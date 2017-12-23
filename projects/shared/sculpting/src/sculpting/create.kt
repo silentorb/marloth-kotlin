@@ -17,10 +17,10 @@ class create {
 //    squareUp(mesh: HalfEdgeMesh, size: Vector2, z: Float): Face {
 //      val half = size * 0.5f;
 //      return mesh.add_face(listOf(
-//      Vertex ( Vector3( -half.x, -half.y, z ) ),
-//      Vertex ( Vector3( half.x, -half.y, z ) ),
-//      Vertex ( Vector3( half.x, half.y, z ) ),
-//      Vertex ( Vector3( -half.x, half.y, z ) )
+//      Vertex ( Vector3( -half.r, -half.y, z ) ),
+//      Vertex ( Vector3( half.r, -half.y, z ) ),
+//      Vertex ( Vector3( half.r, half.y, z ) ),
+//      Vertex ( Vector3( -half.r, half.y, z ) )
 //      ))
 //    }
   }

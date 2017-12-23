@@ -1,7 +1,7 @@
 package rendering
 
-import com.badlogic.gdx.graphics.VertexAttribute
-import com.badlogic.gdx.graphics.glutils.ShaderProgram
+import glowing.ShaderProgram
+import glowing.VertexAttribute
 
 val coloredVertex = """
 #version 440

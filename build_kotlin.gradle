@@ -2,12 +2,6 @@ apply plugin: 'kotlin'
 sourceSets {
     main.kotlin.srcDirs += 'src'
 }
-idea {
-    module {
-        // Marks the already(!) added srcDir as "generated"
-        generatedSourceDirs += file('src')
-    }
-}
 sourceCompatibility = 1.8
 
 repositories {

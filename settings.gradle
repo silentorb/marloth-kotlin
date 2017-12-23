@@ -13,13 +13,12 @@ def addMany = { it.each() { add(it) } }
 addMany([
         'app/front',
         'app/desktop',
-        'app/resources',
 
         'client/clienting',
         'client/visual/rendering',
         'client/visual/scenery',
         'client/visual/visualizing',
-        'client/visual/glow',
+        'client/visual/glowing',
 
         'shared/sculpting',
         'shared/spatial',

@@ -9,7 +9,4 @@ class Client {
     renderer.render()
   }
 
-  fun free() {
-    renderer.free()
-  }
 }

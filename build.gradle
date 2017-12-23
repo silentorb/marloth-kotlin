@@ -30,7 +30,7 @@ switch ( OperatingSystem.current() ) {
 }
 
 allprojects {
-//    apply plugin: "idea"
+    apply plugin: "idea"
 
     version = '1.0'
     ext {
@@ -48,7 +48,6 @@ allprojects {
 //        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
     }
 
-    apply plugin: 'idea'
     idea {
         module {
             outputDir file('build/classes/main')
@@ -62,11 +61,6 @@ allprojects {
 
     ext.require = {... names ->
 //        project.dependencies.add('compile', ':spatial')
-        names.each() { project.dependencies.add('compile', ':' + it) }
+        names.each() { project.dependencies.add('compile', i+t) }
     }
 }
-
-//def require (project, String... names) {
-////    names.each() { project.dependencies.add('compile', ':' + it) }
-//    project.dependencies.add('compile', ':spatial')
-//}
