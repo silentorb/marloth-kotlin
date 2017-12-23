@@ -1,0 +1,27 @@
+rootProject.name = 'dev_lab'
+
+def add = { path ->
+    def tokens = path.tokenize('/')
+//    def name = tokens[tokens.size() - 2] + ':' + tokens.last()
+    def name = tokens.last()
+    include name
+    project(':' + name).projectDir = new File('projects/' + path)
+}
+
+def addMany = { it.each() { add(it) } }
+
+addMany([
+        'app/front',
+        'app/desktop',
+        'app/resources',
+
+        'client/clienting',
+        'client/visual/rendering',
+        'client/visual/scenery',
+        'client/visual/visualizing',
+        'client/visual/glow',
+
+        'shared/sculpting',
+        'shared/spatial',
+])
+

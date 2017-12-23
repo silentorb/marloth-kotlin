@@ -1,0 +1,8 @@
+
+apply from: "$rootProject.projectDir/build_kotlin.gradle"
+
+dependencies {
+    compile project(':shading')
+    compile project(':sculpting')
+    compile project(':visualizing')
+}

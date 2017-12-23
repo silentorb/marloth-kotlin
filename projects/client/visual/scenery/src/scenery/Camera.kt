@@ -1,0 +1,5 @@
+package scenery
+
+class Camera {
+
+}

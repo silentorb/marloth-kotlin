@@ -1,0 +1,72 @@
+group 'dev-lab'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    ext.kotlin_version = '1.2.10'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+def _lwjglNatives = ''
+import org.gradle.internal.os.OperatingSystem
+switch ( OperatingSystem.current() ) {
+    case OperatingSystem.WINDOWS:
+        _lwjglNatives = "natives-windows"
+        break
+    case OperatingSystem.LINUX:
+        _lwjglNatives = "natives-linux"
+        break
+    case OperatingSystem.MAC_OS:
+        _lwjglNatives = "natives-macos"
+        break
+}
+
+allprojects {
+//    apply plugin: "idea"
+
+    version = '1.0'
+    ext {
+        appName = "marloth"
+        gdxVersion = '1.9.8'
+        lwjglVersion = "3.1.5"
+        lwjglNatives = _lwjglNatives
+//        roboVMVersion = '2.3.1'
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+//        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+//        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+    }
+
+    apply plugin: 'idea'
+    idea {
+        module {
+            outputDir file('build/classes/main')
+            testOutputDir file('build/classes/test')
+        }
+    }
+    if (project.convention.findPlugin(JavaPluginConvention)) {
+//        sourceSets.main.output.classesDir = new File(buildDir, "classes/main")
+//        sourceSets.test.output.classesDir = new File(buildDir, "classes/test")
+    }
+
+    ext.require = {... names ->
+//        project.dependencies.add('compile', ':spatial')
+        names.each() { project.dependencies.add('compile', ':' + it) }
+    }
+}
+
+//def require (project, String... names) {
+////    names.each() { project.dependencies.add('compile', ':' + it) }
+//    project.dependencies.add('compile', ':spatial')
+//}
