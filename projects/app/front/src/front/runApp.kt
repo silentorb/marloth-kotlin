@@ -14,8 +14,19 @@ import org.lwjgl.glfw.GLFW.glfwPollEvents
 import java.awt.SystemColor.window
 import org.lwjgl.glfw.GLFW.glfwSwapBuffers
 import org.lwjgl.glfw.GLFW.glfwWindowShouldClose
+import java.lang.management.ManagementFactory
+
+fun is64Bit(): Boolean {
+  if (System.getProperty("os.name").contains("Windows")) {
+    return System.getenv("ProgramFiles(x86)") != null;
+  } else {
+    return System.getProperty("os.arch").indexOf("64") != -1;
+  }
+}
 
 fun createWindow(): Long {
+  val arch = is64Bit()
+  val pid = ManagementFactory.getRuntimeMXBean().getName()
   glfwDefaultWindowHints() // optional, the current window hints are already the default
   glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE) // the window will stay hidden after creation
   glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE) // the window will be resizable
@@ -59,7 +70,7 @@ fun createWindow(): Long {
 fun runApp() {
   GLFWErrorCallback.createPrint(System.err).set()
   if (!glfwInit())
-    throw IllegalStateException("Unable to initialize GLFW")
+    throw Error("Unable to initialize GLFW")
 
   val window = createWindow()
   val client = Client()

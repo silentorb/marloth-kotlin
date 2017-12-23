@@ -2,6 +2,5 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
 dependencies {
-    compile "com.badlogicgames.gdx:gdx:$gdxVersion"
     compile project(":spatial")
 }

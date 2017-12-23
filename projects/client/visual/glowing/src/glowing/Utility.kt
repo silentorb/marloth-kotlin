@@ -1,6 +1,7 @@
 package glowing
 
 import org.lwjgl.opengl.GL11.*
+import java.nio.FloatBuffer
 
 fun getErrorInfo(error: Int): String {
   when (error) {

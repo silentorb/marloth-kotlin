@@ -2,27 +2,29 @@ package glowing
 
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL20.*
-import org.lwjgl.opengl.GL30.glBindVertexArray
 import org.lwjgl.opengl.GL30.glGenVertexArrays
 
 class VertexSchema(val attributes: Array<VertexAttribute>) {
   val size = attributes.sumBy { it.size }
-  val vao = glGenVertexArrays()
+}
+
+class VertexArrayObject(schema: VertexSchema) {
+  val id = glGenVertexArrays()
 
   init {
-//    var offset = 0
+    var offset = 0L
     var i = 0
-    globalState.vertexArrayObject = vao
+    globalState.vertexArrayObject = id
 
-    for (attribute in attributes) {
-      glVertexAttribPointer(i, attribute.size, GL_FLOAT, false, size, 0L)
+    for (attribute in schema.attributes) {
+      glVertexAttribPointer(i, attribute.size, GL_FLOAT, false, schema.size, offset)
       glEnableVertexAttribArray(i)
       i++
-//      offset += attribute.size * 4
+      offset += attribute.size
     }
   }
 
-  fun activate(){
-    globalState.vertexArrayObject = vao
+  fun activate() {
+    globalState.vertexArrayObject = id
   }
 }

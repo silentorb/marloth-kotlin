@@ -1,47 +1,43 @@
 package rendering
 
-import com.badlogic.gdx.graphics.Mesh
+import glowing.SimpleMesh
+import glowing.VertexSchema
+import org.lwjgl.BufferUtils
 import sculpting.HalfEdgeMesh
+import spatial.Vector4
+import spatial.put
 
-fun convertMesh(mesh: HalfEdgeMesh, vertexSchema: VertexSchema): Mesh {
+fun convertMesh(mesh: HalfEdgeMesh, vertexSchema: VertexSchema): SimpleMesh {
   val vertex_count = sculpting.query.vertex_count(mesh)
-  val vertexSize = vertexSchema.sumBy({ it.numComponents })
-  val vertices = FloatArray(vertex_count * vertexSize)
-//  val indices = ShortArray(vertex_count)
-
-//  var offset = 0
+  val vertices = BufferUtils.createFloatBuffer(vertex_count * vertexSchema.size)
+  val offsets = BufferUtils.createIntBuffer(mesh.faces.size)
+  val counts = BufferUtils.createIntBuffer(mesh.faces.size)
   var i = 0
+  var offset = 0
 
   for (polygon in mesh.faces) {
     sculpting.query.each_edge(polygon, { edge ->
       val vertex = edge.vertex!!
 
       // Position
-      vertices[i++] = vertex.position.x
-      vertices[i++] = vertex.position.y
-      vertices[i++] = vertex.position.z
+      vertices.put(vertex.position)
 
       // Temporary normal code
-      vertices[i++] = vertex.position.x
-      vertices[i++] = vertex.position.y
-      vertices[i++] = vertex.position.z
+      vertices.put(vertex.position)
 
       // Temporary color code
-      vertices[i++] = 0.5f
-      vertices[i++] = 0.5f
-      vertices[i++] = 0f
-      vertices[i++] = 1f
+      vertices.put(Vector4(0.5f, 0.5f, 0f, 1f))
     })
 
-//    val face_vertex_count = sculpting.query.vertex_count(polygon)
-//    offset_buffer.putInt(offset)
-//    offset += face_vertex_count
-//    count_buffer.putInt(vertex_count)
+    val face_vertex_count = sculpting.query.vertex_count(polygon)
+    offsets.put(offset)
+    offset += face_vertex_count
+    counts.put(vertex_count)
   }
 
-  val result = Mesh(true, vertex_count, 0, *vertexSchema)
+  vertices.flip()
+  val result = SimpleMesh(vertexSchema, vertices, offsets, counts)
 
-  result.setVertices(vertices)
 //  result.setIndices(indices, 0, indices.size)
   return result
 }

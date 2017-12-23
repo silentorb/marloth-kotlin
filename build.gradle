@@ -61,6 +61,6 @@ allprojects {
 
     ext.require = {... names ->
 //        project.dependencies.add('compile', ':spatial')
-        names.each() { project.dependencies.add('compile', i+t) }
+        names.each() { project.dependencies.add('compile',':' + it) }
     }
 }

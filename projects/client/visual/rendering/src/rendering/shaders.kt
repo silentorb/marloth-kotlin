@@ -4,7 +4,6 @@ import glowing.ShaderProgram
 import glowing.VertexAttribute
 
 val coloredVertex = """
-#version 440
 uniform 	mat4 view;
 uniform 	mat4 projection;
 uniform 	vec3 camera_direction;
@@ -117,7 +116,6 @@ void main() {
 """
 
 val coloredFragment = """
-#version 440
 in vec4 fragment_color;
 out vec4 output_color;
 void main() {
@@ -125,12 +123,33 @@ void main() {
 }
 """
 
-typealias VertexSchema = Array<VertexAttribute>
+val flatVertex = """
+uniform mat4 transform;
 
+in vec3 position;
+in vec3 normal;
+in vec4 vertex_color;
+out vec4 fragment_color;
+
+void main() {
+	fragment_color = vertex_color;
+  gl_Position = vec4(position, 1);
+}
+"""
+
+val flatFragment = """
+in vec4 fragment_color;
+out vec4 output_color;
+
+void main() {
+  output_color = vec4(1);
+}
+"""
 typealias ShaderMap = Map<String, ShaderProgram>
 
 fun createShaders(): ShaderMap {
   return mapOf(
-      "colored" to ShaderProgram(coloredVertex, coloredFragment)
+      "colored" to ShaderProgram(coloredVertex, coloredFragment),
+      "flat" to ShaderProgram(flatVertex, flatFragment)
   )
 }

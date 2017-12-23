@@ -1,10 +1,11 @@
 package rendering
 
-import com.badlogic.gdx.graphics.Mesh
+import glowing.SimpleMesh
+import glowing.VertexSchema
 import sculpting.HalfEdgeMesh
 import spatial.*
 
-typealias MeshMap = Map<String, Mesh>
+typealias MeshMap = Map<String, SimpleMesh>
 
 data class NewMesh(val mesh: HalfEdgeMesh, val vertexSchema: VertexSchema)
 typealias NewMeshMap = Map<String, NewMesh>

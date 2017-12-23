@@ -3,15 +3,19 @@ package glowing
 import org.lwjgl.opengl.GL15.*
 import java.nio.FloatBuffer
 
-class VertexBuffer(buffer: FloatBuffer) {
+class VertexBuffer(vertices: FloatBuffer, vertexSchema: VertexSchema) {
   val vbo = glGenBuffers()
+  val vao: VertexArrayObject
 
   init {
-    glBindBuffer(GL_ARRAY_BUFFER, vbo)
-    glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW)
+//    globalState.vertexArrayObject = 0
+    globalState.vertexBufferObject = vbo
+    glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW)
+    checkError("binding vbo buffer data")
+    vao = VertexArrayObject(vertexSchema)
   }
 
   fun activate() {
-    globalState.vertexBufferObject = vbo
+    globalState.vertexArrayObject = vao.id
   }
 }

@@ -2,6 +2,7 @@ package glowing
 
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL14.glMultiDrawArrays
+import java.nio.FloatBuffer
 import java.nio.IntBuffer
 
 enum class DrawMethod {
@@ -13,8 +14,7 @@ enum class DrawMethod {
   triangleFan
 }
 
-class SimpleMesh(val vertexSchema: VertexSchema, val vertexBuffer: VertexBuffer,
-                 val offsets: IntBuffer, val counts: IntBuffer) {
+class SimpleMesh(val vertexBuffer: VertexBuffer, val offsets: IntBuffer, val counts: IntBuffer) {
 
   private fun convertDrawMethod(method: DrawMethod): Int {
     when (method) {
@@ -32,8 +32,11 @@ class SimpleMesh(val vertexSchema: VertexSchema, val vertexBuffer: VertexBuffer,
   }
 
   fun draw(method: DrawMethod) {
-    vertexSchema.activate()
     vertexBuffer.activate()
-    glMultiDrawArrays(convertDrawMethod(method), offsets, counts);
+//    glMultiDrawArrays(convertDrawMethod(method), offsets, counts);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4)
   }
+
+  constructor(vertexSchema: VertexSchema, buffer: FloatBuffer, offsets: IntBuffer, counts: IntBuffer) :
+      this(VertexBuffer(buffer, vertexSchema), offsets, counts)
 }

@@ -7,7 +7,7 @@ abstract class Shader(code: String, type: Int) {
 
   init {
     id = glCreateShader(type)
-    glShaderSource(id, code)
+    glShaderSource(id, "#version 440\n" + code)
     checkError("Error loading shader code.")
     glCompileShader(id)
     val compiled = glGetShaderi(id, GL_COMPILE_STATUS)

@@ -3,6 +3,7 @@ package glowing
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER
 import org.lwjgl.opengl.GL15.glBindBuffer
+import org.lwjgl.opengl.GL20.glUseProgram
 import org.lwjgl.opengl.GL30.glBindVertexArray
 
 import spatial.Vector4
@@ -13,7 +14,7 @@ class State {
     set(value) {
       if (field != value) {
         field = value
-        glClearColor(value.r, value.g, value.b, value.a)
+        glClearColor(value.x, value.y, value.z, value.a)
       }
     }
 
@@ -30,6 +31,14 @@ class State {
       if (field != value) {
         field = value
         glBindBuffer(GL_ARRAY_BUFFER, value)
+      }
+    }
+
+  var shaderProgram: Int = 0
+    set(value) {
+      if (field != value) {
+        field = value
+        glUseProgram(value)
       }
     }
 

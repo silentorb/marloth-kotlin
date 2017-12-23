@@ -4,17 +4,17 @@ import org.lwjgl.opengl.GL20.*
 import org.lwjgl.opengl.GL30.*
 
 class ShaderProgram(val vertexShader: VertexShader, val fragmentShader: FragmentShader) {
-  var programId: Int
+  var id: Int
 
   init {
-    programId = glCreateProgram()
-    glAttachShader(programId, vertexShader.id)
-    glAttachShader(programId, fragmentShader.id)
-    glBindAttribLocation(programId, 0, "position")
-    glBindFragDataLocation(programId, 0, "color")
-    glLinkProgram(programId)
-    val linked = glGetProgrami(programId, GL_LINK_STATUS)
-    val programLog = glGetProgramInfoLog(programId)
+    id = glCreateProgram()
+    glAttachShader(id, vertexShader.id)
+    glAttachShader(id, fragmentShader.id)
+    glBindAttribLocation(id, 0, "position")
+    glBindFragDataLocation(id, 0, "color")
+    glLinkProgram(id)
+    val linked = glGetProgrami(id, GL_LINK_STATUS)
+    val programLog = glGetProgramInfoLog(id)
     if (programLog!!.trim({ it <= ' ' }).isNotEmpty())
       throw Error(programLog)
 
@@ -23,7 +23,9 @@ class ShaderProgram(val vertexShader: VertexShader, val fragmentShader: Fragment
   }
 
   constructor(vertexCode: String, fragmentCode: String) :
-      this(VertexShader(vertexCode), FragmentShader(fragmentCode)) {
+      this(VertexShader(vertexCode), FragmentShader(fragmentCode))
 
+  fun activate() {
+    globalState.shaderProgram = id
   }
 }
