@@ -31,11 +31,14 @@ fun convertMesh(mesh: HalfEdgeMesh, vertexSchema: VertexSchema): SimpleMesh {
 
     val face_vertex_count = sculpting.query.vertex_count(polygon)
     offsets.put(offset)
+    counts.put(face_vertex_count)
     offset += face_vertex_count
-    counts.put(vertex_count)
   }
 
+
   vertices.flip()
+  offsets.flip()
+  counts.flip()
   val result = SimpleMesh(vertexSchema, vertices, offsets, counts)
 
 //  result.setIndices(indices, 0, indices.size)

@@ -18,5 +18,6 @@ fun createCube(): HalfEdgeMesh {
 }
 
 fun createMeshes(vertexSchema: VertexSchema): NewMeshMap = mapOf(
-    "cube" to NewMesh(createCube(), vertexSchema)
+    "cube" to NewMesh(createCube(), vertexSchema),
+    "test" to NewMesh(sculpting.create.flatTest(), vertexSchema)
 )

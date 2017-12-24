@@ -82,5 +82,22 @@ class create {
           Vertex(Vector3(-half.x, half.y, z))
       ))
     }
+
+    fun flatTest(): HalfEdgeMesh {
+      val mesh = HalfEdgeMesh()
+      mesh.add_face(arrayOf(
+          Vertex(Vector3(1f, 1f, 0f)),
+          Vertex(Vector3(0.5f, 1f, 0f)),
+          Vertex(Vector3(1f, 0.5f, 0f))
+      ))
+
+      mesh.add_face(arrayOf(
+          Vertex(Vector3(-1f, -1f, 0f)),
+          Vertex(Vector3(-1f, -0.5f, 0f)),
+          Vertex(Vector3(-0.5f, -1f, 0f))
+      ))
+      return mesh
+    }
+
   }
 }
