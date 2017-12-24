@@ -2,5 +2,6 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
 dependencies {
-//    compile project(':sculpting')
+    compile project(':spatial')
 }
+//require('spatial')

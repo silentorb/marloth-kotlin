@@ -6,6 +6,7 @@ typealias Vector2 = org.joml.Vector2f
 typealias Vector3 = org.joml.Vector3f
 typealias Vector4 = org.joml.Vector4f
 typealias Matrix = org.joml.Matrix4f
+typealias Quaternion = org.joml.Quaternionf
 
 //public class Vector4 {
 //
@@ -29,6 +30,7 @@ operator fun Vector3.plusAssign(other: Vector3) {
 operator fun Vector3.times(other: Matrix): Vector3 = mulDirection(other)
 operator fun Vector2.times(other: Float): Vector2 = mul(other)
 operator fun Vector3.times(other: Float): Vector3 = mul(other)
+operator fun Quaternion.times(other: Vector3): Vector3 = transform(other)
 
 fun FloatBuffer.put(value: Vector3) {
   put(value.x)
