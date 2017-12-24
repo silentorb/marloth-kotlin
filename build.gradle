@@ -17,7 +17,8 @@ buildscript {
 
 def _lwjglNatives = ''
 import org.gradle.internal.os.OperatingSystem
-switch ( OperatingSystem.current() ) {
+
+switch (OperatingSystem.current()) {
     case OperatingSystem.WINDOWS:
         _lwjglNatives = "natives-windows"
         break
@@ -60,8 +61,8 @@ allprojects {
 //        sourceSets.test.output.classesDir = new File(buildDir, "classes/test")
     }
 
-    ext.require = {... names ->
+    ext.requires = { String... names ->
 //        project.dependencies.add('compile', ':spatial')
-        names.each() { project.dependencies.add('compile',':' + it) }
+        names.each() { project.dependencies.add('compile', project(':' + it)) }
     }
 }

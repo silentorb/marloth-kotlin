@@ -7,4 +7,4 @@ dependencies {
     compile project(':glowing')
 }
 
-require('spatial')
+requires('spatial', 'scenery')

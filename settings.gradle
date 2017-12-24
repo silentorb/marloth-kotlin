@@ -22,5 +22,8 @@ addMany([
 
         'shared/sculpting',
         'shared/spatial',
+
+        'server/serving',
+        'server/simulation',
 ])
 

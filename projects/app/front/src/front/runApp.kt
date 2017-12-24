@@ -1,6 +1,7 @@
 package front
 
 import clienting.Client
+import org.joml.Vector2i
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.system.*;
@@ -14,6 +15,9 @@ import org.lwjgl.glfw.GLFW.glfwPollEvents
 import java.awt.SystemColor.window
 import org.lwjgl.glfw.GLFW.glfwSwapBuffers
 import org.lwjgl.glfw.GLFW.glfwWindowShouldClose
+import rendering.WindowInfo
+import serving.Server
+import visualizing.createScene
 import java.lang.management.ManagementFactory
 
 fun is64Bit(): Boolean {
@@ -36,34 +40,33 @@ fun createWindow(): Long {
   if (window == NULL)
     throw RuntimeException("Failed to create the GLFW window")
 
-  glfwSetKeyCallback(window.toLong()) { window, key, scancode, action, mods ->
+  glfwSetKeyCallback(window) { window2, key, scancode, action, mods ->
     if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
-      glfwSetWindowShouldClose(window, true) // We will detect this in the rendering loop
+      glfwSetWindowShouldClose(window2, true) // We will detect this in the rendering loop
   }
 
-  // Get the thread stack and push a new frame
   stackPush().use { stack ->
-    val pWidth = stack.mallocInt(1) // int*
-    val pHeight = stack.mallocInt(1) // int*
+    val width = stack.mallocInt(1)
+    val height = stack.mallocInt(1)
 
-    glfwGetWindowSize(window, pWidth, pHeight)
+    glfwGetWindowSize(window, width, height)
 
     // Get the resolution of the primary monitor
     val vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor())
 
     glfwSetWindowPos(
-        window.toLong(),
-        (vidmode.width() - pWidth.get(0)) / 2,
-        (vidmode.height() - pHeight.get(0)) / 2
+        window,
+        (vidmode.width() - width.get()) / 2,
+        (vidmode.height() - height.get()) / 2
     )
-  } // the stack frame is popped automatically
+  }
 
-  glfwMakeContextCurrent(window.toLong())
+  glfwMakeContextCurrent(window)
 
   // Enable v-sync
   glfwSwapInterval(1)
 
-  glfwShowWindow(window.toLong())
+  glfwShowWindow(window)
   return window
 }
 
@@ -73,11 +76,13 @@ fun runApp() {
     throw Error("Unable to initialize GLFW")
 
   val window = createWindow()
-  val client = Client()
+  val server = Server()
+  val client = Client(window)
 
   while (!glfwWindowShouldClose(window.toLong())) {
-    glfwSwapBuffers(window.toLong()) // swap the color buffers
-    client.update()
+    glfwSwapBuffers(window)
+    val scene = createScene(server.world)
+    client.update(scene)
     glfwPollEvents()
   }
 }

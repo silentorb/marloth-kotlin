@@ -2,5 +2,10 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
 dependencies {
-    compile project(':rendering')
+    compile "org.lwjgl:lwjgl:${lwjglVersion}"
+    compile "org.lwjgl:lwjgl:${lwjglVersion}:natives-windows"
+    compile "org.lwjgl:lwjgl-glfw:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-glfw:$lwjglVersion:$lwjglNatives"
 }
+
+requires('rendering')

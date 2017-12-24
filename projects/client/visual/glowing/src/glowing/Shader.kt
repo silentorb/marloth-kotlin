@@ -1,6 +1,9 @@
 package glowing
 
 import org.lwjgl.opengl.GL20.*
+import org.lwjgl.BufferUtils
+import java.nio.FloatBuffer
+
 
 abstract class Shader(code: String, type: Int) {
   val id: Int
@@ -18,5 +21,6 @@ abstract class Shader(code: String, type: Int) {
     if (compiled == 0)
       throw Error("Could not compile shader.")
   }
+
 
 }
