@@ -14,7 +14,7 @@ class State {
     set(value) {
       if (field != value) {
         field = value
-        glClearColor(value.x, value.y, value.z, value.a)
+        glClearColor(value.x, value.y, value.z, value.w)
       }
     }
 

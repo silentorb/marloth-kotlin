@@ -38,14 +38,15 @@ allprojects {
         gdxVersion = '1.9.8'
         lwjglVersion = "3.1.5"
         lwjglNatives = _lwjglNatives
+        jomlVersion = "1.9.6"
 //        roboVMVersion = '2.3.1'
     }
 
     repositories {
         mavenLocal()
         mavenCentral()
-//        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-//        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
     }
 
     idea {
