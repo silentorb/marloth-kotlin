@@ -12,7 +12,8 @@ typealias NewMeshMap = Map<String, NewMesh>
 
 fun createCube(): HalfEdgeMesh {
   val mesh = HalfEdgeMesh()
-  sculpting.create.squareDown(mesh, Vector2(1f, 1f), 1f)
+//  sculpting.create.squareDown(mesh, Vector2(1f, 1f), 1f)
+  sculpting.create.cube(mesh, Vector3(1f, 1f, 1f))
   return mesh
 }
 

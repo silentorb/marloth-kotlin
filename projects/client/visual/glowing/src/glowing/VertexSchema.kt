@@ -20,7 +20,7 @@ class VertexArrayObject(schema: VertexSchema) {
       glVertexAttribPointer(i, attribute.size, GL_FLOAT, false, schema.size, offset)
       glEnableVertexAttribArray(i)
       i++
-      offset += attribute.size
+      offset += attribute.size * 4
     }
   }
 

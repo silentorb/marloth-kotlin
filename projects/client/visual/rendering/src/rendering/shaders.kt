@@ -126,9 +126,10 @@ void main() {
 val flatVertex = """
 uniform mat4 transform;
 
-in vec3 position;
-in vec3 normal;
-in vec4 vertex_color;
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec3 normal;
+layout (location = 2) in vec4 vertex_color;
+
 out vec4 fragment_color;
 
 void main() {
@@ -142,7 +143,7 @@ in vec4 fragment_color;
 out vec4 output_color;
 
 void main() {
-  output_color = vec4(1);
+  output_color = fragment_color;
 }
 """
 typealias ShaderMap = Map<String, ShaderProgram>

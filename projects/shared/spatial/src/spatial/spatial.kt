@@ -33,6 +33,10 @@ operator fun Vector2.times(other: Float): Vector2 {
   return scl(other)
 }
 
+operator fun Vector3.times(other: Float): Vector3 {
+  return scl(other)
+}
+
 fun FloatBuffer.put(value: Vector3) {
   put(value.x)
   put(value.y)

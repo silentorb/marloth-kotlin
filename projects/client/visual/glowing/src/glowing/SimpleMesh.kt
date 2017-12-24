@@ -33,8 +33,8 @@ class SimpleMesh(val vertexBuffer: VertexBuffer, val offsets: IntBuffer, val cou
 
   fun draw(method: DrawMethod) {
     vertexBuffer.activate()
-//    glMultiDrawArrays(convertDrawMethod(method), offsets, counts);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 4)
+    glMultiDrawArrays(convertDrawMethod(method), offsets, counts);
+//    glDrawArrays(GL_TRIANGLE_FAN, 0, 4)
   }
 
   constructor(vertexSchema: VertexSchema, buffer: FloatBuffer, offsets: IntBuffer, counts: IntBuffer) :

@@ -2,41 +2,35 @@ package sculpting
 
 import spatial.*
 
-data class Vertex(
+class Vertex(
     var position: Vector3,
-    var edge: Edge? = null
-)
+    edge: Edge? = null
+) {
+  private var _edge: Edge? = edge
+  var edge: Edge
+    get() = _edge!!
+    set(value) {
+      _edge = value
+    }
+}
 
 class Edge(
-    var vertex: Vertex? = null,
-    var face: Face? = null,
-    var next: Edge? = null,
-    var opposite: Edge? = null
-)
+    var vertex: Vertex,
+    var face: Face,
+    next: Edge? = null,
+    opposite: Edge? = null
+) {
+  var next: Edge = next ?: this
+  var opposite: Edge = opposite ?: this
+}
 
-data class Face(
-    var edge: Edge? = null
-)
-
-//interface Vertex {
-//  var position: sculpting.Vector3
-//  var edge: Edge
-//}
-
-//interface Half_Edge: Edge {
-//  var vertex: Vertex
-//  var next: Edge
-//override  var opposite: Edge
-//  var face: Face
-//}
-//
-//interface Edge {
-//  var vertex: Vertex
-//  var next: Edge
-//  var opposite: Edge?
-//  var face: Face
-//}
-//
-//interface Face {
-//  var edge: Edge
-//}
+class Face(
+    edge: Edge? = null
+) {
+  private var _edge: Edge? = edge
+  var edge: Edge
+    get() = _edge!!
+    set(value) {
+      _edge = value
+    }
+}
