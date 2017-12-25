@@ -1,14 +1,14 @@
 package rendering
 
 import spatial.Matrix
-import glowing.MatrixProperty
-import glowing.ShaderProgram
 
-class StandardEffect(val shader: ShaderProgram, ) {
-  val cameraMatrix = MatrixProperty(shader, "cameraMatrix")
-  fun activate(camera: Matrix) {
+class PerspectiveEffect(private val shader: PerspectiveShader, private val camera: Matrix) {
+  init {
+    shader.cameraMatrix.setValue(camera)
+  }
+
+  fun activate() {
     shader.activate()
-    cameraMatrix.value = camera
   }
 }
 
@@ -17,11 +17,9 @@ data class EffectsData(
 )
 
 data class Effects(
-    val StandardEffect:StandardEffect
+    val standardEffect: PerspectiveEffect
 )
 
-fun createEffects(data: EffectsData, shaderPrograms: Shaders): Effects {
-  return Effects(
-      StandardEffect()
-  )
-}
+fun createEffects(shaderPrograms: Shaders, data: EffectsData): Effects = Effects(
+    PerspectiveEffect(shaderPrograms.flat, data.cameraMatrix)
+)

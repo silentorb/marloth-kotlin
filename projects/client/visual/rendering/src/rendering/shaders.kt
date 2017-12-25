@@ -147,8 +147,11 @@ void main() {
 }
 """
 
-class PerspectiveShader(val shader: ShaderProgram) {
-  val cameraMatrix = MatrixProperty(shader, "cameraMatrix")
+class PerspectiveShader(val program: ShaderProgram) {
+  val cameraMatrix = MatrixProperty(program, "cameraMatrix")
+  fun activate() {
+    program.activate()
+  }
 }
 
 data class Shaders(

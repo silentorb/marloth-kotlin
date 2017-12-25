@@ -7,11 +7,12 @@ import org.lwjgl.opengl.GL30.GL_MAJOR_VERSION
 class Glow() {
   val operations = Operations()
   val state = globalState
+  val glVersion: String
 
   init {
     GL.createCapabilities()
 
-    val version = glGetString(GL_VERSION)
+    glVersion = glGetString(GL_VERSION)
     val x = 0
   }
 
