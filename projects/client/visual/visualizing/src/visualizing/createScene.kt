@@ -6,15 +6,19 @@ import simulation.World
 import spatial.Quaternion
 import spatial.Vector3
 
-fun createCamera(world: World): Camera = Camera(
-    Vector3(-10f, 0f, 0f),
-    Quaternion(),
+enum class CameraMode {
+  firstPerson,
+  thirdPerson
+}
+
+fun createCamera(world: World, cameraMode: CameraMode): Camera = Camera(
+    world.player.position,
+    world.player.orientation,
     45f
 )
 
-
-fun createScene(world: World): Scene {
+fun createScene(world: World, cameraMode: CameraMode): Scene {
   return Scene(
-      createCamera(world)
+      createCamera(world, cameraMode)
   )
 }

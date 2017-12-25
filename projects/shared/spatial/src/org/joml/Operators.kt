@@ -2,7 +2,7 @@ package org.joml
 
 /* Matrix3f */
 
-operator fun Matrix3f.get(c: Int, r: Int): Float = get(c, r)
+//operator fun Matrix3f.get(c: Int, r: Int): Float = get(c, r)
 operator fun Matrix3f.minus(m: Matrix3f) = sub(m)
 operator fun Matrix3f.plus(m: Matrix3fc) = add(m)
 operator fun Matrix3f.times(m: Matrix3fc) = mul(m)
@@ -109,7 +109,7 @@ operator fun Vector2f.unaryMinus() = negate()
 
 /* Vector3f */
 
-operator fun Vector3f.get(e: Int): Float = get(e)
+//operator fun Vector3f.get(e: Int): Float = get(e)
 operator fun Vector3f.minus(v: Vector3fc) = sub(v)
 operator fun Vector3f.plus(v: Vector3fc): Vector3f = Vector3f(this).add(v)
 operator fun Vector3f.unaryMinus() = negate()
@@ -125,7 +125,7 @@ operator fun Vector3f.unaryMinus() = negate()
 
 /* Vector4f */
 
-operator fun Vector4f.get(e: Int): Float = get(e)
+//operator fun Vector4f.get(e: Int): Float = get(e)
 operator fun Vector4f.minus(v: Vector4fc) = sub(v)
 operator fun Vector4f.plus(v: Vector4fc) = add(v)
 operator fun Vector4f.unaryMinus() = negate()

@@ -17,6 +17,7 @@ import org.lwjgl.glfw.GLFW.glfwSwapBuffers
 import org.lwjgl.glfw.GLFW.glfwWindowShouldClose
 import rendering.WindowInfo
 import serving.Server
+import visualizing.CameraMode
 import visualizing.createScene
 import java.lang.management.ManagementFactory
 
@@ -81,7 +82,7 @@ fun runApp() {
 
   while (!glfwWindowShouldClose(window.toLong())) {
     glfwSwapBuffers(window)
-    val scene = createScene(server.world)
+    val scene = createScene(server.world, CameraMode.firstPerson)
     client.update(scene)
     glfwPollEvents()
   }
