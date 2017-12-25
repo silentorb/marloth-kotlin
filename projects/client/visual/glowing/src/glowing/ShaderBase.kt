@@ -5,7 +5,7 @@ import org.lwjgl.BufferUtils
 import java.nio.FloatBuffer
 
 
-abstract class Shader(code: String, type: Int) {
+abstract class ShaderBase(code: String, type: Int) {
   val id: Int
 
   init {

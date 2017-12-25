@@ -14,11 +14,7 @@ class ShaderProperty {
 class MatrixProperty(program: ShaderProgram, name: String) {
   private val location = glGetUniformLocation(program.id, name)
 
-  var value: Matrix = Matrix()
-    set(value) {
-//      if (field != value) {
-        field = value
-        glUniformMatrix4fv(location, false, value.get(matrixBuffer));
-//      }
-    }
+  fun setValue(value: Matrix) {
+    glUniformMatrix4fv(location, false, value.get(matrixBuffer));
+  }
 }

@@ -1,7 +1,7 @@
 package rendering
 
+import glowing.MatrixProperty
 import glowing.ShaderProgram
-import glowing.VertexAttribute
 
 val coloredVertex = """
 uniform 	mat4 view;
@@ -146,11 +146,19 @@ void main() {
   output_color = fragment_color;
 }
 """
-typealias ShaderMap = Map<String, ShaderProgram>
 
-fun createShaders(): ShaderMap {
-  return mapOf(
-      "colored" to ShaderProgram(coloredVertex, coloredFragment),
-      "flat" to ShaderProgram(flatVertex, flatFragment)
+class PerspectiveShader(val shader: ShaderProgram) {
+  val cameraMatrix = MatrixProperty(shader, "cameraMatrix")
+}
+
+data class Shaders(
+    val colored: ShaderProgram,
+    val flat: PerspectiveShader
+)
+
+fun createShaders(): Shaders {
+  return Shaders(
+      ShaderProgram(coloredVertex, coloredFragment),
+      PerspectiveShader(ShaderProgram(flatVertex, flatFragment))
   )
 }
