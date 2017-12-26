@@ -16,7 +16,7 @@ fun gatherEffectsData(windowInfo: WindowInfo, scene: Scene): EffectsData {
 
 fun renderScene(scene: Scene, meshes: MeshMap, effects:Effects) {
   effects.standardEffect.activate()
-  meshes["cube"]!!.draw(DrawMethod.triangleFan)
+  meshes["cube"]!!.draw(DrawMethod.lineLoop)
 }
 
 class Renderer {

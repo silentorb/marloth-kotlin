@@ -5,31 +5,58 @@ import commanding.CommandType
 import commanding.Commands
 import org.lwjgl.glfw.GLFW.*
 
-typealias EventMap = Map<Int, CommandType>
+data class Binding(val type: CommandType, val target: Int)
 
-data class InputMap(
-    val keyboard: EventMap,
-    val mouse: EventMap,
-    val gamepad1: EventMap,
-    val gamepad2: EventMap
+typealias BindingMap = Map<Int, Binding>
+
+interface DeviceHandler {
+  fun getValue(event: Int): Float
+}
+
+data class DeviceInput(
+    val name: String,
+    val handler: DeviceHandler,
+    val bindings: BindingMap
 )
 
-class InputManager(val window: Long) {
+typealias InputRoot = Array<DeviceInput>
+
+class UnusedDeviceHandler() : DeviceHandler {
+  override fun getValue(event: Int): Float = 0f
+}
+
+class KeyboardDeviceHandler(val window: Long) : DeviceHandler {
+
+  override fun getValue(event: Int): Float {
+    if (glfwGetKey(window, event) == GLFW_PRESS)
+      return 1f
+
+    return 0f
+  }
 
   init {
     glfwSetInputMode(window, GLFW_STICKY_KEYS, 1)
   }
-
-  private fun isPressed(key: Int): Boolean {
-    return glfwGetKey(window, key) == GLFW_PRESS
-  }
-
-  private fun getKeyboardCommands(keyboardMap: EventMap): Commands {
-    return keyboardMap.filter({ isPressed(it.key) })
-        .values.map({ Command(it, 1f) }).toTypedArray()
-  }
-
-  fun getCommands(inputMap: InputMap): Commands {
-    return getKeyboardCommands(inputMap.keyboard)
-  }
 }
+
+private fun gatherCommands(deviceInput: DeviceInput): Commands {
+  return deviceInput.bindings
+      .mapValues { Pair(it.value, deviceInput.handler.getValue(it.key)) }
+      .filter({ it.value.second != 0f })
+      .values.map({ Command(it.first.type, it.first.target, it.second) }).toTypedArray()
+}
+
+data class InputConfiguration(
+    val keyboard: BindingMap,
+    val mouse: BindingMap,
+    val gamepad1: BindingMap,
+    val gamepad2: BindingMap
+)
+
+fun getCommands(inputRoot: InputRoot): Commands {
+  return inputRoot.map({ gatherCommands(it) }).toTypedArray().flatten().toTypedArray()
+}
+
+fun createNewInputRoot(window: Long, config: InputConfiguration): InputRoot = arrayOf(
+    DeviceInput("keyboard", KeyboardDeviceHandler(window), config.keyboard)
+)

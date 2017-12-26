@@ -1,6 +1,8 @@
 package clienting
 
-import haft.InputManager
+import haft.InputRoot
+import haft.createNewInputRoot
+import haft.getCommands
 import org.joml.Vector2i
 import org.lwjgl.glfw.GLFW.glfwGetWindowSize
 import org.lwjgl.system.MemoryStack
@@ -20,11 +22,12 @@ fun getWindowInfo(window: Long): WindowInfo {
 
 class Client(val window: Long) {
   private val renderer: Renderer = Renderer()
-  private val inputManager = InputManager(window)
+  private val config: Configuration = createNewConfiguration()
+  private val inputRoot: InputRoot = createNewInputRoot(window, config.input)
 
   fun update(scene: Scene) {
     renderer.render(scene, getWindowInfo(window))
-    inputManager.getCommands()
+    getCommands(inputRoot)
   }
 
 }

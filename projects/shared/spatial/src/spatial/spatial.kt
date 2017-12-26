@@ -1,5 +1,6 @@
 package spatial
 
+import org.joml.Math.PI
 import java.nio.FloatBuffer
 
 typealias Vector2 = org.joml.Vector2f
@@ -44,3 +45,5 @@ fun FloatBuffer.put(value: Vector4) {
   put(value.z)
   put(value.w)
 }
+
+val Pi = PI.toFloat()

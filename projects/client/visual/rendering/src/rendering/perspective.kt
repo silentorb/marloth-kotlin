@@ -5,6 +5,7 @@ import scenery.Camera
 import spatial.*
 
 fun createViewMatrix(position: Vector3, orientation: Quaternion): Matrix {
+  val temp = Quaternion()
   val forward = orientation * Vector3(1f, 0f, 0f)
   val look_at = position + forward
   return Matrix()

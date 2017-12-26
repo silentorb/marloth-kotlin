@@ -1,21 +1,14 @@
 package front
 
 import clienting.Client
-import org.joml.Vector2i
-import org.lwjgl.*;
 import org.lwjgl.glfw.*;
-import org.lwjgl.system.*;
-import java.nio.*
 
-import org.lwjgl.glfw.Callbacks.*
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.system.MemoryStack.*
 import org.lwjgl.system.MemoryUtil.*
 import org.lwjgl.glfw.GLFW.glfwPollEvents
-import java.awt.SystemColor.window
 import org.lwjgl.glfw.GLFW.glfwSwapBuffers
 import org.lwjgl.glfw.GLFW.glfwWindowShouldClose
-import rendering.WindowInfo
 import serving.Server
 import visualizing.CameraMode
 import visualizing.createScene
@@ -41,10 +34,10 @@ fun createWindow(): Long {
   if (window == NULL)
     throw RuntimeException("Failed to create the GLFW window")
 
-  glfwSetKeyCallback(window) { window2, key, scancode, action, mods ->
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
-      glfwSetWindowShouldClose(window2, true) // We will detect this in the rendering loop
-  }
+//  glfwSetKeyCallback(window) { window2, key, scancode, action, mods ->
+//    if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
+//      glfwSetWindowShouldClose(window2, true) // We will detect this in the rendering loop
+//  }
 
   stackPush().use { stack ->
     val width = stack.mallocInt(1)
@@ -82,7 +75,7 @@ fun runApp() {
 
   while (!glfwWindowShouldClose(window.toLong())) {
     glfwSwapBuffers(window)
-    val scene = createScene(server.world, CameraMode.firstPerson)
+    val scene = createScene(server.world, CameraMode.Orthographic)
     client.update(scene)
     glfwPollEvents()
   }
