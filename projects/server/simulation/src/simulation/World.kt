@@ -13,15 +13,15 @@ class World {
   val players: Players = listOf(Player(0))
 }
 
-fun applyPlayerCommands(player: Player, commands: Commands) {
+fun applyPlayerCommands(player: Player, commands: Commands, delta: Float) {
   if (commands.isEmpty())
     return
 
   val offset = Vector3()
-  val speed = 0.1f
+  val speed = 3f
 
   for (command in commands) {
-    val rate = speed * command.value
+    val rate = speed * command.value * delta
     when (command.type) {
       CommandType.moveLeft -> offset.x -= rate
       CommandType.moveRight -> offset.x += rate
@@ -34,12 +34,12 @@ fun applyPlayerCommands(player: Player, commands: Commands) {
     player.position += offset
 }
 
-fun applyCommands(players: Players, commands: Commands) {
+fun applyCommands(players: Players, commands: Commands, delta: Float) {
   for (player in players) {
-    applyPlayerCommands(player, commands.filter({ it.target == player.id }))
+    applyPlayerCommands(player, commands.filter({ it.target == player.id }), delta)
   }
 }
 
-fun updateWorld(world: World, commands: Commands) {
-  applyCommands(world.players, commands)
+fun updateWorld(world: World, commands: Commands, delta: Float) {
+  applyCommands(world.players, commands, delta)
 }

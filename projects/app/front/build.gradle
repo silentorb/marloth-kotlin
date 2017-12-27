@@ -7,4 +7,4 @@ dependencies {
     compile "org.lwjgl:lwjgl-glfw:$lwjglVersion:$lwjglNatives"
 }
 
-requires('clienting', 'serving', 'visualizing')
+requires('clienting', 'serving', 'visualizing', 'quartz')

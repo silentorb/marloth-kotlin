@@ -9,6 +9,7 @@ import org.lwjgl.system.MemoryUtil.*
 import org.lwjgl.glfw.GLFW.glfwPollEvents
 import org.lwjgl.glfw.GLFW.glfwSwapBuffers
 import org.lwjgl.glfw.GLFW.glfwWindowShouldClose
+import quartz.DeltaTimer
 import serving.Server
 import visualizing.CameraMode
 import visualizing.createScene
@@ -69,6 +70,7 @@ fun runApp() {
   if (!glfwInit())
     throw Error("Unable to initialize GLFW")
 
+  val timer = DeltaTimer()
   val window = createWindow()
   val server = Server()
   val client = Client(window)
@@ -77,7 +79,8 @@ fun runApp() {
     glfwSwapBuffers(window)
     val scene = createScene(server.world, CameraMode.Orthographic)
     val commands = client.update(scene)
-    server.update(commands)
+    val delta = timer.update().toFloat()
+    server.update(commands, delta)
     glfwPollEvents()
   }
 }
