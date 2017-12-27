@@ -76,7 +76,8 @@ fun runApp() {
   while (!glfwWindowShouldClose(window.toLong())) {
     glfwSwapBuffers(window)
     val scene = createScene(server.world, CameraMode.Orthographic)
-    client.update(scene)
+    val commands = client.update(scene)
+    server.update(commands)
     glfwPollEvents()
   }
 }

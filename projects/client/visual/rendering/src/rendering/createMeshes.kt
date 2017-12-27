@@ -1,7 +1,9 @@
 package rendering
 
 import glowing.SimpleMesh
+import glowing.VertexAttribute
 import glowing.VertexSchema
+import scenery.Depiction
 import sculpting.HalfEdgeMesh
 import spatial.*
 
@@ -17,7 +19,18 @@ fun createCube(): HalfEdgeMesh {
   return mesh
 }
 
+fun createMeshes(): MeshMap {
+  val vertexSchema = VertexSchema(arrayOf(
+      VertexAttribute(0, "position", 3),
+      VertexAttribute(1, "normal", 3),
+      VertexAttribute(2, "color", 4)
+  ))
+  val newMeshes = createMeshes(vertexSchema)
+  return newMeshes.mapValues({ (_, m) -> convertMesh(m.mesh, m.vertexSchema) })
+}
+
 fun createMeshes(vertexSchema: VertexSchema): NewMeshMap = mapOf(
-    "cube" to NewMesh(createCube(), vertexSchema),
+    "child" to NewMesh(createCube(), vertexSchema),
     "test" to NewMesh(sculpting.create.flatTest(), vertexSchema)
 )
+

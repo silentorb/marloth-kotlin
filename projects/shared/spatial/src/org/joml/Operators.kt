@@ -113,7 +113,12 @@ operator fun Vector2f.unaryMinus() = negate()
 /* Vector3f */
 
 //operator fun Vector3f.get(e: Int): Float = get(e)
-operator fun Vector3f.minus(v: Vector3fc) = sub(v)
+operator fun Vector3f.minus(v: Vector3fc) = sub(v, Vector3f())
+
+//operator fun Vector3f.minus(other: Float) = sub(other, Vector3f())
+operator fun Vector3f.plusAssign(other: Vector3f) {
+  add(other)
+}
 
 operator fun Vector3f.plus(v: Vector3fc): Vector3f = Vector3f(this).add(v)
 operator fun Vector3f.unaryMinus() = negate()

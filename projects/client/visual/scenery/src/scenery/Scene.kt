@@ -1,5 +1,6 @@
 package scenery
 
-class Scene(val camera: Camera) {
-
-}
+data class Scene(
+    val camera: Camera,
+    val elements: Array<VisualElement>
+)

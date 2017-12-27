@@ -1,5 +1,6 @@
 package clienting
 
+import commanding.Commands
 import haft.InputRoot
 import haft.createNewInputRoot
 import haft.getCommands
@@ -25,9 +26,9 @@ class Client(val window: Long) {
   private val config: Configuration = createNewConfiguration()
   private val inputRoot: InputRoot = createNewInputRoot(window, config.input)
 
-  fun update(scene: Scene) {
+  fun update(scene: Scene): Commands {
     renderer.render(scene, getWindowInfo(window))
-    getCommands(inputRoot)
+    return getCommands(inputRoot)
   }
 
 }

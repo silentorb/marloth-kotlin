@@ -1,7 +1,6 @@
-
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
 dependencies {
 }
 
-requires('spatial')
+requires('spatial', 'commanding')
