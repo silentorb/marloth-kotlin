@@ -10,7 +10,7 @@ typealias Painters = Map<Depiction, Painter>
 
 fun createSimplePainter(mesh: SimpleMesh): Painter =
     { element, effects ->
-      effects.standardEffect.activate()
+      effects.standardEffect.activate(element.transform)
       mesh.draw(DrawMethod.lineLoop)
     }
 

@@ -1,13 +1,17 @@
 package rendering
 
+import glowing.MatrixProperty
 import spatial.Matrix
 
 class PerspectiveEffect(private val shader: PerspectiveShader, private val camera: Matrix) {
+  val modelTransform = MatrixProperty(shader.program, "modelTransform")
+
   init {
-    shader.cameraMatrix.setValue(camera)
+    shader.cameraTransform.setValue(camera)
   }
 
-  fun activate() {
+  fun activate(transform: Matrix) {
+    modelTransform.setValue(transform)
     shader.activate()
   }
 }

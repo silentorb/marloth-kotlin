@@ -26,7 +26,7 @@ fun createFirstPersonCamera(world: World): Camera = Camera(
 )
 
 fun createOrthographicCamera(world: World): Camera {
-  val position = Vector3(0f, -10f, 10f)
+  val position = Vector3(0f, -20f, 20f)
   return Camera(
       position,
       Quaternion().rotate(0f, 0f, Pi * 0.5f)
@@ -46,6 +46,6 @@ fun createCamera(world: World, cameraMode: CameraMode): Camera = when (cameraMod
 fun createScene(world: World, cameraMode: CameraMode): Scene {
   return Scene(
       createCamera(world, cameraMode),
-      world.players.map({VisualElement(Depiction.child, it.position)}).toTypedArray()
+      world.players.map({ VisualElement(Depiction.child, Matrix().translate(it.position)) }).toTypedArray()
   )
 }

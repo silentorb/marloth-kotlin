@@ -18,7 +18,7 @@ fun applyPlayerCommands(player: Player, commands: Commands) {
     return
 
   val offset = Vector3()
-  val speed = 1
+  val speed = 0.1f
 
   for (command in commands) {
     val rate = speed * command.value

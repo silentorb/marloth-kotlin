@@ -124,7 +124,8 @@ void main() {
 """
 
 val flatVertex = """
-uniform mat4 cameraMatrix;
+uniform mat4 cameraTransform;
+uniform mat4 modelTransform;
 
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
@@ -134,7 +135,7 @@ out vec4 fragment_color;
 
 void main() {
 	fragment_color = vertex_color;
-  gl_Position = cameraMatrix * vec4(position, 1);
+  gl_Position = cameraTransform * modelTransform * vec4(position, 1);
 }
 """
 
@@ -148,7 +149,7 @@ void main() {
 """
 
 class PerspectiveShader(val program: ShaderProgram) {
-  val cameraMatrix = MatrixProperty(program, "cameraMatrix")
+  val cameraTransform = MatrixProperty(program, "cameraTransform")
   fun activate() {
     program.activate()
   }

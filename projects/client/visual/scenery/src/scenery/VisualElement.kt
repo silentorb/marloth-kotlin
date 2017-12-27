@@ -1,6 +1,6 @@
 package scenery
 
-import spatial.Vector3
+import spatial.Matrix
 
 enum class Depiction {
   child,
@@ -9,5 +9,5 @@ enum class Depiction {
 
 data class VisualElement(
     val depiction: Depiction,
-    val position: Vector3
+    val transform: Matrix
 )
