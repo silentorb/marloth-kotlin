@@ -13,7 +13,7 @@ class operations {
 //    }
 
     fun set_opposite_edge(mesh: HalfEdgeMesh, edge: Edge) {
-      val opposite = mesh.get_opposite_edge(edge.next.vertex, edge.vertex!!)
+      val opposite = mesh.get_opposite_edge(edge.next.vertex, edge.vertex)
       if (opposite != null) {
         edge.opposite = opposite
         opposite.opposite = edge
@@ -68,11 +68,11 @@ class operations {
 
 //    fun extrude_relative(mesh: HalfEdgeMesh, face: sculpting.Face, matrix: sculpting.Matrix) {}
 
-    fun clone_vertices(mesh: HalfEdgeMesh, face: Face): Array<Vertex> {
+    fun clone_vertices(mesh: HalfEdgeMesh, face: Face): List<Vertex> {
       val result = Array<Vertex>(0, { Vertex(Vector3(0f, 0f, 0f)) })
       var i = 0
       query.each_vertex(face, { vertex: Vertex -> result[i++] = mesh.add_vertex(vertex) })
-      return result
+      return result.toList()
     }
 
 //    fun flip(face: sculpting.Face) {

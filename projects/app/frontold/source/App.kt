@@ -23,7 +23,7 @@ class App {
   companion object {
 
     @JvmStatic
-    fun main(args: Array<String>) {
+    fun main(args: List<String>) {
       val mythic = MythicInterface()
       mythic.initialize()
       val meshes = initializeMeshes(mythic)

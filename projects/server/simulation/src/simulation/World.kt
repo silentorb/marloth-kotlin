@@ -7,10 +7,10 @@ import org.joml.minus
 import org.joml.plus
 import spatial.Vector3
 
-typealias Players = Array<Player>
+typealias Players = List<Player>
 
 class World {
-  val players: Players = arrayOf(Player(0))
+  val players: Players = listOf(Player(0))
 }
 
 fun applyPlayerCommands(player: Player, commands: Commands) {
@@ -36,7 +36,7 @@ fun applyPlayerCommands(player: Player, commands: Commands) {
 
 fun applyCommands(players: Players, commands: Commands) {
   for (player in players) {
-    applyPlayerCommands(player, commands.filter({ it.target == player.id }).toTypedArray())
+    applyPlayerCommands(player, commands.filter({ it.target == player.id }))
   }
 }
 

@@ -38,14 +38,14 @@ class create {
       return result;
  */
 
-    fun cube(mesh: HalfEdgeMesh, size: Vector3): Array<Face> {
+    fun cube(mesh: HalfEdgeMesh, size: Vector3): List<Face> {
       val half = size * 0.5f
       val top = squareUp(mesh, Vector2(size.x, size.y), half.z)
       val bottom = squareDown(mesh, Vector2(size.x, size.y), -half.z)
 
       val top_vertices = query.vertices(top)
       val initial_bottom_vertices = query.vertices(bottom)
-      val bottom_vertices = arrayOf(
+      val bottom_vertices = listOf(
           initial_bottom_vertices[0],
           initial_bottom_vertices[3],
           initial_bottom_vertices[2],
@@ -54,18 +54,18 @@ class create {
 
       val sides = (0..3).map { a ->
         val b = if (a > 2) 0 else a + 1
-        mesh.add_face(arrayOf(
+        mesh.add_face(listOf(
             top_vertices[b], top_vertices[a],
             bottom_vertices[a], bottom_vertices[b]
         ))
       }
-      return arrayOf<Face>(top, bottom)
-          .plus(arrayOf())
+      return listOf<Face>(top, bottom)
+          .plus(listOf())
     }
 
     fun squareDown(mesh: HalfEdgeMesh, size: Vector2, z: Float): Face {
       val half = size * 0.5f;
-      return mesh.add_face(arrayOf(
+      return mesh.add_face(listOf(
           Vertex(Vector3(-half.x, -half.y, z)),
           Vertex(Vector3(-half.x, half.y, z)),
           Vertex(Vector3(half.x, half.y, z)),
@@ -75,7 +75,7 @@ class create {
 
     fun squareUp(mesh: HalfEdgeMesh, size: Vector2, z: Float): Face {
       val half = size * 0.5f;
-      return mesh.add_face(arrayOf(
+      return mesh.add_face(listOf(
           Vertex(Vector3(-half.x, -half.y, z)),
           Vertex(Vector3(half.x, -half.y, z)),
           Vertex(Vector3(half.x, half.y, z)),
@@ -85,13 +85,13 @@ class create {
 
     fun flatTest(): HalfEdgeMesh {
       val mesh = HalfEdgeMesh()
-      mesh.add_face(arrayOf(
+      mesh.add_face(listOf(
           Vertex(Vector3(1f, 1f, 0f)),
           Vertex(Vector3(0.5f, 1f, 0f)),
           Vertex(Vector3(1f, 0.5f, 0f))
       ))
 
-      mesh.add_face(arrayOf(
+      mesh.add_face(listOf(
           Vertex(Vector3(-1f, -1f, 0f)),
           Vertex(Vector3(-1f, -0.5f, 0f)),
           Vertex(Vector3(-0.5f, -1f, 0f))

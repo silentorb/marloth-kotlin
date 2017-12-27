@@ -46,6 +46,6 @@ fun createCamera(world: World, cameraMode: CameraMode): Camera = when (cameraMod
 fun createScene(world: World, cameraMode: CameraMode): Scene {
   return Scene(
       createCamera(world, cameraMode),
-      world.players.map({ VisualElement(Depiction.child, Matrix().translate(it.position)) }).toTypedArray()
+      world.players.map({ VisualElement(Depiction.child, Matrix().translate(it.position)) })
   )
 }

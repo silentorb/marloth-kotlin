@@ -19,7 +19,7 @@ data class DeviceInput(
     val bindings: BindingMap
 )
 
-typealias InputRoot = Array<DeviceInput>
+typealias InputRoot = List<DeviceInput>
 
 class UnusedDeviceHandler() : DeviceHandler {
   override fun getValue(event: Int): Float = 0f
@@ -43,7 +43,7 @@ private fun gatherCommands(deviceInput: DeviceInput): Commands {
   return deviceInput.bindings
       .mapValues { Pair(it.value, deviceInput.handler.getValue(it.key)) }
       .filter({ it.value.second != 0f })
-      .values.map({ Command(it.first.type, it.first.target, it.second) }).toTypedArray()
+      .values.map({ Command(it.first.type, it.first.target, it.second) })
 }
 
 data class InputConfiguration(
@@ -54,9 +54,9 @@ data class InputConfiguration(
 )
 
 fun getCommands(inputRoot: InputRoot): Commands {
-  return inputRoot.map({ gatherCommands(it) }).toTypedArray().flatten().toTypedArray()
+  return inputRoot.map({ gatherCommands(it) }).flatten()
 }
 
-fun createNewInputRoot(window: Long, config: InputConfiguration): InputRoot = arrayOf(
+fun createNewInputRoot(window: Long, config: InputConfiguration): InputRoot = listOf(
     DeviceInput("keyboard", KeyboardDeviceHandler(window), config.keyboard)
 )

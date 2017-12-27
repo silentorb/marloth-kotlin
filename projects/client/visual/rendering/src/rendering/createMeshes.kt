@@ -20,7 +20,7 @@ fun createCube(): HalfEdgeMesh {
 }
 
 fun createMeshes(): MeshMap {
-  val vertexSchema = VertexSchema(arrayOf(
+  val vertexSchema = VertexSchema(listOf(
       VertexAttribute(0, "position", 3),
       VertexAttribute(1, "normal", 3),
       VertexAttribute(2, "color", 4)

@@ -4,7 +4,7 @@ import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL20.*
 import org.lwjgl.opengl.GL30.glGenVertexArrays
 
-class VertexSchema(val attributes: Array<VertexAttribute>) {
+class VertexSchema(val attributes: List<VertexAttribute>) {
   val size = attributes.sumBy { it.size }
 }
 

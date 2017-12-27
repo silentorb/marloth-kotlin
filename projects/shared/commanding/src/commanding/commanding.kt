@@ -24,6 +24,6 @@ enum class CommandType {
 
 data class Command(val type: CommandType, val target: Int, val value: Float)
 
-typealias Commands = Array<Command>
+typealias Commands = List<Command>
 
 typealias CommandSource = () -> Commands

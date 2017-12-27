@@ -2,5 +2,5 @@ package scenery
 
 data class Scene(
     val camera: Camera,
-    val elements: Array<VisualElement>
+    val elements: List<VisualElement>
 )

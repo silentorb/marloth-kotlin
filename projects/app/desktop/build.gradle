@@ -1,44 +1,9 @@
 
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
-project.ext.mainClassName = "desktop.MainApp"
-project.ext.workingDir = new File( "../../../out/bin")
+//project.ext.mainClassName = "desktop.MainApp"
+//project.ext.workingDir = new File( "../../../out/bin")
 
 dependencies {
     compile project(":front")
-//    compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
-//    compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-//    compile "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-desktop"
-//    compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
 }
-
-//task run(dependsOn: classes, type: JavaExec) {
-//    main = project.mainClassName
-//    classpath = sourceSets.main.runtimeClasspath
-//    standardInput = System.in
-//    workingDir = workingDir
-//    ignoreExitValue = true
-//}
-//
-
-task debug(dependsOn: classes, type: JavaExec) {
-    main = project.mainClassName
-    classpath = sourceSets.main.runtimeClasspath
-    standardInput = System.in
-    workingDir = project.workingDir
-    ignoreExitValue = true
-    debug = true
-}
-//
-//task dist(type: Jar) {
-//    from files(sourceSets.main.output.classesDir)
-//    from files(sourceSets.main.output.resourcesDir)
-//    from {configurations.compile.collect {zipTree(it)}}
-//    from files(project.assetsDir);
-//
-//    manifest {
-////        attributes 'Main-Class': project.mainClassName
-//    }
-//}
-
-//dist.dependsOn classes
