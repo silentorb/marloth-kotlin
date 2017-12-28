@@ -1,10 +1,6 @@
-
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
-
 dependencies {
-    compile project(':sculpting')
-    compile project(':glowing')
 }
 
-requires('spatial', 'scenery')
+requires('spatial', 'scenery', 'gdxy', 'sculpting', 'glowing')

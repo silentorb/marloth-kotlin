@@ -14,9 +14,11 @@ addMany([
         'app/front',
         'app/desktop',
 
+        'client/clienting',
+        'client/gdxy',
+
         'client/input/haft',
 
-        'client/clienting',
         'client/visual/rendering',
         'client/visual/scenery',
         'client/visual/visualizing',
