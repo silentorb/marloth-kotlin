@@ -22,7 +22,7 @@ fun renderScene(scene: Scene, painters: Painters, effects: Effects) {
   }
 }
 
-class Renderer {
+class Renderer(window: Long) {
   val glow = Glow()
   val shaders = createShaders()
   val meshes = createMeshes()
@@ -32,7 +32,7 @@ class Renderer {
   init {
     glow.state.clearColor = Vector4(0f, 0f, 0f, 1f)
     initializeGdx()
-    canvasManager = CanvasManager()
+    canvasManager = CanvasManager(window)
   }
 
   fun render(scene: Scene, windowInfo: WindowInfo) {

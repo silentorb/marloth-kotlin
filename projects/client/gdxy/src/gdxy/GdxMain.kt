@@ -1,8 +1,10 @@
 package gdxy
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.backends.lwjgl.LwjglFiles
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Files
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3NativesLoader
 
 fun initializeGdx() {
-  Gdx.files = LwjglFiles()
+  Lwjgl3NativesLoader.load()
+  Gdx.files = Lwjgl3Files()
 }

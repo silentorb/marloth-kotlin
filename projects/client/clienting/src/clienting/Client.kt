@@ -22,7 +22,7 @@ fun getWindowInfo(window: Long): WindowInfo {
 }
 
 class Client(val window: Long) {
-  private val renderer: Renderer = Renderer()
+  private val renderer: Renderer = Renderer(window)
   private val config: Configuration = createNewConfiguration()
   private val inputRoot: InputRoot = createNewInputRoot(window, config.input)
 
