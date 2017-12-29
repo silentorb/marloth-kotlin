@@ -8,4 +8,4 @@ dependencies {
     compile "org.lwjgl:lwjgl-glfw:$lwjglVersion:$lwjglNatives"
 }
 
-requires('rendering', 'haft', 'commanding')
+requires('rendering', 'haft', 'commanding', 'scenery')

@@ -11,9 +11,7 @@ import org.lwjgl.glfw.GLFW.glfwSwapBuffers
 import org.lwjgl.glfw.GLFW.glfwWindowShouldClose
 import quartz.DeltaTimer
 import serving.Server
-import visualizing.CameraMode
 import visualizing.createScene
-import java.lang.management.ManagementFactory
 
 fun is64Bit(): Boolean {
   if (System.getProperty("os.name").contains("Windows")) {
@@ -75,9 +73,9 @@ fun runApp() {
   val server = Server()
   val client = Client(window)
 
-  while (!glfwWindowShouldClose(window.toLong())) {
+  while (!glfwWindowShouldClose(window)) {
     glfwSwapBuffers(window)
-    val scene = createScene(server.world, CameraMode.Orthographic)
+    val scene = createScene(server.world, client.screens[0])
     val commands = client.update(scene)
     val delta = timer.update().toFloat()
     server.update(commands, delta)

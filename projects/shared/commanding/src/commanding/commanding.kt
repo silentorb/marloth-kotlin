@@ -18,11 +18,23 @@ enum class CommandType {
   duck,
   run,
 
+  switchView,
+
   menuBack,
   select,
 }
 
-data class Command(val type: CommandType, val target: Int, val value: Float)
+enum class CommandLifetime {
+  pressed,
+  end
+}
+
+data class Command(
+    val type: CommandType,
+    val target: Int,
+    val value: Float,
+    val lifetime: CommandLifetime
+)
 
 typealias Commands = List<Command>
 

@@ -15,7 +15,7 @@ addMany([
         'app/desktop',
 
         'client/clienting',
-        'client/gdxy',
+//        'client/gdxy',
 
         'client/input/haft',
 
@@ -32,4 +32,3 @@ addMany([
         'server/serving',
         'server/simulation',
 ])
-

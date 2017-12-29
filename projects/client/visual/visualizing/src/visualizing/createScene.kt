@@ -1,31 +1,28 @@
 package visualizing
 
-import org.joml.AxisAngle4f
 import org.joml.times
-import scenery.Camera
-import scenery.Depiction
-import scenery.Scene
-import scenery.VisualElement
+import scenery.*
+import simulation.Player
 import simulation.World
 import spatial.Matrix
 import spatial.Pi
 import spatial.Quaternion
 import spatial.Vector3
 
-enum class CameraMode {
-  FirstPerson,
-  Orthographic,
-  ThirdPerson
-}
-
-fun createFirstPersonCamera(world: World): Camera = Camera(
-    world.players[0].position,
+fun createFirstPersonCamera(player: Player): Camera = Camera(
+    player.position,
 //    world.player.orientation,
     Quaternion(0f, 0f, .1f),
     45f
 )
 
-fun createOrthographicCamera(world: World): Camera {
+fun createThirdPersonCamera(player: Player): Camera = Camera(
+    player.position,
+    Quaternion(0f, 0f, .1f),
+    45f
+)
+
+fun createOrthographicCamera(): Camera {
   val position = Vector3(0f, -20f, 20f)
   return Camera(
       position,
@@ -37,15 +34,15 @@ fun createOrthographicCamera(world: World): Camera {
   )
 }
 
-fun createCamera(world: World, cameraMode: CameraMode): Camera = when (cameraMode) {
-  CameraMode.FirstPerson -> createFirstPersonCamera(world)
-  CameraMode.ThirdPerson -> throw Error("Not implemented")
-  CameraMode.Orthographic -> createOrthographicCamera(world)
+fun createCamera(world: World, screen: Screen): Camera = when (screen.cameraMode) {
+  CameraMode.firstPerson -> createFirstPersonCamera(world.players[screen.playerId])
+  CameraMode.thirdPerson -> createThirdPersonCamera(world.players[screen.playerId])
+  CameraMode.topDown -> createOrthographicCamera()
 }
 
-fun createScene(world: World, cameraMode: CameraMode): Scene {
+fun createScene(world: World, screen: Screen): Scene {
   return Scene(
-      createCamera(world, cameraMode),
+      createCamera(world, screen),
       world.players.map({ VisualElement(Depiction.child, Matrix().translate(it.position)) })
   )
 }

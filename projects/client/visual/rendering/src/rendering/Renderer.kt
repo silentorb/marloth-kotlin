@@ -1,8 +1,5 @@
 package rendering
 
-import gdxy.CanvasManager
-import gdxy.initializeGdx
-import glowing.DrawMethod
 import glowing.Glow
 import org.joml.Vector2i
 import scenery.Scene
@@ -27,12 +24,9 @@ class Renderer(window: Long) {
   val shaders = createShaders()
   val meshes = createMeshes()
   val painters = createPainters(meshes)
-  val canvasManager:CanvasManager
 
   init {
     glow.state.clearColor = Vector4(0f, 0f, 0f, 1f)
-    initializeGdx()
-    canvasManager = CanvasManager(window)
   }
 
   fun render(scene: Scene, windowInfo: WindowInfo) {
@@ -40,7 +34,7 @@ class Renderer(window: Long) {
     glow.operations.clearScreen()
     val effects = createEffects(shaders, gatherEffectsData(windowInfo, scene))
     renderScene(scene, painters, effects)
-    canvasManager.drawText("Dev Lab", 10f, 10f)
+//    canvasManager.drawText("Dev Lab", 10f, 10f)
   }
 
 }
