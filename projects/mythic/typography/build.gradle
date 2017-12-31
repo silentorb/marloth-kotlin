@@ -6,3 +6,5 @@ dependencies {
     compile "org.lwjgl:lwjgl-opengl:$lwjglVersion"
     compile "org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives"
 }
+
+requires('spatial')

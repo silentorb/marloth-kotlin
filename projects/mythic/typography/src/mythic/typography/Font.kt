@@ -27,6 +27,6 @@ fun generateFontTexture(buffer: ByteBuffer, width: Int, height: Int): Int {
 }
 
 data class Font(val characters: CharacterMap,
-                val texture: Int) {
+                val texture: Int, val dimensions: IntegerVector2) {
 
 }

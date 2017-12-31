@@ -26,7 +26,7 @@ fun loadFont(freetype: Long, filename: String): Font {
   FaceLoader.releaseFace(face)
 
   val texture = generateFontTexture(buffer, dimensions.x, dimensions.y)
-  val font = Font(characters, texture)
+  val font = Font(characters, texture, dimensions)
   return font
 }
 
