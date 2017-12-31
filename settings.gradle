@@ -1,36 +1,65 @@
 rootProject.name = 'dev_lab'
 
-def add = { path ->
-    def tokens = path.tokenize('/')
-//    def name = tokens[tokens.size() - 2] + ':' + tokens.last()
+def addMany(Object arg, List<String> prefix = []) {
+  if (arg instanceof String) {
+    def tokens = arg.tokenize('/')
     def name = tokens.last()
     include name
-    project(':' + name).projectDir = new File('projects/' + path)
+    def path = prefix.plus(arg).join('/')
+    println(path)
+    def file = new File(path)
+    if (!file.exists())
+      throw new FileNotFoundException("Could not find project: " + path)
+
+    project(':' + name).projectDir = file
+  } else if (arg instanceof Map) {
+    arg.each { key, value ->
+      def newPrefix = prefix.plus(key)
+//      println(key)
+//      println(value)
+      addMany(value.collect { it } as List<Object>, newPrefix)
+    }
+//  } else if (arg.size == 2 && arg[0] instanceof String && !(arg[1] instanceof String)) {
+//    def newPrefix = prefix.plus(arg[0])
+//    addMany(arg[1].collect { it } as List<Object>, newPrefix)
+  } else {
+    arg.each() { addMany(it, prefix) }
+  }
 }
 
-def addMany = { it.each() { add(it) } }
-
-addMany([
-        'app/front',
-        'app/desktop',
-
-        'client/clienting',
-//        'client/gdxy',
-
-        'client/input/haft',
-
-        'client/visual/rendering',
-        'client/visual/scenery',
-        'client/visual/visualizing',
-        'client/visual/glowing',
-
-        'shared/sculpting',
-        'shared/spatial',
+addMany([projects: [
+    [marloth: [
+        [app: [
+            'front',
+            'desktop',
+        ]],
+        [client: [
+            'clienting',
+            [visual: [
+                'rendering',
+                'scenery',
+                'visualizing',
+            ]],
+        ]],
         'shared/commanding',
-        'shared/quartz',
 
         'server/serving',
         'server/simulation',
+    ]],
 
-        'mythic/typography',
-])
+    [mythic: [
+        [client: [
+            'input/haft',
+            [visual: [
+                'drawing',
+                'glowing',
+                'typography',
+            ]],
+        ]],
+        [misc: [
+            'quartz',
+            'sculpting',
+            'spatial',
+        ]],
+    ]],
+]])
