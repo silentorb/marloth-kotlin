@@ -12,6 +12,7 @@ import org.lwjgl.glfw.GLFW.glfwWindowShouldClose
 import quartz.DeltaTimer
 import serving.Server
 import visualizing.createScene
+import java.lang.management.ManagementFactory
 
 fun is64Bit(): Boolean {
   if (System.getProperty("os.name").contains("Windows")) {
@@ -23,7 +24,8 @@ fun is64Bit(): Boolean {
 
 fun createWindow(): Long {
 //  val arch = is64Bit()
-//  val pid = ManagementFactory.getRuntimeMXBean().getName()
+  val pid = ManagementFactory.getRuntimeMXBean().getName()
+  println("pid: " + pid)
   glfwDefaultWindowHints() // optional, the current window hints are already the default
   glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE) // the window will stay hidden after creation
   glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE) // the window will be resizable

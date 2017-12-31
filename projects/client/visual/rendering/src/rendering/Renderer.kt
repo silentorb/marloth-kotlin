@@ -1,6 +1,7 @@
 package rendering
 
 import glowing.Glow
+import mythic.typography.loadFonts
 import org.joml.Vector2i
 import scenery.Scene
 import spatial.Vector4
@@ -24,6 +25,7 @@ class Renderer(window: Long) {
   val shaders = createShaders()
   val meshes = createMeshes()
   val painters = createPainters(meshes)
+  val fonts = loadFonts(listOf("lo-fi.ttf"))
 
   init {
     glow.state.clearColor = Vector4(0f, 0f, 0f, 1f)

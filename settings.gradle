@@ -31,4 +31,6 @@ addMany([
 
         'server/serving',
         'server/simulation',
+
+        'mythic/typography',
 ])
