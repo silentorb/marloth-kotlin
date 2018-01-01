@@ -11,10 +11,10 @@ import mythic.typography.TextPackage
 import mythic.typography.prepareText
 import mythic.typography.unitConversion
 import org.joml.Vector2i
-import org.lwjgl.opengl.GL11.GL_TEXTURE_2D
-import org.lwjgl.opengl.GL11.glBindTexture
+import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL13.GL_TEXTURE0
 import org.lwjgl.opengl.GL13.glActiveTexture
+import org.lwjgl.opengl.GL14.GL_BLEND_SRC_ALPHA
 
 fun activateTexture(texture: Int) {
   glActiveTexture(GL_TEXTURE0)
@@ -42,6 +42,8 @@ fun renderText(config: TextConfiguration, effect: ColoredImageEffect, textPackag
 
   activateTexture(config.font.texture)
 
+  glEnable(GL_BLEND)
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
   textPackage.mesh.draw(DrawMethod.triangleFan)
 }
 

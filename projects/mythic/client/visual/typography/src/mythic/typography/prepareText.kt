@@ -43,7 +43,7 @@ fun prepareText(config: TextConfiguration, vertexSchema: VertexSchema): TextPack
   val vertices = BufferUtils.createFloatBuffer(4 * characterCount * vertexSchema.size)
   val offsets = BufferUtils.createIntBuffer(characterCount)
   val counts = BufferUtils.createIntBuffer(characterCount)
-  MemoryUtil.memSet(counts, 4)
+//  MemoryUtil.memSet(counts, 4)
 
   val letter_space = 6f
   val max_width = _max_width * unitConversion / size
@@ -105,6 +105,7 @@ fun prepareText(config: TextConfiguration, vertexSchema: VertexSchema): TextPack
     vertices.put(Vector4(x, py - height, 0f, character.offset))
 //    vertices.put(b)
     offsets.put(index++)
+    counts.put(4)
 
     if (_max_width != 0f && x > max_width && last_space_index > 0) {
       if (last_space_x > block_dimensionsX) {
@@ -128,7 +129,7 @@ fun prepareText(config: TextConfiguration, vertexSchema: VertexSchema): TextPack
   block_dimensionsY = y
   vertices.flip()
   offsets.flip()
-//  counts.flip()
+  counts.flip()
 
   return TextPackage(
       SimpleMesh(vertexSchema, vertices, offsets, counts)

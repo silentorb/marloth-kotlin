@@ -47,9 +47,9 @@ class Renderer(window: Long) {
     drawText(TextConfiguration(
         "Welcome to Marloth!",
         fonts[0],
-        14f,
-        Vector2(100f, 100f),
-        Vector4(1f, 1f, 0f, 1f)
+        60f,
+        Vector2(100f, 200f),
+        Vector4(1f, 0.8f, 0f, 1f)
     ), effects.coloredImage, vertexSchemas.coloredImage, unitScaling)
 //    canvasManager.drawText("Dev Lab", 10f, 10f)
   }
