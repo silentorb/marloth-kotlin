@@ -10,5 +10,5 @@
 && !(this instanceof java.lang.NoSuchMethodError)
 && !(this instanceof java.lang.NoSuchMethodException)
 && !(this instanceof sun.nio.fs.WindowsException)
-
+&& !(this instanceof java.lang.IllegalAccessException)
 ```

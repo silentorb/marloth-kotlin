@@ -5,7 +5,6 @@ import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import org.joml.*
 import scenery.Camera
-import spatial.*
 
 fun createViewMatrix(position: Vector3, orientation: Quaternion): Matrix {
   val temp = Quaternion()

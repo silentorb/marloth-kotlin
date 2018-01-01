@@ -87,25 +87,21 @@ fun prepareText(config: TextConfiguration, vertexSchema: VertexSchema): TextPack
     }
 
     val character = characters[c]!!
-    val character_width = character.info.sizeX
-    x += character_width
-
     val width = character.info.sizeX
+
     val height = character.info.sizeY.toFloat()
     val py = y - (character.info.bearingY - character.info.sizeY) + offset //-font.max_height*scale;
 
     val texture_width = (character.info.sizeX + 1).toFloat() / font.dimensions.x
 
-    val a = Vector4(x + width, py - height, texture_width, character.offset)
-    val b = Vector4(x, py, 0f, character.offset + character.height)
-    vertices.put(a)
-    vertices.put(b)
+    vertices.put(Vector4(x + width, py - height, texture_width, character.offset))
     vertices.put(Vector4(x + width, py, texture_width, character.offset + character.height))
-//    vertices.put(a)
+    vertices.put(Vector4(x, py, 0f, character.offset + character.height))
     vertices.put(Vector4(x, py - height, 0f, character.offset))
-//    vertices.put(b)
-    offsets.put(index++)
+    offsets.put(index)
+    index += 4
     counts.put(4)
+    x += width
 
     if (_max_width != 0f && x > max_width && last_space_index > 0) {
       if (last_space_x > block_dimensionsX) {

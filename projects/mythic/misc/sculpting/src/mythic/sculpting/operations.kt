@@ -5,7 +5,6 @@ import mythic.spatial.Vector3
 import mythic.spatial.plusAssign
 import mythic.spatial.times
 import java.util.*
-import spatial.*
 
 class operations {
   companion object {

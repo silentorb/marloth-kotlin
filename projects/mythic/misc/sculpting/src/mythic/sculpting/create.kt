@@ -4,7 +4,6 @@ import mythic.sculpting.query.Companion.vertices
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.times
-import spatial.*
 
 class create {
   companion object {

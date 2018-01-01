@@ -3,6 +3,11 @@ package mythic.glowing
 import org.lwjgl.opengl.GL20.*
 import org.lwjgl.opengl.GL30.*
 
+enum class ShaderType {
+  vertex,
+  fragment
+}
+
 class ShaderProgram(val vertexShader: VertexShader, val fragmentShader: FragmentShader) {
   var id: Int
 

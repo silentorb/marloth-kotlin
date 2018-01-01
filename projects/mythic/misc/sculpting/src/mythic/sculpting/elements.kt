@@ -1,7 +1,6 @@
 package mythic.sculpting
 
 import mythic.spatial.Vector3
-import spatial.*
 
 class Vertex(
     var position: Vector3,
