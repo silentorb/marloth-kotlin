@@ -32,6 +32,7 @@ addMany([projects: [
         [app: [
             'front',
             'desktop',
+            'lab',
         ]],
         [client: [
             'clienting',
@@ -45,10 +46,12 @@ addMany([projects: [
 
         'server/serving',
         'server/simulation',
+        'server/generation',
     ]],
 
     [mythic: [
         [client: [
+            'bloom',
             'input/haft',
             [visual: [
                 'drawing',

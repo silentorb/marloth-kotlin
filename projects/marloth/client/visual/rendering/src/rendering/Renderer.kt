@@ -1,6 +1,8 @@
 package rendering
 
-import mythic.drawing.drawText
+import lab.renderLab
+import mythic.drawing.Canvas
+import mythic.drawing.createDrawingMeshes
 import mythic.drawing.getUnitScaling
 import mythic.glowing.Glow
 import mythic.spatial.Matrix
@@ -31,6 +33,7 @@ class Renderer(window: Long) {
   val shaders = createShaders()
   val vertexSchemas = createVertexSchemas()
   val meshes = createMeshes(vertexSchemas)
+  val canvasMeshes = createDrawingMeshes(vertexSchemas.drawing)
   val painters = createPainters(meshes)
   val fonts = loadFonts(listOf("lo-fi.ttf"))
 
@@ -44,13 +47,16 @@ class Renderer(window: Long) {
     val effects = createEffects(shaders, gatherEffectsData(windowInfo, scene))
     renderScene(scene, painters, effects)
     val unitScaling = getUnitScaling(windowInfo.dimensions)
-    drawText(TextConfiguration(
+    val canvas = Canvas(vertexSchemas.drawing, canvasMeshes, shaders.drawing, unitScaling)
+    canvas.drawText(TextConfiguration(
         "Welcome to Marloth!",
         fonts[0],
         40f,
         Vector2(100f, 300f),
-        Vector4(1f, 0.8f, 0f, 1f)
-    ), effects.coloredImage, vertexSchemas.coloredImage, unitScaling)
+        Vector4(1f, 0.8f, 0.3f, 1f)
+    ))
+
+    renderLab()
 //    canvasManager.drawText("Dev Lab", 10f, 10f)
   }
 

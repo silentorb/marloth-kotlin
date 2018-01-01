@@ -27,7 +27,7 @@ fun getUnitScaling(dimensions: Vector2i) =
     else
       Vector2(dimensions.y.toFloat() / dimensions.x, 1f)
 
-fun renderText(config: TextConfiguration, effect: ColoredImageEffect, textPackage: TextPackage, scaling: Vector2) {
+fun renderText(config: TextConfiguration, effect: ColoredImageShader, textPackage: TextPackage, scaling: Vector2) {
   val position = config.position
   val scale = config.size / unitConversion
 //  val scaling = effect.get_viewport().get_unit_scaling()
@@ -47,7 +47,7 @@ fun renderText(config: TextConfiguration, effect: ColoredImageEffect, textPackag
   textPackage.mesh.draw(DrawMethod.triangleFan)
 }
 
-fun drawText(config: TextConfiguration, effect: ColoredImageEffect, vertexSchema: VertexSchema, scaling: Vector2) {
+fun drawTextRaw(config: TextConfiguration, effect: ColoredImageShader, vertexSchema: VertexSchema, scaling: Vector2) {
   val textPackage = prepareText(config, vertexSchema)
   if (textPackage != null) {
     renderText(config, effect, textPackage, scaling)

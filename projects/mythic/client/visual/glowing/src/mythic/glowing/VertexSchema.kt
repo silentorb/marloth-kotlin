@@ -5,7 +5,7 @@ import org.lwjgl.opengl.GL20.*
 import org.lwjgl.opengl.GL30.glGenVertexArrays
 
 class VertexSchema(val attributes: List<VertexAttribute>) {
-  val size = attributes.sumBy { it.size }
+  val floatSize = attributes.sumBy { it.size }
 }
 
 class VertexArrayObject(schema: VertexSchema) {
@@ -17,7 +17,7 @@ class VertexArrayObject(schema: VertexSchema) {
     globalState.vertexArrayObject = id
 
     for (attribute in schema.attributes) {
-      glVertexAttribPointer(i, attribute.size, GL_FLOAT, false, schema.size * 4, offset)
+      glVertexAttribPointer(i, attribute.size, GL_FLOAT, false, schema.floatSize * 4, offset)
       glEnableVertexAttribArray(i)
       i++
       offset += attribute.size * 4

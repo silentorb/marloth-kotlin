@@ -1,5 +1,7 @@
 package rendering
 
+import mythic.drawing.DrawingVertexSchemas
+import mythic.drawing.createDrawingVertexSchemas
 import mythic.glowing.SimpleMesh
 import mythic.glowing.VertexAttribute
 import mythic.glowing.VertexSchema
@@ -21,7 +23,7 @@ fun createCube(): HalfEdgeMesh {
 
 data class VertexSchemas(
     val standard: VertexSchema,
-    val coloredImage: VertexSchema
+    val drawing: DrawingVertexSchemas
 )
 
 fun createVertexSchemas() = VertexSchemas(
@@ -30,9 +32,7 @@ fun createVertexSchemas() = VertexSchemas(
         VertexAttribute(1, "normal", 3),
         VertexAttribute(2, "color", 4)
     )),
-    VertexSchema(listOf(
-        VertexAttribute(0, "vertex", 4)
-    ))
+    createDrawingVertexSchemas()
 )
 
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap {

@@ -1,5 +1,6 @@
 package mythic.glowing
 
+import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL14.glMultiDrawArrays
 import java.nio.FloatBuffer
@@ -12,6 +13,22 @@ enum class DrawMethod {
   points,
   triangles,
   triangleFan
+}
+
+fun createFloatBuffer(values: List<Float>): FloatBuffer {
+  val buffer = BufferUtils.createFloatBuffer(values.size)
+  for (value in values) {
+    buffer.put(value)
+  }
+  buffer.flip()
+  return buffer
+}
+
+fun createIntBuffer(value: Int): IntBuffer {
+  val buffer = BufferUtils.createIntBuffer(1)
+  buffer.put(value)
+  buffer.flip()
+  return buffer
 }
 
 class SimpleMesh(val vertexBuffer: VertexBuffer, val offsets: IntBuffer, val counts: IntBuffer) {
@@ -36,10 +53,16 @@ class SimpleMesh(val vertexBuffer: VertexBuffer, val offsets: IntBuffer, val cou
     glMultiDrawArrays(convertDrawMethod(method), offsets, counts)
   }
 
+  constructor(vertexSchema: VertexSchema, values: List<Float>) :
+      this(VertexBuffer(
+          createFloatBuffer(values), vertexSchema),
+          createIntBuffer(0),
+          createIntBuffer(values.size / vertexSchema.floatSize))
+
   constructor(vertexSchema: VertexSchema, buffer: FloatBuffer, offsets: IntBuffer, counts: IntBuffer) :
       this(VertexBuffer(buffer, vertexSchema), offsets, counts)
 
-  fun dispose(){
+  fun dispose() {
     vertexBuffer.dispose()
   }
 }

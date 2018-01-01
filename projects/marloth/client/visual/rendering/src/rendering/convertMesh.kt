@@ -10,7 +10,7 @@ import mythic.spatial.put
 
 fun convertMesh(mesh: HalfEdgeMesh, vertexSchema: VertexSchema): SimpleMesh {
   val vertex_count = query.vertex_count(mesh)
-  val vertices = BufferUtils.createFloatBuffer(vertex_count * vertexSchema.size)
+  val vertices = BufferUtils.createFloatBuffer(vertex_count * vertexSchema.floatSize)
   val offsets = BufferUtils.createIntBuffer(mesh.faces.size)
   val counts = BufferUtils.createIntBuffer(mesh.faces.size)
   var i = 0

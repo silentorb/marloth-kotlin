@@ -1,8 +1,9 @@
 package rendering
 
-import mythic.drawing.ColoredImageShader
 import mythic.glowing.MatrixProperty
 import mythic.glowing.ShaderProgram
+import mythic.drawing.DrawingEffects
+import mythic.drawing.createDrawingEffects
 
 val coloredVertex = """
 uniform 	mat4 view;
@@ -159,12 +160,13 @@ class PerspectiveShader(val program: ShaderProgram) {
 data class Shaders(
     val colored: ShaderProgram,
     val flat: PerspectiveShader,
-    val coloredImage: ColoredImageShader = ColoredImageShader()
+    val drawing: DrawingEffects
 )
 
 fun createShaders(): Shaders {
   return Shaders(
       ShaderProgram(coloredVertex, coloredFragment),
-      PerspectiveShader(ShaderProgram(flatVertex, flatFragment))
+      PerspectiveShader(ShaderProgram(flatVertex, flatFragment)),
+      createDrawingEffects()
   )
 }

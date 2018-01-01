@@ -1,8 +1,9 @@
 package rendering
 
-import mythic.drawing.ColoredImageEffect
+import mythic.drawing.Canvas
 import mythic.glowing.MatrixProperty
 import mythic.spatial.Matrix
+import mythic.drawing.DrawingEffects
 
 class PerspectiveEffect(private val shader: PerspectiveShader, private val camera: Matrix) {
   val modelTransform = MatrixProperty(shader.program, "modelTransform")
@@ -24,10 +25,10 @@ data class EffectsData(
 
 data class Effects(
     val standard: PerspectiveEffect,
-    val coloredImage: ColoredImageEffect
+    val drawing: DrawingEffects
 )
 
 fun createEffects(shaderPrograms: Shaders, data: EffectsData): Effects = Effects(
     PerspectiveEffect(shaderPrograms.flat, data.camera),
-    ColoredImageEffect(shaderPrograms.coloredImage, data.flatProjection)
+    shaderPrograms.drawing
 )

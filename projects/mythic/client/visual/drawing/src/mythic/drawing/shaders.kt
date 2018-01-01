@@ -11,14 +11,12 @@ private val imageVertex = """
 in vec4 vertex;
 out vec2 TexCoords;
 
-uniform mat4 projection;
 uniform mat4 transform;
 
 void main()
 {
     vec4 temp = transform * vec4(vertex.xy, 0.0, 1.0);
     gl_Position = vec4(temp.x / 500.0 - 1.0, (1000.0 - temp.y) / 500.0 - 1.0, 0.0, 1);
- //    gl_Position = projection * transform * vec4(vertex.xy, 0.0, 1.0);
    TexCoords = vertex.zw;
 }
 """
@@ -37,23 +35,51 @@ void main()
 }
 """
 
-//fun createImageShader() = ShaderProgram(imageVertex, imageFragment)
+private val singleColorVertex = """
+in vec2 vertex;
+
+uniform mat4 projection;
+uniform mat4 transform;
+
+void main()
+{
+    vec4 temp = transform * vec4(vertex.xy, 0.0, 1.0);
+    gl_Position = vec4(temp.x / 500.0 - 1.0, (1000.0 - temp.y) / 500.0 - 1.0, 0.0, 1);
+}
+"""
+
+private val singleColorFragment = """
+uniform vec4 color;
+out vec4 output_color;
+
+void main()
+{
+    output_color = color;
+}
+"""
 
 class ColoredImageShader {
   val program: ShaderProgram = ShaderProgram(imageVertex, imageFragment)
-  val projectionProperty = MatrixProperty(program, "projection")
   val transformProperty = MatrixProperty(program, "transform")
   val colorProperty = Vector4Property(program, "color")
-}
-
-class ColoredImageEffect(private val shader: ColoredImageShader, projection: Matrix) {
-  init {
-    shader.projectionProperty.setValue(projection)
-  }
 
   fun activate(transform: Matrix, color: Vector4) {
-    shader.transformProperty.setValue(transform)
-    shader.colorProperty.setValue(color)
-    shader.program.activate()
+    transformProperty.setValue(transform)
+    colorProperty.setValue(color)
+    program.activate()
   }
 }
+
+class SingleColorShader {
+
+}
+
+data class DrawingEffects(
+    val coloredImage: ColoredImageShader,
+    val singleColorShader: SingleColorShader
+)
+
+fun createDrawingEffects() = DrawingEffects(
+    ColoredImageShader(),
+    SingleColorShader()
+)

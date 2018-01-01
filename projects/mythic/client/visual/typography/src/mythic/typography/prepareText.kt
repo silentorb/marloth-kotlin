@@ -6,8 +6,6 @@ import mythic.spatial.Vector2
 import mythic.spatial.Vector4
 import mythic.spatial.put
 import org.lwjgl.BufferUtils
-import org.lwjgl.system.MemoryUtil
-import java.util.ArrayList
 
 private val _max_width = 0f
 val unitConversion = 24f
@@ -40,7 +38,7 @@ fun prepareText(config: TextConfiguration, vertexSchema: VertexSchema): TextPack
   }
 
 //  val vertices = ArrayList<Vector4>(6 * element_count)
-  val vertices = BufferUtils.createFloatBuffer(4 * characterCount * vertexSchema.size)
+  val vertices = BufferUtils.createFloatBuffer(4 * characterCount * vertexSchema.floatSize)
   val offsets = BufferUtils.createIntBuffer(characterCount)
   val counts = BufferUtils.createIntBuffer(characterCount)
 //  MemoryUtil.memSet(counts, 4)
