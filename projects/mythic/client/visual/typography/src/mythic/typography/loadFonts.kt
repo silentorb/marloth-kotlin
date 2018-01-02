@@ -9,7 +9,7 @@ fun loadCharacters(face: Long, dimensions: IntegerVector2): CharacterMap {
   for (value in CharRange('!', '~')) {
     val info = FaceLoader.loadCharacterInfo(face, value)
     characters[value] = Glyph(info,
-        verticalOffset.toFloat() / dimensions.y,
+        verticalOffset / dimensions.y,
         info.sizeY.toFloat() / dimensions.y
     )
     verticalOffset += info.sizeY + 2

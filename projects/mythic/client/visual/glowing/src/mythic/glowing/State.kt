@@ -42,6 +42,14 @@ class State {
       }
     }
 
+  var lineThickness: Float = 1f
+    set(value) {
+      if (field != value) {
+        field = value
+        glLineWidth(value)
+      }
+    }
+
 }
 
 val globalState = State()

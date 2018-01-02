@@ -1,5 +1,6 @@
 package rendering
 
+import lab.LabLayout
 import lab.renderLab
 import mythic.drawing.Canvas
 import mythic.drawing.createDrawingMeshes
@@ -41,13 +42,13 @@ class Renderer(window: Long) {
     glow.state.clearColor = Vector4(0f, 0f, 0f, 1f)
   }
 
-  fun render(scene: Scene, windowInfo: WindowInfo) {
+  fun render(scene: Scene, windowInfo: WindowInfo, labLayout: LabLayout) {
     glow.operations.setViewport(Vector2i(0, 0), windowInfo.dimensions)
     glow.operations.clearScreen()
     val effects = createEffects(shaders, gatherEffectsData(windowInfo, scene))
     renderScene(scene, painters, effects)
     val unitScaling = getUnitScaling(windowInfo.dimensions)
-    val canvas = Canvas(vertexSchemas.drawing, canvasMeshes, shaders.drawing, unitScaling)
+    val canvas = Canvas(vertexSchemas.drawing, canvasMeshes, shaders.drawing, unitScaling, windowInfo.dimensions)
     canvas.drawText(TextConfiguration(
         "Welcome to Marloth!",
         fonts[0],
@@ -56,7 +57,7 @@ class Renderer(window: Long) {
         Vector4(1f, 0.8f, 0.3f, 1f)
     ))
 
-    renderLab()
+    renderLab(labLayout, canvas)
 //    canvasManager.drawText("Dev Lab", 10f, 10f)
   }
 

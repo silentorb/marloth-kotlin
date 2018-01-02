@@ -23,43 +23,45 @@ data class TextPackage(
     val mesh: SimpleMesh
 )
 
-fun prepareText(config: TextConfiguration, vertexSchema: VertexSchema): TextPackage? {
-  val (content, font, size) = config
-  val withoutSpaces = content.replace(" ", "")
+data class ArrangedCharacter(
+    val glyph: Glyph,
+    val x: Float,
+    val y: Float
+)
+
+data class TypeArrangement(
+    val characters: List<ArrangedCharacter>
+)
+
+fun arrangeType(config: TextConfiguration): TypeArrangement? {
+  val content = config.content
+  val font = config.font
+  val size = config.size
   val characters = font.characters
   val inserted_newlines: MutableList<Int> = mutableListOf()
   var block_dimensionsX = 0f
   var block_dimensionsY = 0f
 
-
-  val characterCount = withoutSpaces.length
+  val characterCount = content.replace(" ", "").length
   if (characterCount == 0) {
     return null
   }
 
-//  val vertices = ArrayList<Vector4>(6 * element_count)
-  val vertices = BufferUtils.createFloatBuffer(4 * characterCount * vertexSchema.floatSize)
-  val offsets = BufferUtils.createIntBuffer(characterCount)
-  val counts = BufferUtils.createIntBuffer(characterCount)
-//  MemoryUtil.memSet(counts, 4)
+  val arrangedCharacters = ArrayList<ArrangedCharacter>(characterCount)
 
   val letter_space = 6f
   val max_width = _max_width * unitConversion / size
-  val line_step = characters['A']!!.info.sizeY * line_height
+  val line_step = config.font.height * line_height
   var x = 0f
-  var y = characters['A']!!.info.sizeY.toFloat()
+  var y = config.font.height
   var following_visible_character = false
   block_dimensionsX = 0f
   var last_space_index = 0
   var last_space_x = 0f
-  var step = 0
-  val offset = -y * 2
-  var index = 0
 
   for (i in 0 until content.length) {
     val c = content[i]
     if (c == ' ') {
-      //        x += font.get_dimensions().x * 0.8f;
       last_space_x = x
       last_space_index = i
       x += font.dimensions.x
@@ -85,21 +87,13 @@ fun prepareText(config: TextConfiguration, vertexSchema: VertexSchema): TextPack
     }
 
     val character = characters[c]!!
-    val width = character.info.sizeX
 
-    val height = character.info.sizeY.toFloat()
-    val py = y - (character.info.bearingY - character.info.sizeY) + offset //-font.max_height*scale;
-
-    val texture_width = (character.info.sizeX + 1).toFloat() / font.dimensions.x
-
-    vertices.put(Vector4(x + width, py - height, texture_width, character.offset))
-    vertices.put(Vector4(x + width, py, texture_width, character.offset + character.height))
-    vertices.put(Vector4(x, py, 0f, character.offset + character.height))
-    vertices.put(Vector4(x, py - height, 0f, character.offset))
-    offsets.put(index)
-    index += 4
-    counts.put(4)
-    x += width
+    arrangedCharacters.add(ArrangedCharacter(
+        character,
+        x,
+        y
+    ))
+    x += character.info.sizeX
 
     if (_max_width != 0f && x > max_width && last_space_index > 0) {
       if (last_space_x > block_dimensionsX) {
@@ -121,6 +115,41 @@ fun prepareText(config: TextConfiguration, vertexSchema: VertexSchema): TextPack
   }
 
   block_dimensionsY = y
+
+  return TypeArrangement(
+      arrangedCharacters
+  )
+}
+
+fun prepareText(config: TextConfiguration, vertexSchema: VertexSchema): TextPackage? {
+  val arrangement = arrangeType(config)
+  if (arrangement == null)
+    return null
+
+  val characters = arrangement.characters
+  val vertices = BufferUtils.createFloatBuffer(4 * characters.size * vertexSchema.floatSize)
+  val offsets = BufferUtils.createIntBuffer(characters.size)
+  val counts = BufferUtils.createIntBuffer(characters.size)
+
+  var index = 0
+
+  for (arrangedCharacter in arrangement.characters) {
+    val glyph = arrangedCharacter.glyph
+    val x = arrangedCharacter.x
+    val y = arrangedCharacter.y
+    val width = glyph.info.sizeX
+    val height = glyph.info.sizeY.toFloat()
+    val texture_width = (glyph.info.sizeX + 1).toFloat() / config.font.dimensions.x
+
+    vertices.put(Vector4(x + width, y - height, texture_width, glyph.offset))
+    vertices.put(Vector4(x + width, y, texture_width, glyph.offset + glyph.height))
+    vertices.put(Vector4(x, y, 0f, glyph.offset + glyph.height))
+    vertices.put(Vector4(x, y - height, 0f, glyph.offset))
+    offsets.put(index)
+    index += 4
+    counts.put(4)
+  }
+
   vertices.flip()
   offsets.flip()
   counts.flip()
@@ -129,89 +158,3 @@ fun prepareText(config: TextConfiguration, vertexSchema: VertexSchema): TextPack
       SimpleMesh(vertexSchema, vertices, offsets, counts)
   )
 }
-
-/*
-fun prepareText(content: String, font: Font) {
-
-  val without_spaces = content.replace(" ", "")
-  val characters = font.characters
-
-  element_count = without_spaces.size()
-  if (element_count === 0) {
-    return
-  }
-
-  val vertices = ArrayList<Vector4>(6 * element_count)
-  var left = 0f
-  var step = 0
-  var top = -characters.at('A').size.y
-//C++ TO JAVA CONVERTER TODO TASK: There is no equivalent to implicit typing in Java:
-  val offset = characters.at('A').size.y * 2
-//    float top = 0;
-  //            actual_height = font.characters['A'].size.y * line_size;
-
-  var next_inserted_newline = 0
-  var following_visible_character = false
-
-  for (i in 0 until content.size()) {
-    //C++ TO JAVA CONVERTER TODO TASK: There is no equivalent to implicit typing in Java:
-    val c = content[i]
-    if (next_inserted_newline < inserted_newlines.size() && inserted_newlines[next_inserted_newline] === i) {
-      ++next_inserted_newline
-      top += characters.at('A').size.y * line_height
-      left = 0f
-      following_visible_character = false
-      if (c == ' ') {
-        continue
-      }
-    }
-
-    if (c == ' ') {
-      left += font.get_dimensions().x * 0.8f
-      following_visible_character = false
-      continue
-    }
-
-    if (c == '\n') {
-      top += characters.at('A').size.y * line_height
-      left = 0f
-      following_visible_character = false
-      continue
-    }
-
-    if (following_visible_character) {
-      left += 6f
-    }
-
-    //C++ TO JAVA CONVERTER TODO TASK: There is no equivalent to implicit typing in Java:
-    val character = characters.at(c)
-    val width = character.size.x
-    val height = character.size.y
-    val px = left
-    val py = top - (character.bearing.y - character.size.y) + offset //-font.max_height*scale;
-
-    //C++ TO JAVA CONVERTER TODO TASK: There is no equivalent to implicit typing in Java:
-    val texture_width = (character.size.x + 1) as Float / font.get_dimensions().x
-
-    vertices.set(step + 5, Vector4(px, py, 0, character.offset + character.height))
-    vertices.set(step + 4, Vector4(px, py - height, 0, character.offset))
-    vertices.set(step + 3, Vector4(px + width, py - height, texture_width, character.offset))
-    vertices.set(step + 2, Vector4(px + width, py, texture_width, character.offset + character.height))
-
-    vertices.set(step + 1, vertices.get(step + 5))
-    vertices.set(step + 0, vertices.get(step + 3))
-    step += 6
-    left += character.size.x
-    following_visible_character = true
-  }
-
-//    block_dimensions.x = left;
-//    block_dimensions.y = -top;
-  mesh.replace(vertices.data() as Float, vertices.size)
-//    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4 * element_count, vertices, GL_DYNAMIC_DRAW);
-//    glow::set_array_buffer(0);
-  glow.check_error("Error preparing text.")
-  appearance_changed = false
-
-}
-*/

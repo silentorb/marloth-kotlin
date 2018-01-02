@@ -27,14 +27,14 @@ fun getUnitScaling(dimensions: Vector2i) =
     else
       Vector2(dimensions.y.toFloat() / dimensions.x, 1f)
 
-fun renderText(config: TextConfiguration, effect: ColoredImageShader, textPackage: TextPackage, scaling: Vector2) {
+fun renderText(config: TextConfiguration, effect: ColoredImageShader, textPackage: TextPackage, pixelsToScalar: Matrix) {
   val position = config.position
-  val scale = config.size / unitConversion
-//  val scaling = effect.get_viewport().get_unit_scaling()
+  val scale = config.size * 0.05f
 
   val transform = Matrix()
-      .translate(Vector3(position.x * scaling.x, position.y * scaling.y, 0f))
-      .scale(scale * scaling.x, scale * scaling.y, 1f)
+      .mul(pixelsToScalar)
+//      .translate(position.x, position.y, 0f)
+      .scale(scale, scale, 1f)
 
   effect.activate(transform, config.color)
 
@@ -47,10 +47,10 @@ fun renderText(config: TextConfiguration, effect: ColoredImageShader, textPackag
   textPackage.mesh.draw(DrawMethod.triangleFan)
 }
 
-fun drawTextRaw(config: TextConfiguration, effect: ColoredImageShader, vertexSchema: VertexSchema, scaling: Vector2) {
+fun drawTextRaw(config: TextConfiguration, effect: ColoredImageShader, vertexSchema: VertexSchema, pixelsToScalar: Matrix) {
   val textPackage = prepareText(config, vertexSchema)
   if (textPackage != null) {
-    renderText(config, effect, textPackage, scaling)
+    renderText(config, effect, textPackage, pixelsToScalar)
     textPackage.mesh.dispose()
   }
 }

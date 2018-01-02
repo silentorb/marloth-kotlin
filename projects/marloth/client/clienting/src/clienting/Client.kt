@@ -8,6 +8,7 @@ import haft.createDeviceHandlers
 import haft.createEmptyInputState
 import haft.gatherCommands
 import haft.getCurrentInputState
+import lab.createLabLayout
 import org.joml.Vector2i
 import org.lwjgl.glfw.GLFW.glfwGetWindowSize
 import org.lwjgl.system.MemoryStack
@@ -49,7 +50,8 @@ class Client(val window: Long) {
   )
 
   fun update(scene: Scene): Commands {
-    renderer.render(scene, getWindowInfo(window))
+    val labLayout = createLabLayout()
+    renderer.render(scene, getWindowInfo(window), labLayout)
     inputState = getCurrentInputState(config.input.bindings, deviceHandlers, inputState)
     val commands = gatherCommands(inputState)
     commands.filter({ keyPressCommands.containsKey(it.type) && it.lifetime == CommandLifetime.end })
