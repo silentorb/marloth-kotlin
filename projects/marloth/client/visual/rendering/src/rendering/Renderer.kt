@@ -12,6 +12,7 @@ import mythic.typography.loadFonts
 import org.joml.Vector2i
 import scenery.Scene
 import mythic.spatial.Vector4
+import mythic.typography.FontLoadInfo
 import mythic.typography.TextConfiguration
 
 data class WindowInfo(val dimensions: Vector2i)
@@ -36,10 +37,13 @@ class Renderer(window: Long) {
   val meshes = createMeshes(vertexSchemas)
   val canvasMeshes = createDrawingMeshes(vertexSchemas.drawing)
   val painters = createPainters(meshes)
-  val fonts = loadFonts(listOf("lo-fi.ttf"))
+  val fonts = loadFonts(listOf(
+      FontLoadInfo("cour.ttf", 16, 0f)
+  ))
 
   init {
-    glow.state.clearColor = Vector4(0f, 0f, 0f, 1f)
+//    glow.state.clearColor = Vector4(0f, 0f, 0f, 1f)
+    glow.state.clearColor = Vector4(1f, 1f, 1f, 1f)
   }
 
   fun render(scene: Scene, windowInfo: WindowInfo, labLayout: LabLayout) {
@@ -52,9 +56,10 @@ class Renderer(window: Long) {
     canvas.drawText(TextConfiguration(
         "Welcome to Marloth!",
         fonts[0],
-        40f,
+        12f,
         Vector2(100f, 300f),
-        Vector4(1f, 0.8f, 0.3f, 1f)
+//        Vector4(1f, 0.8f, 0.3f, 1f)
+            Vector4(0f, 0f, 0f, 1f)
     ))
 
     renderLab(labLayout, canvas)

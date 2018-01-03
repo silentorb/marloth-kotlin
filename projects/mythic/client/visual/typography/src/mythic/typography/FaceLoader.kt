@@ -16,16 +16,6 @@ data class Glyph(
     val height: Float
 )
 
-//data class GlyphInfo(
-//    val sizeX: Int,
-//    val sizeY: Int,
-//    val bearingX: Int,
-//    val bearingY: Int,
-//    val advance: Int,
-//    val offset: Float,
-//    val height: Float
-//)
-
 class FaceLoader {
 
   companion object {
@@ -37,7 +27,7 @@ class FaceLoader {
     external fun getTextureDimensions(face: Long): IntegerVector2
 
     @JvmStatic
-    external fun loadFace(freetype: Long, filename: String): Long
+    external fun loadFace(freetype: Long, filename: String, pixelHeight: Int): Long
 
     @JvmStatic
     external fun loadCharacterInfo(face: Long, value: Char): GlyphInfo

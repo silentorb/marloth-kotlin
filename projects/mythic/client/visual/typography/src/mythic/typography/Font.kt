@@ -26,8 +26,12 @@ fun generateFontTexture(buffer: ByteBuffer, width: Int, height: Int): Int {
   return texture
 }
 
-data class Font(val characters: CharacterMap,
-                val texture: Int, val dimensions: IntegerVector2) {
-  val height: Float = characters.maxBy { it.value.info.bearingY }!!.value.info.bearingY.toFloat()
+data class Font(
+    val characters: CharacterMap,
+    val texture: Int,
+    val dimensions: IntegerVector2,
+    val defaultSpacing: Float) {
+  val height: Float = characters.values.maxBy { it.info.bearingY }!!.info.bearingY.toFloat()
+  val v = characters.maxBy { it.value.info.sizeY - it.value.info.bearingY }!!
 
 }

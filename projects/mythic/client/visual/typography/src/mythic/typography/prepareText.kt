@@ -49,7 +49,7 @@ fun arrangeType(config: TextConfiguration): TypeArrangement? {
 
   val arrangedCharacters = ArrayList<ArrangedCharacter>(characterCount)
 
-  val letter_space = 6f
+  val letter_space = config.font.defaultSpacing
   val max_width = _max_width * unitConversion / size
   val line_step = config.font.height * line_height
   var x = 0f

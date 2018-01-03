@@ -18,8 +18,8 @@ fun loadCharacters(face: Long, dimensions: IntegerVector2): CharacterMap {
   return characters
 }
 
-fun loadFont(freetype: Long, filename: String): Font {
-  val face = FaceLoader.loadFace(freetype, filename)
+fun loadFont(freetype: Long, info: FontLoadInfo): Font {
+  val face = FaceLoader.loadFace(freetype, info.filename, info.pixelHeight)
   val dimensions = FaceLoader.getTextureDimensions(face)
   val buffer = BufferUtils.createByteBuffer(dimensions.x * dimensions.y)
   val characters = loadCharacters(face, dimensions)
@@ -27,11 +27,18 @@ fun loadFont(freetype: Long, filename: String): Font {
   FaceLoader.releaseFace(face)
 
   val texture = generateFontTexture(buffer, dimensions.x, dimensions.y)
-  val font = Font(characters, texture, dimensions)
+  val font = Font(characters, texture, dimensions, info.defaultSpacing)
+
   return font
 }
 
-fun loadFonts(files: List<String>): List<Font> {
+data class FontLoadInfo(
+    val filename: String,
+    val pixelHeight: Int,
+    val defaultSpacing: Float
+)
+
+fun loadFonts(files: List<FontLoadInfo>): List<Font> {
   val freetype = FaceLoader.initializeFreetype()
   try {
     return files.map { loadFont(freetype, it) }
