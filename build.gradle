@@ -57,7 +57,7 @@ allprojects {
         }
     }
     if (project.convention.findPlugin(JavaPluginConvention)) {
-//        sourceSets.main.output.classesDir = new File(buildDir, "classes/main")
+        sourceSets.main.kotlin.outDir = new File(buildDir, "classes/main/kotlin")
 //        sourceSets.test.output.classesDir = new File(buildDir, "classes/test")
     }
 

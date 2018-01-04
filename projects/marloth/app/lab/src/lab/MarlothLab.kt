@@ -14,11 +14,10 @@ data class Bounds(
 }
 
 data class Box(
-    val id: Int,
     val bounds: Bounds
 )
 
-typealias BoxMap = Map<Int, Box>
+typealias BoxMap = Map<Box, Box>
 
 data class Border(
     val color: Vector4,
@@ -27,14 +26,20 @@ data class Border(
 
 data class LabLayout(
     val boxes: List<Box>,
-    val borders: Map<Int, Border>
+    val borders: Map<Box, Border>
 )
 
 private val panelBorder = Border(Vector4(0.2f, 0.2f, 1f, 1f), 3f)
 
+data class VerticalPanel (
+
+)
+
+fun createVerticalPanels(panels: List<VerticalPanel>, height: Float): List<Box> = panels.map { Box()}
+
 fun createLabLayout() = LabLayout(
     listOf(
-        Box(1, Bounds(50f, 150f, 200f, 100f))
+        Box(Bounds(50f, 150f, 200f, 100f))
     ),
     mapOf(
         1 to panelBorder
@@ -49,7 +54,7 @@ fun createBoxMap(boxes: List<Box>): BoxMap = boxes.associate { Pair(it.id, it) }
 
 fun renderLab(layout: LabLayout, canvas: Canvas) {
   for (box in layout.boxes) {
-    val border = layout.borders.get(box.id)
+    val border = layout.borders.get(box)
     if (border != null) {
       drawBorder(box, border, canvas)
     }
