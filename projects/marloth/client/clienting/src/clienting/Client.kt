@@ -9,6 +9,7 @@ import haft.createEmptyInputState
 import haft.gatherCommands
 import haft.getCurrentInputState
 import lab.createLabLayout
+import mythic.spatial.Vector2
 import org.joml.Vector2i
 import org.lwjgl.glfw.GLFW.glfwGetWindowSize
 import org.lwjgl.system.MemoryStack
@@ -50,8 +51,9 @@ class Client(val window: Long) {
   )
 
   fun update(scene: Scene): Commands {
-    val labLayout = createLabLayout()
-    renderer.render(scene, getWindowInfo(window), labLayout)
+    val windowInfo = getWindowInfo(window)
+    val labLayout = createLabLayout(Vector2(windowInfo.dimensions.x.toFloat(), windowInfo.dimensions.y.toFloat()))
+    renderer.render(scene, windowInfo, labLayout)
     inputState = getCurrentInputState(config.input.bindings, deviceHandlers, inputState)
     val commands = gatherCommands(inputState)
     commands.filter({ keyPressCommands.containsKey(it.type) && it.lifetime == CommandLifetime.end })
