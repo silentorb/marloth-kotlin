@@ -2,18 +2,21 @@ package mythic.drawing
 
 import mythic.glowing.*
 import mythic.spatial.Matrix
+import mythic.spatial.Pi
 import mythic.spatial.Vector2
 import mythic.spatial.Vector4
 import mythic.typography.TextConfiguration
 import org.joml.Vector2i
-import org.joml.times
+import kotlin.math.cos
+import kotlin.math.sin
 
 data class Meshes(
-    val square: SimpleMesh
+    val square: SimpleMesh,
+    val circle: SimpleMesh
 )
 
 data class DrawingVertexSchemas(
-    val simpleSquare: VertexSchema,
+    val simple: VertexSchema,
     val coloredImage: VertexSchema
 )
 
@@ -24,17 +27,32 @@ fun createDrawingVertexSchemas() = DrawingVertexSchemas(
     ))
 )
 
-fun createSquareMesh(vertexSchema: VertexSchema): SimpleMesh {
-  return SimpleMesh(vertexSchema, listOf(
-      0f, 1f,
-      0f, 0f,
-      1f, 0f,
-      1f, 1f
-  ))
+fun createSquareMesh(vertexSchema: VertexSchema) =
+    SimpleMesh(vertexSchema, listOf(
+        0f, 1f,
+        0f, 0f,
+        1f, 0f,
+        1f, 1f
+    ))
+
+
+fun createCircleMesh(vertexSchema: VertexSchema, radius: Float, count: Int): SimpleMesh {
+  val vertices = ArrayList<Float>((count + 1) * 2)
+  vertices.add(0f)
+  vertices.add(0f)
+  val increment = Pi * 2 / count
+
+  for (i in 0..count) {
+    val theta = increment * i
+    vertices.add(sin(theta) * radius)
+    vertices.add(cos(theta) * radius)
+  }
+  return SimpleMesh(vertexSchema, vertices)
 }
 
 fun createDrawingMeshes(vertexSchemas: DrawingVertexSchemas) = Meshes(
-    createSquareMesh(vertexSchemas.simpleSquare)
+    createSquareMesh(vertexSchemas.simple),
+    createCircleMesh(vertexSchemas.simple, 1f, 8)
 )
 
 enum class FillType {
@@ -50,26 +68,45 @@ class Canvas(
     dimensions: Vector2i
 ) {
 
-  val dimensions = Vector2(dimensions.x.toFloat(), dimensions.y.toFloat())
+  val viewportDimensions = Vector2(dimensions.x.toFloat(), dimensions.y.toFloat())
   val pixelsToScalar = Matrix().scale(1f / dimensions.x, 1f / dimensions.y, 1f)
 
-  private fun drawSquare(position: Vector2, dimensions: Vector2, color: Vector4, drawMethod: DrawMethod) {
-    val transform = Matrix()
-        .mul(pixelsToScalar)
-        .translate(position.x, position.y, 0f)
-        .scale(dimensions.x, dimensions.y, 1f)
+  fun transformScalar(position: Vector2, dimensions: Vector2) =
+      Matrix()
+          .mul(pixelsToScalar)
+          .translate(position.x, position.y, 0f)
+          .scale(dimensions.x, dimensions.y, 1f)
 
+  //  private fun drawMesh(position: Vector2, dimensions: Vector2, mesh: SimpleMesh, color: Vector4, drawMethod: DrawMethod) {
+  fun drawMesh(position: Vector2, dimensions: Vector2, mesh: SimpleMesh, draw: (transform: Matrix, mesh: SimpleMesh) -> Unit) =
+      draw(transformScalar(position, dimensions), mesh)
+//    effects.singleColorShader.activate(transform, color)
+//    mesh.draw(drawMethod)
+
+  fun draw(color: Vector4, drawMethod: DrawMethod) = { transform: Matrix, mesh: SimpleMesh ->
     effects.singleColorShader.activate(transform, color)
-    meshes.square.draw(drawMethod)
+    mesh.draw(drawMethod)
   }
 
+  fun drawLine(color: Vector4, thickness: Float) = {
+    globalState.lineThickness = thickness
+    draw(color, DrawMethod.lineLoop)
+  }
+
+  fun drawSolid(color: Vector4) = { draw(color, DrawMethod.triangleFan) }
+
   fun drawSolidSquare(position: Vector2, dimensions: Vector2, color: Vector4) {
-    drawSquare(position, dimensions, color, DrawMethod.triangleFan)
+    drawMesh(position, dimensions, color, meshes.square, DrawMethod.triangleFan)
   }
 
   fun drawLineSquare(position: Vector2, dimensions: Vector2, color: Vector4, thickness: Float) {
     globalState.lineThickness = thickness
-    drawSquare(position, dimensions, color, DrawMethod.lineLoop)
+    drawMesh(position, dimensions, color, meshes.square, DrawMethod.lineLoop)
+  }
+
+  fun drawLineCircle(position: Vector2, dimensions: Vector2, color: Vector4, thickness: Float) {
+    globalState.lineThickness = thickness
+    drawMesh(position, dimensions, color, meshes.square, DrawMethod.lineLoop)
   }
 
   fun drawText(config: TextConfiguration) {
