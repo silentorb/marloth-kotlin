@@ -62,6 +62,9 @@ class Renderer(window: Long) {
             Vector4(0f, 0f, 0f, 1f)
     ))
 
+    canvas.drawSolidCircle(Vector2(300f, 200f), Vector2(100f, 100f), canvas.solid(Vector4(1f, 1f, 0f, 1f)))
+    canvas.drawCircle(Vector2(300f, 200f), Vector2(100f, 100f), canvas.outline(Vector4(1f, 0f, 0f, 1f), 5f))
+
     renderLab(labLayout, canvas)
 //    canvasManager.drawText("Dev Lab", 10f, 10f)
   }

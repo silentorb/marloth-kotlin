@@ -37,7 +37,7 @@ fun createLabLayout(screenDimensions: Vector2): LabLayout {
 }
 
 fun drawBorder(box: Box, border: Border, canvas: Canvas) {
-  canvas.drawLineSquare(box.bounds.position, box.bounds.dimensions, border.color, 5f)
+  canvas.drawSquare(box.bounds.position, box.bounds.dimensions, canvas.outline(border.color, 5f))
 }
 
 fun createBoxMap(boxes: List<Box>): BoxMap = boxes.associate { Pair(it, it) }
