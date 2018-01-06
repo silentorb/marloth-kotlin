@@ -97,8 +97,8 @@ infix fun Matrix4f.transformDirection(v: Vector3f) = transformDirection(v)
 /* Vector2f */
 
 operator fun Vector2f.get(e: Int): Float = get(e)
-operator fun Vector2f.minus(v: Vector2fc) = sub(v)
-operator fun Vector2f.plus(v: Vector2fc) = add(v)
+operator fun Vector2f.minus(v: Vector2fc) = sub(v, Vector2f())
+operator fun Vector2f.plus(v: Vector2fc) = add(v, Vector2f())
 operator fun Vector2f.unaryMinus() = negate()
 
 /* Vector2d */
@@ -167,3 +167,7 @@ operator fun Quaternionf.times(q: Quaternionf) = mul(q, Quaternion())
 //operator fun Quaterniond.unaryMinus() = conjugate()
 //operator fun Quaterniond.times(v: Vector3d) = transform(v)
 //operator fun Quaterniond.times(v: Vector4d) = transform(v)
+
+
+val Vector3f.xy: Vector2f
+  get() = Vector2f(x, y)

@@ -8,6 +8,7 @@ import haft.createDeviceHandlers
 import haft.createEmptyInputState
 import haft.gatherCommands
 import haft.getCurrentInputState
+import lab.MarlothLab
 import lab.createLabLayout
 import mythic.spatial.Vector2
 import org.joml.Vector2i
@@ -44,6 +45,7 @@ class Client(val window: Long) {
   private val renderer: Renderer = Renderer(window)
   private val config: Configuration = createNewConfiguration()
   private val deviceHandlers = createDeviceHandlers(window)
+  val marlothLab: MarlothLab? = MarlothLab()
   val screens: List<Screen> = listOf(Screen(CameraMode.topDown, 0))
   var inputState = createEmptyInputState(config.input.bindings)
   val keyPressCommands: Map<CommandType, CommandHandler> = mapOf(
@@ -52,7 +54,8 @@ class Client(val window: Long) {
 
   fun update(scene: Scene): Commands {
     val windowInfo = getWindowInfo(window)
-    val labLayout = createLabLayout(Vector2(windowInfo.dimensions.x.toFloat(), windowInfo.dimensions.y.toFloat()))
+    val dimensions = Vector2(windowInfo.dimensions.x.toFloat(), windowInfo.dimensions.y.toFloat())
+    val labLayout = createLabLayout(marlothLab!!.generator.world, dimensions)
     renderer.render(scene, windowInfo, labLayout)
     inputState = getCurrentInputState(config.input.bindings, deviceHandlers, inputState)
     val commands = gatherCommands(inputState)

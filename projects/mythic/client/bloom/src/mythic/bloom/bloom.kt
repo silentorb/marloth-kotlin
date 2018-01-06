@@ -54,7 +54,6 @@ data class Box(
       this(Bounds(x, y, width, height), render)
 }
 
-
 fun resolveMeasurement(measurement: Measurement, bound: Float) =
     when (measurement.type) {
       Measurements.pixel -> measurement.value
