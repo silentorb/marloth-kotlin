@@ -1,4 +1,4 @@
 
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
-requires('spatial')
+requires('spatial', 'drawing')

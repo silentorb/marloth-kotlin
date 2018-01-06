@@ -4,17 +4,20 @@ import org.lwjgl.opengl.GL15.*
 import org.lwjgl.opengl.GL30.glDeleteVertexArrays
 import java.nio.FloatBuffer
 
-class VertexBuffer(vertices: FloatBuffer, vertexSchema: VertexSchema) {
+class VertexBuffer(vertexSchema: VertexSchema) {
   private val vbo = glGenBuffers()
   private val vao: VertexArrayObject
   private val disposed = false
 
   init {
-//    globalState.vertexArrayObject = 0
+    globalState.vertexBufferObject = vbo
+    vao = VertexArrayObject(vertexSchema)
+    checkError("binding vbo buffer data")
+  }
+
+  fun load(vertices: FloatBuffer){
     globalState.vertexBufferObject = vbo
     glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW)
-    checkError("binding vbo buffer data")
-    vao = VertexArrayObject(vertexSchema)
   }
 
   fun activate() {

@@ -59,14 +59,13 @@ class Renderer(window: Long) {
         12f,
         Vector2(100f, 300f),
 //        Vector4(1f, 0.8f, 0.3f, 1f)
-            Vector4(0f, 0f, 0f, 1f)
+        Vector4(0f, 0f, 0f, 1f)
     ))
 
-    canvas.drawSolidCircle(Vector2(300f, 200f), Vector2(100f, 100f), canvas.solid(Vector4(1f, 1f, 0f, 1f)))
-    canvas.drawCircle(Vector2(300f, 200f), Vector2(100f, 100f), canvas.outline(Vector4(1f, 0f, 0f, 1f), 5f))
-
+    canvas.drawSolidCircle(Vector2(200f, 200f), 50f, canvas.solid(Vector4(1f, 1f, 0f, 1f)))
+    canvas.drawCircle(Vector2(200f, 200f), 50f, canvas.outline(Vector4(1f, 0f, 0f, 1f), 5f))
+    canvas.drawLine(100f, 300f, 200f, 320f, Vector4(0f, 0.6f, 0f, 1f), 5f)
     renderLab(labLayout, canvas)
-//    canvasManager.drawText("Dev Lab", 10f, 10f)
   }
 
 }

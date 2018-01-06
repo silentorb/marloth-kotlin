@@ -1,6 +1,7 @@
 package mythic.bloom
 
 import mythic.spatial.Vector2
+import mythic.drawing.Canvas
 
 enum class Measurements {
   stretch,
@@ -43,12 +44,16 @@ data class Bounds(
       this(Vector2(x, y), Vector2(width, height))
 }
 
+typealias Render = (Box, Canvas) -> Unit
+
 data class Box(
-    val bounds: Bounds
+    val bounds: Bounds,
+    val render: Render
 ) {
-  constructor(x: Float, y: Float, width: Float, height: Float) :
-      this(Bounds(x, y, width, height))
+  constructor(x: Float, y: Float, width: Float, height: Float, render: Render) :
+      this(Bounds(x, y, width, height), render)
 }
+
 
 fun resolveMeasurement(measurement: Measurement, bound: Float) =
     when (measurement.type) {
@@ -75,11 +80,11 @@ fun solveMeasurements(lengths: List<Measurement>, bound: Float): List<Float> {
   }
 }
 
-fun createVerticalPanels(widths: List<Measurement>, bounds: Vector2): List<Box> {
+fun createVerticalBounds(widths: List<Measurement>, bounds: Vector2): List<Bounds> {
   var x = 0f
   return solveMeasurements(widths, bounds.x).map {
-    val box = Box(x, 0f, it, bounds.y)
+    val bounds = Bounds(x, 0f, it, bounds.y)
     x += it
-    box
+    bounds
   }
 }

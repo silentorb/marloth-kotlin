@@ -7,6 +7,7 @@ import mythic.spatial.Vector2
 import mythic.spatial.Vector4
 import mythic.typography.TextConfiguration
 import org.joml.Vector2i
+import org.joml.minus
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -65,7 +66,7 @@ enum class FillType {
   outline
 }
 
-typealias Brush = (Matrix, SimpleMesh) -> Unit
+typealias Brush = (Matrix, Drawable) -> Unit
 
 class Canvas(
     val vertexSchemas: DrawingVertexSchemas,
@@ -75,6 +76,7 @@ class Canvas(
     dimensions: Vector2i
 ) {
 
+  val dynamicMesh = MutableSimpleMesh(vertexSchemas.simple)
   val viewportDimensions = Vector2(dimensions.x.toFloat(), dimensions.y.toFloat())
   val pixelsToScalar = Matrix().scale(1f / dimensions.x, 1f / dimensions.y, 1f)
 
@@ -88,26 +90,35 @@ class Canvas(
     brush(transformScalar(position, dimensions), meshes.square)
   }
 
-  fun drawCircle(position: Vector2, dimensions: Vector2, brush: Brush) {
-    brush(transformScalar(position, dimensions), meshes.circle)
+  fun drawCircle(position: Vector2, radius: Float, brush: Brush) {
+    brush(transformScalar(position, Vector2(radius * 2f, radius * 2f)), meshes.circle)
   }
 
-  fun drawSolidCircle(position: Vector2, dimensions: Vector2, brush: Brush) {
-    brush(transformScalar(position, dimensions), meshes.solidCircle)
+  fun drawSolidCircle(position: Vector2, radius: Float, brush: Brush) {
+    brush(transformScalar(position, Vector2(radius * 2f, radius * 2f)), meshes.solidCircle)
   }
 
-  fun draw(color: Vector4, drawMethod: DrawMethod, transform: Matrix, mesh: SimpleMesh) {
+  fun draw(color: Vector4, drawMethod: DrawMethod, transform: Matrix, mesh: Drawable) {
     effects.singleColorShader.activate(transform, color)
     mesh.draw(drawMethod)
   }
 
-  fun outline(color: Vector4, thickness: Float): Brush = { transform: Matrix, mesh: SimpleMesh ->
+  fun outline(color: Vector4, thickness: Float): Brush = { transform: Matrix, mesh: Drawable ->
     globalState.lineThickness = thickness
     draw(color, DrawMethod.lineLoop, transform, mesh)
   }
 
-  fun solid(color: Vector4) = { transform: Matrix, mesh: SimpleMesh ->
+  fun solid(color: Vector4) = { transform: Matrix, mesh: Drawable ->
     draw(color, DrawMethod.triangleFan, transform, mesh)
+  }
+
+  fun drawLine(startX: Float, startY: Float, endX: Float, endY: Float, color: Vector4, thickness: Float) {
+    dynamicMesh.load(listOf(startX, startY, endX, endY))
+    outline(color, thickness)(Matrix().mul(pixelsToScalar), dynamicMesh)
+  }
+
+  fun drawLine(start: Vector2, end: Vector2, color: Vector4, thickness: Float) {
+    drawLine(start.x, start.y, end.x, end.y, color, thickness)
   }
 
   fun drawText(config: TextConfiguration) {
