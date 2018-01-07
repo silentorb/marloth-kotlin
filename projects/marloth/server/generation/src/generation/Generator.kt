@@ -19,6 +19,10 @@ class Generator(val world: AbstractWorld, val dice: Dice) {
     val second = createNode()
     world.connect(first, second)
 
+    for (i in 0..3) {
+      createNode()
+    }
+
     return world
   }
 }

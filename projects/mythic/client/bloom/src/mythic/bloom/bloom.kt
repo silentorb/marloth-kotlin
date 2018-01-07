@@ -2,6 +2,7 @@ package mythic.bloom
 
 import mythic.spatial.Vector2
 import mythic.drawing.Canvas
+import org.joml.Vector4i
 
 enum class Measurements {
   stretch,
@@ -42,9 +43,11 @@ data class Bounds(
 ) {
   constructor(x: Float, y: Float, width: Float, height: Float) :
       this(Vector2(x, y), Vector2(width, height))
+
+  fun toVector4i() = Vector4i(position.x.toInt(), position.y.toInt(), dimensions.x.toInt(), dimensions.y.toInt())
 }
 
-typealias Render = (Box, Canvas) -> Unit
+typealias Render = (Bounds, Canvas) -> Unit
 
 data class Box(
     val bounds: Bounds,
@@ -53,6 +56,8 @@ data class Box(
   constructor(x: Float, y: Float, width: Float, height: Float, render: Render) :
       this(Bounds(x, y, width, height), render)
 }
+
+fun crop(bounds: Bounds, canvas: Canvas, action: () -> Unit) = canvas.crop(bounds.toVector4i(), action)
 
 fun resolveMeasurement(measurement: Measurement, bound: Float) =
     when (measurement.type) {

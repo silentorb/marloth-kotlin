@@ -37,14 +37,14 @@ fun <A, B, C> overlap(aList: List<A>, bList: List<B>, merger: (A, B) -> C): List
   return result
 }
 
-fun drawBorder(box: Box, canvas: Canvas, color: Vector4) {
-  canvas.drawSquare(box.bounds.position, box.bounds.dimensions, canvas.outline(color, 5f))
+fun drawBorder(bounds: Bounds, canvas: Canvas, color: Vector4) {
+  canvas.drawSquare(bounds.position, bounds.dimensions, canvas.outline(color, 5f))
 }
 
-fun drawAbstractWorld(box: Box, canvas: Canvas, world: AbstractWorld) {
+fun drawAbstractWorld(bounds: Bounds, canvas: Canvas, world: AbstractWorld) {
   val solid = canvas.solid(Vector4(1f, 1f, 0f, 1f))
   val outline = canvas.outline(Vector4(1f, 0f, 0f, 1f), 5f)
-  fun getPosition(node: Node) = box.bounds.position + node.position.xy
+  fun getPosition(node: Node) = bounds.position + node.position.xy
 
   for (node in world.nodes) {
     val radius = 20f
@@ -59,10 +59,10 @@ fun drawAbstractWorld(box: Box, canvas: Canvas, world: AbstractWorld) {
 }
 
 fun createLabLayout(world: AbstractWorld, screenDimensions: Vector2): LabLayout {
-  val draw = { b: Box, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
-  val drawWorld = { b: Box, c: Canvas ->
+  val draw = { b: Bounds, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
+  val drawWorld = { b: Bounds, c: Canvas ->
+    crop(b, c, { drawAbstractWorld(b, c, world) })
     draw(b, c)
-    drawAbstractWorld(b, c, world)
   }
 
   val panels = listOf(
@@ -83,7 +83,7 @@ fun createBoxMap(boxes: List<Box>): BoxMap = boxes.associate { Pair(it, it) }
 
 fun renderLab(layout: LabLayout, canvas: Canvas) {
   for (box in layout.boxes) {
-    box.render(box, canvas)
+    box.render(box.bounds, canvas)
   }
 }
 

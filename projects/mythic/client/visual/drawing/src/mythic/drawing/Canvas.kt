@@ -7,6 +7,7 @@ import mythic.spatial.Vector2
 import mythic.spatial.Vector4
 import mythic.typography.TextConfiguration
 import org.joml.Vector2i
+import org.joml.Vector4i
 import org.joml.minus
 import kotlin.math.cos
 import kotlin.math.sin
@@ -124,4 +125,6 @@ class Canvas(
   fun drawText(config: TextConfiguration) {
     drawTextRaw(config, effects.coloredImage, vertexSchemas.coloredImage, pixelsToScalar)
   }
+
+  fun crop(value: Vector4i, action: () -> Unit) = cropStack(value, action)
 }
