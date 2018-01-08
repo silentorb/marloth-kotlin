@@ -29,8 +29,8 @@ operator fun Vector3.plusAssign(other: Vector3) {
 }
 
 operator fun Vector3.times(other: Matrix): Vector3 = mulDirection(other)
-operator fun Vector2.times(other: Float): Vector2 = mul(other)
-operator fun Vector3.times(other: Float): Vector3 = mul(other)
+operator fun Vector2.times(other: Float): Vector2 = mul(other, Vector2())
+operator fun Vector3.times(other: Float): Vector3 = mul(other, Vector3())
 //operator fun Quaternion.times(other: Vector3): Vector3 = transform(other)
 
 fun FloatBuffer.put(value: Vector3) {

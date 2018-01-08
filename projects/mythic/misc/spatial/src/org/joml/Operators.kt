@@ -99,6 +99,7 @@ infix fun Matrix4f.transformDirection(v: Vector3f) = transformDirection(v)
 operator fun Vector2f.get(e: Int): Float = get(e)
 operator fun Vector2f.minus(v: Vector2fc) = sub(v, Vector2f())
 operator fun Vector2f.plus(v: Vector2fc) = add(v, Vector2f())
+operator fun Vector2f.plus(v: Float) = Vector2f(x + v, y + v)
 operator fun Vector2f.unaryMinus() = negate()
 
 /* Vector2d */

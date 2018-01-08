@@ -7,6 +7,7 @@ import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.drawing.FillType
 import mythic.spatial.Vector2
+import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import org.joml.plus
 import org.joml.xy
@@ -41,23 +42,6 @@ fun drawBorder(bounds: Bounds, canvas: Canvas, color: Vector4) {
   canvas.drawSquare(bounds.position, bounds.dimensions, canvas.outline(color, 5f))
 }
 
-fun drawAbstractWorld(bounds: Bounds, canvas: Canvas, world: AbstractWorld) {
-  val solid = canvas.solid(Vector4(1f, 1f, 0f, 1f))
-  val outline = canvas.outline(Vector4(1f, 0f, 0f, 1f), 5f)
-  fun getPosition(node: Node) = bounds.position + node.position.xy
-
-  for (node in world.nodes) {
-    val radius = 20f
-    val position = getPosition(node)
-    canvas.drawSolidCircle(position, radius, solid)
-    canvas.drawCircle(position, radius, outline)
-  }
-
-  for (connection in world.connections) {
-    canvas.drawLine(getPosition(connection.first), getPosition(connection.second), Vector4(0f, 0.6f, 0f, 1f), 5f)
-  }
-}
-
 fun createLabLayout(world: AbstractWorld, screenDimensions: Vector2): LabLayout {
   val draw = { b: Bounds, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
   val drawWorld = { b: Bounds, c: Canvas ->
@@ -88,7 +72,11 @@ fun renderLab(layout: LabLayout, canvas: Canvas) {
 }
 
 class MarlothLab {
-  val generator: Generator = Generator(AbstractWorld(), Dice(1))
+  val abstractWorld = AbstractWorld(
+      Vector3(-50f, -50f, -50f),
+      Vector3(50f, 50f, 50f)
+  )
+  val generator: Generator = Generator(abstractWorld, Dice(1))
 
   init {
     generator.generate()
