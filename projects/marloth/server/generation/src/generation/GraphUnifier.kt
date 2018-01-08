@@ -20,8 +20,8 @@ class GraphUnifier(val world: AbstractWorld) {
       return
 
     scanNode(world.nodes.first())
-    while (unifiedNodes.size != world.nodes.size) {
-
-    }
-  }
+//    while (unifiedNodes.size != world.nodes.size) {
+//
+//    }
+//  }
 }
