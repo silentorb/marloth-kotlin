@@ -49,23 +49,24 @@ class Renderer(window: Long) {
   fun render(scene: Scene, windowInfo: WindowInfo, labLayout: LabLayout) {
     glow.operations.setViewport(Vector2i(0, 0), windowInfo.dimensions)
     glow.operations.clearScreen()
-    val effects = createEffects(shaders, gatherEffectsData(windowInfo, scene))
-    renderScene(scene, painters, effects)
-    val unitScaling = getUnitScaling(windowInfo.dimensions)
-    val canvas = Canvas(vertexSchemas.drawing, canvasMeshes, shaders.drawing, unitScaling, windowInfo.dimensions)
-    canvas.drawText(TextConfiguration(
-        "Welcome to Marloth!",
-        fonts[0],
-        12f,
-        Vector2(100f, 300f),
-//        Vector4(1f, 0.8f, 0.3f, 1f)
-        Vector4(0f, 0f, 0f, 1f)
-    ))
+    if (false) {
+      val effects = createEffects(shaders, gatherEffectsData(windowInfo, scene))
+      renderScene(scene, painters, effects)
+    }
+    else {
+      val unitScaling = getUnitScaling(windowInfo.dimensions)
+      val canvas = Canvas(vertexSchemas.drawing, canvasMeshes, shaders.drawing, unitScaling, windowInfo.dimensions)
+//    canvas.drawText(TextConfiguration(
+//        "Welcome to Marloth!",
+//        fonts[0],
+//        12f,
+//        Vector2(100f, 300f),
+////        Vector4(1f, 0.8f, 0.3f, 1f)
+//        Vector4(0f, 0f, 0f, 1f)
+//    ))
 
-//    canvas.drawSolidCircle(Vector2(200f, 200f), 50f, canvas.solid(Vector4(1f, 1f, 0f, 1f)))
-//    canvas.drawCircle(Vector2(200f, 200f), 50f, canvas.outline(Vector4(1f, 0f, 0f, 1f), 5f))
-//    canvas.drawLine(100f, 300f, 200f, 320f, Vector4(0f, 0.6f, 0f, 1f), 5f)
-    renderLab(labLayout, canvas)
+      renderLab(labLayout, canvas)
+    }
   }
 
 }

@@ -15,8 +15,8 @@ class AbstractWorld(val boundary: WorldBoundary) {
   val nodes: MutableList<Node> = mutableListOf()
   val connections: MutableList<Connection> = mutableListOf()
 
-  fun connect(first: Node, second: Node): Connection {
-    val connection = Connection(first, second)
+  fun connect(first: Node, second: Node, type: ConnectionType): Connection {
+    val connection = Connection(first, second, type)
     connections.add(connection)
     first.connections.add(connection)
     second.connections.add(connection)

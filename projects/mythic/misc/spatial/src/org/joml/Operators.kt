@@ -116,6 +116,8 @@ operator fun Vector2f.unaryMinus() = negate()
 //operator fun Vector3f.get(e: Int): Float = get(e)
 operator fun Vector3f.minus(v: Vector3fc) = sub(v, Vector3f())
 
+operator fun Vector3f.minus(v: Float) = Vector3f(x - v, y - v, z - v)
+
 operator fun Vector2f.minus(v: Float) = sub(Vector2f(v, v), Vector2f())
 
 //operator fun Vector3f.minus(other: Float) = sub(other, Vector3f())
@@ -124,6 +126,7 @@ operator fun Vector3f.plusAssign(other: Vector3f) {
 }
 
 operator fun Vector3f.plus(v: Vector3fc): Vector3f = Vector3f(this).add(v)
+operator fun Vector3f.plus(v: Float): Vector3f = Vector3f(x + v, y + v, z + v)
 operator fun Vector3f.unaryMinus() = negate()
 
 /* Vector3d */

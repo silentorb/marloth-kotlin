@@ -1,6 +1,7 @@
 package lab
 
 import generation.AbstractWorld
+import generation.ConnectionType
 import generation.Node
 import generation.WorldBoundary
 import mythic.bloom.Bounds
@@ -66,8 +67,8 @@ fun drawAbstractWorld(bounds: Bounds, canvas: Canvas, world: AbstractWorld) {
     canvas.drawCircle(position, radius, outline)
   }
 
-  for (connection in world.connections) {
-    canvas.drawLine(getPosition(connection.first), getPosition(connection.second), Vector4(0f, 0.6f, 0f, 1f), 5f)
+  for (connection in world.connections.filter { it.type != ConnectionType.union }) {
+    canvas.drawLine(getPosition(connection.first), getPosition(connection.second), Vector4(0f, 0.5f, 0f, 0.8f), 3f)
   }
 
   canvas.drawSquare(

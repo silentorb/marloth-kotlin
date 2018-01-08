@@ -92,11 +92,11 @@ class Canvas(
   }
 
   fun drawCircle(position: Vector2, radius: Float, brush: Brush) {
-    brush(transformScalar(position, Vector2(radius * 2f, radius * 2f)), meshes.circle)
+    brush(transformScalar(position, Vector2(radius, radius)), meshes.circle)
   }
 
   fun drawSolidCircle(position: Vector2, radius: Float, brush: Brush) {
-    brush(transformScalar(position, Vector2(radius * 2f, radius * 2f)), meshes.solidCircle)
+    brush(transformScalar(position, Vector2(radius, radius)), meshes.solidCircle)
   }
 
   fun draw(color: Vector4, drawMethod: DrawMethod, transform: Matrix, mesh: Drawable) {
