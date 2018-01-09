@@ -1,5 +1,18 @@
 package generation
 
+fun getNodeDistance(first: Node, second: Node): Float =
+    Math.max(0f, first.position.distance(second.position) - first.radius - second.radius)
+
+fun findNearestNode(node: Node, world: AbstractWorld): Node? {
+  if (world.nodes.size < 2)
+    return null
+
+  return world.nodes.asSequence()
+      .filter { it !== node }
+      .sortedBy { getNodeDistance(node, it) }
+      .firstOrNull()
+}
+
 class GraphUnifier(val world: AbstractWorld) {
   val unifiedNodes: MutableList<Node> = mutableListOf()
   val changed: MutableList<Node> = mutableListOf()
@@ -23,5 +36,5 @@ class GraphUnifier(val world: AbstractWorld) {
 //    while (unifiedNodes.size != world.nodes.size) {
 //
 //    }
-//  }
+  }
 }

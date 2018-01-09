@@ -56,14 +56,14 @@ class Renderer(window: Long) {
     else {
       val unitScaling = getUnitScaling(windowInfo.dimensions)
       val canvas = Canvas(vertexSchemas.drawing, canvasMeshes, shaders.drawing, unitScaling, windowInfo.dimensions)
-//    canvas.drawText(TextConfiguration(
-//        "Welcome to Marloth!",
-//        fonts[0],
-//        12f,
-//        Vector2(100f, 300f),
-////        Vector4(1f, 0.8f, 0.3f, 1f)
-//        Vector4(0f, 0f, 0f, 1f)
-//    ))
+    canvas.drawText(TextConfiguration(
+        "Dev Lab",
+        fonts[0],
+        12f,
+        Vector2(10f, 10f),
+//        Vector4(1f, 0.8f, 0.3f, 1f)
+        Vector4(0f, 0f, 0f, 1f)
+    ))
 
       renderLab(labLayout, canvas)
     }
