@@ -19,7 +19,7 @@ class Connection(
 class Node(var position: Vector3, var radius: Float) {
   val connections: MutableList<Connection> = mutableListOf()
 
-  fun getNeighbors() = connections.map { it.getOther(this) }
+  fun getNeighbors() = connections.asSequence().map { it.getOther(this) }
 
   fun getConnection(other: Node) = connections.firstOrNull { it.second === other }
 
