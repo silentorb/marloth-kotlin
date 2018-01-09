@@ -2,6 +2,7 @@ package mythic.drawing
 
 import mythic.glowing.DrawMethod
 import mythic.glowing.VertexSchema
+import mythic.glowing.globalState
 import mythic.spatial.Matrix
 import mythic.spatial.Vector2
 import mythic.typography.TextConfiguration
@@ -37,8 +38,9 @@ fun renderText(config: TextConfiguration, effect: ColoredImageShader, textPackag
 
   activateTexture(config.font.texture)
 
-  glEnable(GL_BLEND)
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+  globalState.blendEnabled = true
+  globalState.blendFunction = Pair(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+//  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
   textPackage.mesh.draw(DrawMethod.triangleFan)
 }

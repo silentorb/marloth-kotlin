@@ -8,6 +8,8 @@ import org.lwjgl.opengl.GL30.glBindVertexArray
 
 import mythic.spatial.Vector4
 import org.joml.Vector4i
+import org.lwjgl.opengl.GL14.GL_BLEND_DST_RGB
+import org.lwjgl.opengl.GL14.GL_BLEND_SRC_RGB
 
 private fun getBounds(type: Int): Vector4i {
   val buffer = IntArray(4)
@@ -85,6 +87,22 @@ class State {
       if (field != value) {
         field = value
         setEnabled(GL_SCISSOR_TEST, value)
+      }
+    }
+
+  var blendEnabled: Boolean = false
+    set(value) {
+      if (field != value) {
+        field = value
+        setEnabled(GL_BLEND, value)
+      }
+    }
+
+  var blendFunction: Pair<Int, Int> = Pair(glGetInteger(GL_BLEND_SRC_RGB), glGetInteger(GL_BLEND_DST_RGB))
+    set(value) {
+      if (field != value) {
+        field = value
+        glBlendFunc(value.first, value.second)
       }
     }
 

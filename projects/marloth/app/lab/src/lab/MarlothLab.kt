@@ -6,11 +6,13 @@ import generation.Node
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.drawing.FillType
+import mythic.glowing.globalState
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import org.joml.plus
 import org.joml.xy
+import org.lwjgl.opengl.GL11
 import randomly.Dice
 
 typealias BoxMap = Map<Box, Box>
@@ -66,6 +68,9 @@ fun createLabLayout(world: AbstractWorld, screenDimensions: Vector2): LabLayout 
 fun createBoxMap(boxes: List<Box>): BoxMap = boxes.associate { Pair(it, it) }
 
 fun renderLab(layout: LabLayout, canvas: Canvas) {
+  globalState.blendEnabled = true
+  globalState.blendFunction = Pair(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
+
   for (box in layout.boxes) {
     box.render(box.bounds, canvas)
   }
