@@ -7,8 +7,8 @@ data class WorldBoundary(
     val start: Vector3,
     val end: Vector3
 ) {
-  val dimensions:Vector3
-  get() = end - start
+  val dimensions: Vector3
+    get() = end - start
 }
 
 class AbstractWorld(val boundary: WorldBoundary) {
@@ -23,5 +23,13 @@ class AbstractWorld(val boundary: WorldBoundary) {
     return connection
   }
 
-  constructor(start: Vector3, end: Vector3): this(WorldBoundary(start, end))
+  constructor(start: Vector3, end: Vector3) : this(WorldBoundary(start, end))
+
+  fun removeNode(node: Node) {
+    nodes.remove(node)
+    for (connection in node.connections) {
+      connection.getOther(node).connections.remove(connection)
+    }
+    node.connections.clear()
+  }
 }

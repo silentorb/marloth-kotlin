@@ -12,20 +12,41 @@ fun overlaps2D(node: Node, other: Node) = Intersectionf.intersectCircleCircle(
     Vector3()
 )
 
-fun connectOverlapping(world: AbstractWorld) {
-  for (node in world.nodes) {
-    for (other in world.nodes) {
+fun getOverlapping(nodes: List<Node>): List<Pair<Node, Node>> {
+  val result = mutableListOf<Pair<Node, Node>>()
+  for (node in nodes) {
+    for (other in nodes) {
       if (node.isConnected(other))
         continue
 
-      if (overlaps2D(node, other)) {
-        world.connect(node, other, ConnectionType.union)
+      // Check if the nodes overlap and there is not already an entry from the other direction
+      if (overlaps2D(node, other) && !result.any { it.first === other && it.second == node }) {
+        result.add(Pair(node, other))
       }
     }
   }
+  return result
 }
 
-class Generator(val world: AbstractWorld, val dice: Dice) {
+fun <T> divide(sequence: Sequence<T>, filter: (T) -> Boolean) =
+    Pair(sequence.filter(filter), sequence.filter { !filter(it) })
+
+fun areTooClose(first: Node, second: Node): Boolean {
+  val distance = getNodeDistance(first, second)
+  return distance < first.radius || distance < second.radius
+}
+
+fun handleOverlapping(world: AbstractWorld) {
+  val overlapping = getOverlapping(world.nodes)
+  val groups = divide(overlapping.asSequence(), { areTooClose(it.first, it.second) })
+
+  for (pair in groups.first) world.removeNode(pair.first)
+
+  for (pair in groups.second) world.connect(pair.first, pair.second, ConnectionType.union)
+}
+
+class Generator(
+    val world: AbstractWorld, val dice: Dice) {
 
   fun createNode(): Node {
     val radius = dice.getFloat(5f, 10f)
@@ -47,7 +68,7 @@ class Generator(val world: AbstractWorld, val dice: Dice) {
 
   fun generate(): AbstractWorld {
     createNodes(20)
-    connectOverlapping(world)
+    handleOverlapping(world)
 
     return world
   }
