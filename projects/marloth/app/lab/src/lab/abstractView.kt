@@ -67,8 +67,13 @@ fun drawAbstractWorld(bounds: Bounds, canvas: Canvas, world: AbstractWorld) {
     canvas.drawCircle(position, radius, outline)
   }
 
-  for (connection in world.connections.filter { it.type != ConnectionType.union }) {
-    canvas.drawLine(getPosition(connection.first), getPosition(connection.second), Vector4(0f, 0.5f, 0f, 0.8f), 3f)
+  for (connection in world.connections) {
+    val color = if (connection.type == ConnectionType.union)
+      Vector4(0.1f, 0f, 0f, 0.4f)
+    else
+      Vector4(0f, 0.5f, 0f, 0.8f)
+
+    canvas.drawLine(getPosition(connection.first), getPosition(connection.second), color, 3f)
   }
 
   canvas.drawSquare(

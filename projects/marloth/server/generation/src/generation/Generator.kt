@@ -1,22 +1,26 @@
 package generation
 
 import mythic.spatial.Vector3
-import org.joml.Intersectionf
 import org.joml.minus
 import org.joml.plus
 import randomly.Dice
 
-fun overlaps2D(node: Node, other: Node) = Intersectionf.intersectCircleCircle(
-    node.position.x, node.position.y, node.radius,
-    other.position.x, other.position.y, other.radius,
-    Vector3()
-)
+//fun overlaps2D(node: Node, other: Node) = Intersectionf.intersectCircleCircle(
+//    node.position.x, node.position.y, node.radius,
+//    other.position.x, other.position.y, other.radius,
+//    Vector3()
+//)
+
+fun overlaps2D(first: Node, second: Node):Boolean {
+  val distance = getNodeDistance(first, second)
+  return distance < first.radius + second.radius
+}
 
 fun getOverlapping(nodes: List<Node>): List<Pair<Node, Node>> {
   val result = mutableListOf<Pair<Node, Node>>()
   for (node in nodes) {
     for (other in nodes) {
-      if (node.isConnected(other))
+      if (node === other || node.isConnected(other))
         continue
 
       // Check if the nodes overlap and there is not already an entry from the other direction
@@ -40,7 +44,7 @@ fun handleOverlapping(world: AbstractWorld) {
   val overlapping = getOverlapping(world.nodes)
   val groups = divide(overlapping.asSequence(), { areTooClose(it.first, it.second) })
 
-  for (pair in groups.first) world.removeNode(pair.first)
+//  for (pair in groups.first) world.removeNode(pair.first)
 
   for (pair in groups.second) world.connect(pair.first, pair.second, ConnectionType.union)
 }
@@ -69,7 +73,7 @@ class Generator(
   fun generate(): AbstractWorld {
     createNodes(20)
     handleOverlapping(world)
-
+//    unifyWorld(world)
     return world
   }
 }

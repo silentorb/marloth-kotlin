@@ -1,6 +1,6 @@
 package generation
 
-typealias NodeGroup = MutableList<Node>
+typealias NodeGroup = List<Node>
 
 fun getNodeDistance(first: Node, second: Node): Float =
     Math.max(0f, first.position.distance(second.position) - first.radius - second.radius)
@@ -12,14 +12,17 @@ fun getNeighborsByDistance(node: Node, nodes: Sequence<Node>) = nodes.asSequence
     .map { NearestNodeResult(it, getNodeDistance(node, it)) }
     .sortedBy { it.distance }
 
-fun findNearestNode(node: Node, nodes: Sequence<Node>) =
-    getNeighborsByDistance(node, nodes)
-        .firstOrNull()
+//fun findNearestNode(node: Node, nodes: Sequence<Node>) =
+//    getNeighborsByDistance(node, nodes)
+//        .firstOrNull()
 
 data class NodeGap(val first: Node, val second: Node, val distance: Float)
 
 fun findNearestGap(node: Node, nodes: Sequence<Node>): NodeGap? {
-  val result = findNearestNode(node, nodes)
+  val result = getNeighborsByDistance(node, nodes)
+      .filter { !it.node.isConnected(node) }
+      .firstOrNull()
+
   if (result != null)
     return NodeGap(node, result.node, result.distance)
 
@@ -41,21 +44,30 @@ fun scanChanged(changed: List<Node>, group: NodeGroup) =
         .flatten()
         .distinct()
 
+tailrec fun scanNodes(previousChanged: List<Node>, mainGroup: List<Node>, outerGroup: List<Node>, world: AbstractWorld) {
+  val possibleChanged = scanChanged(previousChanged, mainGroup).toList()
+  val changed = if (possibleChanged.isEmpty()) {
+    val gap = findShortestGap(mainGroup.asSequence(), outerGroup.asSequence())
+    if (gap == null)
+      throw Error("Could not find gap to fill.")
+
+    world.connect(gap.first, gap.second, ConnectionType.tunnel)
+    listOf(gap.second)
+  } else {
+    possibleChanged
+  }
+
+  val nextMainGroup = mainGroup.plus(changed)
+  if (nextMainGroup.size != world.nodes.size)
+    return scanNodes(changed, nextMainGroup, outerGroup.subtract(changed).toList(), world)
+}
+
 fun unifyWorld(world: AbstractWorld) {
   if (world.nodes.size < 2)
     return
 
   val first = world.nodes.first()
-  val mainGroup = mutableListOf(first)
-  val groups: MutableList<NodeGroup> = mutableListOf()
-  groups.add(mainGroup)
-  var changed = listOf(first)
-
-  while (groups.size != 1 || mainGroup.size != world.nodes.size) {
-    changed = scanChanged(changed, mainGroup).toList()
-    if (changed.isEmpty()) {
-
-      throw Error("Could not finish processing nodes")
-    }
-  }
+  val mainGroup = listOf(first)
+  val outerGroup = world.nodes.filter { it !== first }
+//  scanNodes(mainGroup, mainGroup, outerGroup, world)
 }
