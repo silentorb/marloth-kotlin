@@ -87,6 +87,6 @@ fun drawAbstractWorld(bounds: Bounds, canvas: Canvas, world: AbstractWorld) {
       canvas.outline(Vector4(0.6f, 0.5f, 0.5f, 0.5f), 3f)
   )
 
-  canvas.drawSolidCircle(getPosition(Vector2(-32.670635f,23.672432f)), 2f,
-      canvas.solid(Vector4(1f, 0.6f, 0.5f, 1f)))
+//  canvas.drawSolidCircle(getPosition(Vector2(-32.670635f,23.672432f)), 2f,
+//      canvas.solid(Vector4(1f, 0.6f, 0.5f, 1f)))
 }

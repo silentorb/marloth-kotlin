@@ -30,14 +30,13 @@ fun intersects(lineStart: Vector2, lineEnd: Vector2, circleCenter: Vector2, radi
 fun nodesIntersectOther(first: Node, second: Node, nodes: Sequence<Node>) =
     nodes
         .filter { it !== first && it !== second }
-        .any { intersects(first.position.xy, second.position.xy, it.position.xy, it.radius + tunnelPadding) }
+        .any { lineIntersectsCircle(first.position.xy, second.position.xy, it.position.xy, it.radius + tunnelPadding) }
 
 fun closeDeadEnd(node: Node, world: AbstractWorld) {
   val nodes = world.nodes.asSequence()
   val nextAvailableNode = nodes
       .filter { it !== node && !it.isConnected(node) }
       .sortedBy { getNodeDistance(node, it) }
-      .take(1)
       .filter { !nodesIntersectOther(node, it, node.getNeighbors()) }
       .firstOrNull()
 
@@ -48,5 +47,5 @@ fun closeDeadEnd(node: Node, world: AbstractWorld) {
 
 fun closeDeadEnds(world: AbstractWorld) {
   val deadEnds = world.nodes.filter { it.connections.size < 2 }.asSequence()
-  for (node in deadEnds.take(1)) closeDeadEnd(node, world)
+  for (node in deadEnds) closeDeadEnd(node, world)
 }
