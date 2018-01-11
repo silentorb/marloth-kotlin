@@ -29,6 +29,7 @@ class AbstractWorld(val boundary: WorldBoundary) {
     nodes.remove(node)
     for (connection in node.connections) {
       connection.getOther(node).connections.remove(connection)
+      connections.remove(connection)
     }
     node.connections.clear()
   }

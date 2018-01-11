@@ -5,17 +5,6 @@ import org.joml.minus
 import org.joml.plus
 import randomly.Dice
 
-//fun overlaps2D(node: Node, other: Node) = Intersectionf.intersectCircleCircle(
-//    node.position.x, node.position.y, node.radius,
-//    other.position.x, other.position.y, other.radius,
-//    Vector3()
-//)
-
-fun overlaps2D(first: Node, second: Node):Boolean {
-  val distance = getNodeDistance(first, second)
-  return distance < first.radius + second.radius
-}
-
 fun getOverlapping(nodes: List<Node>): List<Pair<Node, Node>> {
   val result = mutableListOf<Pair<Node, Node>>()
   for (node in nodes) {
@@ -37,16 +26,16 @@ fun <T> divide(sequence: Sequence<T>, filter: (T) -> Boolean) =
 
 fun areTooClose(first: Node, second: Node): Boolean {
   val distance = getNodeDistance(first, second)
-  return distance < first.radius || distance < second.radius
+  return distance < -first.radius && distance < -second.radius
 }
 
 fun handleOverlapping(world: AbstractWorld) {
   val overlapping = getOverlapping(world.nodes)
   val groups = divide(overlapping.asSequence(), { areTooClose(it.first, it.second) })
 
-//  for (pair in groups.first) world.removeNode(pair.first)
-
   for (pair in groups.second) world.connect(pair.first, pair.second, ConnectionType.union)
+
+  for (pair in groups.first) world.removeNode(pair.first)
 }
 
 class Generator(
@@ -73,7 +62,8 @@ class Generator(
   fun generate(): AbstractWorld {
     createNodes(20)
     handleOverlapping(world)
-//    unifyWorld(world)
+    unifyWorld(world)
+    closeDeadEnds(world)
     return world
   }
 }

@@ -2,9 +2,6 @@ package generation
 
 typealias NodeGroup = List<Node>
 
-fun getNodeDistance(first: Node, second: Node): Float =
-    Math.max(0f, first.position.distance(second.position) - first.radius - second.radius)
-
 data class NearestNodeResult(val node: Node, val distance: Float)
 
 fun getNeighborsByDistance(node: Node, nodes: Sequence<Node>) = nodes.asSequence()
@@ -69,5 +66,5 @@ fun unifyWorld(world: AbstractWorld) {
   val first = world.nodes.first()
   val mainGroup = listOf(first)
   val outerGroup = world.nodes.filter { it !== first }
-//  scanNodes(mainGroup, mainGroup, outerGroup, world)
+  scanNodes(mainGroup, mainGroup, outerGroup, world)
 }
