@@ -21,7 +21,7 @@ class Node(var position: Vector3, var radius: Float) {
 
   fun getNeighbors() = connections.asSequence().map { it.getOther(this) }
 
-  fun getConnection(other: Node) = connections.firstOrNull { it.second === other }
+  fun getConnection(other: Node) = connections.firstOrNull { it.first === other || it.second === other }
 
   fun isConnected(other: Node) = getConnection(other) != null
 }

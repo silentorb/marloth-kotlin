@@ -56,7 +56,12 @@ fun drawAbstractWorld(bounds: Bounds, canvas: Canvas, world: AbstractWorld) {
   val outline = canvas.outline(Vector4(0.3f, 0f, 0f, 0.8f), 3f)
   val scale = getScale(bounds, world.boundary)
   val offset = bounds.position + worldPadding
-  fun getPosition(node: Node) = offset + (node.position.xy - world.boundary.start.xy) * scale
+
+  fun getPosition(position: Vector2) = offset + (Vector2(position.x, - position.y)
+      - world.boundary.start.xy) * scale
+
+  fun getPosition(node: Node) = offset + (Vector2(node.position.x, - node.position.y)
+      - world.boundary.start.xy) * scale
 
   drawGrid(canvas, bounds, world.boundary, scale)
 
@@ -81,4 +86,7 @@ fun drawAbstractWorld(bounds: Bounds, canvas: Canvas, world: AbstractWorld) {
       world.boundary.dimensions.xy * scale,
       canvas.outline(Vector4(0.6f, 0.5f, 0.5f, 0.5f), 3f)
   )
+
+  canvas.drawSolidCircle(getPosition(Vector2(-32.670635f,23.672432f)), 2f,
+      canvas.solid(Vector4(1f, 0.6f, 0.5f, 1f)))
 }

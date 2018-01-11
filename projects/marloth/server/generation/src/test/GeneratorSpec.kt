@@ -1,8 +1,6 @@
-import generation.Node
-import generation.getOverlapping
-import generation.overlaps2D
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertSame
+import generation.*
+import junit.framework.TestCase.*
+import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.*
@@ -31,6 +29,25 @@ class GeneratorSpec : Spek({
         assertEquals(1, matches.size)
         assertSame(first, matches[0].first)
         assertSame(second, matches[0].second)
+      }
+    }
+
+    on("intersection between a line and a circle") {
+
+      it("should detect middle") {
+        assertTrue(isBetween(0f, 10f, 5f))
+        assertFalse(isBetween(0f, 10f, 11f))
+        assertTrue(isBetween(10f, -5f, 0f))
+        assertFalse(isBetween(10f, -5f, -150f))
+      }
+
+      it("sees that a line does not intersect a circle") {
+        val result = intersects(
+            Vector2(-27.357315f, 35.34888f),
+            Vector2(-31.243145f, 3.1939812f),
+            Vector2(-33.03736f, -7.435528f), 8.65439f)
+
+        assertFalse(result)
       }
     }
   }
