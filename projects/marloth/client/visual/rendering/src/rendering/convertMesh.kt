@@ -18,7 +18,7 @@ fun convertMesh(mesh: HalfEdgeMesh, vertexSchema: VertexSchema): SimpleMesh {
 
   for (polygon in mesh.faces) {
     query.each_edge(polygon, { edge ->
-      val vertex = edge.vertex!!
+      val vertex = edge.vertex
 
       // Position
       vertices.put(vertex.position)

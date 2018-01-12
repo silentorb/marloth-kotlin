@@ -1,19 +1,20 @@
 package lab
 
-import generation.AbstractWorld
-import generation.Generator
-import generation.Node
+import generation.*
 import mythic.bloom.*
 import mythic.drawing.Canvas
-import mythic.drawing.FillType
 import mythic.glowing.globalState
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
-import org.joml.plus
+import mythic.spatial.times
 import org.joml.xy
+import org.joml.plus
+import org.joml.minus
 import org.lwjgl.opengl.GL11
 import randomly.Dice
+
+val worldPadding = 20f // In screen units
 
 typealias BoxMap = Map<Box, Box>
 
@@ -44,10 +45,34 @@ fun drawBorder(bounds: Bounds, canvas: Canvas, color: Vector4) {
   canvas.drawSquare(bounds.position, bounds.dimensions, canvas.outline(color, 5f))
 }
 
-fun createLabLayout(world: AbstractWorld, screenDimensions: Vector2): LabLayout {
+typealias PositionFunction = (Vector2) -> Vector2
+
+//fun getPositionFunction(offset: Vector2, boundary: WorldBoundary, scale: Float): PositionFunction =
+//    { position: Vector2 -> offset + (Vector2(position.x, -position.y) - boundary.start.xy) * scale }
+
+fun getPositionFunction(offset: Vector2, boundary: WorldBoundary, scale: Float): PositionFunction {
+  return { position: Vector2 -> offset + (Vector2(position.x, -position.y) - boundary.start.xy) * scale }
+}
+
+fun drawGeneratedWorld(bounds: Bounds, canvas: Canvas, abstractWorld: AbstractWorld, structureWorld: StructureWorld) {
+  val scale = getScale(bounds, abstractWorld.boundary)
+  val offset = bounds.position + worldPadding
+  val getPosition: PositionFunction = getPositionFunction(offset, abstractWorld.boundary, scale)
+  drawGrid(canvas, bounds, abstractWorld.boundary, scale)
+  drawAbstractWorld(bounds, getPosition, canvas, abstractWorld)
+  drawStructureWorld(bounds, getPosition, canvas, structureWorld)
+
+  canvas.drawSquare(
+      offset,
+      abstractWorld.boundary.dimensions.xy * scale,
+      canvas.outline(Vector4(0.6f, 0.5f, 0.5f, 0.5f), 3f)
+  )
+}
+
+fun createLabLayout(abstractWorld: AbstractWorld, structureWorld: StructureWorld, screenDimensions: Vector2): LabLayout {
   val draw = { b: Bounds, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
   val drawWorld = { b: Bounds, c: Canvas ->
-    crop(b, c, { drawAbstractWorld(b, c, world) })
+    crop(b, c, { drawGeneratedWorld(b, c, abstractWorld, structureWorld) })
     draw(b, c)
   }
 
@@ -81,9 +106,9 @@ class MarlothLab {
       Vector3(-50f, -50f, -50f),
       Vector3(50f, 50f, 50f)
   )
-  val generator: Generator = Generator(abstractWorld, Dice(1))
+  val structureWorld = StructureWorld()
 
   init {
-    generator.generate()
+    generateWorld(abstractWorld, structureWorld, Dice(1))
   }
 }

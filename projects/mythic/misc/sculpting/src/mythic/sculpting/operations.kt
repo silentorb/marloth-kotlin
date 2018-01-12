@@ -80,7 +80,7 @@ class operations {
     fun clone_vertices(mesh: HalfEdgeMesh, face: Face): List<Vertex> {
       val result = Array<Vertex>(0, { Vertex(Vector3(0f, 0f, 0f)) })
       var i = 0
-      query.each_vertex(face, { vertex: Vertex -> result[i++] = mesh.add_vertex(vertex) })
+      query.each_vertex(face, { vertex: Vertex -> result[i++] = mesh.addVertex(vertex) })
       return result.toList()
     }
 

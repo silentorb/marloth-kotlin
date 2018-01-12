@@ -38,32 +38,42 @@ fun handleOverlapping(world: AbstractWorld) {
   for (pair in groups.first) world.removeNode(pair.first)
 }
 
-class Generator(
-    val world: AbstractWorld, val dice: Dice) {
+//class Generator(
+//    val abstractWorld: AbstractWorld,
+//    val structureWorld: StructureWorld,
+//    val dice: Dice) {
+//
+//}
 
-  fun createNode(): Node {
-    val radius = dice.getFloat(5f, 10f)
-    val start = world.boundary.start + radius
-    val end = world.boundary.end - radius
-    val node = Node(
-        Vector3(dice.getFloat(start.x, end.x), dice.getFloat(start.y, end.y), 0f),
-        radius
-    )
-    world.nodes.add(node)
-    return node
-  }
+fun createNode(abstractWorld: AbstractWorld, dice: Dice): Node {
+  val radius = dice.getFloat(5f, 10f)
+  val start = abstractWorld.boundary.start + radius
+  val end = abstractWorld.boundary.end - radius
+  val node = Node(
+      Vector3(dice.getFloat(start.x, end.x), dice.getFloat(start.y, end.y), 0f),
+      radius
+  )
+  abstractWorld.nodes.add(node)
+  return node
+}
 
-  fun createNodes(count: Int) {
-    for (i in 0..count) {
-      createNode()
-    }
+fun createNodes(count: Int, abstractWorld: AbstractWorld, dice: Dice) {
+  for (i in 0..count) {
+    createNode(abstractWorld, dice)
   }
+}
 
-  fun generate(): AbstractWorld {
-    createNodes(20)
-    handleOverlapping(world)
-    unifyWorld(world)
-    closeDeadEnds(world)
-    return world
-  }
+fun generateAbstract(abstractWorld: AbstractWorld, dice: Dice) {
+  createNodes(20, abstractWorld, dice)
+  handleOverlapping(abstractWorld)
+  unifyWorld(abstractWorld)
+  closeDeadEnds(abstractWorld)
+}
+
+//data class WorldBundle(val abstractWorld: AbstractWorld, val structureWorld: StructureWorld)
+
+fun generateWorld(abstractWorld: AbstractWorld, structureWorld: StructureWorld, dice: Dice) {
+  generateAbstract(abstractWorld, dice)
+  generateStructure(abstractWorld, structureWorld)
+//  return WorldBundle(abstractWorld, structureWorld)
 }

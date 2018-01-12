@@ -1,5 +1,7 @@
 package mythic.sculpting
 
+import mythic.spatial.Vector3
+
 class HalfEdgeMesh {
   val vertices = ArrayList<Vertex>()
   val edges = ArrayList<Edge>()
@@ -14,10 +16,12 @@ class HalfEdgeMesh {
 //    return vertex
 //  }
 
-  fun add_vertex(vertex: Vertex): Vertex {
+  fun addVertex(vertex: Vertex): Vertex {
     vertices.add(vertex)
     return vertex
   }
+
+  fun addVertex(vector: Vector3) = addVertex(Vertex(vector))
 
   fun add_vertices(new_vertices: List<Vertex>) {
     vertices.addAll(new_vertices)

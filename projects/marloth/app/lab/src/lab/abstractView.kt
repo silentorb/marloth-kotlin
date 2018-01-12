@@ -13,7 +13,6 @@ import org.joml.minus
 import org.joml.plus
 import org.joml.xy
 
-private val worldPadding = 20f // In screen units
 private val gridSpacing = 10f // In world units
 
 fun getScale(bounds: Bounds, worldBoundary: WorldBoundary): Float {
@@ -51,23 +50,23 @@ fun drawGrid(canvas: Canvas, bounds: Bounds, worldBoundary: WorldBoundary, scale
   }
 }
 
-fun drawAbstractWorld(bounds: Bounds, canvas: Canvas, world: AbstractWorld) {
+fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, world: AbstractWorld) {
   val solid = canvas.solid(Vector4(0.7f, 0.6f, 0.5f, 0.6f))
   val outline = canvas.outline(Vector4(0.3f, 0f, 0f, 0.8f), 3f)
   val scale = getScale(bounds, world.boundary)
-  val offset = bounds.position + worldPadding
+//  val offset = bounds.position + worldPadding
 
-  fun getPosition(position: Vector2) = offset + (Vector2(position.x, - position.y)
-      - world.boundary.start.xy) * scale
+//  fun getPosition(position: Vector2) = offset + (Vector2(position.x, -position.y)
+//      - world.boundary.start.xy) * scale
 
-  fun getPosition(node: Node) = offset + (Vector2(node.position.x, - node.position.y)
-      - world.boundary.start.xy) * scale
+  fun getNodePosition(node: Node) = getPosition(node.position.xy)
 
-  drawGrid(canvas, bounds, world.boundary, scale)
+//  fun getPosition(node: Node) = offset + (Vector2(node.position.x, -node.position.y)
+//      - world.boundary.start.xy) * scale
 
   for (node in world.nodes) {
     val radius = node.radius * scale
-    val position = getPosition(node)
+    val position = getNodePosition(node)
     canvas.drawSolidCircle(position, radius, solid)
     canvas.drawCircle(position, radius, outline)
   }
@@ -78,14 +77,8 @@ fun drawAbstractWorld(bounds: Bounds, canvas: Canvas, world: AbstractWorld) {
     else
       Vector4(0f, 0.5f, 0f, 0.8f)
 
-    canvas.drawLine(getPosition(connection.first), getPosition(connection.second), color, 3f)
+    canvas.drawLine(getNodePosition(connection.first), getNodePosition(connection.second), color, 3f)
   }
-
-  canvas.drawSquare(
-      offset,
-      world.boundary.dimensions.xy * scale,
-      canvas.outline(Vector4(0.6f, 0.5f, 0.5f, 0.5f), 3f)
-  )
 
 //  canvas.drawSolidCircle(getPosition(Vector2(-32.670635f,23.672432f)), 2f,
 //      canvas.solid(Vector4(1f, 0.6f, 0.5f, 1f)))

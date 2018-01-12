@@ -55,7 +55,7 @@ class Client(val window: Long) {
   fun update(scene: Scene): Commands {
     val windowInfo = getWindowInfo(window)
     val dimensions = Vector2(windowInfo.dimensions.x.toFloat(), windowInfo.dimensions.y.toFloat())
-    val labLayout = createLabLayout(marlothLab!!.generator.world, dimensions)
+    val labLayout = createLabLayout(marlothLab!!.abstractWorld, marlothLab.structureWorld, dimensions)
     renderer.render(scene, windowInfo, labLayout)
     inputState = getCurrentInputState(config.input.bindings, deviceHandlers, inputState)
     val commands = gatherCommands(inputState)
