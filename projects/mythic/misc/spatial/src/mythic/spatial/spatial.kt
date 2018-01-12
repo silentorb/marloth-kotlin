@@ -47,3 +47,5 @@ fun FloatBuffer.put(value: Vector4) {
 }
 
 val Pi = PI.toFloat()
+
+fun Vector2.toVector3() = Vector3(x, y, 0f)
