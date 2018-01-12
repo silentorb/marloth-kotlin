@@ -5,10 +5,10 @@ class query {
 
     fun vertex_count(face: Face): Int {
       var result = 1
-      var edge = face.edge.next
+      var edge = face.edge!!.next
 
       while (edge !== face.edge) {
-        edge = edge.next
+        edge = edge!!.next
         ++result
       }
 
@@ -26,7 +26,7 @@ class query {
     inline fun <T>each_edge(face: Face, action: (Edge) -> T) {
       var edge = face.edge
       do {
-        action(edge)
+        action(edge!!)
         edge = edge.next
       } while (edge !== face.edge)
     }

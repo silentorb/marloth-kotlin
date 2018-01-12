@@ -16,7 +16,7 @@ class operations {
 //    }
 
     fun set_opposite_edge(mesh: HalfEdgeMesh, edge: Edge) {
-      val opposite = mesh.get_opposite_edge(edge.next.vertex, edge.vertex)
+      val opposite = mesh.get_opposite_edge(edge.next!!.vertex, edge.vertex)
       if (opposite != null) {
         edge.opposite = opposite
         opposite.opposite = edge
@@ -24,7 +24,7 @@ class operations {
     }
 
     fun create_edge(mesh: HalfEdgeMesh, face: Face, vertex: Vertex, next: Edge): Edge {
-      val edge = Edge(vertex, face, next)
+      val edge = Edge(vertex, next, null, null, face)
       mesh.add_edge(edge)
       set_opposite_edge(mesh, edge)
       return edge
@@ -35,8 +35,14 @@ class operations {
       first.face = face
       second.face = face
 
-      first.next = create_edge(mesh, face, first.opposite.vertex, second)
-      second.next = create_edge(mesh, face, second.opposite.vertex, first)
+      fun create(a: Edge, b: Edge) {
+        val temp = create_edge(mesh, face, a.opposite!!.vertex, b)
+        a.next = temp
+        temp.previous = a
+      }
+
+      create(first, second)
+      create(second, first)
 
       return face
     }
@@ -54,7 +60,7 @@ class operations {
       for (original_edge in original_edges) {
         val new_edge = new_edges.next()
         val new_face = mesh.create_face()
-        val opposite_new_edge = Edge(new_edge.next.vertex, face, null, new_edge)
+        val opposite_new_edge = Edge(new_edge.next!!.vertex, null, null, new_edge, face)
         mesh.add_edge(opposite_new_edge)
         new_edge.opposite = opposite_new_edge
         result.add(fill_parallel_edges(mesh, new_face, original_edge, opposite_new_edge))

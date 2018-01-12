@@ -51,7 +51,7 @@ class HalfEdgeMesh {
 
   fun get_opposite_edge(first: Vertex, second: Vertex): Edge? {
     for (edge in edges) {
-      if (edge.vertex === first && edge.next.vertex === second) {
+      if (edge.vertex === first && edge.next != null && edge.next!!.vertex === second) {
         return edge
       }
     }
@@ -59,22 +59,24 @@ class HalfEdgeMesh {
   }
 
   fun replace_face_vertices(face: Face, initializer: List<Vertex>) {
-    val first = Edge(initializer.first(), face)
+    val first = Edge(initializer.first(), null, null, null, face)
     face.edge = first
     add_edge(first)
     var previous = first
     first.vertex.edge = first
 
     for (vertex in initializer.drop(1)) {
-      val edge = Edge(vertex, face)
+      val edge = Edge(vertex, null, null, null, face)
       add_edge(edge)
       vertex.edge = edge
       previous.next = edge
+      edge.previous = previous
       operations.set_opposite_edge(this, previous)
       previous = edge
     }
 
     previous.next = first
+    first.previous = previous
     operations.set_opposite_edge(this, previous)
   }
 

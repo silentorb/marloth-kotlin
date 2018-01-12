@@ -4,33 +4,17 @@ import mythic.spatial.Vector3
 
 class Vertex(
     var position: Vector3,
-    edge: Edge? = null
-) {
-  private var _edge: Edge? = edge
-  var edge: Edge
-    get() = _edge!!
-    set(value) {
-      _edge = value
-    }
-}
+    var edge: Edge? = null
+)
 
 class Edge(
     var vertex: Vertex,
-    var face: Face,
-    next: Edge? = null,
-    opposite: Edge? = null
-) {
-  var next: Edge = next ?: this
-  var opposite: Edge = opposite ?: this
-}
+    var next: Edge? = null,
+    var previous: Edge? = null,
+    var opposite: Edge? = null,
+    var face: Face? = null
+)
 
 class Face(
-    edge: Edge? = null
-) {
-  private var _edge: Edge? = edge
-  var edge: Edge
-    get() = _edge!!
-    set(value) {
-      _edge = value
-    }
-}
+    var edge: Edge?
+)
