@@ -70,16 +70,21 @@ fun lineIntersectsCircle(lineStart: Vector2, lineEnd: Vector2, circleCenter: Vec
   }
 }
 
-fun forkVector(point: Vector2, direction: Vector2, length: Float): Pair<Vector2, Vector2> {
+fun forkVector(point: Vector2, direction: Vector2, length: Float): List<Vector2> {
   val perpendicular = Vector2(direction.y, -direction.x) * length
-  return Pair(point + perpendicular, point - perpendicular)
+  return listOf(point + perpendicular, point - perpendicular)
 }
 
-fun circleIntersection(aPoint: Vector2, aRadius: Float, bPoint: Vector2, bRadius: Float): Pair<Vector2, Vector2> {
+fun circleIntersection(aPoint: Vector2, aRadius: Float, bPoint: Vector2, bRadius: Float): List<Vector2> {
   val distance = aPoint.distance(bPoint)
   val aLength = (aRadius * aRadius - bRadius * bRadius + distance * distance) / (distance * 2)
   val direction = (bPoint - aPoint).normalize()
   val center = aPoint + direction.normalize() * aLength
   val pLength = Math.sqrt((aRadius * aRadius - aLength * aLength).toDouble()).toFloat()
   return forkVector(center, direction, pLength)
+}
+
+fun getAngle(first: Vector2, second: Vector2): Float {
+  val third = second - first
+  return Math.atan2(third.y.toDouble(), third.x.toDouble()).toFloat()
 }

@@ -3,34 +3,13 @@ package generation
 import mythic.sculpting.HalfEdgeMesh
 import mythic.spatial.times
 import mythic.spatial.toVector3
+import mythic.spatial.Vector3
 import org.joml.minus
 import org.joml.plus
 import org.joml.xy
 
-fun createDoorway(node: Node, other: Node, mesh: HalfEdgeMesh) {
-  val direction = (other.position - node.position).xy.normalize()
-  val point = node.position.xy + direction * node.radius
-  val points = forkVector(point, direction, 1.5f)
-  mesh.addVertex(points.first.toVector3())
-  mesh.addVertex(points.second.toVector3())
-}
-
-fun createVerticesForOverlappingCircles(node: Node, other: Node, mesh: HalfEdgeMesh) {
-  val points = circleIntersection(node.position.xy, node.radius, other.position.xy, other.radius)
-  mesh.addVertex(points.first.toVector3())
-  mesh.addVertex(points.second.toVector3())
-}
-
-fun createNodeDoorways(node: Node, mesh:HalfEdgeMesh) {
-  for (connection in node.connections.filter { it.type != ConnectionType.union }) {
-    val other = connection.getOther(node)
-    createDoorway(node, other, mesh)
-  }
-}
-
-fun createSingleNodeStructure(node: Node, mesh: HalfEdgeMesh) {
-  createNodeDoorways(node, mesh)
-}
+data class Corner(val position: Vector3, val angle: Float, val isDoorway: Boolean = false)
+data class TempSector(val corners: List<Corner>, val nodes: List<Node>)
 
 val isInCluster = { node: Node ->
   node.connections.any { it.type == ConnectionType.union }
@@ -68,16 +47,44 @@ fun gatherClusters(allNodes: List<Node>): Clusters {
   return clusters
 }
 
+fun createCorner(position: Vector3, node: Node, isDoorway: Boolean = false) =
+    Corner(position, getAngle(node.position.xy, position.xy), isDoorway)
 
-fun createClusterStructure(cluster: Cluster, mesh: HalfEdgeMesh) {
-  val unions = cluster.map { it.connections.filter { it.type == ConnectionType.union } }.flatten().distinct()
+fun createDoorway(node: Node, other: Node): List<Corner> {
+  val direction = (other.position - node.position).xy.normalize()
+  val point = node.position.xy + direction * node.radius
+  return forkVector(point, direction, 1.5f)
+      .map { createCorner(it.toVector3(), node) }
 
-  for (connection in unions) {
-    createVerticesForOverlappingCircles(connection.first, connection.second, mesh)
-  }
+}
 
-  for (node in cluster) {
-    createNodeDoorways(node, mesh)
+fun createVerticesForOverlappingCircles(node: Node, other: Node): List<Corner> =
+    circleIntersection(node.position.xy, node.radius, other.position.xy, other.radius)
+        .map { createCorner(it.toVector3(), node) }
+
+fun createNodeDoorways(node: Node) =
+    node.connections
+        .filter { it.type != ConnectionType.union }
+        .map { createDoorway(node, it.getOther(node)) }
+        .flatten()
+
+fun createSingleNodeStructure(node: Node): TempSector =
+    TempSector(createNodeDoorways(node), listOf(node))
+
+fun getClusterUnions(cluster: Cluster): List<Connection> =
+    cluster.flatMap { it.connections.filter { it.type == ConnectionType.union } }.distinct()
+
+fun createClusterStructure(cluster: Cluster) =
+    TempSector(
+        getClusterUnions(cluster)
+            .flatMap { createVerticesForOverlappingCircles(it.first, it.second) }
+            .plus(cluster.flatMap { createNodeDoorways(it) }),
+        cluster
+    )
+
+fun skinSector(tempSector: TempSector, mesh: HalfEdgeMesh) {
+  for (corner in tempSector.corners) {
+    mesh.addVertex(corner.position)
   }
 }
 
@@ -85,8 +92,9 @@ fun generateStructure(abstractWorld: AbstractWorld, structureWorld: StructureWor
   val mesh = structureWorld.mesh
 
   val singleNodes = abstractWorld.nodes.filter { !isInCluster(it) }
-  singleNodes.forEach { createSingleNodeStructure(it, mesh) }
-
   val clusters = gatherClusters(abstractWorld.nodes)
-  clusters.forEach { createClusterStructure(it, mesh) }
+  val tempSectors = singleNodes.map { createSingleNodeStructure(it) }
+      .plus(clusters.map { createClusterStructure(it) })
+
+  tempSectors.forEach { skinSector(it, mesh) }
 }
