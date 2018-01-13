@@ -2,6 +2,7 @@ package generation
 
 import mythic.sculpting.HalfEdgeMesh
 import mythic.spatial.Vector2
+import mythic.spatial.Vector3
 import mythic.spatial.times
 import mythic.spatial.toVector3
 import org.joml.minus
@@ -87,4 +88,11 @@ fun circleIntersection(aPoint: Vector2, aRadius: Float, bPoint: Vector2, bRadius
 fun getAngle(first: Vector2, second: Vector2): Float {
   val third = second - first
   return Math.atan2(third.y.toDouble(), third.x.toDouble()).toFloat()
+}
+
+fun project2D(angle: Float, distance: Float): Vector2 {
+  return Vector2(
+      Math.cos(angle.toDouble()).toFloat() * distance,
+      Math.sin(angle.toDouble()).toFloat() * distance
+  )
 }

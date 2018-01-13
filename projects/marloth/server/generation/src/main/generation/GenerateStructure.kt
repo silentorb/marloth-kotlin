@@ -1,6 +1,7 @@
 package generation
 
 import mythic.sculpting.HalfEdgeMesh
+import mythic.spatial.Pi
 import mythic.spatial.times
 import mythic.spatial.toVector3
 import mythic.spatial.Vector3
@@ -11,41 +12,8 @@ import org.joml.xy
 data class Corner(val position: Vector3, val angle: Float, val isDoorway: Boolean = false)
 data class TempSector(val corners: List<Corner>, val nodes: List<Node>)
 
-val isInCluster = { node: Node ->
-  node.connections.any { it.type == ConnectionType.union }
-}
-
-typealias Cluster = MutableList<Node>
-typealias Clusters = MutableList<Cluster>
-
-fun createCluster(clusters: Clusters): Cluster {
-  val cluster = mutableListOf<Node>()
-  clusters.add(cluster)
-  return cluster
-}
-
-fun gatherClusters(allNodes: List<Node>): Clusters {
-  val nodes = allNodes.filter(isInCluster)
-  val clusters = mutableListOf<Cluster>()
-
-  fun getCluster(node: Node) = clusters.filter { it.any { it === node } }
-      .firstOrNull()
-
-  for (node in nodes) {
-    val cluster = getCluster(node) ?: createCluster(clusters)
-    for (connection in node.connections.filter { it.type == ConnectionType.union }) {
-      val other = connection.getOther(node)
-      val otherCluster = getCluster(other)
-      if (otherCluster == null) {
-        cluster.add(other)
-      } else if (otherCluster !== cluster) {
-        cluster.plusAssign(otherCluster)
-        clusters.remove(otherCluster)
-      }
-    }
-  }
-  return clusters
-}
+//fun radialSequence(corners: List<Corner>) =
+//    corners.asSequence().plus(Corner(corners.first().position, corners.first().angle + Pi * 2))
 
 fun createCorner(position: Vector3, node: Node, isDoorway: Boolean = false) =
     Corner(position, getAngle(node.position.xy, position.xy), isDoorway)
@@ -55,7 +23,6 @@ fun createDoorway(node: Node, other: Node): List<Corner> {
   val point = node.position.xy + direction * node.radius
   return forkVector(point, direction, 1.5f)
       .map { createCorner(it.toVector3(), node) }
-
 }
 
 fun createVerticesForOverlappingCircles(node: Node, other: Node): List<Corner> =
@@ -68,8 +35,51 @@ fun createNodeDoorways(node: Node) =
         .map { createDoorway(node, it.getOther(node)) }
         .flatten()
 
+data class CornerGap(val first: Corner, val second: Corner, val length: Float)
+
+fun getGaps(corners: List<Corner>, minAngle: Float): List<CornerGap> {
+  val result: MutableList<CornerGap> = mutableListOf()
+  val first = corners.first()
+  var previous = first
+  for (next in corners.drop(1)) {
+    val length = next.angle - previous.angle
+    if (length > minAngle) {
+      result.add(CornerGap(previous, next, length))
+    }
+    previous = next
+  }
+  val length = first.angle + Pi - previous.angle
+  if (length > minAngle) {
+    result.add(CornerGap(previous, first, length))
+  }
+  return result
+}
+
+fun fillCornerGaps(unorderedCorners: List<Corner>, node: Node): List<Corner> {
+  val corners = unorderedCorners.sortedBy { it.angle }
+  val minAngle = Pi * 0.3f
+  val gaps = getGaps(corners, minAngle)
+  if (gaps.size == 1)
+    return corners
+  val newCorners = mutableListOf<Corner>()
+  for (gap in gaps) {
+    val count = (gap.length / minAngle).toInt()
+    val increment = gap.length / count
+    for (i in 0..count) {
+      val angle = gap.first.angle + increment * i
+      val position = project2D(angle, node.radius).toVector3() + node.position
+      newCorners.add(Corner(position, angle))
+    }
+  }
+
+  return corners.plus(newCorners).sortedBy { it.angle }
+}
+
 fun createSingleNodeStructure(node: Node): TempSector =
-    TempSector(createNodeDoorways(node), listOf(node))
+    TempSector(
+        fillCornerGaps(createNodeDoorways(node), node),
+        listOf(node)
+    )
 
 fun getClusterUnions(cluster: Cluster): List<Connection> =
     cluster.flatMap { it.connections.filter { it.type == ConnectionType.union } }.distinct()
@@ -85,6 +95,7 @@ fun createClusterStructure(cluster: Cluster) =
 fun skinSector(tempSector: TempSector, mesh: HalfEdgeMesh) {
   for (corner in tempSector.corners) {
     mesh.addVertex(corner.position)
+    println(corner.angle)
   }
 }
 
