@@ -1,9 +1,17 @@
 package generation
 
+import mythic.sculpting.HalfEdgeMesh
 import mythic.spatial.Vector2
 import mythic.spatial.times
+import mythic.spatial.toVector3
 import org.joml.minus
 import org.joml.plus
+
+fun <T> divide(sequence: Sequence<T>, filter: (T) -> Boolean) =
+    Pair(sequence.filter(filter), sequence.filter { !filter(it) })
+
+fun <T> divide(sequence: List<T>, filter: (T) -> Boolean) =
+    Pair(sequence.filter(filter), sequence.filter { !filter(it) })
 
 fun getNodeDistance(first: Node, second: Node): Float =
     first.position.distance(second.position) - first.radius - second.radius
@@ -69,19 +77,9 @@ fun forkVector(point: Vector2, direction: Vector2, length: Float): Pair<Vector2,
 
 fun circleIntersection(aPoint: Vector2, aRadius: Float, bPoint: Vector2, bRadius: Float): Pair<Vector2, Vector2> {
   val distance = aPoint.distance(bPoint)
-  val aLength = (aRadius * aRadius - bRadius * bRadius + distance * 2) / (distance * 2)
+  val aLength = (aRadius * aRadius - bRadius * bRadius + distance * distance) / (distance * 2)
   val direction = (bPoint - aPoint).normalize()
   val center = aPoint + direction.normalize() * aLength
   val pLength = Math.sqrt((aRadius * aRadius - aLength * aLength).toDouble()).toFloat()
   return forkVector(center, direction, pLength)
-  /*
-  a2 + h2 = r02 and b2 + h2 = r12
-
-Using d = a + b we can solve for a,
-
-a = (r02 - r12 + d2 ) / (2 d)
-
-It can be readily shown that this reduces to r0 when the two circles touch at one point, ie: d = r0 + r1
-Solve for h by substituting a into the first equation, h2 = r02 - a2
-   */
 }

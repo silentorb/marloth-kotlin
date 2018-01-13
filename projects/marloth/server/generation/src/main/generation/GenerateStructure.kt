@@ -21,17 +21,72 @@ fun createVerticesForOverlappingCircles(node: Node, other: Node, mesh: HalfEdgeM
   mesh.addVertex(points.second.toVector3())
 }
 
-fun createNodeStructure(node: Node, mesh: HalfEdgeMesh) {
-  for (connection in node.connections) {
+fun createNodeDoorways(node: Node, mesh:HalfEdgeMesh) {
+  for (connection in node.connections.filter { it.type != ConnectionType.union }) {
     val other = connection.getOther(node)
-    if (connection.type != ConnectionType.union) {
-      createDoorway(node, other, mesh)
-    } else {
-      createVerticesForOverlappingCircles(node, other, mesh)
+    createDoorway(node, other, mesh)
+  }
+}
+
+fun createSingleNodeStructure(node: Node, mesh: HalfEdgeMesh) {
+  createNodeDoorways(node, mesh)
+}
+
+val isInCluster = { node: Node ->
+  node.connections.any { it.type == ConnectionType.union }
+}
+
+typealias Cluster = MutableList<Node>
+typealias Clusters = MutableList<Cluster>
+
+fun createCluster(clusters: Clusters): Cluster {
+  val cluster = mutableListOf<Node>()
+  clusters.add(cluster)
+  return cluster
+}
+
+fun gatherClusters(allNodes: List<Node>): Clusters {
+  val nodes = allNodes.filter(isInCluster)
+  val clusters = mutableListOf<Cluster>()
+
+  fun getCluster(node: Node) = clusters.filter { it.any { it === node } }
+      .firstOrNull()
+
+  for (node in nodes) {
+    val cluster = getCluster(node) ?: createCluster(clusters)
+    for (connection in node.connections.filter { it.type == ConnectionType.union }) {
+      val other = connection.getOther(node)
+      val otherCluster = getCluster(other)
+      if (otherCluster == null) {
+        cluster.add(other)
+      } else if (otherCluster !== cluster) {
+        cluster.plusAssign(otherCluster)
+        clusters.remove(otherCluster)
+      }
     }
+  }
+  return clusters
+}
+
+
+fun createClusterStructure(cluster: Cluster, mesh: HalfEdgeMesh) {
+  val unions = cluster.map { it.connections.filter { it.type == ConnectionType.union } }.flatten().distinct()
+
+  for (connection in unions) {
+    createVerticesForOverlappingCircles(connection.first, connection.second, mesh)
+  }
+
+  for (node in cluster) {
+    createNodeDoorways(node, mesh)
   }
 }
 
 fun generateStructure(abstractWorld: AbstractWorld, structureWorld: StructureWorld) {
-  abstractWorld.nodes.forEach { createNodeStructure(it, structureWorld.mesh) }
+  val mesh = structureWorld.mesh
+
+  val singleNodes = abstractWorld.nodes.filter { !isInCluster(it) }
+  singleNodes.forEach { createSingleNodeStructure(it, mesh) }
+
+  val clusters = gatherClusters(abstractWorld.nodes)
+  clusters.forEach { createClusterStructure(it, mesh) }
 }

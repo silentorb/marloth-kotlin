@@ -31,7 +31,7 @@ fun createWindow(): Long {
   glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE) // the window will be resizable
 //  val pid = ProcessHandle.current().getPid()
 
-  val window = glfwCreateWindow(800, 600, "Marloth", NULL, NULL)
+  val window = glfwCreateWindow(1200, 800, "Marloth", NULL, NULL)
   if (window == NULL)
     throw RuntimeException("Failed to create the GLFW window")
 

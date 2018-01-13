@@ -8,7 +8,7 @@ import mythic.spatial.Vector4
 import org.joml.xy
 
 fun drawVertices(bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, mesh: HalfEdgeMesh) {
-  val solid = canvas.solid(Vector4(1f, 0.6f, 0.7f, 1f))
+  val solid = canvas.solid(Vector4(1f, 0.6f, 0.0f, 1f))
   for (vertex in mesh.vertices) {
     canvas.drawSolidCircle(getPosition(vertex.position.xy), 3f, solid)
   }

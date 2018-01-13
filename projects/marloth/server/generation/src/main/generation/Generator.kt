@@ -21,9 +21,6 @@ fun getOverlapping(nodes: List<Node>): List<Pair<Node, Node>> {
   return result
 }
 
-fun <T> divide(sequence: Sequence<T>, filter: (T) -> Boolean) =
-    Pair(sequence.filter(filter), sequence.filter { !filter(it) })
-
 fun areTooClose(first: Node, second: Node): Boolean {
   val distance = getNodeDistance(first, second)
   return distance < -first.radius && distance < -second.radius
