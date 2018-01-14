@@ -5,8 +5,10 @@ import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.times
 import mythic.spatial.toVector3
+import org.joml.div
 import org.joml.minus
 import org.joml.plus
+import org.joml.xy
 
 fun <T> divide(sequence: Sequence<T>, filter: (T) -> Boolean) =
     Pair(sequence.filter(filter), sequence.filter { !filter(it) })
@@ -90,9 +92,32 @@ fun getAngle(first: Vector2, second: Vector2): Float {
   return Math.atan2(third.y.toDouble(), third.x.toDouble()).toFloat()
 }
 
+fun getAngle(node: Node, second: Vector3) = getAngle(node.position.xy, second.xy)
+
 fun project2D(angle: Float, distance: Float): Vector2 {
   return Vector2(
       Math.cos(angle.toDouble()).toFloat() * distance,
       Math.sin(angle.toDouble()).toFloat() * distance
   )
 }
+
+fun <T> toPairs(corners: Sequence<T>): List<Pair<T, T>> {
+  val result: MutableList<Pair<T, T>> = mutableListOf()
+  var previous = corners.first()
+  for (next in corners.drop(1)) {
+    result.add(Pair(previous, next))
+    previous = next
+  }
+  return result
+}
+
+fun isInsideCircle(point: Vector2, center: Vector2, radius: Float): Boolean {
+  val a = point.x - center.x
+  val b = point.y - center.y
+  return a * a + b * b < radius * radius
+}
+
+fun isInsideNode(point: Vector2, node: Node) = isInsideCircle(point, node.position.xy, node.radius)
+
+fun getCenter(points: List<Vector2>): Vector2 =
+    points.reduce { a, b -> a + b } / points.size.toFloat()

@@ -37,8 +37,8 @@ class HalfEdgeMesh {
 
   fun add_face(face_vertices: List<Vertex>): Face {
     add_vertices(face_vertices)
-    val face = create_face()
-    replace_face_vertices(face, face_vertices)
+    val face = createFace()
+    replaceFaceVertices(face, face_vertices)
     return face
   }
 
@@ -47,7 +47,7 @@ class HalfEdgeMesh {
 //    return add_face(face_vertices)
 //  }
 
-  fun create_face(): Face {
+  fun createFace(): Face {
     val face = Face(null)
     faces.add(face)
     return face
@@ -62,7 +62,7 @@ class HalfEdgeMesh {
     return null
   }
 
-  fun replace_face_vertices(face: Face, initializer: List<Vertex>) {
+  fun replaceFaceVertices(face: Face, initializer: List<Vertex>) {
     val first = Edge(initializer.first(), null, null, null, face)
     face.edge = first
     add_edge(first)

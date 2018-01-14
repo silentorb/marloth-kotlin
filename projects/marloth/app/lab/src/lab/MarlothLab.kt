@@ -59,7 +59,7 @@ fun drawGeneratedWorld(bounds: Bounds, canvas: Canvas, abstractWorld: AbstractWo
   val offset = bounds.position + worldPadding
   val getPosition: PositionFunction = getPositionFunction(offset, abstractWorld.boundary, scale)
   drawGrid(canvas, bounds, abstractWorld.boundary, scale)
-  drawAbstractWorld(bounds, getPosition, canvas, abstractWorld)
+//  drawAbstractWorld(bounds, getPosition, canvas, abstractWorld)
   drawStructureWorld(bounds, getPosition, canvas, structureWorld)
 
   canvas.drawSquare(
