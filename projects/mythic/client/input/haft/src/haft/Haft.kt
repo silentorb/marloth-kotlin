@@ -4,7 +4,7 @@ import commanding.Command
 import commanding.CommandLifetime
 import commanding.CommandType
 import commanding.Commands
-import org.lwjgl.glfw.GLFW.*
+import mythic.platforming.Input
 
 data class TriggerState(
     val lifetime: CommandLifetime,
@@ -30,21 +30,16 @@ class UnusedDeviceHandler() : DeviceHandler {
   override fun getState(trigger: Int, previousState: TriggerState?): TriggerState? = TriggerState(CommandLifetime.end, 0f)
 }
 
-class KeyboardDeviceHandler(val window: Long) : DeviceHandler {
+class KeyboardDeviceHandler(val input: Input) : DeviceHandler {
 
   override fun getState(trigger: Int, previousState: TriggerState?): TriggerState? {
-    val state = glfwGetKey(window, trigger)
-    if (state == GLFW_PRESS)
+    if (input.isKeyPressed(trigger))
       return TriggerState(CommandLifetime.pressed, 1f)
 
     if (previousState != null && previousState.lifetime == CommandLifetime.pressed)
       return TriggerState(CommandLifetime.end, 1f)
 
     return null
-  }
-
-  init {
-    glfwSetInputMode(window, GLFW_STICKY_KEYS, 1)
   }
 }
 
@@ -65,8 +60,8 @@ fun gatherCommands(state: InputState): Commands {
 //  return gatherCommands(currentState)
 //}
 
-fun createDeviceHandlers(window: Long): List<DeviceHandler> {
+fun createDeviceHandlers(input: Input): List<DeviceHandler> {
   return listOf(
-      KeyboardDeviceHandler(window)
+      KeyboardDeviceHandler(input)
   )
 }

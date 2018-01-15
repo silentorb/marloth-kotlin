@@ -6,6 +6,7 @@ import mythic.drawing.Canvas
 import mythic.drawing.createDrawingMeshes
 import mythic.drawing.getUnitScaling
 import mythic.glowing.Glow
+import mythic.platforming.WindowInfo
 import mythic.spatial.Matrix
 import mythic.spatial.Vector2
 import mythic.typography.loadFonts
@@ -14,8 +15,6 @@ import scenery.Scene
 import mythic.spatial.Vector4
 import mythic.typography.FontLoadInfo
 import mythic.typography.TextConfiguration
-
-data class WindowInfo(val dimensions: Vector2i)
 
 fun gatherEffectsData(windowInfo: WindowInfo, scene: Scene): EffectsData {
   return EffectsData(
@@ -30,7 +29,7 @@ fun renderScene(scene: Scene, painters: Painters, effects: Effects) {
   }
 }
 
-class Renderer(window: Long) {
+class Renderer {
   val glow = Glow()
   val shaders = createShaders()
   val vertexSchemas = createVertexSchemas()

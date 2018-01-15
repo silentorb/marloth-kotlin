@@ -1,4 +1,4 @@
-package clienting
+package marloth.clienting
 
 import commanding.CommandType
 import haft.Binding

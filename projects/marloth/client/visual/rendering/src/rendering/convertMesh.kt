@@ -13,7 +13,6 @@ fun convertMesh(mesh: HalfEdgeMesh, vertexSchema: VertexSchema): SimpleMesh {
   val vertices = BufferUtils.createFloatBuffer(vertex_count * vertexSchema.floatSize)
   val offsets = BufferUtils.createIntBuffer(mesh.faces.size)
   val counts = BufferUtils.createIntBuffer(mesh.faces.size)
-  var i = 0
   var offset = 0
 
   for (polygon in mesh.faces) {

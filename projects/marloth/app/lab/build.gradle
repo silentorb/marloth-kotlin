@@ -1,3 +1,8 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
-requires('spatial', 'drawing', 'bloom', 'generation')
+dependencies {
+    compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0"
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.10'
+}
+
+requires 'spatial', 'drawing', 'bloom', 'generation'

@@ -1,11 +1,4 @@
 
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
-dependencies {
-    compile "org.lwjgl:lwjgl:${lwjglVersion}"
-    compile "org.lwjgl:lwjgl:${lwjglVersion}:$lwjglNatives"
-    compile "org.lwjgl:lwjgl-glfw:$lwjglVersion"
-    compile "org.lwjgl:lwjgl-glfw:$lwjglVersion:$lwjglNatives"
-}
-
-requires('commanding')
+requires('commanding', 'platforming')

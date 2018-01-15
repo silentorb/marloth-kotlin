@@ -1,4 +1,4 @@
-package clienting
+package marloth.clienting
 
 import commanding.Command
 import commanding.CommandLifetime
@@ -10,25 +10,12 @@ import haft.gatherCommands
 import haft.getCurrentInputState
 import lab.MarlothLab
 import lab.createLabLayout
+import mythic.platforming.Platform
 import mythic.spatial.Vector2
-import org.joml.Vector2i
-import org.lwjgl.glfw.GLFW.glfwGetWindowSize
-import org.lwjgl.system.MemoryStack
 import rendering.Renderer
-import rendering.WindowInfo
 import scenery.CameraMode
 import scenery.Scene
 import scenery.Screen
-
-fun getWindowInfo(window: Long): WindowInfo {
-  MemoryStack.stackPush().use { stack ->
-    val width = stack.mallocInt(1)
-    val height = stack.mallocInt(1)
-    glfwGetWindowSize(window, width, height)
-
-    return WindowInfo(Vector2i(width.get(), height.get()))
-  }
-}
 
 fun switchCameraMode(playerId: Int, screens: List<Screen>) {
   val currentMode = screens[playerId].cameraMode
@@ -41,10 +28,10 @@ fun switchCameraMode(playerId: Int, screens: List<Screen>) {
 
 typealias CommandHandler = (Command) -> Unit
 
-class Client(val window: Long) {
-  private val renderer: Renderer = Renderer(window)
+class Client(val platform: Platform) {
+  private val renderer: Renderer = Renderer()
   private val config: Configuration = createNewConfiguration()
-  private val deviceHandlers = createDeviceHandlers(window)
+  private val deviceHandlers = createDeviceHandlers(platform.input)
   val marlothLab: MarlothLab? = MarlothLab()
   val screens: List<Screen> = listOf(Screen(CameraMode.topDown, 0))
   var inputState = createEmptyInputState(config.input.bindings)
@@ -53,7 +40,7 @@ class Client(val window: Long) {
   )
 
   fun update(scene: Scene): Commands {
-    val windowInfo = getWindowInfo(window)
+    val windowInfo = platform.display.getInfo()
     val dimensions = Vector2(windowInfo.dimensions.x.toFloat(), windowInfo.dimensions.y.toFloat())
     val labLayout = createLabLayout(marlothLab!!.abstractWorld, marlothLab.structureWorld, dimensions)
     renderer.render(scene, windowInfo, labLayout)
