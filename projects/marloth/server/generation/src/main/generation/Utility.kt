@@ -1,9 +1,19 @@
 package generation
 
+import generation.abstract.Node
 import mythic.spatial.Vector2
+import mythic.spatial.Vector3
 import mythic.spatial.times
+import org.joml.div
 import org.joml.minus
 import org.joml.plus
+import org.joml.xy
+
+fun <T> divide(sequence: Sequence<T>, filter: (T) -> Boolean) =
+    Pair(sequence.filter(filter), sequence.filter { !filter(it) })
+
+fun <T> divide(sequence: List<T>, filter: (T) -> Boolean) =
+    Pair(sequence.filter(filter), sequence.filter { !filter(it) })
 
 fun getNodeDistance(first: Node, second: Node): Float =
     first.position.distance(second.position) - first.radius - second.radius
@@ -62,26 +72,51 @@ fun lineIntersectsCircle(lineStart: Vector2, lineEnd: Vector2, circleCenter: Vec
   }
 }
 
-fun forkVector(point: Vector2, direction: Vector2, length: Float): Pair<Vector2, Vector2> {
+fun forkVector(point: Vector2, direction: Vector2, length: Float): List<Vector2> {
   val perpendicular = Vector2(direction.y, -direction.x) * length
-  return Pair(point + perpendicular, point - perpendicular)
+  return listOf(point + perpendicular, point - perpendicular)
 }
 
-fun circleIntersection(aPoint: Vector2, aRadius: Float, bPoint: Vector2, bRadius: Float): Pair<Vector2, Vector2> {
+fun circleIntersection(aPoint: Vector2, aRadius: Float, bPoint: Vector2, bRadius: Float): List<Vector2> {
   val distance = aPoint.distance(bPoint)
-  val aLength = (aRadius * aRadius - bRadius * bRadius + distance * 2) / (distance * 2)
+  val aLength = (aRadius * aRadius - bRadius * bRadius + distance * distance) / (distance * 2)
   val direction = (bPoint - aPoint).normalize()
   val center = aPoint + direction.normalize() * aLength
   val pLength = Math.sqrt((aRadius * aRadius - aLength * aLength).toDouble()).toFloat()
   return forkVector(center, direction, pLength)
-  /*
-  a2 + h2 = r02 and b2 + h2 = r12
-
-Using d = a + b we can solve for a,
-
-a = (r02 - r12 + d2 ) / (2 d)
-
-It can be readily shown that this reduces to r0 when the two circles touch at one point, ie: d = r0 + r1
-Solve for h by substituting a into the first equation, h2 = r02 - a2
-   */
 }
+
+fun getAngle(first: Vector2, second: Vector2): Float {
+  val third = second - first
+  return Math.atan2(third.y.toDouble(), third.x.toDouble()).toFloat()
+}
+
+fun getAngle(node: Node, second: Vector3) = getAngle(node.position.xy, second.xy)
+
+fun project2D(angle: Float, distance: Float): Vector2 {
+  return Vector2(
+      Math.cos(angle.toDouble()).toFloat() * distance,
+      Math.sin(angle.toDouble()).toFloat() * distance
+  )
+}
+
+fun <T> toPairs(corners: Sequence<T>): List<Pair<T, T>> {
+  val result: MutableList<Pair<T, T>> = mutableListOf()
+  var previous = corners.first()
+  for (next in corners.drop(1)) {
+    result.add(Pair(previous, next))
+    previous = next
+  }
+  return result
+}
+
+fun isInsideCircle(point: Vector2, center: Vector2, radius: Float): Boolean {
+  val a = point.x - center.x
+  val b = point.y - center.y
+  return a * a + b * b < radius * radius
+}
+
+fun isInsideNode(point: Vector2, node: Node) = isInsideCircle(point, node.position.xy, node.radius)
+
+fun getCenter(points: List<Vector2>): Vector2 =
+    points.reduce { a, b -> a + b } / points.size.toFloat()

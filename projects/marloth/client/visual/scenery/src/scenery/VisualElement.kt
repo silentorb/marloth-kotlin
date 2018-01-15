@@ -4,7 +4,8 @@ import mythic.spatial.Matrix
 
 enum class Depiction {
   child,
-  test
+  test,
+  world
 }
 
 data class VisualElement(

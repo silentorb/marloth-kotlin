@@ -19,6 +19,9 @@ enum class CommandType {
   run,
 
   switchView,
+  toggleLab,
+  toggleAbstractView,
+  toggleStructureView,
 
   menuBack,
   select,
@@ -39,3 +42,5 @@ data class Command(
 typealias Commands = List<Command>
 
 typealias CommandSource = () -> Commands
+
+typealias CommandHandler = (Command) -> Unit

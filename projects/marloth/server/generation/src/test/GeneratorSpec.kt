@@ -1,4 +1,7 @@
 import generation.*
+import generation.abstract.Node
+import generation.abstract.intersects
+import generation.abstract.isBetween
 import junit.framework.TestCase.*
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3

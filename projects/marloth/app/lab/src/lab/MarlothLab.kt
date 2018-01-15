@@ -1,6 +1,10 @@
 package lab
 
+import commanding.*
 import generation.*
+import generation.abstract.AbstractWorld
+import generation.abstract.WorldBoundary
+import generation.structure.StructureWorld
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.glowing.globalState
@@ -54,13 +58,16 @@ fun getPositionFunction(offset: Vector2, boundary: WorldBoundary, scale: Float):
   return { position: Vector2 -> offset + (Vector2(position.x, -position.y) - boundary.start.xy) * scale }
 }
 
-fun drawGeneratedWorld(bounds: Bounds, canvas: Canvas, abstractWorld: AbstractWorld, structureWorld: StructureWorld) {
+fun drawGeneratedWorld(bounds: Bounds, canvas: Canvas, abstractWorld: AbstractWorld, structureWorld: StructureWorld,
+                       config: LabConfig) {
   val scale = getScale(bounds, abstractWorld.boundary)
   val offset = bounds.position + worldPadding
   val getPosition: PositionFunction = getPositionFunction(offset, abstractWorld.boundary, scale)
   drawGrid(canvas, bounds, abstractWorld.boundary, scale)
-  drawAbstractWorld(bounds, getPosition, canvas, abstractWorld)
-  drawStructureWorld(bounds, getPosition, canvas, structureWorld)
+  if (config.showAbstract)
+    drawAbstractWorld(bounds, getPosition, canvas, abstractWorld)
+  if (config.showStructure)
+    drawStructureWorld(bounds, getPosition, canvas, structureWorld)
 
   canvas.drawSquare(
       offset,
@@ -69,10 +76,11 @@ fun drawGeneratedWorld(bounds: Bounds, canvas: Canvas, abstractWorld: AbstractWo
   )
 }
 
-fun createLabLayout(abstractWorld: AbstractWorld, structureWorld: StructureWorld, screenDimensions: Vector2): LabLayout {
+fun createLabLayout(abstractWorld: AbstractWorld, structureWorld: StructureWorld, screenDimensions: Vector2,
+                    config: LabConfig): LabLayout {
   val draw = { b: Bounds, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
   val drawWorld = { b: Bounds, c: Canvas ->
-    crop(b, c, { drawGeneratedWorld(b, c, abstractWorld, structureWorld) })
+    crop(b, c, { drawGeneratedWorld(b, c, abstractWorld, structureWorld, config) })
     draw(b, c)
   }
 
@@ -101,14 +109,25 @@ fun renderLab(layout: LabLayout, canvas: Canvas) {
   }
 }
 
+data class LabConfig(
+    var showAbstract: Boolean = false,
+    var showStructure: Boolean = true
+)
+
+fun createLabInputMap(config: LabConfig): Map<CommandType, CommandHandler> = mapOf(
+    CommandType.toggleAbstractView to { _ -> config.showAbstract = !config.showAbstract },
+    CommandType.toggleStructureView to { _ -> config.showStructure = !config.showStructure }
+)
+
 class MarlothLab {
   val abstractWorld = AbstractWorld(
       Vector3(-50f, -50f, -50f),
       Vector3(50f, 50f, 50f)
   )
   val structureWorld = StructureWorld()
+  val config: LabConfig = LabConfig()
 
   init {
-    generateWorld(abstractWorld, structureWorld, Dice(1))
+    generateWorld(abstractWorld, structureWorld, Dice(2))
   }
 }

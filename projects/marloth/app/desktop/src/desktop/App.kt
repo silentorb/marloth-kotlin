@@ -6,6 +6,6 @@ import mythic.desktop.createDesktopPlatform
 object App {
   @JvmStatic
   fun main(args: Array<String>) {
-    runApp(createDesktopPlatform("Marloth", 800, 600))
+    runApp(createDesktopPlatform("Marloth", 1200, 800))
   }
 }

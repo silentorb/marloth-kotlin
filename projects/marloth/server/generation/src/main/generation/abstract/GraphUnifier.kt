@@ -1,4 +1,6 @@
-package generation
+package generation.abstract
+
+import generation.getNodeDistance
 
 typealias NodeGroup = List<Node>
 

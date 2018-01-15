@@ -54,12 +54,12 @@ class operations {
       val original_edges = query.edges(face)
 
 //      detach_face(face)
-      mesh.replace_face_vertices(face, new_points)
+      mesh.replaceFaceVertices(face, new_points)
       transform(face, Matrix().translate(Vector3(0f, 0f, -0.6f)))
       val new_edges = query.edges(face).listIterator()
       for (original_edge in original_edges) {
         val new_edge = new_edges.next()
-        val new_face = mesh.create_face()
+        val new_face = mesh.createFace()
         val opposite_new_edge = Edge(new_edge.next!!.vertex, null, null, new_edge, face)
         mesh.add_edge(opposite_new_edge)
         new_edge.opposite = opposite_new_edge

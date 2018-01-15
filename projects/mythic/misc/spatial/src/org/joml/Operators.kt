@@ -102,6 +102,7 @@ operator fun Vector2f.minus(v: Vector2f) = Vector2f(x - v.x, y - v.y)
 operator fun Vector2f.plus(v: Vector2fc) = add(v, Vector2f())
 operator fun Vector2f.plus(v: Float) = Vector2f(x + v, y + v)
 operator fun Vector2f.unaryMinus() = negate()
+operator fun Vector2f.div(v: Float) = Vector2f(x / v, y / v)
 
 /* Vector2d */
 
