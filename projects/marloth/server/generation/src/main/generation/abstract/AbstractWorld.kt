@@ -1,4 +1,4 @@
-package generation
+package generation.abstract
 
 import mythic.spatial.Vector3
 import org.joml.minus

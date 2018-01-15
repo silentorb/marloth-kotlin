@@ -8,7 +8,7 @@ import mythic.sculpting.query
 import mythic.spatial.Vector4
 import mythic.spatial.put
 
-fun convertMesh(mesh: HalfEdgeMesh, vertexSchema: VertexSchema): SimpleMesh {
+fun convertMesh(mesh: HalfEdgeMesh, vertexSchema: VertexSchema, color: Vector4 = Vector4(0.5f, 0.5f, 0f, 1f)): SimpleMesh {
   val vertex_count = query.vertex_count(mesh)
   val vertices = BufferUtils.createFloatBuffer(vertex_count * vertexSchema.floatSize)
   val offsets = BufferUtils.createIntBuffer(mesh.faces.size)
@@ -27,7 +27,7 @@ fun convertMesh(mesh: HalfEdgeMesh, vertexSchema: VertexSchema): SimpleMesh {
       vertices.put(vertex.position)
 
       // Temporary color code
-      vertices.put(Vector4(0.5f, 0.5f, 0f, 1f))
+      vertices.put(color)
     })
 
     val face_vertex_count = query.vertex_count(polygon)

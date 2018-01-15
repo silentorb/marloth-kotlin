@@ -1,11 +1,14 @@
 package rendering
 
+import lab.LabConfig
 import lab.LabLayout
 import lab.renderLab
 import mythic.drawing.Canvas
 import mythic.drawing.createDrawingMeshes
 import mythic.drawing.getUnitScaling
+import mythic.glowing.DrawMethod
 import mythic.glowing.Glow
+import mythic.glowing.SimpleMesh
 import mythic.spatial.Matrix
 import mythic.spatial.Vector2
 import mythic.typography.loadFonts
@@ -24,7 +27,12 @@ fun gatherEffectsData(windowInfo: WindowInfo, scene: Scene): EffectsData {
   )
 }
 
-fun renderScene(scene: Scene, painters: Painters, effects: Effects) {
+fun renderScene(scene: Scene, painters: Painters, effects: Effects, worldMesh: SimpleMesh?) {
+  if (worldMesh != null) {
+    effects.standard.activate(Matrix())
+    worldMesh.draw(DrawMethod.triangleFan)
+  }
+
   for (element in scene.elements) {
     painters[element.depiction]!!(element, effects)
   }
@@ -35,6 +43,7 @@ class Renderer(window: Long) {
   val shaders = createShaders()
   val vertexSchemas = createVertexSchemas()
   val meshes = createMeshes(vertexSchemas)
+  var worldMesh: SimpleMesh? = null
   val canvasMeshes = createDrawingMeshes(vertexSchemas.drawing)
   val painters = createPainters(meshes)
   val fonts = loadFonts(listOf(
@@ -46,16 +55,19 @@ class Renderer(window: Long) {
     glow.state.clearColor = Vector4(1f, 1f, 1f, 1f)
   }
 
-  fun render(scene: Scene, windowInfo: WindowInfo, labLayout: LabLayout) {
+  fun prepareRender(windowInfo: WindowInfo) {
     glow.operations.setViewport(Vector2i(0, 0), windowInfo.dimensions)
     glow.operations.clearScreen()
-    if (false) {
-      val effects = createEffects(shaders, gatherEffectsData(windowInfo, scene))
-      renderScene(scene, painters, effects)
-    }
-    else {
-      val unitScaling = getUnitScaling(windowInfo.dimensions)
-      val canvas = Canvas(vertexSchemas.drawing, canvasMeshes, shaders.drawing, unitScaling, windowInfo.dimensions)
+  }
+
+  fun renderScene(scene: Scene, windowInfo: WindowInfo) {
+    val effects = createEffects(shaders, gatherEffectsData(windowInfo, scene))
+    renderScene(scene, painters, effects, worldMesh)
+  }
+
+  fun renderLab(windowInfo: WindowInfo, labLayout: LabLayout) {
+    val unitScaling = getUnitScaling(windowInfo.dimensions)
+    val canvas = Canvas(vertexSchemas.drawing, canvasMeshes, shaders.drawing, unitScaling, windowInfo.dimensions)
     canvas.drawText(TextConfiguration(
         "Dev Lab",
         fonts[0],
@@ -64,9 +76,7 @@ class Renderer(window: Long) {
 //        Vector4(1f, 0.8f, 0.3f, 1f)
         Vector4(0f, 0f, 0f, 1f)
     ))
-
-      renderLab(labLayout, canvas)
-    }
+    renderLab(labLayout, canvas)
   }
 
 }

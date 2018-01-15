@@ -8,6 +8,7 @@ import mythic.spatial.Matrix
 import mythic.spatial.Pi
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
+import org.joml.plus
 
 fun createFirstPersonCamera(player: Player): Camera = Camera(
     player.position,
@@ -22,8 +23,8 @@ fun createThirdPersonCamera(player: Player): Camera = Camera(
     45f
 )
 
-fun createOrthographicCamera(): Camera {
-  val position = Vector3(0f, -20f, 20f)
+fun createOrthographicCamera(player: Player): Camera {
+  val position = Vector3(0f, -20f, 20f) + player.position
   return Camera(
       position,
       Quaternion().rotate(0f, 0f, Pi * 0.5f)
@@ -34,10 +35,13 @@ fun createOrthographicCamera(): Camera {
   )
 }
 
-fun createCamera(world: World, screen: Screen): Camera = when (screen.cameraMode) {
-  CameraMode.firstPerson -> createFirstPersonCamera(world.players[screen.playerId])
-  CameraMode.thirdPerson -> createThirdPersonCamera(world.players[screen.playerId])
-  CameraMode.topDown -> createOrthographicCamera()
+fun createCamera(world: World, screen: Screen): Camera {
+  val mainPlayer = world.players[screen.playerId]
+  return when (screen.cameraMode) {
+    CameraMode.firstPerson -> createFirstPersonCamera(mainPlayer)
+    CameraMode.thirdPerson -> createThirdPersonCamera(mainPlayer)
+    CameraMode.topDown -> createOrthographicCamera(mainPlayer)
+  }
 }
 
 fun createScene(world: World, screen: Screen): Scene {

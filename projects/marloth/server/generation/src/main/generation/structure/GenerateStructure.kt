@@ -1,5 +1,7 @@
-package generation
+package generation.structure
 
+import generation.*
+import generation.abstract.*
 import mythic.sculpting.HalfEdgeMesh
 import mythic.sculpting.Vertex
 import mythic.spatial.*

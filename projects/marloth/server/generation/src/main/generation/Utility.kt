@@ -1,10 +1,9 @@
 package generation
 
-import mythic.sculpting.HalfEdgeMesh
+import generation.abstract.Node
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.times
-import mythic.spatial.toVector3
 import org.joml.div
 import org.joml.minus
 import org.joml.plus

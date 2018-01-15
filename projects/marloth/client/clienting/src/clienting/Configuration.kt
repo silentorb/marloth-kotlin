@@ -24,6 +24,10 @@ fun createNewKeyboardMapping(): Bindings = createBindings(0, 0, mapOf(
 
     GLFW_KEY_TAB to CommandType.switchView,
 
+    GLFW_KEY_GRAVE_ACCENT to CommandType.toggleLab,
+    GLFW_KEY_1 to CommandType.toggleAbstractView,
+    GLFW_KEY_2 to CommandType.toggleStructureView,
+
     GLFW_KEY_ESCAPE to CommandType.menuBack
 
 ))

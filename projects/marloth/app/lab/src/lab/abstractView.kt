@@ -1,15 +1,13 @@
 package lab
 
-import generation.AbstractWorld
-import generation.ConnectionType
-import generation.Node
-import generation.WorldBoundary
+import generation.abstract.AbstractWorld
+import generation.abstract.ConnectionType
+import generation.abstract.Node
+import generation.abstract.WorldBoundary
 import mythic.bloom.Bounds
 import mythic.drawing.Canvas
 import mythic.spatial.Vector2
 import mythic.spatial.Vector4
-import mythic.spatial.times
-import org.joml.minus
 import org.joml.plus
 import org.joml.xy
 

@@ -1,6 +1,6 @@
 package lab
 
-import generation.StructureWorld
+import generation.structure.StructureWorld
 import mythic.bloom.Bounds
 import mythic.drawing.Canvas
 import mythic.sculpting.HalfEdgeMesh

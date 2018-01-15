@@ -1,46 +1,12 @@
 package generation
 
+import generation.abstract.*
+import generation.structure.StructureWorld
+import generation.structure.generateStructure
 import mythic.spatial.Vector3
 import org.joml.minus
 import org.joml.plus
 import randomly.Dice
-
-fun getOverlapping(nodes: List<Node>): List<Pair<Node, Node>> {
-  val result = mutableListOf<Pair<Node, Node>>()
-  for (node in nodes) {
-    for (other in nodes) {
-      if (node === other || node.isConnected(other))
-        continue
-
-      // Check if the nodes overlap and there is not already an entry from the other direction
-      if (overlaps2D(node, other) && !result.any { it.first === other && it.second == node }) {
-        result.add(Pair(node, other))
-      }
-    }
-  }
-  return result
-}
-
-fun areTooClose(first: Node, second: Node): Boolean {
-  val distance = getNodeDistance(first, second)
-  return distance < -first.radius && distance < -second.radius
-}
-
-fun handleOverlapping(world: AbstractWorld) {
-  val overlapping = getOverlapping(world.nodes)
-  val groups = divide(overlapping.asSequence(), { areTooClose(it.first, it.second) })
-
-  for (pair in groups.second) world.connect(pair.first, pair.second, ConnectionType.union)
-
-  for (pair in groups.first) world.removeNode(pair.first)
-}
-
-//class Generator(
-//    val abstractWorld: AbstractWorld,
-//    val structureWorld: StructureWorld,
-//    val dice: Dice) {
-//
-//}
 
 fun createNode(abstractWorld: AbstractWorld, dice: Dice): Node {
   val radius = dice.getFloat(5f, 10f)
