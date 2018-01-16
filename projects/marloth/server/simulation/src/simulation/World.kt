@@ -1,7 +1,7 @@
 package simulation
 
 import commanding.CommandType
-import commanding.Commands
+import haft.Commands
 import org.joml.Vector3f
 import org.joml.minus
 import org.joml.plus
@@ -13,7 +13,7 @@ class World {
   val players: Players = listOf(Player(0))
 }
 
-fun applyPlayerCommands(player: Player, commands: Commands, delta: Float) {
+fun applyPlayerCommands(player: Player, commands: Commands<CommandType>, delta: Float) {
   if (commands.isEmpty())
     return
 
@@ -34,12 +34,12 @@ fun applyPlayerCommands(player: Player, commands: Commands, delta: Float) {
     player.position += offset
 }
 
-fun applyCommands(players: Players, commands: Commands, delta: Float) {
+fun applyCommands(players: Players, commands: Commands<CommandType>, delta: Float) {
   for (player in players) {
     applyPlayerCommands(player, commands.filter({ it.target == player.id }), delta)
   }
 }
 
-fun updateWorld(world: World, commands: Commands, delta: Float) {
+fun updateWorld(world: World, commands: Commands<CommandType>, delta: Float) {
   applyCommands(world.players, commands, delta)
 }

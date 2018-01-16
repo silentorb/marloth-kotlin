@@ -1,8 +1,5 @@
 package rendering
 
-import lab.LabConfig
-import lab.LabLayout
-import lab.renderLab
 import mythic.drawing.Canvas
 import mythic.drawing.createDrawingMeshes
 import mythic.drawing.getUnitScaling
@@ -62,20 +59,6 @@ class Renderer {
   fun renderScene(scene: Scene, windowInfo: WindowInfo) {
     val effects = createEffects(shaders, gatherEffectsData(windowInfo, scene))
     renderScene(scene, painters, effects, worldMesh)
-  }
-
-  fun renderLab(windowInfo: WindowInfo, labLayout: LabLayout) {
-    val unitScaling = getUnitScaling(windowInfo.dimensions)
-    val canvas = Canvas(vertexSchemas.drawing, canvasMeshes, shaders.drawing, unitScaling, windowInfo.dimensions)
-    canvas.drawText(TextConfiguration(
-        "Dev Lab",
-        fonts[0],
-        12f,
-        Vector2(10f, 10f),
-//        Vector4(1f, 0.8f, 0.3f, 1f)
-        Vector4(0f, 0f, 0f, 1f)
-    ))
-    renderLab(labLayout, canvas)
   }
 
 }

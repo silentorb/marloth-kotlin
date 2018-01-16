@@ -1,5 +1,6 @@
 import generation.*
 import generation.abstract.Node
+import generation.abstract.getOverlapping
 import generation.abstract.intersects
 import generation.abstract.isBetween
 import junit.framework.TestCase.*

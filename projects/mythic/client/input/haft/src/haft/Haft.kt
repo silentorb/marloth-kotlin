@@ -1,13 +1,14 @@
 package haft
 
-import commanding.Command
-import commanding.CommandLifetime
-import commanding.CommandType
-import commanding.Commands
 import mythic.platforming.Input
 
+enum class TriggerLifetime {
+  pressed,
+  end
+}
+
 data class TriggerState(
-    val lifetime: CommandLifetime,
+    val lifetime: TriggerLifetime,
     val value: Float
 )
 
@@ -15,53 +16,76 @@ interface DeviceHandler {
   fun getState(trigger: Int, previousState: TriggerState?): TriggerState?
 }
 
-data class Binding(
+data class Binding<T>(
     val device: Int,
     val trigger: Int,
-    val type: CommandType,
+    val type: T,
     val target: Int
 )
 
-typealias InputState = Map<Binding, TriggerState?>
+data class Command<T>(
+    val type: T,
+    val target: Int,
+    val value: Float,
+    val lifetime: TriggerLifetime
+)
 
-typealias Bindings = List<Binding>
+typealias Commands<T> = List<Command<T>>
+
+typealias CommandHandler<T> = (Command<T>) -> Unit
+
+typealias InputState<T> = Map<Binding<T>, TriggerState?>
+
+typealias Bindings<T> = List<Binding<T>>
 
 class UnusedDeviceHandler() : DeviceHandler {
-  override fun getState(trigger: Int, previousState: TriggerState?): TriggerState? = TriggerState(CommandLifetime.end, 0f)
+  override fun getState(trigger: Int, previousState: TriggerState?): TriggerState? = TriggerState(TriggerLifetime.end, 0f)
 }
 
 class KeyboardDeviceHandler(val input: Input) : DeviceHandler {
 
   override fun getState(trigger: Int, previousState: TriggerState?): TriggerState? {
     if (input.isKeyPressed(trigger))
-      return TriggerState(CommandLifetime.pressed, 1f)
+      return TriggerState(TriggerLifetime.pressed, 1f)
 
-    if (previousState != null && previousState.lifetime == CommandLifetime.pressed)
-      return TriggerState(CommandLifetime.end, 1f)
+    if (previousState != null && previousState.lifetime == TriggerLifetime.pressed)
+      return TriggerState(TriggerLifetime.end, 1f)
 
     return null
   }
 }
 
-fun getCurrentInputState(bindings: Bindings, handlers: List<DeviceHandler>, previousState: InputState): InputState =
+fun <T> getCurrentInputState(bindings: Bindings<T>, handlers: List<DeviceHandler>, previousState: InputState<T>): InputState<T> =
     bindings.associate { Pair(it, handlers[it.device].getState(it.trigger, previousState[it])) }
 
-fun createEmptyInputState(bindings: Bindings): InputState =
+fun <T> createEmptyInputState(bindings: Bindings<T>): InputState<T> =
     bindings.associate { Pair(it, null) }
 
-fun gatherCommands(state: InputState): Commands {
+fun <T> gatherCommands(state: InputState<T>): Commands<T> {
   return state
       .filter({ it.value != null })
-      .map({ Command(it.key.type, it.key.target, it.value!!.value, it.value!!.lifetime) })
+      .map({ Command<T>(it.key.type, it.key.target, it.value!!.value, it.value!!.lifetime) })
 }
-
-//fun gatherCommands(bindings: Bindings, handlers: List<DeviceHandler>, previousState: InputState): Commands {
-//  val currentState = getCurrentInputState(bindings, handlers, previousState)
-//  return gatherCommands(currentState)
-//}
 
 fun createDeviceHandlers(input: Input): List<DeviceHandler> {
   return listOf(
       KeyboardDeviceHandler(input)
   )
 }
+
+class InputManager<T>(val bindings: Bindings<T>, val deviceHandlers: List<DeviceHandler>) {
+  var inputState = createEmptyInputState(bindings)
+
+  fun update(): Commands<T> {
+    inputState = getCurrentInputState(bindings, deviceHandlers, inputState)
+    return gatherCommands(inputState)
+  }
+}
+
+fun <T> handleKeystrokeCommands(commands: Commands<T>, keyStrokeCommands: Map<T, (Command<T>) -> Unit>) {
+  commands.filter({ keyStrokeCommands.containsKey(it.type) && it.lifetime == TriggerLifetime.end })
+      .forEach({ keyStrokeCommands[it.type]!!(it) })
+}
+
+fun <T> createBindings(device: Int, target: Int, bindings: Map<Int, T>) =
+    bindings.map({ Binding(device, it.key, it.value, target) })

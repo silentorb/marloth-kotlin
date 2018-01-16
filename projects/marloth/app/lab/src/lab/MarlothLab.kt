@@ -5,6 +5,9 @@ import generation.*
 import generation.abstract.AbstractWorld
 import generation.abstract.WorldBoundary
 import generation.structure.StructureWorld
+import haft.Bindings
+import haft.CommandHandler
+import haft.createBindings
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.glowing.globalState
@@ -15,8 +18,10 @@ import mythic.spatial.times
 import org.joml.xy
 import org.joml.plus
 import org.joml.minus
+import org.lwjgl.glfw.GLFW
 import org.lwjgl.opengl.GL11
 import randomly.Dice
+import rendering.convertMesh
 
 val worldPadding = 20f // In screen units
 
@@ -109,23 +114,34 @@ fun renderLab(layout: LabLayout, canvas: Canvas) {
   }
 }
 
+enum class LabCommandType {
+  toggleLab,
+  toggleAbstractView,
+  toggleStructureView,
+}
+
+data class LabInputConfig(
+    val bindings: Bindings<LabCommandType>
+)
+
+fun createLabInputBindings() = createBindings(0, 0, mapOf(
+    GLFW.GLFW_KEY_GRAVE_ACCENT to LabCommandType.toggleLab,
+    GLFW.GLFW_KEY_1 to LabCommandType.toggleAbstractView,
+    GLFW.GLFW_KEY_2 to LabCommandType.toggleStructureView
+))
+
 data class LabConfig(
     var showAbstract: Boolean = false,
-    var showStructure: Boolean = true
+    var showStructure: Boolean = true,
+    val input: LabInputConfig = LabInputConfig(createLabInputBindings())
 )
 
-fun createLabInputMap(config: LabConfig): Map<CommandType, CommandHandler> = mapOf(
-    CommandType.toggleAbstractView to { _ -> config.showAbstract = !config.showAbstract },
-    CommandType.toggleStructureView to { _ -> config.showStructure = !config.showStructure }
-)
-
-class MarlothLab {
+class MarlothLab(val config: LabConfig) {
   val abstractWorld = AbstractWorld(
       Vector3(-50f, -50f, -50f),
       Vector3(50f, 50f, 50f)
   )
   val structureWorld = StructureWorld()
-  val config: LabConfig = LabConfig()
 
   init {
     generateWorld(abstractWorld, structureWorld, Dice(2))
