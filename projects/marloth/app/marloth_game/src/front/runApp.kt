@@ -8,6 +8,7 @@ import mythic.quartz.DeltaTimer
 import mythic.spatial.Vector4
 import rendering.Renderer
 import rendering.convertMesh
+import rendering.temporaryVertexSerializer
 import simulation.*
 import visualizing.createScene
 
@@ -29,8 +30,7 @@ fun runApp(platform: Platform) {
 }
 
 fun convertWorldMesh(structureWorld: StructureWorld, renderer: Renderer): SimpleMesh {
-  convertMesh(structureWorld.mesh, renderer.vertexSchemas.standard,
-      )
+  return convertMesh(structureWorld.mesh, renderer.vertexSchemas.standard, temporaryVertexSerializer)
 }
 
 fun setWorldMesh(structureWorld: StructureWorld, client: Client) {

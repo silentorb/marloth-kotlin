@@ -1,11 +1,12 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
 dependencies {
-  compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0"
-  compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.10'
+    compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0"
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.10'
 }
 
 requires(
-    'spatial', 'drawing', 'bloom', 'generation', 'commanding', 'mythic_desktop',
-    'marloth_clienting', 'serving', 'visualizing', 'quartz', 'platforming', 'marloth_game'
+        'spatial', 'drawing', 'bloom', 'generation', 'commanding', 'mythic_desktop',
+        'marloth_clienting', 'serving', 'visualizing', 'quartz', 'platforming', 'marloth_game',
+        'texture_generation'
 )

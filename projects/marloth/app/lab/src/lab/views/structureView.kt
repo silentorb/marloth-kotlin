@@ -1,5 +1,6 @@
-package lab
+package lab.views
 
+import lab.PositionFunction
 import mythic.bloom.Bounds
 import mythic.drawing.Canvas
 import mythic.sculpting.HalfEdgeMesh

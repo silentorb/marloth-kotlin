@@ -6,6 +6,7 @@ import simulation.WorldBoundary
 import haft.Bindings
 import haft.CommandHandler
 import haft.createBindings
+import lab.views.*
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.glowing.globalState
@@ -81,7 +82,26 @@ fun drawGeneratedWorld(bounds: Bounds, canvas: Canvas, abstractWorld: AbstractWo
   )
 }
 
-fun createLabLayout(abstractWorld: AbstractWorld, structureWorld: StructureWorld, screenDimensions: Vector2,
+fun createTextureLayout(screenDimensions: Vector2, config: LabConfig): LabLayout {
+  val draw = { b: Bounds, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
+
+  val panels = listOf(
+      Pair(Measurement(Measurements.pixel, 200f), draw),
+      Pair(Measurement(Measurements.stretch, 0f), { b: Bounds, c: Canvas ->
+        drawTextureView(b, c)
+        draw(b, c)
+      })
+  )
+  val boxes = overlap(createVerticalBounds(panels.map { it.first }, screenDimensions), panels, { a, b ->
+    Box(a, b.second)
+  })
+
+  return LabLayout(
+      boxes
+  )
+}
+
+fun createMapLayout(abstractWorld: AbstractWorld, structureWorld: StructureWorld, screenDimensions: Vector2,
                     config: LabConfig): LabLayout {
   val draw = { b: Bounds, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
   val drawWorld = { b: Bounds, c: Canvas ->
@@ -91,8 +111,7 @@ fun createLabLayout(abstractWorld: AbstractWorld, structureWorld: StructureWorld
 
   val panels = listOf(
       Pair(Measurement(Measurements.pixel, 200f), draw),
-      Pair(Measurement(Measurements.stretch, 0f), drawWorld),
-      Pair(Measurement(Measurements.pixel, 200f), draw)
+      Pair(Measurement(Measurements.stretch, 0f), drawWorld)
   )
   val boxes = overlap(createVerticalBounds(panels.map { it.first }, screenDimensions), panels, { a, b ->
     Box(a, b.second)
@@ -116,6 +135,7 @@ fun renderLab(layout: LabLayout, canvas: Canvas) {
 
 enum class LabCommandType {
   toggleLab,
+  cycleView,
   toggleAbstractView,
   toggleStructureView,
 }
@@ -127,16 +147,17 @@ data class LabInputConfig(
 fun createLabInputBindings() = createBindings(0, 0, mapOf(
     GLFW.GLFW_KEY_GRAVE_ACCENT to LabCommandType.toggleLab,
     GLFW.GLFW_KEY_1 to LabCommandType.toggleAbstractView,
-    GLFW.GLFW_KEY_2 to LabCommandType.toggleStructureView
+    GLFW.GLFW_KEY_2 to LabCommandType.toggleStructureView,
+    GLFW.GLFW_KEY_TAB to LabCommandType.cycleView
 ))
 
-enum class LabMode {
+enum class LabView {
   world,
   texture
 }
 
 data class LabConfig(
-    var mode: LabMode = LabMode.world,
+    var view: LabView = LabView.world,
     var showAbstract: Boolean = false,
     var showStructure: Boolean = true,
     val input: LabInputConfig = LabInputConfig(createLabInputBindings())

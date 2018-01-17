@@ -16,23 +16,27 @@ class LabClient(val config: LabConfig, val client: Client) {
   val keyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
       LabCommandType.toggleAbstractView to { _ -> config.showAbstract = !config.showAbstract },
       LabCommandType.toggleStructureView to { _ -> config.showStructure = !config.showStructure },
-      LabCommandType.toggleLab to { _ -> showLab = !showLab }
-
+      LabCommandType.toggleLab to { _ -> showLab = !showLab },
+      LabCommandType.cycleView to { _ ->
+        config.view = if (config.view == LabView.texture) LabView.world else LabView.texture
+      }
   )
   val gameKeyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
       LabCommandType.toggleLab to { _ -> showLab = !showLab }
   )
   val labInput = InputManager(config.input.bindings, client.deviceHandlers)
 
-  var showLab = false
+  var showLab = true
 
   fun update(scene: Scene, metaWorld: MetaWorld): Commands<CommandType> {
     val windowInfo = client.platform.display.getInfo()
     if (showLab) {
       val dimensions = Vector2(windowInfo.dimensions.x.toFloat(), windowInfo.dimensions.y.toFloat())
 
-      val labLayout = createLabLayout(metaWorld.abstractWorld, metaWorld.structureWorld, dimensions,
-          config)
+      val labLayout = if (config.view == LabView.world)
+        createMapLayout(metaWorld.abstractWorld, metaWorld.structureWorld, dimensions, config)
+      else
+        createTextureLayout(dimensions, config)
 
       client.renderer.prepareRender(windowInfo)
       renderLab(windowInfo, labLayout)

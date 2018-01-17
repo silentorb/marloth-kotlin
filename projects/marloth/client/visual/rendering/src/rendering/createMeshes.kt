@@ -37,17 +37,10 @@ fun createVertexSchemas() = VertexSchemas(
     createDrawingVertexSchemas()
 )
 
-val temporaryVertexSerializer: VertexSerializer = {vertex, vertices->
-  vertices.put(vertex.position)
-
-  // Temporary color code
-  vertices.put(Vector4(0.5f, 0.5f, 0f, 1f))
-}
-
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap {
   val standard = vertexSchemas.standard
   val newMeshes = createMeshes(standard)
-  return newMeshes.mapValues({ (_, m) -> convertMesh(m.mesh, m.vertexSchema) })
+  return newMeshes.mapValues({ (_, m) -> convertMesh(m.mesh, m.vertexSchema, temporaryVertexSerializer) })
 }
 
 fun createMeshes(vertexSchema: VertexSchema): NewMeshMap = mapOf(

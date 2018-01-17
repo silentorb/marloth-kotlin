@@ -8,6 +8,14 @@ import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
 import simulation.*
 import visualizing.createScene
+import kotlin.concurrent.thread
+
+fun startGui() {
+  thread(true, false, null, "JavaFX GUI", -1) {
+    val gui = LabGui()
+    gui.foo(listOf())
+  }
+}
 
 fun runApp(platform: Platform) {
   val display = platform.display
@@ -16,7 +24,7 @@ fun runApp(platform: Platform) {
   val config = LabConfig()
   val world = generateDefaultWorld()
   val labClient = LabClient(config, client)
-  setWorldMesh(world.mesh, client)
+  setWorldMesh(world.meta.structureWorld, client)
 
   while (!platform.process.isClosing()) {
     display.swapBuffers()
@@ -31,6 +39,8 @@ fun runApp(platform: Platform) {
 object App {
   @JvmStatic
   fun main(args: Array<String>) {
-    runApp(createDesktopPlatform("Marloth Lab", 1200, 800))
+//    runApp(createDesktopPlatform("Marloth Lab", 1200, 800))
+//    startGui()
+    runApp(createDesktopPlatform("Marloth Lab", 640, 480))
   }
 }

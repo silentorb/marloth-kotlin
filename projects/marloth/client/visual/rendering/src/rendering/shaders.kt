@@ -4,6 +4,7 @@ import mythic.glowing.MatrixProperty
 import mythic.glowing.ShaderProgram
 import mythic.drawing.DrawingEffects
 import mythic.drawing.createDrawingEffects
+import mythic.glowing.Texture
 
 val coloredVertex = """
 uniform 	mat4 view;
@@ -158,11 +159,11 @@ layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
 layout (location = 2) in vec2 uv;
 
-out vec4 fragment_color;
+out vec4 fragmentColor;
 out vec2 textureCoordinates;
 
 void main() {
-	fragmentColor = vertex_color;
+	fragmentColor = vec4(1.0);
   gl_Position = cameraTransform * modelTransform * vec4(position, 1);
 }
 """
@@ -172,9 +173,11 @@ in vec4 fragmentColor;
 in vec2 textureCoordinates;
 out vec4 output_color;
 
+uniform sampler2D text;
+
 void main() {
-  vec4 sample = vec4(1.0, 1.0, 1.0, texture(text, textureCoordinates).r);
-  output_color = sample;
+  vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, textureCoordinates).r);
+  output_color = sampled;
 }
 """
 
@@ -185,8 +188,15 @@ class PerspectiveShader(val program: ShaderProgram) {
   }
 }
 
+class TextureShader(private val program: ShaderProgram) {
+  fun activate(texture: Texture) {
+    texture.activate()
+    program.activate()
+  }
+}
+
 data class Shaders(
-    val textured: ShaderProgram,
+    val textured: TextureShader,
     val colored: ShaderProgram,
     val flat: PerspectiveShader,
     val drawing: DrawingEffects
@@ -194,7 +204,7 @@ data class Shaders(
 
 fun createShaders(): Shaders {
   return Shaders(
-      ShaderProgram(texturedVertex, texturedFragment),
+      TextureShader(ShaderProgram(texturedVertex, texturedFragment)),
       ShaderProgram(coloredVertex, coloredFragment),
       PerspectiveShader(ShaderProgram(flatVertex, flatFragment)),
       createDrawingEffects()

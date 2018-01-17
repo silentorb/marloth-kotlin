@@ -13,11 +13,6 @@ import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL13.GL_TEXTURE0
 import org.lwjgl.opengl.GL13.glActiveTexture
 
-fun activateTexture(texture: Int) {
-  glActiveTexture(GL_TEXTURE0)
-  glBindTexture(GL_TEXTURE_2D, texture)
-}
-
 fun getUnitScaling(dimensions: Vector2i) =
     if (dimensions.x < dimensions.y)
       Vector2(1f, dimensions.x.toFloat() / dimensions.y)
@@ -34,9 +29,7 @@ fun renderText(config: TextConfiguration, effect: ColoredImageShader, textPackag
       .translate(position.x, position.y, 0f)
 //      .scale(scale, scale, 1f)
 
-  effect.activate(transform, config.color)
-
-  activateTexture(config.font.texture)
+  effect.activate(transform, config.color, config.font.texture)
 
   globalState.blendEnabled = true
   globalState.blendFunction = Pair(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)

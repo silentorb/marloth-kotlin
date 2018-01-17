@@ -6,10 +6,18 @@ import org.lwjgl.BufferUtils
 import mythic.sculpting.HalfEdgeMesh
 import mythic.sculpting.Vertex
 import mythic.sculpting.query
+import mythic.spatial.Vector4
 import mythic.spatial.put
 import java.nio.FloatBuffer
 
 typealias VertexSerializer = (vertex: Vertex, vertices: FloatBuffer) -> Unit
+
+val temporaryVertexSerializer: VertexSerializer = {vertex, vertices->
+  vertices.put(vertex.position)
+
+  // Temporary color code
+  vertices.put(Vector4(0.5f, 0.5f, 0f, 1f))
+}
 
 fun convertMesh(mesh: HalfEdgeMesh, vertexSchema: VertexSchema, vertexSerializer: VertexSerializer): SimpleMesh {
   val vertex_count = query.vertex_count(mesh)

@@ -14,13 +14,14 @@ import kotlin.math.sin
 
 data class Meshes(
     val square: SimpleMesh,
+    val image: SimpleMesh,
     val circle: SimpleMesh,
     val solidCircle: SimpleMesh
 )
 
 data class DrawingVertexSchemas(
     val simple: VertexSchema,
-    val coloredImage: VertexSchema
+    val image: VertexSchema
 )
 
 fun createDrawingVertexSchemas() = DrawingVertexSchemas(
@@ -34,6 +35,14 @@ fun createSquareMesh(vertexSchema: VertexSchema) =
         0f, 0f,
         1f, 0f,
         1f, 1f
+    ))
+
+fun createImageMesh(vertexSchema: VertexSchema) =
+    SimpleMesh(vertexSchema, listOf(
+        0f, 1f, 0f, 1f,
+        0f, 0f, 0f, 0f,
+        1f, 0f, 1f, 0f,
+        1f, 1f, 1f, 1f
     ))
 
 fun createCircleList(radius: Float, count: Int): ArrayList<Float> {
@@ -57,9 +66,10 @@ fun createSolidCircleMesh(vertexSchema: VertexSchema, radius: Float, count: Int)
 private val circleResolution = 32
 
 fun createDrawingMeshes(vertexSchemas: DrawingVertexSchemas) = Meshes(
-    createSquareMesh(vertexSchemas.simple),
-    createCircleMesh(vertexSchemas.simple, 1f, circleResolution),
-    createSolidCircleMesh(vertexSchemas.simple, 1f, circleResolution)
+    square = createSquareMesh(vertexSchemas.simple),
+    image = createImageMesh(vertexSchemas.image),
+    circle = createCircleMesh(vertexSchemas.simple, 1f, circleResolution),
+    solidCircle = createSolidCircleMesh(vertexSchemas.simple, 1f, circleResolution)
 )
 
 enum class FillType {
@@ -113,6 +123,15 @@ class Canvas(
     draw(color, DrawMethod.triangleFan, transform, mesh)
   }
 
+  fun image(texture: Texture) = { transform: Matrix, mesh: Drawable ->
+    effects.image.activate(transform, texture)
+    mesh.draw(DrawMethod.triangleFan)
+  }
+
+  fun drawImage(position: Vector2, dimensions: Vector2, brush: Brush) {
+    brush(transformScalar(position, dimensions), meshes.image)
+  }
+
   fun drawLine(startX: Float, startY: Float, endX: Float, endY: Float, color: Vector4, thickness: Float) {
     dynamicMesh.load(listOf(startX, startY, endX, endY))
     outline(color, thickness)(Matrix().mul(pixelsToScalar), dynamicMesh)
@@ -123,7 +142,7 @@ class Canvas(
   }
 
   fun drawText(config: TextConfiguration) {
-    drawTextRaw(config, effects.coloredImage, vertexSchemas.coloredImage, pixelsToScalar)
+    drawTextRaw(config, effects.coloredImage, vertexSchemas.image, pixelsToScalar)
   }
 
   fun crop(value: Vector4i, action: () -> Unit) = cropStack(value, action)
