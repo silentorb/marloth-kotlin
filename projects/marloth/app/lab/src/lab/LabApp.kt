@@ -1,32 +1,29 @@
 package lab
 
+import front.setWorldMesh
+import generation.generateDefaultWorld
 import marloth.clienting.Client
 import mythic.desktop.createDesktopPlatform
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
-import mythic.spatial.Vector4
-import rendering.convertMesh
-import serving.Server
+import simulation.*
 import visualizing.createScene
 
 fun runApp(platform: Platform) {
   val display = platform.display
-
   val timer = DeltaTimer()
-  val server = Server()
   val client = Client(platform)
   val config = LabConfig()
-  val marlothLab = MarlothLab(config)
+  val world = generateDefaultWorld()
   val labClient = LabClient(config, client)
-  client.renderer.worldMesh = convertMesh(marlothLab.structureWorld.mesh, client.renderer.vertexSchemas.standard,
-      Vector4(0.5f, 0.2f, 0f, 1f))
+  setWorldMesh(world.mesh, client)
 
   while (!platform.process.isClosing()) {
     display.swapBuffers()
-    val scene = createScene(server.world, client.screens[0])
-    val commands = labClient.update(scene, marlothLab)
+    val scene = createScene(world, client.screens[0])
+    val commands = labClient.update(scene, world.meta)
     val delta = timer.update().toFloat()
-    server.update(commands, delta)
+    updateWorld(world, commands, delta)
     platform.process.pollEvents()
   }
 }

@@ -1,6 +1,7 @@
 package generation.abstract
 
 import generation.getNodeDistance
+import simulation.*
 
 typealias NodeGroup = List<Node>
 

@@ -1,32 +1,38 @@
 package front
 
+import generation.generateDefaultWorld
 import marloth.clienting.Client
+import mythic.glowing.SimpleMesh
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
-import serving.Server
+import mythic.spatial.Vector4
+import rendering.Renderer
+import rendering.convertMesh
+import simulation.*
 import visualizing.createScene
-
-fun is64Bit(): Boolean {
-  if (System.getProperty("os.name").contains("Windows")) {
-    return System.getenv("ProgramFiles(x86)") != null;
-  } else {
-    return System.getProperty("os.arch").indexOf("64") != -1;
-  }
-}
 
 fun runApp(platform: Platform) {
   val display = platform.display
-
   val timer = DeltaTimer()
-  val server = Server()
+  val world = generateDefaultWorld()
   val client = Client(platform)
+  setWorldMesh(world.meta.structureWorld, client)
 
   while (!platform.process.isClosing()) {
     display.swapBuffers()
-    val scene = createScene(server.world, client.screens[0])
+    val scene = createScene(world, client.screens[0])
     val commands = client.update(scene)
     val delta = timer.update().toFloat()
-    server.update(commands, delta)
+    updateWorld(world, commands, delta)
     platform.process.pollEvents()
   }
+}
+
+fun convertWorldMesh(structureWorld: StructureWorld, renderer: Renderer): SimpleMesh {
+  convertMesh(structureWorld.mesh, renderer.vertexSchemas.standard,
+      )
+}
+
+fun setWorldMesh(structureWorld: StructureWorld, client: Client) {
+  client.renderer.worldMesh = convertWorldMesh(structureWorld, client.renderer)
 }

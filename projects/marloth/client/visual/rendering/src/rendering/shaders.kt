@@ -150,6 +150,34 @@ void main() {
 }
 """
 
+val texturedVertex = """
+uniform mat4 cameraTransform;
+uniform mat4 modelTransform;
+
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec3 normal;
+layout (location = 2) in vec2 uv;
+
+out vec4 fragment_color;
+out vec2 textureCoordinates;
+
+void main() {
+	fragmentColor = vertex_color;
+  gl_Position = cameraTransform * modelTransform * vec4(position, 1);
+}
+"""
+
+val texturedFragment = """
+in vec4 fragmentColor;
+in vec2 textureCoordinates;
+out vec4 output_color;
+
+void main() {
+  vec4 sample = vec4(1.0, 1.0, 1.0, texture(text, textureCoordinates).r);
+  output_color = sample;
+}
+"""
+
 class PerspectiveShader(val program: ShaderProgram) {
   val cameraTransform = MatrixProperty(program, "cameraTransform")
   fun activate() {
@@ -158,6 +186,7 @@ class PerspectiveShader(val program: ShaderProgram) {
 }
 
 data class Shaders(
+    val textured: ShaderProgram,
     val colored: ShaderProgram,
     val flat: PerspectiveShader,
     val drawing: DrawingEffects
@@ -165,6 +194,7 @@ data class Shaders(
 
 fun createShaders(): Shaders {
   return Shaders(
+      ShaderProgram(texturedVertex, texturedFragment),
       ShaderProgram(coloredVertex, coloredFragment),
       PerspectiveShader(ShaderProgram(flatVertex, flatFragment)),
       createDrawingEffects()

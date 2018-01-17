@@ -1,7 +1,8 @@
-package generation.abstract
+package simulation
 
 import mythic.spatial.Vector3
 import org.joml.minus
+import randomly.Dice
 
 data class WorldBoundary(
     val start: Vector3,
@@ -9,6 +10,9 @@ data class WorldBoundary(
 ) {
   val dimensions: Vector3
     get() = end - start
+}
+
+data class WorldInput(val boundary: WorldBoundary, val dice: Dice) {
 }
 
 class AbstractWorld(val boundary: WorldBoundary) {
@@ -22,8 +26,6 @@ class AbstractWorld(val boundary: WorldBoundary) {
     second.connections.add(connection)
     return connection
   }
-
-  constructor(start: Vector3, end: Vector3) : this(WorldBoundary(start, end))
 
   fun removeNode(node: Node) {
     nodes.remove(node)

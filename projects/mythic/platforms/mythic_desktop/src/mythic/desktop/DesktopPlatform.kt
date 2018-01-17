@@ -7,6 +7,14 @@ import org.lwjgl.glfw.GLFW.glfwInit
 import org.lwjgl.glfw.GLFW.glfwPollEvents
 import org.lwjgl.glfw.GLFWErrorCallback
 
+fun is64Bit(): Boolean {
+  if (System.getProperty("os.name").contains("Windows")) {
+    return System.getenv("ProgramFiles(x86)") != null;
+  } else {
+    return System.getProperty("os.arch").indexOf("64") != -1;
+  }
+}
+
 class DesktopProcess(val window: Long) : PlatformProcess {
 
   override fun pollEvents() {

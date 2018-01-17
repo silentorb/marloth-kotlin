@@ -2,15 +2,15 @@ package simulation
 
 import commanding.CommandType
 import haft.Commands
-import org.joml.Vector3f
-import org.joml.minus
 import org.joml.plus
 import mythic.spatial.Vector3
 
 typealias Players = List<Player>
 
-class World {
-  val players: Players = listOf(Player(0))
+data class MetaWorld(val abstractWorld: AbstractWorld, val structureWorld: StructureWorld)
+
+data class World(val meta: MetaWorld, val players: Players = listOf(Player(0))) {
+
 }
 
 fun applyPlayerCommands(player: Player, commands: Commands<CommandType>, delta: Float) {

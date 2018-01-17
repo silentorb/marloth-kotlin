@@ -1,4 +1,4 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
 
-requires('spatial', 'commanding', 'haft')
+requires('spatial', 'commanding', 'haft', 'sculpting', 'randomly')

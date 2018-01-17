@@ -8,6 +8,8 @@ import mythic.glowing.VertexSchema
 import mythic.sculpting.HalfEdgeMesh
 import mythic.sculpting.create
 import mythic.spatial.Vector3
+import mythic.spatial.Vector4
+import mythic.spatial.put
 
 typealias MeshMap = Map<String, SimpleMesh>
 
@@ -34,6 +36,13 @@ fun createVertexSchemas() = VertexSchemas(
     )),
     createDrawingVertexSchemas()
 )
+
+val temporaryVertexSerializer: VertexSerializer = {vertex, vertices->
+  vertices.put(vertex.position)
+
+  // Temporary color code
+  vertices.put(Vector4(0.5f, 0.5f, 0f, 1f))
+}
 
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap {
   val standard = vertexSchemas.standard

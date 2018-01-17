@@ -1,4 +1,4 @@
-package generation.structure
+package simulation
 import mythic.sculpting.HalfEdgeMesh
 
 data class StructureWorld(

@@ -8,6 +8,7 @@ import mythic.spatial.*
 import org.joml.minus
 import org.joml.plus
 import org.joml.xy
+import simulation.*
 
 enum class CornerType {
   doorway,

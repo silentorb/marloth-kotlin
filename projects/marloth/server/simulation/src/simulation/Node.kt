@@ -1,4 +1,4 @@
-package generation.abstract
+package simulation
 
 import mythic.spatial.Vector3
 

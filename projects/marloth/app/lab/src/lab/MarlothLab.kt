@@ -2,9 +2,7 @@ package lab
 
 import commanding.*
 import generation.*
-import generation.abstract.AbstractWorld
-import generation.abstract.WorldBoundary
-import generation.structure.StructureWorld
+import simulation.WorldBoundary
 import haft.Bindings
 import haft.CommandHandler
 import haft.createBindings
@@ -22,6 +20,8 @@ import org.lwjgl.glfw.GLFW
 import org.lwjgl.opengl.GL11
 import randomly.Dice
 import rendering.convertMesh
+import simulation.AbstractWorld
+import simulation.StructureWorld
 
 val worldPadding = 20f // In screen units
 
@@ -130,20 +130,14 @@ fun createLabInputBindings() = createBindings(0, 0, mapOf(
     GLFW.GLFW_KEY_2 to LabCommandType.toggleStructureView
 ))
 
+enum class LabMode {
+  world,
+  texture
+}
+
 data class LabConfig(
+    var mode: LabMode = LabMode.world,
     var showAbstract: Boolean = false,
     var showStructure: Boolean = true,
     val input: LabInputConfig = LabInputConfig(createLabInputBindings())
 )
-
-class MarlothLab(val config: LabConfig) {
-  val abstractWorld = AbstractWorld(
-      Vector3(-50f, -50f, -50f),
-      Vector3(50f, 50f, 50f)
-  )
-  val structureWorld = StructureWorld()
-
-  init {
-    generateWorld(abstractWorld, structureWorld, Dice(2))
-  }
-}

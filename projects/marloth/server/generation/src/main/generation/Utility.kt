@@ -1,6 +1,5 @@
 package generation
 
-import generation.abstract.Node
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.times
@@ -8,6 +7,7 @@ import org.joml.div
 import org.joml.minus
 import org.joml.plus
 import org.joml.xy
+import simulation.*
 
 fun <T> divide(sequence: Sequence<T>, filter: (T) -> Boolean) =
     Pair(sequence.filter(filter), sequence.filter { !filter(it) })

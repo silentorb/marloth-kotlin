@@ -1,15 +1,13 @@
 package lab
 
-import generation.abstract.AbstractWorld
-import generation.abstract.ConnectionType
-import generation.abstract.Node
-import generation.abstract.WorldBoundary
+import simulation.WorldBoundary
 import mythic.bloom.Bounds
 import mythic.drawing.Canvas
 import mythic.spatial.Vector2
 import mythic.spatial.Vector4
 import org.joml.plus
 import org.joml.xy
+import simulation.*
 
 private val gridSpacing = 10f // In world units
 

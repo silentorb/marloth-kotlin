@@ -1,12 +1,12 @@
 package generation
 
 import generation.abstract.*
-import generation.structure.StructureWorld
 import generation.structure.generateStructure
 import mythic.spatial.Vector3
 import org.joml.minus
 import org.joml.plus
 import randomly.Dice
+import simulation.*
 
 fun createNode(abstractWorld: AbstractWorld, dice: Dice): Node {
   val radius = dice.getFloat(5f, 10f)
@@ -35,8 +35,19 @@ fun generateAbstract(abstractWorld: AbstractWorld, dice: Dice) {
 
 //data class WorldBundle(val abstractWorld: AbstractWorld, val structureWorld: StructureWorld)
 
-fun generateWorld(abstractWorld: AbstractWorld, structureWorld: StructureWorld, dice: Dice) {
-  generateAbstract(abstractWorld, dice)
+fun generateWorld(input: WorldInput): World {
+  val abstractWorld = AbstractWorld(input.boundary)
+  generateAbstract(abstractWorld, input.dice)
+  val structureWorld = StructureWorld()
   generateStructure(abstractWorld, structureWorld)
-//  return WorldBundle(abstractWorld, structureWorld)
+  return World(MetaWorld(abstractWorld, structureWorld),
+      listOf(Player(0, abstractWorld.nodes.first().position)))
 }
+
+fun generateDefaultWorld() = generateWorld(WorldInput(
+    WorldBoundary(
+        Vector3(-50f, -50f, -50f),
+        Vector3(50f, 50f, 50f)
+    ),
+    Dice(2)
+))

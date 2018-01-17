@@ -3,16 +3,14 @@ package lab
 import commanding.CommandType
 import haft.*
 import marloth.clienting.Client
-import marloth.clienting.switchCameraMode
 import mythic.drawing.Canvas
 import mythic.drawing.getUnitScaling
-import mythic.platforming.Platform
 import mythic.platforming.WindowInfo
 import mythic.spatial.Vector2
 import mythic.spatial.Vector4
 import mythic.typography.TextConfiguration
-import rendering.convertMesh
 import scenery.Scene
+import simulation.MetaWorld
 
 class LabClient(val config: LabConfig, val client: Client) {
   val keyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
@@ -26,15 +24,15 @@ class LabClient(val config: LabConfig, val client: Client) {
   )
   val labInput = InputManager(config.input.bindings, client.deviceHandlers)
 
-  var showLab = true
+  var showLab = false
 
-  fun update(scene: Scene, marlothLab: MarlothLab): Commands<CommandType> {
+  fun update(scene: Scene, metaWorld: MetaWorld): Commands<CommandType> {
     val windowInfo = client.platform.display.getInfo()
     if (showLab) {
       val dimensions = Vector2(windowInfo.dimensions.x.toFloat(), windowInfo.dimensions.y.toFloat())
 
-      val labLayout = createLabLayout(marlothLab.abstractWorld, marlothLab.structureWorld, dimensions,
-          marlothLab.config)
+      val labLayout = createLabLayout(metaWorld.abstractWorld, metaWorld.structureWorld, dimensions,
+          config)
 
       client.renderer.prepareRender(windowInfo)
       renderLab(windowInfo, labLayout)

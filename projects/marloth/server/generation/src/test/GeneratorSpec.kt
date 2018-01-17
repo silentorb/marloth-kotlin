@@ -1,5 +1,4 @@
 import generation.*
-import generation.abstract.Node
 import generation.abstract.getOverlapping
 import generation.abstract.intersects
 import generation.abstract.isBetween
@@ -8,6 +7,7 @@ import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.*
+import simulation.Node
 
 class GeneratorSpec : Spek({
   describe("world generation") {

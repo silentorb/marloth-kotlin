@@ -7,5 +7,5 @@ dependencies {
 
 requires(
     'spatial', 'drawing', 'bloom', 'generation', 'commanding', 'mythic_desktop',
-    'marloth_clienting', 'serving', 'visualizing', 'quartz', 'platforming'
+    'marloth_clienting', 'serving', 'visualizing', 'quartz', 'platforming', 'marloth_game'
 )

@@ -1,11 +1,11 @@
 package lab
 
-import generation.structure.StructureWorld
 import mythic.bloom.Bounds
 import mythic.drawing.Canvas
 import mythic.sculpting.HalfEdgeMesh
 import mythic.spatial.Vector4
 import org.joml.xy
+import simulation.*
 
 fun drawVertices(bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, mesh: HalfEdgeMesh) {
   val solid = canvas.solid(Vector4(1f, 0.6f, 0.0f, 1f))

@@ -2,8 +2,10 @@ package marloth.clienting
 
 import commanding.*
 import haft.*
+import mythic.glowing.SimpleMesh
 import mythic.platforming.Platform
 import rendering.Renderer
+import rendering.convertMesh
 import scenery.CameraMode
 import scenery.Scene
 import scenery.Screen
