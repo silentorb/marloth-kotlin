@@ -191,7 +191,7 @@ uniform sampler2D text;
 
 void main() {
   vec4 sampled = texture(text, textureCoordinates);
-  output_color = sampled;
+  output_color = sampled * fragmentColor;
 }
 """
 
