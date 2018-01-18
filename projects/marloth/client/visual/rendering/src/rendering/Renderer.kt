@@ -23,9 +23,9 @@ fun gatherEffectsData(windowInfo: WindowInfo, scene: Scene): EffectsData {
   )
 }
 
-fun renderScene(scene: Scene, painters: Painters, effects: Effects, worldMesh: SimpleMesh?) {
+fun renderScene(scene: Scene, painters: Painters, effects: Effects, textures: Textures, worldMesh: SimpleMesh?) {
   if (worldMesh != null) {
-    effects.standard.activate(Matrix())
+    effects.textured.activate(Matrix(), textures.checkers)
     worldMesh.draw(DrawMethod.triangleFan)
   }
 
@@ -42,13 +42,14 @@ class Renderer {
   var worldMesh: SimpleMesh? = null
   val canvasMeshes = createDrawingMeshes(vertexSchemas.drawing)
   val painters = createPainters(meshes)
+  val textures = Textures()
   val fonts = loadFonts(listOf(
       FontLoadInfo("cour.ttf", 16, 0f)
   ))
 
   init {
 //    glow.state.clearColor = Vector4(0f, 0f, 0f, 1f)
-    glow.state.clearColor = Vector4(1f, 1f, 1f, 1f)
+    glow.state.clearColor = Vector4(1f, 0.95f, 0.9f, 1f)
   }
 
   fun prepareRender(windowInfo: WindowInfo) {
@@ -58,7 +59,7 @@ class Renderer {
 
   fun renderScene(scene: Scene, windowInfo: WindowInfo) {
     val effects = createEffects(shaders, gatherEffectsData(windowInfo, scene))
-    renderScene(scene, painters, effects, worldMesh)
+    renderScene(scene, painters, effects, textures, worldMesh)
   }
 
 }

@@ -7,7 +7,7 @@ import mythic.sculpting.Vertex
 import mythic.spatial.BoundingBox
 import mythic.spatial.Vector3
 
-fun vertex_count(face: Face): Int {
+fun getVertexCount(face: Face): Int {
   var result = 1
   var edge = face.edge!!.next
 
@@ -19,10 +19,10 @@ fun vertex_count(face: Face): Int {
   return result
 }
 
-fun vertex_count(mesh: HalfEdgeMesh): Int {
+fun getVertexCount(mesh: HalfEdgeMesh): Int {
   var result = 0
   for (polygon in mesh.faces) {
-    result += vertex_count(polygon)
+    result += getVertexCount(polygon)
   }
   return result
 }
@@ -45,7 +45,7 @@ fun getVertices(face: Face): List<Vertex> {
   return result
 }
 
-fun edges(face: Face): List<Edge> {
+fun getEdges(face: Face): List<Edge> {
   val result = ArrayList<Edge>()
   each_edge(face, { result.add(it) })
   return result

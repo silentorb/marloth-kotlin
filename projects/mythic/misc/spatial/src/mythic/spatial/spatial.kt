@@ -1,6 +1,7 @@
 package mythic.spatial
 
 import org.joml.Math.PI
+import org.joml.minus
 import java.nio.FloatBuffer
 
 typealias Vector2 = org.joml.Vector2f
@@ -53,4 +54,7 @@ fun Vector2.toVector3() = Vector3(x, y, 0f)
 data class BoundingBox(
     val start: Vector3,
     val end: Vector3
-)
+) {
+  val dimensions: Vector3
+    get() = end - start
+}

@@ -1,4 +1,4 @@
-package lab
+package lab.views
 
 import commanding.*
 import generation.*
@@ -6,6 +6,7 @@ import simulation.WorldBoundary
 import haft.Bindings
 import haft.CommandHandler
 import haft.createBindings
+import lab.LabConfig
 import lab.views.*
 import mythic.bloom.*
 import mythic.drawing.Canvas
@@ -124,7 +125,7 @@ fun createMapLayout(abstractWorld: AbstractWorld, structureWorld: StructureWorld
 
 fun createBoxMap(boxes: List<Box>): BoxMap = boxes.associate { Pair(it, it) }
 
-fun renderLab(layout: LabLayout, canvas: Canvas) {
+fun renderMainLab(layout: LabLayout, canvas: Canvas) {
   globalState.blendEnabled = true
   globalState.blendFunction = Pair(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
 
@@ -132,33 +133,3 @@ fun renderLab(layout: LabLayout, canvas: Canvas) {
     box.render(box.bounds, canvas)
   }
 }
-
-enum class LabCommandType {
-  toggleLab,
-  cycleView,
-  toggleAbstractView,
-  toggleStructureView,
-}
-
-data class LabInputConfig(
-    val bindings: Bindings<LabCommandType>
-)
-
-fun createLabInputBindings() = createBindings(0, 0, mapOf(
-    GLFW.GLFW_KEY_GRAVE_ACCENT to LabCommandType.toggleLab,
-    GLFW.GLFW_KEY_1 to LabCommandType.toggleAbstractView,
-    GLFW.GLFW_KEY_2 to LabCommandType.toggleStructureView,
-    GLFW.GLFW_KEY_TAB to LabCommandType.cycleView
-))
-
-enum class LabView {
-  world,
-  texture
-}
-
-data class LabConfig(
-    var view: LabView = LabView.world,
-    var showAbstract: Boolean = false,
-    var showStructure: Boolean = true,
-    val input: LabInputConfig = LabInputConfig(createLabInputBindings())
-)

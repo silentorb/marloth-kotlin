@@ -44,10 +44,18 @@ fun prepareWorldMesh(mesh: HalfEdgeMesh): VertexInfo {
   return mesh.faces.associate { face ->
     val vertices = getVertices(face)
     val bounds = getBounds(vertices)
+    val dimensions = bounds.dimensions
+//    val scaleX = 1 / dimensions.x
+//    val scaleY = 1 / dimensions.y
+    val scaleX = .5f
+    val scaleY = .5f
     Pair(face, vertices.associate { vertex ->
       Pair(vertex, VertexNormalTexture(
-          Vector3(),
-          Vector2()
+          Vector3(0f, 0f, 1f),
+          Vector2(
+              (vertex.position.x - bounds.start.x) * scaleX,
+              (vertex.position.y - bounds.start.y) * scaleY
+          )
       ))
     }
     )
@@ -55,8 +63,8 @@ fun prepareWorldMesh(mesh: HalfEdgeMesh): VertexInfo {
 }
 
 fun texturedVertexSerializer(vertexInfo: VertexInfo): VertexSerializer = { vertex, face, vertices ->
-  vertices.put(vertex.position)
   val info = vertexInfo[face]!![vertex]!!
+  vertices.put(info.normal)
   vertices.put(info.uv.x)
   vertices.put(info.uv.y)
 }

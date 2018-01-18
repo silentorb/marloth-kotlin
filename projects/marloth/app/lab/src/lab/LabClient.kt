@@ -2,6 +2,10 @@ package lab
 
 import commanding.CommandType
 import haft.*
+import lab.views.LabLayout
+import lab.views.createMapLayout
+import lab.views.createTextureLayout
+import lab.views.renderMainLab
 import marloth.clienting.Client
 import mythic.drawing.Canvas
 import mythic.drawing.getUnitScaling
@@ -16,21 +20,19 @@ class LabClient(val config: LabConfig, val client: Client) {
   val keyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
       LabCommandType.toggleAbstractView to { _ -> config.showAbstract = !config.showAbstract },
       LabCommandType.toggleStructureView to { _ -> config.showStructure = !config.showStructure },
-      LabCommandType.toggleLab to { _ -> showLab = !showLab },
+      LabCommandType.toggleLab to { _ -> config.showLab = !config.showLab },
       LabCommandType.cycleView to { _ ->
         config.view = if (config.view == LabView.texture) LabView.world else LabView.texture
       }
   )
   val gameKeyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
-      LabCommandType.toggleLab to { _ -> showLab = !showLab }
+      LabCommandType.toggleLab to { _ -> config.showLab = !config.showLab }
   )
   val labInput = InputManager(config.input.bindings, client.deviceHandlers)
 
-  var showLab = true
-
   fun update(scene: Scene, metaWorld: MetaWorld): Commands<CommandType> {
     val windowInfo = client.platform.display.getInfo()
-    if (showLab) {
+    if (config.showLab) {
       val dimensions = Vector2(windowInfo.dimensions.x.toFloat(), windowInfo.dimensions.y.toFloat())
 
       val labLayout = if (config.view == LabView.world)
@@ -63,7 +65,7 @@ class LabClient(val config: LabConfig, val client: Client) {
 //        Vector4(1f, 0.8f, 0.3f, 1f)
         Vector4(0f, 0f, 0f, 1f)
     ))
-    renderLab(labLayout, canvas)
+    renderMainLab(labLayout, canvas)
   }
 
 }

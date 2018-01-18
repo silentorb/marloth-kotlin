@@ -1,5 +1,8 @@
 package mythic.sculpting
 
+import mythic.sculpting.query.each_vertex
+import mythic.sculpting.query.getEdges
+import mythic.sculpting.query.getVertices
 import mythic.spatial.Matrix
 import mythic.spatial.Vector3
 import mythic.spatial.plusAssign
@@ -51,19 +54,19 @@ class operations {
       val result = ArrayList<Face>()
 //      val original_points = query.getVertices(face)
       val new_points = clone_vertices(mesh, face)
-      val original_edges = query.edges(face)
+      val original_edges = getEdges(face)
 
 //      detach_face(face)
       mesh.replaceFaceVertices(face, new_points)
       transform(face, Matrix().translate(Vector3(0f, 0f, -0.6f)))
-      val new_edges = query.edges(face).listIterator()
-      for (original_edge in original_edges) {
-        val new_edge = new_edges.next()
+      val new_edges = getEdges(face).listIterator()
+      for (originalEdge in original_edges) {
+        val newEdge = new_edges.next()
         val new_face = mesh.createFace()
-        val opposite_new_edge = Edge(new_edge.next!!.vertex, null, null, new_edge, face)
+        val opposite_new_edge = Edge(newEdge.next!!.vertex, null, null, newEdge, face)
         mesh.add_edge(opposite_new_edge)
-        new_edge.opposite = opposite_new_edge
-        result.add(fill_parallel_edges(mesh, new_face, original_edge, opposite_new_edge))
+        newEdge.opposite = opposite_new_edge
+        result.add(fill_parallel_edges(mesh, new_face, originalEdge, opposite_new_edge))
       }
 
       return result
@@ -80,7 +83,7 @@ class operations {
     fun clone_vertices(mesh: HalfEdgeMesh, face: Face): List<Vertex> {
       val result = Array<Vertex>(0, { Vertex(Vector3(0f, 0f, 0f)) })
       var i = 0
-      query.each_vertex(face, { vertex: Vertex -> result[i++] = mesh.addVertex(vertex) })
+      each_vertex(face, { vertex: Vertex -> result[i++] = mesh.addVertex(vertex) })
       return result.toList()
     }
 
@@ -96,11 +99,11 @@ class operations {
 //    }
 
     fun translate(face: Face, offset: Vector3) {
-      query.each_vertex(face, { vertex: Vertex -> vertex.position += offset })
+      each_vertex(face, { vertex: Vertex -> vertex.position += offset })
     }
 
     fun transform(face: Face, matrix: Matrix) {
-      query.each_vertex(face, { vertex: Vertex -> vertex.position = Vector3(vertex.position * matrix) })
+      each_vertex(face, { vertex: Vertex -> vertex.position = Vector3(vertex.position * matrix) })
     }
   }
 }

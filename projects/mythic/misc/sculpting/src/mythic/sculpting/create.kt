@@ -1,6 +1,6 @@
 package mythic.sculpting
 
-import mythic.sculpting.query.Companion.vertices
+import mythic.sculpting.query.getVertices
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.times
@@ -45,8 +45,8 @@ class create {
       val top = squareUp(mesh, Vector2(size.x, size.y), half.z)
       val bottom = squareDown(mesh, Vector2(size.x, size.y), -half.z)
 
-      val top_vertices = query.vertices(top)
-      val initial_bottom_vertices = query.vertices(bottom)
+      val top_vertices = getVertices(top)
+      val initial_bottom_vertices = getVertices(bottom)
       val bottom_vertices = listOf(
           initial_bottom_vertices[0],
           initial_bottom_vertices[3],

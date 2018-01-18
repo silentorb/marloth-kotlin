@@ -1,7 +1,5 @@
 package lab.views
 
-import lab.PositionFunction
-import lab.worldPadding
 import simulation.WorldBoundary
 import mythic.bloom.Bounds
 import mythic.drawing.Canvas

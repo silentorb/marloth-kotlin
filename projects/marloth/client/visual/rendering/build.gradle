@@ -3,4 +3,4 @@ apply from: "$rootProject.projectDir/build_kotlin.gradle"
 dependencies {
 }
 
-requires('platforming', 'spatial', 'scenery', 'sculpting', 'glowing', 'typography', 'drawing')
+requires('platforming', 'spatial', 'scenery', 'sculpting', 'glowing', 'typography', 'drawing', 'texture_generation')
