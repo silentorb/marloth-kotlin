@@ -17,8 +17,8 @@ class create {
       result.push_back(&top);
       result.push_back(&bottom);
 
-      auto top_vertices = query::vertices(top);
-      auto initial_bottom_vertices = query::vertices(bottom);
+      auto top_vertices = query::getVertices(top);
+      auto initial_bottom_vertices = query::getVertices(bottom);
       Base_Vertex *bottom_vertices[] = {
         initial_bottom_vertices[0],
         initial_bottom_vertices[3],

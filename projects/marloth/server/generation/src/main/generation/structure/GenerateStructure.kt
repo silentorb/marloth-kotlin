@@ -157,7 +157,7 @@ fun sinew(nodeSectors: List<NodeSector>, tunnelSectors: List<ConnectionSector>, 
 //    val face = mesh.createFace()
 //    val sectorVertices = sector.corners
 //        .sortedBy { getAngle(sector.node, it.position) }
-//        .map { vertices[it]!! }
+//        .map { getVertices[it]!! }
 //    mesh.replaceFaceVertices(face, sectorVertices)
   }
 

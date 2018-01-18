@@ -5,14 +5,15 @@ import mythic.glowing.VertexSchema
 import org.lwjgl.BufferUtils
 import mythic.sculpting.HalfEdgeMesh
 import mythic.sculpting.Vertex
+import mythic.sculpting.Face
 import mythic.sculpting.query
 import mythic.spatial.Vector4
 import mythic.spatial.put
 import java.nio.FloatBuffer
 
-typealias VertexSerializer = (vertex: Vertex, vertices: FloatBuffer) -> Unit
+typealias VertexSerializer = (vertex: Vertex, face: Face, vertices: FloatBuffer) -> Unit
 
-val temporaryVertexSerializer: VertexSerializer = {vertex, vertices->
+val temporaryVertexSerializer: VertexSerializer = { vertex, face, vertices ->
   vertices.put(vertex.position)
 
   // Temporary color code
@@ -30,7 +31,7 @@ fun convertMesh(mesh: HalfEdgeMesh, vertexSchema: VertexSchema, vertexSerializer
     query.each_edge(polygon, { edge ->
       val vertex = edge.vertex
       vertices.put(vertex.position)
-      vertexSerializer(vertex, vertices)
+      vertexSerializer(vertex, polygon, vertices)
     })
 
     val face_vertex_count = query.vertex_count(polygon)

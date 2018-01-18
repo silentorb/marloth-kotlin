@@ -49,3 +49,8 @@ fun FloatBuffer.put(value: Vector4) {
 val Pi = PI.toFloat()
 
 fun Vector2.toVector3() = Vector3(x, y, 0f)
+
+data class BoundingBox(
+    val start: Vector3,
+    val end: Vector3
+)

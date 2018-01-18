@@ -12,7 +12,7 @@ class HalfEdgeMesh {
 
 //  fun create_vertex(): Vertex {
 //    val vertex = Vertex()
-//    vertices.add(vertex)
+//    getVertices.add(vertex)
 //    return vertex
 //  }
 

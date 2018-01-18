@@ -5,11 +5,20 @@ import marloth.clienting.Client
 import mythic.glowing.SimpleMesh
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
-import mythic.spatial.Vector4
+import mythic.sculpting.Face
+import mythic.sculpting.HalfEdgeMesh
+import mythic.sculpting.Vertex
+import mythic.sculpting.VertexNormalTexture
+import mythic.sculpting.query.getBounds
+import mythic.sculpting.query.getVertices
+import mythic.spatial.Vector2
+import mythic.spatial.Vector3
+import mythic.spatial.put
 import rendering.Renderer
+import rendering.VertexSerializer
 import rendering.convertMesh
-import rendering.temporaryVertexSerializer
-import simulation.*
+import simulation.StructureWorld
+import simulation.updateWorld
 import visualizing.createScene
 
 fun runApp(platform: Platform) {
@@ -29,8 +38,32 @@ fun runApp(platform: Platform) {
   }
 }
 
+typealias VertexInfo = Map<Face, Map<Vertex, VertexNormalTexture>>
+
+fun prepareWorldMesh(mesh: HalfEdgeMesh): VertexInfo {
+  return mesh.faces.associate { face ->
+    val vertices = getVertices(face)
+    val bounds = getBounds(vertices)
+    Pair(face, vertices.associate { vertex ->
+      Pair(vertex, VertexNormalTexture(
+          Vector3(),
+          Vector2()
+      ))
+    }
+    )
+  }
+}
+
+fun texturedVertexSerializer(vertexInfo: VertexInfo): VertexSerializer = { vertex, face, vertices ->
+  vertices.put(vertex.position)
+  val info = vertexInfo[face]!![vertex]!!
+  vertices.put(info.uv.x)
+  vertices.put(info.uv.y)
+}
+
 fun convertWorldMesh(structureWorld: StructureWorld, renderer: Renderer): SimpleMesh {
-  return convertMesh(structureWorld.mesh, renderer.vertexSchemas.standard, temporaryVertexSerializer)
+  val vertexInfo = prepareWorldMesh(structureWorld.mesh)
+  return convertMesh(structureWorld.mesh, renderer.vertexSchemas.textured, texturedVertexSerializer(vertexInfo))
 }
 
 fun setWorldMesh(structureWorld: StructureWorld, client: Client) {

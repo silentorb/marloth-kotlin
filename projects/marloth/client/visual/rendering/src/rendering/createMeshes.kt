@@ -25,21 +25,26 @@ fun createCube(): HalfEdgeMesh {
 
 data class VertexSchemas(
     val standard: VertexSchema,
+    val textured: VertexSchema,
     val drawing: DrawingVertexSchemas
 )
 
 fun createVertexSchemas() = VertexSchemas(
-    VertexSchema(listOf(
+    standard = VertexSchema(listOf(
         VertexAttribute(0, "position", 3),
         VertexAttribute(1, "normal", 3),
         VertexAttribute(2, "color", 4)
     )),
-    createDrawingVertexSchemas()
+    textured = VertexSchema(listOf(
+        VertexAttribute(0, "position", 3),
+        VertexAttribute(1, "normal", 3),
+        VertexAttribute(2, "uv", 2)
+    )),
+    drawing = createDrawingVertexSchemas()
 )
 
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap {
-  val standard = vertexSchemas.standard
-  val newMeshes = createMeshes(standard)
+  val newMeshes = createMeshes(vertexSchemas.standard)
   return newMeshes.mapValues({ (_, m) -> convertMesh(m.mesh, m.vertexSchema, temporaryVertexSerializer) })
 }
 

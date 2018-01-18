@@ -49,7 +49,7 @@ class operations {
 
     fun extrude_basic(mesh: HalfEdgeMesh, face: Face): ArrayList<Face> {
       val result = ArrayList<Face>()
-//      val original_points = query.vertices(face)
+//      val original_points = query.getVertices(face)
       val new_points = clone_vertices(mesh, face)
       val original_edges = query.edges(face)
 
