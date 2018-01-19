@@ -24,7 +24,7 @@ fun runApp(platform: Platform) {
   val config = LabConfig()
   val world = generateDefaultWorld()
   val labClient = LabClient(config, client)
-  setWorldMesh(world.meta.structureWorld, client)
+  setWorldMesh(world.meta, client)
 
   while (!platform.process.isClosing()) {
     display.swapBuffers()

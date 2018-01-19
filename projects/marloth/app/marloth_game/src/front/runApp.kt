@@ -17,6 +17,7 @@ import mythic.spatial.put
 import rendering.Renderer
 import rendering.VertexSerializer
 import rendering.convertMesh
+import simulation.MetaWorld
 import simulation.StructureWorld
 import simulation.updateWorld
 import visualizing.createScene
@@ -26,7 +27,7 @@ fun runApp(platform: Platform) {
   val timer = DeltaTimer()
   val world = generateDefaultWorld()
   val client = Client(platform)
-  setWorldMesh(world.meta.structureWorld, client)
+  setWorldMesh(world.meta, client)
 
   while (!platform.process.isClosing()) {
     display.swapBuffers()
@@ -40,8 +41,8 @@ fun runApp(platform: Platform) {
 
 typealias VertexInfo = Map<Face, Map<Vertex, VertexNormalTexture>>
 
-fun prepareWorldMesh(mesh: HalfEdgeMesh): VertexInfo {
-  return mesh.faces.associate { face ->
+fun prepareWorldMesh(metaWorld: MetaWorld): VertexInfo {
+  return metaWorld.groups.floors.associate { face ->
     val vertices = getVertices(face)
     val bounds = getBounds(vertices)
     val dimensions = bounds.dimensions
@@ -60,6 +61,30 @@ fun prepareWorldMesh(mesh: HalfEdgeMesh): VertexInfo {
     }
     )
   }
+      .plus(
+          metaWorld.groups.walls.associate { face ->
+            val vertices = getVertices(face)
+            val bounds = getBounds(vertices)
+            val dimensions = bounds.dimensions
+            val scaleX = .5f
+            val scaleY = .5f
+            val edge = face.edge!!
+            val length = edge.vertex.position.distance(edge.next!!.vertex.position) * scaleX
+            val uvs = listOf(
+                Vector2(0f, 0f),
+                Vector2(length, 0f),
+                Vector2(length, 1f),
+                Vector2(0f, 1f)
+            ).listIterator()
+            Pair(face, vertices.associate { vertex ->
+              Pair(vertex, VertexNormalTexture(
+                  Vector3(0f, 0f, 1f),
+                  uvs.next()
+              ))
+            }
+            )
+          }
+      )
 }
 
 fun texturedVertexSerializer(vertexInfo: VertexInfo): VertexSerializer = { vertex, face, vertices ->
@@ -69,11 +94,11 @@ fun texturedVertexSerializer(vertexInfo: VertexInfo): VertexSerializer = { verte
   vertices.put(info.uv.y)
 }
 
-fun convertWorldMesh(structureWorld: StructureWorld, renderer: Renderer): SimpleMesh {
-  val vertexInfo = prepareWorldMesh(structureWorld.mesh)
-  return convertMesh(structureWorld.mesh, renderer.vertexSchemas.textured, texturedVertexSerializer(vertexInfo))
+fun convertWorldMesh(metaWorld: MetaWorld, renderer: Renderer): SimpleMesh {
+  val vertexInfo = prepareWorldMesh(metaWorld)
+  return convertMesh(metaWorld.structureWorld.mesh, renderer.vertexSchemas.textured, texturedVertexSerializer(vertexInfo))
 }
 
-fun setWorldMesh(structureWorld: StructureWorld, client: Client) {
-  client.renderer.worldMesh = convertWorldMesh(structureWorld, client.renderer)
+fun setWorldMesh(metaWorld: MetaWorld, client: Client) {
+  client.renderer.worldMesh = convertWorldMesh(metaWorld, client.renderer)
 }

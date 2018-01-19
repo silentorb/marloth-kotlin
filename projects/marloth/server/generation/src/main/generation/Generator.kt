@@ -39,8 +39,8 @@ fun generateWorld(input: WorldInput): World {
   val abstractWorld = AbstractWorld(input.boundary)
   generateAbstract(abstractWorld, input.dice)
   val structureWorld = StructureWorld()
-  generateStructure(abstractWorld, structureWorld)
-  return World(MetaWorld(abstractWorld, structureWorld),
+  val groups = generateStructure(abstractWorld, structureWorld)
+  return World(MetaWorld(abstractWorld, structureWorld, groups),
       listOf(Player(0, abstractWorld.nodes.first().position)))
 }
 

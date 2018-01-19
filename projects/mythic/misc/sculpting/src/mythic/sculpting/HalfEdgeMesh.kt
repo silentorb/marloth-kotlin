@@ -62,6 +62,12 @@ class HalfEdgeMesh {
     return null
   }
 
+  fun createFace(initializer: List<Vertex>): Face {
+    val face = createFace()
+    replaceFaceVertices(face, initializer)
+    return face
+  }
+
   fun replaceFaceVertices(face: Face, initializer: List<Vertex>) {
     val first = Edge(initializer.first(), null, null, null, face)
     face.edge = first

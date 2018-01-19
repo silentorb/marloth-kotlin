@@ -2,8 +2,12 @@ package generation.structure
 
 import generation.*
 import generation.abstract.*
+import mythic.sculpting.Edge
+import mythic.sculpting.Face
 import mythic.sculpting.HalfEdgeMesh
 import mythic.sculpting.Vertex
+import mythic.sculpting.query.getEdges
+import mythic.sculpting.query.getVertices
 import mythic.spatial.*
 import org.joml.minus
 import org.joml.plus
@@ -26,12 +30,6 @@ data class NodeCorner(val corner: Corner, val angle: Float) {
 
 fun radialSequence(corners: List<NodeCorner>) =
     corners.asSequence().plus(NodeCorner(corners.first().corner, corners.first().angle + Pi * 2))
-
-//fun createCorner(position: Vector3, type: CornerType = CornerType.normal) =
-//    Corner(position, type)
-
-//fun createCorner(position: Vector3, node: Node, type: CornerType = CornerType.normal) =
-//    Corner(position, getAngle(node.position.xy, position.xy), type)
 
 fun getDoorwayPoints(node: Node, other: Node): List<Vector2> {
   val direction = (other.position - node.position).xy.normalize()
@@ -102,6 +100,7 @@ fun createClusterNodeStructure(node: Node, cluster: List<Node>, corners: List<Co
   val moreCorners = corners.plus(createNodeDoorways(node))
   return moreCorners
       .plus(fillClusterCornerGaps(moreCorners, node, cluster.filter { it !== node }))
+      .sortedBy { getAngle(node, it.position) }
 }
 
 data class SharedCorners(val nodes: List<Node>, val corners: List<Corner>)
@@ -112,15 +111,6 @@ fun createClusterStructure(cluster: Cluster): List<NodeSector> {
         SharedCorners(listOf(i.first, i.second),
             createVerticesForOverlappingCircles(i.first, i.second, cluster.filter { it !== i.first && it !== i.second }))
       }
-//  return NodeSector(
-//      overlapPoints.map { it.corners }.flatten()
-//          .plus(cluster.flatMap { node ->
-//            createClusterNodeStructure(node, cluster,
-//                overlapPoints.filter { it.nodes.any { it === node } }.flatMap { it.corners }
-//            )
-//          }),
-//      cluster
-//  )
 
   return cluster.map { node ->
     val overlapping = overlapPoints.filter { it.nodes.any { it === node } }.flatMap { it.corners }
@@ -138,36 +128,65 @@ fun generateTunnelStructure(connection: Connection, nodeSectors: List<NodeSector
   return ConnectionSector(corners, connection)
 }
 
-fun sinewSector(corners: List<Corner>, center: Vector2, vertices: Map<Corner, Vertex>, mesh: HalfEdgeMesh) {
-  val face = mesh.createFace()
+fun sinewSector(corners: List<Corner>, vertices: Map<Corner, Vertex>, mesh: HalfEdgeMesh): Face {
   val sectorVertices = corners
-      .sortedBy { getAngle(center, it.position.xy) }
       .map { vertices[it]!! }
-  mesh.replaceFaceVertices(face, sectorVertices)
+  val face = mesh.createFace(sectorVertices)
+  return face
 }
 
-fun sinew(nodeSectors: List<NodeSector>, tunnelSectors: List<ConnectionSector>, mesh: HalfEdgeMesh) {
+data class Floor(
+    val sector: NodeSector,
+    val face: Face
+)
+
+data class TunnelFloor(
+    val sector: ConnectionSector,
+    val face: Face
+)
+
+fun sinewFloors(nodeSectors: List<NodeSector>, tunnelSectors: List<ConnectionSector>, mesh: HalfEdgeMesh):
+    Pair<List<Floor>, List<TunnelFloor>> {
   val vertices = nodeSectors.flatMap { it.corners }
       .distinct()
       .associate { Pair(it, Vertex(it.position)) }
 
+  val v = vertices.values.distinctBy { it.position }
   vertices.values.forEach { mesh.addVertex(it) }
-  nodeSectors.forEach { sector ->
-    sinewSector(sector.corners, sector.node.position.xy, vertices, mesh)
-//    val face = mesh.createFace()
-//    val sectorVertices = sector.corners
-//        .sortedBy { getAngle(sector.node, it.position) }
-//        .map { getVertices[it]!! }
-//    mesh.replaceFaceVertices(face, sectorVertices)
-  }
 
-  tunnelSectors.forEach { sector ->
-    val center = getCenter(sector.corners.map { it.position.xy })
-    sinewSector(sector.corners, center, vertices, mesh)
+  return Pair(nodeSectors.map { sector ->
+    Floor(sector, sinewSector(sector.corners, vertices, mesh))
+  },
+      tunnelSectors.map { sector ->
+        val center = getCenter(sector.corners.map { it.position.xy })
+        TunnelFloor(sector, sinewSector(sector.corners, vertices, mesh))
+      }
+  )
+}
+
+fun createWall(edge: Edge, mesh: HalfEdgeMesh): Face {
+  val offset = Vector3(0f, 0f, 1f)
+  val next = edge.next!!.vertex
+  return mesh.createFace(listOf(
+      edge.vertex,
+      next,
+      mesh.addVertex(next.position + offset),
+      mesh.addVertex(edge.vertex.position + offset)
+  ))
+}
+
+fun getWallEdges(face: Face, corners: List<Corner>): List<Edge> {
+  val edges = getEdges(face)
+//  fun getCorner(vertex: Vertex) = corners.first { it.position == vertex.position }
+  return edges.filter {
+    it.opposite == null
+//    val first = getCorner(it.vertex).type
+//    val second = getCorner(it.next!!.vertex).type
+//    first == CornerType.normal || second != first
   }
 }
 
-fun generateStructure(abstractWorld: AbstractWorld, structureWorld: StructureWorld) {
+fun generateStructure(abstractWorld: AbstractWorld, structureWorld: StructureWorld): MeshGroups {
   val mesh = structureWorld.mesh
 
   val singleNodes = abstractWorld.nodes.filter { !isInCluster(it) }
@@ -178,5 +197,10 @@ fun generateStructure(abstractWorld: AbstractWorld, structureWorld: StructureWor
   val tunnelSectors = abstractWorld.connections.filter { it.type == ConnectionType.tunnel }
       .map { generateTunnelStructure(it, nodeSectors) }
 
-  sinew(nodeSectors, tunnelSectors, mesh)
+  val (roomFloors, tunnelFloors) = sinewFloors(nodeSectors, tunnelSectors, mesh)
+  val walls = roomFloors.flatMap { getWallEdges(it.face, it.sector.corners) }
+//      .plus(tunnelFloors.flatMap { getWallEdges(it.face, it.sector.corners) })
+      .map { createWall(it, mesh) }
+  val allFloors = roomFloors.map { it.face }.plus(tunnelFloors.map { it.face })
+  return MeshGroups(allFloors, walls)
 }

@@ -2,12 +2,22 @@ package simulation
 
 import commanding.CommandType
 import haft.Commands
+import mythic.sculpting.Face
 import org.joml.plus
 import mythic.spatial.Vector3
 
 typealias Players = List<Player>
 
-data class MetaWorld(val abstractWorld: AbstractWorld, val structureWorld: StructureWorld)
+data class MeshGroups(
+    val floors: List<Face>,
+    val walls: List<Face>
+)
+
+data class MetaWorld(
+    val abstractWorld: AbstractWorld,
+    val structureWorld: StructureWorld,
+    val groups: MeshGroups
+)
 
 data class World(val meta: MetaWorld, val players: Players = listOf(Player(0))) {
 
