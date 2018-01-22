@@ -7,7 +7,6 @@ import mythic.sculpting.Face
 import mythic.sculpting.HalfEdgeMesh
 import mythic.sculpting.Vertex
 import mythic.sculpting.query.getEdges
-import mythic.sculpting.query.getVertices
 import mythic.spatial.*
 import org.joml.minus
 import org.joml.plus
@@ -20,12 +19,16 @@ enum class CornerType {
   overlap,
 }
 
-data class Corner(val position: Vector3, val type: CornerType = CornerType.normal)
-data class NodeSector(val corners: List<Corner>, val node: Node)
+//data class Corner(val position: Vector3, val type: CornerType = CornerType.normal)
+typealias Corner = Vector3
+
+typealias SectorEdge = List<Vector3>
+
+data class NodeSector(val node: Node, val corners: List<Corner>)
 data class ConnectionSector(val corners: List<Corner>, val connection: Connection)
 data class NodeCorner(val corner: Corner, val angle: Float) {
   val position: Vector3
-    get() = corner.position
+    get() = corner
 }
 
 fun radialSequence(corners: List<NodeCorner>) =
@@ -39,23 +42,23 @@ fun getDoorwayPoints(node: Node, other: Node): List<Vector2> {
 
 fun createDoorway(node: Node, other: Node) =
     getDoorwayPoints(node, other)
-        .map { Corner(it.toVector3(), CornerType.doorway) }
+        .map { it.toVector3() }
 
 fun createVerticesForOverlappingCircles(node: Node, other: Node, others: List<Node>): List<Corner> =
     circleIntersection(node.position.xy, node.radius, other.position.xy, other.radius)
-        .filter { c -> !others.any { isInsideNode(c, it) } }
-        .map { Corner(it.toVector3(), CornerType.overlap) }
+        // Only needed for tri-unions
+//        .filter { c -> !others.any { isInsideNode(c, it) } }
+        .map { it.toVector3() }
 
 fun createNodeDoorways(node: Node) =
     node.connections
         .filter { it.type != ConnectionType.union }
         .map { createDoorway(node, it.getOther(node)) }
-        .flatten()
 
 data class CornerGap(val first: NodeCorner, val second: NodeCorner, val length: Float)
 
 fun mapCorners(corners: List<Corner>, node: Node) =
-    corners.map { NodeCorner(it, getAngle(node, it.position)) }
+    corners.map { NodeCorner(it, getAngle(node, it)) }
 
 fun getGaps(corners: List<NodeCorner>, minAngle: Float) =
     toPairs(radialSequence(corners))
@@ -81,10 +84,12 @@ fun fillCornerGaps(unorderedCorners: List<Corner>, node: Node): List<Corner> {
 }
 
 fun createSingleNodeStructure(node: Node): NodeSector {
-  val corners = createNodeDoorways(node)
+  val doorways = createNodeDoorways(node)
+  val points = doorways.flatten()
   return NodeSector(
-      corners.plus(fillCornerGaps(corners, node)).sortedBy { getAngle(node, it.position) },
-      node
+      node,
+      points.plus(fillCornerGaps(points, node)).sortedBy { getAngle(node, it) }
+//      doorways
   )
 }
 
@@ -93,14 +98,15 @@ fun getClusterUnions(cluster: Cluster): List<Connection> =
 
 fun fillClusterCornerGaps(unorderedCorners: List<Corner>, node: Node, otherNodes: List<Node>): List<Corner> {
   val additional = fillCornerGaps(unorderedCorners, node)
-  return additional.filter { corner -> !otherNodes.any { isInsideNode(corner.position.xy, it) } }
+  return additional.filter { corner -> !otherNodes.any { isInsideNode(corner.xy, it) } }
 }
 
 fun createClusterNodeStructure(node: Node, cluster: List<Node>, corners: List<Corner>): List<Corner> {
-  val moreCorners = corners.plus(createNodeDoorways(node))
+  val doorways = createNodeDoorways(node)
+  val moreCorners = corners.plus(doorways.flatten())
   return moreCorners
       .plus(fillClusterCornerGaps(moreCorners, node, cluster.filter { it !== node }))
-      .sortedBy { getAngle(node, it.position) }
+      .sortedBy { getAngle(node, it) }
 }
 
 data class SharedCorners(val nodes: List<Node>, val corners: List<Corner>)
@@ -114,7 +120,7 @@ fun createClusterStructure(cluster: Cluster): List<NodeSector> {
 
   return cluster.map { node ->
     val overlapping = overlapPoints.filter { it.nodes.any { it === node } }.flatMap { it.corners }
-    NodeSector(createClusterNodeStructure(node, cluster, overlapping), node)
+    NodeSector(node, createClusterNodeStructure(node, cluster, overlapping))
   }
 }
 
@@ -122,7 +128,7 @@ fun generateTunnelStructure(connection: Connection, nodeSectors: List<NodeSector
   val sectors = nodeSectors.filter { it.node === connection.first || it.node == connection.second }
   val corners = sectors.flatMap { sector ->
     val points = getDoorwayPoints(sector.node, connection.getOther(sector.node))
-    sector.corners.filter { p -> points.any { it == p.position.xy } }
+    sector.corners.filter { p -> points.any { it == p.xy } }
   }
 
   return ConnectionSector(corners, connection)
@@ -149,7 +155,7 @@ fun sinewFloors(nodeSectors: List<NodeSector>, tunnelSectors: List<ConnectionSec
     Pair<List<Floor>, List<TunnelFloor>> {
   val vertices = nodeSectors.flatMap { it.corners }
       .distinct()
-      .associate { Pair(it, Vertex(it.position)) }
+      .associate { Pair(it, Vertex(it)) }
 
   val v = vertices.values.distinctBy { it.position }
   vertices.values.forEach { mesh.addVertex(it) }
@@ -158,7 +164,7 @@ fun sinewFloors(nodeSectors: List<NodeSector>, tunnelSectors: List<ConnectionSec
     Floor(sector, sinewSector(sector.corners, vertices, mesh))
   },
       tunnelSectors.map { sector ->
-        val center = getCenter(sector.corners.map { it.position.xy })
+        val center = getCenter(sector.corners.map { it.xy })
         TunnelFloor(sector, sinewSector(sector.corners, vertices, mesh))
       }
   )
@@ -183,6 +189,30 @@ fun getWallEdges(face: Face, corners: List<Corner>): List<Edge> {
 //    val first = getCorner(it.vertex).type
 //    val second = getCorner(it.next!!.vertex).type
 //    first == CornerType.normal || second != first
+  }
+}
+
+fun <T, O> crossMap(firstList: List<T>, secondList: List<T>, action: (T, T) -> O?): List<O> {
+  var skip = 1
+  val result: MutableList<O> = mutableListOf()
+  for (a in firstList) {
+    for (i in skip until secondList.size) {
+      val b = secondList[i]
+      val output = action(a, b)
+      if (output != null)
+        result.add(output)
+    }
+    ++skip
+  }
+  return result
+}
+
+fun findClosePoints(sectors: List<List<Corner>>) {
+  return crossMap(sectors, sectors) { first, second->
+    val pairs = crossMap(first, second) {
+      null
+    }
+    if (pairs.size > 0) pairs else null
   }
 }
 

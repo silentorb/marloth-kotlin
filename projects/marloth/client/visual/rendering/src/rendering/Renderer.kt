@@ -7,6 +7,7 @@ import mythic.glowing.DrawMethod
 import mythic.glowing.Glow
 import mythic.platforming.WindowInfo
 import mythic.glowing.SimpleMesh
+import mythic.glowing.Texture
 import mythic.spatial.Matrix
 import mythic.spatial.Vector2
 import mythic.typography.loadFonts
@@ -23,10 +24,14 @@ fun gatherEffectsData(windowInfo: WindowInfo, scene: Scene): EffectsData {
   )
 }
 
-fun renderScene(scene: Scene, painters: Painters, effects: Effects, textures: Textures, worldMesh: SimpleMesh?) {
+fun renderScene(scene: Scene, painters: Painters, effects: Effects, textures: Textures, worldMesh: WorldMesh?) {
   if (worldMesh != null) {
     effects.textured.activate(Matrix(), textures.checkers)
-    worldMesh.draw(DrawMethod.triangleFan)
+    var index = 0
+    for (texture in worldMesh.textureIndex) {
+      texture.activate()
+      worldMesh.mesh.drawElement(DrawMethod.triangleFan, index++)
+    }
   }
 
   for (element in scene.elements) {
@@ -34,12 +39,17 @@ fun renderScene(scene: Scene, painters: Painters, effects: Effects, textures: Te
   }
 }
 
+data class WorldMesh(
+    val mesh: SimpleMesh,
+    val textureIndex: List<Texture>
+)
+
 class Renderer {
   val glow = Glow()
   val shaders = createShaders()
   val vertexSchemas = createVertexSchemas()
   val meshes = createMeshes(vertexSchemas)
-  var worldMesh: SimpleMesh? = null
+  var worldMesh: WorldMesh? = null
   val canvasMeshes = createDrawingMeshes(vertexSchemas.drawing)
   val painters = createPainters(meshes)
   val textures = Textures()

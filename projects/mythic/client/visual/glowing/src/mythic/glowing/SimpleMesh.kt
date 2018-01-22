@@ -57,6 +57,11 @@ class SimpleMesh(val vertexBuffer: VertexBuffer, val offsets: IntBuffer, val cou
     glMultiDrawArrays(convertDrawMethod(method), offsets, counts)
   }
 
+  fun drawElement(method: DrawMethod, index: Int) {
+    vertexBuffer.activate()
+    glDrawArrays(convertDrawMethod(method), offsets[index], counts[index])
+  }
+
   constructor(vertexSchema: VertexSchema, values: List<Float>) :
       this(VertexBuffer(vertexSchema),
           createIntBuffer(0),

@@ -8,6 +8,8 @@ import org.lwjgl.opengl.GL30.glBindVertexArray
 
 import mythic.spatial.Vector4
 import org.joml.Vector4i
+import org.lwjgl.opengl.GL13
+import org.lwjgl.opengl.GL13.glActiveTexture
 import org.lwjgl.opengl.GL14.GL_BLEND_DST_RGB
 import org.lwjgl.opengl.GL14.GL_BLEND_SRC_RGB
 
@@ -106,6 +108,21 @@ class State {
       }
     }
 
+  var textureSlot: Int = -1
+    set(value) {
+      if (field != value) {
+        field = value
+        glActiveTexture(value)
+      }
+    }
+
+  var boundTexture: Int = 0
+    set(value) {
+      if (field != value) {
+        field = value
+        glBindTexture(GL_TEXTURE_2D, value)
+      }
+    }
 }
 
 val globalState = State()

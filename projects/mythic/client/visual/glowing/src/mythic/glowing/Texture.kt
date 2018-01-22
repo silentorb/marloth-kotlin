@@ -24,7 +24,7 @@ class Texture(width: Int, height: Int, buffer: FloatBuffer, initializer: FontIni
   private val id: Int = glGenTextures()
 
   init {
-    glBindTexture(GL_TEXTURE_2D, id)
+    globalState.boundTexture = id
     initializer(width, height, buffer)
   }
 
@@ -33,7 +33,7 @@ class Texture(width: Int, height: Int, buffer: FloatBuffer, initializer: FontIni
   }
 
   fun activate() {
-    glActiveTexture(GL_TEXTURE0)
-    glBindTexture(GL_TEXTURE_2D, id)
+    globalState.textureSlot = GL_TEXTURE0
+    globalState.boundTexture = id
   }
 }
