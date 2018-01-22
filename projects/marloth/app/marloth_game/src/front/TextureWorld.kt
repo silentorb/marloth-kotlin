@@ -1,10 +1,9 @@
 package front
 
 import marloth.clienting.Client
-import mythic.glowing.SimpleMesh
 import mythic.glowing.Texture
-import mythic.sculpting.Face
-import mythic.sculpting.Vertex
+import mythic.sculpting.HalfEdgeFace
+import mythic.sculpting.HalfEdgeVertex
 import mythic.sculpting.VertexNormalTexture
 import mythic.sculpting.query.getBounds
 import mythic.sculpting.query.getVertices
@@ -14,16 +13,16 @@ import mythic.spatial.put
 import rendering.*
 import simulation.MetaWorld
 
-typealias VertexMap = Map<Vertex, VertexNormalTexture>
-typealias VertexInfo = Map<Face, VertexMap>
+typealias VertexMap = Map<HalfEdgeVertex, VertexNormalTexture>
+typealias VertexInfo = Map<HalfEdgeFace, VertexMap>
 
 data class TextureFace(
-    val face: Face,
+    val face: HalfEdgeFace,
     val vertexMap: VertexMap,
     val texture: Texture
 )
 
-fun createTexturedFloor(face: Face, texture: Texture): TextureFace {
+fun createTexturedFloor(face: HalfEdgeFace, texture: Texture): TextureFace {
   val vertices = getVertices(face)
   val bounds = getBounds(vertices)
   val dimensions = bounds.dimensions
@@ -44,7 +43,7 @@ fun createTexturedFloor(face: Face, texture: Texture): TextureFace {
   )
 }
 
-fun createTexturedWall(face: Face, texture: Texture): TextureFace {
+fun createTexturedWall(face: HalfEdgeFace, texture: Texture): TextureFace {
   val vertices = getVertices(face)
   val bounds = getBounds(vertices)
   val dimensions = bounds.dimensions

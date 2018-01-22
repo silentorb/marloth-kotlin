@@ -2,15 +2,15 @@ package simulation
 
 import commanding.CommandType
 import haft.Commands
-import mythic.sculpting.Face
+import mythic.sculpting.HalfEdgeFace
 import org.joml.plus
 import mythic.spatial.Vector3
 
 typealias Players = List<Player>
 
 data class MeshGroups(
-    val floors: List<Face>,
-    val walls: List<Face>
+    val floors: List<HalfEdgeFace>,
+    val walls: List<HalfEdgeFace>
 )
 
 data class MetaWorld(

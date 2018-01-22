@@ -111,7 +111,7 @@ fun createMapLayout(abstractWorld: AbstractWorld, structureWorld: StructureWorld
   }
 
   val panels = listOf(
-      Pair(Measurement(Measurements.pixel, 200f), draw),
+//      Pair(Measurement(Measurements.pixel, 200f), draw),
       Pair(Measurement(Measurements.stretch, 0f), drawWorld)
   )
   val boxes = overlap(createVerticalBounds(panels.map { it.first }, screenDimensions), panels, { a, b ->

@@ -40,7 +40,7 @@ class create {
       return result;
  */
 
-    fun cube(mesh: HalfEdgeMesh, size: Vector3): List<Face> {
+    fun cube(mesh: HalfEdgeMesh, size: Vector3): List<HalfEdgeFace> {
       val half = size * 0.5f
       val top = squareUp(mesh, Vector2(size.x, size.y), half.z)
       val bottom = squareDown(mesh, Vector2(size.x, size.y), -half.z)
@@ -61,42 +61,42 @@ class create {
             bottom_vertices[a], bottom_vertices[b]
         ))
       }
-      return listOf<Face>(top, bottom)
+      return listOf<HalfEdgeFace>(top, bottom)
           .plus(listOf())
     }
 
-    fun squareDown(mesh: HalfEdgeMesh, size: Vector2, z: Float): Face {
+    fun squareDown(mesh: HalfEdgeMesh, size: Vector2, z: Float): HalfEdgeFace {
       val half = size * 0.5f;
       return mesh.add_face(listOf(
-          Vertex(Vector3(-half.x, -half.y, z)),
-          Vertex(Vector3(-half.x, half.y, z)),
-          Vertex(Vector3(half.x, half.y, z)),
-          Vertex(Vector3(half.x, -half.y, z))
+          HalfEdgeVertex(Vector3(-half.x, -half.y, z)),
+          HalfEdgeVertex(Vector3(-half.x, half.y, z)),
+          HalfEdgeVertex(Vector3(half.x, half.y, z)),
+          HalfEdgeVertex(Vector3(half.x, -half.y, z))
       ))
     }
 
-    fun squareUp(mesh: HalfEdgeMesh, size: Vector2, z: Float): Face {
+    fun squareUp(mesh: HalfEdgeMesh, size: Vector2, z: Float): HalfEdgeFace {
       val half = size * 0.5f;
       return mesh.add_face(listOf(
-          Vertex(Vector3(-half.x, -half.y, z)),
-          Vertex(Vector3(half.x, -half.y, z)),
-          Vertex(Vector3(half.x, half.y, z)),
-          Vertex(Vector3(-half.x, half.y, z))
+          HalfEdgeVertex(Vector3(-half.x, -half.y, z)),
+          HalfEdgeVertex(Vector3(half.x, -half.y, z)),
+          HalfEdgeVertex(Vector3(half.x, half.y, z)),
+          HalfEdgeVertex(Vector3(-half.x, half.y, z))
       ))
     }
 
     fun flatTest(): HalfEdgeMesh {
       val mesh = HalfEdgeMesh()
       mesh.add_face(listOf(
-          Vertex(Vector3(1f, 1f, 0f)),
-          Vertex(Vector3(0.5f, 1f, 0f)),
-          Vertex(Vector3(1f, 0.5f, 0f))
+          HalfEdgeVertex(Vector3(1f, 1f, 0f)),
+          HalfEdgeVertex(Vector3(0.5f, 1f, 0f)),
+          HalfEdgeVertex(Vector3(1f, 0.5f, 0f))
       ))
 
       mesh.add_face(listOf(
-          Vertex(Vector3(-1f, -1f, 0f)),
-          Vertex(Vector3(-1f, -0.5f, 0f)),
-          Vertex(Vector3(-0.5f, -1f, 0f))
+          HalfEdgeVertex(Vector3(-1f, -1f, 0f)),
+          HalfEdgeVertex(Vector3(-1f, -0.5f, 0f)),
+          HalfEdgeVertex(Vector3(-0.5f, -1f, 0f))
       ))
       return mesh
     }

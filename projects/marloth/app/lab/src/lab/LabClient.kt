@@ -57,14 +57,14 @@ class LabClient(val config: LabConfig, val client: Client) {
     val renderer = client.renderer
     val canvas = Canvas(renderer.vertexSchemas.drawing, renderer.canvasMeshes, renderer.shaders.drawing,
         unitScaling, windowInfo.dimensions)
-    canvas.drawText(TextConfiguration(
-        "Dev Lab",
-        renderer.fonts[0],
-        12f,
-        Vector2(10f, 10f),
-//        Vector4(1f, 0.8f, 0.3f, 1f)
-        Vector4(0f, 0f, 0f, 1f)
-    ))
+//    canvas.drawText(TextConfiguration(
+//        "Dev Lab",
+//        renderer.fonts[0],
+//        12f,
+//        Vector2(10f, 10f),
+////        Vector4(1f, 0.8f, 0.3f, 1f)
+//        Vector4(0f, 0f, 0f, 1f)
+//    ))
     renderMainLab(labLayout, canvas)
   }
 

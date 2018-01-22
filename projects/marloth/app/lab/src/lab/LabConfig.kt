@@ -30,8 +30,8 @@ enum class LabView {
 
 data class LabConfig(
     var view: LabView = LabView.world,
-    var showAbstract: Boolean = false,
+    var showAbstract: Boolean = true,
     var showStructure: Boolean = true,
-    var showLab: Boolean = false,
+    var showLab: Boolean = true,
     val input: LabInputConfig = LabInputConfig(createLabInputBindings())
 )

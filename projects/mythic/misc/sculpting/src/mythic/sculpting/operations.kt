@@ -2,7 +2,6 @@ package mythic.sculpting
 
 import mythic.sculpting.query.each_vertex
 import mythic.sculpting.query.getEdges
-import mythic.sculpting.query.getVertices
 import mythic.spatial.Matrix
 import mythic.spatial.Vector3
 import mythic.spatial.plusAssign
@@ -12,13 +11,13 @@ import java.util.*
 class operations {
   companion object {
 
-//    fun detach_face(face: Face) {
-//      query.each_vertex(face, { vertex: Vertex -> vertex.edge.face = null })
+//    fun detach_face(face: HalfEdgeFace) {
+//      query.each_vertex(face, { vertex: HalfEdgeVertex -> vertex.edge.face = null })
 //
 //      face.edge = null
 //    }
 
-    fun set_opposite_edge(mesh: HalfEdgeMesh, edge: Edge) {
+    fun set_opposite_edge(mesh: HalfEdgeMesh, edge: HalfEdge) {
       val opposite = mesh.get_opposite_edge(edge.next!!.vertex, edge.vertex)
       if (opposite != null) {
         edge.opposite = opposite
@@ -26,19 +25,19 @@ class operations {
       }
     }
 
-    fun create_edge(mesh: HalfEdgeMesh, face: Face, vertex: Vertex, next: Edge): Edge {
-      val edge = Edge(vertex, next, null, null, face)
+    fun create_edge(mesh: HalfEdgeMesh, face: HalfEdgeFace, vertex: HalfEdgeVertex, next: HalfEdge): HalfEdge {
+      val edge = HalfEdge(vertex, next, null, null, face)
       mesh.add_edge(edge)
       set_opposite_edge(mesh, edge)
       return edge
     }
 
-    fun fill_parallel_edges(mesh: HalfEdgeMesh, face: Face, first: Edge, second: Edge): Face {
+    fun fill_parallel_edges(mesh: HalfEdgeMesh, face: HalfEdgeFace, first: HalfEdge, second: HalfEdge): HalfEdgeFace {
       face.edge = first
       first.face = face
       second.face = face
 
-      fun create(a: Edge, b: Edge) {
+      fun create(a: HalfEdge, b: HalfEdge) {
         val temp = create_edge(mesh, face, a.opposite!!.vertex, b)
         a.next = temp
         temp.previous = a
@@ -50,8 +49,8 @@ class operations {
       return face
     }
 
-    fun extrude_basic(mesh: HalfEdgeMesh, face: Face): ArrayList<Face> {
-      val result = ArrayList<Face>()
+    fun extrude_basic(mesh: HalfEdgeMesh, face: HalfEdgeFace): ArrayList<HalfEdgeFace> {
+      val result = ArrayList<HalfEdgeFace>()
 //      val original_points = query.getVertices(face)
       val new_points = clone_vertices(mesh, face)
       val original_edges = getEdges(face)
@@ -63,7 +62,7 @@ class operations {
       for (originalEdge in original_edges) {
         val newEdge = new_edges.next()
         val new_face = mesh.createFace()
-        val opposite_new_edge = Edge(newEdge.next!!.vertex, null, null, newEdge, face)
+        val opposite_new_edge = HalfEdge(newEdge.next!!.vertex, null, null, newEdge, face)
         mesh.add_edge(opposite_new_edge)
         newEdge.opposite = opposite_new_edge
         result.add(fill_parallel_edges(mesh, new_face, originalEdge, opposite_new_edge))
@@ -72,22 +71,22 @@ class operations {
       return result
     }
 
-    fun extrude_absolute(mesh: HalfEdgeMesh, face: Face, matrix: Matrix): ArrayList<Face> {
+    fun extrude_absolute(mesh: HalfEdgeMesh, face: HalfEdgeFace, matrix: Matrix): ArrayList<HalfEdgeFace> {
       val result = extrude_basic(mesh, face)
       transform(face, matrix)
       return result
     }
 
-//    fun extrude_relative(mesh: HalfEdgeMesh, face: Face, matrix: sculpting.Matrix) {}
+//    fun extrude_relative(mesh: HalfEdgeMesh, face: HalfEdgeFace, matrix: sculpting.Matrix) {}
 
-    fun clone_vertices(mesh: HalfEdgeMesh, face: Face): List<Vertex> {
-      val result = Array<Vertex>(0, { Vertex(Vector3(0f, 0f, 0f)) })
+    fun clone_vertices(mesh: HalfEdgeMesh, face: HalfEdgeFace): List<HalfEdgeVertex> {
+      val result = Array<HalfEdgeVertex>(0, { HalfEdgeVertex(Vector3(0f, 0f, 0f)) })
       var i = 0
-      each_vertex(face, { vertex: Vertex -> result[i++] = mesh.addVertex(vertex) })
+      each_vertex(face, { vertex: HalfEdgeVertex -> result[i++] = mesh.addVertex(vertex) })
       return result.toList()
     }
 
-//    fun flip(face: Face) {
+//    fun flip(face: HalfEdgeFace) {
 //      var edge = face.edge!!.next
 //      var previous = face.edge!!
 //      while (edge !== face.edge) {
@@ -98,12 +97,12 @@ class operations {
 //      }
 //    }
 
-    fun translate(face: Face, offset: Vector3) {
-      each_vertex(face, { vertex: Vertex -> vertex.position += offset })
+    fun translate(face: HalfEdgeFace, offset: Vector3) {
+      each_vertex(face, { vertex: HalfEdgeVertex -> vertex.position += offset })
     }
 
-    fun transform(face: Face, matrix: Matrix) {
-      each_vertex(face, { vertex: Vertex -> vertex.position = Vector3(vertex.position * matrix) })
+    fun transform(face: HalfEdgeFace, matrix: Matrix) {
+      each_vertex(face, { vertex: HalfEdgeVertex -> vertex.position = Vector3(vertex.position * matrix) })
     }
   }
 }

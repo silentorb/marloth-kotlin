@@ -1,11 +1,13 @@
 package generation.structure
 
 import generation.*
-import generation.abstract.*
-import mythic.sculpting.Edge
-import mythic.sculpting.Face
+import generation.abstract.Cluster
+import generation.abstract.gatherClusters
+import generation.abstract.isInCluster
+import mythic.sculpting.HalfEdge
+import mythic.sculpting.HalfEdgeFace
 import mythic.sculpting.HalfEdgeMesh
-import mythic.sculpting.Vertex
+import mythic.sculpting.HalfEdgeVertex
 import mythic.sculpting.query.getEdges
 import mythic.spatial.*
 import org.joml.minus
@@ -25,7 +27,7 @@ typealias Corner = Vector3
 typealias SectorEdge = List<Vector3>
 
 data class NodeSector(val node: Node, val corners: List<Corner>)
-data class ConnectionSector(val corners: List<Corner>, val connection: Connection)
+//data class ConnectionSector(val corners: List<Corner>, val connection: Connection)
 data class NodeCorner(val corner: Corner, val angle: Float) {
   val position: Vector3
     get() = corner
@@ -124,17 +126,17 @@ fun createClusterStructure(cluster: Cluster): List<NodeSector> {
   }
 }
 
-fun generateTunnelStructure(connection: Connection, nodeSectors: List<NodeSector>): ConnectionSector {
-  val sectors = nodeSectors.filter { it.node === connection.first || it.node == connection.second }
-  val corners = sectors.flatMap { sector ->
-    val points = getDoorwayPoints(sector.node, connection.getOther(sector.node))
-    sector.corners.filter { p -> points.any { it == p.xy } }
-  }
+//fun generateTunnelStructure(connection: Connection, nodeSectors: List<NodeSector>): ConnectionSector {
+//  val sectors = nodeSectors.filter { it.node === connection.first || it.node == connection.second }
+//  val corners = sectors.flatMap { sector ->
+//    val points = getDoorwayPoints(sector.node, connection.getOther(sector.node))
+//    sector.corners.filter { p -> points.any { it == p.xy } }
+//  }
+//
+//  return ConnectionSector(corners, connection)
+//}
 
-  return ConnectionSector(corners, connection)
-}
-
-fun sinewSector(corners: List<Corner>, vertices: Map<Corner, Vertex>, mesh: HalfEdgeMesh): Face {
+fun sinewSector(corners: List<Corner>, vertices: Map<Corner, HalfEdgeVertex>, mesh: HalfEdgeMesh): HalfEdgeFace {
   val sectorVertices = corners
       .map { vertices[it]!! }
   val face = mesh.createFace(sectorVertices)
@@ -143,34 +145,35 @@ fun sinewSector(corners: List<Corner>, vertices: Map<Corner, Vertex>, mesh: Half
 
 data class Floor(
     val sector: NodeSector,
-    val face: Face
+    val face: HalfEdgeFace
 )
 
-data class TunnelFloor(
-    val sector: ConnectionSector,
-    val face: Face
-)
+//data class TunnelFloor(
+//    val sector: ConnectionSector,
+//    val face: HalfEdgeFace
+//)
 
-fun sinewFloors(nodeSectors: List<NodeSector>, tunnelSectors: List<ConnectionSector>, mesh: HalfEdgeMesh):
-    Pair<List<Floor>, List<TunnelFloor>> {
+fun sinewFloors(nodeSectors: List<NodeSector>, mesh: HalfEdgeMesh):
+    List<Floor> {
   val vertices = nodeSectors.flatMap { it.corners }
       .distinct()
-      .associate { Pair(it, Vertex(it)) }
+      .associate { Pair(it, HalfEdgeVertex(it)) }
 
   val v = vertices.values.distinctBy { it.position }
   vertices.values.forEach { mesh.addVertex(it) }
 
-  return Pair(nodeSectors.map { sector ->
+  return nodeSectors.map { sector ->
     Floor(sector, sinewSector(sector.corners, vertices, mesh))
-  },
-      tunnelSectors.map { sector ->
-        val center = getCenter(sector.corners.map { it.xy })
-        TunnelFloor(sector, sinewSector(sector.corners, vertices, mesh))
-      }
-  )
+  }
+//  ,
+//      tunnelSectors.map { sector ->
+//        val center = getCenter(sector.corners.map { it.xy })
+//        TunnelFloor(sector, sinewSector(sector.corners, vertices, mesh))
+//      }
+//  )
 }
 
-fun createWall(edge: Edge, mesh: HalfEdgeMesh): Face {
+fun createWall(edge: HalfEdge, mesh: HalfEdgeMesh): HalfEdgeFace {
   val offset = Vector3(0f, 0f, 1f)
   val next = edge.next!!.vertex
   return mesh.createFace(listOf(
@@ -181,9 +184,9 @@ fun createWall(edge: Edge, mesh: HalfEdgeMesh): Face {
   ))
 }
 
-fun getWallEdges(face: Face, corners: List<Corner>): List<Edge> {
+fun getWallEdges(face: HalfEdgeFace, corners: List<Corner>): List<HalfEdge> {
   val edges = getEdges(face)
-//  fun getCorner(vertex: Vertex) = corners.first { it.position == vertex.position }
+//  fun getCorner(vertex: HalfEdgeVertex) = corners.first { it.position == vertex.position }
   return edges.filter {
     it.opposite == null
 //    val first = getCorner(it.vertex).type
@@ -192,29 +195,46 @@ fun getWallEdges(face: Face, corners: List<Corner>): List<Edge> {
   }
 }
 
-fun <T, O> crossMap(firstList: List<T>, secondList: List<T>, action: (T, T) -> O?): List<O> {
+//fun <T, O> crossMap(firstList: List<T>, secondList: List<T>, action: (T, T) -> O?): List<O> {
+//  var skip = 1
+//  val result: MutableList<O> = mutableListOf()
+//  for (a in firstList) {
+//    for (i in skip until secondList.size) {
+//      val b = secondList[i]
+//      val output = action(a, b)
+//      if (output != null)
+//        result.add(output)
+//    }
+//    ++skip
+//  }
+//  return result
+//}
+
+fun <T> crossMap(firstList: List<T>, secondList: List<T>): List<Pair<T, T>> {
   var skip = 1
-  val result: MutableList<O> = mutableListOf()
+  val result: MutableList<Pair<T, T>> = mutableListOf()
   for (a in firstList) {
     for (i in skip until secondList.size) {
       val b = secondList[i]
-      val output = action(a, b)
-      if (output != null)
-        result.add(output)
+      result.add(Pair(a, b))
     }
     ++skip
   }
   return result
 }
 
-fun findClosePoints(sectors: List<List<Corner>>) {
-  return crossMap(sectors, sectors) { first, second->
-    val pairs = crossMap(first, second) {
-      null
-    }
-    if (pairs.size > 0) pairs else null
-  }
-}
+//data class ClosePointPair(
+//    var first: Pair<NodeSector, Vector3>,
+//)
+
+//fun findClosePoints(sectors: List<List<Corner>>):List<ClosePointPair > {
+//  return crossMap(sectors, sectors)
+//      .map { first, second ->
+//        crossMap(first, second)
+////            .filter { a, b -> a.distance(b) < 0.5f }
+//      }
+//      .flatten()
+//}
 
 fun generateStructure(abstractWorld: AbstractWorld, structureWorld: StructureWorld): MeshGroups {
   val mesh = structureWorld.mesh
@@ -224,13 +244,13 @@ fun generateStructure(abstractWorld: AbstractWorld, structureWorld: StructureWor
   val nodeSectors = singleNodes.map { createSingleNodeStructure(it) }
       .plus(clusters.flatMap { createClusterStructure(it) })
 
-  val tunnelSectors = abstractWorld.connections.filter { it.type == ConnectionType.tunnel }
-      .map { generateTunnelStructure(it, nodeSectors) }
+//  val tunnelSectors = abstractWorld.connections.filter { it.type == ConnectionType.tunnel }
+//      .map { generateTunnelStructure(it, nodeSectors) }
 
-  val (roomFloors, tunnelFloors) = sinewFloors(nodeSectors, tunnelSectors, mesh)
+  val roomFloors = sinewFloors(nodeSectors, mesh)
   val walls = roomFloors.flatMap { getWallEdges(it.face, it.sector.corners) }
 //      .plus(tunnelFloors.flatMap { getWallEdges(it.face, it.sector.corners) })
       .map { createWall(it, mesh) }
-  val allFloors = roomFloors.map { it.face }.plus(tunnelFloors.map { it.face })
+  val allFloors = roomFloors.map { it.face }//.plus(tunnelFloors.map { it.face })
   return MeshGroups(allFloors, walls)
 }

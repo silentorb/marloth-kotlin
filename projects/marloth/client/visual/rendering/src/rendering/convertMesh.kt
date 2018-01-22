@@ -4,15 +4,15 @@ import mythic.glowing.SimpleMesh
 import mythic.glowing.VertexSchema
 import org.lwjgl.BufferUtils
 import mythic.sculpting.HalfEdgeMesh
-import mythic.sculpting.Vertex
-import mythic.sculpting.Face
+import mythic.sculpting.HalfEdgeVertex
+import mythic.sculpting.HalfEdgeFace
 import mythic.sculpting.query.each_edge
 import mythic.sculpting.query.getVertexCount
 import mythic.spatial.Vector4
 import mythic.spatial.put
 import java.nio.FloatBuffer
 
-typealias VertexSerializer = (vertex: Vertex, face: Face, vertices: FloatBuffer) -> Unit
+typealias VertexSerializer = (vertex: HalfEdgeVertex, face: HalfEdgeFace, vertices: FloatBuffer) -> Unit
 
 val temporaryVertexSerializer: VertexSerializer = { vertex, face, vertices ->
   vertices.put(vertex.position)

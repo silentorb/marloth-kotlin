@@ -41,6 +41,7 @@ object App {
   fun main(args: Array<String>) {
 //    runApp(createDesktopPlatform("Marloth Lab", 1200, 800))
 //    startGui()
-    runApp(createDesktopPlatform("Marloth Lab", 640, 480))
+//    runApp(createDesktopPlatform("Marloth Lab", 640, 480))
+    runApp(createDesktopPlatform("Marloth Lab", 320, 240))
   }
 }
