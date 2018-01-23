@@ -21,6 +21,7 @@ import org.joml.minus
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.opengl.GL11
 import randomly.Dice
+import rendering.Renderer
 import rendering.convertMesh
 import simulation.AbstractWorld
 import simulation.StructureWorld
@@ -66,13 +67,13 @@ fun getPositionFunction(offset: Vector2, boundary: WorldBoundary, scale: Float):
 }
 
 fun drawGeneratedWorld(bounds: Bounds, canvas: Canvas, abstractWorld: AbstractWorld, structureWorld: StructureWorld,
-                       config: LabConfig) {
+                       config: LabConfig, renderer: Renderer) {
   val scale = getScale(bounds, abstractWorld.boundary)
   val offset = bounds.position + worldPadding
   val getPosition: PositionFunction = getPositionFunction(offset, abstractWorld.boundary, scale)
   drawGrid(canvas, bounds, abstractWorld.boundary, scale)
   if (config.showAbstract)
-    drawAbstractWorld(bounds, getPosition, canvas, abstractWorld)
+    drawAbstractWorld(bounds, getPosition, canvas, abstractWorld, renderer)
   if (config.showStructure)
     drawStructureWorld(bounds, getPosition, canvas, structureWorld)
 
@@ -103,10 +104,10 @@ fun createTextureLayout(screenDimensions: Vector2, config: LabConfig): LabLayout
 }
 
 fun createMapLayout(abstractWorld: AbstractWorld, structureWorld: StructureWorld, screenDimensions: Vector2,
-                    config: LabConfig): LabLayout {
+                    config: LabConfig, renderer:Renderer): LabLayout {
   val draw = { b: Bounds, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
   val drawWorld = { b: Bounds, c: Canvas ->
-    crop(b, c, { drawGeneratedWorld(b, c, abstractWorld, structureWorld, config) })
+    crop(b, c, { drawGeneratedWorld(b, c, abstractWorld, structureWorld, config, renderer) })
     draw(b, c)
   }
 

@@ -120,3 +120,15 @@ fun isInsideNode(point: Vector2, node: Node) = isInsideCircle(point, node.positi
 
 fun getCenter(points: List<Vector2>): Vector2 =
     points.reduce { a, b -> a + b } / points.size.toFloat()
+
+fun getCenter(first: Node, second: Node): Vector3 {
+  val distance = first.position.distance(second.position)
+  val mod = (distance - first.radius - second.radius) / 2 + first.radius
+  return first.position + (second.position - first.position) / distance * mod
+}
+
+fun roughlyEquals(first: Vector2, second: Vector2, range: Float):Boolean {
+  val r = range / 2
+  return first.x > second.x - r && first.x < second.x + r
+  && first.y > second.y - r && first.y < second.y + r
+}

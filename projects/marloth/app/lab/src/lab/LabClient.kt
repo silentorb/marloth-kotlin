@@ -36,7 +36,7 @@ class LabClient(val config: LabConfig, val client: Client) {
       val dimensions = Vector2(windowInfo.dimensions.x.toFloat(), windowInfo.dimensions.y.toFloat())
 
       val labLayout = if (config.view == LabView.world)
-        createMapLayout(metaWorld.abstractWorld, metaWorld.structureWorld, dimensions, config)
+        createMapLayout(metaWorld.abstractWorld, metaWorld.structureWorld, dimensions, config, client.renderer)
       else
         createTextureLayout(dimensions, config)
 

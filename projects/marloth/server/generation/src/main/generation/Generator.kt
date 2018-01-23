@@ -14,7 +14,8 @@ fun createNode(abstractWorld: AbstractWorld, dice: Dice): Node {
   val end = abstractWorld.boundary.end - radius
   val node = Node(
       Vector3(dice.getFloat(start.x, end.x), dice.getFloat(start.y, end.y), 0f),
-      radius
+      radius,
+      NodeType.room
   )
   abstractWorld.nodes.add(node)
   return node
@@ -31,6 +32,12 @@ fun generateAbstract(abstractWorld: AbstractWorld, dice: Dice) {
   handleOverlapping(abstractWorld)
   unifyWorld(abstractWorld)
   closeDeadEnds(abstractWorld)
+  createTunnelNodes(abstractWorld)
+
+  var index = 0
+  for (node in abstractWorld.nodes) {
+    node.index = index++
+  }
 }
 
 //data class WorldBundle(val abstractWorld: AbstractWorld, val structureWorld: StructureWorld)

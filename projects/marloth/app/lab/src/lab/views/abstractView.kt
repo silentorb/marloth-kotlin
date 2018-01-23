@@ -5,8 +5,10 @@ import mythic.bloom.Bounds
 import mythic.drawing.Canvas
 import mythic.spatial.Vector2
 import mythic.spatial.Vector4
+import mythic.typography.TextConfiguration
 import org.joml.plus
 import org.joml.xy
+import rendering.Renderer
 import simulation.*
 
 private val gridSpacing = 10f // In world units
@@ -46,7 +48,8 @@ fun drawGrid(canvas: Canvas, bounds: Bounds, worldBoundary: WorldBoundary, scale
   }
 }
 
-fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, world: AbstractWorld) {
+fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, world: AbstractWorld,
+                      renderer: Renderer) {
   val solid = canvas.solid(Vector4(0.7f, 0.6f, 0.5f, 0.6f))
   val outline = canvas.outline(Vector4(0.3f, 0f, 0f, 0.8f), 3f)
   val scale = getScale(bounds, world.boundary)
@@ -65,6 +68,13 @@ fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Can
     val position = getNodePosition(node)
     canvas.drawSolidCircle(position, radius, solid)
     canvas.drawCircle(position, radius, outline)
+    canvas.drawText(TextConfiguration(
+        node.index.toString() + " " + node.corners.size.toString(),
+        renderer.fonts[0],
+        12f,
+        position,
+        Vector4(0f, 0f, 0f, 1f)
+    ))
   }
 
   for (connection in world.connections) {

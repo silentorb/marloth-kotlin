@@ -16,8 +16,15 @@ class Connection(
   fun getOther(node: Node) = if (node === first) second else first
 }
 
-class Node(var position: Vector3, var radius: Float) {
+enum class NodeType {
+  room,
+  tunnel
+}
+
+class Node(var position: Vector3, var radius: Float, val type: NodeType) {
   val connections: MutableList<Connection> = mutableListOf()
+  var index = 0
+  var corners: List<Vector3> = listOf()
 
   fun getNeighbors() = connections.asSequence().map { it.getOther(this) }
 

@@ -27,6 +27,11 @@ class AbstractWorld(val boundary: WorldBoundary) {
     return connection
   }
 
+  fun disconnect(connection: Connection) {
+    connection.first.connections.remove(connection)
+    connection.second.connections.remove(connection)
+  }
+
   fun removeNode(node: Node) {
     nodes.remove(node)
     for (connection in node.connections) {

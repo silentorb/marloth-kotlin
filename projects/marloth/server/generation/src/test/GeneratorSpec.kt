@@ -8,15 +8,16 @@ import mythic.spatial.Vector3
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.*
 import simulation.Node
+import simulation.NodeType
 
 class GeneratorSpec : Spek({
   describe("world generation") {
 
     on("testing overlapping") {
 
-      val first = Node(Vector3(0f, 0f, 0f), 5f)
-      val second = Node(Vector3(8f, 0f, 0f), 5f)
-      val third = Node(Vector3(200f, 0f, 0f), 15f)
+      val first = Node(Vector3(0f, 0f, 0f), 5f, NodeType.room)
+      val second = Node(Vector3(8f, 0f, 0f), 5f, NodeType.room)
+      val third = Node(Vector3(200f, 0f, 0f), 15f, NodeType.room)
 
       it("should detect overlap") {
         val overlaps = overlaps2D(first, second)
