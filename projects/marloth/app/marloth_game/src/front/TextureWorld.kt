@@ -2,28 +2,26 @@ package front
 
 import marloth.clienting.Client
 import mythic.glowing.Texture
-import mythic.sculpting.HalfEdgeFace
-import mythic.sculpting.HalfEdgeVertex
+import mythic.sculpting.FlexibleFace
 import mythic.sculpting.VertexNormalTexture
 import mythic.sculpting.query.getBounds
-import mythic.sculpting.query.getVertices
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.put
 import rendering.*
-import simulation.MetaWorld
+import simulation.AbstractWorld
 
-typealias VertexMap = Map<HalfEdgeVertex, VertexNormalTexture>
-typealias VertexInfo = Map<HalfEdgeFace, VertexMap>
+typealias VertexMap = Map<Vector3, VertexNormalTexture>
+typealias VertexInfo = Map<FlexibleFace, VertexMap>
 
 data class TextureFace(
-    val face: HalfEdgeFace,
+    val face: FlexibleFace,
     val vertexMap: VertexMap,
     val texture: Texture
 )
 
-fun createTexturedFloor(face: HalfEdgeFace, texture: Texture): TextureFace {
-  val vertices = getVertices(face)
+fun createTexturedFloor(face: FlexibleFace, texture: Texture): TextureFace {
+  val vertices = face.vertices
   val bounds = getBounds(vertices)
   val dimensions = bounds.dimensions
 //    val scaleX = 1 / dimensions.x
@@ -34,8 +32,8 @@ fun createTexturedFloor(face: HalfEdgeFace, texture: Texture): TextureFace {
     Pair(vertex, VertexNormalTexture(
         Vector3(0f, 0f, 1f),
         Vector2(
-            (vertex.position.x - bounds.start.x) * scaleX,
-            (vertex.position.y - bounds.start.y) * scaleY
+            (vertex.x - bounds.start.x) * scaleX,
+            (vertex.y - bounds.start.y) * scaleY
         )
     ))
   },
@@ -43,14 +41,14 @@ fun createTexturedFloor(face: HalfEdgeFace, texture: Texture): TextureFace {
   )
 }
 
-fun createTexturedWall(face: HalfEdgeFace, texture: Texture): TextureFace {
-  val vertices = getVertices(face)
+fun createTexturedWall(face: FlexibleFace, texture: Texture): TextureFace {
+  val vertices = face.vertices
   val bounds = getBounds(vertices)
   val dimensions = bounds.dimensions
   val scaleX = .5f
   val scaleY = .5f
-  val edge = face.edge!!
-  val length = edge.vertex.position.distance(edge.next!!.vertex.position) * scaleX
+  val edge = face.edges.first()
+  val length = edge.first.distance(edge.second) * scaleX
   val uvs = listOf(
       Vector2(0f, 0f),
       Vector2(length, 0f),
@@ -67,30 +65,30 @@ fun createTexturedWall(face: HalfEdgeFace, texture: Texture): TextureFace {
   )
 }
 
-fun prepareWorldMesh(metaWorld: MetaWorld, textures: Textures): List<TextureFace> {
-  return metaWorld.groups.floors.map { createTexturedFloor(it, textures.checkers) }
+fun prepareWorldMesh(metaWorld: AbstractWorld, textures: Textures): List<TextureFace> {
+  return metaWorld.floors.map { createTexturedFloor(it, textures.checkers) }
       .plus(
-          metaWorld.groups.walls.map { createTexturedWall(it, textures.darkCheckers) }
+          metaWorld.walls.map { createTexturedWall(it, textures.darkCheckers) }
       )
 }
 
-fun texturedVertexSerializer(vertexInfo: VertexInfo): VertexSerializer = { vertex, face, vertices ->
+fun texturedVertexSerializer(vertexInfo: VertexInfo): FlexibleVertexSerializer = { vertex, face, vertices ->
   val info = vertexInfo[face]!![vertex]!!
   vertices.put(info.normal)
   vertices.put(info.uv.x)
   vertices.put(info.uv.y)
 }
 
-fun convertWorldMesh(metaWorld: MetaWorld, renderer: Renderer): WorldMesh {
-  val texturedFaces = prepareWorldMesh(metaWorld, renderer.textures)
+fun convertWorldMesh(abstractWorld: AbstractWorld, renderer: Renderer): WorldMesh {
+  val texturedFaces = prepareWorldMesh(abstractWorld, renderer.textures)
   val vertexInfo = texturedFaces.associate { Pair(it.face, it.vertexMap) }
   val serializer = texturedVertexSerializer(vertexInfo)
   return WorldMesh(
-      convertMesh(metaWorld.structureWorld.mesh, renderer.vertexSchemas.textured, serializer),
+      convertMesh(abstractWorld.mesh, renderer.vertexSchemas.textured, serializer),
       texturedFaces.map { it.texture }
   )
 }
 
-fun setWorldMesh(metaWorld: MetaWorld, client: Client) {
-  client.renderer.worldMesh = convertWorldMesh(metaWorld, client.renderer)
+fun setWorldMesh(abstractWorld: AbstractWorld, client: Client) {
+  client.renderer.worldMesh = convertWorldMesh(abstractWorld, client.renderer)
 }

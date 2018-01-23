@@ -41,24 +41,24 @@ fun gatherTriUnions(nodes: List<Node>): List<List<Node>> {
       .distinctBy { it.sortedBy { it.hashCode() }.map { it.hashCode() }.joinToString() }
 }
 
-fun handleOverlapping(world: AbstractWorld) {
-  val overlapping = getOverlapping(world.nodes)
+fun handleOverlapping(graph: NodeGraph) {
+  val overlapping = getOverlapping(graph.nodes)
   val (tooClose, initialUnions) = divide(overlapping.asSequence(), { areTooClose(it.first, it.second) })
-//  val nodeMap = world.nodes.associate { node ->
+//  val nodeMap = graph.nodes.associate { node ->
 //    Pair(node, groups.first.filter { it.first === node || it.second === node })
 //  }
   val removedNodes1 = tooClose.map { it.first }
 //      .plus(nodeMap.filter { it.value.count() > 1 &&  }.map { it.key })
       .distinct()
 
-  val remainingNodes = world.nodes.minus(removedNodes1)
+  val remainingNodes = graph.nodes.minus(removedNodes1)
 
 //  val triUnions = gatherTriUnions(remainingNodes)
 
   val unions = initialUnions.filter { pair -> removedNodes1.all { pair.first !== it && pair.second != it } }
-  for (node in removedNodes1) world.removeNode(node)
-  for (pair in unions) world.connect(pair.first, pair.second, ConnectionType.union)
+  for (node in removedNodes1) graph.removeNode(node)
+  for (pair in unions) graph.connect(pair.first, pair.second, ConnectionType.union)
 
-  val triUnions = gatherTriUnions(world.nodes)
-  for (triUnion in triUnions) world.removeNode(triUnion.first())
+  val triUnions = gatherTriUnions(graph.nodes)
+  for (triUnion in triUnions) graph.removeNode(triUnion.first())
 }

@@ -51,18 +51,34 @@ fun getEdges(face: HalfEdgeFace): List<HalfEdge> {
   return result
 }
 
-fun getBounds(vertices: List<HalfEdgeVertex>): BoundingBox {
-  val v = vertices.map { it.position }
+//fun getBounds(vertices: List<HalfEdgeVertex>): BoundingBox {
+//  val v = vertices.map { it.position }
+//  return BoundingBox(
+//      Vector3(
+//          v.minBy { it.x }!!.x,
+//          v.minBy { it.y }!!.y,
+//          v.minBy { it.z }!!.z
+//      ),
+//      Vector3(
+//          v.maxBy { it.x }!!.x,
+//          v.maxBy { it.y }!!.y,
+//          v.maxBy { it.z }!!.z
+//      )
+//  )
+//}
+
+fun getBounds(vertices: List<Vector3>): BoundingBox {
   return BoundingBox(
       Vector3(
-          v.minBy { it.x }!!.x,
-          v.minBy { it.y }!!.y,
-          v.minBy { it.z }!!.z
+          vertices.minBy { it.x }!!.x,
+          vertices.minBy { it.y }!!.y,
+          vertices.minBy { it.z }!!.z
       ),
       Vector3(
-          v.maxBy { it.x }!!.x,
-          v.maxBy { it.y }!!.y,
-          v.maxBy { it.z }!!.z
+          vertices.maxBy { it.x }!!.x,
+          vertices.maxBy { it.y }!!.y,
+          vertices.maxBy { it.z }!!.z
       )
   )
 }
+

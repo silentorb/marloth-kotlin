@@ -1,14 +1,17 @@
-import generation.*
 import generation.abstract.getOverlapping
 import generation.abstract.intersects
 import generation.abstract.isBetween
+import generation.createTestWorld
+import generation.overlaps2D
+import generation.structure.generateStructure
 import junit.framework.TestCase.*
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.*
-import simulation.Node
-import simulation.NodeType
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.it
+import org.jetbrains.spek.api.dsl.on
+import simulation.*
 
 class GeneratorSpec : Spek({
   describe("world generation") {
@@ -54,6 +57,12 @@ class GeneratorSpec : Spek({
 
         assertFalse(result)
       }
+    }
+
+    on("skinning two connected nodes") {
+      val world = createTestWorld().meta
+
+//      assertEquals(world.mesh.edges.size, v2)
     }
   }
 })

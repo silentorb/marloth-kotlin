@@ -1,7 +1,9 @@
 package generation.abstract
 
 import generation.getNodeDistance
-import simulation.*
+import simulation.ConnectionType
+import simulation.Node
+import simulation.NodeGraph
 
 typealias NodeGroup = List<Node>
 
@@ -44,30 +46,30 @@ fun scanChanged(changed: List<Node>, group: NodeGroup) =
         .flatten()
         .distinct()
 
-tailrec fun scanNodes(previousChanged: List<Node>, mainGroup: List<Node>, outerGroup: List<Node>, world: AbstractWorld) {
+tailrec fun scanNodes(previousChanged: List<Node>, mainGroup: List<Node>, outerGroup: List<Node>, graph: NodeGraph) {
   val possibleChanged = scanChanged(previousChanged, mainGroup).toList()
   val changed = if (possibleChanged.isEmpty()) {
     val gap = findShortestGap(mainGroup.asSequence(), outerGroup.asSequence())
     if (gap == null)
       throw Error("Could not find gap to fill.")
 
-    world.connect(gap.first, gap.second, ConnectionType.tunnel)
+    graph.connect(gap.first, gap.second, ConnectionType.tunnel)
     listOf(gap.second)
   } else {
     possibleChanged
   }
 
   val nextMainGroup = mainGroup.plus(changed)
-  if (nextMainGroup.size != world.nodes.size)
-    return scanNodes(changed, nextMainGroup, outerGroup.subtract(changed).toList(), world)
+  if (nextMainGroup.size != graph.nodes.size)
+    return scanNodes(changed, nextMainGroup, outerGroup.subtract(changed).toList(), graph)
 }
 
-fun unifyWorld(world: AbstractWorld) {
-  if (world.nodes.size < 2)
+fun unifyWorld(graph: NodeGraph) {
+  if (graph.nodes.size < 2)
     return
 
-  val first = world.nodes.first()
+  val first = graph.nodes.first()
   val mainGroup = listOf(first)
-  val outerGroup = world.nodes.filter { it !== first }
-  scanNodes(mainGroup, mainGroup, outerGroup, world)
+  val outerGroup = graph.nodes.filter { it !== first }
+  scanNodes(mainGroup, mainGroup, outerGroup, graph)
 }

@@ -1,5 +1,7 @@
 package simulation
 
+import mythic.sculpting.FlexibleFace
+import mythic.sculpting.FlexibleMesh
 import mythic.spatial.Vector3
 import org.joml.minus
 import randomly.Dice
@@ -15,7 +17,7 @@ data class WorldBoundary(
 data class WorldInput(val boundary: WorldBoundary, val dice: Dice) {
 }
 
-class AbstractWorld(val boundary: WorldBoundary) {
+class NodeGraph {
   val nodes: MutableList<Node> = mutableListOf()
   val connections: MutableList<Connection> = mutableListOf()
 
@@ -40,4 +42,21 @@ class AbstractWorld(val boundary: WorldBoundary) {
     }
     node.connections.clear()
   }
+}
+
+class AbstractWorld(val boundary: WorldBoundary) {
+  val graph = NodeGraph()
+  val mesh = FlexibleMesh()
+
+  val nodes: MutableList<Node>
+    get() = graph.nodes
+
+  val connections: MutableList<Connection>
+    get() = graph.connections
+
+  val floors: List<FlexibleFace>
+    get() = nodes.flatMap { it.floors }
+
+  val walls: List<FlexibleFace>
+    get() = nodes.flatMap { it.walls }
 }

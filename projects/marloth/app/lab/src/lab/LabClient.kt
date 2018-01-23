@@ -11,10 +11,8 @@ import mythic.drawing.Canvas
 import mythic.drawing.getUnitScaling
 import mythic.platforming.WindowInfo
 import mythic.spatial.Vector2
-import mythic.spatial.Vector4
-import mythic.typography.TextConfiguration
 import scenery.Scene
-import simulation.MetaWorld
+import simulation.AbstractWorld
 
 class LabClient(val config: LabConfig, val client: Client) {
   val keyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
@@ -30,13 +28,13 @@ class LabClient(val config: LabConfig, val client: Client) {
   )
   val labInput = InputManager(config.input.bindings, client.deviceHandlers)
 
-  fun update(scene: Scene, metaWorld: MetaWorld): Commands<CommandType> {
+  fun update(scene: Scene, metaWorld: AbstractWorld): Commands<CommandType> {
     val windowInfo = client.platform.display.getInfo()
     if (config.showLab) {
       val dimensions = Vector2(windowInfo.dimensions.x.toFloat(), windowInfo.dimensions.y.toFloat())
 
       val labLayout = if (config.view == LabView.world)
-        createMapLayout(metaWorld.abstractWorld, metaWorld.structureWorld, dimensions, config, client.renderer)
+        createMapLayout(metaWorld, dimensions, config, client.renderer)
       else
         createTextureLayout(dimensions, config)
 

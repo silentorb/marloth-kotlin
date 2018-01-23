@@ -24,7 +24,6 @@ import randomly.Dice
 import rendering.Renderer
 import rendering.convertMesh
 import simulation.AbstractWorld
-import simulation.StructureWorld
 
 val worldPadding = 20f // In screen units
 
@@ -66,7 +65,7 @@ fun getPositionFunction(offset: Vector2, boundary: WorldBoundary, scale: Float):
   return { position: Vector2 -> offset + (Vector2(position.x, -position.y) - boundary.start.xy) * scale }
 }
 
-fun drawGeneratedWorld(bounds: Bounds, canvas: Canvas, abstractWorld: AbstractWorld, structureWorld: StructureWorld,
+fun drawGeneratedWorld(bounds: Bounds, canvas: Canvas, abstractWorld: AbstractWorld,
                        config: LabConfig, renderer: Renderer) {
   val scale = getScale(bounds, abstractWorld.boundary)
   val offset = bounds.position + worldPadding
@@ -75,7 +74,7 @@ fun drawGeneratedWorld(bounds: Bounds, canvas: Canvas, abstractWorld: AbstractWo
   if (config.showAbstract)
     drawAbstractWorld(bounds, getPosition, canvas, abstractWorld, renderer)
   if (config.showStructure)
-    drawStructureWorld(bounds, getPosition, canvas, structureWorld)
+    drawStructureWorld(bounds, getPosition, canvas, abstractWorld)
 
   canvas.drawSquare(
       offset,
@@ -103,11 +102,11 @@ fun createTextureLayout(screenDimensions: Vector2, config: LabConfig): LabLayout
   )
 }
 
-fun createMapLayout(abstractWorld: AbstractWorld, structureWorld: StructureWorld, screenDimensions: Vector2,
+fun createMapLayout(abstractWorld: AbstractWorld, screenDimensions: Vector2,
                     config: LabConfig, renderer:Renderer): LabLayout {
   val draw = { b: Bounds, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
   val drawWorld = { b: Bounds, c: Canvas ->
-    crop(b, c, { drawGeneratedWorld(b, c, abstractWorld, structureWorld, config, renderer) })
+    crop(b, c, { drawGeneratedWorld(b, c, abstractWorld, config, renderer) })
     draw(b, c)
   }
 

@@ -1,6 +1,9 @@
 package generation
 
-import generation.abstract.*
+import generation.abstract.closeDeadEnds
+import generation.abstract.createTunnelNodes
+import generation.abstract.handleOverlapping
+import generation.abstract.unifyWorld
 import generation.structure.generateStructure
 import mythic.spatial.Vector3
 import org.joml.minus
@@ -21,33 +24,55 @@ fun createNode(abstractWorld: AbstractWorld, dice: Dice): Node {
   return node
 }
 
-fun createNodes(count: Int, abstractWorld: AbstractWorld, dice: Dice) {
+fun createNodes(count: Int, world: AbstractWorld, dice: Dice) {
   for (i in 0..count) {
-    createNode(abstractWorld, dice)
+    createNode(world, dice)
   }
 }
 
-fun generateAbstract(abstractWorld: AbstractWorld, dice: Dice) {
-  createNodes(20, abstractWorld, dice)
-  handleOverlapping(abstractWorld)
-  unifyWorld(abstractWorld)
-  closeDeadEnds(abstractWorld)
-  createTunnelNodes(abstractWorld)
+fun generateAbstract(world: AbstractWorld, dice: Dice) {
+  createNodes(20, world, dice)
+  handleOverlapping(world.graph)
+  unifyWorld(world.graph)
+  closeDeadEnds(world.graph)
+  createTunnelNodes(world)
 
   var index = 0
-  for (node in abstractWorld.nodes) {
+  for (node in world.graph.nodes) {
     node.index = index++
   }
 }
 
 //data class WorldBundle(val abstractWorld: AbstractWorld, val structureWorld: StructureWorld)
 
+fun createTestWorld(): World {
+  val boundary = WorldBoundary(
+      Vector3(-50f, -50f, -50f),
+      Vector3(50f, 50f, 50f)
+  )
+
+  val first = Node(Vector3(-18f, 0f, 0f), 5f, NodeType.room)
+  val second = Node(Vector3(18f, 0f, 0f), 5f, NodeType.room)
+  val tunnel = Node(Vector3(0f, 0f, 0f), .5f, NodeType.tunnel)
+  val world = AbstractWorld(boundary)
+  world.nodes.add(first)
+  world.nodes.add(second)
+  world.nodes.add(tunnel)
+  world.graph.connect(first, tunnel, ConnectionType.tunnel)
+  world.graph.connect(second, tunnel, ConnectionType.tunnel)
+
+  generateStructure(world)
+  return World(
+      world,
+      listOf(Player(0, world.nodes.first().position)))
+}
+
 fun generateWorld(input: WorldInput): World {
   val abstractWorld = AbstractWorld(input.boundary)
   generateAbstract(abstractWorld, input.dice)
-  val structureWorld = StructureWorld()
-  val groups = generateStructure(abstractWorld, structureWorld)
-  return World(MetaWorld(abstractWorld, structureWorld, groups),
+  generateStructure(abstractWorld)
+  return World(
+      abstractWorld,
       listOf(Player(0, abstractWorld.nodes.first().position)))
 }
 
