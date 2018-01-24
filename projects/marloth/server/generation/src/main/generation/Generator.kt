@@ -37,8 +37,12 @@ fun generateAbstract(world: AbstractWorld, dice: Dice) {
   closeDeadEnds(world.graph)
   createTunnelNodes(world)
 
+  fillIndexes(world.graph)
+}
+
+fun fillIndexes(graph: NodeGraph) {
   var index = 0
-  for (node in world.graph.nodes) {
+  for (node in graph.nodes) {
     node.index = index++
   }
 }
@@ -62,6 +66,7 @@ fun createTestWorld(): World {
   world.graph.connect(second, tunnel, ConnectionType.tunnel)
 
   generateStructure(world)
+  fillIndexes(world.graph)
   return World(
       world,
       listOf(Player(0, world.nodes.first().position)))

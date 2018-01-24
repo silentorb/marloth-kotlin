@@ -2,7 +2,6 @@ package serving
 
 import commanding.CommandType
 import haft.Commands
-import simulation.MetaWorld
 import simulation.World
 
 import simulation.updateWorld

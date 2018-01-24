@@ -169,15 +169,12 @@ fun createWall(edge: FlexibleEdge, mesh: FlexibleMesh): FlexibleFace {
   ))
 }
 
-fun getWallEdges(face: FlexibleFace, corners: List<Corner>): List<FlexibleEdge> {
-//  fun getCorner(vertex: Vector3) = corners.first { it.position == vertex.position }
-  return face.edges.filter {
-    it.faces.size == 1
-//    val first = getCorner(it.vertex).type
-//    val second = getCorner(it.next!!.vertex).type
-//    first == CornerType.normal || second != first
-  }
-}
+//fun getWallEdges(face: FlexibleFace, corners: List<Corner>): List<FlexibleEdge> {
+////  fun getCorner(vertex: Vector3) = corners.first { it.position == vertex.position }
+//  return face.edges.filter {
+//    it.faces.size == 1
+//  }
+//}
 
 fun <T> crossMap(firstList: List<T>, secondList: List<T>): List<Pair<T, T>> {
   var skip = 1
@@ -206,17 +203,13 @@ fun generateStructure(abstractWorld: AbstractWorld) {
       .map { generateTunnelStructure(it, nodeSectors) }
 
   val allSectors = nodeSectors.plus(tunnelSectors)
-  val allPoints = allSectors.flatMap { it.corners }
-  val points = crossMap(allPoints, allPoints)
-      .filter { roughlyEquals(it.first.xy, it.second.xy, 0.1f) }
-  val foo = allSectors.map { it.corners.size }
-  val roomFloors = sinewFloors(allSectors, mesh)
+  sinewFloors(allSectors, mesh)
   allSectors.forEach { sector ->
-    getWallEdges(sector.node.floors.first(), sector.corners)
-        .forEach {
-          val wall = createWall(it, mesh)
-          sector.node.walls.add(wall)
-        }
+    val wallBases = sector.node.floors.first().edges.filter { it.edges.size == 0 }
+    wallBases.forEach {
+      val wall = createWall(it, mesh)
+      sector.node.walls.add(wall)
+    }
   }
 
 //  val allFloors = roomFloors.map { it.face }//.plus(tunnelFloors.map { it.face })
