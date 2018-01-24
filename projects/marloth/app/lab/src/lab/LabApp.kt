@@ -33,7 +33,8 @@ fun runApp(platform: Platform) {
     val scene = createScene(world, client.screens[0])
     val commands = labClient.update(scene, world.meta)
     val delta = timer.update().toFloat()
-    updateWorld(world, commands, delta)
+    val updater = WorldUpdater(world)
+    updater.update(commands, delta)
     platform.process.pollEvents()
   }
 }

@@ -4,7 +4,7 @@ import generation.generateDefaultWorld
 import marloth.clienting.Client
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
-import simulation.updateWorld
+import simulation.WorldUpdater
 import visualizing.createScene
 
 fun runApp(platform: Platform) {
@@ -19,7 +19,8 @@ fun runApp(platform: Platform) {
     val scene = createScene(world, client.screens[0])
     val commands = client.update(scene)
     val delta = timer.update().toFloat()
-    updateWorld(world, commands, delta)
+    val updater = WorldUpdater(world)
+    updater.update(commands, delta)
     platform.process.pollEvents()
   }
 }

@@ -4,8 +4,6 @@ import commanding.CommandType
 import haft.Commands
 import simulation.World
 
-import simulation.updateWorld
-
 //class Server {
 //  var gameSession: GameSession? = null
 //
