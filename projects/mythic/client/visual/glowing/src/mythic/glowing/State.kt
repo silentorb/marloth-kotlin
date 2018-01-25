@@ -123,6 +123,28 @@ class State {
         glBindTexture(GL_TEXTURE_2D, value)
       }
     }
+
+  var depthEnabled: Boolean = false
+    set(value) {
+      depthTest = value
+      depthWrite = value
+    }
+
+  var depthTest: Boolean = false
+    set(value) {
+      if (field != value) {
+        field = value
+        setEnabled(GL_DEPTH_TEST, value)
+      }
+    }
+
+  var depthWrite: Boolean = false
+    set(value) {
+      if (field != value) {
+        field = value
+        glDepthMask(value);
+      }
+    }
 }
 
 val globalState = State()

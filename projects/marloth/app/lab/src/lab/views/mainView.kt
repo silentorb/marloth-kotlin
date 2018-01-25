@@ -126,6 +126,7 @@ fun createMapLayout(abstractWorld: AbstractWorld, screenDimensions: Vector2,
 fun createBoxMap(boxes: List<Box>): BoxMap = boxes.associate { Pair(it, it) }
 
 fun renderMainLab(layout: LabLayout, canvas: Canvas) {
+  globalState.depthEnabled = false
   globalState.blendEnabled = true
   globalState.blendFunction = Pair(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
 

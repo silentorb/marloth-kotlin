@@ -48,12 +48,15 @@ class WorldUpdater(val world: World) {
       }
     }
 
-    if (world.meta.walls.any { wall -> hitsWall(wall.edges[1], player.position, 1.0f) }) {
-      offset =  Vector3()
-    }
+    if (offset != Vector3()) {
+      val newPosition = player.position + offset
+      if (world.meta.walls.any { wall -> hitsWall(wall.edges[1], newPosition, 0.8f) }) {
+        offset =  Vector3()
+      }
 
-    if (offset != Vector3())
-      player.position += offset
+      if (offset != Vector3())
+        player.position += offset
+    }
   }
 
   fun applyCommands(players: Players, commands: Commands<CommandType>, delta: Float) {

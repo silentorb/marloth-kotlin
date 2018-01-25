@@ -1,21 +1,14 @@
 package rendering
 
-import mythic.drawing.Canvas
 import mythic.drawing.createDrawingMeshes
-import mythic.drawing.getUnitScaling
-import mythic.glowing.DrawMethod
-import mythic.glowing.Glow
+import mythic.glowing.*
 import mythic.platforming.WindowInfo
-import mythic.glowing.SimpleMesh
-import mythic.glowing.Texture
 import mythic.spatial.Matrix
-import mythic.spatial.Vector2
 import mythic.typography.loadFonts
 import org.joml.Vector2i
 import scenery.Scene
 import mythic.spatial.Vector4
 import mythic.typography.FontLoadInfo
-import mythic.typography.TextConfiguration
 
 fun gatherEffectsData(windowInfo: WindowInfo, scene: Scene): EffectsData {
   return EffectsData(
@@ -25,6 +18,7 @@ fun gatherEffectsData(windowInfo: WindowInfo, scene: Scene): EffectsData {
 }
 
 fun renderScene(scene: Scene, painters: Painters, effects: Effects, textures: Textures, worldMesh: WorldMesh?) {
+  globalState.depthEnabled = true
   if (worldMesh != null) {
     effects.textured.activate(Matrix(), textures.checkers)
     var index = 0
