@@ -7,6 +7,7 @@ import generation.structure.generateStructure
 import junit.framework.TestCase.*
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
+import mythic.spatial.projectPointOntoLine
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
@@ -63,6 +64,14 @@ class GeneratorSpec : Spek({
       val world = createTestWorld().meta
 
 //      assertEquals(world.mesh.edges.size, v2)
+    }
+  }
+
+  describe("spatial calculations") {
+
+    it("can project a 2D point onto a circle") {
+      val result = projectPointOntoLine(Vector2(1f, 1f), Vector2(2f, 0f))
+      assertEquals(result, Vector2(1f,0f))
     }
   }
 })

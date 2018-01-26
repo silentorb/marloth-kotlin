@@ -32,6 +32,6 @@ data class LabConfig(
     var view: LabView = LabView.world,
     var showAbstract: Boolean = true,
     var showStructure: Boolean = true,
-    var showLab: Boolean = true,
+    var showLab: Boolean = false,
     val input: LabInputConfig = LabInputConfig(createLabInputBindings())
 )

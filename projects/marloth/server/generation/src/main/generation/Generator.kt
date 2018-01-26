@@ -78,7 +78,7 @@ fun generateWorld(input: WorldInput): World {
   generateStructure(abstractWorld)
   return World(
       abstractWorld,
-      listOf(Player(0, abstractWorld.nodes.first().position)))
+      listOf(Player(0, abstractWorld.nodes.first().position + Vector3(0f, 0f, 1f))))
 }
 
 fun generateDefaultWorld() = generateWorld(WorldInput(

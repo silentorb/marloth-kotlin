@@ -1,7 +1,9 @@
 package mythic.spatial
 
 import org.joml.Math.PI
+import org.joml.div
 import org.joml.minus
+import org.joml.plus
 import java.nio.FloatBuffer
 
 typealias Vector2 = org.joml.Vector2f
@@ -59,7 +61,6 @@ data class BoundingBox(
     get() = end - start
 }
 
-
 fun lineIntersectsCircle(lineStart: Vector2, lineEnd: Vector2, circleCenter: Vector2, radius: Float): Boolean {
   val d = lineEnd - lineStart
   val f = lineStart - circleCenter
@@ -107,4 +108,21 @@ fun lineIntersectsCircle(lineStart: Vector2, lineEnd: Vector2, circleCenter: Vec
 
     // no intn: FallShort, Past, CompletelyInside
   }
+}
+
+fun projectPointOntoLine(v: Vector2, u1: Vector2, u2: Vector2): Vector2 {
+  val u = u2 - u1
+  val relative = u * u.dot(v - u1) / u.dot(u)
+  return relative + u1
+}
+
+fun atan(v: Vector2) = if (v.x < 0)
+  Math.atan2(v.y.toDouble(), v.x.toDouble()).toFloat() - Pi
+else
+  Math.atan2(v.y.toDouble(), v.x.toDouble()).toFloat()
+
+fun getAngle(a: Vector2, b: Vector2): Float {
+  val ad = atan(a)
+  val bd = atan(b)
+  return ad - bd
 }
