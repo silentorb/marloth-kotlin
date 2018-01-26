@@ -1,9 +1,10 @@
 package lab
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import haft.Bindings
 import haft.createBindings
-
 import org.lwjgl.glfw.GLFW
+
 
 enum class LabCommandType {
   toggleLab,
@@ -24,7 +25,10 @@ fun createLabInputBindings() = createBindings(0, 0, mapOf(
 ))
 
 enum class LabView {
+  @JsonProperty("world")
   world,
+
+  @JsonProperty("texture")
   texture
 }
 
@@ -33,5 +37,7 @@ data class LabConfig(
     var showAbstract: Boolean = true,
     var showStructure: Boolean = true,
     var showLab: Boolean = false,
+    var width: Int = 800,
+    var height: Int = 600,
     val input: LabInputConfig = LabInputConfig(createLabInputBindings())
 )
