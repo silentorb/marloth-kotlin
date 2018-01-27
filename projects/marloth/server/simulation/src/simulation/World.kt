@@ -11,16 +11,6 @@ import org.joml.xy
 
 typealias Players = List<Player>
 
-//data class MeshGroups(
-//    val floors: List<FlexibleFace>,
-//    val walls: List<FlexibleFace>
-//)
-
-//data class MetaWorld(
-//    val abstractWorld: AbstractWorld,
-//    val groups: MeshGroups
-//)
-
 data class World(val meta: AbstractWorld, val players: Players = listOf(Player(0))) {
 
 }
@@ -29,7 +19,7 @@ fun hitsWall(edge: FlexibleEdge, position: Vector3, radius: Float) =
     lineIntersectsCircle(edge.first.xy, edge.second.xy, position.xy, radius)
 
 fun checkWallCollision(source: Vector3, originalOffset: Vector3, world: World): Vector3? {
-  var offset = originalOffset
+  var offset = originalOffset + 0f
   val newPosition = source + offset
   val radius = 0.8f
   val walls = world.meta.walls
@@ -43,13 +33,15 @@ fun checkWallCollision(source: Vector3, originalOffset: Vector3, world: World): 
       .sortedBy { it.third }
 
   for ((edge, hitPoint, gap) in walls) {
-    val gapClose = (offset.normalize() * gap)
-    val angle = getAngle(offset.xy, hitPoint - source.xy)
+    val gapClose = ((offset + 0f).normalize() * gap)
+    val edgeVector = (edge.second - edge.first).xy.normalize()
+    val angle = -getAngle(offset.xy, edgeVector)
     val range = angle / (Pi * 0.5f) * (offset.length() - gap)
-    val slideVector = (edge.second - edge.first).xy.normalize() * range
+    val slideVector = edgeVector * range
     offset = gapClose + Vector3(slideVector, 0f)
+    println("* " + gap.toString() + " | " + angle + " | " + range + " | " + angle / (Pi * 0.5f))
   }
-
+//  println(offset.x.toString() + ", " + offset.y.toString() + " | " + originalOffset.length().toString() + " | " + offset.length().toString())
   return source + offset
 }
 
