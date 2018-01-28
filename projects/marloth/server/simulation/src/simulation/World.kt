@@ -60,17 +60,17 @@ fun checkWallCollision(source: Vector3, originalOffset: Vector3, world: World): 
       val secondEdge = walls[1].first.edges[1]
 
       // Get the points of either edge ordered by the shared point and then the unshared point
-      val points = if (firstEdge.first === secondEdge.second)
-        (listOf(firstEdge.first, firstEdge.second))
+      val rightEdge = if (firstEdge.first === secondEdge.second)
+        secondEdge
       else
-        (listOf(firstEdge.second, firstEdge.first))
+        firstEdge
 
       val knee = walls[0].first.normal + walls[1].first.normal
       val angle = getAngle(
           knee.xy.normalize(),
-          (points[1] - points[0]).xy.normalize()
+          (rightEdge.first - rightEdge.second).xy.normalize()
       )
-      if (angle <= Pi) {
+      if (Math.abs(angle) <= Pi / 2) {
 //        val dot2 = offset.dot(walls[0].first.normal + walls[0].first.normal)
 //        println(dot2)
 //        if (dot2 < 0f) {
