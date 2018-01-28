@@ -4,8 +4,8 @@ import mythic.sculpting.query.each_vertex
 import mythic.sculpting.query.getEdges
 import mythic.spatial.Matrix
 import mythic.spatial.Vector3
-import mythic.spatial.plusAssign
 import mythic.spatial.times
+import org.joml.plus
 import java.util.*
 
 class operations {

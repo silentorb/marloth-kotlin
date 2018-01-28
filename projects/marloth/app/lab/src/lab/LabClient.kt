@@ -9,8 +9,13 @@ import lab.views.renderMainLab
 import marloth.clienting.Client
 import mythic.drawing.Canvas
 import mythic.drawing.getUnitScaling
+import mythic.glowing.DrawMethod
+import mythic.glowing.globalState
 import mythic.platforming.WindowInfo
-import mythic.spatial.Vector2
+import mythic.sculpting.query.getCenter
+import mythic.spatial.*
+import rendering.Effects
+import rendering.FlatColoredPerspectiveEffect
 import scenery.Scene
 import simulation.AbstractWorld
 
@@ -27,6 +32,30 @@ class LabClient(val config: LabConfig, val client: Client) {
       LabCommandType.toggleLab to { _ -> config.showLab = !config.showLab }
   )
   val labInput = InputManager(config.input.bindings, client.deviceHandlers)
+
+  fun renderFaceNormals(world: AbstractWorld, effects: Effects) {
+    globalState.lineThickness = 2f
+    for (face in world.mesh.faces) {
+      val faceCenter = getCenter(face.vertices)
+      val transform = Matrix()
+          .translate(faceCenter)
+          .	rotateTowards(face.normal, Vector3(0f, 0f, 1f))
+          .	rotateY(-Pi * 0.5f)
+//          .lookAlong(face.normal, Vector3(0f, 0f, 1f))
+
+      effects.flat.activate(transform, Vector4(0f, 1f, 0f, 1f))
+      client.renderer.meshes["line"]!!.draw(DrawMethod.lines)
+    }
+  }
+
+  fun renderScene(scene: Scene, metaWorld: AbstractWorld) {
+    val windowInfo = client.getWindowInfo()
+    val renderer = client.renderer
+    renderer.prepareRender(windowInfo)
+    val effects = renderer.createEffects(scene, windowInfo)
+    renderer.renderScene(scene, effects)
+    renderFaceNormals(metaWorld, effects)
+  }
 
   fun update(scene: Scene, metaWorld: AbstractWorld): Commands<CommandType> {
     val windowInfo = client.platform.display.getInfo()
@@ -46,7 +75,8 @@ class LabClient(val config: LabConfig, val client: Client) {
     } else {
       val commands = labInput.update()
       handleKeystrokeCommands(commands, gameKeyPressCommands)
-      return client.update(scene)
+      renderScene(scene, metaWorld)
+      return client.updateInput()
     }
   }
 

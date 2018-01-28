@@ -8,6 +8,7 @@ import mythic.spatial.*
 import org.joml.plus
 import org.joml.minus
 import org.joml.xy
+import kotlin.math.max
 
 typealias Players = List<Player>
 
@@ -18,30 +19,67 @@ data class World(val meta: AbstractWorld, val players: Players = listOf(Player(0
 fun hitsWall(edge: FlexibleEdge, position: Vector3, radius: Float) =
     lineIntersectsCircle(edge.first.xy, edge.second.xy, position.xy, radius)
 
+fun getEdgeNormal(first: Vector2, second: Vector2): Vector2 {
+  val combination = first - second
+  return Vector2(combination.y, -combination.x).normalize()
+}
+
 fun checkWallCollision(source: Vector3, originalOffset: Vector3, world: World): Vector3? {
   var offset = originalOffset + 0f
+  val maxLength = offset.length()
   val newPosition = source + offset
   val radius = 0.8f
+  val broadRadius = radius + maxLength
   val walls = world.meta.walls
-      .filter { wall -> hitsWall(wall.edges[1], newPosition, radius) }
+      .filter { wall -> hitsWall(wall.edges[1], newPosition, broadRadius) && offset.dot(wall.normal) < 0f}
       .map {
         val edge = it.edges[1]
+//        val dot2 = offset.dot(it.normal)C
+//        println(dot2)
         val hitPoint = projectPointOntoLine(source.xy, edge.first.xy, edge.second.xy)
-        val gap = Math.max(hitPoint.distance(source.xy) - radius, 0f)
-        Triple(edge, hitPoint, gap)
+        val gap = Math.max(0f, hitPoint.distance(source.xy) - radius)
+        Triple(it, hitPoint, gap)
       }
-      .sortedBy { it.third }
+      .sortedBy { it.first.normal.dot(offset) }
 
-  for ((edge, hitPoint, gap) in walls) {
-    val gapClose = ((offset + 0f).normalize() * gap)
-    val edgeVector = (edge.second - edge.first).xy.normalize()
-    val angle = -getAngle(offset.xy, edgeVector)
-    val range = angle / (Pi * 0.5f) * (offset.length() - gap)
-    val slideVector = edgeVector * range
-    offset = gapClose + Vector3(slideVector, 0f)
-    println("* " + gap.toString() + " | " + angle + " | " + range + " | " + angle / (Pi * 0.5f))
+  if (walls.size > 0) {
+    if (walls.size > 3)
+      throw Error("Not supported.")
+
+    val slideVectors = walls.map { (face, _, _) ->
+      face.normal * face.normal.dot(offset)
+    }
+
+    val gapVectors = walls.map { (_, _, gap) ->
+      ((offset + 0f).normalize() * gap)
+    }
+    if (walls.size == 2) {
+//      val gapVector = gapVectors[0] + gapVectors[1]
+//      offset = gapVector
+      val dot = walls[0].first.normal.dot(walls[1].first.normal)
+//      println(dot)
+      if (dot > 0.6f) {
+//        val dot2 = offset.dot(walls[0].first.normal + walls[0].first.normal)
+//        println(dot2)
+//        if (dot2 < 0f) {
+          offset = gapVectors[0] + gapVectors[1]
+          println(offset)
+//        }
+      } else {
+        offset = offset + gapVectors[0] - slideVectors[0]
+      }
+//      println("2 " + walls[0].first.normal + " | " + offset + " | " + gapVectors[0] + " | " + slideVectors[0])
+    } else {
+      offset = offset + gapVectors[0] - slideVectors[0]
+//      println("1 " + walls[0].first.normal + " | " + offset + " | " + gapVectors[0] + " | " + slideVectors[0])
+//      println("1 " + walls[0].first.normal + " | " + offset)
+    }
+
+    val offsetLength = offset.length()
+    if (offsetLength > maxLength) {
+      offset.normalize().mul(maxLength)
+    }
   }
-//  println(offset.x.toString() + ", " + offset.y.toString() + " | " + originalOffset.length().toString() + " | " + offset.length().toString())
   return source + offset
 }
 

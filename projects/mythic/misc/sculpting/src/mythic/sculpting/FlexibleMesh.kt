@@ -1,6 +1,7 @@
 package mythic.sculpting
 
 import mythic.spatial.Vector3
+import org.joml.minus
 
 class FlexibleEdge(
     val first: Vector3,
@@ -17,6 +18,12 @@ class FlexibleFace(
 ) {
   val vertices: List<Vector3>
     get() = edges.flatMap { it.toList() }.distinct()
+
+  var normal = Vector3()
+
+  fun updateNormal() {
+    normal = (vertices[0] - vertices[1]).cross(vertices[2] - vertices[1]).normalize()
+  }
 }
 
 class FlexibleMesh {
@@ -72,4 +79,10 @@ class FlexibleMesh {
     }
   }
 
+}
+
+fun calculateNormals(mesh: FlexibleMesh) {
+  for (face in mesh.faces) {
+    face.updateNormal()
+  }
 }

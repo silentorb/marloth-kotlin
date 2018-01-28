@@ -29,18 +29,19 @@ class Client(val platform: Platform) {
       CommandType.switchView to { command -> switchCameraMode(command.target, screens) }
   )
 
-  fun update(scene: Scene): Commands<CommandType> {
-    val windowInfo = platform.display.getInfo()
+  fun getWindowInfo() = platform.display.getInfo()
 
-    renderer.prepareRender(windowInfo)
-    renderer.renderScene(scene, windowInfo)
-
+  fun updateInput(): Commands<CommandType> {
     val commands = userInput.update()
     handleKeystrokeCommands(commands, keyStrokeCommands)
-//    commands.filter({ keyStrokeCommands.containsKey(it.type) && it.lifetime == CommandLifetime.end })
-//        .forEach({ keyStrokeCommands[it.type]!!(it) })
-
     return commands.filterNot({ keyStrokeCommands.containsKey(it.type) })
+  }
+
+  fun update(scene: Scene): Commands<CommandType> {
+    val windowInfo = getWindowInfo()
+    renderer.prepareRender(windowInfo)
+    renderer.renderScene(scene, windowInfo)
+    return updateInput()
   }
 
 }

@@ -1,11 +1,9 @@
 package rendering
 
-import mythic.glowing.MatrixProperty
-import mythic.glowing.ShaderProgram
 import mythic.drawing.DrawingEffects
 import mythic.drawing.createDrawingEffects
-import mythic.glowing.Texture
-import mythic.glowing.Vector3Property
+import mythic.glowing.*
+import mythic.spatial.Vector4
 
 private val lighting = """
 
@@ -134,15 +132,14 @@ void main() {
 private val flatVertex = """
 uniform mat4 cameraTransform;
 uniform mat4 modelTransform;
+uniform vec4 color;
 
 layout (location = 0) in vec3 position;
-layout (location = 1) in vec3 normal;
-layout (location = 2) in vec4 vertex_color;
 
 out vec4 fragment_color;
 
 void main() {
-	fragment_color = vertex_color;
+	fragment_color = color;
   gl_Position = cameraTransform * modelTransform * vec4(position, 1);
 }
 """
@@ -202,6 +199,14 @@ class PerspectiveShader(val program: ShaderProgram) {
   }
 }
 
+class FlatColoredPerspectiveShader(val shader: PerspectiveShader) {
+  val colorProperty = Vector4Property(shader.program, "color")
+  fun activate(color: Vector4) {
+    colorProperty.setValue(color)
+    shader.activate()
+  }
+}
+
 class TextureShader(val program: ShaderProgram) {
   val cameraTransform = MatrixProperty(program, "cameraTransform")
   val cameraDirection = Vector3Property(program, "cameraDirection")
@@ -215,7 +220,7 @@ class TextureShader(val program: ShaderProgram) {
 data class Shaders(
     val textured: TextureShader,
 //    val colored: ShaderProgram,
-    val flat: PerspectiveShader,
+    val flat: FlatColoredPerspectiveShader,
     val drawing: DrawingEffects
 )
 
@@ -223,7 +228,7 @@ fun createShaders(): Shaders {
   return Shaders(
       textured = TextureShader(ShaderProgram(texturedVertex, texturedFragment)),
 //      colored = ShaderProgram(coloredVertex, coloredFragment),
-      flat = PerspectiveShader(ShaderProgram(flatVertex, flatFragment)),
+      flat = FlatColoredPerspectiveShader(PerspectiveShader(ShaderProgram(flatVertex, flatFragment))),
       drawing = createDrawingEffects()
   )
 }

@@ -17,6 +17,11 @@ fun gatherEffectsData(windowInfo: WindowInfo, scene: Scene): EffectsData {
   )
 }
 
+data class WorldMesh(
+    val mesh: SimpleMesh,
+    val textureIndex: List<Texture>
+)
+
 fun renderScene(scene: Scene, painters: Painters, effects: Effects, textures: Textures, worldMesh: WorldMesh?) {
   globalState.depthEnabled = true
   if (worldMesh != null) {
@@ -32,11 +37,6 @@ fun renderScene(scene: Scene, painters: Painters, effects: Effects, textures: Te
     painters[element.depiction]!!(element, effects)
   }
 }
-
-data class WorldMesh(
-    val mesh: SimpleMesh,
-    val textureIndex: List<Texture>
-)
 
 class Renderer {
   val glow = Glow()
@@ -61,9 +61,16 @@ class Renderer {
     glow.operations.clearScreen()
   }
 
-  fun renderScene(scene: Scene, windowInfo: WindowInfo) {
-    val effects = createEffects(shaders, gatherEffectsData(windowInfo, scene))
+  fun renderScene(scene: Scene, effects: Effects) {
     renderScene(scene, painters, effects, textures, worldMesh)
+  }
+
+  fun createEffects(scene: Scene, windowInfo: WindowInfo) =
+      createEffects(shaders, gatherEffectsData(windowInfo, scene))
+
+  fun renderScene(scene: Scene, windowInfo: WindowInfo) {
+    val effects = createEffects(scene, windowInfo)
+    renderScene(scene, effects)
   }
 
 }

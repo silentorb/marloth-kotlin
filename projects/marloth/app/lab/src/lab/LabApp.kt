@@ -75,6 +75,7 @@ fun runApp(platform: Platform, config: LabConfig) {
 object App {
   @JvmStatic
   fun main(args: Array<String>) {
+    System.setProperty("joml.format", "false")
     val config = loadLabConfig("labConfig.yaml")
     runApp(createDesktopPlatform("Dev Lab", config.width, config.height), config)
 //    startGui()

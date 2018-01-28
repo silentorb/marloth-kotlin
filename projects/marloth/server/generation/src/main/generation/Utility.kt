@@ -69,9 +69,6 @@ fun isInsideCircle(point: Vector2, center: Vector2, radius: Float): Boolean {
 
 fun isInsideNode(point: Vector2, node: Node) = isInsideCircle(point, node.position.xy, node.radius)
 
-fun getCenter(points: List<Vector2>): Vector2 =
-    points.reduce { a, b -> a + b } / points.size.toFloat()
-
 fun getCenter(first: Node, second: Node): Vector3 {
   val distance = first.position.distance(second.position)
   val mod = (distance - first.radius - second.radius) / 2 + first.radius

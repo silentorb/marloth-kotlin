@@ -5,7 +5,10 @@ import mythic.sculpting.HalfEdgeFace
 import mythic.sculpting.HalfEdgeMesh
 import mythic.sculpting.HalfEdgeVertex
 import mythic.spatial.BoundingBox
+import mythic.spatial.Vector2
 import mythic.spatial.Vector3
+import org.joml.div
+import org.joml.plus
 
 fun getVertexCount(face: HalfEdgeFace): Int {
   var result = 1
@@ -66,6 +69,17 @@ fun getEdges(face: HalfEdgeFace): List<HalfEdge> {
 //      )
 //  )
 //}
+
+fun getCenter(points: List<Vector2>): Vector2 =
+    points.reduce { a, b -> a + b } / points.size.toFloat()
+
+fun getCenter(vertices: List<Vector3>): Vector3 {
+  var result = Vector3()
+  for (vertex in vertices) {
+    result += vertex
+  }
+  return result / vertices.size.toFloat()
+}
 
 fun getBounds(vertices: List<Vector3>): BoundingBox {
   return BoundingBox(

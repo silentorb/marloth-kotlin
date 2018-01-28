@@ -4,9 +4,9 @@ import mythic.glowing.MatrixProperty
 import mythic.spatial.Matrix
 import mythic.drawing.DrawingEffects
 import mythic.glowing.Texture
-import mythic.glowing.Vector3Property
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
+import mythic.spatial.Vector4
 
 class PerspectiveEffect(private val shader: PerspectiveShader, private val camera: Matrix) {
   val modelTransform = MatrixProperty(shader.program, "modelTransform")
@@ -18,6 +18,15 @@ class PerspectiveEffect(private val shader: PerspectiveShader, private val camer
   fun activate(transform: Matrix) {
     modelTransform.setValue(transform)
     shader.activate()
+  }
+}
+
+class FlatColoredPerspectiveEffect(val shader: FlatColoredPerspectiveShader, camera: Matrix){
+  val perspectiveEffect = PerspectiveEffect(shader.shader, camera)
+
+  fun activate(transform: Matrix, color: Vector4){
+    shader.activate(color)
+    perspectiveEffect.activate(transform)
   }
 }
 
@@ -44,13 +53,13 @@ data class EffectsData(
 )
 
 data class Effects(
-    val standard: PerspectiveEffect,
+    val flat: FlatColoredPerspectiveEffect,
     val textured: TexturedPerspectiveEffect,
     val drawing: DrawingEffects
 )
 
 fun createEffects(shaders: Shaders, data: EffectsData): Effects = Effects(
-    standard = PerspectiveEffect(shaders.flat, data.camera),
+    flat = FlatColoredPerspectiveEffect(shaders.flat, data.camera),
     textured = TexturedPerspectiveEffect(shaders.textured, data.camera),
     drawing = shaders.drawing
 )

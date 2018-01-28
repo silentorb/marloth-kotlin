@@ -8,8 +8,6 @@ import mythic.glowing.VertexSchema
 import mythic.sculpting.HalfEdgeMesh
 import mythic.sculpting.create
 import mythic.spatial.Vector3
-import mythic.spatial.Vector4
-import mythic.spatial.put
 
 typealias MeshMap = Map<String, SimpleMesh>
 
@@ -26,6 +24,7 @@ fun createCube(): HalfEdgeMesh {
 data class VertexSchemas(
     val standard: VertexSchema,
     val textured: VertexSchema,
+    val flat: VertexSchema,
     val drawing: DrawingVertexSchemas
 )
 
@@ -40,16 +39,23 @@ fun createVertexSchemas() = VertexSchemas(
         VertexAttribute(1, "normal", 3),
         VertexAttribute(2, "uv", 2)
     )),
+    flat = VertexSchema(listOf(
+        VertexAttribute(0, "position", 3)
+    )),
     drawing = createDrawingVertexSchemas()
 )
 
-fun createMeshes(vertexSchemas: VertexSchemas): MeshMap {
-  val newMeshes = createMeshes(vertexSchemas.standard)
-  return newMeshes.mapValues({ (_, m) -> convertMesh(m.mesh, m.vertexSchema, temporaryVertexSerializer) })
-}
+fun createSimpleMesh(mesh: HalfEdgeMesh, vertexSchema: VertexSchema) =
+    convertMesh(mesh, vertexSchema, temporaryVertexSerializer)
 
-fun createMeshes(vertexSchema: VertexSchema): NewMeshMap = mapOf(
-    "child" to NewMesh(createCube(), vertexSchema),
-    "test" to NewMesh(create.flatTest(), vertexSchema)
+fun createLineMesh(vertexSchema: VertexSchema) =
+    SimpleMesh(vertexSchema, listOf(
+        0f, 0f, 0f,
+        1f, 0f, 0f
+    ))
+
+fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
+    "child" to createSimpleMesh(createCube(), vertexSchemas.standard),
+    "test" to createSimpleMesh(create.flatTest(), vertexSchemas.standard),
+    "line" to createLineMesh(vertexSchemas.flat)
 )
-

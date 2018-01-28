@@ -7,6 +7,7 @@ import generation.abstract.isInCluster
 import mythic.sculpting.FlexibleEdge
 import mythic.sculpting.FlexibleFace
 import mythic.sculpting.FlexibleMesh
+import mythic.sculpting.calculateNormals
 import mythic.spatial.*
 import org.joml.minus
 import org.joml.plus
@@ -212,5 +213,6 @@ fun generateStructure(abstractWorld: AbstractWorld) {
     }
   }
 
+  calculateNormals(mesh)
 //  val allFloors = roomFloors.map { it.face }//.plus(tunnelFloors.map { it.face })
 }
