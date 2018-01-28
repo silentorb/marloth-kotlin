@@ -31,13 +31,13 @@ fun checkWallCollision(source: Vector3, originalOffset: Vector3, world: World): 
   val radius = 0.8f
   val broadRadius = radius + maxLength
   val walls = world.meta.walls
-      .filter { wall -> hitsWall(wall.edges[1], newPosition, broadRadius) && offset.dot(wall.normal) < 0f}
+      .filter { wall -> hitsWall(wall.edges[1], newPosition, broadRadius) && offset.dot(wall.normal) < 0f }
       .map {
         val edge = it.edges[1]
 //        val dot2 = offset.dot(it.normal)C
 //        println(dot2)
         val hitPoint = projectPointOntoLine(source.xy, edge.first.xy, edge.second.xy)
-        val gap = Math.max(0f, hitPoint.distance(source.xy) - radius)
+        val gap = hitPoint.distance(source.xy) - radius
         Triple(it, hitPoint, gap)
       }
       .sortedBy { it.first.normal.dot(offset) }
@@ -56,14 +56,26 @@ fun checkWallCollision(source: Vector3, originalOffset: Vector3, world: World): 
     if (walls.size == 2) {
 //      val gapVector = gapVectors[0] + gapVectors[1]
 //      offset = gapVector
-      val dot = walls[0].first.normal.dot(walls[1].first.normal)
-//      println(dot)
-      if (dot > 0.6f) {
+      val firstEdge = walls[0].first.edges[1]
+      val secondEdge = walls[1].first.edges[1]
+
+      // Get the points of either edge ordered by the shared point and then the unshared point
+      val points = if (firstEdge.first === secondEdge.second)
+        (listOf(firstEdge.first, firstEdge.second))
+      else
+        (listOf(firstEdge.second, firstEdge.first))
+
+      val knee = walls[0].first.normal + walls[1].first.normal
+      val angle = getAngle(
+          knee.xy.normalize(),
+          (points[1] - points[0]).xy.normalize()
+      )
+      if (angle <= Pi) {
 //        val dot2 = offset.dot(walls[0].first.normal + walls[0].first.normal)
 //        println(dot2)
 //        if (dot2 < 0f) {
-          offset = gapVectors[0] + gapVectors[1]
-          println(offset)
+        offset = gapVectors[0] + gapVectors[1]
+//        println(offset)
 //        }
       } else {
         offset = offset + gapVectors[0] - slideVectors[0]

@@ -117,13 +117,18 @@ fun projectPointOntoLine(v: Vector2, u1: Vector2, u2: Vector2): Vector2 {
   return relative + u1
 }
 
-fun atan(v: Vector2) = if (v.x < 0)
-  Math.atan2(v.y.toDouble(), v.x.toDouble()).toFloat() - Pi
-else
+fun atan(v: Vector2) = //if (v.x < 0)
+//  Math.atan2(v.y.toDouble(), v.x.toDouble()).toFloat() - Pi
+//else
   Math.atan2(v.y.toDouble(), v.x.toDouble()).toFloat()
 
 fun getAngle(a: Vector2, b: Vector2): Float {
   val ad = atan(a)
   val bd = atan(b)
+  println("fn " + a + " " + b + " = " + ad + " - " + bd + " = " + (ad - bd))
   return ad - bd
 }
+
+//fun getAngle(a: Vector2, b: Vector2, c: Vector2): Float {
+//  return getAngle(a - b, c - b)
+//}
