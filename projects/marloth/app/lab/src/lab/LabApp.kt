@@ -1,5 +1,6 @@
 package lab
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -24,6 +25,10 @@ fun startGui() {
 }
 
 data class InputLabConfig(
+    @field:JsonIgnore
+    var view: LabView = LabView.world,
+//    @field:JsonIgnore
+//    var k:Int = 0,
     var showAbstract: Boolean = true,
     var showStructure: Boolean = true,
     var showLab: Boolean = false,
@@ -31,25 +36,33 @@ data class InputLabConfig(
     var height: Int = 600
 )
 
-fun loadLabConfig(path: String): LabConfig {
-  val config = LabConfig()
-
+fun loadLabConfig2(path: String): InputLabConfig {
+  val temp = InputLabConfig()
+  val props = temp.javaClass.fields
+  val fields = temp.javaClass.kotlin.members
   if (File(path).isFile()) {
     val mapper = ObjectMapper(YAMLFactory())
     mapper.registerModule(KotlinModule())
 
-    val initial = Files.newBufferedReader(Paths.get(path)).use {
+    return Files.newBufferedReader(Paths.get(path)).use {
       mapper.readValue(it, InputLabConfig::class.java)
     }
-
-    config.showAbstract = initial.showAbstract
-    config.showStructure = initial.showStructure
-    config.showLab = initial.showLab
-    config.width = initial.width
-    config.height = initial.height
   }
 
-  return config
+  return InputLabConfig()
+}
+
+fun loadLabConfig(path: String): LabConfig {
+  if (File(path).isFile()) {
+    val mapper = ObjectMapper(YAMLFactory())
+    mapper.registerModule(KotlinModule())
+
+    return Files.newBufferedReader(Paths.get(path)).use {
+      mapper.readValue(it, LabConfig::class.java)
+    }
+  }
+
+  return LabConfig()
 }
 
 fun runApp(platform: Platform, config: LabConfig) {
@@ -76,6 +89,8 @@ object App {
   @JvmStatic
   fun main(args: Array<String>) {
     System.setProperty("joml.format", "false")
+    val config2 = loadLabConfig2("labConfig.yaml")
+
     val config = loadLabConfig("labConfig.yaml")
     runApp(createDesktopPlatform("Dev Lab", config.width, config.height), config)
 //    startGui()
