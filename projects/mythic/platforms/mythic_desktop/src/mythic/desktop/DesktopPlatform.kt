@@ -16,6 +16,9 @@ fun is64Bit(): Boolean {
 }
 
 class DesktopProcess(val window: Long) : PlatformProcess {
+  override fun close() {
+    GLFW.glfwSetWindowShouldClose(window, true)
+  }
 
   override fun pollEvents() {
     glfwPollEvents()

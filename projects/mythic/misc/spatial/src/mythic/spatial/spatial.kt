@@ -125,7 +125,7 @@ fun atan(v: Vector2) = //if (v.x < 0)
 fun getAngle(a: Vector2, b: Vector2): Float {
   val ad = atan(a)
   val bd = atan(b)
-  println("fn " + a + " " + b + " = " + ad + " - " + bd + " = " + (ad - bd))
+//  println("fn " + a + " " + b + " = " + ad + " - " + bd + " = " + (ad - bd))
   return ad - bd
 }
 

@@ -3,6 +3,7 @@ package marloth.clienting
 import commanding.*
 import haft.*
 import mythic.glowing.SimpleMesh
+import mythic.platforming.Input
 import mythic.platforming.Platform
 import rendering.Renderer
 import rendering.convertMesh
@@ -19,14 +20,24 @@ fun switchCameraMode(playerId: Int, screens: List<Screen>) {
         CameraMode.topDown
 }
 
+fun createDeviceHandlers(input: Input, gamepads: List<Gamepad>): List<ScalarInputSource> {
+  return listOf(
+      input.KeyboardInputSource
+  ).plus(gamepads.map { gamepad ->
+    { trigger: Int -> input.GamepadInputSource(gamepad.id, trigger) }
+  })
+}
+
 class Client(val platform: Platform) {
   val renderer: Renderer = Renderer()
-  val config: Configuration = createNewConfiguration()
-  val deviceHandlers = createDeviceHandlers(platform.input)
+  val gamepads = platform.input.getGamepads()
+  val config: Configuration = createNewConfiguration(gamepads)
+  val deviceHandlers = createDeviceHandlers(platform.input, gamepads)
   val screens: List<Screen> = listOf(Screen(CameraMode.topDown, 0))
-  var userInput = InputManager(config.input.bindings, deviceHandlers)
+  var userInput = InputManager(flattenInputProfileBindings(config.input.profiles), deviceHandlers)
   val keyStrokeCommands: Map<CommandType, CommandHandler<CommandType>> = mapOf(
-      CommandType.switchView to { command -> switchCameraMode(command.target, screens) }
+      CommandType.switchView to { command -> switchCameraMode(command.target, screens) },
+      CommandType.menuBack to { command -> platform.process.close() }
   )
 
   fun getWindowInfo() = platform.display.getInfo()
