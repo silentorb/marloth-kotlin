@@ -1,5 +1,6 @@
 package lab
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import haft.Bindings
 import haft.InputProfile
@@ -35,11 +36,11 @@ enum class LabView {
 }
 
 data class LabConfig(
-    var view: LabView = LabView.world,
+    @field:JsonIgnore var view: LabView = LabView.world,
     var showAbstract: Boolean = true,
     var showStructure: Boolean = true,
     var showLab: Boolean = false,
     var width: Int = 800,
     var height: Int = 600,
-    val input: LabInputConfig = LabInputConfig(listOf(createLabInputBindings()))
+    @field:JsonIgnore val input: LabInputConfig = LabInputConfig(listOf(createLabInputBindings()))
 )

@@ -1,4 +1,4 @@
-# Marloth Kotlin
+# Dev Lab
 
 ```
 !(this instanceof java.lang.ClassNotFoundException)
@@ -11,4 +11,5 @@
 && !(this instanceof java.lang.NoSuchMethodException)
 && !(this instanceof sun.nio.fs.WindowsException)
 && !(this instanceof java.lang.IllegalAccessException)
+&& !(this instanceof kotlin.reflect.jvm.internal.KotlinReflectionInternalError)
 ```
