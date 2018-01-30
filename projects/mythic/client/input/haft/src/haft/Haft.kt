@@ -87,7 +87,8 @@ fun getState(source: ScalarInputSource, trigger: Int, previousState: TriggerStat
   return null
 }
 
-fun <T> getCurrentInputState(bindings: Bindings<T>, handlers: List<ScalarInputSource>, previousState: InputState<T>): InputState<T> =
+fun <T> getCurrentInputState(bindings: Bindings<T>, handlers: List<ScalarInputSource>,
+                             previousState: InputState<T>): InputState<T> =
     bindings.associate { Pair(it, getState(handlers[it.device], it.trigger, previousState[it])) }
 
 fun <T> createEmptyInputState(bindings: Bindings<T>): InputState<T> =
@@ -99,13 +100,26 @@ fun <T> gatherCommands(state: InputState<T>): Commands<T> {
       .map({ Command<T>(it.key.type, it.key.target, it.value!!.value, it.value!!.lifetime) })
 }
 
-class InputManager<T>(val bindings: Bindings<T>, val deviceHandlers: List<ScalarInputSource>) {
-  var inputState = createEmptyInputState(bindings)
+typealias ProfileStates<T> = Map<InputProfile<T>, InputState<T>>
 
-  fun update(): Commands<T> {
-    inputState = getCurrentInputState(bindings, deviceHandlers, inputState)
-    return gatherCommands(inputState)
+//fun <T> updateProfile(profile: InputProfile<T>, previousState: InputState<T>,
+//                      deviceHandlers: List<ScalarInputSource>): Commands<T> {
+//  val nextState = getCurrentInputState(profile.bindings, deviceHandlers, previousState)
+//  return gatherCommands(nextState)
+//}
+
+typealias InputProfileResult<T> = Pair<Commands<T>, ProfileStates<T>>
+
+fun <T> gatherInputCommands(profiles: List<InputProfile<T>>, profileStates: ProfileStates<T>,
+                            deviceHandlers: List<ScalarInputSource>): InputProfileResult<T> {
+  val previous = profiles.associate { profile ->
+    Pair(profile, profileStates[profile] ?: createEmptyInputState(profile.bindings))
   }
+
+  val next = profiles.associate { profile ->
+    Pair(profile, getCurrentInputState(profile.bindings, deviceHandlers, previous[profile]!!))
+  }
+  return Pair(next.flatMap { gatherCommands(it.value) }, next)
 }
 
 fun <T> handleKeystrokeCommands(commands: Commands<T>, keyStrokeCommands: Map<T, (Command<T>) -> Unit>) {

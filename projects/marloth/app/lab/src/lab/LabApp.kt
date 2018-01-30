@@ -5,10 +5,13 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import front.setWorldMesh
 import generation.generateDefaultWorld
+import haft.ProfileStates
 import marloth.clienting.Client
 import mythic.desktop.createDesktopPlatform
+import mythic.platforming.Display
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
+import simulation.World
 import simulation.WorldUpdater
 import visualizing.createScene
 import java.io.File
@@ -52,24 +55,34 @@ fun loadLabConfig(path: String): LabConfig {
   return config
 }
 
-fun runApp(platform: Platform, config: LabConfig) {
-  val display = platform.display
-  val timer = DeltaTimer()
-  val client = Client(platform)
-  val world = generateDefaultWorld()
-//  val world = createTestWorld()
-  val labClient = LabClient(config, client)
-  setWorldMesh(world.meta, client)
+data class LabApp(
+    val platform: Platform,
+    val config: LabConfig,
+    val display: Display = platform.display,
+    val timer: DeltaTimer = DeltaTimer(),
+    val world: World = generateDefaultWorld(),
+    val client: Client = Client(platform),
+    val labClient: LabClient = LabClient(config, client)
+)
 
-  while (!platform.process.isClosing()) {
-    display.swapBuffers()
-    val scene = createScene(world, client.screens[0])
-    val commands = labClient.update(scene, world.meta)
-    val delta = timer.update().toFloat()
-    val updater = WorldUpdater(world)
-    updater.update(commands, delta)
-    platform.process.pollEvents()
-  }
+tailrec fun labLoop(app: LabApp, previousState: LabState) {
+  app.display.swapBuffers()
+  val scene = createScene(app.world, app.client.screens[0])
+  val (commands, nextState) = app.labClient.update(scene, app.world.meta, previousState)
+  val delta = app.timer.update().toFloat()
+  val updater = WorldUpdater(app.world)
+  updater.update(commands, delta)
+  app.platform.process.pollEvents()
+
+  if (!app.platform.process.isClosing())
+    labLoop(app, nextState)
+}
+
+fun runApp(platform: Platform, config: LabConfig) {
+  val app = LabApp(platform, config)
+  setWorldMesh(app.world.meta, app.client)
+  labLoop(app, LabState(mapOf(), mapOf()))
+
 }
 
 object App {
@@ -78,8 +91,5 @@ object App {
     System.setProperty("joml.format", "false")
     val config = loadLabConfig("labConfig.yaml")
     runApp(createDesktopPlatform("Dev Lab", config.width, config.height), config)
-//    startGui()
-//    runApp(createDesktopPlatform("Marloth Lab", 640, 480))
-//    runApp(createDesktopPlatform("Marloth Lab", 320, 240))
   }
 }

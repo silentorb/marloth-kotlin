@@ -2,6 +2,8 @@ package lab
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import haft.Bindings
+import haft.InputProfile
+import haft.InputProfiles
 import haft.createBindings
 import org.lwjgl.glfw.GLFW
 
@@ -14,15 +16,15 @@ enum class LabCommandType {
 }
 
 data class LabInputConfig(
-    val bindings: Bindings<LabCommandType>
+    val profiles: InputProfiles<LabCommandType>
 )
 
-fun createLabInputBindings() = createBindings(0, 0, mapOf(
+fun createLabInputBindings() = InputProfile(0, createBindings(0, 0, mapOf(
     GLFW.GLFW_KEY_GRAVE_ACCENT to LabCommandType.toggleLab,
     GLFW.GLFW_KEY_1 to LabCommandType.toggleAbstractView,
     GLFW.GLFW_KEY_2 to LabCommandType.toggleStructureView,
     GLFW.GLFW_KEY_TAB to LabCommandType.cycleView
-))
+)))
 
 enum class LabView {
   @JsonProperty("world")
@@ -39,5 +41,5 @@ data class LabConfig(
     var showLab: Boolean = false,
     var width: Int = 800,
     var height: Int = 600,
-    val input: LabInputConfig = LabInputConfig(createLabInputBindings())
+    val input: LabInputConfig = LabInputConfig(listOf(createLabInputBindings()))
 )

@@ -2,11 +2,9 @@ package marloth.clienting
 
 import commanding.*
 import haft.*
-import mythic.glowing.SimpleMesh
 import mythic.platforming.Input
 import mythic.platforming.Platform
 import rendering.Renderer
-import rendering.convertMesh
 import scenery.CameraMode
 import scenery.Scene
 import scenery.Screen
@@ -34,7 +32,6 @@ class Client(val platform: Platform) {
   val config: Configuration = createNewConfiguration(gamepads)
   val deviceHandlers = createDeviceHandlers(platform.input, gamepads)
   val screens: List<Screen> = listOf(Screen(CameraMode.topDown, 0))
-  var userInput = InputManager(flattenInputProfileBindings(config.input.profiles), deviceHandlers)
   val keyStrokeCommands: Map<CommandType, CommandHandler<CommandType>> = mapOf(
       CommandType.switchView to { command -> switchCameraMode(command.target, screens) },
       CommandType.menuBack to { command -> platform.process.close() }
@@ -42,17 +39,17 @@ class Client(val platform: Platform) {
 
   fun getWindowInfo() = platform.display.getInfo()
 
-  fun updateInput(): Commands<CommandType> {
-    val commands = userInput.update()
+  fun updateInput(previousState: ProfileStates<CommandType>): InputProfileResult<CommandType> {
+    val (commands, nextState) = gatherInputCommands(config.input.profiles, previousState, deviceHandlers)
     handleKeystrokeCommands(commands, keyStrokeCommands)
-    return commands.filterNot({ keyStrokeCommands.containsKey(it.type) })
+    return Pair(commands.filterNot({ keyStrokeCommands.containsKey(it.type) }), nextState)
   }
 
-  fun update(scene: Scene): Commands<CommandType> {
+  fun update(scene: Scene, previousState: ProfileStates<CommandType>): InputProfileResult<CommandType> {
     val windowInfo = getWindowInfo()
     renderer.prepareRender(windowInfo)
     renderer.renderScene(scene, windowInfo)
-    return updateInput()
+    return updateInput(previousState)
   }
 
 }

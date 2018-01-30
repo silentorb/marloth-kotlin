@@ -19,6 +19,11 @@ import rendering.FlatColoredPerspectiveEffect
 import scenery.Scene
 import simulation.AbstractWorld
 
+data class LabState(
+    val labInput: ProfileStates<LabCommandType>,
+    val gameInput: ProfileStates<CommandType>
+)
+
 class LabClient(val config: LabConfig, val client: Client) {
   val keyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
       LabCommandType.toggleAbstractView to { _ -> config.showAbstract = !config.showAbstract },
@@ -31,7 +36,7 @@ class LabClient(val config: LabConfig, val client: Client) {
   val gameKeyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
       LabCommandType.toggleLab to { _ -> config.showLab = !config.showLab }
   )
-  val labInput = InputManager(config.input.bindings, client.deviceHandlers)
+//  val labInput = InputManager(config.input.bindings, client.deviceHandlers)
 
   fun renderFaceNormals(world: AbstractWorld, effects: Effects) {
     globalState.lineThickness = 2f
@@ -39,8 +44,8 @@ class LabClient(val config: LabConfig, val client: Client) {
       val faceCenter = getCenter(face.vertices)
       val transform = Matrix()
           .translate(faceCenter)
-          .	rotateTowards(face.normal, Vector3(0f, 0f, 1f))
-          .	rotateY(-Pi * 0.5f)
+          .rotateTowards(face.normal, Vector3(0f, 0f, 1f))
+          .rotateY(-Pi * 0.5f)
 //          .lookAlong(face.normal, Vector3(0f, 0f, 1f))
 
       effects.flat.activate(transform, Vector4(0f, 1f, 0f, 1f))
@@ -57,7 +62,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     renderFaceNormals(metaWorld, effects)
   }
 
-  fun update(scene: Scene, metaWorld: AbstractWorld): Commands<CommandType> {
+  fun update(scene: Scene, metaWorld: AbstractWorld, previousState: LabState): Pair<Commands<CommandType>, LabState> {
     val windowInfo = client.platform.display.getInfo()
     if (config.showLab) {
       val dimensions = Vector2(windowInfo.dimensions.x.toFloat(), windowInfo.dimensions.y.toFloat())
@@ -69,14 +74,15 @@ class LabClient(val config: LabConfig, val client: Client) {
 
       client.renderer.prepareRender(windowInfo)
       renderLab(windowInfo, labLayout)
-      val commands = labInput.update()
+      val (commands, nextState) = gatherInputCommands(config.input.profiles, previousState.labInput, client.deviceHandlers)
       handleKeystrokeCommands(commands, keyPressCommands)
-      return listOf()
+      return Pair(listOf(), LabState(nextState, mapOf()))
     } else {
-      val commands = labInput.update()
+      val (commands, nextLabInputState) = gatherInputCommands(config.input.profiles, previousState.labInput, client.deviceHandlers)
       handleKeystrokeCommands(commands, gameKeyPressCommands)
       renderScene(scene, metaWorld)
-      return client.updateInput()
+      val (gameCommands, nextGameInputState) = client.updateInput(previousState.gameInput)
+      return Pair(gameCommands, LabState(nextLabInputState, nextGameInputState))
     }
   }
 
