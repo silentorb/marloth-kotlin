@@ -12,7 +12,7 @@ import kotlin.math.max
 
 typealias Players = List<Player>
 
-data class World(val meta: AbstractWorld, val players: Players = listOf(Player(0))) {
+data class World(val meta: AbstractWorld, val players: Players = listOf(Player(1))) {
 
 }
 

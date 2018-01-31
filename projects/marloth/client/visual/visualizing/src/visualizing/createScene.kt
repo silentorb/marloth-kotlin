@@ -36,7 +36,7 @@ fun createOrthographicCamera(player: Player): Camera {
 }
 
 fun createCamera(world: World, screen: Screen): Camera {
-  val mainPlayer = world.players[screen.playerId]
+  val mainPlayer = world.players[screen.playerId - 1]
   return when (screen.cameraMode) {
     CameraMode.firstPerson -> createFirstPersonCamera(mainPlayer)
     CameraMode.thirdPerson -> createThirdPersonCamera(mainPlayer)

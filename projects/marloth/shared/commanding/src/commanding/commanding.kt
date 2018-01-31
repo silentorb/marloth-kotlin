@@ -20,6 +20,7 @@ enum class CommandType {
 
   switchView,
 
+  activateDevice,
   menuBack,
   select,
 }

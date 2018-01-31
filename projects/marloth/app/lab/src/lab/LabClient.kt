@@ -74,9 +74,9 @@ class LabClient(val config: LabConfig, val client: Client) {
 
       client.renderer.prepareRender(windowInfo)
       renderLab(windowInfo, labLayout)
-      val (commands, nextState) = gatherInputCommands(config.input.profiles, previousState.labInput, client.deviceHandlers)
+      val (commands, nextLabInputState) = gatherInputCommands(config.input.profiles, previousState.labInput, client.deviceHandlers)
       handleKeystrokeCommands(commands, keyPressCommands)
-      return Pair(listOf(), LabState(nextState, mapOf()))
+      return Pair(listOf(), LabState(nextLabInputState, mapOf()))
     } else {
       val (commands, nextLabInputState) = gatherInputCommands(config.input.profiles, previousState.labInput, client.deviceHandlers)
       handleKeystrokeCommands(commands, gameKeyPressCommands)

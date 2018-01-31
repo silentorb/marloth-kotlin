@@ -29,17 +29,18 @@ fun createDeviceHandlers(input: Input, gamepads: List<Gamepad>): List<ScalarInpu
 class Client(val platform: Platform) {
   val renderer: Renderer = Renderer()
   val gamepads = platform.input.getGamepads()
-  val config: Configuration = createNewConfiguration(gamepads)
+  //  val config: Configuration = createNewConfiguration(gamepads)
   val deviceHandlers = createDeviceHandlers(platform.input, gamepads)
-  val screens: List<Screen> = listOf(Screen(CameraMode.topDown, 0))
+  val screens: List<Screen> = listOf(Screen(CameraMode.topDown, 1))
   val keyStrokeCommands: Map<CommandType, CommandHandler<CommandType>> = mapOf(
       CommandType.switchView to { command -> switchCameraMode(command.target, screens) },
       CommandType.menuBack to { command -> platform.process.close() }
   )
-
+  val playerInputProfiles = createDefaultInputProfiles()
   fun getWindowInfo() = platform.display.getInfo()
 
   fun updateInput(previousState: ProfileStates<CommandType>): InputProfileResult<CommandType> {
+    val profiles = selectActiveInputProfiles(playerInputProfiles)
     val (commands, nextState) = gatherInputCommands(config.input.profiles, previousState, deviceHandlers)
     handleKeystrokeCommands(commands, keyStrokeCommands)
     return Pair(commands.filterNot({ keyStrokeCommands.containsKey(it.type) }), nextState)

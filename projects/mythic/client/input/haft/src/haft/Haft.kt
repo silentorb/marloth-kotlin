@@ -69,12 +69,12 @@ typealias ScalarInputSource = (trigger: Int) -> Float
 
 typealias MultiDeviceScalarInputSource = (device: Int, trigger: Int) -> Float
 
-data class InputProfile<T>(
-    val target: Int,
-    val bindings: Bindings<T>
-)
+//typealias InputProfile<T>(
+//    val target: Int,
+//    val bindings: Bindings<T>
+//)
 
-typealias InputProfiles<T> = List<InputProfile<T>>
+typealias InputProfiles<T> = List<Bindings<T>>
 
 fun getState(source: ScalarInputSource, trigger: Int, previousState: TriggerState?): TriggerState? {
   val value = source(trigger)
@@ -100,7 +100,7 @@ fun <T> gatherCommands(state: InputState<T>): Commands<T> {
       .map({ Command<T>(it.key.type, it.key.target, it.value!!.value, it.value!!.lifetime) })
 }
 
-typealias ProfileStates<T> = Map<InputProfile<T>, InputState<T>>
+typealias ProfileStates<T> = Map<Bindings<T>, InputState<T>>
 
 //fun <T> updateProfile(profile: InputProfile<T>, previousState: InputState<T>,
 //                      deviceHandlers: List<ScalarInputSource>): Commands<T> {
@@ -110,14 +110,14 @@ typealias ProfileStates<T> = Map<InputProfile<T>, InputState<T>>
 
 typealias InputProfileResult<T> = Pair<Commands<T>, ProfileStates<T>>
 
-fun <T> gatherInputCommands(profiles: List<InputProfile<T>>, profileStates: ProfileStates<T>,
+fun <T> gatherInputCommands(profiles: List<Bindings<T>>, profileStates: ProfileStates<T>,
                             deviceHandlers: List<ScalarInputSource>): InputProfileResult<T> {
   val previous = profiles.associate { profile ->
-    Pair(profile, profileStates[profile] ?: createEmptyInputState(profile.bindings))
+    Pair(profile, profileStates[profile] ?: createEmptyInputState(profile))
   }
 
   val next = profiles.associate { profile ->
-    Pair(profile, getCurrentInputState(profile.bindings, deviceHandlers, previous[profile]!!))
+    Pair(profile, getCurrentInputState(profile, deviceHandlers, previous[profile]!!))
   }
   return Pair(next.flatMap { gatherCommands(it.value) }, next)
 }
