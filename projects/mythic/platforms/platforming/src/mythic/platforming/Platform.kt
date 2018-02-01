@@ -7,7 +7,7 @@ import org.joml.Vector2i
 
 data class WindowInfo(val dimensions: Vector2i)
 
-interface Input {
+interface PlatformInput {
   val KeyboardInputSource: ScalarInputSource
   val GamepadInputSource: MultiDeviceScalarInputSource
   fun getGamepads(): List<Gamepad>
@@ -26,6 +26,6 @@ interface PlatformProcess {
 
 data class Platform(
     val display: Display,
-    val input: Input,
+    val input: PlatformInput,
     val process: PlatformProcess
 )

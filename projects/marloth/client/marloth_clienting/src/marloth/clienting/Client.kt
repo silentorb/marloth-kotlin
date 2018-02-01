@@ -2,7 +2,6 @@ package marloth.clienting
 
 import commanding.*
 import haft.*
-import mythic.platforming.Input
 import mythic.platforming.Platform
 import rendering.Renderer
 import scenery.CameraMode
@@ -18,35 +17,30 @@ fun switchCameraMode(playerId: Int, screens: List<Screen>) {
         CameraMode.topDown
 }
 
-fun createDeviceHandlers(input: Input, gamepads: List<Gamepad>): List<ScalarInputSource> {
-  return listOf(
-      input.KeyboardInputSource
-  ).plus(gamepads.map { gamepad ->
-    { trigger: Int -> input.GamepadInputSource(gamepad.id, trigger) }
-  })
-}
-
 class Client(val platform: Platform) {
   val renderer: Renderer = Renderer()
-  val gamepads = platform.input.getGamepads()
   //  val config: Configuration = createNewConfiguration(gamepads)
-  val deviceHandlers = createDeviceHandlers(platform.input, gamepads)
   val screens: List<Screen> = listOf(Screen(CameraMode.topDown, 1))
   val keyStrokeCommands: Map<CommandType, CommandHandler<CommandType>> = mapOf(
       CommandType.switchView to { command -> switchCameraMode(command.target, screens) },
       CommandType.menuBack to { command -> platform.process.close() }
   )
   val playerInputProfiles = createDefaultInputProfiles()
+  var playerCount: Int = 1
   fun getWindowInfo() = platform.display.getInfo()
 
-  fun updateInput(previousState: ProfileStates<CommandType>): InputProfileResult<CommandType> {
-    val profiles = selectActiveInputProfiles(playerInputProfiles)
-    val (commands, nextState) = gatherInputCommands(config.input.profiles, previousState, deviceHandlers)
+  fun updateInput(previousState: HaftInputState<CommandType>):
+      Pair<Commands<CommandType>, HaftInputState<CommandType>> {
+    val gamepadSlots = updateGamepadSlots(platform.input, previousState.gamepadSlots)
+    val deviceHandlers: List<ScalarInputSource> = createDeviceHandlers(platform.input, previousState.gamepadSlots)
+    val profiles = selectActiveInputProfiles(playerInputProfiles, playerCount)
+    val (commands, nextState) = gatherInputCommands(profiles, previousState.profileStates, deviceHandlers)
     handleKeystrokeCommands(commands, keyStrokeCommands)
-    return Pair(commands.filterNot({ keyStrokeCommands.containsKey(it.type) }), nextState)
+    return Pair(commands.filterNot({ keyStrokeCommands.containsKey(it.type) }), HaftInputState(nextState, gamepadSlots))
   }
 
-  fun update(scene: Scene, previousState: ProfileStates<CommandType>): InputProfileResult<CommandType> {
+  fun update(scene: Scene, previousState: HaftInputState<CommandType>):
+      Pair<Commands<CommandType>, HaftInputState<CommandType>> {
     val windowInfo = getWindowInfo()
     renderer.prepareRender(windowInfo)
     renderer.renderScene(scene, windowInfo)

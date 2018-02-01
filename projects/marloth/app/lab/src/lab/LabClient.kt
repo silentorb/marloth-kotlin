@@ -7,22 +7,30 @@ import lab.views.createMapLayout
 import lab.views.createTextureLayout
 import lab.views.renderMainLab
 import marloth.clienting.Client
+import marloth.clienting.initialGameInputState
 import mythic.drawing.Canvas
 import mythic.drawing.getUnitScaling
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
+import mythic.platforming.PlatformInput
 import mythic.platforming.WindowInfo
 import mythic.sculpting.query.getCenter
 import mythic.spatial.*
 import rendering.Effects
-import rendering.FlatColoredPerspectiveEffect
 import scenery.Scene
 import simulation.AbstractWorld
 
 data class LabState(
     val labInput: ProfileStates<LabCommandType>,
-    val gameInput: ProfileStates<CommandType>
+    val gameInput: HaftInputState<CommandType>
 )
+
+fun createLabDeviceHandlers(input: PlatformInput): List<ScalarInputSource> {
+  return listOf(
+      input.KeyboardInputSource,
+      disconnectedScalarInputSource
+  )
+}
 
 class LabClient(val config: LabConfig, val client: Client) {
   val keyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
@@ -36,6 +44,7 @@ class LabClient(val config: LabConfig, val client: Client) {
   val gameKeyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
       LabCommandType.toggleLab to { _ -> config.showLab = !config.showLab }
   )
+  val deviceHandlers = createLabDeviceHandlers(client.platform.input)
 //  val labInput = InputManager(config.input.bindings, client.deviceHandlers)
 
   fun renderFaceNormals(world: AbstractWorld, effects: Effects) {
@@ -74,11 +83,11 @@ class LabClient(val config: LabConfig, val client: Client) {
 
       client.renderer.prepareRender(windowInfo)
       renderLab(windowInfo, labLayout)
-      val (commands, nextLabInputState) = gatherInputCommands(config.input.profiles, previousState.labInput, client.deviceHandlers)
+      val (commands, nextLabInputState) = gatherInputCommands(config.input.profiles, previousState.labInput, deviceHandlers)
       handleKeystrokeCommands(commands, keyPressCommands)
-      return Pair(listOf(), LabState(nextLabInputState, mapOf()))
+      return Pair(listOf(), LabState(nextLabInputState, initialGameInputState()))
     } else {
-      val (commands, nextLabInputState) = gatherInputCommands(config.input.profiles, previousState.labInput, client.deviceHandlers)
+      val (commands, nextLabInputState) = gatherInputCommands(config.input.profiles, previousState.labInput, deviceHandlers)
       handleKeystrokeCommands(commands, gameKeyPressCommands)
       renderScene(scene, metaWorld)
       val (gameCommands, nextGameInputState) = client.updateInput(previousState.gameInput)

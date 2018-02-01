@@ -31,15 +31,41 @@ val GAMEPAD_BUTTON_DPAD_RIGHT = 112
 val GAMEPAD_BUTTON_DPAD_DOWN = 113
 val GAMEPAD_BUTTON_DPAD_LEFT = 114
 
-typealias GamepadSlotId = Int
 typealias GamepadDeviceId = Int
-typealias GamepadMap = Map<GamepadDeviceId, GamepadSlotId>
+typealias GamepadSlots = List<Int?>
 
-fun updateGamepadMap(previousMap: GamepadMap, gamepads: List<Int>): GamepadMap {
-  val existing = previousMap.filter { gamepads.contains(it.key) }
-  return existing
-      .plus(gamepads
-          .filter { !previousMap.containsKey(it) }
-          .mapIndexed { index, entry -> Pair() }
-      )
+fun updateGamepadSlots(gamepads: List<GamepadDeviceId>, previousMap: GamepadSlots): GamepadSlots {
+  var newDevices = gamepads.filter { !previousMap.contains(it) }
+  return previousMap
+      .map { value ->
+        if (value != null) {
+          if (gamepads.contains(value))
+            value
+          else
+            null
+        } else if (newDevices.size > 0) {
+          val result = newDevices.first()
+          newDevices = newDevices.drop(1)
+          result
+        } else
+          null
+      }
+
+//  val result = mutableListOf<Int?>(previousMap.size)
+//  var newDevices = gamepads.filter { !previousMap.contains(it) }
+//  for (i in 0 until previousMap.size) {
+//    val value = previousMap[i]
+//    result[i] = value
+//    if (value != null) {
+//      if (!gamepads.contains(value))
+//        result[i] = null
+//    } else if (newDevices.size > 0) {
+//      result[i] = newDevices.first()
+//      newDevices = newDevices.drop(1)
+//    }
+//  }
+//  return result
+
+//  val (existing, added) = previousMap.partition { gamepads.contains(it) }
 }
+

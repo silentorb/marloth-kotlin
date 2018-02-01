@@ -30,7 +30,7 @@ typealias Commands<T> = List<Command<T>>
 
 typealias CommandHandler<T> = (Command<T>) -> Unit
 
-typealias InputState<T> = Map<Binding<T>, TriggerState?>
+typealias InputTriggerState<T> = Map<Binding<T>, TriggerState?>
 
 typealias Bindings<T> = List<Binding<T>>
 
@@ -39,6 +39,8 @@ typealias ScalarInputSource = (trigger: Int) -> Float
 typealias MultiDeviceScalarInputSource = (device: Int, trigger: Int) -> Float
 
 typealias InputProfiles<T> = List<Bindings<T>>
+
+val disconnectedScalarInputSource: ScalarInputSource = { 0f }
 
 fun getState(source: ScalarInputSource, trigger: Int, previousState: TriggerState?): TriggerState? {
   val value = source(trigger)
@@ -52,21 +54,26 @@ fun getState(source: ScalarInputSource, trigger: Int, previousState: TriggerStat
 }
 
 fun <T> getCurrentInputState(bindings: Bindings<T>, handlers: List<ScalarInputSource>,
-                             previousState: InputState<T>): InputState<T> =
+                             previousState: InputTriggerState<T>): InputTriggerState<T> =
     bindings.associate { Pair(it, getState(handlers[it.device], it.trigger, previousState[it])) }
 
-fun <T> createEmptyInputState(bindings: Bindings<T>): InputState<T> =
+fun <T> createEmptyInputState(bindings: Bindings<T>): InputTriggerState<T> =
     bindings.associate { Pair(it, null) }
 
-fun <T> gatherCommands(state: InputState<T>): Commands<T> {
+fun <T> gatherCommands(state: InputTriggerState<T>): Commands<T> {
   return state
       .filter({ it.value != null })
       .map({ Command<T>(it.key.type, it.key.target, it.value!!.value, it.value!!.lifetime) })
 }
 
-typealias ProfileStates<T> = Map<Bindings<T>, InputState<T>>
+typealias ProfileStates<T> = Map<Bindings<T>, InputTriggerState<T>>
 
 typealias InputProfileResult<T> = Pair<Commands<T>, ProfileStates<T>>
+
+data class HaftInputState<T>(
+    val profileStates: ProfileStates<T>,
+    val gamepadSlots: GamepadSlots
+)
 
 fun <T> gatherInputCommands(profiles: List<Bindings<T>>, profileStates: ProfileStates<T>,
                             deviceHandlers: List<ScalarInputSource>): InputProfileResult<T> {

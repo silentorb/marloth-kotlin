@@ -6,8 +6,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import front.setWorldMesh
 import generation.generateDefaultWorld
-import haft.ProfileStates
 import marloth.clienting.Client
+import marloth.clienting.initialGameInputState
 import mythic.desktop.createDesktopPlatform
 import mythic.platforming.Display
 import mythic.platforming.Platform
@@ -94,7 +94,7 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
 fun runApp(platform: Platform, config: LabConfig) {
   val app = LabApp(platform, config)
   setWorldMesh(app.world.meta, app.client)
-  labLoop(app, LabState(mapOf(), mapOf()))
+  labLoop(app, LabState(mapOf(), initialGameInputState()))
 
 }
 

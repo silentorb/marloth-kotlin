@@ -2,6 +2,7 @@ package front
 
 import commanding.CommandType
 import generation.generateDefaultWorld
+import haft.HaftInputState
 import marloth.clienting.Client
 import mythic.platforming.Display
 import mythic.platforming.Platform
@@ -9,7 +10,7 @@ import mythic.quartz.DeltaTimer
 import simulation.World
 import simulation.WorldUpdater
 import visualizing.createScene
-import haft.ProfileStates
+import marloth.clienting.initialGameInputState
 
 data class App(
     val platform: Platform,
@@ -20,7 +21,7 @@ data class App(
 )
 
 data class AppState(
-    val inputState: ProfileStates<CommandType> = mapOf()
+    val inputState: HaftInputState<CommandType> = initialGameInputState()
 )
 
 tailrec fun gameLoop(app: App, previousState: AppState) {

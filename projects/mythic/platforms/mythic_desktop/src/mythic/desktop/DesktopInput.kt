@@ -2,7 +2,7 @@ package mythic.desktop
 
 import haft.GAMEPAD_BUTTON_A
 import haft.Gamepad
-import mythic.platforming.Input
+import mythic.platforming.PlatformInput
 import org.lwjgl.glfw.GLFW.*
 
 val GamepadIndices = GLFW_JOYSTICK_1..GLFW_JOYSTICK_LAST
@@ -25,7 +25,7 @@ fun getGamepadAxes(device: Int, axisDirIndex: Int): Float {
     if (value < -deadZone) -value else 0f
 }
 
-class DesktopInput(val window: Long) : Input {
+class DesktopInput(val window: Long) : PlatformInput {
 
   init {
     glfwSetInputMode(window, GLFW_STICKY_KEYS, 1)
