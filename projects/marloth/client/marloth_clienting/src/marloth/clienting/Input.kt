@@ -89,9 +89,13 @@ fun createDefaultInputProfiles() = listOf(
     createSecondaryInputProfile(4, 5)
 )
 
-fun filterAvailableDeviceBindings(bindings: Bindings<CommandType>, devices: List<Int>) =
-    bindings.filter { devices.contains(it.device) }
+fun createWaitingGamepadProfiles() =
+    (0 until maxGamepadCount).map {
+      createBindings(gamepadSlotStart + maxGamepadCount + it, 0, waitingGamepadBinding())
+    }
 
-fun selectActiveInputProfiles(playerInputProfiles: List<PlayerInputProfile>, playerCount: Int) =
+fun selectActiveInputProfiles(playerInputProfiles: List<PlayerInputProfile>,
+                              bindings: Map<Int, CommandType>, playerCount: Int) =
     playerInputProfiles.filter { it.player <= playerCount }
         .map { it.gameBindings }
+        .plus(bindings)

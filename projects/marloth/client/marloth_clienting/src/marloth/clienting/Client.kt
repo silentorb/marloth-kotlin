@@ -27,13 +27,14 @@ class Client(val platform: Platform) {
   )
   val playerInputProfiles = createDefaultInputProfiles()
   var playerCount: Int = 1
+  val waitingGamepadProfiles = createWaitingGamepadProfiles()
   fun getWindowInfo() = platform.display.getInfo()
 
   fun updateInput(previousState: HaftInputState<CommandType>):
       Pair<Commands<CommandType>, HaftInputState<CommandType>> {
     val gamepadSlots = updateGamepadSlots(platform.input, previousState.gamepadSlots)
     val deviceHandlers: List<ScalarInputSource> = createDeviceHandlers(platform.input, previousState.gamepadSlots)
-    val profiles = selectActiveInputProfiles(playerInputProfiles, playerCount)
+    val profiles = selectActiveInputProfiles(playerInputProfiles, waitingGamepadProfiles, playerCount)
     val (commands, nextState) = gatherInputCommands(profiles, previousState.profileStates, deviceHandlers)
     handleKeystrokeCommands(commands, keyStrokeCommands)
     return Pair(commands.filterNot({ keyStrokeCommands.containsKey(it.type) }), HaftInputState(nextState, gamepadSlots))
