@@ -26,26 +26,26 @@ class Client(val platform: Platform) {
       CommandType.menuBack to { command -> platform.process.close() }
   )
   val playerInputProfiles = createDefaultInputProfiles()
-  var playerCount: Int = 1
   val waitingGamepadProfiles = createWaitingGamepadProfiles()
   fun getWindowInfo() = platform.display.getInfo()
 
-  fun updateInput(previousState: HaftInputState<CommandType>):
+  fun updateInput(previousState: HaftInputState<CommandType>, players: List<Int>):
       Pair<Commands<CommandType>, HaftInputState<CommandType>> {
+    val playerSlots = (1..maxGamepadCount).map { players.contains(it) }
     val gamepadSlots = updateGamepadSlots(platform.input, previousState.gamepadSlots)
-    val deviceHandlers: List<ScalarInputSource> = createDeviceHandlers(platform.input, previousState.gamepadSlots)
-    val profiles = selectActiveInputProfiles(playerInputProfiles, waitingGamepadProfiles, playerCount)
+    val deviceHandlers = createDeviceHandlers(platform.input, gamepadSlots, playerSlots)
+    val profiles = selectActiveInputProfiles(playerInputProfiles, waitingGamepadProfiles, players)
     val (commands, nextState) = gatherInputCommands(profiles, previousState.profileStates, deviceHandlers)
     handleKeystrokeCommands(commands, keyStrokeCommands)
     return Pair(commands.filterNot({ keyStrokeCommands.containsKey(it.type) }), HaftInputState(nextState, gamepadSlots))
   }
 
-  fun update(scene: Scene, previousState: HaftInputState<CommandType>):
+  fun update(scenes: List<Scene>, previousState: HaftInputState<CommandType>):
       Pair<Commands<CommandType>, HaftInputState<CommandType>> {
     val windowInfo = getWindowInfo()
     renderer.prepareRender(windowInfo)
-    renderer.renderScene(scene, windowInfo)
-    return updateInput(previousState)
+    renderer.renderScene(scenes[0], windowInfo)
+    return updateInput(previousState, scenes.map { it.player })
   }
 
 }

@@ -69,7 +69,7 @@ fun createTestWorld(): World {
   fillIndexes(world.graph)
   return World(
       world,
-      listOf(Player(1, world.nodes.first().position)))
+      mutableListOf(createPlayer(world, 1)))
 }
 
 fun generateWorld(input: WorldInput): World {
@@ -78,7 +78,7 @@ fun generateWorld(input: WorldInput): World {
   generateStructure(abstractWorld)
   return World(
       abstractWorld,
-      listOf(Player(1, abstractWorld.nodes.first().position + Vector3(0f, 0f, 1f))))
+      mutableListOf(createPlayer(abstractWorld, 1)))
 }
 
 fun generateDefaultWorld() = generateWorld(WorldInput(

@@ -11,6 +11,7 @@ import simulation.World
 import simulation.WorldUpdater
 import visualizing.createScene
 import marloth.clienting.initialGameInputState
+import visualizing.createScenes
 
 data class App(
     val platform: Platform,
@@ -26,8 +27,8 @@ data class AppState(
 
 tailrec fun gameLoop(app: App, previousState: AppState) {
   app.display.swapBuffers()
-  val scene = createScene(app.world, app.client.screens[0])
-  val (commands, nextInputState) = app.client.update(scene, previousState.inputState)
+  val scenes = createScenes(app.world, app.client.screens[0])
+  val (commands, nextInputState) = app.client.update(scenes, previousState.inputState)
   val delta = app.timer.update().toFloat()
   val updater = WorldUpdater(app.world)
   updater.update(commands, delta)

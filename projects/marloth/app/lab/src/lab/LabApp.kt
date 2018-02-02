@@ -15,6 +15,7 @@ import mythic.quartz.DeltaTimer
 import simulation.World
 import simulation.WorldUpdater
 import visualizing.createScene
+import visualizing.createScenes
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -80,8 +81,8 @@ data class LabApp(
 
 tailrec fun labLoop(app: LabApp, previousState: LabState) {
   app.display.swapBuffers()
-  val scene = createScene(app.world, app.client.screens[0])
-  val (commands, nextState) = app.labClient.update(scene, app.world.meta, previousState)
+  val scenes = createScenes(app.world, app.client.screens[0])
+  val (commands, nextState) = app.labClient.update(scenes, app.world.meta, previousState)
   val delta = app.timer.update().toFloat()
   val updater = WorldUpdater(app.world)
   updater.update(commands, delta)

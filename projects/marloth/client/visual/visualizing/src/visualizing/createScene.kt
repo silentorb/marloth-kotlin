@@ -44,9 +44,15 @@ fun createCamera(world: World, screen: Screen): Camera {
   }
 }
 
-fun createScene(world: World, screen: Screen): Scene {
-  return Scene(
-      createCamera(world, screen),
-      world.players.map({ VisualElement(Depiction.child, Matrix().translate(it.position)) })
-  )
-}
+fun createScene(world: World, screen: Screen, player: Player) =
+    Scene(
+        createCamera(world, screen),
+        world.players.map { VisualElement(Depiction.child, Matrix().translate(it.position)) },
+        player.id
+    )
+
+
+fun createScenes(world: World, screen: Screen) =
+    world.players.map {
+      createScene(world, screen, it)
+    }

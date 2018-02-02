@@ -16,21 +16,23 @@ fun initialGameInputState() =
 fun updateGamepadSlots(input: PlatformInput, previousMap: GamepadSlots): GamepadSlots =
     updateGamepadSlots(input.getGamepads().map { it.id }, previousMap)
 
-fun selectGamepadHandler(GamepadInputSource: MultiDeviceScalarInputSource, gamepad: Int?) =
-    if (gamepad != null)
+fun selectGamepadHandler(GamepadInputSource: MultiDeviceScalarInputSource, gamepad: Int?, isActive: Boolean) =
+    if (gamepad != null && isActive)
       { trigger: Int -> GamepadInputSource(gamepad, trigger) }
     else
       disconnectedScalarInputSource
 
-fun createDeviceHandlers(input: PlatformInput, gamepadSlots: GamepadSlots): List<ScalarInputSource> {
+fun createDeviceHandlers(input: PlatformInput, gamepadSlots: GamepadSlots, players: List<Boolean>): List<ScalarInputSource> {
   return listOf(
       input.KeyboardInputSource,
       disconnectedScalarInputSource
   )
-      .plus(gamepadSlots.map { selectGamepadHandler(input.GamepadInputSource, it) })
-      .plus(gamepadSlots.mapIndexed { i, value ->
-        val it = if (value != null) null else i
-        selectGamepadHandler(input.GamepadInputSource, it)
+      .plus(gamepadSlots.mapIndexed { i, it ->
+        selectGamepadHandler(input.GamepadInputSource, it, players[i])
+      })
+      .plus(gamepadSlots.mapIndexed { i, it ->
+        selectGamepadHandler(input.GamepadInputSource, it, !players[i])
+//        disconnectedScalarInputSource
       })
 }
 
@@ -91,11 +93,14 @@ fun createDefaultInputProfiles() = listOf(
 
 fun createWaitingGamepadProfiles() =
     (0 until maxGamepadCount).map {
-      createBindings(gamepadSlotStart + maxGamepadCount + it, 0, waitingGamepadBinding())
+      createStrokeBindings(gamepadSlotStart + maxGamepadCount + it, 0, waitingGamepadBinding())
     }
 
 fun selectActiveInputProfiles(playerInputProfiles: List<PlayerInputProfile>,
-                              bindings: Map<Int, CommandType>, playerCount: Int) =
-    playerInputProfiles.filter { it.player <= playerCount }
+                              bindings: List<List<Binding<CommandType>>>,
+                              players: List<Int>) =
+    playerInputProfiles.filter { players.contains(it.player) }
         .map { it.gameBindings }
-        .plus(bindings)
+        .plus(bindings
+//            .filterIndexed { i, it->gamepadSlots[i] != null}
+        )

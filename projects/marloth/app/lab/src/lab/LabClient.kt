@@ -71,7 +71,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     renderFaceNormals(metaWorld, effects)
   }
 
-  fun update(scene: Scene, metaWorld: AbstractWorld, previousState: LabState): Pair<Commands<CommandType>, LabState> {
+  fun update(scenes: List<Scene>, metaWorld: AbstractWorld, previousState: LabState): Pair<Commands<CommandType>, LabState> {
     val windowInfo = client.platform.display.getInfo()
     if (config.showLab) {
       val dimensions = Vector2(windowInfo.dimensions.x.toFloat(), windowInfo.dimensions.y.toFloat())
@@ -89,8 +89,8 @@ class LabClient(val config: LabConfig, val client: Client) {
     } else {
       val (commands, nextLabInputState) = gatherInputCommands(config.input.profiles, previousState.labInput, deviceHandlers)
       handleKeystrokeCommands(commands, gameKeyPressCommands)
-      renderScene(scene, metaWorld)
-      val (gameCommands, nextGameInputState) = client.updateInput(previousState.gameInput)
+      renderScene(scenes[0], metaWorld)
+      val (gameCommands, nextGameInputState) = client.updateInput(previousState.gameInput, scenes.map { it.player })
       return Pair(gameCommands, LabState(nextLabInputState, nextGameInputState))
     }
   }

@@ -14,7 +14,8 @@ data class Binding<T>(
     val device: Int,
     val trigger: Int,
     val type: T,
-    val target: Int
+    val target: Int,
+    val isStroke: Boolean = false
 )
 
 data class Command<T>(
@@ -62,7 +63,7 @@ fun <T> createEmptyInputState(bindings: Bindings<T>): InputTriggerState<T> =
 
 fun <T> gatherCommands(state: InputTriggerState<T>): Commands<T> {
   return state
-      .filter({ it.value != null })
+      .filter({ it.value != null && (!it.key.isStroke || it.value!!.lifetime == TriggerLifetime.end) })
       .map({ Command<T>(it.key.type, it.key.target, it.value!!.value, it.value!!.lifetime) })
 }
 
@@ -94,3 +95,6 @@ fun <T> handleKeystrokeCommands(commands: Commands<T>, keyStrokeCommands: Map<T,
 
 fun <T> createBindings(device: Int, target: Int, bindings: Map<Int, T>) =
     bindings.map({ Binding(device, it.key, it.value, target) })
+
+fun <T> createStrokeBindings(device: Int, target: Int, bindings: Map<Int, T>) =
+    bindings.map({ Binding(device, it.key, it.value, target, true) })
