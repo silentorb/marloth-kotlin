@@ -119,7 +119,7 @@ fun createCube(mesh: FlexibleMesh, size: Vector3): List<FlexibleFace> {
       initial_bottom_vertices[1]
   )
 
-  val sides = (0..1).map { a ->
+  val sides = (0..3).map { a ->
     val b = if (a > 2) 0 else a + 1
     mesh.createFace(listOf(
         top_vertices[b], top_vertices[a],

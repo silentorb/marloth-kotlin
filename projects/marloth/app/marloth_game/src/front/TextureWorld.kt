@@ -21,7 +21,7 @@ data class TextureFace(
 )
 
 fun createTexturedFloor(face: FlexibleFace, texture: Texture): TextureFace {
-  val vertices = face.vertices
+  val vertices = face.unorderedVertices
   val bounds = getBounds(vertices)
   val dimensions = bounds.dimensions
 //    val scaleX = 1 / dimensions.x
@@ -42,7 +42,7 @@ fun createTexturedFloor(face: FlexibleFace, texture: Texture): TextureFace {
 }
 
 fun createTexturedWall(face: FlexibleFace, texture: Texture): TextureFace {
-  val vertices = face.vertices
+  val vertices = face.unorderedVertices
   val bounds = getBounds(vertices)
   val dimensions = bounds.dimensions
   val scaleX = .5f

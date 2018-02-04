@@ -50,7 +50,7 @@ class LabClient(val config: LabConfig, val client: Client) {
   fun renderFaceNormals(world: AbstractWorld, effects: Effects) {
     globalState.lineThickness = 2f
     for (face in world.mesh.faces) {
-      val faceCenter = getCenter(face.vertices)
+      val faceCenter = getCenter(face.unorderedVertices)
       val transform = Matrix()
           .translate(faceCenter)
           .rotateTowards(face.normal, Vector3(0f, 0f, 1f))

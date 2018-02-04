@@ -16,13 +16,16 @@ class FlexibleEdge(
 class FlexibleFace(
     val edges: MutableList<FlexibleEdge> = mutableListOf()
 ) {
-  val vertices: List<Vector3>
+  val unorderedVertices: List<Vector3>
     get() = edges.flatMap { it.toList() }.distinct()
+
+  val vertices: List<Vector3>
+    get() = edges.map { it.first }
 
   var normal = Vector3()
 
   fun updateNormal() {
-    normal = (vertices[0] - vertices[1]).cross(vertices[2] - vertices[1]).normalize()
+    normal = (unorderedVertices[0] - unorderedVertices[1]).cross(unorderedVertices[2] - unorderedVertices[1]).normalize()
   }
 }
 
@@ -32,7 +35,7 @@ class FlexibleMesh {
   val faces: MutableList<FlexibleFace> = mutableListOf()
 
   val vertices: List<Vector3>
-    get() = faces.flatMap { it.vertices }
+    get() = faces.flatMap { it.unorderedVertices }
 
 //  fun addVertex(vertex: Vector3): Vector3 {
 //    vertices.add(vertex)
@@ -68,15 +71,13 @@ class FlexibleMesh {
   }
 
   fun replaceFaceVertices(face: FlexibleFace, initializer: List<Vector3>) {
-    var previous = initializer.last()
-    for (vertex in initializer) {
-      val edge = createEdge(previous, vertex, face)
-      if (edge.edges.size > 0) {
-        val k = 0
-      }
+    var previous = initializer.first()
+    for (next in initializer.drop(1)) {
+      val edge = createEdge(previous, next, face)
       face.edges.add(edge)
-      previous = vertex
+      previous = next
     }
+    face.edges.add(createEdge(initializer.last(), initializer.first(), face))
   }
 
 }

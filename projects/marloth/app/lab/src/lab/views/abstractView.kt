@@ -69,7 +69,7 @@ fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Can
     canvas.drawSolidCircle(position, radius, solid)
     canvas.drawCircle(position, radius, outline)
     canvas.drawText(TextConfiguration(
-        node.index.toString() + " " + node.floors.first().vertices.size.toString(),
+        node.index.toString() + " " + node.floors.first().unorderedVertices.size.toString(),
         renderer.fonts[0],
         12f,
         position,
