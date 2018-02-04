@@ -81,7 +81,7 @@ data class LabApp(
 
 tailrec fun labLoop(app: LabApp, previousState: LabState) {
   app.display.swapBuffers()
-  val scenes = createScenes(app.world, app.client.screens[0])
+  val scenes = createScenes(app.world, app.client.screens)
   val (commands, nextState) = app.labClient.update(scenes, app.world.meta, previousState)
   val delta = app.timer.update().toFloat()
   val updater = WorldUpdater(app.world)

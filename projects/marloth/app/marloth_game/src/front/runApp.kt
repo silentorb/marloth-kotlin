@@ -27,7 +27,7 @@ data class AppState(
 
 tailrec fun gameLoop(app: App, previousState: AppState) {
   app.display.swapBuffers()
-  val scenes = createScenes(app.world, app.client.screens[0])
+  val scenes = createScenes(app.world, app.client.screens)
   val (commands, nextInputState) = app.client.update(scenes, previousState.inputState)
   val delta = app.timer.update().toFloat()
   val updater = WorldUpdater(app.world)

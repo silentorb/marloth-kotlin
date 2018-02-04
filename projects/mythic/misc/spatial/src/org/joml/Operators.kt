@@ -104,6 +104,14 @@ operator fun Vector2f.plus(v: Float) = Vector2f(x + v, y + v)
 operator fun Vector2f.unaryMinus() = negate()
 operator fun Vector2f.div(v: Float) = Vector2f(x / v, y / v)
 
+operator fun Vector2i.get(e: Int): Int = get(e)
+operator fun Vector2i.minus(v: Vector2ic) = sub(v, Vector2i())
+operator fun Vector2i.minus(v: Vector2i) = Vector2i(x - v.x, y - v.y)
+operator fun Vector2i.plus(v: Vector2ic) = add(v, Vector2i())
+operator fun Vector2i.plus(v: Int) = Vector2i(x + v, y + v)
+operator fun Vector2i.unaryMinus() = negate()
+operator fun Vector2i.div(v: Int) = Vector2i(x / v, y / v)
+
 /* Vector2d */
 
 //operator fun Vector2d.get(e: Int): Double = get(e)

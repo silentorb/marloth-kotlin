@@ -2,15 +2,21 @@ package marloth.clienting
 
 import commanding.*
 import haft.*
+import mythic.glowing.globalState
 import mythic.platforming.Platform
+import org.joml.Vector2i
+import org.joml.Vector4i
+import org.joml.div
 import rendering.Renderer
 import scenery.CameraMode
 import scenery.Scene
 import scenery.Screen
 
+val maxPlayerCount = 4
+
 fun switchCameraMode(playerId: Int, screens: List<Screen>) {
-  val currentMode = screens[playerId].cameraMode
-  screens[playerId].cameraMode =
+  val currentMode = screens[playerId - 1].cameraMode
+  screens[playerId - 1].cameraMode =
       if (currentMode == CameraMode.topDown)
         CameraMode.thirdPerson
       else
@@ -19,32 +25,43 @@ fun switchCameraMode(playerId: Int, screens: List<Screen>) {
 
 class Client(val platform: Platform) {
   val renderer: Renderer = Renderer()
-  //  val config: Configuration = createNewConfiguration(gamepads)
-  val screens: List<Screen> = listOf(Screen(CameraMode.topDown, 1))
+  val screens: List<Screen> = (1..maxPlayerCount).map { Screen(CameraMode.topDown, it) }
+  val gamepadAssignments: MutableMap<Int, Int> = mutableMapOf()
   val keyStrokeCommands: Map<CommandType, CommandHandler<CommandType>> = mapOf(
       CommandType.switchView to { command -> switchCameraMode(command.target, screens) },
       CommandType.menuBack to { command -> platform.process.close() }
   )
   val playerInputProfiles = createDefaultInputProfiles()
-  val waitingGamepadProfiles = createWaitingGamepadProfiles()
   fun getWindowInfo() = platform.display.getInfo()
 
   fun updateInput(previousState: HaftInputState<CommandType>, players: List<Int>):
       Pair<Commands<CommandType>, HaftInputState<CommandType>> {
-    val playerSlots = (1..maxGamepadCount).map { players.contains(it) }
-    val gamepadSlots = updateGamepadSlots(platform.input, previousState.gamepadSlots)
-    val deviceHandlers = createDeviceHandlers(platform.input, gamepadSlots, playerSlots)
+//    val playerSlots = (1..maxPlayerCount).map { players.contains(it) }
+//    val gamepadSlots = updateGamepadSlots(platform.input, previousState.gamepadSlots)
+    val gamepads = platform.input.getGamepads().map { it.id }
+    val waitingDevices = getWaitingDevices(gamepadAssignments, gamepads)
+    val deviceHandlers = createDeviceHandlers(platform.input, gamepadAssignments, waitingDevices)
+    val waitingGamepadProfiles = createWaitingGamepadProfiles(waitingDevices.size, gamepadAssignments.size)
     val profiles = selectActiveInputProfiles(playerInputProfiles, waitingGamepadProfiles, players)
     val (commands, nextState) = gatherInputCommands(profiles, previousState.profileStates, deviceHandlers)
     handleKeystrokeCommands(commands, keyStrokeCommands)
-    return Pair(commands.filterNot({ keyStrokeCommands.containsKey(it.type) }), HaftInputState(nextState, gamepadSlots))
+    var playerCount = players.size
+    val assignGamepad: (Command<CommandType>) -> Unit = { command ->
+      gamepadAssignments[command.target - 10] = playerCount++
+    }
+    handleKeystrokeCommands(commands, mapOf(
+        CommandType.activateDevice to assignGamepad,
+        CommandType.joinGame to assignGamepad
+    ))
+
+    return Pair(commands.filterNot({ keyStrokeCommands.containsKey(it.type) }), HaftInputState(nextState))
   }
 
   fun update(scenes: List<Scene>, previousState: HaftInputState<CommandType>):
       Pair<Commands<CommandType>, HaftInputState<CommandType>> {
     val windowInfo = getWindowInfo()
     renderer.prepareRender(windowInfo)
-    renderer.renderScene(scenes[0], windowInfo)
+    renderer.renderedScenes(scenes, windowInfo)
     return updateInput(previousState, scenes.map { it.player })
   }
 

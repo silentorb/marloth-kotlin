@@ -18,8 +18,15 @@ import java.nio.FloatBuffer
 typealias FlexibleVertexSerializer = (vertex: Vector3, face: FlexibleFace, vertices: FloatBuffer) -> Unit
 typealias HalfEdgeVertexSerializer = (vertex: HalfEdgeVertex, face: HalfEdgeFace, vertices: FloatBuffer) -> Unit
 
-val temporaryVertexSerializer: HalfEdgeVertexSerializer = { vertex, face, vertices ->
+val temporaryVertexSerializerOld: HalfEdgeVertexSerializer = { vertex, face, vertices ->
   vertices.put(vertex.position)
+
+  // Temporary color code
+  vertices.put(Vector4(0.5f, 0.5f, 0f, 1f))
+}
+
+val temporaryVertexSerializer: FlexibleVertexSerializer = { vertex, face, vertices ->
+  vertices.put(vertex)
 
   // Temporary color code
   vertices.put(Vector4(0.5f, 0.5f, 0f, 1f))

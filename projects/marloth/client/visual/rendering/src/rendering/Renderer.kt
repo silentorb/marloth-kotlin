@@ -9,11 +9,13 @@ import org.joml.Vector2i
 import scenery.Scene
 import mythic.spatial.Vector4
 import mythic.typography.FontLoadInfo
+import org.joml.Vector4i
+import org.joml.div
 
-fun gatherEffectsData(windowInfo: WindowInfo, scene: Scene): EffectsData {
+fun gatherEffectsData(dimensions: Vector2i, scene: Scene): EffectsData {
   return EffectsData(
-      createCameraMatrix(windowInfo.dimensions, scene.camera),
-      Matrix().ortho(0.0f, windowInfo.dimensions.x.toFloat(), 0.0f, windowInfo.dimensions.y.toFloat(), 0f, 100f)
+      createCameraMatrix(dimensions, scene.camera),
+      Matrix().ortho(0.0f, dimensions.x.toFloat(), 0.0f, dimensions.y.toFloat(), 0f, 100f)
   )
 }
 
@@ -35,6 +37,23 @@ fun renderScene(scene: Scene, painters: Painters, effects: Effects, textures: Te
 
   for (element in scene.elements) {
     painters[element.depiction]!!(element, effects)
+  }
+}
+
+fun getPlayerViewports(playerCount: Int, dimensions: Vector2i): List<Vector4i> {
+  val half = dimensions / 2
+  return when (playerCount) {
+    0, 1 -> listOf(Vector4i(0, 0, dimensions.x, dimensions.y))
+    2 -> listOf(
+        Vector4i(0, 0, half.x, dimensions.y),
+        Vector4i(half.x, 0, half.x, dimensions.y)
+    )
+    3 -> listOf(
+        Vector4i(0, 0, dimensions.x / 2, dimensions.y),
+        Vector4i(half.x, half.y, half.x, half.y),
+        Vector4i(half.x, 0, half.x, half.y)
+    )
+    else -> throw Error("Not supported")
   }
 }
 
@@ -65,11 +84,21 @@ class Renderer {
     renderScene(scene, painters, effects, textures, worldMesh)
   }
 
-  fun createEffects(scene: Scene, windowInfo: WindowInfo) =
-      createEffects(shaders, gatherEffectsData(windowInfo, scene))
+  fun renderedScenes(scenes: List<Scene>, windowInfo: WindowInfo) {
+    val viewports = getPlayerViewports(scenes.size, windowInfo.dimensions).iterator()
+    for (scene in scenes) {
+      val viewport = viewports.next()
+      globalState.viewport = viewport
+      renderScene(scene, Vector2i(viewport.z, viewport.w))
+    }
+    globalState.viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
+  }
 
-  fun renderScene(scene: Scene, windowInfo: WindowInfo) {
-    val effects = createEffects(scene, windowInfo)
+  fun createEffects(scene: Scene, dimensions: Vector2i) =
+      createEffects(shaders, gatherEffectsData(dimensions, scene))
+
+  fun renderScene(scene: Scene, dimensions: Vector2i) {
+    val effects = createEffects(scene, dimensions)
     renderScene(scene, effects)
   }
 

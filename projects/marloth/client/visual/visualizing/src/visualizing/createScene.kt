@@ -52,7 +52,7 @@ fun createScene(world: World, screen: Screen, player: Player) =
     )
 
 
-fun createScenes(world: World, screen: Screen) =
+fun createScenes(world: World, screens: List<Screen>) =
     world.players.map {
-      createScene(world, screen, it)
+      createScene(world, screens[it.id - 1], it)
     }

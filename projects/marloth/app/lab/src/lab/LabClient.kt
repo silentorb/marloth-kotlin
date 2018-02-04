@@ -62,12 +62,12 @@ class LabClient(val config: LabConfig, val client: Client) {
     }
   }
 
-  fun renderScene(scene: Scene, metaWorld: AbstractWorld) {
+  fun renderScene(scenes: List<Scene>, metaWorld: AbstractWorld) {
     val windowInfo = client.getWindowInfo()
     val renderer = client.renderer
     renderer.prepareRender(windowInfo)
-    val effects = renderer.createEffects(scene, windowInfo)
-    renderer.renderScene(scene, effects)
+    renderer.renderedScenes(scenes, windowInfo)
+    val effects = renderer.createEffects(scenes[0], windowInfo.dimensions)
     renderFaceNormals(metaWorld, effects)
   }
 
@@ -89,7 +89,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     } else {
       val (commands, nextLabInputState) = gatherInputCommands(config.input.profiles, previousState.labInput, deviceHandlers)
       handleKeystrokeCommands(commands, gameKeyPressCommands)
-      renderScene(scenes[0], metaWorld)
+      renderScene(scenes, metaWorld)
       val (gameCommands, nextGameInputState) = client.updateInput(previousState.gameInput, scenes.map { it.player })
       return Pair(gameCommands, LabState(nextLabInputState, nextGameInputState))
     }

@@ -40,7 +40,7 @@ class create {
       return result;
  */
 
-    fun cube(mesh: HalfEdgeMesh, size: Vector3): List<HalfEdgeFace> {
+    fun cube_old(mesh: HalfEdgeMesh, size: Vector3): List<HalfEdgeFace> {
       val half = size * 0.5f
       val top = squareUp(mesh, Vector2(size.x, size.y), half.z)
       val bottom = squareDown(mesh, Vector2(size.x, size.y), -half.z)
@@ -102,4 +102,50 @@ class create {
     }
 
   }
+}
+
+
+fun createCube(mesh: FlexibleMesh, size: Vector3): List<FlexibleFace> {
+  val half = size * 0.5f
+  val top = squareUp(mesh, Vector2(size.x, size.y), half.z)
+  val bottom = squareDown(mesh, Vector2(size.x, size.y), -half.z)
+
+  val top_vertices = top.vertices
+  val initial_bottom_vertices = bottom.vertices
+  val bottom_vertices = listOf(
+      initial_bottom_vertices[0],
+      initial_bottom_vertices[3],
+      initial_bottom_vertices[2],
+      initial_bottom_vertices[1]
+  )
+
+  val sides = (0..1).map { a ->
+    val b = if (a > 2) 0 else a + 1
+    mesh.createFace(listOf(
+        top_vertices[b], top_vertices[a],
+        bottom_vertices[a], bottom_vertices[b]
+    ))
+  }
+  return listOf(top, bottom)
+      .plus(listOf())
+}
+
+fun squareDown(mesh: FlexibleMesh, size: Vector2, z: Float): FlexibleFace {
+  val half = size * 0.5f;
+  return mesh.createFace(listOf(
+      Vector3(-half.x, -half.y, z),
+      Vector3(-half.x, half.y, z),
+      Vector3(half.x, half.y, z),
+      Vector3(half.x, -half.y, z)
+  ))
+}
+
+fun squareUp(mesh: FlexibleMesh, size: Vector2, z: Float): FlexibleFace {
+  val half = size * 0.5f;
+  return mesh.createFace(listOf(
+      Vector3(-half.x, -half.y, z),
+      Vector3(half.x, -half.y, z),
+      Vector3(half.x, half.y, z),
+      Vector3(-half.x, half.y, z)
+  ))
 }

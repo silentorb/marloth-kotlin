@@ -10,6 +10,8 @@ import org.joml.minus
 import org.joml.xy
 import kotlin.math.max
 
+val maxPlayerCount = 4
+
 typealias Players = List<Player>
 
 data class World(
@@ -31,9 +33,9 @@ class WorldUpdater(val world: World) {
       applyPlayerCommands(player, commands.filter({ it.target == player.id }), delta)
     }
 
-    val remainingCommands = commands.filter({ it.target == 0 })
+    val remainingCommands = commands.filter({ it.target == 0 || it.target > maxPlayerCount })
     for (command in remainingCommands) {
-      if (command.type == CommandType.activateDevice) {
+      if (command.type == CommandType.joinGame) {
         world.players.add(createPlayer(world.meta, world.players.size + 1))
       }
     }

@@ -72,8 +72,8 @@ typealias ProfileStates<T> = Map<Bindings<T>, InputTriggerState<T>>
 typealias InputProfileResult<T> = Pair<Commands<T>, ProfileStates<T>>
 
 data class HaftInputState<T>(
-    val profileStates: ProfileStates<T>,
-    val gamepadSlots: GamepadSlots
+    val profileStates: ProfileStates<T>
+//    val gamepadSlots: GamepadSlots
 )
 
 fun <T> gatherInputCommands(profiles: List<Bindings<T>>, profileStates: ProfileStates<T>,

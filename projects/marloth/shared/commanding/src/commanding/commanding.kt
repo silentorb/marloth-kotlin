@@ -21,6 +21,7 @@ enum class CommandType {
   switchView,
 
   activateDevice,
+  joinGame,
   menuBack,
   select,
 }

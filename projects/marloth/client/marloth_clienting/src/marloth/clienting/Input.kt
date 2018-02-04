@@ -7,11 +7,12 @@ import mythic.platforming.PlatformInput
 import haft.*
 import org.lwjgl.glfw.GLFW.*
 
-val maxGamepadCount = 4
 val gamepadSlotStart = 2
 
 fun initialGameInputState() =
-    HaftInputState<CommandType>(mapOf(), (1..maxGamepadCount).map { null })
+    HaftInputState<CommandType>(mapOf()
+//        , (1..maxPlayerCount).map { null }
+    )
 
 fun updateGamepadSlots(input: PlatformInput, previousMap: GamepadSlots): GamepadSlots =
     updateGamepadSlots(input.getGamepads().map { it.id }, previousMap)
@@ -22,18 +23,25 @@ fun selectGamepadHandler(GamepadInputSource: MultiDeviceScalarInputSource, gamep
     else
       disconnectedScalarInputSource
 
-fun createDeviceHandlers(input: PlatformInput, gamepadSlots: GamepadSlots, players: List<Boolean>): List<ScalarInputSource> {
+fun getWaitingDevices(gamepadAssignments: MutableMap<Int, Int>, gamepads: List<GamepadDeviceId>) =
+    gamepads.filter { d -> !gamepadAssignments.any { it.key == d } }
+
+fun createDeviceHandlers(input: PlatformInput, gamepadAssignments: MutableMap<Int, Int>,
+                         waitingDevices: List<Int>): List<ScalarInputSource> {
   return listOf(
       input.KeyboardInputSource,
       disconnectedScalarInputSource
   )
-      .plus(gamepadSlots.mapIndexed { i, it ->
-        selectGamepadHandler(input.GamepadInputSource, it, players[i])
+      .plus(gamepadAssignments.map {
+        { trigger: Int -> input.GamepadInputSource(it.key, trigger) }
       })
-      .plus(gamepadSlots.mapIndexed { i, it ->
-        selectGamepadHandler(input.GamepadInputSource, it, !players[i])
-//        disconnectedScalarInputSource
+      .plus((1..(maxPlayerCount - gamepadAssignments.size)).map {
+        disconnectedScalarInputSource
       })
+      .plus(waitingDevices
+          .map {
+            { trigger: Int -> input.GamepadInputSource(it, trigger) }
+          })
 }
 
 fun defaultKeyboardProfile() = mapOf(
@@ -45,10 +53,6 @@ fun defaultKeyboardProfile() = mapOf(
     GLFW_KEY_TAB to CommandType.switchView,
 
     GLFW_KEY_ESCAPE to CommandType.menuBack
-)
-
-fun waitingGamepadBinding() = mapOf(
-    GAMEPAD_BUTTON_START to CommandType.activateDevice
 )
 
 fun defaultGamepadBindings() = mapOf(
@@ -91,9 +95,14 @@ fun createDefaultInputProfiles() = listOf(
     createSecondaryInputProfile(4, 5)
 )
 
-fun createWaitingGamepadProfiles() =
-    (0 until maxGamepadCount).map {
-      createStrokeBindings(gamepadSlotStart + maxGamepadCount + it, 0, waitingGamepadBinding())
+fun createWaitingGamepadProfiles(count: Int, assignedGamepadCount: Int) =
+    (0 until count).map {
+      val bindings = if (assignedGamepadCount == 0)
+        mapOf(GAMEPAD_BUTTON_START to CommandType.activateDevice)
+      else
+        mapOf(GAMEPAD_BUTTON_START to CommandType.joinGame)
+
+      createStrokeBindings(gamepadSlotStart + maxPlayerCount + it, it + 10, bindings)
     }
 
 fun selectActiveInputProfiles(playerInputProfiles: List<PlayerInputProfile>,
