@@ -1,13 +1,8 @@
 package lab
 
 import commanding.CommandType
-import haft.*
-import lab.views.LabLayout
-import lab.views.createMapLayout
-import lab.views.createTextureLayout
-import lab.views.renderMainLab
+import lab.views.*
 import marloth.clienting.Client
-import marloth.clienting.initialGameInputState
 import mythic.drawing.Canvas
 import mythic.drawing.getUnitScaling
 import mythic.glowing.DrawMethod
@@ -19,6 +14,7 @@ import mythic.spatial.*
 import rendering.Effects
 import scenery.Scene
 import simulation.AbstractWorld
+import haft.*
 
 data class LabState(
     val labInput: ProfileStates<LabCommandType>,
@@ -32,19 +28,27 @@ fun createLabDeviceHandlers(input: PlatformInput): List<ScalarInputSource> {
   )
 }
 
+fun createViews(config: LabConfig) = mapOf(
+    "game" to GameView(),
+    "map" to WorldView(config.worldView),
+    "model" to ModelView(config.modelView),
+    "texture" to TextureView()
+)
+
 class LabClient(val config: LabConfig, val client: Client) {
   val keyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
       LabCommandType.toggleAbstractView to { _ -> config.showAbstract = !config.showAbstract },
       LabCommandType.toggleStructureView to { _ -> config.showStructure = !config.showStructure },
-      LabCommandType.toggleLab to { _ -> config.showLab = !config.showLab },
-      LabCommandType.cycleView to { _ ->
-        config.view = if (config.view == LabView.texture) LabView.world else LabView.texture
-      }
+//      LabCommandType.toggleLab to { _ -> config.showLab = !config.showLab },
+//      LabCommandType.cycleView to { _ ->
+//        config.view = if (config.view == LabView.texture) LabView.world else LabView.texture
+//      }
   )
   val gameKeyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
       LabCommandType.toggleLab to { _ -> config.showLab = !config.showLab }
   )
   val deviceHandlers = createLabDeviceHandlers(client.platform.input)
+  val views = createViews(config)
 //  val labInput = InputManager(config.input.bindings, client.deviceHandlers)
 
   fun renderFaceNormals(world: AbstractWorld, effects: Effects) {
@@ -71,28 +75,24 @@ class LabClient(val config: LabConfig, val client: Client) {
     renderFaceNormals(metaWorld, effects)
   }
 
-  fun update(scenes: List<Scene>, metaWorld: AbstractWorld, previousState: LabState): Pair<Commands<CommandType>, LabState> {
+  fun update(scenes: List<Scene>, metaWorld: AbstractWorld, previousState: LabState): ViewInputResult {
     val windowInfo = client.platform.display.getInfo()
-    if (config.showLab) {
-      val dimensions = Vector2(windowInfo.dimensions.x.toFloat(), windowInfo.dimensions.y.toFloat())
+    val view = views[config.view]!!
+    val layout = view.createLayout(windowInfo.dimensions)
+    client.renderer.prepareRender(windowInfo)
 
-      val labLayout = if (config.view == LabView.world)
-        createMapLayout(metaWorld, dimensions, config, client.renderer)
-      else
-        createTextureLayout(dimensions, config)
-
-      client.renderer.prepareRender(windowInfo)
-      renderLab(windowInfo, labLayout)
-      val (commands, nextLabInputState) = gatherInputCommands(config.input.profiles, previousState.labInput, deviceHandlers)
-      handleKeystrokeCommands(commands, keyPressCommands)
-      return Pair(listOf(), LabState(nextLabInputState, initialGameInputState()))
-    } else {
+    if (config.view == "game") {
       val (commands, nextLabInputState) = gatherInputCommands(config.input.profiles, previousState.labInput, deviceHandlers)
       handleKeystrokeCommands(commands, gameKeyPressCommands)
       renderScene(scenes, metaWorld)
       val (gameCommands, nextGameInputState) = client.updateInput(previousState.gameInput, scenes.map { it.player })
       return Pair(gameCommands, LabState(nextLabInputState, nextGameInputState))
     }
+    else {
+
+    }
+    renderLab(windowInfo, layout)
+    return view.input()
   }
 
   fun renderLab(windowInfo: WindowInfo, labLayout: LabLayout) {

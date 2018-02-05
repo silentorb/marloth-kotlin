@@ -1,5 +1,6 @@
-showAbstract: true
-showStructure: true
 showLab: false
 width: 300
 height: 200
+mapView:
+  showAbstract: true
+  showStructure: true

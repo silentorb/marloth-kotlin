@@ -2,19 +2,22 @@ package lab.views
 
 import commanding.*
 import generation.*
+import haft.*
 import simulation.WorldBoundary
-import haft.Bindings
-import haft.CommandHandler
-import haft.createBindings
 import lab.LabConfig
+import lab.LabState
+import lab.WorldViewConfig
 import lab.views.*
+import marloth.clienting.initialGameInputState
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.glowing.globalState
+import mythic.platforming.WindowInfo
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import mythic.spatial.times
+import org.joml.Vector2i
 import org.joml.xy
 import org.joml.plus
 import org.joml.minus
@@ -66,7 +69,7 @@ fun getPositionFunction(offset: Vector2, boundary: WorldBoundary, scale: Float):
 }
 
 fun drawGeneratedWorld(bounds: Bounds, canvas: Canvas, abstractWorld: AbstractWorld,
-                       config: LabConfig, renderer: Renderer) {
+                       config: WorldViewConfig, renderer: Renderer) {
   val scale = getScale(bounds, abstractWorld.boundary)
   val offset = bounds.position + worldPadding
   val getPosition: PositionFunction = getPositionFunction(offset, abstractWorld.boundary, scale)
@@ -83,27 +86,8 @@ fun drawGeneratedWorld(bounds: Bounds, canvas: Canvas, abstractWorld: AbstractWo
   )
 }
 
-fun createTextureLayout(screenDimensions: Vector2, config: LabConfig): LabLayout {
-  val draw = { b: Bounds, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
-
-  val panels = listOf(
-      Pair(Measurement(Measurements.pixel, 200f), draw),
-      Pair(Measurement(Measurements.stretch, 0f), { b: Bounds, c: Canvas ->
-        drawTextureView(b, c)
-        draw(b, c)
-      })
-  )
-  val boxes = overlap(createVerticalBounds(panels.map { it.first }, screenDimensions), panels, { a, b ->
-    Box(a, b.second)
-  })
-
-  return LabLayout(
-      boxes
-  )
-}
-
 fun createMapLayout(abstractWorld: AbstractWorld, screenDimensions: Vector2,
-                    config: LabConfig, renderer:Renderer): LabLayout {
+                    config: LabConfig, renderer: Renderer): LabLayout {
   val draw = { b: Bounds, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
   val drawWorld = { b: Bounds, c: Canvas ->
     crop(b, c, { drawGeneratedWorld(b, c, abstractWorld, config, renderer) })
@@ -132,5 +116,27 @@ fun renderMainLab(layout: LabLayout, canvas: Canvas) {
 
   for (box in layout.boxes) {
     box.render(box.bounds, canvas)
+  }
+}
+
+fun renderWorldView(abstractWorld: AbstractWorld, renderer: Renderer, windowInfo: WindowInfo,
+                    config: LabConfig): LabLayout {
+
+  val dimensions = Vector2(windowInfo.dimensions.x.toFloat(), windowInfo.dimensions.y.toFloat())
+
+  return createMapLayout(abstractWorld, dimensions, config, renderer)
+}
+
+fun inputWorldView(): ViewInputResult {
+  val (commands, nextLabInputState) = gatherInputCommands(config.input.profiles, previousState.labInput, deviceHandlers)
+  handleKeystrokeCommands(commands, keyPressCommands)
+  return Pair(listOf(), LabState(nextLabInputState, initialGameInputState()))
+}
+
+class WorldView(val config: WorldViewConfig) : View {
+  override fun createLayout(dimensions: Vector2i): LabLayout {
+  }
+
+  override fun input(): ViewInputResult {
   }
 }

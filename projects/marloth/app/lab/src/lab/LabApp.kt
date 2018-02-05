@@ -28,33 +28,33 @@ fun startGui() {
   }
 }
 
-data class InputLabConfig(
-    @field:JsonIgnore
-    var view: LabView = LabView.world,
+//data class InputLabConfig(
 //    @field:JsonIgnore
-//    var k:Int = 0,
-    var showAbstract: Boolean = true,
-    var showStructure: Boolean = true,
-    var showLab: Boolean = false,
-    var width: Int = 800,
-    var height: Int = 600
-)
+//    var view: LabView = LabView.world,
+////    @field:JsonIgnore
+////    var k:Int = 0,
+//    var showAbstract: Boolean = true,
+//    var showStructure: Boolean = true,
+//    var showLab: Boolean = false,
+//    var width: Int = 800,
+//    var height: Int = 600
+//)
 
-fun loadLabConfig2(path: String): InputLabConfig {
-  val temp = InputLabConfig()
-  val props = temp.javaClass.fields
-  val fields = temp.javaClass.kotlin.members
-  if (File(path).isFile()) {
-    val mapper = ObjectMapper(YAMLFactory())
-    mapper.registerModule(KotlinModule())
-
-    return Files.newBufferedReader(Paths.get(path)).use {
-      mapper.readValue(it, InputLabConfig::class.java)
-    }
-  }
-
-  return InputLabConfig()
-}
+//fun loadLabConfig2(path: String): InputLabConfig {
+//  val temp = InputLabConfig()
+//  val props = temp.javaClass.fields
+//  val fields = temp.javaClass.kotlin.members
+//  if (File(path).isFile()) {
+//    val mapper = ObjectMapper(YAMLFactory())
+//    mapper.registerModule(KotlinModule())
+//
+//    return Files.newBufferedReader(Paths.get(path)).use {
+//      mapper.readValue(it, InputLabConfig::class.java)
+//    }
+//  }
+//
+//  return InputLabConfig()
+//}
 
 fun loadLabConfig(path: String): LabConfig {
   if (File(path).isFile()) {
@@ -103,7 +103,7 @@ object App {
   @JvmStatic
   fun main(args: Array<String>) {
     System.setProperty("joml.format", "false")
-    val config2 = loadLabConfig2("labConfig.yaml")
+//    val config2 = loadLabConfig2("labConfig.yaml")
 
     val config = loadLabConfig("labConfig.yaml")
     runApp(createDesktopPlatform("Dev Lab", config.width, config.height), config)

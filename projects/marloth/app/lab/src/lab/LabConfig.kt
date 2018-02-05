@@ -1,8 +1,6 @@
 package lab
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonProperty
-import haft.Bindings
 import haft.InputProfiles
 import haft.createBindings
 import org.lwjgl.glfw.GLFW
@@ -25,19 +23,28 @@ fun createLabInputBindings() = createBindings(0, 0, mapOf(
     GLFW.GLFW_KEY_TAB to LabCommandType.cycleView
 ))
 
-enum class LabView {
-  @JsonProperty("world")
-  world,
+//enum class LabView {
+//  game,
+//  model,
+//  world,
+//  texture
+//}
 
-  @JsonProperty("texture")
-  texture
-}
+data class WorldViewConfig(
+    var showAbstract: Boolean = true,
+    var showStructure: Boolean = true
+)
+
+data class ModelViewConfig(
+    var model: String = "cube",
+    var drawVertices: Boolean = true,
+    var drawEdges: Boolean = true
+)
 
 data class LabConfig(
-    @field:JsonIgnore var view: LabView = LabView.world,
-    var showAbstract: Boolean = true,
-    var showStructure: Boolean = true,
-    var showLab: Boolean = false,
+    var view: String = "world",
+    var worldView: WorldViewConfig = WorldViewConfig(),
+    var modelView: ModelViewConfig = ModelViewConfig(),
     var width: Int = 800,
     var height: Int = 600,
     @field:JsonIgnore val input: LabInputConfig = LabInputConfig(listOf(createLabInputBindings()))
