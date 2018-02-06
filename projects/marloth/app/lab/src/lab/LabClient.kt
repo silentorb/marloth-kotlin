@@ -15,41 +15,43 @@ import rendering.Effects
 import scenery.Scene
 import simulation.AbstractWorld
 import haft.*
+import rendering.Renderer
 
 data class LabState(
-    val labInput: ProfileStates<LabCommandType>,
+    val labInput: InputTriggerState<LabCommandType>,
     val gameInput: HaftInputState<CommandType>
 )
 
 fun createLabDeviceHandlers(input: PlatformInput): List<ScalarInputSource> {
+  val gamepad = input.getGamepads().firstOrNull()
   return listOf(
       input.KeyboardInputSource,
-      disconnectedScalarInputSource
+      disconnectedScalarInputSource,
+      if (gamepad != null)
+        { trigger: Int -> input.GamepadInputSource(gamepad.id, trigger) }
+      else
+        disconnectedScalarInputSource
   )
 }
 
-fun createViews(config: LabConfig) = mapOf(
-    "game" to GameView(),
-    "map" to WorldView(config.worldView),
-    "model" to ModelView(config.modelView),
-    "texture" to TextureView()
-)
+fun selectView(config: LabConfig, abstractWorld: AbstractWorld, renderer: Renderer, view: String): View =
+    when (view) {
+      "game" -> GameView()
+      "world" -> WorldView(config.worldView, abstractWorld, renderer)
+      "model" -> ModelView(config.modelView, renderer)
+      "texture" -> TextureView()
+      else -> throw Error("Not supported")
+    }
 
 class LabClient(val config: LabConfig, val client: Client) {
-  val keyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
-      LabCommandType.toggleAbstractView to { _ -> config.showAbstract = !config.showAbstract },
-      LabCommandType.toggleStructureView to { _ -> config.showStructure = !config.showStructure },
-//      LabCommandType.toggleLab to { _ -> config.showLab = !config.showLab },
-//      LabCommandType.cycleView to { _ ->
-//        config.view = if (config.view == LabView.texture) LabView.world else LabView.texture
-//      }
-  )
-  val gameKeyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
-      LabCommandType.toggleLab to { _ -> config.showLab = !config.showLab }
+
+  val globalKeyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
+      LabCommandType.viewGame to { _ -> config.view = "game" },
+      LabCommandType.viewModel to { _ -> config.view = "model" },
+      LabCommandType.viewWorld to { _ -> config.view = "world" },
+      LabCommandType.viewTexture to { _ -> config.view = "texture" }
   )
   val deviceHandlers = createLabDeviceHandlers(client.platform.input)
-  val views = createViews(config)
-//  val labInput = InputManager(config.input.bindings, client.deviceHandlers)
 
   fun renderFaceNormals(world: AbstractWorld, effects: Effects) {
     globalState.lineThickness = 2f
@@ -59,7 +61,6 @@ class LabClient(val config: LabConfig, val client: Client) {
           .translate(faceCenter)
           .rotateTowards(face.normal, Vector3(0f, 0f, 1f))
           .rotateY(-Pi * 0.5f)
-//          .lookAlong(face.normal, Vector3(0f, 0f, 1f))
 
       effects.flat.activate(transform, Vector4(0f, 1f, 0f, 1f))
       client.renderer.meshes["line"]!!.draw(DrawMethod.lines)
@@ -77,22 +78,24 @@ class LabClient(val config: LabConfig, val client: Client) {
 
   fun update(scenes: List<Scene>, metaWorld: AbstractWorld, previousState: LabState): ViewInputResult {
     val windowInfo = client.platform.display.getInfo()
-    val view = views[config.view]!!
+    val view = selectView(config, metaWorld, client.renderer, config.view)
     val layout = view.createLayout(windowInfo.dimensions)
     client.renderer.prepareRender(windowInfo)
 
     if (config.view == "game") {
-      val (commands, nextLabInputState) = gatherInputCommands(config.input.profiles, previousState.labInput, deviceHandlers)
-      handleKeystrokeCommands(commands, gameKeyPressCommands)
+      val (commands, nextLabInputState) = gatherInputCommands(config.input["global"]!!, deviceHandlers, previousState.labInput)
+      applyCommands(commands, globalKeyPressCommands)
       renderScene(scenes, metaWorld)
       val (gameCommands, nextGameInputState) = client.updateInput(previousState.gameInput, scenes.map { it.player })
       return Pair(gameCommands, LabState(nextLabInputState, nextGameInputState))
-    }
-    else {
+    } else {
 
     }
     renderLab(windowInfo, layout)
-    return view.input()
+    val bindings = config.input["global"]!!.plus(config.input[config.view]!!)
+    val (commands, nextLabInputState) = gatherInputCommands(bindings, deviceHandlers, previousState.labInput)
+    applyCommands(commands, view.getCommands().plus(globalKeyPressCommands))
+    return Pair(listOf(), LabState(nextLabInputState, previousState.gameInput))
   }
 
   fun renderLab(windowInfo: WindowInfo, labLayout: LabLayout) {

@@ -5,6 +5,7 @@ import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.spatial.Vector2
 import mythic.spatial.Vector4
+import org.joml.Vector2i
 import rendering.createCheckers
 
 fun drawTextureView(bounds: Bounds, canvas: Canvas) {
@@ -17,7 +18,7 @@ fun drawTextureView(bounds: Bounds, canvas: Canvas) {
 
 class TextureView : View {
 
-  override fun createLayout(dimensions: Vector2): LabLayout {
+  override fun createLayout(dimensions: Vector2i): LabLayout {
     val draw = { b: Bounds, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
 
     val panels = listOf(
@@ -27,7 +28,8 @@ class TextureView : View {
           draw(b, c)
         })
     )
-    val boxes = overlap(createVerticalBounds(panels.map { it.first }, dimensions), panels, { a, b ->
+    val dimensions2 = Vector2(dimensions.x.toFloat(), dimensions.y.toFloat())
+    val boxes = overlap(createVerticalBounds(panels.map { it.first }, dimensions2), panels, { a, b ->
       Box(a, b.second)
     })
 
@@ -36,7 +38,5 @@ class TextureView : View {
     )
   }
 
-  override fun input(): ViewInputResult {
-
-  }
+  override fun getCommands(): LabCommandMap = mapOf()
 }

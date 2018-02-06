@@ -73,11 +73,10 @@ typealias InputProfileResult<T> = Pair<Commands<T>, ProfileStates<T>>
 
 data class HaftInputState<T>(
     val profileStates: ProfileStates<T>
-//    val gamepadSlots: GamepadSlots
 )
 
-fun <T> gatherInputCommands(profiles: List<Bindings<T>>, profileStates: ProfileStates<T>,
-                            deviceHandlers: List<ScalarInputSource>): InputProfileResult<T> {
+fun <T> gatherProfileCommands(profiles: List<Bindings<T>>, profileStates: ProfileStates<T>,
+                              deviceHandlers: List<ScalarInputSource>): InputProfileResult<T> {
   val previous = profiles.associate { profile ->
     Pair(profile, profileStates[profile] ?: createEmptyInputState(profile))
   }
@@ -88,13 +87,30 @@ fun <T> gatherInputCommands(profiles: List<Bindings<T>>, profileStates: ProfileS
   return Pair(next.flatMap { gatherCommands(it.value) }, next)
 }
 
+fun <T> gatherInputCommands(bindings: Bindings<T>, deviceHandlers: List<ScalarInputSource>,
+                            previousState: InputTriggerState<T>?): Pair<Commands<T>, InputTriggerState<T>> {
+  val previous = previousState ?: createEmptyInputState(bindings)
+  val next = getCurrentInputState(bindings, deviceHandlers, previous)
+  return Pair(gatherCommands(next), next)
+}
+
 fun <T> handleKeystrokeCommands(commands: Commands<T>, keyStrokeCommands: Map<T, (Command<T>) -> Unit>) {
   commands.filter({ keyStrokeCommands.containsKey(it.type) && it.lifetime == TriggerLifetime.end })
       .forEach({ keyStrokeCommands[it.type]!!(it) })
 }
 
+fun <T> applyCommands(commands: Commands<T>, actions: Map<T, (Command<T>) -> Unit>) {
+  commands.filter({ actions.containsKey(it.type) })
+      .forEach({ actions[it.type]!!(it) })
+}
+
 fun <T> createBindings(device: Int, target: Int, bindings: Map<Int, T>) =
     bindings.map({ Binding(device, it.key, it.value, target) })
 
+fun <T> createBindings(device: Int, bindings: Map<Int, T>) = createBindings(device, 0, bindings)
+
 fun <T> createStrokeBindings(device: Int, target: Int, bindings: Map<Int, T>) =
     bindings.map({ Binding(device, it.key, it.value, target, true) })
+
+fun <T> createStrokeBindings(device: Int, bindings: Map<Int, T>) = createStrokeBindings(device, 0, bindings)
+

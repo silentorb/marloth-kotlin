@@ -103,8 +103,6 @@ object App {
   @JvmStatic
   fun main(args: Array<String>) {
     System.setProperty("joml.format", "false")
-//    val config2 = loadLabConfig2("labConfig.yaml")
-
     val config = loadLabConfig("labConfig.yaml")
     runApp(createDesktopPlatform("Dev Lab", config.width, config.height), config)
   }

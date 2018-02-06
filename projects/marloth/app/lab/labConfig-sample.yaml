@@ -1,6 +1,6 @@
 showLab: false
 width: 300
 height: 200
-mapView:
+worldView:
   showAbstract: true
   showStructure: true

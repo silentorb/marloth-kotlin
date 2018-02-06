@@ -2,11 +2,7 @@ package marloth.clienting
 
 import commanding.*
 import haft.*
-import mythic.glowing.globalState
 import mythic.platforming.Platform
-import org.joml.Vector2i
-import org.joml.Vector4i
-import org.joml.div
 import rendering.Renderer
 import scenery.CameraMode
 import scenery.Scene
@@ -36,14 +32,12 @@ class Client(val platform: Platform) {
 
   fun updateInput(previousState: HaftInputState<CommandType>, players: List<Int>):
       Pair<Commands<CommandType>, HaftInputState<CommandType>> {
-//    val playerSlots = (1..maxPlayerCount).map { players.contains(it) }
-//    val gamepadSlots = updateGamepadSlots(platform.input, previousState.gamepadSlots)
     val gamepads = platform.input.getGamepads().map { it.id }
     val waitingDevices = getWaitingDevices(gamepadAssignments, gamepads)
     val deviceHandlers = createDeviceHandlers(platform.input, gamepadAssignments, waitingDevices)
     val waitingGamepadProfiles = createWaitingGamepadProfiles(waitingDevices.size, gamepadAssignments.size)
     val profiles = selectActiveInputProfiles(playerInputProfiles, waitingGamepadProfiles, players)
-    val (commands, nextState) = gatherInputCommands(profiles, previousState.profileStates, deviceHandlers)
+    val (commands, nextState) = gatherProfileCommands(profiles, previousState.profileStates, deviceHandlers)
     handleKeystrokeCommands(commands, keyStrokeCommands)
     var playerCount = players.size
     val assignGamepad: (Command<CommandType>) -> Unit = { command ->

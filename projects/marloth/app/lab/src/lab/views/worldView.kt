@@ -3,6 +3,7 @@ package lab.views
 import commanding.*
 import generation.*
 import haft.*
+import lab.LabCommandType
 import simulation.WorldBoundary
 import lab.LabConfig
 import lab.LabState
@@ -37,11 +38,6 @@ data class Border(
     val thickness: Float
 )
 
-private val panelBorder = Border(Vector4(0.2f, 0.2f, 1f, 1f), 3f)
-
-fun addBorders(boxes: List<Box>) =
-    Pair(boxes, boxes.associate { Pair(it, panelBorder) })
-
 data class LabLayout(
     val boxes: List<Box>
 )
@@ -60,9 +56,6 @@ fun drawBorder(bounds: Bounds, canvas: Canvas, color: Vector4) {
 }
 
 typealias PositionFunction = (Vector2) -> Vector2
-
-//fun getPositionFunction(offset: Vector2, boundary: WorldBoundary, scale: Float): PositionFunction =
-//    { position: Vector2 -> offset + (Vector2(position.x, -position.y) - boundary.start.xy) * scale }
 
 fun getPositionFunction(offset: Vector2, boundary: WorldBoundary, scale: Float): PositionFunction {
   return { position: Vector2 -> offset + (Vector2(position.x, -position.y) - boundary.start.xy) * scale }
@@ -87,7 +80,7 @@ fun drawGeneratedWorld(bounds: Bounds, canvas: Canvas, abstractWorld: AbstractWo
 }
 
 fun createMapLayout(abstractWorld: AbstractWorld, screenDimensions: Vector2,
-                    config: LabConfig, renderer: Renderer): LabLayout {
+                    config: WorldViewConfig, renderer: Renderer): LabLayout {
   val draw = { b: Bounds, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
   val drawWorld = { b: Bounds, c: Canvas ->
     crop(b, c, { drawGeneratedWorld(b, c, abstractWorld, config, renderer) })
@@ -107,8 +100,6 @@ fun createMapLayout(abstractWorld: AbstractWorld, screenDimensions: Vector2,
   )
 }
 
-fun createBoxMap(boxes: List<Box>): BoxMap = boxes.associate { Pair(it, it) }
-
 fun renderMainLab(layout: LabLayout, canvas: Canvas) {
   globalState.depthEnabled = false
   globalState.blendEnabled = true
@@ -119,24 +110,15 @@ fun renderMainLab(layout: LabLayout, canvas: Canvas) {
   }
 }
 
-fun renderWorldView(abstractWorld: AbstractWorld, renderer: Renderer, windowInfo: WindowInfo,
-                    config: LabConfig): LabLayout {
+class WorldView(val config: WorldViewConfig, val abstractWorld: AbstractWorld, val renderer: Renderer) : View {
 
-  val dimensions = Vector2(windowInfo.dimensions.x.toFloat(), windowInfo.dimensions.y.toFloat())
-
-  return createMapLayout(abstractWorld, dimensions, config, renderer)
-}
-
-fun inputWorldView(): ViewInputResult {
-  val (commands, nextLabInputState) = gatherInputCommands(config.input.profiles, previousState.labInput, deviceHandlers)
-  handleKeystrokeCommands(commands, keyPressCommands)
-  return Pair(listOf(), LabState(nextLabInputState, initialGameInputState()))
-}
-
-class WorldView(val config: WorldViewConfig) : View {
   override fun createLayout(dimensions: Vector2i): LabLayout {
+    val dimensions2 = Vector2(dimensions.x.toFloat(), dimensions.y.toFloat())
+    return createMapLayout(abstractWorld, dimensions2, config, renderer)
   }
 
-  override fun input(): ViewInputResult {
-  }
+  override fun getCommands(): LabCommandMap = mapOf(
+      LabCommandType.toggleAbstractView to { _ -> config.showAbstract = !config.showAbstract },
+      LabCommandType.toggleStructureView to { _ -> config.showStructure = !config.showStructure }
+  )
 }
