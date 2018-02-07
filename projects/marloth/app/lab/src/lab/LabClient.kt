@@ -70,7 +70,6 @@ class LabClient(val config: LabConfig, val client: Client) {
   fun renderScene(scenes: List<Scene>, metaWorld: AbstractWorld) {
     val windowInfo = client.getWindowInfo()
     val renderer = client.renderer
-    renderer.prepareRender(windowInfo)
     renderer.renderedScenes(scenes, windowInfo)
     val effects = renderer.createEffects(scenes[0], windowInfo.dimensions)
     renderFaceNormals(metaWorld, effects)
@@ -79,8 +78,8 @@ class LabClient(val config: LabConfig, val client: Client) {
   fun update(scenes: List<Scene>, metaWorld: AbstractWorld, previousState: LabState): ViewInputResult {
     val windowInfo = client.platform.display.getInfo()
     val view = selectView(config, metaWorld, client.renderer, config.view)
-    val layout = view.createLayout(windowInfo.dimensions)
     client.renderer.prepareRender(windowInfo)
+    val layout = view.createLayout(windowInfo.dimensions)
 
     if (config.view == "game") {
       val (commands, nextLabInputState) = gatherInputCommands(config.input["global"]!!, deviceHandlers, previousState.labInput)

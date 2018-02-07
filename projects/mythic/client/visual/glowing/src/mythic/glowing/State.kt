@@ -68,6 +68,14 @@ class State {
       }
     }
 
+  var pointSize: Float = 1f
+    set(value) {
+      if (field != value) {
+        field = value
+        glPointSize(value)
+      }
+    }
+
   var viewport: Vector4i = getBounds(GL_VIEWPORT)
     set(value) {
       if (field != value) {
