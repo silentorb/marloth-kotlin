@@ -5,10 +5,7 @@ import mythic.drawing.createDrawingVertexSchemas
 import mythic.glowing.SimpleMesh
 import mythic.glowing.VertexAttribute
 import mythic.glowing.VertexSchema
-import mythic.sculpting.FlexibleMesh
-import mythic.sculpting.HalfEdgeMesh
-import mythic.sculpting.create
-import mythic.sculpting.createCube
+import mythic.sculpting.*
 import mythic.spatial.Vector3
 
 typealias MeshMap = Map<String, SimpleMesh>
@@ -20,6 +17,12 @@ fun createCube(): FlexibleMesh {
   val mesh = FlexibleMesh()
 //  create.squareDown(mesh, Vector2(1f, 1f), 1f)
   createCube(mesh, Vector3(1f, 1f, 1f))
+  return mesh
+}
+
+fun createCylinder(): FlexibleMesh {
+  val mesh = FlexibleMesh()
+  createCylinder(mesh, 1f, 8, 2f)
   return mesh
 }
 
@@ -62,5 +65,6 @@ fun createLineMesh(vertexSchema: VertexSchema) =
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     "child" to createSimpleMesh(createCube(), vertexSchemas.standard),
     "test" to createSimpleMeshOld(create.flatTest(), vertexSchemas.standard),
-    "line" to createLineMesh(vertexSchemas.flat)
+    "line" to createLineMesh(vertexSchemas.flat),
+    "cylinder" to createSimpleMesh(createCylinder(), vertexSchemas.standard)
 )

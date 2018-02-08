@@ -120,7 +120,7 @@ fun projectPointOntoLine(v: Vector2, u1: Vector2, u2: Vector2): Vector2 {
 fun atan(v: Vector2) = //if (v.x < 0)
 //  Math.atan2(v.y.toDouble(), v.x.toDouble()).toFloat() - Pi
 //else
-  Math.atan2(v.y.toDouble(), v.x.toDouble()).toFloat()
+    Math.atan2(v.y.toDouble(), v.x.toDouble()).toFloat()
 
 fun getAngle(a: Vector2, b: Vector2): Float {
   val ad = atan(a)
@@ -132,3 +132,8 @@ fun getAngle(a: Vector2, b: Vector2): Float {
 //fun getAngle(a: Vector2, b: Vector2, c: Vector2): Float {
 //  return getAngle(a - b, c - b)
 //}
+
+val Vector4.xyz: Vector3
+  get() = Vector3(x, y, z)
+
+fun Vector3.transform(m: Matrix) = m.transform(Vector4(this, 1f)).xyz

@@ -15,6 +15,7 @@ import rendering.Effects
 import scenery.Scene
 import simulation.AbstractWorld
 import haft.*
+import mythic.sculpting.FlexibleMesh
 import rendering.Renderer
 
 data class LabState(
@@ -43,6 +44,21 @@ fun selectView(config: LabConfig, abstractWorld: AbstractWorld, renderer: Render
       else -> throw Error("Not supported")
     }
 
+
+fun renderFaceNormals(renderer: Renderer, mesh: FlexibleMesh, effects: Effects, modelTransform: Matrix = Matrix()) {
+  globalState.lineThickness = 2f
+  for (face in mesh.faces) {
+    val faceCenter = getCenter(face.unorderedVertices)
+    val transform = modelTransform
+        .translate(faceCenter)
+        .rotateTowards(face.normal, Vector3(0f, 0f, 1f))
+        .rotateY(-Pi * 0.5f)
+
+    effects.flat.activate(transform, Vector4(0f, 1f, 0f, 1f))
+    renderer.meshes["line"]!!.draw(DrawMethod.lines)
+  }
+}
+
 class LabClient(val config: LabConfig, val client: Client) {
 
   val globalKeyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
@@ -53,26 +69,12 @@ class LabClient(val config: LabConfig, val client: Client) {
   )
   val deviceHandlers = createLabDeviceHandlers(client.platform.input)
 
-  fun renderFaceNormals(world: AbstractWorld, effects: Effects) {
-    globalState.lineThickness = 2f
-    for (face in world.mesh.faces) {
-      val faceCenter = getCenter(face.unorderedVertices)
-      val transform = Matrix()
-          .translate(faceCenter)
-          .rotateTowards(face.normal, Vector3(0f, 0f, 1f))
-          .rotateY(-Pi * 0.5f)
-
-      effects.flat.activate(transform, Vector4(0f, 1f, 0f, 1f))
-      client.renderer.meshes["line"]!!.draw(DrawMethod.lines)
-    }
-  }
-
   fun renderScene(scenes: List<Scene>, metaWorld: AbstractWorld) {
     val windowInfo = client.getWindowInfo()
     val renderer = client.renderer
     renderer.renderedScenes(scenes, windowInfo)
     val effects = renderer.createEffects(scenes[0], windowInfo.dimensions)
-    renderFaceNormals(metaWorld, effects)
+    renderFaceNormals(client.renderer, metaWorld.mesh, effects)
   }
 
   fun update(scenes: List<Scene>, metaWorld: AbstractWorld, previousState: LabState): ViewInputResult {

@@ -7,7 +7,7 @@ class FlexibleEdge(
     val first: Vector3,
     val second: Vector3,
     val face: FlexibleFace,
-    var edges: MutableList<FlexibleEdge>
+    val edges: MutableList<FlexibleEdge>
 ) {
   fun other(node: Vector3) = if (node === first) second else first
   fun toList() = listOf(first, second)
@@ -48,9 +48,15 @@ class FlexibleMesh {
     return face
   }
 
-  fun createFace(initializer: List<Vector3>): FlexibleFace {
+  fun createFace(vertices: List<Vector3>): FlexibleFace {
     val face = createFace()
-    replaceFaceVertices(face, initializer)
+    replaceFaceVertices(face, vertices)
+    return face
+  }
+
+  fun createStitchedFace(vertices: List<Vector3>): FlexibleFace {
+    val face = createFace(vertices)
+    stitchEdges(face.edges)
     return face
   }
 
@@ -61,13 +67,18 @@ class FlexibleMesh {
       }
 
   fun createEdge(first: Vector3, second: Vector3, face: FlexibleFace): FlexibleEdge {
-    val others = getMatchingEdges(first, second)
-    val edge = FlexibleEdge(first, second, face, others.toMutableList())
-    for (other in others) {
-      other.edges.add(edge)
-    }
+    val edge = FlexibleEdge(first, second, face, mutableListOf())
     edges.add(edge)
     return edge
+  }
+
+  fun stitchEdges(edges: List<FlexibleEdge>) {
+    for (edge in edges) {
+      val others = getMatchingEdges(edge.first, edge.second)
+      for (other in others) {
+        other.edges.add(edge)
+      }
+    }
   }
 
   fun replaceFaceVertices(face: FlexibleFace, initializer: List<Vector3>) {
@@ -79,7 +90,6 @@ class FlexibleMesh {
     }
     face.edges.add(createEdge(initializer.last(), initializer.first(), face))
   }
-
 }
 
 fun calculateNormals(mesh: FlexibleMesh) {

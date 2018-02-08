@@ -2,6 +2,7 @@ package lab.views
 
 import lab.LabCommandType
 import lab.ModelViewConfig
+import lab.renderFaceNormals
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.glowing.DrawMethod
@@ -19,19 +20,22 @@ fun drawModelPreview(renderer: Renderer, dimensions: Vector2i, orientation: Quat
   val camera = createCameraMatrix(dimensions, Camera(Vector3(-10f, 0f, 0f), Quaternion(), 45f))
   val effect = FlatColoredPerspectiveEffect(renderer.shaders.flat, camera)
   val transform = Matrix().rotate(orientation)
-  val model = renderer.meshes[modelName]!!
+  val mesh = renderer.meshes[modelName]!!
 
   globalState.depthEnabled = true
   effect.activate(transform, Vector4(0.3f, 0.4f, 0.5f, 0.8f))
-  model.draw(DrawMethod.triangleFan)
+  mesh.draw(DrawMethod.triangleFan)
 
   globalState.lineThickness = 2f
   effect.activate(transform, Vector4(1f, 1f, 0f, 0.6f))
-  model.draw(DrawMethod.lineLoop)
+  mesh.draw(DrawMethod.lineLoop)
 
   globalState.pointSize = 3f
   effect.activate(transform, Vector4(0.1f, 0f, 0f, 0.8f))
-  model.draw(DrawMethod.points)
+  mesh.draw(DrawMethod.points)
+
+//  renderFaceNormals(renderer,mesh,)
+
   globalState.depthEnabled = false
 }
 

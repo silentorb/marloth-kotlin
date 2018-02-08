@@ -1,89 +1,32 @@
 package mythic.sculpting
 
 import mythic.sculpting.query.getVertices
-import mythic.spatial.Vector2
-import mythic.spatial.Vector3
-import mythic.spatial.times
+import mythic.spatial.*
+import kotlin.math.cos
+import kotlin.math.sin
+
+fun createCircleList(radius: Float, count: Int): List<Vector3> {
+  val vertices = ArrayList<Vector3>(count)
+  val increment = Pi * 2 / count
+
+  for (i in 0..count) {
+    val theta = increment * i
+    vertices.add(Vector3(sin(theta) * radius, cos(theta) * radius, 0f))
+  }
+  return vertices
+}
+
+fun createCircle(mesh: FlexibleMesh, radius: Float, count: Int): FlexibleFace {
+  return mesh.createFace(createCircleList(radius, count))
+}
+
+fun createCylinder(mesh: FlexibleMesh, radius: Float, count: Int, height: Float) {
+  val circle = createCircle(mesh, radius, count)
+  extrudeBasic(mesh, circle, Matrix().translate(Vector3(0f, 0f, height)))
+}
 
 class create {
   companion object {
-/*
-  auto half = size * 0.5f;
-      New_Faces result;
-      result.reserve(6);
-      auto &top = square_up(mesh, {size.x, size.y}, half.z);
-      auto &bottom = square_down(mesh, {size.x, size.y}, -half.z);
-
-      result.push_back(&top);
-      result.push_back(&bottom);
-
-      auto top_vertices = query::getVertices(top);
-      auto initial_bottom_vertices = query::getVertices(bottom);
-      Base_Vertex *bottom_vertices[] = {
-        initial_bottom_vertices[0],
-        initial_bottom_vertices[3],
-        initial_bottom_vertices[2],
-        initial_bottom_vertices[1],
-      };
-
-      for (auto i = 0; i < 4; ++i) {
-        auto a = i;
-        auto b = i > 2 ? 0 : i + 1;
-
-        Base_Vertex *v[] = {
-          top_vertices[b], top_vertices[a],
-          bottom_vertices[a], bottom_vertices[b]
-        };
-        result.push_back(&mesh.add_face(v, 4));
-      }
-
-      return result;
- */
-
-    fun cube_old(mesh: HalfEdgeMesh, size: Vector3): List<HalfEdgeFace> {
-      val half = size * 0.5f
-      val top = squareUp(mesh, Vector2(size.x, size.y), half.z)
-      val bottom = squareDown(mesh, Vector2(size.x, size.y), -half.z)
-
-      val top_vertices = getVertices(top)
-      val initial_bottom_vertices = getVertices(bottom)
-      val bottom_vertices = listOf(
-          initial_bottom_vertices[0],
-          initial_bottom_vertices[3],
-          initial_bottom_vertices[2],
-          initial_bottom_vertices[1]
-      )
-
-      val sides = (0..3).map { a ->
-        val b = if (a > 2) 0 else a + 1
-        mesh.add_face(listOf(
-            top_vertices[b], top_vertices[a],
-            bottom_vertices[a], bottom_vertices[b]
-        ))
-      }
-      return listOf<HalfEdgeFace>(top, bottom)
-          .plus(listOf())
-    }
-
-    fun squareDown(mesh: HalfEdgeMesh, size: Vector2, z: Float): HalfEdgeFace {
-      val half = size * 0.5f;
-      return mesh.add_face(listOf(
-          HalfEdgeVertex(Vector3(-half.x, -half.y, z)),
-          HalfEdgeVertex(Vector3(-half.x, half.y, z)),
-          HalfEdgeVertex(Vector3(half.x, half.y, z)),
-          HalfEdgeVertex(Vector3(half.x, -half.y, z))
-      ))
-    }
-
-    fun squareUp(mesh: HalfEdgeMesh, size: Vector2, z: Float): HalfEdgeFace {
-      val half = size * 0.5f;
-      return mesh.add_face(listOf(
-          HalfEdgeVertex(Vector3(-half.x, -half.y, z)),
-          HalfEdgeVertex(Vector3(half.x, -half.y, z)),
-          HalfEdgeVertex(Vector3(half.x, half.y, z)),
-          HalfEdgeVertex(Vector3(-half.x, half.y, z))
-      ))
-    }
 
     fun flatTest(): HalfEdgeMesh {
       val mesh = HalfEdgeMesh()
@@ -104,7 +47,6 @@ class create {
   }
 }
 
-
 fun createCube(mesh: FlexibleMesh, size: Vector3): List<FlexibleFace> {
   val half = size * 0.5f
   val top = squareUp(mesh, Vector2(size.x, size.y), half.z)
@@ -121,7 +63,7 @@ fun createCube(mesh: FlexibleMesh, size: Vector3): List<FlexibleFace> {
 
   val sides = (0..3).map { a ->
     val b = if (a > 2) 0 else a + 1
-    mesh.createFace(listOf(
+    mesh.createStitchedFace(listOf(
         top_vertices[b], top_vertices[a],
         bottom_vertices[a], bottom_vertices[b]
     ))
@@ -132,7 +74,7 @@ fun createCube(mesh: FlexibleMesh, size: Vector3): List<FlexibleFace> {
 
 fun squareDown(mesh: FlexibleMesh, size: Vector2, z: Float): FlexibleFace {
   val half = size * 0.5f;
-  return mesh.createFace(listOf(
+  return mesh.createStitchedFace(listOf(
       Vector3(-half.x, -half.y, z),
       Vector3(-half.x, half.y, z),
       Vector3(half.x, half.y, z),
@@ -142,7 +84,7 @@ fun squareDown(mesh: FlexibleMesh, size: Vector2, z: Float): FlexibleFace {
 
 fun squareUp(mesh: FlexibleMesh, size: Vector2, z: Float): FlexibleFace {
   val half = size * 0.5f;
-  return mesh.createFace(listOf(
+  return mesh.createStitchedFace(listOf(
       Vector3(-half.x, -half.y, z),
       Vector3(half.x, -half.y, z),
       Vector3(half.x, half.y, z),

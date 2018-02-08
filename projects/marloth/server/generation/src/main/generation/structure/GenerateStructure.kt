@@ -136,7 +136,7 @@ fun generateTunnelStructure(node: Node, nodeSectors: List<TempSector>): TempSect
 fun sinewSector(corners: List<Corner>, vertices: Map<Corner, Vector3>, mesh: FlexibleMesh): FlexibleFace {
   val sectorVertices = corners
       .map { vertices[it]!! }
-  val face = mesh.createFace(sectorVertices)
+  val face = mesh.createStitchedFace(sectorVertices)
   return face
 }
 
@@ -162,7 +162,7 @@ fun sinewFloors(nodeSectors: List<TempSector>, mesh: FlexibleMesh):
 
 fun createWall(edge: FlexibleEdge, mesh: FlexibleMesh): FlexibleFace {
   val offset = Vector3(0f, 0f, 1f)
-  return mesh.createFace(listOf(
+  return mesh.createStitchedFace(listOf(
       edge.first,
       edge.second,
       edge.second + offset,
