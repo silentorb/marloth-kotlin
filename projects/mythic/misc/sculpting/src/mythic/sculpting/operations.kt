@@ -10,9 +10,18 @@ import org.joml.plus
 import java.util.*
 
 fun extrudeBasic(mesh: FlexibleMesh, face: FlexibleFace, transform: Matrix) {
-  val newVertices = face.vertices.reversed().map { it.transform(transform) }
+  val newVertices = face.vertices
+      .reversed()
+      .map { it.transform(transform) }
   val secondFace = mesh.createFace(newVertices)
-
+  val secondVertices = secondFace.vertices.reversed()
+  val sides = (0 until newVertices.size).map { a ->
+    val b = if (a > 2) 0 else a + 1
+    mesh.createStitchedFace(listOf(
+        face.vertices[b], face.vertices[a],
+        secondVertices[a], secondVertices[b]
+    ))
+  }
 }
 
 class operations {
