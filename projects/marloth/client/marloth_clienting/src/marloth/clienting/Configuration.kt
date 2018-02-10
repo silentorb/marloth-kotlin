@@ -18,6 +18,6 @@ data class Configuration(
 //    InputConfiguration(listOf(
 //        createBindings(0, 1, defaultKeyboardProfile())
 //    ).plus(gamepads.mapIndexed { index, gamepad ->
-//      createBindings(gamepad.id + 1, index, defaultGamepadBindings())
+//      createBindings(gamepad.id + 1, index, allGamepadBindings())
 //    }))
 //)

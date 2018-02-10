@@ -2,13 +2,8 @@ package simulation
 
 import commanding.CommandType
 import haft.Commands
-import mythic.sculpting.FlexibleEdge
-import mythic.sculpting.FlexibleFace
 import mythic.spatial.*
 import org.joml.plus
-import org.joml.minus
-import org.joml.xy
-import kotlin.math.max
 
 val maxPlayerCount = 4
 
@@ -16,7 +11,7 @@ typealias Players = List<Player>
 
 data class World(
     val meta: AbstractWorld,
-    val players: MutableList<Player> = mutableListOf(Player(1))
+    val players: MutableList<Player> = mutableListOf()
 )
 
 class WorldUpdater(val world: World) {
@@ -25,7 +20,8 @@ class WorldUpdater(val world: World) {
     if (commands.isEmpty())
       return
 
-    movePlayer(world, player, commands, delta)
+    playerMove(world, player, commands, delta)
+    playerShoot(world, player, commands, delta)
   }
 
   fun applyCommands(players: Players, commands: Commands<CommandType>, delta: Float) {
@@ -47,4 +43,6 @@ class WorldUpdater(val world: World) {
 }
 
 fun createPlayer(abstractWorld: AbstractWorld, id: Int) =
-    Player(id, abstractWorld.nodes.first().position + Vector3(0f, 0f, 1f))
+    Player(id,
+        abstractWorld.nodes.first().position + Vector3(0f, 0f, 1f),
+        mutableListOf(Ability(1f)))

@@ -87,25 +87,62 @@ fun checkWallCollision(source: Vector3, originalOffset: Vector3, world: World): 
   return source + offset
 }
 
-fun movePlayer(world: World, player: Player, commands: Commands<CommandType>, delta: Float) {
+val playerMoveMap = mapOf(
+    CommandType.moveLeft to Vector2(-1f, 0f),
+    CommandType.moveRight to Vector2(1f, 0f),
+    CommandType.moveUp to Vector2(0f, 1f),
+    CommandType.moveDown to Vector2(0f, -1f)
+)
 
-  val offset = Vector3()
-  val speed = 6f
+val playerAttackMap = mapOf(
+    CommandType.attackLeft to Vector2(-1f, 0f),
+    CommandType.attackRight to Vector2(1f, 0f),
+    CommandType.attackUp to Vector2(0f, 1f),
+    CommandType.attackDown to Vector2(0f, -1f)
+)
+
+fun joinInputVector(commands: Commands<CommandType>, commandMap: Map<CommandType, Vector2>): Vector3 {
+  var offset = Vector2()
 
   for (command in commands) {
-    val rate = speed * command.value * delta
-    when (command.type) {
-      CommandType.moveLeft -> offset.x -= rate
-      CommandType.moveRight -> offset.x += rate
-      CommandType.moveUp -> offset.y += rate
-      CommandType.moveDown -> offset.y -= rate
+    val vector = commandMap[command.type]
+    if (vector != null) {
+      offset += vector * command.value
     }
   }
+
+  offset.normalize()
+  return Vector3(offset, 0f)
+}
+
+fun playerMove(world: World, player: Player, commands: Commands<CommandType>, delta: Float) {
+
+//  val offset = Vector3()
+//
+//  for (command in commands) {
+//    val rate = speed * command.value * delta
+//    when (command.type) {
+//      CommandType.moveLeft -> offset.x -= rate
+//      CommandType.moveRight -> offset.x += rate
+//      CommandType.moveUp -> offset.y += rate
+//      CommandType.moveDown -> offset.y -= rate
+//    }
+//  }
+  val speed = 6f
+  val offset = joinInputVector(commands, playerMoveMap) * speed * delta
 
   if (offset != Vector3()) {
     val newPosition = checkWallCollision(player.position, offset, world)
 
     if (newPosition != null)
       player.position = newPosition
+  }
+}
+
+fun playerShoot(world: World, player: Player, commands: Commands<CommandType>) {
+  val offset = joinInputVector(commands, playerMoveMap)
+
+  if (offset != Vector3()) {
+    
   }
 }

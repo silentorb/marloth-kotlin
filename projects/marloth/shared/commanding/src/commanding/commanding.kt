@@ -13,6 +13,11 @@ enum class CommandType {
   moveLeft,
   moveRight,
 
+  attackUp,
+  attackDown,
+  attackLeft,
+  attackRight,
+  
   jump,
   attack,
   duck,
