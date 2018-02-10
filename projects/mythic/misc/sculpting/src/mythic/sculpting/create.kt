@@ -1,13 +1,12 @@
 package mythic.sculpting
 
-import mythic.sculpting.query.getVertices
 import mythic.spatial.*
 import kotlin.math.cos
 import kotlin.math.sin
 
-fun createCircleList(radius: Float, count: Int): List<Vector3> {
+fun createArc(radius: Float, count: Int, sweep: Float = Pi * 2): List<Vector3> {
   val vertices = ArrayList<Vector3>(count)
-  val increment = Pi * 2 / count
+  val increment = sweep / count
 
   for (i in 0..count) {
     val theta = increment * i
@@ -17,12 +16,20 @@ fun createCircleList(radius: Float, count: Int): List<Vector3> {
 }
 
 fun createCircle(mesh: FlexibleMesh, radius: Float, count: Int): FlexibleFace {
-  return mesh.createFace(createCircleList(radius, count))
+  return mesh.createFace(createArc(radius, count))
 }
 
 fun createCylinder(mesh: FlexibleMesh, radius: Float, count: Int, height: Float) {
   val circle = createCircle(mesh, radius, count)
   extrudeBasic(mesh, circle, Matrix().translate(Vector3(0f, 0f, height)))
+}
+
+fun createSphere(mesh: FlexibleMesh, radius: Float, horizontalCount: Int, verticalCount: Int) {
+  val arc = createArc(radius, verticalCount, Pi)
+      .map { Vector3(it.x, 0f, it.y) }
+
+  lathe(mesh, arc, horizontalCount)
+//  mesh.createFace(arc)
 }
 
 class create {

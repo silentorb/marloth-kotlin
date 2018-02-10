@@ -26,6 +26,12 @@ fun createCylinder(): FlexibleMesh {
   return mesh
 }
 
+fun createSphere(): FlexibleMesh {
+  val mesh = FlexibleMesh()
+  createSphere(mesh, 1f, 8, 6)
+  return mesh
+}
+
 data class VertexSchemas(
     val standard: VertexSchema,
     val textured: VertexSchema,
@@ -66,5 +72,6 @@ fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     "child" to createSimpleMesh(createCube(), vertexSchemas.standard),
     "test" to createSimpleMeshOld(create.flatTest(), vertexSchemas.standard),
     "line" to createLineMesh(vertexSchemas.flat),
-    "cylinder" to createSimpleMesh(createCylinder(), vertexSchemas.standard)
+    "cylinder" to createSimpleMesh(createCylinder(), vertexSchemas.standard),
+    "sphere" to createSimpleMesh(createSphere(), vertexSchemas.standard)
 )

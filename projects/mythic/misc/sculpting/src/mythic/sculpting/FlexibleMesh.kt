@@ -35,7 +35,7 @@ class FlexibleMesh {
   val faces: MutableList<FlexibleFace> = mutableListOf()
 
   val vertices: List<Vector3>
-    get() = faces.flatMap { it.unorderedVertices }
+    get() = faces.flatMap { it.vertices }
 
 //  fun addVertex(vertex: Vector3): Vector3 {
 //    vertices.add(vertex)
