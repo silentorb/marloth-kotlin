@@ -16,5 +16,5 @@ fun createSimplePainter(mesh: SimpleMesh): Painter =
     }
 
 fun createPainters(meshes: MeshMap): Painters = mapOf(
-    Depiction.child to createSimplePainter(meshes["child"]!!)
+    Depiction.child to createSimplePainter(meshes["cylinder"]!!)
 )

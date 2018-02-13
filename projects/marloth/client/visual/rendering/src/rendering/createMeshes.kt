@@ -22,7 +22,7 @@ fun createCube(): FlexibleMesh {
 
 fun createCylinder(): FlexibleMesh {
   val mesh = FlexibleMesh()
-  createCylinder(mesh, 1f, 8, 2f)
+  createCylinder(mesh, 0.5f, 8, 1f)
   return mesh
 }
 

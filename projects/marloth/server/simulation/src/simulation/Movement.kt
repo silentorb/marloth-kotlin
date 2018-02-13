@@ -23,9 +23,9 @@ fun checkWallCollision(source: Vector3, originalOffset: Vector3, world: World): 
   val radius = 0.8f
   val broadRadius = radius + maxLength
   val walls = world.meta.walls
-      .filter { wall -> hitsWall(wall.edges[1], newPosition, broadRadius) && offset.dot(wall.normal) < 0f }
+      .filter { wall -> hitsWall(wall.edges[0], newPosition, broadRadius) && offset.dot(wall.normal) < 0f }
       .map {
-        val edge = it.edges[1]
+        val edge = it.edges[0]
 //        val dot2 = offset.dot(it.normal)C
 //        println(dot2)
         val hitPoint = projectPointOntoLine(source.xy, edge.first.xy, edge.second.xy)
@@ -102,20 +102,23 @@ val playerAttackMap = mapOf(
 )
 
 fun joinInputVector(commands: Commands<CommandType>, commandMap: Map<CommandType, Vector2>): Vector3 {
-  var offset = Vector2()
 
-  for (command in commands) {
-    val vector = commandMap[command.type]
-    if (vector != null) {
-      offset += vector * command.value
-    }
+  val forces = commands.mapNotNull {
+    val vector = commandMap[it.type]
+    if (vector != null && it.value > 0)
+      vector * it.value
+    else
+      null
   }
+  if (forces.isEmpty())
+    return Vector3()
 
+  val offset = forces.reduce { a, b -> a + b }
   offset.normalize()
   return Vector3(offset, 0f)
 }
 
-fun playerMove(world: World, player: Player, commands: Commands<CommandType>, delta: Float) {
+fun playerMove(world: World, player: Body, commands: Commands<CommandType>, delta: Float) {
 
 //  val offset = Vector3()
 //
@@ -133,16 +136,18 @@ fun playerMove(world: World, player: Player, commands: Commands<CommandType>, de
 
   if (offset != Vector3()) {
     val newPosition = checkWallCollision(player.position, offset, world)
-
     if (newPosition != null)
-      player.position = newPosition
+      player.position = newPosition!!
   }
 }
 
-fun playerShoot(world: World, player: Player, commands: Commands<CommandType>) {
+fun playerShoot(world: World, player: Character, commands: Commands<CommandType>) {
   val offset = joinInputVector(commands, playerMoveMap)
 
   if (offset != Vector3()) {
-    
+    val shootAbility = player.abilities[0]
+//    if (characterCanUse(player, shootAbility)) {
+
+//    }
   }
 }

@@ -67,18 +67,18 @@ fun createTestWorld(): World {
 
   generateStructure(world)
   fillIndexes(world.graph)
-  return World(
-      world,
-      mutableListOf(createPlayer(world, 1)))
+  val result = World(world)
+  createPlayer(result, 1)
+  return result
 }
 
 fun generateWorld(input: WorldInput): World {
   val abstractWorld = AbstractWorld(input.boundary)
   generateAbstract(abstractWorld, input.dice)
   generateStructure(abstractWorld)
-  return World(
-      abstractWorld,
-      mutableListOf(createPlayer(abstractWorld, 1)))
+  val result = World(abstractWorld)
+  createPlayer(result, 1)
+  return result
 }
 
 fun generateDefaultWorld() = generateWorld(WorldInput(

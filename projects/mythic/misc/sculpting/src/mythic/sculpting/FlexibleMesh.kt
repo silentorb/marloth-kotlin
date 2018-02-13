@@ -71,7 +71,10 @@ class FlexibleMesh {
     for (edge in edges) {
       val others = getMatchingEdges(edge.first, edge.second)
       for (other in others) {
-        other.edges.add(edge)
+        if (other !== edge) {
+          other.edges.add(edge)
+          edge.edges.add(other)
+        }
       }
     }
   }
