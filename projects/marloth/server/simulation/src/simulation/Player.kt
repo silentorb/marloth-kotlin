@@ -1,7 +1,7 @@
 package simulation
 
 class Player(
-    val id: Int,
+    val character: Character,
     val playerId: Int
 ) {
 }

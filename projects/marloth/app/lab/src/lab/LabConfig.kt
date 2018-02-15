@@ -66,7 +66,7 @@ data class WorldViewConfig(
 )
 
 data class ModelViewConfig(
-    var model: String = "child",
+    var model: String = "character",
     var drawVertices: Boolean = true,
     var drawEdges: Boolean = true
 )

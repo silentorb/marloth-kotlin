@@ -68,7 +68,7 @@ fun createTestWorld(): World {
   generateStructure(world)
   fillIndexes(world.graph)
   val result = World(world)
-  createPlayer(result, 1)
+  result.createPlayer(1)
   return result
 }
 
@@ -77,7 +77,7 @@ fun generateWorld(input: WorldInput): World {
   generateAbstract(abstractWorld, input.dice)
   generateStructure(abstractWorld)
   val result = World(abstractWorld)
-  createPlayer(result, 1)
+  result.createPlayer(1)
   return result
 }
 

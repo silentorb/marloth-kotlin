@@ -101,8 +101,7 @@ val playerAttackMap = mapOf(
     CommandType.attackDown to Vector2(0f, -1f)
 )
 
-fun joinInputVector(commands: Commands<CommandType>, commandMap: Map<CommandType, Vector2>): Vector3 {
-
+fun joinInputVector(commands: Commands<CommandType>, commandMap: Map<CommandType, Vector2>): Vector3? {
   val forces = commands.mapNotNull {
     val vector = commandMap[it.type]
     if (vector != null && it.value > 0)
@@ -111,43 +110,23 @@ fun joinInputVector(commands: Commands<CommandType>, commandMap: Map<CommandType
       null
   }
   if (forces.isEmpty())
-    return Vector3()
+    return null
 
   val offset = forces.reduce { a, b -> a + b }
   offset.normalize()
+  assert(!offset.x.isNaN() && !offset.y.isNaN())
   return Vector3(offset, 0f)
 }
 
 fun playerMove(world: World, player: Body, commands: Commands<CommandType>, delta: Float) {
-
-//  val offset = Vector3()
-//
-//  for (command in commands) {
-//    val rate = speed * command.value * delta
-//    when (command.type) {
-//      CommandType.moveLeft -> offset.x -= rate
-//      CommandType.moveRight -> offset.x += rate
-//      CommandType.moveUp -> offset.y += rate
-//      CommandType.moveDown -> offset.y -= rate
-//    }
-//  }
   val speed = 6f
-  val offset = joinInputVector(commands, playerMoveMap) * speed * delta
-
-  if (offset != Vector3()) {
-    val newPosition = checkWallCollision(player.position, offset, world)
-    if (newPosition != null)
-      player.position = newPosition!!
-  }
-}
-
-fun playerShoot(world: World, player: Character, commands: Commands<CommandType>) {
   val offset = joinInputVector(commands, playerMoveMap)
 
-  if (offset != Vector3()) {
-    val shootAbility = player.abilities[0]
-//    if (characterCanUse(player, shootAbility)) {
-
-//    }
+  if (offset != null) {
+    val newPosition = checkWallCollision(player.position, offset * speed * delta, world)
+    if (newPosition != null) {
+      assert(!newPosition.x.isNaN() && !newPosition.y.isNaN())
+      player.position = newPosition!!
+    }
   }
 }

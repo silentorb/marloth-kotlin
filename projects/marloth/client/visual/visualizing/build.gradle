@@ -1,6 +1,3 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
-dependencies {
-}
-
-requires('scenery', 'simulation')
+requires 'scenery', 'simulation'

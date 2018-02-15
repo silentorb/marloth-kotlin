@@ -38,7 +38,7 @@ fun createOrthographicCamera(player: Body): Camera {
 
 fun createCamera(world: World, screen: Screen): Camera {
   val player = world.players[screen.playerId - 1]
-  val body = world.bodies[player.id]!!
+  val body = world.bodies[player.character.id]!!
   return when (screen.cameraMode) {
     CameraMode.firstPerson -> createFirstPersonCamera(body)
     CameraMode.thirdPerson -> createThirdPersonCamera(body)
@@ -49,7 +49,9 @@ fun createCamera(world: World, screen: Screen): Camera {
 fun createScene(world: World, screen: Screen, player: Player) =
     Scene(
         createCamera(world, screen),
-        world.bodies.values.map { VisualElement(Depiction.child, Matrix().translate(it.position)) },
+        world.bodies.values
+            .filter { it.depiction != Depiction.none }
+            .map { VisualElement(it.depiction, Matrix().translate(it.position)) },
         player.playerId
     )
 

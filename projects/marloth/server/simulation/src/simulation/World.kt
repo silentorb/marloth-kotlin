@@ -4,6 +4,7 @@ import commanding.CommandType
 import haft.Commands
 import mythic.spatial.*
 import org.joml.plus
+import scenery.Depiction
 
 val maxPlayerCount = 4
 
@@ -16,55 +17,94 @@ data class World(
   val players: MutableList<Player> = mutableListOf()
   val bodies: MutableMap<Int, Body> = mutableMapOf()
   val characters: MutableMap<Int, Character> = mutableMapOf()
+  val missiles: MutableMap<Int, Missile> = mutableMapOf()
   fun getAndSetNextId() = _nextId++
+
+
+  fun createBody(appearance: Depiction, position: Vector3): Body {
+    val id = getAndSetNextId()
+    val body = Body(id, appearance, position, Quaternion(), Vector3())
+    bodies[id] = body
+    return body
+  }
+
+  fun createCharacter(position: Vector3): Character {
+    val body = createBody(Depiction.character, position)
+    val character = Character(body.id, body)
+    characters[body.id] = character
+    return character
+  }
+
+  fun createMissile(position: Vector3, velocity: Vector3): Missile {
+    val body = createBody(Depiction.missile, position)
+    body.velocity = velocity
+    val missile = Missile(body.id, body)
+    missiles[body.id] = missile
+    return missile
+  }
+
+  fun createPlayer(id: Int): Player {
+    val position = meta.nodes.first().position + Vector3(0f, 0f, 1f)
+    val character = createCharacter(position)
+    val player = Player(character, id)
+    players.add(player)
+    character.abilities.add(Ability(0.2f))
+    return player
+  }
 }
 
 class WorldUpdater(val world: World) {
 
-  fun applyPlayerCommands(player: Player, commands: Commands<CommandType>, delta: Float) {
+  fun applyPlayerCommands(player: Player, commands: Commands<CommandType>, delta: Float): NewMissile? {
     if (commands.isEmpty())
-      return
+      return null
 
-    playerMove(world, world.bodies[player.id]!!, commands, delta)
-//    playerShoot(world, player, commands)
+    playerMove(world, player.character.body, commands, delta)
+    return playerShoot(world, player.character, commands)
   }
 
-  fun applyCommands(players: Players, commands: Commands<CommandType>, delta: Float) {
-    for (player in players) {
+  fun applyCommands(players: Players, commands: Commands<CommandType>, delta: Float): List<NewMissile> {
+    val result = players.mapNotNull { player ->
       applyPlayerCommands(player, commands.filter({ it.target == player.playerId }), delta)
     }
 
     val remainingCommands = commands.filter({ it.target == 0 || it.target > maxPlayerCount })
     for (command in remainingCommands) {
       if (command.type == CommandType.joinGame) {
-        createPlayer(world, world.players.size + 1)
+        world.createPlayer(world.players.size + 1)
       }
+    }
+
+    return result
+  }
+
+  fun updateCharacter(character: Character, delta: Float) {
+    character.abilities.forEach { updateAbility(it, delta) }
+  }
+
+  fun updateCharacters(delta: Float) {
+    world.characters.values.forEach { updateCharacter(it, delta) }
+  }
+
+  fun createMissiles(newMissiles: List<NewMissile>) {
+    for (newMissile in newMissiles) {
+      world.createMissile(newMissile.position, newMissile.direction)
     }
   }
 
-  fun update(commands: Commands<CommandType>, delta: Float) {
-    applyCommands(world.players, commands, delta)
+  fun getFinished(): List<Int> {
+    return world.missiles.values
+        .filter { isFinished(world, it) }
+        .map { it.id }
   }
-}
 
-fun createBody(world: World, position: Vector3): Body {
-  val id = world.getAndSetNextId()
-  val body = Body(id, position)
-  world.bodies[id] = body
-  return body
-}
-
-fun createCharacter(world: World, position: Vector3): Character {
-  val body = createBody(world, position)
-  val character = Character(body.id)
-  world.characters[body.id] = character
-  return character
-}
-
-fun createPlayer(world: World, id: Int): Player {
-  val position = world.meta.nodes.first().position + Vector3(0f, 0f, 1f)
-  val character = createCharacter(world, position)
-  val player = Player(character.id, id)
-  character.abilities.add(Ability(1f))
-  return player
+  fun update(commands: Commands<CommandType>, delta: Float) {
+    updateCharacters(delta)
+    world.missiles.values.forEach { updateMissile(it, delta) }
+    val newMissiles = applyCommands(world.players, commands, delta)
+    val finishedMissiles = getFinished()
+    world.missiles.minusAssign(finishedMissiles)
+    world.bodies.minusAssign(finishedMissiles)
+    createMissiles(newMissiles)
+  }
 }

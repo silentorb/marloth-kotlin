@@ -27,6 +27,14 @@ fun createAbility(definition: AbilityDefinition) =
 
 fun updateAbility(ability: Ability, delta: Float) {
   if (ability.cooldown > 0f) {
-    ability.cooldown = Math.min(0f, ability.cooldown - delta)
+    ability.cooldown = Math.max(0f, ability.cooldown - delta)
   }
+}
+
+fun canUse(character: Character, ability: Ability): Boolean {
+  return ability.cooldown == 0f
+}
+
+fun useAbility(ability: Ability) {
+  ability.cooldown = ability.cooldownMax
 }
