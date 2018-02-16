@@ -1,7 +1,6 @@
 package simulation
 
-import commanding.CommandType
-import haft.Commands
+import intellect.Spirit
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import org.joml.plus
@@ -16,9 +15,10 @@ data class World(
   private var _nextId = 1
   val entities: MutableMap<Id, Entity> = mutableMapOf()
   val players: MutableList<Player> = mutableListOf()
-  val bodyTable: MutableMap<Int, Body> = mutableMapOf()
-  val characterTable: MutableMap<Int, Character> = mutableMapOf()
-  val missileTable: MutableMap<Int, Missile> = mutableMapOf()
+  val bodyTable: MutableMap<Id, Body> = mutableMapOf()
+  val characterTable: MutableMap<Id, Character> = mutableMapOf()
+  val missileTable: MutableMap<Id, Missile> = mutableMapOf()
+  val spiritTable: MutableMap<Id, Spirit> = mutableMapOf()
   val factions = mutableListOf(
       Faction(this, "Misfits"),
       Faction(this, "Monsters")
@@ -33,6 +33,8 @@ data class World(
   val missiles: MutableCollection<Missile>
     get() = missileTable.values
 
+  val spirits: MutableCollection<Spirit>
+    get() = spiritTable.values
 
   fun getAndSetNextId() = _nextId++
 
@@ -63,6 +65,18 @@ data class World(
     return character
   }
 
+  fun createAiCharacter(definition: CharacterDefinition, faction: Faction, position: Vector3): Character {
+    val character = createCharacter(definition, faction, position)
+    createSpirit(character)
+    return character
+  }
+
+  fun createSpirit(character: Character): Spirit {
+    val spirit = Spirit(character)
+    spiritTable[character.id] = spirit
+    return spirit
+  }
+
   fun createMissile(newMissile: NewMissile): Missile {
     val body = createBody(EntityType.missile, commonShapes[EntityType.missile]!!, newMissile.position)
     body.velocity = newMissile.velocity
@@ -77,75 +91,5 @@ data class World(
     val player = Player(character, id)
     players.add(player)
     return player
-  }
-}
-
-class WorldUpdater(val world: World) {
-
-  fun applyPlayerCommands(player: Player, commands: Commands<CommandType>, delta: Float): NewMissile? {
-    if (commands.isEmpty())
-      return null
-
-    playerMove(world, player.character.body, commands, delta)
-    return playerAttack(world, player.character, commands)
-  }
-
-  fun applyCommands(players: Players, commands: Commands<CommandType>, delta: Float): List<NewMissile> {
-    val result = players.mapNotNull { player ->
-      applyPlayerCommands(player, commands.filter({ it.target == player.playerId }), delta)
-    }
-
-    val remainingCommands = commands.filter({ it.target == 0 || it.target > maxPlayerCount })
-    for (command in remainingCommands) {
-      if (command.type == CommandType.joinGame) {
-        world.createPlayer(world.players.size + 1)
-      }
-    }
-
-    return result
-  }
-
-  fun updateCharacter(character: Character, delta: Float) {
-    character.abilities.forEach { updateAbility(it, delta) }
-  }
-
-  fun updateCharacters(delta: Float) {
-    world.characters.forEach { updateCharacter(it, delta) }
-  }
-
-  fun createMissiles(newMissiles: List<NewMissile>) {
-    for (newMissile in newMissiles) {
-      world.createMissile(newMissile)
-    }
-  }
-
-  fun getFinished(): List<Int> {
-    return world.missileTable.values
-        .filter { isFinished(world, it) }
-        .map { it.id }
-        .plus(world.characters
-            .filter { isFinished(world, it) }
-            .map { it.id })
-  }
-
-  fun removeFinished(finished: List<Int>) {
-    world.missileTable.minusAssign(finished)
-    world.bodyTable.minusAssign(finished)
-    world.entities.minusAssign(finished)
-    world.characterTable.minusAssign(finished)
-  }
-
-  fun update(commands: Commands<CommandType>, delta: Float) {
-    updateCharacters(delta)
-    val aiCharacters = getAiPlayers(world)
-    val newMissiles = aiCharacters.mapNotNull { updateEnemy(it) }
-        .plus(applyCommands(world.players, commands, delta))
-
-    world.missileTable.values.forEach { updateMissile(world, it, delta) }
-
-    val finished = getFinished()
-    removeFinished(finished)
-
-    createMissiles(newMissiles)
   }
 }

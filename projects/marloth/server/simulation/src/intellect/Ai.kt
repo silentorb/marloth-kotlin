@@ -1,11 +1,18 @@
-package simulation
+package intellect
 
 import org.joml.minus
+import simulation.*
 
-fun getAiPlayers(world: World) =
+fun getAiCharacters(world: World) =
     world.characters.filter { isPlayer(world, it) }
 
-fun updateEnemy(character: Character): NewMissile? {
+fun tryAiMove(world: World, spirit: Spirit) {
+  val character = spirit.character
+
+}
+
+fun tryAiAttack(spirit: Spirit): NewMissile? {
+  val character = spirit.character
   val attack = character.abilities[0]
   if (canUse(character, attack)) {
     val enemies = character.faction.enemies
@@ -17,4 +24,9 @@ fun updateEnemy(character: Character): NewMissile? {
   }
 
   return null
+}
+
+fun updateAi(world: World, spirit: Spirit): NewMissile? {
+  tryAiMove(world, spirit)
+  return tryAiAttack(spirit)
 }
