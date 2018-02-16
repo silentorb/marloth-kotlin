@@ -6,6 +6,7 @@ import generation.abstract.handleOverlapping
 import generation.abstract.unifyWorld
 import generation.structure.generateStructure
 import mythic.spatial.Vector3
+import mythic.spatial.getVector3Center
 import org.joml.minus
 import org.joml.plus
 import randomly.Dice
@@ -47,8 +48,6 @@ fun fillIndexes(graph: NodeGraph) {
   }
 }
 
-//data class WorldBundle(val abstractWorld: AbstractWorld, val structureWorld: StructureWorld)
-
 fun createTestWorld(): World {
   val boundary = WorldBoundary(
       Vector3(-50f, -50f, -50f),
@@ -72,13 +71,28 @@ fun createTestWorld(): World {
   return result
 }
 
+fun placeEnemy(world: World, dice: Dice) {
+  val node = dice.getItem(world.meta.nodes)
+  val wall = dice.getItem(node.walls)
+  val position = getVector3Center(node.position, wall.edges[0].first)
+  world.createCharacter(position, 100)
+}
+
+fun placeEnemies(world: World, dice: Dice) {
+  val enemyCount = 10
+  for (i in 0 until enemyCount) {
+    placeEnemy(world, dice)
+  }
+}
+
 fun generateWorld(input: WorldInput): World {
   val abstractWorld = AbstractWorld(input.boundary)
   generateAbstract(abstractWorld, input.dice)
   generateStructure(abstractWorld)
-  val result = World(abstractWorld)
-  result.createPlayer(1)
-  return result
+  val world = World(abstractWorld)
+  world.createPlayer(1)
+  placeEnemies(world, input.dice)
+  return world
 }
 
 fun generateDefaultWorld() = generateWorld(WorldInput(

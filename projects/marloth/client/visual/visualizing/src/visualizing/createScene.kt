@@ -10,6 +10,7 @@ import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import org.joml.plus
 import simulation.Body
+import simulation.EntityType
 
 fun createFirstPersonCamera(player: Body): Camera = Camera(
     player.position,
@@ -46,12 +47,24 @@ fun createCamera(world: World, screen: Screen): Camera {
   }
 }
 
+val depictionMap = mapOf(
+    EntityType.character to Depiction.character,
+    EntityType.missile to Depiction.missile
+)
+
+fun prepareVisualElement(body: Body, entityType: EntityType): VisualElement? {
+  val depiction = depictionMap[entityType]
+  return if (depiction != null)
+    VisualElement(depiction, Matrix().translate(body.position))
+  else
+    null
+}
+
 fun createScene(world: World, screen: Screen, player: Player) =
     Scene(
         createCamera(world, screen),
         world.bodies.values
-            .filter { it.depiction != Depiction.none }
-            .map { VisualElement(it.depiction, Matrix().translate(it.position)) },
+            .mapNotNull { prepareVisualElement(it, world.entities[it.id]!!.type) },
         player.playerId
     )
 

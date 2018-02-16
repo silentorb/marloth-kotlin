@@ -9,12 +9,14 @@ import org.joml.plus
 data class Missile(
     val id: Int,
     val body: Body,
+    val owner: Character,
     var remainingDistance: Float = 20f
 )
 
 data class NewMissile(
     val position: Vector3,
-    val direction: Vector3
+    val direction: Vector3,
+    val owner: Character
 )
 
 fun playerShoot(world: World, character: Character, commands: Commands<CommandType>): NewMissile? {
@@ -24,17 +26,26 @@ fun playerShoot(world: World, character: Character, commands: Commands<CommandTy
     val ability = character.abilities[0]
     if (canUse(character, ability)) {
       useAbility(ability)
-      return NewMissile(character.body.position + offset * 0.5f, offset * 14.0f)
+      return NewMissile(character.body.position + offset * 0.5f, offset * 14.0f, character)
     }
   }
 
   return null
 }
 
-fun updateMissile(missile: Missile, delta: Float) {
+fun updateMissile(world: World, missile: Missile, delta: Float) {
   val offset = missile.body.velocity * delta
   missile.body.position += offset
-  missile.remainingDistance -= offset.length()
+  val hit = world.bodies.values.filter { it !== missile.body && it !== missile.owner.body }
+      .firstOrNull { overlaps(it, missile.body) }
+
+  if (hit != null) {
+    missile.remainingDistance = 0f
+    val victim = world.characters[hit.id]!!
+    victim.health.modify(-50)
+  } else {
+    missile.remainingDistance -= offset.length()
+  }
 }
 
 fun isFinished(world: World, missile: Missile) =

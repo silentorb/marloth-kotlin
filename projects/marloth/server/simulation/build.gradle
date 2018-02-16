@@ -1,4 +1,3 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
-
-requires 'spatial', 'commanding', 'haft', 'sculpting', 'randomly', 'scenery'
+requires 'spatial', 'commanding', 'haft', 'sculpting', 'randomly'
