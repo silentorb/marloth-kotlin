@@ -34,9 +34,17 @@ data class World(
     return body
   }
 
-  fun createCharacter(position: Vector3, health: Int): Character {
+  fun createCharacter(definition: CharacterDefinition, position: Vector3): Character {
     val body = createBody(EntityType.character, commonShapes[EntityType.character]!!, position)
-    val character = Character(body.id, body, health)
+    val character = Character(
+        id = body.id,
+        body = body,
+        maxHealth = definition.health,
+        abilities = definition.abilities.map {
+          Ability(
+              cooldownMax = it.cooldown)
+        }.toMutableList()
+    )
     characters[body.id] = character
     return character
   }
@@ -51,10 +59,9 @@ data class World(
 
   fun createPlayer(id: Int): Player {
     val position = meta.nodes.first().position + Vector3(0f, 0f, 1f)
-    val character = createCharacter(position, 100)
+    val character = createCharacter(characterDefinitions.player, position)
     val player = Player(character, id)
     players.add(player)
-    character.abilities.add(Ability(0.2f))
     return player
   }
 }
@@ -116,6 +123,8 @@ class WorldUpdater(val world: World) {
 
   fun update(commands: Commands<CommandType>, delta: Float) {
     updateCharacters(delta)
+    val aiCharacters = getAiPlayers(world)
+    aiCharacters.forEach { updateEnemy(world, it) }
     world.missiles.values.forEach { updateMissile(world, it, delta) }
     val newMissiles = applyCommands(world.players, commands, delta)
 

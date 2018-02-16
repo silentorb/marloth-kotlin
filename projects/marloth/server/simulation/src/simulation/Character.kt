@@ -1,12 +1,17 @@
 package simulation
 
+data class CharacterDefinition(
+    val health: Int,
+    val abilities: List<AbilityDefinition>
+)
+
 class Character(
     val id: Int,
     val body: Body,
-    maxHealth: Int
+    maxHealth: Int,
+    val abilities: MutableList<Ability> = mutableListOf()
 ) {
   val health = Resource(maxHealth)
-  val abilities: MutableList<Ability> = mutableListOf()
 }
 
 fun isFinished(world: World, character: Character) =

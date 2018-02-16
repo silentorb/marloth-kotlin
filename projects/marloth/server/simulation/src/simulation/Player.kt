@@ -5,3 +5,6 @@ class Player(
     val playerId: Int
 ) {
 }
+
+fun isPlayer(world: World, character: Character) =
+    world.players.any { it.playerId == character.id }

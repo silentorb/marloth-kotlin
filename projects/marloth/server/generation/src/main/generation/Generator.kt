@@ -75,7 +75,7 @@ fun placeEnemy(world: World, dice: Dice) {
   val node = dice.getItem(world.meta.nodes)
   val wall = dice.getItem(node.walls)
   val position = getVector3Center(node.position, wall.edges[0].first)
-  world.createCharacter(position, 100)
+  world.createCharacter(characterDefinitions.monster, position)
 }
 
 fun placeEnemies(world: World, dice: Dice) {
