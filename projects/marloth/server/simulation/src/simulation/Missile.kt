@@ -10,23 +10,32 @@ data class Missile(
     val id: Int,
     val body: Body,
     val owner: Character,
-    var remainingDistance: Float = 20f
+    var remainingDistance: Float
 )
 
 data class NewMissile(
     val position: Vector3,
-    val direction: Vector3,
+    val velocity: Vector3,
+    val range: Float,
     val owner: Character
 )
 
-fun playerShoot(world: World, character: Character, commands: Commands<CommandType>): NewMissile? {
-  val offset = joinInputVector(commands, playerAttackMap)
+fun characterAttack(character: Character, ability: Ability, direction: Vector3): NewMissile {
+  useAbility(ability)
+  return NewMissile(
+      position = character.body.position + direction * 0.5f,
+      velocity = direction * 14.0f,
+      range = ability.definition.range,
+      owner = character
+  )
+}
 
+fun playerAttack(world: World, character: Character, commands: Commands<CommandType>): NewMissile? {
+  val offset = joinInputVector(commands, playerAttackMap)
   if (offset != null) {
     val ability = character.abilities[0]
     if (canUse(character, ability)) {
-      useAbility(ability)
-      return NewMissile(character.body.position + offset * 0.5f, offset * 14.0f, character)
+      return characterAttack(character, ability, offset)
     }
   }
 
@@ -36,12 +45,12 @@ fun playerShoot(world: World, character: Character, commands: Commands<CommandTy
 fun updateMissile(world: World, missile: Missile, delta: Float) {
   val offset = missile.body.velocity * delta
   missile.body.position += offset
-  val hit = world.bodies.values.filter { it !== missile.body && it !== missile.owner.body }
+  val hit = world.bodyTable.values.filter { it !== missile.body && it !== missile.owner.body }
       .firstOrNull { overlaps(it, missile.body) }
 
   if (hit != null) {
     missile.remainingDistance = 0f
-    val victim = world.characters[hit.id]!!
+    val victim = world.characterTable[hit.id]!!
     victim.health.modify(-50)
   } else {
     missile.remainingDistance -= offset.length()

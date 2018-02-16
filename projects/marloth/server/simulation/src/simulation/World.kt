@@ -2,7 +2,8 @@ package simulation
 
 import commanding.CommandType
 import haft.Commands
-import mythic.spatial.*
+import mythic.spatial.Quaternion
+import mythic.spatial.Vector3
 import org.joml.plus
 
 val maxPlayerCount = 4
@@ -15,9 +16,24 @@ data class World(
   private var _nextId = 1
   val entities: MutableMap<Id, Entity> = mutableMapOf()
   val players: MutableList<Player> = mutableListOf()
-  val bodies: MutableMap<Int, Body> = mutableMapOf()
-  val characters: MutableMap<Int, Character> = mutableMapOf()
-  val missiles: MutableMap<Int, Missile> = mutableMapOf()
+  val bodyTable: MutableMap<Int, Body> = mutableMapOf()
+  val characterTable: MutableMap<Int, Character> = mutableMapOf()
+  val missileTable: MutableMap<Int, Missile> = mutableMapOf()
+  val factions = mutableListOf(
+      Faction(this, "Misfits"),
+      Faction(this, "Monsters")
+  )
+
+  val characters: MutableCollection<Character>
+    get() = characterTable.values
+
+  val bodies: MutableCollection<Body>
+    get() = bodyTable.values
+
+  val missiles: MutableCollection<Missile>
+    get() = missileTable.values
+
+
   fun getAndSetNextId() = _nextId++
 
   fun createEntity(type: EntityType): Entity {
@@ -30,36 +46,34 @@ data class World(
   fun createBody(type: EntityType, shape: collision.Shape, position: Vector3): Body {
     val entity = createEntity(type)
     val body = Body(entity.id, shape, position, Quaternion(), Vector3())
-    bodies[entity.id] = body
+    bodyTable[entity.id] = body
     return body
   }
 
-  fun createCharacter(definition: CharacterDefinition, position: Vector3): Character {
+  fun createCharacter(definition: CharacterDefinition, faction: Faction, position: Vector3): Character {
     val body = createBody(EntityType.character, commonShapes[EntityType.character]!!, position)
     val character = Character(
         id = body.id,
+        faction = faction,
         body = body,
         maxHealth = definition.health,
-        abilities = definition.abilities.map {
-          Ability(
-              cooldownMax = it.cooldown)
-        }.toMutableList()
+        abilities = definition.abilities.map { Ability(it) }.toMutableList()
     )
-    characters[body.id] = character
+    characterTable[body.id] = character
     return character
   }
 
-  fun createMissile(owner: Character, position: Vector3, velocity: Vector3): Missile {
-    val body = createBody(EntityType.missile, commonShapes[EntityType.missile]!!, position)
-    body.velocity = velocity
-    val missile = Missile(body.id, body, owner)
-    missiles[body.id] = missile
+  fun createMissile(newMissile: NewMissile): Missile {
+    val body = createBody(EntityType.missile, commonShapes[EntityType.missile]!!, newMissile.position)
+    body.velocity = newMissile.velocity
+    val missile = Missile(body.id, body, newMissile.owner, newMissile.range)
+    missileTable[body.id] = missile
     return missile
   }
 
   fun createPlayer(id: Int): Player {
     val position = meta.nodes.first().position + Vector3(0f, 0f, 1f)
-    val character = createCharacter(characterDefinitions.player, position)
+    val character = createCharacter(characterDefinitions.player, factions[0], position)
     val player = Player(character, id)
     players.add(player)
     return player
@@ -73,7 +87,7 @@ class WorldUpdater(val world: World) {
       return null
 
     playerMove(world, player.character.body, commands, delta)
-    return playerShoot(world, player.character, commands)
+    return playerAttack(world, player.character, commands)
   }
 
   fun applyCommands(players: Players, commands: Commands<CommandType>, delta: Float): List<NewMissile> {
@@ -96,37 +110,38 @@ class WorldUpdater(val world: World) {
   }
 
   fun updateCharacters(delta: Float) {
-    world.characters.values.forEach { updateCharacter(it, delta) }
+    world.characters.forEach { updateCharacter(it, delta) }
   }
 
   fun createMissiles(newMissiles: List<NewMissile>) {
     for (newMissile in newMissiles) {
-      world.createMissile(newMissile.owner, newMissile.position, newMissile.direction)
+      world.createMissile(newMissile)
     }
   }
 
   fun getFinished(): List<Int> {
-    return world.missiles.values
+    return world.missileTable.values
         .filter { isFinished(world, it) }
         .map { it.id }
-        .plus(world.characters.values
+        .plus(world.characters
             .filter { isFinished(world, it) }
             .map { it.id })
   }
 
   fun removeFinished(finished: List<Int>) {
-    world.missiles.minusAssign(finished)
-    world.bodies.minusAssign(finished)
+    world.missileTable.minusAssign(finished)
+    world.bodyTable.minusAssign(finished)
     world.entities.minusAssign(finished)
-    world.characters.minusAssign(finished)
+    world.characterTable.minusAssign(finished)
   }
 
   fun update(commands: Commands<CommandType>, delta: Float) {
     updateCharacters(delta)
     val aiCharacters = getAiPlayers(world)
-    aiCharacters.forEach { updateEnemy(world, it) }
-    world.missiles.values.forEach { updateMissile(world, it, delta) }
-    val newMissiles = applyCommands(world.players, commands, delta)
+    val newMissiles = aiCharacters.mapNotNull { updateEnemy(it) }
+        .plus(applyCommands(world.players, commands, delta))
+
+    world.missileTable.values.forEach { updateMissile(world, it, delta) }
 
     val finished = getFinished()
     removeFinished(finished)

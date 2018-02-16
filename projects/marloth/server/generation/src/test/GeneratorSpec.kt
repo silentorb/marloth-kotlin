@@ -61,7 +61,7 @@ class GeneratorSpec : Spek({
     }
 
     on("skinning two connected nodes") {
-      val world = createTestWorld().meta
+//      val world = createTestWorld().meta
 
 //      assertEquals(world.mesh.edges.size, v2)
     }

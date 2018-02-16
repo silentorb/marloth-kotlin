@@ -9,7 +9,8 @@ class Character(
     val id: Int,
     val body: Body,
     maxHealth: Int,
-    val abilities: MutableList<Ability> = mutableListOf()
+    val abilities: MutableList<Ability> = mutableListOf(),
+    val faction: Faction
 ) {
   val health = Resource(maxHealth)
 }

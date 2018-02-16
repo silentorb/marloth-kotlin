@@ -1,29 +1,15 @@
 package simulation
 
 data class AbilityDefinition(
-    val cooldown: Float
+    val cooldown: Float,
+    val range: Float
 )
 
 class Ability(
-    var cooldownMax: Float
+    val definition: AbilityDefinition
 ) {
   var cooldown: Float = 0f
 }
-
-//enum class AbilityType {
-//  shoot
-//}
-
-//typealias AbilityLibrary = Map<AbilityType, AbilityDefinition>
-
-//fun createAbilities(): AbilityLibrary = mapOf(
-//    AbilityType.shoot to AbilityDefinition(
-//        1f
-//    )
-//)
-
-fun createAbility(definition: AbilityDefinition) =
-    Ability(definition.cooldown)
 
 fun updateAbility(ability: Ability, delta: Float) {
   if (ability.cooldown > 0f) {
@@ -36,5 +22,5 @@ fun canUse(character: Character, ability: Ability): Boolean {
 }
 
 fun useAbility(ability: Ability) {
-  ability.cooldown = ability.cooldownMax
+  ability.cooldown = ability.definition.cooldown
 }

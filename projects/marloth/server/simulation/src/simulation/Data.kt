@@ -2,9 +2,9 @@ package simulation
 
 class AbilityDefinitions() {
   val shoot = AbilityDefinition(
-      cooldown = 0.2f
+      cooldown = 0.2f,
+      range = 20f
   )
-
 }
 
 val abilityDefinitions = AbilityDefinitions()
