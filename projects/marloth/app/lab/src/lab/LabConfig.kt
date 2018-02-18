@@ -1,9 +1,8 @@
 package lab
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import haft.*
-import mythic.spatial.Quaternion
 import org.lwjgl.glfw.GLFW
+import simulation.ViewMode
 
 enum class LabCommandType {
   viewGame,
@@ -20,13 +19,6 @@ enum class LabCommandType {
 }
 
 typealias LabInputConfig = MutableMap<String, Bindings<LabCommandType>>
-//data class LabInputConfig(
-//    val global: Bindings<LabCommandType>,
-//    val game: Bindings<LabCommandType>,
-//    val model: Bindings<LabCommandType>,
-//    val world: Bindings<LabCommandType>,
-//    val texture: Bindings<LabCommandType>
-//)
 
 fun createLabInputBindings() = mutableMapOf(
     "global" to createStrokeBindings(0, mapOf(
@@ -64,10 +56,15 @@ data class ModelViewConfig(
     var drawEdges: Boolean = true
 )
 
+data class GameViewConfig(
+    var defaultPlayerView: ViewMode = ViewMode.topDown
+)
+
 data class LabConfig(
     var view: String = "world",
     var width: Int = 800,
     var height: Int = 600,
+    var gameView: GameViewConfig = GameViewConfig(),
     var worldView: WorldViewConfig = WorldViewConfig(),
     var modelView: ModelViewConfig = ModelViewConfig()
 )

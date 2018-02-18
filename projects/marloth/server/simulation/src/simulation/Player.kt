@@ -9,7 +9,7 @@ enum class ViewMode {
 class Player(
     val character: Character,
     val playerId: Int,
-    var viewMode: ViewMode = ViewMode.topDown
+    var viewMode: ViewMode
 ) {
 }
 

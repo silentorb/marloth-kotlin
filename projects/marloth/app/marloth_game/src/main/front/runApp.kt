@@ -10,13 +10,15 @@ import mythic.quartz.DeltaTimer
 import simulation.World
 import simulation.changing.WorldUpdater
 import marloth.clienting.initialGameInputState
+import simulation.changing.Instantiator
+import simulation.changing.InstantiatorConfig
 import visualizing.createScenes
 
 data class App(
     val platform: Platform,
     val display: Display = platform.display,
     val timer: DeltaTimer = DeltaTimer(),
-    val world: World = generateDefaultWorld(),
+    val world: World = generateDefaultWorld(InstantiatorConfig()),
     val client: Client = Client(platform)
 )
 
@@ -29,7 +31,8 @@ tailrec fun gameLoop(app: App, previousState: AppState) {
   val scenes = createScenes(app.world, app.client.screens)
   val (commands, nextInputState) = app.client.update(scenes, previousState.inputState)
   val delta = app.timer.update().toFloat()
-  val updater = WorldUpdater(app.world)
+  val instantiator = Instantiator(app.world, InstantiatorConfig())
+  val updater = WorldUpdater(app.world, instantiator)
   updater.update(commands, delta)
   app.platform.process.pollEvents()
 

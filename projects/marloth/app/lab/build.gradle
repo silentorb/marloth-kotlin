@@ -1,14 +1,14 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
 dependencies {
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.9.3'
-    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.3'
-    compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.3"
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.21'
+  compile 'com.fasterxml.jackson.core:jackson-databind:2.9.3'
+  compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.3'
+  compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.3"
+  compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.21'
 }
 
 requires(
-        'spatial', 'drawing', 'bloom', 'generation', 'commanding', 'mythic_desktop',
-        'marloth_clienting', 'serving', 'visualizing', 'quartz', 'platforming', 'marloth_game',
-        'texture_generation'
+    'spatial', 'drawing', 'bloom', 'generation', 'commanding', 'mythic_desktop',
+    'marloth_clienting', 'serving', 'visualizing', 'quartz', 'platforming', 'marloth_game',
+    'texture_generation', 'simulation'
 )

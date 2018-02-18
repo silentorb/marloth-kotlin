@@ -11,6 +11,8 @@ import org.joml.minus
 import org.joml.plus
 import randomly.Dice
 import simulation.*
+import simulation.changing.Instantiator
+import simulation.changing.InstantiatorConfig
 
 fun createNode(abstractWorld: AbstractWorld, dice: Dice): Node {
   val radius = dice.getFloat(5f, 10f)
@@ -48,57 +50,58 @@ fun fillIndexes(graph: NodeGraph) {
   }
 }
 
-fun createTestWorld(): World {
-  val boundary = WorldBoundary(
-      Vector3(-50f, -50f, -50f),
-      Vector3(50f, 50f, 50f)
-  )
+//fun createTestWorld(): World {
+//  val boundary = WorldBoundary(
+//      Vector3(-50f, -50f, -50f),
+//      Vector3(50f, 50f, 50f)
+//  )
+//
+//  val first = Node(Vector3(-18f, 0f, 0f), 5f, NodeType.room)
+//  val second = Node(Vector3(18f, 0f, 0f), 5f, NodeType.room)
+//  val tunnel = Node(Vector3(0f, 0f, 0f), .5f, NodeType.tunnel)
+//  val world = AbstractWorld(boundary)
+//  world.nodes.add(first)
+//  world.nodes.add(second)
+//  world.nodes.add(tunnel)
+//  world.graph.connect(first, tunnel, ConnectionType.tunnel)
+//  world.graph.connect(second, tunnel, ConnectionType.tunnel)
+//
+//  generateStructure(world)
+//  fillIndexes(world.graph)
+//  val result = World(world)
+//  result.createPlayer(1)
+//  return result
+//}
 
-  val first = Node(Vector3(-18f, 0f, 0f), 5f, NodeType.room)
-  val second = Node(Vector3(18f, 0f, 0f), 5f, NodeType.room)
-  val tunnel = Node(Vector3(0f, 0f, 0f), .5f, NodeType.tunnel)
-  val world = AbstractWorld(boundary)
-  world.nodes.add(first)
-  world.nodes.add(second)
-  world.nodes.add(tunnel)
-  world.graph.connect(first, tunnel, ConnectionType.tunnel)
-  world.graph.connect(second, tunnel, ConnectionType.tunnel)
-
-  generateStructure(world)
-  fillIndexes(world.graph)
-  val result = World(world)
-  result.createPlayer(1)
-  return result
-}
-
-fun placeEnemy(world: World, dice: Dice) {
+fun placeEnemy(world: World, instantiator: Instantiator, dice: Dice) {
   val node = dice.getItem(world.meta.nodes.drop(1))// Skip the node where the player starts
   val wall = dice.getItem(node.walls)
   val position = getVector3Center(node.position, wall.edges[0].first)
-  world.createAiCharacter(characterDefinitions.monster, world.factions[1], position)
+  instantiator.createAiCharacter(characterDefinitions.monster, world.factions[1], position)
 }
 
-fun placeEnemies(world: World, dice: Dice) {
+fun placeEnemies(world: World, instantiator: Instantiator, dice: Dice) {
   val enemyCount = 10
   for (i in 0 until enemyCount) {
-    placeEnemy(world, dice)
+    placeEnemy(world, instantiator, dice)
   }
 }
 
-fun generateWorld(input: WorldInput): World {
+fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): World {
   val abstractWorld = AbstractWorld(input.boundary)
   generateAbstract(abstractWorld, input.dice)
   generateStructure(abstractWorld)
   val world = World(abstractWorld)
-  world.createPlayer(1)
-  placeEnemies(world, input.dice)
+  val instantiator = Instantiator(world, instantiatorConfig)
+  instantiator.createPlayer(1)
+  placeEnemies(world, instantiator, input.dice)
   return world
 }
 
-fun generateDefaultWorld() = generateWorld(WorldInput(
+fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig) = generateWorld(WorldInput(
     WorldBoundary(
         Vector3(-50f, -50f, -50f),
         Vector3(50f, 50f, 50f)
     ),
     Dice(2)
-))
+), instantiatorConfig)

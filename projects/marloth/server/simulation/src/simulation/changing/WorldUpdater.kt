@@ -7,7 +7,7 @@ import intellect.updateAi
 import mythic.spatial.Quaternion
 import simulation.*
 
-class WorldUpdater(val world: World) {
+class WorldUpdater(val world: World, val instantiator: Instantiator) {
 
   fun switchCameraMode(player: Player) {
     val currentMode = player.viewMode
@@ -47,7 +47,7 @@ class WorldUpdater(val world: World) {
     val remainingCommands = commands.filter({ it.target == 0 || it.target > maxPlayerCount })
     for (command in remainingCommands) {
       if (command.type == CommandType.joinGame) {
-        world.createPlayer(world.players.size + 1)
+        instantiator.createPlayer(world.players.size + 1)
       }
     }
 
@@ -71,7 +71,7 @@ class WorldUpdater(val world: World) {
 
   fun createMissiles(newMissiles: List<NewMissile>) {
     for (newMissile in newMissiles) {
-      world.createMissile(newMissile)
+      instantiator.createMissile(newMissile)
     }
   }
 

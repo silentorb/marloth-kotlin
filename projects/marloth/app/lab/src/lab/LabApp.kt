@@ -21,6 +21,8 @@ import kotlin.concurrent.thread
 import com.fasterxml.jackson.databind.SequenceWriter
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
+import simulation.changing.Instantiator
+import simulation.changing.InstantiatorConfig
 import java.io.FileOutputStream
 
 
@@ -64,7 +66,7 @@ data class LabApp(
     val config: LabConfig,
     val display: Display = platform.display,
     val timer: DeltaTimer = DeltaTimer(),
-    val world: World = generateDefaultWorld(),
+    val world: World = generateDefaultWorld(InstantiatorConfig(config.gameView.defaultPlayerView)),
     val client: Client = Client(platform),
     val labClient: LabClient = LabClient(config, client)
 )
@@ -76,10 +78,12 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
   val scenes = createScenes(app.world, app.client.screens)
   val (commands, nextState) = app.labClient.update(scenes, app.world.meta, previousState)
   val delta = app.timer.update().toFloat()
-  val updater = WorldUpdater(app.world)
+  val instantiator = Instantiator(app.world, InstantiatorConfig(app.config.gameView.defaultPlayerView))
+  val updater = WorldUpdater(app.world, instantiator)
   updater.update(commands, delta)
   app.platform.process.pollEvents()
 
+  app.config.gameView.defaultPlayerView = app.world.players[0].viewMode
   if (saveIncrement++ > 60 * 3) {
     saveIncrement = 0
     saveLabConfig(app.config)

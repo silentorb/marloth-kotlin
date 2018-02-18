@@ -1,7 +1,6 @@
 import generation.abstract.getOverlapping
 import generation.abstract.intersects
 import generation.abstract.isBetween
-import generation.createTestWorld
 import generation.overlaps2D
 import generation.structure.generateStructure
 import junit.framework.TestCase.*
