@@ -1,4 +1,4 @@
-package front
+package main.front
 
 import marloth.clienting.Client
 import mythic.glowing.Texture

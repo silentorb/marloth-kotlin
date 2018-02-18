@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import front.setWorldMesh
+import main.front.setWorldMesh
 import generation.generateDefaultWorld
 import marloth.clienting.Client
 import marloth.clienting.initialGameInputState

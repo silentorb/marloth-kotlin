@@ -2,22 +2,19 @@ package lab.views
 
 import lab.LabCommandType
 import lab.ModelViewConfig
-import lab.renderFaceNormals
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
 import mythic.spatial.*
 import org.joml.Vector2i
-import rendering.FlatColoredPerspectiveEffect
-import rendering.Renderer
-import rendering.createCameraMatrix
+import rendering.*
 import scenery.Camera
 
 private var orientation: Quaternion = Quaternion()//.rotateZ(45f)
 
 fun drawModelPreview(renderer: Renderer, dimensions: Vector2i, orientation: Quaternion, modelName: String) {
-  val camera = createCameraMatrix(dimensions, Camera(Vector3(-10f, 0f, 0f), Quaternion(), 45f))
+  val camera = createCameraEffectsData(dimensions, Camera(Vector3(-10f, 0f, 0f), Quaternion(), 45f))
   val effect = FlatColoredPerspectiveEffect(renderer.shaders.flat, camera)
   val transform = Matrix().rotate(orientation)
   val mesh = renderer.meshes[modelName]!!

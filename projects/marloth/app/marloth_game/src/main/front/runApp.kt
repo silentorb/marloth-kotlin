@@ -1,4 +1,4 @@
-package front
+package main.front
 
 import commanding.CommandType
 import generation.generateDefaultWorld

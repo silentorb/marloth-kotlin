@@ -3,6 +3,8 @@ package rendering
 import mythic.drawing.DrawingEffects
 import mythic.drawing.createDrawingEffects
 import mythic.glowing.*
+import mythic.spatial.Matrix
+import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 
 private val lighting = """
@@ -94,30 +96,31 @@ vec3 processLights(vec4 input_color, vec3 normal, vec3 cameraDirection, vec3 pos
 """
 
 private val coloredVertex = """
-uniform 	mat4 view;
-uniform 	mat4 projection;
-uniform 	vec3 cameraDirection;
 
 in vec3 position;
 in vec3 normal;
 in vec4 color;
 
 out vec4 fragment_color;
-out vec3 fragmentPosition;
-out vec3 fragment_normal;
+//out vec3 fragmentPosition;
+//out vec3 fragmentNormal;
 
-uniform mat4 model;
-uniform mat4 normal_transform;
-uniform vec4 color_filter;
+uniform mat4 normalTransform;
+uniform vec4 uniformColor;
+uniform mat4 cameraTransform;
+uniform mat4 modelTransform;
+uniform vec3 cameraDirection;
+
+${lighting}
 
 void main() {
-  	fragment_normal = normalize((normal_transform * vec4(normal, 1.0)).xyz);
-  	vec4 modelPosition = model * vec4(position, 1.0);
+  	fragmentNormal = normalize((normalTransform * vec4(normal, 1.0)).xyz);
+  	vec4 modelPosition = modelTransform * vec4(position, 1.0);
 	fragmentPosition = modelPosition.xyz;
-    gl_Position = projection * view * modelPosition;
-
-	vec3 rgb = processLights(color, fragment_normal, cameraDirection, modelPosition.xyz);
-    fragment_color = vec4(rgb, color.a) * color_filter;
+//    gl_Position = projection * view * modelPosition;
+  gl_Position = cameraTransform * modelTransform * vec4(position, 1);
+	vec3 rgb = processLights(color, fragmentNormal, cameraDirection, modelPosition.xyz);
+    fragment_color = vec4(rgb, color.a) * uniformColor;
 }
 """
 
@@ -132,14 +135,14 @@ void main() {
 private val flatVertex = """
 uniform mat4 cameraTransform;
 uniform mat4 modelTransform;
-uniform vec4 color;
+uniform vec4 uniformColor;
 
 layout (location = 0) in vec3 position;
 
 out vec4 fragment_color;
 
 void main() {
-	fragment_color = color;
+	fragment_color = uniformColor;
   gl_Position = cameraTransform * modelTransform * vec4(position, 1);
 }
 """
@@ -194,13 +197,24 @@ void main() {
 
 class PerspectiveShader(val program: ShaderProgram) {
   val cameraTransform = MatrixProperty(program, "cameraTransform")
+  val cameraDirection = Vector3Property(program, "cameraDirection")
   fun activate() {
     program.activate()
   }
 }
 
+class ColoredPerspectiveShader(val shader: PerspectiveShader) {
+  val normalTransformProperty = MatrixProperty(shader.program, "normalTransform")
+  val colorProperty = Vector4Property(shader.program, "uniformColor")
+  fun activate(color: Vector4, normalTransform: Matrix) {
+    colorProperty.setValue(color)
+    normalTransformProperty.setValue(normalTransform)
+    shader.activate()
+  }
+}
+
 class FlatColoredPerspectiveShader(val shader: PerspectiveShader) {
-  val colorProperty = Vector4Property(shader.program, "color")
+  val colorProperty = Vector4Property(shader.program, "uniformColor")
   fun activate(color: Vector4) {
     colorProperty.setValue(color)
     shader.activate()
@@ -208,18 +222,17 @@ class FlatColoredPerspectiveShader(val shader: PerspectiveShader) {
 }
 
 class TextureShader(val program: ShaderProgram) {
-  val cameraTransform = MatrixProperty(program, "cameraTransform")
-  val cameraDirection = Vector3Property(program, "cameraDirection")
+  val perspectiveShader = PerspectiveShader(program)
 
   fun activate(texture: Texture) {
     texture.activate()
-    program.activate()
+    perspectiveShader.activate()
   }
 }
 
 data class Shaders(
     val textured: TextureShader,
-//    val colored: ShaderProgram,
+    val colored: ColoredPerspectiveShader,
     val flat: FlatColoredPerspectiveShader,
     val drawing: DrawingEffects
 )
@@ -227,7 +240,7 @@ data class Shaders(
 fun createShaders(): Shaders {
   return Shaders(
       textured = TextureShader(ShaderProgram(texturedVertex, texturedFragment)),
-//      colored = ShaderProgram(coloredVertex, coloredFragment),
+      colored = ColoredPerspectiveShader(PerspectiveShader(ShaderProgram(coloredVertex, coloredFragment))),
       flat = FlatColoredPerspectiveShader(PerspectiveShader(ShaderProgram(flatVertex, flatFragment))),
       drawing = createDrawingEffects()
   )

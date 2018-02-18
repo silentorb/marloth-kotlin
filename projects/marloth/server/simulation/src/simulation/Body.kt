@@ -8,7 +8,7 @@ import collision.Sphere
 
 class Body(
     val id: Id,
-    val shape: Shape,
+    var shape: Shape?,
     var position: Vector3,
     var orientation: Quaternion,
     var velocity: Vector3

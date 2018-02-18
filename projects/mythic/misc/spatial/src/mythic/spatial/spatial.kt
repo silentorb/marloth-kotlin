@@ -140,3 +140,6 @@ fun Vector3.transform(m: Matrix) = m.transform(Vector4(this, 1f)).xyz
 
 fun getVector3Center(first: Vector3, second: Vector3) =
     first + (second - first) * 0.5f
+
+fun getRotationMatrix(matrix: Matrix) =
+    Matrix().rotation(matrix.getUnnormalizedRotation(Quaternion()))

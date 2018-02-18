@@ -4,6 +4,7 @@ import mythic.drawing.createDrawingMeshes
 import mythic.glowing.*
 import mythic.platforming.WindowInfo
 import mythic.spatial.Matrix
+import mythic.spatial.Vector3
 import mythic.typography.loadFonts
 import org.joml.Vector2i
 import scenery.Scene
@@ -11,10 +12,11 @@ import mythic.spatial.Vector4
 import mythic.typography.FontLoadInfo
 import org.joml.Vector4i
 import org.joml.div
+import org.joml.times
 
 fun gatherEffectsData(dimensions: Vector2i, scene: Scene): EffectsData {
   return EffectsData(
-      createCameraMatrix(dimensions, scene.camera),
+      createCameraEffectsData(dimensions, scene.camera),
       Matrix().ortho(0.0f, dimensions.x.toFloat(), 0.0f, dimensions.y.toFloat(), 0f, 100f)
   )
 }

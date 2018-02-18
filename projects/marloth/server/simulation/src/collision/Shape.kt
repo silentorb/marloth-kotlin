@@ -25,7 +25,10 @@ class Sphere(
 fun overlaps(firstPosition: Vector2, firstRadius: Float, secondPosition: Vector2, secondRadius: Float): Boolean =
     firstPosition.distance(secondPosition) - firstRadius - secondRadius < 0f
 
-fun overlaps(first: Shape, firstPosition: Vector3, second: Shape, secondPosition: Vector3): Boolean {
+fun overlaps(first: Shape?, firstPosition: Vector3, second: Shape?, secondPosition: Vector3): Boolean {
+  if (first == null || second == null)
+    return false
+
   val firstRadius = first.getRadiusOrNull()
   val secondRadius = second.getRadiusOrNull()
   return if (firstRadius != null && secondRadius != null) {

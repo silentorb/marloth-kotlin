@@ -49,9 +49,16 @@ fun updateMissile(world: World, missile: Missile, delta: Float) {
       .firstOrNull { overlaps(it, missile.body) }
 
   if (hit != null) {
-    missile.remainingDistance = 0f
-    val victim = world.characterTable[hit.id]!!
-    victim.health.modify(-50)
+    val victim = world.characterTable[hit.id]
+    if (victim != null) {
+      missile.remainingDistance = 0f
+      victim.health.modify(-50)
+    } else {
+//      val otherMissile = world.missileTable[hit.id]
+//      if (otherMissile != null) {
+//        otherMissile.remainingDistance = 0f
+//      }
+    }
   } else {
     missile.remainingDistance -= offset.length()
   }

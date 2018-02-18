@@ -16,9 +16,11 @@ class WorldUpdater(val world: World) {
   }
 
   fun applyCommands(players: Players, commands: Commands<CommandType>, delta: Float): List<NewMissile> {
-    val result = players.mapNotNull { player ->
-      applyPlayerCommands(player, commands.filter({ it.target == player.playerId }), delta)
-    }
+    val result = players
+        .filter { it.character.isAlive }
+        .mapNotNull { player ->
+          applyPlayerCommands(player, commands.filter({ it.target == player.playerId }), delta)
+        }
 
     val remainingCommands = commands.filter({ it.target == 0 || it.target > maxPlayerCount })
     for (command in remainingCommands) {
@@ -31,7 +33,11 @@ class WorldUpdater(val world: World) {
   }
 
   fun updateCharacter(character: Character, delta: Float) {
-    character.abilities.forEach { updateAbility(it, delta) }
+    if (character.isAlive) {
+      character.abilities.forEach { updateAbility(it, delta) }
+    } else {
+
+    }
   }
 
   fun updateCharacters(delta: Float) {
@@ -44,12 +50,20 @@ class WorldUpdater(val world: World) {
     }
   }
 
+  fun updateDead() {
+    val died = world.characters.filter { it.isAlive == true && it.health.value == 0 }
+    died.forEach {
+      it.isAlive = false
+      it.body.shape = null
+    }
+  }
+
   fun getFinished(): List<Int> {
     return world.missileTable.values
         .filter { isFinished(world, it) }
         .map { it.id }
         .plus(world.characters
-            .filter { isFinished(world, it) }
+            .filter { isFinished(world, it) && !isPlayer(world, it) }
             .map { it.id })
   }
 
@@ -68,7 +82,7 @@ class WorldUpdater(val world: World) {
         .plus(applyCommands(world.players, commands, delta))
 
     world.missileTable.values.forEach { updateMissile(world, it, delta) }
-
+    updateDead()
     val finished = getFinished()
     removeFinished(finished)
 

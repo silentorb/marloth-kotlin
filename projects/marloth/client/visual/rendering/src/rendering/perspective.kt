@@ -29,3 +29,9 @@ fun createCameraMatrix(dimensions: Vector2i, camera: Camera): Matrix {
   val view = createViewMatrix(camera.position, camera.orientation)
   return projection * view
 }
+
+fun createCameraEffectsData(dimensions: Vector2i, camera: Camera) =
+    CameraEffectsData(
+        createCameraMatrix(dimensions, camera),
+        camera.orientation * Vector3(1f, 0f, 0f)
+    )

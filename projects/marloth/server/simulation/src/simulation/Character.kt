@@ -13,6 +13,7 @@ class Character(
     val faction: Faction
 ) {
   val health = Resource(maxHealth)
+  var isAlive = true
 }
 
 fun isFinished(world: World, character: Character) =

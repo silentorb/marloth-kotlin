@@ -72,7 +72,7 @@ fun createTestWorld(): World {
 }
 
 fun placeEnemy(world: World, dice: Dice) {
-  val node = dice.getItem(world.meta.nodes)
+  val node = dice.getItem(world.meta.nodes.drop(1))// Skip the node where the player starts
   val wall = dice.getItem(node.walls)
   val position = getVector3Center(node.position, wall.edges[0].first)
   world.createAiCharacter(characterDefinitions.monster, world.factions[1], position)
