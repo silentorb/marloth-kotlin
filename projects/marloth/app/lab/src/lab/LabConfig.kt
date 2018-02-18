@@ -53,13 +53,6 @@ fun createLabInputBindings() = mutableMapOf(
     ))
 )
 
-//enum class LabView {
-//  game,
-//  model,
-//  world,
-//  texture
-//}
-
 data class WorldViewConfig(
     var showAbstract: Boolean = true,
     var showStructure: Boolean = true

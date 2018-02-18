@@ -1,6 +1,10 @@
-showLab: false
-width: 300
-height: 200
+view: game
+width: 1200
+height: 900
 worldView:
   showAbstract: true
   showStructure: true
+modelView:
+  model: sphere
+  drawVertices: true
+  drawEdges: true
