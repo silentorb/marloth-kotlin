@@ -55,30 +55,35 @@ fun defaultKeyboardProfile() = mapOf(
     GLFW_KEY_ESCAPE to CommandType.menuBack
 )
 
-fun commonGamepadBindings() = mapOf(
+val commonGamepadBindings = mapOf(
     GAMEPAD_AXIS_LEFT_UP to CommandType.moveUp,
     GAMEPAD_AXIS_LEFT_DOWN to CommandType.moveDown,
     GAMEPAD_AXIS_LEFT_LEFT to CommandType.moveLeft,
-    GAMEPAD_AXIS_LEFT_RIGHT to CommandType.moveRight,
+    GAMEPAD_AXIS_LEFT_RIGHT to CommandType.moveRight
+)
 
+//val birdsEyeGamepadBindings = mapOf(
+//    GAMEPAD_AXIS_RIGHT_UP to CommandType.attackUp,
+//    GAMEPAD_AXIS_RIGHT_DOWN to CommandType.attackDown,
+//    GAMEPAD_AXIS_RIGHT_LEFT to CommandType.attackLeft,
+//    GAMEPAD_AXIS_RIGHT_RIGHT to CommandType.attackRight
+//)
+
+val firstPersonGamepadBindings = mapOf(
+    GAMEPAD_AXIS_RIGHT_UP to CommandType.lookUp,
+    GAMEPAD_AXIS_RIGHT_DOWN to CommandType.lookDown,
+    GAMEPAD_AXIS_RIGHT_LEFT to CommandType.lookLeft,
+    GAMEPAD_AXIS_RIGHT_RIGHT to CommandType.lookRight
+)
+
+val allGamepadStrokeBindings = mapOf(
     GAMEPAD_BUTTON_BACK to CommandType.switchView,
     GAMEPAD_BUTTON_START to CommandType.menuBack
 )
 
-fun birdsEyeGamepadBindings() = mapOf(
-    GAMEPAD_AXIS_RIGHT_UP to CommandType.attackUp,
-    GAMEPAD_AXIS_RIGHT_DOWN to CommandType.attackDown,
-    GAMEPAD_AXIS_RIGHT_LEFT to CommandType.attackLeft,
-    GAMEPAD_AXIS_RIGHT_RIGHT to CommandType.attackRight
-    )
-
-//fun firstPersonGamepadBindings()= mapOf(
-//
-//)
-
 fun allGamepadBindings() =
-    commonGamepadBindings()
-        .plus(birdsEyeGamepadBindings())
+    commonGamepadBindings
+        .plus(firstPersonGamepadBindings)
 
 data class PlayerInputProfile(
     val player: Int,
@@ -90,16 +95,20 @@ data class AvailableInputProfiles(
     val playerInputProfiles: List<PlayerInputProfile>
 )
 
+fun createDefaultGamepadBindings(gamepad: Int, player: Int) =
+    createBindings(gamepad, player, allGamepadBindings())
+        .plus(createStrokeBindings(gamepad, player, allGamepadStrokeBindings))
+
 fun createPrimaryInputProfile(player: Int, gamepad: Int) =
     PlayerInputProfile(player,
         createBindings(0, player, defaultKeyboardProfile())
-            .plus(createBindings(gamepad, player, allGamepadBindings())),
+            .plus(createDefaultGamepadBindings(gamepad, player)),
         listOf()
     )
 
 fun createSecondaryInputProfile(player: Int, device: Int) =
     PlayerInputProfile(player,
-        createBindings(device, player, allGamepadBindings()),
+        createDefaultGamepadBindings(device, player),
         listOf()
     )
 

@@ -1,4 +1,4 @@
-package simulation
+package simulation.changing
 
 import commanding.CommandType
 import haft.Commands
@@ -6,7 +6,12 @@ import mythic.sculpting.FlexibleEdge
 import mythic.spatial.*
 import org.joml.minus
 import org.joml.plus
+import org.joml.times
 import org.joml.xy
+import simulation.Body
+import simulation.Player
+import simulation.ViewMode
+import simulation.World
 
 fun hitsWall(edge: FlexibleEdge, position: Vector3, radius: Float) =
     lineIntersectsCircle(edge.first.xy, edge.second.xy, position.xy, radius)
@@ -88,20 +93,27 @@ fun checkWallCollision(source: Vector3, originalOffset: Vector3, world: World): 
 }
 
 val playerMoveMap = mapOf(
-    CommandType.moveLeft to Vector2(-1f, 0f),
-    CommandType.moveRight to Vector2(1f, 0f),
-    CommandType.moveUp to Vector2(0f, 1f),
-    CommandType.moveDown to Vector2(0f, -1f)
+    CommandType.moveLeft to Vector3(-1f, 0f, 0f),
+    CommandType.moveRight to Vector3(1f, 0f, 0f),
+    CommandType.moveUp to Vector3(0f, 1f, 0f),
+    CommandType.moveDown to Vector3(0f, -1f, 0f)
+)
+
+val playerLookMap = mapOf(
+    CommandType.lookLeft to Vector3(0f, 0f, 1f),
+    CommandType.lookRight to Vector3(0f, 0f, -1f),
+    CommandType.lookUp to Vector3(0f, -1f, 0f),
+    CommandType.lookDown to Vector3(0f, 1f, 0f)
 )
 
 val playerAttackMap = mapOf(
-    CommandType.attackLeft to Vector2(-1f, 0f),
-    CommandType.attackRight to Vector2(1f, 0f),
-    CommandType.attackUp to Vector2(0f, 1f),
-    CommandType.attackDown to Vector2(0f, -1f)
+    CommandType.lookLeft to Vector3(-1f, 0f, 0f),
+    CommandType.lookRight to Vector3(1f, 0f, 0f),
+    CommandType.lookUp to Vector3(0f, 1f, 0f),
+    CommandType.lookDown to Vector3(0f, -1f, 0f)
 )
 
-fun joinInputVector(commands: Commands<CommandType>, commandMap: Map<CommandType, Vector2>): Vector3? {
+fun joinInputVector(commands: Commands<CommandType>, commandMap: Map<CommandType, Vector3>): Vector3? {
   val forces = commands.mapNotNull {
     val vector = commandMap[it.type]
     if (vector != null && it.value > 0)
@@ -115,18 +127,32 @@ fun joinInputVector(commands: Commands<CommandType>, commandMap: Map<CommandType
   val offset = forces.reduce { a, b -> a + b }
   offset.normalize()
   assert(!offset.x.isNaN() && !offset.y.isNaN())
-  return Vector3(offset, 0f)
+  return offset
 }
 
-fun playerMove(world: World, player: Body, commands: Commands<CommandType>, delta: Float) {
+fun playerMove(world: World, player: Player, commands: Commands<CommandType>, delta: Float) {
+  val body = player.character.body
   val speed = 6f
-  val offset = joinInputVector(commands, playerMoveMap)
+  var offset = joinInputVector(commands, playerMoveMap)
 
   if (offset != null) {
-    val newPosition = checkWallCollision(player.position, offset * speed * delta, world)
+    if (player.viewMode == ViewMode.firstPerson)
+      offset = (Quaternion().rotateZ(player.character.rotation.z - Pi / 2) * offset)!!
+
+    val newPosition = checkWallCollision(body.position, offset * speed * delta, world)
     if (newPosition != null) {
       assert(!newPosition.x.isNaN() && !newPosition.y.isNaN())
-      player.position = newPosition!!
+      body.position = newPosition
     }
+  }
+}
+
+fun playerRotate(player: Player, commands: Commands<CommandType>, delta: Float) {
+  val character = player.character
+  val speed = 0.03f
+  val offset = joinInputVector(commands, playerLookMap)
+
+  if (offset != null) {
+    character.rotation += offset * speed
   }
 }

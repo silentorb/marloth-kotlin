@@ -10,21 +10,12 @@ import scenery.Screen
 
 val maxPlayerCount = 4
 
-fun switchCameraMode(playerId: Int, screens: List<Screen>) {
-  val currentMode = screens[playerId - 1].cameraMode
-  screens[playerId - 1].cameraMode =
-      if (currentMode == CameraMode.topDown)
-        CameraMode.thirdPerson
-      else
-        CameraMode.topDown
-}
-
 class Client(val platform: Platform) {
   val renderer: Renderer = Renderer()
-  val screens: List<Screen> = (1..maxPlayerCount).map { Screen(CameraMode.topDown, it) }
+  val screens: List<Screen> = (1..maxPlayerCount).map { Screen(it) }
   val gamepadAssignments: MutableMap<Int, Int> = mutableMapOf()
   val keyStrokeCommands: Map<CommandType, CommandHandler<CommandType>> = mapOf(
-      CommandType.switchView to { command -> switchCameraMode(command.target, screens) },
+//      CommandType.switchView to { command -> switchCameraMode(command.target, screens) },
       CommandType.menuBack to { command -> platform.process.close() }
   )
   val playerInputProfiles = createDefaultInputProfiles()

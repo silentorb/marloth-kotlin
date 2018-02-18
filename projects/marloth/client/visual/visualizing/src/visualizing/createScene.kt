@@ -2,20 +2,20 @@ package visualizing
 
 import org.joml.times
 import scenery.*
-import simulation.Player
-import simulation.World
 import mythic.spatial.Matrix
 import mythic.spatial.Pi
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import org.joml.plus
-import simulation.Body
-import simulation.EntityType
+import simulation.*
 
-fun createFirstPersonCamera(player: Body): Camera = Camera(
-    player.position,
+fun createFirstPersonCamera(character: Character): Camera = Camera(
+    character.body.position,
 //    world.player.orientation,
-    Quaternion(0f, 0f, .1f),
+    Quaternion()
+        .rotateZ(character.rotation.z)
+        .rotateY(character.rotation.y)
+    ,
     45f
 )
 
@@ -39,11 +39,11 @@ fun createOrthographicCamera(player: Body): Camera {
 
 fun createCamera(world: World, screen: Screen): Camera {
   val player = world.players[screen.playerId - 1]
-  val body = world.bodyTable[player.character.id]!!
-  return when (screen.cameraMode) {
-    CameraMode.firstPerson -> createFirstPersonCamera(body)
-    CameraMode.thirdPerson -> createThirdPersonCamera(body)
-    CameraMode.topDown -> createOrthographicCamera(body)
+  val body = player.character.body
+  return when (player.viewMode) {
+    ViewMode.firstPerson -> createFirstPersonCamera(player.character)
+    ViewMode.thirdPerson -> createThirdPersonCamera(body)
+    ViewMode.topDown -> createOrthographicCamera(body)
   }
 }
 
@@ -60,11 +60,15 @@ fun prepareVisualElement(body: Body, entityType: EntityType): VisualElement? {
     null
 }
 
+fun selectBodies(world: World, player: Player) =
+    world.bodies
+        .filter { player.viewMode != ViewMode.firstPerson || it !== player.character.body }
+        .mapNotNull { prepareVisualElement(it, world.entities[it.id]!!.type) }
+
 fun createScene(world: World, screen: Screen, player: Player) =
     Scene(
         createCamera(world, screen),
-        world.bodies
-            .mapNotNull { prepareVisualElement(it, world.entities[it.id]!!.type) },
+        selectBodies(world, player),
         player.playerId
     )
 

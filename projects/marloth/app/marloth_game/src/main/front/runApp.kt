@@ -8,8 +8,7 @@ import mythic.platforming.Display
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
 import simulation.World
-import simulation.WorldUpdater
-import visualizing.createScene
+import simulation.changing.WorldUpdater
 import marloth.clienting.initialGameInputState
 import visualizing.createScenes
 

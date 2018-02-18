@@ -1,18 +1,42 @@
-package simulation
+package simulation.changing
 
 import commanding.CommandType
 import haft.Commands
 import intellect.getAiCharacters
 import intellect.updateAi
+import mythic.spatial.Quaternion
+import simulation.*
 
 class WorldUpdater(val world: World) {
+
+  fun switchCameraMode(player: Player) {
+    val currentMode = player.viewMode
+    player.viewMode =
+        if (currentMode == ViewMode.topDown)
+          ViewMode.firstPerson
+        else
+          ViewMode.topDown
+  }
 
   fun applyPlayerCommands(player: Player, commands: Commands<CommandType>, delta: Float): NewMissile? {
     if (commands.isEmpty())
       return null
 
-    playerMove(world, player.character.body, commands, delta)
-    return playerAttack(world, player.character, commands)
+    playerMove(world, player, commands, delta)
+
+    for (command in commands) {
+      when (command.type) {
+        CommandType.switchView -> switchCameraMode(player)
+      }
+    }
+
+    if (player.viewMode == ViewMode.firstPerson) {
+      playerRotate(player, commands, delta)
+      return null
+    }
+    else {
+      return playerAttack(world, player.character, commands)
+    }
   }
 
   fun applyCommands(players: Players, commands: Commands<CommandType>, delta: Float): List<NewMissile> {
@@ -35,6 +59,9 @@ class WorldUpdater(val world: World) {
   fun updateCharacter(character: Character, delta: Float) {
     if (character.isAlive) {
       character.abilities.forEach { updateAbility(it, delta) }
+      character.body.orientation = Quaternion()
+          .rotateZ(character.rotation.z)
+//          .rotateX(character.rotation.x)
     } else {
 
     }

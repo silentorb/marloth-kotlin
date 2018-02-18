@@ -1,5 +1,7 @@
 package simulation
 
+import mythic.spatial.Vector3
+
 data class CharacterDefinition(
     val health: Int,
     val abilities: List<AbilityDefinition>
@@ -14,6 +16,7 @@ class Character(
 ) {
   val health = Resource(maxHealth)
   var isAlive = true
+  var rotation: Vector3 = Vector3()
 }
 
 fun isFinished(world: World, character: Character) =

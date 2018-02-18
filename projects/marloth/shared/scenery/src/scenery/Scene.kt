@@ -7,7 +7,7 @@ enum class CameraMode {
 }
 
 data class Screen(
-    var cameraMode: CameraMode,
+//    var cameraMode: CameraMode,
     val playerId: Int
 )
 

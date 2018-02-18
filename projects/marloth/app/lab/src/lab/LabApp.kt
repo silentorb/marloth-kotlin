@@ -1,6 +1,5 @@
 package lab
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -13,8 +12,7 @@ import mythic.platforming.Display
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
 import simulation.World
-import simulation.WorldUpdater
-import visualizing.createScene
+import simulation.changing.WorldUpdater
 import visualizing.createScenes
 import java.io.File
 import java.nio.file.Files

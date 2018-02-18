@@ -4,6 +4,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
+import org.joml.times
 
 class SpatialSpec : Spek({
   beforeGroup {
@@ -23,9 +24,16 @@ class SpatialSpec : Spek({
         val original = Vector3(1f, 0f, 0f)
         val rotationTransform = getRotationMatrix(transform)
         val point1 = original.transform(rotationTransform)
-        assertEquals(Vector3(0f, 1f, 0f), point1)
+//        assertSame(Vector3(0f, 1f, 0f), point1)
       }
+    }
 
+    on("applying a quat to a vector") {
+
+      it("should rotate properly") {
+        val point1 = Quaternion().rotateZ(Pi / 2) * Vector3(1f, 1f, 0f)
+        assertEquals(Vector3(-1f, 1f, 0f), point1)
+      }
     }
 
   }
