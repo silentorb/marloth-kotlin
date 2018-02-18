@@ -114,9 +114,9 @@ uniform vec3 cameraDirection;
 ${lighting}
 
 void main() {
-  	fragmentNormal = normalize((normalTransform * vec4(normal, 1.0)).xyz);
+  	vec3 fragmentNormal = normalize((normalTransform * vec4(normal, 1.0)).xyz);
   	vec4 modelPosition = modelTransform * vec4(position, 1.0);
-	fragmentPosition = modelPosition.xyz;
+//	fragmentPosition = modelPosition.xyz;
 //    gl_Position = projection * view * modelPosition;
   gl_Position = cameraTransform * modelTransform * vec4(position, 1);
 	vec3 rgb = processLights(color, fragmentNormal, cameraDirection, modelPosition.xyz);
