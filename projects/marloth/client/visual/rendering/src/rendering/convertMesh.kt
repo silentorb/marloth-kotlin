@@ -25,11 +25,13 @@ val temporaryVertexSerializerOld: HalfEdgeVertexSerializer = { vertex, face, ver
   vertices.put(Vector4(0.5f, 0.5f, 0f, 1f))
 }
 
-val temporaryVertexSerializer: FlexibleVertexSerializer = { vertex, face, vertices ->
-  vertices.put(vertex)
+fun temporaryVertexSerializer(color: Vector4): FlexibleVertexSerializer {
+  return { vertex, face, vertices ->
+    vertices.put(vertex)
 
-  // Temporary color code
-  vertices.put(Vector4(0.5f, 0.5f, 0f, 1f))
+    // Temporary color code
+    vertices.put(color)
+  }
 }
 
 fun convertMesh(mesh: HalfEdgeMesh, vertexSchema: VertexSchema, vertexSerializer: HalfEdgeVertexSerializer): SimpleMesh {

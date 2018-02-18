@@ -161,7 +161,7 @@ fun sinewFloors(nodeSectors: List<TempSector>, mesh: FlexibleMesh):
 }
 
 fun createWall(edge: FlexibleEdge, mesh: FlexibleMesh): FlexibleFace {
-  val offset = Vector3(0f, 0f, 1f)
+  val offset = Vector3(0f, 0f, 2f)
   return mesh.createStitchedFace(listOf(
       edge.first,
       edge.second,

@@ -10,11 +10,9 @@ import org.joml.plus
 import simulation.*
 
 fun createFirstPersonCamera(character: Character): Camera = Camera(
-    character.body.position,
+    character.body.position + Vector3(0f, 0f,0.4f),
 //    world.player.orientation,
-    Quaternion()
-        .rotateZ(character.rotation.z)
-        .rotateY(character.rotation.y)
+    character.facingQuaternion
     ,
     45f
 )

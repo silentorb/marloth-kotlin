@@ -8,7 +8,6 @@ import org.joml.minus
 import org.joml.plus
 import org.joml.times
 import org.joml.xy
-import simulation.Body
 import simulation.Player
 import simulation.ViewMode
 import simulation.World
@@ -137,7 +136,7 @@ fun playerMove(world: World, player: Player, commands: Commands<CommandType>, de
 
   if (offset != null) {
     if (player.viewMode == ViewMode.firstPerson)
-      offset = (Quaternion().rotateZ(player.character.rotation.z - Pi / 2) * offset)!!
+      offset = (Quaternion().rotateZ(player.character.facingRotation.z - Pi / 2) * offset)!!
 
     val newPosition = checkWallCollision(body.position, offset * speed * delta, world)
     if (newPosition != null) {
@@ -149,10 +148,10 @@ fun playerMove(world: World, player: Player, commands: Commands<CommandType>, de
 
 fun playerRotate(player: Player, commands: Commands<CommandType>, delta: Float) {
   val character = player.character
-  val speed = 0.03f
+  val speed = Vector3(1f, 0.01f, 0.03f)
   val offset = joinInputVector(commands, playerLookMap)
 
   if (offset != null) {
-    character.rotation += offset * speed
+    character.facingRotation += offset * speed
   }
 }

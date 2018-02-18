@@ -13,7 +13,7 @@ fun createCheckers(): Texture {
 
 fun createDarkCheckers(): Texture {
   val black = Vector3(0.0f, 0.0f, 0.0f)
-  val red = Vector3(1.0f, 0.0f, 0.0f)
+  val red = Vector3(0.55f, 0.3f, 0.0f)
   return createTexture(checkerPattern(black, red), 256)
 }
 

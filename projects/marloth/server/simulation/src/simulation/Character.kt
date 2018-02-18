@@ -1,6 +1,8 @@
 package simulation
 
+import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
+import org.joml.times
 
 data class CharacterDefinition(
     val health: Int,
@@ -16,7 +18,15 @@ class Character(
 ) {
   val health = Resource(maxHealth)
   var isAlive = true
-  var rotation: Vector3 = Vector3()
+  var facingRotation: Vector3 = Vector3()
+
+  val facingQuaternion: Quaternion
+    get() = Quaternion()
+        .rotateZ(facingRotation.z)
+        .rotateY(facingRotation.y)
+
+  val facingVector: Vector3
+    get() = facingQuaternion * Vector3(1f, 0f, 0f)
 }
 
 fun isFinished(world: World, character: Character) =

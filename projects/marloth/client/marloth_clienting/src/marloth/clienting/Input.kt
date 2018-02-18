@@ -73,7 +73,9 @@ val firstPersonGamepadBindings = mapOf(
     GAMEPAD_AXIS_RIGHT_UP to CommandType.lookUp,
     GAMEPAD_AXIS_RIGHT_DOWN to CommandType.lookDown,
     GAMEPAD_AXIS_RIGHT_LEFT to CommandType.lookLeft,
-    GAMEPAD_AXIS_RIGHT_RIGHT to CommandType.lookRight
+    GAMEPAD_AXIS_RIGHT_RIGHT to CommandType.lookRight,
+
+    GAMEPAD_AXIS_TRIGGER_RIGHT to CommandType.attack
 )
 
 val allGamepadStrokeBindings = mapOf(

@@ -32,11 +32,9 @@ class WorldUpdater(val world: World) {
 
     if (player.viewMode == ViewMode.firstPerson) {
       playerRotate(player, commands, delta)
-      return null
     }
-    else {
-      return playerAttack(world, player.character, commands)
-    }
+
+    return playerAttack(player, commands)
   }
 
   fun applyCommands(players: Players, commands: Commands<CommandType>, delta: Float): List<NewMissile> {
@@ -60,7 +58,7 @@ class WorldUpdater(val world: World) {
     if (character.isAlive) {
       character.abilities.forEach { updateAbility(it, delta) }
       character.body.orientation = Quaternion()
-          .rotateZ(character.rotation.z)
+          .rotateZ(character.facingRotation.z)
 //          .rotateX(character.rotation.x)
     } else {
 

@@ -1,5 +1,6 @@
 package mythic.desktop
 
+import haft.GAMEPAD_AXIS_TRIGGER_LEFT
 import haft.GAMEPAD_BUTTON_A
 import haft.Gamepad
 import mythic.platforming.PlatformInput
@@ -16,14 +17,19 @@ val deadZone = 0.2f
 
 fun getGamepadAxes(device: Int, axisDirIndex: Int): Float {
   val axes = glfwGetJoystickAxes(device)
-  val axisIndex = axisDirIndex / 2
-  val value = axes[axisIndex]
-//  if (value < deadZone && value > -deadZone) return 0f
+  if (axisDirIndex < GAMEPAD_AXIS_TRIGGER_LEFT) {
+    val axisIndex = axisDirIndex / 2
+    val value = axes[axisIndex]
+
 //  println(axisDirIndex.toString() + ", " + axisIndex + ", " + value + ", " + (axisDirIndex % 2))
-  return if (axisDirIndex % 2 == 1)
-    if (value > deadZone) value else 0f
-  else
-    if (value < -deadZone) -value else 0f
+    return if (axisDirIndex % 2 == 1)
+      if (value > deadZone) value else 0f
+    else
+      if (value < -deadZone) -value else 0f
+  } else {
+    val value = axes[axisDirIndex - 4]
+    return if (value > deadZone) value else 0f
+  }
 }
 
 class DesktopInput(val window: Long) : PlatformInput {

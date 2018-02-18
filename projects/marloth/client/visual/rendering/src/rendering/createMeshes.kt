@@ -7,6 +7,7 @@ import mythic.glowing.VertexAttribute
 import mythic.glowing.VertexSchema
 import mythic.sculpting.*
 import mythic.spatial.Vector3
+import mythic.spatial.Vector4
 
 typealias MeshMap = Map<String, SimpleMesh>
 
@@ -59,8 +60,8 @@ fun createVertexSchemas() = VertexSchemas(
 fun createSimpleMeshOld(mesh: HalfEdgeMesh, vertexSchema: VertexSchema) =
     convertMesh(mesh, vertexSchema, temporaryVertexSerializerOld)
 
-fun createSimpleMesh(mesh: FlexibleMesh, vertexSchema: VertexSchema) =
-    convertMesh(mesh, vertexSchema, temporaryVertexSerializer)
+fun createSimpleMesh(mesh: FlexibleMesh, vertexSchema: VertexSchema, color: Vector4) =
+    convertMesh(mesh, vertexSchema, temporaryVertexSerializer(color))
 
 fun createLineMesh(vertexSchema: VertexSchema) =
     SimpleMesh(vertexSchema, listOf(
@@ -69,9 +70,8 @@ fun createLineMesh(vertexSchema: VertexSchema) =
     ))
 
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
-    "character" to createSimpleMesh(createCube(), vertexSchemas.standard),
-    "test" to createSimpleMeshOld(create.flatTest(), vertexSchemas.standard),
+    "character" to createSimpleMesh(createCube(), vertexSchemas.standard, Vector4(0.2f, 0.3f, 0.0f, 1f)),
     "line" to createLineMesh(vertexSchemas.flat),
-    "cylinder" to createSimpleMesh(createCylinder(), vertexSchemas.standard),
-    "sphere" to createSimpleMesh(createSphere(), vertexSchemas.standard)
+    "cylinder" to createSimpleMesh(createCylinder(), vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f)),
+    "sphere" to createSimpleMesh(createSphere(), vertexSchemas.standard, Vector4(0.4f, 0.1f, 0.1f, 1f))
 )

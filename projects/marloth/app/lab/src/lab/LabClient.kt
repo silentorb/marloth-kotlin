@@ -84,7 +84,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     val layout = view.createLayout(windowInfo.dimensions)
 
     if (config.view == "game") {
-      val (commands, nextLabInputState) = gatherInputCommands(config.input["global"]!!, deviceHandlers, previousState.labInput)
+      val (commands, nextLabInputState) = gatherInputCommands(labInputConfig["global"]!!, deviceHandlers, previousState.labInput)
       applyCommands(commands, globalKeyPressCommands)
       renderScene(scenes, metaWorld)
       val (gameCommands, nextGameInputState) = client.updateInput(previousState.gameInput, scenes.map { it.player })
@@ -93,7 +93,7 @@ class LabClient(val config: LabConfig, val client: Client) {
 
     }
     renderLab(windowInfo, layout)
-    val bindings = config.input["global"]!!.plus(config.input[config.view]!!)
+    val bindings = labInputConfig["global"]!!.plus(labInputConfig[config.view]!!)
     val (commands, nextLabInputState) = gatherInputCommands(bindings, deviceHandlers, previousState.labInput)
     applyCommands(commands, view.getCommands().plus(globalKeyPressCommands))
     return Pair(listOf(), LabState(nextLabInputState, previousState.gameInput))

@@ -73,9 +73,10 @@ data class ModelViewConfig(
 
 data class LabConfig(
     var view: String = "world",
-    var worldView: WorldViewConfig = WorldViewConfig(),
-    var modelView: ModelViewConfig = ModelViewConfig(),
     var width: Int = 800,
     var height: Int = 600,
-    @field:JsonIgnore val input: LabInputConfig = createLabInputBindings()
+    var worldView: WorldViewConfig = WorldViewConfig(),
+    var modelView: ModelViewConfig = ModelViewConfig()
 )
+
+val labInputConfig: LabInputConfig = createLabInputBindings()

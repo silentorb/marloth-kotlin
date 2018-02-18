@@ -33,18 +33,6 @@ fun characterAttack(character: Character, ability: Ability, direction: Vector3):
   )
 }
 
-fun playerAttack(world: World, character: Character, commands: Commands<CommandType>): NewMissile? {
-  val offset = joinInputVector(commands, playerAttackMap)
-  if (offset != null) {
-    val ability = character.abilities[0]
-    if (canUse(character, ability)) {
-      return characterAttack(character, ability, offset)
-    }
-  }
-
-  return null
-}
-
 fun updateMissile(world: World, missile: Missile, delta: Float) {
   val offset = missile.body.velocity * delta
   missile.body.position += offset

@@ -18,6 +18,11 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 import kotlin.concurrent.thread
+import com.fasterxml.jackson.databind.SequenceWriter
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
+import java.io.FileOutputStream
+
 
 fun startGui() {
   thread(true, false, null, "JavaFX GUI", -1) {
@@ -26,37 +31,9 @@ fun startGui() {
   }
 }
 
-//data class InputLabConfig(
-//    @field:JsonIgnore
-//    var view: LabView = LabView.world,
-////    @field:JsonIgnore
-////    var k:Int = 0,
-//    var showAbstract: Boolean = true,
-//    var showStructure: Boolean = true,
-//    var showLab: Boolean = false,
-//    var width: Int = 800,
-//    var height: Int = 600
-//)
-
-//fun loadLabConfig2(path: String): InputLabConfig {
-//  val temp = InputLabConfig()
-//  val props = temp.javaClass.fields
-//  val fields = temp.javaClass.kotlin.members
-//  if (File(path).isFile()) {
-//    val mapper = ObjectMapper(YAMLFactory())
-//    mapper.registerModule(KotlinModule())
-//
-//    return Files.newBufferedReader(Paths.get(path)).use {
-//      mapper.readValue(it, InputLabConfig::class.java)
-//    }
-//  }
-//
-//  return InputLabConfig()
-//}
-
 fun loadLabConfig(path: String): LabConfig {
   if (File(path).isFile()) {
-    val mapper = ObjectMapper(YAMLFactory())
+    val mapper = YAMLMapper()
     mapper.registerModule(KotlinModule())
 
     return Files.newBufferedReader(Paths.get(path)).use {
@@ -65,6 +42,21 @@ fun loadLabConfig(path: String): LabConfig {
   }
 
   return LabConfig()
+}
+
+fun saveLabConfig(path: String, config: LabConfig) {
+  val mapper = YAMLMapper()
+  mapper.configure(YAMLGenerator.Feature.WRITE_DOC_START_MARKER, false)
+  mapper.configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true)
+  mapper.registerModule(KotlinModule())
+
+  Files.newBufferedWriter(Paths.get(path)).use {
+    mapper.writeValue(it, config)
+  }
+}
+
+fun saveLabConfig(config: LabConfig) {
+  saveLabConfig("labConfig.yaml", config)
 }
 
 data class LabApp(
@@ -77,6 +69,8 @@ data class LabApp(
     val labClient: LabClient = LabClient(config, client)
 )
 
+private var saveIncrement = 0
+
 tailrec fun labLoop(app: LabApp, previousState: LabState) {
   app.display.swapBuffers()
   val scenes = createScenes(app.world, app.client.screens)
@@ -85,6 +79,11 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
   val updater = WorldUpdater(app.world)
   updater.update(commands, delta)
   app.platform.process.pollEvents()
+
+  if (saveIncrement++ > 60 * 3) {
+    saveIncrement = 0
+    saveLabConfig(app.config)
+  }
 
   if (!app.platform.process.isClosing())
     labLoop(app, nextState)
@@ -102,6 +101,7 @@ object App {
   fun main(args: Array<String>) {
     System.setProperty("joml.format", "false")
     val config = loadLabConfig("labConfig.yaml")
+    saveLabConfig(config)
     runApp(createDesktopPlatform("Dev Lab", config.width, config.height), config)
   }
 }
