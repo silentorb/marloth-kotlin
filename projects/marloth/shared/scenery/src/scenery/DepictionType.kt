@@ -1,6 +1,6 @@
 package scenery
 
-enum class Depiction {
+enum class DepictionType {
   character,
   missile,
   none,

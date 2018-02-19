@@ -15,7 +15,9 @@ enum class LabCommandType {
   rotateUp,
   rotateDown,
   rotateLeft,
-  rotateRight
+  rotateRight,
+
+  menu
 }
 
 typealias LabInputConfig = MutableMap<String, Bindings<LabCommandType>>
@@ -26,7 +28,12 @@ fun createLabInputBindings() = mutableMapOf(
         GLFW.GLFW_KEY_F2 to LabCommandType.viewWorld,
         GLFW.GLFW_KEY_F3 to LabCommandType.viewModel,
         GLFW.GLFW_KEY_F4 to LabCommandType.viewTexture
-    )),
+    ))
+        .plus(
+            createStrokeBindings(2, mapOf(
+                GAMEPAD_BUTTON_START to LabCommandType.menu
+            ))
+        ),
     "game" to createStrokeBindings<LabCommandType>(0, mapOf(
 
     )),

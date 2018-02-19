@@ -46,8 +46,8 @@ fun createCamera(world: World, screen: Screen): Camera {
 }
 
 val depictionMap = mapOf(
-    EntityType.character to Depiction.character,
-    EntityType.missile to Depiction.missile
+    EntityType.character to DepictionType.character,
+    EntityType.missile to DepictionType.missile
 )
 
 fun prepareVisualElement(body: Body, entityType: EntityType): VisualElement? {

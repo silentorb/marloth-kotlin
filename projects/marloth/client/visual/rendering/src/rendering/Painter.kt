@@ -2,15 +2,13 @@ package rendering
 
 import mythic.glowing.DrawMethod
 import mythic.glowing.SimpleMesh
-import mythic.spatial.Matrix
-import mythic.spatial.Quaternion
 import mythic.spatial.Vector4
 import mythic.spatial.getRotationMatrix
-import scenery.Depiction
+import scenery.DepictionType
 import scenery.VisualElement
 
 typealias Painter = (VisualElement, Effects) -> Unit
-typealias Painters = Map<Depiction, Painter>
+typealias Painters = Map<DepictionType, Painter>
 
 fun createSimplePainter(mesh: SimpleMesh): Painter =
     { element, effects ->
@@ -20,6 +18,6 @@ fun createSimplePainter(mesh: SimpleMesh): Painter =
     }
 
 fun createPainters(meshes: MeshMap): Painters = mapOf(
-    Depiction.character to createSimplePainter(meshes["cylinder"]!!),
-    Depiction.missile to createSimplePainter(meshes["sphere"]!!)
+    DepictionType.character to createSimplePainter(meshes["cylinder"]!!),
+    DepictionType.missile to createSimplePainter(meshes["sphere"]!!)
 )

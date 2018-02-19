@@ -4,7 +4,6 @@ import commanding.*
 import haft.*
 import mythic.platforming.Platform
 import rendering.Renderer
-import scenery.CameraMode
 import scenery.Scene
 import scenery.Screen
 
@@ -16,7 +15,7 @@ class Client(val platform: Platform) {
   val gamepadAssignments: MutableMap<Int, Int> = mutableMapOf()
   val keyStrokeCommands: Map<CommandType, CommandHandler<CommandType>> = mapOf(
 //      CommandType.switchView to { command -> switchCameraMode(command.target, screens) },
-      CommandType.menuBack to { command -> platform.process.close() }
+      CommandType.menu to { command -> platform.process.close() }
   )
   val playerInputProfiles = createDefaultInputProfiles()
   fun getWindowInfo() = platform.display.getInfo()

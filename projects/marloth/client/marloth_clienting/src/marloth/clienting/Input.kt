@@ -52,7 +52,7 @@ fun defaultKeyboardProfile() = mapOf(
 
     GLFW_KEY_TAB to CommandType.switchView,
 
-    GLFW_KEY_ESCAPE to CommandType.menuBack
+    GLFW_KEY_ESCAPE to CommandType.menu
 )
 
 val commonGamepadBindings = mapOf(
@@ -80,7 +80,7 @@ val firstPersonGamepadBindings = mapOf(
 
 val allGamepadStrokeBindings = mapOf(
     GAMEPAD_BUTTON_BACK to CommandType.switchView,
-    GAMEPAD_BUTTON_START to CommandType.menuBack
+    GAMEPAD_BUTTON_START to CommandType.menu
 )
 
 fun allGamepadBindings() =

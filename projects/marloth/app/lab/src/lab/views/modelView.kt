@@ -11,10 +11,10 @@ import org.joml.Vector2i
 import rendering.*
 import scenery.Camera
 
-private var orientation: Quaternion = Quaternion()//.rotateZ(45f)
+private var rotation = Vector3()
 
 fun drawModelPreview(renderer: Renderer, dimensions: Vector2i, orientation: Quaternion, modelName: String) {
-  val camera = createCameraEffectsData(dimensions, Camera(Vector3(-10f, 0f, 0f), Quaternion(), 45f))
+  val camera = createCameraEffectsData(dimensions, Camera(Vector3(-5f, 0f, 0f), Quaternion(), 30f))
   val effect = FlatColoredPerspectiveEffect(renderer.shaders.flat, camera)
   val transform = Matrix().rotate(orientation)
   val mesh = renderer.meshes[modelName]!!
@@ -40,6 +40,9 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer) : View {
 
   override fun createLayout(dimensions: Vector2i): LabLayout {
     val draw = { b: Bounds, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
+    val orientation = Quaternion()
+        .rotateZ(rotation.z)
+        .rotateY(rotation.y)
 
     val panels = listOf(
         Pair(Measurement(Measurements.pixel, 200f), draw),
@@ -59,12 +62,13 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer) : View {
     )
   }
 
-  val rotateSpeed = 0.04f
+  val rotateSpeedZ = 0.04f
+  val rotateSpeedY = 0.02f
 
   override fun getCommands(): LabCommandMap = mapOf(
-      LabCommandType.rotateLeft to { _ -> orientation.mul(Quaternion().rotateZ(rotateSpeed)) },
-      LabCommandType.rotateRight to { _ -> orientation.mul(Quaternion().rotateZ(-rotateSpeed)) },
-      LabCommandType.rotateUp to { _ -> orientation.mul(Quaternion().rotateY(-rotateSpeed * 0.2f)) },
-      LabCommandType.rotateDown to { _ -> orientation.mul(Quaternion().rotateY(rotateSpeed * 0.2f)) }
+      LabCommandType.rotateLeft to { _ -> rotation.z += rotateSpeedZ },
+      LabCommandType.rotateRight to { _ -> rotation.z -= rotateSpeedZ },
+      LabCommandType.rotateUp to { _ -> rotation.y += rotateSpeedY },
+      LabCommandType.rotateDown to { _ -> rotation.y -= rotateSpeedY }
   )
 }
