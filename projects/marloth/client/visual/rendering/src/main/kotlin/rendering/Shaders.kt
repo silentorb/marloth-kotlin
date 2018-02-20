@@ -105,43 +105,6 @@ vec3 processLights(vec4 input_color, vec3 normal, vec3 cameraDirection, vec3 pos
 
 """
 
-private val coloredVertex = """
-
-in vec3 position;
-in vec3 normal;
-in vec4 color;
-
-out vec4 fragment_color;
-//out vec3 fragmentPosition;
-//out vec3 fragmentNormal;
-
-uniform mat4 normalTransform;
-uniform vec4 uniformColor;
-uniform mat4 cameraTransform;
-uniform mat4 modelTransform;
-uniform vec3 cameraDirection;
-
-${lighting}
-
-void main() {
-  	vec3 fragmentNormal = normalize((normalTransform * vec4(normal, 1.0)).xyz);
-  	vec4 modelPosition = modelTransform * vec4(position, 1.0);
-//	fragmentPosition = modelPosition.xyz;
-//    gl_Position = projection * view * modelPosition;
-  gl_Position = cameraTransform * modelTransform * vec4(position, 1);
-	vec3 rgb = processLights(color, fragmentNormal, cameraDirection, modelPosition.xyz);
-    fragment_color = vec4(rgb, color.a) * uniformColor;
-}
-"""
-
-private val coloredFragment = """
-in vec4 fragment_color;
-out vec4 output_color;
-void main() {
-	output_color = fragment_color;
-}
-"""
-
 private val flatVertex = """
 uniform mat4 cameraTransform;
 uniform mat4 modelTransform;
@@ -165,6 +128,41 @@ void main() {
   output_color = fragment_color;
 }
 """
+
+private val coloredVertex = """
+in vec3 position;
+in vec3 normal;
+in vec4 color;
+
+out vec4 fragment_color;
+
+uniform mat4 normalTransform;
+uniform vec4 uniformColor;
+uniform mat4 cameraTransform;
+uniform mat4 modelTransform;
+uniform vec3 cameraDirection;
+
+${lighting}
+
+void main() {
+  vec3 fragmentNormal = normalize((normalTransform * vec4(normal, 1.0)).xyz);
+  vec4 modelPosition = modelTransform * vec4(position, 1.0);
+  gl_Position = cameraTransform * modelTransform * vec4(position, 1);
+	vec3 rgb = processLights(color, fragmentNormal, cameraDirection, modelPosition.xyz);
+  fragment_color = vec4(rgb, color.a) * uniformColor;
+}
+"""
+
+private val coloredFragment = """
+in vec4 fragment_color;
+out vec4 output_color;
+
+void main() {
+	output_color = fragment_color;
+}
+"""
+
+private val mainVertex = loadResource("shaders/mainVertex.glsl").replace("// #{lighting}", lighting)
 
 private val texturedVertex = """
 uniform mat4 cameraTransform;
@@ -231,12 +229,11 @@ class FlatColoredPerspectiveShader(val shader: PerspectiveShader) {
   }
 }
 
-class TextureShader(val program: ShaderProgram) {
-  val perspectiveShader = PerspectiveShader(program)
+class TextureShader(val colorShader: ColoredPerspectiveShader) {
 
-  fun activate(texture: Texture) {
+  fun activate(texture: Texture, color: Vector4, normalTransform: Matrix) {
     texture.activate()
-    perspectiveShader.activate()
+    colorShader.activate(color, normalTransform)
   }
 }
 
@@ -249,8 +246,8 @@ data class Shaders(
 
 fun createShaders(): Shaders {
   return Shaders(
-      textured = TextureShader(ShaderProgram(texturedVertex, texturedFragment)),
-      colored = ColoredPerspectiveShader(PerspectiveShader(ShaderProgram(coloredVertex, coloredFragment))),
+      textured = TextureShader(ColoredPerspectiveShader(PerspectiveShader(ShaderProgram(mainVertex, texturedFragment)))),
+      colored = ColoredPerspectiveShader(PerspectiveShader(ShaderProgram(mainVertex, coloredFragment))),
       flat = FlatColoredPerspectiveShader(PerspectiveShader(ShaderProgram(flatVertex, flatFragment))),
       drawing = createDrawingEffects()
   )

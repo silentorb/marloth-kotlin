@@ -40,19 +40,13 @@ class FlatColoredPerspectiveEffect(val shader: FlatColoredPerspectiveShader, cam
   }
 }
 
-class TexturedPerspectiveEffect(private val shader: TextureShader, private val camera: CameraEffectsData) {
-  val perspectiveEffect = PerspectiveEffect(shader.perspectiveShader, camera)
+class TexturedPerspectiveEffect(private val shader: TextureShader, camera: CameraEffectsData) {
+  val perspectiveEffect = ColoredPerspectiveEffect(shader.colorShader, camera)
   //  val modelTransform = MatrixProperty(shader.program, "modelTransform")
-  val normalTransform = MatrixProperty(shader.program, "normalTransform")
 
-  init {
-  }
-
-  fun activate(transform: Matrix, texture: Texture) {
-//    modelTransform.setValue(transform)
-    normalTransform.setValue(Matrix())
-    shader.activate(texture)
-    perspectiveEffect.activate(transform)
+  fun activate(transform: Matrix, texture: Texture, color: Vector4, normalTransform: Matrix) {
+    shader.activate(texture, color, normalTransform)
+    perspectiveEffect.activate(transform, color, normalTransform)
   }
 }
 
