@@ -4,10 +4,20 @@ import mythic.drawing.DrawingEffects
 import mythic.drawing.createDrawingEffects
 import mythic.glowing.*
 import mythic.spatial.Matrix
-import mythic.spatial.Vector3
 import mythic.spatial.Vector4
+import java.util.*
 
-private val lighting = """
+private fun loadResource(name: String): String {
+  val classloader = Thread.currentThread().contextClassLoader
+  val inputStream = classloader.getResourceAsStream(name)
+  val s = Scanner(inputStream).useDelimiter("\\A")
+  val result = if (s.hasNext()) s.next() else ""
+  return result
+}
+
+private val lighting = loadResource("shaders/lighting.glsl")
+
+private val lighting2 = """
 
 struct Light {
 	int type;

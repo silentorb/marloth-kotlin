@@ -1,6 +1,7 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
-dependencies {
-}
-
 requires('platforming', 'spatial', 'scenery', 'sculpting', 'glowing', 'typography', 'drawing', 'texture_generation')
+
+apply plugin: 'java'
+
+//processResources()

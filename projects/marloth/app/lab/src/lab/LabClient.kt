@@ -66,7 +66,10 @@ class LabClient(val config: LabConfig, val client: Client) {
       LabCommandType.viewModel to { _ -> config.view = "model" },
       LabCommandType.viewWorld to { _ -> config.view = "world" },
       LabCommandType.viewTexture to { _ -> config.view = "texture" },
-      LabCommandType.menu to { _ -> client.platform.process.close() }
+      LabCommandType.menu to { _ ->
+        if (config.view != "game")
+          client.platform.process.close()
+      }
   )
   val deviceHandlers = createLabDeviceHandlers(client.platform.input)
 

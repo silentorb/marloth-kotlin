@@ -73,8 +73,8 @@ class Renderer {
   ))
 
   init {
-//    glow.state.clearColor = Vector4(0f, 0f, 0f, 1f)
-    glow.state.clearColor = Vector4(1f, 0.95f, 0.9f, 1f)
+    glow.state.clearColor = Vector4(0f, 0f, 0f, 1f)
+//    glow.state.clearColor = Vector4(1f, 0.95f, 0.9f, 1f)
   }
 
   fun prepareRender(windowInfo: WindowInfo) {

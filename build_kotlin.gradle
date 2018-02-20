@@ -1,6 +1,6 @@
 apply plugin: 'kotlin'
 sourceSets {
-  main.kotlin.srcDirs += file('src/main').exists() ? 'src/main' : 'src'
+  main.kotlin.srcDirs += file('src/main').exists() ? 'src/main' : (file('src/main/kotlin').exists() ? 'src/main/kotlin' : 'src')
   test.kotlin.srcDirs += 'src/test'
 
 }

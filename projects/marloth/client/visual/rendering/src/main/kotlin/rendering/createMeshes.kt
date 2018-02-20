@@ -33,6 +33,12 @@ fun createSphere(): FlexibleMesh {
   return mesh
 }
 
+fun createHumanoid(): FlexibleMesh {
+  val mesh = FlexibleMesh()
+  createSphere(mesh, 0.3f, 8, 6)
+  return mesh
+}
+
 data class VertexSchemas(
     val standard: VertexSchema,
     val textured: VertexSchema,
@@ -70,7 +76,7 @@ fun createLineMesh(vertexSchema: VertexSchema) =
     ))
 
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
-    "character" to createSimpleMesh(createCube(), vertexSchemas.standard, Vector4(0.2f, 0.3f, 0.0f, 1f)),
+    "character" to createSimpleMesh(createHumanoid(), vertexSchemas.standard, Vector4(0.3f, 0.2f, 1.0f, 1f)),
     "line" to createLineMesh(vertexSchemas.flat),
     "cylinder" to createSimpleMesh(createCylinder(), vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f)),
     "sphere" to createSimpleMesh(createSphere(), vertexSchemas.standard, Vector4(0.4f, 0.1f, 0.1f, 1f))
