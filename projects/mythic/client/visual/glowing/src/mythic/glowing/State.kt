@@ -12,6 +12,7 @@ import org.lwjgl.opengl.GL13
 import org.lwjgl.opengl.GL13.glActiveTexture
 import org.lwjgl.opengl.GL14.GL_BLEND_DST_RGB
 import org.lwjgl.opengl.GL14.GL_BLEND_SRC_RGB
+import org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER
 
 private fun getBounds(type: Int): Vector4i {
   val buffer = IntArray(4)
@@ -49,6 +50,14 @@ class State {
       if (field != value) {
         field = value
         glBindBuffer(GL_ARRAY_BUFFER, value)
+      }
+    }
+
+  var uniformBufferObject: Int = 0
+    set(value) {
+      if (field != value) {
+        field = value
+        glBindBuffer(GL_UNIFORM_BUFFER, value)
       }
     }
 

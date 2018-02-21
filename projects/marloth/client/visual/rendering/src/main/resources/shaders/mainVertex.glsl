@@ -19,4 +19,5 @@ void main() {
   vec3 rgb = processLights(uniformColor, fragmentNormal, cameraDirection, modelPosition.xyz);
   gl_Position = cameraTransform * modelTransform * vec4(position, 1);
   fragmentColor = vec4(rgb, uniformColor.a);
+  textureCoordinates = uv;
 }

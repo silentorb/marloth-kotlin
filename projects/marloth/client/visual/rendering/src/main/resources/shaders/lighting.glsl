@@ -12,7 +12,7 @@ const float quadratic_attenuation = 0.05;
 const float shininess = 0.9;
 const float strength = 0.3;
 //const vec3 ambient = vec3(0.5);
-vec3 ambient = vec3(0.1);
+vec3 ambient = vec3(0.0);
 
 struct Relationship {
     vec3 direction;
@@ -66,7 +66,7 @@ vec3 processLights(vec4 input_color, vec3 normal, vec3 cameraDirection, vec3 pos
         light.color = vec3(0.9);
         result += process_light(light, input_color, normal, cameraDirection, position);
     }
-
+//
     {
         Light light;
         light.type = 0;

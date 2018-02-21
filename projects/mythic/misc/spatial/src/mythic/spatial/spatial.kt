@@ -4,6 +4,7 @@ import org.joml.Math.PI
 import org.joml.div
 import org.joml.minus
 import org.joml.plus
+import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 
 typealias Vector2 = org.joml.Vector2f
@@ -48,6 +49,19 @@ fun FloatBuffer.put(value: Vector4) {
   put(value.y)
   put(value.z)
   put(value.w)
+}
+
+fun ByteBuffer.putVector3(value: Vector3) {
+  putFloat(value.x)
+  putFloat(value.y)
+  putFloat(value.z)
+}
+
+fun ByteBuffer.putVector4(value: Vector4) {
+  putFloat(value.x)
+  putFloat(value.y)
+  putFloat(value.z)
+  putFloat(value.w)
 }
 
 val Pi = PI.toFloat()

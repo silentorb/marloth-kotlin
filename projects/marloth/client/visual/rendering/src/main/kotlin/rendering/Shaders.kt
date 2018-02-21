@@ -154,11 +154,11 @@ void main() {
 """
 
 private val coloredFragment = """
-in vec4 fragment_color;
+in vec4 fragmentColor;
 out vec4 output_color;
 
 void main() {
-	output_color = fragment_color;
+	output_color = fragmentColor;
 }
 """
 
