@@ -1,6 +1,7 @@
 package simulation
 
 import intellect.Spirit
+import scenery.Light
 
 val maxPlayerCount = 4
 
@@ -19,6 +20,8 @@ data class World(
       Faction(this, "Misfits"),
       Faction(this, "Monsters")
   )
+  val lights: MutableList<Light> = mutableListOf()
+
   private var _nextId = 1
 
   fun getAndSetNextId() = _nextId++

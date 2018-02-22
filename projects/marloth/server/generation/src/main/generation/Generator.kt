@@ -6,10 +6,13 @@ import generation.abstract.handleOverlapping
 import generation.abstract.unifyWorld
 import generation.structure.generateStructure
 import mythic.spatial.Vector3
+import mythic.spatial.Vector4
 import mythic.spatial.getVector3Center
 import org.joml.minus
 import org.joml.plus
 import randomly.Dice
+import scenery.Light
+import scenery.LightType
 import simulation.*
 import simulation.changing.Instantiator
 import simulation.changing.InstantiatorConfig
@@ -94,6 +97,11 @@ fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): Wo
   val world = World(abstractWorld)
   val instantiator = Instantiator(world, instantiatorConfig)
   instantiator.createPlayer(1)
+  world.lights.add(Light(
+      type = LightType.point,
+      color = Vector4(1f, 1f, 1f, 1f),
+      position = world.meta.nodes[0].position + Vector3(0f, 0f, 1f)
+  ))
   placeEnemies(world, instantiator, input.dice)
   return world
 }

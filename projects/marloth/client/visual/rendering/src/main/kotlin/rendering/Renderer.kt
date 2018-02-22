@@ -17,7 +17,8 @@ import org.joml.times
 fun gatherEffectsData(dimensions: Vector2i, scene: Scene): EffectsData {
   return EffectsData(
       createCameraEffectsData(dimensions, scene.camera),
-      Matrix().ortho(0.0f, dimensions.x.toFloat(), 0.0f, dimensions.y.toFloat(), 0f, 100f)
+      Matrix().ortho(0.0f, dimensions.x.toFloat(), 0.0f, dimensions.y.toFloat(), 0f, 100f),
+      scene.lights
   )
 }
 
@@ -68,6 +69,7 @@ class Renderer {
   val canvasMeshes = createDrawingMeshes(vertexSchemas.drawing)
   val painters = createPainters(meshes)
   val textures = Textures()
+  val sectorBuffer = UniformBuffer()
   val fonts = loadFonts(listOf(
       FontLoadInfo("cour.ttf", 16, 0f)
   ))
@@ -98,7 +100,7 @@ class Renderer {
   }
 
   fun createEffects(scene: Scene, dimensions: Vector2i) =
-      createEffects(shaders, gatherEffectsData(dimensions, scene))
+      createEffects(shaders, gatherEffectsData(dimensions, scene), sectorBuffer)
 
   fun renderScene(scene: Scene, dimensions: Vector2i) {
     val effects = createEffects(scene, dimensions)

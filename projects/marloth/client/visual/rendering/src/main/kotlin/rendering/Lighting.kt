@@ -1,23 +1,11 @@
 package rendering
 
-import mythic.spatial.Vector3
-import mythic.spatial.Vector4
+import mythic.glowing.UniformBuffer
 import mythic.spatial.putVector3
 import mythic.spatial.putVector4
 import org.lwjgl.BufferUtils
+import scenery.Light
 import java.nio.ByteBuffer
-
-enum class LightType(val value: Int) {
-  point(1),
-  spot(2)
-}
-
-data class Light(
-    var type: LightType,
-    var color: Vector4, // Includes brightness
-    var position: Vector3,
-    var direction: Vector3
-)
 
 fun padBuffer(buffer: ByteBuffer, count: Int) {
   for (i in 0 until count) {
@@ -41,4 +29,9 @@ fun createLightBuffer(lights: List<Light>): ByteBuffer {
     padBuffer(buffer, 1)
   }
   return buffer
+}
+
+fun updateLights(lights: List<Light>, uniformBuffer: UniformBuffer) {
+  val byteBuffer = createLightBuffer(lights)
+  uniformBuffer.load(byteBuffer)
 }

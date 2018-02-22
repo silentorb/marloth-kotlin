@@ -10,7 +10,7 @@ import org.joml.plus
 import simulation.*
 
 fun createFirstPersonCamera(character: Character): Camera = Camera(
-    character.body.position + Vector3(0f, 0f,0.4f),
+    character.body.position + Vector3(0f, 0f, 0.4f),
 //    world.player.orientation,
     character.facingQuaternion
     ,
@@ -67,7 +67,8 @@ fun createScene(world: World, screen: Screen, player: Player) =
     Scene(
         createCamera(world, screen),
         selectBodies(world, player),
-        player.playerId
+        player.playerId,
+        world.lights
     )
 
 fun createScenes(world: World, screens: List<Screen>) =
