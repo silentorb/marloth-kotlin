@@ -1,9 +1,17 @@
 struct Light {
 	int type;
-	float brightness;
+	vec4 color;
 	vec3 position;
 	vec3 direction;
-	vec3 color;
+};
+
+struct Scene {
+    int lightCount;
+    Light lights[20];
+};
+
+layout(std140) uniform SceneUniform {
+    Scene scene;
 };
 
 const float constant_attenuation = 0.5;
@@ -27,8 +35,11 @@ Relationship get_relationship(Light light, vec3 position) {
 	return info;
 }
 
-vec3 process_light(Light light, vec4 input_color, vec3 normal, vec3 cameraDirection, vec3 position) {
+vec3 processLight(Light light, vec4 input_color, vec3 normal, vec3 cameraDirection, vec3 position) {
 	Relationship info = get_relationship(light, position);
+    float maxDistance = 10;
+    float distanceFade = min(1.0, maxDistance / max(info.distance, 0.01));
+	vec3 lightColor = light.color.xyz * light.color.w;
 
 	float attenuation = 1.5;
 	vec3 half_vector = normalize(info.direction + cameraDirection);
@@ -43,39 +54,39 @@ vec3 process_light(Light light, vec4 input_color, vec3 normal, vec3 cameraDirect
 		specular = pow(specular, shininess) * strength;
 
 	//specular = 0;
-	vec3 scattered_light = ambient + light.color * diffuse * attenuation;
-	vec3 reflected_light = light.color * specular * attenuation;
+	vec3 scattered_light = ambient + lightColor * diffuse * attenuation;
+	vec3 reflected_light = lightColor * specular * attenuation;
 	reflected_light = vec3(0);
-//	return scattered_light;
+
 	vec3 rgb = min(input_color.rgb * scattered_light + reflected_light, vec3(1.0));
-	return rgb;
+	return rgb * distanceFade;
 }
 
 vec3 processLights(vec4 input_color, vec3 normal, vec3 cameraDirection, vec3 position) {
 	vec3 result = vec3(0);
-	for(int i = 0; i < 1; ++i) {
-//		result += process_light(Lighting.lights[i], input_color, normal);
+	for(int i = 0; i < scene.lightCount; ++i) {
+		result += processLight(scene.lights[i], input_color, normal, cameraDirection, position);
 	}
 
-    {
-        Light light;
-        light.type = 0;
-        light.brightness = 1.0;
-        light.position = vec3(-1000, 0, 0);
-        light.direction = vec3(0);
-        light.color = vec3(0.9);
-        result += process_light(light, input_color, normal, cameraDirection, position);
-    }
-//
-    {
-        Light light;
-        light.type = 0;
-        light.brightness = 1.0;
-        light.position = vec3(10, -10, 1000);
-        light.direction = vec3(0);
-        light.color = vec3(0.4);
-        result += process_light(light, input_color, normal, cameraDirection, position);
-    }
+//    {
+//        Light light;
+//        light.type = 0;
+//        light.brightness = 1.0;
+//        light.position = vec3(-1000, 0, 0);
+//        light.direction = vec3(0);
+//        light.color = vec3(0.9);
+//        result += processLight(light, input_color, normal, cameraDirection, position);
+//    }
+////
+//    {
+//        Light light;
+//        light.type = 0;
+//        light.brightness = 1.0;
+//        light.position = vec3(10, -10, 1000);
+//        light.direction = vec3(0);
+//        light.color = vec3(0.4);
+//        result += processLight(light, input_color, normal, cameraDirection, position);
+//    }
 
 //    result += ambient;
 

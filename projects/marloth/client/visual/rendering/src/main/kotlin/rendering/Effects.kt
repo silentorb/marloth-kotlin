@@ -5,12 +5,13 @@ import mythic.spatial.Matrix
 import mythic.drawing.DrawingEffects
 import mythic.glowing.Texture
 import mythic.glowing.UniformBuffer
+import mythic.glowing.UniformBufferProperty
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import scenery.Light
 
 class PerspectiveEffect(private val shader: PerspectiveShader, private val camera: CameraEffectsData) {
-  val modelTransform = MatrixProperty(shader.program, "modelTransform")
+  private val modelTransform = MatrixProperty(shader.program, "modelTransform")
 
   init {
     shader.cameraTransform.setValue(camera.transform)
@@ -23,8 +24,15 @@ class PerspectiveEffect(private val shader: PerspectiveShader, private val camer
   }
 }
 
-class ColoredPerspectiveEffect(val shader: ColoredPerspectiveShader, val camera: CameraEffectsData) {
-  val perspectiveEffect = PerspectiveEffect(shader.shader, camera)
+class ColoredPerspectiveEffect(val shader: ColoredPerspectiveShader,
+                               camera: CameraEffectsData,
+                               sceneBuffer: UniformBuffer) {
+  private val perspectiveEffect = PerspectiveEffect(shader.shader, camera)
+  private val sceneProperty = UniformBufferProperty(shader.shader.program, "SceneUniform")
+
+  init {
+    sceneProperty.setValue(sceneBuffer)
+  }
 
   fun activate(transform: Matrix, color: Vector4, normalTransform: Matrix) {
     shader.activate(color, normalTransform)
@@ -33,7 +41,7 @@ class ColoredPerspectiveEffect(val shader: ColoredPerspectiveShader, val camera:
 }
 
 class FlatColoredPerspectiveEffect(val shader: FlatColoredPerspectiveShader, camera: CameraEffectsData) {
-  val perspectiveEffect = PerspectiveEffect(shader.shader, camera)
+  private val perspectiveEffect = PerspectiveEffect(shader.shader, camera)
 
   fun activate(transform: Matrix, color: Vector4) {
     shader.activate(color)
@@ -41,8 +49,8 @@ class FlatColoredPerspectiveEffect(val shader: FlatColoredPerspectiveShader, cam
   }
 }
 
-class TexturedPerspectiveEffect(private val shader: TextureShader, camera: CameraEffectsData, sectorBuffer: UniformBuffer) {
-  val perspectiveEffect = ColoredPerspectiveEffect(shader.colorShader, camera)
+class TexturedPerspectiveEffect(private val shader: TextureShader, camera: CameraEffectsData, sceneBuffer: UniformBuffer) {
+  private val perspectiveEffect = ColoredPerspectiveEffect(shader.colorShader, camera, sceneBuffer)
 
   fun activate(transform: Matrix, texture: Texture, color: Vector4, normalTransform: Matrix) {
     shader.activate(texture, color, normalTransform)
@@ -68,12 +76,12 @@ data class Effects(
     val drawing: DrawingEffects
 )
 
-fun createEffects(shaders: Shaders, data: EffectsData, sectorBuffer: UniformBuffer): Effects {
-  updateLights(data.lights, sectorBuffer)
+fun createEffects(shaders: Shaders, data: EffectsData, sceneBuffer: UniformBuffer): Effects {
+  updateLights(data.lights, sceneBuffer)
   return Effects(
-      colored = ColoredPerspectiveEffect(shaders.colored, data.camera),
+      colored = ColoredPerspectiveEffect(shaders.colored, data.camera, sceneBuffer),
       flat = FlatColoredPerspectiveEffect(shaders.flat, data.camera),
-      textured = TexturedPerspectiveEffect(shaders.textured, data.camera, sectorBuffer),
+      textured = TexturedPerspectiveEffect(shaders.textured, data.camera, sceneBuffer),
       drawing = shaders.drawing
   )
 }
