@@ -8,8 +8,24 @@ import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil
 import java.lang.management.ManagementFactory
 
+fun centerWindow(window: Long) {
+    MemoryStack.stackPush().use { stack ->
+    val width = stack.mallocInt(1)
+    val height = stack.mallocInt(1)
+
+    glfwGetWindowSize(window, width, height)
+
+    val videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor())
+
+    glfwSetWindowPos(
+        window,
+        (videoMode.width() - width.get()) / 2,
+        (videoMode.height() - height.get()) / 2
+    )
+  }
+}
+
 fun createWindow(title: String, width: Int, height: Int): Long {
-//  val arch = is64Bit()
   val pid = ManagementFactory.getRuntimeMXBean().getName()
   println("pid: " + pid)
   glfwDefaultWindowHints() // optional, the current window hints are already the default
@@ -21,26 +37,10 @@ fun createWindow(title: String, width: Int, height: Int): Long {
   if (window == MemoryUtil.NULL)
     throw RuntimeException("Failed to create the GLFW window")
 
-//  glfwSetKeyCallback(window) { window2, key, scancode, action, mods ->
-//    if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
-//      glfwSetWindowShouldClose(window2, true) // We will detect this in the rendering loop
-//  }
-
-  MemoryStack.stackPush().use { stack ->
-    val width = stack.mallocInt(1)
-    val height = stack.mallocInt(1)
-
-    glfwGetWindowSize(window, width, height)
-
-    // Get the resolution of the primary monitor
-    val vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor())
-
-    glfwSetWindowPos(
-        window,
-        (vidmode.width() - width.get()) / 2,
-        (vidmode.height() - height.get()) / 2
-    )
-  }
+  val monitor = glfwGetPrimaryMonitor()
+  val videoMode = glfwGetVideoMode(monitor)
+  glfwSetWindowMonitor(window, monitor, 0, 0, videoMode.width(), videoMode.height(), videoMode.refreshRate())
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED)
 
   glfwMakeContextCurrent(window)
 
