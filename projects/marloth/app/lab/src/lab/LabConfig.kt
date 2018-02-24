@@ -2,6 +2,7 @@ package lab
 
 import haft.*
 import org.lwjgl.glfw.GLFW
+import rendering.MeshType
 import simulation.ViewMode
 
 enum class LabCommandType {
@@ -58,7 +59,7 @@ data class WorldViewConfig(
 )
 
 data class ModelViewConfig(
-    var model: String = "character",
+    var model: MeshType = MeshType.character,
     var drawVertices: Boolean = true,
     var drawEdges: Boolean = true
 )

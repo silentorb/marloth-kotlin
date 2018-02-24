@@ -12,6 +12,9 @@ fun createArc(radius: Float, count: Int, sweep: Float = Pi * 2): List<Vector3> {
     val theta = increment * i
     vertices.add(Vector3(sin(theta) * radius, cos(theta) * radius, 0f))
   }
+  if (sweep == Pi)
+    vertices.last().x = 0f
+
   return vertices
 }
 

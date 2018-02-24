@@ -13,8 +13,8 @@ import scenery.Camera
 
 private var rotation = Vector3()
 
-fun drawModelPreview(renderer: Renderer, dimensions: Vector2i, orientation: Quaternion, modelName: String) {
-  val camera = createCameraEffectsData(dimensions, Camera(Vector3(-5f, 0f, 0f), Quaternion(), 30f))
+fun drawModelPreview(renderer: Renderer, dimensions: Vector2i, orientation: Quaternion, modelName: MeshType) {
+  val camera = createCameraEffectsData(dimensions, Camera(Vector3(-6f, 0f, 1f), Quaternion(), 30f))
   val effect = FlatColoredPerspectiveEffect(renderer.shaders.flat, camera)
   val transform = Matrix().rotate(orientation)
   val mesh = renderer.meshes[modelName]!!

@@ -37,6 +37,9 @@ class FlexibleMesh {
   val vertices: List<Vector3>
     get() = faces.flatMap { it.vertices }
 
+  val distinctVertices: List<Vector3>
+    get() = vertices.distinct()
+
   fun createFace(): FlexibleFace {
     val face = FlexibleFace()
     faces.add(face)

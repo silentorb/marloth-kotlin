@@ -16,6 +16,7 @@ import scenery.Scene
 import simulation.AbstractWorld
 import haft.*
 import mythic.sculpting.FlexibleMesh
+import rendering.MeshType
 import rendering.Renderer
 
 data class LabState(
@@ -55,7 +56,7 @@ fun renderFaceNormals(renderer: Renderer, mesh: FlexibleMesh, effects: Effects, 
         .rotateY(-Pi * 0.5f)
 
     effects.flat.activate(transform, Vector4(0f, 1f, 0f, 1f))
-    renderer.meshes["line"]!!.draw(DrawMethod.lines)
+    renderer.meshes[MeshType.line]!!.draw(DrawMethod.lines)
   }
 }
 
