@@ -1,8 +1,11 @@
 package lab
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import configuration.loadConfig
+import configuration.saveConfig
+import front.GameConfig
+import front.loadGameConfig
+import front.saveGameConfig
 import main.front.setWorldMesh
 import generation.generateDefaultWorld
 import marloth.clienting.Client
@@ -18,12 +21,8 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 import kotlin.concurrent.thread
-import com.fasterxml.jackson.databind.SequenceWriter
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import simulation.changing.Instantiator
 import simulation.changing.InstantiatorConfig
-import java.io.FileOutputStream
 
 
 fun startGui() {
@@ -32,41 +31,42 @@ fun startGui() {
     gui.foo(listOf())
   }
 }
-
-fun loadLabConfig(path: String): LabConfig {
-  if (File(path).isFile()) {
-    val mapper = YAMLMapper()
-    mapper.registerModule(KotlinModule())
-
-    return Files.newBufferedReader(Paths.get(path)).use {
-      mapper.readValue(it, LabConfig::class.java)
-    }
-  }
-
-  return LabConfig()
-}
-
-fun saveLabConfig(path: String, config: LabConfig) {
-  val mapper = YAMLMapper()
-  mapper.configure(YAMLGenerator.Feature.WRITE_DOC_START_MARKER, false)
-  mapper.configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true)
-  mapper.registerModule(KotlinModule())
-
-  Files.newBufferedWriter(Paths.get(path)).use {
-    mapper.writeValue(it, config)
-  }
-}
+//
+//fun loadLabConfig(path: String): LabConfig {
+//  if (File(path).isFile()) {
+//    val mapper = YAMLMapper()
+//    mapper.registerModule(KotlinModule())
+//
+//    return Files.newBufferedReader(Paths.get(path)).use {
+//      mapper.readValue(it, LabConfig::class.java)
+//    }
+//  }
+//
+//  return LabConfig()
+//}
+//
+//fun saveLabConfig(path: String, config: LabConfig) {
+//  val mapper = YAMLMapper()
+//  mapper.configure(YAMLGenerator.Feature.WRITE_DOC_START_MARKER, false)
+//  mapper.configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true)
+//  mapper.registerModule(KotlinModule())
+//
+//  Files.newBufferedWriter(Paths.get(path)).use {
+//    mapper.writeValue(it, config)
+//  }
+//}
 
 fun saveLabConfig(config: LabConfig) {
-  saveLabConfig("labConfig.yaml", config)
+  saveConfig("labConfig.yaml", config)
 }
 
 data class LabApp(
     val platform: Platform,
     val config: LabConfig,
+    val gameConfig: GameConfig,
     val display: Display = platform.display,
     val timer: DeltaTimer = DeltaTimer(),
-    val world: World = generateDefaultWorld(InstantiatorConfig(config.gameView.defaultPlayerView)),
+    val world: World = generateDefaultWorld(InstantiatorConfig(gameConfig.gameplay.defaultPlayerView)),
     val client: Client = Client(platform),
     val labClient: LabClient = LabClient(config, client)
 )
@@ -78,12 +78,15 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
   val scenes = createScenes(app.world, app.client.screens)
   val (commands, nextState) = app.labClient.update(scenes, app.world.meta, previousState)
   val delta = app.timer.update().toFloat()
-  val instantiator = Instantiator(app.world, InstantiatorConfig(app.config.gameView.defaultPlayerView))
+  val instantiator = Instantiator(app.world, InstantiatorConfig(app.gameConfig.gameplay.defaultPlayerView))
   val updater = WorldUpdater(app.world, instantiator)
   updater.update(commands, delta)
   app.platform.process.pollEvents()
 
-  app.config.gameView.defaultPlayerView = app.world.players[0].viewMode
+  if (app.gameConfig.gameplay.defaultPlayerView != app.world.players[0].viewMode) {
+    app.gameConfig.gameplay.defaultPlayerView = app.world.players[0].viewMode
+    saveGameConfig(app.gameConfig)
+  }
   if (saveIncrement++ > 60 * 3) {
     saveIncrement = 0
     saveLabConfig(app.config)
@@ -93,8 +96,9 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
     labLoop(app, nextState)
 }
 
-fun runApp(platform: Platform, config: LabConfig) {
-  val app = LabApp(platform, config)
+fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
+  platform.display.initialize(gameConfig.display)
+  val app = LabApp(platform, config, gameConfig)
   setWorldMesh(app.world.meta, app.client)
   labLoop(app, LabState(mapOf(), initialGameInputState()))
 
@@ -104,8 +108,9 @@ object App {
   @JvmStatic
   fun main(args: Array<String>) {
     System.setProperty("joml.format", "false")
-    val config = loadLabConfig("labConfig.yaml")
+    val config = loadConfig<LabConfig>("labConfig.yaml") ?: LabConfig()
+    val gameConfig = loadGameConfig()
     saveLabConfig(config)
-    runApp(createDesktopPlatform("Dev Lab", config.width, config.height), config)
+    runApp(createDesktopPlatform("Dev Lab"), config, gameConfig)
   }
 }

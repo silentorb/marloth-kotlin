@@ -1,6 +1,9 @@
 package main.front
 
 import commanding.CommandType
+import configuration.saveConfig
+import front.GameConfig
+import front.loadGameConfig
 import generation.generateDefaultWorld
 import haft.HaftInputState
 import marloth.clienting.Client
@@ -16,6 +19,7 @@ import visualizing.createScenes
 
 data class App(
     val platform: Platform,
+    val config: GameConfig,
     val display: Display = platform.display,
     val timer: DeltaTimer = DeltaTimer(),
     val world: World = generateDefaultWorld(InstantiatorConfig()),
@@ -41,7 +45,9 @@ tailrec fun gameLoop(app: App, previousState: AppState) {
 }
 
 fun runApp(platform: Platform) {
-  val app = App(platform)
+  val config = loadGameConfig()
+  val app = App(platform, config)
+  platform.display.initialize(config.display)
   setWorldMesh(app.world.meta, app.client)
   gameLoop(app, AppState())
 }

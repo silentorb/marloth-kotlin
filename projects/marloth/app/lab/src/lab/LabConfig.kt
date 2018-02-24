@@ -63,15 +63,8 @@ data class ModelViewConfig(
     var drawEdges: Boolean = true
 )
 
-data class GameViewConfig(
-    var defaultPlayerView: ViewMode = ViewMode.topDown
-)
-
 data class LabConfig(
     var view: String = "world",
-    var width: Int = 800,
-    var height: Int = 600,
-    var gameView: GameViewConfig = GameViewConfig(),
     var worldView: WorldViewConfig = WorldViewConfig(),
     var modelView: ModelViewConfig = ModelViewConfig()
 )

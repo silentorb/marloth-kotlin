@@ -13,7 +13,15 @@ interface PlatformInput {
   fun getGamepads(): List<Gamepad>
 }
 
+data class DisplayConfig(
+    var width: Int = 800,
+    var height: Int = 600,
+    var fullscreen: Boolean = false,
+    var windowedFullscreen: Boolean = false // Whether fullscreen uses windowed fullscreen
+)
+
 interface Display {
+  fun initialize(config: DisplayConfig)
   fun swapBuffers()
   fun getInfo(): WindowInfo
 }
