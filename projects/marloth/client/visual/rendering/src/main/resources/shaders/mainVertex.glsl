@@ -9,15 +9,14 @@ uniform mat4 normalTransform;
 uniform vec4 uniformColor;
 
 out vec4 fragmentColor;
+out vec4 fragmentPosition;
+out vec3 fragmentNormal;
 out vec2 textureCoordinates;
 
-// #{lighting}
-
 void main() {
-  vec3 fragmentNormal = normalize((normalTransform * vec4(normal, 1.0)).xyz);
-  vec4 modelPosition = modelTransform * vec4(position, 1.0);
-  vec3 rgb = processLights(uniformColor, fragmentNormal, cameraDirection, modelPosition.xyz);
+  fragmentColor = uniformColor;
+  fragmentPosition = modelTransform * vec4(position, 1.0);
+  fragmentNormal = normalize((normalTransform * vec4(normal, 1.0)).xyz);
   gl_Position = cameraTransform * modelTransform * vec4(position, 1);
-  fragmentColor = vec4(rgb, uniformColor.a);
   textureCoordinates = uv;
 }

@@ -1,11 +1,8 @@
 package visualizing
 
+import mythic.spatial.*
 import org.joml.times
 import scenery.*
-import mythic.spatial.Matrix
-import mythic.spatial.Pi
-import mythic.spatial.Quaternion
-import mythic.spatial.Vector3
 import org.joml.plus
 import simulation.*
 
@@ -68,7 +65,12 @@ fun createScene(world: World, screen: Screen, player: Player) =
         createCamera(world, screen),
         selectBodies(world, player),
         player.playerId,
-        world.lights
+        world.lights.plus(Light(
+            type = LightType.point,
+            color = Vector4(1f, 1f, 1f, 1f),
+            position = player.character.body.position + Vector3(0f, 0f, 2f),
+            direction = Vector4(0f, 0f, 0f, 15f)
+        ))
     )
 
 fun createScenes(world: World, screens: List<Screen>) =

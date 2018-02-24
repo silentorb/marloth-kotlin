@@ -129,77 +129,66 @@ void main() {
 }
 """
 
-private val coloredVertex = """
-in vec3 position;
-in vec3 normal;
-in vec4 color;
-
-out vec4 fragment_color;
-
-uniform mat4 normalTransform;
-uniform vec4 uniformColor;
-uniform mat4 cameraTransform;
-uniform mat4 modelTransform;
-uniform vec3 cameraDirection;
-
-${lighting}
-
-void main() {
-  vec3 fragmentNormal = normalize((normalTransform * vec4(normal, 1.0)).xyz);
-  vec4 modelPosition = modelTransform * vec4(position, 1.0);
-  gl_Position = cameraTransform * modelTransform * vec4(position, 1);
-	vec3 rgb = processLights(color, fragmentNormal, cameraDirection, modelPosition.xyz);
-  fragment_color = vec4(rgb, color.a) * uniformColor;
-}
-"""
-
-private val coloredFragment = """
-in vec4 fragmentColor;
-out vec4 output_color;
-
-void main() {
-	output_color = fragmentColor;
-}
-"""
-
 private val mainVertex = loadResource("shaders/mainVertex.glsl").replace("// #{lighting}", lighting)
 
 private val texturedVertex = """
 uniform mat4 cameraTransform;
 uniform mat4 modelTransform;
-uniform mat4 normalTransform;
-uniform vec3 cameraDirection;
 
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
 layout (location = 2) in vec2 uv;
 
 out vec4 fragmentColor;
+out vec4 fragmentPosition;
+out vec3 fragmentNormal;
 out vec2 textureCoordinates;
 
 ${lighting}
 
 void main() {
-  vec3 fragmentNormal = normalize((normalTransform * vec4(normal, 1.0)).xyz);
-  vec4 modelPosition = normalTransform * vec4(position, 1.0);
-  vec3 rgb = processLights(vec4(1), fragmentNormal, cameraDirection, modelPosition.xyz);
-
-  fragmentColor = vec4(rgb, 1);
+  fragmentColor = vec4(1.0);
+  fragmentPosition = normalTransform * vec4(fragmentPosition, 1.0);
+  fragmentNormal = normalize((normalTransform * vec4(normal, 1.0)).xyz);
   gl_Position = cameraTransform * modelTransform * vec4(position, 1);
   textureCoordinates = uv;
 }
 """
 
+private val coloredFragment = """
+in vec4 fragmentPosition;
+in vec3 fragmentNormal;
+in vec4 fragmentColor;
+out vec4 output_color;
+uniform mat4 normalTransform;
+uniform vec3 cameraDirection;
+uniform mat4 modelTransform;
+${lighting}
+
+void main() {
+  vec3 lightResult = processLights(vec4(1), fragmentNormal, cameraDirection, fragmentPosition.xyz);
+	output_color = fragmentColor * vec4(lightResult, 1.0);
+}
+"""
+
 private val texturedFragment = """
+in vec4 fragmentPosition;
+in vec3 fragmentNormal;
 in vec4 fragmentColor;
 in vec2 textureCoordinates;
 out vec4 output_color;
 
+${lighting}
+
 uniform sampler2D text;
+uniform mat4 normalTransform;
+uniform vec3 cameraDirection;
+uniform mat4 modelTransform;
 
 void main() {
   vec4 sampled = texture(text, textureCoordinates);
-  output_color = sampled * fragmentColor;
+  vec3 lightResult = processLights(vec4(1), fragmentNormal, cameraDirection, fragmentPosition.xyz);
+  output_color = sampled * fragmentColor * vec4(lightResult, 1.0);
 }
 """
 

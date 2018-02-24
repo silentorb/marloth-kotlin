@@ -2,7 +2,7 @@ struct Light {
 	int type;
 	vec4 color;
 	vec3 position;
-	vec3 direction;
+	vec4 direction;
 };
 
 struct Scene {
@@ -37,8 +37,10 @@ Relationship get_relationship(Light light, vec3 position) {
 
 vec3 processLight(Light light, vec4 input_color, vec3 normal, vec3 cameraDirection, vec3 position) {
 	Relationship info = get_relationship(light, position);
-    float maxDistance = 10;
-    float distanceFade = min(1.0, maxDistance / max(info.distance, 0.01));
+    float maxDistance = light.direction.w;
+    float distanceValue = 1 - min(maxDistance, distance(position, light.position)) / maxDistance;
+    float distanceFade = distanceValue;// * distanceValue;
+//    return vec3(distanceFade);
 	vec3 lightColor = light.color.xyz * light.color.w;
 
 	float attenuation = 1.5;
