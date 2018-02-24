@@ -46,6 +46,7 @@ fun initializeFullscreen(window: Long) {
   val videoMode = glfwGetVideoMode(monitor)
   glfwSetWindowMonitor(window, monitor, 0, 0, videoMode.width(), videoMode.height(), videoMode.refreshRate())
   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED)
+  glfwFocusWindow(window) // For some reason the window loses focus when switching to fullscreen mode?
 }
 
 fun initializeWindow(window: Long, config: DisplayConfig) {
