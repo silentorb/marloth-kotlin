@@ -10,14 +10,44 @@ import mythic.spatial.*
 import org.joml.Vector2i
 import rendering.*
 import scenery.Camera
+import groovy.lang.GroovyShell
+import mythic.sculpting.FlexibleMesh
+import org.codehaus.groovy.control.CompilerConfiguration
+import org.codehaus.groovy.control.customizers.ImportCustomizer
 
 private var rotation = Vector3()
 
+class Foo {
+  fun getValue() = 5
+
+  fun test():FlexibleMesh {
+    val customizer = ImportCustomizer()
+    customizer.addStaticImport("lab.views.ModelViewKt", "getTValue")
+    customizer.addStaticImport("rendering.MeshesKt", "createHumanoid")
+    val configuration = CompilerConfiguration()
+    configuration.addCompilationCustomizers(customizer)
+    val shell = GroovyShell(Thread.currentThread().getContextClassLoader(), configuration)
+    val script = """
+import org.joml.Vector3f as Vector3
+import org.joml.Vector4f as Vector4
+3 * getTValue()
+ createHumanoid()
+"""
+    val test = shell.evaluate(script)
+    return test as FlexibleMesh
+//    println(test)
+  }
+}
+
+fun getTValue() = 5
 fun drawModelPreview(renderer: Renderer, dimensions: Vector2i, orientation: Quaternion, modelName: MeshType) {
   val camera = createCameraEffectsData(dimensions, Camera(Vector3(-6f, 0f, 1f), Quaternion(), 30f))
   val effect = FlatColoredPerspectiveEffect(renderer.shaders.flat, camera)
   val transform = Matrix().rotate(orientation)
-  val mesh = renderer.meshes[modelName]!!
+//  val mesh = renderer.meshes[modelName]!!
+
+  val sourceMesh = Foo().test()
+  val mesh = createSimpleMesh(sourceMesh, renderer.vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f))
 
   globalState.depthEnabled = true
   effect.activate(transform, Vector4(0.3f, 0.4f, 0.5f, 0.8f))
@@ -31,6 +61,7 @@ fun drawModelPreview(renderer: Renderer, dimensions: Vector2i, orientation: Quat
   effect.activate(transform, Vector4(0.1f, 0f, 0f, 0.8f))
   mesh.draw(DrawMethod.points)
 
+  mesh.dispose()
 //  renderFaceNormals(renderer,mesh,)
 
   globalState.depthEnabled = false

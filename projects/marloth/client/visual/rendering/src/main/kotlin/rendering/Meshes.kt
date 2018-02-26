@@ -85,6 +85,9 @@ enum class MeshType {
   sphere
 }
 
+typealias MeshGenerator = () -> FlexibleMesh
+
+typealias MeshGeneratorMap = Map<MeshType, MeshGenerator>
 typealias MeshMap = Map<MeshType, SimpleMesh>
 
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(

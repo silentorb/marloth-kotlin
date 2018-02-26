@@ -1,5 +1,9 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
+dependencies {
+  compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.13'
+}
+
 requires(
     'spatial', 'drawing', 'bloom', 'generation', 'commanding', 'mythic_desktop',
     'marloth_clienting', 'serving', 'visualizing', 'quartz', 'platforming', 'marloth_game',
