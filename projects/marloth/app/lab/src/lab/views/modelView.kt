@@ -1,5 +1,6 @@
 package lab.views
 
+import groovier.createGroovyShell
 import lab.LabCommandType
 import lab.ModelViewConfig
 import mythic.bloom.*
@@ -10,43 +11,42 @@ import mythic.spatial.*
 import org.joml.Vector2i
 import rendering.*
 import scenery.Camera
-import groovy.lang.GroovyShell
 import mythic.sculpting.FlexibleMesh
-import org.codehaus.groovy.control.CompilerConfiguration
-import org.codehaus.groovy.control.customizers.ImportCustomizer
 
 private var rotation = Vector3()
 
-class Foo {
-  fun getValue() = 5
+val shell = createGroovyShell(
+    staticClasses = listOf(
+        "rendering.MeshesKt",
+        "mythic.sculpting.CreateKt",
+        "mythic.sculpting.OperationsKt"
+    ),
+    aliases = mapOf(
+        "org.joml.Vector3f" to "Vector3",
+        "org.joml.Vector4f" to "Vector4",
+        "org.joml.Matrix4f" to "Matrix"
+    ),
+    wildcards = listOf(
+        "mythic.sculpting",
+        "org.joml"
+    )
+)
 
-  fun test():FlexibleMesh {
-    val customizer = ImportCustomizer()
-    customizer.addStaticImport("lab.views.ModelViewKt", "getTValue")
-    customizer.addStaticImport("rendering.MeshesKt", "createHumanoid")
-    val configuration = CompilerConfiguration()
-    configuration.addCompilationCustomizers(customizer)
-    val shell = GroovyShell(Thread.currentThread().getContextClassLoader(), configuration)
-    val script = """
-import org.joml.Vector3f as Vector3
-import org.joml.Vector4f as Vector4
-3 * getTValue()
- createHumanoid()
-"""
-    val test = shell.evaluate(script)
-    return test as FlexibleMesh
-//    println(test)
-  }
-}
-
-fun getTValue() = 5
 fun drawModelPreview(renderer: Renderer, dimensions: Vector2i, orientation: Quaternion, modelName: MeshType) {
   val camera = createCameraEffectsData(dimensions, Camera(Vector3(-6f, 0f, 1f), Quaternion(), 30f))
   val effect = FlatColoredPerspectiveEffect(renderer.shaders.flat, camera)
   val transform = Matrix().rotate(orientation)
 //  val mesh = renderer.meshes[modelName]!!
 
-  val sourceMesh = Foo().test()
+  val script = """
+  def mesh = new FlexibleMesh()
+  createSphere(mesh, 0.6f, 8, 3)
+  translate(mesh.distinctVertices, new Matrix4f().translate(0f, 0f, 1.5f))
+  createCylinder(mesh, 0.5f, 8, 1f)
+  return mesh
+"""
+
+  val sourceMesh = shell.evaluate(script) as FlexibleMesh
   val mesh = createSimpleMesh(sourceMesh, renderer.vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f))
 
   globalState.depthEnabled = true
