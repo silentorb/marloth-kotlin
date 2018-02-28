@@ -5,6 +5,7 @@ import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import org.joml.*
 import scenery.Camera
+import scenery.ProjectionType
 
 fun createViewMatrix(position: Vector3, orientation: Quaternion): Matrix {
   val forward = orientation * Vector3(1f, 0f, 0f)
@@ -24,8 +25,17 @@ fun createPerspectiveMatrix(dimensions: Vector2i, angle: Float = 45f): Matrix {
       .setPerspective(radians, ratio, 0.01f, 200.0f)
 }
 
+fun createOrthographicMatrix(zoom: Float): Matrix {
+  return Matrix()
+      .setOrtho(-1f * zoom, 1f * zoom, -1f * zoom, 1f * zoom, 0.01f, 200.0f)
+}
+
 fun createCameraMatrix(dimensions: Vector2i, camera: Camera): Matrix {
-  val projection = createPerspectiveMatrix(dimensions, camera.angle)
+  val projection = if (camera.projectionType == ProjectionType.orthographic)
+    createOrthographicMatrix(camera.position.length())
+  else
+    createPerspectiveMatrix(dimensions, camera.angle)
+
   val view = createViewMatrix(camera.position, camera.orientation)
   return projection * view
 }

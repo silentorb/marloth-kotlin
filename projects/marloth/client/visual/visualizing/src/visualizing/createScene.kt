@@ -7,6 +7,7 @@ import org.joml.plus
 import simulation.*
 
 fun createFirstPersonCamera(character: Character): Camera = Camera(
+    ProjectionType.perspective,
     character.body.position + Vector3(0f, 0f, 0.4f),
 //    world.player.orientation,
     character.facingQuaternion
@@ -15,14 +16,16 @@ fun createFirstPersonCamera(character: Character): Camera = Camera(
 )
 
 fun createThirdPersonCamera(player: Body): Camera = Camera(
+    ProjectionType.perspective,
     player.position,
     Quaternion(0f, 0f, .1f),
     45f
 )
 
-fun createOrthographicCamera(player: Body): Camera {
+fun createTopDownCamera(player: Body): Camera {
   val position = Vector3(0f, -20f, 20f) + player.position
   return Camera(
+      ProjectionType.perspective,
       position,
       Quaternion().rotate(0f, 0f, Pi * 0.5f)
           *
@@ -38,7 +41,7 @@ fun createCamera(world: World, screen: Screen): Camera {
   return when (player.viewMode) {
     ViewMode.firstPerson -> createFirstPersonCamera(player.character)
     ViewMode.thirdPerson -> createThirdPersonCamera(body)
-    ViewMode.topDown -> createOrthographicCamera(body)
+    ViewMode.topDown -> createTopDownCamera(body)
   }
 }
 

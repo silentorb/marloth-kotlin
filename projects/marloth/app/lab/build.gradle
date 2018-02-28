@@ -1,5 +1,13 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
+dependencies {
+//  compile(project(":kotlin-stdlib"))
+  compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: '1.2.21'
+  compile group: 'org.jetbrains.kotlin', name: 'kotlin-script-runtime', version: '1.2.21'
+  compile group: 'org.jetbrains.kotlin', name: 'kotlin-compiler-embeddable', version: '1.2.21'
+  compile group: 'org.jetbrains.kotlin', name: 'kotlin-script-util', version: '1.2.21'
+}
+
 requires(
     'spatial', 'drawing', 'bloom', 'generation', 'commanding', 'mythic_desktop',
     'marloth_clienting', 'serving', 'visualizing', 'quartz', 'platforming', 'marloth_game',
