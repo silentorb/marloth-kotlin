@@ -159,7 +159,15 @@ class State {
     set(value) {
       if (field != value) {
         field = value
-        glDepthMask(value);
+        glDepthMask(value)
+      }
+    }
+
+  var cullFaces: Boolean = false
+    set(value) {
+      if (field != value) {
+        field = value
+        setEnabled(GL_CULL_FACE, value)
       }
     }
 }

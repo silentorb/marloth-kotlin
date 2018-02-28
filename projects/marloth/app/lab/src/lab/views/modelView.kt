@@ -1,6 +1,5 @@
 package lab.views
 
-import groovier.createGroovyShell
 import lab.LabCommandType
 import lab.ModelViewConfig
 import mythic.bloom.*
@@ -11,30 +10,34 @@ import mythic.spatial.*
 import org.joml.Vector2i
 import rendering.*
 import scenery.Camera
-import mythic.sculpting.FlexibleMesh
+import scenery.ProjectionType
 
 private var rotation = Vector3()
 
-val shell = createGroovyShell(
-    staticClasses = listOf(
-        "rendering.MeshesKt",
-        "mythic.sculpting.CreateKt",
-        "mythic.sculpting.OperationsKt"
-    ),
-    aliases = mapOf(
-        "org.joml.Vector3f" to "Vector3",
-        "org.joml.Vector4f" to "Vector4",
-        "org.joml.Matrix4f" to "Matrix"
-    ),
-    wildcards = listOf(
-        "mythic.sculpting",
-        "org.joml"
-    )
-)
+//val shell = createGroovyShell(
+//    staticClasses = listOf(
+//        "rendering.MeshesKt",
+//        "mythic.sculpting.CreateKt",
+//        "mythic.sculpting.OperationsKt"
+//    ),
+//    aliases = mapOf(
+//        "org.joml.Vector3f" to "Vector3",
+//        "org.joml.Vector4f" to "Vector4",
+//        "org.joml.Matrix4f" to "Matrix"
+//    ),
+//    wildcards = listOf(
+//        "mythic.sculpting",
+//        "org.joml"
+//    )
+//)
+private val backgroundGray = 0.22f
+private val faceGray = 0.1f
+private val lineColor = Vector4(0f, 0f, 0f, 1f)
 
 fun drawModelPreview(renderer: Renderer, dimensions: Vector2i, orientation: Quaternion, modelName: MeshType) {
-  val camera = createCameraEffectsData(dimensions, Camera(Vector3(-6f, 0f, 1f), Quaternion(), 30f))
-  val effect = FlatColoredPerspectiveEffect(renderer.shaders.flat, camera)
+  val camera = Camera(ProjectionType.orthographic, Vector3(-2f, 0f, 1f), Quaternion(), 30f)
+  val cameraData = createCameraEffectsData(dimensions, camera)
+  val effect = FlatColoredPerspectiveEffect(renderer.shaders.flat, cameraData)
   val transform = Matrix().rotate(orientation)
 //  val mesh = renderer.meshes[modelName]!!
 
@@ -46,19 +49,24 @@ fun drawModelPreview(renderer: Renderer, dimensions: Vector2i, orientation: Quat
   return mesh
 """
 
-  val sourceMesh = shell.evaluate(script) as FlexibleMesh
+//  val sourceMesh = shell.evaluate(script) as FlexibleMesh
+  val sourceMesh = createHumanoid()
   val mesh = createSimpleMesh(sourceMesh, renderer.vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f))
 
   globalState.depthEnabled = true
-  effect.activate(transform, Vector4(0.3f, 0.4f, 0.5f, 0.8f))
+  globalState.blendEnabled = true
+  globalState.cullFaces = true
+  effect.activate(transform, Vector4(faceGray, faceGray, faceGray, 0.3f))
   mesh.draw(DrawMethod.triangleFan)
+  globalState.cullFaces = false
 
-  globalState.lineThickness = 2f
-  effect.activate(transform, Vector4(1f, 1f, 0f, 0.6f))
+  globalState.depthEnabled = false
+  globalState.lineThickness = 1f
+  effect.activate(transform, lineColor)
   mesh.draw(DrawMethod.lineLoop)
 
   globalState.pointSize = 3f
-  effect.activate(transform, Vector4(0.1f, 0f, 0f, 0.8f))
+  effect.activate(transform, lineColor)
   mesh.draw(DrawMethod.points)
 
   mesh.dispose()
@@ -70,10 +78,14 @@ fun drawModelPreview(renderer: Renderer, dimensions: Vector2i, orientation: Quat
 class ModelView(val config: ModelViewConfig, val renderer: Renderer) : View {
 
   override fun createLayout(dimensions: Vector2i): LabLayout {
-    val draw = { b: Bounds, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
+    val draw = { b: Bounds, canvas: Canvas ->
+      globalState.depthEnabled = false
+      canvas.drawSquare(b.position, b.dimensions, canvas.solid(Vector4(backgroundGray, backgroundGray, backgroundGray, 1f)))
+      drawBorder(b, canvas, Vector4(0f, 0f, 1f, 1f))
+    }
     val orientation = Quaternion()
-        .rotateZ(rotation.z)
         .rotateY(rotation.y)
+        .rotateZ(rotation.z)
 
     val panels = listOf(
         Pair(Measurement(Measurements.pixel, 200f), draw),
@@ -97,9 +109,10 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer) : View {
   val rotateSpeedY = 0.02f
 
   override fun getCommands(): LabCommandMap = mapOf(
-      LabCommandType.rotateLeft to { _ -> rotation.z += rotateSpeedZ },
-      LabCommandType.rotateRight to { _ -> rotation.z -= rotateSpeedZ },
-      LabCommandType.rotateUp to { _ -> rotation.y += rotateSpeedY },
-      LabCommandType.rotateDown to { _ -> rotation.y -= rotateSpeedY }
+      LabCommandType.rotateLeft to { c -> rotation.z += rotateSpeedZ * c.value },
+      LabCommandType.rotateRight to { c -> rotation.z -= rotateSpeedZ * c.value }
+      ,
+      LabCommandType.rotateUp to { c -> rotation.y += rotateSpeedY * c.value },
+      LabCommandType.rotateDown to { c -> rotation.y -= rotateSpeedY * c.value }
   )
 }
