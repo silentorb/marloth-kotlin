@@ -6,11 +6,17 @@ import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
+import mythic.sculpting.FlexibleMesh
 import mythic.spatial.*
+import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.joml.Vector2i
 import rendering.*
 import scenery.Camera
 import scenery.ProjectionType
+import javax.script.ScriptEngine
+import javax.script.ScriptEngineManager
+import javax.script.SimpleScriptContext
+
 
 private var rotation = Vector3()
 
@@ -30,9 +36,57 @@ private var rotation = Vector3()
 //        "org.joml"
 //    )
 //)
+
 private val backgroundGray = 0.22f
 private val faceGray = 0.1f
 private val lineColor = Vector4(0f, 0f, 0f, 1f)
+
+val imports = """
+import mythic.drawing.DrawingVertexSchemas
+import mythic.drawing.createDrawingVertexSchemas
+import mythic.glowing.SimpleMesh
+import mythic.glowing.VertexAttribute
+import mythic.glowing.VertexSchema
+import mythic.sculpting.*
+import mythic.spatial.Matrix
+import mythic.spatial.Vector3
+import mythic.spatial.Vector4
+"""
+
+fun createScriptEngine(): ScriptEngine {
+  setIdeaIoUseFallback()
+  val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+  engine.eval(imports)
+  return engine
+}
+
+val engine = createScriptEngine()
+val script = """
+  val mesh = bindings["mesh"] as FlexibleMesh
+  createSphere(mesh, 0.6f, 8, 3)
+  translate(mesh.distinctVertices, Matrix().translate(0f, 0f, 1.5f))
+  createCylinder(mesh, 0.5f, 8, 1f)
+"""
+
+typealias MeshGenerator = (FlexibleMesh) -> Unit
+
+private var result: MeshGenerator? = null
+
+fun updateResult() {
+  val context = SimpleScriptContext()
+  engine.eval(imports, context)
+  result = engine.eval("{ mesh: FlexibleMesh -> " + script + "}", context) as MeshGenerator
+}
+
+var smesh: FlexibleMesh? = null
+
+fun updateResult2() {
+  smesh = FlexibleMesh()
+  engine.put("mesh", smesh)
+  engine.eval(script)
+//  val res1 = engine.eval("1 + 3")
+
+}
 
 fun drawModelPreview(renderer: Renderer, dimensions: Vector2i, orientation: Quaternion, modelName: MeshType) {
   val camera = Camera(ProjectionType.orthographic, Vector3(-2f, 0f, 1f), Quaternion(), 30f)
@@ -41,14 +95,16 @@ fun drawModelPreview(renderer: Renderer, dimensions: Vector2i, orientation: Quat
   val transform = Matrix().rotate(orientation)
 //  val mesh = renderer.meshes[modelName]!!
 
-  val script = """
-  def mesh = new FlexibleMesh()
-  createSphere(mesh, 0.6f, 8, 3)
-  translate(mesh.distinctVertices, new Matrix4f().translate(0f, 0f, 1.5f))
-  createCylinder(mesh, 0.5f, 8, 1f)
-  return mesh
-"""
 
+//  val context = SimpleScriptContext()
+//  if (result == null)
+//    updateResult()
+
+//  if (smesh == null)
+//    updateResult2()
+
+//  val sourceMesh = smesh!!
+//  result!!(sourceMesh)
 //  val sourceMesh = shell.evaluate(script) as FlexibleMesh
   val sourceMesh = createHumanoid()
   val mesh = createSimpleMesh(sourceMesh, renderer.vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f))
@@ -113,6 +169,8 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer) : View {
       LabCommandType.rotateRight to { c -> rotation.z -= rotateSpeedZ * c.value }
       ,
       LabCommandType.rotateUp to { c -> rotation.y += rotateSpeedY * c.value },
-      LabCommandType.rotateDown to { c -> rotation.y -= rotateSpeedY * c.value }
+      LabCommandType.rotateDown to { c -> rotation.y -= rotateSpeedY * c.value },
+      LabCommandType.update to { _ -> updateResult2() },
+      LabCommandType.cameraViewFront to { _ -> rotation = Vector3(0f) }
   )
 }

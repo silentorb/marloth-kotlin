@@ -31,30 +31,6 @@ fun startGui() {
     gui.foo(listOf())
   }
 }
-//
-//fun loadLabConfig(path: String): LabConfig {
-//  if (File(path).isFile()) {
-//    val mapper = YAMLMapper()
-//    mapper.registerModule(KotlinModule())
-//
-//    return Files.newBufferedReader(Paths.get(path)).use {
-//      mapper.readValue(it, LabConfig::class.java)
-//    }
-//  }
-//
-//  return LabConfig()
-//}
-//
-//fun saveLabConfig(path: String, config: LabConfig) {
-//  val mapper = YAMLMapper()
-//  mapper.configure(YAMLGenerator.Feature.WRITE_DOC_START_MARKER, false)
-//  mapper.configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true)
-//  mapper.registerModule(KotlinModule())
-//
-//  Files.newBufferedWriter(Paths.get(path)).use {
-//    mapper.writeValue(it, config)
-//  }
-//}
 
 fun saveLabConfig(config: LabConfig) {
   saveConfig("labConfig.yaml", config)
@@ -111,7 +87,7 @@ object App {
     val config = loadConfig<LabConfig>("labConfig.yaml") ?: LabConfig()
     val gameConfig = loadGameConfig()
     saveLabConfig(config)
-//    startGui()
+    startGui()
     runApp(createDesktopPlatform("Dev Lab"), config, gameConfig)
   }
 }
