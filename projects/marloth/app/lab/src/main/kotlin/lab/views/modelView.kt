@@ -61,12 +61,21 @@ fun createScriptEngine(): ScriptEngine {
 }
 
 val engine = createScriptEngine()
-val script = """
+private var modelCode = """
   val mesh = bindings["mesh"] as FlexibleMesh
   createSphere(mesh, 0.6f, 8, 3)
   translate(mesh.distinctVertices, Matrix().translate(0f, 0f, 1.5f))
   createCylinder(mesh, 0.5f, 8, 1f)
 """
+
+val setModelCode = { newCode: String ->
+  if (modelCode != newCode) {
+    modelCode = newCode
+    updateResult2()
+  }
+}
+
+val getModelCode = { modelCode }
 
 typealias MeshGenerator = (FlexibleMesh) -> Unit
 
@@ -75,7 +84,7 @@ private var result: MeshGenerator? = null
 fun updateResult() {
   val context = SimpleScriptContext()
   engine.eval(imports, context)
-  result = engine.eval("{ mesh: FlexibleMesh -> " + script + "}", context) as MeshGenerator
+  result = engine.eval("{ mesh: FlexibleMesh -> " + modelCode + "}", context) as MeshGenerator
 }
 
 var smesh: FlexibleMesh? = null
@@ -83,7 +92,7 @@ var smesh: FlexibleMesh? = null
 fun updateResult2() {
   smesh = FlexibleMesh()
   engine.put("mesh", smesh)
-  engine.eval(script)
+  engine.eval(modelCode)
 //  val res1 = engine.eval("1 + 3")
 
 }
@@ -100,13 +109,13 @@ fun drawModelPreview(renderer: Renderer, dimensions: Vector2i, orientation: Quat
 //  if (result == null)
 //    updateResult()
 
-//  if (smesh == null)
-//    updateResult2()
+  if (smesh == null)
+    updateResult2()
 
 //  val sourceMesh = smesh!!
 //  result!!(sourceMesh)
 //  val sourceMesh = shell.evaluate(script) as FlexibleMesh
-  val sourceMesh = createHumanoid()
+  val sourceMesh = smesh!!
   val mesh = createSimpleMesh(sourceMesh, renderer.vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f))
 
   globalState.depthEnabled = true

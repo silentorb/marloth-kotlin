@@ -8,6 +8,8 @@ import front.loadGameConfig
 import front.saveGameConfig
 import main.front.setWorldMesh
 import generation.generateDefaultWorld
+import lab.views.getModelCode
+import lab.views.setModelCode
 import marloth.clienting.Client
 import marloth.clienting.initialGameInputState
 import mythic.desktop.createDesktopPlatform
@@ -27,8 +29,8 @@ import simulation.changing.InstantiatorConfig
 
 fun startGui() {
   thread(true, false, null, "JavaFX GUI", -1) {
-    val gui = LabGui()
-    gui.foo(listOf())
+//    val gui = LabGui(setModelCode, getModelCode)
+    LabGui.main(listOf())
   }
 }
 
