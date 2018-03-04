@@ -7,6 +7,7 @@ import mythic.glowing.VertexAttribute
 import mythic.glowing.VertexSchema
 import mythic.sculpting.*
 import mythic.spatial.Matrix
+import mythic.spatial.Pi
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 
@@ -35,10 +36,34 @@ fun createSphere(): FlexibleMesh {
 
 fun createHumanoid(): FlexibleMesh {
   val mesh = FlexibleMesh()
-  createSphere(mesh, 0.6f, 8, 3)
-  translate(mesh.distinctVertices, Matrix().translate(0f, 0f, 1.5f))
-  createCylinder(mesh, 0.5f, 8, 1f)
-//  translate(mesh.vertices, Matrix().translate(0f, 0f, -0.1f))
+  val headPath = createArc(0.6f, 8, Pi).take(7)
+  headPath.last().x *= 0.5f
+//  val bodyPath = flipVertical(createArc(0.7f, 8, Pi).take(7)).reversed()
+//  bodyPath.first().x *= 0.5f
+//  translate(Matrix().scale(Vector3(1f, 1f, 1.2f)), bodyPath)
+
+  val bodyFront = listOf(
+      Vector3(0.05f, 0f, 1f),
+      Vector3(0.1f, 0f, 0.75f),
+      Vector3(0.5f, 0f, 0.7f),
+      Vector3(0.5f, 0f, 0.25f),
+      Vector3(0.5f, 0f, 0f)
+  )
+
+  val bodySide = listOf(
+      Vector3(0.05f, 0f, 1f),
+      Vector3(0.1f, 0f, 0.75f),
+      Vector3(0.1f, 0f, 0.5f),
+      Vector3(0.1f, 0f, 0.25f),
+      Vector3(0.1f, 0f, 0f)
+  )
+
+  val neck = 0.05f
+  val frontPath = joinPaths(neck, headPath, bodyFront)
+  val sidePath = joinPaths(neck, headPath, bodySide)
+  latheTwoPaths(mesh, frontPath, sidePath)
+//  lathe(mesh, frontPath, 8)
+  alignToFloor(mesh.distinctVertices)
   return mesh
 }
 

@@ -1,6 +1,9 @@
 package mythic.sculpting
 
 import mythic.spatial.*
+import org.joml.plus
+
+typealias Vertices = List<Vector3>
 
 fun skinLoop(mesh: FlexibleMesh, first: List<Vector3>, second: List<Vector3>) {
   val sides = (0 until first.size).map { a ->
@@ -35,38 +38,125 @@ fun extrudeBasic(mesh: FlexibleMesh, face: FlexibleFace, transform: Matrix) {
   skinLoop(mesh, face.vertices, secondVertices)
 }
 
-fun lathe(mesh: FlexibleMesh, vertices: List<Vector3>, count: Int, sweep: Float = Pi * 2) {
+fun keepOrRotate(matrix: Matrix, input: Vector3): Vector3 =
+    if (input.x == 0f && input.y == 0f)
+      input
+    else
+      input.transform(matrix)
+
+fun lathe(mesh: FlexibleMesh, path: List<Vector3>, count: Int, sweep: Float = Pi * 2) {
   val increment = sweep / count
-  var previous = vertices
-  assert(vertices.first().x == 0f && vertices.first().y == 0f)
-  assert(vertices.last().x == 0f && vertices.last().y == 0f)
+  var previous = path
   for (i in 1 until count) {
-//    val next = vertices.map { it.transform(Matrix().rotateZ(i * increment)) }
-    val next = listOf(vertices.first())
-        .plus(vertices.take(vertices.size - 1).drop(1).map { it.transform(Matrix().rotateZ(i * increment)) })
-        .plus(vertices.last())
+    val matrix = Matrix().rotateZ(i * increment)
+    val next = path.map { keepOrRotate(matrix, it) }
     skin(mesh, previous, next)
     previous = next
   }
-  skin(mesh, previous, vertices)
+  skin(mesh, previous, path)
 }
 
-fun translate(vertices: List<Vector3>, matrix: Matrix) {
+fun interpolatePaths(firstPath: Vertices, secondPath: Vertices, weight: Float): Vertices {
+  val secondIterator = secondPath.iterator()
+  return firstPath.map { secondIterator.next() * weight + it * (1 - weight) }
+}
+
+fun sawRange(x: Float) =
+    Math.abs((x % 2) - 1)
+
+fun sineRange(x: Float): Float =
+    Math.sin((x * Pi * 2 - Pi * 0.5f).toDouble()).toFloat() * 0.5f + 0.5f
+
+fun latheTwoPaths(mesh: FlexibleMesh, firstPath: Vertices, secondPath: Vertices) {
+  val sweep: Float = Pi * 2
+  val count = 8
+  val increment = sweep / count
+  val pivots = cloneVertices(firstPath.intersect(secondPath).filter { it.x == 0f })
+  val firstLastPath = firstPath.map {
+    val pivot = pivots.firstOrNull { p -> p == it }
+    if (pivot != null)
+      pivot
+    else
+      it
+  }
+  var previous = firstLastPath
+  val startVector = Vector3(1f, 0f, 0f)
+  for (i in 1 until count) {
+    val angle = i * increment
+    val matrix = Matrix().rotateZ(angle)
+//    val weight = Math.abs(startVector.transform(matrix).normalize().dot(startVector))
+//    val weight = 1 - sawWave(angle / (Pi / 2))
+    val weight = sineRange(angle / Pi)
+    val weight2 = 1 - sawRange(angle / (Pi / 2))
+    val interpolation = interpolatePaths(firstPath, secondPath, weight)
+    val next = interpolation.map {
+      val pivot = pivots.firstOrNull { p -> p == it }
+      if (pivot != null)
+        pivot
+      else
+        it.transform(matrix)
+    }
+    skin(mesh, previous, next)
+    previous = next
+  }
+
+  skin(mesh, previous, firstLastPath)
+}
+
+fun translate(matrix: Matrix, vertices: List<Vector3>) {
 //  vertices.forEach { it.set(it.transform(matrix)) }
   for (vertex in vertices) {
     vertex.set(vertex.transform(matrix))
   }
 }
 
-class operations {
-  companion object {
+fun translatePosition(offset: Vector3, vertices: List<Vector3>) {
+  translate(Matrix().translate(offset), vertices)
+}
 
-    fun set_opposite_edge(mesh: HalfEdgeMesh, edge: HalfEdge) {
-      val opposite = mesh.get_opposite_edge(edge.next!!.vertex, edge.vertex)
-      if (opposite != null) {
-        edge.opposite = opposite
-        opposite.opposite = edge
-      }
-    }
-  }
+//fun convertPath(path: Vertices) =
+//    path.map { Vector3(it.x, 0f, it.y) }
+
+//fun lathe(mesh: FlexibleMesh, arc: Vertices, horizontalCount: Int) {
+//  lathe(mesh, convertPath(arc), horizontalCount)
+//}
+
+fun alignToFloor(vertices: List<Vector3>, floor: Float = 0f) {
+  val lowest = vertices.map { it.z }.sorted().first()
+  translatePosition(Vector3(0f, 0f, floor - lowest), vertices)
+}
+
+fun alignToCeiling(vertices: List<Vector3>, ceiling: Float = 0f) {
+  val highest = vertices.map { it.z }.sorted().last()
+  translatePosition(Vector3(0f, 0f, ceiling - highest), vertices)
+}
+
+data class VerticalDimensions(
+    val top: Float,
+    val bottom: Float,
+    val height: Float = top - bottom
+)
+
+fun getPathDimensions(path: Vertices): VerticalDimensions {
+  val sorted = path.map { it.y }.sorted()
+  val bottom = sorted.first()
+  val top = sorted.last()
+  return VerticalDimensions(top, bottom)
+}
+
+fun cloneVertices(vertices: Collection<Vector3>): Vertices =
+    vertices.map { Vector3(it) }
+
+fun flipVertical(vertices: Vertices): Vertices {
+  val middle = vertices.map { it.z }.average().toFloat()
+  return vertices.map { Vector3(it.x, it.y, middle - (it.z - middle)) }
+}
+
+fun joinPaths(verticalGap: Float, first: Vertices, second: Vertices): Vertices {
+  val firstCopy = cloneVertices(first)
+  val secondCopy = cloneVertices(second)
+  val half = verticalGap * 2
+  alignToFloor(firstCopy, half)
+  alignToCeiling(secondCopy, -half)
+  return firstCopy.plus(secondCopy)
 }

@@ -4,13 +4,13 @@ import mythic.spatial.*
 import kotlin.math.cos
 import kotlin.math.sin
 
-fun createArc(radius: Float, count: Int, sweep: Float = Pi * 2): List<Vector3> {
+fun createArc(radius: Float, count: Int, sweep: Float = Pi * 2): Vertices {
   val vertices = ArrayList<Vector3>(count)
-  val increment = sweep / count
+  val increment = sweep / (count - 1)
 
-  for (i in 0..count) {
+  for (i in 0 until count) {
     val theta = increment * i
-    vertices.add(Vector3(sin(theta) * radius, cos(theta) * radius, 0f))
+    vertices.add(Vector3(sin(theta) * radius, 0f, cos(theta) * radius))
   }
   if (sweep == Pi)
     vertices.last().x = 0f
@@ -22,39 +22,20 @@ fun createCircle(mesh: FlexibleMesh, radius: Float, count: Int): FlexibleFace {
   return mesh.createFace(createArc(radius, count))
 }
 
+//fun createIncompleteCircle(mesh: FlexibleMesh, radius: Float, count: Int, take: Int): FlexibleFace {
+//  return mesh.createFace(convertPath(createArc(radius, count)).take(take))
+//}
+
 fun createCylinder(mesh: FlexibleMesh, radius: Float, count: Int, height: Float) {
   val circle = createCircle(mesh, radius, count)
   extrudeBasic(mesh, circle, Matrix().translate(Vector3(0f, 0f, height)))
 }
 
-fun createSphere(mesh: FlexibleMesh, radius: Float, horizontalCount: Int, verticalCount: Int) {
-  val arc = createArc(radius, verticalCount, Pi)
-      .map { Vector3(it.x, 0f, it.y) }
+fun createSphere(mesh: FlexibleMesh, radius: Float, horizontalCount: Int, verticalCount: Int) =
+    lathe(mesh, createArc(radius, verticalCount, Pi), horizontalCount)
 
-  lathe(mesh, arc, horizontalCount)
-//  mesh.createFace(arc)
-}
-
-class create {
-  companion object {
-
-    fun flatTest(): HalfEdgeMesh {
-      val mesh = HalfEdgeMesh()
-      mesh.add_face(listOf(
-          HalfEdgeVertex(Vector3(1f, 1f, 0f)),
-          HalfEdgeVertex(Vector3(0.5f, 1f, 0f)),
-          HalfEdgeVertex(Vector3(1f, 0.5f, 0f))
-      ))
-
-      mesh.add_face(listOf(
-          HalfEdgeVertex(Vector3(-1f, -1f, 0f)),
-          HalfEdgeVertex(Vector3(-1f, -0.5f, 0f)),
-          HalfEdgeVertex(Vector3(-0.5f, -1f, 0f))
-      ))
-      return mesh
-    }
-  }
-}
+fun createIncompleteSphere(mesh: FlexibleMesh, radius: Float, horizontalCount: Int, verticalCount: Int, take: Int) =
+    lathe(mesh, createArc(radius, verticalCount, Pi).take(take), horizontalCount)
 
 fun createCube(mesh: FlexibleMesh, size: Vector3): List<FlexibleFace> {
   val half = size * 0.5f
@@ -100,3 +81,9 @@ fun squareUp(mesh: FlexibleMesh, size: Vector2, z: Float): FlexibleFace {
       Vector3(-half.x, half.y, z)
   ))
 }
+
+//fun createLines(mesh: FlexibleMesh, path: Vertices) {
+//  for (i in 0 until path.size - 1) {
+//    mesh.createEdge(path[i], path[i + 1])
+//  }
+//}

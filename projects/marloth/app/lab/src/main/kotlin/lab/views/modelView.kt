@@ -60,7 +60,7 @@ fun createScriptEngine(): ScriptEngine {
   return engine
 }
 
-val engine = createScriptEngine()
+//val engine = createScriptEngine()
 private var modelCode = """
   val mesh = bindings["mesh"] as FlexibleMesh
   createSphere(mesh, 0.6f, 8, 3)
@@ -69,10 +69,10 @@ private var modelCode = """
 """
 
 val setModelCode = { newCode: String ->
-  if (modelCode != newCode) {
-    modelCode = newCode
-    updateResult2()
-  }
+//  if (modelCode != newCode) {
+//    modelCode = newCode
+//    updateResult2()
+//  }
 }
 
 val getModelCode = { modelCode }
@@ -81,21 +81,21 @@ typealias MeshGenerator = (FlexibleMesh) -> Unit
 
 private var result: MeshGenerator? = null
 
-fun updateResult() {
-  val context = SimpleScriptContext()
-  engine.eval(imports, context)
-  result = engine.eval("{ mesh: FlexibleMesh -> " + modelCode + "}", context) as MeshGenerator
-}
-
-var smesh: FlexibleMesh? = null
-
-fun updateResult2() {
-  smesh = FlexibleMesh()
-  engine.put("mesh", smesh)
-  engine.eval(modelCode)
-//  val res1 = engine.eval("1 + 3")
-
-}
+//fun updateResult() {
+//  val context = SimpleScriptContext()
+//  engine.eval(imports, context)
+//  result = engine.eval("{ mesh: FlexibleMesh -> " + modelCode + "}", context) as MeshGenerator
+//}
+//
+//var smesh: FlexibleMesh? = null
+//
+//fun updateResult2() {
+//  smesh = FlexibleMesh()
+//  engine.put("mesh", smesh)
+//  engine.eval(modelCode)
+////  val res1 = engine.eval("1 + 3")
+//
+//}
 
 fun drawModelPreview(renderer: Renderer, dimensions: Vector2i, orientation: Quaternion, modelName: MeshType) {
   val camera = Camera(ProjectionType.orthographic, Vector3(-2f, 0f, 1f), Quaternion(), 30f)
@@ -109,13 +109,13 @@ fun drawModelPreview(renderer: Renderer, dimensions: Vector2i, orientation: Quat
 //  if (result == null)
 //    updateResult()
 
-  if (smesh == null)
-    updateResult2()
+//  if (smesh == null)
+//    updateResult2()
 
 //  val sourceMesh = smesh!!
 //  result!!(sourceMesh)
 //  val sourceMesh = shell.evaluate(script) as FlexibleMesh
-  val sourceMesh = smesh!!
+  val sourceMesh = createHumanoid()
   val mesh = createSimpleMesh(sourceMesh, renderer.vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f))
 
   globalState.depthEnabled = true
@@ -150,7 +150,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer) : View {
     }
     val orientation = Quaternion()
         .rotateY(rotation.y)
-        .rotateZ(rotation.z)
+        .rotateZ(rotation.z - Pi * 0.5f)
 
     val panels = listOf(
         Pair(Measurement(Measurements.pixel, 200f), draw),
@@ -179,7 +179,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer) : View {
       ,
       LabCommandType.rotateUp to { c -> rotation.y += rotateSpeedY * c.value },
       LabCommandType.rotateDown to { c -> rotation.y -= rotateSpeedY * c.value },
-      LabCommandType.update to { _ -> updateResult2() },
+//      LabCommandType.update to { _ -> updateResult2() },
       LabCommandType.cameraViewFront to { _ -> rotation = Vector3(0f) }
   )
 }

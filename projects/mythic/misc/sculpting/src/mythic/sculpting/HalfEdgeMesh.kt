@@ -69,25 +69,25 @@ class HalfEdgeMesh {
   }
 
   fun replaceFaceVertices(face: HalfEdgeFace, initializer: List<HalfEdgeVertex>) {
-    val first = HalfEdge(initializer.first(), null, null, null, face)
-    face.edge = first
-    add_edge(first)
-    var previous = first
-    first.vertex.edge = first
-
-    for (vertex in initializer.drop(1)) {
-      val edge = HalfEdge(vertex, null, null, null, face)
-      add_edge(edge)
-      vertex.edge = edge
-      previous.next = edge
-      edge.previous = previous
-      operations.set_opposite_edge(this, previous)
-      previous = edge
-    }
-
-    previous.next = first
-    first.previous = previous
-    operations.set_opposite_edge(this, previous)
+//    val first = HalfEdge(initializer.first(), null, null, null, face)
+//    face.edge = first
+//    add_edge(first)
+//    var previous = first
+//    first.vertex.edge = first
+//
+//    for (vertex in initializer.drop(1)) {
+//      val edge = HalfEdge(vertex, null, null, null, face)
+//      add_edge(edge)
+//      vertex.edge = edge
+//      previous.next = edge
+//      edge.previous = previous
+////      operations.set_opposite_edge(this, previous)
+//      previous = edge
+//    }
+//
+//    previous.next = first
+//    first.previous = previous
+//    operations.set_opposite_edge(this, previous)
   }
 
 }

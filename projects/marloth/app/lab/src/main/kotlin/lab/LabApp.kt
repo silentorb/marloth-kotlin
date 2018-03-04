@@ -89,7 +89,7 @@ object App {
     val config = loadConfig<LabConfig>("labConfig.yaml") ?: LabConfig()
     val gameConfig = loadGameConfig()
     saveLabConfig(config)
-    startGui()
+//    startGui()
     runApp(createDesktopPlatform("Dev Lab"), config, gameConfig)
   }
 }
