@@ -137,7 +137,7 @@ operator fun Vector3f.plusAssign(other: Vector3f) {
 
 operator fun Vector3f.plus(v: Vector3fc): Vector3f = Vector3f(x + v.x(), y + v.y(), z + v.z())
 operator fun Vector3f.plus(v: Float): Vector3f = Vector3f(x + v, y + v, z + v)
-operator fun Vector3f.unaryMinus() = negate()
+operator fun Vector3f.unaryMinus() = Vector3f(this).negate()
 
 /* Vector3d */
 

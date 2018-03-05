@@ -2,6 +2,7 @@ package mythic.sculpting
 
 import mythic.spatial.Vector3
 import org.joml.minus
+import org.joml.plus
 
 class FlexibleEdge(
     val first: Vector3,
@@ -11,6 +12,9 @@ class FlexibleEdge(
 ) {
   fun other(node: Vector3) = if (node === first) second else first
   fun toList() = listOf(first, second)
+
+  val middle: Vector3
+    get() = first + second / 2f
 }
 
 class FlexibleFace(
@@ -91,6 +95,18 @@ class FlexibleMesh {
     }
     face.edges.add(createEdge(initializer.last(), initializer.first(), face))
   }
+
+//  fun import(mesh: FlexibleMesh) {
+//    val vertexMap = mesh.distinctVertices.associate { Pair(it, Vector3(it)) }
+//    val faceMap = mesh.faces.associate { Pair(it, FlexibleFace()) }
+//    val edgeMap = mesh.edges.associate { Pair(it, FlexibleEdge()) }
+//  }
+
+  fun sharedImport(mesh: FlexibleMesh) {
+    faces.addAll(mesh.faces)
+    edges.addAll(mesh.edges)
+  }
+
 }
 
 fun calculateNormals(mesh: FlexibleMesh) {

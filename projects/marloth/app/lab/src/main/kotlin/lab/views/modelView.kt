@@ -1,7 +1,6 @@
 package lab.views
 
 import lab.LabCommandType
-import lab.ModelViewConfig
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.glowing.DrawMethod
@@ -15,27 +14,18 @@ import scenery.Camera
 import scenery.ProjectionType
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
-import javax.script.SimpleScriptContext
 
+data class ViewCameraConfig(
+    var rotationY: Float = 0f,
+    var rotationZ: Float = 0f
+)
 
-private var rotation = Vector3()
-
-//val shell = createGroovyShell(
-//    staticClasses = listOf(
-//        "rendering.MeshesKt",
-//        "mythic.sculpting.CreateKt",
-//        "mythic.sculpting.OperationsKt"
-//    ),
-//    aliases = mapOf(
-//        "org.joml.Vector3f" to "Vector3",
-//        "org.joml.Vector4f" to "Vector4",
-//        "org.joml.Matrix4f" to "Matrix"
-//    ),
-//    wildcards = listOf(
-//        "mythic.sculpting",
-//        "org.joml"
-//    )
-//)
+data class ModelViewConfig(
+    var model: MeshType = MeshType.character,
+    var drawVertices: Boolean = true,
+    var drawEdges: Boolean = true,
+    var camera: ViewCameraConfig = ViewCameraConfig()
+)
 
 private val backgroundGray = 0.22f
 private val faceGray = 0.1f
@@ -69,7 +59,7 @@ private var modelCode = """
 """
 
 val setModelCode = { newCode: String ->
-//  if (modelCode != newCode) {
+  //  if (modelCode != newCode) {
 //    modelCode = newCode
 //    updateResult2()
 //  }
@@ -115,7 +105,7 @@ fun drawModelPreview(renderer: Renderer, dimensions: Vector2i, orientation: Quat
 //  val sourceMesh = smesh!!
 //  result!!(sourceMesh)
 //  val sourceMesh = shell.evaluate(script) as FlexibleMesh
-  val sourceMesh = createHumanoid()
+  val sourceMesh = createHuman()
   val mesh = createSimpleMesh(sourceMesh, renderer.vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f))
 
   globalState.depthEnabled = true
@@ -149,8 +139,8 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer) : View {
       drawBorder(b, canvas, Vector4(0f, 0f, 1f, 1f))
     }
     val orientation = Quaternion()
-        .rotateY(rotation.y)
-        .rotateZ(rotation.z - Pi * 0.5f)
+        .rotateY(config.camera.rotationY)
+        .rotateZ(config.camera.rotationZ - Pi * 0.5f)
 
     val panels = listOf(
         Pair(Measurement(Measurements.pixel, 200f), draw),
@@ -174,12 +164,19 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer) : View {
   val rotateSpeedY = 0.02f
 
   override fun getCommands(): LabCommandMap = mapOf(
-      LabCommandType.rotateLeft to { c -> rotation.z += rotateSpeedZ * c.value },
-      LabCommandType.rotateRight to { c -> rotation.z -= rotateSpeedZ * c.value }
+      LabCommandType.rotateLeft to { c -> config.camera.rotationZ += rotateSpeedZ * c.value },
+      LabCommandType.rotateRight to { c -> config.camera.rotationZ -= rotateSpeedZ * c.value }
       ,
-      LabCommandType.rotateUp to { c -> rotation.y += rotateSpeedY * c.value },
-      LabCommandType.rotateDown to { c -> rotation.y -= rotateSpeedY * c.value },
+      LabCommandType.rotateUp to { c -> config.camera.rotationY += rotateSpeedY * c.value },
+      LabCommandType.rotateDown to { c -> config.camera.rotationY -= rotateSpeedY * c.value },
 //      LabCommandType.update to { _ -> updateResult2() },
-      LabCommandType.cameraViewFront to { _ -> rotation = Vector3(0f) }
+      LabCommandType.cameraViewFront to { _ ->
+        config.camera.rotationY = 0f
+        config.camera.rotationZ = 0f
+      },
+      LabCommandType.cameraViewTop to { _ ->
+        config.camera.rotationY = Pi / 2
+        config.camera.rotationZ = 0f
+      }
   )
 }

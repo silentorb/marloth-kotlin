@@ -3,6 +3,7 @@ package lab
 import haft.*
 import org.lwjgl.glfw.GLFW
 import rendering.MeshType
+import lab.views.*
 
 enum class LabCommandType {
   viewGame,
@@ -22,7 +23,11 @@ enum class LabCommandType {
 
   // model view
 
-  cameraViewFront
+  cameraViewFront,
+  cameraViewBack,
+  cameraViewTop,
+  cameraViewRight,
+  cameraViewLeft
 }
 
 typealias LabInputConfig = MutableMap<String, Bindings<LabCommandType>>
@@ -51,8 +56,12 @@ fun createLabInputBindings() = mutableMapOf(
         GAMEPAD_BUTTON_Y to LabCommandType.update
     )))
         .plus(createStrokeBindings(0, mapOf(
-            GLFW.GLFW_KEY_KP_1 to LabCommandType.cameraViewFront
-        ))),
+            GLFW.GLFW_KEY_KP_1 to LabCommandType.cameraViewFront,
+            GLFW.GLFW_KEY_KP_3 to LabCommandType.cameraViewBack,
+            GLFW.GLFW_KEY_KP_4 to LabCommandType.cameraViewLeft,
+            GLFW.GLFW_KEY_KP_6 to LabCommandType.cameraViewRight,
+            GLFW.GLFW_KEY_KP_8 to LabCommandType.cameraViewTop
+            ))),
     "world" to createStrokeBindings(0, mapOf(
         GLFW.GLFW_KEY_1 to LabCommandType.toggleAbstractView,
         GLFW.GLFW_KEY_2 to LabCommandType.toggleStructureView
@@ -65,12 +74,6 @@ fun createLabInputBindings() = mutableMapOf(
 data class WorldViewConfig(
     var showAbstract: Boolean = true,
     var showStructure: Boolean = true
-)
-
-data class ModelViewConfig(
-    var model: MeshType = MeshType.character,
-    var drawVertices: Boolean = true,
-    var drawEdges: Boolean = true
 )
 
 data class LabConfig(

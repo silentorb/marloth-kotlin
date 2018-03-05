@@ -2,8 +2,10 @@ package mythic.sculpting
 
 import mythic.spatial.*
 import org.joml.plus
+import org.joml.unaryMinus
 
 typealias Vertices = List<Vector3>
+typealias Edges = List<FlexibleEdge>
 
 fun skinLoop(mesh: FlexibleMesh, first: List<Vector3>, second: List<Vector3>) {
   val sides = (0 until first.size).map { a ->
@@ -56,10 +58,13 @@ fun lathe(mesh: FlexibleMesh, path: List<Vector3>, count: Int, sweep: Float = Pi
   skin(mesh, previous, path)
 }
 
-fun interpolatePaths(firstPath: Vertices, secondPath: Vertices, weight: Float): Vertices {
-  val secondIterator = secondPath.iterator()
-  return firstPath.map { secondIterator.next() * weight + it * (1 - weight) }
-}
+//fun interpolatePaths(firstPath: Vertices, secondPath: Vertices, weight: Float): Vertices {
+//  val secondIterator = secondPath.iterator()
+//  return firstPath.map { secondIterator.next() * weight + it * (1 - weight) }
+//}
+//
+//fun interpolate(first: Float, second: Float, weight: Float)=
+//
 
 fun sawRange(x: Float) =
     Math.abs((x % 2) - 1)
@@ -67,9 +72,19 @@ fun sawRange(x: Float) =
 fun sineRange(x: Float): Float =
     Math.sin((x * Pi * 2 - Pi * 0.5f).toDouble()).toFloat() * 0.5f + 0.5f
 
+/* 0 >= i >= 1 */
+fun bezierSample(i: Float, points: List<Vector2>) {
+
+}
+
+data class SwingInfo(
+    val point: Vector3,
+    val scale: Vector3
+)
+
 fun latheTwoPaths(mesh: FlexibleMesh, firstPath: Vertices, secondPath: Vertices) {
   val sweep: Float = Pi * 2
-  val count = 8
+  val count = 8 * 3
   val increment = sweep / count
   val pivots = cloneVertices(firstPath.intersect(secondPath).filter { it.x == 0f })
   val firstLastPath = firstPath.map {
@@ -81,6 +96,12 @@ fun latheTwoPaths(mesh: FlexibleMesh, firstPath: Vertices, secondPath: Vertices)
   }
   var previous = firstLastPath
   val startVector = Vector3(1f, 0f, 0f)
+  val secondIterator = secondPath.iterator()
+  val swings = firstPath.map {
+    val other = secondIterator.next()
+    val shortest = Math.min(it.x, other.x)
+    SwingInfo(Vector3(shortest, 0f, it.z), Vector3(it.x, other.x, shortest) / shortest)
+  }
   for (i in 1 until count) {
     val angle = i * increment
     val matrix = Matrix().rotateZ(angle)
@@ -88,13 +109,13 @@ fun latheTwoPaths(mesh: FlexibleMesh, firstPath: Vertices, secondPath: Vertices)
 //    val weight = 1 - sawWave(angle / (Pi / 2))
     val weight = sineRange(angle / Pi)
     val weight2 = 1 - sawRange(angle / (Pi / 2))
-    val interpolation = interpolatePaths(firstPath, secondPath, weight)
-    val next = interpolation.map {
-      val pivot = pivots.firstOrNull { p -> p == it }
+//    val interpolation = interpolatePaths(firstPath, secondPath, weight)
+    val next = swings.map {
+      val pivot = pivots.firstOrNull { p -> p == it.point }
       if (pivot != null)
         pivot
       else
-        it.transform(matrix)
+        it.point.transform(matrix) * it.scale
     }
     skin(mesh, previous, next)
     previous = next
@@ -159,4 +180,11 @@ fun joinPaths(verticalGap: Float, first: Vertices, second: Vertices): Vertices {
   alignToFloor(firstCopy, half)
   alignToCeiling(secondCopy, -half)
   return firstCopy.plus(secondCopy)
+}
+
+fun convertAsXZ(vertices: List<Vector2>) =
+    vertices.map { Vector3(it.x, 0f, it.y) }
+
+fun setAnchor(anchor: Vector3, vertices: Vertices) {
+  translatePosition(-anchor, vertices)
 }
