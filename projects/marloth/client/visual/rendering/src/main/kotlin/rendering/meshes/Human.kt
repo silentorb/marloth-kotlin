@@ -4,11 +4,6 @@ import mythic.sculpting.*
 import mythic.spatial.Pi
 import mythic.spatial.Vector2
 
-//enum class HumanPorts : PortId {
-//  headNeck,
-//  torsoNeck
-//}
-
 data class HeadPorts(
     val neck: Port
 )
@@ -19,7 +14,7 @@ fun createHead(): MeshNode<HeadPorts> {
   headPath.last().x *= 0.5f
   lathe(mesh, headPath, 8 * 3)
   return MeshNode(mesh, HeadPorts(
-
+      edgeLoopNext(mesh.edges.last())
   ))
 }
 
@@ -47,7 +42,7 @@ fun createTorso(): MeshNode<TorsoPorts> {
   ))
   latheTwoPaths(mesh, bodyFront, bodySide)
   return MeshNode(mesh, TorsoPorts(
-
+      mesh.edges.first()
   ))
 }
 
@@ -55,8 +50,11 @@ fun createHuman(): FlexibleMesh {
   val neck = 0.05f
   val head = createHead()
   val torso = createTorso()
-  val mesh = FlexibleMesh()
-  joinMeshNodes(head.mesh, head.ports.neck, torso.mesh, torso.ports.neck)
-  alignToFloor(mesh.distinctVertices)
+  val mesh = joinMeshNodes(head.mesh, head.ports.neck, torso.mesh, torso.ports.neck)
+//  val mesh = FlexibleMesh()
+//  setAnchor(head.ports.neck.middle, head.mesh.distinctVertices)
+//  mesh.sharedImport(head.mesh)
+//  val mesh = head.mesh
+//  alignToFloor(mesh.distinctVertices, 1f)
   return mesh
 }

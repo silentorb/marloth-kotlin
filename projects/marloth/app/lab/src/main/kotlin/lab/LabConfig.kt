@@ -21,6 +21,8 @@ enum class LabCommandType {
   menu,
   update,
 
+  select,
+
   // model view
 
   cameraViewFront,
@@ -61,7 +63,10 @@ fun createLabInputBindings() = mutableMapOf(
             GLFW.GLFW_KEY_KP_4 to LabCommandType.cameraViewLeft,
             GLFW.GLFW_KEY_KP_6 to LabCommandType.cameraViewRight,
             GLFW.GLFW_KEY_KP_8 to LabCommandType.cameraViewTop
-            ))),
+        )))
+        .plus(createStrokeBindings(1, mapOf(
+            GLFW.GLFW_MOUSE_BUTTON_1 to LabCommandType.select
+        ))),
     "world" to createStrokeBindings(0, mapOf(
         GLFW.GLFW_KEY_1 to LabCommandType.toggleAbstractView,
         GLFW.GLFW_KEY_2 to LabCommandType.toggleStructureView

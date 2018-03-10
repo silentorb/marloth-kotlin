@@ -1,6 +1,7 @@
 package mythic.sculpting
 
 import mythic.spatial.Vector3
+import mythic.spatial.times
 import org.joml.minus
 import org.joml.plus
 
@@ -8,13 +9,15 @@ class FlexibleEdge(
     val first: Vector3,
     val second: Vector3,
     val face: FlexibleFace,
-    val edges: MutableList<FlexibleEdge>
+    val edges: MutableList<FlexibleEdge>,
+    var next: FlexibleEdge?,
+    var previous: FlexibleEdge?
 ) {
   fun other(node: Vector3) = if (node === first) second else first
   fun toList() = listOf(first, second)
 
   val middle: Vector3
-    get() = first + second / 2f
+    get() = first + second * 0.5f
 }
 
 class FlexibleFace(
@@ -69,7 +72,7 @@ class FlexibleMesh {
       }
 
   fun createEdge(first: Vector3, second: Vector3, face: FlexibleFace): FlexibleEdge {
-    val edge = FlexibleEdge(first, second, face, mutableListOf())
+    val edge = FlexibleEdge(first, second, face, mutableListOf(), null, null)
     edges.add(edge)
     return edge
   }
@@ -88,12 +91,25 @@ class FlexibleMesh {
 
   fun replaceFaceVertices(face: FlexibleFace, initializer: List<Vector3>) {
     var previous = initializer.first()
+    var previousEdge: FlexibleEdge? = null
     for (next in initializer.drop(1)) {
       val edge = createEdge(previous, next, face)
       face.edges.add(edge)
+      if (previousEdge != null) {
+        edge.previous = previousEdge
+        previousEdge.next = edge
+      }
+      previousEdge = edge
       previous = next
     }
-    face.edges.add(createEdge(initializer.last(), initializer.first(), face))
+    val first = face.edges.first()
+    val last = createEdge(initializer.last(), initializer.first(), face)
+    face.edges.add(last)
+    last.next = first
+    previousEdge!!.next = last
+    last.previous = previousEdge
+    first.previous = last
+    assert(face.edges.none { it.next == null || it.previous == null })
   }
 
 //  fun import(mesh: FlexibleMesh) {

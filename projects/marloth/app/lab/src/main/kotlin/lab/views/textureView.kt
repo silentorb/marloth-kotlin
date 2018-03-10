@@ -1,6 +1,6 @@
 package lab.views
 
-import lab.LabConfig
+import lab.utility.drawBorder
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.spatial.Vector2

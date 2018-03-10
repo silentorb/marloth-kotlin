@@ -28,7 +28,7 @@ fun createLabDeviceHandlers(input: PlatformInput): List<ScalarInputSource> {
   val gamepad = input.getGamepads().firstOrNull()
   return listOf(
       input.KeyboardInputSource,
-      disconnectedScalarInputSource,
+      input.MouseInputSource,
       if (gamepad != null)
         { trigger: Int -> input.GamepadInputSource(gamepad.id, trigger) }
       else
@@ -36,11 +36,11 @@ fun createLabDeviceHandlers(input: PlatformInput): List<ScalarInputSource> {
   )
 }
 
-fun selectView(config: LabConfig, abstractWorld: AbstractWorld, renderer: Renderer, view: String): View =
+fun selectView(config: LabConfig, abstractWorld: AbstractWorld, client: Client, view: String): View =
     when (view) {
       "game" -> GameView()
-      "world" -> WorldView(config.worldView, abstractWorld, renderer)
-      "model" -> ModelView(config.modelView, renderer)
+      "world" -> WorldView(config.worldView, abstractWorld, client.renderer)
+      "model" -> ModelView(config.modelView, client.renderer, client.platform.input.getMousePosition())
       "texture" -> TextureView()
       else -> throw Error("Not supported")
     }
@@ -84,7 +84,7 @@ class LabClient(val config: LabConfig, val client: Client) {
 
   fun update(scenes: List<Scene>, metaWorld: AbstractWorld, previousState: LabState): ViewInputResult {
     val windowInfo = client.platform.display.getInfo()
-    val view = selectView(config, metaWorld, client.renderer, config.view)
+    val view = selectView(config, metaWorld, client, config.view)
     client.renderer.prepareRender(windowInfo)
     val layout = view.createLayout(windowInfo.dimensions)
 

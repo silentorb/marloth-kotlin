@@ -1,32 +1,21 @@
 package lab.views
 
-import commanding.*
-import generation.*
-import haft.*
 import lab.LabCommandType
 import simulation.WorldBoundary
-import lab.LabConfig
-import lab.LabState
 import lab.WorldViewConfig
-import lab.views.*
-import marloth.clienting.initialGameInputState
+import lab.utility.drawBorder
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.glowing.globalState
-import mythic.platforming.WindowInfo
 import mythic.spatial.Vector2
-import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import mythic.spatial.times
 import org.joml.Vector2i
 import org.joml.xy
 import org.joml.plus
 import org.joml.minus
-import org.lwjgl.glfw.GLFW
 import org.lwjgl.opengl.GL11
-import randomly.Dice
 import rendering.Renderer
-import rendering.convertMesh
 import simulation.AbstractWorld
 
 val worldPadding = 20f // In screen units
@@ -49,10 +38,6 @@ fun <A, B, C> overlap(aList: List<A>, bList: List<B>, merger: (A, B) -> C): List
     result.add(merger(a, iter.next()))
   }
   return result
-}
-
-fun drawBorder(bounds: Bounds, canvas: Canvas, color: Vector4) {
-  canvas.drawSquare(bounds.position, bounds.dimensions, canvas.outline(color, 5f))
 }
 
 typealias PositionFunction = (Vector2) -> Vector2

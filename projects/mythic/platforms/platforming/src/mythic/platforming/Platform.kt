@@ -10,6 +10,8 @@ data class WindowInfo(val dimensions: Vector2i)
 interface PlatformInput {
   val KeyboardInputSource: ScalarInputSource
   val GamepadInputSource: MultiDeviceScalarInputSource
+  val MouseInputSource: ScalarInputSource
+  fun getMousePosition(): Vector2i
   fun getGamepads(): List<Gamepad>
 }
 

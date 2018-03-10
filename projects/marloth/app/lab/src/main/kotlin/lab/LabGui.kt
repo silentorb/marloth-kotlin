@@ -11,8 +11,6 @@ import javafx.stage.Stage
 import javafx.animation.Timeline
 import javafx.animation.KeyFrame
 import javafx.util.Duration
-import lab.views.getModelCode
-import lab.views.setModelCode
 import javafx.scene.input.KeyCombination
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
@@ -21,8 +19,8 @@ import javafx.scene.input.KeyEvent
 
 class LabGui : Application() {
   var code: String = ""
-  val onCodeChanged: (code: String) -> Unit = setModelCode
-  val newCode: () -> String = getModelCode
+//  val onCodeChanged: (code: String) -> Unit = setModelCode
+//  val newCode: () -> String = getModelCode
 
   override fun start(primaryStage: Stage) {
     primaryStage.title = "Editor"
@@ -34,15 +32,15 @@ class LabGui : Application() {
     updateButton.text = "Update"
     updateButton.onAction = EventHandler {
         code = textArea.text
-        onCodeChanged(code)
+//        onCodeChanged(code)
     }
 
     val updater = Timeline(KeyFrame(Duration.seconds(1.0), EventHandler {
-      val possibleCode = newCode()
-      if (code != possibleCode) {
-        code = possibleCode
-        textArea.text = code
-      }
+//      val possibleCode = newCode()
+//      if (code != possibleCode) {
+//        code = possibleCode
+//        textArea.text = code
+//      }
     }))
     updater.cycleCount = Timeline.INDEFINITE
     updater.play()
@@ -59,7 +57,7 @@ class LabGui : Application() {
       override fun handle(event: KeyEvent) {
         if (keyComb.match(event)) {
           code = textArea.text
-          onCodeChanged(code)
+//          onCodeChanged(code)
           event.consume() // <-- stops passing the event to next node
         }
       }

@@ -3,7 +3,9 @@ package mythic.desktop
 import haft.GAMEPAD_AXIS_TRIGGER_LEFT
 import haft.GAMEPAD_BUTTON_A
 import haft.Gamepad
+import haft.ScalarInputSource
 import mythic.platforming.PlatformInput
+import org.joml.Vector2i
 import org.lwjgl.glfw.GLFW.*
 
 val GamepadIndices = GLFW_JOYSTICK_1..GLFW_JOYSTICK_LAST
@@ -33,7 +35,6 @@ fun getGamepadAxes(device: Int, axisDirIndex: Int): Float {
 }
 
 class DesktopInput(val window: Long) : PlatformInput {
-
   init {
     glfwSetInputMode(window, GLFW_STICKY_KEYS, 1)
   }
@@ -43,9 +44,6 @@ class DesktopInput(val window: Long) : PlatformInput {
           .map { Gamepad(it, glfwGetJoystickName(it)) }
 
   override val KeyboardInputSource = { key: Int ->
-    if (key == 0) {
-      val k = 0
-    }
     if (glfwGetKey(window, key) == GLFW_PRESS)
       1f
     else
@@ -57,5 +55,18 @@ class DesktopInput(val window: Long) : PlatformInput {
       getGamepadAxes(device, trigger)
     else
       if (glfwGetJoystickButtons(device)[trigger - GAMEPAD_BUTTON_A].toInt() == GLFW_PRESS) 1f else 0f
+  }
+  override val MouseInputSource = { key: Int ->
+    if (glfwGetMouseButton(window, key) == GLFW_PRESS)
+      1f
+    else
+      0f
+  }
+
+  override fun getMousePosition(): Vector2i {
+    val tempX = DoubleArray(1)
+    val tempY = DoubleArray(1)
+    glfwGetCursorPos(window, tempX, tempY)
+    return Vector2i(tempX[0].toInt(), tempY[0].toInt())
   }
 }
