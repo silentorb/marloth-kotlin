@@ -12,4 +12,5 @@ typealias LabCommandMap = Map<LabCommandType, CommandHandler<LabCommandType>>
 interface View {
   fun createLayout(dimensions: Vector2i): LabLayout
   fun getCommands(): LabCommandMap
+  fun handleInput(layout: LabLayout, commands: List<Command<LabCommandType>>)
 }

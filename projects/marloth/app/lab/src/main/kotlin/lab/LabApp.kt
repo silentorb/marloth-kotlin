@@ -17,9 +17,6 @@ import mythic.quartz.DeltaTimer
 import simulation.World
 import simulation.changing.WorldUpdater
 import visualizing.createScenes
-import java.io.File
-import java.nio.file.Files
-import java.nio.file.Paths
 import kotlin.concurrent.thread
 import simulation.changing.Instantiator
 import simulation.changing.InstantiatorConfig

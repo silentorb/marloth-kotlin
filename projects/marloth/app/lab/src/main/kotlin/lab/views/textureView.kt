@@ -1,5 +1,7 @@
 package lab.views
 
+import haft.Command
+import lab.LabCommandType
 import lab.utility.drawBorder
 import mythic.bloom.*
 import mythic.drawing.Canvas
@@ -36,6 +38,10 @@ class TextureView : View {
     return LabLayout(
         boxes
     )
+  }
+
+  override fun handleInput(layout: LabLayout,commands: List<Command<LabCommandType>>) {
+
   }
 
   override fun getCommands(): LabCommandMap = mapOf()

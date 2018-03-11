@@ -1,6 +1,7 @@
 package mythic.spatial
 
 import org.joml.Math.PI
+import org.joml.Vector2i
 import org.joml.div
 import org.joml.minus
 import org.joml.plus
@@ -157,3 +158,5 @@ fun getVector3Center(first: Vector3, second: Vector3) =
 
 fun getRotationMatrix(matrix: Matrix) =
     Matrix().rotation(matrix.getUnnormalizedRotation(Quaternion()))
+
+fun Vector2.toVector2i() = Vector2i(x.toInt(), y.toInt())

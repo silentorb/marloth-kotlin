@@ -4,15 +4,14 @@ import mythic.drawing.createDrawingMeshes
 import mythic.glowing.*
 import mythic.platforming.WindowInfo
 import mythic.spatial.Matrix
+import mythic.spatial.Pi
 import mythic.spatial.Vector3
 import mythic.typography.loadFonts
-import org.joml.Vector2i
-import scenery.Scene
+import scenery.GameScene
 import mythic.spatial.Vector4
 import mythic.typography.FontLoadInfo
-import org.joml.Vector4i
-import org.joml.div
-import org.joml.times
+import org.joml.*
+import scenery.Scene
 
 fun gatherEffectsData(dimensions: Vector2i, scene: Scene): EffectsData {
   return EffectsData(
@@ -27,7 +26,7 @@ data class WorldMesh(
     val textureIndex: List<Texture>
 )
 
-fun renderScene(scene: Scene, painters: Painters, effects: Effects, textures: Textures, worldMesh: WorldMesh?) {
+fun renderScene(scene: GameScene, painters: Painters, effects: Effects, textures: Textures, worldMesh: WorldMesh?) {
   globalState.depthEnabled = true
   if (worldMesh != null) {
     effects.textured.activate(Matrix(), textures.checkers, Vector4(1f), Matrix())
@@ -64,9 +63,9 @@ class Renderer {
   val glow = Glow()
   val shaders = createShaders()
   val vertexSchemas = createVertexSchemas()
-  val meshes = createMeshes(vertexSchemas)
   var worldMesh: WorldMesh? = null
   val canvasMeshes = createDrawingMeshes(vertexSchemas.drawing)
+  val meshes = createMeshes(vertexSchemas)
   val painters = createPainters(meshes)
   val textures = Textures()
   val sectorBuffer = UniformBuffer()
@@ -79,32 +78,57 @@ class Renderer {
 //    glow.state.clearColor = Vector4(1f, 0.95f, 0.9f, 1f)
   }
 
+  fun createEffects(scene: Scene, dimensions: Vector2i) =
+      createEffects(shaders, gatherEffectsData(dimensions, scene), sectorBuffer)
+
+  fun createSceneRenderer(scene: Scene, dimensions: Vector2i): SceneRenderer {
+    return SceneRenderer(this, worldMesh!!, createEffects(scene, dimensions))
+  }
+
   fun prepareRender(windowInfo: WindowInfo) {
     glow.operations.setViewport(Vector2i(0, 0), windowInfo.dimensions)
     glow.state.depthWrite = true
     glow.operations.clearScreen()
   }
 
-  fun renderScene(scene: Scene, effects: Effects) {
-    renderScene(scene, painters, effects, textures, worldMesh)
-  }
-
-  fun renderedScenes(scenes: List<Scene>, windowInfo: WindowInfo) {
+  fun renderScenes(scenes: List<GameScene>, windowInfo: WindowInfo) {
     val viewports = getPlayerViewports(scenes.size, windowInfo.dimensions).iterator()
     for (scene in scenes) {
       val viewport = viewports.next()
       globalState.viewport = viewport
-      renderScene(scene, Vector2i(viewport.z, viewport.w))
+      val renderer = createSceneRenderer(scene.main, Vector2i(viewport.z, viewport.w))
+      prepareRender(windowInfo)
+      renderer.renderScene(scene)
     }
     globalState.viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
   }
 
-  fun createEffects(scene: Scene, dimensions: Vector2i) =
-      createEffects(shaders, gatherEffectsData(dimensions, scene), sectorBuffer)
+}
 
-  fun renderScene(scene: Scene, dimensions: Vector2i) {
-    val effects = createEffects(scene, dimensions)
-    renderScene(scene, effects)
+class SceneRenderer(
+    val renderer: Renderer,
+    val worldMesh: WorldMesh,
+    val effects: Effects
+) {
+
+  fun renderScene(scene: GameScene) {
+    renderScene(scene, renderer.painters, effects, renderer.textures, worldMesh)
   }
 
+  fun drawnLine(start: Vector3, end: Vector3, color: Vector4, thickness: Float = 1f) {
+    globalState.lineThickness = thickness
+    val transform = Matrix()
+//        .translate(start)
+//        .rotateX(Pi / 2f)
+//        .rotateY(-Pi / 2f)
+//        .rotateTowards(end - start, Vector3(0f, 0f, 1f))
+        .lookAlong((end - start), Vector3(0f, 1f, 0f))
+//        .scale(start.distance(end))
+
+    effects.flat.activate(transform, color)
+    renderer.meshes[MeshType.line]!!.draw(DrawMethod.lines)
+  }
+
+  val meshes: MeshMap
+    get() = renderer.meshes
 }

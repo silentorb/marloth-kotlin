@@ -12,12 +12,12 @@ import mythic.platforming.WindowInfo
 import mythic.sculpting.query.getCenter
 import mythic.spatial.*
 import rendering.Effects
-import scenery.Scene
+import scenery.GameScene
 import simulation.AbstractWorld
 import haft.*
 import mythic.sculpting.FlexibleMesh
 import rendering.MeshType
-import rendering.Renderer
+import rendering.SceneRenderer
 
 data class LabState(
     val labInput: InputTriggerState<LabCommandType>,
@@ -46,7 +46,7 @@ fun selectView(config: LabConfig, abstractWorld: AbstractWorld, client: Client, 
     }
 
 
-fun renderFaceNormals(renderer: Renderer, mesh: FlexibleMesh, effects: Effects, modelTransform: Matrix = Matrix()) {
+fun renderFaceNormals(renderer: SceneRenderer, mesh: FlexibleMesh, effects: Effects, modelTransform: Matrix = Matrix()) {
   globalState.lineThickness = 2f
   for (face in mesh.faces) {
     val faceCenter = getCenter(face.unorderedVertices)
@@ -74,15 +74,15 @@ class LabClient(val config: LabConfig, val client: Client) {
   )
   val deviceHandlers = createLabDeviceHandlers(client.platform.input)
 
-  fun renderScene(scenes: List<Scene>, metaWorld: AbstractWorld) {
+  fun renderScene(scenes: List<GameScene>, metaWorld: AbstractWorld) {
     val windowInfo = client.getWindowInfo()
     val renderer = client.renderer
-    renderer.renderedScenes(scenes, windowInfo)
-    val effects = renderer.createEffects(scenes[0], windowInfo.dimensions)
-    renderFaceNormals(client.renderer, metaWorld.mesh, effects)
+    renderer.renderScenes(scenes, windowInfo)
+//    val effects = renderer.createEffects(scenes[0], windowInfo.dimensions)
+//    renderFaceNormals(client.renderer, metaWorld.mesh, effects)
   }
 
-  fun update(scenes: List<Scene>, metaWorld: AbstractWorld, previousState: LabState): ViewInputResult {
+  fun update(scenes: List<GameScene>, metaWorld: AbstractWorld, previousState: LabState): ViewInputResult {
     val windowInfo = client.platform.display.getInfo()
     val view = selectView(config, metaWorld, client, config.view)
     client.renderer.prepareRender(windowInfo)
@@ -101,6 +101,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     val bindings = labInputConfig["global"]!!.plus(labInputConfig[config.view]!!)
     val (commands, nextLabInputState) = gatherInputCommands(bindings, deviceHandlers, previousState.labInput)
     applyCommands(commands, view.getCommands().plus(globalKeyPressCommands))
+    view.handleInput(layout, commands)
     return Pair(listOf(), LabState(nextLabInputState, previousState.gameInput))
   }
 

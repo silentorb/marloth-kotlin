@@ -18,7 +18,8 @@ fun createFirstPersonCamera(character: Character): Camera = Camera(
 fun createThirdPersonCamera(player: Body): Camera = Camera(
     ProjectionType.perspective,
     player.position,
-    Quaternion(0f, 0f, .1f),
+//    Quaternion(0f, 0f, 0.1f),
+    Quaternion(),
     45f
 )
 
@@ -64,16 +65,19 @@ fun selectBodies(world: World, player: Player) =
         .mapNotNull { prepareVisualElement(it, world.entities[it.id]!!.type) }
 
 fun createScene(world: World, screen: Screen, player: Player) =
-    Scene(
-        createCamera(world, screen),
+    GameScene(
+        Scene(
+            createCamera(world, screen),
+            world.lights.plus(Light(
+                type = LightType.point,
+                color = Vector4(1f, 1f, 1f, 1f),
+                position = player.character.body.position + Vector3(0f, 0f, 2f),
+                direction = Vector4(0f, 0f, 0f, 15f)
+            ))
+        ),
         selectBodies(world, player),
-        player.playerId,
-        world.lights.plus(Light(
-            type = LightType.point,
-            color = Vector4(1f, 1f, 1f, 1f),
-            position = player.character.body.position + Vector3(0f, 0f, 2f),
-            direction = Vector4(0f, 0f, 0f, 15f)
-        ))
+        player.playerId
+
     )
 
 fun createScenes(world: World, screens: List<Screen>) =

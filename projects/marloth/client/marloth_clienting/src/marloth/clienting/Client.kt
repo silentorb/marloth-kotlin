@@ -4,7 +4,7 @@ import commanding.*
 import haft.*
 import mythic.platforming.Platform
 import rendering.Renderer
-import scenery.Scene
+import scenery.GameScene
 import scenery.Screen
 
 val maxPlayerCount = 4
@@ -41,11 +41,10 @@ class Client(val platform: Platform) {
     return Pair(commands.filterNot({ keyStrokeCommands.containsKey(it.type) }), HaftInputState(nextState))
   }
 
-  fun update(scenes: List<Scene>, previousState: HaftInputState<CommandType>):
+  fun update(scenes: List<GameScene>, previousState: HaftInputState<CommandType>):
       Pair<Commands<CommandType>, HaftInputState<CommandType>> {
     val windowInfo = getWindowInfo()
-    renderer.prepareRender(windowInfo)
-    renderer.renderedScenes(scenes, windowInfo)
+    renderer.renderScenes(scenes, windowInfo)
     return updateInput(previousState, scenes.map { it.player })
   }
 
