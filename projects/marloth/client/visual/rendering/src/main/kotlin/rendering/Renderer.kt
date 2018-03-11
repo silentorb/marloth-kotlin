@@ -72,6 +72,7 @@ class Renderer {
   val fonts = loadFonts(listOf(
       FontLoadInfo("cour.ttf", 16, 0f)
   ))
+  val dynamicMesh = MutableSimpleMesh(vertexSchemas.flat)
 
   init {
     glow.state.clearColor = Vector4(0f, 0f, 0f, 1f)
@@ -117,16 +118,20 @@ class SceneRenderer(
 
   fun drawnLine(start: Vector3, end: Vector3, color: Vector4, thickness: Float = 1f) {
     globalState.lineThickness = thickness
-    val transform = Matrix()
-//        .translate(start)
-//        .rotateX(Pi / 2f)
-//        .rotateY(-Pi / 2f)
-//        .rotateTowards(end - start, Vector3(0f, 0f, 1f))
-        .lookAlong((end - start), Vector3(0f, 1f, 0f))
-//        .scale(start.distance(end))
+    val dir = end - start
+//    val transform = Matrix()
+////        .translate(start)
+////        .rotateX(Pi / 2f)
+////        .rotateY(-Pi / 2f)
+////        .rotateTowards(end - start, Vector3(0f, 0f, 1f))
+////        .lookAlong((end - start), Vector3(0f, -1f, 0f))
+////        .scale(start.distance(end))
+//        .rotateTowards(dir, Vector3(0f, 0f, 1f))
+//        .rotateY(-Pi * 0.5f)
+    renderer.dynamicMesh.load(listOf(start.x, start.y, start.z, end.x, end.y, end.z))
 
-    effects.flat.activate(transform, color)
-    renderer.meshes[MeshType.line]!!.draw(DrawMethod.lines)
+    effects.flat.activate(Matrix(), color)
+    renderer.dynamicMesh.draw(DrawMethod.lines)
   }
 
   val meshes: MeshMap

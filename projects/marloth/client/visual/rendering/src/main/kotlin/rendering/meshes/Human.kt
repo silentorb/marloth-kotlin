@@ -3,6 +3,7 @@ package rendering.meshes
 import mythic.sculpting.*
 import mythic.spatial.Pi
 import mythic.spatial.Vector2
+import mythic.spatial.Vector3
 
 data class HeadPorts(
     val neck: Port
@@ -51,6 +52,7 @@ fun createHuman(): FlexibleMesh {
   val head = createHead()
   val torso = createTorso()
   val mesh = joinMeshNodes(head.mesh, head.ports.neck, torso.mesh, torso.ports.neck)
+  translatePosition(Vector3(0f, -2f, 0f), mesh.distinctVertices)
 //  val mesh = FlexibleMesh()
 //  setAnchor(head.ports.neck.middle, head.mesh.distinctVertices)
 //  mesh.sharedImport(head.mesh)

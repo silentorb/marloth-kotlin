@@ -85,8 +85,8 @@ fun drawModelPreview(renderer: Renderer, dimensions: Vector2i, camera: Camera, s
 //  renderFaceNormals(renderer,mesh,)
 
   sceneRenderer.drawnLine(Vector3(), Vector3(2f, 0f, 0f), red)
-  sceneRenderer.drawnLine(Vector3(), Vector3(0.1f, 2f, 0f), green)
-  sceneRenderer.drawnLine(Vector3(), Vector3(0f, 0.1f, 2f), blue)
+  sceneRenderer.drawnLine(Vector3(), Vector3(0f, 2f, 0f), green)
+  sceneRenderer.drawnLine(Vector3(), Vector3(0f, 0f, 2f), blue)
   globalState.depthEnabled = false
 }
 
