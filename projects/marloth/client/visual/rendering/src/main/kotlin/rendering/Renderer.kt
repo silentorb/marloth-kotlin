@@ -134,6 +134,13 @@ class SceneRenderer(
     renderer.dynamicMesh.draw(DrawMethod.lines)
   }
 
+  fun drawPoint(position: Vector3, color: Vector4, size: Float = 1f) {
+    globalState.pointSize = size
+    renderer.dynamicMesh.load(listOf(position.x, position.y, position.z))
+    effects.flat.activate(Matrix(), color)
+    renderer.dynamicMesh.draw(DrawMethod.points)
+  }
+
   val meshes: MeshMap
     get() = renderer.meshes
 }

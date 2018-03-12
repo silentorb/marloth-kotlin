@@ -8,13 +8,12 @@ import org.lwjgl.opengl.GL30.glBindVertexArray
 
 import mythic.spatial.Vector4
 import org.joml.Vector4i
-import org.lwjgl.opengl.GL13
 import org.lwjgl.opengl.GL13.glActiveTexture
 import org.lwjgl.opengl.GL14.GL_BLEND_DST_RGB
 import org.lwjgl.opengl.GL14.GL_BLEND_SRC_RGB
 import org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER
 
-private fun getBounds(type: Int): Vector4i {
+fun getGLBounds(type: Int): Vector4i {
   val buffer = IntArray(4)
   glGetIntegerv(type, buffer)
   return Vector4i(buffer[0], buffer[1], buffer[2], buffer[3])
@@ -85,7 +84,7 @@ class State {
       }
     }
 
-  var viewport: Vector4i = getBounds(GL_VIEWPORT)
+  var viewport: Vector4i = getGLBounds(GL_VIEWPORT)
     set(value) {
       if (field != value) {
         field = value
@@ -93,7 +92,7 @@ class State {
       }
     }
 
-  var cropBounds: Vector4i = getBounds(GL_SCISSOR_BOX)
+  var cropBounds: Vector4i = getGLBounds(GL_SCISSOR_BOX)
     set(value) {
       if (field != value) {
         field = value

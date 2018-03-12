@@ -18,23 +18,24 @@ fun getAspectRatio(dimensions: Vector2i): Float {
   return dimensions.x.toFloat() / dimensions.y.toFloat()
 }
 
-fun createPerspectiveMatrix(dimensions: Vector2i, angle: Float = 45f): Matrix {
+fun createPerspectiveMatrix(dimensions: Vector2i, angle: Float, nearClip: Float, farClip: Float): Matrix {
   val ratio = getAspectRatio(dimensions)
   val radians = Math.toRadians(angle.toDouble()).toFloat()
   return Matrix()
-      .setPerspective(radians, ratio, 0.01f, 200.0f)
+      .setPerspective(radians, ratio, nearClip, farClip)
 }
 
-fun createOrthographicMatrix(zoom: Float): Matrix {
+fun createOrthographicMatrix(dimensions: Vector2i, zoom: Float, nearClip: Float, farClip: Float): Matrix {
+  val ratio = getAspectRatio(dimensions)
   return Matrix()
-      .setOrtho(-1f * zoom, 1f * zoom, -1f * zoom, 1f * zoom, 0.01f, 200.0f)
+      .setOrtho(-1f * zoom, 1f * zoom, -1f * zoom, 1f * zoom, nearClip, farClip)
 }
 
 fun createCameraMatrix(dimensions: Vector2i, camera: Camera): Matrix {
   val projection = if (camera.projectionType == ProjectionType.orthographic)
-    createOrthographicMatrix(camera.position.length())
+    createOrthographicMatrix(dimensions, camera.position.length(), camera.nearClip, camera.farClip)
   else
-    createPerspectiveMatrix(dimensions, camera.angle)
+    createPerspectiveMatrix(dimensions, camera.angle, camera.nearClip, camera.farClip)
 
   val view = createViewMatrix(camera.position, camera.orientation)
   return projection * view

@@ -19,7 +19,7 @@ class Glow() {
 }
 
 fun viewportStack(value: Vector4i, action: () -> Unit) {
-  val current = globalState.viewport
+  val current = getGLBounds(GL_VIEWPORT)
   globalState.viewport = value
   action()
   globalState.viewport = current
