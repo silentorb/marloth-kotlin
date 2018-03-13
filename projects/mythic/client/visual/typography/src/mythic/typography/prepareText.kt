@@ -91,7 +91,7 @@ fun arrangeType(config: TextConfiguration): TypeArrangement? {
     arrangedCharacters.add(ArrangedCharacter(
         character,
         x,
-        y
+        y + character.info.sizeY - character.info.bearingY
     ))
     x += character.info.sizeX
 
