@@ -21,7 +21,6 @@ import kotlin.concurrent.thread
 import simulation.changing.Instantiator
 import simulation.changing.InstantiatorConfig
 
-
 fun startGui() {
   thread(true, false, null, "JavaFX GUI", -1) {
 //    val gui = LabGui(setModelCode, getModelCode)

@@ -1,86 +1,15 @@
 rootProject.name = 'dev_lab'
 
-//def addMany(Object arg, List<String> prefix = []) {
-//    if (arg instanceof String) {
-//        def tokens = arg.tokenize('/')
-//        def name = tokens.last()
-//        include name
-//        def path = prefix.plus(arg).join('/')
-//        println(path)
-//        def file = new File(path)
-//        if (!file.exists())
-//            throw new FileNotFoundException("Could not find project: " + path)
-//
-//        project(':' + name).projectDir = file
-//    } else if (arg instanceof Map) {
-//        arg.each { key, value ->
-//            def newPrefix = prefix.plus(key)
-////      println(key)
-////      println(value)
-//            addMany(value.collect { it } as List<Object>, newPrefix)
-//        }
-////  } else if (arg.size == 2 && arg[0] instanceof String && !(arg[1] instanceof String)) {
-////    def newPrefix = prefix.plus(arg[0])
-////    addMany(arg[1].collect { it } as List<Object>, newPrefix)
-//    } else {
-//        arg.each() { addMany(it, prefix) }
-//    }
-//}
-
 def addProjects(File path) {
     def name = path.name
-//    println path.path.replace('\\', '/') + '/build.gradle'
     if (new File(path.path.replace('\\', '/') + '/build.gradle').exists()) {
-//        println 'Adding project' + ' ' + name + ' ' + path
         include name
         project(':' + name).projectDir = path
     } else {
         path.eachDir { file ->
-//            println file
             addProjects(file)
         }
     }
 }
 
 addProjects(file('projects'))
-
-//addMany([projects: [
-//    [marloth: [
-//        [app: [
-//            'front',
-//            'desktop',
-//            'lab',
-//        ]],
-//        [client: [
-//            'marloth_clienting',
-//            [visual: [
-//                'rendering',
-//                'scenery',
-//                'visualizing',
-//            ]],
-//        ]],
-//        'shared/commanding',
-//
-//        'server/serving',
-//        'server/simulation',
-//        'server/generation',
-//    ]],
-//
-//    [mythic: [
-//        [client: [
-//            'bloom',
-//            'input/haft',
-//            [visual: [
-//                'drawing',
-//                'glowing',
-//                'typography',
-//            ]],
-//        ]],
-//        [misc: [
-//            'quartz',
-//            'sculpting',
-//            'spatial',
-//            'randomly',
-//        ]],
-//    ]],
-//]])
