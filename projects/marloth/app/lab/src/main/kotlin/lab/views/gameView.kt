@@ -1,7 +1,5 @@
 package lab.views
 
-import haft.Command
-import lab.LabCommandType
 import org.joml.Vector2i
 
 class GameView : View {
@@ -9,7 +7,7 @@ class GameView : View {
     return LabLayout(listOf())
   }
 
-  override fun handleInput(layout: LabLayout,commands: List<Command<LabCommandType>>) {
+  override fun updateState(layout: LabLayout, input: InputState, delta: Float) {
 
   }
 

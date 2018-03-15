@@ -1,7 +1,5 @@
 package lab.views
 
-import haft.Command
-import lab.LabCommandType
 import lab.utility.drawBorder
 import mythic.bloom.*
 import mythic.drawing.Canvas
@@ -40,7 +38,7 @@ class TextureView : View {
     )
   }
 
-  override fun handleInput(layout: LabLayout,commands: List<Command<LabCommandType>>) {
+  override fun updateState(layout: LabLayout, input: InputState, delta: Float) {
 
   }
 

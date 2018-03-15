@@ -9,8 +9,14 @@ import org.joml.Vector2i
 typealias ViewInputResult = Pair<Commands<CommandType>, LabState>
 typealias LabCommandMap = Map<LabCommandType, CommandHandler<LabCommandType>>
 
+data class InputState(
+    val commands: List<Command<LabCommandType>>,
+    val mousePosition: Vector2i,
+    val mouseOffset: Vector2i
+)
+
 interface View {
   fun createLayout(dimensions: Vector2i): LabLayout
   fun getCommands(): LabCommandMap
-  fun handleInput(layout: LabLayout, commands: List<Command<LabCommandType>>)
+  fun updateState(layout: LabLayout, input: InputState, delta: Float)
 }

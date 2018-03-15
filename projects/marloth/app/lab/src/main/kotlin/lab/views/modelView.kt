@@ -1,11 +1,8 @@
 package lab.views
 
-import haft.Command
+import haft.getCommand
 import haft.isActive
 import lab.LabCommandType
-import lab.utility.drawBorder
-import lab.utility.drawFill
-import lab.utility.grayTone
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.glowing.DrawMethod
@@ -22,10 +19,13 @@ import scenery.Camera
 import scenery.ProjectionType
 import scenery.Scene
 import java.text.DecimalFormat
+import lab.utility.*
 
 data class ViewCameraConfig(
     var rotationY: Float = 0f,
-    var rotationZ: Float = 0f
+    var rotationZ: Float = 0f,
+    var pivot: Vector3 = Vector3(),
+    var zoom: Float = 2f
 )
 
 data class ModelViewConfig(
@@ -38,17 +38,6 @@ data class ModelViewConfig(
     var tempEnd: Vector3 = Vector3()
 )
 
-private val black = grayTone(0f)
-private val sceneBackgroundColor = grayTone(0.22f)
-private val panelColor = grayTone(0.45f)
-private val faceColor = grayTone(0.1f, 0.3f)
-private val lineColor = black
-private val green = Vector4(0f, 1f, 0f, 1f)
-private val red = Vector4(1f, 0f, 0f, 1f)
-private val blue = Vector4(0f, 0f, 1f, 1f)
-private val white = Vector4(1f)
-private val yellow = Vector4(1f, 1f, 0f, 1f)
-
 typealias MeshGenerator = (FlexibleMesh) -> Unit
 
 private var result: MeshGenerator? = null
@@ -59,15 +48,13 @@ fun createOrthographicCamera(camera: ViewCameraConfig): Camera {
       .rotateZ(camera.rotationZ + Pi * 0.5f)
 
 //  return Camera(ProjectionType.perspective, orientation * Vector3(-12f, 0f, 1f), orientation, 30f)
-  return Camera(ProjectionType.orthographic, orientation * Vector3(-2f, 0f, 1f), orientation, 30f)
+  return Camera(ProjectionType.orthographic, orientation * Vector3(-2f, 0f, 1f), orientation, camera.zoom)
 }
 
 fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, camera: Camera, bundle: MeshBundle) {
   val panelDimensions = Vector2i(b.dimensions.x.toInt(), b.dimensions.y.toInt())
   viewportStack(Vector4i(b.position.x.toInt(), b.position.y.toInt(), panelDimensions.x, panelDimensions.y), {
     val sceneRenderer = renderer.createSceneRenderer(Scene(camera), panelDimensions)
-//  val cameraData = createCameraEffectsData(dimensions, camera)
-//  val effect = FlatColoredPerspectiveEffect(renderer.shaders.flat, cameraData)
     val transform = Matrix()
 
     val simpleMesh = createSimpleMesh(bundle.mesh, renderer.vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f))
@@ -196,9 +183,25 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     )
   }
 
-  override fun handleInput(layout: LabLayout, commands: List<Command<LabCommandType>>) {
+  override fun updateState(layout: LabLayout, input: InputState, delta: Float) {
+    val commands = input.commands
+
+    val rotateSpeedZ = 1f
+    val rotateSpeedY = 1f
+
     if (isActive(commands, LabCommandType.select)) {
       trySelect(config, camera, meshBundle.mesh, mousePosition, layout)
+    }
+
+    if (isActive(commands, LabCommandType.rotate)) {
+      config.camera.rotationZ += rotateSpeedZ * delta * input.mouseOffset.x
+      config.camera.rotationY += rotateSpeedY * delta * input.mouseOffset.y
+    }
+
+    if (isActive(commands, LabCommandType.zoomIn)) {
+      config.camera.zoom -= 10 * delta * getCommand(commands, LabCommandType.zoomIn).value
+    } else if (isActive(commands, LabCommandType.zoomOut)) {
+      config.camera.zoom += 10 * delta * getCommand(commands, LabCommandType.zoomOut).value
     }
   }
 

@@ -16,6 +16,8 @@ import scenery.GameScene
 import simulation.AbstractWorld
 import haft.*
 import mythic.sculpting.FlexibleMesh
+import org.joml.Vector2i
+import org.joml.minus
 import rendering.MeshType
 import rendering.SceneRenderer
 
@@ -60,6 +62,19 @@ fun renderFaceNormals(renderer: SceneRenderer, mesh: FlexibleMesh, effects: Effe
   }
 }
 
+private var previousMousePosition = Vector2i()
+
+fun getInputState(platformInput: PlatformInput, commands: List<Command<LabCommandType>>): InputState {
+  val mousePosition = platformInput.getMousePosition()
+  val input = InputState(
+      commands,
+      mousePosition,
+      mousePosition - previousMousePosition
+  )
+  previousMousePosition = mousePosition
+  return input
+}
+
 class LabClient(val config: LabConfig, val client: Client) {
 
   val globalKeyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
@@ -82,11 +97,12 @@ class LabClient(val config: LabConfig, val client: Client) {
 //    renderFaceNormals(client.renderer, metaWorld.mesh, effects)
   }
 
-  fun update(scenes: List<GameScene>, metaWorld: AbstractWorld, previousState: LabState): ViewInputResult {
+  fun update(scenes: List<GameScene>, metaWorld: AbstractWorld, previousState: LabState, delta: Float): ViewInputResult {
     val windowInfo = client.platform.display.getInfo()
     val view = selectView(config, metaWorld, client, config.view)
     client.renderer.prepareRender(windowInfo)
     val layout = view.createLayout(windowInfo.dimensions)
+    client.platform.input.update()
 
     if (config.view == "game") {
       val (commands, nextLabInputState) = gatherInputCommands(labInputConfig["global"]!!, deviceHandlers, previousState.labInput)
@@ -101,7 +117,8 @@ class LabClient(val config: LabConfig, val client: Client) {
     val bindings = labInputConfig["global"]!!.plus(labInputConfig[config.view]!!)
     val (commands, nextLabInputState) = gatherInputCommands(bindings, deviceHandlers, previousState.labInput)
     applyCommands(commands, view.getCommands().plus(globalKeyPressCommands))
-    view.handleInput(layout, commands)
+    val input = getInputState(client.platform.input, commands)
+    view.updateState(layout, input, delta)
     return Pair(listOf(), LabState(nextLabInputState, previousState.gameInput))
   }
 

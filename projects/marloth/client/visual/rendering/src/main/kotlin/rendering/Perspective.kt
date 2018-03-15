@@ -33,9 +33,9 @@ fun createOrthographicMatrix(dimensions: Vector2i, zoom: Float, nearClip: Float,
 
 fun createCameraMatrix(dimensions: Vector2i, camera: Camera): Matrix {
   val projection = if (camera.projectionType == ProjectionType.orthographic)
-    createOrthographicMatrix(dimensions, camera.position.length(), camera.nearClip, camera.farClip)
+    createOrthographicMatrix(dimensions, camera.angleOrZoom, camera.nearClip, camera.farClip)
   else
-    createPerspectiveMatrix(dimensions, camera.angle, camera.nearClip, camera.farClip)
+    createPerspectiveMatrix(dimensions, camera.angleOrZoom, camera.nearClip, camera.farClip)
 
   val view = createViewMatrix(camera.position, camera.orientation)
   return projection * view

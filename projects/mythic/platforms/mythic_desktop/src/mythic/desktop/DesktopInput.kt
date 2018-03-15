@@ -1,12 +1,10 @@
 package mythic.desktop
 
-import haft.GAMEPAD_AXIS_TRIGGER_LEFT
-import haft.GAMEPAD_BUTTON_A
-import haft.Gamepad
-import haft.ScalarInputSource
+import haft.*
 import mythic.platforming.PlatformInput
 import org.joml.Vector2i
 import org.lwjgl.glfw.GLFW.*
+import org.lwjgl.glfw.GLFWScrollCallback
 
 val GamepadIndices = GLFW_JOYSTICK_1..GLFW_JOYSTICK_LAST
 
@@ -35,8 +33,20 @@ fun getGamepadAxes(device: Int, axisDirIndex: Int): Float {
 }
 
 class DesktopInput(val window: Long) : PlatformInput {
+  private var mouseScrollYBuffer: Float = 0f
+  private var mouseScrollY: Float = 0f
+
   init {
     glfwSetInputMode(window, GLFW_STICKY_KEYS, 1)
+    glfwSetScrollCallback(window, GLFWScrollCallback.create({ window, xoffset, yoffset ->
+      println(yoffset)
+      mouseScrollYBuffer = yoffset.toFloat()
+    }))
+  }
+
+  override fun update() {
+    mouseScrollY = mouseScrollYBuffer
+    mouseScrollYBuffer = 0f
   }
 
   override fun getGamepads(): List<Gamepad> =
@@ -56,11 +66,26 @@ class DesktopInput(val window: Long) : PlatformInput {
     else
       if (glfwGetJoystickButtons(device)[trigger - GAMEPAD_BUTTON_A].toInt() == GLFW_PRESS) 1f else 0f
   }
+
   override val MouseInputSource = { key: Int ->
-    if (glfwGetMouseButton(window, key) == GLFW_PRESS)
-      1f
-    else
+    if (key < MOUSE_SKIP) {
+      if (glfwGetMouseButton(window, key) == GLFW_PRESS)
+        1f
+      else
+        0f
+    } else if (key == MOUSE_SCROLL_UP) {
+      if (mouseScrollY > 0)
+        mouseScrollY
+      else
+        0f
+    } else if (key == MOUSE_SCROLL_DOWN) {
+      if (mouseScrollY < 0)
+        -mouseScrollY
+      else
+        0f
+    } else {
       0f
+    }
   }
 
   override fun getMousePosition(): Vector2i {

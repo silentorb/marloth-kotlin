@@ -1,6 +1,5 @@
 package lab.views
 
-import haft.Command
 import lab.LabCommandType
 import simulation.WorldBoundary
 import lab.WorldViewConfig
@@ -103,7 +102,7 @@ class WorldView(val config: WorldViewConfig, val abstractWorld: AbstractWorld, v
     return createMapLayout(abstractWorld, dimensions2, config, renderer)
   }
 
-  override fun handleInput(layout: LabLayout, commands: List<Command<LabCommandType>>) {
+  override fun updateState(layout: LabLayout, input: InputState, delta: Float) {
 
   }
 

@@ -11,6 +11,7 @@ interface PlatformInput {
   val KeyboardInputSource: ScalarInputSource
   val GamepadInputSource: MultiDeviceScalarInputSource
   val MouseInputSource: ScalarInputSource
+  fun update()
   fun getMousePosition(): Vector2i
   fun getGamepads(): List<Gamepad>
 }

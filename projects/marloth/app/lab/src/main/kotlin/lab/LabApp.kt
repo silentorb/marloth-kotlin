@@ -48,8 +48,8 @@ private var saveIncrement = 0
 tailrec fun labLoop(app: LabApp, previousState: LabState) {
   app.display.swapBuffers()
   val scenes = createScenes(app.world, app.client.screens)
-  val (commands, nextState) = app.labClient.update(scenes, app.world.meta, previousState)
   val delta = app.timer.update().toFloat()
+  val (commands, nextState) = app.labClient.update(scenes, app.world.meta, previousState, delta)
   val instantiator = Instantiator(app.world, InstantiatorConfig(app.gameConfig.gameplay.defaultPlayerView))
   val updater = WorldUpdater(app.world, instantiator)
   updater.update(commands, delta)

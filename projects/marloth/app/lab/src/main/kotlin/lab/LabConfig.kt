@@ -2,7 +2,6 @@ package lab
 
 import haft.*
 import org.lwjgl.glfw.GLFW
-import rendering.MeshType
 import lab.views.*
 
 enum class LabCommandType {
@@ -13,6 +12,7 @@ enum class LabCommandType {
   toggleAbstractView,
   toggleStructureView,
 
+  rotate,
   rotateUp,
   rotateDown,
   rotateLeft,
@@ -22,8 +22,8 @@ enum class LabCommandType {
   update,
 
   select,
-
-  // model view
+  zoomIn,
+  zoomOut,
 
   cameraViewFront,
   cameraViewBack,
@@ -64,6 +64,11 @@ fun createLabInputBindings() = mutableMapOf(
             GLFW.GLFW_KEY_KP_6 to LabCommandType.cameraViewRight,
             GLFW.GLFW_KEY_KP_8 to LabCommandType.cameraViewTop
         )))
+        .plus(createBindings(1, mapOf(
+            GLFW.GLFW_MOUSE_BUTTON_2 to LabCommandType.rotate,
+            MOUSE_SCROLL_UP to LabCommandType.zoomIn,
+            MOUSE_SCROLL_DOWN to LabCommandType.zoomOut
+            )))
         .plus(createStrokeBindings(1, mapOf(
             GLFW.GLFW_MOUSE_BUTTON_1 to LabCommandType.select
         ))),

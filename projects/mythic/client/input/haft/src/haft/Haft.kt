@@ -116,3 +116,6 @@ fun <T> createStrokeBindings(device: Int, bindings: Map<Int, T>) = createStrokeB
 
 fun <T> isActive(commands: List<Command<T>>, commandType: T) =
     commands.any { it.type == commandType }
+
+fun <T> getCommand(commands: List<Command<T>>, commandType: T) =
+    commands.first { it.type == commandType }

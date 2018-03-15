@@ -22,6 +22,7 @@ class Client(val platform: Platform) {
 
   fun updateInput(previousState: HaftInputState<CommandType>, players: List<Int>):
       Pair<Commands<CommandType>, HaftInputState<CommandType>> {
+    platform.input.update()
     val gamepads = platform.input.getGamepads().map { it.id }
     val waitingDevices = getWaitingDevices(gamepadAssignments, gamepads)
     val deviceHandlers = createDeviceHandlers(platform.input, gamepadAssignments, waitingDevices)
