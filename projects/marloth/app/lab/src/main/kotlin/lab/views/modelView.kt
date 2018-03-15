@@ -12,6 +12,7 @@ import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
 import mythic.glowing.viewportStack
 import mythic.sculpting.FlexibleMesh
+import mythic.sculpting.MeshBundle
 import mythic.spatial.*
 import mythic.typography.TextConfiguration
 import org.joml.*
@@ -20,6 +21,7 @@ import rendering.meshes.createHuman
 import scenery.Camera
 import scenery.ProjectionType
 import scenery.Scene
+import java.text.DecimalFormat
 
 data class ViewCameraConfig(
     var rotationY: Float = 0f,
@@ -45,6 +47,7 @@ private val green = Vector4(0f, 1f, 0f, 1f)
 private val red = Vector4(1f, 0f, 0f, 1f)
 private val blue = Vector4(0f, 0f, 1f, 1f)
 private val white = Vector4(1f)
+private val yellow = Vector4(1f, 1f, 0f, 1f)
 
 typealias MeshGenerator = (FlexibleMesh) -> Unit
 
@@ -59,7 +62,7 @@ fun createOrthographicCamera(camera: ViewCameraConfig): Camera {
   return Camera(ProjectionType.orthographic, orientation * Vector3(-2f, 0f, 1f), orientation, 30f)
 }
 
-fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, camera: Camera, sourceMesh: FlexibleMesh) {
+fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, camera: Camera, bundle: MeshBundle) {
   val panelDimensions = Vector2i(b.dimensions.x.toInt(), b.dimensions.y.toInt())
   viewportStack(Vector4i(b.position.x.toInt(), b.position.y.toInt(), panelDimensions.x, panelDimensions.y), {
     val sceneRenderer = renderer.createSceneRenderer(Scene(camera), panelDimensions)
@@ -67,7 +70,7 @@ fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, cam
 //  val effect = FlatColoredPerspectiveEffect(renderer.shaders.flat, cameraData)
     val transform = Matrix()
 
-    val simpleMesh = createSimpleMesh(sourceMesh, renderer.vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f))
+    val simpleMesh = createSimpleMesh(bundle.mesh, renderer.vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f))
 
     globalState.depthEnabled = true
     globalState.blendEnabled = true
@@ -95,12 +98,18 @@ fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, cam
     sceneRenderer.drawnLine(Vector3(), Vector3(0f, 0f, 2f), blue)
 
     if (config.vertexSelection.size > 0) {
-      val vertices = sourceMesh.distinctVertices
+      val vertices = bundle.mesh.distinctVertices
       for (index in config.vertexSelection) {
         sceneRenderer.drawPoint(vertices[index], white, 2f)
       }
     }
     globalState.depthEnabled = false
+
+    for (group in bundle.info.edgeGroups) {
+      for (pair in group) {
+        sceneRenderer.drawnLine(pair.key.first, pair.key.second, yellow)
+      }
+    }
   })
 }
 
@@ -110,22 +119,24 @@ private fun draw(backgroundColor: Vector4): Render = { b: Bounds, canvas: Canvas
   drawBorder(b, canvas, Vector4(0f, 0f, 0f, 1f))
 }
 
-private fun drawScenePanel(config: ModelViewConfig, renderer: Renderer, mesh: FlexibleMesh, camera: Camera): Render = { b: Bounds, canvas: Canvas ->
+private fun drawScenePanel(config: ModelViewConfig, renderer: Renderer, bundle: MeshBundle, camera: Camera): Render = { b: Bounds, canvas: Canvas ->
   draw(sceneBackgroundColor)(b, canvas)
-  drawModelPreview(config, renderer, b, camera, mesh)
+  drawModelPreview(config, renderer, b, camera, bundle)
 }
 
-fun toString(vector: Vector3) =
-    vector.x.toString() + ", " + vector.y.toString() + ", " + vector.z.toString()
+val decimalFormat = DecimalFormat("#.#####")
 
-private fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, mesh: FlexibleMesh,
+fun toString(vector: Vector3) =
+    decimalFormat.format(vector.x) + ", " + decimalFormat.format(vector.y) + ", " + decimalFormat.format(vector.z)
+
+private fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, bundle: MeshBundle,
                           mousePosition: Vector2i): Render = { bounds: Bounds, canvas: Canvas ->
   drawSidePanel()(bounds, canvas)
   canvas.drawText(TextConfiguration("Mouse: " + mousePosition.x.toString() + ", " + mousePosition.y.toString(),
       renderer.fonts[0], 12f, bounds.position + Vector2(5f, 5f), black))
 
   if (config.vertexSelection.size > 0) {
-    val vertices = mesh.distinctVertices
+    val vertices = bundle.mesh.distinctVertices
     canvas.drawText(TextConfiguration(toString(vertices[config.vertexSelection.first()]),
         renderer.fonts[0], 12f, bounds.position + Vector2(5f, 25f), black))
   }
@@ -160,21 +171,20 @@ private fun trySelect(config: ModelViewConfig, camera: Camera, mesh: FlexibleMes
   if (hits.size > 0) {
     val selected = hits.sortedBy { it.distance(start) }.map { vertices.indexOf(it) }
     config.vertexSelection = selected.take(1).toMutableList()
-  }
-  else {
+  } else {
     config.vertexSelection = mutableListOf()
   }
 }
 
 class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePosition: Vector2i) : View {
-  val mesh: FlexibleMesh = createHuman()
+  val meshBundle: MeshBundle = createHuman()
   val camera = createOrthographicCamera(config.camera)
 
   override fun createLayout(dimensions: Vector2i): LabLayout {
     val panels = listOf(
         Pair(Measurement(Measurements.pixel, 200f), drawSidePanel()),
-        Pair(Measurement(Measurements.stretch, 0f), drawScenePanel(config, renderer, mesh, camera)),
-        Pair(Measurement(Measurements.pixel, 300f), drawInfoPanel(config, renderer, mesh, mousePosition))
+        Pair(Measurement(Measurements.stretch, 0f), drawScenePanel(config, renderer, meshBundle, camera)),
+        Pair(Measurement(Measurements.pixel, 300f), drawInfoPanel(config, renderer, meshBundle, mousePosition))
     )
     val dimensions2 = Vector2(dimensions.x.toFloat(), dimensions.y.toFloat())
     val boxes = overlap(createVerticalBounds(panels.map { it.first }, dimensions2), panels, { a, b ->
@@ -188,7 +198,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
 
   override fun handleInput(layout: LabLayout, commands: List<Command<LabCommandType>>) {
     if (isActive(commands, LabCommandType.select)) {
-      trySelect(config, camera, mesh, mousePosition, layout)
+      trySelect(config, camera, meshBundle.mesh, mousePosition, layout)
     }
   }
 

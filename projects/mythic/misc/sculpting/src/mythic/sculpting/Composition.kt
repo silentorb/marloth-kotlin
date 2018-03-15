@@ -17,7 +17,8 @@ typealias Port = FlexibleEdge
 
 data class MeshNode<Ports>(
     val mesh: FlexibleMesh,
-    val ports: Ports
+    val ports: Ports,
+    val info: MeshInfo
 )
 
 fun joinMeshNodes(first: FlexibleMesh, firstPort: Port, second: FlexibleMesh, secondPort: Port): FlexibleMesh {
@@ -27,9 +28,9 @@ fun joinMeshNodes(first: FlexibleMesh, firstPort: Port, second: FlexibleMesh, se
   setAnchor(secondPort.middle, second.distinctVertices)
   mesh.sharedImport(first)
   mesh.sharedImport(second)
-  firstPort.first.x += 1f
-  secondPort.first.x += 0.2f
-  secondPort.first.z += 0.2f
+//  firstPort.first.x += 1f
+//  secondPort.first.x += 0.2f
+//  secondPort.first.z += 0.2f
 //  val firstMiddles = firstPort.map { Pair(it.middle, it) }
 //  val secondMiddles = firstPort.map { Pair(it.middle, it) }
 

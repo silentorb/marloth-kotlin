@@ -81,7 +81,7 @@ typealias MeshGeneratorMap = Map<MeshType, MeshGenerator>
 typealias MeshMap = Map<MeshType, SimpleMesh>
 
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
-    MeshType.character to createSimpleMesh(createHuman(), vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f)),
+    MeshType.character to createSimpleMesh(createHuman().mesh, vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f)),
     MeshType.line to createLineMesh(vertexSchemas.flat),
     MeshType.cylinder to createSimpleMesh(createCylinder(), vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f)),
     MeshType.sphere to createSimpleMesh(createSphere(), vertexSchemas.standard, Vector4(0.4f, 0.1f, 0.1f, 1f))

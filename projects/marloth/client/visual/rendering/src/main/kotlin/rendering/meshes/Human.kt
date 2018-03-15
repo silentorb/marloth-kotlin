@@ -12,11 +12,12 @@ data class HeadPorts(
 fun createHead(): MeshNode<HeadPorts> {
   val mesh = FlexibleMesh()
   val headPath = createArc(0.6f, 8, Pi).take(7)
-  headPath.last().x *= 0.5f
+//  headPath.last().x *= 0.5f
   lathe(mesh, headPath, 8 * 3)
+  val edge = mesh.edges.last()
   return MeshNode(mesh, HeadPorts(
-      edgeLoopNext(mesh.edges.last())
-  ))
+      edgeLoopNext(edge)
+  ), MeshInfo(listOf(), listOf(mapOf(edge to 1f))))
 }
 
 data class TorsoPorts(
@@ -42,12 +43,13 @@ fun createTorso(): MeshNode<TorsoPorts> {
       Vector2(0.25f, 0f)
   ))
   latheTwoPaths(mesh, bodyFront, bodySide)
+  val edge = mesh.edges.first()
   return MeshNode(mesh, TorsoPorts(
-      mesh.edges.first()
-  ))
+      edge
+  ), MeshInfo(listOf(), listOf(mapOf(edge to 1f))))
 }
 
-fun createHuman(): FlexibleMesh {
+fun createHuman(): MeshBundle {
   val neck = 0.05f
   val head = createHead()
   val torso = createTorso()
@@ -58,5 +60,8 @@ fun createHuman(): FlexibleMesh {
 //  mesh.sharedImport(head.mesh)
 //  val mesh = head.mesh
 //  alignToFloor(mesh.distinctVertices, 1f)
-  return mesh
+  return MeshBundle(
+      mesh,
+      MeshInfo(listOf(), head.info.edgeGroups.plus(torso.info.edgeGroups))
+  )
 }
