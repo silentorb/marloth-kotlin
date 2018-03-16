@@ -12,6 +12,7 @@ enum class LabCommandType {
   toggleAbstractView,
   toggleStructureView,
 
+  pan,
   rotate,
   rotateUp,
   rotateDown,
@@ -63,6 +64,9 @@ fun createLabInputBindings() = mutableMapOf(
             GLFW.GLFW_KEY_KP_4 to LabCommandType.cameraViewLeft,
             GLFW.GLFW_KEY_KP_6 to LabCommandType.cameraViewRight,
             GLFW.GLFW_KEY_KP_8 to LabCommandType.cameraViewTop
+        )))
+        .plus(createBindings(0, mapOf(
+            GLFW.GLFW_KEY_W to LabCommandType.pan
         )))
         .plus(createBindings(1, mapOf(
             GLFW.GLFW_MOUSE_BUTTON_2 to LabCommandType.rotate,

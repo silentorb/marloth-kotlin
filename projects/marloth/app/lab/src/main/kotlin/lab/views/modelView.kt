@@ -44,11 +44,13 @@ private var result: MeshGenerator? = null
 
 fun createOrthographicCamera(camera: ViewCameraConfig): Camera {
   val orientation = Quaternion()
+      .rotateZ(camera.rotationZ + Pi)
       .rotateY(camera.rotationY)
-      .rotateZ(camera.rotationZ + Pi * 0.5f)
 
-//  return Camera(ProjectionType.perspective, orientation * Vector3(-12f, 0f, 1f), orientation, 30f)
-  return Camera(ProjectionType.orthographic, orientation * Vector3(-2f, 0f, 1f), orientation, camera.zoom)
+  val position = orientation * Vector3(-2f, 0f, 0f) + camera.pivot
+//  val position = Vector3(-2f, 0f, 0f)
+
+  return Camera(ProjectionType.orthographic, position, orientation, camera.zoom)
 }
 
 fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, camera: Camera, bundle: MeshBundle) {
@@ -119,14 +121,25 @@ fun toString(vector: Vector3) =
 private fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, bundle: MeshBundle,
                           mousePosition: Vector2i): Render = { bounds: Bounds, canvas: Canvas ->
   drawSidePanel()(bounds, canvas)
-  canvas.drawText(TextConfiguration("Mouse: " + mousePosition.x.toString() + ", " + mousePosition.y.toString(),
-      renderer.fonts[0], 12f, bounds.position + Vector2(5f, 5f), black))
+  var row = 1
+  fun drawText(content: String) {
+    canvas.drawText(TextConfiguration(content,
+        renderer.fonts[0], 12f, bounds.position + Vector2(5f, 5f + row++ * 20f), black))
+  }
+  drawText("Mouse: " + mousePosition.x.toString() + ", " + mousePosition.y.toString())
+//  canvas.drawText(TextConfiguration("Mouse: " + mousePosition.x.toString() + ", " + mousePosition.y.toString(),
+//      renderer.fonts[0], 12f, bounds.position + Vector2(5f, 5f), black))
 
   if (config.vertexSelection.size > 0) {
     val vertices = bundle.mesh.distinctVertices
-    canvas.drawText(TextConfiguration(toString(vertices[config.vertexSelection.first()]),
-        renderer.fonts[0], 12f, bounds.position + Vector2(5f, 25f), black))
+    drawText(toString(vertices[config.vertexSelection.first()]))
+//    canvas.drawText(TextConfiguration(toString(vertices[config.vertexSelection.first()]),
+//        renderer.fonts[0], 12f, bounds.position + Vector2(5f, 25f), black))
   }
+
+  drawText("rotationY: " + config.camera.rotationY)
+  drawText("rotationZ: " + config.camera.rotationZ)
+
 //  canvas.drawText(TextConfiguration("ts: " + config.tempStart.x.toString() + ", " + config.tempStart.y.toString() + ", " + config.tempStart.z.toString(),
 //      renderer.fonts[0], 12f, bounds.position + Vector2(5f, 25f), black))
 //  canvas.drawText(TextConfiguration("te: " + config.tempEnd.x.toString() + ", " + config.tempEnd.y.toString() + ", " + config.tempEnd.z.toString(),
@@ -163,6 +176,9 @@ private fun trySelect(config: ModelViewConfig, camera: Camera, mesh: FlexibleMes
   }
 }
 
+fun tightenRotation(value: Float): Float =
+    value % (Pi * 2)
+
 class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePosition: Vector2i) : View {
   val meshBundle: MeshBundle = createHuman()
   val camera = createOrthographicCamera(config.camera)
@@ -198,11 +214,19 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
       config.camera.rotationY += rotateSpeedY * delta * input.mouseOffset.y
     }
 
+    if (isActive(commands, LabCommandType.pan) && (input.mouseOffset.x != 0 || input.mouseOffset.y != 0)) {
+      val offset = Vector3(0f, input.mouseOffset.x.toFloat(), input.mouseOffset.y.toFloat())
+      config.camera.pivot += camera.orientation * offset * delta * config.camera.zoom * 0.14f
+    }
+
     if (isActive(commands, LabCommandType.zoomIn)) {
       config.camera.zoom -= 10 * delta * getCommand(commands, LabCommandType.zoomIn).value
     } else if (isActive(commands, LabCommandType.zoomOut)) {
       config.camera.zoom += 10 * delta * getCommand(commands, LabCommandType.zoomOut).value
     }
+
+    config.camera.rotationY = tightenRotation(config.camera.rotationY)
+    config.camera.rotationZ = tightenRotation(config.camera.rotationZ)
   }
 
   override fun getCommands(): LabCommandMap = mapOf(

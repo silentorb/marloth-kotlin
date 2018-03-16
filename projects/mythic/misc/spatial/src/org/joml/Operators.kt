@@ -132,9 +132,9 @@ operator fun Vector3f.minus(v: Float) = Vector3f(x - v, y - v, z - v)
 operator fun Vector2f.minus(v: Float) = sub(Vector2f(v, v), Vector2f())
 
 //operator fun Vector3f.minus(other: Float) = sub(other, Vector3f())
-operator fun Vector3f.plusAssign(other: Vector3f) {
-  add(other)
-}
+//operator fun Vector3f.plusAssign(other: Vector3f) {
+//  add(other)
+//}
 
 operator fun Vector3f.plus(v: Vector3fc): Vector3f = Vector3f(x + v.x(), y + v.y(), z + v.z())
 operator fun Vector3f.plus(v: Float): Vector3f = Vector3f(x + v, y + v, z + v)
