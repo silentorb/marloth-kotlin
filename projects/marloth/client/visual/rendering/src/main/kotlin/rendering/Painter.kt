@@ -18,6 +18,7 @@ fun createSimplePainter(mesh: SimpleMesh, color: Vector4 = Vector4(1f, 1f, 1f, 1
     }
 
 fun createPainters(meshes: MeshMap): Painters = mapOf(
+    DepictionType.monster to createSimplePainter(meshes[MeshType.monster]!!, Vector4(0.5f, 0.5f, 0.5f, 1f)),
     DepictionType.character to createSimplePainter(meshes[MeshType.character]!!, Vector4(0.3f, 0.2f, 1.0f, 1f)),
     DepictionType.missile to createSimplePainter(meshes[MeshType.sphere]!!,Vector4(0.4f, 0.1f, 0.1f, 1f))
 )

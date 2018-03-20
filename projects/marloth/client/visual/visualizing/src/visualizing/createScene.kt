@@ -46,23 +46,31 @@ fun createCamera(world: World, screen: Screen): Camera {
   }
 }
 
-val depictionMap = mapOf(
-    EntityType.character to DepictionType.character,
-    EntityType.missile to DepictionType.missile
-)
+//val depictionMap = mapOf(
+//    EntityType.character to DepictionType.character,
+//    EntityType.missile to DepictionType.missile,
+//    EntityType.monster to DepictionType.monster
+//)
 
-fun prepareVisualElement(body: Body, entityType: EntityType): VisualElement? {
-  val depiction = depictionMap[entityType]
-  return if (depiction != null)
-    VisualElement(depiction, Matrix().translate(body.position))
-  else
-    null
-}
+//fun prepareVisualElement(body: Body, entityType: EntityType): VisualElement? {
+//  val depiction = depictionMap[entityType]
+//  return if (depiction != null)
+//    VisualElement(depiction, Matrix().translate(body.position))
+//  else
+//    null
+//}
 
-fun selectBodies(world: World, player: Player) =
-    world.bodies
-        .filter { player.viewMode != ViewMode.firstPerson || it !== player.character.body }
-        .mapNotNull { prepareVisualElement(it, world.entities[it.id]!!.type) }
+//fun selectBodies(world: World, player: Player) =
+
+//    world.bodies
+//        .filter { player.viewMode != ViewMode.firstPerson || it !== player.character.body }
+//        .mapNotNull { prepareVisualElement(it, world.entities[it.id]!!.type) }
+
+fun filterDepictions(world: World, player: Player) =
+    if (player.viewMode == ViewMode.firstPerson)
+      world.depictionTable.filter { it.key != player.playerId }
+    else
+      world.depictionTable
 
 fun createScene(world: World, screen: Screen, player: Player) =
     GameScene(
@@ -75,7 +83,8 @@ fun createScene(world: World, screen: Screen, player: Player) =
                 direction = Vector4(0f, 0f, 0f, 15f)
             ))
         ),
-        selectBodies(world, player),
+        filterDepictions(world, player)
+            .map { VisualElement(it.value.type, Matrix().translate(world.bodyTable[it.key]!!.position)) },
         player.playerId
 
     )

@@ -98,6 +98,7 @@ class WorldUpdater(val world: World, val instantiator: Instantiator) {
     world.entities.minusAssign(finished)
     world.characterTable.minusAssign(finished)
     world.spiritTable.minusAssign(finished)
+    world.depictionTable.minusAssign(finished)
   }
 
   fun update(commands: Commands<CommandType>, delta: Float) {

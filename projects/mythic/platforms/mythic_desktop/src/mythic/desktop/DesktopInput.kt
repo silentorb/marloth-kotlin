@@ -39,7 +39,6 @@ class DesktopInput(val window: Long) : PlatformInput {
   init {
     glfwSetInputMode(window, GLFW_STICKY_KEYS, 1)
     glfwSetScrollCallback(window, GLFWScrollCallback.create({ window, xoffset, yoffset ->
-      println(yoffset)
       mouseScrollYBuffer = yoffset.toFloat()
     }))
   }

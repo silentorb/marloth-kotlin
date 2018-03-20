@@ -131,7 +131,6 @@ fun calculateNormals(mesh: FlexibleMesh) {
   }
 }
 
-
 typealias EdgeGroup = Map<FlexibleEdge, Float>
 typealias VertexGroup = Map<Vector3, Float>
 

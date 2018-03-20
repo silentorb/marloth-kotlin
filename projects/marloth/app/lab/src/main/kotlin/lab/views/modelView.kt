@@ -20,6 +20,7 @@ import scenery.ProjectionType
 import scenery.Scene
 import java.text.DecimalFormat
 import lab.utility.*
+import rendering.meshes.createMonster
 
 data class ViewCameraConfig(
     var rotationY: Float = 0f,
@@ -44,13 +45,17 @@ private var result: MeshGenerator? = null
 
 fun createOrthographicCamera(camera: ViewCameraConfig): Camera {
   val orientation = Quaternion()
-      .rotateZ(camera.rotationZ + Pi)
+      .rotateZ(camera.rotationZ)
       .rotateY(camera.rotationY)
+//      .rotateY(camera.rotationZ)
+//      .rotateZ(camera.rotationY)
 
-  val position = orientation * Vector3(-2f, 0f, 0f) + camera.pivot
+  val position = orientation * Vector3(12f, 0f, 0f)
+  val orientationSecond = Quaternion().rotateTo(Vector3(1f, 0f, 0f), -position)
 //  val position = Vector3(-2f, 0f, 0f)
 
-  return Camera(ProjectionType.orthographic, position, orientation, camera.zoom)
+  val k = orientationSecond * Vector3(1f, 0f, 0f)
+  return Camera(ProjectionType.orthographic, position + camera.pivot, orientationSecond, camera.zoom)
 }
 
 fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, camera: Camera, bundle: MeshBundle) {
@@ -139,7 +144,7 @@ private fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, bundle: M
 
   drawText("rotationY: " + config.camera.rotationY)
   drawText("rotationZ: " + config.camera.rotationZ)
-
+  drawText("pivot: " + toString(config.camera.pivot))
 //  canvas.drawText(TextConfiguration("ts: " + config.tempStart.x.toString() + ", " + config.tempStart.y.toString() + ", " + config.tempStart.z.toString(),
 //      renderer.fonts[0], 12f, bounds.position + Vector2(5f, 25f), black))
 //  canvas.drawText(TextConfiguration("te: " + config.tempEnd.x.toString() + ", " + config.tempEnd.y.toString() + ", " + config.tempEnd.z.toString(),
@@ -179,8 +184,14 @@ private fun trySelect(config: ModelViewConfig, camera: Camera, mesh: FlexibleMes
 fun tightenRotation(value: Float): Float =
     value % (Pi * 2)
 
+fun resetCamera(config: ModelViewConfig, rotationY: Float, rotationZ: Float) {
+  config.camera.rotationY = rotationY
+  config.camera.rotationZ = rotationZ
+  config.camera.pivot = Vector3()
+}
+
 class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePosition: Vector2i) : View {
-  val meshBundle: MeshBundle = createHuman()
+  val meshBundle: MeshBundle = createMonster()
   val camera = createOrthographicCamera(config.camera)
 
   override fun createLayout(dimensions: Vector2i): LabLayout {
@@ -210,7 +221,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     }
 
     if (isActive(commands, LabCommandType.rotate)) {
-      config.camera.rotationZ += rotateSpeedZ * delta * input.mouseOffset.x
+      config.camera.rotationZ -= rotateSpeedZ * delta * input.mouseOffset.x
       config.camera.rotationY += rotateSpeedY * delta * input.mouseOffset.y
     }
 
@@ -225,23 +236,21 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
       config.camera.zoom += 10 * delta * getCommand(commands, LabCommandType.zoomOut).value
     }
 
-    config.camera.rotationY = tightenRotation(config.camera.rotationY)
+    config.camera.rotationY = Math.min(1.55f, Math.max(-(Pi / 2 - 0.01f), config.camera.rotationY))
     config.camera.rotationZ = tightenRotation(config.camera.rotationZ)
   }
 
   override fun getCommands(): LabCommandMap = mapOf(
-      LabCommandType.rotateLeft to { c -> config.camera.rotationZ += rotateSpeedZ * c.value },
-      LabCommandType.rotateRight to { c -> config.camera.rotationZ -= rotateSpeedZ * c.value },
+      LabCommandType.rotateLeft to { c -> config.camera.rotationZ -= rotateSpeedZ * c.value },
+      LabCommandType.rotateRight to { c -> config.camera.rotationZ += rotateSpeedZ * c.value },
       LabCommandType.rotateUp to { c -> config.camera.rotationY += rotateSpeedY * c.value },
       LabCommandType.rotateDown to { c -> config.camera.rotationY -= rotateSpeedY * c.value },
 //      LabCommandType.update to { _ -> updateResult2() },
       LabCommandType.cameraViewFront to { _ ->
-        config.camera.rotationY = 0f
-        config.camera.rotationZ = 0f
+        resetCamera(config, 0f, 0f)
       },
       LabCommandType.cameraViewTop to { _ ->
-        config.camera.rotationY = Pi / 2
-        config.camera.rotationZ = 0f
+        resetCamera(config, Pi / 2, 0f)
       }
 //      ,
 //      LabCommandType.select to { _ ->

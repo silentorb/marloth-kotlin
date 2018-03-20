@@ -3,10 +3,12 @@ package simulation
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import org.joml.times
+import scenery.DepictionType
 
 data class CharacterDefinition(
     val health: Int,
-    val abilities: List<AbilityDefinition>
+    val abilities: List<AbilityDefinition>,
+    val depictionType: DepictionType
 )
 
 class Character(

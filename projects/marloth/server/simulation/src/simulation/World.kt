@@ -1,11 +1,13 @@
 package simulation
 
 import intellect.Spirit
+import scenery.Depiction
 import scenery.Light
 
 val maxPlayerCount = 4
 
 typealias Players = List<Player>
+typealias IdentityMap<T> = MutableMap<Id, T>
 
 data class World(
     val meta: AbstractWorld
@@ -16,6 +18,8 @@ data class World(
   val characterTable: MutableMap<Id, Character> = mutableMapOf()
   val missileTable: MutableMap<Id, Missile> = mutableMapOf()
   val spiritTable: MutableMap<Id, Spirit> = mutableMapOf()
+  val depictionTable: IdentityMap<Depiction> = mutableMapOf()
+
   val factions = mutableListOf(
       Faction(this, "Misfits"),
       Faction(this, "Monsters")
@@ -38,4 +42,6 @@ data class World(
   val spirits: MutableCollection<Spirit>
     get() = spiritTable.values
 
+  val depictions: MutableCollection<Depiction>
+    get() = depictionTable.values
 }

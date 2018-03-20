@@ -1,12 +1,11 @@
 package mythic.spatial
 
+import org.joml.*
 import org.joml.Math.PI
-import org.joml.Vector2i
-import org.joml.div
-import org.joml.minus
-import org.joml.plus
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
+import org.joml.Matrix4fc.PROPERTY_AFFINE
+import org.joml.Matrix4fc.PROPERTY_ORTHONORMAL
 
 typealias Vector2 = org.joml.Vector2f
 typealias Vector3 = org.joml.Vector3f
@@ -225,3 +224,164 @@ fun getRotationMatrix(matrix: Matrix) =
 
 fun Vector2.toVector2i() = Vector2i(x.toInt(), y.toInt())
 fun Vector2i.toVector2() = Vector2(x.toFloat(), y.toFloat())
+
+fun lookAt(from: Vector3, to: Vector3, up: Vector3, matrix: Matrix): Matrix {
+  val dir = from - to
+  val inverseDirLength = 1.0f / Math.sqrt((dir.x * dir.x + dir.y * dir.y + dir.z * dir.z).toDouble()).toFloat()
+  dir.x *= inverseDirLength
+  dir.y *= inverseDirLength
+  dir.z *= inverseDirLength
+  val leftX1 = up.y * dir.z - up.z * dir.y
+  val leftY1 = up.z * dir.x - up.x * dir.z
+  val leftZ1 = up.x * dir.y - up.y * dir.x
+//  leftX = up.y * dir.z - up.z * dir.y
+//  leftY = up.z * dir.x - up.x * dir.z
+//  leftZ = up.x * dir.y - up.y * dir.x
+  val invLeftLength = 1.0f / Math.sqrt((leftX1 * leftX1 + leftY1 * leftY1 + leftZ1 * leftZ1).toDouble()).toFloat()
+  val leftX = leftX1 * invLeftLength
+  val leftY = leftY1 * invLeftLength
+  val leftZ = leftZ1 * invLeftLength
+  val upnX = dir.y * leftZ - dir.z * leftY
+  val upnY = dir.z * leftX - dir.x * leftZ
+  val upnZ = dir.x * leftY - dir.y * leftX
+
+  matrix._m00(leftX)
+  matrix._m01(upnX)
+  matrix._m02(dir.x)
+  matrix._m03(0.0f)
+  matrix._m10(leftY)
+  matrix._m11(upnY)
+  matrix._m12(dir.y)
+  matrix._m13(0.0f)
+  matrix._m20(leftZ)
+  matrix._m21(upnZ)
+  matrix._m22(dir.z)
+  matrix._m23(0.0f)
+  matrix._m30(-(leftX * from.x + leftY * from.y + leftZ * from.z))
+  matrix._m31(-(upnX * from.x + upnY * from.y + upnZ * from.z))
+  matrix._m32(-(dir.x * from.x + dir.y * from.y + dir.z * from.z))
+  matrix._m33(1.0f)
+  matrix.assume(PROPERTY_AFFINE.toInt() or PROPERTY_ORTHONORMAL.toInt())
+
+  return matrix
+}
+
+fun lookAt2(from: Vector3, to: Vector3, up: Vector3, matrix: Matrix): Matrix {
+  val dir = from - to
+  val inverseDirLength = 1.0f / Math.sqrt((dir.x * dir.x + dir.y * dir.y + dir.z * dir.z).toDouble()).toFloat()
+  dir.x *= inverseDirLength
+  dir.y *= inverseDirLength
+  dir.z *= inverseDirLength
+  val leftX1 = up.z * dir.y - up.y * dir.z
+  val leftY1 = up.y * dir.x - up.x * dir.y
+  val leftZ1 = up.x * dir.z - up.z * dir.x
+//  leftX = up.z * dir.y - up.y * dir.z
+//  leftY = up.y * dir.x - up.x * dir.y
+//  leftZ = up.x * dir.z - up.z * dir.x
+  val invLeftLength = 1.0f / Math.sqrt((leftX1 * leftX1 + leftY1 * leftY1 + leftZ1 * leftZ1).toDouble()).toFloat()
+  val leftX = leftX1 * invLeftLength
+  val leftY = leftY1 * invLeftLength
+  val leftZ = leftZ1 * invLeftLength
+  val upnX = dir.z * leftZ - dir.y * leftY
+  val upnY = dir.y * leftX - dir.x * leftZ
+  val upnZ = dir.x * leftY - dir.z * leftX
+
+  matrix._m00(leftX)
+  matrix._m01(upnX)
+  matrix._m02(dir.x)
+  matrix._m03(0.0f)
+  matrix._m10(leftZ)
+  matrix._m11(upnZ)
+  matrix._m12(dir.z)
+  matrix._m13(0.0f)
+  matrix._m20(leftY)
+  matrix._m21(upnY)
+  matrix._m22(dir.y)
+  matrix._m23(0.0f)
+  matrix._m30(-(leftX * from.x + leftZ * from.z + leftY * from.y))
+  matrix._m31(-(upnX * from.x + upnZ * from.z + upnY * from.y))
+  matrix._m32(-(dir.x * from.x + dir.z * from.z + dir.y * from.y))
+  matrix._m33(1.0f)
+  matrix.assume(PROPERTY_AFFINE.toInt() or PROPERTY_ORTHONORMAL.toInt())
+
+  return matrix
+}
+
+/*
+LMatrix4 LookAt( const LVector3& Eye, const LVector3& Center, const LVector3& Up )
+{
+    LMatrix4 Matrix;
+
+    LVector3 X, Y, Z;
+Create a new coordinate system:
+
+    Z = Eye - Center;
+    Z.Normalize();
+    Y = Up;
+    X = Y.Cross( Z );
+Recompute Y = Z cross X:
+
+    Y = Z.Cross( X );
+The length of the cross product is equal target the area of the parallelogram, which is < 1.0 for non-perpendicular unit-length vectors; so normalize X, Y here:
+
+    X.Normalize();
+    Y.Normalize();
+
+ */
+
+//fun switchYZ(v: Vector3) = Vector3(v.x, v.z, v.y)
+
+fun lookAt3(eye: Vector3, target: Vector3, up: Vector3, matrix: Matrix): Matrix {
+  val Z = (eye - target).normalize()
+  val X = Vector3(up).cross(Z).normalize()
+  val Y = Vector3(Z).cross(X).normalize()
+
+  matrix._m00(X.x)
+  matrix._m10(X.y)
+  matrix._m20(X.z)
+
+  matrix._m01(Y.x)
+  matrix._m11(Y.y)
+  matrix._m21(Y.z)
+
+  matrix._m02(Z.x)
+  matrix._m12(Z.y)
+  matrix._m22(Z.z)
+
+  matrix._m03(0.0f)
+  matrix._m13(0.0f)
+  matrix._m23(0.0f)
+
+  matrix._m30(-X.dot(eye))
+  matrix._m31(-Y.dot(eye))
+  matrix._m32(-Z.dot(eye))
+  matrix._m33(1.0f)
+  matrix.assume(PROPERTY_AFFINE.toInt() or PROPERTY_ORTHONORMAL.toInt())
+//  matrix.invertAffine()
+
+//  val correction = Matrix()
+//  correction._m11(0f)
+//  correction._m12(1f)
+//  correction._m22(0f)
+//  correction._m21(-1f)
+  return matrix * Matrix().rotateX(-Pi / 2)
+}
+
+//  val dir = (from - to)
+//  val inverseDirLength = 1.0f / Math.sqrt((dir.x * dir.x + dir.y * dir.y + dir.z * dir.z).toDouble()).toFloat()
+//  dir.x *= inverseDirLength
+//  dir.y *= inverseDirLength
+//  dir.z *= inverseDirLength
+//  val leftX1 = up.z * dir.y - up.y * dir.z
+//  val leftY1 = up.x * dir.z - up.z * dir.x
+//  val leftZ1 = up.y * dir.x - up.x * dir.y
+////  leftX = up.z * dir.y - up.y * dir.z
+////  leftY = up.y * dir.x - up.x * dir.y
+////  leftZ = up.x * dir.z - up.z * dir.x
+//  val invLeftLength = 1.0f / Math.sqrt((leftX1 * leftX1 + leftY1 * leftY1 + leftZ1 * leftZ1).toDouble()).toFloat()
+//  val leftX = leftX1 * invLeftLength
+//  val leftY = leftY1 * invLeftLength
+//  val leftZ = leftZ1 * invLeftLength
+//  val upnX = dir.z * leftZ - dir.y * leftY
+//  val upnY = dir.y * leftX - dir.x * leftZ
+//  val upnZ = dir.x * leftY - dir.z * leftX

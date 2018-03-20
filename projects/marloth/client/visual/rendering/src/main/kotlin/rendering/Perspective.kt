@@ -1,17 +1,17 @@
 package rendering
 
-import mythic.spatial.Matrix
-import mythic.spatial.Quaternion
-import mythic.spatial.Vector3
+import mythic.spatial.*
 import org.joml.*
 import scenery.Camera
 import scenery.ProjectionType
 
 fun createViewMatrix(position: Vector3, orientation: Quaternion): Matrix {
-  val forward = orientation * Vector3(1f, 0f, 0f)
+  val forward = Quaternion(orientation) * Vector3(1f, 0f, 0f)
   val look_at = position + forward
-  return Matrix()
-      .setLookAt(position, look_at, Vector3(0f, 0f, 1f))
+//  return Matrix()
+//      .setLookAt(position, look_at, Vector3(0f, 1f, 0f))
+
+  return lookAt3(position, look_at, Vector3(0f, 1f, 0f), Matrix())
 }
 
 fun getAspectRatio(dimensions: Vector2i): Float {

@@ -107,8 +107,8 @@ fun latheTwoPaths(mesh: FlexibleMesh, firstPath: Vertices, secondPath: Vertices)
     val matrix = Matrix().rotateZ(angle)
 //    val weight = Math.abs(startVector.transform(matrix).normalize().dot(startVector))
 //    val weight = 1 - sawWave(angle / (Pi / 2))
-    val weight = sineRange(angle / Pi)
-    val weight2 = 1 - sawRange(angle / (Pi / 2))
+//    val weight = sineRange(angle / Pi)
+//    val weight2 = 1 - sawRange(angle / (Pi / 2))
 //    val interpolation = interpolatePaths(firstPath, secondPath, weight)
     val next = swings.map {
       val pivot = pivots.firstOrNull { p -> p == it.point }

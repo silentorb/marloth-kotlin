@@ -4,6 +4,8 @@ import intellect.Spirit
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import org.joml.plus
+import scenery.Depiction
+import scenery.DepictionType
 import simulation.*
 
 data class InstantiatorConfig(
@@ -29,6 +31,12 @@ class Instantiator(
     return body
   }
 
+  fun createDepiction(id: Id, type: DepictionType): Depiction {
+    val depiction = Depiction(id, type)
+    world.depictionTable[id] = depiction
+    return depiction
+  }
+
   fun createCharacter(definition: CharacterDefinition, faction: Faction, position: Vector3): Character {
     val body = createBody(EntityType.character, commonShapes[EntityType.character]!!, position)
     val character = Character(
@@ -38,6 +46,7 @@ class Instantiator(
         maxHealth = definition.health,
         abilities = definition.abilities.map { Ability(it) }.toMutableList()
     )
+    createDepiction(body.id, definition.depictionType)
     world.characterTable[body.id] = character
     return character
   }
@@ -59,6 +68,7 @@ class Instantiator(
     body.velocity = newMissile.velocity
     val missile = Missile(body.id, body, newMissile.owner, newMissile.range)
     world.missileTable[body.id] = missile
+    createDepiction(body.id, DepictionType.missile)
     return missile
   }
 
