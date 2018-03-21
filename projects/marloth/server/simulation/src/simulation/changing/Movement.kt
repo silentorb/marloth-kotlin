@@ -142,6 +142,7 @@ fun playerMove(world: World, player: Player, commands: Commands<CommandType>, de
     if (newPosition != null) {
       assert(!newPosition.x.isNaN() && !newPosition.y.isNaN())
       body.position = newPosition
+      println("" + body.position.x + ", " + body.position.y + "," + body.position.z)
     }
   }
 }

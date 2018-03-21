@@ -333,8 +333,8 @@ The length of the cross product is equal target the area of the parallelogram, w
 
 fun lookAt3(eye: Vector3, target: Vector3, up: Vector3, matrix: Matrix): Matrix {
   val Z = (eye - target).normalize()
-  val X = Vector3(up).cross(Z).normalize()
-  val Y = Vector3(Z).cross(X).normalize()
+  val X = -Vector3(up).cross(Z).normalize()
+  val Y = -Vector3(Z).cross(X).normalize()
 
   matrix._m00(X.x)
   matrix._m10(X.y)
@@ -364,7 +364,12 @@ fun lookAt3(eye: Vector3, target: Vector3, up: Vector3, matrix: Matrix): Matrix 
 //  correction._m12(1f)
 //  correction._m22(0f)
 //  correction._m21(-1f)
-  return matrix * Matrix().rotateX(-Pi / 2)
+  return matrix
+//  return Matrix() *
+//      Matrix().translate(-X.dot(eye), -Y.dot(eye), -Z.dot(eye)) *
+//      matrix *
+//      Matrix().rotateX(-Pi / 2) *
+//      Matrix()
 }
 
 //  val dir = (from - to)

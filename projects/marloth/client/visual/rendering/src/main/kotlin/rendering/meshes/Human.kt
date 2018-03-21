@@ -72,6 +72,7 @@ fun createMonster(): MeshBundle {
   val torso = createTorso()
   val mesh = joinMeshNodes(head.mesh, head.ports.neck, torso.mesh, torso.ports.neck)
 //  translatePosition(Vector3(0f, 2f, 0f), mesh.distinctVertices)
+//  translatePosition(Vector3(0f, 0f, -10f), mesh.distinctVertices)
 //  val mesh = FlexibleMesh()
 //  setAnchor(head.ports.neck.middle, head.mesh.distinctVertices)
 //  mesh.sharedImport(head.mesh)

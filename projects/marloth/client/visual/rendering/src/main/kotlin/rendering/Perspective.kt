@@ -8,11 +8,19 @@ import scenery.ProjectionType
 fun createViewMatrix(position: Vector3, orientation: Quaternion): Matrix {
   val forward = Quaternion(orientation) * Vector3(1f, 0f, 0f)
   val look_at = position + forward
-//  return Matrix()
-//      .setLookAt(position, look_at, Vector3(0f, 1f, 0f))
+  return Matrix()
+      .setLookAt(position, look_at, Vector3(0f, 0f, 1f))
 
-  return lookAt3(position, look_at, Vector3(0f, 1f, 0f), Matrix())
+//  return lookAt3(position, look_at, Vector3(0f, 0f, 1f), Matrix())
 }
+
+//fun createViewMatrix(position: Vector3, orientation: Quaternion): Matrix {
+//  val forward = Quaternion(-0.271f, 0.271f, 0.653f, 0.653f) * Vector3(1f, 0f, 0f)
+//  val look_at = position + forward
+//  return Matrix().setLookAt(Vector3(1f, -10.70593596f, 10.707852f), Vector3(), Vector3(0f, 0f, 1f))
+//
+////  return lookAt3(position, look_at, Vector3(0f, 0f, 1f), Matrix())
+//}
 
 fun getAspectRatio(dimensions: Vector2i): Float {
   return dimensions.x.toFloat() / dimensions.y.toFloat()

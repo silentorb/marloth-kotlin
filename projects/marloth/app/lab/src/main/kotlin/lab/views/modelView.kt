@@ -47,6 +47,10 @@ fun createOrthographicCamera(camera: ViewCameraConfig): Camera {
   val orientation = Quaternion()
       .rotateZ(camera.rotationZ)
       .rotateY(camera.rotationY)
+
+//      .rotateZ(camera.rotationZ) * Quaternion().rotateY(camera.rotationY)
+
+
 //      .rotateY(camera.rotationZ)
 //      .rotateZ(camera.rotationY)
 
@@ -85,11 +89,10 @@ fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, cam
     simpleMesh.dispose()
 //  renderFaceNormals(renderer,mesh,)
 
-    sceneRenderer.drawnLine(Vector3(), Vector3(2f, 0f, 0f), red)
-    sceneRenderer.drawnLine(Vector3(), Vector3(0f, 2f, 0f), green)
+    sceneRenderer.drawnLine(Vector3(), Vector3(1f, 0f, 0f), red)
+    sceneRenderer.drawnLine(Vector3(), Vector3(0f, 1f, 0f), green)
+    sceneRenderer.drawnLine(Vector3(), Vector3(0f, 0f, 1f), blue)
     sceneRenderer.drawnLine(config.tempStart, config.tempEnd, Vector4(1f, 1f, 0f, 1f))
-
-    sceneRenderer.drawnLine(Vector3(), Vector3(0f, 0f, 2f), blue)
 
     if (config.vertexSelection.size > 0) {
       val vertices = bundle.mesh.distinctVertices
@@ -222,7 +225,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
 
     if (isActive(commands, LabCommandType.rotate)) {
       config.camera.rotationZ -= rotateSpeedZ * delta * input.mouseOffset.x
-      config.camera.rotationY += rotateSpeedY * delta * input.mouseOffset.y
+      config.camera.rotationY -= rotateSpeedY * delta * input.mouseOffset.y
     }
 
     if (isActive(commands, LabCommandType.pan) && (input.mouseOffset.x != 0 || input.mouseOffset.y != 0)) {
@@ -247,14 +250,22 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
       LabCommandType.rotateDown to { c -> config.camera.rotationY -= rotateSpeedY * c.value },
 //      LabCommandType.update to { _ -> updateResult2() },
       LabCommandType.cameraViewFront to { _ ->
+        resetCamera(config, 0f, -Pi / 2f)
+      },
+      LabCommandType.cameraViewBack to { _ ->
+        resetCamera(config, 0f, Pi / 2f)
+      },
+      LabCommandType.cameraViewRight to { _ ->
+        resetCamera(config, 0f, Pi)
+      },
+      LabCommandType.cameraViewLeft to { _ ->
         resetCamera(config, 0f, 0f)
       },
       LabCommandType.cameraViewTop to { _ ->
-        resetCamera(config, Pi / 2, 0f)
+        resetCamera(config, -1.55f, -Pi / 2)
+      },
+      LabCommandType.cameraViewBottom to { _ ->
+        resetCamera(config, Pi / 2, Pi / 2)
       }
-//      ,
-//      LabCommandType.select to { _ ->
-//        trySelect(camera, mesh, mousePosition)
-//      }
   )
 }

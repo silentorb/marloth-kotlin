@@ -29,6 +29,7 @@ enum class LabCommandType {
   cameraViewFront,
   cameraViewBack,
   cameraViewTop,
+  cameraViewBottom,
   cameraViewRight,
   cameraViewLeft
 }
@@ -63,7 +64,8 @@ fun createLabInputBindings() = mutableMapOf(
             GLFW.GLFW_KEY_KP_3 to LabCommandType.cameraViewBack,
             GLFW.GLFW_KEY_KP_4 to LabCommandType.cameraViewLeft,
             GLFW.GLFW_KEY_KP_6 to LabCommandType.cameraViewRight,
-            GLFW.GLFW_KEY_KP_8 to LabCommandType.cameraViewTop
+            GLFW.GLFW_KEY_KP_7 to LabCommandType.cameraViewTop,
+            GLFW.GLFW_KEY_KP_9 to LabCommandType.cameraViewBottom
         )))
         .plus(createBindings(0, mapOf(
             GLFW.GLFW_KEY_W to LabCommandType.pan
