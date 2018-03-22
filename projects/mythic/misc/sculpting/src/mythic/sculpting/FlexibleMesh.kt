@@ -6,8 +6,8 @@ import org.joml.minus
 import org.joml.plus
 
 class FlexibleEdge(
-    val first: Vector3,
-    val second: Vector3,
+    var first: Vector3,
+    var second: Vector3,
     val face: FlexibleFace,
     val edges: MutableList<FlexibleEdge>,
     var next: FlexibleEdge?,

@@ -15,6 +15,7 @@ import rendering.Effects
 import scenery.GameScene
 import simulation.AbstractWorld
 import haft.*
+import lab.views.model.ModelView
 import mythic.sculpting.FlexibleMesh
 import org.joml.Vector2i
 import org.joml.minus

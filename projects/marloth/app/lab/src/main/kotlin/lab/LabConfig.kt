@@ -2,7 +2,7 @@ package lab
 
 import haft.*
 import org.lwjgl.glfw.GLFW
-import lab.views.*
+import lab.views.model.ModelViewConfig
 
 enum class LabCommandType {
   viewGame,
@@ -31,7 +31,14 @@ enum class LabCommandType {
   cameraViewTop,
   cameraViewBottom,
   cameraViewRight,
-  cameraViewLeft
+  cameraViewLeft,
+
+  selectModeEdges,
+  selectModeFaces,
+  selectModeVertices,
+  toggleSelection,
+
+  selectEdgeLoop
 }
 
 typealias LabInputConfig = MutableMap<String, Bindings<LabCommandType>>
@@ -65,7 +72,14 @@ fun createLabInputBindings() = mutableMapOf(
             GLFW.GLFW_KEY_KP_4 to LabCommandType.cameraViewLeft,
             GLFW.GLFW_KEY_KP_6 to LabCommandType.cameraViewRight,
             GLFW.GLFW_KEY_KP_7 to LabCommandType.cameraViewTop,
-            GLFW.GLFW_KEY_KP_9 to LabCommandType.cameraViewBottom
+            GLFW.GLFW_KEY_KP_9 to LabCommandType.cameraViewBottom,
+
+            GLFW.GLFW_KEY_L to LabCommandType.selectEdgeLoop,
+
+            GLFW.GLFW_KEY_A to LabCommandType.toggleSelection,
+            GLFW.GLFW_KEY_E to LabCommandType.selectModeEdges,
+            GLFW.GLFW_KEY_F to LabCommandType.selectModeFaces,
+            GLFW.GLFW_KEY_V to LabCommandType.selectModeVertices
         )))
         .plus(createBindings(0, mapOf(
             GLFW.GLFW_KEY_W to LabCommandType.pan
@@ -74,7 +88,7 @@ fun createLabInputBindings() = mutableMapOf(
             GLFW.GLFW_MOUSE_BUTTON_2 to LabCommandType.rotate,
             MOUSE_SCROLL_UP to LabCommandType.zoomIn,
             MOUSE_SCROLL_DOWN to LabCommandType.zoomOut
-            )))
+        )))
         .plus(createStrokeBindings(1, mapOf(
             GLFW.GLFW_MOUSE_BUTTON_1 to LabCommandType.select
         ))),

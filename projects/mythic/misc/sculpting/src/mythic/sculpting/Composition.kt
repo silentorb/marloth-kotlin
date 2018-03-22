@@ -1,7 +1,5 @@
 package mythic.sculpting
 
-import mythic.sculpting.query.getCenter
-
 typealias Port = FlexibleEdge
 
 //interface PortId {
@@ -24,15 +22,14 @@ data class MeshNode<Ports>(
 fun joinMeshNodes(first: FlexibleMesh, firstPort: Port, second: FlexibleMesh, secondPort: Port): FlexibleMesh {
 //  assert(firstPort.size == secondPort.size)
   val mesh = FlexibleMesh()
-  setAnchor(firstPort.middle, first.distinctVertices)
-  setAnchor(secondPort.middle, second.distinctVertices)
+  val firstLoop = getEdgeLoop(firstPort)
+  val secondLoop = getEdgeLoopReversed(secondPort)
+  setAnchor(getCenter(firstLoop), first.distinctVertices)
+  setAnchor(getCenter(secondLoop), second.distinctVertices)
   mesh.sharedImport(first)
   mesh.sharedImport(second)
-//  firstPort.first.x += 1f
-//  secondPort.first.x += 0.2f
-//  secondPort.first.z += 0.2f
-//  val firstMiddles = firstPort.map { Pair(it.middle, it) }
-//  val secondMiddles = firstPort.map { Pair(it.middle, it) }
+
+  stitchEdgeLoops(firstLoop, secondLoop)
 
   return mesh
 }

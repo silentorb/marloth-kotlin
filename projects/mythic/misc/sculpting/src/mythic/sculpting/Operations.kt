@@ -1,7 +1,6 @@
 package mythic.sculpting
 
 import mythic.spatial.*
-import org.joml.plus
 import org.joml.unaryMinus
 
 typealias Vertices = List<Vector3>
@@ -82,9 +81,9 @@ data class SwingInfo(
     val scale: Vector3
 )
 
-fun latheTwoPaths(mesh: FlexibleMesh, firstPath: Vertices, secondPath: Vertices) {
+fun latheTwoPaths(mesh: FlexibleMesh, firstPath: Vertices, secondPath: Vertices, resolution: Int) {
   val sweep: Float = Pi * 2
-  val count = 8 * 3
+  val count = 8 * resolution
   val increment = sweep / count
   val pivots = cloneVertices(firstPath.intersect(secondPath).filter { it.x == 0f })
   val firstLastPath = firstPath.map {
@@ -187,4 +186,23 @@ fun convertAsXZ(vertices: List<Vector2>) =
 
 fun setAnchor(anchor: Vector3, vertices: Vertices) {
   translatePosition(-anchor, vertices)
+}
+
+fun stitchEdges(a: FlexibleEdge, b: FlexibleEdge) {
+  a.edges.add(b)
+  b.edges.add(a)
+  b.first = a.second
+  b.second = a.first
+  b.next!!.first = b.second
+  b.previous!!.second = b.first
+}
+
+fun stitchEdgeLoops(firstLoop: List<FlexibleEdge>, secondLoop: List<FlexibleEdge>) {
+  val secondIterator = secondLoop.listIterator()
+
+  for (a in firstLoop) {
+    val b = secondIterator.next()
+    stitchEdges(a, b)
+//    break
+  }
 }

@@ -116,7 +116,7 @@ class SceneRenderer(
     renderScene(scene, renderer.painters, effects, renderer.textures, worldMesh)
   }
 
-  fun drawnLine(start: Vector3, end: Vector3, color: Vector4, thickness: Float = 1f) {
+  fun drawLine(start: Vector3, end: Vector3, color: Vector4, thickness: Float = 1f) {
     globalState.lineThickness = thickness
     val dir = end - start
 //    val transform = Matrix()
