@@ -14,6 +14,14 @@ data class WorldBoundary(
     get() = end - start
 }
 
+fun createWorldBoundary(length: Float): WorldBoundary {
+  val half = length / 2f
+  return WorldBoundary(
+      Vector3(-half, -half, -half),
+      Vector3(half, half, half)
+  )
+}
+
 data class WorldInput(val boundary: WorldBoundary, val dice: Dice) {
 }
 

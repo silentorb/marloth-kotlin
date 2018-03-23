@@ -1,29 +1,34 @@
 package lab
 
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import configuration.loadConfig
 import configuration.saveConfig
 import front.GameConfig
 import front.loadGameConfig
 import front.saveGameConfig
 import main.front.setWorldMesh
-import generation.generateDefaultWorld
+import generation.generateWorld
+import lab.views.GameViewConfig
 import marloth.clienting.Client
 import marloth.clienting.initialGameInputState
 import mythic.desktop.createDesktopPlatform
 import mythic.platforming.Display
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
+import mythic.spatial.Vector3
+import randomly.Dice
 import simulation.World
+import simulation.WorldBoundary
+import simulation.WorldInput
 import simulation.changing.WorldUpdater
 import visualizing.createScenes
 import kotlin.concurrent.thread
 import simulation.changing.Instantiator
 import simulation.changing.InstantiatorConfig
+import simulation.createWorldBoundary
 
 fun startGui() {
   thread(true, false, null, "JavaFX GUI", -1) {
-//    val gui = LabGui(setModelCode, getModelCode)
+    //    val gui = LabGui(setModelCode, getModelCode)
     LabGui.main(listOf())
   }
 }
@@ -32,13 +37,24 @@ fun saveLabConfig(config: LabConfig) {
   saveConfig("labConfig.yaml", config)
 }
 
+fun createDice(config: GameViewConfig) =
+    if (config.UseRandomSeed)
+      Dice()
+    else
+      Dice(config.seed)
+
+fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig, gameViewConfig: GameViewConfig) = generateWorld(WorldInput(
+    createWorldBoundary(gameViewConfig.worldLength),
+    createDice(gameViewConfig)
+), instantiatorConfig)
+
 data class LabApp(
     val platform: Platform,
     val config: LabConfig,
     val gameConfig: GameConfig,
     val display: Display = platform.display,
     val timer: DeltaTimer = DeltaTimer(),
-    val world: World = generateDefaultWorld(InstantiatorConfig(gameConfig.gameplay.defaultPlayerView)),
+    val world: World = generateDefaultWorld(InstantiatorConfig(gameConfig.gameplay.defaultPlayerView), config.gameView),
     val client: Client = Client(platform),
     val labClient: LabClient = LabClient(config, client)
 )

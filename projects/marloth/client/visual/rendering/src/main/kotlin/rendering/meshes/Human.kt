@@ -12,6 +12,7 @@ data class HeadPorts(
 fun createHead(resolution: Int): MeshNode<HeadPorts> {
   val mesh = FlexibleMesh()
   val headPath = createArc(0.6f, 8, Pi).take(7)
+  headPath.forEach { it.x *= 0.8f }
 //  headPath.last().x *= 0.5f
   lathe(mesh, headPath, 8 * resolution)
   val edge = mesh.edges.last()
@@ -27,19 +28,20 @@ data class TorsoPorts(
 fun createTorso(resolution: Int): MeshNode<TorsoPorts> {
   val mesh = FlexibleMesh()
 
+  val neckTop = Vector2(0.06f, 0.9f)
   val bodyFront = convertAsXZ(listOf(
-      Vector2(0.05f, 1f),
+      neckTop,
       Vector2(0.1f, 0.75f),
-      Vector2(0.4f, 0.7f),
-      Vector2(0.5f, 0.25f),
-      Vector2(0.5f, 0f)
+      Vector2(0.32f, 0.7f),
+      Vector2(0.42f, 0.5f),
+      Vector2(0.42f, 0f)
   ))
 
   val bodySide = convertAsXZ(listOf(
-      Vector2(0.05f, 1f),
+      neckTop,
       Vector2(0.1f, 0.75f),
       Vector2(0.2f, 0.5f),
-      Vector2(0.25f, 0.25f),
+      Vector2(0.25f, 0.4f),
       Vector2(0.25f, 0f)
   ))
   latheTwoPaths(mesh, bodyFront, bodySide, resolution)
@@ -54,6 +56,7 @@ fun createHuman(): MeshBundle {
   val head = createHead(3)
   val torso = createTorso(3)
   val mesh = joinMeshNodes(head.mesh, head.ports.neck, torso.mesh, torso.ports.neck)
+  alignToFloor(mesh.distinctVertices, 0f)
   return MeshBundle(
       mesh,
       MeshInfo(listOf(), head.info.edgeGroups.plus(torso.info.edgeGroups))
@@ -64,7 +67,9 @@ fun createMonster(): MeshBundle {
   val neck = 0.05f
   val head = createHead(1)
   val torso = createTorso(1)
-  val mesh = joinMeshNodes(head.mesh, head.ports.neck, torso.mesh, torso.ports.neck)
+//  val mesh = joinMeshNodes(head.mesh, head.ports.neck, torso.mesh, torso.ports.neck)
+  val mesh = joinMeshNodes(torso.mesh, torso.ports.neck, head.mesh, head.ports.neck)
+  alignToFloor(mesh.distinctVertices, 0f)
   return MeshBundle(
       mesh,
       MeshInfo(listOf(), head.info.edgeGroups.plus(torso.info.edgeGroups))

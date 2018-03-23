@@ -26,7 +26,7 @@ data class NewMissile(
 fun characterAttack(character: Character, ability: Ability, direction: Vector3): NewMissile {
   useAbility(ability)
   return NewMissile(
-      position = character.body.position + direction * 0.5f,
+      position = character.body.position + direction * 0.5f + Vector3(0f, 0f, 0.7f),
       velocity = direction * 14.0f,
       range = ability.definition.range,
       owner = character

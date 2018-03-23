@@ -73,7 +73,7 @@ class Instantiator(
   }
 
   fun createPlayer(id: Int): Player {
-    val position = world.meta.nodes.first().position + Vector3(0f, 0f, 1f)
+    val position = world.meta.nodes.first().position// + Vector3(0f, 0f, 1f)
     val character = createCharacter(characterDefinitions.player, world.factions[0], position)
     val player = Player(character, id, config.defaultPlayerView)
     world.players.add(player)

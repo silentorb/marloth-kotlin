@@ -36,8 +36,10 @@ fun createNodes(count: Int, world: AbstractWorld, dice: Dice) {
   }
 }
 
-fun generateAbstract(world: AbstractWorld, dice: Dice) {
-  createNodes(20, world, dice)
+
+fun generateAbstract(world: AbstractWorld, dice: Dice, scale: Float) {
+  val nodeCount = (20 * scale).toInt()
+  createNodes(nodeCount, world, dice)
   handleOverlapping(world.graph)
   unifyWorld(world.graph)
   closeDeadEnds(world.graph)
@@ -53,28 +55,6 @@ fun fillIndexes(graph: NodeGraph) {
   }
 }
 
-//fun createTestWorld(): World {
-//  val boundary = WorldBoundary(
-//      Vector3(-50f, -50f, -50f),
-//      Vector3(50f, 50f, 50f)
-//  )
-//
-//  val first = Node(Vector3(-18f, 0f, 0f), 5f, NodeType.room)
-//  val second = Node(Vector3(18f, 0f, 0f), 5f, NodeType.room)
-//  val tunnel = Node(Vector3(0f, 0f, 0f), .5f, NodeType.tunnel)
-//  val world = AbstractWorld(boundary)
-//  world.nodes.add(first)
-//  world.nodes.add(second)
-//  world.nodes.add(tunnel)
-//  world.graph.connect(first, tunnel, ConnectionType.tunnel)
-//  world.graph.connect(second, tunnel, ConnectionType.tunnel)
-//
-//  generateStructure(world)
-//  fillIndexes(world.graph)
-//  val result = World(world)
-//  result.createPlayer(1)
-//  return result
-//}
 
 fun placeEnemy(world: World, instantiator: Instantiator, dice: Dice) {
   val node = dice.getItem(world.meta.nodes.drop(1))// Skip the node where the player starts
@@ -83,8 +63,8 @@ fun placeEnemy(world: World, instantiator: Instantiator, dice: Dice) {
   instantiator.createAiCharacter(characterDefinitions.monster, world.factions[1], position)
 }
 
-fun placeEnemies(world: World, instantiator: Instantiator, dice: Dice) {
-  val enemyCount = 10
+fun placeEnemies(world: World, instantiator: Instantiator, dice: Dice, scale: Float) {
+  val enemyCount = (10f * scale).toInt()
   for (i in 0 until enemyCount) {
     placeEnemy(world, instantiator, dice)
   }
@@ -92,7 +72,8 @@ fun placeEnemies(world: World, instantiator: Instantiator, dice: Dice) {
 
 fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): World {
   val abstractWorld = AbstractWorld(input.boundary)
-  generateAbstract(abstractWorld, input.dice)
+  val scale = (abstractWorld.boundary.dimensions.x * abstractWorld.boundary.dimensions.y) / (100 * 100)
+  generateAbstract(abstractWorld, input.dice, scale)
   generateStructure(abstractWorld)
   val world = World(abstractWorld)
   val instantiator = Instantiator(world, instantiatorConfig)
@@ -103,7 +84,7 @@ fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): Wo
 //      position = world.meta.nodes[0].position + Vector3(0f, 0f, 1f),
 //      direction = Vector4(0f, 0f, 0f, 15f)
 //  ))
-  placeEnemies(world, instantiator, input.dice)
+  placeEnemies(world, instantiator, input.dice, scale)
   return world
 }
 

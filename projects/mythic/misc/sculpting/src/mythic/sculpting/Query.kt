@@ -1,6 +1,5 @@
 package mythic.sculpting
 
-import org.joml.div
 import org.joml.plus
 
 fun edgeLoopNext(edge: FlexibleEdge) =
@@ -21,16 +20,19 @@ fun getEdgeFaceLoop(edge: FlexibleEdge): List<FlexibleEdge> {
   return result
 }
 
-fun getEdgeLoop(edge: FlexibleEdge): List<FlexibleEdge> {
+typealias EdgeExplorer = (FlexibleEdge) -> FlexibleEdge?
+
+fun gatherEdges(explore: EdgeExplorer, edge: FlexibleEdge): List<FlexibleEdge> {
   val result = mutableListOf<FlexibleEdge>()
   var current = edge
   var i = 0
   do {
     result.add(current)
-    if (current.next!!.edges.size == 0)
+    val next = explore(current)
+    if (next == null)
       break
 
-    current = current.next!!.edges[0].next!!
+    current = next
     if (i++ > 20)
       break
 
@@ -39,23 +41,22 @@ fun getEdgeLoop(edge: FlexibleEdge): List<FlexibleEdge> {
   return result
 }
 
-fun getEdgeLoopReversed(edge: FlexibleEdge): List<FlexibleEdge> {
-  val result = mutableListOf<FlexibleEdge>()
-  var current = edge
-  var i = 0
-  do {
-    result.add(current)
-    if (current.previous!!.edges.size == 0)
-      break
-
-    current = current.previous!!.edges[0].previous!!
-    if (i++ > 20)
-      break
-
-  } while (current != edge)
-
-  return result
+val edgeLoopNext: EdgeExplorer = { edge ->
+  if (edge.next!!.edges.size == 0)
+    null
+  else
+    edge.next!!.edges[0].next!!
 }
+
+val edgeLoopReversedNext: EdgeExplorer = { edge ->
+  if (edge.previous!!.edges.size == 0)
+    null
+  else
+    edge.previous!!.edges[0].previous!!
+}
+
+fun getEdgeLoop(edge: FlexibleEdge): List<FlexibleEdge> = gatherEdges(edgeLoopNext, edge)
+fun getEdgeLoopReversed(edge: FlexibleEdge): List<FlexibleEdge> = gatherEdges(edgeLoopReversedNext, edge)
 
 fun getCenter(edges: List<FlexibleEdge>) =
     edges.map { it.first }.reduce { a, b -> a + b } / edges.size.toFloat()

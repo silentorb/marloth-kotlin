@@ -6,9 +6,11 @@ import scenery.*
 import org.joml.plus
 import simulation.*
 
+val firstPersonCameraOffset = Vector3(0f, 0f, 1.4f)
+
 fun createFirstPersonCamera(character: Character): Camera = Camera(
     ProjectionType.perspective,
-    character.body.position + Vector3(0f, 0f, 0.4f),
+    character.body.position + firstPersonCameraOffset,
 //    world.player.orientation,
     character.facingQuaternion
     ,
@@ -84,7 +86,10 @@ fun createScene(world: World, screen: Screen, player: Player) =
             ))
         ),
         filterDepictions(world, player)
-            .map { VisualElement(it.value.type, Matrix().translate(world.bodyTable[it.key]!!.position)) },
+            .map {
+              val body = world.bodyTable[it.key]!!
+              VisualElement(it.value.type, Matrix().translate(body.position))
+            },
         player.playerId
 
     )

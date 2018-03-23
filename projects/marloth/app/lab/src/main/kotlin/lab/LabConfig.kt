@@ -109,7 +109,8 @@ data class WorldViewConfig(
 data class LabConfig(
     var view: String = "world",
     var worldView: WorldViewConfig = WorldViewConfig(),
-    var modelView: ModelViewConfig = ModelViewConfig()
+    var modelView: ModelViewConfig = ModelViewConfig(),
+    var gameView: lab.views.GameViewConfig = lab.views.GameViewConfig()
 )
 
 val labInputConfig: LabInputConfig = createLabInputBindings()
