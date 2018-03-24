@@ -80,23 +80,37 @@ enum class MeshType {
 typealias MeshGenerator = () -> FlexibleMesh
 
 typealias MeshGeneratorMap = Map<MeshType, MeshGenerator>
-typealias MeshMap = Map<MeshType, SimpleMesh>
 
-data class StandardMeshDefinition(
-    val mesh: FlexibleMesh,
-    val color: Vector4
+data class ModelElement(
+    val mesh: SimpleMesh,
+    val material: Material,
+    val offset: Vector3
 )
+
+typealias ModelElements =List<ModelElement>
+typealias MeshMap = Map<MeshType, ModelElements>
+
+//data class StandardMeshDefinition(
+//    val mesh: FlexibleMesh,
+//    val color: Vector4
+//)
 
 fun standardMeshes() = mapOf(
-    MeshType.character to StandardMeshDefinition(createHuman().mesh, Vector4(0.3f, 0.25f, 0.0f, 1f)),
-    MeshType.monster to StandardMeshDefinition(createMonster().mesh, Vector4(0.25f, 0.25f, 0.25f, 1f))
+    MeshType.character to createHuman(),
+    MeshType.monster to createMonster()
 )
+
+fun createModelElements(simpleMesh: SimpleMesh) =
+    listOf(ModelElement(simpleMesh, Material(Vector4(1f)), Vector3()))
 
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     MeshType.line to createLineMesh(vertexSchemas.flat),
     MeshType.cylinder to createSimpleMesh(createCylinder(), vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f)),
     MeshType.sphere to createSimpleMesh(createSphere(), vertexSchemas.standard, Vector4(0.4f, 0.1f, 0.1f, 1f))
 )
+    .mapValues { createModelElements(it.value) }
     .plus(standardMeshes().map {
-      Pair(it.key, createSimpleMesh(it.value.mesh, vertexSchemas.standard, it.value.color))
+      Pair(it.key, it.value.meshes.map {
+        ModelElement(createSimpleMesh(it.mesh, vertexSchemas.standard, Vector4(1f)), it.material, Vector3())
+      })
     })

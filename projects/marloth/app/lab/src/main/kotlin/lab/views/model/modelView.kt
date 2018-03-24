@@ -4,15 +4,12 @@ import haft.getCommand
 import haft.isActive
 import lab.LabCommandType
 import mythic.bloom.*
-import mythic.sculpting.FlexibleMesh
-import mythic.sculpting.MeshBundle
 import mythic.spatial.*
 import org.joml.*
 import rendering.*
 import scenery.Camera
 import lab.views.*
-import mythic.sculpting.FlexibleEdge
-import mythic.sculpting.getEdgeLoop
+import mythic.sculpting.*
 import rendering.meshes.createMonster
 
 data class ViewCameraConfig(
@@ -51,14 +48,14 @@ data class Hit(
     val index: Int
 )
 
-fun getVertexHits(start: Vector3, end: Vector3, mesh: FlexibleMesh): List<Hit> {
-  val vertices = mesh.distinctVertices
+fun getVertexHits(start: Vector3, end: Vector3, model: Model): List<Hit> {
+  val vertices = model.vertices
   return vertices.filter { rayIntersectsSphere(start, end, it, 0.02f) }
       .map { Hit(it, vertices.indexOf(it)) }
 }
 
-fun getEdgeHits(start: Vector3, end: Vector3, mesh: FlexibleMesh): List<Hit> {
-  val edges = mesh.edges
+fun getEdgeHits(start: Vector3, end: Vector3, model: Model): List<Hit> {
+  val edges = model.edges
   return edges.mapNotNull {
     val point = rayIntersectsLine(start, end, it.first, it.second, 0.02f)
     if (point != null)
@@ -68,14 +65,14 @@ fun getEdgeHits(start: Vector3, end: Vector3, mesh: FlexibleMesh): List<Hit> {
   }
 }
 
-fun getHits(componentMode: ComponentMode, start: Vector3, end: Vector3, mesh: FlexibleMesh): List<Hit> =
+fun getHits(componentMode: ComponentMode, start: Vector3, end: Vector3, model: Model): List<Hit> =
     when (componentMode) {
-      ComponentMode.vertices -> getVertexHits(start, end, mesh)
-      ComponentMode.edges -> getEdgeHits(start, end, mesh)
+      ComponentMode.vertices -> getVertexHits(start, end, model)
+      ComponentMode.edges -> getEdgeHits(start, end, model)
       else -> listOf()
     }
 
-private fun trySelect(config: ModelViewConfig, camera: Camera, mesh: FlexibleMesh, mousePosition: Vector2i, layout: LabLayout) {
+private fun trySelect(config: ModelViewConfig, camera: Camera, model: Model, mousePosition: Vector2i, layout: LabLayout) {
   val bounds = layout.boxes[1].bounds
   val dimensions = bounds.dimensions
   val cursor = mousePosition - bounds.position.toVector2i()
@@ -88,7 +85,7 @@ private fun trySelect(config: ModelViewConfig, camera: Camera, mesh: FlexibleMes
   val end = start + cameraData.direction * camera.farClip
   config.tempStart = start
   config.tempEnd = end
-  val hits = getHits(config.componentMode, start, end, mesh)
+  val hits = getHits(config.componentMode, start, end, model)
   if (hits.size > 0) {
     val sorted = hits.sortedBy { it.position.distance(start) }
     config.selection = sorted.map { it.index }.take(1).toMutableList()
@@ -99,13 +96,13 @@ private fun trySelect(config: ModelViewConfig, camera: Camera, mesh: FlexibleMes
   }
 }
 
-fun toSelection(mesh: FlexibleMesh, edges: List<FlexibleEdge>) =
-    edges.map { mesh.edges.indexOf(it) }
+fun toSelection(model: Model, edges: List<FlexibleEdge>) =
+    edges.map { model.edges.indexOf(it) }
 
-fun selectEdgeLoop(config: ModelViewConfig, mesh: FlexibleMesh) {
-  val edge = mesh.edges[config.selection[0]]
+fun selectEdgeLoop(config: ModelViewConfig, model: Model) {
+  val edge = model.edges[config.selection[0]]
   val edges = getEdgeLoop(edge)
-  config.selection = toSelection(mesh, edges)
+  config.selection = toSelection(model, edges)
 }
 
 fun tightenRotation(value: Float): Float =
@@ -118,14 +115,14 @@ fun resetCamera(config: ModelViewConfig, rotationY: Float, rotationZ: Float) {
 }
 
 class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePosition: Vector2i) : View {
-  val meshBundle: MeshBundle = createMonster()
+  val model: Model = createMonster()
   val camera = createOrthographicCamera(config.camera)
 
   override fun createLayout(dimensions: Vector2i): LabLayout {
     val panels = listOf(
         Pair(Measurement(Measurements.pixel, 200f), drawSidePanel()),
-        Pair(Measurement(Measurements.stretch, 0f), drawScenePanel(config, renderer, meshBundle, camera)),
-        Pair(Measurement(Measurements.pixel, 300f), drawInfoPanel(config, renderer, meshBundle, mousePosition))
+        Pair(Measurement(Measurements.stretch, 0f), drawScenePanel(config, renderer, model, camera)),
+        Pair(Measurement(Measurements.pixel, 300f), drawInfoPanel(config, renderer, model, mousePosition))
     )
     val dimensions2 = Vector2(dimensions.x.toFloat(), dimensions.y.toFloat())
     val boxes = overlap(createVerticalBounds(panels.map { it.first }, dimensions2), panels, { a, b ->
@@ -144,7 +141,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     val rotateSpeedY = 1f
 
     if (isActive(commands, LabCommandType.select)) {
-      trySelect(config, camera, meshBundle.mesh, mousePosition, layout)
+      trySelect(config, camera, model, mousePosition, layout)
     }
 
     if (isActive(commands, LabCommandType.rotate)) {
@@ -197,7 +194,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
       },
 
       LabCommandType.selectEdgeLoop to { _ ->
-        selectEdgeLoop(config, meshBundle.mesh)
+        selectEdgeLoop(config, model)
       },
 
       LabCommandType.selectModeEdges to { _ ->

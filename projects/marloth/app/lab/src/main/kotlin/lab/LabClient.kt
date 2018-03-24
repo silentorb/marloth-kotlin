@@ -59,7 +59,7 @@ fun renderFaceNormals(renderer: SceneRenderer, mesh: FlexibleMesh, effects: Effe
         .rotateY(-Pi * 0.5f)
 
     effects.flat.activate(transform, Vector4(0f, 1f, 0f, 1f))
-    renderer.meshes[MeshType.line]!!.draw(DrawMethod.lines)
+    renderer.meshes[MeshType.line]!![0].mesh.draw(DrawMethod.lines)
   }
 }
 

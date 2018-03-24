@@ -3,7 +3,10 @@ package rendering.meshes
 import mythic.sculpting.*
 import mythic.spatial.Pi
 import mythic.spatial.Vector2
-import mythic.spatial.Vector3
+import mythic.spatial.Vector4
+import rendering.Material
+import rendering.MeshElement
+import rendering.Model
 
 data class HeadPorts(
     val neck: Port
@@ -51,27 +54,29 @@ fun createTorso(resolution: Int): MeshNode<TorsoPorts> {
   ), MeshInfo(listOf(), listOf(mapOf(edge to 1f))))
 }
 
-fun createHuman(): MeshBundle {
+fun createHuman(): Model {
   val neck = 0.05f
   val head = createHead(3)
   val torso = createTorso(3)
   val mesh = joinMeshNodes(head.mesh, head.ports.neck, torso.mesh, torso.ports.neck)
   alignToFloor(mesh.distinctVertices, 0f)
-  return MeshBundle(
+  return Model(listOf(MeshElement(
       mesh,
-      MeshInfo(listOf(), head.info.edgeGroups.plus(torso.info.edgeGroups))
-  )
+      MeshInfo(listOf(), head.info.edgeGroups.plus(torso.info.edgeGroups)),
+      Material(Vector4(0.3f, 0.25f, 0.0f, 1f))
+  )))
 }
 
-fun createMonster(): MeshBundle {
+fun createMonster(): Model {
   val neck = 0.05f
   val head = createHead(1)
   val torso = createTorso(1)
 //  val mesh = joinMeshNodes(head.mesh, head.ports.neck, torso.mesh, torso.ports.neck)
   val mesh = joinMeshNodes(torso.mesh, torso.ports.neck, head.mesh, head.ports.neck)
   alignToFloor(mesh.distinctVertices, 0f)
-  return MeshBundle(
+  return Model(listOf(MeshElement(
       mesh,
-      MeshInfo(listOf(), head.info.edgeGroups.plus(torso.info.edgeGroups))
-  )
+      MeshInfo(listOf(), head.info.edgeGroups.plus(torso.info.edgeGroups)),
+      Material(Vector4(0.25f, 0.25f, 0.25f, 1f))
+  )))
 }
