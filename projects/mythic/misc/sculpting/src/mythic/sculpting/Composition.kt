@@ -13,12 +13,6 @@ typealias Port = FlexibleEdge
 //    val ports: Ports
 //)
 
-data class MeshNode<Ports>(
-    val mesh: FlexibleMesh,
-    val ports: Ports,
-    val info: MeshInfo
-)
-
 fun joinMeshNodes(first: FlexibleMesh, firstPort: Port, second: FlexibleMesh, secondPort: Port): FlexibleMesh {
 //  assert(firstPort.size == secondPort.size)
   val mesh = FlexibleMesh()

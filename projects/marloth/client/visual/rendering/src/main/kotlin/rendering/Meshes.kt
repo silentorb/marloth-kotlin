@@ -89,20 +89,21 @@ data class ModelElement(
     val material: Material
 )
 
+typealias ModelElements = List<ModelElement>
+typealias MeshMap = Map<MeshType, ModelElements>
+
 data class TransientModelElement(
     val faces: List<FlexibleFace>,
     val material: Material
 )
 
 fun partitionModelMeshes(model: Model): List<TransientModelElement> {
-  if (model.materialMaps.size == 0) {
-    if (model.defaultMaterial == null)
-      throw Error("Incomplete material info")
+  if (model.materials.size == 0)
+    throw Error("Missing materials")
 
-    return listOf(TransientModelElement(model.mesh.faces, model.defaultMaterial))
+  return model.materials.map {
+    TransientModelElement(it.faceGroup, it.material)
   }
-
-  throw Error("Not implemented yet.")
 }
 
 fun modelToMeshes(vertexSchemas: VertexSchemas, model: Model): ModelElements {
@@ -111,9 +112,6 @@ fun modelToMeshes(vertexSchemas: VertexSchemas, model: Model): ModelElements {
     ModelElement(createSimpleMesh(it.faces, vertexSchemas.standard, Vector4(1f)), it.material)
   }
 }
-
-typealias ModelElements = List<ModelElement>
-typealias MeshMap = Map<MeshType, ModelElements>
 
 fun standardMeshes(): ModelGeneratorMap = mapOf(
     MeshType.character to createHuman,

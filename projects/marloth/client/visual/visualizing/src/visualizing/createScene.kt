@@ -83,7 +83,7 @@ fun convertDepiction(world: World, id: Id, depiction: Depiction): VisualElement 
     translate.rotate(character.facingQuaternion)
   else
     translate
-  
+
   return VisualElement(depiction.type, transform)
 }
 

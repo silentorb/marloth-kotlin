@@ -6,9 +6,9 @@ import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import rendering.Material
-import rendering.MeshElement
 import rendering.Model
 import rendering.ModelGenerator
+import rendering.createMaterialMap
 
 data class HeadPorts(
     val neck: Port
@@ -23,7 +23,7 @@ fun createHead(resolution: Int): MeshNode<HeadPorts> {
   val edge = mesh.edges.last()
   return MeshNode(mesh, HeadPorts(
       edge
-  ), MeshInfo(listOf(), listOf(mapOf(edge to 1f)), listOf()))
+  ), MeshInfo(listOf(), listOf(mapOf(edge to 1f))))
 }
 
 data class TorsoPorts(
@@ -53,10 +53,10 @@ fun createTorso(resolution: Int): MeshNode<TorsoPorts> {
   val edge = mesh.edges[0].edges[0].previous!!
   return MeshNode(mesh, TorsoPorts(
       edge
-  ), MeshInfo(listOf(), listOf(mapOf(edge to 1f)), listOf()))
+  ), MeshInfo(listOf(), listOf(mapOf(edge to 1f))))
 }
 
-val createHuman: ModelGenerator = {
+fun createHumanMesh(): Pair<FlexibleMesh, MeshInfo> {
   val neck = 0.05f
   val head = createHead(3)
   val torso = createTorso(3)
@@ -65,28 +65,24 @@ val createHuman: ModelGenerator = {
   createSphere(s, 0.3f, 8, 6)
   translatePosition(Vector3(0.1f, 0f, 0f), s)
   mesh.sharedImport(s)
+  return Pair(mesh, MeshInfo(listOf(), head.info.edgeGroups.plus(torso.info.edgeGroups)))
+}
+
+val createHuman: ModelGenerator = {
+  val (mesh, info) = createHumanMesh()
   alignToFloor(mesh.distinctVertices, 0f)
   Model(
       mesh = mesh,
-      info = MeshInfo(listOf(), head.info.edgeGroups.plus(torso.info.edgeGroups), listOf()),
-      defaultMaterial = Material(Vector4(0.3f, 0.25f, 0.0f, 1f))
-  )
+      info = info,
+      materials = listOf(createMaterialMap(Material(Vector4(0.3f, 0.25f, 0.0f, 1f)), mesh)
+      ))
 }
 
 val createMonster: ModelGenerator = {
-  val neck = 0.05f
-  val head = createHead(1)
-  val torso = createTorso(1)
-//  val mesh = joinMeshNodes(head.mesh, head.ports.neck, torso.mesh, torso.ports.neck)
-  val mesh = joinMeshNodes(torso.mesh, torso.ports.neck, head.mesh, head.ports.neck)
-  val s = FlexibleMesh()
-  createSphere(s, 0.3f, 8, 6)
-  translatePosition(Vector3(0.1f, 0f, 0f), s)
-  mesh.sharedImport(s)
-  alignToFloor(mesh.distinctVertices, 0f)
+  val (mesh, info) = createHumanMesh()
   Model(
       mesh = mesh,
-      info = MeshInfo(listOf(), head.info.edgeGroups.plus(torso.info.edgeGroups), listOf()),
-      defaultMaterial = Material(Vector4(0.25f, 0.25f, 0.25f, 1f))
-  )
+      info = info,
+      materials = listOf(createMaterialMap(Material(Vector4(0.25f, 0.25f, 0.25f, 1f)), mesh)
+  ))
 }
