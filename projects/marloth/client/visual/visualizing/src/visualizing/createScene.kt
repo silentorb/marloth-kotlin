@@ -4,6 +4,7 @@ import mythic.spatial.*
 import org.joml.times
 import scenery.*
 import org.joml.plus
+import scenery.Id
 import simulation.*
 
 val firstPersonCameraOffset = Vector3(0f, 0f, 1.4f)
@@ -74,6 +75,18 @@ fun filterDepictions(world: World, player: Player) =
     else
       world.depictionTable
 
+fun convertDepiction(world: World, id: Id, depiction: Depiction): VisualElement {
+  val body = world.bodyTable[id]!!
+  val character = world.characterTable[id]
+  val translate = Matrix().translate(body.position)
+  val transform = if (character != null)
+    translate.rotate(character.facingQuaternion)
+  else
+    translate
+  
+  return VisualElement(depiction.type, transform)
+}
+
 fun createScene(world: World, screen: Screen, player: Player) =
     GameScene(
         Scene(
@@ -87,11 +100,12 @@ fun createScene(world: World, screen: Screen, player: Player) =
         ),
         filterDepictions(world, player)
             .map {
-              val body = world.bodyTable[it.key]!!
-              val character = player.character
-              val transform = Matrix().translate(body.position)
-                  .rotate(character.facingQuaternion)
-              VisualElement(it.value.type, transform)
+              convertDepiction(world, it.key, it.value)
+//              val body = world.bodyTable[it.key]!!
+//              val character = player.character
+//              val transform = Matrix().translate(body.position)
+//                  .rotate(character.facingQuaternion)
+//              VisualElement(it.value.type, transform)
             },
         player.playerId
 

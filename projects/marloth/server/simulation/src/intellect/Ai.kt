@@ -2,6 +2,7 @@ package intellect
 
 import org.joml.minus
 import simulation.*
+import simulation.changing.setCharacterFacing
 
 fun getAiCharacters(world: World) =
     world.characters.filter { isPlayer(world, it) }
@@ -19,6 +20,7 @@ fun tryAiAttack(spirit: Spirit): NewMissile? {
     val enemy = enemies.firstOrNull { it.body.position.distance(character.body.position) <= attack.definition.range }
     if (enemy != null) {
       val direction = (enemy.body.position - character.body.position).normalize()
+      setCharacterFacing(character, direction)
       return characterAttack(character, attack, direction)
     }
   }
