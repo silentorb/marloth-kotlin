@@ -18,8 +18,8 @@ fun createMaterialMap(material: Material, mesh: FlexibleMesh): MaterialMap {
 
 data class Model(
     val mesh: FlexibleMesh,
-    val info: MeshInfo,
-    val materials: List<MaterialMap>
+    val materials: List<MaterialMap>,
+    val info: MeshInfo = MeshInfo()
 ) {
   val vertices: List<Vector3> get() = mesh.distinctVertices
   val edges: List<FlexibleEdge> get() = mesh.edges

@@ -120,7 +120,7 @@ class SceneRenderer(
     globalState.lineThickness = thickness
     val dir = end - start
 //    val transform = Matrix()
-////        .translate(start)
+////        .transformVertices(start)
 ////        .rotateX(Pi / 2f)
 ////        .rotateY(-Pi / 2f)
 ////        .rotateTowards(end - start, Vector3(0f, 0f, 1f))

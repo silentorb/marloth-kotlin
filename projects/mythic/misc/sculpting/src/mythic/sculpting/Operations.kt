@@ -123,19 +123,23 @@ fun latheTwoPaths(mesh: FlexibleMesh, firstPath: Vertices, secondPath: Vertices,
   skin(mesh, previous, firstLastPath)
 }
 
-fun translate(matrix: Matrix, vertices: List<Vector3>) {
+fun transformVertices(matrix: Matrix, vertices: List<Vector3>) {
 //  vertices.forEach { it.set(it.transform(matrix)) }
   for (vertex in vertices) {
     vertex.set(vertex.transform(matrix))
   }
 }
 
-fun translatePosition(offset: Vector3, vertices: List<Vector3>) {
-  translate(Matrix().translate(offset), vertices)
+fun distortedTranslatePosition(offset: Vector3, vertices: List<Vector3>) {
+  transformVertices(Matrix().translate(offset), vertices)
 }
 
-fun translatePosition(offset: Vector3, mesh: FlexibleMesh) {
-  translate(Matrix().translate(offset), mesh.vertices)
+fun distortedTranslatePosition(offset: Vector3, mesh: FlexibleMesh) {
+  transformVertices(Matrix().translate(offset), mesh.redundantVertices)
+}
+
+fun transformMesh(mesh: FlexibleMesh, matrix: Matrix) {
+  transformVertices(matrix, mesh.distinctVertices)
 }
 
 //fun convertPath(path: Vertices) =
@@ -147,12 +151,12 @@ fun translatePosition(offset: Vector3, mesh: FlexibleMesh) {
 
 fun alignToFloor(vertices: List<Vector3>, floor: Float = 0f) {
   val lowest = vertices.map { it.z }.sorted().first()
-  translatePosition(Vector3(0f, 0f, floor - lowest), vertices)
+  distortedTranslatePosition(Vector3(0f, 0f, floor - lowest), vertices)
 }
 
 fun alignToCeiling(vertices: List<Vector3>, ceiling: Float = 0f) {
   val highest = vertices.map { it.z }.sorted().last()
-  translatePosition(Vector3(0f, 0f, ceiling - highest), vertices)
+  distortedTranslatePosition(Vector3(0f, 0f, ceiling - highest), vertices)
 }
 
 data class VerticalDimensions(
@@ -189,7 +193,7 @@ fun convertAsXZ(vertices: List<Vector2>) =
     vertices.map { Vector3(it.x, 0f, it.y) }
 
 fun setAnchor(anchor: Vector3, vertices: Vertices) {
-  translatePosition(-anchor, vertices)
+  distortedTranslatePosition(-anchor, vertices)
 }
 
 fun stitchEdges(a: FlexibleEdge, b: FlexibleEdge) {

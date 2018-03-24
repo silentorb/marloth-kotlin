@@ -63,7 +63,7 @@ fun createHumanMesh(): Pair<FlexibleMesh, MeshInfo> {
   val mesh = joinMeshNodes(head.mesh, head.ports.neck, torso.mesh, torso.ports.neck)
   val s = FlexibleMesh()
   createSphere(s, 0.3f, 8, 6)
-  translatePosition(Vector3(0.1f, 0f, 0f), s)
+  distortedTranslatePosition(Vector3(0.1f, 0f, 0f), s)
   mesh.sharedImport(s)
   return Pair(mesh, MeshInfo(listOf(), head.info.edgeGroups.plus(torso.info.edgeGroups)))
 }

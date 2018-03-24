@@ -22,13 +22,31 @@ fun createCircle(mesh: FlexibleMesh, radius: Float, count: Int): FlexibleFace {
   return mesh.createFace(createArc(radius, count))
 }
 
+fun createArc2(radius: Float, count: Int, sweep: Float = Pi * 2): Vertices {
+  val vertices = ArrayList<Vector3>(count)
+  val increment = sweep / (count)
+
+  for (i in 0 until count) {
+    val theta = increment * i
+    vertices.add(Vector3(sin(theta) * radius, cos(theta) * radius, 0f))
+  }
+  if (sweep == Pi)
+    vertices.last().x = 0f
+
+  return vertices
+}
+
+fun createCircle2(mesh: FlexibleMesh, radius: Float, count: Int): FlexibleFace {
+  return mesh.createFace(createArc2(radius, count))
+}
+
 //fun createIncompleteCircle(mesh: FlexibleMesh, radius: Float, count: Int, take: Int): FlexibleFace {
 //  return mesh.createFace(convertPath(createArc(radius, count)).take(take))
 //}
 
-fun createCylinder(mesh: FlexibleMesh, radius: Float, count: Int, height: Float) {
-  val circle = createCircle(mesh, radius, count)
-  extrudeBasic(mesh, circle, Matrix().translate(Vector3(0f, 0f, height)))
+fun createCylinder(mesh: FlexibleMesh, radius: Float, count: Int, length: Float) {
+  val circle = createCircle2(mesh, radius, count)
+  extrudeBasic(mesh, circle, Matrix().translate(Vector3(0f, 0f, length)))
 }
 
 fun createSphere(mesh: FlexibleMesh, radius: Float, horizontalCount: Int, verticalCount: Int) =

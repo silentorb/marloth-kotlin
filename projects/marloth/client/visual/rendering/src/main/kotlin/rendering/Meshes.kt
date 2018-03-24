@@ -9,6 +9,7 @@ import mythic.sculpting.*
 import mythic.spatial.*
 import rendering.meshes.createHuman
 import rendering.meshes.createMonster
+import rendering.meshes.createWallLamp
 
 
 data class NewMesh(val mesh: HalfEdgeMesh, val vertexSchema: VertexSchema)
@@ -77,7 +78,8 @@ enum class MeshType {
   cylinder,
   line,
   monster,
-  sphere
+  sphere,
+  wallLamp,
 }
 
 typealias ModelGenerator = () -> Model
@@ -115,7 +117,8 @@ fun modelToMeshes(vertexSchemas: VertexSchemas, model: Model): ModelElements {
 
 fun standardMeshes(): ModelGeneratorMap = mapOf(
     MeshType.character to createHuman,
-    MeshType.monster to createMonster
+    MeshType.monster to createMonster,
+    MeshType.wallLamp to createWallLamp
 )
 
 fun createModelElements(simpleMesh: SimpleMesh) =

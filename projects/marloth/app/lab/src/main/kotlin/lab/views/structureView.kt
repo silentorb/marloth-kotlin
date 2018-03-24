@@ -4,7 +4,6 @@ package lab.views
 import mythic.bloom.Bounds
 import mythic.drawing.Canvas
 import mythic.sculpting.FlexibleMesh
-import mythic.sculpting.HalfEdgeMesh
 import mythic.spatial.Vector4
 import org.joml.xy
 import simulation.*
@@ -16,7 +15,7 @@ fun drawVertices(bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, 
     canvas.drawLine(getPosition(edge.first.xy), getPosition(edge.second.xy), lineColor, 3f)
   }
 
-  for (vertex in mesh.vertices) {
+  for (vertex in mesh.redundantVertices) {
     canvas.drawSolidCircle(getPosition(vertex.xy), 3f, solid)
   }
 }

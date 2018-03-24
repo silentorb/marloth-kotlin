@@ -10,8 +10,8 @@ typealias VertexGroup = Map<Vector3, Float>
 typealias FaceGroup = List<FlexibleFace>
 
 data class MeshInfo(
-    val vertexGroups: List<VertexGroup>,
-    val edgeGroups: List<EdgeGroup>
+    val vertexGroups: List<VertexGroup> = listOf(),
+    val edgeGroups: List<EdgeGroup> = listOf()
 )
 
 data class MeshNode<Ports>(

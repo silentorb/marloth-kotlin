@@ -41,11 +41,11 @@ class FlexibleMesh {
   val edges: MutableList<FlexibleEdge> = mutableListOf()
   val faces: MutableList<FlexibleFace> = mutableListOf()
 
-  val vertices: List<Vector3>
+  val redundantVertices: List<Vector3>
     get() = faces.flatMap { it.vertices }
 
   val distinctVertices: List<Vector3>
-    get() = vertices.distinct()
+    get() = redundantVertices.distinct()
 
   fun createFace(): FlexibleFace {
     val face = FlexibleFace()
@@ -121,6 +121,10 @@ class FlexibleMesh {
   fun sharedImport(mesh: FlexibleMesh) {
     faces.addAll(mesh.faces)
     edges.addAll(mesh.edges)
+  }
+
+  fun sharedImport(meshes: List<FlexibleMesh>) {
+    meshes.forEach { sharedImport(it) }
   }
 
 }

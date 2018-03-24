@@ -58,7 +58,7 @@ fun createCamera(world: World, screen: Screen): Camera {
 //fun prepareVisualElement(body: Body, entityType: EntityType): VisualElement? {
 //  val depiction = depictionMap[entityType]
 //  return if (depiction != null)
-//    VisualElement(depiction, Matrix().translate(body.position))
+//    VisualElement(depiction, Matrix().transformVertices(body.position))
 //  else
 //    null
 //}
@@ -103,7 +103,7 @@ fun createScene(world: World, screen: Screen, player: Player) =
               convertDepiction(world, it.key, it.value)
 //              val body = world.bodyTable[it.key]!!
 //              val character = player.character
-//              val transform = Matrix().translate(body.position)
+//              val transform = Matrix().transformVertices(body.position)
 //                  .rotate(character.facingQuaternion)
 //              VisualElement(it.value.type, transform)
             },
