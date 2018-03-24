@@ -108,10 +108,10 @@ fun selectEdgeLoop(config: ModelViewConfig, model: Model) {
 fun tightenRotation(value: Float): Float =
     value % (Pi * 2)
 
-fun resetCamera(config: ModelViewConfig, rotationY: Float, rotationZ: Float) {
+fun resetCamera(config: ModelViewConfig, model: Model, rotationY: Float, rotationZ: Float) {
   config.camera.rotationY = rotationY
   config.camera.rotationZ = rotationZ
-  config.camera.pivot = Vector3()
+  config.camera.pivot = getVerticesCenter(model.vertices)
 }
 
 class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePosition: Vector2i) : View {
@@ -171,22 +171,22 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
       LabCommandType.rotateDown to { c -> config.camera.rotationY -= rotateSpeedY * c.value },
 
       LabCommandType.cameraViewFront to { _ ->
-        resetCamera(config, 0f, -Pi / 2f)
+        resetCamera(config, model, 0f, -Pi / 2f)
       },
       LabCommandType.cameraViewBack to { _ ->
-        resetCamera(config, 0f, Pi / 2f)
+        resetCamera(config, model, 0f, Pi / 2f)
       },
       LabCommandType.cameraViewRight to { _ ->
-        resetCamera(config, 0f, Pi)
+        resetCamera(config, model, 0f, Pi)
       },
       LabCommandType.cameraViewLeft to { _ ->
-        resetCamera(config, 0f, 0f)
+        resetCamera(config, model, 0f, 0f)
       },
       LabCommandType.cameraViewTop to { _ ->
-        resetCamera(config, -1.55f, -Pi / 2)
+        resetCamera(config, model, -1.55f, -Pi / 2)
       },
       LabCommandType.cameraViewBottom to { _ ->
-        resetCamera(config, Pi / 2, Pi / 2)
+        resetCamera(config, model, Pi / 2, Pi / 2)
       },
 
       LabCommandType.toggleSelection to { _ ->

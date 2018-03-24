@@ -60,6 +60,9 @@ fun createVertexSchemas() = VertexSchemas(
 fun createSimpleMeshOld(mesh: HalfEdgeMesh, vertexSchema: VertexSchema) =
     convertMesh(mesh, vertexSchema, temporaryVertexSerializerOld)
 
+fun createSimpleMesh(faces: List<FlexibleFace>, vertexSchema: VertexSchema, color: Vector4) =
+    convertMesh(faces, vertexSchema, temporaryVertexSerializer(color))
+
 fun createSimpleMesh(mesh: FlexibleMesh, vertexSchema: VertexSchema, color: Vector4) =
     convertMesh(mesh, vertexSchema, temporaryVertexSerializer(color))
 
@@ -83,17 +86,34 @@ typealias MeshGeneratorMap = Map<MeshType, MeshGenerator>
 
 data class ModelElement(
     val mesh: SimpleMesh,
-    val material: Material,
-    val offset: Vector3
+    val material: Material
 )
 
-typealias ModelElements =List<ModelElement>
-typealias MeshMap = Map<MeshType, ModelElements>
+data class TransientModelElement(
+    val faces: List<FlexibleFace>,
+    val material: Material
+)
 
-//data class StandardMeshDefinition(
-//    val mesh: FlexibleMesh,
-//    val color: Vector4
-//)
+fun partitionModelMeshes(model: Model): List<TransientModelElement> {
+  if (model.materialMaps.size == 0) {
+    if (model.defaultMaterial == null)
+      throw Error("Incomplete material info")
+
+    return listOf(TransientModelElement(model.mesh.faces, model.defaultMaterial))
+  }
+
+  throw Error("Not implemented yet.")
+}
+
+fun modelToMeshes(vertexSchemas: VertexSchemas, model: Model): ModelElements {
+  val sections = partitionModelMeshes(model)
+  return sections.map {
+    ModelElement(createSimpleMesh(it.faces, vertexSchemas.standard, Vector4(1f)), it.material)
+  }
+}
+
+typealias ModelElements = List<ModelElement>
+typealias MeshMap = Map<MeshType, ModelElements>
 
 fun standardMeshes() = mapOf(
     MeshType.character to createHuman(),
@@ -101,7 +121,7 @@ fun standardMeshes() = mapOf(
 )
 
 fun createModelElements(simpleMesh: SimpleMesh) =
-    listOf(ModelElement(simpleMesh, Material(Vector4(1f)), Vector3()))
+    listOf(ModelElement(simpleMesh, Material(Vector4(1f))))
 
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     MeshType.line to createLineMesh(vertexSchemas.flat),
@@ -109,8 +129,6 @@ fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     MeshType.sphere to createSimpleMesh(createSphere(), vertexSchemas.standard, Vector4(0.4f, 0.1f, 0.1f, 1f))
 )
     .mapValues { createModelElements(it.value) }
-    .plus(standardMeshes().map {
-      Pair(it.key, it.value.meshes.map {
-        ModelElement(createSimpleMesh(it.mesh, vertexSchemas.standard, Vector4(1f)), it.material, Vector3())
-      })
+    .plus(standardMeshes().mapValues {
+      modelToMeshes(vertexSchemas, it.value)
     })

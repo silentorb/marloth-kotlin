@@ -73,14 +73,6 @@ fun getEdges(face: HalfEdgeFace): List<HalfEdge> {
 fun getCenter(points: List<Vector2>): Vector2 =
     points.reduce { a, b -> a + b } / points.size.toFloat()
 
-fun getCenter(vertices: List<Vector3>): Vector3 {
-  var result = Vector3()
-  for (vertex in vertices) {
-    result += vertex
-  }
-  return result / vertices.size.toFloat()
-}
-
 fun getBounds(vertices: List<Vector3>): BoundingBox {
   return BoundingBox(
       Vector3(

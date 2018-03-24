@@ -7,7 +7,6 @@ import mythic.drawing.Canvas
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
 import mythic.glowing.viewportStack
-import mythic.sculpting.MeshBundle
 import rendering.Model
 import mythic.spatial.*
 import mythic.typography.TextConfiguration
@@ -44,45 +43,43 @@ fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, cam
     val sceneRenderer = renderer.createSceneRenderer(Scene(camera), panelDimensions)
     val transform = Matrix()
 
-    for (bundle in model.meshes) {
-      val simpleMesh = createSimpleMesh(bundle.mesh, renderer.vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f))
+    val simpleMesh = createSimpleMesh(model.mesh, renderer.vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f))
 
-      globalState.depthEnabled = true
-      globalState.blendEnabled = true
-      globalState.cullFaces = true
-      sceneRenderer.effects.flat.activate(transform, faceColor)
-      simpleMesh.draw(DrawMethod.triangleFan)
-      globalState.cullFaces = false
+    globalState.depthEnabled = true
+    globalState.blendEnabled = true
+    globalState.cullFaces = true
+    sceneRenderer.effects.flat.activate(transform, faceColor)
+    simpleMesh.draw(DrawMethod.triangleFan)
+    globalState.cullFaces = false
 
-      globalState.depthEnabled = false
-      globalState.lineThickness = 1f
-      sceneRenderer.effects.flat.activate(transform, lineColor)
-      simpleMesh.draw(DrawMethod.lineLoop)
+    globalState.depthEnabled = false
+    globalState.lineThickness = 1f
+    sceneRenderer.effects.flat.activate(transform, lineColor)
+    simpleMesh.draw(DrawMethod.lineLoop)
 
-      globalState.pointSize = 3f
-      sceneRenderer.effects.flat.activate(transform, lineColor)
-      simpleMesh.draw(DrawMethod.points)
+    globalState.pointSize = 3f
+    sceneRenderer.effects.flat.activate(transform, lineColor)
+    simpleMesh.draw(DrawMethod.points)
 
-      simpleMesh.dispose()
+    simpleMesh.dispose()
 //  renderFaceNormals(renderer,mesh,)
-    }
 
     sceneRenderer.drawLine(Vector3(), Vector3(1f, 0f, 0f), red)
     sceneRenderer.drawLine(Vector3(), Vector3(0f, 1f, 0f), green)
     sceneRenderer.drawLine(Vector3(), Vector3(0f, 0f, 1f), blue)
-    sceneRenderer.drawLine(config.tempStart, config.tempEnd, Vector4(1f, 1f, 0f, 1f))
+//    sceneRenderer.drawLine(config.tempStart, config.tempEnd, Vector4(1f, 1f, 0f, 1f))
 
     if (config.selection.size > 0) {
       when (config.componentMode) {
         ComponentMode.vertices -> {
-          val vertices = model.meshes.flatMap { it.mesh.distinctVertices }
+          val vertices = model.vertices
           for (index in config.selection) {
             if (vertices.size > index)
               sceneRenderer.drawPoint(vertices[index], white, 2f)
           }
         }
         ComponentMode.edges -> {
-          val edges = model.meshes.flatMap { it.mesh.edges }
+          val edges = model.edges
           for (index in config.selection) {
             if (edges.size > index) {
               val edge = edges[index]
@@ -94,11 +91,9 @@ fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, cam
     }
     globalState.depthEnabled = false
 
-    for (bundle in model.meshes) {
-      for (group in bundle.info.edgeGroups) {
-        for (pair in group) {
-          sceneRenderer.drawLine(pair.key.first, pair.key.second, yellow)
-        }
+    for (group in model.info.edgeGroups) {
+      for (pair in group) {
+        sceneRenderer.drawLine(pair.key.first, pair.key.second, yellow)
       }
     }
   })
@@ -135,7 +130,7 @@ fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: Model,
   if (config.selection.size > 0) {
     when (config.componentMode) {
       ComponentMode.vertices -> {
-        val vertices = model.meshes.flatMap { it.mesh.distinctVertices }
+        val vertices = model.vertices
         if (vertices.size > config.selection.first())
           drawText(toString(vertices[config.selection.first()]))
       }

@@ -24,8 +24,8 @@ fun joinMeshNodes(first: FlexibleMesh, firstPort: Port, second: FlexibleMesh, se
   val mesh = FlexibleMesh()
   val firstLoop = getEdgeLoop(firstPort)
   val secondLoop = getEdgeLoopReversed(secondPort)
-  setAnchor(getCenter(firstLoop), first.distinctVertices)
-  setAnchor(getCenter(secondLoop), second.distinctVertices)
+  setAnchor(getEdgesCenter(firstLoop), first.distinctVertices)
+  setAnchor(getEdgesCenter(secondLoop), second.distinctVertices)
   mesh.sharedImport(first)
   mesh.sharedImport(second)
 

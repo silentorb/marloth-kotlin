@@ -133,13 +133,10 @@ fun calculateNormals(mesh: FlexibleMesh) {
 
 typealias EdgeGroup = Map<FlexibleEdge, Float>
 typealias VertexGroup = Map<Vector3, Float>
+typealias FaceGroup = List<FlexibleFace>
 
 data class MeshInfo(
     val vertexGroups: List<VertexGroup>,
-    val edgeGroups: List<EdgeGroup>
-)
-
-data class MeshBundle(
-    val mesh: FlexibleMesh,
-    val info: MeshInfo
+    val edgeGroups: List<EdgeGroup>,
+    val faceGroups: FaceGroup
 )

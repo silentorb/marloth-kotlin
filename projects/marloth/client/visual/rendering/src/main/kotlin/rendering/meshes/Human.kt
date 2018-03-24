@@ -21,7 +21,7 @@ fun createHead(resolution: Int): MeshNode<HeadPorts> {
   val edge = mesh.edges.last()
   return MeshNode(mesh, HeadPorts(
       edge
-  ), MeshInfo(listOf(), listOf(mapOf(edge to 1f))))
+  ), MeshInfo(listOf(), listOf(mapOf(edge to 1f)), listOf()))
 }
 
 data class TorsoPorts(
@@ -51,7 +51,7 @@ fun createTorso(resolution: Int): MeshNode<TorsoPorts> {
   val edge = mesh.edges[0].edges[0].previous!!
   return MeshNode(mesh, TorsoPorts(
       edge
-  ), MeshInfo(listOf(), listOf(mapOf(edge to 1f))))
+  ), MeshInfo(listOf(), listOf(mapOf(edge to 1f)), listOf()))
 }
 
 fun createHuman(): Model {
@@ -60,11 +60,11 @@ fun createHuman(): Model {
   val torso = createTorso(3)
   val mesh = joinMeshNodes(head.mesh, head.ports.neck, torso.mesh, torso.ports.neck)
   alignToFloor(mesh.distinctVertices, 0f)
-  return Model(listOf(MeshElement(
-      mesh,
-      MeshInfo(listOf(), head.info.edgeGroups.plus(torso.info.edgeGroups)),
-      Material(Vector4(0.3f, 0.25f, 0.0f, 1f))
-  )))
+  return Model(
+      mesh = mesh,
+      info = MeshInfo(listOf(), head.info.edgeGroups.plus(torso.info.edgeGroups), listOf()),
+      defaultMaterial = Material(Vector4(0.3f, 0.25f, 0.0f, 1f))
+  )
 }
 
 fun createMonster(): Model {
@@ -74,9 +74,9 @@ fun createMonster(): Model {
 //  val mesh = joinMeshNodes(head.mesh, head.ports.neck, torso.mesh, torso.ports.neck)
   val mesh = joinMeshNodes(torso.mesh, torso.ports.neck, head.mesh, head.ports.neck)
   alignToFloor(mesh.distinctVertices, 0f)
-  return Model(listOf(MeshElement(
-      mesh,
-      MeshInfo(listOf(), head.info.edgeGroups.plus(torso.info.edgeGroups)),
-      Material(Vector4(0.25f, 0.25f, 0.25f, 1f))
-  )))
+  return Model(
+      mesh = mesh,
+      info = MeshInfo(listOf(), head.info.edgeGroups.plus(torso.info.edgeGroups), listOf()),
+      defaultMaterial = Material(Vector4(0.25f, 0.25f, 0.25f, 1f))
+  )
 }

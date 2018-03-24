@@ -60,16 +60,15 @@ fun convertMesh(mesh: HalfEdgeMesh, vertexSchema: VertexSchema, vertexSerializer
   return SimpleMesh(vertexSchema, vertices, offsets, counts)
 }
 
-fun convertMesh(mesh: FlexibleMesh, vertexSchema: VertexSchema,
+fun convertMesh(faces: List<FlexibleFace>, vertexSchema: VertexSchema,
                 vertexSerializer: FlexibleVertexSerializer): SimpleMesh {
-  val vertex_count = mesh.vertices.size
-//  val v2 = mesh.faces.flatMap { it.vertices }
+  val vertex_count = faces.flatMap { it.vertices }.size
   val vertices = BufferUtils.createFloatBuffer(vertex_count * vertexSchema.floatSize)
-  val offsets = BufferUtils.createIntBuffer(mesh.faces.size)
-  val counts = BufferUtils.createIntBuffer(mesh.faces.size)
+  val offsets = BufferUtils.createIntBuffer(faces.size)
+  val counts = BufferUtils.createIntBuffer(faces.size)
   var offset = 0
 
-  for (polygon in mesh.faces) {
+  for (polygon in faces) {
     polygon.vertices.forEach { v ->
       vertices.put(v)
       vertexSerializer(v, polygon, vertices)
@@ -86,3 +85,6 @@ fun convertMesh(mesh: FlexibleMesh, vertexSchema: VertexSchema,
   counts.flip()
   return SimpleMesh(vertexSchema, vertices, offsets, counts)
 }
+
+fun convertMesh(mesh: FlexibleMesh, vertexSchema: VertexSchema, vertexSerializer: FlexibleVertexSerializer) =
+    convertMesh(mesh.faces, vertexSchema, vertexSerializer)

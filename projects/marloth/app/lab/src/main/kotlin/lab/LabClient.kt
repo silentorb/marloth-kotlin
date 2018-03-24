@@ -17,6 +17,7 @@ import simulation.AbstractWorld
 import haft.*
 import lab.views.model.ModelView
 import mythic.sculpting.FlexibleMesh
+import mythic.sculpting.getVerticesCenter
 import org.joml.Vector2i
 import org.joml.minus
 import rendering.MeshType
@@ -52,7 +53,7 @@ fun selectView(config: LabConfig, abstractWorld: AbstractWorld, client: Client, 
 fun renderFaceNormals(renderer: SceneRenderer, mesh: FlexibleMesh, effects: Effects, modelTransform: Matrix = Matrix()) {
   globalState.lineThickness = 2f
   for (face in mesh.faces) {
-    val faceCenter = getCenter(face.unorderedVertices)
+    val faceCenter = getVerticesCenter(face.unorderedVertices)
     val transform = modelTransform
         .translate(faceCenter)
         .rotateTowards(face.normal, Vector3(0f, 0f, 1f))

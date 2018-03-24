@@ -1,5 +1,6 @@
 package mythic.sculpting
 
+import mythic.spatial.Vector3
 import org.joml.plus
 
 fun edgeLoopNext(edge: FlexibleEdge) =
@@ -58,5 +59,14 @@ val edgeLoopReversedNext: EdgeExplorer = { edge ->
 fun getEdgeLoop(edge: FlexibleEdge): List<FlexibleEdge> = gatherEdges(edgeLoopNext, edge)
 fun getEdgeLoopReversed(edge: FlexibleEdge): List<FlexibleEdge> = gatherEdges(edgeLoopReversedNext, edge)
 
-fun getCenter(edges: List<FlexibleEdge>) =
+fun getEdgesCenter(edges: List<FlexibleEdge>) =
     edges.map { it.first }.reduce { a, b -> a + b } / edges.size.toFloat()
+
+
+fun getVerticesCenter(vertices: List<Vector3>): Vector3 {
+  var result = Vector3()
+  for (vertex in vertices) {
+    result += vertex
+  }
+  return result / vertices.size.toFloat()
+}
