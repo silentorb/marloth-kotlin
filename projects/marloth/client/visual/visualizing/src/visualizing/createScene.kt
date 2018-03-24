@@ -88,7 +88,10 @@ fun createScene(world: World, screen: Screen, player: Player) =
         filterDepictions(world, player)
             .map {
               val body = world.bodyTable[it.key]!!
-              VisualElement(it.value.type, Matrix().translate(body.position))
+              val character = player.character
+              val transform = Matrix().translate(body.position)
+                  .rotate(character.facingQuaternion)
+              VisualElement(it.value.type, transform)
             },
         player.playerId
 

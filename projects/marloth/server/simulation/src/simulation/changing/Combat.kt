@@ -15,6 +15,9 @@ fun playerAttack(player: Player, commands: Commands<CommandType>): NewMissile? {
     null
 
   if (offset != null) {
+    if (player.viewMode == ViewMode.topDown) {
+      setCharacterFacing(character, offset)
+    }
     val ability = character.abilities[0]
     if (canUse(character, ability)) {
       return characterAttack(character, ability, offset)

@@ -134,6 +134,10 @@ fun translatePosition(offset: Vector3, vertices: List<Vector3>) {
   translate(Matrix().translate(offset), vertices)
 }
 
+fun translatePosition(offset: Vector3, mesh: FlexibleMesh) {
+  translate(Matrix().translate(offset), mesh.vertices)
+}
+
 //fun convertPath(path: Vertices) =
 //    path.map { Vector3(it.x, 0f, it.y) }
 

@@ -3,10 +3,12 @@ package rendering.meshes
 import mythic.sculpting.*
 import mythic.spatial.Pi
 import mythic.spatial.Vector2
+import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import rendering.Material
 import rendering.MeshElement
 import rendering.Model
+import rendering.ModelGenerator
 
 data class HeadPorts(
     val neck: Port
@@ -47,34 +49,42 @@ fun createTorso(resolution: Int): MeshNode<TorsoPorts> {
       Vector2(0.25f, 0.4f),
       Vector2(0.25f, 0f)
   ))
-  latheTwoPaths(mesh, bodyFront, bodySide, resolution)
+  latheTwoPaths(mesh, bodySide, bodyFront, resolution)
   val edge = mesh.edges[0].edges[0].previous!!
   return MeshNode(mesh, TorsoPorts(
       edge
   ), MeshInfo(listOf(), listOf(mapOf(edge to 1f)), listOf()))
 }
 
-fun createHuman(): Model {
+val createHuman: ModelGenerator = {
   val neck = 0.05f
   val head = createHead(3)
   val torso = createTorso(3)
   val mesh = joinMeshNodes(head.mesh, head.ports.neck, torso.mesh, torso.ports.neck)
+  val s = FlexibleMesh()
+  createSphere(s, 0.3f, 8, 6)
+  translatePosition(Vector3(0.1f, 0f, 0f), s)
+  mesh.sharedImport(s)
   alignToFloor(mesh.distinctVertices, 0f)
-  return Model(
+  Model(
       mesh = mesh,
       info = MeshInfo(listOf(), head.info.edgeGroups.plus(torso.info.edgeGroups), listOf()),
       defaultMaterial = Material(Vector4(0.3f, 0.25f, 0.0f, 1f))
   )
 }
 
-fun createMonster(): Model {
+val createMonster: ModelGenerator = {
   val neck = 0.05f
   val head = createHead(1)
   val torso = createTorso(1)
 //  val mesh = joinMeshNodes(head.mesh, head.ports.neck, torso.mesh, torso.ports.neck)
   val mesh = joinMeshNodes(torso.mesh, torso.ports.neck, head.mesh, head.ports.neck)
+  val s = FlexibleMesh()
+  createSphere(s, 0.3f, 8, 6)
+  translatePosition(Vector3(0.1f, 0f, 0f), s)
+  mesh.sharedImport(s)
   alignToFloor(mesh.distinctVertices, 0f)
-  return Model(
+  Model(
       mesh = mesh,
       info = MeshInfo(listOf(), head.info.edgeGroups.plus(torso.info.edgeGroups), listOf()),
       defaultMaterial = Material(Vector4(0.25f, 0.25f, 0.25f, 1f))

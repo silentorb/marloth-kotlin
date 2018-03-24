@@ -8,6 +8,7 @@ import org.joml.minus
 import org.joml.plus
 import org.joml.times
 import org.joml.xy
+import simulation.Character
 import simulation.Player
 import simulation.ViewMode
 import simulation.World
@@ -63,8 +64,8 @@ fun checkWallCollision(source: Vector3, originalOffset: Vector3, world: World): 
 
       val knee = walls[0].first.normal + walls[1].first.normal
       val angle = getAngle(
-          knee.xy.normalize(),
-          (rightEdge.first - rightEdge.second).xy.normalize()
+          (rightEdge.first - rightEdge.second).xy.normalize(),
+          knee.xy.normalize()
       )
       if (Math.abs(angle) <= Pi / 2) {
 //        val dot2 = offset.dot(walls[0].first.normal + walls[0].first.normal)
@@ -129,6 +130,11 @@ fun joinInputVector(commands: Commands<CommandType>, commandMap: Map<CommandType
   return offset
 }
 
+fun setCharacterFacing(character: Character, lookAt: Vector3) {
+  val angle = getAngle(Vector2(1f, 0f), lookAt.xy)
+  character.facingRotation.z = angle
+}
+
 fun playerMove(world: World, player: Player, commands: Commands<CommandType>, delta: Float) {
   val body = player.character.body
   val speed = 6f
@@ -137,7 +143,9 @@ fun playerMove(world: World, player: Player, commands: Commands<CommandType>, de
   if (offset != null) {
     if (player.viewMode == ViewMode.firstPerson)
       offset = (Quaternion().rotateZ(player.character.facingRotation.z - Pi / 2) * offset)!!
-
+    else if (player.viewMode == ViewMode.topDown) {
+      setCharacterFacing(player.character, offset)
+    }
     val newPosition = checkWallCollision(body.position, offset * speed * delta, world)
     if (newPosition != null) {
       assert(!newPosition.x.isNaN() && !newPosition.y.isNaN())

@@ -23,12 +23,6 @@ fun createOrthographicCamera(camera: ViewCameraConfig): Camera {
       .rotateZ(camera.rotationZ)
       .rotateY(camera.rotationY)
 
-//      .rotateZ(camera.rotationZ) * Quaternion().rotateY(camera.rotationY)
-
-
-//      .rotateY(camera.rotationZ)
-//      .rotateZ(camera.rotationY)
-
   val position = orientation * Vector3(12f, 0f, 0f)
   val orientationSecond = Quaternion().rotateTo(Vector3(1f, 0f, 0f), -position)
 //  val position = Vector3(-2f, 0f, 0f)

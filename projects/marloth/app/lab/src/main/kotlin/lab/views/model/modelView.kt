@@ -115,7 +115,7 @@ fun resetCamera(config: ModelViewConfig, model: Model, rotationY: Float, rotatio
 }
 
 class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePosition: Vector2i) : View {
-  val model: Model = createMonster()
+  val model: Model = standardMeshes()[config.model]!!()
   val camera = createOrthographicCamera(config.camera)
 
   override fun createLayout(dimensions: Vector2i): LabLayout {

@@ -298,7 +298,7 @@ fun getAngle(a: Vector2, b: Vector2): Float {
   val ad = atan(a)
   val bd = atan(b)
 //  println("fn " + a + " " + b + " = " + ad + " - " + bd + " = " + (ad - bd))
-  return ad - bd
+  return bd - ad
 }
 
 //fun getAngle(a: Vector2, b: Vector2, c: Vector2): Float {

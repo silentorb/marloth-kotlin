@@ -80,9 +80,9 @@ enum class MeshType {
   sphere
 }
 
-typealias MeshGenerator = () -> FlexibleMesh
+typealias ModelGenerator = () -> Model
 
-typealias MeshGeneratorMap = Map<MeshType, MeshGenerator>
+typealias ModelGeneratorMap = Map<MeshType, ModelGenerator>
 
 data class ModelElement(
     val mesh: SimpleMesh,
@@ -115,9 +115,9 @@ fun modelToMeshes(vertexSchemas: VertexSchemas, model: Model): ModelElements {
 typealias ModelElements = List<ModelElement>
 typealias MeshMap = Map<MeshType, ModelElements>
 
-fun standardMeshes() = mapOf(
-    MeshType.character to createHuman(),
-    MeshType.monster to createMonster()
+fun standardMeshes(): ModelGeneratorMap = mapOf(
+    MeshType.character to createHuman,
+    MeshType.monster to createMonster
 )
 
 fun createModelElements(simpleMesh: SimpleMesh) =
@@ -130,5 +130,5 @@ fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
 )
     .mapValues { createModelElements(it.value) }
     .plus(standardMeshes().mapValues {
-      modelToMeshes(vertexSchemas, it.value)
+      modelToMeshes(vertexSchemas, it.value())
     })
