@@ -3,14 +3,13 @@ package rendering.meshes
 import mythic.sculpting.FlexibleMesh
 import mythic.sculpting.createCylinder
 import mythic.sculpting.transformMesh
-import mythic.sculpting.transformVertices
 import mythic.spatial.Matrix
 import mythic.spatial.Pi
 import mythic.spatial.Vector4
 import rendering.Material
 import rendering.Model
 import rendering.ModelGenerator
-import rendering.createMaterialMap
+import rendering.mapMaterial
 
 
 fun createTransformedCylinder(length: Float, radius: Float, transform: Matrix): FlexibleMesh {
@@ -29,6 +28,15 @@ val createWallLamp: ModelGenerator = {
   val second = createTransformedCylinder(secondLength, radius, Matrix().translate(length - radius, 0f, 0f))
   val glass1 = createTransformedCylinder(firstGlassLength, 0.3f, Matrix().translate(length - radius, 0f, secondLength))
   val glass2 = createTransformedCylinder(0.65f, 0.15f, Matrix().translate(length - radius, 0f, secondLength + firstGlassLength))
+
+  val brassMaterial = Material(Vector4(0.3f, 0.25f, 0.1f, 1f))
+  val glassMaterial = Material(Vector4(0.9f, 0.9f, 0.6f, 0.5f))
+
+  val materialMap = listOf(
+      mapMaterial(brassMaterial, listOf(first, second)),
+      mapMaterial(glassMaterial, listOf(glass1, glass2))
+  )
+
   first.sharedImport(listOf(
       second,
       glass1,
@@ -37,6 +45,5 @@ val createWallLamp: ModelGenerator = {
 
   Model(
       mesh = first,
-      materials = listOf(createMaterialMap(Material(Vector4(0.3f, 0.25f, 0.0f, 1f)), first)
-      ))
+      materials = materialMap)
 }

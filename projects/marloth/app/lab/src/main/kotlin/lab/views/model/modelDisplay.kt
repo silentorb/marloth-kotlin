@@ -5,14 +5,13 @@ import mythic.bloom.Bounds
 import mythic.bloom.Render
 import mythic.drawing.Canvas
 import mythic.glowing.DrawMethod
+import mythic.glowing.SimpleMesh
 import mythic.glowing.globalState
 import mythic.glowing.viewportStack
-import rendering.Model
 import mythic.spatial.*
 import mythic.typography.TextConfiguration
 import org.joml.*
-import rendering.Renderer
-import rendering.createSimpleMesh
+import rendering.*
 import scenery.Camera
 import scenery.ProjectionType
 import scenery.Scene
@@ -31,31 +30,45 @@ fun createOrthographicCamera(camera: ViewCameraConfig): Camera {
   return Camera(ProjectionType.orthographic, position + camera.pivot, orientationSecond, camera.zoom)
 }
 
+fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, transform: Matrix, section: ModelElement) {
+  val mesh = section.mesh
+
+  globalState.depthEnabled = true
+  globalState.blendEnabled = true
+  globalState.cullFaces = true
+
+  when (config.meshDisplay) {
+    MeshDisplay.solid -> sceneRenderer.effects.flat.activate(transform, section.material.color)
+    MeshDisplay.wireframe -> sceneRenderer.effects.flat.activate(transform, faceColor)
+  }
+
+  mesh.draw(DrawMethod.triangleFan)
+  globalState.cullFaces = false
+
+  globalState.depthEnabled = false
+  globalState.lineThickness = 1f
+  sceneRenderer.effects.flat.activate(transform, lineColor)
+  mesh.draw(DrawMethod.lineLoop)
+
+  globalState.pointSize = 3f
+  sceneRenderer.effects.flat.activate(transform, lineColor)
+  mesh.draw(DrawMethod.points)
+}
+
 fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, camera: Camera, model: Model) {
   val panelDimensions = Vector2i(b.dimensions.x.toInt(), b.dimensions.y.toInt())
   viewportStack(Vector4i(b.position.x.toInt(), b.position.y.toInt(), panelDimensions.x, panelDimensions.y), {
     val sceneRenderer = renderer.createSceneRenderer(Scene(camera), panelDimensions)
     val transform = Matrix()
 
-    val simpleMesh = createSimpleMesh(model.mesh, renderer.vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f))
+    val meshes = modelToMeshes(renderer.vertexSchemas, model)
 
-    globalState.depthEnabled = true
-    globalState.blendEnabled = true
-    globalState.cullFaces = true
-    sceneRenderer.effects.flat.activate(transform, faceColor)
-    simpleMesh.draw(DrawMethod.triangleFan)
-    globalState.cullFaces = false
+    meshes.forEach { drawMeshPreview(config, sceneRenderer, transform, it) }
+//    val simpleMesh = createSimpleMesh(model.mesh, renderer.vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f))
 
-    globalState.depthEnabled = false
-    globalState.lineThickness = 1f
-    sceneRenderer.effects.flat.activate(transform, lineColor)
-    simpleMesh.draw(DrawMethod.lineLoop)
+//    simpleMesh.dispose()
+    meshes.forEach { it.mesh.dispose() }
 
-    globalState.pointSize = 3f
-    sceneRenderer.effects.flat.activate(transform, lineColor)
-    simpleMesh.draw(DrawMethod.points)
-
-    simpleMesh.dispose()
 //  renderFaceNormals(renderer,mesh,)
 
     sceneRenderer.drawLine(Vector3(), Vector3(1f, 0f, 0f), red)

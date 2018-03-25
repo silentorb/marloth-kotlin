@@ -8,7 +8,7 @@ import mythic.spatial.Vector4
 import rendering.Material
 import rendering.Model
 import rendering.ModelGenerator
-import rendering.createMaterialMap
+import rendering.mapMaterial
 
 data class HeadPorts(
     val neck: Port
@@ -74,7 +74,7 @@ val createHuman: ModelGenerator = {
   Model(
       mesh = mesh,
       info = info,
-      materials = listOf(createMaterialMap(Material(Vector4(0.3f, 0.25f, 0.0f, 1f)), mesh)
+      materials = listOf(mapMaterial(Material(Vector4(0.3f, 0.25f, 0.0f, 1f)), mesh)
       ))
 }
 
@@ -83,6 +83,6 @@ val createMonster: ModelGenerator = {
   Model(
       mesh = mesh,
       info = info,
-      materials = listOf(createMaterialMap(Material(Vector4(0.25f, 0.25f, 0.25f, 1f)), mesh)
+      materials = listOf(mapMaterial(Material(Vector4(0.25f, 0.25f, 0.25f, 1f)), mesh)
   ))
 }

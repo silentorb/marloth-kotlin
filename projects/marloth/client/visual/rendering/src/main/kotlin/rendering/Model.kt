@@ -12,8 +12,12 @@ data class MaterialMap(
     val faceGroup: FaceGroup
 )
 
-fun createMaterialMap(material: Material, mesh: FlexibleMesh): MaterialMap {
+fun mapMaterial(material: Material, mesh: FlexibleMesh): MaterialMap {
   return MaterialMap(material, mesh.faces)
+}
+
+fun mapMaterial(material: Material, meshes: List<FlexibleMesh>): MaterialMap {
+  return MaterialMap(material, meshes.flatMap { it.faces })
 }
 
 data class Model(

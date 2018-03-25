@@ -10,7 +10,6 @@ import rendering.*
 import scenery.Camera
 import lab.views.*
 import mythic.sculpting.*
-import rendering.meshes.createMonster
 
 data class ViewCameraConfig(
     var rotationY: Float = 0f,
@@ -25,6 +24,11 @@ enum class ComponentMode {
   vertices
 }
 
+enum class MeshDisplay {
+  solid,
+  wireframe
+}
+
 data class ModelViewConfig(
     var model: MeshType = MeshType.character,
     var drawVertices: Boolean = true,
@@ -33,7 +37,9 @@ data class ModelViewConfig(
     var selection: List<Int> = listOf(),
     var tempStart: Vector3 = Vector3(),
     var tempEnd: Vector3 = Vector3(),
-    var componentMode: ComponentMode = ComponentMode.vertices
+    var componentMode: ComponentMode = ComponentMode.vertices,
+    var meshDisplay: MeshDisplay = MeshDisplay.wireframe
+
 )
 
 typealias MeshGenerator = (FlexibleMesh) -> Unit
@@ -187,6 +193,13 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
       },
       LabCommandType.cameraViewBottom to { _ ->
         resetCamera(config, model, Pi / 2, Pi / 2)
+      },
+
+      LabCommandType.toggleMeshDisplay to { _ ->
+        config.meshDisplay = if (config.meshDisplay == MeshDisplay.wireframe)
+          MeshDisplay.solid
+        else
+          MeshDisplay.wireframe
       },
 
       LabCommandType.toggleSelection to { _ ->
