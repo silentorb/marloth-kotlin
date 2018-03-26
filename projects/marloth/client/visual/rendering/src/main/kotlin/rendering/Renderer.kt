@@ -29,7 +29,7 @@ data class WorldMesh(
 fun renderScene(scene: GameScene, painters: Painters, effects: Effects, textures: Textures, worldMesh: WorldMesh?) {
   globalState.depthEnabled = true
   if (worldMesh != null) {
-    effects.textured.activate(Matrix(), textures.checkers, Vector4(1f), Matrix())
+    effects.textured.activate(Matrix(), textures.checkers, Vector4(1f),0f, Matrix())
     var index = 0
     for (texture in worldMesh.textureIndex) {
       texture.activate()

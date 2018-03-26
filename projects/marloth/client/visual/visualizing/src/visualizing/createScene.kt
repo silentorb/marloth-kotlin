@@ -82,7 +82,7 @@ fun convertDepiction(world: World, id: Id, depiction: Depiction): VisualElement 
   val transform = if (character != null)
     translate.rotate(character.facingQuaternion)
   else
-    translate
+    translate.rotate(body.orientation)
 
   return VisualElement(depiction.type, transform)
 }
@@ -91,7 +91,7 @@ fun createScene(world: World, screen: Screen, player: Player) =
     GameScene(
         Scene(
             createCamera(world, screen),
-            world.lights.plus(Light(
+            world.lights.values.plus(Light(
                 type = LightType.point,
                 color = Vector4(1f, 1f, 1f, 1f),
                 position = player.character.body.position + Vector3(0f, 0f, 2f),

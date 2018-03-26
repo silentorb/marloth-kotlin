@@ -24,7 +24,7 @@ data class World(
       Faction(this, "Misfits"),
       Faction(this, "Monsters")
   )
-  val lights: MutableList<Light> = mutableListOf()
+  val lights: MutableMap<Id, Light> = mutableMapOf()
 
   private var _nextId = 1
 

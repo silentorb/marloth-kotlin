@@ -8,7 +8,7 @@ class AbilityDefinitions {
       range = 10f
   )
   val slowShoot = AbilityDefinition(
-      cooldown = 0.4f,
+      cooldown = 0.8f,
       range = 10f
   )
 }

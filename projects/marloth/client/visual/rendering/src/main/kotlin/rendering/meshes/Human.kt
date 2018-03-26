@@ -65,12 +65,12 @@ fun createHumanMesh(): Pair<FlexibleMesh, MeshInfo> {
   createSphere(s, 0.3f, 8, 6)
   distortedTranslatePosition(Vector3(0.1f, 0f, 0f), s)
   mesh.sharedImport(s)
+  alignToFloor(mesh.distinctVertices, 0f)
   return Pair(mesh, MeshInfo(listOf(), head.info.edgeGroups.plus(torso.info.edgeGroups)))
 }
 
 val createHuman: ModelGenerator = {
   val (mesh, info) = createHumanMesh()
-  alignToFloor(mesh.distinctVertices, 0f)
   Model(
       mesh = mesh,
       info = info,

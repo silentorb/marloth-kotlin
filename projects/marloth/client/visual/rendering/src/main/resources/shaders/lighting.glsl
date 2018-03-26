@@ -64,33 +64,13 @@ vec3 processLight(Light light, vec4 input_color, vec3 normal, vec3 cameraDirecti
 	return rgb * distanceFade;
 }
 
-vec3 processLights(vec4 input_color, vec3 normal, vec3 cameraDirection, vec3 position) {
+vec3 processLights(vec4 input_color, vec3 normal, vec3 cameraDirection, vec3 position, float glow) {
 	vec3 result = vec3(0);
 	for(int i = 0; i < scene.lightCount; ++i) {
 		result += processLight(scene.lights[i], input_color, normal, cameraDirection, position);
 	}
 
-//    {
-//        Light light;
-//        light.type = 0;
-//        light.brightness = 1.0;
-//        light.position = vec3(-1000, 0, 0);
-//        light.direction = vec3(0);
-//        light.color = vec3(0.9);
-//        result += processLight(light, input_color, normal, cameraDirection, position);
-//    }
-////
-//    {
-//        Light light;
-//        light.type = 0;
-//        light.brightness = 1.0;
-//        light.position = vec3(10, -10, 1000);
-//        light.direction = vec3(0);
-//        light.color = vec3(0.4);
-//        result += processLight(light, input_color, normal, cameraDirection, position);
-//    }
-
-//    result += ambient;
+    result += glow;
 
 	return min(result, vec3(1.0));
 }

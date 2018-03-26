@@ -38,7 +38,7 @@ data class ModelViewConfig(
     var tempStart: Vector3 = Vector3(),
     var tempEnd: Vector3 = Vector3(),
     var componentMode: ComponentMode = ComponentMode.vertices,
-    var meshDisplay: MeshDisplay = MeshDisplay.wireframe
+    var meshDisplay: MeshDisplay = MeshDisplay.solid
 
 )
 

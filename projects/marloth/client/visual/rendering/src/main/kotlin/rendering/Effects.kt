@@ -34,8 +34,8 @@ class ColoredPerspectiveEffect(val shader: ColoredPerspectiveShader,
     sceneProperty.setValue(sceneBuffer)
   }
 
-  fun activate(transform: Matrix, color: Vector4, normalTransform: Matrix) {
-    shader.activate(color, normalTransform)
+  fun activate(transform: Matrix, color: Vector4, glow: Float, normalTransform: Matrix) {
+    shader.activate(color, glow, normalTransform)
     perspectiveEffect.activate(transform)
   }
 }
@@ -52,9 +52,9 @@ class FlatColoredPerspectiveEffect(val shader: FlatColoredPerspectiveShader, cam
 class TexturedPerspectiveEffect(private val shader: TextureShader, camera: CameraEffectsData, sceneBuffer: UniformBuffer) {
   private val perspectiveEffect = ColoredPerspectiveEffect(shader.colorShader, camera, sceneBuffer)
 
-  fun activate(transform: Matrix, texture: Texture, color: Vector4, normalTransform: Matrix) {
-    shader.activate(texture, color, normalTransform)
-    perspectiveEffect.activate(transform, color, normalTransform)
+  fun activate(transform: Matrix, texture: Texture, color: Vector4, glow: Float, normalTransform: Matrix) {
+    shader.activate(texture, color, glow, normalTransform)
+    perspectiveEffect.activate(transform, color, glow, normalTransform)
   }
 }
 

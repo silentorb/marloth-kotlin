@@ -42,6 +42,10 @@ fun getAngle(first: Vector2, second: Vector2): Float {
   return Math.atan2(third.y.toDouble(), third.x.toDouble()).toFloat()
 }
 
+fun getAngle(second: Vector2): Float {
+  return getAngle(Vector2(1f, 0f), second)
+}
+
 fun getAngle(node: Node, second: Vector3) = getAngle(node.position.xy, second.xy)
 
 fun project2D(angle: Float, distance: Float): Vector2 {
@@ -75,8 +79,8 @@ fun getCenter(first: Node, second: Node): Vector3 {
   return first.position + (second.position - first.position) / distance * mod
 }
 
-fun roughlyEquals(first: Vector2, second: Vector2, range: Float):Boolean {
+fun roughlyEquals(first: Vector2, second: Vector2, range: Float): Boolean {
   val r = range / 2
   return first.x > second.x - r && first.x < second.x + r
-  && first.y > second.y - r && first.y < second.y + r
+      && first.y > second.y - r && first.y < second.y + r
 }

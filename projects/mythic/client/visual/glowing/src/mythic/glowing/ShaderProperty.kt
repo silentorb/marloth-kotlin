@@ -37,6 +37,19 @@ class Vector4Property(private val program: ShaderProgram, name: String) {
   }
 }
 
+class FloatProperty(private val program: ShaderProgram, name: String) {
+  private val location = glGetUniformLocation(program.id, name)
+  var cachedValue = Float.NaN
+
+  fun setValue(value: Float) {
+    if (cachedValue != value) {
+      cachedValue = value
+      program.activate()
+      glUniform1f(location, value)
+    }
+  }
+}
+
 class UniformBufferProperty(private val program: ShaderProgram, name: String) {
   private val index = glGetUniformBlockIndex(program.id, name)
 

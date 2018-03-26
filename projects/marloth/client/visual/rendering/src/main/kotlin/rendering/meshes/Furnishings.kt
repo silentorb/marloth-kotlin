@@ -30,7 +30,7 @@ val createWallLamp: ModelGenerator = {
   val glass2 = createTransformedCylinder(0.65f, 0.15f, Matrix().translate(length - radius, 0f, secondLength + firstGlassLength))
 
   val brassMaterial = Material(Vector4(0.3f, 0.25f, 0.1f, 1f))
-  val glassMaterial = Material(Vector4(0.9f, 0.9f, 0.6f, 0.5f))
+  val glassMaterial = Material(Vector4(0.9f, 0.9f, 0.6f, 0.5f), glow = 0.6f)
 
   val materialMap = listOf(
       mapMaterial(brassMaterial, listOf(first, second)),

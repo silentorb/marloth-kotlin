@@ -6,5 +6,6 @@ enum class DepictionType {
   monster,
   none,
   test,
+  wallLamp,
   world
 }

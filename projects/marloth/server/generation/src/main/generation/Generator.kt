@@ -5,12 +5,12 @@ import generation.abstract.createTunnelNodes
 import generation.abstract.handleOverlapping
 import generation.abstract.unifyWorld
 import generation.structure.generateStructure
-import mythic.spatial.Vector3
-import mythic.spatial.Vector4
-import mythic.spatial.getVector3Center
+import mythic.spatial.*
 import org.joml.minus
 import org.joml.plus
+import org.joml.xy
 import randomly.Dice
+import scenery.DepictionType
 import scenery.Light
 import scenery.LightType
 import simulation.*
@@ -55,7 +55,6 @@ fun fillIndexes(graph: NodeGraph) {
   }
 }
 
-
 fun placeEnemy(world: World, instantiator: Instantiator, dice: Dice) {
   val node = dice.getItem(world.meta.nodes.drop(1))// Skip the node where the player starts
   val wall = dice.getItem(node.walls)
@@ -63,10 +62,25 @@ fun placeEnemy(world: World, instantiator: Instantiator, dice: Dice) {
   instantiator.createAiCharacter(characterDefinitions.monster, world.factions[1], position)
 }
 
+
 fun placeEnemies(world: World, instantiator: Instantiator, dice: Dice, scale: Float) {
   val enemyCount = (10f * scale).toInt()
   for (i in 0 until enemyCount) {
     placeEnemy(world, instantiator, dice)
+  }
+}
+
+fun placeWallLamps(world: World, instantiator: Instantiator, dice: Dice, scale: Float) {
+  val count = (10f * scale).toInt()
+  val nodes = dice.getList(world.meta.nodes, count)
+  nodes.forEach { node ->
+    val wall = dice.getItem(node.walls)
+    val edge = wall.edges[0]
+    val position = getVector3Center(edge.first, edge.second) +
+        Vector3(0f, 0f, 0.9f) + wall.normal * -0.1f
+//    val angle = getAngle(edge.first.copy().cross(edge.second).xy)
+    val angle = getAngle(wall.normal.xy)
+    instantiator.createWallLamp(position, Quaternion().rotateZ(angle))
   }
 }
 
@@ -85,6 +99,8 @@ fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): Wo
 //      direction = Vector4(0f, 0f, 0f, 15f)
 //  ))
   placeEnemies(world, instantiator, input.dice, scale)
+  placeWallLamps(world, instantiator, input.dice, scale)
+
   return world
 }
 

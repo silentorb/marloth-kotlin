@@ -4,6 +4,7 @@ typealias Id = Int
 
 enum class EntityType {
   character,
+  furnishing,
   missile
 }
 

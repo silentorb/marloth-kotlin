@@ -1,11 +1,15 @@
 package simulation.changing
 
+import collision.Sphere
 import intellect.Spirit
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
+import mythic.spatial.Vector4
 import org.joml.plus
 import scenery.Depiction
 import scenery.DepictionType
+import scenery.Light
+import scenery.LightType
 import simulation.*
 
 data class InstantiatorConfig(
@@ -24,9 +28,9 @@ class Instantiator(
     return entity
   }
 
-  fun createBody(type: EntityType, shape: collision.Shape, position: Vector3): Body {
+  fun createBody(type: EntityType, shape: collision.Shape, position: Vector3, orientation: Quaternion = Quaternion()): Body {
     val entity = createEntity(type)
-    val body = Body(entity.id, shape, position, Quaternion(), Vector3())
+    val body = Body(entity.id, shape, position, orientation, Vector3())
     world.bodyTable[entity.id] = body
     return body
   }
@@ -72,11 +76,33 @@ class Instantiator(
     return missile
   }
 
-  fun createPlayer(id: Int): Player {
+  fun createPlayer(id: Id): Player {
     val position = world.meta.nodes.first().position// + Vector3(0f, 0f, 1f)
     val character = createCharacter(characterDefinitions.player, world.factions[0], position)
     val player = Player(character, id, config.defaultPlayerView)
     world.players.add(player)
     return player
+  }
+
+  fun createFurnishing(depictionType: DepictionType, position: Vector3, orientation: Quaternion): Body {
+    val body = createBody(EntityType.furnishing, Sphere(0.3f), position, orientation)
+    createDepiction(body.id, depictionType)
+    return body
+  }
+
+  fun addLight(id: Id, light: Light) {
+    world.lights[id] = light
+  }
+
+  fun createWallLamp(position: Vector3, orientation: Quaternion): Body {
+    val body = createFurnishing(DepictionType.wallLamp, position, orientation)
+    val light = Light(
+        type = LightType.point,
+        color = Vector4(1f, 1f, 1f, 1f),
+        position = position + Vector3(0f, 0f, 1.6f),
+        direction = Vector4(0f, 0f, 0f, 15f)
+    )
+    addLight(body.id, light)
+    return body
   }
 }
