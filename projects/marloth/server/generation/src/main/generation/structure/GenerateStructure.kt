@@ -20,6 +20,8 @@ enum class CornerType {
   overlap,
 }
 
+val doorwayLength = 2.5f
+
 //data class Corner(val position: Vector3, val type: CornerType = CornerType.normal)
 typealias Corner = Vector3
 
@@ -38,7 +40,7 @@ fun radialSequence(corners: List<NodeCorner>) =
 fun getDoorwayPoints(node: Node, other: Node): List<Vector2> {
   val direction = (other.position - node.position).xy.normalize()
   val point = node.position.xy + direction * node.radius
-  return forkVector(point, direction, 1.5f)
+  return forkVector(point, direction, doorwayLength)
 }
 
 fun createDoorway(node: Node, other: Node) =

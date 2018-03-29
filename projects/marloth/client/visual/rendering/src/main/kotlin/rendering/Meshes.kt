@@ -121,15 +121,18 @@ fun standardMeshes(): ModelGeneratorMap = mapOf(
     MeshType.wallLamp to createWallLamp
 )
 
-fun createModelElements(simpleMesh: SimpleMesh) =
-    listOf(ModelElement(simpleMesh, Material(Vector4(1f))))
+fun createModelElements(simpleMesh: SimpleMesh, color: Vector4 = Vector4(1f)) =
+    listOf(ModelElement(simpleMesh, Material(color)))
 
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     MeshType.line to createLineMesh(vertexSchemas.flat),
-    MeshType.cylinder to createSimpleMesh(createCylinder(), vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f)),
-    MeshType.sphere to createSimpleMesh(createSphere(), vertexSchemas.standard, Vector4(0.4f, 0.1f, 0.1f, 1f))
+    MeshType.cylinder to createSimpleMesh(createCylinder(), vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f))
 )
     .mapValues { createModelElements(it.value) }
+    .plus(mapOf(
+        MeshType.sphere to createModelElements(createSimpleMesh(createSphere(), vertexSchemas.standard, Vector4(1f)),
+            Vector4(0.4f, 0.1f, 0.1f, 1f))
+    ))
     .plus(standardMeshes().mapValues {
       modelToMeshes(vertexSchemas, it.value())
     })
