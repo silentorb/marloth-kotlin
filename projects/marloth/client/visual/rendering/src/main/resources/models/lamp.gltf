@@ -1,0 +1,249 @@
+{
+    "accessors" : [
+        {
+            "bufferView" : 0, 
+            "componentType" : 5121, 
+            "count" : 276, 
+            "max" : [
+                47
+            ], 
+            "min" : [
+                0
+            ], 
+            "type" : "SCALAR"
+        }, 
+        {
+            "bufferView" : 1, 
+            "componentType" : 5126, 
+            "count" : 48, 
+            "max" : [
+                0.4416874945163727, 
+                0.12017974257469177, 
+                0.7893118262290955
+            ], 
+            "min" : [
+                0.20132872462272644, 
+                -0.12017901241779327, 
+                0.23000219464302063
+            ], 
+            "type" : "VEC3"
+        }, 
+        {
+            "bufferView" : 2, 
+            "componentType" : 5126, 
+            "count" : 48, 
+            "max" : [
+                0.9664601683616638, 
+                0.9664601683616638, 
+                0.6302377581596375
+            ], 
+            "min" : [
+                -0.9664601683616638, 
+                -0.9664601683616638, 
+                -0.7017731070518494
+            ], 
+            "type" : "VEC3"
+        }, 
+        {
+            "bufferView" : 3, 
+            "componentType" : 5121, 
+            "count" : 276, 
+            "max" : [
+                175
+            ], 
+            "min" : [
+                0
+            ], 
+            "type" : "SCALAR"
+        }, 
+        {
+            "bufferView" : 4, 
+            "componentType" : 5126, 
+            "count" : 176, 
+            "max" : [
+                0.3993374705314636, 
+                0.07782965898513794, 
+                0.3210078477859497
+            ], 
+            "min" : [
+                -0.014324285089969635, 
+                -0.07782894372940063, 
+                -0.03803245723247528
+            ], 
+            "type" : "VEC3"
+        }, 
+        {
+            "bufferView" : 5, 
+            "componentType" : 5126, 
+            "count" : 176, 
+            "max" : [
+                0.8507195711135864, 
+                0.9220851063728333, 
+                1.0
+            ], 
+            "min" : [
+                -0.9997681975364685, 
+                -0.9220852851867676, 
+                -0.9200169444084167
+            ], 
+            "type" : "VEC3"
+        }
+    ], 
+    "asset" : {
+        "generator" : "Khronos Blender glTF 2.0 exporter", 
+        "version" : "2.0"
+    }, 
+    "bufferViews" : [
+        {
+            "buffer" : 0, 
+            "byteLength" : 276, 
+            "byteOffset" : 0, 
+            "target" : 34963
+        }, 
+        {
+            "buffer" : 0, 
+            "byteLength" : 576, 
+            "byteOffset" : 276, 
+            "target" : 34962
+        }, 
+        {
+            "buffer" : 0, 
+            "byteLength" : 576, 
+            "byteOffset" : 852, 
+            "target" : 34962
+        }, 
+        {
+            "buffer" : 0, 
+            "byteLength" : 276, 
+            "byteOffset" : 1428, 
+            "target" : 34963
+        }, 
+        {
+            "buffer" : 0, 
+            "byteLength" : 2112, 
+            "byteOffset" : 1704, 
+            "target" : 34962
+        }, 
+        {
+            "buffer" : 0, 
+            "byteLength" : 2112, 
+            "byteOffset" : 3816, 
+            "target" : 34962
+        }
+    ], 
+    "buffers" : [
+        {
+            "byteLength" : 5928, 
+            "uri" : "lamp.bin"
+        }
+    ], 
+    "materials" : [
+        {
+            "name" : "lamp-base", 
+            "pbrMetallicRoughness" : {
+                "baseColorFactor" : [
+                    0.066825080913679, 
+                    0.03959196268904153, 
+                    0.03532343261425841, 
+                    1.0
+                ], 
+                "metallicFactor" : 0.0
+            }
+        }, 
+        {
+            "name" : "lamp-glass", 
+            "pbrMetallicRoughness" : {
+                "baseColorFactor" : [
+                    0.6400000190734865, 
+                    0.6376023387551655, 
+                    0.4907276226688566, 
+                    1.0
+                ], 
+                "metallicFactor" : 0.0
+            }
+        }
+    ], 
+    "meshes" : [
+        {
+            "name" : "lamp-glass", 
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "NORMAL" : 2, 
+                        "POSITION" : 1
+                    }, 
+                    "indices" : 0, 
+                    "material" : 1
+                }
+            ]
+        }, 
+        {
+            "name" : "lamp-base", 
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "NORMAL" : 5, 
+                        "POSITION" : 4
+                    }, 
+                    "indices" : 3, 
+                    "material" : 0
+                }
+            ]
+        }
+    ], 
+    "nodes" : [
+        {
+            "name" : "Camera", 
+            "rotation" : [
+                0.48170700669288635, 
+                0.21292175352573395, 
+                0.3342514932155609, 
+                0.7816000580787659
+            ], 
+            "scale" : [
+                1.0, 
+                0.9999999403953552, 
+                1.0
+            ], 
+            "translation" : [
+                7.481131553649902, 
+                -6.5076398849487305, 
+                5.34366512298584
+            ]
+        }, 
+        {
+            "name" : "Lamp", 
+            "rotation" : [
+                0.16907572746276855, 
+                0.27217134833335876, 
+                0.7558803558349609, 
+                0.570947527885437
+            ], 
+            "translation" : [
+                6.512551784515381, 
+                -5.71218204498291, 
+                5.903861999511719
+            ]
+        }, 
+        {
+            "mesh" : 1, 
+            "name" : "lamp-base"
+        }, 
+        {
+            "mesh" : 0, 
+            "name" : "lamp-glass"
+        }
+    ], 
+    "scene" : 0, 
+    "scenes" : [
+        {
+            "name" : "Scene", 
+            "nodes" : [
+                3, 
+                2, 
+                1, 
+                0
+            ]
+        }
+    ]
+}

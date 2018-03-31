@@ -1,5 +1,6 @@
 package rendering
 
+import de.javagl.jgltf.model.GltfModel
 import mythic.drawing.DrawingVertexSchemas
 import mythic.drawing.createDrawingVertexSchemas
 import mythic.glowing.SimpleMesh
@@ -11,6 +12,7 @@ import rendering.meshes.createHuman
 import rendering.meshes.createMonster
 import rendering.meshes.createWallLamp
 
+import de.javagl.jgltf.model.io.GltfModelReader
 
 data class NewMesh(val mesh: HalfEdgeMesh, val vertexSchema: VertexSchema)
 typealias NewMeshMap = Map<String, NewMesh>
@@ -115,6 +117,22 @@ fun modelToMeshes(vertexSchemas: VertexSchemas, model: Model): ModelElements {
   }
 }
 
+private fun loadResource(name: String): GltfModel {
+  val classloader = Thread.currentThread().contextClassLoader
+  val inputStream = classloader.getResourceAsStream(name)
+  val reader = GltfModelReader()
+  return reader.readWithoutReferences(inputStream)
+}
+
+//val createWallLamp = { vertexSchemas: VertexSchemas ->
+//  val model = loadResource("models/lamp.gltf")
+//  val mesh = SimpleMesh(vertexSchemas.standard,
+//      model.bufferModels.first().bufferData.asFloatBuffer(),
+//      model.bufferModels[1].bufferData.asIntBuffer(),
+//      model.bufferModels[2].bufferData.asIntBuffer())
+//  listOf(ModelElement(mesh, Material()))
+//}
+
 fun standardMeshes(): ModelGeneratorMap = mapOf(
     MeshType.character to createHuman,
     MeshType.monster to createMonster,
@@ -129,6 +147,9 @@ fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     MeshType.cylinder to createSimpleMesh(createCylinder(), vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f))
 )
     .mapValues { createModelElements(it.value) }
+//    .plus(mapOf(
+//        MeshType.wallLamp to createWallLamp(vertexSchemas)
+//    ))
     .plus(mapOf(
         MeshType.sphere to createModelElements(createSimpleMesh(createSphere(), vertexSchemas.standard, Vector4(1f)),
             Vector4(0.4f, 0.1f, 0.1f, 1f))

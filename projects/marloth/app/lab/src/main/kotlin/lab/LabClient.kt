@@ -95,7 +95,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     val windowInfo = client.getWindowInfo()
     val renderer = client.renderer
     renderer.renderScenes(scenes, windowInfo)
-    renderFaceNormals(client.renderer, metaWorld.mesh, effects)
+//    renderFaceNormals(client.renderer, metaWorld.mesh, effects)
   }
 
   fun update(scenes: List<GameScene>, metaWorld: AbstractWorld, previousState: LabState, delta: Float): ViewInputResult {
