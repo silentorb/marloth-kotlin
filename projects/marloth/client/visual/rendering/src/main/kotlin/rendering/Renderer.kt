@@ -4,7 +4,6 @@ import mythic.drawing.createDrawingMeshes
 import mythic.glowing.*
 import mythic.platforming.WindowInfo
 import mythic.spatial.Matrix
-import mythic.spatial.Pi
 import mythic.spatial.Vector3
 import mythic.typography.loadFonts
 import scenery.GameScene
@@ -26,22 +25,6 @@ data class WorldMesh(
     val textureIndex: List<Texture>
 )
 
-fun renderScene(scene: GameScene, painters: Painters, effects: Effects, textures: Textures, worldMesh: WorldMesh?) {
-  globalState.depthEnabled = true
-  if (worldMesh != null) {
-    effects.textured.activate(Matrix(), textures.checkers, Vector4(1f),0f, Matrix())
-    var index = 0
-    for (texture in worldMesh.textureIndex) {
-      texture.activate()
-      worldMesh.mesh.drawElement(DrawMethod.triangleFan, index++)
-    }
-  }
-
-  for (element in scene.elements) {
-    painters[element.depiction]!!(element, effects)
-  }
-}
-
 fun getPlayerViewports(playerCount: Int, dimensions: Vector2i): List<Vector4i> {
   val half = dimensions / 2
   return when (playerCount) {
@@ -56,6 +39,14 @@ fun getPlayerViewports(playerCount: Int, dimensions: Vector2i): List<Vector4i> {
         Vector4i(half.x, 0, half.x, half.y)
     )
     else -> throw Error("Not supported")
+  }
+}
+
+fun mapGameSceneRenderers(renderer: Renderer, scenes: List<GameScene>, windowInfo: WindowInfo): List<GameSceneRenderer> {
+  val viewports = getPlayerViewports(scenes.size, windowInfo.dimensions).iterator()
+  return scenes.map {
+    val viewport = viewports.next()
+    GameSceneRenderer(it, renderer.createSceneRenderer(it.main, viewport))
   }
 }
 
@@ -82,8 +73,8 @@ class Renderer {
   fun createEffects(scene: Scene, dimensions: Vector2i) =
       createEffects(shaders, gatherEffectsData(dimensions, scene), sectorBuffer)
 
-  fun createSceneRenderer(scene: Scene, dimensions: Vector2i): SceneRenderer {
-    return SceneRenderer(this, worldMesh!!, createEffects(scene, dimensions))
+  fun createSceneRenderer(scene: Scene, viewport: Vector4i): SceneRenderer {
+    return SceneRenderer(viewport, this, createEffects(scene, Vector2i(viewport.z, viewport.w)))
   }
 
   fun prepareRender(windowInfo: WindowInfo) {
@@ -92,42 +83,27 @@ class Renderer {
     glow.operations.clearScreen()
   }
 
-  fun renderScenes(scenes: List<GameScene>, windowInfo: WindowInfo) {
-    val viewports = getPlayerViewports(scenes.size, windowInfo.dimensions).iterator()
-    for (scene in scenes) {
-      val viewport = viewports.next()
-      globalState.viewport = viewport
-      val renderer = createSceneRenderer(scene.main, Vector2i(viewport.z, viewport.w))
-      prepareRender(windowInfo)
-      renderer.renderScene(scene)
-    }
+  fun finishRender(windowInfo: WindowInfo) {
     globalState.viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
+  }
+
+  fun renderGameScenes(scenes: List<GameScene>, windowInfo: WindowInfo) {
+    prepareRender(windowInfo)
+    val renderers = mapGameSceneRenderers(this, scenes, windowInfo)
+    renderers.forEach { it.render() }
+    finishRender(windowInfo)
   }
 
 }
 
 class SceneRenderer(
+    val viewport: Vector4i,
     val renderer: Renderer,
-    val worldMesh: WorldMesh,
     val effects: Effects
 ) {
 
-  fun renderScene(scene: GameScene) {
-    renderScene(scene, renderer.painters, effects, renderer.textures, worldMesh)
-  }
-
   fun drawLine(start: Vector3, end: Vector3, color: Vector4, thickness: Float = 1f) {
     globalState.lineThickness = thickness
-    val dir = end - start
-//    val transform = Matrix()
-////        .transformVertices(start)
-////        .rotateX(Pi / 2f)
-////        .rotateY(-Pi / 2f)
-////        .rotateTowards(end - start, Vector3(0f, 0f, 1f))
-////        .lookAlong((end - start), Vector3(0f, -1f, 0f))
-////        .scale(start.distance(end))
-//        .rotateTowards(dir, Vector3(0f, 0f, 1f))
-//        .rotateY(-Pi * 0.5f)
     renderer.dynamicMesh.load(listOf(start.x, start.y, start.z, end.x, end.y, end.z))
 
     effects.flat.activate(Matrix(), color)
@@ -143,4 +119,29 @@ class SceneRenderer(
 
   val meshes: MeshMap
     get() = renderer.meshes
+}
+
+class GameSceneRenderer(
+    val scene: GameScene,
+    val renderer: SceneRenderer
+) {
+
+  fun render() {
+    globalState.viewport = renderer.viewport
+    globalState.depthEnabled = true
+    val worldMesh = renderer.renderer.worldMesh
+    if (worldMesh != null) {
+      renderer.effects.textured.activate(Matrix(), renderer.renderer.textures.checkers, Vector4(1f), 0f, Matrix())
+      var index = 0
+      for (texture in worldMesh.textureIndex) {
+        texture.activate()
+        worldMesh.mesh.drawElement(DrawMethod.triangleFan, index++)
+      }
+    }
+
+    for (element in scene.elements) {
+      renderer.renderer.painters[element.depiction]!!(element, renderer.effects)
+    }
+  }
+
 }

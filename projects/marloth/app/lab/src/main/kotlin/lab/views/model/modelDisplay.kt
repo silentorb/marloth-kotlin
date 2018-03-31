@@ -57,8 +57,9 @@ fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, trans
 
 fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, camera: Camera, model: Model) {
   val panelDimensions = Vector2i(b.dimensions.x.toInt(), b.dimensions.y.toInt())
-  viewportStack(Vector4i(b.position.x.toInt(), b.position.y.toInt(), panelDimensions.x, panelDimensions.y), {
-    val sceneRenderer = renderer.createSceneRenderer(Scene(camera), panelDimensions)
+  val viewport = Vector4i(b.position.x.toInt(), b.position.y.toInt(), panelDimensions.x, panelDimensions.y)
+  viewportStack(viewport, {
+    val sceneRenderer = renderer.createSceneRenderer(Scene(camera), viewport)
     val transform = Matrix()
 
     val meshes = modelToMeshes(renderer.vertexSchemas, model)

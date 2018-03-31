@@ -45,7 +45,7 @@ class Client(val platform: Platform) {
   fun update(scenes: List<GameScene>, previousState: HaftInputState<CommandType>):
       Pair<Commands<CommandType>, HaftInputState<CommandType>> {
     val windowInfo = getWindowInfo()
-    renderer.renderScenes(scenes, windowInfo)
+    renderer.renderGameScenes(scenes, windowInfo)
     return updateInput(previousState, scenes.map { it.player })
   }
 

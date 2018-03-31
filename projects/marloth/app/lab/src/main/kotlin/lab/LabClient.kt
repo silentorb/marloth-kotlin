@@ -9,7 +9,6 @@ import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
 import mythic.platforming.PlatformInput
 import mythic.platforming.WindowInfo
-import mythic.sculpting.query.getCenter
 import mythic.spatial.*
 import rendering.Effects
 import scenery.GameScene
@@ -18,10 +17,12 @@ import haft.*
 import lab.views.model.ModelView
 import mythic.sculpting.FlexibleMesh
 import mythic.sculpting.getVerticesCenter
+import org.jetbrains.kotlin.contracts.model.structure.UNKNOWN_COMPUTATION.effects
 import org.joml.Vector2i
 import org.joml.minus
 import rendering.MeshType
 import rendering.SceneRenderer
+import rendering.mapGameSceneRenderers
 
 data class LabState(
     val labInput: InputTriggerState<LabCommandType>,
@@ -49,17 +50,16 @@ fun selectView(config: LabConfig, abstractWorld: AbstractWorld, client: Client, 
       else -> throw Error("Not supported")
     }
 
-
-fun renderFaceNormals(renderer: SceneRenderer, mesh: FlexibleMesh, effects: Effects, modelTransform: Matrix = Matrix()) {
+fun renderFaceNormals(renderer: SceneRenderer, mesh: FlexibleMesh) {
   globalState.lineThickness = 2f
   for (face in mesh.faces) {
     val faceCenter = getVerticesCenter(face.unorderedVertices)
-    val transform = modelTransform
+    val transform = Matrix()
         .translate(faceCenter)
         .rotateTowards(face.normal, Vector3(0f, 0f, 1f))
         .rotateY(-Pi * 0.5f)
 
-    effects.flat.activate(transform, Vector4(0f, 1f, 0f, 1f))
+   renderer.effects.flat.activate(transform, Vector4(0f, 1f, 0f, 1f))
     renderer.meshes[MeshType.line]!![0].mesh.draw(DrawMethod.lines)
   }
 }
@@ -94,8 +94,14 @@ class LabClient(val config: LabConfig, val client: Client) {
   fun renderScene(scenes: List<GameScene>, metaWorld: AbstractWorld) {
     val windowInfo = client.getWindowInfo()
     val renderer = client.renderer
-    renderer.renderScenes(scenes, windowInfo)
-//    renderFaceNormals(client.renderer, metaWorld.mesh, effects)
+    renderer.prepareRender(windowInfo)
+    val renderers = mapGameSceneRenderers(renderer, scenes, windowInfo)
+    renderers.forEach {
+      it.render()
+      renderFaceNormals(it.renderer, metaWorld.mesh)
+    }
+    renderer.finishRender(windowInfo)
+
   }
 
   fun update(scenes: List<GameScene>, metaWorld: AbstractWorld, previousState: LabState, delta: Float): ViewInputResult {
