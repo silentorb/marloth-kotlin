@@ -5,8 +5,10 @@ import configuration.saveConfig
 import front.GameConfig
 import front.loadGameConfig
 import front.saveGameConfig
+import generation.calculateWorldScale
 import main.front.setWorldMesh
 import generation.generateWorld
+import generation.placeEnemies
 import lab.views.GameViewConfig
 import marloth.clienting.Client
 import marloth.clienting.initialGameInputState
@@ -43,10 +45,22 @@ fun createDice(config: GameViewConfig) =
     else
       Dice(config.seed)
 
-fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig, gameViewConfig: GameViewConfig) = generateWorld(WorldInput(
-    createWorldBoundary(gameViewConfig.worldLength),
-    createDice(gameViewConfig)
-), instantiatorConfig)
+fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig, gameViewConfig: GameViewConfig): World {
+  val boundary = createWorldBoundary(gameViewConfig.worldLength)
+  val dice = createDice(gameViewConfig)
+  val world = generateWorld(WorldInput(
+      boundary,
+      dice
+  ), instantiatorConfig)
+
+  if (gameViewConfig.haveEnemies) {
+    val scale = calculateWorldScale(boundary.dimensions)
+    val instantiator = Instantiator(world, instantiatorConfig)
+    placeEnemies(world, instantiator, dice, scale)
+  }
+
+  return world
+}
 
 data class LabApp(
     val platform: Platform,

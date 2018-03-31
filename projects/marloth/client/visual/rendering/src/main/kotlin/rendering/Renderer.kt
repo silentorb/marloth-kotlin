@@ -126,9 +126,18 @@ class GameSceneRenderer(
     val renderer: SceneRenderer
 ) {
 
-  fun render() {
+  fun prepareRender() {
     globalState.viewport = renderer.viewport
     globalState.depthEnabled = true
+  }
+
+  fun renderElements() {
+    for (element in scene.elements) {
+      renderer.renderer.painters[element.depiction]!!(element, renderer.effects)
+    }
+  }
+
+  fun renderWorldMesh() {
     val worldMesh = renderer.renderer.worldMesh
     if (worldMesh != null) {
       renderer.effects.textured.activate(Matrix(), renderer.renderer.textures.checkers, Vector4(1f), 0f, Matrix())
@@ -138,10 +147,12 @@ class GameSceneRenderer(
         worldMesh.mesh.drawElement(DrawMethod.triangleFan, index++)
       }
     }
+  }
 
-    for (element in scene.elements) {
-      renderer.renderer.painters[element.depiction]!!(element, renderer.effects)
-    }
+  fun render() {
+    prepareRender()
+    renderWorldMesh()
+    renderElements()
   }
 
 }

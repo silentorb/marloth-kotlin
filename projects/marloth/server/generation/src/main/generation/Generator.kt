@@ -85,21 +85,18 @@ fun placeWallLamps(world: World, instantiator: Instantiator, dice: Dice, scale: 
   }
 }
 
+fun calculateWorldScale(dimensions: Vector3) =
+    (dimensions.x * dimensions.y) / (100 * 100)
+
 fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): World {
   val abstractWorld = AbstractWorld(input.boundary)
-  val scale = (abstractWorld.boundary.dimensions.x * abstractWorld.boundary.dimensions.y) / (100 * 100)
+  val scale = calculateWorldScale(abstractWorld.boundary.dimensions)
   generateAbstract(abstractWorld, input.dice, scale)
   generateStructure(abstractWorld)
   val world = World(abstractWorld)
   val instantiator = Instantiator(world, instantiatorConfig)
   instantiator.createPlayer(1)
-//  world.lights.add(Light(
-//      type = LightType.point,
-//      color = Vector4(1f, 1f, 1f, 1f),
-//      position = world.meta.nodes[0].position + Vector3(0f, 0f, 1f),
-//      direction = Vector4(0f, 0f, 0f, 15f)
-//  ))
-  placeEnemies(world, instantiator, input.dice, scale)
+
   placeWallLamps(world, instantiator, input.dice, scale)
 
   return world

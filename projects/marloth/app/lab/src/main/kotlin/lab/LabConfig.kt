@@ -59,7 +59,10 @@ fun createLabInputBindings() = mutableMapOf(
         ),
     "game" to createStrokeBindings<LabCommandType>(0, mapOf(
 
-    )),
+    ))
+        .plus(createStrokeBindings(0, mapOf(
+            GLFW.GLFW_KEY_X to LabCommandType.toggleMeshDisplay
+        ))),
     "model" to createBindings(2, mapOf(
         GAMEPAD_AXIS_RIGHT_UP to LabCommandType.rotateUp,
         GAMEPAD_AXIS_RIGHT_DOWN to LabCommandType.rotateDown,

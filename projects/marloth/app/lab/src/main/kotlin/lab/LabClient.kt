@@ -5,24 +5,14 @@ import lab.views.*
 import marloth.clienting.Client
 import mythic.drawing.Canvas
 import mythic.drawing.getUnitScaling
-import mythic.glowing.DrawMethod
-import mythic.glowing.globalState
 import mythic.platforming.PlatformInput
 import mythic.platforming.WindowInfo
-import mythic.spatial.*
-import rendering.Effects
 import scenery.GameScene
 import simulation.AbstractWorld
 import haft.*
 import lab.views.model.ModelView
-import mythic.sculpting.FlexibleMesh
-import mythic.sculpting.getVerticesCenter
-import org.jetbrains.kotlin.contracts.model.structure.UNKNOWN_COMPUTATION.effects
 import org.joml.Vector2i
 import org.joml.minus
-import rendering.MeshType
-import rendering.SceneRenderer
-import rendering.mapGameSceneRenderers
 
 data class LabState(
     val labInput: InputTriggerState<LabCommandType>,
@@ -43,26 +33,12 @@ fun createLabDeviceHandlers(input: PlatformInput): List<ScalarInputSource> {
 
 fun selectView(config: LabConfig, abstractWorld: AbstractWorld, client: Client, view: String): View =
     when (view) {
-      "game" -> GameView()
+      "game" -> GameView(config.gameView)
       "world" -> WorldView(config.worldView, abstractWorld, client.renderer)
       "model" -> ModelView(config.modelView, client.renderer, client.platform.input.getMousePosition())
       "texture" -> TextureView()
       else -> throw Error("Not supported")
     }
-
-fun renderFaceNormals(renderer: SceneRenderer, mesh: FlexibleMesh) {
-  globalState.lineThickness = 2f
-  for (face in mesh.faces) {
-    val faceCenter = getVerticesCenter(face.unorderedVertices)
-    val transform = Matrix()
-        .translate(faceCenter)
-        .rotateTowards(face.normal, Vector3(0f, 0f, 1f))
-        .rotateY(-Pi * 0.5f)
-
-   renderer.effects.flat.activate(transform, Vector4(0f, 1f, 0f, 1f))
-    renderer.meshes[MeshType.line]!![0].mesh.draw(DrawMethod.lines)
-  }
-}
 
 private var previousMousePosition = Vector2i()
 
@@ -91,17 +67,13 @@ class LabClient(val config: LabConfig, val client: Client) {
   )
   val deviceHandlers = createLabDeviceHandlers(client.platform.input)
 
-  fun renderScene(scenes: List<GameScene>, metaWorld: AbstractWorld) {
-    val windowInfo = client.getWindowInfo()
-    val renderer = client.renderer
-    renderer.prepareRender(windowInfo)
-    val renderers = mapGameSceneRenderers(renderer, scenes, windowInfo)
-    renderers.forEach {
-      it.render()
-      renderFaceNormals(it.renderer, metaWorld.mesh)
-    }
-    renderer.finishRender(windowInfo)
-
+  fun updateInput(view: View, layout: LabLayout, bindings: Bindings<LabCommandType>,
+                  previousState: LabState, delta: Float): InputTriggerState<LabCommandType> {
+    val (commands, nextLabInputState) = gatherInputCommands(bindings, deviceHandlers, previousState.labInput)
+    applyCommands(commands, view.getCommands().plus(globalKeyPressCommands))
+    val input = getInputState(client.platform.input, commands)
+    view.updateState(layout, input, delta)
+    return nextLabInputState
   }
 
   fun update(scenes: List<GameScene>, metaWorld: AbstractWorld, previousState: LabState, delta: Float): ViewInputResult {
@@ -111,21 +83,26 @@ class LabClient(val config: LabConfig, val client: Client) {
     val layout = view.createLayout(windowInfo.dimensions)
     client.platform.input.update()
 
+    val bindings = labInputConfig["global"]!!.plus(labInputConfig[config.view]!!)
+    val nextLabInputState = updateInput(view, layout, bindings, previousState, delta)
+
     if (config.view == "game") {
-      val (commands, nextLabInputState) = gatherInputCommands(labInputConfig["global"]!!, deviceHandlers, previousState.labInput)
-      applyCommands(commands, globalKeyPressCommands)
-      renderScene(scenes, metaWorld)
+//      val (commands, nextLabInputState) = gatherInputCommands(labInputConfig["global"]!!, deviceHandlers, previousState.labInput)
+//      applyCommands(commands, globalKeyPressCommands)
       val (gameCommands, nextGameInputState) = client.updateInput(previousState.gameInput, scenes.map { it.player })
+//      val input = getInputState(client.platform.input, commands)
+//      view.updateState(layout, input, delta)
+      renderScene(client, GameViewRenderData(scenes, metaWorld, config.gameView))
       return Pair(gameCommands, LabState(nextLabInputState, nextGameInputState))
     } else {
 
     }
     renderLab(windowInfo, layout)
-    val bindings = labInputConfig["global"]!!.plus(labInputConfig[config.view]!!)
-    val (commands, nextLabInputState) = gatherInputCommands(bindings, deviceHandlers, previousState.labInput)
-    applyCommands(commands, view.getCommands().plus(globalKeyPressCommands))
-    val input = getInputState(client.platform.input, commands)
-    view.updateState(layout, input, delta)
+//    val bindings = labInputConfig["global"]!!.plus(labInputConfig[config.view]!!)
+//    val (commands, nextLabInputState) = gatherInputCommands(bindings, deviceHandlers, previousState.labInput)
+//    applyCommands(commands, view.getCommands().plus(globalKeyPressCommands))
+//    val input = getInputState(client.platform.input, commands)
+//    view.updateState(layout, input, delta)
     return Pair(listOf(), LabState(nextLabInputState, previousState.gameInput))
   }
 
