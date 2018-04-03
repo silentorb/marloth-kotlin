@@ -3,6 +3,7 @@ package simulation.changing
 import commanding.CommandType
 import haft.Commands
 import mythic.sculpting.FlexibleEdge
+import mythic.sculpting.FlexibleFace
 import mythic.spatial.*
 import org.joml.minus
 import org.joml.plus
@@ -21,69 +22,98 @@ fun getEdgeNormal(first: Vector2, second: Vector2): Vector2 {
   return Vector2(combination.y, -combination.x).normalize()
 }
 
-fun checkWallCollision(source: Vector3, originalOffset: Vector3, world: World): Vector3? {
-  var offset = originalOffset + 0f
+fun findCollisionWalls(source: Vector3, originalOffset: Vector3, world: World): List<Triple<FlexibleFace, Vector2, Float>> {
+  val offset = originalOffset + 0f
   val maxLength = offset.length()
   val newPosition = source + offset
   val radius = 0.8f
   val broadRadius = radius + maxLength
-  val walls = world.meta.walls
+  return world.meta.walls
       .filter { wall -> hitsWall(wall.edges[0], newPosition, broadRadius) && offset.dot(wall.normal) < 0f }
       .map {
         val edge = it.edges[0]
 //        val dot2 = offset.dot(it.normal)C
 //        println(dot2)
         val hitPoint = projectPointOntoLine(source.xy, edge.first.xy, edge.second.xy)
-        val gap = hitPoint.distance(source.xy) - radius
-        Triple(it, hitPoint, gap)
+        if (hitPoint != null) {
+          val gap = hitPoint.distance(source.xy) - radius
+          Triple(it, hitPoint, gap)
+        }
+        else {
+          val nearestEnd = listOf(edge.first.xy, edge.second.xy).sortedBy { it.distance(source.xy) }.first()
+          val gap = nearestEnd.distance(source.xy) - radius
+          Triple(it, nearestEnd, gap)
+        }
       }
       .sortedBy { it.first.normal.dot(offset) }
+}
 
-  if (walls.size > 0) {
-    if (walls.size > 3)
-      throw Error("Not supported.")
+fun getWallCollisionMovementOffset(walls: List<Triple<FlexibleFace, Vector2, Float>>, offset: Vector3): Vector3 {
+  if (walls.size > 3)
+    throw Error("Not supported.")
 
-    val slideVectors = walls.map { (face, _, _) ->
-      face.normal * face.normal.dot(offset)
-    }
+  val slideVectors = walls.map { (face, _, _) ->
+    face.normal * face.normal.dot(offset)
+  }
 
-    val gapVectors = walls.map { (_, _, gap) ->
-      ((offset + 0f).normalize() * gap)
-    }
-    if (walls.size == 2) {
+  val gapVectors = walls.map { (_, _, gap) ->
+    ((offset + 0f).normalize() * gap)
+  }
+  if (walls.size == 2) {
 //      val gapVector = gapVectors[0] + gapVectors[1]
 //      offset = gapVector
-      val firstEdge = walls[0].first.edges[1]
-      val secondEdge = walls[1].first.edges[1]
+    val firstEdge = walls[0].first.edges[1]
+    val secondEdge = walls[1].first.edges[1]
 
-      // Get the points of either edge ordered by the shared point and then the unshared point
-      val rightEdge = if (firstEdge.first === secondEdge.second)
-        secondEdge
-      else
-        firstEdge
+    // Get the points of either edge ordered by the shared point and then the unshared point
+    val rightEdge = if (firstEdge.first === secondEdge.second)
+      secondEdge
+    else
+      firstEdge
 
-      val knee = walls[0].first.normal + walls[1].first.normal
-      val angle = getAngle(
-          (rightEdge.first - rightEdge.second).xy.normalize(),
-          knee.xy.normalize()
-      )
-      if (Math.abs(angle) <= Pi / 2) {
+    val knee = walls[0].first.normal + walls[1].first.normal
+    val angle = getAngle(
+        (rightEdge.first - rightEdge.second).xy.normalize(),
+        knee.xy.normalize()
+    )
+    if (Math.abs(angle) <= Pi / 2) {
 //        val dot2 = offset.dot(walls[0].first.normal + walls[0].first.normal)
 //        println(dot2)
 //        if (dot2 < 0f) {
-        offset = gapVectors[0] + gapVectors[1]
+      return gapVectors[0] + gapVectors[1]
 //        println(offset)
 //        }
-      } else {
-        offset = offset + gapVectors[0] - slideVectors[0]
-      }
-//      println("2 " + walls[0].first.normal + " | " + offset + " | " + gapVectors[0] + " | " + slideVectors[0])
-    } else {
-      offset = offset + gapVectors[0] - slideVectors[0]
-//      println("1 " + walls[0].first.normal + " | " + offset + " | " + gapVectors[0] + " | " + slideVectors[0])
-//      println("1 " + walls[0].first.normal + " | " + offset)
     }
+  }
+//    else {
+//      return offset + gapVectors[0] - slideVectors[0]
+//    }
+////      println("2 " + walls[0].first.normal + " | " + offset + " | " + gapVectors[0] + " | " + slideVectors[0])
+//  } else {
+////      println("1 " + walls[0].first.normal + " | " + offset + " | " + gapVectors[0] + " | " + slideVectors[0])
+////      println("1 " + walls[0].first.normal + " | " + offset)
+//  }
+  return offset + gapVectors[0] - slideVectors[0]
+}
 
+fun checkWallCollision(source: Vector3, originalOffset: Vector3, world: World): Vector3? {
+  var offset = originalOffset + 0f
+  val maxLength = offset.length()
+  val walls = findCollisionWalls(source, originalOffset, world)
+//        world.meta.walls
+//        .filter { wall -> hitsWall(wall.edges[0], newPosition, broadRadius) && offset.dot(wall.normal) < 0f }
+//        .map {
+//          val edge = it.edges[0]
+////        val dot2 = offset.dot(it.normal)C
+////        println(dot2)
+//          val hitPoint = projectPointOntoLine(source.xy, edge.first.xy, edge.second.xy)
+//          val gap = hitPoint.distance(source.xy) - radius
+//          Triple(it, hitPoint, gap)
+//        }
+//        .sortedBy { it.first.normal.dot(offset) }
+
+  if (walls.size > 0) {
+    offset = getWallCollisionMovementOffset(walls, offset)
     val offsetLength = offset.length()
     if (offsetLength > maxLength) {
       offset.normalize().mul(maxLength)
