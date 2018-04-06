@@ -13,6 +13,7 @@ import rendering.meshes.createMonster
 import rendering.meshes.createWallLamp
 
 import de.javagl.jgltf.model.io.GltfModelReader
+import rendering.meshes.createCartoonHuman
 
 data class NewMesh(val mesh: HalfEdgeMesh, val vertexSchema: VertexSchema)
 typealias NewMeshMap = Map<String, NewMesh>
@@ -76,7 +77,7 @@ fun createLineMesh(vertexSchema: VertexSchema) =
     ))
 
 enum class MeshType {
-  character,
+  human,
   cylinder,
   line,
   monster,
@@ -134,8 +135,8 @@ private fun loadResource(name: String): GltfModel {
 //}
 
 fun standardMeshes(): ModelGeneratorMap = mapOf(
-    MeshType.character to createHuman,
-    MeshType.monster to createMonster,
+    MeshType.human to createCartoonHuman,
+    MeshType.monster to createCartoonHuman,
     MeshType.wallLamp to createWallLamp
 )
 

@@ -2,6 +2,7 @@ package mythic.bloom
 
 import mythic.spatial.Vector2
 import mythic.drawing.Canvas
+import mythic.spatial.Vector4
 import org.joml.Vector4i
 
 enum class Measurements {
@@ -43,6 +44,9 @@ data class Bounds(
 ) {
   constructor(x: Float, y: Float, width: Float, height: Float) :
       this(Vector2(x, y), Vector2(width, height))
+
+  constructor(values: Vector4) :
+      this(Vector2(values.x, values.y), Vector2(values.z, values.w))
 
   fun toVector4i() = Vector4i(position.x.toInt(), position.y.toInt(), dimensions.x.toInt(), dimensions.y.toInt())
 }

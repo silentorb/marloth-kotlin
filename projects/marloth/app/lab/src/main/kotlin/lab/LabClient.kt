@@ -13,6 +13,7 @@ import haft.*
 import lab.views.model.ModelView
 import org.joml.Vector2i
 import org.joml.minus
+import rendering.createCanvas
 
 data class LabState(
     val labInput: InputTriggerState<LabCommandType>,
@@ -107,10 +108,11 @@ class LabClient(val config: LabConfig, val client: Client) {
   }
 
   fun renderLab(windowInfo: WindowInfo, labLayout: LabLayout) {
-    val unitScaling = getUnitScaling(windowInfo.dimensions)
-    val renderer = client.renderer
-    val canvas = Canvas(renderer.vertexSchemas.drawing, renderer.canvasMeshes, renderer.shaders.drawing,
-        unitScaling, windowInfo.dimensions)
+    val canvas = createCanvas(client.renderer, windowInfo)
+//    val unitScaling = getUnitScaling(windowInfo.dimensions)
+//    val renderer = client.renderer
+//    val canvas = Canvas(renderer.vertexSchemas.drawing, renderer.canvasMeshes, renderer.shaders.drawing,
+//        unitScaling, windowInfo.dimensions)
 //    canvas.drawText(TextConfiguration(
 //        "Dev Lab",
 //        renderer.fonts[0],

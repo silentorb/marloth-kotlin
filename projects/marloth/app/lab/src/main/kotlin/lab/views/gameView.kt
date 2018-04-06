@@ -3,15 +3,16 @@ package lab.views
 import haft.isActive
 import lab.LabCommandType
 import marloth.clienting.Client
+import marloth.clienting.gui.renderGui
+import mythic.bloom.Bounds
+import mythic.drawing.Canvas
+import mythic.drawing.getUnitScaling
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
 import mythic.platforming.WindowInfo
 import mythic.sculpting.FlexibleMesh
 import mythic.sculpting.getVerticesCenter
-import mythic.spatial.Matrix
-import mythic.spatial.Pi
-import mythic.spatial.Vector3
-import mythic.spatial.Vector4
+import mythic.spatial.*
 import org.joml.Vector2i
 import rendering.*
 import scenery.GameScene
@@ -85,9 +86,15 @@ fun renderScene(client: Client, data: GameViewRenderData) {
     GameDisplayMode.normal -> renderNormalScene(renderers, data)
     GameDisplayMode.wireframe -> renderWireframeScene(renderers, data)
   }
+
+  val canvas = createCanvas(client.renderer, windowInfo)
+
   renderers.forEach {
     if (data.config.drawNormals)
       renderFaceNormals(it.renderer, data.world.mesh)
+
+    val viewport = it.renderer.viewport
+    renderGui(it.renderer, Bounds(viewport.toVector4()), canvas)
   }
   renderer.finishRender(windowInfo)
 }

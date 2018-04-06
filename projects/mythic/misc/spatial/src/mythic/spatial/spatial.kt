@@ -332,3 +332,5 @@ fun getRotationMatrix(matrix: Matrix) =
 
 fun Vector2.toVector2i() = Vector2i(x.toInt(), y.toInt())
 fun Vector2i.toVector2() = Vector2(x.toFloat(), y.toFloat())
+
+fun Vector4i.toVector4() = Vector4(x.toFloat(), y.toFloat(), z.toFloat(), w.toFloat())

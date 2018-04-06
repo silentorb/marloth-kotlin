@@ -30,7 +30,7 @@ enum class MeshDisplay {
 }
 
 data class ModelViewConfig(
-    var model: MeshType = MeshType.character,
+    var model: MeshType = MeshType.human,
     var drawVertices: Boolean = true,
     var drawEdges: Boolean = true,
     var camera: ViewCameraConfig = ViewCameraConfig(),

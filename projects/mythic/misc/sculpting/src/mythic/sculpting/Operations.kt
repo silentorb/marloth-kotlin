@@ -142,6 +142,10 @@ fun transformMesh(mesh: FlexibleMesh, matrix: Matrix) {
   transformVertices(matrix, mesh.distinctVertices)
 }
 
+fun translateMesh(mesh: FlexibleMesh, offset: Vector3) {
+  transformVertices(Matrix().translate(offset), mesh.distinctVertices)
+}
+
 //fun convertPath(path: Vertices) =
 //    path.map { Vector3(it.x, 0f, it.y) }
 
@@ -152,6 +156,10 @@ fun transformMesh(mesh: FlexibleMesh, matrix: Matrix) {
 fun alignToFloor(vertices: List<Vector3>, floor: Float = 0f) {
   val lowest = vertices.map { it.z }.sorted().first()
   distortedTranslatePosition(Vector3(0f, 0f, floor - lowest), vertices)
+}
+
+fun alignToFloor(mesh:FlexibleMesh, floor: Float = 0f) {
+  alignToFloor(mesh.distinctVertices, floor)
 }
 
 fun alignToCeiling(vertices: List<Vector3>, ceiling: Float = 0f) {

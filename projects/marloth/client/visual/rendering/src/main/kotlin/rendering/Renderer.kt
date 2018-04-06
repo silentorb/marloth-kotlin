@@ -1,6 +1,8 @@
 package rendering
 
+import mythic.drawing.Canvas
 import mythic.drawing.createDrawingMeshes
+import mythic.drawing.getUnitScaling
 import mythic.glowing.*
 import mythic.platforming.WindowInfo
 import mythic.spatial.Matrix
@@ -154,5 +156,12 @@ class GameSceneRenderer(
     renderWorldMesh()
     renderElements()
   }
+
+}
+
+fun createCanvas(renderer: Renderer, windowInfo: WindowInfo): Canvas {
+  val unitScaling = getUnitScaling(windowInfo.dimensions)
+  return Canvas(renderer.vertexSchemas.drawing, renderer.canvasMeshes, renderer.shaders.drawing,
+      unitScaling, windowInfo.dimensions)
 
 }

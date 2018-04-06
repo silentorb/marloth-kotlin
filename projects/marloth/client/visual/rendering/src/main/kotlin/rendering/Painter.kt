@@ -1,8 +1,6 @@
 package rendering
 
 import mythic.glowing.DrawMethod
-import mythic.glowing.SimpleMesh
-import mythic.spatial.Vector4
 import mythic.spatial.getRotationMatrix
 import scenery.DepictionType
 import scenery.VisualElement
@@ -22,7 +20,7 @@ fun createSimplePainter(elements: ModelElements): Painter =
 
 fun createPainters(meshes: MeshMap): Painters = mapOf(
     DepictionType.monster to createSimplePainter(meshes[MeshType.monster]!!),
-    DepictionType.character to createSimplePainter(meshes[MeshType.character]!!),
+    DepictionType.character to createSimplePainter(meshes[MeshType.human]!!),
     DepictionType.missile to createSimplePainter(meshes[MeshType.sphere]!!),
     DepictionType.wallLamp to createSimplePainter(meshes[MeshType.wallLamp]!!)
 )
