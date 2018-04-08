@@ -19,6 +19,7 @@ data class ClientInputResult(
 
 data class InputProperties(
     val deviceHandlers: List<ScalarInputSource>,
+    val waitingDevices: List<GamepadDeviceId>,
     val previousState: ProfileStates<CommandType>,
     val players: List<Int>
 )
@@ -29,15 +30,15 @@ class Client(val platform: Platform) {
   val gamepadAssignments: MutableMap<Int, Int> = mutableMapOf()
   val keyStrokeCommands: Map<CommandType, CommandHandler<CommandType>> = mapOf(
 //      CommandType.switchView to { command -> switchCameraMode(command.target, screens) },
-      CommandType.menu to { command -> platform.process.close() }
+//      CommandType.menu to { command -> platform.process.close() }
   )
   val playerInputProfiles = defaultGameInputProfiles()
   val menuInputProfiles = defaultMenuInputProfiles()
   fun getWindowInfo() = platform.display.getInfo()
 
   fun checkForNewGamepads(properties: InputProperties): ClientInputResult {
-    val (deviceHandlers, previousState, players) = properties
-    val profiles = createWaitingGamepadProfiles(deviceHandlers.size, gamepadAssignments.size)
+    val (deviceHandlers, waitingDevices, previousState, players) = properties
+    val profiles = createWaitingGamepadProfiles(waitingDevices.size, gamepadAssignments.size)
     val result = gatherProfileCommands(profiles, previousState, deviceHandlers)
     val (commands, nextState) = result
     var playerCount = players.size
@@ -65,6 +66,7 @@ class Client(val platform: Platform) {
         })
     return InputProperties(
         deviceHandlers,
+        waitingDevices,
         previousState,
         players
     )
