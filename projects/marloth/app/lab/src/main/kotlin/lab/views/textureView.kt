@@ -1,6 +1,6 @@
 package lab.views
 
-import lab.utility.drawBorder
+import mythic.bloom.drawBorder
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.spatial.Vector2
@@ -18,7 +18,7 @@ fun drawTextureView(bounds: Bounds, canvas: Canvas) {
 
 class TextureView : View {
 
-  override fun createLayout(dimensions: Vector2i): LabLayout {
+  override fun createLayout(dimensions: Vector2i): Layout {
     val draw = { b: Bounds, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
 
     val panels = listOf(
@@ -29,16 +29,14 @@ class TextureView : View {
         })
     )
     val dimensions2 = Vector2(dimensions.x.toFloat(), dimensions.y.toFloat())
-    val boxes = overlap(createVerticalBounds(panels.map { it.first }, dimensions2), panels, { a, b ->
-      Box(a, b.second)
-    })
+    val boxes = arrangeList(horizontalArrangement, panels, dimensions2)
 
-    return LabLayout(
+    return Layout(
         boxes
     )
   }
 
-  override fun updateState(layout: LabLayout, input: InputState, delta: Float) {
+  override fun updateState(layout: Layout, input: InputState, delta: Float) {
 
   }
 

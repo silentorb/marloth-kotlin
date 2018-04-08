@@ -3,13 +3,12 @@ package lab.views
 import haft.isActive
 import lab.LabCommandType
 import marloth.clienting.Client
+import marloth.clienting.gui.MenuState
 import marloth.clienting.gui.renderGui
 import mythic.bloom.Bounds
-import mythic.drawing.Canvas
-import mythic.drawing.getUnitScaling
+import mythic.bloom.Layout
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
-import mythic.platforming.WindowInfo
 import mythic.sculpting.FlexibleMesh
 import mythic.sculpting.getVerticesCenter
 import mythic.spatial.*
@@ -49,7 +48,8 @@ fun renderFaceNormals(renderer: SceneRenderer, mesh: FlexibleMesh) {
 data class GameViewRenderData(
     val scenes: List<GameScene>,
     val world: AbstractWorld,
-    val config: GameViewConfig
+    val config: GameViewConfig,
+    val menuState: MenuState
 )
 
 fun renderNormalScene(renderers: List<GameSceneRenderer>, data: GameViewRenderData) {
@@ -94,17 +94,17 @@ fun renderScene(client: Client, data: GameViewRenderData) {
       renderFaceNormals(it.renderer, data.world.mesh)
 
     val viewport = it.renderer.viewport
-    renderGui(it.renderer, Bounds(viewport.toVector4()), canvas)
+    renderGui(it.renderer, Bounds(viewport.toVector4()), canvas, data.menuState)
   }
   renderer.finishRender(windowInfo)
 }
 
 class GameView(val config: GameViewConfig) : View {
-  override fun createLayout(dimensions: Vector2i): LabLayout {
-    return LabLayout(listOf())
+  override fun createLayout(dimensions: Vector2i): Layout {
+    return Layout(listOf())
   }
 
-  override fun updateState(layout: LabLayout, input: InputState, delta: Float) {
+  override fun updateState(layout: Layout, input: InputState, delta: Float) {
     val commands = input.commands
 
     if (isActive(commands, LabCommandType.toggleMeshDisplay)) {

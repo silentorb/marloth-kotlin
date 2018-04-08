@@ -2,10 +2,11 @@ package lab.views.model
 
 import lab.utility.*
 import mythic.bloom.Bounds
-import mythic.bloom.Render
+import mythic.bloom.Depiction
 import mythic.drawing.Canvas
+import mythic.bloom.drawBorder
+import mythic.bloom.drawFill
 import mythic.glowing.DrawMethod
-import mythic.glowing.SimpleMesh
 import mythic.glowing.globalState
 import mythic.glowing.viewportStack
 import mythic.spatial.*
@@ -107,14 +108,14 @@ fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, cam
   })
 }
 
-private fun draw(backgroundColor: Vector4): Render = { b: Bounds, canvas: Canvas ->
+private fun drawBackground(backgroundColor: Vector4): Depiction = { b: Bounds, canvas: Canvas ->
   globalState.depthEnabled = false
   drawFill(b, canvas, backgroundColor)
   drawBorder(b, canvas, Vector4(0f, 0f, 0f, 1f))
 }
 
-fun drawScenePanel(config: ModelViewConfig, renderer: Renderer, model: Model, camera: Camera): Render = { b: Bounds, canvas: Canvas ->
-  draw(sceneBackgroundColor)(b, canvas)
+fun drawScenePanel(config: ModelViewConfig, renderer: Renderer, model: Model, camera: Camera): Depiction = { b: Bounds, canvas: Canvas ->
+  drawBackground(sceneBackgroundColor)(b, canvas)
   drawModelPreview(config, renderer, b, camera, model)
 }
 
@@ -124,7 +125,7 @@ fun toString(vector: Vector3) =
     decimalFormat.format(vector.x) + ", " + decimalFormat.format(vector.y) + ", " + decimalFormat.format(vector.z)
 
 fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: Model,
-                  mousePosition: Vector2i): Render = { bounds: Bounds, canvas: Canvas ->
+                  mousePosition: Vector2i): Depiction = { bounds: Bounds, canvas: Canvas ->
   drawSidePanel()(bounds, canvas)
   var row = 1
   fun drawText(content: String) {
@@ -156,4 +157,4 @@ fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: Model,
 //      renderer.fonts[0], 12f, bounds.position + Vector2(5f, 45f), black))
 }
 
-val drawSidePanel = { draw(panelColor) }
+val drawSidePanel = { drawBackground(panelColor) }

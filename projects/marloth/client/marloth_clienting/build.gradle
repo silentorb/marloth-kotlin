@@ -8,4 +8,4 @@ dependencies {
     compile "org.lwjgl:lwjgl-glfw:$lwjglVersion:$lwjglNatives"
 }
 
-requires 'rendering', 'haft', 'commanding', 'scenery', 'spatial', 'platforming', 'bloom'
+requires 'rendering', 'haft', 'commanding', 'scenery', 'spatial', 'platforming', 'bloom', 'drawing'

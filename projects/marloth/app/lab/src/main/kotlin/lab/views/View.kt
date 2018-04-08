@@ -4,6 +4,7 @@ import commanding.CommandType
 import lab.LabState
 import haft.*
 import lab.LabCommandType
+import mythic.bloom.Layout
 import org.joml.Vector2i
 
 typealias ViewInputResult = Pair<Commands<CommandType>, LabState>
@@ -16,7 +17,7 @@ data class InputState(
 )
 
 interface View {
-  fun createLayout(dimensions: Vector2i): LabLayout
+  fun createLayout(dimensions: Vector2i): Layout
   fun getCommands(): LabCommandMap
-  fun updateState(layout: LabLayout, input: InputState, delta: Float)
+  fun updateState(layout: Layout, input: InputState, delta: Float)
 }

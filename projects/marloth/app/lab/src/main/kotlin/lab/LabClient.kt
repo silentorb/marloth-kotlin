@@ -3,21 +3,24 @@ package lab
 import commanding.CommandType
 import lab.views.*
 import marloth.clienting.Client
-import mythic.drawing.Canvas
-import mythic.drawing.getUnitScaling
 import mythic.platforming.PlatformInput
 import mythic.platforming.WindowInfo
 import scenery.GameScene
 import simulation.AbstractWorld
 import haft.*
 import lab.views.model.ModelView
+import marloth.clienting.gui.MenuState
+import marloth.clienting.gui.updateMenuState
+import mythic.bloom.Layout
+import mythic.bloom.renderLayout
 import org.joml.Vector2i
 import org.joml.minus
 import rendering.createCanvas
 
 data class LabState(
     val labInput: InputTriggerState<LabCommandType>,
-    val gameInput: HaftInputState<CommandType>
+    val gameInput: ProfileStates<CommandType>,
+    val menuState: MenuState
 )
 
 fun createLabDeviceHandlers(input: PlatformInput): List<ScalarInputSource> {
@@ -68,7 +71,7 @@ class LabClient(val config: LabConfig, val client: Client) {
   )
   val deviceHandlers = createLabDeviceHandlers(client.platform.input)
 
-  fun updateInput(view: View, layout: LabLayout, bindings: Bindings<LabCommandType>,
+  fun updateInput(view: View, layout: Layout, bindings: Bindings<LabCommandType>,
                   previousState: LabState, delta: Float): InputTriggerState<LabCommandType> {
     val (commands, nextLabInputState) = gatherInputCommands(bindings, deviceHandlers, previousState.labInput)
     applyCommands(commands, view.getCommands().plus(globalKeyPressCommands))
@@ -88,40 +91,26 @@ class LabClient(val config: LabConfig, val client: Client) {
     val nextLabInputState = updateInput(view, layout, bindings, previousState, delta)
 
     if (config.view == "game") {
-//      val (commands, nextLabInputState) = gatherInputCommands(labInputConfig["global"]!!, deviceHandlers, previousState.labInput)
-//      applyCommands(commands, globalKeyPressCommands)
-      val (gameCommands, nextGameInputState) = client.updateInput(previousState.gameInput, scenes.map { it.player })
-//      val input = getInputState(client.platform.input, commands)
-//      view.updateState(layout, input, delta)
-      renderScene(client, GameViewRenderData(scenes, metaWorld, config.gameView))
-      return Pair(gameCommands, LabState(nextLabInputState, nextGameInputState))
-    } else {
+      val properties = client.prepareInput(previousState.gameInput, scenes.map { it.player })
+      val gameResult = if (previousState.menuState.isVisible)
+        client.updateGameInput(properties, client.menuInputProfiles)
+      else
+        client.updateGameInput(properties, client.playerInputProfiles)
 
+      val waitingResult = client.checkForNewGamepads(properties)
+      val (gameCommands, nextGameInputState) = gameResult + waitingResult
+      val newMenuState = updateMenuState(previousState.menuState, filterKeystrokeCommands(gameCommands))
+      renderScene(client, GameViewRenderData(scenes, metaWorld, config.gameView, previousState.menuState))
+      return Pair(gameCommands, LabState(nextLabInputState, nextGameInputState, newMenuState))
+    } else {
+      renderLab(windowInfo, layout)
+      return Pair(listOf(), LabState(nextLabInputState, previousState.gameInput, previousState.menuState))
     }
-    renderLab(windowInfo, layout)
-//    val bindings = labInputConfig["global"]!!.plus(labInputConfig[config.view]!!)
-//    val (commands, nextLabInputState) = gatherInputCommands(bindings, deviceHandlers, previousState.labInput)
-//    applyCommands(commands, view.getCommands().plus(globalKeyPressCommands))
-//    val input = getInputState(client.platform.input, commands)
-//    view.updateState(layout, input, delta)
-    return Pair(listOf(), LabState(nextLabInputState, previousState.gameInput))
   }
 
-  fun renderLab(windowInfo: WindowInfo, labLayout: LabLayout) {
+  fun renderLab(windowInfo: WindowInfo, labLayout: Layout) {
     val canvas = createCanvas(client.renderer, windowInfo)
-//    val unitScaling = getUnitScaling(windowInfo.dimensions)
-//    val renderer = client.renderer
-//    val canvas = Canvas(renderer.vertexSchemas.drawing, renderer.canvasMeshes, renderer.shaders.drawing,
-//        unitScaling, windowInfo.dimensions)
-//    canvas.drawText(TextConfiguration(
-//        "Dev Lab",
-//        renderer.fonts[0],
-//        12f,
-//        Vector2(10f, 10f),
-////        Vector4(1f, 0.8f, 0.3f, 1f)
-//        Vector4(0f, 0f, 0f, 1f)
-//    ))
-    renderMainLab(labLayout, canvas)
+    renderLayout(labLayout, canvas)
   }
 
 }

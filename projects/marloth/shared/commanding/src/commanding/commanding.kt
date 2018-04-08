@@ -28,5 +28,6 @@ enum class CommandType {
   activateDevice,
   joinGame,
   menu,
-  select,
+  menuSelect,
+  menuBack,
 }

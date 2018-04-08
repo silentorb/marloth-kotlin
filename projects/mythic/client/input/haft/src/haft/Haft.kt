@@ -71,9 +71,9 @@ typealias ProfileStates<T> = Map<Bindings<T>, InputTriggerState<T>>
 
 typealias InputProfileResult<T> = Pair<Commands<T>, ProfileStates<T>>
 
-data class HaftInputState<T>(
-    val profileStates: ProfileStates<T>
-)
+//data class HaftInputState<T>(
+//    val profileStates: ProfileStates<T>
+//)
 
 fun <T> gatherProfileCommands(profiles: List<Bindings<T>>, profileStates: ProfileStates<T>,
                               deviceHandlers: List<ScalarInputSource>): InputProfileResult<T> {
@@ -93,6 +93,12 @@ fun <T> gatherInputCommands(bindings: Bindings<T>, deviceHandlers: List<ScalarIn
   val next = getCurrentInputState(bindings, deviceHandlers, previous)
   return Pair(gatherCommands(next), next)
 }
+
+fun <T> filterKeystrokeCommands(commands: Commands<T>) =
+    commands.filter({ it.lifetime == TriggerLifetime.end })
+
+fun <T> filterKeystrokeCommands(commands: Commands<T>, bindings: List<T>) =
+    commands.filter({ bindings.contains(it.type) && it.lifetime == TriggerLifetime.end })
 
 fun <T> handleKeystrokeCommands(commands: Commands<T>, keyStrokeCommands: Map<T, (Command<T>) -> Unit>) {
   commands.filter({ keyStrokeCommands.containsKey(it.type) && it.lifetime == TriggerLifetime.end })

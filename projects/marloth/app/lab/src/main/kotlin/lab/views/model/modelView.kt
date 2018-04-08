@@ -78,7 +78,7 @@ fun getHits(componentMode: ComponentMode, start: Vector3, end: Vector3, model: M
       else -> listOf()
     }
 
-private fun trySelect(config: ModelViewConfig, camera: Camera, model: Model, mousePosition: Vector2i, layout: LabLayout) {
+private fun trySelect(config: ModelViewConfig, camera: Camera, model: Model, mousePosition: Vector2i, layout: Layout) {
   val bounds = layout.boxes[1].bounds
   val dimensions = bounds.dimensions
   val cursor = mousePosition - bounds.position.toVector2i()
@@ -124,23 +124,21 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
   val model: Model = standardMeshes()[config.model]!!()
   val camera = createOrthographicCamera(config.camera)
 
-  override fun createLayout(dimensions: Vector2i): LabLayout {
+  override fun createLayout(dimensions: Vector2i): Layout {
     val panels = listOf(
         Pair(Measurement(Measurements.pixel, 200f), drawSidePanel()),
         Pair(Measurement(Measurements.stretch, 0f), drawScenePanel(config, renderer, model, camera)),
         Pair(Measurement(Measurements.pixel, 300f), drawInfoPanel(config, renderer, model, mousePosition))
     )
     val dimensions2 = Vector2(dimensions.x.toFloat(), dimensions.y.toFloat())
-    val boxes = overlap(createVerticalBounds(panels.map { it.first }, dimensions2), panels, { a, b ->
-      Box(a, b.second)
-    })
+    val boxes = arrangeList(horizontalArrangement, panels, dimensions2)
 
-    return LabLayout(
+    return Layout(
         boxes
     )
   }
 
-  override fun updateState(layout: LabLayout, input: InputState, delta: Float) {
+  override fun updateState(layout: Layout, input: InputState, delta: Float) {
     val commands = input.commands
 
     val rotateSpeedZ = 1f

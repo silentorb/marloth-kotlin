@@ -11,15 +11,14 @@ import generation.generateWorld
 import generation.placeEnemies
 import lab.views.GameViewConfig
 import marloth.clienting.Client
+import marloth.clienting.gui.initialMenuState
 import marloth.clienting.initialGameInputState
 import mythic.desktop.createDesktopPlatform
 import mythic.platforming.Display
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
-import mythic.spatial.Vector3
 import randomly.Dice
 import simulation.World
-import simulation.WorldBoundary
 import simulation.WorldInput
 import simulation.changing.WorldUpdater
 import visualizing.createScenes
@@ -102,7 +101,7 @@ fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
   platform.display.initialize(gameConfig.display)
   val app = LabApp(platform, config, gameConfig)
   setWorldMesh(app.world.meta, app.client)
-  labLoop(app, LabState(mapOf(), initialGameInputState()))
+  labLoop(app, LabState(mapOf(), initialGameInputState(), initialMenuState()))
 
 }
 

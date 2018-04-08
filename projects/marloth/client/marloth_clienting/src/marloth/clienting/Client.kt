@@ -9,6 +9,20 @@ import scenery.Screen
 
 val maxPlayerCount = 4
 
+data class ClientInputResult(
+    val commands: Commands<CommandType>,
+    val inputState: ProfileStates<CommandType>) {
+
+  operator fun plus(second: ClientInputResult) =
+      ClientInputResult(commands.plus(second.commands), inputState.plus(second.inputState))
+}
+
+data class InputProperties(
+    val deviceHandlers: List<ScalarInputSource>,
+    val previousState: ProfileStates<CommandType>,
+    val players: List<Int>
+)
+
 class Client(val platform: Platform) {
   val renderer: Renderer = Renderer()
   val screens: List<Screen> = (1..maxPlayerCount).map { Screen(it) }
@@ -17,36 +31,51 @@ class Client(val platform: Platform) {
 //      CommandType.switchView to { command -> switchCameraMode(command.target, screens) },
       CommandType.menu to { command -> platform.process.close() }
   )
-  val playerInputProfiles = createDefaultInputProfiles()
+  val playerInputProfiles = defaultGameInputProfiles()
+  val menuInputProfiles = defaultMenuInputProfiles()
   fun getWindowInfo() = platform.display.getInfo()
 
-  fun updateInput(previousState: HaftInputState<CommandType>, players: List<Int>):
-      Pair<Commands<CommandType>, HaftInputState<CommandType>> {
+  fun checkForNewGamepads(properties: InputProperties): ClientInputResult {
+    val (deviceHandlers, previousState, players) = properties
+    val profiles = createWaitingGamepadProfiles(deviceHandlers.size, gamepadAssignments.size)
+    val result = gatherProfileCommands(profiles, previousState, deviceHandlers)
+    val (commands, nextState) = result
+    var playerCount = players.size
+    val keystrokes = filterKeystrokeCommands(commands, listOf(CommandType.activateDevice, CommandType.joinGame))
+    for (command in keystrokes) {
+      gamepadAssignments[command.target - 10] = playerCount++
+    }
+    return ClientInputResult(keystrokes, nextState)
+  }
+
+  fun updateGameInput(properties: InputProperties, playerInputProfiles: List<PlayerInputProfile>): ClientInputResult {
+    val profiles = selectActiveInputProfiles(playerInputProfiles, properties.players)
+    val (commands, nextState) = gatherProfileCommands(profiles, properties.previousState, properties.deviceHandlers)
+    handleKeystrokeCommands(commands, keyStrokeCommands)
+    return ClientInputResult(commands, nextState)
+  }
+
+  fun prepareInput(previousState: ProfileStates<CommandType>, players: List<Int>): InputProperties {
     platform.input.update()
     val gamepads = platform.input.getGamepads().map { it.id }
     val waitingDevices = getWaitingDevices(gamepadAssignments, gamepads)
-    val deviceHandlers = createDeviceHandlers(platform.input, gamepadAssignments, waitingDevices)
-    val waitingGamepadProfiles = createWaitingGamepadProfiles(waitingDevices.size, gamepadAssignments.size)
-    val profiles = selectActiveInputProfiles(playerInputProfiles, waitingGamepadProfiles, players)
-    val (commands, nextState) = gatherProfileCommands(profiles, previousState.profileStates, deviceHandlers)
-    handleKeystrokeCommands(commands, keyStrokeCommands)
-    var playerCount = players.size
-    val assignGamepad: (Command<CommandType>) -> Unit = { command ->
-      gamepadAssignments[command.target - 10] = playerCount++
-    }
-    handleKeystrokeCommands(commands, mapOf(
-        CommandType.activateDevice to assignGamepad,
-        CommandType.joinGame to assignGamepad
-    ))
-
-    return Pair(commands.filterNot({ keyStrokeCommands.containsKey(it.type) }), HaftInputState(nextState))
+    val deviceHandlers = createDeviceHandlers(platform.input, gamepadAssignments)
+        .plus(waitingDevices.map {
+          { trigger: Int -> platform.input.GamepadInputSource(it, trigger) }
+        })
+    return InputProperties(
+        deviceHandlers,
+        previousState,
+        players
+    )
   }
 
-  fun update(scenes: List<GameScene>, previousState: HaftInputState<CommandType>):
-      Pair<Commands<CommandType>, HaftInputState<CommandType>> {
-    val windowInfo = getWindowInfo()
-    renderer.renderGameScenes(scenes, windowInfo)
-    return updateInput(previousState, scenes.map { it.player })
+  fun update(scenes: List<GameScene>, previousState: ProfileStates<CommandType>):
+      Pair<Commands<CommandType>, ProfileStates<CommandType>> {
+    throw Error("Outdated.  Will need updating.")
+//    val windowInfo = getWindowInfo()
+//    renderer.renderGameScenes(scenes, windowInfo)
+//    return updateInput(previousState, scenes.map { it.player })
   }
 
 }

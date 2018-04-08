@@ -16,7 +16,7 @@ data class Configuration(
 
 //fun createNewConfiguration(gamepads: List<Gamepad>): Configuration = Configuration(
 //    InputConfiguration(listOf(
-//        createBindings(0, 1, defaultKeyboardProfile())
+//        createBindings(0, 1, defaultKeyboardGameBindings())
 //    ).plus(gamepads.mapIndexed { index, gamepad ->
 //      createBindings(gamepad.id + 1, index, allGamepadBindings())
 //    }))
