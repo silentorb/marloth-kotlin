@@ -4,10 +4,16 @@ import commanding.CommandType
 import lab.LabState
 import haft.*
 import lab.LabCommandType
+import marloth.clienting.gui.MenuActionType
 import mythic.bloom.Layout
 import org.joml.Vector2i
 
-typealias ViewInputResult = Pair<Commands<CommandType>, LabState>
+data class LabClientResult(
+    val commands: Commands<CommandType>,
+    val state: LabState,
+    val menuAction: MenuActionType
+)
+
 typealias LabCommandMap = Map<LabCommandType, CommandHandler<LabCommandType>>
 
 data class InputState(

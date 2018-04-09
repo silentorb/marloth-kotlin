@@ -161,7 +161,13 @@ class GameSceneRenderer(
 
 fun createCanvas(renderer: Renderer, windowInfo: WindowInfo): Canvas {
   val unitScaling = getUnitScaling(windowInfo.dimensions)
-  return Canvas(renderer.vertexSchemas.drawing, renderer.canvasMeshes, renderer.shaders.drawing,
-      unitScaling, windowInfo.dimensions)
+  return Canvas(
+      renderer.vertexSchemas.drawing,
+      renderer.canvasMeshes,
+      renderer.shaders.drawing,
+      unitScaling,
+      renderer.fonts,
+      windowInfo.dimensions
+  )
 
 }

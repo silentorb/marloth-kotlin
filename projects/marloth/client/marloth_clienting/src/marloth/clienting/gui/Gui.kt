@@ -7,51 +7,70 @@ import mythic.glowing.globalState
 import mythic.spatial.Vector2
 import mythic.spatial.Vector4
 import mythic.typography.TextConfiguration
+import mythic.typography.TextStyle
+import mythic.typography.calculateTextDimensions
 import org.joml.plus
 import rendering.SceneRenderer
 
-fun drawBackground(backgroundColor: Vector4): Depiction = { b: Bounds, canvas: Canvas ->
+data class ButtonState(
+    val text: String,
+    val hasFocus: Boolean
+)
+
+fun depictBackground(backgroundColor: Vector4): Depiction = { b: Bounds, canvas: Canvas ->
   globalState.depthEnabled = false
   drawFill(b, canvas, backgroundColor)
   drawBorder(b, canvas, Vector4(0f, 0f, 0f, 1f))
 }
 
-val menuBackground: Depiction = drawBackground(grayTone(0.5f))
+val menuBackground: Depiction = depictBackground(grayTone(0.5f))
 
-fun createCenteredBounds(dimensions: Vector2, width: Measurement, height: Measurement): Bounds {
-  val resolved = Vector2(
-      resolveMeasurement(dimensions, horizontalPlane, width)!!,
-      resolveMeasurement(dimensions, verticalPlane, height)!!
-  )
-  val left = centeredPosition(horizontalPlane, dimensions, resolved.x)
-  val top = centeredPosition(verticalPlane, dimensions, resolved.y)
-  return Bounds(Vector2(left, top), resolved)
+fun drawMenuButton(state: ButtonState): Depiction = { bounds: Bounds, canvas: Canvas ->
+  //  menuBackground(bounds, canvas)
+  globalState.depthEnabled = false
+  drawFill(bounds, canvas, grayTone(0.5f))
+  val style = if (state.hasFocus)
+    Pair(12f, LineStyle(Vector4(1f), 2f))
+  else
+    Pair(12f, LineStyle(Vector4(0f, 0f, 0f, 1f), 1f))
+
+  drawBorder(bounds, canvas, style.second)
+
+  val blackStyle = TextStyle(canvas.fonts[0], style.first, Vector4(0f, 0f, 0f, 1f))
+  val textConfig = TextConfiguration(state.text, bounds.position, blackStyle)
+  val textDimensions = calculateTextDimensions(textConfig)
+  val position = centeredPosition(bounds, textDimensions)
+  canvas.drawText(state.text, position, blackStyle)
 }
 
-fun createMenuLayout(bounds: Bounds): Layout {
-//  val panels = listOf(
-//      Pair(Measurement(Measurements.pixel, 200f), drawSidePanel()),
-//      Pair(Measurement(Measurements.stretch, 0f), drawScenePanel(config, renderer, model, camera)),
-//      Pair(Measurement(Measurements.pixel, 300f), drawInfoPanel(config, renderer, model, mousePosition))
-//  )
-//  val dimensions2 = Vector2(dimensions.x.toFloat(), dimensions.y.toFloat())
-//  val boxes = arrangeList(horizontalArrangement, panels, dimensions2)
+fun createMenuLayout(bounds: Bounds, state: MenuState): Layout {
+  val buttonHeight = 50f
+  val items = listOf(
+      "New Game",
+      "Continue Game",
+      "Quit"
+  ).mapIndexed { index, it -> PartialBox(buttonHeight, drawMenuButton(ButtonState(it, state.focusIndex == index))) }
+
+  val itemLengths = items.map { it.length }
+  val menuHeight = listContentLength(10f, itemLengths)
+  val menuBounds = centeredBounds(bounds, Vector2(200f, menuHeight))
+  val menuPadding = Vector2(10f)
 
   return Layout(
-      listOf(Box(createCenteredBounds(bounds.dimensions, Measurement(100f), Measurement(100f)), menuBackground))
-          .map(applyBounds(bounds))
+      listOf(Box(menuBounds, menuBackground))
+          .plus(arrangeList(verticalArrangement(menuPadding), items, menuBounds))
   )
 }
 
-fun renderMenus(bounds: Bounds, canvas: Canvas) {
-  val layout = createMenuLayout(bounds)
+fun renderMenus(bounds: Bounds, canvas: Canvas, state: MenuState) {
+  val layout = createMenuLayout(bounds, state)
   renderLayout(layout, canvas)
 }
 
 fun renderGui(renderer: SceneRenderer, bounds: Bounds, canvas: Canvas, state: MenuState) {
-  canvas.drawText(TextConfiguration("Testing",
-      renderer.renderer.fonts[0], 12f, bounds.position + Vector2(10f, 10f), Vector4(1f)))
+  canvas.drawText(TextConfiguration("Testing", bounds.position + Vector2(10f, 10f),
+      TextStyle(canvas.fonts[0], 12f, Vector4(1f))))
 
   if (state.isVisible)
-    renderMenus(bounds, canvas)
+    renderMenus(bounds, canvas, state)
 }

@@ -11,6 +11,7 @@ import generation.generateWorld
 import generation.placeEnemies
 import lab.views.GameViewConfig
 import marloth.clienting.Client
+import marloth.clienting.gui.MenuActionType
 import marloth.clienting.gui.initialMenuState
 import marloth.clienting.initialGameInputState
 import mythic.desktop.createDesktopPlatform
@@ -67,10 +68,14 @@ data class LabApp(
     val gameConfig: GameConfig,
     val display: Display = platform.display,
     val timer: DeltaTimer = DeltaTimer(),
-    val world: World = generateDefaultWorld(InstantiatorConfig(gameConfig.gameplay.defaultPlayerView), config.gameView),
+    var world: World = generateDefaultWorld(InstantiatorConfig(gameConfig.gameplay.defaultPlayerView), config.gameView),
     val client: Client = Client(platform),
     val labClient: LabClient = LabClient(config, client)
-)
+) {
+
+  fun newWorld() =
+      generateDefaultWorld(InstantiatorConfig(gameConfig.gameplay.defaultPlayerView), config.gameView)
+}
 
 private var saveIncrement = 0
 
@@ -78,7 +83,7 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
   app.display.swapBuffers()
   val scenes = createScenes(app.world, app.client.screens)
   val delta = app.timer.update().toFloat()
-  val (commands, nextState) = app.labClient.update(scenes, app.world.meta, previousState, delta)
+  val (commands, nextState, menuAction) = app.labClient.update(scenes, app.world.meta, previousState, delta)
   val instantiator = Instantiator(app.world, InstantiatorConfig(app.gameConfig.gameplay.defaultPlayerView))
   val updater = WorldUpdater(app.world, instantiator)
   updater.update(commands, delta)
@@ -91,6 +96,10 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
   if (saveIncrement++ > 60 * 3) {
     saveIncrement = 0
     saveLabConfig(app.config)
+  }
+
+  if (menuAction == MenuActionType.newGame) {
+    app.world = app.newWorld()
   }
 
   if (!app.platform.process.isClosing())

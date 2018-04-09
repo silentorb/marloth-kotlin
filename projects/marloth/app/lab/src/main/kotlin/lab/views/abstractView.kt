@@ -6,6 +6,7 @@ import mythic.drawing.Canvas
 import mythic.spatial.Vector2
 import mythic.spatial.Vector4
 import mythic.typography.TextConfiguration
+import mythic.typography.TextStyle
 import org.joml.plus
 import org.joml.xy
 import rendering.Renderer
@@ -63,18 +64,20 @@ fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Can
 //  fun getPosition(node: Node) = offset + (Vector2(node.position.x, -node.position.y)
 //      - world.boundary.start.xy) * scale
 
+  val style = TextStyle(
+      canvas.fonts[0],
+      12f,
+      Vector4(0f, 0f, 0f, 1f)
+  )
+
   for (node in world.nodes) {
     val radius = node.radius * scale
     val position = getNodePosition(node)
     canvas.drawSolidCircle(position, radius, solid)
     canvas.drawCircle(position, radius, outline)
-    canvas.drawText(TextConfiguration(
-        node.index.toString() + " " + node.floors.first().unorderedVertices.size.toString(),
-        renderer.fonts[0],
-        12f,
+    canvas.drawText(node.index.toString() + " " + node.floors.first().unorderedVertices.size.toString(),
         position,
-        Vector4(0f, 0f, 0f, 1f)
-    ))
+        style)
   }
 
   for (connection in world.connections) {

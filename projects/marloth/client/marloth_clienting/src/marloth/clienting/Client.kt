@@ -2,6 +2,7 @@ package marloth.clienting
 
 import commanding.*
 import haft.*
+import marloth.clienting.gui.MenuActionType
 import mythic.platforming.Platform
 import rendering.Renderer
 import scenery.GameScene
@@ -35,6 +36,12 @@ class Client(val platform: Platform) {
   val playerInputProfiles = defaultGameInputProfiles()
   val menuInputProfiles = defaultMenuInputProfiles()
   fun getWindowInfo() = platform.display.getInfo()
+
+  fun handleMenuAction(menuAction: MenuActionType) {
+    when (menuAction) {
+      MenuActionType.quit -> platform.process.close()
+    }
+  }
 
   fun checkForNewGamepads(properties: InputProperties): ClientInputResult {
     val (deviceHandlers, waitingDevices, previousState, players) = properties

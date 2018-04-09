@@ -29,7 +29,7 @@ class TextureView : View {
         })
     )
     val dimensions2 = Vector2(dimensions.x.toFloat(), dimensions.y.toFloat())
-    val boxes = arrangeList(horizontalArrangement, panels, dimensions2)
+    val boxes = arrangeMeasuredList(horizontalArrangement, panels, dimensions2)
 
     return Layout(
         boxes

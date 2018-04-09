@@ -11,6 +11,7 @@ import mythic.glowing.globalState
 import mythic.glowing.viewportStack
 import mythic.spatial.*
 import mythic.typography.TextConfiguration
+import mythic.typography.TextStyle
 import org.joml.*
 import rendering.*
 import scenery.Camera
@@ -128,9 +129,10 @@ fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: Model,
                   mousePosition: Vector2i): Depiction = { bounds: Bounds, canvas: Canvas ->
   drawSidePanel()(bounds, canvas)
   var row = 1
+
+  val textStyle = TextStyle(canvas.fonts[0], 12f, black)
   fun drawText(content: String) {
-    canvas.drawText(TextConfiguration(content,
-        renderer.fonts[0], 12f, bounds.position + Vector2(5f, 5f + row++ * 20f), black))
+    canvas.drawText(content, bounds.position + Vector2(5f, 5f + row++ * 20f), textStyle)
   }
   drawText("Mouse: " + mousePosition.x.toString() + ", " + mousePosition.y.toString())
 //  canvas.drawText(TextConfiguration("Mouse: " + mousePosition.x.toString() + ", " + mousePosition.y.toString(),

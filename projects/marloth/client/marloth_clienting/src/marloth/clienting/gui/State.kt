@@ -3,8 +3,21 @@ package marloth.clienting.gui
 import commanding.CommandType
 import haft.Commands
 
+enum class MenuId {
+  main
+}
+
+enum class MenuActionType {
+  none,
+  newGame,
+  continueGame,
+  quit
+}
+
 data class MenuState(
-    val isVisible: Boolean
+    var isVisible: Boolean,
+    val focusIndex: Int,
+    val menuId: MenuId
 )
 
 fun possibleToggle(value: Boolean, shouldToggle: Boolean) =
@@ -13,6 +26,21 @@ fun possibleToggle(value: Boolean, shouldToggle: Boolean) =
     else
       value
 
+fun cycle(value: Int, max: Int) = (value + max) % max
+
+val mainMenu = listOf(
+    MenuActionType.newGame,
+    MenuActionType.continueGame,
+    MenuActionType.quit
+)
+
+fun menuButtonAction(state: MenuState, commands: Commands<CommandType>): MenuActionType {
+  if (haft.isActive(commands, CommandType.menuSelect)) {
+    return mainMenu[state.focusIndex]
+  }
+  return MenuActionType.none
+}
+
 fun updateMenuState(state: MenuState, commands: Commands<CommandType>): MenuState {
   if (commands.size == 0)
     return state
@@ -20,12 +48,31 @@ fun updateMenuState(state: MenuState, commands: Commands<CommandType>): MenuStat
   val isActive = haft.isActive(commands)
 
   val isVisible = possibleToggle(state.isVisible, isActive(CommandType.menu))
+      && !isActive(CommandType.menuSelect)// This line will work until there are sub-menus
+
+  if (!isVisible) {
+    state.isVisible = false  // A compromise in the stead of partial immutable updates
+    return state
+  }
+
+  val focusMod = if (isActive(CommandType.moveDown))
+    1
+  else if (isActive(CommandType.moveUp))
+    -1
+  else
+    0
+
+  val menuSize = 3
 
   return MenuState(
-      isVisible = isVisible
+      isVisible = isVisible,
+      focusIndex = cycle(state.focusIndex + focusMod, menuSize),
+      menuId = state.menuId
   )
 }
 
 fun initialMenuState() = MenuState(
-    isVisible = false
+    isVisible = false,
+    focusIndex = 0,
+    menuId = MenuId.main
 )

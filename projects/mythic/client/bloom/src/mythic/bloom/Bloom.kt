@@ -22,27 +22,6 @@ data class Measurement(
 ) {
   constructor(value: Float) : this(Measurements.pixel, value)
 }
-//
-//data class AxisMeasurement(
-//    val near: Measurement,
-//    val length: Measurement,
-//    val far: Measurement
-//)
-
-//data class Bounds(
-//    val x: AxisMeasurement,
-//    val y: AxisMeasurement
-//)
-//
-//enum class BoxType {
-//
-//}
-//
-//data class Box(
-//    val bounds: Bounds,
-////    val type: BoxType,
-//    val parent: Box? = null
-//)
 
 data class Bounds(
     val position: Vector2,
@@ -66,6 +45,8 @@ interface Plane {
   fun x(value: Vector2i): Int
   fun y(value: Vector2i): Int
 
+  fun vector(first: Float, second: Float): Vector2
+  fun vector(value: Vector2): Vector2
 }
 
 class HorizontalPlane : Plane {
@@ -74,6 +55,10 @@ class HorizontalPlane : Plane {
 
   override fun x(value: Vector2i) = value.x
   override fun y(value: Vector2i) = value.y
+
+  override fun vector(first: Float, second: Float): Vector2 = Vector2(first, second)
+
+  override fun vector(value: Vector2): Vector2 = value
 }
 
 class VerticalPlane : Plane {
@@ -82,6 +67,9 @@ class VerticalPlane : Plane {
 
   override fun x(value: Vector2i) = value.y
   override fun y(value: Vector2i) = value.x
+
+  override fun vector(first: Float, second: Float): Vector2 = Vector2(second, first)
+  override fun vector(value: Vector2): Vector2 = Vector2(value.y, value.x)
 }
 
 val horizontalPlane = HorizontalPlane()
@@ -94,6 +82,11 @@ data class Box(
   constructor(x: Float, y: Float, width: Float, height: Float, depiction: Depiction) :
       this(Bounds(x, y, width, height), depiction)
 }
+
+data class PartialBox(
+    val length: Float,
+    val depiction: Depiction
+)
 
 fun crop(bounds: Bounds, canvas: Canvas, action: () -> Unit) = canvas.crop(bounds.toVector4i(), action)
 
@@ -124,28 +117,66 @@ fun solveMeasurements(plane: Plane, lengths: List<Measurement>, bounds: Vector2)
   }
 }
 
-val listBounds = { plane: Plane, lengths: List<Measurement>, bounds: Vector2 ->
+fun listMeasuredBounds(plane: Plane, lengths: List<Measurement>, bounds: Vector2): List<Bounds> {
   var progress = 0f
-  solveMeasurements(plane, lengths, bounds).map {
+  return solveMeasurements(plane, lengths, bounds).map {
     val b = Bounds(progress, 0f, it, plane.y(bounds))
     progress += it
     b
   }
 }
 
-typealias LengthArrangement = (bounds: Vector2, lengths: List<Measurement>) -> List<Bounds>
+fun listBounds(plane: Plane, padding: Vector2, lengths: List<Float>, bounds: Bounds): List<Bounds> {
+  val mainPadding = plane.x(padding)
+  var progress = mainPadding
+  val otherPadding = plane.y(padding)
+  val otherLength = plane.y(bounds.dimensions) - otherPadding * 2
 
-val horizontalArrangement: LengthArrangement = { bounds: Vector2, lengths: List<Measurement> ->
-  listBounds(horizontalPlane, lengths, bounds)
+  return lengths.map { length ->
+    val b = Bounds(
+        plane.vector(progress, otherPadding) + bounds.position,
+        plane.vector(length, otherLength)
+    )
+    progress += length + mainPadding
+    b
+  }
 }
 
-val verticalArrangement: LengthArrangement = { bounds: Vector2, lengths: List<Measurement> ->
-  listBounds(verticalPlane, lengths, bounds)
+fun listContentLength(padding: Float, lengths: Collection<Float>): Float =
+    lengths.sum() + (lengths.size + 1) * padding
+
+fun listLengths(padding: Float, lengths: Collection<Float>): List<Float> {
+  var offset = 0f
+  return lengths.map {
+    val result = offset
+    offset += padding + it
+    result
+  }
 }
 
-val arrangeList = { arrangement: LengthArrangement, panels: List<Pair<Measurement, Depiction>>, bounds: Vector2 ->
-  arrangement(bounds, panels.map { it.first })
+typealias MeasuredLengthArrangement = (bounds: Vector2, lengths: List<Measurement>) -> List<Bounds>
+typealias LengthArrangement = (bounds: Bounds, lengths: List<Float>) -> List<Bounds>
+
+val horizontalArrangement: MeasuredLengthArrangement = { bounds: Vector2, lengths: List<Measurement> ->
+  listMeasuredBounds(horizontalPlane, lengths, bounds)
+}
+
+val measuredVerticalArrangement: MeasuredLengthArrangement = { bounds: Vector2, lengths: List<Measurement> ->
+  listMeasuredBounds(verticalPlane, lengths, bounds)
+}
+
+fun verticalArrangement(padding: Vector2): LengthArrangement = { bounds: Bounds, lengths: List<Float> ->
+  listBounds(verticalPlane, padding, lengths, bounds)
+}
+
+fun arrangeMeasuredList(arrangement: MeasuredLengthArrangement, panels: List<Pair<Measurement, Depiction>>, bounds: Vector2): List<Box> {
+  return arrangement(bounds, panels.map { it.first })
       .zip(panels, { a, b -> Box(a, b.second) })
+}
+
+fun arrangeList(arrangement: LengthArrangement, panels: List<PartialBox>, bounds: Bounds): List<Box> {
+  return arrangement(bounds, panels.map { it.length })
+      .zip(panels, { a, b -> Box(a, b.depiction) })
 }
 
 fun centeredPosition(boundsLength: Float, length: Float): Float =
@@ -164,8 +195,17 @@ data class Layout(
     val boxes: List<Box>
 )
 
-fun drawBorder(bounds: Bounds, canvas: Canvas, color: Vector4) {
-  canvas.drawSquare(bounds.position, bounds.dimensions, canvas.outline(color, 1f))
+fun drawBorder(bounds: Bounds, canvas: Canvas, color: Vector4, thickness: Float = 1f) {
+  canvas.drawSquare(bounds.position, bounds.dimensions, canvas.outline(color, thickness))
+}
+
+data class LineStyle(
+    val color: Vector4,
+    val thickness: Float
+)
+
+fun drawBorder(bounds: Bounds, canvas: Canvas, style: LineStyle) {
+  canvas.drawSquare(bounds.position, bounds.dimensions, canvas.outline(style.color, style.thickness))
 }
 
 fun drawFill(bounds: Bounds, canvas: Canvas, color: Vector4) {
@@ -185,4 +225,19 @@ fun renderLayout(layout: Layout, canvas: Canvas) {
   for (box in layout.boxes) {
     box.depiction(box.bounds, canvas)
   }
+}
+
+fun centeredPosition(bounds: Bounds, contentDimensions: Vector2): Vector2 {
+  val dimensions = bounds.dimensions
+  return bounds.position + Vector2(
+      centeredPosition(horizontalPlane, dimensions, contentDimensions.x),
+      centeredPosition(verticalPlane, dimensions, contentDimensions.y)
+  )
+}
+
+fun centeredBounds(bounds: Bounds, contentDimensions: Vector2): Bounds {
+  return Bounds(
+      centeredPosition(bounds, contentDimensions) + bounds.position,
+      contentDimensions
+  )
 }

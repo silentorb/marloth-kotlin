@@ -5,7 +5,9 @@ import mythic.spatial.Matrix
 import mythic.spatial.Pi
 import mythic.spatial.Vector2
 import mythic.spatial.Vector4
+import mythic.typography.Font
 import mythic.typography.TextConfiguration
+import mythic.typography.TextStyle
 import org.joml.Vector2i
 import org.joml.Vector4i
 import org.joml.minus
@@ -84,6 +86,7 @@ class Canvas(
     val meshes: Meshes,
     val effects: DrawingEffects,
     val unitScaling: Vector2,
+    val fonts: List<Font>,
     dimensions: Vector2i
 ) {
 
@@ -143,6 +146,10 @@ class Canvas(
 
   fun drawText(config: TextConfiguration) {
     drawTextRaw(config, effects.coloredImage, vertexSchemas.image, pixelsToScalar)
+  }
+
+  fun drawText(content: String, position: Vector2, style: TextStyle) {
+    drawTextRaw(TextConfiguration(content, position, style), effects.coloredImage, vertexSchemas.image, pixelsToScalar)
   }
 
   fun crop(value: Vector4i, action: () -> Unit) = cropStack(value, action)

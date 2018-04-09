@@ -39,7 +39,6 @@ data class ModelViewConfig(
     var tempEnd: Vector3 = Vector3(),
     var componentMode: ComponentMode = ComponentMode.vertices,
     var meshDisplay: MeshDisplay = MeshDisplay.solid
-
 )
 
 typealias MeshGenerator = (FlexibleMesh) -> Unit
@@ -131,7 +130,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
         Pair(Measurement(Measurements.pixel, 300f), drawInfoPanel(config, renderer, model, mousePosition))
     )
     val dimensions2 = Vector2(dimensions.x.toFloat(), dimensions.y.toFloat())
-    val boxes = arrangeList(horizontalArrangement, panels, dimensions2)
+    val boxes = arrangeMeasuredList(horizontalArrangement, panels, dimensions2)
 
     return Layout(
         boxes

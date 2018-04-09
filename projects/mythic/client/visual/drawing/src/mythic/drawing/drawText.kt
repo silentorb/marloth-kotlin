@@ -29,7 +29,7 @@ fun renderText(config: TextConfiguration, effect: ColoredImageShader, textPackag
       .translate(position.x, position.y, 0f)
 //      .scale(scale, scale, 1f)
 
-  effect.activate(transform, config.color, config.font.texture)
+  effect.activate(transform, config.style.color, config.style.font.texture)
 
   globalState.blendEnabled = true
   globalState.blendFunction = Pair(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
