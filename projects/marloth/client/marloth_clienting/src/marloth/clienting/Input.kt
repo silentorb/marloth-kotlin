@@ -69,10 +69,22 @@ val commonGamepadBindings = mapOf(
 )
 
 val defaultGamepadMenuBindings = mapOf(
+    
     GAMEPAD_AXIS_LEFT_UP to CommandType.moveUp,
     GAMEPAD_AXIS_LEFT_DOWN to CommandType.moveDown,
     GAMEPAD_AXIS_LEFT_LEFT to CommandType.moveLeft,
     GAMEPAD_AXIS_LEFT_RIGHT to CommandType.moveRight,
+    
+    GAMEPAD_AXIS_RIGHT_UP to CommandType.moveUp,
+    GAMEPAD_AXIS_RIGHT_DOWN to CommandType.moveDown,
+    GAMEPAD_AXIS_RIGHT_LEFT to CommandType.moveLeft,
+    GAMEPAD_AXIS_RIGHT_RIGHT to CommandType.moveRight,
+
+    GAMEPAD_BUTTON_DPAD_UP to CommandType.moveUp,
+    GAMEPAD_BUTTON_DPAD_DOWN to CommandType.moveDown,
+    GAMEPAD_BUTTON_DPAD_LEFT to CommandType.moveLeft,
+    GAMEPAD_BUTTON_DPAD_RIGHT to CommandType.moveRight,
+
     GAMEPAD_BUTTON_START to CommandType.menu,
     GAMEPAD_BUTTON_A to CommandType.menuSelect,
     GAMEPAD_BUTTON_B to CommandType.menuBack
