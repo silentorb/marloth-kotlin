@@ -1,17 +1,16 @@
 package lab.views.model
 
 import lab.utility.*
-import mythic.bloom.Bounds
-import mythic.bloom.Depiction
+import mythic.bloom.*
 import mythic.drawing.Canvas
-import mythic.bloom.drawBorder
-import mythic.bloom.drawFill
+import mythic.drawing.grayTone
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
 import mythic.glowing.viewportStack
 import mythic.spatial.*
 import mythic.typography.TextConfiguration
 import mythic.typography.TextStyle
+import mythic.typography.calculateTextDimensions
 import org.joml.*
 import rendering.*
 import scenery.Camera
@@ -125,6 +124,8 @@ val decimalFormat = DecimalFormat("#.#####")
 fun toString(vector: Vector3) =
     decimalFormat.format(vector.x) + ", " + decimalFormat.format(vector.y) + ", " + decimalFormat.format(vector.z)
 
+fun drawSidePanel() = drawBackground(panelColor)
+
 fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: Model,
                   mousePosition: Vector2i): Depiction = { bounds: Bounds, canvas: Canvas ->
   drawSidePanel()(bounds, canvas)
@@ -159,4 +160,22 @@ fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: Model,
 //      renderer.fonts[0], 12f, bounds.position + Vector2(5f, 45f), black))
 }
 
-val drawSidePanel = { drawBackground(panelColor) }
+
+fun drawListItem(text: String, isSelected: Boolean): Depiction = { bounds: Bounds, canvas: Canvas ->
+  globalState.depthEnabled = false
+  drawFill(bounds, canvas, grayTone(0.5f))
+  val style = if (isSelected)
+    Pair(12f, LineStyle(Vector4(1f), 2f))
+  else
+    Pair(12f, LineStyle(Vector4(0f, 0f, 0f, 1f), 1f))
+
+  drawBorder(bounds, canvas, style.second)
+
+  val blackStyle = TextStyle(canvas.fonts[0], style.first, Vector4(0f, 0f, 0f, 1f))
+  val textConfig = TextConfiguration(text, bounds.position, blackStyle)
+  val textDimensions = calculateTextDimensions(textConfig)
+  val centered = centeredPosition(bounds, textDimensions)
+  val position = Vector2(bounds.position.x + 10f, centered.y)
+  canvas.drawText(text, position, blackStyle)
+}
+

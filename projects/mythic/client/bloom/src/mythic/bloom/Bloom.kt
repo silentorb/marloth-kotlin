@@ -117,6 +117,22 @@ fun solveMeasurements(plane: Plane, lengths: List<Measurement>, bounds: Vector2)
   }
 }
 
+fun solveMeasurements(boundLength: Float, lengths: List<Float?>): List<Float> {
+  val exacts = lengths.filterNotNull()
+  val total = exacts.fold(0f, { a, b -> a + b })
+
+  if (exacts.size == lengths.size) {
+    if (total != boundLength)
+      throw Error("Could not stretch or shrink to fit bounds")
+
+    return exacts
+  } else {
+    val stretchCount = lengths.size - exacts.size
+    val stretchLength = (boundLength - total) / stretchCount
+    return lengths.map { if (it != null) it else stretchLength }
+  }
+}
+
 fun listMeasuredBounds(plane: Plane, lengths: List<Measurement>, bounds: Vector2): List<Bounds> {
   var progress = 0f
   return solveMeasurements(plane, lengths, bounds).map {
@@ -157,12 +173,16 @@ fun listLengths(padding: Float, lengths: Collection<Float>): List<Float> {
 typealias MeasuredLengthArrangement = (bounds: Vector2, lengths: List<Measurement>) -> List<Bounds>
 typealias LengthArrangement = (bounds: Bounds, lengths: List<Float>) -> List<Bounds>
 
-val horizontalArrangement: MeasuredLengthArrangement = { bounds: Vector2, lengths: List<Measurement> ->
+val measuredHorizontalArrangement: MeasuredLengthArrangement = { bounds: Vector2, lengths: List<Measurement> ->
   listMeasuredBounds(horizontalPlane, lengths, bounds)
 }
 
 val measuredVerticalArrangement: MeasuredLengthArrangement = { bounds: Vector2, lengths: List<Measurement> ->
   listMeasuredBounds(verticalPlane, lengths, bounds)
+}
+
+fun horizontalArrangement(padding: Vector2): LengthArrangement = { bounds: Bounds, lengths: List<Float> ->
+  listBounds(horizontalPlane, padding, lengths, bounds)
 }
 
 fun verticalArrangement(padding: Vector2): LengthArrangement = { bounds: Bounds, lengths: List<Float> ->
@@ -177,6 +197,11 @@ fun arrangeMeasuredList(arrangement: MeasuredLengthArrangement, panels: List<Pai
 fun arrangeList(arrangement: LengthArrangement, panels: List<PartialBox>, bounds: Bounds): List<Box> {
   return arrangement(bounds, panels.map { it.length })
       .zip(panels, { a, b -> Box(a, b.depiction) })
+}
+
+fun arrangeList2(arrangement: LengthArrangement, panels: List<Float>, bounds: Bounds): List<Bounds> {
+  return arrangement(bounds, panels.map { it })
+//      .zip(panels, { a, b -> Box(a, b.depiction) })
 }
 
 fun centeredPosition(boundsLength: Float, length: Float): Float =

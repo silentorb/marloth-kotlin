@@ -54,7 +54,7 @@ fun createMapLayout(abstractWorld: AbstractWorld, screenDimensions: Vector2,
 //      Pair(Measurement(Measurements.pixel, 200f), depictBackground),
       Pair(Measurement(Measurements.stretch, 0f), drawWorld)
   )
-  val boxes = arrangeMeasuredList(horizontalArrangement, panels, screenDimensions)
+  val boxes = arrangeMeasuredList(measuredHorizontalArrangement, panels, screenDimensions)
 
   return Layout(
       boxes

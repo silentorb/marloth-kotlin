@@ -119,18 +119,37 @@ fun resetCamera(config: ModelViewConfig, model: Model, rotationY: Float, rotatio
   config.camera.pivot = getVerticesCenter(model.vertices)
 }
 
+fun drawLeftPanel(meshTypes: List<MeshType>) = { b: Bounds ->
+  val padding = Vector2(10f)
+  val itemHeight = 30f
+  val focusIndex = 0
+
+  val items = meshTypes
+      .map { it.name }
+      .mapIndexed { index, it -> PartialBox(itemHeight, drawListItem(it, focusIndex == index)) }
+
+  listOf(
+      Box(b, drawSidePanel())
+  )
+      .plus(arrangeList(verticalArrangement(padding), items, b))
+}
+
 class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePosition: Vector2i) : View {
-  val model: Model = standardMeshes()[config.model]!!()
+  val model: Model = renderer.meshGenerators[config.model]!!()
   val camera = createOrthographicCamera(config.camera)
 
   override fun createLayout(dimensions: Vector2i): Layout {
+    val bounds = Bounds(Vector2(), dimensions.toVector2())
     val panels = listOf(
-        Pair(Measurement(Measurements.pixel, 200f), drawSidePanel()),
-        Pair(Measurement(Measurements.stretch, 0f), drawScenePanel(config, renderer, model, camera)),
-        Pair(Measurement(Measurements.pixel, 300f), drawInfoPanel(config, renderer, model, mousePosition))
+        Pair(200f, drawLeftPanel(renderer.meshGenerators.keys.toList())),
+        Pair(null, { b: Bounds -> listOf(Box(b, drawScenePanel(config, renderer, model, camera))) }),
+        Pair(300f, { b: Bounds -> listOf(Box(b, drawInfoPanel(config, renderer, model, mousePosition))) })
     )
-    val dimensions2 = Vector2(dimensions.x.toFloat(), dimensions.y.toFloat())
-    val boxes = arrangeMeasuredList(horizontalArrangement, panels, dimensions2)
+    val lengths = solveMeasurements(dimensions.x.toFloat(), panels.map { it.first })
+//    val partials = panels.zip(lengths, { panel, length -> PartialBox(length, panel.second) })
+    val boxes = arrangeList2(horizontalArrangement(Vector2(0f, 0f)), lengths, bounds)
+        .zip(panels, { b, p -> p.second(b) })
+        .flatten()
 
     return Layout(
         boxes

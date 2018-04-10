@@ -58,6 +58,7 @@ class Renderer {
   val vertexSchemas = createVertexSchemas()
   var worldMesh: WorldMesh? = null
   val canvasMeshes = createDrawingMeshes(vertexSchemas.drawing)
+  val meshGenerators = standardMeshes()
   val meshes = createMeshes(vertexSchemas)
   val painters = createPainters(meshes)
   val textures = Textures()
