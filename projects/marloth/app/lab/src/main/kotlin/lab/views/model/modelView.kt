@@ -11,6 +11,10 @@ import scenery.Camera
 import lab.views.*
 import mythic.sculpting.*
 
+data class ModelLayout(
+    val boxes: List<Box>
+)
+
 data class ViewCameraConfig(
     var rotationY: Float = 0f,
     var rotationZ: Float = 0f,
@@ -77,8 +81,8 @@ fun getHits(componentMode: ComponentMode, start: Vector3, end: Vector3, model: M
       else -> listOf()
     }
 
-private fun trySelect(config: ModelViewConfig, camera: Camera, model: Model, mousePosition: Vector2i, layout: Layout) {
-  val bounds = layout.boxes[1].bounds
+private fun trySelect(config: ModelViewConfig, camera: Camera, model: Model, mousePosition: Vector2i, boxes: List<Box>) {
+  val bounds = boxes[1].bounds
   val dimensions = bounds.dimensions
   val cursor = mousePosition - bounds.position.toVector2i()
   val cameraData = createCameraEffectsData(dimensions.toVector2i(), camera)
@@ -134,11 +138,11 @@ fun drawLeftPanel(meshTypes: List<MeshType>) = { b: Bounds ->
       .plus(arrangeList(verticalArrangement(padding), items, b))
 }
 
-class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePosition: Vector2i) : View {
+class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePosition: Vector2i) {
   val model: Model = renderer.meshGenerators[config.model]!!()
   val camera = createOrthographicCamera(config.camera)
 
-  override fun createLayout(dimensions: Vector2i): Layout {
+   fun createLayout(dimensions: Vector2i): ModelLayout {
     val bounds = Bounds(Vector2(), dimensions.toVector2())
     val panels = listOf(
         Pair(200f, drawLeftPanel(renderer.meshGenerators.keys.toList())),
@@ -146,24 +150,24 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
         Pair(300f, { b: Bounds -> listOf(Box(b, drawInfoPanel(config, renderer, model, mousePosition))) })
     )
     val lengths = solveMeasurements(dimensions.x.toFloat(), panels.map { it.first })
-//    val partials = panels.zip(lengths, { panel, length -> PartialBox(length, panel.second) })
     val boxes = arrangeList2(horizontalArrangement(Vector2(0f, 0f)), lengths, bounds)
         .zip(panels, { b, p -> p.second(b) })
         .flatten()
 
-    return Layout(
+    return ModelLayout(
         boxes
     )
   }
 
-  override fun updateState(layout: Layout, input: InputState, delta: Float) {
+   fun updateState(layout: ModelLayout, input: InputState, delta: Float) {
     val commands = input.commands
 
     val rotateSpeedZ = 1f
     val rotateSpeedY = 1f
 
     if (isActive(commands, LabCommandType.select)) {
-      trySelect(config, camera, model, mousePosition, layout)
+      updateMouseClick(layout.boxes, mousePosition)
+      trySelect(config, camera, model, mousePosition, layout.boxes)
     }
 
     if (isActive(commands, LabCommandType.rotate)) {
@@ -186,7 +190,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     config.camera.rotationZ = tightenRotation(config.camera.rotationZ)
   }
 
-  override fun getCommands(): LabCommandMap = mapOf(
+   fun getCommands(): LabCommandMap = mapOf(
       LabCommandType.rotateLeft to { c -> config.camera.rotationZ -= rotateSpeedZ * c.value },
       LabCommandType.rotateRight to { c -> config.camera.rotationZ += rotateSpeedZ * c.value },
       LabCommandType.rotateUp to { c -> config.camera.rotationY += rotateSpeedY * c.value },

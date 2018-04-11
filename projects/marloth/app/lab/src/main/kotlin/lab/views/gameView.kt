@@ -6,7 +6,7 @@ import marloth.clienting.Client
 import marloth.clienting.gui.MenuState
 import marloth.clienting.gui.renderGui
 import mythic.bloom.Bounds
-import mythic.bloom.Layout
+import mythic.bloom.Box
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
 import mythic.sculpting.FlexibleMesh
@@ -99,12 +99,12 @@ fun renderScene(client: Client, data: GameViewRenderData) {
   renderer.finishRender(windowInfo)
 }
 
-class GameView(val config: GameViewConfig) : View {
-  override fun createLayout(dimensions: Vector2i): Layout {
-    return Layout(listOf())
-  }
+class GameView(val config: GameViewConfig)  {
+//   fun createLayout(dimensions: Vector2i): List<Box> {
+//    return listOf()
+//  }
 
-  override fun updateState(layout: Layout, input: InputState, delta: Float) {
+   fun updateState(input: InputState, delta: Float) {
     val commands = input.commands
 
     if (isActive(commands, LabCommandType.toggleMeshDisplay)) {
@@ -115,5 +115,5 @@ class GameView(val config: GameViewConfig) : View {
     }
   }
 
-  override fun getCommands(): LabCommandMap = mapOf()
+//   fun getCommands(): LabCommandMap = mapOf()
 }

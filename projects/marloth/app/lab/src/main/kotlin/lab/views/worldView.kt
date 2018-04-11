@@ -43,7 +43,7 @@ fun drawGeneratedWorld(bounds: Bounds, canvas: Canvas, abstractWorld: AbstractWo
 }
 
 fun createMapLayout(abstractWorld: AbstractWorld, screenDimensions: Vector2,
-                    config: WorldViewConfig, renderer: Renderer): Layout {
+                    config: WorldViewConfig, renderer: Renderer): List<Box> {
   val draw = { b: Bounds, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
   val drawWorld = { b: Bounds, c: Canvas ->
     crop(b, c, { drawGeneratedWorld(b, c, abstractWorld, config, renderer) })
@@ -56,23 +56,17 @@ fun createMapLayout(abstractWorld: AbstractWorld, screenDimensions: Vector2,
   )
   val boxes = arrangeMeasuredList(measuredHorizontalArrangement, panels, screenDimensions)
 
-  return Layout(
-      boxes
-  )
+  return boxes
 }
 
-class WorldView(val config: WorldViewConfig, val abstractWorld: AbstractWorld, val renderer: Renderer) : View {
+class WorldView(val config: WorldViewConfig, val abstractWorld: AbstractWorld, val renderer: Renderer) {
 
-  override fun createLayout(dimensions: Vector2i): Layout {
+  fun createLayout(dimensions: Vector2i): List<Box> {
     val dimensions2 = Vector2(dimensions.x.toFloat(), dimensions.y.toFloat())
     return createMapLayout(abstractWorld, dimensions2, config, renderer)
   }
 
-  override fun updateState(layout: Layout, input: InputState, delta: Float) {
-
-  }
-
-  override fun getCommands(): LabCommandMap = mapOf(
+  fun getCommands(): LabCommandMap = mapOf(
       LabCommandType.toggleAbstractView to { _ -> config.showAbstract = !config.showAbstract },
       LabCommandType.toggleStructureView to { _ -> config.showStructure = !config.showStructure }
   )

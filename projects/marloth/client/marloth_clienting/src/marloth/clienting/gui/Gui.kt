@@ -43,7 +43,7 @@ fun drawMenuButton(state: ButtonState): Depiction = { bounds: Bounds, canvas: Ca
   canvas.drawText(state.text, position, blackStyle)
 }
 
-fun createMenuLayout(bounds: Bounds, state: MenuState): Layout {
+fun createMenuLayout(bounds: Bounds, state: MenuState): List<Box> {
   val buttonHeight = 50f
   val items = listOf(
       "New Game",
@@ -56,10 +56,8 @@ fun createMenuLayout(bounds: Bounds, state: MenuState): Layout {
   val menuBounds = centeredBounds(bounds, Vector2(200f, menuHeight))
   val menuPadding = Vector2(10f)
 
-  return Layout(
-      listOf(Box(menuBounds, menuBackground))
-          .plus(arrangeList(verticalArrangement(menuPadding), items, menuBounds))
-  )
+  return listOf(Box(menuBounds, menuBackground))
+      .plus(arrangeList(verticalArrangement(menuPadding), items, menuBounds))
 }
 
 fun renderMenus(bounds: Bounds, canvas: Canvas, state: MenuState) {

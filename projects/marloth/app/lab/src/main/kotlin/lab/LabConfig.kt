@@ -43,10 +43,10 @@ enum class LabCommandType {
   selectEdgeLoop
 }
 
-typealias LabInputConfig = MutableMap<String, Bindings<LabCommandType>>
+typealias LabInputConfig = MutableMap<Views, Bindings<LabCommandType>>
 
 fun createLabInputBindings() = mutableMapOf(
-    "global" to createStrokeBindings(0, mapOf(
+    Views.global to createStrokeBindings(0, mapOf(
         GLFW.GLFW_KEY_F1 to LabCommandType.viewGame,
         GLFW.GLFW_KEY_F2 to LabCommandType.viewWorld,
         GLFW.GLFW_KEY_F3 to LabCommandType.viewModel,
@@ -57,13 +57,13 @@ fun createLabInputBindings() = mutableMapOf(
                 GAMEPAD_BUTTON_START to LabCommandType.menu
             ))
         ),
-    "game" to createStrokeBindings<LabCommandType>(0, mapOf(
+    Views.game to createStrokeBindings<LabCommandType>(0, mapOf(
 
     ))
         .plus(createStrokeBindings(0, mapOf(
             GLFW.GLFW_KEY_X to LabCommandType.toggleMeshDisplay
         ))),
-    "model" to createBindings(2, mapOf(
+    Views.model to createBindings(2, mapOf(
         GAMEPAD_AXIS_RIGHT_UP to LabCommandType.rotateUp,
         GAMEPAD_AXIS_RIGHT_DOWN to LabCommandType.rotateDown,
         GAMEPAD_AXIS_RIGHT_LEFT to LabCommandType.rotateLeft,
@@ -98,11 +98,11 @@ fun createLabInputBindings() = mutableMapOf(
         .plus(createStrokeBindings(1, mapOf(
             GLFW.GLFW_MOUSE_BUTTON_1 to LabCommandType.select
         ))),
-    "world" to createStrokeBindings(0, mapOf(
+    Views.world to createStrokeBindings(0, mapOf(
         GLFW.GLFW_KEY_1 to LabCommandType.toggleAbstractView,
         GLFW.GLFW_KEY_2 to LabCommandType.toggleStructureView
     )),
-    "texture" to createBindings<LabCommandType>(0, mapOf(
+    Views.texture to createBindings<LabCommandType>(0, mapOf(
 
     ))
 )
@@ -112,8 +112,16 @@ data class WorldViewConfig(
     var showStructure: Boolean = true
 )
 
+enum class Views {
+  game,
+  global,
+  model,
+  texture,
+  world
+}
+
 data class LabConfig(
-    var view: String = "world",
+    var view: Views = Views.world,
     var worldView: WorldViewConfig = WorldViewConfig(),
     var modelView: ModelViewConfig = ModelViewConfig(),
     var gameView: lab.views.GameViewConfig = lab.views.GameViewConfig()

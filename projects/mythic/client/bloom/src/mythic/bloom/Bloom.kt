@@ -4,6 +4,7 @@ import mythic.spatial.Vector2
 import mythic.drawing.Canvas
 import mythic.glowing.globalState
 import mythic.spatial.Vector4
+import mythic.spatial.toVector2
 import org.joml.Vector2i
 import org.joml.Vector4i
 import org.joml.plus
@@ -75,9 +76,12 @@ class VerticalPlane : Plane {
 val horizontalPlane = HorizontalPlane()
 val verticalPlane = VerticalPlane()
 
+typealias EventHandler = () -> Unit
+
 data class Box(
     val bounds: Bounds,
     val depiction: Depiction
+//    val onClick: EventHandler? = null
 ) {
   constructor(x: Float, y: Float, width: Float, height: Float, depiction: Depiction) :
       this(Bounds(x, y, width, height), depiction)
@@ -216,10 +220,6 @@ fun centeredPosition(plane: Plane, bounds: Vector2, length: Float?): Float =
 fun centeredPosition(plane: Plane, bounds: Vector2, length: Measurement): Float =
     centeredPosition(plane, bounds, resolveMeasurement(bounds, plane, length))
 
-data class Layout(
-    val boxes: List<Box>
-)
-
 fun drawBorder(bounds: Bounds, canvas: Canvas, color: Vector4, thickness: Float = 1f) {
   canvas.drawSquare(bounds.position, bounds.dimensions, canvas.outline(color, thickness))
 }
@@ -242,12 +242,12 @@ fun applyBounds(bounds: Bounds, box: Box): Box =
 
 fun applyBounds(bounds: Bounds) = { box: Box -> applyBounds(bounds, box) }
 
-fun renderLayout(layout: Layout, canvas: Canvas) {
+fun renderLayout(boxes: List<Box>, canvas: Canvas) {
   globalState.depthEnabled = false
   globalState.blendEnabled = true
   globalState.blendFunction = Pair(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
 
-  for (box in layout.boxes) {
+  for (box in boxes) {
     box.depiction(box.bounds, canvas)
   }
 }
@@ -265,4 +265,16 @@ fun centeredBounds(bounds: Bounds, contentDimensions: Vector2): Bounds {
       centeredPosition(bounds, contentDimensions) + bounds.position,
       contentDimensions
   )
+}
+
+fun isInBounds(position: Vector2, bounds: Bounds): Boolean =
+    position.x >= bounds.position.x &&
+        position.x < bounds.position.x + bounds.dimensions.x &&
+        position.y >= bounds.position.y &&
+        position.y < bounds.position.y + bounds.dimensions.y
+
+fun updateMouseClick(boxes: List<Box>, mousePosition: Vector2i) {
+//  val position = mousePosition.toVector2()
+//  boxes.filter { box -> box.onClick != null && isInBounds(position, box.bounds) }
+//      .forEach { it.onClick!!() }
 }

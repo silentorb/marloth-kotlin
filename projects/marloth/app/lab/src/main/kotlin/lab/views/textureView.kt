@@ -16,9 +16,9 @@ fun drawTextureView(bounds: Bounds, canvas: Canvas) {
   texture.dispose()
 }
 
-class TextureView : View {
+class TextureView  {
 
-  override fun createLayout(dimensions: Vector2i): Layout {
+   fun createLayout(dimensions: Vector2i): List<Box> {
     val draw = { b: Bounds, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
 
     val panels = listOf(
@@ -31,14 +31,6 @@ class TextureView : View {
     val dimensions2 = Vector2(dimensions.x.toFloat(), dimensions.y.toFloat())
     val boxes = arrangeMeasuredList(measuredHorizontalArrangement, panels, dimensions2)
 
-    return Layout(
-        boxes
-    )
+    return boxes
   }
-
-  override fun updateState(layout: Layout, input: InputState, delta: Float) {
-
-  }
-
-  override fun getCommands(): LabCommandMap = mapOf()
 }

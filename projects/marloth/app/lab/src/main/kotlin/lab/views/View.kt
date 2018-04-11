@@ -5,7 +5,6 @@ import lab.LabState
 import haft.*
 import lab.LabCommandType
 import marloth.clienting.gui.MenuActionType
-import mythic.bloom.Layout
 import org.joml.Vector2i
 
 data class LabClientResult(
@@ -22,8 +21,8 @@ data class InputState(
     val mouseOffset: Vector2i
 )
 
-interface View {
-  fun createLayout(dimensions: Vector2i): Layout
-  fun getCommands(): LabCommandMap
-  fun updateState(layout: Layout, input: InputState, delta: Float)
-}
+//interface View {
+//  fun createLayout(dimensions: Vector2i): Layout
+//  fun getCommands(): LabCommandMap
+//  fun updateState(layout: Layout, input: InputState, delta: Float)
+//}

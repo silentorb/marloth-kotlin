@@ -13,7 +13,7 @@ import marloth.clienting.gui.MenuActionType
 import marloth.clienting.gui.MenuState
 import marloth.clienting.gui.menuButtonAction
 import marloth.clienting.gui.updateMenuState
-import mythic.bloom.Layout
+import mythic.bloom.Box
 import mythic.bloom.renderLayout
 import org.joml.Vector2i
 import org.joml.minus
@@ -37,14 +37,14 @@ fun createLabDeviceHandlers(input: PlatformInput): List<ScalarInputSource> {
   )
 }
 
-fun selectView(config: LabConfig, abstractWorld: AbstractWorld, client: Client, view: String): View =
-    when (view) {
-      "game" -> GameView(config.gameView)
-      "world" -> WorldView(config.worldView, abstractWorld, client.renderer)
-      "model" -> ModelView(config.modelView, client.renderer, client.platform.input.getMousePosition())
-      "texture" -> TextureView()
-      else -> throw Error("Not supported")
-    }
+//fun selectView(config: LabConfig, abstractWorld: AbstractWorld, client: Client, view: String): View =
+//    when (view) {
+//      "game" -> GameView(config.gameView)
+//      "world" -> WorldView(config.worldView, abstractWorld, client.renderer)
+//      "model" -> ModelView(config.modelView, client.renderer, client.platform.input.getMousePosition())
+//      "texture" -> TextureView()
+//      else -> throw Error("Not supported")
+//    }
 
 private var previousMousePosition = Vector2i()
 
@@ -62,28 +62,36 @@ fun getInputState(platformInput: PlatformInput, commands: List<Command<LabComman
 class LabClient(val config: LabConfig, val client: Client) {
 
   val globalKeyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
-      LabCommandType.viewGame to { _ -> config.view = "game" },
-      LabCommandType.viewModel to { _ -> config.view = "model" },
-      LabCommandType.viewWorld to { _ -> config.view = "world" },
-      LabCommandType.viewTexture to { _ -> config.view = "texture" },
-      LabCommandType.menu to { _ ->
-        if (config.view != "game")
-          client.platform.process.close()
-      }
+      LabCommandType.viewGame to { _ -> config.view = Views.game },
+      LabCommandType.viewModel to { _ -> config.view = Views.model },
+      LabCommandType.viewWorld to { _ -> config.view = Views.world },
+      LabCommandType.viewTexture to { _ -> config.view = Views.texture }
+//      LabCommandType.menu to { _ ->
+//        if (config.view != "game")
+//          client.platform.process.close()
+//      }
   )
   val deviceHandlers = createLabDeviceHandlers(client.platform.input)
 
-  fun updateInput(view: View, layout: Layout, bindings: Bindings<LabCommandType>,
-                  previousState: LabState, delta: Float): InputTriggerState<LabCommandType> {
-    val (commands, nextLabInputState) = gatherInputCommands(bindings, deviceHandlers, previousState.labInput)
-    applyCommands(commands, view.getCommands().plus(globalKeyPressCommands))
-    val input = getInputState(client.platform.input, commands)
-    view.updateState(layout, input, delta)
-    return nextLabInputState
+  fun updateInput(viewCommands: LabCommandMap, previousState: LabState): Pair<Commands<LabCommandType>,
+      InputTriggerState<LabCommandType>> {
+    val (commands, nextLabInputState) = gatherInputCommands(getBindings(), deviceHandlers, previousState.labInput)
+    applyCommands(commands, viewCommands.plus(globalKeyPressCommands))
+    return Pair(commands, nextLabInputState)
   }
 
-  fun updateGame(scenes: List<GameScene>, metaWorld: AbstractWorld, previousState: LabState,
-                 nextLabInputState: InputTriggerState<LabCommandType>): LabClientResult {
+  fun getBindings() = labInputConfig[Views.global]!!.plus(labInputConfig[config.view]!!)
+
+  fun prepareClient(windowInfo: WindowInfo) {
+    client.renderer.prepareRender(windowInfo)
+    client.platform.input.update()
+  }
+
+  fun updateGame(windowInfo: WindowInfo, scenes: List<GameScene>, metaWorld: AbstractWorld, previousState: LabState, delta: Float): LabClientResult {
+    val view = GameView(config.gameView)
+    val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
+    val input = getInputState(client.platform.input, commands)
+    view.updateState(input, delta)
     val properties = client.prepareInput(previousState.gameInput, scenes.map { it.player })
     val gameResult = if (previousState.menuState.isVisible)
       client.updateGameInput(properties, client.menuInputProfiles)
@@ -100,31 +108,65 @@ class LabClient(val config: LabConfig, val client: Client) {
     return LabClientResult(gameCommands, LabState(nextLabInputState, nextGameInputState, newMenuState), menuAction)
   }
 
+  fun updateModel(windowInfo: WindowInfo, previousState: LabState, delta: Float): LabClientResult {
+    val view = ModelView(config.modelView, client.renderer, client.platform.input.getMousePosition())
+
+    val layout = view.createLayout(windowInfo.dimensions)
+    val (commands, nextLabInputState) = updateInput(view.getCommands(), previousState)
+    val input = getInputState(client.platform.input, commands)
+    view.updateState(layout, input, delta)
+
+    renderLab(windowInfo, layout.boxes)
+    return LabClientResult(
+        listOf(),
+        LabState(nextLabInputState, previousState.gameInput, previousState.menuState),
+        MenuActionType.none
+    )
+  }
+
+  fun updateTexture(windowInfo: WindowInfo, previousState: LabState): LabClientResult {
+    val view = TextureView()
+
+    val layout = view.createLayout(windowInfo.dimensions)
+    val (_, nextLabInputState) = updateInput(mapOf(), previousState)
+
+    renderLab(windowInfo, layout)
+    return LabClientResult(
+        listOf(),
+        LabState(nextLabInputState, previousState.gameInput, previousState.menuState),
+        MenuActionType.none
+    )
+  }
+
+  fun updateWorld(windowInfo: WindowInfo, metaWorld: AbstractWorld, previousState: LabState): LabClientResult {
+    val view = WorldView(config.worldView, metaWorld, client.renderer)
+
+    val layout = view.createLayout(windowInfo.dimensions)
+    val (_, nextLabInputState) = updateInput(view.getCommands(), previousState)
+
+    renderLab(windowInfo, layout)
+    return LabClientResult(
+        listOf(),
+        LabState(nextLabInputState, previousState.gameInput, previousState.menuState),
+        MenuActionType.none
+    )
+  }
+
   fun update(scenes: List<GameScene>, metaWorld: AbstractWorld, previousState: LabState, delta: Float): LabClientResult {
     val windowInfo = client.platform.display.getInfo()
-    val view = selectView(config, metaWorld, client, config.view)
-    client.renderer.prepareRender(windowInfo)
-    val layout = view.createLayout(windowInfo.dimensions)
-    client.platform.input.update()
-
-    val bindings = labInputConfig["global"]!!.plus(labInputConfig[config.view]!!)
-    val nextLabInputState = updateInput(view, layout, bindings, previousState, delta)
-
-    if (config.view == "game") {
-      return updateGame(scenes, metaWorld, previousState, nextLabInputState)
-    } else {
-      renderLab(windowInfo, layout)
-      return LabClientResult(
-          listOf(),
-          LabState(nextLabInputState, previousState.gameInput, previousState.menuState),
-          MenuActionType.none
-      )
+    prepareClient(windowInfo)
+    return when (config.view) {
+      Views.game -> updateGame(windowInfo, scenes, metaWorld, previousState, delta)
+      Views.model -> updateModel(windowInfo, previousState, delta)
+      Views.texture -> updateTexture(windowInfo, previousState)
+      Views.world -> updateWorld(windowInfo, metaWorld, previousState)
+      else -> throw Error("Not supported")
     }
   }
 
-  fun renderLab(windowInfo: WindowInfo, labLayout: Layout) {
+  fun renderLab(windowInfo: WindowInfo, boxes: List<Box>) {
     val canvas = createCanvas(client.renderer, windowInfo)
-    renderLayout(labLayout, canvas)
+    renderLayout(boxes, canvas)
   }
 
 }
