@@ -142,7 +142,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
   val model: Model = renderer.meshGenerators[config.model]!!()
   val camera = createOrthographicCamera(config.camera)
 
-   fun createLayout(dimensions: Vector2i): ModelLayout {
+  fun createLayout(dimensions: Vector2i): ModelLayout {
     val bounds = Bounds(Vector2(), dimensions.toVector2())
     val panels = listOf(
         Pair(200f, drawLeftPanel(renderer.meshGenerators.keys.toList())),
@@ -152,14 +152,13 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     val lengths = solveMeasurements(dimensions.x.toFloat(), panels.map { it.first })
     val boxes = arrangeList2(horizontalArrangement(Vector2(0f, 0f)), lengths, bounds)
         .zip(panels, { b, p -> p.second(b) })
-        .flatten()
 
     return ModelLayout(
-        boxes
+        boxes.flatten()
     )
   }
 
-   fun updateState(layout: ModelLayout, input: InputState, delta: Float) {
+  fun updateState(layout: ModelLayout, input: InputState, delta: Float) {
     val commands = input.commands
 
     val rotateSpeedZ = 1f
@@ -190,7 +189,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     config.camera.rotationZ = tightenRotation(config.camera.rotationZ)
   }
 
-   fun getCommands(): LabCommandMap = mapOf(
+  fun getCommands(): LabCommandMap = mapOf(
       LabCommandType.rotateLeft to { c -> config.camera.rotationZ -= rotateSpeedZ * c.value },
       LabCommandType.rotateRight to { c -> config.camera.rotationZ += rotateSpeedZ * c.value },
       LabCommandType.rotateUp to { c -> config.camera.rotationY += rotateSpeedY * c.value },
