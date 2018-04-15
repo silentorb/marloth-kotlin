@@ -12,7 +12,8 @@ import lab.views.*
 import mythic.sculpting.*
 
 data class ModelLayout(
-    val boxes: List<Box>
+    val boxes: List<Box>,
+    val clickBoxes: List<ClickBox<SelectionEvent>>
 )
 
 data class ViewCameraConfig(
@@ -123,19 +124,25 @@ fun resetCamera(config: ModelViewConfig, model: Model, rotationY: Float, rotatio
   config.camera.pivot = getVerticesCenter(model.vertices)
 }
 
-fun drawLeftPanel(meshTypes: List<MeshType>) = { b: Bounds ->
+data class SelectionEvent(
+    val index: Int
+)
+
+fun drawLeftPanel(meshTypes: List<MeshType>, config: ModelViewConfig) = { bounds: Bounds ->
   val padding = Vector2(10f)
   val itemHeight = 30f
-  val focusIndex = 0
+  val focusIndex = meshTypes.indexOf(config.model)
 
   val items = meshTypes
       .map { it.name }
       .mapIndexed { index, it -> PartialBox(itemHeight, drawListItem(it, focusIndex == index)) }
 
-  listOf(
-      Box(b, drawSidePanel())
+  val buttonBoxes = arrangeList(verticalArrangement(padding), items, bounds)
+  val boxes = listOf(
+      Box(bounds, drawSidePanel())
   )
-      .plus(arrangeList(verticalArrangement(padding), items, b))
+      .plus(buttonBoxes)
+  Pair(boxes, buttonBoxes.mapIndexed { i, b -> ClickBox(b.bounds, SelectionEvent(i)) })
 }
 
 class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePosition: Vector2i) {
@@ -144,17 +151,22 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
 
   fun createLayout(dimensions: Vector2i): ModelLayout {
     val bounds = Bounds(Vector2(), dimensions.toVector2())
-    val panels = listOf(
-        Pair(200f, drawLeftPanel(renderer.meshGenerators.keys.toList())),
-        Pair(null, { b: Bounds -> listOf(Box(b, drawScenePanel(config, renderer, model, camera))) }),
-        Pair(300f, { b: Bounds -> listOf(Box(b, drawInfoPanel(config, renderer, model, mousePosition))) })
-    )
-    val lengths = solveMeasurements(dimensions.x.toFloat(), panels.map { it.first })
-    val boxes = arrangeList2(horizontalArrangement(Vector2(0f, 0f)), lengths, bounds)
-        .zip(panels, { b, p -> p.second(b) })
+    val initialLengths = listOf(200f, null, 300f)
+
+    val left = drawLeftPanel(renderer.meshGenerators.keys.toList(), config)
+    val middle = { b: Bounds -> Box(b, drawScenePanel(config, renderer, model, camera)) }
+    val right = { b: Bounds -> Box(b, drawInfoPanel(config, renderer, model, mousePosition)) }
+    val lengths = solveMeasurements(dimensions.x.toFloat(), initialLengths)
+    val panelBounds = arrangeList2(horizontalArrangement(Vector2(0f, 0f)), lengths, bounds)
+    val boxes = panelBounds.drop(1)
+        .zip(listOf(middle, right), { b, p -> p(b) })
+
+    val (leftBoxes, leftClickBoxes) = left(panelBounds[0])
 
     return ModelLayout(
-        boxes.flatten()
+        leftBoxes
+            .plus(boxes),
+        leftClickBoxes
     )
   }
 
@@ -165,8 +177,12 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     val rotateSpeedY = 1f
 
     if (isActive(commands, LabCommandType.select)) {
-      updateMouseClick(layout.boxes, mousePosition)
-      trySelect(config, camera, model, mousePosition, layout.boxes)
+      val clickBox = filterMouseOverBoxes(layout.clickBoxes, mousePosition)
+      if (clickBox != null) {
+        config.model = renderer.meshGenerators.keys.toList()[clickBox.value.index]
+      } else {
+        trySelect(config, camera, model, mousePosition, layout.boxes)
+      }
     }
 
     if (isActive(commands, LabCommandType.rotate)) {

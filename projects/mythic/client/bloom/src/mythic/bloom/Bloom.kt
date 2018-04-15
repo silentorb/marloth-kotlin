@@ -87,6 +87,11 @@ data class Box(
       this(Bounds(x, y, width, height), depiction)
 }
 
+data class ClickBox<T>(
+    val bounds: Bounds,
+    val value: T
+)
+
 data class PartialBox(
     val length: Float,
     val depiction: Depiction
@@ -273,8 +278,7 @@ fun isInBounds(position: Vector2, bounds: Bounds): Boolean =
         position.y >= bounds.position.y &&
         position.y < bounds.position.y + bounds.dimensions.y
 
-fun updateMouseClick(boxes: List<Box>, mousePosition: Vector2i) {
-//  val position = mousePosition.toVector2()
-//  boxes.filter { box -> box.onClick != null && isInBounds(position, box.bounds) }
-//      .forEach { it.onClick!!() }
+fun <T> filterMouseOverBoxes(boxes: List<ClickBox<T>>, mousePosition: Vector2i): ClickBox<T>? {
+  val position = mousePosition.toVector2()
+  return boxes.filter { box -> isInBounds(position, box.bounds) }.firstOrNull()
 }
