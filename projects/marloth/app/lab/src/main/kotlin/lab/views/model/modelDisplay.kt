@@ -1,6 +1,7 @@
 package lab.views.model
 
 import lab.utility.*
+import lab.views.renderFaceNormals
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
@@ -68,6 +69,9 @@ fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, cam
     meshes.forEach { drawMeshPreview(config, sceneRenderer, transform, it) }
 //    val simpleMesh = createSimpleMesh(model.mesh, renderer.vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f))
 
+    if (config.drawNormals)
+      renderFaceNormals(sceneRenderer, 0.1f, model.mesh)
+
 //    simpleMesh.dispose()
     meshes.forEach { it.mesh.dispose() }
 
@@ -105,6 +109,7 @@ fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, cam
         sceneRenderer.drawLine(pair.key.first, pair.key.second, yellow)
       }
     }
+
   })
 }
 

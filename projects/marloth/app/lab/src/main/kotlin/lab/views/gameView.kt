@@ -6,13 +6,11 @@ import marloth.clienting.Client
 import marloth.clienting.gui.MenuState
 import marloth.clienting.gui.renderGui
 import mythic.bloom.Bounds
-import mythic.bloom.Box
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
 import mythic.sculpting.FlexibleMesh
 import mythic.sculpting.getVerticesCenter
 import mythic.spatial.*
-import org.joml.Vector2i
 import rendering.*
 import scenery.GameScene
 import simulation.AbstractWorld
@@ -31,7 +29,7 @@ data class GameViewConfig(
     var drawNormals: Boolean = false
 )
 
-fun renderFaceNormals(renderer: SceneRenderer, mesh: FlexibleMesh) {
+fun renderFaceNormals(renderer: SceneRenderer, length: Float, mesh: FlexibleMesh) {
   globalState.lineThickness = 2f
   for (face in mesh.faces) {
     val faceCenter = getVerticesCenter(face.unorderedVertices)
@@ -39,6 +37,7 @@ fun renderFaceNormals(renderer: SceneRenderer, mesh: FlexibleMesh) {
         .translate(faceCenter)
         .rotateTowards(face.normal, Vector3(0f, 0f, 1f))
         .rotateY(-Pi * 0.5f)
+        .scale(length)
 
     renderer.effects.flat.activate(transform, Vector4(0f, 1f, 0f, 1f))
     renderer.meshes[MeshType.line]!![0].mesh.draw(DrawMethod.lines)
@@ -52,7 +51,7 @@ data class GameViewRenderData(
     val menuState: MenuState
 )
 
-fun renderNormalScene(renderers: List<GameSceneRenderer>, data: GameViewRenderData) {
+fun renderStandardScene(renderers: List<GameSceneRenderer>, data: GameViewRenderData) {
   renderers.forEach {
     it.render()
   }
@@ -83,7 +82,7 @@ fun renderScene(client: Client, data: GameViewRenderData) {
   renderer.prepareRender(windowInfo)
   val renderers = mapGameSceneRenderers(renderer, data.scenes, windowInfo)
   when (data.config.displayMode) {
-    GameDisplayMode.normal -> renderNormalScene(renderers, data)
+    GameDisplayMode.normal -> renderStandardScene(renderers, data)
     GameDisplayMode.wireframe -> renderWireframeScene(renderers, data)
   }
 
@@ -91,7 +90,7 @@ fun renderScene(client: Client, data: GameViewRenderData) {
 
   renderers.forEach {
     if (data.config.drawNormals)
-      renderFaceNormals(it.renderer, data.world.mesh)
+      renderFaceNormals(it.renderer, 1f, data.world.mesh)
 
     val viewport = it.renderer.viewport
     renderGui(it.renderer, Bounds(viewport.toVector4()), canvas, data.menuState)
@@ -99,12 +98,12 @@ fun renderScene(client: Client, data: GameViewRenderData) {
   renderer.finishRender(windowInfo)
 }
 
-class GameView(val config: GameViewConfig)  {
+class GameView(val config: GameViewConfig) {
 //   fun createLayout(dimensions: Vector2i): List<Box> {
 //    return listOf()
 //  }
 
-   fun updateState(input: InputState, delta: Float) {
+  fun updateState(input: InputState, delta: Float) {
     val commands = input.commands
 
     if (isActive(commands, LabCommandType.toggleMeshDisplay)) {

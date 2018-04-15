@@ -35,7 +35,7 @@ enum class MeshDisplay {
 }
 
 data class ModelViewConfig(
-    var model: MeshType = MeshType.human,
+    var model: MeshType = MeshType.bear,
     var drawVertices: Boolean = true,
     var drawEdges: Boolean = true,
     var camera: ViewCameraConfig = ViewCameraConfig(),
@@ -43,7 +43,8 @@ data class ModelViewConfig(
     var tempStart: Vector3 = Vector3(),
     var tempEnd: Vector3 = Vector3(),
     var componentMode: ComponentMode = ComponentMode.vertices,
-    var meshDisplay: MeshDisplay = MeshDisplay.solid
+    var meshDisplay: MeshDisplay = MeshDisplay.solid,
+    val drawNormals: Boolean = false
 )
 
 typealias MeshGenerator = (FlexibleMesh) -> Unit

@@ -8,12 +8,11 @@ import mythic.glowing.VertexAttribute
 import mythic.glowing.VertexSchema
 import mythic.sculpting.*
 import mythic.spatial.*
-import rendering.meshes.createHuman
-import rendering.meshes.createMonster
 import rendering.meshes.createWallLamp
 
 import de.javagl.jgltf.model.io.GltfModelReader
 import rendering.meshes.createCartoonHuman
+import rendering.meshes.createHuman
 
 data class NewMesh(val mesh: HalfEdgeMesh, val vertexSchema: VertexSchema)
 typealias NewMeshMap = Map<String, NewMesh>
@@ -77,8 +76,9 @@ fun createLineMesh(vertexSchema: VertexSchema) =
     ))
 
 enum class MeshType {
-  human,
+  bear,
   cylinder,
+  human,
   line,
   monster,
   sphere,
@@ -135,7 +135,8 @@ private fun loadResource(name: String): GltfModel {
 //}
 
 fun standardMeshes(): ModelGeneratorMap = mapOf(
-    MeshType.human to createCartoonHuman,
+    MeshType.bear to createCartoonHuman,
+    MeshType.human to createHuman,
     MeshType.monster to createCartoonHuman,
     MeshType.wallLamp to createWallLamp
 )

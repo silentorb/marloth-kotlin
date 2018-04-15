@@ -59,11 +59,12 @@ fun createHumanMesh(): Pair<FlexibleMesh, MeshInfo> {
   val head = createHead(3)
   val torso = createTorso(3)
   val mesh = joinMeshNodes(head.mesh, head.ports.neck, torso.mesh, torso.ports.neck)
-  val s = FlexibleMesh()
-  createSphere(s, 0.3f, 8, 6)
-  distortedTranslatePosition(Vector3(0.1f, 0f, 0f), s)
-  mesh.sharedImport(s)
+//  val s = FlexibleMesh()
+//  createSphere(s, 0.3f, 8, 6)
+//  distortedTranslatePosition(Vector3(0.1f, 0f, 0f), s)
+//  mesh.sharedImport(s)
   alignToFloor(mesh.distinctVertices, 0f)
+  calculateNormals(mesh)
   return Pair(mesh, MeshInfo(listOf(), head.info.edgeGroups.plus(torso.info.edgeGroups)))
 }
 
