@@ -1,5 +1,11 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
+dependencies {
+  compile 'com.fasterxml.jackson.core:jackson-databind:2.9.3'
+  compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.3"
+  compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.21'
+}
+
 requires 'platforming', 'spatial', 'scenery', 'sculpting', 'glowing', 'typography', 'drawing', 'texture_generation'
 
 apply plugin: 'java'

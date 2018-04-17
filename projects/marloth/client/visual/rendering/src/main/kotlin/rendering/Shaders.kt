@@ -7,7 +7,7 @@ import mythic.spatial.Matrix
 import mythic.spatial.Vector4
 import java.util.*
 
-private fun loadResource(name: String): String {
+private fun loadBinaryResource(name: String): String {
   val classloader = Thread.currentThread().contextClassLoader
   val inputStream = classloader.getResourceAsStream(name)
   val s = Scanner(inputStream).useDelimiter("\\A")
@@ -15,7 +15,7 @@ private fun loadResource(name: String): String {
   return result
 }
 
-private val lighting = loadResource("shaders/lighting.glsl")
+private val lighting = loadBinaryResource("shaders/lighting.glsl")
 
 private val flatVertex = """
 uniform mat4 cameraTransform;
@@ -41,7 +41,7 @@ void main() {
 }
 """
 
-private val mainVertex = loadResource("shaders/mainVertex.glsl").replace("// #{lighting}", lighting)
+private val mainVertex = loadBinaryResource("shaders/mainVertex.glsl").replace("// #{lighting}", lighting)
 
 private val texturedVertex = """
 uniform mat4 cameraTransform;
