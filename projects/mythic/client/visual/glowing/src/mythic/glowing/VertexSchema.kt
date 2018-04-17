@@ -8,20 +8,40 @@ class VertexSchema(val attributes: List<VertexAttribute>) {
   val floatSize = attributes.sumBy { it.size }
 }
 
-class VertexArrayObject(schema: VertexSchema) {
+class VertexArrayObject() {
   val id = glGenVertexArrays()
 
-  init {
-    var offset = 0L
-    var i = 0
-    globalState.vertexArrayObject = id
+  companion object {
 
-    for (attribute in schema.attributes) {
-      glVertexAttribPointer(i, attribute.size, GL_FLOAT, false, schema.floatSize * 4, offset)
-      glEnableVertexAttribArray(i)
-      i++
-      offset += attribute.size * 4
+    fun createInterwoven(schema: VertexSchema): VertexArrayObject {
+      val result = VertexArrayObject()
+      var offset = 0L
+      var i = 0
+      globalState.vertexArrayObject = result.id
+
+      for (attribute in schema.attributes) {
+        glVertexAttribPointer(i, attribute.size, GL_FLOAT, false, schema.floatSize * 4, offset)
+        glEnableVertexAttribArray(i)
+        i++
+        offset += attribute.size * 4
+      }
+      return result
     }
+
+//    fun createStriding(schema: VertexSchema): VertexArrayObject {
+//      val result = VertexArrayObject()
+//      var offset = 0L
+//      var i = 0
+//      globalState.vertexArrayObject = result.id
+//
+//      for (attribute in schema.attributes) {
+//        glVertexAttribPointer(i, attribute.size, GL_FLOAT, false, schema.floatSize * 4, offset)
+//        glEnableVertexAttribArray(i)
+//        i++
+//        offset += attribute.size * 4
+//      }
+//      return result
+//    }
   }
 
   fun activate() {

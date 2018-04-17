@@ -11,11 +11,11 @@ class VertexBuffer(vertexSchema: VertexSchema) {
 
   init {
     globalState.vertexBufferObject = vbo
-    vao = VertexArrayObject(vertexSchema)
+    vao = VertexArrayObject.createInterwoven(vertexSchema)
     checkError("binding vbo buffer data")
   }
 
-  fun load(vertices: FloatBuffer){
+  fun load(vertices: FloatBuffer) {
     globalState.vertexBufferObject = vbo
     glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW)
   }

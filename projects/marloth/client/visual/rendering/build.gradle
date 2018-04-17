@@ -1,9 +1,5 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
-dependencies {
-  compile 'com.github.javagl:JglTF:82bb96b0064732436fdc9e771bdbe717a2b8d8f2'
-}
-
-requires('platforming', 'spatial', 'scenery', 'sculpting', 'glowing', 'typography', 'drawing', 'texture_generation')
+requires 'platforming', 'spatial', 'scenery', 'sculpting', 'glowing', 'typography', 'drawing', 'texture_generation'
 
 apply plugin: 'java'

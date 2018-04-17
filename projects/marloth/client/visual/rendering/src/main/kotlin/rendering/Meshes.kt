@@ -1,6 +1,5 @@
 package rendering
 
-import de.javagl.jgltf.model.GltfModel
 import mythic.drawing.DrawingVertexSchemas
 import mythic.drawing.createDrawingVertexSchemas
 import mythic.glowing.SimpleMesh
@@ -10,7 +9,7 @@ import mythic.sculpting.*
 import mythic.spatial.*
 import rendering.meshes.createWallLamp
 
-import de.javagl.jgltf.model.io.GltfModelReader
+import mythic.glowing.Drawable
 import rendering.meshes.createCartoonHuman
 import rendering.meshes.createHuman
 
@@ -38,6 +37,7 @@ fun createSphere(): FlexibleMesh {
 
 data class VertexSchemas(
     val standard: VertexSchema,
+    val imported: VertexSchema,
     val textured: VertexSchema,
     val flat: VertexSchema,
     val drawing: DrawingVertexSchemas
@@ -56,6 +56,10 @@ fun createVertexSchemas() = VertexSchemas(
     )),
     flat = VertexSchema(listOf(
         VertexAttribute(0, "position", 3)
+    )),
+    imported = VertexSchema(listOf(
+        VertexAttribute(0, "position", 3),
+        VertexAttribute(1, "normal", 3)
     )),
     drawing = createDrawingVertexSchemas()
 )
@@ -82,6 +86,7 @@ enum class MeshType {
   line,
   monster,
   sphere,
+  test,
   wallLamp,
 }
 
@@ -90,7 +95,7 @@ typealias ModelGenerator = () -> Model
 typealias ModelGeneratorMap = Map<MeshType, ModelGenerator>
 
 data class ModelElement(
-    val mesh: SimpleMesh,
+    val mesh: Drawable,
     val material: Material
 )
 
@@ -118,22 +123,6 @@ fun modelToMeshes(vertexSchemas: VertexSchemas, model: Model): ModelElements {
   }
 }
 
-private fun loadResource(name: String): GltfModel {
-  val classloader = Thread.currentThread().contextClassLoader
-  val inputStream = classloader.getResourceAsStream(name)
-  val reader = GltfModelReader()
-  return reader.readWithoutReferences(inputStream)
-}
-
-//val createWallLamp = { vertexSchemas: VertexSchemas ->
-//  val model = loadResource("models/lamp.gltf")
-//  val mesh = SimpleMesh(vertexSchemas.standard,
-//      model.bufferModels.first().bufferData.asFloatBuffer(),
-//      model.bufferModels[1].bufferData.asIntBuffer(),
-//      model.bufferModels[2].bufferData.asIntBuffer())
-//  listOf(ModelElement(mesh, Material()))
-//}
-
 fun standardMeshes(): ModelGeneratorMap = mapOf(
     MeshType.bear to createCartoonHuman,
     MeshType.human to createHuman,
@@ -159,3 +148,6 @@ fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     .plus(standardMeshes().mapValues {
       modelToMeshes(vertexSchemas, it.value())
     })
+    .plus(listOf(
+        MeshType.test to loadGltf(vertexSchemas, "models/cube")
+    ))

@@ -47,7 +47,8 @@ private fun convertDrawMethod(method: DrawMethod): Int {
 }
 
 interface Drawable {
-  fun draw(method: DrawMethod): Unit
+  fun draw(method: DrawMethod)
+  fun dispose()
 }
 
 class SimpleMesh(val vertexBuffer: VertexBuffer, val offsets: IntBuffer, val counts: IntBuffer) : Drawable {
@@ -74,7 +75,24 @@ class SimpleMesh(val vertexBuffer: VertexBuffer, val offsets: IntBuffer, val cou
     vertexBuffer.load(buffer)
   }
 
-  fun dispose() {
+  override fun dispose() {
+    vertexBuffer.dispose()
+  }
+}
+
+class SimpleTriangleMesh(val vertexBuffer: VertexBuffer, val indices: IntBuffer) : Drawable {
+
+  override fun draw(method: DrawMethod) {
+    vertexBuffer.activate()
+    glDrawElements(GL_TRIANGLES, indices)
+  }
+
+  constructor(vertexSchema: VertexSchema, buffer: FloatBuffer, indices: IntBuffer) :
+      this(VertexBuffer(vertexSchema), indices) {
+    vertexBuffer.load(buffer)
+  }
+
+  override fun dispose() {
     vertexBuffer.dispose()
   }
 }
@@ -95,7 +113,7 @@ class MutableSimpleMesh(val vertexSchema: VertexSchema) : Drawable {
     counts = createIntBuffer(values.size / vertexSchema.floatSize)
   }
 
-  fun dispose() {
+  override fun dispose() {
     vertexBuffer.dispose()
   }
 }
