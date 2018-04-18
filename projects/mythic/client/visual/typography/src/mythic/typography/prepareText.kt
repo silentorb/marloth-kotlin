@@ -1,5 +1,6 @@
 package mythic.typography
 
+import mythic.glowing.Drawable
 import mythic.glowing.SimpleMesh
 import mythic.glowing.VertexSchema
 import mythic.spatial.Vector2
@@ -24,7 +25,7 @@ data class TextConfiguration(
 )
 
 data class TextPackage(
-    val mesh: SimpleMesh
+    val mesh: Drawable
 )
 
 data class ArrangedCharacter(
@@ -133,7 +134,7 @@ fun calculateTextDimensions(config: TextConfiguration): Vector2 {
   return Vector2(arrangement.width, arrangement.height)
 }
 
-fun prepareText(config: TextConfiguration, vertexSchema: VertexSchema): TextPackage? {
+fun <T>prepareText(config: TextConfiguration, vertexSchema: VertexSchema<T>): TextPackage? {
   val arrangement = arrangeType(config)
   if (arrangement == null)
     return null

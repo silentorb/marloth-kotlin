@@ -23,7 +23,7 @@ fun gatherEffectsData(dimensions: Vector2i, scene: Scene): EffectsData {
 }
 
 data class WorldMesh(
-    val mesh: SimpleMesh,
+    val mesh: SimpleMesh<AttributeName>,
     val textureIndex: List<Texture>
 )
 

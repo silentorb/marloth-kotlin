@@ -4,7 +4,7 @@ import mythic.drawing.DrawingVertexSchemas
 import mythic.drawing.createDrawingVertexSchemas
 import mythic.glowing.SimpleMesh
 import mythic.glowing.VertexAttribute
-import mythic.glowing.VertexSchema
+import mythic.glowing.VertexSchema as GenericVertexSchema
 import mythic.sculpting.*
 import mythic.spatial.*
 import rendering.meshes.createWallLamp
@@ -13,8 +13,8 @@ import mythic.glowing.Drawable
 import rendering.meshes.createCartoonHuman
 import rendering.meshes.createHuman
 
-data class NewMesh(val mesh: HalfEdgeMesh, val vertexSchema: VertexSchema)
-typealias NewMeshMap = Map<String, NewMesh>
+//data class NewMesh(val mesh: HalfEdgeMesh, val vertexSchema: VertexSchema)
+//typealias NewMeshMap = Map<String, NewMesh>
 
 fun createCube(): FlexibleMesh {
   val mesh = FlexibleMesh()
@@ -35,6 +35,15 @@ fun createSphere(): FlexibleMesh {
   return mesh
 }
 
+enum class AttributeName {
+  position,
+  normal,
+  color,
+  uv
+}
+
+typealias VertexSchema = GenericVertexSchema<AttributeName>
+
 data class VertexSchemas(
     val standard: VertexSchema,
     val imported: VertexSchema,
@@ -45,27 +54,27 @@ data class VertexSchemas(
 
 fun createVertexSchemas() = VertexSchemas(
     standard = VertexSchema(listOf(
-        VertexAttribute(0, "position", 3),
-        VertexAttribute(1, "normal", 3),
-        VertexAttribute(2, "color", 4)
+        VertexAttribute(AttributeName.position, 3),
+        VertexAttribute(AttributeName.normal, 3),
+        VertexAttribute(AttributeName.color, 4)
     )),
     textured = VertexSchema(listOf(
-        VertexAttribute(0, "position", 3),
-        VertexAttribute(1, "normal", 3),
-        VertexAttribute(2, "uv", 2)
+        VertexAttribute(AttributeName.position, 3),
+        VertexAttribute(AttributeName.normal, 3),
+        VertexAttribute(AttributeName.uv, 2)
     )),
     flat = VertexSchema(listOf(
-        VertexAttribute(0, "position", 3)
+        VertexAttribute(AttributeName.position, 3)
     )),
     imported = VertexSchema(listOf(
-        VertexAttribute(0, "position", 3),
-        VertexAttribute(1, "normal", 3)
+        VertexAttribute(AttributeName.position, 3),
+        VertexAttribute(AttributeName.normal, 3)
     )),
     drawing = createDrawingVertexSchemas()
 )
 
-fun createSimpleMeshOld(mesh: HalfEdgeMesh, vertexSchema: VertexSchema) =
-    convertMesh(mesh, vertexSchema, temporaryVertexSerializerOld)
+//fun createSimpleMeshOld(mesh: HalfEdgeMesh, vertexSchema: VertexSchema) =
+//    convertMesh(mesh, vertexSchema, temporaryVertexSerializerOld)
 
 fun createSimpleMesh(faces: List<FlexibleFace>, vertexSchema: VertexSchema, color: Vector4) =
     convertMesh(faces, vertexSchema, temporaryVertexSerializer(color))
@@ -130,7 +139,7 @@ fun standardMeshes(): ModelGeneratorMap = mapOf(
     MeshType.wallLamp to createWallLamp
 )
 
-fun createModelElements(simpleMesh: SimpleMesh, color: Vector4 = Vector4(1f)) =
+fun createModelElements(simpleMesh: SimpleMesh<AttributeName>, color: Vector4 = Vector4(1f)) =
     listOf(ModelElement(simpleMesh, Material(color)))
 
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(

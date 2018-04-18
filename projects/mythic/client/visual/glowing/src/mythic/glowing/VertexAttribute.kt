@@ -1,7 +1,14 @@
 package mythic.glowing
 
-class VertexAttribute(
+class VertexAttribute<T>(
+    val name: T,
+    val size: Int
+)
+
+
+class VertexAttributeDetail<T>(
     val id: Int,
-    val name: String,
+    val name: T,
+    val offset: Int,
     val size: Int
 )

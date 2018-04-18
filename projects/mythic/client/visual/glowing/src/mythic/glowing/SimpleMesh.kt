@@ -51,7 +51,7 @@ interface Drawable {
   fun dispose()
 }
 
-class SimpleMesh(val vertexBuffer: VertexBuffer, val offsets: IntBuffer, val counts: IntBuffer) : Drawable {
+class SimpleMesh<T>(val vertexBuffer: VertexBuffer<T>, val offsets: IntBuffer, val counts: IntBuffer) : Drawable {
 
   override fun draw(method: DrawMethod) {
     vertexBuffer.activate()
@@ -63,14 +63,14 @@ class SimpleMesh(val vertexBuffer: VertexBuffer, val offsets: IntBuffer, val cou
     glDrawArrays(convertDrawMethod(method), offsets[index], counts[index])
   }
 
-  constructor(vertexSchema: VertexSchema, values: List<Float>) :
+  constructor(vertexSchema: VertexSchema<T>, values: List<Float>) :
       this(VertexBuffer(vertexSchema),
           createIntBuffer(0),
           createIntBuffer(values.size / vertexSchema.floatSize)) {
     vertexBuffer.load(createFloatBuffer(values))
   }
 
-  constructor(vertexSchema: VertexSchema, buffer: FloatBuffer, offsets: IntBuffer, counts: IntBuffer) :
+  constructor(vertexSchema: VertexSchema<T>, buffer: FloatBuffer, offsets: IntBuffer, counts: IntBuffer) :
       this(VertexBuffer(vertexSchema), offsets, counts) {
     vertexBuffer.load(buffer)
   }
@@ -80,14 +80,14 @@ class SimpleMesh(val vertexBuffer: VertexBuffer, val offsets: IntBuffer, val cou
   }
 }
 
-class SimpleTriangleMesh(val vertexBuffer: VertexBuffer, val indices: IntBuffer) : Drawable {
+class SimpleTriangleMesh<T>(val vertexBuffer: VertexBuffer<T>, val indices: IntBuffer) : Drawable {
 
   override fun draw(method: DrawMethod) {
     vertexBuffer.activate()
     glDrawElements(GL_TRIANGLES, indices)
   }
 
-  constructor(vertexSchema: VertexSchema, buffer: FloatBuffer, indices: IntBuffer) :
+  constructor(vertexSchema: VertexSchema<T>, buffer: FloatBuffer, indices: IntBuffer) :
       this(VertexBuffer(vertexSchema), indices) {
     vertexBuffer.load(buffer)
   }
@@ -97,7 +97,7 @@ class SimpleTriangleMesh(val vertexBuffer: VertexBuffer, val indices: IntBuffer)
   }
 }
 
-class MutableSimpleMesh(val vertexSchema: VertexSchema) : Drawable {
+class MutableSimpleMesh<T>(val vertexSchema: VertexSchema<T>) : Drawable {
   var offsets: IntBuffer? = null
   var counts: IntBuffer? = null
   val vertexBuffer = VertexBuffer(vertexSchema)

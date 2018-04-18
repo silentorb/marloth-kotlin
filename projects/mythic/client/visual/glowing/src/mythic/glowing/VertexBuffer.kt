@@ -4,7 +4,7 @@ import org.lwjgl.opengl.GL15.*
 import org.lwjgl.opengl.GL30.glDeleteVertexArrays
 import java.nio.FloatBuffer
 
-class VertexBuffer(vertexSchema: VertexSchema) {
+class VertexBuffer<T>(vertexSchema: VertexSchema<T>) {
   private val vbo = glGenBuffers()
   private val vao: VertexArrayObject
   private val disposed = false

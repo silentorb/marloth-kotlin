@@ -15,23 +15,23 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 data class Meshes(
-    val square: SimpleMesh,
-    val image: SimpleMesh,
-    val circle: SimpleMesh,
-    val solidCircle: SimpleMesh
+    val square: Drawable,
+    val image: Drawable,
+    val circle: Drawable,
+    val solidCircle: Drawable
 )
 
 data class DrawingVertexSchemas(
-    val simple: VertexSchema,
-    val image: VertexSchema
+    val simple: VertexSchema<String>,
+    val image: VertexSchema<String>
 )
 
 fun createDrawingVertexSchemas() = DrawingVertexSchemas(
-    VertexSchema(listOf(VertexAttribute(0, "position", 2))),
-    VertexSchema(listOf(VertexAttribute(0, "vertex", 4)))
+    VertexSchema(listOf(VertexAttribute("position", 2))),
+    VertexSchema(listOf(VertexAttribute("vertex", 4)))
 )
 
-fun createSquareMesh(vertexSchema: VertexSchema) =
+fun createSquareMesh(vertexSchema: VertexSchema<String>) =
     SimpleMesh(vertexSchema, listOf(
         0f, 1f,
         0f, 0f,
@@ -39,7 +39,7 @@ fun createSquareMesh(vertexSchema: VertexSchema) =
         1f, 1f
     ))
 
-fun createImageMesh(vertexSchema: VertexSchema) =
+fun createImageMesh(vertexSchema: VertexSchema<String>) =
     SimpleMesh(vertexSchema, listOf(
         0f, 1f, 0f, 1f,
         0f, 0f, 0f, 0f,
@@ -59,10 +59,10 @@ fun createCircleList(radius: Float, count: Int): ArrayList<Float> {
   return vertices
 }
 
-fun createCircleMesh(vertexSchema: VertexSchema, radius: Float, count: Int) =
+fun createCircleMesh(vertexSchema: VertexSchema<String>, radius: Float, count: Int) =
     SimpleMesh(vertexSchema, createCircleList(radius, count))
 
-fun createSolidCircleMesh(vertexSchema: VertexSchema, radius: Float, count: Int) =
+fun createSolidCircleMesh(vertexSchema: VertexSchema<String>, radius: Float, count: Int) =
     SimpleMesh(vertexSchema, listOf(0f, 0f).plus(createCircleList(radius, count)))
 
 private val circleResolution = 32

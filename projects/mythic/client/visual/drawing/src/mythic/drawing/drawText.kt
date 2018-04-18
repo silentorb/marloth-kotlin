@@ -38,7 +38,7 @@ fun renderText(config: TextConfiguration, effect: ColoredImageShader, textPackag
   textPackage.mesh.draw(DrawMethod.triangleFan)
 }
 
-fun drawTextRaw(config: TextConfiguration, effect: ColoredImageShader, vertexSchema: VertexSchema, pixelsToScalar: Matrix) {
+fun <T>drawTextRaw(config: TextConfiguration, effect: ColoredImageShader, vertexSchema: VertexSchema<T>, pixelsToScalar: Matrix) {
   val textPackage = prepareText(config, vertexSchema)
   if (textPackage != null) {
     renderText(config, effect, textPackage, pixelsToScalar)
