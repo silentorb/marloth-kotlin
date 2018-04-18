@@ -135,9 +135,15 @@ fun modelToMeshes(vertexSchemas: VertexSchemas, model: Model): ModelElements {
 fun standardMeshes(): ModelGeneratorMap = mapOf(
     MeshType.bear to createCartoonHuman,
     MeshType.human to createHuman,
-    MeshType.monster to createCartoonHuman,
-    MeshType.wallLamp to createWallLamp
+    MeshType.monster to createCartoonHuman
+//    MeshType.wallLamp to createWallLamp
 )
+
+fun importedMeshes(vertexSchemas: VertexSchemas) = mapOf(
+    MeshType.wallLamp to "lamp",
+    MeshType.test to "cube"
+)
+    .mapValues { loadGltf(vertexSchemas, "models/" + it.value) }
 
 fun createModelElements(simpleMesh: SimpleMesh<AttributeName>, color: Vector4 = Vector4(1f)) =
     listOf(ModelElement(simpleMesh, Material(color)))
@@ -157,6 +163,4 @@ fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     .plus(standardMeshes().mapValues {
       modelToMeshes(vertexSchemas, it.value())
     })
-    .plus(listOf(
-        MeshType.test to loadGltf(vertexSchemas, "models/cube")
-    ))
+    .plus(importedMeshes(vertexSchemas))

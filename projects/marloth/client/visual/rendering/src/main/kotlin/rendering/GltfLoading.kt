@@ -119,7 +119,7 @@ fun loadGltf(vertexSchemas: VertexSchemas, name: String): ModelElements {
   val buffer = loadGltfByteBuffer(name, info)
   val vertexSchema = vertexSchemas.imported
 
-  val result = info.meshes[0].primitives.map { primitive ->
+  val result = info.meshes.flatMap { it.primitives }.map { primitive ->
 
     val triangleCount = info.accessors[primitive.indices].count / 3
     val vertexCount = info.accessors[primitive.attributes[AttributeType.POSITION]!!].count
@@ -128,11 +128,12 @@ fun loadGltf(vertexSchemas: VertexSchemas, name: String): ModelElements {
     val indices = BufferUtils.createIntBuffer(indexCount)
     val vertices = BufferUtils.createFloatBuffer(3 * 2 * vertexCount)
 
-    buffer.position(info.bufferViews[primitive.indices].byteOffset)
-    for (i in 0 until triangleCount) {
-      for (x in 0 until 3) {
-        val value = buffer.get().toInt()
-//        println(value)
+    if (true) {
+      val bufferView = info.bufferViews[primitive.indices]
+      buffer.position(bufferView.byteOffset)
+      for (i in 0 until bufferView.byteLength) {
+        val value = buffer.get().toInt() and 0xFF
+        println(value)
         indices.put(value)
       }
     }
@@ -146,14 +147,14 @@ fun loadGltf(vertexSchemas: VertexSchemas, name: String): ModelElements {
         vertices.position(vertexAttribute.offset + i * vertexSchema.floatSize)
         for (x in 0 until 3) {
           val value = buffer.getFloat()
-          println(value)
+//          println(value)
           vertices.put(value)
         }
       }
     }
 
-    vertices.flip()
-    indices.flip()
+    vertices.position(0)
+    indices.position(0)
 
     val materialSource = info.materials[primitive.material]
     val color = arrayToVector4(materialSource.pbrMetallicRoughness.baseColorFactor)
