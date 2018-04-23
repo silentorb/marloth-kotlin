@@ -13,6 +13,7 @@ import mythic.sculpting.*
 
 data class ModelLayout(
     val boxes: List<Box>,
+    val modelPanelBounds: Bounds,
     val clickBoxes: List<ClickBox<SelectionEvent>>
 )
 
@@ -68,9 +69,25 @@ fun getVertexHits(start: Vector3, end: Vector3, model: Model): List<Hit> {
 fun getEdgeHits(start: Vector3, end: Vector3, model: Model): List<Hit> {
   val edges = model.edges
   return edges.mapNotNull {
-    val point = rayIntersectsLine(start, end, it.first, it.second, 0.02f)
+    val point = rayIntersectsLine3D(start, end, it.first, it.second, 0.02f)
     if (point != null)
       Hit(point, edges.indexOf(it))
+    else
+      null
+  }
+}
+
+fun getFaceHits(start: Vector3, end: Vector3, model: Model): List<Hit> {
+  val faces = model.mesh.faces
+  val rayDirection = (end - start).normalize()
+
+  return faces.mapIndexedNotNull { i, it ->
+    if (it.normal.x == 0f && it.normal.y == 0f && it.normal.z == 0f)
+      it.updateNormal()
+
+    val point = rayIntersectsPolygon3D(start, rayDirection, it.vertices, it.normal)
+    if (point != null)
+      Hit(point, i)
     else
       null
   }
@@ -80,11 +97,11 @@ fun getHits(componentMode: ComponentMode, start: Vector3, end: Vector3, model: M
     when (componentMode) {
       ComponentMode.vertices -> getVertexHits(start, end, model)
       ComponentMode.edges -> getEdgeHits(start, end, model)
+      ComponentMode.faces -> getFaceHits(start, end, model)
       else -> listOf()
     }
 
-private fun trySelect(config: ModelViewConfig, camera: Camera, model: Model, mousePosition: Vector2i, boxes: List<Box>) {
-  val bounds = boxes[1].bounds
+private fun trySelect(config: ModelViewConfig, camera: Camera, model: Model, mousePosition: Vector2i, bounds: Bounds) {
   val dimensions = bounds.dimensions
   val cursor = mousePosition - bounds.position.toVector2i()
   val cameraData = createCameraEffectsData(dimensions.toVector2i(), camera)
@@ -99,9 +116,9 @@ private fun trySelect(config: ModelViewConfig, camera: Camera, model: Model, mou
   val hits = getHits(config.componentMode, start, end, model)
   if (hits.size > 0) {
     val sorted = hits.sortedBy { it.position.distance(start) }
-    config.selection = sorted.map { it.index }.take(1).toMutableList()
+    config.selection = sorted.take(1).map { it.index }.toMutableList()
 //    val edge = mesh.edges.filter { it.middle == sorted[0].position }.first()
-//    rayIntersectsLine(start, end, edge.first, edge.second, 0.02f)
+//    rayIntersectsLine3D(start, end, edge.first, edge.second, 0.02f)
   } else {
     config.selection = mutableListOf()
   }
@@ -146,16 +163,33 @@ fun drawLeftPanel(meshTypes: List<MeshType>, config: ModelViewConfig) = { bounds
   Pair(boxes, buttonBoxes.mapIndexed { i, b -> ClickBox(b.bounds, SelectionEvent(i)) })
 }
 
+fun loadGeneratedModel(config: ModelViewConfig, renderer: Renderer): Model {
+  val generator = renderer.meshGenerators[config.model]
+  return if (generator != null)
+    generator()
+  else
+    Model(FlexibleMesh(), listOf())
+}
+
+fun loadExternalMesh(config: ModelViewConfig, renderer: Renderer): ModelElements? {
+  val generator = renderer.meshGenerators[config.model]
+  return if (generator != null)
+    null
+  else
+    renderer.meshes[config.model]
+}
+
 class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePosition: Vector2i) {
-  val model: Model = renderer.meshGenerators[config.model]!!()
+  val model: Model = loadGeneratedModel(config, renderer)
+  val externalMesh: ModelElements? = loadExternalMesh(config, renderer)
   val camera = createOrthographicCamera(config.camera)
 
   fun createLayout(dimensions: Vector2i): ModelLayout {
     val bounds = Bounds(Vector2(), dimensions.toVector2())
     val initialLengths = listOf(200f, null, 300f)
 
-    val left = drawLeftPanel(renderer.meshGenerators.keys.toList(), config)
-    val middle = { b: Bounds -> Box(b, drawScenePanel(config, renderer, model, camera)) }
+    val left = drawLeftPanel(renderer.meshes.keys.toList(), config)
+    val middle = { b: Bounds -> Box(b, drawScenePanel(config, renderer, model, camera, externalMesh)) }
     val right = { b: Bounds -> Box(b, drawInfoPanel(config, renderer, model, mousePosition)) }
     val lengths = solveMeasurements(dimensions.x.toFloat(), initialLengths)
     val panelBounds = arrangeList2(horizontalArrangement(Vector2(0f, 0f)), lengths, bounds)
@@ -165,9 +199,10 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     val (leftBoxes, leftClickBoxes) = left(panelBounds[0])
 
     return ModelLayout(
-        leftBoxes
+        boxes = leftBoxes
             .plus(boxes),
-        leftClickBoxes
+        modelPanelBounds = panelBounds[1],
+        clickBoxes = leftClickBoxes
     )
   }
 
@@ -180,9 +215,9 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     if (isActive(commands, LabCommandType.select)) {
       val clickBox = filterMouseOverBoxes(layout.clickBoxes, mousePosition)
       if (clickBox != null) {
-        config.model = renderer.meshGenerators.keys.toList()[clickBox.value.index]
+        config.model = renderer.meshes.keys.toList()[clickBox.value.index]
       } else {
-        trySelect(config, camera, model, mousePosition, layout.boxes)
+        trySelect(config, camera, model, mousePosition, layout.modelPanelBounds)
       }
     }
 
@@ -249,6 +284,11 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
       LabCommandType.selectModeEdges to { _ ->
         config.selection = listOf()
         config.componentMode = ComponentMode.edges
+      },
+
+      LabCommandType.selectModeFaces to { _ ->
+        config.selection = listOf()
+        config.componentMode = ComponentMode.faces
       },
 
       LabCommandType.selectModeVertices to { _ ->

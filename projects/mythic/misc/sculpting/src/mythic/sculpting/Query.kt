@@ -64,6 +64,9 @@ fun getEdgesCenter(edges: List<FlexibleEdge>) =
 
 
 fun getVerticesCenter(vertices: List<Vector3>): Vector3 {
+  if (vertices.size == 0)
+    return Vector3()
+
   var result = Vector3()
   for (vertex in vertices) {
     result += vertex

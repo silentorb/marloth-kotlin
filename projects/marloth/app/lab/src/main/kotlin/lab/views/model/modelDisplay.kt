@@ -57,59 +57,78 @@ fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, trans
   mesh.draw(DrawMethod.points)
 }
 
-fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, camera: Camera, model: Model) {
+fun drawSelection(config: ModelViewConfig, model: Model, sceneRenderer: SceneRenderer) {
+  if (config.selection.size > 0) {
+    when (config.componentMode) {
+
+      ComponentMode.faces -> {
+        val faces = model.mesh.faces
+        for (index in config.selection) {
+          if (faces.size > index) {
+            val face = faces[index]
+            sceneRenderer.drawSolidFace(face.vertices, white)
+          }
+        }
+      }
+
+      ComponentMode.edges -> {
+        val edges = model.edges
+        for (index in config.selection) {
+          if (edges.size > index) {
+            val edge = edges[index]
+            sceneRenderer.drawLine(edge.first, edge.second, white, 2f)
+          }
+        }
+      }
+
+      ComponentMode.vertices -> {
+        val vertices = model.vertices
+        for (index in config.selection) {
+          if (vertices.size > index)
+            sceneRenderer.drawPoint(vertices[index], white, 2f)
+        }
+      }
+
+    }
+  }
+}
+
+fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, camera: Camera, model: Model,
+                     modelElements: ModelElements?) {
   val panelDimensions = Vector2i(b.dimensions.x.toInt(), b.dimensions.y.toInt())
   val viewport = Vector4i(b.position.x.toInt(), b.position.y.toInt(), panelDimensions.x, panelDimensions.y)
   viewportStack(viewport, {
     val sceneRenderer = renderer.createSceneRenderer(Scene(camera), viewport)
     val transform = Matrix()
 
-    val meshes = modelToMeshes(renderer.vertexSchemas, model)
+    if (modelElements != null) {
+      modelElements.forEach { drawMeshPreview(config, sceneRenderer, transform, it) }
+    } else {
+      val meshes = modelToMeshes(renderer.vertexSchemas, model)
+      meshes.forEach { drawMeshPreview(config, sceneRenderer, transform, it) }
+      if (config.drawNormals)
+        renderFaceNormals(sceneRenderer, 0.1f, model.mesh)
 
-    meshes.forEach { drawMeshPreview(config, sceneRenderer, transform, it) }
-//    val simpleMesh = createSimpleMesh(model.mesh, renderer.vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f))
-
-    if (config.drawNormals)
-      renderFaceNormals(sceneRenderer, 0.1f, model.mesh)
-
-//    simpleMesh.dispose()
-    meshes.forEach { it.mesh.dispose() }
+      meshes.forEach { it.mesh.dispose() }
 
 //  renderFaceNormals(renderer,mesh,)
 
-    sceneRenderer.drawLine(Vector3(), Vector3(1f, 0f, 0f), red)
-    sceneRenderer.drawLine(Vector3(), Vector3(0f, 1f, 0f), green)
-    sceneRenderer.drawLine(Vector3(), Vector3(0f, 0f, 1f), blue)
-//    sceneRenderer.drawLine(config.tempStart, config.tempEnd, Vector4(1f, 1f, 0f, 1f))
+      sceneRenderer.drawLine(Vector3(), Vector3(1f, 0f, 0f), red)
+      sceneRenderer.drawLine(Vector3(), Vector3(0f, 1f, 0f), green)
+      sceneRenderer.drawLine(Vector3(), Vector3(0f, 0f, 1f), blue)
 
-    if (config.selection.size > 0) {
-      when (config.componentMode) {
-        ComponentMode.vertices -> {
-          val vertices = model.vertices
-          for (index in config.selection) {
-            if (vertices.size > index)
-              sceneRenderer.drawPoint(vertices[index], white, 2f)
-          }
-        }
-        ComponentMode.edges -> {
-          val edges = model.edges
-          for (index in config.selection) {
-            if (edges.size > index) {
-              val edge = edges[index]
-              sceneRenderer.drawLine(edge.first, edge.second, white, 2f)
-            }
-          }
+      sceneRenderer.drawLine(config.tempStart, config.tempEnd, yellow)
+
+      drawSelection(config, model, sceneRenderer)
+
+      globalState.depthEnabled = false
+
+      for (group in model.info.edgeGroups) {
+        for (pair in group) {
+          sceneRenderer.drawLine(pair.key.first, pair.key.second, yellow)
         }
       }
     }
-    globalState.depthEnabled = false
-
-    for (group in model.info.edgeGroups) {
-      for (pair in group) {
-        sceneRenderer.drawLine(pair.key.first, pair.key.second, yellow)
-      }
-    }
-
   })
 }
 
@@ -119,9 +138,9 @@ private fun drawBackground(backgroundColor: Vector4): Depiction = { b: Bounds, c
   drawBorder(b, canvas, Vector4(0f, 0f, 0f, 1f))
 }
 
-fun drawScenePanel(config: ModelViewConfig, renderer: Renderer, model: Model, camera: Camera): Depiction = { b: Bounds, canvas: Canvas ->
+fun drawScenePanel(config: ModelViewConfig, renderer: Renderer, model: Model, camera: Camera, modelElements: ModelElements?): Depiction = { b: Bounds, canvas: Canvas ->
   drawBackground(sceneBackgroundColor)(b, canvas)
-  drawModelPreview(config, renderer, b, camera, model)
+  drawModelPreview(config, renderer, b, camera, model, modelElements)
 }
 
 val decimalFormat = DecimalFormat("#.#####")
@@ -159,6 +178,9 @@ fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: Model,
   drawText("rotationY: " + config.camera.rotationY)
   drawText("rotationZ: " + config.camera.rotationZ)
   drawText("pivot: " + toString(config.camera.pivot))
+
+  drawText("tempStart: " + toString(config.tempStart))
+  drawText("tempEnd: " + toString(config.tempEnd))
 //  canvas.drawText(TextConfiguration("ts: " + config.tempStart.x.toString() + ", " + config.tempStart.y.toString() + ", " + config.tempStart.z.toString(),
 //      renderer.fonts[0], 12f, bounds.position + Vector2(5f, 25f), black))
 //  canvas.drawText(TextConfiguration("te: " + config.tempEnd.x.toString() + ", " + config.tempEnd.y.toString() + ", " + config.tempEnd.z.toString(),

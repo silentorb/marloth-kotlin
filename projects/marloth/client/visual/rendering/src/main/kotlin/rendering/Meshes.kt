@@ -7,20 +7,20 @@ import mythic.glowing.VertexAttribute
 import mythic.glowing.VertexSchema as GenericVertexSchema
 import mythic.sculpting.*
 import mythic.spatial.*
-import rendering.meshes.createWallLamp
 
 import mythic.glowing.Drawable
 import rendering.meshes.createCartoonHuman
 import rendering.meshes.createHuman
+import rendering.meshes.createWallLamp
 
-//data class NewMesh(val mesh: HalfEdgeMesh, val vertexSchema: VertexSchema)
-//typealias NewMeshMap = Map<String, NewMesh>
-
-fun createCube(): FlexibleMesh {
+val createCube = {
   val mesh = FlexibleMesh()
 //  create.squareDown(mesh, Vector2(1f, 1f), 1f)
   createCube(mesh, Vector3(1f, 1f, 1f))
-  return mesh
+  Model(
+      mesh = mesh,
+      materials = listOf(mapMaterial(Material(Vector4(.5f, .5f, .5f, 1f)), mesh))
+  )
 }
 
 fun createCylinder(): FlexibleMesh {
@@ -73,9 +73,6 @@ fun createVertexSchemas() = VertexSchemas(
     drawing = createDrawingVertexSchemas()
 )
 
-//fun createSimpleMeshOld(mesh: HalfEdgeMesh, vertexSchema: VertexSchema) =
-//    convertMesh(mesh, vertexSchema, temporaryVertexSerializerOld)
-
 fun createSimpleMesh(faces: List<FlexibleFace>, vertexSchema: VertexSchema, color: Vector4) =
     convertMesh(faces, vertexSchema, temporaryVertexSerializer(color))
 
@@ -91,11 +88,12 @@ fun createLineMesh(vertexSchema: VertexSchema) =
 enum class MeshType {
   bear,
   cylinder,
+  girl,
   human,
   line,
   monster,
   sphere,
-  test,
+  cube,
   wallLamp,
 }
 
@@ -133,17 +131,20 @@ fun modelToMeshes(vertexSchemas: VertexSchemas, model: Model): ModelElements {
 }
 
 fun standardMeshes(): ModelGeneratorMap = mapOf(
+    MeshType.cube to createCube,
     MeshType.bear to createCartoonHuman,
     MeshType.human to createHuman,
-    MeshType.monster to createCartoonHuman
-//    MeshType.wallLamp to createWallLamp
+    MeshType.monster to createCartoonHuman,
+    MeshType.wallLamp to createWallLamp
 )
 
-fun importedMeshes(vertexSchemas: VertexSchemas) = mapOf(
-    MeshType.wallLamp to "lamp",
-    MeshType.test to "cube"
-)
-    .mapValues { loadGltf(vertexSchemas, "models/" + it.value) }
+//fun importedMeshes(vertexSchemas: VertexSchemas) = mapOf(
+//    MeshType.wallLamp to "lamp",
+//    MeshType.cube to "cube"
+////    MeshType.girl to "girl2/child"
+////    MeshType.girl to "child/child"
+//)
+//    .mapValues { loadGltf(vertexSchemas, "models/" + it.value) }
 
 fun createModelElements(simpleMesh: SimpleMesh<AttributeName>, color: Vector4 = Vector4(1f)) =
     listOf(ModelElement(simpleMesh, Material(color)))
@@ -153,9 +154,6 @@ fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     MeshType.cylinder to createSimpleMesh(createCylinder(), vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f))
 )
     .mapValues { createModelElements(it.value) }
-//    .plus(mapOf(
-//        MeshType.wallLamp to createWallLamp(vertexSchemas)
-//    ))
     .plus(mapOf(
         MeshType.sphere to createModelElements(createSimpleMesh(createSphere(), vertexSchemas.standard, Vector4(1f)),
             Vector4(0.4f, 0.1f, 0.1f, 1f))
@@ -163,4 +161,4 @@ fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     .plus(standardMeshes().mapValues {
       modelToMeshes(vertexSchemas, it.value())
     })
-    .plus(importedMeshes(vertexSchemas))
+//    .plus(importedMeshes(vertexSchemas))

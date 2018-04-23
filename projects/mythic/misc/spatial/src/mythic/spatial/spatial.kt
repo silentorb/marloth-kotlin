@@ -11,30 +11,10 @@ typealias Vector4 = org.joml.Vector4f
 typealias Matrix = org.joml.Matrix4f
 typealias Quaternion = org.joml.Quaternionf
 
-//public class Vector4 {
-//
-//  var x: Float = 0f
-//  var y: Float = 0f
-//  var z: Float = 0f
-//  var a: Float = 0f
-//
-//  constructor(r: Float, g: Float, b: Float, a: Float) {
-//    this.x = r
-//    this.y = g
-//    this.z = b
-//    this.a = a
-//  }
-//}
-//
-//operator fun Vector3.plusAssign(other: Vector3) {
-//  add(other)
-//}
-
 operator fun Vector3.times(other: Matrix): Vector3 = mulDirection(other)
 operator fun Vector2.times(other: Float): Vector2 = mul(other, Vector2())
 operator fun Vector3.times(other: Float): Vector3 = mul(other, Vector3())
 operator fun Vector3.times(other: Vector3): Vector3 = mul(other, Vector3())
-//operator fun Quaternion.times(other: Vector3): Vector3 = transform(other)
 
 fun FloatBuffer.put(value: Vector3) {
   put(value.x)
@@ -187,23 +167,6 @@ fun rayIntersectsSphere(lineStart: Vector3, lineEnd: Vector3, circleCenter: Vect
   }
 }
 
-//fun rayIntersectsLine(rayStart: Vector3, rayEnd: Vector3, lineStart: Vector3, lineEnd: Vector3): Boolean {
-//  val rayDirection = rayEnd - rayStart
-//  val v1 = rayStart - lineStart
-//  val v2 = lineEnd - lineStart
-//  val v3 = Vector(-rayDirection.y, rayDirection.x)
-//
-//  val dot = v2 * v3
-//  if (Math.Abs(dot) < 0.000001)
-//    return null
-//
-//  val t1 = Vector.CrossProduct(v2, v1) / dot
-//  val t2 = v1 * v3 / dot
-//
-//  return if (t1 >= 0.0 && t2 >= 0.0 && t2 <= 1.0) t1 else null
-//
-//}
-
 fun isBetween(middle: Float, first: Float, second: Float) =
     if (middle == first || middle == second)
       true
@@ -224,7 +187,7 @@ fun isBetween(middle: Vector2, first: Vector2, second: Vector2) =
 val epsilon = 0.00000001f
 
 // If successful returns the closest point of intersection on the line.
-fun rayIntersectsLine(p1: Vector3, p2: Vector3, p3: Vector3, p4: Vector3, maxGap: Float): Vector3? {
+fun rayIntersectsLine3D(p1: Vector3, p2: Vector3, p3: Vector3, p4: Vector3, maxGap: Float): Vector3? {
   val p13 = p1 - p3
   val p43 = p4 - p3
 
@@ -253,36 +216,101 @@ fun rayIntersectsLine(p1: Vector3, p2: Vector3, p3: Vector3, p4: Vector3, maxGap
 
   val result1 = p1 + p21 * mua
   val result2 = p3 + p43 * mub
-//  resultSegmentPoint1.x = p1.x + mua * p21.x
-//  resultSegmentPoint1.y = p1.y + mua * p21.y
-//  resultSegmentPoint1.z = p1.z + mua * p21.z
-//  resultSegmentPoint2.x = p3.x + mub * p43.x
-//  resultSegmentPoint2.y = p3.y + mub * p43.y
-//  resultSegmentPoint2.z = p3.z + mub * p43.z
 
   if (result1.distance(result2) > maxGap)
     return null
 
-//  val dir = p4 - p3
-//  val middle = result2 - p3
-//
-//  if (middle.length() > dir.length() || middle.length() < 0f)
-//    return null
-
   if (!isBetween(result2, p3, p4))
     return null
-//  val firstLength = p3.length()
-//  val secondLength = p4.length()
-//  val middleLength = result2.length()
-//
-//  if (middleLength > firstLength) {
-//    if (middleLength > secondLength)
-//      return null
-//  } else if (middleLength < secondLength) {
-//    return null
-//  }
 
   return result2
+}
+
+fun rayPolygonDistance(rayStart: Vector3, rayDirection: Vector3, polygonPoint: Vector3, polygonNormal: Vector3): Float? {
+  val denominator = polygonNormal.dot(rayDirection)
+  if (denominator > -1e-6)
+    return null
+
+  val foo = polygonPoint - rayStart
+  val T = foo.dot(polygonNormal) / denominator
+  return if (T >= 0f)
+    T
+  else
+    null
+}
+
+private val flattenedPlaneNormal = Vector3(0f, 0f, 1f)
+
+fun getSlope(start: Vector2, end: Vector2): Float {
+  val normal = end - start
+  return normal.y / normal.x
+}
+
+fun simpleRayIntersectsLineSegment(rayStart: Vector2, segmentStart: Vector2, segmentEnd: Vector2): Vector2? {
+  if (!isBetween(rayStart.y, segmentStart.y, segmentEnd.y))
+    return null
+
+  val x = if (segmentStart.x == segmentEnd.x) {
+    segmentStart.x
+  } else {
+    val slope = getSlope(segmentStart, segmentEnd)
+    val b = segmentStart.x * slope + segmentStart.y
+    (rayStart.y - b) / slope
+  }
+
+  return if (x >= rayStart.x && isBetween(x, segmentStart.x, segmentEnd.x))
+    Vector2(x, rayStart.y)
+  else
+    null
+}
+
+inline fun simpleRayIntersectsLineSegmentAsNumber(rayStart: Vector2, segmentStart: Vector2, segmentEnd: Vector2): Int {
+  val result = simpleRayIntersectsLineSegment(rayStart, segmentStart, segmentEnd)
+  return if (result != null) 1 else 0
+}
+
+inline fun isEven(value: Int) = (value and 1) == 0
+
+inline fun isOdd(value: Int) = (value and 1) != 0
+
+fun isInsidePolygon(point: Vector2, vertices: List<Vector2>): Boolean {
+  var count = simpleRayIntersectsLineSegmentAsNumber(point, vertices.last(), vertices.first())
+  for (i in 0 until vertices.size - 1) {
+    count += simpleRayIntersectsLineSegmentAsNumber(point, vertices[i], vertices[i + 1])
+  }
+
+  return count > 0 && isOdd(count)
+}
+
+fun rayIntersectsPolygon3D(rayStart: Vector3, rayDirection: Vector3, vertices: List<Vector3>, polygonNormal: Vector3): Vector3? {
+  val distance = rayPolygonDistance(rayStart, rayDirection, vertices.first(), polygonNormal)
+  if (distance == null)
+    return null
+
+  val planeIntersection = rayStart + rayDirection * distance
+
+//  val polygonRotation = Quaternion().rotateTo(polygonNormal, flattenedPlaneNormal)
+//  val transformedPoints = vertices.map { (polygonRotation * it).xy }
+//  val transformedIntersection = (polygonRotation * planeIntersection).xy
+//  val u = Vector3(polygonNormal.y, -polygonNormal.x, 0f)
+  val u = Vector3(polygonNormal).cross((vertices[1] - vertices[0]).normalize())
+  val v = Vector3(polygonNormal).cross(u)
+  val transformedPoints = vertices.map { Vector2(u.dot(it), v.dot(it)) }
+  val transformedIntersection = Vector2(u.dot(planeIntersection), v.dot(planeIntersection))
+
+  return if (isInsidePolygon(transformedIntersection, transformedPoints))
+    planeIntersection
+  else
+    null
+
+  // *** Test code ***
+//  val temp1 = Vector3(-1f, -3f, 3f)
+//  val temp2 = Vector3(-1f, -2f, 2f)
+//  val na = Vector3(1f, 0f, 0f)
+//  val nb = Vector3(0f, -1f, 0f)
+//  val quat = Quaternion().rotateTo(na, nb)
+//  val r1 = quat * temp1
+//  val r2 = quat * temp2
 }
 
 fun projectPointOntoRay(v: Vector2, u1: Vector2, u2: Vector2): Vector2 {

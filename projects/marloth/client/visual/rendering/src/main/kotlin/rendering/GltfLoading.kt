@@ -1,25 +1,58 @@
 package rendering
 
+import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import mythic.glowing.SimpleTriangleMesh
+import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import org.lwjgl.BufferUtils
 import java.io.DataInputStream
 import java.io.InputStream
 import java.nio.ByteBuffer
 import java.util.*
+import com.fasterxml.jackson.annotation.JsonCreator
+import java.nio.IntBuffer
+
 
 enum class AccessorType {
   SCALAR,
-  VEC3
+  MAT4,
+  VEC2,
+  VEC3,
+  VEC4
+}
+
+enum class ComponentType(val value: Int) {
+  Byte(5120),
+  UnsignedByte(5121),
+  Short(5122),
+  UnsignedShort(5123),
+  UnsignedInt(5125),
+  Float(5126);
+
+  companion object {
+    @JsonCreator
+    fun forValue(value: String) =
+        ComponentType.values().first { it.value.toString() == value }
+  }
 }
 
 enum class AttributeType {
+  COLOR_0,
+  JOINTS_0,
+  JOINTS_1,
+  JOINTS_2,
   NORMAL,
-  POSITION
+  POSITION,
+  TANGENT,
+  TEXCOORD_0,
+  WEIGHTS_0,
+  WEIGHTS_1,
+  WEIGHTS_2
 }
+
 
 val attributeMap = mapOf(
     AttributeType.NORMAL to AttributeName.normal,
@@ -60,7 +93,8 @@ data class Metallic(
 )
 
 data class MaterialInfo(
-    var pbrMetallicRoughness: Metallic
+    var pbrMetallicRoughness: Metallic,
+    var emissiveFactor: List<Float>?
 )
 
 data class GltfInfo(
@@ -121,7 +155,8 @@ fun loadGltf(vertexSchemas: VertexSchemas, name: String): ModelElements {
 
   val result = info.meshes.flatMap { it.primitives }.map { primitive ->
 
-    val triangleCount = info.accessors[primitive.indices].count / 3
+    val indexAccessor = info.accessors[primitive.indices]
+    val triangleCount = indexAccessor.count / 3
     val vertexCount = info.accessors[primitive.attributes[AttributeType.POSITION]!!].count
 
     val indexCount = triangleCount * 3
@@ -131,17 +166,31 @@ fun loadGltf(vertexSchemas: VertexSchemas, name: String): ModelElements {
     if (true) {
       val bufferView = info.bufferViews[primitive.indices]
       buffer.position(bufferView.byteOffset)
-      for (i in 0 until bufferView.byteLength) {
-        val value = buffer.get().toInt() and 0xFF
-        println(value)
-        indices.put(value)
+
+      if (indexAccessor.componentType == ComponentType.UnsignedShort.value) {
+        val intBuffer = buffer.asShortBuffer()
+        for (i in 0 until indexAccessor.count) {
+          val value = intBuffer.get().toInt() and 0xFF
+//          println(value)
+          indices.put(value)
+        }
+      } else {
+        for (i in 0 until indexAccessor.count) {
+          val value = buffer.get().toInt() and 0xFF
+//          println(value)
+          indices.put(value)
+        }
       }
     }
 
     for (attribute in primitive.attributes) {
       val bufferView = info.bufferViews[attribute.value]
       buffer.position(bufferView.byteOffset)
-      val vertexAttribute = vertexSchema.getAttribute(attributeMap[attribute.key]!!)
+      val mappedAttribute = attributeMap[attribute.key]
+      if (mappedAttribute == null)
+        continue
+
+      val vertexAttribute = vertexSchema.getAttribute(mappedAttribute)
       vertices.position()
       for (i in 0 until vertexCount) {
         vertices.position(vertexAttribute.offset + i * vertexSchema.floatSize)
@@ -158,14 +207,21 @@ fun loadGltf(vertexSchemas: VertexSchemas, name: String): ModelElements {
 
     val materialSource = info.materials[primitive.material]
     val color = arrayToVector4(materialSource.pbrMetallicRoughness.baseColorFactor)
+    val glow = if (materialSource.emissiveFactor != null)
+      color.x / materialSource.emissiveFactor!!.first()
+    else
+      0f
 
     ModelElement(
         mesh = SimpleTriangleMesh(vertexSchema, vertices, indices),
         material = Material(
-            color = color
+            color = color,
+            glow = glow
         )
     )
   }
 
+//  if (result.size > 3)
+//    return listOf(result[1])
   return result
 }

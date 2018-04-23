@@ -5,50 +5,6 @@
             "componentType" : 5121, 
             "count" : 276, 
             "max" : [
-                47
-            ], 
-            "min" : [
-                0
-            ], 
-            "type" : "SCALAR"
-        }, 
-        {
-            "bufferView" : 1, 
-            "componentType" : 5126, 
-            "count" : 48, 
-            "max" : [
-                1.0269845724105835, 
-                0.27943453192710876, 
-                1.835259199142456
-            ], 
-            "min" : [
-                0.4681171476840973, 
-                -0.27943283319473267, 
-                0.5347869396209717
-            ], 
-            "type" : "VEC3"
-        }, 
-        {
-            "bufferView" : 2, 
-            "componentType" : 5126, 
-            "count" : 48, 
-            "max" : [
-                0.9664601683616638, 
-                0.9664601683616638, 
-                0.6302377581596375
-            ], 
-            "min" : [
-                -0.9664601683616638, 
-                -0.9664601683616638, 
-                -0.7017731070518494
-            ], 
-            "type" : "VEC3"
-        }, 
-        {
-            "bufferView" : 3, 
-            "componentType" : 5121, 
-            "count" : 276, 
-            "max" : [
                 175
             ], 
             "min" : [
@@ -57,7 +13,7 @@
             "type" : "SCALAR"
         }, 
         {
-            "bufferView" : 4, 
+            "bufferView" : 1, 
             "componentType" : 5126, 
             "count" : 176, 
             "max" : [
@@ -73,7 +29,7 @@
             "type" : "VEC3"
         }, 
         {
-            "bufferView" : 5, 
+            "bufferView" : 2, 
             "componentType" : 5126, 
             "count" : 176, 
             "max" : [
@@ -85,6 +41,50 @@
                 -0.9997682571411133, 
                 -0.9220853447914124, 
                 -0.920016884803772
+            ], 
+            "type" : "VEC3"
+        }, 
+        {
+            "bufferView" : 3, 
+            "componentType" : 5121, 
+            "count" : 276, 
+            "max" : [
+                47
+            ], 
+            "min" : [
+                0
+            ], 
+            "type" : "SCALAR"
+        }, 
+        {
+            "bufferView" : 4, 
+            "componentType" : 5126, 
+            "count" : 48, 
+            "max" : [
+                1.0269845724105835, 
+                0.27943453192710876, 
+                1.835259199142456
+            ], 
+            "min" : [
+                0.4681171476840973, 
+                -0.27943283319473267, 
+                0.5347869396209717
+            ], 
+            "type" : "VEC3"
+        }, 
+        {
+            "bufferView" : 5, 
+            "componentType" : 5126, 
+            "count" : 48, 
+            "max" : [
+                0.9664601683616638, 
+                0.9664601683616638, 
+                0.6302377581596375
+            ], 
+            "min" : [
+                -0.9664601683616638, 
+                -0.9664601683616638, 
+                -0.7017731070518494
             ], 
             "type" : "VEC3"
         }
@@ -102,32 +102,32 @@
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 576, 
+            "byteLength" : 2112, 
             "byteOffset" : 276, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 576, 
-            "byteOffset" : 852, 
+            "byteLength" : 2112, 
+            "byteOffset" : 2388, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
             "byteLength" : 276, 
-            "byteOffset" : 1428, 
+            "byteOffset" : 4500, 
             "target" : 34963
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 2112, 
-            "byteOffset" : 1704, 
+            "byteLength" : 576, 
+            "byteOffset" : 4776, 
             "target" : 34962
         }, 
         {
             "buffer" : 0, 
-            "byteLength" : 2112, 
-            "byteOffset" : 3816, 
+            "byteLength" : 576, 
+            "byteOffset" : 5352, 
             "target" : 34962
         }
     ], 
@@ -152,16 +152,16 @@
         }, 
         {
             "emissiveFactor" : [
-                0.800000011920929, 
-                0.797002911567688, 
-                0.6134095191955566
+                0.4000000059604645, 
+                0.398501455783844, 
+                0.3067047595977783
             ], 
             "name" : "lamp-glass", 
             "pbrMetallicRoughness" : {
                 "baseColorFactor" : [
-                    0.6400000190734865, 
-                    0.6376023387551655, 
-                    0.4907276226688566, 
+                    0.800000011920929, 
+                    0.797002911567688, 
+                    0.6134095191955566, 
                     1.0
                 ], 
                 "metallicFactor" : 0.0
@@ -170,7 +170,7 @@
     ], 
     "meshes" : [
         {
-            "name" : "lamp-glass", 
+            "name" : "lamp-base", 
             "primitives" : [
                 {
                     "attributes" : {
@@ -178,12 +178,12 @@
                         "POSITION" : 1
                     }, 
                     "indices" : 0, 
-                    "material" : 1
+                    "material" : 0
                 }
             ]
         }, 
         {
-            "name" : "lamp-base", 
+            "name" : "lamp-glass", 
             "primitives" : [
                 {
                     "attributes" : {
@@ -191,7 +191,7 @@
                         "POSITION" : 4
                     }, 
                     "indices" : 3, 
-                    "material" : 0
+                    "material" : 1
                 }
             ]
         }
@@ -231,11 +231,11 @@
             ]
         }, 
         {
-            "mesh" : 1, 
+            "mesh" : 0, 
             "name" : "lamp-base"
         }, 
         {
-            "mesh" : 0, 
+            "mesh" : 1, 
             "name" : "lamp-glass"
         }
     ], 
