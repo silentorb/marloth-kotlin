@@ -170,6 +170,18 @@ fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: Model,
         if (vertices.size > config.selection.first())
           drawText(toString(vertices[config.selection.first()]))
       }
+
+      ComponentMode.faces -> {
+        val faces = model.mesh.faces
+        val first = config.selection.first()
+        if (faces.size > first) {
+          val face = faces[first]
+          drawText("Face " + first + ":")
+          for (vertex in face.vertices) {
+            drawText(" " + toString(vertex))
+          }
+        }
+      }
     }
 //    canvas.drawText(TextConfiguration(toString(vertices[config.vertexSelection.first()]),
 //        renderer.fonts[0], 12f, bounds.position + Vector2(5f, 25f), black))

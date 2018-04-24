@@ -247,6 +247,9 @@ fun getSlope(start: Vector2, end: Vector2): Float {
 }
 
 fun simpleRayIntersectsLineSegment(rayStart: Vector2, segmentStart: Vector2, segmentEnd: Vector2): Vector2? {
+  if (segmentStart.y == segmentEnd.y)
+    return null
+
   if (!isBetween(rayStart.y, segmentStart.y, segmentEnd.y))
     return null
 
@@ -254,8 +257,7 @@ fun simpleRayIntersectsLineSegment(rayStart: Vector2, segmentStart: Vector2, seg
     segmentStart.x
   } else {
     val slope = getSlope(segmentStart, segmentEnd)
-    val b = segmentStart.x * slope + segmentStart.y
-    (rayStart.y - b) / slope
+    (rayStart.y - segmentStart.y) / slope + segmentStart.x
   }
 
   return if (x >= rayStart.x && isBetween(x, segmentStart.x, segmentEnd.x))

@@ -36,6 +36,20 @@ class SpatialSpec : Spek({
       }
     }
 
+    on("checking if a point is inside a polygon") {
+
+      it("should detect outside points") {
+        val result = isInsidePolygon(Vector2(-0.742f, -0.075f), listOf(
+            Vector2(-0.025f, -0.001f),
+            Vector2(-0.025f, -0.14f),
+            Vector2(-0.078f, -0.138f),
+            Vector2(-0.092f, 0.003f)
+        ))
+
+        assertFalse(result)
+      }
+    }
+
   }
 
 })

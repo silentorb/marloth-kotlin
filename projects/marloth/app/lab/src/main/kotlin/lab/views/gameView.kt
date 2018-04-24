@@ -36,7 +36,7 @@ fun renderFaceNormals(renderer: SceneRenderer, length: Float, mesh: FlexibleMesh
     val transform = Matrix()
         .translate(faceCenter)
         .rotateTowards(face.normal, Vector3(0f, 0f, 1f))
-        .rotateY(-Pi * 0.5f)
+        .rotateY(Pi * 0.5f)
         .scale(length)
 
     renderer.effects.flat.activate(transform, Vector4(0f, 1f, 0f, 1f))
