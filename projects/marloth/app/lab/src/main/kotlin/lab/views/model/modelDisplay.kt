@@ -167,8 +167,10 @@ fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: Model,
     when (config.componentMode) {
       ComponentMode.vertices -> {
         val vertices = model.vertices
-        if (vertices.size > config.selection.first())
-          drawText(toString(vertices[config.selection.first()]))
+        if (vertices.size > config.selection.first()) {
+          val vertex = vertices[config.selection.first()]
+          drawText(toString(vertex) + " " + vertex.hashCode())
+        }
       }
 
       ComponentMode.faces -> {

@@ -15,6 +15,7 @@ data class HeadPorts(
 fun createHead(resolution: Int): MeshNode<HeadPorts> {
   val mesh = FlexibleMesh()
   val headPath = createArc(0.6f, 8, Pi).take(7)
+  transformVertices(Matrix().rotateY(-Pi / 2), headPath)
   headPath.forEach { it.x *= 0.8f }
 //  headPath.last().x *= 0.5f
   lathe(mesh, headPath, 8 * resolution)
@@ -104,8 +105,9 @@ val createCartoonHuman: ModelGenerator = {
     mesh.sharedImport(mesh2)
     Pair(mesh2, it.third)
   }
-
-  transformMesh(mesh, Matrix().scale(1.8f))
+  val v = mesh.distinctVertices.sortedBy { it.z }
+  val v2 = mesh.distinctVertices.sortedBy { -it.z }
+//  transformMesh(mesh, Matrix().scale(1.8f))
 
   alignToFloor(mesh, 0f)
 

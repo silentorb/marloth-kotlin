@@ -45,7 +45,7 @@ data class ModelViewConfig(
     var tempEnd: Vector3 = Vector3(),
     var componentMode: ComponentMode = ComponentMode.vertices,
     var meshDisplay: MeshDisplay = MeshDisplay.solid,
-    val drawNormals: Boolean = false
+    var drawNormals: Boolean = false
 )
 
 typealias MeshGenerator = (FlexibleMesh) -> Unit
@@ -279,6 +279,10 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
 
       LabCommandType.selectEdgeLoop to { _ ->
         selectEdgeLoop(config, model)
+      },
+
+      LabCommandType.toggleNormals to { _ ->
+        config.drawNormals = !config.drawNormals
       },
 
       LabCommandType.selectModeEdges to { _ ->

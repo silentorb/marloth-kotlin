@@ -4,16 +4,16 @@ import mythic.spatial.*
 import kotlin.math.cos
 import kotlin.math.sin
 
-fun createArc(radius: Float, count: Int, sweep: Float = Pi * 2): Vertices {
+fun createArc(radius: Float, count: Int, sweep: Float = Pi * 2, offset: Float = 0f): Vertices {
   val vertices = ArrayList<Vector3>(count)
   val increment = sweep / (count - 1)
 
   for (i in 0 until count) {
-    val theta = increment * i
-    vertices.add(Vector3(sin(theta) * radius, 0f, cos(theta) * radius))
+    val theta = increment * i + offset
+    vertices.add(Vector3(cos(theta) * radius, 0f, sin(theta) * radius))
   }
   if (sweep == Pi)
-    vertices.last().x = 0f
+    vertices.last().y = 0f
 
   return vertices
 }
@@ -50,7 +50,8 @@ fun createCylinder(mesh: FlexibleMesh, radius: Float, count: Int, length: Float)
 }
 
 fun createSphere(mesh: FlexibleMesh, radius: Float, horizontalCount: Int, verticalCount: Int) =
-    lathe(mesh, createArc(radius, verticalCount, Pi), horizontalCount)
+    lathe(mesh, createArc(radius, verticalCount, Pi, -Pi / 2), horizontalCount)
+//    mesh.createFace(createArc(radius, verticalCount, Pi, -Pi / 2))
 
 fun createIncompleteSphere(mesh: FlexibleMesh, radius: Float, horizontalCount: Int, verticalCount: Int, take: Int) =
     lathe(mesh, createArc(radius, verticalCount, Pi).take(take), horizontalCount)

@@ -21,11 +21,14 @@ fun skin(mesh: FlexibleMesh, first: List<Vector3>, second: List<Vector3>) {
     val b = a + 1
     mesh.createStitchedFace(
         if (a == 0 && first[a] == first[b])
-          listOf(first[a], second[a], second[b])
+//          listOf(first[a], second[a], second[b])
+          listOf(second[b], second[a], first[a])
         else if (second.size == 1) //a == first.size - 1 && second[a] == second[b])
-          listOf(first[b], first[a], second[0])
+//          listOf(first[b], first[a], second[0])
+          listOf(second[0], first[a], first[b])
         else
-          listOf(first[b], first[a], second[a], second[b])
+//          listOf(first[b], first[a], second[a], second[b])
+          listOf(second[b], second[a], first[a], first[b])
     )
   }
 }
@@ -39,8 +42,12 @@ fun extrudeBasic(mesh: FlexibleMesh, face: FlexibleFace, transform: Matrix) {
   skinLoop(mesh, face.vertices, secondVertices)
 }
 
+inline fun nearly(value: Float, target: Float) =
+    value < target + 0.000001f
+        && value > target - 0.000001f
+
 fun keepOrRotate(matrix: Matrix, input: Vector3): Vector3 =
-    if (input.x == 0f && input.y == 0f)
+    if (nearly(input.x, 0f) && nearly(input.y, 0f))
       input
     else
       input.transform(matrix)
@@ -126,9 +133,21 @@ fun latheTwoPaths(mesh: FlexibleMesh, firstPath: Vertices, secondPath: Vertices,
 fun transformVertices(matrix: Matrix, vertices: List<Vector3>) {
 //  vertices.forEach { it.set(it.transform(matrix)) }
   for (vertex in vertices) {
-    vertex.set(vertex.transform(matrix))
+    val newValue = vertex.transform(matrix)
+    vertex.x = newValue.x
+    vertex.y = newValue.y
+    vertex.z = newValue.z
+//    vertex.set(newValue)
+    val k = 0
   }
 }
+
+//fun transformVertices2D(matrix: Matrix, vertices: List<Vector2>) {
+////  vertices.forEach { it.set(it.transform(matrix)) }
+//  for (vertex in vertices) {
+//    vertex.set(vertex.transform(matrix))
+//  }
+//}
 
 fun distortedTranslatePosition(offset: Vector3, vertices: List<Vector3>) {
   transformVertices(Matrix().translate(offset), vertices)
@@ -158,7 +177,7 @@ fun alignToFloor(vertices: List<Vector3>, floor: Float = 0f) {
   distortedTranslatePosition(Vector3(0f, 0f, floor - lowest), vertices)
 }
 
-fun alignToFloor(mesh:FlexibleMesh, floor: Float = 0f) {
+fun alignToFloor(mesh: FlexibleMesh, floor: Float = 0f) {
   alignToFloor(mesh.distinctVertices, floor)
 }
 

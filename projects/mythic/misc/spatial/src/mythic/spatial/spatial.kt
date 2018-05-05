@@ -228,7 +228,7 @@ fun rayIntersectsLine3D(p1: Vector3, p2: Vector3, p3: Vector3, p4: Vector3, maxG
 
 fun rayPolygonDistance(rayStart: Vector3, rayDirection: Vector3, polygonPoint: Vector3, polygonNormal: Vector3): Float? {
   val denominator = polygonNormal.dot(rayDirection)
-  if (denominator > -1e-6)
+  if (denominator < 1e-6)
     return null
 
   val foo = polygonPoint - rayStart
@@ -350,9 +350,13 @@ fun getAngle(a: Vector2, b: Vector2): Float {
 val Vector4.xyz: Vector3
   get() = Vector3(x, y, z)
 
+//val Vector4.xy: Vector2
+//  get() = Vector2(x, y)
+
 fun Vector3.copy() = Vector3(this)
 
 fun Vector3.transform(m: Matrix) = m.transform(Vector4(this, 1f)).xyz
+//fun Vector2.transform(m: Matrix) = m.transform(Vector4(x, y, 0f, 1f)).xy
 
 fun getVector3Center(first: Vector3, second: Vector3) =
     first + (second - first) * 0.5f

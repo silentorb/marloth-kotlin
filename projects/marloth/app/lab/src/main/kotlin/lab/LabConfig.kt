@@ -39,6 +39,7 @@ enum class LabCommandType {
   toggleSelection,
 
   toggleMeshDisplay,
+  toggleNormals,
 
   selectEdgeLoop
 }

@@ -23,17 +23,27 @@ val createCube = {
   )
 }
 
+val createSphere = {
+  val mesh = FlexibleMesh()
+  createSphere(mesh, 0.3f, 8, 6)
+  translateMesh(mesh, Vector3(0f, 0f, 1f))
+  Model(
+      mesh = mesh,
+      materials = listOf(mapMaterial(Material(Vector4(0.4f, 0.1f, 0.1f, 1f)), mesh))
+  )
+}
+
 fun createCylinder(): FlexibleMesh {
   val mesh = FlexibleMesh()
   createCylinder(mesh, 0.5f, 8, 1f)
   return mesh
 }
 
-fun createSphere(): FlexibleMesh {
-  val mesh = FlexibleMesh()
-  createSphere(mesh, 0.3f, 8, 6)
-  return mesh
-}
+//fun createSphere(): FlexibleMesh {
+//  val mesh = FlexibleMesh()
+//  createSphere(mesh, 0.3f, 8, 6)
+//  return mesh
+//}
 
 enum class AttributeName {
   position,
@@ -132,6 +142,7 @@ fun modelToMeshes(vertexSchemas: VertexSchemas, model: Model): ModelElements {
 
 fun standardMeshes(): ModelGeneratorMap = mapOf(
     MeshType.cube to createCube,
+    MeshType.sphere to createSphere,
     MeshType.bear to createCartoonHuman,
     MeshType.human to createHuman,
     MeshType.monster to createCartoonHuman,
@@ -140,9 +151,9 @@ fun standardMeshes(): ModelGeneratorMap = mapOf(
 
 //fun importedMeshes(vertexSchemas: VertexSchemas) = mapOf(
 //    MeshType.wallLamp to "lamp",
-//    MeshType.cube to "cube"
+//    MeshType.cube to "cube",
 ////    MeshType.girl to "girl2/child"
-////    MeshType.girl to "child/child"
+//    MeshType.girl to "child/child"
 //)
 //    .mapValues { loadGltf(vertexSchemas, "models/" + it.value) }
 
@@ -154,10 +165,10 @@ fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     MeshType.cylinder to createSimpleMesh(createCylinder(), vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f))
 )
     .mapValues { createModelElements(it.value) }
-    .plus(mapOf(
-        MeshType.sphere to createModelElements(createSimpleMesh(createSphere(), vertexSchemas.standard, Vector4(1f)),
-            Vector4(0.4f, 0.1f, 0.1f, 1f))
-    ))
+//    .plus(mapOf(
+//        MeshType.sphere to createModelElements(createSimpleMesh(createSphere(), vertexSchemas.standard, Vector4(1f)),
+//            Vector4(0.4f, 0.1f, 0.1f, 1f))
+//    ))
     .plus(standardMeshes().mapValues {
       modelToMeshes(vertexSchemas, it.value())
     })

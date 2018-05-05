@@ -119,8 +119,11 @@ class FlexibleMesh {
 //  }
 
   fun sharedImport(mesh: FlexibleMesh) {
+    val old = distinctVertices.size
     faces.addAll(mesh.faces)
     edges.addAll(mesh.edges)
+    val next = distinctVertices.size
+    val k = 1
   }
 
   fun sharedImport(meshes: List<FlexibleMesh>) {
