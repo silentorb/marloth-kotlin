@@ -27,3 +27,7 @@ fun joinMeshNodes(first: FlexibleMesh, firstPort: Port, second: FlexibleMesh, se
 
   return mesh
 }
+
+fun join3DPaths(first: Vertices, second: Vertices) {
+
+}

@@ -8,13 +8,13 @@ import org.joml.plus
 class FlexibleEdge(
     var first: Vector3,
     var second: Vector3,
-    val face: FlexibleFace,
+    val face: FlexibleFace?,
     val edges: MutableList<FlexibleEdge>,
     var next: FlexibleEdge?,
     var previous: FlexibleEdge?
 ) {
   fun other(node: Vector3) = if (node === first) second else first
-  fun toList() = listOf(first, second)
+  val vertices = listOf(first, second)
 
   val middle: Vector3
     get() = first + second * 0.5f
@@ -24,7 +24,7 @@ class FlexibleFace(
     val edges: MutableList<FlexibleEdge> = mutableListOf()
 ) {
   val unorderedVertices: List<Vector3>
-    get() = edges.flatMap { it.toList() }.distinct()
+    get() = edges.flatMap { it.vertices }.distinct()
 
   val vertices: List<Vector3>
     get() = edges.map { it.first }
@@ -42,7 +42,7 @@ class FlexibleMesh {
   val faces: MutableList<FlexibleFace> = mutableListOf()
 
   val redundantVertices: List<Vector3>
-    get() = faces.flatMap { it.vertices }
+    get() = edges.flatMap { it.vertices }
 
   val distinctVertices: List<Vector3>
     get() = redundantVertices.distinct()
@@ -71,10 +71,24 @@ class FlexibleMesh {
             || (existing.first == second && existing.second == first)
       }
 
-  fun createEdge(first: Vector3, second: Vector3, face: FlexibleFace): FlexibleEdge {
+  fun createEdge(first: Vector3, second: Vector3, face: FlexibleFace?): FlexibleEdge {
     val edge = FlexibleEdge(first, second, face, mutableListOf(), null, null)
     edges.add(edge)
     return edge
+  }
+
+  fun createEdges(vertices: Vertices){
+    var previous = vertices.first()
+    var previousEdge: FlexibleEdge? = null
+    for (next in vertices.drop(1)) {
+      val edge = createEdge(previous, next, null)
+      if (previousEdge != null) {
+        edge.previous = previousEdge
+        previousEdge.next = edge
+      }
+      previousEdge = edge
+      previous = next
+    }
   }
 
   fun stitchEdges(edges: List<FlexibleEdge>) {
@@ -112,18 +126,9 @@ class FlexibleMesh {
     assert(face.edges.none { it.next == null || it.previous == null })
   }
 
-//  fun import(mesh: FlexibleMesh) {
-//    val vertexMap = mesh.distinctVertices.associate { Pair(it, Vector3(it)) }
-//    val faceMap = mesh.faces.associate { Pair(it, FlexibleFace()) }
-//    val edgeMap = mesh.edges.associate { Pair(it, FlexibleEdge()) }
-//  }
-
   fun sharedImport(mesh: FlexibleMesh) {
-    val old = distinctVertices.size
     faces.addAll(mesh.faces)
     edges.addAll(mesh.edges)
-    val next = distinctVertices.size
-    val k = 1
   }
 
   fun sharedImport(meshes: List<FlexibleMesh>) {

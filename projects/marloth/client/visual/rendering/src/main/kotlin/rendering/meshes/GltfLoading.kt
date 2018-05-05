@@ -1,11 +1,9 @@
-package rendering
+package rendering.meshes
 
-import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import mythic.glowing.SimpleTriangleMesh
-import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import org.lwjgl.BufferUtils
 import java.io.DataInputStream
@@ -13,7 +11,7 @@ import java.io.InputStream
 import java.nio.ByteBuffer
 import java.util.*
 import com.fasterxml.jackson.annotation.JsonCreator
-import java.nio.IntBuffer
+import rendering.Material
 
 
 enum class AccessorType {
@@ -83,7 +81,7 @@ data class Primitive(
     var material: Int
 )
 
-data class MeshInfo(
+data class MeshInfo2(
     var primitives: List<Primitive>
 )
 
@@ -101,7 +99,7 @@ data class GltfInfo(
     var accessors: List<Accessor>,
     var bufferViews: List<BufferView>,
     var buffers: List<BufferInfo>,
-    var meshes: List<MeshInfo>,
+    var meshes: List<MeshInfo2>,
     var materials: List<MaterialInfo>
 )
 

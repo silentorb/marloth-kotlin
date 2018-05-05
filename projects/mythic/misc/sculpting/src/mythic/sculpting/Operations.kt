@@ -88,58 +88,72 @@ data class SwingInfo(
     val scale: Vector3
 )
 
-fun latheTwoPaths(mesh: FlexibleMesh, firstPath: Vertices, secondPath: Vertices, resolution: Int) {
-  val sweep: Float = Pi * 2
-  val count = 8 * resolution
-  val increment = sweep / count
-  val pivots = cloneVertices(firstPath.intersect(secondPath).filter { it.x == 0f })
-  val firstLastPath = firstPath.map {
-    val pivot = pivots.firstOrNull { p -> p == it }
-    if (pivot != null)
-      pivot
-    else
-      it
-  }
-  var previous = firstLastPath
-  val startVector = Vector3(1f, 0f, 0f)
+typealias Swings = List<SwingInfo>
+
+fun createSwings(firstPath: Vertices, secondPath: Vertices): Swings {
   val secondIterator = secondPath.iterator()
-  val swings = firstPath.map {
+  return firstPath.map {
     val other = secondIterator.next()
     val shortest = Math.min(it.x, other.x)
     SwingInfo(Vector3(shortest, 0f, it.z), Vector3(it.x, other.x, shortest) / shortest)
   }
-  for (i in 1 until count) {
-    val angle = i * increment
-    val matrix = Matrix().rotateZ(angle)
-//    val weight = Math.abs(startVector.transform(matrix).normalize().dot(startVector))
-//    val weight = 1 - sawWave(angle / (Pi / 2))
-//    val weight = sineRange(angle / Pi)
-//    val weight2 = 1 - sawRange(angle / (Pi / 2))
-//    val interpolation = interpolatePaths(firstPath, secondPath, weight)
-    val next = swings.map {
-      val pivot = pivots.firstOrNull { p -> p == it.point }
+}
+
+fun mapPivots(path: Vertices, pivots: Vertices) =
+    path.map {
+      val pivot = pivots.firstOrNull { p -> p == it }
       if (pivot != null)
         pivot
       else
-        it.point.transform(matrix) * it.scale
+        it
     }
+
+fun transformSwing(pivots: Vertices, matrix: Matrix, swing: SwingInfo): Vector3 {
+  val pivot = pivots.firstOrNull { p -> p == swing.point }
+  return if (pivot != null)
+    pivot
+  else
+    swing.point.transform(matrix) * swing.scale
+}
+
+data class LatheCourse(
+    val stepCount: Int,
+    val transformer: (Int) -> Matrix,
+    val wrap: Boolean
+)
+
+fun createLatheCourse(resolution: Int, sweep: Float = Pi * 2): LatheCourse {
+  val count = (resolution * sweep / (Pi / 2)).toInt() + 1
+  val increment = sweep / (count - 1)
+  return LatheCourse(
+      count,
+      { i: Int -> Matrix().rotateZ(i * increment) },
+      sweep == Pi * 2
+  )
+}
+
+fun latheTwoPaths(mesh: FlexibleMesh, latheCourse: LatheCourse, firstPath: Vertices, secondPath: Vertices) {
+
+  val pivots = cloneVertices(firstPath.intersect(secondPath).filter { it.x == 0f })
+  val firstLastPath = mapPivots(firstPath, pivots)
+  var previous = firstLastPath
+  val swings = createSwings(firstPath, secondPath)
+  for (i in 1 until latheCourse.stepCount) {
+    val matrix = latheCourse.transformer(i)
+    val next = swings.map { transformSwing(pivots, matrix, it) }
     skin(mesh, previous, next)
     previous = next
   }
 
-  skin(mesh, previous, firstLastPath)
+  if (latheCourse.wrap)
+    skin(mesh, previous, firstLastPath)
 }
 
-fun transformVertices(matrix: Matrix, vertices: List<Vector3>) {
-//  vertices.forEach { it.set(it.transform(matrix)) }
+fun transformVertices(matrix: Matrix, vertices: Vertices): Vertices {
   for (vertex in vertices) {
-    val newValue = vertex.transform(matrix)
-    vertex.x = newValue.x
-    vertex.y = newValue.y
-    vertex.z = newValue.z
-//    vertex.set(newValue)
-    val k = 0
+    vertex.set(vertex.transform(matrix))
   }
+  return vertices
 }
 
 //fun transformVertices2D(matrix: Matrix, vertices: List<Vector2>) {
@@ -240,4 +254,12 @@ fun stitchEdgeLoops(firstLoop: List<FlexibleEdge>, secondLoop: List<FlexibleEdge
     stitchEdges(a, b)
 //    break
   }
+}
+
+fun mirrorAlongY(mesh: FlexibleMesh): List<FlexibleFace> {
+  val newFaces = mesh.faces.toList().map { original ->
+    mesh.createFace(original.vertices.map { Vector3(it.x, -it.y, it.z) }.reversed())
+  }
+
+  return newFaces
 }

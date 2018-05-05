@@ -10,6 +10,7 @@ import rendering.*
 import scenery.Camera
 import lab.views.*
 import mythic.sculpting.*
+import rendering.meshes.ModelElements
 
 data class ModelLayout(
     val boxes: List<Box>,
@@ -45,7 +46,8 @@ data class ModelViewConfig(
     var tempEnd: Vector3 = Vector3(),
     var componentMode: ComponentMode = ComponentMode.vertices,
     var meshDisplay: MeshDisplay = MeshDisplay.solid,
-    var drawNormals: Boolean = false
+    var drawNormals: Boolean = false,
+    var drawTempLine: Boolean = false
 )
 
 typealias MeshGenerator = (FlexibleMesh) -> Unit

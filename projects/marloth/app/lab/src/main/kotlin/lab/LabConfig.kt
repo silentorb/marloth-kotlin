@@ -82,6 +82,7 @@ fun createLabInputBindings() = mutableMapOf(
 
             GLFW.GLFW_KEY_L to LabCommandType.selectEdgeLoop,
             GLFW.GLFW_KEY_X to LabCommandType.toggleMeshDisplay,
+            GLFW.GLFW_KEY_N to LabCommandType.toggleNormals,
 
             GLFW.GLFW_KEY_A to LabCommandType.toggleSelection,
             GLFW.GLFW_KEY_E to LabCommandType.selectModeEdges,

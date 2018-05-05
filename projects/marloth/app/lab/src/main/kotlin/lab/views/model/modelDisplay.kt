@@ -14,6 +14,9 @@ import mythic.typography.TextStyle
 import mythic.typography.calculateTextDimensions
 import org.joml.*
 import rendering.*
+import rendering.meshes.ModelElement
+import rendering.meshes.ModelElements
+import rendering.meshes.modelToMeshes
 import scenery.Camera
 import scenery.ProjectionType
 import scenery.Scene
@@ -107,17 +110,21 @@ fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, cam
       val meshes = modelToMeshes(renderer.vertexSchemas, model)
       meshes.forEach { drawMeshPreview(config, sceneRenderer, transform, it) }
       if (config.drawNormals)
-        renderFaceNormals(sceneRenderer, 0.1f, model.mesh)
+        renderFaceNormals(sceneRenderer, 0.05f, model.mesh)
 
       meshes.forEach { it.mesh.dispose() }
 
-//  renderFaceNormals(renderer,mesh,)
-
+//      if (model.mesh.faces.size == 0) {
+      model.mesh.edges.filter { it.face == null }.forEach {
+        sceneRenderer.drawLine(it.first, it.second, red)
+      }
+//      }
       sceneRenderer.drawLine(Vector3(), Vector3(1f, 0f, 0f), red)
       sceneRenderer.drawLine(Vector3(), Vector3(0f, 1f, 0f), green)
       sceneRenderer.drawLine(Vector3(), Vector3(0f, 0f, 1f), blue)
 
-      sceneRenderer.drawLine(config.tempStart, config.tempEnd, yellow)
+      if (config.drawTempLine)
+        sceneRenderer.drawLine(config.tempStart, config.tempEnd, yellow)
 
       drawSelection(config, model, sceneRenderer)
 

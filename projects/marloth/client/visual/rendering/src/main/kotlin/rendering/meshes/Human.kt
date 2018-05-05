@@ -2,22 +2,41 @@ package rendering.meshes
 
 import mythic.sculpting.*
 import mythic.spatial.*
-import org.joml.plus
 import rendering.Material
+import rendering.MaterialMap
 import rendering.Model
-import rendering.ModelGenerator
-import rendering.mapMaterial
+import rendering.mapMaterialToMesh
 
 data class HeadPorts(
     val neck: Port
 )
 
+val neckTop = Vector2(0.06f, 0.9f)
+
+fun headFrontPath() = transformVertices(Matrix().scale(0.8f).rotateX(Pi / 2), createArcXY(0.6f, 8, Pi).take(7))
+
+fun bodySidePath() = convertAsXZ(listOf(
+    neckTop.copy(),
+    Vector2(0.1f, 0.75f),
+    Vector2(0.32f, 0.7f),
+    Vector2(0.42f, 0.5f),
+    Vector2(0.42f, 0f)
+))
+
+fun bodyFrontPath() = convertAsXZ(listOf(
+    neckTop.copy(),
+    Vector2(0.1f, 0.75f),
+    Vector2(0.2f, 0.5f),
+    Vector2(0.25f, 0.4f),
+    Vector2(0.25f, 0f)
+))
+
 fun createHead(resolution: Int): MeshNode<HeadPorts> {
   val mesh = FlexibleMesh()
-  val headPath = createArc(0.6f, 8, Pi).take(7)
-  transformVertices(Matrix().rotateY(-Pi / 2), headPath)
-  headPath.forEach { it.x *= 0.8f }
-//  headPath.last().x *= 0.5f
+  val headPath = headFrontPath()
+//  val headPath = createArc(0.6f, 8, Pi).take(7)
+//  transformVertices(Matrix().rotateY(-Pi / 2), headPath)
+//  headPath.forEach { it.x *= 0.8f }
   lathe(mesh, headPath, 8 * resolution)
   val edge = mesh.edges.last()
   return MeshNode(mesh, HeadPorts(
@@ -31,24 +50,9 @@ data class TorsoPorts(
 
 fun createTorso(resolution: Int): MeshNode<TorsoPorts> {
   val mesh = FlexibleMesh()
-
-  val neckTop = Vector2(0.06f, 0.9f)
-  val bodyFront = convertAsXZ(listOf(
-      neckTop,
-      Vector2(0.1f, 0.75f),
-      Vector2(0.32f, 0.7f),
-      Vector2(0.42f, 0.5f),
-      Vector2(0.42f, 0f)
-  ))
-
-  val bodySide = convertAsXZ(listOf(
-      neckTop,
-      Vector2(0.1f, 0.75f),
-      Vector2(0.2f, 0.5f),
-      Vector2(0.25f, 0.4f),
-      Vector2(0.25f, 0f)
-  ))
-  latheTwoPaths(mesh, bodySide, bodyFront, resolution)
+  val bodyFront = bodyFrontPath()
+  val bodySide = bodySidePath()
+  latheTwoPaths(mesh, createLatheCourse(resolution), bodySide, bodyFront)
   val edge = mesh.edges[0].edges[0].previous!!
   return MeshNode(mesh, TorsoPorts(
       edge
@@ -60,78 +64,54 @@ fun createHumanMesh(): Pair<FlexibleMesh, MeshInfo> {
   val head = createHead(3)
   val torso = createTorso(3)
   val mesh = joinMeshNodes(head.mesh, head.ports.neck, torso.mesh, torso.ports.neck)
-//  val s = FlexibleMesh()
-//  createSphere(s, 0.3f, 8, 6)
-//  distortedTranslatePosition(Vector3(0.1f, 0f, 0f), s)
-//  mesh.sharedImport(s)
   alignToFloor(mesh.distinctVertices, 0f)
   calculateNormals(mesh)
   return Pair(mesh, MeshInfo(listOf(), head.info.edgeGroups.plus(torso.info.edgeGroups)))
 }
 
-val createCartoonHuman: ModelGenerator = {
-  val mesh = FlexibleMesh()
-  val skin = Material(Vector4(0.3f, 0.25f, 0.2f, 1f))
-  val black = Material(Vector4(0f, 0f, 0f, 1f))
-  val headCenter = Vector3(0f, 0f, 0.7f)
-  val limbRadius = 0.08f
-  val spheres = listOf(
-
-      // Head
-      Triple(0.3f, headCenter, skin),
-      Triple(0.03f, headCenter + Vector3(0.27f, -0.1f, 0.05f), black),
-      Triple(0.03f, headCenter + Vector3(0.27f, 0.1f, 0.05f), black),
-
-      // Torso
-      Triple(0.2f, Vector3(0f, 0f, 0.35f), skin),
-
-      // Legs
-      Triple(limbRadius, Vector3(0f, -0.1f, 0.1f), skin),
-      Triple(limbRadius, Vector3(0f, 0.1f, 0.1f), skin),
-
-      // Arms
-      Triple(limbRadius, Vector3(0.04f, -0.25f, 0.4f), skin),
-      Triple(limbRadius, Vector3(0.04f, 0.25f, 0.4f), skin),
-
-      // Hands
-      Triple(limbRadius, Vector3(0.05f, -0.3f, 0.3f), skin),
-      Triple(limbRadius, Vector3(0.05f, 0.3f, 0.3f), skin)
-  )
-
-  val sphereMeshes = spheres.map {
-    val mesh2 = FlexibleMesh()
-    createSphere(mesh2, it.first, 8, 8)
-    translateMesh(mesh2, it.second)
-    mesh.sharedImport(mesh2)
-    Pair(mesh2, it.third)
-  }
-  val v = mesh.distinctVertices.sortedBy { it.z }
-  val v2 = mesh.distinctVertices.sortedBy { -it.z }
-//  transformMesh(mesh, Matrix().scale(1.8f))
-
-  alignToFloor(mesh, 0f)
-
-  val materialMap = sphereMeshes.groupBy { it.second }.map { mapMaterial(it.key, it.value.map { it.first }) }
-  Model(
-      mesh = mesh,
-      materials = materialMap
-  )
-}
-
-val createHuman: ModelGenerator = {
+val createHumanOld: ModelGenerator = {
   val (mesh, info) = createHumanMesh()
   Model(
       mesh = mesh,
       info = info,
-      materials = listOf(mapMaterial(Material(Vector4(0.3f, 0.25f, 0.0f, 1f)), mesh)
+      materials = listOf(mapMaterialToMesh(Material(Vector4(0.3f, 0.25f, 0.0f, 1f)), mesh)
       ))
 }
 
-val createMonster: ModelGenerator = {
-  val (mesh, info) = createHumanMesh()
+fun rotateZ(vertices: Vertices) =
+    transformVertices(Matrix().rotateZ(Pi / 2), vertices)
+
+fun joinPaths(first: Vertices, second: Vertices): Vertices {
+  val gap = 0.1f
+  val singleOffset = second.first().z - first.last().z + gap
+  val offset = Vector3(0f, 0f, -singleOffset)
+  val modifiedSecond = transformVertices(Matrix().translate(offset), second)
+  return first.plus(modifiedSecond)
+}
+
+val createHuman: ModelGenerator = {
+  val mesh = FlexibleMesh()
+  val sidePath = joinPaths(headFrontPath(), bodySidePath())
+  val frontPath = joinPaths(headFrontPath(), bodyFrontPath())
+  latheTwoPaths(mesh, createLatheCourse(2, Pi), frontPath, sidePath)
+
+  val originalFaces = mesh.faces.toList()
+  val mirroredFaces = mirrorAlongY(mesh)
+
+  mesh.createEdges(rotateZ(sidePath))
+  mesh.createEdges(frontPath)
+
+//  val k = mesh.distinctVertices.sortedBy { it.x }
+//  mesh.createEdges(headFrontPath())
+//  mesh.createEdges(rotateZ(bodySidePath()))
+//  alignToFloor(mesh.distinctVertices, 0f)
+  calculateNormals(mesh)
+
   Model(
       mesh = mesh,
-      info = info,
-      materials = listOf(mapMaterial(Material(Vector4(0.25f, 0.25f, 0.25f, 1f)), mesh)
+      info = MeshInfo(),
+      materials = listOf(
+          MaterialMap(Material(Vector4(0.3f, 0.25f, 0.0f, 1f)), originalFaces),
+          MaterialMap(Material(Vector4(0.3f, 0.25f, 0.0f, 0.4f)), mirroredFaces)
       ))
 }

@@ -12,6 +12,9 @@ import scenery.GameScene
 import mythic.spatial.Vector4
 import mythic.typography.FontLoadInfo
 import org.joml.*
+import rendering.meshes.AttributeName
+import rendering.meshes.MeshMap
+import rendering.meshes.createVertexSchemas
 import scenery.Scene
 
 fun gatherEffectsData(dimensions: Vector2i, scene: Scene): EffectsData {

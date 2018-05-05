@@ -13,7 +13,7 @@ fun createArc(radius: Float, count: Int, sweep: Float = Pi * 2, offset: Float = 
     vertices.add(Vector3(cos(theta) * radius, 0f, sin(theta) * radius))
   }
   if (sweep == Pi)
-    vertices.last().y = 0f
+    vertices.last().x = 0f
 
   return vertices
 }
@@ -22,22 +22,22 @@ fun createCircle(mesh: FlexibleMesh, radius: Float, count: Int): FlexibleFace {
   return mesh.createFace(createArc(radius, count))
 }
 
-fun createArc2(radius: Float, count: Int, sweep: Float = Pi * 2): Vertices {
+fun createArcXY(radius: Float, count: Int, sweep: Float = Pi * 2): Vertices {
   val vertices = ArrayList<Vector3>(count)
-  val increment = sweep / (count)
+  val increment = sweep / (count - 1)
 
   for (i in 0 until count) {
     val theta = increment * i
     vertices.add(Vector3(sin(theta) * radius, cos(theta) * radius, 0f))
   }
-  if (sweep == Pi)
-    vertices.last().x = 0f
+//  if (sweep == Pi)
+//    vertices.last().x = 0f
 
   return vertices
 }
 
 fun createCircle2(mesh: FlexibleMesh, radius: Float, count: Int): FlexibleFace {
-  return mesh.createFace(createArc2(radius, count))
+  return mesh.createFace(createArcXY(radius, count))
 }
 
 //fun createIncompleteCircle(mesh: FlexibleMesh, radius: Float, count: Int, take: Int): FlexibleFace {

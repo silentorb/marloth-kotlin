@@ -2,6 +2,8 @@ package rendering
 
 import mythic.glowing.DrawMethod
 import mythic.spatial.getRotationMatrix
+import rendering.meshes.MeshMap
+import rendering.meshes.ModelElements
 import scenery.DepictionType
 import scenery.VisualElement
 

@@ -9,6 +9,8 @@ import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.put
 import rendering.*
+import rendering.meshes.FlexibleVertexSerializer
+import rendering.meshes.convertMesh
 import simulation.AbstractWorld
 
 typealias VertexMap = Map<Vector3, VertexNormalTexture>

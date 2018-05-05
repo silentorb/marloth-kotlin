@@ -8,8 +8,7 @@ import mythic.spatial.Pi
 import mythic.spatial.Vector4
 import rendering.Material
 import rendering.Model
-import rendering.ModelGenerator
-import rendering.mapMaterial
+import rendering.mapMaterialToManyMeshes
 
 
 fun createTransformedCylinder(length: Float, radius: Float, transform: Matrix): FlexibleMesh {
@@ -33,8 +32,8 @@ val createWallLamp: ModelGenerator = {
   val glassMaterial = Material(Vector4(0.9f, 0.9f, 0.6f, 0.5f), glow = 0.6f)
 
   val materialMap = listOf(
-      mapMaterial(brassMaterial, listOf(first, second)),
-      mapMaterial(glassMaterial, listOf(glass1, glass2))
+      mapMaterialToManyMeshes(brassMaterial, listOf(first, second)),
+      mapMaterialToManyMeshes(glassMaterial, listOf(glass1, glass2))
   )
 
   first.sharedImport(listOf(

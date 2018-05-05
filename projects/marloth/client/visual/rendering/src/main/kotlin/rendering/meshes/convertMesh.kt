@@ -1,14 +1,11 @@
-package rendering
+package rendering.meshes
 
 import mythic.glowing.SimpleMesh
 import mythic.glowing.VertexSchema
 import mythic.sculpting.FlexibleMesh
 import mythic.sculpting.FlexibleFace
 import mythic.sculpting.HalfEdgeFace
-import mythic.sculpting.HalfEdgeMesh
 import mythic.sculpting.HalfEdgeVertex
-import mythic.sculpting.query.each_edge
-import mythic.sculpting.query.getVertexCount
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import mythic.spatial.put

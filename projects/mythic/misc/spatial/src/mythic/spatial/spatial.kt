@@ -353,6 +353,7 @@ val Vector4.xyz: Vector3
 //val Vector4.xy: Vector2
 //  get() = Vector2(x, y)
 
+fun Vector2.copy() = Vector2(this)
 fun Vector3.copy() = Vector3(this)
 
 fun Vector3.transform(m: Matrix) = m.transform(Vector4(this, 1f)).xyz
