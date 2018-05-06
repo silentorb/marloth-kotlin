@@ -57,7 +57,7 @@ val createCartoonHuman: ModelGenerator = {
   val materialMap = sphereMeshes.groupBy { it.second }.map { mapMaterialToManyMeshes(it.key, it.value.map { it.first }) }
   Model(
       mesh = mesh,
-      materials = materialMap
+      groups = materialMap
   )
 }
 
@@ -66,6 +66,6 @@ val createMonster: ModelGenerator = {
   Model(
       mesh = mesh,
       info = info,
-      materials = listOf(mapMaterialToMesh(Material(Vector4(0.25f, 0.25f, 0.25f, 1f)), mesh)
+      groups = listOf(mapMaterialToMesh(Material(Vector4(0.25f, 0.25f, 0.25f, 1f)), mesh)
       ))
 }

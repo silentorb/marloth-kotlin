@@ -114,9 +114,9 @@ class LabClient(val config: LabConfig, val client: Client) {
     val layout = view.createLayout(windowInfo.dimensions)
     val (commands, nextLabInputState) = updateInput(view.getCommands(), previousState)
     val input = getInputState(client.platform.input, commands)
-    view.updateState(layout, input, delta)
-
     renderLab(windowInfo, layout.boxes)
+    view.updateState(layout, input, delta)
+    
     return LabClientResult(
         listOf(),
         LabState(nextLabInputState, previousState.gameInput, previousState.menuState),

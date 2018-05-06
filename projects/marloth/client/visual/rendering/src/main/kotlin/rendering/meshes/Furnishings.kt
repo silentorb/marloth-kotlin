@@ -44,6 +44,6 @@ val createWallLamp: ModelGenerator = {
 
   Model(
       mesh = first,
-      materials = materialMap
+      groups = materialMap
   )
 }

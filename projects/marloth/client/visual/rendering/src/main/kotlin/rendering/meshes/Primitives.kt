@@ -16,7 +16,7 @@ val createCube = {
   createCube(mesh, Vector3(1f, 1f, 1f))
   Model(
       mesh = mesh,
-      materials = listOf(mapMaterialToMesh(Material(Vector4(.5f, .5f, .5f, 1f)), mesh))
+      groups = listOf(mapMaterialToMesh(Material(Vector4(.5f, .5f, .5f, 1f)), mesh))
   )
 }
 
@@ -26,7 +26,7 @@ val createSphere = {
   translateMesh(mesh, Vector3(0f, 0f, 1f))
   Model(
       mesh = mesh,
-      materials = listOf(mapMaterialToMesh(Material(Vector4(0.4f, 0.1f, 0.1f, 1f)), mesh))
+      groups = listOf(mapMaterialToMesh(Material(Vector4(0.4f, 0.1f, 0.1f, 1f)), mesh))
   )
 }
 

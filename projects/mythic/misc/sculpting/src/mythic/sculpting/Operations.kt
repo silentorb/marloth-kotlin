@@ -134,7 +134,7 @@ fun transformSwing(pivots: Vertices, matrix: Matrix, swing: SwingInfo): Vector3 
     pivot
   else {
     val point = swing.point.transform(matrix)
-    point * swing.scale + Vector3(0f, 0f, swing.rangeZ * point.y)
+    point * swing.scale// + Vector3(0f, 0f, swing.rangeZ * point.y)
   }
 }
 

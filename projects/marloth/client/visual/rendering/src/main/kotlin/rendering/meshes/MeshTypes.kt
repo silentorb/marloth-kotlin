@@ -7,7 +7,7 @@ import mythic.spatial.Vector3
 
 typealias EdgeGroup = Map<FlexibleEdge, Float>
 typealias VertexGroup = Map<Vector3, Float>
-typealias FaceGroup = List<FlexibleFace>
+typealias Faces = List<FlexibleFace>
 
 data class MeshInfo(
     val vertexGroups: List<VertexGroup> = listOf(),

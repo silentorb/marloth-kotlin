@@ -1,28 +1,28 @@
 package rendering
 
 import mythic.sculpting.FlexibleEdge
-import mythic.sculpting.FlexibleFace
 import mythic.sculpting.FlexibleMesh
 import mythic.spatial.Vector3
-import rendering.meshes.FaceGroup
+import rendering.meshes.Faces
 import rendering.meshes.MeshInfo
 
-data class MaterialMap(
+data class MeshGroup(
     val material: Material,
-    val faceGroup: FaceGroup
+    val faces: Faces,
+    val name: String = "Unnamed"
 )
 
-fun mapMaterialToMesh(material: Material, mesh: FlexibleMesh): MaterialMap {
-  return MaterialMap(material, mesh.faces)
+fun mapMaterialToMesh(material: Material, mesh: FlexibleMesh): MeshGroup {
+  return MeshGroup(material, mesh.faces)
 }
 
-fun mapMaterialToManyMeshes(material: Material, meshes: List<FlexibleMesh>): MaterialMap {
-  return MaterialMap(material, meshes.flatMap { it.faces })
+fun mapMaterialToManyMeshes(material: Material, meshes: List<FlexibleMesh>): MeshGroup {
+  return MeshGroup(material, meshes.flatMap { it.faces })
 }
 
 data class Model(
     val mesh: FlexibleMesh,
-    val materials: List<MaterialMap>,
+    val groups: List<MeshGroup>,
     val info: MeshInfo = MeshInfo()
 ) {
   val vertices: List<Vector3> get() = mesh.distinctVertices

@@ -44,11 +44,11 @@ data class TransientModelElement(
 )
 
 fun partitionModelMeshes(model: Model): List<TransientModelElement> {
-  if (model.materials.size == 0)
+  if (model.groups.size == 0)
     throw Error("Missing materials")
 
-  return model.materials.map {
-    TransientModelElement(it.faceGroup, it.material)
+  return model.groups.map {
+    TransientModelElement(it.faces, it.material)
   }
 }
 

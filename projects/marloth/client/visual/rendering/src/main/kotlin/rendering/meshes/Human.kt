@@ -3,7 +3,7 @@ package rendering.meshes
 import mythic.sculpting.*
 import mythic.spatial.*
 import rendering.Material
-import rendering.MaterialMap
+import rendering.MeshGroup
 import rendering.Model
 import rendering.mapMaterialToMesh
 
@@ -74,7 +74,7 @@ val createHumanOld: ModelGenerator = {
   Model(
       mesh = mesh,
       info = info,
-      materials = listOf(mapMaterialToMesh(Material(Vector4(0.3f, 0.25f, 0.0f, 1f)), mesh)
+      groups = listOf(mapMaterialToMesh(Material(Vector4(0.3f, 0.25f, 0.0f, 1f)), mesh)
       ))
 }
 
@@ -112,8 +112,8 @@ val createHuman: ModelGenerator = {
   Model(
       mesh = mesh,
       info = MeshInfo(),
-      materials = listOf(
-          MaterialMap(Material(Vector4(0.3f, 0.25f, 0.0f, 1f)), originalFaces),
-          MaterialMap(Material(Vector4(0.2f, 0.25f, 0.3f, 1f)), mirroredFaces)
+      groups = listOf(
+          MeshGroup(Material(Vector4(0.3f, 0.25f, 0.0f, 1f)), originalFaces, "Original"),
+          MeshGroup(Material(Vector4(0.2f, 0.25f, 0.3f, 1f)), mirroredFaces, "Mirror")
       ))
 }

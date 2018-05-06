@@ -42,6 +42,7 @@ data class ModelViewConfig(
     var drawEdges: Boolean = true,
     var camera: ViewCameraConfig = ViewCameraConfig(),
     var selection: List<Int> = listOf(),
+    var visibleGroups: MutableList<Boolean> = mutableListOf(),
     var tempStart: Vector3 = Vector3(),
     var tempEnd: Vector3 = Vector3(),
     var componentMode: ComponentMode = ComponentMode.vertices,
@@ -144,26 +145,15 @@ fun resetCamera(config: ModelViewConfig, model: Model, rotationY: Float, rotatio
   config.camera.pivot = getVerticesCenter(model.vertices)
 }
 
-data class SelectionEvent(
-    val index: Int
-)
-
-fun drawLeftPanel(meshTypes: List<MeshType>, config: ModelViewConfig) = { bounds: Bounds ->
-  val padding = Vector2(10f)
-  val itemHeight = 30f
-  val focusIndex = meshTypes.indexOf(config.model)
-
-  val items = meshTypes
-      .map { it.name }
-      .mapIndexed { index, it -> PartialBox(itemHeight, drawListItem(it, focusIndex == index)) }
-
-  val buttonBoxes = arrangeList(verticalArrangement(padding), items, bounds)
-  val boxes = listOf(
-      Box(bounds, drawSidePanel())
-  )
-      .plus(buttonBoxes)
-  Pair(boxes, buttonBoxes.mapIndexed { i, b -> ClickBox(b.bounds, SelectionEvent(i)) })
+enum class SelectableListType {
+  model,
+  group
 }
+
+data class SelectionEvent(
+    val list: SelectableListType,
+    val itemIndex: Int
+)
 
 fun loadGeneratedModel(config: ModelViewConfig, renderer: Renderer): Model {
   val generator = renderer.meshGenerators[config.model]
@@ -186,11 +176,19 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
   val externalMesh: ModelElements? = loadExternalMesh(config, renderer)
   val camera = createOrthographicCamera(config.camera)
 
+  init {
+    // When the model view changes to viewing a different model,
+    // the list of visible subgroups needs to be reinitialized.
+    if (config.visibleGroups.size != model.groups.size) {
+      config.visibleGroups = model.groups.map { true }.toMutableList()
+    }
+  }
+
   fun createLayout(dimensions: Vector2i): ModelLayout {
     val bounds = Bounds(Vector2(), dimensions.toVector2())
     val initialLengths = listOf(200f, null, 300f)
 
-    val left = drawLeftPanel(renderer.meshes.keys.toList(), config)
+    val left = drawLeftPanel(renderer.meshes.keys.toList(), config, model)
     val middle = { b: Bounds -> Box(b, drawScenePanel(config, renderer, model, camera, externalMesh)) }
     val right = { b: Bounds -> Box(b, drawInfoPanel(config, renderer, model, mousePosition)) }
     val lengths = solveMeasurements(dimensions.x.toFloat(), initialLengths)
@@ -208,6 +206,18 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     )
   }
 
+  fun onListItemSelection(event: SelectionEvent) {
+    when (event.list) {
+      SelectableListType.model -> {
+        config.model = renderer.meshes.keys.toList()[event.itemIndex]
+        config.visibleGroups = mutableListOf()
+      }
+      SelectableListType.group -> {
+        config.visibleGroups[event.itemIndex] = !config.visibleGroups[event.itemIndex]
+      }
+    }
+  }
+
   fun updateState(layout: ModelLayout, input: InputState, delta: Float) {
     val commands = input.commands
 
@@ -217,7 +227,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     if (isActive(commands, LabCommandType.select)) {
       val clickBox = filterMouseOverBoxes(layout.clickBoxes, mousePosition)
       if (clickBox != null) {
-        config.model = renderer.meshes.keys.toList()[clickBox.value.index]
+        onListItemSelection(clickBox.value)
       } else {
         trySelect(config, camera, model, mousePosition, layout.modelPanelBounds)
       }
