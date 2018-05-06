@@ -44,8 +44,11 @@ class FlexibleMesh {
   val redundantVertices: List<Vector3>
     get() = edges.flatMap { it.vertices }
 
+//  val distinctVertices: List<Vector3>
+//    get() = redundantVertices.distinct()
+
   val distinctVertices: List<Vector3>
-    get() = redundantVertices.distinct()
+    get() = redundantVertices.distinctBy { System.identityHashCode(it) }
 
   fun createFace(): FlexibleFace {
     val face = FlexibleFace()
@@ -77,7 +80,7 @@ class FlexibleMesh {
     return edge
   }
 
-  fun createEdges(vertices: Vertices){
+  fun createEdges(vertices: Vertices) {
     var previous = vertices.first()
     var previousEdge: FlexibleEdge? = null
     for (next in vertices.drop(1)) {

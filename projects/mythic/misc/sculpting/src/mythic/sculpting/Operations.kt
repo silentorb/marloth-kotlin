@@ -42,7 +42,7 @@ fun extrudeBasic(mesh: FlexibleMesh, face: FlexibleFace, transform: Matrix) {
   skinLoop(mesh, face.vertices, secondVertices)
 }
 
-inline fun nearly(value: Float, target: Float) =
+inline fun nearly(value: Float, target: Float = 0f) =
     value < target + 0.000001f
         && value > target - 0.000001f
 
@@ -252,13 +252,25 @@ fun stitchEdgeLoops(firstLoop: List<FlexibleEdge>, secondLoop: List<FlexibleEdge
   for (a in firstLoop) {
     val b = secondIterator.next()
     stitchEdges(a, b)
-//    break
   }
 }
 
 fun mirrorAlongY(mesh: FlexibleMesh): List<FlexibleFace> {
+  val nearAxis = mesh.distinctVertices.filter { nearly(it.y) }
+  nearAxis.forEach { it.y = 0f }
+  val existingVertices = nearAxis.toMutableList()
   val newFaces = mesh.faces.toList().map { original ->
-    mesh.createFace(original.vertices.map { Vector3(it.x, -it.y, it.z) }.reversed())
+    val newVertices = original.vertices.map {
+      val vertex = Vector3(it.x, -it.y, it.z)
+      val existing = existingVertices.find { it == vertex }
+      if (existing != null) {
+        existing
+      } else {
+        existingVertices.add(vertex)
+        vertex
+      }
+    }.reversed()
+    mesh.createStitchedFace(newVertices)
   }
 
   return newFaces

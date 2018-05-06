@@ -95,16 +95,18 @@ val createHuman: ModelGenerator = {
   val frontPath = joinPaths(headFrontPath(), bodyFrontPath())
   latheTwoPaths(mesh, createLatheCourse(2, Pi), frontPath, sidePath)
 
+  val k = mesh.distinctVertices.sortedBy { it.x }
   val originalFaces = mesh.faces.toList()
   val mirroredFaces = mirrorAlongY(mesh)
 
   mesh.createEdges(rotateZ(sidePath))
   mesh.createEdges(frontPath)
 
-//  val k = mesh.distinctVertices.sortedBy { it.x }
+  val k2 = mesh.distinctVertices.sortedBy { it.x }
+//  val k3 = mesh.distinctVertices2
 //  mesh.createEdges(headFrontPath())
 //  mesh.createEdges(rotateZ(bodySidePath()))
-//  alignToFloor(mesh.distinctVertices, 0f)
+  alignToFloor(mesh.distinctVertices, 0f)
   calculateNormals(mesh)
 
   Model(
@@ -112,6 +114,6 @@ val createHuman: ModelGenerator = {
       info = MeshInfo(),
       materials = listOf(
           MaterialMap(Material(Vector4(0.3f, 0.25f, 0.0f, 1f)), originalFaces),
-          MaterialMap(Material(Vector4(0.3f, 0.25f, 0.0f, 0.4f)), mirroredFaces)
+          MaterialMap(Material(Vector4(0.25f, 0.3f, 0.0f, 0.3f)), mirroredFaces)
       ))
 }
