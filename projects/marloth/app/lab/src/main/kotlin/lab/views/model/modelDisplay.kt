@@ -48,9 +48,11 @@ fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, trans
   }
 
   mesh.draw(DrawMethod.triangleFan)
-  globalState.cullFaces = false
+  if (config.meshDisplay == MeshDisplay.wireframe) {
+    globalState.cullFaces = false
+    globalState.depthEnabled = false
+  }
 
-  globalState.depthEnabled = false
   globalState.lineThickness = 1f
   sceneRenderer.effects.flat.activate(transform, lineColor)
   mesh.draw(DrawMethod.lineLoop)
@@ -58,6 +60,9 @@ fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, trans
   globalState.pointSize = 3f
   sceneRenderer.effects.flat.activate(transform, lineColor)
   mesh.draw(DrawMethod.points)
+
+  globalState.depthEnabled = false
+  globalState.cullFaces = false
 }
 
 fun drawSelection(config: ModelViewConfig, model: Model, sceneRenderer: SceneRenderer) {
@@ -114,15 +119,14 @@ fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, cam
 
       meshes.forEach { it.mesh.dispose() }
 
-//      if (model.mesh.faces.size == 0) {
-      model.mesh.edges.filter { it.face == null }.forEach {
-        sceneRenderer.drawLine(it.first, it.second, red)
-      }
-//      }
       sceneRenderer.drawLine(Vector3(), Vector3(1f, 0f, 0f), red)
       sceneRenderer.drawLine(Vector3(), Vector3(0f, 1f, 0f), green)
       sceneRenderer.drawLine(Vector3(), Vector3(0f, 0f, 1f), blue)
 
+      model.mesh.edges.filter { it.face == null }.forEach {
+        sceneRenderer.drawLine(it.first, it.second, Vector4(0.8f, 0.5f, 0.3f, 1f))
+      }
+      
       if (config.drawTempLine)
         sceneRenderer.drawLine(config.tempStart, config.tempEnd, yellow)
 

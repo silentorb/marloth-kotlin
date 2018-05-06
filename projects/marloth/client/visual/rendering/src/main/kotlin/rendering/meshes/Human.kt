@@ -114,6 +114,6 @@ val createHuman: ModelGenerator = {
       info = MeshInfo(),
       materials = listOf(
           MaterialMap(Material(Vector4(0.3f, 0.25f, 0.0f, 1f)), originalFaces),
-          MaterialMap(Material(Vector4(0.25f, 0.3f, 0.0f, 0.3f)), mirroredFaces)
+          MaterialMap(Material(Vector4(0.2f, 0.25f, 0.3f, 1f)), mirroredFaces)
       ))
 }
