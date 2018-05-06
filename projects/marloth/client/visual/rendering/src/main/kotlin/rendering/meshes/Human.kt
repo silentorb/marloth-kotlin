@@ -26,7 +26,7 @@ fun bodySidePath() = convertAsXZ(listOf(
 fun bodyFrontPath() = convertAsXZ(listOf(
     neckTop.copy(),
     Vector2(0.1f, 0.75f),
-    Vector2(0.2f, 0.5f),
+    Vector2(0.2f, 0.6f),
     Vector2(0.25f, 0.4f),
     Vector2(0.25f, 0f)
 ))
@@ -106,7 +106,7 @@ val createHuman: ModelGenerator = {
 //  val k3 = mesh.distinctVertices2
 //  mesh.createEdges(headFrontPath())
 //  mesh.createEdges(rotateZ(bodySidePath()))
-  alignToFloor(mesh.distinctVertices, 0f)
+//  alignToFloor(mesh.distinctVertices, 0f)
   calculateNormals(mesh)
 
   Model(

@@ -1,6 +1,7 @@
 package mythic.sculpting
 
 import mythic.spatial.*
+import org.joml.plus
 import org.joml.unaryMinus
 
 typealias Vertices = List<Vector3>
@@ -85,17 +86,36 @@ fun bezierSample(i: Float, points: List<Vector2>) {
 
 data class SwingInfo(
     val point: Vector3,
-    val scale: Vector3
+    val scale: Vector3,
+    val rangeZ: Float
 )
 
 typealias Swings = List<SwingInfo>
+
+fun minOrOne(first: Float, second: Float): Float {
+  val result = Math.min(first, second)
+  return if (result == 0f)
+    1f
+  else
+    result
+}
 
 fun createSwings(firstPath: Vertices, secondPath: Vertices): Swings {
   val secondIterator = secondPath.iterator()
   return firstPath.map {
     val other = secondIterator.next()
-    val shortest = Math.min(it.x, other.x)
-    SwingInfo(Vector3(shortest, 0f, it.z), Vector3(it.x, other.x, shortest) / shortest)
+    val shortestX = minOrOne(it.x, other.x)
+//    val lowestZ = minOrOne(it.z, other.z)
+//    val highestZ = Math.max(it.z, other.z)
+    val scale = Vector3(it.x / shortestX, other.x / shortestX, 1f)
+    val rangeZ = if (it.z == other.z)
+      1f
+    else {
+      val widestX = Math.max(it.x, other.x)
+      (other.z - it.z) / widestX
+    }
+
+    SwingInfo(Vector3(shortestX, 0f, it.z), scale, rangeZ)
   }
 }
 
@@ -112,8 +132,10 @@ fun transformSwing(pivots: Vertices, matrix: Matrix, swing: SwingInfo): Vector3 
   val pivot = pivots.firstOrNull { p -> p == swing.point }
   return if (pivot != null)
     pivot
-  else
-    swing.point.transform(matrix) * swing.scale
+  else {
+    val point = swing.point.transform(matrix)
+    point * swing.scale + Vector3(0f, 0f, swing.rangeZ * point.y)
+  }
 }
 
 data class LatheCourse(
@@ -178,13 +200,6 @@ fun transformMesh(mesh: FlexibleMesh, matrix: Matrix) {
 fun translateMesh(mesh: FlexibleMesh, offset: Vector3) {
   transformVertices(Matrix().translate(offset), mesh.distinctVertices)
 }
-
-//fun convertPath(path: Vertices) =
-//    path.map { Vector3(it.x, 0f, it.y) }
-
-//fun lathe(mesh: FlexibleMesh, arc: Vertices, horizontalCount: Int) {
-//  lathe(mesh, convertPath(arc), horizontalCount)
-//}
 
 fun alignToFloor(vertices: List<Vector3>, floor: Float = 0f) {
   val lowest = vertices.map { it.z }.sorted().first()
