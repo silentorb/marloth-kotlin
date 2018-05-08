@@ -1,7 +1,6 @@
 package mythic.glowing
 
 import org.lwjgl.opengl.GL11.*
-import java.nio.FloatBuffer
 
 fun getErrorInfo(error: Int): String {
   when (error) {
@@ -21,6 +20,7 @@ fun getErrorInfo(error: Int): String {
 fun checkError(message: String) {
   val error = glGetError()
   if (error != GL_NO_ERROR) {
-    throw Error(message)
+    val info = getErrorInfo(error)
+    throw Error("OpenGL Error " + info + " while " + message)
   }
 }

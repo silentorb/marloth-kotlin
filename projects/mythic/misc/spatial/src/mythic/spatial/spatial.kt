@@ -266,14 +266,14 @@ fun simpleRayIntersectsLineSegment(rayStart: Vector2, segmentStart: Vector2, seg
     null
 }
 
-inline fun simpleRayIntersectsLineSegmentAsNumber(rayStart: Vector2, segmentStart: Vector2, segmentEnd: Vector2): Int {
+fun simpleRayIntersectsLineSegmentAsNumber(rayStart: Vector2, segmentStart: Vector2, segmentEnd: Vector2): Int {
   val result = simpleRayIntersectsLineSegment(rayStart, segmentStart, segmentEnd)
   return if (result != null) 1 else 0
 }
 
-inline fun isEven(value: Int) = (value and 1) == 0
+fun isEven(value: Int) = (value and 1) == 0
 
-inline fun isOdd(value: Int) = (value and 1) != 0
+fun isOdd(value: Int) = (value and 1) != 0
 
 fun isInsidePolygon(point: Vector2, vertices: List<Vector2>): Boolean {
   var count = simpleRayIntersectsLineSegmentAsNumber(point, vertices.last(), vertices.first())
