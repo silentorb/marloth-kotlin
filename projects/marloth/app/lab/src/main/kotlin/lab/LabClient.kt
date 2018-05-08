@@ -116,7 +116,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     val input = getInputState(client.platform.input, commands)
     renderLab(windowInfo, layout.boxes)
     view.updateState(layout, input, delta)
-    
+
     return LabClientResult(
         listOf(),
         LabState(nextLabInputState, previousState.gameInput, previousState.menuState),

@@ -32,7 +32,8 @@ typealias ModelGeneratorMap = Map<MeshType, ModelGenerator>
 
 data class ModelElement(
     val mesh: Drawable,
-    val material: Material
+    val material: Material,
+    val name: String = ""
 )
 
 typealias ModelElements = List<ModelElement>

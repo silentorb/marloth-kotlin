@@ -21,8 +21,8 @@ fun createSimplePainter(elements: ModelElements): Painter =
     }
 
 fun createPainters(meshes: MeshMap): Painters = mapOf(
-    DepictionType.monster to createSimplePainter(meshes[MeshType.bear]!!),
-    DepictionType.character to createSimplePainter(meshes[MeshType.cube]!!),
+    DepictionType.monster to createSimplePainter(meshes[MeshType.child]!!),
+    DepictionType.character to createSimplePainter(meshes[MeshType.child]!!),
     DepictionType.missile to createSimplePainter(meshes[MeshType.sphere]!!),
     DepictionType.wallLamp to createSimplePainter(meshes[MeshType.wallLamp]!!)
 )

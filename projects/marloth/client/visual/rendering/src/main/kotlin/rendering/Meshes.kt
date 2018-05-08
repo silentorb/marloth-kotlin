@@ -7,7 +7,7 @@ import rendering.meshes.*
 enum class MeshType {
   bear,
   cylinder,
-  girl,
+  child,
   human,
   humanOld,
   line,
@@ -18,13 +18,13 @@ enum class MeshType {
 }
 
 fun standardMeshes(): ModelGeneratorMap = mapOf(
-    MeshType.cube to createCube,
+//    MeshType.cube to createCube,
     MeshType.sphere to createSphere,
     MeshType.bear to createCartoonHuman,
     MeshType.human to createHuman,
 //    MeshType.humanOld to createHumanOld,
-    MeshType.monster to createCartoonHuman,
-    MeshType.wallLamp to createWallLamp
+    MeshType.monster to createCartoonHuman
+//    MeshType.wallLamp to createWallLamp
 )
 
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
@@ -39,13 +39,13 @@ fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     .plus(standardMeshes().mapValues {
       modelToMeshes(vertexSchemas, it.value())
     })
-//    .plus(importedMeshes(vertexSchemas))
+    .plus(importedMeshes(vertexSchemas))
 
 
-//fun importedMeshes(vertexSchemas: VertexSchemas) = mapOf(
-//    MeshType.wallLamp to "lamp",
-//    MeshType.cube to "cube",
-////    MeshType.girl to "girl2/child"
-//    MeshType.girl to "child/child"
-//)
-//    .mapValues { loadGltf(vertexSchemas, "models/" + it.value) }
+fun importedMeshes(vertexSchemas: VertexSchemas) = mapOf(
+    MeshType.wallLamp to "lamp",
+    MeshType.cube to "cube",
+//    MeshType.child to "girl2/child"
+    MeshType.child to "child/child"
+)
+    .mapValues { loadGltf(vertexSchemas, "models/" + it.value) }

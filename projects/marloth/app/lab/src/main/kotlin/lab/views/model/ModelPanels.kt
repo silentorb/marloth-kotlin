@@ -121,7 +121,8 @@ fun drawSelectableList(items: List<SelectableItem>, list: SelectableListType, bo
   return Pair(boxes, buttonBoxes.mapIndexed { i, b -> ClickBox(b.bounds, SelectionEvent(list, i)) })
 }
 
-fun drawLeftPanel(meshTypes: List<MeshType>, config: ModelViewConfig, model: Model) = { bounds: Bounds ->
+fun drawLeftPanel(meshTypes: List<MeshType>, config: ModelViewConfig, model: Model,
+                  externalMesh: ModelElements?) = { bounds: Bounds ->
   val gap = 2f
   val halfGap = gap / 2
   val halfDimensions = Vector2(bounds.dimensions.x, bounds.dimensions.y / 2 - halfGap)
@@ -132,9 +133,12 @@ fun drawLeftPanel(meshTypes: List<MeshType>, config: ModelViewConfig, model: Mod
 
   val modelList = drawSelectableList(modelItems, SelectableListType.model, Bounds(bounds.position, halfDimensions))
 
-  val meshGroups = model.groups.mapIndexed { index, it ->
-    SelectableItem(it.name, config.visibleGroups[index])
-  }
+  val meshGroups = if (model.groups.size > 0)
+    model.groups.mapIndexed { index, it ->
+      SelectableItem(it.name, config.visibleGroups[index])
+    }
+  else
+    externalMesh!!.mapIndexed { i, it-> SelectableItem(it.name, config.visibleGroups[i]) }
 
   val groupListBounds = Bounds(bounds.position + Vector2(0f, bounds.dimensions.y / 2 + halfGap), halfDimensions)
   val groupList = drawSelectableList(meshGroups, SelectableListType.group, groupListBounds)

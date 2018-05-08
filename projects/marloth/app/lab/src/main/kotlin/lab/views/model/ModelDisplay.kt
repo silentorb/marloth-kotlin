@@ -30,7 +30,7 @@ fun createOrthographicCamera(camera: ViewCameraConfig): Camera {
   return Camera(ProjectionType.orthographic, position + camera.pivot, orientationSecond, camera.zoom)
 }
 
-fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, transform: Matrix, section: ModelElement) {
+fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, transform: Matrix, section: ModelElement, triangleMode: Boolean = false) {
   val mesh = section.mesh
 
   globalState.depthEnabled = true
@@ -42,7 +42,7 @@ fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, trans
     MeshDisplay.wireframe -> sceneRenderer.effects.flat.activate(transform, faceColor)
   }
 
-  mesh.draw(DrawMethod.triangleFan)
+  mesh.draw(if (triangleMode) DrawMethod.triangles else DrawMethod.triangleFan)
   if (config.meshDisplay == MeshDisplay.wireframe) {
     globalState.cullFaces = false
     globalState.depthEnabled = false
@@ -50,7 +50,7 @@ fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, trans
 
   globalState.lineThickness = 1f
   sceneRenderer.effects.flat.activate(transform, lineColor)
-  mesh.draw(DrawMethod.lineLoop)
+  mesh.draw(if (triangleMode) DrawMethod.lineStrip else DrawMethod.lineLoop)
 
   globalState.pointSize = 3f
   sceneRenderer.effects.flat.activate(transform, lineColor)
@@ -105,7 +105,9 @@ fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, cam
     val transform = Matrix()
 
     if (modelElements != null) {
-      modelElements.forEach { drawMeshPreview(config, sceneRenderer, transform, it) }
+      modelElements
+          .filterIndexed { i, it -> config.visibleGroups[i] }
+          .forEach { drawMeshPreview(config, sceneRenderer, transform, it, true) }
     } else {
       val meshes = modelToMeshes(renderer.vertexSchemas, model)
       meshes

@@ -84,7 +84,7 @@ class SimpleTriangleMesh<T>(val vertexBuffer: VertexBuffer<T>, val indices: IntB
 
   override fun draw(method: DrawMethod) {
     vertexBuffer.activate()
-    glDrawElements(GL_TRIANGLES, indices)
+    glDrawElements(convertDrawMethod(method), indices)
   }
 
   constructor(vertexSchema: VertexSchema<T>, buffer: FloatBuffer, indices: IntBuffer) :

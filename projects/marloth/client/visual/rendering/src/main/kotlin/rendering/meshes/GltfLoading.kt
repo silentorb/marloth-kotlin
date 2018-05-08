@@ -82,7 +82,8 @@ data class Primitive(
 )
 
 data class MeshInfo2(
-    var primitives: List<Primitive>
+    val primitives: List<Primitive>,
+    val name: String
 )
 
 data class Metallic(
@@ -151,13 +152,100 @@ fun loadGltf(vertexSchemas: VertexSchemas, name: String): ModelElements {
   val buffer = loadGltfByteBuffer(name, info)
   val vertexSchema = vertexSchemas.imported
 
-  val result = info.meshes.flatMap { it.primitives }.map { primitive ->
+  if (name == "models/child/boy-clothes") {
+    for (accessor in info.accessors) {
+      val view = info.bufferViews[accessor.bufferView]
+      buffer.position(view.byteOffset)
+      println("Buffer View " + accessor.bufferView)
+      when (accessor.componentType) {
+
+        ComponentType.UnsignedByte.value -> {
+          val intBuffer = buffer
+          for (i in 0 until accessor.count) {
+            val value = intBuffer.get().toInt() and 0xFF
+            println(value)
+          }
+        }
+
+        ComponentType.UnsignedShort.value -> {
+          val intBuffer = buffer.asShortBuffer()
+          for (i in 0 until accessor.count) {
+            val value = intBuffer.get()
+            val value2 = value.toInt() and 0xFF
+            println("" + value + " " + value2)
+          }
+        }
+
+        ComponentType.UnsignedInt.value -> {
+          for (i in 0 until accessor.count) {
+            val value = buffer.get().toInt() and 0xFF
+            println(value)
+          }
+        }
+
+        ComponentType.Float.value -> {
+          when (accessor.type) {
+
+            AccessorType.SCALAR -> {
+              for (i in 0 until accessor.count) {
+                val value1 = buffer.getFloat()
+                println("" + value1)
+              }
+            }
+
+            AccessorType.VEC2 -> {
+              for (i in 0 until accessor.count) {
+                val value1 = buffer.getFloat()
+                val value2 = buffer.getFloat()
+                println("" + value1 + ", " + value2)
+              }
+            }
+
+            AccessorType.VEC3 -> {
+              for (i in 0 until accessor.count) {
+                val value1 = buffer.getFloat()
+                val value2 = buffer.getFloat()
+                val value3 = buffer.getFloat()
+                println("" + value1 + ", " + value2 + ", " + value3)
+              }
+            }
+
+            AccessorType.VEC4 -> {
+              for (i in 0 until accessor.count) {
+                val value1 = buffer.getFloat()
+                val value2 = buffer.getFloat()
+                val value3 = buffer.getFloat()
+                val value4 = buffer.getFloat()
+                println("" + value1 + ", " + value2 + ", " + value3 + ", " + value4)
+              }
+            }
+
+            AccessorType.MAT4 -> {
+              println("Matrix...")
+            }
+
+            else -> throw Error("Not implemented.")
+
+          }
+        }
+
+        else ->
+          throw Error("Not implemented")
+      }
+    }
+  }
+
+  val result = info.meshes.flatMap { mesh -> mesh.primitives.map { Pair(it, mesh.name) } }.map { pair ->
+    val (primitive, name) = pair
 
     val indexAccessor = info.accessors[primitive.indices]
     val triangleCount = indexAccessor.count / 3
     val vertexCount = info.accessors[primitive.attributes[AttributeType.POSITION]!!].count
 
     val indexCount = triangleCount * 3
+    if (name == "boy-clothes") {
+
+    }
     val indices = BufferUtils.createIntBuffer(indexCount)
     val vertices = BufferUtils.createFloatBuffer(3 * 2 * vertexCount)
 
@@ -165,19 +253,29 @@ fun loadGltf(vertexSchemas: VertexSchemas, name: String): ModelElements {
       val bufferView = info.bufferViews[primitive.indices]
       buffer.position(bufferView.byteOffset)
 
-      if (indexAccessor.componentType == ComponentType.UnsignedShort.value) {
-        val intBuffer = buffer.asShortBuffer()
-        for (i in 0 until indexAccessor.count) {
-          val value = intBuffer.get().toInt() and 0xFF
+      when (indexAccessor.componentType) {
+        ComponentType.UnsignedShort.value -> {
+          val intBuffer = buffer.asShortBuffer()
+          for (i in 0 until indexAccessor.count) {
+            val value = intBuffer.get().toInt()// and 0xFF
 //          println(value)
-          indices.put(value)
+            indices.put(value)
+            if (name == "boy-clothes") {
+//              println(value)
+            }
+          }
         }
-      } else {
-        for (i in 0 until indexAccessor.count) {
-          val value = buffer.get().toInt() and 0xFF
+
+        ComponentType.UnsignedByte.value -> {
+          for (i in 0 until indexAccessor.count) {
+            val value = buffer.get().toInt()// and 0xFF
 //          println(value)
-          indices.put(value)
+            indices.put(value)
+          }
         }
+
+        else ->
+          throw Error("Not implemented.")
       }
     }
 
@@ -215,7 +313,8 @@ fun loadGltf(vertexSchemas: VertexSchemas, name: String): ModelElements {
         material = Material(
             color = color,
             glow = glow
-        )
+        ),
+        name = name
     )
   }
 

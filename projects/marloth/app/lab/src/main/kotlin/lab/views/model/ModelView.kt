@@ -179,8 +179,11 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
   init {
     // When the model view changes to viewing a different model,
     // the list of visible subgroups needs to be reinitialized.
-    if (config.visibleGroups.size != model.groups.size) {
-      config.visibleGroups = model.groups.map { true }.toMutableList()
+    if (model.groups.size > 0) {
+      if (config.visibleGroups.size != model.groups.size)
+        config.visibleGroups = model.groups.map { true }.toMutableList()
+    } else if (externalMesh != null && config.visibleGroups.size != externalMesh.size) {
+      config.visibleGroups = externalMesh.map { true }.toMutableList()
     }
   }
 
@@ -188,7 +191,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     val bounds = Bounds(Vector2(), dimensions.toVector2())
     val initialLengths = listOf(200f, null, 300f)
 
-    val left = drawLeftPanel(renderer.meshes.keys.toList(), config, model)
+    val left = drawLeftPanel(renderer.meshes.keys.toList(), config, model, externalMesh)
     val middle = { b: Bounds -> Box(b, drawScenePanel(config, renderer, model, camera, externalMesh)) }
     val right = { b: Bounds -> Box(b, drawInfoPanel(config, renderer, model, mousePosition)) }
     val lengths = solveMeasurements(dimensions.x.toFloat(), initialLengths)

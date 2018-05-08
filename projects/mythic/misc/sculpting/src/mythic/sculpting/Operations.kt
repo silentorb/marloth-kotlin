@@ -1,7 +1,6 @@
 package mythic.sculpting
 
 import mythic.spatial.*
-import org.joml.plus
 import org.joml.unaryMinus
 
 typealias Vertices = List<Vector3>
@@ -85,12 +84,14 @@ fun bezierSample(i: Float, points: List<Vector2>) {
 }
 
 data class SwingInfo(
+    val index: Int,
     val point: Vector3,
     val scale: Vector3,
     val rangeZ: Float
 )
+typealias Swings = List<Swing>
 
-typealias Swings = List<SwingInfo>
+typealias SwingsOld = List<SwingInfo>
 
 fun minOrOne(first: Float, second: Float): Float {
   val result = Math.min(first, second)
@@ -100,23 +101,61 @@ fun minOrOne(first: Float, second: Float): Float {
     result
 }
 
-fun createSwings(firstPath: Vertices, secondPath: Vertices): Swings {
+fun createSwings2(firstPath: Vertices, secondPath: Vertices): SwingsOld {
   val secondIterator = secondPath.iterator()
-  return firstPath.map {
-    val other = secondIterator.next()
-    val shortestX = minOrOne(it.x, other.x)
+  return firstPath
+      .mapIndexed { i, it -> Pair(i, it) }
+      .filter { it.second.x != 0f }
+      .map {
+        val point = it.second
+        val other = secondIterator.next()
+        val shortestX = minOrOne(point.x, other.x)
 //    val lowestZ = minOrOne(it.z, other.z)
 //    val highestZ = Math.max(it.z, other.z)
-    val scale = Vector3(it.x / shortestX, other.x / shortestX, 1f)
-    val rangeZ = if (it.z == other.z)
-      1f
-    else {
-      val widestX = Math.max(it.x, other.x)
-      (other.z - it.z) / widestX
-    }
+        val scale = Vector3(point.x / shortestX, other.x / shortestX, 1f)
+        val rangeZ = if (point.z == other.z)
+          1f
+        else {
+          val widestX = Math.max(point.x, other.x)
+          (other.z - point.z) / widestX
+        }
 
-    SwingInfo(Vector3(shortestX, 0f, it.z), scale, rangeZ)
+        SwingInfo(it.first, Vector3(shortestX, 0f, point.z), scale, rangeZ)
+      }
+}
+
+fun createInterpolatedSwing(point: Vector3, other: Vector3): Swing {
+  val shortestX = minOrOne(point.x, other.x)
+//    val lowestZ = minOrOne(it.z, other.z)
+//    val highestZ = Math.max(it.z, other.z)
+  val scale = Vector3(point.x / shortestX, other.x / shortestX, 1f)
+  val rangeZ = if (point.z == other.z)
+    1f
+  else {
+    val widestX = Math.max(point.x, other.x)
+    (other.z - point.z) / widestX
   }
+
+  val point2 = Vector3(shortestX, 0f, point.z)
+  return { matrix: Matrix ->
+    val point3 = point2.transform(matrix)
+    point3 * scale// + Vector3(0f, 0f, swing.rangeZ * point.y)
+  }
+}
+
+fun createSwings(firstPath: Vertices, secondPath: Vertices): Swings {
+  val secondIterator = secondPath.iterator()
+  return firstPath
+      .mapIndexed { i, point ->
+        val other = secondIterator.next()
+        if (point.x == 0f && other.x == 0f) {
+          val result = { _: Matrix -> point }
+          result
+        } else {
+          createInterpolatedSwing(point, other)
+        }
+//        SwingInfo(it.first, Vector3(shortestX, 0f, point.z), scale, rangeZ)
+      }
 }
 
 fun mapPivots(path: Vertices, pivots: Vertices) =
@@ -140,29 +179,49 @@ fun transformSwing(pivots: Vertices, matrix: Matrix, swing: SwingInfo): Vector3 
 
 data class LatheCourse(
     val stepCount: Int,
-    val transformer: (Int) -> Matrix,
-    val wrap: Boolean
+    val wrap: Boolean,
+    val transformer: (Int) -> Matrix
 )
 
 fun createLatheCourse(resolution: Int, sweep: Float = Pi * 2): LatheCourse {
   val count = (resolution * sweep / (Pi / 2)).toInt() + 1
   val increment = sweep / (count - 1)
   return LatheCourse(
-      count,
-      { i: Int -> Matrix().rotateZ(i * increment) },
-      sweep == Pi * 2
+      stepCount = count,
+      transformer = { i: Int -> Matrix().rotateZ(i * increment) },
+      wrap = sweep == Pi * 2
   )
 }
 
-fun latheTwoPaths(mesh: FlexibleMesh, latheCourse: LatheCourse, firstPath: Vertices, secondPath: Vertices) {
+//fun latheTwoPaths(mesh: FlexibleMesh, latheCourse: LatheCourse, firstPath: Vertices, secondPath: Vertices) {
+////  val pivots = cloneVertices(firstPath.intersect(secondPath).filter { it.x == 0f })
+//  val firstLastPath = mapPivots(firstPath, pivots)
+//  var previous = firstLastPath
+//  val swings = createSwings(firstPath, secondPath)
+//  for (i in 1 until latheCourse.stepCount) {
+//    val matrix = latheCourse.transformer(i)
+//    val next = swings.map { transformSwing(pivots, matrix, it) }
+//    skin(mesh, previous, next)
+//    previous = next
+//  }
+//
+//  if (latheCourse.wrap)
+//    skin(mesh, previous, firstLastPath)
+//}
 
-  val pivots = cloneVertices(firstPath.intersect(secondPath).filter { it.x == 0f })
-  val firstLastPath = mapPivots(firstPath, pivots)
-  var previous = firstLastPath
+typealias Swing = (globalTransform: Matrix) -> Vector3
+
+fun mapSwings(swings: Swings, globalTransform: Matrix) =
+    swings.map { it(globalTransform) }
+
+fun latheTwoPaths(mesh: FlexibleMesh, latheCourse: LatheCourse, firstPath: Vertices, secondPath: Vertices) {
   val swings = createSwings(firstPath, secondPath)
+  val firstLastPath = mapSwings(swings, latheCourse.transformer(0))
+  var previous = firstLastPath
+
   for (i in 1 until latheCourse.stepCount) {
     val matrix = latheCourse.transformer(i)
-    val next = swings.map { transformSwing(pivots, matrix, it) }
+    val next = mapSwings(swings, matrix)
     skin(mesh, previous, next)
     previous = next
   }
