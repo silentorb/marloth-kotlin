@@ -1,17 +1,19 @@
 package rendering.meshes
 
+import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import mythic.glowing.SimpleTriangleMesh
 import mythic.spatial.Vector4
 import org.lwjgl.BufferUtils
+import rendering.Material
 import java.io.DataInputStream
 import java.io.InputStream
 import java.nio.ByteBuffer
+import java.nio.FloatBuffer
+import java.nio.IntBuffer
 import java.util.*
-import com.fasterxml.jackson.annotation.JsonCreator
-import rendering.Material
 
 
 enum class AccessorType {
@@ -147,156 +149,159 @@ fun loadGltfByteBuffer(name: String, info: GltfInfo): ByteBuffer {
 
 fun arrayToVector4(value: List<Float>) = Vector4(value[0], value[1], value[2], value[3])
 
+fun logBuffer(buffer: ByteBuffer, info: GltfInfo) {
+  for (accessor in info.accessors) {
+    val view = info.bufferViews[accessor.bufferView]
+    buffer.position(view.byteOffset)
+    println("Buffer View " + accessor.bufferView)
+    when (accessor.componentType) {
+
+      ComponentType.UnsignedByte.value -> {
+        val intBuffer = buffer
+        for (i in 0 until accessor.count) {
+          val value = intBuffer.get().toInt() and 0xFF
+          println(value)
+        }
+      }
+
+      ComponentType.UnsignedShort.value -> {
+        val intBuffer = buffer.asShortBuffer()
+        for (i in 0 until accessor.count) {
+          val value = intBuffer.get()
+          val value2 = value.toInt() and 0xFF
+          println("" + value + " " + value2)
+        }
+      }
+
+      ComponentType.UnsignedInt.value -> {
+        for (i in 0 until accessor.count) {
+          val value = buffer.get().toInt() and 0xFF
+          println(value)
+        }
+      }
+
+      ComponentType.Float.value -> {
+        when (accessor.type) {
+
+          AccessorType.SCALAR -> {
+            for (i in 0 until accessor.count) {
+              val value1 = buffer.getFloat()
+              println("" + value1)
+            }
+          }
+
+          AccessorType.VEC2 -> {
+            for (i in 0 until accessor.count) {
+              val value1 = buffer.getFloat()
+              val value2 = buffer.getFloat()
+              println("" + value1 + ", " + value2)
+            }
+          }
+
+          AccessorType.VEC3 -> {
+            for (i in 0 until accessor.count) {
+              val value1 = buffer.getFloat()
+              val value2 = buffer.getFloat()
+              val value3 = buffer.getFloat()
+              println("" + value1 + ", " + value2 + ", " + value3)
+            }
+          }
+
+          AccessorType.VEC4 -> {
+            for (i in 0 until accessor.count) {
+              val value1 = buffer.getFloat()
+              val value2 = buffer.getFloat()
+              val value3 = buffer.getFloat()
+              val value4 = buffer.getFloat()
+              println("" + value1 + ", " + value2 + ", " + value3 + ", " + value4)
+            }
+          }
+
+          AccessorType.MAT4 -> {
+            println("Matrix...")
+          }
+
+          else -> throw Error("Not implemented.")
+        }
+      }
+
+      else ->
+        throw Error("Not implemented")
+    }
+  }
+
+}
+
+typealias BufferIterator = (ByteBuffer, Int, (Int) -> Unit) -> Unit
+
+val iterateBytes = { buffer: ByteBuffer, count: Int, action: (Int) -> Unit ->
+  for (i in 0 until count) {
+    val value = buffer.get().toInt() // and 0xFF
+    action(value)
+  }
+}
+
+val iterateShorts = { buffer: ByteBuffer, count: Int, action: (Int) -> Unit ->
+  val intBuffer = buffer.asShortBuffer()
+  for (i in 0 until count) {
+    val value = intBuffer.get().toInt()// and 0xFF
+    action(value)
+  }
+}
+
+fun selectBufferIterator(componentType: Int): BufferIterator =
+    when (componentType) {
+      ComponentType.UnsignedByte.value -> iterateBytes
+      ComponentType.UnsignedShort.value -> iterateShorts
+      else -> throw Error("Not implemented.")
+    }
+
+fun parseIndices(buffer: ByteBuffer, info: GltfInfo, primitive: Primitive): IntBuffer {
+  val indexAccessor = info.accessors[primitive.indices]
+  val bufferView = info.bufferViews[primitive.indices]
+
+  val triangleCount = indexAccessor.count / 3
+  val indexCount = triangleCount * 3
+  val indices = BufferUtils.createIntBuffer(indexCount)
+  buffer.position(bufferView.byteOffset)
+  val iterator = selectBufferIterator(indexAccessor.componentType)
+  iterator(buffer, indexAccessor.count, { indices.put(it) })
+  return indices
+}
+
+fun parseVertices(buffer: ByteBuffer, info: GltfInfo, vertexSchema: VertexSchema, primitive: Primitive): FloatBuffer {
+  val vertexCount = info.accessors[primitive.attributes[AttributeType.POSITION]!!].count
+  val vertices = BufferUtils.createFloatBuffer(3 * 2 * vertexCount)
+  for (attribute in primitive.attributes) {
+    val bufferView = info.bufferViews[attribute.value]
+    buffer.position(bufferView.byteOffset)
+    val mappedAttribute = attributeMap[attribute.key]
+    if (mappedAttribute == null)
+      continue
+
+    val vertexAttribute = vertexSchema.getAttribute(mappedAttribute)
+    vertices.position()
+    for (i in 0 until vertexCount) {
+      vertices.position(vertexAttribute.offset + i * vertexSchema.floatSize)
+      for (x in 0 until 3) {
+        val value = buffer.getFloat()
+        vertices.put(value)
+      }
+    }
+  }
+  return vertices
+}
+
 fun loadGltf(vertexSchemas: VertexSchemas, name: String): ModelElements {
   val info = loadJsonResource<GltfInfo>(name + ".gltf")
   val buffer = loadGltfByteBuffer(name, info)
   val vertexSchema = vertexSchemas.imported
 
-  if (name == "models/child/boy-clothes") {
-    for (accessor in info.accessors) {
-      val view = info.bufferViews[accessor.bufferView]
-      buffer.position(view.byteOffset)
-      println("Buffer View " + accessor.bufferView)
-      when (accessor.componentType) {
-
-        ComponentType.UnsignedByte.value -> {
-          val intBuffer = buffer
-          for (i in 0 until accessor.count) {
-            val value = intBuffer.get().toInt() and 0xFF
-            println(value)
-          }
-        }
-
-        ComponentType.UnsignedShort.value -> {
-          val intBuffer = buffer.asShortBuffer()
-          for (i in 0 until accessor.count) {
-            val value = intBuffer.get()
-            val value2 = value.toInt() and 0xFF
-            println("" + value + " " + value2)
-          }
-        }
-
-        ComponentType.UnsignedInt.value -> {
-          for (i in 0 until accessor.count) {
-            val value = buffer.get().toInt() and 0xFF
-            println(value)
-          }
-        }
-
-        ComponentType.Float.value -> {
-          when (accessor.type) {
-
-            AccessorType.SCALAR -> {
-              for (i in 0 until accessor.count) {
-                val value1 = buffer.getFloat()
-                println("" + value1)
-              }
-            }
-
-            AccessorType.VEC2 -> {
-              for (i in 0 until accessor.count) {
-                val value1 = buffer.getFloat()
-                val value2 = buffer.getFloat()
-                println("" + value1 + ", " + value2)
-              }
-            }
-
-            AccessorType.VEC3 -> {
-              for (i in 0 until accessor.count) {
-                val value1 = buffer.getFloat()
-                val value2 = buffer.getFloat()
-                val value3 = buffer.getFloat()
-                println("" + value1 + ", " + value2 + ", " + value3)
-              }
-            }
-
-            AccessorType.VEC4 -> {
-              for (i in 0 until accessor.count) {
-                val value1 = buffer.getFloat()
-                val value2 = buffer.getFloat()
-                val value3 = buffer.getFloat()
-                val value4 = buffer.getFloat()
-                println("" + value1 + ", " + value2 + ", " + value3 + ", " + value4)
-              }
-            }
-
-            AccessorType.MAT4 -> {
-              println("Matrix...")
-            }
-
-            else -> throw Error("Not implemented.")
-
-          }
-        }
-
-        else ->
-          throw Error("Not implemented")
-      }
-    }
-  }
-
   val result = info.meshes.flatMap { mesh -> mesh.primitives.map { Pair(it, mesh.name) } }.map { pair ->
     val (primitive, name) = pair
 
-    val indexAccessor = info.accessors[primitive.indices]
-    val triangleCount = indexAccessor.count / 3
-    val vertexCount = info.accessors[primitive.attributes[AttributeType.POSITION]!!].count
-
-    val indexCount = triangleCount * 3
-    if (name == "boy-clothes") {
-
-    }
-    val indices = BufferUtils.createIntBuffer(indexCount)
-    val vertices = BufferUtils.createFloatBuffer(3 * 2 * vertexCount)
-
-    if (true) {
-      val bufferView = info.bufferViews[primitive.indices]
-      buffer.position(bufferView.byteOffset)
-
-      when (indexAccessor.componentType) {
-        ComponentType.UnsignedShort.value -> {
-          val intBuffer = buffer.asShortBuffer()
-          for (i in 0 until indexAccessor.count) {
-            val value = intBuffer.get().toInt()// and 0xFF
-//          println(value)
-            indices.put(value)
-            if (name == "boy-clothes") {
-//              println(value)
-            }
-          }
-        }
-
-        ComponentType.UnsignedByte.value -> {
-          for (i in 0 until indexAccessor.count) {
-            val value = buffer.get().toInt()// and 0xFF
-//          println(value)
-            indices.put(value)
-          }
-        }
-
-        else ->
-          throw Error("Not implemented.")
-      }
-    }
-
-    for (attribute in primitive.attributes) {
-      val bufferView = info.bufferViews[attribute.value]
-      buffer.position(bufferView.byteOffset)
-      val mappedAttribute = attributeMap[attribute.key]
-      if (mappedAttribute == null)
-        continue
-
-      val vertexAttribute = vertexSchema.getAttribute(mappedAttribute)
-      vertices.position()
-      for (i in 0 until vertexCount) {
-        vertices.position(vertexAttribute.offset + i * vertexSchema.floatSize)
-        for (x in 0 until 3) {
-          val value = buffer.getFloat()
-//          println(value)
-          vertices.put(value)
-        }
-      }
-    }
+    val vertices = parseVertices(buffer, info, vertexSchema, primitive)
+    val indices = parseIndices(buffer, info, primitive)
 
     vertices.position(0)
     indices.position(0)
@@ -318,7 +323,5 @@ fun loadGltf(vertexSchemas: VertexSchemas, name: String): ModelElements {
     )
   }
 
-//  if (result.size > 3)
-//    return listOf(result[1])
   return result
 }
