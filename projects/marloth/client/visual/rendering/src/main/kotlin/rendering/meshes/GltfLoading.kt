@@ -1,6 +1,7 @@
 package rendering.meshes
 
 import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -14,6 +15,15 @@ import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
 import java.util.*
+import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion.User
+import com.fasterxml.jackson.databind.node.IntNode
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.core.JsonProcessingException
+import com.fasterxml.jackson.databind.DeserializationContext
+import java.io.IOException
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer
+
+
 
 
 enum class AccessorType {
@@ -73,6 +83,13 @@ data class BufferView(
     var target: Int
 )
 
+data class Node(
+    val name: String,
+    val children: List<Node>?,
+    val rotation: List<Float>?,
+    val translation: List<Float>?
+)
+
 data class BufferInfo(
     var byteLength: Int
 )
@@ -89,7 +106,7 @@ data class MeshInfo2(
 )
 
 data class Metallic(
-    var baseColorFactor: List<Float>,
+    var baseColorFactor: Vector4,
     var metallicFactor: Float
 )
 
@@ -119,9 +136,24 @@ fun loadTextResource(name: String): String {
   return result
 }
 
+class Vector4Deserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<Vector4>(vc) {
+
+  @Throws(IOException::class, JsonProcessingException::class)
+  override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): Vector4 {
+//    val node = jp.getCodec().readTree(jp)
+//    val id = (node.get("id") as IntNode).numberValue() as Int
+//    val itemName = node.get("itemName").asText()
+//    val userId = (node.get("createdBy") as IntNode).numberValue() as Int
+
+    return Vector4()
+  }
+}
+
 inline fun <reified T> loadJsonResource(path: String): T {
   val mapper = ObjectMapper()
-  mapper.registerModule(KotlinModule())
+  val module = KotlinModule()
+  module.addDeserializer(Vector4::class.java, Vector4Deserializer(null))
+  mapper.registerModule(module)
   mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
   val content = loadTextResource(path)
   return mapper.readValue(content, T::class.java)
@@ -148,89 +180,6 @@ fun loadGltfByteBuffer(name: String, info: GltfInfo): ByteBuffer {
 }
 
 fun arrayToVector4(value: List<Float>) = Vector4(value[0], value[1], value[2], value[3])
-
-fun logBuffer(buffer: ByteBuffer, info: GltfInfo) {
-  for (accessor in info.accessors) {
-    val view = info.bufferViews[accessor.bufferView]
-    buffer.position(view.byteOffset)
-    println("Buffer View " + accessor.bufferView)
-    when (accessor.componentType) {
-
-      ComponentType.UnsignedByte.value -> {
-        val intBuffer = buffer
-        for (i in 0 until accessor.count) {
-          val value = intBuffer.get().toInt() and 0xFF
-          println(value)
-        }
-      }
-
-      ComponentType.UnsignedShort.value -> {
-        val intBuffer = buffer.asShortBuffer()
-        for (i in 0 until accessor.count) {
-          val value = intBuffer.get()
-          val value2 = value.toInt() and 0xFF
-          println("" + value + " " + value2)
-        }
-      }
-
-      ComponentType.UnsignedInt.value -> {
-        for (i in 0 until accessor.count) {
-          val value = buffer.get().toInt() and 0xFF
-          println(value)
-        }
-      }
-
-      ComponentType.Float.value -> {
-        when (accessor.type) {
-
-          AccessorType.SCALAR -> {
-            for (i in 0 until accessor.count) {
-              val value1 = buffer.getFloat()
-              println("" + value1)
-            }
-          }
-
-          AccessorType.VEC2 -> {
-            for (i in 0 until accessor.count) {
-              val value1 = buffer.getFloat()
-              val value2 = buffer.getFloat()
-              println("" + value1 + ", " + value2)
-            }
-          }
-
-          AccessorType.VEC3 -> {
-            for (i in 0 until accessor.count) {
-              val value1 = buffer.getFloat()
-              val value2 = buffer.getFloat()
-              val value3 = buffer.getFloat()
-              println("" + value1 + ", " + value2 + ", " + value3)
-            }
-          }
-
-          AccessorType.VEC4 -> {
-            for (i in 0 until accessor.count) {
-              val value1 = buffer.getFloat()
-              val value2 = buffer.getFloat()
-              val value3 = buffer.getFloat()
-              val value4 = buffer.getFloat()
-              println("" + value1 + ", " + value2 + ", " + value3 + ", " + value4)
-            }
-          }
-
-          AccessorType.MAT4 -> {
-            println("Matrix...")
-          }
-
-          else -> throw Error("Not implemented.")
-        }
-      }
-
-      else ->
-        throw Error("Not implemented")
-    }
-  }
-
-}
 
 typealias BufferIterator = (ByteBuffer, Int, (Int) -> Unit) -> Unit
 
@@ -307,7 +256,7 @@ fun loadGltf(vertexSchemas: VertexSchemas, name: String): ModelElements {
     indices.position(0)
 
     val materialSource = info.materials[primitive.material]
-    val color = arrayToVector4(materialSource.pbrMetallicRoughness.baseColorFactor)
+    val color = materialSource.pbrMetallicRoughness.baseColorFactor // arrayToVector4()
     val glow = if (materialSource.emissiveFactor != null)
       color.x / materialSource.emissiveFactor!!.first()
     else
