@@ -3,6 +3,7 @@ package rendering
 import mythic.glowing.VertexSchema as GenericVertexSchema
 import mythic.spatial.*
 import rendering.meshes.*
+import rendering.meshes.loading.loadGltf
 
 enum class MeshType {
   bear,

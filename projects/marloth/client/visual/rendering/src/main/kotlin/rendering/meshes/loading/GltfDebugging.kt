@@ -1,4 +1,4 @@
-package rendering.meshes
+package rendering.meshes.loading
 
 import java.nio.ByteBuffer
 
