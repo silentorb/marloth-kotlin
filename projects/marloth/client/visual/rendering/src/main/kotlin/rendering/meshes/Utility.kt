@@ -6,6 +6,7 @@ import mythic.sculpting.FlexibleFace
 import mythic.sculpting.FlexibleMesh
 import mythic.spatial.Vector4
 import rendering.*
+import scenery.Id
 
 enum class AttributeName {
   position,

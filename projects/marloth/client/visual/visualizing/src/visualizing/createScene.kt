@@ -84,32 +84,38 @@ fun convertDepiction(world: World, id: Id, depiction: Depiction): VisualElement 
   else
     translate.rotate(body.orientation)
 
-  return VisualElement(depiction.type, transform)
+  return VisualElement(id, depiction.type, transform)
 }
 
-fun createScene(world: World, screen: Screen, player: Player) =
-    GameScene(
-        Scene(
-            createCamera(world, screen),
-            world.lights.values.plus(Light(
-                type = LightType.point,
-                color = Vector4(1f, 1f, 1f, 1f),
-                position = player.character.body.position + Vector3(0f, 0f, 2f),
-                direction = Vector4(0f, 0f, 0f, 15f)
-            ))
-        ),
-        filterDepictions(world, player)
-            .map {
-              convertDepiction(world, it.key, it.value)
-//              val body = world.bodyTable[it.key]!!
-//              val character = player.character
-//              val transform = Matrix().transformVertices(body.position)
-//                  .rotate(character.facingQuaternion)
-//              VisualElement(it.value.type, transform)
-            },
-        player.playerId
+fun createScene(world: World, screen: Screen, player: Player): GameScene {
+  val depictions = filterDepictions(world, player)
+  val (childDepictions, otherDepictions) = depictions.values.partition {
+    it.type == DepictionType.character || it.type == DepictionType.monster
+  }
+  val elements = childDepictions.map {
+    convertDepiction(world, it.id, it)
+  }
+      .plus(otherDepictions.map {
+        convertDepiction(world, it.id, it)
+      })
 
-    )
+  return GameScene(
+      main = Scene(
+          createCamera(world, screen),
+          world.lights.values.plus(Light(
+              type = LightType.point,
+              color = Vector4(1f, 1f, 1f, 1f),
+              position = player.character.body.position + Vector3(0f, 0f, 2f),
+              direction = Vector4(0f, 0f, 0f, 15f)
+          ))
+      ),
+      elements = elements,
+      elementDetails = ElementDetails(
+          children = childDepictions.associate { Pair(it.id, ChildDetails(if (it.type == DepictionType.character) Gender.female else Gender.male)) }
+      ),
+      player = player.playerId
+  )
+}
 
 fun createScenes(world: World, screens: List<Screen>) =
     world.players.map {

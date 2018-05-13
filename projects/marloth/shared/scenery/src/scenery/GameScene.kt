@@ -16,9 +16,23 @@ data class Scene(
     val lights: List<Light> = listOf()
 )
 
+enum class Gender {
+  female,
+  male
+}
+
+data class ChildDetails(
+    val gender: Gender
+)
+
+data class ElementDetails(
+    val children: Map<Id, ChildDetails>
+)
+
 data class GameScene(
     val main: Scene,
     val elements: List<VisualElement>,
+    val elementDetails: ElementDetails,
     val player: Int
 ) {
 

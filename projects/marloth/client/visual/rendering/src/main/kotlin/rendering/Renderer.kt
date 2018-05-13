@@ -15,7 +15,9 @@ import org.joml.*
 import rendering.meshes.AttributeName
 import rendering.meshes.MeshMap
 import rendering.meshes.createVertexSchemas
+import scenery.DepictionType
 import scenery.Scene
+import scenery.VisualElement
 
 fun gatherEffectsData(dimensions: Vector2i, scene: Scene): EffectsData {
   return EffectsData(
@@ -63,7 +65,6 @@ class Renderer {
   val canvasMeshes = createDrawingMeshes(vertexSchemas.drawing)
   val meshGenerators = standardMeshes()
   val meshes = createMeshes(vertexSchemas)
-  val painters = createPainters(meshes)
   val textures = Textures()
   val sectorBuffer = UniformBuffer()
   val fonts = loadFonts(listOf(
@@ -152,9 +153,22 @@ class GameSceneRenderer(
     globalState.depthEnabled = true
   }
 
+  fun lookupMesh(depiction: DepictionType) = renderer.meshes[simplePainterMap[depiction]]!!
+
+  fun renderElement(element: VisualElement) {
+    val childDetails = scene.elementDetails.children[element.id]
+    if (childDetails != null) {
+      val mesh = lookupMesh(element.depiction)
+      humanPainter(mesh)(element, renderer.effects, childDetails)
+    } else {
+      val mesh = lookupMesh(element.depiction)
+      simplePainter(mesh)(element, renderer.effects)
+    }
+  }
+
   fun renderElements() {
     for (element in scene.elements) {
-      renderer.renderer.painters[element.depiction]!!(element, renderer.effects)
+      renderElement(element)
     }
   }
 
