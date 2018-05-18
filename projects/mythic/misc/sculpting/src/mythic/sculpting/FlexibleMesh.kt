@@ -21,7 +21,8 @@ class FlexibleEdge(
 }
 
 class FlexibleFace(
-    val edges: MutableList<FlexibleEdge> = mutableListOf()
+    val edges: MutableList<FlexibleEdge> = mutableListOf(),
+    var data: Any? = null
 ) {
   val unorderedVertices: List<Vector3>
     get() = edges.flatMap { it.vertices }.distinct()
@@ -34,6 +35,12 @@ class FlexibleFace(
   fun updateNormal() {
     normal = (unorderedVertices[0] - unorderedVertices[1]).cross(unorderedVertices[2] - unorderedVertices[1]).normalize()
   }
+
+  val neighbors: List<FlexibleFace>
+    get() = edges.mapNotNull {
+      if (it.edges.size > 0) it.edges.first().face else null
+    }
+        .filter { it !== this }
 }
 
 class FlexibleMesh {

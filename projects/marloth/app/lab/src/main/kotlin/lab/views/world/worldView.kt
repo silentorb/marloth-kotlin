@@ -1,8 +1,9 @@
-package lab.views
+package lab.views.world
 
 import lab.LabCommandType
 import simulation.WorldBoundary
 import lab.WorldViewConfig
+import lab.views.LabCommandMap
 import mythic.bloom.drawBorder
 import mythic.bloom.*
 import mythic.drawing.Canvas

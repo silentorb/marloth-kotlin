@@ -1,6 +1,7 @@
 package rendering.meshes.loading
 
 import com.fasterxml.jackson.annotation.JsonCreator
+import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import rendering.meshes.AttributeName
 
@@ -63,9 +64,9 @@ data class BufferView(
 
 data class Node(
     val name: String,
-    val children: List<Node>?,
-    val rotation: List<Float>?,
-    val translation: List<Float>?
+    val children: List<Int>?,
+    val rotation: Vector4?,
+    val translation: Vector3?
 )
 
 data class BufferInfo(
@@ -100,10 +101,40 @@ data class MaterialInfo(
     val emissiveFactor: List<Float>?
 )
 
+data class Skin(
+    val inverseBindMatrices: Int,
+    val joints: List<Int>,
+    val skeleton: Int
+)
+
+data class ChannelTarget(
+    val node: Int,
+    val path: String
+)
+
+data class AnimationChannel(
+    val sampler: Int,
+    val target: ChannelTarget
+)
+
+data class AnimationSampler(
+    val input: Int,
+    val interpolation: String,
+    val output: Int
+)
+
+data class Animation(
+    val channels: List<AnimationChannel>,
+    val samplers: List<AnimationSampler>
+)
+
 data class GltfInfo(
     val accessors: List<Accessor>,
+    val animations: List<Animation>?,
     val bufferViews: List<BufferView>,
     val buffers: List<BufferInfo>,
     val meshes: List<MeshInfo2>,
-    val materials: List<MaterialInfo>
+    val materials: List<MaterialInfo>,
+    val nodes: List<Node>,
+    val skins: List<Skin>?
 )

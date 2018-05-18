@@ -1,8 +1,9 @@
 package generation.structure
 
 import mythic.sculpting.FlexibleFace
-import simulation.FaceNodes
-import simulation.FaceSectorMap
+import simulation.FaceInfo
+import simulation.FaceType
+import simulation.getFaceInfo
 
 fun <T> zeroIfNull(value: T?) =
     if (value == null)
@@ -10,29 +11,44 @@ fun <T> zeroIfNull(value: T?) =
     else
       1
 
-fun faceNodeCount(faceMap: FaceNodes) =
-    zeroIfNull(faceMap.first) + zeroIfNull(faceMap.second)
+fun faceNodeCount(faceInfo: FaceInfo) =
+    zeroIfNull(faceInfo.firstNode) + zeroIfNull(faceInfo.secondNode)
 
-fun getNextFace(face: FlexibleFace, faceMap: FaceSectorMap): FlexibleFace? {
-  val node = faceMap[face]!!.first!!
-  return node.walls.filter { it != face && it.vertices.union(face.vertices).size >= 2 }.firstOrNull()
+//fun getNextFace(face: FlexibleFace): FlexibleFace? {
+//  return face.edges.filter()
+//  val info = getFaceInfo(face)
+//  val node = info.firstNode!!
+//  return node.walls.filter { it != face && it.vertices.union(face.vertices).size >= 2 }.firstOrNull()
+//}
+
+fun getAcuteAngles(face: FlexibleFace): Sequence<FlexibleFace> =
+    face.neighbors
+        .asSequence()
+        .filter { getFaceInfo(it).type == FaceType.wall }
+        .filter {
+          val dot = face.normal.dot(it.normal)
+          dot > 0
+        }
+
+fun addSpaceNode(face: FlexibleFace) {
+  val neighbor = getAcuteAngles(face).first()
+  getFaceInfo(face).debugField = "space-a"
+  getFaceInfo(neighbor).debugField = "space-b"
 }
 
-fun processIncompleteEdges(edges: List<FlexibleFace>, faceMap: FaceSectorMap) {
-  val incompleteEdges = edges.filter { faceNodeCount(faceMap[it]!!) == 1 }
+fun processIncompleteEdges(edges: List<FlexibleFace>) {
+  val incompleteEdges = edges.filter { faceNodeCount(getFaceInfo(it)) == 1 }
 
-  val acuteCorners = incompleteEdges.filter {
-    val next = getNextFace(it, faceMap)
-    if (next == null) {
-      false
-    } else {
-      val dot = next.normal.dot(it.normal)
-      dot > 0
-    }
-  }
+  val acuteCorners = incompleteEdges.asSequence().filter { getAcuteAngles(it).any() }
+
+  val cornerFace = acuteCorners.firstOrNull()
+  if (cornerFace == null)
+    return
+
+  addSpaceNode(cornerFace)
 }
 
-tailrec fun defineNegativeSpace(sectors: List<TempSector>, faceMap: FaceSectorMap) {
+fun defineNegativeSpace(sectors: List<TempSector>) {
   val edges = sectors.flatMap { it.node.walls }
-  processIncompleteEdges(edges, faceMap)
+  processIncompleteEdges(edges)
 }

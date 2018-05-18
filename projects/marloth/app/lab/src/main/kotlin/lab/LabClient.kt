@@ -9,6 +9,7 @@ import scenery.GameScene
 import simulation.AbstractWorld
 import haft.*
 import lab.views.model.ModelView
+import lab.views.world.WorldView
 import marloth.clienting.gui.MenuActionType
 import marloth.clienting.gui.MenuState
 import marloth.clienting.gui.menuButtonAction

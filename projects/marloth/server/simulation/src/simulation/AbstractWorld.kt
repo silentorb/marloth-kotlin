@@ -52,13 +52,28 @@ class NodeGraph {
   }
 }
 
-typealias FaceNodes = Pair<Node?, Node?>
-typealias FaceSectorMap = MutableMap<FlexibleFace, FaceNodes>
+enum class FaceType {
+  floor,
+  wall
+}
+
+data class FaceInfo(
+    val type: FaceType,
+    val firstNode: Node?,
+    val secondNode: Node?,
+    var debugField: String? = null
+)
+
+// May be faster to cast straight to non-nullable but at least for debugging
+// it may be better to explicitly non-null cast.
+fun getFaceInfo(face: FlexibleFace): FaceInfo = (face.data as FaceInfo?)!!
+
+fun getNullableFaceInfo(face: FlexibleFace): FaceInfo? = face.data as FaceInfo?
 
 class AbstractWorld(val boundary: WorldBoundary) {
   val graph = NodeGraph()
   val mesh = FlexibleMesh()
-  val faceMap: FaceSectorMap = mutableMapOf()
+//  val faceMap: FaceSectorMap = mutableMapOf()
 
   val nodes: MutableList<Node>
     get() = graph.nodes
@@ -73,20 +88,26 @@ class AbstractWorld(val boundary: WorldBoundary) {
     get() = nodes.flatMap { it.walls }
 }
 
-fun calculateFaceMap(abstractWorld: AbstractWorld) {
-  val faceMap = abstractWorld.faceMap
+private fun initializeFaceInfo(type: FaceType, node: Node, face: FlexibleFace) {
+  val info = getNullableFaceInfo(face)
+  face.data =
+      if (info == null) {
+        FaceInfo(type, node, null)
+      } else {
+        if (info.firstNode != null && info.secondNode != null)
+          throw Error("Not supported.")
+
+        FaceInfo(type, info.firstNode, node)
+      }
+}
+
+fun initializeFaceInfo(abstractWorld: AbstractWorld) {
   for (node in abstractWorld.nodes) {
     for (face in node.walls) {
-      val currentRecord = faceMap[face]
-      faceMap[face] =
-          if (currentRecord == null) {
-            FaceNodes(node, null)
-          } else {
-            if (currentRecord.first != null && currentRecord.second != null)
-              throw Error("Not supported.")
-
-            FaceNodes(currentRecord.first, node)
-          }
+      initializeFaceInfo(FaceType.wall, node, face)
+    }
+    for (face in node.floors) {
+      initializeFaceInfo(FaceType.floor, node, face)
     }
   }
 }

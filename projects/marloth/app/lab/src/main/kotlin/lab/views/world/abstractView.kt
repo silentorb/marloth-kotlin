@@ -1,11 +1,10 @@
-package lab.views
+package lab.views.world
 
 import simulation.WorldBoundary
 import mythic.bloom.Bounds
 import mythic.drawing.Canvas
 import mythic.spatial.Vector2
 import mythic.spatial.Vector4
-import mythic.typography.TextConfiguration
 import mythic.typography.TextStyle
 import org.joml.plus
 import org.joml.xy

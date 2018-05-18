@@ -192,7 +192,6 @@ fun <T> crossMap(firstList: List<T>, secondList: List<T>): List<Pair<T, T>> {
   return result
 }
 
-
 fun generateStructure(abstractWorld: AbstractWorld) {
   val mesh = abstractWorld.mesh
 
@@ -216,9 +215,9 @@ fun generateStructure(abstractWorld: AbstractWorld) {
     }
   }
 
-  calculateFaceMap(abstractWorld)
+  initializeFaceInfo(abstractWorld)
 
-  defineNegativeSpace(allSectors, abstractWorld.faceMap)
+  defineNegativeSpace(allSectors)
 
   calculateNormals(mesh)
 //  val allFloors = roomFloors.map { it.face }//.plus(tunnelFloors.map { it.face })
