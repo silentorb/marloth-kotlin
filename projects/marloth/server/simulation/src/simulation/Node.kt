@@ -19,6 +19,7 @@ class Connection(
 
 enum class NodeType {
   room,
+  space,
   tunnel
 }
 

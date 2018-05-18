@@ -76,25 +76,36 @@ fun renderWireframeScene(renderers: List<GameSceneRenderer>, data: GameViewRende
   }
 }
 
+fun renderWireframeScene(renderer: GameSceneRenderer, data: GameViewRenderData) {
+  renderer.prepareRender()
+  renderWireframeWorldMesh(renderer.renderer)
+  renderer.renderElements()
+}
+
 fun renderScene(client: Client, data: GameViewRenderData) {
   val windowInfo = client.getWindowInfo()
   val renderer = client.renderer
   renderer.prepareRender(windowInfo)
-  val renderers = mapGameSceneRenderers(renderer, data.scenes, windowInfo)
-  when (data.config.displayMode) {
-    GameDisplayMode.normal -> renderStandardScene(renderers, data)
-    GameDisplayMode.wireframe -> renderWireframeScene(renderers, data)
-  }
 
   val canvas = createCanvas(client.renderer, windowInfo)
 
-  renderers.forEach {
-    if (data.config.drawNormals)
-      renderFaceNormals(it.renderer, 1f, data.world.mesh)
+  val viewports = getPlayerViewports(data.scenes.size, windowInfo.dimensions).iterator()
+  for (scene in data.scenes) {
+    val viewport = viewports.next()
+    val sceneRenderer = renderer.createSceneRenderer(scene.main, viewport)
+    val gameRenderer = GameSceneRenderer(scene, sceneRenderer)
+    when (data.config.displayMode) {
+      GameDisplayMode.normal -> gameRenderer.render()
+      GameDisplayMode.wireframe -> renderWireframeScene(gameRenderer, data)
+    }
 
-    val viewport = it.renderer.viewport
-    renderGui(it.renderer, Bounds(viewport.toVector4()), canvas, data.menuState)
+    if (data.config.drawNormals)
+      renderFaceNormals(sceneRenderer, 1f, data.world.mesh)
+
+    renderGui(sceneRenderer, Bounds(viewport.toVector4()), canvas, data.menuState)
   }
+//  val renderers = mapGameSceneRenderers(renderer, data.scenes, windowInfo)
+
   renderer.finishRender(windowInfo)
 }
 

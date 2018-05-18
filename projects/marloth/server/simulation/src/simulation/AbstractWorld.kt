@@ -52,9 +52,13 @@ class NodeGraph {
   }
 }
 
+typealias FaceNodes = Pair<Node?, Node?>
+typealias FaceSectorMap = MutableMap<FlexibleFace, FaceNodes>
+
 class AbstractWorld(val boundary: WorldBoundary) {
   val graph = NodeGraph()
   val mesh = FlexibleMesh()
+  val faceMap: FaceSectorMap = mutableMapOf()
 
   val nodes: MutableList<Node>
     get() = graph.nodes
@@ -67,4 +71,22 @@ class AbstractWorld(val boundary: WorldBoundary) {
 
   val walls: List<FlexibleFace>
     get() = nodes.flatMap { it.walls }
+}
+
+fun calculateFaceMap(abstractWorld: AbstractWorld) {
+  val faceMap = abstractWorld.faceMap
+  for (node in abstractWorld.nodes) {
+    for (face in node.walls) {
+      val currentRecord = faceMap[face]
+      faceMap[face] =
+          if (currentRecord == null) {
+            FaceNodes(node, null)
+          } else {
+            if (currentRecord.first != null && currentRecord.second != null)
+              throw Error("Not supported.")
+
+            FaceNodes(currentRecord.first, node)
+          }
+    }
+  }
 }
