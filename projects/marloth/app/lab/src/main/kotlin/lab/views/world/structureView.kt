@@ -12,7 +12,18 @@ fun drawVertices(bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, 
   val solid = canvas.solid(Vector4(1f, 0.6f, 0.0f, 1f))
   val lineColor = Vector4(0f, 0f, 1f, 1f)
   for (edge in mesh.edges) {
-    // TODO: Change line color based on wall debug info
+    val face = edge.faces.filter { getFaceInfo(it).type == FaceType.wall }.firstOrNull()
+    if (face != null) {
+      val debugInfo = getFaceInfo(face).debugInfo
+      if (debugInfo != null) {
+        if (debugInfo == "space-a")
+          canvas.drawLine(getPosition(edge.first.xy), getPosition(edge.second.xy), Vector4(1f, 0f, 1f, 1f), 3f)
+        else
+          canvas.drawLine(getPosition(edge.first.xy), getPosition(edge.second.xy), Vector4(0f, 1f, 1f, 1f), 3f)
+
+        continue
+      }
+    }
     canvas.drawLine(getPosition(edge.first.xy), getPosition(edge.second.xy), lineColor, 3f)
   }
 

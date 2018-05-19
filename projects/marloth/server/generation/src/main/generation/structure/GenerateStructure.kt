@@ -165,10 +165,10 @@ fun sinewFloors(nodeSectors: List<TempSector>, mesh: FlexibleMesh):
 fun createWall(edge: FlexibleEdge, mesh: FlexibleMesh): FlexibleFace {
   val offset = Vector3(0f, 0f, 2f)
   return mesh.createStitchedFace(listOf(
-      edge.first,
       edge.second,
-      edge.second + offset,
-      edge.first + offset
+      edge.first,
+      edge.first + offset,
+      edge.second + offset
   ))
 }
 
@@ -215,10 +215,10 @@ fun generateStructure(abstractWorld: AbstractWorld) {
     }
   }
 
+  calculateNormals(mesh)
+
   initializeFaceInfo(abstractWorld)
 
   defineNegativeSpace(allSectors)
-
-  calculateNormals(mesh)
 //  val allFloors = roomFloors.map { it.face }//.plus(tunnelFloors.map { it.face })
 }

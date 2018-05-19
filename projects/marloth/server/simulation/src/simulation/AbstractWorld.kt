@@ -61,7 +61,7 @@ data class FaceInfo(
     val type: FaceType,
     val firstNode: Node?,
     val secondNode: Node?,
-    var debugField: String? = null
+    var debugInfo: String? = null
 )
 
 // May be faster to cast straight to non-nullable but at least for debugging

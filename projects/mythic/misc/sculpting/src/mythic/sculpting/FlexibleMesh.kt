@@ -17,7 +17,12 @@ class FlexibleEdge(
   val vertices = listOf(first, second)
 
   val middle: Vector3
-    get() = first + second * 0.5f
+    get() = (first + second) * 0.5f
+
+  val faces: List<FlexibleFace>
+    get() = edges
+        .mapNotNull { it.face }
+        .plus(if (face == null) listOf() else listOf(face))
 }
 
 class FlexibleFace(
@@ -33,7 +38,8 @@ class FlexibleFace(
   var normal = Vector3()
 
   fun updateNormal() {
-    normal = (unorderedVertices[0] - unorderedVertices[1]).cross(unorderedVertices[2] - unorderedVertices[1]).normalize()
+//    normal = (unorderedVertices[0] - unorderedVertices[1]).cross(unorderedVertices[2] - unorderedVertices[1]).normalize()
+    normal = (unorderedVertices[2] - unorderedVertices[1]).cross(unorderedVertices[0] - unorderedVertices[1]).normalize()
   }
 
   val neighbors: List<FlexibleFace>

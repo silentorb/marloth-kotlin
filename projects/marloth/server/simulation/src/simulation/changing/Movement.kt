@@ -32,8 +32,6 @@ fun findCollisionWalls(source: Vector3, originalOffset: Vector3, world: World): 
       .filter { wall -> hitsWall(wall.edges[0], newPosition, broadRadius) && offset.dot(wall.normal) < 0f }
       .map {
         val edge = it.edges[0]
-//        val dot2 = offset.dot(it.normal)C
-//        println(dot2)
         val hitPoint = projectPointOntoLine(source.xy, edge.first.xy, edge.second.xy)
         if (hitPoint != null) {
           val gap = hitPoint.distance(source.xy) - radius
@@ -62,8 +60,8 @@ fun getWallCollisionMovementOffset(walls: List<Triple<FlexibleFace, Vector2, Flo
   if (walls.size == 2) {
 //      val gapVector = gapVectors[0] + gapVectors[1]
 //      offset = gapVector
-    val firstEdge = walls[0].first.edges[1]
-    val secondEdge = walls[1].first.edges[1]
+    val firstEdge = walls[0].first.edges[0]
+    val secondEdge = walls[1].first.edges[0]
 
     // Get the points of either edge ordered by the shared point and then the unshared point
     val rightEdge = if (firstEdge.first === secondEdge.second)
@@ -76,9 +74,11 @@ fun getWallCollisionMovementOffset(walls: List<Triple<FlexibleFace, Vector2, Flo
         (rightEdge.first - rightEdge.second).xy.normalize(),
         knee.xy.normalize()
     )
-    if (Math.abs(angle) <= Pi / 2) {
-//        val dot2 = offset.dot(walls[0].first.normal + walls[0].first.normal)
-//        println(dot2)
+//    println("" + angle + " | " + knee.xy + " | " + slideVectors[0].dot(walls[1].first.normal) + " | " + slideVectors[1].dot(walls[0].first.normal))
+//    if (Math.abs(angle) <= Pi) {
+      if (Math.abs(slideVectors[1].dot(walls[0].first.normal)) > 0.05f) {
+        val dot2 = offset.dot(walls[0].first.normal + walls[0].first.normal)
+        println(dot2)
 //        if (dot2 < 0f) {
       return gapVectors[0] + gapVectors[1]
 //        println(offset)

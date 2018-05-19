@@ -340,6 +340,8 @@ fun getAngle(a: Vector2, b: Vector2): Float {
   val ad = atan(a)
   val bd = atan(b)
 //  println("fn " + a + " " + b + " = " + ad + " - " + bd + " = " + (ad - bd))
+  if (bd - ad == Float.NaN)
+    println("heyllo")
   return bd - ad
 }
 
