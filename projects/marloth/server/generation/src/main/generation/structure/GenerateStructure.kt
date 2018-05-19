@@ -219,6 +219,6 @@ fun generateStructure(abstractWorld: AbstractWorld) {
 
   initializeFaceInfo(abstractWorld)
 
-  defineNegativeSpace(allSectors)
+  defineNegativeSpace(abstractWorld)
 //  val allFloors = roomFloors.map { it.face }//.plus(tunnelFloors.map { it.face })
 }

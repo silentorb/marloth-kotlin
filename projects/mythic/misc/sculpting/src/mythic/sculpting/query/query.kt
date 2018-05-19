@@ -70,7 +70,7 @@ fun getEdges(face: HalfEdgeFace): List<HalfEdge> {
 //  )
 //}
 
-fun getCenter(points: List<Vector2>): Vector2 =
+fun getCenter2D(points: List<Vector2>): Vector2 =
     points.reduce { a, b -> a + b } / points.size.toFloat()
 
 fun getBounds(vertices: List<Vector3>): BoundingBox {

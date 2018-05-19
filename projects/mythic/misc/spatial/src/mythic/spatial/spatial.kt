@@ -371,3 +371,51 @@ fun Vector2.toVector2i() = Vector2i(x.toInt(), y.toInt())
 fun Vector2i.toVector2() = Vector2(x.toFloat(), y.toFloat())
 
 fun Vector4i.toVector4() = Vector4(x.toFloat(), y.toFloat(), z.toFloat(), w.toFloat())
+
+fun clockwiseLesser(center: Vector3, a: Vector3, b: Vector3): Boolean {
+  val ax = a.x - center.x
+  val bx = b.x - center.x
+  
+  if (ax >= 0f && bx < 0f)
+    return true
+  if (ax < 0f && bx >= 0f)
+    return false
+
+  val ay = a.y - center.y
+  val by = b.y - center.y
+
+  if (ax == 0f && bx == 0f) {
+    return if (ay >= 0 || by >= 0f) a.y > b.y else b.y > a.y
+  }
+
+  // compute the cross product of vectors (center -> a) x (center -> b)
+  val det = ax * by - bx * ay
+  if (det < 0)
+    return true
+  if (det > 0)
+    return false
+
+  // points a and b are on the same line from the center
+  // check which point is closer to the center
+  val d1 = ax * ax + ay * ay
+  val d2 = bx * bx + by * by
+  return d1 > d2
+}
+
+fun counterClockwiseLesser(center: Vector3) = { a: Vector3, b: Vector3 ->
+  !clockwiseLesser(center, a, b)
+}
+
+fun arrangePointsCounterClockwise(center: Vector3, vertices: List<Vector3>): List<Vector3> {
+  val sorter = counterClockwiseLesser(center)
+  return vertices.sortedWith(object : Comparator<Vector3> {
+    override fun compare(a: Vector3, b: Vector3): Int =
+        if (sorter(a, b)) 1 else 0
+  })
+}
+
+fun getCenter(points: List<Vector3>): Vector3 =
+    points.reduce { a, b -> a + b } / points.size.toFloat()
+
+fun arrangePointsCounterClockwise(vertices: List<Vector3>): List<Vector3> =
+    arrangePointsCounterClockwise(getCenter(vertices), vertices)

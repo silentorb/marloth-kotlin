@@ -2,6 +2,7 @@ package mythic.sculpting
 
 import mythic.spatial.*
 import org.joml.unaryMinus
+import org.joml.xy
 
 typealias Vertices = List<Vector3>
 typealias Edges = List<FlexibleEdge>

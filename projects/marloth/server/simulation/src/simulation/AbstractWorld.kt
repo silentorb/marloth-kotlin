@@ -101,13 +101,17 @@ private fun initializeFaceInfo(type: FaceType, node: Node, face: FlexibleFace) {
       }
 }
 
+fun initializeFaceInfo(node: Node) {
+  for (face in node.walls) {
+    initializeFaceInfo(FaceType.wall, node, face)
+  }
+  for (face in node.floors) {
+    initializeFaceInfo(FaceType.floor, node, face)
+  }
+}
+
 fun initializeFaceInfo(abstractWorld: AbstractWorld) {
   for (node in abstractWorld.nodes) {
-    for (face in node.walls) {
-      initializeFaceInfo(FaceType.wall, node, face)
-    }
-    for (face in node.floors) {
-      initializeFaceInfo(FaceType.floor, node, face)
-    }
+    initializeFaceInfo(node)
   }
 }

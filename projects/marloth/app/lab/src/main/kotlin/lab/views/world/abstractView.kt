@@ -51,6 +51,7 @@ fun drawGrid(canvas: Canvas, bounds: Bounds, worldBoundary: WorldBoundary, scale
 fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, world: AbstractWorld,
                       renderer: Renderer) {
   val solid = canvas.solid(Vector4(0.7f, 0.6f, 0.5f, 0.6f))
+  val spaceSolid = canvas.solid(Vector4(0.7f, 0.6f, 0.5f, 0.3f))
   val outline = canvas.outline(Vector4(0.3f, 0f, 0f, 0.8f), 3f)
   val scale = getScale(bounds, world.boundary)
 //  val offset = bounds.position + worldPadding
@@ -72,7 +73,8 @@ fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Can
   for (node in world.nodes) {
     val radius = node.radius * scale
     val position = getNodePosition(node)
-    canvas.drawSolidCircle(position, radius, solid)
+    val circleBrush = if (node.type == NodeType.space) spaceSolid else solid
+    canvas.drawSolidCircle(position, radius, circleBrush)
     canvas.drawCircle(position, radius, outline)
     canvas.drawText(node.index.toString() + " " + node.floors.first().unorderedVertices.size.toString(),
         position,

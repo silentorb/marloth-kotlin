@@ -16,10 +16,13 @@ fun drawVertices(bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, 
     if (face != null) {
       val debugInfo = getFaceInfo(face).debugInfo
       if (debugInfo != null) {
-        if (debugInfo == "space-a")
-          canvas.drawLine(getPosition(edge.first.xy), getPosition(edge.second.xy), Vector4(1f, 0f, 1f, 1f), 3f)
-        else
-          canvas.drawLine(getPosition(edge.first.xy), getPosition(edge.second.xy), Vector4(0f, 1f, 1f, 1f), 3f)
+        val color = when (debugInfo) {
+          "space-a" -> Vector4(1f, 0f, 1f, 1f)
+          "space-b" -> Vector4(0f, 1f, 1f, 1f)
+          "space-d" -> Vector4(1f, 0f, 0f, 1f)
+          else -> Vector4(1f, 1f, 1f, 0.5f)
+        }
+        canvas.drawLine(getPosition(edge.first.xy), getPosition(edge.second.xy), color, 3f)
 
         continue
       }
