@@ -45,8 +45,8 @@ class FlexibleFace(
   }
 
   val neighbors: List<FlexibleFace>
-    get() = edges.mapNotNull {
-      if (it.edges.size > 0) it.edges.first().face else null
+    get() = edges.flatMap {
+      it.edges.mapNotNull { it.face }
     }
         .filter { it !== this }
 }

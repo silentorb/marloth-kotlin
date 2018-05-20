@@ -139,24 +139,30 @@ fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace) {
       radius = radius,
       type = NodeType.space
   )
+  node.index = abstractWorld.graph.nodes.size
   node.walls.addAll(walls)
   node.floors.add(floor)
+  initializeFaceInfo(node)
 
   val gapEdges = edges.filter {
-    it.faces.any { !walls.contains(it) }
+    it.faces.count { walls.contains(it) }  < 2
   }
   if (gapEdges.any()) {
     assert(gapEdges.size == 2)
     val gapVertices = getNewWallVertices(sectorCenter, gapEdges)
     val newWall = abstractWorld.mesh.createStitchedFace(gapVertices)
     newWall.updateNormal()
+    initializeFaceInfo(FaceType.wall, node, newWall)
+    val n = getIncompleteNeighbors(newWall).toList()
+    val n2 = getIncompleteNeighbors(newWall).toList()
+    val n3 = newWall.neighbors
     node.walls.add(newWall)
   }
 
   initializeFaceInfo(node)
   abstractWorld.graph.nodes.add(node)
   node.walls.forEach {
-    getFaceInfo(it).debugInfo = "space-c"
+//    getFaceInfo(it).debugInfo = "space-c"
   }
 }
 
@@ -196,11 +202,10 @@ fun defineNegativeSpace(abstractWorld: AbstractWorld) {
             val neighbors = getIncompleteNeighbors(wall).toList()
             neighbors.size < 2
           }.forEach {
-        getFaceInfo(it).debugInfo = "space-d"
+//        getFaceInfo(it).debugInfo = "space-d"
       }
       break
     }
-
     for (originFace in concaveFaces) {
       if (faceNodeCount(originFace) == 1) {
         val walls = gatherNewSectorFaces(originFace)

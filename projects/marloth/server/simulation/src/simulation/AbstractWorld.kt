@@ -90,16 +90,20 @@ class AbstractWorld(val boundary: WorldBoundary) {
     get() = nodes.flatMap { it.walls }
 }
 
-private fun initializeFaceInfo(type: FaceType, node: Node, face: FlexibleFace) {
+fun initializeFaceInfo(type: FaceType, node: Node, face: FlexibleFace) {
   val info = getNullableFaceInfo(face)
   face.data =
       if (info == null) {
         FaceInfo(type, node, null)
       } else {
-        if (info.firstNode != null && info.secondNode != null)
-          throw Error("Not supported.")
+        if (info.firstNode == node || info.secondNode == node)
+          face.data
+        else {
+          if (info.firstNode != null && info.secondNode != null)
+            throw Error("Not supported.")
 
-        FaceInfo(type, info.firstNode, node)
+          FaceInfo(type, info.firstNode, node)
+        }
       }
 }
 

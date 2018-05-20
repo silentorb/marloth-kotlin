@@ -67,7 +67,7 @@ fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Can
   val style = TextStyle(
       canvas.fonts[0],
       12f,
-      Vector4(0f, 0f, 0f, 1f)
+      Vector4(1f, 1f, 1f, 1f)
   )
 
   for (node in world.nodes) {
