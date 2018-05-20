@@ -56,4 +56,4 @@ fun updateMissile(world: World, missile: Missile, delta: Float) {
 }
 
 fun isFinished(world: World, missile: Missile) =
-    missile.remainingDistance <= 0 || world.meta.walls.any { hitsWall(it.edges[0], missile.body.position, 0.2f) }
+    missile.remainingDistance <= 0 || world.meta.walls.any { hitsWall(it.edges[0].edge, missile.body.position, 0.2f) }

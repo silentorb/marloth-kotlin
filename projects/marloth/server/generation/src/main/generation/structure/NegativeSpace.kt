@@ -27,7 +27,7 @@ fun faceNodeCount(face: FlexibleFace) =
 //}
 
 fun getSharedEdge(first: FlexibleFace, second: FlexibleFace): FlexibleEdge =
-    first.edges.first { edge -> edge.edges.any { it.face == second } }
+    first.edges.first { edge -> second.edges.map { it.edge }.contains(edge.edge) }.edge
 
 // This algorithm only works on quads
 fun getOppositeQuadEdge(first: FlexibleFace, edge: FlexibleEdge) =
@@ -112,14 +112,18 @@ fun getDistinctEdges(edges: Edges) =
 fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace) {
   val walls = gatherNewSectorFaces(originFace)
   assert(walls.size > 2)
-  val duplicatedEdges = walls.flatMap { face ->
+//  val duplicatedEdges = walls.flatMap { face ->
+//    face.edges.filter { edge ->
+//      edge.faces.all { getFaceInfo(it).type == FaceType.wall }
+//          && edge.otherEdgeReferences.any()
+//    }
+//  }
+//  val edges = getDistinctEdges(duplicatedEdges)
+  val edges = walls.flatMap { face ->
     face.edges.filter { edge ->
-      edge.faces.all { getFaceInfo(it).type == FaceType.wall }
-          && edge.edges.any()
-    }
-  }
-  val edges = getDistinctEdges(duplicatedEdges)
-
+      edge.first.z != edge.second.z
+    }.map { it.edge }
+  }.distinct()
 
   val floorVertices = edges.map { it.vertices.sortedBy { it.z }.first() }
   val sectorCenter = getCenter(floorVertices)
@@ -145,7 +149,7 @@ fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace) {
   initializeFaceInfo(node)
 
   val gapEdges = edges.filter {
-    it.faces.count { walls.contains(it) }  < 2
+    it.faces.count { walls.contains(it) } < 2
   }
   if (gapEdges.any()) {
     assert(gapEdges.size == 2)
@@ -162,7 +166,7 @@ fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace) {
   initializeFaceInfo(node)
   abstractWorld.graph.nodes.add(node)
   node.walls.forEach {
-//    getFaceInfo(it).debugInfo = "space-c"
+    //    getFaceInfo(it).debugInfo = "space-c"
   }
 }
 
@@ -202,8 +206,8 @@ fun defineNegativeSpace(abstractWorld: AbstractWorld) {
             val neighbors = getIncompleteNeighbors(wall).toList()
             neighbors.size < 2
           }.forEach {
-//        getFaceInfo(it).debugInfo = "space-d"
-      }
+            //        getFaceInfo(it).debugInfo = "space-d"
+          }
       break
     }
     for (originFace in concaveFaces) {

@@ -124,7 +124,7 @@ fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, cam
       sceneRenderer.drawLine(Vector3(), Vector3(0f, 1f, 0f), green)
       sceneRenderer.drawLine(Vector3(), Vector3(0f, 0f, 1f), blue)
 
-      model.mesh.edges.filter { it.face == null }.forEach {
+      model.mesh.edges.filter { it.faces.none() }.forEach {
         sceneRenderer.drawLine(it.first, it.second, Vector4(0.8f, 0.5f, 0.3f, 1f))
       }
 

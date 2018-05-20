@@ -208,9 +208,9 @@ fun generateStructure(abstractWorld: AbstractWorld) {
   val allSectors = nodeSectors.plus(tunnelSectors)
   sinewFloors(allSectors, mesh)
   allSectors.forEach { sector ->
-    val wallBases = sector.node.floors.first().edges.filter { it.edges.size == 0 }
+    val wallBases = sector.node.floors.first().edges.filter { it.otherEdgeReferences.size == 0 }
     wallBases.forEach {
-      val wall = createWall(it, mesh)
+      val wall = createWall(it.edge, mesh)
       sector.node.walls.add(wall)
     }
   }

@@ -132,8 +132,9 @@ fun toSelection(model: Model, edges: List<FlexibleEdge>) =
 
 fun selectEdgeLoop(config: ModelViewConfig, model: Model) {
   val edge = model.edges[config.selection[0]]
-  val edges = getEdgeLoop(edge)
-  config.selection = toSelection(model, edges)
+  throw Error("Original Edge loop code was a hack and broke.  Code needs to be redesigned.")
+//  val edges = getEdgeLoop(edge)
+//  config.selection = toSelection(model, edges)
 }
 
 fun tightenRotation(value: Float): Float =

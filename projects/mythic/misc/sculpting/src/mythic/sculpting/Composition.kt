@@ -1,6 +1,6 @@
 package mythic.sculpting
 
-typealias Port = FlexibleEdge
+typealias Port = EdgeReference
 
 //interface PortId {
 //  val name: String

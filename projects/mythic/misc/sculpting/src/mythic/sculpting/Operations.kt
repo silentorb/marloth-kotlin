@@ -312,16 +312,18 @@ fun setAnchor(anchor: Vector3, vertices: Vertices) {
   distortedTranslatePosition(-anchor, vertices)
 }
 
-fun stitchEdges(a: FlexibleEdge, b: FlexibleEdge) {
-  a.edges.add(b)
-  b.edges.add(a)
-  b.first = a.second
-  b.second = a.first
-  b.next!!.first = b.second
-  b.previous!!.second = b.first
+fun stitchEdges(a: EdgeReference, b: EdgeReference) {
+  throw Error("Needs new code.")
+
+//  a.edges.add(b)
+//  b.edges.add(a)
+//  b.first = a.second
+//  b.second = a.first
+//  b.next!!.first = b.second
+//  b.previous!!.second = b.first
 }
 
-fun stitchEdgeLoops(firstLoop: List<FlexibleEdge>, secondLoop: List<FlexibleEdge>) {
+fun stitchEdgeLoops(firstLoop: List<EdgeReference>, secondLoop: List<EdgeReference>) {
   val secondIterator = secondLoop.listIterator()
 
   for (a in firstLoop) {

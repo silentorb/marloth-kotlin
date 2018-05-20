@@ -29,7 +29,7 @@ fun findCollisionWalls(source: Vector3, originalOffset: Vector3, world: World): 
   val radius = 0.8f
   val broadRadius = radius + maxLength
   return world.meta.walls
-      .filter { wall -> hitsWall(wall.edges[0], newPosition, broadRadius) && offset.dot(wall.normal) < 0f }
+      .filter { wall -> hitsWall(wall.edges[0].edge, newPosition, broadRadius) && offset.dot(wall.normal) < 0f }
       .map {
         val edge = it.edges[0]
         val hitPoint = projectPointOntoLine(source.xy, edge.first.xy, edge.second.xy)

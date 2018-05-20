@@ -3,28 +3,28 @@ package mythic.sculpting
 import mythic.spatial.Vector3
 import org.joml.plus
 
-fun edgeLoopNext(edge: FlexibleEdge) =
-    edge.next!!.edges[0].next!!
+//fun edgeLoopNext(edge: FlexibleEdge) =
+//    edge.next!!.edges[0].next!!
 
-fun getEdgeFaceLoop(edge: FlexibleEdge): List<FlexibleEdge> {
-  val result = mutableListOf<FlexibleEdge>()
-  var current = edge.next!!
-  var i = 0
-  do {
-    result.add(current)
-    current = current.next!!
-    if (i++ > 20)
-      throw Error("Possible infinite loop caused by an invalid edge loop.")
+//fun getEdgeFaceLoop(edge: FlexibleEdge): List<FlexibleEdge> {
+//  val result = mutableListOf<FlexibleEdge>()
+//  var current = edge.next!!
+//  var i = 0
+//  do {
+//    result.add(current)
+//    current = current.next!!
+//    if (i++ > 20)
+//      throw Error("Possible infinite loop caused by an invalid edge loop.")
+//
+//  } while (current != edge)
+//
+//  return result
+//}
 
-  } while (current != edge)
+typealias EdgeExplorer = (EdgeReference) -> EdgeReference?
 
-  return result
-}
-
-typealias EdgeExplorer = (FlexibleEdge) -> FlexibleEdge?
-
-fun gatherEdges(explore: EdgeExplorer, edge: FlexibleEdge): List<FlexibleEdge> {
-  val result = mutableListOf<FlexibleEdge>()
+fun gatherEdges(explore: EdgeExplorer, edge: EdgeReference): List<EdgeReference> {
+  val result = mutableListOf<EdgeReference>()
   var current = edge
   var i = 0
   do {
@@ -43,23 +43,23 @@ fun gatherEdges(explore: EdgeExplorer, edge: FlexibleEdge): List<FlexibleEdge> {
 }
 
 val edgeLoopNext: EdgeExplorer = { edge ->
-  if (edge.next!!.edges.size == 0)
+  if (edge.next!!.otherEdgeReferences.size == 0)
     null
   else
-    edge.next!!.edges[0].next!!
+    edge.next!!.otherEdgeReferences[0].next!!
 }
 
 val edgeLoopReversedNext: EdgeExplorer = { edge ->
-  if (edge.previous!!.edges.size == 0)
+  if (edge.previous!!.otherEdgeReferences.size == 0)
     null
   else
-    edge.previous!!.edges[0].previous!!
+    edge.previous!!.otherEdgeReferences[0].previous!!
 }
 
-fun getEdgeLoop(edge: FlexibleEdge): List<FlexibleEdge> = gatherEdges(edgeLoopNext, edge)
-fun getEdgeLoopReversed(edge: FlexibleEdge): List<FlexibleEdge> = gatherEdges(edgeLoopReversedNext, edge)
+fun getEdgeLoop(edge: EdgeReference): List<EdgeReference> = gatherEdges(edgeLoopNext, edge)
+fun getEdgeLoopReversed(edge: EdgeReference): List<EdgeReference> = gatherEdges(edgeLoopReversedNext, edge)
 
-fun getEdgesCenter(edges: List<FlexibleEdge>) =
+fun getEdgesCenter(edges: List<EdgeReference>) =
     edges.map { it.first }.reduce { a, b -> a + b } / edges.size.toFloat()
 
 

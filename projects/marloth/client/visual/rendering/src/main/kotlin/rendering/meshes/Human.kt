@@ -38,7 +38,7 @@ fun createHead(resolution: Int): MeshNode<HeadPorts> {
 //  transformVertices(Matrix().rotateY(-Pi / 2), headPath)
 //  headPath.forEach { it.x *= 0.8f }
   lathe(mesh, headPath, 8 * resolution)
-  val edge = mesh.edges.last()
+  val edge = mesh.edges.last().references.first()
   return MeshNode(mesh, HeadPorts(
       edge
   ), MeshInfo(listOf(), listOf(mapOf(edge to 1f))))
@@ -53,7 +53,7 @@ fun createTorso(resolution: Int): MeshNode<TorsoPorts> {
   val bodyFront = bodyFrontPath()
   val bodySide = bodySidePath()
   latheTwoPaths(mesh, createLatheCourse(resolution), bodySide, bodyFront)
-  val edge = mesh.edges[0].edges[0].previous!!
+  val edge = mesh.edges[0].references[0].previous!!
   return MeshNode(mesh, TorsoPorts(
       edge
   ), MeshInfo(listOf(), listOf(mapOf(edge to 1f))))
