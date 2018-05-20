@@ -68,6 +68,8 @@ data class FaceInfo(
 // it may be better to explicitly non-null cast.
 fun getFaceInfo(face: FlexibleFace): FaceInfo = (face.data as FaceInfo?)!!
 
+val isWall = { face: FlexibleFace -> getFaceInfo(face).type == FaceType.wall }
+
 fun getNullableFaceInfo(face: FlexibleFace): FaceInfo? = face.data as FaceInfo?
 
 class AbstractWorld(val boundary: WorldBoundary) {

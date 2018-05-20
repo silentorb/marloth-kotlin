@@ -190,8 +190,16 @@ fun defineNegativeSpace(abstractWorld: AbstractWorld) {
       getFaceInfo(it).debugInfo = "space-b"
     }
 
-    if (concaveFaces.none())
+    if (concaveFaces.none()) {
+      faces
+          .filter { wall ->
+            val neighbors = getIncompleteNeighbors(wall).toList()
+            neighbors.size < 2
+          }.forEach {
+        getFaceInfo(it).debugInfo = "space-d"
+      }
       break
+    }
 
     for (originFace in concaveFaces) {
       if (faceNodeCount(originFace) == 1) {
