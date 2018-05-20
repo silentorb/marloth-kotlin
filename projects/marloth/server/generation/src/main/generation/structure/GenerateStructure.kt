@@ -14,21 +14,11 @@ import org.joml.plus
 import org.joml.xy
 import simulation.*
 
-enum class CornerType {
-  doorway,
-  normal,
-  overlap,
-}
-
 val doorwayLength = 2.5f
 
-//data class Corner(val position: Vector3, val type: CornerType = CornerType.normal)
 typealias Corner = Vector3
 
-typealias SectorEdge = List<Vector3>
-
 data class TempSector(val node: Node, val corners: List<Corner>)
-//data class ConnectionSector(val corners: List<Corner>, val connection: Connection)
 data class NodeCorner(val corner: Corner, val angle: Float) {
   val position: Vector3
     get() = corner

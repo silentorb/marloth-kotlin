@@ -115,18 +115,18 @@ class FlexibleMesh {
     val faces = if (face == null) mutableListOf() else mutableListOf(face)
     val existingEdges = getMatchingEdges(first, second)
     assert(existingEdges.size < 2)
-    val edge = if (existingEdges.any()) {
-      val e = existingEdges.first()
+    if (existingEdges.any()) {
+      val edge = existingEdges.first()
       if (face != null)
-        e.faces.add(face)
-      e
+        edge.faces.add(face)
+
+      return EdgeReference(edge, null, null, edge.first == first)
     } else {
-      val e = FlexibleEdge(first, second, faces)
-      edges.add(e)
-      e
+      val edge = FlexibleEdge(first, second, faces)
+      edges.add(edge)
+      return EdgeReference(edge, null, null, true)
     }
 
-    return EdgeReference(edge, null, null, true)
   }
 
   fun createEdges(vertices: Vertices) {

@@ -215,7 +215,7 @@ fun defineNegativeSpace(abstractWorld: AbstractWorld) {
         val walls = gatherNewSectorFaces(originFace)
         if (walls.size < 3) {
           val i = getIncompleteNeighbors(originFace).toList()
-//          getFaceInfo(originFace).debugInfo = "space-d"
+          getFaceInfo(originFace).debugInfo = "space-d"
           return
         }
         addSpaceNode(abstractWorld, originFace)
