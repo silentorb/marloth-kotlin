@@ -1,58 +1,10 @@
 package mythic.sculpting.query
 
-import mythic.sculpting.HalfEdge
-import mythic.sculpting.HalfEdgeFace
-import mythic.sculpting.HalfEdgeMesh
-import mythic.sculpting.HalfEdgeVertex
 import mythic.spatial.BoundingBox
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import org.joml.div
 import org.joml.plus
-
-fun getVertexCount(face: HalfEdgeFace): Int {
-  var result = 1
-  var edge = face.edge!!.next
-
-  while (edge !== face.edge) {
-    edge = edge!!.next
-    ++result
-  }
-
-  return result
-}
-
-fun getVertexCount(mesh: HalfEdgeMesh): Int {
-  var result = 0
-  for (polygon in mesh.faces) {
-    result += getVertexCount(polygon)
-  }
-  return result
-}
-
-inline fun <T> each_edge(face: HalfEdgeFace, action: (HalfEdge) -> T) {
-  var edge = face.edge
-  do {
-    action(edge!!)
-    edge = edge.next
-  } while (edge !== face.edge)
-}
-
-inline fun <T> each_vertex(face: HalfEdgeFace, action: (HalfEdgeVertex) -> T) {
-  each_edge(face, { action(it.vertex) })
-}
-
-fun getVertices(face: HalfEdgeFace): List<HalfEdgeVertex> {
-  val result = ArrayList<HalfEdgeVertex>()
-  each_vertex(face, { result.add(it) })
-  return result
-}
-
-fun getEdges(face: HalfEdgeFace): List<HalfEdge> {
-  val result = ArrayList<HalfEdge>()
-  each_edge(face, { result.add(it) })
-  return result
-}
 
 //fun getBounds(vertices: List<HalfEdgeVertex>): BoundingBox {
 //  val v = vertices.map { it.position }

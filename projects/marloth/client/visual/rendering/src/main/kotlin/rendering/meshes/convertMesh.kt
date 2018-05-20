@@ -4,8 +4,6 @@ import mythic.glowing.SimpleMesh
 import mythic.glowing.VertexSchema
 import mythic.sculpting.FlexibleMesh
 import mythic.sculpting.FlexibleFace
-import mythic.sculpting.HalfEdgeFace
-import mythic.sculpting.HalfEdgeVertex
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import mythic.spatial.put
@@ -13,14 +11,6 @@ import org.lwjgl.BufferUtils
 import java.nio.FloatBuffer
 
 typealias FlexibleVertexSerializer = (vertex: Vector3, face: FlexibleFace, vertices: FloatBuffer) -> Unit
-typealias HalfEdgeVertexSerializer = (vertex: HalfEdgeVertex, face: HalfEdgeFace, vertices: FloatBuffer) -> Unit
-
-val temporaryVertexSerializerOld: HalfEdgeVertexSerializer = { vertex, face, vertices ->
-  vertices.put(vertex.position)
-
-  // Temporary color code
-  vertices.put(Vector4(0.5f, 0.5f, 0f, 1f))
-}
 
 fun temporaryVertexSerializer(color: Vector4): FlexibleVertexSerializer {
   return { vertex, face, vertices ->
