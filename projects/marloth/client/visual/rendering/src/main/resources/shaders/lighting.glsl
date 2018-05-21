@@ -20,7 +20,7 @@ const float quadratic_attenuation = 0.05;
 const float shininess = 0.9;
 const float strength = 0.3;
 //const vec3 ambient = vec3(0.5);
-vec3 ambient = vec3(0.0);
+vec3 ambient = vec3(0.1);
 
 struct Relationship {
     vec3 direction;
@@ -56,7 +56,7 @@ vec3 processLight(Light light, vec4 input_color, vec3 normal, vec3 cameraDirecti
 		specular = pow(specular, shininess) * strength;
 
 	//specular = 0;
-	vec3 scattered_light = ambient + lightColor * diffuse * attenuation;
+	vec3 scattered_light = lightColor * diffuse * attenuation;
 	vec3 reflected_light = lightColor * specular * attenuation;
 	reflected_light = vec3(0);
 
@@ -70,7 +70,7 @@ vec3 processLights(vec4 input_color, vec3 normal, vec3 cameraDirection, vec3 pos
 		result += processLight(scene.lights[i], input_color, normal, cameraDirection, position);
 	}
 
-    result += glow;
+    result += glow + ambient;
 
 	return min(result, vec3(1.0));
 }

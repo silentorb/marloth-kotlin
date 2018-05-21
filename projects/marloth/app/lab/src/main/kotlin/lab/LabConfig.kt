@@ -1,11 +1,13 @@
 package lab
 
 import haft.*
+import lab.views.map.MapViewConfig
 import org.lwjgl.glfw.GLFW
 import lab.views.model.ModelViewConfig
 
 enum class LabCommandType {
   viewGame,
+  viewMap,
   viewModel,
   viewWorld,
   viewTexture,
@@ -49,9 +51,10 @@ typealias LabInputConfig = MutableMap<Views, Bindings<LabCommandType>>
 fun createLabInputBindings() = mutableMapOf(
     Views.global to createStrokeBindings(0, mapOf(
         GLFW.GLFW_KEY_F1 to LabCommandType.viewGame,
-        GLFW.GLFW_KEY_F2 to LabCommandType.viewWorld,
-        GLFW.GLFW_KEY_F3 to LabCommandType.viewModel,
-        GLFW.GLFW_KEY_F4 to LabCommandType.viewTexture
+        GLFW.GLFW_KEY_F2 to LabCommandType.viewMap,
+        GLFW.GLFW_KEY_F3 to LabCommandType.viewWorld,
+        GLFW.GLFW_KEY_F4 to LabCommandType.viewModel,
+        GLFW.GLFW_KEY_F5 to LabCommandType.viewTexture
     ))
         .plus(
             createStrokeBindings(2, mapOf(
@@ -106,6 +109,9 @@ fun createLabInputBindings() = mutableMapOf(
     )),
     Views.texture to createBindings<LabCommandType>(0, mapOf(
 
+    )),
+    Views.map to createStrokeBindings<LabCommandType>(0, mapOf(
+
     ))
 )
 
@@ -117,6 +123,7 @@ data class WorldViewConfig(
 enum class Views {
   game,
   global,
+  map,
   model,
   texture,
   world
@@ -126,7 +133,8 @@ data class LabConfig(
     var view: Views = Views.world,
     var worldView: WorldViewConfig = WorldViewConfig(),
     var modelView: ModelViewConfig = ModelViewConfig(),
-    var gameView: lab.views.GameViewConfig = lab.views.GameViewConfig()
+    var gameView: lab.views.GameViewConfig = lab.views.GameViewConfig(),
+    var mapView: MapViewConfig = MapViewConfig()
 )
 
 val labInputConfig: LabInputConfig = createLabInputBindings()

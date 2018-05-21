@@ -8,6 +8,8 @@ import mythic.platforming.WindowInfo
 import scenery.GameScene
 import simulation.AbstractWorld
 import haft.*
+import lab.views.map.renderMapView
+import lab.views.map.updateMapState
 import lab.views.model.ModelView
 import lab.views.world.WorldView
 import marloth.clienting.gui.MenuActionType
@@ -64,6 +66,7 @@ class LabClient(val config: LabConfig, val client: Client) {
 
   val globalKeyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
       LabCommandType.viewGame to { _ -> config.view = Views.game },
+      LabCommandType.viewMap to { _ -> config.view = Views.map },
       LabCommandType.viewModel to { _ -> config.view = Views.model },
       LabCommandType.viewWorld to { _ -> config.view = Views.world },
       LabCommandType.viewTexture to { _ -> config.view = Views.texture }
@@ -153,6 +156,19 @@ class LabClient(val config: LabConfig, val client: Client) {
     )
   }
 
+  fun updateMap(windowInfo: WindowInfo, scenes: List<GameScene>, metaWorld: AbstractWorld, previousState: LabState, delta: Float): LabClientResult {
+    val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
+    val input = getInputState(client.platform.input, commands)
+    updateMapState(config.mapView, input, delta)
+
+    renderMapView(client, metaWorld, config.mapView)
+    return LabClientResult(
+        listOf(),
+        LabState(nextLabInputState, previousState.gameInput, previousState.menuState),
+        MenuActionType.none
+    )
+  }
+
   fun update(scenes: List<GameScene>, metaWorld: AbstractWorld, previousState: LabState, delta: Float): LabClientResult {
     val windowInfo = client.platform.display.getInfo()
     prepareClient(windowInfo)
@@ -161,6 +177,7 @@ class LabClient(val config: LabConfig, val client: Client) {
       Views.model -> updateModel(windowInfo, previousState, delta)
       Views.texture -> updateTexture(windowInfo, previousState)
       Views.world -> updateWorld(windowInfo, metaWorld, previousState)
+      Views.map -> updateMap(windowInfo, scenes, metaWorld, previousState, delta)
       else -> throw Error("Not supported")
     }
   }

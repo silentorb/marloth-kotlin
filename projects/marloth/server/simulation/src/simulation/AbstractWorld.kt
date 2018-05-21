@@ -84,10 +84,10 @@ class AbstractWorld(val boundary: WorldBoundary) {
     get() = graph.connections
 
   val floors: List<FlexibleFace>
-    get() = nodes.flatMap { it.floors }
+    get() = nodes.flatMap { it.floors }.distinct()
 
   val walls: List<FlexibleFace>
-    get() = nodes.flatMap { it.walls }
+    get() = nodes.flatMap { it.walls }.distinct()
 }
 
 fun initializeFaceInfo(type: FaceType, node: Node, face: FlexibleFace) {

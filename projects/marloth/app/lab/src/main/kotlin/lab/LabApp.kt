@@ -84,9 +84,11 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
   val scenes = createScenes(app.world, app.client.screens)
   val delta = app.timer.update().toFloat()
   val (commands, nextState, menuAction) = app.labClient.update(scenes, app.world.meta, previousState, delta)
-  val instantiator = Instantiator(app.world, InstantiatorConfig(app.gameConfig.gameplay.defaultPlayerView))
-  val updater = WorldUpdater(app.world, instantiator)
-  updater.update(commands, delta)
+  if (app.config.view == Views.game) {
+    val instantiator = Instantiator(app.world, InstantiatorConfig(app.gameConfig.gameplay.defaultPlayerView))
+    val updater = WorldUpdater(app.world, instantiator)
+    updater.update(commands, delta)
+  }
   app.platform.process.pollEvents()
 
   if (app.gameConfig.gameplay.defaultPlayerView != app.world.players[0].viewMode) {
