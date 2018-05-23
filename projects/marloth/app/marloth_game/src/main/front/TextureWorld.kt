@@ -8,10 +8,15 @@ import mythic.sculpting.query.getBounds
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.put
+import org.joml.plus
 import rendering.*
 import rendering.meshes.FlexibleVertexSerializer
 import rendering.meshes.convertMesh
 import simulation.AbstractWorld
+import simulation.Node
+import simulation.NodeType
+import simulation.getFaceInfo
+import kotlin.math.roundToInt
 
 typealias VertexMap = Map<Vector3, VertexNormalTexture>
 typealias VertexInfo = Map<FlexibleFace, VertexMap>
@@ -25,17 +30,19 @@ data class TextureFace(
 fun createTexturedFloor(face: FlexibleFace, texture: Texture): TextureFace {
   val vertices = face.unorderedVertices
   val bounds = getBounds(vertices)
-  val dimensions = bounds.dimensions
-//    val scaleX = 1 / dimensions.x
-//    val scaleY = 1 / dimensions.y
-  val scaleX = .5f
-  val scaleY = .5f
+  val scale = 2f
+  val offset = Vector2(
+      (bounds.start.x / scale).roundToInt().toFloat() * scale,
+      (bounds.start.y / scale).roundToInt().toFloat() * scale
+  )
+  val scaleX = 1f / scale
+  val scaleY = 1f / scale
   return TextureFace(face, vertices.associate { vertex ->
     Pair(vertex, VertexNormalTexture(
         Vector3(0f, 0f, 1f),
         Vector2(
-            (vertex.x - bounds.start.x) * scaleX,
-            (vertex.y - bounds.start.y) * scaleY
+            (vertex.x - offset.x) * scaleX,
+            (vertex.y - offset.y) * scaleY
         )
     ))
   },
@@ -67,10 +74,15 @@ fun createTexturedWall(face: FlexibleFace, texture: Texture): TextureFace {
   )
 }
 
-fun prepareWorldMesh(metaWorld: AbstractWorld, textures: Textures): List<TextureFace> {
-  return metaWorld.floors.map { createTexturedFloor(it, textures.checkers) }
+fun prepareWorldMesh(node: Node, textures: Textures): List<TextureFace> {
+  val floorTexture = if (node.type == NodeType.space) textures.darkCheckers else textures.checkers
+  return node.floors
+      .filter { getFaceInfo(it).firstNode == node }
+      .map { createTexturedFloor(it, floorTexture) }
       .plus(
-          metaWorld.walls.map { createTexturedWall(it, textures.darkCheckers) }
+          node.walls
+              .filter { getFaceInfo(it).firstNode == node }
+              .map { createTexturedWall(it, textures.darkCheckers) }
       )
 }
 
@@ -81,14 +93,21 @@ fun texturedVertexSerializer(vertexInfo: VertexInfo): FlexibleVertexSerializer =
   vertices.put(info.uv.y)
 }
 
-fun convertWorldMesh(abstractWorld: AbstractWorld, renderer: Renderer): WorldMesh {
-  val texturedFaces = prepareWorldMesh(abstractWorld, renderer.textures)
+fun convertSectorMesh(renderer: Renderer, node: Node): SectorMesh {
+  val texturedFaces = prepareWorldMesh(node, renderer.textures)
   val vertexInfo = texturedFaces.associate { Pair(it.face, it.vertexMap) }
   val serializer = texturedVertexSerializer(vertexInfo)
-  return WorldMesh(
-      convertMesh(abstractWorld.mesh, renderer.vertexSchemas.textured, serializer),
+  return SectorMesh(
+      convertMesh(texturedFaces.map { it.face }, renderer.vertexSchemas.textured, serializer),
       texturedFaces.map { it.texture }
   )
+}
+
+fun convertWorldMesh(abstractWorld: AbstractWorld, renderer: Renderer): WorldMesh {
+  val sectors = abstractWorld.nodes.map {
+    convertSectorMesh(renderer, it)
+  }
+  return WorldMesh(sectors)
 }
 
 fun setWorldMesh(abstractWorld: AbstractWorld, client: Client) {

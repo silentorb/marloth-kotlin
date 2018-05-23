@@ -62,9 +62,10 @@ fun renderWireframeWorldMesh(renderer: SceneRenderer) {
   if (worldMesh != null) {
     renderer.effects.flat.activate(Matrix(), Vector4(1f))
     var index = 0
-    for (texture in worldMesh.textureIndex) {
-      worldMesh.mesh.drawElement(DrawMethod.lineLoop, index++)
-    }
+    throw Error("No longer implemented.")
+//    for (texture in worldMesh.textureIndex) {
+//      worldMesh.mesh.drawElement(DrawMethod.lineLoop, index++)
+//    }
   }
 }
 

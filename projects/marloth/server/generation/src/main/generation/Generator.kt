@@ -8,11 +8,7 @@ import generation.structure.generateStructure
 import mythic.spatial.*
 import org.joml.minus
 import org.joml.plus
-import org.joml.xy
 import randomly.Dice
-import scenery.DepictionType
-import scenery.Light
-import scenery.LightType
 import simulation.*
 import simulation.changing.Instantiator
 import simulation.changing.InstantiatorConfig
@@ -56,7 +52,7 @@ fun fillIndexes(graph: NodeGraph) {
 }
 
 fun placeEnemy(world: World, instantiator: Instantiator, dice: Dice) {
-  val node = dice.getItem(world.meta.nodes.drop(1))// Skip the node where the player starts
+  val node = dice.getItem(world.meta.locationNodes.drop(1))// Skip the node where the player starts
   val wall = dice.getItem(node.walls)
   val position = getVector3Center(node.position, wall.edges[0].first)
   instantiator.createAiCharacter(characterDefinitions.monster, world.factions[1], position)
@@ -72,7 +68,7 @@ fun placeEnemies(world: World, instantiator: Instantiator, dice: Dice, scale: Fl
 
 fun placeWallLamps(world: World, instantiator: Instantiator, dice: Dice, scale: Float) {
   val count = (10f * scale).toInt()
-  val nodes = dice.getList(world.meta.nodes, count)
+  val nodes = dice.getList(world.meta.locationNodes, count)
   nodes.forEach { node ->
     val wall = dice.getItem(node.walls)
     val edge = wall.edges[0]

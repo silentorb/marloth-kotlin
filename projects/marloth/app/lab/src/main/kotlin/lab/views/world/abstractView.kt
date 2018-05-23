@@ -4,6 +4,7 @@ import simulation.WorldBoundary
 import mythic.bloom.Bounds
 import mythic.drawing.Canvas
 import mythic.spatial.Vector2
+import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import mythic.typography.TextStyle
 import org.joml.plus
@@ -13,9 +14,8 @@ import simulation.*
 
 private val gridSpacing = 10f // In world units
 
-fun getScale(bounds: Bounds, worldBoundary: WorldBoundary): Float {
-  val worldDimensions = worldBoundary.dimensions
-  val padding = worldPadding * 2
+fun getScale(bounds: Bounds, worldDimensions: Vector3): Float {
+    val padding = worldBorderPadding * 2
   if (worldDimensions.x != worldDimensions.y)
     throw Error("getScale currently only supports worlds with identical x and y dimensions.")
 
@@ -27,7 +27,7 @@ fun getScale(bounds: Bounds, worldBoundary: WorldBoundary): Float {
 }
 
 fun drawGrid(canvas: Canvas, bounds: Bounds, worldBoundary: WorldBoundary, scale: Float) {
-  val offset = bounds.position + worldPadding
+  val offset = bounds.position + worldBorderPadding
   val steps = (worldBoundary.dimensions.x / gridSpacing).toInt() - 1
   val gridColor = Vector4(0f, 0f, 0f, 0.3f)
   val gridGap = gridSpacing * scale
@@ -53,7 +53,7 @@ fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Can
   val solid = canvas.solid(Vector4(0.7f, 0.6f, 0.5f, 0.6f))
   val spaceSolid = canvas.solid(Vector4(0.7f, 0.6f, 0.5f, 0.3f))
   val outline = canvas.outline(Vector4(0.3f, 0f, 0f, 0.8f), 3f)
-  val scale = getScale(bounds, world.boundary)
+  val scale = getScale(bounds, world.boundary.dimensions)
 //  val offset = bounds.position + worldPadding
 
 //  fun getPosition(position: Vector2) = offset + (Vector2(position.x, -position.y)

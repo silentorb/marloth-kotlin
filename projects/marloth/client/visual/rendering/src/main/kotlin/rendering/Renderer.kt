@@ -27,9 +27,14 @@ fun gatherEffectsData(dimensions: Vector2i, scene: Scene): EffectsData {
   )
 }
 
-data class WorldMesh(
+
+data class SectorMesh(
     val mesh: SimpleMesh<AttributeName>,
     val textureIndex: List<Texture>
+)
+
+data class WorldMesh(
+    val sectors: List<SectorMesh>
 )
 
 fun getPlayerViewports(playerCount: Int, dimensions: Vector2i): List<Vector4i> {
@@ -172,16 +177,24 @@ class GameSceneRenderer(
     }
   }
 
+  fun renderSectorMesh(sector: SectorMesh) {
+    var index = 0
+    for (texture in sector.textureIndex) {
+      texture.activate()
+      sector.mesh.drawElement(DrawMethod.triangleFan, index++)
+    }
+  }
+
   fun renderWorldMesh() {
+    globalState.cullFaces = true
     val worldMesh = renderer.renderer.worldMesh
     if (worldMesh != null) {
       renderer.effects.textured.activate(Matrix(), renderer.renderer.textures.checkers, Vector4(1f), 0f, Matrix())
-      var index = 0
-      for (texture in worldMesh.textureIndex) {
-        texture.activate()
-        worldMesh.mesh.drawElement(DrawMethod.triangleFan, index++)
+      for (sector in worldMesh.sectors) {
+        renderSectorMesh(sector)
       }
     }
+    globalState.cullFaces = false
   }
 
   fun render() {

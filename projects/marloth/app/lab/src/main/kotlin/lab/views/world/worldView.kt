@@ -8,6 +8,7 @@ import mythic.bloom.drawBorder
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.spatial.Vector2
+import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import mythic.spatial.times
 import org.joml.Vector2i
@@ -17,28 +18,37 @@ import org.joml.minus
 import rendering.Renderer
 import simulation.AbstractWorld
 
-val worldPadding = 20f // In screen units
+val worldBorderPadding = 20f // In screen units
 
 typealias PositionFunction = (Vector2) -> Vector2
 
-fun getPositionFunction(offset: Vector2, boundary: WorldBoundary, scale: Float): PositionFunction {
-  return { position: Vector2 -> offset + (Vector2(position.x, -position.y) - boundary.start.xy) * scale }
+fun getPositionFunction(screenOffset: Vector2, worldOffset: Vector2, scale: Float): PositionFunction {
+  return { position: Vector2 -> screenOffset + (Vector2(position.x, -position.y) + worldOffset) * scale }
 }
 
 fun drawGeneratedWorld(bounds: Bounds, canvas: Canvas, abstractWorld: AbstractWorld,
                        config: WorldViewConfig, renderer: Renderer) {
-  val scale = getScale(bounds, abstractWorld.boundary)
-  val offset = bounds.position + worldPadding
-  val getPosition: PositionFunction = getPositionFunction(offset, abstractWorld.boundary, scale)
-  drawGrid(canvas, bounds, abstractWorld.boundary, scale)
+  val padding = abstractWorld.boundary.padding
+  val innerScale = getScale(bounds, abstractWorld.boundary.dimensions + Vector3(padding * 2))
+  val outerScale = getScale(bounds, abstractWorld.boundary.dimensions)
+  val offset = bounds.position + worldBorderPadding
+  val getPosition: PositionFunction = getPositionFunction(
+      offset,
+      Vector2(padding) - abstractWorld.boundary.start.xy,
+      innerScale
+  )
+
+  drawGrid(canvas, bounds, abstractWorld.boundary, innerScale)
+
   if (config.showAbstract)
     drawAbstractWorld(bounds, getPosition, canvas, abstractWorld, renderer)
+
   if (config.showStructure)
     drawStructureWorld(bounds, getPosition, canvas, abstractWorld)
 
   canvas.drawSquare(
       offset,
-      abstractWorld.boundary.dimensions.xy * scale,
+      abstractWorld.boundary.dimensions.xy * outerScale,
       canvas.outline(Vector4(0.6f, 0.5f, 0.5f, 0.5f), 3f)
   )
 }

@@ -22,7 +22,7 @@ private fun getLineColor(edge: FlexibleEdge): Vector4 {
       return when (debugInfo) {
         "space-a" -> Vector4(1f, 0f, 1f, opacity)
         "space-b" -> Vector4(0f, 1f, 1f, opacity)
-        "space-d" -> Vector4(1f, 0f, 0f, opacity)
+        "space-d" -> Vector4(1f, 0f, 0f, 1f)
         else -> Vector4(1f, 1f, 1f, opacity)
       }
     }

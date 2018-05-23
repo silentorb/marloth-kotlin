@@ -109,6 +109,15 @@ fun getNewWallVertices(sectorCenter: Vector3, edges: Edges): Vertices {
 fun getDistinctEdges(edges: Edges) =
     edges.distinctBy { it.vertices.map { it.hashCode() }.sorted() }
 
+fun createFloor(world: AbstractWorld, node: Node, vertices: Vertices, center: Vector2): FlexibleFace {
+  val sortedFloorVertices = vertices
+      .sortedBy { atan(it.xy - center) }
+//  val a = sortedFloorVertices.map { atan(it.xy - center) }
+  val floor = world.mesh.createStitchedFace(sortedFloorVertices)
+  node.floors.add(floor)
+  return floor
+}
+
 fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace) {
   val walls = gatherNewSectorFaces(originFace)
   assert(walls.size > 2)
@@ -125,16 +134,15 @@ fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace) {
     }.map { it.edge }
   }.distinct()
 
-  val floorVertices = edges.map { it.vertices.sortedBy { it.z }.first() }
+  val floorVertices = edges.map { it.vertices.sortedBy { it.z }.last() }
   val sectorCenter = getCenter(floorVertices)
   val flatCenter = sectorCenter.xy
-//  val sortedFloorVertices = arrangePointsCounterClockwise(sectorCenter, floorVertices)
 
-  val sortedFloorVertices = floorVertices
-      .sortedBy { atan(it.xy - flatCenter) }
-  val a = sortedFloorVertices.map { atan(it.xy - flatCenter) }
-  val floor = abstractWorld.mesh.createStitchedFace(sortedFloorVertices)
-  floor.updateNormal()
+//  val sortedFloorVertices = floorVertices
+//      .sortedBy { atan(it.xy - flatCenter) }
+//  val a = sortedFloorVertices.map { atan(it.xy - flatCenter) }
+//  val floor = abstractWorld.mesh.createStitchedFace(sortedFloorVertices)
+//  floor.updateNormal()
 
 //  val radius = floorVertices.map { it.distance(sectorCenter) }.average().toFloat()
   val radius = 1f
@@ -145,7 +153,7 @@ fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace) {
   )
   node.index = abstractWorld.graph.nodes.size
   node.walls.addAll(walls)
-  node.floors.add(floor)
+  createFloor(abstractWorld, node, floorVertices, flatCenter)
   initializeFaceInfo(node)
 
   val gapEdges = edges.filter {
@@ -155,11 +163,10 @@ fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace) {
     assert(gapEdges.size == 2)
     val gapVertices = getNewWallVertices(sectorCenter, gapEdges)
     val newWall = abstractWorld.mesh.createStitchedFace(gapVertices)
-    newWall.updateNormal()
     initializeFaceInfo(FaceType.wall, node, newWall)
-    val n = getIncompleteNeighbors(newWall).toList()
-    val n2 = getIncompleteNeighbors(newWall).toList()
-    val n3 = newWall.neighbors
+//    val n = getIncompleteNeighbors(newWall).toList()
+//    val n2 = getIncompleteNeighbors(newWall).toList()
+//    val n3 = newWall.neighbors
     node.walls.add(newWall)
   }
 
@@ -170,11 +177,85 @@ fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace) {
   }
 }
 
+fun getIncomplete(abstractWorld: AbstractWorld) =
+    abstractWorld.graph.nodes.flatMap { it.walls }
+        .filter { faceNodeCount(getFaceInfo(it)) == 1 }
+
+data class WallVertices(
+    val lower: Vertices,
+    val upper: Vertices
+)
+
+fun getWallVertices(vertices: Vertices): WallVertices {
+  val sortedOriginalPoints = vertices.sortedBy { it.z }
+  return WallVertices(sortedOriginalPoints.take(2),
+      sortedOriginalPoints.drop(2)
+  )
+}
+
+fun createWall(abstractWorld: AbstractWorld, node: Node, vertices: Vertices): FlexibleFace {
+  val wall = abstractWorld.mesh.createStitchedFace(vertices)
+  initializeFaceInfo(FaceType.wall, node, wall)
+  node.walls.add(wall)
+  return wall
+}
+
+fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace) {
+  getFaceInfo(originFace).debugInfo = "space-d"
+  val originalWall = getWallVertices(originFace.vertices)
+
+  val newPoints = originFace.vertices.map {
+    val projected = it.xy + it.xy.normalize() * 10f
+    Vector3(projected.x, projected.y, it.z)
+  }
+  val newWall = getWallVertices(newPoints)
+
+  val floorVertices = originalWall.upper.plus(newWall.upper)
+  val sectorCenter = getCenter(floorVertices)
+
+  val radius = 1f
+  val node = Node(
+      position = sectorCenter,
+      radius = radius,
+      type = NodeType.space
+  )
+  node.index = abstractWorld.graph.nodes.size
+//  node.walls.addAll(walls)
+//  node.floors.add(floor)
+  createFloor(abstractWorld, node, floorVertices, sectorCenter.xy)
+
+  val outerWall = createWall(abstractWorld, node, newPoints)
+
+  for (i in 0..1) {
+    val outerSideEdge = outerWall.edge(newWall.lower[i], newWall.upper[1 - i])
+    assert(outerSideEdge != null)
+    if (outerSideEdge!!.faces.size > 1)
+      continue
+
+    val sidePoints = listOf(
+        originalWall.lower[i],
+        newWall.lower[i],
+        newWall.upper[1 - i],
+        originalWall.upper[1 - i]
+    )
+    createWall(abstractWorld, node, sidePoints)
+  }
+
+  initializeFaceInfo(node)
+  abstractWorld.graph.nodes.add(node)
+}
+
+fun fillBoundary(abstractWorld: AbstractWorld) {
+  val faces = getIncomplete(abstractWorld)
+  for (face in faces) {
+    createBoundarySector(abstractWorld, face)
+  }
+}
+
 fun defineNegativeSpace(abstractWorld: AbstractWorld) {
   var pass = 1
   while (true) {
-    val faces = abstractWorld.graph.nodes.flatMap { it.walls }
-        .filter { faceNodeCount(getFaceInfo(it)) == 1 }
+    val faces = getIncomplete(abstractWorld)
 
     val neighborLists = faces.map { wall -> getIncompleteNeighbors(wall).toList() }
     val invalid = neighborLists.filter { it.size > 2 }

@@ -8,7 +8,8 @@ import randomly.Dice
 
 data class WorldBoundary(
     val start: Vector3,
-    val end: Vector3
+    val end: Vector3,
+    val padding: Float = 5f
 ) {
   val dimensions: Vector3
     get() = end - start
@@ -79,6 +80,9 @@ class AbstractWorld(val boundary: WorldBoundary) {
 
   val nodes: MutableList<Node>
     get() = graph.nodes
+
+  val locationNodes: List<Node>
+    get() = nodes.filter { it.type != NodeType.space }
 
   val connections: MutableList<Connection>
     get() = graph.connections

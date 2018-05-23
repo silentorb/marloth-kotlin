@@ -19,6 +19,10 @@ class FlexibleEdge(
 
   val references: List<EdgeReference>
     get() = faces.map { getReference(it) }
+
+  fun matches(a: Vector3, b: Vector3): Boolean =
+      (first == a && second == b)
+          || (first == b && second == a)
 }
 
 class EdgeReference(
@@ -71,6 +75,9 @@ class FlexibleFace(
       it.faces
     }
         .filter { it !== this }
+
+  fun edge(first: Vector3, second: Vector3): EdgeReference? =
+      edges.firstOrNull { it.edge.matches(first, second) }
 }
 
 class FlexibleMesh {
@@ -101,15 +108,13 @@ class FlexibleMesh {
 
   fun createStitchedFace(vertices: List<Vector3>): FlexibleFace {
     val face = createFace(vertices)
+    face.updateNormal()
 //    stitchEdges(face.edges)
     return face
   }
 
   fun getMatchingEdges(first: Vector3, second: Vector3) =
-      edges.filter { existing ->
-        (existing.first == first && existing.second == second)
-            || (existing.first == second && existing.second == first)
-      }
+      edges.filter { it.matches(first, second) }
 
   fun createEdge(first: Vector3, second: Vector3, face: FlexibleFace?): EdgeReference {
     val faces = if (face == null) mutableListOf() else mutableListOf(face)
