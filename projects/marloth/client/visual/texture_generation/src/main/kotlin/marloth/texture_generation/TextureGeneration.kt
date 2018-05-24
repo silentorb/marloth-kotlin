@@ -1,8 +1,13 @@
-package marloth.texture_generation
+package texture_generation
 
+import marloth.texture_generation.OpenSimplexNoise
 import mythic.glowing.Texture
 import mythic.glowing.geometryTextureInitializer
+import mythic.spatial.Vector3
+import mythic.spatial.Vector4
 import mythic.spatial.put
+import mythic.spatial.times
+import org.joml.plus
 import org.lwjgl.BufferUtils
 import java.nio.FloatBuffer
 
@@ -22,6 +27,16 @@ val checkerPattern = { first: OpaqueColor, second: OpaqueColor ->
       first
     else
       second
+  }
+}
+
+fun simpleNoise(first: OpaqueColor, second: OpaqueColor): OpaqueTextureAlgorithm {
+  val generator = OpenSimplexNoise(1)
+  return { x: Int, y: Int, width: Int, height: Int ->
+    val scale = 24f
+    val mod = generator.eval((x.toDouble() / width.toDouble()) * scale, (y.toDouble() / width.toDouble()) * scale).toFloat()
+    //first * mod + second * (1 - mod)
+    Vector3(mod, mod, mod)
   }
 }
 

@@ -1,9 +1,10 @@
 package lab
 
 import haft.*
+import lab.views.TextureViewConfig
 import lab.views.map.MapViewConfig
-import org.lwjgl.glfw.GLFW
 import lab.views.model.ModelViewConfig
+import org.lwjgl.glfw.GLFW
 
 enum class LabCommandType {
   viewGame,
@@ -134,7 +135,8 @@ data class LabConfig(
     var worldView: WorldViewConfig = WorldViewConfig(),
     var modelView: ModelViewConfig = ModelViewConfig(),
     var gameView: lab.views.GameViewConfig = lab.views.GameViewConfig(),
-    var mapView: MapViewConfig = MapViewConfig()
+    var mapView: MapViewConfig = MapViewConfig(),
+    var textureView: TextureViewConfig = TextureViewConfig()
 )
 
 val labInputConfig: LabInputConfig = createLabInputBindings()

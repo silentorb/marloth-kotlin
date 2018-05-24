@@ -70,7 +70,7 @@ class Renderer {
   val canvasMeshes = createDrawingMeshes(vertexSchemas.drawing)
   val meshGenerators = standardMeshes()
   val meshes = createMeshes(vertexSchemas)
-  val textures = Textures()
+  val textures = createTextureLibrary()
   val sectorBuffer = UniformBuffer()
   val fonts = loadFonts(listOf(
       FontLoadInfo("cour.ttf", 16, 0f)
@@ -189,7 +189,7 @@ class GameSceneRenderer(
     globalState.cullFaces = true
     val worldMesh = renderer.renderer.worldMesh
     if (worldMesh != null) {
-      renderer.effects.textured.activate(Matrix(), renderer.renderer.textures.checkers, Vector4(1f), 0f, Matrix())
+      renderer.effects.textured.activate(Matrix(), renderer.renderer.textures[Textures.checkers]!!, Vector4(1f), 0f, Matrix())
       for (sector in worldMesh.sectors) {
         renderSectorMesh(sector)
       }

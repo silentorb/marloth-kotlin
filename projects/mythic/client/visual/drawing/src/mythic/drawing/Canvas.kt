@@ -10,7 +10,6 @@ import mythic.typography.TextConfiguration
 import mythic.typography.TextStyle
 import org.joml.Vector2i
 import org.joml.Vector4i
-import org.joml.minus
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -91,6 +90,7 @@ class Canvas(
 ) {
 
   val dynamicMesh = MutableSimpleMesh(vertexSchemas.simple)
+  val dynamicTexturedMesh = MutableSimpleMesh(vertexSchemas.image)
   val viewportDimensions = Vector2(dimensions.x.toFloat(), dimensions.y.toFloat())
   val pixelsToScalar = Matrix().scale(1f / dimensions.x, 1f / dimensions.y, 1f)
 
@@ -133,6 +133,11 @@ class Canvas(
 
   fun drawImage(position: Vector2, dimensions: Vector2, brush: Brush) {
     brush(transformScalar(position, dimensions), meshes.image)
+  }
+
+  fun drawDynamicImage(position: Vector2, dimensions: Vector2, brush: Brush, vertexData: List<Float>) {
+    dynamicTexturedMesh.load(vertexData)
+    brush(transformScalar(position, dimensions), dynamicTexturedMesh)
   }
 
   fun drawLine(startX: Float, startY: Float, endX: Float, endY: Float, color: Vector4, thickness: Float) {

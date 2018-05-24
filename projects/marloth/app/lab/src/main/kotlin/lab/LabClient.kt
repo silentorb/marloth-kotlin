@@ -131,7 +131,7 @@ class LabClient(val config: LabConfig, val client: Client) {
   fun updateTexture(windowInfo: WindowInfo, previousState: LabState): LabClientResult {
     val view = TextureView()
 
-    val layout = view.createLayout(windowInfo.dimensions)
+    val layout = view.createLayout(client.renderer, config.textureView, windowInfo.dimensions)
     val (_, nextLabInputState) = updateInput(mapOf(), previousState)
 
     renderLab(windowInfo, layout)

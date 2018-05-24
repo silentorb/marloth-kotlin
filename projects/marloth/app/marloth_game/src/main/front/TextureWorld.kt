@@ -74,15 +74,15 @@ fun createTexturedWall(face: FlexibleFace, texture: Texture): TextureFace {
   )
 }
 
-fun prepareWorldMesh(node: Node, textures: Textures): List<TextureFace> {
-  val floorTexture = if (node.type == NodeType.space) textures.darkCheckers else textures.checkers
+fun prepareWorldMesh(node: Node, textures: TextureLibrary): List<TextureFace> {
+  val floorTexture = if (node.type == NodeType.space) textures[Textures.darkCheckers]!! else textures[Textures.checkers]!!
   return node.floors
       .filter { getFaceInfo(it).firstNode == node }
       .map { createTexturedFloor(it, floorTexture) }
       .plus(
           node.walls
               .filter { getFaceInfo(it).firstNode == node }
-              .map { createTexturedWall(it, textures.darkCheckers) }
+              .map { createTexturedWall(it, textures[Textures.darkCheckers]!!) }
       )
 }
 
