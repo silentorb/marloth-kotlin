@@ -15,7 +15,7 @@ data class TextureViewConfig(
 )
 
 fun drawTextureView(renderer: Renderer, config: TextureViewConfig, bounds: Bounds, canvas: Canvas) {
-  val texture = createTexture(textureLibrary[config.texture]!!, 256)
+  val texture = createTexture(textureLibrary[config.texture]!!(), 256)
   val length = Math.min(bounds.dimensions.x, bounds.dimensions.y)
   val repeat = 2f
   canvas.drawDynamicImage(bounds.position, Vector2(length, length), canvas.image(texture), listOf(

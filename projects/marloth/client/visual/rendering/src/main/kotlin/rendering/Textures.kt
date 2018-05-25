@@ -2,27 +2,24 @@ package rendering
 
 import mythic.glowing.Texture
 import mythic.spatial.Vector3
-import texture_generation.OpaqueTextureAlgorithm
-import texture_generation.checkerPattern
-import texture_generation.createTexture
-import texture_generation.simpleNoise
+import texture_generation.*
 
-fun createCheckers(): OpaqueTextureAlgorithm {
+val createCheckers = {
   val black = Vector3(0.0f, 0.0f, 0.0f)
   val white = Vector3(1.0f, 1.0f, 1.0f)
-  return checkerPattern(black, white)
+  checkerPattern(black, white)
 }
 
-fun createDarkCheckers(): OpaqueTextureAlgorithm {
+val createDarkCheckers = {
   val black = Vector3(0.0f, 0.0f, 0.0f)
   val red = Vector3(0.55f, 0.3f, 0.0f)
-  return checkerPattern(black, red)
+  checkerPattern(black, red)
 }
 
-fun createGrayNoise(): OpaqueTextureAlgorithm {
+val createGrayNoise = {
   val black = Vector3(0.0f, 0.0f, 0.0f)
   val white = Vector3(1.0f, 1.0f, 1.0f)
-  return simpleNoise(black, white)
+  colorize(black, white, simpleNoise(listOf(24f, 64f)))
 }
 
 enum class Textures {
@@ -32,12 +29,22 @@ enum class Textures {
 }
 
 typealias TextureLibrary = Map<Textures, Texture>
+typealias OpaqueTextureAlgorithmSource = () -> OpaqueTextureAlgorithm
 
-val textureLibrary: Map<Textures, OpaqueTextureAlgorithm> = mapOf(
-    Textures.checkers to createCheckers(),
-    Textures.darkCheckers to createDarkCheckers(),
-    Textures.grayNoise to createGrayNoise()
+val textureLibrary: Map<Textures, OpaqueTextureAlgorithmSource> = mapOf(
+
+    Textures.checkers to createCheckers,
+
+    Textures.darkCheckers to createDarkCheckers,
+
+    Textures.grayNoise to {
+      colorize(
+          Vector3(0.0f, 0.0f, 0.0f),
+          Vector3(0.55f, 0.35f, 0.0f),
+          simpleNoise(listOf(24f, 64f))
+      )
+    }
 )
 
 fun createTextureLibrary() =
-    textureLibrary.mapValues { createTexture(it.value, 256) }
+    textureLibrary.mapValues { createTexture(it.value(), 256) }

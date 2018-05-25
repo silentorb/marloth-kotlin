@@ -4,7 +4,6 @@ import marloth.texture_generation.OpenSimplexNoise
 import mythic.glowing.Texture
 import mythic.glowing.geometryTextureInitializer
 import mythic.spatial.Vector3
-import mythic.spatial.Vector4
 import mythic.spatial.put
 import mythic.spatial.times
 import org.joml.plus
@@ -14,37 +13,48 @@ import java.nio.FloatBuffer
 typealias OpaqueColor = mythic.spatial.Vector3
 typealias TransparentColor = mythic.spatial.Vector4
 
-typealias TextureAlgorithm<T> = (x: Int, y: Int, width: Int, height: Int) -> T
+typealias TextureAlgorithm<T> = (x: Float, y: Float) -> T
 
+typealias ScalarTextureAlgorithm = TextureAlgorithm<Float>
 typealias OpaqueTextureAlgorithm = TextureAlgorithm<OpaqueColor>
 typealias TransparentTextureAlgorithm = TextureAlgorithm<TransparentColor>
 
 fun flip(a: Boolean, b: Boolean) = if (b) a else !a
 
 val checkerPattern = { first: OpaqueColor, second: OpaqueColor ->
-  { x: Int, y: Int, width: Int, height: Int ->
-    if (flip(x < width / 2, y < height / 2))
+  { x: Float, y: Float ->
+    if (flip(x < 0.5f, y < 0.5f))
       first
     else
       second
   }
 }
 
-fun simpleNoise(first: OpaqueColor, second: OpaqueColor): OpaqueTextureAlgorithm {
-  val generator = OpenSimplexNoise(1)
-  return { x: Int, y: Int, width: Int, height: Int ->
-    val scale = 24f
-    val mod = generator.eval((x.toDouble() / width.toDouble()) * scale, (y.toDouble() / width.toDouble()) * scale).toFloat()
-    //first * mod + second * (1 - mod)
-    Vector3(mod, mod, mod)
-  }
+val noiseSource = OpenSimplexNoise(1)
+
+fun simpleNoise(scale: Float): ScalarTextureAlgorithm =
+    { x, y ->
+      noiseSource.eval(x * scale.toDouble(), y * scale.toDouble()).toFloat()
+    }
+
+fun simpleNoise(scales: List<Float>): ScalarTextureAlgorithm =
+    { x, y ->
+      scales.map { simpleNoise(it)(x, y) / scales.size }
+          .sum()
+    }
+
+fun colorize(first: OpaqueColor, second: OpaqueColor, mod: Float): Vector3 =
+    first * (1 - mod) + second * mod
+
+fun colorize(a: OpaqueColor, b: OpaqueColor, algorithm: ScalarTextureAlgorithm): OpaqueTextureAlgorithm = { x, y ->
+  colorize(a, b, algorithm(x, y))
 }
 
 fun createTextureBuffer(algorithm: OpaqueTextureAlgorithm, width: Int, height: Int = width): FloatBuffer {
   val buffer = BufferUtils.createFloatBuffer(width * height * 3)
   for (y in 0 until width) {
     for (x in 0 until height) {
-      buffer.put(algorithm(x, y, width, height))
+      buffer.put(algorithm(x / width.toFloat(), y / height.toFloat()))
     }
   }
   buffer.flip()
