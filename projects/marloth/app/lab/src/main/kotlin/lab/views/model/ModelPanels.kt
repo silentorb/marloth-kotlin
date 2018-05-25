@@ -3,6 +3,9 @@ package lab.views.model
 import lab.utility.black
 import lab.utility.panelColor
 import lab.utility.sceneBackgroundColor
+import lab.views.shared.SelectableItem
+import lab.views.shared.drawSelectableEnumList
+import lab.views.shared.drawSelectableList
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
@@ -83,79 +86,26 @@ fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: Model,
 //      renderer.fonts[0], 12f, bounds.position + Vector2(5f, 45f), black))
 }
 
-fun drawListItem(text: String, isSelected: Boolean): Depiction = { bounds: Bounds, canvas: Canvas ->
-  globalState.depthEnabled = false
-  drawFill(bounds, canvas, grayTone(0.5f))
-  val style = if (isSelected)
-    Pair(12f, LineStyle(Vector4(1f), 2f))
-  else
-    Pair(12f, LineStyle(Vector4(0f, 0f, 0f, 1f), 1f))
-
-  drawBorder(bounds, canvas, style.second)
-
-  val blackStyle = TextStyle(canvas.fonts[0], style.first, Vector4(0f, 0f, 0f, 1f))
-  val textConfig = TextConfiguration(text, bounds.position, blackStyle)
-  val textDimensions = calculateTextDimensions(textConfig)
-  val centered = centeredPosition(bounds, textDimensions)
-  val position = Vector2(bounds.position.x + 10f, centered.y)
-  canvas.drawText(text, position, blackStyle)
-}
-
-data class SelectableItem(
-    val name: String,
-    val isSelected: Boolean
-)
-
-fun drawSelectableList(items: List<SelectableItem>, list: SelectableListType, bounds: Bounds): Pair<List<Box>, List<ClickBox<SelectionEvent>>> {
-  val padding = Vector2(10f)
-  val itemHeight = 30f
-
-  val partialBoxes = items
-      .map { PartialBox(itemHeight, drawListItem(it.name, it.isSelected)) }
-
-  val buttonBoxes = arrangeList(verticalArrangement(padding), partialBoxes, bounds)
-  val boxes = listOf(
-      Box(bounds, drawSidePanel())
-  )
-      .plus(buttonBoxes)
-  return Pair(boxes, buttonBoxes.mapIndexed { i, b -> ClickBox(b.bounds, SelectionEvent(list, i)) })
-}
-
 fun drawLeftPanel(meshTypes: List<MeshType>, config: ModelViewConfig, model: Model,
                   externalMesh: ModelElements?) = { bounds: Bounds ->
   val gap = 2f
   val halfGap = gap / 2
   val halfDimensions = Vector2(bounds.dimensions.x, bounds.dimensions.y / 2 - halfGap)
-  val focusIndex = meshTypes.indexOf(config.model)
-  val modelItems = meshTypes.mapIndexed { index, it ->
-    SelectableItem(it.name, focusIndex == index)
-  }
-
-  val modelList = drawSelectableList(modelItems, SelectableListType.model, Bounds(bounds.position, halfDimensions))
-
+//  val focusIndex = meshTypes.indexOf(config.model)
+//  val modelItems = meshTypes.mapIndexed { index, it ->
+//    SelectableItem(it.name, focusIndex == index)
+//  }
+//
+//  val modelList = drawSelectableList(modelItems, SelectableListType.model, Bounds(bounds.position, halfDimensions))
+  val modelList = drawSelectableEnumList(meshTypes, config.model, Bounds(bounds.position, halfDimensions))
   val meshGroups = if (model.groups.size > 0)
     model.groups.mapIndexed { index, it ->
       SelectableItem(it.name, config.visibleGroups[index])
     }
   else
-    externalMesh!!.mapIndexed { i, it-> SelectableItem(it.name, config.visibleGroups[i]) }
+    externalMesh!!.mapIndexed { i, it -> SelectableItem(it.name, config.visibleGroups[i]) }
 
   val groupListBounds = Bounds(bounds.position + Vector2(0f, bounds.dimensions.y / 2 + halfGap), halfDimensions)
   val groupList = drawSelectableList(meshGroups, SelectableListType.group, groupListBounds)
   Pair(modelList.first.plus(groupList.first), modelList.second.plus(groupList.second))
-
-//  val padding = Vector2(10f)
-//  val itemHeight = 30f
-//  val focusIndex = meshTypes.indexOf(config.model)
-//
-//  val items = meshTypes
-//      .map { it.name }
-//      .mapIndexed { index, it -> PartialBox(itemHeight, drawListItem(it, focusIndex == index)) }
-//
-//  val buttonBoxes = arrangeList(verticalArrangement(padding), items, bounds)
-//  val boxes = listOf(
-//      Box(bounds, drawSidePanel())
-//  )
-//      .plus(buttonBoxes)
-//  Pair(boxes, buttonBoxes.mapIndexed { i, b -> ClickBox(b.bounds, SelectionEvent(i)) })
 }

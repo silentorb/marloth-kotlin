@@ -110,7 +110,10 @@ fun createLabInputBindings() = mutableMapOf(
     )),
     Views.texture to createBindings<LabCommandType>(0, mapOf(
 
-    )),
+    ))
+        .plus(createStrokeBindings(1, mapOf(
+            GLFW.GLFW_MOUSE_BUTTON_1 to LabCommandType.select
+        ))),
     Views.map to createStrokeBindings<LabCommandType>(0, mapOf(
 
     ))

@@ -132,9 +132,11 @@ class LabClient(val config: LabConfig, val client: Client) {
     val view = TextureView()
 
     val layout = view.createLayout(client.renderer, config.textureView, windowInfo.dimensions)
-    val (_, nextLabInputState) = updateInput(mapOf(), previousState)
+    val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
+    val input = getInputState(client.platform.input, commands)
 
-    renderLab(windowInfo, layout)
+    renderLab(windowInfo, layout.boxes)
+    updateTextureState(layout, input, config.textureView, client.renderer)
     return LabClientResult(
         listOf(),
         LabState(nextLabInputState, previousState.gameInput, previousState.menuState),

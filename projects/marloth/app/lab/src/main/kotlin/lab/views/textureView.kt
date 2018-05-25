@@ -1,9 +1,15 @@
 package lab.views
 
+import haft.isActive
+import lab.LabCommandType
+import lab.views.model.SelectionEvent
+import lab.views.shared.SelectionResult
+import lab.views.shared.drawSelectableEnumList
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.spatial.Vector2
 import mythic.spatial.Vector4
+import mythic.spatial.toVector2
 import org.joml.Vector2i
 import rendering.Renderer
 import scenery.Textures
@@ -27,21 +33,63 @@ fun drawTextureView(renderer: Renderer, config: TextureViewConfig, bounds: Bound
   texture.dispose()
 }
 
+private fun drawLeftPanel(textures: List<Textures>, config: TextureViewConfig, bounds: Bounds): SelectionResult {
+  return drawSelectableEnumList(textures, config.texture, bounds)
+}
+
+data class TextureViewLayout(
+    val boxes: List<Box>,
+    val clickBoxes: List<ClickBox<SelectionEvent>>
+)
+
 class TextureView {
 
-  fun createLayout(renderer: Renderer, config: TextureViewConfig, dimensions: Vector2i): List<Box> {
-    val draw = { b: Bounds, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
+  fun createLayout(renderer: Renderer, config: TextureViewConfig, dimensions: Vector2i): TextureViewLayout {
+//    val draw = { b: Bounds, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
+//
+//    val panels = listOf(
+//        Pair(Measurement(Measurements.pixel, 200f), draw),
+//        Pair(Measurement(Measurements.stretch, 0f), { b: Bounds, c: Canvas ->
+//          drawTextureView(renderer, config, b, c)
+//          draw(b, c)
+//        })
+//    )
+//    val dimensions2 = Vector2(dimensions.x.toFloat(), dimensions.y.toFloat())
+//    val boxes = arrangeMeasuredList(measuredHorizontalArrangement, panels, dimensions2)
+//
+//    return boxes
+    val bounds = Bounds(Vector2(), dimensions.toVector2())
+    val initialLengths = listOf(200f, null)
 
-    val panels = listOf(
-        Pair(Measurement(Measurements.pixel, 200f), draw),
-        Pair(Measurement(Measurements.stretch, 0f), { b: Bounds, c: Canvas ->
-          drawTextureView(renderer, config, b, c)
-          draw(b, c)
-        })
+    val middle = { b: Bounds -> Box(b, { b, c -> drawTextureView(renderer, config, b, c) }) }
+    val lengths = solveMeasurements(dimensions.x.toFloat(), initialLengths)
+    val panelBounds = arrangeList2(horizontalArrangement(Vector2(0f, 0f)), lengths, bounds)
+    val boxes = panelBounds.drop(1)
+        .zip(listOf(middle), { b, p -> p(b) })
+
+    val left = drawLeftPanel(renderer.textures.keys.toList(), config, panelBounds[0])
+    val (leftBoxes, leftClickBoxes) = left
+
+    return TextureViewLayout(
+        boxes = leftBoxes
+            .plus(boxes),
+        clickBoxes = leftClickBoxes
     )
-    val dimensions2 = Vector2(dimensions.x.toFloat(), dimensions.y.toFloat())
-    val boxes = arrangeMeasuredList(measuredHorizontalArrangement, panels, dimensions2)
+  }
+}
 
-    return boxes
+fun onListItemSelection(event: SelectionEvent, config: TextureViewConfig, renderer: Renderer) {
+  config.texture = renderer.textures.keys.toList()[event.itemIndex]
+}
+
+fun updateTextureState(layout: TextureViewLayout, input: InputState, config: TextureViewConfig, renderer: Renderer) {
+  val commands = input.commands
+
+  if (isActive(commands, LabCommandType.select)) {
+    val clickBox = filterMouseOverBoxes(layout.clickBoxes, input.mousePosition)
+    if (clickBox != null) {
+      onListItemSelection(clickBox.value, config, renderer)
+    } else {
+    }
   }
 }
