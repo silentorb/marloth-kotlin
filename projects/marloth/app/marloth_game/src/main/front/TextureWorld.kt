@@ -1,4 +1,4 @@
-package main.front
+package front
 
 import marloth.clienting.Client
 import mythic.glowing.Texture
@@ -8,13 +8,11 @@ import mythic.sculpting.query.getBounds
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.put
-import org.joml.plus
 import rendering.*
 import rendering.meshes.FlexibleVertexSerializer
 import rendering.meshes.convertMesh
 import simulation.AbstractWorld
 import simulation.Node
-import simulation.NodeType
 import simulation.getFaceInfo
 import kotlin.math.roundToInt
 
@@ -75,14 +73,14 @@ fun createTexturedWall(face: FlexibleFace, texture: Texture): TextureFace {
 }
 
 fun prepareWorldMesh(node: Node, textures: TextureLibrary): List<TextureFace> {
-  val floorTexture = if (node.type == NodeType.space) textures[Textures.darkCheckers]!! else textures[Textures.checkers]!!
+//  val floorTexture = if (node.type == NodeType.space) textures[Textures.darkCheckers]!! else textures[Textures.checkers]!!
   return node.floors
-      .filter { getFaceInfo(it).firstNode == node }
-      .map { createTexturedFloor(it, floorTexture) }
+      .filter { getFaceInfo(it).firstNode == node && getFaceInfo(it).texture != null }
+      .map { createTexturedFloor(it, textures[getFaceInfo(it).texture]!!) }
       .plus(
           node.walls
-              .filter { getFaceInfo(it).firstNode == node }
-              .map { createTexturedWall(it, textures[Textures.darkCheckers]!!) }
+              .filter { getFaceInfo(it).firstNode == node && getFaceInfo(it).texture != null }
+              .map { createTexturedWall(it, textures[getFaceInfo(it).texture]!!) }
       )
 }
 

@@ -6,7 +6,7 @@ import mythic.spatial.Vector2
 import mythic.spatial.Vector4
 import org.joml.Vector2i
 import rendering.Renderer
-import rendering.Textures
+import scenery.Textures
 import rendering.textureLibrary
 import texture_generation.createTexture
 

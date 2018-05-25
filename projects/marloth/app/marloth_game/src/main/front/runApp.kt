@@ -1,9 +1,9 @@
 package main.front
 
 import commanding.CommandType
-import configuration.saveConfig
 import front.GameConfig
 import front.loadGameConfig
+import front.setWorldMesh
 import generation.generateDefaultWorld
 import haft.ProfileStates
 import marloth.clienting.Client

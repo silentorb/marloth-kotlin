@@ -6,7 +6,7 @@ import front.GameConfig
 import front.loadGameConfig
 import front.saveGameConfig
 import generation.calculateWorldScale
-import main.front.setWorldMesh
+import front.setWorldMesh
 import generation.generateWorld
 import generation.placeEnemies
 import lab.views.GameViewConfig

@@ -8,16 +8,13 @@ import mythic.platforming.WindowInfo
 import mythic.spatial.Matrix
 import mythic.spatial.Vector3
 import mythic.typography.loadFonts
-import scenery.GameScene
 import mythic.spatial.Vector4
 import mythic.typography.FontLoadInfo
 import org.joml.*
 import rendering.meshes.AttributeName
 import rendering.meshes.MeshMap
 import rendering.meshes.createVertexSchemas
-import scenery.DepictionType
-import scenery.Scene
-import scenery.VisualElement
+import scenery.*
 
 fun gatherEffectsData(dimensions: Vector2i, scene: Scene): EffectsData {
   return EffectsData(

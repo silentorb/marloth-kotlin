@@ -5,6 +5,7 @@ import mythic.sculpting.FlexibleMesh
 import mythic.spatial.Vector3
 import org.joml.minus
 import randomly.Dice
+import scenery.Textures
 
 data class WorldBoundary(
     val start: Vector3,
@@ -62,6 +63,7 @@ data class FaceInfo(
     val type: FaceType,
     val firstNode: Node?,
     val secondNode: Node?,
+    val texture: Textures?,
     var debugInfo: String? = null
 )
 
@@ -94,11 +96,11 @@ class AbstractWorld(val boundary: WorldBoundary) {
     get() = nodes.flatMap { it.walls }.distinct()
 }
 
-fun initializeFaceInfo(type: FaceType, node: Node, face: FlexibleFace) {
+fun initializeFaceInfo(type: FaceType, node: Node, face: FlexibleFace, texture: Textures?) {
   val info = getNullableFaceInfo(face)
   face.data =
       if (info == null) {
-        FaceInfo(type, node, null)
+        FaceInfo(type, node, null, texture)
       } else {
         if (info.firstNode == node || info.secondNode == node)
           face.data
@@ -106,22 +108,22 @@ fun initializeFaceInfo(type: FaceType, node: Node, face: FlexibleFace) {
           if (info.firstNode != null && info.secondNode != null)
             throw Error("Not supported.")
 
-          FaceInfo(type, info.firstNode, node)
+          FaceInfo(type, info.firstNode, node, texture)
         }
       }
 }
 
-fun initializeFaceInfo(node: Node) {
+fun initializeNodeFaceInfo(node: Node, floorTexture: Textures?, wallTexture: Textures?) {
   for (face in node.walls) {
-    initializeFaceInfo(FaceType.wall, node, face)
+    initializeFaceInfo(FaceType.wall, node, face, wallTexture)
   }
   for (face in node.floors) {
-    initializeFaceInfo(FaceType.floor, node, face)
+    initializeFaceInfo(FaceType.floor, node, face, floorTexture)
   }
 }
 
 fun initializeFaceInfo(abstractWorld: AbstractWorld) {
   for (node in abstractWorld.nodes) {
-    initializeFaceInfo(node)
+    initializeNodeFaceInfo(node, Textures.checkers, Textures.darkCheckers)
   }
 }

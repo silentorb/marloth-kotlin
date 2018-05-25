@@ -5,6 +5,7 @@ import mythic.spatial.*
 import org.joml.minus
 import org.joml.plus
 import org.joml.xy
+import scenery.Textures
 import simulation.*
 
 fun <T> zeroIfNull(value: T?) =
@@ -121,13 +122,7 @@ fun createFloor(world: AbstractWorld, node: Node, vertices: Vertices, center: Ve
 fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace) {
   val walls = gatherNewSectorFaces(originFace)
   assert(walls.size > 2)
-//  val duplicatedEdges = walls.flatMap { face ->
-//    face.edges.filter { edge ->
-//      edge.faces.all { getFaceInfo(it).type == FaceType.wall }
-//          && edge.otherEdgeReferences.any()
-//    }
-//  }
-//  val edges = getDistinctEdges(duplicatedEdges)
+
   val edges = walls.flatMap { face ->
     face.edges.filter { edge ->
       edge.first.z != edge.second.z
@@ -138,13 +133,6 @@ fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace) {
   val sectorCenter = getCenter(floorVertices)
   val flatCenter = sectorCenter.xy
 
-//  val sortedFloorVertices = floorVertices
-//      .sortedBy { atan(it.xy - flatCenter) }
-//  val a = sortedFloorVertices.map { atan(it.xy - flatCenter) }
-//  val floor = abstractWorld.mesh.createStitchedFace(sortedFloorVertices)
-//  floor.updateNormal()
-
-//  val radius = floorVertices.map { it.distance(sectorCenter) }.average().toFloat()
   val radius = 1f
   val node = Node(
       position = sectorCenter,
@@ -153,8 +141,9 @@ fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace) {
   )
   node.index = abstractWorld.graph.nodes.size
   node.walls.addAll(walls)
-  createFloor(abstractWorld, node, floorVertices, flatCenter)
-  initializeFaceInfo(node)
+  val floor = createFloor(abstractWorld, node, floorVertices, flatCenter)
+//  initializeFaceInfo(FaceType.wall, node, floor, Textures.grayNoise)
+  initializeNodeFaceInfo(node, Textures.grayNoise, Textures.darkCheckers)
 
   val gapEdges = edges.filter {
     it.faces.count { walls.contains(it) } < 2
@@ -163,18 +152,12 @@ fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace) {
     assert(gapEdges.size == 2)
     val gapVertices = getNewWallVertices(sectorCenter, gapEdges)
     val newWall = abstractWorld.mesh.createStitchedFace(gapVertices)
-    initializeFaceInfo(FaceType.wall, node, newWall)
-//    val n = getIncompleteNeighbors(newWall).toList()
-//    val n2 = getIncompleteNeighbors(newWall).toList()
-//    val n3 = newWall.neighbors
+    initializeFaceInfo(FaceType.wall, node, newWall, null)
     node.walls.add(newWall)
   }
 
-  initializeFaceInfo(node)
+  initializeNodeFaceInfo(node, null, null)
   abstractWorld.graph.nodes.add(node)
-  node.walls.forEach {
-    //    getFaceInfo(it).debugInfo = "space-c"
-  }
 }
 
 fun getIncomplete(abstractWorld: AbstractWorld) =
@@ -193,9 +176,9 @@ fun getWallVertices(vertices: Vertices): WallVertices {
   )
 }
 
-fun createWall(abstractWorld: AbstractWorld, node: Node, vertices: Vertices): FlexibleFace {
+fun createWall(abstractWorld: AbstractWorld, node: Node, vertices: Vertices, texture: Textures?): FlexibleFace {
   val wall = abstractWorld.mesh.createStitchedFace(vertices)
-  initializeFaceInfo(FaceType.wall, node, wall)
+  initializeFaceInfo(FaceType.wall, node, wall, texture)
   node.walls.add(wall)
   return wall
 }
@@ -222,9 +205,10 @@ fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace)
   node.index = abstractWorld.graph.nodes.size
 //  node.walls.addAll(walls)
 //  node.floors.add(floor)
-  createFloor(abstractWorld, node, floorVertices, sectorCenter.xy)
+  val floor = createFloor(abstractWorld, node, floorVertices, sectorCenter.xy)
+//  initializeFaceInfo(FaceType.wall, node, floor, Textures.grayNoise)
 
-  val outerWall = createWall(abstractWorld, node, newPoints)
+  val outerWall = createWall(abstractWorld, node, newPoints, null)
 
   for (i in 0..1) {
     val outerSideEdge = outerWall.edge(newWall.lower[i], newWall.upper[1 - i])
@@ -238,10 +222,10 @@ fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace)
         newWall.upper[1 - i],
         originalWall.upper[1 - i]
     )
-    createWall(abstractWorld, node, sidePoints)
+    createWall(abstractWorld, node, sidePoints, null)
   }
 
-  initializeFaceInfo(node)
+  initializeNodeFaceInfo(node, null, null)
   abstractWorld.graph.nodes.add(node)
 }
 

@@ -2,30 +2,33 @@ package rendering
 
 import mythic.glowing.Texture
 import mythic.spatial.Vector3
+import mythic.spatial.times
+import org.joml.plus
+import scenery.Textures
 import texture_generation.*
+
+val noisyCheckerPattern = { a: Vector3, b: Vector3 ->
+  { x: Float, y: Float ->
+    checkerPattern(a, b)(x, y) * 0.7f + createGrayNoise()(x, y) * 0.3f
+  }
+}
 
 val createCheckers = {
   val black = Vector3(0.0f, 0.0f, 0.0f)
   val white = Vector3(1.0f, 1.0f, 1.0f)
-  checkerPattern(black, white)
+  noisyCheckerPattern(black, white)
 }
 
 val createDarkCheckers = {
   val black = Vector3(0.0f, 0.0f, 0.0f)
   val red = Vector3(0.55f, 0.3f, 0.0f)
-  checkerPattern(black, red)
+  noisyCheckerPattern(black, red)
 }
 
 val createGrayNoise = {
   val black = Vector3(0.0f, 0.0f, 0.0f)
   val white = Vector3(1.0f, 1.0f, 1.0f)
   colorize(black, white, simpleNoise(listOf(24f, 64f)))
-}
-
-enum class Textures {
-  checkers,
-  darkCheckers,
-  grayNoise
 }
 
 typealias TextureLibrary = Map<Textures, Texture>
