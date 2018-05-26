@@ -13,7 +13,6 @@ fun tryAiMove(world: World, spirit: Spirit) {
 }
 
 fun tryAiAttack(spirit: Spirit): NewMissile? {
-  return null
   val character = spirit.character
   val attack = character.abilities[0]
   if (canUse(character, attack)) {
@@ -31,5 +30,6 @@ fun tryAiAttack(spirit: Spirit): NewMissile? {
 
 fun updateAi(world: World, spirit: Spirit): NewMissile? {
   tryAiMove(world, spirit)
-  return tryAiAttack(spirit)
+  return null
+//  return tryAiAttack(spirit)
 }
