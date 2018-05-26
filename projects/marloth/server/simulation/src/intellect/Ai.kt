@@ -3,6 +3,7 @@ package intellect
 import org.joml.minus
 import randomly.Dice
 import simulation.*
+import simulation.changing.characterMove
 import simulation.changing.setCharacterFacing
 
 fun getAiCharacters(world: World) =
@@ -17,13 +18,30 @@ fun setDestination(world: World, spirit: Spirit): SpiritState {
   val destination = Dice.global.getItem(options)
   val path = findPath(location, destination)
   assert(path != null)
+  assert(path!!.any())
   return SpiritState(SpiritMode.moving, path)
 }
 
+fun updatePath(node: Node, path: List<Node>): List<Node> {
+  val index = path.indexOf(node)
+  return if (index == -1)
+    path
+  else
+    path.drop(index + 1)
+}
+
 fun moveAi(world: World, spirit: Spirit): SpiritState {
-  if (spirit.body.node == spirit.state.path!!.last())
+  val node = spirit.body.node
+  val newPath = updatePath(node, spirit.state.path!!)
+
+  if (newPath.none())
     return SpiritState(SpiritMode.idle)
 
+  val nextNode = newPath.first()
+  val face = node.walls.first { getOtherNode(node, it) == nextNode }
+
+  val direction = getFloor(face).middle - spirit.body.position
+//  characterMove(world, spirit.character, direction, delta)
   return spirit.state
 }
 

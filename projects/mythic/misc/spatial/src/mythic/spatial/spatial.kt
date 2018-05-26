@@ -4,6 +4,7 @@ import org.joml.*
 import org.joml.Math.PI
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
+import java.text.DecimalFormat
 
 typealias Vector2 = org.joml.Vector2f
 typealias Vector3 = org.joml.Vector3f
@@ -375,7 +376,7 @@ fun Vector4i.toVector4() = Vector4(x.toFloat(), y.toFloat(), z.toFloat(), w.toFl
 fun clockwiseLesser(center: Vector3, a: Vector3, b: Vector3): Boolean {
   val ax = a.x - center.x
   val bx = b.x - center.x
-  
+
   if (ax >= 0f && bx < 0f)
     return true
   if (ax < 0f && bx >= 0f)
@@ -419,3 +420,16 @@ fun getCenter(points: List<Vector3>): Vector3 =
 
 fun arrangePointsCounterClockwise(vertices: List<Vector3>): List<Vector3> =
     arrangePointsCounterClockwise(getCenter(vertices), vertices)
+
+val decimalFormat = DecimalFormat("#.#####")
+fun toString(vector: Vector3) =
+    decimalFormat.format(vector.x) + ", " + decimalFormat.format(vector.y) + ", " + decimalFormat.format(vector.z)
+
+fun toString(vectors: List<Vector3>) =
+    vectors.map { toString(it) }.joinToString("\n")
+
+fun toString2(vector: Vector2) =
+    decimalFormat.format(vector.x) + ", " + decimalFormat.format(vector.y)
+
+fun toString2(vectors: List<Vector2>) =
+    vectors.map { toString2(it) }.joinToString("\n")

@@ -5,6 +5,7 @@ import mythic.spatial.Vector3
 
 enum class ConnectionType {
   tunnel,
+  obstacle,
   union
 }
 

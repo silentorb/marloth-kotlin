@@ -127,3 +127,16 @@ fun initializeFaceInfo(abstractWorld: AbstractWorld) {
     initializeNodeFaceInfo(node, Textures.checkers, Textures.darkCheckers)
   }
 }
+
+fun getOtherNode(node: Node, face: FlexibleFace): Node? {
+  val info = getFaceInfo(face)
+  return if (info.firstNode == node)
+    info.secondNode
+  else
+    info.firstNode
+}
+
+fun getFloor(face: FlexibleFace) =
+    face.edges.filter { it.first == it.second }
+        .sortedBy { it.first.z }
+        .first()

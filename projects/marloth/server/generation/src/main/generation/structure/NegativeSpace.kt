@@ -119,6 +119,15 @@ fun createFloor(world: AbstractWorld, node: Node, vertices: Vertices, center: Ve
   return floor
 }
 
+fun addSpaceNode(abstractWorld: AbstractWorld, node: Node) {
+  abstractWorld.graph.nodes.add(node)
+  node.walls
+      .mapNotNull { getOtherNode(node, it) }
+      .forEach {
+        abstractWorld.graph.connect(node, it, ConnectionType.obstacle)
+      }
+}
+
 fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace) {
   val walls = gatherNewSectorFaces(originFace)
   assert(walls.size > 2)
@@ -157,7 +166,7 @@ fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace) {
   }
 
   initializeNodeFaceInfo(node, null, null)
-  abstractWorld.graph.nodes.add(node)
+  addSpaceNode(abstractWorld, node)
 }
 
 fun getIncomplete(abstractWorld: AbstractWorld) =
@@ -207,7 +216,7 @@ fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace)
 //  node.floors.add(floor)
   val floor = createFloor(abstractWorld, node, floorVertices, sectorCenter.xy)
 //  initializeFaceInfo(FaceType.wall, node, floor, Textures.grayNoise)
-
+  node.walls.add(originFace)
   val outerWall = createWall(abstractWorld, node, newPoints, null)
 
   for (i in 0..1) {
@@ -226,7 +235,7 @@ fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace)
   }
 
   initializeNodeFaceInfo(node, null, null)
-  abstractWorld.graph.nodes.add(node)
+  addSpaceNode(abstractWorld, node)
 }
 
 fun fillBoundary(abstractWorld: AbstractWorld) {

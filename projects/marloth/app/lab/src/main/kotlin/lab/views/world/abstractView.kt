@@ -15,7 +15,7 @@ import simulation.*
 private val gridSpacing = 10f // In world units
 
 fun getScale(bounds: Bounds, worldDimensions: Vector3): Float {
-    val padding = worldBorderPadding * 2
+  val padding = worldBorderPadding * 2
   if (worldDimensions.x != worldDimensions.y)
     throw Error("getScale currently only supports worlds with identical x and y dimensions.")
 
@@ -82,12 +82,20 @@ fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Can
   }
 
   for (connection in world.connections) {
-    val color = if (connection.type == ConnectionType.union)
-      Vector4(0.1f, 0f, 0f, 0.4f)
-    else
-      Vector4(0f, 0.5f, 0f, 0.8f)
+    val color = when (connection.type) {
+      ConnectionType.union -> Vector4(0.1f, 0f, 0f, 0.4f)
+      ConnectionType.obstacle -> Vector4(0f, 0.5f, 0f, 0.3f)
+      else -> Vector4(0f, 0.5f, 0f, 0.8f)
+    }
 
     canvas.drawLine(getNodePosition(connection.first), getNodePosition(connection.second), color, 3f)
+  }
+
+  for (node in world.nodes) {
+    val position = getNodePosition(node)
+    canvas.drawText(node.index.toString() + " " + node.floors.first().unorderedVertices.size.toString(),
+        position,
+        style)
   }
 
 //  canvas.drawSolidCircle(getPosition(Vector2(-32.670635f,23.672432f)), 2f,

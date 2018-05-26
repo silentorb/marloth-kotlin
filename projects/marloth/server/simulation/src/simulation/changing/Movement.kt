@@ -161,23 +161,35 @@ fun setCharacterFacing(character: Character, lookAt: Vector3) {
   character.facingRotation.z = angle
 }
 
+fun characterMove(world: World, character: Character, offset: Vector3, delta: Float) {
+  val speed = 6f
+  setCharacterFacing(character, offset)
+//    }
+  val newPosition = checkWallCollision(character.body.position, offset * speed * delta, world)
+  if (newPosition != null) {
+    assert(!newPosition.x.isNaN() && !newPosition.y.isNaN())
+    character.body.position = newPosition
+//      println("" + body.position.x + ", " + body.position.y + "," + body.position.z)
+  }
+}
+
 fun playerMove(world: World, player: Player, commands: Commands<CommandType>, delta: Float) {
   val body = player.character.body
-  val speed = 6f
   var offset = joinInputVector(commands, playerMoveMap)
 
   if (offset != null) {
     if (player.viewMode == ViewMode.firstPerson)
       offset = (Quaternion().rotateZ(player.character.facingRotation.z - Pi / 2) * offset)!!
-    else if (player.viewMode == ViewMode.topDown) {
-      setCharacterFacing(player.character, offset)
-    }
-    val newPosition = checkWallCollision(body.position, offset * speed * delta, world)
-    if (newPosition != null) {
-      assert(!newPosition.x.isNaN() && !newPosition.y.isNaN())
-      body.position = newPosition
-//      println("" + body.position.x + ", " + body.position.y + "," + body.position.z)
-    }
+//    else if (player.viewMode == ViewMode.topDown) {
+//      setCharacterFacing(player.character, offset)
+//    }
+//    val newPosition = checkWallCollision(body.position, offset * speed * delta, world)
+//    if (newPosition != null) {
+//      assert(!newPosition.x.isNaN() && !newPosition.y.isNaN())
+//      body.position = newPosition
+////      println("" + body.position.x + ", " + body.position.y + "," + body.position.z)
+//    }
+    characterMove(world, player.character, offset, delta)
   }
 }
 
@@ -192,20 +204,20 @@ fun playerRotate(player: Player, commands: Commands<CommandType>, delta: Float) 
 }
 
 fun isInsideNode(node: Node, position: Vector3) =
-    isInsidePolygon(position.xy, node.floors.first().vertices.map { it.xy })
+    node.floors.any { isInsidePolygon(position.xy, it.vertices.map { it.xy }) }
 
 fun updateBodyNode(body: Body) {
   val position = body.position
   val node = body.node
-  if (node.floors.size > 1)
-    throw Error("Not supported")
 
   if (isInsideNode(node, position))
     return
 
   val newNode = node.neighbors.firstOrNull { isInsideNode(it, position) }
-  if (newNode == null)
+  if (newNode == null) {
+    isInsideNode(node, position)
     throw Error("Not supported")
-
-  body.node = newNode
+  } else {
+    body.node = newNode
+  }
 }

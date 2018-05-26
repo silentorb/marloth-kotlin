@@ -13,6 +13,7 @@ import mythic.glowing.globalState
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
+import mythic.spatial.toString
 import mythic.typography.TextConfiguration
 import mythic.typography.TextStyle
 import mythic.typography.calculateTextDimensions
@@ -29,10 +30,6 @@ fun drawScenePanel(config: ModelViewConfig, renderer: Renderer, model: Model, ca
   drawBackground(sceneBackgroundColor)(b, canvas)
   drawModelPreview(config, renderer, b, camera, model, modelElements)
 }
-
-val decimalFormat = DecimalFormat("#.#####")
-fun toString(vector: Vector3) =
-    decimalFormat.format(vector.x) + ", " + decimalFormat.format(vector.y) + ", " + decimalFormat.format(vector.z)
 
 fun drawSidePanel() = drawBackground(panelColor)
 fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: Model,

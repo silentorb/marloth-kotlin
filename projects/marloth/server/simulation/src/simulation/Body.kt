@@ -14,6 +14,7 @@ class Body(
     var velocity: Vector3,
     var node: Node
 )
+
 val commonShapes = mapOf(
     EntityType.character to Cylinder(0.5f, 1f),
     EntityType.missile to Sphere(0.2f)
