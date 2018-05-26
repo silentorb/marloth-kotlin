@@ -55,9 +55,8 @@ fun placeEnemy(world: World, instantiator: Instantiator, dice: Dice) {
   val node = dice.getItem(world.meta.locationNodes.drop(1))// Skip the node where the player starts
   val wall = dice.getItem(node.walls)
   val position = getVector3Center(node.position, wall.edges[0].first)
-  instantiator.createAiCharacter(characterDefinitions.monster, world.factions[1], position)
+  instantiator.createAiCharacter(characterDefinitions.monster, world.factions[1], position, node)
 }
-
 
 fun placeEnemies(world: World, instantiator: Instantiator, dice: Dice, scale: Float) {
   val enemyCount = (10f * scale).toInt()
@@ -77,7 +76,7 @@ fun placeWallLamps(world: World, instantiator: Instantiator, dice: Dice, scale: 
 //    val angle = getAngle(edge.first.copy().cross(edge.second).xy)
 //    val angle = getAngle(wall.normal.xy)
     val angle = Quaternion().rotateTo(Vector3(1f, 0f, 0f), wall.normal)
-    instantiator.createWallLamp(position, angle)
+    instantiator.createWallLamp(position, node, angle)
   }
 }
 

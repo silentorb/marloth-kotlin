@@ -3,8 +3,8 @@ package randomly
 import mythic.spatial.Vector2
 import java.util.Random
 
-class Dice(val seed: Long) {
-  val random = Random(seed)
+class Dice(private val seed: Long) {
+  private val random = Random(seed)
 
   constructor() : this(System.currentTimeMillis())
 
@@ -28,5 +28,9 @@ class Dice(val seed: Long) {
       result.add(item)
     }
     return result
+  }
+
+  companion object {
+    val global = Dice()
   }
 }

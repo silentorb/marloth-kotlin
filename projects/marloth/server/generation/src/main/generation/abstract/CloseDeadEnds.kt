@@ -40,7 +40,7 @@ fun closeDeadEnd(node: Node, graph: NodeGraph) {
   val nextAvailableNode = nodes
       .filter { it !== node && !it.isConnected(node) }
       .sortedBy { getNodeDistance(node, it) }
-      .filter { !nodesIntersectOther(node, it, node.getNeighbors()) }
+      .filter { !nodesIntersectOther(node, it, node.neighbors) }
       .firstOrNull()
 
   if (nextAvailableNode != null) {

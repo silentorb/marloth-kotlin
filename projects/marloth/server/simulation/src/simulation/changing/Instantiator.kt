@@ -2,6 +2,7 @@ package simulation.changing
 
 import collision.Sphere
 import intellect.Spirit
+import intellect.SpiritState
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
@@ -28,9 +29,9 @@ class Instantiator(
     return entity
   }
 
-  fun createBody(type: EntityType, shape: collision.Shape, position: Vector3, orientation: Quaternion = Quaternion()): Body {
+  fun createBody(type: EntityType, shape: collision.Shape, position: Vector3, node: Node, orientation: Quaternion = Quaternion()): Body {
     val entity = createEntity(type)
-    val body = Body(entity.id, shape, position, orientation, Vector3())
+    val body = Body(entity.id, shape, position, orientation, Vector3(), node)
     world.bodyTable[entity.id] = body
     return body
   }
@@ -41,8 +42,8 @@ class Instantiator(
     return depiction
   }
 
-  fun createCharacter(definition: CharacterDefinition, faction: Faction, position: Vector3): Character {
-    val body = createBody(EntityType.character, commonShapes[EntityType.character]!!, position)
+  fun createCharacter(definition: CharacterDefinition, faction: Faction, position: Vector3, node: Node): Character {
+    val body = createBody(EntityType.character, commonShapes[EntityType.character]!!, position, node)
     val character = Character(
         id = body.id,
         faction = faction,
@@ -55,20 +56,21 @@ class Instantiator(
     return character
   }
 
-  fun createAiCharacter(definition: CharacterDefinition, faction: Faction, position: Vector3): Character {
-    val character = createCharacter(definition, faction, position)
+  fun createAiCharacter(definition: CharacterDefinition, faction: Faction, position: Vector3, node: Node): Character {
+    val character = createCharacter(definition, faction, position, node)
     createSpirit(character)
     return character
   }
 
   fun createSpirit(character: Character): Spirit {
-    val spirit = Spirit(character)
+    val state = SpiritState()
+    val spirit = Spirit(character, state)
     world.spiritTable[character.id] = spirit
     return spirit
   }
 
   fun createMissile(newMissile: NewMissile): Missile {
-    val body = createBody(EntityType.missile, commonShapes[EntityType.missile]!!, newMissile.position)
+    val body = createBody(EntityType.missile, commonShapes[EntityType.missile]!!, newMissile.position, newMissile.node)
     body.velocity = newMissile.velocity
     val missile = Missile(body.id, body, newMissile.owner, newMissile.range)
     world.missileTable[body.id] = missile
@@ -77,15 +79,16 @@ class Instantiator(
   }
 
   fun createPlayer(id: Id): Player {
-    val position = world.meta.nodes.first().position// + Vector3(0f, 0f, 1f)
-    val character = createCharacter(characterDefinitions.player, world.factions[0], position)
+    val node = world.meta.nodes.first()
+    val position = node.position// + Vector3(0f, 0f, 1f)
+    val character = createCharacter(characterDefinitions.player, world.factions[0], position, node)
     val player = Player(character, id, config.defaultPlayerView)
     world.players.add(player)
     return player
   }
 
-  fun createFurnishing(depictionType: DepictionType, position: Vector3, orientation: Quaternion): Body {
-    val body = createBody(EntityType.furnishing, Sphere(0.3f), position, orientation)
+  fun createFurnishing(depictionType: DepictionType, position: Vector3, node: Node, orientation: Quaternion): Body {
+    val body = createBody(EntityType.furnishing, Sphere(0.3f), position, node, orientation)
     createDepiction(body.id, depictionType)
     return body
   }
@@ -94,8 +97,8 @@ class Instantiator(
     world.lights[id] = light
   }
 
-  fun createWallLamp(position: Vector3, orientation: Quaternion): Body {
-    val body = createFurnishing(DepictionType.wallLamp, position, orientation)
+  fun createWallLamp(position: Vector3, node: Node, orientation: Quaternion): Body {
+    val body = createFurnishing(DepictionType.wallLamp, position, node, orientation)
     val light = Light(
         type = LightType.point,
         color = Vector4(1f, 1f, 1f, 1f),

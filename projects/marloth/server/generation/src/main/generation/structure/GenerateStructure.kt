@@ -114,7 +114,7 @@ fun createClusterStructure(cluster: Cluster): List<TempSector> {
 }
 
 fun generateTunnelStructure(node: Node, nodeSectors: List<TempSector>): TempSector {
-  val (first, second) = node.getNeighbors().toList()
+  val (first, second) = node.neighbors.toList()
   val sectors = nodeSectors.filter { it.node === first || it.node == second }
   val corners = sectors.flatMap { sector ->
     val points = getDoorwayPoints(sector.node, if (sector.node === first) second else first)

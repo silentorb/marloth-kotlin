@@ -109,6 +109,7 @@ class WorldUpdater(val world: World, val instantiator: Instantiator) {
         .plus(applyCommands(world.players, commands, delta))
 
     world.missileTable.values.forEach { updateMissile(world, it, delta) }
+    world.bodies.forEach { updateBodyNode(it) }
     updateDead()
     val finished = getFinished()
     removeFinished(finished)

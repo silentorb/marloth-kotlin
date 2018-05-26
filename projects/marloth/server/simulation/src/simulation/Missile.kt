@@ -18,6 +18,7 @@ data class Missile(
 
 data class NewMissile(
     val position: Vector3,
+    val node: Node,
     val velocity: Vector3,
     val range: Float,
     val owner: Character
@@ -27,6 +28,7 @@ fun characterAttack(character: Character, ability: Ability, direction: Vector3):
   useAbility(ability)
   return NewMissile(
       position = character.body.position + direction * 0.5f + Vector3(0f, 0f, 0.7f),
+      node = character.body.node,
       velocity = direction * 14.0f,
       range = ability.definition.range,
       owner = character

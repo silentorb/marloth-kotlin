@@ -1,15 +1,37 @@
 package intellect
 
 import org.joml.minus
+import randomly.Dice
 import simulation.*
 import simulation.changing.setCharacterFacing
 
 fun getAiCharacters(world: World) =
     world.characters.filter { isPlayer(world, it) }
 
-fun tryAiMove(world: World, spirit: Spirit) {
-  val character = spirit.character
+fun setDestination(world: World, spirit: Spirit): SpiritState {
+  val location = spirit.body.node
+  val options = world.meta.nodes
+      .filter { it != location }
+      .filter { it.type != NodeType.space }
 
+  val destination = Dice.global.getItem(options)
+  val path = findPath(location, destination)
+  assert(path != null)
+  return SpiritState(SpiritMode.moving, path)
+}
+
+fun moveAi(world: World, spirit: Spirit): SpiritState {
+  if (spirit.body.node == spirit.state.path!!.last())
+    return SpiritState(SpiritMode.idle)
+
+  return spirit.state
+}
+
+fun updateAiState(world: World, spirit: Spirit): SpiritState {
+  return when (spirit.state.mode) {
+    SpiritMode.idle -> setDestination(world, spirit)
+    SpiritMode.moving -> moveAi(world, spirit)
+  }
 }
 
 fun tryAiAttack(spirit: Spirit): NewMissile? {
@@ -29,7 +51,7 @@ fun tryAiAttack(spirit: Spirit): NewMissile? {
 }
 
 fun updateAi(world: World, spirit: Spirit): NewMissile? {
-  tryAiMove(world, spirit)
+  spirit.state = updateAiState(world, spirit)
   return null
 //  return tryAiAttack(spirit)
 }

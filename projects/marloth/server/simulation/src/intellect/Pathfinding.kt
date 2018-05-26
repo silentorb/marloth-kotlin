@@ -1,6 +1,7 @@
 package intellect
 
 import simulation.Node
+import simulation.NodeType
 
 data class PathNode(
     val node: Node,
@@ -13,10 +14,16 @@ tailrec fun unwindPath(pathNode: PathNode, path: List<Node> = listOf()): List<No
     else
       unwindPath(pathNode.previous, path)
 
+fun getPathNeighbors(node: Node) =
+    node.neighbors.filter { it.type != NodeType.space }
+
 tailrec fun findPath(source: Node, destination: Node, scanned: List<PathNode>, next: List<PathNode>): List<Node>? {
+  if (next.none())
+    return null
+
   val neighbors = next
       .flatMap { node ->
-        node.node.getNeighbors()
+        getPathNeighbors(node.node)
             .filter { n -> scanned.none { it.node == n } && next.none { it.node == n } }
             .map { PathNode(it, node) }
             .toList()

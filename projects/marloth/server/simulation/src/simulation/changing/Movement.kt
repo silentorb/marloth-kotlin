@@ -9,10 +9,7 @@ import org.joml.minus
 import org.joml.plus
 import org.joml.times
 import org.joml.xy
-import simulation.Character
-import simulation.Player
-import simulation.ViewMode
-import simulation.World
+import simulation.*
 
 fun hitsWall(edge: FlexibleEdge, position: Vector3, radius: Float) =
     lineIntersectsCircle(edge.first.xy, edge.second.xy, position.xy, radius)
@@ -36,8 +33,7 @@ fun findCollisionWalls(source: Vector3, originalOffset: Vector3, world: World): 
         if (hitPoint != null) {
           val gap = hitPoint.distance(source.xy) - radius
           Triple(it, hitPoint, gap)
-        }
-        else {
+        } else {
           val nearestEnd = listOf(edge.first.xy, edge.second.xy).sortedBy { it.distance(source.xy) }.first()
           val gap = nearestEnd.distance(source.xy) - radius
           Triple(it, nearestEnd, gap)
@@ -76,9 +72,9 @@ fun getWallCollisionMovementOffset(walls: List<Triple<FlexibleFace, Vector2, Flo
     )
 //    println("" + angle + " | " + knee.xy + " | " + slideVectors[0].dot(walls[1].first.normal) + " | " + slideVectors[1].dot(walls[0].first.normal))
 //    if (Math.abs(angle) <= Pi) {
-      if (Math.abs(slideVectors[1].dot(walls[0].first.normal)) > 0.05f) {
-        val dot2 = offset.dot(walls[0].first.normal + walls[0].first.normal)
-        println(dot2)
+    if (Math.abs(slideVectors[1].dot(walls[0].first.normal)) > 0.05f) {
+      val dot2 = offset.dot(walls[0].first.normal + walls[0].first.normal)
+      println(dot2)
 //        if (dot2 < 0f) {
       return gapVectors[0] + gapVectors[1]
 //        println(offset)
@@ -193,4 +189,23 @@ fun playerRotate(player: Player, commands: Commands<CommandType>, delta: Float) 
   if (offset != null) {
     character.facingRotation += offset * speed
   }
+}
+
+fun isInsideNode(node: Node, position: Vector3) =
+    isInsidePolygon(position.xy, node.floors.first().vertices.map { it.xy })
+
+fun updateBodyNode(body: Body) {
+  val position = body.position
+  val node = body.node
+  if (node.floors.size > 1)
+    throw Error("Not supported")
+
+  if (isInsideNode(node, position))
+    return
+
+  val newNode = node.neighbors.firstOrNull { isInsideNode(it, position) }
+  if (newNode == null)
+    throw Error("Not supported")
+
+  body.node = newNode
 }

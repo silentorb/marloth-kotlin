@@ -27,9 +27,9 @@ fun areTooClose(first: Node, second: Node): Boolean {
 }
 
 fun gatherTriUnions(node: Node): List<List<Node>> {
-  val neighbors = node.getNeighbors().toList()
+  val neighbors = node.neighbors.toList()
   return neighbors.flatMap { other ->
-    other.getNeighbors()
+    other.neighbors
         .filter { it !== node && neighbors.contains(it) }
         .map { listOf(node, other, it) }
         .toList()

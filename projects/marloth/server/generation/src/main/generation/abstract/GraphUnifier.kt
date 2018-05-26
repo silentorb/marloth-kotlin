@@ -38,7 +38,7 @@ fun findShortestGap(firstGroup: Sequence<Node>, secondGroup: Sequence<Node>): No
         .firstOrNull()
 
 fun getNeighborsToAdd(node: Node, group: NodeGroup): Sequence<Node> =
-    node.getNeighbors().filter { !group.contains(it) }
+    node.neighbors.filter { !group.contains(it) }
 
 fun scanChanged(changed: List<Node>, group: NodeGroup) =
     changed.asSequence()
