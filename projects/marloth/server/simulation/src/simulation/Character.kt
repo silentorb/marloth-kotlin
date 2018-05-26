@@ -3,6 +3,7 @@ package simulation
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import org.joml.times
+import physics.Body
 import scenery.DepictionType
 
 data class CharacterDefinition(

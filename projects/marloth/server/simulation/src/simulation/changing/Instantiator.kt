@@ -1,12 +1,14 @@
 package simulation.changing
 
-import collision.Sphere
+import colliding.Sphere
 import intellect.Spirit
 import intellect.SpiritState
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import org.joml.plus
+import physics.Body
+import physics.commonShapes
 import scenery.Depiction
 import scenery.DepictionType
 import scenery.Light
@@ -29,7 +31,7 @@ class Instantiator(
     return entity
   }
 
-  fun createBody(type: EntityType, shape: collision.Shape, position: Vector3, node: Node, orientation: Quaternion = Quaternion()): Body {
+  fun createBody(type: EntityType, shape: colliding.Shape, position: Vector3, node: Node, orientation: Quaternion = Quaternion()): Body {
     val entity = createEntity(type)
     val body = Body(entity.id, shape, position, orientation, Vector3(), node)
     world.bodyTable[entity.id] = body

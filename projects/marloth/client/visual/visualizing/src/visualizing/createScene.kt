@@ -4,6 +4,7 @@ import mythic.spatial.*
 import org.joml.times
 import scenery.*
 import org.joml.plus
+import physics.Body
 import scenery.Id
 import simulation.*
 

@@ -433,3 +433,6 @@ fun toString2(vector: Vector2) =
 
 fun toString2(vectors: List<Vector2>) =
     vectors.map { toString2(it) }.joinToString("\n")
+
+fun isZero(vector: Vector3) =
+    vector.x == 0f && vector.y == 0f && vector.z == 0f

@@ -1,6 +1,6 @@
 package intellect
 
-import simulation.Body
+import physics.Body
 import simulation.Node
 
 enum class SpiritMode {

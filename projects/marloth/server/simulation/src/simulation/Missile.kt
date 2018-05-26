@@ -1,13 +1,11 @@
 package simulation
 
-import commanding.CommandType
-import haft.Commands
 import mythic.spatial.Vector3
 import mythic.spatial.times
 import org.joml.plus
+import physics.Body
+import physics.overlaps
 import simulation.changing.hitsWall
-import simulation.changing.joinInputVector
-import simulation.changing.playerAttackMap
 
 data class Missile(
     val id: Int,
@@ -37,7 +35,7 @@ fun characterAttack(character: Character, ability: Ability, direction: Vector3):
 
 fun updateMissile(world: World, missile: Missile, delta: Float) {
   val offset = missile.body.velocity * delta
-  missile.body.position += offset
+//  missile.body.position += offset
   val hit = world.bodyTable.values.filter { it !== missile.body && it !== missile.owner.body }
       .firstOrNull { overlaps(it, missile.body) }
 

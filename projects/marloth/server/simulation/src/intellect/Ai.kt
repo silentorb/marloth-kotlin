@@ -38,10 +38,11 @@ fun moveAi(world: World, spirit: Spirit): SpiritState {
     return SpiritState(SpiritMode.idle)
 
   val nextNode = newPath.first()
-  val face = node.walls.first { getOtherNode(node, it) == nextNode }
-
-  val direction = getFloor(face).middle - spirit.body.position
-//  characterMove(world, spirit.character, direction, delta)
+  val face = node.walls.firstOrNull { getOtherNode(node, it) == nextNode }
+//  assert(face != null)
+//
+//  val direction = getFloor(face!!).middle - spirit.body.position
+//  characterMove(spirit.character, direction)
   return spirit.state
 }
 

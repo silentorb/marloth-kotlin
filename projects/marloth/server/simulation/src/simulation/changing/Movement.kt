@@ -9,6 +9,7 @@ import org.joml.minus
 import org.joml.plus
 import org.joml.times
 import org.joml.xy
+import physics.Body
 import simulation.*
 
 fun hitsWall(edge: FlexibleEdge, position: Vector3, radius: Float) =
@@ -19,13 +20,13 @@ fun getEdgeNormal(first: Vector2, second: Vector2): Vector2 {
   return Vector2(combination.y, -combination.x).normalize()
 }
 
-fun findCollisionWalls(source: Vector3, originalOffset: Vector3, world: World): List<Triple<FlexibleFace, Vector2, Float>> {
+fun findCollisionWalls(source: Vector3, originalOffset: Vector3, world: AbstractWorld): List<Triple<FlexibleFace, Vector2, Float>> {
   val offset = originalOffset + 0f
   val maxLength = offset.length()
   val newPosition = source + offset
   val radius = 0.8f
   val broadRadius = radius + maxLength
-  return world.meta.walls
+  return world.walls
       .filter { wall -> hitsWall(wall.edges[0].edge, newPosition, broadRadius) && offset.dot(wall.normal) < 0f }
       .map {
         val edge = it.edges[0]
@@ -42,7 +43,12 @@ fun findCollisionWalls(source: Vector3, originalOffset: Vector3, world: World): 
       .sortedBy { it.first.normal.dot(offset) }
 }
 
-fun getWallCollisionMovementOffset(walls: List<Triple<FlexibleFace, Vector2, Float>>, offset: Vector3): Vector3 {
+data class WallCollision(
+    val walls: List<FlexibleFace>,
+    val offset: Vector3
+)
+
+fun getWallCollisionMovementOffset(walls: List<Triple<FlexibleFace, Vector2, Float>>, offset: Vector3): WallCollision {
   if (walls.size > 3)
     throw Error("Not supported.")
 
@@ -76,7 +82,7 @@ fun getWallCollisionMovementOffset(walls: List<Triple<FlexibleFace, Vector2, Flo
       val dot2 = offset.dot(walls[0].first.normal + walls[0].first.normal)
       println(dot2)
 //        if (dot2 < 0f) {
-      return gapVectors[0] + gapVectors[1]
+      return WallCollision(walls.map { it.first }, gapVectors[0] + gapVectors[1])
 //        println(offset)
 //        }
     }
@@ -89,33 +95,25 @@ fun getWallCollisionMovementOffset(walls: List<Triple<FlexibleFace, Vector2, Flo
 ////      println("1 " + walls[0].first.normal + " | " + offset + " | " + gapVectors[0] + " | " + slideVectors[0])
 ////      println("1 " + walls[0].first.normal + " | " + offset)
 //  }
-  return offset + gapVectors[0] - slideVectors[0]
+  return WallCollision(walls.map { it.first }, offset + gapVectors[0] - slideVectors[0])
 }
 
-fun checkWallCollision(source: Vector3, originalOffset: Vector3, world: World): Vector3? {
+fun checkWallCollision(source: Vector3, originalOffset: Vector3, world: AbstractWorld): WallCollision {
   var offset = originalOffset + 0f
   val maxLength = offset.length()
   val walls = findCollisionWalls(source, originalOffset, world)
-//        world.meta.walls
-//        .filter { wall -> hitsWall(wall.edges[0], newPosition, broadRadius) && offset.dot(wall.normal) < 0f }
-//        .map {
-//          val edge = it.edges[0]
-////        val dot2 = offset.dot(it.normal)C
-////        println(dot2)
-//          val hitPoint = projectPointOntoLine(source.xy, edge.first.xy, edge.second.xy)
-//          val gap = hitPoint.distance(source.xy) - radius
-//          Triple(it, hitPoint, gap)
-//        }
-//        .sortedBy { it.first.normal.dot(offset) }
 
   if (walls.size > 0) {
-    offset = getWallCollisionMovementOffset(walls, offset)
+    val collision = getWallCollisionMovementOffset(walls, offset)
+    offset = collision.offset
     val offsetLength = offset.length()
     if (offsetLength > maxLength) {
       offset.normalize().mul(maxLength)
     }
+    return WallCollision(collision.walls, source + offset)
+  } else {
+    return WallCollision(listOf(), source + offset)
   }
-  return source + offset
 }
 
 val playerMoveMap = mapOf(
@@ -161,20 +159,20 @@ fun setCharacterFacing(character: Character, lookAt: Vector3) {
   character.facingRotation.z = angle
 }
 
-fun characterMove(world: World, character: Character, offset: Vector3, delta: Float) {
+fun characterMove(character: Character, offset: Vector3) {
   val speed = 6f
   setCharacterFacing(character, offset)
+  character.body.velocity = offset * speed
 //    }
-  val newPosition = checkWallCollision(character.body.position, offset * speed * delta, world)
-  if (newPosition != null) {
-    assert(!newPosition.x.isNaN() && !newPosition.y.isNaN())
-    character.body.position = newPosition
-//      println("" + body.position.x + ", " + body.position.y + "," + body.position.z)
-  }
+//  val newPosition = checkWallCollision(character.body.position, offset * speed * delta, world)
+//  if (newPosition != null) {
+//    assert(!newPosition.x.isNaN() && !newPosition.y.isNaN())
+//    character.body.position = newPosition
+////      println("" + body.position.x + ", " + body.position.y + "," + body.position.z)
+//  }
 }
 
-fun playerMove(world: World, player: Player, commands: Commands<CommandType>, delta: Float) {
-  val body = player.character.body
+fun playerMove(player: Player, commands: Commands<CommandType>) {
   var offset = joinInputVector(commands, playerMoveMap)
 
   if (offset != null) {
@@ -189,7 +187,7 @@ fun playerMove(world: World, player: Player, commands: Commands<CommandType>, de
 //      body.position = newPosition
 ////      println("" + body.position.x + ", " + body.position.y + "," + body.position.z)
 //    }
-    characterMove(world, player.character, offset, delta)
+    characterMove(player.character, offset)
   }
 }
 

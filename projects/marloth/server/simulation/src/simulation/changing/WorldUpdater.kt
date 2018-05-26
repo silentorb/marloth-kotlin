@@ -5,6 +5,7 @@ import haft.Commands
 import intellect.getAiCharacters
 import intellect.updateAi
 import mythic.spatial.Quaternion
+import physics.updateBodies
 import simulation.*
 
 class WorldUpdater(val world: World, val instantiator: Instantiator) {
@@ -22,7 +23,7 @@ class WorldUpdater(val world: World, val instantiator: Instantiator) {
     if (commands.isEmpty())
       return null
 
-    playerMove(world, player, commands, delta)
+    playerMove(player, commands)
 
     for (command in commands) {
       when (command.type) {
@@ -108,6 +109,7 @@ class WorldUpdater(val world: World, val instantiator: Instantiator) {
     val newMissiles = world.spirits.mapNotNull { updateAi(world, it) }
         .plus(applyCommands(world.players, commands, delta))
 
+    updateBodies(world.meta, world.bodies, delta)
     world.missileTable.values.forEach { updateMissile(world, it, delta) }
     world.bodies.forEach { updateBodyNode(it) }
     updateDead()

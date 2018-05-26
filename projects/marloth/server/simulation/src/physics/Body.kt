@@ -1,10 +1,13 @@
-package simulation
+package physics
 
-import collision.Cylinder
+import colliding.Cylinder
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
-import collision.Shape
-import collision.Sphere
+import colliding.Shape
+import colliding.Sphere
+import simulation.EntityType
+import simulation.Id
+import simulation.Node
 
 class Body(
     val id: Id,
@@ -12,6 +15,7 @@ class Body(
     var position: Vector3,
     var orientation: Quaternion,
     var velocity: Vector3,
+//    val friction: Float,
     var node: Node
 )
 
@@ -21,4 +25,4 @@ val commonShapes = mapOf(
 )
 
 fun overlaps(first: Body, second: Body) =
-    collision.overlaps(first.shape, first.position, second.shape, second.position)
+    colliding.overlaps(first.shape, first.position, second.shape, second.position)

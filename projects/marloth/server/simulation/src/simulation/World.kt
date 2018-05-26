@@ -1,6 +1,7 @@
 package simulation
 
 import intellect.Spirit
+import physics.Body
 import scenery.Depiction
 import scenery.Light
 
