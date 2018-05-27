@@ -47,7 +47,9 @@ class WorldUpdater(val world: World, val instantiator: Instantiator) {
     val playerResults = players
         .filter { it.character.isAlive }
         .map { player ->
-          applyPlayerCommands(player, commands.filter({ it.target == player.playerId }), delta)
+          val result = applyPlayerCommands(player, commands.filter({ it.target == player.playerId }), delta)
+          updatePlayerRotation(player, delta)
+          result
         }
 
     val remainingCommands = commands.filter({ it.target == 0 || it.target > maxPlayerCount })

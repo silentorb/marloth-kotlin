@@ -1,35 +1,13 @@
 package intellect
 
 import mythic.spatial.Vector3
+import mythic.spatial.times
 import org.joml.minus
+import org.joml.plus
 import physics.Force
+import randomly.Dice
 import simulation.*
 import simulation.changing.setCharacterFacing
-
-fun getAiCharacters(world: World) =
-    world.characters.filter { isPlayer(world, it) }
-
-fun setDestination(world: World, spirit: Spirit): SpiritState {
-  val location = spirit.body.node
-  val options = world.meta.nodes
-      .filter { it != location }
-      .filter { it.type != NodeType.space }
-
-//  val destination = Dice.global.getItem(options)
-  val destination = world.meta.graph.nodes[(location.index + 6) % world.meta.graph.nodes.size]
-  val path = findPath(location, destination)
-  assert(path != null)
-  assert(path!!.any())
-  return SpiritState(SpiritMode.moving, path)
-}
-
-fun updatePath(node: Node, path: List<Node>): List<Node> {
-  val index = path.indexOf(node)
-  return if (index == -1)
-    path
-  else
-    path.drop(index + 1)
-}
 
 enum class SpiritActionType {
   move
@@ -44,6 +22,31 @@ data class SpiritUpdateResult(
     val state: SpiritState,
     val actions: List<SpiritAction> = listOf()
 )
+
+fun getAiCharacters(world: World) =
+    world.characters.filter { isPlayer(world, it) }
+
+fun setDestination(world: World, spirit: Spirit): SpiritState {
+  val location = spirit.body.node
+  val options = world.meta.nodes
+      .filter { it != location }
+      .filter { it.type != NodeType.space }
+
+  val destination = Dice.global.getItem(options)
+//  val destination = options[(location.index + 6) % options.size]
+  val path = findPath(location, destination)
+  assert(path != null)
+  assert(path!!.any())
+  return SpiritState(SpiritMode.moving, path)
+}
+
+fun updatePath(node: Node, path: List<Node>): List<Node> {
+  val index = path.indexOf(node)
+  return if (index == -1)
+    path
+  else
+    path.drop(index + 1)
+}
 
 fun moveSpirit(spirit: Spirit): SpiritUpdateResult {
   val node = spirit.body.node
@@ -60,7 +63,12 @@ fun moveSpirit(spirit: Spirit): SpiritUpdateResult {
     println("Not supported!!!")
     return SpiritUpdateResult(spirit.state)
   } else {
-    val direction = getFloor(face).middle - spirit.body.position
+    val edge = getFloor(face)
+    val position = spirit.body.position
+    val nearestPoint = edge.vertices.sortedBy { it.distance(position) }.first()
+    val target = (edge.middle + nearestPoint) / 2f
+//    val target = edge.middle
+    val direction = (target - position).normalize()
 //    characterMove(spirit.character, direction)
     return SpiritUpdateResult(spirit.state, listOf(SpiritAction(SpiritActionType.move, direction)))
   }

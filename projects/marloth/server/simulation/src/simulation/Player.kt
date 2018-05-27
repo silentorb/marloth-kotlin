@@ -1,5 +1,7 @@
 package simulation
 
+import mythic.spatial.Vector3
+
 enum class ViewMode {
   firstPerson,
   topDown,
@@ -9,7 +11,8 @@ enum class ViewMode {
 class Player(
     val character: Character,
     val playerId: Int,
-    var viewMode: ViewMode
+    var viewMode: ViewMode,
+    var lookVelocity: Vector3 = Vector3()
 ) {
 }
 

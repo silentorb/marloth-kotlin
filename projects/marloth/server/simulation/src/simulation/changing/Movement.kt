@@ -161,38 +161,15 @@ fun setCharacterFacing(character: Character, lookAt: Vector3) {
   character.facingRotation.z = angle
 }
 
-//fun characterMove(character: Character, offset: Vector3) {
-////  val speed = 6f
-//  setCharacterFacing(character, offset)
-////  character.body.velocity += offset * speed
-////    }
-////  val newPosition = checkWallCollision(character.body.position, offset * speed * delta, world)
-////  if (newPosition != null) {
-////    assert(!newPosition.x.isNaN() && !newPosition.y.isNaN())
-////    character.body.position = newPosition
-//////      println("" + body.position.x + ", " + body.position.y + "," + body.position.z)
-////  }
-//}
-
 fun playerMove(player: Player, commands: Commands<CommandType>): Force? {
   var offset = joinInputVector(commands, playerMoveMap)
 
   if (offset != null) {
     if (player.viewMode == ViewMode.firstPerson) {
       offset = (Quaternion().rotateZ(player.character.facingRotation.z - Pi / 2) * offset)!!
-    }
-    else {
+    } else {
       setCharacterFacing(player.character, offset)
     }
-//    else if (player.viewMode == ViewMode.topDown) {
-//      setCharacterFacing(player.character, offset)
-//    }
-//    val newPosition = checkWallCollision(body.position, offset * speed * delta, world)
-//    if (newPosition != null) {
-//      assert(!newPosition.x.isNaN() && !newPosition.y.isNaN())
-//      body.position = newPosition
-////      println("" + body.position.x + ", " + body.position.y + "," + body.position.z)
-//    }
     return Force(player.character.body, offset, 6f)
   } else {
     return null
@@ -200,12 +177,27 @@ fun playerMove(player: Player, commands: Commands<CommandType>): Force? {
 }
 
 fun playerRotate(player: Player, commands: Commands<CommandType>, delta: Float) {
-  val character = player.character
-  val speed = Vector3(1f, 0.01f, 0.03f)
+  val deltaFixer = 180f
+  val speed = Vector3(1f, 0.01f * deltaFixer, 0.03f * deltaFixer)
   val offset = joinInputVector(commands, playerLookMap)
 
   if (offset != null) {
-    character.facingRotation += offset * speed
+    player.lookVelocity += offset * speed * delta
+  }
+}
+
+fun updatePlayerRotation(player: Player, delta: Float) {
+  val velocity = player.lookVelocity
+  if (velocity.y != 0f || velocity.z != 0f) {
+    val max = 1f
+    val maxZ = max * 3f
+    player.character.facingRotation += velocity * delta
+    val mod = 1 - 4f * delta
+    player.lookVelocity.y = Math.min(max, velocity.y * mod)
+    player.lookVelocity.z = Math.min(maxZ, velocity.z * mod)
+    if (Vector2(velocity.y, velocity.z).length() < 0.01f) {
+      player.lookVelocity.zero()
+    }
   }
 }
 

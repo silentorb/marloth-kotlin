@@ -22,6 +22,19 @@ data class BodyUpdateResult(
     val wallCollision: List<BodyWallCollision>
 )
 
+fun applyForces(forces: List<Force>, delta: Float) {
+//  val groups = forces.groupBy { it.body }
+  for (force in forces) {
+    val body = force.body
+    body.velocity += force.offset * 20f * delta
+    val length = body.velocity.length()
+//    println("* " + length)
+    if (length > force.maximum) {
+      body.velocity = Vector3(body.velocity).normalize() * force.maximum
+    }
+  }
+}
+
 fun moveBody(world: AbstractWorld, body: Body, offset: Vector3, delta: Float): BodyWallCollision? {
   val (walls, newPosition) = checkWallCollision(body.position, offset * delta, world)
 //    assert(!newPosition.x.isNaN() && !newPosition.y.isNaN())
@@ -39,19 +52,6 @@ fun moveBody(world: AbstractWorld, body: Body, offset: Vector3, delta: Float): B
     BodyWallCollision(body)
   else
     null
-}
-
-fun applyForces(forces: List<Force>, delta: Float) {
-//  val groups = forces.groupBy { it.body }
-  for (force in forces) {
-    val body = force.body
-    body.velocity += force.offset * 20f * delta
-    val length = body.velocity.length()
-//    println("* " + length)
-    if (length > force.maximum) {
-      body.velocity = Vector3(body.velocity).normalize() * force.maximum
-    }
-  }
 }
 
 fun updateBodies(world: AbstractWorld, bodies: Collection<Body>, delta: Float): BodyUpdateResult {
