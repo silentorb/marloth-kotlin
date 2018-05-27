@@ -12,6 +12,7 @@ import mythic.spatial.*
 import org.joml.minus
 import org.joml.plus
 import org.joml.xy
+import scenery.Textures
 import simulation.*
 
 val doorwayLength = 2.5f
@@ -198,9 +199,23 @@ fun generateStructure(abstractWorld: AbstractWorld) {
   val allSectors = nodeSectors.plus(tunnelSectors)
   sinewFloors(allSectors, mesh)
   allSectors.forEach { sector ->
-    val wallBases = sector.node.floors.first().edges.filter { it.otherEdgeReferences.size == 0 }
+    val wallBases = sector.node.floors.first().edges
     wallBases.forEach {
-      val wall = createWall(it.edge, mesh)
+      val otherEdges = it.otherEdgeReferences
+      val wall = if (otherEdges.size > 1) {
+        val face = it.faces.firstOrNull() { it.data != null && getFaceInfo(it).type == FaceType.space }
+        if (face != null)
+          face
+        else
+          createWall(it.edge, mesh)
+      } else
+        createWall(it.edge, mesh)
+
+      if (otherEdges.size > 0)
+        initializeFaceInfo(FaceType.space, sector.node, wall, null)
+      else
+        initializeFaceInfo(FaceType.wall, sector.node, wall, Textures.darkCheckers)
+
       sector.node.walls.add(wall)
     }
   }

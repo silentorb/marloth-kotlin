@@ -56,6 +56,7 @@ class NodeGraph {
 
 enum class FaceType {
   floor,
+  space,
   wall
 }
 
@@ -72,6 +73,7 @@ data class FaceInfo(
 fun getFaceInfo(face: FlexibleFace): FaceInfo = (face.data as FaceInfo?)!!
 
 val isWall = { face: FlexibleFace -> getFaceInfo(face).type == FaceType.wall }
+val isSpace = { face: FlexibleFace -> getFaceInfo(face).type == FaceType.space }
 
 fun getNullableFaceInfo(face: FlexibleFace): FaceInfo? = face.data as FaceInfo?
 
@@ -137,6 +139,6 @@ fun getOtherNode(node: Node, face: FlexibleFace): Node? {
 }
 
 fun getFloor(face: FlexibleFace) =
-    face.edges.filter { it.first == it.second }
+    face.edges.filter { it.first.z == it.second.z }
         .sortedBy { it.first.z }
         .first()

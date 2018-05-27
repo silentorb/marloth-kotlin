@@ -2,9 +2,11 @@ package simulation.changing
 
 import commanding.CommandType
 import haft.Commands
+import intellect.CharacterResult
 import intellect.getAiCharacters
-import intellect.updateAi
+import intellect.updateSpirit
 import mythic.spatial.Quaternion
+import physics.applyForces
 import physics.updateBodies
 import simulation.*
 
@@ -19,11 +21,11 @@ class WorldUpdater(val world: World, val instantiator: Instantiator) {
           ViewMode.topDown
   }
 
-  fun applyPlayerCommands(player: Player, commands: Commands<CommandType>, delta: Float): NewMissile? {
+  fun applyPlayerCommands(player: Player, commands: Commands<CommandType>, delta: Float): CharacterResult {
     if (commands.isEmpty())
-      return null
+      return CharacterResult()
 
-    playerMove(player, commands)
+    val force = playerMove(player, commands)
 
     for (command in commands) {
       when (command.type) {
@@ -35,13 +37,16 @@ class WorldUpdater(val world: World, val instantiator: Instantiator) {
       playerRotate(player, commands, delta)
     }
 
-    return playerAttack(player, commands)
+    return CharacterResult(
+        newMissile = playerAttack(player, commands),
+        forces = if (force != null) listOf(force) else listOf()
+    )
   }
 
-  fun applyCommands(players: Players, commands: Commands<CommandType>, delta: Float): List<NewMissile> {
-    val result = players
+  fun applyCommands(players: Players, commands: Commands<CommandType>, delta: Float): List<CharacterResult> {
+    val playerResults = players
         .filter { it.character.isAlive }
-        .mapNotNull { player ->
+        .map { player ->
           applyPlayerCommands(player, commands.filter({ it.target == player.playerId }), delta)
         }
 
@@ -52,7 +57,7 @@ class WorldUpdater(val world: World, val instantiator: Instantiator) {
       }
     }
 
-    return result
+    return playerResults
   }
 
   fun updateCharacter(character: Character, delta: Float) {
@@ -105,10 +110,12 @@ class WorldUpdater(val world: World, val instantiator: Instantiator) {
 
   fun update(commands: Commands<CommandType>, delta: Float) {
     updateCharacters(delta)
-    val aiCharacters = getAiCharacters(world)
-    val newMissiles = world.spirits.mapNotNull { updateAi(world, it) }
-        .plus(applyCommands(world.players, commands, delta))
+    val spiritResults = world.spirits.map { updateSpirit(world, it) }
+    val playerResults = applyCommands(world.players, commands, delta)
+    val results = spiritResults.plus(playerResults)
+    val newMissiles = results.mapNotNull { it.newMissile }
 
+    applyForces(results.flatMap { it.forces }, delta)
     updateBodies(world.meta, world.bodies, delta)
     world.missileTable.values.forEach { updateMissile(world, it, delta) }
     world.bodies.forEach { updateBodyNode(it) }

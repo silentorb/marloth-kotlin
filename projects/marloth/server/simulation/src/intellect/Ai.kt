@@ -1,9 +1,9 @@
 package intellect
 
+import mythic.spatial.Vector3
 import org.joml.minus
-import randomly.Dice
+import physics.Force
 import simulation.*
-import simulation.changing.characterMove
 import simulation.changing.setCharacterFacing
 
 fun getAiCharacters(world: World) =
@@ -15,7 +15,8 @@ fun setDestination(world: World, spirit: Spirit): SpiritState {
       .filter { it != location }
       .filter { it.type != NodeType.space }
 
-  val destination = Dice.global.getItem(options)
+//  val destination = Dice.global.getItem(options)
+  val destination = world.meta.graph.nodes[(location.index + 6) % world.meta.graph.nodes.size]
   val path = findPath(location, destination)
   assert(path != null)
   assert(path!!.any())
@@ -30,26 +31,45 @@ fun updatePath(node: Node, path: List<Node>): List<Node> {
     path.drop(index + 1)
 }
 
-fun moveAi(world: World, spirit: Spirit): SpiritState {
+enum class SpiritActionType {
+  move
+}
+
+data class SpiritAction(
+    val type: SpiritActionType,
+    val offset: Vector3
+)
+
+data class SpiritUpdateResult(
+    val state: SpiritState,
+    val actions: List<SpiritAction> = listOf()
+)
+
+fun moveSpirit(spirit: Spirit): SpiritUpdateResult {
   val node = spirit.body.node
   val newPath = updatePath(node, spirit.state.path!!)
 
   if (newPath.none())
-    return SpiritState(SpiritMode.idle)
+    return SpiritUpdateResult(SpiritState(SpiritMode.idle))
 
   val nextNode = newPath.first()
   val face = node.walls.firstOrNull { getOtherNode(node, it) == nextNode }
-//  assert(face != null)
-//
-//  val direction = getFloor(face!!).middle - spirit.body.position
-//  characterMove(spirit.character, direction)
-  return spirit.state
+
+  if (face == null) {
+//    throw Error("Not supported")
+    println("Not supported!!!")
+    return SpiritUpdateResult(spirit.state)
+  } else {
+    val direction = getFloor(face).middle - spirit.body.position
+//    characterMove(spirit.character, direction)
+    return SpiritUpdateResult(spirit.state, listOf(SpiritAction(SpiritActionType.move, direction)))
+  }
 }
 
-fun updateAiState(world: World, spirit: Spirit): SpiritState {
+fun updateAiState(world: World, spirit: Spirit): SpiritUpdateResult {
   return when (spirit.state.mode) {
-    SpiritMode.idle -> setDestination(world, spirit)
-    SpiritMode.moving -> moveAi(world, spirit)
+    SpiritMode.idle -> SpiritUpdateResult(setDestination(world, spirit))
+    SpiritMode.moving -> moveSpirit(spirit)
   }
 }
 
@@ -69,8 +89,26 @@ fun tryAiAttack(spirit: Spirit): NewMissile? {
   return null
 }
 
-fun updateAi(world: World, spirit: Spirit): NewMissile? {
-  spirit.state = updateAiState(world, spirit)
+fun handleSpiritAction(spirit: Spirit, action: SpiritAction): Force? {
+  when (action.type) {
+    SpiritActionType.move -> {
+      setCharacterFacing(spirit.character, action.offset)
+      return Force(spirit.body, action.offset, 6f)
+    }
+  }
+
   return null
+}
+
+data class CharacterResult(
+    val forces: List<Force> = listOf(),
+    val newMissile: NewMissile? = null
+)
+
+fun updateSpirit(world: World, spirit: Spirit): CharacterResult {
+  val result = updateAiState(world, spirit)
+  spirit.state = result.state
+  val forces = result.actions.mapNotNull { handleSpiritAction(spirit, it) }
+  return CharacterResult(forces = forces)
 //  return tryAiAttack(spirit)
 }

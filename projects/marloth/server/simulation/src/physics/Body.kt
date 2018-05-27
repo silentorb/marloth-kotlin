@@ -9,12 +9,17 @@ import simulation.EntityType
 import simulation.Id
 import simulation.Node
 
+data class BodyAttributes(
+    val resistance: Float
+)
+
 class Body(
     val id: Id,
     var shape: Shape?,
     var position: Vector3,
     var orientation: Quaternion,
     var velocity: Vector3,
+    val attributes: BodyAttributes,
 //    val friction: Float,
     var node: Node
 )

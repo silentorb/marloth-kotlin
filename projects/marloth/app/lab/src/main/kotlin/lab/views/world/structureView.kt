@@ -27,7 +27,7 @@ private fun getLineColor(edge: FlexibleEdge): Vector4 {
       }
     }
   }
-
+//  val opacity = if (edge.faces.any(isSpace)) 0.2f else 0.5f
   return Vector4(0f, 0f, 1f, 0.5f)
 }
 

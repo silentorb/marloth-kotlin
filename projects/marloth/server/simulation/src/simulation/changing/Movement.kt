@@ -10,6 +10,7 @@ import org.joml.plus
 import org.joml.times
 import org.joml.xy
 import physics.Body
+import physics.Force
 import simulation.*
 
 fun hitsWall(edge: FlexibleEdge, position: Vector3, radius: Float) =
@@ -27,6 +28,7 @@ fun findCollisionWalls(source: Vector3, originalOffset: Vector3, world: Abstract
   val radius = 0.8f
   val broadRadius = radius + maxLength
   return world.walls
+      .filter(isWall)
       .filter { wall -> hitsWall(wall.edges[0].edge, newPosition, broadRadius) && offset.dot(wall.normal) < 0f }
       .map {
         val edge = it.edges[0]
@@ -159,25 +161,29 @@ fun setCharacterFacing(character: Character, lookAt: Vector3) {
   character.facingRotation.z = angle
 }
 
-fun characterMove(character: Character, offset: Vector3) {
-  val speed = 6f
-  setCharacterFacing(character, offset)
-  character.body.velocity = offset * speed
-//    }
-//  val newPosition = checkWallCollision(character.body.position, offset * speed * delta, world)
-//  if (newPosition != null) {
-//    assert(!newPosition.x.isNaN() && !newPosition.y.isNaN())
-//    character.body.position = newPosition
-////      println("" + body.position.x + ", " + body.position.y + "," + body.position.z)
-//  }
-}
+//fun characterMove(character: Character, offset: Vector3) {
+////  val speed = 6f
+//  setCharacterFacing(character, offset)
+////  character.body.velocity += offset * speed
+////    }
+////  val newPosition = checkWallCollision(character.body.position, offset * speed * delta, world)
+////  if (newPosition != null) {
+////    assert(!newPosition.x.isNaN() && !newPosition.y.isNaN())
+////    character.body.position = newPosition
+//////      println("" + body.position.x + ", " + body.position.y + "," + body.position.z)
+////  }
+//}
 
-fun playerMove(player: Player, commands: Commands<CommandType>) {
+fun playerMove(player: Player, commands: Commands<CommandType>): Force? {
   var offset = joinInputVector(commands, playerMoveMap)
 
   if (offset != null) {
-    if (player.viewMode == ViewMode.firstPerson)
+    if (player.viewMode == ViewMode.firstPerson) {
       offset = (Quaternion().rotateZ(player.character.facingRotation.z - Pi / 2) * offset)!!
+    }
+    else {
+      setCharacterFacing(player.character, offset)
+    }
 //    else if (player.viewMode == ViewMode.topDown) {
 //      setCharacterFacing(player.character, offset)
 //    }
@@ -187,7 +193,9 @@ fun playerMove(player: Player, commands: Commands<CommandType>) {
 //      body.position = newPosition
 ////      println("" + body.position.x + ", " + body.position.y + "," + body.position.z)
 //    }
-    characterMove(player.character, offset)
+    return Force(player.character.body, offset, 6f)
+  } else {
+    return null
   }
 }
 

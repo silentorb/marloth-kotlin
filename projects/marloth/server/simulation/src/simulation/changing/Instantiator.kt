@@ -8,6 +8,7 @@ import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import org.joml.plus
 import physics.Body
+import physics.BodyAttributes
 import physics.commonShapes
 import scenery.Depiction
 import scenery.DepictionType
@@ -31,9 +32,18 @@ class Instantiator(
     return entity
   }
 
-  fun createBody(type: EntityType, shape: colliding.Shape, position: Vector3, node: Node, orientation: Quaternion = Quaternion()): Body {
+  fun createBody(type: EntityType, shape: colliding.Shape, position: Vector3, node: Node, attributes: BodyAttributes,
+                 orientation: Quaternion = Quaternion()): Body {
     val entity = createEntity(type)
-    val body = Body(entity.id, shape, position, orientation, Vector3(), node)
+    val body = Body(
+        id = entity.id,
+        shape = shape,
+        position = position,
+        orientation = orientation,
+        velocity = Vector3(),
+        node = node,
+        attributes = attributes
+    )
     world.bodyTable[entity.id] = body
     return body
   }
@@ -45,7 +55,7 @@ class Instantiator(
   }
 
   fun createCharacter(definition: CharacterDefinition, faction: Faction, position: Vector3, node: Node): Character {
-    val body = createBody(EntityType.character, commonShapes[EntityType.character]!!, position, node)
+    val body = createBody(EntityType.character, commonShapes[EntityType.character]!!, position, node, characterBodyAttributes)
     val character = Character(
         id = body.id,
         faction = faction,
@@ -72,7 +82,8 @@ class Instantiator(
   }
 
   fun createMissile(newMissile: NewMissile): Missile {
-    val body = createBody(EntityType.missile, commonShapes[EntityType.missile]!!, newMissile.position, newMissile.node)
+    val shape = commonShapes[EntityType.missile]!!
+    val body = createBody(EntityType.missile, shape, newMissile.position, newMissile.node, missileBodyAttributes)
     body.velocity = newMissile.velocity
     val missile = Missile(body.id, body, newMissile.owner, newMissile.range)
     world.missileTable[body.id] = missile
@@ -90,7 +101,7 @@ class Instantiator(
   }
 
   fun createFurnishing(depictionType: DepictionType, position: Vector3, node: Node, orientation: Quaternion): Body {
-    val body = createBody(EntityType.furnishing, Sphere(0.3f), position, node, orientation)
+    val body = createBody(EntityType.furnishing, Sphere(0.3f), position, node, doodadBodyAttributes, orientation)
     createDepiction(body.id, depictionType)
     return body
   }

@@ -12,7 +12,7 @@ tailrec fun unwindPath(pathNode: PathNode, path: List<Node> = listOf()): List<No
     if (pathNode.previous == null)
       path
     else
-      unwindPath(pathNode.previous, path.plus(listOf(pathNode.node)))
+      unwindPath(pathNode.previous, listOf(pathNode.node).plus(path))
 
 fun getPathNeighbors(node: Node) =
     node.neighbors.filter { it.type != NodeType.space }

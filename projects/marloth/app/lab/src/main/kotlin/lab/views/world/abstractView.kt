@@ -76,7 +76,7 @@ fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Can
     val circleBrush = if (node.type == NodeType.space) spaceSolid else solid
     canvas.drawSolidCircle(position, radius, circleBrush)
     canvas.drawCircle(position, radius, outline)
-    canvas.drawText(node.index.toString() + " " + node.floors.first().unorderedVertices.size.toString(),
+    canvas.drawText(node.index.toString() + " " + node.walls.size,
         position,
         style)
   }

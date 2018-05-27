@@ -1,5 +1,6 @@
 package simulation
 
+import physics.BodyAttributes
 import scenery.DepictionType
 
 class AbilityDefinitions {
@@ -30,3 +31,16 @@ class CharacterDefinitions {
 }
 
 val characterDefinitions = CharacterDefinitions()
+
+val doodadBodyAttributes = BodyAttributes(
+    resistance = 0.1f
+)
+
+val missileBodyAttributes = BodyAttributes(
+    resistance = 1f
+)
+
+val characterBodyAttributes = BodyAttributes(
+    resistance = 8f
+//        resistance = 8f
+)
