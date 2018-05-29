@@ -10,15 +10,15 @@ import physics.applyForces
 import physics.updateBodies
 import simulation.*
 
+private val viewModes = ViewMode.values()
+
 class WorldUpdater(val world: World, val instantiator: Instantiator) {
 
   fun switchCameraMode(player: Player) {
     val currentMode = player.viewMode
-    player.viewMode =
-        if (currentMode == ViewMode.topDown)
-          ViewMode.firstPerson
-        else
-          ViewMode.topDown
+    val index = viewModes.indexOf(currentMode)
+    val nextIndex = (index + 1) % viewModes.size
+    player.viewMode = viewModes[nextIndex]
   }
 
   fun applyPlayerCommands(player: Player, commands: Commands<CommandType>, delta: Float): CharacterResult {

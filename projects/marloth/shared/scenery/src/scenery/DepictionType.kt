@@ -1,6 +1,7 @@
 package scenery
 
 enum class DepictionType {
+  billboard,
   character,
   missile,
   monster,

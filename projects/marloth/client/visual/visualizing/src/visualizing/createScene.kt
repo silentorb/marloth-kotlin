@@ -4,6 +4,7 @@ import mythic.spatial.*
 import org.joml.times
 import scenery.*
 import org.joml.plus
+import org.joml.unaryMinus
 import physics.Body
 import scenery.Id
 import simulation.*
@@ -19,13 +20,23 @@ fun createFirstPersonCamera(character: Character): Camera = Camera(
     45f
 )
 
-fun createThirdPersonCamera(player: Body): Camera = Camera(
-    ProjectionType.perspective,
-    player.position,
-//    Quaternion(0f, 0f, 0.1f),
-    Quaternion(),
-    45f
-)
+fun createThirdPersonCamera(body: Body, hoverCamera: HoverCamera): Camera {
+  val orientation = Quaternion()
+      .rotateZ(hoverCamera.yaw)
+      .rotateY(hoverCamera.pitch)
+
+  val position = orientation * Vector3(12f, 0f, 0f)
+  val orientationSecond = Quaternion().rotateTo(Vector3(1f, 0f, 0f), -position)
+  return Camera(ProjectionType.perspective, position + body.position, orientationSecond, 45f)
+//  return Camera(
+//      ProjectionType.perspective,
+//      body.position,
+//      Quaternion()
+//          .rotateZ(hoverCamera.yaw)
+//          .rotateY(hoverCamera.pitch),
+//      45f
+//  )
+}
 
 fun createTopDownCamera(player: Body): Camera {
   val position = Vector3(0f, -20f, 20f) + player.position
@@ -45,30 +56,10 @@ fun createCamera(world: World, screen: Screen): Camera {
   val body = player.character.body
   return when (player.viewMode) {
     ViewMode.firstPerson -> createFirstPersonCamera(player.character)
-    ViewMode.thirdPerson -> createThirdPersonCamera(body)
+    ViewMode.thirdPerson -> createThirdPersonCamera(body, player.hoverCamera)
     ViewMode.topDown -> createTopDownCamera(body)
   }
 }
-
-//val depictionMap = mapOf(
-//    EntityType.character to DepictionType.character,
-//    EntityType.missile to DepictionType.missile,
-//    EntityType.monster to DepictionType.monster
-//)
-
-//fun prepareVisualElement(body: Body, entityType: EntityType): VisualElement? {
-//  val depiction = depictionMap[entityType]
-//  return if (depiction != null)
-//    VisualElement(depiction, Matrix().transformVertices(body.position))
-//  else
-//    null
-//}
-
-//fun selectBodies(world: World, player: Player) =
-
-//    world.bodies
-//        .filter { player.viewMode != ViewMode.firstPerson || it !== player.character.body }
-//        .mapNotNull { prepareVisualElement(it, world.entities[it.id]!!.type) }
 
 fun filterDepictions(world: World, player: Player) =
     if (player.viewMode == ViewMode.firstPerson)
@@ -88,18 +79,35 @@ fun convertDepiction(world: World, id: Id, depiction: Depiction): VisualElement 
   return VisualElement(id, depiction.type, transform)
 }
 
-fun createScene(world: World, screen: Screen, player: Player): GameScene {
+fun mapElements(world: World, screen: Screen, player: Player): Pair<List<VisualElement>, ElementDetails> {
   val depictions = filterDepictions(world, player)
-  val (childDepictions, otherDepictions) = depictions.values.partition {
+  val childDepictions = depictions.values.filter {
     it.type == DepictionType.character || it.type == DepictionType.monster
   }
-  val elements = childDepictions.map {
+//  val billboardDepictions = depictions.values.filter {
+//    it.type == DepictionType.billboard
+//  }
+//  val elements = childDepictions.map {
+//    convertDepiction(world, it.id, it)
+//  }
+//      .plus(otherDepictions.map {
+//        convertDepiction(world, it.id, it)
+//      })
+  val elements = depictions.values.map {
     convertDepiction(world, it.id, it)
   }
-      .plus(otherDepictions.map {
-        convertDepiction(world, it.id, it)
-      })
 
+  return Pair(
+      elements,
+      ElementDetails(
+          children = childDepictions.associate { Pair(it.id, ChildDetails(if (it.type == DepictionType.character) Gender.female else Gender.male)) }
+//          billboards = world.billboardTable.mapValues { BillboardDetails(it.value.text) }
+      )
+  )
+}
+
+fun createScene(world: World, screen: Screen, player: Player): GameScene {
+  val (elements, elementDetails) = mapElements(world, screen, player)
   return GameScene(
       main = Scene(
           createCamera(world, screen),
@@ -111,9 +119,7 @@ fun createScene(world: World, screen: Screen, player: Player): GameScene {
           ))
       ),
       elements = elements,
-      elementDetails = ElementDetails(
-          children = childDepictions.associate { Pair(it.id, ChildDetails(if (it.type == DepictionType.character) Gender.female else Gender.male)) }
-      ),
+      elementDetails = elementDetails,
       player = player.playerId
   )
 }

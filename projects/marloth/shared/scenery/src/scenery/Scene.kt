@@ -25,8 +25,14 @@ data class ChildDetails(
     val gender: Gender
 )
 
+data class BillboardDetails(
+    val text: String,
+    val cooldown: Float? = null
+)
+
 data class ElementDetails(
     val children: Map<Id, ChildDetails>
+//    val billboards: Map<Id, BillboardDetails>
 )
 
 data class GameScene(

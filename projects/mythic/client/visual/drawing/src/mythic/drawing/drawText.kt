@@ -19,14 +19,15 @@ fun getUnitScaling(dimensions: Vector2i) =
     else
       Vector2(dimensions.y.toFloat() / dimensions.x, 1f)
 
-fun renderText(config: TextConfiguration, effect: ColoredImageShader, textPackage: TextPackage, pixelsToScalar: Matrix) {
-  val position = config.position
-//  val scale = config.size * 0.1f
-  val scale = 1f
+fun prepareTextMatrix(pixelsToScalar: Matrix, position: Vector2) =
+    Matrix()
+    .mul(pixelsToScalar)
+    .translate(position.x, position.y, 0f)
 
-  val transform = Matrix()
-      .mul(pixelsToScalar)
-      .translate(position.x, position.y, 0f)
+fun renderText(config: TextConfiguration, effect: ColoredImageShader, textPackage: TextPackage, transform: Matrix) {
+//  val position = config.position
+//  val scale = config.size * 0.1f
+//  val scale = 1f
 //      .scale(scale, scale, 1f)
 
   effect.activate(transform, config.style.color, config.style.font.texture)
@@ -38,10 +39,11 @@ fun renderText(config: TextConfiguration, effect: ColoredImageShader, textPackag
   textPackage.mesh.draw(DrawMethod.triangleFan)
 }
 
-fun <T>drawTextRaw(config: TextConfiguration, effect: ColoredImageShader, vertexSchema: VertexSchema<T>, pixelsToScalar: Matrix) {
+fun <T>drawTextRaw(config: TextConfiguration, effect: ColoredImageShader, vertexSchema: VertexSchema<T>, transform: Matrix) {
   val textPackage = prepareText(config, vertexSchema)
   if (textPackage != null) {
-    renderText(config, effect, textPackage, pixelsToScalar)
+    val transform = prepareTextMatrix(transform, config.position)
+    renderText(config, effect, textPackage, transform)
     textPackage.mesh.dispose()
   }
 }

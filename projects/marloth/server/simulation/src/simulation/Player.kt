@@ -8,13 +8,19 @@ enum class ViewMode {
   thirdPerson
 }
 
+data class HoverCamera(
+    var pitch: Float = 0f,
+    var yaw: Float = 0f,
+    var distance: Float = 1f
+)
+
 class Player(
     val character: Character,
     val playerId: Int,
     var viewMode: ViewMode,
-    var lookVelocity: Vector3 = Vector3()
-) {
-}
+    var lookVelocity: Vector3 = Vector3(),
+    var hoverCamera: HoverCamera = HoverCamera()
+)
 
 fun isPlayer(world: World, character: Character) =
     world.players.any { it.playerId == character.id }
