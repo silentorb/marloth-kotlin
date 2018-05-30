@@ -1,7 +1,6 @@
 package intellect
 
 import mythic.spatial.Vector3
-import mythic.spatial.times
 import org.joml.minus
 import org.joml.plus
 import physics.Force
@@ -37,7 +36,10 @@ fun setDestination(world: World, spirit: Spirit): SpiritState {
   val path = findPath(location, destination)
   assert(path != null)
   assert(path!!.any())
-  return SpiritState(SpiritMode.moving, path)
+  return spirit.state.copy(
+      mode = SpiritMode.moving,
+      path = path
+  )
 }
 
 fun updatePath(node: Node, path: List<Node>): List<Node> {
