@@ -6,11 +6,8 @@ import mythic.platforming.WindowInfo
 import mythic.spatial.Matrix
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
-import mythic.typography.loadFonts
 import mythic.spatial.Vector4
-import mythic.typography.FontLoadInfo
-import mythic.typography.TextConfiguration
-import mythic.typography.TextStyle
+import mythic.typography.*
 import org.joml.*
 import rendering.meshes.AttributeName
 import rendering.meshes.MeshMap
@@ -148,21 +145,24 @@ class SceneRenderer(
 
   fun drawText(content: String, position: Vector3, style: TextStyle) {
     val modelTransform = Matrix()
-        .translate(position + Vector3(8f, 0f, 0f))
+        .translate(position + Vector3(0f, 0f, 0f))
 
     val transform2 = cameraEffectsData.transform * modelTransform
 //    val transform2 = modelTransform * cameraEffectsData.transform * modelTransform
     val i2 = transform2.transform(Vector4(0f, 0f, 0f, 1f))
-    val i = Vector4(i2) / 14f
+    val i = Vector2(i2.x, i2.y) / i2.z
 //    val transform = modelTransform
 //    val pixelsToScalar = getUnitScaling(Vector2i(viewport.x, viewport.y))
     val dimensions = Vector2i(viewport.z, viewport.w)
-    val pos = Vector2(((i.x + 1)  / 2) * dimensions.x, (1 - ((i.y + 1)  / 2)) * dimensions.y)
+    var pos = Vector2(((i.x + 1)  / 2) * dimensions.x, (1 - ((i.y + 1)  / 2)) * dimensions.y)
+    val config = TextConfiguration(content, pos, style)
+    val textDimensions = calculateTextDimensions(config)
+    pos.x -= textDimensions.x / 2f
     val pixelsToScalar =  Matrix().scale(1f / dimensions.x, 1f / dimensions.y, 1f)
     val transform = prepareTextMatrix(pixelsToScalar, pos)
 
     drawTextRaw(
-        TextConfiguration(content, position.xy, style),
+        config,
         renderer.shaders.drawing.coloredImage,
         renderer.vertexSchemas.drawing.image,
         transform
