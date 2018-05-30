@@ -17,6 +17,8 @@ operator fun Vector2.times(other: Float): Vector2 = mul(other, Vector2())
 operator fun Vector3.times(other: Float): Vector3 = mul(other, Vector3())
 operator fun Vector3.times(other: Vector3): Vector3 = mul(other, Vector3())
 
+//operator fun Matrix.times(other: Matrix): Matrix = Matrix(this).mul(other)
+
 fun FloatBuffer.put(value: Vector3) {
   put(value.x)
   put(value.y)
@@ -436,3 +438,4 @@ fun toString2(vectors: List<Vector2>) =
 
 fun isZero(vector: Vector3) =
     vector.x == 0f && vector.y == 0f && vector.z == 0f
+

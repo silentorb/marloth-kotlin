@@ -51,9 +51,10 @@ data class WallCollision(
 )
 
 fun getWallCollisionMovementOffset(walls: List<Triple<FlexibleFace, Vector2, Float>>, offset: Vector3): WallCollision {
-  if (walls.size > 3)
-    throw Error("Not supported.")
-
+  if (walls.size > 3) {
+//    throw Error("Not supported.")
+    // TODO Uncomment above line
+  }
   val slideVectors = walls.map { (face, _, _) ->
     face.normal * face.normal.dot(offset)
   }
