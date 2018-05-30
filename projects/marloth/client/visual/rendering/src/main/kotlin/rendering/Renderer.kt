@@ -1,24 +1,22 @@
 package rendering
 
-import mythic.drawing.Canvas
-import mythic.drawing.createDrawingMeshes
-import mythic.drawing.getUnitScaling
+import mythic.drawing.*
 import mythic.glowing.*
 import mythic.platforming.WindowInfo
 import mythic.spatial.Matrix
+import mythic.spatial.Vector2
 import mythic.spatial.Vector3
-import mythic.typography.loadFonts
 import mythic.spatial.Vector4
-import mythic.typography.FontLoadInfo
+import mythic.typography.*
 import org.joml.*
 import rendering.meshes.AttributeName
 import rendering.meshes.MeshMap
 import rendering.meshes.createVertexSchemas
 import scenery.*
 
-fun gatherEffectsData(dimensions: Vector2i, scene: Scene): EffectsData {
+fun gatherEffectsData(dimensions: Vector2i, scene: Scene, cameraEffectsData: CameraEffectsData): EffectsData {
   return EffectsData(
-      createCameraEffectsData(dimensions, scene.camera),
+      cameraEffectsData,
       Matrix().ortho(0.0f, dimensions.x.toFloat(), 0.0f, dimensions.y.toFloat(), 0f, 100f),
       scene.lights
   )
@@ -79,11 +77,14 @@ class Renderer {
 //    glow.state.clearColor = Vector4(1f, 0.95f, 0.9f, 1f)
   }
 
-  fun createEffects(scene: Scene, dimensions: Vector2i) =
-      createEffects(shaders, gatherEffectsData(dimensions, scene), sectorBuffer)
+  fun createEffects(scene: Scene, dimensions: Vector2i, cameraEffectsData: CameraEffectsData) =
+      createEffects(shaders, gatherEffectsData(dimensions, scene, cameraEffectsData), sectorBuffer)
 
   fun createSceneRenderer(scene: Scene, viewport: Vector4i): SceneRenderer {
-    return SceneRenderer(viewport, this, createEffects(scene, Vector2i(viewport.z, viewport.w)))
+    val dimensions = Vector2i(viewport.z, viewport.w)
+    val cameraEffectsData = createCameraEffectsData(dimensions, scene.camera)
+    val effects = createEffects(scene, dimensions, cameraEffectsData)
+    return SceneRenderer(viewport, this, effects, cameraEffectsData)
   }
 
   fun prepareRender(windowInfo: WindowInfo) {
@@ -108,7 +109,8 @@ class Renderer {
 class SceneRenderer(
     val viewport: Vector4i,
     val renderer: Renderer,
-    val effects: Effects
+    val effects: Effects,
+    val cameraEffectsData: CameraEffectsData
 ) {
 
   fun drawLine(start: Vector3, end: Vector3, color: Vector4, thickness: Float = 1f) {
@@ -141,6 +143,32 @@ class SceneRenderer(
     renderer.dynamicMesh.draw(DrawMethod.lines)
   }
 
+  fun drawText(content: String, position: Vector3, style: TextStyle) {
+    val modelTransform = Matrix()
+        .translate(position + Vector3(0f, 0f, 0f))
+
+    val transform2 = cameraEffectsData.transform * modelTransform
+//    val transform2 = modelTransform * cameraEffectsData.transform * modelTransform
+    val i2 = transform2.transform(Vector4(0f, 0f, 0f, 1f))
+    val i = Vector2(i2.x, i2.y) / i2.z
+//    val transform = modelTransform
+//    val pixelsToScalar = getUnitScaling(Vector2i(viewport.x, viewport.y))
+    val dimensions = Vector2i(viewport.z, viewport.w)
+    var pos = Vector2(((i.x + 1)  / 2) * dimensions.x, (1 - ((i.y + 1)  / 2)) * dimensions.y)
+    val config = TextConfiguration(content, pos, style)
+    val textDimensions = calculateTextDimensions(config)
+    pos.x -= textDimensions.x / 2f
+    val pixelsToScalar =  Matrix().scale(1f / dimensions.x, 1f / dimensions.y, 1f)
+    val transform = prepareTextMatrix(pixelsToScalar, pos)
+
+    drawTextRaw(
+        config,
+        renderer.shaders.drawing.coloredImage,
+        renderer.vertexSchemas.drawing.image,
+        transform
+    )
+  }
+
   val meshes: MeshMap
     get() = renderer.meshes
 }
@@ -161,7 +189,7 @@ class GameSceneRenderer(
     val childDetails = scene.elementDetails.children[element.id]
     if (childDetails != null) {
       val mesh = lookupMesh(element.depiction)
-      humanPainter(mesh)(element, renderer.effects, childDetails)
+      humanPainter(renderer, mesh)(element, renderer.effects, childDetails)
     } else {
       val mesh = lookupMesh(element.depiction)
       simplePainter(mesh)(element, renderer.effects)

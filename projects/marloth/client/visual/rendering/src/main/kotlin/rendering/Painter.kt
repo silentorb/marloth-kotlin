@@ -1,8 +1,10 @@
 package rendering
 
+import mythic.drawing.Canvas
 import mythic.glowing.DrawMethod
-import mythic.spatial.Pi
-import mythic.spatial.getRotationMatrix
+import mythic.glowing.globalState
+import mythic.spatial.*
+import mythic.typography.TextStyle
 import rendering.meshes.MeshMap
 import rendering.meshes.ModelElements
 import scenery.ChildDetails
@@ -23,7 +25,7 @@ fun simplePainter(elements: ModelElements) =
       }
     }
 
-fun humanPainter(elements: ModelElements) =
+fun humanPainter(renderer: SceneRenderer, elements: ModelElements) =
     { element: VisualElement, effects: Effects, childDetails: ChildDetails ->
       val transform = element.transform.rotateZ(Pi / 2).scale(2f)
       val orientationTransform = getRotationMatrix(element.transform)
@@ -42,6 +44,13 @@ fun humanPainter(elements: ModelElements) =
         effects.colored.activate(element.transform, material.color, material.glow, orientationTransform)
         e.mesh.draw(DrawMethod.triangleFan)
       }
+
+      val textStyle = TextStyle(renderer.renderer.fonts[0], 12f, Vector4(1f))
+      globalState.depthEnabled = false
+      val position = element.transform.getTranslation(Vector3())
+
+      renderer.drawText("Hello World", position, textStyle)
+      globalState.depthEnabled = true
     }
 
 val simplePainterMap = mapOf(

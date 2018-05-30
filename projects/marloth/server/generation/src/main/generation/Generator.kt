@@ -70,7 +70,7 @@ fun placeWallLamps(world: World, instantiator: Instantiator, dice: Dice, scale: 
   val count = (10f * scale).toInt()
   val nodes = dice.getList(world.meta.locationNodes, count)
   nodes.forEach { node ->
-    val wall = dice.getItem(node.walls)
+    val wall = dice.getItem(node.walls.filter { getFaceInfo(it).type == FaceType.wall})
     val edge = wall.edges[0]
     val position = getVector3Center(edge.first, edge.second) +
         Vector3(0f, 0f, 0.9f) + wall.normal * -0.1f

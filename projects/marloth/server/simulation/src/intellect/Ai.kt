@@ -62,7 +62,7 @@ fun moveSpirit(spirit: Spirit): SpiritUpdateResult {
 
   if (face == null) {
 //    throw Error("Not supported")
-    println("Not supported!!!")
+//    println("Not supported!!!")
     return SpiritUpdateResult(spirit.state)
   } else {
     val edge = getFloor(face)

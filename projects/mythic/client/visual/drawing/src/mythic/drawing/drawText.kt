@@ -42,7 +42,7 @@ fun renderText(config: TextConfiguration, effect: ColoredImageShader, textPackag
 fun <T>drawTextRaw(config: TextConfiguration, effect: ColoredImageShader, vertexSchema: VertexSchema<T>, transform: Matrix) {
   val textPackage = prepareText(config, vertexSchema)
   if (textPackage != null) {
-    val transform = prepareTextMatrix(transform, config.position)
+//    val transform = prepareTextMatrix(transform, config.position)
     renderText(config, effect, textPackage, transform)
     textPackage.mesh.dispose()
   }
