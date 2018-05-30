@@ -156,7 +156,7 @@ class Canvas(
 
   fun drawText(content: String, position: Vector2, style: TextStyle) {
     val transform = prepareTextMatrix(pixelsToScalar, position)
-    drawTextRaw(TextConfiguration(content, position, style), effects.coloredImage, vertexSchemas.image, pixelsToScalar)
+    drawTextRaw(TextConfiguration(content, position, style), effects.coloredImage, vertexSchemas.image, transform)
   }
 
   fun crop(value: Vector4i, action: () -> Unit) = cropStack(value, action)
