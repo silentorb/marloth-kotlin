@@ -33,14 +33,14 @@ class CharacterDefinitions {
 val characterDefinitions = CharacterDefinitions()
 
 val doodadBodyAttributes = BodyAttributes(
-    resistance = 0.1f
+    resistance = 4f
 )
 
 val missileBodyAttributes = BodyAttributes(
-    resistance = 1f
+    resistance = 0f
 )
 
 val characterBodyAttributes = BodyAttributes(
-    resistance = 8f
+    resistance = 4f
 //        resistance = 8f
 )

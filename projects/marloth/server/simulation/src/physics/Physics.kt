@@ -43,7 +43,7 @@ fun moveBody(world: AbstractWorld, body: Body, offset: Vector3, delta: Float): B
 
   val oldVelocity = body.velocity
 //  body.velocity = Vector3(body.velocity).normalize() * (body.velocity.length() - body.attributes.resistance * delta)
-  body.velocity *= 1 - 4f * delta
+  body.velocity *= 1 - body.attributes.resistance * delta
 //  println("" + body.hashCode() + ", " + oldVelocity.length() + ", " + body.velocity.length())
   if (body.velocity.length() < 0.01f) {
     body.velocity.zero()

@@ -83,7 +83,7 @@ fun getWallCollisionMovementOffset(walls: List<Triple<FlexibleFace, Vector2, Flo
 //    if (Math.abs(angle) <= Pi) {
     if (Math.abs(slideVectors[1].dot(walls[0].first.normal)) > 0.05f) {
       val dot2 = offset.dot(walls[0].first.normal + walls[0].first.normal)
-      println(dot2)
+//      println(dot2)
 //        if (dot2 < 0f) {
       return WallCollision(walls.map { it.first }, gapVectors[0] + gapVectors[1])
 //        println(offset)
@@ -254,7 +254,7 @@ fun updatePlayerRotation(player: Player, delta: Float) {
       if (hoverCamera.pitch < pitchMin)
         hoverCamera.pitch = pitchMin
 
-      println("p " + hoverCamera.pitch + ", y" + hoverCamera.yaw + " |  vp " + player.lookVelocity.y + ",vy " + player.lookVelocity.z)
+//      println("p " + hoverCamera.pitch + ", y" + hoverCamera.yaw + " |  vp " + player.lookVelocity.y + ",vy " + player.lookVelocity.z)
     }
     player.lookVelocity.y = Math.min(m.pitch.max, velocity.y * (1 - m.pitch.drag * delta))
     player.lookVelocity.z = Math.min(m.yaw.max, velocity.z * (1 - m.yaw.drag * delta))

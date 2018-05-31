@@ -49,7 +49,7 @@ fun humanPainter(renderer: SceneRenderer, elements: ModelElements) =
       globalState.depthEnabled = false
       val position = element.transform.getTranslation(Vector3())
 
-      renderer.drawText("Hello World", position, textStyle)
+//      renderer.drawText("Hello World", position, textStyle)
       globalState.depthEnabled = true
     }
 
