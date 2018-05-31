@@ -126,11 +126,18 @@ val playerMoveMap = mapOf(
     CommandType.moveDown to Vector3(0f, -1f, 0f)
 )
 
-val playerLookMap = mapOf(
+val playerLookMapFP = mapOf(
     CommandType.lookLeft to Vector3(0f, 0f, 1f),
     CommandType.lookRight to Vector3(0f, 0f, -1f),
     CommandType.lookUp to Vector3(0f, -1f, 0f),
     CommandType.lookDown to Vector3(0f, 1f, 0f)
+)
+
+val playerLookMapTP = mapOf(
+    CommandType.lookLeft to Vector3(0f, 0f, 1f),
+    CommandType.lookRight to Vector3(0f, 0f, -1f),
+    CommandType.lookUp to Vector3(0f, 1f, 0f),
+    CommandType.lookDown to Vector3(0f, -1f, 0f)
 )
 
 val playerAttackMap = mapOf(
@@ -168,6 +175,9 @@ fun playerMove(player: Player, commands: Commands<CommandType>): Force? {
   if (offset != null) {
     if (player.viewMode == ViewMode.firstPerson) {
       offset = (Quaternion().rotateZ(player.character.facingRotation.z - Pi / 2) * offset)!!
+    } else if (player.viewMode == ViewMode.thirdPerson) {
+      offset = (Quaternion().rotateZ(player.hoverCamera.yaw + Pi / 2) * offset)!!
+      setCharacterFacing(player.character, offset)
     } else {
       setCharacterFacing(player.character, offset)
     }
@@ -177,28 +187,81 @@ fun playerMove(player: Player, commands: Commands<CommandType>): Force? {
   }
 }
 
-fun playerRotate(player: Player, commands: Commands<CommandType>, delta: Float) {
-  val deltaFixer = 180f
-  val speed = Vector3(1f, 0.01f * deltaFixer, 0.03f * deltaFixer)
-  val offset = joinInputVector(commands, playerLookMap)
+fun playerRotateFP(player: Player, commands: Commands<CommandType>, delta: Float) {
+  val speed = Vector3(1f, 1.8f, 5.4f)
+  val offset = joinInputVector(commands, playerLookMapFP)
 
   if (offset != null) {
     player.lookVelocity += offset * speed * delta
   }
 }
 
+fun playerRotateTP(player: Player, commands: Commands<CommandType>, delta: Float) {
+  val speed = Vector3(1f, 3.4f, 6.4f)
+//  val speed = Vector3(1f, 3.4f, 1f)
+  val offset = joinInputVector(commands, playerLookMapTP)
+
+  if (offset != null) {
+    player.lookVelocity += offset * speed * delta
+  }
+}
+
+data class MomentumConfig(
+    val max: Float,
+    val drag: Float
+)
+
+data class MomentumConfig2(
+    val yaw: MomentumConfig,
+    val pitch: MomentumConfig
+)
+
+private val thirdPersonLookMomentum = MomentumConfig2(
+    MomentumConfig(1.7f, 4f),
+    MomentumConfig(1f, 4f)
+)
+
+private val firstPersonLookMomentum = MomentumConfig2(
+    MomentumConfig(3f, 4f),
+    MomentumConfig(1f, 4f)
+)
+
+
 fun updatePlayerRotation(player: Player, delta: Float) {
+  if (player.viewMode == ViewMode.topDown)
+    return
+
   val velocity = player.lookVelocity
+  val deltaVelocity = velocity * delta
   if (velocity.y != 0f || velocity.z != 0f) {
-    val max = 1f
-    val maxZ = max * 3f
-    player.character.facingRotation += velocity * delta
-    val mod = 1 - 4f * delta
-    player.lookVelocity.y = Math.min(max, velocity.y * mod)
-    player.lookVelocity.z = Math.min(maxZ, velocity.z * mod)
+    val m = if (player.viewMode == ViewMode.firstPerson)
+      firstPersonLookMomentum
+    else
+      thirdPersonLookMomentum
+
+    if (player.viewMode == ViewMode.firstPerson)
+      player.character.facingRotation += deltaVelocity
+    else {
+      val hoverCamera = player.hoverCamera
+      hoverCamera.pitch += deltaVelocity.y
+      hoverCamera.yaw += deltaVelocity.z
+      val pitchMin = -0.9f
+      val pitchMax = -0.1f
+
+      if (hoverCamera.pitch > pitchMax)
+        hoverCamera.pitch = pitchMax
+
+      if (hoverCamera.pitch < pitchMin)
+        hoverCamera.pitch = pitchMin
+
+      println("p " + hoverCamera.pitch + ", y" + hoverCamera.yaw + " |  vp " + player.lookVelocity.y + ",vy " + player.lookVelocity.z)
+    }
+    player.lookVelocity.y = Math.min(m.pitch.max, velocity.y * (1 - m.pitch.drag * delta))
+    player.lookVelocity.z = Math.min(m.yaw.max, velocity.z * (1 - m.yaw.drag * delta))
     if (Vector2(velocity.y, velocity.z).length() < 0.01f) {
       player.lookVelocity.zero()
     }
+
   }
 }
 

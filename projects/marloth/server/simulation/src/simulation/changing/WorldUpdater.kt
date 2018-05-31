@@ -3,7 +3,6 @@ package simulation.changing
 import commanding.CommandType
 import haft.Commands
 import intellect.CharacterResult
-import intellect.getAiCharacters
 import intellect.updateSpirit
 import mythic.spatial.Quaternion
 import physics.applyForces
@@ -34,7 +33,9 @@ class WorldUpdater(val world: World, val instantiator: Instantiator) {
     }
 
     if (player.viewMode == ViewMode.firstPerson) {
-      playerRotate(player, commands, delta)
+      playerRotateFP(player, commands, delta)
+    } else if (player.viewMode == ViewMode.thirdPerson) {
+      playerRotateTP(player, commands, delta)
     }
 
     return CharacterResult(

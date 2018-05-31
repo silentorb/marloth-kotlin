@@ -9,9 +9,9 @@ enum class ViewMode {
 }
 
 data class HoverCamera(
-    var pitch: Float = 0f,
+    var pitch: Float = -0.4f,
     var yaw: Float = 0f,
-    var distance: Float = 1f
+    var distance: Float = 8f
 )
 
 class Player(

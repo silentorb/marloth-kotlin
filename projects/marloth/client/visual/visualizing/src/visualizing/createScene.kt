@@ -25,7 +25,7 @@ fun createThirdPersonCamera(body: Body, hoverCamera: HoverCamera): Camera {
       .rotateZ(hoverCamera.yaw)
       .rotateY(hoverCamera.pitch)
 
-  val position = orientation * Vector3(12f, 0f, 0f)
+  val position = orientation * Vector3(hoverCamera.distance, 0f, 0f)
   val orientationSecond = Quaternion().rotateTo(Vector3(1f, 0f, 0f), -position)
   return Camera(ProjectionType.perspective, position + body.position, orientationSecond, 45f)
 //  return Camera(
