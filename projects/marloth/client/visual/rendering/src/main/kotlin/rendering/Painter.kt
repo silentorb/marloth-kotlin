@@ -30,7 +30,7 @@ fun humanPainter(renderer: SceneRenderer, elements: ModelElements) =
       val transform = element.transform.rotateZ(Pi / 2).scale(2f)
       val orientationTransform = getRotationMatrix(element.transform)
       val gender = childDetails.gender
-      val commonParts = listOf("child", "eyes")
+      val commonParts = listOf("child", "eyes", "face")
       val girlParts = listOf("hair", "leaf_dress")
       val boyParts = listOf("boy-hair", "boy-clothes")
       val parts = commonParts.plus(if (gender == Gender.female)

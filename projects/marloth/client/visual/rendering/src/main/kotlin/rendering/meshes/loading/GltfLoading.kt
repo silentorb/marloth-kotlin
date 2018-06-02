@@ -9,8 +9,8 @@ import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
 
-fun loadGltfByteBuffer(name: String, info: GltfInfo): ByteBuffer {
-  val inputStream = loadBinaryResource(name + ".bin")
+fun loadGltfByteBuffer(directoryPath: String, info: GltfInfo): ByteBuffer {
+  val inputStream = loadBinaryResource(directoryPath + "/" + info.buffers[0].uri)
   val dataStream = DataInputStream(inputStream)
   val buffer = BufferUtils.createByteBuffer(info.buffers[0].byteLength)
   dataStream.use {
@@ -48,7 +48,7 @@ fun selectBufferIterator(componentType: Int): BufferIterator =
 
 fun parseIndices(buffer: ByteBuffer, info: GltfInfo, primitive: Primitive): IntBuffer {
   val indexAccessor = info.accessors[primitive.indices]
-  val bufferView = info.bufferViews[primitive.indices]
+  val bufferView = info.bufferViews[indexAccessor.bufferView]
 
   val triangleCount = indexAccessor.count / 3
   val indexCount = triangleCount * 3
@@ -60,10 +60,12 @@ fun parseIndices(buffer: ByteBuffer, info: GltfInfo, primitive: Primitive): IntB
 }
 
 fun parseVertices(buffer: ByteBuffer, info: GltfInfo, vertexSchema: VertexSchema, primitive: Primitive): FloatBuffer {
-  val vertexCount = info.accessors[primitive.attributes[AttributeType.POSITION]!!].count
+  val vertexAccessor = info.accessors[primitive.attributes[AttributeType.POSITION]!!]
+  val vertexCount = vertexAccessor.count
   val vertices = BufferUtils.createFloatBuffer(3 * 2 * vertexCount)
   for (attribute in primitive.attributes) {
-    val bufferView = info.bufferViews[attribute.value]
+    val attributeAccessor = info.accessors[attribute.value]
+    val bufferView = info.bufferViews[attributeAccessor.bufferView]
     buffer.position(bufferView.byteOffset)
     val mappedAttribute = attributeMap[attribute.key]
     if (mappedAttribute == null)
@@ -82,35 +84,40 @@ fun parseVertices(buffer: ByteBuffer, info: GltfInfo, vertexSchema: VertexSchema
   return vertices
 }
 
-fun loadGltf(vertexSchemas: VertexSchemas, name: String): ModelElements {
-  val info = loadJsonResource<GltfInfo>(name + ".gltf")
-  val buffer = loadGltfByteBuffer(name, info)
+fun loadPrimitive(primitive: Primitive, name: String, buffer: ByteBuffer, info: GltfInfo,
+                  vertexSchema: VertexSchema): ModelElement {
+  val vertices = parseVertices(buffer, info, vertexSchema, primitive)
+  val indices = parseIndices(buffer, info, primitive)
+
+  vertices.position(0)
+  indices.position(0)
+
+  val materialSource = info.materials[primitive.material]
+  val color = materialSource.pbrMetallicRoughness.baseColorFactor // arrayToVector4()
+  val glow = if (materialSource.emissiveFactor != null && materialSource.emissiveFactor.first() != 0f)
+    color.x / materialSource.emissiveFactor.first()
+  else
+    0f
+
+  return ModelElement(
+      mesh = SimpleTriangleMesh(vertexSchema, vertices, indices),
+      material = Material(
+          color = color,
+          glow = glow
+      ),
+      name = name
+  )
+}
+
+fun loadGltf(vertexSchemas: VertexSchemas, resourcePath: String): ModelElements {
+  val info = loadJsonResource<GltfInfo>(resourcePath + ".gltf")
+  val directoryPath = resourcePath.split("/").dropLast(1).joinToString("/")
+  val buffer = loadGltfByteBuffer(directoryPath, info)
   val vertexSchema = vertexSchemas.imported
 
   val result = info.meshes.flatMap { mesh -> mesh.primitives.map { Pair(it, mesh.name) } }.map { pair ->
     val (primitive, name) = pair
-
-    val vertices = parseVertices(buffer, info, vertexSchema, primitive)
-    val indices = parseIndices(buffer, info, primitive)
-
-    vertices.position(0)
-    indices.position(0)
-
-    val materialSource = info.materials[primitive.material]
-    val color = materialSource.pbrMetallicRoughness.baseColorFactor // arrayToVector4()
-    val glow = if (materialSource.emissiveFactor != null)
-      color.x / materialSource.emissiveFactor!!.first()
-    else
-      0f
-
-    ModelElement(
-        mesh = SimpleTriangleMesh(vertexSchema, vertices, indices),
-        material = Material(
-            color = color,
-            glow = glow
-        ),
-        name = name
-    )
+    loadPrimitive(primitive, name.replace(".001", ""), buffer, info, vertexSchema)
   }
 
   return result

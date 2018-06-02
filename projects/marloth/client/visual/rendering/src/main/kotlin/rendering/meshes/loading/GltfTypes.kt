@@ -52,14 +52,16 @@ data class Accessor(
     val bufferView: Int,
     val componentType: Int,
     val count: Int,
-    val type: AccessorType
+    val type: AccessorType,
+    val name: String?
 )
 
 data class BufferView(
     val buffer: Int,
     val byteLength: Int,
     val byteOffset: Int,
-    val target: Int
+    val target: Int,
+    val name: String?
 )
 
 data class Node(
@@ -70,7 +72,8 @@ data class Node(
 )
 
 data class BufferInfo(
-    val byteLength: Int
+    val byteLength: Int,
+    val uri: String
 )
 
 data class Primitive(
