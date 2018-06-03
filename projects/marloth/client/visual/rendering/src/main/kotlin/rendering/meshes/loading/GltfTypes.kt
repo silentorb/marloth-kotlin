@@ -64,7 +64,7 @@ data class BufferView(
     val name: String?
 )
 
-data class Node(
+data class IndexedNode(
     val name: String,
     val children: List<Int>?,
     val rotation: Vector4?,
@@ -126,18 +126,18 @@ data class AnimationSampler(
     val output: Int
 )
 
-data class Animation(
+data class IndexedAnimation(
     val channels: List<AnimationChannel>,
     val samplers: List<AnimationSampler>
 )
 
 data class GltfInfo(
     val accessors: List<Accessor>,
-    val animations: List<Animation>?,
+    val animations: List<IndexedAnimation>?,
     val bufferViews: List<BufferView>,
     val buffers: List<BufferInfo>,
     val meshes: List<MeshInfo2>,
     val materials: List<MaterialInfo>,
-    val nodes: List<Node>,
+    val nodes: List<IndexedNode>,
     val skins: List<Skin>?
 )

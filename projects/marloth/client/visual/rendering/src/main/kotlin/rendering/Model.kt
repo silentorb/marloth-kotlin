@@ -5,7 +5,7 @@ import mythic.sculpting.FlexibleMesh
 import mythic.spatial.Vector3
 import rendering.meshes.Faces
 import rendering.meshes.MeshInfo
-
+import rendering.meshes.Primitives
 data class MeshGroup(
     val material: Material,
     val faces: Faces,
@@ -28,3 +28,8 @@ data class Model(
   val vertices: List<Vector3> get() = mesh.distinctVertices
   val edges: List<FlexibleEdge> get() = mesh.edges
 }
+
+data class AdvancedModel(
+    val primitives: Primitives,
+    val armature: Armature? = null
+)

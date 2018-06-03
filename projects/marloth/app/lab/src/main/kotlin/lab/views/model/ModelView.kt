@@ -10,7 +10,7 @@ import rendering.*
 import scenery.Camera
 import lab.views.*
 import mythic.sculpting.*
-import rendering.meshes.ModelElements
+import rendering.meshes.Primitives
 
 data class ModelLayout(
     val boxes: List<Box>,
@@ -164,17 +164,17 @@ fun loadGeneratedModel(config: ModelViewConfig, renderer: Renderer): Model {
     Model(FlexibleMesh(), listOf())
 }
 
-fun loadExternalMesh(config: ModelViewConfig, renderer: Renderer): ModelElements? {
+fun loadExternalMesh(config: ModelViewConfig, renderer: Renderer): Primitives? {
   val generator = renderer.meshGenerators[config.model]
   return if (generator != null)
     null
   else
-    renderer.meshes[config.model]
+    renderer.meshes[config.model]!!.primitives
 }
 
 class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePosition: Vector2i) {
   val model: Model = loadGeneratedModel(config, renderer)
-  val externalMesh: ModelElements? = loadExternalMesh(config, renderer)
+  val externalMesh: Primitives? = loadExternalMesh(config, renderer)
   val camera = createOrthographicCamera(config.camera)
 
   init {

@@ -1,12 +1,10 @@
 package rendering
 
-import mythic.drawing.Canvas
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
 import mythic.spatial.*
 import mythic.typography.TextStyle
-import rendering.meshes.MeshMap
-import rendering.meshes.ModelElements
+import rendering.meshes.Primitives
 import scenery.ChildDetails
 import scenery.DepictionType
 import scenery.Gender
@@ -15,7 +13,7 @@ import scenery.VisualElement
 //typealias Painter = (VisualElement, Effects, ElementDetails) -> Unit
 //typealias Painters = Map<DepictionType, Painter>
 
-fun simplePainter(elements: ModelElements) =
+fun simplePainter(elements: Primitives) =
     { element: VisualElement, effects: Effects ->
       val orientationTransform = getRotationMatrix(element.transform)
       for (e in elements) {
@@ -25,7 +23,7 @@ fun simplePainter(elements: ModelElements) =
       }
     }
 
-fun humanPainter(renderer: SceneRenderer, elements: ModelElements) =
+fun humanPainter(renderer: SceneRenderer, elements: Primitives) =
     { element: VisualElement, effects: Effects, childDetails: ChildDetails ->
       val transform = element.transform.rotateZ(Pi / 2).scale(2f)
       val orientationTransform = getRotationMatrix(element.transform)

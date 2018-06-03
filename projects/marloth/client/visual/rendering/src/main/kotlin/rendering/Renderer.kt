@@ -189,10 +189,10 @@ class GameSceneRenderer(
     val childDetails = scene.elementDetails.children[element.id]
     if (childDetails != null) {
       val mesh = lookupMesh(element.depiction)
-      humanPainter(renderer, mesh)(element, renderer.effects, childDetails)
+      humanPainter(renderer, mesh.primitives)(element, renderer.effects, childDetails)
     } else {
       val mesh = lookupMesh(element.depiction)
-      simplePainter(mesh)(element, renderer.effects)
+      simplePainter(mesh.primitives)(element, renderer.effects)
     }
   }
 

@@ -40,7 +40,7 @@ fun renderFaceNormals(renderer: SceneRenderer, length: Float, mesh: FlexibleMesh
         .scale(length)
 
     renderer.effects.flat.activate(transform, Vector4(0f, 1f, 0f, 1f))
-    renderer.meshes[MeshType.line]!![0].mesh.draw(DrawMethod.lines)
+    renderer.meshes[MeshType.line]!!.primitives[0].mesh.draw(DrawMethod.lines)
   }
 }
 

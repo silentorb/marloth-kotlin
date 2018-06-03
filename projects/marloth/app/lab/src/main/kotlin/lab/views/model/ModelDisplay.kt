@@ -10,8 +10,8 @@ import mythic.glowing.viewportStack
 import mythic.spatial.*
 import org.joml.*
 import rendering.*
-import rendering.meshes.ModelElement
-import rendering.meshes.ModelElements
+import rendering.meshes.Primitive
+import rendering.meshes.Primitives
 import rendering.meshes.modelToMeshes
 import scenery.Camera
 import scenery.ProjectionType
@@ -27,7 +27,7 @@ fun createOrthographicCamera(camera: ViewCameraConfig): Camera {
   return Camera(ProjectionType.orthographic, position + camera.pivot, orientationSecond, camera.zoom)
 }
 
-fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, transform: Matrix, section: ModelElement) {
+fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, transform: Matrix, section: Primitive) {
   val mesh = section.mesh
 
   globalState.depthEnabled = true
@@ -94,15 +94,15 @@ fun drawSelection(config: ModelViewConfig, model: Model, sceneRenderer: SceneRen
 }
 
 fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, camera: Camera, model: Model,
-                     modelElements: ModelElements?) {
+                     primitives: Primitives?) {
   val panelDimensions = Vector2i(b.dimensions.x.toInt(), b.dimensions.y.toInt())
   val viewport = Vector4i(b.position.x.toInt(), b.position.y.toInt(), panelDimensions.x, panelDimensions.y)
   viewportStack(viewport, {
     val sceneRenderer = renderer.createSceneRenderer(Scene(camera), viewport)
     val transform = Matrix()
 
-    if (modelElements != null) {
-      modelElements
+    if (primitives != null) {
+      primitives
           .filterIndexed { i, it -> config.visibleGroups[i] }
           .forEach { drawMeshPreview(config, sceneRenderer, transform, it) }
     } else {

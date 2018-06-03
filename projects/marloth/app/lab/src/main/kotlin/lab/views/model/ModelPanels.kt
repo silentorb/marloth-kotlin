@@ -8,27 +8,20 @@ import lab.views.shared.drawSelectableEnumList
 import lab.views.shared.drawSelectableList
 import mythic.bloom.*
 import mythic.drawing.Canvas
-import mythic.drawing.grayTone
-import mythic.glowing.globalState
 import mythic.spatial.Vector2
-import mythic.spatial.Vector3
-import mythic.spatial.Vector4
 import mythic.spatial.toString
-import mythic.typography.TextConfiguration
 import mythic.typography.TextStyle
-import mythic.typography.calculateTextDimensions
 import org.joml.Vector2i
 import org.joml.plus
 import rendering.MeshType
 import rendering.Model
 import rendering.Renderer
-import rendering.meshes.ModelElements
+import rendering.meshes.Primitives
 import scenery.Camera
-import java.text.DecimalFormat
 
-fun drawScenePanel(config: ModelViewConfig, renderer: Renderer, model: Model, camera: Camera, modelElements: ModelElements?): Depiction = { b: Bounds, canvas: Canvas ->
+fun drawScenePanel(config: ModelViewConfig, renderer: Renderer, model: Model, camera: Camera, primitives: Primitives?): Depiction = { b: Bounds, canvas: Canvas ->
   drawBackground(sceneBackgroundColor)(b, canvas)
-  drawModelPreview(config, renderer, b, camera, model, modelElements)
+  drawModelPreview(config, renderer, b, camera, model, primitives)
 }
 
 fun drawSidePanel() = drawBackground(panelColor)
@@ -84,7 +77,7 @@ fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: Model,
 }
 
 fun drawLeftPanel(meshTypes: List<MeshType>, config: ModelViewConfig, model: Model,
-                  externalMesh: ModelElements?) = { bounds: Bounds ->
+                  externalMesh: Primitives?) = { bounds: Bounds ->
   val gap = 2f
   val halfGap = gap / 2
   val halfDimensions = Vector2(bounds.dimensions.x, bounds.dimensions.y / 2 - halfGap)

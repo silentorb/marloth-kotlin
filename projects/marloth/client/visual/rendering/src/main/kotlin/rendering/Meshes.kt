@@ -40,8 +40,8 @@ fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     .plus(standardMeshes().mapValues {
       modelToMeshes(vertexSchemas, it.value())
     })
+    .mapValues { AdvancedModel(it.value) }
     .plus(importedMeshes(vertexSchemas))
-
 
 fun importedMeshes(vertexSchemas: VertexSchemas) = mapOf(
     MeshType.wallLamp to "lamp",

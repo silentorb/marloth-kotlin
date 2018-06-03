@@ -4,9 +4,10 @@ import mythic.glowing.Drawable
 import mythic.glowing.SimpleMesh
 import mythic.sculpting.FlexibleFace
 import mythic.sculpting.FlexibleMesh
+import mythic.spatial.Quaternion
+import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import rendering.*
-import scenery.Id
 
 enum class AttributeName {
   position,
@@ -31,14 +32,15 @@ typealias ModelGenerator = () -> Model
 
 typealias ModelGeneratorMap = Map<MeshType, ModelGenerator>
 
-data class ModelElement(
+data class Primitive(
     val mesh: Drawable,
     val material: Material,
     val name: String = ""
 )
 
-typealias ModelElements = List<ModelElement>
-typealias MeshMap = Map<MeshType, ModelElements>
+typealias Primitives = List<Primitive>
+
+typealias MeshMap = Map<MeshType, AdvancedModel>
 
 data class TransientModelElement(
     val faces: List<FlexibleFace>,
@@ -54,12 +56,12 @@ fun partitionModelMeshes(model: Model): List<TransientModelElement> {
   }
 }
 
-fun modelToMeshes(vertexSchemas: VertexSchemas, model: Model): ModelElements {
+fun modelToMeshes(vertexSchemas: VertexSchemas, model: Model): Primitives {
   val sections = partitionModelMeshes(model)
   return sections.map {
-    ModelElement(createSimpleMesh(it.faces, vertexSchemas.standard, Vector4(1f)), it.material)
+    Primitive(createSimpleMesh(it.faces, vertexSchemas.standard, Vector4(1f)), it.material)
   }
 }
 
 fun createModelElements(simpleMesh: SimpleMesh<AttributeName>, color: Vector4 = Vector4(1f)) =
-    listOf(ModelElement(simpleMesh, Material(color)))
+    listOf(Primitive(simpleMesh, Material(color)))
