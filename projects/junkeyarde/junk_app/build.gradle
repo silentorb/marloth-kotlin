@@ -1,1 +1,6 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
+
+requires(
+        'spatial', 'drawing', 'bloom', 'mythic_desktop',
+        'quartz', 'platforming', 'configuration', 'junk_client'
+)

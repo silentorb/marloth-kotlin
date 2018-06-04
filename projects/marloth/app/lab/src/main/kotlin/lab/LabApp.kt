@@ -113,7 +113,6 @@ fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
   val app = LabApp(platform, config, gameConfig)
   setWorldMesh(app.world.meta, app.client)
   labLoop(app, LabState(mapOf(), initialGameInputState(), initialMenuState()))
-
 }
 
 object App {
