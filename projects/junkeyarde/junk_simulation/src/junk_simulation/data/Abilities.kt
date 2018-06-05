@@ -6,14 +6,14 @@ class Abilities {
   companion object {
     val Wait = AbilityType(
         name = "Wait",
-        action = Actions.nothing,
+        action = ActionType.none,
         info = "Skips a turn",
         target = AbilityTarget.global,
         selectable = false
     )
     val Punch = AbilityType(
         name = "Punch",
-        action = Actions.attack,
+        action = ActionType.attack,
         arguments = listOf(
             0
         ),
@@ -25,7 +25,7 @@ class Abilities {
     )
     val Shotgun = AbilityType(
         name = "Shotgun",
-        action = Actions.attack,
+        action = ActionType.attack,
         arguments = listOf(
             2
         ),
@@ -40,7 +40,7 @@ class Abilities {
     )
     val Lightning = AbilityType(
         name = "Lightning",
-        action = Actions.attack,
+        action = ActionType.attack,
         arguments = listOf(
             1
         ),
@@ -55,7 +55,7 @@ class Abilities {
     )
     val Regeneration = AbilityType(
         name = "Regeneration",
-        action = Actions.heal_self,
+        action = ActionType.heal_self,
         arguments = listOf(
             0
         ),
@@ -82,31 +82,31 @@ class Abilities {
         info = "Allows a creature to attack twice each round if able"
     )
     val missileLauncher = AbilityType(
-    name = "Missile Launcher",
-    action = Actions.attack,
-    arguments = listOf(
-    3
-    ),
-    cost = mapOf(
-    Element.robot to 2
-    ),
-    target = AbilityTarget.element,
-    aiTarget = AbilityTarget.element,
-    info = "Has a chance to permanently damage a creature's element",
-    effect = Effects.missileAttack,
-    selectable = false,
-    cooldown = 1
+        name = "Missile Launcher",
+        action = ActionType.attack,
+        arguments = listOf(
+            3
+        ),
+        cost = mapOf(
+            Element.robot to 2
+        ),
+        target = AbilityTarget.element,
+        aiTarget = AbilityTarget.element,
+        info = "Has a chance to permanently damage a creature's element",
+        effect = Effects.missileAttack,
+        selectable = false,
+        cooldown = 1
     )
     val Poisoned = AbilityType(
         name = "Poisoned",
-        action = Actions.poisoned,
+        action = ActionType.poisoned,
         selectable = false,
         trigger = Triggers.update,
         info = "This creature is taking 1 point of damage per round and has any regeneration reduced"
     )
     val Poison = AbilityType(
         name = "Poison",
-        action = Actions.poison,
+        action = ActionType.poison,
         arguments = listOf(
             3
         ),
@@ -140,7 +140,7 @@ class Abilities {
     )
     val Flux = AbilityType(
         name = "Flux",
-        action = Actions.flux,
+        action = ActionType.flux,
         cost = mapOf(
             Element.ethereal to 1
         ),
@@ -157,21 +157,21 @@ class Abilities {
     )
     val Sacrifice = AbilityType(
         name = "Sacrifice",
-        action = Actions.sacrifice,
+        action = ActionType.sacrifice,
         trigger = Triggers.die,
         selectable = false,
         info = "When this creature dies, the creature who summoned it will be healed half of this creature's maximum element amount"
     )
     val Upkeep = AbilityType(
         name = "Upkeep",
-        action = Actions.upkeep,
+        action = ActionType.upkeep,
         trigger = Triggers.update,
         selectable = false,
         info = ""
     )
     val Grenade = AbilityType(
         name = "Grenade",
-        action = Actions.attack,
+        action = ActionType.attack,
         arguments = listOf(
             2
         ),
@@ -185,7 +185,7 @@ class Abilities {
     )
     val wallOfWind = AbilityType(
         name = "Wall of Wind",
-        action = Actions.summon,
+        action = ActionType.summon,
         arguments = listOf(
             "Wall of Wind",
             4
@@ -199,7 +199,7 @@ class Abilities {
     )
     val constructMinion = AbilityType(
         name = "Construct Minion",
-        action = Actions.summon,
+        action = ActionType.summon,
         arguments = listOf(
             "Construct Minion",
             4
@@ -213,7 +213,7 @@ class Abilities {
     )
     val summonSapper = AbilityType(
         name = "Summon Sapper",
-        action = Actions.summon,
+        action = ActionType.summon,
         arguments = listOf(
             "Summon Sapper",
             4

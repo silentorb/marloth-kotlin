@@ -15,22 +15,34 @@ data class Resource(
     val max: Int
 )
 
-data class Action(
-    val name: String
-)
+enum class ActionType {
+  attack,
+  flux,
+  heal_self,
+  none,
+  upkeep,
+  poison,
+  poisoned,
+  sacrifice,
+  summon
+}
 
 enum class AbilityTarget {
+  creature,
   global,
   element,
+  enemy,
   none
 }
 
 enum class Effects {
+  mass_damage,
   missileAttack,
   none
 }
 
 enum class Triggers {
+  die,
   none,
   update
 }
@@ -38,14 +50,15 @@ enum class Triggers {
 data class AbilityType(
     val name: String,
     val cooldown: Int = 0,
-    val action: Action,
+    val action: ActionType = ActionType.none,
     val info: String,
-    val target: AbilityTarget,
+    val target: AbilityTarget = AbilityTarget.none,
     val aiTarget: AbilityTarget = AbilityTarget.none,
     val selectable: Boolean = true,
     val effect: Effects = Effects.none,
-    val cost: Map<Element, Int>,
-    val trigger: Triggers = Triggers.none
+    val cost: Map<Element, Int> = mapOf(),
+    val trigger: Triggers = Triggers.none,
+    val arguments: List<Any> = listOf()
 )
 
 data class Ability(
