@@ -78,7 +78,7 @@ data class CharacterType(
     val name: String,
     val category: CharacterCategory,
     val elements: Map<Element, Int> = mapOf(),
-    val abilities: Map<AbilityType, Int> = mapOf(),
+    val abilities: List<Pair<AbilityType, Int>> = listOf(),
     val level: Int = 1,
     val frequency: Int = 0
 )

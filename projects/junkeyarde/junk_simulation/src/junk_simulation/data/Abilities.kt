@@ -4,14 +4,14 @@ import junk_simulation.*
 
 class Abilities {
   companion object {
-    val Wait = AbilityType(
+    val wait = AbilityType(
         name = "Wait",
         action = ActionType.none,
         info = "Skips a turn",
         target = AbilityTarget.global,
         selectable = false
     )
-    val Punch = AbilityType(
+    val punch = AbilityType(
         name = "Punch",
         action = ActionType.attack,
         arguments = listOf(
@@ -23,7 +23,7 @@ class Abilities {
         effect = Effects.missileAttack,
         cooldown = 0
     )
-    val Shotgun = AbilityType(
+    val shotgun = AbilityType(
         name = "Shotgun",
         action = ActionType.attack,
         arguments = listOf(
@@ -38,7 +38,7 @@ class Abilities {
         effect = Effects.missileAttack,
         cooldown = 1
     )
-    val Lightning = AbilityType(
+    val lightning = AbilityType(
         name = "Lightning",
         action = ActionType.attack,
         arguments = listOf(
@@ -53,7 +53,7 @@ class Abilities {
         effect = Effects.missileAttack,
         cooldown = 1
     )
-    val Regeneration = AbilityType(
+    val regeneration = AbilityType(
         name = "Regeneration",
         action = ActionType.heal_self,
         arguments = listOf(
@@ -65,7 +65,7 @@ class Abilities {
         trigger = Triggers.update,
         info = "Restores 1 of each element each round."
     )
-    val Circumvent = AbilityType(
+    val circumvent = AbilityType(
         name = "Circumvent",
         cost = mapOf(
             Element.robot to 0
@@ -97,14 +97,14 @@ class Abilities {
         selectable = false,
         cooldown = 1
     )
-    val Poisoned = AbilityType(
+    val poisoned = AbilityType(
         name = "Poisoned",
         action = ActionType.poisoned,
         selectable = false,
         trigger = Triggers.update,
         info = "This creature is taking 1 point of damage per round and has any regeneration reduced"
     )
-    val Poison = AbilityType(
+    val poison = AbilityType(
         name = "Poison",
         action = ActionType.poison,
         arguments = listOf(
@@ -119,26 +119,26 @@ class Abilities {
         cooldown = 1,
         info = "Poisoned creatures take 1 point of damage for each element per round and have any regeneration abilities reduced. Targets a creature, not its elements"
     )
-    val Armor = AbilityType(
+    val armor = AbilityType(
         name = "Armor",
         cost = mapOf(
             Element.robot to 0
         ),
         info = "Reduces the amount of damage received from an attack by 1 point per level. Has no effect on meta attacks and poison"
     )
-    val Small = AbilityType(
+    val small = AbilityType(
         name = "Small",
         selectable = false,
         info = "This creature cannot take more than %level% damage per attack"
     )
-    val Thorns = AbilityType(
+    val thorns = AbilityType(
         name = "Thorns",
         cost = mapOf(
             Element.plant to 1
         ),
         info = "Reflects a percentage of damage received back onto the attacker"
     )
-    val Flux = AbilityType(
+    val flux = AbilityType(
         name = "Flux",
         action = ActionType.flux,
         cost = mapOf(
@@ -148,28 +148,28 @@ class Abilities {
         cooldown = 2,
         info = "Restores a certain amount to each of your elements. Can increase an element beyond its maximum"
     )
-    val Recycle = AbilityType(
+    val recycle = AbilityType(
         name = "Recycle",
         cost = mapOf(
             Element.robot to 0
         ),
         info = "Regain a percentage of a killed enemy's elements. A greater yield for element types you share"
     )
-    val Sacrifice = AbilityType(
+    val sacrifice = AbilityType(
         name = "Sacrifice",
         action = ActionType.sacrifice,
         trigger = Triggers.die,
         selectable = false,
         info = "When this creature dies, the creature who summoned it will be healed half of this creature's maximum element amount"
     )
-    val Upkeep = AbilityType(
+    val upkeep = AbilityType(
         name = "Upkeep",
         action = ActionType.upkeep,
         trigger = Triggers.update,
         selectable = false,
         info = ""
     )
-    val Grenade = AbilityType(
+    val grenade = AbilityType(
         name = "Grenade",
         action = ActionType.attack,
         arguments = listOf(
