@@ -8,14 +8,15 @@ import junk_common.JunkScene
 import mythic.platforming.Platform
 
 class Client(val platform: Platform) {
-//  val renderer: Renderer = Renderer()
-//  val screens: List<Screen> = (1..maxPlayerCount).map { Screen(it) }
+  val renderer: Renderer = Renderer()
+  //  val screens: List<Screen> = (1..maxPlayerCount).map { Screen(it) }
   val gamepadAssignments: MutableMap<Int, Int> = mutableMapOf()
   val keyStrokeCommands: Map<CommandType, CommandHandler<CommandType>> = mapOf(
 //      CommandType.switchView to { command -> switchCameraMode(command.target, screens) },
 //      CommandType.menu to { command -> platform.process.close() }
   )
-//  val playerInputProfiles = defaultGameInputProfiles()
+
+  //  val playerInputProfiles = defaultGameInputProfiles()
 //  val menuInputProfiles = defaultMenuInputProfiles()
   fun getWindowInfo() = platform.display.getInfo()
 
@@ -61,12 +62,9 @@ class Client(val platform: Platform) {
 //    )
 //  }
 
-  fun update(scene: JunkScene, previousState: ProfileStates<CommandType>):
-      Pair<Commands<CommandType>, ProfileStates<CommandType>> {
-    throw Error("Outdated.  Will need updating.")
-//    val windowInfo = getWindowInfo()
-//    renderer.renderGameScenes(scenes, windowInfo)
-//    return updateInput(previousState, scenes.map { it.player })
+  fun render(scene: JunkScene) {
+    val windowInfo = getWindowInfo()
+    val canvas = createCanvas(windowInfo)
+    renderScene(renderer, scene, canvas, windowInfo)
   }
-
 }

@@ -1,0 +1,222 @@
+val Wait = CharacterType(
+name = "Wait",
+action = Actions.nothing,
+info = "Skips a turn",
+target = AbilityTarget.global,
+selectable = false
+)
+val Punch = CharacterType(
+name = "Punch",
+action = Actions.attack,
+arguments = listOf(
+0
+),
+target = AbilityTarget.element,
+ai_target = AbilityTarget.element,
+info = "Deals Damage",
+effect = Effects.missile_attack,
+cooldown = 0
+)
+val Shotgun = CharacterType(
+name = "Shotgun",
+action = Actions.attack,
+arguments = listOf(
+2
+),
+cost = mapOf(
+Element.robot = 1
+),
+target = AbilityTarget.element,
+ai_target = AbilityTarget.element,
+info = "Deals Damage",
+effect = Effects.missile_attack,
+cooldown = 1
+)
+val Lightning = CharacterType(
+name = "Lightning",
+action = Actions.attack,
+arguments = listOf(
+1
+),
+cost = mapOf(
+Element.meta = 1
+),
+target = AbilityTarget.element,
+ai_target = AbilityTarget.element,
+info = "Deals Damage. Ignores armor.",
+effect = Effects.missile_attack,
+cooldown = 1
+)
+val Regeneration = CharacterType(
+name = "Regeneration",
+action = Actions.heal_self,
+arguments = listOf(
+0
+),
+cost = mapOf(
+Element.plant = 0
+),
+trigger = Triggers.update,
+info = "Restores 1 of each element each round."
+)
+val Circumvent = CharacterType(
+name = "Circumvent",
+cost = mapOf(
+Element.robot = 0
+),
+selectable = false,
+info = "Allows a creature to bypass your summoned units"
+)
+val multipleAttack = CharacterType(
+name = "Multiple Attack",
+cost = mapOf(
+Element.robot = 0
+),
+selectable = false,
+info = "Allows a creature to attack twice each round if able"
+)
+val Missile Launcher = CharacterType(
+name = "Missile Launcher",
+action = Actions.attack,
+arguments = listOf(
+3
+),
+cost = mapOf(
+Element.robot = 2
+),
+target = AbilityTarget.element,
+ai_target = AbilityTarget.element,
+info = "Has a chance to permanently damage a creature's element",
+effect = Effects.missile_attack,
+selectable = false,
+cooldown = 1
+)
+val Poisoned = CharacterType(
+name = "Poisoned",
+action = Actions.poisoned,
+selectable = false,
+trigger = Triggers.update,
+info = "This creature is taking 1 point of damage per round and has any regeneration reduced"
+)
+val Poison = CharacterType(
+name = "Poison",
+action = Actions.poison,
+arguments = listOf(
+3
+),
+cost = mapOf(
+Element.plant = 1
+),
+target = AbilityTarget.creature,
+ai_target = AbilityTarget.enemy,
+effect = Effects.missile_attack,
+cooldown = 1,
+info = "Poisoned creatures take 1 point of damage for each element per round and have any regeneration abilities reduced. Targets a creature, not its elements"
+)
+val Armor = CharacterType(
+name = "Armor",
+cost = mapOf(
+Element.robot = 0
+),
+info = "Reduces the amount of damage received from an attack by 1 point per level. Has no effect on meta attacks and poison"
+)
+val Small = CharacterType(
+name = "Small",
+selectable = false,
+info = "This creature cannot take more than %level% damage per attack"
+)
+val Thorns = CharacterType(
+name = "Thorns",
+cost = mapOf(
+Element.plant = 1
+),
+info = "Reflects a percentage of damage received back onto the attacker"
+)
+val Flux = CharacterType(
+name = "Flux",
+action = Actions.flux,
+cost = mapOf(
+Element.meta = 1
+),
+target = AbilityTarget.global,
+cooldown = 2,
+info = "Restores a certain amount to each of your elements. Can increase an element beyond its maximum"
+)
+val Recycle = CharacterType(
+name = "Recycle",
+cost = mapOf(
+Element.robot = 0
+),
+info = "Regain a percentage of a killed enemy's elements. A greater yield for element types you share"
+)
+val Sacrifice = CharacterType(
+name = "Sacrifice",
+action = Actions.sacrifice,
+trigger = Triggers.die,
+selectable = false,
+info = "When this creature dies, the creature who summoned it will be healed half of this creature's maximum element amount"
+)
+val Upkeep = CharacterType(
+name = "Upkeep",
+action = Actions.upkeep,
+trigger = Triggers.update,
+selectable = false,
+info = ""
+)
+val Grenade = CharacterType(
+name = "Grenade",
+action = Actions.attack,
+arguments = listOf(
+2
+),
+cost = mapOf(
+Element.robot = 1
+),
+target = AbilityTarget.global,
+effect = Effects.mass_damage,
+cooldown = 3,
+info = "Deals damage to each creature in play except for the Grenade thrower."
+)
+val wallOfWind = CharacterType(
+name = "Wall of Wind",
+action = Actions.summon,
+arguments = listOf(
+"Wall of Wind",
+4
+),
+cost = mapOf(
+Element.meta = 2
+),
+target = AbilityTarget.global,
+cooldown = 2,
+info = "Summons a vaporous wall. Upkeep = 1 Ethereal element per round"
+)
+val constructMinion = CharacterType(
+name = "Construct Minion",
+action = Actions.summon,
+arguments = listOf(
+"Construct Minion",
+4
+),
+cost = mapOf(
+Element.robot = 2
+),
+target = AbilityTarget.global,
+cooldown = 2,
+info = "Summons a metal minion. Upkeep = 1 Robot element per round"
+)
+val summonSapper = CharacterType(
+name = "Summon Sapper",
+action = Actions.summon,
+arguments = listOf(
+"Summon Sapper",
+4
+),
+cost = mapOf(
+Element.plant = 1
+),
+target = AbilityTarget.global,
+selectable = false,
+cooldown = 1,
+info = "Summons a sapper. Upkeep = 1 Plant every other round"
+)

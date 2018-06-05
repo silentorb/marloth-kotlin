@@ -8,7 +8,7 @@ data class GameConfig(
     var display: DisplayConfig = DisplayConfig()
 )
 
-val gameConfigFile = "gameConfig.yaml"
+val gameConfigFile = "junkGameConfig.yaml"
 
 fun saveGameConfig(config: GameConfig) {
   saveConfig(gameConfigFile, config)

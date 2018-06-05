@@ -1,5 +1,5 @@
 package junk_common
 
 data class JunkScene(
-    val temp: Int
+    val temp: Int = 1
 )

@@ -4,7 +4,7 @@ import org.joml.Vector4i
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11.*
 
-class Glow() {
+class Glow {
   val operations = Operations()
   val state: State
   val glVersion: String

@@ -1,0 +1,182 @@
+[
+  {
+    "name": "Wait",
+    "action": "nothing",
+    "info": "Skips a turn",
+    "target": "global",
+    "selectable": false
+  },
+  { "name": "Punch",
+    "action": "attack",
+    "arguments": [0],
+    "target": "element" ,
+    "ai_target": "element",
+    "info": "Deals Damage",
+    "effect": "missile_attack",
+    "cooldown": 0
+  },
+  { "name": "Shotgun",
+    "action": "attack",
+    "arguments": [2],
+    "cost": {
+      "robot": 1
+    },
+    "target": "element" ,
+    "ai_target": "element",
+    "info": "Deals Damage",
+    "effect": "missile_attack",
+    "cooldown": 1
+  },
+  { "name": "Lightning",
+    "action": "attack",
+    "arguments": [1],
+    "cost": {
+      "meta": 1
+    },
+    "target": "element" ,
+    "ai_target": "element",
+    "info": "Deals Damage.  Ignores armor.",
+    "effect": "missile_attack",
+    "cooldown": 1
+  },
+  { "name": "Regeneration",
+    "action": "heal_self",
+    "arguments": [0],
+    "cost": {
+      "plant": 0
+    },
+    "triggers": [ "update" ],
+    "info": "Restores 1 of each element each round."
+  },
+  { "name": "Circumvent",
+    "cost": {
+      "robot": 0
+    },
+    "selectable": false,
+    "info": "Allows a creature to bypass your summoned units"
+  },
+  { "name": "Multiple Attack",
+    "cost": {
+      "robot": 0
+    },
+    "selectable": false,
+    "info": "Allows a creature to attack twice each round if able"
+  },
+  { "name": "Missile Launcher",
+    "action": "attack",
+    "arguments": [3],
+    "cost": {
+      "robot": 2
+    },
+    "target": "element" ,
+    "ai_target": "element",
+    "info": "Deals Damage",
+    "effect": "missile_attack",
+    "selectable": false,
+    "cooldown": 1,
+    "info": "Has a chance to permanently damage a creature's element"
+  },
+  { "name": "Poisoned",
+    "action": "poisoned",
+    "selectable": false,
+    "triggers": [ "update" ],
+    "info": "This creature is taking 1 point of damage per round and has any regeneration reduced"
+  },
+  { "name": "Poison",
+    "action": "poison",
+    "arguments": [3],
+    "cost": {
+      "plant": 1
+    },
+    "target": "creature" ,
+    "ai_target": "enemy",
+    "effect": "missile_attack",
+    "cooldown": 1,
+    "info": "Poisoned creatures take 1 point of damage for each element per round and have any regeneration abilities reduced.  Targets a creature, not its elements"
+  },
+  { "name": "Armor",
+    "cost": {
+      "robot": 0
+    },
+    "info": "Reduces the amount of damage received from an attack by 1 point per level.  Has no effect on meta attacks and poison"
+  },
+  { "name": "Small",
+    "selectable": false,
+    "info": "This creature cannot take more than %level% damage per attack"
+  },
+  { "name": "Thorns",
+    "cost": {
+      "plant": 1
+    },
+    "info": "Reflects a percentage of damage received back onto the attacker"
+  },
+  { "name": "Flux",
+    "action": "flux",
+    "cost": {
+      "meta": 1
+    },
+    "target": "global" ,
+    "cooldown": 2,
+    "info": "Restores a certain amount to each of your elements.  Can increase an element beyond its maximum"
+  },
+  { "name": "Recycle",
+    "cost": {
+      "robot": 0
+    },
+    "info": "Regain a percentage of a killed enemy's elements.  A greater yield for element types you share"
+  },
+  { "name": "Sacrifice",
+    "action": "sacrifice",
+    "triggers": [ "die" ],
+    "selectable": false,
+    "info": "When this creature dies, the creature who summoned it will be healed half of this creature's maximum element amount"
+  },
+  { "name": "Upkeep",
+    "action": "upkeep",
+    "triggers": [ "update" ],
+    "selectable": false,
+    "info": ""
+  },
+  { "name": "Grenade",
+    "action": "attack",
+    "arguments": [2],
+    "cost": {
+      "robot": 1
+    },
+    "target": "global" ,
+    "effect": "mass_damage",
+    "cooldown": 3,
+    "info": "Deals damage to each creature in play except for the Grenade thrower."
+  },
+  { "name": "Wall of Wind",
+    "action": "summon",
+    "arguments": ["Wall of Wind", 4],
+    "cost": {
+      "meta": 2
+    },
+    "target": "global" ,
+    "cooldown": 2,
+    "info": "Summons a vaporous wall.  Upkeep: 1 Ethereal element per round"
+  },
+  { "name": "Construct Minion",
+    "action": "summon",
+    "arguments": ["Construct Minion", 4],
+    "cost": {
+      "robot": 2
+    },
+    "target": "global" ,
+    "cooldown": 2,
+    "info": "Summons a metal minion.  Upkeep: 1 Robot element per round"
+  },
+  { "name": "Summon Sapper",
+    "action": "summon",
+    "arguments": ["Summon Sapper", 4],
+    "cost": {
+      "plant": 1
+    },
+    "target": "global" ,
+    "selectable": false,
+    "cooldown": 1,
+    "info": "Summons a sapper.  Upkeep: 1 Plant every other round"
+  }
+]

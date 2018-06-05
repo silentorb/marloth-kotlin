@@ -6,6 +6,7 @@ import mythic.platforming.Display
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
 import junk_client.Client
+import junk_common.JunkScene
 
 data class AppState(
     val temp: Int = 0
@@ -32,6 +33,7 @@ tailrec fun appLoop(app: JunkApp, previousState: AppState) {
 //    val updater = WorldUpdater(app.world, instantiator)
 //    updater.update(commands, delta)
 //  }
+  app.client.render(JunkScene())
   app.platform.process.pollEvents()
 
 //  if (app.gameConfig.gameplay.defaultPlayerView != app.world.players[0].viewMode) {
@@ -48,13 +50,13 @@ tailrec fun appLoop(app: JunkApp, previousState: AppState) {
 //  }
 
   if (!app.platform.process.isClosing())
-    appLoop(app, nextState)
+    appLoop(app, previousState)
 }
 
 fun runApp(platform: Platform, gameConfig: GameConfig) {
   platform.display.initialize(gameConfig.display)
   val app = JunkApp(platform, gameConfig)
-  appLoop(app, AppState(mapOf(), initialGameInputState(), initialMenuState()))
+  appLoop(app, AppState())
 }
 
 object App {

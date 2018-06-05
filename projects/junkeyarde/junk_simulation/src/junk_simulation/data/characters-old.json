@@ -1,0 +1,199 @@
+[
+  { "name": "Hero",
+    "category": "hero"
+  },
+  { "name": "Spore Colony",
+    "category": "monster",
+    "elements": {
+      "plant": 3
+    },
+    "abilities": [
+      { "name": "punch", "level": 1 }
+    ],
+    "level": 1,
+    "frequency": 7
+  },
+  { "name": "Ghost",
+    "category": "monster",
+    "elements": {
+      "meta": 5
+    },
+    "abilities": [
+      { "name": "lightning", "level": 1 }
+    ],
+    "level": 2,
+    "frequency": 6
+  },
+  { "name": "Droid",
+    "category": "monster",
+    "elements": {
+      "robot": 5
+    },
+    "abilities": [
+      { "name": "shotgun", "level": 1 },
+      "circumvent"
+    ],
+    "level": 2,
+    "frequency": 6
+  },
+  { "name": "Bomb Caster",
+    "category": "monster",
+    "elements": {
+      "robot": 5
+    },
+    "abilities": [
+      { "name": "grenade", "level": 1 }
+    ],
+    "level": 2,
+    "frequency": 6
+  },
+  { "name": "Static Nettle",
+    "category": "monster",
+    "elements": {
+      "meta": 18,
+      "plant": 15
+    },
+    "abilities": [
+      { "name": "lightning", "level": 1 },
+      { "name": "thorns", "level": 4 }
+    ],
+    "level": 3,
+    "frequency": 5
+  },
+  { "name": "Venomous Vine",
+    "category": "monster",
+    "elements": {
+      "plant": 8
+    },
+    "abilities": [
+      { "name": "poison", "level": 1 },
+      { "name": "regeneration", "level": 1 }
+    ],
+    "level": 2,
+    "frequency": 5
+  },
+  { "name": "Obsidian Dwarf",
+    "category": "monster",
+    "elements": {
+      "robot": 10
+    },
+    "abilities": [
+      { "name": "shotgun", "level": 2 },
+      { "name": "small", "level": 3 }
+    ],
+    "level": 4,
+    "frequency": 5
+  },
+  { "name": "Cyber Angel",
+    "category": "monster",
+    "elements": {
+      "meta": 12,
+      "robot": 12
+    },
+    "abilities": [
+      { "name": "lightning", "level": 2 },
+      { "name": "shotgun", "level": 2 }
+    ],
+    "level": 3,
+    "frequency": 5
+  },
+  { "name": "Moss Tank",
+    "category": "monster",
+    "elements": {
+      "plant": 12,
+      "robot": 12
+    },
+    "abilities": [
+      { "name": "grenade", "level": 2 },
+      { "name": "punch", "level": 2 },
+      "damage reduction"
+    ],
+    "level": 4,
+    "frequency": 5
+  },
+  { "name": "Cyber Ent",
+    "category": "monster",
+    "elements": {
+      "plant": 12,
+      "robot": 18
+    },
+    "abilities": [
+      { "name": "missile launcher", "level": 2 }
+    ],
+    "level": 5,
+    "frequency": 4
+  },
+  { "name": "Wall of Wind",
+    "category": "minion",
+    "elements": {
+      "meta": 2
+    },
+    "abilities": [
+      "sacrifice"
+    ],
+    "level": 1
+  },
+  { "name": "Wall of Weed",
+    "category": "minion",
+    "elements": {
+      "plant": 6
+    },
+    "abilities": [
+      "sacrifice",
+      "regeneration"
+    ],
+    "level": 1
+  },
+  { "name": "Golem",
+    "category": "minion",
+    "elements": {
+      "robot": 3
+    },
+    "abilities": [
+      { "name": "punch", "level": 2 },
+      "sacrifice"
+    ],
+    "level": 1
+  },
+  { "name": "Hive",
+    "category": "monster",
+    "elements": {
+      "plant": 20
+    },
+    "abilities": [
+      "summon spore"
+    ],
+    "level": 4,
+    "frequency": 5
+  },
+  { "name": "Assassin",
+    "category": "monster",
+    "elements": {
+      "plant": 14,
+      "robot": 11
+    },
+    "abilities": [
+      { "name": "poison", "level": 2 },
+      "circumvent"
+    ],
+    "level": 4,
+    "frequency": 2
+  },
+  { "name": "UnderLord",
+    "category": "monster",
+    "elements": {
+      "plant": 20,
+      "robot": 22,
+      "meta": 22
+    },
+    "abilities": [
+      { "name": "lightning", "level": 2 },
+      { "name": "shotgun", "level": 2 },
+      { "name": "poison", "level": 2 },
+      { "name": "regeneration", "level": 2 },
+      "multiple attack"
+    ],
+    "level": 6,
+    "frequency": 4
+  }
+]

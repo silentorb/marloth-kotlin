@@ -1,6 +1,6 @@
 # Dev Lab
 
-Desktop
+### Desktop
 ```
 !(this instanceof java.lang.ClassNotFoundException)
 && !(this instanceof java.lang.NumberFormatException)
@@ -17,7 +17,7 @@ Desktop
 && !(this instanceof kotlin.reflect.jvm.internal.KotlinReflectionInternalError)
 ```
 
-Laptop
+### Laptop
 ```
 !(this instanceof java.lang.ClassNotFoundException)
 && !(this instanceof java.lang.NumberFormatException)
@@ -34,3 +34,9 @@ Laptop
 && !(this instanceof java.lang.NoClassDefFoundError)
 && !(this instanceof java.lang.IncompatibleClassChangeError)
 ```
+
+### VM Options
+```-Djava.library.path="E:/dev/games/java-freetype/cmake-build-debug/bin" -ea -Dcom.sun.management.jmxremote```
+
+### Working directory
+```out\bin```
