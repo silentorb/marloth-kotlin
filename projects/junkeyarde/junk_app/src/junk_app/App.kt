@@ -1,19 +1,13 @@
 package junk_app
 
 import commanding.CommandType
+import junk_client.AppState
 import mythic.desktop.createDesktopPlatform
 import mythic.platforming.Display
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
 import junk_client.Client
 import junk_common.JunkScene
-
-data class AppState(
-    val temp: Int = 0
-//    val labInput: InputTriggerState<CommandType>
-//    val gameInput: ProfileStates<CommandType>,
-//    val menuState: MenuState
-)
 
 data class JunkApp(
     val platform: Platform,
@@ -33,7 +27,7 @@ tailrec fun appLoop(app: JunkApp, previousState: AppState) {
 //    val updater = WorldUpdater(app.world, instantiator)
 //    updater.update(commands, delta)
 //  }
-  app.client.render(JunkScene())
+  app.client.render(previousState)
   app.platform.process.pollEvents()
 
 //  if (app.gameConfig.gameplay.defaultPlayerView != app.world.players[0].viewMode) {

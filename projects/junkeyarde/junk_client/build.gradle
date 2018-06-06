@@ -1,3 +1,3 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
-requires 'spatial', 'platforming', 'bloom', 'drawing', 'rendering', 'haft', 'junk_common', 'glowing'
+requires 'spatial', 'platforming', 'bloom', 'drawing', 'rendering', 'haft', 'glowing', 'junk_simulation'

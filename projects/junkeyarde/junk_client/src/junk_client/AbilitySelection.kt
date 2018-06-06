@@ -1,4 +1,17 @@
-package junk_simulation
+package junk_client
+
+import junk_simulation.AbilityType
+import junk_simulation.Character
+
+enum class AbilitySelectionColumn {
+  available,
+  selected
+}
+
+data class AbilitySelectionState(
+    val available: List<AbilityType>,
+    val selected: List<AbilityType>
+)
 
 val additionalAbilityPoints = 3
 
