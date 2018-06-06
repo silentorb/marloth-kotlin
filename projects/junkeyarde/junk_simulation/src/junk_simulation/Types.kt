@@ -54,9 +54,10 @@ data class AbilityType(
     val info: String,
     val target: AbilityTarget = AbilityTarget.none,
     val aiTarget: AbilityTarget = AbilityTarget.none,
-    val selectable: Boolean = true,
+    val purchasable: Boolean = true,
     val effect: Effects = Effects.none,
-    val cost: Map<Element, Int> = mapOf(),
+    val usageCost: Map<Element, Int> = mapOf(),
+    val purchaseCost: Int = 1,
     val trigger: Triggers = Triggers.none,
     val arguments: List<Any> = listOf()
 )
@@ -85,6 +86,8 @@ data class CharacterType(
 
 data class Character(
     val id: Id,
+    val level: Int,
     val type: CharacterType,
-    val resources: List<Resource>
+    val resources: List<Resource>,
+    val abilities: List<Ability>
 )

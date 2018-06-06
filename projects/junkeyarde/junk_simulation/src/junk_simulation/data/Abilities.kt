@@ -1,6 +1,7 @@
 package junk_simulation.data
 
 import junk_simulation.*
+import kotlin.reflect.KProperty
 
 class Abilities {
   companion object {
@@ -9,7 +10,7 @@ class Abilities {
         action = ActionType.none,
         info = "Skips a turn",
         target = AbilityTarget.global,
-        selectable = false
+        purchasable = false
     )
     val punch = AbilityType(
         name = "Punch",
@@ -29,7 +30,7 @@ class Abilities {
         arguments = listOf(
             2
         ),
-        cost = mapOf(
+        usageCost = mapOf(
             Element.robot to 1
         ),
         target = AbilityTarget.element,
@@ -44,7 +45,7 @@ class Abilities {
         arguments = listOf(
             1
         ),
-        cost = mapOf(
+        usageCost = mapOf(
             Element.ethereal to 1
         ),
         target = AbilityTarget.element,
@@ -59,7 +60,7 @@ class Abilities {
         arguments = listOf(
             0
         ),
-        cost = mapOf(
+        usageCost = mapOf(
             Element.plant to 0
         ),
         trigger = Triggers.update,
@@ -67,18 +68,18 @@ class Abilities {
     )
     val circumvent = AbilityType(
         name = "Circumvent",
-        cost = mapOf(
+        usageCost = mapOf(
             Element.robot to 0
         ),
-        selectable = false,
+        purchasable = false,
         info = "Allows a creature to bypass your summoned units"
     )
     val multipleAttack = AbilityType(
         name = "Multiple Attack",
-        cost = mapOf(
+        usageCost = mapOf(
             Element.robot to 0
         ),
-        selectable = false,
+        purchasable = false,
         info = "Allows a creature to attack twice each round if able"
     )
     val missileLauncher = AbilityType(
@@ -87,20 +88,20 @@ class Abilities {
         arguments = listOf(
             3
         ),
-        cost = mapOf(
+        usageCost = mapOf(
             Element.robot to 2
         ),
         target = AbilityTarget.element,
         aiTarget = AbilityTarget.element,
         info = "Has a chance to permanently damage a creature's element",
         effect = Effects.missileAttack,
-        selectable = false,
+        purchasable = false,
         cooldown = 1
     )
     val poisoned = AbilityType(
         name = "Poisoned",
         action = ActionType.poisoned,
-        selectable = false,
+        purchasable = false,
         trigger = Triggers.update,
         info = "This creature is taking 1 point of damage per round and has any regeneration reduced"
     )
@@ -110,7 +111,7 @@ class Abilities {
         arguments = listOf(
             3
         ),
-        cost = mapOf(
+        usageCost = mapOf(
             Element.plant to 1
         ),
         target = AbilityTarget.creature,
@@ -121,19 +122,19 @@ class Abilities {
     )
     val armor = AbilityType(
         name = "Armor",
-        cost = mapOf(
+        usageCost = mapOf(
             Element.robot to 0
         ),
         info = "Reduces the amount of damage received from an attack by 1 point per level. Has no effect on meta attacks and poison"
     )
     val small = AbilityType(
         name = "Small",
-        selectable = false,
+        purchasable = false,
         info = "This creature cannot take more than %level% damage per attack"
     )
     val thorns = AbilityType(
         name = "Thorns",
-        cost = mapOf(
+        usageCost = mapOf(
             Element.plant to 1
         ),
         info = "Reflects a percentage of damage received back onto the attacker"
@@ -141,7 +142,7 @@ class Abilities {
     val flux = AbilityType(
         name = "Flux",
         action = ActionType.flux,
-        cost = mapOf(
+        usageCost = mapOf(
             Element.ethereal to 1
         ),
         target = AbilityTarget.global,
@@ -150,7 +151,7 @@ class Abilities {
     )
     val recycle = AbilityType(
         name = "Recycle",
-        cost = mapOf(
+        usageCost = mapOf(
             Element.robot to 0
         ),
         info = "Regain a percentage of a killed enemy's elements. A greater yield for element types you share"
@@ -159,14 +160,14 @@ class Abilities {
         name = "Sacrifice",
         action = ActionType.sacrifice,
         trigger = Triggers.die,
-        selectable = false,
+        purchasable = false,
         info = "When this creature dies, the creature who summoned it will be healed half of this creature's maximum element amount"
     )
     val upkeep = AbilityType(
         name = "Upkeep",
         action = ActionType.upkeep,
         trigger = Triggers.update,
-        selectable = false,
+        purchasable = false,
         info = ""
     )
     val grenade = AbilityType(
@@ -175,7 +176,7 @@ class Abilities {
         arguments = listOf(
             2
         ),
-        cost = mapOf(
+        usageCost = mapOf(
             Element.robot to 1
         ),
         target = AbilityTarget.global,
@@ -190,7 +191,7 @@ class Abilities {
             "Wall of Wind",
             4
         ),
-        cost = mapOf(
+        usageCost = mapOf(
             Element.ethereal to 2
         ),
         target = AbilityTarget.global,
@@ -204,7 +205,7 @@ class Abilities {
             "Construct Minion",
             4
         ),
-        cost = mapOf(
+        usageCost = mapOf(
             Element.robot to 2
         ),
         target = AbilityTarget.global,
@@ -218,15 +219,15 @@ class Abilities {
             "Summon Sapper",
             4
         ),
-        cost = mapOf(
+        usageCost = mapOf(
             Element.plant to 1
         ),
         target = AbilityTarget.global,
-        selectable = false,
+        purchasable = false,
         cooldown = 1,
         info = "Summons a sapper. Upkeep = 1 Plant every other round"
     )
   }
 }
 
-val abilityLibrary = Abilities::class.java.kotlin.members.toList()
+val abilityLibrary: List<AbilityType> = Abilities::class.java.kotlin.members.map { (it as KProperty).getter as AbilityType }
