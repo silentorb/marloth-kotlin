@@ -7,7 +7,3 @@ fun updateWorld(world: World): World {
       characters = world.characters
   )
 }
-
-fun updateGameState(state: GameState): GameState {
-  return state.copy()
-}

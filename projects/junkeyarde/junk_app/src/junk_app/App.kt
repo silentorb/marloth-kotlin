@@ -1,13 +1,12 @@
 package junk_app
 
-import commanding.CommandType
 import junk_client.AppState
 import mythic.desktop.createDesktopPlatform
 import mythic.platforming.Display
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
 import junk_client.Client
-import junk_common.JunkScene
+import junk_client.newAppState
 
 data class JunkApp(
     val platform: Platform,
@@ -17,17 +16,17 @@ data class JunkApp(
     val client: Client = Client(platform)
 )
 
-tailrec fun appLoop(app: JunkApp, previousState: AppState) {
+tailrec fun appLoop(app: JunkApp, state: AppState) {
   app.display.swapBuffers()
 //  val scenes = createScenes(app.world, app.client.screens)
   val delta = app.timer.update().toFloat()
-//  val (commands, nextState, menuAction) = app.labClient.update(scenes, app.world.meta, previousState, delta)
+//  val (commands, nextState, menuAction) = app.labClient.update(scenes, app.world.meta, state, delta)
 //  if (app.config.view == Views.game) {
 //    val instantiator = Instantiator(app.world, InstantiatorConfig(app.gameConfig.gameplay.defaultPlayerView))
 //    val updater = WorldUpdater(app.world, instantiator)
 //    updater.update(commands, delta)
 //  }
-  app.client.render(previousState)
+  app.client.render(state)
   app.platform.process.pollEvents()
 
 //  if (app.gameConfig.gameplay.defaultPlayerView != app.world.players[0].viewMode) {
@@ -44,13 +43,13 @@ tailrec fun appLoop(app: JunkApp, previousState: AppState) {
 //  }
 
   if (!app.platform.process.isClosing())
-    appLoop(app, previousState)
+    appLoop(app, state)
 }
 
 fun runApp(platform: Platform, gameConfig: GameConfig) {
   platform.display.initialize(gameConfig.display)
   val app = JunkApp(platform, gameConfig)
-  appLoop(app, AppState())
+  appLoop(app, newAppState())
 }
 
 object App {

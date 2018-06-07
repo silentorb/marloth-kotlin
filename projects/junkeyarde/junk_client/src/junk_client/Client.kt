@@ -3,18 +3,16 @@ package junk_client
 import haft.CommandHandler
 import haft.Commands
 import haft.ProfileStates
-import junk_common.CommandType
-import junk_common.JunkScene
 import mythic.platforming.Platform
 
 class Client(val platform: Platform) {
   val renderer: Renderer = Renderer()
   //  val screens: List<Screen> = (1..maxPlayerCount).map { Screen(it) }
   val gamepadAssignments: MutableMap<Int, Int> = mutableMapOf()
-  val keyStrokeCommands: Map<CommandType, CommandHandler<CommandType>> = mapOf(
+//  val keyStrokeCommands: Map<CommandType, CommandHandler<CommandType>> = mapOf(
 //      CommandType.switchView to { command -> switchCameraMode(command.target, screens) },
 //      CommandType.menu to { command -> platform.process.close() }
-  )
+//  )
 
   //  val playerInputProfiles = defaultGameInputProfiles()
 //  val menuInputProfiles = defaultMenuInputProfiles()
@@ -62,9 +60,9 @@ class Client(val platform: Platform) {
 //    )
 //  }
 
-  fun render(scene: JunkScene) {
+  fun render(state: AppState) {
     val windowInfo = getWindowInfo()
     val canvas = createCanvas(windowInfo)
-    renderScene(renderer, scene, canvas, windowInfo)
+    renderScene(renderer, state.world!!, canvas, windowInfo)
   }
 }

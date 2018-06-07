@@ -1,6 +1,6 @@
 package junk_client
 
-import junk_common.JunkScene
+import junk_simulation.World
 import mythic.drawing.*
 import mythic.platforming.WindowInfo
 import mythic.typography.FontLoadInfo
@@ -47,7 +47,7 @@ class Renderer {
   }
 }
 
-fun renderScene(renderer: Renderer, scene: JunkScene, canvas: Canvas, windowInfo: WindowInfo) {
+fun renderScene(renderer: Renderer, world: World, canvas: Canvas, windowInfo: WindowInfo) {
   renderer.prepareRender(windowInfo)
   val textStyle = TextStyle(canvas.fonts[0], 12f, white)
   canvas.drawText("Hello World", Vector2(10f, 10f), textStyle)
