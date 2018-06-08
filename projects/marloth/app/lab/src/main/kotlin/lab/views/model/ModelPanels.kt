@@ -6,7 +6,10 @@ import lab.utility.sceneBackgroundColor
 import lab.views.shared.SelectableItem
 import lab.views.shared.drawSelectableEnumList
 import lab.views.shared.drawSelectableList
-import mythic.bloom.*
+import mythic.bloom.Bounds
+import mythic.bloom.Box
+import mythic.bloom.ClickBox
+import mythic.bloom.Depiction
 import mythic.drawing.Canvas
 import mythic.spatial.Vector2
 import mythic.spatial.toString
@@ -77,16 +80,10 @@ fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: Model,
 }
 
 fun drawLeftPanel(meshTypes: List<MeshType>, config: ModelViewConfig, model: Model,
-                  externalMesh: Primitives?) = { bounds: Bounds ->
+                  externalMesh: Primitives?, bounds: Bounds): Pair<List<Box>, List<ClickBox<SelectionEvent>>> {
   val gap = 2f
   val halfGap = gap / 2
   val halfDimensions = Vector2(bounds.dimensions.x, bounds.dimensions.y / 2 - halfGap)
-//  val focusIndex = meshTypes.indexOf(config.model)
-//  val modelItems = meshTypes.mapIndexed { index, it ->
-//    SelectableItem(it.name, focusIndex == index)
-//  }
-//
-//  val modelList = drawSelectableList(modelItems, SelectableListType.model, Bounds(bounds.position, halfDimensions))
   val modelList = drawSelectableEnumList(meshTypes, config.model, Bounds(bounds.position, halfDimensions))
   val meshGroups = if (model.groups.size > 0)
     model.groups.mapIndexed { index, it ->
@@ -97,5 +94,5 @@ fun drawLeftPanel(meshTypes: List<MeshType>, config: ModelViewConfig, model: Mod
 
   val groupListBounds = Bounds(bounds.position + Vector2(0f, bounds.dimensions.y / 2 + halfGap), halfDimensions)
   val groupList = drawSelectableList(meshGroups, SelectableListType.group, groupListBounds)
-  Pair(modelList.first.plus(groupList.first), modelList.second.plus(groupList.second))
+  return Pair(modelList.first.plus(groupList.first), modelList.second.plus(groupList.second))
 }

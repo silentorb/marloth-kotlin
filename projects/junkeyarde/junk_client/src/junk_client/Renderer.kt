@@ -17,7 +17,7 @@ import org.joml.plus
 fun createCanvas(windowInfo: WindowInfo): Canvas {
   val unitScaling = getUnitScaling(windowInfo.dimensions)
   val vertexSchemas = createDrawingVertexSchemas()
-  val fonts = loadFonts(listOf(FontLoadInfo("dos.ttf", 16, 0f)))
+  val fonts = loadFonts(listOf(FontLoadInfo("dos.ttf", 8, 0f)))
   return Canvas(
       vertexSchemas,
       createDrawingMeshes(vertexSchemas),
@@ -49,7 +49,7 @@ class Renderer {
 
 fun renderScene(renderer: Renderer, world: World, canvas: Canvas, windowInfo: WindowInfo) {
   renderer.prepareRender(windowInfo)
-  val textStyle = TextStyle(canvas.fonts[0], 12f, white)
+  val textStyle = TextStyle(canvas.fonts[0], 1f, white)
   canvas.drawText("Hello World", Vector2(10f, 10f), textStyle)
   renderer.finishRender(windowInfo)
 }

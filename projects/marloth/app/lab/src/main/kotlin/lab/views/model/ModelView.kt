@@ -192,7 +192,6 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     val bounds = Bounds(Vector2(), dimensions.toVector2())
     val initialLengths = listOf(200f, null, 300f)
 
-    val left = drawLeftPanel(renderer.meshes.keys.toList(), config, model, externalMesh)
     val middle = { b: Bounds -> Box(b, drawScenePanel(config, renderer, model, camera, externalMesh)) }
     val right = { b: Bounds -> Box(b, drawInfoPanel(config, renderer, model, mousePosition)) }
     val lengths = solveMeasurements(dimensions.x.toFloat(), initialLengths)
@@ -200,7 +199,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     val boxes = panelBounds.drop(1)
         .zip(listOf(middle, right), { b, p -> p(b) })
 
-    val (leftBoxes, leftClickBoxes) = left(panelBounds[0])
+    val (leftBoxes, leftClickBoxes) = drawLeftPanel(renderer.meshes.keys.toList(), config, model, externalMesh, panelBounds[0])
 
     return ModelLayout(
         boxes = leftBoxes
