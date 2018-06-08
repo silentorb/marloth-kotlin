@@ -3,6 +3,7 @@ package junk_simulation.data
 import junk_simulation.CharacterCategory
 import junk_simulation.CharacterType
 import junk_simulation.Element
+import junk_simulation.reflectProperties
 
 class Characters {
   companion object {
@@ -222,4 +223,4 @@ class Characters {
   }
 }
 
-val characterLibrary = Characters::class.java.kotlin.members.toList()
+val characterLibrary: List<CharacterType> = reflectProperties(Characters.Companion)

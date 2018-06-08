@@ -230,4 +230,8 @@ class Abilities {
   }
 }
 
-val abilityLibrary: List<AbilityType> = Abilities::class.java.kotlin.members.map { (it as KProperty).getter as AbilityType }
+val abilityLibrary: List<AbilityType> = reflectProperties(Abilities.Companion)
+
+//val abilityLibrary: List<AbilityType> = Abilities.Companion::class.java.kotlin.members
+//    .filter { it.returnType == AbilityType::class }
+//    .map { it.call(Abilities.Companion) as AbilityType }
