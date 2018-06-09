@@ -30,7 +30,8 @@ data class Font(
     val characters: CharacterMap,
     val texture: Texture,
     val dimensions: IntegerVector2,
-    val defaultSpacing: Float) {
+    val additionalKerning: Float = 0f
+) {
   val height: Float = characters.values.maxBy { it.info.bearingY }!!.info.bearingY.toFloat()
   val v = characters.maxBy { it.value.info.sizeY - it.value.info.bearingY }!!
 

@@ -56,7 +56,7 @@ fun arrangeType(config: TextConfiguration): TypeArrangement? {
 
   val arrangedCharacters = ArrayList<ArrangedCharacter>(characterCount)
 
-  val letter_space = font.defaultSpacing
+  val letter_space = font.additionalKerning
   val max_width = _max_width * unitConversion / size
   val line_step = font.height * line_height
   var x = 0f
@@ -97,10 +97,10 @@ fun arrangeType(config: TextConfiguration): TypeArrangement? {
 
     arrangedCharacters.add(ArrangedCharacter(
         character,
-        x,
+        x + character.info.bearingX,
         y + character.info.sizeY - character.info.bearingY
     ))
-    x += character.info.sizeX
+    x += character.info.advanceX
 
     if (_max_width != 0f && x > max_width && last_space_index > 0) {
       if (last_space_x > block_dimensionsX) {
@@ -134,7 +134,7 @@ fun calculateTextDimensions(config: TextConfiguration): Vector2 {
   return Vector2(arrangement.width, arrangement.height)
 }
 
-fun <T>prepareText(config: TextConfiguration, vertexSchema: VertexSchema<T>): TextPackage? {
+fun <T> prepareText(config: TextConfiguration, vertexSchema: VertexSchema<T>): TextPackage? {
   val arrangement = arrangeType(config)
   if (arrangement == null)
     return null
@@ -152,7 +152,7 @@ fun <T>prepareText(config: TextConfiguration, vertexSchema: VertexSchema<T>): Te
     val y = arrangedCharacter.y
     val width = glyph.info.sizeX
     val height = glyph.info.sizeY.toFloat()
-    val texture_width = (glyph.info.sizeX + 1).toFloat() / config.style.font.dimensions.x
+    val texture_width = (width +0).toFloat() / config.style.font.dimensions.x
 
     vertices.put(Vector4(x + width, y - height, texture_width, glyph.offset))
     vertices.put(Vector4(x + width, y, texture_width, glyph.offset + glyph.height))

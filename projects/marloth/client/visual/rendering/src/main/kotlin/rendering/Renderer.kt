@@ -68,7 +68,10 @@ class Renderer {
   val textures = createTextureLibrary()
   val sectorBuffer = UniformBuffer()
   val fonts = loadFonts(listOf(
-      FontLoadInfo("cour.ttf", 16, 0f)
+      FontLoadInfo(
+          filename = "cour.ttf",
+          pixelHeight = 16
+      )
   ))
   val dynamicMesh = MutableSimpleMesh(vertexSchemas.flat)
 

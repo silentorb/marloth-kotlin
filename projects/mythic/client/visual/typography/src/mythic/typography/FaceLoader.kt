@@ -7,7 +7,7 @@ data class GlyphInfo(
     val sizeY: Int,
     val bearingX: Int,
     val bearingY: Int,
-    val advance: Int
+    val advanceX: Int
 )
 
 data class Glyph(
@@ -24,16 +24,16 @@ class FaceLoader {
     }
 
     @JvmStatic
-    external fun getTextureDimensions(face: Long): IntegerVector2
+    external fun getTextureDimensions(face: Long, loadFlags: Int, renderMode: Int): IntegerVector2
 
     @JvmStatic
-    external fun loadFace(freetype: Long, filename: String, pixelHeight: Int): Long
+    external fun loadFace(freetype: Long, filename: String, pixelWidth: Int, pixelHeight: Int): Long
 
     @JvmStatic
-    external fun loadCharacterInfo(face: Long, value: Char): GlyphInfo
+    external fun loadCharacterInfo(face: Long, value: Char, loadFlags: Int, renderMode: Int): GlyphInfo
 
     @JvmStatic
-    external fun renderFaces(freetype: Long, face: Long, buffer: Long, width: Int)
+    external fun renderFaces(freetype: Long, face: Long, buffer: Long, width: Int, loadFlags: Int, renderMode: Int)
 
     @JvmStatic
     external fun initializeFreetype(): Long

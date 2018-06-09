@@ -3,11 +3,11 @@ package mythic.typography
 import org.lwjgl.BufferUtils
 import org.lwjgl.system.jni.JNINativeInterface.GetDirectBufferAddress
 
-fun loadCharacters(face: Long, dimensions: IntegerVector2): CharacterMap {
+fun loadCharacters(face: Long, dimensions: IntegerVector2, info: FontLoadInfo): CharacterMap {
   val characters: MutableMap<Char, Glyph> = mutableMapOf()
   var verticalOffset = 0f
   for (value in CharRange('!', '~')) {
-    val info = FaceLoader.loadCharacterInfo(face, value)
+    val info = FaceLoader.loadCharacterInfo(face, value, info.loadFlags, info.renderMode.ordinal)
     characters[value] = Glyph(info,
         verticalOffset / dimensions.y,
         info.sizeY.toFloat() / dimensions.y
@@ -19,23 +19,81 @@ fun loadCharacters(face: Long, dimensions: IntegerVector2): CharacterMap {
 }
 
 fun loadFont(freetype: Long, info: FontLoadInfo): Font {
-  val face = FaceLoader.loadFace(freetype, info.filename, info.pixelHeight)
-  val dimensions = FaceLoader.getTextureDimensions(face)
+  val face = FaceLoader.loadFace(freetype, info.filename, info.pixelWidth, info.pixelHeight)
+  val dimensions = FaceLoader.getTextureDimensions(face, info.loadFlags, info.renderMode.ordinal)
   val buffer = BufferUtils.createByteBuffer(dimensions.x * dimensions.y)
-  val characters = loadCharacters(face, dimensions)
-  FaceLoader.renderFaces(freetype, face, GetDirectBufferAddress(buffer), dimensions.x)
+  val characters = loadCharacters(face, dimensions, info)
+  FaceLoader.renderFaces(freetype, face, GetDirectBufferAddress(buffer), dimensions.x,
+      info.loadFlags, info.renderMode.ordinal)
   FaceLoader.releaseFace(face)
 
   val texture = generateFontTexture(buffer, dimensions.x, dimensions.y)
-  val font = Font(characters, texture, dimensions, info.defaultSpacing)
+  val font = Font(
+      characters = characters,
+      texture = texture,
+      dimensions = dimensions,
+      additionalKerning = info.additionalKerning
+  )
 
   return font
 }
 
+/*
+Freetype header definitions
+
+#define FT_LOAD_DEFAULT                      0x0
+#define FT_LOAD_NO_SCALE                     ( 1L << 0 )
+#define FT_LOAD_NO_HINTING                   ( 1L << 1 )
+#define FT_LOAD_RENDER                       ( 1L << 2 )
+#define FT_LOAD_NO_BITMAP                    ( 1L << 3 )
+#define FT_LOAD_VERTICAL_LAYOUT              ( 1L << 4 )
+#define FT_LOAD_FORCE_AUTOHINT               ( 1L << 5 )
+#define FT_LOAD_CROP_BITMAP                  ( 1L << 6 )
+#define FT_LOAD_PEDANTIC                     ( 1L << 7 )
+#define FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH  ( 1L << 9 )
+#define FT_LOAD_NO_RECURSE                   ( 1L << 10 )
+#define FT_LOAD_IGNORE_TRANSFORM             ( 1L << 11 )
+#define FT_LOAD_MONOCHROME                   ( 1L << 12 )
+#define FT_LOAD_LINEAR_DESIGN                ( 1L << 13 )
+#define FT_LOAD_NO_AUTOHINT                  ( 1L << 15 )
+  /* Bits 16-19 are used by `FT_LOAD_TARGET_' */
+#define FT_LOAD_COLOR                        ( 1L << 20 )
+#define FT_LOAD_COMPUTE_METRICS              ( 1L << 21 )
+#define FT_LOAD_BITMAP_METRICS_ONLY          ( 1L << 22 )
+
+#define FT_LOAD_TARGET_( x )   ( (FT_Int32)( (x) & 15 ) << 16 )
+
+#define FT_LOAD_TARGET_NORMAL  FT_LOAD_TARGET_( FT_RENDER_MODE_NORMAL )
+#define FT_LOAD_TARGET_LIGHT   FT_LOAD_TARGET_( FT_RENDER_MODE_LIGHT  )
+#define FT_LOAD_TARGET_MONO    FT_LOAD_TARGET_( FT_RENDER_MODE_MONO   )
+#define FT_LOAD_TARGET_LCD     FT_LOAD_TARGET_( FT_RENDER_MODE_LCD    )
+#define FT_LOAD_TARGET_LCD_V   FT_LOAD_TARGET_( FT_RENDER_MODE_LCD_V  )
+ */
+
+fun FT_LOAD_TARGET(x: Int) = (x and 15) shl 16
+val FT_LOAD_RENDER = 1 shl 2
+val FT_LOAD_MONOCHROME = 1 shl 12
+
+val FT_LOAD_TARGET_MONO = FT_LOAD_TARGET(RenderMode.FT_RENDER_MODE_MONO.ordinal)
+
+enum class RenderMode {
+  FT_RENDER_MODE_NORMAL,
+  FT_RENDER_MODE_LIGHT,
+  FT_RENDER_MODE_MONO,
+  FT_RENDER_MODE_LCD,
+  FT_RENDER_MODE_LCD_V,
+
+  FT_RENDER_MODE_MAX
+}
+
 data class FontLoadInfo(
     val filename: String,
+    val pixelWidth: Int = 0,
     val pixelHeight: Int,
-    val defaultSpacing: Float
+    val additionalKerning: Float = 0f,
+    val loadFlags: Int = FT_LOAD_RENDER,
+    val renderMode: RenderMode = RenderMode.FT_RENDER_MODE_NORMAL,
+    val monospace: Int? = null
 )
 
 fun loadFonts(files: List<FontLoadInfo>): List<Font> {

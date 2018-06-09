@@ -5,14 +5,12 @@ import mythic.bloom.Box
 import mythic.bloom.renderLayout
 import mythic.drawing.*
 import mythic.platforming.WindowInfo
-import mythic.typography.FontLoadInfo
-import mythic.typography.loadFonts
 import org.joml.Vector2i
 import mythic.glowing.*
 import mythic.spatial.Vector2
 import mythic.spatial.Vector4
 import mythic.spatial.toVector2
-import mythic.typography.TextStyle
+import mythic.typography.*
 import org.joml.Vector2f
 import org.joml.Vector4i
 import org.joml.plus
@@ -25,7 +23,17 @@ import java.nio.FloatBuffer
 fun createCanvas(windowInfo: WindowInfo): Canvas {
   val unitScaling = getUnitScaling(windowInfo.dimensions)
   val vertexSchemas = createDrawingVertexSchemas()
-  val fonts = loadFonts(listOf(FontLoadInfo("dos.ttf", 8, 0f)))
+  val dosFont = FontLoadInfo(
+      "dos.ttf",
+      pixelWidth = 0,
+      pixelHeight = 8,
+      monospace = 6,
+//      loadFlags = FT_LOAD_RENDER or FT_LOAD_TARGET_MONO,
+      renderMode = RenderMode.FT_RENDER_MODE_MONO
+  )
+
+  val fonts = loadFonts(listOf(dosFont))
+
   return Canvas(
       vertexSchemas,
       createDrawingMeshes(vertexSchemas),
@@ -70,6 +78,8 @@ class Renderer {
 
   fun prepareRender(windowInfo: WindowInfo) {
 //    glow.operations.setViewport(Vector2i(0, 0), windowInfo.dimensions)
+    glow.state.framebuffer = 0
+    glow.operations.clearScreen()
     glow.state.framebuffer = offscreenBuffer.framebuffer.id
     glow.state.viewport = Vector4i(0, 0, 320, 200)
     glow.state.depthWrite = false
