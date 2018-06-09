@@ -1,6 +1,8 @@
 package junk_client
 
 import junk_simulation.World
+import mythic.bloom.Box
+import mythic.bloom.renderLayout
 import mythic.drawing.*
 import mythic.platforming.WindowInfo
 import mythic.typography.FontLoadInfo
@@ -47,9 +49,10 @@ class Renderer {
   }
 }
 
-fun renderScene(renderer: Renderer, world: World, canvas: Canvas, windowInfo: WindowInfo) {
+fun renderScreen(renderer: Renderer, boxes: List<Box>, canvas: Canvas, windowInfo: WindowInfo) {
   renderer.prepareRender(windowInfo)
-  val textStyle = TextStyle(canvas.fonts[0], 1f, white)
-  canvas.drawText("Hello World", Vector2(10f, 10f), textStyle)
+//  val textStyle = TextStyle(canvas.fonts[0], 1f, white)
+//  canvas.drawText("Hello World", Vector2(10f, 10f), textStyle)
+  renderLayout(boxes, canvas)
   renderer.finishRender(windowInfo)
 }

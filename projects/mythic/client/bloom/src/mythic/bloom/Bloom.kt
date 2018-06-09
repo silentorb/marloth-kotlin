@@ -25,7 +25,7 @@ data class Measurement(
 }
 
 data class Bounds(
-    val position: Vector2,
+    val position: Vector2 = Vector2(),
     val dimensions: Vector2
 ) {
   constructor(x: Float, y: Float, width: Float, height: Float) :
@@ -80,7 +80,8 @@ typealias EventHandler = () -> Unit
 
 data class Box(
     val bounds: Bounds,
-    val depiction: Depiction
+    val depiction: Depiction? = null,
+    val handler: Any? = null
 //    val onClick: EventHandler? = null
 ) {
   constructor(x: Float, y: Float, width: Float, height: Float, depiction: Depiction) :
@@ -94,7 +95,8 @@ data class ClickBox<T>(
 
 data class PartialBox(
     val length: Float,
-    val depiction: Depiction
+    val depiction: Depiction? = null,
+    val handler: Any? = null
 )
 
 fun crop(bounds: Bounds, canvas: Canvas, action: () -> Unit) = canvas.crop(bounds.toVector4i(), action)
@@ -247,13 +249,16 @@ fun applyBounds(bounds: Bounds, box: Box): Box =
 
 fun applyBounds(bounds: Bounds) = { box: Box -> applyBounds(bounds, box) }
 
-fun renderLayout(boxes: List<Box>, canvas: Canvas) {
+typealias Layout = List<Box>
+
+fun renderLayout(layout: Layout, canvas: Canvas) {
   globalState.depthEnabled = false
   globalState.blendEnabled = true
   globalState.blendFunction = Pair(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
 
-  for (box in boxes) {
-    box.depiction(box.bounds, canvas)
+  for (box in layout) {
+    if (box.depiction != null)
+      box.depiction!!(box.bounds, canvas)
   }
 }
 
@@ -281,4 +286,18 @@ fun isInBounds(position: Vector2, bounds: Bounds): Boolean =
 fun <T> filterMouseOverBoxes(boxes: List<ClickBox<T>>, mousePosition: Vector2i): ClickBox<T>? {
   val position = mousePosition.toVector2()
   return boxes.filter { box -> isInBounds(position, box.bounds) }.firstOrNull()
+}
+
+fun splitBoundsHorizontal(bounds: Bounds, leftPercentage: Float = 0.5f): Pair<Bounds, Bounds> {
+  val leftWidth = bounds.dimensions.x * leftPercentage
+  return Pair(
+      Bounds(
+          position = bounds.position,
+          dimensions = Vector2(leftWidth, bounds.dimensions.y)
+      ),
+      Bounds(
+          position = Vector2(leftWidth, bounds.position.y),
+          dimensions = Vector2(bounds.dimensions.x - leftWidth, bounds.dimensions.y)
+      )
+  )
 }

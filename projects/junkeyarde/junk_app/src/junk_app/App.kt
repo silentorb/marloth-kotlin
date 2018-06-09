@@ -26,24 +26,11 @@ tailrec fun appLoop(app: JunkApp, state: AppState) {
 //    val updater = WorldUpdater(app.world, instantiator)
 //    updater.update(commands, delta)
 //  }
-  app.client.render(state)
+  val newState = app.client.update(state, delta)
   app.platform.process.pollEvents()
 
-//  if (app.gameConfig.gameplay.defaultPlayerView != app.world.players[0].viewMode) {
-//    app.gameConfig.gameplay.defaultPlayerView = app.world.players[0].viewMode
-//    saveGameConfig(app.gameConfig)
-//  }
-//  if (saveIncrement++ > 60 * 3) {
-//    saveIncrement = 0
-//    saveLabConfig(app.config)
-//  }
-
-//  if (menuAction == MenuActionType.newGame) {
-//    app.world = app.newWorld()
-//  }
-
   if (!app.platform.process.isClosing())
-    appLoop(app, state)
+    appLoop(app, newState)
 }
 
 fun runApp(platform: Platform, gameConfig: GameConfig) {
