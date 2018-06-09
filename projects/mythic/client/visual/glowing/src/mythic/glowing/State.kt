@@ -4,13 +4,13 @@ import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER
 import org.lwjgl.opengl.GL15.glBindBuffer
 import org.lwjgl.opengl.GL20.glUseProgram
-import org.lwjgl.opengl.GL30.glBindVertexArray
 
 import mythic.spatial.Vector4
 import org.joml.Vector4i
 import org.lwjgl.opengl.GL13.glActiveTexture
 import org.lwjgl.opengl.GL14.GL_BLEND_DST_RGB
 import org.lwjgl.opengl.GL14.GL_BLEND_SRC_RGB
+import org.lwjgl.opengl.GL30.*
 import org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER
 
 fun getGLBounds(type: Int): Vector4i {
@@ -169,6 +169,15 @@ class State {
         setEnabled(GL_CULL_FACE, value)
       }
     }
+
+  var framebuffer: Int = 0
+    set(value) {
+      if (field != value) {
+        field = value
+        glBindFramebuffer(GL_FRAMEBUFFER, value)
+      }
+    }
+
 }
 
 val globalState = State()

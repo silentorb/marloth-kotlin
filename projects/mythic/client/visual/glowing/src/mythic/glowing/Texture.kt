@@ -4,7 +4,8 @@ import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL13.*
 import java.nio.FloatBuffer
 
-typealias FontInitializer = (width: Int, height: Int, buffer: FloatBuffer) -> Unit
+typealias TextureInitializer = (width: Int, height: Int, buffer: FloatBuffer) -> Unit
+typealias SimpleTextureInitializer = (width: Int, height: Int) -> Unit
 
 val geometryTextureInitializer = { width: Int, height: Int, buffer: FloatBuffer ->
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1) // Disable byte-alignment restriction
@@ -20,14 +21,20 @@ val geometryTextureInitializer = { width: Int, height: Int, buffer: FloatBuffer 
       0, GL_RGB, GL_FLOAT, buffer)
 }
 
-class Texture(width: Int, height: Int, buffer: FloatBuffer, initializer: FontInitializer) {
-  private val id: Int = glGenTextures()
+class Texture(width: Int, height: Int) {
+  val id: Int = glGenTextures()
 
   init {
     globalState.boundTexture = id
+  }
+
+  constructor(width: Int, height: Int, buffer: FloatBuffer, initializer: TextureInitializer) : this(width, height) {
     initializer(width, height, buffer)
   }
 
+  constructor(width: Int, height: Int, initializer: SimpleTextureInitializer) : this(width, height) {
+    initializer(width, height)
+  }
   fun dispose() {
     glDeleteTextures(id)
   }
