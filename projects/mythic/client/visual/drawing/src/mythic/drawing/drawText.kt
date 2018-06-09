@@ -35,7 +35,7 @@ fun renderText(config: TextConfiguration, effect: ColoredImageShader, textPackag
   globalState.blendEnabled = true
   globalState.blendFunction = Pair(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 //  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
   textPackage.mesh.draw(DrawMethod.triangleFan)
 }
 

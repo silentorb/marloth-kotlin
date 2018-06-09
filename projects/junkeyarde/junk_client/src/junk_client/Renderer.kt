@@ -84,10 +84,10 @@ class Renderer {
   }
 }
 
-fun renderScreen(renderer: Renderer, boxes: List<Box>, canvas: Canvas, windowInfo: WindowInfo) {
+fun renderScreen(renderer: Renderer, boxes: List<Box>, canvas: Canvas, windowInfo: WindowInfo, actualWindowInfo: WindowInfo) {
   renderer.prepareRender(windowInfo)
 //  val textStyle = TextStyle(canvas.fonts[0], 1f, white)
 //  canvas.drawText("Hello World", Vector2(10f, 10f), textStyle)
   renderLayout(boxes, canvas)
-  renderer.finishRender(windowInfo, canvas)
+  renderer.finishRender(actualWindowInfo, canvas)
 }

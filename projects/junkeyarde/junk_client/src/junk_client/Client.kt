@@ -12,6 +12,7 @@ import mythic.spatial.toVector2
 import mythic.typography.TextConfiguration
 import mythic.typography.TextStyle
 import mythic.typography.calculateTextDimensions
+import org.joml.Vector2i
 
 fun listItemDepiction(text: String): Depiction = { bounds: Bounds, canvas: Canvas ->
   globalState.depthEnabled = false
@@ -49,11 +50,11 @@ class Client(val platform: Platform) {
   fun getWindowInfo() = platform.display.getInfo()
 
   fun update(state: AppState, delta: Float): AppState {
-    val windowInfo = getWindowInfo()
+    val windowInfo = getWindowInfo().copy(dimensions = Vector2i(320, 200))
     val canvas = createCanvas(windowInfo)
     val bounds = Bounds(dimensions = windowInfo.dimensions.toVector2())
     val layout = abilitySelectionView(state.abilitySelectionState!!, bounds)
-    renderScreen(renderer, layout, canvas, windowInfo)
+    renderScreen(renderer, layout, canvas, windowInfo, getWindowInfo())
     return state
   }
 }
