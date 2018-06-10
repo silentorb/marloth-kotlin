@@ -24,10 +24,13 @@ data class AbilitySelectionEvent(
     val ability: AbilityType
 )
 
+fun remainingPoints(state: AbilitySelectionState): Int =
+    state.availablePoints - state.selected.sumBy { it.purchaseCost }
+
 fun handleAbilitySelectionEvent(event: AbilitySelectionEvent, state: AbilitySelectionState): AbilitySelectionState =
     when (event.column) {
       AbilitySelectionColumn.available ->
-        if (state.selected.sumBy { it.purchaseCost } + event.ability.purchaseCost > state.availablePoints)
+        if (event.ability.purchaseCost > remainingPoints(state))
           state
         else
           state.copy(
