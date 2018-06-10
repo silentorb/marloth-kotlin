@@ -8,16 +8,22 @@ enum class AbilitySelectionColumn {
   selected
 }
 
+data class SimpleAbility(
+    val type: AbilityType,
+    val level: Int
+)
+
 data class AbilitySelectionState(
     val available: List<AbilityType>,
     val selected: List<AbilityType>,
-    val availablePoints: Int
+    val availablePoints: Int,
+    val existing: List<SimpleAbility>
 )
 
 val additionalAbilityPoints = 3
 
-fun getAvailableAbilityPoints(character: Character): Int =
-    character.level + additionalAbilityPoints - character.abilities.map { it.type.purchaseCost }.sum()
+fun getAvailableAbilityPoints(existingAbilities: List<SimpleAbility>, characterLevel: Int): Int =
+    characterLevel + additionalAbilityPoints - existingAbilities.map { it.type.purchaseCost }.sum()
 
 data class AbilitySelectionEvent(
     val column: AbilitySelectionColumn,

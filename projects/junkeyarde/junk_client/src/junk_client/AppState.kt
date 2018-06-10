@@ -1,5 +1,6 @@
 package junk_client
 
+import junk_client.views.ClientBattleState
 import junk_simulation.Character
 import junk_simulation.World
 import junk_simulation.data.abilityLibrary
@@ -7,7 +8,7 @@ import junk_simulation.newWorld
 
 enum class GameMode {
   abilitySelection,
-  combat
+  battle
 }
 
 data class AppState(
@@ -19,21 +20,22 @@ fun updateAppState(state: AppState): AppState {
   return state.copy()
 }
 
-fun newAbilitySelectionState(player: Character) =
+fun newAbilitySelectionState(existingAbilities: List<SimpleAbility>, characterLevel: Int) =
     AbilitySelectionState(
         available = abilityLibrary.filter { it.purchasable == true }.take(6),
         selected = listOf(),
-        availablePoints = getAvailableAbilityPoints(player)
+        availablePoints = getAvailableAbilityPoints(existingAbilities, characterLevel),
+        existing = existingAbilities
     )
 
 fun newAppState(): AppState {
-  val world = newWorld()
-  return AppState(
-      world = world,
+    return AppState(
+      world = null,
       client = ClientState(
           mode = GameMode.abilitySelection,
-          abilitySelectionState = newAbilitySelectionState(world.player),
-          previousInput = mapOf()
+          abilitySelectionState = newAbilitySelectionState(listOf(), 1),
+          previousInput = mapOf(),
+          battle = ClientBattleState()
       )
   )
 }

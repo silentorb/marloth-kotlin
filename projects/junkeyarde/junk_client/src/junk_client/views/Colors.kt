@@ -1,4 +1,4 @@
-package junk_client
+package junk_client.views
 
 import mythic.drawing.grayTone
 import mythic.spatial.Vector4

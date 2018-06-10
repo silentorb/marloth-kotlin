@@ -27,11 +27,17 @@ tailrec fun appLoop(app: JunkApp, state: AppState) {
 //    updater.update(commands, delta)
 //  }
 
-  val newState = state.copy(client = app.client.update(state, delta))
+  val (clientState, command) = app.client.update(state, delta)
+  val newState = state.copy(client = clientState)
+  val newState2 = if (command != null)
+    updateOverlap(newState, command)
+  else
+    newState
+
   app.platform.process.pollEvents()
 
   if (!app.platform.process.isClosing())
-    appLoop(app, newState)
+    appLoop(app, newState2)
 }
 
 fun runApp(platform: Platform, gameConfig: GameConfig) {

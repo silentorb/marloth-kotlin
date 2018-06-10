@@ -6,23 +6,26 @@ import haft.disconnectedScalarInputSource
 import mythic.platforming.PlatformInput
 import org.joml.Vector2i
 
-fun applyInput(event: Any, state: ClientState): ClientState =
+enum class CommandType {
+  select,
+  submit
+}
+
+fun applyInput(event: Any, state: ClientState): Pair<ClientState, CommandType?> =
     when (event.javaClass.kotlin) {
 
+      CommandType::class -> Pair(state, event as CommandType)
+
       AbilitySelectionEvent::class -> {
-        state.copy(
+        Pair(state.copy(
             abilitySelectionState = handleAbilitySelectionEvent(
                 event as AbilitySelectionEvent, state.abilitySelectionState!!
             )
-        )
+        ), null)
       }
 
       else -> throw Error("Unsupported event type.")
     }
-
-enum class CommandType {
-  select
-}
 
 fun createDeviceHandlers(input: PlatformInput): List<ScalarInputSource> {
   val gamepad = input.getGamepads().firstOrNull()

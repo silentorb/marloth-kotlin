@@ -21,17 +21,21 @@ fun newCharacter(type: CharacterType): Character {
   )
 }
 
-fun newPlayer(): Character =
+fun newPlayer(playerAbilities: List<AbilityType>): Character =
     newCharacter(Characters.player)
+        .copy(
+            abilities = playerAbilities.map { initializeAbility(it, 1) }
+        )
 
-fun newWorld(): World {
+fun newWorld(playerAbilities: List<AbilityType>): World {
   resetId()
-  val player = newPlayer()
+  val player = newPlayer(playerAbilities)
   return World(
-      turn = 1,
+      round = 1,
       wave = 1,
       characters = mapOf(
           player.id to player
-      )
+      ),
+      turns = listOf()
   )
 }

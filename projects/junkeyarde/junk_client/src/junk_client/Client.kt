@@ -5,13 +5,17 @@ import mythic.platforming.Platform
 import mythic.spatial.toVector2
 import org.joml.Vector2i
 import haft.*
+import junk_client.views.ClientBattleState
+import junk_client.views.abilitySelectionView
+import junk_client.views.battleView
 import mythic.platforming.WindowInfo
 import org.lwjgl.glfw.GLFW
 
 data class ClientState(
     val previousInput: InputTriggerState<CommandType>,
     val mode: GameMode,
-    val abilitySelectionState: AbilitySelectionState?
+    val abilitySelectionState: AbilitySelectionState?,
+    val battle: ClientBattleState?
 )
 
 class Client(val platform: Platform) {
@@ -36,25 +40,37 @@ class Client(val platform: Platform) {
     return Pair(userInput, nextInputState)
   }
 
-  fun updateInput(layout: Layout, state: ClientState, userInput: UserInput): ClientState {
+  fun getInputEvent(layout: Layout, userInput: UserInput): Any? {
     val isActive = haft.isActive(userInput.commands)
     if (isActive(CommandType.select)) {
       val event = getEvent(layout, userInput.mousePosition)
       if (event != null)
-        return applyInput(event, state)
+        return event
     }
 
-    return state
+    return null
   }
 
-  fun update(state: AppState, delta: Float): ClientState {
+  private fun prepareLayout(state: AppState, bounds: Bounds): Layout {
+    return when (state.client.mode) {
+      GameMode.abilitySelection -> abilitySelectionView(state.client.abilitySelectionState!!, bounds)
+      GameMode.battle -> battleView(state.client.battle!!, state.world!!, bounds)
+    }
+  }
+
+  fun update(state: AppState, delta: Float): Pair<ClientState, CommandType?> {
     val actualWindowInfo = getWindowInfo()
     val windowInfo = actualWindowInfo.copy(dimensions = Vector2i(320, 200))
     val canvas = createCanvas(windowInfo)
     val bounds = Bounds(dimensions = windowInfo.dimensions.toVector2())
-    val layout = abilitySelectionView(state.client.abilitySelectionState!!, bounds)
-    renderScreen(renderer, layout, canvas, windowInfo, getWindowInfo())
     val (userInput, triggerState) = updateInputState(state.client.previousInput, actualWindowInfo)
-    return updateInput(layout, state.client.copy(previousInput = triggerState), userInput)
+    val layout = prepareLayout(state, bounds)
+    renderScreen(renderer, layout, canvas, windowInfo, actualWindowInfo)
+    val newClientState = state.client.copy(previousInput = triggerState)
+    val event = getInputEvent(layout, userInput)
+    return if (event != null)
+      applyInput(event, newClientState)
+    else
+      Pair(newClientState, null)
   }
 }
