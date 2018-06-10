@@ -7,7 +7,7 @@ import junk_simulation.reflectProperties
 
 class Characters {
   companion object {
-    val hero = CharacterType(name = "Hero",
+    val player = CharacterType(name = "Hero",
         category = CharacterCategory.player
     )
     val sporeColony = CharacterType(
@@ -143,7 +143,7 @@ class Characters {
     )
     val wallofWind = CharacterType(
         name = "Wall of Wind",
-        category = CharacterCategory.minion,
+        category = CharacterCategory.ally,
         elements = mapOf(
             Element.ethereal to 2
         ),
@@ -154,7 +154,7 @@ class Characters {
     )
     val wallofWeed = CharacterType(
         name = "Wall of Weed",
-        category = CharacterCategory.minion,
+        category = CharacterCategory.ally,
         elements = mapOf(
             Element.plant to 6
         ),
@@ -166,7 +166,7 @@ class Characters {
     )
     val golem = CharacterType(
         name = "Golem",
-        category = CharacterCategory.minion,
+        category = CharacterCategory.ally,
         elements = mapOf(
             Element.robot to 3
         ),

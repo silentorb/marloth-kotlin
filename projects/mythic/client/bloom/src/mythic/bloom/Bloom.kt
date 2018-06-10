@@ -76,13 +76,10 @@ class VerticalPlane : Plane {
 val horizontalPlane = HorizontalPlane()
 val verticalPlane = VerticalPlane()
 
-typealias EventHandler = () -> Unit
-
 data class Box(
     val bounds: Bounds,
     val depiction: Depiction? = null,
     val handler: Any? = null
-//    val onClick: EventHandler? = null
 ) {
   constructor(x: Float, y: Float, width: Float, height: Float, depiction: Depiction) :
       this(Bounds(x, y, width, height), depiction)
@@ -105,7 +102,6 @@ fun resolveMeasurement(dimensions: Vector2, plane: Plane, measurement: Measureme
     when (measurement.type) {
       Measurements.pixel -> measurement.value
       Measurements.percent -> measurement.value * plane.x(dimensions) / 100
-//      Measurements.shrink -> null
       Measurements.stretch -> null
     }
 
@@ -128,7 +124,7 @@ fun solveMeasurements(plane: Plane, lengths: List<Measurement>, bounds: Vector2)
   }
 }
 
-fun solveMeasurements(boundLength: Float, lengths: List<Float?>): List<Float> {
+fun resolveLengths(boundLength: Float, lengths: List<Float?>): List<Float> {
   val exacts = lengths.filterNotNull()
   val total = exacts.fold(0f, { a, b -> a + b })
 
@@ -153,7 +149,7 @@ fun listMeasuredBounds(plane: Plane, lengths: List<Measurement>, bounds: Vector2
   }
 }
 
-fun listBounds(plane: Plane, padding: Vector2, lengths: List<Float>, bounds: Bounds): List<Bounds> {
+fun listBounds(plane: Plane, padding: Vector2, bounds: Bounds, lengths: List<Float>): List<Bounds> {
   val mainPadding = plane.x(padding)
   var progress = mainPadding
   val otherPadding = plane.y(padding)
@@ -171,15 +167,15 @@ fun listBounds(plane: Plane, padding: Vector2, lengths: List<Float>, bounds: Bou
 
 fun listContentLength(padding: Float, lengths: Collection<Float>): Float =
     lengths.sum() + (lengths.size + 1) * padding
-
-fun listLengths(padding: Float, lengths: Collection<Float>): List<Float> {
-  var offset = 0f
-  return lengths.map {
-    val result = offset
-    offset += padding + it
-    result
-  }
-}
+//
+//fun listLengths(padding: Float, lengths: Collection<Float>): List<Float> {
+//  var offset = 0f
+//  return lengths.map {
+//    val result = offset
+//    offset += padding + it
+//    result
+//  }
+//}
 
 typealias MeasuredLengthArrangement = (bounds: Vector2, lengths: List<Measurement>) -> List<Bounds>
 typealias LengthArrangement = (bounds: Bounds, lengths: List<Float>) -> List<Bounds>
@@ -188,32 +184,35 @@ val measuredHorizontalArrangement: MeasuredLengthArrangement = { bounds: Vector2
   listMeasuredBounds(horizontalPlane, lengths, bounds)
 }
 
-val measuredVerticalArrangement: MeasuredLengthArrangement = { bounds: Vector2, lengths: List<Measurement> ->
-  listMeasuredBounds(verticalPlane, lengths, bounds)
+//val measuredVerticalArrangement: MeasuredLengthArrangement = { bounds: Vector2, lengths: List<Measurement> ->
+//  listMeasuredBounds(verticalPlane, lengths, bounds)
+//}
+
+fun arrangeHorizontal(padding: Vector2): LengthArrangement = { bounds: Bounds, lengths: List<Float> ->
+  listBounds(horizontalPlane, padding, bounds, lengths)
 }
 
-fun horizontalArrangement(padding: Vector2): LengthArrangement = { bounds: Bounds, lengths: List<Float> ->
-  listBounds(horizontalPlane, padding, lengths, bounds)
+fun arrangeVertical(padding: Vector2): LengthArrangement = { bounds: Bounds, lengths: List<Float> ->
+  listBounds(verticalPlane, padding, bounds, lengths)
 }
 
-fun verticalArrangement(padding: Vector2): LengthArrangement = { bounds: Bounds, lengths: List<Float> ->
-  listBounds(verticalPlane, padding, lengths, bounds)
-}
+//fun arrangeVertical(padding: Float, bounds: Bounds, lengths: List<Float>) =
+//    listLengths(verticalPlane, padding, lengths, bounds)
 
 fun arrangeMeasuredList(arrangement: MeasuredLengthArrangement, panels: List<Pair<Measurement, Depiction>>, bounds: Vector2): List<Box> {
   return arrangement(bounds, panels.map { it.first })
       .zip(panels, { a, b -> Box(a, b.second) })
 }
 
-fun arrangeList(arrangement: LengthArrangement, panels: List<PartialBox>, bounds: Bounds): List<Box> {
+fun arrangeListComplex(arrangement: LengthArrangement, panels: List<PartialBox>, bounds: Bounds): List<Box> {
   return arrangement(bounds, panels.map { it.length })
       .zip(panels, { a, b -> Box(a, b.depiction) })
 }
 
-fun arrangeList2(arrangement: LengthArrangement, panels: List<Float>, bounds: Bounds): List<Bounds> {
-  return arrangement(bounds, panels.map { it })
-//      .zip(panels, { a, b -> Box(a, b.depiction) })
-}
+//fun arrangeList(arrangement: LengthArrangement, panels: List<Float>, bounds: Bounds): List<Bounds> {
+//  return arrangement(bounds, panels)
+////      .zip(panels, { a, b -> Box(a, b.depiction) })
+//}
 
 fun centeredPosition(boundsLength: Float, length: Float): Float =
     (boundsLength - length) / 2f
@@ -288,6 +287,13 @@ fun <T> filterMouseOverBoxes(boxes: List<ClickBox<T>>, mousePosition: Vector2i):
   return boxes.filter { box -> isInBounds(position, box.bounds) }.firstOrNull()
 }
 
+fun filterMouseOverBoxes(boxes: Layout, mousePosition: Vector2i): Box? {
+  val position = mousePosition.toVector2()
+  return boxes
+      .filter { it.handler != null }
+      .filter { isInBounds(position, it.bounds) }.firstOrNull()
+}
+
 fun splitBoundsHorizontal(bounds: Bounds, leftPercentage: Float = 0.5f): Pair<Bounds, Bounds> {
   val leftWidth = bounds.dimensions.x * leftPercentage
   return Pair(
@@ -301,3 +307,6 @@ fun splitBoundsHorizontal(bounds: Bounds, leftPercentage: Float = 0.5f): Pair<Bo
       )
   )
 }
+
+fun getEvent(layout: Layout, mousePosition: Vector2i): Any? =
+    filterMouseOverBoxes(layout, mousePosition)?.handler

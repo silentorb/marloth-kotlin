@@ -8,7 +8,6 @@ import lab.views.shared.drawSelectableEnumList
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.spatial.Vector2
-import mythic.spatial.Vector4
 import mythic.spatial.toVector2
 import org.joml.Vector2i
 import rendering.Renderer
@@ -62,8 +61,8 @@ class TextureView {
     val initialLengths = listOf(200f, null)
 
     val middle = { b: Bounds -> Box(b, { b, c -> drawTextureView(renderer, config, b, c) }) }
-    val lengths = solveMeasurements(dimensions.x.toFloat(), initialLengths)
-    val panelBounds = arrangeList2(horizontalArrangement(Vector2(0f, 0f)), lengths, bounds)
+    val lengths = resolveLengths(dimensions.x.toFloat(), initialLengths)
+    val panelBounds = arrangeHorizontal(Vector2(0f, 0f))(bounds, lengths)
     val boxes = panelBounds.drop(1)
         .zip(listOf(middle), { b, p -> p(b) })
 

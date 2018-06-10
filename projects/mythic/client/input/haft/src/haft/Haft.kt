@@ -128,3 +128,11 @@ fun <T> isActive(commands: List<Command<T>>) =
 
 fun <T> getCommand(commands: List<Command<T>>, commandType: T) =
     commands.first { it.type == commandType }
+
+data class InputResult<T>(
+    val commands: Commands<T>,
+    val inputState: ProfileStates<T>) {
+
+  operator fun plus(second: InputResult<T>) =
+      InputResult<T>(commands.plus(second.commands), inputState.plus(second.inputState))
+}

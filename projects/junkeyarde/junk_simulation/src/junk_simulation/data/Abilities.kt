@@ -210,7 +210,7 @@ class Abilities {
         ),
         target = AbilityTarget.global,
         cooldown = 2,
-        info = "Summons a metal minion. Upkeep = 1 Robot element per round"
+        info = "Summons a metal ally. Upkeep = 1 Robot element per round"
     )
     val summonSapper = AbilityType(
         name = "Summon Sapper",

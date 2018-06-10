@@ -26,7 +26,8 @@ tailrec fun appLoop(app: JunkApp, state: AppState) {
 //    val updater = WorldUpdater(app.world, instantiator)
 //    updater.update(commands, delta)
 //  }
-  val newState = app.client.update(state, delta)
+
+  val newState = state.copy(client = app.client.update(state, delta))
   app.platform.process.pollEvents()
 
   if (!app.platform.process.isClosing())

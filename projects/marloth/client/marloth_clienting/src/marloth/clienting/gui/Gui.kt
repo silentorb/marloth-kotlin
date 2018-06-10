@@ -57,7 +57,7 @@ fun createMenuLayout(bounds: Bounds, state: MenuState): List<Box> {
   val menuPadding = Vector2(10f)
 
   return listOf(Box(menuBounds, menuBackground))
-      .plus(arrangeList(verticalArrangement(menuPadding), items, menuBounds))
+      .plus(arrangeListComplex(arrangeVertical(menuPadding), items, menuBounds))
 }
 
 fun renderMenus(bounds: Bounds, canvas: Canvas, state: MenuState) {

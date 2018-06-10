@@ -70,7 +70,7 @@ data class Ability(
 )
 
 enum class CharacterCategory {
-  minion,
+  ally,
   monster,
   player
 }

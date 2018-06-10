@@ -10,7 +10,8 @@ enum class AbilitySelectionColumn {
 
 data class AbilitySelectionState(
     val available: List<AbilityType>,
-    val selected: List<AbilityType>
+    val selected: List<AbilityType>,
+    val availablePoints: Int
 )
 
 val additionalAbilityPoints = 3
@@ -25,12 +26,17 @@ data class AbilitySelectionEvent(
 
 fun handleAbilitySelectionEvent(event: AbilitySelectionEvent, state: AbilitySelectionState): AbilitySelectionState =
     when (event.column) {
-      AbilitySelectionColumn.available -> AbilitySelectionState(
-          available = state.available.minus(event.ability),
-          selected = state.selected.plus(event.ability)
-      )
-      AbilitySelectionColumn.selected -> AbilitySelectionState(
-          available = state.available.plus(event.ability),
-          selected = state.selected.minus(event.ability)
-      )
+      AbilitySelectionColumn.available ->
+        if (state.selected.sumBy { it.purchaseCost } + event.ability.purchaseCost > state.availablePoints)
+          state
+        else
+          state.copy(
+              available = state.available.minus(event.ability),
+              selected = state.selected.plus(event.ability)
+          )
+      AbilitySelectionColumn.selected ->
+        state.copy(
+            available = state.available.plus(event.ability),
+            selected = state.selected.minus(event.ability)
+        )
     }

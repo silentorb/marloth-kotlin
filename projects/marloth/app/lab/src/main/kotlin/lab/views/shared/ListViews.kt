@@ -46,7 +46,7 @@ fun drawSelectableList(items: List<SelectableItem>, list: SelectableListType, bo
   val partialBoxes = items
       .map { PartialBox(itemHeight, drawListItem(it.name, it.isSelected)) }
 
-  val buttonBoxes = arrangeList(verticalArrangement(padding), partialBoxes, bounds)
+  val buttonBoxes = arrangeListComplex(arrangeVertical(padding), partialBoxes, bounds)
   val boxes = listOf(
       Box(bounds, drawSidePanel())
   )
