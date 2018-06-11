@@ -21,11 +21,15 @@ fun newCharacter(type: CharacterType): Character {
   )
 }
 
-fun newPlayer(playerAbilities: List<AbilityType>): Character =
-    newCharacter(Characters.player)
-        .copy(
-            abilities = playerAbilities.map { initializeAbility(it, 1) }
-        )
+fun newPlayer(playerAbilities: List<AbilityType>): Character {
+  val characterLevel = 1
+  val abilities = playerAbilities.map { initializeAbility(it, characterLevel) }
+  return newCharacter(Characters.player)
+      .copy(
+          abilities = abilities,
+          resources = allocateResources(characterLevel, abilities).map(convertSimpleResource)
+      )
+}
 
 fun newWorld(playerAbilities: List<AbilityType>): World {
   resetId()

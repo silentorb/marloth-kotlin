@@ -30,8 +30,12 @@ fun abilitySelectionView(state: AbilitySelectionState, bounds: Bounds): Layout {
   val rows = listBounds(verticalPlane, Vector2(), bounds, rowLengths)
 
   val columnBounds = splitBoundsHorizontal(rows[1])
-  return listOf(label(remainingPoints(state).toString(), rows[0]))
+  return listOf(label(white, remainingPoints(state).toString(), rows[0]))
       .plus(abilitySelectionList(AbilitySelectionColumn.available, state.available, columnBounds.first))
       .plus(abilitySelectionList(AbilitySelectionColumn.selected, state.selected, columnBounds.second))
-      .plus(button("OK", CommandType.submit, rows[2]))
+      .plus(if (state.existing.plus(state.selected).any())
+        listOf(button("OK", CommandType.submit, rows[2]))
+      else
+        listOf()
+      )
 }

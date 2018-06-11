@@ -1,8 +1,6 @@
 package junk_client.views
 
-import mythic.bloom.Bounds
-import mythic.bloom.Box
-import mythic.bloom.centeredPosition
+import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.spatial.Vector2
 import mythic.spatial.Vector4
@@ -28,9 +26,9 @@ fun drawCenteredText(canvas: Canvas, color: Vector4, content: String, bounds: Bo
   canvas.drawText(content, centeredPosition, style)
 }
 
-fun label(content: String, bounds: Bounds) =
+fun label(color: Color, content: String, bounds: Bounds) =
     Box(bounds = bounds, depiction = { b: Bounds, canvas: Canvas ->
-      drawText(canvas, white, content, b.position + standardPadding)
+      drawText(canvas, color, content, b.position + standardPadding)
     })
 
 fun button(content: String, handler: Any, bounds: Bounds): Box {
@@ -39,4 +37,11 @@ fun button(content: String, handler: Any, bounds: Bounds): Box {
       depiction = listItemDepiction(content),
       handler = handler
   )
+}
+
+fun <T> verticalList(items: List<T>, bounds: Bounds, itemHeight: Float, boxer: (T, Bounds) -> List<Box>): Layout {
+  val rows = listBounds(verticalPlane, standardPadding, bounds, items.map { itemHeight })
+  return items
+      .zip(rows, { a, b -> boxer(a, b) })
+      .flatten()
 }

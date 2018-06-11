@@ -196,6 +196,15 @@ fun arrangeVertical(padding: Vector2): LengthArrangement = { bounds: Bounds, len
   listBounds(verticalPlane, padding, bounds, lengths)
 }
 
+fun arrange(plane: Plane, padding: Vector2, bounds: Bounds, lengths: List<Float?>): List<Bounds> =
+    listBounds(plane, padding, bounds, resolveLengths(plane.x(bounds.dimensions), lengths))
+
+fun arrangeVertical(padding: Vector2, bounds: Bounds, lengths: List<Float?>): List<Bounds> =
+    arrange(verticalPlane, padding, bounds, lengths)
+
+fun arrangeHorizontal(padding: Vector2, bounds: Bounds, lengths: List<Float?>): List<Bounds> =
+    arrange(horizontalPlane, padding, bounds, lengths)
+
 //fun arrangeVertical(padding: Float, bounds: Bounds, lengths: List<Float>) =
 //    listLengths(verticalPlane, padding, lengths, bounds)
 

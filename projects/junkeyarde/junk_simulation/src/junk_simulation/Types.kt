@@ -10,8 +10,13 @@ enum class Element {
 }
 
 data class Resource(
-    val type: Element,
-    val amount: Int,
+    val element: Element,
+    val value: Int,
+    val max: Int
+)
+
+data class SimpleResource(
+    val element: Element,
     val max: Int
 )
 

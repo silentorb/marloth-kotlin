@@ -16,10 +16,6 @@ data class AppState(
     val client: ClientState
 )
 
-fun updateAppState(state: AppState): AppState {
-  return state.copy()
-}
-
 fun newAbilitySelectionState(existingAbilities: List<SimpleAbility>, characterLevel: Int) =
     AbilitySelectionState(
         available = abilityLibrary.filter { it.purchasable == true }.take(6),
