@@ -9,9 +9,9 @@ fun finishCharacterCreation(state: AppState): AppState {
   return state.copy(
       client = state.client.copy(
           mode = GameMode.battle,
-          abilitySelectionState = null
+          shopState = null
       ),
-      world = newWorld(state.client.abilitySelectionState!!.selected)
+      world = newWorld(state.client.shopState!!.selected)
   )
 }
 

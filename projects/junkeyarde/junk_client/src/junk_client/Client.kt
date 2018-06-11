@@ -14,7 +14,7 @@ import org.lwjgl.glfw.GLFW
 data class ClientState(
     val previousInput: InputTriggerState<CommandType>,
     val mode: GameMode,
-    val abilitySelectionState: AbilitySelectionState?,
+    val shopState: ShopState?,
     val battle: ClientBattleState?
 )
 
@@ -53,7 +53,7 @@ class Client(val platform: Platform) {
 
   private fun prepareLayout(state: AppState, bounds: Bounds): Layout {
     return when (state.client.mode) {
-      GameMode.abilitySelection -> abilitySelectionView(state.client.abilitySelectionState!!, bounds)
+      GameMode.abilitySelection -> abilitySelectionView(state.client.shopState!!, bounds)
       GameMode.battle -> battleView(state.client.battle!!, state.world!!, bounds)
     }
   }

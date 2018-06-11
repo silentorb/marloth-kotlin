@@ -1,9 +1,8 @@
 package junk_client
 
 import junk_simulation.AbilityType
-import junk_simulation.Character
 
-enum class AbilitySelectionColumn {
+enum class ShopColumn {
   available,
   selected
 }
@@ -13,7 +12,7 @@ data class SimpleAbility(
     val level: Int
 )
 
-data class AbilitySelectionState(
+data class ShopState(
     val available: List<AbilityType>,
     val selected: List<AbilityType>,
     val availablePoints: Int,
@@ -25,17 +24,17 @@ val additionalAbilityPoints = 3
 fun getAvailableAbilityPoints(existingAbilities: List<SimpleAbility>, characterLevel: Int): Int =
     characterLevel + additionalAbilityPoints - existingAbilities.map { it.type.purchaseCost }.sum()
 
-data class AbilitySelectionEvent(
-    val column: AbilitySelectionColumn,
+data class ShopSelectionEvent(
+    val column: ShopColumn,
     val ability: AbilityType
 )
 
-fun remainingPoints(state: AbilitySelectionState): Int =
+fun remainingPoints(state: ShopState): Int =
     state.availablePoints - state.selected.sumBy { it.purchaseCost }
 
-fun handleAbilitySelectionEvent(event: AbilitySelectionEvent, state: AbilitySelectionState): AbilitySelectionState =
+fun handleAbilitySelectionEvent(event: ShopSelectionEvent, state: ShopState): ShopState =
     when (event.column) {
-      AbilitySelectionColumn.available ->
+      ShopColumn.available ->
         if (event.ability.purchaseCost > remainingPoints(state))
           state
         else
@@ -43,7 +42,7 @@ fun handleAbilitySelectionEvent(event: AbilitySelectionEvent, state: AbilitySele
               available = state.available.minus(event.ability),
               selected = state.selected.plus(event.ability)
           )
-      AbilitySelectionColumn.selected ->
+      ShopColumn.selected ->
         state.copy(
             available = state.available.plus(event.ability),
             selected = state.selected.minus(event.ability)

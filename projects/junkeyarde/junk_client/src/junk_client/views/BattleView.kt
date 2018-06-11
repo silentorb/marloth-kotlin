@@ -1,11 +1,13 @@
 package junk_client.views
 
+import junk_client.EntitySelectionEvent
 import junk_simulation.*
+import junk_simulation.logic.isReady
 import mythic.bloom.*
-import mythic.spatial.Vector2
+import mythic.drawing.Canvas
 
 data class ClientBattleState(
-    val placeholder: Int = 1
+    val selectedEntity: Id?
 )
 
 val elementColors = mapOf(
@@ -23,18 +25,37 @@ fun resourceView(resource: Resource, bounds: Bounds) =
 
 val abilityHeight = itemHeight * 2f
 
-fun abilityView(ability: Ability, bounds: Bounds): List<Box> {
+fun abilityEvent(character: Character, ability: Ability): EntitySelectionEvent? =
+    if (isReady(character, ability))
+      EntitySelectionEvent(ability.id)
+    else
+      null
+
+fun selectedDepiction(state: ClientBattleState, id: Id): Depiction? =
+    if (state.selectedEntity == id)
+      { bounds: Bounds, canvas: Canvas ->
+        drawBorder(bounds, canvas, LineStyle(white, 1f))
+      }
+    else
+      null
+
+fun abilityView(state: ClientBattleState, character: Character, ability: Ability, bounds: Bounds): List<Box> {
   val rows = arrangeVertical(standardPadding, bounds, listOf(itemHeight, null))
   return listOf(
       label(white, ability.type.name + " " + ability.level, rows[0]),
-      label(white, (0 until ability.cooldown).map { "* " }.joinToString(), rows[1])
+      label(white, (0 until ability.cooldown).map { "* " }.joinToString(), rows[1]),
+      Box(
+          bounds = bounds,
+          depiction = selectedDepiction(state, ability.id),
+          handler = abilityEvent(character, ability)
+      )
   )
 }
 
 fun playerView(player: Character, state: ClientBattleState, bounds: Bounds): Layout {
   val rows = arrangeVertical(standardPadding, bounds, listOf(40f, null))
   val resourceBoxes = verticalList(player.resources, rows[0], itemHeight, { r, b -> listOf(resourceView(r, b)) })
-  val abilityBoxes = verticalList(player.abilities, rows[1], abilityHeight, { a, b -> abilityView(a, b) })
+  val abilityBoxes = verticalList(player.abilities, rows[1], abilityHeight, { a, b -> abilityView(state, player, a, b) })
   return resourceBoxes.plus(abilityBoxes)
 }
 

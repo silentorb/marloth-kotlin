@@ -1,4 +1,9 @@
-package junk_simulation
+package junk_simulation.logic
+
+import junk_simulation.Ability
+import junk_simulation.Element
+import junk_simulation.Resource
+import junk_simulation.SimpleResource
 
 private val baseResourcePoints = 4
 private val baseResourcePointsPerLevel = 1

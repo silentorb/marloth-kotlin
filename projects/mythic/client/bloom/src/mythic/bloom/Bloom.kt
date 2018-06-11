@@ -80,10 +80,7 @@ data class Box(
     val bounds: Bounds,
     val depiction: Depiction? = null,
     val handler: Any? = null
-) {
-  constructor(x: Float, y: Float, width: Float, height: Float, depiction: Depiction) :
-      this(Bounds(x, y, width, height), depiction)
-}
+)
 
 data class ClickBox<T>(
     val bounds: Bounds,

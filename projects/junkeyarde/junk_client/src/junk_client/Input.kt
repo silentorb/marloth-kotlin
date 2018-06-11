@@ -16,10 +16,23 @@ fun applyInput(event: Any, state: ClientState): Pair<ClientState, CommandType?> 
 
       CommandType::class -> Pair(state, event as CommandType)
 
-      AbilitySelectionEvent::class -> {
+      ShopSelectionEvent::class -> {
         Pair(state.copy(
-            abilitySelectionState = handleAbilitySelectionEvent(
-                event as AbilitySelectionEvent, state.abilitySelectionState!!
+            shopState = handleAbilitySelectionEvent(
+                event as ShopSelectionEvent, state.shopState!!
+            )
+        ), null)
+      }
+
+      EntitySelectionEvent::class -> {
+        val battle = state.battle!!
+        val newId = (event as EntitySelectionEvent).entityId
+        Pair(state.copy(
+            battle = battle.copy(
+                selectedEntity = if (newId == battle.selectedEntity)
+                  null
+                else
+                  newId
             )
         ), null)
       }

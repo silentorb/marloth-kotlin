@@ -1,6 +1,8 @@
 package junk_simulation
 
 import junk_simulation.data.Characters
+import junk_simulation.logic.allocateResources
+import junk_simulation.logic.convertSimpleResource
 
 fun initializeAbility(type: AbilityType, level: Int): Ability {
   return Ability(

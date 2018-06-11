@@ -14,25 +14,25 @@ fun listItemDepiction(content: String): Depiction = { bounds: Bounds, canvas: Ca
   drawCenteredText(canvas, black, content, bounds)
 }
 
-fun abilitySelectionList(column: AbilitySelectionColumn, abilities: List<AbilityType>, bounds: Bounds): Layout {
+fun abilitySelectionList(column: ShopColumn, abilities: List<AbilityType>, bounds: Bounds): Layout {
   val rows = listBounds(verticalPlane, standardPadding, bounds, abilities.map { itemHeight })
   return abilities.zip(rows, { a, b ->
     Box(
         bounds = b,
         depiction = listItemDepiction(a.name),
-        handler = AbilitySelectionEvent(column, a)
+        handler = ShopSelectionEvent(column, a)
     )
   })
 }
 
-fun abilitySelectionView(state: AbilitySelectionState, bounds: Bounds): Layout {
+fun abilitySelectionView(state: ShopState, bounds: Bounds): Layout {
   val rowLengths = resolveLengths(bounds.dimensions.y, listOf(itemHeight, null, itemHeight))
   val rows = listBounds(verticalPlane, Vector2(), bounds, rowLengths)
 
   val columnBounds = splitBoundsHorizontal(rows[1])
   return listOf(label(white, remainingPoints(state).toString(), rows[0]))
-      .plus(abilitySelectionList(AbilitySelectionColumn.available, state.available, columnBounds.first))
-      .plus(abilitySelectionList(AbilitySelectionColumn.selected, state.selected, columnBounds.second))
+      .plus(abilitySelectionList(ShopColumn.available, state.available, columnBounds.first))
+      .plus(abilitySelectionList(ShopColumn.selected, state.selected, columnBounds.second))
       .plus(if (state.existing.plus(state.selected).any())
         listOf(button("OK", CommandType.submit, rows[2]))
       else
