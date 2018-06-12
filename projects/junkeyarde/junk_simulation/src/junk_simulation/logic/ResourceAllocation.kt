@@ -12,8 +12,8 @@ fun calculateResourcePoints(creatureLevel: Int, resourceCount: Int): Int {
 }
 
 fun allocateResources(creatureLevel: Int, abilities: List<Ability>): List<SimpleResource> {
-  val totalRelativePoints = abilities.sumBy { it.type.purchaseCost * it.level }
-  val distributed = abilities.map { Pair(it.type, it.type.purchaseCost * it.level / it.type.usageCost.size) }
+  val totalRelativePoints = abilities.sumBy { it.type.purchaseCost }
+  val distributed = abilities.map { Pair(it.type, it.type.purchaseCost / it.type.usageCost.size) }
 
   val groups = Element.values().map { element ->
     Pair(element, distributed

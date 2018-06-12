@@ -1,6 +1,5 @@
 package junk_simulation
 
-
 typealias Id = Long
 
 enum class Element {
@@ -64,13 +63,13 @@ data class AbilityType(
     val usageCost: Map<Element, Int> = mapOf(),
     val purchaseCost: Int = 1,
     val trigger: Triggers = Triggers.none,
-    val arguments: List<Any> = listOf()
+    val arguments: List<Any> = listOf(),
+    val parent: AbilityType?
 )
 
 data class Ability(
     val id: Id,
     val type: AbilityType,
-    val level: Int,
     val cooldown: Int
 )
 
@@ -84,7 +83,7 @@ data class CreatureType(
     val name: String,
     val category: CreatureCategory,
     val elements: Map<Element, Int> = mapOf(),
-    val abilities: List<Pair<AbilityType, Int>> = listOf(),
+    val abilities: List<AbilityType> = listOf(),
     val level: Int = 1,
     val frequency: Int = 0
 )

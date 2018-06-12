@@ -6,11 +6,10 @@ import junk_simulation.logic.convertSimpleResource
 import junk_simulation.logic.newEnemies
 import randomly.Dice
 
-fun initializeAbility(type: AbilityType, level: Int): Ability {
+fun initializeAbility(type: AbilityType): Ability {
   return Ability(
       id = nextId(),
       type = type,
-      level = level,
       cooldown = 0
   )
 }
@@ -27,14 +26,14 @@ fun newCreature(type: CreatureType): Creature {
       id = nextId(),
       type = type,
       level = type.level,
-      abilities = type.abilities.map { initializeAbility(it.first, it.second) },
+      abilities = type.abilities.map { initializeAbility(it) },
       resources = type.elements.map { newResource(it.key, it.value) }
   )
 }
 
 fun newPlayer(playerAbilities: List<AbilityType>): Creature {
   val creatureLevel = 1
-  val abilities = playerAbilities.map { initializeAbility(it, creatureLevel) }
+  val abilities = playerAbilities.map { initializeAbility(it) }
   return newCreature(Creatures.player)
       .copy(
           abilities = abilities,

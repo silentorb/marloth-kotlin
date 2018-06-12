@@ -17,7 +17,7 @@ class Creatures {
             Element.plant to 3
         ),
         abilities = listOf(
-            Pair(Abilities.punch, 1)
+            Abilities.punch
         ),
         level = 1,
         frequency = 5
@@ -29,7 +29,7 @@ class Creatures {
             Element.ethereal to 5
         ),
         abilities = listOf(
-            Pair(Abilities.lightning, 1)
+            Abilities.lightning
         ),
         level = 2,
         frequency = 4
@@ -41,8 +41,8 @@ class Creatures {
             Element.robot to 5
         ),
         abilities = listOf(
-            Pair(Abilities.shotgun, 1),
-            Pair(Abilities.circumvent, 0)
+            Abilities.shotgun,
+            Abilities.circumvent
         ),
         level = 2,
         frequency = 4
@@ -54,7 +54,7 @@ class Creatures {
             Element.robot to 5
         ),
         abilities = listOf(
-            Pair(Abilities.grenade, 1)
+            Abilities.grenade
         ),
         level = 2,
         frequency = 4
@@ -67,8 +67,8 @@ class Creatures {
             Element.plant to 15
         ),
         abilities = listOf(
-            Pair(Abilities.lightning, 1),
-            Pair(Abilities.thorns, 4)
+            Abilities.lightning,
+            Abilities.thorns
         ),
         level = 3,
         frequency = 3
@@ -80,8 +80,8 @@ class Creatures {
             Element.plant to 8
         ),
         abilities = listOf(
-            Pair(Abilities.poison, 1),
-            Pair(Abilities.regeneration, 1)
+            Abilities.poison,
+            Abilities.regeneration
         ),
         level = 2,
         frequency = 3
@@ -93,8 +93,8 @@ class Creatures {
             Element.robot to 10
         ),
         abilities = listOf(
-            Pair(Abilities.shotgun, 2),
-            Pair(Abilities.small, 3)
+            Abilities.shotgun,
+            Abilities.small
         ),
         level = 4,
         frequency = 3
@@ -107,8 +107,8 @@ class Creatures {
             Element.robot to 12
         ),
         abilities = listOf(
-            Pair(Abilities.lightning, 2),
-            Pair(Abilities.shotgun, 2)
+            Abilities.lightning,
+            Abilities.shotgun
         ),
         level = 3,
         frequency = 3
@@ -121,9 +121,9 @@ class Creatures {
             Element.robot to 12
         ),
         abilities = listOf(
-            Pair(Abilities.grenade, 2),
-            Pair(Abilities.punch, 2),
-            Pair(Abilities.armor, 0)
+            Abilities.grenade,
+            Abilities.punch,
+            Abilities.armor
         ),
         level = 4,
         frequency = 3
@@ -136,7 +136,7 @@ class Creatures {
             Element.robot to 18
         ),
         abilities = listOf(
-            Pair(Abilities.missileLauncher, 2)
+            Abilities.missileLauncher
         ),
         level = 5,
         frequency = 2
@@ -148,7 +148,7 @@ class Creatures {
             Element.ethereal to 2
         ),
         abilities = listOf(
-            Pair(Abilities.sacrifice, 0)
+            Abilities.sacrifice
         ),
         level = 1
     )
@@ -159,8 +159,8 @@ class Creatures {
             Element.plant to 6
         ),
         abilities = listOf(
-            Pair(Abilities.sacrifice, 0),
-            Pair(Abilities.regeneration, 0)
+            Abilities.sacrifice,
+            Abilities.regeneration
         ),
         level = 1
     )
@@ -171,8 +171,8 @@ class Creatures {
             Element.robot to 3
         ),
         abilities = listOf(
-            Pair(Abilities.punch, 2),
-            Pair(Abilities.sacrifice, 0)
+            Abilities.punch,
+            Abilities.sacrifice
         ),
         level = 1
     )
@@ -183,7 +183,7 @@ class Creatures {
             Element.plant to 20
         ),
         abilities = listOf(
-            Pair(Abilities.summonSapper, 0)
+            Abilities.summonSapper
         ),
         level = 4,
         frequency = 3
@@ -196,8 +196,8 @@ class Creatures {
             Element.robot to 11
         ),
         abilities = listOf(
-            Pair(Abilities.poison, 2),
-            Pair(Abilities.circumvent, 0)
+            Abilities.poison,
+            Abilities.circumvent
         ),
         level = 4,
         frequency = 1
@@ -211,11 +211,11 @@ class Creatures {
             Element.ethereal to 22
         ),
         abilities = listOf(
-            Pair(Abilities.lightning, 2),
-            Pair(Abilities.shotgun, 2),
-            Pair(Abilities.poison, 2),
-            Pair(Abilities.regeneration, 2),
-            Pair(Abilities.multipleAttack, 0)
+            Abilities.lightning,
+            Abilities.shotgun,
+            Abilities.poison,
+            Abilities.regeneration,
+            Abilities.multipleAttack
         ),
         level = 6,
         frequency = 2

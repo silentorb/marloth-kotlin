@@ -54,7 +54,7 @@ fun creaturesView(world: World, state: ClientBattleState, bounds: Bounds): Layou
 fun abilityView(state: ClientBattleState, creature: Creature, ability: Ability, bounds: Bounds): List<Box> {
   val rows = arrangeVertical(standardPadding, bounds, listOf(itemHeight, null))
   return listOf(
-      label(white, ability.type.name + " " + ability.level, rows[0]),
+      label(white, ability.type.name, rows[0]),
       label(white, (0 until ability.cooldown).map { "* " }.joinToString(), rows[1]),
       Box(
           bounds = bounds,
