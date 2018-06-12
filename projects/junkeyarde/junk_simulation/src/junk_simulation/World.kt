@@ -19,10 +19,13 @@ fun nextId(): Long {
 data class World(
     val round: Int,
     val wave: Int,
-    val characters: Map<Id, Character>,
+    val creatures: Map<Id, Creature>,
     val turns: List<Int>
 ) {
-  val player: Character
-    get() = characters.values.first { it.type.category == CharacterCategory.player }
+  val player: Creature
+    get() = creatures.values.first { it.type.category == CreatureCategory.player }
+
+  val enemies: List<Creature>
+    get() = creatures.values.filter { it.type.category == CreatureCategory.enemy }
 }
 

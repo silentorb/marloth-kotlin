@@ -62,7 +62,7 @@ class TextureView {
 
     val middle = { b: Bounds -> Box(b, { b, c -> drawTextureView(renderer, config, b, c) }) }
     val lengths = resolveLengths(dimensions.x.toFloat(), initialLengths)
-    val panelBounds = arrangeHorizontal(Vector2(0f, 0f))(bounds, lengths)
+    val panelBounds = arrangeHorizontal(0f)(bounds, lengths)
     val boxes = panelBounds.drop(1)
         .zip(listOf(middle), { b, p -> p(b) })
 

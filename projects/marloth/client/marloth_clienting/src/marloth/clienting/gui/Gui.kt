@@ -54,7 +54,7 @@ fun createMenuLayout(bounds: Bounds, state: MenuState): List<Box> {
   val itemLengths = items.map { it.length }
   val menuHeight = listContentLength(10f, itemLengths)
   val menuBounds = centeredBounds(bounds, Vector2(200f, menuHeight))
-  val menuPadding = Vector2(10f)
+  val menuPadding = 10f
 
   return listOf(Box(menuBounds, menuBackground))
       .plus(arrangeListComplex(arrangeVertical(menuPadding), items, menuBounds))

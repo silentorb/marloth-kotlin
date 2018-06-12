@@ -8,6 +8,8 @@ class Dice(private val seed: Long) {
 
   constructor() : this(System.currentTimeMillis())
 
+  fun getInt(min: Int, max: Int) = min + random.nextInt(max - min)
+
   fun getFloat() = random.nextFloat()
 
   fun getFloat(min: Float, max: Float) = min + getFloat() * (max - min)

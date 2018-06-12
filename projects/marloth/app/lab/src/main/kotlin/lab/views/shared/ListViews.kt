@@ -40,7 +40,7 @@ data class SelectableItem(
 typealias SelectionResult = Pair<List<Box>, List<ClickBox<SelectionEvent>>>
 
 fun drawSelectableList(items: List<SelectableItem>, list: SelectableListType, bounds: Bounds): SelectionResult {
-  val padding = Vector2(10f)
+  val padding = 10f
   val itemHeight = 30f
 
   val partialBoxes = items

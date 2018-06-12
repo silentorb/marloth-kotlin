@@ -21,8 +21,8 @@ data class ShopState(
 
 val additionalAbilityPoints = 3
 
-fun getAvailableAbilityPoints(existingAbilities: List<SimpleAbility>, characterLevel: Int): Int =
-    characterLevel + additionalAbilityPoints - existingAbilities.map { it.type.purchaseCost }.sum()
+fun getAvailableAbilityPoints(existingAbilities: List<SimpleAbility>, creatureLevel: Int): Int =
+    creatureLevel + additionalAbilityPoints - existingAbilities.map { it.type.purchaseCost }.sum()
 
 data class ShopSelectionEvent(
     val column: ShopColumn,

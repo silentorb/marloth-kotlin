@@ -74,25 +74,25 @@ data class Ability(
     val cooldown: Int
 )
 
-enum class CharacterCategory {
+enum class CreatureCategory {
   ally,
-  monster,
+  enemy,
   player
 }
 
-data class CharacterType(
+data class CreatureType(
     val name: String,
-    val category: CharacterCategory,
+    val category: CreatureCategory,
     val elements: Map<Element, Int> = mapOf(),
     val abilities: List<Pair<AbilityType, Int>> = listOf(),
     val level: Int = 1,
     val frequency: Int = 0
 )
 
-data class Character(
+data class Creature(
     val id: Id,
     val level: Int,
-    val type: CharacterType,
+    val type: CreatureType,
     val resources: List<Resource>,
     val abilities: List<Ability>
 )

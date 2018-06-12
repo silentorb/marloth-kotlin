@@ -1,20 +1,17 @@
 package junk_simulation.logic
 
-import junk_simulation.Ability
-import junk_simulation.Element
-import junk_simulation.Resource
-import junk_simulation.SimpleResource
+import junk_simulation.*
 
 private val baseResourcePoints = 4
 private val baseResourcePointsPerLevel = 1
 private val baseResourcePointsPerLevelPerElement = 1
 
-fun calculateResourcePoints(characterLevel: Int, resourceCount: Int): Int {
+fun calculateResourcePoints(creatureLevel: Int, resourceCount: Int): Int {
   val levelMultiplier = baseResourcePointsPerLevel + baseResourcePointsPerLevelPerElement * resourceCount
-  return baseResourcePoints + characterLevel * levelMultiplier
+  return baseResourcePoints + creatureLevel * levelMultiplier
 }
 
-fun allocateResources(characterLevel: Int, abilities: List<Ability>): List<SimpleResource> {
+fun allocateResources(creatureLevel: Int, abilities: List<Ability>): List<SimpleResource> {
   val totalRelativePoints = abilities.sumBy { it.type.purchaseCost * it.level }
   val distributed = abilities.map { Pair(it.type, it.type.purchaseCost * it.level / it.type.usageCost.size) }
 
@@ -26,20 +23,16 @@ fun allocateResources(characterLevel: Int, abilities: List<Ability>): List<Simpl
   }
       .filter { it.second > 0 }
 
-  val characterResourcePoints = calculateResourcePoints(characterLevel, groups.size)
+  val creatureResourcePoints = calculateResourcePoints(creatureLevel, groups.size)
 
   return groups
       .map {
-        val max = it.second * characterResourcePoints / totalRelativePoints
+        val max = it.second * creatureResourcePoints / totalRelativePoints
         SimpleResource(it.first, max)
       }
       .sortedBy { it.max }
 }
 
 val convertSimpleResource = { simple: SimpleResource ->
-  Resource(
-      element = simple.element,
-      max = simple.max,
-      value = simple.max
-  )
+  newResource(simple.element, simple.max)
 }

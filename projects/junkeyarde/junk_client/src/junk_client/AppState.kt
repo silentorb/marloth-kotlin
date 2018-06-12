@@ -14,11 +14,11 @@ data class AppState(
     val client: ClientState
 )
 
-fun newAbilitySelectionState(existingAbilities: List<SimpleAbility>, characterLevel: Int) =
+fun newAbilitySelectionState(existingAbilities: List<SimpleAbility>, creatureLevel: Int) =
     ShopState(
         available = abilityLibrary.filter { it.purchasable == true }.take(6),
         selected = listOf(),
-        availablePoints = getAvailableAbilityPoints(existingAbilities, characterLevel),
+        availablePoints = getAvailableAbilityPoints(existingAbilities, creatureLevel),
         existing = existingAbilities
     )
 

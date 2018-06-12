@@ -146,18 +146,19 @@ fun listMeasuredBounds(plane: Plane, lengths: List<Measurement>, bounds: Vector2
   }
 }
 
-fun listBounds(plane: Plane, padding: Vector2, bounds: Bounds, lengths: List<Float>): List<Bounds> {
-  val mainPadding = plane.x(padding)
-  var progress = mainPadding
-  val otherPadding = plane.y(padding)
-  val otherLength = plane.y(bounds.dimensions) - otherPadding * 2
+fun listBounds(plane: Plane, padding: Float, bounds: Bounds, lengths: List<Float>): List<Bounds> {
+  var progress = 0f
+  val otherLength = plane.y(bounds.dimensions)
 
-  return lengths.map { length ->
+  return lengths.mapIndexed { i, length ->
     val b = Bounds(
-        plane.vector(progress, otherPadding) + bounds.position,
+        plane.vector(progress, 0f) + bounds.position,
         plane.vector(length, otherLength)
     )
-    progress += length + mainPadding
+    progress += length
+    if (i != lengths.size - 1)
+      progress += padding
+
     b
   }
 }
@@ -185,21 +186,21 @@ val measuredHorizontalArrangement: MeasuredLengthArrangement = { bounds: Vector2
 //  listMeasuredBounds(verticalPlane, lengths, bounds)
 //}
 
-fun arrangeHorizontal(padding: Vector2): LengthArrangement = { bounds: Bounds, lengths: List<Float> ->
+fun arrangeHorizontal(padding: Float): LengthArrangement = { bounds: Bounds, lengths: List<Float> ->
   listBounds(horizontalPlane, padding, bounds, lengths)
 }
 
-fun arrangeVertical(padding: Vector2): LengthArrangement = { bounds: Bounds, lengths: List<Float> ->
+fun arrangeVertical(padding: Float): LengthArrangement = { bounds: Bounds, lengths: List<Float> ->
   listBounds(verticalPlane, padding, bounds, lengths)
 }
 
-fun arrange(plane: Plane, padding: Vector2, bounds: Bounds, lengths: List<Float?>): List<Bounds> =
+fun arrange(plane: Plane, padding: Float, bounds: Bounds, lengths: List<Float?>): List<Bounds> =
     listBounds(plane, padding, bounds, resolveLengths(plane.x(bounds.dimensions), lengths))
 
-fun arrangeVertical(padding: Vector2, bounds: Bounds, lengths: List<Float?>): List<Bounds> =
+fun arrangeVertical(padding: Float, bounds: Bounds, lengths: List<Float?>): List<Bounds> =
     arrange(verticalPlane, padding, bounds, lengths)
 
-fun arrangeHorizontal(padding: Vector2, bounds: Bounds, lengths: List<Float?>): List<Bounds> =
+fun arrangeHorizontal(padding: Float, bounds: Bounds, lengths: List<Float?>): List<Bounds> =
     arrange(horizontalPlane, padding, bounds, lengths)
 
 //fun arrangeVertical(padding: Float, bounds: Bounds, lengths: List<Float>) =

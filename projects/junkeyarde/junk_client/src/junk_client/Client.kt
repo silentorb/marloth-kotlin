@@ -6,7 +6,7 @@ import mythic.spatial.toVector2
 import org.joml.Vector2i
 import haft.*
 import junk_client.views.ClientBattleState
-import junk_client.views.abilitySelectionView
+import junk_client.views.shopView
 import junk_client.views.battleView
 import mythic.platforming.WindowInfo
 import org.lwjgl.glfw.GLFW
@@ -53,7 +53,7 @@ class Client(val platform: Platform) {
 
   private fun prepareLayout(state: AppState, bounds: Bounds): Layout {
     return when (state.client.mode) {
-      GameMode.abilitySelection -> abilitySelectionView(state.client.shopState!!, bounds)
+      GameMode.abilitySelection -> shopView(state.client.shopState!!, bounds)
       GameMode.battle -> battleView(state.client.battle!!, state.world!!, bounds)
     }
   }

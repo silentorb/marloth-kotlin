@@ -1,18 +1,18 @@
 package junk_simulation.data
 
-import junk_simulation.CharacterCategory
-import junk_simulation.CharacterType
+import junk_simulation.CreatureCategory
+import junk_simulation.CreatureType
 import junk_simulation.Element
 import junk_simulation.reflectProperties
 
-class Characters {
+class Creatures {
   companion object {
-    val player = CharacterType(name = "Hero",
-        category = CharacterCategory.player
+    val player = CreatureType(name = "Hero",
+        category = CreatureCategory.player
     )
-    val sporeColony = CharacterType(
+    val sporeColony = CreatureType(
         name = "Spore Colony",
-        category = CharacterCategory.monster,
+        category = CreatureCategory.enemy,
         elements = mapOf(
             Element.plant to 3
         ),
@@ -20,11 +20,11 @@ class Characters {
             Pair(Abilities.punch, 1)
         ),
         level = 1,
-        frequency = 7
+        frequency = 5
     )
-    val ghost = CharacterType(
+    val ghost = CreatureType(
         name = "Ghost",
-        category = CharacterCategory.monster,
+        category = CreatureCategory.enemy,
         elements = mapOf(
             Element.ethereal to 5
         ),
@@ -32,11 +32,11 @@ class Characters {
             Pair(Abilities.lightning, 1)
         ),
         level = 2,
-        frequency = 6
+        frequency = 4
     )
-    val droid = CharacterType(
+    val droid = CreatureType(
         name = "Droid",
-        category = CharacterCategory.monster,
+        category = CreatureCategory.enemy,
         elements = mapOf(
             Element.robot to 5
         ),
@@ -45,11 +45,11 @@ class Characters {
             Pair(Abilities.circumvent, 0)
         ),
         level = 2,
-        frequency = 6
+        frequency = 4
     )
-    val bombCaster = CharacterType(
+    val bombCaster = CreatureType(
         name = "Bomb Caster",
-        category = CharacterCategory.monster,
+        category = CreatureCategory.enemy,
         elements = mapOf(
             Element.robot to 5
         ),
@@ -57,11 +57,11 @@ class Characters {
             Pair(Abilities.grenade, 1)
         ),
         level = 2,
-        frequency = 6
+        frequency = 4
     )
-    val staticNettle = CharacterType(
+    val staticNettle = CreatureType(
         name = "Static Nettle",
-        category = CharacterCategory.monster,
+        category = CreatureCategory.enemy,
         elements = mapOf(
             Element.ethereal to 18,
             Element.plant to 15
@@ -71,11 +71,11 @@ class Characters {
             Pair(Abilities.thorns, 4)
         ),
         level = 3,
-        frequency = 5
+        frequency = 3
     )
-    val venomousVine = CharacterType(
+    val venomousVine = CreatureType(
         name = "Venomous Vine",
-        category = CharacterCategory.monster,
+        category = CreatureCategory.enemy,
         elements = mapOf(
             Element.plant to 8
         ),
@@ -84,11 +84,11 @@ class Characters {
             Pair(Abilities.regeneration, 1)
         ),
         level = 2,
-        frequency = 5
+        frequency = 3
     )
-    val obsidianDwarf = CharacterType(
+    val obsidianDwarf = CreatureType(
         name = "Obsidian Dwarf",
-        category = CharacterCategory.monster,
+        category = CreatureCategory.enemy,
         elements = mapOf(
             Element.robot to 10
         ),
@@ -97,11 +97,11 @@ class Characters {
             Pair(Abilities.small, 3)
         ),
         level = 4,
-        frequency = 5
+        frequency = 3
     )
-    val cyberAngel = CharacterType(
+    val cyberAngel = CreatureType(
         name = "Cyber Angel",
-        category = CharacterCategory.monster,
+        category = CreatureCategory.enemy,
         elements = mapOf(
             Element.ethereal to 12,
             Element.robot to 12
@@ -111,11 +111,11 @@ class Characters {
             Pair(Abilities.shotgun, 2)
         ),
         level = 3,
-        frequency = 5
+        frequency = 3
     )
-    val mossTank = CharacterType(
+    val mossTank = CreatureType(
         name = "Moss Tank",
-        category = CharacterCategory.monster,
+        category = CreatureCategory.enemy,
         elements = mapOf(
             Element.plant to 12,
             Element.robot to 12
@@ -126,11 +126,11 @@ class Characters {
             Pair(Abilities.armor, 0)
         ),
         level = 4,
-        frequency = 5
+        frequency = 3
     )
-    val cyberEnt = CharacterType(
+    val cyberEnt = CreatureType(
         name = "Cyber Ent",
-        category = CharacterCategory.monster,
+        category = CreatureCategory.enemy,
         elements = mapOf(
             Element.plant to 12,
             Element.robot to 18
@@ -139,11 +139,11 @@ class Characters {
             Pair(Abilities.missileLauncher, 2)
         ),
         level = 5,
-        frequency = 4
+        frequency = 2
     )
-    val wallofWind = CharacterType(
+    val wallofWind = CreatureType(
         name = "Wall of Wind",
-        category = CharacterCategory.ally,
+        category = CreatureCategory.ally,
         elements = mapOf(
             Element.ethereal to 2
         ),
@@ -152,9 +152,9 @@ class Characters {
         ),
         level = 1
     )
-    val wallofWeed = CharacterType(
+    val wallofWeed = CreatureType(
         name = "Wall of Weed",
-        category = CharacterCategory.ally,
+        category = CreatureCategory.ally,
         elements = mapOf(
             Element.plant to 6
         ),
@@ -164,9 +164,9 @@ class Characters {
         ),
         level = 1
     )
-    val golem = CharacterType(
+    val golem = CreatureType(
         name = "Golem",
-        category = CharacterCategory.ally,
+        category = CreatureCategory.ally,
         elements = mapOf(
             Element.robot to 3
         ),
@@ -176,9 +176,9 @@ class Characters {
         ),
         level = 1
     )
-    val hive = CharacterType(
+    val hive = CreatureType(
         name = "Hive",
-        category = CharacterCategory.monster,
+        category = CreatureCategory.enemy,
         elements = mapOf(
             Element.plant to 20
         ),
@@ -186,11 +186,11 @@ class Characters {
             Pair(Abilities.summonSapper, 0)
         ),
         level = 4,
-        frequency = 5
+        frequency = 3
     )
-    val assassin = CharacterType(
+    val assassin = CreatureType(
         name = "Assassin",
-        category = CharacterCategory.monster,
+        category = CreatureCategory.enemy,
         elements = mapOf(
             Element.plant to 14,
             Element.robot to 11
@@ -200,11 +200,11 @@ class Characters {
             Pair(Abilities.circumvent, 0)
         ),
         level = 4,
-        frequency = 2
+        frequency = 1
     )
-    val underLord = CharacterType(
+    val underLord = CreatureType(
         name = "UnderLord",
-        category = CharacterCategory.monster,
+        category = CreatureCategory.enemy,
         elements = mapOf(
             Element.plant to 20,
             Element.robot to 22,
@@ -218,9 +218,9 @@ class Characters {
             Pair(Abilities.multipleAttack, 0)
         ),
         level = 6,
-        frequency = 4
+        frequency = 2
     )
   }
 }
 
-val characterLibrary: List<CharacterType> = reflectProperties(Characters.Companion)
+val creatureLibrary: List<CreatureType> = reflectProperties(Creatures.Companion)

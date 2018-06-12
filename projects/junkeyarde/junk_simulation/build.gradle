@@ -3,3 +3,5 @@ apply from: "$rootProject.projectDir/build_kotlin.gradle"
 dependencies {
   compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.3'
 }
+
+requires 'randomly'

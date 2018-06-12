@@ -25,14 +25,14 @@ fun abilitySelectionList(column: ShopColumn, abilities: List<AbilityType>, bound
   })
 }
 
-fun abilitySelectionView(state: ShopState, bounds: Bounds): Layout {
+fun shopView(state: ShopState, bounds: Bounds): Layout {
   val rowLengths = resolveLengths(bounds.dimensions.y, listOf(itemHeight, null, itemHeight))
-  val rows = listBounds(verticalPlane, Vector2(), bounds, rowLengths)
+  val rows = listBounds(verticalPlane, 0f, bounds, rowLengths)
 
-  val columnBounds = splitBoundsHorizontal(rows[1])
+  val columnBounds = arrangeHorizontal(standardPadding, rows[1], listOf(150f, null, 150f))
   return listOf(label(white, remainingPoints(state).toString(), rows[0]))
-      .plus(abilitySelectionList(ShopColumn.available, state.available, columnBounds.first))
-      .plus(abilitySelectionList(ShopColumn.selected, state.selected, columnBounds.second))
+      .plus(abilitySelectionList(ShopColumn.available, state.available, columnBounds[0]))
+      .plus(abilitySelectionList(ShopColumn.selected, state.selected, columnBounds[2]))
       .plus(if (state.existing.plus(state.selected).any())
         listOf(button("OK", CommandType.submit, rows[2]))
       else

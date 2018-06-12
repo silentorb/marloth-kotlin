@@ -2,15 +2,15 @@ package junk_simulation.logic
 
 import junk_simulation.Ability
 import junk_simulation.AbilityTarget
-import junk_simulation.Character
+import junk_simulation.Creature
 
-fun hasResourcesFor(character: Character, ability: Ability): Boolean =
+fun hasResourcesFor(creature: Creature, ability: Ability): Boolean =
     ability.type.usageCost.all { cost ->
-      val resource = character.resources.firstOrNull { it.element == cost.key }
+      val resource = creature.resources.firstOrNull { it.element == cost.key }
       resource != null && resource.value >= cost.value
     }
 
-fun isReady(character: Character, ability: Ability): Boolean =
+fun isReady(creature: Creature, ability: Ability): Boolean =
     ability.type.target != AbilityTarget.none &&
         ability.cooldown == 0 &&
-        hasResourcesFor(character, ability)
+        hasResourcesFor(creature, ability)
