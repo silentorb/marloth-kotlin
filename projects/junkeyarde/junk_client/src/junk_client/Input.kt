@@ -5,16 +5,28 @@ import haft.ScalarInputSource
 import haft.disconnectedScalarInputSource
 import mythic.platforming.PlatformInput
 import org.joml.Vector2i
+import junk_simulation.Id
 
 enum class CommandType {
   select,
-  submit
+  submit,
+  useAbility
 }
 
-fun applyInput(event: Any, state: ClientState): Pair<ClientState, CommandType?> =
+data class AbilityUseData(
+    val abilityId: Id,
+    val creatureId: Id?
+)
+
+data class GameCommand(
+    val type: CommandType,
+    val data: Any? = null
+)
+
+fun applyInput(event: Any, state: ClientState): Pair<ClientState, GameCommand?> =
     when (event.javaClass.kotlin) {
 
-      CommandType::class -> Pair(state, event as CommandType)
+      CommandType::class -> Pair(state, GameCommand(event as CommandType))
 
       ShopSelectionEvent::class -> {
         Pair(state.copy(
@@ -26,15 +38,23 @@ fun applyInput(event: Any, state: ClientState): Pair<ClientState, CommandType?> 
 
       EntitySelectionEvent::class -> {
         val battle = state.battle!!
-        val newId = (event as EntitySelectionEvent).entityId
-        Pair(state.copy(
-            battle = battle.copy(
-                selectedEntity = if (newId == battle.selectedEntity)
-                  null
-                else
-                  newId
-            )
-        ), null)
+        val (entityType, newId) = (event as EntitySelectionEvent)
+        when (entityType) {
+          EntityType.ability -> Pair(state.copy(
+              battle = battle.copy(
+                  selectedEntity = if (newId == battle.selectedEntity)
+                    null
+                  else
+                    newId
+              )
+          ), null)
+
+          EntityType.creature -> Pair(state.copy(
+              battle = battle.copy(
+                  selectedEntity = null
+              )
+          ), GameCommand(CommandType.useAbility, AbilityUseData(battle.selectedEntity!!, newId)))
+        }
       }
 
       else -> throw Error("Unsupported event type.")

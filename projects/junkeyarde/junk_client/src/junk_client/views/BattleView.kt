@@ -1,6 +1,7 @@
 package junk_client.views
 
 import junk_client.EntitySelectionEvent
+import junk_client.EntityType
 import junk_simulation.*
 import junk_simulation.logic.isReady
 import mythic.bloom.*
@@ -33,7 +34,7 @@ val abilityHeight = itemHeight * 2f
 
 fun abilityEvent(creature: Creature, ability: Ability): EntitySelectionEvent? =
     if (isReady(creature, ability))
-      EntitySelectionEvent(ability.id)
+      EntitySelectionEvent(EntityType.ability, ability.id)
     else
       null
 
@@ -47,10 +48,16 @@ fun selectedDepiction(state: ClientBattleState, id: Id): Depiction? =
 
 fun creatureView(state: ClientBattleState, creature: Creature, bounds: Bounds): Layout {
   val columns = arrangeHorizontal(standardPadding, bounds, listOf(80f, null))
-//  val resources = verticalList(creature.resources, columns[1], itemHeight, 0f, { a, b -> listOf(resourceView(a, b)) })
   return listOf<Box>()
       .plus(label(white, creature.type.name.take(8), columns[0]))
       .plus(label(white, creature.life.toString(), columns[1]))
+      .plus(if (state.selectedEntity != null)
+        listOf(Box(
+            bounds = bounds,
+            handler = EntitySelectionEvent(EntityType.creature, creature.id)
+        ))
+      else
+        listOf())
 }
 
 fun creaturesView(world: World, state: ClientBattleState, bounds: Bounds): Layout {

@@ -2,6 +2,7 @@ package junk_app
 
 import junk_client.AppState
 import junk_client.CommandType
+import junk_client.GameCommand
 import junk_client.GameMode
 import junk_simulation.newWorld
 
@@ -15,8 +16,8 @@ fun finishCreatureCreation(state: AppState): AppState {
   )
 }
 
-fun updateOverlap(state: AppState, command: CommandType): AppState =
-    when (command) {
+fun updateOverlap(state: AppState, command: GameCommand): AppState =
+    when (command.type) {
       CommandType.submit -> finishCreatureCreation(state)
       else -> throw Error("Unsupported command")
     }

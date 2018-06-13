@@ -65,7 +65,7 @@ class Client(val platform: Platform) {
     }
   }
 
-  fun update(state: AppState, delta: Float): Pair<ClientState, CommandType?> {
+  fun update(state: AppState, delta: Float): Pair<ClientState, GameCommand?> {
     val actualWindowInfo = getWindowInfo()
     val windowInfo = actualWindowInfo.copy(dimensions = Vector2i(320, 200))
     val canvas = createCanvas(windowInfo)
