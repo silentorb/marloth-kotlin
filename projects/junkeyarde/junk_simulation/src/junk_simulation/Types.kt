@@ -64,7 +64,7 @@ data class AbilityType(
     val purchaseCost: Int = 1,
     val trigger: Triggers = Triggers.none,
     val arguments: List<Any> = listOf(),
-    val parent: AbilityType?
+    val parent: AbilityType? = null
 )
 
 data class Ability(
@@ -84,6 +84,7 @@ data class CreatureType(
     val category: CreatureCategory,
     val elements: Map<Element, Int> = mapOf(),
     val abilities: List<AbilityType> = listOf(),
+    val life: Int,
     val level: Int = 1,
     val frequency: Int = 0
 )
@@ -92,6 +93,7 @@ data class Creature(
     val id: Id,
     val level: Int,
     val type: CreatureType,
-    val resources: List<Resource>,
+    val life: Int,
+//    val resources: List<Resource>,
     val abilities: List<Ability>
 )

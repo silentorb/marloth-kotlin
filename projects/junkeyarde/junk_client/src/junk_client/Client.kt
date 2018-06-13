@@ -18,6 +18,9 @@ data class ClientState(
     val battle: ClientBattleState?
 )
 
+fun clip(value: Int, min: Int, max: Int): Int =
+    Math.max(min, Math.min(value, max))
+
 class Client(val platform: Platform) {
   val renderer: Renderer = Renderer()
   val bindings: Bindings<CommandType> = createStrokeBindings(1, mapOf(
@@ -32,9 +35,13 @@ class Client(val platform: Platform) {
     platform.input.update()
     val (commands, nextInputState) = gatherInputCommands(bindings, deviceHandlers, previousInput)
     val initalMousePosition = platform.input.getMousePosition()
+    val clippedMousePosition = Vector2i(
+        clip(initalMousePosition.x, 0, actualWindowInfo.dimensions.x),
+        clip(initalMousePosition.y, 0, actualWindowInfo.dimensions.y)
+    )
     val mousePosition = Vector2i(
-        initalMousePosition.x * 320 / actualWindowInfo.dimensions.x,
-        initalMousePosition.y * 200 / actualWindowInfo.dimensions.y
+        clippedMousePosition.x * 320 / actualWindowInfo.dimensions.x,
+        clippedMousePosition.y * 200 / actualWindowInfo.dimensions.y
     )
     val userInput = UserInput(commands, mousePosition)
     return Pair(userInput, nextInputState)

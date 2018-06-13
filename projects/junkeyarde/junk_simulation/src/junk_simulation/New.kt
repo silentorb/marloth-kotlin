@@ -27,7 +27,8 @@ fun newCreature(type: CreatureType): Creature {
       type = type,
       level = type.level,
       abilities = type.abilities.map { initializeAbility(it) },
-      resources = type.elements.map { newResource(it.key, it.value) }
+      life = type.life
+//      resources = type.elements.map { newResource(it.key, it.value) }
   )
 }
 
@@ -36,8 +37,8 @@ fun newPlayer(playerAbilities: List<AbilityType>): Creature {
   val abilities = playerAbilities.map { initializeAbility(it) }
   return newCreature(Creatures.player)
       .copy(
-          abilities = abilities,
-          resources = allocateResources(creatureLevel, abilities).map(convertSimpleResource)
+          abilities = abilities
+//          resources = allocateResources(creatureLevel, abilities).map(convertSimpleResource)
       )
 }
 

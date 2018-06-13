@@ -5,6 +5,12 @@ import junk_simulation.*
 import junk_simulation.logic.isReady
 import mythic.bloom.*
 import mythic.drawing.Canvas
+import mythic.drawing.grayTone
+
+val columnCount = 4
+val rowCount = 8
+val columnSize = 320f / columnCount
+val rowSize = 200f / rowCount
 
 data class ClientBattleState(
     val selectedEntity: Id?
@@ -41,10 +47,10 @@ fun selectedDepiction(state: ClientBattleState, id: Id): Depiction? =
 
 fun creatureView(state: ClientBattleState, creature: Creature, bounds: Bounds): Layout {
   val columns = arrangeHorizontal(standardPadding, bounds, listOf(80f, null))
-  val resources = verticalList(creature.resources, columns[1], itemHeight, 0f, { a, b -> listOf(resourceView(a, b)) })
+//  val resources = verticalList(creature.resources, columns[1], itemHeight, 0f, { a, b -> listOf(resourceView(a, b)) })
   return listOf<Box>()
       .plus(label(white, creature.type.name.take(8), columns[0]))
-      .plus(resources)
+      .plus(label(white, creature.life.toString(), columns[1]))
 }
 
 fun creaturesView(world: World, state: ClientBattleState, bounds: Bounds): Layout {
@@ -64,11 +70,12 @@ fun abilityView(state: ClientBattleState, creature: Creature, ability: Ability, 
   )
 }
 
-fun playerView(player: Creature, state: ClientBattleState, bounds: Bounds): Layout {
-  val rows = arrangeVertical(standardPadding, bounds, listOf(40f, null))
-  val resourceBoxes = verticalList(player.resources, rows[0], itemHeight, 0f, { r, b -> listOf(resourceView(r, b)) })
-  val abilityBoxes = verticalList(player.abilities, rows[1], abilityHeight, 0f, { a, b -> abilityView(state, player, a, b) })
-  return resourceBoxes.plus(abilityBoxes)
+fun playerView(creature: Creature, state: ClientBattleState, bounds: Bounds): Layout {
+  val rows = arrangeVertical(0f, bounds, (1..rowCount).toList().map { rowSize })
+  val abilityBoxes = creature.abilities.zip(rows.drop(1), { a, b ->
+    abilityView(state, creature, a, b)
+  }).flatten()
+  return listOf(label(white, creature.life.toString(), rows[0])).plus(abilityBoxes)
 }
 
 fun battleLayoutOutline(bounds: Bounds): Layout {
@@ -76,25 +83,24 @@ fun battleLayoutOutline(bounds: Bounds): Layout {
     Box(
         bounds = b,
         depiction = { b2: Bounds, c: Canvas ->
-          drawBorder(b2, c, LineStyle(white, 1f))
+          drawBorder(b2, c, LineStyle(grayTone(0.3f), 1f))
         }
     )
   }
 
-  val columnSize = 320f / 3f
-  val columns = arrangeHorizontal(0f, bounds, listOf(columnSize, columnSize, columnSize))
+  val k = (1..columnCount).toList().map { columnSize }
+  val columns = arrangeHorizontal(0f, bounds, (1..columnCount).toList().map { columnSize })
 
-  val creatureCount = 10
-  val creatureHeight = 200f / creatureCount
   val creaturesOutline = { bounds2: Bounds ->
-    verticalList((1..creatureCount).toList(), bounds2, creatureHeight, 0f, { a, b -> listOf(border(b)) })
+    verticalList((1..rowCount).toList(), bounds2, rowSize, 0f, { a, b -> listOf(border(b)) })
   }
   return columns.flatMap { creaturesOutline(it) }
 }
 
 fun battleView(state: ClientBattleState, world: World, bounds: Bounds): Layout {
-  val columns = arrangeHorizontal(standardPadding, bounds, listOf(120f, null, 120f))
+  val columns = arrangeHorizontal(0f, bounds, (1..columnCount).toList().map { columnSize })
+//  val columns = arrangeHorizontal(standardPadding, bounds, listOf(120f, null, 120f))
   return battleLayoutOutline(bounds)
       .plus(creaturesView(world, state, columns[0]))
-      .plus(playerView(world.player, state, columns[2]))
+      .plus(playerView(world.player, state, columns[3]))
 }

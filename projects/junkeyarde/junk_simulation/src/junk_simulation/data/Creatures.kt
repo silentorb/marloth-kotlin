@@ -8,7 +8,8 @@ import junk_simulation.reflectProperties
 class Creatures {
   companion object {
     val player = CreatureType(name = "Hero",
-        category = CreatureCategory.player
+        category = CreatureCategory.player,
+        life = 8
     )
     val sporeColony = CreatureType(
         name = "Spore Colony",
@@ -16,6 +17,7 @@ class Creatures {
         elements = mapOf(
             Element.plant to 3
         ),
+        life = 3,
         abilities = listOf(
             Abilities.punch
         ),
@@ -28,6 +30,7 @@ class Creatures {
         elements = mapOf(
             Element.ethereal to 5
         ),
+        life = 5,
         abilities = listOf(
             Abilities.lightning
         ),
@@ -37,6 +40,7 @@ class Creatures {
     val droid = CreatureType(
         name = "Droid",
         category = CreatureCategory.enemy,
+        life = 5,
         elements = mapOf(
             Element.robot to 5
         ),
@@ -50,6 +54,7 @@ class Creatures {
     val bombCaster = CreatureType(
         name = "Bomb Caster",
         category = CreatureCategory.enemy,
+        life = 5,
         elements = mapOf(
             Element.robot to 5
         ),
@@ -62,6 +67,7 @@ class Creatures {
     val staticNettle = CreatureType(
         name = "Static Nettle",
         category = CreatureCategory.enemy,
+        life = 18,
         elements = mapOf(
             Element.ethereal to 18,
             Element.plant to 15
@@ -76,6 +82,7 @@ class Creatures {
     val venomousVine = CreatureType(
         name = "Venomous Vine",
         category = CreatureCategory.enemy,
+        life = 8,
         elements = mapOf(
             Element.plant to 8
         ),
@@ -89,6 +96,7 @@ class Creatures {
     val obsidianDwarf = CreatureType(
         name = "Obsidian Dwarf",
         category = CreatureCategory.enemy,
+        life = 10,
         elements = mapOf(
             Element.robot to 10
         ),
@@ -102,6 +110,7 @@ class Creatures {
     val cyberAngel = CreatureType(
         name = "Cyber Angel",
         category = CreatureCategory.enemy,
+        life = 12,
         elements = mapOf(
             Element.ethereal to 12,
             Element.robot to 12
@@ -116,6 +125,7 @@ class Creatures {
     val mossTank = CreatureType(
         name = "Moss Tank",
         category = CreatureCategory.enemy,
+        life = 12,
         elements = mapOf(
             Element.plant to 12,
             Element.robot to 12
@@ -131,6 +141,7 @@ class Creatures {
     val cyberEnt = CreatureType(
         name = "Cyber Ent",
         category = CreatureCategory.enemy,
+        life = 18,
         elements = mapOf(
             Element.plant to 12,
             Element.robot to 18
@@ -144,6 +155,7 @@ class Creatures {
     val wallofWind = CreatureType(
         name = "Wall of Wind",
         category = CreatureCategory.ally,
+        life = 4,
         elements = mapOf(
             Element.ethereal to 2
         ),
@@ -155,6 +167,7 @@ class Creatures {
     val wallofWeed = CreatureType(
         name = "Wall of Weed",
         category = CreatureCategory.ally,
+        life = 6,
         elements = mapOf(
             Element.plant to 6
         ),
@@ -167,6 +180,7 @@ class Creatures {
     val golem = CreatureType(
         name = "Golem",
         category = CreatureCategory.ally,
+        life = 3,
         elements = mapOf(
             Element.robot to 3
         ),
@@ -179,6 +193,7 @@ class Creatures {
     val hive = CreatureType(
         name = "Hive",
         category = CreatureCategory.enemy,
+        life = 20,
         elements = mapOf(
             Element.plant to 20
         ),
@@ -191,6 +206,7 @@ class Creatures {
     val assassin = CreatureType(
         name = "Assassin",
         category = CreatureCategory.enemy,
+        life = 14,
         elements = mapOf(
             Element.plant to 14,
             Element.robot to 11
@@ -205,6 +221,7 @@ class Creatures {
     val underLord = CreatureType(
         name = "UnderLord",
         category = CreatureCategory.enemy,
+        life = 22,
         elements = mapOf(
             Element.plant to 20,
             Element.robot to 22,
