@@ -8,6 +8,8 @@ import haft.*
 import junk_client.views.ClientBattleState
 import junk_client.views.shopView
 import junk_client.views.battleView
+import junk_simulation.CommandType
+import junk_simulation.GameCommand
 import mythic.platforming.WindowInfo
 import org.lwjgl.glfw.GLFW
 

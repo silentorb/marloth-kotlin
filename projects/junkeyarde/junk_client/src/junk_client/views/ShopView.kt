@@ -2,10 +2,10 @@ package junk_client.views
 
 import junk_client.*
 import junk_simulation.AbilityType
+import junk_simulation.CommandType
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
-import mythic.spatial.Vector2
 
 fun listItemDepiction(content: String): Depiction = { bounds: Bounds, canvas: Canvas ->
   drawFill(bounds, canvas, grayTone(0.5f))

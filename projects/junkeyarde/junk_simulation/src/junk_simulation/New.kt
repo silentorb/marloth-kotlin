@@ -48,16 +48,23 @@ fun randomEnemies(min: Int, max: Int, wave: Int) =
 fun enemiesAtWaveStart(wave: Int) =
     randomEnemies(1, 2, wave)
 
+fun newTurn(creatures: Collection<Creature>): List<Id> =
+    creatures.filter(isPlayer)
+        .plus(creatures.filter { !isPlayer(it) })
+        .map { it.id }
+
 fun newWorld(playerAbilities: List<AbilityType>): World {
   resetId()
   val player = newPlayer(playerAbilities)
   val wave = 1
+  val creatures = mapOf(
+      player.id to player
+  ).plus(enemiesAtWaveStart(wave))
+
   return World(
       round = 1,
       wave = wave,
-      creatures = mapOf(
-          player.id to player
-      ).plus(enemiesAtWaveStart(wave)),
-      turns = listOf()
+      creatures = creatures,
+      turns = newTurn(creatures.values)
   )
 }

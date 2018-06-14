@@ -3,25 +3,11 @@ package junk_client
 import haft.Commands
 import haft.ScalarInputSource
 import haft.disconnectedScalarInputSource
+import junk_simulation.Action
+import junk_simulation.CommandType
+import junk_simulation.GameCommand
 import mythic.platforming.PlatformInput
 import org.joml.Vector2i
-import junk_simulation.Id
-
-enum class CommandType {
-  select,
-  submit,
-  useAbility
-}
-
-data class AbilityUseData(
-    val abilityId: Id,
-    val creatureId: Id?
-)
-
-data class GameCommand(
-    val type: CommandType,
-    val data: Any? = null
-)
 
 fun applyInput(event: Any, state: ClientState): Pair<ClientState, GameCommand?> =
     when (event.javaClass.kotlin) {
@@ -53,7 +39,7 @@ fun applyInput(event: Any, state: ClientState): Pair<ClientState, GameCommand?> 
               battle = battle.copy(
                   selectedEntity = null
               )
-          ), GameCommand(CommandType.useAbility, AbilityUseData(battle.selectedEntity!!, newId)))
+          ), GameCommand(CommandType.useAbility, Action(battle.selectedEntity!!, newId)))
         }
       }
 

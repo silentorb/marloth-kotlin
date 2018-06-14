@@ -1,8 +1,8 @@
 package junk_app
 
 import junk_client.AppState
-import junk_client.CommandType
-import junk_client.GameCommand
+import junk_simulation.CommandType
+import junk_simulation.GameCommand
 import junk_client.GameMode
 import junk_simulation.newWorld
 

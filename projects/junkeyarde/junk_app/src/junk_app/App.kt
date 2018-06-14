@@ -2,6 +2,7 @@ package junk_app
 
 import configuration.loadConfig
 import junk_client.*
+import junk_simulation.*
 import mythic.desktop.createDesktopPlatform
 import mythic.platforming.Display
 import mythic.platforming.Platform
@@ -15,20 +16,33 @@ data class JunkApp(
     val client: Client = Client(platform)
 )
 
+fun updateWorld(world: World?, command: GameCommand?, delta: Float): World? {
+  if (world != null) {
+    if (command != null)
+      takeTurn(world, command.data as Action)
+    else if (world.animation != null)
+      world.copy(animation = updateAnimation(world.animation!!, delta))
+  }
+
+  return null
+}
+
 tailrec fun appLoop(app: JunkApp, state: AppState) {
   app.display.swapBuffers()
   val delta = app.timer.update().toFloat()
   val (clientState, command) = app.client.update(state, delta)
   val newState = state.copy(client = clientState)
-  val newState2 = if (command != null)
+  val state2 = if (command != null)
     updateOverlap(newState, command)
   else
     newState
 
+  val state3 = state2.copy(world = updateWorld(state2.world, command, delta))
+
   app.platform.process.pollEvents()
 
   if (!app.platform.process.isClosing())
-    appLoop(app, newState2)
+    appLoop(app, state3)
 }
 
 fun runApp(platform: Platform, gameConfig: GameConfig) {

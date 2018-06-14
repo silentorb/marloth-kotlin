@@ -97,3 +97,17 @@ data class Creature(
 //    val resources: List<Resource>,
     val abilities: List<Ability>
 )
+
+typealias  CreatureMap = Map<Id, Creature>
+
+enum class AnimationType {
+  missile
+}
+
+data class Animation(
+    val type: AnimationType,
+    val ability: Id,
+    val actor: Id,
+    val target: Id,
+    val progress: Float
+)
