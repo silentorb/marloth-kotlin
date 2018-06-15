@@ -5,23 +5,26 @@ data class GameCommand(
     val data: Any? = null
 )
 
-data class Action(
-    val ability: Id,
-    val creature: Id?
-)
-
-fun takeTurn(world: World, action: Action): World {
-  val actor = world.turns.first()
-
+fun startTurn(world: World, action: Action): World {
   return world.copy(
       turns = world.turns.drop(1),
       animation = Animation(
           type = AnimationType.missile,
-          actor = actor,
-          target = action.creature!!,
-          ability = action.ability,
+          action = action,
           progress = 0f
       )
+  )
+}
+
+fun replaceCreature(creatures: CreatureMap, creature: Creature): CreatureMap =
+    creatures.plus(Pair(creature.id, creature))
+
+fun continueTurn(world: World, action: Action): World {
+  val target = world.creatures[action.target]!!
+  val creatures = replaceCreature(world.creatures, target.copy(life = Math.max(0, target.life - 1)))
+  return world.copy(
+      animation = null,
+      creatures = creatures
   )
 }
 

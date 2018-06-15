@@ -6,10 +6,11 @@ import haft.disconnectedScalarInputSource
 import junk_simulation.Action
 import junk_simulation.CommandType
 import junk_simulation.GameCommand
+import junk_simulation.Id
 import mythic.platforming.PlatformInput
 import org.joml.Vector2i
 
-fun applyInput(event: Any, state: ClientState): Pair<ClientState, GameCommand?> =
+fun applyInput(event: Any, state: ClientState, actor: Id?): Pair<ClientState, GameCommand?> =
     when (event.javaClass.kotlin) {
 
       CommandType::class -> Pair(state, GameCommand(event as CommandType))
@@ -39,7 +40,11 @@ fun applyInput(event: Any, state: ClientState): Pair<ClientState, GameCommand?> 
               battle = battle.copy(
                   selectedEntity = null
               )
-          ), GameCommand(CommandType.useAbility, Action(battle.selectedEntity!!, newId)))
+          ), GameCommand(CommandType.useAbility, Action(
+              actor = actor!!,
+              ability = battle.selectedEntity!!,
+              target = newId
+          )))
         }
       }
 

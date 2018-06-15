@@ -67,7 +67,7 @@ class Client(val platform: Platform) {
     }
   }
 
-  fun update(state: AppState, delta: Float): Pair<ClientState, GameCommand?> {
+  fun update(state: AppState): Pair<ClientState, GameCommand?> {
     val actualWindowInfo = getWindowInfo()
     val windowInfo = actualWindowInfo.copy(dimensions = Vector2i(320, 200))
     val canvas = createCanvas(windowInfo)
@@ -78,7 +78,7 @@ class Client(val platform: Platform) {
     val newClientState = state.client.copy(previousInput = triggerState)
     val event = getInputEvent(layout, userInput)
     return if (event != null)
-      applyInput(event, newClientState)
+      applyInput(event, newClientState, state.world?.turns?.first())
     else
       Pair(newClientState, null)
   }

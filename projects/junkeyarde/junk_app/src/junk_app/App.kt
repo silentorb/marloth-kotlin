@@ -16,12 +16,21 @@ data class JunkApp(
     val client: Client = Client(platform)
 )
 
+fun updateWorldAnimation(world: World, animation: Animation, delta: Float): World {
+  val newAnimation = updateAnimation(animation, delta)
+  if (newAnimation != null)
+    return world.copy(animation = newAnimation)
+  else
+    return continueTurn(world, animation.action)
+}
+
 fun updateWorld(world: World?, command: GameCommand?, delta: Float): World? {
   if (world != null) {
     if (command != null)
-      takeTurn(world, command.data as Action)
-    else if (world.animation != null)
-      world.copy(animation = updateAnimation(world.animation!!, delta))
+      startTurn(world, command.data as Action)
+    else if (world.animation != null) {
+      return updateWorldAnimation(world, world.animation!!, delta)
+    }
 
     return world
   }
@@ -32,7 +41,7 @@ fun updateWorld(world: World?, command: GameCommand?, delta: Float): World? {
 tailrec fun appLoop(app: JunkApp, state: AppState) {
   app.display.swapBuffers()
   val delta = app.timer.update().toFloat()
-  val (clientState, command) = app.client.update(state, delta)
+  val (clientState, command) = app.client.update(state)
   val newState = state.copy(client = clientState)
   val state2 = if (command != null && newState.world == null)
     updateOutsideOfWorld(newState, command)

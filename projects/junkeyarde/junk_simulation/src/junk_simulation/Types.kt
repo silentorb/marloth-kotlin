@@ -104,10 +104,14 @@ enum class AnimationType {
   missile
 }
 
+data class Action(
+    val actor: Id,
+    val ability: Id,
+    val target: Id?
+)
+
 data class Animation(
     val type: AnimationType,
-    val ability: Id,
-    val actor: Id,
-    val target: Id,
-    val progress: Float
+    val progress: Float,
+    val action: Action
 )
