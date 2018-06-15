@@ -22,6 +22,8 @@ fun updateWorld(world: World?, command: GameCommand?, delta: Float): World? {
       takeTurn(world, command.data as Action)
     else if (world.animation != null)
       world.copy(animation = updateAnimation(world.animation!!, delta))
+
+    return world
   }
 
   return null
@@ -32,17 +34,15 @@ tailrec fun appLoop(app: JunkApp, state: AppState) {
   val delta = app.timer.update().toFloat()
   val (clientState, command) = app.client.update(state, delta)
   val newState = state.copy(client = clientState)
-  val state2 = if (command != null)
-    updateOverlap(newState, command)
+  val state2 = if (command != null && newState.world == null)
+    updateOutsideOfWorld(newState, command)
   else
-    newState
-
-  val state3 = state2.copy(world = updateWorld(state2.world, command, delta))
+    newState.copy(world = updateWorld(newState.world, command, delta))
 
   app.platform.process.pollEvents()
 
   if (!app.platform.process.isClosing())
-    appLoop(app, state3)
+    appLoop(app, state2)
 }
 
 fun runApp(platform: Platform, gameConfig: GameConfig) {

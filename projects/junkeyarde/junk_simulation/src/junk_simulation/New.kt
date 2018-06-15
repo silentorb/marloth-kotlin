@@ -65,6 +65,7 @@ fun newWorld(playerAbilities: List<AbilityType>): World {
       round = 1,
       wave = wave,
       creatures = creatures,
-      turns = newTurn(creatures.values)
+      turns = newTurn(creatures.values),
+      animation = null
   )
 }

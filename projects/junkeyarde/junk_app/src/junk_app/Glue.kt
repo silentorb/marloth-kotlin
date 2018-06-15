@@ -16,7 +16,7 @@ fun finishCreatureCreation(state: AppState): AppState {
   )
 }
 
-fun updateOverlap(state: AppState, command: GameCommand): AppState =
+fun updateOutsideOfWorld(state: AppState, command: GameCommand): AppState =
     when (command.type) {
       CommandType.submit -> finishCreatureCreation(state)
       else -> throw Error("Unsupported command")
