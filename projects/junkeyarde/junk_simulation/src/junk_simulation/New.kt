@@ -1,8 +1,6 @@
 package junk_simulation
 
 import junk_simulation.data.Creatures
-import junk_simulation.logic.allocateResources
-import junk_simulation.logic.convertSimpleResource
 import junk_simulation.logic.newEnemies
 import randomly.Dice
 
@@ -48,7 +46,10 @@ fun randomEnemies(min: Int, max: Int, wave: Int) =
 fun enemiesAtWaveStart(wave: Int) =
     randomEnemies(1, 2, wave)
 
-fun newTurn(creatures: Collection<Creature>): List<Id> =
+fun enemiesWhenEmpty(wave: Int) =
+    randomEnemies(1, 2, wave)
+
+fun prepareTurns(creatures: Collection<Creature>): List<Id> =
     creatures.filter(isPlayer)
         .plus(creatures.filter { !isPlayer(it) })
         .map { it.id }
@@ -61,11 +62,13 @@ fun newWorld(playerAbilities: List<AbilityType>): World {
       player.id to player
   ).plus(enemiesAtWaveStart(wave))
 
+  val turns = prepareTurns(creatures.values)
   return World(
       round = 1,
       wave = wave,
       creatures = creatures,
-      turns = newTurn(creatures.values),
-      animation = null
+      turns = turns.drop(1),
+      animation = null,
+      activeCreatureId = turns.first()
   )
 }
