@@ -7,6 +7,10 @@ import junk_simulation.logic.isReady
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
+import mythic.spatial.Vector2
+import mythic.spatial.times
+import org.joml.minus
+import org.joml.plus
 
 val columnCount = 4
 val rowCount = 8
@@ -95,7 +99,6 @@ fun battleLayoutOutline(bounds: Bounds): Layout {
     )
   }
 
-  val k = (1..columnCount).toList().map { columnSize }
   val columns = arrangeHorizontal(0f, bounds, (1..columnCount).toList().map { columnSize })
 
   val creaturesOutline = { bounds2: Bounds ->
@@ -104,10 +107,49 @@ fun battleLayoutOutline(bounds: Bounds): Layout {
   return columns.flatMap { creaturesOutline(it) }
 }
 
+
+fun tweenPosition(first: Vector2, second: Vector2, progress: Float): Vector2 {
+  val direction = second - first
+  return first + direction * progress
+}
+
+fun getPosition(world: World, creature: Creature): Vector2 =
+    if (isPlayer(creature))
+      Vector2(columnSize * 2f, 0f)
+    else
+      Vector2(0f, world.enemies.indexOf(creature) * rowSize)
+
+private val positionOffset = Vector2(10f, 5f)
+
+fun renderAnimation(world: World): Layout {
+  val animation = world.animation
+  if (animation == null || animation.delay > 0f)
+    return listOf()
+
+  val action = animation.action
+  val actor = world.creatures[action.actor]!!
+  val target = world.creatures[action.target]!!
+  val ability = actor.abilities.first { it.id == action.ability }
+  val actorPosition = getPosition(world, actor) + positionOffset
+  val targetPosition = getPosition(world, target) + positionOffset
+  val missilePosition = tweenPosition(actorPosition, targetPosition, animation.progress)
+  return listOf(
+      label(
+          white,
+          ability.type.name,
+          Bounds(
+              position = missilePosition,
+              dimensions = Vector2(50f, 10f)
+          )
+      )
+  )
+}
+
 fun battleView(state: ClientBattleState, world: World, bounds: Bounds): Layout {
   val columns = arrangeHorizontal(0f, bounds, (1..columnCount).toList().map { columnSize })
 //  val columns = arrangeHorizontal(standardPadding, bounds, listOf(120f, null, 120f))
   return battleLayoutOutline(bounds)
       .plus(creaturesView(world, state, columns[0]))
       .plus(playerView(world.player, state, columns[3]))
+      .plus(renderAnimation(world))
 }

@@ -113,5 +113,6 @@ data class Action(
 data class Animation(
     val type: AnimationType,
     val progress: Float,
-    val action: Action
+    val action: Action,
+    val delay: Float
 )

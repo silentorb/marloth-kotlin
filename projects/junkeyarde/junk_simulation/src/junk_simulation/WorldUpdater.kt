@@ -10,7 +10,8 @@ fun startTurn(world: World, action: Action): World {
       animation = Animation(
           type = AnimationType.missile,
           action = action,
-          progress = 0f
+          progress = 0f,
+          delay = if (world.player.id == action.actor) 0.1f else 0.3f
       )
   )
 }
@@ -48,7 +49,10 @@ fun continueTurn(world: World, action: Action): World {
 }
 
 fun updateAnimation(animation: Animation, delta: Float): Animation? {
-  val missileSpeed = 2f
+  if (animation.delay > 0f)
+    return animation.copy(delay = Math.max(0f, animation.delay - delta))
+
+  val missileSpeed = 1.5f
   val progress = animation.progress + missileSpeed * delta
   return if (progress < 1f)
     animation.copy(
