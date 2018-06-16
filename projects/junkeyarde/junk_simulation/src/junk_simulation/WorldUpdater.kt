@@ -83,3 +83,6 @@ fun updateAnimation(animation: Animation, delta: Float): Animation? {
   else
     null
 }
+
+fun isDead(creature: Creature): Boolean =
+    creature.life != 0

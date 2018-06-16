@@ -67,7 +67,14 @@ class Client(val platform: Platform) {
     }
   }
 
-  fun update(state: AppState): Pair<ClientState, GameCommand?> {
+  fun updateBattleState(state: ClientBattleState?, delta: Float): ClientBattleState? =
+      if (state != null)
+        state.copy(
+            flicker = (state.flicker + 1f * delta) % 1f
+        )
+      else null
+
+  fun update(state: AppState, delta: Float): Pair<ClientState, GameCommand?> {
     val actualWindowInfo = getWindowInfo()
     val windowInfo = actualWindowInfo.copy(dimensions = Vector2i(320, 200))
     val canvas = createCanvas(windowInfo)
@@ -75,7 +82,10 @@ class Client(val platform: Platform) {
     val (userInput, triggerState) = updateInputState(state.client.previousInput, actualWindowInfo)
     val layout = prepareLayout(state, bounds)
     renderScreen(renderer, layout, canvas, windowInfo, actualWindowInfo)
-    val newClientState = state.client.copy(previousInput = triggerState)
+    val newClientState = state.client.copy(
+        previousInput = triggerState,
+        battle = updateBattleState(state.client.battle, delta)
+    )
     val event = getInputEvent(layout, userInput)
     return if (event != null)
       applyInput(event, newClientState, state.world?.activeCreatureId)

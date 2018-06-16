@@ -39,7 +39,7 @@ fun updateWorld(world: World?, command: GameCommand?, delta: Float): World? {
 tailrec fun appLoop(app: JunkApp, state: AppState) {
   app.display.swapBuffers()
   val delta = app.timer.update().toFloat()
-  val (clientState, command) = app.client.update(state)
+  val (clientState, command) = app.client.update(state, delta)
   val newState = state.copy(client = clientState)
   val state2 = if (command != null && newState.world == null)
     updateOutsideOfWorld(newState, command)

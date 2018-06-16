@@ -23,6 +23,12 @@ fun newAbilitySelectionState(existingAbilities: List<SimpleAbility>, creatureLev
         existing = existingAbilities
     )
 
+fun newClientBattleState() =
+    ClientBattleState(
+        selectedEntity = null,
+        flicker = 0f
+    )
+
 fun newAppState(): AppState {
   return AppState(
       world = null,
@@ -30,9 +36,7 @@ fun newAppState(): AppState {
           mode = GameMode.abilitySelection,
           shopState = newAbilitySelectionState(listOf(), 1),
           previousInput = mapOf(),
-          battle = ClientBattleState(
-              selectedEntity = null
-          )
+          battle = newClientBattleState()
       )
   )
 }
@@ -49,9 +53,7 @@ fun newLabAppState(config: LabConfig): AppState {
           mode = GameMode.battle,
           shopState = null,
           previousInput = mapOf(),
-          battle = ClientBattleState(
-              selectedEntity = null
-          )
+          battle = newClientBattleState()
       )
   )
 }

@@ -18,7 +18,8 @@ val columnSize = 320f / columnCount
 val rowSize = 200f / rowCount
 
 data class ClientBattleState(
-    val selectedEntity: Id?
+    val selectedEntity: Id?,
+    val flicker: Float
 )
 
 val elementColors = mapOf(
@@ -52,16 +53,19 @@ fun selectedDepiction(state: ClientBattleState, id: Id): Depiction? =
 
 fun creatureView(state: ClientBattleState, creature: Creature, bounds: Bounds): Layout {
   val columns = arrangeHorizontal(standardPadding, bounds, listOf(80f, null))
-  return listOf<Box>()
-      .plus(label(white, creature.type.name.take(8), columns[0]))
-      .plus(label(white, creature.life.toString(), columns[1]))
-      .plus(if (state.selectedEntity != null)
-        listOf(Box(
-            bounds = bounds,
-            handler = EntitySelectionEvent(EntityType.creature, creature.id)
-        ))
-      else
-        listOf())
+  return if (isDead(creature))
+    listOf()
+  else
+    listOf<Box>()
+        .plus(label(white, creature.type.name.take(8), columns[0]))
+        .plus(label(white, creature.life.toString(), columns[1]))
+        .plus(if (state.selectedEntity != null)
+          listOf(Box(
+              bounds = bounds,
+              handler = EntitySelectionEvent(EntityType.creature, creature.id)
+          ))
+        else
+          listOf())
 }
 
 fun creaturesView(world: World, state: ClientBattleState, bounds: Bounds): Layout {
@@ -121,11 +125,7 @@ fun getPosition(world: World, creature: Creature): Vector2 =
 
 private val positionOffset = Vector2(10f, 5f)
 
-fun renderAnimation(world: World): Layout {
-  val animation = world.animation
-  if (animation == null || animation.delay > 0f)
-    return listOf()
-
+fun renderMissileAnimation(world: World, animation: Animation): Layout {
   val action = animation.action
   val actor = world.creatures[action.actor]!!
   val target = world.creatures[action.target]!!
@@ -143,6 +143,16 @@ fun renderAnimation(world: World): Layout {
           )
       )
   )
+}
+
+fun renderAnimation(world: World): Layout {
+  val animation = world.animation
+  return if (animation == null || animation.delay > 0f)
+    listOf()
+  else when (animation.type) {
+    AnimationType.missile -> renderMissileAnimation(world, animation)
+    else -> listOf()
+  }
 }
 
 fun battleView(state: ClientBattleState, world: World, bounds: Bounds): Layout {

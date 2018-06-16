@@ -101,6 +101,7 @@ data class Creature(
 typealias  CreatureMap = Map<Id, Creature>
 
 enum class AnimationType {
+  death,
   missile
 }
 
