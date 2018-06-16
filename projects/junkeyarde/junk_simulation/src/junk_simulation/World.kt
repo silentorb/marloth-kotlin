@@ -30,5 +30,11 @@ data class World(
 
   val enemies: List<Creature>
     get() = creatures.values.filter { it.type.category == CreatureCategory.enemy }
+
+  val activeCreatureId: Id =
+      turns.first()
+
+  val activeCreature: Creature =
+      creatures [turns.first()]!!
 }
 

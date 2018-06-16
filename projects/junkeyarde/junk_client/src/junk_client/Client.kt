@@ -78,7 +78,7 @@ class Client(val platform: Platform) {
     val newClientState = state.client.copy(previousInput = triggerState)
     val event = getInputEvent(layout, userInput)
     return if (event != null)
-      applyInput(event, newClientState, state.world?.turns?.first())
+      applyInput(event, newClientState, state.world?.activeCreatureId)
     else
       Pair(newClientState, null)
   }

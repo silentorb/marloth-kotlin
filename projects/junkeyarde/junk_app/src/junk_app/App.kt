@@ -25,17 +25,15 @@ fun updateWorldAnimation(world: World, animation: Animation, delta: Float): Worl
 }
 
 fun updateWorld(world: World?, command: GameCommand?, delta: Float): World? {
-  if (world != null) {
+  return if (world != null) {
     if (command != null)
       startTurn(world, command.data as Action)
     else if (world.animation != null) {
-      return updateWorldAnimation(world, world.animation!!, delta)
-    }
-
-    return world
-  }
-
-  return null
+      updateWorldAnimation(world, world.animation!!, delta)
+    } else
+      world
+  } else
+    null
 }
 
 tailrec fun appLoop(app: JunkApp, state: AppState) {

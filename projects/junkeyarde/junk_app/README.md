@@ -15,13 +15,13 @@
 
 [ ] While the newAnimation is active, the client also renders the newAnimation.
 
-[ ] When the newAnimation ends, the server performs the second half of the logic.
+[*] When the newAnimation ends, the server performs the second half of the logic.
 
 [ ] This can be repeated several times.
 
-[ ] Once the newAnimation/logic chain is complete, the next server handles the first half of the logic and creates an newAnimation.
+[ ] Once the newAnimation/logic chain is complete, the next server handles the second half of the logic.
 
-[ ] The same logic/newAnimation workflow is repeated.
+[*] The same logic/newAnimation workflow is repeated.
 
-[ ] Once the turn queue is empty, the server creates a new round with a new turn queue.
+[*] Once the turn queue is empty, the server creates a new round with a new turn queue.
  
