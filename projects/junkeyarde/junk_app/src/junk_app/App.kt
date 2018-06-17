@@ -43,8 +43,10 @@ tailrec fun appLoop(app: JunkApp, state: AppState) {
   val newState = state.copy(client = clientState)
   val state2 = if (command != null && newState.world == null)
     updateOutsideOfWorld(newState, command)
-  else
+  else if (!isGameOver(newState.world!!))
     newState.copy(world = updateWorld(newState.world, command, delta))
+  else
+    newState
 
   app.platform.process.pollEvents()
 

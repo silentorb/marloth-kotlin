@@ -1,13 +1,12 @@
 package junk_simulation.data
 
 import junk_simulation.*
-import kotlin.reflect.KProperty
 
 class Abilities {
   companion object {
     val wait = AbilityType(
         name = "Wait",
-        action = ActionType.none,
+        action = ActionType.wait,
         info = "Skips a turn",
         target = AbilityTarget.global,
         purchasable = false

@@ -2,6 +2,7 @@ package junk_client.views
 
 import junk_client.EntitySelectionEvent
 import junk_client.EntityType
+import junk_client.GlobalAbilityEvent
 import junk_simulation.*
 import junk_simulation.logic.isReady
 import mythic.bloom.*
@@ -35,11 +36,16 @@ fun resourceView(resource: Resource, bounds: Bounds) =
         bounds
     )
 
-val abilityHeight = itemHeight * 2f
-
-fun abilityEvent(creature: Creature, ability: Ability): EntitySelectionEvent? =
+fun abilityEvent(creature: Creature, ability: Ability): Any? =
     if (isReady(creature, ability))
-      EntitySelectionEvent(EntityType.ability, ability.id)
+      if (ability.type.target == AbilityTarget.global)
+        GlobalAbilityEvent(
+            actionType = ability.type.action,
+            abilityId = ability.id,
+            actor = creature.id
+        )
+      else
+        EntitySelectionEvent(EntityType.ability, ability.id)
     else
       null
 
@@ -129,7 +135,7 @@ fun renderMissileAnimation(world: World, animation: Animation): Layout {
   val action = animation.action
   val actor = world.creatures[action.actor]!!
   val target = world.creatures[action.target]!!
-  val ability = actor.abilities.first { it.id == action.ability }
+  val ability = getAbility(actor, action.ability!!)
   val actorPosition = getPosition(world, actor) + positionOffset
   val targetPosition = getPosition(world, target) + positionOffset
   val missilePosition = tweenPosition(actorPosition, targetPosition, animation.progress)

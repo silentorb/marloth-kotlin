@@ -24,7 +24,7 @@ enum class ActionType {
   death,
   flux,
   heal_self,
-  none,
+  wait,
   upkeep,
   poison,
   poisoned,
@@ -55,7 +55,7 @@ enum class Triggers {
 data class AbilityType(
     val name: String,
     val cooldown: Int = 0,
-    val action: ActionType = ActionType.none,
+    val action: ActionType = ActionType.wait,
     val info: String,
     val target: AbilityTarget = AbilityTarget.none,
     val aiTarget: AbilityTarget = AbilityTarget.none,

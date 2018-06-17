@@ -36,3 +36,5 @@ data class World(
       creatures [activeCreatureId]
 }
 
+fun isGameOver(world: World): Boolean =
+    !isAlive(world.player)

@@ -1,5 +1,6 @@
 package junk_simulation
 
+import junk_simulation.data.Abilities
 import junk_simulation.data.Creatures
 import junk_simulation.logic.newEnemies
 import randomly.Dice
@@ -31,8 +32,10 @@ fun newCreature(type: CreatureType): Creature {
 }
 
 fun newPlayer(playerAbilities: List<AbilityType>): Creature {
-  val creatureLevel = 1
-  val abilities = playerAbilities.map { initializeAbility(it) }
+  val abilities = playerAbilities
+      .plus(Abilities.wait)
+      .map { initializeAbility(it) }
+
   return newCreature(Creatures.player)
       .copy(
           abilities = abilities

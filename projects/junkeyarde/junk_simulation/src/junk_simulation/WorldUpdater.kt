@@ -6,13 +6,17 @@ data class GameCommand(
 )
 
 fun startTurn(world: World, action: Action): World {
-  return world.copy(
-      animation = Animation(
-          action = action,
-          progress = 0f,
-          delay = if (world.player.id == action.actor) 0.1f else 0.3f
-      )
-  )
+  return when (action.type) {
+    ActionType.attack -> world.copy(
+        animation = Animation(
+            action = action,
+            progress = 0f,
+            delay = if (world.player.id == action.actor) 0.1f else 0.3f
+        )
+    )
+    ActionType.wait -> nextTurn(world)
+    else -> throw Error("Not implemented")
+  }
 }
 
 fun startAiTurn(world: World): World {
@@ -54,7 +58,7 @@ data class ActionResult(
 fun damageCreature(world: World, target: Creature): ActionResult {
   val life = Math.max(0, target.life - 2)
   val creatures = replaceCreature(world.creatures, target.copy(life = life))
-  val animation = if (life == 0)
+  val animation = if (life == 0 && !isPlayer(target))
     Animation(
         action = Action(
             type = ActionType.death,
@@ -80,17 +84,7 @@ fun creatureDied(world: World, target: Creature): ActionResult {
       null)
 }
 
-fun continueTurn(oldWorld: World, action: Action): World {
-  val target = oldWorld.creatures[action.target]!!
-  val (world, animation) = when (action.type) {
-    ActionType.attack -> damageCreature(oldWorld, target)
-    ActionType.death -> creatureDied(oldWorld, target)
-    else -> throw Error("Not implemented.")
-  }
-
-  if (animation != null)
-    return world.copy(animation = animation)
-
+fun nextTurn(world: World): World {
   return if (world.turns.any())
     startAiTurn(world.copy(
         turns = world.turns.drop(1),
@@ -100,6 +94,20 @@ fun continueTurn(oldWorld: World, action: Action): World {
   else {
     nextRound(world)
   }
+}
+
+fun continueTurn(oldWorld: World, action: Action): World {
+  val target = oldWorld.creatures[action.target]!!
+  val (world, animation) = when (action.type) {
+    ActionType.attack -> damageCreature(oldWorld, target)
+    ActionType.death -> creatureDied(oldWorld, target)
+    else -> throw Error("Not implemented.")
+  }
+
+  return if (animation != null)
+    world.copy(animation = animation)
+  else
+    nextTurn(world)
 }
 
 fun updateAnimation(animation: Animation, delta: Float): Animation? {
