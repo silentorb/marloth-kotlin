@@ -21,6 +21,7 @@ data class SimpleResource(
 
 enum class ActionType {
   attack,
+  death,
   flux,
   heal_self,
   none,
@@ -100,19 +101,19 @@ data class Creature(
 
 typealias  CreatureMap = Map<Id, Creature>
 
-enum class AnimationType {
-  death,
-  missile
-}
+//enum class AnimationType {
+//  death,
+//  missile
+//}
 
 data class Action(
+    val type: ActionType,
     val actor: Id,
-    val ability: Id,
-    val target: Id?
+    val ability: Id? = null,
+    val target: Id? = null
 )
 
 data class Animation(
-    val type: AnimationType,
     val progress: Float,
     val action: Action,
     val delay: Float

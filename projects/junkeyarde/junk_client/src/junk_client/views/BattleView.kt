@@ -53,9 +53,7 @@ fun selectedDepiction(state: ClientBattleState, id: Id): Depiction? =
 
 fun creatureView(state: ClientBattleState, creature: Creature, bounds: Bounds): Layout {
   val columns = arrangeHorizontal(standardPadding, bounds, listOf(80f, null))
-  return if (isDead(creature))
-    listOf()
-  else
+  return if (isAlive(creature) || state.flicker > 0.4f)
     listOf<Box>()
         .plus(label(white, creature.type.name.take(8), columns[0]))
         .plus(label(white, creature.life.toString(), columns[1]))
@@ -66,6 +64,8 @@ fun creatureView(state: ClientBattleState, creature: Creature, bounds: Bounds): 
           ))
         else
           listOf())
+  else
+    listOf()
 }
 
 fun creaturesView(world: World, state: ClientBattleState, bounds: Bounds): Layout {
@@ -149,8 +149,8 @@ fun renderAnimation(world: World): Layout {
   val animation = world.animation
   return if (animation == null || animation.delay > 0f)
     listOf()
-  else when (animation.type) {
-    AnimationType.missile -> renderMissileAnimation(world, animation)
+  else when (animation.action.type) {
+    ActionType.attack -> renderMissileAnimation(world, animation)
     else -> listOf()
   }
 }

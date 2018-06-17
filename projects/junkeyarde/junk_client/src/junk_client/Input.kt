@@ -3,10 +3,7 @@ package junk_client
 import haft.Commands
 import haft.ScalarInputSource
 import haft.disconnectedScalarInputSource
-import junk_simulation.Action
-import junk_simulation.CommandType
-import junk_simulation.GameCommand
-import junk_simulation.Id
+import junk_simulation.*
 import mythic.platforming.PlatformInput
 import org.joml.Vector2i
 
@@ -41,6 +38,7 @@ fun applyInput(event: Any, state: ClientState, actor: Id?): Pair<ClientState, Ga
                   selectedEntity = null
               )
           ), GameCommand(CommandType.useAbility, Action(
+              type = ActionType.attack,
               actor = actor!!,
               ability = battle.selectedEntity!!,
               target = newId

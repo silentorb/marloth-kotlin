@@ -70,7 +70,7 @@ class Client(val platform: Platform) {
   fun updateBattleState(state: ClientBattleState?, delta: Float): ClientBattleState? =
       if (state != null)
         state.copy(
-            flicker = (state.flicker + 1f * delta) % 1f
+            flicker = (state.flicker + 4f * delta) % 1f
         )
       else null
 

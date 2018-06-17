@@ -8,7 +8,6 @@ data class GameCommand(
 fun startTurn(world: World, action: Action): World {
   return world.copy(
       animation = Animation(
-          type = AnimationType.missile,
           action = action,
           progress = 0f,
           delay = if (world.player.id == action.actor) 0.1f else 0.3f
@@ -20,6 +19,7 @@ fun startAiTurn(world: World): World {
   val actor = world.activeCreature!!
 
   val action = Action(
+      type = ActionType.attack,
       actor = actor.id,
       ability = actor.abilities.first().id,
       target = world.player.id
@@ -30,7 +30,6 @@ fun startAiTurn(world: World): World {
 
 fun replaceCreature(creatures: CreatureMap, creature: Creature): CreatureMap =
     creatures.plus(Pair(creature.id, creature))
-
 
 fun nextRound(world: World): World {
   val turns = prepareTurns(world.creatures.values)
@@ -47,26 +46,59 @@ fun nextRound(world: World): World {
   )
 }
 
-fun damageCreature(world: World, target: Creature): CreatureMap {
+data class ActionResult(
+    val world: World,
+    val animation: Animation?
+)
+
+fun damageCreature(world: World, target: Creature): ActionResult {
   val life = Math.max(0, target.life - 2)
-  return if (life > 0)
-    replaceCreature(world.creatures, target.copy(life = life))
+  val creatures = replaceCreature(world.creatures, target.copy(life = life))
+  val animation = if (life == 0)
+    Animation(
+        action = Action(
+            type = ActionType.death,
+            actor = target.id,
+            target = target.id
+        ),
+        progress = 0f,
+        delay = 0.1f
+    )
   else
-    world.creatures.minus(target.id)
+    null
+
+  return ActionResult(world.copy(
+      creatures = creatures
+  ), animation)
 }
 
-fun continueTurn(world: World, action: Action): World {
-  val target = world.creatures[action.target]!!
-  val creatures = damageCreature(world, target)
+fun creatureDied(world: World, target: Creature): ActionResult {
+  return ActionResult(world.copy(
+      creatures = world.creatures.minus(target.id),
+      turns = world.turns.minus(target.id)
+  ),
+      null)
+}
 
-  return if (world.turns.size > 1)
+fun continueTurn(oldWorld: World, action: Action): World {
+  val target = oldWorld.creatures[action.target]!!
+  val (world, animation) = when (action.type) {
+    ActionType.attack -> damageCreature(oldWorld, target)
+    ActionType.death -> creatureDied(oldWorld, target)
+    else -> throw Error("Not implemented.")
+  }
+
+  if (animation != null)
+    return world.copy(animation = animation)
+
+  return if (world.turns.any())
     startAiTurn(world.copy(
-        turns = world.turns.minus(world.activeCreatureId!!),
-        animation = null,
-        creatures = creatures
+        turns = world.turns.drop(1),
+        activeCreatureId = world.turns.first(),
+        animation = null
     ))
   else {
-    nextRound(world.copy(creatures = creatures))
+    nextRound(world)
   }
 }
 
@@ -84,5 +116,5 @@ fun updateAnimation(animation: Animation, delta: Float): Animation? {
     null
 }
 
-fun isDead(creature: Creature): Boolean =
+fun isAlive(creature: Creature): Boolean =
     creature.life != 0
