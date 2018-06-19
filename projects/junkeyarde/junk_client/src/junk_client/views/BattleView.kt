@@ -23,6 +23,11 @@ data class ClientBattleState(
     val flicker: Float
 )
 
+data class BattleInfo(
+    val state: ClientBattleState,
+    val inputFilter: (Any?) -> Any?
+)
+
 val elementColors = mapOf(
     Element.ethereal to lightBlue,
     Element.plant to lightGreen,
@@ -49,24 +54,24 @@ fun abilityEvent(creature: Creature, ability: Ability): Any? =
     else
       null
 
-fun selectedDepiction(state: ClientBattleState, id: Id): Depiction? =
-    if (state.selectedEntity == id)
+fun selectedDepiction(info: BattleInfo, id: Id): Depiction? =
+    if (info.state.selectedEntity == id)
       { bounds: Bounds, canvas: Canvas ->
         drawBorder(bounds, canvas, LineStyle(red, 1f))
       }
     else
       null
 
-fun creatureView(state: ClientBattleState, creature: Creature, bounds: Bounds): Layout {
+fun creatureView(info: BattleInfo, creature: Creature, bounds: Bounds): Layout {
   val columns = arrangeHorizontal(standardPadding, bounds, listOf(80f, null))
-  return if (isAlive(creature) || state.flicker > 0.4f)
+  return if (isAlive(creature) || info.state.flicker > 0.4f)
     listOf<Box>()
         .plus(label(white, creature.type.name.take(8), columns[0]))
         .plus(label(white, creature.life.toString(), columns[1]))
-        .plus(if (state.selectedEntity != null)
+        .plus(if (info.state.selectedEntity != null)
           listOf(Box(
               bounds = bounds,
-              handler = EntitySelectionEvent(EntityType.creature, creature.id)
+              handler = info.inputFilter(EntitySelectionEvent(EntityType.creature, creature.id))
           ))
         else
           listOf())
@@ -74,27 +79,27 @@ fun creatureView(state: ClientBattleState, creature: Creature, bounds: Bounds): 
     listOf()
 }
 
-fun creaturesView(world: World, state: ClientBattleState, bounds: Bounds): Layout {
-  return verticalList(world.enemies, bounds, 20f, 0f, { a, b -> creatureView(state, a, b) })
+fun creaturesView(world: World, info: BattleInfo, bounds: Bounds): Layout {
+  return verticalList(world.enemies, bounds, 20f, 0f, { a, b -> creatureView(info, a, b) })
 }
 
-fun abilityView(state: ClientBattleState, creature: Creature, ability: Ability, bounds: Bounds): List<Box> {
+fun abilityView(info: BattleInfo, creature: Creature, ability: Ability, bounds: Bounds): List<Box> {
   val rows = arrangeVertical(standardPadding, bounds, listOf(itemHeight, null))
   return listOf(
       label(white, ability.type.name, rows[0]),
       label(white, (0 until ability.cooldown).map { "* " }.joinToString(), rows[1]),
       Box(
           bounds = bounds,
-          depiction = selectedDepiction(state, ability.id),
-          handler = abilityEvent(creature, ability)
+          depiction = selectedDepiction(info, ability.id),
+          handler = info.inputFilter(abilityEvent(creature, ability))
       )
   )
 }
 
-fun playerView(creature: Creature, state: ClientBattleState, bounds: Bounds): Layout {
+fun playerView(creature: Creature, info: BattleInfo, bounds: Bounds): Layout {
   val rows = arrangeVertical(0f, bounds, (1..rowCount).toList().map { rowSize })
   val abilityBoxes = creature.abilities.zip(rows.drop(1), { a, b ->
-    abilityView(state, creature, a, b)
+    abilityView(info, creature, a, b)
   }).flatten()
   return listOf(label(white, creature.life.toString(), rows[0])).plus(abilityBoxes)
 }
@@ -161,11 +166,18 @@ fun renderAnimation(world: World): Layout {
   }
 }
 
+fun isAcceptingInput(world: World): Boolean =
+    world.activeCreature == world.player && world.animation == null && !isGameOver(world)
+
 fun battleView(state: ClientBattleState, world: World, bounds: Bounds): Layout {
   val columns = arrangeHorizontal(0f, bounds, (1..columnCount).toList().map { columnSize })
 //  val columns = arrangeHorizontal(standardPadding, bounds, listOf(120f, null, 120f))
+  val info = BattleInfo(
+      state = state,
+      inputFilter = if (isAcceptingInput(world)) { it: Any? -> it } else { it: Any? -> null }
+  )
   return battleLayoutOutline(bounds)
-      .plus(creaturesView(world, state, columns[0]))
-      .plus(playerView(world.player, state, columns[3]))
+      .plus(creaturesView(world, info, columns[0]))
+      .plus(playerView(world.player, info, columns[3]))
       .plus(renderAnimation(world))
 }
