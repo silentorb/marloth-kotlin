@@ -1,7 +1,9 @@
 package rendering
 
+import mythic.spatial.Matrix
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
+import org.joml.times
 
 data class ChannelTarget2(
     val bone: Bone,
@@ -37,13 +39,32 @@ data class Animation(
     val samplers: List<Keyframes>
 )
 
+typealias Bones = List<Bone>
+
 data class Bone(
-    val translation: Vector3,
+    val name: String,
     val rotation: Quaternion,
-    val name: String
+    val translation: Vector3,
+    val parent: Bone? = null,
+    var children: List<Bone> = listOf()
 )
 
 data class Armature(
-    val bones: List<Bone>,
+    val bones: Bones,
     val animations: List<Animation>
 )
+
+fun joinSkeletonChildren(bones: Bones) {
+  for (bone in bones) {
+    bone.children = bones.filter { it.parent == bone }
+  }
+}
+
+fun getBoneTransform(bone: Bone): Matrix =
+    Matrix()
+        .translate(bone.translation)
+        .rotate(bone.rotation) *
+        if (bone.parent == null)
+          Matrix()
+        else
+          getBoneTransform(bone.parent)

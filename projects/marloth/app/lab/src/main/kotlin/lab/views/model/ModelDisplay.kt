@@ -93,6 +93,18 @@ fun drawSelection(config: ModelViewConfig, model: Model, sceneRenderer: SceneRen
   }
 }
 
+fun drawSkeleton(renderer: SceneRenderer, armature: Armature) {
+  for (bone in armature.bones) {
+    val parent = bone.parent
+    if (parent == null)
+      continue
+
+    val transform = getBoneTransform(bone)
+    val parentPosition = Vector3().transform(getBoneTransform(parent))
+    renderer.drawLine(parentPosition, Vector3().transform(transform), white, 2f)
+  }
+}
+
 fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, camera: Camera, model: Model,
                      primitives: Primitives?) {
   val panelDimensions = Vector2i(b.dimensions.x.toInt(), b.dimensions.y.toInt())
@@ -138,6 +150,11 @@ fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, cam
         }
       }
     }
+
+    val advancedModel = renderer.meshes[config.model]!!
+    val armature = advancedModel.armature
+    if (armature != null)
+      drawSkeleton(sceneRenderer, armature)
   })
 }
 

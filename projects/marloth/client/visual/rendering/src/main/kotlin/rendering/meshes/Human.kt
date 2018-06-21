@@ -2,10 +2,7 @@ package rendering.meshes
 
 import mythic.sculpting.*
 import mythic.spatial.*
-import rendering.Material
-import rendering.MeshGroup
-import rendering.Model
-import rendering.mapMaterialToMesh
+import rendering.*
 
 data class HeadPorts(
     val neck: Port
@@ -116,4 +113,34 @@ val createHuman: ModelGenerator = {
           MeshGroup(Material(Vector4(0.3f, 0.25f, 0.0f, 1f)), originalFaces, "Original"),
           MeshGroup(Material(Vector4(0.2f, 0.25f, 0.3f, 1f)), mirroredFaces, "Mirror")
       ))
+}
+
+fun createSkeleton(): Bones {
+
+  val sternum = Bone(
+      name = "sternum",
+      translation = Vector3(0f, 0f, 0.65f),
+      rotation = Quaternion().rotateY(Pi / 2f)
+  )
+
+  val neck = Bone(
+      name = "neck",
+      translation = Vector3(0f, 0f, 0.5f),
+      rotation = Quaternion()
+  )
+
+  val head = Bone(
+      name = "head",
+      translation = Vector3(0f, 0f, 0.9f),
+      rotation = Quaternion(),
+      parent = neck
+  )
+
+  val result = listOf(
+      head,
+      neck
+  )
+
+  joinSkeletonChildren(result)
+  return result
 }

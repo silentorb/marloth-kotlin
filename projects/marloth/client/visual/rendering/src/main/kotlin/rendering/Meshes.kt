@@ -13,6 +13,7 @@ enum class MeshType {
   humanOld,
   line,
   monster,
+  skeleton,
   sphere,
   cube,
   wallLamp,
@@ -28,6 +29,15 @@ fun standardMeshes(): ModelGeneratorMap = mapOf(
 //    MeshType.wallLamp to createWallLamp
 )
 
+fun skeletonMesh(): AdvancedModel =
+    AdvancedModel(
+        listOf(),
+        Armature(
+            createSkeleton(),
+            listOf()
+        )
+    )
+
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     MeshType.line to createLineMesh(vertexSchemas.flat),
     MeshType.cylinder to createSimpleMesh(createCylinder(), vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f))
@@ -42,6 +52,9 @@ fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     })
     .mapValues { AdvancedModel(it.value) }
     .plus(importedMeshes(vertexSchemas))
+    .plus(mapOf(
+        MeshType.skeleton to skeletonMesh()
+    ))
 
 fun importedMeshes(vertexSchemas: VertexSchemas) = mapOf(
     MeshType.wallLamp to "lamp",
