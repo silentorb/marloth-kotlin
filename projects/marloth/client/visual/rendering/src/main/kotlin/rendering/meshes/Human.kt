@@ -115,31 +115,102 @@ val createHuman: ModelGenerator = {
       ))
 }
 
+enum class Side {
+  left,
+  right
+}
+
+
 fun createSkeleton(): Bones {
+
+  val base = Bone(
+      name = "base",
+      translation = Vector3(0f, 0f, 0.5f)
+  )
 
   val sternum = Bone(
       name = "sternum",
-      translation = Vector3(0f, 0f, 0.65f),
-      rotation = Quaternion().rotateY(Pi / 2f)
+      translation = Vector3(0f, 0f, 0.3f),
+      parent = base
   )
 
   val neck = Bone(
       name = "neck",
-      translation = Vector3(0f, 0f, 0.5f),
-      rotation = Quaternion()
+      translation = Vector3(0f, 0f, 0.05f),
+      parent = sternum
   )
 
   val head = Bone(
       name = "head",
-      translation = Vector3(0f, 0f, 0.9f),
-      rotation = Quaternion(),
+      translation = Vector3(0f, 0f, 0.1f),
       parent = neck
   )
 
+  fun createSkeletonSide(suffix: String, mod: Float): List<Bone> {
+    val shoulder = Bone(
+        name = "shoulder" + suffix,
+        translation = Vector3(0.11f * mod, 0f, 0f),
+        parent = sternum
+    )
+    val elbow = Bone(
+        name = "elbow" + suffix,
+        translation = Vector3(0f, 0f, -0.15f),
+        parent = shoulder
+    )
+    val wrist = Bone(
+        name = "wrist" + suffix,
+        translation = Vector3(0f, 0f, -0.15f),
+        parent = elbow
+    )
+    val hand = Bone(
+        name = "hand" + suffix,
+        translation = Vector3(0f, 0f, -0.05f),
+        parent = wrist
+    )
+    val hip = Bone(
+        name = "hip" + suffix,
+        translation = Vector3(0.08f * mod, 0f, 0f),
+        parent = base
+    )
+    val knee = Bone(
+        name = "knee" + suffix,
+        translation = Vector3(0f, 0f, -0.2f),
+        parent = hip
+    )
+    val ankle = Bone(
+        name = "ankle" + suffix,
+        translation = Vector3(0f, 0f, -0.2f),
+        parent = knee
+    )
+    val toes = Bone(
+        name = "toes" + suffix,
+        translation = Vector3(0f, -0.1f, 0f),
+        parent = ankle
+    )
+    return listOf(
+        shoulder,
+        elbow,
+        wrist,
+        hand,
+
+        hip,
+        knee,
+        ankle,
+        toes
+    )
+  }
+
+  val rightBones = createSkeletonSide("R", 1f)
+  val leftBones = createSkeletonSide("L", -1f)
+
   val result = listOf(
+      base,
+      sternum,
       head,
       neck
   )
+      .plus(leftBones)
+      .plus(rightBones)
 
   joinSkeletonChildren(result)
   return result

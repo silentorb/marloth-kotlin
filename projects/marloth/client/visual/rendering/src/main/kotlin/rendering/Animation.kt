@@ -43,7 +43,7 @@ typealias Bones = List<Bone>
 
 data class Bone(
     val name: String,
-    val rotation: Quaternion,
+    val rotation: Quaternion = Quaternion(),
     val translation: Vector3,
     val parent: Bone? = null,
     var children: List<Bone> = listOf()
@@ -62,8 +62,8 @@ fun joinSkeletonChildren(bones: Bones) {
 
 fun getBoneTransform(bone: Bone): Matrix =
     Matrix()
-        .translate(bone.translation)
-        .rotate(bone.rotation) *
+        .translate(bone.translation) *
+//        .rotate(bone.rotation) *
         if (bone.parent == null)
           Matrix()
         else
