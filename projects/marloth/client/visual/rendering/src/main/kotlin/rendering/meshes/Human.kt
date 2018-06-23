@@ -125,7 +125,7 @@ fun createSkeleton(): Bones {
 
   val base = Bone(
       name = "base",
-      translation = Vector3(0f, 0f, 0.5f)
+      translation = Vector3(0f, 0f, 0.4f)
   )
 
   val sternum = Bone(
@@ -142,14 +142,14 @@ fun createSkeleton(): Bones {
 
   val head = Bone(
       name = "head",
-      translation = Vector3(0f, 0f, 0.1f),
+      translation = Vector3(0f, 0f, 0.15f),
       parent = neck
   )
 
   fun createSkeletonSide(suffix: String, mod: Float): List<Bone> {
     val shoulder = Bone(
         name = "shoulder" + suffix,
-        translation = Vector3(0.11f * mod, 0f, 0f),
+        translation = Vector3(0.1f * mod, 0f, 0f),
         parent = sternum
     )
     val elbow = Bone(
@@ -169,7 +169,7 @@ fun createSkeleton(): Bones {
     )
     val hip = Bone(
         name = "hip" + suffix,
-        translation = Vector3(0.08f * mod, 0f, 0f),
+        translation = Vector3(0.05f * mod, 0f, 0f),
         parent = base
     )
     val knee = Bone(
@@ -203,7 +203,7 @@ fun createSkeleton(): Bones {
   val rightBones = createSkeletonSide("R", 1f)
   val leftBones = createSkeletonSide("L", -1f)
 
-  val result = listOf(
+  val bones = listOf(
       base,
       sternum,
       head,
@@ -212,6 +212,6 @@ fun createSkeleton(): Bones {
       .plus(leftBones)
       .plus(rightBones)
 
-  joinSkeletonChildren(result)
-  return result
+  finalizeSkeleton(bones)
+  return bones
 }

@@ -19,6 +19,10 @@ enum class MeshType {
   wallLamp,
 }
 
+typealias AdvancedModelGenerator = () -> AdvancedModel
+
+typealias AdvancedModelGeneratorMap = Map<MeshType, AdvancedModelGenerator>
+
 fun standardMeshes(): ModelGeneratorMap = mapOf(
 //    MeshType.cube to createCube,
     MeshType.sphere to createSphere
@@ -29,14 +33,19 @@ fun standardMeshes(): ModelGeneratorMap = mapOf(
 //    MeshType.wallLamp to createWallLamp
 )
 
-fun skeletonMesh(): AdvancedModel =
-    AdvancedModel(
-        listOf(),
-        Armature(
-            createSkeleton(),
-            listOf()
-        )
-    )
+val skeletonMesh: AdvancedModelGenerator = {
+  AdvancedModel(
+      primitives = listOf(),
+      armature = Armature(
+          bones = createSkeleton(),
+          animations = listOf()
+      )
+  )
+}
+
+fun advancedMeshes(): AdvancedModelGeneratorMap = mapOf(
+    MeshType.skeleton to skeletonMesh
+)
 
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     MeshType.line to createLineMesh(vertexSchemas.flat),
@@ -52,9 +61,7 @@ fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     })
     .mapValues { AdvancedModel(it.value) }
     .plus(importedMeshes(vertexSchemas))
-    .plus(mapOf(
-        MeshType.skeleton to skeletonMesh()
-    ))
+    .plus(advancedMeshes().mapValues { it.value() })
 
 fun importedMeshes(vertexSchemas: VertexSchemas) = mapOf(
     MeshType.wallLamp to "lamp",

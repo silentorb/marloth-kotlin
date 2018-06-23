@@ -28,25 +28,35 @@ data class Keyframe(
 
 typealias Keyframes = List<Keyframe>
 
-//data class AnimationSampler2(
-//    val input: Int,
-////    val interpolation: String,
-//    val output: Int
-//)
+data class ChannelTarget(
+    val boneIndex: Int,
+    val type: ChannelType
+)
 
-data class Animation(
+data class AnimationOld(
     val channels: List<AnimationChannel2>,
     val samplers: List<Keyframes>
+)
+
+data class AnimationChannel(
+    val target: ChannelTarget,
+    val keys: Keyframes
+)
+
+data class Animation(
+    val duration: Float,
+    val channels: List<AnimationChannel>
 )
 
 typealias Bones = List<Bone>
 
 data class Bone(
     val name: String,
-    val rotation: Quaternion = Quaternion(),
-    val translation: Vector3,
-    val parent: Bone? = null,
-    var children: List<Bone> = listOf()
+    var rotation: Quaternion = Quaternion(),
+    var translation: Vector3,
+    var parent: Bone? = null,
+    var children: List<Bone> = listOf(),
+    var index: Int = -1
 )
 
 data class Armature(
@@ -60,11 +70,59 @@ fun joinSkeletonChildren(bones: Bones) {
   }
 }
 
-fun getBoneTransform(bone: Bone): Matrix =
-    Matrix()
-        .translate(bone.translation) *
-//        .rotate(bone.rotation) *
-        if (bone.parent == null)
-          Matrix()
-        else
-          getBoneTransform(bone.parent)
+fun finalizeSkeleton(bones: Bones) {
+  joinSkeletonChildren(bones)
+  bones.forEachIndexed { index, bone -> bone.index = index }
+}
+
+fun getBoneTransform(bone: Bone): Matrix {
+  val parent = bone.parent
+  return Matrix()
+      .translate(bone.translation)
+      .rotate(bone.rotation) *
+      if (parent == null)
+        Matrix()
+      else
+        getBoneTransform(parent)
+}
+
+fun copyBones(bones: Bones): Bones {
+  val newBones = bones.map {
+    it.copy(parent = null, children = listOf())
+  }
+
+  val oldBones = bones.iterator()
+
+  for (bone in newBones) {
+    val oldBone = oldBones.next()
+    val parent = oldBone.parent
+    if (parent != null) {
+      bone.parent = newBones[parent.index]
+    }
+  }
+
+  joinSkeletonChildren(newBones)
+
+  return newBones
+}
+
+fun applyAnimation(animation: Animation, bones: Bones, timePassed: Float) {
+  for (channel in animation.channels) {
+    val bone = bones[channel.target.boneIndex]
+    val firstKey = channel.keys[0]
+    val secondKey = channel.keys[1]
+
+    val duration = secondKey.time - firstKey.time
+    val localSecondsPassed = timePassed - firstKey.time
+    val progress = localSecondsPassed / duration
+    when (channel.target.type) {
+      ChannelType.rotation -> {
+        val a = firstKey.value as Vector3
+        val b = secondKey.value as Vector3
+        bone.translation = Vector3(a).lerp(b, progress)
+      }
+
+      else -> throw Error("Not implemented.")
+    }
+  }
+}

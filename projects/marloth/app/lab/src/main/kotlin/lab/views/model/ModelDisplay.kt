@@ -94,7 +94,8 @@ fun drawSelection(config: ModelViewConfig, model: Model, sceneRenderer: SceneRen
 }
 
 fun drawSkeleton(renderer: SceneRenderer, armature: Armature) {
-  for (bone in armature.bones) {
+  val bones = copyBones(armature.bones)
+  for (bone in bones) {
     val parent = bone.parent
     if (parent == null)
       continue
@@ -153,10 +154,13 @@ fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, cam
     sceneRenderer.drawLine(Vector3(), Vector3(0f, 1f, 0f), green)
     sceneRenderer.drawLine(Vector3(), Vector3(0f, 0f, 1f), blue)
 
-    val advancedModel = renderer.meshes[config.model]!!
-    val armature = advancedModel.armature
-    if (armature != null)
-      drawSkeleton(sceneRenderer, armature)
+    val advancedModelGenerator = advancedMeshes()[config.model]
+    if (advancedModelGenerator != null) {
+      val advancedModel = advancedModelGenerator()
+      val armature = advancedModel.armature
+      if (armature != null)
+        drawSkeleton(sceneRenderer, armature)
+    }
   })
 }
 

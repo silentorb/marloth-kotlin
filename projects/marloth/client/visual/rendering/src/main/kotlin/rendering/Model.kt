@@ -6,6 +6,7 @@ import mythic.spatial.Vector3
 import rendering.meshes.Faces
 import rendering.meshes.MeshInfo
 import rendering.meshes.Primitives
+
 data class MeshGroup(
     val material: Material,
     val faces: Faces,

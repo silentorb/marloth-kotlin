@@ -7,7 +7,6 @@ import org.lwjgl.BufferUtils
 import rendering.*
 import rendering.meshes.*
 import java.io.DataInputStream
-import java.nio.Buffer
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
@@ -165,7 +164,7 @@ fun convertChannelType(source: String): ChannelType =
       else -> throw Error("Unsupported channel type: " + source)
     }
 
-fun loadAnimation(source: IndexedAnimation, bones: Map<Int, Bone>): Animation {
+fun loadAnimation(source: IndexedAnimation, bones: Map<Int, Bone>): AnimationOld {
 
   val samplers = source.samplers.map {
     listOf<Keyframe>()
@@ -182,13 +181,13 @@ fun loadAnimation(source: IndexedAnimation, bones: Map<Int, Bone>): Animation {
     )
   }
 
-  return Animation(
+  return AnimationOld(
       channels = channels,
       samplers = samplers
   )
 }
 
-fun loadAnimations(animations: List<IndexedAnimation>, bones: Map<Int, Bone>): List<Animation> {
+fun loadAnimations(animations: List<IndexedAnimation>, bones: Map<Int, Bone>): List<AnimationOld> {
   return animations.map { loadAnimation(it, bones) }
 }
 
