@@ -10,6 +10,8 @@ import front.setWorldMesh
 import generation.generateWorld
 import generation.placeEnemies
 import lab.views.GameViewConfig
+import lab.views.model.ModelViewState
+import lab.views.model.newModelViewState
 import marloth.clienting.Client
 import marloth.clienting.gui.MenuActionType
 import marloth.clienting.gui.initialMenuState
@@ -112,7 +114,7 @@ fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
   platform.display.initialize(gameConfig.display)
   val app = LabApp(platform, config, gameConfig)
   setWorldMesh(app.world.meta, app.client)
-  labLoop(app, LabState(mapOf(), initialGameInputState(), initialMenuState()))
+  labLoop(app, LabState(mapOf(), initialGameInputState(), initialMenuState(), newModelViewState()))
 }
 
 object App {

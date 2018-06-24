@@ -16,15 +16,16 @@ import mythic.spatial.toString
 import mythic.typography.TextStyle
 import org.joml.Vector2i
 import org.joml.plus
+import rendering.AdvancedModel
 import rendering.MeshType
 import rendering.Model
 import rendering.Renderer
 import rendering.meshes.Primitives
 import scenery.Camera
 
-fun drawScenePanel(config: ModelViewConfig, renderer: Renderer, model: Model, camera: Camera, primitives: Primitives?): Depiction = { b: Bounds, canvas: Canvas ->
+fun drawScenePanel(config: ModelViewConfig, state: ModelViewState, renderer: Renderer, model: Model, advancedModel: AdvancedModel?, camera: Camera, primitives: Primitives?): Depiction = { b: Bounds, canvas: Canvas ->
   drawBackground(sceneBackgroundColor)(b, canvas)
-  drawModelPreview(config, renderer, b, camera, model, primitives)
+  drawModelPreview(config, state, renderer, b, camera, model, primitives, advancedModel)
 }
 
 fun drawSidePanel() = drawBackground(panelColor)

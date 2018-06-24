@@ -287,17 +287,18 @@ fun isInsidePolygon(point: Vector2, vertices: List<Vector2>): Boolean {
   return count > 0 && isOdd(count)
 }
 
+fun flattenPoints(normal: Vector3, points: List<Vector3>): List<Vector2> {
+  val u = Vector3(normal).cross((points[1] - points[0]).normalize())
+  val v = Vector3(normal).cross(u)
+  return points.map { Vector2(u.dot(it), v.dot(it)) }
+}
+
 fun rayIntersectsPolygon3D(rayStart: Vector3, rayDirection: Vector3, vertices: List<Vector3>, polygonNormal: Vector3): Vector3? {
   val distance = rayPolygonDistance(rayStart, rayDirection, vertices.first(), polygonNormal)
   if (distance == null)
     return null
 
   val planeIntersection = rayStart + rayDirection * distance
-
-//  val polygonRotation = Quaternion().rotateTo(polygonNormal, flattenedPlaneNormal)
-//  val transformedPoints = vertices.map { (polygonRotation * it).xy }
-//  val transformedIntersection = (polygonRotation * planeIntersection).xy
-//  val u = Vector3(polygonNormal.y, -polygonNormal.x, 0f)
   val u = Vector3(polygonNormal).cross((vertices[1] - vertices[0]).normalize())
   val v = Vector3(polygonNormal).cross(u)
   val transformedPoints = vertices.map { Vector2(u.dot(it), v.dot(it)) }

@@ -51,6 +51,17 @@ data class ModelViewConfig(
     var drawTempLine: Boolean = false
 )
 
+data class ModelViewState(
+    val scrollOffsets: Map<String, Float>,
+    val animationOffset: Float
+)
+
+fun newModelViewState() =
+    ModelViewState(
+        scrollOffsets = mapOf(),
+        animationOffset = 0f
+    )
+
 typealias MeshGenerator = (FlexibleMesh) -> Unit
 
 private var result: MeshGenerator? = null
@@ -176,6 +187,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
   val model: Model = loadGeneratedModel(config, renderer)
   val externalMesh: Primitives? = loadExternalMesh(config, renderer)
   val camera = createOrthographicCamera(config.camera)
+  val advancedModel: AdvancedModel?
 
   init {
     // When the model view changes to viewing a different model,
@@ -186,13 +198,19 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     } else if (externalMesh != null && config.visibleGroups.size != externalMesh.size) {
       config.visibleGroups = externalMesh.map { true }.toMutableList()
     }
+
+    val advancedModelGenerator = advancedMeshes()[config.model]
+    advancedModel = if (advancedModelGenerator != null)
+      advancedModelGenerator()
+    else
+      null
   }
 
-  fun createLayout(dimensions: Vector2i): ModelLayout {
+  fun createLayout(dimensions: Vector2i, state: ModelViewState): ModelLayout {
     val bounds = Bounds(Vector2(), dimensions.toVector2())
     val initialLengths = listOf(200f, null, 300f)
 
-    val middle = { b: Bounds -> Box(b, drawScenePanel(config, renderer, model, camera, externalMesh)) }
+    val middle = { b: Bounds -> Box(b, drawScenePanel(config, state, renderer, model, advancedModel, camera, externalMesh)) }
     val right = { b: Bounds -> Box(b, drawInfoPanel(config, renderer, model, mousePosition)) }
     val lengths = resolveLengths(dimensions.x.toFloat(), initialLengths)
     val panelBounds = arrangeHorizontal(0f)(bounds, lengths)
@@ -221,7 +239,17 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     }
   }
 
-  fun updateState(layout: ModelLayout, input: InputState, delta: Float) {
+  fun updateAnimationOffset(state: ModelViewState, delta: Float): Float {
+    if (advancedModel != null) {
+      val armature = advancedModel.armature
+      if (armature != null && armature.animations.any())
+        return (state.animationOffset + delta) % armature.animations[0].duration
+    }
+
+    return 0f
+  }
+
+  fun updateState(layout: ModelLayout, input: InputState, state: ModelViewState, delta: Float): ModelViewState {
     val commands = input.commands
 
     val rotateSpeedZ = 1f
@@ -254,6 +282,8 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
 
     config.camera.rotationY = Math.min(1.55f, Math.max(-(Pi / 2 - 0.01f), config.camera.rotationY))
     config.camera.rotationZ = tightenRotation(config.camera.rotationZ)
+
+    return state.copy(animationOffset = updateAnimationOffset(state, delta))
   }
 
   fun getCommands(): LabCommandMap = mapOf(

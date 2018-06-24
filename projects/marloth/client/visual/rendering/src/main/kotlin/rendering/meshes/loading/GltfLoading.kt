@@ -195,7 +195,8 @@ fun nodeToBone(node: Node) =
     Bone(
         translation = node.translation,
         rotation = node.rotation,
-        name = node.name
+        name = node.name,
+        transform = independentTransform
     )
 
 fun createBoneMap(nodes: List<Node>, animations: List<IndexedAnimation>): Map<Int, Bone> =
@@ -218,7 +219,7 @@ fun loadArmature(info: GltfInfo): Armature? {
 
   return Armature(
       bones = boneMap.values.toList(),
-      animations = loadAnimations(animations, boneMap)
+      animations = listOf()// loadAnimations(animations, boneMap)
   )
 }
 

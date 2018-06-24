@@ -11,6 +11,7 @@ import haft.*
 import lab.views.map.renderMapView
 import lab.views.map.updateMapState
 import lab.views.model.ModelView
+import lab.views.model.ModelViewState
 import lab.views.world.WorldView
 import marloth.clienting.gui.MenuActionType
 import marloth.clienting.gui.MenuState
@@ -25,7 +26,8 @@ import rendering.createCanvas
 data class LabState(
     val labInput: InputTriggerState<LabCommandType>,
     val gameInput: ProfileStates<CommandType>,
-    val menuState: MenuState
+    val menuState: MenuState,
+    val modelViewState: ModelViewState
 )
 
 fun createLabDeviceHandlers(input: PlatformInput): List<ScalarInputSource> {
@@ -109,21 +111,21 @@ class LabClient(val config: LabConfig, val client: Client) {
     val menuAction = menuButtonAction(newMenuState, menuCommands)
     client.handleMenuAction(menuAction)
     renderScene(client, GameViewRenderData(scenes, metaWorld, config.gameView, previousState.menuState))
-    return LabClientResult(gameCommands, LabState(nextLabInputState, nextGameInputState, newMenuState), menuAction)
+    return LabClientResult(gameCommands, LabState(nextLabInputState, nextGameInputState, newMenuState, previousState.modelViewState), menuAction)
   }
 
   fun updateModel(windowInfo: WindowInfo, previousState: LabState, delta: Float): LabClientResult {
     val view = ModelView(config.modelView, client.renderer, client.platform.input.getMousePosition())
 
-    val layout = view.createLayout(windowInfo.dimensions)
+    val layout = view.createLayout(windowInfo.dimensions, previousState.modelViewState)
     val (commands, nextLabInputState) = updateInput(view.getCommands(), previousState)
     val input = getInputState(client.platform.input, commands)
     renderLab(windowInfo, layout.boxes)
-    view.updateState(layout, input, delta)
+    val modelViewState = view.updateState(layout, input, previousState.modelViewState, delta)
 
     return LabClientResult(
         listOf(),
-        LabState(nextLabInputState, previousState.gameInput, previousState.menuState),
+        previousState.copy(labInput = nextLabInputState, modelViewState = modelViewState),
         MenuActionType.none
     )
   }
@@ -139,7 +141,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     updateTextureState(layout, input, config.textureView, client.renderer)
     return LabClientResult(
         listOf(),
-        LabState(nextLabInputState, previousState.gameInput, previousState.menuState),
+        previousState.copy(labInput = nextLabInputState),
         MenuActionType.none
     )
   }
@@ -153,7 +155,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     renderLab(windowInfo, layout)
     return LabClientResult(
         listOf(),
-        LabState(nextLabInputState, previousState.gameInput, previousState.menuState),
+        previousState.copy(labInput = nextLabInputState),
         MenuActionType.none
     )
   }
@@ -166,7 +168,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     renderMapView(client, metaWorld, config.mapView)
     return LabClientResult(
         listOf(),
-        LabState(nextLabInputState, previousState.gameInput, previousState.menuState),
+        previousState.copy(labInput = nextLabInputState),
         MenuActionType.none
     )
   }

@@ -93,21 +93,25 @@ fun drawSelection(config: ModelViewConfig, model: Model, sceneRenderer: SceneRen
   }
 }
 
-fun drawSkeleton(renderer: SceneRenderer, armature: Armature) {
+fun drawSkeleton(renderer: SceneRenderer, armature: Armature, state: ModelViewState) {
   val bones = copyBones(armature.bones)
+  if (armature.animations.any()) {
+    applyAnimation(armature.animations.first(), bones, state.animationOffset)
+  }
+
   for (bone in bones) {
     val parent = bone.parent
     if (parent == null)
       continue
 
-    val transform = getBoneTransform(bone)
-    val parentPosition = Vector3().transform(getBoneTransform(parent))
+    val transform = bone.transform(bones, bone)
+    val parentPosition = Vector3().transform(parent.transform(bones, parent))
     renderer.drawLine(parentPosition, Vector3().transform(transform), white, 2f)
   }
 }
 
-fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, camera: Camera, model: Model,
-                     primitives: Primitives?) {
+fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: Renderer, b: Bounds, camera: Camera, model: Model,
+                     primitives: Primitives?, advancedModel: AdvancedModel?) {
   val panelDimensions = Vector2i(b.dimensions.x.toInt(), b.dimensions.y.toInt())
   val viewport = Vector4i(b.position.x.toInt(), b.position.y.toInt(), panelDimensions.x, panelDimensions.y)
   viewportStack(viewport, {
@@ -154,12 +158,10 @@ fun drawModelPreview(config: ModelViewConfig, renderer: Renderer, b: Bounds, cam
     sceneRenderer.drawLine(Vector3(), Vector3(0f, 1f, 0f), green)
     sceneRenderer.drawLine(Vector3(), Vector3(0f, 0f, 1f), blue)
 
-    val advancedModelGenerator = advancedMeshes()[config.model]
-    if (advancedModelGenerator != null) {
-      val advancedModel = advancedModelGenerator()
+    if (advancedModel != null) {
       val armature = advancedModel.armature
       if (armature != null)
-        drawSkeleton(sceneRenderer, armature)
+        drawSkeleton(sceneRenderer, armature, state)
     }
   })
 }

@@ -34,11 +34,12 @@ fun standardMeshes(): ModelGeneratorMap = mapOf(
 )
 
 val skeletonMesh: AdvancedModelGenerator = {
+  val bones = createSkeleton()
   AdvancedModel(
       primitives = listOf(),
       armature = Armature(
-          bones = createSkeleton(),
-          animations = listOf()
+          bones = bones,
+          animations = humanAnimations(bones)
       )
   )
 }
