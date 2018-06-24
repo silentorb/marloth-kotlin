@@ -4,6 +4,7 @@ import commanding.CommandType
 import haft.Commands
 import intellect.CharacterResult
 import intellect.updateSpirit
+import mythic.breeze.applyAnimation
 import mythic.spatial.Quaternion
 import physics.applyForces
 import physics.updateBodies
@@ -69,6 +70,12 @@ class WorldUpdater(val world: World, val instantiator: Instantiator) {
       character.body.orientation = Quaternion()
           .rotateZ(character.facingRotation.z)
 //          .rotateX(character.rotation.x)
+
+      val depiction = world.depictionTable[character.id]!!
+      val animationInfo = depiction.animation!!
+      val animation = animationInfo.armature.animations[animationInfo.animationIndex]
+      animationInfo.timeOffset = (animationInfo.timeOffset + delta) % animation.duration
+      applyAnimation(animation, animationInfo.armature.bones, animationInfo.timeOffset)
     } else {
 
     }

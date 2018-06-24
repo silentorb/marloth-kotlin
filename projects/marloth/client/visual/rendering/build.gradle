@@ -6,6 +6,6 @@ dependencies {
   compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.21'
 }
 
-requires 'platforming', 'spatial', 'scenery', 'sculpting', 'glowing', 'typography', 'drawing', 'texture_generation'
+requires 'platforming', 'spatial', 'scenery', 'sculpting', 'glowing', 'typography', 'drawing', 'texture_generation', 'breeze', 'rigging'
 
 apply plugin: 'java'

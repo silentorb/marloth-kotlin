@@ -77,7 +77,7 @@ fun convertDepiction(world: World, id: Id, depiction: Depiction): VisualElement 
   else
     translate.rotate(body.orientation)
 
-  return VisualElement(id, depiction.type, transform)
+  return VisualElement(id, depiction.type, depiction.animation, transform)
 }
 
 fun mapElements(world: World, screen: Screen, player: Player): Pair<List<VisualElement>, ElementDetails> {

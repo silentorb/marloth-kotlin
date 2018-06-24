@@ -1,5 +1,6 @@
 package rendering.meshes.loading
 
+import mythic.breeze.*
 import mythic.glowing.SimpleTriangleMesh
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3

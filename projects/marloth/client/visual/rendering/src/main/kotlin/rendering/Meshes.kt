@@ -1,9 +1,12 @@
 package rendering
 
+import mythic.breeze.Armature
 import mythic.glowing.VertexSchema as GenericVertexSchema
 import mythic.spatial.*
 import rendering.meshes.*
 import rendering.meshes.loading.loadGltf
+import rigging.createSkeleton
+import rigging.humanAnimations
 
 enum class MeshType {
   bear,
@@ -45,7 +48,8 @@ val skeletonMesh: AdvancedModelGenerator = {
 }
 
 fun advancedMeshes(): AdvancedModelGeneratorMap = mapOf(
-    MeshType.skeleton to skeletonMesh
+    MeshType.skeleton to skeletonMesh,
+    MeshType.child to skeletonMesh
 )
 
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
@@ -66,8 +70,8 @@ fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
 
 fun importedMeshes(vertexSchemas: VertexSchemas) = mapOf(
     MeshType.wallLamp to "lamp",
-    MeshType.cube to "cube",
+    MeshType.cube to "cube"
 //    MeshType.child to "girl2/child"
-    MeshType.child to "child/child"
+//    MeshType.child to "child/child"
 )
     .mapValues { loadGltf(vertexSchemas, "models/" + it.value) }

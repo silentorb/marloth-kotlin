@@ -2,6 +2,8 @@ package lab.views
 
 import haft.isActive
 import lab.LabCommandType
+import lab.views.shared.drawSkeleton
+import lab.views.shared.getAnimatedBones
 import marloth.clienting.Client
 import marloth.clienting.gui.MenuState
 import marloth.clienting.gui.renderGui
@@ -12,6 +14,7 @@ import mythic.sculpting.FlexibleMesh
 import mythic.sculpting.getVerticesCenter
 import mythic.spatial.*
 import rendering.*
+import scenery.DepictionType
 import scenery.GameScene
 import simulation.AbstractWorld
 
@@ -102,6 +105,13 @@ fun renderScene(client: Client, data: GameViewRenderData) {
 
     if (data.config.drawNormals)
       renderFaceNormals(sceneRenderer, 1f, data.world.mesh)
+
+    scene.elements.filter { it.depiction == DepictionType.character || it.depiction == DepictionType.monster }
+        .forEach {
+          val info = it.animation!!
+          val armature = info.armature
+          drawSkeleton(sceneRenderer, armature.bones, Matrix(it.transform).rotateZ(Pi / 2))
+        }
 
     renderGui(sceneRenderer, Bounds(viewport.toVector4()), canvas, data.menuState)
   }

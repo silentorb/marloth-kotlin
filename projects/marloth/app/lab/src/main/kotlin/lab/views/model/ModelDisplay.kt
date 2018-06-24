@@ -2,6 +2,8 @@ package lab.views.model
 
 import lab.utility.*
 import lab.views.renderFaceNormals
+import lab.views.shared.drawSkeleton
+import lab.views.shared.getAnimatedBones
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.glowing.DrawMethod
@@ -93,28 +95,11 @@ fun drawSelection(config: ModelViewConfig, model: Model, sceneRenderer: SceneRen
   }
 }
 
-fun drawSkeleton(renderer: SceneRenderer, armature: Armature, state: ModelViewState) {
-  val bones = copyBones(armature.bones)
-  if (armature.animations.any()) {
-    applyAnimation(armature.animations.first(), bones, state.animationOffset)
-  }
-
-  for (bone in bones) {
-    val parent = bone.parent
-    if (parent == null)
-      continue
-
-    val transform = bone.transform(bones, bone)
-    val parentPosition = Vector3().transform(parent.transform(bones, parent))
-    renderer.drawLine(parentPosition, Vector3().transform(transform), white, 2f)
-  }
-}
-
 fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: Renderer, b: Bounds, camera: Camera, model: Model,
                      primitives: Primitives?, advancedModel: AdvancedModel?) {
   val panelDimensions = Vector2i(b.dimensions.x.toInt(), b.dimensions.y.toInt())
   val viewport = Vector4i(b.position.x.toInt(), b.position.y.toInt(), panelDimensions.x, panelDimensions.y)
-  viewportStack(viewport, {
+  viewportStack(viewport) {
     val sceneRenderer = renderer.createSceneRenderer(Scene(camera), viewport)
     val transform = Matrix()
 
@@ -160,10 +145,12 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
 
     if (advancedModel != null) {
       val armature = advancedModel.armature
-      if (armature != null)
-        drawSkeleton(sceneRenderer, armature, state)
+      if (armature != null) {
+        val bones = getAnimatedBones(armature, state.animationOffset)
+        drawSkeleton(sceneRenderer, bones, Matrix())
+      }
     }
-  })
+  }
 }
 
 fun drawBackground(backgroundColor: Vector4): Depiction = { b: Bounds, canvas: Canvas ->
