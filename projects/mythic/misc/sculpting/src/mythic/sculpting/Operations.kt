@@ -6,9 +6,10 @@ import org.joml.xy
 
 typealias Vertices = List<Vector3>
 typealias Edges = List<FlexibleEdge>
+typealias Faces = List<FlexibleFace>
 
-fun skinLoop(mesh: FlexibleMesh, first: List<Vector3>, second: List<Vector3>) {
-  val sides = (0 until first.size).map { a ->
+fun skinLoop(mesh: FlexibleMesh, first: List<Vector3>, second: List<Vector3>): Faces {
+  return (0 until first.size).map { a ->
     val b = if (a == first.size - 1) 0 else a + 1
     mesh.createStitchedFace(listOf(
         first[b], first[a],
@@ -34,13 +35,13 @@ fun skin(mesh: FlexibleMesh, first: List<Vector3>, second: List<Vector3>) {
   }
 }
 
-fun extrudeBasic(mesh: FlexibleMesh, face: FlexibleFace, transform: Matrix) {
+fun extrudeBasic(mesh: FlexibleMesh, face: FlexibleFace, transform: Matrix): Faces {
   val newVertices = face.vertices
       .reversed()
       .map { it.transform(transform) }
   val secondFace = mesh.createFace(newVertices)
   val secondVertices = secondFace.vertices.reversed()
-  skinLoop(mesh, face.vertices, secondVertices)
+  return skinLoop(mesh, face.vertices, secondVertices)
 }
 
 inline fun nearly(value: Float, target: Float = 0f) =
@@ -238,6 +239,10 @@ fun transformVertices(matrix: Matrix, vertices: Vertices): Vertices {
   return vertices
 }
 
+fun transformFaces(matrix: Matrix, faces: Faces): Vertices {
+  return transformVertices(matrix, distinctVertices(faces.flatMap { it.vertices }))
+}
+
 //fun transformVertices2D(matrix: Matrix, vertices: List<Vector2>) {
 ////  vertices.forEach { it.set(it.transform(matrix)) }
 //  for (vertex in vertices) {
@@ -332,7 +337,7 @@ fun stitchEdgeLoops(firstLoop: List<EdgeReference>, secondLoop: List<EdgeReferen
   }
 }
 
-fun mirrorAlongY(mesh: FlexibleMesh): List<FlexibleFace> {
+fun mirrorAlongY(mesh: FlexibleMesh): Faces {
   val nearAxis = mesh.distinctVertices.filter { nearly(it.y) }
   nearAxis.forEach { it.y = 0f }
   val existingVertices = nearAxis.toMutableList()

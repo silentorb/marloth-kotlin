@@ -36,10 +36,12 @@ fun standardMeshes(): ModelGeneratorMap = mapOf(
 //    MeshType.wallLamp to createWallLamp
 )
 
-val skeletonMesh: AdvancedModelGenerator = {
+fun skeletonMesh(vertexSchemas: VertexSchemas): AdvancedModelGenerator = {
   val bones = createSkeleton()
+  val model = modelFromSkeleton(bones, "Skeleton")
   AdvancedModel(
-      primitives = listOf(),
+      model = model,
+      primitives = modelToMeshes(vertexSchemas, model),
       armature = Armature(
           bones = bones,
           animations = humanAnimations(bones)
@@ -47,10 +49,13 @@ val skeletonMesh: AdvancedModelGenerator = {
   )
 }
 
-fun advancedMeshes(): AdvancedModelGeneratorMap = mapOf(
-    MeshType.skeleton to skeletonMesh,
-    MeshType.child to skeletonMesh
-)
+fun advancedMeshes(vertexSchemas: VertexSchemas): AdvancedModelGeneratorMap {
+  val skeleton = skeletonMesh(vertexSchemas)
+  return mapOf(
+      MeshType.skeleton to skeleton,
+      MeshType.child to skeleton
+  )
+}
 
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     MeshType.line to createLineMesh(vertexSchemas.flat),
@@ -66,7 +71,7 @@ fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     })
     .mapValues { AdvancedModel(it.value) }
     .plus(importedMeshes(vertexSchemas))
-    .plus(advancedMeshes().mapValues { it.value() })
+    .plus(advancedMeshes(vertexSchemas).mapValues { it.value() })
 
 fun importedMeshes(vertexSchemas: VertexSchemas) = mapOf(
     MeshType.wallLamp to "lamp",

@@ -146,8 +146,10 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
     if (advancedModel != null) {
       val armature = advancedModel.armature
       if (armature != null) {
+        globalState.depthEnabled = false
         val bones = getAnimatedBones(armature, state.animationOffset)
         drawSkeleton(sceneRenderer, bones, Matrix())
+        globalState.depthEnabled = true
       }
     }
   }

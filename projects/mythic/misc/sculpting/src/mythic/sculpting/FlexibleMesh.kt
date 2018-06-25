@@ -80,19 +80,22 @@ class FlexibleFace(
       edges.firstOrNull { it.edge.matches(first, second) }
 }
 
+fun distinctVertices(vertices: Vertices) =
+    vertices.distinctBy { System.identityHashCode(it) }
+
 class FlexibleMesh {
   //  val vertices: MutableList<Vector3> = mutableListOf()
   val edges: MutableList<FlexibleEdge> = mutableListOf()
   val faces: MutableList<FlexibleFace> = mutableListOf()
 
-  val redundantVertices: List<Vector3>
+  val redundantVertices: Vertices
     get() = edges.flatMap { it.vertices }
 
 //  val distinctVertices: List<Vector3>
 //    get() = redundantVertices.distinct()
 
-  val distinctVertices: List<Vector3>
-    get() = redundantVertices.distinctBy { System.identityHashCode(it) }
+  val distinctVertices: Vertices
+    get() = distinctVertices(redundantVertices)
 
   fun createFace(): FlexibleFace {
     val face = FlexibleFace()

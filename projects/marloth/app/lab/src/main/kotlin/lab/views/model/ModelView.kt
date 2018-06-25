@@ -176,20 +176,33 @@ fun loadGeneratedModel(config: ModelViewConfig, renderer: Renderer): Model {
 }
 
 fun loadExternalMesh(config: ModelViewConfig, renderer: Renderer): Primitives? {
-  val generator = renderer.meshGenerators[config.model]
-  return if (generator != null)
-    null
-  else
-    renderer.meshes[config.model]!!.primitives
+//  val generator = renderer.meshGenerators[config.model]
+//  return if (generator != null)
+//    null
+//  else
+//    renderer.meshes[config.model]!!.primitives
+  return null
 }
 
 class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePosition: Vector2i) {
-  val model: Model = loadGeneratedModel(config, renderer)
+  val model: Model
   val externalMesh: Primitives? = loadExternalMesh(config, renderer)
   val camera = createOrthographicCamera(config.camera)
   val advancedModel: AdvancedModel?
 
   init {
+
+    val advancedModelGenerator = advancedMeshes(renderer.vertexSchemas)[config.model]
+    advancedModel = if (advancedModelGenerator != null)
+      advancedModelGenerator()
+    else
+      null
+
+    model = if (advancedModel != null && advancedModel.model != null)
+      advancedModel.model!!
+    else
+      loadGeneratedModel(config, renderer)
+
     // When the model view changes to viewing a different model,
     // the list of visible subgroups needs to be reinitialized.
     if (model.groups.size > 0) {
@@ -199,11 +212,12 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
       config.visibleGroups = externalMesh.map { true }.toMutableList()
     }
 
-    val advancedModelGenerator = advancedMeshes()[config.model]
-    advancedModel = if (advancedModelGenerator != null)
-      advancedModelGenerator()
-    else
-      null
+  }
+
+  fun release() {
+    if (advancedModel != null) {
+      advancedModel.primitives.forEach { it.mesh.dispose() }
+    }
   }
 
   fun createLayout(dimensions: Vector2i, state: ModelViewState): ModelLayout {

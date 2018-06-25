@@ -141,26 +141,26 @@ fun walkingAnimationSide(bones: Bones, duration: Float, suffix: String, timeOffs
               boneIndex = foot.index,
               type = ChannelType.translation
           ),
-          keys = shift(timeOffset, duration, listOf(
-              Keyframe(0f, foot.translation + Vector3(0f, 0.1f, 0f)),
-              Keyframe(division, foot.translation + Vector3(0f, 0f, 0.15f)),
-              Keyframe(division * 2, foot.translation + Vector3(0f, -0.1f, 0f)),
-              Keyframe(division * 3, foot.translation + Vector3(0f, 0f, 0f)),
-              Keyframe(division * 4, foot.translation + Vector3(0f, 0.1f, 0f))
-          ))
+          keys = shift(timeOffset, duration, keySequence(foot.translation, division, listOf(
+              Vector3(0f, 0.1f, 0f),
+              Vector3(0f, 0f, 0.15f),
+              Vector3(0f, -0.1f, 0f),
+              Vector3(0f, 0f, 0f),
+              Vector3(0f, 0.1f, 0f)
+          )))
       ),
       AnimationChannel(
           target = ChannelTarget(
               boneIndex = wrist.index,
               type = ChannelType.translation
           ),
-          keys = shift(timeOffset, duration, listOf(
-              Keyframe(0f, wrist.translation + Vector3(0f, -0.1f, 0f)),
-              Keyframe(division, wrist.translation + Vector3(0f, 0f, 0f)),
-              Keyframe(division * 2, wrist.translation + Vector3(0f, 0.1f, 0f)),
-              Keyframe(division * 3, wrist.translation + Vector3(0f, 0f, 0f)),
-              Keyframe(division * 4, wrist.translation + Vector3(0f, -0.1f, 0f))
-          ))
+          keys = shift(timeOffset, duration, keySequence(wrist.translation, division, listOf(
+              Vector3(0f, -0.1f, 0f),
+              Vector3(0f, 0f, 0f),
+              Vector3(0f, 0.1f, 0f),
+              Vector3(0f, 0f, 0f),
+              Vector3(0f, -0.1f, 0f)
+          )))
       )
   )
 }
@@ -178,13 +178,13 @@ fun walkingAnimation(bones: Bones): Animation {
                   boneIndex = base.index,
                   type = ChannelType.translation
               ),
-              keys = listOf(
-                  Keyframe(0f, base.translation + Vector3(0f, 0f, -0.06f)),
-                  Keyframe(division, base.translation + Vector3(0f, 0f, -0.003f)),
-                  Keyframe(division * 2, base.translation + Vector3(0f, 0f, -0.06f)),
-                  Keyframe(division * 3, base.translation + Vector3(0f, 0f, -0.003f)),
-                  Keyframe(division * 4, base.translation + Vector3(0f, 0f, -0.06f))
-              )
+              keys = keySequence(base.translation, division, listOf(
+                  Vector3(0f, 0f, -0.06f),
+                  Vector3(0f, 0f, -0.003f),
+                  Vector3(0f, 0f, -0.06f),
+                  Vector3(0f, 0f, -0.003f),
+                  Vector3(0f, 0f, -0.06f)
+              ))
           )
       )
           .plus(walkingAnimationSide(bones, duration, "R", 0f))

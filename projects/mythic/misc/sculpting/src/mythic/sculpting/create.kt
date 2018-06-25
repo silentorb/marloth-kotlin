@@ -44,9 +44,11 @@ fun createCircle2(mesh: FlexibleMesh, radius: Float, count: Int): FlexibleFace {
 //  return mesh.createFace(convertPath(createArc(radius, count)).take(take))
 //}
 
-fun createCylinder(mesh: FlexibleMesh, radius: Float, count: Int, length: Float) {
+fun createCylinder(mesh: FlexibleMesh, radius: Float, count: Int, length: Float): List<FlexibleFace> {
   val circle = createCircle2(mesh, radius, count)
-  extrudeBasic(mesh, circle, Matrix().translate(Vector3(0f, 0f, length)))
+  return listOf(circle).plus(
+      extrudeBasic(mesh, circle, Matrix().translate(Vector3(0f, 0f, length)))
+  )
 }
 
 fun createSphere(mesh: FlexibleMesh, radius: Float, horizontalCount: Int, verticalCount: Int) =

@@ -237,5 +237,5 @@ fun loadGltf(vertexSchemas: VertexSchemas, resourcePath: String): AdvancedModel 
 
   val armature = loadArmature(info)
 
-  return AdvancedModel(result, armature)
+  return AdvancedModel(primitives = result, armature = armature)
 }

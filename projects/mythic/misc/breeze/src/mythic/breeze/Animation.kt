@@ -221,3 +221,8 @@ fun shift(timeOffset: Float, duration: Float, keys: Keyframes): Keyframes =
           .plus(second.map { it.copy(time = it.time + timeOffset) })
       listOf(result.last().copy(time = 0f)).plus(result)
     }
+
+fun keySequence(offset: Vector3, increment: Float, values: List<Vector3>): Keyframes =
+    values.mapIndexed { index, value ->
+      Keyframe(increment * index, offset + value)
+    }

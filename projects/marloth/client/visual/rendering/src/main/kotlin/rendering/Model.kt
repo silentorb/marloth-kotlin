@@ -33,5 +33,6 @@ data class Model(
 
 data class AdvancedModel(
     val primitives: Primitives,
+    val model: Model? = null,
     val armature: Armature? = null
 )
