@@ -1,5 +1,6 @@
 package rendering
 
+import mythic.breeze.Bones
 import mythic.drawing.DrawingEffects
 import mythic.drawing.createDrawingEffects
 import mythic.glowing.*
@@ -165,6 +166,14 @@ class TextureShader(val colorShader: ColoredPerspectiveShader) {
   fun activate(texture: Texture, color: Vector4, glow: Float, normalTransform: Matrix) {
     texture.activate()
     colorShader.activate(color, glow, normalTransform)
+  }
+}
+
+class AnimatedShader(val textureShader: TextureShader){
+  val weightProperty = Vector2ArrayProperty(textureShader.colorShader.shader.program, "boneTransforms")
+  fun activate(texture: Texture, color: Vector4, glow: Float, normalTransform: Matrix, bones: Bones) {
+    textureShader.activate(texture,color, glow, normalTransform)
+    
   }
 }
 

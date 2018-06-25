@@ -37,6 +37,15 @@ class Vector4Property(private val program: ShaderProgram, name: String) {
   }
 }
 
+class Vector2ArrayProperty(private val program: ShaderProgram, name: String) {
+  private val location = glGetUniformLocation(program.id, name)
+
+  fun setValue(value: Vector4) {
+    program.activate()
+    glUniform4f(location, value.x, value.y, value.z, value.w)
+  }
+}
+
 class FloatProperty(private val program: ShaderProgram, name: String) {
   private val location = glGetUniformLocation(program.id, name)
   var cachedValue = Float.NaN
