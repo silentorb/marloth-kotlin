@@ -13,7 +13,8 @@ enum class AttributeName {
   position,
   normal,
   color,
-  uv
+  uv,
+  weights
 }
 
 fun createSimpleMesh(faces: List<FlexibleFace>, vertexSchema: VertexSchema, color: Vector4) =

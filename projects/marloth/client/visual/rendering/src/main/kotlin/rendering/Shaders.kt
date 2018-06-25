@@ -41,7 +41,31 @@ void main() {
 }
 """
 
-private val mainVertex = loadBinaryResource("shaders/mainVertex.glsl").replace("// #{lighting}", lighting)
+private val weightHeader = """
+layout (location = 3) in vec2[3] weights;
+uniform mat4[128] boneTransforms;
+"""
+
+private val weightApplication = """
+  for (int i = 0; i < 3; ++i) {
+    int boneIndex = int(weights[i][0])
+    float strength = weights[i][1]
+    modelPosition += (boneTransforms[boneIndex] * vec4(position, 1.0) - position) * strength
+  }
+"""
+
+fun insertTemplates(source: String, replacements: Map<String, String>): String {
+  var result = source
+  replacements.forEach { name, snippet -> result = result.replace("//#" + name + "", snippet) }
+  return result
+}
+
+private val mainVertex = loadBinaryResource("shaders/mainVertex.glsl")
+
+private val animatedVertex = insertTemplates(mainVertex, mapOf(
+    "weightHeader" to weightHeader,
+    "weightApplication" to weightApplication
+))
 
 private val texturedVertex = """
 uniform mat4 cameraTransform;
@@ -146,6 +170,7 @@ class TextureShader(val colorShader: ColoredPerspectiveShader) {
 
 data class Shaders(
     val textured: TextureShader,
+    val animated: TextureShader,
     val colored: ColoredPerspectiveShader,
     val flat: FlatColoredPerspectiveShader,
     val drawing: DrawingEffects
@@ -154,6 +179,7 @@ data class Shaders(
 fun createShaders(): Shaders {
   return Shaders(
       textured = TextureShader(ColoredPerspectiveShader(PerspectiveShader(ShaderProgram(mainVertex, texturedFragment)))),
+      animated = TextureShader(ColoredPerspectiveShader(PerspectiveShader(ShaderProgram(animatedVertex, texturedFragment)))),
       colored = ColoredPerspectiveShader(PerspectiveShader(ShaderProgram(mainVertex, coloredFragment))),
       flat = FlatColoredPerspectiveShader(PerspectiveShader(ShaderProgram(flatVertex, flatFragment))),
       drawing = createDrawingEffects()
