@@ -218,8 +218,10 @@ fun loadArmature(info: GltfInfo): Armature? {
 //  val rootNodes = nodes.filter { it.parent == null }
   val boneMap = createBoneMap(nodes, animations)
 
+  val bones = boneMap.values.toList()
   return Armature(
-      bones = boneMap.values.toList(),
+      bones = bones,
+      originalBones = bones,
       animations = listOf()// loadAnimations(animations, boneMap)
   )
 }

@@ -14,12 +14,14 @@ fun kneeTransform(boneLength: Float, outVector: Vector3): Transformer = { bones,
   val normal = (middle - a).cross(outVector).normalize()
   val a2 = (a - b).length() / 2f
   val c2 = boneLength
-//  val (a2, c2) = flattenPoints(normal, listOf(a, middle))
   val projectLength = Math.sqrt((c2 * c2 - a2 * a2).toDouble()).toFloat()
   val position = middle + outVector * projectLength
+  val parentTranslation = getBoneTranslation(bones, bone.parent!!)
+  val rotation = rotateToward(Matrix(), parentTranslation - position)
+//  val rotation = Matrix().rotateY(Pi / 3f)
   Matrix()
-      .translate(position)
-      .rotate(bone.rotation)
+      .translate(parentTranslation)
+      .mul(rotation)
 }
 
 fun createSkeleton(): Bones {

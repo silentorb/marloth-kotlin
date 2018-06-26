@@ -25,6 +25,7 @@ fun createArmature(): Armature {
   val bones = createSkeleton()
   return Armature(
       bones = bones,
+      originalBones = bones,
       animations = humanAnimations(bones)
   )
 }

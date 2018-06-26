@@ -30,17 +30,17 @@ fun createOrthographicCamera(camera: ViewCameraConfig): Camera {
   return Camera(ProjectionType.orthographic, position + camera.pivot, orientationSecond, camera.zoom)
 }
 
-fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, transform: Matrix, section: Primitive, bones: Bones?) {
+fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, transform: Matrix, section: Primitive, bones: Bones?, originalBones: Bones?) {
   val mesh = section.mesh
 
   globalState.depthEnabled = true
   globalState.blendEnabled = true
   globalState.cullFaces = true
 
-  if (bones != null) {
+  if (bones != null && originalBones != null) {
     when (config.meshDisplay) {
-      MeshDisplay.solid -> sceneRenderer.effects.animatedFlat.activate(transform, section.material.color, bones)
-      MeshDisplay.wireframe -> sceneRenderer.effects.animatedFlat.activate(transform, faceColor, bones)
+      MeshDisplay.solid -> sceneRenderer.effects.animatedFlat.activate(transform, section.material.color, bones, originalBones)
+      MeshDisplay.wireframe -> sceneRenderer.effects.animatedFlat.activate(transform, faceColor, bones, originalBones)
     }
   } else {
     when (config.meshDisplay) {
@@ -114,22 +114,23 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
     val armature = advancedModel?.armature
 
     val bones = if (armature != null) getAnimatedBones(armature, state.animationOffset) else null
+    val originalBones = armature?.originalBones
 
     if (primitives != null) {
       primitives
           .filterIndexed { i, it -> config.visibleGroups[i] }
-          .forEach { drawMeshPreview(config, sceneRenderer, transform, it, bones) }
+          .forEach { drawMeshPreview(config, sceneRenderer, transform, it, bones, originalBones) }
     } else {
       val primitives2 = advancedModel?.primitives
       if (primitives2 != null) {
         primitives2
-            .forEach { drawMeshPreview(config, sceneRenderer, transform, it, bones) }
+            .forEach { drawMeshPreview(config, sceneRenderer, transform, it, bones, originalBones) }
       } else {
         val meshes = modelToMeshes(renderer.vertexSchemas, model)
         meshes
             .filterIndexed { i, it -> config.visibleGroups[i] }
             .forEach {
-              drawMeshPreview(config, sceneRenderer, transform, it, bones)
+              drawMeshPreview(config, sceneRenderer, transform, it, bones, originalBones)
             }
         if (config.drawNormals)
           renderFaceNormals(sceneRenderer, 0.05f, model.mesh)

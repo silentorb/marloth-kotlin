@@ -79,6 +79,7 @@ typealias WeightMap = Map<Vector3, VertexWeights>
 
 data class Armature(
     val bones: Bones,
+    val originalBones: Bones,
     val animations: List<Animation>
 )
 
@@ -91,6 +92,12 @@ fun joinSkeletonChildren(bones: Bones) {
 fun finalizeSkeleton(bones: Bones) {
   joinSkeletonChildren(bones)
   bones.forEachIndexed { index, bone -> bone.index = index }
+//  bones.forEach { bone ->
+//    val position = getBoneTranslation(bones, bone)
+//    val parentTranslation = getBoneTranslation(bones, bone.parent!!)
+//    val rotation = rotateToward(Matrix(), parentTranslation - position)
+//    bone.rotation = rotation
+//  }
 }
 
 /*

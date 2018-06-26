@@ -41,6 +41,7 @@ fun skeletonMesh(vertexSchemas: VertexSchemas): AdvancedModelGenerator = {
   val (model, weights) = modelFromSkeleton(bones, "Skeleton")
   val armature = Armature(
       bones = bones,
+      originalBones = bones,
       animations = humanAnimations(bones)
   )
   AdvancedModel(

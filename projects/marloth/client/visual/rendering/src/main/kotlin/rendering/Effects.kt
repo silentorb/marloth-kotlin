@@ -70,18 +70,18 @@ class TexturedPerspectiveEffect(val shader: TextureShader, camera: CameraEffects
 class AnimatedPerspectiveEffect(val textureEffect: TexturedPerspectiveEffect) {
   val animatedShader = AnimatedShader(textureEffect.shader.colorShader.shader.program)
 
-  fun activate(config: TextureEffectConfig, bones: Bones) {
+  fun activate(config: TextureEffectConfig, bones: Bones, originalBones: Bones) {
     textureEffect.activate(config)
-    animatedShader.activate(bones)
+    animatedShader.activate(bones, originalBones)
   }
 }
 
 class AnimatedFlatPerspectiveEffect(val flatEffect: FlatColoredPerspectiveEffect) {
   val animatedShader = AnimatedShader(flatEffect.shader.shader.program)
 
-  fun activate(transform: Matrix, color: Vector4, bones: Bones) {
+  fun activate(transform: Matrix, color: Vector4, bones: Bones, originalBones: Bones) {
     flatEffect.activate(transform, color)
-    animatedShader.activate(bones)
+    animatedShader.activate(bones, originalBones)
   }
 }
 

@@ -440,3 +440,8 @@ fun toString2(vectors: List<Vector2>) =
 fun isZero(vector: Vector3) =
     vector.x == 0f && vector.y == 0f && vector.z == 0f
 
+fun rotateToward(matrix: Matrix, dir: Vector3): Matrix =
+    if (dir.x == 0f && dir.y == 0f)
+      matrix.rotateTowards(dir, Vector3(0f, 1f, 0f))
+    else
+      matrix.rotateTowards(dir, Vector3(0f, 0f, 1f))
