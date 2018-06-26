@@ -110,7 +110,8 @@ fun renderScene(client: Client, data: GameViewRenderData) {
         .forEach {
           val info = it.animation!!
           val armature = info.armature
-          drawSkeleton(sceneRenderer, armature.bones, Matrix(it.transform).rotateZ(Pi / 2))
+//          drawSkeleton(sceneRenderer, armature.bones, Matrix(it.transform).rotateZ(Pi / 2))
+          drawSkeleton(sceneRenderer, armature.bones,it.transform)
         }
 
     renderGui(sceneRenderer, Bounds(viewport.toVector4()), canvas, data.menuState)

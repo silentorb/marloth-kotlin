@@ -113,22 +113,23 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
 
     val armature = advancedModel?.armature
 
+    val bones = if (armature != null) getAnimatedBones(armature, state.animationOffset) else null
+
     if (primitives != null) {
       primitives
           .filterIndexed { i, it -> config.visibleGroups[i] }
-          .forEach { drawMeshPreview(config, sceneRenderer, transform, it, armature?.bones) }
+          .forEach { drawMeshPreview(config, sceneRenderer, transform, it, bones) }
     } else {
       val primitives2 = advancedModel?.primitives
       if (primitives2 != null) {
         primitives2
-            .forEach { drawMeshPreview(config, sceneRenderer, transform, it, armature?.bones) }
-      }
-      else {
+            .forEach { drawMeshPreview(config, sceneRenderer, transform, it, bones) }
+      } else {
         val meshes = modelToMeshes(renderer.vertexSchemas, model)
         meshes
             .filterIndexed { i, it -> config.visibleGroups[i] }
             .forEach {
-              drawMeshPreview(config, sceneRenderer, transform, it, armature?.bones)
+              drawMeshPreview(config, sceneRenderer, transform, it, bones)
             }
         if (config.drawNormals)
           renderFaceNormals(sceneRenderer, 0.05f, model.mesh)
@@ -160,9 +161,8 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
     sceneRenderer.drawLine(Vector3(), Vector3(0f, 1f, 0f), green)
     sceneRenderer.drawLine(Vector3(), Vector3(0f, 0f, 1f), blue)
 
-    if (armature != null) {
+    if (bones != null) {
       globalState.depthEnabled = false
-      val bones = getAnimatedBones(armature, state.animationOffset)
       drawSkeleton(sceneRenderer, bones, Matrix())
       globalState.depthEnabled = true
     }

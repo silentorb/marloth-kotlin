@@ -28,11 +28,12 @@ layout (std140) uniform BoneTransforms {
 """
 
 private val weightApplication = """
-  for (int i = 0; i < 3; ++i) {
+  for (int i = 0; i < 2; ++i) {
     int boneIndex = int(weights[i][0]);
     float strength = weights[i][1];
-    modelPosition += (boneTransforms[boneIndex] * position4 - position4) * strength;
+    modelPosition += (boneTransforms[boneIndex] * vec4(0, 0, 0, 1.0)) * strength;
   }
+  modelPosition = vec4(modelPosition.xyz, 1.0);
 """
 
 private val flatVertex = """
@@ -199,11 +200,9 @@ class AnimatedShader(program: ShaderProgram) {
 
   fun activate(bones: Bones) {
     val bytes = createBoneTransformBuffer(bones)
-    checkError("binding vbo buffer data")
     boneBuffer.load(bytes)
-    checkError("binding vbo buffer data")
     boneTransformsProperty.setValue(boneBuffer)
-    checkError("binding vbo buffer data")
+    checkError("sending bone transforms")
   }
 
   fun dispose() {
