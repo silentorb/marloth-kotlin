@@ -68,6 +68,15 @@ data class Bone(
     var index: Int = -1
 )
 
+data class VertexWeight(
+    val index: Int,
+    val strength: Float
+)
+
+typealias VertexWeights = Pair<VertexWeight, VertexWeight>
+
+typealias WeightMap = Map<Vector3, VertexWeights>
+
 data class Armature(
     val bones: Bones,
     val animations: List<Animation>

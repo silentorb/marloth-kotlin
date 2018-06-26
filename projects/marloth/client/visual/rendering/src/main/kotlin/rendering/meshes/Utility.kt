@@ -1,12 +1,11 @@
 package rendering.meshes
 
+import mythic.breeze.Armature
 import mythic.glowing.Drawable
 import mythic.glowing.SimpleMesh
 import mythic.sculpting.FlexibleFace
 import mythic.sculpting.FlexibleMesh
-import mythic.spatial.Quaternion
-import mythic.spatial.Vector3
-import mythic.spatial.Vector4
+import mythic.spatial.*
 import rendering.*
 
 enum class AttributeName {
@@ -17,11 +16,34 @@ enum class AttributeName {
   weights
 }
 
+fun animatedVertexSerializer(weightMap: WeightMap): FlexibleVertexSerializer {
+  return { vertex, face, vertices ->
+    vertices.put(vertex)
+    vertices.put(0f)
+    vertices.put(0f)
+
+    val weights = weightMap[vertex]!!
+    vertices.put(weights.first.index.toFloat())
+    vertices.put(weights.first.strength)
+    vertices.put(weights.second.index.toFloat())
+    vertices.put(weights.second.strength)
+  }
+}
+
+fun simpleVertexSerializer(): FlexibleVertexSerializer {
+  return { vertex, face, vertices ->
+    vertices.put(vertex)
+  }
+}
+
 fun createSimpleMesh(faces: List<FlexibleFace>, vertexSchema: VertexSchema, color: Vector4) =
-    convertMesh(faces, vertexSchema, temporaryVertexSerializer(color))
+    convertMesh(faces, vertexSchema, simpleVertexSerializer())
+
+fun createAnimatedMesh(faces: List<FlexibleFace>, vertexSchema: VertexSchema, weightMap: WeightMap) =
+    convertMesh(faces, vertexSchema, animatedVertexSerializer(weightMap))
 
 fun createSimpleMesh(mesh: FlexibleMesh, vertexSchema: VertexSchema, color: Vector4) =
-    convertMesh(mesh, vertexSchema, temporaryVertexSerializer(color))
+    convertMesh(mesh, vertexSchema, simpleVertexSerializer())
 
 fun createLineMesh(vertexSchema: VertexSchema) =
     SimpleMesh(vertexSchema, listOf(
@@ -60,7 +82,14 @@ fun partitionModelMeshes(model: Model): List<TransientModelElement> {
 fun modelToMeshes(vertexSchemas: VertexSchemas, model: Model): Primitives {
   val sections = partitionModelMeshes(model)
   return sections.map {
-    Primitive(createSimpleMesh(it.faces, vertexSchemas.standard, Vector4(1f)), it.material)
+    Primitive(createSimpleMesh(it.faces, vertexSchemas.textured, Vector4(1f)), it.material)
+  }
+}
+
+fun modelToMeshes(vertexSchemas: VertexSchemas, model: Model, weightMap: WeightMap): Primitives {
+  val sections = partitionModelMeshes(model)
+  return sections.map {
+    Primitive(createAnimatedMesh(it.faces, vertexSchemas.animated, weightMap), it.material)
   }
 }
 

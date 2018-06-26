@@ -7,7 +7,6 @@ import mythic.glowing.VertexAttribute
 typealias VertexSchema = mythic.glowing.VertexSchema<AttributeName>
 
 data class VertexSchemas(
-    val standard: VertexSchema,
     val imported: VertexSchema,
     val textured: VertexSchema,
     val flat: VertexSchema,
@@ -16,21 +15,16 @@ data class VertexSchemas(
 )
 
 fun createVertexSchemas() = VertexSchemas(
-    standard = VertexSchema(listOf(
+    textured = VertexSchema(listOf(
         VertexAttribute(AttributeName.position, 3),
         VertexAttribute(AttributeName.normal, 3),
-        VertexAttribute(AttributeName.color, 4)
+        VertexAttribute(AttributeName.uv, 2)
     )),
     animated = VertexSchema(listOf(
         VertexAttribute(AttributeName.position, 3),
         VertexAttribute(AttributeName.normal, 3),
         VertexAttribute(AttributeName.uv, 2),
-        VertexAttribute(AttributeName.weights, 6)
-    )),
-    textured = VertexSchema(listOf(
-        VertexAttribute(AttributeName.position, 3),
-        VertexAttribute(AttributeName.normal, 3),
-        VertexAttribute(AttributeName.uv, 2)
+        VertexAttribute(AttributeName.weights, 4)
     )),
     flat = VertexSchema(listOf(
         VertexAttribute(AttributeName.position, 3)

@@ -5,6 +5,7 @@ import lab.views.renderFaceNormals
 import lab.views.shared.drawSkeleton
 import lab.views.shared.getAnimatedBones
 import mythic.bloom.*
+import mythic.breeze.Bones
 import mythic.drawing.Canvas
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
@@ -29,16 +30,23 @@ fun createOrthographicCamera(camera: ViewCameraConfig): Camera {
   return Camera(ProjectionType.orthographic, position + camera.pivot, orientationSecond, camera.zoom)
 }
 
-fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, transform: Matrix, section: Primitive) {
+fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, transform: Matrix, section: Primitive, bones: Bones?) {
   val mesh = section.mesh
 
   globalState.depthEnabled = true
   globalState.blendEnabled = true
   globalState.cullFaces = true
 
-  when (config.meshDisplay) {
-    MeshDisplay.solid -> sceneRenderer.effects.flat.activate(transform, section.material.color)
-    MeshDisplay.wireframe -> sceneRenderer.effects.flat.activate(transform, faceColor)
+  if (bones != null) {
+    when (config.meshDisplay) {
+      MeshDisplay.solid -> sceneRenderer.effects.animatedFlat.activate(transform, section.material.color, bones)
+      MeshDisplay.wireframe -> sceneRenderer.effects.animatedFlat.activate(transform, faceColor, bones)
+    }
+  } else {
+    when (config.meshDisplay) {
+      MeshDisplay.solid -> sceneRenderer.effects.flat.activate(transform, section.material.color)
+      MeshDisplay.wireframe -> sceneRenderer.effects.flat.activate(transform, faceColor)
+    }
   }
 
   mesh.draw(DrawMethod.triangleFan)
@@ -103,21 +111,30 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
     val sceneRenderer = renderer.createSceneRenderer(Scene(camera), viewport)
     val transform = Matrix()
 
+    val armature = advancedModel?.armature
+
     if (primitives != null) {
       primitives
           .filterIndexed { i, it -> config.visibleGroups[i] }
-          .forEach { drawMeshPreview(config, sceneRenderer, transform, it) }
+          .forEach { drawMeshPreview(config, sceneRenderer, transform, it, armature?.bones) }
     } else {
-      val meshes = modelToMeshes(renderer.vertexSchemas, model)
-      meshes
-          .filterIndexed { i, it -> config.visibleGroups[i] }
-          .forEach {
-            drawMeshPreview(config, sceneRenderer, transform, it)
-          }
-      if (config.drawNormals)
-        renderFaceNormals(sceneRenderer, 0.05f, model.mesh)
+      val primitives2 = advancedModel?.primitives
+      if (primitives2 != null) {
+        primitives2
+            .forEach { drawMeshPreview(config, sceneRenderer, transform, it, armature?.bones) }
+      }
+      else {
+        val meshes = modelToMeshes(renderer.vertexSchemas, model)
+        meshes
+            .filterIndexed { i, it -> config.visibleGroups[i] }
+            .forEach {
+              drawMeshPreview(config, sceneRenderer, transform, it, armature?.bones)
+            }
+        if (config.drawNormals)
+          renderFaceNormals(sceneRenderer, 0.05f, model.mesh)
 
-      meshes.forEach { it.mesh.dispose() }
+        meshes.forEach { it.mesh.dispose() }
+      }
 
       model.mesh.edges.filter { it.faces.none() }.forEach {
         sceneRenderer.drawLine(it.first, it.second, Vector4(0.8f, 0.5f, 0.3f, 1f))
@@ -143,14 +160,11 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
     sceneRenderer.drawLine(Vector3(), Vector3(0f, 1f, 0f), green)
     sceneRenderer.drawLine(Vector3(), Vector3(0f, 0f, 1f), blue)
 
-    if (advancedModel != null) {
-      val armature = advancedModel.armature
-      if (armature != null) {
-        globalState.depthEnabled = false
-        val bones = getAnimatedBones(armature, state.animationOffset)
-        drawSkeleton(sceneRenderer, bones, Matrix())
-        globalState.depthEnabled = true
-      }
+    if (armature != null) {
+      globalState.depthEnabled = false
+      val bones = getAnimatedBones(armature, state.animationOffset)
+      drawSkeleton(sceneRenderer, bones, Matrix())
+      globalState.depthEnabled = true
     }
   }
 }

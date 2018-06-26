@@ -20,6 +20,21 @@ private fun loadBinaryResource(name: String): String {
 
 private val lighting = loadBinaryResource("shaders/lighting.glsl")
 
+private val weightHeader = """
+layout (location = 3) in vec2[2] weights;
+layout (std140) uniform BoneTransforms {
+  mat4[128] boneTransforms;
+};
+"""
+
+private val weightApplication = """
+  for (int i = 0; i < 3; ++i) {
+    int boneIndex = int(weights[i][0]);
+    float strength = weights[i][1];
+    modelPosition += (boneTransforms[boneIndex] * position4 - position4) * strength;
+  }
+"""
+
 private val flatVertex = """
 uniform mat4 cameraTransform;
 uniform mat4 modelTransform;
@@ -27,11 +42,16 @@ uniform vec4 uniformColor;
 
 layout (location = 0) in vec3 position;
 
+//#weightHeader
+
 out vec4 fragment_color;
 
 void main() {
 	fragment_color = uniformColor;
-  gl_Position = cameraTransform * modelTransform * vec4(position, 1);
+  vec4 position4 = vec4(position, 1.0);
+  vec4 modelPosition = modelTransform * position4;
+//#weightApplication
+  gl_Position = cameraTransform * modelPosition;
 }
 """
 
@@ -44,19 +64,6 @@ void main() {
 }
 """
 
-private val weightHeader = """
-layout (location = 3) in vec2[3] weights;
-layout (std140) uniform mat4[128] boneTransforms;
-"""
-
-private val weightApplication = """
-  for (int i = 0; i < 3; ++i) {
-    int boneIndex = int(weights[i][0]);
-    float strength = weights[i][1];
-    modelPosition += (boneTransforms[boneIndex] * vec4(position, 1.0) - position) * strength;
-  }
-"""
-
 fun insertTemplates(source: String, replacements: Map<String, String>): String {
   var result = source
   replacements.forEach { name, snippet -> result = result.replace("//#" + name + "", snippet) }
@@ -65,10 +72,13 @@ fun insertTemplates(source: String, replacements: Map<String, String>): String {
 
 private val mainVertex = loadBinaryResource("shaders/mainVertex.glsl")
 
-private val animatedVertex = insertTemplates(mainVertex, mapOf(
+private fun addWeightShading(source: String) = insertTemplates(source, mapOf(
     "weightHeader" to weightHeader,
     "weightApplication" to weightApplication
 ))
+
+private val animatedVertex = addWeightShading(mainVertex)
+private val animatedFlatVertex = addWeightShading(flatVertex)
 
 private val texturedVertex = """
 uniform mat4 cameraTransform;
@@ -177,19 +187,23 @@ fun createBoneTransformBuffer(bones: Bones): ByteBuffer {
   for (bone in bones) {
     val transform = bone.transform(bones, bone)
     transform.get(buffer)
+    buffer.position(buffer.position() + sizeOfMatrix)
   }
   buffer.flip()
   return buffer
 }
 
-class AnimatedShader(program: ShaderProgram){
-  val boneTransformsProperty = UniformBufferProperty(program, "boneTransforms")
+class AnimatedShader(program: ShaderProgram) {
+  val boneTransformsProperty = UniformBufferProperty(program, "BoneTransforms")
   val boneBuffer = UniformBuffer()
 
   fun activate(bones: Bones) {
     val bytes = createBoneTransformBuffer(bones)
+    checkError("binding vbo buffer data")
     boneBuffer.load(bytes)
+    checkError("binding vbo buffer data")
     boneTransformsProperty.setValue(boneBuffer)
+    checkError("binding vbo buffer data")
   }
 
   fun dispose() {
@@ -202,6 +216,7 @@ data class Shaders(
     val animated: TextureShader,
     val colored: ColoredPerspectiveShader,
     val flat: FlatColoredPerspectiveShader,
+    val flatAnimated: FlatColoredPerspectiveShader,
     val drawing: DrawingEffects
 )
 
@@ -211,6 +226,7 @@ fun createShaders(): Shaders {
       animated = TextureShader(ColoredPerspectiveShader(PerspectiveShader(ShaderProgram(animatedVertex, texturedFragment)))),
       colored = ColoredPerspectiveShader(PerspectiveShader(ShaderProgram(mainVertex, coloredFragment))),
       flat = FlatColoredPerspectiveShader(PerspectiveShader(ShaderProgram(flatVertex, flatFragment))),
+      flatAnimated = FlatColoredPerspectiveShader(PerspectiveShader(ShaderProgram(animatedFlatVertex, flatFragment))),
       drawing = createDrawingEffects()
   )
 }

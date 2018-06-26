@@ -31,8 +31,18 @@ data class Model(
   val edges: List<FlexibleEdge> get() = mesh.edges
 }
 
+data class VertexWeight(
+    val index: Int,
+    val strength: Float
+)
+
+typealias VertexWeights = Pair<VertexWeight, VertexWeight>
+
+typealias WeightMap = Map<Vector3, VertexWeights>
+
 data class AdvancedModel(
     val primitives: Primitives,
     val model: Model? = null,
-    val armature: Armature? = null
+    val armature: Armature? = null,
+    val weights: WeightMap = mapOf()
 )

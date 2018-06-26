@@ -17,7 +17,8 @@ out vec2 textureCoordinates;
 
 void main() {
   fragmentColor = uniformColor;
-  vec4 modelPosition = modelTransform * vec4(position, 1.0);
+  vec4 position4 = vec4(position, 1.0);
+  vec4 modelPosition = modelTransform * position4;
 //#weightApplication
   fragmentPosition = modelPosition;
   fragmentNormal = normalize((normalTransform * vec4(normal, 1.0)).xyz);

@@ -76,6 +76,15 @@ class AnimatedPerspectiveEffect(val textureEffect: TexturedPerspectiveEffect) {
   }
 }
 
+class AnimatedFlatPerspectiveEffect(val flatEffect: FlatColoredPerspectiveEffect) {
+  val animatedShader = AnimatedShader(flatEffect.shader.shader.program)
+
+  fun activate(transform: Matrix, color: Vector4, bones: Bones) {
+    flatEffect.activate(transform, color)
+    animatedShader.activate(bones)
+  }
+}
+
 data class CameraEffectsData(
     val transform: Matrix,
     val direction: Vector3
@@ -91,6 +100,7 @@ data class Effects(
     val colored: ColoredPerspectiveEffect,
     val flat: FlatColoredPerspectiveEffect,
     val animated: AnimatedPerspectiveEffect,
+    val animatedFlat: AnimatedFlatPerspectiveEffect,
     val textured: TexturedPerspectiveEffect,
     val drawing: DrawingEffects
 )
@@ -101,7 +111,8 @@ fun createEffects(shaders: Shaders, data: EffectsData, sceneBuffer: UniformBuffe
       colored = ColoredPerspectiveEffect(shaders.colored, data.camera, sceneBuffer),
       flat = FlatColoredPerspectiveEffect(shaders.flat, data.camera),
       textured = TexturedPerspectiveEffect(shaders.textured, data.camera, sceneBuffer),
-      animated = AnimatedPerspectiveEffect(TexturedPerspectiveEffect(shaders.textured, data.camera, sceneBuffer)),
+      animated = AnimatedPerspectiveEffect(TexturedPerspectiveEffect(shaders.animated, data.camera, sceneBuffer)),
+      animatedFlat = AnimatedFlatPerspectiveEffect(FlatColoredPerspectiveEffect(shaders.flatAnimated, data.camera)),
       drawing = shaders.drawing
   )
 }

@@ -38,14 +38,16 @@ fun standardMeshes(): ModelGeneratorMap = mapOf(
 
 fun skeletonMesh(vertexSchemas: VertexSchemas): AdvancedModelGenerator = {
   val bones = createSkeleton()
-  val model = modelFromSkeleton(bones, "Skeleton")
+  val (model, weights) = modelFromSkeleton(bones, "Skeleton")
+  val armature = Armature(
+      bones = bones,
+      animations = humanAnimations(bones)
+  )
   AdvancedModel(
       model = model,
-      primitives = modelToMeshes(vertexSchemas, model),
-      armature = Armature(
-          bones = bones,
-          animations = humanAnimations(bones)
-      )
+      primitives = modelToMeshes(vertexSchemas, model, weights),
+      armature = armature,
+      weights = weights
   )
 }
 
@@ -59,7 +61,7 @@ fun advancedMeshes(vertexSchemas: VertexSchemas): AdvancedModelGeneratorMap {
 
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     MeshType.line to createLineMesh(vertexSchemas.flat),
-    MeshType.cylinder to createSimpleMesh(createCylinder(), vertexSchemas.standard, Vector4(0.3f, 0.25f, 0.0f, 1f))
+    MeshType.cylinder to createSimpleMesh(createCylinder(), vertexSchemas.textured, Vector4(0.3f, 0.25f, 0.0f, 1f))
 )
     .mapValues { createModelElements(it.value) }
 //    .plus(mapOf(

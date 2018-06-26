@@ -32,8 +32,11 @@ class VertexArrayObject() {
       globalState.vertexArrayObject = result.id
 
       for (attribute in schema.attributes) {
+        checkError("binding vbo buffer data")
         glVertexAttribPointer(i, attribute.size, GL_FLOAT, false, schema.floatSize * 4, offset)
+        checkError("binding vbo buffer data")
         glEnableVertexAttribArray(i)
+        checkError("binding vbo buffer data")
         i++
         offset += attribute.size * 4
       }
