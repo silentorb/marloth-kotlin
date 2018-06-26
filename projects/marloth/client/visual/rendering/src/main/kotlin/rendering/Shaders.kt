@@ -6,6 +6,8 @@ import mythic.drawing.createDrawingEffects
 import mythic.glowing.*
 import mythic.spatial.Matrix
 import mythic.spatial.Vector4
+import org.lwjgl.BufferUtils
+import java.nio.ByteBuffer
 import java.util.*
 
 private fun loadBinaryResource(name: String): String {
@@ -44,14 +46,14 @@ void main() {
 
 private val weightHeader = """
 layout (location = 3) in vec2[3] weights;
-uniform mat4[128] boneTransforms;
+layout (std140) uniform mat4[128] boneTransforms;
 """
 
 private val weightApplication = """
   for (int i = 0; i < 3; ++i) {
-    int boneIndex = int(weights[i][0])
-    float strength = weights[i][1]
-    modelPosition += (boneTransforms[boneIndex] * vec4(position, 1.0) - position) * strength
+    int boneIndex = int(weights[i][0]);
+    float strength = weights[i][1];
+    modelPosition += (boneTransforms[boneIndex] * vec4(position, 1.0) - position) * strength;
   }
 """
 
@@ -169,11 +171,29 @@ class TextureShader(val colorShader: ColoredPerspectiveShader) {
   }
 }
 
-class AnimatedShader(val textureShader: TextureShader){
-  val weightProperty = Vector2ArrayProperty(textureShader.colorShader.shader.program, "boneTransforms")
-  fun activate(texture: Texture, color: Vector4, glow: Float, normalTransform: Matrix, bones: Bones) {
-    textureShader.activate(texture,color, glow, normalTransform)
-    
+fun createBoneTransformBuffer(bones: Bones): ByteBuffer {
+  val sizeOfMatrix = 16 * 4
+  val buffer = BufferUtils.createByteBuffer(bones.size * sizeOfMatrix)
+  for (bone in bones) {
+    val transform = bone.transform(bones, bone)
+    transform.get(buffer)
+  }
+  buffer.flip()
+  return buffer
+}
+
+class AnimatedShader(program: ShaderProgram){
+  val boneTransformsProperty = UniformBufferProperty(program, "boneTransforms")
+  val boneBuffer = UniformBuffer()
+
+  fun activate(bones: Bones) {
+    val bytes = createBoneTransformBuffer(bones)
+    boneBuffer.load(bytes)
+    boneTransformsProperty.setValue(boneBuffer)
+  }
+
+  fun dispose() {
+    boneBuffer.dispose()
   }
 }
 

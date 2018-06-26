@@ -4,7 +4,7 @@ import org.lwjgl.opengl.ARBUniformBufferObject.GL_UNIFORM_BUFFER
 import org.lwjgl.opengl.GL15.*
 import java.nio.ByteBuffer
 
-class UniformBuffer() {
+class UniformBuffer {
   val id = glGenBuffers()
   private var _size: Long = 0
   private val disposed = false

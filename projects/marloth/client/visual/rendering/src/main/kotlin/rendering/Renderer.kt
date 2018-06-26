@@ -217,7 +217,8 @@ class GameSceneRenderer(
     globalState.cullFaces = true
     val worldMesh = renderer.renderer.worldMesh
     if (worldMesh != null) {
-      renderer.effects.textured.activate(Matrix(), renderer.renderer.textures[Textures.checkers]!!, Vector4(1f), 0f, Matrix())
+      val effectConfig = TextureEffectConfig(Matrix(), renderer.renderer.textures[Textures.checkers]!!, Vector4(1f), 0f, Matrix())
+      renderer.effects.textured.activate(effectConfig)
       for (sector in worldMesh.sectors) {
         renderSectorMesh(sector)
       }
