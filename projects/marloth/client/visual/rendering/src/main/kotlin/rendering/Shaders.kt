@@ -28,12 +28,14 @@ layout (std140) uniform BoneTransforms {
 """
 
 private val weightApplication = """
+  vec3 position3 = position * (1 - weights[0][1] - weights[1][1]);
+
   for (int i = 0; i < 2; ++i) {
     int boneIndex = int(weights[i][0]);
     float strength = weights[i][1];
-    modelPosition += (boneTransforms[boneIndex] * vec4(0, 0, 0, 1.0)) * strength;
+    position3 += (boneTransforms[boneIndex] * position4).xyz * strength;
   }
-  modelPosition = vec4(modelPosition.xyz, 1.0);
+  position4 = vec4(position3, 1.0);
 """
 
 private val flatVertex = """
@@ -50,8 +52,8 @@ out vec4 fragment_color;
 void main() {
 	fragment_color = uniformColor;
   vec4 position4 = vec4(position, 1.0);
-  vec4 modelPosition = modelTransform * position4;
 //#weightApplication
+  vec4 modelPosition = modelTransform * position4;
   gl_Position = cameraTransform * modelPosition;
 }
 """
