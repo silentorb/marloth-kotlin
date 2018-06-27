@@ -445,3 +445,9 @@ fun rotateToward(matrix: Matrix, dir: Vector3): Matrix =
       matrix.rotateTowards(dir, Vector3(0f, 1f, 0f))
     else
       matrix.rotateTowards(dir, Vector3(0f, 0f, 1f))
+
+fun rotateToward(dir: Vector3): Quaternion =
+//    if (dir.x == 0f && dir.y == 0f)
+      Quaternion().rotateTo(Vector3(1f, 0f, 0f), dir)
+//    else
+//      Quaternion().rotateTo(dir, Vector3(0f, 0f, 1f))

@@ -5,7 +5,7 @@ import mythic.spatial.*
 import org.joml.minus
 import org.joml.plus
 
-fun kneeTransform(boneLength: Float, outVector: Vector3): Transformer = { bones, bone ->
+fun kneeTransform(outVector: Vector3): Transformer = { bones, bone ->
   val previousBone = bones[bone.index - 1]
   val nextBone = bones[bone.index + 1]
   val a = getBoneTranslation(bones, previousBone)
@@ -13,107 +13,105 @@ fun kneeTransform(boneLength: Float, outVector: Vector3): Transformer = { bones,
   val middle = (a + b) / 2f
   val normal = (middle - a).cross(outVector).normalize()
   val a2 = (a - b).length() / 2f
-  val c2 = boneLength
+  val c2 = bone.length
   val projectLength = Math.sqrt((c2 * c2 - a2 * a2).toDouble()).toFloat()
   val position = middle + outVector * projectLength
   val parentTranslation = getBoneTranslation(bones, bone.parent!!)
-  val rotation = rotateToward(Matrix(), parentTranslation - position)
-//  val rotation = Matrix().rotateY(Pi / 3f)
-  Matrix()
-      .translate(parentTranslation)
-      .mul(rotation)
+  val rotation = rotateToward(parentTranslation - position)
+  transformBone(Matrix(), parentTranslation, rotation, bone.length)
 }
 
 fun createSkeleton(): Bones {
 
-  val base = Bone(
+  val base = BoneDefinition(
       name = "base",
       translation = Vector3(0f, 0f, 0.4f),
+      tail = Vector3(0f, 0f, 0f),
       transform = independentTransform
   )
 
-  val sternum = Bone(
+  val sternum = BoneDefinition(
       name = "sternum",
-      translation = Vector3(0f, 0f, 0.3f),
+      tail = Vector3(0f, 0f, 0.3f),
       parent = base,
       transform = dependentTransform
   )
 
-  val neck = Bone(
+  val neck = BoneDefinition(
       name = "neck",
-      translation = Vector3(0f, 0f, 0.05f),
+      tail = Vector3(0f, 0f, 0.05f),
       parent = sternum,
       transform = dependentTransform
   )
 
-  val head = Bone(
+  val head = BoneDefinition(
       name = "head",
-      translation = Vector3(0f, 0f, 0.15f),
+      tail = Vector3(0f, 0f, 0.15f),
       parent = neck,
       transform = dependentTransform
   )
 
-  fun createSkeletonSide(suffix: String, mod: Float): List<Bone> {
+  fun createSkeletonSide(suffix: String, mod: Float): List<BoneDefinition> {
     val upperOffset = 0.1f * mod
-    val shoulder = Bone(
+    val shoulder = BoneDefinition(
         name = "shoulder" + suffix,
-        translation = Vector3(upperOffset, 0f, 0f),
+        tail = Vector3(upperOffset, 0f, 0f),
         parent = sternum,
         transform = dependentTransform
     )
-    val elbow = Bone(
-        name = "elbow" + suffix,
-        translation = getBoneTranslation(listOf(), shoulder) + Vector3(0f, 0f, -0.15f),
+    val upperArm = BoneDefinition(
+        name = "upperArm" + suffix,
+        tail = Vector3(0f, 0f, -0.15f),
         parent = shoulder,
-        transform = kneeTransform(0.15f, Vector3(0f, 1f, 0f))
-    )
-    val wrist = Bone(
-        name = "wrist" + suffix,
-        translation = getBoneTranslation(listOf(), shoulder) + Vector3(0f, 0f, -0.15f * 2),
-        parent = elbow,
-        transform = independentTransform
-    )
-    val hand = Bone(
-        name = "hand" + suffix,
-        translation = Vector3(0f, 0f, -0.05f),
-        parent = wrist,
         transform = dependentTransform
     )
+    val foreArm = BoneDefinition(
+        name = "foreArm" + suffix,
+        tail = Vector3(0f, 0f, -0.15f * 2),
+        parent = upperArm,
+        transform = kneeTransform(Vector3(0f, 1f, 0f))
+    )
+    val hand = BoneDefinition(
+        name = "hand" + suffix,
+        tail = Vector3(0f, 0f, -0.05f),
+        parent = foreArm,
+        transform = independentTransform
+    )
     val lowerOffset = 0.05f * mod
-    val hip = Bone(
+    val hip = BoneDefinition(
         name = "hip" + suffix,
-        translation = Vector3(lowerOffset, 0f, 0f),
+        tail = Vector3(lowerOffset, 0f, 0f),
         parent = base,
         transform = dependentTransform
     )
-    val knee = Bone(
-        name = "knee" + suffix,
-        translation = Vector3(lowerOffset, 0f, 0.2f),
+    val thigh = BoneDefinition(
+        name = "thigh" + suffix,
+        tail = Vector3(lowerOffset, 0f, 0.2f),
         parent = hip,
-        transform = kneeTransform(0.2f, Vector3(0f, -1f, 0f))
-    )
-    val ankle = Bone(
-        name = "foot" + suffix,
-        translation = Vector3(lowerOffset, 0f, 0f),
-        parent = knee,
-        transform = independentTransform
-    )
-    val toes = Bone(
-        name = "toes" + suffix,
-        translation = Vector3(0f, -0.1f, 0f),
-        parent = ankle,
         transform = dependentTransform
+    )
+    val shin = BoneDefinition(
+        name = "shin" + suffix,
+        tail = Vector3(lowerOffset, 0f, 0f),
+        parent = thigh,
+        transform = kneeTransform(Vector3(0f, -1f, 0f))
+    )
+    val foot = BoneDefinition(
+        name = "foot" + suffix,
+        tail = Vector3(0f, -0.1f, 0f),
+        parent = shin,
+        transform = independentTransform
     )
     return listOf(
         shoulder,
-        elbow,
-        wrist,
+        upperArm,
+        foreArm,
         hand,
 
         hip,
-        knee,
-        ankle,
-        toes
+        thigh,
+        shin,
+        foot
     )
   }
 
@@ -129,13 +127,12 @@ fun createSkeleton(): Bones {
       .plus(leftBones)
       .plus(rightBones)
 
-  finalizeSkeleton(bones)
-  return bones
+  return finalizeSkeleton(bones)
 }
 
 fun walkingAnimationSide(bones: Bones, duration: Float, suffix: String, timeOffset: Float): List<AnimationChannel> {
   val foot = getBone(bones, "foot" + suffix)
-  val wrist = getBone(bones, "wrist" + suffix)
+  val wrist = getBone(bones, "hand" + suffix)
   val division = duration / 4f
   return listOf(
       AnimationChannel(

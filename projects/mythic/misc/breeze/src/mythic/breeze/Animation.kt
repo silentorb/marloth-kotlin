@@ -58,14 +58,22 @@ typealias Bones = List<Bone>
 
 typealias Transformer = (bones: Bones, bone: Bone) -> Matrix
 
+data class BoneDefinition(
+    val name: String,
+    val translation: Vector3 = Vector3(),
+    val parent: BoneDefinition? = null,
+    val transform: Transformer,
+    val tail: Vector3
+)
+
 data class Bone(
     val name: String,
-    var rotation: Quaternion = Quaternion(),
     var translation: Vector3,
-    var parent: Bone? = null,
-    var children: List<Bone> = listOf(),
+    var rotation: Quaternion,
+    var length: Float,
+    val index: Int,
     val transform: Transformer,
-    var index: Int = -1
+    var parent: Bone? = null
 )
 
 data class VertexWeight(
@@ -83,63 +91,74 @@ data class Armature(
     val animations: List<Animation>
 )
 
-fun joinSkeletonChildren(bones: Bones) {
-//  for (bone in bones) {
-//    bone.children = bones.filter { it.parent == bone }
-//  }
-}
+//private fun getBoneDefinitionTranslation(bone: BoneDefinition): Vector3 {
+//  val translation = bone.translation + bone.tail
+//  return if (bone.parent == null)
+//    translation
+//  else
+//    getBoneDefinitionTranslation(bone.parent) + translation
+//}
 
-fun finalizeSkeleton(bones: Bones) {
-  joinSkeletonChildren(bones)
-  bones.forEachIndexed { index, bone -> bone.index = index }
-//  bones.forEach { bone ->
-//    val position = getBoneTranslation(bones, bone)
-//    val parentTranslation = getBoneTranslation(bones, bone.parent!!)
-//    val rotation = rotateToward(Matrix(), parentTranslation - position)
-//    bone.rotation = rotation
-//  }
-}
+fun finalizeSkeleton(boneDefinitions: List<BoneDefinition>): Bones {
+  val bones = boneDefinitions.mapIndexed { index, it ->
+    //    val translation = getBoneDefinitionTranslation(it)
+    val length = it.tail.length()
+    Bone(
+        index = index,
+        name = it.name,
+        translation = it.translation,
+        rotation = if (length != 0f) rotateToward(it.tail) else Quaternion(),
+        transform = it.transform,
+        length = length
+    )
+  }
 
-/*
-fun getBoneTransform(bone: Bone): Matrix {
-  val parent = bone.parent
-  val parentTransform = if (parent == null || bone.jointType != JointType.dependent)
-    Matrix()
-  else
-    getBoneTransform(parent)
+  val definitions = boneDefinitions.iterator()
 
-  return Matrix()
-      .mul(parentTransform)
-      .translate(bone.translation)
-      .rotate(bone.rotation)
+  for (bone in bones) {
+    val oldBone = definitions.next()
+    val parent = oldBone.parent
+    if (parent != null) {
+      bone.parent = bones[boneDefinitions.indexOf(parent)]
+    }
+  }
+
+  return bones
 }
-*/
 
 fun getBoneTranslation(bones: Bones, bone: Bone): Vector3 =
     Vector3().transform(bone.transform(bones, bone))
 
+fun transformBone(matrix: Matrix, translation: Vector3, rotation: Quaternion, length: Float) =
+    matrix
+        .translate(translation)
+        .rotate(rotation)
+//        .translate(Vector3(length, 0f, 0f))
+
 val independentTransform: Transformer = { bones, bone ->
-  Matrix()
-      .translate(bone.translation)
-      .rotate(bone.rotation)
+  transformBone(Matrix(), bone.translation, bone.rotation, bone.length)
 }
+
+fun projectBoneTail(matrix: Matrix, bone: Bone) =
+    Matrix().translate(Vector3(bone.length, 0f, 0f)).mul(matrix)
+//    matrix.translate(Vector3(bone.length, 0f, 0f))
 
 val dependentTransform: Transformer = { bones, bone ->
   val parent = bone.parent
   val parentTransform = if (parent == null)
     Matrix()
   else
-    parent.transform(bones, parent)
+    projectBoneTail(parent.transform(bones, parent), parent)
 
-  Matrix()
+  val matrix = Matrix()
       .mul(parentTransform)
-      .translate(bone.translation)
-      .rotate(bone.rotation)
+
+  transformBone(matrix, bone.translation, bone.rotation, bone.length)
 }
 
 fun copyBones(bones: Bones): Bones {
   val newBones = bones.map {
-    it.copy(parent = null, children = listOf())
+    it.copy(parent = null)
   }
 
   val oldBones = bones.iterator()
@@ -151,8 +170,6 @@ fun copyBones(bones: Bones): Bones {
       bone.parent = newBones[parent.index]
     }
   }
-
-  joinSkeletonChildren(newBones)
 
   return newBones
 }

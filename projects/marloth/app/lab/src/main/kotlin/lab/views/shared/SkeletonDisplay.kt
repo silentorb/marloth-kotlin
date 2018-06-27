@@ -1,10 +1,7 @@
 package lab.views.shared
 
 import lab.utility.white
-import mythic.breeze.Armature
-import mythic.breeze.Bones
-import mythic.breeze.applyAnimation
-import mythic.breeze.copyBones
+import mythic.breeze.*
 import mythic.spatial.Matrix
 import mythic.spatial.Vector3
 import mythic.spatial.transform
@@ -25,13 +22,16 @@ fun getAnimatedBones(armature: Armature, animationOffset: Float): Bones {
 }
 
 fun drawSkeleton(renderer: SceneRenderer, bones: Bones, modelTransform: Matrix) {
-  for (bone in bones) {
+  for (bone in bones.filter { it.length > 0 }.take(1)) {
     val parent = bone.parent
     if (parent == null)
       continue
 
-    val transform = modelTransform * bone.transform(bones, bone)
-    val parentPosition = Vector3().transform(modelTransform * parent.transform(bones, parent))
-    renderer.drawLine(parentPosition, Vector3().transform(transform), white, 2f)
+    val head = modelTransform * bone.transform(bones, bone)
+//    val tail = head
+//        .translate(Vector3(bone.length, 0f, 0f))
+//    val tail = Matrix().translate(Vector3(bone.length, 0f, 0f)).mul(head)
+    val tail = projectBoneTail(head, bone)
+    renderer.drawLine(Vector3().transform(head), Vector3().transform(tail), white, 2f)
   }
 }
