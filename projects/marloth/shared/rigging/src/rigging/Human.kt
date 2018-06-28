@@ -121,8 +121,8 @@ fun createSkeleton(): Bones {
   val bones = listOf(
       base,
       sternum,
-      head,
-      neck
+      neck,
+      head
   )
       .plus(leftBones)
       .plus(rightBones)

@@ -2,9 +2,11 @@ package rendering.meshes
 
 import mythic.breeze.Bones
 import mythic.breeze.getBoneTranslation
+import mythic.breeze.projectBoneTail
 import mythic.sculpting.*
 import mythic.spatial.*
 import org.joml.minus
+import org.joml.times
 import rendering.*
 
 fun modelFromSkeleton(bones: Bones, name: String): Pair<Model, WeightMap> {
@@ -14,13 +16,10 @@ fun modelFromSkeleton(bones: Bones, name: String): Pair<Model, WeightMap> {
 
   bones.filter { it.parent != null }
       .filter { it.length != 0f }
-      .drop(4).take(1)
+      .drop(3).take(3)
       .forEachIndexed { index, bone ->
-        val boneTransform = bone.transform(bones, bone)
-        val parentTranslation = getBoneTranslation(bones, bone.parent!!)
-        val boneTranslation = Vector3().transform(boneTransform)
+        val head = bone.transform(bones, bone)
         val cylinder = createCylinder(mesh, 0.03f, 8, bone.length)
-        val transform = rotateToward(boneTransform, parentTranslation - boneTranslation)
         val vertices = distinctVertices(cylinder.flatMap { it.vertices })
         for (vertex in vertices) {
           weights[vertex] = VertexWeights(
@@ -28,7 +27,9 @@ fun modelFromSkeleton(bones: Bones, name: String): Pair<Model, WeightMap> {
               VertexWeight(0, 0f)
           )
         }
-        transformVertices(transform, vertices)
+//        transformVertices(Matrix().rotateY(Pi / 2f), vertices)
+//        transformVertices(head, vertices)
+        transformVertices(head * Matrix().rotateY(Pi / 2f), vertices)
       }
 
   val model = Model(
