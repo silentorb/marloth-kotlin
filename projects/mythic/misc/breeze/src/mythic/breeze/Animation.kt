@@ -1,7 +1,6 @@
 package mythic.breeze
 
 import mythic.spatial.*
-import org.joml.minus
 import org.joml.plus
 import org.joml.times
 
@@ -64,7 +63,8 @@ data class BoneDefinition(
     val translation: Vector3 = Vector3(),
     val parent: BoneDefinition? = null,
     val transform: Transformer,
-    val tail: Vector3
+    val tail: Vector3,
+    val isGlobal: Boolean = false
 )
 
 data class Bone(
@@ -103,14 +103,27 @@ data class Armature(
 fun getBoneTranslation(bones: Bones, bone: Bone): Vector3 =
     Vector3().transform(bone.transform(bones, bone))
 
-fun transformBone(matrix: Matrix, translation: Vector3, rotation: Quaternion, length: Float) =
-    matrix
+fun transformBone(translation: Vector3, rotation: Quaternion, length: Float) =
+    Matrix()
         .translate(translation)
         .rotate(rotation)
 //        .translate(Vector3(length, 0f, 0f))
 
+fun transformBone(bone: Bone) =
+    transformBone(bone.translation, bone.rotation, bone.length)
+
+fun getSimpleBoneTransform(bone: Bone): Matrix {
+  val parent = bone.parent
+  val parentTransform = if (parent == null)
+    Matrix()
+  else
+    projectBoneTail(getSimpleBoneTransform(parent), parent)
+
+  return  parentTransform * transformBone(bone)
+}
+
 val independentTransform: Transformer = { bones, bone ->
-  transformBone(Matrix(), bone.translation, bone.rotation, bone.length)
+  transformBone(bone.translation, bone.rotation, bone.length)
 }
 
 fun projectBoneTail(matrix: Matrix, bone: Bone) =
@@ -124,10 +137,7 @@ val dependentTransform: Transformer = { bones, bone ->
   else
     projectBoneTail(parent.transform(bones, parent), parent)
 
-  val matrix = Matrix()
-      .mul(parentTransform)
-
-  transformBone(matrix, bone.translation, bone.rotation, bone.length)
+  parentTransform * transformBone(bone.translation, bone.rotation, bone.length)
 }
 
 fun cumulativeRotation(bone: Bone): Quaternion {
@@ -140,8 +150,6 @@ fun cumulativeRotation(bone: Bone): Quaternion {
 
 fun finalizeSkeleton(boneDefinitions: List<BoneDefinition>): Bones {
   val bones = boneDefinitions.mapIndexed { index, it ->
-    //    val translation = getBoneDefinitionTranslation(it)
-    val length = it.tail.length()
     Bone(
         index = index,
         name = it.name,
@@ -156,12 +164,15 @@ fun finalizeSkeleton(boneDefinitions: List<BoneDefinition>): Bones {
 
   for (bone in bones) {
     val oldBone = definitions.next()
-    val parent = oldBone.parent
-    if (parent != null) {
-      val parent = bones[boneDefinitions.indexOf(parent)]
+    if (oldBone.parent != null) {
+      val parent = bones[boneDefinitions.indexOf(oldBone.parent)]
       bone.parent = parent
       val rotation = Quaternion(cumulativeRotation(parent)).invert() * rotateToward(oldBone.tail)
       bone.rotation = rotation
+      if (oldBone.isGlobal) {
+        bone.translation += Vector3().transform(getSimpleBoneTransform(parent))
+        val k = 0
+      }
     }
   }
 

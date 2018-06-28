@@ -18,7 +18,7 @@ fun kneeTransform(outVector: Vector3): Transformer = { bones, bone ->
   val position = middle + outVector * projectLength
   val parentTranslation = getBoneTranslation(bones, bone.parent!!)
   val rotation = rotateToward(parentTranslation - position)
-  transformBone(Matrix(), parentTranslation, rotation, bone.length)
+  transformBone(parentTranslation, rotation, bone.length)
 }
 
 fun createSkeleton(): Bones {
@@ -75,7 +75,8 @@ fun createSkeleton(): Bones {
         name = "hand" + suffix,
         tail = Vector3(0f, 0f, -0.05f),
         parent = foreArm,
-        transform = independentTransform
+        transform = independentTransform,
+        isGlobal = true
     )
     val lowerOffset = 0.05f * mod
     val hip = BoneDefinition(
@@ -100,7 +101,8 @@ fun createSkeleton(): Bones {
         name = "foot" + suffix,
         tail = Vector3(0f, -0.1f, 0f),
         parent = shin,
-        transform = independentTransform
+        transform = independentTransform,
+        isGlobal = true
     )
     return listOf(
         shoulder,
