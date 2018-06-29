@@ -199,7 +199,8 @@ fun nodeToBone(node: Node) =
         name = node.name,
         transform = independentTransform,
         length = 0f,
-        index = -1
+        index = -1,
+        isGlobal = false
     )
 
 fun createBoneMap(nodes: List<Node>, animations: List<IndexedAnimation>): Map<Int, Bone> =

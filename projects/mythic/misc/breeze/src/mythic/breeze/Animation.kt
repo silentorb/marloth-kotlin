@@ -1,6 +1,7 @@
 package mythic.breeze
 
 import mythic.spatial.*
+import org.joml.minus
 import org.joml.plus
 import org.joml.times
 
@@ -74,7 +75,9 @@ data class Bone(
     var length: Float,
     val index: Int,
     val transform: Transformer,
-    var parent: Bone? = null
+    var restingTransform: Matrix = Matrix(),
+    var parent: Bone? = null,
+    val isGlobal: Boolean
 )
 
 data class VertexWeight(
@@ -113,13 +116,36 @@ fun transformBone(bone: Bone) =
     transformBone(bone.translation, bone.rotation, bone.length)
 
 fun getSimpleBoneTransform(bone: Bone): Matrix {
+  if (bone.isGlobal)
+    return transformBone(bone)
+
   val parent = bone.parent
   val parentTransform = if (parent == null)
     Matrix()
   else
     projectBoneTail(getSimpleBoneTransform(parent), parent)
 
-  return  parentTransform * transformBone(bone)
+  return parentTransform * transformBone(bone)
+}
+
+fun getBoneLineage(bone: Bone): List<Bone> {
+  val parent = bone.parent
+  return if (parent == null)
+    listOf(bone)
+  else
+    getBoneLineage(parent).plus(bone)
+}
+
+fun getSimpleBoneTransform2(bone: Bone): Matrix {
+  val lineage = getBoneLineage(bone)
+  val transforms = lineage.map { projectBoneTail(transformBone(it), it) }
+  return transforms.reduce { a, b -> a * b }
+}
+
+fun getSimpleBoneTranslation(bone: Bone): Vector3 {
+  val transform = getSimpleBoneTransform2(bone)
+  val translation = Vector3().transform(transform)
+  return translation
 }
 
 val independentTransform: Transformer = { bones, bone ->
@@ -140,6 +166,42 @@ val dependentTransform: Transformer = { bones, bone ->
   parentTransform * transformBone(bone.translation, bone.rotation, bone.length)
 }
 
+fun inverseKinematicJointTransform(outVector: Vector3): Transformer = { bones, bone ->
+  //  val previousBone = bones[bone.index - 1]
+  val endBone = bones[bone.index + 2]
+  val transform = dependentTransform(bones, bone)
+  val a = Vector3().transform(transform)
+  val b = getBoneTranslation(bones, endBone)
+  val middle = (a + b) / 2f
+  val a2 = (a - b).length() / 2f
+  val c2 = bone.length
+  val projectLength = Math.sqrt((c2 * c2 - a2 * a2).toDouble()).toFloat()
+  val defaultTail = Vector3().transform(projectBoneTail(transform, bone)) - a
+  val newTail = (middle + outVector * projectLength) - a
+  val tail = middle + outVector * projectLength - a
+//  val translation = a
+  val j = projectBoneTail(projectBoneTail(bone.parent!!.transform(bones, bone.parent!!), bone.parent!!), bone.parent!!)
+  val i = Vector3().transform(j)
+  val k = i - a
+  val rotation = Quaternion().rotateTo(k, newTail)// rotateToward(translation - tail)
+//  transformBone(translation, rotation, bone.length)
+  transform * Matrix().rotate(rotation)
+//  transform*Matrix().rotate(Quaternion().rotateZ(Pi / 4))
+//  transform
+  transformBone(a, rotateToward(tail), bone.length)
+//  projectBoneTail(bone.parent!!.transform(bones, bone.parent!!), bone.parent!!) * transformBone(bone.translation, rotation, bone.length)
+}
+
+val pointAtChildTransform: Transformer = { bones, bone ->
+  val transform = dependentTransform(bones, bone)
+  val nextBone = bones[bone.index + 1]
+  val base = Vector3().transform(transform)
+  val target = getBoneTranslation(bones, nextBone) - base
+//  val tail = Vector3().transform(projectBoneTail(transform, bone)) - base
+//  transform.rotate(Quaternion().rotateTo(tail, target - base))
+  transformBone(base, rotateToward(target), bone.length)
+}
+
 fun cumulativeRotation(bone: Bone): Quaternion {
   val parent = bone.parent
   return if (parent != null)
@@ -156,7 +218,8 @@ fun finalizeSkeleton(boneDefinitions: List<BoneDefinition>): Bones {
         translation = it.translation,
         rotation = Quaternion(),
         transform = it.transform,
-        length = it.tail.length()
+        length = it.tail.length(),
+        isGlobal = it.isGlobal
     )
   }
 
@@ -167,12 +230,15 @@ fun finalizeSkeleton(boneDefinitions: List<BoneDefinition>): Bones {
     if (oldBone.parent != null) {
       val parent = bones[boneDefinitions.indexOf(oldBone.parent)]
       bone.parent = parent
-      val rotation = Quaternion(cumulativeRotation(parent)).invert() * rotateToward(oldBone.tail)
-      bone.rotation = rotation
+
       if (oldBone.isGlobal) {
-        bone.translation += Vector3().transform(getSimpleBoneTransform(parent))
-        val k = 0
+        bone.translation += getSimpleBoneTranslation(parent)
+        bone.rotation = rotateToward(oldBone.tail)
+      } else {
+        val rotation = Quaternion(cumulativeRotation(parent)).invert() * rotateToward(oldBone.tail)
+        bone.rotation = rotation
       }
+      bone.restingTransform = getSimpleBoneTransform(bone)
     }
   }
 

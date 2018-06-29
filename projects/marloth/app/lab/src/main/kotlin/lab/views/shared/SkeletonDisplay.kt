@@ -14,7 +14,7 @@ fun getAnimatedBones(armature: Armature, animationOffset: Float): Bones {
     // When switching animations the animation offset may be briefly greater than the duration
     if (animationOffset < animation.duration) {
       val bones = copyBones(armature.bones)
-//      applyAnimation(animation, bones, animationOffset)
+      applyAnimation(animation, bones, animationOffset)
       return bones
     }
   }
@@ -22,7 +22,9 @@ fun getAnimatedBones(armature: Armature, animationOffset: Float): Bones {
 }
 
 fun drawSkeleton(renderer: SceneRenderer, bones: Bones, modelTransform: Matrix) {
-  for (bone in bones.filter { it.length > 0 }.drop(5).take(1)) {
+  for (bone in bones.filter { it.length > 0 }
+//      .drop(3).take(2)
+  ) {
     val parent = bone.parent
     if (parent == null)
       continue

@@ -1,13 +1,14 @@
 package rendering.meshes
 
-import mythic.breeze.Bones
-import mythic.breeze.getBoneTranslation
-import mythic.breeze.projectBoneTail
+import mythic.breeze.*
 import mythic.sculpting.*
 import mythic.spatial.*
 import org.joml.minus
 import org.joml.times
 import rendering.*
+import rendering.VertexWeight
+import rendering.VertexWeights
+import rendering.WeightMap
 
 fun modelFromSkeleton(bones: Bones, name: String): Pair<Model, WeightMap> {
   val mesh = FlexibleMesh()
@@ -15,21 +16,24 @@ fun modelFromSkeleton(bones: Bones, name: String): Pair<Model, WeightMap> {
   val weights = mutableMapOf<Vector3, VertexWeights>()
 
   bones.filter { it.parent != null }
-      .filter { it.length != 0f }
-      .drop(3).take(3)
+//      .filter { it.length != 0f }
+//      .take(7)
+//      .drop(6).take(1)
       .forEachIndexed { index, bone ->
-        val head = bone.transform(bones, bone)
-        val cylinder = createCylinder(mesh, 0.03f, 8, bone.length)
-        val vertices = distinctVertices(cylinder.flatMap { it.vertices })
-        for (vertex in vertices) {
-          weights[vertex] = VertexWeights(
-              VertexWeight(index, 1f),
-              VertexWeight(0, 0f)
-          )
-        }
+        if (bone.length != 0f) {
+          val head = getSimpleBoneTransform(bone)
+          val cylinder = createCylinder(mesh, 0.03f, 8, bone.length)
+          val vertices = distinctVertices(cylinder.flatMap { it.vertices })
+          for (vertex in vertices) {
+            weights[vertex] = VertexWeights(
+                VertexWeight(index, 1f),
+                VertexWeight(0, 0f)
+            )
+          }
 //        transformVertices(Matrix().rotateY(Pi / 2f), vertices)
 //        transformVertices(head, vertices)
-        transformVertices(head * Matrix().rotateY(Pi / 2f), vertices)
+          transformVertices(head * Matrix().rotateY(Pi / 2f), vertices)
+        }
       }
 
   val model = Model(

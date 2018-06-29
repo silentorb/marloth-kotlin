@@ -5,22 +5,6 @@ import mythic.spatial.*
 import org.joml.minus
 import org.joml.plus
 
-fun kneeTransform(outVector: Vector3): Transformer = { bones, bone ->
-  val previousBone = bones[bone.index - 1]
-  val nextBone = bones[bone.index + 1]
-  val a = getBoneTranslation(bones, previousBone)
-  val b = getBoneTranslation(bones, nextBone)
-  val middle = (a + b) / 2f
-  val normal = (middle - a).cross(outVector).normalize()
-  val a2 = (a - b).length() / 2f
-  val c2 = bone.length
-  val projectLength = Math.sqrt((c2 * c2 - a2 * a2).toDouble()).toFloat()
-  val position = middle + outVector * projectLength
-  val parentTranslation = getBoneTranslation(bones, bone.parent!!)
-  val rotation = rotateToward(parentTranslation - position)
-  transformBone(parentTranslation, rotation, bone.length)
-}
-
 fun createSkeleton(): Bones {
 
   val base = BoneDefinition(
@@ -63,13 +47,13 @@ fun createSkeleton(): Bones {
         name = "upperArm" + suffix,
         tail = Vector3(0f, 0f, -0.15f),
         parent = shoulder,
-        transform = dependentTransform
+        transform = inverseKinematicJointTransform(Vector3(0f, 1f, 0f))
     )
     val foreArm = BoneDefinition(
         name = "foreArm" + suffix,
-        tail = Vector3(0f, 0f, -0.15f * 2),
+        tail = Vector3(0f, 0f, -0.15f),
         parent = upperArm,
-        transform = kneeTransform(Vector3(0f, 1f, 0f))
+        transform = pointAtChildTransform
     )
     val hand = BoneDefinition(
         name = "hand" + suffix,
@@ -87,15 +71,15 @@ fun createSkeleton(): Bones {
     )
     val thigh = BoneDefinition(
         name = "thigh" + suffix,
-        tail = Vector3(lowerOffset, 0f, 0.2f),
+        tail = Vector3(0f, 0f, -0.2f),
         parent = hip,
-        transform = dependentTransform
+        transform = inverseKinematicJointTransform(Vector3(0f, -1f, 0f))
     )
     val shin = BoneDefinition(
         name = "shin" + suffix,
-        tail = Vector3(lowerOffset, 0f, 0f),
+        tail = Vector3(0f, 0f, -0.2f),
         parent = thigh,
-        transform = kneeTransform(Vector3(0f, -1f, 0f))
+        transform = pointAtChildTransform
     )
     val foot = BoneDefinition(
         name = "foot" + suffix,
