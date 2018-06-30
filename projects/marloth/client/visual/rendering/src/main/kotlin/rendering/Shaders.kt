@@ -29,12 +29,12 @@ layout (std140) uniform BoneTransforms {
 """
 
 private val weightApplication = """
-  vec3 position3 = position; // * (1 - weights[0][1] - weights[1][1]);
+  vec3 position3 = position * (1 - weights[0][1] - weights[1][1]);
 
   for (int i = 0; i < 2; ++i) {
     int boneIndex = int(weights[i][0]);
     float strength = weights[i][1];
-    position3 += (boneTransforms[boneIndex + 1] * vec4(0, 0, 0, 1.0)).xyz * strength;
+    position3 += (boneTransforms[boneIndex] * position4).xyz * strength;
   }
   position4 = vec4(position3, 1.0);
 """
@@ -183,21 +183,6 @@ class TextureShader(val colorShader: ColoredPerspectiveShader) {
     texture.activate()
     colorShader.activate(color, glow, normalTransform)
   }
-}
-
-fun createBoneTransformBuffer(bones: Bones, originalBones: Bones): ByteBuffer {
-  val sizeOfMatrix = 16 * 4
-  val buffer = BufferUtils.createByteBuffer(bones.size * sizeOfMatrix)
-  for (bone in bones) {
-    val newTransform = bone.transform(bones, bone)
-//    val original = originalBones[bone.index]
-//    val originalTransform = original.transform(originalBones, original)
-    val diff = newTransform - bone.restingTransform
-    diff.get(buffer)
-    buffer.position(buffer.position() + sizeOfMatrix)
-  }
-  buffer.flip()
-  return buffer
 }
 
 class AnimatedShader(program: ShaderProgram) {

@@ -154,6 +154,7 @@ fun walkingAnimation(bones: Bones): Animation {
   val duration = 1.5f
   val division = duration / 4f
   val base = getBone(bones, "base")
+  val head = getBone(bones, "head")
   return Animation(
       duration = duration,
       channels =
@@ -171,6 +172,16 @@ fun walkingAnimation(bones: Bones): Animation {
                   Vector3(0f, 0f, -0.06f)
               ))
           )
+//          AnimationChannel(
+//              target = ChannelTarget(
+//                  boneIndex = head.index,
+//                  type = ChannelType.rotation
+//              ),
+//              keys = listOf(
+//                  Keyframe(0f, Quaternion().rotateY(Pi / 4f)),
+//                  Keyframe(duration, Quaternion().rotateY(-Pi / 4f))
+//              )
+//          )
       )
           .plus(walkingAnimationSide(bones, duration, "R", 0f))
           .plus(walkingAnimationSide(bones, duration, "L", duration / 2f))
