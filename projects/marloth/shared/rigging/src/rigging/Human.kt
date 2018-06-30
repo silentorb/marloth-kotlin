@@ -2,8 +2,6 @@ package rigging
 
 import mythic.breeze.*
 import mythic.spatial.*
-import org.joml.minus
-import org.joml.plus
 
 fun createSkeleton(): Bones {
 
@@ -119,6 +117,8 @@ fun createSkeleton(): Bones {
 fun walkingAnimationSide(bones: Bones, duration: Float, suffix: String, timeOffset: Float): List<AnimationChannel> {
   val foot = getBone(bones, "foot" + suffix)
   val wrist = getBone(bones, "hand" + suffix)
+  val shoulder = getBone(bones, "shoulder" + suffix)
+  val hip = getBone(bones, "hip" + suffix)
   val division = duration / 4f
   return listOf(
       AnimationChannel(
@@ -146,6 +146,34 @@ fun walkingAnimationSide(bones: Bones, duration: Float, suffix: String, timeOffs
               Vector3(0f, 0f, 0f),
               Vector3(0f, -0.1f, 0f)
           )))
+      ),
+      AnimationChannel(
+          target = ChannelTarget(
+              boneIndex = shoulder.index,
+              type = ChannelType.rotation
+          ),
+          keys = shift(timeOffset, duration, keySequenceRotation(shoulder.rotation, division, listOf(
+              -Pi * 0.08f,
+              -Pi * 0.02f,
+              Pi * 0.04f,
+              -Pi * 0.01f,
+              -Pi * 0.08f
+          ).map { Quaternion().rotateZ(it) }
+          ))
+      ),
+      AnimationChannel(
+          target = ChannelTarget(
+              boneIndex = hip.index,
+              type = ChannelType.rotation
+          ),
+          keys = shift(timeOffset + duration / 2f, duration, keySequenceRotation(hip.rotation, division, listOf(
+              -Pi * 0.06f,
+              -Pi * 0.01f,
+              Pi * 0.03f,
+              -Pi * 0.01f,
+              -Pi * 0.06f
+          ).map { Quaternion().rotateZ(it) }
+          ))
       )
   )
 }
@@ -155,6 +183,8 @@ fun walkingAnimation(bones: Bones): Animation {
   val division = duration / 4f
   val base = getBone(bones, "base")
   val head = getBone(bones, "head")
+  val high = Vector3(0f, 0f, -0.003f)
+  val low = Vector3(0f, 0f, -0.04f)
   return Animation(
       duration = duration,
       channels =
@@ -165,11 +195,11 @@ fun walkingAnimation(bones: Bones): Animation {
                   type = ChannelType.translation
               ),
               keys = keySequence(base.translation, division, listOf(
-                  Vector3(0f, 0f, -0.06f),
-                  Vector3(0f, 0f, -0.003f),
-                  Vector3(0f, 0f, -0.06f),
-                  Vector3(0f, 0f, -0.003f),
-                  Vector3(0f, 0f, -0.06f)
+                  low,
+                  high,
+                  low,
+                  high,
+                  low
               ))
           )
 //          AnimationChannel(

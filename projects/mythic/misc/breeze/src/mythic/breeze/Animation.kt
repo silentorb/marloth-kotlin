@@ -348,3 +348,8 @@ fun keySequence(offset: Vector3, increment: Float, values: List<Vector3>): Keyfr
     values.mapIndexed { index, value ->
       Keyframe(increment * index, offset + value)
     }
+
+fun keySequenceRotation(offset: Quaternion, increment: Float, values: List<Quaternion>): Keyframes =
+    values.mapIndexed { index, value ->
+      Keyframe(increment * index, offset * value)
+    }
