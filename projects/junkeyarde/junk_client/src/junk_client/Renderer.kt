@@ -79,7 +79,7 @@ class Renderer {
   fun prepareRender(windowInfo: WindowInfo) {
 //    glow.operations.setViewport(Vector2i(0, 0), windowInfo.dimensions)
     glow.state.framebuffer = 0
-    glow.operations.clearScreen()
+//    glow.operations.clearScreen()
     glow.state.framebuffer = offscreenBuffer.framebuffer.id
     glow.state.viewport = Vector4i(0, 0, 320, 200)
     glow.state.depthWrite = false

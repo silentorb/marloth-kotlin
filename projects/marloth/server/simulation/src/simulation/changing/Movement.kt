@@ -278,7 +278,8 @@ fun updateBodyNode(body: Body) {
   val newNode = node.neighbors.firstOrNull { isInsideNode(it, position) }
   if (newNode == null) {
     isInsideNode(node, position)
-    throw Error("Not supported")
+//    throw Error("Not supported")
+    assert(false)
   } else {
     body.node = newNode
   }

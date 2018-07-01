@@ -1,14 +1,10 @@
 package rendering
 
 import mythic.breeze.Bones
-import mythic.drawing.DrawingEffects
-import mythic.drawing.createDrawingEffects
 import mythic.glowing.*
 import mythic.spatial.Matrix
+import mythic.spatial.Vector3
 import mythic.spatial.Vector4
-import org.joml.minus
-import org.lwjgl.BufferUtils
-import java.nio.ByteBuffer
 import java.util.*
 
 private fun loadBinaryResource(name: String): String {
@@ -148,75 +144,121 @@ void main() {
 }
 """
 
-class PerspectiveShader(val program: ShaderProgram) {
+class PerspectiveFeature(program: ShaderProgram) {
   val cameraTransform = MatrixProperty(program, "cameraTransform")
+  val modelTransform = MatrixProperty(program, "modelTransform")
+}
+
+class ColoringFeature(program: ShaderProgram) {
+  val colorProperty = Vector4Property(program, "uniformColor")
+}
+
+class ShadingFeature(program: ShaderProgram) {
+  val normalTransformProperty = MatrixProperty(program, "normalTransform")
+  val glowProperty = FloatProperty(program, "glow")
   val cameraDirection = Vector3Property(program, "cameraDirection")
-  fun activate() {
-    program.activate()
-  }
+  val sceneProperty = UniformBufferProperty(program, "SceneUniform")
 }
 
-class ColoredPerspectiveShader(val shader: PerspectiveShader) {
-  val normalTransformProperty = MatrixProperty(shader.program, "normalTransform")
-  val colorProperty = Vector4Property(shader.program, "uniformColor")
-  val glowProperty = FloatProperty(shader.program, "glow")
-
-  fun activate(color: Vector4, glow: Float, normalTransform: Matrix) {
-    colorProperty.setValue(color)
-    glowProperty.setValue(glow)
-    normalTransformProperty.setValue(normalTransform)
-    shader.activate()
-  }
-}
-
-class FlatColoredPerspectiveShader(val shader: PerspectiveShader) {
-  val colorProperty = Vector4Property(shader.program, "uniformColor")
-  fun activate(color: Vector4) {
-    colorProperty.setValue(color)
-    shader.activate()
-  }
-}
-
-class TextureShader(val colorShader: ColoredPerspectiveShader) {
-
-  fun activate(texture: Texture, color: Vector4, glow: Float, normalTransform: Matrix) {
-    texture.activate()
-    colorShader.activate(color, glow, normalTransform)
-  }
-}
-
-class AnimatedShader(program: ShaderProgram) {
+class SkeletonFeature(program: ShaderProgram) {
   val boneTransformsProperty = UniformBufferProperty(program, "BoneTransforms")
-  val boneBuffer = UniformBuffer()
+}
 
-  fun activate(bones: Bones, originalBones: Bones) {
-    val bytes = createBoneTransformBuffer(bones, originalBones)
-    boneBuffer.load(bytes)
-    boneTransformsProperty.setValue(boneBuffer)
-    checkError("sending bone transforms")
+fun populateBoneBuffer(boneBuffer: UniformBuffer, bones: Bones): UniformBuffer {
+  val bytes = createBoneTransformBuffer(bones)
+  boneBuffer.load(bytes)
+  checkError("sending bone transforms")
+  return boneBuffer
+}
+
+data class ShaderFeatureConfig(
+//    val perspective: Boolean = false,
+    val shading: Boolean = false,
+    val skeleton: Boolean = false
+)
+
+data class SceneShaderConfig(
+    val cameraTransform: Matrix,
+    val cameraDirection: Vector3,
+    val sceneBuffer: UniformBuffer
+)
+
+data class ObjectShaderConfig(
+    val transform: Matrix,
+    val texture: Texture? = null,
+    val color: Vector4? = null,
+    val glow: Float = 0f,
+    val normalTransform: Matrix? = null,
+    val boneBuffer: UniformBuffer? = null
+)
+
+class GeneralShader(val program: ShaderProgram, featureConfig: ShaderFeatureConfig) {
+  //  val perspective: PerspectiveFeature? = if (featureConfig.perspective) PerspectiveFeature(program) else null
+  val perspective: PerspectiveFeature = PerspectiveFeature(program)
+  val coloring: ColoringFeature = ColoringFeature(program)
+  val shading: ShadingFeature? = if (featureConfig.shading) ShadingFeature(program) else null
+  val skeleton: SkeletonFeature? = if (featureConfig.skeleton) SkeletonFeature(program) else null
+
+  fun updateScene(config: SceneShaderConfig) {
+    program.activate()
+    perspective.cameraTransform.setValue(config.cameraTransform)
+    if (shading != null) {
+      shading.cameraDirection.setValue(config.cameraDirection)
+      shading.sceneProperty.setValue(config.sceneBuffer)
+    }
   }
 
-  fun dispose() {
-    boneBuffer.dispose()
+  fun activate(config: ObjectShaderConfig) {
+    program.activate()
+
+    perspective.modelTransform.setValue(config.transform)
+    coloring.colorProperty.setValue(config.color!!)
+
+    if (shading != null) {
+      shading.glowProperty.setValue(config.glow!!)
+      shading.normalTransformProperty.setValue(config.normalTransform!!)
+    }
+
+    if (skeleton != null) {
+      skeleton.boneTransformsProperty.setValue(config.boneBuffer!!)
+    }
+
+    if (config.texture != null) {
+      config.texture.activate()
+    }
   }
+
 }
 
 data class Shaders(
-    val textured: TextureShader,
-    val animated: TextureShader,
-    val colored: ColoredPerspectiveShader,
-    val flat: FlatColoredPerspectiveShader,
-    val flatAnimated: FlatColoredPerspectiveShader,
-    val drawing: DrawingEffects
+    val textured: GeneralShader,
+    val animated: GeneralShader,
+    val colored: GeneralShader,
+    val flat: GeneralShader,
+    val flatAnimated: GeneralShader
 )
 
 fun createShaders(): Shaders {
   return Shaders(
-      textured = TextureShader(ColoredPerspectiveShader(PerspectiveShader(ShaderProgram(mainVertex, texturedFragment)))),
-      animated = TextureShader(ColoredPerspectiveShader(PerspectiveShader(ShaderProgram(animatedVertex, texturedFragment)))),
-      colored = ColoredPerspectiveShader(PerspectiveShader(ShaderProgram(mainVertex, coloredFragment))),
-      flat = FlatColoredPerspectiveShader(PerspectiveShader(ShaderProgram(flatVertex, flatFragment))),
-      flatAnimated = FlatColoredPerspectiveShader(PerspectiveShader(ShaderProgram(animatedFlatVertex, flatFragment))),
-      drawing = createDrawingEffects()
+      textured = GeneralShader(ShaderProgram(mainVertex, texturedFragment), ShaderFeatureConfig(
+          shading = true
+      )),
+      animated = GeneralShader(ShaderProgram(animatedVertex, texturedFragment), ShaderFeatureConfig(
+          shading = true,
+          skeleton = true
+      )),
+      colored = GeneralShader(ShaderProgram(mainVertex, coloredFragment), ShaderFeatureConfig(
+          shading = true
+      )),
+      flat = GeneralShader(ShaderProgram(flatVertex, flatFragment), ShaderFeatureConfig()),
+      flatAnimated = GeneralShader(ShaderProgram(animatedFlatVertex, flatFragment), ShaderFeatureConfig(
+          skeleton = true
+      ))
   )
 }
+
+//textured = TextureShader(ColoredPerspectiveShader(PerspectiveShader(ShaderProgram(mainVertex, texturedFragment)))),
+//animated = TextureShader(ColoredPerspectiveShader(PerspectiveShader(ShaderProgram(animatedVertex, texturedFragment)))),
+//colored = ColoredPerspectiveShader(PerspectiveShader(ShaderProgram(mainVertex, coloredFragment))),
+//flat = FlatColoredPerspectiveShader(PerspectiveShader(ShaderProgram(flatVertex, flatFragment))),
+//flatAnimated = FlatColoredPerspectiveShader(PerspectiveShader(ShaderProgram(animatedFlatVertex, flatFragment))),

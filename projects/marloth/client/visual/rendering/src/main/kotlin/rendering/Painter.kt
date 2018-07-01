@@ -1,30 +1,54 @@
 package rendering
 
 import mythic.glowing.DrawMethod
+import mythic.glowing.checkError
 import mythic.glowing.globalState
 import mythic.spatial.*
 import mythic.typography.TextStyle
 import rendering.meshes.Primitives
-import scenery.ChildDetails
-import scenery.DepictionType
-import scenery.Gender
-import scenery.VisualElement
+import scenery.*
 
 //typealias Painter = (VisualElement, Effects, ElementDetails) -> Unit
 //typealias Painters = Map<DepictionType, Painter>
 
+fun advancedPainter(mesh: AdvancedModel, renderer: Renderer) =
+    { element: VisualElement, effects: Shaders ->
+      val transform = element.transform.rotateZ(Pi / 2)//.scale(2f)
+      val orientationTransform = getRotationMatrix(transform)
+      for (e in mesh.primitives) {
+        val material = e.material
+        val shaderConfig =ObjectShaderConfig(
+            transform = transform,
+            glow = material.glow,
+            normalTransform = orientationTransform,
+            color = material.color,
+            texture = renderer.textures[Textures.checkers]!!,
+            boneBuffer = populateBoneBuffer(renderer.boneBuffer, element.animation!!.armature.bones)
+        )
+        effects.animated.activate(shaderConfig)
+//        effects.flatAnimated.activate(shaderConfig)
+        e.mesh.draw(DrawMethod.triangleFan)
+        checkError("drawing animated mesh")
+      }
+    }
+
 fun simplePainter(elements: Primitives) =
-    { element: VisualElement, effects: Effects ->
+    { element: VisualElement, effects: Shaders ->
       val orientationTransform = getRotationMatrix(element.transform)
       for (e in elements) {
         val material = e.material
-        effects.colored.activate(element.transform, material.color, material.glow, orientationTransform)
+        effects.colored.activate(ObjectShaderConfig(
+            element.transform,
+            color = material.color,
+            glow = material.glow,
+            normalTransform = orientationTransform
+        ))
         e.mesh.draw(DrawMethod.triangleFan)
       }
     }
 
 fun humanPainter(renderer: SceneRenderer, elements: Primitives) =
-    { element: VisualElement, effects: Effects, childDetails: ChildDetails ->
+    { element: VisualElement, effects: Shaders, childDetails: ChildDetails ->
       val transform = element.transform.rotateZ(Pi / 2).scale(2f)
       val orientationTransform = getRotationMatrix(element.transform)
       val gender = childDetails.gender
@@ -39,8 +63,8 @@ fun humanPainter(renderer: SceneRenderer, elements: Primitives) =
 
       for (e in elements.filter { parts.contains(it.name) }) {
         val material = e.material
-        effects.colored.activate(element.transform, material.color, material.glow, orientationTransform)
-        e.mesh.draw(DrawMethod.triangleFan)
+//        effects.colored.activate(element.transform, material.color, material.glow, orientationTransform)
+//        e.mesh.draw(DrawMethod.triangleFan)
       }
 
       val textStyle = TextStyle(renderer.renderer.fonts[0], 12f, Vector4(1f))

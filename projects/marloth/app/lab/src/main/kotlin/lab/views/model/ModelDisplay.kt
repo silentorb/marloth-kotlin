@@ -38,15 +38,26 @@ fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, trans
   globalState.cullFaces = true
 
   if (bones != null && originalBones != null) {
+    val shaderConfig = ObjectShaderConfig(
+        transform = transform,
+        color = section.material.color,
+        boneBuffer = populateBoneBuffer(sceneRenderer.renderer.boneBuffer, bones)
+    )
     when (config.meshDisplay) {
-      MeshDisplay.solid -> sceneRenderer.effects.animatedFlat.activate(transform, section.material.color, bones, originalBones)
-      MeshDisplay.wireframe -> sceneRenderer.effects.animatedFlat.activate(transform, faceColor, bones, originalBones)
+      MeshDisplay.solid -> sceneRenderer.effects.flatAnimated.activate(shaderConfig)
+      MeshDisplay.wireframe -> sceneRenderer.effects.flatAnimated.activate(shaderConfig)
     }
   } else {
-    when (config.meshDisplay) {
-      MeshDisplay.solid -> sceneRenderer.effects.flat.activate(transform, section.material.color)
-      MeshDisplay.wireframe -> sceneRenderer.effects.flat.activate(transform, faceColor)
-    }
+    val color = if (config.meshDisplay == MeshDisplay.solid)
+      section.material.color
+    else
+      faceColor
+
+    val shaderConfig = ObjectShaderConfig(
+        transform = transform,
+        color = color
+    )
+    sceneRenderer.effects.flat.activate(shaderConfig)
   }
 
   mesh.draw(DrawMethod.triangleFan)
@@ -55,12 +66,17 @@ fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, trans
     globalState.depthEnabled = false
   }
 
+  val shaderConfig = ObjectShaderConfig(
+      transform = transform,
+      color = lineColor
+  )
+
   globalState.lineThickness = 1f
-  sceneRenderer.effects.flat.activate(transform, lineColor)
+  sceneRenderer.effects.flat.activate(shaderConfig)
   mesh.draw(DrawMethod.lineLoop)
 
   globalState.pointSize = 3f
-  sceneRenderer.effects.flat.activate(transform, lineColor)
+  sceneRenderer.effects.flat.activate(shaderConfig)
   mesh.draw(DrawMethod.points)
 
   globalState.depthEnabled = false

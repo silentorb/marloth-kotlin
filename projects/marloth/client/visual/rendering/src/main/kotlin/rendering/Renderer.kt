@@ -13,6 +13,7 @@ import rendering.meshes.AttributeName
 import rendering.meshes.MeshMap
 import rendering.meshes.createVertexSchemas
 import scenery.*
+import kotlin.reflect.full.declaredMemberProperties
 
 fun gatherEffectsData(dimensions: Vector2i, scene: Scene, cameraEffectsData: CameraEffectsData): EffectsData {
   return EffectsData(
@@ -21,7 +22,6 @@ fun gatherEffectsData(dimensions: Vector2i, scene: Scene, cameraEffectsData: Cam
       scene.lights
   )
 }
-
 
 data class SectorMesh(
     val mesh: SimpleMesh<AttributeName>,
@@ -49,6 +49,17 @@ fun getPlayerViewports(playerCount: Int, dimensions: Vector2i): List<Vector4i> {
   }
 }
 
+data class CameraEffectsData(
+    val transform: Matrix,
+    val direction: Vector3
+)
+
+data class EffectsData(
+    val camera: CameraEffectsData,
+    val flatProjection: Matrix,
+    val lights: List<Light>
+)
+
 fun mapGameSceneRenderers(renderer: Renderer, scenes: List<GameScene>, windowInfo: WindowInfo): List<GameSceneRenderer> {
   val viewports = getPlayerViewports(scenes.size, windowInfo.dimensions).iterator()
   return scenes.map {
@@ -60,13 +71,15 @@ fun mapGameSceneRenderers(renderer: Renderer, scenes: List<GameScene>, windowInf
 class Renderer {
   val glow = Glow()
   val shaders = createShaders()
+  val drawing = createDrawingEffects()
   val vertexSchemas = createVertexSchemas()
   var worldMesh: WorldMesh? = null
   val canvasMeshes = createDrawingMeshes(vertexSchemas.drawing)
   val meshGenerators = standardMeshes()
   val meshes = createMeshes(vertexSchemas)
   val textures = createTextureLibrary()
-  val sectorBuffer = UniformBuffer()
+  val sceneBuffer = UniformBuffer()
+  val boneBuffer = UniformBuffer()
   val fonts = loadFonts(listOf(
       FontLoadInfo(
           filename = "cour.ttf",
@@ -80,14 +93,27 @@ class Renderer {
 //    glow.state.clearColor = Vector4(1f, 0.95f, 0.9f, 1f)
   }
 
-  fun createEffects(scene: Scene, dimensions: Vector2i, cameraEffectsData: CameraEffectsData) =
-      createEffects(shaders, gatherEffectsData(dimensions, scene, cameraEffectsData), sectorBuffer)
+  fun updateShaders(scene: Scene, dimensions: Vector2i, cameraEffectsData: CameraEffectsData) {
+//    updateShaders(shaders, gatherEffectsData(dimensions, scene, cameraEffectsData), sectorBuffer)
+    val effectsData = gatherEffectsData(dimensions, scene, cameraEffectsData)
+    updateLights(effectsData.lights, sceneBuffer)
+    val sceneConfig = SceneShaderConfig(
+        cameraDirection = effectsData.camera.direction,
+        cameraTransform = effectsData.camera.transform,
+        sceneBuffer = sceneBuffer
+    )
+
+    for (property in Shaders::class.java.kotlin.declaredMemberProperties) {
+      val shader = property.get(shaders) as GeneralShader
+      shader.updateScene(sceneConfig)
+    }
+  }
 
   fun createSceneRenderer(scene: Scene, viewport: Vector4i): SceneRenderer {
     val dimensions = Vector2i(viewport.z, viewport.w)
     val cameraEffectsData = createCameraEffectsData(dimensions, scene.camera)
-    val effects = createEffects(scene, dimensions, cameraEffectsData)
-    return SceneRenderer(viewport, this, effects, cameraEffectsData)
+    updateShaders(scene, dimensions, cameraEffectsData)
+    return SceneRenderer(viewport, this, cameraEffectsData)
   }
 
   fun prepareRender(windowInfo: WindowInfo) {
@@ -112,29 +138,31 @@ class Renderer {
 class SceneRenderer(
     val viewport: Vector4i,
     val renderer: Renderer,
-    val effects: Effects,
     val cameraEffectsData: CameraEffectsData
 ) {
+
+  val effects: Shaders
+    get() = renderer.shaders
 
   fun drawLine(start: Vector3, end: Vector3, color: Vector4, thickness: Float = 1f) {
     globalState.lineThickness = thickness
     renderer.dynamicMesh.load(listOf(start.x, start.y, start.z, end.x, end.y, end.z))
 
-    effects.flat.activate(Matrix(), color)
+    effects.flat.activate(ObjectShaderConfig(transform = Matrix(), color = color))
     renderer.dynamicMesh.draw(DrawMethod.lines)
   }
 
   fun drawPoint(position: Vector3, color: Vector4, size: Float = 1f) {
     globalState.pointSize = size
     renderer.dynamicMesh.load(listOf(position.x, position.y, position.z))
-    effects.flat.activate(Matrix(), color)
+    effects.flat.activate(ObjectShaderConfig(transform = Matrix(), color = color))
     renderer.dynamicMesh.draw(DrawMethod.points)
   }
 
   fun drawSolidFace(vertices: List<Vector3>, color: Vector4) {
     renderer.dynamicMesh.load(vertices.flatMap { listOf(it.x, it.y, it.z) })
 
-    effects.flat.activate(Matrix(), color)
+    effects.flat.activate(ObjectShaderConfig(transform = Matrix(), color = color))
     renderer.dynamicMesh.draw(DrawMethod.triangleFan)
   }
 
@@ -142,7 +170,7 @@ class SceneRenderer(
     globalState.lineThickness = thickness
     renderer.dynamicMesh.load(vertices.flatMap { listOf(it.x, it.y, it.z) })
 
-    effects.flat.activate(Matrix(), color)
+    effects.flat.activate(ObjectShaderConfig(transform = Matrix(), color = color))
     renderer.dynamicMesh.draw(DrawMethod.lines)
   }
 
@@ -157,7 +185,7 @@ class SceneRenderer(
 //    val transform = modelTransform
 //    val pixelsToScalar = getUnitScaling(Vector2i(viewport.x, viewport.y))
     val dimensions = Vector2i(viewport.z, viewport.w)
-    var pos = Vector2(((i.x + 1) / 2) * dimensions.x, (1 - ((i.y + 1) / 2)) * dimensions.y)
+    val pos = Vector2(((i.x + 1) / 2) * dimensions.x, (1 - ((i.y + 1) / 2)) * dimensions.y)
     val config = TextConfiguration(content, pos, style)
     val textDimensions = calculateTextDimensions(config)
     pos.x -= textDimensions.x / 2f
@@ -166,7 +194,7 @@ class SceneRenderer(
 
     drawTextRaw(
         config,
-        renderer.shaders.drawing.coloredImage,
+        renderer.drawing.coloredImage,
         renderer.vertexSchemas.drawing.image,
         transform
     )
@@ -192,10 +220,11 @@ class GameSceneRenderer(
     val childDetails = scene.elementDetails.children[element.id]
     if (childDetails != null) {
       val mesh = lookupMesh(element.depiction)
+      advancedPainter(mesh, renderer.renderer)(element, renderer.effects)
 //      humanPainter(renderer, mesh.primitives)(element, renderer.effects, childDetails)
     } else {
       val mesh = lookupMesh(element.depiction)
-      simplePainter(mesh.primitives)(element, renderer.effects)
+//      simplePainter(mesh.primitives)(element, renderer.effects)
     }
   }
 
@@ -217,7 +246,12 @@ class GameSceneRenderer(
     globalState.cullFaces = true
     val worldMesh = renderer.renderer.worldMesh
     if (worldMesh != null) {
-      val effectConfig = TextureEffectConfig(Matrix(), renderer.renderer.textures[Textures.checkers]!!, Vector4(1f), 0f, Matrix())
+      val effectConfig = ObjectShaderConfig(
+          transform = Matrix(),
+          texture = renderer.renderer.textures[Textures.checkers]!!,
+          color = Vector4(1f),
+          normalTransform = Matrix()
+      )
       renderer.effects.textured.activate(effectConfig)
       for (sector in worldMesh.sectors) {
         renderSectorMesh(sector)
@@ -239,7 +273,7 @@ fun createCanvas(renderer: Renderer, windowInfo: WindowInfo): Canvas {
   return Canvas(
       renderer.vertexSchemas.drawing,
       renderer.canvasMeshes,
-      renderer.shaders.drawing,
+      renderer.drawing,
       unitScaling,
       renderer.fonts,
       windowInfo.dimensions

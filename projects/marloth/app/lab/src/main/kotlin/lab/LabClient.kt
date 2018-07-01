@@ -94,6 +94,7 @@ class LabClient(val config: LabConfig, val client: Client) {
   }
 
   fun updateGame(windowInfo: WindowInfo, scenes: List<GameScene>, metaWorld: AbstractWorld, previousState: LabState, delta: Float): LabClientResult {
+    client.platform.input.update()
     val view = GameView(config.gameView)
     val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
     val input = getInputState(client.platform.input, commands)
@@ -115,6 +116,7 @@ class LabClient(val config: LabConfig, val client: Client) {
   }
 
   fun updateModel(windowInfo: WindowInfo, previousState: LabState, delta: Float): LabClientResult {
+    prepareClient(windowInfo)
     val view = ModelView(config.modelView, client.renderer, client.platform.input.getMousePosition())
 
     val layout = view.createLayout(windowInfo.dimensions, previousState.modelViewState)
@@ -132,6 +134,7 @@ class LabClient(val config: LabConfig, val client: Client) {
   }
 
   fun updateTexture(windowInfo: WindowInfo, previousState: LabState): LabClientResult {
+    prepareClient(windowInfo)
     val view = TextureView()
 
     val layout = view.createLayout(client.renderer, config.textureView, windowInfo.dimensions)
@@ -148,6 +151,7 @@ class LabClient(val config: LabConfig, val client: Client) {
   }
 
   fun updateWorld(windowInfo: WindowInfo, metaWorld: AbstractWorld, previousState: LabState): LabClientResult {
+    prepareClient(windowInfo)
     val view = WorldView(config.worldView, metaWorld, client.renderer)
 
     val layout = view.createLayout(windowInfo.dimensions)
@@ -162,6 +166,7 @@ class LabClient(val config: LabConfig, val client: Client) {
   }
 
   fun updateMap(windowInfo: WindowInfo, scenes: List<GameScene>, metaWorld: AbstractWorld, previousState: LabState, delta: Float): LabClientResult {
+    prepareClient(windowInfo)
     val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
     val input = getInputState(client.platform.input, commands)
     updateMapState(config.mapView, input, delta)
@@ -176,7 +181,6 @@ class LabClient(val config: LabConfig, val client: Client) {
 
   fun update(scenes: List<GameScene>, metaWorld: AbstractWorld, previousState: LabState, delta: Float): LabClientResult {
     val windowInfo = client.platform.display.getInfo()
-    prepareClient(windowInfo)
     return when (config.view) {
       Views.game -> updateGame(windowInfo, scenes, metaWorld, previousState, delta)
       Views.model -> updateModel(windowInfo, previousState, delta)

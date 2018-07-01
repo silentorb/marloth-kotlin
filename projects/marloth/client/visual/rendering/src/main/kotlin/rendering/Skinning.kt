@@ -2,8 +2,6 @@ package rendering
 
 import mythic.breeze.Bones
 import mythic.spatial.*
-import org.joml.minus
-import org.joml.plus
 import org.joml.times
 import org.lwjgl.BufferUtils
 import java.nio.ByteBuffer
@@ -12,7 +10,8 @@ const val maxBoneCount = 128
 const val sizeOfMatrix = 16 * 4
 private val buffer = BufferUtils.createByteBuffer(maxBoneCount * sizeOfMatrix)
 
-fun createBoneTransformBuffer(bones: Bones, originalBones: Bones): ByteBuffer {
+fun createBoneTransformBuffer(bones: Bones): ByteBuffer {
+//  val buffer = BufferUtils.createByteBuffer(maxBoneCount * sizeOfMatrix)
   for (bone in bones) {
 
     val newTransform = bone.transform(bones, bone)
