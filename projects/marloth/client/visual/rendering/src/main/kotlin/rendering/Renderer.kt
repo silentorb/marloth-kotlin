@@ -70,7 +70,9 @@ fun mapGameSceneRenderers(renderer: Renderer, scenes: List<GameScene>, windowInf
 
 class Renderer {
   val glow = Glow()
-  val shaders = createShaders()
+  val sceneBuffer = UniformBuffer(sceneBufferSize)
+  val boneBuffer = UniformBuffer(boneBufferSize)
+  val shaders = createShaders(UniformBuffers(sceneBuffer, boneBuffer))
   val drawing = createDrawingEffects()
   val vertexSchemas = createVertexSchemas()
   var worldMesh: WorldMesh? = null
@@ -78,8 +80,6 @@ class Renderer {
   val meshGenerators = standardMeshes()
   val meshes = createMeshes(vertexSchemas)
   val textures = createTextureLibrary()
-  val sceneBuffer = UniformBuffer()
-  val boneBuffer = UniformBuffer()
   val fonts = loadFonts(listOf(
       FontLoadInfo(
           filename = "cour.ttf",

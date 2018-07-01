@@ -8,7 +8,8 @@ import java.nio.ByteBuffer
 
 const val maxBoneCount = 128
 const val sizeOfMatrix = 16 * 4
-private val buffer = BufferUtils.createByteBuffer(maxBoneCount * sizeOfMatrix)
+const val boneBufferSize = maxBoneCount * sizeOfMatrix
+private val buffer = BufferUtils.createByteBuffer(boneBufferSize)
 
 fun createBoneTransformBuffer(bones: Bones): ByteBuffer {
 //  val buffer = BufferUtils.createByteBuffer(maxBoneCount * sizeOfMatrix)

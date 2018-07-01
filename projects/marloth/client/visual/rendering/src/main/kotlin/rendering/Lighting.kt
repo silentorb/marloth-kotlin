@@ -13,13 +13,17 @@ fun padBuffer(buffer: ByteBuffer, count: Int) {
   }
 }
 
+private const val headerSize = 4 * 4
+private const val lightSize = 16 * 4
+private const val maxLights = 20
+const val sceneBufferSize = headerSize + lightSize * maxLights
+
 fun createLightBuffer(lights: List<Light>): ByteBuffer {
-  val headerSize = 4
 //  val lightSize = 12
-  val lightSize = 16
+
   val totalSize = headerSize + lightSize * lights.size
 
-  val buffer = BufferUtils.createByteBuffer(totalSize * 4)
+  val buffer = BufferUtils.createByteBuffer(totalSize)
   buffer.putInt(lights.size)
   padBuffer(buffer, 3)
   for (light in lights) {

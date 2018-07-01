@@ -153,15 +153,15 @@ class ColoringFeature(program: ShaderProgram) {
   val colorProperty = Vector4Property(program, "uniformColor")
 }
 
-class ShadingFeature(program: ShaderProgram) {
+class ShadingFeature(program: ShaderProgram, sceneBuffer: UniformBuffer) {
   val normalTransformProperty = MatrixProperty(program, "normalTransform")
   val glowProperty = FloatProperty(program, "glow")
   val cameraDirection = Vector3Property(program, "cameraDirection")
-  val sceneProperty = UniformBufferProperty(program, "SceneUniform")
+  val sceneProperty = UniformBufferProperty(program, "SceneUniform", 1, sceneBuffer)
 }
 
-class SkeletonFeature(program: ShaderProgram) {
-  val boneTransformsProperty = UniformBufferProperty(program, "BoneTransforms")
+class SkeletonFeature(program: ShaderProgram, boneBuffer: UniformBuffer) {
+  val boneTransformsProperty = UniformBufferProperty(program, "BoneTransforms", 2, boneBuffer)
 }
 
 fun populateBoneBuffer(boneBuffer: UniformBuffer, bones: Bones): UniformBuffer {
@@ -192,19 +192,19 @@ data class ObjectShaderConfig(
     val boneBuffer: UniformBuffer? = null
 )
 
-class GeneralShader(val program: ShaderProgram, featureConfig: ShaderFeatureConfig) {
+class GeneralShader(buffers: UniformBuffers, val program: ShaderProgram, featureConfig: ShaderFeatureConfig) {
   //  val perspective: PerspectiveFeature? = if (featureConfig.perspective) PerspectiveFeature(program) else null
   val perspective: PerspectiveFeature = PerspectiveFeature(program)
   val coloring: ColoringFeature = ColoringFeature(program)
-  val shading: ShadingFeature? = if (featureConfig.shading) ShadingFeature(program) else null
-  val skeleton: SkeletonFeature? = if (featureConfig.skeleton) SkeletonFeature(program) else null
+  val shading: ShadingFeature? = if (featureConfig.shading) ShadingFeature(program, buffers.scene) else null
+  val skeleton: SkeletonFeature? = if (featureConfig.skeleton) SkeletonFeature(program, buffers.bone) else null
 
   fun updateScene(config: SceneShaderConfig) {
     program.activate()
     perspective.cameraTransform.setValue(config.cameraTransform)
     if (shading != null) {
       shading.cameraDirection.setValue(config.cameraDirection)
-      shading.sceneProperty.setValue(config.sceneBuffer)
+//      shading.sceneProperty.setValue(config.sceneBuffer)
     }
   }
 
@@ -220,7 +220,7 @@ class GeneralShader(val program: ShaderProgram, featureConfig: ShaderFeatureConf
     }
 
     if (skeleton != null) {
-      skeleton.boneTransformsProperty.setValue(config.boneBuffer!!)
+//      skeleton.boneTransformsProperty.setValue(config.boneBuffer!!)
     }
 
     if (config.texture != null) {
@@ -238,27 +238,26 @@ data class Shaders(
     val flatAnimated: GeneralShader
 )
 
-fun createShaders(): Shaders {
+data class UniformBuffers(
+    val scene: UniformBuffer,
+    val bone: UniformBuffer
+)
+
+fun createShaders(buffers: UniformBuffers): Shaders {
   return Shaders(
-      textured = GeneralShader(ShaderProgram(mainVertex, texturedFragment), ShaderFeatureConfig(
+      textured = GeneralShader(buffers, ShaderProgram(mainVertex, texturedFragment), ShaderFeatureConfig(
           shading = true
       )),
-      animated = GeneralShader(ShaderProgram(animatedVertex, texturedFragment), ShaderFeatureConfig(
+      animated = GeneralShader(buffers, ShaderProgram(animatedVertex, texturedFragment), ShaderFeatureConfig(
           shading = true,
           skeleton = true
       )),
-      colored = GeneralShader(ShaderProgram(mainVertex, coloredFragment), ShaderFeatureConfig(
+      colored = GeneralShader(buffers, ShaderProgram(animatedVertex, coloredFragment), ShaderFeatureConfig(
           shading = true
       )),
-      flat = GeneralShader(ShaderProgram(flatVertex, flatFragment), ShaderFeatureConfig()),
-      flatAnimated = GeneralShader(ShaderProgram(animatedFlatVertex, flatFragment), ShaderFeatureConfig(
+      flat = GeneralShader(buffers, ShaderProgram(flatVertex, flatFragment), ShaderFeatureConfig()),
+      flatAnimated = GeneralShader(buffers,ShaderProgram(animatedFlatVertex, flatFragment), ShaderFeatureConfig(
           skeleton = true
       ))
   )
 }
-
-//textured = TextureShader(ColoredPerspectiveShader(PerspectiveShader(ShaderProgram(mainVertex, texturedFragment)))),
-//animated = TextureShader(ColoredPerspectiveShader(PerspectiveShader(ShaderProgram(animatedVertex, texturedFragment)))),
-//colored = ColoredPerspectiveShader(PerspectiveShader(ShaderProgram(mainVertex, coloredFragment))),
-//flat = FlatColoredPerspectiveShader(PerspectiveShader(ShaderProgram(flatVertex, flatFragment))),
-//flatAnimated = FlatColoredPerspectiveShader(PerspectiveShader(ShaderProgram(animatedFlatVertex, flatFragment))),

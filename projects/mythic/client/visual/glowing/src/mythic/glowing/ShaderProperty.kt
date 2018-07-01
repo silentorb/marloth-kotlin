@@ -50,16 +50,24 @@ class FloatProperty(private val program: ShaderProgram, name: String) {
   }
 }
 
-class UniformBufferProperty(private val program: ShaderProgram, name: String) {
+class UniformBufferProperty(
+    private val program: ShaderProgram,
+    private val name: String,
+    private val bindingPoint: Int,
+    uniformBuffer: UniformBuffer) {
   private val index = glGetUniformBlockIndex(program.id, name)
 
   init {
+    println("program: " + program.id + ", ubo: " + index)
     assert(index != -1)
+    glUniformBlockBinding(program.id, index, bindingPoint)
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, uniformBuffer.id, 0, uniformBuffer.size.toLong())
   }
 
-  fun setValue(value: UniformBuffer) {
-    glBindBufferRange(GL_UNIFORM_BUFFER, 0, value.id, 0, value.size)
-    glUniformBlockBinding(program.id, index, 0)
-  }
+//  fun setValue(value: UniformBuffer) {
+//    println("set program: " + program.id + ", ubo: " + index + ", size: " + value.size)
+////    glBindBufferRange(GL_UNIFORM_BUFFER, 0, value.id, 0, value.size)
+////    glUniformBlockBinding(program.id, index, 0)
+//  }
 }
 
