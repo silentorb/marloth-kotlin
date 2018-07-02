@@ -13,9 +13,11 @@ import lab.views.GameViewConfig
 import lab.views.model.ModelViewState
 import lab.views.model.newModelViewState
 import marloth.clienting.Client
+import marloth.clienting.ClientState
 import marloth.clienting.gui.MenuActionType
 import marloth.clienting.gui.initialMenuState
 import marloth.clienting.initialGameInputState
+import marloth.clienting.newClientState
 import mythic.desktop.createDesktopPlatform
 import mythic.platforming.Display
 import mythic.platforming.Platform
@@ -114,7 +116,14 @@ fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
   platform.display.initialize(gameConfig.display)
   val app = LabApp(platform, config, gameConfig)
   setWorldMesh(app.world.meta, app.client)
-  labLoop(app, LabState(mapOf(), initialGameInputState(), initialMenuState(), newModelViewState()))
+  val clientState = newClientState()
+  val state = LabState(
+      labInput = mapOf(),
+      gameInput = initialGameInputState(),
+      modelViewState = newModelViewState(),
+      gameClientState = clientState
+  )
+  labLoop(app, state)
 }
 
 object App {

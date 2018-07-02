@@ -3,7 +3,10 @@ package rendering
 import mythic.glowing.DrawMethod
 import mythic.glowing.checkError
 import mythic.glowing.globalState
-import mythic.spatial.*
+import mythic.spatial.Pi
+import mythic.spatial.Vector3
+import mythic.spatial.Vector4
+import mythic.spatial.getRotationMatrix
 import mythic.typography.TextStyle
 import rendering.meshes.Primitives
 import scenery.*
@@ -17,7 +20,7 @@ fun advancedPainter(mesh: AdvancedModel, renderer: Renderer) =
       val orientationTransform = getRotationMatrix(transform)
       for (e in mesh.primitives) {
         val material = e.material
-        val shaderConfig =ObjectShaderConfig(
+        val shaderConfig = ObjectShaderConfig(
             transform = transform,
             glow = material.glow,
             normalTransform = orientationTransform,
@@ -27,6 +30,7 @@ fun advancedPainter(mesh: AdvancedModel, renderer: Renderer) =
         )
         effects.animated.activate(shaderConfig)
 //        effects.flatAnimated.activate(shaderConfig)
+        checkError("drawing animated mesh-pre")
         e.mesh.draw(DrawMethod.triangleFan)
         checkError("drawing animated mesh")
       }
@@ -81,10 +85,3 @@ val simplePainterMap = mapOf(
     DepictionType.missile to MeshType.sphere,
     DepictionType.wallLamp to MeshType.wallLamp
 )
-
-//fun createPainters(meshes: MeshMap): Painters = mapOf(
-//    DepictionType.monster to humanPainter(meshes[MeshType.child]!!),
-//    DepictionType.character to humanPainter(meshes[MeshType.child]!!),
-//    DepictionType.missile to simplePainter(meshes[MeshType.sphere]!!),
-//    DepictionType.wallLamp to simplePainter(meshes[MeshType.wallLamp]!!)
-//)

@@ -4,6 +4,7 @@ import commanding.*
 import haft.*
 import marloth.clienting.gui.MenuActionType
 import marloth.clienting.gui.MenuState
+import marloth.clienting.gui.initialMenuState
 import mythic.platforming.Platform
 import rendering.Renderer
 import scenery.GameScene
@@ -35,6 +36,12 @@ data class ClientState(
     val input: InputState,
     val menu: MenuState
 )
+
+fun newClientState() =
+    ClientState(
+        input = newInputState(),
+        menu = initialMenuState()
+    )
 
 class Client(val platform: Platform) {
   val renderer: Renderer = Renderer()

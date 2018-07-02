@@ -1,10 +1,8 @@
 package marloth.clienting
 
 import commanding.CommandType
-import haft.ScalarInputSource
-import haft.disconnectedScalarInputSource
-import mythic.platforming.PlatformInput
 import haft.*
+import mythic.platforming.PlatformInput
 import org.joml.Vector2i
 import org.lwjgl.glfw.GLFW.*
 
@@ -16,6 +14,12 @@ data class InputState(
     val events: InputEvents,
     val mousePosition: Vector2i
 )
+
+fun newInputState() =
+    InputState(
+        events = mapOf(),
+        mousePosition = Vector2i()
+    )
 
 fun initialGameInputState(): ProfileStates<CommandType> = mapOf()
 //        , (1..maxPlayerCount).map { null }
