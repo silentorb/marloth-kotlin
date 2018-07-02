@@ -14,6 +14,7 @@ interface PlatformInput {
   fun update()
   fun getMousePosition(): Vector2i
   fun getGamepads(): List<Gamepad>
+  fun isMouseVisible(value: Boolean)
 }
 
 data class DisplayConfig(

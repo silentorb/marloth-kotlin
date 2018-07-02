@@ -87,6 +87,20 @@ fun <T> gatherProfileCommands(profiles: List<Bindings<T>>, profileStates: Profil
   return Pair(next.flatMap { gatherCommands(it.value) }, next)
 }
 
+fun <T> gatherProfileCommands2(profiles: List<Bindings<T>>, profileStates: ProfileStates<T>,
+                              deviceHandlers: List<ScalarInputSource>): ProfileStates<T> {
+  val previous = profiles.associate { profile ->
+    Pair(profile, profileStates[profile] ?: createEmptyInputState(profile))
+  }
+
+  return profiles.associate { profile ->
+    Pair(profile, getCurrentInputState(profile, deviceHandlers, previous[profile]!!))
+  }
+}
+
+fun <T> gatherProfileCommands3(states: ProfileStates<T>): Commands<T> =
+    states.flatMap { gatherCommands(it.value) }
+
 fun <T> gatherInputCommands(bindings: Bindings<T>, deviceHandlers: List<ScalarInputSource>,
                             previousState: InputTriggerState<T>?): Pair<Commands<T>, InputTriggerState<T>> {
   val previous = previousState ?: createEmptyInputState(bindings)

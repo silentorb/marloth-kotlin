@@ -15,7 +15,7 @@ data class LabClientResult(
 
 typealias LabCommandMap = Map<LabCommandType, CommandHandler<LabCommandType>>
 
-data class InputState(
+data class LabInputState(
     val commands: List<Command<LabCommandType>>,
     val mousePosition: Vector2i,
     val mouseOffset: Vector2i
@@ -24,5 +24,5 @@ data class InputState(
 //interface View {
 //  fun createLayout(dimensions: Vector2i): Layout
 //  fun getCommands(): LabCommandMap
-//  fun updateState(layout: Layout, input: InputState, delta: Float)
+//  fun updateState(layout: Layout, input: LabInputState, delta: Float)
 //}

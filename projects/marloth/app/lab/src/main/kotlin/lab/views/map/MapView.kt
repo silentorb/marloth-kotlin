@@ -1,14 +1,12 @@
 package lab.views.map
 
-import haft.isActive
-import lab.LabCommandType
-import lab.views.InputState
+import lab.views.LabInputState
 
 data class MapViewConfig(
     val dummy: Int = 0 // Not used.  Just here until other properties are added.
 )
 
-fun updateMapState(config: MapViewConfig, input: InputState, delta: Float) {
+fun updateMapState(config: MapViewConfig, input: LabInputState, delta: Float) {
   val commands = input.commands
 
 //  if (isActive(commands, LabCommandType.toggleMeshDisplay)) {

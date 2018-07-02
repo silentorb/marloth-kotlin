@@ -81,7 +81,7 @@ fun onListItemSelection(event: SelectionEvent, config: TextureViewConfig, render
   config.texture = renderer.textures.keys.toList()[event.itemIndex]
 }
 
-fun updateTextureState(layout: TextureViewLayout, input: InputState, config: TextureViewConfig, renderer: Renderer) {
+fun updateTextureState(layout: TextureViewLayout, input: LabInputState, config: TextureViewConfig, renderer: Renderer) {
   val commands = input.commands
 
   if (isActive(commands, LabCommandType.select)) {

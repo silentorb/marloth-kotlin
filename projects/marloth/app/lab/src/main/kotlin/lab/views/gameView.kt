@@ -3,7 +3,6 @@ package lab.views
 import haft.isActive
 import lab.LabCommandType
 import lab.views.shared.drawSkeleton
-import lab.views.shared.getAnimatedBones
 import marloth.clienting.Client
 import marloth.clienting.gui.MenuState
 import marloth.clienting.gui.renderGui
@@ -145,7 +144,7 @@ class GameView(val config: GameViewConfig) {
 //    return listOf()
 //  }
 
-  fun updateState(input: InputState, delta: Float) {
+  fun updateState(input: LabInputState, delta: Float) {
     val commands = input.commands
 
     if (isActive(commands, LabCommandType.toggleMeshDisplay)) {

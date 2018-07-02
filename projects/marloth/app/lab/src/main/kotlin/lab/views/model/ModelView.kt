@@ -263,7 +263,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     return 0f
   }
 
-  fun updateState(layout: ModelLayout, input: InputState, state: ModelViewState, delta: Float): ModelViewState {
+  fun updateState(layout: ModelLayout, input: LabInputState, state: ModelViewState, delta: Float): ModelViewState {
     val commands = input.commands
 
     val rotateSpeedZ = 1f

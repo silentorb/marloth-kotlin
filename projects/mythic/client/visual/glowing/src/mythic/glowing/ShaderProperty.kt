@@ -58,10 +58,10 @@ class UniformBufferProperty(
   private val index = glGetUniformBlockIndex(program.id, name)
 
   init {
-    println("program: " + program.id + ", ubo: " + index)
+    println("program: " + program.id + ", ubo: " + index + ", name: " + name)
     assert(index != -1)
     glUniformBlockBinding(program.id, index, bindingPoint)
-    glBindBufferRange(GL_UNIFORM_BUFFER, 0, uniformBuffer.id, 0, uniformBuffer.size.toLong())
+    glBindBufferRange(GL_UNIFORM_BUFFER, bindingPoint, uniformBuffer.id, 0, uniformBuffer.size.toLong())
   }
 
 //  fun setValue(value: UniformBuffer) {

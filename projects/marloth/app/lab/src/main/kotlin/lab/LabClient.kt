@@ -13,8 +13,9 @@ import lab.views.map.updateMapState
 import lab.views.model.ModelView
 import lab.views.model.ModelViewState
 import lab.views.world.WorldView
+import marloth.clienting.ClientState
+import marloth.clienting.InputState
 import marloth.clienting.gui.MenuActionType
-import marloth.clienting.gui.MenuState
 import marloth.clienting.gui.menuButtonAction
 import marloth.clienting.gui.updateMenuState
 import mythic.bloom.Box
@@ -26,8 +27,8 @@ import rendering.createCanvas
 data class LabState(
     val labInput: InputTriggerState<LabCommandType>,
     val gameInput: ProfileStates<CommandType>,
-    val menuState: MenuState,
-    val modelViewState: ModelViewState
+    val modelViewState: ModelViewState,
+    val gameClientState: ClientState
 )
 
 fun createLabDeviceHandlers(input: PlatformInput): List<ScalarInputSource> {
@@ -53,9 +54,9 @@ fun createLabDeviceHandlers(input: PlatformInput): List<ScalarInputSource> {
 
 private var previousMousePosition = Vector2i()
 
-fun getInputState(platformInput: PlatformInput, commands: List<Command<LabCommandType>>): InputState {
+fun getInputState(platformInput: PlatformInput, commands: List<Command<LabCommandType>>): LabInputState {
   val mousePosition = platformInput.getMousePosition()
-  val input = InputState(
+  val input = LabInputState(
       commands,
       mousePosition,
       mousePosition - previousMousePosition
@@ -90,29 +91,50 @@ class LabClient(val config: LabConfig, val client: Client) {
 
   fun prepareClient(windowInfo: WindowInfo) {
     client.renderer.prepareRender(windowInfo)
+    client.platform.input.isMouseVisible(true)
     client.platform.input.update()
   }
 
   fun updateGame(windowInfo: WindowInfo, scenes: List<GameScene>, metaWorld: AbstractWorld, previousState: LabState, delta: Float): LabClientResult {
+    client.platform.input.isMouseVisible(false)
     client.platform.input.update()
+//    println(client.platform.input.getMousePosition())
     val view = GameView(config.gameView)
     val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
     val input = getInputState(client.platform.input, commands)
     view.updateState(input, delta)
-    val properties = client.prepareInput(previousState.gameInput, scenes.map { it.player })
-    val gameResult = if (previousState.menuState.isVisible)
-      client.updateGameInput(properties, client.menuInputProfiles)
-    else
-      client.updateGameInput(properties, client.playerInputProfiles)
+    val properties = client.input.prepareInput(previousState.gameInput, scenes.map { it.player })
+    val mainEvents = client.input.updateGameInput1(properties, previousState.gameClientState)
+//    client.updateGameInput(properties, client.playerInputProfiles)
 
-    val waitingResult = client.checkForNewGamepads(properties)
-    val (gameCommands, nextGameInputState) = gameResult + waitingResult
-    val menuCommands = filterKeystrokeCommands(gameCommands)
-    val newMenuState = updateMenuState(previousState.menuState, menuCommands)
+    val waitingEvents = client.input.checkForNewGamepads1(properties)
+
+    val allCommands = client.input.updateGameInput2(mainEvents)
+        .plus(client.input.checkForNewGamepads2(waitingEvents, properties.players.size))
+    val menuCommands = filterKeystrokeCommands(allCommands)
+    val newMenuState = updateMenuState(previousState.gameClientState.menu, menuCommands)
     val menuAction = menuButtonAction(newMenuState, menuCommands)
     client.handleMenuAction(menuAction)
-    renderScene(client, GameViewRenderData(scenes, metaWorld, config.gameView, previousState.menuState))
-    return LabClientResult(gameCommands, LabState(nextLabInputState, nextGameInputState, newMenuState, previousState.modelViewState), menuAction)
+    renderScene(client, GameViewRenderData(scenes, metaWorld, config.gameView, previousState.gameClientState.menu))
+
+    val newInputState = InputState(
+        events = mainEvents.plus(waitingEvents),
+        mousePosition = client.platform.input.getMousePosition()
+    )
+
+    val newGameClientState = ClientState(
+        menu = newMenuState,
+        input = newInputState
+    )
+
+    val newLabState = LabState(
+        labInput = nextLabInputState,
+        gameInput = mainEvents.plus(waitingEvents),
+        gameClientState = newGameClientState,
+        modelViewState = previousState.modelViewState
+    )
+
+    return LabClientResult(allCommands, newLabState, menuAction)
   }
 
   fun updateModel(windowInfo: WindowInfo, previousState: LabState, delta: Float): LabClientResult {

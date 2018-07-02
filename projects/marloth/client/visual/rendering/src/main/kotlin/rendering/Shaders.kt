@@ -172,7 +172,6 @@ fun populateBoneBuffer(boneBuffer: UniformBuffer, bones: Bones): UniformBuffer {
 }
 
 data class ShaderFeatureConfig(
-//    val perspective: Boolean = false,
     val shading: Boolean = false,
     val skeleton: Boolean = false
 )
@@ -215,7 +214,7 @@ class GeneralShader(buffers: UniformBuffers, val program: ShaderProgram, feature
     coloring.colorProperty.setValue(config.color!!)
 
     if (shading != null) {
-      shading.glowProperty.setValue(config.glow!!)
+      shading.glowProperty.setValue(config.glow)
       shading.normalTransformProperty.setValue(config.normalTransform!!)
     }
 

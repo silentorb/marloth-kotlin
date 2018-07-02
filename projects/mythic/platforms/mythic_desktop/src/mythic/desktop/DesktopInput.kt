@@ -33,6 +33,7 @@ fun getGamepadAxes(device: Int, axisDirIndex: Int): Float {
 }
 
 class DesktopInput(val window: Long) : PlatformInput {
+
   private var mouseScrollYBuffer: Float = 0f
   private var mouseScrollY: Float = 0f
 
@@ -94,5 +95,10 @@ class DesktopInput(val window: Long) : PlatformInput {
     val tempY = DoubleArray(1)
     glfwGetCursorPos(window, tempX, tempY)
     return Vector2i(tempX[0].toInt(), tempY[0].toInt())
+  }
+
+  override fun isMouseVisible(value: Boolean) {
+    val mode = if (value == true) GLFW_CURSOR_NORMAL else GLFW_CURSOR_DISABLED
+    glfwSetInputMode(window, GLFW_CURSOR, mode)
   }
 }
