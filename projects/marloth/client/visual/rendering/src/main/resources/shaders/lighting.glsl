@@ -7,7 +7,7 @@ struct Light {
 
 struct Scene {
     int lightCount;
-    Light lights[20];
+    Light lights[40];
 };
 
 layout(std140) uniform SceneUniform {

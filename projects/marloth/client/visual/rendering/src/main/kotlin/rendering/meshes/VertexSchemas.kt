@@ -11,10 +11,15 @@ data class VertexSchemas(
     val textured: VertexSchema,
     val flat: VertexSchema,
     val animated: VertexSchema,
+    val shaded: VertexSchema,
     val drawing: DrawingVertexSchemas
 )
 
 fun createVertexSchemas() = VertexSchemas(
+    shaded = VertexSchema(listOf(
+        VertexAttribute(AttributeName.position, 3),
+        VertexAttribute(AttributeName.normal, 3)
+    )),
     textured = VertexSchema(listOf(
         VertexAttribute(AttributeName.position, 3),
         VertexAttribute(AttributeName.normal, 3),

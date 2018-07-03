@@ -82,7 +82,7 @@ fun partitionModelMeshes(model: Model): List<TransientModelElement> {
 fun modelToMeshes(vertexSchemas: VertexSchemas, model: Model): Primitives {
   val sections = partitionModelMeshes(model)
   return sections.map {
-    Primitive(createSimpleMesh(it.faces, vertexSchemas.textured, Vector4(1f)), it.material)
+    Primitive(createSimpleMesh(it.faces, vertexSchemas.shaded, Vector4(1f)), it.material)
   }
 }
 

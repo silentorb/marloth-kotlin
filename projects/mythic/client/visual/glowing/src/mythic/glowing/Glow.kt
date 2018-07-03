@@ -13,7 +13,6 @@ class Glow {
     GL.createCapabilities()
     glVersion = glGetString(GL_VERSION)
     state = globalState
-    val x = 0
   }
 
 }

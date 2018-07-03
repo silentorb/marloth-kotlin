@@ -251,7 +251,7 @@ fun createShaders(buffers: UniformBuffers): Shaders {
           shading = true,
           skeleton = true
       )),
-      colored = GeneralShader(buffers, ShaderProgram(animatedVertex, coloredFragment), ShaderFeatureConfig(
+      colored = GeneralShader(buffers, ShaderProgram(mainVertex, coloredFragment), ShaderFeatureConfig(
           shading = true
       )),
       flat = GeneralShader(buffers, ShaderProgram(flatVertex, flatFragment), ShaderFeatureConfig()),
