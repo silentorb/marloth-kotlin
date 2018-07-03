@@ -52,15 +52,14 @@ fun createTexturedWall(face: FlexibleFace, texture: Texture): TextureFace {
   val vertices = face.unorderedVertices
   val bounds = getBounds(vertices)
   val dimensions = bounds.dimensions
-  val scaleX = .5f
-  val scaleY = .5f
+  val scale = .5f
   val edge = face.edges.first()
-  val length = edge.first.distance(edge.second) * scaleX
+  val length = edge.first.distance(edge.second) * scale
   val uvs = listOf(
       Vector2(0f, 0f),
       Vector2(length, 0f),
-      Vector2(length, 1f),
-      Vector2(0f, 1f)
+      Vector2(length, 2f),
+      Vector2(0f, 2f)
   ).listIterator()
   return TextureFace(face, vertices.associate { vertex ->
     Pair(vertex, VertexNormalTexture(

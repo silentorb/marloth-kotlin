@@ -15,7 +15,8 @@ import org.joml.xy
 import scenery.Textures
 import simulation.*
 
-val doorwayLength = 2.5f
+const val doorwayLength = 2.5f
+const val wallHeight = 4f
 
 typealias Corner = Vector3
 
@@ -154,12 +155,11 @@ fun sinewFloors(nodeSectors: List<TempSector>, mesh: FlexibleMesh):
 }
 
 fun createWall(edge: FlexibleEdge, mesh: FlexibleMesh): FlexibleFace {
-  val offset = Vector3(0f, 0f, 2f)
   return mesh.createStitchedFace(listOf(
       edge.second,
       edge.first,
-      edge.first + offset,
-      edge.second + offset
+      edge.first + Vector3(0f, 0f, wallHeight),
+      edge.second + Vector3(0f, 0f, wallHeight)
   ))
 }
 

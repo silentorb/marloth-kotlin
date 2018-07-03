@@ -245,14 +245,14 @@ fun updatePlayerRotation(player: Player, delta: Float) {
       val hoverCamera = player.hoverCamera
       hoverCamera.pitch += deltaVelocity.y
       hoverCamera.yaw += deltaVelocity.z
-      val pitchMin = -0.9f
-      val pitchMax = -0.1f
+      val hoverPitchMin = -1.0f // Up
+      val hoverPitchMax = 0.0f // Down
 
-      if (hoverCamera.pitch > pitchMax)
-        hoverCamera.pitch = pitchMax
+      if (hoverCamera.pitch > hoverPitchMax)
+        hoverCamera.pitch = hoverPitchMax
 
-      if (hoverCamera.pitch < pitchMin)
-        hoverCamera.pitch = pitchMin
+      if (hoverCamera.pitch < hoverPitchMin)
+        hoverCamera.pitch = hoverPitchMin
 
 //      println("p " + hoverCamera.pitch + ", y" + hoverCamera.yaw + " |  vp " + player.lookVelocity.y + ",vy " + player.lookVelocity.z)
     }

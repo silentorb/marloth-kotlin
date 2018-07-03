@@ -16,7 +16,7 @@ import scenery.*
 
 fun advancedPainter(mesh: AdvancedModel, renderer: Renderer) =
     { element: VisualElement, effects: Shaders ->
-      val transform = element.transform.rotateZ(Pi / 2)//.scale(2f)
+      val transform = element.transform.rotateZ(Pi / 2).scale(2f)
       val orientationTransform = getRotationMatrix(transform)
       for (e in mesh.primitives) {
         val material = e.material

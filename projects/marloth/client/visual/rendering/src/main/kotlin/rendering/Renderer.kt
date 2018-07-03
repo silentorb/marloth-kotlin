@@ -224,7 +224,7 @@ class GameSceneRenderer(
 //      humanPainter(renderer, mesh.primitives)(element, renderer.effects, childDetails)
     } else {
       val mesh = lookupMesh(element.depiction)
-//      simplePainter(mesh.primitives)(element, renderer.effects)
+      simplePainter(mesh.primitives)(element, renderer.effects)
     }
   }
 

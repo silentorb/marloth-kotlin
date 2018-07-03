@@ -28,12 +28,12 @@ typealias AdvancedModelGeneratorMap = Map<MeshType, AdvancedModelGenerator>
 
 fun standardMeshes(): ModelGeneratorMap = mapOf(
 //    MeshType.cube to createCube,
-    MeshType.sphere to createSphere
+    MeshType.sphere to createSphere,
 //    MeshType.bear to createCartoonHuman,
 //    MeshType.human to createHuman,
 //    MeshType.humanOld to createHumanOld,
 //    MeshType.monster to createCartoonHuman
-//    MeshType.wallLamp to createWallLamp
+    MeshType.wallLamp to createWallLamp
 )
 
 fun skeletonMesh(vertexSchemas: VertexSchemas): AdvancedModelGenerator = {
@@ -77,7 +77,7 @@ fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     .plus(advancedMeshes(vertexSchemas).mapValues { it.value() })
 
 fun importedMeshes(vertexSchemas: VertexSchemas) = mapOf(
-    MeshType.wallLamp to "lamp",
+//    MeshType.wallLamp to "lamp",
     MeshType.cube to "cube"
 //    MeshType.child to "girl2/child"
 //    MeshType.child to "child/child"
