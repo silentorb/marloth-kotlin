@@ -1,11 +1,14 @@
 package intellect
 
+import mythic.spatial.Pi
 import mythic.spatial.Vector3
 import org.joml.minus
 import org.joml.plus
 import physics.Force
+import physics.Rotation
 import randomly.Dice
 import simulation.*
+import simulation.changing.getLookAtAngle
 import simulation.changing.setCharacterFacing
 
 enum class SpiritActionType {
@@ -99,15 +102,46 @@ fun tryAiAttack(spirit: Spirit): NewMissile? {
   return null
 }
 
-fun handleSpiritAction(spirit: Spirit, action: SpiritAction): Force? {
+private val full = Pi * 2
+
+fun getAngleCourse(source: Float, destination: Float): Float {
+  if (source == destination)
+    return 0f
+
+  val plus = (full + destination - source) % full
+  val minus = (full + source - destination) % full
+  return if (plus < minus)
+    plus
+  else
+    -minus
+
+//  val (biggest, smallest) = if (source > destination) Pair(source, destination) else Pair(destination, source)
+//  val first = biggest - smallest
+//  val second = smallest + Pi * 2f - biggest
+//  val shortest = if(first < second) {
+//    if ()
+//  }
+//  else
+
+}
+
+fun handleSpiritAction(spirit: Spirit, action: SpiritAction, delta: Float): Force? {
   when (action.type) {
     SpiritActionType.move -> {
-      setCharacterFacing(spirit.character, action.offset)
-      return Force(spirit.body, action.offset, 6f)
+      val angle = getLookAtAngle(action.offset)
+      val character = spirit.character
+      val course = getAngleCourse(character.facingRotation.z, angle)
+      val increment = 2f * delta
+      if (Math.abs(course) > increment) {
+        val dir = if (course > 0f) 1f else -1f
+        character.facingRotation.z += increment * dir
+        return null
+      } else {
+        setCharacterFacing(character, action.offset)
+        return Force(spirit.body, action.offset, maximum = 6f)
+      }
     }
   }
-
-  return null
 }
 
 data class CharacterResult(
@@ -115,10 +149,10 @@ data class CharacterResult(
     val newMissile: NewMissile? = null
 )
 
-fun updateSpirit(world: World, spirit: Spirit): CharacterResult {
+fun updateSpirit(world: World, spirit: Spirit, delta: Float): CharacterResult {
   val result = updateAiState(world, spirit)
   spirit.state = result.state
-  val forces = result.actions.mapNotNull { handleSpiritAction(spirit, it) }
+  val forces = result.actions.mapNotNull { handleSpiritAction(spirit, it, delta) }
   return CharacterResult(forces = forces)
 //  return tryAiAttack(spirit)
 }

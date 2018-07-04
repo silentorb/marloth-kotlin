@@ -120,7 +120,7 @@ class WorldUpdater(val world: World, val instantiator: Instantiator) {
 
   fun update(commands: Commands<CommandType>, delta: Float) {
     updateCharacters(delta)
-    val spiritResults = world.spirits.map { updateSpirit(world, it) }
+    val spiritResults = world.spirits.map { updateSpirit(world, it, delta) }
     val playerResults = applyCommands(world.players, commands, delta)
     val results = spiritResults.plus(playerResults)
     val newMissiles = results.mapNotNull { it.newMissile }

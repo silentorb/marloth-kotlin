@@ -3,10 +3,15 @@ package physics
 import mythic.spatial.Vector3
 import mythic.spatial.isZero
 import mythic.spatial.times
-import org.joml.minus
 import org.joml.plus
 import simulation.AbstractWorld
 import simulation.changing.checkWallCollision
+
+data class Rotation(
+    val pitch: Float = 0f,
+    val yaw: Float = 0f,
+    val roll: Float = 0f
+)
 
 data class Force(
     val body: Body,

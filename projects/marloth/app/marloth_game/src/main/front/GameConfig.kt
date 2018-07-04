@@ -2,6 +2,7 @@ package front
 
 import configuration.loadConfig
 import configuration.saveConfig
+import marloth.clienting.GameInputConfig
 import mythic.platforming.DisplayConfig
 import simulation.ViewMode
 
@@ -11,7 +12,8 @@ data class GameplayConfig(
 
 data class GameConfig(
     var display: DisplayConfig = DisplayConfig(),
-    var gameplay: GameplayConfig = GameplayConfig()
+    var gameplay: GameplayConfig = GameplayConfig(),
+    var input: GameInputConfig = GameInputConfig()
 )
 
 val gameConfigFile = "gameConfig.yaml"

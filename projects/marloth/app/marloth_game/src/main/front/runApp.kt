@@ -23,7 +23,7 @@ data class App(
     val display: Display = platform.display,
     val timer: DeltaTimer = DeltaTimer(),
     val world: World = generateDefaultWorld(InstantiatorConfig()),
-    val client: Client = Client(platform)
+    val client: Client = Client(platform, config.input)
 )
 
 data class AppState(

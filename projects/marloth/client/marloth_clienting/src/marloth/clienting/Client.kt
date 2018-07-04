@@ -45,7 +45,7 @@ fun newClientState() =
         menu = initialMenuState()
     )
 
-class Client(val platform: Platform) {
+class Client(val platform: Platform, inputConfig: GameInputConfig) {
   val renderer: Renderer = Renderer()
   val screens: List<Screen> = (1..maxPlayerCount).map { Screen(it) }
   //  val keyStrokeCommands: Map<CommandType, CommandHandler<CommandType>> = mapOf(
@@ -53,7 +53,7 @@ class Client(val platform: Platform) {
 //      CommandType.menu to { command -> platform.process.close() }
 //  )
 
-  val input = ClientInput(platform.input)
+  val input = ClientInput(platform.input, inputConfig)
 
   fun getWindowInfo() = platform.display.getInfo()
 

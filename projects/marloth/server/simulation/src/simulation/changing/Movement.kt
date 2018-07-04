@@ -175,8 +175,11 @@ fun joinInputVector(commands: Commands<CommandType>, commandMap: Map<CommandType
   return offset
 }
 
+fun getLookAtAngle(lookAt: Vector3) =
+    getAngle(Vector2(1f, 0f), lookAt.xy)
+
 fun setCharacterFacing(character: Character, lookAt: Vector3) {
-  val angle = getAngle(Vector2(1f, 0f), lookAt.xy)
+  val angle = getLookAtAngle(lookAt)
   character.facingRotation.z = angle
 }
 
@@ -192,7 +195,7 @@ fun playerMove(player: Player, commands: Commands<CommandType>): Force? {
     } else {
       setCharacterFacing(player.character, offset)
     }
-    return Force(player.character.body, offset, 6f)
+    return Force(player.character.body, offset, maximum = 6f)
   } else {
     return null
   }

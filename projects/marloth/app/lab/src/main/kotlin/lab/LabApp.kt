@@ -73,7 +73,7 @@ data class LabApp(
     val display: Display = platform.display,
     val timer: DeltaTimer = DeltaTimer(),
     var world: World = generateDefaultWorld(InstantiatorConfig(gameConfig.gameplay.defaultPlayerView), config.gameView),
-    val client: Client = Client(platform),
+    val client: Client = Client(platform, gameConfig.input),
     val labClient: LabClient = LabClient(config, client)
 ) {
 

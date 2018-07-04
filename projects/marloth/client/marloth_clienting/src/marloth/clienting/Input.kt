@@ -194,7 +194,11 @@ fun selectActiveInputProfiles(playerInputProfiles: List<PlayerInputProfile>, pla
     playerInputProfiles.filter { players.contains(it.player) }
         .map { it.gameBindings }
 
-class ClientInput(val input: PlatformInput) {
+data class GameInputConfig(
+    var mouseInput: Boolean = true
+)
+
+class ClientInput(val input: PlatformInput, val config: GameInputConfig) {
   val gamepadAssignments: MutableMap<Int, Int> = mutableMapOf()
   val playerInputProfiles = defaultGameInputProfiles()
   val menuInputProfiles = defaultMenuInputProfiles()
@@ -242,7 +246,10 @@ class ClientInput(val input: PlatformInput) {
 
   fun updateGameInput2(events: InputEvents, properties: InputProperties): Commands<CommandType> {
     val commands = gatherProfileCommands3(events)
-    val mouseMovementCommands = applyMouseMovement(properties)
+    val mouseMovementCommands = if (config.mouseInput)
+      applyMouseMovement(properties)
+    else
+      listOf()
 //    handleKeystrokeCommands(commands, keyStrokeCommands)
     return commands.plus(mouseMovementCommands)
   }
