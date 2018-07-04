@@ -3,7 +3,9 @@ package marloth.clienting
 import commanding.CommandType
 import haft.*
 import mythic.platforming.PlatformInput
+import mythic.spatial.Vector2
 import org.joml.Vector2i
+import org.joml.minus
 import org.lwjgl.glfw.GLFW.*
 
 val gamepadSlotStart = 2
@@ -40,7 +42,7 @@ fun getWaitingDevices(gamepadAssignments: MutableMap<Int, Int>, gamepads: List<G
 fun createDeviceHandlers(input: PlatformInput, gamepadAssignments: MutableMap<Int, Int>): List<ScalarInputSource> {
   return listOf(
       input.KeyboardInputSource,
-      disconnectedScalarInputSource // Mouse
+      input.MouseInputSource
   )
       .plus(gamepadAssignments.map {
         { trigger: Int -> input.GamepadInputSource(it.key, trigger) }
@@ -73,14 +75,18 @@ fun defaultKeyboardMenuBindings() = mapOf(
     GLFW_KEY_SPACE to CommandType.menuSelect
 )
 
-val commonGamepadBindings = mapOf(
+fun defaultMouseGameStrokeBindings() = mapOf(
+    GLFW_MOUSE_BUTTON_LEFT to CommandType.attack
+)
+
+fun commonGamepadBindings() = mapOf(
     GAMEPAD_AXIS_LEFT_UP to CommandType.moveUp,
     GAMEPAD_AXIS_LEFT_DOWN to CommandType.moveDown,
     GAMEPAD_AXIS_LEFT_LEFT to CommandType.moveLeft,
     GAMEPAD_AXIS_LEFT_RIGHT to CommandType.moveRight
 )
 
-val defaultGamepadMenuBindings = mapOf(
+fun defaultGamepadMenuBindings() = mapOf(
 
     GAMEPAD_AXIS_LEFT_UP to CommandType.moveUp,
     GAMEPAD_AXIS_LEFT_DOWN to CommandType.moveDown,
@@ -124,7 +130,7 @@ val allGamepadStrokeBindings = mapOf(
 )
 
 fun allGamepadBindings() =
-    commonGamepadBindings
+    commonGamepadBindings()
         .plus(firstPersonGamepadBindings)
 
 data class PlayerInputProfile(
@@ -145,6 +151,7 @@ fun primaryGameInputProfile(player: Int, gamepad: Int) =
     PlayerInputProfile(player,
         createBindings(0, player, defaultKeyboardGameBindings())
             .plus(createStrokeBindings(0, player, defaultKeyboardStrokeBindings()))
+            .plus(createBindings(1, player, defaultMouseGameStrokeBindings()))
             .plus(createDefaultGamepadBindings(gamepad, player)),
         listOf()
     )
@@ -152,7 +159,7 @@ fun primaryGameInputProfile(player: Int, gamepad: Int) =
 fun primaryMenuInputProfile(player: Int, gamepad: Int) =
     PlayerInputProfile(player,
         createStrokeBindings(0, player, defaultKeyboardMenuBindings())
-            .plus(createStrokeBindings(gamepad, player, defaultGamepadMenuBindings)),
+            .plus(createStrokeBindings(gamepad, player, defaultGamepadMenuBindings())),
         listOf()
     )
 
@@ -195,7 +202,7 @@ class ClientInput(val input: PlatformInput) {
   fun checkForNewGamepads1(properties: InputProperties): InputEvents {
     val (deviceHandlers, waitingDevices, previousState, players) = properties
     val profiles = createWaitingGamepadProfiles(waitingDevices.size, gamepadAssignments.size)
-    return gatherProfileCommands2(profiles, previousState, deviceHandlers)
+    return gatherProfileCommands2(profiles, previousState.events, deviceHandlers)
   }
 
   fun checkForNewGamepads2(events: InputEvents, playerCount: Int): Commands<CommandType> {
@@ -215,16 +222,32 @@ class ClientInput(val input: PlatformInput) {
       playerInputProfiles
 
     val profiles = selectActiveInputProfiles(playerInputProfiles, properties.players)
-    return gatherProfileCommands2(profiles, properties.previousState, properties.deviceHandlers)
+    return gatherProfileCommands2(profiles, properties.previousState.events, properties.deviceHandlers)
   }
 
-  fun updateGameInput2(events: InputEvents): Commands<CommandType> {
+  fun applyMouseAxis(value: Int, firstCommandType: CommandType, secondCommandType: CommandType, scale: Float) =
+      if (value > 0)
+        listOf(Command(firstCommandType, 1, value.toFloat() * scale, TriggerLifetime.pressed))
+      else if (value < 0)
+        listOf(Command(secondCommandType, 1, -value.toFloat() * scale, TriggerLifetime.pressed))
+      else
+        listOf()
+
+  fun applyMouseMovement(properties: InputProperties): Commands<CommandType> {
+    val position = properties.mousePosition - properties.previousState.mousePosition
+    return listOf<Command<CommandType>>()
+        .plus(applyMouseAxis(position.x, CommandType.lookRight, CommandType.lookLeft, 1f))
+        .plus(applyMouseAxis(position.y, CommandType.lookDown, CommandType.lookUp, 1f))
+  }
+
+  fun updateGameInput2(events: InputEvents, properties: InputProperties): Commands<CommandType> {
     val commands = gatherProfileCommands3(events)
+    val mouseMovementCommands = applyMouseMovement(properties)
 //    handleKeystrokeCommands(commands, keyStrokeCommands)
-    return commands
+    return commands.plus(mouseMovementCommands)
   }
 
-  fun prepareInput(previousState: ProfileStates<CommandType>, players: List<Int>): InputProperties {
+  fun prepareInput(state: InputState, players: List<Int>): InputProperties {
     input.update()
     val gamepads = input.getGamepads().map { it.id }
     val waitingDevices = getWaitingDevices(gamepadAssignments, gamepads)
@@ -235,8 +258,9 @@ class ClientInput(val input: PlatformInput) {
     return InputProperties(
         deviceHandlers,
         waitingDevices,
-        previousState,
-        players
+        state,
+        players,
+        input.getMousePosition()
     )
   }
 

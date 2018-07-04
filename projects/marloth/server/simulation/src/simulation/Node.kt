@@ -28,6 +28,7 @@ class Node(var position: Vector3, var radius: Float, val type: NodeType) {
   val connections: MutableList<Connection> = mutableListOf()
   var index = 0
   val floors: MutableList<FlexibleFace> = mutableListOf()
+  val ceilings: MutableList<FlexibleFace> = mutableListOf()
   val walls: MutableList<FlexibleFace> = mutableListOf()
 
   val neighbors get() = connections.asSequence().map { it.getOther(this) }
@@ -37,5 +38,5 @@ class Node(var position: Vector3, var radius: Float, val type: NodeType) {
   fun isConnected(other: Node) = getConnection(other) != null
 
   val faces: List<FlexibleFace>
-    get() = floors.plus(walls)
+    get() = floors.plus(walls).plus(ceilings)
 }

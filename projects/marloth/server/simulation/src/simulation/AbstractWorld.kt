@@ -55,6 +55,7 @@ class NodeGraph {
 }
 
 enum class FaceType {
+  ceiling,
   floor,
   space,
   wall
@@ -121,6 +122,9 @@ fun initializeNodeFaceInfo(node: Node, floorTexture: Textures?, wallTexture: Tex
   }
   for (face in node.floors) {
     initializeFaceInfo(FaceType.floor, node, face, floorTexture)
+  }
+  for (face in node.ceilings) {
+    initializeFaceInfo(FaceType.ceiling, node, face, floorTexture)
   }
 }
 

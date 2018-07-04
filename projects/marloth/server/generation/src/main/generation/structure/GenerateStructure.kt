@@ -4,10 +4,7 @@ import generation.*
 import generation.abstract.Cluster
 import generation.abstract.gatherClusters
 import generation.abstract.isInCluster
-import mythic.sculpting.FlexibleEdge
-import mythic.sculpting.FlexibleFace
-import mythic.sculpting.FlexibleMesh
-import mythic.sculpting.calculateNormals
+import mythic.sculpting.*
 import mythic.spatial.*
 import org.joml.minus
 import org.joml.plus
@@ -127,31 +124,51 @@ fun generateTunnelStructure(node: Node, nodeSectors: List<TempSector>): TempSect
   return TempSector(node, corners)
 }
 
-fun sinewSector(corners: List<Corner>, vertices: Map<Corner, Vector3>, mesh: FlexibleMesh): FlexibleFace {
-  val sectorVertices = corners
-      .map { vertices[it]!! }
-  val face = mesh.createStitchedFace(sectorVertices)
-  return face
+fun createFloor(mesh: FlexibleMesh, node: Node, vertices: Vertices, center: Vector2): FlexibleFace {
+  val sortedFloorVertices = vertices
+      .sortedBy { atan(it.xy - center) }
+  val floor = mesh.createStitchedFace(sortedFloorVertices)
+  node.floors.add(floor)
+  return floor
 }
+
+fun createCeiling(mesh: FlexibleMesh, node: Node, vertices: Vertices, center: Vector2): FlexibleFace {
+  val sortedFloorVertices = vertices
+      .sortedByDescending { atan(it.xy - center) }
+      .map { it + Vector3(0f, 0f, wallHeight) }
+
+  val surface = mesh.createStitchedFace(sortedFloorVertices)
+  node.ceilings.add(surface)
+  return surface
+}
+//fun sinewSector(corners: List<Corner>, vertices: Map<Corner, Vector3>, mesh: FlexibleMesh): FlexibleFace {
+//  val sectorVertices = corners
+//      .map { vertices[it]!! }
+//  val face = mesh.createStitchedFace(sectorVertices)
+//  return face
+//}
 
 data class Floor(
     val sector: TempSector,
     val face: FlexibleFace
 )
 
-fun sinewFloors(nodeSectors: List<TempSector>, mesh: FlexibleMesh):
-    List<Floor> {
-  val vertices = nodeSectors.flatMap { it.corners }
-      .distinct()
-      .associate { Pair(it, Vector3(it)) }
-
-//  vertices.values.forEach { mesh.addVertex(it) }
-
-  return nodeSectors.map { sector ->
-    val face = sinewSector(sector.corners, vertices, mesh)
-    sector.node.floors.add(face)
-    Floor(sector, face)
+fun sinewFloorsAndCeilings(nodeSectors: List<TempSector>, mesh: FlexibleMesh) {
+  return nodeSectors.forEach { sector ->
+    val sectorCenter = getCenter(sector.corners).xy
+    createFloor(mesh, sector.node, sector.corners, sectorCenter)
+    createCeiling(mesh, sector.node, sector.corners, sectorCenter)
   }
+
+//  val vertices = nodeSectors.flatMap { it.corners }
+//      .distinct()
+//      .associate { Pair(it, Vector3(it)) }
+//
+//  return nodeSectors.map { sector ->
+//    val face = sinewSector(sector.corners, vertices, mesh)
+//    sector.node.floors.add(face)
+//    Floor(sector, face)
+//  }
 }
 
 fun createWall(edge: FlexibleEdge, mesh: FlexibleMesh): FlexibleFace {
@@ -161,26 +178,6 @@ fun createWall(edge: FlexibleEdge, mesh: FlexibleMesh): FlexibleFace {
       edge.first + Vector3(0f, 0f, wallHeight),
       edge.second + Vector3(0f, 0f, wallHeight)
   ))
-}
-
-//fun getWallEdges(face: FlexibleFace, corners: List<Corner>): List<FlexibleEdge> {
-////  fun getCorner(vertex: Vector3) = corners.first { it.position == vertex.position }
-//  return face.edges.filter {
-//    it.faces.size == 1
-//  }
-//}
-
-fun <T> crossMap(firstList: List<T>, secondList: List<T>): List<Pair<T, T>> {
-  var skip = 1
-  val result: MutableList<Pair<T, T>> = mutableListOf()
-  for (a in firstList) {
-    for (i in skip until secondList.size) {
-      val b = secondList[i]
-      result.add(Pair(a, b))
-    }
-    ++skip
-  }
-  return result
 }
 
 fun generateStructure(abstractWorld: AbstractWorld) {
@@ -197,7 +194,7 @@ fun generateStructure(abstractWorld: AbstractWorld) {
       .map { generateTunnelStructure(it, nodeSectors) }
 
   val allSectors = nodeSectors.plus(tunnelSectors)
-  sinewFloors(allSectors, mesh)
+  sinewFloorsAndCeilings(allSectors, mesh)
   allSectors.forEach { sector ->
     val wallBases = sector.node.floors.first().edges
     wallBases.forEach {

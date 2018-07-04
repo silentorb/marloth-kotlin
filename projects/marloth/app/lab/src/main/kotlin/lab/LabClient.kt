@@ -103,13 +103,13 @@ class LabClient(val config: LabConfig, val client: Client) {
     val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
     val input = getInputState(client.platform.input, commands)
     view.updateState(input, delta)
-    val properties = client.input.prepareInput(previousState.gameInput, scenes.map { it.player })
+    val properties = client.input.prepareInput(previousState.gameClientState.input, scenes.map { it.player })
     val mainEvents = client.input.updateGameInput1(properties, previousState.gameClientState)
 //    client.updateGameInput(properties, client.playerInputProfiles)
 
     val waitingEvents = client.input.checkForNewGamepads1(properties)
 
-    val allCommands = client.input.updateGameInput2(mainEvents)
+    val allCommands = client.input.updateGameInput2(mainEvents, properties)
         .plus(client.input.checkForNewGamepads2(waitingEvents, properties.players.size))
     val menuCommands = filterKeystrokeCommands(allCommands)
     val newMenuState = updateMenuState(previousState.gameClientState.menu, menuCommands)
@@ -119,7 +119,7 @@ class LabClient(val config: LabConfig, val client: Client) {
 
     val newInputState = InputState(
         events = mainEvents.plus(waitingEvents),
-        mousePosition = client.platform.input.getMousePosition()
+        mousePosition = properties.mousePosition
     )
 
     val newGameClientState = ClientState(

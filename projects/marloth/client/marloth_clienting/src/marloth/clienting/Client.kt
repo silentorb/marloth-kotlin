@@ -6,6 +6,7 @@ import marloth.clienting.gui.MenuActionType
 import marloth.clienting.gui.MenuState
 import marloth.clienting.gui.initialMenuState
 import mythic.platforming.Platform
+import org.joml.Vector2i
 import rendering.Renderer
 import scenery.GameScene
 import scenery.Screen
@@ -28,8 +29,9 @@ data class ClientInputResult(
 data class InputProperties(
     val deviceHandlers: List<ScalarInputSource>,
     val waitingDevices: List<GamepadDeviceId>,
-    val previousState: ProfileStates<CommandType>,
-    val players: List<Int>
+    val previousState: InputState,
+    val players: List<Int>,
+    val mousePosition: Vector2i
 )
 
 data class ClientState(

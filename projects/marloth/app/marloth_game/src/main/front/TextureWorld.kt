@@ -25,7 +25,7 @@ data class TextureFace(
     val texture: Texture
 )
 
-fun createTexturedFloor(face: FlexibleFace, texture: Texture): TextureFace {
+fun createTexturedHorizontalSurface(face: FlexibleFace, texture: Texture): TextureFace {
   val vertices = face.unorderedVertices
   val bounds = getBounds(vertices)
   val scale = 2f
@@ -73,9 +73,14 @@ fun createTexturedWall(face: FlexibleFace, texture: Texture): TextureFace {
 
 fun prepareWorldMesh(node: Node, textures: TextureLibrary): List<TextureFace> {
 //  val floorTexture = if (node.type == NodeType.space) textures[Textures.darkCheckers]!! else textures[Textures.checkers]!!
-  return node.floors
+  val floors = node.floors
       .filter { getFaceInfo(it).firstNode == node && getFaceInfo(it).texture != null }
-      .map { createTexturedFloor(it, textures[getFaceInfo(it).texture]!!) }
+
+  val ceilings = node.ceilings
+      .filter { getFaceInfo(it).firstNode == node && getFaceInfo(it).texture != null }
+
+  return floors.plus(ceilings)
+      .map { createTexturedHorizontalSurface(it, textures[getFaceInfo(it).texture]!!) }
       .plus(
           node.walls
               .filter { getFaceInfo(it).firstNode == node && getFaceInfo(it).texture != null }

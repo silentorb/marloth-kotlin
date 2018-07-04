@@ -110,15 +110,6 @@ fun getNewWallVertices(sectorCenter: Vector3, edges: Edges): Vertices {
 fun getDistinctEdges(edges: Edges) =
     edges.distinctBy { it.vertices.map { it.hashCode() }.sorted() }
 
-fun createFloor(world: AbstractWorld, node: Node, vertices: Vertices, center: Vector2): FlexibleFace {
-  val sortedFloorVertices = vertices
-      .sortedBy { atan(it.xy - center) }
-//  val a = sortedFloorVertices.map { atan(it.xy - center) }
-  val floor = world.mesh.createStitchedFace(sortedFloorVertices)
-  node.floors.add(floor)
-  return floor
-}
-
 fun addSpaceNode(abstractWorld: AbstractWorld, node: Node) {
   abstractWorld.graph.nodes.add(node)
   node.walls
@@ -150,7 +141,7 @@ fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace) {
   )
   node.index = abstractWorld.graph.nodes.size
   node.walls.addAll(walls)
-  val floor = createFloor(abstractWorld, node, floorVertices, flatCenter)
+  val floor = createFloor(abstractWorld.mesh, node, floorVertices, flatCenter)
 //  initializeFaceInfo(FaceType.wall, node, floor, Textures.grayNoise)
   initializeNodeFaceInfo(node, Textures.grayNoise, Textures.darkCheckers)
 
@@ -214,7 +205,7 @@ fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace)
   node.index = abstractWorld.graph.nodes.size
 //  node.walls.addAll(walls)
 //  node.floors.add(floor)
-  val floor = createFloor(abstractWorld, node, floorVertices, sectorCenter.xy)
+  val floor = createFloor(abstractWorld.mesh, node, floorVertices, sectorCenter.xy)
 //  initializeFaceInfo(FaceType.wall, node, floor, Textures.grayNoise)
   node.walls.add(originFace)
   val outerWall = createWall(abstractWorld, node, newPoints, null)

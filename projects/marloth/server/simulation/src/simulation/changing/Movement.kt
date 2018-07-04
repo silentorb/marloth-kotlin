@@ -21,14 +21,24 @@ fun getEdgeNormal(first: Vector2, second: Vector2): Vector2 {
   return Vector2(combination.y, -combination.x).normalize()
 }
 
-fun findCollisionWalls(source: Vector3, originalOffset: Vector3, world: AbstractWorld): List<Triple<FlexibleFace, Vector2, Float>> {
+fun getCollisionWalls(world: AbstractWorld, node: Node): Sequence<FlexibleFace> {
+  return node.neighbors
+      .plus(node)
+      .flatMap { it.walls.asSequence() }
+      .filter(isWall)
+      .distinct()
+}
+
+fun findCollisionWalls(source: Vector3, originalOffset: Vector3, world: AbstractWorld, node: Node): List<Triple<FlexibleFace, Vector2, Float>> {
   val offset = originalOffset + 0f
   val maxLength = offset.length()
   val newPosition = source + offset
   val radius = 0.8f
   val broadRadius = radius + maxLength
-  return world.walls
-      .filter(isWall)
+  val walls = getCollisionWalls(world, node)
+//  val walls = world.walls
+//      .filter(isWall)
+  return walls
       .filter { wall -> hitsWall(wall.edges[0].edge, newPosition, broadRadius) && offset.dot(wall.normal) < 0f }
       .map {
         val edge = it.edges[0]
@@ -43,6 +53,7 @@ fun findCollisionWalls(source: Vector3, originalOffset: Vector3, world: Abstract
         }
       }
       .sortedBy { it.first.normal.dot(offset) }
+      .toList()
 }
 
 data class WallCollision(
@@ -101,10 +112,10 @@ fun getWallCollisionMovementOffset(walls: List<Triple<FlexibleFace, Vector2, Flo
   return WallCollision(walls.map { it.first }, offset + gapVectors[0] - slideVectors[0])
 }
 
-fun checkWallCollision(source: Vector3, originalOffset: Vector3, world: AbstractWorld): WallCollision {
+fun checkWallCollision(source: Vector3, originalOffset: Vector3, world: AbstractWorld, node: Node): WallCollision {
   var offset = originalOffset + 0f
   val maxLength = offset.length()
-  val walls = findCollisionWalls(source, originalOffset, world)
+  val walls = findCollisionWalls(source, originalOffset, world, node)
 
   if (walls.size > 0) {
     val collision = getWallCollisionMovementOffset(walls, offset)
