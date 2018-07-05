@@ -293,7 +293,7 @@ fun updateBodyNode(body: Body) {
   if (newNode == null) {
     isInsideNode(node, position)
 //    throw Error("Not supported")
-    assert(false)
+//    assert(false)
   } else {
     body.node = newNode
   }

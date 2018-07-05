@@ -111,7 +111,12 @@ fun initializeFaceInfo(type: FaceType, node: Node, face: FlexibleFace, texture: 
           if (info.firstNode != null && info.secondNode != null)
             throw Error("Not supported.")
 
-          FaceInfo(type, info.firstNode, node, texture)
+          val newTexture = if (info.texture != null)
+            info.texture
+          else
+            texture
+
+          FaceInfo(type, info.firstNode, node, newTexture)
         }
       }
 }

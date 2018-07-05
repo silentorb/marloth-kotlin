@@ -223,5 +223,4 @@ fun generateStructure(abstractWorld: AbstractWorld) {
 
   defineNegativeSpace(abstractWorld)
   fillBoundary(abstractWorld)
-//  val allFloors = roomFloors.map { it.face }//.plus(tunnelFloors.map { it.face })
 }
