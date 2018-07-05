@@ -58,7 +58,7 @@ fun createCamera(world: World, screen: Screen): Camera {
   return when (player.viewMode) {
     ViewMode.firstPerson -> createFirstPersonCamera(player.character)
     ViewMode.thirdPerson -> createThirdPersonCamera(body, player.hoverCamera)
-    ViewMode.topDown -> createTopDownCamera(body)
+//    ViewMode.topDown -> createTopDownCamera(body)
   }
 }
 

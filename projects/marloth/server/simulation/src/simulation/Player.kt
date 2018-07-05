@@ -4,7 +4,7 @@ import mythic.spatial.Vector3
 
 enum class ViewMode {
   firstPerson,
-  topDown,
+//  topDown
   thirdPerson
 }
 
@@ -21,6 +21,7 @@ class Player(
     var lookVelocity: Vector3 = Vector3(),
     var hoverCamera: HoverCamera = HoverCamera()
 )
+
 
 fun isPlayer(world: World, character: Character) =
     world.players.any { it.playerId == character.id }

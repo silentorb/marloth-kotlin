@@ -242,8 +242,8 @@ private val firstPersonLookMomentum = MomentumConfig2(
 
 
 fun updatePlayerRotation(player: Player, delta: Float) {
-  if (player.viewMode == ViewMode.topDown)
-    return
+//  if (player.viewMode == ViewMode.topDown)
+//    return
 
   val velocity = player.lookVelocity
   val deltaVelocity = velocity * delta

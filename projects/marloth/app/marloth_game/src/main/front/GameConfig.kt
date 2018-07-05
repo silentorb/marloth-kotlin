@@ -7,7 +7,7 @@ import mythic.platforming.DisplayConfig
 import simulation.ViewMode
 
 data class GameplayConfig(
-    var defaultPlayerView: ViewMode = ViewMode.topDown
+    var defaultPlayerView: ViewMode = ViewMode.thirdPerson
 )
 
 data class GameConfig(

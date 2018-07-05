@@ -18,7 +18,7 @@ import simulation.*
 import simulation.Id
 
 data class InstantiatorConfig(
-    var defaultPlayerView: ViewMode = ViewMode.topDown
+    var defaultPlayerView: ViewMode = ViewMode.thirdPerson
 )
 
 fun createArmature(): Armature {

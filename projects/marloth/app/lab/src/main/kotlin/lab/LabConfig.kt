@@ -22,6 +22,11 @@ enum class LabCommandType {
   rotateLeft,
   rotateRight,
 
+  moveUp,
+  moveDown,
+  moveLeft,
+  moveRight,
+
   menu,
   update,
 
@@ -117,6 +122,20 @@ fun createLabInputBindings() = mutableMapOf(
     Views.map to createStrokeBindings<LabCommandType>(0, mapOf(
 
     ))
+        .plus(createBindings<LabCommandType>(0, mapOf(
+            GLFW.GLFW_KEY_UP to LabCommandType.moveUp,
+            GLFW.GLFW_KEY_DOWN to LabCommandType.moveDown,
+            GLFW.GLFW_KEY_LEFT to LabCommandType.moveLeft,
+            GLFW.GLFW_KEY_RIGHT to LabCommandType.moveRight,
+            GLFW.GLFW_KEY_W to LabCommandType.moveUp,
+            GLFW.GLFW_KEY_S to LabCommandType.moveDown,
+            GLFW.GLFW_KEY_A to LabCommandType.moveLeft,
+            GLFW.GLFW_KEY_D to LabCommandType.moveRight
+        )))
+        .plus(createBindings(1, mapOf(
+            MOUSE_SCROLL_UP to LabCommandType.zoomIn,
+            MOUSE_SCROLL_DOWN to LabCommandType.zoomOut
+        )))
 )
 
 data class WorldViewConfig(
