@@ -32,7 +32,7 @@ fun setDestination(world: World, spirit: Spirit): SpiritState {
   val location = spirit.body.node
   val options = world.meta.nodes
       .filter { it != location }
-      .filter { it.type != NodeType.space }
+      .filter (isWalkable)
 
   val destination = Dice.global.getItem(options)
 //  val destination = options[(location.index + 6) % options.size]

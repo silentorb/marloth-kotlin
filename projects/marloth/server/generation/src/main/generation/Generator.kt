@@ -67,17 +67,20 @@ fun placeEnemies(world: World, instantiator: Instantiator, dice: Dice, scale: Fl
 }
 
 fun placeWallLamps(world: World, instantiator: Instantiator, dice: Dice, scale: Float) {
-  val count = (10f * scale).toInt()
+  val count = (11f * scale).toInt()
   val nodes = dice.getList(world.meta.locationNodes, count)
   nodes.forEach { node ->
-    val wall = dice.getItem(node.walls.filter { getFaceInfo(it).type == FaceType.wall})
-    val edge = wall.edges[0]
-    val position = getVector3Center(edge.first, edge.second) +
-        Vector3(0f, 0f, 0.9f) + wall.normal * -0.1f
+    val options = node.walls.filter { getFaceInfo(it).type == FaceType.wall && getFaceInfo(it).texture != null}
+    if (options.any()) {
+      val wall = dice.getItem(options)
+      val edge = wall.edges[0]
+      val position = getVector3Center(edge.first, edge.second) +
+          Vector3(0f, 0f, 0.9f) + wall.normal * -0.1f
 //    val angle = getAngle(edge.first.copy().cross(edge.second).xy)
 //    val angle = getAngle(wall.normal.xy)
-    val angle = Quaternion().rotateTo(Vector3(1f, 0f, 0f), wall.normal)
-    instantiator.createWallLamp(position, node, angle)
+      val angle = Quaternion().rotateTo(Vector3(1f, 0f, 0f), wall.normal)
+      instantiator.createWallLamp(position, node, angle)
+    }
   }
 }
 

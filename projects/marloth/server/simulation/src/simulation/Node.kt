@@ -20,9 +20,20 @@ class Connection(
 
 enum class NodeType {
   room,
+  solid,
   space,
   tunnel
 }
+
+fun isWalkable(nodeType: NodeType): Boolean =
+    when (nodeType) {
+      NodeType.room -> true
+      NodeType.solid -> false
+      NodeType.space -> false
+      NodeType.tunnel -> true
+    }
+
+val isWalkable = { node: Node -> isWalkable(node.type) }
 
 class Node(var position: Vector3, var radius: Float, val type: NodeType) {
   val connections: MutableList<Connection> = mutableListOf()

@@ -80,30 +80,6 @@ private fun addWeightShading(source: String) = insertTemplates(source, mapOf(
 private val animatedVertex = addWeightShading(mainVertex)
 private val animatedFlatVertex = addWeightShading(flatVertex)
 
-private val texturedVertex = """
-uniform mat4 cameraTransform;
-uniform mat4 modelTransform;
-
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec3 normal;
-layout (location = 2) in vec2 uv;
-
-out vec4 fragmentColor;
-out vec4 fragmentPosition;
-out vec3 fragmentNormal;
-out vec2 textureCoordinates;
-
-${lighting}
-
-void main() {
-  fragmentColor = vec4(1.0);
-  fragmentPosition = normalTransform * vec4(fragmentPosition, 1.0);
-  fragmentNormal = normalize((normalTransform * vec4(normal, 1.0)).xyz);
-  gl_Position = cameraTransform * modelTransform * vec4(position, 1);
-  textureCoordinates = uv;
-}
-"""
-
 private val coloredFragment = """
 in vec4 fragmentPosition;
 in vec3 fragmentNormal;
@@ -122,14 +98,17 @@ void main() {
 }
 """
 
-private val texturedFragment = """
+private val lightingApplication1 = "vec3 lightResult = processLights(vec4(1), fragmentNormal, cameraDirection, fragmentPosition.xyz, glow);"
+private val lightingApplication2 = "fragmentColor * vec4(lightResult, 1.0)"
+
+private val texturedFragmentBase = """
 in vec4 fragmentPosition;
 in vec3 fragmentNormal;
 in vec4 fragmentColor;
 in vec2 textureCoordinates;
 out vec4 output_color;
 
-${lighting}
+//#lightingHeader
 
 uniform sampler2D text;
 uniform mat4 normalTransform;
@@ -139,10 +118,18 @@ uniform mat4 modelTransform;
 
 void main() {
   vec4 sampled = texture(text, textureCoordinates);
-  vec3 lightResult = processLights(vec4(1), fragmentNormal, cameraDirection, fragmentPosition.xyz, glow);
-  output_color = sampled * fragmentColor * vec4(lightResult, 1.0);
+//#lightingApplication1
+  output_color = @outColor;
 }
 """
+
+private val texturedFragment = insertTemplates(texturedFragmentBase, mapOf(
+    "lightingHeader" to lighting,
+    "lightingApplication1" to lightingApplication1
+)).replace("@outColor", "sampled * " + lightingApplication2)
+
+private val texturedFragmentFlat = texturedFragmentBase
+    .replace("@outColor", "sampled")
 
 class PerspectiveFeature(program: ShaderProgram) {
   val cameraTransform = MatrixProperty(program, "cameraTransform")
@@ -183,16 +170,20 @@ data class SceneShaderConfig(
 )
 
 data class ObjectShaderConfig(
-    val transform: Matrix,
+    val transform: Matrix = Matrix(),
     val texture: Texture? = null,
-    val color: Vector4? = null,
+    val color: Vector4 = Vector4(1f),
     val glow: Float = 0f,
     val normalTransform: Matrix? = null,
     val boneBuffer: UniformBuffer? = null
 )
 
-class GeneralShader(buffers: UniformBuffers, val program: ShaderProgram, featureConfig: ShaderFeatureConfig) {
-  //  val perspective: PerspectiveFeature? = if (featureConfig.perspective) PerspectiveFeature(program) else null
+fun generateShaderProgram(vertexShader: String, fragmentShader: String, featureConfig: ShaderFeatureConfig): ShaderProgram {
+  return ShaderProgram(vertexShader, fragmentShader)
+}
+
+class GeneralShader(buffers: UniformBuffers, vertexShader: String, fragmentShader: String, featureConfig: ShaderFeatureConfig) {
+  val program = generateShaderProgram(vertexShader, fragmentShader, featureConfig)
   val perspective: PerspectiveFeature = PerspectiveFeature(program)
   val coloring: ColoringFeature = ColoringFeature(program)
   val shading: ShadingFeature? = if (featureConfig.shading) ShadingFeature(program, buffers.scene) else null
@@ -211,7 +202,7 @@ class GeneralShader(buffers: UniformBuffers, val program: ShaderProgram, feature
     program.activate()
 
     perspective.modelTransform.setValue(config.transform)
-    coloring.colorProperty.setValue(config.color!!)
+    coloring.colorProperty.setValue(config.color)
 
     if (shading != null) {
       shading.glowProperty.setValue(config.glow)
@@ -231,6 +222,7 @@ class GeneralShader(buffers: UniformBuffers, val program: ShaderProgram, feature
 
 data class Shaders(
     val textured: GeneralShader,
+    val texturedFlat: GeneralShader,
     val animated: GeneralShader,
     val colored: GeneralShader,
     val flat: GeneralShader,
@@ -244,18 +236,19 @@ data class UniformBuffers(
 
 fun createShaders(buffers: UniformBuffers): Shaders {
   return Shaders(
-      textured = GeneralShader(buffers, ShaderProgram(mainVertex, texturedFragment), ShaderFeatureConfig(
+      textured = GeneralShader(buffers, mainVertex, texturedFragment, ShaderFeatureConfig(
           shading = true
       )),
-      animated = GeneralShader(buffers, ShaderProgram(animatedVertex, texturedFragment), ShaderFeatureConfig(
+      texturedFlat = GeneralShader(buffers, mainVertex, texturedFragmentFlat, ShaderFeatureConfig()),
+      animated = GeneralShader(buffers, animatedVertex, texturedFragment, ShaderFeatureConfig(
           shading = true,
           skeleton = true
       )),
-      colored = GeneralShader(buffers, ShaderProgram(mainVertex, coloredFragment), ShaderFeatureConfig(
+      colored = GeneralShader(buffers, mainVertex, coloredFragment, ShaderFeatureConfig(
           shading = true
       )),
-      flat = GeneralShader(buffers, ShaderProgram(flatVertex, flatFragment), ShaderFeatureConfig()),
-      flatAnimated = GeneralShader(buffers,ShaderProgram(animatedFlatVertex, flatFragment), ShaderFeatureConfig(
+      flat = GeneralShader(buffers, flatVertex, flatFragment, ShaderFeatureConfig()),
+      flatAnimated = GeneralShader(buffers, animatedFlatVertex, flatFragment, ShaderFeatureConfig(
           skeleton = true
       ))
   )

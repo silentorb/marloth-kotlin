@@ -120,7 +120,7 @@ fun createLabInputBindings() = mutableMapOf(
             GLFW.GLFW_MOUSE_BUTTON_1 to LabCommandType.select
         ))),
     Views.map to createStrokeBindings<LabCommandType>(0, mapOf(
-
+        GLFW.GLFW_KEY_M to LabCommandType.toggleMeshDisplay
     ))
         .plus(createBindings<LabCommandType>(0, mapOf(
             GLFW.GLFW_KEY_UP to LabCommandType.moveUp,

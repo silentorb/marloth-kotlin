@@ -26,6 +26,7 @@ fun createLightBuffer(lights: List<Light>): ByteBuffer {
   val totalSize = sceneBufferSize
   val buffer = sceneBuffer
 
+  buffer.limit(sceneBufferSize)
   buffer.putInt(lights.size)
   padBuffer(buffer, 3)
   for (light in lights) {

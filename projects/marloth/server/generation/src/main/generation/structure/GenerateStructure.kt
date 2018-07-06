@@ -9,6 +9,7 @@ import mythic.spatial.*
 import org.joml.minus
 import org.joml.plus
 import org.joml.xy
+import randomly.Dice
 import scenery.Textures
 import simulation.*
 
@@ -124,10 +125,11 @@ fun generateTunnelStructure(node: Node, nodeSectors: List<TempSector>): TempSect
   return TempSector(node, corners)
 }
 
-fun createFloor(mesh: FlexibleMesh, node: Node, vertices: Vertices, center: Vector2): FlexibleFace {
+fun createFloor(mesh: FlexibleMesh, node: Node, vertices: Vertices, center: Vector2, texture: Textures?): FlexibleFace {
   val sortedFloorVertices = vertices
       .sortedBy { atan(it.xy - center) }
   val floor = mesh.createStitchedFace(sortedFloorVertices)
+  floor.data = FaceInfo(FaceType.floor, node, null, texture)
   node.floors.add(floor)
   return floor
 }
@@ -141,34 +143,21 @@ fun createCeiling(mesh: FlexibleMesh, node: Node, vertices: Vertices, center: Ve
   node.ceilings.add(surface)
   return surface
 }
-//fun sinewSector(corners: List<Corner>, vertices: Map<Corner, Vector3>, mesh: FlexibleMesh): FlexibleFace {
-//  val sectorVertices = corners
-//      .map { vertices[it]!! }
-//  val face = mesh.createStitchedFace(sectorVertices)
-//  return face
-//}
 
-data class Floor(
-    val sector: TempSector,
-    val face: FlexibleFace
-)
+fun createWall(abstractWorld: AbstractWorld, node: Node, vertices: Vertices, texture: Textures?): FlexibleFace {
+  val wall = abstractWorld.mesh.createStitchedFace(vertices)
+  wall.data = FaceInfo(FaceType.wall, node, null, texture)
+  node.walls.add(wall)
+  return wall
+}
 
 fun sinewFloorsAndCeilings(nodeSectors: List<TempSector>, mesh: FlexibleMesh) {
   return nodeSectors.forEach { sector ->
     val sectorCenter = getCenter(sector.corners).xy
-    createFloor(mesh, sector.node, sector.corners, sectorCenter)
-    createCeiling(mesh, sector.node, sector.corners, sectorCenter)
+    createFloor(mesh, sector.node, sector.corners, sectorCenter, Textures.checkers)
+    if (Dice.global.getInt(0, 3) != 0)
+      createCeiling(mesh, sector.node, sector.corners, sectorCenter)
   }
-
-//  val vertices = nodeSectors.flatMap { it.corners }
-//      .distinct()
-//      .associate { Pair(it, Vector3(it)) }
-//
-//  return nodeSectors.map { sector ->
-//    val face = sinewSector(sector.corners, vertices, mesh)
-//    sector.node.floors.add(face)
-//    Floor(sector, face)
-//  }
 }
 
 fun createWall(edge: FlexibleEdge, mesh: FlexibleMesh): FlexibleFace {
@@ -180,7 +169,7 @@ fun createWall(edge: FlexibleEdge, mesh: FlexibleMesh): FlexibleFace {
   ))
 }
 
-fun generateStructure(abstractWorld: AbstractWorld) {
+fun createRooms(abstractWorld: AbstractWorld) {
   val mesh = abstractWorld.mesh
 
   val roomNodes = abstractWorld.nodes.filter { it.type == NodeType.room }
@@ -216,11 +205,72 @@ fun generateStructure(abstractWorld: AbstractWorld) {
       sector.node.walls.add(wall)
     }
   }
+}
 
-  calculateNormals(mesh)
+fun determineFloorTexture(info: FaceInfo): Textures? {
+  val first = info.firstNode!!
+  return when (first.type) {
+    NodeType.solid -> Textures.grayNoise
+    NodeType.space -> null
+    NodeType.room -> Textures.checkers
+    NodeType.tunnel -> Textures.checkers
+  }
+}
 
+fun determineWallTexture(info: FaceInfo): Textures? {
+  val nodes = faceNodes(info)
+      .filterNotNull()
+  val rooms = nodes
+      .filter { it.type == NodeType.room || it.type == NodeType.tunnel }
+  return if (rooms.size == 1) {
+    val other = getOtherNode(info, rooms.first())
+    if (other == null)
+      Textures.checkers
+    else if (other.type == NodeType.solid)
+      Textures.darkCheckers
+    else
+      null
+  } else if (rooms.size == 2) {
+    null
+  } else {
+    if (nodes.count { it.type == NodeType.solid } == 1)
+      Textures.darkCheckers
+    else
+      null
+  }
+}
+
+fun determineCeilingTexture(info: FaceInfo): Textures? {
+  val first = info.firstNode!!
+  return when (first.type) {
+    NodeType.solid -> null
+    NodeType.space -> null
+    NodeType.room -> Textures.checkers
+    NodeType.tunnel -> Textures.checkers
+  }
+}
+
+fun determineFaceTexture(info: FaceInfo): Textures? {
+  return when (info.type) {
+    FaceType.wall -> determineWallTexture(info)
+    FaceType.floor -> determineFloorTexture(info)
+    FaceType.space -> null
+    FaceType.ceiling -> determineCeilingTexture(info)
+  }
+}
+
+fun assignTextures(abstractWorld: AbstractWorld) {
+  abstractWorld.mesh.faces.forEach { face ->
+    val info = getFaceInfo(face)
+    info.texture = determineFaceTexture(info)
+  }
+}
+
+fun generateStructure(abstractWorld: AbstractWorld) {
+  createRooms(abstractWorld)
+  calculateNormals(abstractWorld.mesh)
   initializeFaceInfo(abstractWorld)
-
   defineNegativeSpace(abstractWorld)
   fillBoundary(abstractWorld)
+  assignTextures(abstractWorld)
 }

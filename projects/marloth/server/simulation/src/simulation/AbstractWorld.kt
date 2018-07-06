@@ -62,12 +62,21 @@ enum class FaceType {
 }
 
 data class FaceInfo(
-    val type: FaceType,
+    var type: FaceType,
     val firstNode: Node?,
-    val secondNode: Node?,
-    val texture: Textures?,
+    var secondNode: Node?,
+    var texture: Textures?,
     var debugInfo: String? = null
 )
+
+fun faceNodes(info: FaceInfo) =
+    listOf(info.firstNode, info.secondNode)
+
+fun getOtherNode(info: FaceInfo, node: Node) =
+    if (info.firstNode == node)
+      info.secondNode
+    else
+      info.firstNode
 
 // May be faster to cast straight to non-nullable but at least for debugging
 // it may be better to explicitly non-null cast.
@@ -87,7 +96,7 @@ class AbstractWorld(val boundary: WorldBoundary) {
     get() = graph.nodes
 
   val locationNodes: List<Node>
-    get() = nodes.filter { it.type != NodeType.space }
+    get() = nodes.filter(isWalkable)
 
   val connections: MutableList<Connection>
     get() = graph.connections

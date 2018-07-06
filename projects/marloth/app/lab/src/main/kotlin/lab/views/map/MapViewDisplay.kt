@@ -1,33 +1,54 @@
 package lab.views.map
 
-import lab.views.GameDisplayMode
-import lab.views.GameViewRenderData
-import lab.views.renderFaceNormals
-import lab.views.renderWireframeScene
 import marloth.clienting.Client
-import marloth.clienting.gui.renderGui
-import mythic.bloom.Bounds
 import mythic.glowing.DrawMethod
+import mythic.glowing.globalState
 import mythic.spatial.*
 import org.joml.Vector4i
 import org.joml.plus
 import org.joml.times
-import physics.Body
+import org.lwjgl.opengl.GL11
 import rendering.*
 import scenery.Camera
 import scenery.ProjectionType
 import scenery.Scene
 import simulation.AbstractWorld
 
-fun renderWireframeWorldMesh(renderer: SceneRenderer) {
+fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, color: Vector4) {
+  renderer.effects.flat.activate(ObjectShaderConfig(color = color))
+  for (sector in worldMesh.sectors) {
+    var index = 0
+    for (texture in sector.textureIndex) {
+      sector.mesh.drawElement(DrawMethod.lineLoop, index++)
+    }
+  }
+}
+
+fun renderMapMesh(renderer: SceneRenderer, config: MapViewDisplayConfig) {
   val worldMesh = renderer.renderer.worldMesh
   if (worldMesh != null) {
-    renderer.effects.flat.activate(ObjectShaderConfig(transform = Matrix(), color = Vector4(1f)))
-    for (sector in worldMesh.sectors) {
-      var index = 0
-      for (texture in sector.textureIndex) {
-        sector.mesh.drawElement(DrawMethod.lineLoop, index++)
+    if (config.drawMode == MapViewDrawMode.wireframe) {
+      drawWireframeWorld(renderer, worldMesh, Vector4(1f))
+    } else {
+      globalState.depthEnabled = false
+      globalState.cullFaces = false
+      globalState.blendEnabled = true
+      globalState.blendFunction = Pair(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
+
+      val lineHalfColor = Vector4(1f, 1f, 1f, 0.5f)
+      drawWireframeWorld(renderer, worldMesh, lineHalfColor)
+      globalState.depthEnabled = true
+      globalState.cullFaces = true
+      for (sector in worldMesh.sectors) {
+        var index = 0
+        for (texture in sector.textureIndex) {
+          renderer.effects.texturedFlat.activate(ObjectShaderConfig(texture = texture))
+          sector.mesh.drawElement(DrawMethod.triangleFan, index++)
+        }
       }
+      globalState.depthEnabled = false
+      globalState.cullFaces = false
+      drawWireframeWorld(renderer, worldMesh, lineHalfColor)
     }
   }
 }
@@ -37,9 +58,9 @@ fun createTopDownCamera(camera: MapViewCamera): Camera {
   return Camera(
       ProjectionType.perspective,
       position,
-      Quaternion().rotate(0f, 0f, Pi * 0.5f)
+      Quaternion().rotateZ(Pi * 0.5f)
           *
-          Quaternion().rotate(0f, Pi * 0.25f, 0f)
+          Quaternion().rotateY(Pi * 0.25f)
       ,
       45f
   )
@@ -57,22 +78,6 @@ fun renderMapView(client: Client, world: AbstractWorld, config: MapViewConfig) {
   )
   val viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
   val sceneRenderer = renderer.createSceneRenderer(scene, viewport)
-  renderWireframeWorldMesh(sceneRenderer)
-//  val viewports = getPlayerViewports(data.scenes.size, windowInfo.dimensions).iterator()
-//  for (scene in data.scenes) {
-//    val viewport = viewports.next()
-//    val sceneRenderer = renderer.createSceneRenderer(scene.main, viewport)
-//    val gameRenderer = GameSceneRenderer(scene, sceneRenderer)
-//    when (data.config.displayMode) {
-//      GameDisplayMode.normal -> gameRenderer.render()
-//      GameDisplayMode.wireframe -> renderWireframeScene(gameRenderer, data)
-//    }
-//
-//    if (data.config.drawNormals)
-//      renderFaceNormals(sceneRenderer, 1f, data.world.mesh)
-//
-//    renderGui(sceneRenderer, Bounds(viewport.toVector4()), canvas, data.menuState)
-//  }
-
+  renderMapMesh(sceneRenderer, config.display)
   renderer.finishRender(windowInfo)
 }

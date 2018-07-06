@@ -5,6 +5,7 @@ import mythic.spatial.*
 import org.joml.minus
 import org.joml.plus
 import org.joml.xy
+import randomly.Dice
 import scenery.Textures
 import simulation.*
 
@@ -73,18 +74,6 @@ fun gatherNewSectorFaces(origin: FlexibleFace): List<FlexibleFace> {
   return result
 }
 
-//fun processIncompleteEdges(edges: List<FlexibleFace>) {
-//  val incompleteEdges = edges.filter { faceNodeCount(getFaceInfo(it)) == 1 }
-//
-//  val acuteCorners = incompleteEdges.asSequence().filter { getConcaveCorners(it).any() }
-//
-//  val cornerFace = acuteCorners.firstOrNull()
-//  if (cornerFace == null)
-//    return
-//
-//  addSpaceNode(cornerFace)
-//}
-
 fun getNewWallVertices(sectorCenter: Vector3, edges: Edges): Vertices {
   val sortedEdges = edges.map { it.vertices.sortedBy { it.z } }
   val vertices = listOf(
@@ -119,6 +108,22 @@ fun addSpaceNode(abstractWorld: AbstractWorld, node: Node) {
       }
 }
 
+fun createSpaceNode(sectorCenter: Vector3, abstractWorld: AbstractWorld): Node {
+  val radius = 1f
+  val type = if (Dice.global.getInt(0, 1) == 0)
+    NodeType.space
+  else
+    NodeType.solid
+
+  val node = Node(
+      position = sectorCenter,
+      radius = radius,
+      type = type
+  )
+  node.index = abstractWorld.graph.nodes.size
+  return node
+}
+
 fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace) {
   val walls = gatherNewSectorFaces(originFace)
   assert(walls.size > 2)
@@ -133,30 +138,36 @@ fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace) {
   val sectorCenter = getCenter(floorVertices)
   val flatCenter = sectorCenter.xy
 
-  val radius = 1f
-  val node = Node(
-      position = sectorCenter,
-      radius = radius,
-      type = NodeType.space
-  )
-  node.index = abstractWorld.graph.nodes.size
+  val node = createSpaceNode(sectorCenter, abstractWorld)
   node.walls.addAll(walls)
-  val floor = createFloor(abstractWorld.mesh, node, floorVertices, flatCenter)
-//  initializeFaceInfo(FaceType.wall, node, floor, Textures.grayNoise)
-  initializeNodeFaceInfo(node, Textures.grayNoise, Textures.darkCheckers)
+  walls.forEach {
+    val info = getFaceInfo(it)
+    info.secondNode = node
+  }
+  if (node.type == NodeType.solid) {
+    val floor = createFloor(abstractWorld.mesh, node, floorVertices, flatCenter, Textures.grayNoise)
+  }
+
+  val defaultWallTexture: Textures? = if (node.type == NodeType.solid)
+    Textures.darkCheckers
+  else
+    null
 
   val gapEdges = edges.filter {
     it.faces.count { walls.contains(it) } < 2
   }
+
   if (gapEdges.any()) {
     assert(gapEdges.size == 2)
     val gapVertices = getNewWallVertices(sectorCenter, gapEdges)
     val newWall = abstractWorld.mesh.createStitchedFace(gapVertices)
-    initializeFaceInfo(FaceType.wall, node, newWall, null)
+    if (node.type == NodeType.solid)
+      newWall.flipQuad()
+
+    newWall.data = FaceInfo(FaceType.wall, node, null, defaultWallTexture)
     node.walls.add(newWall)
   }
 
-  initializeNodeFaceInfo(node, null, null)
   addSpaceNode(abstractWorld, node)
 }
 
@@ -176,13 +187,6 @@ fun getWallVertices(vertices: Vertices): WallVertices {
   )
 }
 
-fun createWall(abstractWorld: AbstractWorld, node: Node, vertices: Vertices, texture: Textures?): FlexibleFace {
-  val wall = abstractWorld.mesh.createStitchedFace(vertices)
-  initializeFaceInfo(FaceType.wall, node, wall, texture)
-  node.walls.add(wall)
-  return wall
-}
-
 fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace) {
   getFaceInfo(originFace).debugInfo = "space-d"
   val originalWall = getWallVertices(originFace.vertices)
@@ -196,16 +200,11 @@ fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace)
   val floorVertices = originalWall.upper.plus(newWall.upper)
   val sectorCenter = getCenter(floorVertices)
 
-  val radius = 1f
-  val node = Node(
-      position = sectorCenter,
-      radius = radius,
-      type = NodeType.space
-  )
-  node.index = abstractWorld.graph.nodes.size
+  val node = createSpaceNode(sectorCenter, abstractWorld)
+
 //  node.walls.addAll(walls)
 //  node.floors.add(floor)
-  val floor = createFloor(abstractWorld.mesh, node, floorVertices, sectorCenter.xy)
+  val floor = createFloor(abstractWorld.mesh, node, floorVertices, sectorCenter.xy, null)
 //  initializeFaceInfo(FaceType.wall, node, floor, Textures.grayNoise)
   node.walls.add(originFace)
   val outerWall = createWall(abstractWorld, node, newPoints, null)
@@ -213,6 +212,9 @@ fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace)
   for (i in 0..1) {
     val outerSideEdge = outerWall.edge(newWall.lower[i], newWall.upper[1 - i])
     assert(outerSideEdge != null)
+//    if (outerSideEdge == null)
+//      continue
+
     if (outerSideEdge!!.faces.size > 1)
       continue
 
@@ -225,7 +227,7 @@ fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace)
     createWall(abstractWorld, node, sidePoints, null)
   }
 
-  initializeNodeFaceInfo(node, null, null)
+//  initializeNodeFaceInfo(node, null, null)
   addSpaceNode(abstractWorld, node)
 }
 

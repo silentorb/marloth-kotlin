@@ -29,7 +29,7 @@ class EdgeReference(
     val edge: FlexibleEdge,
     var next: EdgeReference?,
     var previous: EdgeReference?,
-    val direction: Boolean
+    var direction: Boolean
 ) {
   val vertices: List<Vector3>
     get() = if (direction) edge.vertices else listOf(edge.second, edge.first)
@@ -55,7 +55,7 @@ fun getNormal(vertices: Vertices) =
     (vertices[2] - vertices[1]).cross(vertices[0] - vertices[1]).normalize()
 
 class FlexibleFace(
-    val edges: MutableList<EdgeReference> = mutableListOf(),
+    var edges: MutableList<EdgeReference> = mutableListOf(),
     var data: Any? = null
 ) {
   val unorderedVertices: List<Vector3>
@@ -78,6 +78,22 @@ class FlexibleFace(
 
   fun edge(first: Vector3, second: Vector3): EdgeReference? =
       edges.firstOrNull { it.edge.matches(first, second) }
+
+  fun flipQuad() {
+    edges.forEach {
+      val a = it.next
+      it.next = it.previous
+      it.previous = a
+      it.direction = !it.direction
+    }
+
+    edges = listOf(
+        edges[0],
+        edges[3],
+        edges[2],
+        edges[1]
+    ).toMutableList()
+  }
 }
 
 fun distinctVertices(vertices: Vertices) =
