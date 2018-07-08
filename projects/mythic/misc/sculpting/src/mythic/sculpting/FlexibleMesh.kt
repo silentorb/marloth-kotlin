@@ -59,7 +59,8 @@ class FlexibleFace(
     var data: Any? = null
 ) {
   val unorderedVertices: List<Vector3>
-    get() = edges.flatMap { it.vertices }.distinct()
+    get() = edges.map { it.first }
+//  get() = edges.flatMap { it.vertices }.distinct()
 
   val vertices: List<Vector3>
     get() = edges.map { it.first }

@@ -13,7 +13,7 @@ import org.joml.Vector2i
 import rendering.Renderer
 import scenery.Textures
 import rendering.textureLibrary
-import texture_generation.createTexture
+import marloth.texture_generation.createTexture
 
 data class TextureViewConfig(
     var texture: Textures = Textures.checkers

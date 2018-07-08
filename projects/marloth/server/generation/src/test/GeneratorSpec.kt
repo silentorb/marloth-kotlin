@@ -18,9 +18,9 @@ class GeneratorSpec : Spek({
 
     on("testing overlapping") {
 
-      val first = Node(Vector3(0f, 0f, 0f), 5f, NodeType.room)
-      val second = Node(Vector3(8f, 0f, 0f), 5f, NodeType.room)
-      val third = Node(Vector3(200f, 0f, 0f), 15f, NodeType.room)
+      val first = Node(Vector3(0f, 0f, 0f), 5f, false)
+      val second = Node(Vector3(8f, 0f, 0f), 5f, false)
+      val third = Node(Vector3(200f, 0f, 0f), 15f, false)
 
       it("should detect overlap") {
         val overlaps = overlaps2D(first, second)

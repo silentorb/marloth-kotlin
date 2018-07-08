@@ -5,13 +5,15 @@ import org.joml.*
 import scenery.Camera
 import scenery.ProjectionType
 
+fun createViewMatrix(position: Vector3, lookAt: Vector3): Matrix {
+  return Matrix()
+      .setLookAt(position, lookAt, Vector3(0f, 0f, 1f))
+}
+
 fun createViewMatrix(position: Vector3, orientation: Quaternion): Matrix {
   val forward = Quaternion(orientation) * Vector3(1f, 0f, 0f)
-  val look_at = position + forward
-  return Matrix()
-      .setLookAt(position, look_at, Vector3(0f, 0f, 1f))
-
-//  return lookAt3(position, look_at, Vector3(0f, 0f, 1f), Matrix())
+  val lookAt = position + forward
+  return createViewMatrix(position, lookAt)
 }
 
 //fun createViewMatrix(position: Vector3, orientation: Quaternion): Matrix {
@@ -45,7 +47,12 @@ fun createCameraMatrix(dimensions: Vector2i, camera: Camera): Matrix {
   else
     createPerspectiveMatrix(dimensions, camera.angleOrZoom, camera.nearClip, camera.farClip)
 
-  val view = createViewMatrix(camera.position, camera.orientation)
+  val lookAt = camera.lookAt
+  val view = if (lookAt == null)
+    createViewMatrix(camera.position, camera.orientation)
+  else
+    createViewMatrix(camera.position, lookAt)
+
   return projection * view
 }
 

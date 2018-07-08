@@ -17,10 +17,16 @@ fun createNode(abstractWorld: AbstractWorld, dice: Dice): Node {
   val radius = dice.getFloat(5f, 10f)
   val start = abstractWorld.boundary.start + radius
   val end = abstractWorld.boundary.end - radius
+//  val type = if (dice.getInt(0, 3) != 0)
+//    NodeType.room
+//  else
+//    NodeType.openRoom
+
   val node = Node(
-      Vector3(dice.getFloat(start.x, end.x), dice.getFloat(start.y, end.y), 0f),
-      radius,
-      NodeType.room
+      position = Vector3(dice.getFloat(start.x, end.x), dice.getFloat(start.y, end.y), 0f),
+      radius = radius,
+      isSolid = false,
+      isWalkable = true
   )
   abstractWorld.nodes.add(node)
   return node
@@ -33,15 +39,16 @@ fun createNodes(count: Int, world: AbstractWorld, dice: Dice) {
 }
 
 
-fun generateAbstract(world: AbstractWorld, dice: Dice, scale: Float) {
+fun generateAbstract(world: AbstractWorld, dice: Dice, scale: Float): List<Node> {
   val nodeCount = (20 * scale).toInt()
   createNodes(nodeCount, world, dice)
   handleOverlapping(world.graph)
   unifyWorld(world.graph)
   closeDeadEnds(world.graph)
-  createTunnelNodes(world)
+  val tunnels = createTunnelNodes(world)
 
   fillIndexes(world.graph)
+  return tunnels
 }
 
 fun fillIndexes(graph: NodeGraph) {
@@ -70,7 +77,7 @@ fun placeWallLamps(world: World, instantiator: Instantiator, dice: Dice, scale: 
   val count = (11f * scale).toInt()
   val nodes = dice.getList(world.meta.locationNodes, count)
   nodes.forEach { node ->
-    val options = node.walls.filter { getFaceInfo(it).type == FaceType.wall && getFaceInfo(it).texture != null}
+    val options = node.walls.filter { getFaceInfo(it).type == FaceType.wall && getFaceInfo(it).texture != null }
     if (options.any()) {
       val wall = dice.getItem(options)
       val edge = wall.edges[0]
@@ -90,8 +97,8 @@ fun calculateWorldScale(dimensions: Vector3) =
 fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): World {
   val abstractWorld = AbstractWorld(input.boundary)
   val scale = calculateWorldScale(abstractWorld.boundary.dimensions)
-  generateAbstract(abstractWorld, input.dice, scale)
-  generateStructure(abstractWorld)
+  val tunnels = generateAbstract(abstractWorld, input.dice, scale)
+  generateStructure(abstractWorld, input.dice, tunnels)
   val world = World(abstractWorld)
   val instantiator = Instantiator(world, instantiatorConfig)
   instantiator.createPlayer(1)

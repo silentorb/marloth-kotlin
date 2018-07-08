@@ -287,10 +287,16 @@ fun isInsidePolygon(point: Vector2, vertices: List<Vector2>): Boolean {
   return count > 0 && isOdd(count)
 }
 
-fun flattenPoints(normal: Vector3, points: List<Vector3>): List<Vector2> {
+fun flattenPoints(normal: Vector3, points: List<Vector3>): Map<Vector2, Vector3> {
   val u = Vector3(normal).cross((points[1] - points[0]).normalize())
   val v = Vector3(normal).cross(u)
-  return points.map { Vector2(u.dot(it), v.dot(it)) }
+  return points.associate { Pair(Vector2(u.dot(it), v.dot(it)), it) }
+}
+
+fun flattenPoints(points: List<Vector3>): Map<Vector2, Vector3> {
+  assert(points.size >= 3)
+  val normal = (points[0] - points[1]).cross(points[2] - points[1])
+  return flattenPoints(normal, points)
 }
 
 fun rayIntersectsPolygon3D(rayStart: Vector3, rayDirection: Vector3, vertices: List<Vector3>, polygonNormal: Vector3): Vector3? {
@@ -375,8 +381,8 @@ fun Vector2.toVector2i() = Vector2i(x.toInt(), y.toInt())
 fun Vector2i.toVector2() = Vector2(x.toFloat(), y.toFloat())
 
 fun Vector4i.toVector4() = Vector4(x.toFloat(), y.toFloat(), z.toFloat(), w.toFloat())
-
-fun clockwiseLesser(center: Vector3, a: Vector3, b: Vector3): Boolean {
+/*
+fun clockwiseLesser(center: Vector2, a: Vector2, b: Vector2): Boolean {
   val ax = a.x - center.x
   val bx = b.x - center.x
 
@@ -406,23 +412,38 @@ fun clockwiseLesser(center: Vector3, a: Vector3, b: Vector3): Boolean {
   return d1 > d2
 }
 
-fun counterClockwiseLesser(center: Vector3) = { a: Vector3, b: Vector3 ->
+fun counterClockwiseLesser(center: Vector2) = { a: Vector2, b: Vector2 ->
   !clockwiseLesser(center, a, b)
 }
 
-fun arrangePointsCounterClockwise(center: Vector3, vertices: List<Vector3>): List<Vector3> {
+fun arrangePointsCounterClockwise2D(center: Vector2, vertices: Collection<Vector2>): List<Vector2> {
   val sorter = counterClockwiseLesser(center)
-  return vertices.sortedWith(object : Comparator<Vector3> {
-    override fun compare(a: Vector3, b: Vector3): Int =
+  return vertices.sortedWith(object : Comparator<Vector2> {
+    override fun compare(a: Vector2, b: Vector2): Int =
         if (sorter(a, b)) 1 else 0
   })
 }
+*/
 
-fun getCenter(points: List<Vector3>): Vector3 =
+fun arrangePointsCounterClockwise2D(center: Vector2, vertices: Collection<Vector2>): List<Vector2> =
+    vertices.sortedBy { atan(it - center) }
+
+fun getCenter(points: Collection<Vector3>): Vector3 =
     points.reduce { a, b -> a + b } / points.size.toFloat()
 
-fun arrangePointsCounterClockwise(vertices: List<Vector3>): List<Vector3> =
-    arrangePointsCounterClockwise(getCenter(vertices), vertices)
+fun getCenter2D(points: Collection<Vector2>): Vector2 =
+    points.reduce { a, b -> a + b } / points.size.toFloat()
+
+fun arrangePointsCounterClockwise2D(vertices: List<Vector2>): List<Vector2> =
+    arrangePointsCounterClockwise2D(getCenter2D(vertices), vertices)
+
+fun arrangePointsCounterClockwise(vertices: List<Vector3>): List<Vector3> {
+  val flatMap = flattenPoints(vertices)
+  val flatVertices = flatMap.keys
+  val sorted = arrangePointsCounterClockwise2D(getCenter2D(flatVertices), flatVertices)
+  val result = sorted.map { flatMap[it]!! }
+  return result
+}
 
 val decimalFormat = DecimalFormat("#.#####")
 fun toString(vector: Vector3) =
@@ -448,6 +469,15 @@ fun rotateToward(matrix: Matrix, dir: Vector3): Matrix =
 
 fun rotateToward(dir: Vector3): Quaternion =
 //    if (dir.x == 0f && dir.y == 0f)
-      Quaternion().rotateTo(Vector3(1f, 0f, 0f), dir)
+    Quaternion().rotateTo(Vector3(1f, 0f, 0f), dir)
 //    else
 //      Quaternion().rotateTo(dir, Vector3(0f, 0f, 1f))
+
+fun sum(vertices: Collection<Vector3>): Vector3 {
+  var result = Vector3()
+  for (vertex in vertices) {
+    result += vertex
+  }
+
+  return result / vertices.size.toFloat()
+}

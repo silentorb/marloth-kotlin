@@ -1,6 +1,5 @@
-package texture_generation
+package marloth.texture_generation
 
-import marloth.texture_generation.OpenSimplexNoise
 import mythic.glowing.Texture
 import mythic.glowing.geometryTextureInitializer
 import mythic.spatial.Vector3
@@ -20,6 +19,8 @@ typealias OpaqueTextureAlgorithm = TextureAlgorithm<OpaqueColor>
 typealias TransparentTextureAlgorithm = TextureAlgorithm<TransparentColor>
 
 fun flip(a: Boolean, b: Boolean) = if (b) a else !a
+
+fun solidColor(color: OpaqueColor): OpaqueTextureAlgorithm = { x, y -> color }
 
 val checkerPattern = { first: OpaqueColor, second: OpaqueColor ->
   { x: Float, y: Float ->

@@ -65,7 +65,7 @@ data class FaceInfo(
     var type: FaceType,
     val firstNode: Node?,
     var secondNode: Node?,
-    var texture: Textures?,
+    var texture: Textures? = null,
     var debugInfo: String? = null
 )
 
@@ -96,7 +96,7 @@ class AbstractWorld(val boundary: WorldBoundary) {
     get() = graph.nodes
 
   val locationNodes: List<Node>
-    get() = nodes.filter(isWalkable)
+    get() = nodes.filter { it.isWalkable }
 
   val connections: MutableList<Connection>
     get() = graph.connections

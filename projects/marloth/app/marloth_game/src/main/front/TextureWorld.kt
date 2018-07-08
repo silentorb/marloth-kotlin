@@ -1,5 +1,6 @@
 package front
 
+import generation.structure.getWallVertices
 import marloth.clienting.Client
 import mythic.glowing.Texture
 import mythic.sculpting.FlexibleFace
@@ -53,18 +54,24 @@ fun createTexturedWall(face: FlexibleFace, texture: Texture): TextureFace {
   val bounds = getBounds(vertices)
   val dimensions = bounds.dimensions
   val scale = .5f
-  val edge = face.edges.first()
-  val length = edge.first.distance(edge.second) * scale
+  val edge = getWallVertices(face).upper
+  val length = edge.first().distance(edge.last()) * scale
   val uvs = listOf(
       Vector2(0f, 0f),
       Vector2(length, 0f),
       Vector2(length, 2f),
       Vector2(0f, 2f)
-  ).listIterator()
+  )
+  val alignedUvs = if (vertices[0].z != vertices[1].z)
+    listOf(uvs.last()).plus(uvs.dropLast(1))
+  else
+    uvs
+
+  val uvIterator = alignedUvs.listIterator()
   return TextureFace(face, vertices.associate { vertex ->
     Pair(vertex, VertexNormalTexture(
         Vector3(0f, 0f, 1f),
-        uvs.next()
+        uvIterator.next()
     ))
   },
       texture

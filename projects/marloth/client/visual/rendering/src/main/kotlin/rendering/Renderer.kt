@@ -118,7 +118,7 @@ class Renderer {
 
   fun prepareRender(windowInfo: WindowInfo) {
     glow.state.viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
-    glow.state.depthWrite = true
+    glow.state.depthEnabled = true
     glow.operations.clearScreen()
   }
 

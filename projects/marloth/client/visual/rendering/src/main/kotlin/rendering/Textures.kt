@@ -1,11 +1,11 @@
 package rendering
 
+import marloth.texture_generation.*
 import mythic.glowing.Texture
 import mythic.spatial.Vector3
 import mythic.spatial.times
 import org.joml.plus
 import scenery.Textures
-import texture_generation.*
 
 fun mix(first: OpaqueTextureAlgorithm, firstPercentage: Float, second: OpaqueTextureAlgorithm) = { x: Float, y: Float ->
   first(x, y) * firstPercentage + second(x, y) * (1 - firstPercentage)
@@ -51,6 +51,9 @@ val textureLibrary: Map<Textures, OpaqueTextureAlgorithmSource> = mapOf(
     Textures.checkers to createCheckers,
 
     Textures.darkCheckers to createDarkCheckers,
+    Textures.debugCyan to { solidColor(Vector3(0f, 1f, 1f)) },
+    Textures.debugMagenta to { solidColor(Vector3(1f, 0f, 1f)) },
+    Textures.debugYellow to { solidColor(Vector3(1f, 1f, 0f)) },
 
     Textures.grayNoise to {
       colorize(

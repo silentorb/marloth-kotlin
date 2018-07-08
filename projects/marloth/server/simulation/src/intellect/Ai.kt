@@ -31,8 +31,7 @@ fun getAiCharacters(world: World) =
 fun setDestination(world: World, spirit: Spirit): SpiritState {
   val location = spirit.body.node
   val options = world.meta.nodes
-      .filter { it != location }
-      .filter (isWalkable)
+      .filter { it != location && it.isWalkable }
 
   val destination = Dice.global.getItem(options)
 //  val destination = options[(location.index + 6) % options.size]

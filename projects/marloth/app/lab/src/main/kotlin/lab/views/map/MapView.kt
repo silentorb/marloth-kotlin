@@ -4,11 +4,13 @@ import haft.isActive
 import lab.LabCommandType
 import lab.views.LabInputState
 import mythic.spatial.*
+import org.joml.plus
 import simulation.ViewMode
 
 data class MapViewCamera(
-    val target: Vector3 = Vector3(),
-    var distance: Float = 20f
+    var target: Vector3 = Vector3(),
+    var distance: Float = 20f,
+    var yaw: Float = 0f
 )
 
 enum class MapViewDrawMode {
@@ -17,7 +19,9 @@ enum class MapViewDrawMode {
 }
 
 data class MapViewDisplayConfig(
-    var drawMode: MapViewDrawMode = MapViewDrawMode.solid
+    var drawMode: MapViewDrawMode = MapViewDrawMode.solid,
+    var normals: Boolean = false,
+    var vertexIndices: Boolean = false
 )
 
 data class MapViewConfig(
@@ -28,25 +32,25 @@ data class MapViewConfig(
 fun updateMapState(config: MapViewConfig, input: LabInputState, delta: Float) {
   val commands = input.commands
 
-//  if (isActive(commands, LabCommandType.toggleMeshDisplay)) {
-//    config.displayMode = if (config.displayMode == GameDisplayMode.normal)
-//      GameDisplayMode.wireframe
-//    else
-//      GameDisplayMode.normal
-//  }
-  val moveSpeed = 15
+  val moveSpeed = 30
   val zoomSpeed = 120
+  val rotateSpeed = 5
+
+  val moveOffset = Vector3()
   if (isActive(commands, LabCommandType.moveUp))
-    config.camera.target.y += moveSpeed * delta
+    moveOffset.y = 1f
 
   if (isActive(commands, LabCommandType.moveDown))
-    config.camera.target.y -= moveSpeed * delta
+    moveOffset.y = -1f
 
   if (isActive(commands, LabCommandType.moveLeft))
-    config.camera.target.x -= moveSpeed * delta
+    moveOffset.x = -1f
 
   if (isActive(commands, LabCommandType.moveRight))
-    config.camera.target.x += moveSpeed * delta
+    moveOffset.x = 1f
+
+  if (moveOffset != Vector3())
+    config.camera.target += moveOffset.transform(Matrix().rotateZ(config.camera.yaw)) * (moveSpeed * delta)
 
   if (isActive(commands, LabCommandType.zoomIn))
     config.camera.distance -= zoomSpeed * delta
@@ -54,10 +58,23 @@ fun updateMapState(config: MapViewConfig, input: LabInputState, delta: Float) {
   if (isActive(commands, LabCommandType.zoomOut))
     config.camera.distance += zoomSpeed * delta
 
+  if (isActive(commands, LabCommandType.rotateLeft))
+    config.camera.yaw = (config.camera.yaw - (rotateSpeed * delta)) % (Pi * 2)
+
+  if (isActive(commands, LabCommandType.rotateRight))
+    config.camera.yaw = (config.camera.yaw + (rotateSpeed * delta)) % (Pi * 2)
+
   if (isActive(commands, LabCommandType.toggleMeshDisplay)) {
     config.display.drawMode = if (config.display.drawMode == MapViewDrawMode.wireframe)
       MapViewDrawMode.solid
     else
       MapViewDrawMode.wireframe
   }
+
+  if (isActive(commands, LabCommandType.toggleNormals))
+    config.display.normals = !config.display.normals
+
+  if (isActive(commands, LabCommandType.toggleVertexIndices))
+    config.display.vertexIndices = !config.display.vertexIndices
+
 }

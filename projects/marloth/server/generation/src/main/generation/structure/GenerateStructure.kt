@@ -125,11 +125,11 @@ fun generateTunnelStructure(node: Node, nodeSectors: List<TempSector>): TempSect
   return TempSector(node, corners)
 }
 
-fun createFloor(mesh: FlexibleMesh, node: Node, vertices: Vertices, center: Vector2, texture: Textures?): FlexibleFace {
+fun createFloor(mesh: FlexibleMesh, node: Node, vertices: Vertices, center: Vector2): FlexibleFace {
   val sortedFloorVertices = vertices
       .sortedBy { atan(it.xy - center) }
   val floor = mesh.createStitchedFace(sortedFloorVertices)
-  floor.data = FaceInfo(FaceType.floor, node, null, texture)
+  floor.data = FaceInfo(FaceType.floor, node, null)
   node.floors.add(floor)
   return floor
 }
@@ -141,12 +141,13 @@ fun createCeiling(mesh: FlexibleMesh, node: Node, vertices: Vertices, center: Ve
 
   val surface = mesh.createStitchedFace(sortedFloorVertices)
   node.ceilings.add(surface)
+  surface.data = FaceInfo(FaceType.ceiling, node, null)
   return surface
 }
 
-fun createWall(abstractWorld: AbstractWorld, node: Node, vertices: Vertices, texture: Textures?): FlexibleFace {
+fun createWall(abstractWorld: AbstractWorld, node: Node, vertices: Vertices): FlexibleFace {
   val wall = abstractWorld.mesh.createStitchedFace(vertices)
-  wall.data = FaceInfo(FaceType.wall, node, null, texture)
+  wall.data = FaceInfo(FaceType.wall, node, null)
   node.walls.add(wall)
   return wall
 }
@@ -154,9 +155,8 @@ fun createWall(abstractWorld: AbstractWorld, node: Node, vertices: Vertices, tex
 fun sinewFloorsAndCeilings(nodeSectors: List<TempSector>, mesh: FlexibleMesh) {
   return nodeSectors.forEach { sector ->
     val sectorCenter = getCenter(sector.corners).xy
-    createFloor(mesh, sector.node, sector.corners, sectorCenter, Textures.checkers)
-    if (Dice.global.getInt(0, 3) != 0)
-      createCeiling(mesh, sector.node, sector.corners, sectorCenter)
+    createFloor(mesh, sector.node, sector.corners, sectorCenter)
+    createCeiling(mesh, sector.node, sector.corners, sectorCenter)
   }
 }
 
@@ -169,17 +169,17 @@ fun createWall(edge: FlexibleEdge, mesh: FlexibleMesh): FlexibleFace {
   ))
 }
 
-fun createRooms(abstractWorld: AbstractWorld) {
+fun createRooms(abstractWorld: AbstractWorld, dice: Dice, tunnels: List<Node>) {
   val mesh = abstractWorld.mesh
 
-  val roomNodes = abstractWorld.nodes.filter { it.type == NodeType.room }
+  val roomNodes = abstractWorld.nodes.minus(tunnels)
 
   val singleNodes = roomNodes.filter { !isInCluster(it) }
   val clusters = gatherClusters(roomNodes)
   val nodeSectors = singleNodes.map { createSingleNodeStructure(it) }
       .plus(clusters.flatMap { createClusterStructure(it) })
 
-  val tunnelSectors = abstractWorld.nodes.filter { it.type == NodeType.tunnel }
+  val tunnelSectors = tunnels
       .map { generateTunnelStructure(it, nodeSectors) }
 
   val allSectors = nodeSectors.plus(tunnelSectors)
@@ -209,45 +209,57 @@ fun createRooms(abstractWorld: AbstractWorld) {
 
 fun determineFloorTexture(info: FaceInfo): Textures? {
   val first = info.firstNode!!
-  return when (first.type) {
-    NodeType.solid -> Textures.grayNoise
-    NodeType.space -> null
-    NodeType.room -> Textures.checkers
-    NodeType.tunnel -> Textures.checkers
-  }
+  return if (first.isWalkable)
+    Textures.checkers
+  else
+    null
 }
 
 fun determineWallTexture(info: FaceInfo): Textures? {
   val nodes = faceNodes(info)
       .filterNotNull()
-  val rooms = nodes
-      .filter { it.type == NodeType.room || it.type == NodeType.tunnel }
-  return if (rooms.size == 1) {
-    val other = getOtherNode(info, rooms.first())
-    if (other == null)
-      Textures.checkers
-    else if (other.type == NodeType.solid)
-      Textures.darkCheckers
-    else
-      null
-  } else if (rooms.size == 2) {
-    null
+
+  assert(nodes.any())
+  return if (nodes.size == 1) {
+//    if (nodes.first().isSolid)
+//      Textures.checkers
+//    else
+      null//Textures.debugCyan
   } else {
-    if (nodes.count { it.type == NodeType.solid } == 1)
+    val wallCount = nodes.count { it.isSolid }
+    val walkableCount = nodes.count { it.isWalkable }
+    if (wallCount > 0 && walkableCount != 2)
       Textures.darkCheckers
     else
       null
   }
+//  val rooms = nodes
+//      .filter { it.type.isWalkable }
+//  return if (rooms.size == 1) {
+//    val other = getOtherNode(info, rooms.first())
+//    if (other == null)
+//      Textures.checkers
+//    else if (other.type == NodeType.solid)
+//      Textures.darkCheckers
+//    else
+//      null
+//  } else if (rooms.size == 2) {
+//    null
+//  } else {
+//    if (nodes.count { it.type == NodeType.solid } == 1)
+//      Textures.darkCheckers
+//    else
+//      null
+//  }
 }
 
 fun determineCeilingTexture(info: FaceInfo): Textures? {
   val first = info.firstNode!!
-  return when (first.type) {
-    NodeType.solid -> null
-    NodeType.space -> null
-    NodeType.room -> Textures.checkers
-    NodeType.tunnel -> Textures.checkers
-  }
+  val second = info.secondNode
+  return if (second != null && second.isSolid)
+    Textures.checkers
+  else
+    null
 }
 
 fun determineFaceTexture(info: FaceInfo): Textures? {
@@ -266,11 +278,121 @@ fun assignTextures(abstractWorld: AbstractWorld) {
   }
 }
 
-fun generateStructure(abstractWorld: AbstractWorld) {
-  createRooms(abstractWorld)
+interface VerticalFacing {
+  val dirMod: Float
+  fun ceilings(node: Node): MutableList<FlexibleFace>
+  fun floors(node: Node): MutableList<FlexibleFace>
+  fun upperNode(node: Node): Node
+  fun wallVertices(face: FlexibleFace): WallVertices
+}
+
+class VerticalFacingUp : VerticalFacing {
+  override val dirMod: Float get() = 1f
+  override fun ceilings(node: Node): MutableList<FlexibleFace> = node.ceilings
+  override fun floors(node: Node): MutableList<FlexibleFace> = node.floors
+  override fun upperNode(node: Node): Node = getUpperNode(node)
+  override fun wallVertices(face: FlexibleFace): WallVertices = getWallVertices(face)
+}
+
+class VerticalFacingDown : VerticalFacing {
+  override val dirMod: Float get() = -1f
+  override fun ceilings(node: Node): MutableList<FlexibleFace> = node.floors
+  override fun floors(node: Node): MutableList<FlexibleFace> = node.ceilings
+  override fun upperNode(node: Node): Node = getLowerNode(node)
+  override fun wallVertices(face: FlexibleFace): WallVertices {
+    val result = getWallVertices(face)
+    return WallVertices(upper = result.lower, lower = result.upper)
+  }
+}
+
+fun createVerticalNodes(abstractWorld: AbstractWorld, middleNodes: List<Node>, roomNodes: List<Node>, dice: Dice, facing: VerticalFacing) {
+  val newNodes = middleNodes.map { node ->
+    val depth = 2f
+    val offset = Vector3(0f, 0f, depth * facing.dirMod)
+    val isSolid = if (!roomNodes.contains(node) && !node.isSolid)
+      false
+    else if (dice.getInt(0, 3) != 0)
+      true
+    else
+      false
+
+    val newNode = createSecondaryNode(node.position + offset, abstractWorld, isSolid = isSolid)
+    assert(facing.ceilings(node).any())
+    for (ceiling in facing.ceilings(node)) {
+      facing.floors(newNode).add(ceiling)
+      val info = getFaceInfo(ceiling)
+      info.secondNode = newNode
+    }
+    newNode
+  }
+
+  newNodes.forEach { lowerNode ->
+    addSpaceNode(abstractWorld, lowerNode)
+  }
+}
+
+fun getLowerNode(node: Node) =
+    getOtherNode(node, node.floors.first())!!
+
+fun getUpperNode(node: Node) =
+    getOtherNode(node, node.ceilings.first())!!
+
+fun createDescendingSpaceWalls(abstractWorld: AbstractWorld, nodes: List<Node>, facing: VerticalFacing) {
+  val walls = nodes.flatMap { it.walls }
+//  nodes.forEach { node ->
+  //    val walls = node.walls.filter {
+//      val otherNode = getOtherNode(node, it)
+//      otherNode != null && !otherNode.isSolid
+//    }
+//    if (walls.any()) {
+  val depth = 6f
+  val offset = Vector3(0f, 0f, depth * facing.dirMod)
+//  val lowerNode = facing.upperNode(node)
+  walls.forEach { upperWall ->
+    val info = getFaceInfo(upperWall)
+    if (info.secondNode != null) {
+      val node = if (info.firstNode!!.isWalkable)
+        info.firstNode!!
+      else
+        info.secondNode!!
+
+      val upperNode = facing.upperNode(node)
+      val otherUpperNode = getOtherNode(node, upperWall)!!
+      val otherUpNode = facing.upperNode(otherUpperNode)
+      val firstEdge = facing.wallVertices(upperWall).upper
+      val unorderedVertices = firstEdge.plus(firstEdge.map { it + offset })
+      val emptyNode = if (!upperNode.isSolid)
+        upperNode
+      else
+        otherUpNode
+
+      val orderedVertices = sortWallVertices(emptyNode.position, unorderedVertices)
+      val newWall = abstractWorld.mesh.createStitchedFace(orderedVertices)
+      newWall.data = FaceInfo(FaceType.wall, upperNode, otherUpNode, null, "lower")
+      upperNode.walls.add(newWall)
+      otherUpNode.walls.add(newWall)
+    }
+  }
+//  }
+//  }
+}
+
+fun expandVertically(abstractWorld: AbstractWorld, roomNodes: List<Node>, dice: Dice) {
+  val middleNodes = abstractWorld.nodes.toList()
+  listOf(VerticalFacingDown(), VerticalFacingUp())
+      .forEach { facing ->
+        createVerticalNodes(abstractWorld, middleNodes, roomNodes, dice, facing)
+        createDescendingSpaceWalls(abstractWorld, middleNodes, facing)
+      }
+}
+
+fun generateStructure(abstractWorld: AbstractWorld, dice: Dice, tunnels: List<Node>) {
+  createRooms(abstractWorld, dice, tunnels)
   calculateNormals(abstractWorld.mesh)
   initializeFaceInfo(abstractWorld)
-  defineNegativeSpace(abstractWorld)
-  fillBoundary(abstractWorld)
+  val roomNodes = abstractWorld.nodes.toList()
+  defineNegativeSpace(abstractWorld, dice)
+  fillBoundary(abstractWorld, dice)
+  expandVertically(abstractWorld, roomNodes, dice)
   assignTextures(abstractWorld)
 }

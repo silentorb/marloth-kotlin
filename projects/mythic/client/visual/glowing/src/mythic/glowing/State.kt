@@ -140,11 +140,12 @@ class State {
       }
     }
 
-  var depthEnabled: Boolean = false
+  var depthEnabled: Boolean
     set(value) {
       depthTest = value
       depthWrite = value
     }
+    get() = depthTest && depthWrite
 
   var depthTest: Boolean = false
     set(value) {
