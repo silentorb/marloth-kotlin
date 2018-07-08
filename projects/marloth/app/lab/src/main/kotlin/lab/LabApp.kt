@@ -82,6 +82,7 @@ data class LabApp(
 }
 
 private var saveIncrement = 0
+private var isSaving = false
 
 tailrec fun labLoop(app: LabApp, previousState: LabState) {
   app.display.swapBuffers()
@@ -99,9 +100,13 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
     app.gameConfig.gameplay.defaultPlayerView = app.world.players[0].viewMode
     saveGameConfig(app.gameConfig)
   }
-  if (saveIncrement++ > 60 * 3) {
+  if (saveIncrement++ > 60 * 3 && !isSaving) {
+    isSaving = true
     saveIncrement = 0
+//    thread {
     saveLabConfig(app.config)
+    isSaving = false
+//    }
   }
 
   if (menuAction == MenuActionType.newGame) {

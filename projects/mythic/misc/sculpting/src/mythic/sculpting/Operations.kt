@@ -30,7 +30,7 @@ fun skin(mesh: FlexibleMesh, first: List<Vector3>, second: List<Vector3>) {
           listOf(second[0], first[a], first[b])
         else
 //          listOf(first[b], first[a], second[a], second[b])
-          listOf(second[b], second[a], first[a], first[b])
+          listOf(second[b], second[a], first[a], first[b]).distinct()
     )
   }
 }

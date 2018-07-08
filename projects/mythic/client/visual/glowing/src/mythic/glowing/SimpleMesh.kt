@@ -103,9 +103,10 @@ class SimpleTriangleMesh<T>(val vertexBuffer: VertexBuffer<T>, val indices: IntB
 }
 
 class MutableSimpleMesh<T>(val vertexSchema: VertexSchema<T>) : Drawable {
-  var offsets: IntBuffer? = null
-  var counts: IntBuffer? = null
+  var offsets: IntBuffer = BufferUtils.createIntBuffer(1)
+  var counts: IntBuffer = BufferUtils.createIntBuffer(1)
   val vertexBuffer = VertexBuffer(vertexSchema)
+  val floatBuffer = BufferUtils.createFloatBuffer(64)
 
   override fun draw(method: DrawMethod) {
     vertexBuffer.activate()
@@ -113,9 +114,15 @@ class MutableSimpleMesh<T>(val vertexSchema: VertexSchema<T>) : Drawable {
   }
 
   fun load(values: List<Float>) {
-    vertexBuffer.load(createFloatBuffer(values))
-    offsets = createIntBuffer(0)
-    counts = createIntBuffer(values.size / vertexSchema.floatSize)
+    for (value in values) {
+      floatBuffer.put(value)
+    }
+    floatBuffer.flip()
+    vertexBuffer.load(floatBuffer)
+    offsets.put(0)
+    offsets.flip()
+    counts.put(values.size / vertexSchema.floatSize)
+    counts.flip()
   }
 
   override fun dispose() {

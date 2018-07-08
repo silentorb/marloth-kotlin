@@ -8,6 +8,7 @@ import mythic.platforming.WindowInfo
 import scenery.GameScene
 import simulation.AbstractWorld
 import haft.*
+import lab.views.map.createTopDownCamera
 import lab.views.map.renderMapView
 import lab.views.map.updateMapState
 import lab.views.model.ModelView
@@ -191,9 +192,10 @@ class LabClient(val config: LabConfig, val client: Client) {
     prepareClient(windowInfo)
     val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
     val input = getInputState(client.platform.input, commands)
-    updateMapState(config.mapView, input, delta)
+    val camera = createTopDownCamera(config.mapView.camera)
+    updateMapState(config.mapView, metaWorld, camera, input, windowInfo, delta)
 
-    renderMapView(client, metaWorld, config.mapView)
+    renderMapView(client, metaWorld, config.mapView, camera)
     return LabClientResult(
         listOf(),
         previousState.copy(labInput = nextLabInputState),

@@ -152,7 +152,7 @@ fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace,
   val newWall = getWallVertices(newPoints)
 
   val floorVertices = originalWall.upper.plus(newWall.upper)
-  val ceilingVertices = originFace.edges.map { it.vertices.sortedBy { it.z }.first() }
+//  val ceilingVertices = originalWall.lower.plus(newWall.lower)
   val sectorCenter = getCenter(floorVertices)
 
   val node = createSpaceNode(sectorCenter, abstractWorld, dice)
@@ -160,7 +160,7 @@ fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace,
 //  node.walls.addAll(walls)
 //  node.floors.add(floor)
   val floor = createFloor(abstractWorld.mesh, node, floorVertices, sectorCenter.xy)
-  val ceiling = createCeiling(abstractWorld.mesh, node, ceilingVertices, sectorCenter.xy)
+  val ceiling = createCeiling(abstractWorld.mesh, node, floorVertices, sectorCenter.xy)
 //  initializeFaceInfo(FaceType.wall, node, floor, Textures.grayNoise)
   node.walls.add(originFace)
   getFaceInfo(originFace).secondNode = node

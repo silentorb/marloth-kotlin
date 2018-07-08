@@ -233,24 +233,6 @@ fun determineWallTexture(info: FaceInfo): Textures? {
     else
       null
   }
-//  val rooms = nodes
-//      .filter { it.type.isWalkable }
-//  return if (rooms.size == 1) {
-//    val other = getOtherNode(info, rooms.first())
-//    if (other == null)
-//      Textures.checkers
-//    else if (other.type == NodeType.solid)
-//      Textures.darkCheckers
-//    else
-//      null
-//  } else if (rooms.size == 2) {
-//    null
-//  } else {
-//    if (nodes.count { it.type == NodeType.solid } == 1)
-//      Textures.darkCheckers
-//    else
-//      null
-//  }
 }
 
 fun determineCeilingTexture(info: FaceInfo): Textures? {
@@ -337,17 +319,10 @@ fun getLowerNode(node: Node) =
 fun getUpperNode(node: Node) =
     getOtherNode(node, node.ceilings.first())!!
 
-fun createDescendingSpaceWalls(abstractWorld: AbstractWorld, nodes: List<Node>, facing: VerticalFacing) {
+fun createAscendingSpaceWalls(abstractWorld: AbstractWorld, nodes: List<Node>, facing: VerticalFacing) {
   val walls = nodes.flatMap { it.walls }
-//  nodes.forEach { node ->
-  //    val walls = node.walls.filter {
-//      val otherNode = getOtherNode(node, it)
-//      otherNode != null && !otherNode.isSolid
-//    }
-//    if (walls.any()) {
   val depth = 6f
   val offset = Vector3(0f, 0f, depth * facing.dirMod)
-//  val lowerNode = facing.upperNode(node)
   walls.forEach { upperWall ->
     val info = getFaceInfo(upperWall)
     if (info.secondNode != null) {
@@ -373,8 +348,6 @@ fun createDescendingSpaceWalls(abstractWorld: AbstractWorld, nodes: List<Node>, 
       otherUpNode.walls.add(newWall)
     }
   }
-//  }
-//  }
 }
 
 fun expandVertically(abstractWorld: AbstractWorld, roomNodes: List<Node>, dice: Dice) {
@@ -382,7 +355,7 @@ fun expandVertically(abstractWorld: AbstractWorld, roomNodes: List<Node>, dice: 
   listOf(VerticalFacingDown(), VerticalFacingUp())
       .forEach { facing ->
         createVerticalNodes(abstractWorld, middleNodes, roomNodes, dice, facing)
-        createDescendingSpaceWalls(abstractWorld, middleNodes, facing)
+        createAscendingSpaceWalls(abstractWorld, middleNodes, facing)
       }
 }
 

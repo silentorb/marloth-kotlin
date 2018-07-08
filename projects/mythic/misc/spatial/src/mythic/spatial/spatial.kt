@@ -230,14 +230,14 @@ fun rayIntersectsLine3D(p1: Vector3, p2: Vector3, p3: Vector3, p4: Vector3, maxG
 }
 
 fun rayPolygonDistance(rayStart: Vector3, rayDirection: Vector3, polygonPoint: Vector3, polygonNormal: Vector3): Float? {
-  val denominator = polygonNormal.dot(rayDirection)
+  val denominator = -polygonNormal.dot(rayDirection)
   if (denominator < 1e-6)
     return null
 
   val foo = polygonPoint - rayStart
   val T = foo.dot(polygonNormal) / denominator
-  return if (T >= 0f)
-    T
+  return if (T <= 0f)
+    -T
   else
     null
 }

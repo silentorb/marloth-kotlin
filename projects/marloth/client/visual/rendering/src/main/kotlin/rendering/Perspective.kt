@@ -59,5 +59,8 @@ fun createCameraMatrix(dimensions: Vector2i, camera: Camera): Matrix {
 fun createCameraEffectsData(dimensions: Vector2i, camera: Camera) =
     CameraEffectsData(
         createCameraMatrix(dimensions, camera),
-        camera.orientation * Vector3(1f, 0f, 0f)
+        if (camera.lookAt != null)
+          camera.lookAt!! - camera.position
+        else
+          camera.orientation * Vector3(1f, 0f, 0f)
     )

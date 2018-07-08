@@ -35,8 +35,6 @@ fun createCanvas(windowInfo: WindowInfo): Canvas {
   val fonts = loadFonts(listOf(dosFont))
 
   return Canvas(
-      vertexSchemas,
-      createDrawingMeshes(vertexSchemas),
       createDrawingEffects(),
       unitScaling,
       fonts,

@@ -121,6 +121,7 @@ class FlexibleMesh {
   }
 
   fun createFace(vertices: List<Vector3>): FlexibleFace {
+    assert(vertices.distinct().size == vertices.size) // Check for duplicate vertices
     val face = createFace()
     replaceFaceVertices(face, vertices)
     return face

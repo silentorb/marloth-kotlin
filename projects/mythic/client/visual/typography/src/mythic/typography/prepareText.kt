@@ -134,16 +134,18 @@ fun calculateTextDimensions(config: TextConfiguration): Vector2 {
   return Vector2(arrangement.width, arrangement.height)
 }
 
+private val maxCharacters = 128
+private val vertexSchemaFloatSize = 4
+private val vertexBuffer = BufferUtils.createFloatBuffer(4 * maxCharacters * vertexSchemaFloatSize)
+private val offsetBuffer = BufferUtils.createIntBuffer(maxCharacters)
+private val countBuffer = BufferUtils.createIntBuffer(maxCharacters)
+
 fun <T> prepareText(config: TextConfiguration, vertexSchema: VertexSchema<T>): TextPackage? {
   val arrangement = arrangeType(config)
   if (arrangement == null)
     return null
 
   val characters = arrangement.characters
-  val vertices = BufferUtils.createFloatBuffer(4 * characters.size * vertexSchema.floatSize)
-  val offsets = BufferUtils.createIntBuffer(characters.size)
-  val counts = BufferUtils.createIntBuffer(characters.size)
-
   var index = 0
 
   for (arrangedCharacter in arrangement.characters) {
@@ -154,20 +156,20 @@ fun <T> prepareText(config: TextConfiguration, vertexSchema: VertexSchema<T>): T
     val height = glyph.info.sizeY.toFloat()
     val texture_width = (width +0).toFloat() / config.style.font.dimensions.x
 
-    vertices.put(Vector4(x + width, y - height, texture_width, glyph.offset))
-    vertices.put(Vector4(x + width, y, texture_width, glyph.offset + glyph.height))
-    vertices.put(Vector4(x, y, 0f, glyph.offset + glyph.height))
-    vertices.put(Vector4(x, y - height, 0f, glyph.offset))
-    offsets.put(index)
+    vertexBuffer.put(Vector4(x + width, y - height, texture_width, glyph.offset))
+    vertexBuffer.put(Vector4(x + width, y, texture_width, glyph.offset + glyph.height))
+    vertexBuffer.put(Vector4(x, y, 0f, glyph.offset + glyph.height))
+    vertexBuffer.put(Vector4(x, y - height, 0f, glyph.offset))
+    offsetBuffer.put(index)
     index += 4
-    counts.put(4)
+    countBuffer.put(4)
   }
 
-  vertices.flip()
-  offsets.flip()
-  counts.flip()
+  vertexBuffer.flip()
+  offsetBuffer.flip()
+  countBuffer.flip()
 
   return TextPackage(
-      SimpleMesh(vertexSchema, vertices, offsets, counts)
+      SimpleMesh(vertexSchema, vertexBuffer, offsetBuffer, countBuffer)
   )
 }

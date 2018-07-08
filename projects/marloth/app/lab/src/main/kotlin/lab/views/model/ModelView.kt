@@ -91,7 +91,7 @@ fun getEdgeHits(start: Vector3, end: Vector3, model: Model): List<Hit> {
   }
 }
 
-fun getFaceHits(start: Vector3, end: Vector3, model: Model): List<Hit> {
+private fun getFaceHits(start: Vector3, end: Vector3, model: Model): List<Hit> {
   val faces = model.mesh.faces
   val rayDirection = (end - start).normalize()
 
@@ -107,7 +107,7 @@ fun getFaceHits(start: Vector3, end: Vector3, model: Model): List<Hit> {
   }
 }
 
-fun getHits(componentMode: ComponentMode, start: Vector3, end: Vector3, model: Model): List<Hit> =
+private fun getHits(componentMode: ComponentMode, start: Vector3, end: Vector3, model: Model): List<Hit> =
     when (componentMode) {
       ComponentMode.vertices -> getVertexHits(start, end, model)
       ComponentMode.edges -> getEdgeHits(start, end, model)

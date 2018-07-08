@@ -76,7 +76,6 @@ class Renderer {
   val drawing = createDrawingEffects()
   val vertexSchemas = createVertexSchemas()
   var worldMesh: WorldMesh? = null
-  val canvasMeshes = createDrawingMeshes(vertexSchemas.drawing)
   val meshGenerators = standardMeshes()
   val meshes = createMeshes(vertexSchemas)
   val textures = createTextureLibrary()
@@ -271,8 +270,6 @@ class GameSceneRenderer(
 fun createCanvas(renderer: Renderer, windowInfo: WindowInfo): Canvas {
   val unitScaling = getUnitScaling(windowInfo.dimensions)
   return Canvas(
-      renderer.vertexSchemas.drawing,
-      renderer.canvasMeshes,
       renderer.drawing,
       unitScaling,
       renderer.fonts,

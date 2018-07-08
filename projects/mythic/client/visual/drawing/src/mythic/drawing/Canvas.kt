@@ -78,19 +78,42 @@ enum class FillType {
   outline
 }
 
+data class CanvasDependencies(
+    val vertexSchemas: DrawingVertexSchemas,
+    val meshes: Meshes,
+    val dynamicMesh: MutableSimpleMesh<String>,
+    val dynamicTexturedMesh: MutableSimpleMesh<String>
+)
+
+private var staticCanvasDependencies: CanvasDependencies? = null
+
+fun getStaticCanvasDependencies(): CanvasDependencies {
+  if (staticCanvasDependencies == null) {
+    val vertexSchemas = createDrawingVertexSchemas()
+    staticCanvasDependencies = CanvasDependencies(
+        vertexSchemas = vertexSchemas,
+        meshes = createDrawingMeshes(vertexSchemas),
+        dynamicMesh = MutableSimpleMesh(vertexSchemas.simple),
+        dynamicTexturedMesh = MutableSimpleMesh(vertexSchemas.image)
+    )
+  }
+  return staticCanvasDependencies!!
+}
+
 typealias Brush = (Matrix, Drawable) -> Unit
 
 class Canvas(
-    val vertexSchemas: DrawingVertexSchemas,
-    val meshes: Meshes,
     val effects: DrawingEffects,
     val unitScaling: Vector2,
     val fonts: List<Font>,
-    dimensions: Vector2i
+    dimensions: Vector2i,
+    dependencies: CanvasDependencies = getStaticCanvasDependencies()
 ) {
+  val vertexSchemas = dependencies.vertexSchemas
+  val meshes = dependencies.meshes
 
-  val dynamicMesh = MutableSimpleMesh(vertexSchemas.simple)
-  val dynamicTexturedMesh = MutableSimpleMesh(vertexSchemas.image)
+  val dynamicMesh = dependencies.dynamicMesh
+  val dynamicTexturedMesh = dependencies.dynamicTexturedMesh
   val viewportDimensions = Vector2(dimensions.x.toFloat(), dimensions.y.toFloat())
   val pixelsToScalar = Matrix().scale(1f / dimensions.x, 1f / dimensions.y, 1f)
 

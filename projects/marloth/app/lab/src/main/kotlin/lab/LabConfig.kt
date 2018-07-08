@@ -138,6 +138,7 @@ fun createLabInputBindings() = mutableMapOf(
             GLFW.GLFW_KEY_E to LabCommandType.rotateRight
         )))
         .plus(createBindings(1, mapOf(
+            GLFW.GLFW_MOUSE_BUTTON_1 to LabCommandType.select,
             MOUSE_SCROLL_UP to LabCommandType.zoomIn,
             MOUSE_SCROLL_DOWN to LabCommandType.zoomOut
         )))
