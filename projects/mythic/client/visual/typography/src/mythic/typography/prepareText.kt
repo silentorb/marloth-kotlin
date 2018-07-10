@@ -148,6 +148,10 @@ fun <T> prepareText(config: TextConfiguration, vertexSchema: VertexSchema<T>): T
   val characters = arrangement.characters
   var index = 0
 
+  vertexBuffer.limit(4 * characters.size * vertexSchemaFloatSize)
+  offsetBuffer.limit(characters.size)
+  countBuffer.limit(characters.size)
+
   for (arrangedCharacter in arrangement.characters) {
     val glyph = arrangedCharacter.glyph
     val x = arrangedCharacter.x
@@ -160,6 +164,7 @@ fun <T> prepareText(config: TextConfiguration, vertexSchema: VertexSchema<T>): T
     vertexBuffer.put(Vector4(x + width, y, texture_width, glyph.offset + glyph.height))
     vertexBuffer.put(Vector4(x, y, 0f, glyph.offset + glyph.height))
     vertexBuffer.put(Vector4(x, y - height, 0f, glyph.offset))
+
     offsetBuffer.put(index)
     index += 4
     countBuffer.put(4)

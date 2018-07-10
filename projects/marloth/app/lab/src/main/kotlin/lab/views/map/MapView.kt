@@ -35,7 +35,8 @@ data class MapViewConfig(
     val display: MapViewDisplayConfig = MapViewDisplayConfig(),
     var selection: List<Int> = listOf(),
     var tempStart: Vector3 = Vector3(),
-    var tempEnd: Vector3 = Vector3()
+    var tempEnd: Vector3 = Vector3(),
+    var raySkip: Int = 0
 )
 
 data class Hit(
@@ -60,7 +61,7 @@ private fun getFaceHits(start: Vector3, end: Vector3, world: AbstractWorld): Lis
   }
 }
 
-private fun trySelect(config: MapViewConfig, camera: Camera, world: AbstractWorld, mousePosition: Vector2i, bounds: Bounds) {
+private fun castSelectionRay(config: MapViewConfig, camera: Camera, world: AbstractWorld, mousePosition: Vector2i, bounds: Bounds) {
   val dimensions = bounds.dimensions
   val cursor = mousePosition - bounds.position.toVector2i()
   val cameraData = createCameraEffectsData(dimensions.toVector2i(), camera)
@@ -72,12 +73,19 @@ private fun trySelect(config: MapViewConfig, camera: Camera, world: AbstractWorl
   val end = start + cameraData.direction * camera.farClip
   config.tempStart = start
   config.tempEnd = end
+}
+
+private fun trySelect(config: MapViewConfig, world: AbstractWorld) {
+  val start = config.tempStart
+  val end = config.tempEnd
+  config.tempStart = start
+  config.tempEnd = end
   val hits = getFaceHits(start, end, world)
   if (hits.size > 0) {
     val sorted = hits.sortedBy { it.position.distance(start) }
-    config.selection = sorted.take(1).map { it.index }.toMutableList()
-//    val edge = mesh.edges.filter { it.middle == sorted[0].position }.first()
-//    rayIntersectsLine3D(start, end, edge.first, edge.second, 0.02f)
+    val index = config.raySkip % sorted.size
+    val hit = sorted[index]
+    config.selection = listOf(hit.index).toMutableList()
   } else {
     config.selection = mutableListOf()
   }
@@ -88,7 +96,19 @@ fun updateMapState(config: MapViewConfig, world: AbstractWorld, camera: Camera, 
 
   if (isActive(commands, LabCommandType.select)) {
     val bounds = Bounds(0f, 0f, windowInfo.dimensions.x.toFloat(), windowInfo.dimensions.y.toFloat())
-    trySelect(config, camera, world, input.mousePosition, bounds)
+    config.raySkip = 0
+    castSelectionRay(config, camera, world, input.mousePosition, bounds)
+    trySelect(config, world)
+  }
+
+  if (isActive(commands, LabCommandType.incrementRaySkip)) {
+    ++config.raySkip
+    trySelect(config, world)
+  }
+
+  if (isActive(commands, LabCommandType.decrementRaySkip)) {
+    --config.raySkip
+    trySelect(config, world)
   }
 
   val moveSpeed = 30

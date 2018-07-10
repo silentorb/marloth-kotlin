@@ -224,7 +224,7 @@ fun determineWallTexture(info: FaceInfo): Textures? {
 //    if (nodes.first().isSolid)
 //      Textures.checkers
 //    else
-      null//Textures.debugCyan
+    null//Textures.debugCyan
   } else {
     val wallCount = nodes.count { it.isSolid }
     val walkableCount = nodes.count { it.isWalkable }
@@ -260,7 +260,13 @@ fun assignTextures(abstractWorld: AbstractWorld) {
   }
 }
 
+enum class VerticalDirection {
+  down,
+  up
+}
+
 interface VerticalFacing {
+  val dir: VerticalDirection
   val dirMod: Float
   fun ceilings(node: Node): MutableList<FlexibleFace>
   fun floors(node: Node): MutableList<FlexibleFace>
@@ -269,6 +275,7 @@ interface VerticalFacing {
 }
 
 class VerticalFacingUp : VerticalFacing {
+  override val dir: VerticalDirection = VerticalDirection.up
   override val dirMod: Float get() = 1f
   override fun ceilings(node: Node): MutableList<FlexibleFace> = node.ceilings
   override fun floors(node: Node): MutableList<FlexibleFace> = node.floors
@@ -277,6 +284,7 @@ class VerticalFacingUp : VerticalFacing {
 }
 
 class VerticalFacingDown : VerticalFacing {
+  override val dir: VerticalDirection = VerticalDirection.down
   override val dirMod: Float get() = -1f
   override fun ceilings(node: Node): MutableList<FlexibleFace> = node.floors
   override fun floors(node: Node): MutableList<FlexibleFace> = node.ceilings
@@ -287,18 +295,13 @@ class VerticalFacingDown : VerticalFacing {
   }
 }
 
-fun createVerticalNodes(abstractWorld: AbstractWorld, middleNodes: List<Node>, roomNodes: List<Node>, dice: Dice, facing: VerticalFacing) {
+fun createVerticalNodes(abstractWorld: AbstractWorld, middleNodes: List<Node>, roomNodes: List<Node>, dice: Dice,
+                        facing: VerticalFacing, shouldBeSolid: (original: Node) -> Boolean) {
   val newNodes = middleNodes.map { node ->
     val depth = 2f
     val offset = Vector3(0f, 0f, depth * facing.dirMod)
-    val isSolid = if (!roomNodes.contains(node) && !node.isSolid)
-      false
-    else if (dice.getInt(0, 3) != 0)
-      true
-    else
-      false
 
-    val newNode = createSecondaryNode(node.position + offset, abstractWorld, isSolid = isSolid)
+    val newNode = createSecondaryNode(node.position + offset, abstractWorld, isSolid = shouldBeSolid(node))
     assert(facing.ceilings(node).any())
     for (ceiling in facing.ceilings(node)) {
       facing.floors(newNode).add(ceiling)
@@ -352,9 +355,24 @@ fun createAscendingSpaceWalls(abstractWorld: AbstractWorld, nodes: List<Node>, f
 
 fun expandVertically(abstractWorld: AbstractWorld, roomNodes: List<Node>, dice: Dice) {
   val middleNodes = abstractWorld.nodes.toList()
+  val isRoom = { node: Node -> roomNodes.contains(node) }
+  val shouldBeSolids = mapOf(
+      VerticalDirection.down to { node: Node ->
+        if (isRoom(node))
+          true
+        else if (!node.isSolid)
+          false
+        else dice.getInt(0, 3) != 0
+      },
+      VerticalDirection.up to { node: Node ->
+        if (!roomNodes.contains(node) && !node.isSolid)
+          false
+        else dice.getInt(0, 3) != 0
+      }
+  )
   listOf(VerticalFacingDown(), VerticalFacingUp())
       .forEach { facing ->
-        createVerticalNodes(abstractWorld, middleNodes, roomNodes, dice, facing)
+        createVerticalNodes(abstractWorld, middleNodes, roomNodes, dice, facing, shouldBeSolids[facing.dir]!!)
         createAscendingSpaceWalls(abstractWorld, middleNodes, facing)
       }
 }

@@ -5,6 +5,7 @@ import generation.abstract.createTunnelNodes
 import generation.abstract.handleOverlapping
 import generation.abstract.unifyWorld
 import generation.structure.generateStructure
+import mythic.sculpting.FlexibleFace
 import mythic.spatial.*
 import org.joml.minus
 import org.joml.plus
@@ -74,10 +75,14 @@ fun placeEnemies(world: World, instantiator: Instantiator, dice: Dice, scale: Fl
 }
 
 fun placeWallLamps(world: World, instantiator: Instantiator, dice: Dice, scale: Float) {
-  val count = (11f * scale).toInt()
-  val nodes = dice.getList(world.meta.locationNodes, count)
+  val count = (10f * scale).toInt()
+  val isValidLampWall = { it: FlexibleFace ->
+    getFaceInfo(it).type == FaceType.wall && getFaceInfo(it).texture != null
+  }
+  val options = world.meta.locationNodes.filter { it.walls.any(isValidLampWall) }
+  val nodes = dice.getList(options, count)
   nodes.forEach { node ->
-    val options = node.walls.filter { getFaceInfo(it).type == FaceType.wall && getFaceInfo(it).texture != null }
+    val options = node.walls.filter(isValidLampWall)
     if (options.any()) {
       val wall = dice.getItem(options)
       val edge = wall.edges[0]

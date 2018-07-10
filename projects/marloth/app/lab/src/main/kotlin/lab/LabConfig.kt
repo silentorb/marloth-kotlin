@@ -33,6 +33,8 @@ enum class LabCommandType {
   select,
   zoomIn,
   zoomOut,
+  incrementRaySkip,
+  decrementRaySkip,
 
   cameraViewFront,
   cameraViewBack,
@@ -123,7 +125,10 @@ fun createLabInputBindings() = mutableMapOf(
     Views.map to createStrokeBindings<LabCommandType>(0, mapOf(
         GLFW.GLFW_KEY_M to LabCommandType.toggleMeshDisplay,
         GLFW.GLFW_KEY_N to LabCommandType.toggleNormals,
-        GLFW.GLFW_KEY_I to LabCommandType.toggleVertexIndices
+        GLFW.GLFW_KEY_I to LabCommandType.toggleVertexIndices,
+        GLFW.GLFW_KEY_LEFT_BRACKET to LabCommandType.decrementRaySkip,
+        GLFW.GLFW_KEY_RIGHT_BRACKET to LabCommandType.incrementRaySkip
+
     ))
         .plus(createBindings<LabCommandType>(0, mapOf(
             GLFW.GLFW_KEY_UP to LabCommandType.moveUp,
