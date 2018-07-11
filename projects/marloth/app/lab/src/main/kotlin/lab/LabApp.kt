@@ -10,12 +10,9 @@ import front.setWorldMesh
 import generation.generateWorld
 import generation.placeEnemies
 import lab.views.GameViewConfig
-import lab.views.model.ModelViewState
 import lab.views.model.newModelViewState
 import marloth.clienting.Client
-import marloth.clienting.ClientState
 import marloth.clienting.gui.MenuActionType
-import marloth.clienting.gui.initialMenuState
 import marloth.clienting.initialGameInputState
 import marloth.clienting.newClientState
 import mythic.desktop.createDesktopPlatform
@@ -31,6 +28,26 @@ import kotlin.concurrent.thread
 import simulation.changing.Instantiator
 import simulation.changing.InstantiatorConfig
 import simulation.createWorldBoundary
+import java.io.File
+import java.util.*
+
+
+private val watchedPackageFiles = listOf(
+    App::class
+)
+    .map { it.java.getProtectionDomain().getCodeSource().getLocation().toURI() }
+
+val lastTimestamps = watchedPackageFiles.associate { Pair(it, 0L) }.toMutableMap()
+
+fun hasAnyChanged(): Boolean =
+    lastTimestamps.any {
+      val lastModified = File(it.key).lastModified()
+      if (lastModified > it.value) {
+        lastTimestamps[it.key] = lastModified
+        true
+      } else
+        false
+    }
 
 fun startGui() {
   thread(true, false, null, "JavaFX GUI", -1) {
@@ -107,6 +124,10 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
     saveLabConfig(app.config)
     isSaving = false
 //    }
+
+    if (hasAnyChanged()) {
+      println("One of the watched packages was modified at " + Date().toString())
+    }
   }
 
   if (menuAction == MenuActionType.newGame) {
@@ -116,6 +137,7 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
   if (!app.platform.process.isClosing())
     labLoop(app, nextState)
 }
+
 
 fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
   platform.display.initialize(gameConfig.display)
@@ -134,6 +156,9 @@ fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
 object App {
   @JvmStatic
   fun main(args: Array<String>) {
+    val s = this.javaClass.`package`.getImplementationVersion()
+    val s2 = File(App::class.java.getProtectionDomain().getCodeSource().getLocation().toURI())
+    val s3 = s2.lastModified()
     System.setProperty("joml.format", "false")
     val config = loadConfig<LabConfig>("labConfig.yaml") ?: LabConfig()
     val gameConfig = loadGameConfig()
