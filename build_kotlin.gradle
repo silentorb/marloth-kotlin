@@ -1,8 +1,7 @@
 apply plugin: 'kotlin'
 sourceSets {
-  main.kotlin.srcDirs += file('src/main').exists() ? 'src/main' : (file('src/main/kotlin').exists() ? 'src/main/kotlin' : 'src')
+  main.kotlin.srcDirs += file('src/main').exists() ? (file('src/main/kotlin').exists() ? 'src/main/kotlin' : 'src/main'): 'src'
   test.kotlin.srcDirs += 'src/test'
-
 }
 sourceCompatibility = 1.8
 
