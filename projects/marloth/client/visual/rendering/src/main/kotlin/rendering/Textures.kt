@@ -2,6 +2,7 @@ package rendering
 
 import marloth.texture_generation.*
 import mythic.glowing.Texture
+import mythic.glowing.TextureAttributes
 import mythic.spatial.Vector3
 import mythic.spatial.times
 import org.joml.plus
@@ -45,8 +46,10 @@ fun grayNoise(scales: List<Float>): OpaqueTextureAlgorithm {
 
 typealias TextureLibrary = Map<Textures, Texture>
 typealias OpaqueTextureAlgorithmSource = () -> OpaqueTextureAlgorithm
+typealias TextureGenerator = (scale: Float) -> Texture
+typealias TextureGeneratorMap = Map<Textures, TextureGenerator>
 
-val textureLibrary: Map<Textures, OpaqueTextureAlgorithmSource> = mapOf(
+val basicTextures: Map<Textures, OpaqueTextureAlgorithmSource> = mapOf(
 
     Textures.checkers to createCheckers,
 
@@ -64,5 +67,23 @@ val textureLibrary: Map<Textures, OpaqueTextureAlgorithmSource> = mapOf(
     }
 )
 
-fun createTextureLibrary() =
-    textureLibrary.mapValues { createTexture(it.value(), 256) }
+fun applyAlgorithm(algorithm: OpaqueTextureAlgorithm, length: Int, attributes: TextureAttributes): TextureGenerator = { scale ->
+  val scaledLength = (length * scale).toInt()
+  val buffer = createTextureBuffer(algorithm, scaledLength, scaledLength)
+  Texture(scaledLength, scaledLength, buffer, attributes)
+}
+
+private val miscTextureGenerators: TextureGeneratorMap = mapOf(
+    Textures.background to applyAlgorithm(createCheckers(), 512, TextureAttributes(repeating = false))
+)
+
+private val basicTextureGenerators: TextureGeneratorMap = basicTextures.mapValues { algorithm ->
+  applyAlgorithm(algorithm.value(), 256, TextureAttributes(repeating = true))
+}
+
+val textureGenerators: TextureGeneratorMap =
+    basicTextureGenerators
+    .plus(miscTextureGenerators)
+
+fun createTextureLibrary(scale: Float) = textureGenerators.mapValues { it.value(scale) }
+

@@ -1,22 +1,40 @@
 package rendering.meshes
 
-import mythic.sculpting.FlexibleMesh
-import mythic.sculpting.createCube
-import mythic.sculpting.createSphere
-import mythic.sculpting.translateMesh
+import mythic.sculpting.*
+import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
+import rendering.FaceTextureMap
 import rendering.Material
 import rendering.Model
 import rendering.mapMaterialToMesh
 
 val createCube = {
   val mesh = FlexibleMesh()
-//  create.squareDown(mesh, Vector2(1f, 1f), 1f)
   createCube(mesh, Vector3(1f, 1f, 1f))
   Model(
       mesh = mesh,
       groups = listOf(mapMaterialToMesh(Material(Vector4(.5f, .5f, .5f, 1f)), mesh))
+  )
+}
+
+val createSkybox = {
+  val mesh = FlexibleMesh()
+  createCube(mesh, Vector3(1f, 1f, 1f))
+  val uvs = listOf(
+      Vector2(0f, 0f),
+      Vector2(1f, 0f),
+      Vector2(1f, 1f),
+      Vector2(0f, 1f)
+  )
+  val textureMap: FaceTextureMap = mesh.faces.associate { face ->
+    val vertexMap = face.vertices.zip(uvs) { a, b -> Pair(a, VertexNormalTexture(face.normal, b)) }.associate { it }
+    Pair(face, vertexMap)
+  }
+  mesh.faces.forEach { it.flipQuad() }
+  Model(
+      mesh = mesh,
+      textureMap = textureMap
   )
 }
 

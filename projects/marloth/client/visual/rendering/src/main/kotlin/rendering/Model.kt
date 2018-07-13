@@ -24,8 +24,9 @@ fun mapMaterialToManyMeshes(material: Material, meshes: List<FlexibleMesh>): Mes
 
 data class Model(
     val mesh: FlexibleMesh,
-    val groups: List<MeshGroup>,
-    val info: MeshInfo = MeshInfo()
+    val groups: List<MeshGroup> = listOf(),
+    val info: MeshInfo = MeshInfo(),
+    val textureMap: FaceTextureMap? = null
 ) {
   val vertices: List<Vector3> get() = mesh.distinctVertices
   val edges: List<FlexibleEdge> get() = mesh.edges

@@ -12,7 +12,9 @@ import org.joml.*
 import rendering.meshes.AttributeName
 import rendering.meshes.MeshMap
 import rendering.meshes.createVertexSchemas
-import scenery.*
+import scenery.GameScene
+import scenery.Light
+import scenery.Scene
 import kotlin.reflect.full.declaredMemberProperties
 
 fun gatherEffectsData(dimensions: Vector2i, scene: Scene, cameraEffectsData: CameraEffectsData): EffectsData {
@@ -77,8 +79,8 @@ class Renderer {
   val vertexSchemas = createVertexSchemas()
   var worldMesh: WorldMesh? = null
   val meshGenerators = standardMeshes()
-  val meshes = createMeshes(vertexSchemas)
-  val textures = createTextureLibrary()
+  val meshes: MeshMap = createMeshes(vertexSchemas)
+  val textures: TextureLibrary = createTextureLibrary(1f)
   val fonts = loadFonts(listOf(
       FontLoadInfo(
           filename = "cour.ttf",
@@ -201,70 +203,6 @@ class SceneRenderer(
 
   val meshes: MeshMap
     get() = renderer.meshes
-}
-
-class GameSceneRenderer(
-    val scene: GameScene,
-    val renderer: SceneRenderer
-) {
-
-  fun prepareRender() {
-    globalState.viewport = renderer.viewport
-    globalState.depthEnabled = true
-  }
-
-  fun lookupMesh(depiction: DepictionType) = renderer.meshes[simplePainterMap[depiction]]!!
-
-  fun renderElement(element: VisualElement) {
-    val childDetails = scene.elementDetails.children[element.id]
-    if (childDetails != null) {
-      val mesh = lookupMesh(element.depiction)
-      advancedPainter(mesh, renderer.renderer)(element, renderer.effects)
-//      humanPainter(renderer, mesh.primitives)(element, renderer.effects, childDetails)
-    } else {
-      val mesh = lookupMesh(element.depiction)
-      simplePainter(mesh.primitives)(element, renderer.effects)
-    }
-  }
-
-  fun renderElements() {
-    for (element in scene.elements) {
-      renderElement(element)
-    }
-  }
-
-  fun renderSectorMesh(sector: SectorMesh) {
-    var index = 0
-    for (texture in sector.textureIndex) {
-      texture.activate()
-      sector.mesh.drawElement(DrawMethod.triangleFan, index++)
-    }
-  }
-
-  fun renderWorldMesh() {
-    globalState.cullFaces = true
-    val worldMesh = renderer.renderer.worldMesh
-    if (worldMesh != null) {
-      val effectConfig = ObjectShaderConfig(
-          transform = Matrix(),
-          texture = renderer.renderer.textures[Textures.checkers]!!,
-          color = Vector4(1f),
-          normalTransform = Matrix()
-      )
-      renderer.effects.textured.activate(effectConfig)
-      for (sector in worldMesh.sectors) {
-        renderSectorMesh(sector)
-      }
-    }
-    globalState.cullFaces = false
-  }
-
-  fun render() {
-    prepareRender()
-    renderWorldMesh()
-    renderElements()
-  }
-
 }
 
 fun createCanvas(renderer: Renderer, windowInfo: WindowInfo): Canvas {

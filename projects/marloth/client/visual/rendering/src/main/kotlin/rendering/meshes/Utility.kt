@@ -1,6 +1,5 @@
 package rendering.meshes
 
-import mythic.breeze.Armature
 import mythic.glowing.Drawable
 import mythic.glowing.SimpleMesh
 import mythic.sculpting.FlexibleFace
@@ -36,13 +35,13 @@ fun simpleVertexSerializer(): FlexibleVertexSerializer {
   }
 }
 
-fun createSimpleMesh(faces: List<FlexibleFace>, vertexSchema: VertexSchema, color: Vector4) =
+fun createSimpleMesh(faces: List<FlexibleFace>, vertexSchema: VertexSchema) =
     convertMesh(faces, vertexSchema, simpleVertexSerializer())
 
 fun createAnimatedMesh(faces: List<FlexibleFace>, vertexSchema: VertexSchema, weightMap: WeightMap) =
     convertMesh(faces, vertexSchema, animatedVertexSerializer(weightMap))
 
-fun createSimpleMesh(mesh: FlexibleMesh, vertexSchema: VertexSchema, color: Vector4) =
+fun createSimpleMesh(mesh: FlexibleMesh, vertexSchema: VertexSchema) =
     convertMesh(mesh, vertexSchema, simpleVertexSerializer())
 
 fun createLineMesh(vertexSchema: VertexSchema) =
@@ -82,7 +81,7 @@ fun partitionModelMeshes(model: Model): List<TransientModelElement> {
 fun modelToMeshes(vertexSchemas: VertexSchemas, model: Model): Primitives {
   val sections = partitionModelMeshes(model)
   return sections.map {
-    Primitive(createSimpleMesh(it.faces, vertexSchemas.shaded, Vector4(1f)), it.material)
+    Primitive(createSimpleMesh(it.faces, vertexSchemas.shaded), it.material)
   }
 }
 

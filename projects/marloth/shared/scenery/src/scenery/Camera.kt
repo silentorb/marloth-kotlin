@@ -14,6 +14,6 @@ data class Camera(
     val orientation: Quaternion,
     val angleOrZoom: Float,
     val nearClip: Float = 0.01f,
-    val farClip: Float = 200f,
+    val farClip: Float = 1000f,
     val lookAt: Vector3? = null
 )

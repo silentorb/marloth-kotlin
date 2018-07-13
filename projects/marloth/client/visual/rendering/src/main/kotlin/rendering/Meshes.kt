@@ -1,12 +1,10 @@
 package rendering
 
 import mythic.breeze.Armature
-import mythic.glowing.VertexSchema as GenericVertexSchema
-import mythic.spatial.*
 import rendering.meshes.*
-import rendering.meshes.loading.loadGltf
 import rigging.createSkeleton
 import rigging.humanAnimations
+import mythic.glowing.VertexSchema as GenericVertexSchema
 
 enum class MeshType {
   bear,
@@ -17,6 +15,7 @@ enum class MeshType {
   line,
   monster,
   skeleton,
+  skybox,
   sphere,
   cube,
   wallLamp,
@@ -56,13 +55,14 @@ fun advancedMeshes(vertexSchemas: VertexSchemas): AdvancedModelGeneratorMap {
   val skeleton = skeletonMesh(vertexSchemas)
   return mapOf(
       MeshType.skeleton to skeleton,
-      MeshType.child to skeleton
+      MeshType.child to skeleton,
+      MeshType.skybox to skyboxModel(vertexSchemas)
   )
 }
 
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     MeshType.line to createLineMesh(vertexSchemas.flat),
-    MeshType.cylinder to createSimpleMesh(createCylinder(), vertexSchemas.textured, Vector4(0.3f, 0.25f, 0.0f, 1f))
+    MeshType.cylinder to createSimpleMesh(createCylinder(), vertexSchemas.textured)
 )
     .mapValues { createModelElements(it.value) }
 //    .plus(mapOf(
@@ -73,13 +73,4 @@ fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
       modelToMeshes(vertexSchemas, it.value())
     })
     .mapValues { AdvancedModel(it.value) }
-//    .plus(importedMeshes(vertexSchemas))
     .plus(advancedMeshes(vertexSchemas).mapValues { it.value() })
-
-//fun importedMeshes(vertexSchemas: VertexSchemas) = mapOf(
-////    MeshType.wallLamp to "lamp",
-//    MeshType.cube to "cube"
-////    MeshType.child to "girl2/child"
-////    MeshType.child to "child/child"
-//)
-//    .mapValues { loadGltf(vertexSchemas, "models/" + it.value) }

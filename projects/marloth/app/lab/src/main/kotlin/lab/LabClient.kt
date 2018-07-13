@@ -97,7 +97,7 @@ class LabClient(val config: LabConfig, val client: Client) {
   }
 
   fun updateGame(windowInfo: WindowInfo, scenes: List<GameScene>, metaWorld: AbstractWorld, previousState: LabState, delta: Float): LabClientResult {
-    client.platform.input.isMouseVisible(false)
+//    client.platform.input.isMouseVisible(false)
     client.platform.input.update()
 //    println(client.platform.input.getMousePosition())
     val view = GameView(config.gameView)
