@@ -88,6 +88,7 @@ class Renderer {
       )
   ))
   val dynamicMesh = MutableSimpleMesh(vertexSchemas.flat)
+  val shaderLookup = Shaders::class.java.kotlin.declaredMemberProperties.map {it.get(shaders) as GeneralShader}
 
   init {
     glow.state.clearColor = Vector4(0f, 0f, 0f, 1f)
@@ -104,8 +105,7 @@ class Renderer {
         sceneBuffer = sceneBuffer
     )
 
-    for (property in Shaders::class.java.kotlin.declaredMemberProperties) {
-      val shader = property.get(shaders) as GeneralShader
+    for (shader in shaderLookup) {
       shader.updateScene(sceneConfig)
     }
   }

@@ -104,7 +104,7 @@ data class Armature(
 //}
 
 fun getBoneTranslation(bones: Bones, bone: Bone): Vector3 =
-    Vector3().transform(bone.transform(bones, bone))
+    transformVector(bone.transform(bones, bone))
 
 fun transformBone(translation: Vector3, rotation: Quaternion, length: Float) =
     Matrix()
@@ -144,7 +144,7 @@ fun getSimpleBoneTransform2(bone: Bone): Matrix {
 
 fun getSimpleBoneTranslation(bone: Bone): Vector3 {
   val transform = getSimpleBoneTransform2(bone)
-  val translation = Vector3().transform(transform)
+  val translation = transformVector(transform)
   return translation
 }
 
@@ -154,7 +154,7 @@ val independentTransform: Transformer = { bones, bone ->
 
 fun projectBoneTail(matrix: Matrix, bone: Bone) =
 //    Matrix().translate(Vector3(bone.length, 0f, 0f)).mul(matrix)
-    Matrix(matrix).translate(Vector3(bone.length, 0f, 0f))
+    Matrix(matrix).translate(bone.length, 0f, 0f)
 
 val dependentTransform: Transformer = { bones, bone ->
   val parent = bone.parent
@@ -170,18 +170,18 @@ fun inverseKinematicJointTransform(outVector: Vector3): Transformer = { bones, b
   //  val previousBone = bones[bone.index - 1]
   val endBone = bones[bone.index + 2]
   val transform = dependentTransform(bones, bone)
-  val a = Vector3().transform(transform)
+  val a = transformVector(transform)
   val b = getBoneTranslation(bones, endBone)
   val middle = (a + b) / 2f
   val a2 = (a - b).length() / 2f
   val c2 = bone.length
   val projectLength = Math.sqrt((c2 * c2 - a2 * a2).toDouble()).toFloat()
-  val defaultTail = Vector3().transform(projectBoneTail(transform, bone)) - a
+  val defaultTail = transformVector(projectBoneTail(transform, bone)) - a
   val newTail = (middle + outVector * projectLength) - a
   val tail = middle + outVector * projectLength - a
 //  val translation = a
   val j = projectBoneTail(projectBoneTail(bone.parent!!.transform(bones, bone.parent!!), bone.parent!!), bone.parent!!)
-  val i = Vector3().transform(j)
+  val i = transformVector(j)
   val k = i - a
   val rotation = Quaternion().rotateTo(k, newTail)// rotateToward(translation - tail)
 //  transformBone(translation, rotation, bone.length)
@@ -195,9 +195,9 @@ fun inverseKinematicJointTransform(outVector: Vector3): Transformer = { bones, b
 val pointAtChildTransform: Transformer = { bones, bone ->
   val transform = dependentTransform(bones, bone)
   val nextBone = bones[bone.index + 1]
-  val base = Vector3().transform(transform)
+  val base = transformVector(transform)
   val target = getBoneTranslation(bones, nextBone) - base
-//  val tail = Vector3().transform(projectBoneTail(transform, bone)) - base
+//  val tail = transformVector(projectBoneTail(transform, bone)) - base
 //  transform.rotate(Quaternion().rotateTo(tail, target - base))
   transformBone(base, rotateToward(target), bone.length)
 }
@@ -263,7 +263,7 @@ fun copyBones(bones: Bones): Bones {
   return newBones
 }
 
-fun getCurrentKeys(keys: Keyframes, timePassed: Float): Pair<Keyframe, Keyframe?> {
+inline fun getCurrentKeys(keys: Keyframes, timePassed: Float): Pair<Keyframe, Keyframe?> {
   for (i in 0 until keys.size) {
     val key = keys[i]
     if (key.time > timePassed) {

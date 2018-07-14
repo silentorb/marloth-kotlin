@@ -11,6 +11,9 @@ import scenery.GameScene
 import scenery.Textures
 import scenery.VisualElement
 
+data class Temp(
+    val foo: Int
+)
 
 fun renderSkyBox(textures: TextureLibrary, meshes: MeshMap, shaders: Shaders) {
   val texture = textures[Textures.checkers]!!
@@ -38,11 +41,11 @@ class GameSceneRenderer(
     val childDetails = scene.elementDetails.children[element.id]
     if (childDetails != null) {
       val mesh = lookupMesh(element.depiction)
-      advancedPainter(mesh, renderer.renderer)(element, renderer.effects)
+      advancedPainter(mesh, renderer.renderer,element, renderer.effects)
 //      humanPainter(renderer, mesh.primitives)(element, renderer.effects, childDetails)
     } else {
       val mesh = lookupMesh(element.depiction)
-      simplePainter(mesh.primitives)(element, renderer.effects)
+      simplePainter(mesh.primitives,element, renderer.effects)
     }
   }
 

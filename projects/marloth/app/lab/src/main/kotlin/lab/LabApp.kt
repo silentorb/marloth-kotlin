@@ -115,13 +115,13 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
 
   if (app.gameConfig.gameplay.defaultPlayerView != app.world.players[0].viewMode) {
     app.gameConfig.gameplay.defaultPlayerView = app.world.players[0].viewMode
-    saveGameConfig(app.gameConfig)
+//    saveGameConfig(app.gameConfig)
   }
   if (saveIncrement++ > 60 * 3 && !isSaving) {
     isSaving = true
     saveIncrement = 0
 //    thread {
-    saveLabConfig(app.config)
+//    saveLabConfig(app.config)
     isSaving = false
 //    }
 

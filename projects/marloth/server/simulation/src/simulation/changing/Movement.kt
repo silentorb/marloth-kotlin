@@ -280,7 +280,7 @@ fun updatePlayerRotation(player: Player, delta: Float) {
 }
 
 fun isInsideNode(node: Node, position: Vector3) =
-    node.floors.any { isInsidePolygon(position.xy, it.vertices.map { it.xy }) }
+    node.floors.any { isInsidePolygon(position, it.vertices) }
 
 fun updateBodyNode(body: Body) {
   val position = body.position

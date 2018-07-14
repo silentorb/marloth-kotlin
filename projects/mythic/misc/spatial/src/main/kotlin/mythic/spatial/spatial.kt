@@ -7,10 +7,11 @@ import java.nio.FloatBuffer
 import java.text.DecimalFormat
 
 typealias Vector2 = org.joml.Vector2f
-typealias Vector3 = org.joml.Vector3f
 typealias Vector4 = org.joml.Vector4f
 typealias Matrix = org.joml.Matrix4f
 typealias Quaternion = org.joml.Quaternionf
+
+private val initialQuaternion = Quaternion()
 
 operator fun Vector3.times(other: Matrix): Vector3 = mulDirection(other)
 operator fun Vector2.times(other: Float): Vector2 = mul(other, Vector2())
@@ -30,6 +31,13 @@ fun FloatBuffer.put(value: Vector4) {
   put(value.y)
   put(value.z)
   put(value.w)
+}
+
+fun FloatBuffer.put(x: Float, y: Float, z: Float, w: Float) {
+  put(x)
+  put(y)
+  put(z)
+  put(w)
 }
 
 fun ByteBuffer.putVector3(value: Vector3) {
@@ -244,12 +252,17 @@ fun rayPolygonDistance(rayStart: Vector3, rayDirection: Vector3, polygonPoint: V
 
 private val flattenedPlaneNormal = Vector3(0f, 0f, 1f)
 
-fun getSlope(start: Vector2, end: Vector2): Float {
+fun getSlope(start: Vector2fMinimal, end: Vector2fMinimal): Float {
   val normal = end - start
   return normal.y / normal.x
 }
 
-fun simpleRayIntersectsLineSegment(rayStart: Vector2, segmentStart: Vector2, segmentEnd: Vector2): Vector2? {
+//fun getSlope(start: Vector3, end: Vector3): Float {
+//  val normal = end - start
+//  return normal.y / normal.x
+//}
+
+fun simpleRayIntersectsLineSegment(rayStart: Vector2fMinimal, segmentStart: Vector2fMinimal, segmentEnd: Vector2fMinimal): Vector2? {
   if (segmentStart.y == segmentEnd.y)
     return null
 
@@ -269,16 +282,41 @@ fun simpleRayIntersectsLineSegment(rayStart: Vector2, segmentStart: Vector2, seg
     null
 }
 
-fun simpleRayIntersectsLineSegmentAsNumber(rayStart: Vector2, segmentStart: Vector2, segmentEnd: Vector2): Int {
+//fun simpleRayIntersectsLineSegment(rayStart: Vector3, segmentStart: Vector3, segmentEnd: Vector3): Vector2? {
+//  if (segmentStart.y == segmentEnd.y)
+//    return null
+//
+//  if (!isBetween(rayStart.y, segmentStart.y, segmentEnd.y))
+//    return null
+//
+//  val x = if (segmentStart.x == segmentEnd.x) {
+//    segmentStart.x
+//  } else {
+//    val slope = getSlope(segmentStart, segmentEnd)
+//    (rayStart.y - segmentStart.y) / slope + segmentStart.x
+//  }
+//
+//  return if (x >= rayStart.x && isBetween(x, segmentStart.x, segmentEnd.x))
+//    Vector3(x, rayStart.y, 0f)
+//  else
+//    null
+//}
+
+fun simpleRayIntersectsLineSegmentAsNumber(rayStart: Vector2fMinimal, segmentStart: Vector2fMinimal, segmentEnd: Vector2fMinimal): Int {
   val result = simpleRayIntersectsLineSegment(rayStart, segmentStart, segmentEnd)
   return if (result != null) 1 else 0
 }
+
+//fun simpleRayIntersectsLineSegmentAsNumber(rayStart: Vector3, segmentStart: Vector3, segmentEnd: Vector3): Int {
+//  val result = simpleRayIntersectsLineSegment(rayStart, segmentStart, segmentEnd)
+//  return if (result != null) 1 else 0
+//}
 
 fun isEven(value: Int) = (value and 1) == 0
 
 fun isOdd(value: Int) = (value and 1) != 0
 
-fun isInsidePolygon(point: Vector2, vertices: List<Vector2>): Boolean {
+fun isInsidePolygon(point: Vector2fMinimal, vertices: List<Vector2fMinimal>): Boolean {
   var count = simpleRayIntersectsLineSegmentAsNumber(point, vertices.last(), vertices.first())
   for (i in 0 until vertices.size - 1) {
     count += simpleRayIntersectsLineSegmentAsNumber(point, vertices[i], vertices[i + 1])
@@ -286,6 +324,15 @@ fun isInsidePolygon(point: Vector2, vertices: List<Vector2>): Boolean {
 
   return count > 0 && isOdd(count)
 }
+
+//fun isInsidePolygon(point: Vector3, vertices: List<Vector3>): Boolean {
+//  var count = simpleRayIntersectsLineSegmentAsNumber(point, vertices.last(), vertices.first())
+//  for (i in 0 until vertices.size - 1) {
+//    count += simpleRayIntersectsLineSegmentAsNumber(point, vertices[i], vertices[i + 1])
+//  }
+//
+//  return count > 0 && isOdd(count)
+//}
 
 fun flattenPoints(normal: Vector3, points: List<Vector3>): Map<Vector2, Vector3> {
   val u = Vector3(normal).cross((points[1] - points[0]).normalize())
@@ -369,13 +416,20 @@ fun Vector2.copy() = Vector2(this)
 fun Vector3.copy() = Vector3(this)
 
 fun Vector3.transform(m: Matrix) = m.transform(Vector4(this, 1f)).xyz
+
+private val tempVector = Vector4()
+fun transformVector(m: Matrix): Vector3 {
+  tempVector.set(0f, 0f, 0f, 1f)
+  return m.transform(tempVector).xyz
+}
+
 //fun Vector2.transform(m: Matrix) = m.transform(Vector4(x, y, 0f, 1f)).xy
 
 fun getVector3Center(first: Vector3, second: Vector3) =
     first + (second - first) * 0.5f
 
 fun getRotationMatrix(matrix: Matrix) =
-    Matrix().rotation(matrix.getUnnormalizedRotation(Quaternion()))
+    Matrix().rotation(matrix.getUnnormalizedRotation(initialQuaternion))
 
 fun Vector2.toVector2i() = Vector2i(x.toInt(), y.toInt())
 fun Vector2i.toVector2() = Vector2(x.toFloat(), y.toFloat())

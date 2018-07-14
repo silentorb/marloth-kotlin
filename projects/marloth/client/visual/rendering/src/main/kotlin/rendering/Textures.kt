@@ -86,4 +86,3 @@ val textureGenerators: TextureGeneratorMap =
     .plus(miscTextureGenerators)
 
 fun createTextureLibrary(scale: Float) = textureGenerators.mapValues { it.value(scale) }
-

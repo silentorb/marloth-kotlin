@@ -198,7 +198,10 @@ class GeneralShader(buffers: UniformBuffers, vertexShader: String, fragmentShade
     }
   }
 
-  fun activate(config: ObjectShaderConfig) {
+  // IntelliJ will flag this use of inline as a warning, but using inline here
+  // causes the JVM to optimize away the ObjectShaderConfig allocation and significantly
+  // reduces the amount of objects created each frame.
+  inline fun activate(config: ObjectShaderConfig) {
     program.activate()
 
     perspective.modelTransform.setValue(config.transform)

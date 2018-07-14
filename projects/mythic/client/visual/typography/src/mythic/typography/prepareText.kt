@@ -49,7 +49,7 @@ fun arrangeType(config: TextConfiguration): TypeArrangement? {
   var block_dimensionsX = 0f
   var block_dimensionsY = 0f
 
-  val characterCount = content.replace(" ", "").length
+  val characterCount = content.length - content.count{ it == ' '}
   if (characterCount == 0) {
     return null
   }
@@ -160,10 +160,10 @@ fun <T> prepareText(config: TextConfiguration, vertexSchema: VertexSchema<T>): T
     val height = glyph.info.sizeY.toFloat()
     val texture_width = (width +0).toFloat() / config.style.font.dimensions.x
 
-    vertexBuffer.put(Vector4(x + width, y - height, texture_width, glyph.offset))
-    vertexBuffer.put(Vector4(x + width, y, texture_width, glyph.offset + glyph.height))
-    vertexBuffer.put(Vector4(x, y, 0f, glyph.offset + glyph.height))
-    vertexBuffer.put(Vector4(x, y - height, 0f, glyph.offset))
+    vertexBuffer.put(x + width, y - height, texture_width, glyph.offset)
+    vertexBuffer.put(x + width, y, texture_width, glyph.offset + glyph.height)
+    vertexBuffer.put(x, y, 0f, glyph.offset + glyph.height)
+    vertexBuffer.put(x, y - height, 0f, glyph.offset)
 
     offsetBuffer.put(index)
     index += 4
