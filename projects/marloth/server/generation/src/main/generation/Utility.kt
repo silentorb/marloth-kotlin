@@ -3,11 +3,9 @@ package generation
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.times
-import org.joml.div
-import org.joml.minus
 import org.joml.plus
 import org.joml.xy
-import simulation.*
+import simulation.Node
 
 fun <T> divide(sequence: Sequence<T>, filter: (T) -> Boolean) =
     Pair(sequence.filter(filter), sequence.filter { !filter(it) })
@@ -83,4 +81,16 @@ fun roughlyEquals(first: Vector2, second: Vector2, range: Float): Boolean {
   val r = range / 2
   return first.x > second.x - r && first.x < second.x + r
       && first.y > second.y - r && first.y < second.y + r
+}
+
+tailrec fun <T> crossMap(items: Sequence<T>, accumulator: List<T> = listOf(), filter: (T, T) -> Boolean): List<T> {
+  val sequence = items
+      .drop(1)
+
+  if (sequence.firstOrNull() == null)
+    return accumulator
+
+  val additions = sequence.filter { filter(items.first(), it) }
+  val accumulation = accumulator.plus(additions)
+  return crossMap(sequence, accumulation, filter)
 }

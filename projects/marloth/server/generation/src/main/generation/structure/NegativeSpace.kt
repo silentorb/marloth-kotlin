@@ -85,13 +85,13 @@ fun addSpaceNode(abstractWorld: AbstractWorld, node: Node) {
       }
 }
 
-fun createSpaceNode(sectorCenter: Vector3, abstractWorld: AbstractWorld, dice: Dice): Node {
-  val isSolid = if (dice.getInt(0, 1) == 0)
+fun createSpaceNode(sectorCenter: Vector3, abstractWorld: AbstractWorld, biome: Biome, dice: Dice): Node {
+  val isSolid = if (!biome.hasEnclosedRooms || dice.getInt(0, 1) == 0)
     false
   else
     true
 
-  return createSecondaryNode(sectorCenter, abstractWorld, isSolid)
+  return createSecondaryNode(sectorCenter, abstractWorld, isSolid, biome)
 }
 
 fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace, dice: Dice) {
@@ -109,7 +109,7 @@ fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace, dice: D
   val sectorCenter = getCenter(floorVertices)
   val flatCenter = sectorCenter.xy
 
-  val node = createSpaceNode(sectorCenter, abstractWorld, dice)
+  val node = createSpaceNode(sectorCenter, abstractWorld, getFaceInfo(originFace).firstNode!!.biome, dice)
   node.walls.addAll(walls)
   walls.forEach {
     val info = getFaceInfo(it)
@@ -155,13 +155,13 @@ fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace,
 //  val ceilingVertices = originalWall.lower.plus(newWall.lower)
   val sectorCenter = getCenter(floorVertices)
 
-  val node = createSpaceNode(sectorCenter, abstractWorld, dice)
+  val node = createSpaceNode(sectorCenter, abstractWorld,getFaceInfo(originFace).firstNode!!.biome, dice)
 
 //  node.walls.addAll(walls)
 //  node.floors.add(floor)
   val floor = createFloor(abstractWorld.mesh, node, floorVertices, sectorCenter.xy)
   val ceiling = createCeiling(abstractWorld.mesh, node, floorVertices, sectorCenter.xy)
-//  initializeFaceInfo(FaceType.wall, node, floor, Textures.grayNoise)
+//  initializeFaceInfo(FaceType.wall, node, floor, Textures.ground)
   node.walls.add(originFace)
   getFaceInfo(originFace).secondNode = node
   val outerWall = createWall(abstractWorld, node, newPoints)

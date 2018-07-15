@@ -16,29 +16,29 @@ import simulation.*
 class GeneratorSpec : Spek({
   describe("world generation") {
 
-    on("testing overlapping") {
-
-      val first = Node(Vector3(0f, 0f, 0f), 5f, false)
-      val second = Node(Vector3(8f, 0f, 0f), 5f, false)
-      val third = Node(Vector3(200f, 0f, 0f), 15f, false)
-
-      it("should detect overlap") {
-        val overlaps = overlaps2D(first, second)
-        assertEquals(true, overlaps)
-      }
-
-      it("should detect no overlap") {
-        val overlaps = overlaps2D(second, third)
-        assertEquals(false, overlaps)
-      }
-
-      it("should return a single pair") {
-        val matches = getOverlapping(listOf(first, second, third))
-        assertEquals(1, matches.size)
-        assertSame(first, matches[0].first)
-        assertSame(second, matches[0].second)
-      }
-    }
+//    on("testing overlapping") {
+//
+//      val first = Node(Vector3(0f, 0f, 0f), 5f, false)
+//      val second = Node(Vector3(8f, 0f, 0f), 5f, false)
+//      val third = Node(Vector3(200f, 0f, 0f), 15f, false)
+//
+//      it("should detect overlap") {
+//        val overlaps = overlaps2D(first, second)
+//        assertEquals(true, overlaps)
+//      }
+//
+//      it("should detect no overlap") {
+//        val overlaps = overlaps2D(second, third)
+//        assertEquals(false, overlaps)
+//      }
+//
+//      it("should return a single pair") {
+//        val matches = getOverlapping(listOf(first, second, third))
+//        assertEquals(1, matches.size)
+//        assertSame(first, matches[0].first)
+//        assertSame(second, matches[0].second)
+//      }
+//    }
 
     on("intersection between a line and a circle") {
 

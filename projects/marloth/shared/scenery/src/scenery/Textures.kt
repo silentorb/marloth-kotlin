@@ -7,5 +7,6 @@ enum class Textures {
   debugYellow,
   debugCyan,
   debugMagenta,
-  grayNoise
+  grass,
+  ground
 }

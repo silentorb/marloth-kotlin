@@ -1,12 +1,13 @@
 package generation
 
-import generation.abstract.closeDeadEnds
-import generation.abstract.createTunnelNodes
-import generation.abstract.handleOverlapping
-import generation.abstract.unifyWorld
+import generation.abstract.*
+import generation.structure.doorwayLength
 import generation.structure.generateStructure
 import mythic.sculpting.FlexibleFace
-import mythic.spatial.*
+import mythic.spatial.Quaternion
+import mythic.spatial.Vector3
+import mythic.spatial.getVector3Center
+import mythic.spatial.times
 import org.joml.minus
 import org.joml.plus
 import randomly.Dice
@@ -14,18 +15,15 @@ import simulation.*
 import simulation.changing.Instantiator
 import simulation.changing.InstantiatorConfig
 
-fun createNode(abstractWorld: AbstractWorld, dice: Dice): Node {
+fun createRoomNode(abstractWorld: AbstractWorld, biomes: List<Biome>, dice: Dice): Node {
   val radius = dice.getFloat(5f, 10f)
   val start = abstractWorld.boundary.start + radius
   val end = abstractWorld.boundary.end - radius
-//  val type = if (dice.getInt(0, 3) != 0)
-//    NodeType.room
-//  else
-//    NodeType.openRoom
 
   val node = Node(
       position = Vector3(dice.getFloat(start.x, end.x), dice.getFloat(start.y, end.y), 0f),
       radius = radius,
+      biome = dice.getItem(biomes),
       isSolid = false,
       isWalkable = true
   )
@@ -33,20 +31,32 @@ fun createNode(abstractWorld: AbstractWorld, dice: Dice): Node {
   return node
 }
 
-fun createNodes(count: Int, world: AbstractWorld, dice: Dice) {
+fun createRoomNodes(count: Int, world: AbstractWorld, biomes: List<Biome>, dice: Dice) {
   for (i in 0..count) {
-    createNode(world, dice)
+    createRoomNode(world, biomes, dice)
   }
 }
 
+fun getTwinTunnels(tunnels: List<PreTunnel>): List<PreTunnel> =
+    crossMap(tunnels.asSequence()) { a: PreTunnel, b: PreTunnel ->
+      //      println("" + a.neighbors.any { b.neighbors.contains(it) } + ", " + a.position.distance(b.position))
+      val c = a.connection.nodes.any { b.connection.nodes.contains(it) }
+          && a.position.distance(b.position) < doorwayLength * 2f
+//      println(c)
+      c
+    }
 
-fun generateAbstract(world: AbstractWorld, dice: Dice, scale: Float): List<Node> {
+fun generateAbstract(world: AbstractWorld, biomes: List<Biome>, dice: Dice, scale: Float): List<Node> {
   val nodeCount = (20 * scale).toInt()
-  createNodes(nodeCount, world, dice)
+  createRoomNodes(nodeCount, world, biomes, dice)
   handleOverlapping(world.graph)
   unifyWorld(world.graph)
   closeDeadEnds(world.graph)
-  val tunnels = createTunnelNodes(world)
+
+  val preTunnels = prepareTunnels(world.graph)
+  val twinTunnels = getTwinTunnels(preTunnels)
+  val tunnels = createTunnelNodes(world, preTunnels.minus(twinTunnels))
+  world.graph.connections.removeAll(twinTunnels.map { it.connection})
 
   fillIndexes(world.graph)
   return tunnels
@@ -102,21 +112,21 @@ fun calculateWorldScale(dimensions: Vector3) =
 fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): World {
   val abstractWorld = AbstractWorld(input.boundary)
   val scale = calculateWorldScale(abstractWorld.boundary.dimensions)
-  val tunnels = generateAbstract(abstractWorld, input.dice, scale)
+  val tunnels = generateAbstract(abstractWorld, input.biomes, input.dice, scale)
   generateStructure(abstractWorld, input.dice, tunnels)
   val world = World(abstractWorld)
   val instantiator = Instantiator(world, instantiatorConfig)
   instantiator.createPlayer(1)
 
-  placeWallLamps(world, instantiator, input.dice, scale)
+//  placeWallLamps(world, instantiator, input.dice, scale)
 
   return world
 }
 
-fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig) = generateWorld(WorldInput(
-    WorldBoundary(
+fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig, biomes: List<Biome>) = generateWorld(WorldInput(
+    boundary = WorldBoundary(
         Vector3(-50f, -50f, -50f),
         Vector3(50f, 50f, 50f)
     ),
-    Dice(2)
-), instantiatorConfig)
+    dice = Dice(2),
+    biomes = biomes), instantiatorConfig)

@@ -1,17 +1,10 @@
 package generation.structure
 
-import mythic.sculpting.Edges
-import mythic.sculpting.FlexibleFace
-import mythic.sculpting.Vertices
-import mythic.sculpting.getNormal
-import mythic.spatial.Vector3
-import mythic.spatial.arrangePointsCounterClockwise
-import mythic.spatial.arrangePointsCounterClockwise2D
-import mythic.spatial.getCenter
-import org.joml.minus
+import mythic.sculpting.*
+import mythic.spatial.*
 import org.joml.plus
-import simulation.AbstractWorld
-import simulation.Node
+import org.joml.xy
+import simulation.*
 
 data class WallVertices(
     val lower: Vertices,
@@ -61,14 +54,42 @@ fun sortWallVertices(sectorCenter: Vector3, vertices: Vertices): Vertices {
     sorted
 }
 
-fun createSecondaryNode(sectorCenter: Vector3, abstractWorld: AbstractWorld, isSolid: Boolean): Node {
+fun createSecondaryNode(sectorCenter: Vector3, abstractWorld: AbstractWorld, isSolid: Boolean, biome: Biome): Node {
   val radius = 1f
 
   val node = Node(
       position = sectorCenter,
       radius = radius,
+      biome = biome,
       isSolid = isSolid
   )
   node.index = abstractWorld.graph.nodes.size
   return node
+}
+
+fun createFloor(mesh: FlexibleMesh, node: Node, vertices: Vertices, center: Vector2): FlexibleFace {
+  val sortedFloorVertices = vertices
+      .sortedBy { atan(it.xy - center) }
+  val floor = mesh.createStitchedFace(sortedFloorVertices)
+  floor.data = FaceInfo(FaceType.floor, node, null)
+  node.floors.add(floor)
+  return floor
+}
+
+fun createCeiling(mesh: FlexibleMesh, node: Node, vertices: Vertices, center: Vector2): FlexibleFace {
+  val sortedFloorVertices = vertices
+      .sortedByDescending { atan(it.xy - center) }
+      .map { it + Vector3(0f, 0f, wallHeight) }
+
+  val surface = mesh.createStitchedFace(sortedFloorVertices)
+  node.ceilings.add(surface)
+  surface.data = FaceInfo(FaceType.ceiling, node, null)
+  return surface
+}
+
+fun createWall(abstractWorld: AbstractWorld, node: Node, vertices: Vertices): FlexibleFace {
+  val wall = abstractWorld.mesh.createStitchedFace(vertices)
+  wall.data = FaceInfo(FaceType.wall, node, null)
+  node.walls.add(wall)
+  return wall
 }

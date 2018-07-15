@@ -22,6 +22,7 @@
  */
 package org.joml
 
+import mythic.spatial.Vector2
 import org.joml.internal.MemUtil
 import org.joml.internal.Options
 import org.joml.internal.Runtime
@@ -46,11 +47,11 @@ class Vector2f : Externalizable, Vector2fc {
   /**
    * The x component of the vector.
    */
-  var x: Float = 0.toFloat()
+ override var x: Float = 0.toFloat()
   /**
    * The y component of the vector.
    */
-  var y: Float = 0.toFloat()
+  override  var y: Float = 0.toFloat()
 
   /**
    * Create a new [Vector2f] and initialize its components to zero.
@@ -85,19 +86,8 @@ class Vector2f : Externalizable, Vector2fc {
    * the [Vector2fc] to copy the values from
    */
   constructor(v: Vector2fc) {
-    x = v.x()
-    y = v.y()
-  }
-
-  /**
-   * Create a new [Vector2f] and initialize its components to the one of the given vector.
-   *
-   * @param v
-   * the [Vector2ic] to copy the values from
-   */
-  constructor(v: Vector2ic) {
-    x = v.x().toFloat()
-    y = v.y().toFloat()
+    x = v.x
+    y = v.y
   }
 
   /**
@@ -171,20 +161,6 @@ class Vector2f : Externalizable, Vector2fc {
     return this
   }
 
-  /* (non-Javadoc)
-     * @see org.joml.Vector2fc#x()
-     */
-  override fun x(): Float {
-    return this.x
-  }
-
-  /* (non-Javadoc)
-     * @see org.joml.Vector2fc#y()
-     */
-  override fun y(): Float {
-    return this.y
-  }
-
   /**
    * Set the x and y components to the supplied value.
    *
@@ -219,33 +195,7 @@ class Vector2f : Externalizable, Vector2fc {
    * @return this
    */
   fun set(v: Vector2fc): Vector2f {
-    return set(v.x(), v.y())
-  }
-
-  /**
-   * Set this [Vector2f] to the values of v.
-   *
-   * @param v
-   * the vector to copy from
-   * @return this
-   */
-  fun set(v: Vector2ic): Vector2f {
-    return set(v.x().toFloat(), v.y().toFloat())
-  }
-
-  /**
-   * Set this [Vector2f] to the values of v.
-   *
-   *
-   * Note that due to the given vector `v` storing the components in double-precision,
-   * there is the possibility to lose precision.
-   *
-   * @param v
-   * the vector to copy from
-   * @return this
-   */
-  fun set(v: Vector2dc): Vector2f {
-    return set(v.x().toFloat(), v.y().toFloat())
+    return set(v.x, v.y)
   }
 
   /**
@@ -442,8 +392,8 @@ class Vector2f : Externalizable, Vector2fc {
      * @see org.joml.Vector2fc#sub(org.joml.Vector2fc, org.joml.Vector2f)
      */
   override fun sub(v: Vector2fc, dest: Vector2f): Vector2f {
-    dest.x = x - v.x()
-    dest.y = y - v.y()
+    dest.x = x - v.x
+    dest.y = y - v.y
     return dest
   }
 
@@ -473,15 +423,15 @@ class Vector2f : Externalizable, Vector2fc {
      * @see org.joml.Vector2fc#dot(org.joml.Vector2fc)
      */
   override fun dot(v: Vector2fc): Float {
-    return x * v.x() + y * v.y()
+    return x * v.x + y * v.y
   }
 
   /* (non-Javadoc)
      * @see org.joml.Vector2fc#angle(org.joml.Vector2fc)
      */
   override fun angle(v: Vector2fc): Float {
-    val dot = x * v.x() + y * v.y()
-    val det = x * v.y() - y * v.x()
+    val dot = x * v.x + y * v.y
+    val det = x * v.y - y * v.x
     return Math.atan2(det.toDouble(), dot.toDouble()).toFloat()
   }
 
@@ -503,14 +453,14 @@ class Vector2f : Externalizable, Vector2fc {
      * @see org.joml.Vector2fc#distance(org.joml.Vector2fc)
      */
   override fun distance(v: Vector2fc): Float {
-    return distance(v.x(), v.y())
+    return distance(v.x, v.y)
   }
 
   /* (non-Javadoc)
      * @see org.joml.Vector2fc#distanceSquared(org.joml.Vector2fc)
      */
   //    public float distanceSquared(Vector2fc v) {
-  //        return distanceSquared(v.x(), v.y());
+  //        return distanceSquared(v.x, v.y);
   //    }
 
   /* (non-Javadoc)
@@ -586,8 +536,8 @@ class Vector2f : Externalizable, Vector2fc {
      * @see org.joml.Vector2fc#add(org.joml.Vector2fc, org.joml.Vector2f)
      */
   override fun add(v: Vector2fc, dest: Vector2f): Vector2f {
-    dest.x = x + v.x()
-    dest.y = y + v.y()
+    dest.x = x + v.x
+    dest.y = y + v.y
     return dest
   }
 
@@ -709,8 +659,8 @@ class Vector2f : Externalizable, Vector2fc {
      * @see org.joml.Vector2fc#mul(org.joml.Vector2fc, org.joml.Vector2f)
      */
   override fun mul(v: Vector2fc, dest: Vector2f): Vector2f {
-    dest.x = x * v.x()
-    dest.y = y * v.y()
+    dest.x = x * v.x
+    dest.y = y * v.y
     return dest
   }
 
@@ -780,8 +730,8 @@ class Vector2f : Externalizable, Vector2fc {
      * @see org.joml.Vector2fc#lerp(org.joml.Vector2fc, float, org.joml.Vector2f)
      */
   override fun lerp(other: Vector2fc, t: Float, dest: Vector2f): Vector2f {
-    dest.x = x + (other.x() - x) * t
-    dest.y = y + (other.y() - y) * t
+    dest.x = x + (other.x - x) * t
+    dest.y = y + (other.y - y) * t
     return dest
   }
 
@@ -859,8 +809,8 @@ class Vector2f : Externalizable, Vector2fc {
      * @see org.joml.Vector2fc#fma(org.joml.Vector2fc, org.joml.Vector2fc, org.joml.Vector2f)
      */
   override fun fma(a: Vector2fc, b: Vector2fc, dest: Vector2f): Vector2f {
-    dest.x = x + a.x() * b.x()
-    dest.y = y + a.y() * b.y()
+    dest.x = x + a.x * b.x
+    dest.y = y + a.y * b.y
     return dest
   }
 
@@ -868,8 +818,8 @@ class Vector2f : Externalizable, Vector2fc {
      * @see org.joml.Vector2fc#fma(float, org.joml.Vector2fc, org.joml.Vector2f)
      */
   override fun fma(a: Float, b: Vector2fc, dest: Vector2f): Vector2f {
-    dest.x = x + a * b.x()
-    dest.y = y + a * b.y()
+    dest.x = x + a * b.x
+    dest.y = y + a * b.y
     return dest
   }
 
@@ -885,8 +835,8 @@ class Vector2f : Externalizable, Vector2fc {
   }
 
   override fun min(v: Vector2fc, dest: Vector2f): Vector2f {
-    dest.x = if (x < v.x()) x else v.x()
-    dest.y = if (y < v.y()) y else v.y()
+    dest.x = if (x < v.x) x else v.x
+    dest.y = if (y < v.y) y else v.y
     return this
   }
 
@@ -902,10 +852,13 @@ class Vector2f : Externalizable, Vector2fc {
   }
 
   override fun max(v: Vector2fc, dest: Vector2f): Vector2f {
-    dest.x = if (x > v.x()) x else v.x()
-    dest.y = if (y > v.y()) y else v.y()
+    dest.x = if (x > v.x) x else v.x
+    dest.y = if (y > v.y) y else v.y
     return this
   }
+
+  override operator fun minus(v: Vector2fMinimal): Vector2 =
+      Vector2f(x - v.x, y - v.y)
 
   companion object {
 

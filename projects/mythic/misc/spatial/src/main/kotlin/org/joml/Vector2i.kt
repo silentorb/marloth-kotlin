@@ -47,11 +47,11 @@ class Vector2i : Externalizable, Vector2ic {
   /**
    * The x component of the vector.
    */
-  var x: Int = 0
+  override var x: Int = 0
   /**
    * The y component of the vector.
    */
-  var y: Int = 0
+  override var y: Int = 0
 
   /**
    * Create a new [Vector2i] and initialize its components to zero.
@@ -81,18 +81,6 @@ class Vector2i : Externalizable, Vector2ic {
   constructor(x: Int, y: Int) {
     this.x = x
     this.y = y
-  }
-
-  /**
-   * Create a new [Vector2i] and initialize its components to the one of
-   * the given vector.
-   *
-   * @param v
-   * the [Vector2ic] to copy the values from
-   */
-  constructor(v: Vector2ic) {
-    x = v.x()
-    y = v.y()
   }
 
   /**
@@ -171,20 +159,6 @@ class Vector2i : Externalizable, Vector2ic {
     return this
   }
 
-  /* (non-Javadoc)
-     * @see org.joml.Vector2ic#x()
-     */
-  override fun x(): Int {
-    return this.x
-  }
-
-  /* (non-Javadoc)
-     * @see org.joml.Vector2ic#y()
-     */
-  override fun y(): Int {
-    return this.y
-  }
-
   /**
    * Set the x and y components to the supplied value.
    *
@@ -209,32 +183,6 @@ class Vector2i : Externalizable, Vector2ic {
     this.x = x
     this.y = y
     return this
-  }
-
-  /**
-   * Set this [Vector2i] to the values of v.
-   *
-   * @param v
-   * the vector to copy from
-   * @return this
-   */
-  fun set(v: Vector2ic): Vector2i {
-    return set(v.x(), v.y())
-  }
-
-  /**
-   * Set this [Vector2i] to the values of v.
-   *
-   *
-   * Note that due to the given vector `v` storing the components
-   * in double-precision, there is the possibility to lose precision.
-   *
-   * @param v
-   * the vector to copy from
-   * @return this
-   */
-  fun set(v: Vector2dc): Vector2i {
-    return set(v.x().toInt(), v.y().toInt())
   }
 
   /**
@@ -423,8 +371,8 @@ class Vector2i : Externalizable, Vector2ic {
      * @see org.joml.Vector2ic#sub(org.joml.Vector2ic, org.joml.Vector2i)
      */
   override fun sub(v: Vector2ic, dest: Vector2i): Vector2i {
-    dest.x = x - v.x()
-    dest.y = y - v.y()
+    dest.x = x - v.x
+    dest.y = y - v.y
     return dest
   }
 
@@ -482,8 +430,8 @@ class Vector2i : Externalizable, Vector2ic {
      * @see org.joml.Vector2ic#distanceSquared(org.joml.Vector2ic)
      */
   override fun distanceSquared(v: Vector2ic): Long {
-    val dx = this.x - v.x()
-    val dy = this.y - v.y()
+    val dx = this.x - v.x
+    val dy = this.y - v.y
     return (dx * dx + dy * dy).toLong()
   }
 
@@ -511,8 +459,8 @@ class Vector2i : Externalizable, Vector2ic {
      * @see org.joml.Vector2ic#add(org.joml.Vector2ic, org.joml.Vector2i)
      */
   override fun add(v: Vector2ic, dest: Vector2i): Vector2i {
-    dest.x = x + v.x()
-    dest.y = y + v.y()
+    dest.x = x + v.x
+    dest.y = y + v.y
     return dest
   }
 
@@ -574,8 +522,8 @@ class Vector2i : Externalizable, Vector2ic {
      * @see org.joml.Vector2ic#mul(org.joml.Vector2ic, org.joml.Vector2i)
      */
   override fun mul(v: Vector2ic, dest: Vector2i): Vector2i {
-    dest.x = x * v.x()
-    dest.y = y * v.y()
+    dest.x = x * v.x
+    dest.y = y * v.y
     return dest
   }
 
@@ -652,8 +600,8 @@ class Vector2i : Externalizable, Vector2ic {
   }
 
   override fun min(v: Vector2ic, dest: Vector2i): Vector2i {
-    dest.x = if (x < v.x()) x else v.x()
-    dest.y = if (y < v.y()) y else v.y()
+    dest.x = if (x < v.x) x else v.x
+    dest.y = if (y < v.y) y else v.y
     return this
   }
 
@@ -669,8 +617,8 @@ class Vector2i : Externalizable, Vector2ic {
   }
 
   override fun max(v: Vector2ic, dest: Vector2i): Vector2i {
-    dest.x = if (x > v.x()) x else v.x()
-    dest.y = if (y > v.y()) y else v.y()
+    dest.x = if (x > v.x) x else v.x
+    dest.y = if (y > v.y) y else v.y
     return this
   }
 

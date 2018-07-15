@@ -1,21 +1,36 @@
 package generation.abstract
 
 import generation.getCenter
-import simulation.AbstractWorld
-import simulation.ConnectionType
-import simulation.Node
+import mythic.spatial.Vector3
+import simulation.*
 
-fun createTunnelNodes(world: AbstractWorld): List<Node> {
+data class PreTunnel(
+    val connection: Connection,
+    val position: Vector3
+)
+
+fun prepareTunnels(graph: NodeGraph): List<PreTunnel> =
+    graph.connections.filter { it.type == ConnectionType.tunnel }
+        .map { oldConnection ->
+          PreTunnel(
+              connection = oldConnection,
+              position = getCenter(oldConnection.first, oldConnection.second)
+              )
+        }
+
+fun createTunnelNodes(world: AbstractWorld, preTunnels: List<PreTunnel>): List<Node> {
   val graph = world.graph
-  return graph.connections.filter { it.type == ConnectionType.tunnel }
-      .map { oldConnection ->
+  return preTunnels
+      .map { preTunnel ->
+        val oldConnection = preTunnel.connection
         val tunnelNode = Node(
             position = getCenter(oldConnection.first, oldConnection.second),
+            biome = oldConnection.first.biome,
             radius = 1f,
             isSolid = false,
             isWalkable = true)
 
-        graph.disconnect(oldConnection)
+        graph.disconnect(preTunnel.connection)
         graph.connect(oldConnection.first, tunnelNode, ConnectionType.tunnel)
         graph.connect(oldConnection.second, tunnelNode, ConnectionType.tunnel)
         graph.nodes.add(tunnelNode)

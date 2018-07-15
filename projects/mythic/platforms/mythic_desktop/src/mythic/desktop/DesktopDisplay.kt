@@ -10,8 +10,8 @@ import org.lwjgl.system.MemoryUtil
 import java.lang.management.ManagementFactory
 
 fun createWindow(title: String, width: Int, height: Int): Long {
-  val pid = ManagementFactory.getRuntimeMXBean().getName()
-  println("pid: " + pid)
+//  val pid = ManagementFactory.getRuntimeMXBean().getName()
+//  println("pid: " + pid)
   glfwDefaultWindowHints() // optional, the current window hints are already the default
   glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE) // the window will stay hidden after creation
   glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE) // the window will be resizable

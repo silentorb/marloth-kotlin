@@ -58,7 +58,7 @@ val basicTextures: Map<Textures, OpaqueTextureAlgorithmSource> = mapOf(
     Textures.debugMagenta to { solidColor(Vector3(1f, 0f, 1f)) },
     Textures.debugYellow to { solidColor(Vector3(1f, 1f, 0f)) },
 
-    Textures.grayNoise to {
+    Textures.ground to {
       colorize(
           Vector3(0.0f, 0.0f, 0.0f),
           Vector3(0.55f, 0.35f, 0.0f),
@@ -74,7 +74,16 @@ fun applyAlgorithm(algorithm: OpaqueTextureAlgorithm, length: Int, attributes: T
 }
 
 private val miscTextureGenerators: TextureGeneratorMap = mapOf(
-    Textures.background to applyAlgorithm(createCheckers(), 512, TextureAttributes(repeating = false))
+    Textures.background to applyAlgorithm(colorize(
+        Vector3(0.25f),
+        Vector3(0.75f),
+        simpleNoise(listOf(12f, 37f))
+    ), 512, TextureAttributes(repeating = false)),
+    Textures.grass to applyAlgorithm(colorize(
+        Vector3(0f, 0.25f, 0f),
+        Vector3(0f, 0.75f, 0f),
+        simpleNoise(listOf(82f, 37f))
+    ), 512, TextureAttributes(repeating = false))
 )
 
 private val basicTextureGenerators: TextureGeneratorMap = basicTextures.mapValues { algorithm ->

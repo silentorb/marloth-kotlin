@@ -35,12 +35,12 @@ interface Vector2ic {
   /**
    * @return the value of the x component
    */
-  fun x(): Int
+  var x: Int
 
   /**
    * @return the value of the y component
    */
-  fun y(): Int
+  var y: Int
 
   /**
    * Store this vector into the supplied [ByteBuffer] at the current

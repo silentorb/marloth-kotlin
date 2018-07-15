@@ -4224,9 +4224,18 @@ abstract class MemUtil {
 
       }
 
+      private fun atLeastJava9(classVersion: String): Boolean {
+        try {
+          val value = java.lang.Double.parseDouble(classVersion)
+          return value >= 53.0
+        } catch (e: NumberFormatException) {
+          return false
+        }
+      }
+
       private fun findBufferAddress(): Long {
-        val javaVersion = System.getProperty("java.version")
-        return if (javaVersion != null && javaVersion.startsWith("9") || javaVersion!!.startsWith("1.9"))
+        val javaVersion = System.getProperty("java.class.version")
+        return if (atLeastJava9(javaVersion))
           findBufferAddressJDK9(null)
         else
           findBufferAddressJDK1()

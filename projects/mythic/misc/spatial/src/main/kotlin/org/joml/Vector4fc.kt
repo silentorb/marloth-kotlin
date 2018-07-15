@@ -35,22 +35,22 @@ interface Vector4fc {
   /**
    * @return the value of the x component
    */
-  fun x(): Float
+  var x: Float
 
   /**
    * @return the value of the y component
    */
-  fun y(): Float
+  var y: Float
 
   /**
    * @return the value of the z component
    */
-  fun z(): Float
+  var z: Float
 
   /**
    * @return the value of the w component
    */
-  fun w(): Float
+  var w: Float
 
   /**
    * Store this vector into the supplied [FloatBuffer] at the current

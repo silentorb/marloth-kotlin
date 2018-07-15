@@ -47,19 +47,19 @@ class Vector4f : Externalizable, Vector4fc {
   /**
    * The x component of the vector.
    */
-  var x: Float = 0.toFloat()
+  override var x: Float = 0.toFloat()
   /**
    * The y component of the vector.
    */
-  var y: Float = 0.toFloat()
+  override var y: Float = 0.toFloat()
   /**
    * The z component of the vector.
    */
-  var z: Float = 0.toFloat()
+  override var z: Float = 0.toFloat()
   /**
    * The w component of the vector.
    */
-  var w: Float = 0.toFloat()
+  override var w: Float = 0.toFloat()
 
   /**
    * Create a new [Vector4f] of `(0, 0, 0, 1)`.
@@ -78,20 +78,12 @@ class Vector4f : Externalizable, Vector4fc {
     if (v is Vector4f) {
       MemUtil.INSTANCE.copy(v, this)
     } else {
-      this.x = v.x()
-      this.y = v.y()
-      this.z = v.z()
-      this.w = v.w()
+      this.x = v.x
+      this.y = v.y
+      this.z = v.z
+      this.w = v.w
     }
   }
-
-  /**
-   * Create a new [Vector4f] with the same values as `v`.
-   *
-   * @param v
-   * the [Vector4ic] to copy the values from
-   */
-  constructor(v: Vector4ic) : this(v.x().toFloat(), v.y().toFloat(), v.z().toFloat(), v.w().toFloat()) {}
 
   /**
    * Create a new [Vector4f] with the first three components from the
@@ -102,18 +94,7 @@ class Vector4f : Externalizable, Vector4fc {
    * @param w
    * the w component
    */
-  constructor(v: Vector3fc, w: Float) : this(v.x(), v.y(), v.z(), w) {}
-
-  /**
-   * Create a new [Vector4f] with the first three components from the
-   * given `v` and the given `w`.
-   *
-   * @param v
-   * the [Vector3ic]
-   * @param w
-   * the w component
-   */
-  constructor(v: Vector3ic, w: Float) : this(v.x().toFloat(), v.y().toFloat(), v.z().toFloat(), w) {}
+  constructor(v: Vector3fc, w: Float) : this(v.x, v.y, v.z, w) {}
 
   /**
    * Create a new [Vector4f] with the first two components from the
@@ -126,7 +107,7 @@ class Vector4f : Externalizable, Vector4fc {
    * @param w
    * the w component
    */
-  constructor(v: Vector2fc, z: Float, w: Float) : this(v.x(), v.y(), z, w) {}
+  constructor(v: Vector2fc, z: Float, w: Float) : this(v.x, v.y, z, w) {}
 
   /**
    * Create a new [Vector4f] with the first two components from the
@@ -139,7 +120,7 @@ class Vector4f : Externalizable, Vector4fc {
    * @param w
    * the w component
    */
-  constructor(v: Vector2ic, z: Float, w: Float) : this(v.x().toFloat(), v.y().toFloat(), z, w) {}
+  constructor(v: Vector2ic, z: Float, w: Float) : this(v.x.toFloat(), v.y.toFloat(), z, w) {}
 
   /**
    * Create a new [Vector4f] and initialize all four components with the given value.
@@ -242,34 +223,6 @@ class Vector4f : Externalizable, Vector4fc {
     return this
   }
 
-  /* (non-Javadoc)
-     * @see org.joml.Vector4fc#x()
-     */
-  override fun x(): Float {
-    return this.x
-  }
-
-  /* (non-Javadoc)
-     * @see org.joml.Vector4fc#y()
-     */
-  override fun y(): Float {
-    return this.y
-  }
-
-  /* (non-Javadoc)
-     * @see org.joml.Vector4fc#z()
-     */
-  override fun z(): Float {
-    return this.z
-  }
-
-  /* (non-Javadoc)
-     * @see org.joml.Vector4fc#w()
-     */
-  override fun w(): Float {
-    return this.w
-  }
-
   /**
    * Set this [Vector4f] to the values of the given `v`.
    *
@@ -281,38 +234,12 @@ class Vector4f : Externalizable, Vector4fc {
     if (v is Vector4f) {
       MemUtil.INSTANCE.copy(v, this)
     } else {
-      this.x = v.x()
-      this.y = v.y()
-      this.z = v.z()
-      this.w = v.w()
+      this.x = v.x
+      this.y = v.y
+      this.z = v.z
+      this.w = v.w
     }
     return this
-  }
-
-  /**
-   * Set this [Vector4f] to the values of the given `v`.
-   *
-   * @param v
-   * the vector whose values will be copied into this
-   * @return this
-   */
-  fun set(v: Vector4ic): Vector4f {
-    return set(v.x().toFloat(), v.y().toFloat(), v.z().toFloat(), v.w().toFloat())
-  }
-
-  /**
-   * Set this [Vector4f] to the values of the given `v`.
-   *
-   *
-   * Note that due to the given vector `v` storing the components in double-precision,
-   * there is the possibility to lose precision.
-   *
-   * @param v
-   * the vector whose values will be copied into this
-   * @return this
-   */
-  fun set(v: Vector4dc): Vector4f {
-    return set(v.x().toFloat(), v.y().toFloat(), v.z().toFloat(), v.w().toFloat())
   }
 
   /**
@@ -326,21 +253,7 @@ class Vector4f : Externalizable, Vector4fc {
    * @return this
    */
   operator fun set(v: Vector3fc, w: Float): Vector4f {
-    return set(v.x(), v.y(), v.z(), w)
-  }
-
-  /**
-   * Set the first three components of this to the components of
-   * `v` and the last component to `w`.
-   *
-   * @param v
-   * the [Vector3ic] to copy
-   * @param w
-   * the w component
-   * @return this
-   */
-  operator fun set(v: Vector3ic, w: Float): Vector4f {
-    return set(v.x().toFloat(), v.y().toFloat(), v.z().toFloat(), w)
+    return set(v.x, v.y, v.z, w)
   }
 
   /**
@@ -356,7 +269,7 @@ class Vector4f : Externalizable, Vector4fc {
    * @return this
    */
   operator fun set(v: Vector2fc, z: Float, w: Float): Vector4f {
-    return set(v.x(), v.y(), z, w)
+    return set(v.x, v.y, z, w)
   }
 
   /**
@@ -372,7 +285,7 @@ class Vector4f : Externalizable, Vector4fc {
    * @return this
    */
   operator fun set(v: Vector2ic, z: Float, w: Float): Vector4f {
-    return set(v.x().toFloat(), v.y().toFloat(), z, w)
+    return set(v.x.toFloat(), v.y.toFloat(), z, w)
   }
 
   /**
@@ -600,7 +513,7 @@ class Vector4f : Externalizable, Vector4fc {
      * @see org.joml.Vector4fc#sub(org.joml.Vector4fc, org.joml.Vector4f)
      */
   override fun sub(v: Vector4fc, dest: Vector4f): Vector4f {
-    return sub(v.x(), v.y(), v.z(), v.w(), dest)
+    return sub(v.x, v.y, v.z, v.w, dest)
   }
 
   /* (non-Javadoc)
@@ -629,10 +542,10 @@ class Vector4f : Externalizable, Vector4fc {
      * @see org.joml.Vector4fc#add(org.joml.Vector4fc, org.joml.Vector4f)
      */
   override fun add(v: Vector4fc, dest: Vector4f): Vector4f {
-    dest.x = x + v.x()
-    dest.y = y + v.y()
-    dest.z = z + v.z()
-    dest.w = w + v.w()
+    dest.x = x + v.x
+    dest.y = y + v.y
+    dest.z = z + v.z
+    dest.w = w + v.w
     return dest
   }
 
@@ -694,10 +607,10 @@ class Vector4f : Externalizable, Vector4fc {
      * @see org.joml.Vector4fc#fma(org.joml.Vector4fc, org.joml.Vector4fc, org.joml.Vector4f)
      */
   override fun fma(a: Vector4fc, b: Vector4fc, dest: Vector4f): Vector4f {
-    dest.x = x + a.x() * b.x()
-    dest.y = y + a.y() * b.y()
-    dest.z = z + a.z() * b.z()
-    dest.w = w + a.w() * b.w()
+    dest.x = x + a.x * b.x
+    dest.y = y + a.y * b.y
+    dest.z = z + a.z * b.z
+    dest.w = w + a.w * b.w
     return dest
   }
 
@@ -705,10 +618,10 @@ class Vector4f : Externalizable, Vector4fc {
      * @see org.joml.Vector4fc#fma(float, org.joml.Vector4fc, org.joml.Vector4f)
      */
   override fun fma(a: Float, b: Vector4fc, dest: Vector4f): Vector4f {
-    dest.x = x + a * b.x()
-    dest.y = y + a * b.y()
-    dest.z = z + a * b.z()
-    dest.w = w + a * b.w()
+    dest.x = x + a * b.x
+    dest.y = y + a * b.y
+    dest.z = z + a * b.z
+    dest.w = w + a * b.w
     return dest
   }
 
@@ -727,10 +640,10 @@ class Vector4f : Externalizable, Vector4fc {
      * @see org.joml.Vector4fc#mul(org.joml.Vector4fc, org.joml.Vector4f)
      */
   override fun mul(v: Vector4fc, dest: Vector4f): Vector4f {
-    dest.x = x * v.x()
-    dest.y = y * v.y()
-    dest.z = z * v.z()
-    dest.w = w * v.w()
+    dest.x = x * v.x
+    dest.y = y * v.y
+    dest.z = z * v.z
+    dest.w = w * v.w
     return dest
   }
 
@@ -749,10 +662,10 @@ class Vector4f : Externalizable, Vector4fc {
      * @see org.joml.Vector4fc#div(org.joml.Vector4fc, org.joml.Vector4f)
      */
   override fun div(v: Vector4fc, dest: Vector4f): Vector4f {
-    dest.x = x / v.x()
-    dest.y = y / v.y()
-    dest.z = z / v.z()
-    dest.w = w / v.w()
+    dest.x = x / v.x
+    dest.y = y / v.y
+    dest.z = z / v.z
+    dest.w = w / v.w
     return dest
   }
 
@@ -1174,7 +1087,7 @@ class Vector4f : Externalizable, Vector4fc {
      * @see org.joml.Vector4fc#distance(org.joml.Vector4fc)
      */
   override fun distance(v: Vector4fc): Float {
-    return distance(v.x(), v.y(), v.z(), v.w())
+    return distance(v.x, v.y, v.z, v.w)
   }
 
   /* (non-Javadoc)
@@ -1192,7 +1105,7 @@ class Vector4f : Externalizable, Vector4fc {
      * @see org.joml.Vector4fc#dot(org.joml.Vector4fc)
      */
   override fun dot(v: Vector4fc): Float {
-    return x * v.x() + y * v.y() + z * v.z() + w * v.w()
+    return x * v.x + y * v.y + z * v.z + w * v.w
   }
 
   /* (non-Javadoc)
@@ -1207,8 +1120,8 @@ class Vector4f : Externalizable, Vector4fc {
      */
   override fun angleCos(v: Vector4fc): Float {
     val length1Sqared = (x * x + y * y + z * z + w * w).toDouble()
-    val length2Sqared = (v.x() * v.x() + v.y() * v.y() + v.z() * v.z() + v.w() * v.w()).toDouble()
-    val dot = (x * v.x() + y * v.y() + z * v.z() + w * v.w()).toDouble()
+    val length2Sqared = (v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w).toDouble()
+    val dot = (x * v.x + y * v.y + z * v.z + w * v.w).toDouble()
     return (dot / Math.sqrt(length1Sqared * length2Sqared)).toFloat()
   }
 
@@ -1218,8 +1131,8 @@ class Vector4f : Externalizable, Vector4fc {
   override fun angle(v: Vector4fc): Float {
     var cos = angleCos(v)
     // This is because sometimes cos goes above 1 or below -1 because of lost precision
-    cos = if (cos < 1) cos else 1
-    cos = if (cos > -1) cos else -1
+    cos = if (cos < 1) cos else 1f
+    cos = if (cos > -1) cos else -1f
     return Math.acos(cos.toDouble()).toFloat()
   }
 
@@ -1305,10 +1218,10 @@ class Vector4f : Externalizable, Vector4fc {
   }
 
   override fun min(v: Vector4fc, dest: Vector4f): Vector4f {
-    dest.x = if (x < v.x()) x else v.x()
-    dest.y = if (y < v.y()) y else v.y()
-    dest.z = if (z < v.z()) z else v.z()
-    dest.w = if (w < v.w()) w else v.w()
+    dest.x = if (x < v.x) x else v.x
+    dest.y = if (y < v.y) y else v.y
+    dest.z = if (z < v.z) z else v.z
+    dest.w = if (w < v.w) w else v.w
     return this
   }
 
@@ -1324,10 +1237,10 @@ class Vector4f : Externalizable, Vector4fc {
   }
 
   override fun max(v: Vector4fc, dest: Vector4f): Vector4f {
-    dest.x = if (x > v.x()) x else v.x()
-    dest.y = if (y > v.y()) y else v.y()
-    dest.z = if (z > v.z()) z else v.z()
-    dest.w = if (w > v.w()) w else v.w()
+    dest.x = if (x > v.x) x else v.x
+    dest.y = if (y > v.y) y else v.y
+    dest.z = if (z > v.z) z else v.z
+    dest.w = if (w > v.w) w else v.w
     return this
   }
 
@@ -1364,10 +1277,10 @@ class Vector4f : Externalizable, Vector4fc {
   override fun smoothStep(v: Vector4fc, t: Float, dest: Vector4f): Vector4f {
     val t2 = t * t
     val t3 = t2 * t
-    dest.x = (x + x - v.x() - v.x()) * t3 + (3.0f * v.x() - 3.0f * x) * t2 + x * t + x
-    dest.y = (y + y - v.y() - v.y()) * t3 + (3.0f * v.y() - 3.0f * y) * t2 + y * t + y
-    dest.z = (z + z - v.z() - v.z()) * t3 + (3.0f * v.z() - 3.0f * z) * t2 + z * t + z
-    dest.w = (w + w - v.w() - v.w()) * t3 + (3.0f * v.w() - 3.0f * w) * t2 + w * t + w
+    dest.x = (x + x - v.x - v.x) * t3 + (3.0f * v.x - 3.0f * x) * t2 + x * t + x
+    dest.y = (y + y - v.y - v.y) * t3 + (3.0f * v.y - 3.0f * y) * t2 + y * t + y
+    dest.z = (z + z - v.z - v.z) * t3 + (3.0f * v.z - 3.0f * z) * t2 + z * t + z
+    dest.w = (w + w - v.w - v.w) * t3 + (3.0f * v.w - 3.0f * w) * t2 + w * t + w
     return dest
   }
 
@@ -1377,10 +1290,10 @@ class Vector4f : Externalizable, Vector4fc {
   override fun hermite(t0: Vector4fc, v1: Vector4fc, t1: Vector4fc, t: Float, dest: Vector4f): Vector4f {
     val t2 = t * t
     val t3 = t2 * t
-    dest.x = (x + x - v1.x() - v1.x() + t1.x() + t0.x()) * t3 + (3.0f * v1.x() - 3.0f * x - t0.x() - t0.x() - t1.x()) * t2 + x * t + x
-    dest.y = (y + y - v1.y() - v1.y() + t1.y() + t0.y()) * t3 + (3.0f * v1.y() - 3.0f * y - t0.y() - t0.y() - t1.y()) * t2 + y * t + y
-    dest.z = (z + z - v1.z() - v1.z() + t1.z() + t0.z()) * t3 + (3.0f * v1.z() - 3.0f * z - t0.z() - t0.z() - t1.z()) * t2 + z * t + z
-    dest.w = (w + w - v1.w() - v1.w() + t1.w() + t0.w()) * t3 + (3.0f * v1.w() - 3.0f * w - t0.w() - t0.w() - t1.w()) * t2 + w * t + w
+    dest.x = (x + x - v1.x - v1.x + t1.x + t0.x) * t3 + (3.0f * v1.x - 3.0f * x - t0.x - t0.x - t1.x) * t2 + x * t + x
+    dest.y = (y + y - v1.y - v1.y + t1.y + t0.y) * t3 + (3.0f * v1.y - 3.0f * y - t0.y - t0.y - t1.y) * t2 + y * t + y
+    dest.z = (z + z - v1.z - v1.z + t1.z + t0.z) * t3 + (3.0f * v1.z - 3.0f * z - t0.z - t0.z - t1.z) * t2 + z * t + z
+    dest.w = (w + w - v1.w - v1.w + t1.w + t0.w) * t3 + (3.0f * v1.w - 3.0f * w - t0.w - t0.w - t1.w) * t2 + w * t + w
     return dest
   }
 
@@ -1406,10 +1319,10 @@ class Vector4f : Externalizable, Vector4fc {
      * @see org.joml.Vector4fc#lerp(org.joml.Vector4fc, float, org.joml.Vector4f)
      */
   override fun lerp(other: Vector4fc, t: Float, dest: Vector4f): Vector4f {
-    dest.x = x + (other.x() - x) * t
-    dest.y = y + (other.y() - y) * t
-    dest.z = z + (other.z() - z) * t
-    dest.w = w + (other.w() - w) * t
+    dest.x = x + (other.x - x) * t
+    dest.y = y + (other.y - y) * t
+    dest.z = z + (other.z - z) * t
+    dest.w = w + (other.w - w) * t
     return dest
   }
 

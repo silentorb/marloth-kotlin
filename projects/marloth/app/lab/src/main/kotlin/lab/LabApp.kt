@@ -4,9 +4,8 @@ import configuration.loadConfig
 import configuration.saveConfig
 import front.GameConfig
 import front.loadGameConfig
-import front.saveGameConfig
-import generation.calculateWorldScale
 import front.setWorldMesh
+import generation.calculateWorldScale
 import generation.generateWorld
 import generation.placeEnemies
 import lab.views.GameViewConfig
@@ -20,16 +19,13 @@ import mythic.platforming.Display
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
 import randomly.Dice
-import simulation.World
-import simulation.WorldInput
-import simulation.changing.WorldUpdater
-import visualizing.createScenes
-import kotlin.concurrent.thread
+import simulation.*
 import simulation.changing.Instantiator
 import simulation.changing.InstantiatorConfig
-import simulation.createWorldBoundary
+import simulation.changing.WorldUpdater
+import visualizing.createScenes
 import java.io.File
-import java.util.*
+import kotlin.concurrent.thread
 
 
 private val watchedPackageFiles = listOf(
@@ -66,12 +62,13 @@ fun createDice(config: GameViewConfig) =
     else
       Dice(config.seed)
 
-fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig, gameViewConfig: GameViewConfig): World {
+fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig, gameViewConfig: GameViewConfig, biomes: List<Biome>): World {
   val boundary = createWorldBoundary(gameViewConfig.worldLength)
   val dice = createDice(gameViewConfig)
   val world = generateWorld(WorldInput(
       boundary,
-      dice
+      dice,
+      biomes
   ), instantiatorConfig)
 
   if (gameViewConfig.haveEnemies) {
@@ -89,13 +86,14 @@ data class LabApp(
     val gameConfig: GameConfig,
     val display: Display = platform.display,
     val timer: DeltaTimer = DeltaTimer(),
-    var world: World = generateDefaultWorld(InstantiatorConfig(gameConfig.gameplay.defaultPlayerView), config.gameView),
+    val biomes: List<Biome>,
+    var world: World,
     val client: Client = Client(platform, gameConfig.input),
     val labClient: LabClient = LabClient(config, client)
 ) {
 
   fun newWorld() =
-      generateDefaultWorld(InstantiatorConfig(gameConfig.gameplay.defaultPlayerView), config.gameView)
+      generateDefaultWorld(InstantiatorConfig(gameConfig.gameplay.defaultPlayerView), config.gameView, biomes)
 }
 
 private var saveIncrement = 0
@@ -121,12 +119,12 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
     isSaving = true
     saveIncrement = 0
 //    thread {
-//    saveLabConfig(app.config)
+    saveLabConfig(app.config)
     isSaving = false
 //    }
 
     if (hasAnyChanged()) {
-      println("One of the watched packages was modified at " + Date().toString())
+//      println("One of the watched packages was modified at " + Date().toString())
     }
   }
 
@@ -138,10 +136,11 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
     labLoop(app, nextState)
 }
 
-
 fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
   platform.display.initialize(gameConfig.display)
-  val app = LabApp(platform, config, gameConfig)
+  val biomes = createBiomes()
+  val world = generateDefaultWorld(InstantiatorConfig(gameConfig.gameplay.defaultPlayerView), config.gameView, biomes)
+  val app = LabApp(platform, config, gameConfig, world = world, biomes = biomes)
   setWorldMesh(app.world.meta, app.client)
   val clientState = newClientState()
   val state = LabState(

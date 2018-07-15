@@ -16,7 +16,7 @@ data class Temp(
 )
 
 fun renderSkyBox(textures: TextureLibrary, meshes: MeshMap, shaders: Shaders) {
-  val texture = textures[Textures.checkers]!!
+  val texture = textures[Textures.background]!!
   val mesh = meshes[MeshType.skybox]!!
   shaders.texturedFlat.activate(ObjectShaderConfig(
       texture = texture,

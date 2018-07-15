@@ -35,12 +35,12 @@ interface Vector2fc : Vector2fMinimal {
   /**
    * @return the value of the x component
    */
-  override fun x(): Float
+  override var x: Float
 
   /**
    * @return the value of the y component
    */
-  override fun y(): Float
+  override var y: Float
 
   /**
    * Store this vector into the supplied [ByteBuffer] at the current

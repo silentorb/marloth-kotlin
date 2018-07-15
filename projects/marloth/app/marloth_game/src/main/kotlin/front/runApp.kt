@@ -12,6 +12,7 @@ import simulation.changing.WorldUpdater
 import marloth.clienting.initialGameInputState
 import simulation.changing.Instantiator
 import simulation.changing.InstantiatorConfig
+import simulation.createBiomes
 import visualizing.createScenes
 
 data class App(
@@ -19,7 +20,7 @@ data class App(
     val config: GameConfig,
     val display: Display = platform.display,
     val timer: DeltaTimer = DeltaTimer(),
-    val world: World = generateDefaultWorld(InstantiatorConfig()),
+    val world: World,
     val client: Client = Client(platform, config.input)
 )
 
@@ -43,7 +44,12 @@ tailrec fun gameLoop(app: App, previousState: AppState) {
 
 fun runApp(platform: Platform) {
   val config = loadGameConfig()
-  val app = App(platform, config)
+  val biomes = createBiomes()
+  val app = App(
+      platform = platform,
+      config = config,
+      world = generateDefaultWorld(InstantiatorConfig(), biomes)
+  )
   platform.display.initialize(config.display)
   setWorldMesh(app.world.meta, app.client)
   gameLoop(app, AppState())

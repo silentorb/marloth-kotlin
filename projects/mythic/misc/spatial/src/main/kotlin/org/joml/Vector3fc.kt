@@ -22,6 +22,7 @@
  */
 package org.joml
 
+import mythic.spatial.Vector3
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 
@@ -35,17 +36,17 @@ interface Vector3fc {
   /**
    * @return the value of the x component
    */
-  fun x(): Float
+  var x: Float
 
   /**
    * @return the value of the y component
    */
-  fun y(): Float
+  var y: Float
 
   /**
    * @return the value of the z component
    */
-  fun z(): Float
+  var z: Float
 
   /**
    * Store this vector into the supplied [FloatBuffer] at the current
@@ -141,7 +142,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun sub(v: Vector3fc, dest: Vector3f): Vector3f
+  fun sub(v: Vector3fc, dest: Vector3): Vector3
 
   /**
    * Decrement the components of this vector by the given values and store the result in `dest`.
@@ -156,7 +157,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun sub(x: Float, y: Float, z: Float, dest: Vector3f): Vector3f
+  fun sub(x: Float, y: Float, z: Float, dest: Vector3): Vector3
 
   /**
    * Add the supplied vector to this one and store the result in `dest`.
@@ -167,7 +168,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun add(v: Vector3fc, dest: Vector3f): Vector3f
+  fun add(v: Vector3fc, dest: Vector3): Vector3
 
   /**
    * Increment the components of this vector by the given values and store the result in `dest`.
@@ -182,7 +183,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun add(x: Float, y: Float, z: Float, dest: Vector3f): Vector3f
+  fun add(x: Float, y: Float, z: Float, dest: Vector3): Vector3
 
   /**
    * Add the component-wise multiplication of `a * b` to this vector
@@ -196,7 +197,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun fma(a: Vector3fc, b: Vector3fc, dest: Vector3f): Vector3f
+  fun fma(a: Vector3fc, b: Vector3fc, dest: Vector3): Vector3
 
   /**
    * Add the component-wise multiplication of `a * b` to this vector
@@ -210,10 +211,10 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun fma(a: Float, b: Vector3fc, dest: Vector3f): Vector3f
+  fun fma(a: Float, b: Vector3fc, dest: Vector3): Vector3
 
   /**
-   * Multiply this Vector3f component-wise by another Vector3f and store the result in `dest`.
+   * Multiply this Vector3 component-wise by another Vector3 and store the result in `dest`.
    *
    * @param v
    * the vector to multiply by
@@ -221,10 +222,10 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun mul(v: Vector3fc, dest: Vector3f): Vector3f
+  fun mul(v: Vector3fc, dest: Vector3): Vector3
 
   /**
-   * Divide this Vector3f component-wise by another Vector3f and store the result in `dest`.
+   * Divide this Vector3 component-wise by another Vector3 and store the result in `dest`.
    *
    * @param v
    * the vector to divide by
@@ -232,10 +233,10 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun div(v: Vector3fc, dest: Vector3f): Vector3f
+  fun div(v: Vector3fc, dest: Vector3): Vector3
 
   /**
-   * Multiply the given matrix `mat` with this Vector3f, perform perspective division
+   * Multiply the given matrix `mat` with this Vector3, perform perspective division
    * and store the result in `dest`.
    *
    *
@@ -247,10 +248,10 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun mulProject(mat: Matrix4fc, dest: Vector3f): Vector3f
+  fun mulProject(mat: Matrix4fc, dest: Vector3): Vector3
 
   /**
-   * Multiply the given matrix with this Vector3f and store the result in `dest`.
+   * Multiply the given matrix with this Vector3 and store the result in `dest`.
    *
    * @param mat
    * the matrix
@@ -258,10 +259,10 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun mul(mat: Matrix3fc, dest: Vector3f): Vector3f
+  fun mul(mat: Matrix3fc, dest: Vector3): Vector3
 
   /**
-   * Multiply the given matrix with this Vector3f and store the result in `dest`.
+   * Multiply the given matrix with this Vector3 and store the result in `dest`.
    *
    * @param mat
    * the matrix
@@ -269,7 +270,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun mul(mat: Matrix3dc, dest: Vector3f): Vector3f
+  fun mul(mat: Matrix3dc, dest: Vector3): Vector3
 
   /**
    * Multiply the given matrix `mat` with `this` by assuming a
@@ -281,10 +282,10 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun mul(mat: Matrix3x2fc, dest: Vector3f): Vector3f
+  fun mul(mat: Matrix3x2fc, dest: Vector3): Vector3
 
   /**
-   * Multiply the transpose of the given matrix with this Vector3f and store the result in `dest`.
+   * Multiply the transpose of the given matrix with this Vector3 and store the result in `dest`.
    *
    * @param mat
    * the matrix
@@ -292,7 +293,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun mulTranspose(mat: Matrix3fc, dest: Vector3f): Vector3f
+  fun mulTranspose(mat: Matrix3fc, dest: Vector3): Vector3
 
   /**
    * Multiply the given 4x4 matrix `mat` with `this` and store the
@@ -307,7 +308,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun mulPosition(mat: Matrix4fc, dest: Vector3f): Vector3f
+  fun mulPosition(mat: Matrix4fc, dest: Vector3): Vector3
 
   /**
    * Multiply the given 4x3 matrix `mat` with `this` and store the
@@ -322,7 +323,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun mulPosition(mat: Matrix4x3fc, dest: Vector3f): Vector3f
+  fun mulPosition(mat: Matrix4x3fc, dest: Vector3): Vector3
 
   /**
    * Multiply the transpose of the given 4x4 matrix `mat` with `this` and store the
@@ -337,7 +338,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun mulTransposePosition(mat: Matrix4fc, dest: Vector3f): Vector3f
+  fun mulTransposePosition(mat: Matrix4fc, dest: Vector3): Vector3
 
   /**
    * Multiply the given 4x4 matrix `mat` with `this`, store the
@@ -352,7 +353,7 @@ interface Vector3fc {
    * will hold the <tt>(x, y, z)</tt> components of the resulting vector
    * @return the *w* component of the resulting 4D vector after multiplication
    */
-  fun mulPositionW(mat: Matrix4fc, dest: Vector3f): Float
+  fun mulPositionW(mat: Matrix4fc, dest: Vector3): Float
 
   /**
    * Multiply the given 4x4 matrix `mat` with `this` and store the
@@ -367,7 +368,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun mulDirection(mat: Matrix4dc, dest: Vector3f): Vector3f
+  fun mulDirection(mat: Matrix4dc, dest: Vector3): Vector3
 
   /**
    * Multiply the given 4x4 matrix `mat` with `this` and store the
@@ -382,7 +383,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun mulDirection(mat: Matrix4fc, dest: Vector3f): Vector3f
+  fun mulDirection(mat: Matrix4fc, dest: Vector3): Vector3
 
   /**
    * Multiply the given 4x3 matrix `mat` with `this` and store the
@@ -397,7 +398,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun mulDirection(mat: Matrix4x3fc, dest: Vector3f): Vector3f
+  fun mulDirection(mat: Matrix4x3fc, dest: Vector3): Vector3
 
   /**
    * Multiply the transpose of the given 4x4 matrix `mat` with `this` and store the
@@ -412,10 +413,10 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun mulTransposeDirection(mat: Matrix4fc, dest: Vector3f): Vector3f
+  fun mulTransposeDirection(mat: Matrix4fc, dest: Vector3): Vector3
 
   /**
-   * Multiply all components of this [Vector3f] by the given scalar
+   * Multiply all components of this [Vector3] by the given scalar
    * value and store the result in `dest`.
    *
    * @param scalar
@@ -424,10 +425,10 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun mul(scalar: Float, dest: Vector3f): Vector3f
+  fun mul(scalar: Float, dest: Vector3): Vector3
 
   /**
-   * Multiply the components of this Vector3f by the given scalar values and store the result in `dest`.
+   * Multiply the components of this Vector3 by the given scalar values and store the result in `dest`.
    *
    * @param x
    * the x component to multiply this vector by
@@ -439,10 +440,10 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun mul(x: Float, y: Float, z: Float, dest: Vector3f): Vector3f
+  fun mul(x: Float, y: Float, z: Float, dest: Vector3): Vector3
 
   /**
-   * Divide all components of this [Vector3f] by the given scalar
+   * Divide all components of this [Vector3] by the given scalar
    * value and store the result in `dest`.
    *
    * @param scalar
@@ -451,10 +452,10 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun div(scalar: Float, dest: Vector3f): Vector3f
+  fun div(scalar: Float, dest: Vector3): Vector3
 
   /**
-   * Divide the components of this Vector3f by the given scalar values and store the result in `dest`.
+   * Divide the components of this Vector3 by the given scalar values and store the result in `dest`.
    *
    * @param x
    * the x component to divide this vector by
@@ -466,7 +467,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun div(x: Float, y: Float, z: Float, dest: Vector3f): Vector3f
+  fun div(x: Float, y: Float, z: Float, dest: Vector3): Vector3
 
   /**
    * Rotate this vector by the given quaternion `quat` and store the result in `dest`.
@@ -478,7 +479,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun rotate(quat: Quaternionfc, dest: Vector3f): Vector3f
+  fun rotate(quat: Quaternionfc, dest: Vector3): Vector3
 
   /**
    * Compute the quaternion representing a rotation of `this` vector to point along `toDir`
@@ -532,7 +533,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun rotateAxis(angle: Float, aX: Float, aY: Float, aZ: Float, dest: Vector3f): Vector3f
+  fun rotateAxis(angle: Float, aX: Float, aY: Float, aZ: Float, dest: Vector3): Vector3
 
   /**
    * Rotate this vector the specified radians around the X axis and store the result
@@ -544,7 +545,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun rotateX(angle: Float, dest: Vector3f): Vector3f
+  fun rotateX(angle: Float, dest: Vector3): Vector3
 
   /**
    * Rotate this vector the specified radians around the Y axis and store the result
@@ -556,7 +557,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun rotateY(angle: Float, dest: Vector3f): Vector3f
+  fun rotateY(angle: Float, dest: Vector3): Vector3
 
   /**
    * Rotate this vector the specified radians around the Z axis and store the result
@@ -568,7 +569,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun rotateZ(angle: Float, dest: Vector3f): Vector3f
+  fun rotateZ(angle: Float, dest: Vector3): Vector3
 
   /**
    * Return the length squared of this vector.
@@ -591,7 +592,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun normalize(dest: Vector3f): Vector3f
+  fun normalize(dest: Vector3): Vector3
 
   /**
    * Scale this vector to have the given length and store the result in `dest`.
@@ -602,7 +603,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun normalize(length: Float, dest: Vector3f): Vector3f
+  fun normalize(length: Float, dest: Vector3): Vector3
 
   /**
    * Compute the cross product of this vector and `v` and store the result in `dest`.
@@ -613,7 +614,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun cross(v: Vector3fc, dest: Vector3f): Vector3f
+  fun cross(v: Vector3fc, dest: Vector3): Vector3
 
   /**
    * Compute the cross product of this vector and <tt>(x, y, z)</tt> and store the result in `dest`.
@@ -628,7 +629,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun cross(x: Float, y: Float, z: Float, dest: Vector3f): Vector3f
+  fun cross(x: Float, y: Float, z: Float, dest: Vector3): Vector3
 
   /**
    * Return the distance between this Vector and `v`.
@@ -725,7 +726,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun min(v: Vector3fc, dest: Vector3f): Vector3f
+  fun min(v: Vector3fc, dest: Vector3): Vector3
 
   /**
    * Set the components of `dest` to be the component-wise maximum of this and the other vector.
@@ -736,7 +737,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun max(v: Vector3fc, dest: Vector3f): Vector3f
+  fun max(v: Vector3fc, dest: Vector3): Vector3
 
   /**
    * Negate this vector and store the result in `dest`.
@@ -745,7 +746,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun negate(dest: Vector3f): Vector3f
+  fun negate(dest: Vector3): Vector3
 
   /**
    * Compute the absolute values of the individual components of `this` and store the result in `dest`.
@@ -754,7 +755,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun absolute(dest: Vector3f): Vector3f
+  fun absolute(dest: Vector3): Vector3
 
   /**
    * Reflect this vector about the given `normal` vector and store the result in `dest`.
@@ -765,7 +766,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun reflect(normal: Vector3fc, dest: Vector3f): Vector3f
+  fun reflect(normal: Vector3fc, dest: Vector3): Vector3
 
   /**
    * Reflect this vector about the given normal vector and store the result in `dest`.
@@ -780,7 +781,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun reflect(x: Float, y: Float, z: Float, dest: Vector3f): Vector3f
+  fun reflect(x: Float, y: Float, z: Float, dest: Vector3): Vector3
 
   /**
    * Compute the half vector between this and the other vector and store the result in `dest`.
@@ -791,7 +792,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun half(other: Vector3fc, dest: Vector3f): Vector3f
+  fun half(other: Vector3fc, dest: Vector3): Vector3
 
   /**
    * Compute the half vector between this and the vector <tt>(x, y, z)</tt>
@@ -807,7 +808,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun half(x: Float, y: Float, z: Float, dest: Vector3f): Vector3f
+  fun half(x: Float, y: Float, z: Float, dest: Vector3): Vector3
 
   /**
    * Compute a smooth-step (i.e. hermite with zero tangents) interpolation
@@ -822,7 +823,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun smoothStep(v: Vector3fc, t: Float, dest: Vector3f): Vector3f
+  fun smoothStep(v: Vector3fc, t: Float, dest: Vector3): Vector3
 
   /**
    * Compute a hermite interpolation between `this` vector with its
@@ -842,7 +843,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun hermite(t0: Vector3fc, v1: Vector3fc, t1: Vector3fc, t: Float, dest: Vector3f): Vector3f
+  fun hermite(t0: Vector3fc, v1: Vector3fc, t1: Vector3fc, t: Float, dest: Vector3): Vector3
 
   /**
    * Linearly interpolate `this` and `other` using the given interpolation factor `t`
@@ -860,7 +861,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun lerp(other: Vector3fc, t: Float, dest: Vector3f): Vector3f
+  fun lerp(other: Vector3fc, t: Float, dest: Vector3): Vector3
 
   /**
    * Get the value of the specified component of this vector.
@@ -899,7 +900,7 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun orthogonalize(v: Vector3fc, dest: Vector3f): Vector3f
+  fun orthogonalize(v: Vector3fc, dest: Vector3): Vector3
 
   /**
    * Transform `this` vector so that it is orthogonal to the given unit vector `v`, normalize the result and store it into `dest`.
@@ -916,6 +917,6 @@ interface Vector3fc {
    * will hold the result
    * @return dest
    */
-  fun orthogonalizeUnit(v: Vector3fc, dest: Vector3f): Vector3f
+  fun orthogonalizeUnit(v: Vector3fc, dest: Vector3): Vector3
 
 }
