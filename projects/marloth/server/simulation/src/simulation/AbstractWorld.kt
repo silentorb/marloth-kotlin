@@ -45,6 +45,7 @@ class NodeGraph {
   fun disconnect(connection: Connection) {
     connection.first.connections.remove(connection)
     connection.second.connections.remove(connection)
+    connections.remove(connection)
   }
 
   fun removeNode(node: Node) {
@@ -111,43 +112,37 @@ class AbstractWorld(val boundary: WorldBoundary) {
     get() = nodes.flatMap { it.walls }.distinct()
 }
 
-fun initializeFaceInfo(type: FaceType, node: Node, face: FlexibleFace, texture: Textures?) {
+fun initializeFaceInfo(type: FaceType, node: Node, face: FlexibleFace) {
   val info = getNullableFaceInfo(face)
   face.data =
       if (info == null) {
-        FaceInfo(type, node, null, texture)
+        FaceInfo(type, node, null, null)
       } else {
         if (info.firstNode == node || info.secondNode == node)
           face.data
         else {
-          if (info.firstNode != null && info.secondNode != null)
-            throw Error("Not supported.")
+//          assert(info.firstNode != null && info.secondNode != null)
 
-          val newTexture = if (info.texture != null)
-            info.texture
-          else
-            texture
-
-          FaceInfo(type, info.firstNode, node, newTexture)
+          FaceInfo(type, info.firstNode, node)
         }
       }
 }
 
-fun initializeNodeFaceInfo(node: Node, floorTexture: Textures?, wallTexture: Textures?) {
+fun initializeNodeFaceInfo(node: Node) {
   for (face in node.walls) {
-    initializeFaceInfo(FaceType.wall, node, face, wallTexture)
+    initializeFaceInfo(FaceType.wall, node, face)
   }
   for (face in node.floors) {
-    initializeFaceInfo(FaceType.floor, node, face, floorTexture)
+    initializeFaceInfo(FaceType.floor, node, face)
   }
   for (face in node.ceilings) {
-    initializeFaceInfo(FaceType.ceiling, node, face, floorTexture)
+    initializeFaceInfo(FaceType.ceiling, node, face)
   }
 }
 
 fun initializeFaceInfo(abstractWorld: AbstractWorld) {
   for (node in abstractWorld.nodes) {
-    initializeNodeFaceInfo(node, Textures.checkers, Textures.darkCheckers)
+    initializeNodeFaceInfo(node)
   }
 }
 

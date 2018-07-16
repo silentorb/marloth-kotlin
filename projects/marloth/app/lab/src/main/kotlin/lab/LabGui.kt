@@ -16,7 +16,6 @@ import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyEvent
 
-
 class LabGui : Application() {
   var code: String = ""
 //  val onCodeChanged: (code: String) -> Unit = setModelCode

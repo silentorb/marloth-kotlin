@@ -68,6 +68,7 @@ class FlexibleFace(
   var normal = Vector3()
 
   fun updateNormal() {
+//    if (vertices.size > 2)
     normal = getNormal(unorderedVertices)
   }
 

@@ -4,10 +4,7 @@ import generation.*
 import generation.abstract.Cluster
 import generation.abstract.gatherClusters
 import generation.abstract.isInCluster
-import mythic.sculpting.FlexibleEdge
-import mythic.sculpting.FlexibleFace
-import mythic.sculpting.FlexibleMesh
-import mythic.sculpting.calculateNormals
+import mythic.sculpting.*
 import mythic.spatial.*
 import org.joml.plus
 import org.joml.xy
@@ -94,10 +91,11 @@ fun fillClusterCornerGaps(unorderedCorners: List<Corner>, node: Node, otherNodes
 
 const val minPointDistance = 1f
 
-fun withoutClosePoints(corners: List<Corner>):List<Corner>{
+fun withoutClosePoints(corners: List<Corner>): List<Corner> {
   val tooClose = crossMap(corners.asSequence()) { a: Corner, b: Corner ->
     println(a.distance(b))
-    a.distance(b) < minPointDistance }
+    a.distance(b) < minPointDistance
+  }
   return corners.minus(tooClose.distinct())
 }
 
@@ -107,7 +105,8 @@ fun createClusterNodeStructure(node: Node, cluster: List<Node>, corners: List<Co
   val allCorners = moreCorners
       .plus(fillClusterCornerGaps(moreCorners, node, cluster.filter { it !== node }))
 
-  return withoutClosePoints(allCorners)
+//  return withoutClosePoints(allCorners)
+  return allCorners
       .sortedBy { getAngle(node, it) }
 }
 
@@ -130,8 +129,9 @@ fun generateTunnelStructure(node: Node, nodeSectors: List<TempSector>): TempSect
   val (first, second) = node.neighbors.toList()
   val sectors = nodeSectors.filter { it.node === first || it.node == second }
   val corners = sectors.flatMap { sector ->
-    val points = getDoorwayPoints(sector.node, if (sector.node === first) second else first)
-    sector.corners.filter { p -> points.any { roughlyEquals(it, p.xy, 0.1f) } }
+    val other = if (sector.node === first) second else first
+    val points = getDoorwayPoints(sector.node, other)
+    points.map { point -> sector.corners.sortedBy { it.xy.distance(point) }.first() }
   }
       .sortedBy { getAngle(node, it) }
 
@@ -155,6 +155,17 @@ fun createWall(edge: FlexibleEdge, mesh: FlexibleMesh): FlexibleFace {
   ))
 }
 
+fun getOrCreateWall(edge:FlexibleEdge, otherEdges: List<EdgeReference>, mesh: FlexibleMesh): FlexibleFace {
+  return if (otherEdges.size > 1) {
+    val face = edge.faces.firstOrNull { it.data != null && getFaceInfo(it).type == FaceType.space }
+    if (face != null)
+      face
+    else
+      createWall(edge, mesh)
+  } else
+    createWall(edge, mesh)
+}
+
 fun createRooms(abstractWorld: AbstractWorld, dice: Dice, tunnels: List<Node>) {
   val mesh = abstractWorld.mesh
 
@@ -172,21 +183,14 @@ fun createRooms(abstractWorld: AbstractWorld, dice: Dice, tunnels: List<Node>) {
   sinewFloorsAndCeilings(allSectors, mesh)
   allSectors.forEach { sector ->
     val wallBases = sector.node.floors.first().edges
-    wallBases.forEach {
-      val otherEdges = it.otherEdgeReferences
-      val wall = if (otherEdges.size > 1) {
-        val face = it.faces.firstOrNull() { it.data != null && getFaceInfo(it).type == FaceType.space }
-        if (face != null)
-          face
-        else
-          createWall(it.edge, mesh)
-      } else
-        createWall(it.edge, mesh)
+    wallBases.forEach { edgeReference ->
+      val otherEdges = edgeReference.otherEdgeReferences
+      val wall = getOrCreateWall(edgeReference.edge, otherEdges, mesh)
 
-      if (otherEdges.size > 0)
-        initializeFaceInfo(FaceType.space, sector.node, wall, null)
+      if (otherEdges.any())
+        initializeFaceInfo(FaceType.space, sector.node, wall)
       else
-        initializeFaceInfo(FaceType.wall, sector.node, wall, Textures.darkCheckers)
+        initializeFaceInfo(FaceType.wall, sector.node, wall)
 
       sector.node.walls.add(wall)
     }
@@ -198,8 +202,8 @@ fun generateStructure(abstractWorld: AbstractWorld, dice: Dice, tunnels: List<No
   calculateNormals(abstractWorld.mesh)
   initializeFaceInfo(abstractWorld)
   val roomNodes = abstractWorld.nodes.toList()
-//  defineNegativeSpace(abstractWorld, dice)
-//  fillBoundary(abstractWorld, dice)
-//  expandVertically(abstractWorld, roomNodes, dice)
+  defineNegativeSpace(abstractWorld, dice)
+  fillBoundary(abstractWorld, dice)
+  expandVertically(abstractWorld, roomNodes, dice)
   assignTextures(abstractWorld)
 }

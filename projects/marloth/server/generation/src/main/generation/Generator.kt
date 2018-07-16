@@ -56,7 +56,7 @@ fun generateAbstract(world: AbstractWorld, biomes: List<Biome>, dice: Dice, scal
   val preTunnels = prepareTunnels(world.graph)
   val twinTunnels = getTwinTunnels(preTunnels)
   val tunnels = createTunnelNodes(world, preTunnels.minus(twinTunnels))
-  world.graph.connections.removeAll(twinTunnels.map { it.connection})
+  twinTunnels.forEach { world.graph.disconnect(it.connection) }
 
   fillIndexes(world.graph)
   return tunnels
@@ -118,7 +118,7 @@ fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): Wo
   val instantiator = Instantiator(world, instantiatorConfig)
   instantiator.createPlayer(1)
 
-//  placeWallLamps(world, instantiator, input.dice, scale)
+  placeWallLamps(world, instantiator, input.dice, scale)
 
   return world
 }
