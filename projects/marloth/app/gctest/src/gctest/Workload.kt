@@ -1,7 +1,13 @@
 package gctest
 
 data class A(
-    val value: Int
+    val value: Int,
+    val t1: Long = 10,
+    val t2: Long = 20,
+    val t3: Long = 20,
+    val t4: Long = 20,
+    val t5: Long = 20,
+    val t6: Long = 20
 )
 
 fun getResult(a: A) =
