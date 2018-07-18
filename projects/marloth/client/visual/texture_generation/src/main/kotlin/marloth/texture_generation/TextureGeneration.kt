@@ -30,9 +30,9 @@ val checkerPattern = { first: OpaqueColor, second: OpaqueColor ->
   }
 }
 
-val noiseSource = OpenSimplexNoise(1)
+val noiseSource = OpenSimplexNoiseKotlin(1)
 
-fun tileable2DNoise(source: OpenSimplexNoise, x: Float, y: Float, scale: Float): Float {
+fun tileable2DNoise(source: OpenSimplexNoiseKotlin, x: Float, y: Float, scale: Float): Float {
   // Noise range
   val x1 = 0f
   val x2 = scale
@@ -46,17 +46,17 @@ fun tileable2DNoise(source: OpenSimplexNoise, x: Float, y: Float, scale: Float):
   val t = y / 1f
 
   // Calculate our 4D coordinates
-  val nx = x1 + Math.cos((s * 2f * Pi).toDouble()) * dx / (2 * Pi)
-  val ny = y1 + Math.cos((t * 2f * Pi).toDouble()) * dy / (2 * Pi)
-  val nz = x1 + Math.sin((s * 2f * Pi).toDouble()) * dx / (2 * Pi)
-  val nw = y1 + Math.sin((t * 2f * Pi).toDouble()) * dy / (2 * Pi)
+  val nx = x1 + Math.cos((s * 2f * Pi).toDouble()).toFloat() * dx / (2 * Pi)
+  val ny = y1 + Math.cos((t * 2f * Pi).toDouble()).toFloat() * dy / (2 * Pi)
+  val nz = x1 + Math.sin((s * 2f * Pi).toDouble()).toFloat() * dx / (2 * Pi)
+  val nw = y1 + Math.sin((t * 2f * Pi).toDouble()).toFloat() * dy / (2 * Pi)
   return source.eval(nx, ny, nz, nw).toFloat()
 }
 
 fun simpleNoise(scale: Float): ScalarTextureAlgorithm =
     { x, y ->
-      //      noiseSource.eval(x * scale.toDouble(), y * scale.toDouble()).toFloat()
-      tileable2DNoise(noiseSource, x, y, scale)
+      noiseSource.eval(x * scale, y * scale)
+//      tileable2DNoise(noiseSource, x, y, scale)
     }
 
 fun simpleNoise(scales: List<Float>): ScalarTextureAlgorithm =

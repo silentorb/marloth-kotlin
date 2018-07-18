@@ -2,6 +2,7 @@ package org.joml
 
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
+import mythic.spatial.Vector4
 
 
 /* Matrix3d */
@@ -117,6 +118,11 @@ operator fun Vector2f.minus(v: Float) = sub(Vector2f(v, v), Vector2f())
 operator fun Vector3.plus(v: Vector3fc): Vector3 = Vector3(x + v.x, y + v.y, z + v.z)
 operator fun Vector3.plus(v: Float): Vector3 = Vector3(x + v, y + v, z + v)
 operator fun Vector3.unaryMinus() = Vector3(this).negate()
+
+operator fun Vector4.plus(v: Float): Vector4 = Vector4(x + v, y + v, z + v, w + v)
+operator fun Vector4i.plus(v: Int): Vector4i = Vector4i(x + v, y + v, z + v, w + v)
+
+fun Vector4.toVector4i() = Vector4i(x.toInt(), y.toInt(), z.toInt(), w.toInt())
 
 /* Vector3d */
 

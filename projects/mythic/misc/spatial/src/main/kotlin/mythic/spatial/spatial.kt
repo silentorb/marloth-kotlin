@@ -409,6 +409,12 @@ fun getAngle(a: Vector2, b: Vector2): Float {
 val Vector4.xyz: Vector3
   get() = Vector3(x, y, z)
 
+val Vector4.xy: Vector2
+  get() = Vector2(x, y)
+
+val Vector4.zw: Vector2
+  get() = Vector2(z, w)
+
 //val Vector4.xy: Vector2
 //  get() = Vector2(x, y)
 
