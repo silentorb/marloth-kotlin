@@ -104,9 +104,8 @@ class OpenSimplexNoiseKotlin {
     //Floor to get grid coordinates of rhombus (stretched square) super-cell origin.
     val sb = Vector2(fastFloor(s.x), fastFloor(s.y))
 
-    //Skew out to get actual coordinates of rhombus origin. We'll need these later.
+    //Skew out to get actual coordinates of rhombus origin.
     val squishOffset = (sb.x + sb.y) * SQUISH_CONSTANT_2D
-    val b = sb + squishOffset
 
     //Compute grid coordinates relative to rhombus origin.
     val ins = s - sb
@@ -115,10 +114,9 @@ class OpenSimplexNoiseKotlin {
     val inSum = ins.x + ins.y
 
     //Positions relative to origin point.
-    val d0 = input - b
+    val d0 = input - (sb + squishOffset)
 
     //We'll be defining these inside the next block and using them afterwards.
-
     val db = d0 - SQUISH_CONSTANT_2D
 
     //Contribution (1,0)
@@ -138,20 +136,6 @@ class OpenSimplexNoiseKotlin {
       d0.y = d0.y - 1.0f - 2 * SQUISH_CONSTANT_2D
     }
 
-//    //Contribution (0,0) or (1,1)
-//    var attn0 = 2.0f - d0.x * d0.x - d0.y * d0.y
-//    if (attn0 > 0) {
-//      attn0 *= attn0
-//      value += attn0 * attn0 * extrapolate(sb.x.toInt(), sb.y.toInt(), d0.x, d0.y)
-//    }
-//
-//    //Extra Vertex
-//    var attn_ext = 2.0f - foo.z * foo.z - foo.w * foo.w
-//    if (attn_ext > 0) {
-//      attn_ext *= attn_ext
-//      value += attn_ext * attn_ext * extrapolate(foo.x.toInt(), foo.y.toInt(), foo.z, foo.w)
-//    }
-
     val value = wow(d1, sb + Vector2(1f, 0f)) +
         wow(d2, sb + Vector2(0f, 1f)) +
         wow(d0, sb2 + Vector2(1f, 0f)) +
@@ -159,7 +143,129 @@ class OpenSimplexNoiseKotlin {
 
     return value / NORM_CONSTANT_2D
   }
+  
+  fun eval2(x: Float, y: Float): Float {
+    val input = Vector2(x, y)
+    //Place input coordinates onto grid.
+    val stretchOffset = (x + y) * STRETCH_CONSTANT_2D
+    val s = input + stretchOffset
+//    val xs = x + stretchOffset
+//    val ys = y + stretchOffset
 
+    //Floor to get grid coordinates of rhombus (stretched square) super-cell origin.
+    val sb = Vector2(fastFloor(s.x), fastFloor(s.y))
+//    var sb.x = fastFloor(xs)
+//    var sb.y = fastFloor(ys)
+
+    //Skew out to get actual coordinates of rhombus origin. We'll need these later.
+    val squishOffset = (sb.x + sb.y) * SQUISH_CONSTANT_2D
+    val b = sb + squishOffset
+//    val xb = sb.x + squishOffset
+//    val yb = sb.y + squishOffset
+
+    //Compute grid coordinates relative to rhombus origin.
+    val ins = s - sb
+
+    //Sum those together to get a value that determines which region we're in.
+    val inSum = ins.x + ins.y
+
+    //Positions relative to origin point.
+    val d0 = input - b
+//    var d0.x = x - xb
+//    var d0.y = y - yb
+
+    //We'll be defining these inside the next block and using them afterwards.
+    val dv_ext = Vector2()
+    val sv_ext = Vector2()
+//    var dv_ext.x: Float = 0f
+//    var dv_ext.y: Float = 0f
+//    var sv_ext.x: Int = 0
+//    var sv_ext.y: Int = 0
+
+    var value = 0f
+
+    //Contribution (1,0)
+    val dx1 = d0.x - 1.0f - SQUISH_CONSTANT_2D
+    val dy1 = d0.y - 0f - SQUISH_CONSTANT_2D
+    var attn1 = 2.0f - dx1 * dx1 - dy1 * dy1
+    if (attn1 > 0) {
+      attn1 *= attn1
+      value += attn1 * attn1 * extrapolate(sb.x.toInt() + 1, sb.y.toInt() + 0, dx1, dy1)
+    }
+
+    //Contribution (0,1)
+    val dx2 = d0.x - 0f - SQUISH_CONSTANT_2D
+    val dy2 = d0.y - 1.0f - SQUISH_CONSTANT_2D
+    var attn2 = 2.0f - dx2 * dx2 - dy2 * dy2
+    if (attn2 > 0) {
+      attn2 *= attn2
+      value += attn2 * attn2 * extrapolate(sb.x.toInt() + 0, sb.y.toInt() + 1, dx2, dy2)
+    }
+
+    if (inSum <= 1) run {
+      //We're inside the triangle (2-Simplex) at (0,0)
+      val insz = 1 - inSum
+      if (insz > ins.x || insz > ins.y) { //(0,0) is one of the closest two triangular vertices
+        if (ins.x > ins.y) {
+          sv_ext.x = sb.x + 1
+          sv_ext.y = sb.y - 1
+          dv_ext.x = d0.x - 1
+          dv_ext.y = d0.y + 1
+        } else {
+          sv_ext.x = sb.x - 1
+          sv_ext.y = sb.y + 1
+          dv_ext.x = d0.x + 1
+          dv_ext.y = d0.y - 1
+        }
+      } else { //(1,0) and (0,1) are the closest two vertices.
+        sv_ext.x = sb.x + 1
+        sv_ext.y = sb.y + 1
+        dv_ext.x = d0.x - 1.0f - 2 * SQUISH_CONSTANT_2D
+        dv_ext.y = d0.y - 1.0f - 2 * SQUISH_CONSTANT_2D
+      }
+    } else {
+      //We're inside the triangle (2-Simplex) at (1,1)
+      val insz = 2 - inSum
+      if (insz < ins.x || insz < ins.y) { //(0,0) is one of the closest two triangular vertices
+        if (ins.x > ins.y) {
+          sv_ext.x = sb.x + 2
+          sv_ext.y = sb.y + 0
+          dv_ext.x = d0.x - 2.0f - 2 * SQUISH_CONSTANT_2D
+          dv_ext.y = d0.y + 0 - 2 * SQUISH_CONSTANT_2D
+        } else {
+          sv_ext.x = sb.x + 0
+          sv_ext.y = sb.y + 2
+          dv_ext.x = d0.x + 0 - 2 * SQUISH_CONSTANT_2D
+          dv_ext.y = d0.y - 2.0f - 2 * SQUISH_CONSTANT_2D
+        }
+      } else { //(1,0) and (0,1) are the closest two vertices.
+        dv_ext.x = d0.x
+        dv_ext.y = d0.y
+        sv_ext.x = sb.x
+        sv_ext.y = sb.y
+      }
+      sb.x += 1
+      sb.y += 1
+      d0.x = d0.x - 1.0f - 2 * SQUISH_CONSTANT_2D
+      d0.y = d0.y - 1.0f - 2 * SQUISH_CONSTANT_2D
+    }
+
+    //Contribution (0,0) or (1,1)
+    var attn0 = 2.0f - d0.x * d0.x - d0.y * d0.y
+    if (attn0 > 0) {
+      attn0 *= attn0
+      value += attn0 * attn0 * extrapolate(sb.x.toInt(), sb.y.toInt(), d0.x, d0.y)
+    }
+
+    //Extra Vertex
+    var attn_ext = 2.0f - dv_ext.x * dv_ext.x - dv_ext.y * dv_ext.y
+    if (attn_ext > 0) {
+      attn_ext *= attn_ext
+      value += attn_ext * attn_ext * extrapolate(sv_ext.x.toInt(), sv_ext.y.toInt(), dv_ext.x, dv_ext.y)
+    }
+
+    return value / NORM_CONSTANT_2D
+  }
   fun eval(x: Float, y: Float, z: Float, w: Float): Float {
     val input = Vector4(x, y, z, w)
     //Place input coordinates on simplectic honeycomb.

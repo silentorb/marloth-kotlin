@@ -55,7 +55,7 @@ fun tileable2DNoise(source: OpenSimplexNoiseKotlin, x: Float, y: Float, scale: F
 
 fun simpleNoise(scale: Float): ScalarTextureAlgorithm =
     { x, y ->
-      noiseSource.eval(x * scale, y * scale)
+      noiseSource.eval2(x * scale, y * scale)
 //      tileable2DNoise(noiseSource, x, y, scale)
     }
 
