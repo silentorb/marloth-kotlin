@@ -7,7 +7,6 @@ import org.joml.Vector2i
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil
-import java.lang.management.ManagementFactory
 
 fun createWindow(title: String, width: Int, height: Int): Long {
 //  val pid = ManagementFactory.getRuntimeMXBean().getName()
@@ -60,7 +59,7 @@ fun initializeWindow(window: Long, config: DisplayConfig) {
   glfwMakeContextCurrent(window)
 
   // Enable v-sync
-  glfwSwapInterval(1)
+  glfwSwapInterval(if (config.vsync) 1 else 0)
 
   glfwShowWindow(window)
 }

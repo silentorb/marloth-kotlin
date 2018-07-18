@@ -1,18 +1,26 @@
 package mythic.quartz
 
+private const val ceiling = 1.0 / 5
+
 class DeltaTimer {
-  private val start = System.nanoTime() // Just used for reference
-  private var last = start
+  val start = System.nanoTime() // Just used for reference
+  private var _last = start
+  var actualDelta: Double = 0.0
+
+  val last: Long
+    get() = _last
 
   fun update(): Double {
     val now = System.nanoTime()
-    val gap = now - last
+    val gap = now - _last
     val result = gap.toDouble() / 1000000000 // 1,000,000,000
-    last = now
+    _last = now
 
-    if (result > 1.0 / 30)
-      return 1.0 / 30
+    actualDelta = result
 
-    return result
+    return if (result > ceiling)
+      ceiling
+    else
+      result
   }
 }

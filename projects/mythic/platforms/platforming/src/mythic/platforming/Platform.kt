@@ -21,7 +21,8 @@ data class DisplayConfig(
     var width: Int = 800,
     var height: Int = 600,
     var fullscreen: Boolean = false,
-    var windowedFullscreen: Boolean = false // Whether fullscreen uses windowed fullscreen
+    var windowedFullscreen: Boolean = false, // Whether fullscreen uses windowed fullscreen
+    var vsync: Boolean = true
 )
 
 interface Display {

@@ -26,6 +26,7 @@ import simulation.changing.WorldUpdater
 import visualizing.createScenes
 import java.io.File
 import kotlin.concurrent.thread
+import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 
 
 private val watchedPackageFiles = listOf(
@@ -99,16 +100,28 @@ data class LabApp(
 private var saveIncrement = 0
 private var isSaving = false
 
+const val nSecond: Long = 1000000000L
+const val maxInterval = 1f / 60f
+
 tailrec fun labLoop(app: LabApp, previousState: LabState) {
   app.display.swapBuffers()
-  val scenes = createScenes(app.world, app.client.screens)
   val delta = app.timer.update().toFloat()
-  val (commands, nextState, menuAction) = app.labClient.update(scenes, app.world.meta, previousState, delta)
+  if (app.timer.actualDelta > maxInterval) {
+    val progress = app.timer.last - app.timer.start
+    println("" + (progress.toDouble() / nSecond.toDouble()).toFloat() + ": " + app.timer.actualDelta)
+  }
+//  val nextState = previousState
+  val (commands, nextState, menuAction) = app.labClient.update(app.world, app.client.screens, previousState, delta)
   if (app.config.view == Views.game) {
     val instantiator = Instantiator(app.world, InstantiatorConfig(app.gameConfig.gameplay.defaultPlayerView))
     val updater = WorldUpdater(app.world, instantiator)
     updater.update(commands, delta)
   }
+
+  if (menuAction == MenuActionType.newGame) {
+    app.world = app.newWorld()
+  }
+
   app.platform.process.pollEvents()
 
   if (app.gameConfig.gameplay.defaultPlayerView != app.world.players[0].viewMode) {
@@ -119,17 +132,13 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
     isSaving = true
     saveIncrement = 0
 //    thread {
-    saveLabConfig(app.config)
+//    saveLabConfig(app.config)
     isSaving = false
 //    }
 
-    if (hasAnyChanged()) {
+//    if (hasAnyChanged()) {
 //      println("One of the watched packages was modified at " + Date().toString())
-    }
-  }
-
-  if (menuAction == MenuActionType.newGame) {
-    app.world = app.newWorld()
+//    }
   }
 
   if (!app.platform.process.isClosing())
@@ -155,6 +164,8 @@ fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
 object App {
   @JvmStatic
   fun main(args: Array<String>) {
+    val a = KotlinReflectionInternalError("Reflection on built-in Kotlin types is not yet fully supported. " +
+        "No metadata found for ")
     val s = this.javaClass.`package`.getImplementationVersion()
     val s2 = File(App::class.java.getProtectionDomain().getCodeSource().getLocation().toURI())
     val s3 = s2.lastModified()

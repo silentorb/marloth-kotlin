@@ -1,6 +1,5 @@
 package mythic.glowing
 
-import org.joml.Vector2i
 import org.lwjgl.opengl.GL11.*
 
 class Operations {

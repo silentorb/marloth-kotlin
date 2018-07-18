@@ -1,28 +1,45 @@
 package gctest
 
+const val OneMillion = 1000000
+
+const val objectCount = 100000
+
 data class A(
-    val value: Int,
-    val t1: Long = 10,
-    val t2: Long = 20,
-    val t3: Long = 20,
-    val t4: Long = 20,
-    val t5: Long = 20,
-    val t6: Long = 20
+    var value: Int,
+    var second: Int,
+    var third: Int,
+    var b: B? = null
 )
 
 fun getResult(a: A) =
-    a.value + 1
+    a.value + a.second + a.third + 1
 
-class Workload {
+fun createA(i: Int): A {
+  return A(i, 0, i)
+}
+
+data class B(
+    var a: A?
+)
+
+class Workload(val useBList: Boolean) {
   var unusedResult = 0
+  var blist: List<B> = if (useBList)
+    (0 until objectCount * 100).map { B(A(10, 0, 0)) }
+  else
+    listOf()
 
-  fun update() {
+  fun update(creator: (Int) -> A) {
+//    println("Updating")
     var result = 0
-    for (i in 0 until 1000) {
-      val a = A(i)
+    for (i in 0 until objectCount) {
+      val a = creator(i)
+      if (useBList) {
+        a.b = blist[i]
+      }
       result += getResult(a)
     }
 
-    unusedResult = 0
+    unusedResult = result
   }
 }

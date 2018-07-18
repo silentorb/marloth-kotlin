@@ -2,7 +2,6 @@ package gcview
 
 import java.io.File
 import java.nio.file.Files
-import java.nio.file.Paths
 
 val decimalPattern = Regex("\\d+\\.\\d+")
 
@@ -19,14 +18,13 @@ fun loadCollection(lines: Collection<String>): GarbageCollection {
   fun decimals(linePattern: String): List<Float> =
       getDecimals(findLine(linePattern))
 
-  val startTime = getDecimals(lines.first()).first()
-  val totalEvacuationTime = decimals("  Evacuate Collection Set")[1]
-
+  val firstLineDecimals = getDecimals(lines.first())
   return GarbageCollection(
-      startTime = startTime,
-      evacuateCollectionSet = EvacuateCollectionSet(
-          duration = totalEvacuationTime
-      )
+      startTime = firstLineDecimals[0],
+      youngPauseDuration = if (firstLineDecimals.size > 1) firstLineDecimals[1] else 0f,
+      evacuateCollectionSetDuration = decimals("  Evacuate Collection Set")[1],
+      updateRSMax = decimals("Update RS")[3],
+      objectCopyMax = decimals("Object Copy")[3]
   )
 }
 

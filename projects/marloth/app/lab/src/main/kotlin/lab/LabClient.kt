@@ -1,19 +1,15 @@
 package lab
 
 import commanding.CommandType
-import lab.views.*
-import marloth.clienting.Client
-import mythic.platforming.PlatformInput
-import mythic.platforming.WindowInfo
-import scenery.GameScene
-import simulation.AbstractWorld
 import haft.*
+import lab.views.*
 import lab.views.map.createTopDownCamera
 import lab.views.map.renderMapView
 import lab.views.map.updateMapState
 import lab.views.model.ModelView
 import lab.views.model.ModelViewState
 import lab.views.world.WorldView
+import marloth.clienting.Client
 import marloth.clienting.ClientState
 import marloth.clienting.InputState
 import marloth.clienting.gui.MenuActionType
@@ -21,9 +17,15 @@ import marloth.clienting.gui.menuButtonAction
 import marloth.clienting.gui.updateMenuState
 import mythic.bloom.Box
 import mythic.bloom.renderLayout
+import mythic.platforming.PlatformInput
+import mythic.platforming.WindowInfo
 import org.joml.Vector2i
 import org.joml.minus
 import rendering.createCanvas
+import scenery.Screen
+import simulation.AbstractWorld
+import simulation.World
+import visualizing.createScenes
 
 data class LabState(
     val labInput: InputTriggerState<LabCommandType>,
@@ -96,10 +98,11 @@ class LabClient(val config: LabConfig, val client: Client) {
     client.platform.input.update()
   }
 
-  fun updateGame(windowInfo: WindowInfo, scenes: List<GameScene>, metaWorld: AbstractWorld, previousState: LabState, delta: Float): LabClientResult {
+  fun updateGame(windowInfo: WindowInfo, world: World, screens: List<Screen>, previousState: LabState, delta: Float): LabClientResult {
 //    client.platform.input.isMouseVisible(false)
     client.platform.input.update()
 //    println(client.platform.input.getMousePosition())
+    val scenes = createScenes(world, screens)
     val view = GameView(config.gameView)
     val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
     val input = getInputState(client.platform.input, commands)
@@ -116,7 +119,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     val newMenuState = updateMenuState(previousState.gameClientState.menu, menuCommands)
     val menuAction = menuButtonAction(newMenuState, menuCommands)
     client.handleMenuAction(menuAction)
-    renderScene(client, GameViewRenderData(scenes, metaWorld, config.gameView, previousState.gameClientState.menu))
+    renderScene(client, GameViewRenderData(scenes, world.meta, config.gameView, previousState.gameClientState.menu))
 
     val newInputState = InputState(
         events = mainEvents.plus(waitingEvents),
@@ -188,14 +191,14 @@ class LabClient(val config: LabConfig, val client: Client) {
     )
   }
 
-  fun updateMap(windowInfo: WindowInfo, scenes: List<GameScene>, metaWorld: AbstractWorld, previousState: LabState, delta: Float): LabClientResult {
+  fun updateMap(windowInfo: WindowInfo, world: World, previousState: LabState, delta: Float): LabClientResult {
     prepareClient(windowInfo)
     val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
     val input = getInputState(client.platform.input, commands)
     val camera = createTopDownCamera(config.mapView.camera)
-    updateMapState(config.mapView, metaWorld, camera, input, windowInfo, delta)
+    updateMapState(config.mapView, world.meta, camera, input, windowInfo, delta)
 
-    renderMapView(client, metaWorld, config.mapView, camera)
+    renderMapView(client, world.meta, config.mapView, camera)
     return LabClientResult(
         listOf(),
         previousState.copy(labInput = nextLabInputState),
@@ -203,14 +206,14 @@ class LabClient(val config: LabConfig, val client: Client) {
     )
   }
 
-  fun update(scenes: List<GameScene>, metaWorld: AbstractWorld, previousState: LabState, delta: Float): LabClientResult {
+  fun update(world: World, screens: List<Screen>, previousState: LabState, delta: Float): LabClientResult {
     val windowInfo = client.platform.display.getInfo()
     return when (config.view) {
-      Views.game -> updateGame(windowInfo, scenes, metaWorld, previousState, delta)
+      Views.game -> updateGame(windowInfo, world, screens, previousState, delta)
       Views.model -> updateModel(windowInfo, previousState, delta)
       Views.texture -> updateTexture(windowInfo, previousState)
-      Views.world -> updateWorld(windowInfo, metaWorld, previousState)
-      Views.map -> updateMap(windowInfo, scenes, metaWorld, previousState, delta)
+      Views.world -> updateWorld(windowInfo, world.meta, previousState)
+      Views.map -> updateMap(windowInfo, world, previousState, delta)
       else -> throw Error("Not supported")
     }
   }
