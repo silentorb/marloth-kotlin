@@ -81,8 +81,8 @@ private val miscTextureGenerators: TextureGeneratorMap = mapOf(
     ), 512, TextureAttributes(repeating = false)),
     Textures.grass to applyAlgorithm(colorize(
         Vector3(0f, 0.35f, 0f),
-        Vector3(0f, 0.35f, 0f),
-//        Vector3(0.1f, 0.75f, 0.1f),
+//        Vector3(0f, 0.35f, 0f),
+        Vector3(0.1f, 0.75f, 0.1f),
         simpleNoise(listOf(82f, 37f))
     ), 512, TextureAttributes(repeating = true))
 )

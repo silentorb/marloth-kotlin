@@ -23,8 +23,10 @@
 && (this.getClass().getName() != "kotlin.reflect.jvm.internal.KotlinReflectionInternalError")
 ```
 ### VM Options
-```-Djava.library.path="E:/dev/games/java-freetype/cmake-build-debug/bin" -ea -Dcom.sun.management.jmxremote
+```
+-Djava.library.path="E:/dev/games/java-freetype/cmake-build-debug/bin" -ea -Dcom.sun.management.jmxremote
 -Xlog:gc*=debug:file=logs/gclog.txt 
+-XX:MaxGCPauseMillis=8
 ```
 
 ### Working directory
