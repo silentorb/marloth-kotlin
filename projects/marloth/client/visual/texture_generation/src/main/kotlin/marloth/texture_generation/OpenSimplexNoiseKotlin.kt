@@ -1,9 +1,6 @@
 package marloth.texture_generation
 
-import mythic.spatial.Vector2
-import mythic.spatial.Vector4
-import mythic.spatial.xy
-import mythic.spatial.zw
+import mythic.spatial.*
 import org.joml.*
 
 private val STRETCH_CONSTANT_2D = -0.211324865405187f   //(1/Math.sqrt(2+1)-1)/2;
@@ -84,7 +81,7 @@ class OpenSimplexNoiseKotlin {
       }
     }
 
-    return  Vector4(sb.x, sb.y, d0.x, d0.y) + offset2
+    return Vector4(sb.x, sb.y, d0.x, d0.y) + offset2
   }
 
   fun wow(d: Vector2, sb: Vector2): Float {
@@ -127,7 +124,7 @@ class OpenSimplexNoiseKotlin {
 
     val foo = cool(ins, sb, d0)
 
-    val sb2 = sb
+    val sb2 = sb.copy()
 
     if (inSum > 1) {
       sb2.x += 1
@@ -136,14 +133,20 @@ class OpenSimplexNoiseKotlin {
       d0.y = d0.y - 1.0f - 2 * SQUISH_CONSTANT_2D
     }
 
-    val value = wow(d1, sb + Vector2(1f, 0f)) +
-        wow(d2, sb + Vector2(0f, 1f)) +
-        wow(d0, sb2 + Vector2(1f, 0f)) +
-        wow(foo.zw, foo.xy)
+    val a1 = wow(d1, sb + Vector2(1f, 0f))
+    val a2 = wow(d2, sb + Vector2(0f, 1f))
+    val a3 = wow(d0, sb2)
+    val a4 = wow(foo.zw, foo.xy)
+//    println("b1 " + a1)
+//    println("b2 " + a2)
+//    println("b3 " + a3)
+//    println("b4 " + a4)
+
+    val value = a1 + a2 + a3 + a4
 
     return value / NORM_CONSTANT_2D
   }
-  
+
   fun eval2(x: Float, y: Float): Float {
     val input = Vector2(x, y)
     //Place input coordinates onto grid.
@@ -190,6 +193,7 @@ class OpenSimplexNoiseKotlin {
     var attn1 = 2.0f - dx1 * dx1 - dy1 * dy1
     if (attn1 > 0) {
       attn1 *= attn1
+      println("a1 " + (attn1 * attn1 * extrapolate(sb.x.toInt() + 1, sb.y.toInt() + 0, dx1, dy1)))
       value += attn1 * attn1 * extrapolate(sb.x.toInt() + 1, sb.y.toInt() + 0, dx1, dy1)
     }
 
@@ -199,6 +203,7 @@ class OpenSimplexNoiseKotlin {
     var attn2 = 2.0f - dx2 * dx2 - dy2 * dy2
     if (attn2 > 0) {
       attn2 *= attn2
+      println("a2 " + (attn2 * attn2 * extrapolate(sb.x.toInt() + 0, sb.y.toInt() + 1, dx2, dy2)))
       value += attn2 * attn2 * extrapolate(sb.x.toInt() + 0, sb.y.toInt() + 1, dx2, dy2)
     }
 
@@ -254,6 +259,7 @@ class OpenSimplexNoiseKotlin {
     var attn0 = 2.0f - d0.x * d0.x - d0.y * d0.y
     if (attn0 > 0) {
       attn0 *= attn0
+      println("a3 " + (attn0 * attn0 * extrapolate(sb.x.toInt(), sb.y.toInt(), d0.x, d0.y)))
       value += attn0 * attn0 * extrapolate(sb.x.toInt(), sb.y.toInt(), d0.x, d0.y)
     }
 
@@ -261,11 +267,13 @@ class OpenSimplexNoiseKotlin {
     var attn_ext = 2.0f - dv_ext.x * dv_ext.x - dv_ext.y * dv_ext.y
     if (attn_ext > 0) {
       attn_ext *= attn_ext
+      println("a4 " + (attn_ext * attn_ext * extrapolate(sv_ext.x.toInt(), sv_ext.y.toInt(), dv_ext.x, dv_ext.y)))
       value += attn_ext * attn_ext * extrapolate(sv_ext.x.toInt(), sv_ext.y.toInt(), dv_ext.x, dv_ext.y)
     }
 
     return value / NORM_CONSTANT_2D
   }
+/*
   fun eval(x: Float, y: Float, z: Float, w: Float): Float {
     val input = Vector4(x, y, z, w)
     //Place input coordinates on simplectic honeycomb.
@@ -1678,7 +1686,7 @@ class OpenSimplexNoiseKotlin {
 
     return value / NORM_CONSTANT_4D
   }
-
+*/
   private fun extrapolate(sbx: Int, sby: Int, dx: Float, dy: Float): Float {
     val index = perm[perm[sbx and 0xFF] + sby and 0xFF].toInt() and 0x0E
     return gradients2D[index] * dx + gradients2D[index + 1] * dy
