@@ -61,6 +61,6 @@ fun runApp(platform: Platform) {
 object App {
   @JvmStatic
   fun main(args: Array<String>) {
-    runApp(createDesktopPlatform("GC Test"))
+    runApp(createDesktopPlatform("GC Test", DisplayConfig()))
   }
 }

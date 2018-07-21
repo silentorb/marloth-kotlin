@@ -71,6 +71,6 @@ object App {
   fun main(args: Array<String>) {
     System.setProperty("joml.format", "false")
     val gameConfig = loadGameConfig()
-    runApp(createDesktopPlatform("Dev Lab"), gameConfig)
+    runApp(createDesktopPlatform("Dev Lab", gameConfig.display), gameConfig)
   }
 }

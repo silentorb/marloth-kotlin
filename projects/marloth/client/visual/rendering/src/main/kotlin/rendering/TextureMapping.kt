@@ -1,11 +1,11 @@
 package rendering
 
-import mythic.glowing.Texture
 import mythic.sculpting.FlexibleFace
 import mythic.sculpting.VertexNormalTexture
 import mythic.spatial.Vector3
 import mythic.spatial.put
 import rendering.meshes.FlexibleVertexSerializer
+import scenery.Textures
 
 typealias VertexMap = Map<Vector3, VertexNormalTexture>
 typealias FaceTextureMap = Map<FlexibleFace, VertexMap>
@@ -13,7 +13,7 @@ typealias FaceTextureMap = Map<FlexibleFace, VertexMap>
 data class TextureFace(
     val face: FlexibleFace,
     val vertexMap: VertexMap,
-    val texture: Texture
+    val texture: Textures
 )
 
 fun texturedVertexSerializer(vertexInfo: FaceTextureMap): FlexibleVertexSerializer = { vertex, face, vertices ->

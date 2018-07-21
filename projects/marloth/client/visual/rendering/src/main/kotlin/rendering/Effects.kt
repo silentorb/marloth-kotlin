@@ -14,7 +14,7 @@ import scenery.Light
 //class PerspectiveEffect(private val shader: GeneralShader, private val camera: CameraEffectsData) {
 //  private val modelTransform = MatrixProperty(shader.program, "modelTransform")
 //
-//  init {
+//  initialize {
 //    shader.cameraTransform.setValue(camera.transform)
 //    shader.cameraDirection.setValue(camera.direction)
 //  }
@@ -31,7 +31,7 @@ import scenery.Light
 //  private val perspectiveEffect = PerspectiveEffect(shader.shader, camera)
 //  private val sceneProperty = UniformBufferProperty(shader.shader.program, "SceneUniform")
 //
-//  init {
+//  initialize {
 //    sceneProperty.setValue(sceneBuffer)
 //  }
 //

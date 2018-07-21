@@ -10,12 +10,13 @@ import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import rendering.*
 import rendering.meshes.convertMesh
+import scenery.Textures
 import simulation.AbstractWorld
 import simulation.Node
 import simulation.getFaceInfo
 import kotlin.math.roundToInt
 
-fun createTexturedHorizontalSurface(face: FlexibleFace, texture: Texture): TextureFace {
+fun createTexturedHorizontalSurface(face: FlexibleFace, texture: Textures): TextureFace {
   val vertices = face.unorderedVertices
   val bounds = getBounds(vertices)
   val scale = 2f
@@ -38,7 +39,7 @@ fun createTexturedHorizontalSurface(face: FlexibleFace, texture: Texture): Textu
   )
 }
 
-fun createTexturedWall(face: FlexibleFace, texture: Texture): TextureFace {
+fun createTexturedWall(face: FlexibleFace, texture: Textures): TextureFace {
   val vertices = face.unorderedVertices
   val bounds = getBounds(vertices)
   val dimensions = bounds.dimensions
@@ -76,11 +77,11 @@ fun prepareWorldMesh(node: Node, textures: TextureLibrary): List<TextureFace> {
       .filter { getFaceInfo(it).firstNode == node && getFaceInfo(it).texture != null }
 
   return floors.plus(ceilings)
-      .map { createTexturedHorizontalSurface(it, textures[getFaceInfo(it).texture]!!) }
+      .map { createTexturedHorizontalSurface(it, getFaceInfo(it).texture!!) }
       .plus(
           node.walls
               .filter { getFaceInfo(it).firstNode == node && getFaceInfo(it).texture != null }
-              .map { createTexturedWall(it, textures[getFaceInfo(it).texture]!!) }
+              .map { createTexturedWall(it, getFaceInfo(it).texture!!) }
       )
 }
 

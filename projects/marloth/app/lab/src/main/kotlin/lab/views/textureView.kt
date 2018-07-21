@@ -20,7 +20,8 @@ data class TextureViewConfig(
 )
 
 fun drawTextureView(renderer: Renderer, config: TextureViewConfig, bounds: Bounds, canvas: Canvas) {
-  val texture = textureGenerators[config.texture]!!(1f)
+//  val texture = textureGenerators[config.texture]!!(1f)
+  val texture = renderer.textures[config.texture]!!
   val length = Math.min(bounds.dimensions.x, bounds.dimensions.y)
   val repeat = 2f
   canvas.drawDynamicImage(bounds.position, Vector2(length, length), canvas.image(texture), listOf(
@@ -29,7 +30,7 @@ fun drawTextureView(renderer: Renderer, config: TextureViewConfig, bounds: Bound
       1f, 0f, repeat, 0f,
       1f, 1f, repeat, repeat
   ))
-  texture.dispose()
+//  texture.dispose()
 }
 
 private fun drawLeftPanel(textures: List<Textures>, config: TextureViewConfig, bounds: Bounds): SelectionResult {

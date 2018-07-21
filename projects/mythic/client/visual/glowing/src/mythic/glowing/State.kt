@@ -7,11 +7,13 @@ import org.lwjgl.opengl.GL20.glUseProgram
 
 import mythic.spatial.Vector4
 import org.joml.Vector4i
+import org.lwjgl.opengl.GL13.GL_MULTISAMPLE
 import org.lwjgl.opengl.GL13.glActiveTexture
 import org.lwjgl.opengl.GL14.GL_BLEND_DST_RGB
 import org.lwjgl.opengl.GL14.GL_BLEND_SRC_RGB
 import org.lwjgl.opengl.GL30.*
 import org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER
+import org.lwjgl.opengl.GL32
 
 fun getGLBounds(type: Int): Vector4i {
   val buffer = IntArray(4)
@@ -116,6 +118,14 @@ class State {
       }
     }
 
+  var multisampleEnabled: Boolean = false
+    set(value) {
+      if (field != value) {
+        field = value
+        setEnabled(GL_MULTISAMPLE, value)
+      }
+    }
+
   var blendFunction: Pair<Int, Int> = Pair(glGetInteger(GL_BLEND_SRC_RGB), glGetInteger(GL_BLEND_DST_RGB))
     set(value) {
       if (field != value) {
@@ -132,11 +142,19 @@ class State {
       }
     }
 
-  var boundTexture: Int = 0
+  var bound2dTexture: Int = 0
     set(value) {
       if (field != value) {
         field = value
         glBindTexture(GL_TEXTURE_2D, value)
+      }
+    }
+
+  var bound2dMultisampleTexture: Int = 0
+    set(value) {
+      if (field != value) {
+        field = value
+        glBindTexture(GL32.GL_TEXTURE_2D_MULTISAMPLE, value)
       }
     }
 

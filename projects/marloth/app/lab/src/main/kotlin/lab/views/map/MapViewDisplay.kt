@@ -75,7 +75,7 @@ fun renderMapMesh(renderer: SceneRenderer, world: AbstractWorld, config: MapView
       for (sector in worldMesh.sectors) {
         var index = 0
         for (texture in sector.textureIndex) {
-          renderer.effects.texturedFlat.activate(ObjectShaderConfig(texture = texture))
+          renderer.effects.texturedFlat.activate(ObjectShaderConfig(texture = renderer.renderer.textures[texture]))
           sector.mesh.drawElement(DrawMethod.triangleFan, index++)
         }
       }

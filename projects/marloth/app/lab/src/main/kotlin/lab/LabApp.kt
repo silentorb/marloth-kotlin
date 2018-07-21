@@ -25,26 +25,9 @@ import simulation.changing.InstantiatorConfig
 import simulation.changing.WorldUpdater
 import visualizing.createScenes
 import java.io.File
+import java.util.*
 import kotlin.concurrent.thread
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
-
-
-private val watchedPackageFiles = listOf(
-    App::class
-)
-    .map { it.java.getProtectionDomain().getCodeSource().getLocation().toURI() }
-
-val lastTimestamps = watchedPackageFiles.associate { Pair(it, 0L) }.toMutableMap()
-
-fun hasAnyChanged(): Boolean =
-    lastTimestamps.any {
-      val lastModified = File(it.key).lastModified()
-      if (lastModified > it.value) {
-        lastTimestamps[it.key] = lastModified
-        true
-      } else
-        false
-    }
 
 fun startGui() {
   thread(true, false, null, "JavaFX GUI", -1) {
@@ -89,7 +72,7 @@ data class LabApp(
     val timer: DeltaTimer = DeltaTimer(),
     val biomes: List<Biome>,
     var world: World,
-    val client: Client = Client(platform, gameConfig.input),
+    val client: Client = Client(platform, gameConfig.display, gameConfig.input),
     val labClient: LabClient = LabClient(config, client)
 ) {
 
@@ -97,8 +80,7 @@ data class LabApp(
       generateDefaultWorld(InstantiatorConfig(gameConfig.gameplay.defaultPlayerView), config.gameView, biomes)
 }
 
-private var saveIncrement = 0
-private var isSaving = false
+private var saveIncrement = 0f
 
 const val nSecond: Long = 1000000000L
 const val maxInterval = 1f / 60f
@@ -106,13 +88,13 @@ const val maxInterval = 1f / 60f
 tailrec fun labLoop(app: LabApp, previousState: LabState) {
   app.display.swapBuffers()
   val delta = app.timer.update().toFloat()
-  if (app.timer.actualDelta > maxInterval) {
-    val progress = app.timer.last - app.timer.start
-    println("" + (progress.toDouble() / nSecond.toDouble()).toFloat() + ": " + app.timer.actualDelta)
-  }
-//  val nextState = previousState
+
   val (commands, nextState, menuAction) = app.labClient.update(app.world, app.client.screens, previousState, delta)
   if (app.config.view == Views.game) {
+    if (app.config.gameView.logDroppedFrames && app.timer.actualDelta > maxInterval) {
+      val progress = app.timer.last - app.timer.start
+      println("" + (progress.toDouble() / nSecond.toDouble()).toFloat() + ": " + app.timer.actualDelta)
+    }
     val instantiator = Instantiator(app.world, InstantiatorConfig(app.gameConfig.gameplay.defaultPlayerView))
     val updater = WorldUpdater(app.world, instantiator)
     updater.update(commands, delta)
@@ -128,17 +110,12 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
     app.gameConfig.gameplay.defaultPlayerView = app.world.players[0].viewMode
 //    saveGameConfig(app.gameConfig)
   }
-  if (saveIncrement++ > 60 * 3 && !isSaving) {
-    isSaving = true
-    saveIncrement = 0
-//    thread {
-//    saveLabConfig(app.config)
-    isSaving = false
-//    }
 
-//    if (hasAnyChanged()) {
-//      println("One of the watched packages was modified at " + Date().toString())
-//    }
+  saveIncrement += 1f * delta
+  if (saveIncrement > 1f) {
+    saveIncrement = 0f
+
+    updateWatching(app)
   }
 
   if (!app.platform.process.isClosing())
@@ -174,6 +151,6 @@ object App {
     val gameConfig = loadGameConfig()
     saveLabConfig(config)
 //    startGui()
-    runApp(createDesktopPlatform("Dev Lab"), config, gameConfig)
+    runApp(createDesktopPlatform("Dev Lab", gameConfig.display), config, gameConfig)
   }
 }

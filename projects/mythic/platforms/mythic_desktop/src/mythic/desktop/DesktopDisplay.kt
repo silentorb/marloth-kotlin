@@ -8,15 +8,16 @@ import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil
 
-fun createWindow(title: String, width: Int, height: Int): Long {
+fun createWindow(title: String, config: DisplayConfig): Long {
 //  val pid = ManagementFactory.getRuntimeMXBean().getName()
 //  println("pid: " + pid)
   glfwDefaultWindowHints() // optional, the current window hints are already the default
   glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE) // the window will stay hidden after creation
   glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE) // the window will be resizable
+  glfwWindowHint(GLFW_SAMPLES, config.multisamples)
 //  val pid = ProcessHandle.current().getPid()
 
-  val window = glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL)
+  val window = glfwCreateWindow(config.width, config.height, title, MemoryUtil.NULL, MemoryUtil.NULL)
   if (window == MemoryUtil.NULL)
     throw RuntimeException("Failed to create the GLFW window")
 

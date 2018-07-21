@@ -5,6 +5,7 @@ import haft.*
 import marloth.clienting.gui.MenuActionType
 import marloth.clienting.gui.MenuState
 import marloth.clienting.gui.initialMenuState
+import mythic.platforming.DisplayConfig
 import mythic.platforming.Platform
 import org.joml.Vector2i
 import rendering.Renderer
@@ -45,8 +46,8 @@ fun newClientState() =
         menu = initialMenuState()
     )
 
-class Client(val platform: Platform, inputConfig: GameInputConfig) {
-  val renderer: Renderer = Renderer()
+class Client(val platform: Platform, displayConfig: DisplayConfig, inputConfig: GameInputConfig) {
+  val renderer: Renderer = Renderer(displayConfig)
   val screens: List<Screen> = (1..maxPlayerCount).map { Screen(it) }
   //  val keyStrokeCommands: Map<CommandType, CommandHandler<CommandType>> = mapOf(
 //      CommandType.switchView to { command -> switchCameraMode(command.target, screens) },

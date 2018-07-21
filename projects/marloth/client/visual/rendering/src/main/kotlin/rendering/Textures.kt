@@ -18,8 +18,10 @@ val noisyCheckerPattern = { a: Vector3, b: Vector3 ->
   }
 }
 
-val createCheckers = {
+
+fun createCheckers() = {
   val black = Vector3(0.0f, 0.0f, 0.0f)
+//  val white = Vector3(0.0f, 1.0f, 1.0f)
   val white = Vector3(1.0f, 1.0f, 1.0f)
   mix(
       checkerPattern(black, white),
@@ -28,7 +30,7 @@ val createCheckers = {
   )
 }
 
-val createDarkCheckers = {
+fun createDarkCheckers() = {
   val black = Vector3(0.0f, 0.0f, 0.0f)
   val red = Vector3(0.5f, 0.3f, 0.1f)
   mix(
@@ -49,11 +51,11 @@ typealias OpaqueTextureAlgorithmSource = () -> OpaqueTextureAlgorithm
 typealias TextureGenerator = (scale: Float) -> Texture
 typealias TextureGeneratorMap = Map<Textures, TextureGenerator>
 
-val basicTextures: Map<Textures, OpaqueTextureAlgorithmSource> = mapOf(
+fun basicTextures(): Map<Textures, OpaqueTextureAlgorithmSource> = mapOf(
 
-    Textures.checkers to createCheckers,
+    Textures.checkers to createCheckers(),
 
-    Textures.darkCheckers to createDarkCheckers,
+    Textures.darkCheckers to createDarkCheckers(),
     Textures.debugCyan to { solidColor(Vector3(0f, 1f, 1f)) },
     Textures.debugMagenta to { solidColor(Vector3(1f, 0f, 1f)) },
     Textures.debugYellow to { solidColor(Vector3(1f, 1f, 0f)) },
@@ -73,26 +75,25 @@ fun applyAlgorithm(algorithm: OpaqueTextureAlgorithm, length: Int, attributes: T
   Texture(scaledLength, scaledLength, buffer, attributes)
 }
 
-private val miscTextureGenerators: TextureGeneratorMap = mapOf(
+private fun miscTextureGenerators(): TextureGeneratorMap = mapOf(
     Textures.background to applyAlgorithm(colorize(
         Vector3(0.25f),
         Vector3(0.75f),
         simpleNoise(listOf(12f, 37f))
     ), 512, TextureAttributes(repeating = false)),
     Textures.grass to applyAlgorithm(colorize(
-        Vector3(0f, 0.35f, 0f),
-//        Vector3(0f, 0.35f, 0f),
-        Vector3(0.1f, 0.75f, 0.1f),
-        simpleNoise(listOf(82f, 37f))
+        Vector3(0.25f, 0.35f, 0.05f),
+        Vector3(0.5f, 0.65f, 0.2f),
+        simpleNoise(listOf(62f, 37f))
     ), 512, TextureAttributes(repeating = true))
 )
 
-private val basicTextureGenerators: TextureGeneratorMap = basicTextures.mapValues { algorithm ->
+private fun basicTextureGenerators(): TextureGeneratorMap = basicTextures().mapValues { algorithm ->
   applyAlgorithm(algorithm.value(), 256, TextureAttributes(repeating = true))
 }
 
-val textureGenerators: TextureGeneratorMap =
-    basicTextureGenerators
-    .plus(miscTextureGenerators)
+fun textureGenerators(): TextureGeneratorMap =
+    basicTextureGenerators()
+    .plus(miscTextureGenerators())
 
-fun createTextureLibrary(scale: Float) = textureGenerators.mapValues { it.value(scale) }
+fun createTextureLibrary(scale: Float) = textureGenerators().mapValues { it.value(scale) }

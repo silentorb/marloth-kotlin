@@ -46,11 +46,11 @@ fun createLabDeviceHandlers(input: PlatformInput): List<ScalarInputSource> {
   )
 }
 
-//fun selectView(config: LabConfig, abstractWorld: AbstractWorld, client: Client, view: String): View =
+//fun selectView(config: LabConfig, abstractWorld: AbstractWorld, rendering: Client, view: String): View =
 //    when (view) {
 //      "game" -> GameView(config.gameView)
-//      "world" -> WorldView(config.worldView, abstractWorld, client.renderer)
-//      "model" -> ModelView(config.modelView, client.renderer, client.platform.input.getMousePosition())
+//      "world" -> WorldView(config.worldView, abstractWorld, rendering.renderer)
+//      "model" -> ModelView(config.modelView, rendering.renderer, rendering.platform.input.getMousePosition())
 //      "texture" -> TextureView()
 //      else -> throw Error("Not supported")
 //    }
@@ -78,7 +78,7 @@ class LabClient(val config: LabConfig, val client: Client) {
       LabCommandType.viewTexture to { _ -> config.view = Views.texture }
 //      LabCommandType.menu to { _ ->
 //        if (config.view != "game")
-//          client.platform.process.close()
+//          rendering.platform.process.close()
 //      }
   )
   val deviceHandlers = createLabDeviceHandlers(client.platform.input)
@@ -99,9 +99,9 @@ class LabClient(val config: LabConfig, val client: Client) {
   }
 
   fun updateGame(windowInfo: WindowInfo, world: World, screens: List<Screen>, previousState: LabState, delta: Float): LabClientResult {
-//    client.platform.input.isMouseVisible(false)
+//    rendering.platform.input.isMouseVisible(false)
     client.platform.input.update()
-//    println(client.platform.input.getMousePosition())
+//    println(rendering.platform.input.getMousePosition())
     val scenes = createScenes(world, screens)
     val view = GameView(config.gameView)
     val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
@@ -109,7 +109,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     view.updateState(input, delta)
     val properties = client.input.prepareInput(previousState.gameClientState.input, scenes.map { it.player })
     val mainEvents = client.input.updateGameInput1(properties, previousState.gameClientState)
-//    client.updateGameInput(properties, client.playerInputProfiles)
+//    rendering.updateGameInput(properties, rendering.playerInputProfiles)
 
     val waitingEvents = client.input.checkForNewGamepads1(properties)
 

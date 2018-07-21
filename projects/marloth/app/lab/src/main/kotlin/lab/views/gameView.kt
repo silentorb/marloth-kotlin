@@ -35,7 +35,8 @@ data class GameViewConfig(
     var worldLength: Float = 100f,
     var haveEnemies: Boolean = true,
     var displayMode: GameDisplayMode = GameDisplayMode.normal,
-    var draw: GameViewDrawConfig = GameViewDrawConfig()
+    var draw: GameViewDrawConfig = GameViewDrawConfig(),
+    var logDroppedFrames: Boolean = false
 )
 
 fun renderFaceNormals(renderer: SceneRenderer, length: Float, mesh: FlexibleMesh) {

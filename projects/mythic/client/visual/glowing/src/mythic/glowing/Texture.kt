@@ -13,7 +13,7 @@ data class TextureAttributes(
 
 fun geometryTextureInitializer(attributes: TextureAttributes) = { width: Int, height: Int, buffer: FloatBuffer ->
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1) // Disable byte-alignment restriction
-  val wrapMode = if(attributes.repeating)
+  val wrapMode = if (attributes.repeating)
     GL_REPEAT
   else
     GL_CLAMP
@@ -30,31 +30,48 @@ fun geometryTextureInitializer(attributes: TextureAttributes) = { width: Int, he
       0, GL_RGB, GL_FLOAT, buffer)
 }
 
-class Texture(width: Int, height: Int) {
-  val id: Int = glGenTextures()
+enum class TextureTarget {
+  general,
+  multisample
+}
+
+class Texture(width: Int, height: Int, val target: TextureTarget) {
+  var id: Int = glGenTextures()
 
   init {
-    globalState.boundTexture = id
+    if (target == TextureTarget.multisample) {
+      globalState.multisampleEnabled = true
+    }
+
+    bind()
   }
 
-  constructor(width: Int, height: Int, buffer: FloatBuffer, initializer: TextureInitializer) : this(width, height) {
+  constructor(width: Int, height: Int, buffer: FloatBuffer, initializer: TextureInitializer, target: TextureTarget = TextureTarget.general) : this(width, height, target) {
     initializer(width, height, buffer)
   }
 
-  constructor(width: Int, height: Int, initializer: SimpleTextureInitializer) : this(width, height) {
+  constructor(width: Int, height: Int, initializer: SimpleTextureInitializer, target: TextureTarget = TextureTarget.general) : this(width, height, target) {
     initializer(width, height)
   }
 
-  constructor(width: Int, height: Int, buffer: FloatBuffer, attributes: TextureAttributes): this(width, height){
+  constructor(width: Int, height: Int, buffer: FloatBuffer, attributes: TextureAttributes, target: TextureTarget = TextureTarget.general) : this(width, height, target) {
     geometryTextureInitializer(attributes)(width, height, buffer)
   }
-  
+
   fun dispose() {
     glDeleteTextures(id)
+    id = 0
+  }
+
+  private fun bind() {
+    when (target) {
+      TextureTarget.general -> globalState.bound2dTexture = id
+      TextureTarget.multisample -> globalState.bound2dMultisampleTexture = id
+    }
   }
 
   fun activate() {
     globalState.textureSlot = GL_TEXTURE0
-    globalState.boundTexture = id
+    bind()
   }
 }

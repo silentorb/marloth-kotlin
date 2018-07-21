@@ -21,7 +21,7 @@ data class App(
     val display: Display = platform.display,
     val timer: DeltaTimer = DeltaTimer(),
     val world: World,
-    val client: Client = Client(platform, config.input)
+    val client: Client = Client(platform, config.display, config.input)
 )
 
 data class AppState(

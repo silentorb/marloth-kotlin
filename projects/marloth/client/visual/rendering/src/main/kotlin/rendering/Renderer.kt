@@ -2,6 +2,7 @@ package rendering
 
 import mythic.drawing.*
 import mythic.glowing.*
+import mythic.platforming.DisplayConfig
 import mythic.platforming.WindowInfo
 import mythic.spatial.Matrix
 import mythic.spatial.Vector2
@@ -9,13 +10,19 @@ import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import mythic.typography.*
 import org.joml.*
+import org.lwjgl.opengl.GL11.*
+import org.lwjgl.opengl.GL30.*
+import org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE
+import org.lwjgl.opengl.GL32.glTexImage2DMultisample
 import rendering.meshes.AttributeName
 import rendering.meshes.MeshMap
 import rendering.meshes.createVertexSchemas
 import scenery.GameScene
 import scenery.Light
 import scenery.Scene
+import scenery.Textures
 import kotlin.reflect.full.declaredMemberProperties
+
 
 fun gatherEffectsData(dimensions: Vector2i, scene: Scene, cameraEffectsData: CameraEffectsData): EffectsData {
   return EffectsData(
@@ -27,7 +34,7 @@ fun gatherEffectsData(dimensions: Vector2i, scene: Scene, cameraEffectsData: Cam
 
 data class SectorMesh(
     val mesh: SimpleMesh<AttributeName>,
-    val textureIndex: List<Texture>
+    val textureIndex: List<Textures>
 )
 
 data class WorldMesh(
@@ -70,7 +77,80 @@ fun mapGameSceneRenderers(renderer: Renderer, scenes: List<GameScene>, windowInf
   }
 }
 
-class Renderer {
+const val defaultTextureScale = 1f
+
+interface RenderCustodian {
+  fun prepare(windowInfo: WindowInfo)
+  fun finish(windowInfo: WindowInfo)
+}
+
+fun standardPrepare(glow: Glow, windowInfo: WindowInfo) {
+  glow.state.viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
+  glow.state.depthEnabled = true
+  glow.operations.clearScreen()
+}
+
+class SimpleCustodian(val glow: Glow) : RenderCustodian {
+
+  override fun prepare(windowInfo: WindowInfo) {
+    standardPrepare(glow, windowInfo)
+  }
+
+  override fun finish(windowInfo: WindowInfo) {
+    globalState.viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
+  }
+}
+
+class MultisampleCustodian(val glow: Glow, val config: DisplayConfig) : RenderCustodian {
+  val texture = Texture(config.width, config.height, { width, height ->
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, config.multisamples, GL_RGB, width, height, true)
+  }, TextureTarget.multisample)
+
+  val framebuffer: Framebuffer
+  val renderbuffer: Renderbuffer
+
+  init {
+    checkError("Initializing multisampled framebuffer.")
+    framebuffer = Framebuffer()
+    checkError("Initializing multisampled framebuffer.")
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texture.id, 0)
+    checkError("Initializing multisampled framebuffer.")
+
+    renderbuffer = Renderbuffer()
+    checkError("Initializing multisampled framebuffer.")
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, config.multisamples, GL_DEPTH24_STENCIL8, config.width, config.height);
+    checkError("Initializing multisampled framebuffer.")
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderbuffer.id);
+    checkError("Initializing multisampled framebuffer.")
+
+    val status = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER)
+    if (status != GL_FRAMEBUFFER_COMPLETE )
+      throw Error("Error creating multisample framebuffer.")
+
+    println(status)
+    checkError("Initializing multisampled framebuffer.")
+  }
+
+  override fun prepare(windowInfo: WindowInfo) {
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer.id)
+    standardPrepare(glow, windowInfo)
+  }
+
+  override fun finish(windowInfo: WindowInfo) {
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0)  // Make sure no FBO is set as the draw framebuffer
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer.id) // Make sure your multisampled FBO is the read framebuffer
+    glDrawBuffer(GL_BACK)                       // Set the back buffer as the draw buffer
+    glBlitFramebuffer(0, 0, config.width, config.height, 0, 0, config.width, config.height, GL_COLOR_BUFFER_BIT, GL_NEAREST)
+  }
+}
+
+fun createRenderCustodian(glow: Glow, config: DisplayConfig): RenderCustodian =
+    if (config.multisamples == 0)
+      SimpleCustodian(glow)
+    else
+      MultisampleCustodian(glow, config)
+
+class Renderer(config: DisplayConfig) {
   val glow = Glow()
   val sceneBuffer = UniformBuffer(sceneBufferSize)
   val boneBuffer = UniformBuffer(boneBufferSize)
@@ -80,7 +160,8 @@ class Renderer {
   var worldMesh: WorldMesh? = null
   val meshGenerators = standardMeshes()
   val meshes: MeshMap = createMeshes(vertexSchemas)
-  val textures: TextureLibrary = createTextureLibrary(1f)
+  var textures: TextureLibrary = createTextureLibrary(defaultTextureScale)
+  val custodian: RenderCustodian = createRenderCustodian(glow, config)
   val fonts = loadFonts(listOf(
       FontLoadInfo(
           filename = "cour.ttf",
@@ -88,15 +169,13 @@ class Renderer {
       )
   ))
   val dynamicMesh = MutableSimpleMesh(vertexSchemas.flat)
-  val shaderLookup = Shaders::class.java.kotlin.declaredMemberProperties.map {it.get(shaders) as GeneralShader}
+  val shaderLookup = Shaders::class.java.kotlin.declaredMemberProperties.map { it.get(shaders) as GeneralShader }
 
   init {
     glow.state.clearColor = Vector4(0f, 0f, 0f, 1f)
-//    glow.state.clearColor = Vector4(1f, 0.95f, 0.9f, 1f)
   }
 
   fun updateShaders(scene: Scene, dimensions: Vector2i, cameraEffectsData: CameraEffectsData) {
-//    updateShaders(shaders, gatherEffectsData(dimensions, scene, cameraEffectsData), sectorBuffer)
     val effectsData = gatherEffectsData(dimensions, scene, cameraEffectsData)
     updateLights(effectsData.lights, sceneBuffer)
     val sceneConfig = SceneShaderConfig(
@@ -118,13 +197,11 @@ class Renderer {
   }
 
   fun prepareRender(windowInfo: WindowInfo) {
-    glow.state.viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
-    glow.state.depthEnabled = true
-    glow.operations.clearScreen()
+    custodian.prepare(windowInfo)
   }
 
   fun finishRender(windowInfo: WindowInfo) {
-    globalState.viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
+    custodian.finish(windowInfo)
   }
 
   fun renderGameScenes(scenes: List<GameScene>, windowInfo: WindowInfo) {
@@ -213,5 +290,4 @@ fun createCanvas(renderer: Renderer, windowInfo: WindowInfo): Canvas {
       renderer.fonts,
       windowInfo.dimensions
   )
-
 }
