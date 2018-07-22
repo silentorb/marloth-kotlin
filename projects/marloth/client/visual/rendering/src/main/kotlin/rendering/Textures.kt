@@ -72,7 +72,7 @@ fun basicTextures(): Map<Textures, OpaqueTextureAlgorithmSource> = mapOf(
 fun applyAlgorithm(algorithm: OpaqueTextureAlgorithm, length: Int, attributes: TextureAttributes): TextureGenerator = { scale ->
   val scaledLength = (length * scale).toInt()
   val buffer = createTextureBuffer(algorithm, scaledLength, scaledLength)
-  Texture(scaledLength, scaledLength, buffer, attributes)
+  Texture(scaledLength, scaledLength, attributes, buffer)
 }
 
 private fun miscTextureGenerators(): TextureGeneratorMap = mapOf(

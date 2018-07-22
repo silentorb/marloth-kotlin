@@ -14,6 +14,7 @@ import mythic.typography.*
 import org.joml.Vector2f
 import org.joml.Vector4i
 import org.joml.plus
+import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL20.glDrawBuffers
 import org.lwjgl.opengl.GL30.*
@@ -42,28 +43,11 @@ fun createCanvas(windowInfo: WindowInfo): Canvas {
   )
 }
 
-val screenTextureInitializer: SimpleTextureInitializer = { width: Int, height: Int ->
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 320, 200, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-}
-
-data class OffscreenBuffer(
-    val framebuffer: Framebuffer,
-    val texture: Texture
-)
-
-fun prepareScreenFrameBuffer(): OffscreenBuffer {
-  val framebuffer = Framebuffer()
-  val texture = Texture(320, 200, screenTextureInitializer)
-  glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture.id, 0);
-  glDrawBuffers(GL_COLOR_ATTACHMENT0)
-  if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-    throw Error("Error creating framebuffer.")
-
-  globalState.framebuffer = 0
-  return OffscreenBuffer(framebuffer, texture)
-}
+//val screenTextureInitializer: SimpleTextureInitializer = { width: Int, height: Int ->
+//  GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, width, height, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, 0);
+//  GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+//  GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+//}
 
 class Renderer {
   val glow = Glow()
@@ -71,7 +55,7 @@ class Renderer {
 
   init {
     glow.state.clearColor = Vector4(0f, 0f, 0f, 1f)
-    offscreenBuffer = prepareScreenFrameBuffer()
+    offscreenBuffer = prepareScreenFrameBuffer(320, 200, false)
   }
 
   fun prepareRender(windowInfo: WindowInfo) {
@@ -88,7 +72,7 @@ class Renderer {
 //    glow.state.framebuffer = 0
     glow.state.viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
 //    canvas.drawImage(Vector2(), windowInfo.dimensions.toVector2(), canvas.image(offscreenBuffer.texture))
-    offscreenBuffer.framebuffer.blitToScreen(windowInfo.dimensions)
+    offscreenBuffer.framebuffer.blitToScreen(Vector2i(320, 200), windowInfo.dimensions)
   }
 }
 

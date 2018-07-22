@@ -1,6 +1,7 @@
 package mythic.typography
 
 import mythic.glowing.Texture
+import mythic.glowing.TextureInitializer
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE
 import java.nio.ByteBuffer
@@ -8,7 +9,7 @@ import java.nio.FloatBuffer
 
 typealias CharacterMap = Map<Char, Glyph>
 
-val fontTextureInitializer = { width: Int, height: Int, buffer: FloatBuffer ->
+val fontTextureInitializer: TextureInitializer = { width: Int, height: Int, buffer: FloatBuffer? ->
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1) // Disable byte-alignment restriction
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)

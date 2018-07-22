@@ -197,6 +197,22 @@ class State {
       }
     }
 
+  var drawFramebuffer: Int = 0
+    set(value) {
+      if (field != value) {
+        field = value
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, value)
+      }
+    }
+
+  var readFramebuffer: Int = 0
+    set(value) {
+      if (field != value) {
+        field = value
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, value)
+      }
+    }
+
 }
 
 val globalState = State()

@@ -21,6 +21,7 @@ import scenery.GameScene
 import scenery.Light
 import scenery.Scene
 import scenery.Textures
+import java.nio.FloatBuffer
 import kotlin.reflect.full.declaredMemberProperties
 
 
@@ -79,76 +80,39 @@ fun mapGameSceneRenderers(renderer: Renderer, scenes: List<GameScene>, windowInf
 
 const val defaultTextureScale = 1f
 
-interface RenderCustodian {
-  fun prepare(windowInfo: WindowInfo)
-  fun finish(windowInfo: WindowInfo)
-}
+data class Multisampler(
+    val framebuffer: Framebuffer,
+    val renderbuffer: Renderbuffer
+)
 
-fun standardPrepare(glow: Glow, windowInfo: WindowInfo) {
-  glow.state.viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
-  glow.state.depthEnabled = true
-  glow.operations.clearScreen()
-}
-
-class SimpleCustodian(val glow: Glow) : RenderCustodian {
-
-  override fun prepare(windowInfo: WindowInfo) {
-    standardPrepare(glow, windowInfo)
-  }
-
-  override fun finish(windowInfo: WindowInfo) {
-    globalState.viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
-  }
-}
-
-class MultisampleCustodian(val glow: Glow, val config: DisplayConfig) : RenderCustodian {
-  val texture = Texture(config.width, config.height, { width, height ->
+fun createMultiSampler(glow: Glow, config: DisplayConfig): Multisampler {
+  val texture = Texture(config.width, config.height, null, { width: Int, height: Int, buffer: FloatBuffer? ->
     glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, config.multisamples, GL_RGB, width, height, true)
   }, TextureTarget.multisample)
 
   val framebuffer: Framebuffer
   val renderbuffer: Renderbuffer
 
-  init {
-    checkError("Initializing multisampled framebuffer.")
-    framebuffer = Framebuffer()
-    checkError("Initializing multisampled framebuffer.")
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texture.id, 0)
-    checkError("Initializing multisampled framebuffer.")
+  framebuffer = Framebuffer()
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texture.id, 0)
 
-    renderbuffer = Renderbuffer()
-    checkError("Initializing multisampled framebuffer.")
-    glRenderbufferStorageMultisample(GL_RENDERBUFFER, config.multisamples, GL_DEPTH24_STENCIL8, config.width, config.height);
-    checkError("Initializing multisampled framebuffer.")
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderbuffer.id);
-    checkError("Initializing multisampled framebuffer.")
+  renderbuffer = Renderbuffer()
+  glRenderbufferStorageMultisample(GL_RENDERBUFFER, config.multisamples, GL_DEPTH24_STENCIL8, config.width, config.height);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderbuffer.id);
 
-    val status = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER)
-    if (status != GL_FRAMEBUFFER_COMPLETE )
-      throw Error("Error creating multisample framebuffer.")
+  checkError("Initializing multisampled framebuffer.")
 
-    println(status)
-    checkError("Initializing multisampled framebuffer.")
-  }
+  val status = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER)
+  if (status != GL_FRAMEBUFFER_COMPLETE)
+    throw Error("Error creating multisample framebuffer.")
 
-  override fun prepare(windowInfo: WindowInfo) {
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer.id)
-    standardPrepare(glow, windowInfo)
-  }
+  println(status)
 
-  override fun finish(windowInfo: WindowInfo) {
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0)  // Make sure no FBO is set as the draw framebuffer
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer.id) // Make sure your multisampled FBO is the read framebuffer
-    glDrawBuffer(GL_BACK)                       // Set the back buffer as the draw buffer
-    glBlitFramebuffer(0, 0, config.width, config.height, 0, 0, config.width, config.height, GL_COLOR_BUFFER_BIT, GL_NEAREST)
-  }
+  return Multisampler(
+      framebuffer = framebuffer,
+      renderbuffer = renderbuffer
+  )
 }
-
-fun createRenderCustodian(glow: Glow, config: DisplayConfig): RenderCustodian =
-    if (config.multisamples == 0)
-      SimpleCustodian(glow)
-    else
-      MultisampleCustodian(glow, config)
 
 class Renderer(config: DisplayConfig) {
   val glow = Glow()
@@ -161,7 +125,8 @@ class Renderer(config: DisplayConfig) {
   val meshGenerators = standardMeshes()
   val meshes: MeshMap = createMeshes(vertexSchemas)
   var textures: TextureLibrary = createTextureLibrary(defaultTextureScale)
-  val custodian: RenderCustodian = createRenderCustodian(glow, config)
+  val offscreenBuffer = prepareScreenFrameBuffer(config.width, config.height, true)
+  val multisampler: Multisampler?
   val fonts = loadFonts(listOf(
       FontLoadInfo(
           filename = "cour.ttf",
@@ -173,6 +138,10 @@ class Renderer(config: DisplayConfig) {
 
   init {
     glow.state.clearColor = Vector4(0f, 0f, 0f, 1f)
+    multisampler = if (config.multisamples == 0)
+      null
+    else
+      createMultiSampler(glow, config)
   }
 
   fun updateShaders(scene: Scene, dimensions: Vector2i, cameraEffectsData: CameraEffectsData) {
@@ -197,11 +166,26 @@ class Renderer(config: DisplayConfig) {
   }
 
   fun prepareRender(windowInfo: WindowInfo) {
-    custodian.prepare(windowInfo)
+    if (multisampler != null) {
+      multisampler.framebuffer.activateDraw()
+    }
+    glow.state.viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
+    glow.state.framebuffer = offscreenBuffer.framebuffer.id
+    glow.state.depthEnabled = true
+    glow.operations.clearScreen()
   }
 
   fun finishRender(windowInfo: WindowInfo) {
-    custodian.finish(windowInfo)
+    if (multisampler != null) {
+      val width = windowInfo.dimensions.x
+      val height = windowInfo.dimensions.y
+      glow.state.drawFramebuffer = 0
+      glow.state.readFramebuffer = multisampler.framebuffer.id
+      glDrawBuffer(GL_BACK)                       // Set the back buffer as the draw buffer
+      glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST)
+    }
+    offscreenBuffer.framebuffer.blitToScreen(windowInfo.dimensions, windowInfo.dimensions)
+    globalState.viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
   }
 
   fun renderGameScenes(scenes: List<GameScene>, windowInfo: WindowInfo) {
