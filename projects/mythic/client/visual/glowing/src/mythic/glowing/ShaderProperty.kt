@@ -50,26 +50,16 @@ class FloatProperty(private val program: ShaderProgram, name: String) {
   }
 }
 
-private var bindingPointCounter = 1
-
 class UniformBufferProperty(
     private val program: ShaderProgram,
     private val name: String,
+    private val bindingPoint: Int,
     uniformBuffer: UniformBuffer) {
   private val index = glGetUniformBlockIndex(program.id, name)
 
   init {
 //    println("program: " + program.id + ", propIndex: " + index + ", ubo: " + uniformBuffer.id + ", bindingPoint: " + bindingPoint + ", name: " + name)
     assert(index != -1)
-    val bindingPoint = bindingPointCounter++
-
-    // Currently this code is designed for only a few uniform buffers initialized once at program start.
-    // If more dynamic requirements ever arise, I want this assertion to be triggered and then this code
-    // can be expanded accordingly.
-    // Previously I had the bindingPoint index passed to the constructor but that was error prone.  It was not a big error but also not an obvious one.
-    // I want this shader code to be easy to walk away from and jump back into months later.
-    assert(bindingPoint <= 8)
-
     glUniformBlockBinding(program.id, index, bindingPoint)
     glBindBufferRange(GL_UNIFORM_BUFFER, bindingPoint, uniformBuffer.id, 0, uniformBuffer.size.toLong())
   }

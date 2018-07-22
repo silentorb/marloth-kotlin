@@ -3,7 +3,6 @@ package rendering
 import mythic.breeze.Bones
 import mythic.glowing.*
 import mythic.spatial.Matrix
-import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import java.util.*
 
@@ -89,9 +88,6 @@ private fun addWeightShading(source: String) = insertTemplates(source, mapOf(
     "weightApplication" to weightApplication
 ))
 
-private val animatedVertex = addWeightShading(mainVertex)
-private val animatedFlatVertex = addWeightShading(flatVertex)
-
 private val coloredFragment = """
 ${sceneHeader}
 in vec4 fragmentPosition;
@@ -151,15 +147,25 @@ class ColoringFeature(program: ShaderProgram) {
   val colorProperty = Vector4Property(program, "uniformColor")
 }
 
-class ShadingFeature(program: ShaderProgram, sectionBuffer: UniformBuffer, sceneBuffer: UniformBuffer) {
+enum class UniformBufferId {
+  SceneUniform,
+  SectionUniform,
+  BoneTransforms
+}
+
+fun bindUniformBuffer(id: UniformBufferId, program: ShaderProgram, buffer: UniformBuffer): UniformBufferProperty {
+  val index = id.ordinal + 1
+  return UniformBufferProperty(program, id.name, index, buffer)
+}
+
+class ShadingFeature(program: ShaderProgram, sectionBuffer: UniformBuffer) {
   val normalTransformProperty = MatrixProperty(program, "normalTransform")
   val glowProperty = FloatProperty(program, "glow")
-  val sectionProperty = UniformBufferProperty(program, "SectionUniform", sectionBuffer)
-  val sceneProperty = UniformBufferProperty(program, "SceneUniform", sceneBuffer)
+  val sectionProperty = bindUniformBuffer(UniformBufferId.SectionUniform, program, sectionBuffer)
 }
 
 class SkeletonFeature(program: ShaderProgram, boneBuffer: UniformBuffer) {
-  val boneTransformsProperty = UniformBufferProperty(program, "BoneTransforms", boneBuffer)
+  val boneTransformsProperty = bindUniformBuffer(UniformBufferId.BoneTransforms, program, boneBuffer)
 }
 
 fun populateBoneBuffer(boneBuffer: UniformBuffer, bones: Bones): UniformBuffer {
@@ -171,14 +177,9 @@ fun populateBoneBuffer(boneBuffer: UniformBuffer, bones: Bones): UniformBuffer {
 
 data class ShaderFeatureConfig(
     val shading: Boolean = false,
-    val skeleton: Boolean = false
+    val skeleton: Boolean = false,
+    val texture: Boolean = false
 )
-
-//data class SceneShaderConfig(
-//    val cameraTransform: Matrix,
-//    val cameraDirection: Vector3
-////    val sceneBuffer: UniformBuffer
-//)
 
 data class ObjectShaderConfig(
     val transform: Matrix = Matrix(),
@@ -189,24 +190,30 @@ data class ObjectShaderConfig(
     val boneBuffer: UniformBuffer? = null
 )
 
-fun generateShaderProgram(vertexShader: String, fragmentShader: String, featureConfig: ShaderFeatureConfig): ShaderProgram {
+fun generateVertexCode(config: ShaderFeatureConfig): String {
+  val baseCode = if (config.shading || config.texture)
+    mainVertex
+  else
+    flatVertex
+
+  return if (config.skeleton)
+    addWeightShading(baseCode)
+  else
+    baseCode
+}
+
+fun generateShaderProgram(fragmentShader: String, featureConfig: ShaderFeatureConfig): ShaderProgram {
+  val vertexShader = generateVertexCode(featureConfig)
   return ShaderProgram(vertexShader, fragmentShader)
 }
 
-class GeneralPerspectiveShader(buffers: UniformBuffers, vertexShader: String, fragmentShader: String, featureConfig: ShaderFeatureConfig) {
-  val program = generateShaderProgram(vertexShader, fragmentShader, featureConfig)
+class GeneralPerspectiveShader(buffers: UniformBuffers, fragmentShader: String, featureConfig: ShaderFeatureConfig) {
+  val program = generateShaderProgram(fragmentShader, featureConfig)
   val perspective: PerspectiveFeature = PerspectiveFeature(program)
   val coloring: ColoringFeature = ColoringFeature(program)
-  val shading: ShadingFeature? = if (featureConfig.shading) ShadingFeature(program, buffers.section, buffers.scene) else null
+  val sceneProperty = bindUniformBuffer(UniformBufferId.SceneUniform, program, buffers.scene)
+  val shading: ShadingFeature? = if (featureConfig.shading) ShadingFeature(program, buffers.section) else null
   val skeleton: SkeletonFeature? = if (featureConfig.skeleton) SkeletonFeature(program, buffers.bone) else null
-
-//  fun updateScene(config: SceneShaderConfig) {
-//    program.activate()
-//    perspective.cameraTransform.setValue(config.cameraTransform)
-//    if (shading != null) {
-//      shading.cameraDirection.setValue(config.cameraDirection)
-//    }
-//  }
 
   // IntelliJ will flag this use of inline as a warning, but using inline here
   // causes the JVM to optimize away the ObjectShaderConfig allocation and significantly
@@ -249,19 +256,23 @@ data class UniformBuffers(
 
 fun createShaders(buffers: UniformBuffers): Shaders {
   return Shaders(
-      textured = GeneralPerspectiveShader(buffers, mainVertex, texturedFragment, ShaderFeatureConfig(
-          shading = true
-      )),
-      texturedFlat = GeneralPerspectiveShader(buffers, mainVertex, texturedFragmentFlat, ShaderFeatureConfig()),
-      animated = GeneralPerspectiveShader(buffers, animatedVertex, texturedFragment, ShaderFeatureConfig(
+      textured = GeneralPerspectiveShader(buffers, texturedFragment, ShaderFeatureConfig(
           shading = true,
-          skeleton = true
+          texture = true
       )),
-      colored = GeneralPerspectiveShader(buffers, mainVertex, coloredFragment, ShaderFeatureConfig(
+      texturedFlat = GeneralPerspectiveShader(buffers, texturedFragmentFlat, ShaderFeatureConfig(
+          texture = true
+      )),
+      animated = GeneralPerspectiveShader(buffers, texturedFragment, ShaderFeatureConfig(
+          shading = true,
+          skeleton = true,
+          texture = true
+      )),
+      colored = GeneralPerspectiveShader(buffers, coloredFragment, ShaderFeatureConfig(
           shading = true
       )),
-      flat = GeneralPerspectiveShader(buffers, flatVertex, flatFragment, ShaderFeatureConfig()),
-      flatAnimated = GeneralPerspectiveShader(buffers, animatedFlatVertex, flatFragment, ShaderFeatureConfig(
+      flat = GeneralPerspectiveShader(buffers, flatFragment, ShaderFeatureConfig()),
+      flatAnimated = GeneralPerspectiveShader(buffers, flatFragment, ShaderFeatureConfig(
           skeleton = true
       ))
   )

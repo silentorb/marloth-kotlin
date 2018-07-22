@@ -79,11 +79,6 @@ class GameSceneRenderer(
         renderSectorMesh(sector)
       }
     }
-    val r = renderer.renderer
-
-    renderSkyBox(r.textures, r.meshes, r.shaders)
-
-    globalState.cullFaces = false
   }
 
   fun render() {

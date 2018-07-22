@@ -99,6 +99,10 @@ fun renderNormalScene(renderer: GameSceneRenderer, config: GameViewConfig) {
     renderer.renderWorldMesh()
 
   renderer.renderElements()
+
+  val r = renderer.renderer.renderer
+  renderSkyBox(r.textures, r.meshes, r.shaders)
+  globalState.cullFaces = false
 }
 
 fun renderScene(client: Client, data: GameViewRenderData) {
