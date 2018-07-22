@@ -60,9 +60,9 @@ class Renderer {
 
   fun prepareRender(windowInfo: WindowInfo) {
 //    glow.operations.setViewport(Vector2i(0, 0), windowInfo.dimensions)
-    glow.state.framebuffer = 0
+    glow.state.setFrameBuffer(0)
 //    glow.operations.clearScreen()
-    glow.state.framebuffer = offscreenBuffer.framebuffer.id
+    glow.state.setFrameBuffer(offscreenBuffer.framebuffer.id)
     glow.state.viewport = Vector4i(0, 0, 320, 200)
     glow.state.depthWrite = false
     glow.operations.clearScreen()
@@ -72,7 +72,7 @@ class Renderer {
 //    glow.state.framebuffer = 0
     glow.state.viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
 //    canvas.drawImage(Vector2(), windowInfo.dimensions.toVector2(), canvas.image(offscreenBuffer.texture))
-    offscreenBuffer.framebuffer.blitToScreen(Vector2i(320, 200), windowInfo.dimensions)
+    offscreenBuffer.framebuffer.blitToScreen(Vector2i(320, 200), windowInfo.dimensions, false)
   }
 }
 

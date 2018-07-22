@@ -31,7 +31,7 @@ class GameSceneRenderer(
 ) {
 
   fun prepareRender() {
-    globalState.viewport = renderer.viewport
+//    globalState.viewport = renderer.viewport
     globalState.depthEnabled = true
   }
 

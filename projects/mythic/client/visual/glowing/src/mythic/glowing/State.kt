@@ -189,26 +189,30 @@ class State {
       }
     }
 
-  var framebuffer: Int = 0
-    set(value) {
-      if (field != value) {
-        field = value
-        glBindFramebuffer(GL_FRAMEBUFFER, value)
-      }
+  fun setFrameBuffer(value: Int) {
+    if (drawFramebuffer != value || readFramebuffer != value) {
+      _drawFramebuffer = value
+      _readFramebuffer = value
+      glBindFramebuffer(GL_FRAMEBUFFER, value)
     }
+  }
 
-  var drawFramebuffer: Int = 0
+  private var _drawFramebuffer: Int = 0
+  var drawFramebuffer: Int
+    get() = _drawFramebuffer
     set(value) {
-      if (field != value) {
-        field = value
+      if (_drawFramebuffer != value) {
+        _drawFramebuffer = value
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, value)
       }
     }
 
-  var readFramebuffer: Int = 0
+  private var _readFramebuffer: Int = 0
+  var readFramebuffer: Int
+    get() = _readFramebuffer
     set(value) {
-      if (field != value) {
-        field = value
+      if (_readFramebuffer != value) {
+        _readFramebuffer = value
         glBindFramebuffer(GL_READ_FRAMEBUFFER, value)
       }
     }

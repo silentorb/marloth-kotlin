@@ -169,9 +169,10 @@ class Renderer(config: DisplayConfig) {
     if (multisampler != null) {
       multisampler.framebuffer.activateDraw()
     }
-    glow.state.viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
-    glow.state.framebuffer = offscreenBuffer.framebuffer.id
+    val dimensions = Vector2i(offscreenBuffer.colorTexture.width, offscreenBuffer.colorTexture.height)
+    glow.state.setFrameBuffer(offscreenBuffer.framebuffer.id)
     glow.state.depthEnabled = true
+    glow.state.viewport = Vector4i(0, 0, dimensions.x, dimensions.y)
     glow.operations.clearScreen()
   }
 
@@ -184,7 +185,7 @@ class Renderer(config: DisplayConfig) {
       glDrawBuffer(GL_BACK)                       // Set the back buffer as the draw buffer
       glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST)
     }
-    offscreenBuffer.framebuffer.blitToScreen(windowInfo.dimensions, windowInfo.dimensions)
+    applyOffscreenBuffer(offscreenBuffer, windowInfo.dimensions, true)
     globalState.viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
   }
 
