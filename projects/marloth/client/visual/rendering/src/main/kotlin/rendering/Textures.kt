@@ -77,8 +77,8 @@ fun applyAlgorithm(algorithm: OpaqueTextureAlgorithm, length: Int, attributes: T
 
 private fun miscTextureGenerators(): TextureGeneratorMap = mapOf(
     Textures.background to applyAlgorithm(colorize(
-        Vector3(0.25f),
-        Vector3(0.75f),
+        Vector3(0.35f),
+        Vector3(0.55f),
         simpleNoise(listOf(12f, 37f))
     ), 512, TextureAttributes(repeating = false)),
     Textures.grass to applyAlgorithm(colorize(

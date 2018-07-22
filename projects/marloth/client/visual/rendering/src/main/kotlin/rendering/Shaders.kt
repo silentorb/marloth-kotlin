@@ -17,6 +17,18 @@ private fun loadBinaryResource(name: String): String {
 
 private val lighting = loadBinaryResource("shaders/lighting.glsl")
 
+private val sceneHeader = """
+struct Scene {
+  mat4 cameraTransform;
+  vec3 cameraDirection;
+};
+
+layout(std140) uniform SceneUniform {
+    Scene scene;
+};
+
+"""
+
 private val weightHeader = """
 layout (location = 3) in vec2[2] weights;
 layout (std140) uniform BoneTransforms {
@@ -36,7 +48,7 @@ private val weightApplication = """
 """
 
 private val flatVertex = """
-uniform mat4 cameraTransform;
+${sceneHeader}
 uniform mat4 modelTransform;
 uniform vec4 uniformColor;
 
@@ -51,7 +63,7 @@ void main() {
   vec4 position4 = vec4(position, 1.0);
 //#weightApplication
   vec4 modelPosition = modelTransform * position4;
-  gl_Position = cameraTransform * modelPosition;
+  gl_Position = scene.cameraTransform * modelPosition;
 }
 """
 
@@ -70,7 +82,7 @@ fun insertTemplates(source: String, replacements: Map<String, String>): String {
   return result
 }
 
-private val mainVertex = loadBinaryResource("shaders/mainVertex.glsl")
+private val mainVertex = sceneHeader + loadBinaryResource("shaders/mainVertex.glsl")
 
 private fun addWeightShading(source: String) = insertTemplates(source, mapOf(
     "weightHeader" to weightHeader,
@@ -81,27 +93,28 @@ private val animatedVertex = addWeightShading(mainVertex)
 private val animatedFlatVertex = addWeightShading(flatVertex)
 
 private val coloredFragment = """
+${sceneHeader}
 in vec4 fragmentPosition;
 in vec3 fragmentNormal;
 in vec4 fragmentColor;
 out vec4 output_color;
 uniform mat4 normalTransform;
-uniform vec3 cameraDirection;
 uniform float glow;
 uniform mat4 modelTransform;
 
 ${lighting}
 
 void main() {
-  vec3 lightResult = processLights(vec4(1), fragmentNormal, cameraDirection, fragmentPosition.xyz, glow);
+  vec3 lightResult = processLights(vec4(1), fragmentNormal, scene.cameraDirection, fragmentPosition.xyz, glow);
 	output_color = fragmentColor * vec4(lightResult, 1.0);
 }
 """
 
-private val lightingApplication1 = "vec3 lightResult = processLights(vec4(1), fragmentNormal, cameraDirection, fragmentPosition.xyz, glow);"
+private val lightingApplication1 = "vec3 lightResult = processLights(vec4(1), fragmentNormal, scene.cameraDirection, fragmentPosition.xyz, glow);"
 private val lightingApplication2 = "fragmentColor * vec4(lightResult, 1.0)"
 
 private val texturedFragmentBase = """
+${sceneHeader}
 in vec4 fragmentPosition;
 in vec3 fragmentNormal;
 in vec4 fragmentColor;
@@ -112,7 +125,6 @@ out vec4 output_color;
 
 uniform sampler2D text;
 uniform mat4 normalTransform;
-uniform vec3 cameraDirection;
 uniform float glow;
 uniform mat4 modelTransform;
 
@@ -132,7 +144,6 @@ private val texturedFragmentFlat = texturedFragmentBase
     .replace("@outColor", "sampled")
 
 class PerspectiveFeature(program: ShaderProgram) {
-  val cameraTransform = MatrixProperty(program, "cameraTransform")
   val modelTransform = MatrixProperty(program, "modelTransform")
 }
 
@@ -140,15 +151,15 @@ class ColoringFeature(program: ShaderProgram) {
   val colorProperty = Vector4Property(program, "uniformColor")
 }
 
-class ShadingFeature(program: ShaderProgram, sceneBuffer: UniformBuffer) {
+class ShadingFeature(program: ShaderProgram, sectionBuffer: UniformBuffer, sceneBuffer: UniformBuffer) {
   val normalTransformProperty = MatrixProperty(program, "normalTransform")
   val glowProperty = FloatProperty(program, "glow")
-  val cameraDirection = Vector3Property(program, "cameraDirection")
-  val sceneProperty = UniformBufferProperty(program, "SceneUniform", 1, sceneBuffer)
+  val sectionProperty = UniformBufferProperty(program, "SectionUniform", sectionBuffer)
+  val sceneProperty = UniformBufferProperty(program, "SceneUniform", sceneBuffer)
 }
 
 class SkeletonFeature(program: ShaderProgram, boneBuffer: UniformBuffer) {
-  val boneTransformsProperty = UniformBufferProperty(program, "BoneTransforms", 2, boneBuffer)
+  val boneTransformsProperty = UniformBufferProperty(program, "BoneTransforms", boneBuffer)
 }
 
 fun populateBoneBuffer(boneBuffer: UniformBuffer, bones: Bones): UniformBuffer {
@@ -163,11 +174,11 @@ data class ShaderFeatureConfig(
     val skeleton: Boolean = false
 )
 
-data class SceneShaderConfig(
-    val cameraTransform: Matrix,
-    val cameraDirection: Vector3,
-    val sceneBuffer: UniformBuffer
-)
+//data class SceneShaderConfig(
+//    val cameraTransform: Matrix,
+//    val cameraDirection: Vector3
+////    val sceneBuffer: UniformBuffer
+//)
 
 data class ObjectShaderConfig(
     val transform: Matrix = Matrix(),
@@ -182,21 +193,20 @@ fun generateShaderProgram(vertexShader: String, fragmentShader: String, featureC
   return ShaderProgram(vertexShader, fragmentShader)
 }
 
-class GeneralShader(buffers: UniformBuffers, vertexShader: String, fragmentShader: String, featureConfig: ShaderFeatureConfig) {
+class GeneralPerspectiveShader(buffers: UniformBuffers, vertexShader: String, fragmentShader: String, featureConfig: ShaderFeatureConfig) {
   val program = generateShaderProgram(vertexShader, fragmentShader, featureConfig)
   val perspective: PerspectiveFeature = PerspectiveFeature(program)
   val coloring: ColoringFeature = ColoringFeature(program)
-  val shading: ShadingFeature? = if (featureConfig.shading) ShadingFeature(program, buffers.scene) else null
+  val shading: ShadingFeature? = if (featureConfig.shading) ShadingFeature(program, buffers.section, buffers.scene) else null
   val skeleton: SkeletonFeature? = if (featureConfig.skeleton) SkeletonFeature(program, buffers.bone) else null
 
-  fun updateScene(config: SceneShaderConfig) {
-    program.activate()
-    perspective.cameraTransform.setValue(config.cameraTransform)
-    if (shading != null) {
-      shading.cameraDirection.setValue(config.cameraDirection)
-//      shading.sceneProperty.setValue(config.sceneBuffer)
-    }
-  }
+//  fun updateScene(config: SceneShaderConfig) {
+//    program.activate()
+//    perspective.cameraTransform.setValue(config.cameraTransform)
+//    if (shading != null) {
+//      shading.cameraDirection.setValue(config.cameraDirection)
+//    }
+//  }
 
   // IntelliJ will flag this use of inline as a warning, but using inline here
   // causes the JVM to optimize away the ObjectShaderConfig allocation and significantly
@@ -220,38 +230,38 @@ class GeneralShader(buffers: UniformBuffers, vertexShader: String, fragmentShade
       config.texture.activate()
     }
   }
-
 }
 
 data class Shaders(
-    val textured: GeneralShader,
-    val texturedFlat: GeneralShader,
-    val animated: GeneralShader,
-    val colored: GeneralShader,
-    val flat: GeneralShader,
-    val flatAnimated: GeneralShader
+    val textured: GeneralPerspectiveShader,
+    val texturedFlat: GeneralPerspectiveShader,
+    val animated: GeneralPerspectiveShader,
+    val colored: GeneralPerspectiveShader,
+    val flat: GeneralPerspectiveShader,
+    val flatAnimated: GeneralPerspectiveShader
 )
 
 data class UniformBuffers(
     val scene: UniformBuffer,
+    val section: UniformBuffer,
     val bone: UniformBuffer
 )
 
 fun createShaders(buffers: UniformBuffers): Shaders {
   return Shaders(
-      textured = GeneralShader(buffers, mainVertex, texturedFragment, ShaderFeatureConfig(
+      textured = GeneralPerspectiveShader(buffers, mainVertex, texturedFragment, ShaderFeatureConfig(
           shading = true
       )),
-      texturedFlat = GeneralShader(buffers, mainVertex, texturedFragmentFlat, ShaderFeatureConfig()),
-      animated = GeneralShader(buffers, animatedVertex, texturedFragment, ShaderFeatureConfig(
+      texturedFlat = GeneralPerspectiveShader(buffers, mainVertex, texturedFragmentFlat, ShaderFeatureConfig()),
+      animated = GeneralPerspectiveShader(buffers, animatedVertex, texturedFragment, ShaderFeatureConfig(
           shading = true,
           skeleton = true
       )),
-      colored = GeneralShader(buffers, mainVertex, coloredFragment, ShaderFeatureConfig(
+      colored = GeneralPerspectiveShader(buffers, mainVertex, coloredFragment, ShaderFeatureConfig(
           shading = true
       )),
-      flat = GeneralShader(buffers, flatVertex, flatFragment, ShaderFeatureConfig()),
-      flatAnimated = GeneralShader(buffers, animatedFlatVertex, flatFragment, ShaderFeatureConfig(
+      flat = GeneralPerspectiveShader(buffers, flatVertex, flatFragment, ShaderFeatureConfig()),
+      flatAnimated = GeneralPerspectiveShader(buffers, animatedFlatVertex, flatFragment, ShaderFeatureConfig(
           skeleton = true
       ))
   )

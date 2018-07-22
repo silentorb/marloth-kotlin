@@ -3,6 +3,7 @@ package mythic.glowing
 import org.joml.Vector4i
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11.*
+import org.lwjgl.opengl.GL31.GL_MAX_UNIFORM_BUFFER_BINDINGS
 
 class Glow {
   val operations = Operations()

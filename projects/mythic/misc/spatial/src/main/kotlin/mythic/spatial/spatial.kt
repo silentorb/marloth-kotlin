@@ -53,6 +53,11 @@ fun ByteBuffer.putVector4(value: Vector4) {
   putFloat(value.w)
 }
 
+fun ByteBuffer.putMatrix(value: Matrix) {
+  value.get(this)
+  position(position() + 16 * 4)
+}
+
 val Pi = PI.toFloat()
 
 fun Vector2.toVector3() = Vector3(x, y, 0f)

@@ -117,8 +117,13 @@ fun createMultiSampler(glow: Glow, config: DisplayConfig): Multisampler {
 class Renderer(config: DisplayConfig) {
   val glow = Glow()
   val sceneBuffer = UniformBuffer(sceneBufferSize)
+  val sectionBuffer = UniformBuffer(sectionBufferSize)
   val boneBuffer = UniformBuffer(boneBufferSize)
-  val shaders = createShaders(UniformBuffers(sceneBuffer, boneBuffer))
+  val shaders = createShaders(UniformBuffers(
+      scene = sceneBuffer,
+      section = sectionBuffer,
+      bone = boneBuffer
+  ))
   val drawing = createDrawingEffects()
   val vertexSchemas = createVertexSchemas()
   var worldMesh: WorldMesh? = null
@@ -134,7 +139,7 @@ class Renderer(config: DisplayConfig) {
       )
   ))
   val dynamicMesh = MutableSimpleMesh(vertexSchemas.flat)
-  val shaderLookup = Shaders::class.java.kotlin.declaredMemberProperties.map { it.get(shaders) as GeneralShader }
+  val shaderLookup = Shaders::class.java.kotlin.declaredMemberProperties.map { it.get(shaders) as GeneralPerspectiveShader }
 
   init {
     glow.state.clearColor = Vector4(0f, 0f, 0f, 1f)
@@ -146,16 +151,17 @@ class Renderer(config: DisplayConfig) {
 
   fun updateShaders(scene: Scene, dimensions: Vector2i, cameraEffectsData: CameraEffectsData) {
     val effectsData = gatherEffectsData(dimensions, scene, cameraEffectsData)
-    updateLights(effectsData.lights, sceneBuffer)
-    val sceneConfig = SceneShaderConfig(
-        cameraDirection = effectsData.camera.direction,
-        cameraTransform = effectsData.camera.transform,
-        sceneBuffer = sceneBuffer
-    )
+    updateLights(effectsData.lights, sectionBuffer)
+    sceneBuffer.load(createSceneBuffer(effectsData))
 
-    for (shader in shaderLookup) {
-      shader.updateScene(sceneConfig)
-    }
+//    val sceneConfig = SceneShaderConfig(
+//        cameraDirection = effectsData.camera.direction,
+//        cameraTransform = effectsData.camera.transform
+//    )
+//
+//    for (shader in shaderLookup) {
+//      shader.updateScene(sceneConfig)
+//    }
   }
 
   fun createSceneRenderer(scene: Scene, viewport: Vector4i): SceneRenderer {

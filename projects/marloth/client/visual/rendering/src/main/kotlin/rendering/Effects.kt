@@ -11,7 +11,7 @@ import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import scenery.Light
 
-//class PerspectiveEffect(private val shader: GeneralShader, private val camera: CameraEffectsData) {
+//class PerspectiveEffect(private val shader: GeneralPerspectiveShader, private val camera: CameraEffectsData) {
 //  private val modelTransform = MatrixProperty(shader.program, "modelTransform")
 //
 //  initialize {
@@ -25,7 +25,7 @@ import scenery.Light
 //  }
 //}
 //
-//class ColoredPerspectiveEffect(val shader: GeneralShader,
+//class ColoredPerspectiveEffect(val shader: GeneralPerspectiveShader,
 //                               camera: CameraEffectsData,
 //                               sceneBuffer: UniformBuffer) {
 //  private val perspectiveEffect = PerspectiveEffect(shader.shader, camera)
@@ -41,7 +41,7 @@ import scenery.Light
 //  }
 //}
 //
-//class FlatColoredPerspectiveEffect(val shader: GeneralShader, camera: CameraEffectsData) {
+//class FlatColoredPerspectiveEffect(val shader: GeneralPerspectiveShader, camera: CameraEffectsData) {
 //  private val perspectiveEffect = PerspectiveEffect(shader.shader, camera)
 //
 //  fun activate(transform: Matrix, color: Vector4) {
@@ -58,7 +58,7 @@ import scenery.Light
 //    val normalTransform: Matrix
 //)
 //
-//class TexturedPerspectiveEffect(val shader: GeneralShader, camera: CameraEffectsData, sceneBuffer: UniformBuffer) {
+//class TexturedPerspectiveEffect(val shader: GeneralPerspectiveShader, camera: CameraEffectsData, sceneBuffer: UniformBuffer) {
 //  private val perspectiveEffect = ColoredPerspectiveEffect(shader.colorShader, camera, sceneBuffer)
 //
 //  fun activate(config: TextureEffectConfig) {

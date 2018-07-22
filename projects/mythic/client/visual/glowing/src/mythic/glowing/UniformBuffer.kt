@@ -10,7 +10,7 @@ class UniformBuffer(val size: Int) {
   private val disposed = false
 
   init {
-//    println("New Uniform Buffer   id: " + id + ", size: " + size)
+    println("New Uniform Buffer   id: " + id + ", size: " + size)
   }
 
 //  val size: Long

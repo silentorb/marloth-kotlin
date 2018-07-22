@@ -5,13 +5,13 @@ struct Light {
 	vec4 direction;
 };
 
-struct Scene {
+struct Section {
     int lightCount;
     Light lights[40];
 };
 
-layout(std140) uniform SceneUniform {
-    Scene scene;
+layout(std140) uniform SectionUniform {
+    Section section;
 };
 
 const float constant_attenuation = 0.5;
@@ -66,8 +66,8 @@ vec3 processLight(Light light, vec4 input_color, vec3 normal, vec3 cameraDirecti
 
 vec3 processLights(vec4 input_color, vec3 normal, vec3 cameraDirection, vec3 position, float glow) {
 	vec3 result = vec3(0);
-	for(int i = 0; i < scene.lightCount; ++i) {
-		result += processLight(scene.lights[i], input_color, normal, cameraDirection, position);
+	for(int i = 0; i < section.lightCount; ++i) {
+		result += processLight(section.lights[i], input_color, normal, cameraDirection, position);
 	}
 
     result += glow + ambient;
