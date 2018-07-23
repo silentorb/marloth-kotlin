@@ -12,6 +12,7 @@ import mythic.glowing.globalState
 import mythic.sculpting.FlexibleMesh
 import mythic.sculpting.getVerticesCenter
 import mythic.spatial.*
+import org.joml.zw
 import rendering.*
 import scenery.DepictionType
 import scenery.GameScene
@@ -91,6 +92,7 @@ fun renderWireframeScene(renderer: GameSceneRenderer) {
   renderer.prepareRender()
   renderWireframeWorldMesh(renderer.renderer)
   renderer.renderElements()
+  renderer.finishRender(renderer.renderer.viewport.zw)
 }
 
 fun renderNormalScene(renderer: GameSceneRenderer, config: GameViewConfig) {
@@ -102,6 +104,7 @@ fun renderNormalScene(renderer: GameSceneRenderer, config: GameViewConfig) {
 
   val r = renderer.renderer.renderer
   renderSkyBox(r.textures, r.meshes, r.shaders)
+  renderer.finishRender(renderer.renderer.viewport.zw)
   globalState.cullFaces = false
 }
 
@@ -131,7 +134,6 @@ fun renderScene(client: Client, data: GameViewRenderData) {
           .forEach {
             val info = it.animation!!
             val armature = info.armature
-//          drawSkeleton(sceneRenderer, armature.bones, Matrix(it.transform).rotateZ(Pi / 2))
             drawSkeleton(sceneRenderer, armature.bones, it.transform)
           }
     }
@@ -139,7 +141,6 @@ fun renderScene(client: Client, data: GameViewRenderData) {
     if (config.draw.gui)
       renderGui(sceneRenderer, Bounds(viewport.toVector4()), canvas, data.menuState)
   }
-//  val renderers = mapGameSceneRenderers(renderer, data.scenes, windowInfo)
 
   renderer.finishRender(windowInfo)
 }

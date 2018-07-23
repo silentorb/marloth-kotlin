@@ -211,6 +211,7 @@ class State {
   var readFramebuffer: Int
     get() = _readFramebuffer
     set(value) {
+      val k = glGetInteger(GL_READ_FRAMEBUFFER_BINDING)
       if (_readFramebuffer != value) {
         _readFramebuffer = value
         glBindFramebuffer(GL_READ_FRAMEBUFFER, value)

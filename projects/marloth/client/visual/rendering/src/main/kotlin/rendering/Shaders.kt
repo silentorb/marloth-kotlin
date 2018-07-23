@@ -1,6 +1,7 @@
 package rendering
 
 import mythic.breeze.Bones
+import mythic.drawing.positionTranslation
 import mythic.glowing.*
 import mythic.spatial.Matrix
 import mythic.spatial.Vector4
@@ -72,6 +73,31 @@ out vec4 output_color;
 
 void main() {
   output_color = fragment_color;
+}
+"""
+
+private val screenVertex = """
+in vec4 vertex;
+out vec2 texCoords;
+
+void main()
+{
+  vec4 temp = vec4(vertex.xy, 0.0, 1.0);
+  gl_Position = vec4(temp.x * 2.0 - 1.0, temp.y * 2.0 - 1.0, 0.0, 1.0);
+  texCoords = vertex.zw;
+}
+"""
+dd
+private val screenFragment = """
+in vec2 texCoords;
+out vec4 output_color;
+
+uniform sampler2D colorTexture;
+
+void main()
+{
+    vec4 colorSample = vec4(texture(colorTexture, texCoords).xyz, 1.0);
+    output_color = colorSample;
 }
 """
 
@@ -245,7 +271,8 @@ data class Shaders(
     val animated: GeneralPerspectiveShader,
     val colored: GeneralPerspectiveShader,
     val flat: GeneralPerspectiveShader,
-    val flatAnimated: GeneralPerspectiveShader
+    val flatAnimated: GeneralPerspectiveShader,
+    val screen: ShaderProgram
 )
 
 data class UniformBuffers(
@@ -274,6 +301,7 @@ fun createShaders(buffers: UniformBuffers): Shaders {
       flat = GeneralPerspectiveShader(buffers, flatFragment, ShaderFeatureConfig()),
       flatAnimated = GeneralPerspectiveShader(buffers, flatFragment, ShaderFeatureConfig(
           skeleton = true
-      ))
+      )),
+      screen = ShaderProgram(screenVertex, screenFragment)
   )
 }

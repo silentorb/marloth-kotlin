@@ -139,7 +139,6 @@ class Renderer(config: DisplayConfig) {
       )
   ))
   val dynamicMesh = MutableSimpleMesh(vertexSchemas.flat)
-  val shaderLookup = Shaders::class.java.kotlin.declaredMemberProperties.map { it.get(shaders) as GeneralPerspectiveShader }
 
   init {
     glow.state.clearColor = Vector4(0f, 0f, 0f, 1f)
@@ -153,15 +152,6 @@ class Renderer(config: DisplayConfig) {
     val effectsData = gatherEffectsData(dimensions, scene, cameraEffectsData)
     updateLights(effectsData.lights, sectionBuffer)
     sceneBuffer.load(createSceneBuffer(effectsData))
-
-//    val sceneConfig = SceneShaderConfig(
-//        cameraDirection = effectsData.camera.direction,
-//        cameraTransform = effectsData.camera.transform
-//    )
-//
-//    for (shader in shaderLookup) {
-//      shader.updateScene(sceneConfig)
-//    }
   }
 
   fun createSceneRenderer(scene: Scene, viewport: Vector4i): SceneRenderer {
@@ -175,10 +165,7 @@ class Renderer(config: DisplayConfig) {
     if (multisampler != null) {
       multisampler.framebuffer.activateDraw()
     }
-    val dimensions = Vector2i(offscreenBuffer.colorTexture.width, offscreenBuffer.colorTexture.height)
-    glow.state.setFrameBuffer(offscreenBuffer.framebuffer.id)
-    glow.state.depthEnabled = true
-    glow.state.viewport = Vector4i(0, 0, dimensions.x, dimensions.y)
+    glow.state.viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
     glow.operations.clearScreen()
   }
 
@@ -191,8 +178,6 @@ class Renderer(config: DisplayConfig) {
       glDrawBuffer(GL_BACK)                       // Set the back buffer as the draw buffer
       glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST)
     }
-    applyOffscreenBuffer(offscreenBuffer, windowInfo.dimensions, true)
-    globalState.viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
   }
 
   fun renderGameScenes(scenes: List<GameScene>, windowInfo: WindowInfo) {

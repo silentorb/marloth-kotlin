@@ -95,8 +95,14 @@ class Texture(val width: Int, val height: Int, val target: TextureTarget) {
     }
   }
 
-  fun activate() {
-    globalState.textureSlot = GL_TEXTURE0
+  fun activate(unit: Int = GL_TEXTURE0) {
+    globalState.textureSlot = unit
     bind()
+  }
+}
+
+fun activateTextures(textures: List<Texture>) {
+  textures.forEachIndexed { index, texture ->
+    texture.activate(GL_TEXTURE0 + index)
   }
 }

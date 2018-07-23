@@ -1,19 +1,21 @@
 package rendering
 
+import mythic.drawing.getStaticCanvasDependencies
 import mythic.glowing.DrawMethod
+import mythic.glowing.activateTextures
+import mythic.glowing.applyOffscreenBuffer
 import mythic.glowing.globalState
+import mythic.platforming.WindowInfo
 import mythic.spatial.Matrix
 import mythic.spatial.Vector4
+import org.joml.Vector2i
+import org.joml.Vector4i
 import org.lwjgl.opengl.GL11
 import rendering.meshes.MeshMap
 import scenery.DepictionType
 import scenery.GameScene
 import scenery.Textures
 import scenery.VisualElement
-
-data class Temp(
-    val foo: Int
-)
 
 fun renderSkyBox(textures: TextureLibrary, meshes: MeshMap, shaders: Shaders) {
   val texture = textures[Textures.background]!!
@@ -33,6 +35,30 @@ class GameSceneRenderer(
   fun prepareRender() {
 //    globalState.viewport = renderer.viewport
     globalState.depthEnabled = true
+    val glow = renderer.renderer.glow
+    val offscreenBuffer = renderer.renderer.offscreenBuffer
+    val dimensions = Vector2i(offscreenBuffer.colorTexture.width, offscreenBuffer.colorTexture.height)
+    glow.state.setFrameBuffer(offscreenBuffer.framebuffer.id)
+    glow.state.viewport = Vector4i(0, 0, dimensions.x, dimensions.y)
+    glow.operations.clearScreen()
+  }
+
+  fun finishRender(dimensions:Vector2i) {
+    val offscreenBuffer = renderer.renderer.offscreenBuffer
+//    applyOffscreenBuffer(offscreenBuffer, dimensions, true)
+    globalState.cullFaces = false
+    globalState.setFrameBuffer(0)
+    globalState.viewport = Vector4i(0, 0, dimensions.x, dimensions.y)
+    applyFrameBufferTexture()
+    globalState.cullFaces = true
+  }
+
+  fun applyFrameBufferTexture() {
+    val canvasDependencies = getStaticCanvasDependencies()
+    val offscreenBuffer = renderer.renderer.offscreenBuffer
+    renderer.renderer.shaders.screen.activate()
+    activateTextures(listOf(offscreenBuffer.colorTexture))
+    canvasDependencies.meshes.image.draw(DrawMethod.triangleFan)
   }
 
   fun lookupMesh(depiction: DepictionType) = renderer.meshes[simplePainterMap[depiction]]!!
