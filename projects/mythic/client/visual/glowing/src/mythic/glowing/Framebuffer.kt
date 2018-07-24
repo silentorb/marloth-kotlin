@@ -64,7 +64,7 @@ fun prepareScreenFrameBuffer(windowWidth: Int, windowHeight: Int, withDepth: Boo
   GL20.glDrawBuffers(GL_COLOR_ATTACHMENT0)
 
   val depthTexture = if (withDepth) {
-    val depthTexture = Texture(dimensions.x, dimensions.y, textureAttributes.copy(format = TextureFormat.depth))
+    val depthTexture = Texture(dimensions.x, dimensions.y, textureAttributes.copy(format = TextureFormat.depth, storageUnit = TextureStorageUnit.float))
     GL32.glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthTexture.id, 0)
     depthTexture
   } else

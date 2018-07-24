@@ -57,7 +57,7 @@ class GameSceneRenderer(
     val canvasDependencies = getStaticCanvasDependencies()
     val offscreenBuffer = renderer.renderer.offscreenBuffer
     renderer.renderer.shaders.screen.activate()
-    activateTextures(listOf(offscreenBuffer.colorTexture))
+    activateTextures(listOf(offscreenBuffer.colorTexture, offscreenBuffer.depthTexture!!))
     canvasDependencies.meshes.image.draw(DrawMethod.triangleFan)
   }
 
