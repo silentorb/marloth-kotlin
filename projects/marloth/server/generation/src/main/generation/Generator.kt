@@ -50,6 +50,7 @@ fun generateAbstract(world: AbstractWorld, biomes: List<Biome>, dice: Dice, scal
   val nodeCount = (20 * scale).toInt()
   createRoomNodes(nodeCount, world, biomes, dice)
   handleOverlapping(world.graph)
+  fillIndexes(world.graph)
   unifyWorld(world.graph)
   closeDeadEnds(world.graph)
 
@@ -58,7 +59,7 @@ fun generateAbstract(world: AbstractWorld, biomes: List<Biome>, dice: Dice, scal
   val tunnels = createTunnelNodes(world, preTunnels.minus(twinTunnels))
   twinTunnels.forEach { world.graph.disconnect(it.connection) }
 
-  fillIndexes(world.graph)
+//  fillIndexes(world.graph)
   return tunnels
 }
 
@@ -90,6 +91,7 @@ fun placeWallLamps(world: World, instantiator: Instantiator, dice: Dice, scale: 
     getFaceInfo(it).type == FaceType.wall && getFaceInfo(it).texture != null
   }
   val options = world.meta.locationNodes.filter { it.walls.any(isValidLampWall) }
+  assert(options.any())
   val nodes = dice.getList(options, count)
   nodes.forEach { node ->
     val options = node.walls.filter(isValidLampWall)
@@ -118,7 +120,7 @@ fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): Wo
   val instantiator = Instantiator(world, instantiatorConfig)
   instantiator.createPlayer(1)
 
-  placeWallLamps(world, instantiator, input.dice, scale)
+//  placeWallLamps(world, instantiator, input.dice, scale)
 
   return world
 }

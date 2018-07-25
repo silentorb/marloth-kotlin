@@ -75,9 +75,19 @@ fun fillCornerGaps(unorderedCorners: List<Corner>, node: Node): List<Corner> {
   return newCorners
 }
 
+const val minPointDistance = 1f
+
+fun withoutClosePoints(corners: List<Corner>): List<Corner> {
+  val tooClose = crossMap(corners.asSequence()) { a: Corner, b: Corner ->
+    println(a.distance(b))
+    a.distance(b) < minPointDistance
+  }
+  return corners.minus(tooClose.distinct())
+}
+
 fun createSingleNodeStructure(node: Node): TempSector {
   val doorways = createNodeDoorways(node)
-  val points = doorways.flatten()
+  val points = withoutClosePoints(doorways.flatten())
   return TempSector(node, points.plus(fillCornerGaps(points, node)).sortedBy { getAngle(node, it) })
 }
 
@@ -87,16 +97,6 @@ fun getClusterUnions(cluster: Cluster): List<Connection> =
 fun fillClusterCornerGaps(unorderedCorners: List<Corner>, node: Node, otherNodes: List<Node>): List<Corner> {
   val additional = fillCornerGaps(unorderedCorners, node)
   return additional.filter { corner -> !otherNodes.any { isInsideNode(corner.xy, it) } }
-}
-
-const val minPointDistance = 1f
-
-fun withoutClosePoints(corners: List<Corner>): List<Corner> {
-  val tooClose = crossMap(corners.asSequence()) { a: Corner, b: Corner ->
-    println(a.distance(b))
-    a.distance(b) < minPointDistance
-  }
-  return corners.minus(tooClose.distinct())
 }
 
 fun createClusterNodeStructure(node: Node, cluster: List<Node>, corners: List<Corner>): List<Corner> {
@@ -203,7 +203,7 @@ fun generateStructure(abstractWorld: AbstractWorld, dice: Dice, tunnels: List<No
   initializeFaceInfo(abstractWorld)
   val roomNodes = abstractWorld.nodes.toList()
   defineNegativeSpace(abstractWorld, dice)
-  fillBoundary(abstractWorld, dice)
-  expandVertically(abstractWorld, roomNodes, dice)
+//  fillBoundary(abstractWorld, dice)
+//  expandVertically(abstractWorld, roomNodes, dice)
   assignTextures(abstractWorld)
 }

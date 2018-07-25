@@ -114,7 +114,7 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
   saveIncrement += 1f * delta
   if (saveIncrement > 1f) {
     saveIncrement = 0f
-
+    saveLabConfig(app.config)
     updateWatching(app)
   }
 

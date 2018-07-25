@@ -1,5 +1,7 @@
 package generation.abstract
 
+import generation.connectionOverlapsNeighborNodes
+import generation.getCenter
 import generation.getNodeDistance
 import simulation.ConnectionType
 import simulation.Node
@@ -12,6 +14,7 @@ data class NearestNodeResult(val node: Node, val distance: Float)
 fun getNeighborsByDistance(node: Node, nodes: Sequence<Node>) = nodes.asSequence()
     .filter { it !== node }
     .map { NearestNodeResult(it, getNodeDistance(node, it)) }
+    .toList()
     .sortedBy { it.distance }
 
 //fun findNearestNode(node: Node, nodes: Sequence<Node>) =
@@ -21,12 +24,27 @@ fun getNeighborsByDistance(node: Node, nodes: Sequence<Node>) = nodes.asSequence
 data class NodeGap(val first: Node, val second: Node, val distance: Float)
 
 fun findNearestGap(node: Node, nodes: Sequence<Node>): NodeGap? {
-  val result = getNeighborsByDistance(node, nodes)
+  val neighbors = getNeighborsByDistance(node, nodes)
       .filter { !it.node.isConnected(node) }
+  val nearest = neighbors
       .firstOrNull()
 
-  if (result != null)
-    return NodeGap(node, result.node, result.distance)
+  // Check if the potential connection would overlap with the next nearest node.
+//  if (neighbors.size > 1) {
+//    val nearestNode = nearest!!.node
+//    val connectionCenter = getCenter(node, nearestNode)
+//    for (neighbor in neighbors.drop(1).take(3)) {
+//      if (neighbor.node.position.distance(connectionCenter) - neighbor.node.radius - tunnelRadius < 0f)
+//        return null
+//    }
+//  }
+
+  if (nearest != null) {
+//    if (connectionOverlapsNeighborNodes(neighbors.drop(1).take(3).map { it.node }, node, nearest.node))
+//      return null
+
+    return NodeGap(node, nearest.node, nearest.distance)
+  }
 
   return null
 }
@@ -54,6 +72,7 @@ tailrec fun scanNodes(previousChanged: List<Node>, mainGroup: List<Node>, outerG
       throw Error("Could not find gap to fill.")
 
     graph.connect(gap.first, gap.second, ConnectionType.tunnel)
+    println("" + gap.first.index + " " + gap.second.index)
     listOf(gap.second)
   } else {
     possibleChanged

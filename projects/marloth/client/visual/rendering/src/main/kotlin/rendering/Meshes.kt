@@ -1,6 +1,7 @@
 package rendering
 
 import mythic.breeze.Armature
+import mythic.spatial.Vector4
 import rendering.meshes.*
 import rigging.createSkeleton
 import rigging.humanAnimations
@@ -37,7 +38,8 @@ fun standardMeshes(): ModelGeneratorMap = mapOf(
 
 fun skeletonMesh(vertexSchemas: VertexSchemas): AdvancedModelGenerator = {
   val bones = createSkeleton()
-  val (model, weights) = modelFromSkeleton(bones, "Skeleton")
+  val (model, weights) = modelFromSkeleton(bones, "Skeleton", Material(Vector4(1f, 1f, 1f, 1f)))
+//  val (model, weights) = modelFromSkeleton(bones, "Skeleton", Material(Vector4(0.4f, 0.25f, 0.0f, 1f)))
   val armature = Armature(
       bones = bones,
       originalBones = bones,

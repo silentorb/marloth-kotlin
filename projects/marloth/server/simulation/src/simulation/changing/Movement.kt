@@ -33,7 +33,7 @@ fun findCollisionWalls(source: Vector3, originalOffset: Vector3, world: Abstract
   val offset = originalOffset + 0f
   val maxLength = offset.length()
   val newPosition = source + offset
-  val radius = 0.8f
+  val radius = 0.5f
   val broadRadius = radius + maxLength
   val walls = getCollisionWalls(world, node)
 //  val walls = world.walls

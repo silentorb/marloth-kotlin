@@ -1,7 +1,9 @@
 package generation
 
+import generation.abstract.tunnelRadius
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
+import mythic.spatial.lineIntersectsCircle
 import mythic.spatial.times
 import org.joml.plus
 import org.joml.xy
@@ -93,4 +95,15 @@ tailrec fun <T> crossMap(items: Sequence<T>, accumulator: List<T> = listOf(), fi
   val additions = sequence.filter { filter(items.first(), it) }
   val accumulation = accumulator.plus(additions)
   return crossMap(sequence, accumulation, filter)
+}
+
+fun connectionOverlapsNeighborNodes(neighbors: List<Node>, first: Node, second: Node): Boolean {
+  if (neighbors.any()) {
+    val connectionCenter = getCenter(first, second)
+    return neighbors.any { neighbor ->
+      lineIntersectsCircle(first.position.xy, second.position.xy, neighbor.position.xy, neighbor.radius + tunnelRadius)
+//      neighbor.position.distance(connectionCenter) - neighbor.radius - tunnelRadius < 0f
+    }
+  }
+  return false
 }

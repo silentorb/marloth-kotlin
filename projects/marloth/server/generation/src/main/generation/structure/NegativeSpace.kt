@@ -204,6 +204,9 @@ fun defineNegativeSpace(abstractWorld: AbstractWorld, dice: Dice) {
 
     val neighborLists = faces.map { wall -> getIncompleteNeighbors(wall).toList() }
     val invalid = neighborLists.filter { it.size > 2 }
+    if (invalid.any())
+      return
+
     assert(invalid.none())
 //  processIncompleteEdges(edges)
     val concaveFaces = faces

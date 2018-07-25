@@ -2,6 +2,7 @@ package mythic.glowing
 
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL13.*
+import org.lwjgl.opengl.GL30.glGenerateMipmap
 import java.nio.FloatBuffer
 
 typealias TextureInitializer = (width: Int, height: Int, buffer: FloatBuffer?) -> Unit
@@ -21,7 +22,8 @@ data class TextureAttributes(
     val repeating: Boolean = true,
     val smooth: Boolean = true,
     val format: TextureFormat = TextureFormat.rgb,
-    val storageUnit: TextureStorageUnit = TextureStorageUnit.float
+    val storageUnit: TextureStorageUnit = TextureStorageUnit.float,
+    val mipmap: Boolean = false
 )
 
 fun initializeTexture(width: Int, height: Int, attributes: TextureAttributes, buffer: FloatBuffer? = null) {
@@ -34,13 +36,15 @@ fun initializeTexture(width: Int, height: Int, attributes: TextureAttributes, bu
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode)
 
-  val filter = if (attributes.smooth)
-    GL_LINEAR
+  val (minFilter, magFilter) = if (attributes.mipmap)
+    Pair(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR)
+  else if (attributes.smooth)
+    Pair(GL_LINEAR, GL_LINEAR)
   else
-    GL_NEAREST
+  Pair(GL_NEAREST, GL_NEAREST)
 
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter)
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter)
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter)
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter)
 
   val internalFormat = when (attributes.format) {
     TextureFormat.rgb -> GL_RGB
@@ -57,6 +61,11 @@ fun initializeTexture(width: Int, height: Int, attributes: TextureAttributes, bu
       width,
       height,
       0, internalFormat, storageUnit, buffer)
+
+  if (attributes.mipmap) {
+    glGenerateMipmap(GL_TEXTURE_2D)
+  }
+  checkError("Initializing texture")
 }
 
 enum class TextureTarget {

@@ -102,8 +102,8 @@ fun blurPrecalculations(range: Int): String {
       if (smallX == 0 && smallY == 0)
         continue
 
-      val x = smallX * 2 + dice.getInt(0, 1) * if (smallX > 0) 1 else -1
-      val y = smallY * 2 + dice.getInt(0, 1) * if (smallY > 0) 1 else -1
+      val x = smallX// * 2 + dice.getInt(0, 1) * if (smallX > 0) 1 else -1
+      val y = smallY// * 2 + dice.getInt(0, 1) * if (smallY > 0) 1 else -1
 
       val distance = Vector2(x.toFloat(), y.toFloat()).length()
       val strength = 1f / (1f + distance / 2)
@@ -122,7 +122,7 @@ fun blurPrecalculations(range: Int): String {
   return result + "float divisor = ${divisor};"
 }
 
-private const val blurRange = 2
+private const val blurRange = 3
 
 //private const val minBlurDepth = 0.999f
 private const val minBlurDepth = 0.9985f

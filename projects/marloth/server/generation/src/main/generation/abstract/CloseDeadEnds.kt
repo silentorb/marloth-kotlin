@@ -1,5 +1,7 @@
 package generation.abstract
 
+import generation.connectionOverlapsNeighborNodes
+import generation.getCenter
 import generation.getNodeDistance
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
@@ -37,13 +39,23 @@ fun nodesIntersectOther(first: Node, second: Node, nodes: Sequence<Node>) =
 
 fun closeDeadEnd(node: Node, graph: NodeGraph) {
   val nodes = graph.nodes.asSequence()
-  val nextAvailableNode = nodes
+  val neighbors = nodes
       .filter { it !== node && !it.isConnected(node) }
-      .sortedBy { getNodeDistance(node, it) }
       .filter { !nodesIntersectOther(node, it, node.neighbors) }
+      .toList()
+      .sortedBy { getNodeDistance(node, it) }
+
+  val nextAvailableNode = neighbors
       .firstOrNull()
 
   if (nextAvailableNode != null) {
+    if (node.index == 5) {
+      val k = 0
+    }
+    if (connectionOverlapsNeighborNodes(node.neighbors.filter { it != nextAvailableNode }.toList(), node, nextAvailableNode))
+      return
+
+    println("DE " + node.index + " " + nextAvailableNode.index)
     graph.connect(node, nextAvailableNode, ConnectionType.tunnel)
   }
 }

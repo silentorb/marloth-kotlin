@@ -10,7 +10,7 @@ import rendering.VertexWeight
 import rendering.VertexWeights
 import rendering.WeightMap
 
-fun modelFromSkeleton(bones: Bones, name: String): Pair<Model, WeightMap> {
+fun modelFromSkeleton(bones: Bones, name: String, material:Material): Pair<Model, WeightMap> {
   val mesh = FlexibleMesh()
 
   val weights = mutableMapOf<Vector3, VertexWeights>()
@@ -41,7 +41,7 @@ fun modelFromSkeleton(bones: Bones, name: String): Pair<Model, WeightMap> {
       mesh = mesh,
       info = MeshInfo(),
       groups = listOf(
-          MeshGroup(Material(Vector4(0.4f, 0.25f, 0.0f, 1f)), mesh.faces, name)
+          MeshGroup(material, mesh.faces, name)
       )
   )
 

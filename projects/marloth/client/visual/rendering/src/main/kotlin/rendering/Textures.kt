@@ -85,11 +85,11 @@ private fun miscTextureGenerators(): TextureGeneratorMap = mapOf(
         Vector3(0.25f, 0.35f, 0.05f),
         Vector3(0.5f, 0.65f, 0.2f),
         simpleNoise(listOf(62f, 37f))
-    ), 512, TextureAttributes(repeating = true))
+    ), 512, TextureAttributes(repeating = true, mipmap = true))
 )
 
 private fun basicTextureGenerators(): TextureGeneratorMap = basicTextures().mapValues { algorithm ->
-  applyAlgorithm(algorithm.value(), 256, TextureAttributes(repeating = true))
+  applyAlgorithm(algorithm.value(), 256, TextureAttributes(repeating = true, mipmap = true))
 }
 
 fun textureGenerators(): TextureGeneratorMap =
