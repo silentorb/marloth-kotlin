@@ -76,7 +76,7 @@ fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Can
     val circleBrush = if (node.isWalkable) solid else spaceSolid
     canvas.drawSolidCircle(position, radius, circleBrush)
     canvas.drawCircle(position, radius, outline)
-    canvas.drawText(node.index.toString() + " " + node.walls.size,
+    canvas.drawText(node.index.toString(),
         position,
         style)
   }
@@ -94,7 +94,8 @@ fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Can
   for (node in world.nodes) {
     if (node.floors.any()) {
       val position = getNodePosition(node)
-      canvas.drawText(node.index.toString() + " " + node.floors.first().unorderedVertices.size.toString(),
+      // + " " + node.floors.first().unorderedVertices.size.toString()
+      canvas.drawText(node.index.toString(),
           position,
           style)
     }

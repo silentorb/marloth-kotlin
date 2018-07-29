@@ -79,7 +79,7 @@ const val minPointDistance = 1f
 
 fun withoutClosePoints(corners: List<Corner>): List<Corner> {
   val tooClose = crossMap(corners.asSequence()) { a: Corner, b: Corner ->
-    println(a.distance(b))
+//    println(a.distance(b))
     a.distance(b) < minPointDistance
   }
   return corners.minus(tooClose.distinct())

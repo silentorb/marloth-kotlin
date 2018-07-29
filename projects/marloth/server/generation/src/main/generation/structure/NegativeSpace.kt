@@ -2,7 +2,6 @@ package generation.structure
 
 import mythic.sculpting.*
 import mythic.spatial.*
-import org.joml.minus
 import org.joml.plus
 import org.joml.xy
 import randomly.Dice
@@ -54,23 +53,111 @@ fun getConcaveCorners(face: FlexibleFace): Sequence<FlexibleFace> =
     getIncompleteNeighbors(face)
         .filter { isConcaveCorner(face, it) }
 
-fun gatherNewSectorFaces(origin: FlexibleFace): List<FlexibleFace> {
-  val result = mutableListOf(origin)
-  var recent = mutableListOf(origin)
-  while (recent.any()) {
-    val next = recent
-    recent = mutableListOf()
-    for (face in next) {
-      val neighbors = getIncompleteNeighbors(face)
-      for (neighbor in neighbors) {
-        if (!result.contains(neighbor) && !isConcaveCorner(face, neighbor)) {
-          result.add(neighbor)
-          recent.add(neighbor)
-        }
-      }
+fun traceIncompleteWalls(origin: FlexibleFace, first: FlexibleFace, otherEnd: FlexibleFace): Pair<MutableList<FlexibleFace>, List<FlexibleFace>> {
+  var current = first
+  var previous = origin
+  val collected = mutableListOf(first)
+  var step = 0
+  while (true) {
+    val neighbors = getIncompleteNeighbors(current).filter { it != previous }.toList()
+    val n = neighbors.filter { !isConcaveCorner(current, it) }.toList()
+    assert(n.size < 2)
+    val next = n.firstOrNull()
+    if (next == null) {
+      val notUsed = neighbors.toList()
+      assert(notUsed.size < 2)
+      return Pair(collected, notUsed)
     }
+    if (next == otherEnd) {
+      return Pair(collected, listOf())
+    }
+    collected.add(next)
+    previous = current
+    current = next
+    ++step
   }
-  return result
+}
+
+//fun getJoiningPoint(first: FlexibleFace, second: FlexibleFace): Vector3 =
+//    first.edges.intersect(second.edges).first().first
+
+//fun getJoiningPoint(a: Collection<EdgeReference>, b: Collection<EdgeReference>): Vector3 =
+//    a.intersect(b).first().first
+
+fun getEndEdge(walls: List<FlexibleFace>, offset: Int): FlexibleEdge {
+  val head = walls.size - 1 - offset
+  val last = walls[head]
+  val nextLast = walls[head - 1]
+  return last.edges.first { e -> nextLast.edges.any { it.edge == e.edge } }.edge
+//  return last.edges.intersect(nextLast.edges).first().edge
+}
+
+fun getEndEdgeReversed(walls: List<FlexibleFace>, offset: Int): FlexibleEdge {
+  val head = 0 + offset
+  val last = walls[head]
+  val nextLast = walls[head + 1]
+  return last.edges.first { e -> nextLast.edges.any { it.edge == e.edge } }.edge
+}
+
+fun getEndPoint(walls: List<FlexibleEdge>, offset: Int): Vector3 {
+  val head = walls.size - 1 - offset
+  val last = walls[head]
+  val nextLast = walls[head - 1]
+  return last.vertices.first { !nextLast.vertices.contains(it) }
+}
+
+fun getEndPointReversed(walls: List<FlexibleEdge>, offset: Int): Vector3 {
+  val head = 0 + offset
+  val last = walls[head]
+  val nextLast = walls[head + 1]
+  return last.vertices.first { !nextLast.vertices.contains(it) }
+}
+
+tailrec fun shaveOffOccludedWalls(a: Vector3, walls: List<FlexibleEdge>, notUsed: List<FlexibleEdge>, shaveCount: Int = 0): Int {
+  // 3 is an estimate right now.  A sector needs at least 3 walls but this condition may not directly translate to wall count.
+  assert(shaveCount < walls.size - 2)
+  val b = getEndPoint(walls, shaveCount)
+  return if (notUsed.none { lineSegmentIntersectsLineSegment(a, b, it.first, it.second) != null })
+    shaveCount
+  else
+    shaveOffOccludedWalls(a, walls, notUsed, shaveCount + 1)
+}
+
+fun chainIntegrity(walls: List<FlexibleFace>): List<Int> =
+    walls.drop(1).zip(walls.dropLast(1)) { a, b ->
+      a.edges.count { e -> b.edges.any { it.edge == e.edge } }
+    }
+
+fun isChain(walls: List<FlexibleFace>): Boolean =
+    chainIntegrity(walls)
+        .all { it == 1 }
+
+fun gatherNewSectorFaces(origin: FlexibleFace): List<FlexibleFace> {
+  println("a")
+  val firstNeighbors = getIncompleteNeighbors(origin).filter { !isConcaveCorner(origin, it) }.toList()
+  assert(firstNeighbors.size == 2)
+  val (firstDir, firstNotUsed) = traceIncompleteWalls(origin, firstNeighbors[0], origin)
+  val (secondDir, secondNotUsed) = traceIncompleteWalls(origin, firstNeighbors[1], firstDir.last())
+  val notUsed = if (firstNotUsed.none())
+    listOf()
+  else
+    firstNotUsed.plus(secondNotUsed)
+
+  val walls = firstDir.reversed().plus(origin).plus(secondDir)
+
+  val i = chainIntegrity(walls)
+  assert(isChain(walls))
+
+  return if (notUsed.any()) {
+    assert(firstNotUsed.any() && secondNotUsed.any())
+    val edges = walls.map { getFloor(it).edge }
+    val a = getEndPointReversed(edges, 0)
+    val unusedEdges = notUsed.map { getFloor(it).edge }
+    val shaveCount = shaveOffOccludedWalls(a, edges, unusedEdges)
+    println(shaveCount)
+    walls.dropLast(shaveCount)
+  } else
+    walls
 }
 
 fun getDistinctEdges(edges: Edges) =
@@ -122,10 +209,13 @@ fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace, dice: D
   val gapEdges = edges.filter {
     it.faces.count { walls.contains(it) } < 2
   }
+  val a = getEndEdgeReversed(walls, 0)
+  val b = getEndEdge(walls, 0)
 
-  if (gapEdges.any()) {
-    assert(gapEdges.size == 2)
-    val gapVertices = getNewWallVertices(sectorCenter, gapEdges)
+  if (a != b) {
+//    assert(gapEdges.size == 2)
+    val d = walls.map { getFaceInfo(it).firstNode!!.index }
+    val gapVertices = getNewWallVertices(sectorCenter, listOf(a, b))
     val newWall = abstractWorld.mesh.createStitchedFace(gapVertices)
     if (node.isSolid)
       newWall.flipQuad()
@@ -155,7 +245,7 @@ fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace,
 //  val ceilingVertices = originalWall.lower.plus(newWall.lower)
   val sectorCenter = getCenter(floorVertices)
 
-  val node = createSpaceNode(sectorCenter, abstractWorld,getFaceInfo(originFace).firstNode!!.biome, dice)
+  val node = createSpaceNode(sectorCenter, abstractWorld, getFaceInfo(originFace).firstNode!!.biome, dice)
 
 //  node.walls.addAll(walls)
 //  node.floors.add(floor)
@@ -202,8 +292,9 @@ fun defineNegativeSpace(abstractWorld: AbstractWorld, dice: Dice) {
   while (true) {
     val faces = getIncomplete(abstractWorld)
 
-    val neighborLists = faces.map { wall -> getIncompleteNeighbors(wall).toList() }
-    val invalid = neighborLists.filter { it.size > 2 }
+    val neighborLists = faces.map { wall -> Pair(wall, getIncompleteNeighbors(wall).toList()) }
+    val invalid = neighborLists.filter { it.second.size > 2 }
+//    assert(invalid.none())
     if (invalid.any())
       return
 

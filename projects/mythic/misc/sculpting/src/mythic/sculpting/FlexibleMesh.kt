@@ -54,14 +54,22 @@ class EdgeReference(
 fun getNormal(vertices: Vertices) =
     (vertices[2] - vertices[1]).cross(vertices[0] - vertices[1]).normalize()
 
+private var flexibleFaceDebugCounter = 0L
+
 class FlexibleFace(
     var edges: MutableList<EdgeReference> = mutableListOf(),
     var data: Any? = null
 ) {
+  val debugIndex = flexibleFaceDebugCounter++
   val unorderedVertices: List<Vector3>
     get() = edges.map { it.first }
 //  get() = edges.flatMap { it.vertices }.distinct()
 
+  init {
+    if (debugIndex == 500L) {
+      val k = 0
+    }
+  }
   val vertices: List<Vector3>
     get() = edges.map { it.first }
 

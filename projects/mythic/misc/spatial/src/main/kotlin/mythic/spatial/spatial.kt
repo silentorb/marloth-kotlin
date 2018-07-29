@@ -196,7 +196,7 @@ fun isBetween(middle: Vector3, first: Vector3, second: Vector3) =
         && isBetween(middle.y, first.y, second.y)
         && isBetween(middle.z, first.z, second.z)
 
-fun isBetween(middle: Vector2, first: Vector2, second: Vector2) =
+fun isBetween(middle: Vector2fMinimal, first: Vector2fMinimal, second: Vector2fMinimal) =
     isBetween(middle.x, first.x, second.x)
         && isBetween(middle.y, first.y, second.y)
 
@@ -283,6 +283,25 @@ fun simpleRayIntersectsLineSegment(rayStart: Vector2fMinimal, segmentStart: Vect
 
   return if (x >= rayStart.x && isBetween(x, segmentStart.x, segmentEnd.x))
     Vector2(x, rayStart.y)
+  else
+    null
+}
+
+fun lineSegmentIntersectsLineSegment(f1: Vector2fMinimal, f2: Vector2fMinimal, s1: Vector2fMinimal, s2: Vector2fMinimal): Vector2? {
+  val point = if (f1.x == f2.x || f1.y == f2.y || s1.x == s2.x || s1.y == s2.y) {
+    throw Error("Not yet implemented.")
+  } else {
+    val fSlope = getSlope(s1, s2)
+    val sSlope = getSlope(f1, f2)
+    val fOffset = f1.y - f1.x * fSlope
+    val sOffset = s1.y - s1.x * sSlope
+    val x = (sOffset - fOffset) / (fSlope - sSlope)
+    val y = s1.x * sSlope + sOffset
+    Vector2(x, y)
+  }
+
+  return if (isBetween(point, f1, f2) && isBetween(point, s1, s2))
+    point
   else
     null
 }

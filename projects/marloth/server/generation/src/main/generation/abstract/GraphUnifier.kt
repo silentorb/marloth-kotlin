@@ -72,7 +72,7 @@ tailrec fun scanNodes(previousChanged: List<Node>, mainGroup: List<Node>, outerG
       throw Error("Could not find gap to fill.")
 
     graph.connect(gap.first, gap.second, ConnectionType.tunnel)
-    println("" + gap.first.index + " " + gap.second.index)
+//    println("" + gap.first.index + " " + gap.second.index)
     listOf(gap.second)
   } else {
     possibleChanged

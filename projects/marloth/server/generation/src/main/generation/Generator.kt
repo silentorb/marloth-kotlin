@@ -50,7 +50,6 @@ fun generateAbstract(world: AbstractWorld, biomes: List<Biome>, dice: Dice, scal
   val nodeCount = (20 * scale).toInt()
   createRoomNodes(nodeCount, world, biomes, dice)
   handleOverlapping(world.graph)
-  fillIndexes(world.graph)
   unifyWorld(world.graph)
   closeDeadEnds(world.graph)
 
@@ -59,7 +58,7 @@ fun generateAbstract(world: AbstractWorld, biomes: List<Biome>, dice: Dice, scal
   val tunnels = createTunnelNodes(world, preTunnels.minus(twinTunnels))
   twinTunnels.forEach { world.graph.disconnect(it.connection) }
 
-//  fillIndexes(world.graph)
+  fillIndexes(world.graph)
   return tunnels
 }
 

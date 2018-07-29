@@ -55,7 +55,7 @@ fun closeDeadEnd(node: Node, graph: NodeGraph) {
     if (connectionOverlapsNeighborNodes(node.neighbors.filter { it != nextAvailableNode }.toList(), node, nextAvailableNode))
       return
 
-    println("DE " + node.index + " " + nextAvailableNode.index)
+//    println("DE " + node.index + " " + nextAvailableNode.index)
     graph.connect(node, nextAvailableNode, ConnectionType.tunnel)
   }
 }
