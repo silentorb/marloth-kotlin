@@ -70,119 +70,6 @@ data class BoundingBox(
     get() = end - start
 }
 
-fun lineIntersectsCircle(lineStart: Vector2, lineEnd: Vector2, circleCenter: Vector2, radius: Float): Boolean {
-  val d = lineEnd - lineStart
-  val f = lineStart - circleCenter
-  val a = d.dot(d)
-  val b = 2f * f.dot(d)
-  val c = f.dot(f) - radius * radius
-
-  var discriminant = b * b - 4f * a * c
-  if (discriminant < 0) {
-    return false
-  } else {
-    // ray didn't totally miss sphere,
-    // so there is a solution to
-    // the equation.
-
-    discriminant = Math.sqrt(discriminant.toDouble()).toFloat()
-
-    // either solution may be on or off the ray so need to test both
-    // t1 is always the smaller value, because BOTH discriminant and
-    // a are nonnegative.
-    val t1 = (-b - discriminant) / (2 * a)
-    val t2 = (-b + discriminant) / (2 * a)
-
-    // 3x HIT cases:
-    //          -o->             --|-->  |            |  --|->
-    // Impale(t1 hit,t2 hit), Poke(t1 hit,t2>1), ExitWound(t1<0, t2 hit),
-
-    // 3x MISS cases:
-    //       ->  o                     o ->              | -> |
-    // FallShort (t1>1,t2>1), Past (t1<0,t2<0), CompletelyInside(t1<0, t2>1)
-
-    if (t1 >= 0 && t1 <= 1) {
-      // t1 is the intersection, and it's closer than t2
-      // (since t1 uses -b - discriminant)
-      // Impale, Poke
-      return true
-    }
-
-    // here t1 didn't intersect so we are either started
-    // inside the sphere or completely past it
-    return if (t2 >= 0 && t2 <= 1) {
-      // ExitWound
-      true
-    } else false
-
-    // no intn: FallShort, Past, CompletelyInside
-  }
-}
-
-fun lineIntersectsSphere(lineStart: Vector3, lineEnd: Vector3, circleCenter: Vector3, radius: Float): Boolean {
-  val d = lineEnd - lineStart
-  val f = lineStart - circleCenter
-  val a = d.dot(d)
-  val b = 2f * f.dot(d)
-  val c = f.dot(f) - radius * radius
-
-  var discriminant = b * b - 4f * a * c
-  if (discriminant < 0) {
-    return false
-  } else {
-    // ray didn't totally miss sphere,
-    // so there is a solution to
-    // the equation.
-
-    discriminant = Math.sqrt(discriminant.toDouble()).toFloat()
-
-    // either solution may be on or off the ray so need to test both
-    // t1 is always the smaller value, because BOTH discriminant and
-    // a are nonnegative.
-    val t1 = (-b - discriminant) / (2 * a)
-    val t2 = (-b + discriminant) / (2 * a)
-
-    // 3x HIT cases:
-    //          -o->             --|-->  |            |  --|->
-    // Impale(t1 hit,t2 hit), Poke(t1 hit,t2>1), ExitWound(t1<0, t2 hit),
-
-    // 3x MISS cases:
-    //       ->  o                     o ->              | -> |
-    // FallShort (t1>1,t2>1), Past (t1<0,t2<0), CompletelyInside(t1<0, t2>1)
-
-    if (t1 >= 0 && t1 <= 1) {
-      // t1 is the intersection, and it's closer than t2
-      // (since t1 uses -b - discriminant)
-      // Impale, Poke
-      return true
-    }
-
-    // here t1 didn't intersect so we are either started
-    // inside the sphere or completely past it
-    return if (t2 >= 0 && t2 <= 1) {
-      // ExitWound
-      true
-    } else false
-
-    // no intn: FallShort, Past, CompletelyInside
-  }
-}
-
-fun rayIntersectsSphere(lineStart: Vector3, lineEnd: Vector3, circleCenter: Vector3, radius: Float): Boolean {
-  val d = lineEnd - lineStart
-  val f = lineStart - circleCenter
-  val a = d.dot(d)
-  val b = 2f * f.dot(d)
-  val c = f.dot(f) - radius * radius
-
-  var discriminant = b * b - 4f * a * c
-  if (discriminant < 0) {
-    return false
-  } else {
-    return true
-  }
-}
-
 fun isBetween(middle: Float, first: Float, second: Float) =
     if (middle == first || middle == second)
       true
@@ -201,46 +88,6 @@ fun isBetween(middle: Vector2fMinimal, first: Vector2fMinimal, second: Vector2fM
         && isBetween(middle.y, first.y, second.y)
 
 val epsilon = 0.00000001f
-
-// If successful returns the closest point of intersection on the line.
-fun rayIntersectsLine3D(p1: Vector3, p2: Vector3, p3: Vector3, p4: Vector3, maxGap: Float): Vector3? {
-  val p13 = p1 - p3
-  val p43 = p4 - p3
-
-  if (p43.lengthSquared() < epsilon) {
-    return null
-  }
-  val p21 = p2 - p1
-  if (p21.lengthSquared() < epsilon) {
-    return null
-  }
-
-  val d1343 = p13.x * p43.x + p13.y * p43.y + p13.z * p43.z
-  val d4321 = p43.x * p21.x + p43.y * p21.y + p43.z * p21.z
-  val d1321 = p13.x * p21.x + p13.y * p21.y + p13.z * p21.z
-  val d4343 = p43.x * p43.x + p43.y * p43.y + p43.z * p43.z
-  val d2121 = p21.x * p21.x + p21.y * p21.y + p21.z * p21.z
-
-  val denom = d2121 * d4343 - d4321 * d4321
-  if (Math.abs(denom) < epsilon) {
-    return null
-  }
-  val numer = d1343 * d4321 - d1321 * d4343
-
-  val mua = numer / denom
-  val mub = (d1343 + d4321 * mua) / d4343
-
-  val result1 = p1 + p21 * mua
-  val result2 = p3 + p43 * mub
-
-  if (result1.distance(result2) > maxGap)
-    return null
-
-  if (!isBetween(result2, p3, p4))
-    return null
-
-  return result2
-}
 
 fun rayPolygonDistance(rayStart: Vector3, rayDirection: Vector3, polygonPoint: Vector3, polygonNormal: Vector3): Float? {
   val denominator = -polygonNormal.dot(rayDirection)
@@ -262,80 +109,6 @@ fun getSlope(start: Vector2fMinimal, end: Vector2fMinimal): Float {
   return normal.y / normal.x
 }
 
-//fun getSlope(start: Vector3, end: Vector3): Float {
-//  val normal = end - start
-//  return normal.y / normal.x
-//}
-
-fun simpleRayIntersectsLineSegment(rayStart: Vector2fMinimal, segmentStart: Vector2fMinimal, segmentEnd: Vector2fMinimal): Vector2? {
-  if (segmentStart.y == segmentEnd.y)
-    return null
-
-  if (!isBetween(rayStart.y, segmentStart.y, segmentEnd.y))
-    return null
-
-  val x = if (segmentStart.x == segmentEnd.x) {
-    segmentStart.x
-  } else {
-    val slope = getSlope(segmentStart, segmentEnd)
-    (rayStart.y - segmentStart.y) / slope + segmentStart.x
-  }
-
-  return if (x >= rayStart.x && isBetween(x, segmentStart.x, segmentEnd.x))
-    Vector2(x, rayStart.y)
-  else
-    null
-}
-
-fun lineSegmentIntersectsLineSegment(f1: Vector2fMinimal, f2: Vector2fMinimal, s1: Vector2fMinimal, s2: Vector2fMinimal): Vector2? {
-  val point = if (f1.x == f2.x || f1.y == f2.y || s1.x == s2.x || s1.y == s2.y) {
-    throw Error("Not yet implemented.")
-  } else {
-    val fSlope = getSlope(s1, s2)
-    val sSlope = getSlope(f1, f2)
-    val fOffset = f1.y - f1.x * fSlope
-    val sOffset = s1.y - s1.x * sSlope
-    val x = (sOffset - fOffset) / (fSlope - sSlope)
-    val y = s1.x * sSlope + sOffset
-    Vector2(x, y)
-  }
-
-  return if (isBetween(point, f1, f2) && isBetween(point, s1, s2))
-    point
-  else
-    null
-}
-
-//fun simpleRayIntersectsLineSegment(rayStart: Vector3, segmentStart: Vector3, segmentEnd: Vector3): Vector2? {
-//  if (segmentStart.y == segmentEnd.y)
-//    return null
-//
-//  if (!isBetween(rayStart.y, segmentStart.y, segmentEnd.y))
-//    return null
-//
-//  val x = if (segmentStart.x == segmentEnd.x) {
-//    segmentStart.x
-//  } else {
-//    val slope = getSlope(segmentStart, segmentEnd)
-//    (rayStart.y - segmentStart.y) / slope + segmentStart.x
-//  }
-//
-//  return if (x >= rayStart.x && isBetween(x, segmentStart.x, segmentEnd.x))
-//    Vector3(x, rayStart.y, 0f)
-//  else
-//    null
-//}
-
-fun simpleRayIntersectsLineSegmentAsNumber(rayStart: Vector2fMinimal, segmentStart: Vector2fMinimal, segmentEnd: Vector2fMinimal): Int {
-  val result = simpleRayIntersectsLineSegment(rayStart, segmentStart, segmentEnd)
-  return if (result != null) 1 else 0
-}
-
-//fun simpleRayIntersectsLineSegmentAsNumber(rayStart: Vector3, segmentStart: Vector3, segmentEnd: Vector3): Int {
-//  val result = simpleRayIntersectsLineSegment(rayStart, segmentStart, segmentEnd)
-//  return if (result != null) 1 else 0
-//}
-
 fun isEven(value: Int) = (value and 1) == 0
 
 fun isOdd(value: Int) = (value and 1) != 0
@@ -349,15 +122,6 @@ fun isInsidePolygon(point: Vector2fMinimal, vertices: List<Vector2fMinimal>): Bo
   return count > 0 && isOdd(count)
 }
 
-//fun isInsidePolygon(point: Vector3, vertices: List<Vector3>): Boolean {
-//  var count = simpleRayIntersectsLineSegmentAsNumber(point, vertices.last(), vertices.first())
-//  for (i in 0 until vertices.size - 1) {
-//    count += simpleRayIntersectsLineSegmentAsNumber(point, vertices[i], vertices[i + 1])
-//  }
-//
-//  return count > 0 && isOdd(count)
-//}
-
 fun flattenPoints(normal: Vector3, points: List<Vector3>): Map<Vector2, Vector3> {
   val u = Vector3(normal).cross((points[1] - points[0]).normalize())
   val v = Vector3(normal).cross(u)
@@ -368,32 +132,6 @@ fun flattenPoints(points: List<Vector3>): Map<Vector2, Vector3> {
   assert(points.size >= 3)
   val normal = (points[0] - points[1]).cross(points[2] - points[1])
   return flattenPoints(normal, points)
-}
-
-fun rayIntersectsPolygon3D(rayStart: Vector3, rayDirection: Vector3, vertices: List<Vector3>, polygonNormal: Vector3): Vector3? {
-  val distance = rayPolygonDistance(rayStart, rayDirection, vertices.first(), polygonNormal)
-  if (distance == null)
-    return null
-
-  val planeIntersection = rayStart + rayDirection * distance
-  val u = Vector3(polygonNormal).cross((vertices[1] - vertices[0]).normalize())
-  val v = Vector3(polygonNormal).cross(u)
-  val transformedPoints = vertices.map { Vector2(u.dot(it), v.dot(it)) }
-  val transformedIntersection = Vector2(u.dot(planeIntersection), v.dot(planeIntersection))
-
-  return if (isInsidePolygon(transformedIntersection, transformedPoints))
-    planeIntersection
-  else
-    null
-
-  // *** Test code ***
-//  val temp1 = Vector3(-1f, -3f, 3f)
-//  val temp2 = Vector3(-1f, -2f, 2f)
-//  val na = Vector3(1f, 0f, 0f)
-//  val nb = Vector3(0f, -1f, 0f)
-//  val quat = Quaternion().rotateTo(na, nb)
-//  val r1 = quat * temp1
-//  val r2 = quat * temp2
 }
 
 fun projectPointOntoRay(v: Vector2, u1: Vector2, u2: Vector2): Vector2 {
@@ -465,49 +203,6 @@ fun Vector2.toVector2i() = Vector2i(x.toInt(), y.toInt())
 fun Vector2i.toVector2() = Vector2(x.toFloat(), y.toFloat())
 
 fun Vector4i.toVector4() = Vector4(x.toFloat(), y.toFloat(), z.toFloat(), w.toFloat())
-/*
-fun clockwiseLesser(center: Vector2, a: Vector2, b: Vector2): Boolean {
-  val ax = a.x - center.x
-  val bx = b.x - center.x
-
-  if (ax >= 0f && bx < 0f)
-    return true
-  if (ax < 0f && bx >= 0f)
-    return false
-
-  val ay = a.y - center.y
-  val by = b.y - center.y
-
-  if (ax == 0f && bx == 0f) {
-    return if (ay >= 0 || by >= 0f) a.y > b.y else b.y > a.y
-  }
-
-  // compute the cross product of vectors (center -> a) x (center -> b)
-  val det = ax * by - bx * ay
-  if (det < 0)
-    return true
-  if (det > 0)
-    return false
-
-  // points a and b are on the same line from the center
-  // check which point is closer to the center
-  val d1 = ax * ax + ay * ay
-  val d2 = bx * bx + by * by
-  return d1 > d2
-}
-
-fun counterClockwiseLesser(center: Vector2) = { a: Vector2, b: Vector2 ->
-  !clockwiseLesser(center, a, b)
-}
-
-fun arrangePointsCounterClockwise2D(center: Vector2, vertices: Collection<Vector2>): List<Vector2> {
-  val sorter = counterClockwiseLesser(center)
-  return vertices.sortedWith(object : Comparator<Vector2> {
-    override fun compare(a: Vector2, b: Vector2): Int =
-        if (sorter(a, b)) 1 else 0
-  })
-}
-*/
 
 fun arrangePointsCounterClockwise2D(center: Vector2, vertices: Collection<Vector2>): List<Vector2> =
     vertices.sortedBy { atan(it - center) }

@@ -7,4 +7,6 @@ interface Vector2fMinimal {
   var y: Float
 
   operator fun minus(v: Vector2fMinimal): Vector2
+
+  val xy: Vector2
 }
