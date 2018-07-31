@@ -151,7 +151,7 @@ fun gatherNewSectorFaces(origin: FlexibleFace): List<FlexibleFace> {
     firstNotUsed.plus(secondNotUsed).distinct()
 
   val walls = firstDir.reversed().plus(origin).plus(secondDir)
-
+  assert(walls.size > 1)
   val i = chainIntegrity(walls)
   assert(isChain(walls))
 
@@ -161,7 +161,11 @@ fun gatherNewSectorFaces(origin: FlexibleFace): List<FlexibleFace> {
     val a = getEndPointReversed(edges, 0)
     val unusedEdges = notUsed.map { getFloor(it).edge }
     val shaveCount = shaveOffOccludedWalls(a, edges, unusedEdges)
-    println(shaveCount)
+//    println(shaveCount)
+    val b = getEndPoint(edges, 0)
+    val count = walls.size - shaveCount
+    assert(count > 2 || (count > 1 && a != b))
+
     walls.dropLast(shaveCount)
   } else
     walls
@@ -190,7 +194,10 @@ fun createSpaceNode(sectorCenter: Vector3, abstractWorld: AbstractWorld, biome: 
 
 fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace, dice: Dice) {
   val walls = gatherNewSectorFaces(originFace)
-  assert(walls.size > 2)
+  val a = getEndEdgeReversed(walls, 0)
+  val b = getEndEdge(walls, 0)
+
+  assert(walls.size > 2 || (walls.size > 1 && a != b))
 
   val edges = walls.flatMap { face ->
     face.edges.filter { edge ->
@@ -216,8 +223,6 @@ fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace, dice: D
   val gapEdges = edges.filter {
     it.faces.count { walls.contains(it) } < 2
   }
-  val a = getEndEdgeReversed(walls, 0)
-  val b = getEndEdge(walls, 0)
 
   if (a != b) {
 //    assert(gapEdges.size == 2)
@@ -340,7 +345,8 @@ fun defineNegativeSpace(abstractWorld: AbstractWorld, dice: Dice) {
     for (originFace in concaveFaces) {
       if (faceNodeCount(originFace) == 1) {
         val walls = gatherNewSectorFaces(originFace)
-        if (walls.size < 3) {
+        println("bob")
+        if (walls.size < 2) {
           val i = getIncompleteNeighbors(originFace).toList()
           getFaceInfo(originFace).debugInfo = "space-d"
           return
