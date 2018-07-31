@@ -2,7 +2,6 @@ package colliding
 
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
-import org.joml.xy
 
 interface Shape {
   fun getRadiusOrNull(): Float?

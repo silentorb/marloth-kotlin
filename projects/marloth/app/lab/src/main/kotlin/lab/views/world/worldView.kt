@@ -12,7 +12,6 @@ import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import mythic.spatial.times
 import org.joml.Vector2i
-import org.joml.xy
 import org.joml.plus
 import org.joml.minus
 import rendering.Renderer

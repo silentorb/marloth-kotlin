@@ -6,7 +6,6 @@ import mythic.spatial.Vector3
 import mythic.spatial.lineIntersectsCircle
 import mythic.spatial.times
 import org.joml.plus
-import org.joml.xy
 import simulation.Node
 
 fun <T> divide(sequence: Sequence<T>, filter: (T) -> Boolean) =

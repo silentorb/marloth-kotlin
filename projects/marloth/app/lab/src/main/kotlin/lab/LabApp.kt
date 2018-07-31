@@ -114,7 +114,7 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
   saveIncrement += 1f * delta
   if (saveIncrement > 1f) {
     saveIncrement = 0f
-    saveLabConfig(app.config)
+//    saveLabConfig(app.config)
     updateWatching(app)
   }
 
@@ -149,7 +149,7 @@ object App {
     System.setProperty("joml.format", "false")
     val config = loadConfig<LabConfig>("labConfig.yaml") ?: LabConfig()
     val gameConfig = loadGameConfig()
-    saveLabConfig(config)
+//    saveLabConfig(config)
 //    startGui()
     runApp(createDesktopPlatform("Dev Lab", gameConfig.display), config, gameConfig)
   }

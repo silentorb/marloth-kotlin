@@ -200,7 +200,7 @@ fun simpleRayIntersectsLineSegment(rayStart: Vector2fMinimal, segmentStart: Vect
 private infix fun Vector2.cross(b: Vector2): Float =
     x * b.y - y * b.x
 
-fun lineSegmentIntersectsLineSegment(f1: Vector2fMinimal, f2: Vector2fMinimal, s1: Vector2fMinimal, s2: Vector2fMinimal): Vector2? {
+fun lineSegmentIntersectsLineSegment(f1: Vector2fMinimal, f2: Vector2fMinimal, s1: Vector2fMinimal, s2: Vector2fMinimal): Pair<Boolean, Vector2?> {
   val p = f1.xy
   val q = s1.xy
   val r = (f2 - f1).xy
@@ -212,19 +212,26 @@ fun lineSegmentIntersectsLineSegment(f1: Vector2fMinimal, f2: Vector2fMinimal, s
   val n = startGap cross r
 
   if (m == 0f && n != 0f) {
-    return null
+    return Pair(false, null)
   }
 
   if (m == 0f && n == 0f) {
-    throw Error("Not yet implemented.")
+    val k = r / r.dot(r)
+    val t0 = startGap.dot(k)
+    val t1 = t0 + s.dot(k)
+    return if ((t0 < 1f && t1 > 0f) || (t1 < 1f && t0 > 0f))
+      Pair(true, null)
+    else
+      Pair(false, null)
   }
 
   val t = startGap cross (s / vectorCross)
   val u = startGap cross (r / vectorCross)
   if (r cross s != 0f && 0f <= t && t <= 1f && 0f <= u && u <= 1f) {
-    return p + r * t + q + s * u
+    val point = p + r * t
+    return Pair(true, point)
   }
-  return null
+  return Pair(false, null)
 }
 
 fun simpleRayIntersectsLineSegmentAsNumber(rayStart: Vector2fMinimal, segmentStart: Vector2fMinimal, segmentEnd: Vector2fMinimal): Int {

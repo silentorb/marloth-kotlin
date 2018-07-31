@@ -8,7 +8,6 @@ import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import mythic.typography.TextStyle
 import org.joml.plus
-import org.joml.xy
 import rendering.Renderer
 import simulation.*
 

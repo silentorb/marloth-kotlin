@@ -8,7 +8,6 @@ import mythic.spatial.*
 import org.joml.minus
 import org.joml.plus
 import org.joml.times
-import org.joml.xy
 import physics.Body
 import physics.Force
 import simulation.*

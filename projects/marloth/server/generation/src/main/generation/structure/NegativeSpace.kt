@@ -3,7 +3,6 @@ package generation.structure
 import mythic.sculpting.*
 import mythic.spatial.*
 import org.joml.plus
-import org.joml.xy
 import randomly.Dice
 import simulation.*
 
@@ -57,10 +56,12 @@ fun traceIncompleteWalls(origin: FlexibleFace, first: FlexibleFace, otherEnd: Fl
   var current = first
   var previous = origin
   val collected = mutableListOf(first)
+//  val notUsedResult = mutableListOf<FlexibleFace>()
   var step = 0
   while (true) {
     val neighbors = getIncompleteNeighbors(current).filter { it != previous }.toList()
     val n = neighbors.filter { !isConcaveCorner(current, it) }.toList()
+//    assert(neighbors.any())
     assert(n.size < 2)
     val next = n.firstOrNull()
     if (next == null) {
@@ -113,11 +114,18 @@ fun getEndPointReversed(walls: List<FlexibleEdge>, offset: Int): Vector3 {
   return last.vertices.first { !nextLast.vertices.contains(it) }
 }
 
-tailrec fun shaveOffOccludedWalls(a: Vector3, walls: List<FlexibleEdge>, notUsed: List<FlexibleEdge>, shaveCount: Int = 0): Int {
+fun shaveOffOccludedWalls(a: Vector3, walls: List<FlexibleEdge>, notUsed: List<FlexibleEdge>, shaveCount: Int = 0): Int {
   // 3 is an estimate right now.  A sector needs at least 3 walls but this condition may not directly translate to wall count.
-  assert(shaveCount < walls.size - 2)
+//  assert(shaveCount < walls.size - 2)
+  if (shaveCount >= walls.size - 2)
+    return shaveCount
+
   val b = getEndPoint(walls, shaveCount)
-  return if (notUsed.none { lineSegmentIntersectsLineSegment(a, b, it.first, it.second) != null })
+  val e = 0.000f
+  return if (notUsed.none {
+        val (hit, point) = lineSegmentIntersectsLineSegment(a, b, it.first, it.second)
+        hit && (point == null || (point.distance(a.xy) > e && point.distance(b.xy) > e))
+      })
     shaveCount
   else
     shaveOffOccludedWalls(a, walls, notUsed, shaveCount + 1)
@@ -133,7 +141,6 @@ fun isChain(walls: List<FlexibleFace>): Boolean =
         .all { it == 1 }
 
 fun gatherNewSectorFaces(origin: FlexibleFace): List<FlexibleFace> {
-  println("a")
   val firstNeighbors = getIncompleteNeighbors(origin).filter { !isConcaveCorner(origin, it) }.toList()
   assert(firstNeighbors.size == 2)
   val (firstDir, firstNotUsed) = traceIncompleteWalls(origin, firstNeighbors[0], origin)
@@ -141,7 +148,7 @@ fun gatherNewSectorFaces(origin: FlexibleFace): List<FlexibleFace> {
   val notUsed = if (firstNotUsed.none())
     listOf()
   else
-    firstNotUsed.plus(secondNotUsed)
+    firstNotUsed.plus(secondNotUsed).distinct()
 
   val walls = firstDir.reversed().plus(origin).plus(secondDir)
 
@@ -149,7 +156,7 @@ fun gatherNewSectorFaces(origin: FlexibleFace): List<FlexibleFace> {
   assert(isChain(walls))
 
   return if (notUsed.any()) {
-    assert(firstNotUsed.any() && secondNotUsed.any())
+//    assert(firstNotUsed.any() && secondNotUsed.any())
     val edges = walls.map { getFloor(it).edge }
     val a = getEndPointReversed(edges, 0)
     val unusedEdges = notUsed.map { getFloor(it).edge }

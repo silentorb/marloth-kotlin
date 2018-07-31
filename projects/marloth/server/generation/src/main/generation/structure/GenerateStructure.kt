@@ -7,7 +7,6 @@ import generation.abstract.isInCluster
 import mythic.sculpting.*
 import mythic.spatial.*
 import org.joml.plus
-import org.joml.xy
 import randomly.Dice
 import scenery.Textures
 import simulation.*

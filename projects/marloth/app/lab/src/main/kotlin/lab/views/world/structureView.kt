@@ -9,7 +9,6 @@ import mythic.sculpting.FlexibleFace
 import mythic.sculpting.FlexibleMesh
 import mythic.spatial.Vector4
 import org.joml.plus
-import org.joml.xy
 import simulation.*
 
 private fun getLineColor(edge: FlexibleEdge): Vector4 {
