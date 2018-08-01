@@ -92,3 +92,6 @@ fun createWall(abstractWorld: AbstractWorld, node: Node, vertices: Vertices): Fl
   node.walls.add(wall)
   return wall
 }
+
+fun verticalEdges(face: FlexibleFace) =
+    face.edges.asSequence().filter { it.first.x == it.second.x && it.first.y == it.second.y }

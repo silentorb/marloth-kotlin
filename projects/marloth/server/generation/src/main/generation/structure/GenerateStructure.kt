@@ -202,7 +202,7 @@ fun generateStructure(abstractWorld: AbstractWorld, dice: Dice, tunnels: List<No
   initializeFaceInfo(abstractWorld)
   val roomNodes = abstractWorld.nodes.toList()
   defineNegativeSpace(abstractWorld, dice)
-//  fillBoundary(abstractWorld, dice)
-//  expandVertically(abstractWorld, roomNodes, dice)
+  fillBoundary(abstractWorld, dice)
+  expandVertically(abstractWorld, roomNodes, dice)
   assignTextures(abstractWorld)
 }

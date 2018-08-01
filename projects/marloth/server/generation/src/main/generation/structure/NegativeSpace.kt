@@ -89,7 +89,7 @@ fun getEndEdge(walls: List<FlexibleFace>, offset: Int): FlexibleEdge {
   val head = walls.size - 1 - offset
   val last = walls[head]
   val nextLast = walls[head - 1]
-  return last.edges.first { e -> nextLast.edges.any { it.edge == e.edge } }.edge
+  return verticalEdges(last).first { e -> nextLast.edges.none { it.edge == e.edge } }.edge
 //  return last.edges.intersect(nextLast.edges).first().edge
 }
 
@@ -97,7 +97,7 @@ fun getEndEdgeReversed(walls: List<FlexibleFace>, offset: Int): FlexibleEdge {
   val head = 0 + offset
   val last = walls[head]
   val nextLast = walls[head + 1]
-  return last.edges.first { e -> nextLast.edges.any { it.edge == e.edge } }.edge
+  return verticalEdges(last).first { e -> nextLast.edges.none { it.edge == e.edge } }.edge
 }
 
 fun getEndPoint(walls: List<FlexibleEdge>, offset: Int): Vector3 {
@@ -164,9 +164,9 @@ fun gatherNewSectorFaces(origin: FlexibleFace): List<FlexibleFace> {
 //    println(shaveCount)
 //    val c = getEndEdgeReversed(walls.dropLast(shaveCount), 0)
 //    val d = getEndEdge(walls.dropLast(shaveCount), 0)
-//    val count = walls.size - shaveCount
+    val count = walls.size - shaveCount
 //    assert(count > 2 || (count > 1 && c != d))
-//    println("size " + count + ", " + shaveCount)
+    println("size " + count + ", " + shaveCount)
 
     walls.dropLast(shaveCount)
   } else {
