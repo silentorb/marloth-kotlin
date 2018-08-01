@@ -1,6 +1,6 @@
 package simulation
 
-import mythic.spatial.Vector3
+import mythic.spatial.Vector2
 
 enum class ViewMode {
   firstPerson,
@@ -18,10 +18,10 @@ class Player(
     val character: Character,
     val playerId: Int,
     var viewMode: ViewMode,
-    var lookVelocity: Vector3 = Vector3(),
+    var lookForce: Vector2 = Vector2(),
+    var lookVelocity: Vector2 = Vector2(),
     var hoverCamera: HoverCamera = HoverCamera()
 )
-
 
 fun isPlayer(world: World, character: Character) =
     world.players.any { it.playerId == character.id }

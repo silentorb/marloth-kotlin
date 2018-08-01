@@ -14,6 +14,7 @@ typealias Quaternion = org.joml.Quaternionf
 private val initialQuaternion = Quaternion()
 
 operator fun Vector3.times(other: Matrix): Vector3 = mulDirection(other)
+operator fun Vector2.times(other: Vector2): Vector2 = mul(other, Vector2())
 operator fun Vector2.times(other: Float): Vector2 = mul(other, Vector2())
 operator fun Vector3.times(other: Float): Vector3 = mul(other, Vector3())
 operator fun Vector3.times(other: Vector3): Vector3 = mul(other, Vector3())

@@ -33,11 +33,7 @@ class WorldUpdater(val world: World, val instantiator: Instantiator) {
       }
     }
 
-    if (player.viewMode == ViewMode.firstPerson) {
-      playerRotateFP(player, commands, delta)
-    } else if (player.viewMode == ViewMode.thirdPerson) {
-      playerRotateTP(player, commands, delta)
-    }
+    applyPlayerLookCommands(player, commands, delta)
 
     return CharacterResult(
         newMissile = playerAttack(player, commands),

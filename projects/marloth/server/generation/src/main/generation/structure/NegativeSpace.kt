@@ -166,7 +166,7 @@ fun gatherNewSectorFaces(origin: FlexibleFace): List<FlexibleFace> {
 //    val d = getEndEdge(walls.dropLast(shaveCount), 0)
     val count = walls.size - shaveCount
 //    assert(count > 2 || (count > 1 && c != d))
-    println("size " + count + ", " + shaveCount)
+//    println("size " + count + ", " + shaveCount)
 
     walls.dropLast(shaveCount)
   } else {
