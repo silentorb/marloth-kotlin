@@ -121,7 +121,7 @@ fun shaveOffOccludedWalls(a: Vector3, walls: List<FlexibleEdge>, notUsed: List<F
     return shaveCount
 
   val b = getEndPoint(walls, shaveCount)
-  val e = 0.000f
+  val e = 0.001f
   return if (notUsed.none {
         val (hit, point) = lineSegmentIntersectsLineSegment(a, b, it.first, it.second)
         hit && (point == null || (point.distance(a.xy) > e && point.distance(b.xy) > e))
@@ -162,13 +162,18 @@ fun gatherNewSectorFaces(origin: FlexibleFace): List<FlexibleFace> {
     val unusedEdges = notUsed.map { getFloor(it).edge }
     val shaveCount = shaveOffOccludedWalls(a, edges, unusedEdges)
 //    println(shaveCount)
-    val b = getEndPoint(edges, 0)
-    val count = walls.size - shaveCount
-    assert(count > 2 || (count > 1 && a != b))
+//    val c = getEndEdgeReversed(walls.dropLast(shaveCount), 0)
+//    val d = getEndEdge(walls.dropLast(shaveCount), 0)
+//    val count = walls.size - shaveCount
+//    assert(count > 2 || (count > 1 && c != d))
+//    println("size " + count + ", " + shaveCount)
 
     walls.dropLast(shaveCount)
-  } else
+  } else {
+    assert(walls.size > 2)
+//    println("size " + walls.size)
     walls
+  }
 }
 
 fun getDistinctEdges(edges: Edges) =
@@ -345,7 +350,6 @@ fun defineNegativeSpace(abstractWorld: AbstractWorld, dice: Dice) {
     for (originFace in concaveFaces) {
       if (faceNodeCount(originFace) == 1) {
         val walls = gatherNewSectorFaces(originFace)
-        println("bob")
         if (walls.size < 2) {
           val i = getIncompleteNeighbors(originFace).toList()
           getFaceInfo(originFace).debugInfo = "space-d"
