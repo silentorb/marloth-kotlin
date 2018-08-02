@@ -66,7 +66,7 @@ fun playerRotate(lookMap: Map<CommandType, Vector3>, player: Player, commands: C
   val offset3 = joinInputVector(commands, lookMap)
   if (offset3 != null) {
     val offset2 = Vector2(offset3.z, offset3.y)
-    player.lookForce = offset2 * mouseLookSensitivity * speed * delta
+    player.lookForce = offset2 * mouseLookSensitivity * speed
   }
 }
 
@@ -96,7 +96,7 @@ fun applyPlayerLookCommands(player: Player, commands: Commands<CommandType>, del
 fun updatePlayerRotation(player: Player, delta: Float) {
 //  if (player.viewMode == ViewMode.topDown)
 //    return
-
+  player.lookVelocity = player.lookForce
   val velocity = player.lookVelocity
   val deltaVelocity = velocity * delta
   if (velocity.y != 0f || velocity.x != 0f) {
@@ -122,11 +122,12 @@ fun updatePlayerRotation(player: Player, delta: Float) {
 
 //      println("p " + hoverCamera.pitch + ", y" + hoverCamera.yaw + " |  vp " + player.lookVelocity.y + ",vy " + player.lookVelocity.z)
     }
-    player.lookVelocity.y = Math.min(m.pitch.max, velocity.y * (1 - m.pitch.drag * delta))
-    player.lookVelocity.x = Math.min(m.yaw.max, velocity.z * (1 - m.yaw.drag * delta))
-    if (Vector2(velocity.y, velocity.z).length() < 0.01f) {
-      player.lookVelocity.zero()
-    }
+
+//    player.lookVelocity.y = Math.min(m.pitch.max, velocity.y * (1 - m.pitch.drag * delta))
+//    player.lookVelocity.x = Math.min(m.yaw.max, velocity.z * (1 - m.yaw.drag * delta))
+//    if (Vector2(velocity.y, velocity.z).length() < 0.01f) {
+//      player.lookVelocity.zero()
+//    }
 
   }
 }
