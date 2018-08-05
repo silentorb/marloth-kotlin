@@ -56,12 +56,12 @@ fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Can
 //  val offset = bounds.position + worldPadding
 
 //  fun getPosition(position: Vector2) = offset + (Vector2(position.x, -position.y)
-//      - world.boundary.start.xy) * scale
+//      - world.boundary.start.xy()) * scale
 
-  fun getNodePosition(node: Node) = getPosition(node.position.xy)
+  fun getNodePosition(node: Node) = getPosition(node.position.xy())
 
 //  fun getPosition(node: IndexedNode) = offset + (Vector2(node.position.x, -node.position.y)
-//      - world.boundary.start.xy) * scale
+//      - world.boundary.start.xy()) * scale
 
   val style = TextStyle(
       canvas.fonts[0],

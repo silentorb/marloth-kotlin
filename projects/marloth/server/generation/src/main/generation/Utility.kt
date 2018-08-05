@@ -45,7 +45,7 @@ fun getAngle(second: Vector2): Float {
   return getAngle(Vector2(1f, 0f), second)
 }
 
-fun getAngle(node: Node, second: Vector3) = getAngle(node.position.xy, second.xy)
+fun getAngle(node: Node, second: Vector3) = getAngle(node.position.xy(), second.xy())
 
 fun project2D(angle: Float, distance: Float): Vector2 {
   return Vector2(
@@ -70,7 +70,7 @@ fun isInsideCircle(point: Vector2, center: Vector2, radius: Float): Boolean {
   return a * a + b * b < radius * radius
 }
 
-fun isInsideNode(point: Vector2, node: Node) = isInsideCircle(point, node.position.xy, node.radius)
+fun isInsideNode(point: Vector2, node: Node) = isInsideCircle(point, node.position.xy(), node.radius)
 
 fun getCenter(first: Node, second: Node): Vector3 {
   val distance = first.position.distance(second.position)
@@ -100,7 +100,7 @@ fun connectionOverlapsNeighborNodes(neighbors: List<Node>, first: Node, second: 
   if (neighbors.any()) {
     val connectionCenter = getCenter(first, second)
     return neighbors.any { neighbor ->
-      lineIntersectsCircle(first.position.xy, second.position.xy, neighbor.position.xy, neighbor.radius + tunnelRadius)
+      lineIntersectsCircle(first.position.xy(), second.position.xy(), neighbor.position.xy(), neighbor.radius + tunnelRadius)
 //      neighbor.position.distance(connectionCenter) - neighbor.radius - tunnelRadius < 0f
     }
   }

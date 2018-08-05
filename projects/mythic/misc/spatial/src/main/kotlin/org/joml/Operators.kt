@@ -168,7 +168,7 @@ operator fun Quaternionf.times(q: Quaternionf) = mul(q, Quaternion())
 //operator fun Quaterniond.times(v: Vector4d) = transform(v)
 
 
-//val Vector3.xy: Vector2f
+//val Vector3.xy(): Vector2f
 //  get() = Vector2f(x, y)
 
 val Vector4i.zw: Vector2i

@@ -13,7 +13,7 @@ import physics.Force
 import simulation.*
 
 fun hitsWall(edge: FlexibleEdge, position: Vector3, radius: Float) =
-    lineIntersectsCircle(edge.first.xy, edge.second.xy, position.xy, radius)
+    lineIntersectsCircle(edge.first.xy(), edge.second.xy(), position.xy(), radius)
 
 fun getEdgeNormal(first: Vector2, second: Vector2): Vector2 {
   val combination = first - second
@@ -41,13 +41,13 @@ fun findCollisionWalls(source: Vector3, originalOffset: Vector3, world: Abstract
       .filter { wall -> hitsWall(wall.edges[0].edge, newPosition, broadRadius) && offset.dot(wall.normal) < 0f }
       .map {
         val edge = it.edges[0]
-        val hitPoint = projectPointOntoLine(source.xy, edge.first.xy, edge.second.xy)
+        val hitPoint = projectPointOntoLine(source.xy(), edge.first.xy(), edge.second.xy())
         if (hitPoint != null) {
-          val gap = hitPoint.distance(source.xy) - radius
+          val gap = hitPoint.distance(source.xy()) - radius
           Triple(it, hitPoint, gap)
         } else {
-          val nearestEnd = listOf(edge.first.xy, edge.second.xy).sortedBy { it.distance(source.xy) }.first()
-          val gap = nearestEnd.distance(source.xy) - radius
+          val nearestEnd = listOf(edge.first.xy(), edge.second.xy()).sortedBy { it.distance(source.xy()) }.first()
+          val gap = nearestEnd.distance(source.xy()) - radius
           Triple(it, nearestEnd, gap)
         }
       }
@@ -86,10 +86,10 @@ fun getWallCollisionMovementOffset(walls: List<Triple<FlexibleFace, Vector2, Flo
 
     val knee = walls[0].first.normal + walls[1].first.normal
     val angle = getAngle(
-        (rightEdge.first - rightEdge.second).xy.normalize(),
-        knee.xy.normalize()
+        (rightEdge.first - rightEdge.second).xy().normalize(),
+        knee.xy().normalize()
     )
-//    println("" + angle + " | " + knee.xy + " | " + slideVectors[0].dot(walls[1].first.normal) + " | " + slideVectors[1].dot(walls[0].first.normal))
+//    println("" + angle + " | " + knee.xy() + " | " + slideVectors[0].dot(walls[1].first.normal) + " | " + slideVectors[1].dot(walls[0].first.normal))
 //    if (Math.abs(angle) <= Pi) {
     if (Math.abs(slideVectors[1].dot(walls[0].first.normal)) > 0.05f) {
       val dot2 = offset.dot(walls[0].first.normal + walls[0].first.normal)
@@ -161,7 +161,7 @@ fun joinInputVector(commands: Commands<CommandType>, commandMap: Map<CommandType
 }
 
 fun getLookAtAngle(lookAt: Vector3) =
-    getAngle(Vector2(1f, 0f), lookAt.xy)
+    getAngle(Vector2(1f, 0f), lookAt.xy())
 
 fun setCharacterFacing(character: Character, lookAt: Vector3) {
   val angle = getLookAtAngle(lookAt)

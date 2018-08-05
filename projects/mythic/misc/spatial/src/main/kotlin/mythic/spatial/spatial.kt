@@ -172,13 +172,12 @@ fun getAngle(a: Vector2, b: Vector2): Float {
 val Vector4.xyz: Vector3
   get() = Vector3(x, y, z)
 
-val Vector4.xy: Vector2
-  get() = Vector2(x, y)
+fun Vector4.xy(): Vector2 = Vector2(x, y)
 
 val Vector4.zw: Vector2
   get() = Vector2(z, w)
 
-//val Vector4.xy: Vector2
+//val Vector4.xy(): Vector2
 //  get() = Vector2(x, y)
 
 fun Vector2.copy() = Vector2(this)
@@ -192,7 +191,7 @@ fun transformVector(m: Matrix): Vector3 {
   return m.transform(tempVector).xyz
 }
 
-//fun Vector2.transform(m: Matrix) = m.transform(Vector4(x, y, 0f, 1f)).xy
+//fun Vector2.transform(m: Matrix) = m.transform(Vector4(x, y, 0f, 1f)).xy()
 
 fun getVector3Center(first: Vector3, second: Vector3) =
     first + (second - first) * 0.5f

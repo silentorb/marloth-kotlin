@@ -26,8 +26,8 @@ fun radialSequence(corners: List<NodeCorner>) =
     corners.asSequence().plus(NodeCorner(corners.first().corner, corners.first().angle + Pi * 2))
 
 fun getDoorwayPoints(node: Node, other: Node): List<Vector2> {
-  val direction = (other.position - node.position).xy.normalize()
-  val point = node.position.xy + direction * node.radius
+  val direction = (other.position - node.position).xy().normalize()
+  val point = node.position.xy() + direction * node.radius
   return forkVector(point, direction, doorwayLength)
 }
 
@@ -36,7 +36,7 @@ fun createDoorway(node: Node, other: Node) =
         .map { it.toVector3() }
 
 fun createVerticesForOverlappingCircles(node: Node, other: Node, others: List<Node>): List<Corner> =
-    circleIntersection(node.position.xy, node.radius, other.position.xy, other.radius)
+    circleIntersection(node.position.xy(), node.radius, other.position.xy(), other.radius)
         // Only needed for tri-unions
 //        .filter { c -> !others.any { isInsideNode(c, it) } }
         .map { it.toVector3() }
@@ -95,7 +95,7 @@ fun getClusterUnions(cluster: Cluster): List<Connection> =
 
 fun fillClusterCornerGaps(unorderedCorners: List<Corner>, node: Node, otherNodes: List<Node>): List<Corner> {
   val additional = fillCornerGaps(unorderedCorners, node)
-  return additional.filter { corner -> !otherNodes.any { isInsideNode(corner.xy, it) } }
+  return additional.filter { corner -> !otherNodes.any { isInsideNode(corner.xy(), it) } }
 }
 
 fun createClusterNodeStructure(node: Node, cluster: List<Node>, corners: List<Corner>): List<Corner> {
@@ -130,7 +130,7 @@ fun generateTunnelStructure(node: Node, nodeSectors: List<TempSector>): TempSect
   val corners = sectors.flatMap { sector ->
     val other = if (sector.node === first) second else first
     val points = getDoorwayPoints(sector.node, other)
-    points.map { point -> sector.corners.sortedBy { it.xy.distance(point) }.first() }
+    points.map { point -> sector.corners.sortedBy { it.xy().distance(point) }.first() }
   }
       .sortedBy { getAngle(node, it) }
 
@@ -139,7 +139,7 @@ fun generateTunnelStructure(node: Node, nodeSectors: List<TempSector>): TempSect
 
 fun sinewFloorsAndCeilings(nodeSectors: List<TempSector>, mesh: FlexibleMesh) {
   return nodeSectors.forEach { sector ->
-    val sectorCenter = getCenter(sector.corners).xy
+    val sectorCenter = getCenter(sector.corners).xy()
     createFloor(mesh, sector.node, sector.corners, sectorCenter)
     createCeiling(mesh, sector.node, sector.corners, sectorCenter)
   }

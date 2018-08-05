@@ -68,7 +68,7 @@ fun createSecondaryNode(sectorCenter: Vector3, abstractWorld: AbstractWorld, isS
 
 fun createFloor(mesh: FlexibleMesh, node: Node, vertices: Vertices, center: Vector2): FlexibleFace {
   val sortedFloorVertices = vertices
-      .sortedBy { atan(it.xy - center) }
+      .sortedBy { atan(it.xy() - center) }
   val floor = mesh.createStitchedFace(sortedFloorVertices)
   floor.data = FaceInfo(FaceType.floor, node, null)
   node.floors.add(floor)
@@ -77,7 +77,7 @@ fun createFloor(mesh: FlexibleMesh, node: Node, vertices: Vertices, center: Vect
 
 fun createCeiling(mesh: FlexibleMesh, node: Node, vertices: Vertices, center: Vector2): FlexibleFace {
   val sortedFloorVertices = vertices
-      .sortedByDescending { atan(it.xy - center) }
+      .sortedByDescending { atan(it.xy() - center) }
       .map { it + Vector3(0f, 0f, wallHeight) }
 
   val surface = mesh.createStitchedFace(sortedFloorVertices)

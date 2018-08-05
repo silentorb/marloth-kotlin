@@ -8,5 +8,5 @@ interface Vector2fMinimal {
 
   operator fun minus(v: Vector2fMinimal): Vector2
 
-  val xy: Vector2
+  fun xy(): Vector2
 }

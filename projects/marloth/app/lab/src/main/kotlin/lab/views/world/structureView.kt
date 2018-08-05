@@ -40,14 +40,14 @@ fun drawVertices(bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, 
     if (wallFaces.any()) {
       val color = getLineColor(edge)
       val normal = wallFaces.first().normal
-      val middle = edge.middle.xy
-      canvas.drawLine(getPosition(edge.first.xy), getPosition(edge.second.xy), color, 3f)
-      canvas.drawLine(getPosition(middle), getPosition(middle + normal.xy), color, 3f * wallFaces.size)
+      val middle = edge.middle.xy()
+      canvas.drawLine(getPosition(edge.first.xy()), getPosition(edge.second.xy()), color, 3f)
+      canvas.drawLine(getPosition(middle), getPosition(middle + normal.xy()), color, 3f * wallFaces.size)
     }
   }
 
   for (vertex in mesh.redundantVertices) {
-    canvas.drawSolidCircle(getPosition(vertex.xy), 3f, solid)
+    canvas.drawSolidCircle(getPosition(vertex.xy()), 3f, solid)
   }
 }
 

@@ -34,7 +34,7 @@ fun intersects(lineStart: Vector2, lineEnd: Vector2, circleCenter: Vector2, radi
 fun nodesIntersectOther(first: Node, second: Node, nodes: Sequence<Node>) =
     nodes
         .filter { it !== first && it !== second }
-        .any { lineIntersectsCircle(first.position.xy, second.position.xy, it.position.xy, it.radius + tunnelPadding) }
+        .any { lineIntersectsCircle(first.position.xy(), second.position.xy(), it.position.xy(), it.radius + tunnelPadding) }
 
 fun closeDeadEnd(node: Node, graph: NodeGraph) {
   val nodes = graph.nodes.asSequence()

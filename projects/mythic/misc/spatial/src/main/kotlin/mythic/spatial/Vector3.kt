@@ -1756,6 +1756,5 @@ class Vector3 : Externalizable, Vector3fc, Vector2fMinimal {
     private val serialVersionUID = 1L
   }
 
-  override val xy: Vector2
-    get() = Vector2(x, y)
+  override fun xy(): Vector2 = Vector2(x, y)
 }

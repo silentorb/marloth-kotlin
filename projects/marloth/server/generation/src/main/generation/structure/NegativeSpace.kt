@@ -124,7 +124,7 @@ fun shaveOffOccludedWalls(a: Vector3, walls: List<FlexibleEdge>, notUsed: List<F
   val e = 0.001f
   return if (notUsed.none {
         val (hit, point) = lineSegmentIntersectsLineSegment(a, b, it.first, it.second)
-        hit && (point == null || (point.distance(a.xy) > e && point.distance(b.xy) > e))
+        hit && (point == null || (point.distance(a.xy()) > e && point.distance(b.xy()) > e))
       })
     shaveCount
   else
@@ -213,7 +213,7 @@ fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace, dice: D
   val floorVertices = edges.map { it.vertices.sortedBy { it.z }.last() }
   val ceilingVertices = edges.map { it.vertices.sortedBy { it.z }.first() }
   val sectorCenter = getCenter(floorVertices)
-  val flatCenter = sectorCenter.xy
+  val flatCenter = sectorCenter.xy()
 
   val node = createSpaceNode(sectorCenter, abstractWorld, getFaceInfo(originFace).firstNode!!.biome, dice)
   node.walls.addAll(walls)
@@ -253,7 +253,7 @@ fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace,
   val originalWall = getWallVertices(originFace.vertices)
 
   val newPoints = originFace.vertices.map {
-    val projected = it.xy + it.xy.normalize() * 10f
+    val projected = it.xy() + it.xy().normalize() * 10f
     Vector3(projected.x, projected.y, it.z)
   }
   val newWall = getWallVertices(newPoints)
@@ -266,8 +266,8 @@ fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace,
 
 //  node.walls.addAll(walls)
 //  node.floors.add(floor)
-  val floor = createFloor(abstractWorld.mesh, node, floorVertices, sectorCenter.xy)
-  val ceiling = createCeiling(abstractWorld.mesh, node, floorVertices, sectorCenter.xy)
+  val floor = createFloor(abstractWorld.mesh, node, floorVertices, sectorCenter.xy())
+  val ceiling = createCeiling(abstractWorld.mesh, node, floorVertices, sectorCenter.xy())
 //  initializeFaceInfo(FaceType.wall, node, floor, Textures.ground)
   node.walls.add(originFace)
   getFaceInfo(originFace).secondNode = node

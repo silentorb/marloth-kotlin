@@ -30,7 +30,7 @@ fun overlaps(first: Shape?, firstPosition: Vector3, second: Shape?, secondPositi
   val firstRadius = first.getRadiusOrNull()
   val secondRadius = second.getRadiusOrNull()
   return if (firstRadius != null && secondRadius != null) {
-    overlaps(firstPosition.xy, firstRadius, secondPosition.xy, secondRadius)
+    overlaps(firstPosition.xy(), firstRadius, secondPosition.xy(), secondRadius)
   } else {
     throw Error("Not implemented")
   }

@@ -1,5 +1,6 @@
 package lab
 
+import configuration.ConfigManager
 import configuration.loadConfig
 import configuration.saveConfig
 import front.GameConfig
@@ -28,6 +29,8 @@ import java.io.File
 import java.util.*
 import kotlin.concurrent.thread
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
+
+const val labConfigPath = "labConfig.yaml"
 
 fun startGui() {
   thread(true, false, null, "JavaFX GUI", -1) {
@@ -73,7 +76,8 @@ data class LabApp(
     val biomes: List<Biome>,
     var world: World,
     val client: Client = Client(platform, gameConfig.display, gameConfig.input),
-    val labClient: LabClient = LabClient(config, client)
+    val labClient: LabClient = LabClient(config, client),
+    val labConfigManager: ConfigManager<LabConfig>
 ) {
 
   fun newWorld() =
@@ -115,6 +119,7 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
   if (saveIncrement > 1f) {
     saveIncrement = 0f
 //    saveLabConfig(app.config)
+    app.labConfigManager.save()
     updateWatching(app)
   }
 
@@ -126,7 +131,7 @@ fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
   platform.display.initialize(gameConfig.display)
   val biomes = createBiomes()
   val world = generateDefaultWorld(InstantiatorConfig(gameConfig.gameplay.defaultPlayerView), config.gameView, biomes)
-  val app = LabApp(platform, config, gameConfig, world = world, biomes = biomes)
+  val app = LabApp(platform, config, gameConfig, world = world, biomes = biomes, labConfigManager = ConfigManager(labConfigPath, config))
   setWorldMesh(app.world.meta, app.client)
   val clientState = newClientState()
   val state = LabState(
@@ -147,7 +152,7 @@ object App {
     val s2 = File(App::class.java.getProtectionDomain().getCodeSource().getLocation().toURI())
     val s3 = s2.lastModified()
     System.setProperty("joml.format", "false")
-    val config = loadConfig<LabConfig>("labConfig.yaml") ?: LabConfig()
+    val config = loadConfig<LabConfig>(labConfigPath) ?: LabConfig()
     val gameConfig = loadGameConfig()
 //    saveLabConfig(config)
 //    startGui()

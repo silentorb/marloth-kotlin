@@ -20,13 +20,38 @@ inline fun <reified T> loadConfig(path: String): T? {
   return null
 }
 
-fun <T> saveConfig(path: String, config: T) {
+fun createYamlMapper(): YAMLMapper {
   val mapper = YAMLMapper()
   mapper.configure(YAMLGenerator.Feature.WRITE_DOC_START_MARKER, false)
   mapper.configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true)
   mapper.registerModule(KotlinModule())
+  return mapper
+}
 
+fun <T> saveConfig(mapper: YAMLMapper, path: String, config: T) {
   Files.newBufferedWriter(Paths.get(path)).use {
     mapper.writeValue(it, config)
+  }
+}
+
+fun <T> saveConfig(path: String, config: T) {
+  saveConfig(createYamlMapper(), path, config)
+}
+
+class ConfigManager<T>(private val path: String, private val config: T) {
+  private var previous: String
+
+  init {
+    val mapper = createYamlMapper()
+    previous = mapper.writeValueAsString(config)
+  }
+
+  fun save(){
+    val mapper = createYamlMapper()
+    val newString = mapper.writeValueAsString(config)
+    if (newString != previous) {
+      saveConfig(mapper, path, newString)
+      previous = newString
+    }
   }
 }

@@ -865,6 +865,5 @@ class Vector2f : Externalizable, Vector2fc {
     private val serialVersionUID = 1L
   }
 
-  override val xy: Vector2f
-    get() = this
+  override fun xy(): Vector2f = this
 }

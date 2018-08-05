@@ -99,8 +99,8 @@ fun placeWallLamps(world: World, instantiator: Instantiator, dice: Dice, scale: 
       val edge = wall.edges[0]
       val position = getVector3Center(edge.first, edge.second) +
           Vector3(0f, 0f, 0.9f) + wall.normal * -0.1f
-//    val angle = getAngle(edge.first.copy().cross(edge.second).xy)
-//    val angle = getAngle(wall.normal.xy)
+//    val angle = getAngle(edge.first.copy().cross(edge.second).xy())
+//    val angle = getAngle(wall.normal.xy())
       val angle = Quaternion().rotateTo(Vector3(1f, 0f, 0f), wall.normal)
       instantiator.createWallLamp(position, node, angle)
     }

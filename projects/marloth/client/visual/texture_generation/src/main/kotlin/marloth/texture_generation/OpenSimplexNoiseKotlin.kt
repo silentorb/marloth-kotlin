@@ -132,7 +132,7 @@ class OpenSimplexNoiseKotlin {
     val a1 = wow(d1, sb + Vector2(1f, 0f))
     val a2 = wow(d2, sb + Vector2(0f, 1f))
     val a3 = wow(d02, sb2)
-    val a4 = wow(foo.zw, foo.xy)
+    val a4 = wow(foo.zw, foo.xy())
 
     val value = a1 + a2 + a3 + a4
 

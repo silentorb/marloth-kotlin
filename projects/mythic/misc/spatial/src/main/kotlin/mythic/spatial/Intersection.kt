@@ -201,10 +201,10 @@ private infix fun Vector2.cross(b: Vector2): Float =
     x * b.y - y * b.x
 
 fun lineSegmentIntersectsLineSegment(f1: Vector2fMinimal, f2: Vector2fMinimal, s1: Vector2fMinimal, s2: Vector2fMinimal): Pair<Boolean, Vector2?> {
-  val p = f1.xy
-  val q = s1.xy
-  val r = (f2 - f1).xy
-  val s = (s2 - s1).xy
+  val p = f1.xy()
+  val q = s1.xy()
+  val r = (f2 - f1).xy()
+  val s = (s2 - s1).xy()
   val startGap = q - p
   val vectorCross = (r cross s)
 

@@ -33,7 +33,7 @@ fun drawGeneratedWorld(bounds: Bounds, canvas: Canvas, abstractWorld: AbstractWo
   val offset = bounds.position + worldBorderPadding
   val getPosition: PositionFunction = getPositionFunction(
       offset,
-      Vector2(padding) - abstractWorld.boundary.start.xy,
+      Vector2(padding) - abstractWorld.boundary.start.xy(),
       innerScale
   )
 
@@ -47,7 +47,7 @@ fun drawGeneratedWorld(bounds: Bounds, canvas: Canvas, abstractWorld: AbstractWo
 
   canvas.drawSquare(
       offset,
-      abstractWorld.boundary.dimensions.xy * outerScale,
+      abstractWorld.boundary.dimensions.xy() * outerScale,
       canvas.outline(Vector4(0.6f, 0.5f, 0.5f, 0.5f), 3f)
   )
 }

@@ -46,15 +46,6 @@ fun createLabDeviceHandlers(input: PlatformInput): List<ScalarInputSource> {
   )
 }
 
-//fun selectView(config: LabConfig, abstractWorld: AbstractWorld, rendering: Client, view: String): View =
-//    when (view) {
-//      "game" -> GameView(config.gameView)
-//      "world" -> WorldView(config.worldView, abstractWorld, rendering.renderer)
-//      "model" -> ModelView(config.modelView, rendering.renderer, rendering.platform.input.getMousePosition())
-//      "texture" -> TextureView()
-//      else -> throw Error("Not supported")
-//    }
-
 private var previousMousePosition = Vector2i()
 
 fun getInputState(platformInput: PlatformInput, commands: List<Command<LabCommandType>>): LabInputState {
