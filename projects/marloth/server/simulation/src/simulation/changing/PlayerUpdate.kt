@@ -3,6 +3,7 @@ package simulation.changing
 import commanding.CommandType
 import haft.Commands
 import intellect.CharacterResult
+import mythic.spatial.Vector2
 import simulation.*
 
 private val viewModes = ViewMode.values()
@@ -34,10 +35,11 @@ fun applyPlayerCommands(player: Player, commands: Commands<CommandType>, delta: 
   )
 }
 
-fun applyCommands(world: World, instantiator: Instantiator, players: Players, commands: Commands<CommandType>, delta: Float): List<CharacterResult> {
-  val playerResults = players
+fun applyCommands(world: World, instantiator: Instantiator, commands: Commands<CommandType>, delta: Float): List<CharacterResult> {
+  val playerResults = world.players
       .filter { it.character.isAlive }
       .map { player ->
+        player.lookForce = Vector2()
         val result = applyPlayerCommands(player, commands.filter({ it.target == player.playerId }), delta)
         updatePlayerRotation(player, delta)
         result

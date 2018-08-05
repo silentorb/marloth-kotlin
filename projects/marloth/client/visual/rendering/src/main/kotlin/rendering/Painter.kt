@@ -78,7 +78,7 @@ fun humanPainter(renderer: SceneRenderer, elements: Primitives) =
     }
 
 val simplePainterMap = mapOf(
-    DepictionType.monster to MeshType.child,
+    DepictionType.monster to MeshType.eyeball,
     DepictionType.character to MeshType.child,
     DepictionType.missile to MeshType.sphere,
     DepictionType.wallLamp to MeshType.wallLamp

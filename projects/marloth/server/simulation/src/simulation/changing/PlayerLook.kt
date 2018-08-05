@@ -71,13 +71,6 @@ fun playerRotate(lookMap: Map<CommandType, Vector3>, player: Player, commands: C
 }
 
 fun playerRotateFP(player: Player, commands: Commands<CommandType>, delta: Float) {
-//  val speed = Vector3(1f, 1.8f, 5.4f)
-//  val speed = 1f
-//  val offset3 = joinInputVector(commands, playerLookMapFP)
-//  if (offset3 != null) {
-//    val offset2 = Vector2(offset3.z, offset3.y)
-//    player.lookForce = offset2 * mouseLookSensitivity * speed * delta
-//  }
   playerRotate(playerLookMapFP, player, commands, delta)
 }
 
@@ -94,9 +87,14 @@ fun applyPlayerLookCommands(player: Player, commands: Commands<CommandType>, del
 }
 
 fun updatePlayerRotation(player: Player, delta: Float) {
-//  if (player.viewMode == ViewMode.topDown)
-//    return
-  player.lookVelocity = player.lookForce
+  val diff = player.lookForce - player.lookVelocity
+  val diffLength = diff.length()
+  val maxLength = 0.05f
+  if (diffLength != 0f) {
+    val adjustment = if (diffLength > maxLength) diff.normalize() * maxLength else diff
+    player.lookVelocity += adjustment
+  }
+
   val velocity = player.lookVelocity
   val deltaVelocity = velocity * delta
   if (velocity.y != 0f || velocity.x != 0f) {
@@ -122,12 +120,5 @@ fun updatePlayerRotation(player: Player, delta: Float) {
 
 //      println("p " + hoverCamera.pitch + ", y" + hoverCamera.yaw + " |  vp " + player.lookVelocity.y + ",vy " + player.lookVelocity.z)
     }
-
-//    player.lookVelocity.y = Math.min(m.pitch.max, velocity.y * (1 - m.pitch.drag * delta))
-//    player.lookVelocity.x = Math.min(m.yaw.max, velocity.z * (1 - m.yaw.drag * delta))
-//    if (Vector2(velocity.y, velocity.z).length() < 0.01f) {
-//      player.lookVelocity.zero()
-//    }
-
   }
 }
