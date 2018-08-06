@@ -50,7 +50,7 @@ class ConfigManager<T>(private val path: String, private val config: T) {
     val mapper = createYamlMapper()
     val newString = mapper.writeValueAsString(config)
     if (newString != previous) {
-      saveConfig(mapper, path, newString)
+      saveConfig(mapper, path, config)
       previous = newString
     }
   }

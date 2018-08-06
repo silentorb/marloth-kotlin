@@ -1,6 +1,5 @@
 package lab.views.map
 
-import lab.utility.yellow
 import lab.views.renderFaceNormals
 import marloth.clienting.Client
 import mythic.glowing.DrawMethod
@@ -8,7 +7,6 @@ import mythic.glowing.globalState
 import mythic.spatial.*
 import mythic.typography.TextStyle
 import org.joml.Vector4i
-import org.joml.minus
 import org.joml.plus
 import org.lwjgl.opengl.GL11
 import rendering.*
