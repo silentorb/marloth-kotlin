@@ -166,6 +166,7 @@ class Renderer(config: DisplayConfig) {
       multisampler.framebuffer.activateDraw()
     }
     glow.state.viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
+    glow.state.depthEnabled = true
     glow.operations.clearScreen()
   }
 
