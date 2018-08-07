@@ -1,25 +1,8 @@
 package mythic.sculpting
 
+import mythic.spatial.BoundingBox
 import mythic.spatial.Vector3
 import org.joml.plus
-
-//fun edgeLoopNext(edge: FlexibleEdge) =
-//    edge.next!!.edges[0].next!!
-
-//fun getEdgeFaceLoop(edge: FlexibleEdge): List<FlexibleEdge> {
-//  val result = mutableListOf<FlexibleEdge>()
-//  var current = edge.next!!
-//  var i = 0
-//  do {
-//    result.add(current)
-//    current = current.next!!
-//    if (i++ > 20)
-//      throw Error("Possible infinite loop caused by an invalid edge loop.")
-//
-//  } while (current != edge)
-//
-//  return result
-//}
 
 typealias EdgeExplorer = (EdgeReference) -> EdgeReference?
 
@@ -73,3 +56,19 @@ fun getVerticesCenter(vertices: List<Vector3>): Vector3 {
   }
   return result / vertices.size.toFloat()
 }
+
+fun getBounds(vertices: List<Vector3>): BoundingBox {
+  return BoundingBox(
+      Vector3(
+          vertices.minBy { it.x }!!.x,
+          vertices.minBy { it.y }!!.y,
+          vertices.minBy { it.z }!!.z
+      ),
+      Vector3(
+          vertices.maxBy { it.x }!!.x,
+          vertices.maxBy { it.y }!!.y,
+          vertices.maxBy { it.z }!!.z
+      )
+  )
+}
+

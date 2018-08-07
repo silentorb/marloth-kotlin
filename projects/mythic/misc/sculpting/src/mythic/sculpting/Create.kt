@@ -52,7 +52,7 @@ fun createCylinder(mesh: FlexibleMesh, radius: Float, count: Int, length: Float)
 }
 
 fun createSphere(mesh: FlexibleMesh, radius: Float, horizontalCount: Int, verticalCount: Int) =
-    lathe(mesh, createArc(radius, verticalCount, Pi, -Pi / 2), horizontalCount)
+    lathe(mesh, createArc(radius, verticalCount, Pi, Pi / 2), horizontalCount)
 //    mesh.createFace(createArc(radius, verticalCount, Pi, -Pi / 2))
 
 fun createIncompleteSphere(mesh: FlexibleMesh, radius: Float, horizontalCount: Int, verticalCount: Int, take: Int) =

@@ -1,17 +1,21 @@
 package rendering.meshes
 
 import mythic.sculpting.FlexibleMesh
+import mythic.sculpting.calculateNormals
 import mythic.sculpting.transformMesh
 import mythic.spatial.Matrix
 import mythic.spatial.Pi
 import mythic.spatial.Vector4
+import mythic.spatial.getCenter
 import rendering.Material
+import rendering.MeshGroup
 import rendering.Model
 import rendering.mapMaterialToManyMeshes
 
 fun createTransformedSphere(radius: Float, transform: Matrix): FlexibleMesh {
   val mesh = FlexibleMesh()
-  mythic.sculpting.createSphere(mesh, radius, 8, 8)
+  val res = 16
+  mythic.sculpting.createSphere(mesh, radius, res, res)
   transformMesh(mesh, transform)
   return mesh
 }
@@ -19,27 +23,27 @@ fun createTransformedSphere(radius: Float, transform: Matrix): FlexibleMesh {
 val createEyeball: ModelGenerator = {
   val radius = 0.5f
   val floorOffset = 0.5f
-  val ball = createTransformedSphere(radius, Matrix()
+  val mesh = createTransformedSphere(radius, Matrix()
       .translate(0f, 0f, radius + floorOffset)
+      .rotateX(Pi / 2f)
   )
-  val pupil = createTransformedSphere(0.3f, Matrix()
-      .translate(0f, -0.3f, radius + floorOffset)
-  )
+  val (pupilIris, ball) = mesh.faces.partition { getCenter(it.vertices).y < -0.38f }
+  val (pupil, iris) = pupilIris.partition { getCenter(it.vertices).y < -0.48f }
 
   val whiteMaterial = Material(Vector4(0.9f, 0.9f, 0.9f, 1f))
+  val irisMaterial = Material(Vector4(0.8f, 0.4f, 0.2f, 1f))
   val pupilMaterial = Material(Vector4(0f, 0f, 0f, 1f))
 
   val materialMap = listOf(
-      mapMaterialToManyMeshes(whiteMaterial, listOf(ball)),
-      mapMaterialToManyMeshes(pupilMaterial, listOf(pupil))
+      MeshGroup(whiteMaterial, ball),
+      MeshGroup(irisMaterial, iris),
+      MeshGroup(pupilMaterial, pupil)
   )
 
-  ball.sharedImport(listOf(
-      pupil
-  ))
+  calculateNormals(mesh)
 
   Model(
-      mesh = ball,
+      mesh = mesh,
       groups = materialMap
   )
 }

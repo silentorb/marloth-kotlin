@@ -5,7 +5,7 @@ import marloth.clienting.Client
 import mythic.glowing.Texture
 import mythic.sculpting.FlexibleFace
 import mythic.sculpting.VertexNormalTexture
-import mythic.sculpting.query.getBounds
+import mythic.sculpting.getBounds
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import rendering.*

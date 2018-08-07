@@ -175,18 +175,19 @@ fun loadGeneratedModel(config: ModelViewConfig, renderer: Renderer): Model {
     Model(FlexibleMesh(), listOf())
 }
 
-fun loadExternalMesh(config: ModelViewConfig, renderer: Renderer): Primitives? {
-//  val generator = renderer.meshGenerators[config.model]
-//  return if (generator != null)
-//    null
-//  else
-//    renderer.meshes[config.model]!!.primitives
-  return null
-}
+//fun loadExternalMesh(config: ModelViewConfig, renderer: Renderer): Primitives? {
+////  val generator = renderer.meshGenerators[config.model]
+////  return if (generator != null)
+////    null
+////  else
+////    renderer.meshes[config.model]!!.primitives
+//  if (renderer.meshGenerators.containsKey(config.model) || renderer.)
+//  return null
+//}
 
 class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePosition: Vector2i) {
   val model: Model
-  val externalMesh: Primitives? = loadExternalMesh(config, renderer)
+  val externalMesh: Primitives? = null//renderer.meshes[config.model]!!.primitives
   val camera = createOrthographicCamera(config.camera)
   val advancedModel: AdvancedModel?
 
