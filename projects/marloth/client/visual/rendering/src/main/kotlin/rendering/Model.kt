@@ -47,3 +47,7 @@ data class AdvancedModel(
     val armature: Armature? = null,
     val weights: WeightMap = mapOf()
 )
+
+fun dispose(model: AdvancedModel) {
+  model.primitives.forEach { it.mesh.dispose() }
+}

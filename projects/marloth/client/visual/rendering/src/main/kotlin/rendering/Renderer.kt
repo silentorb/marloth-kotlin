@@ -128,7 +128,7 @@ class Renderer(config: DisplayConfig) {
   val vertexSchemas = createVertexSchemas()
   var worldMesh: WorldMesh? = null
   val meshGenerators = standardMeshes()
-  val meshes: MeshMap = createMeshes(vertexSchemas)
+  var meshes: MeshMap = createMeshes(vertexSchemas)
   var textures: TextureLibrary = createTextureLibrary(defaultTextureScale)
   val offscreenBuffer = prepareScreenFrameBuffer(config.width, config.height, true)
   val multisampler: Multisampler?

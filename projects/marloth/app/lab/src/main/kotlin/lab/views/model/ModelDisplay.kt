@@ -148,11 +148,12 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
             .forEach {
               drawMeshPreview(config, sceneRenderer, transform, it, bones, originalBones)
             }
-        if (config.drawNormals)
-          renderFaceNormals(sceneRenderer, 0.05f, model.mesh)
 
         meshes.forEach { it.mesh.dispose() }
       }
+      
+      if (config.drawNormals)
+        renderFaceNormals(sceneRenderer, 0.05f, model.mesh)
 
       model.mesh.edges.filter { it.faces.none() }.forEach {
         sceneRenderer.drawLine(it.first, it.second, Vector4(0.8f, 0.5f, 0.3f, 1f))

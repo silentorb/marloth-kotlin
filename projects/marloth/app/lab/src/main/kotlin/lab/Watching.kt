@@ -1,8 +1,6 @@
 package lab
 
-import rendering.Renderer
-import rendering.createTextureLibrary
-import rendering.defaultTextureScale
+import rendering.*
 import java.io.File
 import java.net.URI
 import java.util.*
@@ -66,22 +64,25 @@ fun reloadTextures(renderer: Renderer) {
   renderer.textures = createTextureLibrary(defaultTextureScale)
 }
 
+fun reloadMeshes(renderer: Renderer){
+  for (mesh in renderer.meshes.values) {
+    dispose(mesh)
+  }
+
+  renderer.meshes = createMeshes(renderer.vertexSchemas)
+}
+
 fun onPackageChanged(app: LabApp, watchedPackage: WatchedPackage) {
   when (watchedPackage) {
-    WatchedPackage.rendering -> reloadTextures(app.client.renderer)
+    WatchedPackage.rendering -> {
+      reloadTextures(app.client.renderer)
+      reloadMeshes(app.client.renderer)
+    }
   }
 }
 
-private var lastWatchedTime = 0L
-
 fun updateWatching(app: LabApp) {
   val changes = checkForChangedPackages()
-//  val gap = app.timer.last - lastWatchedTime
-//  println(gap)
-//  lastWatchedTime = app.timer.last
-//  if (gap < 3000)
-//    return
-
   for (change in changes) {
     println("Updating " + change)
     onPackageChanged(app, change)
