@@ -30,7 +30,7 @@ fun getSharedEdge(first: FlexibleFace, second: FlexibleFace): FlexibleEdge =
 
 // This algorithm only works on quads
 fun getOppositeQuadEdge(first: FlexibleFace, edge: FlexibleEdge) =
-    first.edges.first { it.vertices.none { edge.vertices.contains(it) } }
+    first.edges.first { e-> e.vertices.none { edge.vertices.contains(it) } }
 
 fun isConcaveCorner(first: FlexibleFace, second: FlexibleFace): Boolean {
   val sharedEdge = getSharedEdge(first, second)
@@ -38,6 +38,11 @@ fun isConcaveCorner(first: FlexibleFace, second: FlexibleFace): Boolean {
   val firstOuterEdge = getOppositeQuadEdge(first, sharedEdge)
   val firstVector = (firstOuterEdge.middle - middle).normalize()
   return firstVector.dot(second.normal) > 0
+}
+
+fun isConcaveCorner(a: Vector3, b: Vector3, bcNormal: Vector3): Boolean {
+  val firstVector = (a - b).normalize()
+  return firstVector.dot(bcNormal) > 0
 }
 
 fun getIncompleteNeighbors(face: FlexibleFace): Sequence<FlexibleFace> =
@@ -114,21 +119,26 @@ fun getEndPointReversed(walls: List<FlexibleEdge>, offset: Int): Vector3 {
   return last.vertices.first { !nextLast.vertices.contains(it) }
 }
 
-fun shaveOffOccludedWalls(a: Vector3, walls: List<FlexibleEdge>, notUsed: List<FlexibleEdge>, shaveCount: Int = 0): Int {
+fun shaveOffOccludedWalls(points: List<Vector3>, walls: List<FlexibleFace>, shaveCount: Int = 0): Int {
   // 3 is an estimate right now.  A sector needs at least 3 walls but this condition may not directly translate to wall count.
 //  assert(shaveCount < walls.size - 2)
-  if (shaveCount >= walls.size - 2)
+  if (shaveCount >= points.size - 2)
     return shaveCount
 
-  val b = getEndPoint(walls, shaveCount)
+  if (_i == 3) {
+    val k = 0
+  }
+//  val a2 = points[1]
+  val a = points[0]
+  val b = points[points.size - shaveCount - 1]
+//  val b2 = points[points.size - shaveCount - 1]
+  val firstNormal = walls[0].normal
+  val secondNormal = walls[walls.size - shaveCount - 1].normal
   val e = 0.001f
-  return if (notUsed.none {
-        val (hit, point) = lineSegmentIntersectsLineSegment(a, b, it.first, it.second)
-        hit && (point == null || (point.distance(a.xy()) > e && point.distance(b.xy()) > e))
-      })
+  return if (!isConcaveCorner(a, b, secondNormal) && !isConcaveCorner(b, a, firstNormal))
     shaveCount
   else
-    shaveOffOccludedWalls(a, walls, notUsed, shaveCount + 1)
+    shaveOffOccludedWalls(points, walls, shaveCount + 1)
 }
 
 fun chainIntegrity(walls: List<FlexibleFace>): List<Int> =
@@ -140,7 +150,14 @@ fun isChain(walls: List<FlexibleFace>): Boolean =
     chainIntegrity(walls)
         .all { it == 1 }
 
+fun lineChainToVertexChain(edges: List<FlexibleEdge>): List<Vector3> =
+    listOf(edges[0].vertices.first { !edges[1].vertices.contains(it) })
+        .plus(edges.drop(1).zip(edges.dropLast(1)) { c, d -> c.vertices.intersect(d.vertices).first() })
+        .plus(edges.last().vertices.first { !edges[edges.size - 2].vertices.contains(it) })
+
+var _i: Int = 0
 fun gatherNewSectorFaces(origin: FlexibleFace): List<FlexibleFace> {
+  ++_i
   val firstNeighbors = getIncompleteNeighbors(origin).filter { !isConcaveCorner(origin, it) }.toList()
   assert(firstNeighbors.size == 2)
   val (firstDir, firstNotUsed) = traceIncompleteWalls(origin, firstNeighbors[0], origin)
@@ -152,15 +169,17 @@ fun gatherNewSectorFaces(origin: FlexibleFace): List<FlexibleFace> {
 
   val walls = firstDir.reversed().plus(origin).plus(secondDir)
   assert(walls.size > 1)
-  val i = chainIntegrity(walls)
   assert(isChain(walls))
 
   return if (notUsed.any()) {
 //    assert(firstNotUsed.any() && secondNotUsed.any())
     val edges = walls.map { getFloor(it).edge }
-    val a = getEndPointReversed(edges, 0)
+//    val a = getEndPointReversed(edges, 0)
     val unusedEdges = notUsed.map { getFloor(it).edge }
-    val shaveCount = shaveOffOccludedWalls(a, edges, unusedEdges)
+    notUsed.forEach { getFaceInfo(it).debugInfo = "space-c" }
+    val points = lineChainToVertexChain(edges)
+
+    val shaveCount = shaveOffOccludedWalls(points, walls)
 //    println(shaveCount)
 //    val c = getEndEdgeReversed(walls.dropLast(shaveCount), 0)
 //    val d = getEndEdge(walls.dropLast(shaveCount), 0)
@@ -168,6 +187,9 @@ fun gatherNewSectorFaces(origin: FlexibleFace): List<FlexibleFace> {
 //    assert(count > 2 || (count > 1 && c != d))
 //    println("size " + count + ", " + shaveCount)
 
+    if (shaveCount > 0) {
+      val k = 0
+    }
     walls.dropLast(shaveCount)
   } else {
     assert(walls.size > 2)
@@ -237,7 +259,7 @@ fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace, dice: D
     if (node.isSolid)
       newWall.flipQuad()
 
-    newWall.data = FaceInfo(FaceType.wall, node, null)
+    newWall.data = FaceInfo(FaceType.wall, node, null, null, "space-b")
     node.walls.add(newWall)
   }
 
@@ -249,7 +271,6 @@ fun getIncomplete(abstractWorld: AbstractWorld) =
         .filter { faceNodeCount(getFaceInfo(it)) == 1 }
 
 fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace, dice: Dice) {
-  getFaceInfo(originFace).debugInfo = "space-d"
   val originalWall = getWallVertices(originFace.vertices)
 
   val newPoints = originFace.vertices.map {
@@ -257,7 +278,6 @@ fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace,
     Vector3(projected.x, projected.y, it.z)
   }
   val newWall = getWallVertices(newPoints)
-
   val floorVertices = originalWall.upper.plus(newWall.upper)
 //  val ceilingVertices = originalWall.lower.plus(newWall.lower)
   val sectorCenter = getCenter(floorVertices)
@@ -272,6 +292,7 @@ fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace,
   node.walls.add(originFace)
   getFaceInfo(originFace).secondNode = node
   val outerWall = createWall(abstractWorld, node, newPoints)
+  getFaceInfo(outerWall).debugInfo = "space-d"
 
   for (i in 0..1) {
     val outerSideEdge = outerWall.edge(newWall.lower[i], newWall.upper[1 - i])
@@ -290,7 +311,8 @@ fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace,
         newWall.upper[1 - i],
         originalWall.upper[1 - i]
     )
-    createWall(abstractWorld, node, sidePoints)
+    val wall = createWall(abstractWorld, node, sidePoints)
+    getFaceInfo(wall).debugInfo = "space-d"
   }
 
 //  initializeNodeFaceInfo(node, null, null)
@@ -323,19 +345,11 @@ fun defineNegativeSpace(abstractWorld: AbstractWorld, dice: Dice) {
           neighbors.size > 1 && neighbors.all { !isConcaveCorner(wall, it) }
         }
 
-    concaveFaces.forEach {
-      getFaceInfo(it).debugInfo = "space-a"
-    }
-
     val convexFaces = faces
         .filter { wall ->
           val neighbors = getIncompleteNeighbors(wall).toList()
           neighbors.size > 1 && neighbors.all { isConcaveCorner(wall, it) }
         }
-
-    convexFaces.forEach {
-      getFaceInfo(it).debugInfo = "space-b"
-    }
 
     if (concaveFaces.none()) {
       faces
@@ -352,7 +366,6 @@ fun defineNegativeSpace(abstractWorld: AbstractWorld, dice: Dice) {
         val walls = gatherNewSectorFaces(originFace)
         if (walls.size < 2) {
           val i = getIncompleteNeighbors(originFace).toList()
-          getFaceInfo(originFace).debugInfo = "space-d"
           return
         }
         addSpaceNode(abstractWorld, originFace, dice)

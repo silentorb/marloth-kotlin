@@ -16,7 +16,7 @@ private fun getLineColor(edge: FlexibleEdge): Vector4 {
   val face = wallFaces.firstOrNull()
   if (face != null) {
     val debugInfo = getFaceInfo(face).debugInfo
-    val opacity = if (faceNodeCount(face) == 2) 1f else 0.1f
+    val opacity = 1f//if (faceNodeCount(face) == 2) 1f else 0.1f
     if (debugInfo != null) {
       return when (debugInfo) {
         "space-a" -> Vector4(1f, 0f, 1f, opacity)

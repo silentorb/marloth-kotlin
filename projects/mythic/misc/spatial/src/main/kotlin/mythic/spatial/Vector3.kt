@@ -1422,7 +1422,7 @@ class Vector3 : Externalizable, Vector3fc, Vector2fMinimal {
    * @return the string representation
    */
   fun toString(formatter: NumberFormat): String {
-    return "(" + formatter.format(x.toDouble()) + " " + formatter.format(y.toDouble()) + " " + formatter.format(z.toDouble()) + ")"
+    return "(" + formatter.format(x.toDouble()) + ", " + formatter.format(y.toDouble()) + ", " + formatter.format(z.toDouble()) + ")"
   }
 
   @Throws(IOException::class)

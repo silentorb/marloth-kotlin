@@ -151,7 +151,7 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
 
         meshes.forEach { it.mesh.dispose() }
       }
-      
+
       if (config.drawNormals)
         renderFaceNormals(sceneRenderer, 0.05f, model.mesh)
 
