@@ -9,7 +9,8 @@ import front.setWorldMesh
 import generation.calculateWorldScale
 import generation.generateWorld
 import generation.placeEnemies
-import lab.views.GameViewConfig
+import lab.views.game.GameViewConfig
+import lab.views.game.updateWorld
 import lab.views.model.newModelViewState
 import marloth.clienting.Client
 import marloth.clienting.gui.MenuActionType
@@ -23,10 +24,7 @@ import randomly.Dice
 import simulation.*
 import simulation.changing.Instantiator
 import simulation.changing.InstantiatorConfig
-import simulation.changing.WorldUpdater
-import visualizing.createScenes
 import java.io.File
-import java.util.*
 import kotlin.concurrent.thread
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 
@@ -86,22 +84,13 @@ data class LabApp(
 
 private var saveIncrement = 0f
 
-const val nSecond: Long = 1000000000L
-const val maxInterval = 1f / 60f
-
 tailrec fun labLoop(app: LabApp, previousState: LabState) {
   app.display.swapBuffers()
   val delta = app.timer.update().toFloat()
 
   val (commands, nextState, menuAction) = app.labClient.update(app.world, app.client.screens, previousState, delta)
   if (app.config.view == Views.game) {
-    if (app.config.gameView.logDroppedFrames && app.timer.actualDelta > maxInterval) {
-      val progress = app.timer.last - app.timer.start
-      println("" + (progress.toDouble() / nSecond.toDouble()).toFloat() + ": " + app.timer.actualDelta)
-    }
-    val instantiator = Instantiator(app.world, InstantiatorConfig(app.gameConfig.gameplay.defaultPlayerView))
-    val updater = WorldUpdater(app.world, instantiator)
-    updater.update(commands, delta)
+    updateWorld(app, commands, delta)
   }
 
   if (menuAction == MenuActionType.newGame) {

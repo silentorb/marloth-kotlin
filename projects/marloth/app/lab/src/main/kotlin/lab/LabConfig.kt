@@ -2,6 +2,7 @@ package lab
 
 import haft.*
 import lab.views.TextureViewConfig
+import lab.views.game.GameViewConfig
 import lab.views.map.MapViewConfig
 import lab.views.model.ModelViewConfig
 import org.lwjgl.glfw.GLFW
@@ -167,7 +168,7 @@ data class LabConfig(
     var view: Views = Views.world,
     var worldView: WorldViewConfig = WorldViewConfig(),
     var modelView: ModelViewConfig = ModelViewConfig(),
-    var gameView: lab.views.GameViewConfig = lab.views.GameViewConfig(),
+    var gameView: GameViewConfig = GameViewConfig(),
     var mapView: MapViewConfig = MapViewConfig(),
     var textureView: TextureViewConfig = TextureViewConfig()
 )

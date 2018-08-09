@@ -1,7 +1,8 @@
-package lab.views
+package lab.views.game
 
 import haft.isActive
 import lab.LabCommandType
+import lab.views.LabInputState
 import lab.views.shared.drawSkeleton
 import marloth.clienting.Client
 import marloth.clienting.gui.MenuState

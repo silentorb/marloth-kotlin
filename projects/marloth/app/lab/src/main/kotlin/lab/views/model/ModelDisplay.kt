@@ -1,7 +1,7 @@
 package lab.views.model
 
 import lab.utility.*
-import lab.views.renderFaceNormals
+import lab.views.game.renderFaceNormals
 import lab.views.shared.drawSkeleton
 import lab.views.shared.getAnimatedBones
 import mythic.bloom.*

@@ -65,7 +65,9 @@ fun moveSpirit(spirit: Spirit): SpiritUpdateResult {
   if (face == null) {
 //    throw Error("Not supported")
 //    println("Not supported!!!")
-    return SpiritUpdateResult(spirit.state)
+    return SpiritUpdateResult(spirit.state.copy(
+        path = findPath(node, newPath.last())
+    ))
   } else {
     val edge = getFloor(face)
     val position = spirit.body.position

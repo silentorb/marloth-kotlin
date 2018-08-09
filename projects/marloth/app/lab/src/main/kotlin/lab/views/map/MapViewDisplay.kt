@@ -1,6 +1,6 @@
 package lab.views.map
 
-import lab.views.renderFaceNormals
+import lab.views.game.renderFaceNormals
 import marloth.clienting.Client
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState

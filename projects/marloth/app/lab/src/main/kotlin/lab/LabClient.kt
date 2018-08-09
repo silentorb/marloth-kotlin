@@ -3,6 +3,9 @@ package lab
 import commanding.CommandType
 import haft.*
 import lab.views.*
+import lab.views.game.GameView
+import lab.views.game.GameViewRenderData
+import lab.views.game.renderScene
 import lab.views.map.createTopDownCamera
 import lab.views.map.renderMapView
 import lab.views.map.updateMapState
@@ -92,7 +95,6 @@ class LabClient(val config: LabConfig, val client: Client) {
   fun updateGame(windowInfo: WindowInfo, world: World, screens: List<Screen>, previousState: LabState, delta: Float): LabClientResult {
 //    rendering.platform.input.isMouseVisible(false)
     client.platform.input.update()
-//    println(rendering.platform.input.getMousePosition())
     val scenes = createScenes(world, screens)
     val view = GameView(config.gameView)
     val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
