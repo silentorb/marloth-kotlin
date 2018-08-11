@@ -1,18 +1,31 @@
 package intellect
 
 import mythic.spatial.Pi
+import mythic.spatial.Vector3
 import org.joml.plus
 import physics.Force
 import randomly.Dice
-import simulation.Node
-import simulation.World
+import simulation.*
 import simulation.changing.getLookAtAngle
 import simulation.changing.setCharacterFacing
-import simulation.getFloor
-import simulation.getOtherNode
 
-fun setDestination(world: World, spirit: Spirit): SpiritState {
-  val location = spirit.body.node
+fun pathToGoalChain(path: List<Node>): Goal {
+  val top = Goal(
+      type = GoalType.beAt,
+      target = path.last().index
+  )
+
+  return path.dropLast(1).foldRight(top) { node, dependency ->
+    Goal(
+        type = GoalType.beAt,
+        target = path[0].index,
+        dependencies = listOf(dependency)
+    )
+  }
+}
+
+fun startRoaming(world: World, character: Character): Goal {
+  val location = character.body.node
   val options = world.meta.nodes
       .filter { it != location && it.isWalkable }
 
@@ -21,10 +34,7 @@ fun setDestination(world: World, spirit: Spirit): SpiritState {
   val path = findPath(location, destination)
   assert(path != null)
   assert(path!!.any())
-  return spirit.state.copy(
-      mode = SpiritMode.moving,
-      path = path
-  )
+  return pathToGoalChain(path)
 }
 
 fun updatePath(node: Node, path: List<Node>): List<Node> {
@@ -35,12 +45,12 @@ fun updatePath(node: Node, path: List<Node>): List<Node> {
     path.drop(index + 1)
 }
 
-fun moveSpirit(spirit: Spirit): SpiritUpdateResult {
-  val node = spirit.body.node
+fun moveSpirit(knowledge: Knowledge, goal:Goal): Actions {
+  val node = knowledge.nodes[goal.target!!]
   val newPath = updatePath(node, spirit.state.path!!)
 
   if (newPath.none())
-    return SpiritUpdateResult(SpiritState(SpiritMode.idle))
+    return SpiritUpdateResult(SpiritState(GoalType.idle))
 
   val nextNode = newPath.first()
   val face = node.walls.firstOrNull { getOtherNode(node, it) == nextNode }
@@ -76,10 +86,14 @@ fun getAngleCourse(source: Float, destination: Float): Float {
     -minus
 }
 
+fun facingDistance(character: Character, lookAt: Vector3): Float {
+  val angle = getLookAtAngle(lookAt)
+  return getAngleCourse(character.facingRotation.z, angle)
+}
+
 fun movementForce(spirit: Spirit, action: SpiritAction, delta: Float): Force? {
-  val angle = getLookAtAngle(action.offset)
   val character = spirit.character
-  val course = getAngleCourse(character.facingRotation.z, angle)
+  val course = facingDistance(character, action.offset)
   val increment = 2f * delta
   if (Math.abs(course) > increment) {
     val dir = if (course > 0f) 1f else -1f

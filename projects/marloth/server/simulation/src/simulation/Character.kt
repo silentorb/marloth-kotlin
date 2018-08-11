@@ -34,3 +34,14 @@ class Character(
 
 fun isFinished(world: World, character: Character) =
     character.health.value == 0
+
+enum class ActionType {
+  move
+}
+
+data class Action(
+    val type: ActionType,
+    val offset: Vector3
+)
+
+typealias Actions = List<Action>

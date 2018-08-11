@@ -2,7 +2,6 @@ package simulation.changing
 
 import commanding.CommandType
 import haft.Commands
-import intellect.CharacterResult
 import intellect.updateSpirit
 import mythic.breeze.applyAnimation
 import mythic.spatial.Quaternion
@@ -73,7 +72,7 @@ class WorldUpdater(val world: World, val instantiator: Instantiator) {
     val results = spiritResults.plus(playerResults)
     val newMissiles = results.mapNotNull { it.newMissile }
 
-    applyForces(results.flatMap { it.forces }, delta)
+    applyForces(results.flatMap { it.actions }, delta)
     updateBodies(world.meta, world.bodies, delta)
     world.missileTable.values.forEach { updateMissile(world, it, delta) }
     world.bodies.forEach { updateBodyNode(it) }

@@ -17,7 +17,6 @@ enum class TextureStorageUnit {
   unsigned_byte
 }
 
-
 data class TextureAttributes(
     val repeating: Boolean = true,
     val smooth: Boolean = true,

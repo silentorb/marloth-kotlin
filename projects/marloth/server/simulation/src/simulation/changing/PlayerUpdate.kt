@@ -31,7 +31,7 @@ fun applyPlayerCommands(player: Player, commands: Commands<CommandType>, delta: 
 
   return CharacterResult(
       newMissile = playerAttack(player, commands),
-      forces = if (force != null) listOf(force) else listOf()
+      actions = if (force != null) listOf(force) else listOf()
   )
 }
 
