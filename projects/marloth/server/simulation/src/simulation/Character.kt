@@ -4,6 +4,7 @@ import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import org.joml.times
 import physics.Body
+import physics.Force
 import scenery.DepictionType
 
 data class CharacterDefinition(
@@ -41,7 +42,14 @@ enum class ActionType {
 
 data class Action(
     val type: ActionType,
-    val offset: Vector3
+    val force: Force?
 )
 
 typealias Actions = List<Action>
+
+data class CharacterAction(
+    val character: Character,
+    val actions: Actions
+)
+
+typealias CharacterActions = List<CharacterAction>

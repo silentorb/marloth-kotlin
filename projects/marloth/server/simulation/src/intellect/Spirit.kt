@@ -7,7 +7,7 @@ import simulation.Node
 
 enum class GoalType {
   kill,
-  faceTarget,
+//  faceTarget,
   beAt
 }
 

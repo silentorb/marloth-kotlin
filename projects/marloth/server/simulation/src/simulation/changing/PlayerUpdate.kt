@@ -15,11 +15,11 @@ fun switchCameraMode(player: Player) {
   player.viewMode = viewModes[nextIndex]
 }
 
-fun applyPlayerCommands(player: Player, commands: Commands<CommandType>, delta: Float): CharacterResult {
+fun applyPlayerCommands(player: Player, commands: Commands<CommandType>, delta: Float): Actions {
   if (commands.isEmpty())
-    return CharacterResult()
+    return listOf()
 
-  val force = playerMove(player, commands)
+  val actions = playerMove(player, commands)
 
   for (command in commands) {
     when (command.type) {
@@ -29,20 +29,21 @@ fun applyPlayerCommands(player: Player, commands: Commands<CommandType>, delta: 
 
   applyPlayerLookCommands(player, commands, delta)
 
-  return CharacterResult(
-      newMissile = playerAttack(player, commands),
-      actions = if (force != null) listOf(force) else listOf()
-  )
+//  return CharacterResult(
+//      newMissile = playerAttack(player, commands),
+//      actions = if (force != null) listOf(force) else listOf()
+//  )
+  return actions
 }
 
-fun applyCommands(world: World, instantiator: Instantiator, commands: Commands<CommandType>, delta: Float): List<CharacterResult> {
+fun applyCommands(world: World, instantiator: Instantiator, commands: Commands<CommandType>, delta: Float): CharacterActions {
   val playerResults = world.players
       .filter { it.character.isAlive }
-      .map { player ->
+      .associate { player ->
         player.lookForce = Vector2()
         val result = applyPlayerCommands(player, commands.filter({ it.target == player.playerId }), delta)
         updatePlayerRotation(player, delta)
-        result
+        Pair(player.character, result)
       }
 
   val remainingCommands = commands.filter({ it.target == 0 || it.target > maxPlayerCount })

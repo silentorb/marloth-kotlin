@@ -24,15 +24,17 @@ fun updateGoalStructure(world: World, character: Character, knowledge: Knowledge
     return if (visibleEnemy != null)
     //    return SpiritUpdateResult(enemySightingState)
       listOf()
-      else
-    listOf(startRoaming(world, character))
+    else
+      listOf(startRoaming(world, character))
   }
   return goals
 }
 
 fun pursueGoal(knowledge: Knowledge, goal: Goal): Actions {
-  return when(goal.type){
-    GoalType.beAt->
+  return when (goal.type) {
+    GoalType.beAt -> moveSpirit(knowledge, goal)
+//    GoalType.faceTarget->
+    GoalType.kill -> listOf()
   }
 }
 

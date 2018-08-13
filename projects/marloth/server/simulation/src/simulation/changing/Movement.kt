@@ -168,21 +168,21 @@ fun setCharacterFacing(character: Character, lookAt: Vector3) {
   character.facingRotation.z = angle
 }
 
-fun playerMove(player: Player, commands: Commands<CommandType>): Force? {
+fun playerMove(player: Player, commands: Commands<CommandType>): Actions {
   var offset = joinInputVector(commands, playerMoveMap)
 
   if (offset != null) {
     if (player.viewMode == ViewMode.firstPerson) {
-      offset = (Quaternion().rotateZ(player.character.facingRotation.z - Pi / 2) * offset)!!
+      offset = (Quaternion().rotateZ(player.character.facingRotation.z - Pi / 2) * offset)
     } else if (player.viewMode == ViewMode.thirdPerson) {
-      offset = (Quaternion().rotateZ(player.hoverCamera.yaw + Pi / 2) * offset)!!
+      offset = (Quaternion().rotateZ(player.hoverCamera.yaw + Pi / 2) * offset)
       setCharacterFacing(player.character, offset)
     } else {
       setCharacterFacing(player.character, offset)
     }
-    return Force(player.character.body, offset, maximum = 6f)
+    return listOf(Action(ActionType.move, offset))
   } else {
-    return null
+    return listOf()
   }
 }
 

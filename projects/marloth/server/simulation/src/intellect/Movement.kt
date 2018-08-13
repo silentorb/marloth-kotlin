@@ -45,31 +45,33 @@ fun updatePath(node: Node, path: List<Node>): List<Node> {
     path.drop(index + 1)
 }
 
-fun moveSpirit(knowledge: Knowledge, goal:Goal): Actions {
-  val node = knowledge.nodes[goal.target!!]
-  val newPath = updatePath(node, spirit.state.path!!)
+fun moveSpirit(knowledge: Knowledge, goal: Goal): Actions {
+  val character = knowledge.character
+  val node = character.body.node
+  val nextNode = knowledge.nodes[goal.target!!]
+//  val newPath = updatePath(node, spirit.state.path!!)
+//
+//  if (newPath.none())
+//    return SpiritUpdateResult(SpiritState(GoalType.idle))
 
-  if (newPath.none())
-    return SpiritUpdateResult(SpiritState(GoalType.idle))
-
-  val nextNode = newPath.first()
+//  val nextNode = goal.target
   val face = node.walls.firstOrNull { getOtherNode(node, it) == nextNode }
 
   if (face == null) {
-//    throw Error("Not supported")
+    throw Error("Not supported")
 //    println("Not supported!!!")
-    return SpiritUpdateResult(spirit.state.copy(
-        path = findPath(node, newPath.last())
-    ))
+//    return SpiritUpdateResult(spirit.state.copy(
+//        path = findPath(node, newPath.last())
+//    ))
   } else {
     val edge = getFloor(face)
-    val position = spirit.body.position
+    val position = character.body.position
     val nearestPoint = edge.vertices.sortedBy { it.distance(position) }.first()
     val target = (edge.middle + nearestPoint) / 2f
 //    val target = edge.middle
     val direction = (target - position).normalize()
 //    characterMove(spirit.character, direction)
-    return SpiritUpdateResult(spirit.state, listOf(SpiritAction(SpiritActionType.move, direction)))
+    return listOf(Action(ActionType.move, offset = direction))
   }
 }
 
@@ -91,16 +93,16 @@ fun facingDistance(character: Character, lookAt: Vector3): Float {
   return getAngleCourse(character.facingRotation.z, angle)
 }
 
-fun movementForce(spirit: Spirit, action: SpiritAction, delta: Float): Force? {
-  val character = spirit.character
-  val course = facingDistance(character, action.offset)
-  val increment = 2f * delta
-  if (Math.abs(course) > increment) {
-    val dir = if (course > 0f) 1f else -1f
-    character.facingRotation.z += increment * dir
-    return null
-  } else {
-    setCharacterFacing(character, action.offset)
-    return Force(spirit.body, action.offset, maximum = 6f)
-  }
-}
+//fun movementForce(spirit: Spirit, delta: Float): Force? {
+//  val character = spirit.character
+//  val course = facingDistance(character, action.offset)
+//  val increment = 2f * delta
+//  if (Math.abs(course) > increment) {
+//    val dir = if (course > 0f) 1f else -1f
+//    character.facingRotation.z += increment * dir
+//    return null
+//  } else {
+//    setCharacterFacing(character, action.offset)
+//    return Force(spirit.body, action.offset, maximum = 6f)
+//  }
+//}
