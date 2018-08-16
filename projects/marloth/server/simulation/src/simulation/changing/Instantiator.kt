@@ -1,8 +1,9 @@
 package simulation.changing
 
 import colliding.Sphere
+import intellect.Knowledge
+import intellect.Pursuit
 import intellect.Spirit
-import intellect.SpiritState
 import mythic.breeze.Armature
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
@@ -87,8 +88,16 @@ class Instantiator(
   }
 
   fun createSpirit(character: Character): Spirit {
-    val state = SpiritState()
-    val spirit = Spirit(character, state)
+    val spirit = Spirit(
+        id = character.id,
+        goals = listOf(),
+        knowledge = Knowledge(
+            character = character,
+            nodes = listOf(),
+            visibleCharacters = listOf()
+        ),
+        pursuit = Pursuit()
+    )
     world.spiritTable[character.id] = spirit
     return spirit
   }

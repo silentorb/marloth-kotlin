@@ -1,5 +1,6 @@
 package intellect
 
+import mythic.sculpting.FlexibleFace
 import mythic.spatial.Pi
 import mythic.spatial.Vector3
 import org.joml.plus
@@ -7,37 +8,33 @@ import physics.Force
 import randomly.Dice
 import simulation.*
 import simulation.changing.getLookAtAngle
-import simulation.changing.setCharacterFacing
 
-fun pathToGoalChain(path: List<Node>): Goal {
-  val top = Goal(
-      type = GoalType.beAt,
-      target = path.last().index
-  )
-
-  return path.dropLast(1).foldRight(top) { node, dependency ->
-    Goal(
-        type = GoalType.beAt,
-        target = path[0].index,
-        dependencies = listOf(dependency)
-    )
-  }
+fun getNextPathFace(knowledge: Knowledge, path: Path): FlexibleFace? {
+  val character = knowledge.character
+  val node = character.body.node
+//  val remainingPath = getRemainingPath(node, path)
+  val nextNode = path.first()
+  return node.walls.firstOrNull { getOtherNode(node, it) == nextNode }
 }
 
-fun startRoaming(world: World, character: Character): Goal {
+fun pathIsAccessible(knowledge: Knowledge, path: Path): Boolean =
+    getNextPathFace(knowledge, path) != null
+
+fun startRoaming(knowledge: Knowledge): Path {
+  val character = knowledge.character
   val location = character.body.node
-  val options = world.meta.nodes
+  val options = knowledge.nodes
       .filter { it != location && it.isWalkable }
 
   val destination = Dice.global.getItem(options)
-//  val destination = options[(location.index + 6) % options.size]
   val path = findPath(location, destination)
   assert(path != null)
   assert(path!!.any())
-  return pathToGoalChain(path)
+  assert(pathIsAccessible(knowledge, path))
+  return path
 }
 
-fun updatePath(node: Node, path: List<Node>): List<Node> {
+fun getRemainingPath(node: Node, path: List<Node>): List<Node> {
   val index = path.indexOf(node)
   return if (index == -1)
     path
@@ -45,18 +42,25 @@ fun updatePath(node: Node, path: List<Node>): List<Node> {
     path.drop(index + 1)
 }
 
-fun moveSpirit(knowledge: Knowledge, goal: Goal): Actions {
+fun updateMovementPursuit(knowledge: Knowledge, pursuit: Pursuit): Pursuit {
+  val path =
+      if (pursuit.path == null || !pathIsAccessible(knowledge, pursuit.path))
+        startRoaming(knowledge)
+      else {
+        val remainingPath = getRemainingPath(knowledge.character.body.node, pursuit.path)
+        if (remainingPath.any())
+          remainingPath
+        else
+          startRoaming(knowledge)
+      }
+
+  return Pursuit(path = path)
+}
+
+fun moveSpirit(knowledge: Knowledge, pursuit: Pursuit): Actions {
   val character = knowledge.character
-  val node = character.body.node
-  val nextNode = knowledge.nodes[goal.target!!]
-//  val newPath = updatePath(node, spirit.state.path!!)
-//
-//  if (newPath.none())
-//    return SpiritUpdateResult(SpiritState(GoalType.idle))
-
-//  val nextNode = goal.target
-  val face = node.walls.firstOrNull { getOtherNode(node, it) == nextNode }
-
+  val path = pursuit.path!!
+  val face = getNextPathFace(knowledge, path)
   if (face == null) {
     throw Error("Not supported")
 //    println("Not supported!!!")
@@ -71,7 +75,7 @@ fun moveSpirit(knowledge: Knowledge, goal: Goal): Actions {
 //    val target = edge.middle
     val direction = (target - position).normalize()
 //    characterMove(spirit.character, direction)
-    return listOf(Action(ActionType.move, offset = direction))
+    return listOf(Action(ActionType.move, force = Force(offset = direction, body = character.body, maximum = 6f)))
   }
 }
 

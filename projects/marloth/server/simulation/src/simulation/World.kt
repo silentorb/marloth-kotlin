@@ -18,7 +18,7 @@ data class World(
   val bodyTable: MutableMap<Id, Body> = mutableMapOf()
   val characterTable: MutableMap<Id, Character> = mutableMapOf()
   val missileTable: MutableMap<Id, Missile> = mutableMapOf()
-  val spiritTable: MutableMap<Id, Spirit> = mutableMapOf()
+  var spiritTable: MutableMap<Id, Spirit> = mutableMapOf()
   val depictionTable: IdentityMap<Depiction> = mutableMapOf()
 
   val factions = mutableListOf(

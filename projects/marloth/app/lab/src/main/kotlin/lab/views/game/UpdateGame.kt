@@ -17,22 +17,25 @@ private var spiritMovementTallies = mapOf<Id, Pair<Float, Vector3>>()
 
 fun trackSpiritMovement(world: World, delta: Float) {
   spiritMovementTallies = world.spirits.associate { spirit ->
-    val data = if (!spiritMovementTallies.containsKey(spirit.character.id))
-      Pair(0f, spirit.body.position)
+    val character = world.characterTable[spirit.id]!!
+    val body = world.bodyTable[spirit.id]!!
+    val data = if (!spiritMovementTallies.containsKey(spirit.id))
+      Pair(0f, body.position)
     else {
-      val previous = spiritMovementTallies[spirit.character.id]!!
-      val tally = if (spirit.body.position != previous.second)
+      val previous = spiritMovementTallies[character.id]!!
+      val tally = if (body.position != previous.second)
         0f
       else
         previous.first + delta
 
-      Pair(tally, spirit.body.position)
+      Pair(tally, body.position)
     }
-    Pair(spirit.character.id, data)
+    Pair(character.id, data)
   }
 
   for (spirit in world.spirits) {
-    val data = spiritMovementTallies[spirit.character.id]!!
+    val character = world.characterTable[spirit.id]!!
+    val data = spiritMovementTallies[character.id]!!
     if (data.first > 10f) {
       val k = 0
     }

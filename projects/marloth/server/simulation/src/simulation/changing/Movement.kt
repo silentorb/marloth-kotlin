@@ -180,7 +180,7 @@ fun playerMove(player: Player, commands: Commands<CommandType>): Actions {
     } else {
       setCharacterFacing(player.character, offset)
     }
-    return listOf(Action(ActionType.move, offset))
+    return listOf(Action(ActionType.move, force = Force(body = player.character.body, offset = offset, maximum = 6f)))
   } else {
     return listOf()
   }

@@ -7,26 +7,43 @@ import simulation.Node
 
 enum class GoalType {
   kill,
-//  faceTarget,
+  //  faceTarget,
   beAt
 }
 
 data class Goal(
-    val type: GoalType,
-    val dependencies: List<Goal> = listOf(),
-    val target: Id? = null
+    val id: Id,
+    val type: GoalType
 )
 
 typealias Goals = List<Goal>
 
-data class SpiritState(
-    val goals: List<Goal>,
-    val knowledge: Knowledge
+typealias Path = List<Node>
+
+data class Pursuit(
+    val target: Id? = null,
+    val path: Path? = null
 )
 
-class Spirit(
+data class Spirit(
+    val id: Id,
+    val knowledge: Knowledge,
+    val goals: List<Goal>,
+    val pursuit: Pursuit
+)
+
+//class Spirit(
+//    val character: Character,
+//    var state: Spirit
+//) {
+//  val body: Body
+//    get() = character.body
+//}
+
+
+class AssociatedSpirit(
     val character: Character,
-    var state: SpiritState
+    var state: Spirit
 ) {
   val body: Body
     get() = character.body

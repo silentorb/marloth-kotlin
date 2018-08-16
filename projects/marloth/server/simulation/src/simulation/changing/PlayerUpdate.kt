@@ -39,11 +39,11 @@ fun applyPlayerCommands(player: Player, commands: Commands<CommandType>, delta: 
 fun applyCommands(world: World, instantiator: Instantiator, commands: Commands<CommandType>, delta: Float): CharacterActions {
   val playerResults = world.players
       .filter { it.character.isAlive }
-      .associate { player ->
+      .map { player ->
         player.lookForce = Vector2()
         val result = applyPlayerCommands(player, commands.filter({ it.target == player.playerId }), delta)
         updatePlayerRotation(player, delta)
-        Pair(player.character, result)
+        CharacterAction(player.character, result)
       }
 
   val remainingCommands = commands.filter({ it.target == 0 || it.target > maxPlayerCount })

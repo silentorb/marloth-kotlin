@@ -19,6 +19,8 @@ data class Force(
     val maximum: Float
 )
 
+typealias Forces = List<Force>
+
 data class BodyWallCollision(
     val body: Body
 )
