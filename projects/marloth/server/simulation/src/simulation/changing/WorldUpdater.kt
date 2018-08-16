@@ -87,3 +87,25 @@ class WorldUpdater(val world: World, val instantiator: Instantiator) {
 //    createMissiles(newMissiles)
   }
 }
+
+const val simulationHertz = 1f / 60f
+
+private var deltaAggregator = 0f
+
+fun updateWorld(world: World, instantiator: Instantiator, commands: Commands<CommandType>, delta: Float) {
+  deltaAggregator += delta
+  if (deltaAggregator > simulationHertz) {
+    deltaAggregator -= simulationHertz
+
+    // The above subtraction, this condition, and the modulus could all be handled by a single modulus
+    // but if deltaAggregator is more than twice the simulationHertz then the simulation is not keeping
+    // up and I want that to be handled as a special case, not incidentally handled by a modulus.
+    if (deltaAggregator > simulationHertz) {
+      deltaAggregator = deltaAggregator % simulationHertz
+    }
+    val updater = WorldUpdater(world, instantiator)
+    updater.update(commands, simulationHertz)
+  }
+//  val updater = WorldUpdater(world, instantiator)
+//  updater.update(commands, delta)
+}

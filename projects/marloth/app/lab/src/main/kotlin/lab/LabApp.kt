@@ -10,7 +10,7 @@ import generation.calculateWorldScale
 import generation.generateWorld
 import generation.placeEnemies
 import lab.views.game.GameViewConfig
-import lab.views.game.updateWorld
+import lab.views.game.updateLabWorld
 import lab.views.model.newModelViewState
 import marloth.clienting.Client
 import marloth.clienting.gui.MenuActionType
@@ -90,7 +90,7 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
 
   val (commands, nextState, menuAction) = app.labClient.update(app.world, app.client.screens, previousState, delta)
   if (app.config.view == Views.game) {
-    updateWorld(app, commands, delta)
+    updateLabWorld(app, commands, delta)
   }
 
   if (menuAction == MenuActionType.newGame) {

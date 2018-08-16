@@ -75,7 +75,9 @@ fun moveSpirit(knowledge: Knowledge, pursuit: Pursuit): Actions {
 //    val target = edge.middle
     val direction = (target - position).normalize()
 //    characterMove(spirit.character, direction)
-    return listOf(Action(ActionType.move, force = Force(offset = direction, body = character.body, maximum = 6f)))
+    return listOf(
+        Action(ActionType.move, force = Force(offset = direction, body = character.body, maximum = 6f))
+    )
   }
 }
 

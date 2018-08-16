@@ -151,7 +151,7 @@ class GameView(val config: GameViewConfig) {
 //    return listOf()
 //  }
 
-  fun updateState(input: LabInputState, delta: Float) {
+  fun updateState(input: LabInputState) {
     val commands = input.commands
 
     if (isActive(commands, LabCommandType.toggleMeshDisplay)) {
