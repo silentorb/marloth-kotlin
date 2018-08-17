@@ -73,7 +73,7 @@ class WorldUpdater(val world: World, val instantiator: Instantiator) {
     val playerResults = applyCommands(world, instantiator, commands, delta)
     val results = spiritResults.plus(playerResults)
     applyActions(world, results)
-    val forces = actionsToForces(world, results)
+    val forces = actionsToForces(results)
 //    val newMissiles = results.mapNotNull { it.newMissile }
 
     applyForces(forces, delta)
@@ -88,23 +88,24 @@ class WorldUpdater(val world: World, val instantiator: Instantiator) {
   }
 }
 
-const val simulationHertz = 1f / 60f
+const val simulationDelta = 1f / 60f
 
 private var deltaAggregator = 0f
 
 fun updateWorld(world: World, instantiator: Instantiator, commands: Commands<CommandType>, delta: Float) {
   deltaAggregator += delta
-  if (deltaAggregator > simulationHertz) {
-    deltaAggregator -= simulationHertz
+  if (deltaAggregator > simulationDelta) {
+    deltaAggregator -= simulationDelta
 
     // The above subtraction, this condition, and the modulus could all be handled by a single modulus
     // but if deltaAggregator is more than twice the simulationHertz then the simulation is not keeping
     // up and I want that to be handled as a special case, not incidentally handled by a modulus.
-    if (deltaAggregator > simulationHertz) {
-      deltaAggregator = deltaAggregator % simulationHertz
+    if (deltaAggregator > simulationDelta) {
+      println("Skipped a frame.  deltaAggregator = " + deltaAggregator + " simulationDelta = " + simulationDelta)
+      deltaAggregator = deltaAggregator % simulationDelta
     }
     val updater = WorldUpdater(world, instantiator)
-    updater.update(commands, simulationHertz)
+    updater.update(commands, simulationDelta)
   }
 //  val updater = WorldUpdater(world, instantiator)
 //  updater.update(commands, delta)

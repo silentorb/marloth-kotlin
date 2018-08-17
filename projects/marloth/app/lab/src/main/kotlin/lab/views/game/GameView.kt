@@ -146,21 +146,13 @@ fun renderScene(client: Client, data: GameViewRenderData) {
   renderer.finishRender(windowInfo)
 }
 
-class GameView(val config: GameViewConfig) {
-//   fun createLayout(dimensions: Vector2i): List<Box> {
-//    return listOf()
-//  }
+fun updateGameViewState(config: GameViewConfig, input: LabInputState) {
+  val commands = input.commands
 
-  fun updateState(input: LabInputState) {
-    val commands = input.commands
-
-    if (isActive(commands, LabCommandType.toggleMeshDisplay)) {
-      config.displayMode = if (config.displayMode == GameDisplayMode.normal)
-        GameDisplayMode.wireframe
-      else
-        GameDisplayMode.normal
-    }
+  if (isActive(commands, LabCommandType.toggleMeshDisplay)) {
+    config.displayMode = if (config.displayMode == GameDisplayMode.normal)
+      GameDisplayMode.wireframe
+    else
+      GameDisplayMode.normal
   }
-
-//   fun getCommands(): LabCommandMap = mapOf()
 }

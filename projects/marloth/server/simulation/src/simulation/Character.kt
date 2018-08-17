@@ -37,12 +37,14 @@ fun isFinished(world: World, character: Character) =
     character.health.value == 0
 
 enum class ActionType {
+  face,
   move
 }
 
 data class Action(
     val type: ActionType,
-    val force: Force?
+    val force: Force? = null,
+    val facingRotation: Vector3? = null
 )
 
 typealias Actions = List<Action>

@@ -1,11 +1,7 @@
 package intellect
 
-import simulation.Character
-import simulation.NewMissile
-import simulation.World
-import simulation.canUse
+import simulation.*
 import simulation.changing.setCharacterFacing
-import simulation.characterAttack
 
 //fun tryAiAttack(spirit: Spirit): NewMissile? {
 //  val character = spirit.character
@@ -25,7 +21,7 @@ import simulation.characterAttack
 
 fun getVisibleCharacters(world: World, character: Character): List<Character> {
 //  val enemies = world.characters.filter { it.faction != character.faction }
-  return world.characters.filter { canSee(character, it) }
+  return world.characters.filter { it.id != character.id && canSee(character, it) }
 }
 
 //fun checkEnemySighting(world: World, character: Character): Spirit? {

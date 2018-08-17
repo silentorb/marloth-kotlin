@@ -5,7 +5,7 @@ import simulation.Id
 
 fun newGoalId(goals: Goals): Id {
   var i = 0
-  while (goals.any {it.id == i}) i++
+  while (goals.any { it.id == i }) i++
   return i
 }
 
@@ -14,24 +14,24 @@ fun newGoal(goals: Goals, type: GoalType): Goal =
 
 fun updateGoalStructure(knowledge: Knowledge, goals: Goals): Goals {
   val character = knowledge.character
-  if (goals.size == 0) {
-    if (knowledge.visibleCharacters.any()) {
-      val k = 0
-    }
-    val visibleEnemy = getVisibleEnemies(character, knowledge).firstOrNull()
-    return if (visibleEnemy != null)
-    //    return SpiritUpdateResult(enemySightingState)
-      listOf()
-    else
-      listOf(newGoal(goals, GoalType.beAt))
+  val visibleEnemy = getVisibleEnemies(character, knowledge).firstOrNull()
+  return if (visibleEnemy != null)
+    return listOf(newGoal(goals, GoalType.kill))
+  else {
+    val goals2 = goals.filter {it.type != GoalType.kill}
+    if (goals2.size == 0) {
+      if (knowledge.visibleCharacters.any()) {
+        val k = 0
+      }
+      listOf(newGoal(goals2, GoalType.beAt))
+    } else
+      goals2
   }
-  return goals
 }
 
 fun updatePursuit(knowledge: Knowledge, goal: Goal, pursuit: Pursuit): Pursuit {
   return when (goal.type) {
     GoalType.beAt -> updateMovementPursuit(knowledge, pursuit)
-//    GoalType.faceTarget->
     GoalType.kill -> pursuit
   }
 }
@@ -39,7 +39,6 @@ fun updatePursuit(knowledge: Knowledge, goal: Goal, pursuit: Pursuit): Pursuit {
 fun pursueGoal(knowledge: Knowledge, goal: Goal, pursuit: Pursuit): Actions {
   return when (goal.type) {
     GoalType.beAt -> moveSpirit(knowledge, pursuit)
-//    GoalType.faceTarget->
     GoalType.kill -> listOf()
   }
 }

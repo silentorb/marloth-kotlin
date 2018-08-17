@@ -49,7 +49,5 @@ fun updateLabWorld(app: LabApp, commands: Commands<CommandType>, delta: Float) {
   }
   val instantiator = Instantiator(app.world, InstantiatorConfig(app.gameConfig.gameplay.defaultPlayerView))
   updateWorld(app.world, instantiator, commands, delta)
-//  val updater = WorldUpdater(app.world, instantiator)
-//  updater.update(commands, delta)
 //  trackSpiritMovement(app.world, delta)
 }

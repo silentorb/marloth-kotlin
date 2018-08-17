@@ -77,8 +77,8 @@ fun placeEnemy(world: World, instantiator: Instantiator, dice: Dice) {
 }
 
 fun placeEnemies(world: World, instantiator: Instantiator, dice: Dice, scale: Float) {
-  val enemyCount = (10f * scale).toInt()
-//  val enemyCount = 1
+//  val enemyCount = (10f * scale).toInt()
+  val enemyCount = 1
   for (i in 0 until enemyCount) {
     placeEnemy(world, instantiator, dice)
   }
