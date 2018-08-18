@@ -5,11 +5,10 @@ import haft.Commands
 import mythic.sculpting.FlexibleEdge
 import mythic.sculpting.FlexibleFace
 import mythic.spatial.*
-import org.joml.minus
 import org.joml.plus
 import org.joml.times
 import physics.Body
-import physics.Force
+import physics.MovementForce
 import simulation.*
 
 fun hitsWall(edge: FlexibleEdge, position: Vector3, radius: Float) =
@@ -168,23 +167,6 @@ fun setCharacterFacing(character: Character, lookAt: Vector3) {
   character.facingRotation.z = angle
 }
 
-fun playerMove(player: Player, commands: Commands<CommandType>): Actions {
-  var offset = joinInputVector(commands, playerMoveMap)
-
-  if (offset != null) {
-    if (player.viewMode == ViewMode.firstPerson) {
-      offset = (Quaternion().rotateZ(player.character.facingRotation.z - Pi / 2) * offset)
-    } else if (player.viewMode == ViewMode.thirdPerson) {
-      offset = (Quaternion().rotateZ(player.hoverCamera.yaw + Pi / 2) * offset)
-      setCharacterFacing(player.character, offset)
-    } else {
-      setCharacterFacing(player.character, offset)
-    }
-    return listOf(Action(ActionType.move, force = Force(body = player.character.body, offset = offset, maximum = 6f)))
-  } else {
-    return listOf()
-  }
-}
 
 fun isInsideNode(node: Node, position: Vector3) =
     node.floors.any { isInsidePolygon(position, it.vertices) }

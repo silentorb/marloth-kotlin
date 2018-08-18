@@ -6,7 +6,7 @@ import mythic.spatial.Vector3
 import mythic.spatial.copy
 import mythic.spatial.minMax
 import org.joml.plus
-import physics.Force
+import physics.MovementForce
 import randomly.Dice
 import simulation.*
 import simulation.changing.getLookAtAngle
@@ -59,8 +59,8 @@ fun updateMovementPursuit(knowledge: Knowledge, pursuit: Pursuit): Pursuit {
 
   return Pursuit(path = path)
 }
-
-fun movementForce(character: Character, offset: Vector3, delta: Float): Actions {
+/*
+fun <T>requiresFacing(character: Character, offset: Vector3, delta: Float, delegate: () -> T): T? {
   val course = facingDistance(character, offset)
   val dir = if (course > 0f) 1f else -1f
   val absCourse = Math.abs(course)
@@ -73,17 +73,26 @@ fun movementForce(character: Character, offset: Vector3, delta: Float): Actions 
   } else {
     val facing = character.facingRotation.copy()
     facing.z = getLookAtAngle(offset)
-    listOf(Action(ActionType.face, facingRotation = facing),
-        Action(ActionType.move, force = Force(offset = offset, body = character.body, maximum = 6f))
+    listOf(
+        Action(ActionType.face, facingRotation = facing),
+        delegate()
     )
   }
 }
+ */
 
-fun moveSpirit(knowledge: Knowledge, pursuit: Pursuit): Actions {
+fun inFacingRange(character: Character, offset: Vector3, delta: Float): Boolean {
+  val course = facingDistance(character, offset)
+  val absCourse = Math.abs(course)
+  val increment = minMax(2f * delta, -absCourse, absCourse)
+  return absCourse <= increment
+}
+
+fun moveSpirit(knowledge: Knowledge, pursuit: Pursuit): MovementForce? {
   val character = knowledge.character
   val path = pursuit.path!!
   val face = getNextPathFace(knowledge, path)
-  if (face == null) {
+  return if (face == null) {
     throw Error("Not supported")
 //    println("Not supported!!!")
 //    return SpiritUpdateResult(spirit.state.copy(
@@ -94,10 +103,11 @@ fun moveSpirit(knowledge: Knowledge, pursuit: Pursuit): Actions {
     val position = character.body.position
     val nearestPoint = edge.vertices.sortedBy { it.distance(position) }.first()
     val target = (edge.middle + nearestPoint) / 2f
-    val direction = (target - position).normalize()
-    return movementForce(character, direction, simulationDelta)
-//        Action(ActionType.move, force = Force(offset = direction, body = character.body, maximum = 6f))
-
+    val offset = (target - position).normalize()
+    if (inFacingRange(character, offset, simulationDelta))
+      MovementForce(offset = offset, body = character.body, maximum = 6f)
+    else
+      null
   }
 }
 
@@ -118,3 +128,14 @@ fun facingDistance(character: Character, lookAt: Vector3): Float {
   val angle = getLookAtAngle(lookAt)
   return getAngleCourse(character.facingRotation.z, angle)
 }
+
+fun spiritMovement(spirit: Spirit): MovementForce? {
+  val goal = spirit.goals.first()
+  return if (goal.type == GoalType.beAt)
+    moveSpirit(spirit.knowledge, spirit.pursuit)
+  else
+    null
+}
+
+fun allSpiritMovements(spirits: Collection<Spirit>): List<MovementForce> =
+    spirits.mapNotNull { spiritMovement(it) }

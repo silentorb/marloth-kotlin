@@ -54,8 +54,10 @@ class DesktopInput(val window: Long) : PlatformInput {
           .map { Gamepad(it, glfwGetJoystickName(it)) }
 
   override val KeyboardInputSource = { key: Int ->
-    if (glfwGetKey(window, key) == GLFW_PRESS)
+    if (glfwGetKey(window, key) == GLFW_PRESS) {
+      println("*")
       1f
+    }
     else
       0f
   }
@@ -65,7 +67,10 @@ class DesktopInput(val window: Long) : PlatformInput {
       getGamepadAxes(device, trigger)
     else {
       val buttons = glfwGetJoystickButtons(device)
-      if (buttons[trigger - GAMEPAD_BUTTON_A].toInt() == GLFW_PRESS) 1f else 0f
+      if (buttons[trigger - GAMEPAD_BUTTON_A].toInt() == GLFW_PRESS)
+        1f
+      else
+        0f
     }
   }
 

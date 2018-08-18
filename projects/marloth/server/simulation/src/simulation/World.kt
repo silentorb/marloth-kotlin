@@ -14,9 +14,9 @@ data class World(
     val meta: AbstractWorld
 ) {
   val entities: MutableMap<Id, Entity> = mutableMapOf()
-  val players: MutableList<Player> = mutableListOf()
+  var players: List<Player> = listOf()
   val bodyTable: MutableMap<Id, Body> = mutableMapOf()
-  val characterTable: MutableMap<Id, Character> = mutableMapOf()
+  var characterTable: MutableMap<Id, Character> = mutableMapOf()
   val missileTable: MutableMap<Id, Missile> = mutableMapOf()
   var spiritTable: MutableMap<Id, Spirit> = mutableMapOf()
   val depictionTable: IdentityMap<Depiction> = mutableMapOf()
@@ -45,4 +45,7 @@ data class World(
 
   val depictions: MutableCollection<Depiction>
     get() = depictionTable.values
+
+  val playerCharacters: List<PlayerCharacter>
+    get() = players.map { PlayerCharacter(it, characterTable[it.character]!!) }
 }

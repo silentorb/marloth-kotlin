@@ -43,9 +43,9 @@ fun updateAiState(world: World, spirit: Spirit): Spirit {
 //  }
 }
 
-//fun applySpiritAction(spirit: Spirit, action: SpiritAction, delta: Float): Force? {
+//fun applySpiritAction(spirit: Spirit, action: SpiritAction, delta: Float): MovementForce? {
 //  return when (action.type) {
-//    SpiritActionType.beAt -> movementForce(spirit, action, delta)
+//    SpiritActionType.beAt -> requiresFacing(spirit, action, delta)
 //  }
 //}
 

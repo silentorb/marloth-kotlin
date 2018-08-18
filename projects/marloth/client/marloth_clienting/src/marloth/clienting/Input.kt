@@ -211,6 +211,8 @@ class ClientInput(val input: PlatformInput, val config: GameInputConfig) {
 
   fun checkForNewGamepads2(events: InputEvents, playerCount: Int): Commands<CommandType> {
     val commands = gatherProfileCommands3(events)
+    if (commands.size > 0)
+      println(commands.size)
     var playerCounter = playerCount
     val keystrokes = filterKeystrokeCommands(commands, listOf(CommandType.activateDevice, CommandType.joinGame))
     for (command in keystrokes) {

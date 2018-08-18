@@ -13,13 +13,13 @@ data class Rotation(
     val roll: Float = 0f
 )
 
-data class Force(
+data class MovementForce(
     val body: Body,
     val offset: Vector3,
     val maximum: Float
 )
 
-typealias Forces = List<Force>
+typealias Forces = List<MovementForce>
 
 data class BodyWallCollision(
     val body: Body
@@ -29,7 +29,7 @@ data class BodyUpdateResult(
     val wallCollision: List<BodyWallCollision>
 )
 
-fun applyForces(forces: List<Force>, delta: Float) {
+fun applyForces(forces: List<MovementForce>, delta: Float) {
 //  val groups = forces.groupBy { it.body }
   for (force in forces) {
     val body = force.body

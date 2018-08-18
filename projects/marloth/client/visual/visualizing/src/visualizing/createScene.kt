@@ -54,9 +54,10 @@ fun createTopDownCamera(player: Body): Camera {
 
 fun createCamera(world: World, screen: Screen): Camera {
   val player = world.players[screen.playerId - 1]
-  val body = player.character.body
+  val character = world.characterTable[player.character]!!
+  val body = world.bodyTable [player.character]!!
   return when (player.viewMode) {
-    ViewMode.firstPerson -> createFirstPersonCamera(player.character)
+    ViewMode.firstPerson -> createFirstPersonCamera(character)
     ViewMode.thirdPerson -> createThirdPersonCamera(body, player.hoverCamera)
 //    ViewMode.topDown -> createTopDownCamera(body)
   }
@@ -109,13 +110,14 @@ fun mapElements(world: World, screen: Screen, player: Player): Pair<List<VisualE
 
 fun createScene(world: World, screen: Screen, player: Player): GameScene {
   val (elements, elementDetails) = mapElements(world, screen, player)
+  val body = world.bodyTable [player.character]!!
   return GameScene(
       main = Scene(
           createCamera(world, screen),
           world.lights.values.plus(Light(
               type = LightType.point,
               color = Vector4(1f, 1f, 1f, 1f),
-              position = player.character.body.position + Vector3(0f, 0f, 2f),
+              position = body.position + Vector3(0f, 0f, 2f),
               direction = Vector4(0f, 0f, 0f, 15f)
           ))
       ),

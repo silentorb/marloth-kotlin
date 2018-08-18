@@ -36,17 +36,17 @@ fun updatePursuit(knowledge: Knowledge, goal: Goal, pursuit: Pursuit): Pursuit {
   }
 }
 
-fun pursueGoal(knowledge: Knowledge, goal: Goal, pursuit: Pursuit): Actions {
-  return when (goal.type) {
-    GoalType.beAt -> moveSpirit(knowledge, pursuit)
-    GoalType.kill -> listOf()
-  }
-}
-
-fun pursueGoal(spirit: Spirit): Actions {
-  val goal = spirit.goals.firstOrNull()
-  if (goal == null)
-    throw Error("Not supported.  Maybe some day.")
-
-  return pursueGoal(spirit.knowledge, goal, spirit.pursuit)
-}
+//fun pursueGoal(knowledge: Knowledge, goal: Goal, pursuit: Pursuit): Actions {
+//  return when (goal.type) {
+//    GoalType.beAt -> moveSpirit(knowledge, pursuit)
+//    GoalType.kill -> listOf()
+//  }
+//}
+//
+//fun pursueGoal(spirit: Spirit): Actions {
+//  val goal = spirit.goals.firstOrNull()
+//  if (goal == null)
+//    throw Error("Not supported.  Maybe some day.")
+//
+//  return pursueGoal(spirit.knowledge, goal, spirit.pursuit)
+//}

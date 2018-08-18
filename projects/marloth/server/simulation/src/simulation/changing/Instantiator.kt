@@ -69,7 +69,7 @@ class Instantiator(
         id = body.id,
         faction = faction,
         body = body,
-        maxHealth = definition.health,
+        health = Resource(definition.health),
         abilities = definition.abilities.map { Ability(it) }.toMutableList()
     )
     addDepiction(Depiction(
@@ -116,8 +116,8 @@ class Instantiator(
     val node = world.meta.nodes.first()
     val position = node.position// + Vector3(0f, 0f, 1f)
     val character = createCharacter(characterDefinitions.player, world.factions[0], position, node)
-    val player = Player(character, id, config.defaultPlayerView)
-    world.players.add(player)
+    val player = Player(character.id, id, config.defaultPlayerView)
+    world.players = world.players.plus(player)
     return player
   }
 

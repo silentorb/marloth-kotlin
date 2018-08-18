@@ -14,14 +14,21 @@ data class HoverCamera(
     var distance: Float = 7f
 )
 
-class Player(
-    val character: Character,
+data class Player(
+    val character: Id,
     val playerId: Int,
-    var viewMode: ViewMode,
-    var lookForce: Vector2 = Vector2(),
-    var lookVelocity: Vector2 = Vector2(),
-    var hoverCamera: HoverCamera = HoverCamera()
+    val viewMode: ViewMode,
+    val lookForce: Vector2 = Vector2(),
+    val lookVelocity: Vector2 = Vector2(),
+    val hoverCamera: HoverCamera = HoverCamera()
 )
+
+data class PlayerCharacter(
+    val player: Player,
+    val character: Character
+)
+
+typealias PlayerCharacters = List<PlayerCharacter>
 
 fun isPlayer(world: World, character: Character) =
     world.players.any { it.playerId == character.id }

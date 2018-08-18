@@ -4,7 +4,6 @@ import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import org.joml.times
 import physics.Body
-import physics.Force
 import scenery.DepictionType
 
 data class CharacterDefinition(
@@ -13,17 +12,15 @@ data class CharacterDefinition(
     val depictionType: DepictionType
 )
 
-class Character(
+data class Character(
     val id: Int,
     val body: Body,
-    maxHealth: Int,
     val abilities: MutableList<Ability> = mutableListOf(),
-    val faction: Faction
+    val faction: Faction,
+    val health: Resource,
+    var isAlive: Boolean = true,
+    val facingRotation: Vector3 = Vector3()
 ) {
-  val health = Resource(maxHealth)
-  var isAlive = true
-  var facingRotation: Vector3 = Vector3()
-
   val facingQuaternion: Quaternion
     get() = Quaternion()
         .rotateZ(facingRotation.z)
@@ -35,23 +32,3 @@ class Character(
 
 fun isFinished(world: World, character: Character) =
     character.health.value == 0
-
-enum class ActionType {
-  face,
-  move
-}
-
-data class Action(
-    val type: ActionType,
-    val force: Force? = null,
-    val facingRotation: Vector3? = null
-)
-
-typealias Actions = List<Action>
-
-data class CharacterAction(
-    val character: Character,
-    val actions: Actions
-)
-
-typealias CharacterActions = List<CharacterAction>

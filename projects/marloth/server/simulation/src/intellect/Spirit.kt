@@ -41,10 +41,10 @@ data class Spirit(
 //}
 
 
-class AssociatedSpirit(
-    val character: Character,
-    var state: Spirit
-) {
-  val body: Body
-    get() = character.body
-}
+//class AssociatedSpirit(
+//    val character: Character,
+//    var state: Spirit
+//) {
+//  val body: Body
+//    get() = character.body
+//}
