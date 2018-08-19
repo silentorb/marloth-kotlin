@@ -1,10 +1,6 @@
 package simulation.changing
 
-import commanding.CommandType
-import haft.Commands
-import simulation.*
-
-//fun playerAttack(player: Player, commands: Commands<CommandType>): NewMissile? {
+//fun playerAttack(player: Player, commands: Commands): NewMissile? {
 //  val character = player.character
 //
 //  val offset = if (commands.any { it.type == CommandType.attack })

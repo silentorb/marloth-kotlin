@@ -1,9 +1,6 @@
 package simulation.changing
 
-import commanding.CommandType
-import haft.Commands
-import intellect.CharacterResult
-import mythic.spatial.Vector2
+import simulation.CommandType
 import simulation.*
 
 
@@ -14,7 +11,7 @@ import simulation.*
 //  player.viewMode = viewModes[nextIndex]
 //}
 
-//fun applyPlayerCommands(player: Player, commands: Commands<CommandType>, delta: Float) {
+//fun applyPlayerCommands(player: Player, commands: Commands, delta: Float) {
 //  if (commands.isEmpty())
 //    return
 //
@@ -35,7 +32,7 @@ import simulation.*
 ////  return actions
 //}
 
-fun applyCommands(world: World, instantiator: Instantiator, commands: Commands<CommandType>, delta: Float) {
+fun applyCommands(world: World, instantiator: Instantiator, commands: Commands, delta: Float) {
 //  val playerResults = world.players
 //      .filter { it.character.isAlive }
 //      .map { player ->

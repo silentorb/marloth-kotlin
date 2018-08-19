@@ -1,7 +1,7 @@
 package intellect
 
-import simulation.Actions
 import simulation.Id
+import simulation.Commands
 
 fun newGoalId(goals: Goals): Id {
   var i = 0
@@ -18,7 +18,7 @@ fun updateGoalStructure(knowledge: Knowledge, goals: Goals): Goals {
   return if (visibleEnemy != null)
     return listOf(newGoal(goals, GoalType.kill))
   else {
-    val goals2 = goals.filter {it.type != GoalType.kill}
+    val goals2 = goals.filter { it.type != GoalType.kill }
     if (goals2.size == 0) {
       if (knowledge.visibleCharacters.any()) {
         val k = 0
@@ -36,12 +36,17 @@ fun updatePursuit(knowledge: Knowledge, goal: Goal, pursuit: Pursuit): Pursuit {
   }
 }
 
-//fun pursueGoal(knowledge: Knowledge, goal: Goal, pursuit: Pursuit): Actions {
-//  return when (goal.type) {
-//    GoalType.beAt -> moveSpirit(knowledge, pursuit)
-//    GoalType.kill -> listOf()
-//  }
-//}
+fun pursueGoal(knowledge: Knowledge, goal: Goal, pursuit: Pursuit): Commands {
+  return when (goal.type) {
+    GoalType.beAt -> moveSpirit(knowledge, pursuit)
+    GoalType.kill -> listOf()
+  }
+}
+
+fun pursueGoals(spirits: Collection<Spirit>): Commands {
+  return spirits.flatMap { pursueGoal(it.knowledge, it.goals.first(), it.pursuit) }
+}
+
 //
 //fun pursueGoal(spirit: Spirit): Actions {
 //  val goal = spirit.goals.firstOrNull()

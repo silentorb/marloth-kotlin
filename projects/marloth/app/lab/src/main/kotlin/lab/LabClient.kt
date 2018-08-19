@@ -51,7 +51,7 @@ fun createLabDeviceHandlers(input: PlatformInput): List<ScalarInputSource> {
 
 private var previousMousePosition = Vector2i()
 
-fun getInputState(platformInput: PlatformInput, commands: List<Command<LabCommandType>>): LabInputState {
+fun getInputState(platformInput: PlatformInput, commands: List<HaftCommand<LabCommandType>>): LabInputState {
   val mousePosition = platformInput.getMousePosition()
   val input = LabInputState(
       commands,
@@ -77,7 +77,7 @@ class LabClient(val config: LabConfig, val client: Client) {
   )
   val deviceHandlers = createLabDeviceHandlers(client.platform.input)
 
-  fun updateInput(viewCommands: LabCommandMap, previousState: LabState): Pair<Commands<LabCommandType>,
+  fun updateInput(viewCommands: LabCommandMap, previousState: LabState): Pair<HaftCommands<LabCommandType>,
       InputTriggerState<LabCommandType>> {
     val (commands, nextLabInputState) = gatherInputCommands(getBindings(), deviceHandlers, previousState.labInput)
     applyCommands(commands, viewCommands.plus(globalKeyPressCommands))

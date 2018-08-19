@@ -18,8 +18,6 @@ data class Player(
     val character: Id,
     val playerId: Int,
     val viewMode: ViewMode,
-    val lookForce: Vector2 = Vector2(),
-    val lookVelocity: Vector2 = Vector2(),
     val hoverCamera: HoverCamera = HoverCamera()
 )
 

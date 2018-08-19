@@ -1,6 +1,7 @@
 package simulation
 
 import mythic.spatial.Quaternion
+import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import org.joml.times
 import physics.Body
@@ -19,7 +20,9 @@ data class Character(
     val faction: Faction,
     val health: Resource,
     val isAlive: Boolean = true,
-    val facingRotation: Vector3 = Vector3()
+    val facingRotation: Vector3 = Vector3(),
+    val lookForce: Vector2 = Vector2(),
+    val lookVelocity: Vector2 = Vector2()
 ) {
   val facingQuaternion: Quaternion
     get() = Quaternion()

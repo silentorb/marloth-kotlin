@@ -17,6 +17,8 @@ import rigging.humanAnimations
 import scenery.*
 import simulation.*
 import simulation.Id
+import simulation.combat.Missile
+import simulation.combat.NewMissile
 
 data class InstantiatorConfig(
     var defaultPlayerView: ViewMode = ViewMode.thirdPerson
@@ -102,15 +104,15 @@ class Instantiator(
     return spirit
   }
 
-  fun createMissile(newMissile: NewMissile): Missile {
-    val shape = commonShapes[EntityType.missile]!!
-    val body = createBody(EntityType.missile, shape, newMissile.position, newMissile.node, missileBodyAttributes)
-    body.velocity = newMissile.velocity
-    val missile = Missile(body.id, body, newMissile.owner, newMissile.range)
-    world.missileTable[body.id] = missile
-    addDepiction(Depiction(body.id, DepictionType.missile, null))
-    return missile
-  }
+//  fun createMissile(newMissile: NewMissile): Missile {
+//    val shape = commonShapes[EntityType.missile]!!
+//    val body = createBody(EntityType.missile, shape, newMissile.position, newMissile.node, missileBodyAttributes)
+//    body.velocity = newMissile.velocity
+//    val missile = Missile(body.id, body, newMissile.owner, newMissile.range)
+//    world.missileTable[body.id] = missile
+//    addDepiction(Depiction(body.id, DepictionType.missile, null))
+//    return missile
+//  }
 
   fun createPlayer(id: Id): Player {
     val node = world.meta.nodes.first()

@@ -4,19 +4,22 @@ import intellect.Spirit
 import physics.Body
 import scenery.Depiction
 import scenery.Light
+import simulation.combat.Missile
 
 val maxPlayerCount = 4
 
 typealias Players = List<Player>
 typealias IdentityMap<T> = MutableMap<Id, T>
+typealias BodyTable = MutableMap<Id, Body>
+typealias CharacterTable = MutableMap<Id,  Character>
 
 data class World(
     val meta: AbstractWorld
 ) {
   val entities: MutableMap<Id, Entity> = mutableMapOf()
   var players: List<Player> = listOf()
-  val bodyTable: MutableMap<Id, Body> = mutableMapOf()
-  var characterTable: MutableMap<Id, Character> = mutableMapOf()
+  val bodyTable: BodyTable = mutableMapOf()
+  var characterTable: CharacterTable = mutableMapOf()
   val missileTable: MutableMap<Id, Missile> = mutableMapOf()
   var spiritTable: MutableMap<Id, Spirit> = mutableMapOf()
   val depictionTable: IdentityMap<Depiction> = mutableMapOf()

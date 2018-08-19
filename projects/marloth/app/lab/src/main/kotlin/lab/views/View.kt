@@ -8,7 +8,7 @@ import marloth.clienting.gui.MenuActionType
 import org.joml.Vector2i
 
 data class LabClientResult(
-    val commands: Commands<CommandType>,
+    val commands: HaftCommands<CommandType>,
     val state: LabState,
     val menuAction: MenuActionType
 )
@@ -16,7 +16,7 @@ data class LabClientResult(
 typealias LabCommandMap = Map<LabCommandType, CommandHandler<LabCommandType>>
 
 data class LabInputState(
-    val commands: List<Command<LabCommandType>>,
+    val commands: List<HaftCommand<LabCommandType>>,
     val mousePosition: Vector2i,
     val mouseOffset: Vector2i
 )

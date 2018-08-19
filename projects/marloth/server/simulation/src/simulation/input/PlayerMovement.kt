@@ -1,7 +1,6 @@
 package simulation.input
 
-import commanding.CommandType
-import haft.Commands
+import simulation.CommandType
 import mythic.spatial.Pi
 import mythic.spatial.Quaternion
 import org.joml.times
@@ -11,7 +10,7 @@ import simulation.changing.joinInputVector
 import simulation.changing.playerMoveMap
 import simulation.changing.setCharacterFacing
 
-fun playerMovement(player: Player, commands: Commands<CommandType>, character: Character): MovementForce? {
+fun playerMovement(player: Player, commands: Commands, character: Character): MovementForce? {
   var offset = joinInputVector(commands, playerMoveMap)
 
   if (offset != null) {
@@ -29,5 +28,5 @@ fun playerMovement(player: Player, commands: Commands<CommandType>, character: C
   }
 }
 
-fun allPlayerMovements(playerCharacters: PlayerCharacters, commands: Commands<CommandType>): List<MovementForce> =
+fun allPlayerMovements(playerCharacters: PlayerCharacters, commands: Commands): List<MovementForce> =
     playerCharacters.mapNotNull { pc -> playerMovement(pc.player, filterCommands(pc.player, commands), pc.character) }

@@ -15,7 +15,7 @@ import scenery.Screen
 val maxPlayerCount = 4
 
 data class ClientInputResult(
-    val commands: Commands<CommandType>,
+    val commands: HaftCommands<CommandType>,
     val state: InputState
 )
 //{
@@ -65,7 +65,7 @@ class Client(val platform: Platform, displayConfig: DisplayConfig, inputConfig: 
   }
 
   fun update(scenes: List<GameScene>, previousState: ProfileStates<CommandType>):
-      Pair<Commands<CommandType>, ProfileStates<CommandType>> {
+      Pair<HaftCommands<CommandType>, ProfileStates<CommandType>> {
     throw Error("Outdated.  Will need updating.")
 //    val windowInfo = getWindowInfo()
 //    renderer.renderGameScenes(scenes, windowInfo)

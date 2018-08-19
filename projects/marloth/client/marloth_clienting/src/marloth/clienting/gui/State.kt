@@ -1,7 +1,7 @@
 package marloth.clienting.gui
 
 import commanding.CommandType
-import haft.Commands
+import haft.HaftCommands
 
 enum class MenuId {
   main
@@ -34,14 +34,14 @@ val mainMenu = listOf(
     MenuActionType.quit
 )
 
-fun menuButtonAction(state: MenuState, commands: Commands<CommandType>): MenuActionType {
+fun menuButtonAction(state: MenuState, commands: HaftCommands<CommandType>): MenuActionType {
   if (haft.isActive(commands, CommandType.menuSelect)) {
     return mainMenu[state.focusIndex]
   }
   return MenuActionType.none
 }
 
-fun updateMenuState(state: MenuState, commands: Commands<CommandType>): MenuState {
+fun updateMenuState(state: MenuState, commands: HaftCommands<CommandType>): MenuState {
   if (commands.size == 0)
     return state
 

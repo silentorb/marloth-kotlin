@@ -1,19 +1,19 @@
 package simulation.input
 
-import commanding.CommandType
-import haft.Commands
+import simulation.CommandType
 import mythic.spatial.Vector2
+import simulation.Commands
 import simulation.Player
 import simulation.Players
 import simulation.ViewMode
 import simulation.changing.*
 
-fun filterCommands(player: Player, commands: Commands<CommandType>) =
+fun filterCommands(player: Player, commands: Commands) =
     commands.filter({ it.target == player.playerId })
 
 private val viewModes = ViewMode.values()
 
-fun updatePlayerView(viewMode: ViewMode, commands: Commands<CommandType>): ViewMode {
+fun updatePlayerView(viewMode: ViewMode, commands: Commands): ViewMode {
 //  if (commands.any()) {
 //    println(commands.size)
 //  }
@@ -26,10 +26,11 @@ fun updatePlayerView(viewMode: ViewMode, commands: Commands<CommandType>): ViewM
     viewMode
 }
 
-fun updatePlayer(player: Player, commands: Commands<CommandType>): Player {
+fun updatePlayer(player: Player, commands: Commands): Player {
   val delta = simulationDelta
   val lookForce = updateField(Vector2(), updatePlayerLookForce(player, commands))
   val lookVelocity = updatePlayerLookVelocity(lookForce, player.lookVelocity)
+//  applyPlayerLookCommands(player, commands, delta)
 
   return player.copy(
       lookVelocity = lookVelocity,
@@ -37,7 +38,7 @@ fun updatePlayer(player: Player, commands: Commands<CommandType>): Player {
   )
 }
 
-fun updatePlayers(players: Players, commands: Commands<CommandType>): Players {
+fun updatePlayers(players: Players, commands: Commands): Players {
 //  if (filterCommands(players.first(), commands).size != commands.size)
 //    throw Error("")
   if (commands.any { it.type == CommandType.switchView })

@@ -18,7 +18,7 @@ data class Binding<T>(
     val isStroke: Boolean = false
 )
 
-data class Command<T>(
+data class HaftCommand<T>(
     val type: T,
     val target: Int,
     val value: Float,
@@ -27,9 +27,9 @@ data class Command<T>(
 
 data class Gamepad(val id: Int, val name: String)
 
-typealias Commands<T> = List<Command<T>>
+typealias HaftCommands<T> = List<HaftCommand<T>>
 
-typealias CommandHandler<T> = (Command<T>) -> Unit
+typealias CommandHandler<T> = (HaftCommand<T>) -> Unit
 
 typealias InputTriggerState<T> = Map<Binding<T>, TriggerState?>
 
@@ -61,15 +61,15 @@ fun <T> getCurrentInputState(bindings: Bindings<T>, handlers: List<ScalarInputSo
 fun <T> createEmptyInputState(bindings: Bindings<T>): InputTriggerState<T> =
     bindings.associate { Pair(it, null) }
 
-fun <T> gatherCommands(state: InputTriggerState<T>): Commands<T> {
+fun <T> gatherCommands(state: InputTriggerState<T>): HaftCommands<T> {
   return state
       .filter({ it.value != null && (!it.key.isStroke || it.value!!.lifetime == TriggerLifetime.end) })
-      .map({ Command<T>(it.key.type, it.key.target, it.value!!.value, it.value!!.lifetime) })
+      .map({ HaftCommand<T>(it.key.type, it.key.target, it.value!!.value, it.value!!.lifetime) })
 }
 
 typealias ProfileStates<T> = Map<Bindings<T>, InputTriggerState<T>>
 
-typealias InputProfileResult<T> = Pair<Commands<T>, ProfileStates<T>>
+typealias InputProfileResult<T> = Pair<HaftCommands<T>, ProfileStates<T>>
 
 //data class HaftInputState<T>(
 //    val profileStates: ProfileStates<T>
@@ -98,28 +98,28 @@ fun <T> gatherProfileCommands2(profiles: List<Bindings<T>>, profileStates: Profi
   }
 }
 
-fun <T> gatherProfileCommands3(states: ProfileStates<T>): Commands<T> =
+fun <T> gatherProfileCommands3(states: ProfileStates<T>): HaftCommands<T> =
     states.flatMap { gatherCommands(it.value) }
 
 fun <T> gatherInputCommands(bindings: Bindings<T>, deviceHandlers: List<ScalarInputSource>,
-                            previousState: InputTriggerState<T>?): Pair<Commands<T>, InputTriggerState<T>> {
+                            previousState: InputTriggerState<T>?): Pair<HaftCommands<T>, InputTriggerState<T>> {
   val previous = previousState ?: createEmptyInputState(bindings)
   val next = getCurrentInputState(bindings, deviceHandlers, previous)
   return Pair(gatherCommands(next), next)
 }
 
-fun <T> filterKeystrokeCommands(commands: Commands<T>) =
+fun <T> filterKeystrokeCommands(commands: HaftCommands<T>) =
     commands.filter({ it.lifetime == TriggerLifetime.end })
 
-fun <T> filterKeystrokeCommands(commands: Commands<T>, bindings: List<T>) =
+fun <T> filterKeystrokeCommands(commands: HaftCommands<T>, bindings: List<T>) =
     commands.filter({ bindings.contains(it.type) && it.lifetime == TriggerLifetime.end })
 
-fun <T> handleKeystrokeCommands(commands: Commands<T>, keyStrokeCommands: Map<T, (Command<T>) -> Unit>) {
+fun <T> handleKeystrokeCommands(commands: HaftCommands<T>, keyStrokeCommands: Map<T, (HaftCommand<T>) -> Unit>) {
   commands.filter({ keyStrokeCommands.containsKey(it.type) && it.lifetime == TriggerLifetime.end })
       .forEach({ keyStrokeCommands[it.type]!!(it) })
 }
 
-fun <T> applyCommands(commands: Commands<T>, actions: Map<T, (Command<T>) -> Unit>) {
+fun <T> applyCommands(commands: HaftCommands<T>, actions: Map<T, (HaftCommand<T>) -> Unit>) {
   commands.filter({ actions.containsKey(it.type) })
       .forEach({ actions[it.type]!!(it) })
 }
@@ -134,17 +134,17 @@ fun <T> createStrokeBindings(device: Int, target: Int, bindings: Map<Int, T>) =
 
 fun <T> createStrokeBindings(device: Int, bindings: Map<Int, T>) = createStrokeBindings(device, 0, bindings)
 
-fun <T> isActive(commands: List<Command<T>>, commandType: T) =
+fun <T> isActive(commands: List<HaftCommand<T>>, commandType: T) =
     commands.any { it.type == commandType }
 
-fun <T> isActive(commands: List<Command<T>>) =
+fun <T> isActive(commands: List<HaftCommand<T>>) =
     { commandType: T -> haft.isActive(commands, commandType) }
 
-fun <T> getCommand(commands: List<Command<T>>, commandType: T) =
+fun <T> getCommand(commands: List<HaftCommand<T>>, commandType: T) =
     commands.first { it.type == commandType }
 
 data class InputResult<T>(
-    val commands: Commands<T>,
+    val commands: HaftCommands<T>,
     val inputState: ProfileStates<T>) {
 
   operator fun plus(second: InputResult<T>) =

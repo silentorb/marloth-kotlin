@@ -34,7 +34,7 @@ tailrec fun gameLoop(app: App, previousState: AppState) {
   val (commands, nextInputState) = app.client.update(scenes, previousState.inputState)
   val delta = app.timer.update().toFloat()
   val instantiator = Instantiator(app.world, InstantiatorConfig())
-  val updater = WorldUpdater(app.world, instantiator)
+  val updater = WorldUpdater(app.world)
   updater.update(commands, delta)
   app.platform.process.pollEvents()
 

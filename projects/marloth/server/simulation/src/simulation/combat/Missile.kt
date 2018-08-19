@@ -1,16 +1,16 @@
-package simulation
+package simulation.combat
 
+import simulation.CommandType
 import mythic.spatial.Vector3
 import mythic.spatial.times
 import org.joml.plus
-import physics.Body
 import physics.overlaps
+import simulation.*
 import simulation.changing.hitsWall
 
 data class Missile(
     val id: Int,
-    val body: Body,
-    val owner: Character,
+    val owner: Id,
     var remainingDistance: Float
 )
 
@@ -33,14 +33,16 @@ fun characterAttack(character: Character, ability: Ability, direction: Vector3):
   )
 }
 
-fun updateMissile(world: World, missile: Missile, delta: Float) {
-  val offset = missile.body.velocity * delta
+fun updateMissile(bodyTable: BodyTable, characterTable: CharacterTable, missile: Missile, delta: Float) {
+  val body = bodyTable[missile.id]!!
+  val offset = body.velocity * delta
 //  missile.body.position += offset
-  val hit = world.bodyTable.values.filter { it !== missile.body && it !== missile.owner.body }
-      .firstOrNull { overlaps(it, missile.body) }
+  val owner = characterTable[missile.owner]!!
+  val hit = bodyTable.values.filter { it !== body && it !== owner.body }
+      .firstOrNull { overlaps(it, body) }
 
   if (hit != null) {
-    val victim = world.characterTable[hit.id]
+    val victim = characterTable[hit.id]
     if (victim != null) {
       missile.remainingDistance = 0f
       victim.health.modify(-50)
@@ -55,5 +57,17 @@ fun updateMissile(world: World, missile: Missile, delta: Float) {
   }
 }
 
-fun isFinished(world: World, missile: Missile) =
-    missile.remainingDistance <= 0 || world.meta.walls.any { hitsWall(it.edges[0].edge, missile.body.position, 0.2f) }
+fun isFinished(world: AbstractWorld, bodyTable: BodyTable, missile: Missile): Boolean {
+  val body = bodyTable[missile.id]!!.position
+  return missile.remainingDistance <= 0 || world.walls.any { hitsWall(it.edges[0].edge, body, 0.2f) }
+}
+
+
+fun createMissiles(world: World, commands: Commands): List<Missile> {
+return listOf()
+}
+
+fun updateMissiles(world: World, commands: Commands): List<Missile> {
+  val newMissiles = commands.filter { it.type == CommandType.attack }
+  return listOf()
+}

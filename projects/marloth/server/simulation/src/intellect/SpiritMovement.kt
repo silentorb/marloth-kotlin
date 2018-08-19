@@ -1,5 +1,6 @@
 package intellect
 
+import simulation.CommandType
 import mythic.sculpting.FlexibleFace
 import mythic.spatial.Pi
 import mythic.spatial.Vector3
@@ -73,13 +74,14 @@ fun getTargetOffset(knowledge: Knowledge, pursuit: Pursuit): Vector3 {
   return (target - position).normalize()
 }
 
-fun moveSpirit(knowledge: Knowledge, pursuit: Pursuit): MovementForce? {
+fun moveSpirit(knowledge: Knowledge, pursuit: Pursuit): Commands {
   val offset = getTargetOffset(knowledge, pursuit)
   val character = knowledge.character
+  val facingCommands = spiritFacingChange(knowledge, pursuit)
   return if (inFacingRange(character, offset, simulationDelta))
-    MovementForce(offset = offset, body = character.body, maximum = 6f)
+    facingCommands.plus(Command(CommandType.lookLeft, character.id))
   else
-    null
+    facingCommands
 }
 
 fun getAngleCourse(source: Float, destination: Float): Float {
@@ -100,13 +102,13 @@ fun facingDistance(character: Character, lookAt: Vector3): Float {
   return getAngleCourse(character.facingRotation.z, angle)
 }
 
-fun spiritMovement(spirit: Spirit): MovementForce? {
-  val goal = spirit.goals.first()
-  return if (goal.type == GoalType.beAt)
-    moveSpirit(spirit.knowledge, spirit.pursuit)
-  else
-    null
-}
+//fun spiritMovement(spirit: Spirit): MovementForce? {
+//  val goal = spirit.goals.first()
+//  return if (goal.type == GoalType.beAt)
+//    moveSpirit(spirit.knowledge, spirit.pursuit)
+//  else
+//    null
+//}
 
-fun allSpiritMovements(spirits: Collection<Spirit>): List<MovementForce> =
-    spirits.mapNotNull { spiritMovement(it) }
+//fun allSpiritMovements(spirits: Collection<Spirit>): List<MovementForce> =
+//    spirits.mapNotNull { spiritMovement(it) }

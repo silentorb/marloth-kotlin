@@ -1,11 +1,7 @@
 package intellect
 
 import simulation.*
-
-data class SpiritUpdateResult(
-    val state: Spirit,
-    val actions: List<Action> = listOf()
-)
+import simulation.combat.NewMissile
 
 fun updateAiState(world: World, spirit: Spirit): Spirit {
   val character = world.characterTable[spirit.id]!!
@@ -20,7 +16,3 @@ fun updateAiState(world: World, spirit: Spirit): Spirit {
   )
 }
 
-data class CharacterResult(
-    val actions: List<Action> = listOf(),
-    val newMissile: NewMissile? = null
-)

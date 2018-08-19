@@ -3,7 +3,6 @@ package marloth.clienting
 import commanding.CommandType
 import haft.*
 import mythic.platforming.PlatformInput
-import mythic.spatial.Vector2
 import org.joml.Vector2i
 import org.joml.minus
 import org.lwjgl.glfw.GLFW.*
@@ -209,7 +208,7 @@ class ClientInput(val input: PlatformInput, val config: GameInputConfig) {
     return gatherProfileCommands2(profiles, previousState.events, deviceHandlers)
   }
 
-  fun checkForNewGamepads2(events: InputEvents, playerCount: Int): Commands<CommandType> {
+  fun checkForNewGamepads2(events: InputEvents, playerCount: Int): HaftCommands<CommandType> {
     val commands = gatherProfileCommands3(events)
     if (commands.size > 0)
       println(commands.size)
@@ -233,20 +232,20 @@ class ClientInput(val input: PlatformInput, val config: GameInputConfig) {
 
   fun applyMouseAxis(value: Int, firstCommandType: CommandType, secondCommandType: CommandType, scale: Float) =
       if (value > 0)
-        listOf(Command(firstCommandType, 1, value.toFloat() * scale, TriggerLifetime.pressed))
+        listOf(HaftCommand(firstCommandType, 1, value.toFloat() * scale, TriggerLifetime.pressed))
       else if (value < 0)
-        listOf(Command(secondCommandType, 1, -value.toFloat() * scale, TriggerLifetime.pressed))
+        listOf(HaftCommand(secondCommandType, 1, -value.toFloat() * scale, TriggerLifetime.pressed))
       else
         listOf()
 
-  fun applyMouseMovement(properties: InputProperties): Commands<CommandType> {
+  fun applyMouseMovement(properties: InputProperties): HaftCommands<CommandType> {
     val position = properties.mousePosition - properties.previousState.mousePosition
-    return listOf<Command<CommandType>>()
+    return listOf<HaftCommand<CommandType>>()
         .plus(applyMouseAxis(position.x, CommandType.lookRight, CommandType.lookLeft, 1f))
         .plus(applyMouseAxis(position.y, CommandType.lookDown, CommandType.lookUp, 1f))
   }
 
-  fun updateGameInput2(events: InputEvents, properties: InputProperties): Commands<CommandType> {
+  fun updateGameInput2(events: InputEvents, properties: InputProperties): HaftCommands<CommandType> {
     val commands = gatherProfileCommands3(events)
     val mouseMovementCommands = if (config.mouseInput)
       applyMouseMovement(properties)

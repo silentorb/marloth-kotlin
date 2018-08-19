@@ -1,17 +1,15 @@
 package simulation.changing
 
-import commanding.CommandType
-import haft.Commands
-import intellect.allSpiritFacingChanges
-import intellect.allSpiritMovements
+import intellect.pursueGoals
 import intellect.updateAiState
 import mythic.breeze.applyAnimation
 import mythic.spatial.Quaternion
 import physics.applyForces
 import physics.updateBodies
 import simulation.*
-import simulation.input.allPlayerFacingChanges
+import simulation.combat.updateMissiles
 import simulation.input.allPlayerMovements
+import simulation.input.updateCharacterFacing
 import simulation.input.updatePlayers
 
 fun <T> updateField(defaultValue: T, newValue: T?): T =
@@ -20,47 +18,49 @@ fun <T> updateField(defaultValue: T, newValue: T?): T =
     else
       defaultValue
 
-fun updateCharacters(world: World, playerCharacters: PlayerCharacters, commands: Commands<CommandType>) {
-  val delta = simulationDelta
-  val changes = allPlayerFacingChanges(playerCharacters, commands).plus(allSpiritFacingChanges(world.spirits))
+fun updateCharacter(world: World, character: Character, commands: Commands, delta: Float): Character {
+  val id = character.id
+  if (character.isAlive) {
+    character.abilities.forEach { updateAbility(it, delta) }
+    character.body.orientation = Quaternion()
+        .rotateZ(character.facingRotation.z)
 
+    val depiction = world.depictionTable[character.id]!!
+    val animationInfo = depiction.animation!!
+    val animation = animationInfo.armature.animations[animationInfo.animationIndex]
+    animationInfo.timeOffset = (animationInfo.timeOffset + delta) % animation.duration
+    applyAnimation(animation, animationInfo.armature.bones, animationInfo.timeOffset)
+  } else {
+
+  }
+  return character.copy(
+      isAlive = character.health.value > 0,
+      facingRotation = updateCharacterFacing(character, commands)
+  )
+}
+
+fun updateCharacters(world: World, commands: Commands) {
+  val delta = simulationDelta
   world.characterTable = world.characterTable.mapValues { e ->
     val character = e.value
     val id = character.id
-    if (character.isAlive) {
-      character.abilities.forEach { updateAbility(it, delta) }
-      character.body.orientation = Quaternion()
-          .rotateZ(character.facingRotation.z)
-//          .rotateX(character.rotation.x)
-
-      val depiction = world.depictionTable[character.id]!!
-      val animationInfo = depiction.animation!!
-      val animation = animationInfo.armature.animations[animationInfo.animationIndex]
-      animationInfo.timeOffset = (animationInfo.timeOffset + delta) % animation.duration
-      applyAnimation(animation, animationInfo.armature.bones, animationInfo.timeOffset)
-    } else {
-
-    }
-    character.copy(
-        isAlive = character.health.value > 0,
-        facingRotation = updateField(character.facingRotation, changes[id])
-    )
+    updateCharacter(world, character, commands.filter { it.target == id }, delta)
   }.toMutableMap()
 }
 
-fun updateBodies(world: World, playerCharacters: PlayerCharacters, commands: Commands<CommandType>) {
+fun updateBodies(world: World, playerCharacters: PlayerCharacters, commands: Commands) {
   val delta = simulationDelta
-  val forces = allPlayerMovements(playerCharacters, commands).plus(allSpiritMovements(world.spirits))
+  val forces = allPlayerMovements(playerCharacters, commands)
   applyForces(forces, delta)
   updateBodies(world.meta, world.bodies, delta)
   world.bodies.forEach { updateBodyNode(it) }
 }
 
-class WorldUpdater(val world: World, val instantiator: Instantiator) {
+class WorldUpdater(val world: World) {
 
   fun getFinished(): List<Int> {
     return world.missileTable.values
-        .filter { isFinished(world, it) }
+        .filter { simulation.combat.isFinished(world.meta, world.bodyTable, it) }
         .map { it.id }
         .plus(world.characters
             .filter { isFinished(world, it) && !isPlayer(world, it) }
@@ -77,25 +77,19 @@ class WorldUpdater(val world: World, val instantiator: Instantiator) {
     world.lights.minusAssign(finished)
   }
 
-  fun update(commands: Commands<CommandType>, delta: Float) {
+  fun update(playerCommands: Commands, delta: Float) {
     val playerCharacters = world.playerCharacters
         .filter { it.character.isAlive }
 
     world.spiritTable = world.spiritTable.mapValues { updateAiState(world, it.value) }.toMutableMap()
-//    val spiritResults = world.spirits.map { CharacterAction(world.characterTable[it.id]!!, pursueGoal(it)) }
-//    val playerResults = applyCommands(world, instantiator, commands, delta)
-//    val results = spiritResults.plus(playerResults)
-//    applyActions(world, results)
-//    val forces = actionsToForces(results)
-//    val newMissiles = results.mapNotNull { it.newMissile }
+    val spiritCommands = pursueGoals(world.spirits)
+    val commands = playerCommands.plus(spiritCommands)
     world.players = updatePlayers(world.players, commands)
-    updateCharacters(world, playerCharacters, commands)
+    updateCharacters(world, commands)
+    updateMissiles(world, commands)
     updateBodies(world, playerCharacters, commands)
-    world.missileTable.values.forEach { updateMissile(world, it, delta) }
     val finished = getFinished()
     removeFinished(finished)
-
-//    createMissiles(newMissiles)
   }
 }
 
@@ -103,7 +97,7 @@ const val simulationDelta = 1f / 60f
 
 private var deltaAggregator = 0f
 
-fun updateWorld(world: World, instantiator: Instantiator, commands: Commands<CommandType>, delta: Float) {
+fun updateWorld(world: World, commands: Commands, delta: Float) {
   deltaAggregator += delta
   if (deltaAggregator > simulationDelta) {
     deltaAggregator -= simulationDelta
@@ -115,7 +109,7 @@ fun updateWorld(world: World, instantiator: Instantiator, commands: Commands<Com
       println("Skipped a frame.  deltaAggregator = " + deltaAggregator + " simulationDelta = " + simulationDelta)
       deltaAggregator = deltaAggregator % simulationDelta
     }
-    val updater = WorldUpdater(world, instantiator)
+    val updater = WorldUpdater(world)
     updater.update(commands, simulationDelta)
   }
 //  val updater = WorldUpdater(world, instantiator)

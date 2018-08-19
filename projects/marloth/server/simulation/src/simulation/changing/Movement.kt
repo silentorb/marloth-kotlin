@@ -1,14 +1,11 @@
 package simulation.changing
 
-import commanding.CommandType
-import haft.Commands
+import simulation.CommandType
 import mythic.sculpting.FlexibleEdge
 import mythic.sculpting.FlexibleFace
 import mythic.spatial.*
 import org.joml.plus
-import org.joml.times
 import physics.Body
-import physics.MovementForce
 import simulation.*
 
 fun hitsWall(edge: FlexibleEdge, position: Vector3, radius: Float) =
@@ -142,7 +139,7 @@ val playerAttackMap = mapOf(
     CommandType.lookDown to Vector3(0f, -1f, 0f)
 )
 
-fun joinInputVector(commands: Commands<CommandType>, commandMap: Map<CommandType, Vector3>): Vector3? {
+fun joinInputVector(commands: Commands, commandMap: Map<CommandType, Vector3>): Vector3? {
   val forces = commands.mapNotNull {
     val vector = commandMap[it.type]
     if (vector != null && it.value > 0)

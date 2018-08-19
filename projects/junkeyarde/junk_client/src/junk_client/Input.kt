@@ -1,9 +1,8 @@
 package junk_client
 
-import haft.Commands
+import haft.HaftCommands
 import haft.ScalarInputSource
 import haft.disconnectedScalarInputSource
-import junk_client.views.ClientBattleState
 import junk_simulation.*
 import mythic.platforming.PlatformInput
 import org.joml.Vector2i
@@ -92,6 +91,6 @@ fun createDeviceHandlers(input: PlatformInput): List<ScalarInputSource> {
 }
 
 data class UserInput(
-    val commands: Commands<CommandType>,
+    val commands: HaftCommands<CommandType>,
     val mousePosition: Vector2i
 )

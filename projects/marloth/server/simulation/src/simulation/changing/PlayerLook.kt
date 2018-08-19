@@ -1,11 +1,12 @@
 package simulation.changing
 
-import commanding.CommandType
-import haft.Commands
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.times
 import org.joml.plus
+import simulation.Character
+import simulation.CommandType
+import simulation.Commands
 import simulation.Player
 import simulation.ViewMode
 
@@ -47,23 +48,18 @@ private val thirdPersonLookMomentum = MomentumConfig2(
 //    MomentumConfig(1f, 4f)
 //)
 
-val playerLookMapFP = mapOf(
+val playerLookMap = mapOf(
     CommandType.lookLeft to Vector3(0f, 0f, 1f),
     CommandType.lookRight to Vector3(0f, 0f, -1f),
     CommandType.lookUp to Vector3(0f, -1f, 0f),
-    CommandType.lookDown to Vector3(0f, 1f, 0f)
+    CommandType.lookDown to Vector3(0f, 1f, 0f),
+    CommandType.lookCameraUp to Vector3(0f, 1f, 0f),
+    CommandType.lookCameraDown to Vector3(0f, -1f, 0f)
 )
 
-val playerLookMapTP = mapOf(
-    CommandType.lookLeft to Vector3(0f, 0f, 1f),
-    CommandType.lookRight to Vector3(0f, 0f, -1f),
-    CommandType.lookUp to Vector3(0f, 1f, 0f),
-    CommandType.lookDown to Vector3(0f, -1f, 0f)
-)
-
-fun playerRotate(lookMap: Map<CommandType, Vector3>, player: Player, commands: Commands<CommandType>): Vector2? {
+fun characterLookForce(commands: Commands): Vector2? {
   val speed = 1f
-  val offset3 = joinInputVector(commands, lookMap)
+  val offset3 = joinInputVector(commands, playerLookMap)
   return if (offset3 != null) {
     val offset2 = Vector2(offset3.z, offset3.y)
     offset2 * mouseLookSensitivity * speed
@@ -71,28 +67,29 @@ fun playerRotate(lookMap: Map<CommandType, Vector3>, player: Player, commands: C
     null
 }
 
-fun playerRotateFP(player: Player, commands: Commands<CommandType>): Vector2? =
-    playerRotate(playerLookMapFP, player, commands)
+//fun playerRotateFP(player: Player, commands: Commands): Vector2? =
+//    characterLookForce(playerLookMapFP, player, commands)
+//
+//
+//fun playerRotateTP(player: Player, commands: Commands): Vector2? =
+//    characterLookForce(playerLookMapTP, player, commands)
 
-
-fun playerRotateTP(player: Player, commands: Commands<CommandType>): Vector2? =
-    playerRotate(playerLookMapTP, player, commands)
-
-fun applyPlayerLookCommands(player: Player, commands: Commands<CommandType>, delta: Float) {
-  if (player.viewMode == ViewMode.firstPerson) {
-    playerRotateFP(player, commands)
-  } else if (player.viewMode == ViewMode.thirdPerson) {
-    playerRotateTP(player, commands)
-  }
+fun applyPlayerLookCommands(commands: Commands, delta: Float): Vector2? {
+  return characterLookForce(playerLookMap, commands)
+//  if (player.viewMode == ViewMode.firstPerson) {
+//    playerRotateFP(player, commands)
+//  } else if (player.viewMode == ViewMode.thirdPerson) {
+//    playerRotateTP(player, commands)
+//  }
 }
 
-fun updatePlayerLookForce(player: Player, commands: Commands<CommandType>): Vector2? {
-  return when (player.viewMode) {
-    ViewMode.firstPerson -> playerRotateFP(player, commands)
-    player.viewMode -> playerRotateTP(player, commands)
-    else -> throw Error("Not supported")
-  }
-}
+//fun updatePlayerLookForce(player: Player, commands: Commands): Vector2? {
+//  return when (player.viewMode) {
+//    ViewMode.firstPerson -> playerRotateFP(player, commands)
+//    player.viewMode -> playerRotateTP(player, commands)
+//    else -> throw Error("Not supported")
+//  }
+//}
 
 fun updatePlayerLookVelocity(lookForce: Vector2, lookVelocity: Vector2): Vector2 {
   val diff = lookForce - lookVelocity
@@ -105,8 +102,8 @@ fun updatePlayerLookVelocity(lookForce: Vector2, lookVelocity: Vector2): Vector2
     lookVelocity
 }
 
-fun updatePlayerRotation(player: Player, delta: Float): Vector3? {
-  val velocity = player.lookVelocity
+fun updatePlayerRotation(player: Player,character: Character, delta: Float): Vector3? {
+  val velocity = character.lookVelocity
   val deltaVelocity = velocity * delta
   return if (velocity.y != 0f || velocity.x != 0f) {
     val m = (if (player.viewMode == ViewMode.firstPerson)
