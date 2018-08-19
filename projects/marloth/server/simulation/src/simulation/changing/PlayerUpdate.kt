@@ -38,7 +38,7 @@ fun applyCommands(world: World, instantiator: Instantiator, commands: Commands, 
 //      .map { player ->
 //        player.lookForce = Vector2()
 //        val result = applyPlayerCommands(player, commands.filter({ it.target == player.playerId }), delta)
-//        updatePlayerRotation(player, delta)
+//        updateTpCameraRotation(player, delta)
 //        CharacterAction(player.character, result)
 //      }
 

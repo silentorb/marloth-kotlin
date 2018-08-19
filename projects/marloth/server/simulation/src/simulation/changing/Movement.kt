@@ -151,9 +151,13 @@ fun joinInputVector(commands: Commands, commandMap: Map<CommandType, Vector3>): 
     return null
 
   val offset = forces.reduce { a, b -> a + b }
-  offset.normalize()
-  assert(!offset.x.isNaN() && !offset.y.isNaN())
-  return offset
+  return if (offset == Vector3())
+    Vector3()
+  else {
+    offset.normalize()
+    assert(!offset.x.isNaN() && !offset.y.isNaN())
+    return offset
+  }
 }
 
 fun getLookAtAngle(lookAt: Vector3) =

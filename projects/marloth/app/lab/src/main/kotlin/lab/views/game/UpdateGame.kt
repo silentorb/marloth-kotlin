@@ -1,8 +1,9 @@
 package lab.views.game
 
-import commanding.CommandType
+import front.mapCommands
 import haft.HaftCommands
 import lab.LabApp
+import marloth.clienting.CommandType
 import mythic.spatial.Vector3
 import simulation.Id
 import simulation.World
@@ -47,11 +48,7 @@ fun updateLabWorld(app: LabApp, commands: HaftCommands<CommandType>, delta: Floa
   }
 //  val instantiator = Instantiator(app.world, InstantiatorConfig(app.gameConfig.gameplay.defaultPlayerView))
   val world = app.world
-  val characterCommands = commands.map {
-    it.copy(
-        target = world.players[it.target].character
-    )
-  }
+  val characterCommands = mapCommands(world.players, commands)
   updateWorld(world, characterCommands, delta)
 
 //  trackSpiritMovement(app.world, delta)

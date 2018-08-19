@@ -7,19 +7,16 @@ enum class CommandType {
   lookRight,
   lookUp,
   lookDown,
-
-  lookCameraUp,
-  lookCameraDown,
+  
+  cameraLookLeft,
+  cameraLookRight,
+  cameraLookUp,
+  cameraLookDown,
 
   moveUp,
   moveDown,
   moveLeft,
   moveRight,
-
-//  attackUp,
-//  attackDown,
-//  attackLeft,
-//  attackRight,
 
   jump,
   attack,
@@ -27,12 +24,7 @@ enum class CommandType {
   run,
 
   switchView,
-
-  activateDevice,
-  joinGame,
-  menu,
-  menuSelect,
-  menuBack,
+  joinGame
 }
 
 data class Command(

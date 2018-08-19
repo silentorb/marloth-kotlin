@@ -48,40 +48,45 @@ private val thirdPersonLookMomentum = MomentumConfig2(
 //    MomentumConfig(1f, 4f)
 //)
 
-val playerLookMap = mapOf(
+val firstPersonLookMap = mapOf(
     CommandType.lookLeft to Vector3(0f, 0f, 1f),
     CommandType.lookRight to Vector3(0f, 0f, -1f),
     CommandType.lookUp to Vector3(0f, -1f, 0f),
-    CommandType.lookDown to Vector3(0f, 1f, 0f),
-    CommandType.lookCameraUp to Vector3(0f, 1f, 0f),
-    CommandType.lookCameraDown to Vector3(0f, -1f, 0f)
+    CommandType.lookDown to Vector3(0f, 1f, 0f)
 )
 
-fun characterLookForce(commands: Commands): Vector2? {
+val cameraLookMap = mapOf(
+    CommandType.cameraLookLeft to Vector3(0f, 0f, 1f),
+    CommandType.cameraLookRight to Vector3(0f, 0f, -1f),
+    CommandType.cameraLookUp to Vector3(0f, 1f, 0f),
+    CommandType.cameraLookDown to Vector3(0f, -1f, 0f)
+)
+
+fun applyLookForce(lookMap: Map<CommandType, Vector3>, commands: Commands): Vector2 {
   val speed = 1f
-  val offset3 = joinInputVector(commands, playerLookMap)
+  val offset3 = joinInputVector(commands, lookMap)
   return if (offset3 != null) {
     val offset2 = Vector2(offset3.z, offset3.y)
     offset2 * mouseLookSensitivity * speed
   } else
-    null
+    Vector2()
 }
 
-//fun playerRotateFP(player: Player, commands: Commands): Vector2? =
-//    characterLookForce(playerLookMapFP, player, commands)
-//
+fun characterLookForce(commands: Commands): Vector2 =
+    applyLookForce(firstPersonLookMap, commands)
+
 //
 //fun playerRotateTP(player: Player, commands: Commands): Vector2? =
 //    characterLookForce(playerLookMapTP, player, commands)
 
-fun applyPlayerLookCommands(commands: Commands, delta: Float): Vector2? {
-  return characterLookForce(playerLookMap, commands)
-//  if (player.viewMode == ViewMode.firstPerson) {
-//    playerRotateFP(player, commands)
-//  } else if (player.viewMode == ViewMode.thirdPerson) {
-//    playerRotateTP(player, commands)
-//  }
-}
+//fun applyPlayerLookCommands(commands: Commands, delta: Float): Vector2? {
+//  return characterLookForce(firstPersonLookMap, commands)
+////  if (player.viewMode == ViewMode.firstPerson) {
+////    playerRotateFP(player, commands)
+////  } else if (player.viewMode == ViewMode.thirdPerson) {
+////    playerRotateTP(player, commands)
+////  }
+//}
 
 //fun updatePlayerLookForce(player: Player, commands: Commands): Vector2? {
 //  return when (player.viewMode) {
@@ -102,15 +107,19 @@ fun updatePlayerLookVelocity(lookForce: Vector2, lookVelocity: Vector2): Vector2
     lookVelocity
 }
 
-fun updatePlayerRotation(player: Player,character: Character, delta: Float): Vector3? {
+fun fpCameraRotation(velocity: Vector2, delta: Float): Vector3 {
+  val deltaVelocity = velocity * delta
+  return if (velocity.y != 0f || velocity.x != 0f) {
+    Vector3(0f, deltaVelocity.y, deltaVelocity.x)
+  }
+  else
+    Vector3()
+}
+
+fun updateTpCameraRotation(player: Player, character: Character, delta: Float): Vector3? {
   val velocity = character.lookVelocity
   val deltaVelocity = velocity * delta
   return if (velocity.y != 0f || velocity.x != 0f) {
-    val m = (if (player.viewMode == ViewMode.firstPerson)
-      firstPersonLookMomentum
-    else
-      thirdPersonLookMomentum) * mouseLookSensitivity
-
     if (player.viewMode == ViewMode.firstPerson)
       Vector3(0f, deltaVelocity.y, deltaVelocity.x)
     else {

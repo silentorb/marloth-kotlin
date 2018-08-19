@@ -1,6 +1,5 @@
 package marloth.clienting
 
-import commanding.CommandType
 import haft.*
 import mythic.platforming.PlatformInput
 import org.joml.Vector2i
@@ -10,6 +9,10 @@ import org.lwjgl.glfw.GLFW.*
 val gamepadSlotStart = 2
 
 typealias InputEvents = ProfileStates<CommandType>
+
+typealias UserCommand = HaftCommand<CommandType>
+
+typealias UserCommands = List<UserCommand>
 
 data class InputState(
     val events: InputEvents,

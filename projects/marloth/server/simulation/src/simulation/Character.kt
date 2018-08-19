@@ -21,7 +21,6 @@ data class Character(
     val health: Resource,
     val isAlive: Boolean = true,
     val facingRotation: Vector3 = Vector3(),
-    val lookForce: Vector2 = Vector2(),
     val lookVelocity: Vector2 = Vector2()
 ) {
   val facingQuaternion: Quaternion

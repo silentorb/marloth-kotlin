@@ -1,6 +1,5 @@
 package marloth.clienting
 
-import commanding.CommandType
 import haft.*
 
 data class InputConfiguration(

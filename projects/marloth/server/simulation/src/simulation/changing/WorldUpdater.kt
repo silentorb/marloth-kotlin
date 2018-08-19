@@ -4,12 +4,12 @@ import intellect.pursueGoals
 import intellect.updateAiState
 import mythic.breeze.applyAnimation
 import mythic.spatial.Quaternion
+import org.joml.plus
 import physics.applyForces
 import physics.updateBodies
 import simulation.*
 import simulation.combat.updateMissiles
 import simulation.input.allPlayerMovements
-import simulation.input.updateCharacterFacing
 import simulation.input.updatePlayers
 
 fun <T> updateField(defaultValue: T, newValue: T?): T =
@@ -33,9 +33,13 @@ fun updateCharacter(world: World, character: Character, commands: Commands, delt
   } else {
 
   }
+  val lookForce = characterLookForce(commands)
+  val lookVelocity = updatePlayerLookVelocity(lookForce, character.lookVelocity)
+
   return character.copy(
       isAlive = character.health.value > 0,
-      facingRotation = updateCharacterFacing(character, commands)
+      lookVelocity = lookVelocity,
+      facingRotation = character.facingRotation + fpCameraRotation(lookVelocity, delta)
   )
 }
 

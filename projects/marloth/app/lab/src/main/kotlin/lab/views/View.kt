@@ -1,9 +1,9 @@
 package lab.views
 
-import commanding.CommandType
 import lab.LabState
 import haft.*
 import lab.LabCommandType
+import marloth.clienting.CommandType
 import marloth.clienting.gui.MenuActionType
 import org.joml.Vector2i
 

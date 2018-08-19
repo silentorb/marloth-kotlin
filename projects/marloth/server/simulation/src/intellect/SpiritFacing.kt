@@ -49,7 +49,8 @@ fun spiritFacingChange(knowledge: Knowledge, pursuit: Pursuit): Commands {
   return if (absCourse == 0f) {
     listOf()
   } else {
-    val dir = if (course > 0f) CommandType.lookRight else CommandType.lookLeft
+//    val dir = if (course > 0f) CommandType.lookRight else CommandType.lookLeft
+    val dir = if (course > 0f) CommandType.lookLeft else CommandType.lookRight
 //    val increment = minMax(2f * delta, -absCourse, absCourse)
 //    val facing = character.facingRotation.copy()
 //    facing.z += increment * dir

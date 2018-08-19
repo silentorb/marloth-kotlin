@@ -1,9 +1,9 @@
 package front
 
-import commanding.CommandType
 import generation.generateDefaultWorld
 import haft.ProfileStates
 import marloth.clienting.Client
+import marloth.clienting.CommandType
 import mythic.platforming.Display
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
@@ -33,9 +33,10 @@ tailrec fun gameLoop(app: App, previousState: AppState) {
   val scenes = createScenes(app.world, app.client.screens)
   val (commands, nextInputState) = app.client.update(scenes, previousState.inputState)
   val delta = app.timer.update().toFloat()
-  val instantiator = Instantiator(app.world, InstantiatorConfig())
+//  val instantiator = Instantiator(app.world, InstantiatorConfig())
   val updater = WorldUpdater(app.world)
-  updater.update(commands, delta)
+  val characterCommands = mapCommands(app.world.players, commands)
+  updater.update(characterCommands, delta)
   app.platform.process.pollEvents()
 
   if (!app.platform.process.isClosing())

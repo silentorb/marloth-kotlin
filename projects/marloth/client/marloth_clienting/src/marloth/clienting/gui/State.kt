@@ -1,7 +1,7 @@
 package marloth.clienting.gui
 
-import commanding.CommandType
 import haft.HaftCommands
+import marloth.clienting.CommandType
 
 enum class MenuId {
   main

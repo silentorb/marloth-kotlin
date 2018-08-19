@@ -1,6 +1,5 @@
 package lab
 
-import commanding.CommandType
 import haft.*
 import lab.views.*
 import lab.views.game.GameViewRenderData
@@ -14,6 +13,7 @@ import lab.views.model.ModelViewState
 import lab.views.world.WorldView
 import marloth.clienting.Client
 import marloth.clienting.ClientState
+import marloth.clienting.CommandType
 import marloth.clienting.InputState
 import marloth.clienting.gui.MenuActionType
 import marloth.clienting.gui.menuButtonAction
