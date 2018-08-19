@@ -18,7 +18,7 @@ data class Character(
     val abilities: MutableList<Ability> = mutableListOf(),
     val faction: Faction,
     val health: Resource,
-    var isAlive: Boolean = true,
+    val isAlive: Boolean = true,
     val facingRotation: Vector3 = Vector3()
 ) {
   val facingQuaternion: Quaternion

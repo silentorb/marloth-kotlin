@@ -15,7 +15,7 @@ data class BodyAttributes(
 
 class Body(
     val id: Id,
-    var shape: Shape?,
+    val shape: Shape?,
     var position: Vector3,
     var orientation: Quaternion,
     var velocity: Vector3,

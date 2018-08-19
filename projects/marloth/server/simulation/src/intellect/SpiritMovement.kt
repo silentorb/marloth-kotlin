@@ -15,7 +15,6 @@ import simulation.changing.simulationDelta
 fun getNextPathFace(knowledge: Knowledge, path: Path): FlexibleFace? {
   val character = knowledge.character
   val node = character.body.node
-//  val remainingPath = getRemainingPath(node, path)
   val nextNode = path.first()
   return node.walls.firstOrNull { getOtherNode(node, it) == nextNode }
 }
@@ -59,56 +58,28 @@ fun updateMovementPursuit(knowledge: Knowledge, pursuit: Pursuit): Pursuit {
 
   return Pursuit(path = path)
 }
-/*
-fun <T>requiresFacing(character: Character, offset: Vector3, delta: Float, delegate: () -> T): T? {
-  val course = facingDistance(character, offset)
-  val dir = if (course > 0f) 1f else -1f
-  val absCourse = Math.abs(course)
-  val increment = minMax(2f * delta, -absCourse, absCourse)
-  return if (absCourse > increment) {
-    character.facingRotation.z += increment * dir
-    val facing = character.facingRotation.copy()
-    facing.z += increment * dir
-    listOf(Action(ActionType.face, facingRotation = facing))
-  } else {
-    val facing = character.facingRotation.copy()
-    facing.z = getLookAtAngle(offset)
-    listOf(
-        Action(ActionType.face, facingRotation = facing),
-        delegate()
-    )
-  }
-}
- */
 
-fun inFacingRange(character: Character, offset: Vector3, delta: Float): Boolean {
-  val course = facingDistance(character, offset)
-  val absCourse = Math.abs(course)
-  val increment = minMax(2f * delta, -absCourse, absCourse)
-  return absCourse <= increment
-}
-
-fun moveSpirit(knowledge: Knowledge, pursuit: Pursuit): MovementForce? {
+fun getTargetOffset(knowledge: Knowledge, pursuit: Pursuit): Vector3 {
   val character = knowledge.character
   val path = pursuit.path!!
   val face = getNextPathFace(knowledge, path)
-  return if (face == null) {
+  if (face == null)
     throw Error("Not supported")
-//    println("Not supported!!!")
-//    return SpiritUpdateResult(spirit.state.copy(
-//        path = findPath(node, newPath.last())
-//    ))
-  } else {
-    val edge = getFloor(face)
-    val position = character.body.position
-    val nearestPoint = edge.vertices.sortedBy { it.distance(position) }.first()
-    val target = (edge.middle + nearestPoint) / 2f
-    val offset = (target - position).normalize()
-    if (inFacingRange(character, offset, simulationDelta))
-      MovementForce(offset = offset, body = character.body, maximum = 6f)
-    else
-      null
-  }
+
+  val edge = getFloor(face)
+  val position = character.body.position
+  val nearestPoint = edge.vertices.sortedBy { it.distance(position) }.first()
+  val target = (edge.middle + nearestPoint) / 2f
+  return (target - position).normalize()
+}
+
+fun moveSpirit(knowledge: Knowledge, pursuit: Pursuit): MovementForce? {
+  val offset = getTargetOffset(knowledge, pursuit)
+  val character = knowledge.character
+  return if (inFacingRange(character, offset, simulationDelta))
+    MovementForce(offset = offset, body = character.body, maximum = 6f)
+  else
+    null
 }
 
 fun getAngleCourse(source: Float, destination: Float): Float {

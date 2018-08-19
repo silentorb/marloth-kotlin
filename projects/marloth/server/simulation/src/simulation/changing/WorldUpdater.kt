@@ -2,6 +2,7 @@ package simulation.changing
 
 import commanding.CommandType
 import haft.Commands
+import intellect.allSpiritFacingChanges
 import intellect.allSpiritMovements
 import intellect.updateAiState
 import mythic.breeze.applyAnimation
@@ -21,28 +22,11 @@ fun <T> updateField(defaultValue: T, newValue: T?): T =
 
 fun updateCharacters(world: World, playerCharacters: PlayerCharacters, commands: Commands<CommandType>) {
   val delta = simulationDelta
-  val changes = allPlayerFacingChanges(playerCharacters, commands)
+  val changes = allPlayerFacingChanges(playerCharacters, commands).plus(allSpiritFacingChanges(world.spirits))
 
   world.characterTable = world.characterTable.mapValues { e ->
     val character = e.value
     val id = character.id
-    character.copy(
-        facingRotation = updateField(character.facingRotation, changes[id])
-    )
-  }.toMutableMap()
-}
-
-fun updatePhysics(world: World, playerCharacters: PlayerCharacters, commands: Commands<CommandType>) {
-  val delta = simulationDelta
-  val forces = allPlayerMovements(playerCharacters, commands).plus(allSpiritMovements(world.spirits))
-  applyForces(forces, delta)
-  updateBodies(world.meta, world.bodies, delta)
-  world.bodies.forEach { updateBodyNode(it) }
-}
-
-class WorldUpdater(val world: World, val instantiator: Instantiator) {
-
-  fun updateCharacter(character: Character, delta: Float) {
     if (character.isAlive) {
       character.abilities.forEach { updateAbility(it, delta) }
       character.body.orientation = Quaternion()
@@ -57,25 +41,22 @@ class WorldUpdater(val world: World, val instantiator: Instantiator) {
     } else {
 
     }
-  }
+    character.copy(
+        isAlive = character.health.value > 0,
+        facingRotation = updateField(character.facingRotation, changes[id])
+    )
+  }.toMutableMap()
+}
 
-//  fun updateCharacters(delta: Float) {
-//    world.characters.forEach { updateCharacter(it, delta) }
-//  }
+fun updateBodies(world: World, playerCharacters: PlayerCharacters, commands: Commands<CommandType>) {
+  val delta = simulationDelta
+  val forces = allPlayerMovements(playerCharacters, commands).plus(allSpiritMovements(world.spirits))
+  applyForces(forces, delta)
+  updateBodies(world.meta, world.bodies, delta)
+  world.bodies.forEach { updateBodyNode(it) }
+}
 
-  fun createMissiles(newMissiles: List<NewMissile>) {
-    for (newMissile in newMissiles) {
-      instantiator.createMissile(newMissile)
-    }
-  }
-
-  fun updateDead() {
-    val died = world.characters.filter { it.isAlive == true && it.health.value == 0 }
-    died.forEach {
-      it.isAlive = false
-      it.body.shape = null
-    }
-  }
+class WorldUpdater(val world: World, val instantiator: Instantiator) {
 
   fun getFinished(): List<Int> {
     return world.missileTable.values
@@ -102,16 +83,15 @@ class WorldUpdater(val world: World, val instantiator: Instantiator) {
 
     world.spiritTable = world.spiritTable.mapValues { updateAiState(world, it.value) }.toMutableMap()
 //    val spiritResults = world.spirits.map { CharacterAction(world.characterTable[it.id]!!, pursueGoal(it)) }
-    val playerResults = applyCommands(world, instantiator, commands, delta)
+//    val playerResults = applyCommands(world, instantiator, commands, delta)
 //    val results = spiritResults.plus(playerResults)
 //    applyActions(world, results)
 //    val forces = actionsToForces(results)
 //    val newMissiles = results.mapNotNull { it.newMissile }
     world.players = updatePlayers(world.players, commands)
     updateCharacters(world, playerCharacters, commands)
-    updatePhysics(world, playerCharacters, commands)
+    updateBodies(world, playerCharacters, commands)
     world.missileTable.values.forEach { updateMissile(world, it, delta) }
-    updateDead()
     val finished = getFinished()
     removeFinished(finished)
 
