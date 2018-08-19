@@ -1,15 +1,11 @@
 package simulation.input
 
-import simulation.CommandType
 import mythic.spatial.Vector2
-import simulation.Commands
-import simulation.Player
-import simulation.Players
-import simulation.ViewMode
+import simulation.*
 import simulation.changing.*
 
-fun filterCommands(player: Player, commands: Commands) =
-    commands.filter({ it.target == player.playerId })
+fun filterCommands(id: Id, commands: Commands) =
+    commands.filter({ it.target == id })
 
 private val viewModes = ViewMode.values()
 
@@ -43,5 +39,5 @@ fun updatePlayers(players: Players, commands: Commands): Players {
   if (commands.any { it.type == CommandType.switchView })
     println("hello")
 
-  return players.map { updatePlayer(it, filterCommands(it, commands)) }
+  return players.map { updatePlayer(it, filterCommands(it.character, commands)) }
 }

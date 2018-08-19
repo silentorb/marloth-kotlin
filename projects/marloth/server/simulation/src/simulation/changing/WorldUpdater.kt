@@ -52,9 +52,9 @@ fun updateCharacters(world: World, commands: Commands) {
   }.toMutableMap()
 }
 
-fun updateBodies(world: World, playerCharacters: PlayerCharacters, commands: Commands) {
+fun updateBodies(world: World, commands: Commands) {
   val delta = simulationDelta
-  val forces = allPlayerMovements(playerCharacters, commands)
+  val forces = allPlayerMovements(world.characterTable, commands)
   applyForces(forces, delta)
   updateBodies(world.meta, world.bodies, delta)
   world.bodies.forEach { updateBodyNode(it) }
@@ -91,7 +91,7 @@ class WorldUpdater(val world: World) {
     world.players = updatePlayers(world.players, commands)
     updateCharacters(world, commands)
     updateMissiles(world, commands)
-    updateBodies(world, playerCharacters, commands)
+    updateBodies(world, commands)
     val finished = getFinished()
     removeFinished(finished)
   }

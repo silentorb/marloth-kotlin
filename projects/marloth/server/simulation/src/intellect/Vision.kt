@@ -11,7 +11,7 @@ fun isInAngleOfView(viewer: Character, target: Character): Boolean =
 fun isInVisibleRange(viewer: Character, target: Character): Boolean =
     viewer.body.position.distance(target.body.position) <= viewingRange
 
-fun canSee(viewer: Character, target: Character): Boolean =
-    isInVisibleRange(viewer, target)
-        && isInAngleOfView(viewer, target)
-        && rayCanHitPoint(viewer.body.node, viewer.body.position, target.body.position)
+fun canSee(viewer: Character, target: Character): Boolean = false
+//    isInVisibleRange(viewer, target)
+//        && isInAngleOfView(viewer, target)
+//        && rayCanHitPoint(viewer.body.node, viewer.body.position, target.body.position)

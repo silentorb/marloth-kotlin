@@ -79,7 +79,7 @@ fun moveSpirit(knowledge: Knowledge, pursuit: Pursuit): Commands {
   val character = knowledge.character
   val facingCommands = spiritFacingChange(knowledge, pursuit)
   return if (inFacingRange(character, offset, simulationDelta))
-    facingCommands.plus(Command(CommandType.lookLeft, character.id))
+    facingCommands.plus(Command(CommandType.moveUp, character.id))
   else
     facingCommands
 }
