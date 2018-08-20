@@ -6,6 +6,7 @@ import intellect.Pursuit
 import intellect.Spirit
 import mythic.breeze.Armature
 import mythic.spatial.Quaternion
+import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import org.joml.plus
@@ -69,6 +70,7 @@ class Instantiator(
     val body = createBody(EntityType.character, commonShapes[EntityType.character]!!, position, node, characterBodyAttributes)
     val character = Character(
         id = body.id,
+        turnSpeed = Vector2(1.5f, 1f),
         faction = faction,
         body = body,
         health = Resource(definition.health),

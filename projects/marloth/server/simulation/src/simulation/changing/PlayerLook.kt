@@ -62,18 +62,17 @@ val cameraLookMap = mapOf(
     CommandType.cameraLookDown to Vector3(0f, -1f, 0f)
 )
 
-fun applyLookForce(lookMap: Map<CommandType, Vector3>, commands: Commands): Vector2 {
-  val speed = 1f
+fun applyLookForce(lookMap: Map<CommandType, Vector3>, character: Character, commands: Commands): Vector2 {
   val offset3 = joinInputVector(commands, lookMap)
   return if (offset3 != null) {
     val offset2 = Vector2(offset3.z, offset3.y)
-    offset2 * mouseLookSensitivity * speed
+    offset2 * mouseLookSensitivity * character.turnSpeed
   } else
     Vector2()
 }
 
-fun characterLookForce(commands: Commands): Vector2 =
-    applyLookForce(firstPersonLookMap, commands)
+fun characterLookForce(character: Character, commands: Commands): Vector2 =
+    applyLookForce(firstPersonLookMap, character, commands)
 
 //
 //fun playerRotateTP(player: Player, commands: Commands): Vector2? =
@@ -96,12 +95,13 @@ fun characterLookForce(commands: Commands): Vector2 =
 //  }
 //}
 
+const val maxLookVelocityChange = 0.1f
+
 fun updatePlayerLookVelocity(lookForce: Vector2, lookVelocity: Vector2): Vector2 {
   val diff = lookForce - lookVelocity
   val diffLength = diff.length()
-  val maxLength = 0.05f
   return if (diffLength != 0f) {
-    val adjustment = if (diffLength > maxLength) diff.normalize() * maxLength else diff
+    val adjustment = if (diffLength > maxLookVelocityChange) diff.normalize() * maxLookVelocityChange else diff
     lookVelocity + adjustment
   } else
     lookVelocity
@@ -111,8 +111,7 @@ fun fpCameraRotation(velocity: Vector2, delta: Float): Vector3 {
   val deltaVelocity = velocity * delta
   return if (velocity.y != 0f || velocity.x != 0f) {
     Vector3(0f, deltaVelocity.y, deltaVelocity.x)
-  }
-  else
+  } else
     Vector3()
 }
 

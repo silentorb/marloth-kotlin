@@ -77,38 +77,13 @@ fun getTargetOffset(knowledge: Knowledge, pursuit: Pursuit): Vector3 {
 fun moveSpirit(knowledge: Knowledge, pursuit: Pursuit): Commands {
   val offset = getTargetOffset(knowledge, pursuit)
   val character = knowledge.character
-  val facingCommands = spiritFacingChange(knowledge, pursuit)
-  return if (inFacingRange(character, offset, simulationDelta))
+  val facingCommands = spiritFacingChange(knowledge, offset)
+  val course = facingDistance(character, offset)
+
+  val absCourse = Math.abs(course)
+  val acceptableRange = 0.1f
+  return if (absCourse <= acceptableRange)
     facingCommands.plus(Command(CommandType.moveUp, character.id))
   else
     facingCommands
 }
-
-fun getAngleCourse(source: Float, destination: Float): Float {
-  val full = Pi * 2
-  if (source == destination)
-    return 0f
-
-  val plus = (full + destination - source) % full
-  val minus = (full + source - destination) % full
-  return if (plus < minus)
-    plus
-  else
-    -minus
-}
-
-fun facingDistance(character: Character, lookAt: Vector3): Float {
-  val angle = getLookAtAngle(lookAt)
-  return getAngleCourse(character.facingRotation.z, angle)
-}
-
-//fun spiritMovement(spirit: Spirit): MovementForce? {
-//  val goal = spirit.goals.first()
-//  return if (goal.type == GoalType.beAt)
-//    moveSpirit(spirit.knowledge, spirit.pursuit)
-//  else
-//    null
-//}
-
-//fun allSpiritMovements(spirits: Collection<Spirit>): List<MovementForce> =
-//    spirits.mapNotNull { spiritMovement(it) }

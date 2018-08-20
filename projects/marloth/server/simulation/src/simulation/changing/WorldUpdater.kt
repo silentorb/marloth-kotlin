@@ -33,7 +33,7 @@ fun updateCharacter(world: World, character: Character, commands: Commands, delt
   } else {
 
   }
-  val lookForce = characterLookForce(commands)
+  val lookForce = characterLookForce(character, commands)
   val lookVelocity = updatePlayerLookVelocity(lookForce, character.lookVelocity)
 
   return character.copy(

@@ -15,6 +15,7 @@ data class CharacterDefinition(
 
 data class Character(
     val id: Int,
+    val turnSpeed: Vector2,
     val body: Body,
     val abilities: MutableList<Ability> = mutableListOf(),
     val faction: Faction,

@@ -1,6 +1,5 @@
 package simulation.input
 
-import simulation.CommandType
 import mythic.spatial.Pi
 import mythic.spatial.Quaternion
 import org.joml.times
