@@ -5,10 +5,12 @@ import intellect.updateAiState
 import mythic.breeze.applyAnimation
 import mythic.spatial.Quaternion
 import org.joml.plus
+import physics.Body
 import physics.applyForces
+import physics.commonShapes
 import physics.updateBodies
 import simulation.*
-import simulation.combat.updateMissiles
+import simulation.combat.*
 import simulation.input.allPlayerMovements
 import simulation.input.updatePlayers
 
@@ -18,7 +20,7 @@ fun <T> updateField(defaultValue: T, newValue: T?): T =
     else
       defaultValue
 
-fun updateCharacter(world: World, character: Character, commands: Commands, delta: Float): Character {
+fun updateCharacter(world: World, character: Character, commands: Commands, collisions: List<Collision>, delta: Float): Character {
   val id = character.id
   if (character.isAlive) {
     character.abilities.forEach { updateAbility(it, delta) }
@@ -36,28 +38,49 @@ fun updateCharacter(world: World, character: Character, commands: Commands, delt
   val lookForce = characterLookForce(character, commands)
   val lookVelocity = updatePlayerLookVelocity(lookForce, character.lookVelocity)
 
+  val hits = collisions.filter { it.second == character.id }
+  val health = modifyResource(character.health, hits.map { -50 })
+
   return character.copy(
       isAlive = character.health.value > 0,
       lookVelocity = lookVelocity,
-      facingRotation = character.facingRotation + fpCameraRotation(lookVelocity, delta)
+      facingRotation = character.facingRotation + fpCameraRotation(lookVelocity, delta),
+      health = character.health.copy(value = health)
   )
 }
 
-fun updateCharacters(world: World, commands: Commands) {
+fun updateCharacters(world: World, collisions: List<Collision>, commands: Commands): List<Character> {
   val delta = simulationDelta
-  world.characterTable = world.characterTable.mapValues { e ->
+  return world.characterTable.map{ e ->
     val character = e.value
     val id = character.id
-    updateCharacter(world, character, commands.filter { it.target == id }, delta)
-  }.toMutableMap()
+    updateCharacter(world, character, commands.filter { it.target == id }, collisions, delta)
+  }
 }
 
-fun updateBodies(world: World, commands: Commands) {
+fun updateBodies(world: World, commands: Commands): List<Body> {
   val delta = simulationDelta
   val forces = allPlayerMovements(world.characterTable, commands)
   applyForces(forces, delta)
   updateBodies(world.meta, world.bodies, delta)
-  world.bodies.forEach { updateBodyNode(it) }
+  return world.bodies.map {
+    updateBodyNode(it)
+    it
+  }
+}
+
+fun getNewBodies(newMissiles: List<NewMissile>): List<Body> {
+  return newMissiles.map { newMissile ->
+    Body(
+        id = newMissile.id,
+        shape = commonShapes[EntityType.missile]!!,
+        position = newMissile.position,
+        orientation = Quaternion(),
+        velocity = newMissile.velocity,
+        node = newMissile.node,
+        attributes = missileBodyAttributes
+    )
+  }
 }
 
 class WorldUpdater(val world: World) {
@@ -72,10 +95,7 @@ class WorldUpdater(val world: World) {
   }
 
   fun removeFinished(finished: List<Int>) {
-    world.missileTable.minusAssign(finished)
-    world.bodyTable.minusAssign(finished)
-    world.entities.minusAssign(finished)
-    world.characterTable.minusAssign(finished)
+    world.characterTable = world.characterTable.minus(finished)
     world.spiritTable.minusAssign(finished)
     world.depictionTable.minusAssign(finished)
     world.lights.minusAssign(finished)
@@ -89,10 +109,18 @@ class WorldUpdater(val world: World) {
     val spiritCommands = pursueGoals(world.spirits)
     val commands = playerCommands.plus(spiritCommands)
     world.players = updatePlayers(world.players, commands)
-    updateCharacters(world, commands)
-    updateMissiles(world, commands)
-    updateBodies(world, commands)
+    val collisions = getCollisions(world.bodyTable, world.characterTable, world.missiles)
+    val characters = updateCharacters(world, collisions, commands)
+    val newMissiles = getNewMissiles(world, commands)
     val finished = getFinished()
+    world.missileTable = updateMissiles(world, newMissiles, collisions, finished)
+        .associate { Pair(it.id, it) }
+    world.bodyTable = updateBodies(world, commands)
+        .filter { body -> finished.none { it == body.id } }
+        .plus(getNewBodies(newMissiles))
+        .associate { Pair(it.id, it) }
+
+    world.characterTable = characters.associate { Pair(it.id, it) }
     removeFinished(finished)
   }
 }

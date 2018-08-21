@@ -18,8 +18,6 @@ import rigging.humanAnimations
 import scenery.*
 import simulation.*
 import simulation.Id
-import simulation.combat.Missile
-import simulation.combat.NewMissile
 
 data class InstantiatorConfig(
     var defaultPlayerView: ViewMode = ViewMode.thirdPerson
@@ -34,23 +32,27 @@ fun createArmature(): Armature {
   )
 }
 
+fun createEntity(world: World, type: EntityType): Id {
+  val id = world.getAndSetNextId()
+//  val entity = Entity(id, type)
+//  world.entities[id] = entity
+//  return entity.id
+  return id
+}
+
 class Instantiator(
     private val world: World,
     val config: InstantiatorConfig
 ) {
 
-  fun createEntity(type: EntityType): Entity {
-    val id = world.getAndSetNextId()
-    val entity = Entity(id, type)
-    world.entities[id] = entity
-    return entity
-  }
+  fun createEntity(type: EntityType): Id =
+    createEntity(world, type)
 
   fun createBody(type: EntityType, shape: colliding.Shape, position: Vector3, node: Node, attributes: BodyAttributes,
                  orientation: Quaternion = Quaternion()): Body {
-    val entity = createEntity(type)
+    val id = createEntity(type)
     val body = Body(
-        id = entity.id,
+        id = id,
         shape = shape,
         position = position,
         orientation = orientation,
@@ -58,7 +60,7 @@ class Instantiator(
         node = node,
         attributes = attributes
     )
-    world.bodyTable[entity.id] = body
+    world.bodyTable = world.bodyTable.plus(Pair(body.id, body))
     return body
   }
 

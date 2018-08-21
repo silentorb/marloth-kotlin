@@ -10,17 +10,16 @@ val maxPlayerCount = 4
 
 typealias Players = List<Player>
 typealias IdentityMap<T> = MutableMap<Id, T>
-typealias BodyTable = MutableMap<Id, Body>
-typealias CharacterTable = MutableMap<Id,  Character>
+typealias BodyTable = Map<Id, Body>
+typealias CharacterTable = Map<Id, Character>
 
 data class World(
     val meta: AbstractWorld
 ) {
-  val entities: MutableMap<Id, Entity> = mutableMapOf()
   var players: List<Player> = listOf()
-  val bodyTable: BodyTable = mutableMapOf()
-  var characterTable: CharacterTable = mutableMapOf()
-  val missileTable: MutableMap<Id, Missile> = mutableMapOf()
+  var bodyTable: BodyTable = mapOf()
+  var characterTable: CharacterTable = mapOf()
+  var missileTable: Map<Id, Missile> = mapOf()
   var spiritTable: MutableMap<Id, Spirit> = mutableMapOf()
   val depictionTable: IdentityMap<Depiction> = mutableMapOf()
 
@@ -34,13 +33,13 @@ data class World(
 
   fun getAndSetNextId() = _nextId++
 
-  val characters: MutableCollection<Character>
+  val characters: Collection<Character>
     get() = characterTable.values
 
-  val bodies: MutableCollection<Body>
+  val bodies: Collection<Body>
     get() = bodyTable.values
 
-  val missiles: MutableCollection<Missile>
+  val missiles: Collection<Missile>
     get() = missileTable.values
 
   val spirits: MutableCollection<Spirit>

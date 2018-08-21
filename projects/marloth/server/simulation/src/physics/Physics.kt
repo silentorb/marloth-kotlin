@@ -6,6 +6,7 @@ import mythic.spatial.times
 import org.joml.plus
 import simulation.AbstractWorld
 import simulation.changing.checkWallCollision
+import simulation.combat.NewMissile
 
 data class Rotation(
     val pitch: Float = 0f,
