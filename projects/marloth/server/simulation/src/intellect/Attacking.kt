@@ -3,6 +3,15 @@ package intellect
 import simulation.*
 import simulation.changing.setCharacterFacing
 
+fun spiritAttack(knowledge: Knowledge, pursuit: Pursuit): Commands {
+  val target = knowledge.visibleCharacters.first { it.id == pursuit.target }
+  val character = knowledge.character
+  val offset = target.body.position - character.body.position
+  return spiritNeedsFacing(knowledge, offset, 0.1f) {
+    listOf(Command(CommandType.attack, character.id))
+  }
+}
+
 //fun tryAiAttack(spirit: Spirit): NewMissile? {
 //  val character = spirit.character
 //  val attack = character.abilities[0]

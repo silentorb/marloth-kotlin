@@ -94,7 +94,6 @@ class Instantiator(
   fun createSpirit(character: Character): Spirit {
     val spirit = Spirit(
         id = character.id,
-        goals = listOf(),
         knowledge = Knowledge(
             character = character,
             nodes = listOf(),

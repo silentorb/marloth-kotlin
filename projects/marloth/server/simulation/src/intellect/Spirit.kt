@@ -28,7 +28,7 @@ data class Pursuit(
 data class Spirit(
     val id: Id,
     val knowledge: Knowledge,
-    val goals: List<Goal>,
+//    val goals: List<Goal>,
     val pursuit: Pursuit
 )
 

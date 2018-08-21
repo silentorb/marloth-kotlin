@@ -45,19 +45,16 @@ fun getRemainingPath(node: Node, path: List<Node>): List<Node> {
     path.drop(index + 1)
 }
 
-fun updateMovementPursuit(knowledge: Knowledge, pursuit: Pursuit): Pursuit {
-  val path =
-      if (pursuit.path == null || !pathIsAccessible(knowledge, pursuit.path))
-        startRoaming(knowledge)
-      else {
-        val remainingPath = getRemainingPath(knowledge.character.body.node, pursuit.path)
-        if (remainingPath.any())
-          remainingPath
-        else
-          startRoaming(knowledge)
-      }
-
-  return Pursuit(path = path)
+fun updateMovementPursuit(knowledge: Knowledge, pursuit: Pursuit): Path {
+  return if (pursuit.path == null || !pathIsAccessible(knowledge, pursuit.path))
+    startRoaming(knowledge)
+  else {
+    val remainingPath = getRemainingPath(knowledge.character.body.node, pursuit.path)
+    if (remainingPath.any())
+      remainingPath
+    else
+      startRoaming(knowledge)
+  }
 }
 
 fun getTargetOffset(knowledge: Knowledge, pursuit: Pursuit): Vector3 {
@@ -77,13 +74,16 @@ fun getTargetOffset(knowledge: Knowledge, pursuit: Pursuit): Vector3 {
 fun moveSpirit(knowledge: Knowledge, pursuit: Pursuit): Commands {
   val offset = getTargetOffset(knowledge, pursuit)
   val character = knowledge.character
-  val facingCommands = spiritFacingChange(knowledge, offset)
-  val course = facingDistance(character, offset)
-
-  val absCourse = Math.abs(course)
-  val acceptableRange = 0.1f
-  return if (absCourse <= acceptableRange)
-    facingCommands.plus(Command(CommandType.moveUp, character.id))
-  else
-    facingCommands
+  return spiritNeedsFacing(knowledge, offset, 0.1f) {
+    listOf(Command(CommandType.moveUp, character.id))
+  }
+//  val facingCommands = spiritFacingChange(knowledge, offset)
+//  val course = facingDistance(character, offset)
+//
+//  val absCourse = Math.abs(course)
+//  val acceptableRange = 0.1f
+//  return if (absCourse <= acceptableRange)
+//    facingCommands.plus(Command(CommandType.moveUp, character.id))
+//  else
+//    facingCommands
 }

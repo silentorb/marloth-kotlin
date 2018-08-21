@@ -45,3 +45,14 @@ fun spiritFacingChange(knowledge: Knowledge, offset: Vector3): Commands {
     listOf(Command(dir, knowledge.character.id, 1f))
   }
 }
+
+fun spiritNeedsFacing(knowledge: Knowledge, offset: Vector3, acceptableRange: Float, action: ()-> Commands): Commands {
+  val character = knowledge.character
+  val facingCommands = spiritFacingChange(knowledge, offset)
+  val course = facingDistance(character, offset)
+  val absCourse = Math.abs(course)
+  return if (absCourse <= acceptableRange)
+    facingCommands.plus(action())
+  else
+    facingCommands
+}
