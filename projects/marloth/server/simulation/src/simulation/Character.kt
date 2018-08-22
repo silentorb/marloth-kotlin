@@ -17,7 +17,7 @@ data class Character(
     val id: Int,
     val turnSpeed: Vector2,
     val body: Body,
-    val abilities: MutableList<Ability> = mutableListOf(),
+    val abilities: List<Ability> = listOf(),
     val faction: Faction,
     val health: Resource,
     val isAlive: Boolean = true,

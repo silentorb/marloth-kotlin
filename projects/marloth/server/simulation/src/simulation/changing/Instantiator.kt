@@ -32,7 +32,7 @@ fun createArmature(): Armature {
   )
 }
 
-fun createEntity(world: World, type: EntityType): Id {
+fun createEntity(world: World): Id {
   val id = world.getAndSetNextId()
 //  val entity = Entity(id, type)
 //  world.entities[id] = entity
@@ -46,7 +46,7 @@ class Instantiator(
 ) {
 
   fun createEntity(type: EntityType): Id =
-    createEntity(world, type)
+      createEntity(world)
 
   fun createBody(type: EntityType, shape: colliding.Shape, position: Vector3, node: Node, attributes: BodyAttributes,
                  orientation: Quaternion = Quaternion()): Body {
@@ -70,20 +70,26 @@ class Instantiator(
 
   fun createCharacter(definition: CharacterDefinition, faction: Faction, position: Vector3, node: Node): Character {
     val body = createBody(EntityType.character, commonShapes[EntityType.character]!!, position, node, characterBodyAttributes)
+    val abilities = definition.abilities.map {
+      Ability(
+          id = createEntity(world),
+          definition = it
+      )
+    }
     val character = Character(
         id = body.id,
         turnSpeed = Vector2(1.5f, 1f),
         faction = faction,
         body = body,
         health = Resource(definition.health),
-        abilities = definition.abilities.map { Ability(it) }.toMutableList()
+        abilities = abilities
     )
     addDepiction(Depiction(
         body.id,
         definition.depictionType,
         DepictionAnimation(0, 0f, createArmature())
     ))
-    world.characterTable[body.id] = character
+    world.characterTable = world.characterTable.plus(Pair(body.id, character))
     return character
   }
 

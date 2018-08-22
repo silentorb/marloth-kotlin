@@ -20,10 +20,20 @@ fun <T> updateField(defaultValue: T, newValue: T?): T =
     else
       defaultValue
 
-fun updateCharacter(world: World, character: Character, commands: Commands, collisions: List<Collision>, delta: Float): Character {
+fun updateAbilities(character: Character, activatedAbilities: List<Ability>): List<Ability> {
+  return character.abilities.map { ability ->
+    val isActivated = activatedAbilities.any { it.id == ability.id }
+    ability.copy(
+        cooldown = updateCooldown(ability, isActivated, simulationDelta)
+    )
+  }
+}
+
+fun updateCharacter(world: World, character: Character, commands: Commands, collisions: List<Collision>,
+                    activatedAbilities: List<Ability>, delta: Float): Character {
   val id = character.id
   if (character.isAlive) {
-    character.abilities.forEach { updateAbility(it, delta) }
+//    character.activatedAbilities.forEach { updateAbility(it, delta) }
     character.body.orientation = Quaternion()
         .rotateZ(character.facingRotation.z)
 
@@ -41,20 +51,24 @@ fun updateCharacter(world: World, character: Character, commands: Commands, coll
   val hits = collisions.filter { it.second == character.id }
   val health = modifyResource(character.health, hits.map { -50 })
 
+  val abilities = updateAbilities(character, activatedAbilities)
   return character.copy(
       isAlive = character.health.value > 0,
       lookVelocity = lookVelocity,
       facingRotation = character.facingRotation + fpCameraRotation(lookVelocity, delta),
-      health = character.health.copy(value = health)
+      health = character.health.copy(value = health),
+      abilities = abilities
   )
 }
 
-fun updateCharacters(world: World, collisions: List<Collision>, commands: Commands): List<Character> {
+fun updateCharacters(world: World, collisions: List<Collision>, commands: Commands, activatedAbilities: List<ActivatedAbility>): List<Character> {
   val delta = simulationDelta
-  return world.characterTable.map{ e ->
+  return world.characterTable.map { e ->
     val character = e.value
     val id = character.id
-    updateCharacter(world, character, commands.filter { it.target == id }, collisions, delta)
+    val abilities = activatedAbilities.filter { it.character.id == character.id }
+        .map { it.ability }
+    updateCharacter(world, character, commands.filter { it.target == id }, collisions, abilities, delta)
   }
 }
 
@@ -110,11 +124,16 @@ class WorldUpdater(val world: World) {
     val commands = playerCommands.plus(spiritCommands)
     world.players = updatePlayers(world.players, commands)
     val collisions = getCollisions(world.bodyTable, world.characterTable, world.missiles)
-    val characters = updateCharacters(world, collisions, commands)
-    val newMissiles = getNewMissiles(world, commands)
+    val activatedAbilities = getActivatedAbilities(world, commands)
+    val characters = updateCharacters(world, collisions, commands, activatedAbilities)
+    val newMissiles = getNewMissiles(world, activatedAbilities)
     val finished = getFinished()
     world.missileTable = updateMissiles(world, newMissiles, collisions, finished)
         .associate { Pair(it.id, it) }
+    val finishedBodies = world.bodies.filter { body -> finished.any{ it == body.id } }
+    if (finishedBodies.any()) {
+      val k = 1
+    }
     world.bodyTable = updateBodies(world, commands)
         .filter { body -> finished.none { it == body.id } }
         .plus(getNewBodies(newMissiles))

@@ -25,9 +25,8 @@ data class NewMissile(
 )
 
 fun characterAttack(world: World, character: Character, ability: Ability, direction: Vector3): NewMissile {
-  useAbility(ability)
   return NewMissile(
-      id = createEntity(world, EntityType.missile),
+      id = createEntity(world),
       position = character.body.position + direction * 0.5f + Vector3(0f, 0f, 0.7f),
       node = character.body.node,
       velocity = direction * 14.0f,
@@ -78,18 +77,11 @@ fun isFinished(world: AbstractWorld, bodyTable: BodyTable, missile: Missile): Bo
 }
 
 
-fun getNewMissiles(world: World, commands: Commands): List<NewMissile> {
-  return commands.filter { it.type == CommandType.attack }
-      .filter {
-        val character = world.characterTable[it.target]!!
-        val ability = character.abilities.first()
-        canUse(character, ability)
-      }
-      .map {
-        val character = world.characterTable[it.target]!!
-        val ability = character.abilities.first()
-        characterAttack(world, character, ability, character.facingVector)
-      }
+fun getNewMissiles(world: World, activatedAbilities: List<ActivatedAbility>): List<NewMissile> {
+  return activatedAbilities.map {
+    val (character, ability) = it
+    characterAttack(world, character, ability, character.facingVector)
+  }
 }
 
 fun updateMissiles(world: World, newMissiles: List<NewMissile>, collisions: List<Collision>, finished: List<Int>): List<Missile> {
@@ -97,7 +89,7 @@ fun updateMissiles(world: World, newMissiles: List<NewMissile>, collisions: List
       .filter { item -> finished.none { it == item.id } }
       .map { updateMissile(world.bodyTable, world.characterTable, it, collisions, simulationDelta) }
       .plus(newMissiles.map {
-        val id = createEntity(world, EntityType.missile)
+        val id = createEntity(world)
         Missile(id, it.owner, it.range)
       })
 }
