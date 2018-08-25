@@ -97,6 +97,11 @@ fun getNewBodies(newMissiles: List<NewMissile>): List<Body> {
   }
 }
 
+fun checkMissileBodies(missileTable: Map<Id, Missile>, bodyTable: BodyTable) {
+  val incomplete = missileTable.values.filter { !bodyTable.containsKey(it.id) }
+  assert(incomplete.none())
+}
+
 class WorldUpdater(val world: World) {
 
   fun getFinished(): List<Int> {
@@ -110,6 +115,8 @@ class WorldUpdater(val world: World) {
 
   fun removeFinished(finished: List<Int>) {
     world.characterTable = world.characterTable.minus(finished)
+    world.missileTable = world.missileTable.minus(finished)
+    world.bodyTable = world.bodyTable.minus(finished)
     world.spiritTable.minusAssign(finished)
     world.depictionTable.minusAssign(finished)
     world.lights.minusAssign(finished)
@@ -128,19 +135,22 @@ class WorldUpdater(val world: World) {
     val characters = updateCharacters(world, collisions, commands, activatedAbilities)
     val newMissiles = getNewMissiles(world, activatedAbilities)
     val finished = getFinished()
+    checkMissileBodies(world.missileTable, world.bodyTable)
     world.missileTable = updateMissiles(world, newMissiles, collisions, finished)
         .associate { Pair(it.id, it) }
-    val finishedBodies = world.bodies.filter { body -> finished.any{ it == body.id } }
-    if (finishedBodies.any()) {
+    val finishedBodies = world.bodies.filter { body -> finished.any { it == body.id } }
+    if (newMissiles.any()) {
       val k = 1
     }
     world.bodyTable = updateBodies(world, commands)
-        .filter { body -> finished.none { it == body.id } }
         .plus(getNewBodies(newMissiles))
         .associate { Pair(it.id, it) }
 
     world.characterTable = characters.associate { Pair(it.id, it) }
+    checkMissileBodies(world.missileTable, world.bodyTable)
     removeFinished(finished)
+
+    checkMissileBodies(world.missileTable, world.bodyTable)
   }
 }
 

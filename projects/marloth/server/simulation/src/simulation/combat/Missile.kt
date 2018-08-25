@@ -86,10 +86,8 @@ fun getNewMissiles(world: World, activatedAbilities: List<ActivatedAbility>): Li
 
 fun updateMissiles(world: World, newMissiles: List<NewMissile>, collisions: List<Collision>, finished: List<Int>): List<Missile> {
   return world.missiles
-      .filter { item -> finished.none { it == item.id } }
       .map { updateMissile(world.bodyTable, world.characterTable, it, collisions, simulationDelta) }
       .plus(newMissiles.map {
-        val id = createEntity(world)
-        Missile(id, it.owner, it.range)
+        Missile(it.id, it.owner, it.range)
       })
 }
