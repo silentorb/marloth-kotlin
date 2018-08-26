@@ -60,7 +60,8 @@ fun createSecondaryNode(sectorCenter: Vector3, abstractWorld: AbstractWorld, isS
       position = sectorCenter,
       radius = radius,
       biome = biome,
-      isSolid = isSolid
+      isSolid = isSolid,
+      isWalkable = false
   )
   node.index = abstractWorld.graph.nodes.size
   return node

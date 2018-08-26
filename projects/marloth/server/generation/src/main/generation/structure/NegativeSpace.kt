@@ -232,8 +232,8 @@ fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace, dice: D
     }.map { it.edge }
   }.distinct()
 
-  val floorVertices = edges.map { it.vertices.sortedBy { it.z }.last() }
-  val ceilingVertices = edges.map { it.vertices.sortedBy { it.z }.first() }
+  val floorVertices = edges.map { edge -> edge.vertices.sortedBy { it.z }.first() }
+  val ceilingVertices = edges.map { edge -> edge.vertices.sortedBy { it.z }.last() }
   val sectorCenter = getCenter(floorVertices)
   val flatCenter = sectorCenter.xy()
 

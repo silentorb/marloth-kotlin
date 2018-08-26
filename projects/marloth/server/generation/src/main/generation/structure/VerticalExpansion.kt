@@ -45,7 +45,7 @@ class VerticalFacingDown : VerticalFacing {
 fun createVerticalNodes(abstractWorld: AbstractWorld, middleNodes: List<Node>, roomNodes: List<Node>, dice: Dice,
                         facing: VerticalFacing, shouldBeSolid: (original: Node) -> Boolean) {
   val newNodes = middleNodes.map { node ->
-    val depth = 2f
+    val depth = wallHeight
     val offset = Vector3(0f, 0f, depth * facing.dirMod)
 
     val newNode = createSecondaryNode(node.position + offset, abstractWorld, isSolid = shouldBeSolid(node), biome = node.biome)

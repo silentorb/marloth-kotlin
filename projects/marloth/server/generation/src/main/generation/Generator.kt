@@ -119,7 +119,7 @@ fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): Wo
   val instantiator = Instantiator(world, instantiatorConfig)
   instantiator.createPlayer(1)
 
-  placeWallLamps(world, instantiator, input.dice, scale)
+//  placeWallLamps(world, instantiator, input.dice, scale)
 
   return world
 }

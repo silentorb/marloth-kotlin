@@ -38,7 +38,7 @@ fun createDoorway(node: Node, other: Node) =
 fun createVerticesForOverlappingCircles(node: Node, other: Node, others: List<Node>): List<Corner> =
     circleIntersection(node.position.xy(), node.radius, other.position.xy(), other.radius)
         // Only needed for tri-unions
-//        .filter { c -> !others.any { isInsideNode(c, it) } }
+//        .filter { c -> !others.any { isInsideNodeHorizontally(c, it) } }
         .map { it.toVector3() }
 
 fun createNodeDoorways(node: Node) =

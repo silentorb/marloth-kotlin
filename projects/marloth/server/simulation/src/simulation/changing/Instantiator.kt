@@ -120,7 +120,7 @@ class Instantiator(
         velocity = Vector3(),
         node = node,
         attributes = doodadBodyAttributes,
-        gravity = true
+        gravity = false
     )
     world.bodyTable = world.bodyTable.plus(Pair(body.id, body))
     addDepiction(Depiction(body.id, depictionType, null))

@@ -27,16 +27,17 @@ class Node(
     var radius: Float,
     val isSolid: Boolean,
     val biome: Biome,
-    val isWalkable: Boolean = false
+    val isWalkable: Boolean = false,
+    var index: Int = 0,
+    var height: Float = 4f
 ) {
   val connections: MutableList<Connection> = mutableListOf()
-  var index = 0
   val floors: MutableList<FlexibleFace> = mutableListOf()
   val ceilings: MutableList<FlexibleFace> = mutableListOf()
   val walls: MutableList<FlexibleFace> = mutableListOf()
-  var height: Float = 2f
 
   val neighbors get() = connections.asSequence().map { it.getOther(this) }
+  val horizontalNeighbors get() = walls.asSequence().mapNotNull { getOtherNode(this, it) }
 
   fun getConnection(other: Node) = connections.firstOrNull { it.first === other || it.second === other }
 

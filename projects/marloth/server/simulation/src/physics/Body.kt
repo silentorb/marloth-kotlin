@@ -6,6 +6,7 @@ import mythic.spatial.Vector3
 import colliding.Shape
 import colliding.Sphere
 import mythic.spatial.isInsidePolygon
+import scenery.Textures
 import simulation.*
 import simulation.changing.simulationDelta
 import simulation.combat.NewMissile
@@ -13,6 +14,18 @@ import simulation.input.allPlayerMovements
 
 data class BodyAttributes(
     val resistance: Float
+)
+
+private const val voidNodeHeight = 10000f
+
+val voidNode: Node = Node(
+    index = -1,
+    position = Vector3(0f, 0f, -voidNodeHeight),
+    height = voidNodeHeight,
+    radius = 0f,
+    isSolid = false,
+    isWalkable = false,
+    biome = Biome("void", floorTexture = Textures.none)
 )
 
 class Body(
@@ -39,22 +52,37 @@ val commonShapes = mapOf(
 fun overlaps(first: Body, second: Body) =
     colliding.overlaps(first.shape, first.position, second.shape, second.position)
 
-fun isInsideNode(node: Node, position: Vector3) =
-    node.position.z <= position.z && node.position.z + node.height > position.z
-        && node.floors.any { isInsidePolygon(position, it.vertices) }
+fun isInsideNodeHorizontally(node: Node, position: Vector3) =
+    node.floors.any { isInsidePolygon(position, it.vertices) }
 
 fun updateBodyNode(body: Body) {
+  if (body.node == voidNode)
+    return
+
   val position = body.position
   val node = body.node
 
-  if (isInsideNode(node, position))
-    return
+  val horizontalNode = if (!isInsideNodeHorizontally(node, position)) {
+    val n = node.horizontalNeighbors.firstOrNull { isInsideNodeHorizontally(it, position) }
+    if (n != null)
+      n
+    else
+      node
+  } else
+    node
 
-  val newNode = node.neighbors.firstOrNull { isInsideNode(it, position) }
+  val newNode = if (position.z < horizontalNode.position.z)
+    if (horizontalNode.floors.any())
+      getOtherNode(node, horizontalNode.floors.first())
+    else
+      voidNode
+  else
+    horizontalNode
+
   if (newNode == null) {
-    isInsideNode(node, position)
+//    isInsideNodeHorizontally(node, position)
 //    throw Error("Not supported")
-//    assert(false)
+    assert(false)
   } else {
     body.node = newNode
   }

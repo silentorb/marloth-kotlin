@@ -36,6 +36,7 @@ fun getFinished(world: World): List<Int> {
       .plus(world.characters
           .filter { isFinished(world, it) && !isPlayer(world, it) }
           .map { it.id })
+//      .plus(world.bodies.filter { it.node == voidNode }.map { it.id })
 }
 
 fun removeFinished(world: World, finished: List<Int>) {
