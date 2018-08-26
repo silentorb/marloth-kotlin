@@ -1,5 +1,7 @@
 package simulation
 
+import simulation.changing.simulationDelta
+
 data class AbilityDefinition(
     val cooldown: Float,
     val range: Float
@@ -11,9 +13,14 @@ data class Ability(
     val cooldown: Float = 0f
 )
 
+data class ActivatedAbility(
+    val character: Character,
+    val ability: Ability
+)
+
 fun updateCooldown(ability: Ability, isActivated: Boolean, delta: Float): Float {
   return if (isActivated)
-    ability.cooldown
+    ability.definition.cooldown
   else if (ability.cooldown > 0f)
     Math.max(0f, ability.cooldown - delta)
   else
@@ -23,11 +30,6 @@ fun updateCooldown(ability: Ability, isActivated: Boolean, delta: Float): Float 
 fun canUse(character: Character, ability: Ability): Boolean {
   return ability.cooldown == 0f
 }
-
-data class ActivatedAbility(
-    val character: Character,
-    val ability: Ability
-)
 
 fun getActivatedAbilities(world: World, commands: Commands): List<ActivatedAbility> {
   return commands.filter { it.type == CommandType.attack }
@@ -39,4 +41,13 @@ fun getActivatedAbilities(world: World, commands: Commands): List<ActivatedAbili
         else
           null
       }
+}
+
+fun updateAbilities(character: Character, activatedAbilities: List<Ability>): List<Ability> {
+  return character.abilities.map { ability ->
+    val isActivated = activatedAbilities.any { it.id == ability.id }
+    ability.copy(
+        cooldown = updateCooldown(ability, isActivated, simulationDelta)
+    )
+  }
 }

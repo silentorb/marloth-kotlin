@@ -46,7 +46,12 @@ fun applyForces(forces: List<MovementForce>, delta: Float) {
 fun moveBody(world: AbstractWorld, body: Body, offset: Vector3, delta: Float): BodyWallCollision? {
   val (walls, newPosition) = checkWallCollision(body.position, offset * delta, world, body.node)
 //    assert(!newPosition.x.isNaN() && !newPosition.y.isNaN())
-  body.position = newPosition
+  val newPosition2 = if(!body.node.isWalkable)
+    newPosition + Vector3(0f, 0f, -2f * delta)
+  else
+    newPosition
+
+  body.position = newPosition2
 //  val resistance = body.velocity.normalize() * body.attributes.resistance * delta
 
   val oldVelocity = body.velocity

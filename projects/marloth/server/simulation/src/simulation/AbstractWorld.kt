@@ -86,7 +86,10 @@ fun getOtherNode(info: FaceInfo, node: Node) =
 // it may be better to explicitly non-null cast.
 fun getFaceInfo(face: FlexibleFace): FaceInfo = (face.data as FaceInfo?)!!
 
-val isWall = { face: FlexibleFace -> getFaceInfo(face).type == FaceType.wall }
+val isWall = { face: FlexibleFace ->
+  val info = getFaceInfo(face)
+  info.type == FaceType.wall && info.texture != null
+}
 val isSpace = { face: FlexibleFace -> getFaceInfo(face).type == FaceType.space }
 
 fun getNullableFaceInfo(face: FlexibleFace): FaceInfo? = face.data as FaceInfo?

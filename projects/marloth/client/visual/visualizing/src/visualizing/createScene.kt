@@ -55,7 +55,7 @@ fun createTopDownCamera(player: Body): Camera {
 fun createCamera(world: World, screen: Screen): Camera {
   val player = world.players[screen.playerId - 1]
   val character = world.characterTable[player.character]!!
-  val body = world.bodyTable [player.character]!!
+  val body = world.bodyTable[player.character]!!
   return when (player.viewMode) {
     ViewMode.firstPerson -> createFirstPersonCamera(character)
     ViewMode.thirdPerson -> createThirdPersonCamera(body, player.hoverCamera)
@@ -69,48 +69,50 @@ fun filterDepictions(world: World, player: Player) =
     else
       world.depictionTable
 
-fun convertDepiction(world: World, id: Id, depiction: Depiction): VisualElement {
+fun convertDepiction(world: World, id: Id, type: DepictionType): VisualElement {
   val body = world.bodyTable[id]!!
   val character = world.characterTable[id]
+  val depiction = world.depictionTable[id]
   val translate = Matrix().translate(body.position)
   val transform = if (character != null)
     translate.rotate(character.facingQuaternion)
   else
     translate.rotate(body.orientation)
 
-  return VisualElement(id, depiction.type, depiction.animation, transform)
+  val animation = if (depiction != null)
+    depiction.animation
+  else
+    null
+  return VisualElement(id, type, animation, transform)
 }
 
-fun mapElements(world: World, screen: Screen, player: Player): Pair<List<VisualElement>, ElementDetails> {
+fun createChildDetails(depiction: Depiction): ChildDetails =
+    ChildDetails(if (depiction.type == DepictionType.character) Gender.female else Gender.male)
+
+fun gatherVisualElements(world: World, screen: Screen, player: Player): Pair<List<VisualElement>, ElementDetails> {
   val depictions = filterDepictions(world, player)
   val childDepictions = depictions.values.filter {
     it.type == DepictionType.character || it.type == DepictionType.monster
   }
-//  val billboardDepictions = depictions.values.filter {
-//    it.type == DepictionType.billboard
-//  }
-//  val elements = childDepictions.map {
-//    convertDepiction(world, it.id, it)
-//  }
-//      .plus(otherDepictions.map {
-//        convertDepiction(world, it.id, it)
-//      })
+
   val elements = depictions.values.map {
-    convertDepiction(world, it.id, it)
+    convertDepiction(world, it.id, it.type)
   }
+      .plus(world.missileTable.values.map {
+        convertDepiction(world, it.id, DepictionType.missile)
+      })
 
   return Pair(
       elements,
       ElementDetails(
-          children = childDepictions.associate { Pair(it.id, ChildDetails(if (it.type == DepictionType.character) Gender.female else Gender.male)) }
-//          billboards = world.billboardTable.mapValues { BillboardDetails(it.value.text) }
+          children = childDepictions.associate { Pair(it.id, createChildDetails(it)) }
       )
   )
 }
 
 fun createScene(world: World, screen: Screen, player: Player): GameScene {
-  val (elements, elementDetails) = mapElements(world, screen, player)
-  val body = world.bodyTable [player.character]!!
+  val (elements, elementDetails) = gatherVisualElements(world, screen, player)
+  val body = world.bodyTable[player.character]!!
   return GameScene(
       main = Scene(
           createCamera(world, screen),

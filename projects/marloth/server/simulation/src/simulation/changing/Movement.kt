@@ -34,6 +34,7 @@ fun findCollisionWalls(source: Vector3, originalOffset: Vector3, world: Abstract
 //  val walls = world.walls
 //      .filter(isWall)
   return walls
+      .filter(isWall)
       .filter { wall -> hitsWall(wall.edges[0].edge, newPosition, broadRadius) && offset.dot(wall.normal) < 0f }
       .map {
         val edge = it.edges[0]
@@ -166,25 +167,4 @@ fun getLookAtAngle(lookAt: Vector3) =
 fun setCharacterFacing(character: Character, lookAt: Vector3) {
   val angle = getLookAtAngle(lookAt)
   character.facingRotation.z = angle
-}
-
-
-fun isInsideNode(node: Node, position: Vector3) =
-    node.floors.any { isInsidePolygon(position, it.vertices) }
-
-fun updateBodyNode(body: Body) {
-  val position = body.position
-  val node = body.node
-
-  if (isInsideNode(node, position))
-    return
-
-  val newNode = node.neighbors.firstOrNull { isInsideNode(it, position) }
-  if (newNode == null) {
-    isInsideNode(node, position)
-//    throw Error("Not supported")
-//    assert(false)
-  } else {
-    body.node = newNode
-  }
 }

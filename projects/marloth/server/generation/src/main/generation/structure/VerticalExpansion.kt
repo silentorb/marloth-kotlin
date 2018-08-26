@@ -96,6 +96,7 @@ fun createAscendingSpaceWalls(abstractWorld: AbstractWorld, nodes: List<Node>, f
       newWall.data = FaceInfo(FaceType.wall, upperNode, otherUpNode, null, "lower")
       upperNode.walls.add(newWall)
       otherUpNode.walls.add(newWall)
+      abstractWorld.graph.connect(node, upperNode, ConnectionType.ceilingFloor)
     }
   }
 }

@@ -59,7 +59,8 @@ fun ByteBuffer.putMatrix(value: Matrix) {
   position(position() + 16 * 4)
 }
 
-val Pi = PI.toFloat()
+const val Pi = PI.toFloat()
+const val Pi2 = Pi * 2f
 
 fun Vector2.toVector3() = Vector3(x, y, 0f)
 

@@ -6,11 +6,11 @@ import scenery.DepictionType
 class AbilityDefinitions {
   val shoot = AbilityDefinition(
       cooldown = 0.2f,
-      range = 10f
+      range = 15f
   )
   val slowShoot = AbilityDefinition(
       cooldown = 0.8f,
-      range = 10f
+      range = 15f
   )
 }
 

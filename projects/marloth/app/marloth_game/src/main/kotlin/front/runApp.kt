@@ -8,10 +8,10 @@ import mythic.platforming.Display
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
 import simulation.World
-import simulation.changing.WorldUpdater
 import marloth.clienting.initialGameInputState
 import simulation.changing.Instantiator
 import simulation.changing.InstantiatorConfig
+import simulation.changing.updateWorld
 import simulation.createBiomes
 import visualizing.createScenes
 
@@ -34,9 +34,8 @@ tailrec fun gameLoop(app: App, previousState: AppState) {
   val (commands, nextInputState) = app.client.update(scenes, previousState.inputState)
   val delta = app.timer.update().toFloat()
 //  val instantiator = Instantiator(app.world, InstantiatorConfig())
-  val updater = WorldUpdater(app.world)
   val characterCommands = mapCommands(app.world.players, commands)
-  updater.update(characterCommands, delta)
+  updateWorld(app.world, characterCommands, delta)
   app.platform.process.pollEvents()
 
   if (!app.platform.process.isClosing())

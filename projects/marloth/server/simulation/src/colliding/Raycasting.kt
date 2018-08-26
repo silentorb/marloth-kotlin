@@ -35,6 +35,7 @@ fun rayCanHitPoint(firstNode: Node, start: Vector3, end: Vector3): Boolean {
   var lastWall: FlexibleFace? = null
   do {
     val wall = node.walls
+        .filter(isWall)
         .filter { it != lastWall}
         .firstOrNull {
           val edge = getFloor(it)

@@ -6,7 +6,8 @@ import mythic.spatial.Vector3
 enum class ConnectionType {
   tunnel,
   obstacle,
-  union
+  union,
+  ceilingFloor
 }
 
 class Connection(
@@ -33,6 +34,7 @@ class Node(
   val floors: MutableList<FlexibleFace> = mutableListOf()
   val ceilings: MutableList<FlexibleFace> = mutableListOf()
   val walls: MutableList<FlexibleFace> = mutableListOf()
+  var height: Float = 2f
 
   val neighbors get() = connections.asSequence().map { it.getOther(this) }
 

@@ -32,11 +32,8 @@ fun createArmature(): Armature {
   )
 }
 
-fun createEntity(world: World): Id {
+fun nextId(world: World): Id {
   val id = world.getAndSetNextId()
-//  val entity = Entity(id, type)
-//  world.entities[id] = entity
-//  return entity.id
   return id
 }
 
@@ -45,34 +42,26 @@ class Instantiator(
     val config: InstantiatorConfig
 ) {
 
-  fun createEntity(type: EntityType): Id =
-      createEntity(world)
-
-  fun createBody(type: EntityType, shape: colliding.Shape, position: Vector3, node: Node, attributes: BodyAttributes,
-                 orientation: Quaternion = Quaternion()): Body {
-    val id = createEntity(type)
-    val body = Body(
-        id = id,
-        shape = shape,
-        position = position,
-        orientation = orientation,
-        velocity = Vector3(),
-        node = node,
-        attributes = attributes
-    )
-    world.bodyTable = world.bodyTable.plus(Pair(body.id, body))
-    return body
-  }
-
   fun addDepiction(depiction: Depiction) {
     world.depictionTable[depiction.id] = depiction
   }
 
   fun createCharacter(definition: CharacterDefinition, faction: Faction, position: Vector3, node: Node): Character {
-    val body = createBody(EntityType.character, commonShapes[EntityType.character]!!, position, node, characterBodyAttributes)
+    val body = Body(
+        id = nextId(world),
+        shape = commonShapes[EntityType.character]!!,
+        position = position,
+        orientation = Quaternion(),
+        velocity = Vector3(),
+        node = node,
+        attributes = characterBodyAttributes,
+        gravity = true
+    )
+    world.bodyTable = world.bodyTable.plus(Pair(body.id, body))
+
     val abilities = definition.abilities.map {
       Ability(
-          id = createEntity(world),
+          id = nextId(world),
           definition = it
       )
     }
@@ -113,16 +102,6 @@ class Instantiator(
     return spirit
   }
 
-//  fun createMissile(newMissile: NewMissile): Missile {
-//    val shape = commonShapes[EntityType.missile]!!
-//    val body = createBody(EntityType.missile, shape, newMissile.position, newMissile.node, missileBodyAttributes)
-//    body.velocity = newMissile.velocity
-//    val missile = Missile(body.id, body, newMissile.owner, newMissile.range)
-//    world.missileTable[body.id] = missile
-//    addDepiction(Depiction(body.id, DepictionType.missile, null))
-//    return missile
-//  }
-
   fun createPlayer(id: Id): Player {
     val node = world.meta.nodes.first()
     val position = node.position// + Vector3(0f, 0f, 1f)
@@ -133,7 +112,17 @@ class Instantiator(
   }
 
   fun createFurnishing(depictionType: DepictionType, position: Vector3, node: Node, orientation: Quaternion): Body {
-    val body = createBody(EntityType.furnishing, Sphere(0.3f), position, node, doodadBodyAttributes, orientation)
+    val body = Body(
+        id = nextId(world),
+        shape = Sphere(0.3f),
+        position = position,
+        orientation = orientation,
+        velocity = Vector3(),
+        node = node,
+        attributes = doodadBodyAttributes,
+        gravity = true
+    )
+    world.bodyTable = world.bodyTable.plus(Pair(body.id, body))
     addDepiction(Depiction(body.id, depictionType, null))
     return body
   }

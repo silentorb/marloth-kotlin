@@ -5,7 +5,7 @@ import mythic.spatial.times
 import org.joml.plus
 import physics.overlaps
 import simulation.*
-import simulation.changing.createEntity
+import simulation.changing.nextId
 import simulation.changing.hitsWall
 import simulation.changing.simulationDelta
 
@@ -26,7 +26,7 @@ data class NewMissile(
 
 fun characterAttack(world: World, character: Character, ability: Ability, direction: Vector3): NewMissile {
   return NewMissile(
-      id = createEntity(world),
+      id = nextId(world),
       position = character.body.position + direction * 0.5f + Vector3(0f, 0f, 0.7f),
       node = character.body.node,
       velocity = direction * 14.0f,
@@ -72,10 +72,10 @@ fun updateMissile(bodyTable: BodyTable, characterTable: CharacterTable, missile:
 }
 
 fun isFinished(world: AbstractWorld, bodyTable: BodyTable, missile: Missile): Boolean {
-  val body = bodyTable[missile.id]!!.position
-  return missile.remainingDistance <= 0 || world.walls.any { hitsWall(it.edges[0].edge, body, 0.2f) }
+  val body = bodyTable[missile.id]!!
+  val position = body.position
+  return missile.remainingDistance <= 0 || world.walls.filter(isWall).any { hitsWall(it.edges[0].edge, position, body.radius!!) }
 }
-
 
 fun getNewMissiles(world: World, activatedAbilities: List<ActivatedAbility>): List<NewMissile> {
   return activatedAbilities.map {
