@@ -211,10 +211,10 @@ fun addSpaceNode(abstractWorld: AbstractWorld, node: Node) {
 }
 
 fun createSpaceNode(sectorCenter: Vector3, abstractWorld: AbstractWorld, biome: Biome, dice: Dice): Node {
-  val isSolid = if (!biome.hasEnclosedRooms || dice.getInt(0, 1) == 0)
-    false
-  else
+  val isSolid = if (biome.hasEnclosedRooms && dice.getInt(0, 3) > 0)
     true
+  else
+    false
 
   return createSecondaryNode(sectorCenter, abstractWorld, isSolid, biome)
 }

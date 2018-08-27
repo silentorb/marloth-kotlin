@@ -1,12 +1,23 @@
 package lab.views.game
 
+import haft.HaftCommands
+import haft.InputTriggerState
+import haft.filterKeystrokeCommands
 import haft.isActive
 import lab.LabCommandType
+import lab.LabConfig
+import lab.LabState
+import lab.getInputState
+import lab.views.LabClientResult
 import lab.views.LabInputState
 import lab.views.shared.drawSkeleton
 import marloth.clienting.Client
+import marloth.clienting.ClientState
+import marloth.clienting.InputState
 import marloth.clienting.gui.MenuState
+import marloth.clienting.gui.menuButtonAction
 import marloth.clienting.gui.renderGui
+import marloth.clienting.gui.updateMenuState
 import mythic.bloom.Bounds
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
@@ -17,7 +28,10 @@ import org.joml.zw
 import rendering.*
 import scenery.DepictionType
 import scenery.GameScene
+import scenery.Screen
 import simulation.AbstractWorld
+import simulation.World
+import visualizing.createScenes
 
 enum class GameDisplayMode {
   normal,
@@ -155,4 +169,46 @@ fun updateGameViewState(config: GameViewConfig, input: LabInputState) {
     else
       GameDisplayMode.normal
   }
+}
+
+fun updateGame(config: LabConfig, client: Client, world: World, screens: List<Screen>, previousState: LabState,
+               commands: HaftCommands<LabCommandType>,
+               nextLabInputState: InputTriggerState<LabCommandType>): LabClientResult {
+//    rendering.platform.input.isMouseVisible(false)
+  client.platform.input.update()
+  val scenes = createScenes(world, screens)
+  val input = getInputState(client.platform.input, commands)
+  updateGameViewState(config.gameView, input)
+  val properties = client.input.prepareInput(previousState.gameClientState.input, scenes.map { it.player })
+  val mainEvents = client.input.updateGameInput1(properties, previousState.gameClientState)
+//    rendering.updateGameInput(properties, rendering.playerInputProfiles)
+
+  val waitingEvents = client.input.checkForNewGamepads1(properties)
+
+  val allCommands = client.input.updateGameInput2(mainEvents, properties)
+      .plus(client.input.checkForNewGamepads2(waitingEvents, properties.players.size))
+  val menuCommands = filterKeystrokeCommands(allCommands)
+  val newMenuState = updateMenuState(previousState.gameClientState.menu, menuCommands)
+  val menuAction = menuButtonAction(newMenuState, menuCommands)
+  client.handleMenuAction(menuAction)
+  renderScene(client, GameViewRenderData(scenes, world.meta, config.gameView, previousState.gameClientState.menu))
+
+  val newInputState = InputState(
+      events = mainEvents.plus(waitingEvents),
+      mousePosition = properties.mousePosition
+  )
+
+  val newGameClientState = ClientState(
+      menu = newMenuState,
+      input = newInputState
+  )
+
+  val newLabState = LabState(
+      labInput = nextLabInputState,
+      gameInput = mainEvents.plus(waitingEvents),
+      gameClientState = newGameClientState,
+      modelViewState = previousState.modelViewState
+  )
+
+  return LabClientResult(allCommands, newLabState, menuAction)
 }

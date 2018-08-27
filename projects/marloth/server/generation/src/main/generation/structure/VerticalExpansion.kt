@@ -115,7 +115,7 @@ fun expandVertically(abstractWorld: AbstractWorld, roomNodes: List<Node>, dice: 
       VerticalDirection.up to { node: Node ->
         if (!node.biome.hasEnclosedRooms || (!roomNodes.contains(node) && !node.isSolid))
           false
-        else dice.getInt(0, 3) != 0
+        else dice.getInt(0, 4) != 0
       }
   )
   listOf(VerticalFacingDown(), VerticalFacingUp())

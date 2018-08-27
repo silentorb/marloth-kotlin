@@ -4,6 +4,7 @@ import haft.*
 import lab.views.*
 import lab.views.game.GameViewRenderData
 import lab.views.game.renderScene
+import lab.views.game.updateGame
 import lab.views.game.updateGameViewState
 import lab.views.map.createTopDownCamera
 import lab.views.map.renderMapView
@@ -77,6 +78,8 @@ class LabClient(val config: LabConfig, val client: Client) {
   )
   val deviceHandlers = createLabDeviceHandlers(client.platform.input)
 
+  fun getBindings() = labInputConfig[Views.global]!!.plus(labInputConfig[config.view]!!)
+
   fun updateInput(viewCommands: LabCommandMap, previousState: LabState): Pair<HaftCommands<LabCommandType>,
       InputTriggerState<LabCommandType>> {
     val (commands, nextLabInputState) = gatherInputCommands(getBindings(), deviceHandlers, previousState.labInput)
@@ -84,53 +87,16 @@ class LabClient(val config: LabConfig, val client: Client) {
     return Pair(commands, nextLabInputState)
   }
 
-  fun getBindings() = labInputConfig[Views.global]!!.plus(labInputConfig[config.view]!!)
-
   fun prepareClient(windowInfo: WindowInfo) {
     client.renderer.prepareRender(windowInfo)
     client.platform.input.isMouseVisible(true)
     client.platform.input.update()
   }
 
-  fun updateGame(windowInfo: WindowInfo, world: World, screens: List<Screen>, previousState: LabState): LabClientResult {
-//    rendering.platform.input.isMouseVisible(false)
-    client.platform.input.update()
-    val scenes = createScenes(world, screens)
+  fun updateGame(world: World, screens: List<Screen>, previousState: LabState): LabClientResult {
+    client.platform.input.isMouseVisible(false)
     val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
-    val input = getInputState(client.platform.input, commands)
-    updateGameViewState(config.gameView, input)
-    val properties = client.input.prepareInput(previousState.gameClientState.input, scenes.map { it.player })
-    val mainEvents = client.input.updateGameInput1(properties, previousState.gameClientState)
-//    rendering.updateGameInput(properties, rendering.playerInputProfiles)
-
-    val waitingEvents = client.input.checkForNewGamepads1(properties)
-
-    val allCommands = client.input.updateGameInput2(mainEvents, properties)
-        .plus(client.input.checkForNewGamepads2(waitingEvents, properties.players.size))
-    val menuCommands = filterKeystrokeCommands(allCommands)
-    val newMenuState = updateMenuState(previousState.gameClientState.menu, menuCommands)
-    val menuAction = menuButtonAction(newMenuState, menuCommands)
-    client.handleMenuAction(menuAction)
-    renderScene(client, GameViewRenderData(scenes, world.meta, config.gameView, previousState.gameClientState.menu))
-
-    val newInputState = InputState(
-        events = mainEvents.plus(waitingEvents),
-        mousePosition = properties.mousePosition
-    )
-
-    val newGameClientState = ClientState(
-        menu = newMenuState,
-        input = newInputState
-    )
-
-    val newLabState = LabState(
-        labInput = nextLabInputState,
-        gameInput = mainEvents.plus(waitingEvents),
-        gameClientState = newGameClientState,
-        modelViewState = previousState.modelViewState
-    )
-
-    return LabClientResult(allCommands, newLabState, menuAction)
+    return updateGame(config, client, world, screens, previousState, commands, nextLabInputState)
   }
 
   fun updateModel(windowInfo: WindowInfo, previousState: LabState, delta: Float): LabClientResult {
@@ -201,7 +167,7 @@ class LabClient(val config: LabConfig, val client: Client) {
   fun update(world: World, screens: List<Screen>, previousState: LabState, delta: Float): LabClientResult {
     val windowInfo = client.platform.display.getInfo()
     return when (config.view) {
-      Views.game -> updateGame(windowInfo, world, screens, previousState)
+      Views.game -> updateGame(world, screens, previousState)
       Views.model -> updateModel(windowInfo, previousState, delta)
       Views.texture -> updateTexture(windowInfo, previousState)
       Views.world -> updateWorld(windowInfo, world.meta, previousState)
