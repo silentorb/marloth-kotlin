@@ -12,3 +12,7 @@ class Entity(
     val id: Id,
     val type: EntityType
 )
+
+interface EntityLike {
+  val id: Id
+}

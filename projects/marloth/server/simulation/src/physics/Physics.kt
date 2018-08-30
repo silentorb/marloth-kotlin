@@ -1,12 +1,13 @@
 package physics
 
+import mythic.sculpting.FlexibleFace
+import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.isZero
 import mythic.spatial.times
 import org.joml.plus
-import simulation.AbstractWorld
+import simulation.Id
 import simulation.changing.checkWallCollision
-import simulation.combat.NewMissile
 
 data class Rotation(
     val pitch: Float = 0f,
@@ -26,6 +27,16 @@ data class BodyWallCollision(
     val body: Body
 )
 
+data class Collision(
+    val first: Id,
+    val second: Id? = null,
+    val wall: FlexibleFace? = null,
+    val hitPoint: Vector2,
+    val gap: Float
+)
+
+typealias Collisions = List<Collision>
+
 data class BodyUpdateResult(
     val wallCollision: List<BodyWallCollision>
 )
@@ -43,13 +54,8 @@ fun applyForces(forces: List<MovementForce>, delta: Float) {
   }
 }
 
-fun moveBody(world: AbstractWorld, body: Body, offset: Vector3, delta: Float): BodyWallCollision? {
-  val (walls, newPosition) = checkWallCollision(body.position, offset * delta, world, body.node)
-//    assert(!newPosition.x.isNaN() && !newPosition.y.isNaN())
-//  val newPosition2 = if(!body.node.isWalkable)
-//    newPosition + Vector3(0f, 0f, -2f * delta)
-//  else
-//    newPosition
+fun moveBody(body: Body, offset: Vector3, delta: Float, walls: List<Collision>) {
+  val newPosition = checkWallCollision(body.position, offset * delta, walls)
 
   body.position = newPosition
 //  val resistance = body.velocity.normalize() * body.attributes.resistance * delta
@@ -61,21 +67,18 @@ fun moveBody(world: AbstractWorld, body: Body, offset: Vector3, delta: Float): B
   if (body.velocity.length() < 0.01f) {
     body.velocity.zero()
   }
-  return if (walls.any())
-    BodyWallCollision(body)
-  else
-    null
 }
 
-fun updateBodies(world: AbstractWorld, bodies: Collection<Body>, delta: Float): BodyUpdateResult {
+fun updateBodies(bodies: Collection<Body>, collisions: Collisions, delta: Float) {
   bodies
       .filter { it.gravity }
       .filter { !it.node.isWalkable }
       .forEach { it.position += Vector3(0f, 0f, -4f * delta) }
 
   val movingBodies = bodies.filter { !isZero(it.velocity) }
-  val collisions = movingBodies
-      .mapNotNull { moveBody(world, it, it.velocity, delta) }
-
-  return BodyUpdateResult(collisions)
+  movingBodies
+      .forEach { body ->
+        val walls = collisions.filter { it.first == body.id && it.wall != null }
+        moveBody(body, body.velocity, delta, walls)
+      }
 }

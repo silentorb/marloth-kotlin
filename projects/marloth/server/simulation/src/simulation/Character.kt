@@ -1,5 +1,6 @@
 package simulation
 
+import intellect.NewSpirit
 import mythic.breeze.applyAnimation
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector2
@@ -7,9 +8,10 @@ import mythic.spatial.Vector3
 import org.joml.plus
 import org.joml.times
 import physics.Body
+import physics.Collision
+import physics.Collisions
 import scenery.DepictionType
 import simulation.changing.*
-import simulation.combat.Collision
 
 data class CharacterDefinition(
     val health: Int,
@@ -18,16 +20,15 @@ data class CharacterDefinition(
 )
 
 data class Character(
-    val id: Int,
+    override val id: Id,
     val turnSpeed: Vector2,
-    val body: Body,
     val abilities: List<Ability> = listOf(),
     val faction: Faction,
     val health: Resource,
     val isAlive: Boolean = true,
     val facingRotation: Vector3 = Vector3(),
     val lookVelocity: Vector2 = Vector2()
-) {
+) : EntityLike {
   val facingQuaternion: Quaternion
     get() = Quaternion()
         .rotateZ(facingRotation.z)
@@ -37,15 +38,26 @@ data class Character(
     get() = facingQuaternion * Vector3(1f, 0f, 0f)
 }
 
-fun isFinished(world: World, character: Character) =
+data class NewCharacter(
+    val id: Id,
+    val faction: Faction,
+    val definition: CharacterDefinition,
+    val abilities: List<NewAbility>,
+    val position: Vector3,
+    val node: Node,
+    val spirit: NewSpirit?
+)
+
+fun isFinished(world: WorldMap, character: Character) =
     character.health.value == 0
 
-fun updateCharacter(world: World, character: Character, commands: Commands, collisions: List<Collision>,
+fun updateCharacter(world: WorldMap, character: Character, commands: Commands, collisions: List<Collision>,
                     activatedAbilities: List<Ability>, delta: Float): Character {
   val id = character.id
   if (character.isAlive) {
+    val body = world.bodyTable[character.id]!!
 //    character.activatedAbilities.forEach { updateAbility(it, delta) }
-    character.body.orientation = Quaternion()
+    body.orientation = Quaternion()
         .rotateZ(character.facingRotation.z)
 
     val depiction = world.depictionTable[character.id]!!
@@ -73,7 +85,7 @@ fun updateCharacter(world: World, character: Character, commands: Commands, coll
   )
 }
 
-fun updateCharacters(world: World, collisions: List<Collision>, commands: Commands, activatedAbilities: List<ActivatedAbility>): List<Character> {
+fun updateCharacters(world: WorldMap, collisions: Collisions, commands: Commands, activatedAbilities: List<ActivatedAbility>): List<Character> {
   val delta = simulationDelta
   return world.characterTable.map { e ->
     val character = e.value
@@ -83,3 +95,20 @@ fun updateCharacters(world: World, collisions: List<Collision>, commands: Comman
     updateCharacter(world, character, commands.filter { it.target == id }, collisions, abilities, delta)
   }
 }
+
+fun getNewCharacters(newCharacters: List<NewCharacter>): List<Character> =
+    newCharacters.map { source ->
+      val abilities = source.abilities.map {
+        Ability(
+            id = it.id,
+            definition = it.definition
+        )
+      }
+      Character(
+          id = source.id,
+          turnSpeed = Vector2(1.5f, 1f),
+          faction = source.faction,
+          health = Resource(source.definition.health),
+          abilities = abilities
+      )
+    }

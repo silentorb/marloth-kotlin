@@ -2,7 +2,7 @@ package intellect
 
 import simulation.Character
 import simulation.Node
-import simulation.World
+import simulation.WorldMap
 
 data class Knowledge(
     val character: Character,
@@ -10,7 +10,7 @@ data class Knowledge(
     val visibleCharacters: List<Character>
 )
 
-fun updateKnowledge(world: World, character: Character, knowledge: Knowledge): Knowledge {
+fun updateKnowledge(world: WorldMap, character: Character, knowledge: Knowledge): Knowledge {
   return Knowledge(
       character = character,
       nodes = world.meta.nodes,

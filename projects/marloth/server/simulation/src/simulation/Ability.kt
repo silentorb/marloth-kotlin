@@ -18,6 +18,11 @@ data class ActivatedAbility(
     val ability: Ability
 )
 
+data class NewAbility(
+    val id: Id,
+    val definition: AbilityDefinition
+)
+
 fun updateCooldown(ability: Ability, isActivated: Boolean, delta: Float): Float {
   return if (isActivated)
     ability.definition.cooldown
@@ -31,7 +36,7 @@ fun canUse(character: Character, ability: Ability): Boolean {
   return ability.cooldown == 0f
 }
 
-fun getActivatedAbilities(world: World, commands: Commands): List<ActivatedAbility> {
+fun getActivatedAbilities(world: WorldMap, commands: Commands): List<ActivatedAbility> {
   return commands.filter { it.type == CommandType.attack }
       .mapNotNull {
         val character = world.characterTable[it.target]!!

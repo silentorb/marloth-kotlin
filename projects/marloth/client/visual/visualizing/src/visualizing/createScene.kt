@@ -52,7 +52,7 @@ fun createTopDownCamera(player: Body): Camera {
   )
 }
 
-fun createCamera(world: World, screen: Screen): Camera {
+fun createCamera(world: WorldMap, screen: Screen): Camera {
   val player = world.players[screen.playerId - 1]
   val character = world.characterTable[player.character]!!
   val body = world.bodyTable[player.character]!!
@@ -63,13 +63,13 @@ fun createCamera(world: World, screen: Screen): Camera {
   }
 }
 
-fun filterDepictions(world: World, player: Player) =
+fun filterDepictions(world: WorldMap, player: Player) =
     if (player.viewMode == ViewMode.firstPerson)
       world.depictionTable.filter { it.key != player.playerId }
     else
       world.depictionTable
 
-fun convertDepiction(world: World, id: Id, type: DepictionType): VisualElement {
+fun convertDepiction(world: WorldMap, id: Id, type: DepictionType): VisualElement {
   val body = world.bodyTable[id]!!
   val character = world.characterTable[id]
   val depiction = world.depictionTable[id]
@@ -89,7 +89,7 @@ fun convertDepiction(world: World, id: Id, type: DepictionType): VisualElement {
 fun createChildDetails(depiction: Depiction): ChildDetails =
     ChildDetails(if (depiction.type == DepictionType.character) Gender.female else Gender.male)
 
-fun gatherVisualElements(world: World, screen: Screen, player: Player): Pair<List<VisualElement>, ElementDetails> {
+fun gatherVisualElements(world: WorldMap, screen: Screen, player: Player): Pair<List<VisualElement>, ElementDetails> {
   val depictions = filterDepictions(world, player)
   val childDepictions = depictions.values.filter {
     it.type == DepictionType.character || it.type == DepictionType.monster
@@ -110,7 +110,7 @@ fun gatherVisualElements(world: World, screen: Screen, player: Player): Pair<Lis
   )
 }
 
-fun createScene(world: World, screen: Screen, player: Player): GameScene {
+fun createScene(world: WorldMap, screen: Screen, player: Player): GameScene {
   val (elements, elementDetails) = gatherVisualElements(world, screen, player)
   val body = world.bodyTable[player.character]!!
   return GameScene(
@@ -129,7 +129,7 @@ fun createScene(world: World, screen: Screen, player: Player): GameScene {
   )
 }
 
-fun createScenes(world: World, screens: List<Screen>) =
+fun createScenes(world: WorldMap, screens: List<Screen>) =
     world.players.map {
       createScene(world, screens[it.playerId - 1], it)
     }

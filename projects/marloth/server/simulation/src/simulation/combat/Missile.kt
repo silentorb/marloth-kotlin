@@ -1,8 +1,10 @@
 package simulation.combat
 
+import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.times
 import org.joml.plus
+import physics.Collision
 import physics.overlaps
 import simulation.*
 import simulation.changing.nextId
@@ -10,10 +12,10 @@ import simulation.changing.hitsWall
 import simulation.changing.simulationDelta
 
 data class Missile(
-    val id: Int,
+    override val id: Int,
     val owner: Id,
     val remainingDistance: Float
-)
+) : EntityLike
 
 data class NewMissile(
     val id: Id,
@@ -24,7 +26,7 @@ data class NewMissile(
     val owner: Id
 )
 
-fun characterAttack(world: World, character: Character, ability: Ability, direction: Vector3): NewMissile {
+fun characterAttack(world: WorldMap, character: Character, ability: Ability, direction: Vector3): NewMissile {
   return NewMissile(
       id = nextId(world),
       position = character.body.position + direction * 0.5f + Vector3(0f, 0f, 0.7f),
@@ -35,21 +37,20 @@ fun characterAttack(world: World, character: Character, ability: Ability, direct
   )
 }
 
-data class Collision(
-    val first: Id,
-    val second: Id
-)
-
-fun getCollisions(bodyTable: BodyTable, characterTable: CharacterTable, missiles: Collection<Missile>): List<Collision> {
-  return missiles.mapNotNull { missile ->
+fun getBodyCollisions(bodyTable: BodyTable, characterTable: CharacterTable, missiles: Collection<Missile>): List<Collision> {
+  return missiles.flatMap { missile ->
     val body = bodyTable[missile.id]!!
     val owner = characterTable[missile.owner]!!
-    val hit = bodyTable.values.filter { it !== body && it !== owner.body }
-        .firstOrNull { overlaps(it, body) }
-    if (hit == null)
-      null
-    else
-      Collision(missile.id, hit.id)
+    bodyTable.values.filter { it !== body && it !== owner.body }
+        .filter { overlaps(it, body) }
+        .map { hit ->
+          Collision(
+              first = missile.id,
+              second = hit.id,
+              hitPoint = Vector2(),
+              gap = 0f
+          )
+        }
   }
 }
 
@@ -77,17 +78,14 @@ fun isFinished(world: AbstractWorld, bodyTable: BodyTable, missile: Missile): Bo
   return missile.remainingDistance <= 0 || world.walls.filter(isWall).any { hitsWall(it.edges[0].edge, position, body.radius!!) }
 }
 
-fun getNewMissiles(world: World, activatedAbilities: List<ActivatedAbility>): List<NewMissile> {
+fun getNewMissiles(world: WorldMap, activatedAbilities: List<ActivatedAbility>): List<NewMissile> {
   return activatedAbilities.map {
     val (character, ability) = it
     characterAttack(world, character, ability, character.facingVector)
   }
 }
 
-fun updateMissiles(world: World, newMissiles: List<NewMissile>, collisions: List<Collision>, finished: List<Int>): List<Missile> {
+fun updateMissiles(world: WorldMap, collisions: List<Collision>): List<Missile> {
   return world.missiles
       .map { updateMissile(world.bodyTable, world.characterTable, it, collisions, simulationDelta) }
-      .plus(newMissiles.map {
-        Missile(it.id, it.owner, it.range)
-      })
 }

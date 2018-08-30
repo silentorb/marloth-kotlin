@@ -32,7 +32,7 @@ import simulation.*
 ////  return actions
 //}
 
-fun applyCommands(world: World, instantiator: Instantiator, commands: Commands, delta: Float) {
+fun applyCommands(world: WorldMap, instantiator: Instantiator, commands: Commands, delta: Float) {
 //  val playerResults = world.players
 //      .filter { it.character.isAlive }
 //      .map { player ->

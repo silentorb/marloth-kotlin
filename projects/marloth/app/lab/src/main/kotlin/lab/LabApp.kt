@@ -47,7 +47,7 @@ fun createDice(config: GameViewConfig) =
     else
       Dice(config.seed)
 
-fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig, gameViewConfig: GameViewConfig, biomes: List<Biome>): World {
+fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig, gameViewConfig: GameViewConfig, biomes: List<Biome>): WorldMap {
   val boundary = createWorldBoundary(gameViewConfig.worldLength)
   val dice = createDice(gameViewConfig)
   val world = generateWorld(WorldInput(
@@ -72,7 +72,7 @@ data class LabApp(
     val display: Display = platform.display,
     val timer: DeltaTimer = DeltaTimer(),
     val biomes: List<Biome>,
-    var world: World,
+    var world: WorldMap,
     val client: Client = Client(platform, gameConfig.display, gameConfig.input),
     val labClient: LabClient = LabClient(config, client),
     val labConfigManager: ConfigManager<LabConfig>
@@ -89,7 +89,7 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
   val delta = app.timer.update().toFloat()
 
   val (commands, nextState, menuAction) = app.labClient.update(app.world, app.client.screens, previousState, delta)
-  if (app.config.view == Views.game) {
+  if (app.config.view == Views.game && !nextState.gameClientState.menu.isVisible) {
     updateLabWorld(app, commands, delta)
   }
 

@@ -9,29 +9,61 @@ import simulation.combat.Missile
 val maxPlayerCount = 4
 
 typealias Players = List<Player>
-typealias IdentityMap<T> = MutableMap<Id, T>
+typealias IdentityMap<T> = Map<Id, T>
 typealias BodyTable = Map<Id, Body>
 typealias CharacterTable = Map<Id, Character>
 
 data class World(
-    val meta: AbstractWorld
+    val bodies: List<Body>,
+    val characters: List<Character>,
+    val depictions: List<Depiction>,
+    val factions: List<Faction>,
+    val lights: List<Light>,
+    val meta: AbstractWorld,
+    val missiles: List<Missile>,
+    val players: List<Player>,
+    val spirits: List<Spirit>
 ) {
-  var players: List<Player> = listOf()
-  var bodyTable: BodyTable = mapOf()
-  var characterTable: CharacterTable = mapOf()
-  var missileTable: Map<Id, Missile> = mapOf()
-  var spiritTable: MutableMap<Id, Spirit> = mutableMapOf()
-  val depictionTable: IdentityMap<Depiction> = mutableMapOf()
+  fun plus(other: NewEntitiesWorld) = this.copy(
+      bodies = bodies.plus(other.bodies),
+      characters = characters.plus(other.characters),
+      players = players.plus(other.players),
+      missiles = missiles.plus(other.missiles),
+      spirits = spirits.plus(other.spirits)
+  )
+}
 
-  val factions = mutableListOf(
+data class NewEntitiesWorld(
+    val bodies: List<Body>,
+    val characters: List<Character>,
+    val missiles: List<Missile>,
+    val players: List<Player>,
+    val spirits: List<Spirit>
+)
+
+data class WorldMap(
+    val bodyTable: BodyTable,
+    val characterTable: CharacterTable,
+    val depictionTable: IdentityMap<Depiction>,
+    val lights: Map<Id, Light>,
+    val missileTable: Map<Id, Missile>,
+    val spiritTable: Map<Id, Spirit>,
+    val state: World
+) {
+
+  val factions = listOf(
       Faction(this, "Misfits"),
       Faction(this, "Monsters")
   )
-  val lights: MutableMap<Id, Light> = mutableMapOf()
 
   private var _nextId = 1
 
   fun getAndSetNextId() = _nextId++
+  val meta: AbstractWorld
+    get() = state.meta
+
+  val players: List<Player>
+    get() = state.players
 
   val characters: Collection<Character>
     get() = characterTable.values
@@ -42,12 +74,27 @@ data class World(
   val missiles: Collection<Missile>
     get() = missileTable.values
 
-  val spirits: MutableCollection<Spirit>
+  val spirits: Collection<Spirit>
     get() = spiritTable.values
 
-  val depictions: MutableCollection<Depiction>
+  val depictions: Collection<Depiction>
     get() = depictionTable.values
 
   val playerCharacters: List<PlayerCharacter>
     get() = players.map { PlayerCharacter(it, characterTable[it.character]!!) }
 }
+
+fun <T : EntityLike> mapEntities(list: Collection<T>): Map<Id, T> =
+    list.associate { Pair(it.id, it) }
+
+fun generateWorldMap(world: World): WorldMap =
+    WorldMap(
+        bodyTable = mapEntities(world.bodies),
+        characterTable = mapEntities(world.characters),
+        depictionTable = world.depictions.associate { Pair(it.id, it) },
+        lights = world.lights.associate { Pair(it.id, it) },
+        missileTable = mapEntities(world.missiles),
+        spiritTable = mapEntities(world.spirits),
+        state = world
+
+    )

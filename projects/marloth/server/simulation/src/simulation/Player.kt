@@ -1,7 +1,5 @@
 package simulation
 
-import mythic.spatial.Vector2
-
 enum class ViewMode {
   firstPerson,
 //  topDown
@@ -28,5 +26,5 @@ data class PlayerCharacter(
 
 typealias PlayerCharacters = List<PlayerCharacter>
 
-fun isPlayer(world: World, character: Character) =
+fun isPlayer(world: WorldMap, character: Character) =
     world.players.any { it.playerId == character.id }

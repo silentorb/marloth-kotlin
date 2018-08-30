@@ -2,10 +2,7 @@ package lab
 
 import haft.*
 import lab.views.*
-import lab.views.game.GameViewRenderData
-import lab.views.game.renderScene
 import lab.views.game.updateGame
-import lab.views.game.updateGameViewState
 import lab.views.map.createTopDownCamera
 import lab.views.map.renderMapView
 import lab.views.map.updateMapState
@@ -15,10 +12,7 @@ import lab.views.world.WorldView
 import marloth.clienting.Client
 import marloth.clienting.ClientState
 import marloth.clienting.CommandType
-import marloth.clienting.InputState
 import marloth.clienting.gui.MenuActionType
-import marloth.clienting.gui.menuButtonAction
-import marloth.clienting.gui.updateMenuState
 import mythic.bloom.Box
 import mythic.bloom.renderLayout
 import mythic.platforming.PlatformInput
@@ -28,8 +22,7 @@ import org.joml.minus
 import rendering.createCanvas
 import scenery.Screen
 import simulation.AbstractWorld
-import simulation.World
-import visualizing.createScenes
+import simulation.WorldMap
 
 data class LabState(
     val labInput: InputTriggerState<LabCommandType>,
@@ -93,7 +86,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     client.platform.input.update()
   }
 
-  fun updateGame(world: World, screens: List<Screen>, previousState: LabState): LabClientResult {
+  fun updateGame(world: WorldMap, screens: List<Screen>, previousState: LabState): LabClientResult {
     client.platform.input.isMouseVisible(false)
     val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
     return updateGame(config, client, world, screens, previousState, commands, nextLabInputState)
@@ -149,7 +142,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     )
   }
 
-  fun updateMap(windowInfo: WindowInfo, world: World, previousState: LabState, delta: Float): LabClientResult {
+  fun updateMap(windowInfo: WindowInfo, world: WorldMap, previousState: LabState, delta: Float): LabClientResult {
     prepareClient(windowInfo)
     val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
     val input = getInputState(client.platform.input, commands)
@@ -164,7 +157,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     )
   }
 
-  fun update(world: World, screens: List<Screen>, previousState: LabState, delta: Float): LabClientResult {
+  fun update(world: WorldMap, screens: List<Screen>, previousState: LabState, delta: Float): LabClientResult {
     val windowInfo = client.platform.display.getInfo()
     return when (config.view) {
       Views.game -> updateGame(world, screens, previousState)

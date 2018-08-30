@@ -11,7 +11,7 @@ fun raycastNodes(firstNode: Node, start: Vector3, end: Vector3): List<Node> {
   var lastWall: FlexibleFace? = null
   do {
     val wall = node.walls
-        .filter { it != lastWall  && getFaceInfo(it).type != FaceType.space}
+        .filter { it != lastWall && getFaceInfo(it).type != FaceType.space }
         .firstOrNull {
           val edge = getFloor(it)
           lineSegmentIntersectsLineSegment(start, end, edge.first, edge.second).first
@@ -34,9 +34,10 @@ fun rayCanHitPoint(firstNode: Node, start: Vector3, end: Vector3): Boolean {
   var node = firstNode
   var lastWall: FlexibleFace? = null
   do {
-    val wall = node.walls
-        .filter(isWall)
-        .filter { it != lastWall}
+    val walls = node.walls
+        .filter { it != lastWall }
+
+    val wall = walls
         .firstOrNull {
           val edge = getFloor(it)
           lineSegmentIntersectsLineSegment(start, end, edge.first, edge.second).first

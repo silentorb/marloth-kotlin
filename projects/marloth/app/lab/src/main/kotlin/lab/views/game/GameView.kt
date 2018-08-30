@@ -30,7 +30,7 @@ import scenery.DepictionType
 import scenery.GameScene
 import scenery.Screen
 import simulation.AbstractWorld
-import simulation.World
+import simulation.WorldMap
 import visualizing.createScenes
 
 enum class GameDisplayMode {
@@ -171,7 +171,7 @@ fun updateGameViewState(config: GameViewConfig, input: LabInputState) {
   }
 }
 
-fun updateGame(config: LabConfig, client: Client, world: World, screens: List<Screen>, previousState: LabState,
+fun updateGame(config: LabConfig, client: Client, world: WorldMap, screens: List<Screen>, previousState: LabState,
                commands: HaftCommands<LabCommandType>,
                nextLabInputState: InputTriggerState<LabCommandType>): LabClientResult {
 //    rendering.platform.input.isMouseVisible(false)

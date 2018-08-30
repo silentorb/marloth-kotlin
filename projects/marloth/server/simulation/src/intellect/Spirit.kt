@@ -2,6 +2,7 @@ package intellect
 
 import physics.Body
 import simulation.Character
+import simulation.EntityLike
 import simulation.Id
 import simulation.Node
 
@@ -26,12 +27,15 @@ data class Pursuit(
 )
 
 data class Spirit(
-    val id: Id,
+    override val id: Id,
     val knowledge: Knowledge,
 //    val goals: List<Goal>,
     val pursuit: Pursuit
-)
+) : EntityLike
 
+data class NewSpirit(
+    val id: Id
+)
 //class Spirit(
 //    val character: Character,
 //    var state: Spirit
@@ -48,3 +52,16 @@ data class Spirit(
 //  val body: Body
 //    get() = character.body
 //}
+
+fun getNewSpirits(newSpirits: List<NewSpirit>, newCharacters: List<Character>): List<Spirit> =
+    newSpirits.map { source ->
+      Spirit(
+          id = source.id,
+          knowledge = Knowledge(
+              character = newCharacters.first { it.id == source.id },
+              nodes = listOf(),
+              visibleCharacters = listOf()
+          ),
+          pursuit = Pursuit()
+      )
+    }

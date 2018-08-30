@@ -6,7 +6,7 @@ import lab.LabApp
 import marloth.clienting.CommandType
 import mythic.spatial.Vector3
 import simulation.Id
-import simulation.World
+import simulation.WorldMap
 import simulation.changing.updateWorld
 
 const val nSecond: Long = 1000000000L
@@ -14,7 +14,7 @@ const val maxInterval = 1f / 60f
 
 private var spiritMovementTallies = mapOf<Id, Pair<Float, Vector3>>()
 
-fun trackSpiritMovement(world: World, delta: Float) {
+fun trackSpiritMovement(world: WorldMap, delta: Float) {
   spiritMovementTallies = world.spirits.associate { spirit ->
     val character = world.characterTable[spirit.id]!!
     val body = world.bodyTable[spirit.id]!!

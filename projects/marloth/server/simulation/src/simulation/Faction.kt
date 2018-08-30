@@ -1,7 +1,7 @@
 package simulation
 
 class Faction(
-    val world: World,
+    val world: WorldMap,
     val name: String
 ) {
 

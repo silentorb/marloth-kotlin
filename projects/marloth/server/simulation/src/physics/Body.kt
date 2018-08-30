@@ -8,6 +8,7 @@ import colliding.Sphere
 import mythic.spatial.isInsidePolygon
 import scenery.Textures
 import simulation.*
+import simulation.changing.NewEntities
 import simulation.changing.simulationDelta
 import simulation.combat.NewMissile
 import simulation.input.allPlayerMovements
@@ -29,7 +30,7 @@ val voidNode: Node = Node(
 )
 
 class Body(
-    val id: Id,
+    override val id: Id,
     val shape: Shape?,
     var position: Vector3,
     var orientation: Quaternion,
@@ -38,7 +39,7 @@ class Body(
     val gravity: Boolean,
 //    val friction: Float,
     var node: Node
-) {
+) : EntityLike {
 
   val radius: Float?
     get() = shape?.getRadiusOrNull()
@@ -88,19 +89,19 @@ fun updateBodyNode(body: Body) {
   }
 }
 
-fun updateBodies(world: World, commands: Commands): List<Body> {
+fun updateBodies(world: WorldMap, commands: Commands, collisions: Collisions): List<Body> {
   val delta = simulationDelta
   val forces = allPlayerMovements(world.characterTable, commands)
   applyForces(forces, delta)
-  updateBodies(world.meta, world.bodies, delta)
+  updateBodies(world.bodies, collisions, delta)
   return world.bodies.map {
     updateBodyNode(it)
     it
   }
 }
 
-fun getNewBodies(newMissiles: List<NewMissile>): List<Body> {
-  return newMissiles.map { newMissile ->
+fun getNewBodies(newEntities: NewEntities): List<Body> {
+  return newEntities.newMissiles.map { newMissile ->
     Body(
         id = newMissile.id,
         shape = commonShapes[EntityType.missile]!!,
@@ -112,4 +113,16 @@ fun getNewBodies(newMissiles: List<NewMissile>): List<Body> {
         gravity = false
     )
   }
+      .plus(newEntities.newCharacters.map { character ->
+        Body(
+            id = character.id,
+            shape = commonShapes[EntityType.character]!!,
+            position = character.position,
+            orientation = Quaternion(),
+            velocity = Vector3(),
+            node = character.node,
+            attributes = characterBodyAttributes,
+            gravity = true
+        )
+      })
 }

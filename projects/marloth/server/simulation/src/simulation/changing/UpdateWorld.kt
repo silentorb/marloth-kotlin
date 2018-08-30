@@ -1,13 +1,13 @@
 package simulation.changing
 
+import intellect.getNewSpirits
 import intellect.pursueGoals
 import intellect.updateAiState
 import mythic.spatial.Pi2
-import mythic.spatial.Quaternion
+import mythic.spatial.times
 import physics.*
 import simulation.*
 import simulation.combat.*
-import simulation.input.allPlayerMovements
 import simulation.input.updatePlayers
 
 fun <T> updateField(defaultValue: T, newValue: T?): T =
@@ -29,7 +29,7 @@ fun checkMissileBodies(missileTable: Map<Id, Missile>, bodyTable: BodyTable) {
   assert(incomplete.none())
 }
 
-fun getFinished(world: World): List<Int> {
+fun getFinished(world: WorldMap): List<Int> {
   return world.missileTable.values
       .filter { simulation.combat.isFinished(world.meta, world.bodyTable, it) }
       .map { it.id }
@@ -39,51 +39,93 @@ fun getFinished(world: World): List<Int> {
 //      .plus(world.bodies.filter { it.node == voidNode }.map { it.id })
 }
 
-fun removeFinished(world: World, finished: List<Int>) {
-  world.characterTable = world.characterTable.minus(finished)
-  world.missileTable = world.missileTable.minus(finished)
-  world.bodyTable = world.bodyTable.minus(finished)
-  world.spiritTable.minusAssign(finished)
-  world.depictionTable.minusAssign(finished)
-  world.lights.minusAssign(finished)
+fun removeFinished(world: World, finishedIds: List<Int>): World {
+  val isFinished = { entity: EntityLike -> finishedIds.contains(entity.id) }
+
+  return world.copy(
+      characters = world.characters.filter(isFinished),
+      missiles = world.missiles.filter(isFinished),
+      bodies = world.bodies.filter(isFinished),
+      spirits = world.spirits.filter(isFinished)
+  )
 }
 
-fun updateWorldMain(world: World, playerCommands: Commands, delta: Float) {
-  val playerCharacters = world.playerCharacters
-      .filter { it.character.isAlive }
+data class NewEntities(
+    val newCharacters: List<NewCharacter>,
+    val newMissiles: List<NewMissile>
+)
 
-  world.spiritTable = world.spiritTable.mapValues { updateAiState(world, it.value) }.toMutableMap()
+data class Intermediate(
+    val commands: Commands,
+    val activatedAbilities: List<ActivatedAbility>,
+    val collisions: Collisions
+)
+
+fun getNewEntities(world: WorldMap, data: Intermediate): NewEntities {
+  return NewEntities(
+      newCharacters = listOf(),
+      newMissiles = getNewMissiles(world, data.activatedAbilities)
+  )
+}
+
+fun generateIntermediateRecords(world: WorldMap, playerCommands: Commands, delta: Float): Intermediate {
   val spiritCommands = pursueGoals(world.spirits)
   val commands = playerCommands.plus(spiritCommands)
-  world.players = updatePlayers(world.players, commands)
-  val collisions = getCollisions(world.bodyTable, world.characterTable, world.missiles)
-  val activatedAbilities = getActivatedAbilities(world, commands)
-  val characters = updateCharacters(world, collisions, commands, activatedAbilities)
-  val newMissiles = getNewMissiles(world, activatedAbilities)
-  val finished = getFinished(world)
-  checkMissileBodies(world.missileTable, world.bodyTable)
-  world.missileTable = updateMissiles(world, newMissiles, collisions, finished)
-      .associate { Pair(it.id, it) }
-  val finishedBodies = world.bodies.filter { body -> finished.any { it == body.id } }
-  if (newMissiles.any()) {
-    val k = 1
+  val collisions: Collisions = world.bodies.flatMap { body ->
+    val offset = body.velocity * delta
+    val walls = findCollisionWalls(body.position, offset, world.meta, body.node)
+    walls.map { Collision(body.id, null, it.wall, it.hitPoint, it.gap) }
   }
-  world.bodyTable = updateBodies(world, commands)
-      .plus(getNewBodies(newMissiles))
-      .associate { Pair(it.id, it) }
+      .plus(getBodyCollisions(world.bodyTable, world.characterTable, world.missiles))
+  val activatedAbilities = getActivatedAbilities(world, commands)
 
-  world.characterTable = characters.associate { Pair(it.id, it) }
-  checkMissileBodies(world.missileTable, world.bodyTable)
-  removeFinished(world, finished)
+  return Intermediate(
+      commands = commands,
+      activatedAbilities = activatedAbilities,
+      collisions = collisions
+  )
+}
 
-  checkMissileBodies(world.missileTable, world.bodyTable)
+fun updateEntities(world: World, worldMap: WorldMap, data: Intermediate): World {
+  val (commands, activatedAbilities, collisionMap) = data
+
+  return world.copy(
+      bodies = updateBodies(worldMap, commands, collisionMap),
+      characters = updateCharacters(worldMap, collisionMap, commands, activatedAbilities),
+      missiles = updateMissiles(worldMap, collisionMap),
+      players = updatePlayers(world.players, data.commands),
+      spirits = world.spirits.map { updateAiState(worldMap, it) }
+  )
+}
+
+fun newEntities(data: NewEntities): NewEntitiesWorld {
+  val characters = getNewCharacters(data.newCharacters)
+  return NewEntitiesWorld(
+      bodies = getNewBodies(data),
+      characters = characters,
+      missiles = data.newMissiles.map { Missile(it.id, it.owner, it.range) },
+      players = listOf(),
+      spirits = getNewSpirits(data.newCharacters.mapNotNull { it.spirit }, characters)
+  )
+}
+
+fun removeEntities(world: World, worldMap: WorldMap): World {
+  val finished = getFinished(worldMap)
+  return removeFinished(world, finished)
+}
+
+fun updateWorldMain(world: World, worldMap: WorldMap, playerCommands: Commands, delta: Float): World {
+  val data = generateIntermediateRecords(worldMap, playerCommands, delta)
+  val updatedWorld = updateEntities(world, worldMap, data)
+  return removeEntities(updatedWorld, worldMap)
+      .plus(newEntities(getNewEntities(worldMap, data)))
 }
 
 const val simulationDelta = 1f / 60f
 
 private var deltaAggregator = 0f
 
-fun updateWorld(world: World, commands: Commands, delta: Float) {
+fun updateWorld(world: WorldMap, commands: Commands, delta: Float): WorldMap {
   deltaAggregator += delta
   if (deltaAggregator > simulationDelta) {
     deltaAggregator -= simulationDelta
@@ -95,6 +137,9 @@ fun updateWorld(world: World, commands: Commands, delta: Float) {
       println("Skipped a frame.  deltaAggregator = " + deltaAggregator + " simulationDelta = " + simulationDelta)
       deltaAggregator = deltaAggregator % simulationDelta
     }
-    updateWorldMain(world, commands, simulationDelta)
+    val newWorld = updateWorldMain(world.state, world, commands, simulationDelta)
+    return generateWorldMap(newWorld)
+  } else {
+    return world
   }
 }

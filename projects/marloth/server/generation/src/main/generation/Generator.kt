@@ -69,14 +69,14 @@ fun fillIndexes(graph: NodeGraph) {
   }
 }
 
-fun placeEnemy(world: World, instantiator: Instantiator, dice: Dice) {
+fun placeEnemy(world: WorldMap, instantiator: Instantiator, dice: Dice) {
   val node = dice.getItem(world.meta.locationNodes.drop(1))// Skip the node where the player starts
   val wall = dice.getItem(node.walls)
   val position = getVector3Center(node.position, wall.edges[0].first)
   instantiator.createAiCharacter(characterDefinitions.monster, world.factions[1], position, node)
 }
 
-fun placeEnemies(world: World, instantiator: Instantiator, dice: Dice, scale: Float) {
+fun placeEnemies(world: WorldMap, instantiator: Instantiator, dice: Dice, scale: Float) {
 //  val enemyCount = (10f * scale).toInt()
   val enemyCount = 1
   for (i in 0 until enemyCount) {
@@ -84,7 +84,7 @@ fun placeEnemies(world: World, instantiator: Instantiator, dice: Dice, scale: Fl
   }
 }
 
-fun placeWallLamps(world: World, instantiator: Instantiator, dice: Dice, scale: Float) {
+fun placeWallLamps(world: WorldMap, instantiator: Instantiator, dice: Dice, scale: Float) {
   val count = (10f * scale).toInt()
   val isValidLampWall = { it: FlexibleFace ->
     getFaceInfo(it).type == FaceType.wall && getFaceInfo(it).texture != null
@@ -110,12 +110,12 @@ fun placeWallLamps(world: World, instantiator: Instantiator, dice: Dice, scale: 
 fun calculateWorldScale(dimensions: Vector3) =
     (dimensions.x * dimensions.y) / (100 * 100)
 
-fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): World {
+fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): WorldMap {
   val abstractWorld = AbstractWorld(input.boundary)
   val scale = calculateWorldScale(abstractWorld.boundary.dimensions)
   val tunnels = generateAbstract(abstractWorld, input.biomes, input.dice, scale)
   generateStructure(abstractWorld, input.dice, tunnels)
-  val world = World(abstractWorld)
+  val world = WorldMap(abstractWorld)
   val instantiator = Instantiator(world, instantiatorConfig)
   instantiator.createPlayer(1)
 

@@ -7,9 +7,8 @@ import marloth.clienting.CommandType
 import mythic.platforming.Display
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
-import simulation.World
+import simulation.WorldMap
 import marloth.clienting.initialGameInputState
-import simulation.changing.Instantiator
 import simulation.changing.InstantiatorConfig
 import simulation.changing.updateWorld
 import simulation.createBiomes
@@ -20,7 +19,7 @@ data class App(
     val config: GameConfig,
     val display: Display = platform.display,
     val timer: DeltaTimer = DeltaTimer(),
-    val world: World,
+    val world: WorldMap,
     val client: Client = Client(platform, config.display, config.input)
 )
 

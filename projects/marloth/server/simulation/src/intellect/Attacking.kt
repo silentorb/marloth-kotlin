@@ -1,7 +1,6 @@
 package intellect
 
 import simulation.*
-import simulation.changing.setCharacterFacing
 
 fun spiritAttack(knowledge: Knowledge, pursuit: Pursuit): Commands {
   val target = knowledge.visibleCharacters.first { it.id == pursuit.target }
@@ -28,12 +27,12 @@ fun spiritAttack(knowledge: Knowledge, pursuit: Pursuit): Commands {
 //  return null
 //}
 
-fun getVisibleCharacters(world: World, character: Character): List<Character> {
+fun getVisibleCharacters(world: WorldMap, character: Character): List<Character> {
 //  val enemies = world.characters.filter { it.faction != character.faction }
   return world.characters.filter { it.id != character.id && canSee(character, it) }
 }
 
-//fun checkEnemySighting(world: World, character: Character): Spirit? {
+//fun checkEnemySighting(world: WorldMap, character: Character): Spirit? {
 //  val visibleEnemy = getVisibleEnemy(world, character)
 //  return if (visibleEnemy == null)
 //    null
@@ -44,7 +43,7 @@ fun getVisibleCharacters(world: World, character: Character): List<Character> {
 //    )
 //}
 
-//fun updateAttack(world: World, spirit: Spirit): SpiritUpdateResult {
+//fun updateAttack(world: WorldMap, spirit: Spirit): SpiritUpdateResult {
 //  val visibleEnemy = getVisibleEnemy(world, spirit)
 //  return if (visibleEnemy == null)
 //    SpiritUpdateResult(Spirit(mode = GoalType.idle))

@@ -11,7 +11,6 @@ import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import org.joml.plus
 import physics.Body
-import physics.BodyAttributes
 import physics.commonShapes
 import rigging.createSkeleton
 import rigging.humanAnimations
@@ -32,75 +31,75 @@ fun createArmature(): Armature {
   )
 }
 
-fun nextId(world: World): Id {
+fun nextId(world: WorldMap): Id {
   val id = world.getAndSetNextId()
   return id
 }
 
 class Instantiator(
-    private val world: World,
+    private val world: WorldMap,
     val config: InstantiatorConfig
 ) {
 
-  fun addDepiction(depiction: Depiction) {
-    world.depictionTable[depiction.id] = depiction
-  }
+//  fun addDepiction(depiction: Depiction) {
+//    world.depictionTable[depiction.id] = depiction
+//  }
 
-  fun createCharacter(definition: CharacterDefinition, faction: Faction, position: Vector3, node: Node): Character {
-    val body = Body(
-        id = nextId(world),
-        shape = commonShapes[EntityType.character]!!,
-        position = position,
-        orientation = Quaternion(),
-        velocity = Vector3(),
-        node = node,
-        attributes = characterBodyAttributes,
-        gravity = true
-    )
-    world.bodyTable = world.bodyTable.plus(Pair(body.id, body))
+//  fun createCharacter(source: NewCharacter): Character {
+//    val body = Body(
+//        id = source.id,
+//        shape = commonShapes[EntityType.character]!!,
+//        position = source.position,
+//        orientation = Quaternion(),
+//        velocity = Vector3(),
+//        node = source.node,
+//        attributes = characterBodyAttributes,
+//        gravity = true
+//    )
+//    world.bodyTable = world.bodyTable.plus(Pair(body.id, body))
 
-    val abilities = definition.abilities.map {
-      Ability(
-          id = nextId(world),
-          definition = it
-      )
-    }
-    val character = Character(
-        id = body.id,
-        turnSpeed = Vector2(1.5f, 1f),
-        faction = faction,
-        body = body,
-        health = Resource(definition.health),
-        abilities = abilities
-    )
-    addDepiction(Depiction(
-        body.id,
-        definition.depictionType,
-        DepictionAnimation(0, 0f, createArmature())
-    ))
-    world.characterTable = world.characterTable.plus(Pair(body.id, character))
-    return character
-  }
+//    val abilities = definition.abilities.map {
+//      Ability(
+//          id = nextId(world),
+//          definition = it
+//      )
+//    }
+//    val character = Character(
+//        id = body.id,
+//        turnSpeed = Vector2(1.5f, 1f),
+//        faction = faction,
+//        body = body,
+//        health = Resource(definition.health),
+//        abilities = abilities
+//    )
+//    addDepiction(Depiction(
+//        body.id,
+//        definition.depictionType,
+//        DepictionAnimation(0, 0f, createArmature())
+//    ))
+//    world.characterTable = world.characterTable.plus(Pair(body.id, character))
+//    return character
+//  }
 
-  fun createAiCharacter(definition: CharacterDefinition, faction: Faction, position: Vector3, node: Node): Character {
-    val character = createCharacter(definition, faction, position, node)
-    createSpirit(character)
-    return character
-  }
+//  fun createAiCharacter(definition: CharacterDefinition, faction: Faction, position: Vector3, node: Node): Character {
+//    val character = createCharacter(definition, faction, position, node)
+//    createSpirit(character)
+//    return character
+//  }
 
-  fun createSpirit(character: Character): Spirit {
-    val spirit = Spirit(
-        id = character.id,
-        knowledge = Knowledge(
-            character = character,
-            nodes = listOf(),
-            visibleCharacters = listOf()
-        ),
-        pursuit = Pursuit()
-    )
-    world.spiritTable[character.id] = spirit
-    return spirit
-  }
+//  fun createSpirit(character: Character): Spirit {
+//    val spirit = Spirit(
+//        id = character.id,
+//        knowledge = Knowledge(
+//            character = character,
+//            nodes = listOf(),
+//            visibleCharacters = listOf()
+//        ),
+//        pursuit = Pursuit()
+//    )
+//    world.spiritTable[character.id] = spirit
+//    return spirit
+//  }
 
   fun createPlayer(id: Id): Player {
     val node = world.meta.nodes.first()
