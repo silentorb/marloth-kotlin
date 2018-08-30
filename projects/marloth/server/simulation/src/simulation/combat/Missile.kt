@@ -7,12 +7,11 @@ import org.joml.plus
 import physics.Collision
 import physics.overlaps
 import simulation.*
-import simulation.changing.nextId
 import simulation.changing.hitsWall
 import simulation.changing.simulationDelta
 
 data class Missile(
-    override val id: Int,
+    override val id: Id,
     val owner: Id,
     val remainingDistance: Float
 ) : EntityLike
@@ -26,11 +25,12 @@ data class NewMissile(
     val owner: Id
 )
 
-fun characterAttack(world: WorldMap, character: Character, ability: Ability, direction: Vector3): NewMissile {
+fun characterAttack(world: WorldMap, nextId: IdSource, character: Character, ability: Ability, direction: Vector3): NewMissile {
+  val body = world.bodyTable[character.id]!!
   return NewMissile(
-      id = nextId(world),
-      position = character.body.position + direction * 0.5f + Vector3(0f, 0f, 0.7f),
-      node = character.body.node,
+      id = nextId(),
+      position = body.position + direction * 0.5f + Vector3(0f, 0f, 0.7f),
+      node = body.node,
       velocity = direction * 14.0f,
       range = ability.definition.range,
       owner = character.id
@@ -40,8 +40,8 @@ fun characterAttack(world: WorldMap, character: Character, ability: Ability, dir
 fun getBodyCollisions(bodyTable: BodyTable, characterTable: CharacterTable, missiles: Collection<Missile>): List<Collision> {
   return missiles.flatMap { missile ->
     val body = bodyTable[missile.id]!!
-    val owner = characterTable[missile.owner]!!
-    bodyTable.values.filter { it !== body && it !== owner.body }
+    val owner = bodyTable[missile.owner]!!
+    bodyTable.values.filter { it !== body && it !== owner }
         .filter { overlaps(it, body) }
         .map { hit ->
           Collision(
@@ -78,10 +78,10 @@ fun isFinished(world: AbstractWorld, bodyTable: BodyTable, missile: Missile): Bo
   return missile.remainingDistance <= 0 || world.walls.filter(isWall).any { hitsWall(it.edges[0].edge, position, body.radius!!) }
 }
 
-fun getNewMissiles(world: WorldMap, activatedAbilities: List<ActivatedAbility>): List<NewMissile> {
+fun getNewMissiles(world: WorldMap, nextId: IdSource, activatedAbilities: List<ActivatedAbility>): List<NewMissile> {
   return activatedAbilities.map {
     val (character, ability) = it
-    characterAttack(world, character, ability, character.facingVector)
+    characterAttack(world, nextId, character, ability, character.facingVector)
   }
 }
 

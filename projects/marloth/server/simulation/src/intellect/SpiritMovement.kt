@@ -1,21 +1,14 @@
 package intellect
 
-import simulation.CommandType
 import mythic.sculpting.FlexibleFace
-import mythic.spatial.Pi
 import mythic.spatial.Vector3
-import mythic.spatial.copy
-import mythic.spatial.minMax
 import org.joml.plus
-import physics.MovementForce
 import randomly.Dice
 import simulation.*
-import simulation.changing.getLookAtAngle
-import simulation.changing.simulationDelta
 
 fun getNextPathFace(knowledge: Knowledge, path: Path): FlexibleFace? {
-  val character = knowledge.character
-  val node = character.body.node
+  val body = knowledge.world.bodyTable[knowledge.spiritId]!!
+  val node = body.node
   val nextNode = path.first()
   return node.walls.firstOrNull { getOtherNode(node, it) == nextNode }
 }
@@ -24,8 +17,8 @@ fun pathIsAccessible(knowledge: Knowledge, path: Path): Boolean =
     getNextPathFace(knowledge, path) != null
 
 fun startRoaming(knowledge: Knowledge): Path {
-  val character = knowledge.character
-  val location = character.body.node
+  val body = knowledge.world.bodyTable[knowledge.spiritId]!!
+  val location = body.node
   val options = knowledge.nodes
       .filter { it != location && it.isWalkable }
 
@@ -49,7 +42,8 @@ fun updateMovementPursuit(knowledge: Knowledge, pursuit: Pursuit): Path {
   return if (pursuit.path == null || !pathIsAccessible(knowledge, pursuit.path))
     startRoaming(knowledge)
   else {
-    val remainingPath = getRemainingPath(knowledge.character.body.node, pursuit.path)
+    val body = knowledge.world.bodyTable[knowledge.spiritId]!!
+    val remainingPath = getRemainingPath(body.node, pursuit.path)
     if (remainingPath.any())
       remainingPath
     else
@@ -58,14 +52,14 @@ fun updateMovementPursuit(knowledge: Knowledge, pursuit: Pursuit): Path {
 }
 
 fun getTargetOffset(knowledge: Knowledge, pursuit: Pursuit): Vector3 {
-  val character = knowledge.character
+  val body = knowledge.world.bodyTable[knowledge.spiritId]!!
   val path = pursuit.path!!
   val face = getNextPathFace(knowledge, path)
   if (face == null)
     throw Error("Not supported")
 
   val edge = getFloor(face)
-  val position = character.body.position
+  val position = body.position
   val nearestPoint = edge.vertices.sortedBy { it.distance(position) }.first()
   val target = (edge.middle + nearestPoint) / 2f
   return (target - position).normalize()
@@ -73,9 +67,8 @@ fun getTargetOffset(knowledge: Knowledge, pursuit: Pursuit): Vector3 {
 
 fun moveSpirit(knowledge: Knowledge, pursuit: Pursuit): Commands {
   val offset = getTargetOffset(knowledge, pursuit)
-  val character = knowledge.character
   return spiritNeedsFacing(knowledge, offset, 0.1f) {
-    listOf(Command(CommandType.moveUp, character.id))
+    listOf(Command(CommandType.moveUp, knowledge.spiritId))
   }
 //  val facingCommands = spiritFacingChange(knowledge, offset)
 //  val course = facingDistance(character, offset)

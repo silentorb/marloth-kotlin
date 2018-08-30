@@ -31,10 +31,10 @@ fun createArmature(): Armature {
   )
 }
 
-fun nextId(world: WorldMap): Id {
-  val id = world.getAndSetNextId()
-  return id
-}
+//fun nextId(world: WorldMap): Id {
+//  val id = world.getAndSetNextId()
+//  return id
+//}
 
 class Instantiator(
     private val world: WorldMap,
@@ -101,44 +101,44 @@ class Instantiator(
 //    return spirit
 //  }
 
-  fun createPlayer(id: Id): Player {
-    val node = world.meta.nodes.first()
-    val position = node.position// + Vector3(0f, 0f, 1f)
-    val character = createCharacter(characterDefinitions.player, world.factions[0], position, node)
-    val player = Player(character.id, id, config.defaultPlayerView)
-    world.players = world.players.plus(player)
-    return player
-  }
+//  fun createPlayer(id: Id): Player {
+//    val node = world.meta.nodes.first()
+//    val position = node.position// + Vector3(0f, 0f, 1f)
+//    val character = createCharacter(characterDefinitions.player, world.factions[0], position, node)
+//    val player = Player(character.id, id, config.defaultPlayerView)
+//    world.players = world.players.plus(player)
+//    return player
+//  }
 
-  fun createFurnishing(depictionType: DepictionType, position: Vector3, node: Node, orientation: Quaternion): Body {
-    val body = Body(
-        id = nextId(world),
-        shape = Sphere(0.3f),
-        position = position,
-        orientation = orientation,
-        velocity = Vector3(),
-        node = node,
-        attributes = doodadBodyAttributes,
-        gravity = false
-    )
-    world.bodyTable = world.bodyTable.plus(Pair(body.id, body))
-    addDepiction(Depiction(body.id, depictionType, null))
-    return body
-  }
+//  fun createFurnishing(depictionType: DepictionType, position: Vector3, node: Node, orientation: Quaternion): Body {
+//    val body = Body(
+//        id = nextId(),
+//        shape = Sphere(0.3f),
+//        position = position,
+//        orientation = orientation,
+//        velocity = Vector3(),
+//        node = node,
+//        attributes = doodadBodyAttributes,
+//        gravity = false
+//    )
+//    world.bodyTable = world.bodyTable.plus(Pair(body.id, body))
+//    addDepiction(Depiction(body.id, depictionType, null))
+//    return body
+//  }
 
-  fun addLight(id: Id, light: Light) {
-    world.lights[id] = light
-  }
+//  fun addLight(id: Id, light: Light) {
+//    world.lights[id] = light
+//  }
 
-  fun createWallLamp(position: Vector3, node: Node, orientation: Quaternion): Body {
-    val body = createFurnishing(DepictionType.wallLamp, position, node, orientation)
-    val light = Light(
-        type = LightType.point,
-        color = Vector4(1f, 1f, 1f, 1f),
-        position = position + Vector3(0f, 0f, 1.6f),
-        direction = Vector4(0f, 0f, 0f, 15f)
-    )
-    addLight(body.id, light)
-    return body
-  }
+//  fun createWallLamp(position: Vector3, node: Node, orientation: Quaternion): Body {
+//    val body = createFurnishing(DepictionType.wallLamp, position, node, orientation)
+//    val light = Light(
+//        type = LightType.point,
+//        color = Vector4(1f, 1f, 1f, 1f),
+//        position = position + Vector3(0f, 0f, 1.6f),
+//        direction = Vector4(0f, 0f, 0f, 15f)
+//    )
+//    addLight(body.id, light)
+//    return body
+//  }
 }

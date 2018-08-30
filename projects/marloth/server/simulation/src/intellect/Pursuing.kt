@@ -4,8 +4,7 @@ import simulation.Commands
 import simulation.Id
 
 fun updateTarget(knowledge: Knowledge, pursuit: Pursuit): Id? {
-  val character = knowledge.character
-  val visibleEnemies = getVisibleEnemies(character, knowledge)
+  val visibleEnemies = getVisibleEnemies(knowledge.character, knowledge)
   return if (pursuit.target != null && visibleEnemies.any { it.id == pursuit.target })
     pursuit.target
   else if (visibleEnemies.any())
@@ -35,5 +34,10 @@ fun pursueGoal(knowledge: Knowledge, pursuit: Pursuit): Commands {
 }
 
 fun pursueGoals(spirits: Collection<Spirit>): Commands {
-  return spirits.flatMap { pursueGoal(it.knowledge, it.pursuit) }
+  return spirits.flatMap {
+    if (it.knowledge != null)
+      pursueGoal(it.knowledge, it.pursuit)
+    else
+      listOf()
+  }
 }

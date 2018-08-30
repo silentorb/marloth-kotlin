@@ -3,9 +3,12 @@ package intellect
 import simulation.*
 
 fun spiritAttack(knowledge: Knowledge, pursuit: Pursuit): Commands {
+  val world = knowledge.world
   val target = knowledge.visibleCharacters.first { it.id == pursuit.target }
-  val character = knowledge.character
-  val offset = target.body.position - character.body.position
+  val character = world.characterTable[knowledge.spiritId]!!
+  val body = world.bodyTable[knowledge.spiritId]!!
+  val targetBody = world.bodyTable[target.id]!!
+  val offset = targetBody.position - body.position
   return spiritNeedsFacing(knowledge, offset, 0.1f) {
     listOf(Command(CommandType.attack, character.id))
   }
@@ -29,7 +32,7 @@ fun spiritAttack(knowledge: Knowledge, pursuit: Pursuit): Commands {
 
 fun getVisibleCharacters(world: WorldMap, character: Character): List<Character> {
 //  val enemies = world.characters.filter { it.faction != character.faction }
-  return world.characters.filter { it.id != character.id && canSee(character, it) }
+  return world.characters.filter { it.id != character.id && canSee(world, character, it) }
 }
 
 //fun checkEnemySighting(world: WorldMap, character: Character): Spirit? {

@@ -104,7 +104,7 @@ fun placeWallLamps(world: WorldMap, instantiator: Instantiator, dice: Dice, scal
 //    val angle = getAngle(edge.first.copy().cross(edge.second).xy())
 //    val angle = getAngle(wall.normal.xy())
       val angle = Quaternion().rotateTo(Vector3(1f, 0f, 0f), wall.normal)
-      instantiator.createWallLamp(position, node, angle)
+//      instantiator.createWallLamp(position, node, angle)
     }
   }
 }
@@ -119,16 +119,21 @@ fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): Wo
   generateStructure(abstractWorld, input.dice, tunnels)
   val playerNode = abstractWorld.nodes.first()
   var id = 1
+  val nextId = newIdSource(1)
   val newEntities = NewEntities(
       newCharacters = listOf(
           NewCharacter(
-              id = id++,
-
+              id = nextId()
               )
       )
   )
   val world = World(
+      factions = listOf(
+          Faction(1, "Misfits"),
+          Faction(2, "Monsters")
+      ),
       meta = abstractWorld,
+      nextId = nextId(),
       players = listOf(Player(newEntities.newCharacters.first().id, 1, instantiatorConfig.defaultPlayerView))
   ).plus(createNewEntitiesWorld(newEntities))
 //  instantiator.createPlayer(1)

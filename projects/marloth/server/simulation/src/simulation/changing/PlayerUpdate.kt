@@ -42,12 +42,12 @@ fun applyCommands(world: WorldMap, instantiator: Instantiator, commands: Command
 //        CharacterAction(player.character, result)
 //      }
 
-  val remainingCommands = commands.filter({ it.target == 0 || it.target > maxPlayerCount })
-  for (command in remainingCommands) {
-    if (command.type == CommandType.joinGame) {
-      instantiator.createPlayer(world.players.size + 1)
-    }
-  }
+//  val remainingCommands = commands.filter({ it.target == 0 || it.target > maxPlayerCount })
+//  for (command in remainingCommands) {
+//    if (command.type == CommandType.joinGame) {
+//      instantiator.createPlayer(world.players.size + 1)
+//    }
+//  }
 
 //  return playerResults
 }

@@ -1,6 +1,6 @@
 package simulation
 
-typealias Id = Int
+typealias Id = Long
 
 enum class EntityType {
   character,
@@ -15,4 +15,11 @@ class Entity(
 
 interface EntityLike {
   val id: Id
+}
+
+typealias IdSource = () -> Id
+
+fun newIdSource(initialValue: Id): IdSource {
+  var nextId: Id = initialValue
+  return { nextId++ }
 }

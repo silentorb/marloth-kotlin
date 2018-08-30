@@ -16,11 +16,12 @@ typealias CharacterTable = Map<Id, Character>
 data class World(
     val bodies: List<Body> = listOf(),
     val characters: List<Character> = listOf(),
-    val depictions: List<Depiction> = listOf(),
-    val factions: List<Faction> = listOf(),
-    val lights: List<Light> = listOf(),
+    val animations: List<ArmatureAnimation> = listOf(),
+    val factions: List<Faction>,
+//    val lights: List<Light> = listOf(),
     val meta: AbstractWorld,
     val missiles: List<Missile> = listOf(),
+    val nextId: Id,
     val players: List<Player> = listOf(),
     val spirits: List<Spirit> = listOf()
 ) {
@@ -44,17 +45,12 @@ data class NewEntitiesWorld(
 data class WorldMap(
     val bodyTable: BodyTable,
     val characterTable: CharacterTable,
-    val depictionTable: IdentityMap<Depiction>,
-    val lights: Map<Id, Light>,
+    val animationTable: IdentityMap<ArmatureAnimation>,
+//    val lights: Map<Id, Light>,
     val missileTable: Map<Id, Missile>,
     val spiritTable: Map<Id, Spirit>,
     val state: World
 ) {
-
-  val factions = listOf(
-      Faction(this, "Misfits"),
-      Faction(this, "Monsters")
-  )
 
   private var _nextId = 1
 
@@ -76,12 +72,6 @@ data class WorldMap(
 
   val spirits: Collection<Spirit>
     get() = spiritTable.values
-
-  val depictions: Collection<Depiction>
-    get() = depictionTable.values
-
-  val playerCharacters: List<PlayerCharacter>
-    get() = players.map { PlayerCharacter(it, characterTable[it.character]!!) }
 }
 
 fun <T : EntityLike> mapEntities(list: Collection<T>): Map<Id, T> =
@@ -91,8 +81,8 @@ fun generateWorldMap(world: World): WorldMap =
     WorldMap(
         bodyTable = mapEntities(world.bodies),
         characterTable = mapEntities(world.characters),
-        depictionTable = world.depictions.associate { Pair(it.id, it) },
-        lights = world.lights.associate { Pair(it.id, it) },
+        animationTable = world.animations.associate { Pair(it.id, it) },
+//        lights = world.lights.associate { Pair(it.id, it) },
         missileTable = mapEntities(world.missiles),
         spiritTable = mapEntities(world.spirits),
         state = world

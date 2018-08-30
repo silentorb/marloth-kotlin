@@ -23,7 +23,7 @@ data class Character(
     override val id: Id,
     val turnSpeed: Vector2,
     val abilities: List<Ability> = listOf(),
-    val faction: Faction,
+    val faction: Id,
     val health: Resource,
     val isAlive: Boolean = true,
     val facingRotation: Vector3 = Vector3(),
@@ -48,6 +48,12 @@ data class NewCharacter(
     val spirit: NewSpirit?
 )
 
+data class ArmatureAnimation(
+    override val id: Id,
+    val animationIndex: Int,
+    var timeOffset: Float
+): EntityLike
+
 fun isFinished(world: WorldMap, character: Character) =
     character.health.value == 0
 
@@ -60,11 +66,10 @@ fun updateCharacter(world: WorldMap, character: Character, commands: Commands, c
     body.orientation = Quaternion()
         .rotateZ(character.facingRotation.z)
 
-    val depiction = world.depictionTable[character.id]!!
-    val animationInfo = depiction.animation!!
-    val animation = animationInfo.armature.animations[animationInfo.animationIndex]
-    animationInfo.timeOffset = (animationInfo.timeOffset + delta) % animation.duration
-    applyAnimation(animation, animationInfo.armature.bones, animationInfo.timeOffset)
+//    val animationInfo = world.animationTable[character.id]!!
+//    val animation = animationInfo.armature.animations[animationInfo.animationIndex]
+//    animationInfo.timeOffset = (animationInfo.timeOffset + delta) % animation.duration
+//    applyAnimation(animation, animationInfo.armature.bones, animationInfo.timeOffset)
   } else {
 
   }

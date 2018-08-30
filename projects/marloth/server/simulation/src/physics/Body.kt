@@ -91,7 +91,7 @@ fun updateBodyNode(body: Body) {
 
 fun updateBodies(world: WorldMap, commands: Commands, collisions: Collisions): List<Body> {
   val delta = simulationDelta
-  val forces = allPlayerMovements(world.characterTable, commands)
+  val forces = allPlayerMovements(world, commands)
   applyForces(forces, delta)
   updateBodies(world.bodies, collisions, delta)
   return world.bodies.map {

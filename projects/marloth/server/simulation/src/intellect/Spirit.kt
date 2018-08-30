@@ -1,10 +1,7 @@
 package intellect
 
 import physics.Body
-import simulation.Character
-import simulation.EntityLike
-import simulation.Id
-import simulation.Node
+import simulation.*
 
 enum class GoalType {
   kill,
@@ -28,7 +25,7 @@ data class Pursuit(
 
 data class Spirit(
     override val id: Id,
-    val knowledge: Knowledge,
+    val knowledge: Knowledge?,
 //    val goals: List<Goal>,
     val pursuit: Pursuit
 ) : EntityLike
@@ -53,15 +50,11 @@ data class NewSpirit(
 //    get() = character.body
 //}
 
-fun getNewSpirits(newSpirits: List<NewSpirit>, newCharacters: List<Character>): List<Spirit> =
+fun getNewSpirits(newSpirits: List<NewSpirit>): List<Spirit> =
     newSpirits.map { source ->
       Spirit(
           id = source.id,
-          knowledge = Knowledge(
-              character = newCharacters.first { it.id == source.id },
-              nodes = listOf(),
-              visibleCharacters = listOf()
-          ),
+          knowledge = null,
           pursuit = Pursuit()
       )
     }

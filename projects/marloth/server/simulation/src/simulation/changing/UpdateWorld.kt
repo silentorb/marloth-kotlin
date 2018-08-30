@@ -5,7 +5,10 @@ import intellect.pursueGoals
 import intellect.updateAiState
 import mythic.spatial.Pi2
 import mythic.spatial.times
-import physics.*
+import physics.Collision
+import physics.Collisions
+import physics.getNewBodies
+import physics.updateBodies
 import simulation.*
 import simulation.combat.*
 import simulation.input.updatePlayers
@@ -29,7 +32,7 @@ fun checkMissileBodies(missileTable: Map<Id, Missile>, bodyTable: BodyTable) {
   assert(incomplete.none())
 }
 
-fun getFinished(world: WorldMap): List<Int> {
+fun getFinished(world: WorldMap): List<Id> {
   return world.missileTable.values
       .filter { simulation.combat.isFinished(world.meta, world.bodyTable, it) }
       .map { it.id }
@@ -39,7 +42,7 @@ fun getFinished(world: WorldMap): List<Int> {
 //      .plus(world.bodies.filter { it.node == voidNode }.map { it.id })
 }
 
-fun removeFinished(world: World, finishedIds: List<Int>): World {
+fun removeFinished(world: World, finishedIds: List<Id>): World {
   val isFinished = { entity: EntityLike -> finishedIds.contains(entity.id) }
 
   return world.copy(
@@ -61,10 +64,10 @@ data class Intermediate(
     val collisions: Collisions
 )
 
-fun getNewEntities(world: WorldMap, data: Intermediate): NewEntities {
+fun getNewEntities(world: WorldMap, nextId: IdSource, data: Intermediate): NewEntities {
   return NewEntities(
       newCharacters = listOf(),
-      newMissiles = getNewMissiles(world, data.activatedAbilities)
+      newMissiles = getNewMissiles(world, nextId, data.activatedAbilities)
   )
 }
 
@@ -105,7 +108,7 @@ fun createNewEntitiesWorld(data: NewEntities): NewEntitiesWorld {
       characters = characters,
       missiles = data.newMissiles.map { Missile(it.id, it.owner, it.range) },
       players = listOf(),
-      spirits = getNewSpirits(data.newCharacters.mapNotNull { it.spirit }, characters)
+      spirits = getNewSpirits(data.newCharacters.mapNotNull { it.spirit })
   )
 }
 
@@ -115,10 +118,15 @@ fun removeEntities(world: World, worldMap: WorldMap): World {
 }
 
 fun updateWorldMain(world: World, worldMap: WorldMap, playerCommands: Commands, delta: Float): World {
+  val nextId: IdSource = newIdSource(world.nextId)
   val data = generateIntermediateRecords(worldMap, playerCommands, delta)
   val updatedWorld = updateEntities(world, worldMap, data)
+  val newEntities = getNewEntities(worldMap, nextId, data)
   return removeEntities(updatedWorld, worldMap)
-      .plus(createNewEntitiesWorld(getNewEntities(worldMap, data)))
+      .plus(createNewEntitiesWorld(newEntities))
+      .copy(
+          nextId = nextId()
+      )
 }
 
 const val simulationDelta = 1f / 60f
