@@ -40,7 +40,7 @@ data class Character(
 
 data class NewCharacter(
     val id: Id,
-    val faction: Faction,
+    val faction: Id,
     val definition: CharacterDefinition,
     val abilities: List<NewAbility>,
     val position: Vector3,

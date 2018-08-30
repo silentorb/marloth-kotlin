@@ -51,8 +51,8 @@ fun removeFinished(world: World, finishedIds: List<Int>): World {
 }
 
 data class NewEntities(
-    val newCharacters: List<NewCharacter>,
-    val newMissiles: List<NewMissile>
+    val newCharacters: List<NewCharacter> = listOf(),
+    val newMissiles: List<NewMissile> = listOf()
 )
 
 data class Intermediate(
@@ -98,7 +98,7 @@ fun updateEntities(world: World, worldMap: WorldMap, data: Intermediate): World 
   )
 }
 
-fun newEntities(data: NewEntities): NewEntitiesWorld {
+fun createNewEntitiesWorld(data: NewEntities): NewEntitiesWorld {
   val characters = getNewCharacters(data.newCharacters)
   return NewEntitiesWorld(
       bodies = getNewBodies(data),
@@ -118,7 +118,7 @@ fun updateWorldMain(world: World, worldMap: WorldMap, playerCommands: Commands, 
   val data = generateIntermediateRecords(worldMap, playerCommands, delta)
   val updatedWorld = updateEntities(world, worldMap, data)
   return removeEntities(updatedWorld, worldMap)
-      .plus(newEntities(getNewEntities(worldMap, data)))
+      .plus(createNewEntitiesWorld(getNewEntities(worldMap, data)))
 }
 
 const val simulationDelta = 1f / 60f

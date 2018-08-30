@@ -14,15 +14,15 @@ typealias BodyTable = Map<Id, Body>
 typealias CharacterTable = Map<Id, Character>
 
 data class World(
-    val bodies: List<Body>,
-    val characters: List<Character>,
-    val depictions: List<Depiction>,
-    val factions: List<Faction>,
-    val lights: List<Light>,
+    val bodies: List<Body> = listOf(),
+    val characters: List<Character> = listOf(),
+    val depictions: List<Depiction> = listOf(),
+    val factions: List<Faction> = listOf(),
+    val lights: List<Light> = listOf(),
     val meta: AbstractWorld,
-    val missiles: List<Missile>,
-    val players: List<Player>,
-    val spirits: List<Spirit>
+    val missiles: List<Missile> = listOf(),
+    val players: List<Player> = listOf(),
+    val spirits: List<Spirit> = listOf()
 ) {
   fun plus(other: NewEntitiesWorld) = this.copy(
       bodies = bodies.plus(other.bodies),

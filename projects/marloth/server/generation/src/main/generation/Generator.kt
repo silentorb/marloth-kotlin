@@ -14,6 +14,8 @@ import randomly.Dice
 import simulation.*
 import simulation.changing.Instantiator
 import simulation.changing.InstantiatorConfig
+import simulation.changing.NewEntities
+import simulation.changing.createNewEntitiesWorld
 
 fun createRoomNode(abstractWorld: AbstractWorld, biomes: List<Biome>, dice: Dice): Node {
   val radius = dice.getFloat(5f, 10f)
@@ -115,13 +117,25 @@ fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): Wo
   val scale = calculateWorldScale(abstractWorld.boundary.dimensions)
   val tunnels = generateAbstract(abstractWorld, input.biomes, input.dice, scale)
   generateStructure(abstractWorld, input.dice, tunnels)
-  val world = WorldMap(abstractWorld)
-  val instantiator = Instantiator(world, instantiatorConfig)
-  instantiator.createPlayer(1)
+  val playerNode = abstractWorld.nodes.first()
+  var id = 1
+  val newEntities = NewEntities(
+      newCharacters = listOf(
+          NewCharacter(
+              id = id++,
+
+              )
+      )
+  )
+  val world = World(
+      meta = abstractWorld,
+      players = listOf(Player(newEntities.newCharacters.first().id, 1, instantiatorConfig.defaultPlayerView))
+  ).plus(createNewEntitiesWorld(newEntities))
+//  instantiator.createPlayer(1)
 
 //  placeWallLamps(world, instantiator, input.dice, scale)
 
-  return world
+  return generateWorldMap(world)
 }
 
 fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig, biomes: List<Biome>) = generateWorld(WorldInput(
