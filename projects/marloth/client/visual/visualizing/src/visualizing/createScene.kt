@@ -1,19 +1,22 @@
 package visualizing
 
-import mythic.spatial.*
-import org.joml.times
-import scenery.*
+import mythic.spatial.Matrix
+import mythic.spatial.Pi
+import mythic.spatial.Quaternion
+import mythic.spatial.Vector3
 import org.joml.plus
+import org.joml.times
 import org.joml.unaryMinus
 import physics.Body
-import scenery.Id
+import scenery.*
 import simulation.*
+import simulation.Id
 
 val firstPersonCameraOffset = Vector3(0f, 0f, 1.4f)
 
-fun createFirstPersonCamera(character: Character): Camera = Camera(
+fun createFirstPersonCamera(body: Body, character: Character): Camera = Camera(
     ProjectionType.perspective,
-    character.body.position + firstPersonCameraOffset,
+    body.position + firstPersonCameraOffset,
 //    world.player.orientation,
     character.facingQuaternion
     ,
@@ -57,46 +60,45 @@ fun createCamera(world: WorldMap, screen: Screen): Camera {
   val character = world.characterTable[player.character]!!
   val body = world.bodyTable[player.character]!!
   return when (player.viewMode) {
-    ViewMode.firstPerson -> createFirstPersonCamera(character)
+    ViewMode.firstPerson -> createFirstPersonCamera(body, character)
     ViewMode.thirdPerson -> createThirdPersonCamera(body, player.hoverCamera)
 //    ViewMode.topDown -> createTopDownCamera(body)
   }
 }
 
-fun filterDepictions(world: WorldMap, player: Player) =
-    if (player.viewMode == ViewMode.firstPerson)
-      world.depictionTable.filter { it.key != player.playerId }
-    else
-      world.depictionTable
+//fun filterDepictions(world: WorldMap, player: Player) =
+//    if (player.viewMode == ViewMode.firstPerson)
+//      world.depictionTable.filter { it.key != player.playerId }
+//    else
+//      world.depictionTable
 
 fun convertDepiction(world: WorldMap, id: Id, type: DepictionType): VisualElement {
   val body = world.bodyTable[id]!!
   val character = world.characterTable[id]
-  val depiction = world.depictionTable[id]
   val translate = Matrix().translate(body.position)
   val transform = if (character != null)
     translate.rotate(character.facingQuaternion)
   else
     translate.rotate(body.orientation)
 
-  val animation = if (depiction != null)
-    depiction.animation
-  else
-    null
-  return VisualElement(id, type, animation, transform)
+//  val animation = if (depiction != null)
+//    depiction.animation
+//  else
+//    null
+  return VisualElement(id, type, null, transform)
 }
 
-fun createChildDetails(depiction: Depiction): ChildDetails =
-    ChildDetails(if (depiction.type == DepictionType.character) Gender.female else Gender.male)
+fun createChildDetails(character: Character): ChildDetails =
+    ChildDetails(if (character.definition.depictionType == DepictionType.character) Gender.female else Gender.male)
 
 fun gatherVisualElements(world: WorldMap, screen: Screen, player: Player): Pair<List<VisualElement>, ElementDetails> {
-  val depictions = filterDepictions(world, player)
-  val childDepictions = depictions.values.filter {
-    it.type == DepictionType.character || it.type == DepictionType.monster
-  }
+//  val depictions = filterDepictions(world, player)
+//  val childDepictions = depictions.values.filter {
+//    it.type == DepictionType.character || it.type == DepictionType.monster
+//  }
 
-  val elements = depictions.values.map {
-    convertDepiction(world, it.id, it.type)
+  val elements = world.characters.map {
+    convertDepiction(world, it.id, it.definition.depictionType)
   }
       .plus(world.missileTable.values.map {
         convertDepiction(world, it.id, DepictionType.missile)
@@ -105,7 +107,7 @@ fun gatherVisualElements(world: WorldMap, screen: Screen, player: Player): Pair<
   return Pair(
       elements,
       ElementDetails(
-          children = childDepictions.associate { Pair(it.id, createChildDetails(it)) }
+          children = world.characters.associate { Pair(it.id, createChildDetails(it)) }
       )
   )
 }
@@ -116,12 +118,13 @@ fun createScene(world: WorldMap, screen: Screen, player: Player): GameScene {
   return GameScene(
       main = Scene(
           createCamera(world, screen),
-          world.lights.values.plus(Light(
-              type = LightType.point,
-              color = Vector4(1f, 1f, 1f, 1f),
-              position = body.position + Vector3(0f, 0f, 2f),
-              direction = Vector4(0f, 0f, 0f, 15f)
-          ))
+          listOf()
+//          world.lights.values.plus(Light(
+//              type = LightType.point,
+//              color = Vector4(1f, 1f, 1f, 1f),
+//              position = body.position + Vector3(0f, 0f, 2f),
+//              direction = Vector4(0f, 0f, 0f, 15f)
+//          ))
       ),
       elements = elements,
       elementDetails = elementDetails,

@@ -2,7 +2,7 @@ package scenery
 
 import mythic.breeze.Armature
 
-typealias Id = Int
+typealias Id = Long
 
 data class DepictionAnimation(
     val animationIndex: Int,

@@ -22,8 +22,9 @@ import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
 import randomly.Dice
 import simulation.*
-import simulation.changing.Instantiator
 import simulation.changing.InstantiatorConfig
+import simulation.changing.NewEntities
+import simulation.changing.addEntities
 import java.io.File
 import kotlin.concurrent.thread
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
@@ -56,13 +57,15 @@ fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig, gameViewConfig:
       biomes
   ), instantiatorConfig)
 
-  if (gameViewConfig.haveEnemies) {
+  val world2 = if (gameViewConfig.haveEnemies) {
     val scale = calculateWorldScale(boundary.dimensions)
-    val instantiator = Instantiator(world, instantiatorConfig)
-    placeEnemies(world, instantiator, dice, scale)
-  }
+    val nextId = newIdSource(world.nextId)
+    val newCharacters = placeEnemies(world, nextId, dice, scale)
+    addEntities(world, NewEntities(newCharacters = newCharacters), nextId)
+  } else
+    world
 
-  return world
+  return generateWorldMap(world2)
 }
 
 data class LabApp(

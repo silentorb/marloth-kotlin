@@ -19,8 +19,7 @@ data class ActivatedAbility(
 )
 
 data class NewAbility(
-    val id: Id,
-    val definition: AbilityDefinition
+    val id: Id
 )
 
 fun updateCooldown(ability: Ability, isActivated: Boolean, delta: Float): Float {

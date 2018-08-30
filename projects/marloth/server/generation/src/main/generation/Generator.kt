@@ -3,6 +3,7 @@ package generation
 import generation.abstract.*
 import generation.structure.doorwayLength
 import generation.structure.generateStructure
+import intellect.NewSpirit
 import mythic.sculpting.FlexibleFace
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
@@ -71,18 +72,28 @@ fun fillIndexes(graph: NodeGraph) {
   }
 }
 
-fun placeEnemy(world: WorldMap, instantiator: Instantiator, dice: Dice) {
+fun placeEnemy(world: World, nextId: IdSource, dice: Dice): NewCharacter {
   val node = dice.getItem(world.meta.locationNodes.drop(1))// Skip the node where the player starts
   val wall = dice.getItem(node.walls)
   val position = getVector3Center(node.position, wall.edges[0].first)
-  instantiator.createAiCharacter(characterDefinitions.monster, world.factions[1], position, node)
+//  instantiator.createAiCharacter(characterDefinitions.monster, world.factions[1], position, node)
+  val id = nextId()
+  return NewCharacter(
+      id = id,
+      faction = 2,
+      definition = characterDefinitions.monster,
+      abilities = characterDefinitions.monster.abilities.map { NewAbility(nextId()) },
+      position = position,
+      node = node,
+      spirit = NewSpirit(id)
+  )
 }
 
-fun placeEnemies(world: WorldMap, instantiator: Instantiator, dice: Dice, scale: Float) {
+fun placeEnemies(world: World, nextId: IdSource, dice: Dice, scale: Float): List<NewCharacter> {
 //  val enemyCount = (10f * scale).toInt()
   val enemyCount = 1
-  for (i in 0 until enemyCount) {
-    placeEnemy(world, instantiator, dice)
+  return (0 until enemyCount).map {
+    placeEnemy(world, nextId, dice)
   }
 }
 
@@ -112,7 +123,7 @@ fun placeWallLamps(world: WorldMap, instantiator: Instantiator, dice: Dice, scal
 fun calculateWorldScale(dimensions: Vector3) =
     (dimensions.x * dimensions.y) / (100 * 100)
 
-fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): WorldMap {
+fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): World {
   val abstractWorld = AbstractWorld(input.boundary)
   val scale = calculateWorldScale(abstractWorld.boundary.dimensions)
   val tunnels = generateAbstract(abstractWorld, input.biomes, input.dice, scale)
@@ -123,8 +134,14 @@ fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): Wo
   val newEntities = NewEntities(
       newCharacters = listOf(
           NewCharacter(
-              id = nextId()
-              )
+              id = nextId(),
+              faction = 1,
+              definition = characterDefinitions.player,
+              abilities = characterDefinitions.player.abilities.map { NewAbility(nextId()) },
+              position = playerNode.position,
+              node = playerNode,
+              spirit = null
+          )
       )
   )
   val world = World(
@@ -140,7 +157,7 @@ fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): Wo
 
 //  placeWallLamps(world, instantiator, input.dice, scale)
 
-  return generateWorldMap(world)
+  return world
 }
 
 fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig, biomes: List<Biome>) = generateWorld(WorldInput(

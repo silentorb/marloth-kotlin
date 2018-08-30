@@ -117,16 +117,18 @@ fun removeEntities(world: World, worldMap: WorldMap): World {
   return removeFinished(world, finished)
 }
 
+fun addEntities(world: World, newEntities: NewEntities, nextId: IdSource): World =
+    world.plus(createNewEntitiesWorld(newEntities))
+        .copy(
+            nextId = nextId()
+        )
+
 fun updateWorldMain(world: World, worldMap: WorldMap, playerCommands: Commands, delta: Float): World {
   val nextId: IdSource = newIdSource(world.nextId)
   val data = generateIntermediateRecords(worldMap, playerCommands, delta)
   val updatedWorld = updateEntities(world, worldMap, data)
   val newEntities = getNewEntities(worldMap, nextId, data)
-  return removeEntities(updatedWorld, worldMap)
-      .plus(createNewEntitiesWorld(newEntities))
-      .copy(
-          nextId = nextId()
-      )
+  return addEntities(removeEntities(updatedWorld, worldMap), newEntities, nextId)
 }
 
 const val simulationDelta = 1f / 60f

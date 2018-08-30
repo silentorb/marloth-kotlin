@@ -21,6 +21,7 @@ data class CharacterDefinition(
 
 data class Character(
     override val id: Id,
+    val definition: CharacterDefinition,
     val turnSpeed: Vector2,
     val abilities: List<Ability> = listOf(),
     val faction: Id,
@@ -111,6 +112,7 @@ fun getNewCharacters(newCharacters: List<NewCharacter>): List<Character> =
       }
       Character(
           id = source.id,
+          definition = source.definition,
           turnSpeed = Vector2(1.5f, 1f),
           faction = source.faction,
           health = Resource(source.definition.health),

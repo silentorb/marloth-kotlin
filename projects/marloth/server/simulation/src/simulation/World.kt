@@ -52,10 +52,7 @@ data class WorldMap(
     val state: World
 ) {
 
-  private var _nextId = 1
-
-  fun getAndSetNextId() = _nextId++
-  val meta: AbstractWorld
+   val meta: AbstractWorld
     get() = state.meta
 
   val players: List<Player>
