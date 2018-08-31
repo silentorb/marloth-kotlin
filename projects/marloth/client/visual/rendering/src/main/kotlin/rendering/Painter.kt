@@ -32,7 +32,7 @@ fun advancedPainter(mesh: AdvancedModel, renderer: Renderer, element: VisualElem
         texture = renderer.textures[Textures.checkers]!!,
         boneBuffer = boneBuffer
     )
-    effects.animated.activate(shaderConfig)
+    effects.textured.activate(shaderConfig)
 //        effects.flatAnimated.activate(shaderConfig)
     checkError("drawing animated mesh-pre")
     e.mesh.draw(DrawMethod.triangleFan)

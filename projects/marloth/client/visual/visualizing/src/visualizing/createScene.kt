@@ -97,7 +97,8 @@ fun gatherVisualElements(world: WorldMap, screen: Screen, player: Player): Pair<
 //    it.type == DepictionType.character || it.type == DepictionType.monster
 //  }
 
-  val elements = world.characters.map {
+  val characters = world.characters.asIterable().filter{ !isPlayer(world, it)}
+  val elements = characters.map {
     convertDepiction(world, it.id, it.definition.depictionType)
   }
       .plus(world.missileTable.values.map {
@@ -107,7 +108,7 @@ fun gatherVisualElements(world: WorldMap, screen: Screen, player: Player): Pair<
   return Pair(
       elements,
       ElementDetails(
-          children = world.characters.associate { Pair(it.id, createChildDetails(it)) }
+          children = characters.associate { Pair(it.id, createChildDetails(it)) }
       )
   )
 }
