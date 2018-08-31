@@ -41,15 +41,15 @@ tailrec fun gameLoop(app: App, previousState: AppState) {
     gameLoop(app, AppState(nextInputState))
 }
 
-fun runApp(platform: Platform) {
-  val config = loadGameConfig()
-  val biomes = createBiomes()
-  val app = App(
-      platform = platform,
-      config = config,
-      world = generateDefaultWorld(InstantiatorConfig(), biomes)
-  )
-  platform.display.initialize(config.display)
-  setWorldMesh(app.world.meta, app.client)
-  gameLoop(app, AppState())
-}
+//fun runApp(platform: Platform) {
+//  val config = loadGameConfig()
+//  val biomes = createBiomes()
+//  val app = App(
+//      platform = platform,
+//      config = config,
+//      world = generateDefaultWorld(InstantiatorConfig(), biomes)
+//  )
+//  platform.display.initialize(config.display)
+//  setWorldMesh(app.world.meta, app.client)
+//  gameLoop(app, AppState())
+//}

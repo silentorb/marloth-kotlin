@@ -43,13 +43,13 @@ fun getFinished(world: WorldMap): List<Id> {
 }
 
 fun removeFinished(world: World, finishedIds: List<Id>): World {
-  val isFinished = { entity: EntityLike -> finishedIds.contains(entity.id) }
+  val IsActive = { entity: EntityLike -> !finishedIds.contains(entity.id) }
 
   return world.copy(
-      characters = world.characters.filter(isFinished),
-      missiles = world.missiles.filter(isFinished),
-      bodies = world.bodies.filter(isFinished),
-      spirits = world.spirits.filter(isFinished)
+      characters = world.characters.filter(IsActive),
+      missiles = world.missiles.filter(IsActive),
+      bodies = world.bodies.filter(IsActive),
+      spirits = world.spirits.filter(IsActive)
   )
 }
 

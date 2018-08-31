@@ -19,13 +19,18 @@ fun advancedPainter(mesh: AdvancedModel, renderer: Renderer, element: VisualElem
   val orientationTransform = getRotationMatrix(transform)
   for (e in mesh.primitives) {
     val material = e.material
+    val boneBuffer = if (element.animation != null)
+      populateBoneBuffer(renderer.boneBuffer, element.animation!!.armature.bones)
+    else
+      null
+
     val shaderConfig = ObjectShaderConfig(
         transform = transform,
         glow = material.glow,
         normalTransform = orientationTransform,
         color = material.color,
         texture = renderer.textures[Textures.checkers]!!,
-        boneBuffer = populateBoneBuffer(renderer.boneBuffer, element.animation!!.armature.bones)
+        boneBuffer = boneBuffer
     )
     effects.animated.activate(shaderConfig)
 //        effects.flatAnimated.activate(shaderConfig)

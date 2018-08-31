@@ -1,6 +1,5 @@
 package simulation.input
 
-import mythic.spatial.Vector2
 import simulation.*
 import simulation.changing.*
 
@@ -29,7 +28,7 @@ fun updatePlayer(player: Player, commands: Commands): Player {
 //  applyPlayerLookCommands(player, commands, delta)
 
   return player.copy(
-            viewMode = updatePlayerView(player.viewMode, commands)
+      viewMode = updatePlayerView(player.viewMode, commands)
   )
 }
 

@@ -92,12 +92,11 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
   val delta = app.timer.update().toFloat()
 
   val (commands, nextState, menuAction) = app.labClient.update(app.world, app.client.screens, previousState, delta)
-  if (app.config.view == Views.game && !nextState.gameClientState.menu.isVisible) {
-    updateLabWorld(app, commands, delta)
-  }
 
   if (menuAction == MenuActionType.newGame) {
     app.world = app.newWorld()
+  } else if (app.config.view == Views.game && !nextState.gameClientState.menu.isVisible) {
+    app.world = updateLabWorld(app, commands, delta)
   }
 
   app.platform.process.pollEvents()

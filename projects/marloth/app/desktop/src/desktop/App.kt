@@ -1,6 +1,6 @@
 package desktop
 
-import front.runApp
+//import front.runApp
 import mythic.desktop.createDesktopPlatform
 
 object App {

@@ -41,7 +41,7 @@ fun trackSpiritMovement(world: WorldMap, delta: Float) {
   }
 }
 
-fun updateLabWorld(app: LabApp, commands: HaftCommands<CommandType>, delta: Float) {
+fun updateLabWorld(app: LabApp, commands: HaftCommands<CommandType>, delta: Float): WorldMap {
   if (app.config.gameView.logDroppedFrames && app.timer.actualDelta > maxInterval) {
     val progress = app.timer.last - app.timer.start
     println("" + (progress.toDouble() / nSecond.toDouble()).toFloat() + ": " + app.timer.actualDelta)
@@ -49,7 +49,7 @@ fun updateLabWorld(app: LabApp, commands: HaftCommands<CommandType>, delta: Floa
 //  val instantiator = Instantiator(app.world, InstantiatorConfig(app.gameConfig.gameplay.defaultPlayerView))
   val world = app.world
   val characterCommands = mapCommands(world.players, commands)
-  updateWorld(world, characterCommands, delta)
+  return updateWorld(world, characterCommands, delta)
 
 //  trackSpiritMovement(app.world, delta)
 }

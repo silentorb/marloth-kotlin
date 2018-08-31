@@ -1,6 +1,6 @@
 package simulation
 
-class Faction(
+data class Faction(
     val id: Id,
     val name: String
 ) {

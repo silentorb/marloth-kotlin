@@ -53,7 +53,7 @@ data class ArmatureAnimation(
     override val id: Id,
     val animationIndex: Int,
     var timeOffset: Float
-): EntityLike
+) : EntityLike
 
 fun isFinished(world: WorldMap, character: Character) =
     character.health.value == 0
@@ -104,10 +104,10 @@ fun updateCharacters(world: WorldMap, collisions: Collisions, commands: Commands
 
 fun getNewCharacters(newCharacters: List<NewCharacter>): List<Character> =
     newCharacters.map { source ->
-      val abilities = source.abilities.map {
+      val abilities = source.abilities.zip(source.definition.abilities) { a, d ->
         Ability(
-            id = it.id,
-            definition = it.definition
+            id = a.id,
+            definition = d
         )
       }
       Character(
