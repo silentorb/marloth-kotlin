@@ -82,4 +82,6 @@ class DesktopDisplay(val window: Long) : Display {
   override fun getInfo(): WindowInfo = getWindowInfo(window)
 
   override fun swapBuffers() = glfwSwapBuffers(window)
+
+  override fun hasFocus() = glfwGetWindowAttrib(window, GLFW_FOCUSED) == 1
 }

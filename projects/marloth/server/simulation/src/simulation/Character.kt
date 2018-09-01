@@ -73,6 +73,9 @@ fun updateCharacter(world: World, character: Character, commands: Commands, coll
 
   val abilities = updateAbilities(character, activatedAbilities)
   val facingRotation = character.facingRotation + fpCameraRotation(lookVelocity, delta)
+  if (character.faction == 1L)
+    println(facingRotation)
+
   return character.copy(
       isAlive = character.health.value > 0,
       lookVelocity = lookVelocity,

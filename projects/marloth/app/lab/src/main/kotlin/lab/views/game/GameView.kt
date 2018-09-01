@@ -7,13 +7,10 @@ import haft.isActive
 import lab.LabCommandType
 import lab.LabConfig
 import lab.LabState
-import lab.getInputState
 import lab.views.LabClientResult
-import lab.views.LabInputState
+import lab.views.LabCommandState
 import lab.views.shared.drawSkeleton
-import marloth.clienting.Client
-import marloth.clienting.ClientState
-import marloth.clienting.InputState
+import marloth.clienting.*
 import marloth.clienting.gui.MenuState
 import marloth.clienting.gui.menuButtonAction
 import marloth.clienting.gui.renderGui
@@ -160,7 +157,7 @@ fun renderScene(client: Client, data: GameViewRenderData) {
   renderer.finishRender(windowInfo)
 }
 
-fun updateGameViewState(config: GameViewConfig, input: LabInputState) {
+fun updateGameViewState(config: GameViewConfig, input: LabCommandState) {
   val commands = input.commands
 
   if (isActive(commands, LabCommandType.toggleMeshDisplay)) {
@@ -172,41 +169,28 @@ fun updateGameViewState(config: GameViewConfig, input: LabInputState) {
 }
 
 fun updateGame(config: LabConfig, client: Client, world: World, screens: List<Screen>, previousState: LabState,
-               commands: HaftCommands<LabCommandType>,
+               labCommands: HaftCommands<LabCommandType>,
                nextLabInputState: InputTriggerState<LabCommandType>): LabClientResult {
 //    rendering.platform.input.isMouseVisible(false)
-  client.platform.input.update()
   val scenes = createScenes(world, screens)
-  val input = getInputState(client.platform.input, commands)
-  updateGameViewState(config.gameView, input)
-  val properties = client.input.prepareInput(previousState.gameClientState.input, scenes.map { it.player })
-  val mainEvents = client.input.updateGameInput1(properties, previousState.gameClientState)
-//    rendering.updateGameInput(properties, rendering.playerInputProfiles)
-
-  val waitingEvents = client.input.checkForNewGamepads1(properties)
-
-  val allCommands = client.input.updateGameInput2(mainEvents, properties)
-      .plus(client.input.checkForNewGamepads2(waitingEvents, properties.players.size))
+  val newInputState = updateInputDeviceState(client, scenes, previousState.gameClientState)
+  val labInput = marloth.clienting.getCommandState(client.platform.input, labCommands)
+  updateGameViewState(config.gameView, labInput)
   val menuCommands = filterKeystrokeCommands(allCommands)
-  val newMenuState = updateMenuState(previousState.gameClientState.menu, menuCommands)
+  val newMenuState = updateMenuState(state.menu, menuCommands)
   val menuAction = menuButtonAction(newMenuState, menuCommands)
   client.handleMenuAction(menuAction)
   renderScene(client, GameViewRenderData(scenes, world.realm, config.gameView, previousState.gameClientState.menu))
 
-  val newInputState = InputState(
-      events = mainEvents.plus(waitingEvents),
-      mousePosition = properties.mousePosition
-  )
-
-  val newGameClientState = ClientState(
-      menu = newMenuState,
-      input = newInputState
-  )
+//  val newInputState = GeneralInputDeviceState<CommandType>(
+//      events = mainEvents.plus(waitingEvents),
+//      mousePosition = properties.mousePosition
+//  )
 
   val newLabState = LabState(
       labInput = nextLabInputState,
-      gameInput = mainEvents.plus(waitingEvents),
-      gameClientState = newGameClientState,
+//      gameInput = mainEvents.plus(waitingEvents),
+      gameClientState = newClientState,
       modelViewState = previousState.modelViewState
   )
 

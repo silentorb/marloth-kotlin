@@ -11,7 +11,6 @@ import lab.views.model.ModelViewState
 import lab.views.world.WorldView
 import marloth.clienting.Client
 import marloth.clienting.ClientState
-import marloth.clienting.CommandType
 import marloth.clienting.gui.MenuActionType
 import mythic.bloom.Box
 import mythic.bloom.renderLayout
@@ -26,7 +25,7 @@ import simulation.World
 
 data class LabState(
     val labInput: InputTriggerState<LabCommandType>,
-    val gameInput: ProfileStates<CommandType>,
+//    val gameInput: ProfileStates<CommandType>,
     val modelViewState: ModelViewState,
     val gameClientState: ClientState
 )
@@ -45,9 +44,9 @@ fun createLabDeviceHandlers(input: PlatformInput): List<ScalarInputSource> {
 
 private var previousMousePosition = Vector2i()
 
-fun getInputState(platformInput: PlatformInput, commands: List<HaftCommand<LabCommandType>>): LabInputState {
+fun getInputState(platformInput: PlatformInput, commands: List<HaftCommand<LabCommandType>>): LabCommandState {
   val mousePosition = platformInput.getMousePosition()
-  val input = LabInputState(
+  val input = LabCommandState(
       commands,
       mousePosition,
       mousePosition - previousMousePosition
@@ -87,7 +86,6 @@ class LabClient(val config: LabConfig, val client: Client) {
   }
 
   fun updateGame(world: World, screens: List<Screen>, previousState: LabState): LabClientResult {
-    client.platform.input.isMouseVisible(false)
     val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
     return updateGame(config, client, world, screens, previousState, commands, nextLabInputState)
   }

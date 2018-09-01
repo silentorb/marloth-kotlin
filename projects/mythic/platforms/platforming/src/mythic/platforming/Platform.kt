@@ -30,6 +30,7 @@ interface Display {
   fun initialize(config: DisplayConfig)
   fun swapBuffers()
   fun getInfo(): WindowInfo
+  fun hasFocus(): Boolean
 }
 
 interface PlatformProcess {

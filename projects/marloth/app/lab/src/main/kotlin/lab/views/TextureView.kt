@@ -12,8 +12,6 @@ import mythic.spatial.toVector2
 import org.joml.Vector2i
 import rendering.Renderer
 import scenery.Textures
-import rendering.basicTextures
-import rendering.textureGenerators
 
 data class TextureViewConfig(
     var texture: Textures = Textures.checkers
@@ -82,7 +80,7 @@ fun onListItemSelection(event: SelectionEvent, config: TextureViewConfig, render
   config.texture = renderer.textures.keys.toList()[event.itemIndex]
 }
 
-fun updateTextureState(layout: TextureViewLayout, input: LabInputState, config: TextureViewConfig, renderer: Renderer) {
+fun updateTextureState(layout: TextureViewLayout, input: LabCommandState, config: TextureViewConfig, renderer: Renderer) {
   val commands = input.commands
 
   if (isActive(commands, LabCommandType.select)) {

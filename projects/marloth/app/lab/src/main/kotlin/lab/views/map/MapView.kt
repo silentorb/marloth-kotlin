@@ -2,7 +2,7 @@ package lab.views.map
 
 import haft.isActive
 import lab.LabCommandType
-import lab.views.LabInputState
+import lab.views.LabCommandState
 import mythic.bloom.Bounds
 import mythic.platforming.WindowInfo
 import mythic.spatial.*
@@ -91,7 +91,7 @@ private fun trySelect(config: MapViewConfig, world: Realm) {
   }
 }
 
-fun updateMapState(config: MapViewConfig, world: Realm, camera: Camera, input: LabInputState, windowInfo: WindowInfo, delta: Float) {
+fun updateMapState(config: MapViewConfig, world: Realm, camera: Camera, input: LabCommandState, windowInfo: WindowInfo, delta: Float) {
   val commands = input.commands
 
   if (isActive(commands, LabCommandType.select)) {

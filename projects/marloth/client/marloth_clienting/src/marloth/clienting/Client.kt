@@ -6,7 +6,6 @@ import marloth.clienting.gui.MenuState
 import marloth.clienting.gui.initialMenuState
 import mythic.platforming.DisplayConfig
 import mythic.platforming.Platform
-import org.joml.Vector2i
 import rendering.Renderer
 import scenery.GameScene
 import scenery.Screen
@@ -15,27 +14,11 @@ val maxPlayerCount = 4
 
 data class ClientInputResult(
     val commands: HaftCommands<CommandType>,
-    val state: InputState
-)
-//{
-//
-//  operator fun plus(second: ClientInputResult) =
-//      ClientInputResult(
-//          commands.plus(second.commands),
-//          state.copy(inputState = state.inputState.plus(second.state.inputState))
-//      )
-//}
-
-data class InputProperties(
-    val deviceHandlers: List<ScalarInputSource>,
-    val waitingDevices: List<GamepadDeviceId>,
-    val previousState: InputState,
-    val players: List<Int>,
-    val mousePosition: Vector2i
+    val state: InputDeviceState
 )
 
 data class ClientState(
-    val input: InputState,
+    val input: InputDeviceState,
     val menu: MenuState
 )
 
@@ -53,8 +36,6 @@ class Client(val platform: Platform, displayConfig: DisplayConfig, inputConfig: 
 //      CommandType.menu to { command -> platform.process.close() }
 //  )
 
-  val input = ClientInput(platform.input, inputConfig)
-
   fun getWindowInfo() = platform.display.getInfo()
 
   fun handleMenuAction(menuAction: MenuActionType) {
@@ -71,4 +52,9 @@ class Client(val platform: Platform, displayConfig: DisplayConfig, inputConfig: 
 //    return updateInput(previousState, scenes.map { it.player })
   }
 
+}
+
+fun updateMousePointerVisibility(platform: Platform) {
+  val windowHasFocus = platform.display.hasFocus()
+  platform.input.isMouseVisible(!windowHasFocus)
 }

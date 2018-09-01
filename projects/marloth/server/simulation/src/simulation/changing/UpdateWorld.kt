@@ -25,11 +25,6 @@ fun simplifyRotation(value: Float): Float =
     else
       value
 
-fun checkMissileBodies(missileTable: Map<Id, Missile>, bodyTable: BodyTable) {
-  val incomplete = missileTable.values.filter { !bodyTable.containsKey(it.id) }
-  assert(incomplete.none())
-}
-
 fun getFinished(world: World): List<Id> {
   return world.missileTable.values
       .filter { simulation.combat.isFinished(world.realm, world.bodyTable, it) }
@@ -51,24 +46,11 @@ fun removeFinished(deck: Deck, finishedIds: List<Id>): Deck {
   )
 }
 
-//data class NewEntities(
-//    val newCharacters: List<NewCharacter> = listOf(),
-//    val newFurnishings: List<NewFurnishing> = listOf(),
-//    val newMissiles: List<NewMissile> = listOf()
-//)
-
 data class Intermediate(
     val commands: Commands,
     val activatedAbilities: List<ActivatedAbility>,
     val collisions: Collisions
 )
-
-//fun getNewEntities(world: World, nextId: IdSource, data: Intermediate): Deck {
-//  return Deck(
-//      newCharacters = listOf(),
-//      newMissiles = getNewMissiles(world, nextId, data.activatedAbilities)
-//  )
-//}
 
 fun generateIntermediateRecords(world: World, playerCommands: Commands, delta: Float): Intermediate {
   val spiritCommands = pursueGoals(world.spirits)
@@ -99,18 +81,6 @@ fun updateEntities(deck: Deck, world: World, data: Intermediate): Deck {
       spirits = deck.spirits.map { updateAiState(world, it) }
   )
 }
-
-//fun createNewEntitiesWorld(data: Deck): Deck {
-//  val characters = getNewCharacters(data.newCharacters)
-//  return Deck(
-//      bodies = getNewBodies(data),
-//      characters = characters,
-//      furnishings = data.newFurnishings.map { Furnishing(it.id, it.type) },
-//      missiles = data.newMissiles.map { Missile(it.id, it.owner, it.range) },
-//      players = listOf(),
-//      spirits = getNewSpirits(data.newCharacters.mapNotNull { it.spirit })
-//  )
-//}
 
 fun removeEntities(deck: Deck, world: World): Deck {
   val finished = getFinished(world)

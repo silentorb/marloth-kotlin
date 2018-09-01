@@ -123,7 +123,7 @@ fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
   val clientState = newClientState()
   val state = LabState(
       labInput = mapOf(),
-      gameInput = initialGameInputState(),
+//      gameInput = initialGameInputState(),
       modelViewState = newModelViewState(),
       gameClientState = clientState
   )
