@@ -25,7 +25,7 @@ data class Pursuit(
 
 data class Spirit(
     override val id: Id,
-    val knowledge: Knowledge?,
+    val knowledge: Knowledge? = null,
 //    val goals: List<Goal>,
     val pursuit: Pursuit
 ) : EntityLike

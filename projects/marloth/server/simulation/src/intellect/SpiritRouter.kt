@@ -2,7 +2,7 @@ package intellect
 
 import simulation.*
 
-fun updateAiState(world: WorldMap, spirit: Spirit): Spirit {
+fun updateAiState(world: World, spirit: Spirit): Spirit {
   val character = world.characterTable[spirit.id]!!
   val knowledge = updateKnowledge(world, character, spirit.knowledge)
 //  val goals = updateGoalStructure(knowledge, )

@@ -31,5 +31,5 @@ fun playerMovementFp(commands: Commands, character: Character, body: Body): Move
   }
 }
 
-fun allPlayerMovements(world: WorldMap, commands: Commands): List<MovementForce> =
+fun allPlayerMovements(world: World, commands: Commands): List<MovementForce> =
     world.characters.mapNotNull { playerMovementFp(filterCommands(it.id, commands), it, world.bodyTable[it.id]!!) }

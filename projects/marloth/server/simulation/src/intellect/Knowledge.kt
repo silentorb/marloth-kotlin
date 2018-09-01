@@ -3,22 +3,22 @@ package intellect
 import simulation.Character
 import simulation.Id
 import simulation.Node
-import simulation.WorldMap
+import simulation.World
 
 data class Knowledge(
     val spiritId: Id,
     val nodes: List<Node>,
     val visibleCharacters: List<Character>,
-    val world: WorldMap
+    val world: World
 ) {
   val character: Character
     get() = world.characterTable[spiritId]!!
 }
 
-fun updateKnowledge(world: WorldMap, character: Character, knowledge: Knowledge?): Knowledge {
+fun updateKnowledge(world: World, character: Character, knowledge: Knowledge?): Knowledge {
   return Knowledge(
       spiritId = character.id,
-      nodes = world.meta.nodes,
+      nodes = world.realm.nodes,
       visibleCharacters = getVisibleCharacters(world, character),
       world = world
   )

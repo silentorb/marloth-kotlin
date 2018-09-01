@@ -1,17 +1,14 @@
 package front
 
-import generation.generateDefaultWorld
 import haft.ProfileStates
 import marloth.clienting.Client
 import marloth.clienting.CommandType
 import mythic.platforming.Display
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
-import simulation.WorldMap
+import simulation.World
 import marloth.clienting.initialGameInputState
-import simulation.changing.InstantiatorConfig
 import simulation.changing.updateWorld
-import simulation.createBiomes
 import visualizing.createScenes
 
 data class App(
@@ -19,7 +16,7 @@ data class App(
     val config: GameConfig,
     val display: Display = platform.display,
     val timer: DeltaTimer = DeltaTimer(),
-    val world: WorldMap,
+    val world: World,
     val client: Client = Client(platform, config.display, config.input)
 )
 

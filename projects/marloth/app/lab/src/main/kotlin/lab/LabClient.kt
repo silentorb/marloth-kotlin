@@ -21,8 +21,8 @@ import org.joml.Vector2i
 import org.joml.minus
 import rendering.createCanvas
 import scenery.Screen
-import simulation.AbstractWorld
-import simulation.WorldMap
+import simulation.Realm
+import simulation.World
 
 data class LabState(
     val labInput: InputTriggerState<LabCommandType>,
@@ -86,7 +86,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     client.platform.input.update()
   }
 
-  fun updateGame(world: WorldMap, screens: List<Screen>, previousState: LabState): LabClientResult {
+  fun updateGame(world: World, screens: List<Screen>, previousState: LabState): LabClientResult {
     client.platform.input.isMouseVisible(false)
     val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
     return updateGame(config, client, world, screens, previousState, commands, nextLabInputState)
@@ -127,7 +127,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     )
   }
 
-  fun updateWorld(windowInfo: WindowInfo, metaWorld: AbstractWorld, previousState: LabState): LabClientResult {
+  fun updateWorld(windowInfo: WindowInfo, metaWorld: Realm, previousState: LabState): LabClientResult {
     prepareClient(windowInfo)
     val view = WorldView(config.worldView, metaWorld, client.renderer)
 
@@ -142,14 +142,14 @@ class LabClient(val config: LabConfig, val client: Client) {
     )
   }
 
-  fun updateMap(windowInfo: WindowInfo, world: WorldMap, previousState: LabState, delta: Float): LabClientResult {
+  fun updateMap(windowInfo: WindowInfo, world: World, previousState: LabState, delta: Float): LabClientResult {
     prepareClient(windowInfo)
     val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
     val input = getInputState(client.platform.input, commands)
     val camera = createTopDownCamera(config.mapView.camera)
-    updateMapState(config.mapView, world.meta, camera, input, windowInfo, delta)
+    updateMapState(config.mapView, world.realm, camera, input, windowInfo, delta)
 
-    renderMapView(client, world.meta, config.mapView, camera)
+    renderMapView(client, world.realm, config.mapView, camera)
     return LabClientResult(
         listOf(),
         previousState.copy(labInput = nextLabInputState),
@@ -157,13 +157,13 @@ class LabClient(val config: LabConfig, val client: Client) {
     )
   }
 
-  fun update(world: WorldMap, screens: List<Screen>, previousState: LabState, delta: Float): LabClientResult {
+  fun update(world: World, screens: List<Screen>, previousState: LabState, delta: Float): LabClientResult {
     val windowInfo = client.platform.display.getInfo()
     return when (config.view) {
       Views.game -> updateGame(world, screens, previousState)
       Views.model -> updateModel(windowInfo, previousState, delta)
       Views.texture -> updateTexture(windowInfo, previousState)
-      Views.world -> updateWorld(windowInfo, world.meta, previousState)
+      Views.world -> updateWorld(windowInfo, world.realm, previousState)
       Views.map -> updateMap(windowInfo, world, previousState, delta)
       else -> throw Error("Not supported")
     }

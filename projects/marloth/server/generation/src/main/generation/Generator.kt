@@ -4,6 +4,8 @@ import generation.abstract.*
 import generation.structure.doorwayLength
 import generation.structure.generateStructure
 import intellect.NewSpirit
+import intellect.Pursuit
+import intellect.Spirit
 import mythic.sculpting.FlexibleFace
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
@@ -15,13 +17,11 @@ import randomly.Dice
 import simulation.*
 import simulation.changing.Instantiator
 import simulation.changing.InstantiatorConfig
-import simulation.changing.NewEntities
-import simulation.changing.createNewEntitiesWorld
 
-fun createRoomNode(abstractWorld: AbstractWorld, biomes: List<Biome>, dice: Dice): Node {
+fun createRoomNode(realm: Realm, biomes: List<Biome>, dice: Dice): Node {
   val radius = dice.getFloat(5f, 10f)
-  val start = abstractWorld.boundary.start + radius
-  val end = abstractWorld.boundary.end - radius
+  val start = realm.boundary.start + radius
+  val end = realm.boundary.end - radius
 
   val node = Node(
       position = Vector3(dice.getFloat(start.x, end.x), dice.getFloat(start.y, end.y), 0f),
@@ -30,11 +30,11 @@ fun createRoomNode(abstractWorld: AbstractWorld, biomes: List<Biome>, dice: Dice
       isSolid = false,
       isWalkable = true
   )
-  abstractWorld.nodes.add(node)
+  realm.nodes.add(node)
   return node
 }
 
-fun createRoomNodes(count: Int, world: AbstractWorld, biomes: List<Biome>, dice: Dice) {
+fun createRoomNodes(count: Int, world: Realm, biomes: List<Biome>, dice: Dice) {
   for (i in 0..count) {
     createRoomNode(world, biomes, dice)
   }
@@ -49,7 +49,7 @@ fun getTwinTunnels(tunnels: List<PreTunnel>): List<PreTunnel> =
       c
     }
 
-fun generateAbstract(world: AbstractWorld, biomes: List<Biome>, dice: Dice, scale: Float): List<Node> {
+fun generateAbstract(world: Realm, biomes: List<Biome>, dice: Dice, scale: Float): List<Node> {
   val nodeCount = (20 * scale).toInt()
   createRoomNodes(nodeCount, world, biomes, dice)
   handleOverlapping(world.graph)
@@ -72,43 +72,43 @@ fun fillIndexes(graph: NodeGraph) {
   }
 }
 
-fun placeEnemy(world: World, nextId: IdSource, dice: Dice): NewCharacter {
-  val node = dice.getItem(world.meta.locationNodes.drop(1))// Skip the node where the player starts
+fun placeEnemy(realm: Realm, nextId: IdSource, dice: Dice): Hand {
+  val node = dice.getItem(realm.locationNodes.drop(1))// Skip the node where the player starts
   val wall = dice.getItem(node.walls)
   val position = getVector3Center(node.position, wall.edges[0].first)
-//  instantiator.createAiCharacter(characterDefinitions.monster, world.factions[1], position, node)
-  val id = nextId()
-  return NewCharacter(
-      id = id,
+  return newCharacter(
+      nextId = nextId,
       faction = 2,
       definition = characterDefinitions.monster,
-      abilities = characterDefinitions.monster.abilities.map { NewAbility(nextId()) },
       position = position,
       node = node,
-      spirit = NewSpirit(id)
+      spirit = Spirit(
+          id = 0,
+          pursuit = Pursuit()
+      )
   )
 }
 
-fun placeEnemies(world: World, nextId: IdSource, dice: Dice, scale: Float): List<NewCharacter> {
+fun placeEnemies(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): Deck {
 //  val enemyCount = (10f * scale).toInt()
   val enemyCount = 1
-  return (0 until enemyCount).map {
-    placeEnemy(world, nextId, dice)
-  }
+  return toDeck((0 until enemyCount).map {
+    placeEnemy(realm, nextId, dice)
+  })
 }
 
-fun placeWallLamps(world: WorldMap, instantiator: Instantiator, dice: Dice, scale: Float) {
+fun placeWallLamps(world: World, instantiator: Instantiator, dice: Dice, scale: Float) {
   val count = (10f * scale).toInt()
   val isValidLampWall = { it: FlexibleFace ->
     getFaceInfo(it).type == FaceType.wall && getFaceInfo(it).texture != null
   }
-  val options = world.meta.locationNodes.filter { it.walls.any(isValidLampWall) }
+  val options = world.realm.locationNodes.filter { it.walls.any(isValidLampWall) }
   assert(options.any())
   val nodes = dice.getList(options, count)
   nodes.forEach { node ->
-    val options = node.walls.filter(isValidLampWall)
-    if (options.any()) {
-      val wall = dice.getItem(options)
+    val options2 = node.walls.filter(isValidLampWall)
+    if (options2.any()) {
+      val wall = dice.getItem(options2)
       val edge = wall.edges[0]
       val position = getVector3Center(edge.first, edge.second) +
           Vector3(0f, 0f, 0.9f) + wall.normal * -0.1f
@@ -124,40 +124,40 @@ fun calculateWorldScale(dimensions: Vector3) =
     (dimensions.x * dimensions.y) / (100 * 100)
 
 fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): World {
-  val abstractWorld = AbstractWorld(input.boundary)
-  val scale = calculateWorldScale(abstractWorld.boundary.dimensions)
-  val tunnels = generateAbstract(abstractWorld, input.biomes, input.dice, scale)
-  generateStructure(abstractWorld, input.dice, tunnels)
-  val playerNode = abstractWorld.nodes.first()
+  val realm = Realm(input.boundary)
+  val scale = calculateWorldScale(realm.boundary.dimensions)
+  val tunnels = generateAbstract(realm, input.biomes, input.dice, scale)
+  generateStructure(realm, input.dice, tunnels)
+  val playerNode = realm.nodes.first()
   var id = 1
   val nextId = newIdSource(1)
-  val newEntities = NewEntities(
-      newCharacters = listOf(
-          NewCharacter(
-              id = nextId(),
-              faction = 1,
-              definition = characterDefinitions.player,
-              abilities = characterDefinitions.player.abilities.map { NewAbility(nextId()) },
-              position = playerNode.position,
-              node = playerNode,
-              spirit = null
-          )
+  val newEntities = toDeck(newCharacter(
+      nextId = nextId,
+      faction = 1,
+      definition = characterDefinitions.player,
+      position = playerNode.position,
+      node = playerNode,
+      player = Player(
+          playerId = 1,
+          character = 0,
+          viewMode = instantiatorConfig.defaultPlayerView
       )
-  )
-  val world = World(
+  ))
+  val deck = Deck(
       factions = listOf(
           Faction(1, "Misfits"),
           Faction(2, "Monsters")
-      ),
-      meta = abstractWorld,
-      nextId = nextId(),
-      players = listOf(Player(newEntities.newCharacters.first().id, 1, instantiatorConfig.defaultPlayerView))
-  ).plus(createNewEntitiesWorld(newEntities))
+      )
+  ).plus(newEntities)
 //  instantiator.createPlayer(1)
 
 //  placeWallLamps(world, instantiator, input.dice, scale)
 
-  return world
+  return World(
+      deck = deck,
+      tables = toTables(deck),
+      nextId = nextId(),
+      realm = realm)
 }
 
 fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig, biomes: List<Biome>) = generateWorld(WorldInput(

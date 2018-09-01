@@ -1,11 +1,9 @@
 package lab.views.world
 
 //import lab.PositionFunction
-import generation.structure.faceNodeCount
 import mythic.bloom.Bounds
 import mythic.drawing.Canvas
 import mythic.sculpting.FlexibleEdge
-import mythic.sculpting.FlexibleFace
 import mythic.sculpting.FlexibleMesh
 import mythic.spatial.Vector4
 import org.joml.plus
@@ -51,6 +49,6 @@ fun drawVertices(bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, 
   }
 }
 
-fun drawStructureWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, world: AbstractWorld) {
+fun drawStructureWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, world: Realm) {
   drawVertices(bounds, getPosition, canvas, world.mesh)
 }

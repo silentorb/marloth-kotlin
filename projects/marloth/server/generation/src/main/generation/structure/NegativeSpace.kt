@@ -201,25 +201,25 @@ fun gatherNewSectorFaces(origin: FlexibleFace): List<FlexibleFace> {
 fun getDistinctEdges(edges: Edges) =
     edges.distinctBy { it.vertices.map { it.hashCode() }.sorted() }
 
-fun addSpaceNode(abstractWorld: AbstractWorld, node: Node) {
-  abstractWorld.graph.nodes.add(node)
+fun addSpaceNode(realm: Realm, node: Node) {
+  realm.graph.nodes.add(node)
   node.walls
       .mapNotNull { getOtherNode(node, it) }
       .forEach {
-        abstractWorld.graph.connect(node, it, ConnectionType.obstacle)
+        realm.graph.connect(node, it, ConnectionType.obstacle)
       }
 }
 
-fun createSpaceNode(sectorCenter: Vector3, abstractWorld: AbstractWorld, biome: Biome, dice: Dice): Node {
+fun createSpaceNode(sectorCenter: Vector3, realm: Realm, biome: Biome, dice: Dice): Node {
   val isSolid = if (biome.hasEnclosedRooms && dice.getInt(0, 3) > 0)
     true
   else
     false
 
-  return createSecondaryNode(sectorCenter, abstractWorld, isSolid, biome)
+  return createSecondaryNode(sectorCenter, realm, isSolid, biome)
 }
 
-fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace, dice: Dice) {
+fun addSpaceNode(realm: Realm, originFace: FlexibleFace, dice: Dice) {
   val walls = gatherNewSectorFaces(originFace)
   val a = getEndEdgeReversed(walls, 0)
   val b = getEndEdge(walls, 0)
@@ -237,15 +237,15 @@ fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace, dice: D
   val sectorCenter = getCenter(floorVertices)
   val flatCenter = sectorCenter.xy()
 
-  val node = createSpaceNode(sectorCenter, abstractWorld, getFaceInfo(originFace).firstNode!!.biome, dice)
+  val node = createSpaceNode(sectorCenter, realm, getFaceInfo(originFace).firstNode!!.biome, dice)
   node.walls.addAll(walls)
   walls.forEach {
     val info = getFaceInfo(it)
     info.secondNode = node
   }
 
-  val floor = createFloor(abstractWorld.mesh, node, floorVertices, flatCenter)
-  val ceiling = createCeiling(abstractWorld.mesh, node, ceilingVertices, flatCenter)
+  val floor = createFloor(realm.mesh, node, floorVertices, flatCenter)
+  val ceiling = createCeiling(realm.mesh, node, ceilingVertices, flatCenter)
 
   val gapEdges = edges.filter {
     it.faces.count { walls.contains(it) } < 2
@@ -255,7 +255,7 @@ fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace, dice: D
 //    assert(gapEdges.size == 2)
     val d = walls.map { getFaceInfo(it).firstNode!!.index }
     val gapVertices = getNewWallVertices(sectorCenter, listOf(a, b))
-    val newWall = abstractWorld.mesh.createStitchedFace(gapVertices)
+    val newWall = realm.mesh.createStitchedFace(gapVertices)
     if (node.isSolid)
       newWall.flipQuad()
 
@@ -263,14 +263,14 @@ fun addSpaceNode(abstractWorld: AbstractWorld, originFace: FlexibleFace, dice: D
     node.walls.add(newWall)
   }
 
-  addSpaceNode(abstractWorld, node)
+  addSpaceNode(realm, node)
 }
 
-fun getIncomplete(abstractWorld: AbstractWorld) =
-    abstractWorld.graph.nodes.flatMap { it.walls }
+fun getIncomplete(realm: Realm) =
+    realm.graph.nodes.flatMap { it.walls }
         .filter { faceNodeCount(getFaceInfo(it)) == 1 }
 
-fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace, dice: Dice) {
+fun createBoundarySector(realm: Realm, originFace: FlexibleFace, dice: Dice) {
   val originalWall = getWallVertices(originFace.vertices)
 
   val newPoints = originFace.vertices.map {
@@ -282,16 +282,16 @@ fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace,
 //  val ceilingVertices = originalWall.lower.plus(newWall.lower)
   val sectorCenter = getCenter(floorVertices)
 
-  val node = createSpaceNode(sectorCenter, abstractWorld, getFaceInfo(originFace).firstNode!!.biome, dice)
+  val node = createSpaceNode(sectorCenter, realm, getFaceInfo(originFace).firstNode!!.biome, dice)
 
 //  node.walls.addAll(walls)
 //  node.floors.add(floor)
-  val floor = createFloor(abstractWorld.mesh, node, floorVertices, sectorCenter.xy())
-  val ceiling = createCeiling(abstractWorld.mesh, node, floorVertices, sectorCenter.xy())
+  val floor = createFloor(realm.mesh, node, floorVertices, sectorCenter.xy())
+  val ceiling = createCeiling(realm.mesh, node, floorVertices, sectorCenter.xy())
 //  initializeFaceInfo(FaceType.wall, node, floor, Textures.ground)
   node.walls.add(originFace)
   getFaceInfo(originFace).secondNode = node
-  val outerWall = createWall(abstractWorld, node, newPoints)
+  val outerWall = createWall(realm, node, newPoints)
   getFaceInfo(outerWall).debugInfo = "space-d"
 
   for (i in 0..1) {
@@ -311,25 +311,25 @@ fun createBoundarySector(abstractWorld: AbstractWorld, originFace: FlexibleFace,
         newWall.upper[1 - i],
         originalWall.upper[1 - i]
     )
-    val wall = createWall(abstractWorld, node, sidePoints)
+    val wall = createWall(realm, node, sidePoints)
     getFaceInfo(wall).debugInfo = "space-d"
   }
 
 //  initializeNodeFaceInfo(node, null, null)
-  addSpaceNode(abstractWorld, node)
+  addSpaceNode(realm, node)
 }
 
-fun fillBoundary(abstractWorld: AbstractWorld, dice: Dice) {
-  val faces = getIncomplete(abstractWorld)
+fun fillBoundary(realm: Realm, dice: Dice) {
+  val faces = getIncomplete(realm)
   for (face in faces) {
-    createBoundarySector(abstractWorld, face, dice)
+    createBoundarySector(realm, face, dice)
   }
 }
 
-fun defineNegativeSpace(abstractWorld: AbstractWorld, dice: Dice) {
+fun defineNegativeSpace(realm: Realm, dice: Dice) {
   var pass = 1
   while (true) {
-    val faces = getIncomplete(abstractWorld)
+    val faces = getIncomplete(realm)
 
     val neighborLists = faces.map { wall -> Pair(wall, getIncompleteNeighbors(wall).toList()) }
     val invalid = neighborLists.filter { it.second.size > 2 }
@@ -368,7 +368,7 @@ fun defineNegativeSpace(abstractWorld: AbstractWorld, dice: Dice) {
           val i = getIncompleteNeighbors(originFace).toList()
           return
         }
-        addSpaceNode(abstractWorld, originFace, dice)
+        addSpaceNode(realm, originFace, dice)
       }
     }
     ++pass

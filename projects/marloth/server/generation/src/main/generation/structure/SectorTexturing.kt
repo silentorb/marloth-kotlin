@@ -49,8 +49,8 @@ fun determineFaceTexture(info: FaceInfo): Textures? {
   }
 }
 
-fun assignTextures(abstractWorld: AbstractWorld) {
-  abstractWorld.mesh.faces.forEach { face ->
+fun assignTextures(realm: Realm) {
+  realm.mesh.faces.forEach { face ->
     val info = getFaceInfo(face)
     info.texture = determineFaceTexture(info)
   }

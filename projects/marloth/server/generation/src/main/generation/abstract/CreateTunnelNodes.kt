@@ -20,7 +20,7 @@ fun prepareTunnels(graph: NodeGraph): List<PreTunnel> =
               )
         }
 
-fun createTunnelNodes(world: AbstractWorld, preTunnels: List<PreTunnel>): List<Node> {
+fun createTunnelNodes(world: Realm, preTunnels: List<PreTunnel>): List<Node> {
   val graph = world.graph
   return preTunnels
       .map { preTunnel ->

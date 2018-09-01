@@ -42,13 +42,13 @@ class VerticalFacingDown : VerticalFacing {
   }
 }
 
-fun createVerticalNodes(abstractWorld: AbstractWorld, middleNodes: List<Node>, roomNodes: List<Node>, dice: Dice,
+fun createVerticalNodes(realm: Realm, middleNodes: List<Node>, roomNodes: List<Node>, dice: Dice,
                         facing: VerticalFacing, shouldBeSolid: (original: Node) -> Boolean) {
   val newNodes = middleNodes.map { node ->
     val depth = wallHeight
     val offset = Vector3(0f, 0f, depth * facing.dirMod)
 
-    val newNode = createSecondaryNode(node.position + offset, abstractWorld, isSolid = shouldBeSolid(node), biome = node.biome)
+    val newNode = createSecondaryNode(node.position + offset, realm, isSolid = shouldBeSolid(node), biome = node.biome)
     assert(facing.ceilings(node).any())
     for (ceiling in facing.ceilings(node)) {
       facing.floors(newNode).add(ceiling)
@@ -59,7 +59,7 @@ fun createVerticalNodes(abstractWorld: AbstractWorld, middleNodes: List<Node>, r
   }
 
   newNodes.forEach { lowerNode ->
-    addSpaceNode(abstractWorld, lowerNode)
+    addSpaceNode(realm, lowerNode)
   }
 }
 
@@ -69,7 +69,7 @@ fun getLowerNode(node: Node) =
 fun getUpperNode(node: Node) =
     getOtherNode(node, node.ceilings.first())!!
 
-fun createAscendingSpaceWalls(abstractWorld: AbstractWorld, nodes: List<Node>, facing: VerticalFacing) {
+fun createAscendingSpaceWalls(realm: Realm, nodes: List<Node>, facing: VerticalFacing) {
   val walls = nodes.flatMap { it.walls }
   val depth = 6f
   val offset = Vector3(0f, 0f, depth * facing.dirMod)
@@ -92,17 +92,17 @@ fun createAscendingSpaceWalls(abstractWorld: AbstractWorld, nodes: List<Node>, f
         otherUpNode
 
       val orderedVertices = sortWallVertices(emptyNode.position, unorderedVertices)
-      val newWall = abstractWorld.mesh.createStitchedFace(orderedVertices)
+      val newWall = realm.mesh.createStitchedFace(orderedVertices)
       newWall.data = FaceInfo(FaceType.wall, upperNode, otherUpNode, null, "lower")
       upperNode.walls.add(newWall)
       otherUpNode.walls.add(newWall)
-      abstractWorld.graph.connect(node, upperNode, ConnectionType.ceilingFloor)
+      realm.graph.connect(node, upperNode, ConnectionType.ceilingFloor)
     }
   }
 }
 
-fun expandVertically(abstractWorld: AbstractWorld, roomNodes: List<Node>, dice: Dice) {
-  val middleNodes = abstractWorld.nodes.toList()
+fun expandVertically(realm: Realm, roomNodes: List<Node>, dice: Dice) {
+  val middleNodes = realm.nodes.toList()
   val isRoom = { node: Node -> roomNodes.contains(node) }
   val shouldBeSolids = mapOf(
       VerticalDirection.down to { node: Node ->
@@ -120,7 +120,7 @@ fun expandVertically(abstractWorld: AbstractWorld, roomNodes: List<Node>, dice: 
   )
   listOf(VerticalFacingDown(), VerticalFacingUp())
       .forEach { facing ->
-        createVerticalNodes(abstractWorld, middleNodes, roomNodes, dice, facing, shouldBeSolids[facing.dir]!!)
-        createAscendingSpaceWalls(abstractWorld, middleNodes, facing)
+        createVerticalNodes(realm, middleNodes, roomNodes, dice, facing, shouldBeSolids[facing.dir]!!)
+        createAscendingSpaceWalls(realm, middleNodes, facing)
       }
 }

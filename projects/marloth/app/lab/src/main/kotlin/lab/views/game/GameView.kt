@@ -29,8 +29,8 @@ import rendering.*
 import scenery.DepictionType
 import scenery.GameScene
 import scenery.Screen
-import simulation.AbstractWorld
-import simulation.WorldMap
+import simulation.Realm
+import simulation.World
 import visualizing.createScenes
 
 enum class GameDisplayMode {
@@ -72,7 +72,7 @@ fun renderFaceNormals(renderer: SceneRenderer, length: Float, mesh: FlexibleMesh
 
 data class GameViewRenderData(
     val scenes: List<GameScene>,
-    val world: AbstractWorld,
+    val world: Realm,
     val config: GameViewConfig,
     val menuState: MenuState
 )
@@ -171,7 +171,7 @@ fun updateGameViewState(config: GameViewConfig, input: LabInputState) {
   }
 }
 
-fun updateGame(config: LabConfig, client: Client, world: WorldMap, screens: List<Screen>, previousState: LabState,
+fun updateGame(config: LabConfig, client: Client, world: World, screens: List<Screen>, previousState: LabState,
                commands: HaftCommands<LabCommandType>,
                nextLabInputState: InputTriggerState<LabCommandType>): LabClientResult {
 //    rendering.platform.input.isMouseVisible(false)
@@ -191,7 +191,7 @@ fun updateGame(config: LabConfig, client: Client, world: WorldMap, screens: List
   val newMenuState = updateMenuState(previousState.gameClientState.menu, menuCommands)
   val menuAction = menuButtonAction(newMenuState, menuCommands)
   client.handleMenuAction(menuAction)
-  renderScene(client, GameViewRenderData(scenes, world.meta, config.gameView, previousState.gameClientState.menu))
+  renderScene(client, GameViewRenderData(scenes, world.realm, config.gameView, previousState.gameClientState.menu))
 
   val newInputState = InputState(
       events = mainEvents.plus(waitingEvents),

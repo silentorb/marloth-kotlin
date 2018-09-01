@@ -13,10 +13,10 @@ import rendering.*
 import scenery.Camera
 import scenery.ProjectionType
 import scenery.Scene
-import simulation.AbstractWorld
+import simulation.Realm
 import simulation.getFaceInfo
 
-fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, world: AbstractWorld, config: MapViewConfig, color: Vector4) {
+fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, world: Realm, config: MapViewConfig, color: Vector4) {
   val faces = world.nodes.flatMap { it.faces }.distinct()
 //      .take(1)
   for (face in faces) {
@@ -38,7 +38,7 @@ fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, world: Abs
   }
 }
 
-fun renderFaceIndices(renderer: SceneRenderer, world: AbstractWorld) {
+fun renderFaceIndices(renderer: SceneRenderer, world: Realm) {
   globalState.depthEnabled = true
   val textStyle = TextStyle(renderer.renderer.fonts[0], 0f, Vector4(0.5f, 1f, 1f, 1f))
   for (node in world.nodes) {
@@ -54,7 +54,7 @@ fun renderFaceIndices(renderer: SceneRenderer, world: AbstractWorld) {
   }
 }
 
-fun renderMapMesh(renderer: SceneRenderer, world: AbstractWorld, config: MapViewConfig) {
+fun renderMapMesh(renderer: SceneRenderer, world: Realm, config: MapViewConfig) {
   val worldMesh = renderer.renderer.worldMesh
   if (worldMesh != null) {
     if (config.display.drawMode == MapViewDrawMode.wireframe) {
@@ -112,7 +112,7 @@ fun createTopDownCamera(camera: MapViewCamera): Camera {
   )
 }
 
-fun renderMapView(client: Client, world: AbstractWorld, config: MapViewConfig, camera: Camera) {
+fun renderMapView(client: Client, world: Realm, config: MapViewConfig, camera: Camera) {
   val windowInfo = client.getWindowInfo()
   val renderer = client.renderer
   renderer.prepareRender(windowInfo)

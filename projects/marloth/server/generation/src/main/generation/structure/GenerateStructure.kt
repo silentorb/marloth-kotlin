@@ -8,7 +8,6 @@ import mythic.sculpting.*
 import mythic.spatial.*
 import org.joml.plus
 import randomly.Dice
-import scenery.Textures
 import simulation.*
 
 const val doorwayLength = 2.5f
@@ -165,10 +164,10 @@ fun getOrCreateWall(edge:FlexibleEdge, otherEdges: List<EdgeReference>, mesh: Fl
     createWall(edge, mesh)
 }
 
-fun createRooms(abstractWorld: AbstractWorld, dice: Dice, tunnels: List<Node>) {
-  val mesh = abstractWorld.mesh
+fun createRooms(realm: Realm, dice: Dice, tunnels: List<Node>) {
+  val mesh = realm.mesh
 
-  val roomNodes = abstractWorld.nodes.minus(tunnels)
+  val roomNodes = realm.nodes.minus(tunnels)
 
   val singleNodes = roomNodes.filter { !isInCluster(it) }
   val clusters = gatherClusters(roomNodes)
@@ -196,13 +195,13 @@ fun createRooms(abstractWorld: AbstractWorld, dice: Dice, tunnels: List<Node>) {
   }
 }
 
-fun generateStructure(abstractWorld: AbstractWorld, dice: Dice, tunnels: List<Node>) {
-  createRooms(abstractWorld, dice, tunnels)
-  calculateNormals(abstractWorld.mesh)
-  initializeFaceInfo(abstractWorld)
-  val roomNodes = abstractWorld.nodes.toList()
-  defineNegativeSpace(abstractWorld, dice)
-  fillBoundary(abstractWorld, dice)
-  expandVertically(abstractWorld, roomNodes, dice)
-  assignTextures(abstractWorld)
+fun generateStructure(realm: Realm, dice: Dice, tunnels: List<Node>) {
+  createRooms(realm, dice, tunnels)
+  calculateNormals(realm.mesh)
+  initializeFaceInfo(realm)
+  val roomNodes = realm.nodes.toList()
+  defineNegativeSpace(realm, dice)
+  fillBoundary(realm, dice)
+  expandVertically(realm, roomNodes, dice)
+  assignTextures(realm)
 }

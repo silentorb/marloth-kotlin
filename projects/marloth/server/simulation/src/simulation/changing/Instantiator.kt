@@ -1,22 +1,9 @@
 package simulation.changing
 
-import colliding.Sphere
-import intellect.Knowledge
-import intellect.Pursuit
-import intellect.Spirit
 import mythic.breeze.Armature
-import mythic.spatial.Quaternion
-import mythic.spatial.Vector2
-import mythic.spatial.Vector3
-import mythic.spatial.Vector4
-import org.joml.plus
-import physics.Body
-import physics.commonShapes
 import rigging.createSkeleton
 import rigging.humanAnimations
-import scenery.*
 import simulation.*
-import simulation.Id
 
 data class InstantiatorConfig(
     var defaultPlayerView: ViewMode = ViewMode.thirdPerson
@@ -31,13 +18,13 @@ fun createArmature(): Armature {
   )
 }
 
-//fun nextId(world: WorldMap): Id {
+//fun nextId(world: World): Id {
 //  val id = world.getAndSetNextId()
 //  return id
 //}
 
 class Instantiator(
-    private val world: WorldMap,
+    private val world: World,
     val config: InstantiatorConfig
 ) {
 

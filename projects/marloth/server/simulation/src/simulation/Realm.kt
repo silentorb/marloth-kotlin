@@ -3,7 +3,6 @@ package simulation
 import mythic.sculpting.FlexibleFace
 import mythic.sculpting.FlexibleMesh
 import mythic.spatial.Vector3
-import org.joml.minus
 import randomly.Dice
 import scenery.Textures
 
@@ -94,7 +93,7 @@ val isSpace = { face: FlexibleFace -> getFaceInfo(face).type == FaceType.space }
 
 fun getNullableFaceInfo(face: FlexibleFace): FaceInfo? = face.data as FaceInfo?
 
-class AbstractWorld(val boundary: WorldBoundary) {
+class Realm(val boundary: WorldBoundary) {
   val graph = NodeGraph()
   val mesh = FlexibleMesh()
 //  val faceMap: FaceSectorMap = mutableMapOf()
@@ -143,8 +142,8 @@ fun initializeNodeFaceInfo(node: Node) {
   }
 }
 
-fun initializeFaceInfo(abstractWorld: AbstractWorld) {
-  for (node in abstractWorld.nodes) {
+fun initializeFaceInfo(realm: Realm) {
+  for (node in realm.nodes) {
     initializeNodeFaceInfo(node)
   }
 }

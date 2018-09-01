@@ -9,7 +9,6 @@ enum class LightType(val value: Int) {
 }
 
 data class Light(
-    var id: Id,
     var type: LightType,
     var color: Vector4, // w is brightness
     var position: Vector3,

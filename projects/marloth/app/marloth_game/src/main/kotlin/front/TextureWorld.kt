@@ -2,7 +2,6 @@ package front
 
 import generation.structure.getWallVertices
 import marloth.clienting.Client
-import mythic.glowing.Texture
 import mythic.sculpting.FlexibleFace
 import mythic.sculpting.VertexNormalTexture
 import mythic.sculpting.getBounds
@@ -11,7 +10,7 @@ import mythic.spatial.Vector3
 import rendering.*
 import rendering.meshes.convertMesh
 import scenery.Textures
-import simulation.AbstractWorld
+import simulation.Realm
 import simulation.Node
 import simulation.getFaceInfo
 import kotlin.math.roundToInt
@@ -95,13 +94,13 @@ fun convertSectorMesh(renderer: Renderer, node: Node): SectorMesh {
   )
 }
 
-fun convertWorldMesh(abstractWorld: AbstractWorld, renderer: Renderer): WorldMesh {
-  val sectors = abstractWorld.nodes.map {
+fun convertWorldMesh(realm: Realm, renderer: Renderer): WorldMesh {
+  val sectors = realm.nodes.map {
     convertSectorMesh(renderer, it)
   }
   return WorldMesh(sectors)
 }
 
-fun setWorldMesh(abstractWorld: AbstractWorld, client: Client) {
-  client.renderer.worldMesh = convertWorldMesh(abstractWorld, client.renderer)
+fun setWorldMesh(realm: Realm, client: Client) {
+  client.renderer.worldMesh = convertWorldMesh(realm, client.renderer)
 }

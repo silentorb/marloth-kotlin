@@ -1,10 +1,13 @@
 package simulation.combat
 
+import mythic.spatial.Quaternion
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.times
 import org.joml.plus
+import physics.Body
 import physics.Collision
+import physics.commonShapes
 import physics.overlaps
 import simulation.*
 import simulation.changing.hitsWall
@@ -16,24 +19,25 @@ data class Missile(
     val remainingDistance: Float
 ) : EntityLike
 
-data class NewMissile(
-    val id: Id,
-    val position: Vector3,
-    val node: Node,
-    val velocity: Vector3,
-    val range: Float,
-    val owner: Id
-)
-
-fun characterAttack(world: WorldMap, nextId: IdSource, character: Character, ability: Ability, direction: Vector3): NewMissile {
+fun characterAttack(world: World, nextId: IdSource, character: Character, ability: Ability, direction: Vector3): Hand {
   val body = world.bodyTable[character.id]!!
-  return NewMissile(
-      id = nextId(),
-      position = body.position + direction * 0.5f + Vector3(0f, 0f, 0.7f),
-      node = body.node,
-      velocity = direction * 14.0f,
-      range = ability.definition.range,
-      owner = character.id
+  val id = nextId()
+  return Hand(
+      body = Body(
+          id = id,
+          position = body.position + direction * 0.5f + Vector3(0f, 0f, 0.7f),
+          node = body.node,
+          velocity = direction * 14.0f,
+          shape = commonShapes[EntityType.missile]!!,
+          orientation = Quaternion(),
+          attributes = missileBodyAttributes,
+          gravity = false
+      ),
+      missile = Missile(
+          id = id,
+          remainingDistance = ability.definition.range,
+          owner = character.id
+      )
   )
 }
 
@@ -72,20 +76,20 @@ fun updateMissile(bodyTable: BodyTable, characterTable: CharacterTable, missile:
   return missile.copy(remainingDistance = remainingDistance)
 }
 
-fun isFinished(world: AbstractWorld, bodyTable: BodyTable, missile: Missile): Boolean {
+fun isFinished(world: Realm, bodyTable: BodyTable, missile: Missile): Boolean {
   val body = bodyTable[missile.id]!!
   val position = body.position
   return missile.remainingDistance <= 0 || world.walls.filter(isWall).any { hitsWall(it.edges[0].edge, position, body.radius!!) }
 }
 
-fun getNewMissiles(world: WorldMap, nextId: IdSource, activatedAbilities: List<ActivatedAbility>): List<NewMissile> {
-  return activatedAbilities.map {
+fun getNewMissiles(world: World, nextId: IdSource, activatedAbilities: List<ActivatedAbility>): Deck {
+  return toDeck(activatedAbilities.map {
     val (character, ability) = it
     characterAttack(world, nextId, character, ability, character.facingVector)
-  }
+  })
 }
 
-fun updateMissiles(world: WorldMap, collisions: List<Collision>): List<Missile> {
+fun updateMissiles(world: World, collisions: List<Collision>): List<Missile> {
   return world.missiles
       .map { updateMissile(world.bodyTable, world.characterTable, it, collisions, simulationDelta) }
 }

@@ -8,9 +8,7 @@ import colliding.Sphere
 import mythic.spatial.isInsidePolygon
 import scenery.Textures
 import simulation.*
-import simulation.changing.NewEntities
 import simulation.changing.simulationDelta
-import simulation.combat.NewMissile
 import simulation.input.allPlayerMovements
 
 data class BodyAttributes(
@@ -89,7 +87,7 @@ fun updateBodyNode(body: Body) {
   }
 }
 
-fun updateBodies(world: WorldMap, commands: Commands, collisions: Collisions): List<Body> {
+fun updateBodies(world: World, commands: Commands, collisions: Collisions): List<Body> {
   val delta = simulationDelta
   val forces = allPlayerMovements(world, commands)
   applyForces(forces, delta)
@@ -99,7 +97,7 @@ fun updateBodies(world: WorldMap, commands: Commands, collisions: Collisions): L
     it
   }
 }
-
+/*
 fun getNewBodies(newEntities: NewEntities): List<Body> {
   return newEntities.newMissiles.map { newMissile ->
     Body(
@@ -125,4 +123,17 @@ fun getNewBodies(newEntities: NewEntities): List<Body> {
             gravity = true
         )
       })
+      .plus(newEntities.newFurnishings.map { character ->
+        Body(
+            id = character.id,
+            shape = commonShapes[EntityType.character]!!,
+            position = character.position,
+            orientation = Quaternion(),
+            velocity = Vector3(),
+            node = character.node,
+            attributes = characterBodyAttributes,
+            gravity = true
+        )
+      })
 }
+*/

@@ -11,7 +11,7 @@ import org.joml.minus
 import org.joml.plus
 import rendering.createCameraEffectsData
 import scenery.Camera
-import simulation.AbstractWorld
+import simulation.Realm
 
 data class MapViewCamera(
     var target: Vector3 = Vector3(),
@@ -44,7 +44,7 @@ data class Hit(
     val index: Int
 )
 
-private fun getFaceHits(start: Vector3, end: Vector3, world: AbstractWorld): List<Hit> {
+private fun getFaceHits(start: Vector3, end: Vector3, world: Realm): List<Hit> {
   val faces = world.nodes.flatMap { it.faces }.distinct()
 //      .take(1)
   val rayDirection = (end - start).normalize()
@@ -61,7 +61,7 @@ private fun getFaceHits(start: Vector3, end: Vector3, world: AbstractWorld): Lis
   }
 }
 
-private fun castSelectionRay(config: MapViewConfig, camera: Camera, world: AbstractWorld, mousePosition: Vector2i, bounds: Bounds) {
+private fun castSelectionRay(config: MapViewConfig, camera: Camera, world: Realm, mousePosition: Vector2i, bounds: Bounds) {
   val dimensions = bounds.dimensions
   val cursor = mousePosition - bounds.position.toVector2i()
   val cameraData = createCameraEffectsData(dimensions.toVector2i(), camera)
@@ -75,7 +75,7 @@ private fun castSelectionRay(config: MapViewConfig, camera: Camera, world: Abstr
   config.tempEnd = end
 }
 
-private fun trySelect(config: MapViewConfig, world: AbstractWorld) {
+private fun trySelect(config: MapViewConfig, world: Realm) {
   val start = config.tempStart
   val end = config.tempEnd
   config.tempStart = start
@@ -91,7 +91,7 @@ private fun trySelect(config: MapViewConfig, world: AbstractWorld) {
   }
 }
 
-fun updateMapState(config: MapViewConfig, world: AbstractWorld, camera: Camera, input: LabInputState, windowInfo: WindowInfo, delta: Float) {
+fun updateMapState(config: MapViewConfig, world: Realm, camera: Camera, input: LabInputState, windowInfo: WindowInfo, delta: Float) {
   val commands = input.commands
 
   if (isActive(commands, LabCommandType.select)) {

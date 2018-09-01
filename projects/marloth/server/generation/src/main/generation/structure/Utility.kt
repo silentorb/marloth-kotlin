@@ -53,7 +53,7 @@ fun sortWallVertices(sectorCenter: Vector3, vertices: Vertices): Vertices {
     sorted
 }
 
-fun createSecondaryNode(sectorCenter: Vector3, abstractWorld: AbstractWorld, isSolid: Boolean, biome: Biome): Node {
+fun createSecondaryNode(sectorCenter: Vector3, realm: Realm, isSolid: Boolean, biome: Biome): Node {
   val radius = 1f
 
   val node = Node(
@@ -63,7 +63,7 @@ fun createSecondaryNode(sectorCenter: Vector3, abstractWorld: AbstractWorld, isS
       isSolid = isSolid,
       isWalkable = false
   )
-  node.index = abstractWorld.graph.nodes.size
+  node.index = realm.graph.nodes.size
   return node
 }
 
@@ -87,8 +87,8 @@ fun createCeiling(mesh: FlexibleMesh, node: Node, vertices: Vertices, center: Ve
   return surface
 }
 
-fun createWall(abstractWorld: AbstractWorld, node: Node, vertices: Vertices): FlexibleFace {
-  val wall = abstractWorld.mesh.createStitchedFace(vertices)
+fun createWall(realm: Realm, node: Node, vertices: Vertices): FlexibleFace {
+  val wall = realm.mesh.createStitchedFace(vertices)
   wall.data = FaceInfo(FaceType.wall, node, null)
   node.walls.add(wall)
   return wall

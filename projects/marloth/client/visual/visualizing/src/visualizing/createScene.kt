@@ -1,9 +1,6 @@
 package visualizing
 
-import mythic.spatial.Matrix
-import mythic.spatial.Pi
-import mythic.spatial.Quaternion
-import mythic.spatial.Vector3
+import mythic.spatial.*
 import org.joml.plus
 import org.joml.times
 import org.joml.unaryMinus
@@ -55,7 +52,7 @@ fun createTopDownCamera(player: Body): Camera {
   )
 }
 
-fun createCamera(world: WorldMap, screen: Screen): Camera {
+fun createCamera(world: World, screen: Screen): Camera {
   val player = world.players[screen.playerId - 1]
   val character = world.characterTable[player.character]!!
   val body = world.bodyTable[player.character]!!
@@ -66,13 +63,13 @@ fun createCamera(world: WorldMap, screen: Screen): Camera {
   }
 }
 
-//fun filterDepictions(world: WorldMap, player: Player) =
+//fun filterDepictions(world: World, player: Player) =
 //    if (player.viewMode == ViewMode.firstPerson)
 //      world.depictionTable.filter { it.key != player.playerId }
 //    else
 //      world.depictionTable
 
-fun convertDepiction(world: WorldMap, id: Id, type: DepictionType): VisualElement {
+fun convertDepiction(world: World, id: Id, type: DepictionType): VisualElement {
   val body = world.bodyTable[id]!!
   val character = world.characterTable[id]
   val translate = Matrix().translate(body.position)
@@ -91,13 +88,13 @@ fun convertDepiction(world: WorldMap, id: Id, type: DepictionType): VisualElemen
 fun createChildDetails(character: Character): ChildDetails =
     ChildDetails(if (character.definition.depictionType == DepictionType.character) Gender.female else Gender.male)
 
-fun gatherVisualElements(world: WorldMap, screen: Screen, player: Player): Pair<List<VisualElement>, ElementDetails> {
+fun gatherVisualElements(world: World, screen: Screen, player: Player): Pair<List<VisualElement>, ElementDetails> {
 //  val depictions = filterDepictions(world, player)
 //  val childDepictions = depictions.values.filter {
 //    it.type == DepictionType.character || it.type == DepictionType.monster
 //  }
 
-  val characters = world.characters.asIterable().filter{ !isPlayer(world, it)}
+  val characters = world.characters.asIterable().filter { !isPlayer(world, it) }
   val elements = characters.map {
     convertDepiction(world, it.id, it.definition.depictionType)
   }
@@ -113,19 +110,27 @@ fun gatherVisualElements(world: WorldMap, screen: Screen, player: Player): Pair<
   )
 }
 
-fun createScene(world: WorldMap, screen: Screen, player: Player): GameScene {
+fun createScene(world: World, screen: Screen, player: Player): GameScene {
   val (elements, elementDetails) = gatherVisualElements(world, screen, player)
   val body = world.bodyTable[player.character]!!
   return GameScene(
       main = Scene(
           createCamera(world, screen),
-          listOf()
-//          world.lights.values.plus(Light(
-//              type = LightType.point,
-//              color = Vector4(1f, 1f, 1f, 1f),
-//              position = body.position + Vector3(0f, 0f, 2f),
-//              direction = Vector4(0f, 0f, 0f, 15f)
-//          ))
+          world.deck.furnishings
+              .map {
+                Light(
+                    type = LightType.point,
+                    color = Vector4(1f, 1f, 1f, 1f),
+                    position = body.position + Vector3(0f, 0f, 2f),
+                    direction = Vector4(0f, 0f, 0f, 15f)
+                )
+              }
+              .plus(Light(
+                  type = LightType.point,
+                  color = Vector4(1f, 1f, 1f, 1f),
+                  position = body.position + Vector3(0f, 0f, 2f),
+                  direction = Vector4(0f, 0f, 0f, 15f)
+              ))
       ),
       elements = elements,
       elementDetails = elementDetails,
@@ -133,7 +138,7 @@ fun createScene(world: WorldMap, screen: Screen, player: Player): GameScene {
   )
 }
 
-fun createScenes(world: WorldMap, screens: List<Screen>) =
+fun createScenes(world: World, screens: List<Screen>) =
     world.players.map {
       createScene(world, screens[it.playerId - 1], it)
     }

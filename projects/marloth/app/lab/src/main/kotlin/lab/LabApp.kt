@@ -23,8 +23,6 @@ import mythic.quartz.DeltaTimer
 import randomly.Dice
 import simulation.*
 import simulation.changing.InstantiatorConfig
-import simulation.changing.NewEntities
-import simulation.changing.addEntities
 import java.io.File
 import kotlin.concurrent.thread
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
@@ -48,7 +46,7 @@ fun createDice(config: GameViewConfig) =
     else
       Dice(config.seed)
 
-fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig, gameViewConfig: GameViewConfig, biomes: List<Biome>): WorldMap {
+fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig, gameViewConfig: GameViewConfig, biomes: List<Biome>): World {
   val boundary = createWorldBoundary(gameViewConfig.worldLength)
   val dice = createDice(gameViewConfig)
   val world = generateWorld(WorldInput(
@@ -57,15 +55,13 @@ fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig, gameViewConfig:
       biomes
   ), instantiatorConfig)
 
-  val world2 = if (gameViewConfig.haveEnemies) {
+  return if (gameViewConfig.haveEnemies) {
     val scale = calculateWorldScale(boundary.dimensions)
     val nextId = newIdSource(world.nextId)
-    val newCharacters = placeEnemies(world, nextId, dice, scale)
-    addEntities(world, NewEntities(newCharacters = newCharacters), nextId)
+    val newCharacters = placeEnemies(world.realm, nextId, dice, scale)
+    addDeck(world, newCharacters, nextId)
   } else
     world
-
-  return generateWorldMap(world2)
 }
 
 data class LabApp(
@@ -75,7 +71,7 @@ data class LabApp(
     val display: Display = platform.display,
     val timer: DeltaTimer = DeltaTimer(),
     val biomes: List<Biome>,
-    var world: WorldMap,
+    var world: World,
     val client: Client = Client(platform, gameConfig.display, gameConfig.input),
     val labClient: LabClient = LabClient(config, client),
     val labConfigManager: ConfigManager<LabConfig>
@@ -123,7 +119,7 @@ fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
   val biomes = createBiomes()
   val world = generateDefaultWorld(InstantiatorConfig(gameConfig.gameplay.defaultPlayerView), config.gameView, biomes)
   val app = LabApp(platform, config, gameConfig, world = world, biomes = biomes, labConfigManager = ConfigManager(labConfigPath, config))
-  setWorldMesh(app.world.meta, app.client)
+  setWorldMesh(app.world.realm, app.client)
   val clientState = newClientState()
   val state = LabState(
       labInput = mapOf(),

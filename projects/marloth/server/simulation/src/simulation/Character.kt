@@ -1,7 +1,7 @@
 package simulation
 
 import intellect.NewSpirit
-import mythic.breeze.applyAnimation
+import intellect.Spirit
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
@@ -10,6 +10,7 @@ import org.joml.times
 import physics.Body
 import physics.Collision
 import physics.Collisions
+import physics.commonShapes
 import scenery.DepictionType
 import simulation.changing.*
 
@@ -39,26 +40,16 @@ data class Character(
     get() = facingQuaternion * Vector3(1f, 0f, 0f)
 }
 
-data class NewCharacter(
-    val id: Id,
-    val faction: Id,
-    val definition: CharacterDefinition,
-    val abilities: List<NewAbility>,
-    val position: Vector3,
-    val node: Node,
-    val spirit: NewSpirit?
-)
-
 data class ArmatureAnimation(
     override val id: Id,
     val animationIndex: Int,
     var timeOffset: Float
 ) : EntityLike
 
-fun isFinished(world: WorldMap, character: Character) =
+fun isFinished(world: World, character: Character) =
     character.health.value == 0
 
-fun updateCharacter(world: WorldMap, character: Character, commands: Commands, collisions: List<Collision>,
+fun updateCharacter(world: World, character: Character, commands: Commands, collisions: List<Collision>,
                     activatedAbilities: List<Ability>, delta: Float): Character {
   val id = character.id
   if (character.isAlive) {
@@ -91,7 +82,7 @@ fun updateCharacter(world: WorldMap, character: Character, commands: Commands, c
   )
 }
 
-fun updateCharacters(world: WorldMap, collisions: Collisions, commands: Commands, activatedAbilities: List<ActivatedAbility>): List<Character> {
+fun updateCharacters(world: World, collisions: Collisions, commands: Commands, activatedAbilities: List<ActivatedAbility>): List<Character> {
   val delta = simulationDelta
   return world.characterTable.map { e ->
     val character = e.value
@@ -102,20 +93,35 @@ fun updateCharacters(world: WorldMap, collisions: Collisions, commands: Commands
   }
 }
 
-fun getNewCharacters(newCharacters: List<NewCharacter>): List<Character> =
-    newCharacters.map { source ->
-      val abilities = source.abilities.zip(source.definition.abilities) { a, d ->
-        Ability(
-            id = a.id,
-            definition = d
-        )
-      }
-      Character(
-          id = source.id,
-          definition = source.definition,
+fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id, position: Vector3, node: Node,
+                 player: Player? = null, spirit: Spirit? = null): Hand {
+  val id = nextId()
+  val abilities = definition.abilities.map {
+    Ability(
+        id = nextId(),
+        definition = it
+    )
+  }
+  return Hand(
+      body = Body(
+          id = id,
+          shape = commonShapes[EntityType.character]!!,
+          position = position,
+          orientation = Quaternion(),
+          velocity = Vector3(),
+          node = node,
+          attributes = characterBodyAttributes,
+          gravity = true
+      ),
+      character = Character(
+          id = id,
+          definition = definition,
           turnSpeed = Vector2(1.5f, 1f),
-          faction = source.faction,
-          health = Resource(source.definition.health),
+          faction = faction,
+          health = Resource(definition.health),
           abilities = abilities
-      )
-    }
+      ),
+      player = player?.copy(character = id),
+      spirit = spirit?.copy(id = id)
+  )
+}

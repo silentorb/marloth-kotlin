@@ -47,7 +47,7 @@ fun drawGrid(canvas: Canvas, bounds: Bounds, worldBoundary: WorldBoundary, scale
   }
 }
 
-fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, world: AbstractWorld,
+fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, world: Realm,
                       renderer: Renderer) {
   val solid = canvas.solid(Vector4(0.7f, 0.6f, 0.5f, 0.6f))
   val spaceSolid = canvas.solid(Vector4(0.7f, 0.6f, 0.5f, 0.3f))

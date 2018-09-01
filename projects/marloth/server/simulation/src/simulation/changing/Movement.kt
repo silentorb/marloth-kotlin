@@ -16,7 +16,7 @@ fun getEdgeNormal(first: Vector2, second: Vector2): Vector2 {
   return Vector2(combination.y, -combination.x).normalize()
 }
 
-fun getCollisionWalls(world: AbstractWorld, node: Node): Sequence<FlexibleFace> {
+fun getCollisionWalls(world: Realm, node: Node): Sequence<FlexibleFace> {
   return node.neighbors
       .plus(node)
       .flatMap { it.walls.asSequence() }
@@ -31,7 +31,7 @@ data class WallCollision3(
 )
 
 
-fun findCollisionWalls(source: Vector3, originalOffset: Vector3, world: AbstractWorld, node: Node): List<WallCollision3> {
+fun findCollisionWalls(source: Vector3, originalOffset: Vector3, world: Realm, node: Node): List<WallCollision3> {
   val offset = originalOffset + 0f
   val maxLength = offset.length()
   val newPosition = source + offset

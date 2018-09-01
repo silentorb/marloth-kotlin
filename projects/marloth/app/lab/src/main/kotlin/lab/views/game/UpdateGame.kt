@@ -6,7 +6,7 @@ import lab.LabApp
 import marloth.clienting.CommandType
 import mythic.spatial.Vector3
 import simulation.Id
-import simulation.WorldMap
+import simulation.World
 import simulation.changing.updateWorld
 
 const val nSecond: Long = 1000000000L
@@ -14,7 +14,7 @@ const val maxInterval = 1f / 60f
 
 private var spiritMovementTallies = mapOf<Id, Pair<Float, Vector3>>()
 
-fun trackSpiritMovement(world: WorldMap, delta: Float) {
+fun trackSpiritMovement(world: World, delta: Float) {
   spiritMovementTallies = world.spirits.associate { spirit ->
     val character = world.characterTable[spirit.id]!!
     val body = world.bodyTable[spirit.id]!!
@@ -41,7 +41,7 @@ fun trackSpiritMovement(world: WorldMap, delta: Float) {
   }
 }
 
-fun updateLabWorld(app: LabApp, commands: HaftCommands<CommandType>, delta: Float): WorldMap {
+fun updateLabWorld(app: LabApp, commands: HaftCommands<CommandType>, delta: Float): World {
   if (app.config.gameView.logDroppedFrames && app.timer.actualDelta > maxInterval) {
     val progress = app.timer.last - app.timer.start
     println("" + (progress.toDouble() / nSecond.toDouble()).toFloat() + ": " + app.timer.actualDelta)

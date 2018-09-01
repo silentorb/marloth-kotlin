@@ -26,5 +26,5 @@ data class PlayerCharacter(
 
 typealias PlayerCharacters = List<PlayerCharacter>
 
-fun isPlayer(world: WorldMap, character: Character) =
+fun isPlayer(world: World, character: Character) =
     world.players.any { it.character == character.id }

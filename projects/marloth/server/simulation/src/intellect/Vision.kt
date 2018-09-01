@@ -3,7 +3,7 @@ package intellect
 import colliding.rayCanHitPoint
 import physics.Body
 import simulation.Character
-import simulation.WorldMap
+import simulation.World
 
 const val viewingRange = 30f
 
@@ -13,7 +13,7 @@ fun isInAngleOfView(viewer: Character, viewerBody: Body, targetBody: Body): Bool
 fun isInVisibleRange(viewerBody: Body, targetBody: Body): Boolean =
     viewerBody.position.distance(targetBody.position) <= viewingRange
 
-fun canSee(world: WorldMap, viewer: Character, target: Character): Boolean {
+fun canSee(world: World, viewer: Character, target: Character): Boolean {
   val viewerBody = world.bodyTable[viewer.id]!!
   val targetBody = world.bodyTable[target.id]!!
   return isInVisibleRange(viewerBody, targetBody)
