@@ -36,7 +36,7 @@ data class InputState(
     val config: GameInputConfig
 )
 
-fun newInputState() =
+fun newInputDeviceState() =
     InputDeviceState(
         profileStates = mapOf(),
         mousePosition = Vector2i()
@@ -136,21 +136,10 @@ fun applyMouseAxis(value: Int, firstCommandType: CommandType, secondCommandType:
     else
       listOf()
 
-fun applyMouseMovement(arguments: InputArguments): HaftCommands<CommandType> {
-  val position = arguments.mousePosition - arguments.previousState.mousePosition
+fun applyMouseMovement(mouseOffset: Vector2i): HaftCommands<CommandType> {
   return listOf<HaftCommand<CommandType>>()
-      .plus(applyMouseAxis(position.x, CommandType.lookRight, CommandType.lookLeft, 1f))
-      .plus(applyMouseAxis(position.y, CommandType.lookDown, CommandType.lookUp, 1f))
-}
-
-fun updateGameInput2(config: GameInputConfig, events: ProfileStates<CommandType>, arguments: InputArguments): HaftCommands<CommandType> {
-  val commands = gatherProfileCommands3(events)
-  val mouseMovementCommands = if (config.mouseInput)
-    applyMouseMovement(arguments)
-  else
-    listOf()
-//    handleKeystrokeCommands(commands, keyStrokeCommands)
-  return commands.plus(mouseMovementCommands)
+      .plus(applyMouseAxis(mouseOffset.x, CommandType.lookRight, CommandType.lookLeft, 1f))
+      .plus(applyMouseAxis(mouseOffset.y, CommandType.lookDown, CommandType.lookUp, 1f))
 }
 
 fun getInputArguments(input: PlatformInput, state: InputDeviceState, players: List<Int>): InputArguments {
@@ -164,8 +153,7 @@ fun getInputArguments(input: PlatformInput, state: InputDeviceState, players: Li
       deviceHandlers,
       waitingDevices,
       state,
-      players,
-      input.getMousePosition()
+      players
   )
 }
 
@@ -179,7 +167,7 @@ private var previousMousePosition = Vector2i()
 
 fun updateInputDeviceState(input: PlatformInput, scenes: List<GameScene>, clientState: ClientState): InputDeviceState {
   input.update()
-  val properties = getInputArguments(state.device, scenes.map { it.player })
+  val properties = getInputArguments(input, clientState.input.device, scenes.map { it.player })
   val mainEvents = updateGameInput1(properties, clientState)
 //    rendering.updateGameInput(properties, rendering.playerInputProfiles)
 
@@ -187,21 +175,28 @@ fun updateInputDeviceState(input: PlatformInput, scenes: List<GameScene>, client
 
   val mousePosition = input.getMousePosition()
   return InputDeviceState(
-      profileStates = mainEvents,
+      profileStates = mainEvents.plus(waitingEvents),
       mousePosition = mousePosition
   )
 }
 
-fun getCommandState(platformInput: PlatformInput, inputState: InputDeviceState): CommandState {
-  platformInput.update()
-  val allCommands = updateGameInput2(mainEvents, properties)
-      .plus(checkForNewGamepads2(waitingEvents, properties.players.size))
+fun getCommandState(deviceState: InputDeviceState, config: GameInputConfig, playerCount: Int): CommandState {
+  val commands = gatherProfileCommands3(deviceState.profileStates)
+  val mousePosition = deviceState.mousePosition
+  val mouseOffset = mousePosition - previousMousePosition
+  val mouseMovementCommands = if (config.mouseInput)
+    applyMouseMovement(mouseOffset)
+  else
+    listOf()
+//    handleKeystrokeCommands(commands, keyStrokeCommands)
+  val allCommands = commands
+      .plus(mouseMovementCommands)
+      .plus(checkForNewGamepads2(deviceState.profileStates, playerCount))
 
-  val mousePosition = platformInput.getMousePosition()
   val input = CommandState(
       commands = allCommands,
       mousePosition = mousePosition,
-      mouseOffset = mousePosition - previousMousePosition
+      mouseOffset = mouseOffset
   )
   previousMousePosition = mousePosition
   return input

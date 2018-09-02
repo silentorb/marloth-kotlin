@@ -9,8 +9,7 @@ import marloth.clienting.gui.MenuActionType
 
 data class LabClientResult(
     val commands: HaftCommands<CommandType>,
-    val state: LabState,
-    val menuAction: MenuActionType
+    val state: LabState
 )
 
 typealias LabCommandMap = Map<LabCommandType, CommandHandler<LabCommandType>>

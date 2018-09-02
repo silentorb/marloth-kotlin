@@ -3,7 +3,6 @@ package generation
 import generation.abstract.*
 import generation.structure.doorwayLength
 import generation.structure.generateStructure
-import intellect.NewSpirit
 import intellect.Pursuit
 import intellect.Spirit
 import mythic.sculpting.FlexibleFace
@@ -16,7 +15,6 @@ import org.joml.plus
 import randomly.Dice
 import simulation.*
 import simulation.changing.Instantiator
-import simulation.changing.InstantiatorConfig
 
 fun createRoomNode(realm: Realm, biomes: List<Biome>, dice: Dice): Node {
   val radius = dice.getFloat(5f, 10f)
@@ -123,7 +121,7 @@ fun placeWallLamps(world: World, instantiator: Instantiator, dice: Dice, scale: 
 fun calculateWorldScale(dimensions: Vector3) =
     (dimensions.x * dimensions.y) / (100 * 100)
 
-fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): World {
+fun generateWorld(input: WorldInput): World {
   val realm = Realm(input.boundary)
   val scale = calculateWorldScale(realm.boundary.dimensions)
   val tunnels = generateAbstract(realm, input.biomes, input.dice, scale)
@@ -140,7 +138,7 @@ fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): Wo
       player = Player(
           playerId = 1,
           character = 0,
-          viewMode = instantiatorConfig.defaultPlayerView
+          viewMode = ViewMode.firstPerson
       )
   ))
   val deck = Deck(
@@ -160,10 +158,19 @@ fun generateWorld(input: WorldInput, instantiatorConfig: InstantiatorConfig): Wo
       realm = realm)
 }
 
-fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig, biomes: List<Biome>) = generateWorld(WorldInput(
-    boundary = WorldBoundary(
-        Vector3(-50f, -50f, -50f),
-        Vector3(50f, 50f, 50f)
-    ),
-    dice = Dice(2),
-    biomes = biomes), instantiatorConfig)
+fun generateDefaultWorld(): World {
+  val input = WorldInput(
+      boundary = createWorldBoundary(50f),
+      dice = Dice(2),
+      biomes = createBiomes()
+  )
+  val world = generateWorld(input)
+  return addEnemies(world, input.boundary, input.dice)
+}
+
+fun addEnemies(world: World, boundary: WorldBoundary, dice: Dice): World {
+  val scale = calculateWorldScale(boundary.dimensions)
+  val nextId = newIdSource(world.nextId)
+  val newCharacters = placeEnemies(world.realm, nextId, dice, scale)
+  return addDeck(world, newCharacters, nextId)
+}

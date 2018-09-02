@@ -18,13 +18,16 @@ data class ClientInputResult(
 )
 
 data class ClientState(
-    val input: InputDeviceState,
+    val input: InputState,
     val menu: MenuState
 )
 
-fun newClientState() =
+fun newClientState(config: GameInputConfig) =
     ClientState(
-        input = newInputState(),
+        input = InputState(
+            device = newInputDeviceState(),
+            config = config
+        ),
         menu = initialMenuState()
     )
 

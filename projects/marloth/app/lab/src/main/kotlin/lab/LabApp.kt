@@ -6,15 +6,14 @@ import configuration.saveConfig
 import front.GameConfig
 import front.loadGameConfig
 import front.setWorldMesh
-import generation.calculateWorldScale
+import generation.addEnemies
 import generation.generateWorld
-import generation.placeEnemies
 import lab.views.game.GameViewConfig
 import lab.views.game.updateLabWorld
 import lab.views.model.newModelViewState
 import marloth.clienting.Client
-import marloth.clienting.gui.MenuActionType
-import marloth.clienting.initialGameInputState
+import marloth.clienting.CommandType
+
 import marloth.clienting.newClientState
 import mythic.desktop.createDesktopPlatform
 import mythic.platforming.Display
@@ -25,7 +24,6 @@ import simulation.*
 import simulation.changing.InstantiatorConfig
 import java.io.File
 import kotlin.concurrent.thread
-import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 
 const val labConfigPath = "labConfig.yaml"
 
@@ -53,14 +51,11 @@ fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig, gameViewConfig:
       boundary,
       dice,
       biomes
-  ), instantiatorConfig)
+  ))
 
-  return if (gameViewConfig.haveEnemies) {
-    val scale = calculateWorldScale(boundary.dimensions)
-    val nextId = newIdSource(world.nextId)
-    val newCharacters = placeEnemies(world.realm, nextId, dice, scale)
-    addDeck(world, newCharacters, nextId)
-  } else
+  return if (gameViewConfig.haveEnemies)
+    addEnemies(world, boundary, dice)
+  else
     world
 }
 
@@ -87,9 +82,9 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
   app.display.swapBuffers()
   val delta = app.timer.update().toFloat()
 
-  val (commands, nextState, menuAction) = app.labClient.update(app.world, app.client.screens, previousState, delta)
+  val (commands, nextState) = app.labClient.update(app.world, app.client.screens, previousState, delta)
 
-  if (menuAction == MenuActionType.newGame) {
+  if (commands.any { it.type == CommandType.newGame }) {
     app.world = app.newWorld()
   } else if (app.config.view == Views.game && !nextState.gameClientState.menu.isVisible) {
     app.world = updateLabWorld(app, commands, delta)
@@ -120,10 +115,9 @@ fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
   val world = generateDefaultWorld(InstantiatorConfig(gameConfig.gameplay.defaultPlayerView), config.gameView, biomes)
   val app = LabApp(platform, config, gameConfig, world = world, biomes = biomes, labConfigManager = ConfigManager(labConfigPath, config))
   setWorldMesh(app.world.realm, app.client)
-  val clientState = newClientState()
+  val clientState = newClientState(gameConfig.input)
   val state = LabState(
       labInput = mapOf(),
-//      gameInput = initialGameInputState(),
       modelViewState = newModelViewState(),
       gameClientState = clientState
   )
@@ -133,16 +127,9 @@ fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
 object App {
   @JvmStatic
   fun main(args: Array<String>) {
-    val a = KotlinReflectionInternalError("Reflection on built-in Kotlin types is not yet fully supported. " +
-        "No metadata found for ")
-    val s = this.javaClass.`package`.getImplementationVersion()
-    val s2 = File(App::class.java.getProtectionDomain().getCodeSource().getLocation().toURI())
-    val s3 = s2.lastModified()
     System.setProperty("joml.format", "false")
     val config = loadConfig<LabConfig>(labConfigPath) ?: LabConfig()
     val gameConfig = loadGameConfig()
-//    saveLabConfig(config)
-//    startGui()
     runApp(createDesktopPlatform("Dev Lab", gameConfig.display), config, gameConfig)
   }
 }

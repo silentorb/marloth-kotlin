@@ -2,7 +2,7 @@ package lab
 
 import haft.*
 import lab.views.*
-import lab.views.game.updateGame
+import lab.views.game.updateGameViewInput
 import lab.views.map.createTopDownCamera
 import lab.views.map.renderMapView
 import lab.views.map.updateMapState
@@ -87,7 +87,7 @@ class LabClient(val config: LabConfig, val client: Client) {
 
   fun updateGame(world: World, screens: List<Screen>, previousState: LabState): LabClientResult {
     val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
-    return updateGame(config, client, world, screens, previousState, commands, nextLabInputState)
+    return updateGameViewInput(config, client, world, screens, previousState, commands, nextLabInputState)
   }
 
   fun updateModel(windowInfo: WindowInfo, previousState: LabState, delta: Float): LabClientResult {
@@ -103,8 +103,7 @@ class LabClient(val config: LabConfig, val client: Client) {
 
     return LabClientResult(
         listOf(),
-        previousState.copy(labInput = nextLabInputState, modelViewState = modelViewState),
-        MenuActionType.none
+        previousState.copy(labInput = nextLabInputState, modelViewState = modelViewState)
     )
   }
 
@@ -120,8 +119,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     updateTextureState(layout, input, config.textureView, client.renderer)
     return LabClientResult(
         listOf(),
-        previousState.copy(labInput = nextLabInputState),
-        MenuActionType.none
+        previousState.copy(labInput = nextLabInputState)
     )
   }
 
@@ -135,8 +133,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     renderLab(windowInfo, layout)
     return LabClientResult(
         listOf(),
-        previousState.copy(labInput = nextLabInputState),
-        MenuActionType.none
+        previousState.copy(labInput = nextLabInputState)
     )
   }
 
@@ -150,8 +147,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     renderMapView(client, world.realm, config.mapView, camera)
     return LabClientResult(
         listOf(),
-        previousState.copy(labInput = nextLabInputState),
-        MenuActionType.none
+        previousState.copy(labInput = nextLabInputState)
     )
   }
 

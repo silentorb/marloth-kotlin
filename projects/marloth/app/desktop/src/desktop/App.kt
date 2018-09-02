@@ -1,11 +1,15 @@
 package desktop
 
-//import front.runApp
+import front.loadGameConfig
+import front.runApp
 import mythic.desktop.createDesktopPlatform
 
 object App {
   @JvmStatic
   fun main(args: Array<String>) {
-//    runApp(createDesktopPlatform("Marloth"))
+    System.setProperty("joml.format", "false")
+    val gameConfig = loadGameConfig()
+    val platform = createDesktopPlatform("Marloth", gameConfig.display)
+    runApp(platform, gameConfig)
   }
 }

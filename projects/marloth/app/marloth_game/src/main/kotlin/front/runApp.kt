@@ -1,5 +1,6 @@
 package front
 
+import generation.generateDefaultWorld
 import haft.ProfileStates
 import marloth.clienting.Client
 import marloth.clienting.CommandType
@@ -16,37 +17,42 @@ data class App(
     val config: GameConfig,
     val display: Display = platform.display,
     val timer: DeltaTimer = DeltaTimer(),
-    val world: World,
     val client: Client = Client(platform, config.display, config.input)
 )
 
 data class AppState(
-    val inputState: ProfileStates<CommandType> = initialGameInputState()
+    val input: ProfileStates<CommandType> = initialGameInputState(),
+    val world: World
 )
 
-tailrec fun gameLoop(app: App, previousState: AppState) {
+tailrec fun gameLoop(app: App, state: AppState) {
   app.display.swapBuffers()
-  val scenes = createScenes(app.world, app.client.screens)
-  val (commands, nextInputState) = app.client.update(scenes, previousState.inputState)
+  val scenes = createScenes(state.world, app.client.screens)
+  val (commands, nextInputState) = app.client.update(scenes, state.input)
   val delta = app.timer.update().toFloat()
-//  val instantiator = Instantiator(app.world, InstantiatorConfig())
-  val characterCommands = mapCommands(app.world.players, commands)
-  updateWorld(app.world, characterCommands, delta)
+  val characterCommands = mapCommands(state.world.players, commands)
+  val nextWorld = updateWorld(state.world, characterCommands, delta)
   app.platform.process.pollEvents()
 
+  val nextState = AppState(
+      input = nextInputState,
+      world = nextWorld
+  )
+
   if (!app.platform.process.isClosing())
-    gameLoop(app, AppState(nextInputState))
+    gameLoop(app, nextState)
 }
 
-//fun runApp(platform: Platform) {
-//  val config = loadGameConfig()
-//  val biomes = createBiomes()
-//  val app = App(
-//      platform = platform,
-//      config = config,
-//      world = generateDefaultWorld(InstantiatorConfig(), biomes)
-//  )
-//  platform.display.initialize(config.display)
-//  setWorldMesh(app.world.meta, app.client)
-//  gameLoop(app, AppState())
-//}
+fun runApp(platform: Platform, config: GameConfig) {
+  platform.display.initialize(config.display)
+  val app = App(
+      platform = platform,
+      config = config
+  )
+  val world = generateDefaultWorld()
+  setWorldMesh(world.realm, app.client)
+  val state = AppState(
+      world = world
+  )
+  gameLoop(app, state)
+}

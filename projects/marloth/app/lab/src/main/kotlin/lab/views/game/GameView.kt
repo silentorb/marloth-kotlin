@@ -1,14 +1,10 @@
 package lab.views.game
 
-import haft.HaftCommands
-import haft.InputTriggerState
-import haft.filterKeystrokeCommands
-import haft.isActive
+import haft.*
 import lab.LabCommandType
 import lab.LabConfig
 import lab.LabState
 import lab.views.LabClientResult
-import lab.views.LabCommandState
 import lab.views.shared.drawSkeleton
 import marloth.clienting.*
 import marloth.clienting.gui.MenuState
@@ -157,9 +153,7 @@ fun renderScene(client: Client, data: GameViewRenderData) {
   renderer.finishRender(windowInfo)
 }
 
-fun updateGameViewState(config: GameViewConfig, input: LabCommandState) {
-  val commands = input.commands
-
+fun updateLabGameState(config: GameViewConfig, commands: List<HaftCommand<LabCommandType>>) {
   if (isActive(commands, LabCommandType.toggleMeshDisplay)) {
     config.displayMode = if (config.displayMode == GameDisplayMode.normal)
       GameDisplayMode.wireframe
@@ -168,24 +162,25 @@ fun updateGameViewState(config: GameViewConfig, input: LabCommandState) {
   }
 }
 
-fun updateGame(config: LabConfig, client: Client, world: World, screens: List<Screen>, previousState: LabState,
-               labCommands: HaftCommands<LabCommandType>,
-               nextLabInputState: InputTriggerState<LabCommandType>): LabClientResult {
-//    rendering.platform.input.isMouseVisible(false)
+fun updateGameViewInput(config: LabConfig, client: Client, world: World, screens: List<Screen>, previousState: LabState,
+                        labCommands: HaftCommands<LabCommandType>,
+                        nextLabInputState: InputTriggerState<LabCommandType>): LabClientResult {
   val scenes = createScenes(world, screens)
-  val newInputState = updateInputDeviceState(client, scenes, previousState.gameClientState)
-  val labInput = marloth.clienting.getCommandState(client.platform.input, labCommands)
-  updateGameViewState(config.gameView, labInput)
-  val menuCommands = filterKeystrokeCommands(allCommands)
-  val newMenuState = updateMenuState(state.menu, menuCommands)
+  val inputState = previousState.gameClientState.input
+  val newDeviceState = updateInputDeviceState(client.platform.input, scenes, previousState.gameClientState)
+  val newCommandState = getCommandState(newDeviceState, inputState.config, screens.size)
+  updateLabGameState(config.gameView, labCommands)
+  val menuCommands = filterKeystrokeCommands(newCommandState.commands)
+  val newMenuState = updateMenuState(previousState.gameClientState.menu, menuCommands)
   val menuAction = menuButtonAction(newMenuState, menuCommands)
   client.handleMenuAction(menuAction)
   renderScene(client, GameViewRenderData(scenes, world.realm, config.gameView, previousState.gameClientState.menu))
 
-//  val newInputState = GeneralInputDeviceState<CommandType>(
-//      events = mainEvents.plus(waitingEvents),
-//      mousePosition = properties.mousePosition
-//  )
+  val newClientState = previousState.gameClientState.copy(
+      input = previousState.gameClientState.input.copy(
+          device = newDeviceState
+      )
+  )
 
   val newLabState = LabState(
       labInput = nextLabInputState,
@@ -194,5 +189,5 @@ fun updateGame(config: LabConfig, client: Client, world: World, screens: List<Sc
       modelViewState = previousState.modelViewState
   )
 
-  return LabClientResult(allCommands, newLabState, menuAction)
+  return LabClientResult(newCommandState.commands, newLabState)
 }
