@@ -1,21 +1,15 @@
 package marloth.clienting
 
 import haft.*
-import marloth.clienting.gui.MenuActionType
 import marloth.clienting.gui.MenuState
 import marloth.clienting.gui.initialMenuState
+import marloth.clienting.gui.updateMenu
 import mythic.platforming.DisplayConfig
 import mythic.platforming.Platform
 import rendering.Renderer
-import scenery.GameScene
 import scenery.Screen
 
 val maxPlayerCount = 4
-
-data class ClientInputResult(
-    val commands: HaftCommands<CommandType>,
-    val state: InputDeviceState
-)
 
 data class ClientState(
     val input: InputState,
@@ -26,38 +20,47 @@ fun newClientState(config: GameInputConfig) =
     ClientState(
         input = InputState(
             device = newInputDeviceState(),
-            config = config
+            config = config,
+            gameProfiles = defaultGameInputProfiles(),
+            menuProfiles = defaultMenuInputProfiles()
         ),
         menu = initialMenuState()
     )
 
-class Client(val platform: Platform, displayConfig: DisplayConfig, inputConfig: GameInputConfig) {
+class Client(val platform: Platform, displayConfig: DisplayConfig) {
   val renderer: Renderer = Renderer(displayConfig)
   val screens: List<Screen> = (1..maxPlayerCount).map { Screen(it) }
-  //  val keyStrokeCommands: Map<CommandType, CommandHandler<CommandType>> = mapOf(
-//      CommandType.switchView to { command -> switchCameraMode(command.target, screens) },
-//      CommandType.menu to { command -> platform.process.close() }
-//  )
-
   fun getWindowInfo() = platform.display.getInfo()
-
-  fun handleMenuAction(menuAction: MenuActionType) {
-    when (menuAction) {
-      MenuActionType.quit -> platform.process.close()
-    }
-  }
-
-  fun update(scenes: List<GameScene>, previousState: ProfileStates<CommandType>):
-      Pair<HaftCommands<CommandType>, ProfileStates<CommandType>> {
-    throw Error("Outdated.  Will need updating.")
-//    val windowInfo = getWindowInfo()
-//    renderer.renderGameScenes(scenes, windowInfo)
-//    return updateInput(previousState, scenes.map { it.player })
-  }
-
 }
 
 fun updateMousePointerVisibility(platform: Platform) {
   val windowHasFocus = platform.display.hasFocus()
   platform.input.isMouseVisible(!windowHasFocus)
+}
+
+fun applyClientCommands(client: Client, commands: UserCommands) {
+  if (commands.any { it.type == CommandType.quit }) {
+    client.platform.process.close()
+  }
+}
+
+fun updateClient(client: Client, players: List<Int>, previousState: ClientState): Pair<ClientState, UserCommands> {
+  updateMousePointerVisibility(client.platform)
+  val inputState = previousState.input
+  val profiles = selectProfiles(previousState)
+  val newDeviceState = updateInputDeviceState(client.platform.input, players, previousState.input, profiles)
+  val newCommandState = getCommandState(newDeviceState, inputState.config, players.size)
+  val (nextMenuState, menuGlobalCommands) = updateMenu(previousState.menu, newCommandState.commands)
+
+  val allCommands = newCommandState.commands.plus(menuGlobalCommands)
+
+  applyClientCommands(client, allCommands)
+
+  val newClientState = previousState.copy(
+      input = previousState.input.copy(
+          device = newDeviceState
+      ),
+      menu = nextMenuState
+  )
+  return Pair(newClientState, allCommands)
 }

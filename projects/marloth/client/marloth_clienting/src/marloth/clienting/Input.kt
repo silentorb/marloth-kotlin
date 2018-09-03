@@ -4,7 +4,6 @@ import haft.*
 import mythic.platforming.PlatformInput
 import org.joml.Vector2i
 import org.joml.minus
-import scenery.GameScene
 
 val gamepadSlotStart = 2
 
@@ -33,7 +32,9 @@ data class GameInputConfig(
 
 data class InputState(
     val device: InputDeviceState,
-    val config: GameInputConfig
+    val config: GameInputConfig,
+    val gameProfiles: List<PlayerInputProfile>,
+    val menuProfiles: List<PlayerInputProfile>
 )
 
 fun newInputDeviceState() =
@@ -92,8 +93,8 @@ data class InputArguments(
     val players: List<Int>
 )
 
-val playerInputProfiles = defaultGameInputProfiles()
-val menuInputProfiles = defaultMenuInputProfiles()
+//val playerInputProfiles = defaultGameInputProfiles()
+//val menuInputProfiles = defaultMenuInputProfiles()
 
 // TODO: Make gamepadAssignments a part of InputState
 val gamepadAssignments: MutableMap<Int, Int> = mutableMapOf()
@@ -108,8 +109,8 @@ fun checkForNewGamepads1(arguments: InputArguments): ProfileStates<CommandType> 
 
 fun checkForNewGamepads2(events: ProfileStates<CommandType>, playerCount: Int): HaftCommands<CommandType> {
   val commands = gatherProfileCommands3(events)
-  if (commands.size > 0)
-    println(commands.size)
+//  if (commands.size > 0)
+//    println(commands.size)
   var playerCounter = playerCount
   val keystrokes = filterKeystrokeCommands(commands, listOf(CommandType.activateDevice, CommandType.joinGame))
   for (command in keystrokes) {
@@ -118,13 +119,8 @@ fun checkForNewGamepads2(events: ProfileStates<CommandType>, playerCount: Int): 
   return commands
 }
 
-fun updateGameInput1(arguments: InputArguments, clientState: ClientState): ProfileStates<CommandType> {
-  val playerInputProfiles = if (clientState.menu.isVisible)
-    menuInputProfiles
-  else
-    playerInputProfiles
-
-  val profiles = selectActiveInputProfiles(playerInputProfiles, arguments.players)
+fun updateGameInput1(arguments: InputArguments, inputProfiles: List<PlayerInputProfile>): ProfileStates<CommandType> {
+  val profiles = selectActiveInputProfiles(inputProfiles, arguments.players)
   return gatherProfileCommands2(profiles, arguments.previousState.profileStates, arguments.deviceHandlers)
 }
 
@@ -165,11 +161,17 @@ private var previousMousePosition = Vector2i()
 //    val mouseOffset: Vector2i
 //)
 
-fun updateInputDeviceState(input: PlatformInput, scenes: List<GameScene>, clientState: ClientState): InputDeviceState {
+fun selectProfiles(clientState: ClientState): List<PlayerInputProfile> =
+    if (clientState.menu.isVisible)
+      clientState.input.menuProfiles
+    else
+      clientState.input.gameProfiles
+
+fun updateInputDeviceState(input: PlatformInput, players: List<Int>, inputState: InputState, profiles: List<PlayerInputProfile>): InputDeviceState {
   input.update()
-  val properties = getInputArguments(input, clientState.input.device, scenes.map { it.player })
-  val mainEvents = updateGameInput1(properties, clientState)
-//    rendering.updateGameInput(properties, rendering.playerInputProfiles)
+  val properties = getInputArguments(input, inputState.device, players)
+  val mainEvents = updateGameInput1(properties, profiles)
+//    rendering.updateGameInput(properties, rendering.inputProfiles)
 
   val waitingEvents = checkForNewGamepads1(properties)
 

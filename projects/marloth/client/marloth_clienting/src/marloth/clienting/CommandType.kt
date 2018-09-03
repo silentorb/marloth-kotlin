@@ -18,8 +18,6 @@ enum class CommandType {
   duck,
   run,
 
-  newGame,
-
   switchView,
 
   activateDevice,
@@ -27,4 +25,8 @@ enum class CommandType {
   menu,
   menuSelect,
   menuBack,
+
+  newGame,
+  quit,
+
 }

@@ -67,7 +67,7 @@ data class LabApp(
     val timer: DeltaTimer = DeltaTimer(),
     val biomes: List<Biome>,
     var world: World,
-    val client: Client = Client(platform, gameConfig.display, gameConfig.input),
+    val client: Client = Client(platform, gameConfig.display),
     val labClient: LabClient = LabClient(config, client),
     val labConfigManager: ConfigManager<LabConfig>
 ) {
@@ -82,6 +82,8 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
   app.display.swapBuffers()
   val delta = app.timer.update().toFloat()
 
+  app.platform.process.pollEvents()
+
   val (commands, nextState) = app.labClient.update(app.world, app.client.screens, previousState, delta)
 
   if (commands.any { it.type == CommandType.newGame }) {
@@ -89,8 +91,6 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
   } else if (app.config.view == Views.game && !nextState.gameClientState.menu.isVisible) {
     app.world = updateLabWorld(app, commands, delta)
   }
-
-  app.platform.process.pollEvents()
 
   if (app.gameConfig.gameplay.defaultPlayerView != app.world.players[0].viewMode) {
     app.gameConfig.gameplay.defaultPlayerView = app.world.players[0].viewMode

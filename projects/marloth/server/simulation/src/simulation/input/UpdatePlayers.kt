@@ -35,8 +35,6 @@ fun updatePlayer(player: Player, commands: Commands): Player {
 fun updatePlayers(players: Players, commands: Commands): Players {
 //  if (filterCommands(players.first(), commands).size != commands.size)
 //    throw Error("")
-  if (commands.any { it.type == CommandType.switchView })
-    println("hello")
 
   return players.map { updatePlayer(it, filterCommands(it.character, commands)) }
 }

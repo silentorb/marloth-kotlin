@@ -25,6 +25,14 @@ data class HaftCommand<T>(
     val lifetime: TriggerLifetime
 )
 
+fun <T> simpleCommand(type: T, target: Int = 0): HaftCommand<T> =
+    HaftCommand(
+        type = type,
+        target = target,
+        value = 1f,
+        lifetime = TriggerLifetime.end
+    )
+
 data class Gamepad(val id: Int, val name: String)
 
 typealias HaftCommands<T> = List<HaftCommand<T>>
@@ -64,7 +72,14 @@ fun <T> createEmptyInputState(bindings: Bindings<T>): InputTriggerState<T> =
 fun <T> gatherCommands(state: InputTriggerState<T>): HaftCommands<T> {
   return state
       .filter({ it.value != null && (!it.key.isStroke || it.value!!.lifetime == TriggerLifetime.end) })
-      .map({ HaftCommand<T>(it.key.type, it.key.target, it.value!!.value, it.value!!.lifetime) })
+      .map({
+        HaftCommand<T>(
+            type = it.key.type,
+            target = it.key.target,
+            value = it.value!!.value,
+            lifetime = it.value!!.lifetime
+        )
+      })
 }
 
 typealias ProfileStates<T> = Map<Bindings<T>, InputTriggerState<T>>
@@ -88,7 +103,7 @@ fun <T> gatherProfileCommands(profiles: List<Bindings<T>>, profileStates: Profil
 }
 
 fun <T> gatherProfileCommands2(profiles: List<Bindings<T>>, profileStates: ProfileStates<T>,
-                              deviceHandlers: List<ScalarInputSource>): ProfileStates<T> {
+                               deviceHandlers: List<ScalarInputSource>): ProfileStates<T> {
   val previous = profiles.associate { profile ->
     Pair(profile, profileStates[profile] ?: createEmptyInputState(profile))
   }

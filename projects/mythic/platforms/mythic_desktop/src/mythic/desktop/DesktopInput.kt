@@ -55,7 +55,6 @@ class DesktopInput(val window: Long) : PlatformInput {
 
   override val KeyboardInputSource = { key: Int ->
     if (glfwGetKey(window, key) == GLFW_PRESS) {
-      println("*")
       1f
     }
     else

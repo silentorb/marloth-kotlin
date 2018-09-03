@@ -2,7 +2,8 @@ package lab
 
 import haft.*
 import lab.views.*
-import lab.views.game.updateGameViewInput
+import lab.views.game.updateGameView
+import lab.views.game.updateLabGameState
 import lab.views.map.createTopDownCamera
 import lab.views.map.renderMapView
 import lab.views.map.updateMapState
@@ -11,7 +12,6 @@ import lab.views.model.ModelViewState
 import lab.views.world.WorldView
 import marloth.clienting.Client
 import marloth.clienting.ClientState
-import marloth.clienting.gui.MenuActionType
 import mythic.bloom.Box
 import mythic.bloom.renderLayout
 import mythic.platforming.PlatformInput
@@ -87,7 +87,15 @@ class LabClient(val config: LabConfig, val client: Client) {
 
   fun updateGame(world: World, screens: List<Screen>, previousState: LabState): LabClientResult {
     val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
-    return updateGameViewInput(config, client, world, screens, previousState, commands, nextLabInputState)
+    updateLabGameState(config.gameView, commands)
+    val (nextClientState, globalCommands) = updateGameView(client, config, world, screens, previousState)
+
+    val newLabState = previousState.copy(
+        labInput = nextLabInputState,
+        gameClientState = nextClientState
+    )
+
+    return LabClientResult(globalCommands, newLabState)
   }
 
   fun updateModel(windowInfo: WindowInfo, previousState: LabState, delta: Float): LabClientResult {

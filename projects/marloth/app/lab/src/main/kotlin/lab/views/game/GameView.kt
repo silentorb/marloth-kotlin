@@ -4,13 +4,9 @@ import haft.*
 import lab.LabCommandType
 import lab.LabConfig
 import lab.LabState
-import lab.views.LabClientResult
 import lab.views.shared.drawSkeleton
 import marloth.clienting.*
-import marloth.clienting.gui.MenuState
-import marloth.clienting.gui.menuButtonAction
-import marloth.clienting.gui.renderGui
-import marloth.clienting.gui.updateMenuState
+import marloth.clienting.gui.*
 import mythic.bloom.Bounds
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
@@ -116,7 +112,7 @@ fun renderNormalScene(renderer: GameSceneRenderer, config: GameViewConfig) {
   globalState.cullFaces = false
 }
 
-fun renderScene(client: Client, data: GameViewRenderData) {
+fun renderLabScenes(client: Client, data: GameViewRenderData) {
   val windowInfo = client.getWindowInfo()
   val renderer = client.renderer
   renderer.prepareRender(windowInfo)
@@ -162,32 +158,9 @@ fun updateLabGameState(config: GameViewConfig, commands: List<HaftCommand<LabCom
   }
 }
 
-fun updateGameViewInput(config: LabConfig, client: Client, world: World, screens: List<Screen>, previousState: LabState,
-                        labCommands: HaftCommands<LabCommandType>,
-                        nextLabInputState: InputTriggerState<LabCommandType>): LabClientResult {
+fun updateGameView(client: Client, config: LabConfig, world: World, screens: List<Screen>, previousState: LabState): Pair<ClientState, UserCommands> {
   val scenes = createScenes(world, screens)
-  val inputState = previousState.gameClientState.input
-  val newDeviceState = updateInputDeviceState(client.platform.input, scenes, previousState.gameClientState)
-  val newCommandState = getCommandState(newDeviceState, inputState.config, screens.size)
-  updateLabGameState(config.gameView, labCommands)
-  val menuCommands = filterKeystrokeCommands(newCommandState.commands)
-  val newMenuState = updateMenuState(previousState.gameClientState.menu, menuCommands)
-  val menuAction = menuButtonAction(newMenuState, menuCommands)
-  client.handleMenuAction(menuAction)
-  renderScene(client, GameViewRenderData(scenes, world.realm, config.gameView, previousState.gameClientState.menu))
-
-  val newClientState = previousState.gameClientState.copy(
-      input = previousState.gameClientState.input.copy(
-          device = newDeviceState
-      )
-  )
-
-  val newLabState = LabState(
-      labInput = nextLabInputState,
-//      gameInput = mainEvents.plus(waitingEvents),
-      gameClientState = newClientState,
-      modelViewState = previousState.modelViewState
-  )
-
-  return LabClientResult(newCommandState.commands, newLabState)
+  renderLabScenes(client, GameViewRenderData(scenes, world.realm, config.gameView, previousState.gameClientState.menu))
+  val players = world.players.map { it.playerId }
+  return updateClient(client, players, previousState.gameClientState)
 }
