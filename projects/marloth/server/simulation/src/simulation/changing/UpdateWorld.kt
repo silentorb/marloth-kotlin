@@ -3,7 +3,6 @@ package simulation.changing
 import intellect.pursueGoals
 import intellect.updateAiState
 import mythic.spatial.Pi2
-import mythic.spatial.times
 import physics.Collision
 import physics.Collisions
 import physics.updateBodies

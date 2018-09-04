@@ -50,7 +50,7 @@ fun renderFaceNormals(renderer: SceneRenderer, length: Float, mesh: FlexibleMesh
     val faceCenter = getVerticesCenter(face.unorderedVertices)
     val transform = Matrix()
         .translate(faceCenter)
-        .rotateTowards(face.normal, Vector3(0f, 0f, 1f))
+        .rotateTowards(Vector3m(face.normal), Vector3m(0f, 0f, 1f))
         .rotateY(-Pi * 0.5f)
         .scale(length)
 

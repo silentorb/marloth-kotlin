@@ -13,11 +13,11 @@ import simulation.*
 const val doorwayLength = 2.5f
 const val wallHeight = 4f
 
-typealias Corner = Vector3
+typealias Corner = Vector3m
 
 data class TempSector(val node: Node, val corners: List<Corner>)
 data class NodeCorner(val corner: Corner, val angle: Float) {
-  val position: Vector3
+  val position: Vector3m
     get() = corner
 }
 
@@ -148,8 +148,8 @@ fun createWall(edge: FlexibleEdge, mesh: FlexibleMesh): FlexibleFace {
   return mesh.createStitchedFace(listOf(
       edge.second,
       edge.first,
-      edge.first + Vector3(0f, 0f, wallHeight),
-      edge.second + Vector3(0f, 0f, wallHeight)
+      edge.first + Vector3m(0f, 0f, wallHeight),
+      edge.second + Vector3m(0f, 0f, wallHeight)
   ))
 }
 

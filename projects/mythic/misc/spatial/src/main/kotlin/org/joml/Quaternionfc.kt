@@ -22,7 +22,7 @@
  */
 package org.joml
 
-import mythic.spatial.Vector3
+import mythic.spatial.Vector3m
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 
@@ -362,7 +362,7 @@ interface Quaternionfc {
    * the vector to transform
    * @return vec
    */
-  fun transform(vec: Vector3): Vector3
+  fun transform(vec: Vector3m): Vector3m
 
   /**
    * Transform the vector <tt>(1, 0, 0)</tt> by this quaternion.
@@ -371,7 +371,7 @@ interface Quaternionfc {
    * will hold the result
    * @return dest
    */
-  fun transformPositiveX(dest: Vector3): Vector3
+  fun transformPositiveX(dest: Vector3m): Vector3m
 
   /**
    * Transform the vector <tt>(1, 0, 0)</tt> by this quaternion.
@@ -398,7 +398,7 @@ interface Quaternionfc {
    * will hold the result
    * @return dest
    */
-  fun transformUnitPositiveX(dest: Vector3): Vector3
+  fun transformUnitPositiveX(dest: Vector3m): Vector3m
 
   /**
    * Transform the vector <tt>(1, 0, 0)</tt> by this unit quaternion.
@@ -425,7 +425,7 @@ interface Quaternionfc {
    * will hold the result
    * @return dest
    */
-  fun transformPositiveY(dest: Vector3): Vector3
+  fun transformPositiveY(dest: Vector3m): Vector3m
 
   /**
    * Transform the vector <tt>(0, 1, 0)</tt> by this quaternion.
@@ -452,7 +452,7 @@ interface Quaternionfc {
    * will hold the result
    * @return dest
    */
-  fun transformUnitPositiveY(dest: Vector3): Vector3
+  fun transformUnitPositiveY(dest: Vector3m): Vector3m
 
   /**
    * Transform the vector <tt>(0, 1, 0)</tt> by this unit quaternion.
@@ -479,7 +479,7 @@ interface Quaternionfc {
    * will hold the result
    * @return dest
    */
-  fun transformPositiveZ(dest: Vector3): Vector3
+  fun transformPositiveZ(dest: Vector3m): Vector3m
 
   /**
    * Transform the vector <tt>(0, 0, 1)</tt> by this quaternion.
@@ -506,7 +506,7 @@ interface Quaternionfc {
    * will hold the result
    * @return dest
    */
-  fun transformUnitPositiveZ(dest: Vector3): Vector3
+  fun transformUnitPositiveZ(dest: Vector3m): Vector3m
 
   /**
    * Transform the vector <tt>(0, 0, 1)</tt> by this unit quaternion.
@@ -549,7 +549,7 @@ interface Quaternionfc {
    * will hold the result
    * @return dest
    */
-  fun transform(vec: Vector3fc, dest: Vector3): Vector3
+  fun transform(vec: Vector3fc, dest: Vector3m): Vector3m
 
   /**
    * Transform the given vector <tt>(x, y, z)</tt> by this quaternion and store the result in `dest`.
@@ -565,7 +565,7 @@ interface Quaternionfc {
    * will hold the result
    * @return dest
    */
-  fun transform(x: Float, y: Float, z: Float, dest: Vector3): Vector3
+  fun transform(x: Float, y: Float, z: Float, dest: Vector3m): Vector3m
 
   /**
    * Transform the given vector by this quaternion and store the result in `dest`.
@@ -720,7 +720,7 @@ interface Quaternionfc {
    * will hold the euler angles in radians
    * @return the passed in vector
    */
-  fun getEulerAnglesXYZ(eulerAngles: Vector3): Vector3
+  fun getEulerAnglesXYZ(eulerAngles: Vector3m): Vector3m
 
   /**
    * Return the square of the length of this quaternion.
@@ -1193,7 +1193,7 @@ interface Quaternionfc {
    * will hold the direction of <tt>+X</tt>
    * @return dir
    */
-  fun positiveX(dir: Vector3): Vector3
+  fun positiveX(dir: Vector3m): Vector3m
 
   /**
    * Obtain the direction of <tt>+X</tt> before the rotation transformation represented by `this` *normalized* quaternion is applied.
@@ -1210,7 +1210,7 @@ interface Quaternionfc {
    * will hold the direction of <tt>+X</tt>
    * @return dir
    */
-  fun normalizedPositiveX(dir: Vector3): Vector3
+  fun normalizedPositiveX(dir: Vector3m): Vector3m
 
   /**
    * Obtain the direction of <tt>+Y</tt> before the rotation transformation represented by `this` quaternion is applied.
@@ -1226,7 +1226,7 @@ interface Quaternionfc {
    * will hold the direction of <tt>+Y</tt>
    * @return dir
    */
-  fun positiveY(dir: Vector3): Vector3
+  fun positiveY(dir: Vector3m): Vector3m
 
   /**
    * Obtain the direction of <tt>+Y</tt> before the rotation transformation represented by `this` *normalized* quaternion is applied.
@@ -1243,7 +1243,7 @@ interface Quaternionfc {
    * will hold the direction of <tt>+Y</tt>
    * @return dir
    */
-  fun normalizedPositiveY(dir: Vector3): Vector3
+  fun normalizedPositiveY(dir: Vector3m): Vector3m
 
   /**
    * Obtain the direction of <tt>+Z</tt> before the rotation transformation represented by `this` quaternion is applied.
@@ -1259,7 +1259,7 @@ interface Quaternionfc {
    * will hold the direction of <tt>+Z</tt>
    * @return dir
    */
-  fun positiveZ(dir: Vector3): Vector3
+  fun positiveZ(dir: Vector3m): Vector3m
 
   /**
    * Obtain the direction of <tt>+Z</tt> before the rotation transformation represented by `this` *normalized* quaternion is applied.
@@ -1276,6 +1276,6 @@ interface Quaternionfc {
    * will hold the direction of <tt>+Z</tt>
    * @return dir
    */
-  fun normalizedPositiveZ(dir: Vector3): Vector3
+  fun normalizedPositiveZ(dir: Vector3m): Vector3m
 
 }

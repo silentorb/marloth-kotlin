@@ -1,8 +1,5 @@
 package simulation
 
-import mythic.spatial.Vector3
-import physics.MovementForce
-
 //enum class ActionType {
 //  attack,
 //  face,

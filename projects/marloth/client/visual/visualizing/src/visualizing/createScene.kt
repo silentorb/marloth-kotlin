@@ -1,9 +1,7 @@
 package visualizing
 
 import mythic.spatial.*
-import org.joml.plus
 import org.joml.times
-import org.joml.unaryMinus
 import physics.Body
 import scenery.*
 import simulation.*

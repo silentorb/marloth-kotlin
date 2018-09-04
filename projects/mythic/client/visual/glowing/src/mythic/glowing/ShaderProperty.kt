@@ -2,7 +2,7 @@ package mythic.glowing
 
 import org.lwjgl.BufferUtils
 import mythic.spatial.Matrix
-import mythic.spatial.Vector3
+import mythic.spatial.Vector3m
 import mythic.spatial.Vector4
 import org.lwjgl.opengl.GL20.*
 import org.lwjgl.opengl.GL30.glBindBufferRange
@@ -22,7 +22,7 @@ class MatrixProperty(private val program: ShaderProgram, name: String) {
 class Vector3Property(private val program: ShaderProgram, name: String) {
   private val location = glGetUniformLocation(program.id, name)
 
-  fun setValue(value: Vector3) {
+  fun setValue(value: Vector3m) {
     program.activate()
     glUniform3f(location, value.x, value.y, value.z)
   }

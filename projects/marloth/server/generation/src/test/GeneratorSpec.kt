@@ -1,26 +1,20 @@
-import generation.abstract.getOverlapping
 import generation.abstract.intersects
 import generation.abstract.isBetween
-import generation.overlaps2D
-import generation.structure.generateStructure
 import junit.framework.TestCase.*
 import mythic.spatial.Vector2
-import mythic.spatial.Vector3
-import mythic.spatial.projectPointOntoLine
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import simulation.*
 
 class GeneratorSpec : Spek({
   describe("world generation") {
 
 //    on("testing overlapping") {
 //
-//      val first = Node(Vector3(0f, 0f, 0f), 5f, false)
-//      val second = Node(Vector3(8f, 0f, 0f), 5f, false)
-//      val third = Node(Vector3(200f, 0f, 0f), 15f, false)
+//      val first = Node(Vector3m(0f, 0f, 0f), 5f, false)
+//      val second = Node(Vector3m(8f, 0f, 0f), 5f, false)
+//      val third = Node(Vector3m(200f, 0f, 0f), 15f, false)
 //
 //      it("should detect overlap") {
 //        val overlaps = overlaps2D(first, second)

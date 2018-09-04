@@ -4,8 +4,6 @@ import marloth.texture_generation.*
 import mythic.glowing.Texture
 import mythic.glowing.TextureAttributes
 import mythic.spatial.Vector3
-import mythic.spatial.times
-import org.joml.plus
 import scenery.Textures
 
 fun mix(first: OpaqueTextureAlgorithm, firstPercentage: Float, second: OpaqueTextureAlgorithm) = { x: Float, y: Float ->

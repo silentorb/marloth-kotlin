@@ -1,14 +1,14 @@
 package generation.abstract
 
 import generation.getCenter
-import mythic.spatial.Vector3
+import mythic.spatial.Vector3m
 import simulation.*
 
 const val tunnelRadius = 1f
 
 data class PreTunnel(
     val connection: Connection,
-    val position: Vector3
+    val position: Vector3m
 )
 
 fun prepareTunnels(graph: NodeGraph): List<PreTunnel> =

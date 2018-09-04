@@ -4,7 +4,6 @@ import mythic.glowing.DrawMethod
 import mythic.glowing.checkError
 import mythic.glowing.globalState
 import mythic.spatial.Pi
-import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import mythic.spatial.getRotationMatrix
 import mythic.typography.TextStyle
@@ -76,7 +75,7 @@ fun humanPainter(renderer: SceneRenderer, elements: Primitives) =
 
       val textStyle = TextStyle(renderer.renderer.fonts[0], 12f, Vector4(1f))
       globalState.depthEnabled = false
-      val position = element.transform.getTranslation(Vector3())
+//      val position = element.transform.getTranslation(Vector3())
 
 //      renderer.drawText("Hello World", position, textStyle)
       globalState.depthEnabled = true

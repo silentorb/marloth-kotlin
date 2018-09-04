@@ -4,13 +4,13 @@ import mythic.glowing.SimpleMesh
 import mythic.glowing.VertexSchema
 import mythic.sculpting.FlexibleMesh
 import mythic.sculpting.FlexibleFace
-import mythic.spatial.Vector3
+import mythic.spatial.Vector3m
 import mythic.spatial.Vector4
 import mythic.spatial.put
 import org.lwjgl.BufferUtils
 import java.nio.FloatBuffer
 
-typealias FlexibleVertexSerializer = (vertex: Vector3, face: FlexibleFace, vertices: FloatBuffer) -> Unit
+typealias FlexibleVertexSerializer = (vertex: Vector3m, face: FlexibleFace, vertices: FloatBuffer) -> Unit
 
 fun temporaryVertexSerializer(color: Vector4): FlexibleVertexSerializer {
   return { vertex, face, vertices ->

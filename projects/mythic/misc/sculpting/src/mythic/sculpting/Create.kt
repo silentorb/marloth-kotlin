@@ -4,13 +4,14 @@ import mythic.spatial.*
 import kotlin.math.cos
 import kotlin.math.sin
 
+
 fun createArc(radius: Float, count: Int, sweep: Float = Pi * 2, offset: Float = 0f): Vertices {
-  val vertices = ArrayList<Vector3>(count)
+  val vertices = ArrayList<Vector3m>(count)
   val increment = sweep / (count - 1)
 
   for (i in 0 until count) {
     val theta = increment * i + offset
-    vertices.add(Vector3(cos(theta) * radius, 0f, sin(theta) * radius))
+    vertices.add(Vector3m(cos(theta) * radius, 0f, sin(theta) * radius))
   }
   if (sweep == Pi)
     vertices.last().x = 0f
@@ -23,12 +24,12 @@ fun createCircle(mesh: FlexibleMesh, radius: Float, count: Int): FlexibleFace {
 }
 
 fun createArcXY(radius: Float, count: Int, sweep: Float = Pi * 2): Vertices {
-  val vertices = ArrayList<Vector3>(count)
+  val vertices = ArrayList<Vector3m>(count)
   val increment = sweep / (count - 1)
 
   for (i in 0 until count) {
     val theta = increment * i
-    vertices.add(Vector3(sin(theta) * radius, cos(theta) * radius, 0f))
+    vertices.add(Vector3m(sin(theta) * radius, cos(theta) * radius, 0f))
   }
 //  if (sweep == Pi)
 //    vertices.last().x = 0f
@@ -47,7 +48,7 @@ fun createCircle2(mesh: FlexibleMesh, radius: Float, count: Int): FlexibleFace {
 fun createCylinder(mesh: FlexibleMesh, radius: Float, count: Int, length: Float): List<FlexibleFace> {
   val circle = createCircle2(mesh, radius, count)
   return listOf(circle).plus(
-      extrudeBasic(mesh, circle, Matrix().translate(Vector3(0f, 0f, length)))
+      extrudeBasic(mesh, circle, Matrix().translate(Vector3m(0f, 0f, length)))
   )
 }
 
@@ -86,20 +87,20 @@ fun createCube(mesh: FlexibleMesh, size: Vector3): List<FlexibleFace> {
 fun squareDown(mesh: FlexibleMesh, size: Vector2, z: Float): FlexibleFace {
   val half = size * 0.5f;
   return mesh.createStitchedFace(listOf(
-      Vector3(-half.x, -half.y, z),
-      Vector3(-half.x, half.y, z),
-      Vector3(half.x, half.y, z),
-      Vector3(half.x, -half.y, z)
+      Vector3m(-half.x, -half.y, z),
+      Vector3m(-half.x, half.y, z),
+      Vector3m(half.x, half.y, z),
+      Vector3m(half.x, -half.y, z)
   ))
 }
 
 fun squareUp(mesh: FlexibleMesh, size: Vector2, z: Float): FlexibleFace {
   val half = size * 0.5f;
   return mesh.createStitchedFace(listOf(
-      Vector3(-half.x, -half.y, z),
-      Vector3(half.x, -half.y, z),
-      Vector3(half.x, half.y, z),
-      Vector3(-half.x, half.y, z)
+      Vector3m(-half.x, -half.y, z),
+      Vector3m(half.x, -half.y, z),
+      Vector3m(half.x, half.y, z),
+      Vector3m(-half.x, half.y, z)
   ))
 }
 

@@ -6,7 +6,6 @@ import mythic.sculpting.createSphere
 import mythic.sculpting.translateMesh
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
-import org.joml.plus
 import rendering.Material
 import rendering.Model
 import rendering.mapMaterialToManyMeshes

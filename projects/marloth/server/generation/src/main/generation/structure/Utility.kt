@@ -21,7 +21,7 @@ fun getWallVertices(face: FlexibleFace): WallVertices =
     getWallVertices(face.vertices)
 
 
-fun getNewWallVertices(sectorCenter: Vector3, edges: Edges): Vertices {
+fun getNewWallVertices(sectorCenter: Vector3m, edges: Edges): Vertices {
   val sortedEdges = edges.map { it.vertices.sortedBy { it.z } }
   val vertices = listOf(
       sortedEdges[0][0],
@@ -29,7 +29,7 @@ fun getNewWallVertices(sectorCenter: Vector3, edges: Edges): Vertices {
       sortedEdges[1][1],
       sortedEdges[0][1]
   )
-  val normal = getNormal(vertices)
+  val normal = Vector3m(getNormal(vertices))
   val center = getCenter(vertices)
   if (sectorCenter.distance(center + normal) > sectorCenter.distance(center - normal)) {
     return listOf(
@@ -43,9 +43,9 @@ fun getNewWallVertices(sectorCenter: Vector3, edges: Edges): Vertices {
   return vertices
 }
 
-fun sortWallVertices(sectorCenter: Vector3, vertices: Vertices): Vertices {
+fun sortWallVertices(sectorCenter: Vector3m, vertices: Vertices): Vertices {
   val sorted = arrangePointsCounterClockwise(vertices)
-  val normal = getNormal(sorted)
+  val normal = Vector3m(getNormal(sorted))
   val center = getCenter(sorted)
   return if (sectorCenter.distance(center + normal) > sectorCenter.distance(center - normal))
     sorted.reversed()
@@ -53,7 +53,7 @@ fun sortWallVertices(sectorCenter: Vector3, vertices: Vertices): Vertices {
     sorted
 }
 
-fun createSecondaryNode(sectorCenter: Vector3, realm: Realm, isSolid: Boolean, biome: Biome): Node {
+fun createSecondaryNode(sectorCenter: Vector3m, realm: Realm, isSolid: Boolean, biome: Biome): Node {
   val radius = 1f
 
   val node = Node(
@@ -79,7 +79,7 @@ fun createFloor(mesh: FlexibleMesh, node: Node, vertices: Vertices, center: Vect
 fun createCeiling(mesh: FlexibleMesh, node: Node, vertices: Vertices, center: Vector2): FlexibleFace {
   val sortedFloorVertices = vertices
       .sortedByDescending { atan(it.xy() - center) }
-      .map { it + Vector3(0f, 0f, wallHeight) }
+      .map { it + Vector3m(0f, 0f, wallHeight) }
 
   val surface = mesh.createStitchedFace(sortedFloorVertices)
   node.ceilings.add(surface)

@@ -1,7 +1,6 @@
 package mythic.breeze
 
 import mythic.spatial.*
-import org.joml.minus
 import org.joml.plus
 import org.joml.times
 
@@ -61,16 +60,16 @@ typealias Transformer = (bones: Bones, bone: Bone) -> Matrix
 
 data class BoneDefinition(
     val name: String,
-    val translation: Vector3 = Vector3(),
+    val translation: Vector3m = Vector3m(),
     val parent: BoneDefinition? = null,
     val transform: Transformer,
-    val tail: Vector3,
+    val tail: Vector3m,
     val isGlobal: Boolean = false
 )
 
 data class Bone(
     val name: String,
-    var translation: Vector3,
+    var translation: Vector3m,
     var rotation: Quaternion,
     var length: Float,
     val index: Int,
@@ -87,7 +86,7 @@ data class VertexWeight(
 
 typealias VertexWeights = Pair<VertexWeight, VertexWeight>
 
-typealias WeightMap = Map<Vector3, VertexWeights>
+typealias WeightMap = Map<Vector3m, VertexWeights>
 
 data class Armature(
     val bones: Bones,
@@ -95,7 +94,7 @@ data class Armature(
     val animations: List<Animation>
 )
 
-//private fun getBoneDefinitionTranslation(bone: BoneDefinition): Vector3 {
+//private fun getBoneDefinitionTranslation(bone: BoneDefinition): Vector3m {
 //  val translation = bone.translation + bone.tail
 //  return if (bone.parent == null)
 //    translation
@@ -103,14 +102,14 @@ data class Armature(
 //    getBoneDefinitionTranslation(bone.parent) + translation
 //}
 
-fun getBoneTranslation(bones: Bones, bone: Bone): Vector3 =
+fun getBoneTranslation(bones: Bones, bone: Bone): Vector3m =
     transformVector(bone.transform(bones, bone))
 
-fun transformBone(translation: Vector3, rotation: Quaternion, length: Float) =
+fun transformBone(translation: Vector3m, rotation: Quaternion, length: Float) =
     Matrix()
         .translate(translation)
         .rotate(rotation)
-//        .translate(Vector3(length, 0f, 0f))
+//        .translate(Vector3m(length, 0f, 0f))
 
 fun transformBone(bone: Bone) =
     transformBone(bone.translation, bone.rotation, bone.length)
@@ -142,7 +141,7 @@ fun getSimpleBoneTransform2(bone: Bone): Matrix {
   return transforms.reduce { a, b -> a * b }
 }
 
-fun getSimpleBoneTranslation(bone: Bone): Vector3 {
+fun getSimpleBoneTranslation(bone: Bone): Vector3m {
   val transform = getSimpleBoneTransform2(bone)
   val translation = transformVector(transform)
   return translation
@@ -153,7 +152,7 @@ val independentTransform: Transformer = { bones, bone ->
 }
 
 fun projectBoneTail(matrix: Matrix, bone: Bone) =
-//    Matrix().translate(Vector3(bone.length, 0f, 0f)).mul(matrix)
+//    Matrix().translate(Vector3m(bone.length, 0f, 0f)).mul(matrix)
     Matrix(matrix).translate(bone.length, 0f, 0f)
 
 val dependentTransform: Transformer = { bones, bone ->
@@ -166,7 +165,7 @@ val dependentTransform: Transformer = { bones, bone ->
   parentTransform * transformBone(bone.translation, bone.rotation, bone.length)
 }
 
-fun inverseKinematicJointTransform(outVector: Vector3): Transformer = { bones, bone ->
+fun inverseKinematicJointTransform(outVector: Vector3m): Transformer = { bones, bone ->
   //  val previousBone = bones[bone.index - 1]
   val endBone = bones[bone.index + 2]
   val transform = dependentTransform(bones, bone)
@@ -279,7 +278,7 @@ fun getChannelValue(channel: AnimationChannel, timePassed: Float): Any {
   return if (secondKey == null) {
     when (channel.target.type) {
       ChannelType.rotation -> firstKey.value as Quaternion
-      ChannelType.translation -> firstKey.value as Vector3
+      ChannelType.translation -> firstKey.value as Vector3m
       else -> throw Error("Not implemented.")
     }
   } else {
@@ -294,9 +293,9 @@ fun getChannelValue(channel: AnimationChannel, timePassed: Float): Any {
         value
       }
       ChannelType.translation -> {
-        val a = firstKey.value as Vector3
-        val b = secondKey.value as Vector3
-        Vector3(a).lerp(b, progress)
+        val a = firstKey.value as Vector3m
+        val b = secondKey.value as Vector3m
+        Vector3m(a).lerp(b, progress)
       }
 
       else -> throw Error("Not implemented.")
@@ -314,7 +313,7 @@ fun applyAnimation(animation: Animation, bones: Bones, timePassed: Float) {
         bone.rotation = value as Quaternion
       }
       ChannelType.translation -> {
-        bone.translation = value as Vector3
+        bone.translation = value as Vector3m
       }
       else -> throw Error("Not implemented.")
     }
@@ -344,7 +343,7 @@ fun shift(timeOffset: Float, duration: Float, keys: Keyframes): Keyframes =
       listOf(result.last().copy(time = 0f)).plus(result)
     }
 
-fun keySequence(offset: Vector3, increment: Float, values: List<Vector3>): Keyframes =
+fun keySequence(offset: Vector3m, increment: Float, values: List<Vector3m>): Keyframes =
     values.mapIndexed { index, value ->
       Keyframe(increment * index, offset + value)
     }

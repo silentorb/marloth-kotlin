@@ -1,10 +1,9 @@
 package generation.abstract
 
 import generation.connectionOverlapsNeighborNodes
-import generation.getCenter
 import generation.getNodeDistance
 import mythic.spatial.Vector2
-import mythic.spatial.Vector3
+import mythic.spatial.Vector3m
 import mythic.spatial.lineIntersectsCircle
 import org.joml.Intersectionf
 import simulation.*
@@ -18,7 +17,7 @@ fun isBetween(first: Float, second: Float, middle: Float) =
       middle >= second && middle <= first
 
 fun intersects(lineStart: Vector2, lineEnd: Vector2, circleCenter: Vector2, radius: Float): Boolean {
-  val hitPoint = Vector3()
+  val hitPoint = Vector3m()
   val hit = Intersectionf.intersectLineCircle(
       lineStart.x, lineStart.y,
       lineEnd.x, lineEnd.y,

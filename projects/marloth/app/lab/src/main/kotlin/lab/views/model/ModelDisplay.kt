@@ -102,7 +102,7 @@ fun drawSelection(config: ModelViewConfig, model: Model, sceneRenderer: SceneRen
         for (index in config.selection) {
           if (edges.size > index) {
             val edge = edges[index]
-            sceneRenderer.drawLine(edge.first, edge.second, white, 2f)
+            sceneRenderer.drawLine(Vector3(edge.first), Vector3(edge.second), white, 2f)
           }
         }
       }
@@ -111,7 +111,7 @@ fun drawSelection(config: ModelViewConfig, model: Model, sceneRenderer: SceneRen
         val vertices = model.vertices
         for (index in config.selection) {
           if (vertices.size > index)
-            sceneRenderer.drawPoint(vertices[index], white, 2f)
+            sceneRenderer.drawPoint(Vector3(vertices[index]), white, 2f)
         }
       }
 
@@ -156,7 +156,7 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
         renderFaceNormals(sceneRenderer, 0.05f, model.mesh)
 
       model.mesh.edges.filter { it.faces.none() }.forEach {
-        sceneRenderer.drawLine(it.first, it.second, Vector4(0.8f, 0.5f, 0.3f, 1f))
+        sceneRenderer.drawLine(Vector3(it.first), Vector3(it.second), Vector4(0.8f, 0.5f, 0.3f, 1f))
       }
 
       if (config.drawTempLine)
@@ -168,7 +168,7 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
 
       for (group in model.info.edgeGroups) {
         for (pair in group) {
-          sceneRenderer.drawLine(pair.key.first, pair.key.second, yellow)
+          sceneRenderer.drawLine(Vector3(pair.key.first), Vector3(pair.key.second), yellow)
         }
       }
     }

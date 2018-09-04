@@ -1,9 +1,7 @@
 package rendering.meshes
 
-import mythic.breeze.*
 import mythic.sculpting.*
 import mythic.spatial.*
-import org.joml.plus
 import rendering.*
 
 data class HeadPorts(

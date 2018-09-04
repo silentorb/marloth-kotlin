@@ -1,11 +1,5 @@
 package simulation.input
 
-import mythic.spatial.Vector3
-import org.joml.plus
-import simulation.*
-import simulation.changing.simulationDelta
-import simulation.changing.updateTpCameraRotation
-
 //fun updateCharacterFacing(character: Character, commands: Commands): Vector3 {
 //  val delta = simulationDelta
 //  val vector = updateTpCameraRotation(player, delta)

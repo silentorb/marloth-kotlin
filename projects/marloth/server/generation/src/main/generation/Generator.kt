@@ -6,12 +6,7 @@ import generation.structure.generateStructure
 import intellect.Pursuit
 import intellect.Spirit
 import mythic.sculpting.FlexibleFace
-import mythic.spatial.Quaternion
-import mythic.spatial.Vector3
-import mythic.spatial.getVector3Center
-import mythic.spatial.times
-import org.joml.minus
-import org.joml.plus
+import mythic.spatial.*
 import randomly.Dice
 import simulation.*
 import simulation.changing.Instantiator
@@ -22,7 +17,7 @@ fun createRoomNode(realm: Realm, biomes: List<Biome>, dice: Dice): Node {
   val end = realm.boundary.end - radius
 
   val node = Node(
-      position = Vector3(dice.getFloat(start.x, end.x), dice.getFloat(start.y, end.y), 0f),
+      position = Vector3m(dice.getFloat(start.x, end.x), dice.getFloat(start.y, end.y), 0f),
       radius = radius,
       biome = dice.getItem(biomes),
       isSolid = false,
@@ -73,7 +68,7 @@ fun fillIndexes(graph: NodeGraph) {
 fun placeEnemy(realm: Realm, nextId: IdSource, dice: Dice): Hand {
   val node = dice.getItem(realm.locationNodes.drop(1))// Skip the node where the player starts
   val wall = dice.getItem(node.walls)
-  val position = getVector3Center(node.position, wall.edges[0].first)
+  val position = getVector3Center(Vector3(node.position), Vector3(wall.edges[0].first))
   return newCharacter(
       nextId = nextId,
       faction = 2,
@@ -108,7 +103,7 @@ fun placeWallLamps(world: World, instantiator: Instantiator, dice: Dice, scale: 
     if (options2.any()) {
       val wall = dice.getItem(options2)
       val edge = wall.edges[0]
-      val position = getVector3Center(edge.first, edge.second) +
+      val position = getVector3Center(Vector3(edge.first), Vector3(edge.second)) +
           Vector3(0f, 0f, 0.9f) + wall.normal * -0.1f
 //    val angle = getAngle(edge.first.copy().cross(edge.second).xy())
 //    val angle = getAngle(wall.normal.xy())
@@ -133,7 +128,7 @@ fun generateWorld(input: WorldInput): World {
       nextId = nextId,
       faction = 1,
       definition = characterDefinitions.player,
-      position = playerNode.position,
+      position = Vector3(playerNode.position),
       node = playerNode,
       player = Player(
           playerId = 1,

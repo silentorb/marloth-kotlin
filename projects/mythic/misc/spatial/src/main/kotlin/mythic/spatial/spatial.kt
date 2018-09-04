@@ -13,13 +13,19 @@ typealias Quaternion = org.joml.Quaternionf
 
 private val initialQuaternion = Quaternion()
 
-operator fun Vector3.times(other: Matrix): Vector3 = mulDirection(other)
+operator fun Vector3m.times(other: Matrix): Vector3m = mulDirection(other)
 operator fun Vector2.times(other: Vector2): Vector2 = mul(other, Vector2())
 operator fun Vector2.times(other: Float): Vector2 = mul(other, Vector2())
-operator fun Vector3.times(other: Float): Vector3 = mul(other, Vector3())
-operator fun Vector3.times(other: Vector3): Vector3 = mul(other, Vector3())
+operator fun Vector3m.times(other: Float): Vector3m = mul(other, Vector3m())
+operator fun Vector3m.times(other: Vector3m): Vector3m = mul(other, Vector3m())
 
 //operator fun Matrix.times(other: Matrix): Matrix = Matrix(this).mul(other)
+
+fun FloatBuffer.put(value: Vector3m) {
+  put(value.x)
+  put(value.y)
+  put(value.z)
+}
 
 fun FloatBuffer.put(value: Vector3) {
   put(value.x)
@@ -41,7 +47,13 @@ fun FloatBuffer.put(x: Float, y: Float, z: Float, w: Float) {
   put(w)
 }
 
-fun ByteBuffer.putVector3(value: Vector3) {
+fun ByteBuffer.putVector3(value: Vector3m) {
+  putFloat(value.x)
+  putFloat(value.y)
+  putFloat(value.z)
+}
+
+fun ByteBuffer.putVector3m(value: Vector3) {
   putFloat(value.x)
   putFloat(value.y)
   putFloat(value.z)
@@ -62,13 +74,13 @@ fun ByteBuffer.putMatrix(value: Matrix) {
 const val Pi = PI.toFloat()
 const val Pi2 = Pi * 2f
 
-fun Vector2.toVector3() = Vector3(x, y, 0f)
+fun Vector2.toVector3() = Vector3m(x, y, 0f)
 
 data class BoundingBox(
-    val start: Vector3,
-    val end: Vector3
+    val start: Vector3m,
+    val end: Vector3m
 ) {
-  val dimensions: Vector3
+  val dimensions: Vector3m
     get() = end - start
 }
 
@@ -80,7 +92,7 @@ fun isBetween(middle: Float, first: Float, second: Float) =
     else
       middle > second
 
-fun isBetween(middle: Vector3, first: Vector3, second: Vector3) =
+fun isBetween(middle: Vector3m, first: Vector3m, second: Vector3m) =
     isBetween(middle.x, first.x, second.x)
         && isBetween(middle.y, first.y, second.y)
         && isBetween(middle.z, first.z, second.z)
@@ -104,7 +116,7 @@ fun rayPolygonDistance(rayStart: Vector3, rayDirection: Vector3, polygonPoint: V
     null
 }
 
-private val flattenedPlaneNormal = Vector3(0f, 0f, 1f)
+private val flattenedPlaneNormal = Vector3m(0f, 0f, 1f)
 
 fun getSlope(start: Vector2fMinimal, end: Vector2fMinimal): Float {
   val normal = end - start
@@ -124,13 +136,13 @@ fun isInsidePolygon(point: Vector2fMinimal, vertices: List<Vector2fMinimal>): Bo
   return count > 0 && isOdd(count)
 }
 
-fun flattenPoints(normal: Vector3, points: List<Vector3>): Map<Vector2, Vector3> {
-  val u = Vector3(normal).cross((points[1] - points[0]).normalize())
-  val v = Vector3(normal).cross(u)
+fun flattenPoints(normal: Vector3m, points: List<Vector3m>): Map<Vector2, Vector3m> {
+  val u = Vector3m(normal).cross((points[1] - points[0]).normalize())
+  val v = Vector3m(normal).cross(u)
   return points.associate { Pair(Vector2(u.dot(it), v.dot(it)), it) }
 }
 
-fun flattenPoints(points: List<Vector3>): Map<Vector2, Vector3> {
+fun flattenPoints(points: List<Vector3m>): Map<Vector2, Vector3m> {
   assert(points.size >= 3)
   val normal = (points[0] - points[1]).cross(points[2] - points[1])
   return flattenPoints(normal, points)
@@ -170,8 +182,8 @@ fun getAngle(a: Vector2, b: Vector2): Float {
 //  return getAngle(a - b, c - b)
 //}
 
-val Vector4.xyz: Vector3
-  get() = Vector3(x, y, z)
+val Vector4.xyz: Vector3m
+  get() = Vector3m(x, y, z)
 
 fun Vector4.xy(): Vector2 = Vector2(x, y)
 
@@ -182,12 +194,12 @@ val Vector4.zw: Vector2
 //  get() = Vector2(x, y)
 
 fun Vector2.copy() = Vector2(this)
-fun Vector3.copy() = Vector3(this)
+fun Vector3m.copy() = Vector3m(this)
 
-fun Vector3.transform(m: Matrix) = m.transform(Vector4(this, 1f)).xyz
+fun Vector3m.transform(m: Matrix) = m.transform(Vector4(this, 1f)).xyz
 
 private val tempVector = Vector4()
-fun transformVector(m: Matrix): Vector3 {
+fun transformVector(m: Matrix): Vector3m {
   tempVector.set(0f, 0f, 0f, 1f)
   return m.transform(tempVector).xyz
 }
@@ -208,7 +220,7 @@ fun Vector4i.toVector4() = Vector4(x.toFloat(), y.toFloat(), z.toFloat(), w.toFl
 fun arrangePointsCounterClockwise2D(center: Vector2, vertices: Collection<Vector2>): List<Vector2> =
     vertices.sortedBy { atan(it - center) }
 
-fun getCenter(points: Collection<Vector3>): Vector3 =
+fun getCenter(points: Collection<Vector3m>): Vector3m =
     points.reduce { a, b -> a + b } / points.size.toFloat()
 
 fun getCenter2D(points: Collection<Vector2>): Vector2 =
@@ -217,7 +229,7 @@ fun getCenter2D(points: Collection<Vector2>): Vector2 =
 fun arrangePointsCounterClockwise2D(vertices: List<Vector2>): List<Vector2> =
     arrangePointsCounterClockwise2D(getCenter2D(vertices), vertices)
 
-fun arrangePointsCounterClockwise(vertices: List<Vector3>): List<Vector3> {
+fun arrangePointsCounterClockwise(vertices: List<Vector3m>): List<Vector3m> {
   val flatMap = flattenPoints(vertices)
   val flatVertices = flatMap.keys
   val sorted = arrangePointsCounterClockwise2D(getCenter2D(flatVertices), flatVertices)
@@ -226,10 +238,14 @@ fun arrangePointsCounterClockwise(vertices: List<Vector3>): List<Vector3> {
 }
 
 val decimalFormat = DecimalFormat("#.#####")
+
+fun toString(vector: Vector3m) =
+    decimalFormat.format(vector.x) + ", " + decimalFormat.format(vector.y) + ", " + decimalFormat.format(vector.z)
+
 fun toString(vector: Vector3) =
     decimalFormat.format(vector.x) + ", " + decimalFormat.format(vector.y) + ", " + decimalFormat.format(vector.z)
 
-fun toString(vectors: List<Vector3>) =
+fun toString(vectors: List<Vector3m>) =
     vectors.map { toString(it) }.joinToString("\n")
 
 fun toString2(vector: Vector2) =
@@ -238,23 +254,23 @@ fun toString2(vector: Vector2) =
 fun toString2(vectors: List<Vector2>) =
     vectors.map { toString2(it) }.joinToString("\n")
 
-fun isZero(vector: Vector3) =
+fun isZero(vector: Vector3m) =
     vector.x == 0f && vector.y == 0f && vector.z == 0f
 
-fun rotateToward(matrix: Matrix, dir: Vector3): Matrix =
+fun rotateToward(matrix: Matrix, dir: Vector3m): Matrix =
     if (dir.x == 0f && dir.y == 0f)
-      matrix.rotateTowards(dir, Vector3(0f, 1f, 0f))
+      matrix.rotateTowards(dir, Vector3m(0f, 1f, 0f))
     else
-      matrix.rotateTowards(dir, Vector3(0f, 0f, 1f))
+      matrix.rotateTowards(dir, Vector3m(0f, 0f, 1f))
 
-fun rotateToward(dir: Vector3): Quaternion =
+fun rotateToward(dir: Vector3m): Quaternion =
 //    if (dir.x == 0f && dir.y == 0f)
-    Quaternion().rotateTo(Vector3(1f, 0f, 0f), dir)
+    Quaternion().rotateTo(Vector3m(1f, 0f, 0f), dir)
 //    else
-//      Quaternion().rotateTo(dir, Vector3(0f, 0f, 1f))
+//      Quaternion().rotateTo(dir, Vector3m(0f, 0f, 1f))
 
-fun sum(vertices: Collection<Vector3>): Vector3 {
-  var result = Vector3()
+fun sum(vertices: Collection<Vector3m>): Vector3m {
+  var result = Vector3m()
   for (vertex in vertices) {
     result += vertex
   }

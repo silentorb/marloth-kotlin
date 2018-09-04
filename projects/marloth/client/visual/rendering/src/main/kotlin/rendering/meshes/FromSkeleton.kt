@@ -3,7 +3,6 @@ package rendering.meshes
 import mythic.breeze.*
 import mythic.sculpting.*
 import mythic.spatial.*
-import org.joml.minus
 import org.joml.times
 import rendering.*
 import rendering.VertexWeight
@@ -13,7 +12,7 @@ import rendering.WeightMap
 fun modelFromSkeleton(bones: Bones, name: String, material:Material): Pair<Model, WeightMap> {
   val mesh = FlexibleMesh()
 
-  val weights = mutableMapOf<Vector3, VertexWeights>()
+  val weights = mutableMapOf<Vector3m, VertexWeights>()
 
   bones
       .filter { it.parent != null }

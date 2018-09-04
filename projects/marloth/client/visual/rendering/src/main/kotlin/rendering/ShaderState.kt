@@ -3,7 +3,7 @@ package rendering
 import mythic.breeze.Bones
 import mythic.spatial.Matrix
 import mythic.spatial.putMatrix
-import mythic.spatial.putVector3
+import mythic.spatial.putVector3m
 import mythic.spatial.putVector4
 import org.joml.times
 import org.lwjgl.BufferUtils
@@ -56,7 +56,7 @@ fun createLightBuffer(lights: List<Light>): ByteBuffer {
     buffer.putInt(light.type.value)
     padBuffer(buffer, 3)
     buffer.putVector4(light.color)
-    buffer.putVector3(light.position)
+    buffer.putVector3m(light.position)
     padBuffer(buffer, 1)
     buffer.putVector4(light.direction)
   }
@@ -93,7 +93,7 @@ fun createSceneBuffer(effectsData: EffectsData): ByteBuffer {
 //    boneBuffer.position(boneBuffer.position() + sizeOfMatrix)
 //  }
   sceneMemoryBuffer.putMatrix(effectsData.camera.transform)
-  sceneMemoryBuffer.putVector3(effectsData.camera.direction)
+  sceneMemoryBuffer.putVector3m(effectsData.camera.direction)
   sceneBufferCustodian.finish()
   return sceneMemoryBuffer
 }

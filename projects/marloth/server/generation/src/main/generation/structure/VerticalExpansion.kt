@@ -1,7 +1,7 @@
 package generation.structure
 
 import mythic.sculpting.FlexibleFace
-import mythic.spatial.Vector3
+import mythic.spatial.Vector3m
 import org.joml.plus
 import randomly.Dice
 import simulation.*
@@ -46,7 +46,7 @@ fun createVerticalNodes(realm: Realm, middleNodes: List<Node>, roomNodes: List<N
                         facing: VerticalFacing, shouldBeSolid: (original: Node) -> Boolean) {
   val newNodes = middleNodes.map { node ->
     val depth = wallHeight
-    val offset = Vector3(0f, 0f, depth * facing.dirMod)
+    val offset = Vector3m(0f, 0f, depth * facing.dirMod)
 
     val newNode = createSecondaryNode(node.position + offset, realm, isSolid = shouldBeSolid(node), biome = node.biome)
     assert(facing.ceilings(node).any())
@@ -72,7 +72,7 @@ fun getUpperNode(node: Node) =
 fun createAscendingSpaceWalls(realm: Realm, nodes: List<Node>, facing: VerticalFacing) {
   val walls = nodes.flatMap { it.walls }
   val depth = 6f
-  val offset = Vector3(0f, 0f, depth * facing.dirMod)
+  val offset = Vector3m(0f, 0f, depth * facing.dirMod)
   walls.forEach { upperWall ->
     val info = getFaceInfo(upperWall)
     if (info.secondNode != null) {

@@ -3,8 +3,6 @@ package simulation.combat
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
-import mythic.spatial.times
-import org.joml.plus
 import physics.Body
 import physics.Collision
 import physics.commonShapes

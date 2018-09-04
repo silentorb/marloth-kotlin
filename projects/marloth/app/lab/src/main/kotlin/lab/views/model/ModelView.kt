@@ -76,14 +76,14 @@ data class Hit(
 
 fun getVertexHits(start: Vector3, end: Vector3, model: Model): List<Hit> {
   val vertices = model.vertices
-  return vertices.filter { rayIntersectsSphere(start, end, it, 0.02f) }
-      .map { Hit(it, vertices.indexOf(it)) }
+  return vertices.filter { rayIntersectsSphere(start, end, Vector3(it), 0.02f) }
+      .map { Hit(Vector3(it), vertices.indexOf(it)) }
 }
 
 fun getEdgeHits(start: Vector3, end: Vector3, model: Model): List<Hit> {
   val edges = model.edges
   return edges.mapNotNull {
-    val point = rayIntersectsLine3D(start, end, it.first, it.second, 0.02f)
+    val point = rayIntersectsLine3D(start, end, Vector3(it.first), Vector3(it.second), 0.02f)
     if (point != null)
       Hit(point, edges.indexOf(it))
     else
@@ -123,7 +123,8 @@ private fun trySelect(config: ModelViewConfig, camera: Camera, model: Model, mou
       0, 0,
       bounds.dimensions.x.toInt(), bounds.dimensions.y.toInt()
   ).toIntArray()
-  val start = cameraData.transform.unproject(cursor.x.toFloat(), bounds.dimensions.y - cursor.y.toFloat(), 0.01f, viewportBounds, Vector3())
+  val start = Vector3(cameraData.transform.unproject(cursor.x.toFloat(),
+      bounds.dimensions.y - cursor.y.toFloat(), 0.01f, viewportBounds, Vector3m()))
   val end = start + cameraData.direction * camera.farClip
   config.tempStart = start
   config.tempEnd = end
@@ -154,7 +155,7 @@ fun tightenRotation(value: Float): Float =
 fun resetCamera(config: ModelViewConfig, model: Model, rotationY: Float, rotationZ: Float) {
   config.camera.rotationY = rotationY
   config.camera.rotationZ = rotationZ
-  config.camera.pivot = getVerticesCenter(model.vertices)
+  config.camera.pivot = Vector3(getVerticesCenter(model.vertices))
 }
 
 enum class SelectableListType {

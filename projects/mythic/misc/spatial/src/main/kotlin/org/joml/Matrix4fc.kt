@@ -22,7 +22,7 @@
  */
 package org.joml
 
-import mythic.spatial.Vector3
+import mythic.spatial.Vector3m
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 
@@ -663,7 +663,7 @@ import java.nio.FloatBuffer
  * will hold the translation components of this matrix
  * @return dest
  */
-     fun getTranslation(dest: Vector3): Vector3
+     fun getTranslation(dest: Vector3m): Vector3m
 
 /**
  * Get the scaling factors of `this` matrix for the three base axes.
@@ -672,7 +672,7 @@ import java.nio.FloatBuffer
  * will hold the scaling factors for <tt>x</tt>, <tt>y</tt> and <tt>z</tt>
  * @return dest
  */
-     fun getScale(dest: Vector3): Vector3
+     fun getScale(dest: Vector3m): Vector3m
 
 /**
  * Get the current values of `this` matrix and store them into
@@ -1135,12 +1135,12 @@ import java.nio.FloatBuffer
  *
  * This method uses <tt>w=1.0</tt> as the fourth vector component.
  *
- * @see Vector3.mulProject
+ * @see Vector3m.mulProject
  * @param v
  * the vector to transform and to hold the final result
  * @return v
  */
-     fun transformProject(v: Vector3): Vector3
+     fun transformProject(v: Vector3m): Vector3m
 
 /**
  * Transform/multiply the given vector by this matrix, perform perspective divide and store the result in `dest`.
@@ -1148,14 +1148,14 @@ import java.nio.FloatBuffer
  *
  * This method uses <tt>w=1.0</tt> as the fourth vector component.
  *
- * @see Vector3.mulProject
+ * @see Vector3m.mulProject
  * @param v
  * the vector to transform
  * @param dest
  * will contain the result
  * @return dest
  */
-     fun transformProject(v:Vector3fc, dest: Vector3): Vector3
+     fun transformProject(v:Vector3fc, dest: Vector3m): Vector3m
 
 /**
  * Transform/multiply the vector <tt>(x, y, z)</tt> by this matrix, perform perspective divide and store the result in `dest`.
@@ -1173,7 +1173,7 @@ import java.nio.FloatBuffer
  * will contain the result
  * @return dest
  */
-     fun transformProject(x:Float, y:Float, z:Float, dest: Vector3): Vector3
+     fun transformProject(x:Float, y:Float, z:Float, dest: Vector3m): Vector3m
 
 /**
  * Transform/multiply the given 3D-vector, as if it was a 4D-vector with w=1, by
@@ -1197,7 +1197,7 @@ import java.nio.FloatBuffer
  * the vector to transform and to hold the final result
  * @return v
  */
-     fun transformPosition(v: Vector3): Vector3
+     fun transformPosition(v: Vector3m): Vector3m
 
 /**
  * Transform/multiply the given 3D-vector, as if it was a 4D-vector with w=1, by
@@ -1223,7 +1223,7 @@ import java.nio.FloatBuffer
  * will hold the result
  * @return dest
  */
-     fun transformPosition(v:Vector3fc, dest: Vector3): Vector3
+     fun transformPosition(v:Vector3fc, dest: Vector3m): Vector3m
 
 /**
  * Transform/multiply the 3D-vector <tt>(x, y, z)</tt>, as if it was a 4D-vector with w=1, by
@@ -1249,7 +1249,7 @@ import java.nio.FloatBuffer
  * will hold the result
  * @return dest
  */
-     fun transformPosition(x:Float, y:Float, z:Float, dest: Vector3): Vector3
+     fun transformPosition(x:Float, y:Float, z:Float, dest: Vector3m): Vector3m
 
 /**
  * Transform/multiply the given 3D-vector, as if it was a 4D-vector with w=0, by
@@ -1268,7 +1268,7 @@ import java.nio.FloatBuffer
  * the vector to transform and to hold the final result
  * @return v
  */
-     fun transformDirection(v: Vector3): Vector3
+     fun transformDirection(v: Vector3m): Vector3m
 
 /**
  * Transform/multiply the given 3D-vector, as if it was a 4D-vector with w=0, by
@@ -1289,7 +1289,7 @@ import java.nio.FloatBuffer
  * will hold the result
  * @return dest
  */
-     fun transformDirection(v:Vector3fc, dest: Vector3): Vector3
+     fun transformDirection(v:Vector3fc, dest: Vector3m): Vector3m
 
 /**
  * Transform/multiply the given 3D-vector <tt>(x, y, z)</tt>, as if it was a 4D-vector with w=0, by
@@ -1310,7 +1310,7 @@ import java.nio.FloatBuffer
  * will hold the result
  * @return dest
  */
-     fun transformDirection(x:Float, y:Float, z:Float, dest: Vector3): Vector3
+     fun transformDirection(x:Float, y:Float, z:Float, dest: Vector3m): Vector3m
 
 /**
  * Transform/multiply the given 4D-vector by assuming that `this` matrix represents an [affine][.isAffine] transformation
@@ -3290,7 +3290,7 @@ import java.nio.FloatBuffer
  * will hold the unprojected position
  * @return dest
  */
-     fun unproject(winX:Float, winY:Float, winZ:Float, viewport:IntArray, dest: Vector3): Vector3
+     fun unproject(winX:Float, winY:Float, winZ:Float, viewport:IntArray, dest: Vector3m): Vector3m
 
 /**
  * Unproject the given window coordinates `winCoords` by `this` matrix using the specified viewport.
@@ -3346,7 +3346,7 @@ import java.nio.FloatBuffer
  * will hold the unprojected position
  * @return dest
  */
-     fun unproject(winCoords:Vector3fc, viewport:IntArray, dest: Vector3): Vector3
+     fun unproject(winCoords:Vector3fc, viewport:IntArray, dest: Vector3m): Vector3m
 
 /**
  * Unproject the given 2D window coordinates <tt>(winX, winY)</tt> by `this` matrix using the specified viewport
@@ -3375,7 +3375,7 @@ import java.nio.FloatBuffer
  * will hold the (unnormalized) ray direction
  * @return this
  */
-     fun unprojectRay(winX:Float, winY:Float, viewport:IntArray, originDest: Vector3, dirDest: Vector3):Matrix4f
+     fun unprojectRay(winX:Float, winY:Float, viewport:IntArray, originDest: Vector3m, dirDest: Vector3m):Matrix4f
 
 /**
  * Unproject the given 2D window coordinates `winCoords` by `this` matrix using the specified viewport
@@ -3403,7 +3403,7 @@ import java.nio.FloatBuffer
  * will hold the (unnormalized) ray direction
  * @return this
  */
-     fun unprojectRay(winCoords:Vector2fc, viewport:IntArray, originDest: Vector3, dirDest: Vector3):Matrix4f
+     fun unprojectRay(winCoords:Vector2fc, viewport:IntArray, originDest: Vector3m, dirDest: Vector3m):Matrix4f
 
 /**
  * Unproject the given window coordinates `winCoords` by `this` matrix using the specified viewport.
@@ -3476,7 +3476,7 @@ import java.nio.FloatBuffer
  * will hold the (unnormalized) ray direction
  * @return this
  */
-     fun unprojectInvRay(winCoords:Vector2fc, viewport:IntArray, originDest: Vector3, dirDest: Vector3):Matrix4f
+     fun unprojectInvRay(winCoords:Vector2fc, viewport:IntArray, originDest: Vector3m, dirDest: Vector3m):Matrix4f
 
 /**
  * Unproject the given 2D window coordinates <tt>(winX, winY)</tt> by `this` matrix using the specified viewport
@@ -3500,7 +3500,7 @@ import java.nio.FloatBuffer
  * will hold the (unnormalized) ray direction
  * @return this
  */
-     fun unprojectInvRay(winX:Float, winY:Float, viewport:IntArray, originDest: Vector3, dirDest: Vector3):Matrix4f
+     fun unprojectInvRay(winX:Float, winY:Float, viewport:IntArray, originDest: Vector3m, dirDest: Vector3m):Matrix4f
 
 /**
  * Unproject the given window coordinates `winCoords` by `this` matrix using the specified viewport.
@@ -3522,7 +3522,7 @@ import java.nio.FloatBuffer
  * will hold the unprojected position
  * @return dest
  */
-     fun unprojectInv(winCoords:Vector3fc, viewport:IntArray, dest: Vector3): Vector3
+     fun unprojectInv(winCoords:Vector3fc, viewport:IntArray, dest: Vector3m): Vector3m
 
 /**
  * Unproject the given window coordinates <tt>(winX, winY, winZ)</tt> by `this` matrix using the specified viewport.
@@ -3548,7 +3548,7 @@ import java.nio.FloatBuffer
  * will hold the unprojected position
  * @return dest
  */
-     fun unprojectInv(winX:Float, winY:Float, winZ:Float, viewport:IntArray, dest: Vector3): Vector3
+     fun unprojectInv(winX:Float, winY:Float, winZ:Float, viewport:IntArray, dest: Vector3m): Vector3m
 
 /**
  * Project the given <tt>(x, y, z)</tt> position via `this` matrix using the specified viewport
@@ -3600,7 +3600,7 @@ import java.nio.FloatBuffer
  * will hold the projected window coordinates
  * @return winCoordsDest
  */
-     fun project(x:Float, y:Float, z:Float, viewport:IntArray, winCoordsDest: Vector3): Vector3
+     fun project(x:Float, y:Float, z:Float, viewport:IntArray, winCoordsDest: Vector3m): Vector3m
 
 /**
  * Project the given `position` via `this` matrix using the specified viewport
@@ -3646,7 +3646,7 @@ import java.nio.FloatBuffer
  * will hold the projected window coordinates
  * @return winCoordsDest
  */
-     fun project(position:Vector3fc, viewport:IntArray, winCoordsDest: Vector3): Vector3
+     fun project(position:Vector3fc, viewport:IntArray, winCoordsDest: Vector3m): Vector3m
 
 /**
  * Apply a mirror/reflection transformation to this matrix that reflects about the given plane
@@ -3934,7 +3934,7 @@ import java.nio.FloatBuffer
  * will hold the resulting corner point coordinates
  * @return point
  */
-     fun frustumCorner(corner:Int, point: Vector3): Vector3
+     fun frustumCorner(corner:Int, point: Vector3m): Vector3m
 
 /**
  * Compute the eye/origin of the perspective frustum transformation defined by `this` matrix,
@@ -3963,7 +3963,7 @@ import java.nio.FloatBuffer
  * perspective projection transformation
  * @return origin
  */
-     fun perspectiveOrigin(origin: Vector3): Vector3
+     fun perspectiveOrigin(origin: Vector3m): Vector3m
 
 /**
  * Return the vertical field-of-view angle in radians of this perspective transformation matrix.
@@ -4036,7 +4036,7 @@ import java.nio.FloatBuffer
  * transforming to homogeneous clipping space using `this` matrix
  * @return dir
  */
-     fun frustumRayDir(x:Float, y:Float, dir: Vector3): Vector3
+     fun frustumRayDir(x:Float, y:Float, dir: Vector3m): Vector3m
 
 /**
  * Obtain the direction of <tt>+Z</tt> before the transformation represented by `this` matrix is applied.
@@ -4060,7 +4060,7 @@ import java.nio.FloatBuffer
  * will hold the direction of <tt>+Z</tt>
  * @return dir
  */
-     fun positiveZ(dir: Vector3): Vector3
+     fun positiveZ(dir: Vector3m): Vector3m
 
 /**
  * Obtain the direction of <tt>+Z</tt> before the transformation represented by `this` *orthogonal* matrix is applied.
@@ -4084,7 +4084,7 @@ import java.nio.FloatBuffer
  * will hold the direction of <tt>+Z</tt>
  * @return dir
  */
-     fun normalizedPositiveZ(dir: Vector3): Vector3
+     fun normalizedPositiveZ(dir: Vector3m): Vector3m
 
 /**
  * Obtain the direction of <tt>+X</tt> before the transformation represented by `this` matrix is applied.
@@ -4108,7 +4108,7 @@ import java.nio.FloatBuffer
  * will hold the direction of <tt>+X</tt>
  * @return dir
  */
-     fun positiveX(dir: Vector3): Vector3
+     fun positiveX(dir: Vector3m): Vector3m
 
 /**
  * Obtain the direction of <tt>+X</tt> before the transformation represented by `this` *orthogonal* matrix is applied.
@@ -4132,7 +4132,7 @@ import java.nio.FloatBuffer
  * will hold the direction of <tt>+X</tt>
  * @return dir
  */
-     fun normalizedPositiveX(dir: Vector3): Vector3
+     fun normalizedPositiveX(dir: Vector3m): Vector3m
 
 /**
  * Obtain the direction of <tt>+Y</tt> before the transformation represented by `this` matrix is applied.
@@ -4156,7 +4156,7 @@ import java.nio.FloatBuffer
  * will hold the direction of <tt>+Y</tt>
  * @return dir
  */
-     fun positiveY(dir: Vector3): Vector3
+     fun positiveY(dir: Vector3m): Vector3m
 
 /**
  * Obtain the direction of <tt>+Y</tt> before the transformation represented by `this` *orthogonal* matrix is applied.
@@ -4180,7 +4180,7 @@ import java.nio.FloatBuffer
  * will hold the direction of <tt>+Y</tt>
  * @return dir
  */
-     fun normalizedPositiveY(dir: Vector3): Vector3
+     fun normalizedPositiveY(dir: Vector3m): Vector3m
 
 /**
  * Obtain the position that gets transformed to the origin by `this` [affine][.isAffine] matrix.
@@ -4200,7 +4200,7 @@ import java.nio.FloatBuffer
  * will hold the position transformed to the origin
  * @return origin
  */
-     fun originAffine(origin: Vector3): Vector3
+     fun originAffine(origin: Vector3m): Vector3m
 
 /**
  * Obtain the position that gets transformed to the origin by `this` matrix.
@@ -4217,7 +4217,7 @@ import java.nio.FloatBuffer
  * will hold the position transformed to the origin
  * @return origin
  */
-     fun origin(origin: Vector3): Vector3
+     fun origin(origin: Vector3m): Vector3m
 
 /**
  * Apply a projection transformation to this matrix that projects onto the plane specified via the general plane equation
@@ -4435,7 +4435,7 @@ import java.nio.FloatBuffer
  * will hold the maximum corner coordinates of the axis-aligned bounding box
  * @return this
  */
-     fun frustumAabb(min: Vector3, max: Vector3):Matrix4f
+     fun frustumAabb(min: Vector3m, max: Vector3m):Matrix4f
 
 /**
  * Compute the *range matrix* for the Projected Grid transformation as described in chapter "2.4.2 Creating the range conversion matrix"
@@ -4529,7 +4529,7 @@ import java.nio.FloatBuffer
  * will hold the maximum corner of the resulting axis-aligned box
  * @return this
  */
-     fun transformAab(minX:Float, minY:Float, minZ:Float, maxX:Float, maxY:Float, maxZ:Float, outMin: Vector3, outMax: Vector3):Matrix4f
+     fun transformAab(minX:Float, minY:Float, minZ:Float, maxX:Float, maxY:Float, maxZ:Float, outMin: Vector3m, outMax: Vector3m):Matrix4f
 
 /**
  * Transform the axis-aligned box given as the minimum corner `min` and maximum corner `max`
@@ -4546,7 +4546,7 @@ import java.nio.FloatBuffer
  * will hold the maximum corner of the resulting axis-aligned box
  * @return this
  */
-     fun transformAab(min:Vector3fc, max:Vector3fc, outMin: Vector3, outMax: Vector3):Matrix4f
+     fun transformAab(min:Vector3fc, max:Vector3fc, outMin: Vector3m, outMax: Vector3m):Matrix4f
 
 /**
  * Linearly interpolate `this` and `other` using the given interpolation factor `t`
@@ -4578,7 +4578,7 @@ import java.nio.FloatBuffer
  * the lookat transformation will be applied first!
  *
  *
- * This method is equivalent to calling: <tt>mulAffine(new Matrix4f().lookAt(new Vector3(), new Vector3(dir).negate(), up).invertAffine(), dest)</tt>
+ * This method is equivalent to calling: <tt>mulAffine(new Matrix4f().lookAt(new Vector3m(), new Vector3m(dir).negate(), up).invertAffine(), dest)</tt>
  *
  * @see .rotateTowards
  * @param dir
@@ -4639,7 +4639,7 @@ import java.nio.FloatBuffer
  * <pre>
  * Matrix4f m = ...; // &lt;- matrix only representing rotation
  * Matrix4f n = new Matrix4f();
- * n.rotateZYX(m.getEulerAnglesZYX(new Vector3()));
+ * n.rotateZYX(m.getEulerAnglesZYX(new Vector3m()));
 </pre> *
  *
  *
@@ -4649,7 +4649,7 @@ import java.nio.FloatBuffer
  * will hold the extracted Euler angles
  * @return dest
  */
-     fun getEulerAnglesZYX(dest: Vector3): Vector3
+     fun getEulerAnglesZYX(dest: Vector3m): Vector3m
 
 /**
  * Test whether the given point <tt>(x, y, z)</tt> is within the frustum defined by `this` matrix.

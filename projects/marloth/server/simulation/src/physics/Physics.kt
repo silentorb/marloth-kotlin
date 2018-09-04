@@ -1,11 +1,9 @@
 package physics
 
 import mythic.sculpting.FlexibleFace
+import mythic.spatial.Quaternion
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
-import mythic.spatial.isZero
-import mythic.spatial.times
-import org.joml.plus
 import simulation.Id
 import simulation.changing.checkWallCollision
 
@@ -21,10 +19,9 @@ data class MovementForce(
     val maximum: Float
 )
 
-typealias Forces = List<MovementForce>
-
-data class BodyWallCollision(
-    val body: Body
+data class AbsoluteOrientationForce(
+    val body: Id,
+    val orientation: Quaternion
 )
 
 data class Collision(
@@ -37,48 +34,54 @@ data class Collision(
 
 typealias Collisions = List<Collision>
 
-data class BodyUpdateResult(
-    val wallCollision: List<BodyWallCollision>
-)
-
-fun applyForces(forces: List<MovementForce>, delta: Float) {
-//  val groups = forces.groupBy { it.body }
-  for (force in forces) {
-    val body = force.body
-    body.velocity += force.offset * 20f * delta
-    val length = body.velocity.length()
+fun applyForces(previousVelocity: Vector3, forces: List<MovementForce>, resistance: Float, delta: Float): Vector3 {
+  val intermediate = forces.fold(previousVelocity) { a, force ->
+    val newVelocity = a + force.offset * 20f * delta
+    val length = newVelocity.length()
 //    println("* " + length)
-    if (length > force.maximum) {
-      body.velocity = Vector3(body.velocity).normalize() * force.maximum
-    }
+    if (length > force.maximum)
+      newVelocity.normalize() * force.maximum
+    else
+      newVelocity
   }
+
+  return if (intermediate.length() < 0.01f)
+    Vector3()
+  else
+    intermediate * (1f - resistance * delta)
 }
 
-fun moveBody(body: Body, offset: Vector3, delta: Float, walls: List<Collision>) {
-  val newPosition = checkWallCollision(body.position, offset * delta, walls)
+fun moveBody(body: Body, offset: Vector3, walls: List<Collision>, delta: Float): Vector3 {
+  val position = if (offset == Vector3())
+    body.position
+  else
+    checkWallCollision(body.position, offset * delta, walls)
 
-  body.position = newPosition
-//  val resistance = body.velocity.normalize() * body.attributes.resistance * delta
-
-  val oldVelocity = body.velocity
-//  body.velocity = Vector3(body.velocity).normalize() * (body.velocity.length() - body.attributes.resistance * delta)
-  body.velocity *= 1 - body.attributes.resistance * delta
-//  println("" + body.hashCode() + ", " + oldVelocity.length() + ", " + body.velocity.length())
-  if (body.velocity.length() < 0.01f) {
-    body.velocity.zero()
-  }
+  return if (body.gravity && !body.node.isWalkable)
+    position + Vector3(0f, 0f, -4f * delta)
+  else
+    position
 }
 
-fun updateBodies(bodies: Collection<Body>, collisions: Collisions, delta: Float) {
-  bodies
-      .filter { it.gravity }
-      .filter { !it.node.isWalkable }
-      .forEach { it.position += Vector3(0f, 0f, -4f * delta) }
+fun updateBody(body: Body, movementForces: List<MovementForce>, collisions: List<Collision>,
+               orientationForces: List<AbsoluteOrientationForce>, delta: Float): Body {
+  return body.copy(
+      velocity = applyForces(body.velocity, movementForces, body.attributes.resistance, delta),
+      position = moveBody(body, body.velocity, collisions, delta),
+      orientation = orientationForces.firstOrNull()?.orientation ?: body.orientation,
+      node = updateBodyNode(body)
+  )
+}
 
-  val movingBodies = bodies.filter { !isZero(it.velocity) }
-  movingBodies
-      .forEach { body ->
-        val walls = collisions.filter { it.first == body.id && it.wall != null }
-        moveBody(body, body.velocity, delta, walls)
-      }
+fun updatePhysicsBodies(bodies: Collection<Body>, collisions: Collisions, movementForces: List<MovementForce>,
+                        orientationForces: List<AbsoluteOrientationForce>, delta: Float): List<Body> {
+  return bodies.map { body ->
+    updateBody(
+        body = body,
+        movementForces = movementForces.filter { it.body == body },
+        orientationForces = orientationForces.filter { it.body == body.id },
+        collisions = collisions.filter { it.first == body.id && it.wall != null },
+        delta = delta
+    )
+  }
 }

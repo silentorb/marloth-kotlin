@@ -3,7 +3,7 @@ package rendering
 import mythic.breeze.Armature
 import mythic.sculpting.FlexibleEdge
 import mythic.sculpting.FlexibleMesh
-import mythic.spatial.Vector3
+import mythic.spatial.Vector3m
 import rendering.meshes.Faces
 import rendering.meshes.MeshInfo
 import rendering.meshes.Primitives
@@ -28,7 +28,7 @@ data class Model(
     val info: MeshInfo = MeshInfo(),
     val textureMap: FaceTextureMap? = null
 ) {
-  val vertices: List<Vector3> get() = mesh.distinctVertices
+  val vertices: List<Vector3m> get() = mesh.distinctVertices
   val edges: List<FlexibleEdge> get() = mesh.edges
 }
 
@@ -39,7 +39,7 @@ data class VertexWeight(
 
 typealias VertexWeights = Pair<VertexWeight, VertexWeight>
 
-typealias WeightMap = Map<Vector3, VertexWeights>
+typealias WeightMap = Map<Vector3m, VertexWeights>
 
 data class AdvancedModel(
     val primitives: Primitives,

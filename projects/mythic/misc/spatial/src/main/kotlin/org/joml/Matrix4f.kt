@@ -22,6 +22,7 @@
  */
 package org.joml
 
+import mythic.spatial.Vector3m
 import mythic.spatial.Vector3
 import org.joml.internal.MemUtil
 import org.joml.internal.Options
@@ -3070,9 +3071,9 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#getTranslation(mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#getTranslation(mythic.spatial.Vector3m)
      */
-  override fun getTranslation(dest: Vector3): Vector3 {
+  override fun getTranslation(dest: Vector3m): Vector3m {
     dest.x = m30
     dest.y = m31
     dest.z = m32
@@ -3080,9 +3081,9 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#getScale(mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#getScale(mythic.spatial.Vector3m)
      */
-  override fun getScale(dest: Vector3): Vector3 {
+  override fun getScale(dest: Vector3m): Vector3m {
     dest.x = Math.sqrt((m00 * m00 + m01 * m01 + m02 * m02).toDouble()).toFloat()
     dest.y = Math.sqrt((m10 * m10 + m11 * m11 + m12 * m12).toDouble()).toFloat()
     dest.z = Math.sqrt((m20 * m20 + m21 * m21 + m22 * m22).toDouble()).toFloat()
@@ -3449,7 +3450,7 @@ class Matrix4f : Externalizable, Matrix4fc {
    * @param angle
    * the angle in radians
    * @param axis
-   * the axis to rotate about (needs to be [normalized][Vector3.normalize])
+   * the axis to rotate about (needs to be [normalized][Vector3m.normalize])
    * @return this
    */
   fun rotation(angle: Float, axis: Vector3fc): Matrix4f {
@@ -4636,23 +4637,23 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#transformProject(mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#transformProject(mythic.spatial.Vector3m)
      */
-  override fun transformProject(v: Vector3): Vector3 {
+  override fun transformProject(v: Vector3m): Vector3m {
     return v.mulProject(this)
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#transformProject(org.joml.Vector3fc, mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#transformProject(org.joml.Vector3fc, mythic.spatial.Vector3m)
      */
-  override fun transformProject(v: Vector3fc, dest: Vector3): Vector3 {
+  override fun transformProject(v: Vector3fc, dest: Vector3m): Vector3m {
     return v.mulProject(this, dest)
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#transformProject(float, float, float, mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#transformProject(float, float, float, mythic.spatial.Vector3m)
      */
-  override fun transformProject(x: Float, y: Float, z: Float, dest: Vector3): Vector3 {
+  override fun transformProject(x: Float, y: Float, z: Float, dest: Vector3m): Vector3m {
     dest.x = x
     dest.y = y
     dest.z = z
@@ -4660,23 +4661,23 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#transformPosition(mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#transformPosition(mythic.spatial.Vector3m)
      */
-  override fun transformPosition(v: Vector3): Vector3 {
+  override fun transformPosition(v: Vector3m): Vector3m {
     return v.mulPosition(this)
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#transformPosition(org.joml.Vector3fc, mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#transformPosition(org.joml.Vector3fc, mythic.spatial.Vector3m)
      */
-  override fun transformPosition(v: Vector3fc, dest: Vector3): Vector3 {
+  override fun transformPosition(v: Vector3fc, dest: Vector3m): Vector3m {
     return transformPosition(v.x, v.y, v.z, dest)
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#transformPosition(float, float, float, mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#transformPosition(float, float, float, mythic.spatial.Vector3m)
      */
-  override fun transformPosition(x: Float, y: Float, z: Float, dest: Vector3): Vector3 {
+  override fun transformPosition(x: Float, y: Float, z: Float, dest: Vector3m): Vector3m {
     dest.x = x
     dest.y = y
     dest.z = z
@@ -4684,23 +4685,23 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#transformDirection(mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#transformDirection(mythic.spatial.Vector3m)
      */
-  override fun transformDirection(v: Vector3): Vector3 {
+  override fun transformDirection(v: Vector3m): Vector3m {
     return transformDirection(v.x, v.y, v.z, v)
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#transformDirection(org.joml.Vector3fc, mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#transformDirection(org.joml.Vector3fc, mythic.spatial.Vector3m)
      */
-  override fun transformDirection(v: Vector3fc, dest: Vector3): Vector3 {
+  override fun transformDirection(v: Vector3fc, dest: Vector3m): Vector3m {
     return transformDirection(v.x, v.y, v.z, dest)
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#transformDirection(float, float, float, mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#transformDirection(float, float, float, mythic.spatial.Vector3m)
      */
-  override fun transformDirection(x: Float, y: Float, z: Float, dest: Vector3): Vector3 {
+  override fun transformDirection(x: Float, y: Float, z: Float, dest: Vector3m): Vector3m {
     dest.x = x
     dest.y = y
     dest.z = z
@@ -5354,7 +5355,7 @@ class Matrix4f : Externalizable, Matrix4fc {
    * the Euler angles
    * @return this
    */
-  fun rotateXYZ(angles: Vector3): Matrix4f {
+  fun rotateXYZ(angles: Vector3m): Matrix4f {
     return rotateXYZ(angles.x, angles.y, angles.z)
   }
 
@@ -5546,7 +5547,7 @@ class Matrix4f : Externalizable, Matrix4fc {
    * the Euler angles
    * @return this
    */
-  fun rotateZYX(angles: Vector3): Matrix4f {
+  fun rotateZYX(angles: Vector3m): Matrix4f {
     return rotateZYX(angles.z, angles.y, angles.x)
   }
 
@@ -5735,7 +5736,7 @@ class Matrix4f : Externalizable, Matrix4fc {
    * the Euler angles
    * @return this
    */
-  fun rotateYXZ(angles: Vector3): Matrix4f {
+  fun rotateYXZ(angles: Vector3m): Matrix4f {
     return rotateYXZ(angles.y, angles.x, angles.z)
   }
 
@@ -6677,6 +6678,14 @@ class Matrix4f : Externalizable, Matrix4fc {
    * @return this
    */
   fun translate(offset: Vector3fc): Matrix4f {
+    return translate(offset.x, offset.y, offset.z)
+  }
+
+  fun translateM(offset: Vector3): Matrix4f {
+    return translate(offset.x, offset.y, offset.z)
+  }
+
+  fun translate(offset: Vector3): Matrix4f {
     return translate(offset.x, offset.y, offset.z)
   }
 
@@ -8401,6 +8410,10 @@ class Matrix4f : Externalizable, Matrix4fc {
    * @return this
    */
   fun setLookAt(eye: Vector3fc, center: Vector3fc, up: Vector3fc): Matrix4f {
+    return setLookAt(eye.x, eye.y, eye.z, center.x, center.y, center.z, up.x, up.y, up.z)
+  }
+
+  fun setLookAt(eye: Vector3, center: Vector3, up: Vector3): Matrix4f {
     return setLookAt(eye.x, eye.y, eye.z, center.x, center.y, center.z, up.x, up.y, up.z)
   }
 
@@ -11014,7 +11027,7 @@ class Matrix4f : Externalizable, Matrix4fc {
    * @param angle
    * the angle in radians
    * @param axis
-   * the rotation axis (needs to be [normalized][Vector3.normalize])
+   * the rotation axis (needs to be [normalized][Vector3m.normalize])
    * @return this
    */
   fun rotate(angle: Float, axis: Vector3fc): Matrix4f {
@@ -11050,7 +11063,7 @@ class Matrix4f : Externalizable, Matrix4fc {
    * @param angle
    * the angle in radians
    * @param axis
-   * the rotation axis (needs to be [normalized][Vector3.normalize])
+   * the rotation axis (needs to be [normalized][Vector3m.normalize])
    * @param dest
    * will hold the result
    * @return dest
@@ -11105,9 +11118,9 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#unproject(float, float, float, int[], mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#unproject(float, float, float, int[], mythic.spatial.Vector3m)
      */
-  override fun unproject(winX: Float, winY: Float, winZ: Float, viewport: IntArray, dest: Vector3): Vector3 {
+  override fun unproject(winX: Float, winY: Float, winZ: Float, viewport: IntArray, dest: Vector3m): Vector3m {
     val a = m00 * m11 - m01 * m10
     val b = m00 * m12 - m02 * m10
     val c = m00 * m13 - m03 * m10
@@ -11156,16 +11169,16 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#unproject(org.joml.Vector3fc, int[], mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#unproject(org.joml.Vector3fc, int[], mythic.spatial.Vector3m)
      */
-  override fun unproject(winCoords: Vector3fc, viewport: IntArray, dest: Vector3): Vector3 {
+  override fun unproject(winCoords: Vector3fc, viewport: IntArray, dest: Vector3m): Vector3m {
     return unproject(winCoords.x, winCoords.y, winCoords.z, viewport, dest)
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#unprojectRay(float, float, int[], mythic.spatial.Vector3, mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#unprojectRay(float, float, int[], mythic.spatial.Vector3m, mythic.spatial.Vector3m)
      */
-  override fun unprojectRay(winX: Float, winY: Float, viewport: IntArray, originDest: Vector3, dirDest: Vector3): Matrix4f {
+  override fun unprojectRay(winX: Float, winY: Float, viewport: IntArray, originDest: Vector3m, dirDest: Vector3m): Matrix4f {
     val a = m00 * m11 - m01 * m10
     val b = m00 * m12 - m02 * m10
     val c = m00 * m13 - m03 * m10
@@ -11219,9 +11232,9 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#unprojectRay(org.joml.Vector2fc, int[], mythic.spatial.Vector3, mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#unprojectRay(org.joml.Vector2fc, int[], mythic.spatial.Vector3m, mythic.spatial.Vector3m)
      */
-  override fun unprojectRay(winCoords: Vector2fc, viewport: IntArray, originDest: Vector3, dirDest: Vector3): Matrix4f {
+  override fun unprojectRay(winCoords: Vector2fc, viewport: IntArray, originDest: Vector3m, dirDest: Vector3m): Matrix4f {
     return unprojectRay(winCoords.x, winCoords.y, viewport, originDest, dirDest)
   }
 
@@ -11248,16 +11261,16 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#unprojectInvRay(org.joml.Vector2fc, int[], mythic.spatial.Vector3, mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#unprojectInvRay(org.joml.Vector2fc, int[], mythic.spatial.Vector3m, mythic.spatial.Vector3m)
      */
-  override fun unprojectInvRay(winCoords: Vector2fc, viewport: IntArray, originDest: Vector3, dirDest: Vector3): Matrix4f {
+  override fun unprojectInvRay(winCoords: Vector2fc, viewport: IntArray, originDest: Vector3m, dirDest: Vector3m): Matrix4f {
     return unprojectInvRay(winCoords.x, winCoords.y, viewport, originDest, dirDest)
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#unprojectInvRay(float, float, int[], mythic.spatial.Vector3, mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#unprojectInvRay(float, float, int[], mythic.spatial.Vector3m, mythic.spatial.Vector3m)
      */
-  override fun unprojectInvRay(winX: Float, winY: Float, viewport: IntArray, originDest: Vector3, dirDest: Vector3): Matrix4f {
+  override fun unprojectInvRay(winX: Float, winY: Float, viewport: IntArray, originDest: Vector3m, dirDest: Vector3m): Matrix4f {
     val ndcX = (winX - viewport[0]) / viewport[2] * 2.0f - 1.0f
     val ndcY = (winY - viewport[1]) / viewport[3] * 2.0f - 1.0f
     val px = m00 * ndcX + m10 * ndcY + m30
@@ -11281,16 +11294,16 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#unprojectInv(org.joml.Vector3fc, int[], mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#unprojectInv(org.joml.Vector3fc, int[], mythic.spatial.Vector3m)
      */
-  override fun unprojectInv(winCoords: Vector3fc, viewport: IntArray, dest: Vector3): Vector3 {
+  override fun unprojectInv(winCoords: Vector3fc, viewport: IntArray, dest: Vector3m): Vector3m {
     return unprojectInv(winCoords.x, winCoords.y, winCoords.z, viewport, dest)
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#unprojectInv(float, float, float, int[], mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#unprojectInv(float, float, float, int[], mythic.spatial.Vector3m)
      */
-  override fun unprojectInv(winX: Float, winY: Float, winZ: Float, viewport: IntArray, dest: Vector3): Vector3 {
+  override fun unprojectInv(winX: Float, winY: Float, winZ: Float, viewport: IntArray, dest: Vector3m): Vector3m {
     val ndcX = (winX - viewport[0]) / viewport[2] * 2.0f - 1.0f
     val ndcY = (winY - viewport[1]) / viewport[3] * 2.0f - 1.0f
     val ndcZ = winZ + winZ - 1.0f
@@ -11317,9 +11330,9 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#project(float, float, float, int[], mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#project(float, float, float, int[], mythic.spatial.Vector3m)
      */
-  override fun project(x: Float, y: Float, z: Float, viewport: IntArray, winCoordsDest: Vector3): Vector3 {
+  override fun project(x: Float, y: Float, z: Float, viewport: IntArray, winCoordsDest: Vector3m): Vector3m {
     val invW = 1.0f / (m03 * x + m13 * y + m23 * z + m33)
     val nx = (m00 * x + m10 * y + m20 * z + m30) * invW
     val ny = (m01 * x + m11 * y + m21 * z + m31) * invW
@@ -11338,9 +11351,9 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#project(org.joml.Vector3fc, int[], mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#project(org.joml.Vector3fc, int[], mythic.spatial.Vector3m)
      */
-  override fun project(position: Vector3fc, viewport: IntArray, winCoordsDest: Vector3): Vector3 {
+  override fun project(position: Vector3fc, viewport: IntArray, winCoordsDest: Vector3m): Vector3m {
     return project(position.x, position.y, position.z, viewport, winCoordsDest)
   }
 
@@ -12065,9 +12078,9 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#frustumCorner(int, mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#frustumCorner(int, mythic.spatial.Vector3m)
      */
-  override fun frustumCorner(corner: Int, point: Vector3): Vector3 {
+  override fun frustumCorner(corner: Int, point: Vector3m): Vector3m {
     val d1: Float
     val d2: Float
     val d3: Float
@@ -12255,7 +12268,7 @@ class Matrix4f : Externalizable, Matrix4fc {
    * perspective projection transformation
    * @return origin
    */
-  override fun perspectiveOrigin(origin: Vector3): Vector3 {
+  override fun perspectiveOrigin(origin: Vector3m): Vector3m {
     /*
          * Simply compute the intersection point of the left, right and top frustum plane.
          */
@@ -12371,9 +12384,9 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#frustumRayDir(float, float, mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#frustumRayDir(float, float, mythic.spatial.Vector3m)
      */
-  override fun frustumRayDir(x: Float, y: Float, dir: Vector3): Vector3 {
+  override fun frustumRayDir(x: Float, y: Float, dir: Vector3m): Vector3m {
     /*
          * This method works by first obtaining the frustum plane normals,
          * then building the cross product to obtain the corner rays,
@@ -12418,9 +12431,9 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#positiveZ(mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#positiveZ(mythic.spatial.Vector3m)
      */
-  override fun positiveZ(dir: Vector3): Vector3 {
+  override fun positiveZ(dir: Vector3m): Vector3m {
     dir.x = m10 * m21 - m11 * m20
     dir.y = m20 * m01 - m21 * m00
     dir.z = m00 * m11 - m01 * m10
@@ -12428,9 +12441,9 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#normalizedPositiveZ(mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#normalizedPositiveZ(mythic.spatial.Vector3m)
      */
-  override fun normalizedPositiveZ(dir: Vector3): Vector3 {
+  override fun normalizedPositiveZ(dir: Vector3m): Vector3m {
     dir.x = m02
     dir.y = m12
     dir.z = m22
@@ -12438,9 +12451,9 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#positiveX(mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#positiveX(mythic.spatial.Vector3m)
      */
-  override fun positiveX(dir: Vector3): Vector3 {
+  override fun positiveX(dir: Vector3m): Vector3m {
     dir.x = m11 * m22 - m12 * m21
     dir.y = m02 * m21 - m01 * m22
     dir.z = m01 * m12 - m02 * m11
@@ -12448,9 +12461,9 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#normalizedPositiveX(mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#normalizedPositiveX(mythic.spatial.Vector3m)
      */
-  override fun normalizedPositiveX(dir: Vector3): Vector3 {
+  override fun normalizedPositiveX(dir: Vector3m): Vector3m {
     dir.x = m00
     dir.y = m10
     dir.z = m20
@@ -12458,9 +12471,9 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#positiveY(mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#positiveY(mythic.spatial.Vector3m)
      */
-  override fun positiveY(dir: Vector3): Vector3 {
+  override fun positiveY(dir: Vector3m): Vector3m {
     dir.x = m12 * m20 - m10 * m22
     dir.y = m00 * m22 - m02 * m20
     dir.z = m02 * m10 - m00 * m12
@@ -12468,9 +12481,9 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#normalizedPositiveY(mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#normalizedPositiveY(mythic.spatial.Vector3m)
      */
-  override fun normalizedPositiveY(dir: Vector3): Vector3 {
+  override fun normalizedPositiveY(dir: Vector3m): Vector3m {
     dir.x = m01
     dir.y = m11
     dir.z = m21
@@ -12478,9 +12491,9 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#originAffine(mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#originAffine(mythic.spatial.Vector3m)
      */
-  override fun originAffine(origin: Vector3): Vector3 {
+  override fun originAffine(origin: Vector3m): Vector3m {
     val a = m00 * m11 - m01 * m10
     val b = m00 * m12 - m02 * m10
     val d = m01 * m12 - m02 * m11
@@ -12494,13 +12507,13 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#origin(mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#origin(mythic.spatial.Vector3m)
      */
-  override fun origin(dest: Vector3): Vector3 {
+  override fun origin(dest: Vector3m): Vector3m {
     return if (properties and Matrix4fc.PROPERTY_AFFINE != 0) originAffine(dest) else originGeneric(dest)
   }
 
-  private fun originGeneric(dest: Vector3): Vector3 {
+  private fun originGeneric(dest: Vector3m): Vector3m {
     val a = m00 * m11 - m01 * m10
     val b = m00 * m12 - m02 * m10
     val c = m00 * m13 - m03 * m10
@@ -12762,7 +12775,7 @@ class Matrix4f : Externalizable, Matrix4fc {
    * @param targetPos
    * the position of the target (for example the camera) towards which to rotate the object
    * @param up
-   * the rotation axis (must be [normalized][Vector3.normalize])
+   * the rotation axis (must be [normalized][Vector3m.normalize])
    * @return this
    */
   fun billboardCylindrical(objPos: Vector3fc, targetPos: Vector3fc, up: Vector3fc): Matrix4f {
@@ -13168,7 +13181,7 @@ class Matrix4f : Externalizable, Matrix4fc {
    * will hold the maximum corner coordinates of the axis-aligned bounding box
    * @return this
    */
-  override fun frustumAabb(min: Vector3, max: Vector3): Matrix4f {
+  override fun frustumAabb(min: Vector3m, max: Vector3m): Matrix4f {
     var minX = java.lang.Float.POSITIVE_INFINITY
     var minY = java.lang.Float.POSITIVE_INFINITY
     var minZ = java.lang.Float.POSITIVE_INFINITY
@@ -13441,9 +13454,9 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#transformAab(float, float, float, float, float, float, mythic.spatial.Vector3, mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#transformAab(float, float, float, float, float, float, mythic.spatial.Vector3m, mythic.spatial.Vector3m)
      */
-  override fun transformAab(minX: Float, minY: Float, minZ: Float, maxX: Float, maxY: Float, maxZ: Float, outMin: Vector3, outMax: Vector3): Matrix4f {
+  override fun transformAab(minX: Float, minY: Float, minZ: Float, maxX: Float, maxY: Float, maxZ: Float, outMin: Vector3m, outMax: Vector3m): Matrix4f {
     val xax = m00 * minX
     val xay = m01 * minX
     val xaz = m02 * minX
@@ -13553,9 +13566,9 @@ class Matrix4f : Externalizable, Matrix4fc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Matrix4fc#transformAab(org.joml.Vector3fc, org.joml.Vector3fc, mythic.spatial.Vector3, mythic.spatial.Vector3)
+     * @see org.joml.Matrix4fc#transformAab(org.joml.Vector3fc, org.joml.Vector3fc, mythic.spatial.Vector3m, mythic.spatial.Vector3m)
      */
-  override fun transformAab(min: Vector3fc, max: Vector3fc, outMin: Vector3, outMax: Vector3): Matrix4f {
+  override fun transformAab(min: Vector3fc, max: Vector3fc, outMin: Vector3m, outMax: Vector3m): Matrix4f {
     return transformAab(min.x, min.y, min.z, max.x, max.y, max.z, outMin, outMax)
   }
 
@@ -13616,7 +13629,7 @@ class Matrix4f : Externalizable, Matrix4fc {
    * use [rotationTowards()][.rotationTowards].
    *
    *
-   * This method is equivalent to calling: <tt>mulAffine(new Matrix4f().lookAt(new Vector3(), new Vector3(dir).negate(), up).invertAffine(), dest)</tt>
+   * This method is equivalent to calling: <tt>mulAffine(new Matrix4f().lookAt(new Vector3m(), new Vector3m(dir).negate(), up).invertAffine(), dest)</tt>
    *
    * @see .rotateTowards
    * @see .rotationTowards
@@ -13647,7 +13660,7 @@ class Matrix4f : Externalizable, Matrix4fc {
    * use [rotationTowards()][.rotationTowards].
    *
    *
-   * This method is equivalent to calling: <tt>mulAffine(new Matrix4f().lookAt(new Vector3(), new Vector3(dir).negate(), up).invertAffine())</tt>
+   * This method is equivalent to calling: <tt>mulAffine(new Matrix4f().lookAt(new Vector3m(), new Vector3m(dir).negate(), up).invertAffine())</tt>
    *
    * @see .rotateTowards
    * @see .rotationTowards
@@ -13793,7 +13806,7 @@ class Matrix4f : Externalizable, Matrix4fc {
    * use [rotateTowards][.rotateTowards].
    *
    *
-   * This method is equivalent to calling: <tt>setLookAt(new Vector3(), new Vector3(dir).negate(), up).invertAffine()</tt>
+   * This method is equivalent to calling: <tt>setLookAt(new Vector3m(), new Vector3m(dir).negate(), up).invertAffine()</tt>
    *
    * @see .rotationTowards
    * @see .rotateTowards
@@ -13985,7 +13998,7 @@ class Matrix4f : Externalizable, Matrix4fc {
    * <pre>
    * Matrix4f m = ...; // &lt;- matrix only representing rotation
    * Matrix4f n = new Matrix4f();
-   * n.rotateZYX(m.getEulerAnglesZYX(new Vector3()));
+   * n.rotateZYX(m.getEulerAnglesZYX(new Vector3m()));
   </pre> *
    *
    *
@@ -13995,7 +14008,7 @@ class Matrix4f : Externalizable, Matrix4fc {
    * will hold the extracted Euler angles
    * @return dest
    */
-  override fun getEulerAnglesZYX(dest: Vector3): Vector3 {
+  override fun getEulerAnglesZYX(dest: Vector3m): Vector3m {
     dest.x = Math.atan2(m12.toDouble(), m22.toDouble()).toFloat()
     dest.y = Math.atan2((-m02).toDouble(), Math.sqrt((m12 * m12 + m22 * m22).toDouble()).toFloat().toDouble()).toFloat()
     dest.z = Math.atan2(m01.toDouble(), m00.toDouble()).toFloat()
@@ -14026,7 +14039,7 @@ class Matrix4f : Externalizable, Matrix4fc {
    * will hold the direction and length of the span along the positive z axis
    * @return this
    */
-  fun affineSpan(corner: Vector3, xDir: Vector3, yDir: Vector3, zDir: Vector3): Matrix4f {
+  fun affineSpan(corner: Vector3m, xDir: Vector3m, yDir: Vector3m, zDir: Vector3m): Matrix4f {
     val a = m10 * m22
     val b = m10 * m21
     val c = m10 * m02
@@ -14249,7 +14262,7 @@ class Matrix4f : Externalizable, Matrix4fc {
      * will hold the resulting view matrix
      */
     fun projViewFromRectangle(
-        eye: Vector3, p: Vector3, x: Vector3, y: Vector3, nearFarDist: Float, zeroToOne: Boolean,
+        eye: Vector3m, p: Vector3m, x: Vector3m, y: Vector3m, nearFarDist: Float, zeroToOne: Boolean,
         projDest: Matrix4f, viewDest: Matrix4f) {
       var zx = y.y * x.z - y.z * x.y
       var zy = y.z * x.x - y.x * x.z

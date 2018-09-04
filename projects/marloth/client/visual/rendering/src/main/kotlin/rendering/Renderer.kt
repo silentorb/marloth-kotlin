@@ -4,10 +4,7 @@ import mythic.drawing.*
 import mythic.glowing.*
 import mythic.platforming.DisplayConfig
 import mythic.platforming.WindowInfo
-import mythic.spatial.Matrix
-import mythic.spatial.Vector2
-import mythic.spatial.Vector3
-import mythic.spatial.Vector4
+import mythic.spatial.*
 import mythic.typography.*
 import org.joml.*
 import org.lwjgl.opengl.GL11.*
@@ -22,7 +19,6 @@ import scenery.Light
 import scenery.Scene
 import scenery.Textures
 import java.nio.FloatBuffer
-import kotlin.reflect.full.declaredMemberProperties
 
 
 fun gatherEffectsData(dimensions: Vector2i, scene: Scene, cameraEffectsData: CameraEffectsData): EffectsData {
@@ -214,14 +210,14 @@ class SceneRenderer(
     renderer.dynamicMesh.draw(DrawMethod.points)
   }
 
-  fun drawSolidFace(vertices: List<Vector3>, color: Vector4) {
+  fun drawSolidFace(vertices: List<Vector3m>, color: Vector4) {
     renderer.dynamicMesh.load(vertices.flatMap { listOf(it.x, it.y, it.z) })
 
     effects.flat.activate(ObjectShaderConfig(transform = Matrix(), color = color))
     renderer.dynamicMesh.draw(DrawMethod.triangleFan)
   }
 
-  fun drawOutlinedFace(vertices: List<Vector3>, color: Vector4, thickness: Float = 1f) {
+  fun drawOutlinedFace(vertices: List<Vector3m>, color: Vector4, thickness: Float = 1f) {
     globalState.lineThickness = thickness
     renderer.dynamicMesh.load(vertices.flatMap { listOf(it.x, it.y, it.z) })
 

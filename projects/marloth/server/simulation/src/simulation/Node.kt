@@ -1,7 +1,7 @@
 package simulation
 
 import mythic.sculpting.FlexibleFace
-import mythic.spatial.Vector3
+import mythic.spatial.Vector3m
 
 enum class ConnectionType {
   tunnel,
@@ -23,7 +23,7 @@ class Connection(
 }
 
 class Node(
-    var position: Vector3,
+    var position: Vector3m,
     var radius: Float,
     val isSolid: Boolean,
     val biome: Biome,

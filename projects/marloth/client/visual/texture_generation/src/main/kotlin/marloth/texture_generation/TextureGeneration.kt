@@ -1,10 +1,7 @@
 package marloth.texture_generation
 
-import mythic.spatial.Pi
 import mythic.spatial.Vector3
 import mythic.spatial.put
-import mythic.spatial.times
-import org.joml.plus
 import org.lwjgl.BufferUtils
 import java.nio.FloatBuffer
 

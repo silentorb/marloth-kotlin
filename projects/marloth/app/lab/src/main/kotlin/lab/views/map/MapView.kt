@@ -8,7 +8,6 @@ import mythic.platforming.WindowInfo
 import mythic.spatial.*
 import org.joml.Vector2i
 import org.joml.minus
-import org.joml.plus
 import rendering.createCameraEffectsData
 import scenery.Camera
 import simulation.Realm
@@ -69,7 +68,8 @@ private fun castSelectionRay(config: MapViewConfig, camera: Camera, world: Realm
       0, 0,
       bounds.dimensions.x.toInt(), bounds.dimensions.y.toInt()
   ).toIntArray()
-  val start = cameraData.transform.unproject(cursor.x.toFloat(), bounds.dimensions.y - cursor.y.toFloat(), 0.01f, viewportBounds, Vector3())
+  val start = Vector3(cameraData.transform.unproject(cursor.x.toFloat(),
+      bounds.dimensions.y - cursor.y.toFloat(), 0.01f, viewportBounds, Vector3m()))
   val end = start + cameraData.direction * camera.farClip
   config.tempStart = start
   config.tempEnd = end
@@ -115,18 +115,20 @@ fun updateMapState(config: MapViewConfig, world: Realm, camera: Camera, input: L
   val zoomSpeed = 120
   val rotateSpeed = 5
 
-  val moveOffset = Vector3()
-  if (isActive(commands, LabCommandType.moveUp))
-    moveOffset.y = 1f
-
-  if (isActive(commands, LabCommandType.moveDown))
-    moveOffset.y = -1f
-
-  if (isActive(commands, LabCommandType.moveLeft))
-    moveOffset.x = -1f
-
-  if (isActive(commands, LabCommandType.moveRight))
-    moveOffset.x = 1f
+  val moveOffset = Vector3(
+      if (isActive(commands, LabCommandType.moveLeft))
+        -1f
+      else if (isActive(commands, LabCommandType.moveRight))
+        1f
+      else
+        0f,
+      if (isActive(commands, LabCommandType.moveUp))
+        1f
+      else if (isActive(commands, LabCommandType.moveDown))
+        -1f
+      else
+        0f
+  )
 
   if (moveOffset != Vector3())
     config.camera.target += moveOffset.transform(Matrix().rotateZ(config.camera.yaw)) * (moveSpeed * delta)

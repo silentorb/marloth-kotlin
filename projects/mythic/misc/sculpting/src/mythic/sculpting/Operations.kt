@@ -3,11 +3,11 @@ package mythic.sculpting
 import mythic.spatial.*
 import org.joml.unaryMinus
 
-typealias Vertices = List<Vector3>
+typealias Vertices = List<Vector3m>
 typealias Edges = List<FlexibleEdge>
 typealias Faces = List<FlexibleFace>
 
-fun skinLoop(mesh: FlexibleMesh, first: List<Vector3>, second: List<Vector3>): Faces {
+fun skinLoop(mesh: FlexibleMesh, first: List<Vector3m>, second: List<Vector3m>): Faces {
   return (0 until first.size).map { a ->
     val b = if (a == first.size - 1) 0 else a + 1
     mesh.createStitchedFace(listOf(
@@ -17,7 +17,7 @@ fun skinLoop(mesh: FlexibleMesh, first: List<Vector3>, second: List<Vector3>): F
   }
 }
 
-fun skin(mesh: FlexibleMesh, first: List<Vector3>, second: List<Vector3>) {
+fun skin(mesh: FlexibleMesh, first: List<Vector3m>, second: List<Vector3m>) {
   val sides = (0 until first.size - 1).map { a ->
     val b = a + 1
     mesh.createStitchedFace(
@@ -47,13 +47,13 @@ inline fun nearly(value: Float, target: Float = 0f) =
     value < target + 0.000001f
         && value > target - 0.000001f
 
-fun keepOrRotate(matrix: Matrix, input: Vector3): Vector3 =
+fun keepOrRotate(matrix: Matrix, input: Vector3m): Vector3m =
     if (nearly(input.x, 0f) && nearly(input.y, 0f))
       input
     else
       input.transform(matrix)
 
-fun lathe(mesh: FlexibleMesh, path: List<Vector3>, count: Int, sweep: Float = Pi * 2) {
+fun lathe(mesh: FlexibleMesh, path: List<Vector3m>, count: Int, sweep: Float = Pi * 2) {
   val increment = sweep / count
   var previous = path
   for (i in 1 until count) {
@@ -86,8 +86,8 @@ fun bezierSample(i: Float, points: List<Vector2>) {
 
 data class SwingInfo(
     val index: Int,
-    val point: Vector3,
-    val scale: Vector3,
+    val point: Vector3m,
+    val scale: Vector3m,
     val rangeZ: Float
 )
 typealias Swings = List<Swing>
@@ -113,7 +113,7 @@ fun createSwings2(firstPath: Vertices, secondPath: Vertices): SwingsOld {
         val shortestX = minOrOne(point.x, other.x)
 //    val lowestZ = minOrOne(it.z, other.z)
 //    val highestZ = Math.max(it.z, other.z)
-        val scale = Vector3(point.x / shortestX, other.x / shortestX, 1f)
+        val scale = Vector3m(point.x / shortestX, other.x / shortestX, 1f)
         val rangeZ = if (point.z == other.z)
           1f
         else {
@@ -121,15 +121,15 @@ fun createSwings2(firstPath: Vertices, secondPath: Vertices): SwingsOld {
           (other.z - point.z) / widestX
         }
 
-        SwingInfo(it.first, Vector3(shortestX, 0f, point.z), scale, rangeZ)
+        SwingInfo(it.first, Vector3m(shortestX, 0f, point.z), scale, rangeZ)
       }
 }
 
-fun createInterpolatedSwing(point: Vector3, other: Vector3): Swing {
+fun createInterpolatedSwing(point: Vector3m, other: Vector3m): Swing {
   val shortestX = minOrOne(point.x, other.x)
 //    val lowestZ = minOrOne(it.z, other.z)
 //    val highestZ = Math.max(it.z, other.z)
-  val scale = Vector3(point.x / shortestX, other.x / shortestX, 1f)
+  val scale = Vector3m(point.x / shortestX, other.x / shortestX, 1f)
   val rangeZ = if (point.z == other.z)
     1f
   else {
@@ -137,10 +137,10 @@ fun createInterpolatedSwing(point: Vector3, other: Vector3): Swing {
     (other.z - point.z) / widestX
   }
 
-  val point2 = Vector3(shortestX, 0f, point.z)
+  val point2 = Vector3m(shortestX, 0f, point.z)
   return { matrix: Matrix ->
     val point3 = point2.transform(matrix)
-    point3 * scale// + Vector3(0f, 0f, swing.rangeZ * point.y)
+    point3 * scale// + Vector3m(0f, 0f, swing.rangeZ * point.y)
   }
 }
 
@@ -155,7 +155,7 @@ fun createSwings(firstPath: Vertices, secondPath: Vertices): Swings {
         } else {
           createInterpolatedSwing(point, other)
         }
-//        SwingInfo(it.first, Vector3(shortestX, 0f, point.z), scale, rangeZ)
+//        SwingInfo(it.first, Vector3m(shortestX, 0f, point.z), scale, rangeZ)
       }
 }
 
@@ -168,13 +168,13 @@ fun mapPivots(path: Vertices, pivots: Vertices) =
         it
     }
 
-fun transformSwing(pivots: Vertices, matrix: Matrix, swing: SwingInfo): Vector3 {
+fun transformSwing(pivots: Vertices, matrix: Matrix, swing: SwingInfo): Vector3m {
   val pivot = pivots.firstOrNull { p -> p == swing.point }
   return if (pivot != null)
     pivot
   else {
     val point = swing.point.transform(matrix)
-    point * swing.scale// + Vector3(0f, 0f, swing.rangeZ * point.y)
+    point * swing.scale// + Vector3m(0f, 0f, swing.rangeZ * point.y)
   }
 }
 
@@ -210,7 +210,7 @@ fun createLatheCourse(resolution: Int, sweep: Float = Pi * 2): LatheCourse {
 //    skin(mesh, previous, firstLastPath)
 //}
 
-typealias Swing = (globalTransform: Matrix) -> Vector3
+typealias Swing = (globalTransform: Matrix) -> Vector3m
 
 fun mapSwings(swings: Swings, globalTransform: Matrix) =
     swings.map { it(globalTransform) }
@@ -249,11 +249,11 @@ fun transformFaces(matrix: Matrix, faces: Faces): Vertices {
 //  }
 //}
 
-fun distortedTranslatePosition(offset: Vector3, vertices: List<Vector3>) {
+fun distortedTranslatePosition(offset: Vector3m, vertices: List<Vector3m>) {
   transformVertices(Matrix().translate(offset), vertices)
 }
 
-fun distortedTranslatePosition(offset: Vector3, mesh: FlexibleMesh) {
+fun distortedTranslatePosition(offset: Vector3m, mesh: FlexibleMesh) {
   transformVertices(Matrix().translate(offset), mesh.redundantVertices)
 }
 
@@ -265,18 +265,18 @@ fun translateMesh(mesh: FlexibleMesh, offset: Vector3) {
   transformVertices(Matrix().translate(offset), mesh.distinctVertices)
 }
 
-fun alignToFloor(vertices: List<Vector3>, floor: Float = 0f) {
+fun alignToFloor(vertices: List<Vector3m>, floor: Float = 0f) {
   val lowest = vertices.map { it.z }.sorted().first()
-  distortedTranslatePosition(Vector3(0f, 0f, floor - lowest), vertices)
+  distortedTranslatePosition(Vector3m(0f, 0f, floor - lowest), vertices)
 }
 
 fun alignToFloor(mesh: FlexibleMesh, floor: Float = 0f) {
   alignToFloor(mesh.distinctVertices, floor)
 }
 
-fun alignToCeiling(vertices: List<Vector3>, ceiling: Float = 0f) {
+fun alignToCeiling(vertices: List<Vector3m>, ceiling: Float = 0f) {
   val highest = vertices.map { it.z }.sorted().last()
-  distortedTranslatePosition(Vector3(0f, 0f, ceiling - highest), vertices)
+  distortedTranslatePosition(Vector3m(0f, 0f, ceiling - highest), vertices)
 }
 
 data class VerticalDimensions(
@@ -292,12 +292,12 @@ fun getPathDimensions(path: Vertices): VerticalDimensions {
   return VerticalDimensions(top, bottom)
 }
 
-fun cloneVertices(vertices: Collection<Vector3>): Vertices =
-    vertices.map { Vector3(it) }
+fun cloneVertices(vertices: Collection<Vector3m>): Vertices =
+    vertices.map { Vector3m(it) }
 
 fun flipVertical(vertices: Vertices): Vertices {
   val middle = vertices.map { it.z }.average().toFloat()
-  return vertices.map { Vector3(it.x, it.y, middle - (it.z - middle)) }
+  return vertices.map { Vector3m(it.x, it.y, middle - (it.z - middle)) }
 }
 
 fun joinPaths(verticalGap: Float, first: Vertices, second: Vertices): Vertices {
@@ -310,9 +310,9 @@ fun joinPaths(verticalGap: Float, first: Vertices, second: Vertices): Vertices {
 }
 
 fun convertAsXZ(vertices: List<Vector2>) =
-    vertices.map { Vector3(it.x, 0f, it.y) }
+    vertices.map { Vector3m(it.x, 0f, it.y) }
 
-fun setAnchor(anchor: Vector3, vertices: Vertices) {
+fun setAnchor(anchor: Vector3m, vertices: Vertices) {
   distortedTranslatePosition(-anchor, vertices)
 }
 
@@ -342,7 +342,7 @@ fun mirrorAlongY(mesh: FlexibleMesh): Faces {
   val existingVertices = nearAxis.toMutableList()
   val newFaces = mesh.faces.toList().map { original ->
     val newVertices = original.vertices.map {
-      val vertex = Vector3(it.x, -it.y, it.z)
+      val vertex = Vector3m(it.x, -it.y, it.z)
       val existing = existingVertices.find { it == vertex }
       if (existing != null) {
         existing

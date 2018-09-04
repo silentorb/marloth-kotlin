@@ -4,7 +4,6 @@ import simulation.CommandType
 import mythic.sculpting.FlexibleEdge
 import mythic.sculpting.FlexibleFace
 import mythic.spatial.*
-import org.joml.plus
 import physics.Collision
 import simulation.*
 
@@ -125,7 +124,7 @@ fun checkWallCollision(source: Vector3, originalOffset: Vector3, walls: List<Col
     offset = collision.offset
     val offsetLength = offset.length()
     if (offsetLength > maxLength) {
-      offset.normalize().mul(maxLength)
+      offset.normalize() * maxLength
     }
     source + offset
   } else {
@@ -171,7 +170,7 @@ fun joinInputVector(commands: Commands, commandMap: Map<CommandType, Vector3>): 
 fun getLookAtAngle(lookAt: Vector3) =
     getAngle(Vector2(1f, 0f), lookAt.xy())
 
-fun setCharacterFacing(character: Character, lookAt: Vector3) {
-  val angle = getLookAtAngle(lookAt)
-  character.facingRotation.z = angle
-}
+//fun setCharacterFacing(character: Character, lookAt: Vector3) {
+//  val angle = getLookAtAngle(lookAt)
+//  character.facingRotation.z = angle
+//}

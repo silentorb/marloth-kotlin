@@ -3,6 +3,7 @@ package rendering.meshes.loading
 import mythic.breeze.*
 import mythic.glowing.SimpleTriangleMesh
 import mythic.spatial.Quaternion
+import mythic.spatial.Vector3m
 import mythic.spatial.Vector3
 import org.lwjgl.BufferUtils
 import rendering.*
@@ -194,7 +195,7 @@ fun loadAnimations(animations: List<IndexedAnimation>, bones: Map<Int, Bone>): L
 
 fun nodeToBone(node: Node) =
     Bone(
-        translation = node.translation,
+        translation = Vector3m(node.translation),
         rotation = node.rotation,
         name = node.name,
         transform = independentTransform,

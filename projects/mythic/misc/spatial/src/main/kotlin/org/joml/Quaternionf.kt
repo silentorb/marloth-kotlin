@@ -23,6 +23,7 @@
 package org.joml
 
 import mythic.spatial.Pi
+import mythic.spatial.Vector3m
 import mythic.spatial.Vector3
 import org.joml.internal.MemUtil
 import org.joml.internal.Options
@@ -1105,13 +1106,13 @@ class Quaternionf : Externalizable, Quaternionfc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Quaternionfc#transform(mythic.spatial.Vector3)
+     * @see org.joml.Quaternionfc#transform(mythic.spatial.Vector3m)
      */
-  override fun transform(vec: Vector3): Vector3 {
+  override fun transform(vec: Vector3m): Vector3m {
     return transform(vec.x, vec.y, vec.z, vec)
   }
 
-  override fun transformPositiveX(dest: Vector3): Vector3 {
+  override fun transformPositiveX(dest: Vector3m): Vector3m {
     val w2 = this.w * this.w
     val x2 = this.x * this.x
     val y2 = this.y * this.y
@@ -1141,7 +1142,7 @@ class Quaternionf : Externalizable, Quaternionfc {
     return dest
   }
 
-  override fun transformUnitPositiveX(dest: Vector3): Vector3 {
+  override fun transformUnitPositiveX(dest: Vector3m): Vector3m {
     val y2 = y * y
     val z2 = z * z
     val xy = x * y
@@ -1167,7 +1168,7 @@ class Quaternionf : Externalizable, Quaternionfc {
     return dest
   }
 
-  override fun transformPositiveY(dest: Vector3): Vector3 {
+  override fun transformPositiveY(dest: Vector3m): Vector3m {
     val w2 = this.w * this.w
     val x2 = this.x * this.x
     val y2 = this.y * this.y
@@ -1210,7 +1211,7 @@ class Quaternionf : Externalizable, Quaternionfc {
     return dest
   }
 
-  override fun transformUnitPositiveY(dest: Vector3): Vector3 {
+  override fun transformUnitPositiveY(dest: Vector3m): Vector3m {
     val x2 = x * x
     val z2 = z * z
     val xy = x * y
@@ -1223,7 +1224,7 @@ class Quaternionf : Externalizable, Quaternionfc {
     return dest
   }
 
-  override fun transformPositiveZ(dest: Vector3): Vector3 {
+  override fun transformPositiveZ(dest: Vector3m): Vector3m {
     val w2 = this.w * this.w
     val x2 = this.x * this.x
     val y2 = this.y * this.y
@@ -1266,7 +1267,7 @@ class Quaternionf : Externalizable, Quaternionfc {
     return dest
   }
 
-  override fun transformUnitPositiveZ(dest: Vector3): Vector3 {
+  override fun transformUnitPositiveZ(dest: Vector3m): Vector3m {
     val x2 = x * x
     val y2 = y * y
     val xz = x * z
@@ -1287,16 +1288,20 @@ class Quaternionf : Externalizable, Quaternionfc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Quaternionfc#transform(org.joml.Vector3fc, mythic.spatial.Vector3)
+     * @see org.joml.Quaternionfc#transform(org.joml.Vector3fc, mythic.spatial.Vector3m)
      */
-  override fun transform(vec: Vector3fc, dest: Vector3): Vector3 {
+  override fun transform(vec: Vector3fc, dest: Vector3m): Vector3m {
+    return transform(vec.x, vec.y, vec.z, dest)
+  }
+
+  fun transform(vec: Vector3, dest: Vector3m): Vector3m {
     return transform(vec.x, vec.y, vec.z, dest)
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Quaternionfc#transform(float, float, float, mythic.spatial.Vector3)
+     * @see org.joml.Quaternionfc#transform(float, float, float, mythic.spatial.Vector3m)
      */
-  override fun transform(x: Float, y: Float, z: Float, dest: Vector3): Vector3 {
+  override fun transform(x: Float, y: Float, z: Float, dest: Vector3m): Vector3m {
     val w2 = this.w * this.w
     val x2 = this.x * this.x
     val y2 = this.y * this.y
@@ -1623,9 +1628,9 @@ class Quaternionf : Externalizable, Quaternionfc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Quaternionfc#getEulerAnglesXYZ(mythic.spatial.Vector3)
+     * @see org.joml.Quaternionfc#getEulerAnglesXYZ(mythic.spatial.Vector3m)
      */
-  override fun getEulerAnglesXYZ(eulerAngles: Vector3): Vector3 {
+  override fun getEulerAnglesXYZ(eulerAngles: Vector3m): Vector3m {
     eulerAngles.x = Math.atan2(2.0 * (x * w - y * z), 1.0 - 2.0 * (x * x + y * y)).toFloat()
     eulerAngles.y = Math.asin(2.0 * (x * z + y * w)).toFloat()
     eulerAngles.z = Math.atan2(2.0 * (z * w - x * y), 1.0 - 2.0 * (y * y + z * z)).toFloat()
@@ -2294,6 +2299,10 @@ class Quaternionf : Externalizable, Quaternionfc {
     return rotateTo(fromDir.x, fromDir.y, fromDir.z, toDir.x, toDir.y, toDir.z, this)
   }
 
+  fun rotateTo(fromDir: Vector3, toDir: Vector3): Quaternionf {
+    return rotateTo(fromDir.x, fromDir.y, fromDir.z, toDir.x, toDir.y, toDir.z, this)
+  }
+
   /**
    * Apply a rotation to `this` quaternion rotating the given radians about the basis unit axes of the cartesian space.
    *
@@ -2779,9 +2788,9 @@ class Quaternionf : Externalizable, Quaternionfc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Quaternionfc#positiveX(mythic.spatial.Vector3)
+     * @see org.joml.Quaternionfc#positiveX(mythic.spatial.Vector3m)
      */
-  override fun positiveX(dir: Vector3): Vector3 {
+  override fun positiveX(dir: Vector3m): Vector3m {
     val invNorm = 1.0f / (x * x + y * y + z * z + w * w)
     val nx = -x * invNorm
     val ny = -y * invNorm
@@ -2796,9 +2805,9 @@ class Quaternionf : Externalizable, Quaternionfc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Quaternionfc#normalizedPositiveX(mythic.spatial.Vector3)
+     * @see org.joml.Quaternionfc#normalizedPositiveX(mythic.spatial.Vector3m)
      */
-  override fun normalizedPositiveX(dir: Vector3): Vector3 {
+  override fun normalizedPositiveX(dir: Vector3m): Vector3m {
     val dy = y + y
     val dz = z + z
     dir.x = -y * dy - z * dz + 1.0f
@@ -2808,9 +2817,9 @@ class Quaternionf : Externalizable, Quaternionfc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Quaternionfc#positiveY(mythic.spatial.Vector3)
+     * @see org.joml.Quaternionfc#positiveY(mythic.spatial.Vector3m)
      */
-  override fun positiveY(dir: Vector3): Vector3 {
+  override fun positiveY(dir: Vector3m): Vector3m {
     val invNorm = 1.0f / (x * x + y * y + z * z + w * w)
     val nx = -x * invNorm
     val ny = -y * invNorm
@@ -2826,9 +2835,9 @@ class Quaternionf : Externalizable, Quaternionfc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Quaternionfc#normalizedPositiveY(mythic.spatial.Vector3)
+     * @see org.joml.Quaternionfc#normalizedPositiveY(mythic.spatial.Vector3m)
      */
-  override fun normalizedPositiveY(dir: Vector3): Vector3 {
+  override fun normalizedPositiveY(dir: Vector3m): Vector3m {
     val dx = x + x
     val dy = y + y
     val dz = z + z
@@ -2839,9 +2848,9 @@ class Quaternionf : Externalizable, Quaternionfc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Quaternionfc#positiveZ(mythic.spatial.Vector3)
+     * @see org.joml.Quaternionfc#positiveZ(mythic.spatial.Vector3m)
      */
-  override fun positiveZ(dir: Vector3): Vector3 {
+  override fun positiveZ(dir: Vector3m): Vector3m {
     val invNorm = 1.0f / (x * x + y * y + z * z + w * w)
     val nx = -x * invNorm
     val ny = -y * invNorm
@@ -2857,9 +2866,9 @@ class Quaternionf : Externalizable, Quaternionfc {
   }
 
   /* (non-Javadoc)
-     * @see org.joml.Quaternionfc#normalizedPositiveZ(mythic.spatial.Vector3)
+     * @see org.joml.Quaternionfc#normalizedPositiveZ(mythic.spatial.Vector3m)
      */
-  override fun normalizedPositiveZ(dir: Vector3): Vector3 {
+  override fun normalizedPositiveZ(dir: Vector3m): Vector3m {
     val dx = x + x
     val dy = y + y
     val dz = z + z

@@ -1,18 +1,15 @@
 package simulation
 
-import intellect.NewSpirit
 import intellect.Spirit
+import mythic.spatial.Pi
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
-import org.joml.plus
 import org.joml.times
-import physics.Body
-import physics.Collision
-import physics.Collisions
-import physics.commonShapes
+import physics.*
 import scenery.DepictionType
 import simulation.changing.*
+import simulation.input.filterCommands
 
 data class CharacterDefinition(
     val health: Int,
@@ -54,9 +51,7 @@ fun updateCharacter(world: World, character: Character, commands: Commands, coll
   val id = character.id
   if (character.isAlive) {
     val body = world.bodyTable[character.id]!!
-//    character.activatedAbilities.forEach { updateAbility(it, delta) }
-    body.orientation = Quaternion()
-        .rotateZ(character.facingRotation.z)
+
 
 //    val animationInfo = world.animationTable[character.id]!!
 //    val animation = animationInfo.armature.animations[animationInfo.animationIndex]
@@ -73,13 +68,13 @@ fun updateCharacter(world: World, character: Character, commands: Commands, coll
 
   val abilities = updateAbilities(character, activatedAbilities)
   val facingRotation = character.facingRotation + fpCameraRotation(lookVelocity, delta)
-//  if (character.faction == 1L)
-//    println(facingRotation)
+  if (character.faction == 1L)
+    println(facingRotation)
 
   return character.copy(
       isAlive = character.health.value > 0,
       lookVelocity = lookVelocity,
-      facingRotation = Vector3(0f, facingRotation.y, simplifyRotation(facingRotation.z)),
+      facingRotation = Vector3(0f, facingRotation.y, facingRotation.z),
       health = character.health.copy(value = health),
       abilities = abilities
   )
@@ -95,6 +90,25 @@ fun updateCharacters(world: World, collisions: Collisions, commands: Commands, a
     updateCharacter(world, character, commands.filter { it.target == id }, collisions, abilities, delta)
   }
 }
+
+fun characterMovementFp(commands: Commands, character: Character, body: Body): MovementForce? {
+  var offset = joinInputVector(commands, playerMoveMap)
+  if (offset != null) {
+    offset = (Quaternion().rotateZ(character.facingRotation.z - Pi / 2) * offset)
+    return MovementForce(body = body, offset = offset, maximum = 6f)
+  } else {
+    return null
+  }
+}
+
+fun allCharacterMovements(world: World, commands: Commands): List<MovementForce> =
+    world.characters.mapNotNull { characterMovementFp(filterCommands(it.id, commands), it, world.bodyTable[it.id]!!) }
+
+fun allCharacterOrientations(world: World): List<AbsoluteOrientationForce> =
+    world.characters.map {
+      AbsoluteOrientationForce(it.id, Quaternion()
+          .rotateZ(it.facingRotation.z))
+    }
 
 fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id, position: Vector3, node: Node,
                  player: Player? = null, spirit: Spirit? = null): Hand {

@@ -7,28 +7,28 @@ fun createSkeleton(): Bones {
 
   val base = BoneDefinition(
       name = "base",
-      translation = Vector3(0f, 0f, 0.4f),
-      tail = Vector3(0f, 0f, 0f),
+      translation = Vector3m(0f, 0f, 0.4f),
+      tail = Vector3m(0f, 0f, 0f),
       transform = independentTransform
   )
 
   val sternum = BoneDefinition(
       name = "sternum",
-      tail = Vector3(0f, 0f, 0.3f),
+      tail = Vector3m(0f, 0f, 0.3f),
       parent = base,
       transform = dependentTransform
   )
 
   val neck = BoneDefinition(
       name = "neck",
-      tail = Vector3(0f, 0f, 0.05f),
+      tail = Vector3m(0f, 0f, 0.05f),
       parent = sternum,
       transform = dependentTransform
   )
 
   val head = BoneDefinition(
       name = "head",
-      tail = Vector3(0f, 0f, 0.15f),
+      tail = Vector3m(0f, 0f, 0.15f),
       parent = neck,
       transform = dependentTransform
   )
@@ -37,25 +37,25 @@ fun createSkeleton(): Bones {
     val upperOffset = 0.1f * mod
     val shoulder = BoneDefinition(
         name = "shoulder" + suffix,
-        tail = Vector3(upperOffset, 0f, 0f),
+        tail = Vector3m(upperOffset, 0f, 0f),
         parent = sternum,
         transform = dependentTransform
     )
     val upperArm = BoneDefinition(
         name = "upperArm" + suffix,
-        tail = Vector3(0f, 0f, -0.15f),
+        tail = Vector3m(0f, 0f, -0.15f),
         parent = shoulder,
-        transform = inverseKinematicJointTransform(Vector3(0f, 1f, 0f))
+        transform = inverseKinematicJointTransform(Vector3m(0f, 1f, 0f))
     )
     val foreArm = BoneDefinition(
         name = "foreArm" + suffix,
-        tail = Vector3(0f, 0f, -0.15f),
+        tail = Vector3m(0f, 0f, -0.15f),
         parent = upperArm,
         transform = pointAtChildTransform
     )
     val hand = BoneDefinition(
         name = "hand" + suffix,
-        tail = Vector3(0f, 0f, -0.05f),
+        tail = Vector3m(0f, 0f, -0.05f),
         parent = foreArm,
         transform = independentTransform,
         isGlobal = true
@@ -63,25 +63,25 @@ fun createSkeleton(): Bones {
     val lowerOffset = 0.05f * mod
     val hip = BoneDefinition(
         name = "hip" + suffix,
-        tail = Vector3(lowerOffset, 0f, 0f),
+        tail = Vector3m(lowerOffset, 0f, 0f),
         parent = base,
         transform = dependentTransform
     )
     val thigh = BoneDefinition(
         name = "thigh" + suffix,
-        tail = Vector3(0f, 0f, -0.2f),
+        tail = Vector3m(0f, 0f, -0.2f),
         parent = hip,
-        transform = inverseKinematicJointTransform(Vector3(0f, -1f, 0f))
+        transform = inverseKinematicJointTransform(Vector3m(0f, -1f, 0f))
     )
     val shin = BoneDefinition(
         name = "shin" + suffix,
-        tail = Vector3(0f, 0f, -0.2f),
+        tail = Vector3m(0f, 0f, -0.2f),
         parent = thigh,
         transform = pointAtChildTransform
     )
     val foot = BoneDefinition(
         name = "foot" + suffix,
-        tail = Vector3(0f, -0.1f, 0f),
+        tail = Vector3m(0f, -0.1f, 0f),
         parent = shin,
         transform = independentTransform,
         isGlobal = true
@@ -127,11 +127,11 @@ fun walkingAnimationSide(bones: Bones, duration: Float, suffix: String, timeOffs
               type = ChannelType.translation
           ),
           keys = shift(timeOffset, duration, keySequence(foot.translation, division, listOf(
-              Vector3(0f, 0.1f, 0f),
-              Vector3(0f, 0f, 0.15f),
-              Vector3(0f, -0.1f, 0f),
-              Vector3(0f, 0f, 0f),
-              Vector3(0f, 0.1f, 0f)
+              Vector3m(0f, 0.1f, 0f),
+              Vector3m(0f, 0f, 0.15f),
+              Vector3m(0f, -0.1f, 0f),
+              Vector3m(0f, 0f, 0f),
+              Vector3m(0f, 0.1f, 0f)
           )))
       ),
       AnimationChannel(
@@ -140,11 +140,11 @@ fun walkingAnimationSide(bones: Bones, duration: Float, suffix: String, timeOffs
               type = ChannelType.translation
           ),
           keys = shift(timeOffset, duration, keySequence(wrist.translation, division, listOf(
-              Vector3(0f, -0.1f, 0f),
-              Vector3(0f, 0f, 0f),
-              Vector3(0f, 0.1f, 0f),
-              Vector3(0f, 0f, 0f),
-              Vector3(0f, -0.1f, 0f)
+              Vector3m(0f, -0.1f, 0f),
+              Vector3m(0f, 0f, 0f),
+              Vector3m(0f, 0.1f, 0f),
+              Vector3m(0f, 0f, 0f),
+              Vector3m(0f, -0.1f, 0f)
           )))
       ),
       AnimationChannel(
@@ -183,8 +183,8 @@ fun walkingAnimation(bones: Bones): Animation {
   val division = duration / 4f
   val base = getBone(bones, "base")
   val head = getBone(bones, "head")
-  val high = Vector3(0f, 0f, -0.003f)
-  val low = Vector3(0f, 0f, -0.04f)
+  val high = Vector3m(0f, 0f, -0.003f)
+  val low = Vector3m(0f, 0f, -0.04f)
   return Animation(
       duration = duration,
       channels =

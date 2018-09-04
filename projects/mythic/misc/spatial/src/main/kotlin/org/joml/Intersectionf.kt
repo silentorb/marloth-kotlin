@@ -22,7 +22,7 @@
  */
 package org.joml
 
-import mythic.spatial.Vector3
+import mythic.spatial.Vector3m
 
 /**
  * Contains intersection and distance tests for some 2D and 3D geometric primitives.
@@ -575,8 +575,8 @@ object Intersectionf {
    * @return `true` if both boxes intersect; `false` otherwise
    */
   fun testObOb(
-      b0c: Vector3, b0uX: Vector3, b0uY: Vector3, b0uZ: Vector3, b0hs: Vector3,
-      b1c: Vector3, b1uX: Vector3, b1uY: Vector3, b1uZ: Vector3, b1hs: Vector3): Boolean {
+      b0c: Vector3m, b0uX: Vector3m, b0uY: Vector3m, b0uZ: Vector3m, b0hs: Vector3m,
+      b1c: Vector3m, b1uX: Vector3m, b1uY: Vector3m, b1uZ: Vector3m, b1hs: Vector3m): Boolean {
     return testObOb(
         b0c.x, b0c.y, b0c.z, b0uX.x, b0uX.y, b0uX.z, b0uY.x, b0uY.y, b0uY.z, b0uZ.x, b0uZ.y, b0uZ.z, b0hs.x, b0hs.y, b0hs.z,
         b1c.x, b1c.y, b1c.z, b1uX.x, b1uX.y, b1uX.z, b1uY.x, b1uY.y, b1uY.z, b1uZ.x, b1uZ.y, b1uZ.z, b1hs.x, b1hs.y, b1hs.z)
@@ -898,7 +898,7 @@ object Intersectionf {
       v0X: Float, v0Y: Float, v0Z: Float,
       v1X: Float, v1Y: Float, v1Z: Float,
       v2X: Float, v2Y: Float, v2Z: Float,
-      result: Vector3): Int {
+      result: Vector3m): Int {
     val closest = findClosestPointOnTriangle(v0X, v0Y, v0Z, v1X, v1Y, v1Z, v2X, v2Y, v2Z, sX, sY, sZ, result)
     val vX = result.x - sX
     val vY = result.y - sY
@@ -1314,7 +1314,7 @@ object Intersectionf {
    * will hold the result
    * @return result
    */
-  fun findClosestPointOnPlane(aX: Float, aY: Float, aZ: Float, nX: Float, nY: Float, nZ: Float, pX: Float, pY: Float, pZ: Float, result: Vector3): Vector3 {
+  fun findClosestPointOnPlane(aX: Float, aY: Float, aZ: Float, nX: Float, nY: Float, nZ: Float, pX: Float, pY: Float, pZ: Float, result: Vector3m): Vector3m {
     val d = -(nX * aX + nY * aY + nZ * aZ)
     val t = nX * pX + nY * pY + nZ * pZ - d
     result.x = pX - t * nX
@@ -1348,7 +1348,7 @@ object Intersectionf {
    * will hold the result
    * @return result
    */
-  fun findClosestPointOnLineSegment(aX: Float, aY: Float, aZ: Float, bX: Float, bY: Float, bZ: Float, pX: Float, pY: Float, pZ: Float, result: Vector3): Vector3 {
+  fun findClosestPointOnLineSegment(aX: Float, aY: Float, aZ: Float, bX: Float, bY: Float, bZ: Float, pX: Float, pY: Float, pZ: Float, result: Vector3m): Vector3m {
     val abX = bX - aX
     val abY = bY - aY
     val abZ = bZ - aZ
@@ -1401,7 +1401,7 @@ object Intersectionf {
   fun findClosestPointsLineSegments(
       a0X: Float, a0Y: Float, a0Z: Float, a1X: Float, a1Y: Float, a1Z: Float,
       b0X: Float, b0Y: Float, b0Z: Float, b1X: Float, b1Y: Float, b1Z: Float,
-      resultA: Vector3, resultB: Vector3): Float {
+      resultA: Vector3m, resultB: Vector3m): Float {
     val d1x = a1X - a0X
     val d1y = a1Y - a0Y
     val d1z = a1Z - a0Z
@@ -1512,7 +1512,7 @@ object Intersectionf {
 //  fun findClosestPointsLineSegmentTriangle(
 //      aX: Float, aY: Float, aZ: Float, bX: Float, bY: Float, bZ: Float,
 //      v0X: Float, v0Y: Float, v0Z: Float, v1X: Float, v1Y: Float, v1Z: Float, v2X: Float, v2Y: Float, v2Z: Float,
-//      lineSegmentResult: Vector3, triangleResult: Vector3): Float {
+//      lineSegmentResult: Vector3m, triangleResult: Vector3m): Float {
 //    var min: Float
 //    var d: Float
 //    var minlsX: Float
@@ -1668,7 +1668,7 @@ object Intersectionf {
       v1X: Float, v1Y: Float, v1Z: Float,
       v2X: Float, v2Y: Float, v2Z: Float,
       pX: Float, pY: Float, pZ: Float,
-      result: Vector3): Int {
+      result: Vector3m): Int {
     val abX = v1X - v0X
     val abY = v1Y - v0Y
     val abZ = v1Z - v0Z
@@ -1767,7 +1767,7 @@ object Intersectionf {
    * [.POINT_ON_TRIANGLE_EDGE_01], [.POINT_ON_TRIANGLE_EDGE_12], [.POINT_ON_TRIANGLE_EDGE_20] or
    * [.POINT_ON_TRIANGLE_FACE]
    */
-  fun findClosestPointOnTriangle(v0: Vector3fc, v1: Vector3fc, v2: Vector3fc, p: Vector3fc, result: Vector3): Int {
+  fun findClosestPointOnTriangle(v0: Vector3fc, v1: Vector3fc, v2: Vector3fc, p: Vector3fc, result: Vector3m): Int {
     return findClosestPointOnTriangle(v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, p.x, p.y, p.z, result)
   }
 
@@ -1810,7 +1810,7 @@ object Intersectionf {
       aX: Float, aY: Float, aZ: Float,
       bX: Float, bY: Float, bZ: Float,
       cX: Float, cY: Float, cZ: Float,
-      pX: Float, pY: Float, pZ: Float, res: Vector3): Vector3 {
+      pX: Float, pY: Float, pZ: Float, res: Vector3m): Vector3m {
     val abX = bX - aX
     val abY = bY - aY
     val abZ = bZ - aZ
@@ -3473,7 +3473,7 @@ object Intersectionf {
    */
   fun intersectLineSegmentTriangle(p0X: Float, p0Y: Float, p0Z: Float, p1X: Float, p1Y: Float, p1Z: Float,
                                    v0X: Float, v0Y: Float, v0Z: Float, v1X: Float, v1Y: Float, v1Z: Float, v2X: Float, v2Y: Float, v2Z: Float,
-                                   epsilon: Float, intersectionPoint: Vector3): Boolean {
+                                   epsilon: Float, intersectionPoint: Vector3m): Boolean {
     val dirX = p1X - p0X
     val dirY = p1Y - p0Y
     val dirZ = p1Z - p0Z
@@ -3514,7 +3514,7 @@ object Intersectionf {
    * the point of intersection
    * @return `true` if the given line segment intersects the triangle; `false` otherwise
    */
-  fun intersectLineSegmentTriangle(p0: Vector3fc, p1: Vector3fc, v0: Vector3fc, v1: Vector3fc, v2: Vector3fc, epsilon: Float, intersectionPoint: Vector3): Boolean {
+  fun intersectLineSegmentTriangle(p0: Vector3fc, p1: Vector3fc, v0: Vector3fc, v1: Vector3fc, v2: Vector3fc, epsilon: Float, intersectionPoint: Vector3m): Boolean {
     return intersectLineSegmentTriangle(p0.x, p0.y, p0.z, p1.x, p1.y, p1.z, v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, epsilon, intersectionPoint)
   }
 
@@ -3548,7 +3548,7 @@ object Intersectionf {
    * @return `true` if the given line segment intersects the plane; `false` otherwise
    */
   fun intersectLineSegmentPlane(p0X: Float, p0Y: Float, p0Z: Float, p1X: Float, p1Y: Float, p1Z: Float,
-                                a: Float, b: Float, c: Float, d: Float, intersectionPoint: Vector3): Boolean {
+                                a: Float, b: Float, c: Float, d: Float, intersectionPoint: Vector3m): Boolean {
     val dirX = p1X - p0X
     val dirY = p1Y - p0Y
     val dirZ = p1Z - p0Z
@@ -3614,7 +3614,7 @@ object Intersectionf {
    * will hold the center of the line segment of intersection in the <tt>(x, y)</tt> components and the half-length in the z component
    * @return `true` iff the line intersects the circle; `false` otherwise
    */
-  fun intersectLineCircle(a: Float, b: Float, c: Float, centerX: Float, centerY: Float, radius: Float, intersectionCenterAndHL: Vector3): Boolean {
+  fun intersectLineCircle(a: Float, b: Float, c: Float, centerX: Float, centerY: Float, radius: Float, intersectionCenterAndHL: Vector3m): Boolean {
     val invDenom = 1.0f / Math.sqrt((a * a + b * b).toDouble()).toFloat()
     val dist = (a * centerX + b * centerY + c) * invDenom
     if (-radius <= dist && dist <= radius) {
@@ -3652,7 +3652,7 @@ object Intersectionf {
    * will hold the center of the line segment of intersection in the <tt>(x, y)</tt> components and the half-length in the z component
    * @return `true` iff the line intersects the circle; `false` otherwise
    */
-  fun intersectLineCircle(x0: Float, y0: Float, x1: Float, y1: Float, centerX: Float, centerY: Float, radius: Float, intersectionCenterAndHL: Vector3): Boolean {
+  fun intersectLineCircle(x0: Float, y0: Float, x1: Float, y1: Float, centerX: Float, centerY: Float, radius: Float, intersectionCenterAndHL: Vector3m): Boolean {
     // Build general line equation from two points and use the other method
     return intersectLineCircle(y0 - y1, x1 - x0, (x0 - x1) * y0 + (y1 - y0) * x0, centerX, centerY, radius, intersectionCenterAndHL)
   }
@@ -3912,7 +3912,7 @@ object Intersectionf {
    * will hold the center of the circle of intersection in the <tt>(x, y, z)</tt> components and the radius in the w component
    * @return `true` iff both circles intersect; `false` otherwise
    */
-  fun intersectCircleCircle(aX: Float, aY: Float, radiusSquaredA: Float, bX: Float, bY: Float, radiusSquaredB: Float, intersectionCenterAndHL: Vector3): Boolean {
+  fun intersectCircleCircle(aX: Float, aY: Float, radiusSquaredA: Float, bX: Float, bY: Float, radiusSquaredB: Float, intersectionCenterAndHL: Vector3m): Boolean {
     val dX = bX - aX
     val dY = bY - aY
     val distSquared = dX * dX + dY * dY
@@ -3950,7 +3950,7 @@ object Intersectionf {
    * will hold the center of the line segment of intersection in the <tt>(x, y)</tt> components and the half-length in the z component
    * @return `true` iff both circles intersect; `false` otherwise
    */
-  fun intersectCircleCircle(centerA: Vector2fc, radiusSquaredA: Float, centerB: Vector2fc, radiusSquaredB: Float, intersectionCenterAndHL: Vector3): Boolean {
+  fun intersectCircleCircle(centerA: Vector2fc, radiusSquaredA: Float, centerB: Vector2fc, radiusSquaredB: Float, intersectionCenterAndHL: Vector3m): Boolean {
     return intersectCircleCircle(centerA.x, centerA.y, radiusSquaredA, centerB.x, centerB.y, radiusSquaredB, intersectionCenterAndHL)
   }
 

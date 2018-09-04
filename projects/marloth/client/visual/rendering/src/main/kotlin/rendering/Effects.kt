@@ -1,16 +1,5 @@
 package rendering
 
-import mythic.breeze.Bones
-import mythic.drawing.DrawingEffects
-import mythic.glowing.MatrixProperty
-import mythic.glowing.Texture
-import mythic.glowing.UniformBuffer
-import mythic.glowing.UniformBufferProperty
-import mythic.spatial.Matrix
-import mythic.spatial.Vector3
-import mythic.spatial.Vector4
-import scenery.Light
-
 //class PerspectiveEffect(private val shader: GeneralPerspectiveShader, private val camera: CameraEffectsData) {
 //  private val modelTransform = MatrixProperty(shader.program, "modelTransform")
 //
