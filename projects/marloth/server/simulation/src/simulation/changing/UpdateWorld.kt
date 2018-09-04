@@ -93,8 +93,7 @@ fun updateWorldMain(deck: Deck, world: World, playerCommands: Commands, delta: F
   val finalDeck = removeEntities(updatedDeck, world)
   return world.copy(
       deck = finalDeck,
-      nextId = nextId(),
-      tables = toTables(deck)
+      nextId = nextId()
   )
 }
 

@@ -1,6 +1,9 @@
 package mythic.spatial
 
 import org.joml.*
+import org.joml.internal.Options
+import org.joml.internal.Runtime
+import java.text.NumberFormat
 
 data class Vector3(
     override val x: Float = 0f,
@@ -88,4 +91,12 @@ data class Vector3(
   operator fun unaryMinus() = Vector3(-x, -y, -z)
 
   override fun xy(): Vector2 = Vector2(x, y)
+
+  override fun toString(): String {
+    return Runtime.formatNumbers(toString(Options.NUMBER_FORMAT))
+  }
+
+  fun toString(formatter: NumberFormat): String {
+    return "(" + formatter.format(x.toDouble()) + ", " + formatter.format(y.toDouble()) + ", " + formatter.format(z.toDouble()) + ")"
+  }
 }

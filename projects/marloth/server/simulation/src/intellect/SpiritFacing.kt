@@ -1,12 +1,8 @@
 package intellect
 
 import mythic.spatial.*
-import simulation.CommandType
-import simulation.Character
-import simulation.Command
-import simulation.Commands
+import simulation.*
 import simulation.changing.getLookAtAngle
-import simulation.changing.maxLookVelocityChange
 import simulation.changing.simulationDelta
 
 fun getAngleCourse(source: Float, destination: Float): Float {
@@ -38,7 +34,7 @@ fun spiritFacingChange(knowledge: Knowledge, offset: Vector3): Commands {
     val velocity = character.lookVelocity.x
     val increment = character.turnSpeed.x * simulationDelta
 //    println("" + dir + " " + absCourse + " " + increment)
-    val drift = increment * velocity / maxLookVelocityChange
+    val drift = increment * velocity / maxLookVelocityChange()
     return if (absCourse <= drift)
       listOf() // Don't need to rotate anymore.  The remaining momentum will get us there.
     else

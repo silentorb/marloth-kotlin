@@ -92,9 +92,5 @@ fun updateBodies(world: World, commands: Commands, collisions: Collisions): List
   val delta = simulationDelta
   val movementForces = allCharacterMovements(world, commands)
   val orientationForces = allCharacterOrientations(world)
-  updatePhysicsBodies(world.bodies, collisions, movementForces, orientationForces, delta)
-  return world.bodies.map {
-    updateBodyNode(it)
-    it
-  }
+  return updatePhysicsBodies(world.bodies, collisions, movementForces, orientationForces, delta)
 }

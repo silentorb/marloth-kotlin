@@ -87,9 +87,9 @@ fun toDeck(hands: List<Hand>): Deck =
 data class World(
     val realm: Realm,
     val nextId: Id,
-    val deck: Deck,
-    val tables: Tables
+    val deck: Deck
 ) {
+  val tables: Tables = toTables(deck)
   val animationTable: IdentityMap<ArmatureAnimation> get() = tables.animationTable
   val bodyTable: BodyTable get() = tables.bodyTable
   val characterTable: CharacterTable get() = tables.characterTable
@@ -120,7 +120,6 @@ fun addDeck(world: World, deck: Deck, nextId: IdSource): World {
   val newDeck = world.deck.plus(deck)
   return world.copy(
       deck = newDeck,
-      nextId = nextId(),
-      tables = toTables(newDeck)
+      nextId = nextId()
   )
 }

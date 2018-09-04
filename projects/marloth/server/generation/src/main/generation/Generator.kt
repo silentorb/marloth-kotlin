@@ -148,7 +148,6 @@ fun generateWorld(input: WorldInput): World {
 
   return World(
       deck = deck,
-      tables = toTables(deck),
       nextId = nextId(),
       realm = realm)
 }

@@ -48,28 +48,15 @@ fun isFinished(world: World, character: Character) =
 
 fun updateCharacter(world: World, character: Character, commands: Commands, collisions: List<Collision>,
                     activatedAbilities: List<Ability>, delta: Float): Character {
-  val id = character.id
-  if (character.isAlive) {
-    val body = world.bodyTable[character.id]!!
-
-
-//    val animationInfo = world.animationTable[character.id]!!
-//    val animation = animationInfo.armature.animations[animationInfo.animationIndex]
-//    animationInfo.timeOffset = (animationInfo.timeOffset + delta) % animation.duration
-//    applyAnimation(animation, animationInfo.armature.bones, animationInfo.timeOffset)
-  } else {
-
-  }
   val lookForce = characterLookForce(character, commands)
-  val lookVelocity = updatePlayerLookVelocity(lookForce, character.lookVelocity)
+  val lookVelocity = transitionVector(maxLookVelocityChange(),
+      Vector3(character.lookVelocity, 0f), Vector3(lookForce, 0f)).xy()
 
   val hits = collisions.filter { it.second == character.id }
   val health = modifyResource(character.health, hits.map { -50 })
 
   val abilities = updateAbilities(character, activatedAbilities)
   val facingRotation = character.facingRotation + fpCameraRotation(lookVelocity, delta)
-  if (character.faction == 1L)
-    println(facingRotation)
 
   return character.copy(
       isAlive = character.health.value > 0,
@@ -94,8 +81,8 @@ fun updateCharacters(world: World, collisions: Collisions, commands: Commands, a
 fun characterMovementFp(commands: Commands, character: Character, body: Body): MovementForce? {
   var offset = joinInputVector(commands, playerMoveMap)
   if (offset != null) {
-    offset = (Quaternion().rotateZ(character.facingRotation.z - Pi / 2) * offset)
-    return MovementForce(body = body, offset = offset, maximum = 6f)
+    offset = Quaternion().rotateZ(character.facingRotation.z - Pi / 2) * offset * characterMoveSpeed()
+    return MovementForce(body = body.id, offset = offset, maximum = 6f)
   } else {
     return null
   }

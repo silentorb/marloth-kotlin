@@ -24,7 +24,7 @@ fun updatePlayerView(viewMode: ViewMode, commands: Commands): ViewMode {
 fun updatePlayer(player: Player, commands: Commands): Player {
   val delta = simulationDelta
 //  val lookForce = updateField(Vector2(), updatePlayerLookForce(player, commands))
-//  val lookVelocity = updatePlayerLookVelocity(lookForce, player.lookVelocity)
+//  val lookVelocity = transitionVector(lookForce, player.lookVelocity)
 //  applyPlayerLookCommands(player, commands, delta)
 
   return player.copy(
