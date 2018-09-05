@@ -43,7 +43,7 @@ fun transitionVector(maxChange: Float, current: Vector3, target: Vector3): Vecto
       target
     else {
       val adjustment = if (diffLength > maxChange)
-        diff.normalize() *maxChange
+        diff.normalize() * maxChange
       else
         diff
 
@@ -80,13 +80,17 @@ fun applyForces(previousVelocity: Vector3, forces: List<MovementForce>, resistan
 //    intermediate * (1f - resistance * delta)
 }
 
+fun isGrounded(body: Body): Boolean {
+  return body.gravity && !body.node.isWalkable
+}
+
 fun moveBody(body: Body, offset: Vector3, walls: List<Collision>, delta: Float): Vector3 {
   val position = if (offset == Vector3())
     body.position
   else
     checkWallCollision(body.position, offset * delta, walls)
 
-  return if (body.gravity && !body.node.isWalkable)
+  return if (isGrounded(body))
     position + Vector3(0f, 0f, -4f * delta)
   else
     position

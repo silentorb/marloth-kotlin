@@ -1,7 +1,5 @@
 package simulation
 
-import simulation.changing.simulationDelta
-
 data class AbilityDefinition(
     val cooldown: Float,
     val range: Float

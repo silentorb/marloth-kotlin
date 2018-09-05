@@ -3,7 +3,7 @@ package intellect
 import mythic.spatial.*
 import simulation.*
 import simulation.changing.getLookAtAngle
-import simulation.changing.simulationDelta
+import simulation.simulationDelta
 
 fun getAngleCourse(source: Float, destination: Float): Float {
   val full = Pi * 2

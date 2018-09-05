@@ -1,13 +1,12 @@
 package front
 
 import generation.generateDefaultWorld
-import haft.ProfileStates
 import marloth.clienting.*
 import mythic.platforming.Display
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
 import simulation.World
-import simulation.changing.updateWorld
+import simulation.updateWorld
 import visualizing.createScenes
 
 data class App(

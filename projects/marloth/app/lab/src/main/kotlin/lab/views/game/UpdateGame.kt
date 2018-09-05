@@ -7,7 +7,7 @@ import marloth.clienting.CommandType
 import mythic.spatial.Vector3
 import simulation.Id
 import simulation.World
-import simulation.changing.updateWorld
+import simulation.updateWorld
 
 const val nSecond: Long = 1000000000L
 const val maxInterval = 1f / 60f

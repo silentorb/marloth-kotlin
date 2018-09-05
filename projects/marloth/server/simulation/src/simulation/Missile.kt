@@ -1,4 +1,4 @@
-package simulation.combat
+package simulation
 
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector2
@@ -7,9 +7,7 @@ import physics.Body
 import physics.Collision
 import physics.commonShapes
 import physics.overlaps
-import simulation.*
 import simulation.changing.hitsWall
-import simulation.changing.simulationDelta
 
 data class Missile(
     override val id: Id,

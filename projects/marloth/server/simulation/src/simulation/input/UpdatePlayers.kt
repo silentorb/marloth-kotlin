@@ -1,7 +1,6 @@
 package simulation.input
 
 import simulation.*
-import simulation.changing.*
 
 fun filterCommands(id: Id, commands: Commands) =
     commands.filter({ it.target == id })

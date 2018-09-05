@@ -2,7 +2,6 @@ package simulation
 
 import intellect.Spirit
 import physics.Body
-import simulation.combat.Missile
 
 val maxPlayerCount = 4
 

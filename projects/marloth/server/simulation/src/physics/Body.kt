@@ -9,7 +9,7 @@ import mythic.spatial.Vector3m
 import mythic.spatial.isInsidePolygon
 import scenery.Textures
 import simulation.*
-import simulation.changing.simulationDelta
+import simulation.simulationDelta
 
 data class BodyAttributes(
     val resistance: Float

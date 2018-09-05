@@ -1,4 +1,4 @@
-package simulation.changing
+package simulation
 
 import intellect.pursueGoals
 import intellect.updateAiState
@@ -6,8 +6,7 @@ import mythic.spatial.Pi2
 import physics.Collision
 import physics.Collisions
 import physics.updateBodies
-import simulation.*
-import simulation.combat.*
+import simulation.changing.findCollisionWalls
 import simulation.input.updatePlayers
 
 fun <T> updateField(defaultValue: T, newValue: T?): T =
@@ -26,7 +25,7 @@ fun simplifyRotation(value: Float): Float =
 
 fun getFinished(world: World): List<Id> {
   return world.missileTable.values
-      .filter { simulation.combat.isFinished(world.realm, world.bodyTable, it) }
+      .filter { isFinished(world.realm, world.bodyTable, it) }
       .map { it.id }
       .plus(world.characters
           .filter { isFinished(world, it) && !isPlayer(world, it) }
@@ -86,11 +85,17 @@ fun removeEntities(deck: Deck, world: World): Deck {
   return removeFinished(deck, finished)
 }
 
+fun newEntities(world: World, nextId: IdSource, data: Intermediate): Deck {
+  return getNewMissiles(world, nextId, data.activatedAbilities)
+}
+
 fun updateWorldMain(deck: Deck, world: World, playerCommands: Commands, delta: Float): World {
   val nextId: IdSource = newIdSource(world.nextId)
   val data = generateIntermediateRecords(world, playerCommands, delta)
   val updatedDeck = updateEntities(deck, world, data)
   val finalDeck = removeEntities(updatedDeck, world)
+      .plus(newEntities(world, nextId, data))
+
   return world.copy(
       deck = finalDeck,
       nextId = nextId()
