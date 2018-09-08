@@ -154,10 +154,30 @@ fun projectPointOntoRay(v: Vector2, u1: Vector2, u2: Vector2): Vector2 {
   return relative + u1
 }
 
-fun projectPointOntoLine(v: Vector2, u1: Vector2, u2: Vector2): Vector2? {
+fun projectPointOntoLine(v: Vector2, u1: Vector2, u2: Vector2): Vector2 {
   val u = u2 - u1
   val relative = u * u.dot(v - u1) / u.dot(u)
-  val result = relative + u1
+  return relative + u1
+}
+
+fun projectPointOntoLine(v: Vector3, u1: Vector3, u2: Vector3): Vector3 {
+  val u = u2 - u1
+  val relative = u * u.dot(v - u1) / u.dot(u)
+  return relative + u1
+}
+
+fun getPointToLineDistance(v: Vector2, u1: Vector2, u2: Vector2): Float {
+  val projectedPoint = projectPointOntoLine(v, u1, u2)
+  return v.distance(projectedPoint)
+}
+
+fun getPointToLineDistance(v: Vector3, u1: Vector3, u2: Vector3): Float {
+  val projectedPoint = projectPointOntoLine(v, u1, u2)
+  return v.distance(projectedPoint)
+}
+
+fun projectPointOntoLineSegment(v: Vector2, u1: Vector2, u2: Vector2): Vector2? {
+  val result = projectPointOntoLine(v, u1, u2)
   if (isBetween(result, u1, u2))
     return result
   else

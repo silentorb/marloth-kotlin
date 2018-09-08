@@ -1,12 +1,9 @@
 package physics
 
 import mythic.sculpting.FlexibleFace
-import mythic.spatial.Quaternion
-import mythic.spatial.Vector2
-import mythic.spatial.Vector3
-import simulation.Id
+import mythic.spatial.*
+import simulation.*
 import simulation.changing.checkWallCollision
-import simulation.maxMoveVelocityChange
 
 data class Rotation(
     val pitch: Float = 0f,
@@ -16,8 +13,7 @@ data class Rotation(
 
 data class MovementForce(
     val body: Id,
-    val offset: Vector3,
-    val maximum: Float
+    val offset: Vector3
 )
 
 data class AbsoluteOrientationForce(
@@ -53,7 +49,10 @@ fun transitionVector(maxChange: Float, current: Vector3, target: Vector3): Vecto
     current
 }
 
-fun applyForces(previousVelocity: Vector3, forces: List<MovementForce>, resistance: Float, delta: Float): Vector3 {
+fun applyForces(body: Body, forces: List<MovementForce>, resistance: Float, delta: Float): Vector3 {
+  if (body.perpetual)
+    return body.velocity
+
   if (forces.size > 2)
     throw Error("Not yet supported")
 
@@ -62,26 +61,29 @@ fun applyForces(previousVelocity: Vector3, forces: List<MovementForce>, resistan
   else
     Vector3()
 
-  return transitionVector(maxMoveVelocityChange(), previousVelocity, target)
+  return transitionVector(maxMoveVelocityChange(), body.velocity, target)
+}
 
-//  val intermediate = forces.fold(previousVelocity) { a, force ->
-//    val newVelocity = a + force.offset * 20f * delta
-//    val length = newVelocity.length()
-////    println("* " + length)
-//    if (length > force.maximum)
-//      newVelocity.normalize() * force.maximum
-//    else
-//      newVelocity
-//  }
-//
-//  return if (intermediate.length() < 0.01f)
-//    Vector3()
-//  else
-//    intermediate * (1f - resistance * delta)
+fun isWalkable(node: Node?) = node?.isWalkable ?: false
+
+fun isGroundedOnNeighborNode(body: Body): Boolean {
+  if (body.node.walls.none())
+    return false
+
+  val (nearestWall, distance) = body.node.walls
+      .map {
+        val edge = getFloor(it)
+        Pair(it, getPointToLineDistance(body.position, Vector3(edge.first), Vector3(edge.second)))
+      }
+      .sortedBy { it.second }
+      .first()
+
+  return distance < 0.5f && isWalkable(getOtherNode(body.node, nearestWall))
 }
 
 fun isGrounded(body: Body): Boolean {
-  return body.gravity && !body.node.isWalkable
+  return !body.gravity || body.node.isWalkable || isGroundedOnNeighborNode(body)
+
 }
 
 fun moveBody(body: Body, offset: Vector3, walls: List<Collision>, delta: Float): Vector3 {
@@ -90,7 +92,7 @@ fun moveBody(body: Body, offset: Vector3, walls: List<Collision>, delta: Float):
   else
     checkWallCollision(body.position, offset * delta, walls)
 
-  return if (isGrounded(body))
+  return if (!isGrounded(body))
     position + Vector3(0f, 0f, -4f * delta)
   else
     position
@@ -99,7 +101,7 @@ fun moveBody(body: Body, offset: Vector3, walls: List<Collision>, delta: Float):
 fun updateBody(body: Body, movementForces: List<MovementForce>, collisions: List<Collision>,
                orientationForces: List<AbsoluteOrientationForce>, delta: Float): Body {
   return body.copy(
-      velocity = applyForces(body.velocity, movementForces, body.attributes.resistance, delta),
+      velocity = applyForces(body, movementForces, body.attributes.resistance, delta),
       position = moveBody(body, body.velocity, collisions, delta),
       orientation = orientationForces.firstOrNull()?.orientation ?: body.orientation,
       node = updateBodyNode(body)

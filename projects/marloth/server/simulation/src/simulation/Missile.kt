@@ -27,7 +27,8 @@ fun characterAttack(world: World, nextId: IdSource, character: Character, abilit
           shape = commonShapes[EntityType.missile]!!,
           orientation = Quaternion(),
           attributes = missileBodyAttributes,
-          gravity = false
+          gravity = false,
+          perpetual = true
       ),
       missile = Missile(
           id = id,
@@ -40,7 +41,7 @@ fun characterAttack(world: World, nextId: IdSource, character: Character, abilit
 fun getBodyCollisions(bodyTable: BodyTable, characterTable: CharacterTable, missiles: Collection<Missile>): List<Collision> {
   return missiles.flatMap { missile ->
     val body = bodyTable[missile.id]!!
-    val owner = bodyTable[missile.owner]!!
+    val owner = bodyTable[missile.owner]
     bodyTable.values.filter { it !== body && it !== owner }
         .filter { overlaps(it, body) }
         .map { hit ->

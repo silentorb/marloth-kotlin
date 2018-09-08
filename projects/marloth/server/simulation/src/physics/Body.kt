@@ -36,8 +36,9 @@ data class Body(
     val attributes: BodyAttributes,
     val gravity: Boolean,
 //    val friction: Float,
-    val node: Node
-) : EntityLike {
+    val node: Node,
+    val perpetual: Boolean = false
+    ) : EntityLike {
 
   val radius: Float?
     get() = shape?.getRadiusOrNull()

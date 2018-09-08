@@ -82,7 +82,7 @@ fun characterMovementFp(commands: Commands, character: Character, body: Body): M
   var offset = joinInputVector(commands, playerMoveMap)
   if (offset != null) {
     offset = Quaternion().rotateZ(character.facingRotation.z - Pi / 2) * offset * characterMoveSpeed()
-    return MovementForce(body = body.id, offset = offset, maximum = 6f)
+    return MovementForce(body = body.id, offset = offset)
   } else {
     return null
   }

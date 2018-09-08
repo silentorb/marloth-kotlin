@@ -44,7 +44,7 @@ fun findCollisionWalls(source: Vector3, originalOffset: Vector3, world: Realm, n
       .filter { wall -> hitsWall(wall.edges[0].edge, newPosition, broadRadius) && offset.dot(wall.normal) < 0f }
       .map { face ->
         val edge = face.edges[0]
-        val hitPoint = projectPointOntoLine(source.xy(), edge.first.xy(), edge.second.xy())
+        val hitPoint = projectPointOntoLineSegment(source.xy(), edge.first.xy(), edge.second.xy())
         if (hitPoint != null) {
           val gap = hitPoint.distance(source.xy()) - radius
           WallCollision3(face, hitPoint, gap)
