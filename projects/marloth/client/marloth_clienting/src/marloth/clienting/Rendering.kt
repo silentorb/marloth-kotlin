@@ -2,11 +2,7 @@ package marloth.clienting
 
 import mythic.glowing.globalState
 import org.joml.zw
-import rendering.GameSceneRenderer
-import rendering.createCanvas
-import rendering.getPlayerViewports
-import rendering.renderSkyBox
-import scenery.GameScene
+import rendering.*
 
 
 fun renderScene(renderer: GameSceneRenderer) {

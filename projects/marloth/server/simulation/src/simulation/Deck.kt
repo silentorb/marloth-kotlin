@@ -15,7 +15,7 @@ data class Hand(
     val character: Character? = null,
     val animation: ArmatureAnimation? = null,
     val faction: Faction? = null,
-    val furnishing: Furnishing? = null,
+    val depiction: Depiction? = null,
     val missile: Missile? = null,
     val player: Player? = null,
     val spirit: Spirit? = null
@@ -26,7 +26,7 @@ data class Deck(
     val bodies: List<Body> = listOf(),
     val characters: List<Character> = listOf(),
     val factions: List<Faction> = listOf(),
-    val furnishings: List<Furnishing> = listOf(),
+    val depictions: List<Depiction> = listOf(),
     val missiles: List<Missile> = listOf(),
     val players: List<Player> = listOf(),
     val spirits: List<Spirit> = listOf()
@@ -36,7 +36,7 @@ data class Deck(
       bodies = bodies.plus(other.bodies),
       characters = characters.plus(other.characters),
       factions = factions.plus(other.factions),
-      furnishings = furnishings.plus(other.furnishings),
+      depictions = depictions.plus(other.depictions),
       missiles = missiles.plus(other.missiles),
       players = players.plus(other.players),
       spirits = spirits.plus(other.spirits)
@@ -47,7 +47,7 @@ data class Tables(
     val animationTable: IdentityMap<ArmatureAnimation>,
     val bodyTable: BodyTable,
     val characterTable: CharacterTable,
-    val furnishingTable: IdentityMap<Furnishing>,
+    val depictionTable: IdentityMap<Depiction>,
     val missileTable: Map<Id, Missile>,
     val spiritTable: Map<Id, Spirit>
 )
@@ -57,7 +57,7 @@ fun toTables(deck: Deck): Tables =
         bodyTable = mapEntities(deck.bodies),
         characterTable = mapEntities(deck.characters),
         animationTable = mapEntities(deck.animations),
-        furnishingTable = mapEntities(deck.furnishings),
+        depictionTable = mapEntities(deck.depictions),
         missileTable = mapEntities(deck.missiles),
         spiritTable = mapEntities(deck.spirits)
     )
@@ -74,7 +74,7 @@ fun toDeck(hand: Hand): Deck =
         bodies = nullableList(hand.body),
         characters = nullableList(hand.character),
         factions = nullableList(hand.faction),
-        furnishings = nullableList(hand.furnishing),
+        depictions = nullableList(hand.depiction),
         missiles = nullableList(hand.missile),
         players = nullableList(hand.player),
         spirits = nullableList(hand.spirit)
@@ -92,7 +92,7 @@ data class World(
   val animationTable: IdentityMap<ArmatureAnimation> get() = tables.animationTable
   val bodyTable: BodyTable get() = tables.bodyTable
   val characterTable: CharacterTable get() = tables.characterTable
-  val furnishingTable: IdentityMap<Furnishing> get() = tables.furnishingTable
+  val depictionTable: IdentityMap<Depiction> get() = tables.depictionTable
   val missileTable: Map<Id, Missile> get() = tables.missileTable
   val spiritTable: Map<Id, Spirit> get() = tables.spiritTable
 

@@ -1,5 +1,6 @@
 package generation
 
+import colliding.Sphere
 import generation.abstract.*
 import generation.structure.doorwayLength
 import generation.structure.generateStructure
@@ -7,6 +8,7 @@ import intellect.Pursuit
 import intellect.Spirit
 import mythic.sculpting.FlexibleFace
 import mythic.spatial.*
+import physics.Body
 import randomly.Dice
 import simulation.*
 import simulation.changing.Instantiator
@@ -90,15 +92,15 @@ fun placeEnemies(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): Deck
   })
 }
 
-fun placeWallLamps(world: World, instantiator: Instantiator, dice: Dice, scale: Float) {
+fun placeWallLamps(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): Deck {
   val count = (10f * scale).toInt()
   val isValidLampWall = { it: FlexibleFace ->
     getFaceInfo(it).type == FaceType.wall && getFaceInfo(it).texture != null
   }
-  val options = world.realm.locationNodes.filter { it.walls.any(isValidLampWall) }
+  val options = realm.locationNodes.filter { it.walls.any(isValidLampWall) }
   assert(options.any())
   val nodes = dice.getList(options, count)
-  nodes.forEach { node ->
+  val hands = nodes.mapNotNull { node ->
     val options2 = node.walls.filter(isValidLampWall)
     if (options2.any()) {
       val wall = dice.getItem(options2)
@@ -109,12 +111,46 @@ fun placeWallLamps(world: World, instantiator: Instantiator, dice: Dice, scale: 
 //    val angle = getAngle(wall.normal.xy())
       val angle = Quaternion().rotateTo(Vector3(1f, 0f, 0f), wall.normal)
 //      instantiator.createWallLamp(position, node, angle)
-    }
+      val id = nextId()
+      Hand(
+          body = Body(
+              id = id,
+              shape = Sphere(0.3f),
+              position = position,
+              orientation = angle,
+              velocity = Vector3(),
+              node = node,
+              attributes = doodadBodyAttributes,
+              gravity = false
+          ),
+          depiction = Depiction(
+              id = id,
+              type = DepictionType.wallLamp
+          )
+      )
+    } else
+      null
   }
+
+  return toDeck(hands)
 }
 
 fun calculateWorldScale(dimensions: Vector3) =
     (dimensions.x * dimensions.y) / (100 * 100)
+
+fun newPlayer(nextId: IdSource, playerNode: Node): Hand =
+    newCharacter(
+        nextId = nextId,
+        faction = 1,
+        definition = characterDefinitions.player,
+        position = Vector3(playerNode.position),
+        node = playerNode,
+        player = Player(
+            playerId = 1,
+            character = 0,
+            viewMode = ViewMode.firstPerson
+        )
+    )
 
 fun generateWorld(input: WorldInput): World {
   val realm = Realm(input.boundary)
@@ -122,27 +158,16 @@ fun generateWorld(input: WorldInput): World {
   val tunnels = generateAbstract(realm, input.biomes, input.dice, scale)
   generateStructure(realm, input.dice, tunnels)
   val playerNode = realm.nodes.first()
-  var id = 1
   val nextId = newIdSource(1)
-  val newEntities = toDeck(newCharacter(
-      nextId = nextId,
-      faction = 1,
-      definition = characterDefinitions.player,
-      position = Vector3(playerNode.position),
-      node = playerNode,
-      player = Player(
-          playerId = 1,
-          character = 0,
-          viewMode = ViewMode.firstPerson
-      )
-  ))
   val deck = Deck(
       factions = listOf(
           Faction(1, "Misfits"),
           Faction(2, "Monsters")
       )
-  ).plus(newEntities)
-//  instantiator.createPlayer(1)
+  )
+      .plus(toDeck(newPlayer(nextId, playerNode)))
+      .plus(placeWallLamps(realm, nextId, input.dice, scale))
+//  instantiator.newPlayer(1)
 
 //  placeWallLamps(world, instantiator, input.dice, scale)
 

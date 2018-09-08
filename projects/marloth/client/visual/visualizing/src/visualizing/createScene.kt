@@ -3,11 +3,21 @@ package visualizing
 import mythic.spatial.*
 import org.joml.times
 import physics.Body
+import rendering.GameScene
+import rendering.MeshElement
+import rendering.MeshType
 import scenery.*
 import simulation.*
 import simulation.Id
 
 val firstPersonCameraOffset = Vector3(0f, 0f, 1.4f)
+
+val simplePainterMap = mapOf(
+    DepictionType.monster to MeshType.eyeball,
+    DepictionType.character to MeshType.child,
+    DepictionType.missile to MeshType.sphere,
+    DepictionType.wallLamp to MeshType.wallLamp
+)
 
 fun createFirstPersonCamera(body: Body, character: Character): Camera = Camera(
     ProjectionType.perspective,
@@ -67,7 +77,11 @@ fun createCamera(world: World, screen: Screen): Camera {
 //    else
 //      world.depictionTable
 
-fun convertDepiction(world: World, id: Id, type: DepictionType): VisualElement {
+fun convertDepiction(world: World, id: Id, type: DepictionType): MeshElement? {
+  val mesh = simplePainterMap[type]
+  if (mesh == null)
+    return null
+
   val body = world.bodyTable[id]!!
   val character = world.characterTable[id]
   val translate = Matrix().translate(body.position)
@@ -80,25 +94,34 @@ fun convertDepiction(world: World, id: Id, type: DepictionType): VisualElement {
 //    depiction.animation
 //  else
 //    null
-  return VisualElement(id, type, null, transform)
+  return MeshElement(
+      id = id,
+      mesh = mesh,
+//      null,
+      transform = transform
+  )
 }
 
 fun createChildDetails(character: Character): ChildDetails =
     ChildDetails(if (character.definition.depictionType == DepictionType.character) Gender.female else Gender.male)
 
-fun gatherVisualElements(world: World, screen: Screen, player: Player): Pair<List<VisualElement>, ElementDetails> {
+fun gatherVisualElements(world: World, screen: Screen, player: Player): Pair<List<MeshElement>, ElementDetails> {
 //  val depictions = filterDepictions(world, player)
 //  val childDepictions = depictions.values.filter {
 //    it.type == DepictionType.character || it.type == DepictionType.monster
 //  }
 
   val characters = world.characters.asIterable().filter { !isPlayer(world, it) }
-  val elements = characters.map {
-    convertDepiction(world, it.id, it.definition.depictionType)
-  }
-      .plus(world.missileTable.values.map {
-        convertDepiction(world, it.id, DepictionType.missile)
-      })
+  val elements =
+      world.deck.depictions.mapNotNull {
+        convertDepiction(world, it.id, it.type)
+      }
+          .plus(characters.mapNotNull {
+            convertDepiction(world, it.id, it.definition.depictionType)
+          })
+          .plus(world.missileTable.values.mapNotNull {
+            convertDepiction(world, it.id, DepictionType.missile)
+          })
 
   return Pair(
       elements,
@@ -114,7 +137,7 @@ fun createScene(world: World, screen: Screen, player: Player): GameScene {
   return GameScene(
       main = Scene(
           createCamera(world, screen),
-          world.deck.furnishings
+          world.deck.depictions.filter { it.type == DepictionType.wallLamp }
               .map {
                 Light(
                     type = LightType.point,

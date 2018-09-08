@@ -31,20 +31,6 @@ data class BillboardDetails(
 )
 
 data class ElementDetails(
-    val children: Map<Id, ChildDetails>
+    val children: Map<Long, ChildDetails>
 //    val billboards: Map<Id, BillboardDetails>
 )
-
-data class GameScene(
-    val main: Scene,
-    val elements: List<VisualElement>,
-    val elementDetails: ElementDetails,
-    val player: Int
-) {
-
-  val camera: Camera
-    get() = main.camera
-
-  val lights: List<Light>
-    get() = main.lights
-}

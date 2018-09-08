@@ -10,12 +10,8 @@ import mythic.spatial.Matrix
 import mythic.spatial.Vector4
 import org.joml.Vector2i
 import org.joml.Vector4i
-import org.lwjgl.opengl.GL11
 import rendering.meshes.MeshMap
-import scenery.DepictionType
-import scenery.GameScene
 import scenery.Textures
-import scenery.VisualElement
 
 fun renderSkyBox(textures: TextureLibrary, meshes: MeshMap, shaders: Shaders) {
   val texture = textures[Textures.background]!!
@@ -61,16 +57,15 @@ class GameSceneRenderer(
     canvasDependencies.meshes.image.draw(DrawMethod.triangleFan)
   }
 
-  fun lookupMesh(depiction: DepictionType) = renderer.meshes[simplePainterMap[depiction]]!!
+//  fun lookupMesh(depiction: DepictionType) = renderer.meshes[simplePainterMap[depiction]]!!
 
-  fun renderElement(element: VisualElement) {
+  fun renderElement(element: MeshElement) {
     val childDetails = scene.elementDetails.children[element.id]
+    val mesh = renderer.meshes[element.mesh]!!
     if (childDetails != null) {
-      val mesh = lookupMesh(element.depiction)
       advancedPainter(mesh, renderer.renderer,element, renderer.effects)
 //      humanPainter(renderer, mesh.primitives)(element, renderer.effects, childDetails)
     } else {
-      val mesh = lookupMesh(element.depiction)
       simplePainter(mesh.primitives,element, renderer.effects)
     }
   }

@@ -1,7 +1,6 @@
 package simulation
 
 import physics.BodyAttributes
-import scenery.DepictionType
 
 class AbilityDefinitions {
   val shoot = AbilityDefinition(

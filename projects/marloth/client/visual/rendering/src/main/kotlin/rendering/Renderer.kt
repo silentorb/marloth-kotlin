@@ -14,12 +14,10 @@ import org.lwjgl.opengl.GL32.glTexImage2DMultisample
 import rendering.meshes.AttributeName
 import rendering.meshes.MeshMap
 import rendering.meshes.createVertexSchemas
-import scenery.GameScene
 import scenery.Light
 import scenery.Scene
 import scenery.Textures
 import java.nio.FloatBuffer
-
 
 fun gatherEffectsData(dimensions: Vector2i, scene: Scene, cameraEffectsData: CameraEffectsData): EffectsData {
   return EffectsData(

@@ -7,7 +7,6 @@ import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import org.joml.times
 import physics.*
-import scenery.DepictionType
 import simulation.changing.*
 import simulation.input.filterCommands
 

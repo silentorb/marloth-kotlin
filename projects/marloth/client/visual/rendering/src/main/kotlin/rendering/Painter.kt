@@ -13,7 +13,7 @@ import scenery.*
 //typealias Painter = (VisualElement, Effects, ElementDetails) -> Unit
 //typealias Painters = Map<DepictionType, Painter>
 
-fun advancedPainter(mesh: AdvancedModel, renderer: Renderer, element: VisualElement, effects: Shaders) {
+fun advancedPainter(mesh: AdvancedModel, renderer: Renderer, element: MeshElement, effects: Shaders) {
   val transform = element.transform.rotateZ(Pi / 2).scale(2f)
   val orientationTransform = getRotationMatrix(transform)
   for (e in mesh.primitives) {
@@ -39,7 +39,7 @@ fun advancedPainter(mesh: AdvancedModel, renderer: Renderer, element: VisualElem
   }
 }
 
-fun simplePainter(elements: Primitives, element: VisualElement, effects: Shaders) {
+fun simplePainter(elements: Primitives, element: MeshElement, effects: Shaders) {
   val orientationTransform = getRotationMatrix(element.transform)
   for (e in elements) {
     val material = e.material
@@ -54,7 +54,7 @@ fun simplePainter(elements: Primitives, element: VisualElement, effects: Shaders
 }
 
 fun humanPainter(renderer: SceneRenderer, elements: Primitives) =
-    { element: VisualElement, effects: Shaders, childDetails: ChildDetails ->
+    { element: MeshElement, effects: Shaders, childDetails: ChildDetails ->
       val transform = element.transform.rotateZ(Pi / 2).scale(2f)
       val orientationTransform = getRotationMatrix(element.transform)
       val gender = childDetails.gender
@@ -80,10 +80,3 @@ fun humanPainter(renderer: SceneRenderer, elements: Primitives) =
 //      renderer.drawText("Hello World", position, textStyle)
       globalState.depthEnabled = true
     }
-
-val simplePainterMap = mapOf(
-    DepictionType.monster to MeshType.eyeball,
-    DepictionType.character to MeshType.child,
-    DepictionType.missile to MeshType.sphere,
-    DepictionType.wallLamp to MeshType.wallLamp
-)

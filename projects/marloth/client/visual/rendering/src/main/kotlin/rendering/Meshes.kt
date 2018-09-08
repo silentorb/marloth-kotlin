@@ -1,6 +1,7 @@
 package rendering
 
 import mythic.breeze.Armature
+import mythic.spatial.Matrix
 import mythic.spatial.Vector4
 import rendering.meshes.*
 import rigging.createSkeleton
@@ -78,3 +79,16 @@ fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     })
     .mapValues { AdvancedModel(it.value) }
     .plus(advancedMeshes(vertexSchemas).mapValues { it.value() })
+
+data class DepictionAnimation(
+    val animationIndex: Int,
+    var timeOffset: Float,
+    val armature: Armature
+)
+
+data class MeshElement(
+    val id: Long,
+    val mesh: MeshType,
+    val animation: DepictionAnimation? = null,
+    val transform: Matrix
+)

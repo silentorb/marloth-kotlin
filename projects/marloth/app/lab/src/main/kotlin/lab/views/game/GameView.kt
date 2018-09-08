@@ -15,8 +15,6 @@ import mythic.sculpting.getVerticesCenter
 import mythic.spatial.*
 import org.joml.zw
 import rendering.*
-import scenery.DepictionType
-import scenery.GameScene
 import scenery.Screen
 import simulation.Realm
 import simulation.World
@@ -134,12 +132,12 @@ fun renderLabScenes(client: Client, data: GameViewRenderData) {
       renderFaceNormals(sceneRenderer, 1f, data.world.mesh)
 
     if (config.draw.skeletons) {
-      scene.elements.filter { it.depiction == DepictionType.character || it.depiction == DepictionType.monster }
-          .forEach {
-            val info = it.animation!!
-            val armature = info.armature
-            drawSkeleton(sceneRenderer, armature.bones, it.transform)
-          }
+//      scene.elements.filter { it.depiction == DepictionType.character || it.depiction == DepictionType.monster }
+//          .forEach {
+//            val info = it.animation!!
+//            val armature = info.armature
+//            drawSkeleton(sceneRenderer, armature.bones, it.transform)
+//          }
     }
 
     if (config.draw.gui)
