@@ -188,7 +188,7 @@ fun loadGeneratedModel(config: ModelViewConfig, renderer: Renderer): Model {
 
 class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePosition: Vector2i) {
   val model: Model
-  val externalMesh: Primitives? = null//renderer.meshes[config.model]!!.primitives
+  val externalMesh: Primitives? = renderer.meshes[config.model]?.primitives
   val camera = createOrthographicCamera(config.camera)
   val advancedModel: AdvancedModel?
 

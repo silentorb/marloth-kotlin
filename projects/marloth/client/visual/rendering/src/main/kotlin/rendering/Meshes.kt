@@ -4,6 +4,7 @@ import mythic.breeze.Armature
 import mythic.spatial.Matrix
 import mythic.spatial.Vector4
 import rendering.meshes.*
+import rendering.meshes.loading.loadGltf
 import rigging.createSkeleton
 import rigging.humanAnimations
 import mythic.glowing.VertexSchema as GenericVertexSchema
@@ -29,14 +30,14 @@ typealias AdvancedModelGenerator = () -> AdvancedModel
 typealias AdvancedModelGeneratorMap = Map<MeshType, AdvancedModelGenerator>
 
 fun standardMeshes(): ModelGeneratorMap = mapOf(
-    MeshType.cube to createCube,
+//    MeshType.cube to createCube,
     MeshType.eyeball to createEyeball,
-    MeshType.sphere to createSphere,
+    MeshType.sphere to createSphere
 //    MeshType.bear to createCartoonHuman,
 //    MeshType.human to createHuman,
 //    MeshType.humanOld to createHumanOld,
 //    MeshType.monster to createCartoonHuman
-    MeshType.wallLamp to createWallLamp
+//    MeshType.wallLamp to createWallLamp
     )
 
 fun skeletonMesh(vertexSchemas: VertexSchemas): AdvancedModelGenerator = {
@@ -65,6 +66,14 @@ fun advancedMeshes(vertexSchemas: VertexSchemas): AdvancedModelGeneratorMap {
   )
 }
 
+fun importedMeshes(vertexSchemas: VertexSchemas) = mapOf(
+    MeshType.wallLamp to "lamp",
+    MeshType.cube to "cube"
+//    MeshType.child to "girl2/child"
+//    MeshType.child to "child/child"
+)
+    .mapValues { loadGltf(vertexSchemas, "models/" + it.value) }
+
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     MeshType.line to createLineMesh(vertexSchemas.flat),
     MeshType.cylinder to createSimpleMesh(createCylinder(), vertexSchemas.textured)
@@ -78,17 +87,5 @@ fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
       modelToMeshes(vertexSchemas, it.value())
     })
     .mapValues { AdvancedModel(it.value) }
+    .plus(importedMeshes(vertexSchemas))
     .plus(advancedMeshes(vertexSchemas).mapValues { it.value() })
-
-data class DepictionAnimation(
-    val animationIndex: Int,
-    var timeOffset: Float,
-    val armature: Armature
-)
-
-data class MeshElement(
-    val id: Long,
-    val mesh: MeshType,
-    val animation: DepictionAnimation? = null,
-    val transform: Matrix
-)
