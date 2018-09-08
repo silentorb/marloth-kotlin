@@ -131,27 +131,29 @@ fun gatherVisualElements(world: World, screen: Screen, player: Player): Pair<Lis
   )
 }
 
+fun mapLights(world: World, player: Player) =
+    world.deck.depictions.filter { it.type == DepictionType.wallLamp }
+        .map {
+          Light(
+              type = LightType.point,
+              color = Vector4(1f, 1f, 1f, 1f),
+              position = world.bodyTable[it.id]!!.position + Vector3(0f, 0f, 1.6f),
+              direction = Vector4(0f, 0f, 0f, 15f)
+          )
+        }
+        .plus(Light(
+            type = LightType.point,
+            color = Vector4(1f, 1f, 1f, 1f),
+            position = world.bodyTable[player.character]!!.position + Vector3(0f, 0f, 2f),
+            direction = Vector4(0f, 0f, 0f, 15f)
+        ))
+
 fun createScene(world: World, screen: Screen, player: Player): GameScene {
   val (elements, elementDetails) = gatherVisualElements(world, screen, player)
-  val body = world.bodyTable[player.character]!!
   return GameScene(
       main = Scene(
-          createCamera(world, screen),
-          world.deck.depictions.filter { it.type == DepictionType.wallLamp }
-              .map {
-                Light(
-                    type = LightType.point,
-                    color = Vector4(1f, 1f, 1f, 1f),
-                    position = body.position + Vector3(0f, 0f, 2f),
-                    direction = Vector4(0f, 0f, 0f, 15f)
-                )
-              }
-              .plus(Light(
-                  type = LightType.point,
-                  color = Vector4(1f, 1f, 1f, 1f),
-                  position = body.position + Vector3(0f, 0f, 2f),
-                  direction = Vector4(0f, 0f, 0f, 15f)
-              ))
+          camera = createCamera(world, screen),
+          lights = mapLights(world, player)
       ),
       elements = elements,
       elementDetails = elementDetails,

@@ -235,6 +235,8 @@ fun loadGltf(vertexSchemas: VertexSchemas, resourcePath: String): AdvancedModel 
   val directoryPath = resourcePath.split("/").dropLast(1).joinToString("/")
   val buffer = loadGltfByteBuffer(directoryPath, info)
   val vertexSchema = vertexSchemas.imported
+  if (resourcePath == "models/cube")
+    logBuffer(buffer, info)
 
   val result = info.meshes.flatMap { mesh -> mesh.primitives.map { Pair(it, mesh.name) } }.map { pair ->
     val (primitive, name) = pair

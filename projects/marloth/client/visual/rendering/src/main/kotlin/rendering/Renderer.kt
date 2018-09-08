@@ -128,7 +128,7 @@ class Renderer(config: DisplayConfig) {
   val multisampler: Multisampler?
   val fonts = loadFonts(listOf(
       FontLoadInfo(
-          filename = "cour.ttf",
+          filename = "fonts/cour.ttf",
           pixelHeight = 16
       )
   ))

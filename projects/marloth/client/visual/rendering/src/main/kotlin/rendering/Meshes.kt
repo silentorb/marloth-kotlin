@@ -72,7 +72,7 @@ fun importedMeshes(vertexSchemas: VertexSchemas) = mapOf(
 //    MeshType.child to "girl2/child"
 //    MeshType.child to "child/child"
 )
-    .mapValues { loadGltf(vertexSchemas, "models/" + it.value) }
+    .mapValues { loadGltf(vertexSchemas, "models/" + it.value + "/" + it.value) }
 
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
     MeshType.line to createLineMesh(vertexSchemas.flat),
