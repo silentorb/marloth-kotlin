@@ -13,8 +13,9 @@ requires 'platforming', 'spatial', 'scenery', 'sculpting', 'glowing', 'typograph
 apply plugin: 'java'
 
 class ModelAssetsTask extends DefaultTask {
-  @InputDirectory
-  def File inputDir
+
+  @InputFiles
+  def Set<File> inputFiles
 
 //  @OutputDirectory
 //  def File outputDir
@@ -64,7 +65,7 @@ class ModelAssetsTask extends DefaultTask {
 }
 
 task modelAssets(type: ModelAssetsTask) {
-  inputDir = file('blend/models')
+  inputFiles = fileTree('blend/models').matching { include '**/*.blend'}.getFiles()
   _projectDir = projectDir
 //  outputDir = file("$buildDir/outputs")
 //  inputProperty = project.properties['taskInputProperty'] ?: 'original'

@@ -18,6 +18,7 @@ enum class MeshType {
   humanOld,
   line,
   monster,
+  prisonDoor,
   skeleton,
   skybox,
   sphere,
@@ -38,7 +39,7 @@ fun standardMeshes(): ModelGeneratorMap = mapOf(
 //    MeshType.humanOld to createHumanOld,
 //    MeshType.monster to createCartoonHuman
 //    MeshType.wallLamp to createWallLamp
-    )
+)
 
 fun skeletonMesh(vertexSchemas: VertexSchemas): AdvancedModelGenerator = {
   val bones = createSkeleton()
@@ -68,7 +69,9 @@ fun advancedMeshes(vertexSchemas: VertexSchemas): AdvancedModelGeneratorMap {
 
 fun importedMeshes(vertexSchemas: VertexSchemas) = mapOf(
     MeshType.wallLamp to "lamp",
+    MeshType.prisonDoor to "prison_door",
     MeshType.cube to "cube"
+
 //    MeshType.child to "girl2/child"
 //    MeshType.child to "child/child"
 )
