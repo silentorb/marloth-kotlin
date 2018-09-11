@@ -1,10 +1,19 @@
 package rendering
 
+import getResourceUrl
 import marloth.texture_generation.*
 import mythic.glowing.Texture
 import mythic.glowing.TextureAttributes
+import mythic.glowing.loadImageBuffer
 import mythic.spatial.Vector3
+import scanTextureResources
 import scenery.Textures
+import java.nio.file.Files
+import java.util.stream.Stream
+import java.nio.file.Paths
+import java.nio.file.FileSystems
+import java.util.*
+
 
 fun mix(first: OpaqueTextureAlgorithm, firstPercentage: Float, second: OpaqueTextureAlgorithm) = { x: Float, y: Float ->
   first(x, y) * firstPercentage + second(x, y) * (1 - firstPercentage)
@@ -45,6 +54,7 @@ fun grayNoise(scales: List<Float>): OpaqueTextureAlgorithm {
 }
 
 typealias TextureLibrary = Map<Textures, Texture>
+typealias DynamicTextureLibrary = Map<String, Texture>
 typealias OpaqueTextureAlgorithmSource = () -> OpaqueTextureAlgorithm
 typealias TextureGenerator = (scale: Float) -> Texture
 typealias TextureGeneratorMap = Map<Textures, TextureGenerator>
@@ -52,7 +62,6 @@ typealias TextureGeneratorMap = Map<Textures, TextureGenerator>
 fun basicTextures(): Map<Textures, OpaqueTextureAlgorithmSource> = mapOf(
 
     Textures.checkers to createCheckers(),
-
     Textures.darkCheckers to createDarkCheckers(),
     Textures.debugCyan to { solidColor(Vector3(0f, 1f, 1f)) },
     Textures.debugMagenta to { solidColor(Vector3(1f, 0f, 1f)) },
@@ -71,6 +80,11 @@ fun applyAlgorithm(algorithm: OpaqueTextureAlgorithm, length: Int, attributes: T
   val scaledLength = (length * scale).toInt()
   val buffer = createTextureBuffer(algorithm, scaledLength, scaledLength)
   Texture(scaledLength, scaledLength, attributes, buffer)
+}
+
+fun loadTextureFromFile(path: String, attributes: TextureAttributes): Texture {
+  val (buffer, dimensions) = loadImageBuffer(getResourceUrl(path))
+  return Texture(dimensions.x, dimensions.y, attributes, buffer)
 }
 
 private fun miscTextureGenerators(): TextureGeneratorMap = mapOf(
@@ -92,6 +106,22 @@ private fun basicTextureGenerators(): TextureGeneratorMap = basicTextures().mapV
 
 fun textureGenerators(): TextureGeneratorMap =
     basicTextureGenerators()
-    .plus(miscTextureGenerators())
+        .plus(miscTextureGenerators())
 
-fun createTextureLibrary(scale: Float) = textureGenerators().mapValues { it.value(scale) }
+
+fun createTextureLibrary(scale: Float) =
+    textureGenerators().mapValues { it.value(scale) }
+//        .plus(mapOf(
+//            Textures.woodDoor to "models/prison_door/prison_door_wood.jpg"
+//        )
+//            .mapValues { loadTextureFromFile(it.value, TextureAttributes(repeating = true, mipmap = true)) }
+//        )
+
+fun createTextureLibrary2() =
+    scanTextureResources()
+        .associate {
+          Pair(
+              Paths.get(it).fileName.toString(),
+              loadTextureFromFile(it, TextureAttributes(repeating = true, mipmap = true))
+          )
+        }

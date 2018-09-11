@@ -28,7 +28,7 @@ fun advancedPainter(mesh: AdvancedModel, renderer: Renderer, element: MeshElemen
         glow = material.glow,
         normalTransform = orientationTransform,
         color = material.color,
-        texture = renderer.textures[Textures.checkers]!!,
+        texture = renderer.mappedTextures[Textures.checkers]!!,
         boneBuffer = boneBuffer
     )
     effects.textured.activate(shaderConfig)
@@ -39,7 +39,7 @@ fun advancedPainter(mesh: AdvancedModel, renderer: Renderer, element: MeshElemen
   }
 }
 
-fun simplePainter(elements: Primitives, element: MeshElement, effects: Shaders) {
+fun simplePainter(elements: Primitives, element: MeshElement, effects: Shaders, textures: DynamicTextureLibrary) {
   val orientationTransform = getRotationMatrix(element.transform)
   for (e in elements) {
     val material = e.material
@@ -47,7 +47,8 @@ fun simplePainter(elements: Primitives, element: MeshElement, effects: Shaders) 
         element.transform,
         color = material.color,
         glow = material.glow,
-        normalTransform = orientationTransform
+        normalTransform = orientationTransform,
+        texture = textures[material.texture]
     ))
     e.mesh.draw(DrawMethod.triangleFan)
   }

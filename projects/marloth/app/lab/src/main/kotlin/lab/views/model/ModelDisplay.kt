@@ -19,6 +19,7 @@ import rendering.meshes.modelToMeshes
 import scenery.Camera
 import scenery.ProjectionType
 import scenery.Scene
+import scenery.Textures
 
 fun createOrthographicCamera(camera: ViewCameraConfig): Camera {
   val orientation = Quaternion()
@@ -53,11 +54,16 @@ fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, trans
     else
       faceColor
 
+    val texture = sceneRenderer.renderer.textures[section.material.texture]
     val shaderConfig = ObjectShaderConfig(
         transform = transform,
-        color = color
+        color = color,
+        texture = texture
     )
-    sceneRenderer.effects.flat.activate(shaderConfig)
+    if (texture != null)
+      sceneRenderer.effects.texturedFlat.activate(shaderConfig)
+    else
+      sceneRenderer.effects.flat.activate(shaderConfig)
   }
 
   mesh.draw(DrawMethod.triangleFan)

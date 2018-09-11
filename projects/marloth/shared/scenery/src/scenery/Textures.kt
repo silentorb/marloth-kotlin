@@ -9,5 +9,6 @@ enum class Textures {
   debugCyan,
   debugMagenta,
   grass,
-  ground
+  ground,
+  woodDoor
 }

@@ -3,7 +3,6 @@ package lab
 import rendering.*
 import java.io.File
 import java.net.URI
-import java.util.*
 
 enum class WatchedPackage {
   rendering
@@ -57,11 +56,11 @@ fun checkForChangedPackages(): List<WatchedPackage> =
     }
 
 fun reloadTextures(renderer: Renderer) {
-  for (texture in renderer.textures) {
+  for (texture in renderer.mappedTextures) {
     texture.value.dispose()
   }
 
-  renderer.textures = createTextureLibrary(defaultTextureScale)
+  renderer.mappedTextures = createTextureLibrary(defaultTextureScale)
 }
 
 fun reloadMeshes(renderer: Renderer){

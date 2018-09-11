@@ -8,47 +8,9 @@ import mythic.spatial.Vector3
 import org.lwjgl.BufferUtils
 import rendering.*
 import rendering.meshes.*
-import java.io.DataInputStream
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
-
-fun loadGltfByteBuffer(directoryPath: String, info: GltfInfo): ByteBuffer {
-  val inputStream = loadBinaryResource(directoryPath + "/" + info.buffers[0].uri)
-  val dataStream = DataInputStream(inputStream)
-  val buffer = BufferUtils.createByteBuffer(info.buffers[0].byteLength)
-  dataStream.use {
-    while (dataStream.available() > 0) {
-      buffer.put(dataStream.readByte())
-    }
-  }
-
-  return buffer
-}
-
-typealias BufferIterator = (ByteBuffer, Int, (Int) -> Unit) -> Unit
-
-val iterateBytes = { buffer: ByteBuffer, count: Int, action: (Int) -> Unit ->
-  for (i in 0 until count) {
-    val value = buffer.get().toInt() // and 0xFF
-    action(value)
-  }
-}
-
-val iterateShorts = { buffer: ByteBuffer, count: Int, action: (Int) -> Unit ->
-  val intBuffer = buffer.asShortBuffer()
-  for (i in 0 until count) {
-    val value = intBuffer.get().toInt()// and 0xFF
-    action(value)
-  }
-}
-
-fun selectBufferIterator(componentType: Int): BufferIterator =
-    when (componentType) {
-      ComponentType.UnsignedByte.value -> iterateBytes
-      ComponentType.UnsignedShort.value -> iterateShorts
-      else -> throw Error("Not implemented.")
-    }
 
 fun loadIndices(buffer: ByteBuffer, info: GltfInfo, primitive: Primitive): IntBuffer {
   val indexAccessor = info.accessors[primitive.indices]
@@ -66,23 +28,28 @@ fun loadIndices(buffer: ByteBuffer, info: GltfInfo, primitive: Primitive): IntBu
 fun loadVertices(buffer: ByteBuffer, info: GltfInfo, vertexSchema: VertexSchema, primitive: Primitive): FloatBuffer {
   val vertexAccessor = info.accessors[primitive.attributes[AttributeType.POSITION]!!]
   val vertexCount = vertexAccessor.count
-  val vertices = BufferUtils.createFloatBuffer(3 * 2 * vertexCount)
-  for (attribute in primitive.attributes) {
-    val attributeAccessor = info.accessors[attribute.value]
-    val bufferView = info.bufferViews[attributeAccessor.bufferView]
-    buffer.position(bufferView.byteOffset)
-    val mappedAttribute = attributeMap[attribute.key]
-    if (mappedAttribute == null)
-      continue
+  val vertices = BufferUtils.createFloatBuffer(vertexSchema.floatSize * vertexCount)
 
-    val vertexAttribute = vertexSchema.getAttribute(mappedAttribute)
-    for (i in 0 until vertexCount) {
+  val attributes = vertexSchema.attributes.map { attribute ->
+    val mappedAttribute = attributeMap2[attribute.name]
+    if (mappedAttribute == null)
+      throw Error("Missing attribute map for " + attribute.name)
+
+    val attributeAccessorIndex = primitive.attributes [mappedAttribute]!!
+    val attributeAccessor = info.accessors[attributeAccessorIndex]
+    val bufferView = info.bufferViews[attributeAccessor.bufferView]
+    Triple(attributeAccessor, bufferView, attribute.size)
+  }
+
+  for (i in 0 until vertexCount) {
 //      val slice = buffer.slice().asFloatBuffer()
 //      slice.limit(3)
 //      buffer.position(buffer.position() + 4 * 3)
-      vertices.position(vertexAttribute.offset + i * vertexSchema.floatSize)
+    for ((attributeAccessor, bufferView, componentCount) in attributes) {
+      buffer.position(bufferView.byteOffset + attributeAccessor.byteOffset + i * bufferView.byteStride)
+//      vertices.position(attribute.offset + i * vertexSchema.floatSize)
 //      vertices.put(slice)
-      for (x in 0 until 3) {
+      for (x in 0 until componentCount) {
         val value = buffer.getFloat()
         vertices.put(value)
       }
@@ -92,7 +59,12 @@ fun loadVertices(buffer: ByteBuffer, info: GltfInfo, vertexSchema: VertexSchema,
 }
 
 fun loadPrimitive(primitive: Primitive, name: String, buffer: ByteBuffer, info: GltfInfo,
-                  vertexSchema: VertexSchema): rendering.meshes.Primitive {
+                  vertexSchemas: VertexSchemas): rendering.meshes.Primitive {
+  val vertexSchema = if (primitive.attributes.size == 2)
+    vertexSchemas.imported
+  else
+    vertexSchemas.textured
+
   val vertices = loadVertices(buffer, info, vertexSchema, primitive)
   val indices = loadIndices(buffer, info, primitive)
 
@@ -100,17 +72,26 @@ fun loadPrimitive(primitive: Primitive, name: String, buffer: ByteBuffer, info: 
   indices.position(0)
 
   val materialSource = info.materials[primitive.material]
-  val color = materialSource.pbrMetallicRoughness.baseColorFactor // arrayToVector4()
+  val details = materialSource.pbrMetallicRoughness
+  val color = details.baseColorFactor // arrayToVector4()
   val glow = if (materialSource.emissiveFactor != null && materialSource.emissiveFactor.first() != 0f)
     color.x / materialSource.emissiveFactor.first()
   else
     0f
 
+  val texture = if (details.baseColorTexture == null) {
+    null
+  } else {
+    val gltfTexture = info.textures!![details.baseColorTexture.index]
+    val gltfImage = info.images!![gltfTexture.source]
+    gltfImage.uri
+  }
   return Primitive(
       mesh = SimpleTriangleMesh(vertexSchema, vertices, indices),
       material = Material(
           color = color,
-          glow = glow
+          glow = glow,
+          texture = texture
       ),
       name = name
   )
@@ -234,13 +215,10 @@ fun loadGltf(vertexSchemas: VertexSchemas, resourcePath: String): AdvancedModel 
   val info = loadJsonResource<GltfInfo>(resourcePath + ".gltf")
   val directoryPath = resourcePath.split("/").dropLast(1).joinToString("/")
   val buffer = loadGltfByteBuffer(directoryPath, info)
-  val vertexSchema = vertexSchemas.imported
-  if (resourcePath == "models/cube")
-    logBuffer(buffer, info)
 
   val result = info.meshes.flatMap { mesh -> mesh.primitives.map { Pair(it, mesh.name) } }.map { pair ->
     val (primitive, name) = pair
-    loadPrimitive(primitive, name.replace(".001", ""), buffer, info, vertexSchema)
+    loadPrimitive(primitive, name.replace(".001", ""), buffer, info, vertexSchemas)
   }
 
   val armature = loadArmature(info)

@@ -19,7 +19,7 @@ data class TextureViewConfig(
 
 fun drawTextureView(renderer: Renderer, config: TextureViewConfig, bounds: Bounds, canvas: Canvas) {
 //  val texture = textureGenerators[config.texture]!!(1f)
-  val texture = renderer.textures[config.texture]!!
+  val texture = renderer.mappedTextures[config.texture]!!
   val length = Math.min(bounds.dimensions.x, bounds.dimensions.y)
   val repeat = 2f
   canvas.drawDynamicImage(bounds.position, Vector2(length, length), canvas.image(texture), listOf(
@@ -65,7 +65,7 @@ class TextureView {
     val boxes = panelBounds.drop(1)
         .zip(listOf(middle), { b, p -> p(b) })
 
-    val left = drawLeftPanel(renderer.textures.keys.toList(), config, panelBounds[0])
+    val left = drawLeftPanel(renderer.mappedTextures.keys.toList(), config, panelBounds[0])
     val (leftBoxes, leftClickBoxes) = left
 
     return TextureViewLayout(
@@ -77,7 +77,7 @@ class TextureView {
 }
 
 fun onListItemSelection(event: SelectionEvent, config: TextureViewConfig, renderer: Renderer) {
-  config.texture = renderer.textures.keys.toList()[event.itemIndex]
+  config.texture = renderer.mappedTextures.keys.toList()[event.itemIndex]
 }
 
 fun updateTextureState(layout: TextureViewLayout, input: LabCommandState, config: TextureViewConfig, renderer: Renderer) {

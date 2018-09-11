@@ -3,9 +3,7 @@ package rendering
 import mythic.drawing.getStaticCanvasDependencies
 import mythic.glowing.DrawMethod
 import mythic.glowing.activateTextures
-import mythic.glowing.applyOffscreenBuffer
 import mythic.glowing.globalState
-import mythic.platforming.WindowInfo
 import mythic.spatial.Matrix
 import mythic.spatial.Vector4
 import org.joml.Vector2i
@@ -39,7 +37,7 @@ class GameSceneRenderer(
     glow.operations.clearScreen()
   }
 
-  fun finishRender(dimensions:Vector2i) {
+  fun finishRender(dimensions: Vector2i) {
     val offscreenBuffer = renderer.renderer.offscreenBuffer
 //    applyOffscreenBuffer(offscreenBuffer, dimensions, true)
     globalState.cullFaces = false
@@ -63,10 +61,10 @@ class GameSceneRenderer(
     val childDetails = scene.elementDetails.children[element.id]
     val mesh = renderer.meshes[element.mesh]!!
     if (childDetails != null) {
-      advancedPainter(mesh, renderer.renderer,element, renderer.effects)
+      advancedPainter(mesh, renderer.renderer, element, renderer.effects)
 //      humanPainter(renderer, mesh.primitives)(element, renderer.effects, childDetails)
     } else {
-      simplePainter(mesh.primitives,element, renderer.effects)
+      simplePainter(mesh.primitives, element, renderer.effects, renderer.renderer.textures)
     }
   }
 
@@ -79,7 +77,7 @@ class GameSceneRenderer(
   fun renderSectorMesh(sector: SectorMesh) {
     var index = 0
     for (textureId in sector.textureIndex) {
-      val texture = renderer.renderer.textures[textureId]!!
+      val texture = renderer.renderer.mappedTextures[textureId]!!
       texture.activate()
       sector.mesh.drawElement(DrawMethod.triangleFan, index++)
     }
@@ -91,7 +89,7 @@ class GameSceneRenderer(
     if (worldMesh != null) {
       val effectConfig = ObjectShaderConfig(
           transform = Matrix(),
-          texture = renderer.renderer.textures[Textures.checkers]!!,
+          texture = renderer.renderer.mappedTextures[Textures.checkers]!!,
           color = Vector4(1f),
           normalTransform = Matrix()
       )

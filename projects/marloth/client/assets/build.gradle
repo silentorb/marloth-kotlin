@@ -1,0 +1,63 @@
+import groovy.json.JsonSlurper
+
+apply from: "$rootProject.projectDir/build_kotlin.gradle"
+
+dependencies {
+//    compile "org.lwjgl:lwjgl:${lwjglVersion}"
+//    compile "org.lwjgl:lwjgl:${lwjglVersion}:$lwjglNatives"
+//    compile "org.lwjgl:lwjgl-glfw:$lwjglVersion"
+//    compile "org.lwjgl:lwjgl-glfw:$lwjglVersion:$lwjglNatives"
+}
+
+class ModelAssetsTask extends DefaultTask {
+
+  @InputFiles
+  def Set<File> inputFiles
+
+  @Input
+  def File _projectDir
+
+  private Object _blendConfig
+
+  def getBlendConfig() {
+    if (_blendConfig)
+      return _blendConfig
+
+    def configFile = new File("$_projectDir/blend/config/config.json")
+    _blendConfig = new JsonSlurper().parseText(configFile.text)
+    return _blendConfig
+  }
+
+  @TaskAction
+  void execute(IncrementalTaskInputs inputs) {
+    println inputs.incremental ? 'CHANGED inputs considered out of date'
+        : 'ALL inputs considered out of date'
+//    if (!inputs.incremental)
+//      project.delete(outputDir.listFiles())
+
+    def blendConfig = getBlendConfig()
+    def blenderPath = blendConfig.paths.blender_executable
+    inputs.outOfDate { change ->
+      println "out of date: ${change.file.name}"
+      def scriptPath = "$_projectDir/blend/scripts/export.py"
+      def proc = [blenderPath, change.file.absolutePath, '--background', '--python', scriptPath].execute()
+      def sout = new StringBuilder(), serr = new StringBuilder()
+      proc.consumeProcessOutput(sout, serr)
+      proc.waitFor()
+      println "out> $sout err> $serr"
+    }
+
+    inputs.removed { change ->
+      println "removed: ${change.file.name}"
+    }
+  }
+}
+
+task modelAssets(type: ModelAssetsTask) {
+  inputFiles = fileTree("$projectDir/blend/models").matching { include '**/*.blend'}.getFiles()
+  _projectDir = projectDir
+}
+
+processResources {
+  dependsOn modelAssets
+}

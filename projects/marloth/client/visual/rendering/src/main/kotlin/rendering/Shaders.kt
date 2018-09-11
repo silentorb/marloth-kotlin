@@ -1,7 +1,7 @@
 package rendering
 
+import loadTextResource
 import mythic.breeze.Bones
-import mythic.drawing.positionTranslation
 import mythic.glowing.*
 import mythic.spatial.Matrix
 import mythic.spatial.Vector2
@@ -9,18 +9,9 @@ import mythic.spatial.Vector4
 import org.lwjgl.opengl.GL20.glGetUniformLocation
 import org.lwjgl.opengl.GL20.glUniform1i
 import randomly.Dice
-import java.lang.Math.abs
 import java.util.*
 
-private fun loadBinaryResource(name: String): String {
-  val classloader = Thread.currentThread().contextClassLoader
-  val inputStream = classloader.getResourceAsStream(name)
-  val s = Scanner(inputStream).useDelimiter("\\A")
-  val result = if (s.hasNext()) s.next() else ""
-  return result
-}
-
-private val lighting = loadBinaryResource("shaders/lighting.glsl")
+private val lighting = loadTextResource("shaders/lighting.glsl")
 
 private val sceneHeader = """
 struct Scene {
@@ -180,7 +171,7 @@ fun insertTemplates(source: String, replacements: Map<String, String>): String {
   return result
 }
 
-private val mainVertex = sceneHeader + loadBinaryResource("shaders/mainVertex.glsl")
+private val mainVertex = sceneHeader + loadTextResource("shaders/mainVertex.glsl")
 
 private fun addWeightShading(source: String) = insertTemplates(source, mapOf(
     "weightHeader" to weightHeader,

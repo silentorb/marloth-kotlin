@@ -8,69 +8,7 @@ dependencies {
   compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.21'
 }
 
-requires 'platforming', 'spatial', 'scenery', 'sculpting', 'glowing', 'typography', 'drawing', 'texture_generation', 'breeze', 'rigging', 'randomly'
+requires('assets', 'platforming', 'spatial', 'scenery', 'sculpting', 'glowing', 'typography', 'drawing',
+    'texture_generation', 'breeze', 'rigging', 'randomly')
 
 apply plugin: 'java'
-
-class ModelAssetsTask extends DefaultTask {
-
-  @InputFiles
-  def Set<File> inputFiles
-
-//  @OutputDirectory
-//  def File outputDir
-
-//  @Input
-//  def inputProperty
-
-  @Input
-  def File _projectDir
-
-  private Object _blendConfig
-
-  def getBlendConfig() {
-    if (_blendConfig)
-      return _blendConfig
-
-    def configFile = new File("$_projectDir/blend/config/config.json")
-    _blendConfig = new JsonSlurper().parseText(configFile.text)
-    return _blendConfig
-  }
-
-  @TaskAction
-  void execute(IncrementalTaskInputs inputs) {
-    println inputs.incremental ? 'CHANGED inputs considered out of date'
-        : 'ALL inputs considered out of date'
-//    if (!inputs.incremental)
-//      project.delete(outputDir.listFiles())
-
-    def blendConfig = getBlendConfig()
-    def blenderPath = blendConfig.paths.blender_executable
-    inputs.outOfDate { change ->
-      println "out of date: ${change.file.name}"
-      def scriptPath = "$_projectDir/blend/scripts/export.py"
-      def proc = [blenderPath, change.file.absolutePath, '--background', '--python', scriptPath].execute()
-      def sout = new StringBuilder(), serr = new StringBuilder()
-      proc.consumeProcessOutput(sout, serr)
-      proc.waitFor()
-      println "out> $sout err> $serr"
-    }
-
-    inputs.removed { change ->
-      println "removed: ${change.file.name}"
-//      def targetFile = new File(outputDir, change.file.name)
-//      targetFile.delete()
-    }
-  }
-}
-
-task modelAssets(type: ModelAssetsTask) {
-  inputFiles = fileTree('blend/models').matching { include '**/*.blend'}.getFiles()
-  _projectDir = projectDir
-//  outputDir = file("$buildDir/outputs")
-//  inputProperty = project.properties['taskInputProperty'] ?: 'original'
-}
-
-processResources {
-  dependsOn modelAssets
-}

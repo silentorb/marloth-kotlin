@@ -45,11 +45,19 @@ enum class AttributeType {
 
 val attributeMap = mapOf(
     AttributeType.NORMAL to AttributeName.normal,
-    AttributeType.POSITION to AttributeName.position
+    AttributeType.POSITION to AttributeName.position,
+    AttributeType.TEXCOORD_0 to AttributeName.uv
+)
+
+val attributeMap2 = mapOf(
+    AttributeName.normal to AttributeType.NORMAL,
+    AttributeName.position to AttributeType.POSITION,
+    AttributeName.uv to AttributeType.TEXCOORD_0
 )
 
 data class Accessor(
     val bufferView: Int,
+    val byteOffset: Int,
     val componentType: Int,
     val count: Int,
     val type: AccessorType,
@@ -60,6 +68,7 @@ data class BufferView(
     val buffer: Int,
     val byteLength: Int,
     val byteOffset: Int,
+    val byteStride: Int,
     val target: Int,
     val name: String?
 )
@@ -87,21 +96,27 @@ data class MeshInfo2(
     val name: String
 )
 
-data class Metallic(
-    val baseColorFactor: Vector4,
-    val metallicFactor: Float
+data class TextureReference(
+    val index: Int
 )
 
-//class Metallic(
-//    val metallicFactor: Float
-//) {
-////  @JsonDeserialize(using = Vector4Deserializer::class)
-//  val baseColorFactor: Vector4 = Vector4()
-//}
+data class Metallic(
+    val baseColorFactor: Vector4,
+    val metallicFactor: Float,
+    val baseColorTexture: TextureReference?
+)
 
 data class MaterialInfo(
     val pbrMetallicRoughness: Metallic,
     val emissiveFactor: List<Float>?
+)
+
+data class Image(
+    val uri: String
+)
+
+data class Texture(
+    val source: Int
 )
 
 data class Skin(
@@ -136,8 +151,10 @@ data class GltfInfo(
     val animations: List<IndexedAnimation>?,
     val bufferViews: List<BufferView>,
     val buffers: List<BufferInfo>,
+    val images: List<Image>?,
     val meshes: List<MeshInfo2>,
     val materials: List<MaterialInfo>,
     val nodes: List<IndexedNode>,
-    val skins: List<Skin>?
+    val skins: List<Skin>?,
+    val textures: List<Texture>?
 )

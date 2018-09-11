@@ -4,7 +4,6 @@ import haft.*
 import lab.LabCommandType
 import lab.LabConfig
 import lab.LabState
-import lab.views.shared.drawSkeleton
 import marloth.clienting.*
 import marloth.clienting.gui.*
 import mythic.bloom.Bounds
@@ -105,7 +104,7 @@ fun renderNormalScene(renderer: GameSceneRenderer, config: GameViewConfig) {
   renderer.renderElements()
 
   val r = renderer.renderer.renderer
-  renderSkyBox(r.textures, r.meshes, r.shaders)
+  renderSkyBox(r.mappedTextures, r.meshes, r.shaders)
   renderer.finishRender(renderer.renderer.viewport.zw)
   globalState.cullFaces = false
 }

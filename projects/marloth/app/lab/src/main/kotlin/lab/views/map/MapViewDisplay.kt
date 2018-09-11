@@ -73,7 +73,7 @@ fun renderMapMesh(renderer: SceneRenderer, world: Realm, config: MapViewConfig) 
       for (sector in worldMesh.sectors) {
         var index = 0
         for (texture in sector.textureIndex) {
-          renderer.effects.texturedFlat.activate(ObjectShaderConfig(texture = renderer.renderer.textures[texture]))
+          renderer.effects.texturedFlat.activate(ObjectShaderConfig(texture = renderer.renderer.mappedTextures[texture]))
           sector.mesh.drawElement(DrawMethod.triangleFan, index++)
         }
       }

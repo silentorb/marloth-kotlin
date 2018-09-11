@@ -123,7 +123,8 @@ class Renderer(config: DisplayConfig) {
   var worldMesh: WorldMesh? = null
   val meshGenerators = standardMeshes()
   var meshes: MeshMap = createMeshes(vertexSchemas)
-  var textures: TextureLibrary = createTextureLibrary(defaultTextureScale)
+  var mappedTextures: TextureLibrary = createTextureLibrary(defaultTextureScale)
+  val textures: DynamicTextureLibrary = createTextureLibrary2()
   val offscreenBuffer = prepareScreenFrameBuffer(config.width, config.height, true)
   val multisampler: Multisampler?
   val fonts = loadFonts(listOf(

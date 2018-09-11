@@ -10,7 +10,7 @@ fun renderScene(renderer: GameSceneRenderer) {
   renderer.renderElements()
 
   val r = renderer.renderer.renderer
-  renderSkyBox(r.textures, r.meshes, r.shaders)
+  renderSkyBox(r.mappedTextures, r.meshes, r.shaders)
   renderer.finishRender(renderer.renderer.viewport.zw)
   globalState.cullFaces = false
 }

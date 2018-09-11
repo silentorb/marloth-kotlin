@@ -85,7 +85,7 @@ fun prepareWorldMesh(node: Node, textures: TextureLibrary): List<TextureFace> {
 }
 
 fun convertSectorMesh(renderer: Renderer, node: Node): SectorMesh {
-  val texturedFaces = prepareWorldMesh(node, renderer.textures)
+  val texturedFaces = prepareWorldMesh(node, renderer.mappedTextures)
   val vertexInfo = texturedFaces.associate { Pair(it.face, it.vertexMap) }
   val serializer = texturedVertexSerializer(vertexInfo)
   return SectorMesh(

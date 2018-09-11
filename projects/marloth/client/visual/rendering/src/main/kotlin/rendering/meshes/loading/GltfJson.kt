@@ -9,24 +9,11 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import loadTextResource
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import java.io.IOException
-import java.io.InputStream
-import java.util.*
 
-fun loadBinaryResource(name: String): InputStream {
-  val classloader = Thread.currentThread().contextClassLoader
-  return classloader.getResourceAsStream(name)
-}
-
-fun loadTextResource(name: String): String {
-  val classloader = Thread.currentThread().contextClassLoader
-  val inputStream = classloader.getResourceAsStream(name)
-  val s = Scanner(inputStream).useDelimiter("\\A")
-  val result = if (s.hasNext()) s.next() else ""
-  return result
-}
 
 fun parseFloat(node: JsonNode): Float =
     (node.numberValue() as Double).toFloat()
