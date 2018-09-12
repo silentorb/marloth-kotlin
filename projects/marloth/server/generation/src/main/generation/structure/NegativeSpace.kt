@@ -217,14 +217,14 @@ fun addSpaceNode(realm: Realm, node: Node) {
       }
 }
 
-fun createSpaceNode(sectorCenter: Vector3m, realm: Realm, biome: Biome, dice: Dice): Node {
-  val isSolid = when(biome.enclosure){
-    Enclosure.all -> true
-    Enclosure.none -> false
-    Enclosure.some -> dice.getInt(0, 3) > 0
-  }
+fun createSpaceNode(sectorCenter: Vector3m, realm: Realm): Node {
+//  val isSolid = when(biome.enclosure){
+//    Enclosure.all -> true
+//    Enclosure.none -> false
+//    Enclosure.some -> dice.getInt(0, 3) > 0
+//  }
 
-  return createSecondaryNode(sectorCenter, realm, isSolid, biome)
+  return createSecondaryNode(sectorCenter, realm, true)
 }
 
 fun addSpaceNode(realm: Realm, originFace: FlexibleFace, dice: Dice) {
@@ -245,7 +245,7 @@ fun addSpaceNode(realm: Realm, originFace: FlexibleFace, dice: Dice) {
   val sectorCenter = getCenter(floorVertices)
   val flatCenter = sectorCenter.xy()
 
-  val node = createSpaceNode(sectorCenter, realm, getFaceInfo(originFace).firstNode!!.biome, dice)
+  val node = createSpaceNode(sectorCenter, realm)
   node.walls.addAll(walls)
   walls.forEach {
     val info = getFaceInfo(it)
@@ -261,7 +261,7 @@ fun addSpaceNode(realm: Realm, originFace: FlexibleFace, dice: Dice) {
 
   if (a != b) {
 //    assert(gapEdges.size == 2)
-    val d = walls.map { getFaceInfo(it).firstNode!!.index }
+    val d = walls.map { getFaceInfo(it).firstNode!!.id }
     val gapVertices = getNewWallVertices(sectorCenter, listOf(a, b))
     val newWall = realm.mesh.createStitchedFace(gapVertices)
     if (node.isSolid)
@@ -290,7 +290,7 @@ fun createBoundarySector(realm: Realm, originFace: FlexibleFace, dice: Dice) {
 //  val ceilingVertices = originalWall.lower.plus(newWall.lower)
   val sectorCenter = getCenter(floorVertices)
 
-  val node = createSpaceNode(sectorCenter, realm, getFaceInfo(originFace).firstNode!!.biome, dice)
+  val node = createSpaceNode(sectorCenter, realm)
 
 //  node.walls.addAll(walls)
 //  node.floors.add(floor)

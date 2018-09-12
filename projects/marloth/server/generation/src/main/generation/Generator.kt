@@ -3,6 +3,7 @@ package generation
 import generation.abstract.*
 import generation.abstract.Node
 import generation.abstract.Realm
+import generation.structure.assignTextures
 import generation.structure.doorwayLength
 import generation.structure.generateStructure
 import mythic.spatial.*
@@ -15,9 +16,9 @@ fun createRoomNode(realm: Realm, biomes: List<Biome>, dice: Dice): Node {
   val end = realm.boundary.end - radius
 
   val node = Node(
+      id = realm.nextId(),
       position = Vector3m(dice.getFloat(start.x, end.x), dice.getFloat(start.y, end.y), 0f),
       radius = radius,
-      biome = dice.getItem(biomes),
       isSolid = false,
       isWalkable = true
   )
@@ -52,16 +53,16 @@ fun generateAbstract(world: Realm, biomes: List<Biome>, dice: Dice, scale: Float
   val tunnels = createTunnelNodes(world, preTunnels.minus(twinTunnels))
   twinTunnels.forEach { world.graph.disconnect(it.connection) }
 
-  fillIndexes(world.graph)
+//  fillIndexes(world.graph)
   return tunnels
 }
 
-fun fillIndexes(graph: NodeGraph) {
-  var index = 0
-  for (node in graph.nodes) {
-    node.index = index++
-  }
-}
+//fun fillIndexes(graph: NodeGraph) {
+//  var index = 1L
+//  for (node in graph.nodes) {
+//    node.id = index++
+//  }
+//}
 
 fun calculateWorldScale(dimensions: Vector3) =
     (dimensions.x * dimensions.y) / (100 * 100)
@@ -72,15 +73,17 @@ fun generateWorld(input: WorldInput): World {
   val scale = calculateWorldScale(initialRealm.boundary.dimensions)
   val tunnels = generateAbstract(initialRealm, biomes, input.dice, scale)
   generateStructure(initialRealm, input.dice, tunnels)
+  val biomeMap = assignBiomes(initialRealm, biomes, input.dice)
+  assignTextures(biomeMap, initialRealm)
   val realm = simulation.Realm(
       boundary = initialRealm.boundary,
       nodes = initialRealm.nodes.map {
         simulation.Node(
-            id = it.index.toLong(),
+            id = it.id,
             position = Vector3(it.position),
             height = it.height,
             isWalkable = it.isWalkable,
-            biome = it.biome,
+            biome = biomeMap[it.id]!!,
             isSolid = it.isSolid,
             floors = it.floors.toList(),
             ceilings = it.ceilings.toList(),
@@ -92,13 +95,16 @@ fun generateWorld(input: WorldInput): World {
   val getNode = { id: Long? -> realm.nodes.firstOrNull { it.id == id } }
   realm.mesh.faces.forEach { face ->
     val data = generation.abstract.getFaceInfo(face)
-    face.data = simulation.FaceInfo(
+    assert(data.firstNode != data.secondNode)
+    val data2 = simulation.FaceInfo(
         type = data.type,
-        firstNode = getNode(data.firstNode?.index?.toLong()),
-        secondNode = getNode(data.secondNode?.index?.toLong()),
+        firstNode = getNode(data.firstNode?.id),
+        secondNode = getNode(data.secondNode?.id),
         texture = data.texture,
         debugInfo = data.debugInfo
     )
+    face.data = data2
+    assert(data2.firstNode != data2.secondNode)
   }
   return finalizeRealm(input, realm)
 }

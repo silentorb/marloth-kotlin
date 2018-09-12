@@ -2,7 +2,6 @@ package generation.abstract
 
 import generation.getCenter
 import mythic.spatial.Vector3m
-import simulation.*
 
 const val tunnelRadius = 1f
 
@@ -20,14 +19,14 @@ fun prepareTunnels(graph: NodeGraph): List<PreTunnel> =
               )
         }
 
-fun createTunnelNodes(world: Realm, preTunnels: List<PreTunnel>): List<Node> {
-  val graph = world.graph
+fun createTunnelNodes(realm: Realm, preTunnels: List<PreTunnel>): List<Node> {
+  val graph = realm.graph
   return preTunnels
       .map { preTunnel ->
         val oldConnection = preTunnel.connection
         val tunnelNode = Node(
+            id = realm.nextId(),
             position = getCenter(oldConnection.first, oldConnection.second),
-            biome = oldConnection.first.biome,
             radius = tunnelRadius,
             isSolid = false,
             isWalkable = true)

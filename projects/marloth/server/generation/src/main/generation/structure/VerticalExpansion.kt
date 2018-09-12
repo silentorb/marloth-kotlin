@@ -1,5 +1,6 @@
 package generation.structure
 
+import generation.BiomeMap
 import generation.abstract.*
 import mythic.sculpting.FlexibleFace
 import mythic.spatial.Vector3m
@@ -49,7 +50,7 @@ fun createVerticalNodes(realm: Realm, middleNodes: List<Node>, roomNodes: List<N
     val depth = wallHeight
     val offset = Vector3m(0f, 0f, depth * facing.dirMod)
 
-    val newNode = createSecondaryNode(node.position + offset, realm, isSolid = shouldBeSolid(node), biome = node.biome)
+    val newNode = createSecondaryNode(node.position + offset, realm, isSolid = shouldBeSolid(node))
     assert(facing.ceilings(node).any())
     for (ceiling in facing.ceilings(node)) {
       facing.floors(newNode).add(ceiling)
@@ -78,7 +79,7 @@ fun createAscendingSpaceWalls(realm: Realm, nodes: List<Node>, facing: VerticalF
     val info = getFaceInfo(upperWall)
     if (info.secondNode != null) {
       val node = if (info.firstNode!!.isWalkable)
-        info.firstNode!!
+        info.firstNode
       else
         info.secondNode!!
 
@@ -114,11 +115,13 @@ fun expandVertically(realm: Realm, roomNodes: List<Node>, dice: Dice) {
         else dice.getInt(0, 3) != 0
       },
       VerticalDirection.up to { node: Node ->
-        when (node.biome.enclosure) {
-          Enclosure.all -> dice.getInt(0, 4) != 0
-          Enclosure.none -> dice.getInt(0, 4) != 0
-          Enclosure.some -> dice.getInt(0, 4) != 0
-        }
+        dice.getInt(0, 4) != 0
+//        val biome = biomeMap[node.id]!!
+//        when (biome.enclosure) {
+//          Enclosure.all -> dice.getInt(0, 4) != 0
+//          Enclosure.none -> dice.getInt(0, 4) != 0
+//          Enclosure.some -> dice.getInt(0, 4) != 0
+//        }
 //        if (!node.biome.hasEnclosedRooms || (!roomNodes.contains(node) && !node.isSolid))
 //          false
 //        else dice.getInt(0, 4) != 0

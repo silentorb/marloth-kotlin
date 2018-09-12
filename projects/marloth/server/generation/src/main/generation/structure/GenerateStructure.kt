@@ -201,5 +201,4 @@ fun generateStructure(realm: Realm, dice: Dice, tunnels: List<Node>) {
   defineNegativeSpace(realm, dice)
   fillBoundary(realm, dice)
   expandVertically(realm, roomNodes, dice)
-  assignTextures(realm)
 }

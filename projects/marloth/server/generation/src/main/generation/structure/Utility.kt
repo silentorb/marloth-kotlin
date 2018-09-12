@@ -57,17 +57,16 @@ fun sortWallVertices(sectorCenter: Vector3m, vertices: Vertices): Vertices {
     sorted
 }
 
-fun createSecondaryNode(sectorCenter: Vector3m, realm: Realm, isSolid: Boolean, biome: Biome): Node {
+fun createSecondaryNode(sectorCenter: Vector3m, realm: Realm, isSolid: Boolean): Node {
   val radius = 1f
 
   val node = Node(
+      id = realm.nextId(),
       position = sectorCenter,
       radius = radius,
-      biome = biome,
       isSolid = isSolid,
       isWalkable = false
   )
-  node.index = realm.graph.nodes.size
   return node
 }
 

@@ -6,7 +6,6 @@ import mythic.spatial.Vector2
 import mythic.spatial.Vector3m
 import mythic.spatial.lineIntersectsCircle
 import org.joml.Intersectionf
-import simulation.*
 
 private val tunnelPadding = 0f
 
@@ -47,9 +46,6 @@ fun closeDeadEnd(node: Node, graph: NodeGraph) {
       .firstOrNull()
 
   if (nextAvailableNode != null) {
-    if (node.index == 5) {
-      val k = 0
-    }
     if (connectionOverlapsNeighborNodes(node.neighbors.filter { it != nextAvailableNode }.toList(), node, nextAvailableNode))
       return
 

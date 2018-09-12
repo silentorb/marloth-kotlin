@@ -25,7 +25,6 @@ val noisyCheckerPattern = { a: Vector3, b: Vector3 ->
   }
 }
 
-
 fun createCheckers() = {
   val black = Vector3(0.0f, 0.0f, 0.0f)
 //  val white = Vector3(0.0f, 1.0f, 1.0f)
@@ -89,8 +88,8 @@ fun loadTextureFromFile(path: String, attributes: TextureAttributes): Texture {
 
 private fun miscTextureGenerators(): TextureGeneratorMap = mapOf(
     Textures.background to applyAlgorithm(colorize(
-        Vector3(0.35f),
-        Vector3(0.55f),
+        Vector3(0.15f),
+        Vector3(0.25f),
         simpleNoise(listOf(12f, 37f))
     ), 512, TextureAttributes(repeating = false)),
     Textures.grass to applyAlgorithm(colorize(

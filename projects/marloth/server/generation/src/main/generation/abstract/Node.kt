@@ -4,9 +4,7 @@ import mythic.sculpting.FlexibleFace
 import mythic.sculpting.FlexibleMesh
 import mythic.spatial.Vector3m
 import scenery.Textures
-import simulation.Biome
-import simulation.FaceType
-import simulation.WorldBoundary
+import simulation.*
 
 enum class ConnectionType {
   tunnel,
@@ -31,9 +29,8 @@ class Node(
     var position: Vector3m,
     var radius: Float,
     val isSolid: Boolean,
-    val biome: Biome,
     val isWalkable: Boolean = false,
-    var index: Int = 0,
+    val id: Id,
     var height: Float = 4f
 ) {
   val connections: MutableList<Connection> = mutableListOf()
@@ -81,6 +78,7 @@ class NodeGraph {
 class Realm(val boundary: WorldBoundary) {
   val graph = NodeGraph()
   val mesh = FlexibleMesh()
+  val nextId = newIdSource(1)
 
   val nodes: MutableList<Node>
     get() = graph.nodes
