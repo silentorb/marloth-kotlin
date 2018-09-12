@@ -1,6 +1,8 @@
 package generation
 
 import generation.abstract.*
+import generation.abstract.Node
+import generation.abstract.Realm
 import generation.structure.doorwayLength
 import generation.structure.generateStructure
 import mythic.spatial.*
@@ -66,28 +68,39 @@ fun calculateWorldScale(dimensions: Vector3) =
 
 fun generateWorld(input: WorldInput): World {
   val biomes = createBiomes()
-  val realm = Realm(input.boundary)
-  val scale = calculateWorldScale(realm.boundary.dimensions)
-  val tunnels = generateAbstract(realm, biomes, input.dice, scale)
-  generateStructure(realm, input.dice, tunnels)
-  val playerNode = realm.nodes.first()
-  val nextId = newIdSource(1)
-  val deck = Deck(
-      factions = listOf(
-          Faction(1, "Misfits"),
-          Faction(2, "Monsters")
-      )
+  val initialRealm = Realm(input.boundary)
+  val scale = calculateWorldScale(initialRealm.boundary.dimensions)
+  val tunnels = generateAbstract(initialRealm, biomes, input.dice, scale)
+  generateStructure(initialRealm, input.dice, tunnels)
+  val realm = simulation.Realm(
+      boundary = initialRealm.boundary,
+      nodes = initialRealm.nodes.map {
+        simulation.Node(
+            id = it.index.toLong(),
+            position = Vector3(it.position),
+            height = it.height,
+            isWalkable = it.isWalkable,
+            biome = it.biome,
+            isSolid = it.isSolid,
+            floors = it.floors.toList(),
+            ceilings = it.ceilings.toList(),
+            walls = it.walls.toList()
+        )
+      },
+      mesh = initialRealm.mesh
   )
-      .plus(toDeck(newPlayer(nextId, playerNode)))
-      .plus(placeWallLamps(realm, nextId, input.dice, scale))
-//  instantiator.newPlayer(1)
-
-//  placeWallLamps(world, instantiator, input.dice, scale)
-
-  return World(
-      deck = deck,
-      nextId = nextId(),
-      realm = realm)
+  val getNode = { id: Long? -> realm.nodes.firstOrNull { it.id == id } }
+  realm.mesh.faces.forEach { face ->
+    val data = generation.abstract.getFaceInfo(face)
+    face.data = simulation.FaceInfo(
+        type = data.type,
+        firstNode = getNode(data.firstNode?.index?.toLong()),
+        secondNode = getNode(data.secondNode?.index?.toLong()),
+        texture = data.texture,
+        debugInfo = data.debugInfo
+    )
+  }
+  return finalizeRealm(input, realm)
 }
 
 fun generateDefaultWorld(): World {

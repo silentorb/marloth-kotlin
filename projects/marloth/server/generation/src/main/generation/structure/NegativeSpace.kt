@@ -1,10 +1,17 @@
 package generation.structure
 
+import generation.abstract.*
+import generation.abstract.FaceInfo
+import generation.abstract.Node
+import generation.abstract.Realm
 import mythic.sculpting.*
 import mythic.spatial.*
 import org.joml.plus
 import randomly.Dice
-import simulation.*
+import simulation.Biome
+import simulation.Enclosure
+import simulation.FaceType
+import simulation.getFloor
 
 fun <T> zeroIfNull(value: T?) =
     if (value == null)

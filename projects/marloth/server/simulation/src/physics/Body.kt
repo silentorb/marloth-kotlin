@@ -18,13 +18,15 @@ data class BodyAttributes(
 private const val voidNodeHeight = 10000f
 
 val voidNode: Node = Node(
-    index = -1,
-    position = Vector3m(0f, 0f, -voidNodeHeight),
+    id = -1,
+    position = Vector3(0f, 0f, -voidNodeHeight),
     height = voidNodeHeight,
-    radius = 0f,
     isSolid = false,
     isWalkable = false,
-    biome = Biome("void", floorTexture = Textures.none, enclosure = Enclosure.none)
+    biome = Biome("void", floorTexture = Textures.none, enclosure = Enclosure.none),
+    floors = listOf(),
+    ceilings = listOf(),
+    walls = listOf()
 )
 
 data class Body(

@@ -14,7 +14,7 @@ import simulation.*
 fun placeEnemy(realm: Realm, nextId: IdSource, dice: Dice): Hand {
   val node = dice.getItem(realm.locationNodes.drop(1))// Skip the node where the player starts
   val wall = dice.getItem(node.walls)
-  val position = getVector3Center(Vector3(node.position), Vector3(wall.edges[0].first))
+  val position = getVector3Center(node.position, Vector3(wall.edges[0].first))
   return newCharacter(
       nextId = nextId,
       faction = 2,
@@ -84,7 +84,7 @@ fun newPlayer(nextId: IdSource, playerNode: Node): Hand =
         nextId = nextId,
         faction = 1,
         definition = characterDefinitions.player,
-        position = Vector3(playerNode.position),
+        position = playerNode.position,
         node = playerNode,
         player = Player(
             playerId = 1,

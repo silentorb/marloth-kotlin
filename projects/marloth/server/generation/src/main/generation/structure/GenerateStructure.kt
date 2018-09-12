@@ -1,14 +1,12 @@
 package generation.structure
 
 import generation.*
-import generation.abstract.Cluster
-import generation.abstract.gatherClusters
-import generation.abstract.isInCluster
+import generation.abstract.*
 import mythic.sculpting.*
 import mythic.spatial.*
 import org.joml.plus
 import randomly.Dice
-import simulation.*
+import simulation.FaceType
 
 const val doorwayLength = 2.5f
 const val wallHeight = 4f

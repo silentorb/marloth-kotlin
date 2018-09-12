@@ -28,34 +28,6 @@ data class WorldInput(
     val dice: Dice
 )
 
-class NodeGraph {
-  val nodes: MutableList<Node> = mutableListOf()
-  val connections: MutableList<Connection> = mutableListOf()
-
-  fun connect(first: Node, second: Node, type: ConnectionType): Connection {
-    val connection = Connection(first, second, type)
-    connections.add(connection)
-    first.connections.add(connection)
-    second.connections.add(connection)
-    return connection
-  }
-
-  fun disconnect(connection: Connection) {
-    connection.first.connections.remove(connection)
-    connection.second.connections.remove(connection)
-    connections.remove(connection)
-  }
-
-  fun removeNode(node: Node) {
-    nodes.remove(node)
-    for (connection in node.connections) {
-      connection.getOther(node).connections.remove(connection)
-      connections.remove(connection)
-    }
-    node.connections.clear()
-  }
-}
-
 enum class FaceType {
   ceiling,
   floor,
@@ -92,19 +64,15 @@ val isSpace = { face: FlexibleFace -> getFaceInfo(face).type == FaceType.space }
 
 fun getNullableFaceInfo(face: FlexibleFace): FaceInfo? = face.data as FaceInfo?
 
-class Realm(val boundary: WorldBoundary) {
-  val graph = NodeGraph()
-  val mesh = FlexibleMesh()
+data class Realm(
+    val boundary: WorldBoundary,
+    val nodes: List<Node>,
+    val mesh: FlexibleMesh
+) {
 //  val faceMap: FaceSectorMap = mutableMapOf()
-
-  val nodes: MutableList<Node>
-    get() = graph.nodes
 
   val locationNodes: List<Node>
     get() = nodes.filter { it.isWalkable }
-
-  val connections: MutableList<Connection>
-    get() = graph.connections
 
   val floors: List<FlexibleFace>
     get() = nodes.flatMap { it.floors }.distinct()

@@ -71,7 +71,8 @@ fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Can
 
   val nodes = world.nodes.filter {it.position.z == 0f}
   for (node in nodes) {
-    val radius = node.radius * scale
+    val radius = 2f * scale
+//    val radius = node.radius * scale
     val position = getNodePosition(node)
     val circleBrush = if (node.isWalkable) solid else spaceSolid
     canvas.drawSolidCircle(position, radius, circleBrush)
@@ -81,21 +82,21 @@ fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Can
 //        style)
   }
 
-  for (connection in world.connections) {
-    val color = when (connection.type) {
-      ConnectionType.union -> Vector4(0.1f, 0f, 0f, 0.4f)
-      ConnectionType.obstacle -> Vector4(0f, 0.5f, 0f, 0.3f)
-      else -> Vector4(0f, 0.5f, 0f, 0.8f)
-    }
-
-    canvas.drawLine(getNodePosition(connection.first), getNodePosition(connection.second), color, 3f)
-  }
+//  for (connection in world.connections) {
+//    val color = when (connection.type) {
+//      ConnectionType.union -> Vector4(0.1f, 0f, 0f, 0.4f)
+//      ConnectionType.obstacle -> Vector4(0f, 0.5f, 0f, 0.3f)
+//      else -> Vector4(0f, 0.5f, 0f, 0.8f)
+//    }
+//
+//    canvas.drawLine(getNodePosition(connection.first), getNodePosition(connection.second), color, 3f)
+//  }
 
   for (node in nodes) {
 //    if (node.floors.any()) {
       val position = getNodePosition(node)
       // + " " + node.floors.first().unorderedVertices.size.toString()
-      canvas.drawText(node.index.toString(),
+      canvas.drawText(node.id.toString(),
           position,
           style)
 //    }

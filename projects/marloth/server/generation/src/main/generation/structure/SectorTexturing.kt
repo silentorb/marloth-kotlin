@@ -1,7 +1,11 @@
 package generation.structure
 
+import generation.abstract.FaceInfo
+import generation.abstract.Realm
+import generation.abstract.faceNodes
+import generation.abstract.getFaceInfo
 import scenery.Textures
-import simulation.*
+import simulation.FaceType
 
 fun determineFloorTexture(info: FaceInfo): Textures? {
   val first = info.firstNode!!

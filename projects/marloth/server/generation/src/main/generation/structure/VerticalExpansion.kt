@@ -1,11 +1,12 @@
 package generation.structure
 
+import generation.abstract.*
 import mythic.sculpting.FlexibleFace
 import mythic.spatial.Vector3m
 import org.joml.plus
 import randomly.Dice
-import simulation.*
-
+import simulation.Enclosure
+import simulation.FaceType
 
 enum class VerticalDirection {
   down,

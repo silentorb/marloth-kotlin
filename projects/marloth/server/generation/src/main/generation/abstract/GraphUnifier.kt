@@ -1,11 +1,6 @@
 package generation.abstract
 
-import generation.connectionOverlapsNeighborNodes
-import generation.getCenter
 import generation.getNodeDistance
-import simulation.ConnectionType
-import simulation.Node
-import simulation.NodeGraph
 
 typealias NodeGroup = List<Node>
 

@@ -1,12 +1,12 @@
 package generation
 
+import generation.abstract.Node
 import generation.abstract.tunnelRadius
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3m
 import mythic.spatial.lineIntersectsCircle
 import mythic.spatial.times
 import org.joml.plus
-import simulation.Node
 
 fun <T> divide(sequence: Sequence<T>, filter: (T) -> Boolean) =
     Pair(sequence.filter(filter), sequence.filter { !filter(it) })

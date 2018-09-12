@@ -1,9 +1,13 @@
 package generation.structure
 
+import generation.abstract.FaceInfo
+import generation.abstract.Node
+import generation.abstract.Realm
 import mythic.sculpting.*
 import mythic.spatial.*
 import org.joml.plus
-import simulation.*
+import simulation.Biome
+import simulation.FaceType
 
 data class WallVertices(
     val lower: Vertices,
