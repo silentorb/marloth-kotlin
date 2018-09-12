@@ -73,7 +73,7 @@ fun generateWorld(input: WorldInput): World {
   val scale = calculateWorldScale(initialRealm.boundary.dimensions)
   val tunnels = generateAbstract(initialRealm, biomes, input.dice, scale)
   generateStructure(initialRealm, input.dice, tunnels)
-  val biomeMap = assignBiomes(initialRealm, biomes, input.dice)
+  val biomeMap = assignBiomes(initialRealm, biomes, input)
   assignTextures(biomeMap, initialRealm)
   val realm = simulation.Realm(
       boundary = initialRealm.boundary,

@@ -298,6 +298,14 @@ fun sum(vertices: Collection<Vector3m>): Vector3m {
   return result / vertices.size.toFloat()
 }
 
+fun minMax(value: Int, min: Int, max: Int): Int =
+    if (value < min)
+      min
+    else if (value > max)
+      max
+    else
+      value
+
 fun minMax(value: Float, min: Float, max: Float): Float =
     if (value < min)
       min
