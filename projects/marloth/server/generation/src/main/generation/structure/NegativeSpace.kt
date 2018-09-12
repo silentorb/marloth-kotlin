@@ -211,10 +211,11 @@ fun addSpaceNode(realm: Realm, node: Node) {
 }
 
 fun createSpaceNode(sectorCenter: Vector3m, realm: Realm, biome: Biome, dice: Dice): Node {
-  val isSolid = if (biome.hasEnclosedRooms && dice.getInt(0, 3) > 0)
-    true
-  else
-    false
+  val isSolid = when(biome.enclosure){
+    Enclosure.all -> true
+    Enclosure.none -> false
+    Enclosure.some -> dice.getInt(0, 3) > 0
+  }
 
   return createSecondaryNode(sectorCenter, realm, isSolid, biome)
 }

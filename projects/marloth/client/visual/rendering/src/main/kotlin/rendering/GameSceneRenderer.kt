@@ -77,7 +77,7 @@ class GameSceneRenderer(
   fun renderSectorMesh(sector: SectorMesh) {
     var index = 0
     for (textureId in sector.textureIndex) {
-      val texture = renderer.renderer.mappedTextures[textureId]!!
+      val texture = renderer.renderer.mappedTextures[textureId] ?: renderer.renderer.textures[textureId.toString()]!!
       texture.activate()
       sector.mesh.drawElement(DrawMethod.triangleFan, index++)
     }

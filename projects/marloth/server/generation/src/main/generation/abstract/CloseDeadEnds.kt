@@ -58,7 +58,10 @@ fun closeDeadEnd(node: Node, graph: NodeGraph) {
   }
 }
 
+fun getDeadEnds(graph: NodeGraph) =
+    graph.nodes.filter { it.connections.size < 2 }
+
 fun closeDeadEnds(graph: NodeGraph) {
-  val deadEnds = graph.nodes.filter { it.connections.size < 2 }.asSequence()
-  for (node in deadEnds) closeDeadEnd(node, graph)
+  val deadEnds = getDeadEnds(graph).drop(2)
+  deadEnds.forEach { closeDeadEnd(it, graph) }
 }

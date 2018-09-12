@@ -1,17 +1,11 @@
 package generation
 
-import colliding.Sphere
 import generation.abstract.*
 import generation.structure.doorwayLength
 import generation.structure.generateStructure
-import intellect.Pursuit
-import intellect.Spirit
-import mythic.sculpting.FlexibleFace
 import mythic.spatial.*
-import physics.Body
 import randomly.Dice
 import simulation.*
-import simulation.changing.Instantiator
 
 fun createRoomNode(realm: Realm, biomes: List<Biome>, dice: Dice): Node {
   val radius = dice.getFloat(5f, 10f)
@@ -71,9 +65,10 @@ fun calculateWorldScale(dimensions: Vector3) =
     (dimensions.x * dimensions.y) / (100 * 100)
 
 fun generateWorld(input: WorldInput): World {
+  val biomes = createBiomes()
   val realm = Realm(input.boundary)
   val scale = calculateWorldScale(realm.boundary.dimensions)
-  val tunnels = generateAbstract(realm, input.biomes, input.dice, scale)
+  val tunnels = generateAbstract(realm, biomes, input.dice, scale)
   generateStructure(realm, input.dice, tunnels)
   val playerNode = realm.nodes.first()
   val nextId = newIdSource(1)
@@ -98,8 +93,7 @@ fun generateWorld(input: WorldInput): World {
 fun generateDefaultWorld(): World {
   val input = WorldInput(
       boundary = createWorldBoundary(50f),
-      dice = Dice(2),
-      biomes = createBiomes()
+      dice = Dice(2)
   )
   val world = generateWorld(input)
   return addEnemies(world, input.boundary, input.dice)

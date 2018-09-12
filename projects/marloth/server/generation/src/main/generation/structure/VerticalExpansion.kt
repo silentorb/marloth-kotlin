@@ -113,11 +113,15 @@ fun expandVertically(realm: Realm, roomNodes: List<Node>, dice: Dice) {
         else dice.getInt(0, 3) != 0
       },
       VerticalDirection.up to { node: Node ->
-        if (!node.biome.hasEnclosedRooms || (!roomNodes.contains(node) && !node.isSolid))
-          false
-        else dice.getInt(0, 4) != 0
-      }
-  )
+        when (node.biome.enclosure) {
+          Enclosure.all -> dice.getInt(0, 4) != 0
+          Enclosure.none -> dice.getInt(0, 4) != 0
+          Enclosure.some -> dice.getInt(0, 4) != 0
+        }
+//        if (!node.biome.hasEnclosedRooms || (!roomNodes.contains(node) && !node.isSolid))
+//          false
+//        else dice.getInt(0, 4) != 0
+      })
   listOf(VerticalFacingDown(), VerticalFacingUp())
       .forEach { facing ->
         createVerticalNodes(realm, middleNodes, roomNodes, dice, facing, shouldBeSolids[facing.dir]!!)

@@ -24,7 +24,7 @@ val voidNode: Node = Node(
     radius = 0f,
     isSolid = false,
     isWalkable = false,
-    biome = Biome("void", floorTexture = Textures.none)
+    biome = Biome("void", floorTexture = Textures.none, enclosure = Enclosure.none)
 )
 
 data class Body(
@@ -38,7 +38,7 @@ data class Body(
 //    val friction: Float,
     val node: Node,
     val perpetual: Boolean = false
-    ) : EntityLike {
+) : EntityLike {
 
   val radius: Float?
     get() = shape?.getRadiusOrNull()

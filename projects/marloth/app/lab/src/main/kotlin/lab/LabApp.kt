@@ -22,7 +22,6 @@ import mythic.quartz.DeltaTimer
 import randomly.Dice
 import simulation.*
 import simulation.changing.InstantiatorConfig
-import java.io.File
 import kotlin.concurrent.thread
 
 const val labConfigPath = "labConfig.yaml"
@@ -49,8 +48,7 @@ fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig, gameViewConfig:
   val dice = createDice(gameViewConfig)
   val world = generateWorld(WorldInput(
       boundary,
-      dice,
-      biomes
+      dice
   ))
 
   return if (gameViewConfig.haveEnemies)

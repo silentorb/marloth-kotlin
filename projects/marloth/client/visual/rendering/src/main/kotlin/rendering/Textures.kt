@@ -118,10 +118,11 @@ fun createTextureLibrary(scale: Float) =
 //        )
 
 fun createTextureLibrary2() =
-    scanTextureResources()
+    scanTextureResources("models")
+        .plus(scanTextureResources("textures"))
         .associate {
           Pair(
-              Paths.get(it).fileName.toString(),
+              Paths.get(it).fileName.toString().substringBeforeLast("."),
               loadTextureFromFile(it, TextureAttributes(repeating = true, mipmap = true))
           )
         }

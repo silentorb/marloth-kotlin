@@ -25,8 +25,7 @@ fun createWorldBoundary(length: Float): WorldBoundary {
 
 data class WorldInput(
     val boundary: WorldBoundary,
-    val dice: Dice,
-    val biomes: List<Biome>
+    val dice: Dice
 )
 
 class NodeGraph {
