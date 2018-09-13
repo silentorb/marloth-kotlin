@@ -19,6 +19,9 @@ data class Vector3(
 
   constructor(v: Vector2ic, z: Float) : this(v.x.toFloat(), v.y.toFloat(), z) {}
 
+  init {
+//    assert(!this.x.isNaN())
+  }
   override operator fun minus(v: Vector2fMinimal): Vector2 =
       Vector2f(x - v.x, y - v.y)
 

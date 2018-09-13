@@ -19,7 +19,7 @@ fun createRoomNode(boundary: WorldBoundary, id: Id, dice: Dice): Node {
 
   return Node(
       id = id,
-      position = Vector3m(dice.getFloat(start.x, end.x), dice.getFloat(start.y, end.y), 0f),
+      position = Vector3(dice.getFloat(start.x, end.x), dice.getFloat(start.y, end.y), 0f),
       radius = radius,
       isSolid = false,
       isWalkable = true
@@ -93,7 +93,7 @@ fun generateWorld(input: WorldInput): World {
       nodes = initialRealm.nodes.map {
         simulation.Node(
             id = it.id,
-            position = Vector3(it.position),
+            position = it.position,
             height = it.height,
             isWalkable = it.isWalkable,
             biome = biomeMap[it.id]!!,

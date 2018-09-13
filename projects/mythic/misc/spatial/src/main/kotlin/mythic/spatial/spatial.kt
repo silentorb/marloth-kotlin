@@ -74,7 +74,8 @@ fun ByteBuffer.putMatrix(value: Matrix) {
 const val Pi = PI.toFloat()
 const val Pi2 = Pi * 2f
 
-fun Vector2.toVector3() = Vector3m(x, y, 0f)
+fun Vector2.toVector3m() = Vector3m(x, y, 0f)
+fun Vector2.toVector3() = Vector3(x, y, 0f)
 
 data class BoundingBox(
     val start: Vector3m,
@@ -241,6 +242,9 @@ fun arrangePointsCounterClockwise2D(center: Vector2, vertices: Collection<Vector
     vertices.sortedBy { atan(it - center) }
 
 fun getCenter(points: Collection<Vector3m>): Vector3m =
+    points.reduce { a, b -> a + b } / points.size.toFloat()
+
+fun getCenter(points: Collection<Vector3>): Vector3 =
     points.reduce { a, b -> a + b } / points.size.toFloat()
 
 fun getCenter2D(points: Collection<Vector2>): Vector2 =

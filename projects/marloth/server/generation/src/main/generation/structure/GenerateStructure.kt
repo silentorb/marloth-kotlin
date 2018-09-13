@@ -11,11 +11,11 @@ import simulation.FaceType
 const val doorwayLength = 2.5f
 const val wallHeight = 4f
 
-typealias Corner = Vector3m
+typealias Corner = Vector3
 
 data class TempSector(val node: Node, val corners: List<Corner>)
 data class NodeCorner(val corner: Corner, val angle: Float) {
-  val position: Vector3m
+  val position: Vector3
     get() = corner
 }
 
@@ -30,13 +30,13 @@ fun getDoorwayPoints(node: Node, other: Node): List<Vector2> {
 
 fun createDoorway(node: Node, other: Node) =
     getDoorwayPoints(node, other)
-        .map { it.toVector3() }
+        .map { Vector3(it.x, it.y, 0f) }
 
 fun createVerticesForOverlappingCircles(node: Node, other: Node, others: List<Node>): List<Corner> =
     circleIntersection(node.position.xy(), node.radius, other.position.xy(), other.radius)
         // Only needed for tri-unions
 //        .filter { c -> !others.any { isInsideNodeHorizontally(c, it) } }
-        .map { it.toVector3() }
+        .map { Vector3(it.x, it.y, 0f) }
 
 fun createNodeDoorways(graph: Graph, node: Node) =
     node.connections(graph)
@@ -64,7 +64,7 @@ fun fillCornerGaps(unorderedCorners: List<Corner>, node: Node): List<Corner> {
     for (i in 1..count) {
       val angle = gap.first.angle + increment * i
       val position = project2D(angle, node.radius).toVector3() + node.position
-      newCorners.add(Corner(position))
+      newCorners.add(position)
     }
   }
 
@@ -138,8 +138,9 @@ fun generateTunnelStructure(graph: Graph, node: Node, nodeSectors: List<TempSect
 fun sinewFloorsAndCeilings(nodeSectors: List<TempSector>, mesh: FlexibleMesh) {
   return nodeSectors.forEach { sector ->
     val sectorCenter = getCenter(sector.corners).xy()
-    createFloor(mesh, sector.node, sector.corners, sectorCenter)
-    createCeiling(mesh, sector.node, sector.corners, sectorCenter)
+    val vertices = sector.corners.map { Vector3m(it) }
+    createFloor(mesh, sector.node, vertices, sectorCenter)
+    createCeiling(mesh, sector.node, vertices, sectorCenter)
   }
 }
 

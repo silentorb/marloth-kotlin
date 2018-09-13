@@ -2,6 +2,7 @@ package generation.abstract
 
 import mythic.sculpting.FlexibleFace
 import mythic.sculpting.FlexibleMesh
+import mythic.spatial.Vector3
 import mythic.spatial.Vector3m
 import scenery.Textures
 import simulation.*
@@ -18,6 +19,10 @@ class Connection(
     val second: Id,
     val type: ConnectionType
 ) {
+  init {
+    assert(first != second)
+  }
+
   fun contains(id: Id) = first == id || second == id
   fun contains(node: Node) = contains(node.id)
 
@@ -32,7 +37,7 @@ typealias Connections = List<Connection>
 
 class Node(
     override val id: Id,
-    val position: Vector3m,
+    val position: Vector3,
     val radius: Float,
     val isSolid: Boolean,
     val isWalkable: Boolean = false,

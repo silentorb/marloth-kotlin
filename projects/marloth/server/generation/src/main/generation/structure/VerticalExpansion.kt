@@ -3,6 +3,7 @@ package generation.structure
 import generation.BiomeMap
 import generation.abstract.*
 import mythic.sculpting.FlexibleFace
+import mythic.spatial.Vector3
 import mythic.spatial.Vector3m
 import org.joml.plus
 import randomly.Dice
@@ -47,7 +48,7 @@ fun createVerticalNodes(realm: Realm, middleNodes: List<Node>, roomNodes: List<N
                         facing: VerticalFacing, shouldBeSolid: (original: Node) -> Boolean): Graph {
   val newNodes = middleNodes.map { node ->
     val depth = wallHeight
-    val offset = Vector3m(0f, 0f, depth * facing.dirMod)
+    val offset = Vector3(0f, 0f, depth * facing.dirMod)
 
     val newNode = createSecondaryNode(node.position + offset, realm.nextId, isSolid = shouldBeSolid(node))
     assert(facing.ceilings(node).any())

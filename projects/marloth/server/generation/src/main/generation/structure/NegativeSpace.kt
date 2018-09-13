@@ -219,7 +219,7 @@ fun addSpaceNode(graph: Graph, node: Node): Graph {
   )
 }
 
-fun createSpaceNode(sectorCenter: Vector3m, nextId: IdSource): Node {
+fun createSpaceNode(sectorCenter: Vector3, nextId: IdSource): Node {
 //  val isSolid = when(biome.enclosure){
 //    Enclosure.all -> true
 //    Enclosure.none -> false
@@ -244,7 +244,7 @@ fun addSpaceNode(realm: Realm, originFace: FlexibleFace, dice: Dice): Graph {
 
   val floorVertices = edges.map { edge -> edge.vertices.sortedBy { it.z }.first() }
   val ceilingVertices = edges.map { edge -> edge.vertices.sortedBy { it.z }.last() }
-  val sectorCenter = getCenter(floorVertices)
+  val sectorCenter = Vector3(getCenter(floorVertices))
   val flatCenter = sectorCenter.xy()
 
   val node = createSpaceNode(sectorCenter, realm.nextId)
@@ -290,7 +290,7 @@ fun createBoundarySector(realm: Realm, originFace: FlexibleFace, dice: Dice): Gr
   val newWall = getWallVertices(newPoints)
   val floorVertices = originalWall.upper.plus(newWall.upper)
 //  val ceilingVertices = originalWall.lower.plus(newWall.lower)
-  val sectorCenter = getCenter(floorVertices)
+  val sectorCenter = Vector3(getCenter(floorVertices))
 
   val node = createSpaceNode(sectorCenter, realm.nextId)
 

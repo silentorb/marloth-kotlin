@@ -25,16 +25,16 @@ fun getWallVertices(face: FlexibleFace): WallVertices =
     getWallVertices(face.vertices)
 
 
-fun getNewWallVertices(sectorCenter: Vector3m, edges: Edges): Vertices {
-  val sortedEdges = edges.map { it.vertices.sortedBy { it.z } }
+fun getNewWallVertices(sectorCenter: Vector3, edges: Edges): Vertices {
+  val sortedEdges = edges.map { edge -> edge.vertices.sortedBy { it.z } }
   val vertices = listOf(
       sortedEdges[0][0],
       sortedEdges[1][0],
       sortedEdges[1][1],
       sortedEdges[0][1]
   )
-  val normal = Vector3m(getNormal(vertices))
-  val center = getCenter(vertices)
+  val normal = getNormal(vertices)
+  val center = Vector3(getCenter(vertices))
   if (sectorCenter.distance(center + normal) > sectorCenter.distance(center - normal)) {
     return listOf(
         sortedEdges[1][0],
@@ -47,17 +47,17 @@ fun getNewWallVertices(sectorCenter: Vector3m, edges: Edges): Vertices {
   return vertices
 }
 
-fun sortWallVertices(sectorCenter: Vector3m, vertices: Vertices): Vertices {
+fun sortWallVertices(sectorCenter: Vector3, vertices: Vertices): Vertices {
   val sorted = arrangePointsCounterClockwise(vertices)
-  val normal = Vector3m(getNormal(sorted))
-  val center = getCenter(sorted)
+  val normal = getNormal(sorted)
+  val center = Vector3(getCenter(sorted))
   return if (sectorCenter.distance(center + normal) > sectorCenter.distance(center - normal))
     sorted.reversed()
   else
     sorted
 }
 
-fun createSecondaryNode(sectorCenter: Vector3m, nextId: IdSource, isSolid: Boolean): Node {
+fun createSecondaryNode(sectorCenter: Vector3, nextId: IdSource, isSolid: Boolean): Node {
   val radius = 1f
 
   val node = Node(
