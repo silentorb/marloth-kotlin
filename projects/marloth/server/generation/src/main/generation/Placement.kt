@@ -36,6 +36,36 @@ fun placeEnemies(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): Deck
   })
 }
 
+fun placeDoors(realm: Realm, nextId: IdSource): Deck =
+    toDeck(realm.nodes.filter { it.biome == Biome.home }
+        .flatMap { node ->
+          node.walls.filter {
+            val info = getFaceInfo(it)
+            info.type == FaceType.space
+                && getOtherNode(info, node)!!.biome != Biome.home
+          }
+        }
+        .map { face ->
+          val floor = getFloor(face)
+          val id = nextId()
+          Hand(
+              door = Door(
+                  id = id
+              ),
+              body = Body(
+                  id = id,
+                  position = Vector3(floor.middle),
+                  orientation = Quaternion().rotateTo(Vector3(0f, 1f, 0f), face.normal),
+                  attributes = doodadBodyAttributes,
+                  shape = null,
+                  gravity = false,
+                  node = getFaceInfo(face).firstNode!!
+              )
+          )
+
+        })
+
+
 fun placeWallLamps(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): Deck {
   val count = (10f * scale).toInt()
   val isValidLampWall = { it: FlexibleFace ->
@@ -92,3 +122,27 @@ fun newPlayer(nextId: IdSource, playerNode: Node): Hand =
             viewMode = ViewMode.firstPerson
         )
     )
+
+
+fun finalizeRealm(input: WorldInput, realm: Realm): World {
+  val playerNode = realm.nodes.first()
+  val scale = calculateWorldScale(input.boundary.dimensions)
+  val nextId = newIdSource(1)
+  val deck = Deck(
+      factions = listOf(
+          Faction(1, "Misfits"),
+          Faction(2, "Monsters")
+      )
+  )
+      .plus(toDeck(newPlayer(nextId, playerNode)))
+      .plus(placeWallLamps(realm, nextId, input.dice, scale))
+      .plus(placeDoors(realm, nextId))
+//  instantiator.newPlayer(1)
+
+//  placeWallLamps(world, instantiator, input.dice, scale)
+
+  return World(
+      deck = deck,
+      nextId = nextId(),
+      realm = realm)
+}

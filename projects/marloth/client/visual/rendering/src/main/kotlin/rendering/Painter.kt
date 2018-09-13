@@ -7,6 +7,7 @@ import mythic.spatial.Pi
 import mythic.spatial.Vector4
 import mythic.spatial.getRotationMatrix
 import mythic.typography.TextStyle
+import org.joml.times
 import rendering.meshes.Primitives
 import scenery.*
 
@@ -40,16 +41,29 @@ fun advancedPainter(mesh: AdvancedModel, renderer: Renderer, element: MeshElemen
 }
 
 fun simplePainter(elements: Primitives, element: MeshElement, effects: Shaders, textures: DynamicTextureLibrary) {
-  val orientationTransform = getRotationMatrix(element.transform)
   for (e in elements) {
+    val transform = if (e.transform != null)
+      element.transform * e.transform
+    else
+      element.transform
+
+    val orientationTransform = getRotationMatrix(transform)
     val material = e.material
-    effects.colored.activate(ObjectShaderConfig(
-        element.transform,
+    val texture = textures[material.texture]
+
+    val config = ObjectShaderConfig(
+        transform,
         color = material.color,
         glow = material.glow,
         normalTransform = orientationTransform,
-        texture = textures[material.texture]
-    ))
+        texture = texture
+    )
+    val effect = if (texture != null)
+      effects.textured
+    else
+      effects.colored
+
+    effect.activate(config)
     e.mesh.draw(DrawMethod.triangleFan)
   }
 }

@@ -2,9 +2,7 @@ package rendering.meshes.loading
 
 import mythic.breeze.*
 import mythic.glowing.SimpleTriangleMesh
-import mythic.spatial.Quaternion
-import mythic.spatial.Vector3m
-import mythic.spatial.Vector3
+import mythic.spatial.*
 import org.lwjgl.BufferUtils
 import rendering.*
 import rendering.meshes.*
@@ -84,10 +82,11 @@ fun loadPrimitive(primitive: Primitive, name: String, buffer: ByteBuffer, info: 
   } else {
     val gltfTexture = info.textures!![details.baseColorTexture.index]
     val gltfImage = info.images!![gltfTexture.source]
-    gltfImage.uri
+    gltfImage.uri.substringBeforeLast(".")
   }
   return Primitive(
       mesh = SimpleTriangleMesh(vertexSchema, vertices, indices),
+      transform = null,
       material = Material(
           color = color,
           glow = glow,

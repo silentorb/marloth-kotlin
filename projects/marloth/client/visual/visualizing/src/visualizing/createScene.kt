@@ -77,11 +77,7 @@ fun createCamera(world: World, screen: Screen): Camera {
 //    else
 //      world.depictionTable
 
-fun convertDepiction(world: World, id: Id, type: DepictionType): MeshElement? {
-  val mesh = simplePainterMap[type]
-  if (mesh == null)
-    return null
-
+fun convertDepiction(world: World, id: Id, mesh: MeshType): MeshElement? {
   val body = world.bodyTable[id]!!
   val character = world.characterTable[id]
   val translate = Matrix().translate(body.position)
@@ -102,6 +98,14 @@ fun convertDepiction(world: World, id: Id, type: DepictionType): MeshElement? {
   )
 }
 
+fun convertDepiction(world: World, id: Id, type: DepictionType): MeshElement? {
+  val mesh = simplePainterMap[type]
+  if (mesh == null)
+    return null
+
+  return convertDepiction(world, id, mesh)
+}
+
 fun createChildDetails(character: Character): ChildDetails =
     ChildDetails(if (character.definition.depictionType == DepictionType.character) Gender.female else Gender.male)
 
@@ -119,10 +123,12 @@ fun gatherVisualElements(world: World, screen: Screen, player: Player): Pair<Lis
           .plus(characters.mapNotNull {
             convertDepiction(world, it.id, it.definition.depictionType)
           })
-          .plus(world.missileTable.values.mapNotNull {
+          .plus(world.deck.missiles.mapNotNull {
             convertDepiction(world, it.id, DepictionType.missile)
           })
-
+          .plus(world.deck.doors.mapNotNull {
+            convertDepiction(world, it.id, MeshType.prisonDoor)
+          })
   return Pair(
       elements,
       ElementDetails(

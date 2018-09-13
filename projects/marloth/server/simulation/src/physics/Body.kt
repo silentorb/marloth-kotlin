@@ -33,7 +33,7 @@ data class Body(
     val shape: Shape?,
     val position: Vector3,
     val orientation: Quaternion,
-    val velocity: Vector3,
+    val velocity: Vector3 = Vector3(),
     val attributes: BodyAttributes,
     val gravity: Boolean,
 //    val friction: Float,

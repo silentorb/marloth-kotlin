@@ -57,6 +57,7 @@ typealias ModelGeneratorMap = Map<MeshType, ModelGenerator>
 data class Primitive(
     val mesh: Drawable,
     val material: Material,
+    val transform: Matrix? = null,
     val name: String = ""
 )
 

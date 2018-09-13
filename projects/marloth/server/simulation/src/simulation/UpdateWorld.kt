@@ -24,7 +24,7 @@ fun simplifyRotation(value: Float): Float =
       value
 
 fun getFinished(world: World): List<Id> {
-  return world.missileTable.values
+  return world.table.missiles.values
       .filter { isFinished(world.realm, world.bodyTable, it) }
       .map { it.id }
       .plus(world.characters
