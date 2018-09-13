@@ -1,6 +1,7 @@
 package generation.structure
 
 import generation.abstract.FaceInfo
+import generation.abstract.Graph
 import generation.abstract.Node
 import generation.abstract.Realm
 import mythic.sculpting.*
@@ -8,6 +9,7 @@ import mythic.spatial.*
 import org.joml.plus
 import simulation.FaceType
 import simulation.IdSource
+import simulation.newIdSource
 
 data class WallVertices(
     val lower: Vertices,
@@ -99,3 +101,10 @@ fun createWall(realm: Realm, node: Node, vertices: Vertices): FlexibleFace {
 
 fun verticalEdges(face: FlexibleFace) =
     face.edges.asSequence().filter { it.first.x == it.second.x && it.first.y == it.second.y }
+
+fun idSourceFromNodes(nodes: List<Node>): IdSource =
+    newIdSource(if (nodes.any())
+      nodes.sortedByDescending { it.id }.first().id + 1L
+    else
+      1L
+    )

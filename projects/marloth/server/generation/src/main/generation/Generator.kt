@@ -7,6 +7,7 @@ import generation.abstract.Realm
 import generation.structure.assignTextures
 import generation.structure.doorwayLength
 import generation.structure.generateStructure
+import generation.structure.idSourceFromNodes
 import mythic.sculpting.FlexibleMesh
 import mythic.spatial.*
 import randomly.Dice
@@ -77,7 +78,7 @@ fun getHome(graph: Graph): List<Node> {
 fun generateWorld(input: WorldInput): World {
   val scale = calculateWorldScale(input.boundary.dimensions)
   val (graph, tunnels) = generateAbstract(input.boundary, input.dice, scale)
-  val nextId = newIdSource(graph.nodes.size + 1L)
+  val nextId = idSourceFromNodes(graph.nodes)
   val home = getHome(graph)
   val initialRealm = Realm(
       input.boundary,
@@ -85,12 +86,12 @@ fun generateWorld(input: WorldInput): World {
       mesh = FlexibleMesh(),
       graph = graph
   )
-  generateStructure(initialRealm, input.dice, tunnels)
-  val biomeMap = assignBiomes(initialRealm, input, home)
+  val structuredGraph = generateStructure(initialRealm, input.dice, tunnels)
+  val biomeMap = assignBiomes(structuredGraph, input, home)
   assignTextures(biomeMap, initialRealm)
   val realm = simulation.Realm(
-      boundary = initialRealm.boundary,
-      nodes = initialRealm.nodes.map {
+      boundary = input.boundary,
+      nodes = structuredGraph.nodes.map {
         simulation.Node(
             id = it.id,
             position = it.position,

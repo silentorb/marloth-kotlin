@@ -1,5 +1,6 @@
 package generation
 
+import generation.abstract.Graph
 import generation.abstract.Node
 import generation.abstract.Realm
 import generation.abstract.getDeadEnds
@@ -40,9 +41,9 @@ private fun logGrid(grid: Grid<Biome>, boundary: WorldBoundary) {
   }
 }
 
-fun assignBiomes(realm: Realm, input: WorldInput, home: List<Node>): BiomeMap {
+fun assignBiomes(graph: Graph, input: WorldInput, home: List<Node>): BiomeMap {
   val grid = normalizeGrid(clampGrid(newBiomeGrid(input, randomBiomes)), input.boundary)
-  return realm.nodes.associate { node ->
+  return graph.nodes.associate { node ->
     val biome = if (home.any { it.id == node.id })
       Biome.home
     else
