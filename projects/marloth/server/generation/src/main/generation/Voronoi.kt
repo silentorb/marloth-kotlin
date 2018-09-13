@@ -23,6 +23,14 @@ fun <T> voronoiAnchors(values: List<T>, count: Int, dice: Dice): List<VoronoiAnc
           )
         }
 
+private fun <T> logVoronoiGrid(width: Int, height: Int, list: List<T>) {
+  for (y in 0 until height) {
+    val line = (0 until width).map { x -> list[y * width + x].toString().substring(0, 1) }
+        .joinToString(" ")
+    println(line)
+  }
+}
+
 fun <T> voronoi(width: Int, height: Int, anchors: List<VoronoiAnchor<T>>): Grid<T> {
   val total = width * height
   val list: List<T> = (0 until total).map { i ->
@@ -38,7 +46,8 @@ fun <T> voronoi(width: Int, height: Int, anchors: List<VoronoiAnchor<T>>): Grid<
   return { x, y ->
     val x2 = x * width
     val y2 = y * height
-    list[(y2 * width + x2).toInt()]
+    val index = Math.min((y2 * width + x2).toInt(), list.size - 1)
+    list[index]
   }
 }
 

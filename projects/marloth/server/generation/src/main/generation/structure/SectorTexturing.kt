@@ -7,11 +7,12 @@ import generation.abstract.faceNodes
 import generation.abstract.getFaceInfo
 import scenery.Textures
 import simulation.FaceType
+import simulation.biomeInfoMap
 
 fun determineFloorTexture(biomeMap: BiomeMap, info: FaceInfo): Textures? {
   val first = info.firstNode!!
   return if (first.isWalkable)
-    biomeMap[first.id]!!.floorTexture
+    biomeInfoMap[biomeMap[first.id]!!]!!.floorTexture
   else
     null
 }
@@ -30,7 +31,7 @@ fun determineWallTexture(biomeMap: BiomeMap, info: FaceInfo): Textures? {
     val wallCount = nodes.count { it.isSolid }
     val walkableCount = nodes.count { it.isWalkable }
     if (wallCount > 0 && walkableCount != 2)
-      biomeMap[nodes.first().id]!!.wallTexture
+      biomeInfoMap[biomeMap[nodes.first().id]!!]!!.wallTexture
     else
       null
   }
@@ -40,7 +41,7 @@ fun determineCeilingTexture(biomeMap: BiomeMap, info: FaceInfo): Textures? {
   val first = info.firstNode!!
   val second = info.secondNode
   return if (second != null && second.isSolid)
-    biomeMap[first.id]!!.ceilingTexture
+    biomeInfoMap[biomeMap[first.id]!!]!!.ceilingTexture
   else
     null
 }

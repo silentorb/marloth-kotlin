@@ -8,8 +8,6 @@ import mythic.sculpting.*
 import mythic.spatial.*
 import org.joml.plus
 import randomly.Dice
-import simulation.Biome
-import simulation.Enclosure
 import simulation.FaceType
 import simulation.getFloor
 

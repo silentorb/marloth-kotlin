@@ -5,7 +5,6 @@ import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import colliding.Shape
 import colliding.Sphere
-import mythic.spatial.Vector3m
 import mythic.spatial.isInsidePolygon
 import scenery.Textures
 import simulation.*
@@ -23,7 +22,7 @@ val voidNode: Node = Node(
     height = voidNodeHeight,
     isSolid = false,
     isWalkable = false,
-    biome = Biome("void", floorTexture = Textures.none, enclosure = Enclosure.none),
+    biome = Biome.void,
     floors = listOf(),
     ceilings = listOf(),
     walls = listOf()

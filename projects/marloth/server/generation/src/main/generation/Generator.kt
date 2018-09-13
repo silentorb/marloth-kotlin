@@ -1,5 +1,6 @@
 package generation
 
+import gatherNodes
 import generation.abstract.*
 import generation.abstract.Node
 import generation.abstract.Realm
@@ -10,7 +11,7 @@ import mythic.spatial.*
 import randomly.Dice
 import simulation.*
 
-fun createRoomNode(realm: Realm, biomes: List<Biome>, dice: Dice): Node {
+fun createRoomNode(realm: Realm, dice: Dice): Node {
   val radius = dice.getFloat(5f, 10f)
   val start = realm.boundary.start + radius
   val end = realm.boundary.end - radius
@@ -26,9 +27,9 @@ fun createRoomNode(realm: Realm, biomes: List<Biome>, dice: Dice): Node {
   return node
 }
 
-fun createRoomNodes(count: Int, world: Realm, biomes: List<Biome>, dice: Dice) {
+fun createRoomNodes(count: Int, world: Realm, dice: Dice) {
   for (i in 0..count) {
-    createRoomNode(world, biomes, dice)
+    createRoomNode(world, dice)
   }
 }
 
@@ -41,9 +42,9 @@ fun getTwinTunnels(tunnels: List<PreTunnel>): List<PreTunnel> =
       c
     }
 
-fun generateAbstract(world: Realm, biomes: List<Biome>, dice: Dice, scale: Float): List<Node> {
+fun generateAbstract(world: Realm, dice: Dice, scale: Float): List<Node> {
   val nodeCount = (20 * scale).toInt()
-  createRoomNodes(nodeCount, world, biomes, dice)
+  createRoomNodes(nodeCount, world, dice)
   handleOverlapping(world.graph)
   unifyWorld(world.graph)
   closeDeadEnds(world.graph)
@@ -67,13 +68,20 @@ fun generateAbstract(world: Realm, biomes: List<Biome>, dice: Dice, scale: Float
 fun calculateWorldScale(dimensions: Vector3) =
     (dimensions.x * dimensions.y) / (100 * 100)
 
+fun getHome(graph: NodeGraph): List<Node> {
+  val start = getDeadEnds(graph).first()
+  return gatherNodes(listOf(start)) { node ->
+    node.neighbors.filter { it.isWalkable && it.getConnection(node)!!.type == ConnectionType.union }.toList()
+  }
+}
+
 fun generateWorld(input: WorldInput): World {
-  val biomes = createBiomes()
   val initialRealm = Realm(input.boundary)
   val scale = calculateWorldScale(initialRealm.boundary.dimensions)
-  val tunnels = generateAbstract(initialRealm, biomes, input.dice, scale)
+  val tunnels = generateAbstract(initialRealm, input.dice, scale)
+  val home = getHome(initialRealm.graph)
   generateStructure(initialRealm, input.dice, tunnels)
-  val biomeMap = assignBiomes(initialRealm, biomes, input)
+  val biomeMap = assignBiomes(initialRealm, input, home)
   assignTextures(biomeMap, initialRealm)
   val realm = simulation.Realm(
       boundary = initialRealm.boundary,

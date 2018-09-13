@@ -6,7 +6,6 @@ import generation.abstract.Realm
 import mythic.sculpting.*
 import mythic.spatial.*
 import org.joml.plus
-import simulation.Biome
 import simulation.FaceType
 
 data class WallVertices(

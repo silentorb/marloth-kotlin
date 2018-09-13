@@ -1,17 +1,14 @@
 package generation
 
+import generation.abstract.Node
 import generation.abstract.Realm
-import mythic.spatial.minMax
-import simulation.Biome
-import simulation.Id
-import simulation.WorldBoundary
-import simulation.WorldInput
+import generation.abstract.getDeadEnds
+import simulation.*
 
 typealias BiomeMap = Map<Id, Biome>
 
-private val gridScale = 0.5f
-
 fun newBiomeGrid(input: WorldInput, biomes: List<Biome>): Grid<Biome> {
+  val gridScale = 0.5f
   val dimensions = input.boundary.dimensions * gridScale
   val width = dimensions.x.toInt()
   val height = dimensions.y.toInt()
@@ -24,25 +21,33 @@ private fun normalizeGrid(grid: Grid<Biome>, boundary: WorldBoundary): Grid<Biom
   val offset = (boundary.dimensions / 2f)
   return { x, y ->
     grid(
-        (x + offset.x) * gridScale / boundary.dimensions.x,
-        (y + offset.y) * gridScale / boundary.dimensions.y
+        (x + offset.x) / boundary.dimensions.x,
+        (y + offset.y) / boundary.dimensions.y
     )
   }
 }
 
-fun assignBiomes(realm: Realm, biomes: List<Biome>, input: WorldInput): BiomeMap {
-  val grid = normalizeGrid(clampGrid(newBiomeGrid(input, biomes)), input.boundary)
-  val boundary = input.boundary
-  for (y in 0 until (boundary.dimensions.y * gridScale).toInt()) {
-    val line = (0 until (boundary.dimensions.x * gridScale).toInt()).map { x -> biomes.indexOf(grid(x.toFloat(), y.toFloat())) }
+private fun logGrid(grid: Grid<Biome>, boundary: WorldBoundary) {
+  for (y in 0 until (boundary.dimensions.y).toInt()) {
+    val line = (0 until (boundary.dimensions.x).toInt()).map { x ->
+      grid(
+          x.toFloat() - boundary.dimensions.x / 2f,
+          y.toFloat() - boundary.dimensions.y / 2f)
+          .ordinal
+    }
         .joinToString(" ")
     println(line)
   }
+}
+
+fun assignBiomes(realm: Realm, input: WorldInput, home: List<Node>): BiomeMap {
+  val grid = normalizeGrid(clampGrid(newBiomeGrid(input, randomBiomes)), input.boundary)
   return realm.nodes.associate { node ->
-    val biome = grid(
-        node.position.x,
-        node.position.y
-    )
+    val biome = if (home.any { it.id == node.id })
+      Biome.home
+    else
+      grid(node.position.x, node.position.y)
+
     Pair(node.id, biome)
   }
 }

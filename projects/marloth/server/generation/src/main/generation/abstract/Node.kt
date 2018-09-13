@@ -26,13 +26,13 @@ class Connection(
 }
 
 class Node(
+    override val id: Id,
     var position: Vector3m,
     var radius: Float,
     val isSolid: Boolean,
     val isWalkable: Boolean = false,
-    val id: Id,
     var height: Float = 4f
-) {
+): EntityLike {
   val connections: MutableList<Connection> = mutableListOf()
   val floors: MutableList<FlexibleFace> = mutableListOf()
   val ceilings: MutableList<FlexibleFace> = mutableListOf()

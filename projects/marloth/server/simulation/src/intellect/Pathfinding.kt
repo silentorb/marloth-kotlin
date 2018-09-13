@@ -16,7 +16,7 @@ tailrec fun unwindPath(pathNode: PathNode, path: List<Node> = listOf()): List<No
 fun getPathNeighbors(node: Node) =
     node.neighbors.filter { it.isWalkable }
 
-tailrec fun findPath(source: Node, destination: Node, scanned: List<PathNode>, next: List<PathNode>): List<Node>? {
+tailrec fun findPath(destination: Node, scanned: List<PathNode>, next: List<PathNode>): List<Node>? {
   if (next.none())
     return null
 
@@ -34,10 +34,10 @@ tailrec fun findPath(source: Node, destination: Node, scanned: List<PathNode>, n
     return unwindPath(arrived.first())
 
   val newScanned = scanned.plus(neighbors)
-  return findPath(source, destination, newScanned, neighbors)
+  return findPath(destination, newScanned, neighbors)
 }
 
 fun findPath(source: Node, destination: Node): List<Node>? {
   val list = listOf(PathNode(source, null))
-  return findPath(source, destination, list, list)
+  return findPath(destination, list, list)
 }

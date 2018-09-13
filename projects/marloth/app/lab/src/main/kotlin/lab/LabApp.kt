@@ -43,7 +43,7 @@ fun createDice(config: GameViewConfig) =
     else
       Dice(config.seed)
 
-fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig, gameViewConfig: GameViewConfig, biomes: List<Biome>): World {
+fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig, gameViewConfig: GameViewConfig): World {
   val boundary = createWorldBoundary(gameViewConfig.worldLength)
   val dice = createDice(gameViewConfig)
   val world = generateWorld(WorldInput(
@@ -63,7 +63,6 @@ data class LabApp(
     val gameConfig: GameConfig,
     val display: Display = platform.display,
     val timer: DeltaTimer = DeltaTimer(),
-    val biomes: List<Biome>,
     var world: World,
     val client: Client = Client(platform, gameConfig.display),
     val labClient: LabClient = LabClient(config, client),
@@ -71,7 +70,7 @@ data class LabApp(
 ) {
 
   fun newWorld() =
-      generateDefaultWorld(InstantiatorConfig(gameConfig.gameplay.defaultPlayerView), config.gameView, biomes)
+      generateDefaultWorld(InstantiatorConfig(gameConfig.gameplay.defaultPlayerView), config.gameView)
 }
 
 private var saveIncrement = 0f
@@ -109,9 +108,8 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
 
 fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
   platform.display.initialize(gameConfig.display)
-  val biomes = createBiomes()
-  val world = generateDefaultWorld(InstantiatorConfig(gameConfig.gameplay.defaultPlayerView), config.gameView, biomes)
-  val app = LabApp(platform, config, gameConfig, world = world, biomes = biomes, labConfigManager = ConfigManager(labConfigPath, config))
+  val world = generateDefaultWorld(InstantiatorConfig(gameConfig.gameplay.defaultPlayerView), config.gameView)
+  val app = LabApp(platform, config, gameConfig, world = world, labConfigManager = ConfigManager(labConfigPath, config))
   setWorldMesh(app.world.realm, app.client)
   val clientState = newClientState(gameConfig.input)
   val state = LabState(
