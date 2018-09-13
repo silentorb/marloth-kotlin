@@ -9,6 +9,7 @@ import mythic.spatial.*
 import org.joml.plus
 import randomly.Dice
 import simulation.FaceType
+import simulation.IdSource
 import simulation.getFloor
 
 fun <T> zeroIfNull(value: T?) =
@@ -35,7 +36,7 @@ fun getSharedEdge(first: FlexibleFace, second: FlexibleFace): FlexibleEdge =
 
 // This algorithm only works on quads
 fun getOppositeQuadEdge(first: FlexibleFace, edge: FlexibleEdge) =
-    first.edges.first { e-> e.vertices.none { edge.vertices.contains(it) } }
+    first.edges.first { e -> e.vertices.none { edge.vertices.contains(it) } }
 
 fun isConcaveCorner(first: FlexibleFace, second: FlexibleFace): Boolean {
   val sharedEdge = getSharedEdge(first, second)
@@ -206,26 +207,29 @@ fun gatherNewSectorFaces(origin: FlexibleFace): List<FlexibleFace> {
 fun getDistinctEdges(edges: Edges) =
     edges.distinctBy { it.vertices.map { it.hashCode() }.sorted() }
 
-fun addSpaceNode(realm: Realm, node: Node) {
-  realm.graph.nodes.add(node)
-  node.walls
-      .mapNotNull { getOtherNode(node, it) }
-      .forEach {
-        realm.graph.connect(node, it, ConnectionType.obstacle)
-      }
+fun addSpaceNode(graph: Graph, node: Node): Graph {
+  return graph.copy(
+      nodes = graph.nodes.plus(node),
+      connections = graph.connections.plus(
+          node.walls
+              .mapNotNull { getOtherNode(node, it) }
+              .map {
+                Connection(node.id, it.id, ConnectionType.obstacle)
+              })
+  )
 }
 
-fun createSpaceNode(sectorCenter: Vector3m, realm: Realm): Node {
+fun createSpaceNode(sectorCenter: Vector3m, nextId: IdSource): Node {
 //  val isSolid = when(biome.enclosure){
 //    Enclosure.all -> true
 //    Enclosure.none -> false
 //    Enclosure.some -> dice.getInt(0, 3) > 0
 //  }
 
-  return createSecondaryNode(sectorCenter, realm, true)
+  return createSecondaryNode(sectorCenter, nextId, true)
 }
 
-fun addSpaceNode(realm: Realm, originFace: FlexibleFace, dice: Dice) {
+fun addSpaceNode(realm: Realm, originFace: FlexibleFace, dice: Dice): Graph {
   val walls = gatherNewSectorFaces(originFace)
   val a = getEndEdgeReversed(walls, 0)
   val b = getEndEdge(walls, 0)
@@ -243,7 +247,7 @@ fun addSpaceNode(realm: Realm, originFace: FlexibleFace, dice: Dice) {
   val sectorCenter = getCenter(floorVertices)
   val flatCenter = sectorCenter.xy()
 
-  val node = createSpaceNode(sectorCenter, realm)
+  val node = createSpaceNode(sectorCenter, realm.nextId)
   node.walls.addAll(walls)
   walls.forEach {
     val info = getFaceInfo(it)
@@ -253,8 +257,8 @@ fun addSpaceNode(realm: Realm, originFace: FlexibleFace, dice: Dice) {
   val floor = createFloor(realm.mesh, node, floorVertices, flatCenter)
   val ceiling = createCeiling(realm.mesh, node, ceilingVertices, flatCenter)
 
-  val gapEdges = edges.filter {
-    it.faces.count { walls.contains(it) } < 2
+  val gapEdges = edges.filter { edge ->
+    edge.faces.count { walls.contains(it) } < 2
   }
 
   if (a != b) {
@@ -269,14 +273,14 @@ fun addSpaceNode(realm: Realm, originFace: FlexibleFace, dice: Dice) {
     node.walls.add(newWall)
   }
 
-  addSpaceNode(realm, node)
+  return addSpaceNode(realm.graph, node)
 }
 
-fun getIncomplete(realm: Realm) =
-    realm.graph.nodes.flatMap { it.walls }
+fun getIncomplete(graph: Graph) =
+    graph.nodes.flatMap { it.walls }
         .filter { faceNodeCount(getFaceInfo(it)) == 1 }
 
-fun createBoundarySector(realm: Realm, originFace: FlexibleFace, dice: Dice) {
+fun createBoundarySector(realm: Realm, originFace: FlexibleFace, dice: Dice): Graph {
   val originalWall = getWallVertices(originFace.vertices)
 
   val newPoints = originFace.vertices.map {
@@ -288,7 +292,7 @@ fun createBoundarySector(realm: Realm, originFace: FlexibleFace, dice: Dice) {
 //  val ceilingVertices = originalWall.lower.plus(newWall.lower)
   val sectorCenter = getCenter(floorVertices)
 
-  val node = createSpaceNode(sectorCenter, realm)
+  val node = createSpaceNode(sectorCenter, realm.nextId)
 
 //  node.walls.addAll(walls)
 //  node.floors.add(floor)
@@ -322,26 +326,30 @@ fun createBoundarySector(realm: Realm, originFace: FlexibleFace, dice: Dice) {
   }
 
 //  initializeNodeFaceInfo(node, null, null)
-  addSpaceNode(realm, node)
+  return addSpaceNode(realm.graph, node)
 }
 
-fun fillBoundary(realm: Realm, dice: Dice) {
-  val faces = getIncomplete(realm)
+fun fillBoundary(realm: Realm, dice: Dice): Graph {
+  var graph = realm.graph
+  val faces = getIncomplete(graph)
   for (face in faces) {
-    createBoundarySector(realm, face, dice)
+    graph = createBoundarySector(realm.copy(graph = graph), face, dice)
   }
+
+  return graph
 }
 
-fun defineNegativeSpace(realm: Realm, dice: Dice) {
+fun defineNegativeSpace(realm: Realm, dice: Dice): Graph {
   var pass = 1
+  var graph = realm.graph
   while (true) {
-    val faces = getIncomplete(realm)
+    val faces = getIncomplete(graph)
 
     val neighborLists = faces.map { wall -> Pair(wall, getIncompleteNeighbors(wall).toList()) }
     val invalid = neighborLists.filter { it.second.size > 2 }
 //    assert(invalid.none())
     if (invalid.any())
-      return
+      return graph
 
     assert(invalid.none())
 //  processIncompleteEdges(edges)
@@ -372,11 +380,13 @@ fun defineNegativeSpace(realm: Realm, dice: Dice) {
         val walls = gatherNewSectorFaces(originFace)
         if (walls.size < 2) {
           val i = getIncompleteNeighbors(originFace).toList()
-          return
+          return graph
         }
-        addSpaceNode(realm, originFace, dice)
+        graph = addSpaceNode(realm.copy(graph = graph), originFace, dice)
       }
     }
     ++pass
   }
+
+  return graph
 }

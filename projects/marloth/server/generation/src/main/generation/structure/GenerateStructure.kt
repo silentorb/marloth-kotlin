@@ -41,7 +41,7 @@ fun createVerticesForOverlappingCircles(node: Node, other: Node, others: List<No
 fun createNodeDoorways(graph: Graph, node: Node) =
     node.connections(graph)
         .filter { it.type != ConnectionType.union }
-        .map { createDoorway(node, it.getOther(node)) }
+        .map { createDoorway(node, it.getOther(graph, node)) }
 
 data class CornerGap(val first: NodeCorner, val second: NodeCorner, val length: Float)
 
@@ -87,8 +87,8 @@ fun createSingleNodeStructure(graph: Graph, node: Node): TempSector {
   return TempSector(node, points.plus(fillCornerGaps(points, node)).sortedBy { getAngle(node, it) })
 }
 
-fun getClusterUnions(graph: Graph, cluster: Cluster): List<Connection> =
-    cluster.flatMap { a -> a.connections(graph).filter { it.type == ConnectionType.union } }.distinct()
+fun getClusterUnions(connections: Connections, cluster: Cluster): List<Connection> =
+    cluster.flatMap { a -> connections.filter { it.contains(a) && it.type == ConnectionType.union } }.distinct()
 
 fun fillClusterCornerGaps(unorderedCorners: List<Corner>, node: Node, otherNodes: List<Node>): List<Corner> {
   val additional = fillCornerGaps(unorderedCorners, node)
@@ -109,10 +109,11 @@ fun createClusterNodeStructure(graph: Graph, node: Node, cluster: List<Node>, co
 data class SharedCorners(val nodes: List<Node>, val corners: List<Corner>)
 
 fun createClusterStructure(graph: Graph, cluster: Cluster): List<TempSector> {
-  val overlapPoints = getClusterUnions(graph, cluster)
+  val overlapPoints = getClusterUnions(graph.connections, cluster)
       .map { i ->
-        SharedCorners(listOf(i.first, i.second),
-            createVerticesForOverlappingCircles(i.first, i.second, cluster.filter { it !== i.first && it !== i.second }))
+        val (first, second) = i.nodes(graph)
+        SharedCorners(listOf(first, second),
+            createVerticesForOverlappingCircles(first, second, cluster.filter { it.id != i.first && it.id != i.second }))
       }
 
   return cluster.map { node ->
@@ -194,12 +195,12 @@ fun createRooms(realm: Realm, dice: Dice, tunnels: List<Node>) {
   }
 }
 
-fun generateStructure(realm: Realm, dice: Dice, tunnels: List<Node>) {
+fun generateStructure(realm: Realm, dice: Dice, tunnels: List<Node>): Graph {
   createRooms(realm, dice, tunnels)
   calculateNormals(realm.mesh)
   initializeFaceInfo(realm)
   val roomNodes = realm.nodes.toList()
-  defineNegativeSpace(realm, dice)
-  fillBoundary(realm, dice)
-  expandVertically(realm, roomNodes, dice)
+  val negativeGraph = defineNegativeSpace(realm, dice)
+  val boundaryGraph = fillBoundary(realm.copy(graph = negativeGraph), dice)
+  return expandVertically(realm.copy(graph = boundaryGraph), roomNodes, dice)
 }

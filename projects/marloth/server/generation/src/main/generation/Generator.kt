@@ -51,11 +51,10 @@ fun generateAbstract(boundary: WorldBoundary, dice: Dice, scale: Float): Pair<Gr
 
   val preTunnels = prepareTunnels(thirdGraph)
   val twinTunnels = getTwinTunnels(thirdGraph, preTunnels)
-  val (tunnelGraph, tunnels) = createTunnelNodes(thirdGraph, preTunnels.minus(twinTunnels))
+  val tunnelGraph = createTunnelNodes(thirdGraph, preTunnels.minus(twinTunnels))
 
-  val fourthGraph = thirdGraph.plus(tunnelGraph)
-  val fifthGraph = fourthGraph.copy(connections = fourthGraph.connections.minus(twinTunnels.map { it.connection }))
-  return Pair(fifthGraph, tunnels)
+  val fourthGraph = thirdGraph.plus(tunnelGraph).minusConnections(preTunnels.plus(twinTunnels).map { it.connection })
+  return Pair(fourthGraph, tunnelGraph.nodes)
 }
 
 //fun fillIndexes(graph: Graph) {

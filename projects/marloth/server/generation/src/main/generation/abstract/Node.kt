@@ -23,6 +23,8 @@ class Connection(
 
   fun getOther(node: Node) = if (node.id == first) second else first
 
+  fun getOther(graph: Graph, node: Node) = graph.node(getOther(node))!!
+
   fun nodes(graph: Graph): List<Node> = listOf(graph.node(first)!!, graph.node(second)!!)
 }
 
@@ -65,6 +67,22 @@ data class Graph(
           nodes = nodes.plus(graph.nodes),
           connections = connections.plus(graph.connections)
       )
+
+  fun plusConnections(newConnections: Connections) =
+      copy(
+          connections = connections.plus(newConnections)
+      )
+
+  fun minusConnections(oldConnections: Connections) =
+      copy(
+          connections = connections.minus(oldConnections)
+      )
+
+  fun plusNodes(newNodes: List<Node>) =
+      copy(
+          nodes = nodes.plus(newNodes)
+      )
+
 }
 
 data class Realm(

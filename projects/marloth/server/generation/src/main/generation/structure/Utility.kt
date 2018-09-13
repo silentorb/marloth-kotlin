@@ -7,6 +7,7 @@ import mythic.sculpting.*
 import mythic.spatial.*
 import org.joml.plus
 import simulation.FaceType
+import simulation.IdSource
 
 data class WallVertices(
     val lower: Vertices,
@@ -56,11 +57,11 @@ fun sortWallVertices(sectorCenter: Vector3m, vertices: Vertices): Vertices {
     sorted
 }
 
-fun createSecondaryNode(sectorCenter: Vector3m, realm: Realm, isSolid: Boolean): Node {
+fun createSecondaryNode(sectorCenter: Vector3m, nextId: IdSource, isSolid: Boolean): Node {
   val radius = 1f
 
   val node = Node(
-      id = realm.nextId(),
+      id = nextId(),
       position = sectorCenter,
       radius = radius,
       isSolid = isSolid,

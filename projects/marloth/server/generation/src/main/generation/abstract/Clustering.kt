@@ -14,16 +14,16 @@ fun createCluster(clusters: Clusters): Cluster {
 }
 
 fun gatherClusters(graph: Graph, allNodes: List<Node>): Clusters {
-  val nodes = allNodes.filter{isInCluster(graph, it)}
+  val nodes = allNodes.filter { isInCluster(graph, it) }
   val clusters = mutableListOf<Cluster>()
 
-  fun getCluster(node: Node) = clusters.filter { it.any { it === node } }
+  fun getCluster(node: Node) = clusters.filter { cluster -> cluster.any { it === node } }
       .firstOrNull()
 
   for (node in nodes) {
     val cluster = getCluster(node) ?: createCluster(clusters)
     for (connection in node.connections(graph).filter { it.type == ConnectionType.union }) {
-      val other = connection.getOther(node)
+      val other = connection.getOther(graph, node)
       val otherCluster = getCluster(other)
       if (otherCluster == null) {
         cluster.add(other)
