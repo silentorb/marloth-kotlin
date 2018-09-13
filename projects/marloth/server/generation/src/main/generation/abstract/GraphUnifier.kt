@@ -18,72 +18,60 @@ fun getNeighborsByDistance(node: Node, nodes: Sequence<Node>) = nodes.asSequence
 
 data class NodeGap(val first: Node, val second: Node, val distance: Float)
 
-fun findNearestGap(node: Node, nodes: Sequence<Node>): NodeGap? {
+fun findNearestGap(graph: Graph, node: Node, nodes: Sequence<Node>): NodeGap? {
   val neighbors = getNeighborsByDistance(node, nodes)
-      .filter { !it.node.isConnected(node) }
+      .filter { !it.node.isConnected(graph, node) }
   val nearest = neighbors
       .firstOrNull()
 
-  // Check if the potential connection would overlap with the next nearest node.
-//  if (neighbors.size > 1) {
-//    val nearestNode = nearest!!.node
-//    val connectionCenter = getCenter(node, nearestNode)
-//    for (neighbor in neighbors.drop(1).take(3)) {
-//      if (neighbor.node.position.distance(connectionCenter) - neighbor.node.radius - tunnelRadius < 0f)
-//        return null
-//    }
-//  }
-
-  if (nearest != null) {
-//    if (connectionOverlapsNeighborNodes(neighbors.drop(1).take(3).map { it.node }, node, nearest.node))
-//      return null
-
-    return NodeGap(node, nearest.node, nearest.distance)
-  }
-
-  return null
+  return if (nearest != null)
+    NodeGap(node, nearest.node, nearest.distance)
+  else
+    null
 }
 
-fun findShortestGap(firstGroup: Sequence<Node>, secondGroup: Sequence<Node>): NodeGap? =
-    firstGroup.map { findNearestGap(it, secondGroup) }
+fun findShortestGap(graph: Graph, firstGroup: Sequence<Node>, secondGroup: Sequence<Node>): NodeGap? =
+    firstGroup.map { findNearestGap(graph, it, secondGroup) }
         .filterNotNull()
         .sortedBy { it.distance }
         .firstOrNull()
 
-fun getNeighborsToAdd(node: Node, group: NodeGroup): Sequence<Node> =
-    node.neighbors.filter { !group.contains(it) }
+fun getNeighborsToAdd(graph: Graph, node: Node, group: NodeGroup): Sequence<Node> =
+    node.neighbors(graph).filter { !group.contains(it) }
 
-fun scanChanged(changed: List<Node>, group: NodeGroup) =
+fun scanChanged(graph: Graph, changed: List<Node>, group: NodeGroup) =
     changed.asSequence()
-        .map { getNeighborsToAdd(it, group) }
+        .map { getNeighborsToAdd(graph, it, group) }
         .flatten()
         .distinct()
 
-tailrec fun scanNodes(previousChanged: List<Node>, mainGroup: List<Node>, outerGroup: List<Node>, graph: NodeGraph) {
-  val possibleChanged = scanChanged(previousChanged, mainGroup).toList()
-  val changed = if (possibleChanged.isEmpty()) {
-    val gap = findShortestGap(mainGroup.asSequence(), outerGroup.asSequence())
+tailrec fun scanNodes(graph: Graph, previousChanged: List<Node>, mainGroup: List<Node>, outerGroup: List<Node>,
+                      connections: Connections): Connections {
+  val possibleChanged = scanChanged(graph, previousChanged, mainGroup).toList()
+  val (changed, newConnections) = if (possibleChanged.isEmpty()) {
+    val gap = findShortestGap(graph, mainGroup.asSequence(), outerGroup.asSequence())
     if (gap == null)
       throw Error("Could not find gap to fill.")
 
-    graph.connect(gap.first, gap.second, ConnectionType.tunnel)
 //    println("" + gap.first.index + " " + gap.second.index)
-    listOf(gap.second)
+    Pair(listOf(gap.second), connections.plus(Connection(gap.first.id, gap.second.id, ConnectionType.tunnel)))
   } else {
-    possibleChanged
+    Pair(possibleChanged, connections)
   }
 
   val nextMainGroup = mainGroup.plus(changed)
-  if (nextMainGroup.size != graph.nodes.size)
-    return scanNodes(changed, nextMainGroup, outerGroup.subtract(changed).toList(), graph)
+  return if (nextMainGroup.size == graph.nodes.size)
+    newConnections
+  else
+    scanNodes(graph, changed, nextMainGroup, outerGroup.subtract(changed).toList(), newConnections)
 }
 
-fun unifyWorld(graph: NodeGraph) {
+fun unifyWorld(graph: Graph): Connections {
   if (graph.nodes.size < 2)
-    return
+    return listOf()
 
   val first = graph.nodes.first()
   val mainGroup = listOf(first)
   val outerGroup = graph.nodes.filter { it !== first }
-  scanNodes(mainGroup, mainGroup, outerGroup, graph)
+  return scanNodes(graph, mainGroup, mainGroup, outerGroup, listOf())
 }

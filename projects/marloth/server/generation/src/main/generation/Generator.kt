@@ -7,58 +7,58 @@ import generation.abstract.Realm
 import generation.structure.assignTextures
 import generation.structure.doorwayLength
 import generation.structure.generateStructure
+import mythic.sculpting.FlexibleMesh
 import mythic.spatial.*
 import randomly.Dice
 import simulation.*
 
-fun createRoomNode(realm: Realm, dice: Dice): Node {
+fun createRoomNode(boundary: WorldBoundary, id: Id, dice: Dice): Node {
   val radius = dice.getFloat(5f, 10f)
-  val start = realm.boundary.start + radius
-  val end = realm.boundary.end - radius
+  val start = boundary.start + radius
+  val end = boundary.end - radius
 
-  val node = Node(
-      id = realm.nextId(),
+  return Node(
+      id = id,
       position = Vector3m(dice.getFloat(start.x, end.x), dice.getFloat(start.y, end.y), 0f),
       radius = radius,
       isSolid = false,
       isWalkable = true
   )
-  realm.nodes.add(node)
-  return node
 }
 
-fun createRoomNodes(count: Int, world: Realm, dice: Dice) {
-  for (i in 0..count) {
-    createRoomNode(world, dice)
-  }
-}
+fun createRoomNodes(boundary: WorldBoundary, count: Int, dice: Dice) =
+    (1L..count).map { id ->
+      createRoomNode(boundary, id, dice)
+    }
 
-fun getTwinTunnels(tunnels: List<PreTunnel>): List<PreTunnel> =
+fun getTwinTunnels(graph: Graph, tunnels: List<PreTunnel>): List<PreTunnel> =
     crossMap(tunnels.asSequence()) { a: PreTunnel, b: PreTunnel ->
       //      println("" + a.neighbors.any { b.neighbors.contains(it) } + ", " + a.position.distance(b.position))
-      val c = a.connection.nodes.any { b.connection.nodes.contains(it) }
+      val c = a.connection.nodes(graph).any { b.connection.nodes(graph).contains(it) }
           && a.position.distance(b.position) < doorwayLength * 2f
 //      println(c)
       c
     }
 
-fun generateAbstract(world: Realm, dice: Dice, scale: Float): List<Node> {
+fun generateAbstract(boundary: WorldBoundary, dice: Dice, scale: Float): Pair<Graph, List<Node>> {
   val nodeCount = (20 * scale).toInt()
-  createRoomNodes(nodeCount, world, dice)
-  handleOverlapping(world.graph)
-  unifyWorld(world.graph)
-  closeDeadEnds(world.graph)
+  val initialNodes = createRoomNodes(boundary, nodeCount, dice)
+  val graph = handleOverlapping(initialNodes)
+  val unifyingConnections = unifyWorld(graph)
+  val secondConnections = graph.connections.plus(unifyingConnections)
+  val deadEndClosingConnections = closeDeadEnds(graph.copy(connections = secondConnections))
+  val thirdGraph = graph.copy(connections = secondConnections.plus(deadEndClosingConnections))
 
-  val preTunnels = prepareTunnels(world.graph)
-  val twinTunnels = getTwinTunnels(preTunnels)
-  val tunnels = createTunnelNodes(world, preTunnels.minus(twinTunnels))
-  twinTunnels.forEach { world.graph.disconnect(it.connection) }
+  val preTunnels = prepareTunnels(thirdGraph)
+  val twinTunnels = getTwinTunnels(thirdGraph, preTunnels)
+  val (tunnelGraph, tunnels) = createTunnelNodes(thirdGraph, preTunnels.minus(twinTunnels))
 
-//  fillIndexes(world.graph)
-  return tunnels
+  val fourthGraph = thirdGraph.plus(tunnelGraph)
+  val fifthGraph = fourthGraph.copy(connections = fourthGraph.connections.minus(twinTunnels.map { it.connection }))
+  return Pair(fifthGraph, tunnels)
 }
 
-//fun fillIndexes(graph: NodeGraph) {
+//fun fillIndexes(graph: Graph) {
 //  var index = 1L
 //  for (node in graph.nodes) {
 //    node.id = index++
@@ -68,18 +68,24 @@ fun generateAbstract(world: Realm, dice: Dice, scale: Float): List<Node> {
 fun calculateWorldScale(dimensions: Vector3) =
     (dimensions.x * dimensions.y) / (100 * 100)
 
-fun getHome(graph: NodeGraph): List<Node> {
+fun getHome(graph: Graph): List<Node> {
   val start = getDeadEnds(graph).first()
   return gatherNodes(listOf(start)) { node ->
-    node.neighbors.filter { it.isWalkable && it.getConnection(node)!!.type == ConnectionType.union }.toList()
+    node.neighbors(graph).filter { it.isWalkable && it.getConnection(graph, node)!!.type == ConnectionType.union }.toList()
   }
 }
 
 fun generateWorld(input: WorldInput): World {
-  val initialRealm = Realm(input.boundary)
-  val scale = calculateWorldScale(initialRealm.boundary.dimensions)
-  val tunnels = generateAbstract(initialRealm, input.dice, scale)
-  val home = getHome(initialRealm.graph)
+  val scale = calculateWorldScale(input.boundary.dimensions)
+  val (graph, tunnels) = generateAbstract(input.boundary, input.dice, scale)
+  val nextId = newIdSource(graph.nodes.size + 1L)
+  val home = getHome(graph)
+  val initialRealm = Realm(
+      input.boundary,
+      nextId = nextId,
+      mesh = FlexibleMesh(),
+      graph = graph
+  )
   generateStructure(initialRealm, input.dice, tunnels)
   val biomeMap = assignBiomes(initialRealm, input, home)
   assignTextures(biomeMap, initialRealm)

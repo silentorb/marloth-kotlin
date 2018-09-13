@@ -38,8 +38,8 @@ fun createVerticesForOverlappingCircles(node: Node, other: Node, others: List<No
 //        .filter { c -> !others.any { isInsideNodeHorizontally(c, it) } }
         .map { it.toVector3() }
 
-fun createNodeDoorways(node: Node) =
-    node.connections
+fun createNodeDoorways(graph: Graph, node: Node) =
+    node.connections(graph)
         .filter { it.type != ConnectionType.union }
         .map { createDoorway(node, it.getOther(node)) }
 
@@ -75,28 +75,28 @@ const val minPointDistance = 1f
 
 fun withoutClosePoints(corners: List<Corner>): List<Corner> {
   val tooClose = crossMap(corners.asSequence()) { a: Corner, b: Corner ->
-//    println(a.distance(b))
+    //    println(a.distance(b))
     a.distance(b) < minPointDistance
   }
   return corners.minus(tooClose.distinct())
 }
 
-fun createSingleNodeStructure(node: Node): TempSector {
-  val doorways = createNodeDoorways(node)
+fun createSingleNodeStructure(graph: Graph, node: Node): TempSector {
+  val doorways = createNodeDoorways(graph, node)
   val points = withoutClosePoints(doorways.flatten())
   return TempSector(node, points.plus(fillCornerGaps(points, node)).sortedBy { getAngle(node, it) })
 }
 
-fun getClusterUnions(cluster: Cluster): List<Connection> =
-    cluster.flatMap { it.connections.filter { it.type == ConnectionType.union } }.distinct()
+fun getClusterUnions(graph: Graph, cluster: Cluster): List<Connection> =
+    cluster.flatMap { a -> a.connections(graph).filter { it.type == ConnectionType.union } }.distinct()
 
 fun fillClusterCornerGaps(unorderedCorners: List<Corner>, node: Node, otherNodes: List<Node>): List<Corner> {
   val additional = fillCornerGaps(unorderedCorners, node)
   return additional.filter { corner -> !otherNodes.any { isInsideNode(corner.xy(), it) } }
 }
 
-fun createClusterNodeStructure(node: Node, cluster: List<Node>, corners: List<Corner>): List<Corner> {
-  val doorways = createNodeDoorways(node)
+fun createClusterNodeStructure(graph: Graph, node: Node, cluster: List<Node>, corners: List<Corner>): List<Corner> {
+  val doorways = createNodeDoorways(graph, node)
   val moreCorners = corners.plus(doorways.flatten())
   val allCorners = moreCorners
       .plus(fillClusterCornerGaps(moreCorners, node, cluster.filter { it !== node }))
@@ -108,21 +108,21 @@ fun createClusterNodeStructure(node: Node, cluster: List<Node>, corners: List<Co
 
 data class SharedCorners(val nodes: List<Node>, val corners: List<Corner>)
 
-fun createClusterStructure(cluster: Cluster): List<TempSector> {
-  val overlapPoints = getClusterUnions(cluster)
+fun createClusterStructure(graph: Graph, cluster: Cluster): List<TempSector> {
+  val overlapPoints = getClusterUnions(graph, cluster)
       .map { i ->
         SharedCorners(listOf(i.first, i.second),
             createVerticesForOverlappingCircles(i.first, i.second, cluster.filter { it !== i.first && it !== i.second }))
       }
 
   return cluster.map { node ->
-    val overlapping = overlapPoints.filter { it.nodes.any { it === node } }.flatMap { it.corners }
-    TempSector(node, createClusterNodeStructure(node, cluster, overlapping))
+    val overlapping = overlapPoints.filter { a -> a.nodes.any { it === node } }.flatMap { it.corners }
+    TempSector(node, createClusterNodeStructure(graph, node, cluster, overlapping))
   }
 }
 
-fun generateTunnelStructure(node: Node, nodeSectors: List<TempSector>): TempSector {
-  val (first, second) = node.neighbors.toList()
+fun generateTunnelStructure(graph: Graph, node: Node, nodeSectors: List<TempSector>): TempSector {
+  val (first, second) = node.neighbors(graph).toList()
   val sectors = nodeSectors.filter { it.node === first || it.node == second }
   val corners = sectors.flatMap { sector ->
     val other = if (sector.node === first) second else first
@@ -151,7 +151,7 @@ fun createWall(edge: FlexibleEdge, mesh: FlexibleMesh): FlexibleFace {
   ))
 }
 
-fun getOrCreateWall(edge:FlexibleEdge, otherEdges: List<EdgeReference>, mesh: FlexibleMesh): FlexibleFace {
+fun getOrCreateWall(edge: FlexibleEdge, otherEdges: List<EdgeReference>, mesh: FlexibleMesh): FlexibleFace {
   return if (otherEdges.size > 1) {
     val face = edge.faces.firstOrNull { it.data != null && getFaceInfo(it).type == FaceType.space }
     if (face != null)
@@ -166,14 +166,15 @@ fun createRooms(realm: Realm, dice: Dice, tunnels: List<Node>) {
   val mesh = realm.mesh
 
   val roomNodes = realm.nodes.minus(tunnels)
+  val graph = realm.graph
 
-  val singleNodes = roomNodes.filter { !isInCluster(it) }
-  val clusters = gatherClusters(roomNodes)
-  val nodeSectors = singleNodes.map { createSingleNodeStructure(it) }
-      .plus(clusters.flatMap { createClusterStructure(it) })
+  val singleNodes = roomNodes.filter { !isInCluster(graph, it) }
+  val clusters = gatherClusters(graph, roomNodes)
+  val nodeSectors = singleNodes.map { createSingleNodeStructure(graph, it) }
+      .plus(clusters.flatMap { createClusterStructure(graph, it) })
 
   val tunnelSectors = tunnels
-      .map { generateTunnelStructure(it, nodeSectors) }
+      .map { generateTunnelStructure(graph, it, nodeSectors) }
 
   val allSectors = nodeSectors.plus(tunnelSectors)
   sinewFloorsAndCeilings(allSectors, mesh)

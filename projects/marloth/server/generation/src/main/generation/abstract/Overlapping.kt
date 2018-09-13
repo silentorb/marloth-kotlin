@@ -3,13 +3,12 @@ package generation.abstract
 import generation.divide
 import generation.getNodeDistance
 import generation.overlaps2D
-import simulation.*
 
 fun getOverlapping(nodes: List<Node>): List<Pair<Node, Node>> {
   val result = mutableListOf<Pair<Node, Node>>()
   for (node in nodes) {
     for (other in nodes) {
-      if (node === other || node.isConnected(other))
+      if (node === other)
         continue
 
       // Check if the nodes overlap and there is not already an entry from the other direction
@@ -26,23 +25,23 @@ fun areTooClose(first: Node, second: Node): Boolean {
   return distance < -first.radius && distance < -second.radius
 }
 
-fun gatherTriUnions(node: Node): List<List<Node>> {
-  val neighbors = node.neighbors.toList()
+fun gatherTriUnions(graph: Graph, node: Node): List<List<Node>> {
+  val neighbors = node.neighbors(graph).toList()
   return neighbors.flatMap { other ->
-    other.neighbors
+    other.neighbors(graph)
         .filter { it !== node && neighbors.contains(it) }
         .map { listOf(node, other, it) }
         .toList()
   }
 }
 
-fun gatherTriUnions(nodes: List<Node>): List<List<Node>> {
-  return nodes.flatMap { gatherTriUnions(it) }
-      .distinctBy { it.sortedBy { it.hashCode() }.map { it.hashCode() }.joinToString() }
+fun gatherTriUnions(graph: Graph): List<List<Node>> {
+  return graph.nodes.flatMap { gatherTriUnions(graph, it) }
+      .distinctBy { node -> node.sortedBy { it.hashCode() }.map { it.hashCode() }.joinToString() }
 }
 
-fun handleOverlapping(graph: NodeGraph) {
-  val overlapping = getOverlapping(graph.nodes)
+fun handleOverlapping(nodes: List<Node>): Graph {
+  val overlapping = getOverlapping(nodes)
   val (tooClose, initialUnions) = divide(overlapping.asSequence(), { areTooClose(it.first, it.second) })
 //  val nodeMap = graph.nodes.associate { node ->
 //    Pair(node, groups.first.filter { it.first === node || it.second === node })
@@ -51,14 +50,19 @@ fun handleOverlapping(graph: NodeGraph) {
 //      .plus(nodeMap.filter { it.value.count() > 1 &&  }.map { it.key })
       .distinct()
 
-  val remainingNodes = graph.nodes.minus(removedNodes1)
-
-//  val triUnions = gatherTriUnions(remainingNodes)
+//  val remainingNodes = nodes.minus(removedNodes1)
 
   val unions = initialUnions.filter { pair -> removedNodes1.all { pair.first !== it && pair.second != it } }
-  for (node in removedNodes1) graph.removeNode(node)
-  for (pair in unions) graph.connect(pair.first, pair.second, ConnectionType.union)
+//  for (node in removedNodes1) graph.removeNode(node)
+//  for (pair in unions) graph.connect(pair.first, pair.second, ConnectionType.union)
+  val connections = unions.map {
+    Connection(it.first.id, it.second.id, ConnectionType.union)
+  }.toList()
 
-  val triUnions = gatherTriUnions(graph.nodes)
-  for (triUnion in triUnions) graph.removeNode(triUnion.first())
+  val triUnions = gatherTriUnions(Graph(nodes, connections))
+  val removedNodes2 = triUnions.map { it.first() }
+  return Graph(
+      nodes = nodes.minus(removedNodes1).minus(removedNodes2),
+      connections = connections
+  )
 }

@@ -14,73 +14,67 @@ enum class ConnectionType {
 }
 
 class Connection(
-    val first: Node,
-    val second: Node,
+    val first: Id,
+    val second: Id,
     val type: ConnectionType
 ) {
+  fun contains(id: Id) = first == id || second == id
+  fun contains(node: Node) = contains(node.id)
 
-  fun getOther(node: Node) = if (node === first) second else first
+  fun getOther(node: Node) = if (node.id == first) second else first
 
-  val nodes: List<Node>
-    get() = listOf(first, second)
+  fun nodes(graph: Graph): List<Node> = listOf(graph.node(first)!!, graph.node(second)!!)
 }
+
+typealias Connections = List<Connection>
 
 class Node(
     override val id: Id,
-    var position: Vector3m,
-    var radius: Float,
+    val position: Vector3m,
+    val radius: Float,
     val isSolid: Boolean,
     val isWalkable: Boolean = false,
-    var height: Float = 4f
-): EntityLike {
-  val connections: MutableList<Connection> = mutableListOf()
+    val height: Float = 4f
+) : EntityLike {
+  //  val connections: MutableList<Connection> = mutableListOf()
+  fun connections(graph: Graph): List<Connection> =
+      graph.connections.filter { it.contains(id) }
+
   val floors: MutableList<FlexibleFace> = mutableListOf()
   val ceilings: MutableList<FlexibleFace> = mutableListOf()
   val walls: MutableList<FlexibleFace> = mutableListOf()
 
-  val neighbors get() = connections.asSequence().map { it.getOther(this) }
+  fun neighbors(graph: Graph): Sequence<Node> = connections(graph).asSequence().mapNotNull { graph.node(it.getOther(this)) }
 
-  fun getConnection(other: Node) = connections.firstOrNull { it.first === other || it.second === other }
+  fun getConnection(graph: Graph, other: Node) = graph.connections.firstOrNull { it.contains(this) && it.contains(other) }
 
-  fun isConnected(other: Node) = getConnection(other) != null
+  fun isConnected(graph: Graph, other: Node) = getConnection(graph, other) != null
 
   val faces: List<FlexibleFace>
     get() = floors.plus(walls).plus(ceilings)
 }
 
-class NodeGraph {
-  val nodes: MutableList<Node> = mutableListOf()
-  val connections: MutableList<Connection> = mutableListOf()
+data class Graph(
+    val nodes: List<Node>,
+    val connections: Connections
+) {
+  fun node(id: Id): Node? = nodes.first { it.id == id }
 
-  fun connect(first: Node, second: Node, type: ConnectionType): Connection {
-    val connection = Connection(first, second, type)
-    connections.add(connection)
-    first.connections.add(connection)
-    second.connections.add(connection)
-    return connection
-  }
-
-  fun disconnect(connection: Connection) {
-    connection.first.connections.remove(connection)
-    connection.second.connections.remove(connection)
-    connections.remove(connection)
-  }
-
-  fun removeNode(node: Node) {
-    nodes.remove(node)
-    for (connection in node.connections) {
-      connection.getOther(node).connections.remove(connection)
-      connections.remove(connection)
-    }
-    node.connections.clear()
-  }
+  fun plus(graph: Graph) =
+      Graph(
+          nodes = nodes.plus(graph.nodes),
+          connections = connections.plus(graph.connections)
+      )
 }
-class Realm(val boundary: WorldBoundary) {
-  val graph = NodeGraph()
-  val mesh = FlexibleMesh()
-  val nextId = newIdSource(1)
 
-  val nodes: MutableList<Node>
+data class Realm(
+    val boundary: WorldBoundary,
+    val graph: Graph,
+    val mesh: FlexibleMesh,
+    val nextId: IdSource
+) {
+
+  val nodes: List<Node>
     get() = graph.nodes
 }
 

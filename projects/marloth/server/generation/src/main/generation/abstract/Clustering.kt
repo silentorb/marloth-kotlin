@@ -1,8 +1,7 @@
 package generation.abstract
-import simulation.*
 
-val isInCluster = { node: Node ->
-  node.connections.any { it.type == ConnectionType.union }
+val isInCluster = { graph: Graph, node: Node ->
+  node.connections(graph).any { it.type == ConnectionType.union }
 }
 
 typealias Cluster = MutableList<Node>
@@ -14,8 +13,8 @@ fun createCluster(clusters: Clusters): Cluster {
   return cluster
 }
 
-fun gatherClusters(allNodes: List<Node>): Clusters {
-  val nodes = allNodes.filter(isInCluster)
+fun gatherClusters(graph: Graph, allNodes: List<Node>): Clusters {
+  val nodes = allNodes.filter{isInCluster(graph, it)}
   val clusters = mutableListOf<Cluster>()
 
   fun getCluster(node: Node) = clusters.filter { it.any { it === node } }
@@ -23,7 +22,7 @@ fun gatherClusters(allNodes: List<Node>): Clusters {
 
   for (node in nodes) {
     val cluster = getCluster(node) ?: createCluster(clusters)
-    for (connection in node.connections.filter { it.type == ConnectionType.union }) {
+    for (connection in node.connections(graph).filter { it.type == ConnectionType.union }) {
       val other = connection.getOther(node)
       val otherCluster = getCluster(other)
       if (otherCluster == null) {
