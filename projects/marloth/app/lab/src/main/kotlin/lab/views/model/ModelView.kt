@@ -152,10 +152,10 @@ fun selectEdgeLoop(config: ModelViewConfig, model: Model) {
 fun tightenRotation(value: Float): Float =
     value % (Pi * 2)
 
-fun resetCamera(config: ModelViewConfig, model: Model, rotationY: Float, rotationZ: Float) {
+fun resetCamera(config: ModelViewConfig, model: AdvancedModel, rotationY: Float, rotationZ: Float) {
   config.camera.rotationY = rotationY
   config.camera.rotationZ = rotationZ
-  config.camera.pivot = Vector3(getVerticesCenter(model.vertices))
+  config.camera.pivot = Vector3(getVerticesCenter(model.model!!.vertices))
 }
 
 enum class SelectableListType {
@@ -187,53 +187,54 @@ fun loadGeneratedModel(config: ModelViewConfig, renderer: Renderer): Model {
 //}
 
 class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePosition: Vector2i) {
-  val model: Model
-  val externalMesh: Primitives? = renderer.meshes[config.model]?.primitives
+  val model: AdvancedModel = renderer.meshes[config.model]!!
+//  val externalMesh: Primitives? = renderer.meshes[config.model]?.primitives
   val camera = createOrthographicCamera(config.camera)
-  val advancedModel: AdvancedModel?
+//  val advancedModel: AdvancedModel?
 
   init {
 
-    val advancedModelGenerator = advancedMeshes(renderer.vertexSchemas)[config.model]
-    advancedModel = if (advancedModelGenerator != null)
-      advancedModelGenerator()
-    else
-      null
-
-    model = if (advancedModel != null && advancedModel.model != null)
-      advancedModel.model!!
-    else
-      loadGeneratedModel(config, renderer)
+//    val advancedModelGenerator = advancedMeshes(renderer.vertexSchemas)[config.model]
+//    advancedModel = if (advancedModelGenerator != null)
+//      advancedModelGenerator()
+//    else
+//      null
+//
+//    model = if (advancedModel != null && advancedModel.model != null)
+//      advancedModel.model!!
+//    else
+//      loadGeneratedModel(config, renderer)
 
     // When the model view changes to viewing a different model,
     // the list of visible subgroups needs to be reinitialized.
-    if (model.groups.size > 0) {
-      if (config.visibleGroups.size != model.groups.size)
-        config.visibleGroups = model.groups.map { true }.toMutableList()
-    } else if (externalMesh != null && config.visibleGroups.size != externalMesh.size) {
-      config.visibleGroups = externalMesh.map { true }.toMutableList()
+    val m = model.model
+    if (m != null && m.groups.size > 0) {
+      if (config.visibleGroups.size != m.groups.size)
+        config.visibleGroups = m.groups.map { true }.toMutableList()
+    } else if (config.visibleGroups.size != model.primitives.size) {
+      config.visibleGroups = model.primitives.map { true }.toMutableList()
     }
 
   }
 
   fun release() {
-    if (advancedModel != null) {
-      advancedModel.primitives.forEach { it.mesh.dispose() }
-    }
+//    if (advancedModel != null) {
+//      advancedModel.primitives.forEach { it.mesh.dispose() }
+//    }
   }
 
   fun createLayout(dimensions: Vector2i, state: ModelViewState): ModelLayout {
     val bounds = Bounds(Vector2(), dimensions.toVector2())
     val initialLengths = listOf(200f, null, 300f)
 
-    val middle = { b: Bounds -> Box(b, drawScenePanel(config, state, renderer, model, advancedModel, camera, externalMesh)) }
+    val middle = { b: Bounds -> Box(b, drawScenePanel(config, state, renderer, model, camera)) }
     val right = { b: Bounds -> Box(b, drawInfoPanel(config, renderer, model, mousePosition)) }
     val lengths = resolveLengths(dimensions.x.toFloat(), initialLengths)
     val panelBounds = arrangeHorizontal(0f)(bounds, lengths)
     val boxes = panelBounds.drop(1)
         .zip(listOf(middle, right), { b, p -> p(b) })
 
-    val (leftBoxes, leftClickBoxes) = drawLeftPanel(renderer.meshes.keys.toList(), config, model, externalMesh, panelBounds[0])
+    val (leftBoxes, leftClickBoxes) = drawLeftPanel(renderer.meshes.keys.toList(), config, model, panelBounds[0])
 
     return ModelLayout(
         boxes = leftBoxes
@@ -256,11 +257,9 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
   }
 
   fun updateAnimationOffset(state: ModelViewState, delta: Float): Float {
-    if (advancedModel != null) {
-      val armature = advancedModel.armature
+      val armature = model.armature
       if (armature != null && armature.animations.any())
         return (state.animationOffset + delta) % armature.animations[0].duration
-    }
 
     return 0f
   }
@@ -276,7 +275,9 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
       if (clickBox != null) {
         onListItemSelection(clickBox.value)
       } else {
-        trySelect(config, camera, model, mousePosition, layout.modelPanelBounds)
+        val m = model.model
+        if (m != null)
+          trySelect(config, camera, m, mousePosition, layout.modelPanelBounds)
       }
     }
 
@@ -339,7 +340,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
       },
 
       LabCommandType.selectEdgeLoop to { _ ->
-        selectEdgeLoop(config, model)
+        selectEdgeLoop(config, model.model!!)
       },
 
       LabCommandType.toggleNormals to { _ ->

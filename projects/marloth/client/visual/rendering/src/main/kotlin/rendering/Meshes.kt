@@ -61,7 +61,7 @@ fun advancedMeshes(vertexSchemas: VertexSchemas): AdvancedModelGeneratorMap {
   val skeleton = skeletonMesh(vertexSchemas)
   return mapOf(
       MeshType.skeleton to skeleton,
-      MeshType.child to skeleton,
+//      MeshType.child to skeleton,
       MeshType.skybox to skyboxModel(vertexSchemas)
   )
 }
@@ -69,10 +69,10 @@ fun advancedMeshes(vertexSchemas: VertexSchemas): AdvancedModelGeneratorMap {
 fun importedMeshes(vertexSchemas: VertexSchemas) = mapOf(
     MeshType.wallLamp to "lamp",
     MeshType.prisonDoor to "prison_door",
-    MeshType.cube to "cube"
+    MeshType.cube to "cube",
 
 //    MeshType.child to "girl2/child"
-//    MeshType.child to "child/child"
+    MeshType.child to "child"
 )
     .mapValues { loadGltf(vertexSchemas, "models/" + it.value + "/" + it.value) }
 

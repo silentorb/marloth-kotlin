@@ -125,54 +125,50 @@ fun drawSelection(config: ModelViewConfig, model: Model, sceneRenderer: SceneRen
   }
 }
 
-fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: Renderer, b: Bounds, camera: Camera, model: Model,
-                     primitives: Primitives?, advancedModel: AdvancedModel?) {
+fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: Renderer, b: Bounds, camera: Camera, model: AdvancedModel) {
   val panelDimensions = Vector2i(b.dimensions.x.toInt(), b.dimensions.y.toInt())
   val viewport = Vector4i(b.position.x.toInt(), b.position.y.toInt(), panelDimensions.x, panelDimensions.y)
   viewportStack(viewport) {
     val sceneRenderer = renderer.createSceneRenderer(Scene(camera), viewport)
     val transform = Matrix()
 
-    val armature = advancedModel?.armature
+    val armature = model.armature
+    val modelSource = model.model
 
     val bones = if (armature != null) getAnimatedBones(armature, state.animationOffset) else null
     val originalBones = armature?.originalBones
 
-    if (primitives != null) {
-      primitives
+    if (modelSource == null) {
+      model.primitives
           .filterIndexed { i, it -> config.visibleGroups[i] }
           .forEach { drawMeshPreview(config, sceneRenderer, transform, it, bones, originalBones) }
     } else {
-      val primitives2 = advancedModel?.primitives
-      if (primitives2 != null) {
-        primitives2
-            .forEach { drawMeshPreview(config, sceneRenderer, transform, it, bones, originalBones) }
-      } else {
-        val meshes = modelToMeshes(renderer.vertexSchemas, model)
-        meshes
-            .filterIndexed { i, it -> config.visibleGroups[i] }
-            .forEach {
-              drawMeshPreview(config, sceneRenderer, transform, it, bones, originalBones)
-            }
+      val primitives2 = model.primitives
 
-        meshes.forEach { it.mesh.dispose() }
-      }
+      val meshes = modelToMeshes(renderer.vertexSchemas, modelSource)
+      meshes
+          .filterIndexed { i, it -> config.visibleGroups[i] }
+          .forEach {
+            drawMeshPreview(config, sceneRenderer, transform, it, bones, originalBones)
+          }
+
+      meshes.forEach { it.mesh.dispose() }
 
       if (config.drawNormals)
-        renderFaceNormals(sceneRenderer, 0.05f, model.mesh)
+        renderFaceNormals(sceneRenderer, 0.05f, modelSource.mesh)
 
-      model.mesh.edges.filter { it.faces.none() }.forEach {
+      modelSource.mesh.edges.filter { it.faces.none() }.forEach {
         sceneRenderer.drawLine(Vector3(it.first), Vector3(it.second), Vector4(0.8f, 0.5f, 0.3f, 1f))
       }
 
       if (config.drawTempLine)
         sceneRenderer.drawLine(config.tempStart, config.tempEnd, yellow)
 
-      drawSelection(config, model, sceneRenderer)
+      drawSelection(config, modelSource, sceneRenderer)
 
       globalState.depthEnabled = false
 
-      for (group in model.info.edgeGroups) {
+      for (group in modelSource.info.edgeGroups) {
         for (pair in group) {
           sceneRenderer.drawLine(Vector3(pair.key.first), Vector3(pair.key.second), yellow)
         }

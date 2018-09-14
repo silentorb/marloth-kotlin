@@ -24,9 +24,9 @@ fun drawSkeleton(renderer: SceneRenderer, bones: Bones, modelTransform: Matrix) 
   for (bone in bones.filter { it.length > 0 }
 //      .drop(3).take(2)
   ) {
-    val parent = bone.parent
-    if (parent == null)
-      continue
+//    val parent = bone.parent
+//    if (parent == null)
+//      continue
 
     val head = modelTransform * bone.transform(bones, bone)
     val tail = projectBoneTail(head, bone)

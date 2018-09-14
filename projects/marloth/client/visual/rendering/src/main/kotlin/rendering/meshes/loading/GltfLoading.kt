@@ -33,10 +33,14 @@ fun loadVertices(buffer: ByteBuffer, info: GltfInfo, vertexSchema: VertexSchema,
     if (mappedAttribute == null)
       throw Error("Missing attribute map for " + attribute.name)
 
-    val attributeAccessorIndex = primitive.attributes [mappedAttribute]!!
-    val attributeAccessor = info.accessors[attributeAccessorIndex]
-    val bufferView = info.bufferViews[attributeAccessor.bufferView]
-    Triple(attributeAccessor, bufferView, attribute.size)
+    val attributeAccessorIndex = primitive.attributes [mappedAttribute]
+    if (attributeAccessorIndex != null) {
+      val attributeAccessor = info.accessors[attributeAccessorIndex]
+      val bufferView = info.bufferViews[attributeAccessor.bufferView]
+      Triple(attributeAccessor, bufferView, attribute.size)
+    }
+    else
+      Triple(null, null, attribute.size)
   }
 
   for (i in 0 until vertexCount) {
@@ -44,12 +48,19 @@ fun loadVertices(buffer: ByteBuffer, info: GltfInfo, vertexSchema: VertexSchema,
 //      slice.limit(3)
 //      buffer.position(buffer.position() + 4 * 3)
     for ((attributeAccessor, bufferView, componentCount) in attributes) {
-      buffer.position(bufferView.byteOffset + attributeAccessor.byteOffset + i * bufferView.byteStride)
+      if (attributeAccessor != null && bufferView != null) {
+        buffer.position(bufferView.byteOffset + attributeAccessor.byteOffset + i * bufferView.byteStride)
 //      vertices.position(attribute.offset + i * vertexSchema.floatSize)
 //      vertices.put(slice)
-      for (x in 0 until componentCount) {
-        val value = buffer.getFloat()
-        vertices.put(value)
+        for (x in 0 until componentCount) {
+          val value = buffer.getFloat()
+          vertices.put(value)
+        }
+      }
+      else {
+        for (x in 0 until componentCount) {
+          vertices.put(0f)
+        }
       }
     }
   }
@@ -179,7 +190,7 @@ fun nodeToBone(node: Node) =
         rotation = node.rotation,
         name = node.name,
         transform = independentTransform,
-        length = 0f,
+        length = 1f,
         index = -1,
         isGlobal = false
     )

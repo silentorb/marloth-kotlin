@@ -23,13 +23,13 @@ import rendering.Renderer
 import rendering.meshes.Primitives
 import scenery.Camera
 
-fun drawScenePanel(config: ModelViewConfig, state: ModelViewState, renderer: Renderer, model: Model, advancedModel: AdvancedModel?, camera: Camera, primitives: Primitives?): Depiction = { b: Bounds, canvas: Canvas ->
+fun drawScenePanel(config: ModelViewConfig, state: ModelViewState, renderer: Renderer, model: AdvancedModel, camera: Camera): Depiction = { b: Bounds, canvas: Canvas ->
   drawBackground(sceneBackgroundColor)(b, canvas)
-  drawModelPreview(config, state, renderer, b, camera, model, primitives, advancedModel)
+  drawModelPreview(config, state, renderer, b, camera, model)
 }
 
 fun drawSidePanel() = drawBackground(panelColor)
-fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: Model,
+fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: AdvancedModel,
                   mousePosition: Vector2i): Depiction = { bounds: Bounds, canvas: Canvas ->
   drawSidePanel()(bounds, canvas)
   var row = 1
@@ -41,7 +41,7 @@ fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: Model,
   drawText("Mouse: " + mousePosition.x.toString() + ", " + mousePosition.y.toString())
 //  canvas.drawText(TextConfiguration("Mouse: " + mousePosition.x.toString() + ", " + mousePosition.y.toString(),
 //      renderer.fonts[0], 12f, bounds.position + Vector2(5f, 5f), black))
-
+/*
   if (config.selection.size > 0) {
     when (config.componentMode) {
       ComponentMode.vertices -> {
@@ -67,7 +67,7 @@ fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: Model,
 //    canvas.drawText(TextConfiguration(toString(vertices[config.vertexSelection.first()]),
 //        renderer.fonts[0], 12f, bounds.position + Vector2(5f, 25f), black))
   }
-
+*/
   drawText("rotationY: " + config.camera.rotationY)
   drawText("rotationZ: " + config.camera.rotationZ)
   drawText("pivot: " + toString(config.camera.pivot))
@@ -80,18 +80,18 @@ fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: Model,
 //      renderer.fonts[0], 12f, bounds.position + Vector2(5f, 45f), black))
 }
 
-fun drawLeftPanel(meshTypes: List<MeshType>, config: ModelViewConfig, model: Model,
-                  externalMesh: Primitives?, bounds: Bounds): Pair<List<Box>, List<ClickBox<SelectionEvent>>> {
+fun drawLeftPanel(meshTypes: List<MeshType>, config: ModelViewConfig, model: AdvancedModel,
+                  bounds: Bounds): Pair<List<Box>, List<ClickBox<SelectionEvent>>> {
   val gap = 2f
   val halfGap = gap / 2
   val halfDimensions = Vector2(bounds.dimensions.x, bounds.dimensions.y / 2 - halfGap)
   val modelList = drawSelectableEnumList(meshTypes, config.model, Bounds(bounds.position, halfDimensions))
-  val meshGroups = if (model.groups.size > 0)
-    model.groups.mapIndexed { index, it ->
+  val meshGroups = if (model.primitives.size > 0)
+    model.primitives.mapIndexed { index, it ->
       SelectableItem(it.name, config.visibleGroups[index])
     }
   else
-    externalMesh!!.mapIndexed { i, it -> SelectableItem(it.name, config.visibleGroups[i]) }
+    model.primitives.mapIndexed { i, it -> SelectableItem(it.name, config.visibleGroups[i]) }
 
   val groupListBounds = Bounds(bounds.position + Vector2(0f, bounds.dimensions.y / 2 + halfGap), halfDimensions)
   val groupList = drawSelectableList(meshGroups, SelectableListType.group, groupListBounds)
