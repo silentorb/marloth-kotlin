@@ -1,8 +1,10 @@
 package rendering
 
+import mythic.breeze.transformSkeleton
 import mythic.glowing.DrawMethod
 import mythic.glowing.checkError
 import mythic.glowing.globalState
+import mythic.spatial.Matrix
 import mythic.spatial.Pi
 import mythic.spatial.Vector4
 import mythic.spatial.getRotationMatrix
@@ -19,8 +21,15 @@ fun advancedPainter(mesh: AdvancedModel, renderer: Renderer, element: MeshElemen
   val orientationTransform = getRotationMatrix(transform)
   for (e in mesh.primitives) {
     val material = e.material
-    val boneBuffer = if (element.animation != null)
-      populateBoneBuffer(renderer.boneBuffer, element.animation!!.armature.bones)
+    val animation = element.animation
+    val boneBuffer = if (animation != null) {
+      val transforms = transformSkeleton(animation.armature)
+//      val transforms = animation.armature.bones.mapIndexed { i, bone ->
+
+//        Matrix(transforms[i]) * Matrix(originalTransform).invert()
+//      }
+      populateBoneBuffer(renderer.boneBuffer, transforms)
+    }
     else
       null
 

@@ -69,12 +69,12 @@ const val boneBufferSize = maxBoneCount * sizeOfMatrix
 private val boneMemoryBuffer = BufferUtils.createByteBuffer(boneBufferSize)
 private val boneBufferCustodian = BufferCustodian(boneMemoryBuffer)
 
-fun createBoneTransformBuffer(bones: Bones): ByteBuffer {
+fun createBoneTransformBuffer(transforms: List<Matrix>): ByteBuffer {
 //  boneMemoryBuffer.rewind()
-  for (bone in bones) {
-    val newTransform = bone.transform(bones, bone)
-    val diff = Matrix(newTransform) * Matrix(bone.restingTransform).invert()
-    diff.get(boneMemoryBuffer)
+  transforms.forEachIndexed { i, transform ->
+//    val newTransform = bone.transform(bones, bone)
+//    val diff = Matrix(transforms[i]) * Matrix(originalTransform).invert()
+    transform.get(boneMemoryBuffer)
     boneMemoryBuffer.position(boneMemoryBuffer.position() + sizeOfMatrix)
   }
   boneBufferCustodian.finish()

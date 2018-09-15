@@ -52,13 +52,15 @@ data class ModelViewConfig(
 
 data class ModelViewState(
     val scrollOffsets: Map<String, Float>,
-    val animationOffset: Float
+    val animation: Int,
+    val animationElapsedTime: Float
 )
 
 fun newModelViewState() =
     ModelViewState(
         scrollOffsets = mapOf(),
-        animationOffset = 0f
+        animation = 0,
+        animationElapsedTime = 0f
     )
 
 typealias MeshGenerator = (FlexibleMesh) -> Unit
@@ -260,7 +262,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
   fun updateAnimationOffset(state: ModelViewState, delta: Float): Float {
     val armature = model.armature
     if (armature != null && armature.animations.any())
-      return (state.animationOffset + delta) % armature.animations[0].duration
+      return (state.animationElapsedTime + delta) % armature.animations[state.animation].duration
 
     return 0f
   }
@@ -314,7 +316,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     config.camera.rotationY = minMax(config.camera.rotationY, -maxY, maxY)
     config.camera.rotationZ = tightenRotation(config.camera.rotationZ)
 
-    return state.copy(animationOffset = updateAnimationOffset(state, delta))
+    return state.copy(animationElapsedTime = updateAnimationOffset(state, delta))
   }
 
   fun getCommands(): LabCommandMap = mapOf(

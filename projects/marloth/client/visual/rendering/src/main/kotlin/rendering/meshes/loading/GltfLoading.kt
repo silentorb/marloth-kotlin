@@ -155,43 +155,64 @@ fun convertChannelType(source: String): ChannelType =
       else -> throw Error("Unsupported channel type: " + source)
     }
 
-fun loadAnimation(source: IndexedAnimation, bones: Map<Int, Bone>): AnimationOld {
+fun loadAnimation(buffer: ByteBuffer, info: GltfInfo, source: IndexedAnimation, bones: List<Bone>, boneIndexMap: Map<Int, Int>): Animation {
 
-  val samplers = source.samplers.map {
-    listOf<Keyframe>()
-//    AnimationSampler2(
-//        it.input,
-//        it.output
-//    )
-  }
+//  val samplers = source.samplers.map {
+//    listOf<Keyframe>()
+////    AnimationSampler2(
+////        it.input,
+////        it.output
+////    )
+//  }
 
+  var duration = 0f
   val channels = source.channels.map {
-    AnimationChannel2(
-        samplers[it.sampler],
-        ChannelTarget2(bones[it.target.node]!!, convertChannelType(it.target.path))
+    val target = it.target
+    val sampler = source.samplers[it.sampler]
+    val boneIndex = boneIndexMap[target.node]!!
+    val inputAccessor = info.accessors[sampler.input]
+    val inputBufferView = info.bufferViews[inputAccessor.bufferView]
+    val outputAccessor = info.accessors[sampler.output]
+    val outputBufferView = info.bufferViews[outputAccessor.bufferView]
+    val times = getFloats(buffer, inputBufferView.byteOffset, inputAccessor.count)
+    val values: List<Any> = when (target.path) {
+      "translation" -> getVector3List(buffer, outputBufferView.byteOffset, outputAccessor.count)
+      "rotation" -> getQuaternions(buffer, outputBufferView.byteOffset, outputAccessor.count)
+      "scale" -> getVector3List(buffer, outputBufferView.byteOffset, outputAccessor.count)
+      else -> throw Error("Not implemented.")
+    }
+
+    val lastTime = times.last()
+    if (lastTime > duration)
+      duration = lastTime
+
+    AnimationChannel(
+        target = mythic.breeze.ChannelTarget(boneIndex, convertChannelType(it.target.path)),
+        keys = times.zip(values) { time, value -> Keyframe(time, value) }
     )
   }
 
-  return AnimationOld(
+  return Animation(
       channels = channels,
-      samplers = samplers
+      channelMap = mapChannels(channels),
+      duration = duration
   )
 }
 
-fun loadAnimations(animations: List<IndexedAnimation>, bones: Map<Int, Bone>): List<AnimationOld> {
-  return animations.map { loadAnimation(it, bones) }
+fun loadAnimations(buffer: ByteBuffer, info: GltfInfo, animations: List<IndexedAnimation>, bones: List<Bone>, boneIndexMap: Map<Int, Int>): List<Animation> {
+  return animations.map { loadAnimation(buffer, info, it, bones, boneIndexMap) }
 }
 
 fun nodeToBone(node: Node, index: Int, parent: Int) =
     Bone(
-        translationOld = Vector3m(node.translation!!),
+//        translationOld = Vector3m(node.translation!!),
         rotation = if (node.rotation != null)
           Quaternion(node.rotation.x, node.rotation.y, node.rotation.z, node.rotation.w)
         else
           Quaternion(),
         name = node.name,
-        translation = node.translation,
-        transform = independentTransform,
+        translation = node.translation!!,
+//        transform = independentTransform,
         parent = parent,
         length = 0.1f,
         index = index,
@@ -215,32 +236,14 @@ fun gatherBoneHierarchy(nodes: List<Node>, root: Int, level: Int = 0, parent: In
 }
 
 fun orderBoneHierarchy(levelMap: List<InitialBoneNode>): List<InitialBoneNode> {
-  val size = levelMap.sortedByDescending { it.level }.first().level
-  return (0 until size).flatMap { level ->
+  val top = levelMap.sortedByDescending { it.level }.first().level
+  return (0..top).flatMap { level ->
     levelMap.filter { it.level == level }
   }
-
-//  return listOf(initialLevels.first().map {
-//    ArrangedBoneNode(it.index, -1)
-//  })
-//      .plus(initialLevels.drop(1).map { list ->
-//        list.map { node ->
-//          ArrangedBoneNode(node.index, initialLevels[node.level - 1].indexOfFirst { it.index == node.parent })
-//        }
-//      })
 }
 
-//fun createBoneMap(nodes: List<Node>, root: Int): Map<Int, Bone> =
-//    animations.flatMap { it.channels.map { it.target.node } }
-//        .distinct()
-//        .associate {
-//          val node = nodes[it]
-//          Pair(it, nodeToBone(node))
-//        }
-
-fun loadArmature(info: GltfInfo): Armature? {
-  val animations = info.animations
-  if (animations == null || animations.none())
+fun loadArmature(buffer: ByteBuffer, info: GltfInfo): Armature? {
+  if (info.animations == null || info.animations.none())
     return null
 
 //  val skin = info.skins!!.first()
@@ -253,10 +256,14 @@ fun loadArmature(info: GltfInfo): Armature? {
     val parent = if (item.parent == -1) -1 else orderMap.indexOfFirst { it.index == item.parent }
     nodeToBone(node, i, parent)
   }
+  val boneIndexMap = orderMap
+      .mapIndexed { i, it -> Pair(it.index, i) }
+      .associate { it }
+
   return Armature(
       bones = bones,
       originalBones = listOf(),
-      animations = listOf()// loadAnimations(animations, boneMap)
+      animations = loadAnimations(buffer, info, info.animations, bones, boneIndexMap)
   )
 }
 
@@ -270,7 +277,7 @@ fun loadGltf(vertexSchemas: VertexSchemas, resourcePath: String): AdvancedModel 
     loadPrimitive(primitive, name.replace(".001", ""), buffer, info, vertexSchemas)
   }
 
-  val armature = loadArmature(info)
+  val armature = loadArmature(buffer, info)
 
   return AdvancedModel(primitives = result, armature = armature, weights = mapOf())
 }

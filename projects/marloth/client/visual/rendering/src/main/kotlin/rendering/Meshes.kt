@@ -4,8 +4,8 @@ import mythic.breeze.Armature
 import mythic.spatial.Vector4
 import rendering.meshes.*
 import rendering.meshes.loading.loadGltf
-import rigging.createSkeleton
-import rigging.humanAnimations
+//import rigging.createSkeleton
+//import rigging.humanAnimations
 import mythic.glowing.VertexSchema as GenericVertexSchema
 
 enum class MeshType {
@@ -40,27 +40,27 @@ fun standardMeshes(): ModelGeneratorMap = mapOf(
 //    MeshType.wallLamp to createWallLamp
 )
 
-fun skeletonMesh(vertexSchemas: VertexSchemas): AdvancedModelGenerator = {
-  val bones = createSkeleton()
-  val (model, weights) = modelFromSkeleton(bones, "Skeleton", Material(Vector4(1f, 1f, 1f, 1f)))
-//  val (model, weights) = modelFromSkeleton(bones, "Skeleton", Material(Vector4(0.4f, 0.25f, 0.0f, 1f)))
-  val armature = Armature(
-      bones = bones,
-      originalBones = bones,
-      animations = humanAnimations(bones)
-  )
-  AdvancedModel(
-      model = model,
-      primitives = modelToMeshes(vertexSchemas, model, weights),
-      armature = armature,
-      weights = weights
-  )
-}
+//fun skeletonMesh(vertexSchemas: VertexSchemas): AdvancedModelGenerator = {
+//  val bones = createSkeleton()
+//  val (model, weights) = modelFromSkeleton(bones, "Skeleton", Material(Vector4(1f, 1f, 1f, 1f)))
+////  val (model, weights) = modelFromSkeleton(bones, "Skeleton", Material(Vector4(0.4f, 0.25f, 0.0f, 1f)))
+//  val armature = Armature(
+//      bones = bones,
+//      originalBones = bones,
+//      animations = humanAnimations(bones)
+//  )
+//  AdvancedModel(
+//      model = model,
+//      primitives = modelToMeshes(vertexSchemas, model, weights),
+//      armature = armature,
+//      weights = weights
+//  )
+//}
 
 fun advancedMeshes(vertexSchemas: VertexSchemas): AdvancedModelGeneratorMap {
-  val skeleton = skeletonMesh(vertexSchemas)
+//  val skeleton = skeletonMesh(vertexSchemas)
   return mapOf(
-      MeshType.skeleton to skeleton,
+//      MeshType.skeleton to skeleton,
 //      MeshType.child to skeleton,
       MeshType.skybox to skyboxModel(vertexSchemas)
   )

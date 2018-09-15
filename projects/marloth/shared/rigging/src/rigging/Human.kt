@@ -2,7 +2,7 @@ package rigging
 
 import mythic.breeze.*
 import mythic.spatial.*
-
+/*
 fun createSkeleton(): Bones {
 
   val base = BoneDefinition(
@@ -239,3 +239,4 @@ fun humanAnimations(bones: Bones): List<Animation> {
       )
   )
 }
+    */

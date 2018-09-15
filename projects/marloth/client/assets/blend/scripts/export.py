@@ -37,7 +37,7 @@ def export_gltf():
         images_data_storage = 'COPY',
         images_allow_srgb = False,
         buffers_embed_data = False,
-        buffers_combine_data = False,
+        buffers_combine_data = True,
         asset_copyright = '',
         asset_version = '2.0',
         asset_profile = 'WEB',

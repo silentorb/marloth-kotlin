@@ -3,10 +3,8 @@ package lab.views.model
 import lab.utility.*
 import lab.views.game.renderFaceNormals
 import lab.views.shared.drawSkeleton
-import lab.views.shared.getAnimatedBones
 import mythic.bloom.*
-import mythic.breeze.Bones
-import mythic.breeze.transformSkeleton
+import mythic.breeze.transformAnimatedSkeleton
 import mythic.drawing.Canvas
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
@@ -15,12 +13,10 @@ import mythic.spatial.*
 import org.joml.*
 import rendering.*
 import rendering.meshes.Primitive
-import rendering.meshes.Primitives
 import rendering.meshes.modelToMeshes
 import scenery.Camera
 import scenery.ProjectionType
 import scenery.Scene
-import scenery.Textures
 
 fun createOrthographicCamera(camera: ViewCameraConfig): Camera {
   val orientation = Quaternion()
@@ -138,7 +134,7 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
 
 //    val bones = if (armature != null) getAnimatedBones(armature, state.animationOffset) else null
     val transforms = if (armature != null)
-      transformSkeleton(armature)
+      transformAnimatedSkeleton(armature, armature.animations[state.animation], state.animationElapsedTime)
     else
       null
 

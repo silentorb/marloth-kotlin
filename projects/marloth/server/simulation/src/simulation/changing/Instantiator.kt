@@ -1,8 +1,8 @@
 package simulation.changing
 
 import mythic.breeze.Armature
-import rigging.createSkeleton
-import rigging.humanAnimations
+//import rigging.createSkeleton
+//import rigging.humanAnimations
 import simulation.*
 
 data class InstantiatorConfig(

@@ -51,33 +51,21 @@ data class AnimationChannel(
 
 data class Animation(
     val duration: Float,
-    val channels: List<AnimationChannel>
+    val channels: List<AnimationChannel>,
+    val channelMap: ChannelTypeMap
 )
 
 typealias Bones = List<Bone>
 
 typealias Transformer = (bones: Bones, bone: Bone) -> Matrix
 
-data class BoneDefinition(
-    val name: String,
-    val translation: Vector3m = Vector3m(),
-    val parent: BoneDefinition? = null,
-    val transform: Transformer,
-    val tail: Vector3m,
-    val isGlobal: Boolean = false
-)
-
 data class Bone(
     val name: String,
-    val translation: Vector3 = Vector3(),
-    var translationOld: Vector3m = Vector3m(),
-    var rotation: Quaternion,
-    var length: Float,
+    val translation: Vector3,
+    val rotation: Quaternion,
+    val length: Float,
     val index: Int,
-    val transform: Transformer,
-    var restingTransform: Matrix = Matrix(),
     val parent: Int = -1,
-    var parentOld: Bone? = null,
     val isGlobal: Boolean
 )
 
@@ -88,12 +76,15 @@ data class VertexWeight(
 
 typealias VertexWeights = Pair<VertexWeight, VertexWeight>
 
-typealias WeightMap = Map<Vector3m, VertexWeights>
+typealias WeightMap = Map<Vector3, VertexWeights>
 
 data class ArrangedBoneNode(
     val index: Int,
     val parent: Int
 )
+
+typealias ChannelMap = Map<Int, AnimationChannel>
+typealias ChannelTypeMap = Map<ChannelType, ChannelMap>
 
 data class Armature(
     val bones: Bones,
@@ -101,13 +92,28 @@ data class Armature(
     val animations: List<Animation>
 )
 
-fun transformSkeleton(armature: Armature): List<Matrix> {
+typealias MatrixSource = (index: Int) -> Matrix
+
+fun mapChannels(channels: List<AnimationChannel>): ChannelTypeMap =
+    channels
+        .groupBy { it.target.type }
+        .mapValues { c -> c.value.associate { Pair(it.target.boneIndex, it) } }
+
+typealias ValueSource<T> = (boneIndex: Int) -> T?
+
+fun staticMatrixSource(armature: Armature): MatrixSource = { i ->
+  val bone = armature.bones[i]
+  transformBone(bone.translation, bone.rotation)
+}
+
+//fun transformSkeleton(armature: Armature, translationMap: ValueSource<Vector3>, rotationMap: ValueSource<Quaternion>): List<Matrix> {
+fun transformSkeleton(armature: Armature, matrixSource: MatrixSource = staticMatrixSource(armature)): List<Matrix> {
   val bones = armature.bones
   val init = Matrix()
   val result = Array(bones.size, { init })
   for (i in 0 until bones.size) {
     val bone = bones[i]
-    val transform = transformBone(bone.translation, bone.rotation)
+    val transform = matrixSource(i)
     result[i] = if (bone.parent == -1)
       transform
     else
@@ -117,178 +123,43 @@ fun transformSkeleton(armature: Armature): List<Matrix> {
   return result.toList()
 }
 
-//private fun getBoneDefinitionTranslation(bone: BoneDefinition): Vector3m {
-//  val translation = bone.translation + bone.tail
-//  return if (bone.parent == null)
-//    translation
-//  else
-//    getBoneDefinitionTranslation(bone.parent) + translation
-//}
-
-fun getBoneTranslation(bones: Bones, bone: Bone): Vector3m =
-    transformVector(bone.transform(bones, bone))
+fun transformAnimatedSkeleton(armature: Armature, animation: Animation, timeElapsed: Float): List<Matrix> {
+  val translationMap = animatedValueSource<Vector3>(animation.channelMap[ChannelType.translation], timeElapsed)
+  val rotationMap = animatedValueSource<Quaternion>(animation.channelMap[ChannelType.rotation], timeElapsed)
+  val bones = armature.bones
+  val matrixSource: MatrixSource = { i ->
+    val bone = bones[i]
+    val translation = translationMap(i) ?: bone.translation
+    val rotation = rotationMap(i) ?: bone.rotation
+    transformBone(translation, rotation)
+  }
+  return transformSkeleton(armature, matrixSource)
+}
 
 fun transformBone(translation: Vector3, rotation: Quaternion) =
     Matrix()
         .translate(translation)
         .rotate(rotation)
 
-fun transformBone(translation: Vector3m, rotation: Quaternion, length: Float) =
-    Matrix()
-        .translate(translation)
-        .rotate(rotation)
-//        .translate(Vector3m(length, 0f, 0f))
 
-fun transformBone(bone: Bone) =
-    transformBone(bone.translationOld, bone.rotation, bone.length)
+fun <T> emptyValueSource(): ValueSource<T> = { null }
 
-fun getSimpleBoneTransform(bone: Bone): Matrix {
-  if (bone.isGlobal)
-    return transformBone(bone)
-
-  val parent = bone.parentOld
-  val parentTransform = if (parent == null)
-    Matrix()
-  else
-    projectBoneTail(getSimpleBoneTransform(parent), parent)
-
-  return parentTransform * transformBone(bone)
-}
-
-fun getBoneLineage(bone: Bone): List<Bone> {
-  val parent = bone.parentOld
-  return if (parent == null)
-    listOf(bone)
-  else
-    getBoneLineage(parent).plus(bone)
-}
-
-fun getSimpleBoneTransform2(bone: Bone): Matrix {
-  val lineage = getBoneLineage(bone)
-  val transforms = lineage.map { projectBoneTail(transformBone(it), it) }
-  return transforms.reduce { a, b -> a * b }
-}
-
-fun getSimpleBoneTranslation(bone: Bone): Vector3m {
-  val transform = getSimpleBoneTransform2(bone)
-  val translation = transformVector(transform)
-  return translation
-}
-
-val independentTransform: Transformer = { bones, bone ->
-  transformBone(bone.translationOld, bone.rotation, bone.length)
-}
+fun <T> animatedValueSource(channelMap: ChannelMap?, timePassed: Float): ValueSource<T> =
+    if (channelMap == null)
+      emptyValueSource()
+    else
+      { i ->
+        val channel = channelMap[i]
+        if (channel != null)
+          getChannelValue(channel, timePassed) as T
+        else
+          null
+      }
 
 fun projectBoneTail(matrix: Matrix, bone: Bone) =
-//    Matrix().translate(Vector3m(bone.length, 0f, 0f)).mul(matrix)
+//    Matrix().translate(Vector3(bone.length, 0f, 0f)).mul(matrix)
     Matrix(matrix).translate(bone.length, 0f, 0f)
 
-val dependentTransform: Transformer = { bones, bone ->
-  val parent = bone.parentOld
-  val parentTransform = if (parent == null)
-    Matrix()
-  else
-    projectBoneTail(parent.transform(bones, parent), parent)
-
-  parentTransform * transformBone(bone.translationOld, bone.rotation, bone.length)
-}
-
-fun inverseKinematicJointTransform(outVector: Vector3m): Transformer = { bones, bone ->
-  //  val previousBone = bones[bone.index - 1]
-  val endBone = bones[bone.index + 2]
-  val transform = dependentTransform(bones, bone)
-  val a = transformVector(transform)
-  val b = getBoneTranslation(bones, endBone)
-  val middle = (a + b) / 2f
-  val a2 = (a - b).length() / 2f
-  val c2 = bone.length
-  val projectLength = Math.sqrt((c2 * c2 - a2 * a2).toDouble()).toFloat()
-  val defaultTail = transformVector(projectBoneTail(transform, bone)) - a
-  val newTail = (middle + outVector * projectLength) - a
-  val tail = middle + outVector * projectLength - a
-//  val translation = a
-  val j = projectBoneTail(projectBoneTail(bone.parentOld!!.transform(bones, bone.parentOld!!), bone.parentOld!!), bone.parentOld!!)
-  val i = transformVector(j)
-  val k = i - a
-  val rotation = Quaternion().rotateTo(k, newTail)// rotateToward(translation - tail)
-//  transformBone(translation, rotation, bone.length)
-  transform * Matrix().rotate(rotation)
-//  transform*Matrix().rotate(Quaternion().rotateZ(Pi / 4))
-//  transform
-  transformBone(a, rotateToward(tail), bone.length)
-//  projectBoneTail(bone.parent!!.transform(bones, bone.parent!!), bone.parent!!) * transformBone(bone.translation, rotation, bone.length)
-}
-
-val pointAtChildTransform: Transformer = { bones, bone ->
-  val transform = dependentTransform(bones, bone)
-  val nextBone = bones[bone.index + 1]
-  val base = transformVector(transform)
-  val target = getBoneTranslation(bones, nextBone) - base
-//  val tail = transformVector(projectBoneTail(transform, bone)) - base
-//  transform.rotate(Quaternion().rotateTo(tail, target - base))
-  transformBone(base, rotateToward(target), bone.length)
-}
-
-fun cumulativeRotation(bone: Bone): Quaternion {
-  val parent = bone.parentOld
-  return if (parent != null)
-    cumulativeRotation(parent) * bone.rotation
-  else
-    bone.rotation
-}
-
-fun finalizeSkeleton(boneDefinitions: List<BoneDefinition>): Bones {
-  val bones = boneDefinitions.mapIndexed { index, it ->
-    Bone(
-        index = index,
-        name = it.name,
-        translationOld = it.translation,
-        rotation = Quaternion(),
-        transform = it.transform,
-        length = it.tail.length(),
-        isGlobal = it.isGlobal
-    )
-  }
-
-  val definitions = boneDefinitions.iterator()
-
-  for (bone in bones) {
-    val oldBone = definitions.next()
-    if (oldBone.parent != null) {
-      val parent = bones[boneDefinitions.indexOf(oldBone.parent)]
-      bone.parentOld = parent
-
-      if (oldBone.isGlobal) {
-        bone.translationOld += getSimpleBoneTranslation(parent)
-        bone.rotation = rotateToward(oldBone.tail)
-      } else {
-        val rotation = Quaternion(cumulativeRotation(parent)).invert() * rotateToward(oldBone.tail)
-        bone.rotation = rotation
-      }
-      bone.restingTransform = getSimpleBoneTransform(bone)
-    }
-  }
-
-  return bones
-}
-
-fun copyBones(bones: Bones): Bones {
-  val newBones = bones.map {
-    it.copy(parentOld = null)
-  }
-
-  val oldBones = bones.iterator()
-
-  for (bone in newBones) {
-    val oldBone = oldBones.next()
-    val parent = oldBone.parentOld
-    if (parent != null) {
-      bone.parentOld = newBones[parent.index]
-    }
-  }
-
-  return newBones
-}
 
 inline fun getCurrentKeys(keys: Keyframes, timePassed: Float): Pair<Keyframe, Keyframe?> {
   for (i in 0 until keys.size) {
@@ -306,7 +177,7 @@ fun getChannelValue(channel: AnimationChannel, timePassed: Float): Any {
   return if (secondKey == null) {
     when (channel.target.type) {
       ChannelType.rotation -> firstKey.value as Quaternion
-      ChannelType.translation -> firstKey.value as Vector3m
+      ChannelType.translation -> firstKey.value as Vector3
       else -> throw Error("Not implemented.")
     }
   } else {
@@ -321,28 +192,11 @@ fun getChannelValue(channel: AnimationChannel, timePassed: Float): Any {
         value
       }
       ChannelType.translation -> {
-        val a = firstKey.value as Vector3m
-        val b = secondKey.value as Vector3m
-        Vector3m(a).lerp(b, progress)
+        val a = firstKey.value as Vector3
+        val b = secondKey.value as Vector3
+        Vector3(Vector3m(a).lerp(Vector3m(b), progress))
       }
 
-      else -> throw Error("Not implemented.")
-    }
-  }
-}
-
-fun applyAnimation(animation: Animation, bones: Bones, timePassed: Float) {
-  for (channel in animation.channels) {
-    val bone = bones[channel.target.boneIndex]
-
-    val value = getChannelValue(channel, timePassed)
-    when (channel.target.type) {
-      ChannelType.rotation -> {
-        bone.rotation = value as Quaternion
-      }
-      ChannelType.translation -> {
-        bone.translationOld = value as Vector3m
-      }
       else -> throw Error("Not implemented.")
     }
   }
@@ -371,7 +225,7 @@ fun shift(timeOffset: Float, duration: Float, keys: Keyframes): Keyframes =
       listOf(result.last().copy(time = 0f)).plus(result)
     }
 
-fun keySequence(offset: Vector3m, increment: Float, values: List<Vector3m>): Keyframes =
+fun keySequence(offset: Vector3, increment: Float, values: List<Vector3>): Keyframes =
     values.mapIndexed { index, value ->
       Keyframe(increment * index, offset + value)
     }

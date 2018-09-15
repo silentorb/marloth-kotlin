@@ -8,7 +8,7 @@ import rendering.*
 import rendering.VertexWeight
 import rendering.VertexWeights
 import rendering.WeightMap
-
+/*
 fun modelFromSkeleton(bones: Bones, name: String, material:Material): Pair<Model, WeightMap> {
   val mesh = FlexibleMesh()
 
@@ -45,4 +45,4 @@ fun modelFromSkeleton(bones: Bones, name: String, material:Material): Pair<Model
   )
 
   return Pair(model, weights.toMap())
-}
+}*/

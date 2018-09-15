@@ -142,6 +142,7 @@ data class AnimationSampler(
 )
 
 data class IndexedAnimation(
+    val name: String,
     val channels: List<AnimationChannel>,
     val samplers: List<AnimationSampler>
 )
