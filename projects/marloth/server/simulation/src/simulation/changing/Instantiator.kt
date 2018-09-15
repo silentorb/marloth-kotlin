@@ -9,14 +9,15 @@ data class InstantiatorConfig(
     var defaultPlayerView: ViewMode = ViewMode.thirdPerson
 )
 
-fun createArmature(): Armature {
-  val bones = createSkeleton()
-  return Armature(
-      bones = bones,
-      originalBones = bones,
-      animations = humanAnimations(bones)
-  )
-}
+//fun createArmature(): Armature {
+//  val bones = createSkeleton()
+//  return Armature(
+//      bones = bones,
+//      originalBones = bones,
+//      levels = listOf(),
+//      animations = humanAnimations(bones)
+//  )
+//}
 
 //fun nextId(world: World): Id {
 //  val id = world.getAndSetNextId()

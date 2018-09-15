@@ -10,7 +10,6 @@ import rendering.*
 import scenery.Camera
 import lab.views.*
 import mythic.sculpting.*
-import rendering.meshes.Primitives
 
 data class ModelLayout(
     val boxes: List<Box>,
@@ -115,9 +114,9 @@ private fun getHits(componentMode: ComponentMode, start: Vector3, end: Vector3, 
       else -> listOf()
     }
 
-private fun trySelect(config: ModelViewConfig, camera: Camera, model: Model, mousePosition: Vector2i, bounds: Bounds) {
+private fun trySelect(config: ModelViewConfig, camera: Camera, model: Model, mousePosition: Vector2, bounds: Bounds) {
   val dimensions = bounds.dimensions
-  val cursor = mousePosition - bounds.position.toVector2i()
+  val cursor = mousePosition - bounds.position
   val cameraData = createCameraEffectsData(dimensions.toVector2i(), camera)
   val viewportBounds = listOf(
       0, 0,
@@ -155,7 +154,9 @@ fun tightenRotation(value: Float): Float =
 fun resetCamera(config: ModelViewConfig, model: AdvancedModel, rotationY: Float, rotationZ: Float) {
   config.camera.rotationY = rotationY
   config.camera.rotationZ = rotationZ
-  config.camera.pivot = Vector3(getVerticesCenter(model.model!!.vertices))
+  val m = model.model
+  if (m != null)
+    config.camera.pivot = Vector3(getVerticesCenter(m.vertices))
 }
 
 enum class SelectableListType {
@@ -186,9 +187,9 @@ fun loadGeneratedModel(config: ModelViewConfig, renderer: Renderer): Model {
 //  return null
 //}
 
-class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePosition: Vector2i) {
+class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePosition: Vector2) {
   val model: AdvancedModel = renderer.meshes[config.model]!!
-//  val externalMesh: Primitives? = renderer.meshes[config.model]?.primitives
+  //  val externalMesh: Primitives? = renderer.meshes[config.model]?.primitives
   val camera = createOrthographicCamera(config.camera)
 //  val advancedModel: AdvancedModel?
 
@@ -257,9 +258,9 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
   }
 
   fun updateAnimationOffset(state: ModelViewState, delta: Float): Float {
-      val armature = model.armature
-      if (armature != null && armature.animations.any())
-        return (state.animationOffset + delta) % armature.animations[0].duration
+    val armature = model.armature
+    if (armature != null && armature.animations.any())
+      return (state.animationOffset + delta) % armature.animations[0].duration
 
     return 0f
   }
@@ -267,8 +268,11 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
   fun updateState(layout: ModelLayout, input: LabCommandState, state: ModelViewState, delta: Float): ModelViewState {
     val commands = input.commands
 
-    val rotateSpeedZ = 1f
-    val rotateSpeedY = 1f
+    val mouseRotateSpeedZ = 2.5f
+    val mouseRotateSpeedY = 1.5f
+
+    val keyboardRotateSpeedZ = 1.5f
+    val keyboardRotateSpeedY = 0.1f
 
     if (isActive(commands, LabCommandType.select)) {
       val clickBox = filterMouseOverBoxes(layout.clickBoxes, mousePosition)
@@ -282,32 +286,42 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     }
 
     if (isActive(commands, LabCommandType.rotate)) {
-      config.camera.rotationZ -= rotateSpeedZ * delta * input.mouseOffset.x
-      config.camera.rotationY -= rotateSpeedY * delta * input.mouseOffset.y
+      config.camera.rotationZ -= mouseRotateSpeedZ * delta * Math.min(input.mouseOffset.x, 3f)
+//      config.camera.rotationY -= mouseRotateSpeedY * delta * Math.min(input.mouseOffset.y, 3f)
     }
 
-    if (isActive(commands, LabCommandType.pan) && (input.mouseOffset.x != 0 || input.mouseOffset.y != 0)) {
+    if (isActive(commands, LabCommandType.rotateLeft)) {
+      config.camera.rotationZ -= keyboardRotateSpeedZ * delta
+    }
+
+    if (isActive(commands, LabCommandType.rotateRight)) {
+      config.camera.rotationZ += keyboardRotateSpeedZ * delta
+    }
+
+    if (isActive(commands, LabCommandType.pan) && (input.mouseOffset.x != 0f || input.mouseOffset.y != 0f)) {
       val offset = Vector3(0f, input.mouseOffset.x.toFloat(), input.mouseOffset.y.toFloat())
       config.camera.pivot += camera.orientation * offset * delta * config.camera.zoom * 0.14f
     }
 
     if (isActive(commands, LabCommandType.zoomIn)) {
-      config.camera.zoom -= 10 * delta * getCommand(commands, LabCommandType.zoomIn).value
+      config.camera.zoom -= 20 * delta * getCommand(commands, LabCommandType.zoomIn).value
     } else if (isActive(commands, LabCommandType.zoomOut)) {
-      config.camera.zoom += 10 * delta * getCommand(commands, LabCommandType.zoomOut).value
+      config.camera.zoom += 20 * delta * getCommand(commands, LabCommandType.zoomOut).value
     }
 
-    config.camera.rotationY = Math.min(1.55f, Math.max(-(Pi / 2 - 0.01f), config.camera.rotationY))
+//    config.camera.rotationY = Math.min(1.55f, Math.max(-(Pi / 2 - 0.01f), config.camera.rotationY))
+    val maxY = Pi / 2f - 0.01f
+    config.camera.rotationY = minMax(config.camera.rotationY, -maxY, maxY)
     config.camera.rotationZ = tightenRotation(config.camera.rotationZ)
 
     return state.copy(animationOffset = updateAnimationOffset(state, delta))
   }
 
   fun getCommands(): LabCommandMap = mapOf(
-      LabCommandType.rotateLeft to { c -> config.camera.rotationZ -= rotateSpeedZ * c.value },
-      LabCommandType.rotateRight to { c -> config.camera.rotationZ += rotateSpeedZ * c.value },
-      LabCommandType.rotateUp to { c -> config.camera.rotationY += rotateSpeedY * c.value },
-      LabCommandType.rotateDown to { c -> config.camera.rotationY -= rotateSpeedY * c.value },
+//      LabCommandType.rotateLeft to { c -> config.camera.rotationZ -= rotateSpeedZ * c.value },
+//      LabCommandType.rotateRight to { c -> config.camera.rotationZ += rotateSpeedZ * c.value },
+//      LabCommandType.rotateUp to { c -> config.camera.rotationY += rotateSpeedY * c.value },
+//      LabCommandType.rotateDown to { c -> config.camera.rotationY -= rotateSpeedY * c.value },
 
       LabCommandType.cameraViewFront to { _ ->
         resetCamera(config, model, 0f, -Pi / 2f)

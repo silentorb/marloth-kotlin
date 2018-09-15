@@ -289,16 +289,14 @@ fun isInBounds(position: Vector2, bounds: Bounds): Boolean =
         position.y >= bounds.position.y &&
         position.y < bounds.position.y + bounds.dimensions.y
 
-fun <T> filterMouseOverBoxes(boxes: List<ClickBox<T>>, mousePosition: Vector2i): ClickBox<T>? {
-  val position = mousePosition.toVector2()
-  return boxes.filter { box -> isInBounds(position, box.bounds) }.firstOrNull()
+fun <T> filterMouseOverBoxes(boxes: List<ClickBox<T>>, mousePosition: Vector2): ClickBox<T>? {
+  return boxes.filter { box -> isInBounds(mousePosition, box.bounds) }.firstOrNull()
 }
 
-fun filterMouseOverBoxes(boxes: Layout, mousePosition: Vector2i): Box? {
-  val position = mousePosition.toVector2()
+fun filterMouseOverBoxes(boxes: Layout, mousePosition: Vector2): Box? {
   return boxes
       .filter { it.handler != null }
-      .filter { isInBounds(position, it.bounds) }.firstOrNull()
+      .filter { isInBounds(mousePosition, it.bounds) }.firstOrNull()
 }
 
 fun splitBoundsHorizontal(bounds: Bounds, leftPercentage: Float = 0.5f): Pair<Bounds, Bounds> {
@@ -315,5 +313,5 @@ fun splitBoundsHorizontal(bounds: Bounds, leftPercentage: Float = 0.5f): Pair<Bo
   )
 }
 
-fun getEvent(layout: Layout, mousePosition: Vector2i): Any? =
+fun getEvent(layout: Layout, mousePosition: Vector2): Any? =
     filterMouseOverBoxes(layout, mousePosition)?.handler

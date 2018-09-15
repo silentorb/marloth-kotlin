@@ -69,13 +69,15 @@ data class BoneDefinition(
 
 data class Bone(
     val name: String,
-    var translation: Vector3m,
+    val translation: Vector3 = Vector3(),
+    var translationOld: Vector3m = Vector3m(),
     var rotation: Quaternion,
     var length: Float,
     val index: Int,
     val transform: Transformer,
     var restingTransform: Matrix = Matrix(),
-    var parent: Bone? = null,
+    val parent: Int = -1,
+    var parentOld: Bone? = null,
     val isGlobal: Boolean
 )
 
@@ -88,11 +90,32 @@ typealias VertexWeights = Pair<VertexWeight, VertexWeight>
 
 typealias WeightMap = Map<Vector3m, VertexWeights>
 
+data class ArrangedBoneNode(
+    val index: Int,
+    val parent: Int
+)
+
 data class Armature(
     val bones: Bones,
     val originalBones: Bones,
     val animations: List<Animation>
 )
+
+fun transformSkeleton(armature: Armature): List<Matrix> {
+  val bones = armature.bones
+  val init = Matrix()
+  val result = Array(bones.size, { init })
+  for (i in 0 until bones.size) {
+    val bone = bones[i]
+    val transform = transformBone(bone.translation, bone.rotation)
+    result[i] = if (bone.parent == -1)
+      transform
+    else
+      result[bone.parent] * transform
+  }
+
+  return result.toList()
+}
 
 //private fun getBoneDefinitionTranslation(bone: BoneDefinition): Vector3m {
 //  val translation = bone.translation + bone.tail
@@ -105,6 +128,11 @@ data class Armature(
 fun getBoneTranslation(bones: Bones, bone: Bone): Vector3m =
     transformVector(bone.transform(bones, bone))
 
+fun transformBone(translation: Vector3, rotation: Quaternion) =
+    Matrix()
+        .translate(translation)
+        .rotate(rotation)
+
 fun transformBone(translation: Vector3m, rotation: Quaternion, length: Float) =
     Matrix()
         .translate(translation)
@@ -112,13 +140,13 @@ fun transformBone(translation: Vector3m, rotation: Quaternion, length: Float) =
 //        .translate(Vector3m(length, 0f, 0f))
 
 fun transformBone(bone: Bone) =
-    transformBone(bone.translation, bone.rotation, bone.length)
+    transformBone(bone.translationOld, bone.rotation, bone.length)
 
 fun getSimpleBoneTransform(bone: Bone): Matrix {
   if (bone.isGlobal)
     return transformBone(bone)
 
-  val parent = bone.parent
+  val parent = bone.parentOld
   val parentTransform = if (parent == null)
     Matrix()
   else
@@ -128,7 +156,7 @@ fun getSimpleBoneTransform(bone: Bone): Matrix {
 }
 
 fun getBoneLineage(bone: Bone): List<Bone> {
-  val parent = bone.parent
+  val parent = bone.parentOld
   return if (parent == null)
     listOf(bone)
   else
@@ -148,7 +176,7 @@ fun getSimpleBoneTranslation(bone: Bone): Vector3m {
 }
 
 val independentTransform: Transformer = { bones, bone ->
-  transformBone(bone.translation, bone.rotation, bone.length)
+  transformBone(bone.translationOld, bone.rotation, bone.length)
 }
 
 fun projectBoneTail(matrix: Matrix, bone: Bone) =
@@ -156,13 +184,13 @@ fun projectBoneTail(matrix: Matrix, bone: Bone) =
     Matrix(matrix).translate(bone.length, 0f, 0f)
 
 val dependentTransform: Transformer = { bones, bone ->
-  val parent = bone.parent
+  val parent = bone.parentOld
   val parentTransform = if (parent == null)
     Matrix()
   else
     projectBoneTail(parent.transform(bones, parent), parent)
 
-  parentTransform * transformBone(bone.translation, bone.rotation, bone.length)
+  parentTransform * transformBone(bone.translationOld, bone.rotation, bone.length)
 }
 
 fun inverseKinematicJointTransform(outVector: Vector3m): Transformer = { bones, bone ->
@@ -179,7 +207,7 @@ fun inverseKinematicJointTransform(outVector: Vector3m): Transformer = { bones, 
   val newTail = (middle + outVector * projectLength) - a
   val tail = middle + outVector * projectLength - a
 //  val translation = a
-  val j = projectBoneTail(projectBoneTail(bone.parent!!.transform(bones, bone.parent!!), bone.parent!!), bone.parent!!)
+  val j = projectBoneTail(projectBoneTail(bone.parentOld!!.transform(bones, bone.parentOld!!), bone.parentOld!!), bone.parentOld!!)
   val i = transformVector(j)
   val k = i - a
   val rotation = Quaternion().rotateTo(k, newTail)// rotateToward(translation - tail)
@@ -202,7 +230,7 @@ val pointAtChildTransform: Transformer = { bones, bone ->
 }
 
 fun cumulativeRotation(bone: Bone): Quaternion {
-  val parent = bone.parent
+  val parent = bone.parentOld
   return if (parent != null)
     cumulativeRotation(parent) * bone.rotation
   else
@@ -214,7 +242,7 @@ fun finalizeSkeleton(boneDefinitions: List<BoneDefinition>): Bones {
     Bone(
         index = index,
         name = it.name,
-        translation = it.translation,
+        translationOld = it.translation,
         rotation = Quaternion(),
         transform = it.transform,
         length = it.tail.length(),
@@ -228,10 +256,10 @@ fun finalizeSkeleton(boneDefinitions: List<BoneDefinition>): Bones {
     val oldBone = definitions.next()
     if (oldBone.parent != null) {
       val parent = bones[boneDefinitions.indexOf(oldBone.parent)]
-      bone.parent = parent
+      bone.parentOld = parent
 
       if (oldBone.isGlobal) {
-        bone.translation += getSimpleBoneTranslation(parent)
+        bone.translationOld += getSimpleBoneTranslation(parent)
         bone.rotation = rotateToward(oldBone.tail)
       } else {
         val rotation = Quaternion(cumulativeRotation(parent)).invert() * rotateToward(oldBone.tail)
@@ -246,16 +274,16 @@ fun finalizeSkeleton(boneDefinitions: List<BoneDefinition>): Bones {
 
 fun copyBones(bones: Bones): Bones {
   val newBones = bones.map {
-    it.copy(parent = null)
+    it.copy(parentOld = null)
   }
 
   val oldBones = bones.iterator()
 
   for (bone in newBones) {
     val oldBone = oldBones.next()
-    val parent = oldBone.parent
+    val parent = oldBone.parentOld
     if (parent != null) {
-      bone.parent = newBones[parent.index]
+      bone.parentOld = newBones[parent.index]
     }
   }
 
@@ -313,7 +341,7 @@ fun applyAnimation(animation: Animation, bones: Bones, timePassed: Float) {
         bone.rotation = value as Quaternion
       }
       ChannelType.translation -> {
-        bone.translation = value as Vector3m
+        bone.translationOld = value as Vector3m
       }
       else -> throw Error("Not implemented.")
     }

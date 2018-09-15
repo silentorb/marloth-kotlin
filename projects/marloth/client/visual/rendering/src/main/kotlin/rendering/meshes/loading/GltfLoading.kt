@@ -33,13 +33,12 @@ fun loadVertices(buffer: ByteBuffer, info: GltfInfo, vertexSchema: VertexSchema,
     if (mappedAttribute == null)
       throw Error("Missing attribute map for " + attribute.name)
 
-    val attributeAccessorIndex = primitive.attributes [mappedAttribute]
+    val attributeAccessorIndex = primitive.attributes[mappedAttribute]
     if (attributeAccessorIndex != null) {
       val attributeAccessor = info.accessors[attributeAccessorIndex]
       val bufferView = info.bufferViews[attributeAccessor.bufferView]
       Triple(attributeAccessor, bufferView, attribute.size)
-    }
-    else
+    } else
       Triple(null, null, attribute.size)
   }
 
@@ -56,8 +55,7 @@ fun loadVertices(buffer: ByteBuffer, info: GltfInfo, vertexSchema: VertexSchema,
           val value = buffer.getFloat()
           vertices.put(value)
         }
-      }
-      else {
+      } else {
         for (x in 0 until componentCount) {
           vertices.put(0f)
         }
@@ -106,16 +104,15 @@ fun loadPrimitive(primitive: Primitive, name: String, buffer: ByteBuffer, info: 
       name = name
   )
 }
-
+/*
 data class Node(
     val name: String,
     val rotation: Quaternion,
     val translation: Vector3,
-    var children: List<Node> = listOf(),
     var parent: Int? = null
 )
 
-fun convertNode(indexedNode: IndexedNode): Node {
+fun convertNode(indexedNode: Node): Node {
   val rotation = if (indexedNode.rotation != null)
     Quaternion(indexedNode.rotation.x, indexedNode.rotation.y, indexedNode.rotation.z, indexedNode.rotation.w)
   else
@@ -129,7 +126,7 @@ fun convertNode(indexedNode: IndexedNode): Node {
   return Node(indexedNode.name, rotation, translation)
 }
 
-fun loadNodes(indexedNodes: List<IndexedNode>): List<Node> {
+fun loadNodes(indexedNodes: List<Node>): List<Node> {
   val nodes = indexedNodes.map { convertNode(it) }
   val indexedIterator = indexedNodes.iterator()
   nodes.forEachIndexed { i, node ->
@@ -144,6 +141,7 @@ fun loadNodes(indexedNodes: List<IndexedNode>): List<Node> {
 
   return nodes
 }
+*/
 
 fun loadKeyframes(inputIndex: Int, outputIndex: Int, info: GltfInfo) {
 
@@ -184,39 +182,80 @@ fun loadAnimations(animations: List<IndexedAnimation>, bones: Map<Int, Bone>): L
   return animations.map { loadAnimation(it, bones) }
 }
 
-fun nodeToBone(node: Node) =
+fun nodeToBone(node: Node, index: Int, parent: Int) =
     Bone(
-        translation = Vector3m(node.translation),
-        rotation = node.rotation,
+        translationOld = Vector3m(node.translation!!),
+        rotation = if (node.rotation != null)
+          Quaternion(node.rotation.x, node.rotation.y, node.rotation.z, node.rotation.w)
+        else
+          Quaternion(),
         name = node.name,
+        translation = node.translation,
         transform = independentTransform,
-        length = 1f,
-        index = -1,
+        parent = parent,
+        length = 0.1f,
+        index = index,
         isGlobal = false
     )
 
-fun createBoneMap(nodes: List<Node>, animations: List<IndexedAnimation>): Map<Int, Bone> =
-    animations.flatMap { it.channels.map { it.target.node } }
-        .distinct()
-        .associate {
-          val node = nodes[it]
-          Pair(it, nodeToBone(node))
-        }
+data class InitialBoneNode(
+    val index: Int,
+    val level: Int,
+    val parent: Int
+)
+
+fun gatherBoneHierarchy(nodes: List<Node>, root: Int, level: Int = 0, parent: Int = -1): List<InitialBoneNode> {
+  val children = nodes[root].children
+  val descendents: List<InitialBoneNode> = if (children == null) listOf() else children.flatMap { child ->
+    gatherBoneHierarchy(nodes, child, level + 1, root).toList()
+  }
+
+  return listOf(InitialBoneNode(root, level, parent))
+      .plus(descendents)
+}
+
+fun orderBoneHierarchy(levelMap: List<InitialBoneNode>): List<InitialBoneNode> {
+  val size = levelMap.sortedByDescending { it.level }.first().level
+  return (0 until size).flatMap { level ->
+    levelMap.filter { it.level == level }
+  }
+
+//  return listOf(initialLevels.first().map {
+//    ArrangedBoneNode(it.index, -1)
+//  })
+//      .plus(initialLevels.drop(1).map { list ->
+//        list.map { node ->
+//          ArrangedBoneNode(node.index, initialLevels[node.level - 1].indexOfFirst { it.index == node.parent })
+//        }
+//      })
+}
+
+//fun createBoneMap(nodes: List<Node>, root: Int): Map<Int, Bone> =
+//    animations.flatMap { it.channels.map { it.target.node } }
+//        .distinct()
+//        .associate {
+//          val node = nodes[it]
+//          Pair(it, nodeToBone(node))
+//        }
 
 fun loadArmature(info: GltfInfo): Armature? {
   val animations = info.animations
   if (animations == null || animations.none())
     return null
 
-  val nodes = loadNodes(info.nodes)
+//  val skin = info.skins!!.first()
+  val root = info.nodes.indexOfFirst { it.name == "metarig" }
 
-//  val rootNodes = nodes.filter { it.parent == null }
-  val boneMap = createBoneMap(nodes, animations)
-
-  val bones = boneMap.values.toList()
+  val levelMap = gatherBoneHierarchy(info.nodes, root)
+  val orderMap = orderBoneHierarchy(levelMap)
+  val bones = orderMap.mapIndexed { i, item ->
+    val node = info.nodes[item.index]
+    val parent = if (item.parent == -1) -1 else orderMap.indexOfFirst { it.index == item.parent }
+    nodeToBone(node, i, parent)
+  }
   return Armature(
       bones = bones,
-      originalBones = bones,
+      originalBones = listOf(),
       animations = listOf()// loadAnimations(animations, boneMap)
   )
 }

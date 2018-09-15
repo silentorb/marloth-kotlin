@@ -73,7 +73,7 @@ data class BufferView(
     val name: String?
 )
 
-data class IndexedNode(
+data class Node(
     val name: String,
     val children: List<Int>?,
     val rotation: Vector4?,
@@ -154,7 +154,7 @@ data class GltfInfo(
     val images: List<Image>?,
     val meshes: List<MeshInfo2>,
     val materials: List<MaterialInfo>,
-    val nodes: List<IndexedNode>,
+    val nodes: List<Node>,
     val skins: List<Skin>?,
     val textures: List<Texture>?
 )

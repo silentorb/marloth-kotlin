@@ -6,6 +6,7 @@ import lab.views.shared.drawSkeleton
 import lab.views.shared.getAnimatedBones
 import mythic.bloom.*
 import mythic.breeze.Bones
+import mythic.breeze.transformSkeleton
 import mythic.drawing.Canvas
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
@@ -31,40 +32,40 @@ fun createOrthographicCamera(camera: ViewCameraConfig): Camera {
   return Camera(ProjectionType.orthographic, position + camera.pivot, orientationSecond, camera.zoom)
 }
 
-fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, transform: Matrix, section: Primitive, bones: Bones?, originalBones: Bones?) {
+fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, transform: Matrix, section: Primitive) {
   val mesh = section.mesh
 
   globalState.depthEnabled = true
   globalState.blendEnabled = true
   globalState.cullFaces = true
 
-  if (bones != null && originalBones != null) {
-    val shaderConfig = ObjectShaderConfig(
-        transform = transform,
-        color = section.material.color,
-        boneBuffer = populateBoneBuffer(sceneRenderer.renderer.boneBuffer, bones)
-    )
-    when (config.meshDisplay) {
-      MeshDisplay.solid -> sceneRenderer.effects.flatAnimated.activate(shaderConfig)
-      MeshDisplay.wireframe -> sceneRenderer.effects.flatAnimated.activate(shaderConfig)
-    }
-  } else {
-    val color = if (config.meshDisplay == MeshDisplay.solid)
-      section.material.color
-    else
-      faceColor
+//  if (bones != null && originalBones != null) {
+//    val shaderConfig = ObjectShaderConfig(
+//        transform = transform,
+//        color = section.material.color,
+//        boneBuffer = populateBoneBuffer(sceneRenderer.renderer.boneBuffer, bones)
+//    )
+//    when (config.meshDisplay) {
+//      MeshDisplay.solid -> sceneRenderer.effects.flatAnimated.activate(shaderConfig)
+//      MeshDisplay.wireframe -> sceneRenderer.effects.flatAnimated.activate(shaderConfig)
+//    }
+//  } else {
+  val color = if (config.meshDisplay == MeshDisplay.solid)
+    section.material.color
+  else
+    faceColor
 
-    val texture = sceneRenderer.renderer.textures[section.material.texture]
-    val shaderConfig = ObjectShaderConfig(
-        transform = transform,
-        color = color,
-        texture = texture
-    )
-    if (texture != null)
-      sceneRenderer.effects.texturedFlat.activate(shaderConfig)
-    else
-      sceneRenderer.effects.flat.activate(shaderConfig)
-  }
+  val texture = sceneRenderer.renderer.textures[section.material.texture]
+  val shaderConfig = ObjectShaderConfig(
+      transform = transform,
+      color = color,
+      texture = texture
+  )
+  if (texture != null)
+    sceneRenderer.effects.texturedFlat.activate(shaderConfig)
+  else
+    sceneRenderer.effects.flat.activate(shaderConfig)
+//  }
 
   mesh.draw(DrawMethod.triangleFan)
   if (config.meshDisplay == MeshDisplay.wireframe) {
@@ -72,17 +73,17 @@ fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, trans
     globalState.depthEnabled = false
   }
 
-  val shaderConfig = ObjectShaderConfig(
+  val shaderConfig2 = ObjectShaderConfig(
       transform = transform,
       color = lineColor
   )
 
   globalState.lineThickness = 1f
-  sceneRenderer.effects.flat.activate(shaderConfig)
+  sceneRenderer.effects.flat.activate(shaderConfig2)
   mesh.draw(DrawMethod.lineLoop)
 
   globalState.pointSize = 3f
-  sceneRenderer.effects.flat.activate(shaderConfig)
+  sceneRenderer.effects.flat.activate(shaderConfig2)
   mesh.draw(DrawMethod.points)
 
   globalState.depthEnabled = false
@@ -135,13 +136,18 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
     val armature = model.armature
     val modelSource = model.model
 
-    val bones = if (armature != null) getAnimatedBones(armature, state.animationOffset) else null
+//    val bones = if (armature != null) getAnimatedBones(armature, state.animationOffset) else null
+    val transforms = if (armature != null)
+      transformSkeleton(armature)
+    else
+      null
+
     val originalBones = armature?.originalBones
 
     if (modelSource == null) {
       model.primitives
           .filterIndexed { i, it -> config.visibleGroups[i] }
-          .forEach { drawMeshPreview(config, sceneRenderer, transform, it, bones, originalBones) }
+          .forEach { drawMeshPreview(config, sceneRenderer, transform, it) }
     } else {
       val primitives2 = model.primitives
 
@@ -149,7 +155,7 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
       meshes
           .filterIndexed { i, it -> config.visibleGroups[i] }
           .forEach {
-            drawMeshPreview(config, sceneRenderer, transform, it, bones, originalBones)
+            drawMeshPreview(config, sceneRenderer, transform, it)
           }
 
       meshes.forEach { it.mesh.dispose() }
@@ -181,9 +187,9 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
     sceneRenderer.drawLine(Vector3(), Vector3(0f, 1f, 0f), green)
     sceneRenderer.drawLine(Vector3(), Vector3(0f, 0f, 1f), blue)
 
-    if (bones != null) {
+    if (armature != null) {
       globalState.depthEnabled = false
-      drawSkeleton(sceneRenderer, bones, Matrix())
+      drawSkeleton(sceneRenderer, armature, transforms!!, Matrix())
       globalState.depthEnabled = true
     }
   }

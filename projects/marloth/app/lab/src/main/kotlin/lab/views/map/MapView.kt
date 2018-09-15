@@ -60,9 +60,9 @@ private fun getFaceHits(start: Vector3, end: Vector3, world: Realm): List<Hit> {
   }
 }
 
-private fun castSelectionRay(config: MapViewConfig, camera: Camera, world: Realm, mousePosition: Vector2i, bounds: Bounds) {
+private fun castSelectionRay(config: MapViewConfig, camera: Camera, world: Realm, mousePosition: Vector2, bounds: Bounds) {
   val dimensions = bounds.dimensions
-  val cursor = mousePosition - bounds.position.toVector2i()
+  val cursor = mousePosition - bounds.position
   val cameraData = createCameraEffectsData(dimensions.toVector2i(), camera)
   val viewportBounds = listOf(
       0, 0,

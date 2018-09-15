@@ -103,7 +103,10 @@ fun createLabInputBindings() = mutableMapOf(
             GLFW.GLFW_KEY_V to LabCommandType.selectModeVertices
         )))
         .plus(createBindings(0, mapOf(
-            GLFW.GLFW_KEY_W to LabCommandType.pan
+            GLFW.GLFW_KEY_W to LabCommandType.pan,
+            GLFW.GLFW_KEY_LEFT to LabCommandType.rotateLeft,
+            GLFW.GLFW_KEY_RIGHT to LabCommandType.rotateRight
+
         )))
         .plus(createBindings(1, mapOf(
             GLFW.GLFW_MOUSE_BUTTON_2 to LabCommandType.rotate,

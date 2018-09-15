@@ -16,6 +16,7 @@ import mythic.bloom.Box
 import mythic.bloom.renderLayout
 import mythic.platforming.PlatformInput
 import mythic.platforming.WindowInfo
+import mythic.spatial.Vector2
 import org.joml.Vector2i
 import org.joml.minus
 import rendering.createCanvas
@@ -42,7 +43,7 @@ fun createLabDeviceHandlers(input: PlatformInput): List<ScalarInputSource> {
   )
 }
 
-private var previousMousePosition = Vector2i()
+private var previousMousePosition = Vector2()
 
 fun getInputState(platformInput: PlatformInput, commands: List<HaftCommand<LabCommandType>>): LabCommandState {
   val mousePosition = platformInput.getMousePosition()

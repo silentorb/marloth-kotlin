@@ -11,6 +11,8 @@ import junk_client.views.battleView
 import junk_simulation.CommandType
 import junk_simulation.GameCommand
 import mythic.platforming.WindowInfo
+import mythic.spatial.Vector2
+import mythic.spatial.minMax
 import org.lwjgl.glfw.GLFW
 
 data class ClientState(
@@ -19,9 +21,6 @@ data class ClientState(
     val shopState: ShopState?,
     val battle: ClientBattleState?
 )
-
-fun clip(value: Int, min: Int, max: Int): Int =
-    Math.max(min, Math.min(value, max))
 
 class Client(val platform: Platform) {
   val renderer: Renderer = Renderer()
@@ -37,11 +36,11 @@ class Client(val platform: Platform) {
     platform.input.update()
     val (commands, nextInputState) = gatherInputCommands(bindings, deviceHandlers, previousInput)
     val initalMousePosition = platform.input.getMousePosition()
-    val clippedMousePosition = Vector2i(
-        clip(initalMousePosition.x, 0, actualWindowInfo.dimensions.x),
-        clip(initalMousePosition.y, 0, actualWindowInfo.dimensions.y)
+    val clippedMousePosition = Vector2(
+        minMax(initalMousePosition.x, 0f, actualWindowInfo.dimensions.x.toFloat()),
+        minMax(initalMousePosition.y, 0f, actualWindowInfo.dimensions.y.toFloat())
     )
-    val mousePosition = Vector2i(
+    val mousePosition = Vector2(
         clippedMousePosition.x * 320 / actualWindowInfo.dimensions.x,
         clippedMousePosition.y * 200 / actualWindowInfo.dimensions.y
     )

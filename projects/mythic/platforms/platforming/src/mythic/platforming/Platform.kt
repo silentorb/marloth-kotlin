@@ -3,6 +3,7 @@ package mythic.platforming
 import haft.Gamepad
 import haft.MultiDeviceScalarInputSource
 import haft.ScalarInputSource
+import mythic.spatial.Vector2
 import org.joml.Vector2i
 
 data class WindowInfo(val dimensions: Vector2i)
@@ -12,7 +13,7 @@ interface PlatformInput {
   val GamepadInputSource: MultiDeviceScalarInputSource
   val MouseInputSource: ScalarInputSource
   fun update()
-  fun getMousePosition(): Vector2i
+  fun getMousePosition(): Vector2
   fun getGamepads(): List<Gamepad>
   fun isMouseVisible(value: Boolean)
 }

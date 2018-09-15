@@ -126,7 +126,7 @@ fun walkingAnimationSide(bones: Bones, duration: Float, suffix: String, timeOffs
               boneIndex = foot.index,
               type = ChannelType.translation
           ),
-          keys = shift(timeOffset, duration, keySequence(foot.translation, division, listOf(
+          keys = shift(timeOffset, duration, keySequence(foot.translationOld, division, listOf(
               Vector3m(0f, 0.1f, 0f),
               Vector3m(0f, 0f, 0.15f),
               Vector3m(0f, -0.1f, 0f),
@@ -139,7 +139,7 @@ fun walkingAnimationSide(bones: Bones, duration: Float, suffix: String, timeOffs
               boneIndex = wrist.index,
               type = ChannelType.translation
           ),
-          keys = shift(timeOffset, duration, keySequence(wrist.translation, division, listOf(
+          keys = shift(timeOffset, duration, keySequence(wrist.translationOld, division, listOf(
               Vector3m(0f, -0.1f, 0f),
               Vector3m(0f, 0f, 0f),
               Vector3m(0f, 0.1f, 0f),
@@ -194,7 +194,7 @@ fun walkingAnimation(bones: Bones): Animation {
                   boneIndex = base.index,
                   type = ChannelType.translation
               ),
-              keys = keySequence(base.translation, division, listOf(
+              keys = keySequence(base.translationOld, division, listOf(
                   low,
                   high,
                   low,

@@ -2,6 +2,7 @@ package marloth.clienting
 
 import haft.*
 import mythic.platforming.PlatformInput
+import mythic.spatial.Vector2
 import org.joml.Vector2i
 import org.joml.minus
 
@@ -13,13 +14,13 @@ typealias UserCommands = List<UserCommand>
 
 data class GeneralInputDeviceState<CT>(
     val profileStates: ProfileStates<CT>,
-    val mousePosition: Vector2i
+    val mousePosition: Vector2
 )
 
 data class GeneralCommandState<CT>(
     val commands: List<HaftCommand<CT>>,
-    val mousePosition: Vector2i,
-    val mouseOffset: Vector2i
+    val mousePosition: Vector2,
+    val mouseOffset: Vector2
 )
 
 typealias CommandState = GeneralCommandState<CommandType>
@@ -40,7 +41,7 @@ data class InputState(
 fun newInputDeviceState() =
     InputDeviceState(
         profileStates = mapOf(),
-        mousePosition = Vector2i()
+        mousePosition = Vector2()
     )
 
 fun initialGameInputState(): ProfileStates<CommandType> = mapOf()
@@ -124,15 +125,15 @@ fun updateGameInput1(arguments: InputArguments, inputProfiles: List<PlayerInputP
   return gatherProfileCommands2(profiles, arguments.previousState.profileStates, arguments.deviceHandlers)
 }
 
-fun applyMouseAxis(value: Int, firstCommandType: CommandType, secondCommandType: CommandType, scale: Float) =
+fun applyMouseAxis(value: Float, firstCommandType: CommandType, secondCommandType: CommandType, scale: Float) =
     if (value > 0)
-      listOf(HaftCommand(firstCommandType, 1, value.toFloat() * scale, TriggerLifetime.pressed))
+      listOf(HaftCommand(firstCommandType, 1, value * scale, TriggerLifetime.pressed))
     else if (value < 0)
-      listOf(HaftCommand(secondCommandType, 1, -value.toFloat() * scale, TriggerLifetime.pressed))
+      listOf(HaftCommand(secondCommandType, 1, -value * scale, TriggerLifetime.pressed))
     else
       listOf()
 
-fun applyMouseMovement(mouseOffset: Vector2i): HaftCommands<CommandType> {
+fun applyMouseMovement(mouseOffset: Vector2): HaftCommands<CommandType> {
   return listOf<HaftCommand<CommandType>>()
       .plus(applyMouseAxis(mouseOffset.x, CommandType.lookRight, CommandType.lookLeft, 1f))
       .plus(applyMouseAxis(mouseOffset.y, CommandType.lookDown, CommandType.lookUp, 1f))
@@ -153,7 +154,7 @@ fun getInputArguments(input: PlatformInput, state: InputDeviceState, players: Li
   )
 }
 
-private var previousMousePosition = Vector2i()
+private var previousMousePosition = Vector2()
 
 //data class LabInputState(
 //    val commands: List<HaftCommand<LabCommandType>>,

@@ -2,6 +2,7 @@ package mythic.desktop
 
 import haft.*
 import mythic.platforming.PlatformInput
+import mythic.spatial.Vector2
 import org.joml.Vector2i
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWScrollCallback
@@ -94,11 +95,11 @@ class DesktopInput(val window: Long) : PlatformInput {
     }
   }
 
-  override fun getMousePosition(): Vector2i {
+  override fun getMousePosition(): Vector2 {
     val tempX = DoubleArray(1)
     val tempY = DoubleArray(1)
     glfwGetCursorPos(window, tempX, tempY)
-    return Vector2i(tempX[0].toInt(), tempY[0].toInt())
+    return Vector2(tempX[0].toFloat(), tempY[0].toFloat())
   }
 
   override fun isMouseVisible(value: Boolean) {

@@ -30,7 +30,7 @@ fun drawScenePanel(config: ModelViewConfig, state: ModelViewState, renderer: Ren
 
 fun drawSidePanel() = drawBackground(panelColor)
 fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: AdvancedModel,
-                  mousePosition: Vector2i): Depiction = { bounds: Bounds, canvas: Canvas ->
+                  mousePosition: Vector2): Depiction = { bounds: Bounds, canvas: Canvas ->
   drawSidePanel()(bounds, canvas)
   var row = 1
 

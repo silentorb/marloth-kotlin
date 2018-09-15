@@ -15,7 +15,7 @@ fun modelFromSkeleton(bones: Bones, name: String, material:Material): Pair<Model
   val weights = mutableMapOf<Vector3m, VertexWeights>()
 
   bones
-      .filter { it.parent != null }
+      .filter { it.parentOld != null }
       .filter { it.length != 0f }
 //      .take(7)
 //      .drop(6).take(1)
