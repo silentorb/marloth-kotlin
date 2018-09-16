@@ -43,16 +43,12 @@ enum class AttributeType {
   WEIGHTS_2
 }
 
-val attributeMap = mapOf(
-    AttributeType.NORMAL to AttributeName.normal,
-    AttributeType.POSITION to AttributeName.position,
-    AttributeType.TEXCOORD_0 to AttributeName.uv
-)
-
 val attributeMap2 = mapOf(
     AttributeName.normal to AttributeType.NORMAL,
     AttributeName.position to AttributeType.POSITION,
-    AttributeName.uv to AttributeType.TEXCOORD_0
+    AttributeName.uv to AttributeType.TEXCOORD_0,
+    AttributeName.joints to AttributeType.JOINTS_0,
+    AttributeName.weights to AttributeType.WEIGHTS_0
 )
 
 data class Accessor(

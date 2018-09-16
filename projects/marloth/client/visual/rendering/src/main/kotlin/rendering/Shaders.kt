@@ -26,18 +26,18 @@ layout(std140) uniform SceneUniform {
 """
 
 private val weightHeader = """
-layout (location = 3) in vec2[2] weights;
+layout (location = 3) in vec4[2] weights;
 layout (std140) uniform BoneTransforms {
   mat4[128] boneTransforms;
 };
 """
 
 private val weightApplication = """
-  vec3 position3 = position * (1 - weights[0][1] - weights[1][1]);
+  vec3 position3 = position;
 
-  for (int i = 0; i < 2; ++i) {
-    int boneIndex = int(weights[i][0]);
-    float strength = weights[i][1];
+  for (int i = 0; i < 3; ++i) {
+    int boneIndex = int(weights[0][i]);
+    float strength = weights[1][i];
     position3 += (boneTransforms[boneIndex] * position4).xyz * strength;
   }
   position4 = vec4(position3, 1.0);
@@ -319,9 +319,9 @@ class GeneralPerspectiveShader(buffers: UniformBuffers, fragmentShader: String, 
       shading.normalTransformProperty.setValue(config.normalTransform!!)
     }
 
-    if (skeleton != null) {
+//    if (skeleton != null) {
 //      skeleton.boneTransformsProperty.setValue(config.boneBuffer!!)
-    }
+//    }
 
     if (config.texture != null) {
       config.texture.activate()

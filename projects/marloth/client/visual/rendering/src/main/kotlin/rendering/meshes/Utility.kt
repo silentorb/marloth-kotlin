@@ -12,6 +12,7 @@ enum class AttributeName {
   normal,
   color,
   uv,
+  joints,
   weights
 }
 

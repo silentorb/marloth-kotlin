@@ -28,7 +28,7 @@ fun createOrthographicCamera(camera: ViewCameraConfig): Camera {
   return Camera(ProjectionType.orthographic, position + camera.pivot, orientationSecond, camera.zoom)
 }
 
-fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, transform: Matrix, section: Primitive) {
+fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, transform: Matrix, section: Primitive, isAnimated: Boolean) {
   val mesh = section.mesh
 
   globalState.depthEnabled = true
@@ -55,13 +55,18 @@ fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, trans
   val shaderConfig = ObjectShaderConfig(
       transform = transform,
       color = color,
-      texture = texture
+      texture = texture,
+      normalTransform = Matrix()
   )
-  if (texture != null)
-    sceneRenderer.effects.texturedFlat.activate(shaderConfig)
+  val effects = sceneRenderer.effects
+  val (effect, flatEffect) = if (isAnimated)
+    Pair(effects.animated, effects.flatAnimated)
+  else if (texture != null)
+    Pair(effects.texturedFlat, effects.flat)
   else
-    sceneRenderer.effects.flat.activate(shaderConfig)
-//  }
+    Pair(effects.flat, effects.flat)
+
+  effect.activate(shaderConfig)
 
   mesh.draw(DrawMethod.triangleFan)
   if (config.meshDisplay == MeshDisplay.wireframe) {
@@ -75,11 +80,11 @@ fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, trans
   )
 
   globalState.lineThickness = 1f
-  sceneRenderer.effects.flat.activate(shaderConfig2)
+  flatEffect.activate(shaderConfig2)
   mesh.draw(DrawMethod.lineLoop)
 
   globalState.pointSize = 3f
-  sceneRenderer.effects.flat.activate(shaderConfig2)
+  flatEffect.activate(shaderConfig2)
   mesh.draw(DrawMethod.points)
 
   globalState.depthEnabled = false
@@ -138,12 +143,14 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
     else
       null
 
-    val originalBones = armature?.originalBones
+    if (transforms != null) {
+      populateBoneBuffer(sceneRenderer.renderer.boneBuffer, transforms)
+    }
 
     if (modelSource == null) {
       model.primitives
           .filterIndexed { i, it -> config.visibleGroups[i] }
-          .forEach { drawMeshPreview(config, sceneRenderer, transform, it) }
+          .forEach { drawMeshPreview(config, sceneRenderer, transform, it, transforms != null) }
     } else {
       val primitives2 = model.primitives
 
@@ -151,7 +158,7 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
       meshes
           .filterIndexed { i, it -> config.visibleGroups[i] }
           .forEach {
-            drawMeshPreview(config, sceneRenderer, transform, it)
+            drawMeshPreview(config, sceneRenderer, transform, it, transforms != null)
           }
 
       meshes.forEach { it.mesh.dispose() }

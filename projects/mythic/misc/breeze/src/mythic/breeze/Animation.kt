@@ -1,7 +1,6 @@
 package mythic.breeze
 
 import mythic.spatial.*
-import org.joml.plus
 import org.joml.times
 
 data class ChannelTarget2(
@@ -65,8 +64,7 @@ data class Bone(
     val rotation: Quaternion,
     val length: Float,
     val index: Int,
-    val parent: Int = -1,
-    val isGlobal: Boolean
+    val parent: Int = -1
 )
 
 data class VertexWeight(

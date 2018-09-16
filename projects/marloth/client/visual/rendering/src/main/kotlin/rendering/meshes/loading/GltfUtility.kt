@@ -3,6 +3,7 @@ package rendering.meshes.loading
 import getResourceStream
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
+import mythic.spatial.Vector4
 import org.lwjgl.BufferUtils
 import java.io.DataInputStream
 import java.nio.ByteBuffer
@@ -83,3 +84,9 @@ fun selectBufferIterator(componentType: Int): BufferIterator =
       ComponentType.UnsignedShort.value -> iterateShorts
       else -> throw Error("Not implemented.")
     }
+
+fun loadQuaternion(value:Vector4?) =
+    if (value != null)
+      Quaternion(value.x, value.y, value.z, value.w)
+    else
+      Quaternion()

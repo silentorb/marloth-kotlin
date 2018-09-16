@@ -2,7 +2,6 @@ package rendering.meshes.loading
 
 import mythic.breeze.*
 import mythic.glowing.SimpleTriangleMesh
-import mythic.spatial.*
 import org.lwjgl.BufferUtils
 import rendering.*
 import rendering.meshes.*
@@ -43,14 +42,9 @@ fun loadVertices(buffer: ByteBuffer, info: GltfInfo, vertexSchema: VertexSchema,
   }
 
   for (i in 0 until vertexCount) {
-//      val slice = buffer.slice().asFloatBuffer()
-//      slice.limit(3)
-//      buffer.position(buffer.position() + 4 * 3)
     for ((attributeAccessor, bufferView, componentCount) in attributes) {
       if (attributeAccessor != null && bufferView != null) {
         buffer.position(bufferView.byteOffset + attributeAccessor.byteOffset + i * bufferView.byteStride)
-//      vertices.position(attribute.offset + i * vertexSchema.floatSize)
-//      vertices.put(slice)
         for (x in 0 until componentCount) {
           val value = buffer.getFloat()
           vertices.put(value)
@@ -67,10 +61,12 @@ fun loadVertices(buffer: ByteBuffer, info: GltfInfo, vertexSchema: VertexSchema,
 
 fun loadPrimitive(primitive: Primitive, name: String, buffer: ByteBuffer, info: GltfInfo,
                   vertexSchemas: VertexSchemas): rendering.meshes.Primitive {
-  val vertexSchema = if (primitive.attributes.size == 2)
-    vertexSchemas.imported
-  else
+  val vertexSchema = if (primitive.attributes.containsKey(AttributeType.JOINTS_0))
+    vertexSchemas.animated
+  else if (primitive.attributes.containsKey(AttributeType.TEXCOORD_0))
     vertexSchemas.textured
+  else
+    vertexSchemas.imported
 
   val vertices = loadVertices(buffer, info, vertexSchema, primitive)
   val indices = loadIndices(buffer, info, primitive)
@@ -80,7 +76,7 @@ fun loadPrimitive(primitive: Primitive, name: String, buffer: ByteBuffer, info: 
 
   val materialSource = info.materials[primitive.material]
   val details = materialSource.pbrMetallicRoughness
-  val color = details.baseColorFactor // arrayToVector4()
+  val color = details.baseColorFactor
   val glow = if (materialSource.emissiveFactor != null && materialSource.emissiveFactor.first() != 0f)
     color.x / materialSource.emissiveFactor.first()
   else
@@ -104,48 +100,6 @@ fun loadPrimitive(primitive: Primitive, name: String, buffer: ByteBuffer, info: 
       name = name
   )
 }
-/*
-data class Node(
-    val name: String,
-    val rotation: Quaternion,
-    val translation: Vector3,
-    var parent: Int? = null
-)
-
-fun convertNode(indexedNode: Node): Node {
-  val rotation = if (indexedNode.rotation != null)
-    Quaternion(indexedNode.rotation.x, indexedNode.rotation.y, indexedNode.rotation.z, indexedNode.rotation.w)
-  else
-    Quaternion()
-
-  val translation = if (indexedNode.translation != null)
-    indexedNode.translation
-  else
-    Vector3()
-
-  return Node(indexedNode.name, rotation, translation)
-}
-
-fun loadNodes(indexedNodes: List<Node>): List<Node> {
-  val nodes = indexedNodes.map { convertNode(it) }
-  val indexedIterator = indexedNodes.iterator()
-  nodes.forEachIndexed { i, node ->
-    val indexedNode = indexedIterator.next()
-    if (indexedNode.children != null) {
-      node.children = indexedNode.children.map {
-        nodes[it]
-      }
-      node.children.forEach { it.parent = i }
-    }
-  }
-
-  return nodes
-}
-*/
-
-fun loadKeyframes(inputIndex: Int, outputIndex: Int, info: GltfInfo) {
-
-}
 
 fun convertChannelType(source: String): ChannelType =
     when (source) {
@@ -155,41 +109,37 @@ fun convertChannelType(source: String): ChannelType =
       else -> throw Error("Unsupported channel type: " + source)
     }
 
-fun loadAnimation(buffer: ByteBuffer, info: GltfInfo, source: IndexedAnimation, bones: List<Bone>, boneIndexMap: Map<Int, Int>): Animation {
+fun loadChannel(target: ChannelTarget, buffer: ByteBuffer, info: GltfInfo, sampler: AnimationSampler,
+                boneIndexMap: Map<Int, Int>): mythic.breeze.AnimationChannel {
+  val boneIndex = boneIndexMap[target.node]!!
+  val inputAccessor = info.accessors[sampler.input]
+  val inputBufferView = info.bufferViews[inputAccessor.bufferView]
+  val outputAccessor = info.accessors[sampler.output]
+  val outputBufferView = info.bufferViews[outputAccessor.bufferView]
+  val times = getFloats(buffer, inputBufferView.byteOffset, inputAccessor.count)
+  val values: List<Any> = when (target.path) {
+    "translation" -> getVector3List(buffer, outputBufferView.byteOffset, outputAccessor.count)
+    "rotation" -> getQuaternions(buffer, outputBufferView.byteOffset, outputAccessor.count)
+    "scale" -> getVector3List(buffer, outputBufferView.byteOffset, outputAccessor.count)
+    else -> throw Error("Not implemented.")
+  }
 
-//  val samplers = source.samplers.map {
-//    listOf<Keyframe>()
-////    AnimationSampler2(
-////        it.input,
-////        it.output
-////    )
-//  }
+  return AnimationChannel(
+      target = mythic.breeze.ChannelTarget(boneIndex, convertChannelType(target.path)),
+      keys = times.zip(values) { time, value -> Keyframe(time, value) }
+  )
+}
 
+fun loadAnimation(buffer: ByteBuffer, info: GltfInfo, source: IndexedAnimation, boneIndexMap: Map<Int, Int>): Animation {
   var duration = 0f
   val channels = source.channels.map {
-    val target = it.target
-    val sampler = source.samplers[it.sampler]
-    val boneIndex = boneIndexMap[target.node]!!
-    val inputAccessor = info.accessors[sampler.input]
-    val inputBufferView = info.bufferViews[inputAccessor.bufferView]
-    val outputAccessor = info.accessors[sampler.output]
-    val outputBufferView = info.bufferViews[outputAccessor.bufferView]
-    val times = getFloats(buffer, inputBufferView.byteOffset, inputAccessor.count)
-    val values: List<Any> = when (target.path) {
-      "translation" -> getVector3List(buffer, outputBufferView.byteOffset, outputAccessor.count)
-      "rotation" -> getQuaternions(buffer, outputBufferView.byteOffset, outputAccessor.count)
-      "scale" -> getVector3List(buffer, outputBufferView.byteOffset, outputAccessor.count)
-      else -> throw Error("Not implemented.")
-    }
+    val channel = loadChannel(it.target, buffer, info, source.samplers[it.sampler], boneIndexMap)
 
-    val lastTime = times.last()
+    val lastTime = channel.keys.last().time
     if (lastTime > duration)
       duration = lastTime
 
-    AnimationChannel(
-        target = mythic.breeze.ChannelTarget(boneIndex, convertChannelType(it.target.path)),
-        keys = times.zip(values) { time, value -> Keyframe(time, value) }
-    )
+    channel
   }
 
   return Animation(
@@ -200,23 +150,17 @@ fun loadAnimation(buffer: ByteBuffer, info: GltfInfo, source: IndexedAnimation, 
 }
 
 fun loadAnimations(buffer: ByteBuffer, info: GltfInfo, animations: List<IndexedAnimation>, bones: List<Bone>, boneIndexMap: Map<Int, Int>): List<Animation> {
-  return animations.map { loadAnimation(buffer, info, it, bones, boneIndexMap) }
+  return animations.map { loadAnimation(buffer, info, it, boneIndexMap) }
 }
 
 fun nodeToBone(node: Node, index: Int, parent: Int) =
     Bone(
-//        translationOld = Vector3m(node.translation!!),
-        rotation = if (node.rotation != null)
-          Quaternion(node.rotation.x, node.rotation.y, node.rotation.z, node.rotation.w)
-        else
-          Quaternion(),
         name = node.name,
         translation = node.translation!!,
-//        transform = independentTransform,
-        parent = parent,
+        rotation = loadQuaternion(node.rotation),
         length = 0.1f,
         index = index,
-        isGlobal = false
+        parent = parent
     )
 
 data class InitialBoneNode(
@@ -246,7 +190,6 @@ fun loadArmature(buffer: ByteBuffer, info: GltfInfo): Armature? {
   if (info.animations == null || info.animations.none())
     return null
 
-//  val skin = info.skins!!.first()
   val root = info.nodes.indexOfFirst { it.name == "metarig" }
 
   val levelMap = gatherBoneHierarchy(info.nodes, root)

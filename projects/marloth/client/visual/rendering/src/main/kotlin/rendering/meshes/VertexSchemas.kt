@@ -29,6 +29,7 @@ fun createVertexSchemas() = VertexSchemas(
         VertexAttribute(AttributeName.position, 3),
         VertexAttribute(AttributeName.normal, 3),
         VertexAttribute(AttributeName.uv, 2),
+        VertexAttribute(AttributeName.joints, 4),
         VertexAttribute(AttributeName.weights, 4)
     )),
     flat = VertexSchema(listOf(
