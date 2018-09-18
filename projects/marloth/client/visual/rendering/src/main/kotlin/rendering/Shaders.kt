@@ -32,7 +32,7 @@ layout (std140) uniform BoneTransforms {
 private val weightApplication = """
   vec3 position3 = vec3(0.0);
 
-  for (int i = 0; i < 3; ++i) {
+  for (int i = 0; i < 4; ++i) {
     int boneIndex = int(joints[i]);
     float strength = weights[i];
     position3 += (boneTransforms[boneIndex] * position4).xyz * strength;

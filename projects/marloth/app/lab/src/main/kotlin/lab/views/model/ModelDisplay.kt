@@ -60,7 +60,7 @@ fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, trans
   )
   val effects = sceneRenderer.effects
   val (effect, flatEffect) = if (isAnimated)
-    Pair(effects.flatAnimated, effects.flat)
+    Pair(effects.flatAnimated, effects.flatAnimated)
   else if (texture != null)
     Pair(effects.texturedFlat, effects.flat)
   else
