@@ -1,6 +1,7 @@
 package rendering.meshes.loading
 
 import getResourceStream
+import mythic.spatial.Matrix
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
@@ -78,6 +79,33 @@ fun getQuaternions(buffer: ByteBuffer, offset: Int, count: Int): List<Quaternion
   return result.toList()
 }
 
+fun getMatrices(buffer: ByteBuffer, offset: Int, count: Int): List<Matrix> {
+  buffer.position(offset)
+  val valueBuffer = buffer.asFloatBuffer()
+  val result = mutableListOf<Matrix>()
+  for (i in 0 until count) {
+    result.add(Matrix(
+        valueBuffer.get(),
+        valueBuffer.get(),
+        valueBuffer.get(),
+        valueBuffer.get(),
+        valueBuffer.get(),
+        valueBuffer.get(),
+        valueBuffer.get(),
+        valueBuffer.get(),
+        valueBuffer.get(),
+        valueBuffer.get(),
+        valueBuffer.get(),
+        valueBuffer.get(),
+        valueBuffer.get(),
+        valueBuffer.get(),
+        valueBuffer.get(),
+        valueBuffer.get()
+    ))
+  }
+  return result.toList()
+}
+
 fun selectBufferIterator(componentType: Int): BufferIterator =
     when (componentType) {
       ComponentType.UnsignedByte.value -> iterateBytes
@@ -85,8 +113,29 @@ fun selectBufferIterator(componentType: Int): BufferIterator =
       else -> throw Error("Not implemented.")
     }
 
-fun loadQuaternion(value:Vector4?) =
+fun loadQuaternion(value: Vector4?) =
     if (value != null)
       Quaternion(value.x, value.y, value.z, value.w)
     else
       Quaternion()
+
+fun getVector3(buffer: ByteBuffer) =
+    Vector3(
+        buffer.getFloat(),
+        buffer.getFloat(),
+        buffer.getFloat()
+    )
+
+fun getVector4(buffer: ByteBuffer) =
+    Vector4(
+        buffer.getFloat(),
+        buffer.getFloat(),
+        buffer.getFloat(),
+        buffer.getFloat()
+    )
+
+fun getOffset(info: GltfInfo, accessorIndex: Int): Int {
+  val accessor = info.accessors[accessorIndex]
+  val bufferView = info.bufferViews[accessor.bufferView]
+  return bufferView.byteOffset
+}

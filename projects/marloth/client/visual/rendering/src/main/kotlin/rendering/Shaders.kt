@@ -1,7 +1,6 @@
 package rendering
 
 import loadTextResource
-import mythic.breeze.Bones
 import mythic.glowing.*
 import mythic.spatial.Matrix
 import mythic.spatial.Vector2
@@ -9,7 +8,6 @@ import mythic.spatial.Vector4
 import org.lwjgl.opengl.GL20.glGetUniformLocation
 import org.lwjgl.opengl.GL20.glUniform1i
 import randomly.Dice
-import java.util.*
 
 private val lighting = loadTextResource("shaders/lighting.glsl")
 
@@ -26,18 +24,17 @@ layout(std140) uniform SceneUniform {
 """
 
 private val weightHeader = """
-layout (location = 3) in vec4[2] weights;
 layout (std140) uniform BoneTransforms {
   mat4[128] boneTransforms;
 };
 """
 
 private val weightApplication = """
-  vec3 position3 = position;
+  vec3 position3 = vec3(0.0);
 
   for (int i = 0; i < 3; ++i) {
-    int boneIndex = int(weights[0][i]);
-    float strength = weights[1][i];
+    int boneIndex = int(joints[i]);
+    float strength = weights[i];
     position3 += (boneTransforms[boneIndex] * position4).xyz * strength;
   }
   position4 = vec4(position3, 1.0);
@@ -47,8 +44,6 @@ private val flatVertex = """
 ${sceneHeader}
 uniform mat4 modelTransform;
 uniform vec4 uniformColor;
-
-layout (location = 0) in vec3 position;
 
 //#weightHeader
 
@@ -258,8 +253,8 @@ class SkeletonFeature(program: ShaderProgram, boneBuffer: UniformBuffer) {
   val boneTransformsProperty = bindUniformBuffer(UniformBufferId.BoneTransforms, program, boneBuffer)
 }
 
-fun populateBoneBuffer(boneBuffer: UniformBuffer, transforms: List<Matrix>): UniformBuffer {
-  val bytes = createBoneTransformBuffer(transforms)
+fun populateBoneBuffer(boneBuffer: UniformBuffer, originalTransforms: List<Matrix>, transforms: List<Matrix>): UniformBuffer {
+  val bytes = createBoneTransformBuffer(originalTransforms, transforms)
   boneBuffer.load(bytes)
   checkError("sending bone transforms")
   return boneBuffer
@@ -280,7 +275,28 @@ data class ObjectShaderConfig(
     val boneBuffer: UniformBuffer? = null
 )
 
-fun generateVertexCode(config: ShaderFeatureConfig): String {
+fun generateVertexInputHeader(config: ShaderFeatureConfig): String {
+  val baseInputs = listOf(
+      "vec3 position",
+      "vec3 normal",
+      "vec2 uv"
+  )
+  val weightInputs = listOf(
+      "vec4 joints",
+      "vec4 weights"
+  )
+
+  val inputs = if (config.skeleton)
+    baseInputs.plus(weightInputs)
+  else
+    baseInputs
+
+  return inputs.mapIndexed { i, input ->
+    "layout(location = ${i}) in ${input};"
+  }.joinToString("\n")
+}
+
+fun generateVertexCodeBody(config: ShaderFeatureConfig): String {
   val baseCode = if (config.shading || config.texture)
     mainVertex
   else
@@ -290,6 +306,13 @@ fun generateVertexCode(config: ShaderFeatureConfig): String {
     addWeightShading(baseCode)
   else
     baseCode
+}
+
+fun generateVertexCode(config: ShaderFeatureConfig): String {
+  val inputHeader = generateVertexInputHeader(config)
+  val mainBody = generateVertexCodeBody(config)
+
+  return inputHeader + mainBody
 }
 
 fun generateShaderProgram(fragmentShader: String, featureConfig: ShaderFeatureConfig): ShaderProgram {

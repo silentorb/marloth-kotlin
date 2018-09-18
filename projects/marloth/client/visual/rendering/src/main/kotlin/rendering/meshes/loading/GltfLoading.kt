@@ -2,6 +2,11 @@ package rendering.meshes.loading
 
 import mythic.breeze.*
 import mythic.glowing.SimpleTriangleMesh
+import mythic.glowing.VertexAttributeDetail
+import mythic.spatial.Matrix
+import mythic.spatial.Vector3
+import mythic.spatial.put
+import org.joml.times
 import org.lwjgl.BufferUtils
 import rendering.*
 import rendering.meshes.*
@@ -22,7 +27,59 @@ fun loadIndices(buffer: ByteBuffer, info: GltfInfo, primitive: Primitive): IntBu
   return indices
 }
 
-fun loadVertices(buffer: ByteBuffer, info: GltfInfo, vertexSchema: VertexSchema, primitive: Primitive): FloatBuffer {
+typealias VertexConverter = (ByteBuffer, FloatBuffer, VertexAttributeDetail<AttributeName>) -> Unit
+
+fun createVertexConverter(info: GltfInfo, transformBuffer: ByteBuffer, boneMap: BoneMap, meshIndex: Int): VertexConverter {
+  val node = info.nodes.firstOrNull { it.mesh == meshIndex && it.skin != null }
+  val skin = info.skins?.get(node?.skin!!)
+
+  return if (skin != null) {
+    val jointMap = skin.joints.mapIndexed { index, jointIndex ->
+      Pair(index, jointIndex)
+    }.associate { it }
+
+    val transforms = getMatrices(transformBuffer, getOffset(info, skin.inverseBindMatrices), skin.joints.size)
+    var lastJoints: List<Int> = listOf()
+    var lastWeights: List<Float> = listOf()
+    return { buffer, vertices, attribute ->
+      if (attribute.name == AttributeName.weights) {
+        lastWeights = (0 until attribute.size).map {
+          val value = buffer.getFloat()
+          vertices.put(value)
+          value
+        }
+      } else if (attribute.name == AttributeName.joints) {
+        lastJoints = (0 until attribute.size).map {
+          val value = buffer.get().toInt()
+          val converted = boneMap[jointMap[value]!!]!!.index
+          vertices.put(converted.toFloat())
+          value
+        }
+//      } else if (attribute.name == AttributeName.position) {
+//        val originalVertex = getVector3(buffer)
+//        val transformedVertex = lastJoints.foldIndexed(Vector3()) { i, a, b ->
+//          a + originalVertex.transform(transforms[b]) * lastWeights [i]
+//        }
+//        vertices.put(transformedVertex)
+      } else {
+        for (x in 0 until attribute.size) {
+          val value = buffer.getFloat()
+          vertices.put(value)
+        }
+      }
+    }
+  } else {
+    { buffer, vertices, attribute ->
+      for (x in 0 until attribute.size) {
+        val value = buffer.getFloat()
+        vertices.put(value)
+      }
+    }
+  }
+}
+
+fun loadVertices(buffer: ByteBuffer, info: GltfInfo, vertexSchema: VertexSchema, primitive: Primitive,
+                 converter: VertexConverter): FloatBuffer {
   val vertexAccessor = info.accessors[primitive.attributes[AttributeType.POSITION]!!]
   val vertexCount = vertexAccessor.count
   val vertices = BufferUtils.createFloatBuffer(vertexSchema.floatSize * vertexCount)
@@ -36,21 +93,18 @@ fun loadVertices(buffer: ByteBuffer, info: GltfInfo, vertexSchema: VertexSchema,
     if (attributeAccessorIndex != null) {
       val attributeAccessor = info.accessors[attributeAccessorIndex]
       val bufferView = info.bufferViews[attributeAccessor.bufferView]
-      Triple(attributeAccessor, bufferView, attribute.size)
+      Triple(attributeAccessor, bufferView, attribute)
     } else
-      Triple(null, null, attribute.size)
+      Triple(null, null, attribute)
   }
 
   for (i in 0 until vertexCount) {
-    for ((attributeAccessor, bufferView, componentCount) in attributes) {
+    for ((attributeAccessor, bufferView, attribute) in attributes) {
       if (attributeAccessor != null && bufferView != null) {
         buffer.position(bufferView.byteOffset + attributeAccessor.byteOffset + i * bufferView.byteStride)
-        for (x in 0 until componentCount) {
-          val value = buffer.getFloat()
-          vertices.put(value)
-        }
+        converter(buffer, vertices, attribute)
       } else {
-        for (x in 0 until componentCount) {
+        for (x in 0 until attribute.size) {
           vertices.put(0f)
         }
       }
@@ -59,22 +113,18 @@ fun loadVertices(buffer: ByteBuffer, info: GltfInfo, vertexSchema: VertexSchema,
   return vertices
 }
 
-fun loadPrimitive(primitive: Primitive, name: String, buffer: ByteBuffer, info: GltfInfo,
-                  vertexSchemas: VertexSchemas): rendering.meshes.Primitive {
-  val vertexSchema = if (primitive.attributes.containsKey(AttributeType.JOINTS_0))
-    vertexSchemas.animated
-  else if (primitive.attributes.containsKey(AttributeType.TEXCOORD_0))
-    vertexSchemas.textured
-  else
-    vertexSchemas.imported
+typealias SkinMap = Map<Int, Int>
 
-  val vertices = loadVertices(buffer, info, vertexSchema, primitive)
-  val indices = loadIndices(buffer, info, primitive)
+fun mapSkinIndices(info: GltfInfo, node: Node, boneMap: Map<Int, BoneNode>): SkinMap {
+  val skin = info.skins!![node.skin!!]
+  return skin.joints.mapIndexed { index, jointIndex ->
+    Pair(index, boneMap[jointIndex]!!.index)
+  }
+      .associate { it }
+}
 
-  vertices.position(0)
-  indices.position(0)
-
-  val materialSource = info.materials[primitive.material]
+fun loadMaterial(info: GltfInfo, materialIndex: Int): Material {
+  val materialSource = info.materials[materialIndex]
   val details = materialSource.pbrMetallicRoughness
   val color = details.baseColorFactor
   val glow = if (materialSource.emissiveFactor != null && materialSource.emissiveFactor.first() != 0f)
@@ -89,14 +139,35 @@ fun loadPrimitive(primitive: Primitive, name: String, buffer: ByteBuffer, info: 
     val gltfImage = info.images!![gltfTexture.source]
     gltfImage.uri.substringBeforeLast(".")
   }
+
+  return Material(
+      color = color,
+      glow = glow,
+      texture = texture
+  )
+}
+
+fun loadPrimitive(buffer: ByteBuffer, info: GltfInfo, vertexSchemas: VertexSchemas, primitive: Primitive,
+                  name: String, converter: VertexConverter): rendering.meshes.Primitive {
+  val vertexSchema = if (primitive.attributes.containsKey(AttributeType.JOINTS_0))
+    vertexSchemas.animated
+  else if (primitive.attributes.containsKey(AttributeType.TEXCOORD_0))
+    vertexSchemas.textured
+  else
+    vertexSchemas.imported
+
+  val vertices = loadVertices(buffer, info, vertexSchema, primitive, converter)
+  val indices = loadIndices(buffer, info, primitive)
+
+  vertices.position(0)
+  indices.position(0)
+
+  val material = loadMaterial(info, primitive.material)
+
   return Primitive(
       mesh = SimpleTriangleMesh(vertexSchema, vertices, indices),
       transform = null,
-      material = Material(
-          color = color,
-          glow = glow,
-          texture = texture
-      ),
+      material = material,
       name = name
   )
 }
@@ -110,7 +181,7 @@ fun convertChannelType(source: String): ChannelType =
     }
 
 fun loadChannel(target: ChannelTarget, buffer: ByteBuffer, info: GltfInfo, sampler: AnimationSampler,
-                boneIndexMap: Map<Int, Int>): mythic.breeze.AnimationChannel {
+                boneIndexMap: Map<Int, BoneNode>): mythic.breeze.AnimationChannel {
   val boneIndex = boneIndexMap[target.node]!!
   val inputAccessor = info.accessors[sampler.input]
   val inputBufferView = info.bufferViews[inputAccessor.bufferView]
@@ -125,12 +196,12 @@ fun loadChannel(target: ChannelTarget, buffer: ByteBuffer, info: GltfInfo, sampl
   }
 
   return AnimationChannel(
-      target = mythic.breeze.ChannelTarget(boneIndex, convertChannelType(target.path)),
+      target = mythic.breeze.ChannelTarget(boneIndex.index, convertChannelType(target.path)),
       keys = times.zip(values) { time, value -> Keyframe(time, value) }
   )
 }
 
-fun loadAnimation(buffer: ByteBuffer, info: GltfInfo, source: IndexedAnimation, boneIndexMap: Map<Int, Int>): Animation {
+fun loadAnimation(buffer: ByteBuffer, info: GltfInfo, source: IndexedAnimation, boneIndexMap: Map<Int, BoneNode>): Animation {
   var duration = 0f
   val channels = source.channels.map {
     val channel = loadChannel(it.target, buffer, info, source.samplers[it.sampler], boneIndexMap)
@@ -149,7 +220,7 @@ fun loadAnimation(buffer: ByteBuffer, info: GltfInfo, source: IndexedAnimation, 
   )
 }
 
-fun loadAnimations(buffer: ByteBuffer, info: GltfInfo, animations: List<IndexedAnimation>, bones: List<Bone>, boneIndexMap: Map<Int, Int>): List<Animation> {
+fun loadAnimations(buffer: ByteBuffer, info: GltfInfo, animations: List<IndexedAnimation>, bones: List<Bone>, boneIndexMap: Map<Int, BoneNode>): List<Animation> {
   return animations.map { loadAnimation(buffer, info, it, boneIndexMap) }
 }
 
@@ -164,10 +235,19 @@ fun nodeToBone(node: Node, index: Int, parent: Int) =
     )
 
 data class InitialBoneNode(
-    val index: Int,
+    val originalIndex: Int,
     val level: Int,
     val parent: Int
 )
+
+data class BoneNode(
+    val index: Int,
+    val originalIndex: Int,
+    val parent: Int,
+    val originalParent: Int
+)
+
+typealias BoneMap = Map<Int, BoneNode>
 
 fun gatherBoneHierarchy(nodes: List<Node>, root: Int, level: Int = 0, parent: Int = -1): List<InitialBoneNode> {
   val children = nodes[root].children
@@ -175,7 +255,11 @@ fun gatherBoneHierarchy(nodes: List<Node>, root: Int, level: Int = 0, parent: In
     gatherBoneHierarchy(nodes, child, level + 1, root).toList()
   }
 
-  return listOf(InitialBoneNode(root, level, parent))
+  return listOf(InitialBoneNode(
+      originalIndex = root,
+      level = level,
+      parent = parent
+  ))
       .plus(descendents)
 }
 
@@ -186,27 +270,38 @@ fun orderBoneHierarchy(levelMap: List<InitialBoneNode>): List<InitialBoneNode> {
   }
 }
 
-fun loadArmature(buffer: ByteBuffer, info: GltfInfo): Armature? {
+fun loadBoneMap(info: GltfInfo): BoneMap {
+  val root = info.nodes.indexOfFirst { it.name == "metarig" }
+  val levelMap = gatherBoneHierarchy(info.nodes, root)
+  val orderMap = orderBoneHierarchy(levelMap)
+  val result = orderMap
+      .mapIndexed { i,
+                    item ->
+        Pair(item.originalIndex, BoneNode(
+            index = i,
+            originalIndex = item.originalIndex,
+            parent = if (item.parent == -1) -1 else orderMap.indexOfFirst { it.originalIndex == item.parent },
+            originalParent = item.parent
+        ))
+      }
+      .associate { it }
+
+  return result
+}
+
+fun loadArmature(buffer: ByteBuffer, info: GltfInfo, boneMap: BoneMap): Armature? {
   if (info.animations == null || info.animations.none())
     return null
 
-  val root = info.nodes.indexOfFirst { it.name == "metarig" }
-
-  val levelMap = gatherBoneHierarchy(info.nodes, root)
-  val orderMap = orderBoneHierarchy(levelMap)
-  val bones = orderMap.mapIndexed { i, item ->
-    val node = info.nodes[item.index]
-    val parent = if (item.parent == -1) -1 else orderMap.indexOfFirst { it.index == item.parent }
-    nodeToBone(node, i, parent)
+  val bones = boneMap.map { (_, item) ->
+    val node = info.nodes[item.originalIndex]
+    nodeToBone(node, item.index, item.parent)
   }
-  val boneIndexMap = orderMap
-      .mapIndexed { i, it -> Pair(it.index, i) }
-      .associate { it }
 
   return Armature(
       bones = bones,
-      originalBones = listOf(),
-      animations = loadAnimations(buffer, info, info.animations, bones, boneIndexMap)
+      animations = loadAnimations(buffer, info, info.animations, bones, boneMap),
+      transforms = transformSkeleton(bones)
   )
 }
 
@@ -215,12 +310,26 @@ fun loadGltf(vertexSchemas: VertexSchemas, resourcePath: String): AdvancedModel 
   val directoryPath = resourcePath.split("/").dropLast(1).joinToString("/")
   val buffer = loadGltfByteBuffer(directoryPath, info)
 
-  val result = info.meshes.flatMap { mesh -> mesh.primitives.map { Pair(it, mesh.name) } }.map { pair ->
-    val (primitive, name) = pair
-    loadPrimitive(primitive, name.replace(".001", ""), buffer, info, vertexSchemas)
-  }
+  val boneMap = if (info.skins != null)
+    loadBoneMap(info)
+  else
+    mapOf()
 
-  val armature = loadArmature(buffer, info)
+  val armature = if (info.animations == null || info.animations.none())
+    null
+  else
+    loadArmature(buffer, info, boneMap)
 
-  return AdvancedModel(primitives = result, armature = armature, weights = mapOf())
+  val primitives = info.meshes
+      .mapIndexed { index, mesh ->
+        mesh.primitives.map { Triple(it, index, mesh.name) }
+      }
+      .flatten()
+      .map { (primitive, meshIndex, name) ->
+        val name2 = name.replace(".001", "")
+        val converter = createVertexConverter(info, buffer, boneMap, meshIndex)
+        loadPrimitive(buffer, info, vertexSchemas, primitive, name2, converter)
+      }
+
+  return AdvancedModel(primitives = primitives, armature = armature, weights = mapOf())
 }

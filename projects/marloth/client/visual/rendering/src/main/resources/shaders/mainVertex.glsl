@@ -1,12 +1,8 @@
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec3 normal;
-layout (location = 2) in vec2 uv;
+//#weightHeader
 
 uniform mat4 modelTransform;
 uniform mat4 normalTransform;
 uniform vec4 uniformColor;
-
-//#weightHeader
 
 out vec4 fragmentColor;
 out vec4 fragmentPosition;

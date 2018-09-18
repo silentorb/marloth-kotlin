@@ -23,12 +23,12 @@ fun advancedPainter(mesh: AdvancedModel, renderer: Renderer, element: MeshElemen
     val material = e.material
     val animation = element.animation
     val boneBuffer = if (animation != null) {
-      val transforms = transformSkeleton(animation.armature)
+      val transforms = transformSkeleton(animation.armature.bones)
 //      val transforms = animation.armature.bones.mapIndexed { i, bone ->
 
 //        Matrix(transforms[i]) * Matrix(originalTransform).invert()
 //      }
-      populateBoneBuffer(renderer.boneBuffer, transforms)
+      populateBoneBuffer(renderer.boneBuffer, animation.armature.transforms, transforms)
     }
     else
       null

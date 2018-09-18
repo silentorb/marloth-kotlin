@@ -73,7 +73,9 @@ data class Node(
     val name: String,
     val children: List<Int>?,
     val rotation: Vector4?,
-    val translation: Vector3?
+    val translation: Vector3?,
+    val mesh: Int?,
+    val skin: Int?
 )
 
 data class BufferInfo(

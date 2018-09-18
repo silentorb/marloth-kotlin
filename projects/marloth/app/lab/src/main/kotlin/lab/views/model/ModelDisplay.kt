@@ -60,7 +60,7 @@ fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, trans
   )
   val effects = sceneRenderer.effects
   val (effect, flatEffect) = if (isAnimated)
-    Pair(effects.animated, effects.flatAnimated)
+    Pair(effects.flatAnimated, effects.flat)
   else if (texture != null)
     Pair(effects.texturedFlat, effects.flat)
   else
@@ -144,7 +144,7 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
       null
 
     if (transforms != null) {
-      populateBoneBuffer(sceneRenderer.renderer.boneBuffer, transforms)
+      populateBoneBuffer(sceneRenderer.renderer.boneBuffer, armature!!.transforms, transforms)
     }
 
     if (modelSource == null) {

@@ -86,8 +86,8 @@ typealias ChannelTypeMap = Map<ChannelType, ChannelMap>
 
 data class Armature(
     val bones: Bones,
-    val originalBones: Bones,
-    val animations: List<Animation>
+    val animations: List<Animation>,
+    val transforms: List<Matrix>
 )
 
 typealias MatrixSource = (index: Int) -> Matrix
@@ -99,14 +99,13 @@ fun mapChannels(channels: List<AnimationChannel>): ChannelTypeMap =
 
 typealias ValueSource<T> = (boneIndex: Int) -> T?
 
-fun staticMatrixSource(armature: Armature): MatrixSource = { i ->
-  val bone = armature.bones[i]
+fun staticMatrixSource(bones: Bones): MatrixSource = { i ->
+  val bone = bones[i]
   transformBone(bone.translation, bone.rotation)
 }
 
 //fun transformSkeleton(armature: Armature, translationMap: ValueSource<Vector3>, rotationMap: ValueSource<Quaternion>): List<Matrix> {
-fun transformSkeleton(armature: Armature, matrixSource: MatrixSource = staticMatrixSource(armature)): List<Matrix> {
-  val bones = armature.bones
+fun transformSkeleton(bones: Bones, matrixSource: MatrixSource = staticMatrixSource(bones)): List<Matrix> {
   val init = Matrix()
   val result = Array(bones.size, { init })
   for (i in 0 until bones.size) {
@@ -131,7 +130,7 @@ fun transformAnimatedSkeleton(armature: Armature, animation: Animation, timeElap
     val rotation = rotationMap(i) ?: bone.rotation
     transformBone(translation, rotation)
   }
-  return transformSkeleton(armature, matrixSource)
+  return transformSkeleton(armature.bones, matrixSource)
 }
 
 fun transformBone(translation: Vector3, rotation: Quaternion) =

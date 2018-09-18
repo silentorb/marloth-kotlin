@@ -4,14 +4,18 @@ import org.lwjgl.opengl.GL15.*
 import org.lwjgl.opengl.GL30.glDeleteVertexArrays
 import java.nio.FloatBuffer
 
-class VertexBuffer<T>(vertexSchema: VertexSchema<T>) {
+class VertexBuffer<T>(vertexSchema: VertexSchema<T>, interleaved: Boolean = true) {
   private val vbo = glGenBuffers()
   private val vao: VertexArrayObject
   private val disposed = false
 
   init {
     globalState.vertexBufferObject = vbo
-    vao = VertexArrayObject.createInterwoven(vertexSchema)
+    vao = if (interleaved)
+      VertexArrayObject.createInterwoven(vertexSchema)
+    else
+      VertexArrayObject.createNonInterleaved(vertexSchema)
+
     checkError("binding vbo buffer data")
   }
 
