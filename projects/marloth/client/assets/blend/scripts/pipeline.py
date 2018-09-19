@@ -13,7 +13,8 @@ def export_model(filename):
     blender_path = config['paths']['blender_executable']
     subprocess.call([blender_path, filepath, '--background', '--python', 'export.py'])
 
+# files = os.listdir(model_path)
+# for file in files:
+#     export_model(file)
 
-files = os.listdir(model_path)
-for file in files:
-    export_model(file)
+export_model('child2.blend')

@@ -27,7 +27,7 @@ fun loadIndices(buffer: ByteBuffer, info: GltfInfo, primitive: Primitive): IntBu
   return indices
 }
 
-typealias VertexConverter = (ByteBuffer, FloatBuffer, VertexAttributeDetail<AttributeName>) -> Unit
+typealias VertexConverter = (ByteBuffer, FloatBuffer, VertexAttributeDetail<AttributeName>, Int) -> Unit
 
 fun createVertexConverter(info: GltfInfo, transformBuffer: ByteBuffer, boneMap: BoneMap, meshIndex: Int): VertexConverter {
   val node = info.nodes.firstOrNull { it.mesh == meshIndex && it.skin != null }
@@ -41,8 +41,11 @@ fun createVertexConverter(info: GltfInfo, transformBuffer: ByteBuffer, boneMap: 
     val transforms = getMatrices(transformBuffer, getOffset(info, skin.inverseBindMatrices), skin.joints.size)
     var lastJoints: List<Int> = listOf()
     var lastWeights: List<Float> = listOf()
-    return { buffer, vertices, attribute ->
+    return { buffer, vertices, attribute, vertexIndex ->
       if (attribute.name == AttributeName.weights) {
+        if (node?.name == "hair" && vertexIndex == 44) {
+          val k = 0
+        }
         lastWeights = (0 until attribute.size).map {
           val value = buffer.getFloat()
           vertices.put(value)
@@ -50,8 +53,14 @@ fun createVertexConverter(info: GltfInfo, transformBuffer: ByteBuffer, boneMap: 
         }
       } else if (attribute.name == AttributeName.joints) {
         lastJoints = (0 until attribute.size).map {
-          val value = buffer.get().toInt()
-          val converted = boneMap[jointMap[value]!!]!!.index
+          val position = buffer.position()
+          val byteValue = buffer.get()
+          val value = byteValue.toInt() and 0xFF
+          val jointIndex = jointMap[value]!!
+          val converted = boneMap[jointIndex]!!.index
+          if (node?.name == "hair" && vertexIndex == 44) {
+            val k = position
+          }
           vertices.put(converted.toFloat())
           value
         }
@@ -69,7 +78,7 @@ fun createVertexConverter(info: GltfInfo, transformBuffer: ByteBuffer, boneMap: 
       }
     }
   } else {
-    { buffer, vertices, attribute ->
+    { buffer, vertices, attribute, _ ->
       for (x in 0 until attribute.size) {
         val value = buffer.getFloat()
         vertices.put(value)
@@ -102,7 +111,7 @@ fun loadVertices(buffer: ByteBuffer, info: GltfInfo, vertexSchema: VertexSchema,
     for ((attributeAccessor, bufferView, attribute) in attributes) {
       if (attributeAccessor != null && bufferView != null) {
         buffer.position(bufferView.byteOffset + attributeAccessor.byteOffset + i * bufferView.byteStride)
-        converter(buffer, vertices, attribute)
+        converter(buffer, vertices, attribute, i)
       } else {
         for (x in 0 until attribute.size) {
           vertices.put(0f)
@@ -235,12 +244,14 @@ fun nodeToBone(node: Node, index: Int, parent: Int) =
     )
 
 data class InitialBoneNode(
+    val name: String,
     val originalIndex: Int,
     val level: Int,
     val parent: Int
 )
 
 data class BoneNode(
+    val name: String,
     val index: Int,
     val originalIndex: Int,
     val parent: Int,
@@ -250,12 +261,14 @@ data class BoneNode(
 typealias BoneMap = Map<Int, BoneNode>
 
 fun gatherBoneHierarchy(nodes: List<Node>, root: Int, level: Int = 0, parent: Int = -1): List<InitialBoneNode> {
-  val children = nodes[root].children
+  val node = nodes[root]
+  val children = node.children
   val descendents: List<InitialBoneNode> = if (children == null) listOf() else children.flatMap { child ->
     gatherBoneHierarchy(nodes, child, level + 1, root).toList()
   }
 
   return listOf(InitialBoneNode(
+      name = node.name,
       originalIndex = root,
       level = level,
       parent = parent
@@ -278,6 +291,7 @@ fun loadBoneMap(info: GltfInfo): BoneMap {
       .mapIndexed { i,
                     item ->
         Pair(item.originalIndex, BoneNode(
+            name = item.name,
             index = i,
             originalIndex = item.originalIndex,
             parent = if (item.parent == -1) -1 else orderMap.indexOfFirst { it.originalIndex == item.parent },
@@ -292,7 +306,7 @@ fun loadBoneMap(info: GltfInfo): BoneMap {
 fun loadArmature(buffer: ByteBuffer, info: GltfInfo, boneMap: BoneMap): Armature? {
   if (info.animations == null || info.animations.none())
     return null
-
+  logBuffer(buffer, info)
   val bones = boneMap.map { (_, item) ->
     val node = info.nodes[item.originalIndex]
     nodeToBone(node, item.index, item.parent)
