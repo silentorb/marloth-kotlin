@@ -19,13 +19,13 @@ class CharacterDefinitions {
   val player = CharacterDefinition(
       health = 200,
       abilities = listOf(abilityDefinitions.shoot),
-      depictionType = DepictionType.character
+      depictionType = DepictionType.child
   )
 
   val monster = CharacterDefinition(
       health = 100,
       abilities = listOf(abilityDefinitions.slowShoot),
-      depictionType = DepictionType.monster
+      depictionType = DepictionType.child
   )
 }
 

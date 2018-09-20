@@ -170,7 +170,7 @@ fun joinInputVector(commands: Commands, commandMap: Map<CommandType, Vector3>): 
 fun getLookAtAngle(lookAt: Vector3) =
     getAngle(Vector2(1f, 0f), lookAt.xy())
 
-//fun setCharacterFacing(character: Character, lookAt: Vector3) {
+//fun setCharacterFacing(child: Character, lookAt: Vector3) {
 //  val angle = getLookAtAngle(lookAt)
-//  character.facingRotation.z = angle
+//  child.facingRotation.z = angle
 //}

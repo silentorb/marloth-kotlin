@@ -31,7 +31,7 @@ tailrec fun gameLoop(app: App, state: AppState) {
   val (nextClientState, commands) = updateClient(app.client, players, state.client)
   val delta = app.timer.update().toFloat()
   val characterCommands = mapCommands(state.world.players, commands)
-  val nextWorld = updateWorld(state.world, characterCommands, delta)
+  val nextWorld = updateWorld(app.client.renderer.animationDurations, state.world, characterCommands, delta)
 
   val nextState = AppState(
       client = nextClientState,

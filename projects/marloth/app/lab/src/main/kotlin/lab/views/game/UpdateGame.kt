@@ -16,12 +16,12 @@ private var spiritMovementTallies = mapOf<Id, Pair<Float, Vector3>>()
 
 //fun trackSpiritMovement(world: World, delta: Float) {
 //  spiritMovementTallies = world.spirits.associate { spirit ->
-//    val character = world.characterTable[spirit.id]!!
+//    val child = world.characterTable[spirit.id]!!
 //    val body = world.bodyTable[spirit.id]!!
 //    val data = if (!spiritMovementTallies.containsKey(spirit.id))
 //      Pair(0f, body.position)
 //    else {
-//      val previous = spiritMovementTallies[character.id]!!
+//      val previous = spiritMovementTallies[child.id]!!
 //      val tally = if (body.position != previous.second)
 //        0f
 //      else
@@ -29,12 +29,12 @@ private var spiritMovementTallies = mapOf<Id, Pair<Float, Vector3>>()
 //
 //      Pair(tally, body.position)
 //    }
-//    Pair(character.id, data)
+//    Pair(child.id, data)
 //  }
 //
 //  for (spirit in world.spirits) {
-//    val character = world.characterTable[spirit.id]!!
-//    val data = spiritMovementTallies[character.id]!!
+//    val child = world.characterTable[spirit.id]!!
+//    val data = spiritMovementTallies[child.id]!!
 //    if (data.first > 10f) {
 //      val k = 0
 //    }
@@ -49,7 +49,7 @@ fun updateLabWorld(app: LabApp, commands: HaftCommands<CommandType>, delta: Floa
 //  val instantiator = Instantiator(app.world, InstantiatorConfig(app.gameConfig.gameplay.defaultPlayerView))
   val world = app.world
   val characterCommands = mapCommands(world.players, commands)
-  return updateWorld(world, characterCommands, delta)
+  return updateWorld(app.client.renderer.animationDurations, world, characterCommands, delta)
 
 //  trackSpiritMovement(app.world, delta)
 }

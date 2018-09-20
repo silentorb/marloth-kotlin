@@ -3,10 +3,6 @@ package rendering.meshes.loading
 import mythic.breeze.*
 import mythic.glowing.SimpleTriangleMesh
 import mythic.glowing.VertexAttributeDetail
-import mythic.spatial.Matrix
-import mythic.spatial.Vector3
-import mythic.spatial.put
-import org.joml.times
 import org.lwjgl.BufferUtils
 import rendering.*
 import rendering.meshes.*

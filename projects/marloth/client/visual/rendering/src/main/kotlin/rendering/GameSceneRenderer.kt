@@ -57,20 +57,19 @@ class GameSceneRenderer(
 
 //  fun lookupMesh(depiction: DepictionType) = renderer.meshes[simplePainterMap[depiction]]!!
 
-  fun renderElement(element: MeshElement) {
-    val childDetails = scene.elementDetails.children[element.id]
-    val mesh = renderer.meshes[element.mesh]!!
-    if (childDetails != null) {
-      advancedPainter(mesh, renderer.renderer, element, renderer.effects)
-//      humanPainter(renderer, mesh.primitives)(element, renderer.effects, childDetails)
-    } else {
-      simplePainter(mesh.primitives, element, renderer.effects, renderer.renderer.textures)
-    }
-  }
+//  fun renderSimpleElement(element: MeshElement) {
+//    val mesh = renderer.meshes[element.mesh]!!
+//    if (childDetails != null) {
+//      advancedPainter(mesh, renderer.renderer, element, renderer.effects)
+////      humanPainter(renderer, mesh.primitives)(element, renderer.effects, childDetails)
+//    } else {
+//      simplePainter(mesh.primitives, element, renderer.effects, renderer.renderer.textures)
+//    }
+//  }
 
   fun renderElements() {
-    for (element in scene.elements) {
-      renderElement(element)
+    for (group in scene.elementGroups) {
+      renderElementGroup(this, group)
     }
   }
 

@@ -34,20 +34,20 @@ data class NewSpirit(
     val id: Id
 )
 //class Spirit(
-//    val character: Character,
+//    val child: Character,
 //    var state: Spirit
 //) {
 //  val body: Body
-//    get() = character.body
+//    get() = child.body
 //}
 
 
 //class AssociatedSpirit(
-//    val character: Character,
+//    val child: Character,
 //    var state: Spirit
 //) {
 //  val body: Body
-//    get() = character.body
+//    get() = child.body
 //}
 
 fun getNewSpirits(newSpirits: List<NewSpirit>): List<Spirit> =

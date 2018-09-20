@@ -36,7 +36,7 @@ class Instantiator(
 //  fun createCharacter(source: NewCharacter): Character {
 //    val body = Body(
 //        id = source.id,
-//        shape = commonShapes[EntityType.character]!!,
+//        shape = commonShapes[EntityType.child]!!,
 //        position = source.position,
 //        orientation = Quaternion(),
 //        velocity = Vector3(),
@@ -52,7 +52,7 @@ class Instantiator(
 //          definition = it
 //      )
 //    }
-//    val character = Character(
+//    val child = Character(
 //        id = body.id,
 //        turnSpeed = Vector2(1.5f, 1f),
 //        faction = faction,
@@ -65,35 +65,35 @@ class Instantiator(
 //        definition.depictionType,
 //        DepictionAnimation(0, 0f, createArmature())
 //    ))
-//    world.characterTable = world.characterTable.plus(Pair(body.id, character))
-//    return character
+//    world.characterTable = world.characterTable.plus(Pair(body.id, child))
+//    return child
 //  }
 
 //  fun createAiCharacter(definition: CharacterDefinition, faction: Faction, position: Vector3, node: Node): Character {
-//    val character = createCharacter(definition, faction, position, node)
-//    createSpirit(character)
-//    return character
+//    val child = createCharacter(definition, faction, position, node)
+//    createSpirit(child)
+//    return child
 //  }
 
-//  fun createSpirit(character: Character): Spirit {
+//  fun createSpirit(child: Character): Spirit {
 //    val spirit = Spirit(
-//        id = character.id,
+//        id = child.id,
 //        knowledge = Knowledge(
-//            character = character,
+//            child = child,
 //            nodes = listOf(),
 //            visibleCharacters = listOf()
 //        ),
 //        pursuit = Pursuit()
 //    )
-//    world.spiritTable[character.id] = spirit
+//    world.spiritTable[child.id] = spirit
 //    return spirit
 //  }
 
 //  fun createPlayer(id: Id): Player {
 //    val node = world.meta.nodes.first()
 //    val position = node.position// + Vector3(0f, 0f, 1f)
-//    val character = createCharacter(characterDefinitions.player, world.factions[0], position, node)
-//    val player = Player(character.id, id, config.defaultPlayerView)
+//    val child = createCharacter(characterDefinitions.player, world.factions[0], position, node)
+//    val player = Player(child.id, id, config.defaultPlayerView)
 //    world.players = world.players.plus(player)
 //    return player
 //  }

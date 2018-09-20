@@ -131,7 +131,7 @@ fun renderLabScenes(client: Client, data: GameViewRenderData) {
       renderFaceNormals(sceneRenderer, 1f, data.world.mesh)
 
     if (config.draw.skeletons) {
-//      scene.elements.filter { it.depiction == DepictionType.character || it.depiction == DepictionType.monster }
+//      scene.elements.filter { it.depiction == DepictionType.child || it.depiction == DepictionType.monster }
 //          .forEach {
 //            val info = it.animation!!
 //            val armature = info.armature

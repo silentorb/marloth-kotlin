@@ -124,6 +124,16 @@ fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id,
           health = Resource(definition.health),
           abilities = abilities
       ),
+      depiction = Depiction(
+          id = id,
+          type = definition.depictionType,
+          animations = listOf(
+              DepictionAnimation(
+                  animation = 0,
+                  animationOffset = 0
+              )
+          )
+      ),
       player = player?.copy(character = id),
       spirit = spirit?.copy(id = id)
   )

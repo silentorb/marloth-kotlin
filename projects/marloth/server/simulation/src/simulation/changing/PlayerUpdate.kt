@@ -33,12 +33,12 @@ import simulation.*
 
 fun applyCommands(world: World, instantiator: Instantiator, commands: Commands, delta: Float) {
 //  val playerResults = world.players
-//      .filter { it.character.isAlive }
+//      .filter { it.child.isAlive }
 //      .map { player ->
 //        player.lookForce = Vector2()
 //        val result = applyPlayerCommands(player, commands.filter({ it.target == player.playerId }), delta)
 //        updateTpCameraRotation(player, delta)
-//        CharacterAction(player.character, result)
+//        CharacterAction(player.child, result)
 //      }
 
 //  val remainingCommands = commands.filter({ it.target == 0 || it.target > maxPlayerCount })

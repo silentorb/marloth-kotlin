@@ -4,6 +4,7 @@ import simulation.Commands
 import simulation.Id
 
 fun updateTarget(knowledge: Knowledge, pursuit: Pursuit): Id? {
+  return null
   val visibleEnemies = getVisibleEnemies(knowledge.character, knowledge)
   return if (pursuit.target != null && visibleEnemies.any { it.id == pursuit.target })
     pursuit.target

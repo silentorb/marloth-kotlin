@@ -16,7 +16,7 @@ package simulation
 //typealias Actions = List<Action>
 //
 //data class CharacterAction(
-//    val character: Character,
+//    val child: Character,
 //    val actions: Actions
 //)
 //

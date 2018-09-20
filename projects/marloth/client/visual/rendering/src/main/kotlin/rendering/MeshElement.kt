@@ -1,17 +1,22 @@
 package rendering
 
-import mythic.breeze.Armature
 import mythic.spatial.Matrix
 
-data class DepictionAnimation(
-    val animationIndex: Int,
+data class ElementAnimation(
+    val animation: Int,
     var timeOffset: Float,
-    val armature: Armature
+    val strength: Float = 1f
 )
 
 data class MeshElement(
     val id: Long,
     val mesh: MeshType,
-    val animation: DepictionAnimation? = null,
+    val animations: List<ElementAnimation> = listOf(),
     val transform: Matrix
 )
+
+data class ElementGroup(
+    val meshes: List<MeshElement>
+)
+
+typealias ElementGroups = List<ElementGroup>

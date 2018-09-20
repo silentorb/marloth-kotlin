@@ -15,15 +15,15 @@ fun spiritAttack(knowledge: Knowledge, pursuit: Pursuit): Commands {
 }
 
 //fun tryAiAttack(spirit: Spirit): NewMissile? {
-//  val character = spirit.character
-//  val attack = character.abilities[0]
-//  if (canUse(character, attack)) {
-//    val enemies = character.faction.enemies.asSequence().filter { it.isAlive }
-//    val enemy = enemies.firstOrNull { it.body.position.distance(character.body.position) <= attack.definition.range }
+//  val child = spirit.child
+//  val attack = child.abilities[0]
+//  if (canUse(child, attack)) {
+//    val enemies = child.faction.enemies.asSequence().filter { it.isAlive }
+//    val enemy = enemies.firstOrNull { it.body.position.distance(child.body.position) <= attack.definition.range }
 //    if (enemy != null) {
-//      val direction = (enemy.body.position - character.body.position).normalize()
-//      setCharacterFacing(character, direction)
-//      return characterAttack(character, attack, direction)
+//      val direction = (enemy.body.position - child.body.position).normalize()
+//      setCharacterFacing(child, direction)
+//      return characterAttack(child, attack, direction)
 //    }
 //  }
 //
@@ -31,12 +31,12 @@ fun spiritAttack(knowledge: Knowledge, pursuit: Pursuit): Commands {
 //}
 
 fun getVisibleCharacters(world: World, character: Character): List<Character> {
-//  val enemies = world.characters.filter { it.faction != character.faction }
+//  val enemies = world.characters.filter { it.faction != child.faction }
   return world.characters.filter { it.id != character.id && canSee(world, character, it) }
 }
 
-//fun checkEnemySighting(world: World, character: Character): Spirit? {
-//  val visibleEnemy = getVisibleEnemy(world, character)
+//fun checkEnemySighting(world: World, child: Character): Spirit? {
+//  val visibleEnemy = getVisibleEnemy(world, child)
 //  return if (visibleEnemy == null)
 //    null
 //  else

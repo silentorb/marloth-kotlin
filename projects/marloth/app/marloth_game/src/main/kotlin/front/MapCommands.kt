@@ -7,7 +7,7 @@ import simulation.Player
 private typealias UserCommandType = marloth.clienting.CommandType
 private typealias CharacterCommandType = simulation.CommandType
 
-// Associate user commands and character commands that share the same name.
+// Associate user commands and child commands that share the same name.
 private val commandTypeMap: Map<UserCommandType, CharacterCommandType> =
     CharacterCommandType.values().mapNotNull { type ->
       val other = UserCommandType.values().firstOrNull { it.name == type.name }

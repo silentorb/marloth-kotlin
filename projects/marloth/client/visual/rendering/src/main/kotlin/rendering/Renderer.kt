@@ -1,5 +1,6 @@
 package rendering
 
+import mythic.breeze.Armature
 import mythic.drawing.*
 import mythic.glowing.*
 import mythic.platforming.DisplayConfig
@@ -108,6 +109,14 @@ fun createMultiSampler(glow: Glow, config: DisplayConfig): Multisampler {
   )
 }
 
+typealias AnimationDurationMap = Map<MeshType, List<Float>>
+
+fun mapAnimationDurations(meshes: MeshMap): AnimationDurationMap =
+    meshes.filter { it.value.armature != null }
+        .mapValues { entry ->
+          entry.value.armature!!.animations.map { it.duration }
+        }
+
 class Renderer(config: DisplayConfig) {
   val glow = Glow()
   val sceneBuffer = UniformBuffer(sceneBufferSize)
@@ -123,6 +132,7 @@ class Renderer(config: DisplayConfig) {
   var worldMesh: WorldMesh? = null
   val meshGenerators = standardMeshes()
   var meshes: MeshMap = createMeshes(vertexSchemas)
+  val animationDurations = mapAnimationDurations(meshes)
   var mappedTextures: TextureLibrary = createTextureLibrary(defaultTextureScale)
   val textures: DynamicTextureLibrary = createTextureLibrary2()
   val offscreenBuffer = prepareScreenFrameBuffer(config.width, config.height, true)

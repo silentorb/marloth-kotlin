@@ -3,9 +3,7 @@ package visualizing
 import mythic.spatial.*
 import org.joml.times
 import physics.Body
-import rendering.GameScene
-import rendering.MeshElement
-import rendering.MeshType
+import rendering.*
 import scenery.*
 import simulation.*
 import simulation.Id
@@ -14,7 +12,7 @@ val firstPersonCameraOffset = Vector3(0f, 0f, 1.4f)
 
 val simplePainterMap = mapOf(
     DepictionType.monster to MeshType.eyeball,
-    DepictionType.character to MeshType.child,
+    DepictionType.child to MeshType.child,
     DepictionType.missile to MeshType.sphere,
     DepictionType.wallLamp to MeshType.wallLamp
 )
@@ -71,13 +69,13 @@ fun createCamera(world: World, screen: Screen): Camera {
   }
 }
 
-//fun filterDepictions(world: World, player: Player) =
-//    if (player.viewMode == ViewMode.firstPerson)
-//      world.depictionTable.filter { it.key != player.playerId }
-//    else
-//      world.depictionTable
+fun filterDepictions(depictions: List<Depiction>, player: Player) =
+    if (player.viewMode == ViewMode.firstPerson)
+      depictions.filter { it.id != player.character }
+    else
+      depictions
 
-fun convertDepiction(world: World, id: Id, mesh: MeshType): MeshElement? {
+fun convertSimpleDepiction(world: World, id: Id, mesh: MeshType): MeshElement? {
   val body = world.bodyTable[id]!!
   val character = world.characterTable[id]
   val translate = Matrix().translate(body.position)
@@ -86,55 +84,81 @@ fun convertDepiction(world: World, id: Id, mesh: MeshType): MeshElement? {
   else
     translate.rotate(body.orientation)
 
-//  val animation = if (depiction != null)
-//    depiction.animation
-//  else
-//    null
   return MeshElement(
       id = id,
       mesh = mesh,
-//      null,
       transform = transform
   )
 }
 
-fun convertDepiction(world: World, id: Id, type: DepictionType): MeshElement? {
+fun convertSimpleDepiction(world: World, id: Id, type: DepictionType): MeshElement? {
   val mesh = simplePainterMap[type]
   if (mesh == null)
     return null
 
-  return convertDepiction(world, id, mesh)
+  return convertSimpleDepiction(world, id, mesh)
 }
 
-fun createChildDetails(character: Character): ChildDetails =
-    ChildDetails(if (character.definition.depictionType == DepictionType.character) Gender.female else Gender.male)
+fun convertComplexDepiction(world: World, depiction: Depiction): ElementGroup {
+  val id = depiction.id
+  val body = world.bodyTable[id]!!
+  val character = world.characterTable[id]!!
+  val transform = Matrix()
+      .translate(body.position)
+      .rotate(character.facingQuaternion)
+      .rotateZ(Pi / 2f)
+      .scale(2f)
 
-fun gatherVisualElements(world: World, screen: Screen, player: Player): Pair<List<MeshElement>, ElementDetails> {
-//  val depictions = filterDepictions(world, player)
-//  val childDepictions = depictions.values.filter {
-//    it.type == DepictionType.character || it.type == DepictionType.monster
-//  }
-
-  val characters = world.characters.asIterable().filter { !isPlayer(world, it) }
-  val elements =
-      world.deck.depictions.mapNotNull {
-        convertDepiction(world, it.id, it.type)
-      }
-          .plus(characters.mapNotNull {
-            convertDepiction(world, it.id, it.definition.depictionType)
-          })
-          .plus(world.deck.missiles.mapNotNull {
-            convertDepiction(world, it.id, DepictionType.missile)
-          })
-          .plus(world.deck.doors.mapNotNull {
-            convertDepiction(world, it.id, MeshType.prisonDoor)
-          })
-  return Pair(
-      elements,
-      ElementDetails(
-          children = characters.associate { Pair(it.id, createChildDetails(it)) }
+  val animations = listOf(
+      ElementAnimation(
+          animation = 0,
+          timeOffset = 0f
       )
   )
+  return ElementGroup(
+      meshes = listOf(
+          MeshElement(
+              id = 0,
+              mesh = MeshType.child,
+              animations = animations,
+              transform = transform
+          )
+      )
+  )
+}
+
+val isComplexDepiction = { depiction: Depiction ->
+  depiction.type == DepictionType.child
+}
+
+fun gatherVisualElements(world: World, screen: Screen, player: Player): ElementGroups {
+//  val depictions = filterDepictions(world, player)
+//  val childDepictions = depictions.values.filter {
+//    it.type == DepictionType.child || it.type == DepictionType.monster
+//  }
+
+  val (complex, simple) = filterDepictions(world.deck.depictions, player).partition(isComplexDepiction)
+
+  val complexElements = complex.map {
+    convertComplexDepiction(world, it)
+  }
+
+//  val characters = world.characters.asIterable().filter { !isPlayer(world, it) }
+  val simpleElements =
+      simple.mapNotNull {
+        convertSimpleDepiction(world, it.id, it.type)
+      }
+//          .plus(characters.mapNotNull {
+//            convertSimpleDepiction(world, it.id, it.definition.depictionType)
+//          })
+          .plus(world.deck.missiles.mapNotNull {
+            convertSimpleDepiction(world, it.id, DepictionType.missile)
+          })
+          .plus(world.deck.doors.mapNotNull {
+            convertSimpleDepiction(world, it.id, MeshType.prisonDoor)
+          })
+
+  return complexElements.plus(ElementGroup(simpleElements))
 }
 
 fun mapLights(world: World, player: Player) =
@@ -155,14 +179,13 @@ fun mapLights(world: World, player: Player) =
         ))
 
 fun createScene(world: World, screen: Screen, player: Player): GameScene {
-  val (elements, elementDetails) = gatherVisualElements(world, screen, player)
+  val elementGroups = gatherVisualElements(world, screen, player)
   return GameScene(
       main = Scene(
           camera = createCamera(world, screen),
           lights = mapLights(world, player)
       ),
-      elements = elements,
-      elementDetails = elementDetails,
+      elementGroups = elementGroups,
       player = player.playerId
   )
 }

@@ -68,10 +68,11 @@ fun generateIntermediateRecords(world: World, playerCommands: Commands, delta: F
   )
 }
 
-fun updateEntities(deck: Deck, world: World, data: Intermediate): Deck {
+fun updateEntities(animationDurations: AnimationDurationMap, deck: Deck, world: World, data: Intermediate): Deck {
   val (commands, activatedAbilities, collisionMap) = data
 
   return deck.copy(
+      depictions = updateDepictions(animationDurations, world),
       bodies = updateBodies(world, commands, collisionMap),
       characters = updateCharacters(world, collisionMap, commands, activatedAbilities),
       missiles = updateMissiles(world, collisionMap),
@@ -89,10 +90,10 @@ fun newEntities(world: World, nextId: IdSource, data: Intermediate): Deck {
   return getNewMissiles(world, nextId, data.activatedAbilities)
 }
 
-fun updateWorldMain(deck: Deck, world: World, playerCommands: Commands, delta: Float): World {
+fun updateWorldMain(animationDurations: AnimationDurationMap, deck: Deck, world: World, playerCommands: Commands, delta: Float): World {
   val nextId: IdSource = newIdSource(world.nextId)
   val data = generateIntermediateRecords(world, playerCommands, delta)
-  val updatedDeck = updateEntities(deck, world, data)
+  val updatedDeck = updateEntities(animationDurations, deck, world, data)
   val finalDeck = removeEntities(updatedDeck, world)
       .plus(newEntities(world, nextId, data))
 
@@ -106,7 +107,7 @@ const val simulationDelta = 1f / 60f
 
 private var deltaAggregator = 0f
 
-fun updateWorld(world: World, commands: Commands, delta: Float): World {
+fun updateWorld(animationDurations: AnimationDurationMap, world: World, commands: Commands, delta: Float): World {
   deltaAggregator += delta
   if (deltaAggregator > simulationDelta) {
     deltaAggregator -= simulationDelta
@@ -118,7 +119,7 @@ fun updateWorld(world: World, commands: Commands, delta: Float): World {
       println("Skipped a frame.  deltaAggregator = " + deltaAggregator + " simulationDelta = " + simulationDelta)
       deltaAggregator = deltaAggregator % simulationDelta
     }
-    return updateWorldMain(world.deck, world, commands, simulationDelta)
+    return updateWorldMain(animationDurations, world.deck, world, commands, simulationDelta)
   } else {
     return world
   }

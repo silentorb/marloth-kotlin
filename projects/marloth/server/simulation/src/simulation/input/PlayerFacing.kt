@@ -1,16 +1,16 @@
 package simulation.input
 
-//fun updateCharacterFacing(character: Character, commands: Commands): Vector3 {
+//fun updateCharacterFacing(child: Character, commands: Commands): Vector3 {
 //  val delta = simulationDelta
 //  val vector = updateTpCameraRotation(player, delta)
 //  return if (vector != null)
-//    character.facingRotation + vector
+//    child.facingRotation + vector
 //  else
-//    character.facingRotation
+//    child.facingRotation
 //}
 
 //fun allFacingChanges(playerCharacters: PlayerCharacters, commands: Commands): Map<Id, Vector3> =
 //    playerCharacters.mapNotNull { pc ->
-//      updateCharacterFacing(pc.player, pc.character, commands.filter({ it.target == pc.player.playerId }))
+//      updateCharacterFacing(pc.player, pc.child, commands.filter({ it.target == pc.player.playerId }))
 //    }
 //        .associate { it }

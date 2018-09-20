@@ -72,12 +72,12 @@ fun moveSpirit(knowledge: Knowledge, pursuit: Pursuit): Commands {
     listOf(Command(CommandType.moveUp, knowledge.spiritId))
   }
 //  val facingCommands = spiritFacingChange(knowledge, offset)
-//  val course = facingDistance(character, offset)
+//  val course = facingDistance(child, offset)
 //
 //  val absCourse = Math.abs(course)
 //  val acceptableRange = 0.1f
 //  return if (absCourse <= acceptableRange)
-//    facingCommands.plus(Command(CommandType.moveUp, character.id))
+//    facingCommands.plus(Command(CommandType.moveUp, child.id))
 //  else
 //    facingCommands
 }
