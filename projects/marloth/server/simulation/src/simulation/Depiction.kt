@@ -1,6 +1,6 @@
 package simulation
 
-typealias AnimationDurationMap = Map<DepictionType, List<Float>>
+typealias AnimationDurationMap = List<List<Float>>
 
 enum class DepictionType {
   billboard,
@@ -15,7 +15,7 @@ enum class DepictionType {
 
 data class DepictionAnimation(
     val animation: Int = -1,
-    val animationOffset: Int = -1,
+    val animationOffset: Float = -1f,
     val strength: Float = 1f
 )
 
@@ -26,7 +26,16 @@ data class Depiction(
 ) : EntityLike
 
 fun updateAnimation(animationDurations: AnimationDurationMap, animation: DepictionAnimation): DepictionAnimation {
-  val duration = animationDurations[]
+  val duration = animationDurations[0][animation.animation]
+  val nextValue = animation.animationOffset + 1f * simulationDelta
+  val finalValue = if (nextValue >= duration)
+    nextValue % duration
+  else
+    nextValue
+
+  return animation.copy(
+      animationOffset = finalValue
+  )
 }
 
 fun updateDepictions(animationDurations: AnimationDurationMap, world: World): List<Depiction> =

@@ -358,6 +358,7 @@ data class Shaders(
     val animated: GeneralPerspectiveShader,
     val colored: GeneralPerspectiveShader,
     val flat: GeneralPerspectiveShader,
+    val coloredAnimated: GeneralPerspectiveShader,
     val flatAnimated: GeneralPerspectiveShader,
     val screen: ScreenShader
 )
@@ -384,6 +385,10 @@ fun createShaders(buffers: UniformBuffers): Shaders {
       )),
       colored = GeneralPerspectiveShader(buffers, coloredFragment, ShaderFeatureConfig(
           shading = true
+      )),
+      coloredAnimated = GeneralPerspectiveShader(buffers, coloredFragment, ShaderFeatureConfig(
+          shading = true,
+          skeleton = true
       )),
       flat = GeneralPerspectiveShader(buffers, flatFragment, ShaderFeatureConfig()),
       flatAnimated = GeneralPerspectiveShader(buffers, flatFragment, ShaderFeatureConfig(

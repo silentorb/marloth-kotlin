@@ -109,10 +109,11 @@ fun convertComplexDepiction(world: World, depiction: Depiction): ElementGroup {
       .rotateZ(Pi / 2f)
       .scale(2f)
 
+  val firstAnimation = depiction.animations.first()
   val animations = listOf(
       ElementAnimation(
-          animation = 0,
-          timeOffset = 0f
+          animation = firstAnimation.animation,
+          timeOffset = firstAnimation.animationOffset
       )
   )
   return ElementGroup(

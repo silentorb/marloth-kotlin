@@ -109,13 +109,15 @@ fun createMultiSampler(glow: Glow, config: DisplayConfig): Multisampler {
   )
 }
 
-typealias AnimationDurationMap = Map<MeshType, List<Float>>
+typealias AnimationDurationMap = List<List<Float>>
 
 fun mapAnimationDurations(meshes: MeshMap): AnimationDurationMap =
     meshes.filter { it.value.armature != null }
         .mapValues { entry ->
           entry.value.armature!!.animations.map { it.duration }
         }
+        // Temporary:
+        .map { it.value }
 
 class Renderer(config: DisplayConfig) {
   val glow = Glow()

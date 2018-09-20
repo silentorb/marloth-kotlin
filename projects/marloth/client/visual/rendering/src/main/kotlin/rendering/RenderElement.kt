@@ -1,13 +1,11 @@
 package rendering
 
-import mythic.breeze.transformSkeleton
+import mythic.breeze.transformAnimatedSkeleton
 import mythic.glowing.DrawMethod
-import mythic.glowing.checkError
-import mythic.spatial.Pi
 import mythic.spatial.getRotationMatrix
 import org.joml.times
 import rendering.meshes.Primitives
-import scenery.Textures
+
 /*
 fun advancedPainter(mesh: AdvancedModel, renderer: Renderer, element: MeshElement, effects: Shaders) {
   val transform = element.transform.rotateZ(Pi / 2).scale(2f)
@@ -42,16 +40,26 @@ fun advancedPainter(mesh: AdvancedModel, renderer: Renderer, element: MeshElemen
 }
 */
 
-fun simplePainter(elements: Primitives, element: MeshElement, effects: Shaders, textures: DynamicTextureLibrary) {
-  for (e in elements) {
-    val transform = if (e.transform != null)
-      element.transform * e.transform
+fun simplePainter(renderer: SceneRenderer, model: AdvancedModel, element: MeshElement) {
+  val armature = model.armature
+  val transforms = if (armature != null) {
+    val animation = element.animations.first()
+    transformAnimatedSkeleton(armature, armature.animations[animation.animation], animation.timeOffset)
+  } else
+    null
+
+  if (transforms != null) {
+    populateBoneBuffer(renderer.renderer.boneBuffer, armature!!.transforms, transforms)
+  }
+  for (primitive in model.primitives) {
+    val transform = if (primitive.transform != null)
+      element.transform * primitive.transform
     else
       element.transform
 
     val orientationTransform = getRotationMatrix(transform)
-    val material = e.material
-    val texture = textures[material.texture]
+    val material = primitive.material
+    val texture = renderer.renderer.textures[material.texture]
 
     val config = ObjectShaderConfig(
         transform,
@@ -60,13 +68,15 @@ fun simplePainter(elements: Primitives, element: MeshElement, effects: Shaders, 
         normalTransform = orientationTransform,
         texture = texture
     )
-    val effect = if (texture != null)
-      effects.textured
+    val effect = if (armature != null)
+      renderer.effects.coloredAnimated
+    else if (texture != null)
+      renderer.effects.textured
     else
-      effects.colored
+      renderer.effects.colored
 
     effect.activate(config)
-    e.mesh.draw(DrawMethod.triangleFan)
+    primitive.mesh.draw(DrawMethod.triangleFan)
   }
 }
 
@@ -76,7 +86,7 @@ fun renderSimpleElement(gameRenderer: GameSceneRenderer, element: MeshElement) {
 //  advancedPainter(mesh, renderer.renderer, element, renderer.effects)
 //      humanPainter(renderer, mesh.primitives)(element, renderer.effects, childDetails)
 //  } else {
-    simplePainter(mesh.primitives, element, renderer.effects, renderer.renderer.textures)
+  simplePainter(renderer, mesh, element)
 //  }
 }
 

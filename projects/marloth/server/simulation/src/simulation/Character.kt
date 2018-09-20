@@ -130,7 +130,7 @@ fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id,
           animations = listOf(
               DepictionAnimation(
                   animation = 0,
-                  animationOffset = 0
+                  animationOffset = 0f
               )
           )
       ),
