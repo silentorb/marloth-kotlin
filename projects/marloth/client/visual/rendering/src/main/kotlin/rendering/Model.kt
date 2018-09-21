@@ -44,8 +44,7 @@ typealias WeightMap = Map<Vector3m, VertexWeights>
 data class AdvancedModel(
     val primitives: Primitives,
     val model: Model? = null,
-    val armature: Armature? = null,
-    val weights: WeightMap = mapOf()
+    val armature: Armature? = null
 )
 
 fun dispose(model: AdvancedModel) {

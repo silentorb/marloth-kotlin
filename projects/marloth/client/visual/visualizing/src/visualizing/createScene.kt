@@ -11,10 +11,10 @@ import simulation.Id
 val firstPersonCameraOffset = Vector3(0f, 0f, 1.4f)
 
 val simplePainterMap = mapOf(
-    DepictionType.monster to MeshType.eyeball,
-    DepictionType.child to MeshType.child,
-    DepictionType.missile to MeshType.sphere,
-    DepictionType.wallLamp to MeshType.wallLamp
+    DepictionType.monster to MeshId.eyeball,
+    DepictionType.child to MeshId.childBody,
+    DepictionType.missile to MeshId.sphere,
+    DepictionType.wallLamp to MeshId.wallLamp
 )
 
 fun createFirstPersonCamera(body: Body, character: Character): Camera = Camera(
@@ -75,7 +75,7 @@ fun filterDepictions(depictions: List<Depiction>, player: Player) =
     else
       depictions
 
-fun convertSimpleDepiction(world: World, id: Id, mesh: MeshType): MeshElement? {
+fun convertSimpleDepiction(world: World, id: Id, mesh: MeshId): MeshElement? {
   val body = world.bodyTable[id]!!
   val character = world.characterTable[id]
   val translate = Matrix().translate(body.position)
@@ -116,15 +116,27 @@ fun convertComplexDepiction(world: World, depiction: Depiction): ElementGroup {
           timeOffset = firstAnimation.animationOffset
       )
   )
+  val commonMeshes = listOf(
+      MeshId.childBody,
+      MeshId.childEyes
+  )
+  val girlMeshes = listOf(
+      MeshId.childGown,
+      MeshId.childLongHair
+  )
+
+  val meshes = commonMeshes.plus(girlMeshes)
+
   return ElementGroup(
-      meshes = listOf(
-          MeshElement(
-              id = 0,
-              mesh = MeshType.child,
-              animations = animations,
-              transform = transform
-          )
-      )
+      meshes = meshes.map {
+        MeshElement(
+            id = 0,
+            mesh = it,
+            transform = transform
+        )
+      },
+      armature = ArmatureId.child,
+      animations = animations
   )
 }
 
@@ -153,10 +165,10 @@ fun gatherVisualElements(world: World, screen: Screen, player: Player): ElementG
 //            convertSimpleDepiction(world, it.id, it.definition.depictionType)
 //          })
           .plus(world.deck.missiles.mapNotNull {
-            convertSimpleDepiction(world, it.id, DepictionType.missile)
+            convertSimpleDepiction(world, it.id, MeshId.missile)
           })
           .plus(world.deck.doors.mapNotNull {
-            convertSimpleDepiction(world, it.id, MeshType.prisonDoor)
+            convertSimpleDepiction(world, it.id, MeshId.prisonDoor)
           })
 
   return complexElements.plus(ElementGroup(simpleElements))

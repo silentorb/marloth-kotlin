@@ -341,5 +341,5 @@ fun loadGltf(vertexSchemas: VertexSchemas, resourcePath: String): AdvancedModel 
         loadPrimitive(buffer, info, vertexSchemas, primitive, name2, converter)
       }
 
-  return AdvancedModel(primitives = primitives, armature = armature, weights = mapOf())
+  return AdvancedModel(primitives = primitives, armature = armature)
 }

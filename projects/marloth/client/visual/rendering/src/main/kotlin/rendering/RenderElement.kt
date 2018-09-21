@@ -4,6 +4,7 @@ import mythic.breeze.transformAnimatedSkeleton
 import mythic.glowing.DrawMethod
 import mythic.spatial.getRotationMatrix
 import org.joml.times
+import rendering.meshes.Primitive
 import rendering.meshes.Primitives
 
 /*
@@ -40,58 +41,60 @@ fun advancedPainter(mesh: AdvancedModel, renderer: Renderer, element: MeshElemen
 }
 */
 
-fun simplePainter(renderer: SceneRenderer, model: AdvancedModel, element: MeshElement) {
-  val armature = model.armature
+fun simplePainter(renderer: SceneRenderer, primitive: Primitive, element: MeshElement, isAnimated: Boolean) {
+  val transform = if (primitive.transform != null)
+    element.transform * primitive.transform
+  else
+    element.transform
+
+  val orientationTransform = getRotationMatrix(transform)
+  val material = primitive.material
+  val texture = renderer.renderer.textures[material.texture]
+
+  val config = ObjectShaderConfig(
+      transform,
+      color = material.color,
+      glow = material.glow,
+      normalTransform = orientationTransform,
+      texture = texture
+  )
+  val effect = if (isAnimated)
+    renderer.effects.coloredAnimated
+  else if (texture != null)
+    renderer.effects.textured
+  else
+    renderer.effects.colored
+
+  effect.activate(config)
+  primitive.mesh.draw(DrawMethod.triangleFan)
+}
+
+//fun renderSimpleElement(gameRenderer: GameSceneRenderer, element: MeshElement) {
+//  val renderer = gameRenderer.renderer
+//  val mesh = renderer.meshes[element.mesh]!!
+////  advancedPainter(mesh, renderer.renderer, element, renderer.effects)
+////      humanPainter(renderer, mesh.primitives)(element, renderer.effects, childDetails)
+////  } else {
+//  simplePainter(renderer, mesh, element)
+////  }
+//}
+
+fun renderElementGroup(gameRenderer: GameSceneRenderer, group: ElementGroup) {
+  val sceneRenderer = gameRenderer.renderer
+  val armature = sceneRenderer.renderer.armatures[group.armature]
   val transforms = if (armature != null) {
-    val animation = element.animations.first()
+    val animation = group.animations.first()
     transformAnimatedSkeleton(armature, armature.animations[animation.animation], animation.timeOffset)
   } else
     null
 
   if (transforms != null) {
-    populateBoneBuffer(renderer.renderer.boneBuffer, armature!!.transforms, transforms)
+    populateBoneBuffer(sceneRenderer.renderer.boneBuffer, armature!!.transforms, transforms)
   }
-  for (primitive in model.primitives) {
-    val transform = if (primitive.transform != null)
-      element.transform * primitive.transform
-    else
-      element.transform
-
-    val orientationTransform = getRotationMatrix(transform)
-    val material = primitive.material
-    val texture = renderer.renderer.textures[material.texture]
-
-    val config = ObjectShaderConfig(
-        transform,
-        color = material.color,
-        glow = material.glow,
-        normalTransform = orientationTransform,
-        texture = texture
-    )
-    val effect = if (armature != null)
-      renderer.effects.coloredAnimated
-    else if (texture != null)
-      renderer.effects.textured
-    else
-      renderer.effects.colored
-
-    effect.activate(config)
-    primitive.mesh.draw(DrawMethod.triangleFan)
-  }
-}
-
-fun renderSimpleElement(gameRenderer: GameSceneRenderer, element: MeshElement) {
-  val renderer = gameRenderer.renderer
-  val mesh = renderer.meshes[element.mesh]!!
-//  advancedPainter(mesh, renderer.renderer, element, renderer.effects)
-//      humanPainter(renderer, mesh.primitives)(element, renderer.effects, childDetails)
-//  } else {
-  simplePainter(renderer, mesh, element)
-//  }
-}
-
-fun renderElementGroup(gameRenderer: GameSceneRenderer, group: ElementGroup) {
   for (element in group.meshes) {
-    renderSimpleElement(gameRenderer, element)
+    val primitives = sceneRenderer.renderer.meshMap[element.mesh]!!
+    for (primitive in primitives) {
+      simplePainter(gameRenderer.renderer, primitive, element, armature != null)
+    }
   }
 }

@@ -14,10 +14,9 @@ import org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE
 import org.lwjgl.opengl.GL32.glTexImage2DMultisample
 import rendering.meshes.AttributeName
 import rendering.meshes.MeshMap
+import rendering.meshes.Primitive
 import rendering.meshes.createVertexSchemas
-import scenery.Light
-import scenery.Scene
-import scenery.Textures
+import scenery.*
 import java.nio.FloatBuffer
 
 fun gatherEffectsData(dimensions: Vector2i, scene: Scene, cameraEffectsData: CameraEffectsData): EffectsData {
@@ -111,6 +110,10 @@ fun createMultiSampler(glow: Glow, config: DisplayConfig): Multisampler {
 
 typealias AnimationDurationMap = List<List<Float>>
 
+private val camelCaseRegex = Regex("-[a-z]")
+fun toCamelCase(identifier: String) =
+    identifier.replace(camelCaseRegex) { it.value[1].toUpperCase().toString() }
+
 fun mapAnimationDurations(meshes: MeshMap): AnimationDurationMap =
     meshes.filter { it.value.armature != null }
         .mapValues { entry ->
@@ -118,6 +121,38 @@ fun mapAnimationDurations(meshes: MeshMap): AnimationDurationMap =
         }
         // Temporary:
         .map { it.value }
+
+fun mapMeshDepictions(models: MeshMap): Map<MeshId, List<Primitive>> {
+  val keys = MeshId.values().associate { Pair(it.name, it) }
+  return models.flatMap { entry ->
+    val entryName = entry.key.toString()
+    val modelKey = keys[entryName]
+    if (modelKey != null)
+      listOf(Pair(modelKey, entry.value.primitives))
+    else
+      entry.value.primitives.mapNotNull { primitive ->
+        val name = entryName.decapitalize() + toCamelCase(primitive.name).capitalize()
+        val key = keys[name]
+        if (key != null)
+          Pair(key, listOf(primitive))
+        else
+          null
+      }
+
+  }.associate { it }
+}
+
+fun mapArmatures(models: MeshMap): Map<ArmatureId, Armature> {
+  val keys = ArmatureId.values().associate { Pair(it.name, it) }
+  return models.mapNotNull { entry ->
+    val key = keys[entry.key.toString()]
+    val armature = entry.value.armature
+    if (key != null && armature != null)
+      Pair(key, armature)
+    else
+      null
+  }.associate { it }
+}
 
 class Renderer(config: DisplayConfig) {
   val glow = Glow()
@@ -134,6 +169,8 @@ class Renderer(config: DisplayConfig) {
   var worldMesh: WorldMesh? = null
   val meshGenerators = standardMeshes()
   var meshes: MeshMap = createMeshes(vertexSchemas)
+  val meshMap = mapMeshDepictions(meshes)
+  val armatures = mapArmatures(meshes)
   val animationDurations = mapAnimationDurations(meshes)
   var mappedTextures: TextureLibrary = createTextureLibrary(defaultTextureScale)
   val textures: DynamicTextureLibrary = createTextureLibrary2()
