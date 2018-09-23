@@ -1,6 +1,5 @@
 package rendering
 
-import mythic.breeze.Armature
 import mythic.spatial.Vector4
 import rendering.meshes.*
 import rendering.meshes.loading.loadGltf

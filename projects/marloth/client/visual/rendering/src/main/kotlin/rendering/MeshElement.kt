@@ -1,11 +1,12 @@
 package rendering
 
 import mythic.spatial.Matrix
+import scenery.AnimationId
 import scenery.ArmatureId
 import scenery.MeshId
 
 data class ElementAnimation(
-    val animation: Int,
+    val animationId: AnimationId,
     var timeOffset: Float,
     val strength: Float = 1f
 )

@@ -1,5 +1,7 @@
 package scenery
 
+import mythic.breeze.Animation
+
 enum class MeshId {
   childBody,
   childBoyClothes,
@@ -16,4 +18,16 @@ enum class MeshId {
 
 enum class ArmatureId {
   child
+}
+
+enum class AnimationId {
+  girlStand,
+  none,
+  run,
+  stand,
+  walk
+}
+
+enum class MaterialId {
+
 }

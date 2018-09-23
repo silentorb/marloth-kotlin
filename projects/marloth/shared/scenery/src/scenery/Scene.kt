@@ -16,21 +16,8 @@ data class Scene(
     val lights: List<Light> = listOf()
 )
 
-//enum class Gender {
-//  female,
-//  male
-//}
-//
-//data class ChildDetails(
-//    val gender: Gender
-//)
 
 data class BillboardDetails(
     val text: String,
     val cooldown: Float? = null
 )
-
-//data class ElementDetails(
-//    val children: Map<Long, ChildDetails>
-////    val billboards: Map<Id, BillboardDetails>
-//)

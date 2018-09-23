@@ -72,7 +72,7 @@ fun updateEntities(animationDurations: AnimationDurationMap, deck: Deck, world: 
   val (commands, activatedAbilities, collisionMap) = data
 
   return deck.copy(
-      depictions = updateDepictions(animationDurations, world),
+      depictions = updateDepictions(world, animationDurations),
       bodies = updateBodies(world, commands, collisionMap),
       characters = updateCharacters(world, collisionMap, commands, activatedAbilities),
       missiles = updateMissiles(world, collisionMap),

@@ -112,7 +112,7 @@ fun convertComplexDepiction(world: World, depiction: Depiction): ElementGroup {
   val firstAnimation = depiction.animations.first()
   val animations = listOf(
       ElementAnimation(
-          animation = firstAnimation.animation,
+          animationId = mapAnimation(world, firstAnimation.animationId),
           timeOffset = firstAnimation.animationOffset
       )
   )

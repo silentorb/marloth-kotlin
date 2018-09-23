@@ -7,6 +7,7 @@ import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import org.joml.times
 import physics.*
+import scenery.AnimationId
 import simulation.changing.*
 import simulation.input.filterCommands
 
@@ -129,7 +130,7 @@ fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id,
           type = definition.depictionType,
           animations = listOf(
               DepictionAnimation(
-                  animation = 0,
+                  animationId = AnimationId.stand,
                   animationOffset = 0f
               )
           )

@@ -1,6 +1,7 @@
 package rendering
 
-import mythic.breeze.Armature
+import mythic.breeze.Animation
+import mythic.breeze.Bones
 import mythic.drawing.*
 import mythic.glowing.*
 import mythic.platforming.DisplayConfig
@@ -108,19 +109,19 @@ fun createMultiSampler(glow: Glow, config: DisplayConfig): Multisampler {
   )
 }
 
-typealias AnimationDurationMap = List<List<Float>>
+typealias AnimationDurationMap = Map<ArmatureId, Map<AnimationId, Float>>
 
-private val camelCaseRegex = Regex("-[a-z]")
+private val camelCaseRegex = Regex("[-_][a-z]")
 fun toCamelCase(identifier: String) =
     identifier.replace(camelCaseRegex) { it.value[1].toUpperCase().toString() }
 
 fun mapAnimationDurations(meshes: MeshMap): AnimationDurationMap =
     meshes.filter { it.value.armature != null }
-        .mapValues { entry ->
-          entry.value.armature!!.animations.map { it.duration }
+        .map { entry ->
+          Pair(ArmatureId.child, entry.value.armature!!.animations.mapValues { it.value.duration })
         }
         // Temporary:
-        .map { it.value }
+        .associate { it }
 
 fun mapMeshDepictions(models: MeshMap): Map<MeshId, List<Primitive>> {
   val keys = MeshId.values().associate { Pair(it.name, it) }
@@ -141,6 +142,14 @@ fun mapMeshDepictions(models: MeshMap): Map<MeshId, List<Primitive>> {
 
   }.associate { it }
 }
+
+typealias AnimationMap = Map<AnimationId, Animation>
+
+data class Armature(
+    val bones: Bones,
+    val animations: AnimationMap,
+    val transforms: List<Matrix>
+)
 
 fun mapArmatures(models: MeshMap): Map<ArmatureId, Armature> {
   val keys = ArmatureId.values().associate { Pair(it.name, it) }

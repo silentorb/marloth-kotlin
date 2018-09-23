@@ -6,6 +6,7 @@ import mythic.glowing.VertexAttributeDetail
 import org.lwjgl.BufferUtils
 import rendering.*
 import rendering.meshes.*
+import scenery.AnimationId
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
@@ -219,14 +220,23 @@ fun loadAnimation(buffer: ByteBuffer, info: GltfInfo, source: IndexedAnimation, 
   }
 
   return Animation(
+      name = source.name,
       channels = channels,
       channelMap = mapChannels(channels),
       duration = duration
   )
 }
 
-fun loadAnimations(buffer: ByteBuffer, info: GltfInfo, animations: List<IndexedAnimation>, bones: List<Bone>, boneIndexMap: Map<Int, BoneNode>): List<Animation> {
-  return animations.map { loadAnimation(buffer, info, it, boneIndexMap) }
+fun loadAnimations(buffer: ByteBuffer, info: GltfInfo, animations: List<IndexedAnimation>, bones: List<Bone>, boneIndexMap: Map<Int, BoneNode>): AnimationMap {
+  return animations.mapNotNull { source ->
+    val name = toCamelCase(source.name.replace("metarig_", ""))
+    val key = AnimationId.values().firstOrNull { it.name == name }
+    if (key != null)
+      Pair(key, loadAnimation(buffer, info, source, boneIndexMap))
+    else
+      null
+  }
+      .associate { it }
 }
 
 fun nodeToBone(node: Node, index: Int, parent: Int) =

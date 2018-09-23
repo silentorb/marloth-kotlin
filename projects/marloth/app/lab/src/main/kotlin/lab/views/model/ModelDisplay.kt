@@ -139,7 +139,7 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
 
 //    val bones = if (armature != null) getAnimatedBones(armature, state.animationOffset) else null
     val transforms = if (armature != null)
-      transformAnimatedSkeleton(armature, armature.animations[state.animation], state.animationElapsedTime)
+      transformAnimatedSkeleton(armature.bones, armature.animations[state.animation]!!, state.animationElapsedTime)
     else
       null
 

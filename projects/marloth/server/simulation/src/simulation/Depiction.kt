@@ -1,6 +1,9 @@
 package simulation
 
-typealias AnimationDurationMap = List<List<Float>>
+import scenery.AnimationId
+import scenery.ArmatureId
+
+typealias AnimationDurationMap = Map<ArmatureId, Map<AnimationId, Float>>
 
 enum class DepictionType {
   billboard,
@@ -14,7 +17,7 @@ enum class DepictionType {
 }
 
 data class DepictionAnimation(
-    val animation: Int = -1,
+    val animationId: AnimationId = AnimationId.none,
     val animationOffset: Float = -1f,
     val strength: Float = 1f
 )
@@ -25,8 +28,16 @@ data class Depiction(
     val animations: List<DepictionAnimation> = listOf()
 ) : EntityLike
 
-fun updateAnimation(animationDurations: AnimationDurationMap, animation: DepictionAnimation): DepictionAnimation {
-  val duration = animationDurations[0][animation.animation]
+fun mapAnimation(world: World, id: AnimationId): AnimationId {
+  if(id == AnimationId.stand)
+    return AnimationId.girlStand
+
+  return id
+}
+
+fun updateAnimation(world: World, animationDurations: AnimationDurationMap, animation: DepictionAnimation): DepictionAnimation {
+  val animationId = mapAnimation(world, animation.animationId)
+  val duration = animationDurations[ArmatureId.child]!![animationId]!!
   val nextValue = animation.animationOffset + 1f * simulationDelta
   val finalValue = if (nextValue >= duration)
     nextValue % duration
@@ -38,12 +49,12 @@ fun updateAnimation(animationDurations: AnimationDurationMap, animation: Depicti
   )
 }
 
-fun updateDepictions(animationDurations: AnimationDurationMap, world: World): List<Depiction> =
+fun updateDepictions(world: World, animationDurations: AnimationDurationMap): List<Depiction> =
     world.deck.depictions.map { depiction ->
       if (depiction.animations.none())
         depiction
       else
         depiction.copy(
-            animations = depiction.animations.map { updateAnimation(animationDurations, it) }
+            animations = depiction.animations.map { updateAnimation(world, animationDurations, it) }
         )
     }

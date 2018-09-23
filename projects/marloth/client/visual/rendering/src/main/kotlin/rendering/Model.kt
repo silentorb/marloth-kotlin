@@ -1,6 +1,5 @@
 package rendering
 
-import mythic.breeze.Armature
 import mythic.sculpting.FlexibleEdge
 import mythic.sculpting.FlexibleMesh
 import mythic.spatial.Vector3m

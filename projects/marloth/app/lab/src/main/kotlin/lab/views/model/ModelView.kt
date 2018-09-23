@@ -10,6 +10,7 @@ import rendering.*
 import scenery.Camera
 import lab.views.*
 import mythic.sculpting.*
+import scenery.AnimationId
 
 data class ModelLayout(
     val boxes: List<Box>,
@@ -52,14 +53,14 @@ data class ModelViewConfig(
 
 data class ModelViewState(
     val scrollOffsets: Map<String, Float>,
-    val animation: Int,
+    val animation: AnimationId,
     val animationElapsedTime: Float
 )
 
 fun newModelViewState() =
     ModelViewState(
         scrollOffsets = mapOf(),
-        animation = 0,
+        animation = AnimationId.stand,
         animationElapsedTime = 0f
     )
 
@@ -262,7 +263,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
   fun updateAnimationOffset(state: ModelViewState, delta: Float): Float {
     val armature = model.armature
     if (armature != null && armature.animations.any())
-      return (state.animationElapsedTime + delta) % armature.animations[state.animation].duration
+      return (state.animationElapsedTime + delta) % armature.animations[state.animation]!!.duration
 
     return 0f
   }

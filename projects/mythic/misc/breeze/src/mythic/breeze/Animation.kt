@@ -49,6 +49,7 @@ data class AnimationChannel(
 }
 
 data class Animation(
+    val name: String,
     val duration: Float,
     val channels: List<AnimationChannel>,
     val channelMap: ChannelTypeMap
@@ -84,12 +85,6 @@ data class ArrangedBoneNode(
 typealias ChannelMap = Map<Int, AnimationChannel>
 typealias ChannelTypeMap = Map<ChannelType, ChannelMap>
 
-data class Armature(
-    val bones: Bones,
-    val animations: List<Animation>,
-    val transforms: List<Matrix>
-)
-
 typealias MatrixSource = (index: Int) -> Matrix
 
 fun mapChannels(channels: List<AnimationChannel>): ChannelTypeMap =
@@ -120,17 +115,16 @@ fun transformSkeleton(bones: Bones, matrixSource: MatrixSource = staticMatrixSou
   return result.toList()
 }
 
-fun transformAnimatedSkeleton(armature: Armature, animation: Animation, timeElapsed: Float): List<Matrix> {
+fun transformAnimatedSkeleton(bones: List<Bone>, animation: Animation, timeElapsed: Float): List<Matrix> {
   val translationMap = animatedValueSource<Vector3>(animation.channelMap[ChannelType.translation], timeElapsed)
   val rotationMap = animatedValueSource<Quaternion>(animation.channelMap[ChannelType.rotation], timeElapsed)
-  val bones = armature.bones
-  val matrixSource: MatrixSource = { i ->
+    val matrixSource: MatrixSource = { i ->
     val bone = bones[i]
     val translation = translationMap(i) ?: bone.translation
     val rotation = rotationMap(i) ?: bone.rotation
     transformBone(translation, rotation)
   }
-  return transformSkeleton(armature.bones, matrixSource)
+  return transformSkeleton(bones, matrixSource)
 }
 
 fun transformBone(translation: Vector3, rotation: Quaternion) =
