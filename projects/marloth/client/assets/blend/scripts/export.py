@@ -1,8 +1,77 @@
 import bpy
 import os
 import os.path
+import json
 
 models_path = 'src/main/resources/models'
+
+def add_to_map_list(map, key, item):
+    if key in map:
+        map[key].append(item)
+    else:
+        map[key] = [item]
+
+def of_type(list, type):
+    return [c for c in list if c.type == type]
+
+def gather_ik_bones(pose):
+    constraints = {}
+    for bone in pose.bones:
+        for constraint in of_type(bone.constraints, 'IK'):
+            key = str(constraint.subtarget)
+            add_to_map_list(constraints, key, bone.name)
+            b = bone
+            while b.parent and b.bone.use_connect:
+                b = b.parent
+                add_to_map_list(constraints, key, b.name)
+    return constraints
+
+def add_keyframe_if_missing(curves, obj_name, property_name, values):
+    data_path = 'pose.bones["' + obj_name + '"].' + property_name
+    for curve in curves:
+        if curve.data_path == data_path:
+            return
+
+    for i, value in enumerate(values):
+        print('adding curve ' + data_path)
+        curve = curves.new(data_path, i, obj_name)
+        # curve.keyframe_points.insert(0, value)
+
+def prepare_armature(armature):
+    constraints = gather_ik_bones(armature.pose)
+    # print(json.dumps(constraints, indent=4))
+    for action in bpy.data.actions:
+        print(action.name)
+        if action.name != 'walk':
+            continue
+
+        for k, ik in constraints.items():
+            for bone_name in ik:
+                if next((g for g in action.groups if g.name == bone_name), None) == None:
+                    action.groups.new(bone_name)
+
+                add_keyframe_if_missing(action.fcurves, bone_name, 'location',[0,0,0])
+                add_keyframe_if_missing(action.fcurves, bone_name, 'rotation_quaternion',[1,0,0,0])
+
+        for group in action.groups:
+            print (group.name)
+            for channel in group.channels:
+                data_path = channel.data_path
+                if armature.pose and 'pose.bones' in data_path:
+                    target_name = data_path.split('"')[1]
+                    transform = data_path.split('.')[-1]
+                    print(' * * ' +target_name)
+        # for fcurve in action.fcurves:
+        #     data_path = fcurve.data_path
+        #     target_name = data_path.split('"')[1]
+        #     transform = data_path.split('.')[-1]
+        #     print('  ' + fcurve.data_path + ' ' + str(fcurve.array_index))
+    # pose_bones = set()
+
+
+def prepare_scene():
+    for armature in of_type(bpy.data.objects, 'ARMATURE'):
+        prepare_armature(armature)
 
 def get_blend_filename():
     filepath = bpy.data.filepath
@@ -51,9 +120,8 @@ def export_gltf():
         enable_meshes = True,
         enable_textures = True
     )
-    return
-
 
 if __name__ == '__main__':
+    prepare_scene()
     export_gltf()
     print('Exported ', get_export_filepath())

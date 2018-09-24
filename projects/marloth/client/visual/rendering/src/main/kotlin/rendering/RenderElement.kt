@@ -1,5 +1,6 @@
 package rendering
 
+import mythic.breeze.MultiAnimationPart
 import mythic.breeze.transformAnimatedSkeleton
 import mythic.glowing.DrawMethod
 import mythic.spatial.getRotationMatrix
@@ -40,8 +41,19 @@ fun renderElementGroup(gameRenderer: GameSceneRenderer, group: ElementGroup) {
   val sceneRenderer = gameRenderer.renderer
   val armature = sceneRenderer.renderer.armatures[group.armature]
   val transforms = if (armature != null) {
-    val animation = group.animations.first()
-    transformAnimatedSkeleton(armature.bones, armature.animations[animation.animationId]!!, animation.timeOffset)
+    if (group.animations.size == 1) {
+      val animation = group.animations.first()
+      transformAnimatedSkeleton(armature.bones, armature.animations[animation.animationId]!!, animation.timeOffset)
+    } else {
+      val animations = group.animations.map { animation ->
+        MultiAnimationPart(
+            animation = armature.animations[animation.animationId]!!,
+            strength = animation.strength,
+            timeOffset = animation.timeOffset
+        )
+      }
+      transformAnimatedSkeleton(armature.bones, animations)
+    }
   } else
     null
 

@@ -209,16 +209,27 @@ fun loadChannel(target: ChannelTarget, buffer: ByteBuffer, info: GltfInfo, sampl
 
 fun loadAnimation(buffer: ByteBuffer, info: GltfInfo, source: IndexedAnimation, boneIndexMap: Map<Int, BoneNode>): Animation {
   var duration = 0f
-  val channels = source.channels.map {
-    val channel = loadChannel(it.target, buffer, info, source.samplers[it.sampler], boneIndexMap)
+  val channels = source.channels
+      .filter { it.target.path != "scale" }
+      .map {
+        val channel = loadChannel(it.target, buffer, info, source.samplers[it.sampler], boneIndexMap)
 
-    val lastTime = channel.keys.last().time
-    if (lastTime > duration)
-      duration = lastTime
+        val lastTime = channel.keys.last().time
+        if (lastTime > duration)
+          duration = lastTime
 
-    channel
+        channel
+      }
+
+  val d = source.channels.map {
+    it.target.node
   }
+      .distinct()
+      .map { Pair(it, info.nodes[it]) }
 
+  if (source.name == "metarig_walk") {
+    val k = 0
+  }
   return Animation(
       name = source.name,
       channels = channels,

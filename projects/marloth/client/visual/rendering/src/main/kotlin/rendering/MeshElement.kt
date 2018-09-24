@@ -7,7 +7,7 @@ import scenery.MeshId
 
 data class ElementAnimation(
     val animationId: AnimationId,
-    var timeOffset: Float,
+    val timeOffset: Float,
     val strength: Float = 1f
 )
 

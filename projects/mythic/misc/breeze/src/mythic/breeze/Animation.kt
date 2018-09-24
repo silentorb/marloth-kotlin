@@ -99,7 +99,6 @@ fun staticMatrixSource(bones: Bones): MatrixSource = { i ->
   transformBone(bone.translation, bone.rotation)
 }
 
-//fun transformSkeleton(armature: Armature, translationMap: ValueSource<Vector3>, rotationMap: ValueSource<Quaternion>): List<Matrix> {
 fun transformSkeleton(bones: Bones, matrixSource: MatrixSource = staticMatrixSource(bones)): List<Matrix> {
   val init = Matrix()
   val result = Array(bones.size, { init })
@@ -115,14 +114,55 @@ fun transformSkeleton(bones: Bones, matrixSource: MatrixSource = staticMatrixSou
   return result.toList()
 }
 
+data class IntermediateTransform(
+    val translation: Vector3,
+    val rotation: Quaternion
+)
+
+fun intermediateTransformAnimatedSkeleton(bones: List<Bone>, animation: MultiAnimationPart): List<IntermediateTransform> {
+  val translationMap = animatedValueSource<Vector3>(animation.animation.channelMap[ChannelType.translation], animation.timeOffset)
+  val rotationMap = animatedValueSource<Quaternion>(animation.animation.channelMap[ChannelType.rotation], animation.timeOffset)
+  return bones.mapIndexed { i, bone ->
+    IntermediateTransform(
+        translation = (translationMap(i) ?: bone.translation) * animation.strength,
+        rotation = Quaternion().slerp(rotationMap(i) ?: bone.rotation, animation.strength)
+    )
+  }
+}
+
 fun transformAnimatedSkeleton(bones: List<Bone>, animation: Animation, timeElapsed: Float): List<Matrix> {
   val translationMap = animatedValueSource<Vector3>(animation.channelMap[ChannelType.translation], timeElapsed)
   val rotationMap = animatedValueSource<Quaternion>(animation.channelMap[ChannelType.rotation], timeElapsed)
-    val matrixSource: MatrixSource = { i ->
+  val matrixSource: MatrixSource = { i ->
     val bone = bones[i]
     val translation = translationMap(i) ?: bone.translation
     val rotation = rotationMap(i) ?: bone.rotation
     transformBone(translation, rotation)
+  }
+  return transformSkeleton(bones, matrixSource)
+}
+
+data class MultiAnimationPart(
+    val animation: Animation,
+    val timeOffset: Float,
+    val strength: Float = 1f
+)
+
+fun transformAnimatedSkeleton(bones: List<Bone>, animations: List<MultiAnimationPart>): List<Matrix> {
+  val poses = animations.map { animation ->
+    intermediateTransformAnimatedSkeleton(bones, animation)
+  }
+  val pose = poses.reduce { a, b ->
+    a.zip(b) { a2, b2 ->
+      IntermediateTransform(
+          a2.translation + b2.translation,
+          a2.rotation * b2.rotation
+      )
+    }
+  }
+  val matrixSource: MatrixSource = { i ->
+    val t = pose[i]
+    transformBone(t.translation, t.rotation)
   }
   return transformSkeleton(bones, matrixSource)
 }
