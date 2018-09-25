@@ -35,7 +35,7 @@ def add_keyframe_if_missing(curves, obj_name, property_name, values):
     for i, value in enumerate(values):
         print('adding curve ' + data_path)
         curve = curves.new(data_path, i, obj_name)
-        # curve.keyframe_points.insert(0, value)
+        curve.keyframe_points.insert(0, value)
 
 def prepare_armature(armature):
     constraints = gather_ik_bones(armature.pose)
