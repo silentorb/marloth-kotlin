@@ -4,6 +4,7 @@ import lab.utility.*
 import lab.views.game.renderFaceNormals
 import lab.views.shared.drawSkeleton
 import mythic.bloom.*
+import mythic.breeze.MultiAnimationPart
 import mythic.breeze.transformAnimatedSkeleton
 import mythic.drawing.Canvas
 import mythic.glowing.DrawMethod
@@ -14,6 +15,7 @@ import org.joml.*
 import rendering.*
 import rendering.meshes.Primitive
 import rendering.meshes.modelToMeshes
+import scenery.AnimationId
 import scenery.Camera
 import scenery.ProjectionType
 import scenery.Scene
@@ -138,8 +140,22 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
     val modelSource = model.model
 
 //    val bones = if (armature != null) getAnimatedBones(armature, state.animationOffset) else null
-    val transforms = if (armature != null)
-      transformAnimatedSkeleton(armature.bones, armature.animations[state.animation]!!, state.animationElapsedTime)
+    val transforms = if (armature != null) {
+//      transformAnimatedSkeleton(armature.bones, armature.animations[state.animation]!!, state.animationElapsedTime)
+      val a = listOf(
+          MultiAnimationPart(
+              animation = armature.animations[AnimationId.girlStand]!!,
+              timeOffset = state.animationElapsedTime,
+              strength = 0.5f
+          ),
+          MultiAnimationPart(
+              animation = armature.animations[AnimationId.walk]!!,
+              timeOffset = state.animationElapsedTime,
+              strength = 0.5f
+          )
+      )
+      transformAnimatedSkeleton(armature.bones, a)
+    }
     else
       null
 

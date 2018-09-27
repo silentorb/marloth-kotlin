@@ -263,7 +263,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
   fun updateAnimationOffset(state: ModelViewState, delta: Float): Float {
     val armature = model.armature
     if (armature != null && armature.animations.any())
-      return (state.animationElapsedTime + delta * 0.25f) % armature.animations[state.animation]!!.duration
+      return (state.animationElapsedTime + delta * 0.5f) % armature.animations[AnimationId.girlStand]!!.duration
 
     return 0f
   }

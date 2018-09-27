@@ -71,14 +71,14 @@ fun getUpdatedAnimationDistributions(primary: AnimationId, animations: List<Depi
 fun updateAnimations(world: World, animationDurations: AnimationDurationMap, id: Id, animations: List<DepictionAnimation>, delta: Float): List<DepictionAnimation> {
   val body = world.bodyTable[id]!!
   val speed = body.velocity.length()
-//  val primaryAnimation = if (speed == 0f)
-//    AnimationId.stand
-////  else if (speed < 1f)
-////    AnimationId.walk
-//  else
+  val primaryAnimation = if (speed == 0f)
+    AnimationId.stand
+//  else if (speed < 1f)
 //    AnimationId.walk
+  else
+    AnimationId.walk
 
-  val primaryAnimation = AnimationId.walk
+//  val primaryAnimation = AnimationId.walk
   val animationsPlus = if (animations.none { it.animationId == primaryAnimation })
     animations.plus(DepictionAnimation(primaryAnimation, 0f, 0f))
   else
@@ -86,7 +86,8 @@ fun updateAnimations(world: World, animationDurations: AnimationDurationMap, id:
 
   val distributions = getUpdatedAnimationDistributions(primaryAnimation, animationsPlus, delta)
   val distributedAnimations = animationsPlus.zip(distributions) { animation, strength -> updateAnimation(world, animationDurations, animation, strength, delta) }
-  return distributedAnimations.filter { it.strength > 0f }
+  val result = distributedAnimations.filter { it.strength > 0f }
+  return result
 }
 
 fun updateDepictions(world: World, animationDurations: AnimationDurationMap): List<Depiction> =

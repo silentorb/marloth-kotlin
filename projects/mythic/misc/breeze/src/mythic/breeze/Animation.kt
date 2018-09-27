@@ -119,14 +119,13 @@ data class IntermediateTransform(
     val rotation: Quaternion
 )
 
-fun intermediateTransformAnimatedSkeleton(bones: List<Bone>, animation: MultiAnimationPart): List<IntermediateTransform> {
+fun intermediateTransformAnimatedSkeleton(bones: List<Bone>, animation: MultiAnimationPart): List<Matrix> {
   val translationMap = animatedValueSource<Vector3>(animation.animation.channelMap[ChannelType.translation], animation.timeOffset)
   val rotationMap = animatedValueSource<Quaternion>(animation.animation.channelMap[ChannelType.rotation], animation.timeOffset)
   return bones.mapIndexed { i, bone ->
-    IntermediateTransform(
-        translation = (translationMap(i) ?: bone.translation) * animation.strength,
-        rotation = Quaternion().slerp(rotationMap(i) ?: bone.rotation, animation.strength)
-    )
+    val translation = (translationMap(i) ?: bone.translation) * animation.strength
+    val rotation = Quaternion().slerp(rotationMap(i) ?: bone.rotation, animation.strength)
+    transformBone(translation, rotation)
   }
 }
 
@@ -149,29 +148,40 @@ data class MultiAnimationPart(
 )
 
 fun transformAnimatedSkeleton(bones: List<Bone>, animations: List<MultiAnimationPart>): List<Matrix> {
+  if (animations.size != 2)
+    throw Error("Mixing any number other than two animations is not currently supported.")
+
+  val sum = animations.map {it.strength}.sum()
+  assert(sum <= 1f)
+  assert(sum > 0.999f)
+
   val poses = animations.map { animation ->
-    intermediateTransformAnimatedSkeleton(bones, animation)
+    transformAnimatedSkeleton(bones, animation.animation, animation.timeOffset)
+        .map { transform ->
+          IntermediateTransform(
+              translation = Vector3(transform.getTranslation(Vector3m())),
+              rotation = transform.getUnnormalizedRotation(Quaternion())
+          )
+        }
   }
-  val pose = poses.reduce { a, b ->
-    a.zip(b) { a2, b2 ->
-      IntermediateTransform(
-          a2.translation + b2.translation,
-          a2.rotation * b2.rotation
-      )
-    }
+
+  val strengthA = animations[0].strength
+  val strengthB = animations[1].strength
+  val slerpRatio = strengthA / (strengthA + strengthB)
+  return poses[0].zip(poses[1]) { a, b ->
+    val ta = a.translation * strengthA
+    val ra = a.rotation
+    val tb = b.translation * strengthB
+    val rb = b.rotation
+    transformBone(ta + tb, ra.slerp(Quaternion(rb), slerpRatio))
+//    transformBone(a.translation, ra)
   }
-  val matrixSource: MatrixSource = { i ->
-    val t = pose[i]
-    transformBone(t.translation, t.rotation)
-  }
-  return transformSkeleton(bones, matrixSource)
 }
 
 fun transformBone(translation: Vector3, rotation: Quaternion) =
     Matrix()
         .translate(translation)
         .rotate(rotation)
-
 
 fun <T> emptyValueSource(): ValueSource<T> = { null }
 

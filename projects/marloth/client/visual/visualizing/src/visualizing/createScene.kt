@@ -109,13 +109,15 @@ fun convertComplexDepiction(world: World, depiction: Depiction): ElementGroup {
       .rotateZ(Pi / 2f)
       .scale(2f)
 
-  val firstAnimation = depiction.animations.first()
-  val animations = listOf(
-      ElementAnimation(
-          animationId = mapAnimation(world, firstAnimation.animationId),
-          timeOffset = firstAnimation.animationOffset
-      )
-  )
+  val animations = depiction.animations.map {
+    ElementAnimation(
+        animationId = mapAnimation(world, it.animationId),
+        timeOffset = it.animationOffset,
+        strength = it.strength
+//        strength = 1f / depiction.animations.size
+    )
+  }
+
   val commonMeshes = listOf(
       MeshId.childBody,
       MeshId.childEyes
