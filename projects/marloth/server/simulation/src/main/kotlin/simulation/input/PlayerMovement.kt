@@ -1,14 +1,5 @@
 package simulation.input
 
-import mythic.spatial.Pi
-import mythic.spatial.Quaternion
-import org.joml.times
-import physics.Body
-import physics.MovementForce
-import simulation.*
-import simulation.changing.joinInputVector
-import simulation.changing.playerMoveMap
-
 //fun playerMovementTp(player: Player, commands: Commands, child: Character, body: Body): MovementForce? {
 //  var offset = joinInputVector(commands, playerMoveMap)
 //  if (offset != null) {

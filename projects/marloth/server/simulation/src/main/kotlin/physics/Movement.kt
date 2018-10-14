@@ -1,10 +1,9 @@
-package simulation.changing
+package physics
 
 import simulation.CommandType
 import mythic.sculpting.FlexibleEdge
 import mythic.sculpting.FlexibleFace
 import mythic.spatial.*
-import physics.Collision
 import simulation.*
 
 fun hitsWall(edge: FlexibleEdge, position: Vector3, radius: Float) =
@@ -23,7 +22,7 @@ fun getCollisionWallsIncludingNeighbors(world: Realm, node: Node): Sequence<Flex
       .distinct()
 }
 
-fun getCollisionWalls(world: Realm, node: Node): List<FlexibleFace> {
+fun wallsInCollisionRange(world: Realm, node: Node): List<FlexibleFace> {
   return node.walls
       .filter(isWall)
       .distinct()
@@ -32,37 +31,48 @@ fun getCollisionWalls(world: Realm, node: Node): List<FlexibleFace> {
 data class WallCollision3(
     val wall: FlexibleFace,
     val hitPoint: Vector2,
-    val gap: Float
+    val directGap: Float,
+    val travelingGap: Float
 )
 
-private const val characterRadius = 0.5f
+data class MovingBody(
+    val radius: Float,
+    val position: Vector3
+)
 
-fun getCollisionDetails(face: FlexibleFace, source: Vector3): WallCollision3 {
+fun getCollisionDetails(face: FlexibleFace, body: MovingBody, offset: Vector3): WallCollision3 {
   val edge = getFloor(face)
-  val hitPoint = projectPointOntoLineSegment(source.xy(), edge.first.xy(), edge.second.xy())
-  return if (hitPoint != null) {
-    val gap = hitPoint.distance(source.xy()) - characterRadius
-    WallCollision3(face, hitPoint, gap)
-  } else {
-    val nearestEnd = listOf(edge.first.xy(), edge.second.xy()).sortedBy { it.distance(source.xy()) }.first()
-    val gap = nearestEnd.distance(source.xy()) - characterRadius
-    WallCollision3(face, nearestEnd, gap)
-  }
+  val initialPoint = projectPointOntoLineSegment(body.position.xy(), edge.first.xy(), edge.second.xy())
+      ?: listOf(edge.first.xy(), edge.second.xy()).sortedBy { it.distance(body.position.xy()) }.first()
+
+  val directGap = initialPoint.distance(body.position.xy()) - body.radius
+
+  val floorEdge = getFloor(face)
+  val directPoint = body.position + (Vector3(initialPoint.x, initialPoint.y) - body.position).normalize() * body.radius
+  val travelingPoint = getLineAndLineIntersection(directPoint, directPoint + offset, floorEdge.first, floorEdge.second)!!
+  val travelingGap = directPoint.distance(Vector3(travelingPoint.x, travelingPoint.y, 0f))
+  return WallCollision3(face, initialPoint, directGap, travelingGap)
 }
 
-fun findCollisionWalls(source: Vector3, originalOffset: Vector3, world: Realm, node: Node): List<WallCollision3> {
-  val offset = originalOffset + 0f
+fun getWallCollisions(body: MovingBody, offset: Vector3, walls: Collection<FlexibleFace>): List<WallCollision3> {
   val maxLength = offset.length()
-  val broadRadius = characterRadius + maxLength
-  val walls = getCollisionWalls(world, node)
-//  val walls = world.walls
-//      .filter(isWall)
-  return walls
-      .filter(isWall)
-      .filter { wall -> hitsWall(getFloor(wall).edge, source, broadRadius) && offset.dot(wall.normal) < 0f }
-      .map { getCollisionDetails(it, source) }
-      .sortedBy { it.gap }
+  val broadRadius = body.radius + maxLength
+  val hitWalls = walls
+      .filter { wall -> hitsWall(getFloor(wall).edge, body.position, broadRadius) && offset.dot(wall.normal) < 0f }
+
+  if (body.position.x + offset.x < 0.5f) {
+    val k = 0
+  }
+  val result = hitWalls
+      .map { getCollisionDetails(it, body, offset) }
+//      .filter { it.directGap < offset.length() && it.travelingGap < offset.length() }
+      .sortedBy { it.directGap }
       .toList()
+
+  return if (result.size == 1 && result.first().travelingGap > offset.length())
+    listOf()
+  else
+    result
 }
 
 data class WallCollision(
@@ -86,44 +96,33 @@ fun limitVector(max: Float, value: Vector3) =
     else
       value
 
-fun getWallCollisionMovementOffset(collisions: List<Collision>, offset: Vector3, position: Vector3): WallCollision {
-  assert(collisions.none { it.wall == null })
-  val walls = collisions.mapNotNull { it.wall }
+fun getWallCollisionMovementOffset(collisions: List<WallCollision3>, offset: Vector3, body: MovingBody): WallCollision {
+  val walls = collisions.map { it.wall }
   val firstWall = walls.first()
   val normalizedOffset = offset.normalize()
-  val slideVector = -(firstWall.normal * firstWall.normal.dot(offset)).normalize()
+  val floorEdge = getFloor(firstWall)
+  val wallVector = Vector3(floorEdge.first - floorEdge.second).normalize()
+  val slideVector = (wallVector * wallVector.dot(offset)).normalize()
 
-  val firstGap = collisions.first().gap
-  val gapOffset = limitVector(offset.length(), normalizedOffset * firstGap)
+//  val firstGap = collisions.first().gap
+  val gapOffset = normalizedOffset * collisions.first().travelingGap
   val remainingLength = offset.length() - gapOffset.length()
   val slideOffset = slideVector * remainingLength
-  val modifiedSlideOffset = if (walls.size > 1) {
-    val secondPosition = position + gapOffset + slideOffset
-    val newCollisions = collisions.drop(1).map { getCollisionDetails(it.wall!!, secondPosition) }
-    val backup = newCollisions.map { it.gap }.filter { it < 0f }.sorted().firstOrNull()
+  val modifiedSlideOffset = if (collisions.size > 1) {
+    val secondBody = MovingBody(
+        radius = body.radius,
+        position = body.position + gapOffset
+    )
+    val newCollisions = collisions.drop(1).map { getCollisionDetails(it.wall, secondBody, slideOffset) }
+    val backup = newCollisions.map { it.travelingGap }.filter { it >= 0f }.sorted().firstOrNull()
     lastTemp = 1
-    val edges = walls.map { getFloor(it).edge }
-    val ideal2D = getLineAndLineIntersection(
-        Vector3(edges[0].first) + walls[0].normal * characterRadius,
-        Vector3(edges[0].second) + walls[0].normal * characterRadius,
-        Vector3(edges[1].first) + walls[1].normal * characterRadius,
-        Vector3(edges[1].second) + walls[1].normal * characterRadius
-    )!!
-    val ideal = Vector3(ideal2D.x, ideal2D.y, 0f)
 
     val result = if (backup != null) {
-      println(" " + slideOffset + " " + slideVector * backup)
-      slideOffset + slideVector * backup
+//      println(" " + slideOffset + " " + slideVector * backup)
+      slideOffset.normalize() * backup
     } else {
 //      println(newCollisions.first().gap)
       slideOffset
-    }
-    if (position.distance(ideal) <= offset.length()) {
-      if (ideal.roughlyEquals(position + result)) {
-        println("a")
-      } else {
-        println("b")
-      }
     }
     result
   } else {
@@ -131,27 +130,33 @@ fun getWallCollisionMovementOffset(collisions: List<Collision>, offset: Vector3,
     slideOffset
   }
   val finalOffset = gapOffset + modifiedSlideOffset
-  println(" " + firstWall.hashCode() + " " + position)
+  if (body.position.x + finalOffset.x < 0.5f) {
+    val k = 0
+  }
+  if (body.position.y + finalOffset.y > -0.5f) {
+    val k = 0
+  }
+//  println(" " + firstWall.hashCode() + " " + body.position)
   lastOffset = finalOffset
-  lastPosition = position
+  lastPosition = body.position
   return WallCollision(walls, finalOffset)
 }
 
-fun checkWallCollision(source: Vector3, originalOffset: Vector3, walls: List<Collision>): Vector3 {
+fun checkWallCollision(body: MovingBody, originalOffset: Vector3, walls: List<WallCollision3>): Vector3 {
   var offset = originalOffset + 0f
   val maxLength = offset.length()
 
   return if (walls.size > 0) {
-    val collision = getWallCollisionMovementOffset(walls, offset, source)
+    val collision = getWallCollisionMovementOffset(walls, offset, body)
     offset = collision.offset
     val offsetLength = offset.length()
     if (offsetLength > maxLength) {
       offset.normalize() * maxLength
     }
-    source + offset
+    body.position + offset
   } else {
     lastTemp = 0
-    source + offset
+    body.position + offset
   }
 }
 

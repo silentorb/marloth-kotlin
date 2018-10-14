@@ -2,7 +2,7 @@ package intellect
 
 import mythic.spatial.*
 import simulation.*
-import simulation.changing.getLookAtAngle
+import physics.getLookAtAngle
 import simulation.simulationDelta
 
 fun getAngleCourse(source: Float, destination: Float): Float {

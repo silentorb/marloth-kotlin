@@ -58,7 +58,8 @@ private var flexibleFaceDebugCounter = 0L
 
 class FlexibleFace(
     var edges: MutableList<EdgeReference> = mutableListOf(),
-    var data: Any? = null
+    var data: Any? = null,
+    var normal: Vector3 = Vector3()
 ) {
   val debugIndex = flexibleFaceDebugCounter++
   val unorderedVertices: List<Vector3m>
@@ -73,7 +74,6 @@ class FlexibleFace(
   val vertices: List<Vector3m>
     get() = edges.map { it.first }
 
-  var normal = Vector3()
 
   fun updateNormal() {
 //    if (vertices.size > 2)

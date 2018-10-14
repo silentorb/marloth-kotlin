@@ -7,7 +7,7 @@ import physics.Body
 import physics.Collision
 import physics.commonShapes
 import physics.overlaps
-import simulation.changing.hitsWall
+import physics.hitsWall
 
 data class Missile(
     override val id: Id,
@@ -49,7 +49,8 @@ fun getBodyCollisions(bodyTable: BodyTable, characterTable: CharacterTable, miss
               first = missile.id,
               second = hit.id,
               hitPoint = Vector2(),
-              gap = 0f
+              directGap = 0f,
+              travelingGap = 0f
           )
         }
   }

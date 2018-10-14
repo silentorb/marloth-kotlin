@@ -105,7 +105,8 @@ data class Vector3(
   override fun xy(): Vector2 = Vector2(x, y)
 
   override fun toString(): String {
-    return Runtime.formatNumbers(toString(Options.NUMBER_FORMAT))
+//    return Runtime.formatNumbers(toString(Options.NUMBER_FORMAT))
+    return "(${x}, ${y}, ${z})"
   }
 
   fun toString(formatter: NumberFormat): String {
@@ -113,7 +114,7 @@ data class Vector3(
   }
 
   fun roughlyEquals(value: Vector3): Boolean =
-      Math.abs(x - value.x) < epsilon
-          && Math.abs(y - value.y) < epsilon
-          && Math.abs(z - value.z) < epsilon
+      x > value.x - epsilon && x < value.x + epsilon
+          && y > value.y - epsilon && y < value.y + epsilon
+          && z > value.z - epsilon && z < value.z + epsilon
 }

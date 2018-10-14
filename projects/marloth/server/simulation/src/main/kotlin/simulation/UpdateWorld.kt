@@ -3,10 +3,13 @@ package simulation
 import intellect.pursueGoals
 import intellect.updateAiState
 import mythic.spatial.Pi2
+import mythic.spatial.Vector3
 import physics.Collision
 import physics.Collisions
 import physics.updateBodies
-import simulation.changing.findCollisionWalls
+import physics.MovingBody
+import physics.getWallCollisions
+import physics.wallsInCollisionRange
 import simulation.input.updatePlayers
 
 fun <T> updateField(defaultValue: T, newValue: T?): T =
@@ -53,11 +56,14 @@ data class Intermediate(
 fun generateIntermediateRecords(world: World, playerCommands: Commands, delta: Float): Intermediate {
   val spiritCommands = pursueGoals(world.spirits)
   val commands = playerCommands.plus(spiritCommands)
-  val collisions: Collisions = world.bodies.flatMap { body ->
-    val offset = body.velocity * delta
-    val walls = findCollisionWalls(body.position, offset, world.realm, body.node)
-    walls.map { Collision(body.id, null, it.wall, it.hitPoint, it.gap) }
-  }
+  val collisions: Collisions = world.bodies
+      .filter { it.velocity != Vector3.zero }
+      .flatMap { body ->
+        val offset = body.velocity * delta
+        val wallsInRange = wallsInCollisionRange(world.realm, body.node)
+        val walls = getWallCollisions(MovingBody(body.radius!!, body.position), offset, wallsInRange)
+        walls.map { Collision(body.id, null, it.wall, it.hitPoint, it.directGap, it.travelingGap) }
+      }
       .plus(getBodyCollisions(world.bodyTable, world.characterTable, world.missiles))
   val activatedAbilities = getActivatedAbilities(world, commands)
 

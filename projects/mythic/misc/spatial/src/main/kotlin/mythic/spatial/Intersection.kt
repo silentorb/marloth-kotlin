@@ -200,7 +200,29 @@ fun simpleRayIntersectsLineSegment(rayStart: Vector2fMinimal, segmentStart: Vect
 private infix fun Vector2.cross(b: Vector2): Float =
     x * b.y - y * b.x
 
-fun getLineAndLineIntersection(f1: Vector2fMinimal, f2: Vector2fMinimal, s1: Vector2fMinimal, s2: Vector2fMinimal): Vector2? {
+class LineF(val s: Vector2fMinimal, val e: Vector2fMinimal)
+
+fun findIntersection(l1: LineF, l2: LineF): Vector2? {
+  val a1 = l1.e.y - l1.s.y
+  val b1 = l1.s.x - l1.e.x
+  val c1 = a1 * l1.s.x + b1 * l1.s.y
+
+  val a2 = l2.e.y - l2.s.y
+  val b2 = l2.s.x - l2.e.x
+  val c2 = a2 * l2.s.x + b2 * l2.s.y
+
+  val delta = a1 * b2 - a2 * b1
+  if (delta == 0f)
+    return null
+
+  // If lines are parallel, intersection point will contain infinite values
+  return Vector2((b2 * c1 - b1 * c2) / delta, (a1 * c2 - a2 * c1) / delta)
+}
+//fun getLineAndLineIntersection(f1: Vector2fMinimal, f2: Vector2fMinimal, s1: Vector2fMinimal, s2: Vector2fMinimal): Vector2? {
+//  return findIntersection(LineF(f1, f2), LineF(s1, s2))
+//}
+
+  fun getLineAndLineIntersection(f1: Vector2fMinimal, f2: Vector2fMinimal, s1: Vector2fMinimal, s2: Vector2fMinimal): Vector2? {
   val a1 = f2.y - f1.y
   val b1 = f2.x - f1.x
 

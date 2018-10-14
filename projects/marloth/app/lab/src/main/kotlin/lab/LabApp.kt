@@ -21,7 +21,6 @@ import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
 import randomly.Dice
 import simulation.*
-import simulation.changing.InstantiatorConfig
 import kotlin.concurrent.thread
 
 const val labConfigPath = "labConfig.yaml"
@@ -46,7 +45,7 @@ fun createDice(config: GameViewConfig) =
 fun <T> pipeline(initial: T, steps: List<(T) -> T>): T =
     steps.fold(initial) { a, b -> b(a) }
 
-fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig, gameViewConfig: GameViewConfig): World {
+fun generateDefaultWorld(gameViewConfig: GameViewConfig): World {
   val boundary = createWorldBoundary(gameViewConfig.worldLength)
   val dice = createDice(gameViewConfig)
   val initialWorld = generateWorld(WorldInput(
@@ -90,7 +89,7 @@ data class LabApp(
 ) {
 
   fun newWorld() =
-      generateDefaultWorld(InstantiatorConfig(gameConfig.gameplay.defaultPlayerView), config.gameView)
+      generateDefaultWorld(config.gameView)
 }
 
 private var saveIncrement = 0f
@@ -128,7 +127,7 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
 
 fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
   platform.display.initialize(gameConfig.display)
-  val world = generateDefaultWorld(InstantiatorConfig(gameConfig.gameplay.defaultPlayerView), config.gameView)
+  val world = generateDefaultWorld(config.gameView)
   val app = LabApp(platform, config, gameConfig, world = world, labConfigManager = ConfigManager(labConfigPath, config))
   setWorldMesh(app.world.realm, app.client)
   val clientState = newClientState(gameConfig.input)

@@ -3,7 +3,6 @@ package physics
 import mythic.sculpting.FlexibleFace
 import mythic.spatial.*
 import simulation.*
-import simulation.changing.checkWallCollision
 
 data class Rotation(
     val pitch: Float = 0f,
@@ -26,7 +25,8 @@ data class Collision(
     val second: Id? = null,
     val wall: FlexibleFace? = null,
     val hitPoint: Vector2,
-    val gap: Float
+    val directGap: Float,
+    val travelingGap: Float
 )
 
 typealias Collisions = List<Collision>
@@ -90,7 +90,9 @@ fun moveBody(body: Body, offset: Vector3, walls: List<Collision>, delta: Float):
   val position = if (offset == Vector3())
     body.position
   else
-    checkWallCollision(body.position, offset * delta, walls)
+    checkWallCollision(MovingBody(body.radius!!, body.position), offset * delta, walls.map {
+      WallCollision3(it.wall!!, it.hitPoint, it.directGap, it.travelingGap)
+    })
 
   return if (!isGrounded(body))
     position + Vector3(0f, 0f, -4f * delta)

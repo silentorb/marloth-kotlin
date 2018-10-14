@@ -3,6 +3,7 @@ package simulation.changing
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.times
+import physics.joinInputVector
 import simulation.*
 
 data class MomentumConfig(
