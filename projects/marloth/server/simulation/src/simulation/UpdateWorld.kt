@@ -34,7 +34,7 @@ fun getFinished(world: World): List<Id> {
 }
 
 fun removeFinished(deck: Deck, finishedIds: List<Id>): Deck {
-  val IsActive = { entity: EntityLike -> !finishedIds.contains(entity.id) }
+  val IsActive = { entity: Entity -> !finishedIds.contains(entity.id) }
 
   return deck.copy(
       characters = deck.characters.filter(IsActive),
@@ -116,7 +116,7 @@ fun updateWorld(animationDurations: AnimationDurationMap, world: World, commands
     // but if deltaAggregator is more than twice the simulationHertz then the simulation is not keeping
     // up and I want that to be handled as a special case, not incidentally handled by a modulus.
     if (deltaAggregator > simulationDelta) {
-      println("Skipped a frame.  deltaAggregator = " + deltaAggregator + " simulationDelta = " + simulationDelta)
+//      println("Skipped a frame.  deltaAggregator = " + deltaAggregator + " simulationDelta = " + simulationDelta)
       deltaAggregator = deltaAggregator % simulationDelta
     }
     return updateWorldMain(animationDurations, world.deck, world, commands, simulationDelta)

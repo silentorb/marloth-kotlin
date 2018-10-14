@@ -148,7 +148,10 @@ data class MultiAnimationPart(
 )
 
 fun transformAnimatedSkeleton(bones: List<Bone>, animations: List<MultiAnimationPart>): List<Matrix> {
-  if (animations.size != 2)
+  if (animations.size == 1)
+    return transformAnimatedSkeleton(bones, animations.first().animation, animations.first().timeOffset)
+
+  if (animations.size > 2)
     throw Error("Mixing any number other than two animations is not currently supported.")
 
   val sum = animations.map {it.strength}.sum()
@@ -167,14 +170,13 @@ fun transformAnimatedSkeleton(bones: List<Bone>, animations: List<MultiAnimation
 
   val strengthA = animations[0].strength
   val strengthB = animations[1].strength
-  val slerpRatio = strengthA / (strengthA + strengthB)
+  val slerpRatio = strengthB / (strengthA + strengthB)
   return poses[0].zip(poses[1]) { a, b ->
     val ta = a.translation * strengthA
     val ra = a.rotation
     val tb = b.translation * strengthB
     val rb = b.rotation
     transformBone(ta + tb, ra.slerp(Quaternion(rb), slerpRatio))
-//    transformBone(a.translation, ra)
   }
 }
 

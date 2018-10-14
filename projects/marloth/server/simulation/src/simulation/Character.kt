@@ -27,7 +27,7 @@ data class Character(
     val isAlive: Boolean = true,
     val facingRotation: Vector3 = Vector3(),
     val lookVelocity: Vector2 = Vector2()
-) : EntityLike {
+) : Entity {
   val facingQuaternion: Quaternion
     get() = Quaternion()
         .rotateZ(facingRotation.z)
@@ -41,7 +41,7 @@ data class ArmatureAnimation(
     override val id: Id,
     val animationIndex: Int,
     var timeOffset: Float
-) : EntityLike
+) : Entity
 
 fun isFinished(world: World, character: Character) =
     character.health.value == 0

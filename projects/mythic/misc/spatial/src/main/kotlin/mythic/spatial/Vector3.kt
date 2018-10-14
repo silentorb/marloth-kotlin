@@ -5,6 +5,8 @@ import org.joml.internal.Options
 import org.joml.internal.Runtime
 import java.text.NumberFormat
 
+private val _zero = Vector3()
+
 data class Vector3(
     override val x: Float = 0f,
     override val y: Float = 0f,
@@ -22,6 +24,12 @@ data class Vector3(
   init {
 //    assert(!this.x.isNaN())
   }
+
+  companion object {
+
+    val zero: Vector3 = _zero
+  }
+
   override operator fun minus(v: Vector2fMinimal): Vector2 =
       Vector2f(x - v.x, y - v.y)
 
@@ -103,4 +111,9 @@ data class Vector3(
   fun toString(formatter: NumberFormat): String {
     return "(" + formatter.format(x.toDouble()) + ", " + formatter.format(y.toDouble()) + ", " + formatter.format(z.toDouble()) + ")"
   }
+
+  fun roughlyEquals(value: Vector3): Boolean =
+      Math.abs(x - value.x) < epsilon
+          && Math.abs(y - value.y) < epsilon
+          && Math.abs(z - value.z) < epsilon
 }

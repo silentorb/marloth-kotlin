@@ -10,7 +10,7 @@ enum class FurnishingType {
 data class Furnishing(
     override val id: Id,
     val type: FurnishingType
-) : EntityLike
+) : Entity
 
 data class NewFurnishing(
     val id: Id,

@@ -45,7 +45,6 @@ fun renderElementGroup(gameRenderer: GameSceneRenderer, group: ElementGroup) {
       val animation = group.animations.first()
       transformAnimatedSkeleton(armature.bones, armature.animations[animation.animationId]!!, animation.timeOffset)
     } else {
-      println( group.animations.map {it.strength.toString()}.joinToString(", "))
       val animations = group.animations.map { animation ->
         MultiAnimationPart(
             animation = armature.animations[animation.animationId]!!,

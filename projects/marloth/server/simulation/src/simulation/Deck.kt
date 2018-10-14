@@ -110,7 +110,7 @@ data class World(
     get() = deck.spirits
 }
 
-fun <T : EntityLike> mapEntities(list: Collection<T>): Map<Id, T> =
+fun <T : Entity> mapEntities(list: Collection<T>): Map<Id, T> =
     list.associate { Pair(it.id, it) }
 
 fun addDeck(world: World, deck: Deck, nextId: IdSource): World {

@@ -1,9 +1,9 @@
-import simulation.EntityLike
+import simulation.Entity
 
 typealias Neighbors<T> = (T) -> Collection<T>
 typealias GraphFinished<T> = (List<T>) -> List<T>?
 
-tailrec fun <T : EntityLike> gatherNodes(scanned: List<T>, next: List<T> = scanned, gatherNeighbors: Neighbors<T>): List<T> {
+tailrec fun <T : Entity> gatherNodes(scanned: List<T>, next: List<T> = scanned, gatherNeighbors: Neighbors<T>): List<T> {
   if (next.none())
     return scanned
 

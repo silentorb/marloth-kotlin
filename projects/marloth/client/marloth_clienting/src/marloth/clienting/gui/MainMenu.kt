@@ -40,6 +40,7 @@ val mainMenu = listOf(
 
 val menuCommands: Map<MenuActionType, CommandType> = mapOf(
     MenuActionType.newGame to CommandType.newGame,
+    MenuActionType.continueGame to CommandType.menuBack,
     MenuActionType.quit to CommandType.quit
 )
 

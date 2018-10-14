@@ -26,7 +26,7 @@ data class Depiction(
     override val id: Id,
     val type: DepictionType,
     val animations: List<DepictionAnimation> = listOf()
-) : EntityLike
+) : Entity
 
 fun mapAnimation(world: World, id: AnimationId): AnimationId {
   if (id == AnimationId.stand)

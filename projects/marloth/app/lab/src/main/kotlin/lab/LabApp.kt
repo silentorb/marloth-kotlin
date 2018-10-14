@@ -43,18 +43,38 @@ fun createDice(config: GameViewConfig) =
     else
       Dice(config.seed)
 
+fun <T> pipeline(initial: T, steps: List<(T) -> T>): T =
+    steps.fold(initial) { a, b -> b(a) }
+
 fun generateDefaultWorld(instantiatorConfig: InstantiatorConfig, gameViewConfig: GameViewConfig): World {
   val boundary = createWorldBoundary(gameViewConfig.worldLength)
   val dice = createDice(gameViewConfig)
-  val world = generateWorld(WorldInput(
+  val initialWorld = generateWorld(WorldInput(
       boundary,
       dice
   ))
 
-  return if (gameViewConfig.haveEnemies)
-    addEnemies(world, boundary, dice)
-  else
-    world
+  return pipeline(initialWorld, listOf(
+      { world ->
+        if (gameViewConfig.haveEnemies)
+          addEnemies(world, boundary, dice)
+        else
+          world
+      },
+      { world ->
+        if (!gameViewConfig.playerGravity) {
+          val id = world.players.first().character
+          val body = world.deck.bodies.first { it.id == id }
+              .copy(gravity = false)
+          world.copy(
+              deck = world.deck.copy(
+                  bodies = replace(world.deck.bodies, body)
+              )
+          )
+        } else
+          world
+      }
+  ))
 }
 
 data class LabApp(

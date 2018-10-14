@@ -144,5 +144,6 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
   return World(
       deck = deck,
       nextId = nextId(),
-      realm = realm)
+      realm = realm
+  )
 }

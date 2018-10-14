@@ -1,6 +1,5 @@
 package intellect
 
-import physics.Body
 import simulation.*
 
 enum class GoalType {
@@ -28,7 +27,7 @@ data class Spirit(
     val knowledge: Knowledge? = null,
 //    val goals: List<Goal>,
     val pursuit: Pursuit
-) : EntityLike
+) : Entity
 
 data class NewSpirit(
     val id: Id

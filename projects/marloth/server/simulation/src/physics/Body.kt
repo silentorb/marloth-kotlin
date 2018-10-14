@@ -6,7 +6,6 @@ import mythic.spatial.Vector3
 import colliding.Shape
 import colliding.Sphere
 import mythic.spatial.isInsidePolygon
-import scenery.Textures
 import simulation.*
 import simulation.simulationDelta
 
@@ -39,7 +38,7 @@ data class Body(
 //    val friction: Float,
     val node: Node,
     val perpetual: Boolean = false
-) : EntityLike {
+) : Entity {
 
   val radius: Float?
     get() = shape?.getRadiusOrNull()
@@ -56,8 +55,16 @@ fun overlaps(first: Body, second: Body) =
 fun isInsideNodeHorizontally(node: Node, position: Vector3) =
     node.floors.any { isInsidePolygon(position, it.vertices) }
 
-fun updateBodyNode(body: Body): Node {
+fun isInsideNode(node: Node, position: Vector3) =
+    node.floors.any { isInsidePolygon(position, it.vertices) }
+//        && position.z >= node.position.z
+//        && position.z < node.position.z + node.height
+
+fun updateBodyNode(realm: Realm, body: Body): Node {
   if (body.node == voidNode)
+    return body.node
+
+  if (body.velocity == Vector3.zero)
     return body.node
 
   val position = body.position
@@ -67,10 +74,20 @@ fun updateBodyNode(body: Body): Node {
     val n = node.horizontalNeighbors.firstOrNull { isInsideNodeHorizontally(it, position) }
     if (n != null)
       n
-    else
-      node
+    else {
+      println("Warning: Had to rely on fallback method for determining which node a body is in.")
+      val n3 = realm.nodes.filter { isInsideNode(it, position) }
+      val n2 = realm.nodes.firstOrNull { isInsideNode(it, position) }
+      if (n2 != null)
+        n2
+      else
+        voidNode
+    }
   } else
     node
+
+  if (horizontalNode == voidNode)
+    return voidNode
 
   val newNode = if (position.z < horizontalNode.position.z)
     if (horizontalNode.floors.any())
@@ -94,5 +111,5 @@ fun updateBodies(world: World, commands: Commands, collisions: Collisions): List
   val delta = simulationDelta
   val movementForces = allCharacterMovements(world, commands)
   val orientationForces = allCharacterOrientations(world)
-  return updatePhysicsBodies(world.bodies, collisions, movementForces, orientationForces, delta)
+  return updatePhysicsBodies(world, collisions, movementForces, orientationForces, delta)
 }

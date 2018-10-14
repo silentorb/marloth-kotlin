@@ -98,20 +98,21 @@ fun moveBody(body: Body, offset: Vector3, walls: List<Collision>, delta: Float):
     position
 }
 
-fun updateBody(body: Body, movementForces: List<MovementForce>, collisions: List<Collision>,
+fun updateBody(realm: Realm, body: Body, movementForces: List<MovementForce>, collisions: List<Collision>,
                orientationForces: List<AbsoluteOrientationForce>, delta: Float): Body {
   return body.copy(
       velocity = applyForces(body, movementForces, body.attributes.resistance, delta),
       position = moveBody(body, body.velocity, collisions, delta),
       orientation = orientationForces.firstOrNull()?.orientation ?: body.orientation,
-      node = updateBodyNode(body)
+      node = updateBodyNode(realm, body)
   )
 }
 
-fun updatePhysicsBodies(bodies: Collection<Body>, collisions: Collisions, movementForces: List<MovementForce>,
+fun updatePhysicsBodies(world: World, collisions: Collisions, movementForces: List<MovementForce>,
                         orientationForces: List<AbsoluteOrientationForce>, delta: Float): List<Body> {
-  return bodies.map { body ->
+  return world.bodies.map { body ->
     updateBody(
+        world.realm,
         body = body,
         movementForces = movementForces.filter { it.body == body.id },
         orientationForces = orientationForces.filter { it.body == body.id },

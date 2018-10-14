@@ -13,7 +13,7 @@ data class Missile(
     override val id: Id,
     val owner: Id,
     val remainingDistance: Float
-) : EntityLike
+) : Entity
 
 fun characterAttack(world: World, nextId: IdSource, character: Character, ability: Ability, direction: Vector3): Hand {
   val body = world.bodyTable[character.id]!!

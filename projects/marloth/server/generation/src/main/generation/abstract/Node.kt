@@ -3,7 +3,6 @@ package generation.abstract
 import mythic.sculpting.FlexibleFace
 import mythic.sculpting.FlexibleMesh
 import mythic.spatial.Vector3
-import mythic.spatial.Vector3m
 import scenery.Textures
 import simulation.*
 
@@ -42,7 +41,7 @@ class Node(
     val isSolid: Boolean,
     val isWalkable: Boolean = false,
     val height: Float = 4f
-) : EntityLike {
+) : Entity {
   //  val connections: MutableList<Connection> = mutableListOf()
   fun connections(graph: Graph): List<Connection> =
       graph.connections.filter { it.contains(id) }
