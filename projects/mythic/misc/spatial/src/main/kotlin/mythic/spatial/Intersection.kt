@@ -218,29 +218,29 @@ fun findIntersection(l1: LineF, l2: LineF): Vector2? {
   // If lines are parallel, intersection point will contain infinite values
   return Vector2((b2 * c1 - b1 * c2) / delta, (a1 * c2 - a2 * c1) / delta)
 }
-//fun getLineAndLineIntersection(f1: Vector2fMinimal, f2: Vector2fMinimal, s1: Vector2fMinimal, s2: Vector2fMinimal): Vector2? {
-//  return findIntersection(LineF(f1, f2), LineF(s1, s2))
-//}
-
-  fun getLineAndLineIntersection(f1: Vector2fMinimal, f2: Vector2fMinimal, s1: Vector2fMinimal, s2: Vector2fMinimal): Vector2? {
-  val a1 = f2.y - f1.y
-  val b1 = f2.x - f1.x
-
-  val a2 = s2.y - s1.y
-  val b2 = s2.x - s1.x
-
-  val delta = a1 * b2 - a2 * b1
-
-  if (delta == 0f)
-    return null
-
-  val c1 = a1 * f1.x + b1 * f1.y
-  val c2 = a2 * s1.x + b2 * s1.y
-
-  val x = (b2 * c1 - b1 * c2) / delta
-  val y = (a1 * c2 - a2 * c1) / delta
-  return Vector2(x, y)
+fun getLineAndLineIntersection(f1: Vector2fMinimal, f2: Vector2fMinimal, s1: Vector2fMinimal, s2: Vector2fMinimal): Vector2? {
+  return findIntersection(LineF(f1, f2), LineF(s1, s2))
 }
+
+//  fun getLineAndLineIntersection(f1: Vector2fMinimal, f2: Vector2fMinimal, s1: Vector2fMinimal, s2: Vector2fMinimal): Vector2? {
+//  val a1 = f2.y - f1.y
+//  val b1 = f2.x - f1.x
+//
+//  val a2 = s2.y - s1.y
+//  val b2 = s2.x - s1.x
+//
+//  val delta = a1 * b2 - a2 * b1
+//
+//  if (delta == 0f)
+//    return null
+//
+//  val c1 = a1 * f1.x + b1 * f1.y
+//  val c2 = a2 * s1.x + b2 * s1.y
+//
+//  val x = (b2 * c1 - b1 * c2) / delta
+//  val y = (a1 * c2 - a2 * c1) / delta
+//  return Vector2(x, y)
+//}
 
 fun lineSegmentIntersectsLineSegment(f1: Vector2fMinimal, f2: Vector2fMinimal, s1: Vector2fMinimal, s2: Vector2fMinimal): Pair<Boolean, Vector2?> {
   val p = f1.xy()
