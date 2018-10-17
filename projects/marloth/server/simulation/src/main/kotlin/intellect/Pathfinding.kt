@@ -1,6 +1,7 @@
 package intellect
 
 import simulation.Node
+import simulation.getPathNeighbors
 
 data class PathNode(
     val node: Node,
@@ -12,9 +13,6 @@ tailrec fun unwindPath(pathNode: PathNode, path: List<Node> = listOf()): List<No
       path
     else
       unwindPath(pathNode.previous, listOf(pathNode.node).plus(path))
-
-fun getPathNeighbors(node: Node) =
-    node.neighbors.filter { it.isWalkable }
 
 tailrec fun findPath(destination: Node, scanned: List<PathNode>, next: List<PathNode>): List<Node>? {
   if (next.none())

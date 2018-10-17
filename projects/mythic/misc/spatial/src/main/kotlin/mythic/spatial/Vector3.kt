@@ -114,7 +114,7 @@ data class Vector3(
   }
 
   fun roughlyEquals(value: Vector3): Boolean =
-      x > value.x - epsilon && x < value.x + epsilon
-          && y > value.y - epsilon && y < value.y + epsilon
-          && z > value.z - epsilon && z < value.z + epsilon
+      x >= value.x - epsilon && x <= value.x + epsilon
+          && y >= value.y - epsilon && y <= value.y + epsilon
+          && z >= value.z - epsilon && z <= value.z + epsilon
 }

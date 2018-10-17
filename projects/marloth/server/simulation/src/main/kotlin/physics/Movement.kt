@@ -1,5 +1,6 @@
 package physics
 
+import simulation.getPathNeighbors
 import simulation.CommandType
 import mythic.sculpting.FlexibleEdge
 import mythic.sculpting.FlexibleFace
@@ -15,16 +16,17 @@ fun getEdgeNormal(first: Vector2, second: Vector2): Vector2 {
 }
 
 fun getCollisionWallsIncludingNeighbors(world: Realm, node: Node): Sequence<FlexibleFace> {
-  return node.neighbors
+  return getPathNeighbors(node)
       .plus(node)
       .flatMap { it.walls.asSequence() }
-      .filter(isWall)
+      .filter(isSolidWall)
       .distinct()
 }
 
 fun wallsInCollisionRange(world: Realm, node: Node): List<FlexibleFace> {
-  return node.walls
-      .filter(isWall)
+  return getPathNeighbors(node).toList()
+      .plus(node)
+      .flatMap { it.walls.filter(isSolidWall) }
       .distinct()
 }
 

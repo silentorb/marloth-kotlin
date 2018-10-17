@@ -20,3 +20,6 @@ data class Node(
   val faces: List<FlexibleFace>
     get() = floors.plus(walls).plus(ceilings)
 }
+
+fun getPathNeighbors(node: Node) =
+    node.neighbors.filter { it.isWalkable }

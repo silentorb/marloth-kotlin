@@ -10,7 +10,7 @@ import org.joml.plus
 import simulation.*
 
 private fun getLineColor(edge: FlexibleEdge): Vector4 {
-  val wallFaces = edge.faces.filter(isWall)
+  val wallFaces = edge.faces.filter(isSolidWall)
   val face = wallFaces.firstOrNull()
   if (face != null) {
     val debugInfo = getFaceInfo(face).debugInfo
@@ -33,7 +33,7 @@ fun drawVertices(bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, 
   val lineColor = Vector4(0f, 0f, 1f, 1f)
   val edges = mesh.edges.filter {it.vertices[0].z == it.vertices[1].z && it.vertices[1].z == 0f}
   for (edge in edges) {
-    val wallFaces = edge.faces.filter(isWall)
+    val wallFaces = edge.faces.filter(isSolidWall)
 //    assert(wallFaces.size < 2)
     if (wallFaces.any()) {
       val color = getLineColor(edge)
