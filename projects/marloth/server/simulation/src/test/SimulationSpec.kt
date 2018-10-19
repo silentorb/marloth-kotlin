@@ -6,6 +6,7 @@ import mythic.spatial.Vector3m
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import org.jetbrains.spek.api.dsl.xit
 import org.jetbrains.spek.api.dsl.on
 import physics.MovingBody
 import physics.checkWallCollision
@@ -14,7 +15,6 @@ import simulation.FaceInfo
 import simulation.FaceType
 import simulation.simulationDelta
 import junit.framework.TestCase.*
-
 
 class SimulationSpec : Spek({
   describe("simulation logic") {
@@ -34,7 +34,8 @@ class SimulationSpec : Spek({
                   }.toMutableList(),
               normal = normal
           )
-      it("should smoothly settle in the corner") {
+
+      xit("should smoothly settle in the corner") {
         val delta = simulationDelta
         val wallsInRange = listOf(
             newFace(listOf(
@@ -64,7 +65,7 @@ class SimulationSpec : Spek({
         assertTrue(position.roughlyEquals(target))
       }
 
-      it("Can round a corner without getting too close") {
+      xit("Can round a corner without getting too close") {
         val delta = simulationDelta
         val cornerPoint = Vector3(1f, 0f, 0f)
         val wallsInRange = listOf(
@@ -98,6 +99,41 @@ class SimulationSpec : Spek({
 
         assertTrue(position.y < 0.5f)
         assertTrue(distances.none { it < 0f })
+      }
+
+      it("Can round a corner without getting stuck") {
+        val delta = simulationDelta
+        val wallsInRange = listOf(
+            newFace(listOf(
+                Pair(Vector3m(0f, 0f, 0f), Vector3m(1f, 0f, 0f))
+            ), Vector3(0f, -1f, 0f)),
+            newFace(listOf(
+                Pair(Vector3m(1f, 0f, 0f), Vector3m(2f, 1f, 0f))
+            ), Vector3(1f, -1f, 0f).normalize())
+        )
+
+        val positions = mutableListOf(Vector3(0.999f, -0.5f, 0f))
+        val offset = Vector3(0.3f, 1f, 0f).normalize() * 4f * delta
+
+        val radius = 0.5f
+        for (i in 0..40) {
+          val body = MovingBody(
+              radius = radius,
+              position = positions.last()
+          )
+          val walls = getWallCollisions(body, offset, wallsInRange)
+          val newPosition = checkWallCollision(body, offset, walls)
+          positions.add(newPosition)
+        }
+
+        val position = positions.last()
+        val lengths = positions.drop(1).zip(positions.dropLast(1)) { a, b ->
+          a.distance(b)
+        }
+        val dots = positions.drop(1).zip(positions.dropLast(1)) { a, b ->
+          a.normalize().dot(b.normalize())
+        }
+        assertTrue(position.y > -0.45f)
       }
     }
   }
