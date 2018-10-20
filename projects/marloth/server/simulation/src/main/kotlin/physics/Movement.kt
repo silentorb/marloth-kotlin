@@ -113,31 +113,30 @@ fun getSlideOffset(firstWall: FlexibleFace, others: List<WallCollision3>, offset
   val slideStrength = Math.min(1f, Math.abs(wallDot) * 10f)
   val slideOffset = slideVector * remainingLength * slideStrength
   val newCollisions = others
-      .filter { it.wall.normal.dot(slideVector) <= 0f }
+      .filter { it.wall.normal.dot(slideVector) < 0f }
       .map { getCollisionDetails(it.wall, body, slideOffset) }
+
+//  val newCollisions2 = newCollisions1
+//      .filter { c ->
+//        val floor = getFloor(c.wall)
+//        floor.vertices.all { it.distance(Vector3m(c.hitPoint.x, c.hitPoint.y, 0f)) > epsilon }
+//      }
   val backup = newCollisions.map { it.travelingGap }.sorted().firstOrNull()
   lastTemp = 1
 
   val result = if (backup != null) {
-//      println(" " + slideOffset + " " + slideVector * backup)
     slideOffset.normalize() * Math.min(remainingLength, backup)
   } else {
-//      println(newCollisions.first().gap)
     slideOffset
   }
   return result
 }
 
+var _i = 0
 fun getWallCollisionMovementOffset(collisions: List<WallCollision3>, offset: Vector3, body: MovingBody): WallCollision {
   val walls = collisions.map { it.wall }
   val firstWall = walls.first()
   val normalizedOffset = offset.normalize()
-//  val floorEdge = getFloor(firstWall)
-//  val wallVector = Vector3(floorEdge.first - floorEdge.second).normalize()
-//  val wallDot = wallVector.dot(offset)
-//  val slideVector = (wallVector * wallDot).normalize()
-
-//  val slideStrength = Math.min(1f, Math.abs(wallDot) * 10f)
   val initialTravelingGap = collisions.first().travelingGap
   val travelingGap = if (initialTravelingGap < 0f)
     Math.max(-offset.length(), initialTravelingGap)
@@ -155,27 +154,19 @@ fun getWallCollisionMovementOffset(collisions: List<WallCollision3>, offset: Vec
     val slideOffsets = collisions.mapIndexed { index, collision ->
       getSlideOffset(collision.wall, collisions.filterIndexed { i, _ -> i != index }, offset, secondBody, remainingLength)
     }
-    slideOffsets.sortedByDescending { it.length() }.first()
-
-//    val newCollisions = collisions.drop(1).map { getCollisionDetails(it.wall, secondBody, slideOffset) }
-//    val backup = newCollisions.map { it.travelingGap }.sorted().firstOrNull()
-//    lastTemp = 1
-//
-//    val result = if (backup != null) {
-////      println(" " + slideOffset + " " + slideVector * backup)
-//      slideOffset.normalize() * backup
-//    } else {
-////      println(newCollisions.first().gap)
-//      slideOffset
-//    }
-//    result
+    slideOffsets.first()
+//    val sortedSlideOffsets = slideOffsets.sortedByDescending { it.length() }
+//    println("" + _i++ + " " + slideOffsets.indexOf(sortedSlideOffsets.first()))
+//    sortedSlideOffsets.first()
   } else {
     lastTemp = 2
     getSlideOffset(firstWall, listOf(), offset, body, remainingLength)
-//    slideOffset
   }
   val finalOffset = gapOffset + modifiedSlideOffset
-  if (finalOffset.x > 0.001f) {
+  if (offset.dot(finalOffset) <= 0f) {
+    val k = 0
+  }
+  if (finalOffset.dot(lastOffset) < 0.9f) {
     val k = 0
   }
   if (finalOffset.length() > offset.length()) {

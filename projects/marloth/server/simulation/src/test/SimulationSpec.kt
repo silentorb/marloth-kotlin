@@ -15,6 +15,7 @@ import simulation.FaceInfo
 import simulation.FaceType
 import simulation.simulationDelta
 import junit.framework.TestCase.*
+import physics.WallCollision3
 
 class SimulationSpec : Spek({
   describe("simulation logic") {
@@ -112,27 +113,42 @@ class SimulationSpec : Spek({
             ), Vector3(1f, -1f, 0f).normalize())
         )
 
-        val positions = mutableListOf(Vector3(0.999f, -0.5f, 0f))
+        val start = Vector3(0.99f, -0.5f, 0f)
+//        val start = Vector3(1.002771f, -0.5f, 0.0f)
+        val positions = mutableListOf(start)
         val offset = Vector3(0.3f, 1f, 0f).normalize() * 4f * delta
+        val collisions: MutableList<List<WallCollision3>> = mutableListOf()
 
         val radius = 0.5f
-        for (i in 0..40) {
+        for (i in 0..60) {
           val body = MovingBody(
               radius = radius,
               position = positions.last()
           )
           val walls = getWallCollisions(body, offset, wallsInRange)
           val newPosition = checkWallCollision(body, offset, walls)
+          collisions.add(walls)
           positions.add(newPosition)
         }
 
         val position = positions.last()
-        val lengths = positions.drop(1).zip(positions.dropLast(1)) { a, b ->
+        val lengths = positions.dropLast(1).zip(positions.drop(1)) { a, b ->
           a.distance(b)
         }
-        val dots = positions.drop(1).zip(positions.dropLast(1)) { a, b ->
+        val offsets = positions.dropLast(1).zip(positions.drop(1)) { a, b ->
+          b - a
+        }
+        val dots = offsets.dropLast(1).zip(offsets.drop(1)) { a, b ->
           a.normalize().dot(b.normalize())
         }
+        val primaryWalls = collisions.map {
+          it[0].wall.debugIndex
+        }
+
+        // Ensure the shifts in direction are subtle.
+        assertTrue(dots.all { it > 0.9f })
+
+        // Ensure the corner was rounded
         assertTrue(position.y > -0.45f)
       }
     }
