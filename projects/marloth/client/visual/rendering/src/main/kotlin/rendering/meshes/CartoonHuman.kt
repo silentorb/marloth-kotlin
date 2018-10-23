@@ -1,6 +1,6 @@
 package rendering.meshes
 
-import mythic.sculpting.FlexibleMesh
+import mythic.sculpting.ImmutableMesh
 import mythic.sculpting.alignToFloor
 import mythic.sculpting.createSphere
 import mythic.sculpting.translateMesh
@@ -12,7 +12,7 @@ import rendering.mapMaterialToManyMeshes
 import rendering.mapMaterialToMesh
 
 val createCartoonHuman: ModelGenerator = {
-  val mesh = FlexibleMesh()
+  val mesh = ImmutableMesh()
   val skin = Material(Vector4(0.3f, 0.25f, 0.2f, 1f))
   val black = Material(Vector4(0f, 0f, 0f, 1f))
   val headCenter = Vector3(0f, 0f, 0.7f)
@@ -39,32 +39,32 @@ val createCartoonHuman: ModelGenerator = {
       Triple(limbRadius, Vector3(0.05f, -0.3f, 0.3f), skin),
       Triple(limbRadius, Vector3(0.05f, 0.3f, 0.3f), skin)
   )
-
-  val sphereMeshes = spheres.map {
-    val mesh2 = FlexibleMesh()
-    createSphere(mesh2, it.first, 8, 8)
-    translateMesh(mesh2, it.second)
-    mesh.sharedImport(mesh2)
-    Pair(mesh2, it.third)
-  }
-  val v = mesh.distinctVertices.sortedBy { it.z }
-  val v2 = mesh.distinctVertices.sortedBy { -it.z }
-//  transformMesh(mesh, Matrix().scale(1.8f))
-
-  alignToFloor(mesh, 0f)
-
-  val materialMap = sphereMeshes.groupBy { it.second }.map { mapMaterialToManyMeshes(it.key, it.value.map { it.first }) }
-  Model(
-      mesh = mesh,
-      groups = materialMap
-  )
+  throw Error("No longer used")
+//  val sphereMeshes = spheres.map {
+//    val mesh2 = ImmutableMesh()
+//    createSphere(mesh2, it.first, 8, 8)
+//    translateMesh(mesh2, it.second)
+//    mesh.sharedImport(mesh2)
+//    Pair(mesh2, it.third)
+//  }
+//  val v = mesh.distinctVertices.sortedBy { it.z }
+//  val v2 = mesh.distinctVertices.sortedBy { -it.z }
+////  transformMesh(mesh, Matrix().scale(1.8f))
+//
+//  alignToFloor(mesh, 0f)
+//
+//  val materialMap = sphereMeshes.groupBy { it.second }.map { mapMaterialToManyMeshes(it.key, it.value.map { it.first }) }
+//  Model(
+//      mesh = mesh,
+//      groups = materialMap
+//  )
 }
 
-val createMonster: ModelGenerator = {
-  val (mesh, info) = createHumanMesh()
-  Model(
-      mesh = mesh,
-      info = info,
-      groups = listOf(mapMaterialToMesh(Material(Vector4(0.25f, 0.25f, 0.25f, 1f)), mesh)
-      ))
-}
+//val createMonster: ModelGenerator = {
+//  val (mesh, info) = createHumanMesh()
+//  Model(
+//      mesh = mesh,
+//      info = info,
+//      groups = listOf(mapMaterialToMesh(Material(Vector4(0.25f, 0.25f, 0.25f, 1f)), mesh)
+//      ))
+//}

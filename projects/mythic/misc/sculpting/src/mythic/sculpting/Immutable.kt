@@ -1,77 +1,75 @@
 package mythic.sculpting
 
-import mythic.spatial.Vector3m
+
 import mythic.spatial.Vector3
 import mythic.spatial.times
 import org.joml.plus
 
-class FlexibleEdge(
-    var first: Vector3m,
-    var second: Vector3m,
-    val faces: MutableList<FlexibleFace>
+typealias Vertices = List<Vector3>
+typealias Edges = List<ImmutableEdge>
+typealias Faces = List<ImmutableFace>
+
+class ImmutableEdge(
+    var first: Vector3,
+    var second: Vector3,
+    val faces: MutableList<ImmutableFace>
 ) {
   val vertices = listOf(first, second)
 
-  val middle: Vector3m
+  val middle: Vector3
     get() = (first + second) * 0.5f
 
-  fun getReference(face: FlexibleFace) = face.edges.first { it.edge == this }
+  fun getReference(face: ImmutableFace) = face.edges.first { it.edge == this }
 
-  val references: List<EdgeReference>
+  val references: List<ImmutableEdgeReference>
     get() = faces.map { getReference(it) }
 
-  fun matches(a: Vector3m, b: Vector3m): Boolean =
+  fun matches(a: Vector3, b: Vector3): Boolean =
       (first == a && second == b)
           || (first == b && second == a)
 }
 
-class EdgeReference(
-    val edge: FlexibleEdge,
-    var next: EdgeReference?,
-    var previous: EdgeReference?,
+class ImmutableEdgeReference(
+    val edge: ImmutableEdge,
+    var next: ImmutableEdgeReference?,
+    var previous: ImmutableEdgeReference?,
     var direction: Boolean
 ) {
-  val vertices: List<Vector3m>
+  val vertices: List<Vector3>
     get() = if (direction) edge.vertices else listOf(edge.second, edge.first)
 
-  val faces: List<FlexibleFace>
+  val faces: List<ImmutableFace>
     get() = edge.faces
 
-  val first: Vector3m
+  val first: Vector3
     get() = if (direction) edge.first else edge.second
 
-  val second: Vector3m
+  val second: Vector3
     get() = if (direction) edge.second else edge.first
 
-  val otherEdgeReferences: List<EdgeReference>
+  val otherImmutableEdgeReferences: List<ImmutableEdgeReference>
     get() = edge.references.filter { it != this }
 
-  val middle: Vector3m
+  val middle: Vector3
     get() = edge.middle
 
 }
 
-fun getNormal(vertices: Vertices3m) =
-    Vector3((vertices[2] - vertices[1]).cross(vertices[0] - vertices[1]).normalize())
+fun getNormal(vertices: Vertices) =
+    (vertices[2] - vertices[1]).cross(vertices[0] - vertices[1]).normalize()
 
 private var flexibleFaceDebugCounter = 0L
 
-class FlexibleFace(
-    var edges: MutableList<EdgeReference> = mutableListOf(),
+class ImmutableFace(
+    var edges: MutableList<ImmutableEdgeReference> = mutableListOf(),
     var data: Any? = null,
     var normal: Vector3 = Vector3()
 ) {
   val debugIndex = flexibleFaceDebugCounter++
-  val unorderedVertices: List<Vector3m>
+  val unorderedVertices: List<Vector3>
     get() = edges.map { it.first }
-//  get() = edges.flatMap { it.vertices }.distinct()
 
-  init {
-    if (debugIndex == 500L) {
-      val k = 0
-    }
-  }
-  val vertices: List<Vector3m>
+  val vertices: List<Vector3>
     get() = edges.map { it.first }
 
 
@@ -80,13 +78,13 @@ class FlexibleFace(
     normal = getNormal(unorderedVertices)
   }
 
-  val neighbors: List<FlexibleFace>
+  val neighbors: List<ImmutableFace>
     get() = edges.flatMap {
       it.faces
     }
         .filter { it !== this }
 
-  fun edge(first: Vector3m, second: Vector3m): EdgeReference? =
+  fun edge(first: Vector3, second: Vector3): ImmutableEdgeReference? =
       edges.firstOrNull { it.edge.matches(first, second) }
 
   fun flipQuad() {
@@ -106,47 +104,47 @@ class FlexibleFace(
   }
 }
 
-fun distinctVertices(vertices: Vertices3m) =
+fun distinctVertices(vertices: Vertices) =
     vertices.distinctBy { System.identityHashCode(it) }
 
-class FlexibleMesh {
-  //  val vertices: MutableList<Vector3m> = mutableListOf()
-  val edges: MutableList<FlexibleEdge> = mutableListOf()
-  val faces: MutableList<FlexibleFace> = mutableListOf()
+class ImmutableMesh {
+  //  val vertices: MutableList<Vector3> = mutableListOf()
+  val edges: MutableList<ImmutableEdge> = mutableListOf()
+  val faces: MutableList<ImmutableFace> = mutableListOf()
 
-  val redundantVertices: Vertices3m
+  val redundantVertices: Vertices
     get() = edges.flatMap { it.vertices }
 
-//  val distinctVertices: List<Vector3m>
+//  val distinctVertices: List<Vector3>
 //    get() = redundantVertices.distinct()
 
-  val distinctVertices: Vertices3m
+  val distinctVertices: Vertices
     get() = distinctVertices(redundantVertices)
 
-  fun createFace(): FlexibleFace {
-    val face = FlexibleFace()
+  fun createFace(): ImmutableFace {
+    val face = ImmutableFace()
     faces.add(face)
     return face
   }
 
-  fun createFace(vertices: List<Vector3m>): FlexibleFace {
+  fun createFace(vertices: List<Vector3>): ImmutableFace {
     assert(vertices.distinct().size == vertices.size) // Check for duplicate vertices
     val face = createFace()
     replaceFaceVertices(face, vertices)
     return face
   }
 
-  fun createStitchedFace(vertices: List<Vector3m>): FlexibleFace {
+  fun createStitchedFace(vertices: List<Vector3>): ImmutableFace {
     val face = createFace(vertices)
     face.updateNormal()
 //    stitchEdges(face.edges)
     return face
   }
 
-  fun getMatchingEdges(first: Vector3m, second: Vector3m) =
+  fun getMatchingEdges(first: Vector3, second: Vector3) =
       edges.filter { it.matches(first, second) }
 
-  fun createEdge(first: Vector3m, second: Vector3m, face: FlexibleFace?): EdgeReference {
+  fun createEdge(first: Vector3, second: Vector3, face: ImmutableFace?): ImmutableEdgeReference {
     val faces = if (face == null) mutableListOf() else mutableListOf(face)
     val existingEdges = getMatchingEdges(first, second)
     assert(existingEdges.size < 2)
@@ -155,18 +153,18 @@ class FlexibleMesh {
       if (face != null)
         edge.faces.add(face)
 
-      return EdgeReference(edge, null, null, edge.first == first)
+      return ImmutableEdgeReference(edge, null, null, edge.first == first)
     } else {
-      val edge = FlexibleEdge(first, second, faces)
+      val edge = ImmutableEdge(first, second, faces)
       edges.add(edge)
-      return EdgeReference(edge, null, null, true)
+      return ImmutableEdgeReference(edge, null, null, true)
     }
 
   }
 
-  fun createEdges(vertices: Vertices3m) {
+  fun createEdges(vertices: Vertices) {
     var previous = vertices.first()
-    var previousEdge: EdgeReference? = null
+    var previousEdge: ImmutableEdgeReference? = null
     for (next in vertices.drop(1)) {
       val edge = createEdge(previous, next, null)
       if (previousEdge != null) {
@@ -178,9 +176,9 @@ class FlexibleMesh {
     }
   }
 
-  fun replaceFaceVertices(face: FlexibleFace, initializer: List<Vector3m>) {
+  fun replaceFaceVertices(face: ImmutableFace, initializer: List<Vector3>) {
     var previous = initializer.first()
-    var previousEdge: EdgeReference? = null
+    var previousEdge: ImmutableEdgeReference? = null
     for (next in initializer.drop(1)) {
       val edge = createEdge(previous, next, face)
       face.edges.add(edge)
@@ -201,18 +199,18 @@ class FlexibleMesh {
     assert(face.edges.none { it.next == null || it.previous == null })
   }
 
-  fun sharedImport(mesh: FlexibleMesh) {
+  fun sharedImport(mesh: ImmutableMesh) {
     faces.addAll(mesh.faces)
     edges.addAll(mesh.edges)
   }
 
-  fun sharedImport(meshes: List<FlexibleMesh>) {
+  fun sharedImport(meshes: List<ImmutableMesh>) {
     meshes.forEach { sharedImport(it) }
   }
 
 }
 
-fun calculateNormals(mesh: FlexibleMesh) {
+fun calculateNormals(mesh: ImmutableMesh) {
   for (face in mesh.faces) {
     face.updateNormal()
   }

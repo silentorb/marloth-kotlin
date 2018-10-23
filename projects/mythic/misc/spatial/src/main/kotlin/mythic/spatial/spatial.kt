@@ -47,13 +47,13 @@ fun FloatBuffer.put(x: Float, y: Float, z: Float, w: Float) {
   put(w)
 }
 
-fun ByteBuffer.putVector3(value: Vector3m) {
+fun ByteBuffer.putVector3(value: Vector3) {
   putFloat(value.x)
   putFloat(value.y)
   putFloat(value.z)
 }
 
-fun ByteBuffer.putVector3m(value: Vector3) {
+fun ByteBuffer.putVector3m(value: Vector3m) {
   putFloat(value.x)
   putFloat(value.y)
   putFloat(value.z)
@@ -143,7 +143,13 @@ fun flattenPoints(normal: Vector3m, points: List<Vector3m>): Map<Vector2, Vector
   return points.associate { Pair(Vector2(u.dot(it), v.dot(it)), it) }
 }
 
-fun flattenPoints(points: List<Vector3m>): Map<Vector2, Vector3m> {
+fun flattenPoints(normal: Vector3, points: List<Vector3>): Map<Vector2, Vector3> {
+  val u = normal.cross((points[1] - points[0]).normalize())
+  val v = normal.cross(u)
+  return points.associate { Pair(Vector2(u.dot(it), v.dot(it)), it) }
+}
+
+fun flattenPoints(points: List<Vector3>): Map<Vector2, Vector3> {
   assert(points.size >= 3)
   val normal = (points[0] - points[1]).cross(points[2] - points[1])
   return flattenPoints(normal, points)
@@ -253,7 +259,7 @@ fun getCenter2D(points: Collection<Vector2>): Vector2 =
 fun arrangePointsCounterClockwise2D(vertices: List<Vector2>): List<Vector2> =
     arrangePointsCounterClockwise2D(getCenter2D(vertices), vertices)
 
-fun arrangePointsCounterClockwise(vertices: List<Vector3m>): List<Vector3m> {
+fun arrangePointsCounterClockwise(vertices: List<Vector3>): List<Vector3> {
   val flatMap = flattenPoints(vertices)
   val flatVertices = flatMap.keys
   val sorted = arrangePointsCounterClockwise2D(getCenter2D(flatVertices), flatVertices)

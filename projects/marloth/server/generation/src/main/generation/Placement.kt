@@ -3,7 +3,7 @@ package generation
 import colliding.Sphere
 import intellect.Pursuit
 import intellect.Spirit
-import mythic.sculpting.FlexibleFace
+import mythic.sculpting.ImmutableFace
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import mythic.spatial.getVector3Center
@@ -14,7 +14,7 @@ import simulation.*
 fun placeEnemy(realm: Realm, nextId: IdSource, dice: Dice): Hand {
   val node = dice.getItem(realm.locationNodes.drop(1))// Skip the node where the player starts
   val wall = dice.getItem(node.walls)
-  val position = getVector3Center(node.position, Vector3(wall.edges[0].first))
+  val position = getVector3Center(node.position, wall.edges[0].first)
   return newCharacter(
       nextId = nextId,
       faction = 2,
@@ -54,7 +54,7 @@ fun placeDoors(realm: Realm, nextId: IdSource): Deck =
               ),
               body = Body(
                   id = id,
-                  position = Vector3(floor.middle),
+                  position = floor.middle,
                   orientation = Quaternion().rotateTo(Vector3(0f, 1f, 0f), face.normal),
                   attributes = doodadBodyAttributes,
                   shape = null,
@@ -68,7 +68,7 @@ fun placeDoors(realm: Realm, nextId: IdSource): Deck =
 
 fun placeWallLamps(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): Deck {
   val count = (10f * scale).toInt()
-  val isValidLampWall = { it: FlexibleFace ->
+  val isValidLampWall = { it: ImmutableFace ->
     getFaceInfo(it).type == FaceType.wall && getFaceInfo(it).texture != null
   }
   val options = realm.locationNodes.filter { it.walls.any(isValidLampWall) }
@@ -79,7 +79,7 @@ fun placeWallLamps(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): De
     if (options2.any()) {
       val wall = dice.getItem(options2)
       val edge = wall.edges[0]
-      val position = getVector3Center(Vector3(edge.first), Vector3(edge.second)) +
+      val position = getVector3Center(edge.first, edge.second) +
           Vector3(0f, 0f, 0.9f) + wall.normal * -0.1f
 //    val angle = getAngle(edge.first.copy().cross(edge.second).xy())
 //    val angle = getAngle(wall.normal.xy())

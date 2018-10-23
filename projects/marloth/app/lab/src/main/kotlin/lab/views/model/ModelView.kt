@@ -64,7 +64,7 @@ fun newModelViewState() =
         animationElapsedTime = 0f
     )
 
-typealias MeshGenerator = (FlexibleMesh) -> Unit
+typealias MeshGenerator = (ImmutableMesh) -> Unit
 
 private var result: MeshGenerator? = null
 
@@ -78,14 +78,14 @@ data class Hit(
 
 fun getVertexHits(start: Vector3, end: Vector3, model: Model): List<Hit> {
   val vertices = model.vertices
-  return vertices.filter { rayIntersectsSphere(start, end, Vector3(it), 0.02f) }
-      .map { Hit(Vector3(it), vertices.indexOf(it)) }
+  return vertices.filter { rayIntersectsSphere(start, end, it, 0.02f) }
+      .map { Hit(it, vertices.indexOf(it)) }
 }
 
 fun getEdgeHits(start: Vector3, end: Vector3, model: Model): List<Hit> {
   val edges = model.edges
   return edges.mapNotNull {
-    val point = rayIntersectsLine3D(start, end, Vector3(it.first), Vector3(it.second), 0.02f)
+    val point = rayIntersectsLine3D(start, end, it.first, it.second, 0.02f)
     if (point != null)
       Hit(point, edges.indexOf(it))
     else
@@ -141,7 +141,7 @@ private fun trySelect(config: ModelViewConfig, camera: Camera, model: Model, mou
   }
 }
 
-fun toSelection(model: Model, edges: List<FlexibleEdge>) =
+fun toSelection(model: Model, edges: List<ImmutableEdge>) =
     edges.map { model.edges.indexOf(it) }
 
 fun selectEdgeLoop(config: ModelViewConfig, model: Model) {
@@ -159,7 +159,7 @@ fun resetCamera(config: ModelViewConfig, model: AdvancedModel, rotationY: Float,
   config.camera.rotationZ = rotationZ
   val m = model.model
   if (m != null)
-    config.camera.pivot = Vector3(getVerticesCenter(m.vertices))
+    config.camera.pivot = getVerticesCenter(m.vertices)
 }
 
 enum class SelectableListType {
@@ -177,7 +177,7 @@ fun loadGeneratedModel(config: ModelViewConfig, renderer: Renderer): Model {
   return if (generator != null)
     generator()
   else
-    Model(FlexibleMesh(), listOf())
+    Model(ImmutableMesh(), listOf())
 }
 
 //fun loadExternalMesh(config: ModelViewConfig, renderer: Renderer): Primitives? {

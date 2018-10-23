@@ -2,17 +2,17 @@ package rendering.meshes
 
 import mythic.glowing.SimpleMesh
 import mythic.glowing.VertexSchema
-import mythic.sculpting.FlexibleMesh
-import mythic.sculpting.FlexibleFace
-import mythic.spatial.Vector3m
+import mythic.sculpting.ImmutableMesh
+import mythic.sculpting.ImmutableFace
+import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import mythic.spatial.put
 import org.lwjgl.BufferUtils
 import java.nio.FloatBuffer
 
-typealias FlexibleVertexSerializer = (vertex: Vector3m, face: FlexibleFace, vertices: FloatBuffer) -> Unit
+typealias ImmutableVertexSerializer = (vertex: Vector3, face: ImmutableFace, vertices: FloatBuffer) -> Unit
 
-fun temporaryVertexSerializer(color: Vector4): FlexibleVertexSerializer {
+fun temporaryVertexSerializer(color: Vector4): ImmutableVertexSerializer {
   return { vertex, face, vertices ->
     vertices.put(vertex)
 
@@ -21,8 +21,8 @@ fun temporaryVertexSerializer(color: Vector4): FlexibleVertexSerializer {
   }
 }
 
-fun <T>convertMesh(faces: List<FlexibleFace>, vertexSchema: VertexSchema<T>,
-                vertexSerializer: FlexibleVertexSerializer): SimpleMesh<T> {
+fun <T>convertMesh(faces: List<ImmutableFace>, vertexSchema: VertexSchema<T>,
+                vertexSerializer: ImmutableVertexSerializer): SimpleMesh<T> {
   val vertex_count = faces.flatMap { it.vertices }.size
   val vertices = BufferUtils.createFloatBuffer(vertex_count * vertexSchema.floatSize)
   val offsets = BufferUtils.createIntBuffer(faces.size)
@@ -47,5 +47,5 @@ fun <T>convertMesh(faces: List<FlexibleFace>, vertexSchema: VertexSchema<T>,
   return SimpleMesh(vertexSchema, vertices, offsets, counts)
 }
 
-fun <T>convertMesh(mesh: FlexibleMesh, vertexSchema: VertexSchema<T>, vertexSerializer: FlexibleVertexSerializer) =
+fun <T>convertMesh(mesh: ImmutableMesh, vertexSchema: VertexSchema<T>, vertexSerializer: ImmutableVertexSerializer) =
     convertMesh(mesh.faces, vertexSchema, vertexSerializer)

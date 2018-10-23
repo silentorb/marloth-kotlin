@@ -42,8 +42,6 @@ fun getAngle(second: Vector2): Float {
   return getAngle(Vector2(1f, 0f), second)
 }
 
-fun getAngle(node: Node, second: Vector3m) = getAngle(node.position.xy(), second.xy())
-
 fun getAngle(node: Node, second: Vector3) = getAngle(node.position.xy(), second.xy())
 
 fun project2D(angle: Float, distance: Float): Vector2 {

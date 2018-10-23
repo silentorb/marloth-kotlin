@@ -281,15 +281,15 @@ fun simpleRayIntersectsLineSegmentAsNumber(rayStart: Vector2fMinimal, segmentSta
   return if (result != null) 1 else 0
 }
 
-fun rayIntersectsPolygon3D(rayStart: Vector3, rayDirection: Vector3, vertices: List<Vector3m>, polygonNormal: Vector3): Vector3? {
-  val distance = rayPolygonDistance(rayStart, rayDirection, Vector3(vertices.first()), polygonNormal)
+fun rayIntersectsPolygon3D(rayStart: Vector3, rayDirection: Vector3, vertices: List<Vector3>, polygonNormal: Vector3): Vector3? {
+  val distance = rayPolygonDistance(rayStart, rayDirection, vertices.first(), polygonNormal)
   if (distance == null)
     return null
 
   val planeIntersection = rayStart + rayDirection * distance
-  val u = polygonNormal.cross(Vector3((vertices[1] - vertices[0]).normalize()))
+  val u = polygonNormal.cross((vertices[1] - vertices[0].normalize()))
   val v = polygonNormal.cross(u)
-  val transformedPoints = vertices.map { Vector2(u.dot(Vector3(it)), v.dot(Vector3(it))) }
+  val transformedPoints = vertices.map { Vector2(u.dot(it), v.dot(it)) }
   val transformedIntersection = Vector2(u.dot(planeIntersection), v.dot(planeIntersection))
 
   return if (isInsidePolygon(transformedIntersection, transformedPoints))

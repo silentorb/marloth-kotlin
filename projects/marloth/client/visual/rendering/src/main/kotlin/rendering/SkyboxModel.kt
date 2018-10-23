@@ -1,6 +1,6 @@
 package rendering
 
-import mythic.sculpting.FlexibleMesh
+import mythic.sculpting.ImmutableMesh
 import mythic.sculpting.VertexNormalTexture
 import mythic.sculpting.createCube
 import mythic.spatial.Vector2
@@ -10,7 +10,7 @@ import rendering.meshes.VertexSchemas
 import rendering.meshes.convertMesh
 
 fun skyboxModel(vertexSchemas: VertexSchemas): AdvancedModelGenerator = {
-  val mesh = FlexibleMesh()
+  val mesh = ImmutableMesh()
   createCube(mesh, Vector3(1f, 1f, 1f))
   val uvs = listOf(
       Vector2(0f, 0f),

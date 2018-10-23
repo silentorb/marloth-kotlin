@@ -1,13 +1,12 @@
 package intellect
 
-import mythic.sculpting.FlexibleFace
-import mythic.spatial.Vector3m
+import mythic.sculpting.ImmutableFace
 import mythic.spatial.Vector3
 import org.joml.plus
 import randomly.Dice
 import simulation.*
 
-fun getNextPathFace(knowledge: Knowledge, path: Path): FlexibleFace? {
+fun getNextPathFace(knowledge: Knowledge, path: Path): ImmutableFace? {
   val body = knowledge.world.bodyTable[knowledge.spiritId]!!
   val node = body.node
   val nextNode = path.first()
@@ -61,8 +60,8 @@ fun getTargetOffset(knowledge: Knowledge, pursuit: Pursuit): Vector3 {
 
   val edge = getFloor(face)
   val position = body.position
-  val nearestPoint = edge.vertices.sortedBy { it.distance(Vector3m(position)) }.first()
-  val target = Vector3((edge.middle + nearestPoint) / 2f)
+  val nearestPoint = edge.vertices.sortedBy { it.distance(position) }.first()
+  val target = (edge.middle + nearestPoint) / 2f
   return (target - position).normalize()
 }
 

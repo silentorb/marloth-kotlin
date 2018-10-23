@@ -1,7 +1,7 @@
 package generation.abstract
 
-import mythic.sculpting.FlexibleFace
-import mythic.sculpting.FlexibleMesh
+import mythic.sculpting.ImmutableFace
+import mythic.sculpting.ImmutableMesh
 import mythic.spatial.Vector3
 import scenery.Textures
 import simulation.*
@@ -46,9 +46,9 @@ class Node(
   fun connections(graph: Graph): List<Connection> =
       graph.connections.filter { it.contains(id) }
 
-  val floors: MutableList<FlexibleFace> = mutableListOf()
-  val ceilings: MutableList<FlexibleFace> = mutableListOf()
-  val walls: MutableList<FlexibleFace> = mutableListOf()
+  val floors: MutableList<ImmutableFace> = mutableListOf()
+  val ceilings: MutableList<ImmutableFace> = mutableListOf()
+  val walls: MutableList<ImmutableFace> = mutableListOf()
 
   fun neighbors(graph: Graph): Sequence<Node> = connections(graph).asSequence().mapNotNull { graph.node(it.getOther(this)) }
 
@@ -56,7 +56,7 @@ class Node(
 
   fun isConnected(graph: Graph, other: Node) = getConnection(graph, other) != null
 
-  val faces: List<FlexibleFace>
+  val faces: List<ImmutableFace>
     get() = floors.plus(walls).plus(ceilings)
 }
 
@@ -92,7 +92,7 @@ data class Graph(
 data class Realm(
     val boundary: WorldBoundary,
     val graph: Graph,
-    val mesh: FlexibleMesh,
+    val mesh: ImmutableMesh,
     val nextId: IdSource
 ) {
 
@@ -108,12 +108,12 @@ data class FaceInfo(
     var debugInfo: String? = null
 )
 
-fun getFaceInfo(face: FlexibleFace): FaceInfo = (face.data as FaceInfo?)!!
+fun getFaceInfo(face: ImmutableFace): FaceInfo = (face.data as FaceInfo?)!!
 
 fun faceNodes(info: FaceInfo) =
     listOf(info.firstNode, info.secondNode)
 
-fun getOtherNode(node: Node, face: FlexibleFace): Node? {
+fun getOtherNode(node: Node, face: ImmutableFace): Node? {
   val info = getFaceInfo(face)
   return if (info.firstNode == node)
     info.secondNode
@@ -121,9 +121,9 @@ fun getOtherNode(node: Node, face: FlexibleFace): Node? {
     info.firstNode
 }
 
-fun getNullableFaceInfo(face: FlexibleFace): FaceInfo? = face.data as FaceInfo?
+fun getNullableFaceInfo(face: ImmutableFace): FaceInfo? = face.data as FaceInfo?
 
-fun initializeFaceInfo(type: FaceType, node: Node, face: FlexibleFace) {
+fun initializeFaceInfo(type: FaceType, node: Node, face: ImmutableFace) {
   val info = getNullableFaceInfo(face)
   face.data =
       if (info == null) {

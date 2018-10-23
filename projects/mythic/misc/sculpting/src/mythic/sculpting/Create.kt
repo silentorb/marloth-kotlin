@@ -5,7 +5,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 
-fun createArc(radius: Float, count: Int, sweep: Float = Pi * 2, offset: Float = 0f): Vertices {
+fun createArc(radius: Float, count: Int, sweep: Float = Pi * 2, offset: Float = 0f): Vertices3m {
   val vertices = ArrayList<Vector3m>(count)
   val increment = sweep / (count - 1)
 
@@ -23,7 +23,7 @@ fun createCircle(mesh: FlexibleMesh, radius: Float, count: Int): FlexibleFace {
   return mesh.createFace(createArc(radius, count))
 }
 
-fun createArcXY(radius: Float, count: Int, sweep: Float = Pi * 2): Vertices {
+fun createArcXY(radius: Float, count: Int, sweep: Float = Pi * 2): Vertices3m {
   val vertices = ArrayList<Vector3m>(count)
   val increment = sweep / (count - 1)
 
@@ -84,6 +84,30 @@ fun createCube(mesh: FlexibleMesh, size: Vector3): List<FlexibleFace> {
       .plus(listOf())
 }
 
+fun createCube(mesh: ImmutableMesh, size: Vector3): List<ImmutableFace> {
+  val half = size * 0.5f
+  val top = squareUp(mesh, Vector2(size.x, size.y), half.z)
+  val bottom = squareDown(mesh, Vector2(size.x, size.y), -half.z)
+
+  val top_vertices = top.vertices
+  val initial_bottom_vertices = bottom.vertices
+  val bottom_vertices = listOf(
+      initial_bottom_vertices[0],
+      initial_bottom_vertices[3],
+      initial_bottom_vertices[2],
+      initial_bottom_vertices[1]
+  )
+
+  val sides = (0..3).map { a ->
+    val b = if (a > 2) 0 else a + 1
+    mesh.createStitchedFace(listOf(
+        top_vertices[b], top_vertices[a],
+        bottom_vertices[a], bottom_vertices[b]
+    ))
+  }
+  return listOf(top, bottom)
+}
+
 fun squareDown(mesh: FlexibleMesh, size: Vector2, z: Float): FlexibleFace {
   val half = size * 0.5f;
   return mesh.createStitchedFace(listOf(
@@ -91,6 +115,16 @@ fun squareDown(mesh: FlexibleMesh, size: Vector2, z: Float): FlexibleFace {
       Vector3m(-half.x, half.y, z),
       Vector3m(half.x, half.y, z),
       Vector3m(half.x, -half.y, z)
+  ))
+}
+
+fun squareDown(mesh: ImmutableMesh, size: Vector2, z: Float): ImmutableFace {
+  val half = size * 0.5f;
+  return mesh.createStitchedFace(listOf(
+      Vector3(-half.x, -half.y, z),
+      Vector3(-half.x, half.y, z),
+      Vector3(half.x, half.y, z),
+      Vector3(half.x, -half.y, z)
   ))
 }
 
@@ -104,7 +138,17 @@ fun squareUp(mesh: FlexibleMesh, size: Vector2, z: Float): FlexibleFace {
   ))
 }
 
-//fun createLines(mesh: FlexibleMesh, path: Vertices) {
+fun squareUp(mesh: ImmutableMesh, size: Vector2, z: Float): ImmutableFace {
+  val half = size * 0.5f;
+  return mesh.createStitchedFace(listOf(
+      Vector3(-half.x, -half.y, z),
+      Vector3(half.x, -half.y, z),
+      Vector3(half.x, half.y, z),
+      Vector3(-half.x, half.y, z)
+  ))
+}
+
+//fun createLines(mesh: FlexibleMesh, path: Vertices3m) {
 //  for (i in 0 until path.size - 1) {
 //    mesh.createEdge(path[i], path[i + 1])
 //  }

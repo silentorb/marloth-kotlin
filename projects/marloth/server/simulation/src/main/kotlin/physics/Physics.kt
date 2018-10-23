@@ -1,6 +1,6 @@
 package physics
 
-import mythic.sculpting.FlexibleFace
+import mythic.sculpting.ImmutableFace
 import mythic.spatial.*
 import simulation.*
 
@@ -23,7 +23,7 @@ data class AbsoluteOrientationForce(
 data class Collision(
     val first: Id,
     val second: Id? = null,
-    val wall: FlexibleFace? = null,
+    val wall: ImmutableFace? = null,
     val hitPoint: Vector2,
     val directGap: Float,
     val travelingGap: Float
@@ -73,7 +73,7 @@ fun isGroundedOnNeighborNode(body: Body): Boolean {
   val (nearestWall, distance) = body.node.walls
       .map {
         val edge = getFloor(it)
-        Pair(it, getPointToLineDistance(body.position, Vector3(edge.first), Vector3(edge.second)))
+        Pair(it, getPointToLineDistance(body.position, edge.first, edge.second))
       }
       .sortedBy { it.second }
       .first()

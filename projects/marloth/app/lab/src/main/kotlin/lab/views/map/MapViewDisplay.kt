@@ -32,7 +32,7 @@ fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, world: Rea
     else
       1f
     for (edge in face.edges) {
-      renderer.drawLine(Vector3(edge.first), Vector3(edge.second), c, thickness)
+      renderer.drawLine(edge.first, edge.second, c, thickness)
 //                sector.mesh.drawElement(DrawMethod.lineLoop, index++)
     }
   }
@@ -48,7 +48,7 @@ fun renderFaceIndices(renderer: SceneRenderer, world: Realm) {
         val vertex = edge.first
         val centeringOffset = (edge.next!!.first - vertex).normalize() + (edge.previous!!.first - vertex).normalize()
         val offset = centeringOffset// + normalOffset
-        renderer.drawText(index.toString(), Vector3(vertex + offset), textStyle)
+        renderer.drawText(index.toString(), vertex + offset, textStyle)
       }
     }
   }

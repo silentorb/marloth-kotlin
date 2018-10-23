@@ -21,6 +21,8 @@ data class Vector3(
 
   constructor(v: Vector2ic, z: Float) : this(v.x.toFloat(), v.y.toFloat(), z) {}
 
+  constructor(v: Vector2, z: Float = 0f) : this(v.x, v.y, z) {}
+
   init {
 //    assert(!this.x.isNaN())
   }

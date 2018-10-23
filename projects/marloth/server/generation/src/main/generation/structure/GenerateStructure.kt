@@ -135,25 +135,25 @@ fun generateTunnelStructure(graph: Graph, node: Node, nodeSectors: List<TempSect
   return TempSector(node, corners)
 }
 
-fun sinewFloorsAndCeilings(nodeSectors: List<TempSector>, mesh: FlexibleMesh) {
+fun sinewFloorsAndCeilings(nodeSectors: List<TempSector>, mesh: ImmutableMesh) {
   return nodeSectors.forEach { sector ->
     val sectorCenter = getCenter(sector.corners).xy()
-    val vertices = sector.corners.map { Vector3m(it) }
+    val vertices = sector.corners.map { it }
     createFloor(mesh, sector.node, vertices, sectorCenter)
     createCeiling(mesh, sector.node, vertices, sectorCenter)
   }
 }
 
-fun createWall(edge: FlexibleEdge, mesh: FlexibleMesh): FlexibleFace {
+fun createWall(edge: ImmutableEdge, mesh: ImmutableMesh): ImmutableFace {
   return mesh.createStitchedFace(listOf(
       edge.second,
       edge.first,
-      edge.first + Vector3m(0f, 0f, wallHeight),
-      edge.second + Vector3m(0f, 0f, wallHeight)
+      edge.first + Vector3(0f, 0f, wallHeight),
+      edge.second + Vector3(0f, 0f, wallHeight)
   ))
 }
 
-fun getOrCreateWall(edge: FlexibleEdge, otherEdges: List<EdgeReference>, mesh: FlexibleMesh): FlexibleFace {
+fun getOrCreateWall(edge: ImmutableEdge, otherEdges: List<ImmutableEdgeReference>, mesh: ImmutableMesh): ImmutableFace {
   return if (otherEdges.size > 1) {
     val face = edge.faces.firstOrNull { it.data != null && getFaceInfo(it).type == FaceType.space }
     if (face != null)
@@ -182,9 +182,9 @@ fun createRooms(realm: Realm, dice: Dice, tunnels: List<Node>) {
   sinewFloorsAndCeilings(allSectors, mesh)
   allSectors.forEach { sector ->
     val wallBases = sector.node.floors.first().edges
-    wallBases.forEach { edgeReference ->
-      val otherEdges = edgeReference.otherEdgeReferences
-      val wall = getOrCreateWall(edgeReference.edge, otherEdges, mesh)
+    wallBases.forEach { ImmutableEdgeReference ->
+      val otherEdges = ImmutableEdgeReference.otherImmutableEdgeReferences
+      val wall = getOrCreateWall(ImmutableEdgeReference.edge, otherEdges, mesh)
 
       if (otherEdges.any())
         initializeFaceInfo(FaceType.space, sector.node, wall)

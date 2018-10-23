@@ -1,8 +1,8 @@
 package rendering
 
-import mythic.sculpting.FlexibleEdge
-import mythic.sculpting.FlexibleMesh
-import mythic.spatial.Vector3m
+import mythic.sculpting.ImmutableEdge
+import mythic.sculpting.ImmutableMesh
+import mythic.spatial.Vector3
 import rendering.meshes.Faces
 import rendering.meshes.MeshInfo
 import rendering.meshes.Primitives
@@ -13,22 +13,22 @@ data class MeshGroup(
     val name: String = "Unnamed"
 )
 
-fun mapMaterialToMesh(material: Material, mesh: FlexibleMesh): MeshGroup {
+fun mapMaterialToMesh(material: Material, mesh: ImmutableMesh): MeshGroup {
   return MeshGroup(material, mesh.faces)
 }
 
-fun mapMaterialToManyMeshes(material: Material, meshes: List<FlexibleMesh>): MeshGroup {
+fun mapMaterialToManyMeshes(material: Material, meshes: List<ImmutableMesh>): MeshGroup {
   return MeshGroup(material, meshes.flatMap { it.faces })
 }
 
 data class Model(
-    val mesh: FlexibleMesh,
+    val mesh: ImmutableMesh,
     val groups: List<MeshGroup> = listOf(),
     val info: MeshInfo = MeshInfo(),
     val textureMap: FaceTextureMap? = null
 ) {
-  val vertices: List<Vector3m> get() = mesh.distinctVertices
-  val edges: List<FlexibleEdge> get() = mesh.edges
+  val vertices: List<Vector3> get() = mesh.distinctVertices
+  val edges: List<ImmutableEdge> get() = mesh.edges
 }
 
 data class VertexWeight(
@@ -38,7 +38,7 @@ data class VertexWeight(
 
 typealias VertexWeights = Pair<VertexWeight, VertexWeight>
 
-typealias WeightMap = Map<Vector3m, VertexWeights>
+typealias WeightMap = Map<Vector3, VertexWeights>
 
 data class AdvancedModel(
     val primitives: Primitives,

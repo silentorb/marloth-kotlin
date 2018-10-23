@@ -2,9 +2,8 @@ package generation.structure
 
 import generation.BiomeMap
 import generation.abstract.*
-import mythic.sculpting.FlexibleFace
+import mythic.sculpting.ImmutableFace
 import mythic.spatial.Vector3
-import mythic.spatial.Vector3m
 import org.joml.plus
 import randomly.Dice
 import simulation.FaceType
@@ -17,28 +16,28 @@ enum class VerticalDirection {
 interface VerticalFacing {
   val dir: VerticalDirection
   val dirMod: Float
-  fun ceilings(node: Node): MutableList<FlexibleFace>
-  fun floors(node: Node): MutableList<FlexibleFace>
+  fun ceilings(node: Node): MutableList<ImmutableFace>
+  fun floors(node: Node): MutableList<ImmutableFace>
   fun upperNode(node: Node): Node
-  fun wallVertices(face: FlexibleFace): WallVertices
+  fun wallVertices(face: ImmutableFace): WallVertices
 }
 
 class VerticalFacingUp : VerticalFacing {
   override val dir: VerticalDirection = VerticalDirection.up
   override val dirMod: Float get() = 1f
-  override fun ceilings(node: Node): MutableList<FlexibleFace> = node.ceilings
-  override fun floors(node: Node): MutableList<FlexibleFace> = node.floors
+  override fun ceilings(node: Node): MutableList<ImmutableFace> = node.ceilings
+  override fun floors(node: Node): MutableList<ImmutableFace> = node.floors
   override fun upperNode(node: Node): Node = getUpperNode(node)
-  override fun wallVertices(face: FlexibleFace): WallVertices = getWallVertices(face)
+  override fun wallVertices(face: ImmutableFace): WallVertices = getWallVertices(face)
 }
 
 class VerticalFacingDown : VerticalFacing {
   override val dir: VerticalDirection = VerticalDirection.down
   override val dirMod: Float get() = -1f
-  override fun ceilings(node: Node): MutableList<FlexibleFace> = node.floors
-  override fun floors(node: Node): MutableList<FlexibleFace> = node.ceilings
+  override fun ceilings(node: Node): MutableList<ImmutableFace> = node.floors
+  override fun floors(node: Node): MutableList<ImmutableFace> = node.ceilings
   override fun upperNode(node: Node): Node = getLowerNode(node)
-  override fun wallVertices(face: FlexibleFace): WallVertices {
+  override fun wallVertices(face: ImmutableFace): WallVertices {
     val result = getWallVertices(face)
     return WallVertices(upper = result.lower, lower = result.upper)
   }
@@ -77,7 +76,7 @@ fun getUpperNode(node: Node) =
 fun createAscendingSpaceWalls(realm: Realm, nodes: List<Node>, facing: VerticalFacing): Connections {
   val walls = nodes.flatMap { it.walls }
   val depth = 6f
-  val offset = Vector3m(0f, 0f, depth * facing.dirMod)
+  val offset = Vector3(0f, 0f, depth * facing.dirMod)
   return walls
       .filter { upperWall ->
         getFaceInfo(upperWall).secondNode != null

@@ -1,8 +1,7 @@
-import mythic.sculpting.EdgeReference
-import mythic.sculpting.FlexibleEdge
-import mythic.sculpting.FlexibleFace
+import mythic.sculpting.ImmutableEdgeReference
+import mythic.sculpting.ImmutableEdge
+import mythic.sculpting.ImmutableFace
 import mythic.spatial.Vector3
-import mythic.spatial.Vector3m
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
@@ -22,12 +21,12 @@ class SimulationSpec : Spek({
 
     on("bodies collide with room corners") {
 
-      fun newFace(edges: List<Pair<Vector3m, Vector3m>>, normal: Vector3) =
-          FlexibleFace(
+      fun newFace(edges: List<Pair<Vector3, Vector3>>, normal: Vector3) =
+          ImmutableFace(
               edges
                   .map {
-                    EdgeReference(
-                        edge = FlexibleEdge(it.first, it.second, mutableListOf()),
+                    ImmutableEdgeReference(
+                        edge = ImmutableEdge(it.first, it.second, mutableListOf()),
                         next = null,
                         previous = null,
                         direction = true
@@ -40,10 +39,10 @@ class SimulationSpec : Spek({
         val delta = simulationDelta
         val wallsInRange = listOf(
             newFace(listOf(
-                Pair(Vector3m(0f, 0f, 0f), Vector3m(4f, 0f, 0f))
+                Pair(Vector3(0f, 0f, 0f), Vector3(4f, 0f, 0f))
             ), Vector3(0f, -1f, 0f)),
             newFace(listOf(
-                Pair(Vector3m(0f, 0f, 0f), Vector3m(0f, -4f, 0f))
+                Pair(Vector3(0f, 0f, 0f), Vector3(0f, -4f, 0f))
             ), Vector3(1f, 0f, 0f))
         )
 
@@ -71,7 +70,7 @@ class SimulationSpec : Spek({
         val cornerPoint = Vector3(1f, 0f, 0f)
         val wallsInRange = listOf(
             newFace(listOf(
-                Pair(Vector3m(0f, 0f, 0f), Vector3m(cornerPoint))
+                Pair(Vector3(0f, 0f, 0f), cornerPoint)
             ), Vector3(0f, -1f, 0f))
         )
 
@@ -104,17 +103,19 @@ class SimulationSpec : Spek({
 
       it("Can round a corner without getting stuck") {
         val delta = simulationDelta
+        val cornerPoint = Vector3(1f, 0f, 0f)
         val wallsInRange = listOf(
             newFace(listOf(
-                Pair(Vector3m(0f, 0f, 0f), Vector3m(1f, 0f, 0f))
+                Pair(Vector3(0f, 0f, 0f), cornerPoint)
             ), Vector3(0f, -1f, 0f)),
             newFace(listOf(
-                Pair(Vector3m(1f, 0f, 0f), Vector3m(2f, 1f, 0f))
+                Pair(cornerPoint, Vector3(2f, 1f, 0f))
             ), Vector3(1f, -1f, 0f).normalize())
         )
 
-        val start = Vector3(0.99f, -0.5f, 0f)
-//        val start = Vector3(1.002771f, -0.5f, 0.0f)
+//        val start = Vector3(0.99f, -0.5f, 0f)
+//        val start = Vector3(1.002771f, -0.5f, 0.0f)\
+        val start = Vector3(1.4889201f, -0.23607628f, 0.0f)
         val positions = mutableListOf(start)
         val offset = Vector3(0.3f, 1f, 0f).normalize() * 4f * delta
         val collisions: MutableList<List<WallCollision3>> = mutableListOf()
@@ -130,6 +131,13 @@ class SimulationSpec : Spek({
           collisions.add(walls)
           positions.add(newPosition)
         }
+        data class All(
+            val position: Vector3,
+            val offset: Vector3,
+            val length: Float,
+            val dot: Float,
+            val distance: Float
+        )
 
         val position = positions.last()
         val lengths = positions.dropLast(1).zip(positions.drop(1)) { a, b ->
@@ -144,7 +152,17 @@ class SimulationSpec : Spek({
         val primaryWalls = collisions.map {
           it[0].wall.debugIndex
         }
+        val distances = positions.map { it.distance(cornerPoint) }
 
+        val all = dots.mapIndexed { i, dot ->
+          All(
+              length = lengths[i],
+              offset = offsets[i],
+              dot = dot,
+              position = positions[i],
+              distance = distances[i]
+          )
+        }
         // Ensure the shifts in direction are subtle.
         assertTrue(dots.all { it > 0.9f })
 

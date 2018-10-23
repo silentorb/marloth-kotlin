@@ -1,6 +1,6 @@
 package rendering.meshes
 
-import mythic.sculpting.FlexibleMesh
+import mythic.sculpting.ImmutableMesh
 import mythic.sculpting.calculateNormals
 import mythic.sculpting.transformMesh
 import mythic.spatial.Matrix
@@ -12,12 +12,13 @@ import rendering.MeshGroup
 import rendering.Model
 import rendering.mapMaterialToManyMeshes
 
-fun createTransformedSphere(radius: Float, transform: Matrix): FlexibleMesh {
-  val mesh = FlexibleMesh()
+fun createTransformedSphere(radius: Float, transform: Matrix): ImmutableMesh {
+  val mesh = ImmutableMesh()
   val res = 16
-  mythic.sculpting.createSphere(mesh, radius, res, res)
-  transformMesh(mesh, transform)
-  return mesh
+  throw Error("No longer used")
+//  mythic.sculpting.createSphere(mesh, radius, res, res)
+//  transformMesh(mesh, transform)
+//  return mesh
 }
 
 val createEyeball: ModelGenerator = {

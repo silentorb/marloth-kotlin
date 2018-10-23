@@ -2,8 +2,8 @@ package rendering.meshes
 
 import mythic.glowing.Drawable
 import mythic.glowing.SimpleMesh
-import mythic.sculpting.FlexibleFace
-import mythic.sculpting.FlexibleMesh
+import mythic.sculpting.ImmutableFace
+import mythic.sculpting.ImmutableMesh
 import mythic.spatial.*
 import rendering.*
 
@@ -16,7 +16,7 @@ enum class AttributeName {
   weights
 }
 
-fun animatedVertexSerializer(weightMap: WeightMap): FlexibleVertexSerializer {
+fun animatedVertexSerializer(weightMap: WeightMap): ImmutableVertexSerializer {
   return { vertex, face, vertices ->
     vertices.put(vertex)
     vertices.put(0f)
@@ -30,19 +30,19 @@ fun animatedVertexSerializer(weightMap: WeightMap): FlexibleVertexSerializer {
   }
 }
 
-fun simpleVertexSerializer(): FlexibleVertexSerializer {
+fun simpleVertexSerializer(): ImmutableVertexSerializer {
   return { vertex, face, vertices ->
     vertices.put(vertex)
   }
 }
 
-fun createSimpleMesh(faces: List<FlexibleFace>, vertexSchema: VertexSchema) =
+fun createSimpleMesh(faces: List<ImmutableFace>, vertexSchema: VertexSchema) =
     convertMesh(faces, vertexSchema, simpleVertexSerializer())
 
-fun createAnimatedMesh(faces: List<FlexibleFace>, vertexSchema: VertexSchema, weightMap: WeightMap) =
+fun createAnimatedMesh(faces: List<ImmutableFace>, vertexSchema: VertexSchema, weightMap: WeightMap) =
     convertMesh(faces, vertexSchema, animatedVertexSerializer(weightMap))
 
-fun createSimpleMesh(mesh: FlexibleMesh, vertexSchema: VertexSchema) =
+fun createSimpleMesh(mesh: ImmutableMesh, vertexSchema: VertexSchema) =
     convertMesh(mesh, vertexSchema, simpleVertexSerializer())
 
 fun createLineMesh(vertexSchema: VertexSchema) =
@@ -67,7 +67,7 @@ typealias Primitives = List<Primitive>
 typealias MeshMap = Map<MeshType, AdvancedModel>
 
 data class TransientModelElement(
-    val faces: List<FlexibleFace>,
+    val faces: List<ImmutableFace>,
     val material: Material
 )
 

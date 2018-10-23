@@ -21,28 +21,28 @@ fun <T> zeroIfNull(value: T?) =
 fun faceNodeCount(faceInfo: FaceInfo) =
     zeroIfNull(faceInfo.firstNode) + zeroIfNull(faceInfo.secondNode)
 
-fun faceNodeCount(face: FlexibleFace) =
+fun faceNodeCount(face: ImmutableFace) =
     faceNodeCount(getFaceInfo(face))
 
-//fun getNextFace(face: FlexibleFace): FlexibleFace? {
+//fun getNextFace(face: ImmutableFace): ImmutableFace? {
 //  return face.edges.filter()
 //  val info = getFaceInfo(face)
 //  val node = info.firstNode!!
 //  return node.walls.filter { it != face && it.vertices.union(face.vertices).size >= 2 }.firstOrNull()
 //}
 
-fun getSharedEdge(first: FlexibleFace, second: FlexibleFace): FlexibleEdge =
+fun getSharedEdge(first: ImmutableFace, second: ImmutableFace): ImmutableEdge =
     first.edges.first { edge -> second.edges.map { it.edge }.contains(edge.edge) }.edge
 
 // This algorithm only works on quads
-fun getOppositeQuadEdge(first: FlexibleFace, edge: FlexibleEdge) =
+fun getOppositeQuadEdge(first: ImmutableFace, edge: ImmutableEdge) =
     first.edges.first { e -> e.vertices.none { edge.vertices.contains(it) } }
 
-fun isConcaveCorner(first: FlexibleFace, second: FlexibleFace): Boolean {
+fun isConcaveCorner(first: ImmutableFace, second: ImmutableFace): Boolean {
   val sharedEdge = getSharedEdge(first, second)
   val middle = sharedEdge.middle
   val firstOuterEdge = getOppositeQuadEdge(first, sharedEdge)
-  val firstVector = Vector3((firstOuterEdge.middle - middle).normalize())
+  val firstVector = (firstOuterEdge.middle - middle).normalize()
   return firstVector.dot(second.normal) > 0
 }
 
@@ -51,7 +51,7 @@ fun isConcaveCorner(a: Vector3, b: Vector3, bcNormal: Vector3): Boolean {
   return firstVector.dot(bcNormal) > 0
 }
 
-fun getIncompleteNeighbors(face: FlexibleFace): Sequence<FlexibleFace> =
+fun getIncompleteNeighbors(face: ImmutableFace): Sequence<ImmutableFace> =
     face.neighbors
         .asSequence()
         .filter {
@@ -59,15 +59,15 @@ fun getIncompleteNeighbors(face: FlexibleFace): Sequence<FlexibleFace> =
           info.type == FaceType.wall && faceNodeCount(info) == 1
         }
 
-fun getConcaveCorners(face: FlexibleFace): Sequence<FlexibleFace> =
+fun getConcaveCorners(face: ImmutableFace): Sequence<ImmutableFace> =
     getIncompleteNeighbors(face)
         .filter { isConcaveCorner(face, it) }
 
-fun traceIncompleteWalls(origin: FlexibleFace, first: FlexibleFace, otherEnd: FlexibleFace): Pair<MutableList<FlexibleFace>, List<FlexibleFace>> {
+fun traceIncompleteWalls(origin: ImmutableFace, first: ImmutableFace, otherEnd: ImmutableFace): Pair<MutableList<ImmutableFace>, List<ImmutableFace>> {
   var current = first
   var previous = origin
   val collected = mutableListOf(first)
-//  val notUsedResult = mutableListOf<FlexibleFace>()
+//  val notUsedResult = mutableListOf<ImmutableFace>()
   var step = 0
   while (true) {
     val neighbors = getIncompleteNeighbors(current).filter { it != previous }.toList()
@@ -90,13 +90,13 @@ fun traceIncompleteWalls(origin: FlexibleFace, first: FlexibleFace, otherEnd: Fl
   }
 }
 
-//fun getJoiningPoint(first: FlexibleFace, second: FlexibleFace): Vector3m =
+//fun getJoiningPoint(first: ImmutableFace, second: ImmutableFace): Vector3 =
 //    first.edges.intersect(second.edges).first().first
 
-//fun getJoiningPoint(a: Collection<EdgeReference>, b: Collection<EdgeReference>): Vector3m =
+//fun getJoiningPoint(a: Collection<ImmutableEdgeReference>, b: Collection<ImmutableEdgeReference>): Vector3 =
 //    a.intersect(b).first().first
 
-fun getEndEdge(walls: List<FlexibleFace>, offset: Int): FlexibleEdge {
+fun getEndEdge(walls: List<ImmutableFace>, offset: Int): ImmutableEdge {
   val head = walls.size - 1 - offset
   val last = walls[head]
   val nextLast = walls[head - 1]
@@ -104,28 +104,28 @@ fun getEndEdge(walls: List<FlexibleFace>, offset: Int): FlexibleEdge {
 //  return last.edges.intersect(nextLast.edges).first().edge
 }
 
-fun getEndEdgeReversed(walls: List<FlexibleFace>, offset: Int): FlexibleEdge {
+fun getEndEdgeReversed(walls: List<ImmutableFace>, offset: Int): ImmutableEdge {
   val head = 0 + offset
   val last = walls[head]
   val nextLast = walls[head + 1]
   return verticalEdges(last).first { e -> nextLast.edges.none { it.edge == e.edge } }.edge
 }
 
-fun getEndPoint(walls: List<FlexibleEdge>, offset: Int): Vector3m {
+fun getEndPoint(walls: List<ImmutableEdge>, offset: Int): Vector3 {
   val head = walls.size - 1 - offset
   val last = walls[head]
   val nextLast = walls[head - 1]
   return last.vertices.first { !nextLast.vertices.contains(it) }
 }
 
-fun getEndPointReversed(walls: List<FlexibleEdge>, offset: Int): Vector3m {
+fun getEndPointReversed(walls: List<ImmutableEdge>, offset: Int): Vector3 {
   val head = 0 + offset
   val last = walls[head]
   val nextLast = walls[head + 1]
   return last.vertices.first { !nextLast.vertices.contains(it) }
 }
 
-fun shaveOffOccludedWalls(points: List<Vector3m>, walls: List<FlexibleFace>, shaveCount: Int = 0): Int {
+fun shaveOffOccludedWalls(points: List<Vector3>, walls: List<ImmutableFace>, shaveCount: Int = 0): Int {
   // 3 is an estimate right now.  A sector needs at least 3 walls but this condition may not directly translate to wall count.
 //  assert(shaveCount < walls.size - 2)
   if (shaveCount >= points.size - 2)
@@ -135,8 +135,8 @@ fun shaveOffOccludedWalls(points: List<Vector3m>, walls: List<FlexibleFace>, sha
     val k = 0
   }
 //  val a2 = points[1]
-  val a = Vector3(points[0])
-  val b = Vector3(points[points.size - shaveCount - 1])
+  val a = points[0]
+  val b = points[points.size - shaveCount - 1]
 //  val b2 = points[points.size - shaveCount - 1]
   val firstNormal = walls[0].normal
   val secondNormal = walls[walls.size - shaveCount - 1].normal
@@ -147,22 +147,22 @@ fun shaveOffOccludedWalls(points: List<Vector3m>, walls: List<FlexibleFace>, sha
     shaveOffOccludedWalls(points, walls, shaveCount + 1)
 }
 
-fun chainIntegrity(walls: List<FlexibleFace>): List<Int> =
+fun chainIntegrity(walls: List<ImmutableFace>): List<Int> =
     walls.drop(1).zip(walls.dropLast(1)) { a, b ->
       a.edges.count { e -> b.edges.any { it.edge == e.edge } }
     }
 
-fun isChain(walls: List<FlexibleFace>): Boolean =
+fun isChain(walls: List<ImmutableFace>): Boolean =
     chainIntegrity(walls)
         .all { it == 1 }
 
-fun lineChainToVertexChain(edges: List<FlexibleEdge>): List<Vector3m> =
+fun lineChainToVertexChain(edges: List<ImmutableEdge>): List<Vector3> =
     listOf(edges[0].vertices.first { !edges[1].vertices.contains(it) })
         .plus(edges.drop(1).zip(edges.dropLast(1)) { c, d -> c.vertices.intersect(d.vertices).first() })
         .plus(edges.last().vertices.first { !edges[edges.size - 2].vertices.contains(it) })
 
 var _i: Int = 0
-fun gatherNewSectorFaces(origin: FlexibleFace): List<FlexibleFace> {
+fun gatherNewSectorFaces(origin: ImmutableFace): List<ImmutableFace> {
   ++_i
   val firstNeighbors = getIncompleteNeighbors(origin).filter { !isConcaveCorner(origin, it) }.toList()
   assert(firstNeighbors.size == 2)
@@ -229,7 +229,7 @@ fun createSpaceNode(sectorCenter: Vector3, nextId: IdSource): Node {
   return createSecondaryNode(sectorCenter, nextId, true)
 }
 
-fun addSpaceNode(realm: Realm, originFace: FlexibleFace, dice: Dice): Graph {
+fun addSpaceNode(realm: Realm, originFace: ImmutableFace, dice: Dice): Graph {
   val walls = gatherNewSectorFaces(originFace)
   val a = getEndEdgeReversed(walls, 0)
   val b = getEndEdge(walls, 0)
@@ -244,7 +244,7 @@ fun addSpaceNode(realm: Realm, originFace: FlexibleFace, dice: Dice): Graph {
 
   val floorVertices = edges.map { edge -> edge.vertices.sortedBy { it.z }.first() }
   val ceilingVertices = edges.map { edge -> edge.vertices.sortedBy { it.z }.last() }
-  val sectorCenter = Vector3(getCenter(floorVertices))
+  val sectorCenter = getCenter(floorVertices)
   val flatCenter = sectorCenter.xy()
 
   val node = createSpaceNode(sectorCenter, realm.nextId)
@@ -280,17 +280,17 @@ fun getIncomplete(graph: Graph) =
     graph.nodes.flatMap { it.walls }
         .filter { faceNodeCount(getFaceInfo(it)) == 1 }
 
-fun createBoundarySector(realm: Realm, originFace: FlexibleFace, dice: Dice): Graph {
+fun createBoundarySector(realm: Realm, originFace: ImmutableFace, dice: Dice): Graph {
   val originalWall = getWallVertices(originFace.vertices)
 
   val newPoints = originFace.vertices.map {
     val projected = it.xy() + it.xy().normalize() * 10f
-    Vector3m(projected.x, projected.y, it.z)
+    Vector3(projected.x, projected.y, it.z)
   }
   val newWall = getWallVertices(newPoints)
   val floorVertices = originalWall.upper.plus(newWall.upper)
 //  val ceilingVertices = originalWall.lower.plus(newWall.lower)
-  val sectorCenter = Vector3(getCenter(floorVertices))
+  val sectorCenter = getCenter(floorVertices)
 
   val node = createSpaceNode(sectorCenter, realm.nextId)
 

@@ -10,9 +10,9 @@ import rendering.VertexWeights
 import rendering.WeightMap
 /*
 fun modelFromSkeleton(bones: Bones, name: String, material:Material): Pair<Model, WeightMap> {
-  val mesh = FlexibleMesh()
+  val mesh = ImmutableMesh()
 
-  val weights = mutableMapOf<Vector3m, VertexWeights>()
+  val weights = mutableMapOf<Vector3, VertexWeights>()
 
   bones
       .filter { it.parentOld != null }

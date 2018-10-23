@@ -30,8 +30,8 @@ typealias AdvancedModelGeneratorMap = Map<MeshType, AdvancedModelGenerator>
 
 fun standardMeshes(): ModelGeneratorMap = mapOf(
 //    MeshType.cube to createCube,
-    MeshType.eyeball to createEyeball,
-    MeshType.sphere to createSphere
+//    MeshType.eyeball to createEyeball,
+//    MeshType.sphere to createSphere
 //    MeshType.bear to createCartoonHuman,
 //    MeshType.human to createHuman,
 //    MeshType.humanOld to createHumanOld,
@@ -76,8 +76,8 @@ fun importedMeshes(vertexSchemas: VertexSchemas) = mapOf(
     .mapValues { loadGltf(vertexSchemas, "models/" + it.value + "/" + it.value) }
 
 fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
-    MeshType.line to createLineMesh(vertexSchemas.flat),
-    MeshType.cylinder to createSimpleMesh(createCylinder(), vertexSchemas.textured)
+    MeshType.line to createLineMesh(vertexSchemas.flat)
+//    MeshType.cylinder to createSimpleMesh(createCylinder(), vertexSchemas.textured)
 )
     .mapValues { createModelElements(it.value) }
 //    .plus(mapOf(

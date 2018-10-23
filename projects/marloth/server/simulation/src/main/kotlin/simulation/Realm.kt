@@ -1,7 +1,7 @@
 package simulation
 
-import mythic.sculpting.FlexibleFace
-import mythic.sculpting.FlexibleMesh
+import mythic.sculpting.ImmutableFace
+import mythic.sculpting.ImmutableMesh
 import mythic.spatial.Vector3
 import randomly.Dice
 import scenery.Textures
@@ -54,34 +54,34 @@ fun getOtherNode(info: FaceInfo, node: Node) =
 
 // May be faster to cast straight to non-nullable but at least for debugging
 // it may be better to explicitly non-null cast.
-fun getFaceInfo(face: FlexibleFace): FaceInfo = (face.data as FaceInfo?)!!
+fun getFaceInfo(face: ImmutableFace): FaceInfo = (face.data as FaceInfo?)!!
 
-val isSolidWall = { face: FlexibleFace ->
+val isSolidWall = { face: ImmutableFace ->
   val info = getFaceInfo(face)
   info.type == FaceType.wall && info.texture != null
 }
-val isSpace = { face: FlexibleFace -> getFaceInfo(face).type == FaceType.space }
+val isSpace = { face: ImmutableFace -> getFaceInfo(face).type == FaceType.space }
 
-fun getNullableFaceInfo(face: FlexibleFace): FaceInfo? = face.data as FaceInfo?
+fun getNullableFaceInfo(face: ImmutableFace): FaceInfo? = face.data as FaceInfo?
 
 data class Realm(
     val boundary: WorldBoundary,
     val nodes: List<Node>,
-    val mesh: FlexibleMesh
+    val mesh: ImmutableMesh
 ) {
 //  val faceMap: FaceSectorMap = mutableMapOf()
 
   val locationNodes: List<Node>
     get() = nodes.filter { it.isWalkable }
 
-  val floors: List<FlexibleFace>
+  val floors: List<ImmutableFace>
     get() = nodes.flatMap { it.floors }.distinct()
 
-  val walls: List<FlexibleFace>
+  val walls: List<ImmutableFace>
     get() = nodes.flatMap { it.walls }.distinct()
 }
 
-fun initializeFaceInfo(type: FaceType, node: Node, face: FlexibleFace) {
+fun initializeFaceInfo(type: FaceType, node: Node, face: ImmutableFace) {
   val info = getNullableFaceInfo(face)
   face.data =
       if (info == null) {
@@ -115,7 +115,7 @@ fun initializeFaceInfo(realm: Realm) {
   }
 }
 
-fun getOtherNode(node: Node, face: FlexibleFace): Node? {
+fun getOtherNode(node: Node, face: ImmutableFace): Node? {
   val info = getFaceInfo(face)
   return if (info.firstNode == node)
     info.secondNode
@@ -123,7 +123,7 @@ fun getOtherNode(node: Node, face: FlexibleFace): Node? {
     info.firstNode
 }
 
-fun getFloor(face: FlexibleFace) =
+fun getFloor(face: ImmutableFace) =
     face.edges.filter { it.first.z == it.second.z }
         .sortedBy { it.first.z }
         .first()

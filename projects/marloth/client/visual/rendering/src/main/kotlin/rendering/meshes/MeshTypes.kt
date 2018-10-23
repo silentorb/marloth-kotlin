@@ -1,13 +1,13 @@
 package rendering.meshes
 
 import mythic.sculpting.EdgeReference
-import mythic.sculpting.FlexibleMesh
-import mythic.sculpting.FlexibleFace
+import mythic.sculpting.ImmutableMesh
+import mythic.sculpting.ImmutableFace
 import mythic.spatial.Vector3
 
 typealias EdgeGroup = Map<EdgeReference, Float>
 typealias VertexGroup = Map<Vector3, Float>
-typealias Faces = List<FlexibleFace>
+typealias Faces = List<ImmutableFace>
 
 data class MeshInfo(
     val vertexGroups: List<VertexGroup> = listOf(),
@@ -15,7 +15,7 @@ data class MeshInfo(
 )
 
 data class MeshNode<Ports>(
-    val mesh: FlexibleMesh,
+    val mesh: ImmutableMesh,
     val ports: Ports,
     val info: MeshInfo
 )

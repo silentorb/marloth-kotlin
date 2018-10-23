@@ -1,6 +1,6 @@
 package rendering.meshes
 
-import mythic.sculpting.FlexibleMesh
+import mythic.sculpting.ImmutableMesh
 import mythic.sculpting.createCylinder
 import mythic.sculpting.transformMesh
 import mythic.spatial.Matrix
@@ -11,11 +11,12 @@ import rendering.Model
 import rendering.mapMaterialToManyMeshes
 
 
-fun createTransformedCylinder(length: Float, radius: Float, transform: Matrix): FlexibleMesh {
-  val mesh = FlexibleMesh()
-  createCylinder(mesh, radius, 8, length)
-  transformMesh(mesh, transform)
-  return mesh
+fun createTransformedCylinder(length: Float, radius: Float, transform: Matrix): ImmutableMesh {
+  val mesh = ImmutableMesh()
+  throw Error("No longer used")
+//  createCylinder(mesh, radius, 8, length)
+//  transformMesh(mesh, transform)
+//  return mesh
 }
 
 val createWallLamp: ModelGenerator = {

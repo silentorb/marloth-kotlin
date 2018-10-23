@@ -8,7 +8,7 @@ import generation.structure.assignTextures
 import generation.structure.doorwayLength
 import generation.structure.generateStructure
 import generation.structure.idSourceFromNodes
-import mythic.sculpting.FlexibleMesh
+import mythic.sculpting.ImmutableMesh
 import mythic.spatial.*
 import randomly.Dice
 import simulation.*
@@ -83,7 +83,7 @@ fun generateWorld(input: WorldInput): World {
   val initialRealm = Realm(
       input.boundary,
       nextId = nextId,
-      mesh = FlexibleMesh(),
+      mesh = ImmutableMesh(),
       graph = graph
   )
   val structuredGraph = generateStructure(initialRealm, input.dice, tunnels)

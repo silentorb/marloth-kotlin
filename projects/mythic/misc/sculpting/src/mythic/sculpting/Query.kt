@@ -1,6 +1,7 @@
 package mythic.sculpting
 
 import mythic.spatial.BoundingBox
+import mythic.spatial.Vector3
 import mythic.spatial.Vector3m
 import org.joml.plus
 
@@ -46,18 +47,18 @@ fun getEdgesCenter(edges: List<EdgeReference>) =
     edges.map { it.first }.reduce { a, b -> a + b } / edges.size.toFloat()
 
 
-fun getVerticesCenter(vertices: List<Vector3m>): Vector3m {
+fun getVerticesCenter(vertices: List<Vector3>): Vector3 {
   if (vertices.size == 0)
-    return Vector3m()
+    return Vector3()
 
-  var result = Vector3m()
+  var result = Vector3()
   for (vertex in vertices) {
     result += vertex
   }
   return result / vertices.size.toFloat()
 }
 
-fun getBounds(vertices: List<Vector3m>): BoundingBox {
+fun getBounds(vertices: List<Vector3>): BoundingBox {
   return BoundingBox(
       Vector3m(
           vertices.minBy { it.x }!!.x,

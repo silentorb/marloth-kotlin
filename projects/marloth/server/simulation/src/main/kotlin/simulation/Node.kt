@@ -1,6 +1,6 @@
 package simulation
 
-import mythic.sculpting.FlexibleFace
+import mythic.sculpting.ImmutableFace
 import mythic.spatial.Vector3
 
 data class Node(
@@ -10,14 +10,14 @@ data class Node(
     val isWalkable: Boolean,
     val biome: Biome,
     val isSolid: Boolean,
-    val floors: List<FlexibleFace>,
-    val ceilings: List<FlexibleFace>,
-    val walls: List<FlexibleFace>
+    val floors: List<ImmutableFace>,
+    val ceilings: List<ImmutableFace>,
+    val walls: List<ImmutableFace>
 ) {
   val horizontalNeighbors get() = walls.asSequence().mapNotNull { getOtherNode(this, it) }
   val neighbors get() = walls.asSequence().mapNotNull { getOtherNode(this, it) }
 
-  val faces: List<FlexibleFace>
+  val faces: List<ImmutableFace>
     get() = floors.plus(walls).plus(ceilings)
 }
 

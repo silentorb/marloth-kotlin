@@ -3,13 +3,13 @@ package lab.views.world
 //import lab.PositionFunction
 import mythic.bloom.Bounds
 import mythic.drawing.Canvas
-import mythic.sculpting.FlexibleEdge
-import mythic.sculpting.FlexibleMesh
+import mythic.sculpting.ImmutableEdge
+import mythic.sculpting.ImmutableMesh
 import mythic.spatial.Vector4
 import org.joml.plus
 import simulation.*
 
-private fun getLineColor(edge: FlexibleEdge): Vector4 {
+private fun getLineColor(edge: ImmutableEdge): Vector4 {
   val wallFaces = edge.faces.filter(isSolidWall)
   val face = wallFaces.firstOrNull()
   if (face != null) {
@@ -28,7 +28,7 @@ private fun getLineColor(edge: FlexibleEdge): Vector4 {
   return Vector4(0f, 0f, 1f, 0.5f)
 }
 
-fun drawVertices(bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, mesh: FlexibleMesh) {
+fun drawVertices(bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, mesh: ImmutableMesh) {
   val solid = canvas.solid(Vector4(1f, 0.6f, 0.0f, 1f))
   val lineColor = Vector4(0f, 0f, 1f, 1f)
   val edges = mesh.edges.filter {it.vertices[0].z == it.vertices[1].z && it.vertices[1].z == 0f}

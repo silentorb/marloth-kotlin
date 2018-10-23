@@ -9,7 +9,7 @@ import marloth.clienting.gui.*
 import mythic.bloom.Bounds
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
-import mythic.sculpting.FlexibleMesh
+import mythic.sculpting.ImmutableMesh
 import mythic.sculpting.getVerticesCenter
 import mythic.spatial.*
 import org.joml.zw
@@ -42,7 +42,7 @@ data class GameViewConfig(
     var logDroppedFrames: Boolean = false
 )
 
-fun renderFaceNormals(renderer: SceneRenderer, length: Float, mesh: FlexibleMesh) {
+fun renderFaceNormals(renderer: SceneRenderer, length: Float, mesh: ImmutableMesh) {
   globalState.lineThickness = 2f
   for (face in mesh.faces) {
     val faceCenter = getVerticesCenter(face.unorderedVertices)

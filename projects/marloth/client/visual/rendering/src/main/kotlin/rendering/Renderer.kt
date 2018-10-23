@@ -267,14 +267,14 @@ class SceneRenderer(
     renderer.dynamicMesh.draw(DrawMethod.points)
   }
 
-  fun drawSolidFace(vertices: List<Vector3m>, color: Vector4) {
+  fun drawSolidFace(vertices: List<Vector3>, color: Vector4) {
     renderer.dynamicMesh.load(vertices.flatMap { listOf(it.x, it.y, it.z) })
 
     effects.flat.activate(ObjectShaderConfig(transform = Matrix(), color = color))
     renderer.dynamicMesh.draw(DrawMethod.triangleFan)
   }
 
-  fun drawOutlinedFace(vertices: List<Vector3m>, color: Vector4, thickness: Float = 1f) {
+  fun drawOutlinedFace(vertices: List<Vector3>, color: Vector4, thickness: Float = 1f) {
     globalState.lineThickness = thickness
     renderer.dynamicMesh.load(vertices.flatMap { listOf(it.x, it.y, it.z) })
 

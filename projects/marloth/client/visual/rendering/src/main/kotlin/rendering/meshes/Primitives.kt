@@ -10,7 +10,7 @@ import rendering.Model
 import rendering.mapMaterialToMesh
 
 val createCube = {
-  val mesh = FlexibleMesh()
+  val mesh = ImmutableMesh()
   createCube(mesh, Vector3(1f, 1f, 1f))
   Model(
       mesh = mesh,
@@ -19,7 +19,7 @@ val createCube = {
 }
 
 val createSkybox = {
-  val mesh = FlexibleMesh()
+  val mesh = ImmutableMesh()
   createCube(mesh, Vector3(1f, 1f, 1f))
   val uvs = listOf(
       Vector2(0f, 0f),
@@ -38,18 +38,18 @@ val createSkybox = {
   )
 }
 
-val createSphere = {
-  val mesh = FlexibleMesh()
-  createSphere(mesh, 0.3f, 8, 6)
-  translateMesh(mesh, Vector3(0f, 0f, 1f))
-  Model(
-      mesh = mesh,
-      groups = listOf(mapMaterialToMesh(Material(Vector4(0.4f, 0.1f, 0.1f, 1f)), mesh))
-  )
-}
-
-fun createCylinder(): FlexibleMesh {
-  val mesh = FlexibleMesh()
-  mythic.sculpting.createCylinder(mesh, 0.5f, 8, 1f)
-  return mesh
-}
+//val createSphere = {
+//  val mesh = ImmutableMesh()
+//  createSphere(mesh, 0.3f, 8, 6)
+//  translateMesh(mesh, Vector3(0f, 0f, 1f))
+//  Model(
+//      mesh = mesh,
+//      groups = listOf(mapMaterialToMesh(Material(Vector4(0.4f, 0.1f, 0.1f, 1f)), mesh))
+//  )
+//}
+//
+//fun createCylinder(): ImmutableMesh {
+//  val mesh = ImmutableMesh()
+//  mythic.sculpting.createCylinder(mesh, 0.5f, 8, 1f)
+//  return mesh
+//}

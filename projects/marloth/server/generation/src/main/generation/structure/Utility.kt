@@ -1,7 +1,6 @@
 package generation.structure
 
 import generation.abstract.FaceInfo
-import generation.abstract.Graph
 import generation.abstract.Node
 import generation.abstract.Realm
 import mythic.sculpting.*
@@ -23,7 +22,7 @@ fun getWallVertices(vertices: Vertices): WallVertices {
   )
 }
 
-fun getWallVertices(face: FlexibleFace): WallVertices =
+fun getWallVertices(face: ImmutableFace): WallVertices =
     getWallVertices(face.vertices)
 
 
@@ -36,7 +35,7 @@ fun getNewWallVertices(sectorCenter: Vector3, edges: Edges): Vertices {
       sortedEdges[0][1]
   )
   val normal = getNormal(vertices)
-  val center = Vector3(getCenter(vertices))
+  val center = getCenter(vertices)
   if (sectorCenter.distance(center + normal) > sectorCenter.distance(center - normal)) {
     return listOf(
         sortedEdges[1][0],
@@ -52,7 +51,7 @@ fun getNewWallVertices(sectorCenter: Vector3, edges: Edges): Vertices {
 fun sortWallVertices(sectorCenter: Vector3, vertices: Vertices): Vertices {
   val sorted = arrangePointsCounterClockwise(vertices)
   val normal = getNormal(sorted)
-  val center = Vector3(getCenter(sorted))
+  val center = getCenter(sorted)
   return if (sectorCenter.distance(center + normal) > sectorCenter.distance(center - normal))
     sorted.reversed()
   else
@@ -72,7 +71,7 @@ fun createSecondaryNode(sectorCenter: Vector3, nextId: IdSource, isSolid: Boolea
   return node
 }
 
-fun createFloor(mesh: FlexibleMesh, node: Node, vertices: Vertices, center: Vector2): FlexibleFace {
+fun createFloor(mesh: ImmutableMesh, node: Node, vertices: Vertices, center: Vector2): ImmutableFace {
   val sortedFloorVertices = vertices
       .sortedBy { atan(it.xy() - center) }
   val floor = mesh.createStitchedFace(sortedFloorVertices)
@@ -81,10 +80,10 @@ fun createFloor(mesh: FlexibleMesh, node: Node, vertices: Vertices, center: Vect
   return floor
 }
 
-fun createCeiling(mesh: FlexibleMesh, node: Node, vertices: Vertices, center: Vector2): FlexibleFace {
+fun createCeiling(mesh: ImmutableMesh, node: Node, vertices: Vertices, center: Vector2): ImmutableFace {
   val sortedFloorVertices = vertices
       .sortedByDescending { atan(it.xy() - center) }
-      .map { it + Vector3m(0f, 0f, wallHeight) }
+      .map { it + Vector3(0f, 0f, wallHeight) }
 
   val surface = mesh.createStitchedFace(sortedFloorVertices)
   node.ceilings.add(surface)
@@ -92,14 +91,14 @@ fun createCeiling(mesh: FlexibleMesh, node: Node, vertices: Vertices, center: Ve
   return surface
 }
 
-fun createWall(realm: Realm, node: Node, vertices: Vertices): FlexibleFace {
+fun createWall(realm: Realm, node: Node, vertices: Vertices): ImmutableFace {
   val wall = realm.mesh.createStitchedFace(vertices)
   wall.data = FaceInfo(FaceType.wall, node, null)
   node.walls.add(wall)
   return wall
 }
 
-fun verticalEdges(face: FlexibleFace) =
+fun verticalEdges(face: ImmutableFace) =
     face.edges.asSequence().filter { it.first.x == it.second.x && it.first.y == it.second.y }
 
 fun idSourceFromNodes(nodes: List<Node>): IdSource =

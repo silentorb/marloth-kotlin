@@ -3,11 +3,11 @@ package mythic.sculpting
 import mythic.spatial.*
 import org.joml.unaryMinus
 
-typealias Vertices = List<Vector3m>
-typealias Edges = List<FlexibleEdge>
-typealias Faces = List<FlexibleFace>
+typealias Vertices3m = List<Vector3m>
+typealias Edges3m = List<FlexibleEdge>
+typealias Faces3m = List<FlexibleFace>
 
-fun skinLoop(mesh: FlexibleMesh, first: List<Vector3m>, second: List<Vector3m>): Faces {
+fun skinLoop(mesh: FlexibleMesh, first: List<Vector3m>, second: List<Vector3m>): Faces3m {
   return (0 until first.size).map { a ->
     val b = if (a == first.size - 1) 0 else a + 1
     mesh.createStitchedFace(listOf(
@@ -34,7 +34,7 @@ fun skin(mesh: FlexibleMesh, first: List<Vector3m>, second: List<Vector3m>) {
   }
 }
 
-fun extrudeBasic(mesh: FlexibleMesh, face: FlexibleFace, transform: Matrix): Faces {
+fun extrudeBasic(mesh: FlexibleMesh, face: FlexibleFace, transform: Matrix): Faces3m {
   val newVertices = face.vertices
       .reversed()
       .map { it.transform(transform) }
@@ -65,7 +65,7 @@ fun lathe(mesh: FlexibleMesh, path: List<Vector3m>, count: Int, sweep: Float = P
   skin(mesh, previous, path)
 }
 
-//fun interpolatePaths(firstPath: Vertices, secondPath: Vertices, weight: Float): Vertices {
+//fun interpolatePaths(firstPath: Vertices3m, secondPath: Vertices3m, weight: Float): Vertices3m {
 //  val secondIterator = secondPath.iterator()
 //  return firstPath.map { secondIterator.next() * weight + it * (1 - weight) }
 //}
@@ -102,7 +102,7 @@ fun minOrOne(first: Float, second: Float): Float {
     result
 }
 
-fun createSwings2(firstPath: Vertices, secondPath: Vertices): SwingsOld {
+fun createSwings2(firstPath: Vertices3m, secondPath: Vertices3m): SwingsOld {
   val secondIterator = secondPath.iterator()
   return firstPath
       .mapIndexed { i, it -> Pair(i, it) }
@@ -144,7 +144,7 @@ fun createInterpolatedSwing(point: Vector3m, other: Vector3m): Swing {
   }
 }
 
-fun createSwings(firstPath: Vertices, secondPath: Vertices): Swings {
+fun createSwings(firstPath: Vertices3m, secondPath: Vertices3m): Swings {
   val secondIterator = secondPath.iterator()
   return firstPath
       .mapIndexed { i, point ->
@@ -159,7 +159,7 @@ fun createSwings(firstPath: Vertices, secondPath: Vertices): Swings {
       }
 }
 
-fun mapPivots(path: Vertices, pivots: Vertices) =
+fun mapPivots(path: Vertices3m, pivots: Vertices3m) =
     path.map {
       val pivot = pivots.firstOrNull { p -> p == it }
       if (pivot != null)
@@ -168,7 +168,7 @@ fun mapPivots(path: Vertices, pivots: Vertices) =
         it
     }
 
-fun transformSwing(pivots: Vertices, matrix: Matrix, swing: SwingInfo): Vector3m {
+fun transformSwing(pivots: Vertices3m, matrix: Matrix, swing: SwingInfo): Vector3m {
   val pivot = pivots.firstOrNull { p -> p == swing.point }
   return if (pivot != null)
     pivot
@@ -194,7 +194,7 @@ fun createLatheCourse(resolution: Int, sweep: Float = Pi * 2): LatheCourse {
   )
 }
 
-//fun latheTwoPaths(mesh: FlexibleMesh, latheCourse: LatheCourse, firstPath: Vertices, secondPath: Vertices) {
+//fun latheTwoPaths(mesh: FlexibleMesh, latheCourse: LatheCourse, firstPath: Vertices3m, secondPath: Vertices3m) {
 ////  val pivots = cloneVertices(firstPath.intersect(secondPath).filter { it.x == 0f })
 //  val firstLastPath = mapPivots(firstPath, pivots)
 //  var previous = firstLastPath
@@ -215,7 +215,7 @@ typealias Swing = (globalTransform: Matrix) -> Vector3m
 fun mapSwings(swings: Swings, globalTransform: Matrix) =
     swings.map { it(globalTransform) }
 
-fun latheTwoPaths(mesh: FlexibleMesh, latheCourse: LatheCourse, firstPath: Vertices, secondPath: Vertices) {
+fun latheTwoPaths(mesh: FlexibleMesh, latheCourse: LatheCourse, firstPath: Vertices3m, secondPath: Vertices3m) {
   val swings = createSwings(firstPath, secondPath)
   val firstLastPath = mapSwings(swings, latheCourse.transformer(0))
   var previous = firstLastPath
@@ -231,14 +231,14 @@ fun latheTwoPaths(mesh: FlexibleMesh, latheCourse: LatheCourse, firstPath: Verti
     skin(mesh, previous, firstLastPath)
 }
 
-fun transformVertices(matrix: Matrix, vertices: Vertices): Vertices {
+fun transformVertices(matrix: Matrix, vertices: Vertices3m): Vertices3m {
   for (vertex in vertices) {
     vertex.set(vertex.transform(matrix))
   }
   return vertices
 }
 
-fun transformFaces(matrix: Matrix, faces: Faces): Vertices {
+fun transformFaces(matrix: Matrix, faces: Faces3m): Vertices3m {
   return transformVertices(matrix, distinctVertices(faces.flatMap { it.vertices }))
 }
 
@@ -285,22 +285,22 @@ data class VerticalDimensions(
     val height: Float = top - bottom
 )
 
-fun getPathDimensions(path: Vertices): VerticalDimensions {
+fun getPathDimensions(path: Vertices3m): VerticalDimensions {
   val sorted = path.map { it.y }.sorted()
   val bottom = sorted.first()
   val top = sorted.last()
   return VerticalDimensions(top, bottom)
 }
 
-fun cloneVertices(vertices: Collection<Vector3m>): Vertices =
+fun cloneVertices(vertices: Collection<Vector3m>): Vertices3m =
     vertices.map { Vector3m(it) }
 
-fun flipVertical(vertices: Vertices): Vertices {
+fun flipVertical(vertices: Vertices3m): Vertices3m {
   val middle = vertices.map { it.z }.average().toFloat()
   return vertices.map { Vector3m(it.x, it.y, middle - (it.z - middle)) }
 }
 
-fun joinPaths(verticalGap: Float, first: Vertices, second: Vertices): Vertices {
+fun joinPaths(verticalGap: Float, first: Vertices3m, second: Vertices3m): Vertices3m {
   val firstCopy = cloneVertices(first)
   val secondCopy = cloneVertices(second)
   val half = verticalGap * 2
@@ -312,7 +312,7 @@ fun joinPaths(verticalGap: Float, first: Vertices, second: Vertices): Vertices {
 fun convertAsXZ(vertices: List<Vector2>) =
     vertices.map { Vector3m(it.x, 0f, it.y) }
 
-fun setAnchor(anchor: Vector3m, vertices: Vertices) {
+fun setAnchor(anchor: Vector3m, vertices: Vertices3m) {
   distortedTranslatePosition(-anchor, vertices)
 }
 
@@ -336,7 +336,7 @@ fun stitchEdgeLoops(firstLoop: List<EdgeReference>, secondLoop: List<EdgeReferen
   }
 }
 
-fun mirrorAlongY(mesh: FlexibleMesh): Faces {
+fun mirrorAlongY(mesh: FlexibleMesh): Faces3m {
   val nearAxis = mesh.distinctVertices.filter { nearly(it.y) }
   nearAxis.forEach { it.y = 0f }
   val existingVertices = nearAxis.toMutableList()

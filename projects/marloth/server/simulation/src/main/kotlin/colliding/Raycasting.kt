@@ -1,6 +1,6 @@
 package colliding
 
-import mythic.sculpting.FlexibleFace
+import mythic.sculpting.ImmutableFace
 import mythic.spatial.Vector3
 import mythic.spatial.lineSegmentIntersectsLineSegment
 import simulation.*
@@ -8,7 +8,7 @@ import simulation.*
 fun raycastNodes(firstNode: Node, start: Vector3, end: Vector3): List<Node> {
   val result = mutableListOf(firstNode)
   var node = firstNode
-  var lastWall: FlexibleFace? = null
+  var lastWall: ImmutableFace? = null
   do {
     val wall = node.walls
         .filter { it != lastWall && getFaceInfo(it).type != FaceType.space }
@@ -32,7 +32,7 @@ fun raycastNodes(firstNode: Node, start: Vector3, end: Vector3): List<Node> {
 
 fun rayCanHitPoint(firstNode: Node, start: Vector3, end: Vector3): Boolean {
   var node = firstNode
-  var lastWall: FlexibleFace? = null
+  var lastWall: ImmutableFace? = null
   do {
     val walls = node.walls
         .filter { it != lastWall }

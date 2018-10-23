@@ -2,7 +2,7 @@ package front
 
 import generation.structure.getWallVertices
 import marloth.clienting.Client
-import mythic.sculpting.FlexibleFace
+import mythic.sculpting.ImmutableFace
 import mythic.sculpting.VertexNormalTexture
 import mythic.sculpting.getBounds
 import mythic.spatial.Vector2
@@ -15,7 +15,7 @@ import simulation.Node
 import simulation.getFaceInfo
 import kotlin.math.roundToInt
 
-fun createTexturedHorizontalSurface(face: FlexibleFace, texture: Textures): TextureFace {
+fun createTexturedHorizontalSurface(face: ImmutableFace, texture: Textures): TextureFace {
   val vertices = face.unorderedVertices
   val bounds = getBounds(vertices)
   val scale = 2f
@@ -38,7 +38,7 @@ fun createTexturedHorizontalSurface(face: FlexibleFace, texture: Textures): Text
   )
 }
 
-fun createTexturedWall(face: FlexibleFace, texture: Textures): TextureFace {
+fun createTexturedWall(face: ImmutableFace, texture: Textures): TextureFace {
   val vertices = face.unorderedVertices
   val bounds = getBounds(vertices)
   val dimensions = bounds.dimensions

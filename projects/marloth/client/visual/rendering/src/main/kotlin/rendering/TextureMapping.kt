@@ -1,22 +1,22 @@
 package rendering
 
-import mythic.sculpting.FlexibleFace
+import mythic.sculpting.ImmutableFace
 import mythic.sculpting.VertexNormalTexture
-import mythic.spatial.Vector3m
+import mythic.spatial.Vector3
 import mythic.spatial.put
-import rendering.meshes.FlexibleVertexSerializer
+import rendering.meshes.ImmutableVertexSerializer
 import scenery.Textures
 
-typealias VertexMap = Map<Vector3m, VertexNormalTexture>
-typealias FaceTextureMap = Map<FlexibleFace, VertexMap>
+typealias VertexMap = Map<Vector3, VertexNormalTexture>
+typealias FaceTextureMap = Map<ImmutableFace, VertexMap>
 
 data class TextureFace(
-    val face: FlexibleFace,
+    val face: ImmutableFace,
     val vertexMap: VertexMap,
     val texture: Textures
 )
 
-fun texturedVertexSerializer(vertexInfo: FaceTextureMap): FlexibleVertexSerializer = { vertex, face, vertices ->
+fun texturedVertexSerializer(vertexInfo: FaceTextureMap): ImmutableVertexSerializer = { vertex, face, vertices ->
   val info = vertexInfo[face]!![vertex]!!
   vertices.put(info.normal)
   vertices.put(info.uv.x)
