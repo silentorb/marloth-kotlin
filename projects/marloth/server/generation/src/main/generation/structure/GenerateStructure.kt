@@ -2,11 +2,12 @@ package generation.structure
 
 import generation.*
 import generation.abstract.*
+import generation.abstract.Realm
 import mythic.sculpting.*
 import mythic.spatial.*
 import org.joml.plus
 import randomly.Dice
-import simulation.FaceType
+import simulation.*
 
 const val doorwayLength = 2.5f
 const val wallHeight = 4f

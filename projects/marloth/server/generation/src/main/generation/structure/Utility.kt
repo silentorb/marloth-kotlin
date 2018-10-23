@@ -1,7 +1,5 @@
 package generation.structure
 
-import generation.abstract.FaceInfo
-import generation.abstract.Node
 import generation.abstract.Realm
 import mythic.sculpting.*
 import mythic.spatial.*
@@ -9,6 +7,7 @@ import org.joml.plus
 import simulation.FaceType
 import simulation.IdSource
 import simulation.newIdSource
+import simulation.*
 
 data class WallVertices(
     val lower: Vertices,
@@ -66,7 +65,12 @@ fun createSecondaryNode(sectorCenter: Vector3, nextId: IdSource, isSolid: Boolea
       position = sectorCenter,
       radius = radius,
       isSolid = isSolid,
-      isWalkable = false
+      isWalkable = false,
+      biome = Biome.void,
+      height = 0f,
+      floors = mutableListOf(),
+      ceilings = mutableListOf(),
+      walls = mutableListOf()
   )
   return node
 }

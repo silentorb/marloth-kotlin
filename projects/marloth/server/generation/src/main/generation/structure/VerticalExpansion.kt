@@ -2,11 +2,13 @@ package generation.structure
 
 import generation.BiomeMap
 import generation.abstract.*
+import generation.abstract.Realm
 import mythic.sculpting.ImmutableFace
 import mythic.spatial.Vector3
 import org.joml.plus
 import randomly.Dice
 import simulation.FaceType
+import simulation.*
 
 enum class VerticalDirection {
   down,
@@ -84,7 +86,7 @@ fun createAscendingSpaceWalls(realm: Realm, nodes: List<Node>, facing: VerticalF
       .map { upperWall ->
         val info = getFaceInfo(upperWall)
         val node = if (info.firstNode!!.isWalkable)
-          info.firstNode
+          info.firstNode!!
         else
           info.secondNode!!
 

@@ -2,7 +2,6 @@ package generation
 
 import gatherNodes
 import generation.abstract.*
-import generation.abstract.Node
 import generation.abstract.Realm
 import generation.structure.assignTextures
 import generation.structure.doorwayLength
@@ -23,7 +22,12 @@ fun createRoomNode(boundary: WorldBoundary, id: Id, dice: Dice): Node {
       position = Vector3(dice.getFloat(start.x, end.x), dice.getFloat(start.y, end.y), 0f),
       radius = radius,
       isSolid = false,
-      isWalkable = true
+      isWalkable = true,
+      biome = Biome.void,
+      height = 0f,
+      floors = mutableListOf(),
+      ceilings = mutableListOf(),
+      walls = mutableListOf()
   )
 }
 
@@ -92,23 +96,15 @@ fun generateWorld(input: WorldInput): World {
   val realm = simulation.Realm(
       boundary = input.boundary,
       nodes = structuredGraph.nodes.map {
-        simulation.Node(
-            id = it.id,
-            position = it.position,
-            height = it.height,
-            isWalkable = it.isWalkable,
-            biome = biomeMap[it.id]!!,
-            isSolid = it.isSolid,
-            floors = it.floors.toList(),
-            ceilings = it.ceilings.toList(),
-            walls = it.walls.toList()
+        it.copy(
+            biome = biomeMap[it.id]!!
         )
       },
       mesh = initialRealm.mesh
   )
   val getNode = { id: Long? -> realm.nodes.firstOrNull { it.id == id } }
   realm.mesh.faces.forEach { face ->
-    val data = generation.abstract.getFaceInfo(face)
+    val data = getFaceInfo(face)
     assert(data.firstNode != data.secondNode)
     val data2 = simulation.FaceInfo(
         type = data.type,

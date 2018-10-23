@@ -1,6 +1,5 @@
 package mythic.sculpting
 
-
 import mythic.spatial.Vector3
 import mythic.spatial.times
 import org.joml.plus
@@ -10,8 +9,8 @@ typealias Edges = List<ImmutableEdge>
 typealias Faces = List<ImmutableFace>
 
 class ImmutableEdge(
-    var first: Vector3,
-    var second: Vector3,
+    val first: Vector3,
+    val second: Vector3,
     val faces: MutableList<ImmutableFace>
 ) {
   val vertices = listOf(first, second)

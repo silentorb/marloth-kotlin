@@ -7,6 +7,7 @@ import mythic.spatial.Vector3
 import mythic.spatial.Vector3m
 import mythic.spatial.lineIntersectsCircle
 import org.joml.Intersectionf
+import simulation.*
 
 private val tunnelPadding = 0f
 

@@ -6,34 +6,7 @@ import mythic.spatial.Vector3
 import scenery.Textures
 import simulation.*
 
-enum class ConnectionType {
-  tunnel,
-  obstacle,
-  union,
-  ceilingFloor
-}
-
-class Connection(
-    val first: Id,
-    val second: Id,
-    val type: ConnectionType
-) {
-  init {
-    assert(first != second)
-  }
-
-  fun contains(id: Id) = first == id || second == id
-  fun contains(node: Node) = contains(node.id)
-
-  fun getOther(node: Node) = if (node.id == first) second else first
-
-  fun getOther(graph: Graph, node: Node) = graph.node(getOther(node))!!
-
-  fun nodes(graph: Graph): List<Node> = listOf(graph.node(first)!!, graph.node(second)!!)
-}
-
-typealias Connections = List<Connection>
-
+/*
 class Node(
     override val id: Id,
     val position: Vector3,
@@ -59,35 +32,7 @@ class Node(
   val faces: List<ImmutableFace>
     get() = floors.plus(walls).plus(ceilings)
 }
-
-data class Graph(
-    val nodes: List<Node>,
-    val connections: Connections
-) {
-  fun node(id: Id): Node? = nodes.first { it.id == id }
-
-  fun plus(graph: Graph) =
-      Graph(
-          nodes = nodes.plus(graph.nodes),
-          connections = connections.plus(graph.connections)
-      )
-
-  fun plusConnections(newConnections: Connections) =
-      copy(
-          connections = connections.plus(newConnections)
-      )
-
-  fun minusConnections(oldConnections: Connections) =
-      copy(
-          connections = connections.minus(oldConnections)
-      )
-
-  fun plusNodes(newNodes: List<Node>) =
-      copy(
-          nodes = nodes.plus(newNodes)
-      )
-
-}
+*/
 
 data class Realm(
     val boundary: WorldBoundary,
@@ -100,44 +45,44 @@ data class Realm(
     get() = graph.nodes
 }
 
-data class FaceInfo(
-    var type: FaceType,
-    val firstNode: Node?,
-    var secondNode: Node?,
-    var texture: Textures? = null,
-    var debugInfo: String? = null
-)
+//data class FaceInfo(
+//    var type: FaceType,
+//    val firstNode: Node?,
+//    var secondNode: Node?,
+//    var texture: Textures? = null,
+//    var debugInfo: String? = null
+//)
 
-fun getFaceInfo(face: ImmutableFace): FaceInfo = (face.data as FaceInfo?)!!
+//fun getFaceInfo(face: ImmutableFace): FaceInfo = (face.data as FaceInfo?)!!
 
 fun faceNodes(info: FaceInfo) =
     listOf(info.firstNode, info.secondNode)
 
-fun getOtherNode(node: Node, face: ImmutableFace): Node? {
-  val info = getFaceInfo(face)
-  return if (info.firstNode == node)
-    info.secondNode
-  else
-    info.firstNode
-}
+//fun getOtherNode(node: Node, face: ImmutableFace): Node? {
+//  val info = getFaceInfo(face)
+//  return if (info.firstNode == node)
+//    info.secondNode
+//  else
+//    info.firstNode
+//}
 
-fun getNullableFaceInfo(face: ImmutableFace): FaceInfo? = face.data as FaceInfo?
+//fun getNullableFaceInfo(face: ImmutableFace): FaceInfo? = face.data as FaceInfo?
 
-fun initializeFaceInfo(type: FaceType, node: Node, face: ImmutableFace) {
-  val info = getNullableFaceInfo(face)
-  face.data =
-      if (info == null) {
-        FaceInfo(type, node, null, null)
-      } else {
-        if (info.firstNode == node || info.secondNode == node)
-          face.data
-        else {
-//          assert(info.firstNode != null && info.secondNode != null)
-
-          FaceInfo(type, info.firstNode, node)
-        }
-      }
-}
+//fun initializeFaceInfo(type: FaceType, node: Node, face: ImmutableFace) {
+//  val info = getNullableFaceInfo(face)
+//  face.data =
+//      if (info == null) {
+//        FaceInfo(type, node, null, null)
+//      } else {
+//        if (info.firstNode == node || info.secondNode == node)
+//          face.data
+//        else {
+////          assert(info.firstNode != null && info.secondNode != null)
+//
+//          FaceInfo(type, info.firstNode, node)
+//        }
+//      }
+//}
 
 fun initializeNodeFaceInfo(node: Node) {
   for (face in node.walls) {

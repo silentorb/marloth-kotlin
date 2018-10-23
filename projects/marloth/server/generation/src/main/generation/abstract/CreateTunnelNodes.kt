@@ -3,7 +3,7 @@ package generation.abstract
 import generation.getCenter
 import generation.structure.idSourceFromNodes
 import mythic.spatial.Vector3
-import simulation.newIdSource
+import simulation.*
 
 const val tunnelRadius = 1f
 
@@ -31,7 +31,13 @@ fun createTunnelNodes(graph: Graph, preTunnels: List<PreTunnel>): Graph {
             position = getCenter(graph.node(oldConnection.first)!!, graph.node(oldConnection.second)!!),
             radius = tunnelRadius,
             isSolid = false,
-            isWalkable = true)
+            isWalkable = true,
+            height = 0f,
+            biome = Biome.void,
+            floors = mutableListOf(),
+            ceilings = mutableListOf(),
+            walls = mutableListOf()
+        )
 
 //        graph.disconnect(preTunnel.connection)
 //        graph.connect(oldConnection.first, tunnelNode, ConnectionType.tunnel)
@@ -46,7 +52,7 @@ fun createTunnelNodes(graph: Graph, preTunnels: List<PreTunnel>): Graph {
         listOf(
             Connection(oldConnection.first, node.id, ConnectionType.tunnel),
             Connection(oldConnection.second, node.id, ConnectionType.tunnel)
-            )
+        )
       }.flatten()
 
   return Graph(nodes, connections)

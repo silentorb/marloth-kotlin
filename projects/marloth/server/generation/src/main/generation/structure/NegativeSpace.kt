@@ -1,8 +1,6 @@
 package generation.structure
 
 import generation.abstract.*
-import generation.abstract.FaceInfo
-import generation.abstract.Node
 import generation.abstract.Realm
 import mythic.sculpting.*
 import mythic.spatial.*
@@ -11,6 +9,7 @@ import randomly.Dice
 import simulation.FaceType
 import simulation.IdSource
 import simulation.getFloor
+import simulation.*
 
 fun <T> zeroIfNull(value: T?) =
     if (value == null)

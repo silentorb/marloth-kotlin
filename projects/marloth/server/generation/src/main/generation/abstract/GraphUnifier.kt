@@ -1,4 +1,5 @@
 package generation.abstract
+import simulation.*
 
 import generation.getNodeDistance
 

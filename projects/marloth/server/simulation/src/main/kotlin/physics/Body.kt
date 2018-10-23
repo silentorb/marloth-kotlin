@@ -19,12 +19,13 @@ val voidNode: Node = Node(
     id = -1,
     position = Vector3(0f, 0f, -voidNodeHeight),
     height = voidNodeHeight,
+    radius = 0f,
     isSolid = false,
     isWalkable = false,
     biome = Biome.void,
-    floors = listOf(),
-    ceilings = listOf(),
-    walls = listOf()
+    floors = mutableListOf(),
+    ceilings = mutableListOf(),
+    walls = mutableListOf()
 )
 
 data class Body(
