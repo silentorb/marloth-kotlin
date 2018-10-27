@@ -66,7 +66,7 @@ fun applyForces(body: Body, forces: List<MovementForce>, resistance: Float, delt
 
 fun isWalkable(node: Node?) = node?.isWalkable ?: false
 
-fun isGroundedOnNeighborNode(body: Body): Boolean {
+fun isGroundedOnNeighborNode(realm: Realm, body: Body): Boolean {
   if (body.node.walls.none())
     return false
 
@@ -78,15 +78,15 @@ fun isGroundedOnNeighborNode(body: Body): Boolean {
       .sortedBy { it.second }
       .first()
 
-  return distance < 0.5f && isWalkable(getOtherNode(body.node, nearestWall))
+  return distance < 0.5f && isWalkable(realm.nodeTable[getOtherNode(body.node, realm.faces[nearestWall.id]!!)])
 }
 
-fun isGrounded(body: Body): Boolean {
-  return !body.gravity || body.node.isWalkable || isGroundedOnNeighborNode(body)
+fun isGrounded(realm: Realm, body: Body): Boolean {
+  return !body.gravity || body.node.isWalkable || isGroundedOnNeighborNode(realm, body)
 
 }
 
-fun moveBody(body: Body, offset: Vector3, walls: List<Collision>, delta: Float): Vector3 {
+fun moveBody(realm: Realm, body: Body, offset: Vector3, walls: List<Collision>, delta: Float): Vector3 {
   val position = if (offset == Vector3())
     body.position
   else
@@ -94,7 +94,7 @@ fun moveBody(body: Body, offset: Vector3, walls: List<Collision>, delta: Float):
       WallCollision3(it.wall!!, it.hitPoint, it.directGap, it.travelingGap)
     })
 
-  return if (!isGrounded(body))
+  return if (!isGrounded(realm, body))
     position + Vector3(0f, 0f, -4f * delta)
   else
     position
@@ -104,7 +104,7 @@ fun updateBody(realm: Realm, body: Body, movementForces: List<MovementForce>, co
                orientationForces: List<AbsoluteOrientationForce>, delta: Float): Body {
   return body.copy(
       velocity = applyForces(body, movementForces, body.attributes.resistance, delta),
-      position = moveBody(body, body.velocity, collisions, delta),
+      position = moveBody(realm, body, body.velocity, collisions, delta),
       orientation = orientationForces.firstOrNull()?.orientation ?: body.orientation,
       node = updateBodyNode(realm, body)
   )

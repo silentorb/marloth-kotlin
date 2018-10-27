@@ -1,6 +1,7 @@
 package intellect
 
 import simulation.Node
+import simulation.Realm
 import simulation.getPathNeighbors
 
 data class PathNode(
@@ -14,13 +15,13 @@ tailrec fun unwindPath(pathNode: PathNode, path: List<Node> = listOf()): List<No
     else
       unwindPath(pathNode.previous, listOf(pathNode.node).plus(path))
 
-tailrec fun findPath(destination: Node, scanned: List<PathNode>, next: List<PathNode>): List<Node>? {
+tailrec fun findPath(realm: Realm, destination: Node, scanned: List<PathNode>, next: List<PathNode>): List<Node>? {
   if (next.none())
     return null
 
   val neighbors = next
       .flatMap { node ->
-        getPathNeighbors(node.node)
+        getPathNeighbors(realm.nodeTable, realm.faces, node.node)
             .filter { n -> scanned.none { it.node == n } && next.none { it.node == n } }
             .map { PathNode(it, node) }
             .toList()
@@ -32,10 +33,10 @@ tailrec fun findPath(destination: Node, scanned: List<PathNode>, next: List<Path
     return unwindPath(arrived.first())
 
   val newScanned = scanned.plus(neighbors)
-  return findPath(destination, newScanned, neighbors)
+  return findPath(realm, destination, newScanned, neighbors)
 }
 
-fun findPath(source: Node, destination: Node): List<Node>? {
+fun findPath(realm: Realm, source: Node, destination: Node): List<Node>? {
   val list = listOf(PathNode(source, null))
-  return findPath(destination, list, list)
+  return findPath(realm, destination, list, list)
 }

@@ -18,7 +18,7 @@ data class Knowledge(
 fun updateKnowledge(world: World, character: Character, knowledge: Knowledge?): Knowledge {
   return Knowledge(
       spiritId = character.id,
-      nodes = world.realm.nodes,
+      nodes = world.realm.nodeList,
       visibleCharacters = getVisibleCharacters(world, character),
       world = world
   )

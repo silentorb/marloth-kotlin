@@ -1,11 +1,8 @@
 package generation.structure
 
-import generation.BiomeMap
-import generation.abstract.*
 import generation.abstract.Realm
 import mythic.sculpting.ImmutableFace
 import mythic.spatial.Vector3
-import org.joml.plus
 import randomly.Dice
 import simulation.FaceType
 import simulation.*
@@ -102,10 +99,10 @@ fun createAscendingSpaceWalls(realm: Realm, nodes: List<Node>, facing: VerticalF
 
         val orderedVertices = sortWallVertices(emptyNode.position, unorderedVertices)
         val newWall = realm.mesh.createStitchedFace(orderedVertices)
-        newWall.data = FaceInfo(FaceType.wall, upperNode, otherUpNode, null, "lower")
+        newWall.data = NodeFace(FaceType.wall, upperNode, otherUpNode, null, "lower")
         upperNode.walls.add(newWall)
         otherUpNode.walls.add(newWall)
-        Connection(node.id, upperNode.id, ConnectionType.ceilingFloor)
+        Connection(node.id, upperNode.id, ConnectionType.ceilingFloor, FaceType.floor)
       }
 }
 

@@ -100,7 +100,7 @@ fun createCube(mesh: ImmutableMesh, size: Vector3): List<ImmutableFace> {
 
   val sides = (0..3).map { a ->
     val b = if (a > 2) 0 else a + 1
-    mesh.createStitchedFace(listOf(
+    mesh.createStitchedFace(0, listOf(
         top_vertices[b], top_vertices[a],
         bottom_vertices[a], bottom_vertices[b]
     ))
@@ -120,7 +120,7 @@ fun squareDown(mesh: FlexibleMesh, size: Vector2, z: Float): FlexibleFace {
 
 fun squareDown(mesh: ImmutableMesh, size: Vector2, z: Float): ImmutableFace {
   val half = size * 0.5f;
-  return mesh.createStitchedFace(listOf(
+  return mesh.createStitchedFace(0, listOf(
       Vector3(-half.x, -half.y, z),
       Vector3(-half.x, half.y, z),
       Vector3(half.x, half.y, z),
@@ -140,7 +140,7 @@ fun squareUp(mesh: FlexibleMesh, size: Vector2, z: Float): FlexibleFace {
 
 fun squareUp(mesh: ImmutableMesh, size: Vector2, z: Float): ImmutableFace {
   val half = size * 0.5f;
-  return mesh.createStitchedFace(listOf(
+  return mesh.createStitchedFace(0, listOf(
       Vector3(-half.x, -half.y, z),
       Vector3(half.x, -half.y, z),
       Vector3(half.x, half.y, z),

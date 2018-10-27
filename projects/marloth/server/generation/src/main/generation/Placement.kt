@@ -37,11 +37,11 @@ fun placeEnemies(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): Deck
 }
 
 fun placeDoors(realm: Realm, nextId: IdSource): Deck =
-    toDeck(realm.nodes.filter { it.biome == Biome.home }
+    toDeck(realm.nodeList.filter { it.biome == Biome.home }
         .flatMap { node ->
           node.walls.filter {
             val info = getFaceInfo(it)
-            info.type == FaceType.space
+            info.faceType == FaceType.space
                 && getOtherNode(info, node)!!.biome != Biome.home
           }
         }
@@ -69,7 +69,7 @@ fun placeDoors(realm: Realm, nextId: IdSource): Deck =
 fun placeWallLamps(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): Deck {
   val count = (10f * scale).toInt()
   val isValidLampWall = { it: ImmutableFace ->
-    getFaceInfo(it).type == FaceType.wall && getFaceInfo(it).texture != null
+    getFaceInfo(it).faceType == FaceType.wall && getFaceInfo(it).texture != null
   }
   val options = realm.locationNodes.filter { it.walls.any(isValidLampWall) }
   assert(options.any())
@@ -125,7 +125,7 @@ fun newPlayer(nextId: IdSource, playerNode: Node): Hand =
 
 
 fun finalizeRealm(input: WorldInput, realm: Realm): World {
-  val playerNode = realm.nodes.first()
+  val playerNode = realm.nodeList.first()
   val scale = calculateWorldScale(input.boundary.dimensions)
   val nextId = newIdSource(1)
   val deck = Deck(

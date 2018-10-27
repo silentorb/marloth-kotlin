@@ -156,7 +156,7 @@ fun createWall(edge: ImmutableEdge, mesh: ImmutableMesh): ImmutableFace {
 
 fun getOrCreateWall(edge: ImmutableEdge, otherEdges: List<ImmutableEdgeReference>, mesh: ImmutableMesh): ImmutableFace {
   return if (otherEdges.size > 1) {
-    val face = edge.faces.firstOrNull { it.data != null && getFaceInfo(it).type == FaceType.space }
+    val face = edge.faces.firstOrNull { it.data != null && getFaceInfo(it).faceType == FaceType.space }
     if (face != null)
       face
     else

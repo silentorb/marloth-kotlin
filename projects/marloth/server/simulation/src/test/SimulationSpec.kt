@@ -10,8 +10,6 @@ import org.jetbrains.spek.api.dsl.on
 import physics.MovingBody
 import physics.checkWallCollision
 import physics.getWallCollisions
-import simulation.FaceInfo
-import simulation.FaceType
 import simulation.simulationDelta
 import junit.framework.TestCase.*
 import physics.WallCollision3
@@ -22,7 +20,7 @@ class SimulationSpec : Spek({
     on("bodies collide with room corners") {
 
       fun newFace(edges: List<Pair<Vector3, Vector3>>, normal: Vector3) =
-          ImmutableFace(
+          ImmutableFace(0,
               edges
                   .map {
                     ImmutableEdgeReference(

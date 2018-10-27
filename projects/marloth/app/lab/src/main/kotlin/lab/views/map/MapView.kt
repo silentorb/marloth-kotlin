@@ -6,8 +6,6 @@ import lab.views.LabCommandState
 import mythic.bloom.Bounds
 import mythic.platforming.WindowInfo
 import mythic.spatial.*
-import org.joml.Vector2i
-import org.joml.minus
 import rendering.createCameraEffectsData
 import scenery.Camera
 import simulation.Realm
@@ -44,7 +42,7 @@ data class Hit(
 )
 
 private fun getFaceHits(start: Vector3, end: Vector3, world: Realm): List<Hit> {
-  val faces = world.nodes.flatMap { it.faces }.distinct()
+  val faces = world.nodeList.flatMap { it.faces }.distinct()
 //      .take(1)
   val rayDirection = (end - start).normalize()
 

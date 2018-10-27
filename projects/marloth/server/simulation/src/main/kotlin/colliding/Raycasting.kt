@@ -5,13 +5,14 @@ import mythic.spatial.Vector3
 import mythic.spatial.lineSegmentIntersectsLineSegment
 import simulation.*
 
+/*
 fun raycastNodes(firstNode: Node, start: Vector3, end: Vector3): List<Node> {
   val result = mutableListOf(firstNode)
   var node = firstNode
   var lastWall: ImmutableFace? = null
   do {
     val wall = node.walls
-        .filter { it != lastWall && getFaceInfo(it).type != FaceType.space }
+        .filter { it != lastWall && getFaceInfo(it).faceType != FaceType.space }
         .firstOrNull {
           val edge = getFloor(it)
           lineSegmentIntersectsLineSegment(start, end, edge.first, edge.second).first
@@ -29,8 +30,9 @@ fun raycastNodes(firstNode: Node, start: Vector3, end: Vector3): List<Node> {
   } while (true)
   return result
 }
+*/
 
-fun rayCanHitPoint(firstNode: Node, start: Vector3, end: Vector3): Boolean {
+fun rayCanHitPoint(nodes: NodeTable, faces: FaceTable, firstNode: Node, start: Vector3, end: Vector3): Boolean {
   var node = firstNode
   var lastWall: ImmutableFace? = null
   do {
@@ -45,10 +47,10 @@ fun rayCanHitPoint(firstNode: Node, start: Vector3, end: Vector3): Boolean {
     if (wall == null)
       return true
 
-    if (getFaceInfo(wall).type != FaceType.space)
+    if (faces[wall.id]!!.faceType != FaceType.space)
       return false
 
-    val nextNode = getOtherNode(node, wall)
+    val nextNode = nodes[getOtherNode(node,faces[ wall.id]!!)]
     if (nextNode == null)
       return true
 

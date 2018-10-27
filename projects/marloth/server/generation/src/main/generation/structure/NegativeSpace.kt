@@ -1,6 +1,5 @@
 package generation.structure
 
-import generation.abstract.*
 import generation.abstract.Realm
 import mythic.sculpting.*
 import mythic.spatial.*
@@ -17,7 +16,7 @@ fun <T> zeroIfNull(value: T?) =
     else
       1
 
-fun faceNodeCount(faceInfo: FaceInfo) =
+fun faceNodeCount(faceInfo: NodeFace) =
     zeroIfNull(faceInfo.firstNode) + zeroIfNull(faceInfo.secondNode)
 
 fun faceNodeCount(face: ImmutableFace) =
@@ -55,7 +54,7 @@ fun getIncompleteNeighbors(face: ImmutableFace): Sequence<ImmutableFace> =
         .asSequence()
         .filter {
           val info = getFaceInfo(it)
-          info.type == FaceType.wall && faceNodeCount(info) == 1
+          info.faceType == FaceType.wall && faceNodeCount(info) == 1
         }
 
 fun getConcaveCorners(face: ImmutableFace): Sequence<ImmutableFace> =
@@ -213,7 +212,7 @@ fun addSpaceNode(graph: Graph, node: Node): Graph {
           node.walls
               .mapNotNull { getOtherNode(node, it) }
               .map {
-                Connection(node.id, it.id, ConnectionType.obstacle)
+                Connection(node.id, it.id, ConnectionType.obstacle, FaceType.wall)
               })
   )
 }
@@ -268,7 +267,7 @@ fun addSpaceNode(realm: Realm, originFace: ImmutableFace, dice: Dice): Graph {
     if (node.isSolid)
       newWall.flipQuad()
 
-    newWall.data = FaceInfo(FaceType.wall, node, null, null, "space-b")
+    newWall.data = NodeFace(FaceType.wall, node, null, null, "space-b")
     node.walls.add(newWall)
   }
 
@@ -306,7 +305,7 @@ fun createBoundarySector(realm: Realm, originFace: ImmutableFace, dice: Dice): G
   for (i in 0..1) {
     val outerSideEdge = outerWall.edge(newWall.lower[i], newWall.upper[1 - i])
     assert(outerSideEdge != null)
-    val neighborWalls = outerSideEdge!!.faces.filter { getFaceInfo(it).type == FaceType.wall }
+    val neighborWalls = outerSideEdge!!.faces.filter { getFaceInfo(it).faceType == FaceType.wall }
     if (neighborWalls.size > 1) {
       val missingWalls = neighborWalls.filter { !node.walls.contains(it) && it.edges.any { originFace.edges.map { it.edge }.contains(it.edge) } }
       node.walls.addAll(missingWalls)

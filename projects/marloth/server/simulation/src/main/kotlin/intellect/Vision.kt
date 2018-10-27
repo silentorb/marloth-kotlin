@@ -18,5 +18,5 @@ fun canSee(world: World, viewer: Character, target: Character): Boolean {
   val targetBody = world.bodyTable[target.id]!!
   return isInVisibleRange(viewerBody, targetBody)
       && isInAngleOfView(viewer, viewerBody, targetBody)
-      && rayCanHitPoint(viewerBody.node, viewerBody.position, targetBody.position)
+      && rayCanHitPoint(world.realm.nodeTable, world.realm.faces, viewerBody.node, viewerBody.position, targetBody.position)
 }

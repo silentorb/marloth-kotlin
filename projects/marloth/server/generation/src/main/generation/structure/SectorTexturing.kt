@@ -4,12 +4,12 @@ import generation.BiomeMap
 import generation.abstract.Realm
 import generation.abstract.faceNodes
 import scenery.Textures
-import simulation.FaceInfo
+import simulation.NodeFace
 import simulation.FaceType
 import simulation.biomeInfoMap
 import simulation.getFaceInfo
 
-fun determineFloorTexture(biomeMap: BiomeMap, info: FaceInfo): Textures? {
+fun determineFloorTexture(biomeMap: BiomeMap, info: NodeFace): Textures? {
   val first = info.firstNode!!
   return if (first.isWalkable)
     biomeInfoMap[biomeMap[first.id]!!]!!.floorTexture
@@ -17,7 +17,7 @@ fun determineFloorTexture(biomeMap: BiomeMap, info: FaceInfo): Textures? {
     null
 }
 
-fun determineWallTexture(biomeMap: BiomeMap, info: FaceInfo): Textures? {
+fun determineWallTexture(biomeMap: BiomeMap, info: NodeFace): Textures? {
   val nodes = faceNodes(info)
       .filterNotNull()
 
@@ -37,7 +37,7 @@ fun determineWallTexture(biomeMap: BiomeMap, info: FaceInfo): Textures? {
   }
 }
 
-fun determineCeilingTexture(biomeMap: BiomeMap, info: FaceInfo): Textures? {
+fun determineCeilingTexture(biomeMap: BiomeMap, info: NodeFace): Textures? {
   val first = info.firstNode!!
   val second = info.secondNode
   return if (second != null && second.isSolid)
@@ -46,8 +46,8 @@ fun determineCeilingTexture(biomeMap: BiomeMap, info: FaceInfo): Textures? {
     null
 }
 
-fun determineFaceTexture(biomeMap: BiomeMap, info: FaceInfo): Textures? {
-  return when (info.type) {
+fun determineFaceTexture(biomeMap: BiomeMap, info: NodeFace): Textures? {
+  return when (info.faceType) {
     FaceType.wall -> determineWallTexture(biomeMap, info)
     FaceType.floor -> determineFloorTexture(biomeMap, info)
     FaceType.space -> null

@@ -72,13 +72,16 @@ fun updateBodyNode(realm: Realm, body: Body): Node {
   val node = body.node
 
   val horizontalNode = if (!isInsideNodeHorizontally(node, position)) {
-    val n = node.horizontalNeighbors.firstOrNull { isInsideNodeHorizontally(it, position) }
+    val n = horizontalNeighbors(realm.faces, node)
+        .map { realm.nodeTable[it]!! }
+        .firstOrNull { isInsideNodeHorizontally(it, position) }
+
     if (n != null)
       n
     else {
       println("Warning: Had to rely on fallback method for determining which node a body is in.")
-      val n3 = realm.nodes.filter { isInsideNode(it, position) }
-      val n2 = realm.nodes.firstOrNull { isInsideNode(it, position) }
+      val n3 = realm.nodeList.filter { isInsideNode(it, position) }
+      val n2 = realm.nodeList.firstOrNull { isInsideNode(it, position) }
       if (n2 != null)
         n2
       else
@@ -90,12 +93,13 @@ fun updateBodyNode(realm: Realm, body: Body): Node {
   if (horizontalNode == voidNode)
     return voidNode
 
-  val newNode = if (position.z < horizontalNode.position.z)
-    if (horizontalNode.floors.any())
-      getOtherNode(node, horizontalNode.floors.first())
+  val newNode = if (position.z < horizontalNode.position.z) {
+    val floors = getFloors(realm.faces.values, horizontalNode)
+    if (floors.any())
+      realm.nodeTable[getOtherNode(node, floors.first())]
     else
       voidNode
-  else
+  } else
     horizontalNode
 
   return if (newNode == null) {

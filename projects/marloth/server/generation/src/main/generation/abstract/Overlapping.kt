@@ -44,11 +44,11 @@ fun gatherTriUnions(graph: Graph): List<List<Node>> {
 fun handleOverlapping(nodes: List<Node>): Graph {
   val overlapping = getOverlapping(nodes)
   val (tooClose, initialUnions) = divide(overlapping.asSequence(), { areTooClose(it.first, it.second) })
-//  val nodeMap = graph.nodes.associate { node ->
+//  val nodeTable = graph.nodes.associate { node ->
 //    Pair(node, groups.first.filter { it.first === node || it.second === node })
 //  }
   val removedNodes1 = tooClose.map { it.first }
-//      .plus(nodeMap.filter { it.value.count() > 1 &&  }.map { it.key })
+//      .plus(nodeTable.filter { it.value.count() > 1 &&  }.map { it.key })
       .distinct()
 
 //  val remainingNodes = nodes.minus(removedNodes1)
@@ -57,7 +57,7 @@ fun handleOverlapping(nodes: List<Node>): Graph {
 //  for (node in removedNodes1) graph.removeNode(node)
 //  for (pair in unions) graph.connect(pair.first, pair.second, ConnectionType.union)
   val unionConnections = unions.map {
-    Connection(it.first.id, it.second.id, ConnectionType.union)
+    Connection(it.first.id, it.second.id, ConnectionType.union, FaceType.space)
   }.toList()
   val triUnions = gatherTriUnions(Graph(nodes, unionConnections))
   val removedNodes2 = removedNodes1.plus(triUnions.map { it.first() })

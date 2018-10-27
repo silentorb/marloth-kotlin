@@ -3,7 +3,6 @@ package generation.structure
 import generation.abstract.Realm
 import mythic.sculpting.*
 import mythic.spatial.*
-import org.joml.plus
 import simulation.FaceType
 import simulation.IdSource
 import simulation.newIdSource
@@ -79,7 +78,7 @@ fun createFloor(mesh: ImmutableMesh, node: Node, vertices: Vertices, center: Vec
   val sortedFloorVertices = vertices
       .sortedBy { atan(it.xy() - center) }
   val floor = mesh.createStitchedFace(sortedFloorVertices)
-  floor.data = FaceInfo(FaceType.floor, node, null)
+  floor.data = NodeFace(FaceType.floor, node, null)
   node.floors.add(floor)
   return floor
 }
@@ -91,13 +90,13 @@ fun createCeiling(mesh: ImmutableMesh, node: Node, vertices: Vertices, center: V
 
   val surface = mesh.createStitchedFace(sortedFloorVertices)
   node.ceilings.add(surface)
-  surface.data = FaceInfo(FaceType.ceiling, node, null)
+  surface.data = NodeFace(FaceType.ceiling, node, null)
   return surface
 }
 
 fun createWall(realm: Realm, node: Node, vertices: Vertices): ImmutableFace {
   val wall = realm.mesh.createStitchedFace(vertices)
-  wall.data = FaceInfo(FaceType.wall, node, null)
+  wall.data = NodeFace(FaceType.wall, node, null)
   node.walls.add(wall)
   return wall
 }

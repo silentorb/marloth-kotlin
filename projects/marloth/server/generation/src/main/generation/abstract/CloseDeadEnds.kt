@@ -49,7 +49,7 @@ fun closeDeadEnd(node: Node, graph: Graph): Connection? {
 
   return if (nextAvailableNode != null &&
       !connectionOverlapsNeighborNodes(node.neighbors(graph).filter { it != nextAvailableNode }.toList(), node, nextAvailableNode))
-    Connection(node.id, nextAvailableNode.id, ConnectionType.tunnel)
+    Connection(node.id, nextAvailableNode.id, ConnectionType.tunnel, FaceType.space)
   else
     null
 }

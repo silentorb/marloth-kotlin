@@ -1,9 +1,6 @@
 package generation.abstract
 
-import mythic.sculpting.ImmutableFace
 import mythic.sculpting.ImmutableMesh
-import mythic.spatial.Vector3
-import scenery.Textures
 import simulation.*
 
 /*
@@ -45,7 +42,7 @@ data class Realm(
     get() = graph.nodes
 }
 
-//data class FaceInfo(
+//data class NodeFace(
 //    var type: FaceType,
 //    val firstNode: Node?,
 //    var secondNode: Node?,
@@ -53,9 +50,9 @@ data class Realm(
 //    var debugInfo: String? = null
 //)
 
-//fun getFaceInfo(face: ImmutableFace): FaceInfo = (face.data as FaceInfo?)!!
+//fun getFaceInfo(face: ImmutableFace): NodeFace = (face.data as NodeFace?)!!
 
-fun faceNodes(info: FaceInfo) =
+fun faceNodes(info: NodeFace) =
     listOf(info.firstNode, info.secondNode)
 
 //fun getOtherNode(node: Node, face: ImmutableFace): Node? {
@@ -66,20 +63,20 @@ fun faceNodes(info: FaceInfo) =
 //    info.firstNode
 //}
 
-//fun getNullableFaceInfo(face: ImmutableFace): FaceInfo? = face.data as FaceInfo?
+//fun getNullableFaceInfo(face: ImmutableFace): NodeFace? = face.data as NodeFace?
 
 //fun initializeFaceInfo(type: FaceType, node: Node, face: ImmutableFace) {
 //  val info = getNullableFaceInfo(face)
 //  face.data =
 //      if (info == null) {
-//        FaceInfo(type, node, null, null)
+//        NodeFace(type, node, null, null)
 //      } else {
 //        if (info.firstNode == node || info.secondNode == node)
 //          face.data
 //        else {
 ////          assert(info.firstNode != null && info.secondNode != null)
 //
-//          FaceInfo(type, info.firstNode, node)
+//          NodeFace(type, info.firstNode, node)
 //        }
 //      }
 //}

@@ -74,10 +74,10 @@ fun updateMissile(bodyTable: BodyTable, characterTable: CharacterTable, missile:
   return missile.copy(remainingDistance = remainingDistance)
 }
 
-fun isFinished(world: Realm, bodyTable: BodyTable, missile: Missile): Boolean {
+fun isFinished(realm: Realm, bodyTable: BodyTable, missile: Missile): Boolean {
   val body = bodyTable[missile.id]!!
   val position = body.position
-  return missile.remainingDistance <= 0 || world.walls.filter(isSolidWall).any { hitsWall(it.edges[0].edge, position, body.radius!!) }
+  return missile.remainingDistance <= 0 || realm.walls.filter { isSolidWall(realm.faces[it.id]!!) }.any { hitsWall(it.edges[0].edge, position, body.radius!!) }
 }
 
 fun getNewMissiles(world: World, nextId: IdSource, activatedAbilities: List<ActivatedAbility>): Deck {

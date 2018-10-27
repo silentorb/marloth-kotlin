@@ -8,9 +8,10 @@ import simulation.*
 
 fun getNextPathFace(knowledge: Knowledge, path: Path): ImmutableFace? {
   val body = knowledge.world.bodyTable[knowledge.spiritId]!!
+  val faces = knowledge.world.realm.faces
   val node = body.node
   val nextNode = path.first()
-  return node.walls.firstOrNull { getOtherNode(node, it) == nextNode }
+  return node.walls.firstOrNull { getOtherNode(node, faces[it.id]!!) == nextNode.id }
 }
 
 fun pathIsAccessible(knowledge: Knowledge, path: Path): Boolean =
@@ -23,7 +24,7 @@ fun startRoaming(knowledge: Knowledge): Path {
       .filter { it != location && it.isWalkable }
 
   val destination = Dice.global.getItem(options)
-  val path = findPath(location, destination)
+  val path = findPath(knowledge.world.realm, location, destination)
   assert(path != null)
   assert(path!!.any())
   assert(pathIsAccessible(knowledge, path))

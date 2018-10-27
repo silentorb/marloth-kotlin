@@ -60,8 +60,9 @@ fun getNormal(vertices: Vertices) =
 private var flexibleFaceDebugCounter = 0L
 
 class ImmutableFace(
+    val id: Long,
     var edges: MutableList<ImmutableEdgeReference> = mutableListOf(),
-    var data: Any? = null,
+//    var data: Any? = null,
     var normal: Vector3 = Vector3()
 ) {
   val debugIndex = flexibleFaceDebugCounter++
@@ -120,21 +121,21 @@ class ImmutableMesh {
   val distinctVertices: Vertices
     get() = distinctVertices(redundantVertices)
 
-  fun createFace(): ImmutableFace {
-    val face = ImmutableFace()
+  fun createFace(id: Long): ImmutableFace {
+    val face = ImmutableFace(id)
     faces.add(face)
     return face
   }
 
-  fun createFace(vertices: List<Vector3>): ImmutableFace {
+  fun createFace(id: Long, vertices: List<Vector3>): ImmutableFace {
     assert(vertices.distinct().size == vertices.size) // Check for duplicate vertices
-    val face = createFace()
+    val face = createFace(id)
     replaceFaceVertices(face, vertices)
     return face
   }
 
-  fun createStitchedFace(vertices: List<Vector3>): ImmutableFace {
-    val face = createFace(vertices)
+  fun createStitchedFace(id: Long, vertices: List<Vector3>): ImmutableFace {
+    val face = createFace(id, vertices)
     face.updateNormal()
 //    stitchEdges(face.edges)
     return face

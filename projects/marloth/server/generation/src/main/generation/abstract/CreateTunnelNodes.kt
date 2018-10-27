@@ -50,8 +50,8 @@ fun createTunnelNodes(graph: Graph, preTunnels: List<PreTunnel>): Graph {
       .zip(preTunnels) { node, preTunnel ->
         val oldConnection = preTunnel.connection
         listOf(
-            Connection(oldConnection.first, node.id, ConnectionType.tunnel),
-            Connection(oldConnection.second, node.id, ConnectionType.tunnel)
+            Connection(oldConnection.first, node.id, ConnectionType.tunnel, FaceType.space),
+            Connection(oldConnection.second, node.id, ConnectionType.tunnel, FaceType.space)
         )
       }.flatten()
 

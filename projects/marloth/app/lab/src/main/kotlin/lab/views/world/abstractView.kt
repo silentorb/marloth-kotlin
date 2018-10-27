@@ -69,7 +69,7 @@ fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Can
       Vector4(1f, 1f, 1f, 1f)
   )
 
-  val nodes = world.nodes.filter {it.position.z == 0f}
+  val nodes = world.nodeList.filter {it.position.z == 0f}
   for (node in nodes) {
     val radius = 2f * scale
 //    val radius = node.radius * scale

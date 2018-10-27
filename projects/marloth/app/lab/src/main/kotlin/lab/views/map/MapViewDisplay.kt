@@ -7,7 +7,6 @@ import mythic.glowing.globalState
 import mythic.spatial.*
 import mythic.typography.TextStyle
 import org.joml.Vector4i
-import org.joml.plus
 import org.lwjgl.opengl.GL11
 import rendering.*
 import scenery.Camera
@@ -17,7 +16,7 @@ import simulation.Realm
 import simulation.getFaceInfo
 
 fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, world: Realm, config: MapViewConfig, color: Vector4) {
-  val faces = world.nodes.flatMap { it.faces }.distinct()
+  val faces = world.nodeList.flatMap { it.faces }.distinct()
 //      .take(1)
   for (face in faces) {
 //      renderer.effects.flat.activate(ObjectShaderConfig(color = color))
@@ -41,7 +40,7 @@ fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, world: Rea
 fun renderFaceIndices(renderer: SceneRenderer, world: Realm) {
   globalState.depthEnabled = true
   val textStyle = TextStyle(renderer.renderer.fonts[0], 0f, Vector4(0.5f, 1f, 1f, 1f))
-  for (node in world.nodes) {
+  for (node in world.nodeList) {
     for (face in node.faces) {
       val normalOffset = face.normal * 0.5f
       face.edges.forEachIndexed { index, edge ->

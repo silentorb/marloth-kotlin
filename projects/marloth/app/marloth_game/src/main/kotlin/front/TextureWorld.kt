@@ -95,7 +95,7 @@ fun convertSectorMesh(renderer: Renderer, node: Node): SectorMesh {
 }
 
 fun convertWorldMesh(realm: Realm, renderer: Renderer): WorldMesh {
-  val sectors = realm.nodes.map {
+  val sectors = realm.nodeList.map {
     convertSectorMesh(renderer, it)
   }
   return WorldMesh(sectors)

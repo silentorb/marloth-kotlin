@@ -9,6 +9,7 @@ import generation.structure.generateStructure
 import generation.structure.idSourceFromNodes
 import mythic.sculpting.ImmutableMesh
 import mythic.spatial.*
+import physics.voidNode
 import randomly.Dice
 import simulation.*
 
@@ -93,21 +94,32 @@ fun generateWorld(input: WorldInput): World {
   val structuredGraph = generateStructure(initialRealm, input.dice, tunnels)
   val biomeMap = assignBiomes(structuredGraph, input, home)
   assignTextures(biomeMap, initialRealm)
+  val faces = initialRealm.mesh.faces.map {
+    val data = initialRealm.faces [it.id]
+    NodeFace(
+        faceType = data.faceType,
+        firstNode = data.firstNode?.id ?: voidNode.id,
+        secondNode = data.secondNode?.id ?: voidNode.id,
+        texture = data.texture,
+        debugInfo = data.debugInfo
+    )
+  }
   val realm = simulation.Realm(
       boundary = input.boundary,
-      nodes = structuredGraph.nodes.map {
+      nodeList = structuredGraph.nodes.map {
         it.copy(
             biome = biomeMap[it.id]!!
         )
       },
+      faces = faces,
       mesh = initialRealm.mesh
   )
-  val getNode = { id: Long? -> realm.nodes.firstOrNull { it.id == id } }
+  val getNode = { id: Long? -> realm.nodeList.firstOrNull { it.id == id } }
   realm.mesh.faces.forEach { face ->
     val data = getFaceInfo(face)
     assert(data.firstNode != data.secondNode)
-    val data2 = simulation.FaceInfo(
-        type = data.type,
+    val data2 = simulation.NodeFace(
+        faceType = data.faceType,
         firstNode = getNode(data.firstNode?.id),
         secondNode = getNode(data.secondNode?.id),
         texture = data.texture,

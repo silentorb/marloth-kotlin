@@ -9,7 +9,7 @@ import simulation.*
 
 fun hitsWall(edge: ImmutableEdge, position: Vector3, radius: Float) =
     lineIntersectsCircle(edge.first.xy(), edge.second.xy(), position.xy(), radius)
-
+/*
 fun getEdgeNormal(first: Vector2, second: Vector2): Vector2 {
   val combination = first - second
   return Vector2(combination.y, -combination.x).normalize()
@@ -22,11 +22,12 @@ fun getCollisionWallsIncludingNeighbors(world: Realm, node: Node): Sequence<Immu
       .filter(isSolidWall)
       .distinct()
 }
+*/
 
-fun wallsInCollisionRange(world: Realm, node: Node): List<ImmutableFace> {
-  return getPathNeighbors(node).toList()
+fun wallsInCollisionRange(realm: Realm, node: Node): List<ImmutableFace> {
+  return getPathNeighbors(realm.nodeTable, realm.faces, node).toList()
       .plus(node)
-      .flatMap { it.walls.filter(isSolidWall) }
+      .flatMap { n -> n.walls.filter { isSolidWall(realm.faces[it.id]!!) } }
       .distinct()
 }
 
@@ -172,8 +173,7 @@ fun getWallCollisionMovementOffset(collisions: List<WallCollision3>, offset: Vec
   }
   val finalOffset = if (combinedOffset.length() > offset.length()) {
     combinedOffset.normalize() * offset.length() * (1 - 0.0000001f)
-  }
-  else
+  } else
     combinedOffset
 
 //  if (finalOffset.length() > offset.length()) {
