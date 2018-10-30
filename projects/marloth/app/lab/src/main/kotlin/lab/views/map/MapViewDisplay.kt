@@ -21,7 +21,7 @@ fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, world: Rea
   for (face in faces) {
 //      renderer.effects.flat.activate(ObjectShaderConfig(color = color))
 //      renderer.drawOutlinedFace(face.vertices, color)
-    val debugInfo = getFaceInfo(face).debugInfo
+    val debugInfo = world.faces [face.id]!!.debugInfo
     val c = when (debugInfo) {
       "lower" -> Vector4(1f, 0f, 1f, 1f)
       else -> color

@@ -9,7 +9,7 @@ import simulation.*
 fun getNextPathFace(knowledge: Knowledge, path: Path): ImmutableFace? {
   val body = knowledge.world.bodyTable[knowledge.spiritId]!!
   val faces = knowledge.world.realm.faces
-  val node = body.node
+  val node = knowledge.world.realm.nodeTable[body.node]!!
   val nextNode = path.first()
   return node.walls.firstOrNull { getOtherNode(node, faces[it.id]!!) == nextNode.id }
 }
@@ -19,7 +19,7 @@ fun pathIsAccessible(knowledge: Knowledge, path: Path): Boolean =
 
 fun startRoaming(knowledge: Knowledge): Path {
   val body = knowledge.world.bodyTable[knowledge.spiritId]!!
-  val location = body.node
+  val location = knowledge.world.realm.nodeTable[body.node]!!
   val options = knowledge.nodes
       .filter { it != location && it.isWalkable }
 
@@ -44,7 +44,8 @@ fun updateMovementPursuit(knowledge: Knowledge, pursuit: Pursuit): Path {
     startRoaming(knowledge)
   else {
     val body = knowledge.world.bodyTable[knowledge.spiritId]!!
-    val remainingPath = getRemainingPath(body.node, pursuit.path)
+    val node = knowledge.world.realm.nodeTable[body.node]!!
+    val remainingPath = getRemainingPath(node, pursuit.path)
     if (remainingPath.any())
       remainingPath
     else

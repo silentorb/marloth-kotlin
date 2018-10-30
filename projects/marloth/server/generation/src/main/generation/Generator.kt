@@ -89,21 +89,26 @@ fun generateWorld(input: WorldInput): World {
       input.boundary,
       nextId = nextId,
       mesh = ImmutableMesh(),
+      faces = mapOf(),
       graph = graph
   )
-  val structuredGraph = generateStructure(initialRealm, input.dice, tunnels)
+  val nextFaceId = newIdSource(1)
+  val (structuredGraph, initialMesh) = generateStructure(initialRealm, nextFaceId, input.dice, tunnels)
   val biomeMap = assignBiomes(structuredGraph, input, home)
-  assignTextures(biomeMap, initialRealm)
-  val faces = initialRealm.mesh.faces.map {
-    val data = initialRealm.faces [it.id]
-    NodeFace(
-        faceType = data.faceType,
-        firstNode = data.firstNode?.id ?: voidNode.id,
-        secondNode = data.secondNode?.id ?: voidNode.id,
-        texture = data.texture,
-        debugInfo = data.debugInfo
-    )
-  }
+
+  throw Error("Not implemented")
+//  assignTextures(biomeMap, initialRealm)
+
+//  val faces = initialRealm.mesh.faces.map {
+//    val data = initialRealm.faces[it.id]!!
+//    NodeFace(
+//        faceType = data.faceType,
+//        firstNode = data.firstNode,
+//        secondNode = data.secondNode,
+//        texture = data.texture,
+//        debugInfo = data.debugInfo
+//    )
+//  }
   val realm = simulation.Realm(
       boundary = input.boundary,
       nodeList = structuredGraph.nodes.map {
@@ -111,23 +116,23 @@ fun generateWorld(input: WorldInput): World {
             biome = biomeMap[it.id]!!
         )
       },
-      faces = faces,
+      faces = initialRealm.faces,
       mesh = initialRealm.mesh
   )
-  val getNode = { id: Long? -> realm.nodeList.firstOrNull { it.id == id } }
-  realm.mesh.faces.forEach { face ->
-    val data = getFaceInfo(face)
-    assert(data.firstNode != data.secondNode)
-    val data2 = simulation.NodeFace(
-        faceType = data.faceType,
-        firstNode = getNode(data.firstNode?.id),
-        secondNode = getNode(data.secondNode?.id),
-        texture = data.texture,
-        debugInfo = data.debugInfo
-    )
-    face.data = data2
-    assert(data2.firstNode != data2.secondNode)
-  }
+//  val getNode = { id: Long? -> realm.nodeList.firstOrNull { it.id == id } }
+//  realm.mesh.faces.forEach { face ->
+//    val data = getFaceInfo(face)
+//    assert(data.firstNode != data.secondNode)
+//    val data2 = simulation.NodeFace(
+//        faceType = data.faceType,
+//        firstNode = getNode(data.firstNode?.id),
+//        secondNode = getNode(data.secondNode?.id),
+//        texture = data.texture,
+//        debugInfo = data.debugInfo
+//    )
+//    face.data = data2
+//    assert(data2.firstNode != data2.secondNode)
+//  }
   return finalizeRealm(input, realm)
 }
 

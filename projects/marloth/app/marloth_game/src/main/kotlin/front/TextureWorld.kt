@@ -10,6 +10,7 @@ import mythic.spatial.Vector3
 import rendering.*
 import rendering.meshes.convertMesh
 import scenery.Textures
+import simulation.FaceTable
 import simulation.Realm
 import simulation.Node
 import simulation.getFaceInfo
@@ -67,25 +68,25 @@ fun createTexturedWall(face: ImmutableFace, texture: Textures): TextureFace {
   )
 }
 
-fun prepareWorldMesh(node: Node, textures: TextureLibrary): List<TextureFace> {
+fun prepareWorldMesh(faces: FaceTable, node: Node, textures: TextureLibrary): List<TextureFace> {
 //  val floorTexture = if (node.type == NodeType.space) textures[Textures.darkCheckers]!! else textures[Textures.checkers]!!
-  val floors = node.floors
-      .filter { getFaceInfo(it).firstNode == node && getFaceInfo(it).texture != null }
+  val floors = node.floors.map { Pair(faces[it.id]!!, it) }
+      .filter { (it, _) -> it.firstNode == node.id && it.texture != null }
 
-  val ceilings = node.ceilings
-      .filter { getFaceInfo(it).firstNode == node && getFaceInfo(it).texture != null }
+  val ceilings = node.ceilings.map { Pair(faces[it.id]!!, it) }
+      .filter { (it, _) -> it.firstNode == node.id && it.texture != null }
 
   return floors.plus(ceilings)
-      .map { createTexturedHorizontalSurface(it, getFaceInfo(it).texture!!) }
+      .map { createTexturedHorizontalSurface(it.second, it.first.texture!!) }
       .plus(
-          node.walls
-              .filter { getFaceInfo(it).firstNode == node && getFaceInfo(it).texture != null }
-              .map { createTexturedWall(it, getFaceInfo(it).texture!!) }
+          node.walls.map { Pair(faces[it.id]!!, it) }
+              .filter { (it, _) -> it.firstNode == node.id && it.texture != null }
+              .map { createTexturedWall(it.second, it.first.texture!!) }
       )
 }
 
-fun convertSectorMesh(renderer: Renderer, node: Node): SectorMesh {
-  val texturedFaces = prepareWorldMesh(node, renderer.mappedTextures)
+fun convertSectorMesh(faces: FaceTable, renderer: Renderer, node: Node): SectorMesh {
+  val texturedFaces = prepareWorldMesh(faces, node, renderer.mappedTextures)
   val vertexInfo = texturedFaces.associate { Pair(it.face, it.vertexMap) }
   val serializer = texturedVertexSerializer(vertexInfo)
   return SectorMesh(
@@ -96,7 +97,7 @@ fun convertSectorMesh(renderer: Renderer, node: Node): SectorMesh {
 
 fun convertWorldMesh(realm: Realm, renderer: Renderer): WorldMesh {
   val sectors = realm.nodeList.map {
-    convertSectorMesh(renderer, it)
+    convertSectorMesh(realm.faces, renderer, it)
   }
   return WorldMesh(sectors)
 }

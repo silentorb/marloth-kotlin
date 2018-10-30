@@ -67,10 +67,11 @@ fun applyForces(body: Body, forces: List<MovementForce>, resistance: Float, delt
 fun isWalkable(node: Node?) = node?.isWalkable ?: false
 
 fun isGroundedOnNeighborNode(realm: Realm, body: Body): Boolean {
-  if (body.node.walls.none())
+  val node = realm.nodeTable[body.node]!!
+  if (node.walls.none())
     return false
 
-  val (nearestWall, distance) = body.node.walls
+  val (nearestWall, distance) = node.walls
       .map {
         val edge = getFloor(it)
         Pair(it, getPointToLineDistance(body.position, edge.first, edge.second))
@@ -78,11 +79,11 @@ fun isGroundedOnNeighborNode(realm: Realm, body: Body): Boolean {
       .sortedBy { it.second }
       .first()
 
-  return distance < 0.5f && isWalkable(realm.nodeTable[getOtherNode(body.node, realm.faces[nearestWall.id]!!)])
+  return distance < 0.5f && isWalkable(realm.nodeTable[getOtherNode(node, realm.faces[nearestWall.id]!!)])
 }
 
 fun isGrounded(realm: Realm, body: Body): Boolean {
-  return !body.gravity || body.node.isWalkable || isGroundedOnNeighborNode(realm, body)
+  return !body.gravity || realm.nodeTable[body.node]!!.isWalkable || isGroundedOnNeighborNode(realm, body)
 
 }
 

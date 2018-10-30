@@ -4,6 +4,7 @@ import mythic.sculpting.ImmutableFace
 import mythic.sculpting.ImmutableMesh
 import mythic.spatial.Vector3
 import physics.voidNode
+import physics.voidNodeId
 import randomly.Dice
 import scenery.Textures
 
@@ -106,18 +107,22 @@ class NodeEdgeReference(
 }
 */
 data class NodeFace(
-    val id: Id,
+    override val id: Id,
     var faceType: FaceType,
     val firstNode: Id,
     var secondNode: Id,
     var texture: Textures? = null,
     var debugInfo: String? = null
-)
+) : Entity
 
 typealias FaceTable = Map<Id, NodeFace>
 typealias FaceList = Collection<NodeFace>
 
 typealias NodeTable = Map<Id, Node>
+
+data class RealmMesh(
+    val faces: FaceTable
+)
 
 data class Realm(
     val boundary: WorldBoundary,
@@ -147,7 +152,7 @@ fun getFloors(faces: FaceList, node: Node) =
 fun initializeFaceInfo(faces: FaceTable, type: FaceType, node: Node, face: ImmutableFace): NodeFace {
   val info = faces[face.id]
   return if (info == null) {
-    NodeFace(face.id, type, node.id, voidNode.id, null)
+    NodeFace(face.id, type, node.id, voidNodeId, null)
   } else {
     if (info.firstNode == node.id || info.secondNode == node.id)
       info

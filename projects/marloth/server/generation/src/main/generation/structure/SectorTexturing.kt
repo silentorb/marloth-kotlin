@@ -4,21 +4,18 @@ import generation.BiomeMap
 import generation.abstract.Realm
 import generation.abstract.faceNodes
 import scenery.Textures
-import simulation.NodeFace
-import simulation.FaceType
-import simulation.biomeInfoMap
-import simulation.getFaceInfo
+import simulation.*
 
-fun determineFloorTexture(biomeMap: BiomeMap, info: NodeFace): Textures? {
-  val first = info.firstNode!!
+fun determineFloorTexture(nodes: NodeTable, biomeMap: BiomeMap, info: NodeFace): Textures? {
+  val first = nodes[info.firstNode]!!
   return if (first.isWalkable)
     biomeInfoMap[biomeMap[first.id]!!]!!.floorTexture
   else
     null
 }
 
-fun determineWallTexture(biomeMap: BiomeMap, info: NodeFace): Textures? {
-  val nodes = faceNodes(info)
+fun determineWallTexture(nodeTable: NodeTable, biomeMap: BiomeMap, info: NodeFace): Textures? {
+  val nodes = faceNodes(info).map { nodeTable[it]!! }
       .filterNotNull()
 
   assert(nodes.any())
@@ -37,27 +34,27 @@ fun determineWallTexture(biomeMap: BiomeMap, info: NodeFace): Textures? {
   }
 }
 
-fun determineCeilingTexture(biomeMap: BiomeMap, info: NodeFace): Textures? {
-  val first = info.firstNode!!
-  val second = info.secondNode
+fun determineCeilingTexture(nodes: NodeTable, biomeMap: BiomeMap, info: NodeFace): Textures? {
+  val first = nodes[info.firstNode]!!
+  val second = nodes[info.secondNode]
   return if (second != null && second.isSolid)
     biomeInfoMap[biomeMap[first.id]!!]!!.ceilingTexture
   else
     null
 }
 
-fun determineFaceTexture(biomeMap: BiomeMap, info: NodeFace): Textures? {
+fun determineFaceTexture(nodes: NodeTable, biomeMap: BiomeMap, info: NodeFace): Textures? {
   return when (info.faceType) {
-    FaceType.wall -> determineWallTexture(biomeMap, info)
-    FaceType.floor -> determineFloorTexture(biomeMap, info)
+    FaceType.wall -> determineWallTexture(nodes, biomeMap, info)
+    FaceType.floor -> determineFloorTexture(nodes, biomeMap, info)
     FaceType.space -> null
-    FaceType.ceiling -> determineCeilingTexture(biomeMap, info)
+    FaceType.ceiling -> determineCeilingTexture(nodes, biomeMap, info)
   }
 }
 
-fun assignTextures(biomeMap: BiomeMap, realm: Realm) {
+fun assignTextures(nodes: NodeTable, faces: FaceTable, biomeMap: BiomeMap, realm: Realm) {
   realm.mesh.faces.forEach { face ->
-    val info = getFaceInfo(face)
-    info.texture = determineFaceTexture(biomeMap, info)
+    val info = faces[face.id]!!
+    info.texture = determineFaceTexture(nodes, biomeMap, info)
   }
 }

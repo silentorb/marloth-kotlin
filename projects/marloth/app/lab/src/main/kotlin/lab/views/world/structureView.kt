@@ -9,11 +9,11 @@ import mythic.spatial.Vector4
 import org.joml.plus
 import simulation.*
 
-private fun getLineColor(edge: ImmutableEdge): Vector4 {
-  val wallFaces = edge.faces.filter(isSolidWall)
+private fun getLineColor(faces: FaceTable, edge: ImmutableEdge): Vector4 {
+  val wallFaces = edge.faces.filter { isSolidWall(faces[it.id]!!) }
   val face = wallFaces.firstOrNull()
   if (face != null) {
-    val debugInfo = getFaceInfo(face).debugInfo
+    val debugInfo = faces[face.id]!!.debugInfo
     val opacity = 1f//if (faceNodeCount(face) == 2) 1f else 0.1f
     if (debugInfo != null) {
       return when (debugInfo) {
@@ -28,15 +28,15 @@ private fun getLineColor(edge: ImmutableEdge): Vector4 {
   return Vector4(0f, 0f, 1f, 0.5f)
 }
 
-fun drawVertices(bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, mesh: ImmutableMesh) {
+fun drawVertices(faces: FaceTable, bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, mesh: ImmutableMesh) {
   val solid = canvas.solid(Vector4(1f, 0.6f, 0.0f, 1f))
   val lineColor = Vector4(0f, 0f, 1f, 1f)
-  val edges = mesh.edges.filter {it.vertices[0].z == it.vertices[1].z && it.vertices[1].z == 0f}
+  val edges = mesh.edges.filter { it.vertices[0].z == it.vertices[1].z && it.vertices[1].z == 0f }
   for (edge in edges) {
-    val wallFaces = edge.faces.filter(isSolidWall)
+    val wallFaces = edge.faces.filter { isSolidWall(faces[it.id]!!) }
 //    assert(wallFaces.size < 2)
     if (wallFaces.any()) {
-      val color = getLineColor(edge)
+      val color = getLineColor(faces, edge)
       val normal = wallFaces.first().normal
       val middle = edge.middle.xy()
       canvas.drawLine(getPosition(edge.first.xy()), getPosition(edge.second.xy()), color, 3f)
@@ -50,5 +50,5 @@ fun drawVertices(bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, 
 }
 
 fun drawStructureWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, world: Realm) {
-  drawVertices(bounds, getPosition, canvas, world.mesh)
+  drawVertices(world.faces, bounds, getPosition, canvas, world.mesh)
 }

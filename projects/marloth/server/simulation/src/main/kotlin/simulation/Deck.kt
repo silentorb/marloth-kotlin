@@ -55,13 +55,13 @@ data class Tables(
 
 fun toTables(deck: Deck): Tables =
     Tables(
-        bodies = mapEntities(deck.bodies),
-        characters = mapEntities(deck.characters),
-        animations = mapEntities(deck.animations),
-        depictions = mapEntities(deck.depictions),
-        doors = mapEntities(deck.doors),
-        missiles = mapEntities(deck.missiles),
-        spirits = mapEntities(deck.spirits)
+        bodies = entityMap(deck.bodies),
+        characters = entityMap(deck.characters),
+        animations = entityMap(deck.animations),
+        depictions = entityMap(deck.depictions),
+        doors = entityMap(deck.doors),
+        missiles = entityMap(deck.missiles),
+        spirits = entityMap(deck.spirits)
     )
 
 fun <T> nullableList(entity: T?): List<T> =
@@ -110,7 +110,7 @@ data class World(
     get() = deck.spirits
 }
 
-fun <T : Entity> mapEntities(list: Collection<T>): Map<Id, T> =
+fun <T : Entity> entityMap(list: Collection<T>): Map<Id, T> =
     list.associate { Pair(it.id, it) }
 
 fun addDeck(world: World, deck: Deck, nextId: IdSource): World {

@@ -15,8 +15,10 @@ data class BodyAttributes(
 
 private const val voidNodeHeight = 10000f
 
+const val voidNodeId = -1L
+
 val voidNode: Node = Node(
-    id = -1,
+    id = voidNodeId,
     position = Vector3(0f, 0f, -voidNodeHeight),
     height = voidNodeHeight,
     radius = 0f,
@@ -37,7 +39,7 @@ data class Body(
     val attributes: BodyAttributes,
     val gravity: Boolean,
 //    val friction: Float,
-    val node: Node,
+    val node: Id,
     val perpetual: Boolean = false
 ) : Entity {
 
@@ -61,15 +63,15 @@ fun isInsideNode(node: Node, position: Vector3) =
 //        && position.z >= node.position.z
 //        && position.z < node.position.z + node.height
 
-fun updateBodyNode(realm: Realm, body: Body): Node {
-  if (body.node == voidNode)
+fun updateBodyNode(realm: Realm, body: Body): Id {
+  if (body.node == voidNodeId)
     return body.node
 
   if (body.velocity == Vector3.zero)
     return body.node
 
   val position = body.position
-  val node = body.node
+  val node = realm.nodeTable[body.node]!!
 
   val horizontalNode = if (!isInsideNodeHorizontally(node, position)) {
     val n = horizontalNeighbors(realm.faces, node)
@@ -90,8 +92,8 @@ fun updateBodyNode(realm: Realm, body: Body): Node {
   } else
     node
 
-  if (horizontalNode == voidNode)
-    return voidNode
+  if (horizontalNode.id == voidNodeId)
+    return voidNodeId
 
   val newNode = if (position.z < horizontalNode.position.z) {
     val floors = getFloors(realm.faces.values, horizontalNode)
@@ -108,7 +110,7 @@ fun updateBodyNode(realm: Realm, body: Body): Node {
     assert(false)
     body.node
   } else {
-    newNode
+    newNode.id
   }
 }
 

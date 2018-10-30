@@ -20,7 +20,7 @@ fun placeEnemy(realm: Realm, nextId: IdSource, dice: Dice): Hand {
       faction = 2,
       definition = characterDefinitions.monster,
       position = position,
-      node = node,
+      node = node.id,
       spirit = Spirit(
           id = 0,
           pursuit = Pursuit()
@@ -40,9 +40,9 @@ fun placeDoors(realm: Realm, nextId: IdSource): Deck =
     toDeck(realm.nodeList.filter { it.biome == Biome.home }
         .flatMap { node ->
           node.walls.filter {
-            val info = getFaceInfo(it)
+            val info = realm.faces[it.id]!!
             info.faceType == FaceType.space
-                && getOtherNode(info, node)!!.biome != Biome.home
+                && realm.nodeTable[getOtherNode(node, info)]!!.biome != Biome.home
           }
         }
         .map { face ->
@@ -59,7 +59,7 @@ fun placeDoors(realm: Realm, nextId: IdSource): Deck =
                   attributes = doodadBodyAttributes,
                   shape = null,
                   gravity = false,
-                  node = getFaceInfo(face).firstNode!!
+                  node = realm.faces[face.id]!!.firstNode
               )
           )
 
@@ -69,7 +69,8 @@ fun placeDoors(realm: Realm, nextId: IdSource): Deck =
 fun placeWallLamps(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): Deck {
   val count = (10f * scale).toInt()
   val isValidLampWall = { it: ImmutableFace ->
-    getFaceInfo(it).faceType == FaceType.wall && getFaceInfo(it).texture != null
+    val info = realm.faces[it.id]!!
+    info.faceType == FaceType.wall && info.texture != null
   }
   val options = realm.locationNodes.filter { it.walls.any(isValidLampWall) }
   assert(options.any())
@@ -93,7 +94,7 @@ fun placeWallLamps(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): De
               position = position,
               orientation = angle,
               velocity = Vector3(),
-              node = node,
+              node = node.id,
               attributes = doodadBodyAttributes,
               gravity = false
           ),
@@ -115,7 +116,7 @@ fun newPlayer(nextId: IdSource, playerNode: Node): Hand =
         faction = 1,
         definition = characterDefinitions.player,
         position = playerNode.position,
-        node = playerNode,
+        node = playerNode.id,
         player = Player(
             playerId = 1,
             character = 0,

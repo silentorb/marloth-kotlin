@@ -34,6 +34,7 @@ class Node(
 data class Realm(
     val boundary: WorldBoundary,
     val graph: Graph,
+    val faces: FaceTable,
     val mesh: ImmutableMesh,
     val nextId: IdSource
 ) {
@@ -81,21 +82,21 @@ fun faceNodes(info: NodeFace) =
 //      }
 //}
 
-fun initializeNodeFaceInfo(node: Node) {
-  for (face in node.walls) {
-    initializeFaceInfo(FaceType.wall, node, face)
-  }
-  for (face in node.floors) {
-    initializeFaceInfo(FaceType.floor, node, face)
-  }
-  for (face in node.ceilings) {
-    initializeFaceInfo(FaceType.ceiling, node, face)
-  }
-}
-
-fun initializeFaceInfo(realm: Realm) {
-  for (node in realm.nodes) {
-    initializeNodeFaceInfo(node)
-  }
-}
+//fun initializeNodeFaceInfo(node: Node) {
+//  for (face in node.walls) {
+//    initializeFaceInfo(FaceType.wall, node, face)
+//  }
+//  for (face in node.floors) {
+//    initializeFaceInfo(FaceType.floor, node, face)
+//  }
+//  for (face in node.ceilings) {
+//    initializeFaceInfo(FaceType.ceiling, node, face)
+//  }
+//}
+//
+//fun initializeFaceInfo(realm: Realm) {
+//  for (node in realm.nodes) {
+//    initializeNodeFaceInfo(node)
+//  }
+//}
 

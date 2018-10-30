@@ -97,7 +97,7 @@ fun allCharacterOrientations(world: World): List<AbsoluteOrientationForce> =
           .rotateZ(it.facingRotation.z))
     }
 
-fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id, position: Vector3, node: Node,
+fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id, position: Vector3, node: Id,
                  player: Player? = null, spirit: Spirit? = null): Hand {
   val id = nextId()
   val abilities = definition.abilities.map {
