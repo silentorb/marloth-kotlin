@@ -142,7 +142,7 @@ fun expandVertically(realm: Realm, mesh: RealmMesh, nodeTable: NodeTable, nextFa
         val result = createVerticalNodes(realm.copy(graph = graph), currentMesh, middleNodes, roomNodes, dice, facing, shouldBeSolids[facing.dir]!!)
         graph = result.first
         currentMesh = result.second
-        val ascendingFaces = createAscendingSpaceWalls(realm.copy(graph = graph), currentMesh, nodeTable, nextFaceId, middleNodes, facing)
+        val ascendingFaces = createAscendingSpaceWalls(realm.copy(graph = graph), currentMesh, entityMap(graph.nodes), nextFaceId, middleNodes, facing)
         currentMesh = currentMesh.copy(faces = currentMesh.faces.plus(entityMap(ascendingFaces)))
       }
 

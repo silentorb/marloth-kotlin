@@ -240,5 +240,5 @@ fun generateStructure(realm: Realm, nextFaceId: IdSource, dice: Dice, tunnels: L
   val mesh = RealmMesh(
       faces = updatedFaces
   )
-  return expandVertically(realm.copy(graph = boundaryGraph), mesh, realm.nodes.associate { Pair(it.id, it) }, nextFaceId, roomNodes, dice)
+  return expandVertically(realm.copy(graph = boundaryGraph), mesh, entityMap(boundaryGraph.nodes), nextFaceId, roomNodes, dice)
 }
