@@ -6,6 +6,7 @@ import generation.abstract.Realm
 import mythic.sculpting.*
 import mythic.spatial.*
 import org.joml.plus
+import physics.voidNodeId
 import randomly.Dice
 import simulation.*
 
@@ -185,21 +186,46 @@ fun createRooms(realm: Realm, nextFaceId: IdSource, dice: Dice, tunnels: List<No
 
   val allSectors = nodeSectors.plus(tunnelSectors)
   val floorsAndCeilings = sinewFloorsAndCeilings(nextFaceId, allSectors, mesh)
-  val updatedWalls = allSectors.flatMap { sector ->
+  val faces: FaceTable = mapOf()
+
+  val pairs = allSectors.flatMap { sector ->
     val wallBases = sector.node.floors.first().edges
-    wallBases.map { ImmutableEdgeReference ->
-      val otherEdges = ImmutableEdgeReference.otherImmutableEdgeReferences
-      val wall = getOrCreateWall(realm.faces, nextFaceId, ImmutableEdgeReference.edge, otherEdges, mesh)
-
-      val info = if (otherEdges.any())
-        initializeFaceInfo(realm.faces, FaceType.space, sector.node, wall)
-      else
-        initializeFaceInfo(realm.faces, FaceType.wall, sector.node, wall)
-
-      sector.node.walls.add(wall)
-      info
+    wallBases.map { immutableEdgeReference ->
+      Pair(immutableEdgeReference, sector.node.id)
     }
   }
+
+  val nodeTable = entityMap(realm.nodes)
+  val groups = pairs.groupBy { it.first.edge.hashCode() }
+  val (singles, shared) = groups.entries.partition { it.value.size == 1 }
+  val updatedWalls = singles.map { it.value.first() }.map {
+    val face = createWall(nextFaceId, it.first.edge, mesh)
+    nodeTable[it.second]!!.walls.add(face)
+    NodeFace(face.id, FaceType.wall, it.second, voidNodeId, null)
+  }
+      .plus(
+          shared.map { it.value }.map {
+            val face = createWall(nextFaceId, it.first().first.edge, mesh)
+            nodeTable[it[0].second]!!.walls.add(face)
+            nodeTable[it[1].second]!!.walls.add(face)
+            NodeFace(face.id, FaceType.space, it[0].second, it[1].second, null)
+          }
+      )
+//  val updatedWalls = allSectors.flatMap { sector ->
+//    val wallBases = sector.node.floors.first().edges
+//    wallBases.map { ImmutableEdgeReference ->
+//      val otherEdges = ImmutableEdgeReference.otherImmutableEdgeReferences
+//      val wall = getOrCreateWall(faces, nextFaceId, ImmutableEdgeReference.edge, otherEdges, mesh)
+//
+//      val info = if (otherEdges.any())
+//        initializeFaceInfo(faces, FaceType.space, sector.node, wall)
+//      else
+//        initializeFaceInfo(faces, FaceType.wall, sector.node, wall)
+//
+//      sector.node.walls.add(wall)
+//      info
+//    }
+//  }
   return floorsAndCeilings.map { it.info }.plus(updatedWalls)
 }
 

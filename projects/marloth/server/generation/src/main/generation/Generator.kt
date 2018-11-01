@@ -9,7 +9,6 @@ import generation.structure.generateStructure
 import generation.structure.idSourceFromNodes
 import mythic.sculpting.ImmutableMesh
 import mythic.spatial.*
-import physics.voidNode
 import randomly.Dice
 import simulation.*
 
@@ -89,15 +88,12 @@ fun generateWorld(input: WorldInput): World {
       input.boundary,
       nextId = nextId,
       mesh = ImmutableMesh(),
-      faces = mapOf(),
       graph = graph
   )
   val nextFaceId = newIdSource(1)
   val (structuredGraph, initialMesh) = generateStructure(initialRealm, nextFaceId, input.dice, tunnels)
   val biomeMap = assignBiomes(structuredGraph, input, home)
-
-  throw Error("Not implemented")
-//  assignTextures(biomeMap, initialRealm)
+  val texturedFaces = assignTextures(entityMap(structuredGraph.nodes), initialMesh.faces, biomeMap)
 
 //  val faces = initialRealm.mesh.faces.map {
 //    val data = initialRealm.faces[it.id]!!
@@ -116,9 +112,11 @@ fun generateWorld(input: WorldInput): World {
             biome = biomeMap[it.id]!!
         )
       },
-      faces = initialRealm.faces,
+      faces = texturedFaces,
       mesh = initialRealm.mesh
   )
+  val n = realm.locationNodes.first()
+  val n2 = n.walls.map { realm.faces[it.id]!! }
 //  val getNode = { id: Long? -> realm.nodeList.firstOrNull { it.id == id } }
 //  realm.mesh.faces.forEach { face ->
 //    val data = getFaceInfo(face)

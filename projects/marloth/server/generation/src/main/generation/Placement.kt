@@ -65,18 +65,21 @@ fun placeDoors(realm: Realm, nextId: IdSource): Deck =
 
         })
 
+val isValidLampWall = { info: NodeFace ->
+  info.faceType == FaceType.wall && info.texture != null
+}
 
 fun placeWallLamps(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): Deck {
   val count = (10f * scale).toInt()
-  val isValidLampWall = { it: ImmutableFace ->
-    val info = realm.faces[it.id]!!
-    info.faceType == FaceType.wall && info.texture != null
+
+  val options = realm.locationNodes.filter { node ->
+    val infos = node.walls.map { realm.faces[it.id]!! }
+    infos.any(isValidLampWall)
   }
-  val options = realm.locationNodes.filter { it.walls.any(isValidLampWall) }
   assert(options.any())
   val nodes = dice.getList(options, count)
   val hands = nodes.mapNotNull { node ->
-    val options2 = node.walls.filter(isValidLampWall)
+    val options2 = node.walls.filter { isValidLampWall(realm.faces[it.id]!!) }
     if (options2.any()) {
       val wall = dice.getItem(options2)
       val edge = wall.edges[0]

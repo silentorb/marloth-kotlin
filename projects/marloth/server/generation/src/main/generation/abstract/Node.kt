@@ -34,7 +34,7 @@ class Node(
 data class Realm(
     val boundary: WorldBoundary,
     val graph: Graph,
-    val faces: FaceTable,
+//    val faces: FaceTable,
     val mesh: ImmutableMesh,
     val nextId: IdSource
 ) {

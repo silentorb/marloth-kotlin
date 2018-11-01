@@ -1,8 +1,8 @@
 package generation.structure
 
 import generation.BiomeMap
-import generation.abstract.Realm
 import generation.abstract.faceNodes
+import physics.voidNodeId
 import scenery.Textures
 import simulation.*
 
@@ -15,8 +15,9 @@ fun determineFloorTexture(nodes: NodeTable, biomeMap: BiomeMap, info: NodeFace):
 }
 
 fun determineWallTexture(nodeTable: NodeTable, biomeMap: BiomeMap, info: NodeFace): Textures? {
-  val nodes = faceNodes(info).map { nodeTable[it]!! }
-      .filterNotNull()
+  val nodes = faceNodes(info)
+      .filter { it != voidNodeId }
+      .map { nodeTable[it]!! }
 
   assert(nodes.any())
   return if (nodes.size == 1) {
@@ -52,9 +53,8 @@ fun determineFaceTexture(nodes: NodeTable, biomeMap: BiomeMap, info: NodeFace): 
   }
 }
 
-fun assignTextures(nodes: NodeTable, faces: FaceTable, biomeMap: BiomeMap, realm: Realm) {
-  realm.mesh.faces.forEach { face ->
-    val info = faces[face.id]!!
-    info.texture = determineFaceTexture(nodes, biomeMap, info)
-  }
-}
+fun assignTextures(nodes: NodeTable, faces: FaceTable, biomeMap: BiomeMap) =
+    faces.mapValues { (_, face) ->
+      face.copy(texture = determineFaceTexture(nodes, biomeMap, face))
+    }
+

@@ -110,7 +110,7 @@ data class NodeFace(
     override val id: Id,
     var faceType: FaceType,
     val firstNode: Id,
-    var secondNode: Id,
+    val secondNode: Id,
     var texture: Textures? = null,
     var debugInfo: String? = null
 ) : Entity

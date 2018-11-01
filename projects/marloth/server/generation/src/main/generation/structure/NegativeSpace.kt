@@ -4,20 +4,21 @@ import generation.abstract.Realm
 import mythic.sculpting.*
 import mythic.spatial.*
 import org.joml.plus
+import physics.voidNodeId
 import randomly.Dice
 import simulation.FaceType
 import simulation.IdSource
 import simulation.getFloor
 import simulation.*
 
-fun <T> zeroIfNull(value: T?) =
-    if (value == null)
+fun zeroIfVoid(value: Id) =
+    if (value == voidNodeId)
       0
     else
       1
 
 fun faceNodeCount(faceInfo: NodeFace) =
-    zeroIfNull(faceInfo.firstNode) + zeroIfNull(faceInfo.secondNode)
+    zeroIfVoid(faceInfo.firstNode) + zeroIfVoid(faceInfo.secondNode)
 
 fun faceNodeCount(faces: FaceTable, face: ImmutableFace) =
     faceNodeCount(faces[face.id]!!)
@@ -247,9 +248,9 @@ fun addSpaceNode(realm: Realm, faces: FaceTable, nextFaceId: IdSource, originFac
 
   val node = createSpaceNode(sectorCenter, realm.nextId)
   node.walls.addAll(walls)
-  walls.forEach {
+  val updatedWalls = walls.map {
     val info = faces[it.id]!!
-    info.secondNode = node.id
+    info.copy(secondNode = node.id)
   }
 
   val floor = createFloor(realm.mesh, nextFaceId, node, floorVertices, flatCenter)
@@ -273,7 +274,7 @@ fun addSpaceNode(realm: Realm, faces: FaceTable, nextFaceId: IdSource, originFac
   val newFaces = entityMap(listOf(floor, ceiling).map { it.info })
 
   return Pair(
-      addSpaceNode(realm.graph, faces, node),
+      addSpaceNode(realm.graph, faces.plus(entityMap(updatedWalls)), node),
       RealmMesh(newFaces)
   )
 
@@ -283,7 +284,7 @@ fun getIncomplete(faces: FaceTable, graph: Graph) =
     graph.nodes.flatMap { it.walls }
         .filter { faceNodeCount(faces[it.id]!!) == 1 }
 
-fun createBoundarySector(realm: Realm, nextFaceId: IdSource, originFace: ImmutableFace, dice: Dice): Pair<Graph, List<FacePair>> {
+fun createBoundarySector(realm: Realm, mesh: RealmMesh, nextFaceId: IdSource, originFace: ImmutableFace, dice: Dice): Pair<Graph, List<FacePair>> {
   val originalWall = getWallVertices(originFace.vertices)
 
   val newPoints = originFace.vertices.map {
@@ -303,18 +304,20 @@ fun createBoundarySector(realm: Realm, nextFaceId: IdSource, originFace: Immutab
   val ceiling = createCeiling(realm.mesh, nextFaceId, node, floorVertices, sectorCenter.xy())
 //  initializeFaceInfo(FaceType.wall, node, floor, Textures.ground)
   node.walls.add(originFace)
-  realm.faces[originFace.id]!!.secondNode = node.id
+  val updatedOriginFace = mesh.faces[originFace.id]!!.copy(secondNode = node.id)
   val outerWall = createWall(realm, nextFaceId, node, newPoints)
-  realm.faces[outerWall.geometry.id]!!.debugInfo = "space-d"
+  mesh.faces[outerWall.geometry.id]!!.debugInfo = "space-d"
 
+  val missingWallsAccumulator = mutableListOf<FacePair>()
   val sideWalls = (0..1).filter { i ->
     val outerSideEdge = outerWall.geometry.edge(newWall.lower[i], newWall.upper[1 - i])
     assert(outerSideEdge != null)
-    val neighborWalls = outerSideEdge!!.faces.filter { realm.faces[it.id]!!.faceType == FaceType.wall }
+    val neighborWalls = outerSideEdge!!.faces.filter { mesh.faces[it.id]!!.faceType == FaceType.wall }
     if (neighborWalls.size > 1) {
       val missingWalls = neighborWalls.filter { !node.walls.contains(it) && it.edges.any { originFace.edges.map { it.edge }.contains(it.edge) } }
       node.walls.addAll(missingWalls)
-      missingWalls.forEach { realm.faces[it.id]!!.secondNode = node.id }
+      missingWallsAccumulator.plus(missingWalls.associate { Pair(it.id, mesh.faces[it.id]!!.copy(secondNode = node.id)) })
+
       false
     } else
       true
@@ -326,13 +329,18 @@ fun createBoundarySector(realm: Realm, nextFaceId: IdSource, originFace: Immutab
         originalWall.upper[1 - i]
     )
     val wall = createWall(realm, nextFaceId, node, sidePoints)
-    realm.faces[wall.geometry.id]!!.debugInfo = "space-d"
+    mesh.faces[wall.geometry.id]!!.debugInfo = "space-d"
     wall
   }
 
 //  initializeNodeFaceInfo(node, null, null)
-  val faces = sideWalls.plus(outerWall).plus(floor).plus(ceiling)
-  return Pair(addSpaceNode(realm.graph, realm.faces, node), faces)
+  val faces = sideWalls
+      .plus(outerWall)
+      .plus(floor)
+      .plus(ceiling)
+      .plus(FacePair(updatedOriginFace, originFace))
+      .plus(missingWallsAccumulator)
+  return Pair(addSpaceNode(realm.graph, mesh.faces, node), faces)
 }
 
 fun fillBoundary(realm: Realm, mesh: RealmMesh, nextFaceId: IdSource, dice: Dice): Pair<Graph, FaceTable> {
@@ -340,7 +348,7 @@ fun fillBoundary(realm: Realm, mesh: RealmMesh, nextFaceId: IdSource, dice: Dice
   var faces = mesh.faces
   val incompleteFaces = getIncomplete(faces, graph)
   for (face in incompleteFaces) {
-    val result = createBoundarySector(realm.copy(graph = graph), nextFaceId, face, dice)
+    val result = createBoundarySector(realm.copy(graph = graph), mesh, nextFaceId, face, dice)
     graph = result.first
     faces = faces.plus(result.second.associate { Pair(it.info.id, it.info) })
   }
@@ -355,7 +363,7 @@ fun defineNegativeSpace(realm: Realm, mesh: RealmMesh, nextFaceId: IdSource, dic
   while (true) {
     val faces = getIncomplete(currentMesh.faces, graph)
 
-    val neighborLists = faces.map { wall -> Pair(wall, getIncompleteNeighbors(realm.faces, wall).toList()) }
+    val neighborLists = faces.map { wall -> Pair(wall, getIncompleteNeighbors(currentMesh.faces, wall).toList()) }
     val invalid = neighborLists.filter { it.second.size > 2 }
 //    assert(invalid.none())
     if (invalid.any())
@@ -365,20 +373,20 @@ fun defineNegativeSpace(realm: Realm, mesh: RealmMesh, nextFaceId: IdSource, dic
 //  processIncompleteEdges(edges)
     val concaveFaces = faces
         .filter { wall ->
-          val neighbors = getIncompleteNeighbors(realm.faces, wall).toList()
+          val neighbors = getIncompleteNeighbors(currentMesh.faces, wall).toList()
           neighbors.size > 1 && neighbors.all { !isConcaveCorner(wall, it) }
         }
 
     val convexFaces = faces
         .filter { wall ->
-          val neighbors = getIncompleteNeighbors(realm.faces, wall).toList()
+          val neighbors = getIncompleteNeighbors(currentMesh.faces, wall).toList()
           neighbors.size > 1 && neighbors.all { isConcaveCorner(wall, it) }
         }
 
     if (concaveFaces.none()) {
       faces
           .filter { wall ->
-            val neighbors = getIncompleteNeighbors(realm.faces, wall).toList()
+            val neighbors = getIncompleteNeighbors(currentMesh.faces, wall).toList()
             neighbors.size < 2
           }.forEach {
             //        getFaceInfo(it).debugInfo = "space-d"
@@ -386,10 +394,10 @@ fun defineNegativeSpace(realm: Realm, mesh: RealmMesh, nextFaceId: IdSource, dic
       break
     }
     for (originFace in concaveFaces) {
-      if (faceNodeCount(realm.faces, originFace) == 1) {
-        val walls = gatherNewSectorFaces(realm.faces, originFace)
+      if (faceNodeCount(currentMesh.faces, originFace) == 1) {
+        val walls = gatherNewSectorFaces(currentMesh.faces, originFace)
         if (walls.size < 2) {
-          val i = getIncompleteNeighbors(realm.faces, originFace).toList()
+          val i = getIncompleteNeighbors(currentMesh.faces, originFace).toList()
           return Pair(graph, currentMesh)
         }
         val (newGraph, updatedMesh) = addSpaceNode(realm.copy(graph = graph), currentMesh.faces, nextFaceId, originFace, dice)
