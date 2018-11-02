@@ -29,7 +29,7 @@ val createSkybox = {
   )
   val textureMap: FaceTextureMap = mesh.faces.associate { face ->
     val vertexMap = face.vertices.zip(uvs) { a, b -> Pair(a, VertexNormalTexture(face.normal, b)) }.associate { it }
-    Pair(face, vertexMap)
+    Pair(face.id, vertexMap)
   }
   mesh.faces.forEach { it.flipQuad() }
   Model(

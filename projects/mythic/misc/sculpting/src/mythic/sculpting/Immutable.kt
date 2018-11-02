@@ -104,16 +104,20 @@ class ImmutableFace(
   }
 }
 
+typealias ImmutableFaceTable = Map<Long, ImmutableFace>
+
 fun distinctVertices(vertices: Vertices) =
     vertices.distinctBy { System.identityHashCode(it) }
 
-class ImmutableMesh {
-  //  val vertices: MutableList<Vector3> = mutableListOf()
-  val edges: MutableList<ImmutableEdge> = mutableListOf()
-  val faces: MutableList<ImmutableFace> = mutableListOf()
+typealias ImmutableEdgeTable = Map<Long, ImmutableEdge>
+
+data class ImmutableMesh(
+    val edges: ImmutableEdgeTable = mapOf(),
+    val faces: List<ImmutableFace> = listOf()
+) {
 
   val redundantVertices: Vertices
-    get() = edges.flatMap { it.vertices }
+    get() = edges.flatMap { it.value.vertices }
 
 //  val distinctVertices: List<Vector3>
 //    get() = redundantVertices.distinct()
@@ -121,15 +125,15 @@ class ImmutableMesh {
   val distinctVertices: Vertices
     get() = distinctVertices(redundantVertices)
 
-  fun createFace(id: Long): ImmutableFace {
-    val face = ImmutableFace(id)
-    faces.add(face)
-    return face
-  }
+//  fun createFace(id: Long): ImmutableFace {
+//    val face = ImmutableFace(id)
+//    faces.add(face)
+//    return face
+//  }
 
   fun createFace(id: Long, vertices: List<Vector3>): ImmutableFace {
     assert(vertices.distinct().size == vertices.size) // Check for duplicate vertices
-    val face = createFace(id)
+    val face = ImmutableFace(id)
     replaceFaceVertices(face, vertices)
     return face
   }
@@ -142,7 +146,7 @@ class ImmutableMesh {
   }
 
   fun getMatchingEdges(first: Vector3, second: Vector3) =
-      edges.filter { it.matches(first, second) }
+      edges.values.filter { it.matches(first, second) }
 
   fun createEdge(first: Vector3, second: Vector3, face: ImmutableFace?): ImmutableEdgeReference {
     val faces = if (face == null) mutableListOf() else mutableListOf(face)
@@ -156,25 +160,26 @@ class ImmutableMesh {
       return ImmutableEdgeReference(edge, null, null, edge.first == first)
     } else {
       val edge = ImmutableEdge(first, second, faces)
-      edges.add(edge)
+      throw Error("This needs to be handled.")
+//      edges.add(edge)
       return ImmutableEdgeReference(edge, null, null, true)
     }
 
   }
 
-  fun createEdges(vertices: Vertices) {
-    var previous = vertices.first()
-    var previousEdge: ImmutableEdgeReference? = null
-    for (next in vertices.drop(1)) {
-      val edge = createEdge(previous, next, null)
-      if (previousEdge != null) {
-        edge.previous = previousEdge
-        previousEdge.next = edge
-      }
-      previousEdge = edge
-      previous = next
-    }
-  }
+//  fun createEdges(vertices: Vertices) {
+//    var previous = vertices.first()
+//    var previousEdge: ImmutableEdgeReference? = null
+//    for (next in vertices.drop(1)) {
+//      val edge = createEdge(previous, next, null)
+//      if (previousEdge != null) {
+//        edge.previous = previousEdge
+//        previousEdge.next = edge
+//      }
+//      previousEdge = edge
+//      previous = next
+//    }
+//  }
 
   fun replaceFaceVertices(face: ImmutableFace, initializer: List<Vector3>) {
     var previous = initializer.first()
@@ -199,14 +204,14 @@ class ImmutableMesh {
     assert(face.edges.none { it.next == null || it.previous == null })
   }
 
-  fun sharedImport(mesh: ImmutableMesh) {
-    faces.addAll(mesh.faces)
-    edges.addAll(mesh.edges)
-  }
-
-  fun sharedImport(meshes: List<ImmutableMesh>) {
-    meshes.forEach { sharedImport(it) }
-  }
+//  fun sharedImport(mesh: ImmutableMesh) {
+//    faces.addAll(mesh.faces)
+//    edges.addAll(mesh.edges)
+//  }
+//
+//  fun sharedImport(meshes: List<ImmutableMesh>) {
+//    meshes.forEach { sharedImport(it) }
+//  }
 
 }
 

@@ -3,6 +3,7 @@ package front
 import generation.structure.getWallVertices
 import marloth.clienting.Client
 import mythic.sculpting.ImmutableFace
+import mythic.sculpting.ImmutableFaceTable
 import mythic.sculpting.VertexNormalTexture
 import mythic.sculpting.getBounds
 import mythic.spatial.Vector2
@@ -10,10 +11,7 @@ import mythic.spatial.Vector3
 import rendering.*
 import rendering.meshes.convertMesh
 import scenery.Textures
-import simulation.FaceTable
-import simulation.Realm
-import simulation.Node
-import simulation.getFaceInfo
+import simulation.*
 import kotlin.math.roundToInt
 
 fun createTexturedHorizontalSurface(face: ImmutableFace, texture: Textures): TextureFace {
@@ -26,7 +24,7 @@ fun createTexturedHorizontalSurface(face: ImmutableFace, texture: Textures): Tex
   )
   val scaleX = 1f / scale
   val scaleY = 1f / scale
-  return TextureFace(face, vertices.associate { vertex ->
+  return TextureFace(face.id, vertices.associate { vertex ->
     Pair(vertex, VertexNormalTexture(
         Vector3(0f, 0f, 1f),
         Vector2(
@@ -58,7 +56,7 @@ fun createTexturedWall(face: ImmutableFace, texture: Textures): TextureFace {
     uvs
 
   val uvIterator = alignedUvs.listIterator()
-  return TextureFace(face, vertices.associate { vertex ->
+  return TextureFace(face.id, vertices.associate { vertex ->
     Pair(vertex, VertexNormalTexture(
         Vector3(0f, 0f, 1f),
         uvIterator.next()
@@ -85,19 +83,20 @@ fun prepareWorldMesh(faces: FaceTable, node: Node, textures: TextureLibrary): Li
       )
 }
 
-fun convertSectorMesh(faces: FaceTable, renderer: Renderer, node: Node): SectorMesh {
+fun convertSectorMesh(faces: FaceTable, faces2: ImmutableFaceTable, renderer: Renderer, node: Node): SectorMesh {
   val texturedFaces = prepareWorldMesh(faces, node, renderer.mappedTextures)
   val vertexInfo = texturedFaces.associate { Pair(it.face, it.vertexMap) }
   val serializer = texturedVertexSerializer(vertexInfo)
   return SectorMesh(
-      convertMesh(texturedFaces.map { it.face }, renderer.vertexSchemas.textured, serializer),
+      convertMesh(texturedFaces.map { faces2[it.face]!! }, renderer.vertexSchemas.textured, serializer),
       texturedFaces.map { it.texture }
   )
 }
 
 fun convertWorldMesh(realm: Realm, renderer: Renderer): WorldMesh {
+  val faces2 = realm.mesh.faces.associate { Pair(it.id, it) }
   val sectors = realm.nodeList.map {
-    convertSectorMesh(realm.faces, renderer, it)
+    convertSectorMesh(realm.faces, faces2, renderer, it)
   }
   return WorldMesh(sectors)
 }

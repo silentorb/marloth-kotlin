@@ -36,12 +36,12 @@ val createWallLamp: ModelGenerator = {
       mapMaterialToManyMeshes(brassMaterial, listOf(first, second)),
       mapMaterialToManyMeshes(glassMaterial, listOf(glass1, glass2))
   )
-
-  first.sharedImport(listOf(
-      second,
-      glass1,
-      glass2
-  ))
+//
+//  first.sharedImport(listOf(
+//      second,
+//      glass1,
+//      glass2
+//  ))
 
   Model(
       mesh = first,
