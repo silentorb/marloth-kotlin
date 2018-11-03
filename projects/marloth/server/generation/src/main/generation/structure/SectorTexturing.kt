@@ -6,7 +6,7 @@ import physics.voidNodeId
 import scenery.Textures
 import simulation.*
 
-fun determineFloorTexture(nodes: NodeTable, biomeMap: BiomeMap, info: NodeFace): Textures? {
+fun determineFloorTexture(nodes: NodeTable, biomeMap: BiomeMap, info: ConnectionFace): Textures? {
   val first = nodes[info.firstNode]!!
   return if (first.isWalkable)
     biomeInfoMap[biomeMap[first.id]!!]!!.floorTexture
@@ -14,7 +14,7 @@ fun determineFloorTexture(nodes: NodeTable, biomeMap: BiomeMap, info: NodeFace):
     null
 }
 
-fun determineWallTexture(nodeTable: NodeTable, biomeMap: BiomeMap, info: NodeFace): Textures? {
+fun determineWallTexture(nodeTable: NodeTable, biomeMap: BiomeMap, info: ConnectionFace): Textures? {
   val nodes = faceNodes(info)
       .filter { it != voidNodeId }
       .map { nodeTable[it]!! }
@@ -35,7 +35,7 @@ fun determineWallTexture(nodeTable: NodeTable, biomeMap: BiomeMap, info: NodeFac
   }
 }
 
-fun determineCeilingTexture(nodes: NodeTable, biomeMap: BiomeMap, info: NodeFace): Textures? {
+fun determineCeilingTexture(nodes: NodeTable, biomeMap: BiomeMap, info: ConnectionFace): Textures? {
   val first = nodes[info.firstNode]!!
   val second = nodes[info.secondNode]
   return if (second != null && second.isSolid)
@@ -44,7 +44,7 @@ fun determineCeilingTexture(nodes: NodeTable, biomeMap: BiomeMap, info: NodeFace
     null
 }
 
-fun determineFaceTexture(nodes: NodeTable, biomeMap: BiomeMap, info: NodeFace): Textures? {
+fun determineFaceTexture(nodes: NodeTable, biomeMap: BiomeMap, info: ConnectionFace): Textures? {
   return when (info.faceType) {
     FaceType.wall -> determineWallTexture(nodes, biomeMap, info)
     FaceType.floor -> determineFloorTexture(nodes, biomeMap, info)
@@ -53,7 +53,7 @@ fun determineFaceTexture(nodes: NodeTable, biomeMap: BiomeMap, info: NodeFace): 
   }
 }
 
-fun assignTextures(nodes: NodeTable, faces: FaceTable, biomeMap: BiomeMap) =
+fun assignTextures(nodes: NodeTable, faces: ConnectionTable, biomeMap: BiomeMap) =
     faces.mapValues { (_, face) ->
       face.copy(texture = determineFaceTexture(nodes, biomeMap, face))
     }

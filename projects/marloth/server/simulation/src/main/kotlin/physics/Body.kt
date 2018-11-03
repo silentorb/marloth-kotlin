@@ -5,6 +5,8 @@ import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import colliding.Shape
 import colliding.Sphere
+import mythic.ent.Entity
+import mythic.ent.Id
 import mythic.spatial.isInsidePolygon
 import simulation.*
 import simulation.simulationDelta

@@ -1,5 +1,7 @@
 package simulation
 
+import mythic.ent.Entity
+import mythic.ent.Id
 import mythic.sculpting.ImmutableFace
 import mythic.spatial.Vector3
 import scenery.Textures
@@ -11,7 +13,7 @@ enum class ConnectionType {
   ceilingFloor
 }
 
-data class Connection(
+data class InitialConnection(
     val first: Id,
     val second: Id,
     val type: ConnectionType,
@@ -33,7 +35,7 @@ data class Connection(
   fun nodes(graph: Graph): List<Node> = listOf(graph.node(first)!!, graph.node(second)!!)
 }
 
-typealias Connections = List<Connection>
+typealias InitialConnections = List<InitialConnection>
 
 data class Node(
     override val id: Id,
@@ -51,7 +53,7 @@ data class Node(
   val faces: List<ImmutableFace>
     get() = floors.plus(walls).plus(ceilings)
 
-  fun connections(graph: Graph): List<Connection> =
+  fun connections(graph: Graph): List<InitialConnection> =
       graph.connections.filter { it.contains(id) }
 
   fun neighbors(graph: Graph): Sequence<Node> = connections(graph).asSequence().mapNotNull { graph.node(it.getOther(this)) }
@@ -61,18 +63,18 @@ data class Node(
   fun isConnected(graph: Graph, other: Node) = getConnection(graph, other) != null
 }
 
-fun horizontalNeighbors(faces: FaceTable, node: Node) = node.walls.asSequence().mapNotNull { getOtherNode(node, faces[it.id]!!) }
+fun horizontalNeighbors(faces: ConnectionTable, node: Node) = node.walls.asSequence().mapNotNull { getOtherNode(node, faces[it.id]!!) }
 
-fun nodeNeighbors(faces: FaceTable, node: Node) = node.walls.asSequence().mapNotNull { getOtherNode(node, faces[it.id]!!) }
+fun nodeNeighbors(faces: ConnectionTable, node: Node) = node.walls.asSequence().mapNotNull { getOtherNode(node, faces[it.id]!!) }
 
-fun getPathNeighbors(nodes: NodeTable, faces: FaceTable, node: Node) =
+fun getPathNeighbors(nodes: NodeTable, faces: ConnectionTable, node: Node) =
     nodeNeighbors(faces, node)
         .map { nodes[it]!! }
         .filter { it.isWalkable }
 
 data class Graph(
     val nodes: List<Node>,
-    val connections: Connections
+    val connections: InitialConnections
 ) {
   fun node(id: Id): Node? = nodes.first { it.id == id }
 
@@ -82,19 +84,9 @@ data class Graph(
           connections = connections.plus(graph.connections)
       )
 
-  fun plusConnections(newConnections: Connections) =
-      copy(
-          connections = connections.plus(newConnections)
-      )
-
-  fun minusConnections(oldConnections: Connections) =
+  fun minusConnections(oldConnections: InitialConnections) =
       copy(
           connections = connections.minus(oldConnections)
-      )
-
-  fun plusNodes(newNodes: List<Node>) =
-      copy(
-          nodes = nodes.plus(newNodes)
       )
 
 }

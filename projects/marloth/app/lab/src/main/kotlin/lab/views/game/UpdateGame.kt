@@ -5,7 +5,7 @@ import haft.HaftCommands
 import lab.LabApp
 import marloth.clienting.CommandType
 import mythic.spatial.Vector3
-import simulation.Id
+import mythic.ent.Id
 import simulation.World
 import simulation.updateWorld
 

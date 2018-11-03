@@ -1,5 +1,7 @@
 package simulation
 
+import mythic.ent.Entity
+import mythic.ent.Id
 import scenery.AnimationId
 import scenery.ArmatureId
 

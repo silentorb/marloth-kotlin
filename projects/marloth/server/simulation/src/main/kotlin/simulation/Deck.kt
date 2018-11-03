@@ -1,6 +1,9 @@
 package simulation
 
 import intellect.Spirit
+import mythic.ent.Id
+import mythic.ent.IdSource
+import mythic.ent.entityMap
 import physics.Body
 
 typealias Players = List<Player>
@@ -109,9 +112,6 @@ data class World(
   val spirits: Collection<Spirit>
     get() = deck.spirits
 }
-
-fun <T : Entity> entityMap(list: Collection<T>): Map<Id, T> =
-    list.associate { Pair(it.id, it) }
 
 fun addDeck(world: World, deck: Deck, nextId: IdSource): World {
   val newDeck = world.deck.plus(deck)

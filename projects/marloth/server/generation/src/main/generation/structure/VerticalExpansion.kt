@@ -1,6 +1,8 @@
 package generation.structure
 
-import generation.abstract.Realm
+import generation.abstract.OldRealm
+import mythic.ent.Id
+import mythic.ent.entityMap
 import mythic.sculpting.ImmutableFace
 import mythic.spatial.Vector3
 import physics.voidNodeId
@@ -18,7 +20,7 @@ interface VerticalFacing {
   val dirMod: Float
   fun ceilings(node: Node): MutableList<ImmutableFace>
   fun floors(node: Node): MutableList<ImmutableFace>
-  fun upperNode(faces: FaceTable, node: Node): Id
+  fun upperNode(faces: ConnectionTable, node: Node): Id
   fun wallVertices(face: ImmutableFace): WallVertices
 }
 
@@ -27,7 +29,7 @@ class VerticalFacingUp : VerticalFacing {
   override val dirMod: Float get() = 1f
   override fun ceilings(node: Node): MutableList<ImmutableFace> = node.ceilings
   override fun floors(node: Node): MutableList<ImmutableFace> = node.floors
-  override fun upperNode(faces: FaceTable, node: Node): Id = getUpperNode(faces, node)
+  override fun upperNode(faces: ConnectionTable, node: Node): Id = getUpperNode(faces, node)
   override fun wallVertices(face: ImmutableFace): WallVertices = getWallVertices(face)
 }
 
@@ -36,65 +38,63 @@ class VerticalFacingDown : VerticalFacing {
   override val dirMod: Float get() = -1f
   override fun ceilings(node: Node): MutableList<ImmutableFace> = node.floors
   override fun floors(node: Node): MutableList<ImmutableFace> = node.ceilings
-  override fun upperNode(faces: FaceTable, node: Node): Id = getLowerNode(faces, node)
+  override fun upperNode(faces: ConnectionTable, node: Node): Id = getLowerNode(faces, node)
   override fun wallVertices(face: ImmutableFace): WallVertices {
     val result = getWallVertices(face)
     return WallVertices(upper = result.lower, lower = result.upper)
   }
 }
 
-fun createVerticalNodes(realm: Realm, mesh: RealmMesh, middleNodes: List<Node>, roomNodes: List<Node>, dice: Dice,
-                        facing: VerticalFacing, shouldBeSolid: (original: Node) -> Boolean): Pair<Graph, RealmMesh> {
+fun createVerticalNodes(idSources: StructureIdSources, realm: StructureRealm, middleNodes: Collection<Node>, roomNodes: List<Node>, dice: Dice,
+                        facing: VerticalFacing, shouldBeSolid: (original: Node) -> Boolean): StructureRealm {
   val newNodes = middleNodes.map { node ->
     val depth = wallHeight
     val offset = Vector3(0f, 0f, depth * facing.dirMod)
 
-    createSecondaryNode(node.position + offset, realm.nextId, isSolid = shouldBeSolid(node))
+    createSecondaryNode(node.position + offset, idSources.node, isSolid = shouldBeSolid(node))
   }
 
   val newFaces = middleNodes.zip(newNodes) { node, newNode ->
     assert(facing.ceilings(node).any())
     facing.ceilings(node).map { ceiling ->
       facing.floors(newNode).add(ceiling)
-      val info = mesh.faces[ceiling.id]!!
+      val info = realm.connections[ceiling.id]!!
       info.copy(secondNode = newNode.id)
     }
   }.flatten()
 
-  var graph = realm.graph
-  newNodes.map { lowerNode ->
-    graph = addSpaceNode(graph, mesh.faces, lowerNode)
-  }
-  val newMesh = mesh.copy(faces = mesh.faces.plus(entityMap(newFaces)))
-
-  return Pair(graph, newMesh)
+  return StructureRealm(
+      nodes = realm.nodes.plus(entityMap(newNodes)),
+      connections = realm.connections.plus(entityMap(newFaces)),
+      mesh = realm.mesh
+  )
 }
 
-fun getLowerNode(faces: FaceTable, node: Node) =
+fun getLowerNode(faces: ConnectionTable, node: Node) =
     getOtherNode(node, faces[node.floors.first().id]!!)!!
 
-fun getUpperNode(faces: FaceTable, node: Node) =
+fun getUpperNode(faces: ConnectionTable, node: Node) =
     getOtherNode(node, faces[node.ceilings.first().id]!!)!!
 
-fun createAscendingSpaceWalls(realm: Realm, mesh: RealmMesh, nodeTable: NodeTable, nextFaceId: IdSource, nodes: List<Node>, facing: VerticalFacing): List<NodeFace> {
+fun createAscendingSpaceWalls(idSources: StructureIdSources, realm: StructureRealm, nodes: Collection<Node>, facing: VerticalFacing): StructureRealm {
   val walls = nodes.flatMap { it.walls }
   val depth = 6f
   val offset = Vector3(0f, 0f, depth * facing.dirMod)
-  return walls
+  val updatePairs = walls
       .filter { upperWall ->
-        mesh.faces[upperWall.id]!!.secondNode != voidNodeId
+        realm.connections[upperWall.id]!!.secondNode != voidNodeId
       }
       .map { upperWall ->
-        val info = mesh.faces[upperWall.id]!!
-        val nodeId = if (nodeTable[info.firstNode]!!.isWalkable)
+        val info = realm.connections[upperWall.id]!!
+        val nodeId = if (realm.nodes[info.firstNode]!!.isWalkable)
           info.firstNode
         else
           info.secondNode
 
-        val node = nodeTable[nodeId]!!
-        val upperNode = nodeTable[facing.upperNode(mesh.faces, node)]!!
-        val otherUpperNode = getOtherNode(node, mesh.faces[upperWall.id]!!)!!
-        val otherUpNode = nodeTable[facing.upperNode(mesh.faces, nodeTable[otherUpperNode]!!)]!!
+        val node = realm.nodes[nodeId]!!
+        val upperNode = realm.nodes[facing.upperNode(realm.connections, node)]!!
+        val otherUpperNode = getOtherNode(node, realm.connections[upperWall.id]!!)!!
+        val otherUpNode = realm.nodes[facing.upperNode(realm.connections, realm.nodes[otherUpperNode]!!)]!!
         val firstEdge = facing.wallVertices(upperWall).upper
         val unorderedVertices = firstEdge.plus(firstEdge.map { it + offset })
         val emptyNode = if (!upperNode.isSolid)
@@ -103,17 +103,27 @@ fun createAscendingSpaceWalls(realm: Realm, mesh: RealmMesh, nodeTable: NodeTabl
           otherUpNode
 
         val orderedVertices = sortWallVertices(emptyNode.position, unorderedVertices)
-        val newWall = realm.mesh.createStitchedFace(nextFaceId(), orderedVertices)
-//        newWall.data = NodeFace(FaceType.wall, upperNode, otherUpNode, null, "lower")
+        val newWall = realm.mesh.createStitchedFace(idSources.face(), orderedVertices)
+//        newWall.data = ConnectionFace(FaceType.wall, upperNode, otherUpNode, null, "lower")
         upperNode.walls.add(newWall)
         otherUpNode.walls.add(newWall)
-        Connection(node.id, upperNode.id, ConnectionType.ceilingFloor, FaceType.floor)
-        NodeFace(newWall.id, FaceType.wall, upperNode.id, otherUpNode.id, null, "lower")
+//        InitialConnection(node.id, upperNode.id, ConnectionType.ceilingFloor, FaceType.floor)
+        val connection = ConnectionFace(newWall.id, FaceType.wall, upperNode.id, otherUpNode.id, null, "lower")
+        FacePair(connection, newWall)
       }
+
+  val (updatedConnections, updatedFaces) = splitFacePairTables(updatePairs)
+  return StructureRealm(
+      nodes = realm.nodes,
+      connections = realm.connections.plus(updatedConnections),
+      mesh = realm.mesh.copy(
+          faces = realm.mesh.faces.plus(updatedFaces)
+      )
+  )
 }
 
-fun expandVertically(realm: Realm, mesh: RealmMesh, nodeTable: NodeTable, nextFaceId: IdSource, roomNodes: List<Node>, dice: Dice): Pair<Graph, RealmMesh> {
-  val middleNodes = realm.nodes.toList()
+fun expandVertically(idSources: StructureIdSources, realm: StructureRealm, roomNodes: List<Node>, dice: Dice): StructureRealm {
+  val middleNodes = realm.nodes.values
   val isRoom = { node: Node -> roomNodes.contains(node) }
   val shouldBeSolids = mapOf(
       VerticalDirection.down to { node: Node ->
@@ -135,16 +145,12 @@ fun expandVertically(realm: Realm, mesh: RealmMesh, nodeTable: NodeTable, nextFa
 //          false
 //        else dice.getInt(0, 4) != 0
       })
-  var graph = realm.graph
-  var currentMesh = mesh
+  var currentRealm = realm
   listOf(VerticalFacingDown(), VerticalFacingUp())
       .forEach { facing ->
-        val result = createVerticalNodes(realm.copy(graph = graph), currentMesh, middleNodes, roomNodes, dice, facing, shouldBeSolids[facing.dir]!!)
-        graph = result.first
-        currentMesh = result.second
-        val ascendingFaces = createAscendingSpaceWalls(realm.copy(graph = graph), currentMesh, entityMap(graph.nodes), nextFaceId, middleNodes, facing)
-        currentMesh = currentMesh.copy(faces = currentMesh.faces.plus(entityMap(ascendingFaces)))
+        currentRealm = createVerticalNodes(idSources, currentRealm, middleNodes, roomNodes, dice, facing, shouldBeSolids[facing.dir]!!)
+        currentRealm = createAscendingSpaceWalls(idSources, currentRealm, middleNodes, facing)
       }
 
-  return Pair(graph, currentMesh)
+  return currentRealm
 }

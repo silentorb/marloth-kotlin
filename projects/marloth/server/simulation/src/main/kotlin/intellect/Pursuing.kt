@@ -1,7 +1,7 @@
 package intellect
 
 import simulation.Commands
-import simulation.Id
+import mythic.ent.Id
 
 fun updateTarget(knowledge: Knowledge, pursuit: Pursuit): Id? {
   return null

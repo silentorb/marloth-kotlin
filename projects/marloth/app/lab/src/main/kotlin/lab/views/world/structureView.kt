@@ -9,7 +9,7 @@ import mythic.spatial.Vector4
 import org.joml.plus
 import simulation.*
 
-private fun getLineColor(faces: FaceTable, edge: ImmutableEdge): Vector4 {
+private fun getLineColor(faces: ConnectionTable, edge: ImmutableEdge): Vector4 {
   val wallFaces = edge.faces.filter { isSolidWall(faces[it.id]!!) }
   val face = wallFaces.firstOrNull()
   if (face != null) {
@@ -28,10 +28,10 @@ private fun getLineColor(faces: FaceTable, edge: ImmutableEdge): Vector4 {
   return Vector4(0f, 0f, 1f, 0.5f)
 }
 
-fun drawVertices(faces: FaceTable, bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, mesh: ImmutableMesh) {
+fun drawVertices(faces: ConnectionTable, bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, mesh: ImmutableMesh) {
   val solid = canvas.solid(Vector4(1f, 0.6f, 0.0f, 1f))
   val lineColor = Vector4(0f, 0f, 1f, 1f)
-  val edges = mesh.edges.filter { it.vertices[0].z == it.vertices[1].z && it.vertices[1].z == 0f }
+  val edges = mesh.edges.values.filter { it.vertices[0].z == it.vertices[1].z && it.vertices[1].z == 0f }
   for (edge in edges) {
     val wallFaces = edge.faces.filter { isSolidWall(faces[it.id]!!) }
 //    assert(wallFaces.size < 2)

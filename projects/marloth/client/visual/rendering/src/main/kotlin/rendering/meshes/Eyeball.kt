@@ -21,30 +21,30 @@ fun createTransformedSphere(radius: Float, transform: Matrix): ImmutableMesh {
 //  return mesh
 }
 
-val createEyeball: ModelGenerator = {
-  val radius = 0.5f
-  val floorOffset = 0.5f
-  val mesh = createTransformedSphere(radius, Matrix()
-      .translate(0f, 0f, radius + floorOffset)
-      .rotateX(Pi / 2f)
-  )
-  val (pupilIris, ball) = mesh.faces.partition { getCenter(it.vertices).y < -0.38f }
-  val (pupil, iris) = pupilIris.partition { getCenter(it.vertices).y < -0.48f }
-
-  val whiteMaterial = Material(Vector4(0.9f, 0.9f, 0.9f, 1f))
-  val irisMaterial = Material(Vector4(0.8f, 0.4f, 0.2f, 1f))
-  val pupilMaterial = Material(Vector4(0f, 0f, 0f, 1f))
-
-  val materialMap = listOf(
-      MeshGroup(whiteMaterial, ball),
-      MeshGroup(irisMaterial, iris),
-      MeshGroup(pupilMaterial, pupil)
-  )
-
-  calculateNormals(mesh)
-
-  Model(
-      mesh = mesh,
-      groups = materialMap
-  )
-}
+//val createEyeball: ModelGenerator = {
+//  val radius = 0.5f
+//  val floorOffset = 0.5f
+//  val mesh = createTransformedSphere(radius, Matrix()
+//      .translate(0f, 0f, radius + floorOffset)
+//      .rotateX(Pi / 2f)
+//  )
+//  val (pupilIris, ball) = mesh.faces.values.partition { getCenter(it.vertices).y < -0.38f }
+//  val (pupil, iris) = pupilIris.partition { getCenter(it.vertices).y < -0.48f }
+//
+//  val whiteMaterial = Material(Vector4(0.9f, 0.9f, 0.9f, 1f))
+//  val irisMaterial = Material(Vector4(0.8f, 0.4f, 0.2f, 1f))
+//  val pupilMaterial = Material(Vector4(0f, 0f, 0f, 1f))
+//
+//  val materialMap = listOf(
+//      MeshGroup(whiteMaterial, ball),
+//      MeshGroup(irisMaterial, iris),
+//      MeshGroup(pupilMaterial, pupil)
+//  )
+//
+//  calculateNormals(mesh)
+//
+//  Model(
+//      mesh = mesh,
+//      groups = materialMap
+//  )
+//}

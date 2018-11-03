@@ -1,6 +1,9 @@
 package simulation
 
 import intellect.Spirit
+import mythic.ent.Entity
+import mythic.ent.Id
+import mythic.ent.IdSource
 import mythic.spatial.Pi
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector2

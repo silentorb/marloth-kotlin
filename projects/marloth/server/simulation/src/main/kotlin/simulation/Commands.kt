@@ -1,5 +1,7 @@
 package simulation
 
+import mythic.ent.Id
+
 enum class CommandType {
   none,
 

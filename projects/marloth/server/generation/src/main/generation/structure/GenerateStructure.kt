@@ -2,7 +2,9 @@ package generation.structure
 
 import generation.*
 import generation.abstract.*
-import generation.abstract.Realm
+import generation.abstract.OldRealm
+import mythic.ent.IdSource
+import mythic.ent.entityMap
 import mythic.sculpting.*
 import mythic.spatial.*
 import org.joml.plus
@@ -89,7 +91,7 @@ fun createSingleNodeStructure(graph: Graph, node: Node): TempSector {
   return TempSector(node, points.plus(fillCornerGaps(points, node)).sortedBy { getAngle(node, it) })
 }
 
-fun getClusterUnions(connections: Connections, cluster: Cluster): List<Connection> =
+fun getClusterUnions(connections: InitialConnections, cluster: Cluster): List<InitialConnection> =
     cluster.flatMap { a -> connections.filter { it.contains(a) && it.type == ConnectionType.union } }.distinct()
 
 fun fillClusterCornerGaps(unorderedCorners: List<Corner>, node: Node, otherNodes: List<Node>): List<Corner> {
@@ -156,7 +158,7 @@ fun createWall(nextId: IdSource, edge: ImmutableEdge, mesh: ImmutableMesh): Immu
   ))
 }
 
-fun getOrCreateWall(faces: FaceTable, nextId: IdSource, edge: ImmutableEdge, otherEdges: List<ImmutableEdgeReference>, mesh: ImmutableMesh): ImmutableFace {
+fun getOrCreateWall(faces: ConnectionTable, nextId: IdSource, edge: ImmutableEdge, otherEdges: List<ImmutableEdgeReference>, mesh: ImmutableMesh): ImmutableFace {
   return if (otherEdges.size > 1) {
     val face = edge.faces.firstOrNull {
       val info = faces[it.id]
@@ -170,11 +172,9 @@ fun getOrCreateWall(faces: FaceTable, nextId: IdSource, edge: ImmutableEdge, oth
     createWall(nextId, edge, mesh)
 }
 
-fun createRooms(realm: Realm, nextFaceId: IdSource, dice: Dice, tunnels: List<Node>): List<NodeFace> {
-  val mesh = realm.mesh
-
-  val roomNodes = realm.nodes.minus(tunnels)
-  val graph = realm.graph
+fun createRooms(oldRealm: OldRealm, nextFaceId: IdSource, dice: Dice, tunnels: List<Node>): StructureRealm {
+  val roomNodes = oldRealm.nodes.minus(tunnels)
+  val graph = oldRealm.graph
 
   val singleNodes = roomNodes.filter { !isInCluster(graph, it) }
   val clusters = gatherClusters(graph, roomNodes)
@@ -186,7 +186,7 @@ fun createRooms(realm: Realm, nextFaceId: IdSource, dice: Dice, tunnels: List<No
 
   val allSectors = nodeSectors.plus(tunnelSectors)
   val floorsAndCeilings = sinewFloorsAndCeilings(nextFaceId, allSectors, mesh)
-  val faces: FaceTable = mapOf()
+  val faces: ConnectionTable = mapOf()
 
   val pairs = allSectors.flatMap { sector ->
     val wallBases = sector.node.floors.first().edges
@@ -195,50 +195,45 @@ fun createRooms(realm: Realm, nextFaceId: IdSource, dice: Dice, tunnels: List<No
     }
   }
 
-  val nodeTable = entityMap(realm.nodes)
+  val nodeTable = entityMap(oldRealm.nodes)
   val groups = pairs.groupBy { it.first.edge.hashCode() }
   val (singles, shared) = groups.entries.partition { it.value.size == 1 }
   val updatedWalls = singles.map { it.value.first() }.map {
     val face = createWall(nextFaceId, it.first.edge, mesh)
     nodeTable[it.second]!!.walls.add(face)
-    NodeFace(face.id, FaceType.wall, it.second, voidNodeId, null)
+    FacePair(ConnectionFace(face.id, FaceType.wall, it.second, voidNodeId, null), face)
   }
       .plus(
           shared.map { it.value }.map {
             val face = createWall(nextFaceId, it.first().first.edge, mesh)
             nodeTable[it[0].second]!!.walls.add(face)
             nodeTable[it[1].second]!!.walls.add(face)
-            NodeFace(face.id, FaceType.space, it[0].second, it[1].second, null)
+            FacePair(ConnectionFace(face.id, FaceType.space, it[0].second, it[1].second, null), face)
           }
       )
-//  val updatedWalls = allSectors.flatMap { sector ->
-//    val wallBases = sector.node.floors.first().edges
-//    wallBases.map { ImmutableEdgeReference ->
-//      val otherEdges = ImmutableEdgeReference.otherImmutableEdgeReferences
-//      val wall = getOrCreateWall(faces, nextFaceId, ImmutableEdgeReference.edge, otherEdges, mesh)
-//
-//      val info = if (otherEdges.any())
-//        initializeFaceInfo(faces, FaceType.space, sector.node, wall)
-//      else
-//        initializeFaceInfo(faces, FaceType.wall, sector.node, wall)
-//
-//      sector.node.walls.add(wall)
-//      info
-//    }
-//  }
-  return floorsAndCeilings.map { it.info }.plus(updatedWalls)
+  return floorsAndCeilings.plus(updatedWalls)
 }
 
-fun generateStructure(realm: Realm, nextFaceId: IdSource, dice: Dice, tunnels: List<Node>): Pair<Graph, RealmMesh> {
-  val roomFaces = entityMap(createRooms(realm, nextFaceId, dice, tunnels))
-  calculateNormals(realm.mesh)
-//  initializeFaceInfo(realm)
-  val roomNodes = realm.nodes.toList()
-  val roomsMesh = RealmMesh(roomFaces)
-  val (negativeGraph, negativeMesh) = defineNegativeSpace(realm, roomsMesh, nextFaceId, dice)
-  val (boundaryGraph, updatedFaces) = fillBoundary(realm.copy(graph = negativeGraph), negativeMesh, nextFaceId, dice)
-  val mesh = RealmMesh(
-      faces = updatedFaces
+data class StructureRealm(
+    val nodes: NodeTable,
+    val connections: ConnectionTable,
+    val mesh: ImmutableMesh
+)
+
+fun generateStructure(oldRealm: OldRealm, nextFaceId: IdSource, dice: Dice, tunnels: List<Node>): StructureRealm {
+  val initialRealm = createRooms(oldRealm, nextFaceId, dice, tunnels)
+  calculateNormals(oldRealm.mesh)
+  val roomNodes = oldRealm.nodes.toList()
+  val idSources = StructureIdSources(
+      node = oldRealm.nextId,
+      face = nextFaceId
   )
-  return expandVertically(realm.copy(graph = boundaryGraph), mesh, entityMap(boundaryGraph.nodes), nextFaceId, roomNodes, dice)
+  val spaceInputRealm = StructureRealm(
+      nodes = entityMap(oldRealm.nodes),
+      connections = connections,
+      mesh = ImmutableMesh(faces = faces)
+  )
+  val spaceOutputRealm = defineNegativeSpace(idSources, spaceInputRealm, dice)
+  val boundaryOutputRealm = fillBoundary(idSources, spaceOutputRealm, dice)
+  return expandVertically(idSources, boundaryOutputRealm, roomNodes, dice)
 }

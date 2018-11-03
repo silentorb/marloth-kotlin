@@ -1,5 +1,7 @@
 package simulation
 
+import mythic.ent.Id
+
 data class AbilityDefinition(
     val cooldown: Float,
     val range: Float

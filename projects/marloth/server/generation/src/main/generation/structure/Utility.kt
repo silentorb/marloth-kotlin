@@ -1,11 +1,13 @@
 package generation.structure
 
-import generation.abstract.Realm
+import generation.abstract.OldRealm
+import mythic.ent.Id
 import mythic.sculpting.*
 import mythic.spatial.*
 import physics.voidNodeId
 import simulation.FaceType
-import simulation.IdSource
+import mythic.ent.IdSource
+import mythic.ent.entityMap
 import simulation.newIdSource
 import simulation.*
 
@@ -76,22 +78,33 @@ fun createSecondaryNode(sectorCenter: Vector3, nextId: IdSource, isSolid: Boolea
 }
 
 data class FacePair(
-    val info: NodeFace,
+    val info: ConnectionFace,
     val geometry: ImmutableFace
 )
 
+fun splitFacePairs(pairs: List<FacePair>): Pair<List<ConnectionFace>, List<ImmutableFace>> =
+    Pair(
+        pairs.map { it.info },
+        pairs.map { it.geometry }
+    )
+
+fun splitFacePairTables(pairs: List<FacePair>): Pair<ConnectionTable, ImmutableFaceTable> =
+    Pair(
+        entityMap(pairs.map { it.info }),
+        entityMap(pairs.map { it.geometry })
+    )
+
+
 fun createSurface(mesh: ImmutableMesh, id: Id, node: Id, vertices: Vertices, faceType: FaceType): FacePair {
   val floor = mesh.createStitchedFace(id, vertices)
-  val info = NodeFace(id, faceType, node, voidNodeId)
+  val info = ConnectionFace(id, faceType, node, voidNodeId)
   return FacePair(info, floor)
 }
 
 fun createFloor(mesh: ImmutableMesh, nextId: IdSource, node: Node, vertices: Vertices, center: Vector2): FacePair {
   val sortedFloorVertices = vertices
       .sortedBy { atan(it.xy() - center) }
-//  val id = nextId()
-//  val floor = mesh.createStitchedFace(id, sortedFloorVertices)
-//  val info = NodeFace(id, FaceType.floor, node.id, voidNodeId)
+
   val result = createSurface(mesh, nextId(), node.id, sortedFloorVertices, FaceType.floor)
   node.floors.add(result.geometry)
   return result
@@ -101,22 +114,14 @@ fun createCeiling(mesh: ImmutableMesh, nextId: IdSource, node: Node, vertices: V
   val sortedFloorVertices = vertices
       .sortedByDescending { atan(it.xy() - center) }
       .map { it + Vector3(0f, 0f, wallHeight) }
-//
-//  val id = nextId()
-//  val surface = mesh.createStitchedFace(id, sortedFloorVertices)
-//  node.ceilings.add(surface)
-//  val info = NodeFace(id, FaceType.ceiling, node.id, voidNodeId)
+
   val result = createSurface(mesh, nextId(), node.id, sortedFloorVertices, FaceType.ceiling)
   node.ceilings.add(result.geometry)
   return result
 }
 
-fun createWall(realm: Realm, nextId: IdSource, node: Node, vertices: Vertices): FacePair {
-//  val wall = realm.mesh.createStitchedFace(nextId(), vertices)
-  //  wall.data = NodeFace(FaceType.wall, node, null)
-//  node.walls.add(wall)
-//  return wall
-  val result = createSurface(realm.mesh, nextId(), node.id, vertices, FaceType.wall)
+fun createWall(mesh: ImmutableMesh, nextId: IdSource, node: Node, vertices: Vertices): FacePair {
+  val result = createSurface(mesh, nextId(), node.id, vertices, FaceType.wall)
   node.walls.add(result.geometry)
   return result
 }

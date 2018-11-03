@@ -32,7 +32,7 @@ fun raycastNodes(firstNode: Node, start: Vector3, end: Vector3): List<Node> {
 }
 */
 
-fun rayCanHitPoint(nodes: NodeTable, faces: FaceTable, firstNode: Node, start: Vector3, end: Vector3): Boolean {
+fun rayCanHitPoint(nodes: NodeTable, faces: ConnectionTable, firstNode: Node, start: Vector3, end: Vector3): Boolean {
   var node = firstNode
   var lastWall: ImmutableFace? = null
   do {

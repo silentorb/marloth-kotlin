@@ -36,7 +36,7 @@ fun nodesIntersectOther(first: Node, second: Node, nodes: Sequence<Node>) =
         .filter { it !== first && it !== second }
         .any { lineIntersectsCircle(first.position.xy(), second.position.xy(), it.position.xy(), it.radius + tunnelPadding) }
 
-fun closeDeadEnd(node: Node, graph: Graph): Connection? {
+fun closeDeadEnd(node: Node, graph: Graph): InitialConnection? {
   val nodes = graph.nodes.asSequence()
   val neighbors = nodes
       .filter { it !== node && !it.isConnected(graph, node) }
@@ -49,7 +49,7 @@ fun closeDeadEnd(node: Node, graph: Graph): Connection? {
 
   return if (nextAvailableNode != null &&
       !connectionOverlapsNeighborNodes(node.neighbors(graph).filter { it != nextAvailableNode }.toList(), node, nextAvailableNode))
-    Connection(node.id, nextAvailableNode.id, ConnectionType.tunnel, FaceType.space)
+    InitialConnection(node.id, nextAvailableNode.id, ConnectionType.tunnel, FaceType.space)
   else
     null
 }
@@ -57,7 +57,7 @@ fun closeDeadEnd(node: Node, graph: Graph): Connection? {
 fun getDeadEnds(graph: Graph) =
     graph.nodes.filter { it.connections(graph).size < 2 }
 
-fun closeDeadEnds(graph: Graph): Connections =
+fun closeDeadEnds(graph: Graph): InitialConnections =
     getDeadEnds(graph)
         .drop(2) // Leaving room for a home biome, and a few dead ends are okay.
         .mapNotNull { closeDeadEnd(it, graph) }

@@ -2,12 +2,12 @@ package generation
 
 import gatherNodes
 import generation.abstract.*
-import generation.abstract.Realm
+import generation.abstract.OldRealm
 import generation.structure.assignTextures
 import generation.structure.doorwayLength
 import generation.structure.generateStructure
 import generation.structure.idSourceFromNodes
-import mythic.sculpting.ImmutableMesh
+import mythic.ent.Id
 import mythic.spatial.*
 import randomly.Dice
 import simulation.*
@@ -84,20 +84,18 @@ fun generateWorld(input: WorldInput): World {
   val (graph, tunnels) = generateAbstract(input.boundary, input.dice, scale)
   val nextId = idSourceFromNodes(graph.nodes)
   val home = getHome(graph)
-  val initialRealm = Realm(
-      input.boundary,
-      nextId = nextId,
-      mesh = ImmutableMesh(),
-      graph = graph
+  val initialRealm = OldRealm(
+      graph = graph,
+      nextId = nextId
   )
   val nextFaceId = newIdSource(1)
-  val (structuredGraph, initialMesh) = generateStructure(initialRealm, nextFaceId, input.dice, tunnels)
-  val biomeMap = assignBiomes(structuredGraph, input, home)
-  val texturedFaces = assignTextures(entityMap(structuredGraph.nodes), initialMesh.faces, biomeMap)
+  val structuredRealm = generateStructure(initialRealm, nextFaceId, input.dice, tunnels)
+  val biomeMap = assignBiomes(structuredRealm.nodes.values, input, home)
+  val texturedFaces = assignTextures(structuredRealm.nodes, structuredRealm.connections, biomeMap)
 
 //  val faces = initialRealm.mesh.faces.map {
 //    val data = initialRealm.faces[it.id]!!
-//    NodeFace(
+//    ConnectionFace(
 //        faceType = data.faceType,
 //        firstNode = data.firstNode,
 //        secondNode = data.secondNode,
@@ -107,13 +105,13 @@ fun generateWorld(input: WorldInput): World {
 //  }
   val realm = simulation.Realm(
       boundary = input.boundary,
-      nodeList = structuredGraph.nodes.map {
+      nodeList = structuredRealm.nodes.values.map {
         it.copy(
             biome = biomeMap[it.id]!!
         )
       },
       faces = texturedFaces,
-      mesh = initialRealm.mesh
+      mesh = structuredRealm.mesh
   )
   val n = realm.locationNodes.first()
   val n2 = n.walls.map { realm.faces[it.id]!! }
@@ -121,7 +119,7 @@ fun generateWorld(input: WorldInput): World {
 //  realm.mesh.faces.forEach { face ->
 //    val data = getFaceInfo(face)
 //    assert(data.firstNode != data.secondNode)
-//    val data2 = simulation.NodeFace(
+//    val data2 = simulation.ConnectionFace(
 //        faceType = data.faceType,
 //        firstNode = getNode(data.firstNode?.id),
 //        secondNode = getNode(data.secondNode?.id),

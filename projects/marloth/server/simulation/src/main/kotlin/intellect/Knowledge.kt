@@ -1,7 +1,7 @@
 package intellect
 
 import simulation.Character
-import simulation.Id
+import mythic.ent.Id
 import simulation.Node
 import simulation.World
 

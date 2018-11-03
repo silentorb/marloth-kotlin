@@ -1,5 +1,7 @@
 package intellect
 
+import mythic.ent.Entity
+import mythic.ent.Id
 import simulation.*
 
 enum class GoalType {

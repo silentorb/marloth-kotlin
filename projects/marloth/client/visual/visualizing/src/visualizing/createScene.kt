@@ -6,7 +6,7 @@ import physics.Body
 import rendering.*
 import scenery.*
 import simulation.*
-import simulation.Id
+import mythic.ent.Id
 
 val firstPersonCameraOffset = Vector3(0f, 0f, 1.4f)
 

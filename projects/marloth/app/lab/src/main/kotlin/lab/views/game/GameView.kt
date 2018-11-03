@@ -44,7 +44,7 @@ data class GameViewConfig(
 
 fun renderFaceNormals(renderer: SceneRenderer, length: Float, mesh: ImmutableMesh) {
   globalState.lineThickness = 2f
-  for (face in mesh.faces) {
+  for (face in mesh.faces.values) {
     val faceCenter = getVerticesCenter(face.unorderedVertices)
     val transform = Matrix()
         .translate(faceCenter)

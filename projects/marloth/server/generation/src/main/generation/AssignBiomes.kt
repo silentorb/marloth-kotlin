@@ -1,5 +1,6 @@
 package generation
 
+import mythic.ent.Id
 import simulation.*
 
 typealias BiomeMap = Map<Id, Biome>
@@ -37,9 +38,9 @@ private fun logGrid(grid: Grid<Biome>, boundary: WorldBoundary) {
   }
 }
 
-fun assignBiomes(graph: Graph, input: WorldInput, home: List<Node>): BiomeMap {
+fun assignBiomes(nodes: Collection<Node>, input: WorldInput, home: List<Node>): BiomeMap {
   val grid = normalizeGrid(clampGrid(newBiomeGrid(input, randomBiomes)), input.boundary)
-  return graph.nodes.associate { node ->
+  return nodes.associate { node ->
     val biome = if (home.any { it.id == node.id })
       Biome.home
     else

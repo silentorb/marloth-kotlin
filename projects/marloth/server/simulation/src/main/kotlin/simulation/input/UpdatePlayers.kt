@@ -1,5 +1,6 @@
 package simulation.input
 
+import mythic.ent.Id
 import simulation.*
 
 fun filterCommands(id: Id, commands: Commands) =

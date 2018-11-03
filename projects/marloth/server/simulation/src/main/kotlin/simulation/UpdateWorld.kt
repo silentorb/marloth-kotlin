@@ -2,6 +2,9 @@ package simulation
 
 import intellect.pursueGoals
 import intellect.updateAiState
+import mythic.ent.Entity
+import mythic.ent.Id
+import mythic.ent.IdSource
 import mythic.spatial.Pi2
 import mythic.spatial.Vector3
 import physics.Collision

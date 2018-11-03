@@ -1,6 +1,7 @@
 package rendering
 
 import mythic.sculpting.ImmutableEdge
+import mythic.sculpting.ImmutableFace
 import mythic.sculpting.ImmutableMesh
 import mythic.spatial.Vector3
 import rendering.meshes.Faces
@@ -9,16 +10,16 @@ import rendering.meshes.Primitives
 
 data class MeshGroup(
     val material: Material,
-    val faces: Faces,
+    val faces: Collection<ImmutableFace>,
     val name: String = "Unnamed"
 )
 
 fun mapMaterialToMesh(material: Material, mesh: ImmutableMesh): MeshGroup {
-  return MeshGroup(material, mesh.faces)
+  return MeshGroup(material, mesh.faces.values)
 }
 
 fun mapMaterialToManyMeshes(material: Material, meshes: List<ImmutableMesh>): MeshGroup {
-  return MeshGroup(material, meshes.flatMap { it.faces })
+  return MeshGroup(material, meshes.flatMap { it.faces.values })
 }
 
 data class Model(
@@ -28,7 +29,7 @@ data class Model(
     val textureMap: FaceTextureMap? = null
 ) {
   val vertices: List<Vector3> get() = mesh.distinctVertices
-  val edges: List<ImmutableEdge> get() = mesh.edges
+  val edges: List<ImmutableEdge> get() = mesh.edges.values.toList()
 }
 
 data class VertexWeight(

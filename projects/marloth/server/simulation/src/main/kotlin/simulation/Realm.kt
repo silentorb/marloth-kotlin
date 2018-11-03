@@ -1,9 +1,10 @@
 package simulation
 
+import mythic.ent.Entity
+import mythic.ent.Id
 import mythic.sculpting.ImmutableFace
 import mythic.sculpting.ImmutableMesh
 import mythic.spatial.Vector3
-import physics.voidNode
 import physics.voidNodeId
 import randomly.Dice
 import scenery.Textures
@@ -37,7 +38,7 @@ enum class FaceType {
   wall
 }
 
-//data class NodeFace(
+//data class ConnectionFace(
 //    var faceType: FaceType,
 //    val firstNode: Node?,
 //    var secondNode: Node?,
@@ -45,19 +46,19 @@ enum class FaceType {
 //    var debugInfo: String? = null
 //)
 
-//fun faceNodes(info: NodeFace) =
+//fun faceNodes(info: ConnectionFace) =
 //    listOf(info.firstNode, info.secondNode)
 
 // May be faster to cast straight to non-nullable but at least for debugging
 // it may be better to explicitly non-null cast.
-fun getFaceInfo(faces: FaceTable, face: ImmutableFace): NodeFace = faces[face.id]!!
+fun getFaceInfo(faces: ConnectionTable, face: ImmutableFace): ConnectionFace = faces[face.id]!!
 
-val isSolidWall = { face: NodeFace ->
+val isSolidWall = { face: ConnectionFace ->
   face.faceType == FaceType.wall && face.texture != null
 }
-val isSpace = { face: NodeFace -> face.faceType == FaceType.space }
+val isSpace = { face: ConnectionFace -> face.faceType == FaceType.space }
 
-//fun getNullableFaceInfo(face: ImmutableFace): NodeFace? = face.data as NodeFace?
+//fun getNullableFaceInfo(face: ImmutableFace): ConnectionFace? = face.data as ConnectionFace?
 
 /*
 class NodeEdge(
@@ -70,7 +71,7 @@ class NodeEdge(
   val middle: Vector3
     get() = (first + second) * 0.5f
 
-  fun getReference(face: NodeFace) = face.edges.first { it.edge == this }
+  fun getReference(face: ConnectionFace) = face.edges.first { it.edge == this }
 
   val references: List<NodeEdgeReference>
     get() = faces.map { getReference(it) }
@@ -106,7 +107,7 @@ class NodeEdgeReference(
 
 }
 */
-data class NodeFace(
+data class ConnectionFace(
     override val id: Id,
     var faceType: FaceType,
     val firstNode: Id,
@@ -115,19 +116,19 @@ data class NodeFace(
     var debugInfo: String? = null
 ) : Entity
 
-typealias FaceTable = Map<Id, NodeFace>
-typealias FaceList = Collection<NodeFace>
+typealias ConnectionTable = Map<Id, ConnectionFace>
+typealias FaceList = Collection<ConnectionFace>
 
 typealias NodeTable = Map<Id, Node>
 
 data class RealmMesh(
-    val faces: FaceTable
+    val faces: ConnectionTable
 )
 
 data class Realm(
     val boundary: WorldBoundary,
     val nodeList: List<Node>,
-    val faces: FaceTable,
+    val faces: ConnectionTable,
     val mesh: ImmutableMesh
 ) {
 
@@ -149,32 +150,32 @@ fun getFaces(faces: FaceList, node: Node) =
 fun getFloors(faces: FaceList, node: Node) =
     getFaces(faces, node).filter { it.faceType == FaceType.floor }
 
-fun initializeFaceInfo(faces: FaceTable, type: FaceType, node: Node, face: ImmutableFace): NodeFace {
+fun initializeFaceInfo(faces: ConnectionTable, type: FaceType, node: Node, face: ImmutableFace): ConnectionFace {
   val info = faces[face.id]
   return if (info == null) {
-    NodeFace(face.id, type, node.id, voidNodeId, null)
+    ConnectionFace(face.id, type, node.id, voidNodeId, null)
   } else {
     if (info.firstNode == node.id || info.secondNode == node.id)
       info
     else {
-      NodeFace(face.id, type, info.firstNode, node.id)
+      ConnectionFace(face.id, type, info.firstNode, node.id)
     }
   }
 }
 
-fun initializeNodeFaceInfo(faces: FaceTable, node: Node): List<NodeFace> {
+fun initializeNodeFaceInfo(faces: ConnectionTable, node: Node): List<ConnectionFace> {
   return node.walls.map { initializeFaceInfo(faces, FaceType.wall, node, it) }
       .plus(node.floors.map { initializeFaceInfo(faces, FaceType.floor, node, it) })
       .plus(node.ceilings.map { initializeFaceInfo(faces, FaceType.ceiling, node, it) })
 }
 
-fun initializeFaceInfo(nodes: List<Node>, faces: FaceTable) {
+fun initializeFaceInfo(nodes: List<Node>, faces: ConnectionTable) {
   for (node in nodes) {
     initializeNodeFaceInfo(faces, node)
   }
 }
 
-fun getOtherNode(node: Node, info: NodeFace): Id? {
+fun getOtherNode(node: Node, info: ConnectionFace): Id? {
   return if (info.firstNode == node.id)
     info.secondNode
   else

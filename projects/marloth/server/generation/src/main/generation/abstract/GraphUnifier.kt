@@ -47,7 +47,7 @@ fun scanChanged(graph: Graph, changed: List<Node>, group: NodeGroup) =
         .distinct()
 
 tailrec fun scanNodes(graph: Graph, previousChanged: List<Node>, mainGroup: List<Node>, outerGroup: List<Node>,
-                      connections: Connections): Connections {
+                      connections: InitialConnections): InitialConnections {
   val possibleChanged = scanChanged(graph, previousChanged, mainGroup).toList()
   val (changed, newConnections) = if (possibleChanged.isEmpty()) {
     val gap = findShortestGap(graph, mainGroup.asSequence(), outerGroup.asSequence())
@@ -55,7 +55,7 @@ tailrec fun scanNodes(graph: Graph, previousChanged: List<Node>, mainGroup: List
       throw Error("Could not find gap to fill.")
 
 //    println("" + gap.first.index + " " + gap.second.index)
-    Pair(listOf(gap.second), connections.plus(Connection(gap.first.id, gap.second.id, ConnectionType.tunnel, FaceType.space)))
+    Pair(listOf(gap.second), connections.plus(InitialConnection(gap.first.id, gap.second.id, ConnectionType.tunnel, FaceType.space)))
   } else {
     Pair(possibleChanged, connections)
   }
@@ -67,7 +67,7 @@ tailrec fun scanNodes(graph: Graph, previousChanged: List<Node>, mainGroup: List
     scanNodes(graph, changed, nextMainGroup, outerGroup.subtract(changed).toList(), newConnections)
 }
 
-fun unifyWorld(graph: Graph): Connections {
+fun unifyWorld(graph: Graph): InitialConnections {
   if (graph.nodes.size < 2)
     return listOf()
 

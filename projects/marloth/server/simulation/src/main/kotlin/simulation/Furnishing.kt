@@ -1,5 +1,7 @@
 package simulation
 
+import mythic.ent.Entity
+import mythic.ent.Id
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 

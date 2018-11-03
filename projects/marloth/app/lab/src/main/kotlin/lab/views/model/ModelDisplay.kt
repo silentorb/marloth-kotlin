@@ -98,7 +98,7 @@ fun drawSelection(config: ModelViewConfig, model: Model, sceneRenderer: SceneRen
     when (config.componentMode) {
 
       ComponentMode.faces -> {
-        val faces = model.mesh.faces
+        val faces = model.mesh.faces.values.toList()
         for (index in config.selection) {
           if (faces.size > index) {
             val face = faces[index]
@@ -182,7 +182,7 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
       if (config.drawNormals)
         renderFaceNormals(sceneRenderer, 0.05f, modelSource.mesh)
 
-      modelSource.mesh.edges.filter { it.faces.none() }.forEach {
+      modelSource.mesh.edges.values.filter { it.faces.none() }.forEach {
         sceneRenderer.drawLine(it.first, it.second, Vector4(0.8f, 0.5f, 0.3f, 1f))
       }
 

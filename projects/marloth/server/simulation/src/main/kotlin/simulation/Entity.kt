@@ -1,18 +1,14 @@
 package simulation
 
-typealias Id = Long
+import mythic.ent.Entity
+import mythic.ent.Id
+import mythic.ent.IdSource
 
 enum class EntityType {
   character,
   furnishing,
   missile
 }
-
-interface Entity {
-  val id: Id
-}
-
-typealias IdSource = () -> Id
 
 fun newIdSource(initialValue: Id): IdSource {
   var nextId: Id = initialValue

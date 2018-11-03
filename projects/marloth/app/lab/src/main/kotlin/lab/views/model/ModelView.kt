@@ -97,7 +97,7 @@ private fun getFaceHits(start: Vector3, end: Vector3, model: Model): List<Hit> {
   val faces = model.mesh.faces
   val rayDirection = (end - start).normalize()
 
-  return faces.mapIndexedNotNull { i, it ->
+  return faces.values.mapIndexedNotNull { i, it ->
     if (it.normal.x == 0f && it.normal.y == 0f && it.normal.z == 0f)
       it.updateNormal()
 

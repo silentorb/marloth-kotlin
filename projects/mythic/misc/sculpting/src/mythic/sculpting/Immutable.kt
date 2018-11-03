@@ -1,5 +1,7 @@
 package mythic.sculpting
 
+import mythic.ent.Entity
+import mythic.ent.Id
 import mythic.spatial.Vector3
 import mythic.spatial.times
 import org.joml.plus
@@ -59,19 +61,18 @@ fun getNormal(vertices: Vertices) =
 
 private var flexibleFaceDebugCounter = 0L
 
-class ImmutableFace(
-    val id: Long,
+data class ImmutableFace(
+    override val id: Id,
     var edges: MutableList<ImmutableEdgeReference> = mutableListOf(),
 //    var data: Any? = null,
     var normal: Vector3 = Vector3()
-) {
+) : Entity {
   val debugIndex = flexibleFaceDebugCounter++
   val unorderedVertices: List<Vector3>
     get() = edges.map { it.first }
 
   val vertices: List<Vector3>
     get() = edges.map { it.first }
-
 
   fun updateNormal() {
 //    if (vertices.size > 2)
@@ -104,16 +105,16 @@ class ImmutableFace(
   }
 }
 
-typealias ImmutableFaceTable = Map<Long, ImmutableFace>
+typealias ImmutableFaceTable = Map<Id, ImmutableFace>
 
 fun distinctVertices(vertices: Vertices) =
     vertices.distinctBy { System.identityHashCode(it) }
 
-typealias ImmutableEdgeTable = Map<Long, ImmutableEdge>
+typealias ImmutableEdgeTable = Map<Id, ImmutableEdge>
 
 data class ImmutableMesh(
     val edges: ImmutableEdgeTable = mapOf(),
-    val faces: List<ImmutableFace> = listOf()
+    val faces: ImmutableFaceTable = mapOf()
 ) {
 
   val redundantVertices: Vertices
@@ -215,8 +216,12 @@ data class ImmutableMesh(
 
 }
 
-fun calculateNormals(mesh: ImmutableMesh) {
-  for (face in mesh.faces) {
-    face.updateNormal()
-  }
+fun calculateNormals(mesh: ImmutableMesh): ImmutableMesh {
+  return mesh.copy(
+      faces = mesh.faces.mapValues {
+        it.value.copy(
+            normal = getNormal(it.value.unorderedVertices)
+        )
+      }
+  )
 }

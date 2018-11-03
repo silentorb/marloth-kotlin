@@ -3,7 +3,7 @@ package generation
 import colliding.Sphere
 import intellect.Pursuit
 import intellect.Spirit
-import mythic.sculpting.ImmutableFace
+import mythic.ent.IdSource
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import mythic.spatial.getVector3Center
@@ -65,7 +65,7 @@ fun placeDoors(realm: Realm, nextId: IdSource): Deck =
 
         })
 
-val isValidLampWall = { info: NodeFace ->
+val isValidLampWall = { info: ConnectionFace ->
   info.faceType == FaceType.wall && info.texture != null
 }
 

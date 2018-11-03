@@ -76,7 +76,7 @@ fun partitionModelMeshes(model: Model): List<TransientModelElement> {
     throw Error("Missing materials")
 
   return model.groups.map {
-    TransientModelElement(it.faces, it.material)
+    TransientModelElement(it.faces.toList(), it.material)
   }
 }
 
