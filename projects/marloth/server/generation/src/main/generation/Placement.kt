@@ -4,6 +4,7 @@ import colliding.Sphere
 import intellect.Pursuit
 import intellect.Spirit
 import mythic.ent.IdSource
+import mythic.ent.newIdSource
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import mythic.spatial.getVector3Center

@@ -57,11 +57,8 @@ fun standardMeshes(): ModelGeneratorMap = mapOf(
 //}
 
 fun advancedMeshes(vertexSchemas: VertexSchemas): AdvancedModelGeneratorMap {
-//  val skeleton = skeletonMesh(vertexSchemas)
   return mapOf(
-//      MeshType.skeleton to skeleton,
-//      MeshType.child to skeleton,
-      MeshType.skybox to skyboxModel(vertexSchemas)
+//      MeshType.skybox to skyboxModel(vertexSchemas)
   )
 }
 

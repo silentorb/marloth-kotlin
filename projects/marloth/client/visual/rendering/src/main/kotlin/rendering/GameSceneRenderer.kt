@@ -12,6 +12,7 @@ import rendering.meshes.MeshMap
 import scenery.Textures
 
 fun renderSkyBox(textures: TextureLibrary, meshes: MeshMap, shaders: Shaders) {
+  /*
   val texture = textures[Textures.background]!!
   val mesh = meshes[MeshType.skybox]!!
   shaders.texturedFlat.activate(ObjectShaderConfig(
@@ -19,6 +20,7 @@ fun renderSkyBox(textures: TextureLibrary, meshes: MeshMap, shaders: Shaders) {
       transform = Matrix().scale(900f)
   ))
   mesh.primitives[0].mesh.draw(DrawMethod.triangleFan)
+  */
 }
 
 class GameSceneRenderer(

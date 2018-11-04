@@ -2,13 +2,13 @@ package rendering
 
 import mythic.sculpting.ImmutableMesh
 import mythic.sculpting.VertexNormalTexture
-import mythic.sculpting.createCube
+//import mythic.sculpting.createCube
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import rendering.meshes.Primitive
 import rendering.meshes.VertexSchemas
 import rendering.meshes.convertMesh
-
+/*
 fun skyboxModel(vertexSchemas: VertexSchemas): AdvancedModelGenerator = {
   val mesh = ImmutableMesh()
   createCube(mesh, Vector3(1f, 1f, 1f))
@@ -35,3 +35,4 @@ fun skyboxModel(vertexSchemas: VertexSchemas): AdvancedModelGenerator = {
       primitives = primitives
   )
 }
+*/

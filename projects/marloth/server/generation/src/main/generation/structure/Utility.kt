@@ -1,6 +1,5 @@
 package generation.structure
 
-import generation.abstract.OldRealm
 import mythic.ent.Id
 import mythic.sculpting.*
 import mythic.spatial.*
@@ -8,7 +7,7 @@ import physics.voidNodeId
 import simulation.FaceType
 import mythic.ent.IdSource
 import mythic.ent.entityMap
-import simulation.newIdSource
+import mythic.ent.newIdSource
 import simulation.*
 
 data class WallVertices(
@@ -95,33 +94,33 @@ fun splitFacePairTables(pairs: List<FacePair>): Pair<ConnectionTable, ImmutableF
     )
 
 
-fun createSurface(mesh: ImmutableMesh, id: Id, node: Id, vertices: Vertices, faceType: FaceType): FacePair {
-  val floor = mesh.createStitchedFace(id, vertices)
+fun createSurface(nextEdgeId: IdSource, mesh: ImmutableMesh, id: Id, node: Id, vertices: Vertices, faceType: FaceType): FacePair {
+  val floor = mesh.createStitchedFace(nextEdgeId, id, vertices)
   val info = ConnectionFace(id, faceType, node, voidNodeId)
   return FacePair(info, floor)
 }
 
-fun createFloor(mesh: ImmutableMesh, nextId: IdSource, node: Node, vertices: Vertices, center: Vector2): FacePair {
+fun createFloor(idSources: GeometryIdSources, mesh: ImmutableMesh, node: Node, vertices: Vertices, center: Vector2): FacePair {
   val sortedFloorVertices = vertices
       .sortedBy { atan(it.xy() - center) }
 
-  val result = createSurface(mesh, nextId(), node.id, sortedFloorVertices, FaceType.floor)
+  val result = createSurface(idSources.edge, mesh, idSources.face(), node.id, sortedFloorVertices, FaceType.floor)
   node.floors.add(result.geometry)
   return result
 }
 
-fun createCeiling(mesh: ImmutableMesh, nextId: IdSource, node: Node, vertices: Vertices, center: Vector2): FacePair {
+fun createCeiling(idSources: GeometryIdSources, mesh: ImmutableMesh, node: Node, vertices: Vertices, center: Vector2): FacePair {
   val sortedFloorVertices = vertices
       .sortedByDescending { atan(it.xy() - center) }
       .map { it + Vector3(0f, 0f, wallHeight) }
 
-  val result = createSurface(mesh, nextId(), node.id, sortedFloorVertices, FaceType.ceiling)
+  val result = createSurface(idSources.edge, mesh, idSources.face(), node.id, sortedFloorVertices, FaceType.ceiling)
   node.ceilings.add(result.geometry)
   return result
 }
 
-fun createWall(mesh: ImmutableMesh, nextId: IdSource, node: Node, vertices: Vertices): FacePair {
-  val result = createSurface(mesh, nextId(), node.id, vertices, FaceType.wall)
+fun createWall(idSources: GeometryIdSources, mesh: ImmutableMesh, node: Node, vertices: Vertices): FacePair {
+  val result = createSurface(idSources.edge, mesh, idSources.face(), node.id, vertices, FaceType.wall)
   node.walls.add(result.geometry)
   return result
 }

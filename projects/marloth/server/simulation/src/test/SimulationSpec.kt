@@ -12,6 +12,8 @@ import physics.checkWallCollision
 import physics.getWallCollisions
 import simulation.simulationDelta
 import junit.framework.TestCase.*
+import mythic.ent.IdSource
+import mythic.ent.newIdSource
 import physics.WallCollision3
 
 class SimulationSpec : Spek({
@@ -19,12 +21,12 @@ class SimulationSpec : Spek({
 
     on("bodies collide with room corners") {
 
-      fun newFace(edges: List<Pair<Vector3, Vector3>>, normal: Vector3) =
+      fun newFace(nextId: IdSource, edges: List<Pair<Vector3, Vector3>>, normal: Vector3) =
           ImmutableFace(0,
               edges
                   .map {
                     ImmutableEdgeReference(
-                        edge = ImmutableEdge(it.first, it.second, mutableListOf()),
+                        edge = ImmutableEdge(nextId(), it.first, it.second, mutableListOf()),
                         next = null,
                         previous = null,
                         direction = true
@@ -35,11 +37,12 @@ class SimulationSpec : Spek({
 
       xit("should smoothly settle in the corner") {
         val delta = simulationDelta
+        val nextId = newIdSource(0)
         val wallsInRange = listOf(
-            newFace(listOf(
+            newFace(nextId, listOf(
                 Pair(Vector3(0f, 0f, 0f), Vector3(4f, 0f, 0f))
             ), Vector3(0f, -1f, 0f)),
-            newFace(listOf(
+            newFace(nextId, listOf(
                 Pair(Vector3(0f, 0f, 0f), Vector3(0f, -4f, 0f))
             ), Vector3(1f, 0f, 0f))
         )
@@ -66,8 +69,9 @@ class SimulationSpec : Spek({
       xit("Can round a corner without getting too close") {
         val delta = simulationDelta
         val cornerPoint = Vector3(1f, 0f, 0f)
+        val nextId = newIdSource(0)
         val wallsInRange = listOf(
-            newFace(listOf(
+            newFace(nextId, listOf(
                 Pair(Vector3(0f, 0f, 0f), cornerPoint)
             ), Vector3(0f, -1f, 0f))
         )
@@ -102,11 +106,12 @@ class SimulationSpec : Spek({
       it("Can round a corner without getting stuck") {
         val delta = simulationDelta
         val cornerPoint = Vector3(1f, 0f, 0f)
+        val nextId = newIdSource(0)
         val wallsInRange = listOf(
-            newFace(listOf(
+            newFace(nextId, listOf(
                 Pair(Vector3(0f, 0f, 0f), cornerPoint)
             ), Vector3(0f, -1f, 0f)),
-            newFace(listOf(
+            newFace(nextId, listOf(
                 Pair(cornerPoint, Vector3(2f, 1f, 0f))
             ), Vector3(1f, -1f, 0f).normalize())
         )

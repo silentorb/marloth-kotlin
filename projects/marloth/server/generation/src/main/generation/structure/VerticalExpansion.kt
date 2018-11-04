@@ -1,6 +1,5 @@
 package generation.structure
 
-import generation.abstract.OldRealm
 import mythic.ent.Id
 import mythic.ent.entityMap
 import mythic.sculpting.ImmutableFace
@@ -103,7 +102,7 @@ fun createAscendingSpaceWalls(idSources: StructureIdSources, realm: StructureRea
           otherUpNode
 
         val orderedVertices = sortWallVertices(emptyNode.position, unorderedVertices)
-        val newWall = realm.mesh.createStitchedFace(idSources.face(), orderedVertices)
+        val newWall = realm.mesh.createStitchedFace(idSources.edge, idSources.face(), orderedVertices)
 //        newWall.data = ConnectionFace(FaceType.wall, upperNode, otherUpNode, null, "lower")
         upperNode.walls.add(newWall)
         otherUpNode.walls.add(newWall)

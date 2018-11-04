@@ -254,8 +254,8 @@ fun addSpaceNode(idSources: StructureIdSources, realm: StructureRealm, originFac
     info.copy(secondNode = node.id)
   }
 
-  val floor = createFloor(realm.mesh, idSources.face, node, floorVertices, flatCenter)
-  val ceiling = createCeiling(realm.mesh, idSources.face, node, ceilingVertices, flatCenter)
+  val floor = createFloor(idSources, realm.mesh, node, floorVertices, flatCenter)
+  val ceiling = createCeiling(idSources, realm.mesh, node, ceilingVertices, flatCenter)
 
   val gapEdges = edges.filter { edge ->
     edge.faces.count { walls.contains(it) } < 2
@@ -263,7 +263,7 @@ fun addSpaceNode(idSources: StructureIdSources, realm: StructureRealm, originFac
 
   val gapWall = if (a != b) {
     val gapVertices = getNewWallVertices(sectorCenter, listOf(a, b))
-    val newWall = realm.mesh.createStitchedFace(idSources.face(), gapVertices)
+    val newWall = realm.mesh.createStitchedFace(idSources.edge, idSources.face(), gapVertices)
     if (node.isSolid)
       newWall.flipQuad()
 
@@ -279,13 +279,12 @@ fun addSpaceNode(idSources: StructureIdSources, realm: StructureRealm, originFac
           .plus(gapWall)
   )
 
-  val updatedConnections = realm.connections
-      .plus(newConnections)
+  val updatedConnections = newConnections
       .plus(entityMap(updatedWalls))
 
   return realm.copy(
       nodes = realm.nodes.plus(Pair(node.id, node)),
-      connections = updatedConnections,
+      connections = realm.connections.plus(updatedConnections),
       mesh = realm.mesh.copy(
           faces = realm.mesh.faces.plus(newFaces)
       )
@@ -309,12 +308,12 @@ fun createBoundarySector(idSources: StructureIdSources, realm: StructureRealm, o
 
   val node = createSpaceNode(sectorCenter, idSources.node)
 
-  val floor = createFloor(realm.mesh, idSources.face, node, floorVertices, sectorCenter.xy())
-  val ceiling = createCeiling(realm.mesh, idSources.face, node, floorVertices, sectorCenter.xy())
+  val floor = createFloor(idSources, realm.mesh, node, floorVertices, sectorCenter.xy())
+  val ceiling = createCeiling(idSources, realm.mesh, node, floorVertices, sectorCenter.xy())
 //  initializeFaceInfo(FaceType.wall, node, floor, Textures.ground)
   node.walls.add(originFace)
   val updatedOriginFace = realm.connections[originFace.id]!!.copy(secondNode = node.id)
-  val outerWall = createWall(realm.mesh, idSources.face, node, newPoints)
+  val outerWall = createWall(idSources, realm.mesh, node, newPoints)
 //  mesh.faces[outerWall.geometry.id]!!.debugInfo = "space-d"
   val faces1 = listOf(outerWall)
       .plus(floor)
@@ -343,12 +342,12 @@ fun createBoundarySector(idSources: StructureIdSources, realm: StructureRealm, o
         newWall.upper[1 - i],
         originalWall.upper[1 - i]
     )
-    val wall = createWall(realm.mesh, idSources.face, node, sidePoints)
+    val wall = createWall(idSources, realm.mesh, node, sidePoints)
 //    mesh.faces[wall.geometry.id]!!.debugInfo = "space-d"
     wall
   }
 
-  val (connections2, faces2) = splitFacePairTables(sideWalls.plus(missingWallsAccumulator))
+  val (connections2, faces2) = splitFacePairTables(faces1.plus(sideWalls.plus(missingWallsAccumulator)))
 
   return StructureRealm(
       nodes = realm.nodes.plus(Pair(node.id, node)),
@@ -377,8 +376,9 @@ fun fillBoundary(idSources: StructureIdSources, realm: StructureRealm, dice: Dic
 
 data class StructureIdSources(
     val node: IdSource,
-    val face: IdSource
-)
+    override val face: IdSource,
+    override val edge: IdSource
+) : GeometryIdSources
 
 fun defineNegativeSpace(idSources: StructureIdSources, realm: StructureRealm, dice: Dice): StructureRealm {
   var pass = 1
@@ -428,5 +428,5 @@ fun defineNegativeSpace(idSources: StructureIdSources, realm: StructureRealm, di
     ++pass
   }
 
-  return realm
+  return currentRealm
 }

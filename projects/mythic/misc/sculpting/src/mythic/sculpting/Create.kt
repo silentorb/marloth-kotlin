@@ -1,5 +1,7 @@
 package mythic.sculpting
 
+import mythic.ent.IdSource
+import mythic.ent.newIdSource
 import mythic.spatial.*
 import kotlin.math.cos
 import kotlin.math.sin
@@ -58,7 +60,7 @@ fun createSphere(mesh: FlexibleMesh, radius: Float, horizontalCount: Int, vertic
 
 fun createIncompleteSphere(mesh: FlexibleMesh, radius: Float, horizontalCount: Int, verticalCount: Int, take: Int) =
     lathe(mesh, createArc(radius, verticalCount, Pi).take(take), horizontalCount)
-
+/*
 fun createCube(mesh: FlexibleMesh, size: Vector3): List<FlexibleFace> {
   val half = size * 0.5f
   val top = squareUp(mesh, Vector2(size.x, size.y), half.z)
@@ -98,9 +100,11 @@ fun createCube(mesh: ImmutableMesh, size: Vector3): List<ImmutableFace> {
       initial_bottom_vertices[1]
   )
 
+  val nextId = newIdSource(0)
+
   val sides = (0..3).map { a ->
     val b = if (a > 2) 0 else a + 1
-    mesh.createStitchedFace(0, listOf(
+    mesh.createStitchedFace(nextId, nextId(), listOf(
         top_vertices[b], top_vertices[a],
         bottom_vertices[a], bottom_vertices[b]
     ))
@@ -118,9 +122,9 @@ fun squareDown(mesh: FlexibleMesh, size: Vector2, z: Float): FlexibleFace {
   ))
 }
 
-fun squareDown(mesh: ImmutableMesh, size: Vector2, z: Float): ImmutableFace {
+fun squareDown(nextId: IdSource, mesh: ImmutableMesh, size: Vector2, z: Float): ImmutableFace {
   val half = size * 0.5f;
-  return mesh.createStitchedFace(0, listOf(
+  return mesh.createStitchedFace(nextId, nextId(), listOf(
       Vector3(-half.x, -half.y, z),
       Vector3(-half.x, half.y, z),
       Vector3(half.x, half.y, z),
@@ -138,9 +142,9 @@ fun squareUp(mesh: FlexibleMesh, size: Vector2, z: Float): FlexibleFace {
   ))
 }
 
-fun squareUp(mesh: ImmutableMesh, size: Vector2, z: Float): ImmutableFace {
+fun squareUp(nextId: IdSource, mesh: ImmutableMesh, size: Vector2, z: Float): ImmutableFace {
   val half = size * 0.5f;
-  return mesh.createStitchedFace(0, listOf(
+  return mesh.createStitchedFace(nextId, nextId(), listOf(
       Vector3(-half.x, -half.y, z),
       Vector3(half.x, -half.y, z),
       Vector3(half.x, half.y, z),
@@ -153,3 +157,4 @@ fun squareUp(mesh: ImmutableMesh, size: Vector2, z: Float): ImmutableFace {
 //    mesh.createEdge(path[i], path[i + 1])
 //  }
 //}
+*/

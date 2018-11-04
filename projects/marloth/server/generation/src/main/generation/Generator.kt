@@ -2,12 +2,9 @@ package generation
 
 import gatherNodes
 import generation.abstract.*
-import generation.abstract.OldRealm
-import generation.structure.assignTextures
-import generation.structure.doorwayLength
-import generation.structure.generateStructure
-import generation.structure.idSourceFromNodes
+import generation.structure.*
 import mythic.ent.Id
+import mythic.ent.newIdSource
 import mythic.spatial.*
 import randomly.Dice
 import simulation.*
@@ -82,14 +79,13 @@ fun getHome(graph: Graph): List<Node> {
 fun generateWorld(input: WorldInput): World {
   val scale = calculateWorldScale(input.boundary.dimensions)
   val (graph, tunnels) = generateAbstract(input.boundary, input.dice, scale)
-  val nextId = idSourceFromNodes(graph.nodes)
   val home = getHome(graph)
-  val initialRealm = OldRealm(
-      graph = graph,
-      nextId = nextId
+  val idSources = StructureIdSources(
+      node = idSourceFromNodes(graph.nodes),
+      face = newIdSource(1),
+      edge = newIdSource(1)
   )
-  val nextFaceId = newIdSource(1)
-  val structuredRealm = generateStructure(initialRealm, nextFaceId, input.dice, tunnels)
+  val structuredRealm = generateStructure(idSources, graph, input.dice, tunnels)
   val biomeMap = assignBiomes(structuredRealm.nodes.values, input, home)
   val texturedFaces = assignTextures(structuredRealm.nodes, structuredRealm.connections, biomeMap)
 

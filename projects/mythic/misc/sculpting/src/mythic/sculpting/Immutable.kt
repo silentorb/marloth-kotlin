@@ -2,6 +2,7 @@ package mythic.sculpting
 
 import mythic.ent.Entity
 import mythic.ent.Id
+import mythic.ent.IdSource
 import mythic.spatial.Vector3
 import mythic.spatial.times
 import org.joml.plus
@@ -11,10 +12,11 @@ typealias Edges = List<ImmutableEdge>
 typealias Faces = List<ImmutableFace>
 
 class ImmutableEdge(
+    override val id: Id,
     val first: Vector3,
     val second: Vector3,
     val faces: MutableList<ImmutableFace>
-) {
+) : Entity {
   val vertices = listOf(first, second)
 
   val middle: Vector3
@@ -65,7 +67,7 @@ data class ImmutableFace(
     override val id: Id,
     var edges: MutableList<ImmutableEdgeReference> = mutableListOf(),
 //    var data: Any? = null,
-    var normal: Vector3 = Vector3()
+    val normal: Vector3 = Vector3()
 ) : Entity {
   val debugIndex = flexibleFaceDebugCounter++
   val unorderedVertices: List<Vector3>
@@ -74,10 +76,10 @@ data class ImmutableFace(
   val vertices: List<Vector3>
     get() = edges.map { it.first }
 
-  fun updateNormal() {
-//    if (vertices.size > 2)
-    normal = getNormal(unorderedVertices)
-  }
+//  fun updateNormal() {
+////    if (vertices.size > 2)
+//    normal = getNormal(unorderedVertices)
+//  }
 
   val neighbors: List<ImmutableFace>
     get() = edges.flatMap {
@@ -132,16 +134,19 @@ data class ImmutableMesh(
 //    return face
 //  }
 
-  fun createFace(id: Long, vertices: List<Vector3>): ImmutableFace {
+  fun createFace(nextEdgeId: IdSource, id: Long, vertices: List<Vector3>): ImmutableFace {
     assert(vertices.distinct().size == vertices.size) // Check for duplicate vertices
-    val face = ImmutableFace(id)
-    replaceFaceVertices(face, vertices)
+    val face = ImmutableFace(
+        id = id,
+        normal = getNormal(vertices)
+    )
+    replaceFaceVertices(nextEdgeId, face, vertices)
     return face
   }
 
-  fun createStitchedFace(id: Long, vertices: List<Vector3>): ImmutableFace {
-    val face = createFace(id, vertices)
-    face.updateNormal()
+  fun createStitchedFace(nextEdgeId: IdSource, id: Long, vertices: List<Vector3>): ImmutableFace {
+    val face = createFace(nextEdgeId, id, vertices)
+//    face.updateNormal()
 //    stitchEdges(face.edges)
     return face
   }
@@ -149,7 +154,7 @@ data class ImmutableMesh(
   fun getMatchingEdges(first: Vector3, second: Vector3) =
       edges.values.filter { it.matches(first, second) }
 
-  fun createEdge(first: Vector3, second: Vector3, face: ImmutableFace?): ImmutableEdgeReference {
+  fun createEdge(nextId: IdSource, first: Vector3, second: Vector3, face: ImmutableFace?): ImmutableEdgeReference {
     val faces = if (face == null) mutableListOf() else mutableListOf(face)
     val existingEdges = getMatchingEdges(first, second)
     assert(existingEdges.size < 2)
@@ -160,33 +165,18 @@ data class ImmutableMesh(
 
       return ImmutableEdgeReference(edge, null, null, edge.first == first)
     } else {
-      val edge = ImmutableEdge(first, second, faces)
-      throw Error("This needs to be handled.")
+      val edge = ImmutableEdge(nextId(), first, second, faces)
+//      throw Error("This needs to be handled.")
 //      edges.add(edge)
       return ImmutableEdgeReference(edge, null, null, true)
     }
-
   }
 
-//  fun createEdges(vertices: Vertices) {
-//    var previous = vertices.first()
-//    var previousEdge: ImmutableEdgeReference? = null
-//    for (next in vertices.drop(1)) {
-//      val edge = createEdge(previous, next, null)
-//      if (previousEdge != null) {
-//        edge.previous = previousEdge
-//        previousEdge.next = edge
-//      }
-//      previousEdge = edge
-//      previous = next
-//    }
-//  }
-
-  fun replaceFaceVertices(face: ImmutableFace, initializer: List<Vector3>) {
+  fun replaceFaceVertices(nextId: IdSource, face: ImmutableFace, initializer: List<Vector3>) {
     var previous = initializer.first()
     var previousEdge: ImmutableEdgeReference? = null
     for (next in initializer.drop(1)) {
-      val edge = createEdge(previous, next, face)
+      val edge = createEdge(nextId, previous, next, face)
       face.edges.add(edge)
       if (previousEdge != null) {
         edge.previous = previousEdge
@@ -196,7 +186,7 @@ data class ImmutableMesh(
       previous = next
     }
     val first = face.edges.first()
-    val last = createEdge(initializer.last(), initializer.first(), face)
+    val last = createEdge(nextId, initializer.last(), initializer.first(), face)
     face.edges.add(last)
     last.next = first
     previousEdge!!.next = last

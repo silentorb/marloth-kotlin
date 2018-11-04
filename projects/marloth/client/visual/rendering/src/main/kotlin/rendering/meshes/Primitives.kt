@@ -8,7 +8,7 @@ import rendering.FaceTextureMap
 import rendering.Material
 import rendering.Model
 import rendering.mapMaterialToMesh
-
+/*
 val createCube = {
   val mesh = ImmutableMesh()
   createCube(mesh, Vector3(1f, 1f, 1f))
@@ -37,6 +37,7 @@ val createSkybox = {
       textureMap = textureMap
   )
 }
+*/
 
 //val createSphere = {
 //  val mesh = ImmutableMesh()

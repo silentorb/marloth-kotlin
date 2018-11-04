@@ -5,6 +5,7 @@ import intellect.updateAiState
 import mythic.ent.Entity
 import mythic.ent.Id
 import mythic.ent.IdSource
+import mythic.ent.newIdSource
 import mythic.spatial.Pi2
 import mythic.spatial.Vector3
 import physics.Collision
