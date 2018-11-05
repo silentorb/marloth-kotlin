@@ -45,9 +45,9 @@ fun renderFaceIndices(renderer: SceneRenderer, world: Realm) {
       val normalOffset = face.normal * 0.5f
       face.edges.forEachIndexed { index, edge ->
         val vertex = edge.first
-        val centeringOffset = (edge.next!!.first - vertex).normalize() + (edge.previous!!.first - vertex).normalize()
-        val offset = centeringOffset// + normalOffset
-        renderer.drawText(index.toString(), vertex + offset, textStyle)
+//        val centeringOffset = (edge.next!!.first - vertex).normalize() + (edge.previous!!.first - vertex).normalize()
+//        val offset = centeringOffset// + normalOffset
+//        renderer.drawText(index.toString(), vertex + offset, textStyle)
       }
     }
   }

@@ -263,11 +263,13 @@ fun addSpaceNode(idSources: StructureIdSources, realm: StructureRealm, originFac
 
   val gapWall = if (a != b) {
     val gapVertices = getNewWallVertices(sectorCenter, listOf(a, b))
-    val newWall = realm.mesh.createStitchedFace(idSources.edge, idSources.face(), gapVertices)
-    if (node.isSolid)
-      newWall.flipQuad()
+    val facingVertices = if(node.isSolid)
+      flipVertices(gapVertices)
+    else
+      gapVertices
 
-    //    newWall.data = ConnectionFace(FaceType.wall, node, null, null, "space-b")
+    val newWall = realm.mesh.createStitchedFace(idSources.edge, idSources.face(), facingVertices)
+
     node.walls.add(newWall)
     val connection = ConnectionFace(newWall.id, FaceType.wall, node.id, voidNodeId, null, "space-b")
     listOf(FacePair(connection, newWall))

@@ -4,8 +4,6 @@ import mythic.ent.Entity
 import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.spatial.Vector3
-import mythic.spatial.times
-import org.joml.plus
 
 typealias Vertices = List<Vector3>
 typealias Edges = List<ImmutableEdge>
@@ -34,9 +32,9 @@ class ImmutableEdge(
 
 class ImmutableEdgeReference(
     val edge: ImmutableEdge,
-    var next: ImmutableEdgeReference?,
-    var previous: ImmutableEdgeReference?,
-    var direction: Boolean
+//    var next: ImmutableEdgeReference?,
+//    var previous: ImmutableEdgeReference?,
+    val direction: Boolean
 ) {
   val vertices: List<Vector3>
     get() = if (direction) edge.vertices else listOf(edge.second, edge.first)
@@ -65,7 +63,7 @@ private var flexibleFaceDebugCounter = 0L
 
 data class ImmutableFace(
     override val id: Id,
-    var edges: MutableList<ImmutableEdgeReference> = mutableListOf(),
+    val edges: MutableList<ImmutableEdgeReference> = mutableListOf(),
 //    var data: Any? = null,
     val normal: Vector3 = Vector3()
 ) : Entity {
@@ -90,22 +88,34 @@ data class ImmutableFace(
   fun edge(first: Vector3, second: Vector3): ImmutableEdgeReference? =
       edges.firstOrNull { it.edge.matches(first, second) }
 
-  fun flipQuad() {
-    edges.forEach {
-      val a = it.next
-      it.next = it.previous
-      it.previous = a
-      it.direction = !it.direction
-    }
-
-    edges = listOf(
-        edges[0],
-        edges[3],
-        edges[2],
-        edges[1]
-    ).toMutableList()
-  }
+//  fun flipQuad() {
+//    edges.forEach {
+//      val a = it.next
+//      it.next = it.previous
+//      it.previous = a
+//      it.direction = !it.direction
+//    }
+//
+//    edges = listOf(
+//        edges[0],
+//        edges[3],
+//        edges[2],
+//        edges[1]
+//    ).toMutableList()
+//  }
 }
+
+fun flipVertices(vertices: List<Vector3>): List<Vector3> =
+    listOf(
+//        vertices[0],
+//        vertices[3],
+//        vertices[2],
+//        vertices[1]
+        vertices[1],
+        vertices[0],
+        vertices[3],
+        vertices[2]
+    )
 
 typealias ImmutableFaceTable = Map<Id, ImmutableFace>
 
@@ -163,36 +173,24 @@ data class ImmutableMesh(
       if (face != null)
         edge.faces.add(face)
 
-      return ImmutableEdgeReference(edge, null, null, edge.first == first)
+      return ImmutableEdgeReference(edge, edge.first == first)
     } else {
       val edge = ImmutableEdge(nextId(), first, second, faces)
 //      throw Error("This needs to be handled.")
 //      edges.add(edge)
-      return ImmutableEdgeReference(edge, null, null, true)
+      return ImmutableEdgeReference(edge, true)
     }
   }
 
   fun replaceFaceVertices(nextId: IdSource, face: ImmutableFace, initializer: List<Vector3>) {
     var previous = initializer.first()
-    var previousEdge: ImmutableEdgeReference? = null
     for (next in initializer.drop(1)) {
       val edge = createEdge(nextId, previous, next, face)
       face.edges.add(edge)
-      if (previousEdge != null) {
-        edge.previous = previousEdge
-        previousEdge.next = edge
-      }
-      previousEdge = edge
       previous = next
     }
-    val first = face.edges.first()
     val last = createEdge(nextId, initializer.last(), initializer.first(), face)
     face.edges.add(last)
-    last.next = first
-    previousEdge!!.next = last
-    last.previous = previousEdge
-    first.previous = last
-    assert(face.edges.none { it.next == null || it.previous == null })
   }
 
 //  fun sharedImport(mesh: ImmutableMesh) {

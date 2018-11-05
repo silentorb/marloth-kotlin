@@ -27,8 +27,6 @@ class SimulationSpec : Spek({
                   .map {
                     ImmutableEdgeReference(
                         edge = ImmutableEdge(nextId(), it.first, it.second, mutableListOf()),
-                        next = null,
-                        previous = null,
                         direction = true
                     )
                   }.toMutableList(),

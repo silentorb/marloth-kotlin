@@ -38,8 +38,12 @@ private fun logGrid(grid: Grid<Biome>, boundary: WorldBoundary) {
   }
 }
 
-fun assignBiomes(nodes: Collection<Node>, input: WorldInput, home: List<Node>): BiomeMap {
-  val grid = normalizeGrid(clampGrid(newBiomeGrid(input, randomBiomes)), input.boundary)
+typealias BiomeGrid = Grid<Biome>
+
+fun newBiomeGrid(input: WorldInput) =
+    normalizeGrid(clampGrid(newBiomeGrid(input, randomBiomes)), input.boundary)
+
+fun assignBiomes(nodes: Collection<Node>, grid: BiomeGrid, home: List<Node>): BiomeMap {
   return nodes.associate { node ->
     val biome = if (home.any { it.id == node.id })
       Biome.home

@@ -58,7 +58,7 @@ fun sortWallVertices(sectorCenter: Vector3, vertices: Vertices): Vertices {
     sorted
 }
 
-fun createSecondaryNode(sectorCenter: Vector3, nextId: IdSource, isSolid: Boolean): Node {
+fun createSecondaryNode(sectorCenter: Vector3, nextId: IdSource, isSolid: Boolean, biome: Biome = Biome.void): Node {
   val radius = 1f
 
   val node = Node(
@@ -67,7 +67,7 @@ fun createSecondaryNode(sectorCenter: Vector3, nextId: IdSource, isSolid: Boolea
       radius = radius,
       isSolid = isSolid,
       isWalkable = false,
-      biome = Biome.void,
+      biome = biome,
       height = 0f,
       floors = mutableListOf(),
       ceilings = mutableListOf(),

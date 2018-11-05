@@ -50,7 +50,10 @@ fun createVerticalNodes(idSources: StructureIdSources, realm: StructureRealm, mi
     val depth = wallHeight
     val offset = Vector3(0f, 0f, depth * facing.dirMod)
 
-    createSecondaryNode(node.position + offset, idSources.node, isSolid = shouldBeSolid(node))
+    createSecondaryNode(node.position + offset, idSources.node,
+        isSolid = shouldBeSolid(node),
+        biome = node.biome
+    )
   }
 
   val newFaces = middleNodes.zip(newNodes) { node, newNode ->
