@@ -6,22 +6,18 @@ import mythic.drawing.Canvas
 import mythic.sculpting.ImmutableEdge
 import mythic.sculpting.ImmutableMesh
 import mythic.spatial.Vector4
-import org.joml.plus
 import simulation.*
 
 private fun getLineColor(faces: ConnectionTable, edge: ImmutableEdge): Vector4 {
-  val wallFaces = edge.faces.filter { isSolidWall(faces[it.id]!!) }
-  val face = wallFaces.firstOrNull()
-  if (face != null) {
-    val debugInfo = faces[face.id]!!.debugInfo
+  val wallFaces = edge.faces//.filter { isSolidWall(faces[it.id]!!) }
+  val debugInfo = wallFaces.mapNotNull { faces[it.id]?.debugInfo }.firstOrNull()
+  if (debugInfo != null) {
     val opacity = 1f//if (faceNodeCount(face) == 2) 1f else 0.1f
-    if (debugInfo != null) {
-      return when (debugInfo) {
-        "space-a" -> Vector4(1f, 0f, 1f, opacity)
-        "space-b" -> Vector4(0f, 1f, 1f, opacity)
-        "space-d" -> Vector4(1f, 0f, 0f, 1f)
-        else -> Vector4(1f, 1f, 1f, opacity)
-      }
+    return when (debugInfo) {
+      "space-a" -> Vector4(1f, 0f, 1f, opacity)
+      "space-b" -> Vector4(0f, 1f, 1f, opacity)
+      "space-d" -> Vector4(1f, 0f, 0f, 1f)
+      else -> Vector4(1f, 1f, 1f, opacity)
     }
   }
 //  val opacity = if (edge.faces.any(isSpace)) 0.2f else 0.5f
@@ -33,15 +29,19 @@ fun drawVertices(faces: ConnectionTable, bounds: Bounds, getPosition: PositionFu
   val lineColor = Vector4(0f, 0f, 1f, 1f)
   val edges = mesh.edges.values.filter { it.vertices[0].z == it.vertices[1].z && it.vertices[1].z == 0f }
   for (edge in edges) {
-    val wallFaces = edge.faces.filter { isSolidWall(faces[it.id]!!) }
+//    val wallFaces = edge.faces.filter { isSolidWall(faces[it.id]!!) }
 //    assert(wallFaces.size < 2)
-    if (wallFaces.any()) {
-      val color = getLineColor(faces, edge)
-      val normal = wallFaces.first().normal
-      val middle = edge.middle.xy()
-      canvas.drawLine(getPosition(edge.first.xy()), getPosition(edge.second.xy()), color, 3f)
-      canvas.drawLine(getPosition(middle), getPosition(middle + normal.xy()), color, 3f * wallFaces.size)
-    }
+//    if (wallFaces.any()) {
+//      val color = getLineColor(faces, edge)
+//      val normal = wallFaces.first().normal
+//      val middle = edge.middle.xy()
+//      canvas.drawLine(getPosition(edge.first.xy()), getPosition(edge.second.xy()), color, 3f)
+//      canvas.drawLine(getPosition(middle), getPosition(middle + normal.xy()), color, 3f * wallFaces.size)
+//    }
+//    else {
+    val color = getLineColor(faces, edge)
+    canvas.drawLine(getPosition(edge.first.xy()), getPosition(edge.second.xy()), color, 3f)
+//    }
   }
 
   for (vertex in mesh.redundantVertices) {

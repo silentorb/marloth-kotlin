@@ -5,6 +5,7 @@ import generation.BiomeGrid
 import generation.assignBiomes
 import generation.getTwinTunnels
 import mythic.ent.Id
+import mythic.ent.entityMap
 import mythic.spatial.Vector3
 import randomly.Dice
 import simulation.*
@@ -40,10 +41,10 @@ fun getHome(graph: Graph): List<Node> {
   }
 }
 
-fun generateAbstract(input: WorldInput, scale: Float, biomeGrid: BiomeGrid): Pair<Graph, List<Node>> {
+fun generateAbstract(input: WorldInput, scale: Float, biomeGrid: BiomeGrid): Pair<Graph, NodeTable> {
   val nodeCount = (20 * scale).toInt()
   val initialNodes = createRoomNodes(input.boundary, nodeCount, input.dice)
-  val graph = handleOverlapping(initialNodes)
+  val graph = handleOverlapping(entityMap(initialNodes))
   val unifyingConnections = unifyWorld(graph)
   val secondConnections = graph.connections.plus(unifyingConnections)
   val deadEndClosingConnections = closeDeadEnds(graph.copy(connections = secondConnections))
@@ -55,11 +56,11 @@ fun generateAbstract(input: WorldInput, scale: Float, biomeGrid: BiomeGrid): Pai
 
   val fourthGraph = thirdGraph.plus(tunnelGraph).minusConnections(preTunnels.plus(twinTunnels).map { it.connection })
   val home = getHome(graph)
-  val biomeMap = assignBiomes(fourthGraph.nodes, biomeGrid, home)
+  val biomeMap = assignBiomes(fourthGraph.nodes.values, biomeGrid, home)
   val fifthGraph = fourthGraph.copy(
-      nodes = fourthGraph.nodes.map {
-        it.copy(
-            biome = biomeMap[it.id]!!
+      nodes = fourthGraph.nodes.mapValues {
+        it.value.copy(
+            biome = biomeMap[it.value.id]!!
         )
       }
   )

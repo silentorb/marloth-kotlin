@@ -7,7 +7,6 @@ import mythic.spatial.Vector3
 
 typealias Vertices = List<Vector3>
 typealias Edges = List<ImmutableEdge>
-typealias Faces = List<ImmutableFace>
 
 class ImmutableEdge(
     override val id: Id,
@@ -22,8 +21,8 @@ class ImmutableEdge(
 
   fun getReference(face: ImmutableFace) = face.edges.first { it.edge == this }
 
-  val references: List<ImmutableEdgeReference>
-    get() = faces.map { getReference(it) }
+//  val references: List<ImmutableEdgeReference>
+//    get() = faces.map { getReference(it) }
 
   fun matches(a: Vector3, b: Vector3): Boolean =
       (first == a && second == b)
@@ -48,8 +47,8 @@ class ImmutableEdgeReference(
   val second: Vector3
     get() = if (direction) edge.second else edge.first
 
-  val otherImmutableEdgeReferences: List<ImmutableEdgeReference>
-    get() = edge.references.filter { it != this }
+//  val otherImmutableEdgeReferences: List<ImmutableEdgeReference>
+//    get() = edge.references.filter { it != this }
 
   val middle: Vector3
     get() = edge.middle
@@ -132,17 +131,8 @@ data class ImmutableMesh(
   val redundantVertices: Vertices
     get() = edges.flatMap { it.value.vertices }
 
-//  val distinctVertices: List<Vector3>
-//    get() = redundantVertices.distinct()
-
   val distinctVertices: Vertices
     get() = distinctVertices(redundantVertices)
-
-//  fun createFace(id: Long): ImmutableFace {
-//    val face = ImmutableFace(id)
-//    faces.add(face)
-//    return face
-//  }
 
   fun createFace(nextEdgeId: IdSource, id: Long, vertices: List<Vector3>): ImmutableFace {
     assert(vertices.distinct().size == vertices.size) // Check for duplicate vertices
@@ -155,10 +145,7 @@ data class ImmutableMesh(
   }
 
   fun createStitchedFace(nextEdgeId: IdSource, id: Long, vertices: List<Vector3>): ImmutableFace {
-    val face = createFace(nextEdgeId, id, vertices)
-//    face.updateNormal()
-//    stitchEdges(face.edges)
-    return face
+    return createFace(nextEdgeId, id, vertices)
   }
 
   fun getMatchingEdges(first: Vector3, second: Vector3) =
@@ -192,16 +179,6 @@ data class ImmutableMesh(
     val last = createEdge(nextId, initializer.last(), initializer.first(), face)
     face.edges.add(last)
   }
-
-//  fun sharedImport(mesh: ImmutableMesh) {
-//    faces.addAll(mesh.faces)
-//    edges.addAll(mesh.edges)
-//  }
-//
-//  fun sharedImport(meshes: List<ImmutableMesh>) {
-//    meshes.forEach { sharedImport(it) }
-//  }
-
 }
 
 fun calculateNormals(mesh: ImmutableMesh): ImmutableMesh {

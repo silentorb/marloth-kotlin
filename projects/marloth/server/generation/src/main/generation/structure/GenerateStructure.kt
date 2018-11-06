@@ -165,34 +165,34 @@ fun createWall(idSources: GeometryIdSources, edge: ImmutableEdge, mesh: Immutabl
   ))
 }
 
-fun getOrCreateWall(idSources: GeometryIdSources, faces: ConnectionTable, edge: ImmutableEdge, otherEdges: List<ImmutableEdgeReference>, mesh: ImmutableMesh): ImmutableFace {
-  return if (otherEdges.size > 1) {
-    val face = edge.faces.firstOrNull {
-      val info = faces[it.id]
-      info != null && info.faceType == FaceType.space
-    }
-    if (face != null)
-      face
-    else
-      createWall(idSources, edge, mesh)
-  } else
-    createWall(idSources, edge, mesh)
-}
+//fun getOrCreateWall(idSources: GeometryIdSources, faces: ConnectionTable, edge: ImmutableEdge, otherEdges: List<ImmutableEdgeReference>, mesh: ImmutableMesh): ImmutableFace {
+//  return if (otherEdges.size > 1) {
+//    val face = edge.faces.firstOrNull {
+//      val info = faces[it.id]
+//      info != null && info.faceType == FaceType.space
+//    }
+//    if (face != null)
+//      face
+//    else
+//      createWall(idSources, edge, mesh)
+//  } else
+//    createWall(idSources, edge, mesh)
+//}
 
 fun toEdgeTable(faces: Collection<ImmutableFace>) =
     entityMap(faces.flatMap { er -> er.edges.map { it.edge } }.distinct())
 
-fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice, tunnels: List<Node>): StructureRealm {
-  val roomNodes = graph.nodes.minus(tunnels)
+fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice, tunnels: NodeTable): StructureRealm {
+  val roomNodes = graph.nodes.minus(tunnels.keys)
 
-  val singleNodes = roomNodes.filter { !isInCluster(graph, it) }
-  val clusters = gatherClusters(graph, roomNodes)
+  val singleNodes = roomNodes.values.filter { !isInCluster(graph, it) }
+  val clusters = gatherClusters(graph, roomNodes.values)
   val nodeSectors = singleNodes.map { createSingleNodeStructure(graph, it) }
       .plus(clusters.flatMap { createClusterStructure(graph, it) })
 
   val tunnelSectors = tunnels
-      .map { generateTunnelStructure(graph, it, nodeSectors) }
-
+      .map { generateTunnelStructure(graph, it.value, nodeSectors) }
+//  val tunnelSectors: List<TempSector> = listOf()
   val allSectors = nodeSectors.plus(tunnelSectors)
   val floorsAndCeilings = splitFacePairTables(sinewFloorsAndCeilings(idSources, allSectors, ImmutableMesh()))
   var mesh = ImmutableMesh(
@@ -207,7 +207,7 @@ fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice, tunnels:
     }
   }
 
-  val nodeTable = entityMap(graph.nodes)
+  val nodeTable = graph.nodes
   val groups = pairs.groupBy { it.first.edge.hashCode() }
   val (singles, shared) = groups.entries.partition { it.value.size == 1 }
   val updatedWalls = singles.map { it.value.first() }.map {
@@ -244,15 +244,18 @@ data class StructureRealm(
     val mesh: ImmutableMesh
 )
 
-fun generateStructure(idSources: StructureIdSources, graph: Graph, dice: Dice, tunnels: List<Node>): StructureRealm {
+fun generateStructure(idSources: StructureIdSources, graph: Graph, dice: Dice, tunnels: NodeTable): StructureRealm {
   val initialRealm = createRooms(graph, idSources, dice, tunnels)
   val roomNodes = graph.nodes
-//  val spaceInputRealm = StructureRealm(
-//      nodes = entityMap(graph.nodes),
-//      connections = connections,
-//      mesh = ImmutableMesh(faces = faces)
-//  )
   val spaceOutputRealm = defineNegativeSpace(idSources, initialRealm, dice)
-  val boundaryOutputRealm = fillBoundary(idSources, spaceOutputRealm, dice)
-  return expandVertically(idSources, boundaryOutputRealm, roomNodes, dice)
+//  val spaceOutputRealm = initialRealm
+//  val boundaryOutputRealm = fillBoundary(idSources, spaceOutputRealm, dice)
+  val boundaryOutputRealm = spaceOutputRealm
+//  val finalRealm = expandVertically(idSources, boundaryOutputRealm, roomNodes, dice)
+  val finalRealm = boundaryOutputRealm
+  return finalRealm.copy(
+      mesh = finalRealm.mesh.copy(
+          edges = entityMap(finalRealm.mesh.faces.flatMap { er -> er.value.edges.map { it.edge } }.distinct())
+      )
+  )
 }

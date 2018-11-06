@@ -182,9 +182,9 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
       if (config.drawNormals)
         renderFaceNormals(sceneRenderer, 0.05f, modelSource.mesh)
 
-      modelSource.mesh.edges.values.filter { it.faces.none() }.forEach {
-        sceneRenderer.drawLine(it.first, it.second, Vector4(0.8f, 0.5f, 0.3f, 1f))
-      }
+//      modelSource.mesh.edges.values.filter { it.faces.none() }.forEach {
+//        sceneRenderer.drawLine(it.first, it.second, Vector4(0.8f, 0.5f, 0.3f, 1f))
+//      }
 
       if (config.drawTempLine)
         sceneRenderer.drawLine(config.tempStart, config.tempEnd, yellow)

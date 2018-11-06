@@ -257,13 +257,9 @@ fun addSpaceNode(idSources: StructureIdSources, realm: StructureRealm, originFac
   val floor = createFloor(idSources, realm.mesh, node, floorVertices, flatCenter)
   val ceiling = createCeiling(idSources, realm.mesh, node, ceilingVertices, flatCenter)
 
-  val gapEdges = edges.filter { edge ->
-    edge.faces.count { walls.contains(it) } < 2
-  }
-
   val gapWall = if (a != b) {
     val gapVertices = getNewWallVertices(sectorCenter, listOf(a, b))
-    val facingVertices = if(node.isSolid)
+    val facingVertices = if (node.isSolid)
       flipVertices(gapVertices)
     else
       gapVertices
@@ -271,7 +267,7 @@ fun addSpaceNode(idSources: StructureIdSources, realm: StructureRealm, originFac
     val newWall = realm.mesh.createStitchedFace(idSources.edge, idSources.face(), facingVertices)
 
     node.walls.add(newWall)
-    val connection = ConnectionFace(newWall.id, FaceType.wall, node.id, voidNodeId, null, "space-b")
+    val connection = ConnectionFace(newWall.id, FaceType.wall, node.id, voidNodeId, null)
     listOf(FacePair(connection, newWall))
   } else
     listOf()
@@ -316,7 +312,6 @@ fun createBoundarySector(idSources: StructureIdSources, realm: StructureRealm, o
   node.walls.add(originFace)
   val updatedOriginFace = realm.connections[originFace.id]!!.copy(secondNode = node.id)
   val outerWall = createWall(idSources, realm.mesh, node, newPoints)
-//  mesh.faces[outerWall.geometry.id]!!.debugInfo = "space-d"
   val faces1 = listOf(outerWall)
       .plus(floor)
       .plus(ceiling)
@@ -345,7 +340,6 @@ fun createBoundarySector(idSources: StructureIdSources, realm: StructureRealm, o
         originalWall.upper[1 - i]
     )
     val wall = createWall(idSources, realm.mesh, node, sidePoints)
-//    mesh.faces[wall.geometry.id]!!.debugInfo = "space-d"
     wall
   }
 
@@ -417,6 +411,9 @@ fun defineNegativeSpace(idSources: StructureIdSources, realm: StructureRealm, di
           }
       break
     }
+//    concaveFaces.forEach { currentRealm.connections[it.id]!!.debugInfo = "space-d" }
+//    return realm
+
     for (originFace in concaveFaces) {
       if (faceNodeCount(currentRealm.connections, originFace) == 1) {
         val walls = gatherNewSectorFaces(currentRealm.connections, originFace)

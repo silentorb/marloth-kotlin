@@ -17,7 +17,7 @@ fun createCluster(clusters: Clusters): Cluster {
   return cluster
 }
 
-fun gatherClusters(graph: Graph, allNodes: List<Node>): Clusters {
+fun gatherClusters(graph: Graph, allNodes: Collection<Node>): Clusters {
   val nodes = allNodes.filter { isInCluster(graph, it) }
   val clusters = mutableListOf<Cluster>()
 

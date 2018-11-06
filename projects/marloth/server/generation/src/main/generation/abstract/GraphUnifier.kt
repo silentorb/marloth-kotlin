@@ -71,8 +71,8 @@ fun unifyWorld(graph: Graph): InitialConnections {
   if (graph.nodes.size < 2)
     return listOf()
 
-  val first = graph.nodes.first()
+  val first = graph.nodes.values.first()
   val mainGroup = listOf(first)
-  val outerGroup = graph.nodes.filter { it !== first }
+  val outerGroup = graph.nodes.values.filter { it !== first }
   return scanNodes(graph, mainGroup, mainGroup, outerGroup, listOf())
 }

@@ -24,7 +24,7 @@ fun generateWorld(input: WorldInput): World {
   val biomeGrid = newBiomeGrid(input)
   val (graph, tunnels) = generateAbstract(input, scale, biomeGrid)
   val idSources = StructureIdSources(
-      node = idSourceFromNodes(graph.nodes),
+      node = idSourceFromNodes(graph.nodes.values),
       face = newIdSource(1),
       edge = newIdSource(1)
   )

@@ -128,7 +128,7 @@ fun createWall(idSources: GeometryIdSources, mesh: ImmutableMesh, node: Node, ve
 fun verticalEdges(face: ImmutableFace) =
     face.edges.asSequence().filter { it.first.x == it.second.x && it.first.y == it.second.y }
 
-fun idSourceFromNodes(nodes: List<Node>): IdSource =
+fun idSourceFromNodes(nodes: Collection<Node>): IdSource =
     newIdSource(if (nodes.any())
       nodes.sortedByDescending { it.id }.first().id + 1L
     else

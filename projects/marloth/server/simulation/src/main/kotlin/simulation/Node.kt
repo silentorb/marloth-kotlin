@@ -73,10 +73,10 @@ fun getPathNeighbors(nodes: NodeTable, faces: ConnectionTable, node: Node) =
         .filter { it.isWalkable }
 
 data class Graph(
-    val nodes: List<Node>,
+    val nodes: NodeTable,
     val connections: InitialConnections
 ) {
-  fun node(id: Id): Node? = nodes.first { it.id == id }
+  fun node(id: Id): Node? = nodes[id]!!
 
   fun plus(graph: Graph) =
       Graph(

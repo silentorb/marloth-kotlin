@@ -2,6 +2,7 @@ package generation.abstract
 
 import generation.getCenter
 import generation.structure.idSourceFromNodes
+import mythic.ent.entityMap
 import mythic.spatial.Vector3
 import simulation.*
 
@@ -22,7 +23,7 @@ fun prepareTunnels(graph: Graph): List<PreTunnel> =
         }
 
 fun createTunnelNodes(graph: Graph, preTunnels: List<PreTunnel>): Graph {
-  val nextId = idSourceFromNodes(graph.nodes)
+  val nextId = idSourceFromNodes(graph.nodes.values)
   val nodes = preTunnels
       .map { preTunnel ->
         val oldConnection = preTunnel.connection
@@ -55,5 +56,5 @@ fun createTunnelNodes(graph: Graph, preTunnels: List<PreTunnel>): Graph {
         )
       }.flatten()
 
-  return Graph(nodes, connections)
+  return Graph(entityMap(nodes), connections)
 }

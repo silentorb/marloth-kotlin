@@ -3,9 +3,10 @@ package generation.abstract
 import generation.divide
 import generation.getNodeDistance
 import generation.overlaps2D
+import mythic.ent.entityMap
 import simulation.*
 
-fun getOverlapping(nodes: List<Node>): List<Pair<Node, Node>> {
+fun getOverlapping(nodes: Collection<Node>): List<Pair<Node, Node>> {
   val result = mutableListOf<Pair<Node, Node>>()
   for (node in nodes) {
     for (other in nodes) {
@@ -37,12 +38,12 @@ fun gatherTriUnions(graph: Graph, node: Node): List<List<Node>> {
 }
 
 fun gatherTriUnions(graph: Graph): List<List<Node>> {
-  return graph.nodes.flatMap { gatherTriUnions(graph, it) }
+  return graph.nodes.values.flatMap { gatherTriUnions(graph, it) }
       .distinctBy { node -> node.sortedBy { it.hashCode() }.map { it.hashCode() }.joinToString() }
 }
 
-fun handleOverlapping(nodes: List<Node>): Graph {
-  val overlapping = getOverlapping(nodes)
+fun handleOverlapping(nodes: NodeTable): Graph {
+  val overlapping = getOverlapping(nodes.values)
   val (tooClose, initialUnions) = divide(overlapping.asSequence(), { areTooClose(it.first, it.second) })
 //  val nodeTable = graph.nodes.associate { node ->
 //    Pair(node, groups.first.filter { it.first === node || it.second === node })
@@ -65,7 +66,7 @@ fun handleOverlapping(nodes: List<Node>): Graph {
   val filteredConnections = unionConnections.filter { c -> removedNodes2.none { c.contains(it) } }
 
   return Graph(
-      nodes = nodes.minus(removedNodes2),
+      nodes = nodes.minus(removedNodes2.map { it.id }),
       connections = filteredConnections
   )
 }

@@ -37,7 +37,7 @@ fun nodesIntersectOther(first: Node, second: Node, nodes: Sequence<Node>) =
         .any { lineIntersectsCircle(first.position.xy(), second.position.xy(), it.position.xy(), it.radius + tunnelPadding) }
 
 fun closeDeadEnd(node: Node, graph: Graph): InitialConnection? {
-  val nodes = graph.nodes.asSequence()
+  val nodes = graph.nodes.values.asSequence()
   val neighbors = nodes
       .filter { it !== node && !it.isConnected(graph, node) }
       .filter { !nodesIntersectOther(node, it, node.neighbors(graph)) }
@@ -55,7 +55,7 @@ fun closeDeadEnd(node: Node, graph: Graph): InitialConnection? {
 }
 
 fun getDeadEnds(graph: Graph) =
-    graph.nodes.filter { it.connections(graph).size < 2 }
+    graph.nodes.values.filter { it.connections(graph).size < 2 }
 
 fun closeDeadEnds(graph: Graph): InitialConnections =
     getDeadEnds(graph)

@@ -61,8 +61,8 @@ typealias LabInputConfig = MutableMap<Views, Bindings<LabCommandType>>
 fun createLabInputBindings() = mutableMapOf(
     Views.global to createStrokeBindings(0, mapOf(
         GLFW.GLFW_KEY_F1 to LabCommandType.viewGame,
-        GLFW.GLFW_KEY_F2 to LabCommandType.viewMap,
-        GLFW.GLFW_KEY_F3 to LabCommandType.viewWorld,
+        GLFW.GLFW_KEY_F2 to LabCommandType.viewWorld,
+        GLFW.GLFW_KEY_F3 to LabCommandType.viewMap,
         GLFW.GLFW_KEY_F4 to LabCommandType.viewModel,
         GLFW.GLFW_KEY_F5 to LabCommandType.viewTexture
     ))
