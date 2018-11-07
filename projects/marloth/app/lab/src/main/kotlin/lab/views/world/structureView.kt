@@ -6,6 +6,7 @@ import mythic.drawing.Canvas
 import mythic.sculpting.ImmutableEdge
 import mythic.sculpting.ImmutableMesh
 import mythic.spatial.Vector4
+import org.joml.plus
 import simulation.*
 
 private fun getLineColor(faces: ConnectionTable, edge: ImmutableEdge): Vector4 {
@@ -29,19 +30,28 @@ fun drawVertices(faces: ConnectionTable, bounds: Bounds, getPosition: PositionFu
   val lineColor = Vector4(0f, 0f, 1f, 1f)
   val edges = mesh.edges.values.filter { it.vertices[0].z == it.vertices[1].z && it.vertices[1].z == 0f }
   for (edge in edges) {
-//    val wallFaces = edge.faces.filter { isSolidWall(faces[it.id]!!) }
+    val wallFaces = edge.faces.filter { faces[it.id]!!.faceType == FaceType.wall }
 //    assert(wallFaces.size < 2)
-//    if (wallFaces.any()) {
-//      val color = getLineColor(faces, edge)
-//      val normal = wallFaces.first().normal
-//      val middle = edge.middle.xy()
-//      canvas.drawLine(getPosition(edge.first.xy()), getPosition(edge.second.xy()), color, 3f)
-//      canvas.drawLine(getPosition(middle), getPosition(middle + normal.xy()), color, 3f * wallFaces.size)
-//    }
-//    else {
     val color = getLineColor(faces, edge)
-    canvas.drawLine(getPosition(edge.first.xy()), getPosition(edge.second.xy()), color, 3f)
-//    }
+    if (wallFaces.any()) {
+      val normal = wallFaces.first().normal
+      val middle = edge.middle.xy()
+      canvas.drawLine(getPosition(middle), getPosition(middle + normal.xy()), color, 3f * wallFaces.size)
+      canvas.drawLine(getPosition(edge.first.xy()), getPosition(edge.second.xy()), color, 3f)
+    } else {
+      val i = edge.faces.map { faces[it.id] }
+      val spaceFaces = edge.faces.filter { faces[it.id]!!.faceType == FaceType.space }
+      val c = Vector4(0.5f, 0.5f, 0.5f, 1f)
+      if (spaceFaces.any()) {
+        val normal = spaceFaces.first().normal
+        val middle = edge.middle.xy()
+        canvas.drawLine(getPosition(middle), getPosition(middle + normal.xy()), c, 3f * spaceFaces.size)
+        canvas.drawLine(getPosition(edge.first.xy()), getPosition(edge.second.xy()), c, 3f)
+      }
+      else {
+        canvas.drawLine(getPosition(edge.first.xy()), getPosition(edge.second.xy()), c, 3f)
+      }
+    }
   }
 
   for (vertex in mesh.redundantVertices) {

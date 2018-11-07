@@ -24,13 +24,6 @@ fun faceNodeCount(faceInfo: ConnectionFace) =
 fun faceNodeCount(faces: ConnectionTable, face: ImmutableFace) =
     faceNodeCount(faces[face.id]!!)
 
-//fun getNextFace(face: ImmutableFace): ImmutableFace? {
-//  return face.edges.filter()
-//  val info = getFaceInfo(face)
-//  val node = info.firstNode!!
-//  return node.walls.filter { it != face && it.vertices.union(face.vertices).size >= 2 }.firstOrNull()
-//}
-
 fun getSharedEdge(first: ImmutableFace, second: ImmutableFace): ImmutableEdge =
     first.edges.first { edge -> second.edges.map { it.edge }.contains(edge.edge) }.edge
 
@@ -51,17 +44,13 @@ fun isConcaveCorner(a: Vector3, b: Vector3, bcNormal: Vector3): Boolean {
   return firstVector.dot(bcNormal) > 0
 }
 
-fun getIncompleteNeighbors(faces: ConnectionTable, face: ImmutableFace): Sequence<ImmutableFace> =
+fun getIncompleteNeighbors(faces: ConnectionTable, face: ImmutableFace): Collection<ImmutableFace> =
     face.neighbors
-        .asSequence()
         .filter {
           val info = faces[it.id]!!
-          info.faceType == FaceType.wall && faceNodeCount(info) == 1
+          val c = faceNodeCount(info) == 1
+          info.faceType == FaceType.wall && c
         }
-
-//fun getConcaveCorners(face: ImmutableFace): Sequence<ImmutableFace> =
-//    getIncompleteNeighbors(face)
-//        .filter { isConcaveCorner(face, it) }
 
 fun traceIncompleteWalls(faces: ConnectionTable, origin: ImmutableFace, first: ImmutableFace, otherEnd: ImmutableFace): Pair<MutableList<ImmutableFace>, List<ImmutableFace>> {
   var current = first
@@ -89,12 +78,6 @@ fun traceIncompleteWalls(faces: ConnectionTable, origin: ImmutableFace, first: I
     ++step
   }
 }
-
-//fun getJoiningPoint(first: ImmutableFace, second: ImmutableFace): Vector3 =
-//    first.edges.intersect(second.edges).first().first
-
-//fun getJoiningPoint(a: Collection<ImmutableEdgeReference>, b: Collection<ImmutableEdgeReference>): Vector3 =
-//    a.intersect(b).first().first
 
 fun getEndEdge(walls: List<ImmutableFace>, offset: Int): ImmutableEdge {
   val head = walls.size - 1 - offset
@@ -178,46 +161,19 @@ fun gatherNewSectorFaces(faces: ConnectionTable, origin: ImmutableFace): List<Im
   assert(isChain(walls))
 
   return if (notUsed.any()) {
-//    assert(firstNotUsed.any() && secondNotUsed.any())
     val edges = walls.map { getFloor(it).edge }
-//    val a = getEndPointReversed(edges, 0)
-    val unusedEdges = notUsed.map { getFloor(it).edge }
-    notUsed.forEach { faces[it.id]!!.debugInfo = "space-c" }
     val points = lineChainToVertexChain(edges)
 
     val shaveCount = shaveOffOccludedWalls(points, walls)
-//    println(shaveCount)
-//    val c = getEndEdgeReversed(walls.dropLast(shaveCount), 0)
-//    val d = getEndEdge(walls.dropLast(shaveCount), 0)
-    val count = walls.size - shaveCount
-//    assert(count > 2 || (count > 1 && c != d))
-//    println("size " + count + ", " + shaveCount)
-
-    if (shaveCount > 0) {
-      val k = 0
-    }
     walls.dropLast(shaveCount)
   } else {
     assert(walls.size > 2)
-//    println("size " + walls.size)
     walls
   }
 }
 
 fun getDistinctEdges(edges: Edges) =
     edges.distinctBy { it.vertices.map { it.hashCode() }.sorted() }
-
-//fun addSpaceNode2(nodes: List<Node>, connections: InitialConnections, faces: ConnectionTable, node: Node): Pair<List<Node>, InitialConnections> {
-//  return Pair(
-//      nodes.plus(node),
-//      connections.plus(
-//          node.walls
-//              .mapNotNull { getOtherNode(node, faces[it.id]!!) }
-//              .map {
-//                InitialConnection(node.id, it, ConnectionType.obstacle, FaceType.wall)
-//              })
-//  )
-//}
 
 fun createSpaceNode(sectorCenter: Vector3, nextId: IdSource): Node {
 //  val isSolid = when(biome.enclosure){
@@ -259,7 +215,7 @@ fun addSpaceNode(idSources: StructureIdSources, realm: StructureRealm, originFac
 
   val gapWall = if (a != b) {
     val gapVertices = getNewWallVertices(sectorCenter, listOf(a, b))
-    val facingVertices = if (node.isSolid)
+    val facingVertices = if (!node.isSolid)
       flipVertices(gapVertices)
     else
       gapVertices
@@ -418,7 +374,13 @@ fun defineNegativeSpace(idSources: StructureIdSources, realm: StructureRealm, di
       if (faceNodeCount(currentRealm.connections, originFace) == 1) {
         val walls = gatherNewSectorFaces(currentRealm.connections, originFace)
         if (walls.size < 2) {
-          val i = getIncompleteNeighbors(currentRealm.connections, originFace).toList()
+          gatherNewSectorFaces(currentRealm.connections, originFace)
+//          val i = getIncompleteNeighbors(currentRealm.connections, originFace).toList()
+//          val n = i.map { currentRealm.connections[it.id]!! }
+//          concaveFaces.map { currentRealm.connections[it.id]!! }.forEach { it.debugInfo = "space-a" }
+//          val j = currentRealm.nodes[1]!!.faces.map { currentRealm.connections[it.id]!! }
+//          val u = currentRealm.nodes[1]!!.walls.filter { faceNodeCount(currentRealm.connections[it.id]!!) == 1 }
+//          val m = currentRealm.mesh.edges.filter { it.value.faces.size < 2 }
           return currentRealm
         }
         currentRealm = addSpaceNode(idSources, currentRealm, originFace, dice)

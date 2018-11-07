@@ -44,7 +44,7 @@ class VerticalFacingDown : VerticalFacing {
   }
 }
 
-fun createVerticalNodes(idSources: StructureIdSources, realm: StructureRealm, middleNodes: Collection<Node>, roomNodes: List<Node>, dice: Dice,
+fun createVerticalNodes(idSources: StructureIdSources, realm: StructureRealm, middleNodes: Collection<Node>, roomNodes: Collection<Node>, dice: Dice,
                         facing: VerticalFacing, shouldBeSolid: (original: Node) -> Boolean): StructureRealm {
   val newNodes = middleNodes.map { node ->
     val depth = wallHeight
@@ -124,7 +124,7 @@ fun createAscendingSpaceWalls(idSources: StructureIdSources, realm: StructureRea
   )
 }
 
-fun expandVertically(idSources: StructureIdSources, realm: StructureRealm, roomNodes: List<Node>, dice: Dice): StructureRealm {
+fun expandVertically(idSources: StructureIdSources, realm: StructureRealm, roomNodes: Collection<Node>, dice: Dice): StructureRealm {
   val middleNodes = realm.nodes.values
   val isRoom = { node: Node -> roomNodes.contains(node) }
   val shouldBeSolids = mapOf(

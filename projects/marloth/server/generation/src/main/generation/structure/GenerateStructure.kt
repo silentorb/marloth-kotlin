@@ -249,10 +249,10 @@ fun generateStructure(idSources: StructureIdSources, graph: Graph, dice: Dice, t
   val roomNodes = graph.nodes
   val spaceOutputRealm = defineNegativeSpace(idSources, initialRealm, dice)
 //  val spaceOutputRealm = initialRealm
-//  val boundaryOutputRealm = fillBoundary(idSources, spaceOutputRealm, dice)
-  val boundaryOutputRealm = spaceOutputRealm
-//  val finalRealm = expandVertically(idSources, boundaryOutputRealm, roomNodes, dice)
-  val finalRealm = boundaryOutputRealm
+  val boundaryOutputRealm = fillBoundary(idSources, spaceOutputRealm, dice)
+//  val boundaryOutputRealm = spaceOutputRealm
+  val finalRealm = expandVertically(idSources, boundaryOutputRealm, roomNodes.values, dice)
+//  val finalRealm = boundaryOutputRealm
   return finalRealm.copy(
       mesh = finalRealm.mesh.copy(
           edges = entityMap(finalRealm.mesh.faces.flatMap { er -> er.value.edges.map { it.edge } }.distinct())
