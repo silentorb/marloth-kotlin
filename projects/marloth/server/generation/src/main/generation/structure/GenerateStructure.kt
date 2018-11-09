@@ -2,8 +2,10 @@ package generation.structure
 
 import generation.*
 import generation.abstract.*
+import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.ent.entityMap
+import mythic.ent.pipeline
 import mythic.sculpting.*
 import mythic.spatial.*
 import org.joml.plus
@@ -244,18 +246,54 @@ data class StructureRealm(
     val mesh: ImmutableMesh
 )
 
-fun generateStructure(idSources: StructureIdSources, graph: Graph, dice: Dice, tunnels: NodeTable): StructureRealm {
+fun requiresSolidNeighbors(realm: StructureRealm, nodeId: Id): Boolean =
+    if (nodeId == voidNodeId)
+      false
+    else {
+      val neighbor = realm.nodes[nodeId]!!
+      val biomeInfo = biomeInfoMap[neighbor.biome]!!
+      biomeInfo.enclosureRate == 1f
+    }
+
+fun isNodeSolid(dice: Dice, realm: StructureRealm, node: Node): Boolean {
+  val enclosureRate = biomeInfoMap[node.biome]!!.enclosureRate
+  if (horizontalNeighbors(realm.connections, node).any { requiresSolidNeighbors(realm, it) })
+    return true
+
+  return if (enclosureRate == 1f)
+    true
+  else if (enclosureRate == 0f)
+    false
+  else
+    dice.getFloat(1f) < enclosureRate
+}
+
+fun fillNodeBiomesAndSolid(dice: Dice, realm: StructureRealm, biomeGrid: BiomeGrid): NodeTable =
+    realm.nodes.mapValues { (_, node) ->
+      if (node.biome == Biome.void) {
+        val biome = biomeGrid(node.position.x, node.position.y)
+        node.copy(
+            biome = biome,
+            isSolid = isNodeSolid(dice, realm, node)
+        )
+      } else
+        node
+    }
+
+fun generateStructure(biomeGrid: BiomeGrid, idSources: StructureIdSources, graph: Graph, dice: Dice, tunnels: NodeTable): StructureRealm {
   val initialRealm = createRooms(graph, idSources, dice, tunnels)
   val roomNodes = graph.nodes
-  val spaceOutputRealm = defineNegativeSpace(idSources, initialRealm, dice)
-//  val spaceOutputRealm = initialRealm
-  val boundaryOutputRealm = fillBoundary(idSources, spaceOutputRealm, dice)
-//  val boundaryOutputRealm = spaceOutputRealm
-  val finalRealm = expandVertically(idSources, boundaryOutputRealm, roomNodes.values, dice)
-//  val finalRealm = boundaryOutputRealm
-  return finalRealm.copy(
-      mesh = finalRealm.mesh.copy(
-          edges = entityMap(finalRealm.mesh.faces.flatMap { er -> er.value.edges.map { it.edge } }.distinct())
-      )
-  )
+  return pipeline(initialRealm, listOf(
+      { realm -> defineNegativeSpace(idSources, realm, dice) },
+      { realm -> realm.copy(nodes = fillNodeBiomesAndSolid(dice, realm, biomeGrid)) },
+      { realm -> fillBoundary(idSources, realm, dice) },
+      { realm -> expandVertically(idSources, realm, roomNodes.values, dice) },
+      { realm ->
+        realm.copy(
+            mesh = realm.mesh.copy(
+                edges = entityMap(realm.mesh.faces.flatMap { er -> er.value.edges.map { it.edge } }.distinct())
+            )
+        )
+      }
+  ))
 }

@@ -16,6 +16,7 @@ import marloth.clienting.CommandType
 
 import marloth.clienting.newClientState
 import mythic.desktop.createDesktopPlatform
+import mythic.ent.pipeline
 import mythic.platforming.Display
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
@@ -41,9 +42,6 @@ fun createDice(config: GameViewConfig) =
       Dice()
     else
       Dice(config.seed)
-
-fun <T> pipeline(initial: T, steps: List<(T) -> T>): T =
-    steps.fold(initial) { a, b -> b(a) }
 
 fun generateDefaultWorld(gameViewConfig: GameViewConfig): World {
   val boundary = createWorldBoundary(gameViewConfig.worldLength)

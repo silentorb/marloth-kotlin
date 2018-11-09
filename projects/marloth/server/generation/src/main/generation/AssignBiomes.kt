@@ -53,3 +53,11 @@ fun assignBiomes(nodes: Collection<Node>, grid: BiomeGrid, home: List<Node>): Bi
     Pair(node.id, biome)
   }
 }
+
+fun fillNodeBiomes(biomeGrid: BiomeGrid, nodes: NodeTable) =
+    nodes.mapValues { (_, node) ->
+      if (node.biome == Biome.void)
+        node.copy(biome = biomeGrid(node.position.x, node.position.y))
+      else
+        node
+    }

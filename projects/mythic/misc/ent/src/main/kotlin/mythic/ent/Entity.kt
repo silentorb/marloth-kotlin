@@ -15,3 +15,6 @@ fun newIdSource(initialValue: Id): IdSource {
   var nextId: Id = initialValue
   return { nextId++ }
 }
+
+fun <T> pipeline(initial: T, steps: List<(T) -> T>): T =
+    steps.fold(initial) { a, b -> b(a) }

@@ -28,15 +28,11 @@ fun generateWorld(input: WorldInput): World {
       face = newIdSource(1),
       edge = newIdSource(1)
   )
-  val realm1 = generateStructure(idSources, graph, input.dice, tunnels)
-  val realm2 = realm1.copy(
-      nodes = realm1.nodes.mapValues { (_, node) ->
-        if (node.biome == Biome.void)
-          node.copy(biome = biomeGrid(node.position.x, node.position.y))
-        else
-          node
-      }
-  )
+  val realm1 = generateStructure(biomeGrid, idSources, graph, input.dice, tunnels)
+  val realm2 = realm1
+//      .copy(
+//      nodes = fillNodeBiomes(biomeGrid, realm1.nodes)
+//  )
 
   val texturedFaces = assignTextures(realm2.nodes, realm2.connections)
 

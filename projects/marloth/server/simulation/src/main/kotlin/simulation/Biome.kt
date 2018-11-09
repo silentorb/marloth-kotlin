@@ -17,15 +17,17 @@ data class BiomeInfo(
     val wallTexture: Textures? = null
 )
 
-val biomeInfoMap: Map<Biome, BiomeInfo> = mapOf(
+typealias BiomeInfoMap = Map<Biome, BiomeInfo>
+
+val biomeInfoMap: BiomeInfoMap = mapOf(
     Biome.checkers to BiomeInfo("checkers",
-        enclosureRate = 1f,
+        enclosureRate = 0.5f,
         floorTexture = Textures.checkers,
         ceilingTexture = Textures.checkers,
         wallTexture = Textures.darkCheckers
     ),
     Biome.forest to BiomeInfo("forest",
-        enclosureRate = 1f,
+        enclosureRate = 0.25f,
         floorTexture = Textures.grass,
         ceilingTexture = Textures.ground,
         wallTexture = Textures.ground

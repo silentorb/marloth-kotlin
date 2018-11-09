@@ -85,7 +85,6 @@ fun isGroundedOnNeighborNode(realm: Realm, body: Body): Boolean {
 
 fun isGrounded(realm: Realm, body: Body): Boolean {
   return !body.gravity || realm.nodeTable[body.node]!!.isWalkable || isGroundedOnNeighborNode(realm, body)
-
 }
 
 fun moveBody(realm: Realm, body: Body, offset: Vector3, walls: List<Collision>, delta: Float): Vector3 {
