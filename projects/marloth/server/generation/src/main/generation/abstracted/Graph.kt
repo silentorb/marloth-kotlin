@@ -1,0 +1,57 @@
+package generation.abstracted
+
+import mythic.ent.Id
+import scenery.Textures
+import simulation.FaceType
+import simulation.Node
+import simulation.NodeTable
+
+enum class ConnectionType {
+  tunnel,
+  obstacle,
+  union,
+  ceilingFloor
+}
+
+data class InitialConnection(
+    val first: Id,
+    val second: Id,
+    val type: ConnectionType,
+    val faceType: FaceType,
+    var texture: Textures? = null,
+    var debugInfo: String? = null
+) {
+  init {
+    assert(first != second)
+  }
+
+  fun contains(id: Id) = first == id || second == id
+  fun contains(node: Node) = contains(node.id)
+
+  fun getOther(node: Node) = if (node.id == first) second else first
+
+  fun getOther(graph: Graph, node: Node) = graph.node(getOther(node))!!
+
+  fun nodes(graph: Graph): List<Node> = listOf(graph.node(first)!!, graph.node(second)!!)
+}typealias InitialConnections = List<InitialConnection>
+
+data class Graph(
+    val nodes: NodeTable,
+    val connections: InitialConnections,
+    val tunnels: List<Id> = listOf()
+) {
+  fun node(id: Id): Node? = nodes[id]!!
+
+  fun plus(graph: Graph) =
+      Graph(
+          nodes = nodes.plus(graph.nodes),
+          connections = connections.plus(graph.connections),
+          tunnels = tunnels.plus(graph.tunnels)
+      )
+
+  fun minusConnections(oldConnections: InitialConnections) =
+      copy(
+          connections = connections.minus(oldConnections)
+      )
+
+}

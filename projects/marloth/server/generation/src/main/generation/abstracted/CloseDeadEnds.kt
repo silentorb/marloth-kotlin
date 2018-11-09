@@ -1,4 +1,4 @@
-package generation.abstract
+package generation.abstracted
 
 import generation.connectionOverlapsNeighborNodes
 import generation.getNodeDistance
@@ -39,8 +39,8 @@ fun nodesIntersectOther(first: Node, second: Node, nodes: Sequence<Node>) =
 fun closeDeadEnd(node: Node, graph: Graph): InitialConnection? {
   val nodes = graph.nodes.values.asSequence()
   val neighbors = nodes
-      .filter { it !== node && !it.isConnected(graph, node) }
-      .filter { !nodesIntersectOther(node, it, node.neighbors(graph)) }
+      .filter { it !== node && !isConnected(graph, it, node) }
+      .filter { !nodesIntersectOther(node, it, neighbors(graph, node)) }
       .toList()
       .sortedBy { getNodeDistance(node, it) }
 
@@ -48,14 +48,14 @@ fun closeDeadEnd(node: Node, graph: Graph): InitialConnection? {
       .firstOrNull()
 
   return if (nextAvailableNode != null &&
-      !connectionOverlapsNeighborNodes(node.neighbors(graph).filter { it != nextAvailableNode }.toList(), node, nextAvailableNode))
+      !connectionOverlapsNeighborNodes(neighbors(graph, node).filter { it != nextAvailableNode }.toList(), node, nextAvailableNode))
     InitialConnection(node.id, nextAvailableNode.id, ConnectionType.tunnel, FaceType.space)
   else
     null
 }
 
 fun getDeadEnds(graph: Graph) =
-    graph.nodes.values.filter { it.connections(graph).size < 2 }
+    graph.nodes.values.filter { connections(graph, it).size < 2 }
 
 fun closeDeadEnds(graph: Graph): InitialConnections =
     getDeadEnds(graph)

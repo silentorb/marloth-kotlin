@@ -1,11 +1,9 @@
-package generation.abstract
+package generation.abstracted
 
-import simulation.ConnectionType
-import simulation.Graph
 import simulation.Node
 
 val isInCluster = { graph: Graph, node: Node ->
-  node.connections(graph).any { it.type == ConnectionType.union }
+  connections(graph, node).any { it.type == ConnectionType.union }
 }
 
 typealias Cluster = MutableList<Node>
@@ -26,7 +24,7 @@ fun gatherClusters(graph: Graph, allNodes: Collection<Node>): Clusters {
 
   for (node in nodes) {
     val cluster = getCluster(node) ?: createCluster(clusters)
-    for (connection in node.connections(graph).filter { it.type == ConnectionType.union }) {
+    for (connection in connections(graph, node).filter { it.type == ConnectionType.union }) {
       val other = connection.getOther(graph, node)
       val otherCluster = getCluster(other)
       if (otherCluster == null) {

@@ -1,6 +1,6 @@
 package generation.structure
 
-import generation.abstract.faceNodes
+import generation.abstracted.faceNodes
 import physics.voidNodeId
 import scenery.Textures
 import simulation.*

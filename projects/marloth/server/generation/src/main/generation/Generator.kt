@@ -1,20 +1,11 @@
 package generation
 
-import generation.abstract.*
+import generation.abstracted.*
 import generation.structure.*
 import mythic.ent.newIdSource
 import mythic.spatial.*
 import randomly.Dice
 import simulation.*
-
-fun getTwinTunnels(graph: Graph, tunnels: List<PreTunnel>): List<PreTunnel> =
-    crossMap(tunnels.asSequence()) { a: PreTunnel, b: PreTunnel ->
-      //      println("" + a.neighbors.any { b.neighbors.contains(it) } + ", " + a.position.distance(b.position))
-      val c = a.connection.nodes(graph).any { b.connection.nodes(graph).contains(it) }
-          && a.position.distance(b.position) < doorwayLength * 2f
-//      println(c)
-      c
-    }
 
 fun calculateWorldScale(dimensions: Vector3) =
     (dimensions.x * dimensions.y) / (100 * 100)
@@ -22,13 +13,13 @@ fun calculateWorldScale(dimensions: Vector3) =
 fun generateWorld(input: WorldInput): World {
   val scale = calculateWorldScale(input.boundary.dimensions)
   val biomeGrid = newBiomeGrid(input)
-  val (graph, tunnels) = generateAbstract(input, scale, biomeGrid)
+  val graph = generateAbstract(input, scale, biomeGrid)
   val idSources = StructureIdSources(
       node = idSourceFromNodes(graph.nodes.values),
       face = newIdSource(1),
       edge = newIdSource(1)
   )
-  val realm1 = generateStructure(biomeGrid, idSources, graph, input.dice, tunnels)
+  val realm1 = generateStructure(biomeGrid, idSources, graph, input.dice)
   val realm2 = realm1
 //      .copy(
 //      nodes = fillNodeBiomes(biomeGrid, realm1.nodes)

@@ -1,6 +1,6 @@
 package generation
 
-import generation.abstract.tunnelRadius
+import generation.abstracted.tunnelRadius
 import mythic.spatial.*
 import org.joml.plus
 import simulation.Node

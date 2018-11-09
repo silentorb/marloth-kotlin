@@ -62,7 +62,7 @@ fun generateDefaultWorld(gameViewConfig: GameViewConfig): World {
         if (!gameViewConfig.playerGravity) {
           val id = world.players.first().character
           val body = world.deck.bodies.first { it.id == id }
-              .copy(gravity = false)
+//              .copy(gravity = false)
           world.copy(
               deck = world.deck.copy(
                   bodies = replace(world.deck.bodies, body)

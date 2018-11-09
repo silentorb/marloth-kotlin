@@ -1,4 +1,4 @@
-package generation.abstract
+package generation.abstracted
 import simulation.*
 
 import generation.getNodeDistance
@@ -21,7 +21,7 @@ data class NodeGap(val first: Node, val second: Node, val distance: Float)
 
 fun findNearestGap(graph: Graph, node: Node, nodes: Sequence<Node>): NodeGap? {
   val neighbors = getNeighborsByDistance(node, nodes)
-      .filter { !it.node.isConnected(graph, node) }
+      .filter { !isConnected(graph,it.node, node) }
   val nearest = neighbors
       .firstOrNull()
 
@@ -38,7 +38,7 @@ fun findShortestGap(graph: Graph, firstGroup: Sequence<Node>, secondGroup: Seque
         .firstOrNull()
 
 fun getNeighborsToAdd(graph: Graph, node: Node, group: NodeGroup): Sequence<Node> =
-    node.neighbors(graph).filter { !group.contains(it) }
+    neighbors(graph, node).filter { !group.contains(it) }
 
 fun scanChanged(graph: Graph, changed: List<Node>, group: NodeGroup) =
     changed.asSequence()

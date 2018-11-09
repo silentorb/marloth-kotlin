@@ -77,7 +77,10 @@ fun placeWallLamps(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): De
     val infos = node.walls.map { realm.faces[it.id]!! }
     infos.any(isValidLampWall)
   }
-  assert(options.any())
+  if (options.none())
+    return Deck()
+
+//  assert(options.any())
   val nodes = dice.getList(options, count)
   val hands = nodes.mapNotNull { node ->
     val options2 = node.walls.filter { isValidLampWall(realm.faces[it.id]!!) }

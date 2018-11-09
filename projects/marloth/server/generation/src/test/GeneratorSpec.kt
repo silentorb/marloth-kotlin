@@ -1,5 +1,5 @@
-import generation.abstract.intersects
-import generation.abstract.isBetween
+import generation.abstracted.intersects
+import generation.abstracted.isBetween
 import junit.framework.TestCase.*
 import mythic.spatial.Vector2
 import org.jetbrains.spek.api.Spek

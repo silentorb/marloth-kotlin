@@ -1,7 +1,7 @@
 package generation.structure
 
 import generation.*
-import generation.abstract.*
+import generation.abstracted.*
 import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.ent.entityMap
@@ -18,7 +18,11 @@ const val wallHeight = 4f
 
 typealias Corner = Vector3
 
-data class TempSector(val node: Node, val corners: List<Corner>)
+data class TempSector(val node: Node, val corners: List<Corner>) {
+  init {
+    assert(corners.size > 2)
+  }
+}
 data class NodeCorner(val corner: Corner, val angle: Float) {
   val position: Vector3
     get() = corner
@@ -44,7 +48,7 @@ fun createVerticesForOverlappingCircles(node: Node, other: Node, others: List<No
         .map { Vector3(it.x, it.y, 0f) }
 
 fun createNodeDoorways(graph: Graph, node: Node) =
-    node.connections(graph)
+    connections(graph, node)
         .filter { it.type != ConnectionType.union }
         .map { createDoorway(node, it.getOther(graph, node)) }
 
@@ -128,8 +132,9 @@ fun createClusterStructure(graph: Graph, cluster: Cluster): List<TempSector> {
 }
 
 fun generateTunnelStructure(graph: Graph, node: Node, nodeSectors: List<TempSector>): TempSector {
-  val (first, second) = node.neighbors(graph).toList()
+  val (first, second) = neighbors(graph, node).toList()
   val sectors = nodeSectors.filter { it.node === first || it.node == second }
+  assert(sectors.size == 2)
   val corners = sectors.flatMap { sector ->
     val other = if (sector.node === first) second else first
     val points = getDoorwayPoints(sector.node, other)
@@ -184,16 +189,16 @@ fun createWall(idSources: GeometryIdSources, edge: ImmutableEdge, mesh: Immutabl
 fun toEdgeTable(faces: Collection<ImmutableFace>) =
     entityMap(faces.flatMap { er -> er.edges.map { it.edge } }.distinct())
 
-fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice, tunnels: NodeTable): StructureRealm {
-  val roomNodes = graph.nodes.minus(tunnels.keys)
+fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice): StructureRealm {
+  val roomNodes = graph.nodes.minus(graph.tunnels)
 
   val singleNodes = roomNodes.values.filter { !isInCluster(graph, it) }
   val clusters = gatherClusters(graph, roomNodes.values)
   val nodeSectors = singleNodes.map { createSingleNodeStructure(graph, it) }
       .plus(clusters.flatMap { createClusterStructure(graph, it) })
 
-  val tunnelSectors = tunnels
-      .map { generateTunnelStructure(graph, it.value, nodeSectors) }
+  val tunnelSectors = graph.tunnels
+      .map { generateTunnelStructure(graph, graph.nodes[it]!!, nodeSectors) }
 //  val tunnelSectors: List<TempSector> = listOf()
   val allSectors = nodeSectors.plus(tunnelSectors)
   val floorsAndCeilings = splitFacePairTables(sinewFloorsAndCeilings(idSources, allSectors, ImmutableMesh()))
@@ -280,20 +285,20 @@ fun fillNodeBiomesAndSolid(dice: Dice, realm: StructureRealm, biomeGrid: BiomeGr
         node
     }
 
-fun generateStructure(biomeGrid: BiomeGrid, idSources: StructureIdSources, graph: Graph, dice: Dice, tunnels: NodeTable): StructureRealm {
-  val initialRealm = createRooms(graph, idSources, dice, tunnels)
+fun generateStructure(biomeGrid: BiomeGrid, idSources: StructureIdSources, graph: Graph, dice: Dice): StructureRealm {
+  val initialRealm = createRooms(graph, idSources, dice)
   val roomNodes = graph.nodes
   return pipeline(initialRealm, listOf(
-      { realm -> defineNegativeSpace(idSources, realm, dice) },
-      { realm -> realm.copy(nodes = fillNodeBiomesAndSolid(dice, realm, biomeGrid)) },
-      { realm -> fillBoundary(idSources, realm, dice) },
-      { realm -> expandVertically(idSources, realm, roomNodes.values, dice) },
-      { realm ->
-        realm.copy(
-            mesh = realm.mesh.copy(
-                edges = entityMap(realm.mesh.faces.flatMap { er -> er.value.edges.map { it.edge } }.distinct())
-            )
-        )
-      }
+      { realm -> defineNegativeSpace(idSources, realm, dice) }
+//      { realm -> realm.copy(nodes = fillNodeBiomesAndSolid(dice, realm, biomeGrid)) },
+//      { realm -> fillBoundary(idSources, realm, dice) },
+//      { realm -> expandVertically(idSources, realm, roomNodes.values, dice) },
+//      { realm ->
+//        realm.copy(
+//            mesh = realm.mesh.copy(
+//                edges = entityMap(realm.mesh.faces.flatMap { er -> er.value.edges.map { it.edge } }.distinct())
+//            )
+//        )
+//      }
   ))
 }

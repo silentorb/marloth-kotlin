@@ -1,9 +1,8 @@
-package generation.abstract
+package generation.abstracted
 
 import generation.divide
 import generation.getNodeDistance
 import generation.overlaps2D
-import mythic.ent.entityMap
 import simulation.*
 
 fun getOverlapping(nodes: Collection<Node>): List<Pair<Node, Node>> {
@@ -28,9 +27,9 @@ fun areTooClose(first: Node, second: Node): Boolean {
 }
 
 fun gatherTriUnions(graph: Graph, node: Node): List<List<Node>> {
-  val neighbors = node.neighbors(graph).toList()
+  val neighbors = neighbors(graph, node).toList()
   return neighbors.flatMap { other ->
-    other.neighbors(graph)
+    neighbors(graph, other)
         .filter { it !== node && neighbors.contains(it) }
         .map { listOf(node, other, it) }
         .toList()
@@ -60,13 +59,14 @@ fun handleOverlapping(nodes: NodeTable): Graph {
   val unionConnections = unions.map {
     InitialConnection(it.first.id, it.second.id, ConnectionType.union, FaceType.space)
   }.toList()
-  val triUnions = gatherTriUnions(Graph(nodes, unionConnections))
+  val triUnions = gatherTriUnions(Graph(nodes, unionConnections, listOf()))
   val removedNodes2 = removedNodes1.plus(triUnions.map { it.first() })
 
   val filteredConnections = unionConnections.filter { c -> removedNodes2.none { c.contains(it) } }
 
   return Graph(
       nodes = nodes.minus(removedNodes2.map { it.id }),
-      connections = filteredConnections
+      connections = filteredConnections,
+      tunnels = listOf()
   )
 }

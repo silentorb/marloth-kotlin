@@ -145,6 +145,7 @@ data class ImmutableMesh(
   }
 
   fun createStitchedFace(nextEdgeId: IdSource, id: Long, vertices: List<Vector3>): ImmutableFace {
+    assert(vertices.size > 2)
     return createFace(nextEdgeId, id, vertices)
   }
 

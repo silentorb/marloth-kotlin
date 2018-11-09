@@ -1,4 +1,4 @@
-package generation.abstract
+package generation.abstracted
 
 import generation.getCenter
 import generation.structure.idSourceFromNodes
@@ -26,10 +26,10 @@ fun createTunnelNodes(graph: Graph, preTunnels: List<PreTunnel>): Graph {
   val nextId = idSourceFromNodes(graph.nodes.values)
   val nodes = preTunnels
       .map { preTunnel ->
-        val oldConnection = preTunnel.connection
-        val tunnelNode = Node(
+        Node(
             id = nextId(),
-            position = getCenter(graph.node(oldConnection.first)!!, graph.node(oldConnection.second)!!),
+//            position = getCenter(graph.node(oldConnection.first)!!, graph.node(oldConnection.second)!!),
+            position = preTunnel.position,
             radius = tunnelRadius,
             isSolid = false,
             isWalkable = true,
@@ -39,12 +39,6 @@ fun createTunnelNodes(graph: Graph, preTunnels: List<PreTunnel>): Graph {
             ceilings = mutableListOf(),
             walls = mutableListOf()
         )
-
-//        graph.disconnect(preTunnel.connection)
-//        graph.connect(oldConnection.first, tunnelNode, ConnectionType.tunnel)
-//        graph.connect(oldConnection.second, tunnelNode, ConnectionType.tunnel)
-//        graph.nodes.add(tunnelNode)
-        tunnelNode
       }
 
   val connections = nodes

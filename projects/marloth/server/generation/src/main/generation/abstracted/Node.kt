@@ -1,4 +1,4 @@
-package generation.abstract
+package generation.abstracted
 
 import simulation.*
 
