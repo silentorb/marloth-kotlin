@@ -341,8 +341,14 @@ fun defineNegativeSpace(idSources: StructureIdSources, realm: StructureRealm, di
     val neighborLists = faces.map { wall -> Pair(wall, getIncompleteNeighbors(currentRealm.connections, wall).toList()) }
     val invalid = neighborLists.filter { it.second.size > 2 }
 //    assert(invalid.none())
-    if (invalid.any())
+    if (invalid.any()) {
+      val temp = invalid.map { (a, b) ->
+        Pair(realm.connections[a.id]!!, b.map { realm.connections[it.id]!! })
+      }
+      val nd = temp.flatMap { (a, b) -> b.map { it.firstNode }.plus(a.firstNode) }
+          .distinct()
       return currentRealm
+    }
 
     assert(invalid.none())
     val concaveFaces = faces

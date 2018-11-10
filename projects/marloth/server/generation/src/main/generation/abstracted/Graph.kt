@@ -29,6 +29,7 @@ data class InitialConnection(
   fun contains(node: Node) = contains(node.id)
 
   fun getOther(node: Node) = if (node.id == first) second else first
+  fun getOther(node: Id) = if (node == first) second else first
 
   fun getOther(graph: Graph, node: Node) = graph.node(getOther(node))!!
 
@@ -38,7 +39,8 @@ data class InitialConnection(
 data class Graph(
     val nodes: NodeTable,
     val connections: InitialConnections,
-    val tunnels: List<Id> = listOf()
+    val tunnels: List<Id> = listOf(),
+    val doorways: List<Id> = listOf()
 ) {
   fun node(id: Id): Node? = nodes[id]!!
 

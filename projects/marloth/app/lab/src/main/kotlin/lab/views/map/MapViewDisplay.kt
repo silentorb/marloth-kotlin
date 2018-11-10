@@ -21,7 +21,7 @@ fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, world: Rea
   for (face in faces) {
 //      renderer.effects.flat.activate(ObjectShaderConfig(color = color))
 //      renderer.drawOutlinedFace(face.vertices, color)
-    val debugInfo = world.faces [face.id]!!.debugInfo
+    val debugInfo = world.faces[face.id]!!.debugInfo
     val c = when (debugInfo) {
       "lower" -> Vector4(1f, 0f, 1f, 1f)
       else -> color
@@ -43,12 +43,15 @@ fun renderFaceIndices(renderer: SceneRenderer, world: Realm) {
   for (node in world.nodeList) {
     for (face in node.faces) {
       val normalOffset = face.normal * 0.5f
-      face.edges.forEachIndexed { index, edge ->
-        val vertex = edge.first
+//      face.edges.forEachIndexed { index, edge ->
+//        val vertex = edge.first
 //        val centeringOffset = (edge.next!!.first - vertex).normalize() + (edge.previous!!.first - vertex).normalize()
 //        val offset = centeringOffset// + normalOffset
 //        renderer.drawText(index.toString(), vertex + offset, textStyle)
-      }
+//      }
+//      renderer.drawText(face.id.toString(), getCenter(face.vertices), textStyle)
+      renderer.drawText(face.id.toString(), Vector3(), textStyle)
+      return
     }
   }
 }
@@ -71,8 +74,10 @@ fun renderMapMesh(renderer: SceneRenderer, world: Realm, config: MapViewConfig) 
       globalState.cullFaces = true
       for (sector in worldMesh.sectors) {
         var index = 0
-        for (texture in sector.textureIndex) {
-          renderer.effects.texturedFlat.activate(ObjectShaderConfig(texture = renderer.renderer.mappedTextures[texture]))
+        for (textureId in sector.textureIndex) {
+          val texture = renderer.renderer.mappedTextures[textureId]
+              ?: renderer.renderer.textures[textureId.toString()]!!
+          renderer.effects.texturedFlat.activate(ObjectShaderConfig(texture = texture))
           sector.mesh.drawElement(DrawMethod.triangleFan, index++)
         }
       }
@@ -82,7 +87,7 @@ fun renderMapMesh(renderer: SceneRenderer, world: Realm, config: MapViewConfig) 
     }
 
     if (config.display.normals)
-      renderFaceNormals(renderer, 1f, world.mesh)
+      renderFaceNormals(renderer, 0.3f, world.mesh)
 
     if (config.display.vertexIndices) {
       renderFaceIndices(renderer, world)

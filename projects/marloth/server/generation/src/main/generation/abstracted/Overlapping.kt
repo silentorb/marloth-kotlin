@@ -59,14 +59,13 @@ fun handleOverlapping(nodes: NodeTable): Graph {
   val unionConnections = unions.map {
     InitialConnection(it.first.id, it.second.id, ConnectionType.union, FaceType.space)
   }.toList()
-  val triUnions = gatherTriUnions(Graph(nodes, unionConnections, listOf()))
+  val triUnions = gatherTriUnions(Graph(nodes, unionConnections))
   val removedNodes2 = removedNodes1.plus(triUnions.map { it.first() })
 
   val filteredConnections = unionConnections.filter { c -> removedNodes2.none { c.contains(it) } }
 
   return Graph(
       nodes = nodes.minus(removedNodes2.map { it.id }),
-      connections = filteredConnections,
-      tunnels = listOf()
+      connections = filteredConnections
   )
 }

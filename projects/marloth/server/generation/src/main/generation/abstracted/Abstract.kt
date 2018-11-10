@@ -18,9 +18,20 @@ fun connections(graph: Graph, node: Node): List<InitialConnection> =
 
 fun neighbors(graph: Graph, node: Node): Sequence<Node> = connections(graph, node).asSequence().mapNotNull { graph.node(it.getOther(node)) }
 
+fun connections(graph: Graph, node: Id): List<InitialConnection> =
+    graph.connections.filter { it.contains(node) }
+
+fun neighbors(graph: Graph, node: Id): Sequence<Node> = connections(graph, node).asSequence().mapNotNull { graph.node(it.getOther(node)) }
+
 fun getConnection(graph: Graph, node: Node, other: Node) = graph.connections.firstOrNull { it.contains(node) && it.contains(other) }
 
 fun isConnected(graph: Graph, node: Node, other: Node) = getConnection(graph, node, other) != null
+
+fun getOtherNode(graph: Graph, first: Id, pivot: Id): Node {
+  val options = neighbors(graph, pivot).filter { it.id != first }.toList()
+  assert(options.size == 1)
+  return options.first()
+}
 
 fun createRoomNode(boundary: WorldBoundary, id: Id, dice: Dice): Node {
   val radius = dice.getFloat(5f, 10f)
@@ -103,10 +114,11 @@ fun prepareDoorways(graph: Graph): Graph {
     }
   }
   val newTunnels = createTunnelNodes(graph, doorways)
+  val doorwayNodeIds = newTunnels.nodes.map { it.key }
   return graph.copy(
       nodes = graph.nodes.plus(newTunnels.nodes.mapValues { it.value.copy(biome = Biome.home) }),
       connections = graph.connections.plus(newTunnels.connections).minus(doorways.map { it.connection }),
-      tunnels = graph.tunnels.plus(newTunnels.nodes.map { it.key })
+      doorways = graph.doorways.plus(doorwayNodeIds)
   )
 }
 

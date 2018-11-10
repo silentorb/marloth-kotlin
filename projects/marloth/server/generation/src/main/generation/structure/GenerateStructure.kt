@@ -14,6 +14,7 @@ import randomly.Dice
 import simulation.*
 
 const val doorwayLength = 2.5f
+const val doorLength = 1.5f
 const val wallHeight = 4f
 
 typealias Corner = Vector3
@@ -23,6 +24,7 @@ data class TempSector(val node: Node, val corners: List<Corner>) {
     assert(corners.size > 2)
   }
 }
+
 data class NodeCorner(val corner: Corner, val angle: Float) {
   val position: Vector3
     get() = corner
@@ -31,15 +33,31 @@ data class NodeCorner(val corner: Corner, val angle: Float) {
 fun radialSequence(corners: List<NodeCorner>) =
     corners.asSequence().plus(NodeCorner(corners.first().corner, corners.first().angle + Pi * 2))
 
-fun getDoorwayPoints(node: Node, other: Node): List<Vector2> {
+fun getDoorwayPoints(width: Float, node: Node, other: Node): List<Vector2> {
   val direction = (other.position - node.position).xy().normalize()
   val point = node.position.xy() + direction * node.radius
-  return forkVector(point, direction, doorwayLength)
+  return forkVector(point, direction, width)
 }
 
-fun createDoorway(node: Node, other: Node) =
-    getDoorwayPoints(node, other)
+fun getDoorwayPoints3(width: Float, node: Node, other: Node): List<Vector3> =
+    getDoorwayPoints(width, node, other)
         .map { Vector3(it.x, it.y, 0f) }
+
+fun getInnerDoorwayLength(doorFrameWalls: List<Id>, firstNode: Id, secondNode: Id): Float =
+    if (doorFrameWalls.contains(firstNode) || doorFrameWalls.contains(secondNode))
+      doorLength
+    else
+      doorwayLength
+
+fun getDoorFramePoints(node: Node, other: Node): List<Vector3> =
+    listOf(doorwayLength, doorLength)
+        .flatMap { getDoorwayPoints3(it, node, other) }
+
+fun getDoorwayOrDoorFramePoints(doorFrameWalls: List<Id>, node: Node, other: Node): List<Vector3> =
+    if (doorFrameWalls.contains(other.id))
+      getDoorFramePoints(node, other)
+    else
+      getDoorwayPoints3(doorwayLength, node, other)
 
 fun createVerticesForOverlappingCircles(node: Node, other: Node, others: List<Node>): List<Corner> =
     circleIntersection(node.position.xy(), node.radius, other.position.xy(), other.radius)
@@ -50,7 +68,7 @@ fun createVerticesForOverlappingCircles(node: Node, other: Node, others: List<No
 fun createNodeDoorways(graph: Graph, node: Node) =
     connections(graph, node)
         .filter { it.type != ConnectionType.union }
-        .map { createDoorway(node, it.getOther(graph, node)) }
+        .map { getDoorwayOrDoorFramePoints(graph.doorways, node, it.getOther(graph, node)) }
 
 data class CornerGap(val first: NodeCorner, val second: NodeCorner, val length: Float)
 
@@ -131,18 +149,76 @@ fun createClusterStructure(graph: Graph, cluster: Cluster): List<TempSector> {
   }
 }
 
-fun generateTunnelStructure(graph: Graph, node: Node, nodeSectors: List<TempSector>): TempSector {
-  val (first, second) = neighbors(graph, node).toList()
-  val sectors = nodeSectors.filter { it.node === first || it.node == second }
+fun generateTunnelStructure(graph: Graph, node: Node, nodeSectors: Map<Id, TempSector>): TempSector {
+  val n = neighbors(graph, node).toList()
+  val sectors = n.map { nodeSectors[it.id]!! }
   assert(sectors.size == 2)
-  val corners = sectors.flatMap { sector ->
-    val other = if (sector.node === first) second else first
-    val points = getDoorwayPoints(sector.node, other)
-    points.map { point -> sector.corners.sortedBy { it.xy().distance(point) }.first() }
+  val corners = sectors.zip(sectors.reversed()) { a, b ->
+    if (graph.doorways.contains(a.node.id)) {
+//      getDoorwayNodePoints(a, b.node)[0]
+      val doorRoom  = getOtherNode(graph, node.id, a.node.id)
+      val points = getDoorFramePoints(doorRoom, a.node)
+      getExtrudedDoorwayPoints(points, b.node.position)
+    }
+    else
+      getDoorwayPoints3(doorwayLength, a.node, b.node)
   }
+      .flatten()
       .sortedBy { getAngle(node, it) }
 
   return TempSector(node, corners)
+}
+
+fun isFacingSameGeneralDirection(a: Vector3, b: Vector3): Boolean {
+  val dot = a.dot(b)
+  assert(dot != 0f)
+  return dot > 0f
+}
+
+fun horizontalExtrusionVector(points: List<Vector3>, targetPoint: Vector3): Vector3 {
+  val cross = (points[1] - points[0]).normalize().cross(Vector3(0f, 0f, 1f))
+  return if (isFacingSameGeneralDirection((targetPoint - points[0]).normalize(), cross))
+    cross
+  else
+    -cross
+}
+
+fun getExtrudedDoorwayPoints(firstCorners: List<Vector3>, otherNodePosition: Vector3): List<Vector3> {
+  val extrusionVector = horizontalExtrusionVector(firstCorners, otherNodePosition)
+  val doorwayDepth = 0.5f
+  val offset = extrusionVector * doorwayDepth
+  return firstCorners.map { it + offset }
+}
+
+fun getExistingDoorwayPoints(sector: TempSector, otherNode: Node): List<Vector3> =
+    getDoorwayPoints(doorLength, sector.node, otherNode)
+        .map { point -> sector.corners.sortedBy { it.xy().distance(point) }.first() }
+
+fun getDoorwayNodePoints(sector: TempSector, otherNode: Node): List<List<Vector3>> {
+  val firstCorners = getExistingDoorwayPoints(sector, otherNode)
+  val secondCorners = getExtrudedDoorwayPoints(firstCorners, otherNode.position)
+  return listOf(firstCorners, secondCorners)
+}
+
+fun generateDoorwayStructure(graph: Graph, node: Node, nodeSectors: Map<Id, TempSector>): TempSector {
+  // Room    (other)
+  //  |
+  // Tunnel
+  //  |
+  // Doorway
+  //  |
+  // Room    (main)
+
+  val nodes = neighbors(graph, node).sortedBy { if (nodeSectors.containsKey(it.id)) 0 else 1 }.toList()
+  val first = nodes[0]
+  val mainSector = nodeSectors[first.id]!!
+  val second = neighbors(graph, nodes[1]).first { it.id != first.id }
+  val corners = getDoorwayNodePoints(mainSector, second)
+
+  val finalCorners = corners.flatten()
+      .sortedBy { getAngle(node, it) }
+
+  return TempSector(node, finalCorners)
 }
 
 interface GeometryIdSources {
@@ -150,7 +226,7 @@ interface GeometryIdSources {
   val edge: IdSource
 }
 
-fun sinewFloorsAndCeilings(idSources: GeometryIdSources, nodeSectors: List<TempSector>, mesh: ImmutableMesh): List<FacePair> {
+fun sinewFloorsAndCeilings(idSources: GeometryIdSources, nodeSectors: Collection<TempSector>, mesh: ImmutableMesh): List<FacePair> {
   var currentMesh = mesh
   return nodeSectors.flatMap { sector ->
     val sectorCenter = getCenter(sector.corners).xy()
@@ -172,42 +248,37 @@ fun createWall(idSources: GeometryIdSources, edge: ImmutableEdge, mesh: Immutabl
   ))
 }
 
-//fun getOrCreateWall(idSources: GeometryIdSources, faces: ConnectionTable, edge: ImmutableEdge, otherEdges: List<ImmutableEdgeReference>, mesh: ImmutableMesh): ImmutableFace {
-//  return if (otherEdges.size > 1) {
-//    val face = edge.faces.firstOrNull {
-//      val info = faces[it.id]
-//      info != null && info.faceType == FaceType.space
-//    }
-//    if (face != null)
-//      face
-//    else
-//      createWall(idSources, edge, mesh)
-//  } else
-//    createWall(idSources, edge, mesh)
-//}
-
 fun toEdgeTable(faces: Collection<ImmutableFace>) =
     entityMap(faces.flatMap { er -> er.edges.map { it.edge } }.distinct())
 
 fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice): StructureRealm {
-  val roomNodes = graph.nodes.minus(graph.tunnels)
+  val roomNodes = graph.nodes.minus(graph.tunnels).minus(graph.doorways)
 
   val singleNodes = roomNodes.values.filter { !isInCluster(graph, it) }
   val clusters = gatherClusters(graph, roomNodes.values)
-  val nodeSectors = singleNodes.map { createSingleNodeStructure(graph, it) }
+  val roomSectors = singleNodes.map { createSingleNodeStructure(graph, it) }
       .plus(clusters.flatMap { createClusterStructure(graph, it) })
+      .associate { Pair(it.node.id, it) }
+
+  val doorwaySectors = graph.doorways
+      .map { generateDoorwayStructure(graph, graph.nodes[it]!!, roomSectors) }
+
+  val nodeSectors = roomSectors.plus(doorwaySectors.associate { Pair(it.node.id, it) })
 
   val tunnelSectors = graph.tunnels
       .map { generateTunnelStructure(graph, graph.nodes[it]!!, nodeSectors) }
-//  val tunnelSectors: List<TempSector> = listOf()
-  val allSectors = nodeSectors.plus(tunnelSectors)
-  val floorsAndCeilings = splitFacePairTables(sinewFloorsAndCeilings(idSources, allSectors, ImmutableMesh()))
+      .associate { Pair(it.node.id, it) }
+
+  val allSectors = nodeSectors
+      .plus(tunnelSectors)
+
+  val floorsAndCeilings = splitFacePairTables(sinewFloorsAndCeilings(idSources, allSectors.values, ImmutableMesh()))
   var mesh = ImmutableMesh(
       faces = floorsAndCeilings.second,
       edges = toEdgeTable(floorsAndCeilings.second.values)
   )
 
-  val pairs = allSectors.flatMap { sector ->
+  val pairs = allSectors.values.flatMap { sector ->
     val wallBases = sector.node.floors.first().edges
     wallBases.map { immutableEdgeReference ->
       Pair(immutableEdgeReference, sector.node.id)
@@ -289,8 +360,8 @@ fun generateStructure(biomeGrid: BiomeGrid, idSources: StructureIdSources, graph
   val initialRealm = createRooms(graph, idSources, dice)
   val roomNodes = graph.nodes
   return pipeline(initialRealm, listOf(
-      { realm -> defineNegativeSpace(idSources, realm, dice) }
-//      { realm -> realm.copy(nodes = fillNodeBiomesAndSolid(dice, realm, biomeGrid)) },
+      { realm -> defineNegativeSpace(idSources, realm, dice) },
+      { realm -> realm.copy(nodes = fillNodeBiomesAndSolid(dice, realm, biomeGrid)) }
 //      { realm -> fillBoundary(idSources, realm, dice) },
 //      { realm -> expandVertically(idSources, realm, roomNodes.values, dice) },
 //      { realm ->
