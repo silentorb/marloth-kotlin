@@ -158,7 +158,7 @@ data class ImmutableMesh(
   fun createEdge(nextId: IdSource, first: Vector3, second: Vector3, face: ImmutableFace?): ImmutableEdgeReference {
     val faces = if (face == null) mutableListOf() else mutableListOf(face)
     val existingEdges = getMatchingEdges(first, second)
-    assert(existingEdges.size < 2)
+//    assert(existingEdges.size < 2)
     if (existingEdges.any()) {
       val edge = existingEdges.first()
       if (face != null)

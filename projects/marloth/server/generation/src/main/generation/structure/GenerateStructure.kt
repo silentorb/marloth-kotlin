@@ -14,7 +14,7 @@ import randomly.Dice
 import simulation.*
 
 const val doorwayLength = 2.5f
-const val doorLength = 1.75f
+const val doorLength = 1.5f
 const val wallHeight = 4f
 
 typealias Corner = Vector3
@@ -361,16 +361,17 @@ fun generateStructure(biomeGrid: BiomeGrid, idSources: StructureIdSources, graph
   val initialRealm = createRooms(graph, idSources, dice)
   val roomNodes = graph.nodes
   return pipeline(initialRealm, listOf(
-      { realm -> defineNegativeSpace(idSources, realm, dice) }
-//      { realm -> realm.copy(nodes = fillNodeBiomesAndSolid(dice, realm, biomeGrid)) },
-//      { realm -> fillBoundary(idSources, realm, dice) },
-//      { realm -> expandVertically(idSources, realm, roomNodes.values, dice) },
-//      { realm ->
-//        realm.copy(
-//            mesh = realm.mesh.copy(
-//                edges = entityMap(realm.mesh.faces.flatMap { er -> er.value.edges.map { it.edge } }.distinct())
-//            )
-//        )
-//      }
+      { realm -> defineNegativeSpace(idSources, realm, dice) },
+      { realm -> realm.copy(nodes = fillNodeBiomesAndSolid(dice, realm, biomeGrid)) },
+      { realm -> fillBoundary(idSources, realm, dice) },
+      { realm -> expandVertically(idSources, realm, roomNodes.values, dice) },
+      { realm ->
+        realm.copy(
+            mesh = realm.mesh.copy(
+                edges = entityMap(realm.mesh.faces.flatMap { er -> er.value.edges.map { it.edge } }.distinct())
+            )
+        )
+      },
+      { realm -> realm }
   ))
 }

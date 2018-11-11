@@ -112,7 +112,7 @@ fun createFloor(idSources: GeometryIdSources, mesh: ImmutableMesh, node: Node, v
 fun createCeiling(idSources: GeometryIdSources, mesh: ImmutableMesh, node: Node, vertices: Vertices, center: Vector2): FacePair {
   val sortedFloorVertices = vertices
       .sortedByDescending { atan(it.xy() - center) }
-      .map { it + Vector3(0f, 0f, wallHeight) }
+//      .map { it + Vector3(0f, 0f, wallHeight) }
 
   val result = createSurface(idSources.edge, mesh, idSources.face(), node.id, sortedFloorVertices, FaceType.ceiling)
   node.ceilings.add(result.geometry)

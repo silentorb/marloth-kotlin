@@ -143,8 +143,8 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
       )
   )
       .plus(toDeck(newPlayer(nextId, playerNode)))
-//      .plus(placeWallLamps(realm, nextId, input.dice, scale))
-//      .plus(placeDoors(realm, nextId))
+      .plus(placeWallLamps(realm, nextId, input.dice, scale))
+      .plus(placeDoors(realm, nextId))
 
   return World(
       deck = deck,

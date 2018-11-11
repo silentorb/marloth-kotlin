@@ -44,9 +44,9 @@ fun drawVertices(faces: ConnectionTable, bounds: Bounds, getPosition: PositionFu
       val middle = edge.middle.xy()
       canvas.drawLine(getPosition(middle), getPosition(middle + normal.xy()), color, 3f * wallFaces.size)
       canvas.drawLine(getPosition(edge.first.xy()), getPosition(edge.second.xy()), color, 3f)
-      canvas.drawText(wallFaces.first().id.toString(),
-          getPosition(middle + normal.xy()),
-          style)
+//      canvas.drawText(wallFaces.first().id.toString(),
+//          getPosition(middle + normal.xy()),
+//          style)
     } else {
       val i = edge.faces.map { faces[it.id] }
       val spaceFaces = edge.faces.filter { faces[it.id]!!.faceType == FaceType.space }

@@ -186,6 +186,9 @@ fun createSpaceNode(sectorCenter: Vector3, nextId: IdSource): Node {
 }
 
 fun addSpaceNode(idSources: StructureIdSources, realm: StructureRealm, originFace: ImmutableFace, dice: Dice): StructureRealm {
+  if (realm.nodes.containsKey(26L)) {
+    val k = 0
+  }
   val walls = gatherNewSectorFaces(realm.connections, originFace)
   val a = getEndEdgeReversed(walls, 0)
   val b = getEndEdge(walls, 0)
