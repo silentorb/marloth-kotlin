@@ -6,6 +6,7 @@ import mythic.drawing.Canvas
 import mythic.sculpting.ImmutableEdge
 import mythic.sculpting.ImmutableMesh
 import mythic.spatial.Vector4
+import mythic.typography.TextStyle
 import org.joml.plus
 import simulation.*
 
@@ -29,6 +30,11 @@ fun drawVertices(faces: ConnectionTable, bounds: Bounds, getPosition: PositionFu
   val solid = canvas.solid(Vector4(1f, 0.6f, 0.0f, 1f))
   val lineColor = Vector4(0f, 0f, 1f, 1f)
   val edges = mesh.edges.values.filter { it.vertices[0].z == it.vertices[1].z && it.vertices[1].z == 0f }
+  val style = TextStyle(
+      canvas.fonts[0],
+      12f,
+      Vector4(1f, 1f, 1f, 1f)
+  )
   for (edge in edges) {
     val wallFaces = edge.faces.filter { faces[it.id]!!.faceType == FaceType.wall }
 //    assert(wallFaces.size < 2)
@@ -38,6 +44,9 @@ fun drawVertices(faces: ConnectionTable, bounds: Bounds, getPosition: PositionFu
       val middle = edge.middle.xy()
       canvas.drawLine(getPosition(middle), getPosition(middle + normal.xy()), color, 3f * wallFaces.size)
       canvas.drawLine(getPosition(edge.first.xy()), getPosition(edge.second.xy()), color, 3f)
+      canvas.drawText(wallFaces.first().id.toString(),
+          getPosition(middle + normal.xy()),
+          style)
     } else {
       val i = edge.faces.map { faces[it.id] }
       val spaceFaces = edge.faces.filter { faces[it.id]!!.faceType == FaceType.space }
@@ -47,7 +56,7 @@ fun drawVertices(faces: ConnectionTable, bounds: Bounds, getPosition: PositionFu
         val middle = edge.middle.xy()
         canvas.drawLine(getPosition(middle), getPosition(middle + normal.xy()), c, 3f * spaceFaces.size)
         canvas.drawLine(getPosition(edge.first.xy()), getPosition(edge.second.xy()), c, 3f)
-      }
+          }
       else {
         canvas.drawLine(getPosition(edge.first.xy()), getPosition(edge.second.xy()), c, 3f)
       }

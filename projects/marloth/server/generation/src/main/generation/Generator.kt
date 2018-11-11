@@ -31,7 +31,8 @@ fun generateWorld(input: WorldInput): World {
       boundary = input.boundary,
       nodeList = realm2.nodes.values.toList(),
       faces = texturedFaces,
-      mesh = realm2.mesh
+      mesh = realm2.mesh,
+      doorFrameNodes = graph.doorways
   )
 
   return finalizeRealm(input, finalRealm)

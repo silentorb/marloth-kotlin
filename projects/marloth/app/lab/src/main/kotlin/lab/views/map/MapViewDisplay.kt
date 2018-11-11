@@ -49,9 +49,8 @@ fun renderFaceIndices(renderer: SceneRenderer, world: Realm) {
 //        val offset = centeringOffset// + normalOffset
 //        renderer.drawText(index.toString(), vertex + offset, textStyle)
 //      }
-//      renderer.drawText(face.id.toString(), getCenter(face.vertices), textStyle)
-      renderer.drawText(face.id.toString(), Vector3(), textStyle)
-      return
+      renderer.drawText(face.id.toString(), getCenter(face.vertices), textStyle)
+//      renderer.drawText(face.id.toString(), Vector3(), textStyle)
     }
   }
 }

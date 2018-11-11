@@ -288,7 +288,7 @@ class SceneRenderer(
 
     val transform2 = cameraEffectsData.transform * modelTransform
     val i2 = transform2.transform(Vector4(0f, 0f, 0f, 1f))
-    val i = Vector2(i2.x, i2.y) / i2.z
+    val i = -Vector2(i2.x, i2.y) / i2.z
     val dimensions = Vector2i(viewport.z, viewport.w)
     val pos = Vector2(((i.x + 1) / 2) * dimensions.x, (1 - ((i.y + 1) / 2)) * dimensions.y)
     val config = TextConfiguration(content, pos, style)

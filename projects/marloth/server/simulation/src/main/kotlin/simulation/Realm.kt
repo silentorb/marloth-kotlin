@@ -38,17 +38,6 @@ enum class FaceType {
   wall
 }
 
-//data class ConnectionFace(
-//    var faceType: FaceType,
-//    val firstNode: Node?,
-//    var secondNode: Node?,
-//    var texture: Textures? = null,
-//    var debugInfo: String? = null
-//)
-
-//fun faceNodes(info: ConnectionFace) =
-//    listOf(info.firstNode, info.secondNode)
-
 // May be faster to cast straight to non-nullable but at least for debugging
 // it may be better to explicitly non-null cast.
 fun getFaceInfo(faces: ConnectionTable, face: ImmutableFace): ConnectionFace = faces[face.id]!!
@@ -58,55 +47,6 @@ val isSolidWall = { face: ConnectionFace ->
 }
 val isSpace = { face: ConnectionFace -> face.faceType == FaceType.space }
 
-//fun getNullableFaceInfo(face: ImmutableFace): ConnectionFace? = face.data as ConnectionFace?
-
-/*
-class NodeEdge(
-    val first: Vector3,
-    val second: Vector3,
-    val faces: List<Id>
-) {
-  val vertices = listOf(first, second)
-
-  val middle: Vector3
-    get() = (first + second) * 0.5f
-
-  fun getReference(face: ConnectionFace) = face.edges.first { it.edge == this }
-
-  val references: List<NodeEdgeReference>
-    get() = faces.map { getReference(it) }
-
-  fun matches(a: Vector3, b: Vector3): Boolean =
-      (first == a && second == b)
-          || (first == b && second == a)
-}
-
-class NodeEdgeReference(
-    val edge: NodeEdge,
-    var next: NodeEdgeReference?,
-    var previous: NodeEdgeReference?,
-    var direction: Boolean
-) {
-  val vertices: List<Vector3>
-    get() = if (direction) edge.vertices else listOf(edge.second, edge.first)
-
-  val faces: List<Id>
-    get() = edge.faces
-
-  val first: Vector3
-    get() = if (direction) edge.first else edge.second
-
-  val second: Vector3
-    get() = if (direction) edge.second else edge.first
-
-  val otherNodeEdgeReferences: List<NodeEdgeReference>
-    get() = edge.references.filter { it != this }
-
-  val middle: Vector3
-    get() = edge.middle
-
-}
-*/
 data class ConnectionFace(
     override val id: Id,
     var faceType: FaceType,
@@ -129,7 +69,8 @@ data class Realm(
     val boundary: WorldBoundary,
     val nodeList: List<Node>,
     val faces: ConnectionTable,
-    val mesh: ImmutableMesh
+    val mesh: ImmutableMesh,
+    val doorFrameNodes: List<Id>
 ) {
 
   val nodeTable: NodeTable = nodeList.associate { Pair(it.id, it) }

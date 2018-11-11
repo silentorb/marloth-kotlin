@@ -14,7 +14,7 @@ import randomly.Dice
 import simulation.*
 
 const val doorwayLength = 2.5f
-const val doorLength = 1.5f
+const val doorLength = 1.75f
 const val wallHeight = 4f
 
 typealias Corner = Vector3
@@ -156,12 +156,12 @@ fun generateTunnelStructure(graph: Graph, node: Node, nodeSectors: Map<Id, TempS
   val corners = sectors.zip(sectors.reversed()) { a, b ->
     if (graph.doorways.contains(a.node.id)) {
 //      getDoorwayNodePoints(a, b.node)[0]
-      val doorRoom  = getOtherNode(graph, node.id, a.node.id)
+      val doorRoom = getOtherNode(graph, node.id, a.node.id)
       val points = getDoorFramePoints(doorRoom, a.node)
       getExtrudedDoorwayPoints(points, b.node.position)
-    }
-    else
+    } else
       getDoorwayPoints3(doorwayLength, a.node, b.node)
+          .map { point -> a.corners.sortedBy { it.xy().distance(point.xy()) }.first() }
   }
       .flatten()
       .sortedBy { getAngle(node, it) }
@@ -251,6 +251,7 @@ fun createWall(idSources: GeometryIdSources, edge: ImmutableEdge, mesh: Immutabl
 fun toEdgeTable(faces: Collection<ImmutableFace>) =
     entityMap(faces.flatMap { er -> er.edges.map { it.edge } }.distinct())
 
+
 fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice): StructureRealm {
   val roomNodes = graph.nodes.minus(graph.tunnels).minus(graph.doorways)
 
@@ -286,7 +287,7 @@ fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice): Structu
   }
 
   val nodeTable = graph.nodes
-  val groups = pairs.groupBy { it.first.edge.hashCode() }
+  val groups = pairs.groupBy { it.first.edge.id }
   val (singles, shared) = groups.entries.partition { it.value.size == 1 }
   val updatedWalls = singles.map { it.value.first() }.map {
     val face = createWall(idSources, it.first.edge, mesh)
@@ -360,8 +361,8 @@ fun generateStructure(biomeGrid: BiomeGrid, idSources: StructureIdSources, graph
   val initialRealm = createRooms(graph, idSources, dice)
   val roomNodes = graph.nodes
   return pipeline(initialRealm, listOf(
-      { realm -> defineNegativeSpace(idSources, realm, dice) },
-      { realm -> realm.copy(nodes = fillNodeBiomesAndSolid(dice, realm, biomeGrid)) }
+      { realm -> defineNegativeSpace(idSources, realm, dice) }
+//      { realm -> realm.copy(nodes = fillNodeBiomesAndSolid(dice, realm, biomeGrid)) },
 //      { realm -> fillBoundary(idSources, realm, dice) },
 //      { realm -> expandVertically(idSources, realm, roomNodes.values, dice) },
 //      { realm ->

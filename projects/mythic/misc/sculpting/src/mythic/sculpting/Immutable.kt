@@ -135,6 +135,9 @@ data class ImmutableMesh(
     get() = distinctVertices(redundantVertices)
 
   fun createFace(nextEdgeId: IdSource, id: Long, vertices: List<Vector3>): ImmutableFace {
+    if (id == 110L) {
+      val k = 0
+    }
     assert(vertices.distinct().size == vertices.size) // Check for duplicate vertices
     val face = ImmutableFace(
         id = id,

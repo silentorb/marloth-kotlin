@@ -7,6 +7,7 @@ import mythic.ent.IdSource
 import mythic.ent.newIdSource
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
+import mythic.spatial.getCenter
 import mythic.spatial.getVector3Center
 import physics.Body
 import randomly.Dice
@@ -38,16 +39,18 @@ fun placeEnemies(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): Deck
 }
 
 fun placeDoors(realm: Realm, nextId: IdSource): Deck =
-    toDeck(realm.nodeList.filter { it.biome == Biome.home }
-        .flatMap { node ->
-          node.walls.filter {
-            val info = realm.faces[it.id]!!
-            info.faceType == FaceType.space
-                && realm.nodeTable[getOtherNode(node, info)]!!.biome != Biome.home
-          }
-        }
-        .map { face ->
-          val floor = getFloor(face)
+    toDeck(
+//        realm.nodeList.filter { it.biome == Biome.home }
+//        .flatMap { node ->
+//          node.walls.filter {
+//            val info = realm.faces[it.id]!!
+//            info.faceType == FaceType.space
+//                && realm.nodeTable[getOtherNode(node, info)]!!.biome != Biome.home
+//          }
+//        }
+        realm.doorFrameNodes.map { nodeId ->
+          val node = realm.nodeTable[nodeId]!!
+          val face = node.walls.first { realm.faces[it.id]!!.faceType == FaceType.wall }
           val id = nextId()
           Hand(
               door = Door(
@@ -55,12 +58,12 @@ fun placeDoors(realm: Realm, nextId: IdSource): Deck =
               ),
               body = Body(
                   id = id,
-                  position = floor.middle,
+                  position = getCenter(node.floors.first().vertices),
                   orientation = Quaternion().rotateTo(Vector3(0f, 1f, 0f), face.normal),
                   attributes = doodadBodyAttributes,
                   shape = null,
                   gravity = false,
-                  node = realm.faces[face.id]!!.firstNode
+                  node = nodeId
               )
           )
 
@@ -73,14 +76,15 @@ val isValidLampWall = { info: ConnectionFace ->
 fun placeWallLamps(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): Deck {
   val count = (10f * scale).toInt()
 
-  val options = realm.locationNodes.filter { node ->
-    val infos = node.walls.map { realm.faces[it.id]!! }
-    infos.any(isValidLampWall)
-  }
+  val options = realm.locationNodes
+      .filter { node -> !realm.doorFrameNodes.contains(node.id) }
+      .filter { node ->
+        val infos = node.walls.map { realm.faces[it.id]!! }
+        infos.any(isValidLampWall)
+      }
   if (options.none())
     return Deck()
 
-//  assert(options.any())
   val nodes = dice.getList(options, count)
   val hands = nodes.mapNotNull { node ->
     val options2 = node.walls.filter { isValidLampWall(realm.faces[it.id]!!) }
@@ -89,10 +93,7 @@ fun placeWallLamps(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): De
       val edge = wall.edges[0]
       val position = getVector3Center(edge.first, edge.second) +
           Vector3(0f, 0f, 0.9f) + wall.normal * -0.1f
-//    val angle = getAngle(edge.first.copy().cross(edge.second).xy())
-//    val angle = getAngle(wall.normal.xy())
       val angle = Quaternion().rotateTo(Vector3(1f, 0f, 0f), wall.normal)
-//      instantiator.createWallLamp(position, node, angle)
       val id = nextId()
       Hand(
           body = Body(
@@ -131,7 +132,6 @@ fun newPlayer(nextId: IdSource, playerNode: Node): Hand =
         )
     )
 
-
 fun finalizeRealm(input: WorldInput, realm: Realm): World {
   val playerNode = realm.nodeList.first()
   val scale = calculateWorldScale(input.boundary.dimensions)
@@ -143,8 +143,8 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
       )
   )
       .plus(toDeck(newPlayer(nextId, playerNode)))
-      .plus(placeWallLamps(realm, nextId, input.dice, scale))
-      .plus(placeDoors(realm, nextId))
+//      .plus(placeWallLamps(realm, nextId, input.dice, scale))
+//      .plus(placeDoors(realm, nextId))
 
   return World(
       deck = deck,

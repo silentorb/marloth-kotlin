@@ -44,6 +44,13 @@ fun determineCeilingTexture(nodes: NodeTable, info: ConnectionFace): Textures? {
 }
 
 fun determineFaceTexture(nodes: NodeTable, info: ConnectionFace): Textures? {
+  if (info.id == 117L) {
+    val k = 0
+  }
+
+  if (info.id == 98L) {
+    val k = 0
+  }
   return when (info.faceType) {
     FaceType.wall -> determineWallTexture(nodes, info)
     FaceType.floor -> determineFloorTexture(nodes, info)
