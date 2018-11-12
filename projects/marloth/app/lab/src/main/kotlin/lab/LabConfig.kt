@@ -132,7 +132,6 @@ fun createLabInputBindings() = mutableMapOf(
         GLFW.GLFW_KEY_I to LabCommandType.toggleVertexIndices,
         GLFW.GLFW_KEY_LEFT_BRACKET to LabCommandType.decrementRaySkip,
         GLFW.GLFW_KEY_RIGHT_BRACKET to LabCommandType.incrementRaySkip
-
     ))
         .plus(createBindings<LabCommandType>(0, mapOf(
             GLFW.GLFW_KEY_UP to LabCommandType.moveUp,
@@ -144,7 +143,13 @@ fun createLabInputBindings() = mutableMapOf(
             GLFW.GLFW_KEY_A to LabCommandType.moveLeft,
             GLFW.GLFW_KEY_D to LabCommandType.moveRight,
             GLFW.GLFW_KEY_Q to LabCommandType.rotateLeft,
-            GLFW.GLFW_KEY_E to LabCommandType.rotateRight
+            GLFW.GLFW_KEY_E to LabCommandType.rotateRight,
+            GLFW.GLFW_KEY_R to LabCommandType.rotateUp,
+            GLFW.GLFW_KEY_F to LabCommandType.rotateDown,
+            GLFW.GLFW_KEY_EQUAL to LabCommandType.zoomIn,
+            GLFW.GLFW_KEY_MINUS to LabCommandType.zoomOut,
+            GLFW.GLFW_KEY_PAGE_UP to LabCommandType.zoomIn,
+            GLFW.GLFW_KEY_PAGE_DOWN to LabCommandType.zoomOut
         )))
         .plus(createBindings(1, mapOf(
             GLFW.GLFW_MOUSE_BUTTON_1 to LabCommandType.select,

@@ -13,7 +13,8 @@ import simulation.Realm
 data class MapViewCamera(
     var target: Vector3 = Vector3(),
     var distance: Float = 20f,
-    var yaw: Float = 0f
+    var yaw: Float = 0f,
+    var pitch: Float = Pi / 4f
 )
 
 enum class MapViewDrawMode {
@@ -110,7 +111,7 @@ fun updateMapState(config: MapViewConfig, world: Realm, camera: Camera, input: L
     trySelect(config, world)
   }
 
-  val moveSpeed = 30
+  val moveSpeed = 50
   val zoomSpeed = 120
   val rotateSpeed = 5
 
@@ -129,14 +130,23 @@ fun updateMapState(config: MapViewConfig, world: Realm, camera: Camera, input: L
         0f
   )
 
+  val distanceOffset = config.camera.distance / 50f
+
   if (moveOffset != Vector3())
-    config.camera.target += moveOffset.transform(Matrix().rotateZ(config.camera.yaw)) * (moveSpeed * delta)
+    config.camera.target += moveOffset.transform(Matrix().rotateZ(config.camera.yaw)) * (moveSpeed * delta * distanceOffset)
 
   if (isActive(commands, LabCommandType.zoomIn))
-    config.camera.distance -= zoomSpeed * delta
+    config.camera.distance = Math.max(1f, config.camera.distance - zoomSpeed * delta * distanceOffset)
+
+  val pitchRange = Pi / 2f - 0.001f
+  if (isActive(commands, LabCommandType.rotateUp))
+    config.camera.pitch = Math.min(pitchRange, config.camera.pitch + rotateSpeed * delta)
+
+  if (isActive(commands, LabCommandType.rotateDown))
+    config.camera.pitch = Math.max(-pitchRange, config.camera.pitch - rotateSpeed * delta)
 
   if (isActive(commands, LabCommandType.zoomOut))
-    config.camera.distance += zoomSpeed * delta
+    config.camera.distance = Math.min(50f, config.camera.distance + zoomSpeed * delta * distanceOffset)
 
   if (isActive(commands, LabCommandType.rotateLeft))
     config.camera.yaw = (config.camera.yaw - (rotateSpeed * delta)) % (Pi * 2)
