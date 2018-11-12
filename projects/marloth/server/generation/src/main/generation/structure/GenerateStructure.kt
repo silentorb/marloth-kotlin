@@ -158,7 +158,9 @@ fun generateTunnelStructure(graph: Graph, node: Node, nodeSectors: Map<Id, TempS
 //      getDoorwayNodePoints(a, b.node)[0]
       val doorRoom = getOtherNode(graph, node.id, a.node.id)
       val points = getDoorFramePoints(doorRoom, a.node)
+      val doorSector = nodeSectors[doorRoom.id]!!
       getExtrudedDoorwayPoints(points, b.node.position)
+          .map { point -> doorSector.corners.sortedBy { it.xy().distance(point.xy()) }.first() }
     } else
       getDoorwayPoints3(doorwayLength, a.node, b.node)
           .map { point -> a.corners.sortedBy { it.xy().distance(point.xy()) }.first() }
@@ -361,10 +363,10 @@ fun generateStructure(biomeGrid: BiomeGrid, idSources: StructureIdSources, graph
   val initialRealm = createRooms(graph, idSources, dice)
   val roomNodes = graph.nodes
   return pipeline(initialRealm, listOf(
-//      { realm -> defineNegativeSpace(idSources, realm, dice) },
+      { realm -> defineNegativeSpace(idSources, realm, dice) },
       { realm -> realm.copy(nodes = fillNodeBiomesAndSolid(dice, realm, biomeGrid)) },
-//      { realm -> fillBoundary(idSources, realm, dice) },
-//      { realm -> expandVertically(idSources, realm, roomNodes.values, dice) },
+      { realm -> fillBoundary(idSources, realm, dice) },
+      { realm -> expandVertically(idSources, realm, roomNodes.values, dice) },
       { realm ->
         realm.copy(
             mesh = realm.mesh.copy(

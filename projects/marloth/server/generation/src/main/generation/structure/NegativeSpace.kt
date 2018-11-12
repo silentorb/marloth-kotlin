@@ -356,9 +356,6 @@ fun defineNegativeSpace(idSources: StructureIdSources, realm: StructureRealm, di
     assert(invalid.none())
     val concaveFaces = faces
         .filter { wall ->
-          if (wall.id == 95L || wall.id == 99L || wall.id == 62L) {
-            val k = 0
-          }
           val neighbors = getIncompleteNeighbors(currentRealm.connections, wall).toList()
           neighbors.size > 1 && neighbors.all { !isConcaveCorner(wall, it) }
         }
@@ -383,9 +380,6 @@ fun defineNegativeSpace(idSources: StructureIdSources, realm: StructureRealm, di
 //    return realm
 
     for (originFace in concaveFaces) {
-      if (originFace.id == 95L || originFace.id == 99L || originFace.id == 62L) {
-        val k = 0
-      }
       if (faceNodeCount(currentRealm.connections, originFace) == 1) {
         val walls = gatherNewSectorFaces(currentRealm.connections, originFace)
         if (walls.size < 2) {
@@ -395,15 +389,7 @@ fun defineNegativeSpace(idSources: StructureIdSources, realm: StructureRealm, di
           gatherNewSectorFaces(currentRealm.connections, originFace)
           return currentRealm
         }
-
-        // Don't build sectors ontop of new sectors in the same pass in order to give
-        // critical corners a chance to get filled in first.
-        val doesNotContainNewWalls = walls.all { lastRealm.connections.containsKey(it.id) }
-        if (doesNotContainNewWalls)
-          currentRealm = addSpaceNode(idSources, currentRealm, walls)
-        else {
-          val k = 0
-        }
+        currentRealm = addSpaceNode(idSources, currentRealm, walls)
       }
     }
     ++pass
