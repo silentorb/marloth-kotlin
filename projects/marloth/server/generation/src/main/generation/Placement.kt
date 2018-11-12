@@ -50,7 +50,7 @@ fun placeDoors(realm: Realm, nextId: IdSource): Deck =
 //        }
         realm.doorFrameNodes.map { nodeId ->
           val node = realm.nodeTable[nodeId]!!
-          val face = node.walls.first { realm.faces[it.id]!!.faceType == FaceType.wall }
+          val face = node.walls.first { realm.faces[it.id]!!.faceType != FaceType.wall }
           val id = nextId()
           Hand(
               door = Door(

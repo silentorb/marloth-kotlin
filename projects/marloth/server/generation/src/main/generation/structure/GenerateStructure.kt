@@ -177,7 +177,7 @@ fun generateTunnelStructure(graph: Graph, node: Node, nodeSectors: Map<Id, TempS
   return TempSector(node, corners)
 }
 
-fun isFacingSameGeneralDirection(a: Vector3, b: Vector3): Boolean {
+fun isFacingSameDirection(a: Vector3, b: Vector3): Boolean {
   val dot = a.dot(b)
   assert(dot != 0f)
   return dot > 0f
@@ -185,7 +185,7 @@ fun isFacingSameGeneralDirection(a: Vector3, b: Vector3): Boolean {
 
 fun horizontalExtrusionVector(points: List<Vector3>, targetPoint: Vector3): Vector3 {
   val cross = (points[1] - points[0]).normalize().cross(Vector3(0f, 0f, 1f))
-  return if (isFacingSameGeneralDirection((targetPoint - points[0]).normalize(), cross))
+  return if (isFacingSameDirection((targetPoint - points[0]).normalize(), cross))
     cross
   else
     -cross
@@ -365,6 +365,32 @@ fun fillNodeBiomesAndSolid(dice: Dice, realm: StructureRealm, biomeGrid: BiomeGr
         node
     }
 
+fun cleanupSolidNormals(realm: StructureRealm): StructureRealm {
+  val updatedFaces = realm.mesh.faces.mapValues { (_, face) ->
+    val info = realm.connections[face.id]!!
+    val nodes = listOf(
+        realm.nodes[info.firstNode]!!,
+        realm.nodes[info.secondNode]!!
+    )
+    val nodeCenter = nodes[0].position + Vector3(0f, 0f, nodes[0].height / 2f)
+    val nodeNormal = (nodeCenter - getCenter(face.vertices)).normalize()
+    val outerWall = if (isFacingSameDirection(face.normal, nodeNormal))
+      0
+    else
+      1
+
+    if (nodes[outerWall].isSolid)
+      flipFace(face)
+    else
+      face
+  }
+  return realm.copy(
+      mesh = realm.mesh.copy(
+          faces = updatedFaces
+      )
+  )
+}
+
 fun generateStructure(biomeGrid: BiomeGrid, idSources: StructureIdSources, graph: Graph, dice: Dice): StructureRealm {
   val initialRealm = createRooms(graph, idSources, dice)
   val roomNodes = graph.nodes
@@ -373,6 +399,7 @@ fun generateStructure(biomeGrid: BiomeGrid, idSources: StructureIdSources, graph
       { realm -> realm.copy(nodes = fillNodeBiomesAndSolid(dice, realm, biomeGrid)) },
       { realm -> fillBoundary(idSources, realm, dice) },
       { realm -> expandVertically(idSources, realm, roomNodes.values, dice) },
+      { realm -> cleanupSolidNormals(realm) },
       { realm ->
         realm.copy(
             mesh = realm.mesh.copy(

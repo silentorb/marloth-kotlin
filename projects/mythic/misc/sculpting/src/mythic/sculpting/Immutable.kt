@@ -29,7 +29,7 @@ class ImmutableEdge(
           || (first == b && second == a)
 }
 
-class ImmutableEdgeReference(
+data class ImmutableEdgeReference(
     val edge: ImmutableEdge,
 //    var next: ImmutableEdgeReference?,
 //    var previous: ImmutableEdgeReference?,
@@ -103,6 +103,17 @@ data class ImmutableFace(
 //    ).toMutableList()
 //  }
 }
+
+fun flipFace(face: ImmutableFace): ImmutableFace =
+    face.copy(
+        edges = face.edges.map { er ->
+          er.copy(
+              direction = !er.direction
+          )
+
+        }.toMutableList(),
+        normal = face.normal * -1f
+    )
 
 fun flipVertices(vertices: List<Vector3>): List<Vector3> =
     listOf(
