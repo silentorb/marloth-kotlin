@@ -1,5 +1,6 @@
 package colliding
 
+import mythic.ent.Id
 import mythic.sculpting.ImmutableFace
 import mythic.spatial.Vector3
 import mythic.spatial.lineSegmentIntersectsLineSegment
@@ -32,25 +33,27 @@ fun raycastNodes(firstNode: Node, start: Vector3, end: Vector3): List<Node> {
 }
 */
 
-fun rayCanHitPoint(nodes: NodeTable, faces: ConnectionTable, firstNode: Node, start: Vector3, end: Vector3): Boolean {
+fun rayCanHitPoint(realm: Realm, firstNode: Node, start: Vector3, end: Vector3): Boolean {
   var node = firstNode
-  var lastWall: ImmutableFace? = null
+  var lastWall: Id? = null
   do {
     val walls = node.walls
         .filter { it != lastWall }
 
     val wall = walls
         .firstOrNull {
-          val edge = getFloor(it)
+          val edge = getFloor(realm.mesh.faces[it]!!)
           lineSegmentIntersectsLineSegment(start, end, edge.first, edge.second).first
         }
     if (wall == null)
       return true
 
-    if (faces[wall.id]!!.faceType != FaceType.space)
+    val info = realm.faces[wall]!!
+
+    if (info.faceType != FaceType.space)
       return false
 
-    val nextNode = nodes[getOtherNode(node,faces[ wall.id]!!)]
+    val nextNode = realm.nodeTable[getOtherNode(node, info)]
     if (nextNode == null)
       return true
 

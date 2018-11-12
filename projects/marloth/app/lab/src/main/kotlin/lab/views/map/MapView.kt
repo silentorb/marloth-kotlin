@@ -48,11 +48,12 @@ private fun getFaceHits(start: Vector3, end: Vector3, world: Realm): List<Hit> {
   val rayDirection = (end - start).normalize()
 
   return faces.mapIndexedNotNull { i, it ->
-    if (it.normal.x == 0f && it.normal.y == 0f && it.normal.z == 0f)
+    val face = world.mesh.faces[it]!!
+    if (face.normal.x == 0f && face.normal.y == 0f && face.normal.z == 0f)
       assert(false)
 //      it.updateNormal()
 
-    val point = rayIntersectsPolygon3D(start, rayDirection, it.vertices, it.normal)
+    val point = rayIntersectsPolygon3D(start, rayDirection, face.vertices, face.normal)
     if (point != null)
       Hit(point, i)
     else

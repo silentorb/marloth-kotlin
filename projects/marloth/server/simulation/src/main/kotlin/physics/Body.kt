@@ -7,6 +7,7 @@ import colliding.Shape
 import colliding.Sphere
 import mythic.ent.Entity
 import mythic.ent.Id
+import mythic.sculpting.ImmutableFaceTable
 import mythic.spatial.isInsidePolygon
 import simulation.*
 import simulation.simulationDelta
@@ -26,10 +27,7 @@ val voidNode: Node = Node(
     radius = 0f,
     isSolid = false,
     isWalkable = false,
-    biome = Biome.void,
-    floors = mutableListOf(),
-    ceilings = mutableListOf(),
-    walls = mutableListOf()
+    biome = Biome.void
 )
 
 data class Body(
@@ -57,11 +55,11 @@ val commonShapes = mapOf(
 fun overlaps(first: Body, second: Body) =
     colliding.overlaps(first.shape, first.position, second.shape, second.position)
 
-fun isInsideNodeHorizontally(node: Node, position: Vector3) =
-    node.floors.any { isInsidePolygon(position, it.vertices) }
+fun isInsideNodeHorizontally(faces: ImmutableFaceTable, node: Node, position: Vector3) =
+    node.floors.any { isInsidePolygon(position, faces[it]!!.vertices) }
 
-fun isInsideNode(node: Node, position: Vector3) =
-    node.floors.any { isInsidePolygon(position, it.vertices) }
+fun isInsideNode(faces: ImmutableFaceTable, node: Node, position: Vector3) =
+    node.floors.any { isInsidePolygon(position, faces[it]!!.vertices) }
 //        && position.z >= node.position.z
 //        && position.z < node.position.z + node.height
 
@@ -75,17 +73,17 @@ fun updateBodyNode(realm: Realm, body: Body): Id {
   val position = body.position
   val node = realm.nodeTable[body.node]!!
 
-  val horizontalNode = if (!isInsideNodeHorizontally(node, position)) {
+  val horizontalNode = if (!isInsideNodeHorizontally(realm.mesh.faces, node, position)) {
     val n = horizontalNeighbors(realm.faces, node)
         .map { realm.nodeTable[it]!! }
-        .firstOrNull { isInsideNodeHorizontally(it, position) }
+        .firstOrNull { isInsideNodeHorizontally(realm.mesh.faces, it, position) }
 
     if (n != null)
       n
     else {
       println("Warning: Had to rely on fallback method for determining which node a body is in.")
-      val n3 = realm.nodeList.filter { isInsideNode(it, position) }
-      val n2 = realm.nodeList.firstOrNull { isInsideNode(it, position) }
+      val n3 = realm.nodeList.filter { isInsideNode(realm.mesh.faces, it, position) }
+      val n2 = realm.nodeList.firstOrNull { isInsideNode(realm.mesh.faces, it, position) }
       if (n2 != null)
         n2
       else

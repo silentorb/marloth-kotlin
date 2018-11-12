@@ -79,10 +79,10 @@ data class Realm(
     get() = nodeList.filter { it.isWalkable }
 
   val floors: List<ImmutableFace>
-    get() = nodeList.flatMap { it.floors }.distinct()
+    get() = nodeList.flatMap { it.floors }.distinct().map { mesh.faces[it]!! }
 
   val walls: List<ImmutableFace>
-    get() = nodeList.flatMap { it.walls }.distinct()
+    get() = nodeList.flatMap { it.walls }.distinct().map { mesh.faces[it]!! }
 }
 
 fun getFaces(faces: FaceList, node: Node) =
@@ -91,15 +91,15 @@ fun getFaces(faces: FaceList, node: Node) =
 fun getFloors(faces: FaceList, node: Node) =
     getFaces(faces, node).filter { it.faceType == FaceType.floor }
 
-fun initializeFaceInfo(faces: ConnectionTable, type: FaceType, node: Node, face: ImmutableFace): ConnectionFace {
-  val info = faces[face.id]
+fun initializeFaceInfo(faces: ConnectionTable, type: FaceType, node: Node, id: Id): ConnectionFace {
+  val info = faces[id]
   return if (info == null) {
-    ConnectionFace(face.id, type, node.id, voidNodeId, null)
+    ConnectionFace(id, type, node.id, voidNodeId, null)
   } else {
     if (info.firstNode == node.id || info.secondNode == node.id)
       info
     else {
-      ConnectionFace(face.id, type, info.firstNode, node.id)
+      ConnectionFace(id, type, info.firstNode, node.id)
     }
   }
 }

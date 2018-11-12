@@ -17,8 +17,8 @@ enum class VerticalDirection {
 interface VerticalFacing {
   val dir: VerticalDirection
   val dirMod: Float
-  fun ceilings(node: Node): MutableList<ImmutableFace>
-  fun floors(node: Node): MutableList<ImmutableFace>
+  fun ceilings(node: Node): MutableList<Id>
+  fun floors(node: Node): MutableList<Id>
   fun upperNode(faces: ConnectionTable, node: Node): Id
   fun wallVertices(face: ImmutableFace): WallVertices
 }
@@ -26,8 +26,8 @@ interface VerticalFacing {
 class VerticalFacingUp : VerticalFacing {
   override val dir: VerticalDirection = VerticalDirection.up
   override val dirMod: Float get() = 1f
-  override fun ceilings(node: Node): MutableList<ImmutableFace> = node.ceilings
-  override fun floors(node: Node): MutableList<ImmutableFace> = node.floors
+  override fun ceilings(node: Node): MutableList<Id> = node.ceilings
+  override fun floors(node: Node): MutableList<Id> = node.floors
   override fun upperNode(faces: ConnectionTable, node: Node): Id = getUpperNode(faces, node)
   override fun wallVertices(face: ImmutableFace): WallVertices = getWallVertices(face)
 }
@@ -35,8 +35,8 @@ class VerticalFacingUp : VerticalFacing {
 class VerticalFacingDown : VerticalFacing {
   override val dir: VerticalDirection = VerticalDirection.down
   override val dirMod: Float get() = -1f
-  override fun ceilings(node: Node): MutableList<ImmutableFace> = node.floors
-  override fun floors(node: Node): MutableList<ImmutableFace> = node.ceilings
+  override fun ceilings(node: Node): MutableList<Id> = node.floors
+  override fun floors(node: Node): MutableList<Id> = node.ceilings
   override fun upperNode(faces: ConnectionTable, node: Node): Id = getLowerNode(faces, node)
   override fun wallVertices(face: ImmutableFace): WallVertices {
     val result = getWallVertices(face)
@@ -60,7 +60,7 @@ fun createVerticalNodes(idSources: StructureIdSources, realm: StructureRealm, mi
     assert(facing.ceilings(node).any())
     facing.ceilings(node).map { ceiling ->
       facing.floors(newNode).add(ceiling)
-      val info = realm.connections[ceiling.id]!!
+      val info = realm.connections[ceiling]!!
       info.copy(secondNode = newNode.id)
     }
   }.flatten()
@@ -73,10 +73,10 @@ fun createVerticalNodes(idSources: StructureIdSources, realm: StructureRealm, mi
 }
 
 fun getLowerNode(faces: ConnectionTable, node: Node) =
-    getOtherNode(node, faces[node.floors.first().id]!!)!!
+    getOtherNode(node, faces[node.floors.first()]!!)!!
 
 fun getUpperNode(faces: ConnectionTable, node: Node) =
-    getOtherNode(node, faces[node.ceilings.first().id]!!)!!
+    getOtherNode(node, faces[node.ceilings.first()]!!)!!
 
 fun createAscendingSpaceWalls(idSources: StructureIdSources, realm: StructureRealm, nodes: Collection<Node>, facing: VerticalFacing): StructureRealm {
   val walls = nodes.flatMap { it.walls }
@@ -84,10 +84,10 @@ fun createAscendingSpaceWalls(idSources: StructureIdSources, realm: StructureRea
   val offset = Vector3(0f, 0f, depth * facing.dirMod)
   val updatePairs = walls
       .filter { upperWall ->
-        realm.connections[upperWall.id]!!.secondNode != voidNodeId
+        realm.connections[upperWall]!!.secondNode != voidNodeId
       }
       .map { upperWall ->
-        val info = realm.connections[upperWall.id]!!
+        val info = realm.connections[upperWall]!!
         val nodeId = if (realm.nodes[info.firstNode]!!.isWalkable)
           info.firstNode
         else
@@ -95,9 +95,9 @@ fun createAscendingSpaceWalls(idSources: StructureIdSources, realm: StructureRea
 
         val node = realm.nodes[nodeId]!!
         val upperNode = realm.nodes[facing.upperNode(realm.connections, node)]!!
-        val otherUpperNode = getOtherNode(node, realm.connections[upperWall.id]!!)!!
+        val otherUpperNode = getOtherNode(node, realm.connections[upperWall]!!)!!
         val otherUpNode = realm.nodes[facing.upperNode(realm.connections, realm.nodes[otherUpperNode]!!)]!!
-        val firstEdge = facing.wallVertices(upperWall).upper
+        val firstEdge = facing.wallVertices(realm.mesh.faces[upperWall]!!).upper
         val unorderedVertices = firstEdge.plus(firstEdge.map { it + offset })
         val emptyNode = if (!upperNode.isSolid)
           upperNode
@@ -107,8 +107,8 @@ fun createAscendingSpaceWalls(idSources: StructureIdSources, realm: StructureRea
         val orderedVertices = sortWallVertices(emptyNode.position, unorderedVertices)
         val newWall = realm.mesh.createStitchedFace(idSources.edge, idSources.face(), orderedVertices)
 //        newWall.data = ConnectionFace(FaceType.wall, upperNode, otherUpNode, null, "lower")
-        upperNode.walls.add(newWall)
-        otherUpNode.walls.add(newWall)
+        upperNode.walls.add(newWall.id)
+        otherUpNode.walls.add(newWall.id)
 //        InitialConnection(node.id, upperNode.id, ConnectionType.ceilingFloor, FaceType.floor)
         val connection = ConnectionFace(newWall.id, FaceType.wall, upperNode.id, otherUpNode.id, null, "lower")
         FacePair(connection, newWall)

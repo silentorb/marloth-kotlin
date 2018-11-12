@@ -34,10 +34,7 @@ fun createTunnelNodes(graph: Graph, preTunnels: List<PreTunnel>): Graph {
             isSolid = false,
             isWalkable = true,
             height = 0f,
-            biome = Biome.void,
-            floors = mutableListOf(),
-            ceilings = mutableListOf(),
-            walls = mutableListOf()
+            biome = Biome.void
         )
       }
 

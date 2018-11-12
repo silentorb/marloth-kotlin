@@ -68,10 +68,7 @@ fun createSecondaryNode(sectorCenter: Vector3, nextId: IdSource, isSolid: Boolea
       isSolid = isSolid,
       isWalkable = false,
       biome = biome,
-      height = 0f,
-      floors = mutableListOf(),
-      ceilings = mutableListOf(),
-      walls = mutableListOf()
+      height = 0f
   )
   return node
 }
@@ -105,7 +102,7 @@ fun createFloor(idSources: GeometryIdSources, mesh: ImmutableMesh, node: Node, v
       .sortedBy { atan(it.xy() - center) }
 
   val result = createSurface(idSources.edge, mesh, idSources.face(), node.id, sortedFloorVertices, FaceType.floor)
-  node.floors.add(result.geometry)
+  node.floors.add(result.geometry.id)
   return result
 }
 
@@ -115,13 +112,13 @@ fun createCeiling(idSources: GeometryIdSources, mesh: ImmutableMesh, node: Node,
 //      .map { it + Vector3(0f, 0f, wallHeight) }
 
   val result = createSurface(idSources.edge, mesh, idSources.face(), node.id, sortedFloorVertices, FaceType.ceiling)
-  node.ceilings.add(result.geometry)
+  node.ceilings.add(result.geometry.id)
   return result
 }
 
 fun createWall(idSources: GeometryIdSources, mesh: ImmutableMesh, node: Node, vertices: Vertices): FacePair {
   val result = createSurface(idSources.edge, mesh, idSources.face(), node.id, vertices, FaceType.wall)
-  node.walls.add(result.geometry)
+  node.walls.add(result.geometry.id)
   return result
 }
 

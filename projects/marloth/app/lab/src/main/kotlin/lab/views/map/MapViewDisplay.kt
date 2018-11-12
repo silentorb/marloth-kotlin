@@ -13,15 +13,14 @@ import scenery.Camera
 import scenery.ProjectionType
 import scenery.Scene
 import simulation.Realm
-import simulation.getFaceInfo
 
-fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, world: Realm, config: MapViewConfig, color: Vector4) {
-  val faces = world.nodeList.flatMap { it.faces }.distinct()
+fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, realm: Realm, config: MapViewConfig, color: Vector4) {
+  val faces = realm.nodeList.flatMap { it.faces }.distinct()
 //      .take(1)
   for (face in faces) {
 //      renderer.effects.flat.activate(ObjectShaderConfig(color = color))
 //      renderer.drawOutlinedFace(face.vertices, color)
-    val debugInfo = world.faces[face.id]!!.debugInfo
+    val debugInfo = realm.faces[face]!!.debugInfo
     val c = when (debugInfo) {
       "lower" -> Vector4(1f, 0f, 1f, 1f)
       else -> color
@@ -30,18 +29,19 @@ fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, world: Rea
       3f
     else
       1f
-    for (edge in face.edges) {
+    for (edge in realm.mesh.faces[face]!!.edges) {
       renderer.drawLine(edge.first, edge.second, c, thickness)
 //                sector.mesh.drawElement(DrawMethod.lineLoop, index++)
     }
   }
 }
 
-fun renderFaceIndices(renderer: SceneRenderer, world: Realm) {
+fun renderFaceIndices(renderer: SceneRenderer, realm: Realm) {
   globalState.depthEnabled = true
   val textStyle = TextStyle(renderer.renderer.fonts[0], 0f, Vector4(0.5f, 1f, 1f, 1f))
-  for (node in world.nodeList) {
-    for (face in node.faces) {
+  for (node in realm.nodeList) {
+    for (faceId in node.faces) {
+      val face = realm.mesh.faces[faceId]!!
       val normalOffset = face.normal * 0.5f
 //      face.edges.forEachIndexed { index, edge ->
 //        val vertex = edge.first

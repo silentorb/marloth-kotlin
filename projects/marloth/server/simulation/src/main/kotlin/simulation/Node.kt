@@ -2,7 +2,6 @@ package simulation
 
 import mythic.ent.Entity
 import mythic.ent.Id
-import mythic.sculpting.ImmutableFace
 import mythic.spatial.Vector3
 
 data class Node(
@@ -13,18 +12,18 @@ data class Node(
     val isWalkable: Boolean,
     val biome: Biome,
     val isSolid: Boolean,
-    val floors: MutableList<ImmutableFace>,
-    val ceilings: MutableList<ImmutableFace>,
-    val walls: MutableList<ImmutableFace>
+    val floors: MutableList<Id> = mutableListOf(),
+    val ceilings: MutableList<Id> = mutableListOf(),
+    val walls: MutableList<Id> = mutableListOf()
 ) : Entity {
 
-  val faces: List<ImmutableFace>
+  val faces: List<Id>
     get() = floors.plus(walls).plus(ceilings)
 }
 
-fun horizontalNeighbors(faces: ConnectionTable, node: Node) = node.walls.asSequence().mapNotNull { getOtherNode(node, faces[it.id]!!) }
+fun horizontalNeighbors(faces: ConnectionTable, node: Node) = node.walls.asSequence().mapNotNull { getOtherNode(node, faces[it]!!) }
 
-fun nodeNeighbors(faces: ConnectionTable, node: Node) = node.walls.asSequence().mapNotNull { getOtherNode(node, faces[it.id]!!) }
+fun nodeNeighbors(faces: ConnectionTable, node: Node) = node.walls.asSequence().mapNotNull { getOtherNode(node, faces[it]!!) }
 
 fun getPathNeighbors(nodes: NodeTable, faces: ConnectionTable, node: Node) =
     nodeNeighbors(faces, node)

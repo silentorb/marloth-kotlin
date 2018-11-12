@@ -65,7 +65,8 @@ fun generateIntermediateRecords(world: World, playerCommands: Commands, delta: F
       .flatMap { body ->
         val offset = body.velocity * delta
         val wallsInRange = wallsInCollisionRange(world.realm, world.realm.nodeTable[body.node]!!)
-        val walls = getWallCollisions(MovingBody(body.radius!!, body.position), offset, wallsInRange)
+        val faces = wallsInRange.map { world.realm.mesh.faces[it]!! }
+        val walls = getWallCollisions(MovingBody(body.radius!!, body.position), offset, faces)
         walls.map { Collision(body.id, null, it.wall, it.hitPoint, it.directGap, it.travelingGap) }
       }
       .plus(getBodyCollisions(world.bodyTable, world.characterTable, world.missiles))

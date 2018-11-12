@@ -16,7 +16,7 @@ import simulation.*
 fun placeEnemy(realm: Realm, nextId: IdSource, dice: Dice): Hand {
   val node = dice.getItem(realm.locationNodes.drop(1))// Skip the node where the player starts
   val wall = dice.getItem(node.walls)
-  val position = getVector3Center(node.position, wall.edges[0].first)
+  val position = getVector3Center(node.position, realm.mesh.faces[wall]!!.edges[0].first)
   return newCharacter(
       nextId = nextId,
       faction = 2,
@@ -50,7 +50,7 @@ fun placeDoors(realm: Realm, nextId: IdSource): Deck =
 //        }
         realm.doorFrameNodes.map { nodeId ->
           val node = realm.nodeTable[nodeId]!!
-          val face = node.walls.first { realm.faces[it.id]!!.faceType != FaceType.wall }
+          val face = node.walls.first { realm.faces[it]!!.faceType != FaceType.wall }
           val id = nextId()
           Hand(
               door = Door(
@@ -58,8 +58,8 @@ fun placeDoors(realm: Realm, nextId: IdSource): Deck =
               ),
               body = Body(
                   id = id,
-                  position = getCenter(node.floors.first().vertices),
-                  orientation = Quaternion().rotateTo(Vector3(0f, 1f, 0f), face.normal),
+                  position = getCenter(realm.mesh.faces[node.floors.first()]!!.vertices),
+                  orientation = Quaternion().rotateTo(Vector3(0f, 1f, 0f), realm.mesh.faces[face]!!.normal),
                   attributes = doodadBodyAttributes,
                   shape = null,
                   gravity = false,
@@ -79,7 +79,7 @@ fun placeWallLamps(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): De
   val options = realm.locationNodes
       .filter { node -> !realm.doorFrameNodes.contains(node.id) }
       .filter { node ->
-        val infos = node.walls.map { realm.faces[it.id]!! }
+        val infos = node.walls.map { realm.faces[it]!! }
         infos.any(isValidLampWall)
       }
   if (options.none())
@@ -87,9 +87,9 @@ fun placeWallLamps(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): De
 
   val nodes = dice.getList(options, count)
   val hands = nodes.mapNotNull { node ->
-    val options2 = node.walls.filter { isValidLampWall(realm.faces[it.id]!!) }
+    val options2 = node.walls.filter { isValidLampWall(realm.faces[it]!!) }
     if (options2.any()) {
-      val wall = dice.getItem(options2)
+      val wall = realm.mesh.faces[dice.getItem(options2)]!!
       val edge = wall.edges[0]
       val position = getVector3Center(edge.first, edge.second) +
           Vector3(0f, 0f, 0.9f) + wall.normal * -0.1f

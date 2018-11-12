@@ -288,11 +288,13 @@ fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice): Structu
   )
 
   val pairs = allSectors.values.flatMap { sector ->
-    val wallBases = sector.node.floors.first().edges
+    val wallBases = mesh.faces[sector.node.floors.first()]!!.edges
     wallBases.map { immutableEdgeReference ->
       Pair(immutableEdgeReference, sector.node.id)
     }
   }
+
+//  val pairs = listOf<Pair<ImmutableEdgeReference, Id>>()
 
   val nodeTable = graph.nodes
   val groups = pairs.groupBy { it.first.edge.id }
@@ -303,7 +305,7 @@ fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice): Structu
         faces = mesh.faces.plus(Pair(face.id, face)),
         edges = mesh.edges.plus(entityMap(face.edges.map { it.edge }))
     )
-    nodeTable[it.second]!!.walls.add(face)
+    nodeTable[it.second]!!.walls.add(face.id)
     FacePair(ConnectionFace(face.id, FaceType.wall, it.second, voidNodeId, null), face)
   }
       .plus(
@@ -313,8 +315,8 @@ fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice): Structu
                 faces = mesh.faces.plus(Pair(face.id, face)),
                 edges = mesh.edges.plus(entityMap(face.edges.map { it.edge }))
             )
-            nodeTable[it[0].second]!!.walls.add(face)
-            nodeTable[it[1].second]!!.walls.add(face)
+            nodeTable[it[0].second]!!.walls.add(face.id)
+            nodeTable[it[1].second]!!.walls.add(face.id)
             FacePair(ConnectionFace(face.id, FaceType.space, it[0].second, it[1].second, null), face)
           }
       )
@@ -368,18 +370,24 @@ fun fillNodeBiomesAndSolid(dice: Dice, realm: StructureRealm, biomeGrid: BiomeGr
 fun cleanupSolidNormals(realm: StructureRealm): StructureRealm {
   val updatedFaces = realm.mesh.faces.mapValues { (_, face) ->
     val info = realm.connections[face.id]!!
+    val firstNode = realm.nodes[info.firstNode]!!
     val nodes = listOf(
-        realm.nodes[info.firstNode]!!,
-        realm.nodes[info.secondNode]!!
+        firstNode,
+        realm.nodes[info.secondNode]
     )
-    val nodeCenter = nodes[0].position + Vector3(0f, 0f, nodes[0].height / 2f)
+    val height = if (firstNode.height == 0f)
+      2f
+    else
+      firstNode.height
+
+    val nodeCenter = firstNode.position + Vector3(0f, 0f, height / 2f)
     val nodeNormal = (nodeCenter - getCenter(face.vertices)).normalize()
     val outerWall = if (isFacingSameDirection(face.normal, nodeNormal))
       0
     else
       1
 
-    if (nodes[outerWall].isSolid)
+    if (nodes[outerWall]?.isSolid ?: false)
       flipFace(face)
     else
       face

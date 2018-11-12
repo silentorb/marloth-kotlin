@@ -1,5 +1,6 @@
 package physics
 
+import mythic.ent.Id
 import simulation.getPathNeighbors
 import simulation.CommandType
 import mythic.sculpting.ImmutableEdge
@@ -24,10 +25,10 @@ fun getCollisionWallsIncludingNeighbors(world: Realm, node: Node): Sequence<Immu
 }
 */
 
-fun wallsInCollisionRange(realm: Realm, node: Node): List<ImmutableFace> {
+fun wallsInCollisionRange(realm: Realm, node: Node): List<Id> {
   return getPathNeighbors(realm.nodeTable, realm.faces, node).toList()
       .plus(node)
-      .flatMap { n -> n.walls.filter { isSolidWall(realm.faces[it.id]!!) } }
+      .flatMap { n -> n.walls.filter { isSolidWall(realm.faces[it]!!) } }
       .distinct()
 }
 

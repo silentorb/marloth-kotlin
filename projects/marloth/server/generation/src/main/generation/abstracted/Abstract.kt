@@ -45,10 +45,7 @@ fun createRoomNode(boundary: WorldBoundary, id: Id, dice: Dice): Node {
       isSolid = false,
       isWalkable = true,
       biome = Biome.void,
-      height = 0f,
-      floors = mutableListOf(),
-      ceilings = mutableListOf(),
-      walls = mutableListOf()
+      height = 0f
   )
 }
 

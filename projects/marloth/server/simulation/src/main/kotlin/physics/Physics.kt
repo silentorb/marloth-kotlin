@@ -74,13 +74,13 @@ fun isGroundedOnNeighborNode(realm: Realm, body: Body): Boolean {
 
   val (nearestWall, distance) = node.walls
       .map {
-        val edge = getFloor(it)
+        val edge = getFloor(realm.mesh.faces [it]!!)
         Pair(it, getPointToLineDistance(body.position, edge.first, edge.second))
       }
       .sortedBy { it.second }
       .first()
 
-  return distance < 0.5f && isWalkable(realm.nodeTable[getOtherNode(node, realm.faces[nearestWall.id]!!)])
+  return distance < 0.5f && isWalkable(realm.nodeTable[getOtherNode(node, realm.faces[nearestWall]!!)])
 }
 
 fun isGrounded(realm: Realm, body: Body): Boolean {
