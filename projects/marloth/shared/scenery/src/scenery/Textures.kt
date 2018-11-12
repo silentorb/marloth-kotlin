@@ -4,6 +4,7 @@ enum class Textures {
   none,
   background,
   checkers,
+  cobblestone,
   darkCheckers,
   debugYellow,
   debugCyan,

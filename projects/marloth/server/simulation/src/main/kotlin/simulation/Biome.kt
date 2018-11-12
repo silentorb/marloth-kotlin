@@ -22,7 +22,7 @@ typealias BiomeInfoMap = Map<Biome, BiomeInfo>
 val biomeInfoMap: BiomeInfoMap = mapOf(
     Biome.checkers to BiomeInfo("checkers",
         enclosureRate = 0.5f,
-        floorTexture = Textures.checkers,
+        floorTexture = Textures.cobblestone,
         ceilingTexture = Textures.checkers,
         wallTexture = Textures.darkCheckers
     ),
