@@ -49,7 +49,7 @@ fun renderFaceIndices(renderer: SceneRenderer, world: Realm) {
 //        val offset = centeringOffset// + normalOffset
 //        renderer.drawText(index.toString(), vertex + offset, textStyle)
 //      }
-      if (face.id == 96L || face.id == 98L)
+//      if (face.id == 96L || face.id == 98L)
       renderer.drawText(face.id.toString(), getCenter(face.vertices), textStyle)
 //      renderer.drawText(face.id.toString(), Vector3(), textStyle)
     }

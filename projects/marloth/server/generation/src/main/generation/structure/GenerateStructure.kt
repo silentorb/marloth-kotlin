@@ -158,9 +158,15 @@ fun generateTunnelStructure(graph: Graph, node: Node, nodeSectors: Map<Id, TempS
 //      getDoorwayNodePoints(a, b.node)[0]
       val doorRoom = getOtherNode(graph, node.id, a.node.id)
       val points = getDoorFramePoints(doorRoom, a.node)
-      val doorSector = nodeSectors[doorRoom.id]!!
-      getExtrudedDoorwayPoints(points, b.node.position)
-          .map { point -> doorSector.corners.sortedBy { it.xy().distance(point.xy()) }.first() }
+      val c = getExtrudedDoorwayPoints(points, b.node.position)
+      val d = c.map { point ->
+        val point2 = a.corners.sortedBy { it.xy().distance(point.xy()) }.first()
+        if (point.xy().distance(point2.xy()) < 0.001f)
+          point2
+        else
+          point
+      }
+      d
     } else
       getDoorwayPoints3(doorwayLength, a.node, b.node)
           .map { point -> a.corners.sortedBy { it.xy().distance(point.xy()) }.first() }

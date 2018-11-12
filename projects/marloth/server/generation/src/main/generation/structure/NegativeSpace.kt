@@ -314,6 +314,7 @@ fun fillBoundary(idSources: StructureIdSources, realm: StructureRealm, dice: Dic
   var currentRealm = realm
   val incompleteFaces = getIncomplete(realm.connections, realm.nodes.values)
   for (face in incompleteFaces) {
+//    realm.connections[face.id]!!.debugInfo = "space-a"
     val result = createBoundarySector(idSources, currentRealm, face, dice)
     currentRealm = currentRealm.copy(
         nodes = result.nodes,
