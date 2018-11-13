@@ -1,14 +1,14 @@
 package mythic.desktop
 
 import mythic.platforming.Display
-import mythic.platforming.DisplayConfig
+import mythic.platforming.PlatformDisplayConfig
 import mythic.platforming.WindowInfo
 import org.joml.Vector2i
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil
 
-fun createWindow(title: String, config: DisplayConfig): Long {
+fun createWindow(title: String, config: PlatformDisplayConfig): Long {
 //  val pid = ManagementFactory.getRuntimeMXBean().getName()
 //  println("pid: " + pid)
   glfwDefaultWindowHints() // optional, the current window hints are already the default
@@ -49,7 +49,7 @@ fun initializeFullscreen(window: Long) {
   glfwFocusWindow(window) // For some reason the window loses focus when switching to fullscreen mode?
 }
 
-fun initializeWindow(window: Long, config: DisplayConfig) {
+fun initializeWindow(window: Long, config: PlatformDisplayConfig) {
   if (config.fullscreen) {
     initializeFullscreen(window)
   } else {
@@ -77,7 +77,7 @@ fun getWindowInfo(window: Long): WindowInfo {
 
 class DesktopDisplay(val window: Long) : Display {
 
-  override fun initialize(config: DisplayConfig) = initializeWindow(window, config)
+  override fun initialize(config: PlatformDisplayConfig) = initializeWindow(window, config)
 
   override fun getInfo(): WindowInfo = getWindowInfo(window)
 

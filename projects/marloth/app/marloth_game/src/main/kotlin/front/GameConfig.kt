@@ -3,7 +3,8 @@ package front
 import configuration.loadConfig
 import configuration.saveConfig
 import marloth.clienting.GameInputConfig
-import mythic.platforming.DisplayConfig
+import mythic.platforming.PlatformDisplayConfig
+import rendering.DisplayConfig
 import simulation.ViewMode
 
 data class GameplayConfig(

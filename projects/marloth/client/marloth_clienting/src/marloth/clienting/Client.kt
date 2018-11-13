@@ -1,11 +1,11 @@
 package marloth.clienting
 
-import haft.*
 import marloth.clienting.gui.MenuState
 import marloth.clienting.gui.initialMenuState
 import marloth.clienting.gui.updateMenu
-import mythic.platforming.DisplayConfig
+import mythic.platforming.PlatformDisplayConfig
 import mythic.platforming.Platform
+import rendering.DisplayConfig
 import rendering.Renderer
 import scenery.Screen
 

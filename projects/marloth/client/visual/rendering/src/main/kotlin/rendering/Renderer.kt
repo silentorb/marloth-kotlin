@@ -4,7 +4,7 @@ import mythic.breeze.Animation
 import mythic.breeze.Bones
 import mythic.drawing.*
 import mythic.glowing.*
-import mythic.platforming.DisplayConfig
+import mythic.platforming.PlatformDisplayConfig
 import mythic.platforming.WindowInfo
 import mythic.spatial.*
 import mythic.typography.*
@@ -19,6 +19,23 @@ import rendering.meshes.Primitive
 import rendering.meshes.createVertexSchemas
 import scenery.*
 import java.nio.FloatBuffer
+
+enum class TextureAntialiasing {
+  none,
+  bilinear,
+  trilinear
+}
+
+data class DisplayConfig(
+    override var width: Int = 800,
+    override var height: Int = 600,
+    override var fullscreen: Boolean = false,
+    override var windowedFullscreen: Boolean = false, // Whether fullscreen uses windowed fullscreen
+    override var vsync: Boolean = true,
+    override var multisamples: Int = 0,
+    var depthOfField: Boolean = false,
+    var textureAntialiasing: TextureAntialiasing = TextureAntialiasing.trilinear
+) : PlatformDisplayConfig
 
 fun gatherEffectsData(dimensions: Vector2i, scene: Scene, cameraEffectsData: CameraEffectsData): EffectsData {
   return EffectsData(
@@ -80,7 +97,7 @@ data class Multisampler(
     val renderbuffer: Renderbuffer
 )
 
-fun createMultiSampler(glow: Glow, config: DisplayConfig): Multisampler {
+fun createMultiSampler(glow: Glow, config: PlatformDisplayConfig): Multisampler {
   val texture = Texture(config.width, config.height, null, { width: Int, height: Int, buffer: FloatBuffer? ->
     glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, config.multisamples, GL_RGB, width, height, true)
   }, TextureTarget.multisample)
@@ -163,7 +180,14 @@ fun mapArmatures(models: MeshMap): Map<ArmatureId, Armature> {
   }.associate { it }
 }
 
-class Renderer(config: DisplayConfig) {
+fun textureAttributesFromConfig(config: DisplayConfig) =
+    TextureAttributes(
+        repeating = true,
+        mipmap = config.textureAntialiasing == TextureAntialiasing.trilinear,
+        smooth = config.textureAntialiasing != TextureAntialiasing.none
+    )
+
+class Renderer(val config: DisplayConfig) {
   val glow = Glow()
   val sceneBuffer = UniformBuffer(sceneBufferSize)
   val sectionBuffer = UniformBuffer(sectionBufferSize)
@@ -182,7 +206,7 @@ class Renderer(config: DisplayConfig) {
   val armatures = mapArmatures(meshes)
   val animationDurations = mapAnimationDurations(meshes)
   var mappedTextures: TextureLibrary = createTextureLibrary(defaultTextureScale)
-  val textures: DynamicTextureLibrary = createTextureLibrary2()
+  val textures: DynamicTextureLibrary = createTextureLibrary2(textureAttributesFromConfig(config))
   val offscreenBuffer = prepareScreenFrameBuffer(config.width, config.height, true)
   val multisampler: Multisampler?
   val fonts = loadFonts(listOf(

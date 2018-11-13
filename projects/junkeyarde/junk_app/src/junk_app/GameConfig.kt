@@ -2,7 +2,7 @@ package junk_app
 
 import configuration.loadConfig
 import configuration.saveConfig
-import mythic.platforming.DisplayConfig
+import rendering.DisplayConfig
 
 data class GameConfig(
     var display: DisplayConfig = DisplayConfig()

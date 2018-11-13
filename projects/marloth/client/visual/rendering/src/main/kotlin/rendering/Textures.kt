@@ -107,7 +107,6 @@ fun textureGenerators(): TextureGeneratorMap =
     basicTextureGenerators()
         .plus(miscTextureGenerators())
 
-
 fun createTextureLibrary(scale: Float) =
     textureGenerators().mapValues { it.value(scale) }
 //        .plus(mapOf(
@@ -116,12 +115,12 @@ fun createTextureLibrary(scale: Float) =
 //            .mapValues { loadTextureFromFile(it.value, TextureAttributes(repeating = true, mipmap = true)) }
 //        )
 
-fun createTextureLibrary2() =
+fun createTextureLibrary2(attributes: TextureAttributes) =
     scanTextureResources("models")
         .plus(scanTextureResources("textures"))
         .associate {
           Pair(
               Paths.get(it).fileName.toString().substringBeforeLast("."),
-              loadTextureFromFile(it, TextureAttributes(repeating = true, mipmap = true))
+              loadTextureFromFile(it, attributes)
           )
         }

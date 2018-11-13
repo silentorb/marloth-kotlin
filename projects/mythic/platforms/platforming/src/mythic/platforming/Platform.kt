@@ -18,17 +18,17 @@ interface PlatformInput {
   fun isMouseVisible(value: Boolean)
 }
 
-data class DisplayConfig(
-    var width: Int = 800,
-    var height: Int = 600,
-    var fullscreen: Boolean = false,
-    var windowedFullscreen: Boolean = false, // Whether fullscreen uses windowed fullscreen
-    var vsync: Boolean = true,
-    var multisamples: Int = 0
-)
+interface PlatformDisplayConfig {
+  var width: Int
+  var height: Int
+  var fullscreen: Boolean
+  var windowedFullscreen: Boolean // Whether fullscreen uses windowed fullscreen
+  var vsync: Boolean
+  var multisamples: Int
+}
 
 interface Display {
-  fun initialize(config: DisplayConfig)
+  fun initialize(config: PlatformDisplayConfig)
   fun swapBuffers()
   fun getInfo(): WindowInfo
   fun hasFocus(): Boolean

@@ -2,7 +2,7 @@ package gctest
 
 import mythic.desktop.createDesktopPlatform
 import mythic.glowing.Glow
-import mythic.platforming.DisplayConfig
+import mythic.platforming.PlatformDisplayConfig
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
 
@@ -48,19 +48,19 @@ fun heavyLoop(app: GCTestApp) {
   println(workload.unusedResult)
 }
 
-fun runApp(platform: Platform) {
-  platform.display.initialize(DisplayConfig(1400, 900, vsync = false))
-  val glow = Glow()
-  val app = GCTestApp(platform, glow)
-  if (true)
-    heavyLoop(app)
-  else
-    basicLoop(app)
-}
-
-object App {
-  @JvmStatic
-  fun main(args: Array<String>) {
-    runApp(createDesktopPlatform("GC Test", DisplayConfig()))
-  }
-}
+//fun runApp(platform: Platform) {
+//  platform.display.initialize(DisplayConfig(1400, 900, vsync = false))
+//  val glow = Glow()
+//  val app = GCTestApp(platform, glow)
+//  if (true)
+//    heavyLoop(app)
+//  else
+//    basicLoop(app)
+//}
+//
+//object App {
+//  @JvmStatic
+//  fun main(args: Array<String>) {
+//    runApp(createDesktopPlatform("GC Test", PlatformDisplayConfig()))
+//  }
+//}

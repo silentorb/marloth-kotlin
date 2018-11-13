@@ -1,5 +1,7 @@
 package mythic.glowing
 
+import org.lwjgl.opengl.EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT
+import org.lwjgl.opengl.EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL13.*
 import org.lwjgl.opengl.GL30.glGenerateMipmap
@@ -25,6 +27,16 @@ data class TextureAttributes(
     val mipmap: Boolean = false
 )
 
+private var _maxAnistropy: Float? = null
+
+fun getMaxAnistropy(): Float {
+  if (_maxAnistropy != null)
+    return _maxAnistropy!!
+
+  _maxAnistropy = glGetFloat(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT)
+  return _maxAnistropy!!
+}
+
 fun initializeTexture(width: Int, height: Int, attributes: TextureAttributes, buffer: FloatBuffer? = null) {
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1) // Disable byte-alignment restriction
   val wrapMode = if (attributes.repeating)
@@ -36,11 +48,19 @@ fun initializeTexture(width: Int, height: Int, attributes: TextureAttributes, bu
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode)
 
   val (minFilter, magFilter) = if (attributes.mipmap)
-    Pair(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR)
+    Pair(GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST)
+//  Pair(GL_LINEAR_MIPMAP_LINEAR, GL_NEAREST)
   else if (attributes.smooth)
     Pair(GL_LINEAR, GL_LINEAR)
   else
-  Pair(GL_NEAREST, GL_NEAREST)
+    Pair(GL_NEAREST, GL_NEAREST)
+
+  if (attributes.smooth || attributes.smooth) {
+    val maxAnistropy = getMaxAnistropy()
+    if (maxAnistropy != 0f) {
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnistropy)
+    }
+  }
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter)

@@ -1,6 +1,6 @@
 package mythic.desktop
 
-import mythic.platforming.DisplayConfig
+import mythic.platforming.PlatformDisplayConfig
 import mythic.platforming.Platform
 import mythic.platforming.PlatformProcess
 import org.lwjgl.glfw.GLFW
@@ -29,7 +29,7 @@ class DesktopProcess(val window: Long) : PlatformProcess {
 
 }
 
-fun createDesktopPlatform(title: String, config: DisplayConfig): Platform {
+fun createDesktopPlatform(title: String, config: PlatformDisplayConfig): Platform {
   GLFWErrorCallback.createPrint(System.err).set()
   if (!glfwInit())
     throw Error("Unable to initialize GLFW")

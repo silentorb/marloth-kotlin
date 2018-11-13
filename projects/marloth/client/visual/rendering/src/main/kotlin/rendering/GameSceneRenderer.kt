@@ -29,23 +29,30 @@ class GameSceneRenderer(
 ) {
 
   fun prepareRender() {
-//    globalState.viewport = renderer.viewport
     globalState.depthEnabled = true
     val glow = renderer.renderer.glow
-    val offscreenBuffer = renderer.renderer.offscreenBuffer
-    val dimensions = Vector2i(offscreenBuffer.colorTexture.width, offscreenBuffer.colorTexture.height)
-    glow.state.setFrameBuffer(offscreenBuffer.framebuffer.id)
-    glow.state.viewport = Vector4i(0, 0, dimensions.x, dimensions.y)
+    if (renderer.renderer.config.depthOfField) {
+      val offscreenBuffer = renderer.renderer.offscreenBuffer
+      val dimensions = Vector2i(offscreenBuffer.colorTexture.width, offscreenBuffer.colorTexture.height)
+      glow.state.setFrameBuffer(offscreenBuffer.framebuffer.id)
+      glow.state.viewport = Vector4i(0, 0, dimensions.x, dimensions.y)
+    }
+    else {
+
+    }
     glow.operations.clearScreen()
   }
 
   fun finishRender(dimensions: Vector2i) {
-    val offscreenBuffer = renderer.renderer.offscreenBuffer
-//    applyOffscreenBuffer(offscreenBuffer, dimensions, true)
     globalState.cullFaces = false
     globalState.setFrameBuffer(0)
     globalState.viewport = Vector4i(0, 0, dimensions.x, dimensions.y)
-    applyFrameBufferTexture()
+    if (renderer.renderer.config.depthOfField) {
+      applyFrameBufferTexture()
+    }
+    else {
+
+    }
     globalState.cullFaces = true
   }
 
@@ -56,18 +63,6 @@ class GameSceneRenderer(
     activateTextures(listOf(offscreenBuffer.colorTexture, offscreenBuffer.depthTexture!!))
     canvasDependencies.meshes.image.draw(DrawMethod.triangleFan)
   }
-
-//  fun lookupMesh(depiction: DepictionType) = renderer.meshes[simplePainterMap[depiction]]!!
-
-//  fun renderSimpleElement(element: MeshElement) {
-//    val mesh = renderer.meshes[element.mesh]!!
-//    if (childDetails != null) {
-//      advancedPainter(mesh, renderer.renderer, element, renderer.effects)
-////      humanPainter(renderer, mesh.primitives)(element, renderer.effects, childDetails)
-//    } else {
-//      simplePainter(mesh.primitives, element, renderer.effects, renderer.renderer.textures)
-//    }
-//  }
 
   fun renderElements() {
     for (group in scene.elementGroups) {
