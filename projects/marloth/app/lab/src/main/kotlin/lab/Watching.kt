@@ -64,11 +64,11 @@ fun reloadTextures(renderer: Renderer) {
 }
 
 fun reloadMeshes(renderer: Renderer){
-  for (mesh in renderer.meshes.values) {
-    dispose(mesh)
-  }
-
-  renderer.meshes = createMeshes(renderer.vertexSchemas)
+//  for (mesh in renderer.meshes.values) {
+//    dispose(mesh)
+//  }
+//
+//  renderer.meshes = createMeshes(renderer.vertexSchemas)
 }
 
 fun onPackageChanged(app: LabApp, watchedPackage: WatchedPackage) {

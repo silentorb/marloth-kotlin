@@ -10,8 +10,9 @@ typealias AnimationDurationMap = Map<ArmatureId, Map<AnimationId, Float>>
 enum class DepictionType {
   billboard,
   child,
-  missile,
+  spikyBall,
   monster,
+  person,
   none,
   test,
   wallLamp,

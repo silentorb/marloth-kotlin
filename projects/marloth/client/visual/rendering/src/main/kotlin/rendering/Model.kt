@@ -4,9 +4,10 @@ import mythic.sculpting.ImmutableEdge
 import mythic.sculpting.ImmutableFace
 import mythic.sculpting.ImmutableMesh
 import mythic.spatial.Vector3
-import rendering.meshes.Faces
 import rendering.meshes.MeshInfo
 import rendering.meshes.Primitives
+import scenery.ArmatureId
+import scenery.MeshId
 
 data class MeshGroup(
     val material: Material,
@@ -47,6 +48,31 @@ data class AdvancedModel(
     val armature: Armature? = null
 )
 
+data class ModelMesh(
+    val id: MeshId,
+    val primitives: Primitives
+)
+
+typealias ModelMeshMap = Map<MeshId, ModelMesh>
+
 fun dispose(model: AdvancedModel) {
   model.primitives.forEach { it.mesh.dispose() }
+}
+
+fun getMeshId(name: String): MeshId {
+  val formattedName = toCamelCase(name)
+  val id = MeshId.values().firstOrNull { it.name == formattedName }
+  if (id == null)
+    throw Error("Could not find MeshId " + formattedName)
+
+  return id
+}
+
+fun getArmatureId(name: String): ArmatureId {
+  val formattedName = toCamelCase(name)
+  val id = ArmatureId.values().firstOrNull { it.name == formattedName }
+  if (id == null)
+    throw Error("Could not find ArmatureId " + formattedName)
+
+  return id
 }

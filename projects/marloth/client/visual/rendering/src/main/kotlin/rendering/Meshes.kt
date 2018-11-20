@@ -1,10 +1,11 @@
 package rendering
 
-import mythic.spatial.Vector4
+import getResourceUrl
 import rendering.meshes.*
 import rendering.meshes.loading.loadGltf
-//import rigging.createSkeleton
-//import rigging.humanAnimations
+import scenery.MeshId
+import java.io.File
+import java.nio.file.Paths
 import mythic.glowing.VertexSchema as GenericVertexSchema
 
 enum class MeshType {
@@ -16,6 +17,7 @@ enum class MeshType {
   humanOld,
   line,
   monster,
+  person,
   prisonDoor,
   skeleton,
   skybox,
@@ -28,62 +30,39 @@ typealias AdvancedModelGenerator = () -> AdvancedModel
 
 typealias AdvancedModelGeneratorMap = Map<MeshType, AdvancedModelGenerator>
 
-fun standardMeshes(): ModelGeneratorMap = mapOf(
-//    MeshType.cube to createCube,
-//    MeshType.eyeball to createEyeball,
-//    MeshType.sphere to createSphere
-//    MeshType.bear to createCartoonHuman,
-//    MeshType.human to createHuman,
-//    MeshType.humanOld to createHumanOld,
-//    MeshType.monster to createCartoonHuman
-//    MeshType.wallLamp to createWallLamp
-)
-
-//fun skeletonMesh(vertexSchemas: VertexSchemas): AdvancedModelGenerator = {
-//  val bones = createSkeleton()
-//  val (model, weights) = modelFromSkeleton(bones, "Skeleton", Material(Vector4(1f, 1f, 1f, 1f)))
-////  val (model, weights) = modelFromSkeleton(bones, "Skeleton", Material(Vector4(0.4f, 0.25f, 0.0f, 1f)))
-//  val armature = Armature(
-//      bones = bones,
-//      originalBones = bones,
-//      animations = humanAnimations(bones)
-//  )
-//  AdvancedModel(
-//      model = model,
-//      primitives = modelToMeshes(vertexSchemas, model, weights),
-//      armature = armature,
-//      weights = weights
+//fun advancedMeshes(vertexSchemas: VertexSchemas): AdvancedModelGeneratorMap {
+//  return mapOf(
+////      MeshType.skybox to skyboxModel(vertexSchemas)
 //  )
 //}
 
-fun advancedMeshes(vertexSchemas: VertexSchemas): AdvancedModelGeneratorMap {
-  return mapOf(
-//      MeshType.skybox to skyboxModel(vertexSchemas)
-  )
+fun getMeshFilenames(): Array<File> {
+  val modelRoot = getResourceUrl("models")
+  return File(modelRoot.toURI()).listFiles()
 }
 
-fun importedMeshes(vertexSchemas: VertexSchemas) = mapOf(
-    MeshType.wallLamp to "lamp",
-    MeshType.prisonDoor to "prison_door",
-    MeshType.cube to "cube",
+fun importedMeshes(vertexSchemas: VertexSchemas) =
+//    mapOf(
+//    MeshType.wallLamp to "lamp",
+//    MeshType.prisonDoor to "prison_door",
+//    MeshType.cube to "cube",
+//    MeshType.child to "child",
+//    MeshType.person to "person"
+//)
+    getMeshFilenames()
+        .map { it.name }
+        .map { loadGltf(vertexSchemas, it, "models/" + it + "/" + it) }
 
-//    MeshType.child to "girl2/child"
-    MeshType.child to "child"
-)
-    .mapValues { loadGltf(vertexSchemas, "models/" + it.value + "/" + it.value) }
+fun createMeshes(vertexSchemas: VertexSchemas): Pair<Map<MeshId, ModelMesh>, List<Armature>> {
+  val imports = importedMeshes(vertexSchemas)
+  val meshes = mapOf(
+      MeshId.line to createLineMesh(vertexSchemas.flat)
+  )
+      .mapValues { createModelElements(it.value) }
+      .mapValues { ModelMesh(it.key, it.value) }
+      .plus(imports.flatMap { it.meshes }.associate { Pair(it.id, it) })
 
-fun createMeshes(vertexSchemas: VertexSchemas): MeshMap = mapOf(
-    MeshType.line to createLineMesh(vertexSchemas.flat)
-//    MeshType.cylinder to createSimpleMesh(createCylinder(), vertexSchemas.textured)
-)
-    .mapValues { createModelElements(it.value) }
-//    .plus(mapOf(
-//        MeshType.sphere to createModelElements(createSimpleMesh(createSphere(), vertexSchemas.standard, Vector4(1f)),
-//            Vector4(0.4f, 0.1f, 0.1f, 1f))
-//    ))
-    .plus(standardMeshes().mapValues {
-      modelToMeshes(vertexSchemas, it.value())
-    })
-    .mapValues { AdvancedModel(it.value) }
-    .plus(importedMeshes(vertexSchemas))
-    .plus(advancedMeshes(vertexSchemas).mapValues { it.value() })
+  val armatures = imports.flatMap { it.armatures }
+  return Pair(meshes, armatures)
+
+}

@@ -50,6 +50,6 @@ fun generateDefaultWorld(): World {
 fun addEnemies(world: World, boundary: WorldBoundary, dice: Dice): World {
   val scale = calculateWorldScale(boundary.dimensions)
   val nextId = newIdSource(world.nextId)
-  val newCharacters = placeEnemies(world.realm, nextId, dice, scale)
+  val newCharacters = placeCharacters(world.realm, nextId, dice, scale)
   return addDeck(world, newCharacters, nextId)
 }

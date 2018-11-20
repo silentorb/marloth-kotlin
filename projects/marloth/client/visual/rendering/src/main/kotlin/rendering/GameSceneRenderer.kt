@@ -8,10 +8,10 @@ import mythic.spatial.Matrix
 import mythic.spatial.Vector4
 import org.joml.Vector2i
 import org.joml.Vector4i
-import rendering.meshes.MeshMap
+import rendering.meshes.ModelMap
 import scenery.Textures
 
-fun renderSkyBox(textures: TextureLibrary, meshes: MeshMap, shaders: Shaders) {
+fun renderSkyBox(textures: TextureLibrary, meshes: ModelMap, shaders: Shaders) {
   /*
   val texture = textures[Textures.background]!!
   val mesh = meshes[MeshType.skybox]!!

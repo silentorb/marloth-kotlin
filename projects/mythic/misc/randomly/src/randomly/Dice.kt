@@ -20,7 +20,7 @@ class Dice(private val seed: Long) {
 
   fun <T> getItem(list: List<T>) = list[random.nextInt(list.size)]
 
-  fun <T> getList(list: List<T>, count: Int): List<T> {
+  fun <T> take(list: List<T>, count: Int): List<T> {
     assert(count <= list.size)
     val result = mutableListOf<T>()
     val options = list.toMutableList()

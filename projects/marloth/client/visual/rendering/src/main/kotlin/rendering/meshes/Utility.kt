@@ -64,7 +64,7 @@ data class Primitive(
 
 typealias Primitives = List<Primitive>
 
-typealias MeshMap = Map<MeshType, AdvancedModel>
+typealias ModelMap = Map<MeshType, AdvancedModel>
 
 data class TransientModelElement(
     val faces: List<ImmutableFace>,

@@ -7,6 +7,7 @@ import org.lwjgl.BufferUtils
 import rendering.*
 import rendering.meshes.*
 import scenery.AnimationId
+import scenery.MeshId
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
@@ -320,7 +321,7 @@ fun loadBoneMap(info: GltfInfo): BoneMap {
   return result
 }
 
-fun loadArmature(buffer: ByteBuffer, info: GltfInfo, boneMap: BoneMap): Armature? {
+fun loadArmature(buffer: ByteBuffer, info: GltfInfo, filename: String, boneMap: BoneMap): Armature? {
   if (info.animations == null || info.animations.none())
     return null
   logBuffer(buffer, info)
@@ -330,13 +331,19 @@ fun loadArmature(buffer: ByteBuffer, info: GltfInfo, boneMap: BoneMap): Armature
   }
 
   return Armature(
+      id = getArmatureId(filename),
       bones = bones,
       animations = loadAnimations(buffer, info, info.animations, bones, boneMap),
       transforms = transformSkeleton(bones)
   )
 }
 
-fun loadGltf(vertexSchemas: VertexSchemas, resourcePath: String): AdvancedModel {
+data class ModelImport(
+    val meshes: List<ModelMesh>,
+    val armatures: List<Armature>
+)
+
+fun loadGltf(vertexSchemas: VertexSchemas, filename: String, resourcePath: String): ModelImport {
   val info = loadJsonResource<GltfInfo>(resourcePath + ".gltf")
   val directoryPath = resourcePath.split("/").dropLast(1).joinToString("/")
   val buffer = loadGltfByteBuffer(directoryPath, info)
@@ -346,12 +353,12 @@ fun loadGltf(vertexSchemas: VertexSchemas, resourcePath: String): AdvancedModel 
   else
     mapOf()
 
-  val armature = if (info.animations == null || info.animations.none())
-    null
+  val armatures = if (info.animations == null || info.animations.none())
+    listOf()
   else
-    loadArmature(buffer, info, boneMap)
+    listOf(loadArmature(buffer, info, filename, boneMap)).mapNotNull { it }
 
-  val primitives = info.meshes
+  val meshes = info.meshes
       .mapIndexed { index, mesh ->
         mesh.primitives.map { Triple(it, index, mesh.name) }
       }
@@ -361,6 +368,10 @@ fun loadGltf(vertexSchemas: VertexSchemas, resourcePath: String): AdvancedModel 
         val converter = createVertexConverter(info, buffer, boneMap, meshIndex)
         loadPrimitive(buffer, info, vertexSchemas, primitive, name2, converter)
       }
+      .map { primitive ->
+        val id = getMeshId(primitive.name)
+        ModelMesh(id, listOf(primitive))
+      }
 
-  return AdvancedModel(primitives = primitives, armature = armature)
+  return ModelImport(meshes = meshes, armatures = armatures)
 }

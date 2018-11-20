@@ -173,13 +173,13 @@ data class SelectionEvent(
     val itemIndex: Int
 )
 
-fun loadGeneratedModel(config: ModelViewConfig, renderer: Renderer): Model {
-  val generator = renderer.meshGenerators[config.model]
-  return if (generator != null)
-    generator()
-  else
-    Model(ImmutableMesh(), listOf())
-}
+//fun loadGeneratedModel(config: ModelViewConfig, renderer: Renderer): Model {
+//  val generator = renderer.meshGenerators[config.model]
+//  return if (generator != null)
+//    generator()
+//  else
+//    Model(ImmutableMesh(), listOf())
+//}
 
 //fun loadExternalMesh(config: ModelViewConfig, renderer: Renderer): Primitives? {
 ////  val generator = renderer.meshGenerators[config.model]
@@ -192,13 +192,13 @@ fun loadGeneratedModel(config: ModelViewConfig, renderer: Renderer): Model {
 //}
 
 class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePosition: Vector2) {
-  val model: AdvancedModel = renderer.meshes[config.model]!!
+  val model: AdvancedModel// = renderer.meshes[config.model]!!
   //  val externalMesh: Primitives? = renderer.meshes[config.model]?.primitives
   val camera = createOrthographicCamera(config.camera)
 //  val advancedModel: AdvancedModel?
 
   init {
-
+    model = AdvancedModel(listOf())
 //    val advancedModelGenerator = advancedMeshes(renderer.vertexSchemas)[config.model]
 //    advancedModel = if (advancedModelGenerator != null)
 //      advancedModelGenerator()
@@ -239,7 +239,8 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     val boxes = panelBounds.drop(1)
         .zip(listOf(middle, right), { b, p -> p(b) })
 
-    val (leftBoxes, leftClickBoxes) = drawLeftPanel(renderer.meshes.keys.toList(), config, model, panelBounds[0])
+//    val (leftBoxes, leftClickBoxes) = drawLeftPanel(renderer.meshes.keys.toList(), config, model, panelBounds[0])
+    val (leftBoxes, leftClickBoxes) = drawLeftPanel(listOf(), config, model, panelBounds[0])
 
     return ModelLayout(
         boxes = leftBoxes
@@ -252,7 +253,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
   fun onListItemSelection(event: SelectionEvent) {
     when (event.list) {
       SelectableListType.model -> {
-        config.model = renderer.meshes.keys.toList()[event.itemIndex]
+//        config.model = renderer.meshes.keys.toList()[event.itemIndex]
         config.visibleGroups = mutableListOf()
       }
       SelectableListType.group -> {

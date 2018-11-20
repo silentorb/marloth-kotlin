@@ -14,7 +14,7 @@ import org.lwjgl.opengl.GL30.*
 import org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE
 import org.lwjgl.opengl.GL32.glTexImage2DMultisample
 import rendering.meshes.AttributeName
-import rendering.meshes.MeshMap
+import rendering.meshes.ModelMap
 import rendering.meshes.Primitive
 import rendering.meshes.createVertexSchemas
 import scenery.*
@@ -132,15 +132,13 @@ private val camelCaseRegex = Regex("[-_][a-z]")
 fun toCamelCase(identifier: String) =
     identifier.replace(camelCaseRegex) { it.value[1].toUpperCase().toString() }
 
-fun mapAnimationDurations(meshes: MeshMap): AnimationDurationMap =
-    meshes.filter { it.value.armature != null }
-        .map { entry ->
-          Pair(ArmatureId.child, entry.value.armature!!.animations.mapValues { it.value.duration })
+fun mapAnimationDurations(armatures: Map<ArmatureId, Armature>): AnimationDurationMap =
+    armatures
+        .mapValues { (_, armature) ->
+          armature.animations.mapValues { it.value.duration }
         }
-        // Temporary:
-        .associate { it }
 
-fun mapMeshDepictions(models: MeshMap): Map<MeshId, List<Primitive>> {
+fun mapMeshDepictions(models: ModelMap): Map<MeshId, List<Primitive>> {
   val keys = MeshId.values().associate { Pair(it.name, it) }
   return models.flatMap { entry ->
     val entryName = entry.key.toString()
@@ -149,7 +147,7 @@ fun mapMeshDepictions(models: MeshMap): Map<MeshId, List<Primitive>> {
       listOf(Pair(modelKey, entry.value.primitives))
     else
       entry.value.primitives.mapNotNull { primitive ->
-        val name = entryName.decapitalize() + toCamelCase(primitive.name).capitalize()
+        val name = toCamelCase(primitive.name).capitalize()
         val key = keys[name]
         if (key != null)
           Pair(key, listOf(primitive))
@@ -163,22 +161,23 @@ fun mapMeshDepictions(models: MeshMap): Map<MeshId, List<Primitive>> {
 typealias AnimationMap = Map<AnimationId, Animation>
 
 data class Armature(
+    val id: ArmatureId,
     val bones: Bones,
     val animations: AnimationMap,
     val transforms: List<Matrix>
 )
 
-fun mapArmatures(models: MeshMap): Map<ArmatureId, Armature> {
-  val keys = ArmatureId.values().associate { Pair(it.name, it) }
-  return models.mapNotNull { entry ->
-    val key = keys[entry.key.toString()]
-    val armature = entry.value.armature
-    if (key != null && armature != null)
-      Pair(key, armature)
-    else
-      null
-  }.associate { it }
-}
+//fun mapArmatures(models: ModelMap): Map<ArmatureId, Armature> {
+//  val keys = ArmatureId.values().associate { Pair(it.name, it) }
+//  return models.mapNotNull { entry ->
+//    val key = keys[entry.key.toString()]
+//    val armature = entry.value.armature
+//    if (key != null && armature != null)
+//      Pair(key, armature)
+//    else
+//      null
+//  }.associate { it }
+//}
 
 fun textureAttributesFromConfig(config: DisplayConfig) =
     TextureAttributes(
@@ -200,11 +199,9 @@ class Renderer(val config: DisplayConfig) {
   val drawing = createDrawingEffects()
   val vertexSchemas = createVertexSchemas()
   var worldMesh: WorldMesh? = null
-  val meshGenerators = standardMeshes()
-  var meshes: MeshMap = createMeshes(vertexSchemas)
-  val meshMap = mapMeshDepictions(meshes)
-  val armatures = mapArmatures(meshes)
-  val animationDurations = mapAnimationDurations(meshes)
+  val meshes: ModelMeshMap
+  val armatures: Map<ArmatureId, Armature>
+  val animationDurations: AnimationDurationMap
   var mappedTextures: TextureLibrary = createTextureLibrary(defaultTextureScale)
   val textures: DynamicTextureLibrary = createTextureLibrary2(textureAttributesFromConfig(config))
   val offscreenBuffer = prepareScreenFrameBuffer(config.width, config.height, true)
@@ -223,6 +220,11 @@ class Renderer(val config: DisplayConfig) {
       null
     else
       createMultiSampler(glow, config)
+
+    val imports = createMeshes(vertexSchemas)
+    meshes = imports.first
+    armatures = imports.second.associate { Pair(it.id, it) }
+    animationDurations = mapAnimationDurations(armatures)
   }
 
   fun updateShaders(scene: Scene, dimensions: Vector2i, cameraEffectsData: CameraEffectsData) {
@@ -329,7 +331,7 @@ class SceneRenderer(
     )
   }
 
-  val meshes: MeshMap
+  val meshes: ModelMeshMap
     get() = renderer.meshes
 }
 

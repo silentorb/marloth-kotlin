@@ -14,6 +14,7 @@ import mythic.sculpting.getVerticesCenter
 import mythic.spatial.*
 import org.joml.zw
 import rendering.*
+import scenery.MeshId
 import scenery.Screen
 import simulation.Realm
 import simulation.World
@@ -53,7 +54,7 @@ fun renderFaceNormals(renderer: SceneRenderer, length: Float, mesh: ImmutableMes
         .scale(length)
 
     renderer.effects.flat.activate(ObjectShaderConfig(transform = transform, color = Vector4(0f, 1f, 0f, 1f)))
-    renderer.meshes[MeshType.line]!!.primitives[0].mesh.draw(DrawMethod.lines)
+    renderer.meshes[MeshId.line]!!.primitives[0].mesh.draw(DrawMethod.lines)
   }
 }
 
@@ -105,7 +106,7 @@ fun renderNormalScene(renderer: GameSceneRenderer, config: GameViewConfig) {
   renderer.renderElements()
 
   val r = renderer.renderer.renderer
-  renderSkyBox(r.mappedTextures, r.meshes, r.shaders)
+//  renderSkyBox(r.mappedTextures, r.meshes, r.shaders)
   renderer.finishRender(renderer.renderer.viewport.zw)
   globalState.cullFaces = false
 }

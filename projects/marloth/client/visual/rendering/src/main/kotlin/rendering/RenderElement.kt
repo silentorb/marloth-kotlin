@@ -60,9 +60,11 @@ fun renderElementGroup(gameRenderer: GameSceneRenderer, group: ElementGroup) {
   if (transforms != null) {
     populateBoneBuffer(sceneRenderer.renderer.boneBuffer, armature!!.transforms, transforms)
   }
+
+  val meshes = sceneRenderer.renderer.meshes
   for (element in group.meshes) {
-    val primitives = sceneRenderer.renderer.meshMap[element.mesh]!!
-    for (primitive in primitives) {
+    val mesh = meshes[element.mesh]!!
+    for (primitive in mesh.primitives) {
       simplePainter(gameRenderer.renderer, primitive, element, armature != null)
     }
   }

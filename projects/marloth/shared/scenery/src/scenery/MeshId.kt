@@ -1,7 +1,5 @@
 package scenery
 
-import mythic.breeze.Animation
-
 enum class MeshId {
   childBody,
   childBoyClothes,
@@ -10,9 +8,12 @@ enum class MeshId {
   childGown,
   childLongHair,
   eyeball,
+  line,
   missile,
+  person,
   prisonDoor,
   sphere,
+  spikyBall,
   wallLamp
 }
 

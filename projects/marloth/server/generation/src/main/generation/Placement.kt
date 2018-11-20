@@ -3,6 +3,7 @@ package generation
 import colliding.Sphere
 import intellect.Pursuit
 import intellect.Spirit
+import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.ent.newIdSource
 import mythic.spatial.Quaternion
@@ -13,16 +14,21 @@ import physics.Body
 import randomly.Dice
 import simulation.*
 
-fun placeEnemy(realm: Realm, nextId: IdSource, dice: Dice): Hand {
-  val node = dice.getItem(realm.locationNodes.drop(1))// Skip the node where the player starts
-  val wall = dice.getItem(node.walls)
-  val position = getVector3Center(node.position, realm.mesh.faces[wall]!!.edges[0].first)
+data class CharacterTemplate(
+    val faction: Id,
+    val definition: CharacterDefinition
+)
+
+fun placeCharacter(realm: Realm, template: CharacterTemplate, nextId: IdSource, node: Id, position: Vector3): Hand {
+//  val node = dice.getItem(realm.locationNodes.drop(1))// Skip the node where the player starts
+//  val wall = dice.getItem(node.walls)
+//  val position = getVector3Center(node.position, realm.mesh.faces[wall]!!.edges[0].first)
   return newCharacter(
       nextId = nextId,
-      faction = 2,
-      definition = characterDefinitions.monster,
+      faction = template.faction,
+      definition = template.definition,
       position = position,
-      node = node.id,
+      node = node,
       spirit = Spirit(
           id = 0,
           pursuit = Pursuit()
@@ -30,24 +36,39 @@ fun placeEnemy(realm: Realm, nextId: IdSource, dice: Dice): Hand {
   )
 }
 
-fun placeEnemies(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): Deck {
+fun placeCharacters(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): Deck {
 //  val enemyCount = (10f * scale).toInt()
-  val enemyCount = 1
-  return toDeck((0 until enemyCount).map {
-    placeEnemy(realm, nextId, dice)
+  val counts = listOf(2, 2)
+  val total = counts.sum()
+
+  val walls = realm.locationNodes
+      .drop(1) // Skip the node where the player starts
+      .flatMap { node -> node.walls.map { Pair(node.id, it) } }
+
+  val positions = dice.take(walls, total)
+      .map { Pair(it.first, getVector3Center(realm.nodeTable[it.first]!!.position, realm.mesh.faces[it.second]!!.edges[0].first)) }
+
+  val templates = listOf(
+      CharacterTemplate(
+          faction = 1,
+          definition = characterDefinitions.ally
+      ),
+      CharacterTemplate(
+          faction = 2,
+          definition = characterDefinitions.monster
+      )
+  )
+
+  val seeds = counts.mapIndexed { index, i -> (1..i).map { templates[index] } }
+      .flatten()
+
+  return toDeck(seeds.zip(positions) { seed, (node, position) ->
+    placeCharacter(realm, seed, nextId, node, position)
   })
 }
 
 fun placeDoors(realm: Realm, nextId: IdSource): Deck =
     toDeck(
-//        realm.nodeList.filter { it.biome == Biome.home }
-//        .flatMap { node ->
-//          node.walls.filter {
-//            val info = realm.faces[it.id]!!
-//            info.faceType == FaceType.space
-//                && realm.nodeTable[getOtherNode(node, info)]!!.biome != Biome.home
-//          }
-//        }
         realm.doorFrameNodes.map { nodeId ->
           val node = realm.nodeTable[nodeId]!!
           val face = node.walls.first { realm.faces[it]!!.faceType != FaceType.wall }
@@ -85,7 +106,7 @@ fun placeWallLamps(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): De
   if (options.none())
     return Deck()
 
-  val nodes = dice.getList(options, count)
+  val nodes = dice.take(options, count)
   val hands = nodes.mapNotNull { node ->
     val options2 = node.walls.filter { isValidLampWall(realm.faces[it]!!) }
     if (options2.any()) {

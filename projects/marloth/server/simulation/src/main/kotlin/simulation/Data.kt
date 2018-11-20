@@ -22,10 +22,16 @@ class CharacterDefinitions {
       depictionType = DepictionType.child
   )
 
-  val monster = CharacterDefinition(
+  val ally = CharacterDefinition(
       health = 100,
       abilities = listOf(abilityDefinitions.slowShoot),
       depictionType = DepictionType.child
+  )
+
+  val monster = CharacterDefinition(
+      health = 100,
+      abilities = listOf(abilityDefinitions.slowShoot),
+      depictionType = DepictionType.person
   )
 }
 

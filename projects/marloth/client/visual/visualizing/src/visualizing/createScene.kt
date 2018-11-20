@@ -10,12 +10,18 @@ import mythic.ent.Id
 
 val firstPersonCameraOffset = Vector3(0f, 0f, 1.4f)
 
-val simplePainterMap = mapOf(
-    DepictionType.monster to MeshId.eyeball,
-    DepictionType.child to MeshId.childBody,
-    DepictionType.missile to MeshId.sphere,
-    DepictionType.wallLamp to MeshId.wallLamp
-)
+val simplePainterMap = MeshId.values().mapNotNull { meshId ->
+  val depictionType = DepictionType.values().firstOrNull { it.name == meshId.name }
+  if (depictionType != null)
+    Pair(depictionType, meshId)
+  else
+    null
+}.associate { it }
+    .plus(
+        mapOf(
+            DepictionType.child to MeshId.childBody
+        )
+    )
 
 fun createFirstPersonCamera(body: Body, character: Character): Camera = Camera(
     ProjectionType.perspective,
@@ -35,14 +41,6 @@ fun createThirdPersonCamera(body: Body, hoverCamera: HoverCamera): Camera {
   val orientationSecond = Quaternion().rotateTo(Vector3(1f, 0f, 0f), -offset)
   val position = offset + body.position + Vector3(0f, 0f, 1f)
   return Camera(ProjectionType.perspective, position, orientationSecond, 45f)
-//  return Camera(
-//      ProjectionType.perspective,
-//      body.position,
-//      Quaternion()
-//          .rotateZ(hoverCamera.yaw)
-//          .rotateY(hoverCamera.pitch),
-//      45f
-//  )
 }
 
 fun createTopDownCamera(player: Body): Camera {
@@ -107,7 +105,7 @@ fun convertComplexDepiction(world: World, depiction: Depiction): ElementGroup {
       .translate(body.position)
       .rotate(character.facingQuaternion)
       .rotateZ(Pi / 2f)
-      .scale(2f)
+      .scale(1.75f)
 
   val animations = depiction.animations.map {
     ElementAnimation(
@@ -118,32 +116,49 @@ fun convertComplexDepiction(world: World, depiction: Depiction): ElementGroup {
     )
   }
 
-  val commonMeshes = listOf(
-      MeshId.childBody,
-      MeshId.childEyes
-  )
-  val girlMeshes = listOf(
-      MeshId.childGown,
-      MeshId.childLongHair
-  )
+  return if (depiction.type == DepictionType.child) {
+    val commonMeshes = listOf(
+        MeshId.childBody,
+        MeshId.childEyes
+    )
+    val girlMeshes = listOf(
+        MeshId.childGown,
+        MeshId.childLongHair
+    )
 
-  val meshes = commonMeshes.plus(girlMeshes)
+    val meshes = commonMeshes.plus(girlMeshes)
 
-  return ElementGroup(
-      meshes = meshes.map {
-        MeshElement(
-            id = 0,
-            mesh = it,
-            transform = transform
-        )
-      },
-      armature = ArmatureId.child,
-      animations = animations
-  )
+    ElementGroup(
+        meshes = meshes.map {
+          MeshElement(
+              id = 0,
+              mesh = it,
+              transform = transform
+          )
+        },
+        armature = ArmatureId.child,
+        animations = animations
+    )
+  } else {
+    ElementGroup(
+        meshes = listOf(MeshElement(
+            id = id,
+            mesh = MeshId.person,
+            transform = transform.scale(0.5f)
+        ))
+//        armature = ArmatureId.child,
+//        animations = animations
+    )
+  }
 }
 
+private val complexDepictions = setOf(
+    DepictionType.child,
+    DepictionType.person
+)
+
 val isComplexDepiction = { depiction: Depiction ->
-  depiction.type == DepictionType.child
+  complexDepictions.contains(depiction.type)
 }
 
 fun gatherVisualElements(world: World, screen: Screen, player: Player): ElementGroups {
