@@ -360,18 +360,25 @@ fun loadGltf(vertexSchemas: VertexSchemas, filename: String, resourcePath: Strin
 
   val meshes = info.meshes
       .mapIndexed { index, mesh ->
-        mesh.primitives.map { Triple(it, index, mesh.name) }
+        mesh.primitives.map { Triple(it, index, mesh) }
       }
       .flatten()
-      .map { (primitive, meshIndex, name) ->
-        val name2 = name.replace(".001", "")
+      .map { (primitiveSource, meshIndex, mesh) ->
+        val name2 = mesh.name.replace(".001", "")
         val converter = createVertexConverter(info, buffer, boneMap, meshIndex)
-        loadPrimitive(buffer, info, vertexSchemas, primitive, name2, converter)
+        val primitive = loadPrimitive(buffer, info, vertexSchemas, primitiveSource, name2, converter)
+        val nodeIndex = info.nodes.indexOfFirst { it.mesh == meshIndex }
+        val parent = info.nodes.firstOrNull { it.children != null && it.children.contains(nodeIndex) }
+        val name = if (parent != null && parent.name != "metarig")
+          parent.name
+        else
+          info.nodes[nodeIndex].name
+
+        val id = getMeshId(name)
+        Pair(id, primitive)
       }
-      .map { primitive ->
-        val id = getMeshId(primitive.name)
-        ModelMesh(id, listOf(primitive))
-      }
+      .groupBy { it.first }
+      .map { ModelMesh(it.key, it.value.map { it.second }) }
 
   return ModelImport(meshes = meshes, armatures = armatures)
 }

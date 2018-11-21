@@ -7,6 +7,7 @@ enum class MeshId {
   childEyes,
   childGown,
   childLongHair,
+  cube,
   eyeball,
   line,
   missile,
