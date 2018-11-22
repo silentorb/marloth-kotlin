@@ -82,9 +82,15 @@ def get_export_filepath():
     script_path = os.path.realpath(__file__)
     return os.path.abspath(os.path.join(os.path.dirname(script_path), '../../', models_path, name, name + '.gltf'))
 
+def hide_unrenderable():
+    for obj in bpy.context.scene.objects:
+        if obj.hide:
+            obj.hide_render = False
+
 def export_gltf():
     filepath = get_export_filepath()
     os.makedirs(os.path.dirname(filepath), exist_ok = True)
+    hide_unrenderable()
     bpy.ops.export_scene.gltf(
         filepath = filepath,
         axis_forward = 'Y',

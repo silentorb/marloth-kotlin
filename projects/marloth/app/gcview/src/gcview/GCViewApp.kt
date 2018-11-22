@@ -183,11 +183,11 @@ class GCViewApp : Application() {
     val command = config.javaPath + " -Xlog:gc*=debug:file=logs/test.txt " + config.exeArgs
     val run = Runtime.getRuntime()
     val proc = run.exec(command)
-    val pid = proc.toHandle().pid()
-    thread {
-      Thread.sleep(30 * second)
-      Runtime.getRuntime().exec("taskkill /F /pid " + pid)
-    }
+//    val pid = proc.toHandle().pid()
+//    thread {
+//      Thread.sleep(30 * second)
+//      Runtime.getRuntime().exec("taskkill /F /pid " + pid)
+//    }
 //    Thread.sleep(30 * second)
 //    Runtime.getRuntime().exec("taskkill /F /pid " + pid)
 //    tabPane.tabs.clear()
