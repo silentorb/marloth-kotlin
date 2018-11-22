@@ -22,7 +22,10 @@ fun startRoaming(knowledge: Knowledge): Path {
   val body = knowledge.world.bodyTable[knowledge.spiritId]!!
   val location = knowledge.world.realm.nodeTable[body.node]!!
   val options = knowledge.nodes
-      .filter { it != location && it.isWalkable }
+      .filter {
+        val node = knowledge.world.realm.nodeTable[it]!!
+        node != location && node.isWalkable
+      }
 
   val destination = Dice.global.getItem(options)
   val path = findPath(knowledge.world.realm, location, destination)

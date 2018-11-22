@@ -1,5 +1,6 @@
 package intellect
 
+import mythic.ent.Id
 import simulation.Node
 import simulation.Realm
 import simulation.getPathNeighbors
@@ -15,7 +16,7 @@ tailrec fun unwindPath(pathNode: PathNode, path: List<Node> = listOf()): List<No
     else
       unwindPath(pathNode.previous, listOf(pathNode.node).plus(path))
 
-tailrec fun findPath(realm: Realm, destination: Node, scanned: List<PathNode>, next: List<PathNode>): List<Node>? {
+tailrec fun findPath(realm: Realm, destination: Id, scanned: List<PathNode>, next: List<PathNode>): List<Node>? {
   if (next.none())
     return null
 
@@ -28,7 +29,7 @@ tailrec fun findPath(realm: Realm, destination: Node, scanned: List<PathNode>, n
       }
       .distinctBy { it.node }
 
-  val arrived = neighbors.filter { it.node == destination }
+  val arrived = neighbors.filter { it.node.id == destination }
   if (arrived.any())
     return unwindPath(arrived.first())
 
@@ -36,7 +37,7 @@ tailrec fun findPath(realm: Realm, destination: Node, scanned: List<PathNode>, n
   return findPath(realm, destination, newScanned, neighbors)
 }
 
-fun findPath(realm: Realm, source: Node, destination: Node): List<Node>? {
+fun findPath(realm: Realm, source: Node, destination: Id): List<Node>? {
   val list = listOf(PathNode(source, null))
   return findPath(realm, destination, list, list)
 }

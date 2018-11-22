@@ -26,7 +26,7 @@ data class Pursuit(
 
 data class Spirit(
     override val id: Id,
-    val knowledge: Knowledge? = null,
+    val knowledge: SpiritKnowledge? = null,
 //    val goals: List<Goal>,
     val pursuit: Pursuit
 ) : Entity
@@ -34,22 +34,6 @@ data class Spirit(
 data class NewSpirit(
     val id: Id
 )
-//class Spirit(
-//    val child: Character,
-//    var state: Spirit
-//) {
-//  val body: Body
-//    get() = child.body
-//}
-
-
-//class AssociatedSpirit(
-//    val child: Character,
-//    var state: Spirit
-//) {
-//  val body: Body
-//    get() = child.body
-//}
 
 fun getNewSpirits(newSpirits: List<NewSpirit>): List<Spirit> =
     newSpirits.map { source ->

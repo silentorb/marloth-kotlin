@@ -2,6 +2,7 @@ package intellect
 
 import simulation.Commands
 import mythic.ent.Id
+import simulation.World
 
 fun updateTarget(knowledge: Knowledge, pursuit: Pursuit): Id? {
   val visibleEnemies = getVisibleEnemies(knowledge.character, knowledge)
@@ -33,10 +34,10 @@ fun pursueGoal(knowledge: Knowledge, pursuit: Pursuit): Commands {
     moveSpirit(knowledge, pursuit)
 }
 
-fun pursueGoals(spirits: Collection<Spirit>): Commands {
+fun pursueGoals(world: World, spirits: Collection<Spirit>): Commands {
   return spirits.flatMap {
     if (it.knowledge != null)
-      pursueGoal(it.knowledge, it.pursuit)
+      pursueGoal(convertKnowledge(world, it.knowledge), it.pursuit)
     else
       listOf()
   }

@@ -4,7 +4,9 @@ import simulation.*
 
 fun spiritAttack(knowledge: Knowledge, pursuit: Pursuit): Commands {
   val world = knowledge.world
-  val target = knowledge.visibleCharacters.first { it.id == pursuit.target }
+  val target = knowledge.visibleCharacters
+      .map { knowledge.world.characterTable[it]!! }
+      .first { it.id == pursuit.target }
   val character = world.characterTable[knowledge.spiritId]!!
   val body = world.bodyTable[knowledge.spiritId]!!
   val targetBody = world.bodyTable[target.id]!!

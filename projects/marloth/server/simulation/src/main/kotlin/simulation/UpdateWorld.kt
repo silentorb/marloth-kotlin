@@ -42,12 +42,9 @@ fun getFinished(world: World): List<Id> {
 fun removeFinished(deck: Deck, finishedIds: List<Id>): Deck {
   val isActive = { entity: Entity -> !finishedIds.contains(entity.id) }
 
-  if (deck.missiles.any { !isActive(it) }) {
-    val k = 0
-  }
-
   return deck.copy(
       characters = deck.characters.filter(isActive),
+      depictions = deck.depictions.filter(isActive),
       missiles = deck.missiles.filter(isActive),
       bodies = deck.bodies.filter(isActive),
       spirits = deck.spirits.filter(isActive)
@@ -61,7 +58,7 @@ data class Intermediate(
 )
 
 fun generateIntermediateRecords(world: World, playerCommands: Commands, delta: Float): Intermediate {
-  val spiritCommands = pursueGoals(world.spirits)
+  val spiritCommands = pursueGoals(world, world.spirits)
   val commands = playerCommands.plus(spiritCommands)
   val collisions: Collisions = world.bodies
       .filter { it.velocity != Vector3.zero }

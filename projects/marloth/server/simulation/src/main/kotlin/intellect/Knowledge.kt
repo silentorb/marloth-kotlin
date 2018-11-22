@@ -7,22 +7,37 @@ import simulation.World
 
 data class Knowledge(
     val spiritId: Id,
-    val nodes: List<Node>,
-    val visibleCharacters: List<Character>,
+    val nodes: List<Id>,
+    val visibleCharacters: List<Id>,
     val world: World
 ) {
   val character: Character
     get() = world.characterTable[spiritId]!!
 }
 
-fun updateKnowledge(world: World, character: Character, knowledge: Knowledge?): Knowledge {
-  return Knowledge(
+data class SpiritKnowledge(
+    val spiritId: Id,
+    val nodes: List<Id>,
+    val visibleCharacters: List<Id>
+)
+
+fun convertKnowledge(world: World, input: SpiritKnowledge) =
+    Knowledge(
+        spiritId = input.spiritId,
+        nodes = input.nodes,
+        visibleCharacters = input.visibleCharacters,
+        world = world
+    )
+
+fun updateKnowledge(world: World, character: Character): SpiritKnowledge {
+  return SpiritKnowledge(
       spiritId = character.id,
-      nodes = world.realm.nodeList,
-      visibleCharacters = getVisibleCharacters(world, character),
-      world = world
+      nodes = world.realm.nodeList.map { it.id },
+      visibleCharacters = getVisibleCharacters(world, character).map { it.id }
   )
 }
 
 fun getVisibleEnemies(character: Character, knowledge: Knowledge) =
-    knowledge.visibleCharacters.filter { it.faction != character.faction }
+    knowledge.visibleCharacters
+        .map {knowledge.world.characterTable[it]!!}
+        .filter { it.faction != character.faction }
