@@ -141,14 +141,20 @@ fun convertComplexDepiction(world: World, depiction: Depiction): ElementGroup {
     )
   } else {
     ElementGroup(
-        meshes = listOf(MeshElement(
-            id = id,
-            mesh = MeshId.person,
-            transform = transform.scale(0.5f)
-        ))
+        meshes = listOf(
+            MeshId.personBody,
+            MeshId.hogHead
+        )
+            .map {
+              MeshElement(
+                  id = id,
+                  mesh = it,
+                  transform = transform.scale(0.5f)
+              )
+            }
+    )
 //        armature = ArmatureId.child,
 //        animations = animations
-    )
   }
 }
 
@@ -182,7 +188,7 @@ fun gatherVisualElements(world: World, screen: Screen, player: Player): ElementG
 //            convertSimpleDepiction(world, it.id, it.definition.depictionType)
 //          })
           .plus(world.deck.missiles.mapNotNull {
-            convertSimpleDepiction(world, it.id, MeshId.missile)
+            convertSimpleDepiction(world, it.id, MeshId.spikyBall)
           })
           .plus(world.deck.doors.mapNotNull {
             convertSimpleDepiction(world, it.id, MeshId.prisonDoor)

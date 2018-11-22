@@ -11,8 +11,6 @@ enum class MeshId {
   eyeball,
   hogHead,
   line,
-  missile,
-  person,
   personBody,
   prisonDoor,
   sphere,
