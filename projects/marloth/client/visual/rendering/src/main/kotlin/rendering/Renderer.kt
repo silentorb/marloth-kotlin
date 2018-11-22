@@ -203,7 +203,7 @@ class Renderer(val config: DisplayConfig) {
   val armatures: Map<ArmatureId, Armature>
   val animationDurations: AnimationDurationMap
   var mappedTextures: TextureLibrary = createTextureLibrary(defaultTextureScale)
-  val textures: DynamicTextureLibrary = createTextureLibrary2(textureAttributesFromConfig(config))
+  val textures: DynamicTextureLibrary = loadTextures(textureAttributesFromConfig(config))
   val offscreenBuffer = prepareScreenFrameBuffer(config.width, config.height, true)
   val multisampler: Multisampler?
   val fonts = loadFonts(listOf(

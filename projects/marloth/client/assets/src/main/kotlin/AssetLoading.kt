@@ -31,7 +31,7 @@ fun scanTextureResources(rootPath: String): List<String> {
   while (it.hasNext()) {
     val path = it.next()
     val stringPath = path.toString()
-    if (stringPath.endsWith(".jpg")) {
+    if (stringPath.endsWith(".jpg") || stringPath.endsWith(".png")) {
       imageFiles.add(stringPath.substring(pathPrefix).replace("\\", "/"))
     }
   }

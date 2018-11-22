@@ -115,7 +115,7 @@ fun createTextureLibrary(scale: Float) =
 //            .mapValues { loadTextureFromFile(it.value, TextureAttributes(repeating = true, mipmap = true)) }
 //        )
 
-fun createTextureLibrary2(attributes: TextureAttributes) =
+fun loadTextures(attributes: TextureAttributes) =
     scanTextureResources("models")
         .plus(scanTextureResources("textures"))
         .associate {
