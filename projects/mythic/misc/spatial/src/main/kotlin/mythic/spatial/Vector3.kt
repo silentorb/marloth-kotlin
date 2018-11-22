@@ -115,6 +115,11 @@ data class Vector3(
     return "(" + formatter.format(x.toDouble()) + ", " + formatter.format(y.toDouble()) + ", " + formatter.format(z.toDouble()) + ")"
   }
 
+  fun roughlyEquals(margin: Float, value: Vector3): Boolean =
+      x >= value.x - margin && x <= value.x + margin
+          && y >= value.y - margin && y <= value.y + margin
+          && z >= value.z - margin && z <= value.z + margin
+
   fun roughlyEquals(value: Vector3): Boolean =
       x >= value.x - epsilon && x <= value.x + epsilon
           && y >= value.y - epsilon && y <= value.y + epsilon

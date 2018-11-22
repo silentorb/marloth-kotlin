@@ -56,8 +56,11 @@ fun updateCharacter(world: World, character: Character, commands: Commands, coll
       Vector3(character.lookVelocity, 0f), Vector3(lookForce, 0f)).xy()
 
   val hits = collisions.filter { it.second == character.id }
-  val health = modifyResource(character.health, hits.map { -50 })
 
+  val health = modifyResource(character.health, hits.map { -50 }.sum())
+  if (hits.any()) {
+    val k = 0
+  }
   val abilities = updateAbilities(character, activatedAbilities)
   val facingRotation = character.facingRotation + fpCameraRotation(lookVelocity, delta)
 

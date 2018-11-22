@@ -59,29 +59,26 @@ fun getBodyCollisions(bodyTable: BodyTable, characterTable: CharacterTable, miss
   }
 }
 
-fun updateMissile(bodyTable: BodyTable, characterTable: CharacterTable, missile: Missile, collisions: List<Collision>, delta: Float): Missile {
-  val body = bodyTable[missile.id]!!
+fun updateMissile(world: World, missile: Missile, collisions: List<Collision>, delta: Float): Missile {
+  val body = world.table.bodies[missile.id]!!
   val offset = body.velocity * delta
   val hit = collisions.firstOrNull { it.first == missile.id }
 
   val remainingDistance = if (hit != null) {
-    val victim = characterTable[hit.second]
-    if (victim != null) {
-      0f
-    } else {
-      missile.remainingDistance - offset.length()
-    }
+//    if (world.table.characters[hit.second] != null) {
+    0f
+//    } else {
+//      missile.remainingDistance - offset.length()
+//    }
   } else {
     missile.remainingDistance - offset.length()
   }
   return missile.copy(remainingDistance = remainingDistance)
 }
+//realm.walls.filter { isSolidWall(realm.faces[it.id]!!) }.any { hitsWall(it.edges[0].edge, position, body.radius!!)
 
-fun isFinished(realm: Realm, bodyTable: BodyTable, missile: Missile): Boolean {
-  val body = bodyTable[missile.id]!!
-  val position = body.position
-  return missile.remainingDistance <= 0 || realm.walls.filter { isSolidWall(realm.faces[it.id]!!) }.any { hitsWall(it.edges[0].edge, position, body.radius!!) }
-}
+fun isFinished(missile: Missile): Boolean =
+    missile.remainingDistance <= 0
 
 fun getNewMissiles(world: World, nextId: IdSource, activatedAbilities: List<ActivatedAbility>): Deck {
   return toDeck(activatedAbilities.map {
@@ -92,5 +89,5 @@ fun getNewMissiles(world: World, nextId: IdSource, activatedAbilities: List<Acti
 
 fun updateMissiles(world: World, collisions: List<Collision>): List<Missile> {
   return world.missiles
-      .map { updateMissile(world.bodyTable, world.characterTable, it, collisions, simulationDelta) }
+      .map { updateMissile(world, it, collisions, simulationDelta) }
 }

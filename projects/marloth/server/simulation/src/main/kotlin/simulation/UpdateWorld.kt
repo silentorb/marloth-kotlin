@@ -32,22 +32,25 @@ fun simplifyRotation(value: Float): Float =
 
 fun getFinished(world: World): List<Id> {
   return world.table.missiles.values
-      .filter { isFinished(world.realm, world.bodyTable, it) }
+      .filter { isFinished(it) }
       .map { it.id }
       .plus(world.characters
           .filter { isFinished(world, it) && !isPlayer(world, it) }
           .map { it.id })
-//      .plus(world.bodies.filter { it.node == voidNode }.map { it.id })
 }
 
 fun removeFinished(deck: Deck, finishedIds: List<Id>): Deck {
-  val IsActive = { entity: Entity -> !finishedIds.contains(entity.id) }
+  val isActive = { entity: Entity -> !finishedIds.contains(entity.id) }
+
+  if (deck.missiles.any { !isActive(it) }) {
+    val k = 0
+  }
 
   return deck.copy(
-      characters = deck.characters.filter(IsActive),
-      missiles = deck.missiles.filter(IsActive),
-      bodies = deck.bodies.filter(IsActive),
-      spirits = deck.spirits.filter(IsActive)
+      characters = deck.characters.filter(isActive),
+      missiles = deck.missiles.filter(isActive),
+      bodies = deck.bodies.filter(isActive),
+      spirits = deck.spirits.filter(isActive)
   )
 }
 

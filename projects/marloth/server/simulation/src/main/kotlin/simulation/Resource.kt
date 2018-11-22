@@ -15,5 +15,5 @@ fun modifyResource(value: Int, max: Int, mod: Int): Int {
     newValue
 }
 
-fun modifyResource(resource: Resource, mods: List<Int>): Int =
-    mods.fold(resource.value, { a, mod -> modifyResource(a, resource.max, mod) })
+fun modifyResource(resource: Resource, mod: Int): Int =
+    modifyResource(resource.value, resource.max, mod)

@@ -98,7 +98,7 @@ fun fillCornerGaps(unorderedCorners: List<Corner>, node: Node): List<Corner> {
   return newCorners
 }
 
-const val minPointDistance = 1f
+const val minPointDistance = 0.01f
 
 fun withoutClosePoints(corners: List<Corner>): List<Corner> {
   val tooClose = crossMap(corners.asSequence()) { a: Corner, b: Corner ->
@@ -155,7 +155,6 @@ fun generateTunnelStructure(graph: Graph, node: Node, nodeSectors: Map<Id, TempS
   assert(sectors.size == 2)
   val corners = sectors.zip(sectors.reversed()) { a, b ->
     if (graph.doorways.contains(a.node.id)) {
-//      getDoorwayNodePoints(a, b.node)[0]
       val doorRoom = getOtherNode(graph, node.id, a.node.id)
       val points = getDoorFramePoints(doorRoom, a.node)
       val c = getExtrudedDoorwayPoints(points, b.node.position)
@@ -169,7 +168,8 @@ fun generateTunnelStructure(graph: Graph, node: Node, nodeSectors: Map<Id, TempS
       d
     } else
       getDoorwayPoints3(doorwayLength, a.node, b.node)
-          .map { point -> a.corners.sortedBy { it.xy().distance(point.xy()) }.first() }
+          .map { point -> mapPointToExisting(a.corners, point.xy()) }
+//          .map { point -> a.corners.sortedBy { it.xy().distance(point.xy()) }.first() }
   }
       .flatten()
       .sortedBy { getAngle(node, it) }
@@ -198,9 +198,15 @@ fun getExtrudedDoorwayPoints(firstCorners: List<Vector3>, otherNodePosition: Vec
   return firstCorners.map { it + offset }
 }
 
+fun mapPointToExisting(corners: List<Corner>, point: Vector2): Vector3 {
+  val result = corners.filter { it.xy().distance(point) < 0.001f }
+  assert(result.size == 1)
+  return result.first()
+}
+
 fun getExistingDoorwayPoints(sector: TempSector, otherNode: Node): List<Vector3> =
     getDoorwayPoints(doorLength, sector.node, otherNode)
-        .map { point -> sector.corners.sortedBy { it.xy().distance(point) }.first() }
+        .map { point -> mapPointToExisting(sector.corners, point) }
 
 fun getDoorwayNodePoints(sector: TempSector, otherNode: Node): List<List<Vector3>> {
   val firstCorners = getExistingDoorwayPoints(sector, otherNode)
@@ -259,8 +265,45 @@ fun createWall(idSources: GeometryIdSources, edge: ImmutableEdge, mesh: Immutabl
 fun toEdgeTable(faces: Collection<ImmutableFace>) =
     entityMap(faces.flatMap { er -> er.edges.map { it.edge } }.distinct())
 
+data class Disjoint(
+    val sector: Id,
+    val point: Vector3
+)
 
-fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice): StructureRealm {
+fun getDisjoints(graph: Graph, sectors: Map<Id, TempSector>): List<Pair<Disjoint, Disjoint>> =
+    graph.connections.map { connection ->
+      val firstSector = sectors[connection.first]!!
+      val secondSector = sectors[connection.second]!!
+      firstSector.corners.map { a ->
+        secondSector.corners.filter { b -> a != b && a.distance(b) < 0.01f }
+            .map {
+              val sorted = listOf(Disjoint(connection.first, a), Disjoint(connection.second, it))
+                  .sortedBy { it.hashCode() }
+              Pair(sorted[0], sorted[1])
+            }
+      }
+          .flatten()
+    }
+        .flatten()
+
+fun fixDisjoints(sectors: Map<Id, TempSector>, disjoints: List<Pair<Disjoint, Disjoint>>) =
+    sectors.mapValues { (id, sector) ->
+      val corrections = disjoints.filter { it.first.sector == id }
+      if (corrections.none())
+        sector
+      else
+        sector.copy(
+            corners = sector.corners.map { corner ->
+              val correction = corrections.firstOrNull { it.second.point == corner }
+              if (correction != null)
+                correction.first.point
+              else
+                corner
+            }
+        )
+    }
+
+fun compileSectors(graph: Graph, idSources: GeometryIdSources): Map<Id, TempSector> {
   val roomNodes = graph.nodes.minus(graph.tunnels).minus(graph.doorways)
 
   val singleNodes = roomNodes.values.filter { !isInCluster(graph, it) }
@@ -281,6 +324,17 @@ fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice): Structu
   val allSectors = nodeSectors
       .plus(tunnelSectors)
 
+  val disjoints = getDisjoints(graph, allSectors)
+
+  return if (disjoints.any())
+    fixDisjoints(allSectors, disjoints)
+  else
+    return allSectors
+}
+
+fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice): StructureRealm {
+  val allSectors = compileSectors(graph, idSources)
+
   val floorsAndCeilings = splitFacePairTables(sinewFloorsAndCeilings(idSources, allSectors.values, ImmutableMesh()))
   var mesh = ImmutableMesh(
       faces = floorsAndCeilings.second,
@@ -293,8 +347,6 @@ fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice): Structu
       Pair(immutableEdgeReference, sector.node.id)
     }
   }
-
-//  val pairs = listOf<Pair<ImmutableEdgeReference, Id>>()
 
   val nodeTable = graph.nodes
   val groups = pairs.groupBy { it.first.edge.id }
