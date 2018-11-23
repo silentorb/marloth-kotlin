@@ -11,7 +11,9 @@ enum class Textures {
   debugMagenta,
   grass,
   ground,
+  leaves,
   red_tile01,
   red_tile02,
+  swirl,
   woodDoor
 }

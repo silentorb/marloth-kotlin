@@ -24,13 +24,13 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
         enclosureRate = 0.5f,
         floorTexture = Textures.cobblestone,
         ceilingTexture = Textures.checkers,
-        wallTexture = Textures.darkCheckers
+        wallTexture = Textures.swirl
     ),
     Biome.forest to BiomeInfo("forest",
         enclosureRate = 0.25f,
         floorTexture = Textures.grass,
-        ceilingTexture = Textures.ground,
-        wallTexture = Textures.ground
+        ceilingTexture = Textures.leaves,
+        wallTexture = Textures.leaves
     ),
     Biome.home to BiomeInfo("home",
         enclosureRate = 1f,
