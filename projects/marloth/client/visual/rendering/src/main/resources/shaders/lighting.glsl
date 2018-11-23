@@ -20,7 +20,7 @@ const float quadratic_attenuation = 0.05;
 const float shininess = 0.9;
 const float strength = 0.3;
 //const vec3 ambient = vec3(0.5);
-vec3 ambient = vec3(0.2);
+vec3 ambient = vec3(0.0f);
 
 struct Relationship {
     vec3 direction;

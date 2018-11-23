@@ -143,6 +143,7 @@ object App {
     System.setProperty("joml.format", "false")
     val config = loadConfig<LabConfig>(labConfigPath) ?: LabConfig()
     val gameConfig = loadGameConfig()
+//    startGui()
     runApp(createDesktopPlatform("Dev Lab", gameConfig.display), config, gameConfig)
   }
 }

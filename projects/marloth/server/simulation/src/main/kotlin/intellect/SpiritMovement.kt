@@ -12,7 +12,8 @@ fun getNextPathFace(knowledge: Knowledge, path: Path): Id? {
   val faces = knowledge.world.realm.faces
   val node = knowledge.world.realm.nodeTable[body.node]!!
   val nextNode = path.first()
-  return node.walls.firstOrNull { getOtherNode(node, faces[it]!!) == nextNode.id }
+  val nodeFaces = node.walls.map {faces[it]!!}
+  return node.walls.firstOrNull { getOtherNode(node, faces[it]!!) == nextNode }
 }
 
 fun pathIsAccessible(knowledge: Knowledge, path: Path): Boolean =
@@ -35,7 +36,7 @@ fun startRoaming(knowledge: Knowledge): Path {
   return path
 }
 
-fun getRemainingPath(node: Node, path: List<Node>): List<Node> {
+fun getRemainingPath(node: Id, path: Path): Path {
   val index = path.indexOf(node)
   return if (index == -1)
     path
@@ -48,8 +49,7 @@ fun updateMovementPursuit(knowledge: Knowledge, pursuit: Pursuit): Path {
     startRoaming(knowledge)
   else {
     val body = knowledge.world.bodyTable[knowledge.spiritId]!!
-    val node = knowledge.world.realm.nodeTable[body.node]!!
-    val remainingPath = getRemainingPath(node, pursuit.path)
+    val remainingPath = getRemainingPath(body.node, pursuit.path)
     if (remainingPath.any())
       remainingPath
     else
@@ -61,8 +61,10 @@ fun getTargetOffset(knowledge: Knowledge, pursuit: Pursuit): Vector3 {
   val body = knowledge.world.bodyTable[knowledge.spiritId]!!
   val path = pursuit.path!!
   val face = getNextPathFace(knowledge, path)
-  if (face == null)
+  if (face == null) {
+    getNextPathFace(knowledge, path)
     throw Error("Not supported")
+  }
 
   val edge = getFloor(knowledge.world.realm.mesh.faces[face]!!)
   val position = body.position

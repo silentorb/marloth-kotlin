@@ -4,6 +4,7 @@ import haft.*
 import lab.views.TextureViewConfig
 import lab.views.game.GameViewConfig
 import lab.views.map.MapViewConfig
+import lab.views.map.mapViewBindings
 import lab.views.model.ModelViewConfig
 import org.lwjgl.glfw.GLFW
 
@@ -51,7 +52,8 @@ enum class LabCommandType {
 
   toggleMeshDisplay,
   toggleNormals,
-  toggleVertexIndices,
+  toggleFaceIds,
+  toggleNodeIds,
 
   selectEdgeLoop
 }
@@ -61,8 +63,8 @@ typealias LabInputConfig = MutableMap<Views, Bindings<LabCommandType>>
 fun createLabInputBindings() = mutableMapOf(
     Views.global to createStrokeBindings(0, mapOf(
         GLFW.GLFW_KEY_F1 to LabCommandType.viewGame,
-        GLFW.GLFW_KEY_F2 to LabCommandType.viewWorld,
-        GLFW.GLFW_KEY_F3 to LabCommandType.viewMap,
+        GLFW.GLFW_KEY_F2 to LabCommandType.viewMap,
+        GLFW.GLFW_KEY_F3 to LabCommandType.viewWorld,
         GLFW.GLFW_KEY_F4 to LabCommandType.viewModel,
         GLFW.GLFW_KEY_F5 to LabCommandType.viewTexture
     ))
@@ -126,36 +128,7 @@ fun createLabInputBindings() = mutableMapOf(
         .plus(createStrokeBindings(1, mapOf(
             GLFW.GLFW_MOUSE_BUTTON_1 to LabCommandType.select
         ))),
-    Views.map to createStrokeBindings<LabCommandType>(0, mapOf(
-        GLFW.GLFW_KEY_M to LabCommandType.toggleMeshDisplay,
-        GLFW.GLFW_KEY_N to LabCommandType.toggleNormals,
-        GLFW.GLFW_KEY_I to LabCommandType.toggleVertexIndices,
-        GLFW.GLFW_KEY_LEFT_BRACKET to LabCommandType.decrementRaySkip,
-        GLFW.GLFW_KEY_RIGHT_BRACKET to LabCommandType.incrementRaySkip
-    ))
-        .plus(createBindings<LabCommandType>(0, mapOf(
-            GLFW.GLFW_KEY_UP to LabCommandType.moveUp,
-            GLFW.GLFW_KEY_DOWN to LabCommandType.moveDown,
-            GLFW.GLFW_KEY_LEFT to LabCommandType.moveLeft,
-            GLFW.GLFW_KEY_RIGHT to LabCommandType.moveRight,
-            GLFW.GLFW_KEY_W to LabCommandType.moveUp,
-            GLFW.GLFW_KEY_S to LabCommandType.moveDown,
-            GLFW.GLFW_KEY_A to LabCommandType.moveLeft,
-            GLFW.GLFW_KEY_D to LabCommandType.moveRight,
-            GLFW.GLFW_KEY_Q to LabCommandType.rotateLeft,
-            GLFW.GLFW_KEY_E to LabCommandType.rotateRight,
-            GLFW.GLFW_KEY_R to LabCommandType.rotateUp,
-            GLFW.GLFW_KEY_F to LabCommandType.rotateDown,
-            GLFW.GLFW_KEY_EQUAL to LabCommandType.zoomIn,
-            GLFW.GLFW_KEY_MINUS to LabCommandType.zoomOut,
-            GLFW.GLFW_KEY_PAGE_UP to LabCommandType.zoomIn,
-            GLFW.GLFW_KEY_PAGE_DOWN to LabCommandType.zoomOut
-        )))
-        .plus(createBindings(1, mapOf(
-            GLFW.GLFW_MOUSE_BUTTON_1 to LabCommandType.select,
-            MOUSE_SCROLL_UP to LabCommandType.zoomIn,
-            MOUSE_SCROLL_DOWN to LabCommandType.zoomOut
-        )))
+    Views.map to mapViewBindings()
 )
 
 data class WorldViewConfig(

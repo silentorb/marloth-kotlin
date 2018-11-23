@@ -36,23 +36,22 @@ fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, realm: Rea
   }
 }
 
-fun renderFaceIndices(renderer: SceneRenderer, realm: Realm) {
+fun renderFaceIds(renderer: SceneRenderer, realm: Realm) {
   globalState.depthEnabled = true
   val textStyle = TextStyle(renderer.renderer.fonts[0], 0f, Vector4(0.5f, 1f, 1f, 1f))
   for (node in realm.nodeList) {
     for (faceId in node.faces) {
       val face = realm.mesh.faces[faceId]!!
-      val normalOffset = face.normal * 0.5f
-//      face.edges.forEachIndexed { index, edge ->
-//        val vertex = edge.first
-//        val centeringOffset = (edge.next!!.first - vertex).normalize() + (edge.previous!!.first - vertex).normalize()
-//        val offset = centeringOffset// + normalOffset
-//        renderer.drawText(index.toString(), vertex + offset, textStyle)
-//      }
-//      if (face.id == 96L || face.id == 98L)
       renderer.drawText(face.id.toString(), getCenter(face.vertices), textStyle)
-//      renderer.drawText(face.id.toString(), Vector3(), textStyle)
     }
+  }
+}
+
+fun renderNodeIds(renderer: SceneRenderer, realm: Realm) {
+  globalState.depthEnabled = true
+  val textStyle = TextStyle(renderer.renderer.fonts[0], 0f, Vector4(0.5f, 1f, 1f, 1f))
+  for (node in realm.nodeList) {
+    renderer.drawText(node.id.toString(), node.position, textStyle)
   }
 }
 
@@ -89,8 +88,12 @@ fun renderMapMesh(renderer: SceneRenderer, world: Realm, config: MapViewConfig) 
     if (config.display.normals)
       renderFaceNormals(renderer, 0.3f, world.mesh)
 
-    if (config.display.vertexIndices) {
-      renderFaceIndices(renderer, world)
+    if (config.display.faceIds) {
+      renderFaceIds(renderer, world)
+    }
+
+    if (config.display.nodeIds) {
+      renderNodeIds(renderer, world)
     }
   }
 

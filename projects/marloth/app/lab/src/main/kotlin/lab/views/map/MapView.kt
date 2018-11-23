@@ -25,7 +25,8 @@ enum class MapViewDrawMode {
 data class MapViewDisplayConfig(
     var drawMode: MapViewDrawMode = MapViewDrawMode.solid,
     var normals: Boolean = false,
-    var vertexIndices: Boolean = false
+    var faceIds: Boolean = false,
+    var nodeIds: Boolean = false
 )
 
 data class MapViewConfig(
@@ -165,7 +166,10 @@ fun updateMapState(config: MapViewConfig, world: Realm, camera: Camera, input: L
   if (isActive(commands, LabCommandType.toggleNormals))
     config.display.normals = !config.display.normals
 
-  if (isActive(commands, LabCommandType.toggleVertexIndices))
-    config.display.vertexIndices = !config.display.vertexIndices
+  if (isActive(commands, LabCommandType.toggleFaceIds))
+    config.display.faceIds = !config.display.faceIds
+
+  if (isActive(commands, LabCommandType.toggleNodeIds))
+    config.display.nodeIds = !config.display.nodeIds
 
 }

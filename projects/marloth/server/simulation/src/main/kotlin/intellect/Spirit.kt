@@ -17,7 +17,7 @@ data class Goal(
 
 typealias Goals = List<Goal>
 
-typealias Path = List<Node>
+typealias Path = List<Id>
 
 data class Pursuit(
     val target: Id? = null,

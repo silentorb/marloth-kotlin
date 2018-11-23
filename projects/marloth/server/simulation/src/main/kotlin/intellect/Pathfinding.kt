@@ -10,13 +10,13 @@ data class PathNode(
     val previous: PathNode?
 )
 
-tailrec fun unwindPath(pathNode: PathNode, path: List<Node> = listOf()): List<Node> =
+tailrec fun unwindPath(pathNode: PathNode, path: Path = listOf()): Path =
     if (pathNode.previous == null)
       path
     else
-      unwindPath(pathNode.previous, listOf(pathNode.node).plus(path))
+      unwindPath(pathNode.previous, listOf(pathNode.node.id).plus(path))
 
-tailrec fun findPath(realm: Realm, destination: Id, scanned: List<PathNode>, next: List<PathNode>): List<Node>? {
+tailrec fun findPath(realm: Realm, destination: Id, scanned: List<PathNode>, next: List<PathNode>): Path? {
   if (next.none())
     return null
 
@@ -37,7 +37,7 @@ tailrec fun findPath(realm: Realm, destination: Id, scanned: List<PathNode>, nex
   return findPath(realm, destination, newScanned, neighbors)
 }
 
-fun findPath(realm: Realm, source: Node, destination: Id): List<Node>? {
+fun findPath(realm: Realm, source: Node, destination: Id): Path? {
   val list = listOf(PathNode(source, null))
   return findPath(realm, destination, list, list)
 }

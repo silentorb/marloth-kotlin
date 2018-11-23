@@ -82,13 +82,17 @@ fun generateIntermediateRecords(world: World, playerCommands: Commands, delta: F
 fun updateEntities(animationDurations: AnimationDurationMap, deck: Deck, world: World, data: Intermediate): Deck {
   val (commands, activatedAbilities, collisionMap) = data
 
-  return deck.copy(
-      depictions = updateDepictions(world, animationDurations),
-      bodies = updateBodies(world, commands, collisionMap),
-      characters = updateCharacters(world, collisionMap, commands, activatedAbilities),
-      missiles = updateMissiles(world, collisionMap),
+  val bodies = updateBodies(world, commands, collisionMap)
+  val bodyWorld = world.copy(
+      deck = deck.copy(bodies = bodies)
+  )
+
+  return bodyWorld.deck.copy(
+      depictions = updateDepictions(bodyWorld, animationDurations),
+      characters = updateCharacters(bodyWorld, collisionMap, commands, activatedAbilities),
+      missiles = updateMissiles(bodyWorld, collisionMap),
       players = updatePlayers(deck.players, data.commands),
-      spirits = deck.spirits.map { updateAiState(world, it) }
+      spirits = deck.spirits.map { updateAiState(bodyWorld, it) }
   )
 }
 
@@ -104,9 +108,15 @@ fun newEntities(world: World, nextId: IdSource, data: Intermediate): Deck {
 fun updateWorldMain(animationDurations: AnimationDurationMap, deck: Deck, world: World, playerCommands: Commands, delta: Float): World {
   val nextId: IdSource = newIdSource(world.nextId)
   val data = generateIntermediateRecords(world, playerCommands, delta)
-  val updatedDeck = updateEntities(animationDurations, deck, world, data)
-  val finalDeck = removeEntities(updatedDeck, world)
+
+  val truncated = removeEntities(deck, world)
+  val updatedDeck = updateEntities(animationDurations, truncated, world, data)
+  val finalDeck = updatedDeck
       .plus(newEntities(world, nextId, data))
+
+//  val updatedDeck = updateEntities(animationDurations, deck, world, data)
+//  val finalDeck = removeEntities(updatedDeck, world)
+//      .plus(newEntities(world, nextId, data))
 
   return world.copy(
       deck = finalDeck,
