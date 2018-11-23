@@ -4,6 +4,7 @@ import scenery.Textures
 
 enum class Biome {
   checkers,
+  exit,
   forest,
   home,
   void
@@ -24,19 +25,25 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
         enclosureRate = 0.5f,
         floorTexture = Textures.cobblestone,
         ceilingTexture = Textures.checkers,
+        wallTexture = Textures.darkCheckers
+    ),
+    Biome.exit to BiomeInfo("exit",
+        enclosureRate = 0f,
+        floorTexture = Textures.swirl,
+        ceilingTexture = Textures.swirl,
         wallTexture = Textures.swirl
     ),
     Biome.forest to BiomeInfo("forest",
         enclosureRate = 0.25f,
-        floorTexture = Textures.grass,
-        ceilingTexture = Textures.leaves,
-        wallTexture = Textures.leaves
+        floorTexture = Textures.brownLeaves,
+        ceilingTexture = Textures.greenLeaves,
+        wallTexture = Textures.greenLeaves
     ),
     Biome.home to BiomeInfo("home",
         enclosureRate = 1f,
-        floorTexture = Textures.red_tile02,
-        ceilingTexture = Textures.red_tile01,
-        wallTexture = Textures.red_tile01
+        floorTexture = Textures.redTile02,
+        ceilingTexture = Textures.redTile01,
+        wallTexture = Textures.redTile01
     ),
     Biome.void to BiomeInfo("void",
         floorTexture = Textures.none,

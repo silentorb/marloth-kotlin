@@ -8,12 +8,7 @@ import mythic.glowing.loadImageBuffer
 import mythic.spatial.Vector3
 import scanTextureResources
 import scenery.Textures
-import java.nio.file.Files
-import java.util.stream.Stream
 import java.nio.file.Paths
-import java.nio.file.FileSystems
-import java.util.*
-
 
 fun mix(first: OpaqueTextureAlgorithm, firstPercentage: Float, second: OpaqueTextureAlgorithm) = { x: Float, y: Float ->
   first(x, y) * firstPercentage + second(x, y) * (1 - firstPercentage)
@@ -120,7 +115,7 @@ fun loadTextures(attributes: TextureAttributes) =
         .plus(scanTextureResources("textures"))
         .associate {
           Pair(
-              Paths.get(it).fileName.toString().substringBeforeLast("."),
+              toCamelCase(Paths.get(it).fileName.toString().substringBeforeLast(".")),
               loadTextureFromFile(it, attributes)
           )
         }
