@@ -8,12 +8,12 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import loadTextResource
+import getResourceStream
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import java.io.IOException
-
 
 fun parseFloat(node: JsonNode): Float =
     (node.numberValue() as Double).toFloat()
@@ -47,13 +47,24 @@ class Vector3Deserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdD
   }
 }
 
+private var globalMapper: ObjectMapper? = null
+
+fun getObjectMapper(): ObjectMapper {
+  if (globalMapper == null) {
+    val mapper = ObjectMapper()
+    val module = KotlinModule()
+    module.addDeserializer(Vector3::class.java, Vector3Deserializer(null))
+    module.addDeserializer(Vector4::class.java, Vector4Deserializer(null))
+    mapper.registerModule(module)
+    mapper.registerModule(AfterburnerModule())
+    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    globalMapper = mapper
+  }
+
+  return globalMapper!!
+}
+
 inline fun <reified T> loadJsonResource(path: String): T {
-  val mapper = ObjectMapper()
-  val module = KotlinModule()
-  module.addDeserializer(Vector3::class.java, Vector3Deserializer(null))
-  module.addDeserializer(Vector4::class.java, Vector4Deserializer(null))
-  mapper.registerModule(module)
-  mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-  val content = loadTextResource(path)
-  return mapper.readValue(content, T::class.java)
+  val content = getResourceStream(path)
+  return getObjectMapper().readValue(content, T::class.java)
 }

@@ -12,11 +12,13 @@ import java.nio.ByteBuffer
 fun loadGltfByteBuffer(directoryPath: String, info: GltfInfo): ByteBuffer {
   val inputStream = getResourceStream(directoryPath + "/" + info.buffers[0].uri)
   val dataStream = DataInputStream(inputStream)
-  val buffer = BufferUtils.createByteBuffer(info.buffers[0].byteLength)
+  val size = info.buffers[0].byteLength
+  val buffer = BufferUtils.createByteBuffer(size)
   dataStream.use {
-    while (dataStream.available() > 0) {
+    for (i in 0 until size)
+//    while (dataStream.available() > 0) {
       buffer.put(dataStream.readByte())
-    }
+//    }
   }
 
   return buffer

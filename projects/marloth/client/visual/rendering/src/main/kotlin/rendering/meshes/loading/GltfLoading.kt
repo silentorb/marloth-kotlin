@@ -324,7 +324,7 @@ fun loadBoneMap(info: GltfInfo): BoneMap {
 fun loadArmature(buffer: ByteBuffer, info: GltfInfo, filename: String, boneMap: BoneMap): Armature? {
   if (info.animations == null || info.animations.none())
     return null
-  logBuffer(buffer, info)
+//  logBuffer(buffer, info)
   val bones = boneMap.map { (_, item) ->
     val node = info.nodes[item.originalIndex]
     nodeToBone(node, item.index, item.parent)
