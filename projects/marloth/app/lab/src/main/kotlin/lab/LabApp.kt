@@ -13,15 +13,19 @@ import lab.views.game.updateLabWorld
 import lab.views.model.newModelViewState
 import marloth.clienting.Client
 import marloth.clienting.CommandType
-
 import marloth.clienting.newClientState
 import mythic.desktop.createDesktopPlatform
 import mythic.ent.pipeline
 import mythic.platforming.Display
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
+import mythic.quartz.globalProfiler
+import mythic.quartz.printProfiler
 import randomly.Dice
-import simulation.*
+import simulation.World
+import simulation.WorldInput
+import simulation.createWorldBoundary
+import simulation.replace
 import kotlin.concurrent.thread
 
 const val labConfigPath = "labConfig.yaml"
@@ -124,8 +128,11 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
 }
 
 fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
+  globalProfiler().start("init-display")
   platform.display.initialize(gameConfig.display)
+  globalProfiler().start("world-gen")
   val world = generateDefaultWorld(config.gameView)
+  globalProfiler().start("app")
   val app = LabApp(platform, config, gameConfig, world = world, labConfigManager = ConfigManager(labConfigPath, config))
   setWorldMesh(app.world.realm, app.client)
   val clientState = newClientState(gameConfig.input)
@@ -134,12 +141,15 @@ fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
       modelViewState = newModelViewState(),
       gameClientState = clientState
   )
+  globalProfiler().stop()
+  printProfiler(globalProfiler())
   labLoop(app, state)
 }
 
 object App {
   @JvmStatic
   fun main(args: Array<String>) {
+    globalProfiler().start("start")
     System.setProperty("joml.format", "false")
     val config = loadConfig<LabConfig>(labConfigPath) ?: LabConfig()
     val gameConfig = loadGameConfig()

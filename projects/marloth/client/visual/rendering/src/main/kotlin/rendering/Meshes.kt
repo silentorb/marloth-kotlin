@@ -1,6 +1,7 @@
 package rendering
 
 import getResourceUrl
+import mythic.quartz.globalProfiler
 import rendering.meshes.*
 import rendering.meshes.loading.loadGltf
 import scenery.MeshId
@@ -49,9 +50,11 @@ fun importedMeshes(vertexSchemas: VertexSchemas) =
 //    MeshType.child to "child",
 //    MeshType.person to "person"
 //)
-    getMeshFilenames()
-        .map { it.name }
-        .map { loadGltf(vertexSchemas, it, "models/" + it + "/" + it) }
+    globalProfiler().wrap("meshes") {
+      getMeshFilenames()
+          .map { it.name }
+          .map { loadGltf(vertexSchemas, it, "models/" + it + "/" + it) }
+    }
 
 fun createMeshes(vertexSchemas: VertexSchemas): Pair<Map<MeshId, ModelMesh>, List<Armature>> {
   val imports = importedMeshes(vertexSchemas)

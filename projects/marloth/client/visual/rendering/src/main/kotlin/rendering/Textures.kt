@@ -5,6 +5,7 @@ import marloth.texture_generation.*
 import mythic.glowing.Texture
 import mythic.glowing.TextureAttributes
 import mythic.glowing.loadImageBuffer
+import mythic.quartz.globalProfiler
 import mythic.spatial.Vector3
 import scanTextureResources
 import scenery.Textures
@@ -104,18 +105,15 @@ fun textureGenerators(): TextureGeneratorMap =
 
 fun createTextureLibrary(scale: Float) =
     textureGenerators().mapValues { it.value(scale) }
-//        .plus(mapOf(
-//            Textures.woodDoor to "models/prison_door/prison_door_wood.jpg"
-//        )
-//            .mapValues { loadTextureFromFile(it.value, TextureAttributes(repeating = true, mipmap = true)) }
-//        )
 
 fun loadTextures(attributes: TextureAttributes) =
-    scanTextureResources("models")
-        .plus(scanTextureResources("textures"))
-        .associate {
-          Pair(
-              toCamelCase(Paths.get(it).fileName.toString().substringBeforeLast(".")),
-              loadTextureFromFile(it, attributes)
-          )
-        }
+    globalProfiler().wrap("textures") {
+      scanTextureResources("models")
+          .plus(scanTextureResources("textures"))
+          .associate {
+            Pair(
+                toCamelCase(Paths.get(it).fileName.toString().substringBeforeLast(".")),
+                loadTextureFromFile(it, attributes)
+            )
+          }
+    }
