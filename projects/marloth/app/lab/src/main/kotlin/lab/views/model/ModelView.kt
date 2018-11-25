@@ -120,8 +120,8 @@ private fun getHits(componentMode: ComponentMode, start: Vector3, end: Vector3, 
 
 private fun trySelect(config: ModelViewConfig, camera: Camera, model: Model, mousePosition: Vector2, bounds: Bounds) {
   val dimensions = bounds.dimensions
-  val cursor = mousePosition - bounds.position
-  val cameraData = createCameraEffectsData(dimensions.toVector2i(), camera)
+  val cursor = mousePosition.toVector2i() - bounds.position
+  val cameraData = createCameraEffectsData(dimensions, camera)
   val viewportBounds = listOf(
       0, 0,
       bounds.dimensions.x.toInt(), bounds.dimensions.y.toInt()
@@ -229,13 +229,13 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
   }
 
   fun createLayout(dimensions: Vector2i, state: ModelViewState): ModelLayout {
-    val bounds = Bounds(Vector2(), dimensions.toVector2())
-    val initialLengths = listOf(200f, null, 300f)
+    val bounds = Bounds(Vector2i(), dimensions)
+    val initialLengths = listOf(200, null, 300)
 
     val middle = { b: Bounds -> Box(b, drawScenePanel(config, state, renderer, model, camera)) }
     val right = { b: Bounds -> Box(b, drawInfoPanel(config, renderer, model, mousePosition)) }
-    val lengths = resolveLengths(dimensions.x.toFloat(), initialLengths)
-    val panelBounds = arrangeHorizontal(0f)(bounds, lengths)
+    val lengths = resolveLengths(dimensions.x, initialLengths)
+    val panelBounds = arrangeHorizontal(0)(bounds, lengths)
     val boxes = panelBounds.drop(1)
         .zip(listOf(middle, right), { b, p -> p(b) })
 
@@ -280,7 +280,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     val keyboardRotateSpeedY = 0.1f
 
     if (isActive(commands, LabCommandType.select)) {
-      val clickBox = filterMouseOverBoxes(layout.clickBoxes, mousePosition)
+      val clickBox = filterMouseOverBoxes(layout.clickBoxes, mousePosition.toVector2i())
       if (clickBox != null) {
         onListItemSelection(clickBox.value)
       } else {

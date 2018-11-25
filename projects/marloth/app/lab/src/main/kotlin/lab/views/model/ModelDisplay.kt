@@ -9,7 +9,6 @@ import mythic.breeze.transformAnimatedSkeleton
 import mythic.drawing.Canvas
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
-import mythic.glowing.viewportStack
 import mythic.spatial.*
 import org.joml.*
 import rendering.*
@@ -130,9 +129,7 @@ fun drawSelection(config: ModelViewConfig, model: Model, sceneRenderer: SceneRen
 }
 
 fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: Renderer, b: Bounds, camera: Camera, model: AdvancedModel) {
-  val panelDimensions = Vector2i(b.dimensions.x.toInt(), b.dimensions.y.toInt())
-  val viewport = Vector4i(b.position.x.toInt(), b.position.y.toInt(), panelDimensions.x, panelDimensions.y)
-  viewportStack(viewport) {
+  embedCameraView(b) { viewport ->
     val sceneRenderer = renderer.createSceneRenderer(Scene(camera), viewport)
     val transform = Matrix()
 
@@ -155,8 +152,7 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
           )
       )
       transformAnimatedSkeleton(armature.bones, a)
-    }
-    else
+    } else
       null
 
     if (transforms != null) {

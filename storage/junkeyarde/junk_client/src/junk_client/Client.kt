@@ -2,7 +2,6 @@ package junk_client
 
 import mythic.bloom.*
 import mythic.platforming.Platform
-import mythic.spatial.toVector2
 import org.joml.Vector2i
 import haft.*
 import junk_client.views.ClientBattleState
@@ -13,6 +12,7 @@ import junk_simulation.GameCommand
 import mythic.platforming.WindowInfo
 import mythic.spatial.Vector2
 import mythic.spatial.minMax
+import mythic.spatial.toVector2i
 import org.lwjgl.glfw.GLFW
 
 data class ClientState(
@@ -48,10 +48,10 @@ class Client(val platform: Platform) {
     return Pair(userInput, nextInputState)
   }
 
-  fun getInputEvent(layout: Layout, userInput: UserInput): Any? {
+  fun getInputEvent(layout: LayoutOld, userInput: UserInput): Any? {
     val isActive = haft.isActive(userInput.commands)
     if (isActive(CommandType.select)) {
-      val event = getEvent(layout, userInput.mousePosition)
+      val event = getEvent(layout, userInput.mousePosition.toVector2i())
       if (event != null)
         return event
     }
@@ -59,7 +59,7 @@ class Client(val platform: Platform) {
     return null
   }
 
-  private fun prepareLayout(state: AppState, bounds: Bounds): Layout {
+  private fun prepareLayout(state: AppState, bounds: Bounds): LayoutOld {
     return when (state.client.mode) {
       GameMode.abilitySelection -> shopView(state.client.shopState!!, bounds)
       GameMode.battle -> battleView(state.client.battle!!, state.world!!, bounds)
@@ -77,7 +77,7 @@ class Client(val platform: Platform) {
     val actualWindowInfo = getWindowInfo()
     val windowInfo = actualWindowInfo.copy(dimensions = Vector2i(320, 200))
     val canvas = createCanvas(windowInfo)
-    val bounds = Bounds(dimensions = windowInfo.dimensions.toVector2())
+    val bounds = Bounds(dimensions = windowInfo.dimensions)
     val (userInput, triggerState) = updateInputState(state.client.previousInput, actualWindowInfo)
     val layout = prepareLayout(state, bounds)
     renderScreen(renderer, layout, canvas, windowInfo, actualWindowInfo)

@@ -11,9 +11,9 @@ import physics.MovingBody
 import physics.checkWallCollision
 import physics.getWallCollisions
 import simulation.simulationDelta
-import junit.framework.TestCase.*
 import mythic.ent.IdSource
 import mythic.ent.newIdSource
+import org.junit.jupiter.api.Assertions.assertTrue
 import physics.WallCollision3
 
 class SimulationSpec : Spek({

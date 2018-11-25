@@ -4,13 +4,13 @@ import junk_client.EntitySelectionEvent
 import junk_client.EntityType
 import junk_client.GlobalAbilityEvent
 import junk_simulation.*
+import junk_simulation.Id
 import junk_simulation.logic.isReady
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
 import mythic.spatial.Vector2
 import mythic.spatial.times
-import org.joml.minus
 import org.joml.plus
 
 val columnCount = 4
@@ -62,7 +62,7 @@ fun selectedDepiction(info: BattleInfo, id: Id): Depiction? =
     else
       null
 
-fun creatureView(info: BattleInfo, creature: Creature, bounds: Bounds): Layout {
+fun creatureView(info: BattleInfo, creature: Creature, bounds: Bounds): LayoutOld {
   val columns = arrangeHorizontal(standardPadding, bounds, listOf(80f, null))
   return if (isAlive(creature) || info.state.flicker > 0.4f)
     listOf<Box>()
@@ -79,7 +79,7 @@ fun creatureView(info: BattleInfo, creature: Creature, bounds: Bounds): Layout {
     listOf()
 }
 
-fun creaturesView(world: World, info: BattleInfo, bounds: Bounds): Layout {
+fun creaturesView(world: World, info: BattleInfo, bounds: Bounds): LayoutOld {
   return verticalList(world.enemies, bounds, 20f, 0f, { a, b -> creatureView(info, a, b) })
 }
 
@@ -96,7 +96,7 @@ fun abilityView(info: BattleInfo, creature: Creature, ability: Ability, bounds: 
   )
 }
 
-fun playerView(creature: Creature, info: BattleInfo, bounds: Bounds): Layout {
+fun playerView(creature: Creature, info: BattleInfo, bounds: Bounds): LayoutOld {
   val rows = arrangeVertical(0f, bounds, (1..rowCount).toList().map { rowSize })
   val abilityBoxes = creature.abilities.zip(rows.drop(1), { a, b ->
     abilityView(info, creature, a, b)
@@ -104,7 +104,7 @@ fun playerView(creature: Creature, info: BattleInfo, bounds: Bounds): Layout {
   return listOf(label(white, creature.life.toString(), rows[0])).plus(abilityBoxes)
 }
 
-fun battleLayoutOutline(bounds: Bounds): Layout {
+fun battleLayoutOutline(bounds: Bounds): LayoutOld {
   val border = { b: Bounds ->
     Box(
         bounds = b,
@@ -136,7 +136,7 @@ fun getPosition(world: World, creature: Creature): Vector2 =
 
 private val positionOffset = Vector2(10f, 5f)
 
-fun renderMissileAnimation(world: World, animation: Animation): Layout {
+fun renderMissileAnimation(world: World, animation: Animation): LayoutOld {
   val action = animation.action
   val actor = world.creatures[action.actor]!!
   val target = world.creatures[action.target]!!
@@ -156,7 +156,7 @@ fun renderMissileAnimation(world: World, animation: Animation): Layout {
   )
 }
 
-fun renderAnimation(world: World): Layout {
+fun renderAnimation(world: World): LayoutOld {
   val animation = world.animation
   return if (animation == null || animation.delay > 0f)
     listOf()
@@ -169,7 +169,7 @@ fun renderAnimation(world: World): Layout {
 fun isAcceptingInput(world: World): Boolean =
     world.activeCreature == world.player && world.animation == null && !isGameOver(world)
 
-fun battleView(state: ClientBattleState, world: World, bounds: Bounds): Layout {
+fun battleView(state: ClientBattleState, world: World, bounds: Bounds): LayoutOld {
   val columns = arrangeHorizontal(0f, bounds, (1..columnCount).toList().map { columnSize })
 //  val columns = arrangeHorizontal(standardPadding, bounds, listOf(120f, null, 120f))
   val info = BattleInfo(

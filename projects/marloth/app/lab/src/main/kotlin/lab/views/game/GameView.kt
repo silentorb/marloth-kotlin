@@ -142,7 +142,7 @@ fun renderLabScenes(client: Client, data: GameViewRenderData) {
     }
 
     if (config.draw.gui)
-      renderGui(sceneRenderer, Bounds(viewport.toVector4()), canvas, data.menuState)
+      renderGui(sceneRenderer, Bounds(viewport), canvas, data.menuState)
   }
 
   renderer.finishRender(windowInfo)

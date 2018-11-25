@@ -22,7 +22,7 @@ typealias LabCommandState = GeneralCommandState<LabCommandType>
 //)
 
 //interface View {
-//  fun createLayout(dimensions: Vector2i): Layout
+//  fun createLayout(dimensions: Vector2i): LayoutOld
 //  fun getCommands(): LabCommandMap
-//  fun updateState(layout: Layout, input: LabCommandState, delta: Float)
+//  fun updateState(layout: LayoutOld, input: LabCommandState, delta: Float)
 //}

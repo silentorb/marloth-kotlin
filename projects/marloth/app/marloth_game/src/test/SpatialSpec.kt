@@ -1,10 +1,11 @@
-import junit.framework.TestCase.*
 import mythic.spatial.*
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.joml.times
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 
 class SpatialSpec : Spek({
   beforeGroup {

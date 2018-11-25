@@ -14,7 +14,7 @@ fun listItemDepiction(content: String): Depiction = { bounds: Bounds, canvas: Ca
   drawCenteredText(canvas, black, content, bounds)
 }
 
-fun abilitySelectionList(column: ShopColumn, abilities: List<AbilityType>, bounds: Bounds): Layout {
+fun abilitySelectionList(column: ShopColumn, abilities: List<AbilityType>, bounds: Bounds): LayoutOld {
   val rows = listBounds(verticalPlane, standardPadding, bounds, abilities.map { itemHeight })
   return abilities.zip(rows, { a, b ->
     Box(
@@ -25,7 +25,7 @@ fun abilitySelectionList(column: ShopColumn, abilities: List<AbilityType>, bound
   })
 }
 
-fun shopView(state: ShopState, bounds: Bounds): Layout {
+fun shopView(state: ShopState, bounds: Bounds): LayoutOld {
   val rowLengths = resolveLengths(bounds.dimensions.y, listOf(itemHeight, null, itemHeight))
   val rows = listBounds(verticalPlane, 0f, bounds, rowLengths)
 

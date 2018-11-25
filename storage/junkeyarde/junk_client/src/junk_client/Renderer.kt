@@ -1,25 +1,14 @@
 package junk_client
 
-import junk_simulation.World
 import mythic.bloom.Box
 import mythic.bloom.renderLayout
 import mythic.drawing.*
 import mythic.platforming.WindowInfo
 import org.joml.Vector2i
 import mythic.glowing.*
-import mythic.spatial.Vector2
 import mythic.spatial.Vector4
-import mythic.spatial.toVector2
 import mythic.typography.*
-import org.joml.Vector2f
 import org.joml.Vector4i
-import org.joml.plus
-import org.lwjgl.opengl.GL11
-import org.lwjgl.opengl.GL11.*
-import org.lwjgl.opengl.GL20.glDrawBuffers
-import org.lwjgl.opengl.GL30.*
-import org.lwjgl.opengl.GL32.glFramebufferTexture
-import java.nio.FloatBuffer
 
 fun createCanvas(windowInfo: WindowInfo): Canvas {
   val unitScaling = getUnitScaling(windowInfo.dimensions)

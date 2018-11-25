@@ -7,16 +7,16 @@ class Profiler {
   val metrics: MutableMap<String, Long> = mutableMapOf()
 
   fun start(name: String) {
-    if (lastStart != 0L) {
-      stop()
-    }
+    stop()
     lastStart = System.nanoTime()
     lastName = name
   }
 
   fun stop() {
-    metrics[lastName] = System.nanoTime() - lastStart
-    lastStart = 0L
+    if (lastStart != 0L) {
+      metrics[lastName] = System.nanoTime() - lastStart
+      lastStart = 0L
+    }
   }
 
   fun <T> wrap(name: String, action: () -> T): T {
@@ -32,7 +32,7 @@ fun printProfiler(profiler: Profiler) {
     println(
         metric.key.padStart(12, ' ')
             + " "
-            + String.format("%,d", metric.value).padStart(24, ' ')
+            + String.format("%,d", metric.value).padStart(18, ' ')
     )
   }
 }

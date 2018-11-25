@@ -6,16 +6,13 @@ import lab.views.LabCommandMap
 import mythic.bloom.drawBorder
 import mythic.bloom.*
 import mythic.drawing.Canvas
-import mythic.spatial.Vector2
-import mythic.spatial.Vector3
-import mythic.spatial.Vector4
-import mythic.spatial.times
+import mythic.spatial.*
 import org.joml.Vector2i
 import org.joml.plus
 import rendering.Renderer
 import simulation.Realm
 
-val worldBorderPadding = 20f // In screen units
+val worldBorderPadding = 20 // In screen units
 
 typealias PositionFunction = (Vector2) -> Vector2
 
@@ -30,7 +27,7 @@ fun drawGeneratedWorld(bounds: Bounds, canvas: Canvas, realm: Realm,
   val outerScale = getScale(bounds, realm.boundary.dimensions)
   val offset = bounds.position + worldBorderPadding
   val getPosition: PositionFunction = getPositionFunction(
-      offset,
+      offset.toVector2(),
       Vector2(padding) - realm.boundary.start.xy(),
       innerScale
   )
@@ -44,13 +41,13 @@ fun drawGeneratedWorld(bounds: Bounds, canvas: Canvas, realm: Realm,
     drawStructureWorld(bounds, getPosition, canvas, realm)
 
   canvas.drawSquare(
-      offset,
+      offset.toVector2(),
       realm.boundary.dimensions.xy() * outerScale,
       canvas.outline(Vector4(0.6f, 0.5f, 0.5f, 0.5f), 3f)
   )
 }
 
-fun createMapLayout(realm: Realm, screenDimensions: Vector2,
+fun createMapLayout(realm: Realm, screenDimensions: Vector2i,
                     config: WorldViewConfig, renderer: Renderer): List<Box> {
   val draw = { b: Bounds, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
   val drawWorld = { b: Bounds, c: Canvas ->
@@ -60,7 +57,7 @@ fun createMapLayout(realm: Realm, screenDimensions: Vector2,
 
   val panels = listOf(
 //      Pair(Measurement(Measurements.pixel, 200f), depictBackground),
-      Pair(Measurement(Measurements.stretch, 0f), drawWorld)
+      Pair(Measurement(Measurements.stretch, 0), drawWorld)
   )
   val boxes = arrangeMeasuredList(measuredHorizontalArrangement, panels, screenDimensions)
 
@@ -70,8 +67,7 @@ fun createMapLayout(realm: Realm, screenDimensions: Vector2,
 class WorldView(val config: WorldViewConfig, val realm: Realm, val renderer: Renderer) {
 
   fun createLayout(dimensions: Vector2i): List<Box> {
-    val dimensions2 = Vector2(dimensions.x.toFloat(), dimensions.y.toFloat())
-    return createMapLayout(realm, dimensions2, config, renderer)
+    return createMapLayout(realm, dimensions, config, renderer)
   }
 
   fun getCommands(): LabCommandMap = mapOf(

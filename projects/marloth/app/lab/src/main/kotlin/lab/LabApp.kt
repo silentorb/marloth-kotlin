@@ -33,7 +33,7 @@ const val labConfigPath = "labConfig.yaml"
 fun startGui() {
   thread(true, false, null, "JavaFX GUI", -1) {
     //    val gui = LabGui(setModelCode, getModelCode)
-    LabGui.main(listOf())
+//    LabGui.main(listOf())
   }
 }
 
@@ -151,9 +151,12 @@ object App {
   fun main(args: Array<String>) {
     globalProfiler().start("start")
     System.setProperty("joml.format", "false")
+    globalProfiler().start("labConfig")
     val config = loadConfig<LabConfig>(labConfigPath) ?: LabConfig()
+    globalProfiler().start("gameConfig")
     val gameConfig = loadGameConfig()
 //    startGui()
+    globalProfiler().start("otherStart")
     runApp(createDesktopPlatform("Dev Lab", gameConfig.display), config, gameConfig)
   }
 }

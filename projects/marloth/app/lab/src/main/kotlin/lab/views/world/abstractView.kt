@@ -6,6 +6,7 @@ import mythic.drawing.Canvas
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
+import mythic.spatial.toVector2
 import mythic.typography.TextStyle
 import org.joml.plus
 import rendering.Renderer
@@ -34,13 +35,13 @@ fun drawGrid(canvas: Canvas, bounds: Bounds, worldBoundary: WorldBoundary, scale
   val length = worldBoundary.dimensions.x * scale
   for (i in 0..steps) {
     canvas.drawSquare(
-        Vector2(0f, i * gridGap) + offset,
+        Vector2(0f, i * gridGap) + offset.toVector2(),
         Vector2(length, 1f),
         gridBrush
     )
 
     canvas.drawSquare(
-        Vector2(i * gridGap, 0f) + offset,
+        Vector2(i * gridGap, 0f) + offset.toVector2(),
         Vector2(1f, length),
         gridBrush
     )

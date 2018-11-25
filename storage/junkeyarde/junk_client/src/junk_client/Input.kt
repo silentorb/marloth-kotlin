@@ -6,7 +6,6 @@ import haft.disconnectedScalarInputSource
 import junk_simulation.*
 import mythic.platforming.PlatformInput
 import mythic.spatial.Vector2
-import org.joml.Vector2i
 
 typealias InputResult = Pair<ClientState, GameCommand?>
 

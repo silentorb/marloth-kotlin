@@ -9,6 +9,7 @@ import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.spatial.Vector2
 import mythic.spatial.toVector2
+import mythic.spatial.toVector2i
 import org.joml.Vector2i
 import rendering.Renderer
 import scenery.Textures
@@ -20,9 +21,9 @@ data class TextureViewConfig(
 fun drawTextureView(renderer: Renderer, config: TextureViewConfig, bounds: Bounds, canvas: Canvas) {
 //  val texture = textureGenerators[config.texture]!!(1f)
   val texture = renderer.mappedTextures[config.texture]!!
-  val length = Math.min(bounds.dimensions.x, bounds.dimensions.y)
+  val length = Math.min(bounds.dimensions.x, bounds.dimensions.y).toFloat()
   val repeat = 2f
-  canvas.drawDynamicImage(bounds.position, Vector2(length, length), canvas.image(texture), listOf(
+  canvas.drawDynamicImage(bounds.position.toVector2(), Vector2(length, length), canvas.image(texture), listOf(
       0f, 1f, 0f, repeat,
       0f, 0f, 0f, 0f,
       1f, 0f, repeat, 0f,
@@ -56,12 +57,12 @@ class TextureView {
 //    val boxes = arrangeMeasuredList(measuredHorizontalArrangement, panels, dimensions2)
 //
 //    return boxes
-    val bounds = Bounds(Vector2(), dimensions.toVector2())
-    val initialLengths = listOf(200f, null)
+    val bounds = Bounds(Vector2i(), dimensions)
+    val initialLengths = listOf(200, null)
 
     val middle = { b: Bounds -> Box(b, { b, c -> drawTextureView(renderer, config, b, c) }) }
-    val lengths = resolveLengths(dimensions.x.toFloat(), initialLengths)
-    val panelBounds = arrangeHorizontal(0f)(bounds, lengths)
+    val lengths = resolveLengths(dimensions.x, initialLengths)
+    val panelBounds = arrangeHorizontal(0)(bounds, lengths)
     val boxes = panelBounds.drop(1)
         .zip(listOf(middle), { b, p -> p(b) })
 
@@ -84,7 +85,7 @@ fun updateTextureState(layout: TextureViewLayout, input: LabCommandState, config
   val commands = input.commands
 
   if (isActive(commands, LabCommandType.select)) {
-    val clickBox = filterMouseOverBoxes(layout.clickBoxes, input.mousePosition)
+    val clickBox = filterMouseOverBoxes(layout.clickBoxes, input.mousePosition.toVector2i())
     if (clickBox != null) {
       onListItemSelection(clickBox.value, config, renderer)
     } else {

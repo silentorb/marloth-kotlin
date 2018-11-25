@@ -1,10 +1,7 @@
 package mythic.drawing
 
 import mythic.glowing.*
-import mythic.spatial.Matrix
-import mythic.spatial.Pi
-import mythic.spatial.Vector2
-import mythic.spatial.Vector4
+import mythic.spatial.*
 import mythic.typography.Font
 import mythic.typography.TextConfiguration
 import mythic.typography.TextStyle
@@ -181,6 +178,9 @@ class Canvas(
     val transform = prepareTextMatrix(pixelsToScalar, position)
     drawTextRaw(TextConfiguration(content, position, style), effects.coloredImage, vertexSchemas.image, transform)
   }
+
+  fun drawText(content: String, position: Vector2i, style: TextStyle) =
+      drawText(content, position.toVector2(), style)
 
   fun crop(value: Vector4i, action: () -> Unit) = cropStack(value, action)
 }

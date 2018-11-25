@@ -1,6 +1,5 @@
 package mythic.bloom
 
-import mythic.spatial.Vector2
 import mythic.drawing.Canvas
 import mythic.glowing.globalState
 import mythic.spatial.Vector4
@@ -13,64 +12,68 @@ import org.lwjgl.opengl.GL11
 enum class Measurements {
   stretch,
   //  shrink,
-  percent,
+//  percent,
   pixel
 }
 
 data class Measurement(
     val type: Measurements,
-    val value: Float
+    val value: Int
 ) {
-  constructor(value: Float) : this(Measurements.pixel, value)
+  constructor(value: Int) : this(Measurements.pixel, value)
 }
 
 data class Bounds(
-    val position: Vector2 = Vector2(),
-    val dimensions: Vector2
+    val position: Vector2i = Vector2i(),
+    val dimensions: Vector2i
 ) {
-  constructor(x: Float, y: Float, width: Float, height: Float) :
-      this(Vector2(x, y), Vector2(width, height))
+  constructor(x: Int, y: Int, width: Int, height: Int) :
+      this(Vector2i(x, y), Vector2i(width, height))
 
-  constructor(values: Vector4) :
-      this(Vector2(values.x, values.y), Vector2(values.z, values.w))
+  constructor(values: Vector4i) :
+      this(Vector2i(values.x, values.y), Vector2i(values.z, values.w))
 
   fun toVector4i() = Vector4i(position.x.toInt(), position.y.toInt(), dimensions.x.toInt(), dimensions.y.toInt())
 }
 
+//data class Bounds(
+//    val position: Vector2i = Vector2i(),
+//    val dimensions: Vector2i
+//) {
+//  constructor(x: Int, y: Int, width: Int, height: Int) :
+//      this(Vector2i(x, y), Vector2i(width, height))
+//
+//  constructor(values: Vector4i) :
+//      this(Vector2i(values.x, values.y), Vector2i(values.z, values.w))
+//
+//  fun toVector4i() = Vector4i(position.x.toInt(), position.y.toInt(), dimensions.x.toInt(), dimensions.y.toInt())
+//}
+
 typealias Depiction = (Bounds, Canvas) -> Unit
 
 interface Plane {
-  fun x(value: Vector2): Float
-  fun y(value: Vector2): Float
-
   fun x(value: Vector2i): Int
   fun y(value: Vector2i): Int
 
-  fun vector(first: Float, second: Float): Vector2
-  fun vector(value: Vector2): Vector2
+  fun vector(first: Int, second: Int): Vector2i
+  fun vector(value: Vector2i): Vector2i
 }
 
 class HorizontalPlane : Plane {
-  override fun x(value: Vector2) = value.x
-  override fun y(value: Vector2) = value.y
-
   override fun x(value: Vector2i) = value.x
   override fun y(value: Vector2i) = value.y
 
-  override fun vector(first: Float, second: Float): Vector2 = Vector2(first, second)
+  override fun vector(first: Int, second: Int): Vector2i = Vector2i(first, second)
 
-  override fun vector(value: Vector2): Vector2 = value
+  override fun vector(value: Vector2i): Vector2i = value
 }
 
 class VerticalPlane : Plane {
-  override fun x(value: Vector2) = value.y
-  override fun y(value: Vector2) = value.x
-
   override fun x(value: Vector2i) = value.y
   override fun y(value: Vector2i) = value.x
 
-  override fun vector(first: Float, second: Float): Vector2 = Vector2(second, first)
-  override fun vector(value: Vector2): Vector2 = Vector2(value.y, value.x)
+  override fun vector(first: Int, second: Int): Vector2i = Vector2i(second, first)
+  override fun vector(value: Vector2i): Vector2i = Vector2i(value.y, value.x)
 }
 
 val horizontalPlane = HorizontalPlane()
@@ -88,25 +91,25 @@ data class ClickBox<T>(
 )
 
 data class PartialBox(
-    val length: Float,
+    val length: Int,
     val depiction: Depiction? = null,
     val handler: Any? = null
 )
 
 fun crop(bounds: Bounds, canvas: Canvas, action: () -> Unit) = canvas.crop(bounds.toVector4i(), action)
 
-fun resolveMeasurement(dimensions: Vector2, plane: Plane, measurement: Measurement) =
+fun resolveMeasurement(dimensions: Vector2i, plane: Plane, measurement: Measurement) =
     when (measurement.type) {
       Measurements.pixel -> measurement.value
-      Measurements.percent -> measurement.value * plane.x(dimensions) / 100
+//      Measurements.percent -> measurement.value * plane.x(dimensions) / 100
       Measurements.stretch -> null
     }
 
-fun solveMeasurements(plane: Plane, lengths: List<Measurement>, bounds: Vector2): List<Float> {
+fun solveMeasurements(plane: Plane, lengths: List<Measurement>, bounds: Vector2i): List<Int> {
   val resolved = lengths.map { resolveMeasurement(bounds, plane, it) }
   val exacts = resolved.filterNotNull()
 
-  val total = exacts.fold(0f, { a, b -> a + b })
+  val total = exacts.sum()
   val boundLength = plane.x(bounds)
 
   if (exacts.size == lengths.size) {
@@ -121,38 +124,38 @@ fun solveMeasurements(plane: Plane, lengths: List<Measurement>, bounds: Vector2)
   }
 }
 
-fun resolveLengths(boundLength: Float, lengths: List<Float?>): List<Float> {
-  val exacts = lengths.filterNotNull()
-  val total = exacts.fold(0f, { a, b -> a + b })
+//fun resolveLengths(boundLength: Int, lengths: List<Int?>): List<Int> {
+//  val exacts = lengths.filterNotNull()
+//  val total = exacts.sum()
+//
+//  if (exacts.size == lengths.size) {
+//    if (total != boundLength)
+//      throw Error("Could not stretch or shrink to fit bounds")
+//
+//    return exacts
+//  } else {
+//    val stretchCount = lengths.size - exacts.size
+//    val stretchLength = (boundLength - total) / stretchCount
+//    return lengths.map { if (it != null) it else stretchLength }
+//  }
+//}
 
-  if (exacts.size == lengths.size) {
-    if (total != boundLength)
-      throw Error("Could not stretch or shrink to fit bounds")
-
-    return exacts
-  } else {
-    val stretchCount = lengths.size - exacts.size
-    val stretchLength = (boundLength - total) / stretchCount
-    return lengths.map { if (it != null) it else stretchLength }
-  }
-}
-
-fun listMeasuredBounds(plane: Plane, lengths: List<Measurement>, bounds: Vector2): List<Bounds> {
-  var progress = 0f
+fun listMeasuredBounds(plane: Plane, lengths: List<Measurement>, bounds: Vector2i): List<Bounds> {
+  var progress = 0
   return solveMeasurements(plane, lengths, bounds).map {
-    val b = Bounds(progress, 0f, it, plane.y(bounds))
+    val b = Bounds(progress, 0, it, plane.y(bounds))
     progress += it
     b
   }
 }
 
-fun listBounds(plane: Plane, padding: Float, bounds: Bounds, lengths: List<Float>): List<Bounds> {
-  var progress = 0f
+fun listBounds(plane: Plane, padding: Int, bounds: Bounds, lengths: List<Int>): List<Bounds> {
+  var progress = 0
   val otherLength = plane.y(bounds.dimensions)
 
   return lengths.mapIndexed { i, length ->
     val b = Bounds(
-        plane.vector(progress, 0f) + bounds.position,
+        plane.vector(progress, 0) + bounds.position,
         plane.vector(length, otherLength)
     )
     progress += length
@@ -163,10 +166,10 @@ fun listBounds(plane: Plane, padding: Float, bounds: Bounds, lengths: List<Float
   }
 }
 
-fun listContentLength(padding: Float, lengths: Collection<Float>): Float =
+fun listContentLength(padding: Int, lengths: Collection<Int>): Int =
     lengths.sum() + (lengths.size + 1) * padding
 //
-//fun listLengths(padding: Float, lengths: Collection<Float>): List<Float> {
+//fun listLengths(padding: Int, lengths: Collection<Int>): List<Int> {
 //  var offset = 0f
 //  return lengths.map {
 //    val result = offset
@@ -175,38 +178,38 @@ fun listContentLength(padding: Float, lengths: Collection<Float>): Float =
 //  }
 //}
 
-typealias MeasuredLengthArrangement = (bounds: Vector2, lengths: List<Measurement>) -> List<Bounds>
-typealias LengthArrangement = (bounds: Bounds, lengths: List<Float>) -> List<Bounds>
+typealias MeasuredLengthArrangement = (bounds: Vector2i, lengths: List<Measurement>) -> List<Bounds>
+typealias LengthArrangement = (bounds: Bounds, lengths: List<Int>) -> List<Bounds>
 
-val measuredHorizontalArrangement: MeasuredLengthArrangement = { bounds: Vector2, lengths: List<Measurement> ->
+val measuredHorizontalArrangement: MeasuredLengthArrangement = { bounds: Vector2i, lengths: List<Measurement> ->
   listMeasuredBounds(horizontalPlane, lengths, bounds)
 }
 
-//val measuredVerticalArrangement: MeasuredLengthArrangement = { bounds: Vector2, lengths: List<Measurement> ->
+//val measuredVerticalArrangement: MeasuredLengthArrangement = { bounds: Vector2i, lengths: List<Measurement> ->
 //  listMeasuredBounds(verticalPlane, lengths, bounds)
 //}
 
-fun arrangeHorizontal(padding: Float): LengthArrangement = { bounds: Bounds, lengths: List<Float> ->
+fun arrangeHorizontal(padding: Int): LengthArrangement = { bounds: Bounds, lengths: List<Int> ->
   listBounds(horizontalPlane, padding, bounds, lengths)
 }
 
-fun arrangeVertical(padding: Float): LengthArrangement = { bounds: Bounds, lengths: List<Float> ->
+fun arrangeVertical(padding: Int): LengthArrangement = { bounds: Bounds, lengths: List<Int> ->
   listBounds(verticalPlane, padding, bounds, lengths)
 }
 
-fun arrange(plane: Plane, padding: Float, bounds: Bounds, lengths: List<Float?>): List<Bounds> =
+fun arrange(plane: Plane, padding: Int, bounds: Bounds, lengths: List<Int?>): List<Bounds> =
     listBounds(plane, padding, bounds, resolveLengths(plane.x(bounds.dimensions), lengths))
 
-fun arrangeVertical(padding: Float, bounds: Bounds, lengths: List<Float?>): List<Bounds> =
+fun arrangeVertical(padding: Int, bounds: Bounds, lengths: List<Int?>): List<Bounds> =
     arrange(verticalPlane, padding, bounds, lengths)
 
-fun arrangeHorizontal(padding: Float, bounds: Bounds, lengths: List<Float?>): List<Bounds> =
+fun arrangeHorizontal(padding: Int, bounds: Bounds, lengths: List<Int?>): List<Bounds> =
     arrange(horizontalPlane, padding, bounds, lengths)
 
-//fun arrangeVertical(padding: Float, bounds: Bounds, lengths: List<Float>) =
+//fun arrangeVertical(padding: Int, bounds: Bounds, lengths: List<Int>) =
 //    listLengths(verticalPlane, padding, lengths, bounds)
 
-fun arrangeMeasuredList(arrangement: MeasuredLengthArrangement, panels: List<Pair<Measurement, Depiction>>, bounds: Vector2): List<Box> {
+fun arrangeMeasuredList(arrangement: MeasuredLengthArrangement, panels: List<Pair<Measurement, Depiction>>, bounds: Vector2i): List<Box> {
   return arrangement(bounds, panels.map { it.first })
       .zip(panels, { a, b -> Box(a, b.second) })
 }
@@ -216,25 +219,25 @@ fun arrangeListComplex(arrangement: LengthArrangement, panels: List<PartialBox>,
       .zip(panels, { a, b -> Box(a, b.depiction) })
 }
 
-//fun arrangeList(arrangement: LengthArrangement, panels: List<Float>, bounds: Bounds): List<Bounds> {
+//fun arrangeList(arrangement: LengthArrangement, panels: List<Int>, bounds: Bounds): List<Bounds> {
 //  return arrangement(bounds, panels)
 ////      .zip(panels, { a, b -> Box(a, b.depiction) })
 //}
 
-fun centeredPosition(boundsLength: Float, length: Float): Float =
-    (boundsLength - length) / 2f
+fun centeredPosition(boundsLength: Int, length: Int): Int =
+    (boundsLength - length) / 2
 
-fun centeredPosition(plane: Plane, bounds: Vector2, length: Float?): Float =
+fun centeredPosition(plane: Plane, bounds: Vector2i, length: Int?): Int =
     if (length == null)
-      0f
+      0
     else
       centeredPosition(plane.x(bounds), length)
 
-fun centeredPosition(plane: Plane, bounds: Vector2, length: Measurement): Float =
+fun centeredPosition(plane: Plane, bounds: Vector2i, length: Measurement): Int =
     centeredPosition(plane, bounds, resolveMeasurement(bounds, plane, length))
 
 fun drawBorder(bounds: Bounds, canvas: Canvas, color: Vector4, thickness: Float = 1f) {
-  canvas.drawSquare(bounds.position, bounds.dimensions, canvas.outline(color, thickness))
+  canvas.drawSquare(bounds.position.toVector2(), bounds.dimensions.toVector2(), canvas.outline(color, thickness))
 }
 
 data class LineStyle(
@@ -243,11 +246,11 @@ data class LineStyle(
 )
 
 fun drawBorder(bounds: Bounds, canvas: Canvas, style: LineStyle) {
-  canvas.drawSquare(bounds.position, bounds.dimensions, canvas.outline(style.color, style.thickness))
+  canvas.drawSquare(bounds.position.toVector2(), bounds.dimensions.toVector2(), canvas.outline(style.color, style.thickness))
 }
 
 fun drawFill(bounds: Bounds, canvas: Canvas, color: Vector4) {
-  canvas.drawSquare(bounds.position, bounds.dimensions, canvas.solid(color))
+  canvas.drawSquare(bounds.position.toVector2(), bounds.dimensions.toVector2(), canvas.solid(color))
 }
 
 fun applyBounds(bounds: Bounds, box: Box): Box =
@@ -255,9 +258,9 @@ fun applyBounds(bounds: Bounds, box: Box): Box =
 
 fun applyBounds(bounds: Bounds) = { box: Box -> applyBounds(bounds, box) }
 
-typealias Layout = List<Box>
+typealias LayoutOld = List<Box>
 
-fun renderLayout(layout: Layout, canvas: Canvas) {
+fun renderLayout(layout: LayoutOld, canvas: Canvas) {
   globalState.depthEnabled = false
   globalState.blendEnabled = true
   globalState.blendFunction = Pair(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
@@ -268,50 +271,50 @@ fun renderLayout(layout: Layout, canvas: Canvas) {
   }
 }
 
-fun centeredPosition(bounds: Bounds, contentDimensions: Vector2): Vector2 {
+fun centeredPosition(bounds: Bounds, contentDimensions: Vector2i): Vector2i {
   val dimensions = bounds.dimensions
-  return bounds.position + Vector2(
+  return bounds.position + Vector2i(
       centeredPosition(horizontalPlane, dimensions, contentDimensions.x),
       centeredPosition(verticalPlane, dimensions, contentDimensions.y)
   )
 }
 
-fun centeredBounds(bounds: Bounds, contentDimensions: Vector2): Bounds {
+fun centeredBounds(bounds: Bounds, contentDimensions: Vector2i): Bounds {
   return Bounds(
       centeredPosition(bounds, contentDimensions) + bounds.position,
       contentDimensions
   )
 }
 
-fun isInBounds(position: Vector2, bounds: Bounds): Boolean =
+fun isInBounds(position: Vector2i, bounds: Bounds): Boolean =
     position.x >= bounds.position.x &&
         position.x < bounds.position.x + bounds.dimensions.x &&
         position.y >= bounds.position.y &&
         position.y < bounds.position.y + bounds.dimensions.y
 
-fun <T> filterMouseOverBoxes(boxes: List<ClickBox<T>>, mousePosition: Vector2): ClickBox<T>? {
+fun <T> filterMouseOverBoxes(boxes: List<ClickBox<T>>, mousePosition: Vector2i): ClickBox<T>? {
   return boxes.filter { box -> isInBounds(mousePosition, box.bounds) }.firstOrNull()
 }
 
-fun filterMouseOverBoxes(boxes: Layout, mousePosition: Vector2): Box? {
+fun filterMouseOverBoxes(boxes: LayoutOld, mousePosition: Vector2i): Box? {
   return boxes
       .filter { it.handler != null }
       .filter { isInBounds(mousePosition, it.bounds) }.firstOrNull()
 }
 
 fun splitBoundsHorizontal(bounds: Bounds, leftPercentage: Float = 0.5f): Pair<Bounds, Bounds> {
-  val leftWidth = bounds.dimensions.x * leftPercentage
+  val leftWidth: Int = (bounds.dimensions.x * leftPercentage).toInt()
   return Pair(
       Bounds(
           position = bounds.position,
-          dimensions = Vector2(leftWidth, bounds.dimensions.y)
+          dimensions = Vector2i(leftWidth, bounds.dimensions.y)
       ),
       Bounds(
-          position = Vector2(leftWidth, bounds.position.y),
-          dimensions = Vector2(bounds.dimensions.x - leftWidth, bounds.dimensions.y)
+          position = Vector2i(leftWidth, bounds.position.y),
+          dimensions = Vector2i(bounds.dimensions.x - leftWidth, bounds.dimensions.y)
       )
   )
 }
 
-fun getEvent(layout: Layout, mousePosition: Vector2): Any? =
+fun getEvent(layout: LayoutOld, mousePosition: Vector2i): Any? =
     filterMouseOverBoxes(layout, mousePosition)?.handler
