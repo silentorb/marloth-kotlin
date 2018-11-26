@@ -4,8 +4,7 @@ import haft.*
 import lab.views.*
 import lab.views.game.updateGameView
 import lab.views.game.updateLabGameState
-import lab.views.map.createTopDownCamera
-import lab.views.map.renderMapView
+import lab.views.map.mapLayout
 import lab.views.map.updateMapState
 import lab.views.model.ModelView
 import lab.views.model.ModelViewState
@@ -17,8 +16,6 @@ import mythic.bloom.renderLayout
 import mythic.platforming.PlatformInput
 import mythic.platforming.WindowInfo
 import mythic.spatial.Vector2
-import org.joml.Vector2i
-import org.joml.minus
 import rendering.createCanvas
 import scenery.Screen
 import simulation.Realm
@@ -150,10 +147,9 @@ class LabClient(val config: LabConfig, val client: Client) {
     prepareClient(windowInfo)
     val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
     val input = getInputState(client.platform.input, commands)
-    val camera = createTopDownCamera(config.mapView.camera)
-    updateMapState(config.mapView, world.realm, camera, input, windowInfo, delta)
-
-    renderMapView(client, world.realm, config.mapView, camera)
+    updateMapState(config.mapView, world.realm, input, windowInfo, delta)
+    val layout = mapLayout(windowInfo.dimensions, client, world.realm, config.mapView)
+    renderLab(windowInfo, layout)
     return LabClientResult(
         listOf(),
         previousState.copy(labInput = nextLabInputState)

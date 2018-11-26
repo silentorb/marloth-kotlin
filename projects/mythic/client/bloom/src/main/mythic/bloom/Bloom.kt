@@ -49,7 +49,8 @@ data class Bounds(
 //  fun toVector4i() = Vector4i(position.x.toInt(), position.y.toInt(), dimensions.x.toInt(), dimensions.y.toInt())
 //}
 
-typealias Depiction = (Bounds, Canvas) -> Unit
+typealias DepictionOld = (Bounds, Canvas) -> Unit
+typealias Depiction = (Bounds) -> Unit
 
 interface Plane {
   fun x(value: Vector2i): Int
@@ -81,9 +82,12 @@ val verticalPlane = VerticalPlane()
 
 data class Box(
     val bounds: Bounds,
+    val depictionOld: DepictionOld? = null,
     val depiction: Depiction? = null,
     val handler: Any? = null
 )
+
+typealias Boxes = List<Box>
 
 data class ClickBox<T>(
     val bounds: Bounds,
@@ -92,7 +96,7 @@ data class ClickBox<T>(
 
 data class PartialBox(
     val length: Int,
-    val depiction: Depiction? = null,
+    val depiction: DepictionOld? = null,
     val handler: Any? = null
 )
 
@@ -209,7 +213,7 @@ fun arrangeHorizontal(padding: Int, bounds: Bounds, lengths: List<Int?>): List<B
 //fun arrangeVertical(padding: Int, bounds: Bounds, lengths: List<Int>) =
 //    listLengths(verticalPlane, padding, lengths, bounds)
 
-fun arrangeMeasuredList(arrangement: MeasuredLengthArrangement, panels: List<Pair<Measurement, Depiction>>, bounds: Vector2i): List<Box> {
+fun arrangeMeasuredList(arrangement: MeasuredLengthArrangement, panels: List<Pair<Measurement, DepictionOld>>, bounds: Vector2i): List<Box> {
   return arrangement(bounds, panels.map { it.first })
       .zip(panels, { a, b -> Box(a, b.second) })
 }
@@ -254,7 +258,7 @@ fun drawFill(bounds: Bounds, canvas: Canvas, color: Vector4) {
 }
 
 fun applyBounds(bounds: Bounds, box: Box): Box =
-    Box(Bounds(box.bounds.position + bounds.position, box.bounds.dimensions), box.depiction)
+    Box(Bounds(box.bounds.position + bounds.position, box.bounds.dimensions), box.depictionOld)
 
 fun applyBounds(bounds: Bounds) = { box: Box -> applyBounds(bounds, box) }
 
@@ -266,8 +270,10 @@ fun renderLayout(layout: LayoutOld, canvas: Canvas) {
   globalState.blendFunction = Pair(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
 
   for (box in layout) {
+    if (box.depictionOld != null)
+      box.depictionOld!!(box.bounds, canvas)
     if (box.depiction != null)
-      box.depiction!!(box.bounds, canvas)
+      box.depiction!!(box.bounds)
   }
 }
 

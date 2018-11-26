@@ -8,7 +8,6 @@ import mythic.platforming.WindowInfo
 import mythic.spatial.*
 import org.joml.minus
 import rendering.createCameraEffectsData
-import scenery.Camera
 import simulation.Realm
 
 data class MapViewCamera(
@@ -63,7 +62,8 @@ private fun getFaceHits(start: Vector3, end: Vector3, world: Realm): List<Hit> {
   }
 }
 
-private fun castSelectionRay(config: MapViewConfig, camera: Camera, world: Realm, mousePosition: Vector2, bounds: Bounds) {
+private fun castSelectionRay(config: MapViewConfig, world: Realm, mousePosition: Vector2, bounds: Bounds) {
+  val camera = createTopDownCamera(config.camera)
   val dimensions = bounds.dimensions
   val cursor = mousePosition.toVector2i() - bounds.position
   val cameraData = createCameraEffectsData(dimensions, camera)
@@ -94,13 +94,13 @@ private fun trySelect(config: MapViewConfig, world: Realm) {
   }
 }
 
-fun updateMapState(config: MapViewConfig, world: Realm, camera: Camera, input: LabCommandState, windowInfo: WindowInfo, delta: Float) {
+fun updateMapState(config: MapViewConfig, world: Realm, input: LabCommandState, windowInfo: WindowInfo, delta: Float) {
   val commands = input.commands
 
   if (isActive(commands, LabCommandType.select)) {
     val bounds = Bounds(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
     config.raySkip = 0
-    castSelectionRay(config, camera, world, input.mousePosition, bounds)
+    castSelectionRay(config, world, input.mousePosition, bounds)
     trySelect(config, world)
   }
 

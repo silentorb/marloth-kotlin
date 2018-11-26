@@ -1,5 +1,6 @@
-package lab
+package lab.utility
 
+import lab.LabApp
 import rendering.*
 import java.io.File
 import java.net.URI

@@ -8,6 +8,7 @@ import front.loadGameConfig
 import front.setWorldMesh
 import generation.addEnemies
 import generation.generateWorld
+import lab.utility.updateWatching
 import lab.views.game.GameViewConfig
 import lab.views.game.updateLabWorld
 import lab.views.model.newModelViewState

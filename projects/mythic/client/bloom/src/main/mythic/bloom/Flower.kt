@@ -1,28 +1,23 @@
 package mythic.bloom
 
-typealias ParentArranger = (List<Bounds>) -> Bounds
-typealias ChildArranger = (Bounds) -> Bounds
-typealias Appearance = (Bounds) -> Unit
-typealias EventEmitter = (Bounds) -> Any
+typealias FixedChildArranger = (Bounds) -> List<Bounds>
+typealias ParentFlower = (Bounds, List<Flower>) -> Boxes
+typealias Flower = (Bounds) -> Boxes
 
-//data class ParentFlower(
-//    val arranger: ParentArranger?,
-//    val appearance: Appearance?,
-//    val emitter: EventEmitter?
-//)
-//
-//data class ChildFlower(
-//    val arranger: ChildArranger,
-//    val appearance: Appearance?,
-//    val emitter: EventEmitter?
-//)
+fun horizontal(padding: Int, lengths: List<Int?>): FixedChildArranger = { bounds ->
+  arrangeHorizontal(padding)(bounds, resolveLengths(bounds.dimensions.x, lengths))
+}
 
-data class Garden(
-    val nextId: Id,
-    val parentArrangers: Map<Id, ParentArranger>,
-    val childArrangers: Map<Id, ChildArranger>,
-    val appearances: Map<Id, Appearance>,
-    val emitters: Map<Id, EventEmitter>
-)
+fun arrangeChildren(arranger: FixedChildArranger, bounds: Bounds, children: List<Flower>): Boxes =
+    arranger(bounds).zip(children) { b, child -> child(b) }
+        .flatten()
 
-val newParentFlower = {}
+fun arrangeChildren(arranger: FixedChildArranger): ParentFlower = { bounds, children ->
+  arrangeChildren(arranger, bounds, children)
+}
+
+fun depict(depiction: Depiction): Flower = { b ->
+  listOf(
+      Box(b, depiction = depiction)
+  )
+}

@@ -8,7 +8,7 @@ fun fixed(bounds: Bounds): Arranger = fixed(convertBounds(bounds))
 
 val inherit: Arranger = { (_, s, c) -> Pair(s, c) }
 
-fun hlist(lengths: List<Int?>): Arranger {
+fun hlistOld(lengths: List<Int?>): Arranger {
   return { (p, s, c) ->
     if (isResolved(p))
       Pair(p,

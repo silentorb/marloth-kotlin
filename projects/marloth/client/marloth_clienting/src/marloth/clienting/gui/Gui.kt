@@ -4,7 +4,6 @@ import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
 import mythic.glowing.globalState
-import mythic.spatial.Vector2
 import mythic.spatial.Vector4
 import mythic.spatial.toVector2
 import mythic.spatial.toVector2i
@@ -20,15 +19,15 @@ data class ButtonState(
     val hasFocus: Boolean
 )
 
-fun depictBackground(backgroundColor: Vector4): Depiction = { b: Bounds, canvas: Canvas ->
+fun depictBackground(backgroundColor: Vector4): DepictionOld = { b: Bounds, canvas: Canvas ->
   globalState.depthEnabled = false
   drawFill(b, canvas, backgroundColor)
   drawBorder(b, canvas, Vector4(0f, 0f, 0f, 1f))
 }
 
-val menuBackground: Depiction = depictBackground(grayTone(0.5f))
+val menuBackground: DepictionOld = depictBackground(grayTone(0.5f))
 
-fun drawMenuButton(state: ButtonState): Depiction = { bounds: Bounds, canvas: Canvas ->
+fun drawMenuButton(state: ButtonState): DepictionOld = { bounds: Bounds, canvas: Canvas ->
   //  menuBackground(bounds, canvas)
   globalState.depthEnabled = false
   drawFill(bounds, canvas, grayTone(0.5f))

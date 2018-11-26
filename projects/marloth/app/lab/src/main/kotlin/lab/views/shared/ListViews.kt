@@ -7,7 +7,6 @@ import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
 import mythic.glowing.globalState
-import mythic.spatial.Vector2
 import mythic.spatial.Vector4
 import mythic.spatial.toVector2
 import mythic.spatial.toVector2i
@@ -17,7 +16,7 @@ import mythic.typography.calculateTextDimensions
 import org.joml.Vector2i
 
 
-fun drawListItem(text: String, isSelected: Boolean): Depiction = { bounds: Bounds, canvas: Canvas ->
+fun drawListItem(text: String, isSelected: Boolean): DepictionOld = { bounds: Bounds, canvas: Canvas ->
   globalState.depthEnabled = false
   drawFill(bounds, canvas, grayTone(0.5f))
   val style = if (isSelected)
