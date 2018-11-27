@@ -19,4 +19,4 @@ fun embedCameraView(b: Bounds, action: (Vector4i) -> Unit) {
 }
 
 fun depictScene(action: (Vector4i) -> Unit): Flower =
-    depict { embedCameraView(it, action) }
+    depict { b, c -> embedCameraView(b, action) }

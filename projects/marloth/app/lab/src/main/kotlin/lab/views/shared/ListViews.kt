@@ -16,7 +16,7 @@ import mythic.typography.calculateTextDimensions
 import org.joml.Vector2i
 
 
-fun drawListItem(text: String, isSelected: Boolean): DepictionOld = { bounds: Bounds, canvas: Canvas ->
+fun drawListItem(text: String, isSelected: Boolean): Depiction = { bounds: Bounds, canvas: Canvas ->
   globalState.depthEnabled = false
   drawFill(bounds, canvas, grayTone(0.5f))
   val style = if (isSelected)
@@ -31,7 +31,7 @@ fun drawListItem(text: String, isSelected: Boolean): DepictionOld = { bounds: Bo
   val textDimensions = calculateTextDimensions(textConfig).toVector2i()
   val centered = centeredPosition(bounds, textDimensions)
   val position = Vector2i(bounds.position.x + 10, centered.y)
-  canvas.drawText(text, position, blackStyle)
+  canvas.drawText(position, blackStyle, text)
 }
 
 data class SelectableItem(
@@ -51,7 +51,7 @@ fun drawSelectableList(items: List<SelectableItem>, list: SelectableListType, bo
         PartialBox(itemHeight, drawListItem(it.name, it.isSelected))
       }
 
-  val buttonBoxes = arrangeListComplex(arrangeVertical(padding), partialBoxes, bounds)
+  val buttonBoxes = arrangeListComplex(vertical(padding), partialBoxes, bounds)
   val boxes = listOf(
       Box(bounds, drawSidePanel())
   )

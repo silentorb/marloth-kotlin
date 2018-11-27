@@ -235,7 +235,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     val middle = { b: Bounds -> Box(b, drawScenePanel(config, state, renderer, model, camera)) }
     val right = { b: Bounds -> Box(b, drawInfoPanel(config, renderer, model, mousePosition)) }
     val lengths = resolveLengths(dimensions.x, initialLengths)
-    val panelBounds = arrangeHorizontal(0)(bounds, lengths)
+    val panelBounds = horizontal(0)(bounds, lengths)
     val boxes = panelBounds.drop(1)
         .zip(listOf(middle, right), { b, p -> p(b) })
 

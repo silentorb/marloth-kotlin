@@ -174,13 +174,13 @@ class Canvas(
     drawTextRaw(config, effects.coloredImage, vertexSchemas.image, transform)
   }
 
-  fun drawText(content: String, position: Vector2, style: TextStyle) {
+  fun drawText(position: Vector2, style: TextStyle, content: String) {
     val transform = prepareTextMatrix(pixelsToScalar, position)
     drawTextRaw(TextConfiguration(content, position, style), effects.coloredImage, vertexSchemas.image, transform)
   }
 
-  fun drawText(content: String, position: Vector2i, style: TextStyle) =
-      drawText(content, position.toVector2(), style)
+  fun drawText(position: Vector2i, style: TextStyle, content: String) =
+      drawText(position.toVector2(), style, content)
 
   fun crop(value: Vector4i, action: () -> Unit) = cropStack(value, action)
 }

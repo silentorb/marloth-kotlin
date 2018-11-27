@@ -97,9 +97,9 @@ fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Can
 //    if (node.floors.any()) {
       val position = getNodePosition(node)
       // + " " + node.floors.first().unorderedVertices.size.toString()
-      canvas.drawText(node.id.toString(),
-          position,
-          style)
+      canvas.drawText(position,
+          style,
+          node.id.toString())
 //    }
   }
 

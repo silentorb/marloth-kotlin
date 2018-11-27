@@ -210,7 +210,7 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
   }
 }
 
-fun drawBackground(backgroundColor: Vector4): DepictionOld = { b: Bounds, canvas: Canvas ->
+fun drawBackground(backgroundColor: Vector4): Depiction = { b: Bounds, canvas: Canvas ->
   globalState.depthEnabled = false
   drawFill(b, canvas, backgroundColor)
   drawBorder(b, canvas, Vector4(0f, 0f, 0f, 1f))

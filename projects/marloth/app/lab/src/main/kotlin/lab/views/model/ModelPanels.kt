@@ -9,7 +9,7 @@ import lab.views.shared.drawSelectableList
 import mythic.bloom.Bounds
 import mythic.bloom.Box
 import mythic.bloom.ClickBox
-import mythic.bloom.DepictionOld
+import mythic.bloom.Depiction
 import mythic.drawing.Canvas
 import mythic.spatial.Vector2
 import mythic.spatial.toString
@@ -21,20 +21,20 @@ import rendering.MeshType
 import rendering.Renderer
 import scenery.Camera
 
-fun drawScenePanel(config: ModelViewConfig, state: ModelViewState, renderer: Renderer, model: AdvancedModel, camera: Camera): DepictionOld = { b: Bounds, canvas: Canvas ->
+fun drawScenePanel(config: ModelViewConfig, state: ModelViewState, renderer: Renderer, model: AdvancedModel, camera: Camera): Depiction = { b: Bounds, canvas: Canvas ->
   drawBackground(sceneBackgroundColor)(b, canvas)
   drawModelPreview(config, state, renderer, b, camera, model)
 }
 
 fun drawSidePanel() = drawBackground(panelColor)
 fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: AdvancedModel,
-                  mousePosition: Vector2): DepictionOld = { bounds: Bounds, canvas: Canvas ->
+                  mousePosition: Vector2): Depiction = { bounds: Bounds, canvas: Canvas ->
   drawSidePanel()(bounds, canvas)
   var row = 1
 
   val textStyle = TextStyle(canvas.fonts[0], 12f, black)
   fun drawText(content: String) {
-    canvas.drawText(content, bounds.position + Vector2i(5, 5 + row++ * 20), textStyle)
+    canvas.drawText(bounds.position + Vector2i(5, 5 + row++ * 20), textStyle, content)
   }
   drawText("Mouse: " + mousePosition.x.toString() + ", " + mousePosition.y.toString())
 //  canvas.drawText(TextConfiguration("Mouse: " + mousePosition.x.toString() + ", " + mousePosition.y.toString(),

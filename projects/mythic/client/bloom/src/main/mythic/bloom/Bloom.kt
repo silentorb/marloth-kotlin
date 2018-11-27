@@ -49,8 +49,7 @@ data class Bounds(
 //  fun toVector4i() = Vector4i(position.x.toInt(), position.y.toInt(), dimensions.x.toInt(), dimensions.y.toInt())
 //}
 
-typealias DepictionOld = (Bounds, Canvas) -> Unit
-typealias Depiction = (Bounds) -> Unit
+typealias Depiction = (Bounds, Canvas) -> Unit
 
 interface Plane {
   fun x(value: Vector2i): Int
@@ -82,7 +81,6 @@ val verticalPlane = VerticalPlane()
 
 data class Box(
     val bounds: Bounds,
-    val depictionOld: DepictionOld? = null,
     val depiction: Depiction? = null,
     val handler: Any? = null
 )
@@ -96,7 +94,7 @@ data class ClickBox<T>(
 
 data class PartialBox(
     val length: Int,
-    val depiction: DepictionOld? = null,
+    val depiction: Depiction? = null,
     val handler: Any? = null
 )
 
@@ -193,27 +191,27 @@ val measuredHorizontalArrangement: MeasuredLengthArrangement = { bounds: Vector2
 //  listMeasuredBounds(verticalPlane, lengths, bounds)
 //}
 
-fun arrangeHorizontal(padding: Int): LengthArrangement = { bounds: Bounds, lengths: List<Int> ->
+fun horizontal(padding: Int): LengthArrangement = { bounds: Bounds, lengths: List<Int> ->
   listBounds(horizontalPlane, padding, bounds, lengths)
 }
 
-fun arrangeVertical(padding: Int): LengthArrangement = { bounds: Bounds, lengths: List<Int> ->
+fun vertical(padding: Int): LengthArrangement = { bounds: Bounds, lengths: List<Int> ->
   listBounds(verticalPlane, padding, bounds, lengths)
 }
 
 fun arrange(plane: Plane, padding: Int, bounds: Bounds, lengths: List<Int?>): List<Bounds> =
     listBounds(plane, padding, bounds, resolveLengths(plane.x(bounds.dimensions), lengths))
 
-fun arrangeVertical(padding: Int, bounds: Bounds, lengths: List<Int?>): List<Bounds> =
+fun vertical(padding: Int, bounds: Bounds, lengths: List<Int?>): List<Bounds> =
     arrange(verticalPlane, padding, bounds, lengths)
 
-fun arrangeHorizontal(padding: Int, bounds: Bounds, lengths: List<Int?>): List<Bounds> =
+fun horizontal(padding: Int, bounds: Bounds, lengths: List<Int?>): List<Bounds> =
     arrange(horizontalPlane, padding, bounds, lengths)
 
-//fun arrangeVertical(padding: Int, bounds: Bounds, lengths: List<Int>) =
+//fun vertical(padding: Int, bounds: Bounds, lengths: List<Int>) =
 //    listLengths(verticalPlane, padding, lengths, bounds)
 
-fun arrangeMeasuredList(arrangement: MeasuredLengthArrangement, panels: List<Pair<Measurement, DepictionOld>>, bounds: Vector2i): List<Box> {
+fun arrangeMeasuredList(arrangement: MeasuredLengthArrangement, panels: List<Pair<Measurement, Depiction>>, bounds: Vector2i): List<Box> {
   return arrangement(bounds, panels.map { it.first })
       .zip(panels, { a, b -> Box(a, b.second) })
 }
@@ -258,7 +256,7 @@ fun drawFill(bounds: Bounds, canvas: Canvas, color: Vector4) {
 }
 
 fun applyBounds(bounds: Bounds, box: Box): Box =
-    Box(Bounds(box.bounds.position + bounds.position, box.bounds.dimensions), box.depictionOld)
+    Box(Bounds(box.bounds.position + bounds.position, box.bounds.dimensions), box.depiction)
 
 fun applyBounds(bounds: Bounds) = { box: Box -> applyBounds(bounds, box) }
 
@@ -270,10 +268,8 @@ fun renderLayout(layout: LayoutOld, canvas: Canvas) {
   globalState.blendFunction = Pair(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
 
   for (box in layout) {
-    if (box.depictionOld != null)
-      box.depictionOld!!(box.bounds, canvas)
     if (box.depiction != null)
-      box.depiction!!(box.bounds)
+      box.depiction!!(box.bounds, canvas)
   }
 }
 
