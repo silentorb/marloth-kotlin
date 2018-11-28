@@ -11,17 +11,13 @@ import org.lwjgl.opengl.GL11
 
 enum class Measurements {
   stretch,
-  //  shrink,
-//  percent,
   pixel
 }
 
 data class Measurement(
     val type: Measurements,
     val value: Int
-) {
-  constructor(value: Int) : this(Measurements.pixel, value)
-}
+)
 
 data class Bounds(
     val position: Vector2i = Vector2i(),
@@ -33,21 +29,10 @@ data class Bounds(
   constructor(values: Vector4i) :
       this(Vector2i(values.x, values.y), Vector2i(values.z, values.w))
 
-  fun toVector4i() = Vector4i(position.x.toInt(), position.y.toInt(), dimensions.x.toInt(), dimensions.y.toInt())
-}
+  val end: Vector2i = position + dimensions
 
-//data class Bounds(
-//    val position: Vector2i = Vector2i(),
-//    val dimensions: Vector2i
-//) {
-//  constructor(x: Int, y: Int, width: Int, height: Int) :
-//      this(Vector2i(x, y), Vector2i(width, height))
-//
-//  constructor(values: Vector4i) :
-//      this(Vector2i(values.x, values.y), Vector2i(values.z, values.w))
-//
-//  fun toVector4i() = Vector4i(position.x.toInt(), position.y.toInt(), dimensions.x.toInt(), dimensions.y.toInt())
-//}
+  fun toVector4i() = Vector4i(position.x, position.y, dimensions.x, dimensions.y)
+}
 
 typealias Depiction = (Bounds, Canvas) -> Unit
 
@@ -126,22 +111,6 @@ fun solveMeasurements(plane: Plane, lengths: List<Measurement>, bounds: Vector2i
   }
 }
 
-//fun resolveLengths(boundLength: Int, lengths: List<Int?>): List<Int> {
-//  val exacts = lengths.filterNotNull()
-//  val total = exacts.sum()
-//
-//  if (exacts.size == lengths.size) {
-//    if (total != boundLength)
-//      throw Error("Could not stretch or shrink to fit bounds")
-//
-//    return exacts
-//  } else {
-//    val stretchCount = lengths.size - exacts.size
-//    val stretchLength = (boundLength - total) / stretchCount
-//    return lengths.map { if (it != null) it else stretchLength }
-//  }
-//}
-
 fun listMeasuredBounds(plane: Plane, lengths: List<Measurement>, bounds: Vector2i): List<Bounds> {
   var progress = 0
   return solveMeasurements(plane, lengths, bounds).map {
@@ -170,15 +139,6 @@ fun listBounds(plane: Plane, padding: Int, bounds: Bounds, lengths: List<Int>): 
 
 fun listContentLength(padding: Int, lengths: Collection<Int>): Int =
     lengths.sum() + (lengths.size + 1) * padding
-//
-//fun listLengths(padding: Int, lengths: Collection<Int>): List<Int> {
-//  var offset = 0f
-//  return lengths.map {
-//    val result = offset
-//    offset += padding + it
-//    result
-//  }
-//}
 
 typealias MeasuredLengthArrangement = (bounds: Vector2i, lengths: List<Measurement>) -> List<Bounds>
 typealias LengthArrangement = (bounds: Bounds, lengths: List<Int>) -> List<Bounds>
@@ -186,10 +146,6 @@ typealias LengthArrangement = (bounds: Bounds, lengths: List<Int>) -> List<Bound
 val measuredHorizontalArrangement: MeasuredLengthArrangement = { bounds: Vector2i, lengths: List<Measurement> ->
   listMeasuredBounds(horizontalPlane, lengths, bounds)
 }
-
-//val measuredVerticalArrangement: MeasuredLengthArrangement = { bounds: Vector2i, lengths: List<Measurement> ->
-//  listMeasuredBounds(verticalPlane, lengths, bounds)
-//}
 
 fun horizontal(padding: Int): LengthArrangement = { bounds: Bounds, lengths: List<Int> ->
   listBounds(horizontalPlane, padding, bounds, lengths)
@@ -208,9 +164,6 @@ fun vertical(padding: Int, bounds: Bounds, lengths: List<Int?>): List<Bounds> =
 fun horizontal(padding: Int, bounds: Bounds, lengths: List<Int?>): List<Bounds> =
     arrange(horizontalPlane, padding, bounds, lengths)
 
-//fun vertical(padding: Int, bounds: Bounds, lengths: List<Int>) =
-//    listLengths(verticalPlane, padding, lengths, bounds)
-
 fun arrangeMeasuredList(arrangement: MeasuredLengthArrangement, panels: List<Pair<Measurement, Depiction>>, bounds: Vector2i): List<Box> {
   return arrangement(bounds, panels.map { it.first })
       .zip(panels, { a, b -> Box(a, b.second) })
@@ -220,11 +173,6 @@ fun arrangeListComplex(arrangement: LengthArrangement, panels: List<PartialBox>,
   return arrangement(bounds, panels.map { it.length })
       .zip(panels, { a, b -> Box(a, b.depiction) })
 }
-
-//fun arrangeList(arrangement: LengthArrangement, panels: List<Int>, bounds: Bounds): List<Bounds> {
-//  return arrangement(bounds, panels)
-////      .zip(panels, { a, b -> Box(a, b.depiction) })
-//}
 
 fun centeredPosition(boundsLength: Int, length: Int): Int =
     (boundsLength - length) / 2
@@ -268,8 +216,9 @@ fun renderLayout(layout: LayoutOld, canvas: Canvas) {
   globalState.blendFunction = Pair(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
 
   for (box in layout) {
-    if (box.depiction != null)
-      box.depiction!!(box.bounds, canvas)
+    val depiction = box.depiction
+    if (depiction != null)
+      depiction(box.bounds, canvas)
   }
 }
 

@@ -23,7 +23,7 @@ import scenery.Camera
 
 fun drawScenePanel(config: ModelViewConfig, state: ModelViewState, renderer: Renderer, model: AdvancedModel, camera: Camera): Depiction = { b: Bounds, canvas: Canvas ->
   drawBackground(sceneBackgroundColor)(b, canvas)
-  drawModelPreview(config, state, renderer, b, camera, model)
+  drawModelPreview(config, state, renderer, camera, model)(b, canvas)
 }
 
 fun drawSidePanel() = drawBackground(panelColor)

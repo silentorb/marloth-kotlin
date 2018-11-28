@@ -4,6 +4,7 @@ import lab.utility.embedCameraView
 import lab.views.game.renderFaceNormals
 import marloth.clienting.Client
 import mythic.bloom.Bounds
+import mythic.bloom.Depiction
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
 import mythic.spatial.*
@@ -125,7 +126,7 @@ fun createTopDownCamera(camera: MapViewCamera): Camera {
   )
 }
 
-fun renderMapView(client: Client, realm: Realm, config: MapViewConfig) = { viewport: Vector4i ->
+fun renderMapView(client: Client, realm: Realm, config: MapViewConfig):Depiction = { b, c ->
   val camera = createTopDownCamera(config.camera)
   val windowInfo = client.getWindowInfo()
   val renderer = client.renderer
@@ -135,7 +136,7 @@ fun renderMapView(client: Client, realm: Realm, config: MapViewConfig) = { viewp
       camera = camera,
       lights = listOf()
   )
-  val sceneRenderer = renderer.createSceneRenderer(scene, viewport)
+  val sceneRenderer = renderer.createSceneRenderer(scene, b.toVector4i())
   renderMapMesh(sceneRenderer, realm, config)
   renderer.finishRender(windowInfo)
 }

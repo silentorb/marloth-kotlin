@@ -21,7 +21,7 @@ private val nodeRow: ListItem<Node> = ListItem(20) { node ->
   depict(label(textStyle, node.id.toString()))
 }
 
-private val nodeList: ListFlower<Node> = list(vertical(15), nodeRow)
+private val nodeList: ListFlower<Node> = wrap(scrolling, list(vertical(15), nodeRow))
 
 private fun rightPanel(realm: Realm): Flower = nodeList(realm.nodeList)
 

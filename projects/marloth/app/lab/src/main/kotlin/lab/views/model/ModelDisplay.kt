@@ -128,9 +128,9 @@ fun drawSelection(config: ModelViewConfig, model: Model, sceneRenderer: SceneRen
   }
 }
 
-fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: Renderer, b: Bounds, camera: Camera, model: AdvancedModel) {
-  embedCameraView(b) { viewport ->
-    val sceneRenderer = renderer.createSceneRenderer(Scene(camera), viewport)
+fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: Renderer, camera: Camera, model: AdvancedModel): Depiction {
+  return embedCameraView { b, c ->
+    val sceneRenderer = renderer.createSceneRenderer(Scene(camera), b.toVector4i())
     val transform = Matrix()
 
     val armature = model.armature
