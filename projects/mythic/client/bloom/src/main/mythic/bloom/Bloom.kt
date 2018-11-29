@@ -2,6 +2,7 @@ package mythic.bloom
 
 import mythic.drawing.Canvas
 import mythic.glowing.globalState
+import mythic.spatial.Vector2
 import mythic.spatial.Vector4
 import mythic.spatial.toVector2
 import org.joml.Vector2i
@@ -36,38 +37,27 @@ data class Bounds(
 
 typealias Depiction = (Bounds, Canvas) -> Unit
 
-interface Plane {
-  fun x(value: Vector2i): Int
-  fun y(value: Vector2i): Int
+typealias StateBag = Map<String, Any>
 
-  fun vector(first: Int, second: Int): Vector2i
-  fun vector(value: Vector2i): Vector2i
-}
+typealias StateBagMods = StateBag
 
-class HorizontalPlane : Plane {
-  override fun x(value: Vector2i) = value.x
-  override fun y(value: Vector2i) = value.y
+data class BloomState(
+    val bag: StateBag,
+    val input: InputState
+)
 
-  override fun vector(first: Int, second: Int): Vector2i = Vector2i(first, second)
+data class HistoricalBloomState(
+    val bag: StateBag,
+    val input: HistoricalInputState
+)
 
-  override fun vector(value: Vector2i): Vector2i = value
-}
-
-class VerticalPlane : Plane {
-  override fun x(value: Vector2i) = value.y
-  override fun y(value: Vector2i) = value.x
-
-  override fun vector(first: Int, second: Int): Vector2i = Vector2i(second, first)
-  override fun vector(value: Vector2i): Vector2i = Vector2i(value.y, value.x)
-}
-
-val horizontalPlane = HorizontalPlane()
-val verticalPlane = VerticalPlane()
+typealias LogicModule = (HistoricalBloomState, Bounds) -> StateBagMods
 
 data class Box(
     val bounds: Bounds,
     val depiction: Depiction? = null,
-    val handler: Any? = null
+    val handler: Any? = null,
+    val logic: LogicModule? = null
 )
 
 typealias Boxes = List<Box>

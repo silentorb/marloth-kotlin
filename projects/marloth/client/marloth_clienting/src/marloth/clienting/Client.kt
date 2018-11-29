@@ -3,8 +3,10 @@ package marloth.clienting
 import marloth.clienting.gui.MenuState
 import marloth.clienting.gui.initialMenuState
 import marloth.clienting.gui.updateMenu
-import mythic.platforming.PlatformDisplayConfig
+import mythic.bloom.BloomState
+import mythic.bloom.ButtonState
 import mythic.platforming.Platform
+import org.joml.Vector2i
 import rendering.DisplayConfig
 import rendering.Renderer
 import scenery.Screen
@@ -13,7 +15,8 @@ val maxPlayerCount = 4
 
 data class ClientState(
     val input: InputState,
-    val menu: MenuState
+    val menu: MenuState,
+    val bloomState: BloomState
 )
 
 fun newClientState(config: GameInputConfig) =
@@ -24,7 +27,14 @@ fun newClientState(config: GameInputConfig) =
             gameProfiles = defaultGameInputProfiles(),
             menuProfiles = defaultMenuInputProfiles()
         ),
-        menu = initialMenuState()
+        menu = initialMenuState(),
+        bloomState = BloomState(
+            bag = mapOf(),
+            input = mythic.bloom.InputState(
+                mousePosition = Vector2i(),
+                mouseButtons = listOf(ButtonState.up)
+            )
+        )
     )
 
 class Client(val platform: Platform, displayConfig: DisplayConfig) {

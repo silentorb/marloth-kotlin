@@ -11,8 +11,8 @@ import lab.views.model.ModelViewState
 import lab.views.world.WorldView
 import marloth.clienting.Client
 import marloth.clienting.ClientState
-import mythic.bloom.Box
-import mythic.bloom.renderLayout
+import marloth.clienting.newBloomInputState
+import mythic.bloom.*
 import mythic.platforming.PlatformInput
 import mythic.platforming.WindowInfo
 import mythic.spatial.Vector2
@@ -148,11 +148,24 @@ class LabClient(val config: LabConfig, val client: Client) {
     val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
     val input = getInputState(client.platform.input, commands)
     updateMapState(config.mapView, world.realm, input, windowInfo, delta)
-    val layout = mapLayout(windowInfo.dimensions, client, world.realm, config.mapView)
-    renderLab(windowInfo, layout)
+    val layout = mapLayout(client, world.realm, config.mapView)
+    val boxes = layout(Seed(
+        bag = previousState.gameClientState.bloomState.bag,
+        bounds = Bounds(dimensions = windowInfo.dimensions)
+    ))
+    renderLab(windowInfo, boxes)
+
+    val bloomInputState = newBloomInputState(client.platform.input)
+    val newBloomState = updateBloomState(boxes, previousState.gameClientState.bloomState, bloomInputState)
+
     return LabClientResult(
         listOf(),
-        previousState.copy(labInput = nextLabInputState)
+        previousState.copy(
+            labInput = nextLabInputState,
+            gameClientState = previousState.gameClientState.copy(
+                bloomState = newBloomState
+            )
+        )
     )
   }
 

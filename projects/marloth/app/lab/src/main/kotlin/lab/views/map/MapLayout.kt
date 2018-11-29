@@ -21,14 +21,12 @@ private val nodeRow: ListItem<Node> = ListItem(20) { node ->
   depict(label(textStyle, node.id.toString()))
 }
 
-private val nodeList: ListFlower<Node> = wrap(scrolling, list(vertical(15), nodeRow))
+private val nodeList: ListFlower<Node> = wrap(scrolling("nodeList"), list(vertical(15), nodeRow))
 
 private fun rightPanel(realm: Realm): Flower = nodeList(realm.nodeList)
 
-fun mapLayout(dimensions: Vector2i, client: Client, realm: Realm, config: MapViewConfig): List<Box> {
-  val bounds = Bounds(dimensions = dimensions)
-
-  return mainPanel(bounds, listOf(
+fun mapLayout(client: Client, realm: Realm, config: MapViewConfig): Flower {
+  return mainPanel(listOf(
       mapDisplay(client, realm, config),
       rightPanel(realm)
   ))

@@ -1,8 +1,10 @@
 package marloth.clienting
 
 import haft.*
+import mythic.bloom.ButtonState
 import mythic.platforming.PlatformInput
 import mythic.spatial.Vector2
+import mythic.spatial.toVector2i
 import org.joml.Vector2i
 import org.joml.minus
 
@@ -204,3 +206,14 @@ fun getCommandState(deviceState: InputDeviceState, config: GameInputConfig, play
   previousMousePosition = mousePosition
   return input
 }
+
+fun newBloomInputState(input: PlatformInput) =
+    mythic.bloom.InputState(
+        mousePosition = input.getMousePosition().toVector2i(),
+        mouseButtons = listOf(
+            if (input.MouseInputSource(0) == 1f)
+              ButtonState.down
+            else
+              ButtonState.up
+        )
+    )

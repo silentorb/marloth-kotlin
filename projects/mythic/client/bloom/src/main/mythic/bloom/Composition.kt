@@ -8,13 +8,13 @@ fun <A, B> wrap(outer: (A) -> A, inner: (B) -> A): (B) -> A =
 fun join(first: Flower, second: Flower): Flower =
     { first(it).plus(second(it)) }
 
-fun joinChildren(child: Flower, parent: (Bounds) -> Flower): Flower =
+fun joinChildren(child: Flower, parent: (Seed) -> Flower): Flower =
     {
       val childBoxes = child(it)
       val start = childBoxes.first().bounds.position
       val end = childBoxes.last().bounds.end
       val childBounds = Bounds(start, end - start)
 
-      parent(childBounds)(it)
+      parent(Seed(it.bag, childBounds))(it)
           .plus(childBoxes)
     }
