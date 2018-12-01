@@ -5,17 +5,19 @@ import org.joml.Vector2i
 import org.joml.plus
 
 fun scrollbar(offset: Int, contentLength: Int): Depiction = { b, c ->
-  val width = 15
-  val bounds = Bounds(
-      x = b.end.x - width - 2,
-      y = offset * b.dimensions.y / contentLength,
-      width = width,
-      height = b.dimensions.y * b.dimensions.y / contentLength
-  )
+  if (contentLength > b.dimensions.y) {
+    val width = 15
+    val bounds = Bounds(
+        x = b.end.x - width - 2,
+        y = offset * b.dimensions.y / contentLength,
+        width = width,
+        height = b.dimensions.y * b.dimensions.y / contentLength
+    )
 
-  val viewport = bounds.toVector4i().toVector4()
+    val viewport = bounds.toVector4i().toVector4()
 
-  c.drawSquare(viewport.xy(), viewport.zw, c.solid(Vector4(0.6f, 0.6f, 0.6f, 1f)))
+    c.drawSquare(viewport.xy(), viewport.zw, c.solid(Vector4(0.6f, 0.6f, 0.6f, 1f)))
+  }
 }
 
 fun clipChildren(child: Flower): Flower = { s ->
@@ -42,11 +44,11 @@ data class ScrollingState(
 )
 
 val scrollingState = getExistingOrNewState {
-        ScrollingState(
-          dragOrigin = null,
-          offsetOrigin = 0,
-          offset = 0
-      )
+  ScrollingState(
+      dragOrigin = null,
+      offsetOrigin = 0,
+      offset = 0
+  )
 }
 
 fun extractOffset(key: String, input: (Vector2i) -> Flower): Flower = { seed ->
@@ -55,33 +57,37 @@ fun extractOffset(key: String, input: (Vector2i) -> Flower): Flower = { seed ->
 }
 
 fun scrollingInteraction(key: String, contentBounds: Bounds): LogicModule = { bloomState, bounds ->
-  val state = scrollingState(bloomState.bag[key])
-  val input = bloomState.input
-  val currentButton = input.current.mouseButtons[0]
-  val previousButton = input.previous.mouseButtons[0]
+  if (contentBounds.dimensions.y <= bounds.dimensions.y) {
+    mapOf()
+  } else {
+    val state = scrollingState(bloomState.bag[key])
+    val input = bloomState.input
+    val currentButton = input.current.mouseButtons[0]
+    val previousButton = input.previous.mouseButtons[0]
 
-  val (dragOrigin, offsetOrigin) = if (currentButton == ButtonState.down && previousButton == ButtonState.up
-      && isInBounds(input.current.mousePosition, bounds))
-    Pair(input.current.mousePosition, state.offset)
-  else if (currentButton == ButtonState.up)
-    Pair(null, state.offset)
-  else
-    Pair(state.dragOrigin, state.offsetOrigin)
+    val (dragOrigin, offsetOrigin) = if (currentButton == ButtonState.down && previousButton == ButtonState.up
+        && isInBounds(input.current.mousePosition, bounds))
+      Pair(input.current.mousePosition, state.offset)
+    else if (currentButton == ButtonState.up)
+      Pair(null, state.offset)
+    else
+      Pair(state.dragOrigin, state.offsetOrigin)
 
-  val offset = if (dragOrigin != null) {
-    val mouseOffsetY = input.current.mousePosition.y - dragOrigin.y
-    val mod = offsetOrigin + mouseOffsetY * contentBounds.dimensions.y / bounds.dimensions.y
+    val offset = if (dragOrigin != null) {
+      val mouseOffsetY = input.current.mousePosition.y - dragOrigin.y
+      val mod = offsetOrigin + mouseOffsetY * contentBounds.dimensions.y / bounds.dimensions.y
 //    println(mod)
-    minMax(0, contentBounds.dimensions.y - bounds.dimensions.y, mod)
-  } else
-    state.offset
+      minMax(0, contentBounds.dimensions.y - bounds.dimensions.y, mod)
+    } else
+      state.offset
 
-  val newState = ScrollingState(
-      dragOrigin = dragOrigin,
-      offsetOrigin = offsetOrigin,
-      offset = offset
-  )
-  mapOf(key to newState)
+    val newState = ScrollingState(
+        dragOrigin = dragOrigin,
+        offsetOrigin = offsetOrigin,
+        offset = offset
+    )
+    mapOf(key to newState)
+  }
 }
 
 fun scrollBox(key: String, contentBounds: Bounds): Flower = { s ->
