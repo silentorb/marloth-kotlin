@@ -1,27 +1,45 @@
 package lab.views.map
 
-import lab.utility.black
 import lab.utility.depictScene
 import lab.utility.white
 import marloth.clienting.Client
 import mythic.bloom.*
-import org.joml.Vector2i
+import mythic.drawing.grayTone
 import simulation.Node
 import simulation.Realm
 
-private val textStyle = resolve(DeferredTextStyle(0, 12f, white))
+private val textStyle = resolve(DeferredTextStyle(0, 12f, grayTone(0.7f)))
+
+private val selectedTextStyle = resolve(DeferredTextStyle(0, 12f, white))
 
 private val mainPanel: ParentFlower =
-    arrangeChildren(horizontal(0, listOf(null, 200)))
+    applyBounds(horizontal(0, listOf(null, 200)))
 
 private fun mapDisplay(client: Client, realm: Realm, config: MapViewConfig): Flower =
     depictScene(renderMapView(client, realm, config))
 
 private val nodeRow: ListItem<Node> = ListItem(20) { node ->
-  depict(label(textStyle, node.id.toString()))
+  depictSelectable(nodeListSelectionKey, node.id.toString()) { seed, selected ->
+    val style = if (selected)
+      selectedTextStyle
+    else
+      textStyle
+
+    label(style, node.id.toString())
+  }
 }
 
-private val nodeList: ListFlower<Node> = wrap(scrolling("nodeList"), list(vertical(15), nodeRow))
+//private val selectableNodes = selectable<Node>(optionalSingleSelection) { it.id.toString() }
+
+const val nodeListSelectionKey = "nodeList-selection"
+
+private val nodeList: ListFlower<Node> = wrap(
+    scrolling("nodeList-scrolling"),
+    list(
+        children(vertical(15), nodeRow),
+        selectable(nodeListSelectionKey, optionalSingleSelection) { it.id.toString() }
+    )
+)
 
 private fun rightPanel(realm: Realm): Flower = nodeList(realm.nodeList)
 

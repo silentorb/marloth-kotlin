@@ -18,10 +18,10 @@ fun scrollbar(offset: Int, contentLength: Int): Depiction = { b, c ->
   c.drawSquare(viewport.xy(), viewport.zw, c.solid(Vector4(0.6f, 0.6f, 0.6f, 1f)))
 }
 
-fun clipChildren(child: Flower): Flower = { b ->
-  child(b).map { box ->
+fun clipChildren(child: Flower): Flower = { s ->
+  child(s).map { box ->
     val depiction = if (box.depiction != null)
-      clip(b.bounds, box.depiction)
+      clip(s.bounds, box.depiction)
     else
       null
 
@@ -41,15 +41,13 @@ data class ScrollingState(
     val offset: Int
 )
 
-fun scrollingState(state: Any?): ScrollingState =
-    if (state != null)
-      state as ScrollingState
-    else
-      ScrollingState(
+val scrollingState = getExistingOrNewState {
+        ScrollingState(
           dragOrigin = null,
           offsetOrigin = 0,
           offset = 0
       )
+}
 
 fun extractOffset(key: String, input: (Vector2i) -> Flower): Flower = { seed ->
   val state = scrollingState(seed.bag[key])
@@ -86,11 +84,11 @@ fun scrollingInteraction(key: String, contentBounds: Bounds): LogicModule = { bl
   mapOf(key to newState)
 }
 
-fun scrollBox(key: String, contentBounds: Bounds): Flower = { b ->
+fun scrollBox(key: String, contentBounds: Bounds): Flower = { s ->
   listOf(
       Box(
-          bounds = b.bounds,
-          depiction = scrollbar(scrollingState(b.bag[key]).offset, contentBounds.dimensions.y),
+          bounds = s.bounds,
+          depiction = scrollbar(scrollingState(s.bag[key]).offset, contentBounds.dimensions.y),
           logic = scrollingInteraction(key, contentBounds)
       )
   )

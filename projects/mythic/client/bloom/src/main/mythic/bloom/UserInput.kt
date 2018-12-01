@@ -19,6 +19,7 @@ data class HistoricalInputState(
 
 fun updateStateBag(boxes: Boxes, state: HistoricalBloomState): StateBag =
     boxes.filter { it.logic != null }
+//        .fold(state.bag) { bag, box -> box.logic!!(HistoricalBloomState(bag, state.input), box.bounds) }
         .flatMap { box -> box.logic!!(state, box.bounds).entries }
         .associate { it.toPair() }
 
@@ -38,3 +39,13 @@ fun updateBloomState(boxes: Boxes, previousState: BloomState, currentInput: Inpu
       bag = newBag
   )
 }
+
+fun isClick(button: Int): (HistoricalInputState) -> Boolean = {
+  it.previous.mouseButtons[button] == ButtonState.up
+      && it.current.mouseButtons[button] == ButtonState.down
+}
+
+fun isClick() = isClick(0)
+
+fun isClickInside(bounds: Bounds, inputState: HistoricalInputState) =
+    isClick()(inputState) && isInBounds(inputState.current.mousePosition, bounds)

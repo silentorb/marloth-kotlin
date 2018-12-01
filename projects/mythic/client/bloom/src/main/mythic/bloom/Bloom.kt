@@ -2,7 +2,6 @@ package mythic.bloom
 
 import mythic.drawing.Canvas
 import mythic.glowing.globalState
-import mythic.spatial.Vector2
 import mythic.spatial.Vector4
 import mythic.spatial.toVector2
 import org.joml.Vector2i
