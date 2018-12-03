@@ -20,17 +20,30 @@ fun scrollbar(offset: Int, contentLength: Int): Depiction = { b, c ->
   }
 }
 
-fun clipChildren(child: Flower): Flower = { s ->
-  child(s).map { box ->
-    val depiction = if (box.depiction != null)
-      clip(s.bounds, box.depiction)
-    else
-      null
+//fun clipChildren(child: Flower): Flower = { seed ->
+//  child(seed).map { box ->
+//    val depiction = if (box.depiction != null)
+//      clipBox(seed.bounds, box.depiction)
+//    else
+//      null
+//
+//    box.copy(
+//        depiction = depiction,
+//        clipBounds = seed.bounds
+//    )
+//  }
+//}
 
-    box.copy(
-        depiction = depiction
-    )
-  }
+fun clipBox(clipBounds: Bounds): (Box) -> Box = { box ->
+  val depiction = if (box.depiction != null)
+    clipBox(clipBounds, box.depiction)
+  else
+    null
+
+  box.copy(
+      depiction = depiction,
+      clipBounds = clipBounds
+  )
 }
 
 fun offset(flower: Flower): (Vector2i) -> Flower = { value ->
@@ -51,12 +64,17 @@ val scrollingState = getExistingOrNewState {
   )
 }
 
-fun extractOffset(key: String, input: (Vector2i) -> Flower): Flower = { seed ->
-  val state = scrollingState(seed.bag[key])
-  input(Vector2i(0, -state.offset))(seed)
+//fun extractOffset(key: String, input: (Vector2i) -> Flower): Flower = { seed ->
+//  val state = scrollingState(seed.bag[key])
+//  input(Vector2i(0, -state.offset))(seed)
+//}
+
+fun extractOffset(key: String, bag: StateBag): Vector2i {
+  val state = scrollingState(bag[key])
+  return Vector2i(0, -state.offset)
 }
 
-fun scrollingInteraction(key: String, contentBounds: Bounds): LogicModule = { bloomState, bounds ->
+fun scrollingInteraction(key: String, contentBounds: Bounds): LogicModule = { (bloomState, bounds) ->
   if (contentBounds.dimensions.y <= bounds.dimensions.y) {
     mapOf()
   } else {
@@ -90,19 +108,22 @@ fun scrollingInteraction(key: String, contentBounds: Bounds): LogicModule = { bl
   }
 }
 
-fun scrollBox(key: String, contentBounds: Bounds): Flower = { s ->
+fun scrollBox(key: String, contentBounds: Bounds): Flower = { seed ->
   listOf(
       Box(
-          bounds = s.bounds,
-          depiction = scrollbar(scrollingState(s.bag[key]).offset, contentBounds.dimensions.y),
+          bounds = seed.bounds,
+          depiction = scrollbar(scrollingState(seed.bag[key]).offset, contentBounds.dimensions.y),
           logic = scrollingInteraction(key, contentBounds)
       )
   )
 }
 
 fun scrolling(key: String): (Flower) -> Flower = { child ->
-  joinChildren(
-      clipChildren(extractOffset(key, offset(child))),
-      { scrollBox(key, it.bounds) }
-  )
+  { seed ->
+    val childBoxes = offset(child)(extractOffset(key, seed.bag))(seed)
+        .map(clipBox(seed.bounds))
+    val contentBounds = accumulatedBounds(childBoxes)
+    scrollBox(key, contentBounds)(seed)
+        .plus(childBoxes)
+  }
 }

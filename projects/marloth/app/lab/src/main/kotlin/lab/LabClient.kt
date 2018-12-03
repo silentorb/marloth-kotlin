@@ -134,9 +134,13 @@ class LabClient(val config: LabConfig, val client: Client) {
     val view = WorldView(config.worldView, metaWorld, client.renderer)
 
     val layout = view.createLayout(windowInfo.dimensions)
+    val boxes = layout(Seed(
+        bag = previousState.gameClientState.bloomState.bag,
+        bounds = Bounds(dimensions = windowInfo.dimensions)
+    ))
     val (_, nextLabInputState) = updateInput(view.getCommands(), previousState)
 
-    renderLab(windowInfo, layout)
+    renderLab(windowInfo, boxes)
     return LabClientResult(
         listOf(),
         previousState.copy(labInput = nextLabInputState)

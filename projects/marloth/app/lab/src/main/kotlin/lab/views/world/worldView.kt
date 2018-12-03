@@ -48,25 +48,26 @@ fun drawGeneratedWorld(bounds: Bounds, canvas: Canvas, realm: Realm,
 }
 
 fun createMapLayout(realm: Realm, screenDimensions: Vector2i,
-                    config: WorldViewConfig, renderer: Renderer): List<Box> {
+                    config: WorldViewConfig, renderer: Renderer): Flower {
   val draw = { b: Bounds, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
   val drawWorld = { b: Bounds, c: Canvas ->
     crop(b, c, { drawGeneratedWorld(b, c, realm, config, renderer) })
     draw(b, c)
   }
 
-  val panels = listOf(
-//      Pair(Measurement(Measurements.pixel, 200f), depictBackground),
-      Pair(Measurement(Measurements.stretch, 0), drawWorld)
-  )
-  val boxes = arrangeMeasuredList(measuredHorizontalArrangement, panels, screenDimensions)
-
-  return boxes
+  return depict(drawWorld)
+//  val panels = listOf(
+////      Pair(Measurement(Measurements.pixel, 200f), depictBackground),
+//      Pair(Measurement(Measurements.stretch, 0), drawWorld)
+//  )
+//  val boxes = arrangeMeasuredList(measuredHorizontalArrangement, panels, screenDimensions)
+//
+//  return boxes
 }
 
 class WorldView(val config: WorldViewConfig, val realm: Realm, val renderer: Renderer) {
 
-  fun createLayout(dimensions: Vector2i): List<Box> {
+  fun createLayout(dimensions: Vector2i): Flower {
     return createMapLayout(realm, dimensions, config, renderer)
   }
 

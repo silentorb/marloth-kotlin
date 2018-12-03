@@ -51,9 +51,12 @@ fun drawSelectableList(items: List<SelectableItem>, list: SelectableListType, bo
         PartialBox(itemHeight, drawListItem(it.name, it.isSelected))
       }
 
+//  list(
+//      children(vertical(15), nodeRow)
+
   val buttonBoxes = arrangeListComplex(vertical(padding), partialBoxes, bounds)
-  val boxes = listOf(
-      Box(bounds, drawSidePanel())
+  val boxes = listOf<Box>(
+//      Box(bounds, drawSidePanel())
   )
       .plus(buttonBoxes)
   return Pair(boxes, buttonBoxes.mapIndexed { i, b -> ClickBox(b.bounds, SelectionEvent(list, i)) })
