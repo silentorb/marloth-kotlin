@@ -110,9 +110,13 @@ fun updateBodyNode(realm: Realm, body: Body): Id {
     assert(false)
     body.node
   } else {
-    if (newNode.id != node.id && newNode.biome == Biome.void) {
-      assert(false)
-    }
+//    if (newNode.id != node.id && !newNode.isWalkable) {
+//      assert(false)
+//    }
+//
+//    if (newNode.id != node.id && newNode.biome == Biome.void) {
+//      assert(false)
+//    }
     newNode.id
   }
 }

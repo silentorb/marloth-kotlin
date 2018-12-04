@@ -27,7 +27,8 @@ fun nodeNeighbors(faces: ConnectionTable, node: Node) = node.walls.asSequence().
 
 fun nodeNeighbors(realm: Realm, id: Id): Collection<Id> {
   val node = realm.nodeTable[id]!!
-  return node.walls.mapNotNull { getOtherNode(node, realm.faces[it]!!) }
+  return node.faces
+      .mapNotNull { getOtherNode(node, realm.faces[it]!!) }
 }
 
 fun getPathNeighbors(nodes: NodeTable, faces: ConnectionTable, node: Node) =

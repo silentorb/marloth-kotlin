@@ -11,6 +11,7 @@ import mythic.spatial.Vector3
 import mythic.spatial.getCenter
 import mythic.spatial.getVector3Center
 import physics.Body
+import physics.voidNode
 import randomly.Dice
 import simulation.*
 
@@ -153,6 +154,11 @@ fun newPlayer(nextId: IdSource, playerNode: Node): Hand =
         )
     )
 
+fun addVoidNode(realm:Realm): Realm =
+    realm.copy(
+        nodeList = realm.nodeList.plus(voidNode)
+    )
+
 fun finalizeRealm(input: WorldInput, realm: Realm): World {
   val playerNode = realm.nodeList.first()
   val scale = calculateWorldScale(input.boundary.dimensions)
@@ -170,6 +176,6 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
   return World(
       deck = deck,
       nextId = nextId(),
-      realm = realm
+      realm = addVoidNode(realm)
   )
 }
