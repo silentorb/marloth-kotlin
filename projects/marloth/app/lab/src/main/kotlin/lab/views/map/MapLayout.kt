@@ -16,7 +16,7 @@ private val mainPanel: ParentFlower =
     applyBounds(horizontal(0, listOf(null, 200)))
 
 private fun mapDisplay(client: Client, realm: Realm, config: MapViewConfig): Flower =
-    depictScene(renderMapView(client, realm, config))
+    depict(renderMapView(client, realm, config))
 
 private val nodeRow: ListItem<Node> = ListItem(20) { node ->
   depictSelectable(nodeListSelectionKey, node.id.toString()) { seed, selected ->

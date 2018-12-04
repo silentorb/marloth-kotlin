@@ -3,6 +3,7 @@ package rendering
 import mythic.breeze.Animation
 import mythic.breeze.Bones
 import mythic.drawing.*
+import mythic.ent.Id
 import mythic.glowing.*
 import mythic.platforming.PlatformDisplayConfig
 import mythic.platforming.WindowInfo
@@ -46,6 +47,7 @@ fun gatherEffectsData(dimensions: Vector2i, scene: Scene, cameraEffectsData: Cam
 }
 
 data class SectorMesh(
+    val id: Id,
     val mesh: SimpleMesh<AttributeName>,
     val textureIndex: List<Textures>
 )

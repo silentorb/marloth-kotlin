@@ -88,8 +88,9 @@ fun convertSectorMesh(realm: Realm, faces2: ImmutableFaceTable, renderer: Render
   val vertexInfo = texturedFaces.associate { Pair(it.face, it.vertexMap) }
   val serializer = texturedVertexSerializer(vertexInfo)
   return SectorMesh(
-      convertMesh(texturedFaces.map { faces2[it.face]!! }, renderer.vertexSchemas.textured, serializer),
-      texturedFaces.map { it.texture }
+      id = node.id,
+      mesh = convertMesh(texturedFaces.map { faces2[it.face]!! }, renderer.vertexSchemas.textured, serializer),
+      textureIndex = texturedFaces.map { it.texture }
   )
 }
 

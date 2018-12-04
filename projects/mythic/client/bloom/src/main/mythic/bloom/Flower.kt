@@ -26,7 +26,6 @@ fun depict(depiction: Depiction): Flower =
 
 typealias StateDepiction = (Seed) -> Depiction
 
-
 fun <T> getExistingOrNewState(initializer: () -> T): (Any?) -> T = { state ->
   if (state != null)
     state as T

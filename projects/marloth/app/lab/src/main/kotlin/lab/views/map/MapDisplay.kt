@@ -1,24 +1,25 @@
 package lab.views.map
 
+import generation.abstracted.neighbors
 import lab.utility.embedCameraView
 import lab.views.game.renderFaceNormals
 import marloth.clienting.Client
-import mythic.bloom.Bounds
-import mythic.bloom.Depiction
+import mythic.bloom.*
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
 import mythic.spatial.*
 import mythic.typography.TextStyle
-import org.joml.Vector4i
 import org.lwjgl.opengl.GL11
 import rendering.*
 import scenery.Camera
 import scenery.ProjectionType
 import scenery.Scene
+import simulation.Node
 import simulation.Realm
+import simulation.nodeNeighbors
 
-fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, realm: Realm, config: MapViewConfig, color: Vector4) {
-  val faces = realm.nodeList.flatMap { it.faces }.distinct()
+fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, realm: Realm, config: MapViewConfig, nodes: Collection<Node>, color: Vector4) {
+  val faces = nodes.flatMap { it.faces }.distinct()
 //      .take(1)
   for (face in faces) {
 //      renderer.effects.flat.activate(ObjectShaderConfig(color = color))
@@ -39,30 +40,42 @@ fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, realm: Rea
   }
 }
 
-fun renderFaceIds(renderer: SceneRenderer, realm: Realm) {
+fun renderFaceIds(renderer: SceneRenderer, realm: Realm, nodes: Collection<Node>) {
   globalState.depthEnabled = true
   val textStyle = TextStyle(renderer.renderer.fonts[0], 0f, Vector4(0.5f, 1f, 1f, 1f))
-  for (node in realm.nodeList) {
-    for (faceId in node.faces) {
-      val face = realm.mesh.faces[faceId]!!
-      renderer.drawText(face.id.toString(), getCenter(face.vertices), textStyle)
-    }
+  for (faceId in nodes.flatMap { it.faces }) {
+//    for (faceId in node.faces) {
+    val face = realm.mesh.faces[faceId]!!
+    renderer.drawText(face.id.toString(), getCenter(face.vertices), textStyle)
+//    }
   }
 }
 
-fun renderNodeIds(renderer: SceneRenderer, realm: Realm) {
+fun renderNodeIds(renderer: SceneRenderer, nodes: Collection<Node>) {
   globalState.depthEnabled = true
   val textStyle = TextStyle(renderer.renderer.fonts[0], 0f, Vector4(0.5f, 1f, 1f, 1f))
-  for (node in realm.nodeList) {
+  for (node in nodes) {
     renderer.drawText(node.id.toString(), node.position, textStyle)
   }
 }
 
-fun renderMapMesh(renderer: SceneRenderer, world: Realm, config: MapViewConfig) {
+fun renderMapMesh(renderer: SceneRenderer, realm: Realm, config: MapViewConfig, bag: StateBag) {
   val worldMesh = renderer.renderer.worldMesh
+  val selectedNodes = selectionState(bag[nodeListSelectionKey])
+  val nodes: Collection<Node> = if (selectedNodes.selection.none())
+    realm.nodeList
+  else
+    selectedNodes.selection.map { it.toLong() }
+        .flatMap { id ->
+          nodeNeighbors(realm, id)
+              .plus(id)
+        }
+        .distinct()
+        .map { realm.nodeTable[it]!! }
+
   if (worldMesh != null) {
     if (config.display.drawMode == MapViewDrawMode.wireframe) {
-      drawWireframeWorld(renderer, worldMesh, world, config, Vector4(1f))
+      drawWireframeWorld(renderer, worldMesh, realm, config, nodes, Vector4(1f))
     } else {
       globalState.depthEnabled = false
       globalState.cullFaces = false
@@ -71,10 +84,15 @@ fun renderMapMesh(renderer: SceneRenderer, world: Realm, config: MapViewConfig) 
 
       val lineHalfColor = Vector4(1f, 1f, 1f, 1f)
 //      val lineHalfColor = Vector4(1f, 1f, 1f, 0.5f)
-//      drawWireframeWorld(renderer, worldMesh, world, lineHalfColor)
+//      drawWireframeWorld(renderer, worldMesh, realm, lineHalfColor)
       globalState.depthEnabled = true
       globalState.cullFaces = true
-      for (sector in worldMesh.sectors) {
+      val sectors = if (selectedNodes.selection.any())
+        worldMesh.sectors
+      else
+        worldMesh.sectors.filter { selectedNodes.selection.contains(it.id.toString()) }
+
+      for (sector in sectors) {
         var index = 0
         for (textureId in sector.textureIndex) {
           val texture = renderer.renderer.mappedTextures[textureId]
@@ -85,18 +103,18 @@ fun renderMapMesh(renderer: SceneRenderer, world: Realm, config: MapViewConfig) 
       }
       globalState.depthEnabled = false
       globalState.cullFaces = false
-      drawWireframeWorld(renderer, worldMesh, world, config, lineHalfColor)
+      drawWireframeWorld(renderer, worldMesh, realm, config, nodes, lineHalfColor)
     }
 
     if (config.display.normals)
-      renderFaceNormals(renderer, 0.3f, world.mesh)
+      renderFaceNormals(renderer, 0.3f, realm.mesh)
 
     if (config.display.faceIds) {
-      renderFaceIds(renderer, world)
+      renderFaceIds(renderer, realm, nodes)
     }
 
     if (config.display.nodeIds) {
-      renderNodeIds(renderer, world)
+      renderNodeIds(renderer, nodes)
     }
   }
 
@@ -126,17 +144,19 @@ fun createTopDownCamera(camera: MapViewCamera): Camera {
   )
 }
 
-fun renderMapView(client: Client, realm: Realm, config: MapViewConfig):Depiction = { b, c ->
-  val camera = createTopDownCamera(config.camera)
-  val windowInfo = client.getWindowInfo()
-  val renderer = client.renderer
-  renderer.prepareRender(windowInfo)
+fun renderMapView(client: Client, realm: Realm, config: MapViewConfig): StateDepiction = { seed ->
+  embedCameraView { b, c ->
+    val camera = createTopDownCamera(config.camera)
+    val windowInfo = client.getWindowInfo()
+    val renderer = client.renderer
+    renderer.prepareRender(windowInfo)
 
-  val scene = Scene(
-      camera = camera,
-      lights = listOf()
-  )
-  val sceneRenderer = renderer.createSceneRenderer(scene, b.toVector4i())
-  renderMapMesh(sceneRenderer, realm, config)
-  renderer.finishRender(windowInfo)
+    val scene = Scene(
+        camera = camera,
+        lights = listOf()
+    )
+    val sceneRenderer = renderer.createSceneRenderer(scene, b.toVector4i())
+    renderMapMesh(sceneRenderer, realm, config, seed.bag)
+    renderer.finishRender(windowInfo)
+  }
 }
