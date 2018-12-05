@@ -1,4 +1,4 @@
-package intellect
+package intellect.acessment
 
 import colliding.rayCanHitPoint
 import physics.Body
@@ -20,4 +20,8 @@ fun canSee(world: World, viewer: Character, target: Character): Boolean {
   return isInVisibleRange(viewerBody, targetBody)
       && isInAngleOfView(viewer, viewerBody, targetBody)
       && rayCanHitPoint(world.realm, nodes[viewerBody.node]!!, viewerBody.position, targetBody.position)
+}
+
+fun getVisibleCharacters(world: World, character: Character): List<Character> {
+  return world.characters.filter { it.id != character.id && canSee(world, character, it) }
 }

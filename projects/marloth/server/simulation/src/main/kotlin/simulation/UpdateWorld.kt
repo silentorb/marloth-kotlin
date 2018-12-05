@@ -1,6 +1,6 @@
 package simulation
 
-import intellect.pursueGoals
+import intellect.execution.pursueGoals
 import intellect.updateAiState
 import mythic.ent.Entity
 import mythic.ent.Id
@@ -64,7 +64,7 @@ fun generateIntermediateRecords(world: World, playerCommands: Commands, delta: F
       .filter { it.velocity != Vector3.zero }
       .flatMap { body ->
         val offset = body.velocity * delta
-        val wallsInRange = wallsInCollisionRange(world.realm, world.realm.nodeTable[body.node]!!)
+        val wallsInRange = wallsInCollisionRange(world.realm, body.node)
         val faces = wallsInRange.map { world.realm.mesh.faces[it]!! }
         val walls = getWallCollisions(MovingBody(body.radius!!, body.position), offset, faces)
         walls.map { Collision(body.id, null, it.wall, it.hitPoint, it.directGap, it.travelingGap) }

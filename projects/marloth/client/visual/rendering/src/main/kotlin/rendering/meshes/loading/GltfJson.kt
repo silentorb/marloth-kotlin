@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import configuration.getAfterburnerModule
 import getResourceStream
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
@@ -56,7 +57,7 @@ fun getObjectMapper(): ObjectMapper {
     module.addDeserializer(Vector3::class.java, Vector3Deserializer(null))
     module.addDeserializer(Vector4::class.java, Vector4Deserializer(null))
     mapper.registerModule(module)
-    mapper.registerModule(AfterburnerModule())
+    mapper.registerModule(getAfterburnerModule())
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     globalMapper = mapper
   }

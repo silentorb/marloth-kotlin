@@ -9,14 +9,22 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 private var globalMapper: YAMLMapper? = null
+private var afterburnerModule: AfterburnerModule? = null
 
+fun getAfterburnerModule():AfterburnerModule {
+  if (afterburnerModule == null) {
+    afterburnerModule = AfterburnerModule()
+    afterburnerModule!!.setUseValueClassLoader(false)
+  }
+  return afterburnerModule!!
+}
 fun getObjectMapper(): YAMLMapper {
   if (globalMapper == null) {
     val mapper = YAMLMapper()
     mapper.configure(YAMLGenerator.Feature.WRITE_DOC_START_MARKER, false)
     mapper.configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true)
     mapper.registerModule(KotlinModule())
-    mapper.registerModule(AfterburnerModule())
+    mapper.registerModule(getAfterburnerModule())
     globalMapper = mapper
     return mapper
   }

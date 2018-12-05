@@ -1,8 +1,7 @@
-package intellect
+package intellect.acessment
 
 import simulation.Character
 import mythic.ent.Id
-import simulation.Node
 import simulation.World
 
 data class Knowledge(

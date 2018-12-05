@@ -17,6 +17,9 @@ fun simplePainter(renderer: SceneRenderer, primitive: Primitive, element: MeshEl
   val material = primitive.material
   val texture = renderer.renderer.textures[material.texture]
 
+  if (material.texture != null && texture == null) {
+    val k = 0
+  }
   val config = ObjectShaderConfig(
       transform,
       color = material.color,

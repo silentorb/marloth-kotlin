@@ -25,14 +25,16 @@ fun horizontalNeighbors(faces: ConnectionTable, node: Node) = node.walls.asSeque
 
 fun nodeNeighbors(faces: ConnectionTable, node: Node) = node.walls.asSequence().mapNotNull { getOtherNode(node, faces[it]!!) }
 
+fun nodeNeighbors(nodes: NodeTable, faces: ConnectionTable, node: Id) = nodeNeighbors(faces, nodes[node]!!)
+
 fun nodeNeighbors(realm: Realm, id: Id): Collection<Id> {
   val node = realm.nodeTable[id]!!
   return node.faces
       .mapNotNull { getOtherNode(node, realm.faces[it]!!) }
 }
 
-fun getPathNeighbors(nodes: NodeTable, faces: ConnectionTable, node: Node) =
-    nodeNeighbors(faces, node)
+fun getPathNeighbors(nodes: NodeTable, faces: ConnectionTable, node: Id) =
+    nodeNeighbors(nodes, faces, node)
         .map { nodes[it]!! }
         .filter { it.isWalkable }
 

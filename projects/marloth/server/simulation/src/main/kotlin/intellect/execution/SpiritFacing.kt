@@ -1,5 +1,6 @@
-package intellect
+package intellect.execution
 
+import intellect.acessment.Knowledge
 import mythic.spatial.*
 import simulation.*
 import physics.getLookAtAngle

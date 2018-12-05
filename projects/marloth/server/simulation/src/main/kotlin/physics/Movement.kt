@@ -25,9 +25,9 @@ fun getCollisionWallsIncludingNeighbors(world: Realm, node: Node): Sequence<Immu
 }
 */
 
-fun wallsInCollisionRange(realm: Realm, node: Node): List<Id> {
+fun wallsInCollisionRange(realm: Realm, node: Id): List<Id> {
   return getPathNeighbors(realm.nodeTable, realm.faces, node).toList()
-      .plus(node)
+      .plus(realm.nodeTable[node]!!)
       .flatMap { n -> n.walls.filter { isSolidWall(realm.faces[it]!!) } }
       .distinct()
 }

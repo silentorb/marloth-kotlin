@@ -8,6 +8,6 @@ dependencies {
 }
 
 requires('assets', 'platforming', 'spatial', 'scenery', 'sculpting', 'glowing', 'typography', 'drawing',
-        'texture_generation', 'breeze', 'rigging', 'randomly')
+        'texture_generation', 'breeze', 'rigging', 'randomly', 'configuration')
 
 apply plugin: 'java'

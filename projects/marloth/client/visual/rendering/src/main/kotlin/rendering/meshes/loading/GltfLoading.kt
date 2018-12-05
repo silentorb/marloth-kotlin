@@ -144,7 +144,7 @@ fun loadMaterial(info: GltfInfo, materialIndex: Int): Material {
   } else {
     val gltfTexture = info.textures!![details.baseColorTexture.index]
     val gltfImage = info.images!![gltfTexture.source]
-    gltfImage.uri.substringBeforeLast(".")
+    toCamelCase(gltfImage.uri.substringBeforeLast("."))
   }
 
   return Material(
