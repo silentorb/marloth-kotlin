@@ -6,10 +6,7 @@ import intellect.Spirit
 import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.ent.newIdSource
-import mythic.spatial.Quaternion
-import mythic.spatial.Vector3
-import mythic.spatial.getCenter
-import mythic.spatial.getVector3Center
+import mythic.spatial.*
 import physics.Body
 import physics.voidNode
 import randomly.Dice
@@ -131,6 +128,11 @@ fun placeWallLamps(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): De
           depiction = Depiction(
               id = id,
               type = DepictionType.wallLamp
+          ),
+          light = Light(
+              id = id,
+              color = Vector4(1f),
+              range = 15f
           )
       )
     } else
@@ -154,7 +156,7 @@ fun newPlayer(nextId: IdSource, playerNode: Node): Hand =
         )
     )
 
-fun addVoidNode(realm:Realm): Realm =
+fun addVoidNode(realm: Realm): Realm =
     realm.copy(
         nodeList = realm.nodeList.plus(voidNode)
     )

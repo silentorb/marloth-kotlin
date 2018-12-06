@@ -17,6 +17,7 @@ data class Hand(
     val animation: ArmatureAnimation? = null,
     val depiction: Depiction? = null,
     val door: Door? = null,
+    val light: Light? = null,
     val missile: Missile? = null,
     val player: Player? = null,
     val spirit: Spirit? = null
@@ -29,6 +30,7 @@ data class Deck(
     val factions: List<Faction> = listOf(),
     val depictions: List<Depiction> = listOf(),
     val doors: List<Door> = listOf(),
+    val lights: List<Light> = listOf(),
     val missiles: List<Missile> = listOf(),
     val players: List<Player> = listOf(),
     val spirits: List<Spirit> = listOf()
@@ -40,6 +42,7 @@ data class Deck(
       factions = factions.plus(other.factions),
       depictions = depictions.plus(other.depictions),
       doors = doors.plus(other.doors),
+      lights = lights.plus(other.lights),
       missiles = missiles.plus(other.missiles),
       players = players.plus(other.players),
       spirits = spirits.plus(other.spirits)
@@ -80,6 +83,7 @@ fun toDeck(hand: Hand): Deck =
         characters = nullableList(hand.character),
         depictions = nullableList(hand.depiction),
         doors = nullableList(hand.door),
+        lights = nullableList(hand.light),
         missiles = nullableList(hand.missile),
         players = nullableList(hand.player),
         spirits = nullableList(hand.spirit)

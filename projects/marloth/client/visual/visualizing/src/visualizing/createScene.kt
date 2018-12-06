@@ -7,6 +7,7 @@ import rendering.*
 import scenery.*
 import simulation.*
 import mythic.ent.Id
+import scenery.Light
 
 val firstPersonCameraOffset = Vector3(0f, 0f, 1.4f)
 
@@ -149,7 +150,7 @@ fun convertComplexDepiction(world: World, depiction: Depiction): ElementGroup {
               MeshElement(
                   id = id,
                   mesh = it,
-                  transform = transform.scale(0.5f)
+                  transform = transform.scale(0.75f)
               )
             }
     )
@@ -198,18 +199,18 @@ fun gatherVisualElements(world: World, screen: Screen, player: Player): ElementG
 }
 
 fun mapLights(world: World, player: Player) =
-    world.deck.depictions.filter { it.type == DepictionType.wallLamp }
-        .map {
+    world.deck.lights
+        .map { light ->
           Light(
               type = LightType.point,
-              color = Vector4(1f, 1f, 1f, 1f),
-              position = world.bodyTable[it.id]!!.position + Vector3(0f, 0f, 2.2f),
-              direction = Vector4(0f, 0f, 0f, 15f)
+              color = light.color,
+              position = world.bodyTable[light.id]!!.position + Vector3(0f, 0f, 2.2f),
+              direction = Vector4(0f, 0f, 0f, light.range)
           )
         }
         .plus(Light(
             type = LightType.point,
-            color = Vector4(1f, 1f, 1f, 2f),
+            color = Vector4(1f, 1f, 1f, 1f),
             position = world.bodyTable[player.character]!!.position + Vector3(0f, 0f, 2f),
             direction = Vector4(0f, 0f, 0f, 15f)
         ))
