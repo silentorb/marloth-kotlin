@@ -1,11 +1,11 @@
 package mythic.bloom
 
-import mythic.drawing.Canvas
 import mythic.spatial.Vector4
+import mythic.typography.Font
 import mythic.typography.TextStyle
 
 data class Seed(
-    val bag: StateBag,
+    val bag: StateBag = mapOf(),
     val bounds: Bounds,
     val clipBounds: Bounds? = null
 )
@@ -33,18 +33,24 @@ fun <T> getExistingOrNewState(initializer: () -> T): (Any?) -> T = { state ->
     initializer()
 }
 
-data class DeferredTextStyle(
+data class IndexedTextStyle(
     val font: Int,
     val size: Float,
     val color: Vector4
 )
 
-typealias TextStyleSource = (Canvas) -> TextStyle
+typealias TextStyleSource = (List<Font>) -> TextStyle
 
-fun resolve(style: DeferredTextStyle): TextStyleSource = { c: Canvas ->
+fun resolve(style: IndexedTextStyle): TextStyleSource = { fonts: List<Font> ->
   TextStyle(
-      font = c.fonts[style.font],
+      font = fonts[style.font],
       size = style.size,
       color = style.color
   )
 }
+
+//fun padding(all: Int): (Flower) -> Flower = { flower ->
+//  {seed->
+//    flower()
+//  }
+//}

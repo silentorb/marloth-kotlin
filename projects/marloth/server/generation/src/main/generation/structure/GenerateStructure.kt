@@ -394,17 +394,16 @@ fun requiresSolidNeighbors(realm: StructureRealm, nodeId: Id): Boolean =
       biomeInfo.enclosureRate == 1f
     }
 
-fun isNodeSolid(dice: Dice, realm: StructureRealm, node: Node): Boolean {
-  val enclosureRate = biomeInfoMap[node.biome]!!.enclosureRate
+fun isNodeSolid(dice: Dice, realm: StructureRealm, node: Node, biome: Biome): Boolean {
+  val enclosureRate = biomeInfoMap[biome]!!.enclosureRate
   if (horizontalNeighbors(realm.connections, node).any { requiresSolidNeighbors(realm, it) })
     return true
 
-  return if (enclosureRate == 1f)
-    true
-  else if (enclosureRate == 0f)
-    false
-  else
-    dice.getFloat(1f) < enclosureRate
+  return when (enclosureRate) {
+    1f -> true
+    0f -> false
+    else -> dice.getFloat(1f) < enclosureRate
+  }
 }
 
 fun fillNodeBiomesAndSolid(dice: Dice, realm: StructureRealm, biomeGrid: BiomeGrid): NodeTable =
@@ -413,7 +412,7 @@ fun fillNodeBiomesAndSolid(dice: Dice, realm: StructureRealm, biomeGrid: BiomeGr
         val biome = biomeGrid(node.position.x, node.position.y)
         node.copy(
             biome = biome,
-            isSolid = isNodeSolid(dice, realm, node)
+            isSolid = isNodeSolid(dice, realm, node, biome)
         )
       } else
         node

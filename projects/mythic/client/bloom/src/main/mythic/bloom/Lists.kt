@@ -1,5 +1,9 @@
 package mythic.bloom
 
+import org.joml.Vector2i
+import org.joml.minus
+import org.joml.plus
+
 typealias FixedChildArranger = (Bounds) -> List<Bounds>
 typealias ParentFlower = (List<Flower>) -> Flower
 typealias ItemFlower<T> = (T) -> Flower
@@ -29,9 +33,47 @@ fun applyBounds(arranger: FixedChildArranger): ParentFlower = { children ->
   { applyBounds(it.bag, children, arranger(it.bounds)) }
 }
 
+fun list(plane: Plane, padding: Int): (List<Flower>) -> Flower = { children ->
+  { seed ->
+    val normalize = normalizeBounds(plane)
+    var lastBounds = seed.bounds
+    children.flatMap { flower ->
+      val boxes = flower(seed.copy(bounds = lastBounds))
+      val farthest = boxes.map { normalize(it.bounds).right }.sortedDescending().first()
+      val normalizedLastBounds = normalize(lastBounds)
+
+      val offset = Vector2i(farthest + padding, 0)
+      lastBounds = normalize(Bounds(
+          position = normalizedLastBounds.position + offset,
+          dimensions = normalizedLastBounds.dimensions - offset
+      ))
+      boxes
+          .map {
+            it.copy(
+                bounds = it.bounds.copy(
+                    position = it.bounds.position + plane(offset)
+                )
+            )
+          }
+    }
+  }
+}
+
 fun <T> list(arranger: ChildArranger<T>): ListFlower<T> = { items ->
   { seed ->
     val (_, flowers, itemBounds) = arranger(seed.bounds, items)
     applyBounds(seed.bag, flowers, itemBounds)
   }
 }
+
+fun <T> list(arrangement: LengthArrangement, listItem: ListItem<T>): ListFlower<T> = { items ->
+  { b ->
+    val lengths = items.map { listItem.length }
+    val flowers = items.map(listItem.itemFlower)
+    applyBounds(b.bag, flowers, arrangement(b.bounds, lengths))
+  }
+}
+//
+//fun <T> list(arrangement: LengthArrangement): (List<Flower>) -> Flower = { flowers ->
+//  applyBounds(arrangement)(flowers)
+//}

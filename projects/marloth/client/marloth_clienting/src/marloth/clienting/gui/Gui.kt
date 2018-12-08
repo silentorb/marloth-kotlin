@@ -1,8 +1,10 @@
 package marloth.clienting.gui
 
+import intellect.acessment.lightRating
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
+import mythic.ent.Id
 import mythic.glowing.globalState
 import mythic.spatial.Vector4
 import mythic.spatial.toVector2
@@ -11,8 +13,9 @@ import mythic.typography.TextConfiguration
 import mythic.typography.TextStyle
 import mythic.typography.calculateTextDimensions
 import org.joml.Vector2i
-import org.joml.plus
 import rendering.SceneRenderer
+import simulation.World
+import java.text.DecimalFormat
 
 data class ButtonState(
     val text: String,
@@ -45,7 +48,7 @@ fun drawMenuButton(state: ButtonState): Depiction = { bounds: Bounds, canvas: Ca
   canvas.drawText(position, blackStyle, state.text)
 }
 
-fun createMenuLayout(bounds: Bounds, state: MenuState): List<Box> {
+fun menuLayout(bounds: Bounds, state: MenuState): Boxes {
   val buttonHeight = 50
   val items = listOf(
       "New Game",
@@ -59,18 +62,44 @@ fun createMenuLayout(bounds: Bounds, state: MenuState): List<Box> {
   val menuPadding = 10
 
   return listOf(Box(menuBounds, menuBackground))
-      .plus(arrangeListComplex(vertical(menuPadding), items, menuBounds))
+      .plus(arrangeListComplex(lengthArranger(vertical, menuPadding), items, menuBounds))
 }
 
-fun renderMenus(bounds: Bounds, canvas: Canvas, state: MenuState) {
-  val layout = createMenuLayout(bounds, state)
-  renderLayout(layout, canvas)
+private val textStyle = IndexedTextStyle(0, 12f, grayTone(0.7f))
+
+fun characterHealth(world: World, id: Id): String {
+  val resource = world.table.characters[id]!!.health
+  val value = resource.value
+  val max = resource.max
+  return "$value / $max"
 }
 
-fun renderGui(renderer: SceneRenderer, bounds: Bounds, canvas: Canvas, state: MenuState) {
-  canvas.drawText(bounds.position + Vector2i(10, 10), TextStyle(canvas.fonts[0], 12f, Vector4(1f)),
-      "Testing")
+val df = DecimalFormat("#0.00")
 
-  if (state.isVisible)
-    renderMenus(bounds, canvas, state)
+fun characterVisibility(world: World, id: Id): String {
+  val rating = lightRating(world, id)
+  return df.format(rating)
+}
+
+fun hudLayout(world: World): Flower {
+  val player = world.players.first().character
+  val rows = listOf(
+      label(textStyle, characterHealth(world, player)),
+      label(textStyle, characterVisibility(world, player))
+  )
+  return offset(Vector2i(10))(
+      list(vertical, 10)(rows)
+  )
+}
+
+fun renderGui(renderer: SceneRenderer, bounds: Bounds, canvas: Canvas, world: World, state: MenuState) {
+  val hudBoxes = hudLayout(world)(Seed(bounds = bounds))
+  renderLayout(hudBoxes, canvas)
+
+//  canvas.drawText(bounds.position + Vector2i(10, 10), TextStyle(canvas.fonts[0], 12f, Vector4(1f)),
+//      "Testing")
+  if (!state.isVisible)
+    return
+
+  renderLayout(menuLayout(bounds, state), canvas)
 }

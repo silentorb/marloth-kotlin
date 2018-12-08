@@ -25,14 +25,6 @@ val optionalSingleSelection: SelectionLogic = { selection, item ->
     setOf(item)
 }
 
-fun <T> list(arrangement: LengthArrangement, listItem: ListItem<T>): ListFlower<T> = { items ->
-  { b ->
-    val lengths = items.map { listItem.length }
-    val flowers = items.map(listItem.itemFlower)
-    applyBounds(b.bag, flowers, arrangement(b.bounds, lengths))
-  }
-}
-
 typealias ChildInteraction<T> = (PreparedChildren<T>) -> LogicModule
 
 fun <T> selectable(key: String, selectionLogic: SelectionLogic, idSelector: IdSelector<T>): ChildInteraction<T> = { (items, _, itemBounds) ->

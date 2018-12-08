@@ -52,12 +52,12 @@ fun crop(bounds: Bounds, canvas: Canvas, action: () -> Unit) = canvas.crop(bound
 
 fun listBounds(plane: Plane, padding: Int, bounds: Bounds, lengths: List<Int>): List<Bounds> {
   var progress = 0
-  val otherLength = plane.y(bounds.dimensions)
+  val otherLength = plane(bounds.dimensions).y
 
   return lengths.mapIndexed { i, length ->
     val b = Bounds(
-        plane.vector(progress, 0) + bounds.position,
-        plane.vector(length, otherLength)
+        plane(Vector2i(progress, 0)) + bounds.position,
+        plane(Vector2i(length, otherLength))
     )
     progress += length
     if (i != lengths.size - 1)
@@ -69,12 +69,33 @@ fun listBounds(plane: Plane, padding: Int, bounds: Bounds, lengths: List<Int>): 
 
 typealias LengthArrangement = (bounds: Bounds, lengths: List<Int>) -> List<Bounds>
 
-fun horizontal(padding: Int): LengthArrangement = { bounds: Bounds, lengths: List<Int> ->
-  listBounds(horizontalPlane, padding, bounds, lengths)
+//fun horizontalFromLengths(padding: Int): LengthArrangement = { bounds: Bounds, lengths: List<Int> ->
+//  listBounds(horizontalPlane, padding, bounds, lengths)
+//}
+
+//fun verticalFromLengths(padding: Int): LengthArrangement = { bounds: Bounds, lengths: List<Int> ->
+//  listBounds(verticalPlane, padding, bounds, lengths)
+//}
+
+//fun horizontal(padding: Int, lengths: List<Int?>): FixedChildArranger = { bounds ->
+//  horizontalFromLengths(padding)(bounds, resolveLengths(bounds.dimensions.x, lengths))
+//}
+
+//fun vertical(padding: Int, lengths: List<Int?>): FixedChildArranger = { bounds ->
+//  verticalFromLengths(padding)(bounds, resolveLengths(bounds.dimensions.y, lengths))
+//}
+
+fun lengthArranger(plane: Plane, padding: Int): LengthArrangement = { bounds: Bounds, lengths: List<Int> ->
+  listBounds(plane, padding, bounds, lengths)
 }
 
-fun vertical(padding: Int): LengthArrangement = { bounds: Bounds, lengths: List<Int> ->
-  listBounds(verticalPlane, padding, bounds, lengths)
+fun fixedLengthArranger(plane: Plane, padding: Int, lengths: List<Int?>): FixedChildArranger = { bounds ->
+  lengthArranger(plane, padding)(bounds, resolveLengths(plane(bounds.dimensions).x, lengths))
+}
+
+fun boundsArranger(plane: Plane, padding: Int): (Bounds, List<Bounds>) -> List<Bounds> = { bounds, b ->
+  val lengths = b.map { plane(it.dimensions).x }
+  listBounds(plane, padding, bounds, lengths)
 }
 
 fun centeredPosition(boundsLength: Int, length: Int): Int =
@@ -84,7 +105,7 @@ fun centeredPosition(plane: Plane, bounds: Vector2i, length: Int?): Int =
     if (length == null)
       0
     else
-      centeredPosition(plane.x(bounds), length)
+      centeredPosition(plane(bounds).x, length)
 
 fun drawBorder(bounds: Bounds, canvas: Canvas, color: Vector4, thickness: Float = 1f) {
   canvas.drawSquare(bounds.position.toVector2(), bounds.dimensions.toVector2(), canvas.outline(color, thickness))
@@ -120,8 +141,8 @@ fun renderLayout(layout: LayoutOld, canvas: Canvas) {
 fun centeredPosition(bounds: Bounds, contentDimensions: Vector2i): Vector2i {
   val dimensions = bounds.dimensions
   return bounds.position + Vector2i(
-      centeredPosition(horizontalPlane, dimensions, contentDimensions.x),
-      centeredPosition(verticalPlane, dimensions, contentDimensions.y)
+      centeredPosition(horizontal, dimensions, contentDimensions.x),
+      centeredPosition(vertical, dimensions, contentDimensions.y)
   )
 }
 

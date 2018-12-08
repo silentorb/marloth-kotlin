@@ -24,11 +24,3 @@ fun arrangeListComplex(arrangement: LengthArrangement, panels: List<PartialBox>,
 fun <T> filterMouseOverBoxes(boxes: List<ClickBox<T>>, mousePosition: Vector2i): ClickBox<T>? {
   return boxes.filter { box -> isInBounds(mousePosition, box.bounds) }.firstOrNull()
 }
-
-fun horizontal(padding: Int, lengths: List<Int?>): FixedChildArranger = { bounds ->
-  horizontal(padding)(bounds, resolveLengths(bounds.dimensions.x, lengths))
-}
-
-fun vertical(padding: Int, lengths: List<Int?>): FixedChildArranger = { bounds ->
-  vertical(padding)(bounds, resolveLengths(bounds.dimensions.y, lengths))
-}

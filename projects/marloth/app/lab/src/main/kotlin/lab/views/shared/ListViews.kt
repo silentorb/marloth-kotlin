@@ -2,7 +2,6 @@ package lab.views.shared
 
 import lab.views.model.SelectableListType
 import lab.views.model.SelectionEvent
-import lab.views.model.drawSidePanel
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
@@ -52,9 +51,9 @@ fun drawSelectableList(items: List<SelectableItem>, list: SelectableListType, bo
       }
 
 //  list(
-//      children(vertical(15), nodeRow)
+//      children(verticalFromLengths(15), nodeRow)
 
-  val buttonBoxes = arrangeListComplex(vertical(padding), partialBoxes, bounds)
+  val buttonBoxes = arrangeListComplex(lengthArranger(vertical, padding), partialBoxes, bounds)
   val boxes = listOf<Box>(
 //      Box(bounds, drawSidePanel())
   )

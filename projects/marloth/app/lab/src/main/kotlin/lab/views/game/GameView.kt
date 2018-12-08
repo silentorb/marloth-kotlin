@@ -5,7 +5,8 @@ import lab.LabCommandType
 import lab.LabConfig
 import lab.LabState
 import marloth.clienting.*
-import marloth.clienting.gui.*
+import marloth.clienting.gui.MenuState
+import marloth.clienting.gui.renderGui
 import mythic.bloom.Bounds
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
@@ -60,7 +61,7 @@ fun renderFaceNormals(renderer: SceneRenderer, length: Float, mesh: ImmutableMes
 
 data class GameViewRenderData(
     val scenes: List<GameScene>,
-    val world: Realm,
+    val world: World,
     val config: GameViewConfig,
     val menuState: MenuState
 )
@@ -130,7 +131,7 @@ fun renderLabScenes(client: Client, data: GameViewRenderData) {
     }
 
     if (config.draw.normals)
-      renderFaceNormals(sceneRenderer, 1f, data.world.mesh)
+      renderFaceNormals(sceneRenderer, 1f, data.world.realm.mesh)
 
     if (config.draw.skeletons) {
 //      scene.elements.filter { it.depiction == DepictionType.child || it.depiction == DepictionType.monster }
@@ -142,7 +143,7 @@ fun renderLabScenes(client: Client, data: GameViewRenderData) {
     }
 
     if (config.draw.gui)
-      renderGui(sceneRenderer, Bounds(viewport), canvas, data.menuState)
+      renderGui(sceneRenderer, Bounds(viewport), canvas, data.world, data.menuState)
   }
 
   renderer.finishRender(windowInfo)
@@ -159,7 +160,7 @@ fun updateLabGameState(config: GameViewConfig, commands: List<HaftCommand<LabCom
 
 fun updateGameView(client: Client, config: LabConfig, world: World, screens: List<Screen>, previousState: LabState): Pair<ClientState, UserCommands> {
   val scenes = createScenes(world, screens)
-  renderLabScenes(client, GameViewRenderData(scenes, world.realm, config.gameView, previousState.gameClientState.menu))
+  renderLabScenes(client, GameViewRenderData(scenes, world, config.gameView, previousState.gameClientState.menu))
   val players = world.players.map { it.playerId }
   return updateClient(client, players, previousState.gameClientState)
 }
