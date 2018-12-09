@@ -1,11 +1,8 @@
 package rendering
 
 import mythic.glowing.UniformBuffer
-import mythic.spatial.putVector3
-import mythic.spatial.putVector4
-import org.lwjgl.BufferUtils
+import rendering.shading.createLightBuffer
 import scenery.Light
-import java.nio.ByteBuffer
 
 fun updateLights(lights: List<Light>, uniformBuffer: UniformBuffer) {
   val byteBuffer = createLightBuffer(lights)

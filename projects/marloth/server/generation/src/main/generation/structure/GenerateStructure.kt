@@ -5,7 +5,7 @@ import generation.abstracted.*
 import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.ent.entityMap
-import mythic.ent.pipeline
+import mythic.ent.pipe
 import mythic.sculpting.*
 import mythic.spatial.*
 import org.joml.plus
@@ -453,7 +453,7 @@ fun cleanupSolidNormals(realm: StructureRealm): StructureRealm {
 fun generateStructure(biomeGrid: BiomeGrid, idSources: StructureIdSources, graph: Graph, dice: Dice): StructureRealm {
   val initialRealm = createRooms(graph, idSources, dice)
   val roomNodes = graph.nodes
-  return pipeline(initialRealm, listOf(
+  return pipe(initialRealm, listOf(
       { realm -> defineNegativeSpace(idSources, realm, dice) },
       { realm -> realm.copy(nodes = fillNodeBiomesAndSolid(dice, realm, biomeGrid)) },
       { realm -> fillBoundary(idSources, realm, dice) },

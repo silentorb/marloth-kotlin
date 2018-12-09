@@ -151,7 +151,7 @@ fun newPlayer(nextId: IdSource, playerNode: Node): Hand =
         node = playerNode.id,
         player = Player(
             playerId = 1,
-            character = 0,
+            id = 0,
             viewMode = ViewMode.firstPerson
         )
     )

@@ -8,7 +8,7 @@ import generation.getCenter
 import generation.structure.doorwayLength
 import mythic.ent.Id
 import mythic.ent.entityMap
-import mythic.ent.pipeline
+import mythic.ent.pipe
 import mythic.spatial.Vector3
 import randomly.Dice
 import simulation.*
@@ -127,7 +127,7 @@ fun generateAbstract(input: WorldInput, scale: Float, biomeGrid: BiomeGrid): Gra
   val nodeCount = (20 * scale).toInt()
   val initialNodes = createRoomNodes(input.boundary, nodeCount, input.dice)
   val initialGraph = handleOverlapping(entityMap(initialNodes))
-  return pipeline(initialGraph, listOf(
+  return pipe(initialGraph, listOf(
       { graph -> cleanupWorld(graph) },
       { graph -> createAndMixTunnels(graph) },
       { graph -> applyInitialBiomes(biomeGrid, graph) },

@@ -1,6 +1,5 @@
 package lab.views.map
 
-import generation.abstracted.neighbors
 import lab.utility.embedCameraView
 import lab.views.game.renderFaceNormals
 import marloth.clienting.Client
@@ -11,6 +10,7 @@ import mythic.spatial.*
 import mythic.typography.TextStyle
 import org.lwjgl.opengl.GL11
 import rendering.*
+import rendering.shading.ObjectShaderConfig
 import scenery.Camera
 import scenery.ProjectionType
 import scenery.Scene

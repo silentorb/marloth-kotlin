@@ -81,7 +81,7 @@ fun characterVisibility(world: World, id: Id): String {
 }
 
 fun hudLayout(world: World): Flower {
-  val player = world.players.first().character
+  val player = world.players.first().id
   val rows = listOf(
       label(textStyle, characterHealth(world, player)),
       label(textStyle, characterVisibility(world, player)),

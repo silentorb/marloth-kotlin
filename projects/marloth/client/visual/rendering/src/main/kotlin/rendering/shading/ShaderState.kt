@@ -1,14 +1,13 @@
-package rendering
+package rendering.shading
 
-import mythic.breeze.Bones
 import mythic.spatial.Matrix
 import mythic.spatial.putMatrix
 import mythic.spatial.putVector3
 import mythic.spatial.putVector4
 import org.joml.times
 import org.lwjgl.BufferUtils
+import rendering.EffectsData
 import scenery.Light
-import scenery.Scene
 import java.nio.ByteBuffer
 
 const val sizeOfFloat = 4

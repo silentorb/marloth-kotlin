@@ -4,6 +4,7 @@ import intellect.Spirit
 import mythic.ent.Entity
 import mythic.ent.Id
 import mythic.ent.IdSource
+import mythic.ent.pipe
 import mythic.spatial.Pi
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector2
@@ -46,8 +47,8 @@ data class ArmatureAnimation(
     var timeOffset: Float
 ) : Entity
 
-fun isFinished(world: World, character: Character) =
-    character.health.value == 0
+fun isAlive(world: World, id: Id) =
+    world.table.characters[id]!!.health.value > 0
 
 fun updateCharacter(world: World, character: Character, commands: Commands, collisions: List<Collision>,
                     activatedAbilities: List<Ability>, delta: Float): Character {
@@ -80,7 +81,12 @@ fun updateCharacters(world: World, collisions: Collisions, commands: Commands, a
     val id = character.id
     val abilities = activatedAbilities.filter { it.character.id == character.id }
         .map { it.ability }
-    updateCharacter(world, character, commands.filter { it.target == id }, collisions, abilities, delta)
+
+    val characterCommands = pipe(commands, listOf(
+        { c -> if (isAlive(world, id)) c else listOf() },
+        { c -> c.filter { it.target == id } }
+    ))
+    updateCharacter(world, character, characterCommands, collisions, abilities, delta)
   }
 }
 
@@ -95,7 +101,9 @@ fun characterMovementFp(commands: Commands, character: Character, body: Body): M
 }
 
 fun allCharacterMovements(world: World, commands: Commands): List<MovementForce> =
-    world.characters.mapNotNull { characterMovementFp(filterCommands(it.id, commands), it, world.bodyTable[it.id]!!) }
+    world.characters
+        .filter { isAlive(world, it.id) }
+        .mapNotNull { characterMovementFp(filterCommands(it.id, commands), it, world.bodyTable[it.id]!!) }
 
 fun allCharacterOrientations(world: World): List<AbsoluteOrientationForce> =
     world.characters.map {
@@ -141,7 +149,7 @@ fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id,
               )
           )
       ),
-      player = player?.copy(character = id),
+      player = player?.copy(id = id),
       spirit = spirit?.copy(id = id)
   )
 }

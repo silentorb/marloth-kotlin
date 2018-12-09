@@ -24,7 +24,7 @@ fun characterAttack(world: World, nextId: IdSource, character: Character, abilit
   return Hand(
       body = Body(
           id = id,
-          position = body.position + direction * 0.5f + Vector3(0f, 0f, 0.7f),
+          position = body.position + direction * 0.5f + Vector3(0f, 0f, 1.0f),
           node = body.node,
           velocity = direction * 14.0f,
           shape = commonShapes[EntityType.missile]!!,

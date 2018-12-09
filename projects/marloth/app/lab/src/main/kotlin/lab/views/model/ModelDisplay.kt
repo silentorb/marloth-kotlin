@@ -14,6 +14,8 @@ import org.joml.*
 import rendering.*
 import rendering.meshes.Primitive
 import rendering.meshes.modelToMeshes
+import rendering.shading.ObjectShaderConfig
+import rendering.shading.populateBoneBuffer
 import scenery.AnimationId
 import scenery.Camera
 import scenery.ProjectionType

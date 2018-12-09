@@ -35,7 +35,7 @@ fun getFinished(world: World): List<Id> {
       .filter { isFinished(it) }
       .map { it.id }
       .plus(world.characters
-          .filter { isFinished(world, it) && !isPlayer(world, it) }
+          .filter { !isAlive(world, it.id) && !isPlayer(world, it) }
           .map { it.id })
 }
 

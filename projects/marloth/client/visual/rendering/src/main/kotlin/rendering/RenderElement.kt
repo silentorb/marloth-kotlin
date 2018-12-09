@@ -6,6 +6,8 @@ import mythic.glowing.DrawMethod
 import mythic.spatial.getRotationMatrix
 import org.joml.times
 import rendering.meshes.Primitive
+import rendering.shading.ObjectShaderConfig
+import rendering.shading.populateBoneBuffer
 
 fun simplePainter(renderer: SceneRenderer, primitive: Primitive, element: MeshElement, isAnimated: Boolean) {
   val transform = if (primitive.transform != null)

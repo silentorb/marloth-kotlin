@@ -10,6 +10,7 @@ import mythic.ent.Id
 import scenery.Light
 
 val firstPersonCameraOffset = Vector3(0f, 0f, 1.4f)
+val firstPersonDeadCameraOffset = Vector3(0f, 0f, 0.4f)
 
 val simplePainterMap = MeshId.values().mapNotNull { meshId ->
   val depictionType = DepictionType.values().firstOrNull { it.name == meshId.name }
@@ -24,9 +25,9 @@ val simplePainterMap = MeshId.values().mapNotNull { meshId ->
         )
     )
 
-fun createFirstPersonCamera(body: Body, character: Character): Camera = Camera(
+fun createFirstPersonCamera(body: Body, character: Character, isAlive: Boolean): Camera = Camera(
     ProjectionType.perspective,
-    body.position + firstPersonCameraOffset,
+    body.position + if (isAlive) firstPersonCameraOffset else firstPersonDeadCameraOffset,
 //    world.player.orientation,
     character.facingQuaternion
     ,
@@ -59,10 +60,10 @@ fun createTopDownCamera(player: Body): Camera {
 
 fun createCamera(world: World, screen: Screen): Camera {
   val player = world.players[screen.playerId - 1]
-  val character = world.characterTable[player.character]!!
-  val body = world.bodyTable[player.character]!!
+  val character = world.characterTable[player.id]!!
+  val body = world.bodyTable[player.id]!!
   return when (player.viewMode) {
-    ViewMode.firstPerson -> createFirstPersonCamera(body, character)
+    ViewMode.firstPerson -> createFirstPersonCamera(body, character, isAlive(world, player.id))
     ViewMode.thirdPerson -> createThirdPersonCamera(body, player.hoverCamera)
 //    ViewMode.topDown -> createTopDownCamera(body)
   }
@@ -70,7 +71,7 @@ fun createCamera(world: World, screen: Screen): Camera {
 
 fun filterDepictions(depictions: List<Depiction>, player: Player) =
     if (player.viewMode == ViewMode.firstPerson)
-      depictions.filter { it.id != player.character }
+      depictions.filter { it.id != player.id }
     else
       depictions
 
@@ -211,7 +212,7 @@ fun mapLights(world: World, player: Player) =
         .plus(Light(
             type = LightType.point,
             color = Vector4(1f, 1f, 1f, 0.5f),
-            position = world.bodyTable[player.character]!!.position + Vector3(0f, 0f, 2f),
+            position = world.bodyTable[player.id]!!.position + Vector3(0f, 0f, 2f),
             direction = Vector4(0f, 0f, 0f, 10f)
         ))
 
@@ -223,11 +224,15 @@ fun createScene(world: World, screen: Screen, player: Player): GameScene {
           lights = mapLights(world, player)
       ),
       elementGroups = elementGroups,
-      player = player.playerId
+      player = player.playerId,
+      filters = if (!isAlive(world, player.id))
+        listOf<ScreenFilter>({ it.screenColor.activate(Vector4(1f, 0f, 0f, 0.5f)) })
+      else
+        listOf()
   )
 }
 
-fun createScenes(world: World, screens: List<Screen>) =
+fun createScenes(world: World, screens: List<Screen>): List<GameScene> =
     world.players.map {
       createScene(world, screens[it.playerId - 1], it)
     }

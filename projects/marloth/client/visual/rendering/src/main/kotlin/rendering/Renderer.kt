@@ -18,6 +18,7 @@ import rendering.meshes.AttributeName
 import rendering.meshes.ModelMap
 import rendering.meshes.Primitive
 import rendering.meshes.createVertexSchemas
+import rendering.shading.*
 import scenery.*
 import java.nio.FloatBuffer
 
@@ -193,7 +194,7 @@ class Renderer(val config: DisplayConfig) {
   val sceneBuffer = UniformBuffer(sceneBufferSize)
   val sectionBuffer = UniformBuffer(sectionBufferSize)
   val boneBuffer = UniformBuffer(boneBufferSize)
-  val shaders = createShaders(UniformBuffers(
+  val shaders: Shaders = createShaders(UniformBuffers(
       scene = sceneBuffer,
       section = sectionBuffer,
       bone = boneBuffer
@@ -262,12 +263,12 @@ class Renderer(val config: DisplayConfig) {
     }
   }
 
-  fun renderGameScenes(scenes: List<GameScene>, windowInfo: WindowInfo) {
-    prepareRender(windowInfo)
-    val renderers = mapGameSceneRenderers(this, scenes, windowInfo)
-    renderers.forEach { it.render() }
-    finishRender(windowInfo)
-  }
+//  fun renderGameScenes(scenes: List<GameScene>, windowInfo: WindowInfo) {
+//    prepareRender(windowInfo)
+//    val renderers = mapGameSceneRenderers(this, scenes, windowInfo)
+//    renderers.forEach { it.render() }
+//    finishRender(windowInfo)
+//  }
 
 }
 

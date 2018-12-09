@@ -15,6 +15,7 @@ import mythic.sculpting.getVerticesCenter
 import mythic.spatial.*
 import org.joml.zw
 import rendering.*
+import rendering.shading.ObjectShaderConfig
 import scenery.MeshId
 import scenery.Screen
 import simulation.World
@@ -65,11 +66,11 @@ data class GameViewRenderData(
     val menuState: MenuState
 )
 
-fun renderStandardScene(renderers: List<GameSceneRenderer>, data: GameViewRenderData) {
-  renderers.forEach {
-    it.render()
-  }
-}
+//fun renderStandardScene(renderers: List<GameSceneRenderer>, data: GameViewRenderData) {
+//  renderers.forEach {
+//    it.render()
+//  }
+//}
 
 fun renderWireframeWorldMesh(renderer: SceneRenderer) {
   val worldMesh = renderer.renderer.worldMesh
@@ -85,31 +86,32 @@ fun renderWireframeWorldMesh(renderer: SceneRenderer) {
 
 fun renderWireframeScene(renderers: List<GameSceneRenderer>, data: GameViewRenderData) {
   renderers.forEach {
-    it.prepareRender()
+    it.prepareRender(listOf())
     renderWireframeWorldMesh(it.renderer)
     it.renderElements()
   }
 }
 
 fun renderWireframeScene(renderer: GameSceneRenderer) {
-  renderer.prepareRender()
+  renderer.prepareRender(listOf())
   renderWireframeWorldMesh(renderer.renderer)
   renderer.renderElements()
-  renderer.finishRender(renderer.renderer.viewport.zw)
+  renderer.finishRender(renderer.renderer.viewport.zw, listOf())
 }
 
-fun renderNormalScene(renderer: GameSceneRenderer, config: GameViewConfig) {
-  renderer.prepareRender()
-  if (config.draw.world)
-    renderer.renderWorldMesh()
-
-  renderer.renderElements()
-
-  val r = renderer.renderer.renderer
-//  renderSkyBox(r.mappedTextures, r.meshes, r.shaders)
-  renderer.finishRender(renderer.renderer.viewport.zw)
-  globalState.cullFaces = false
-}
+//fun renderNormalScene(renderer: GameSceneRenderer, config: GameViewConfig) {
+//  val r = renderer.renderer.renderer
+//  val filters = getDisplayConfigFilters(r.config)
+//  renderer.prepareRender(filters)
+//  if (config.draw.world)
+//    renderer.renderWorldMesh()
+//
+//  renderer.renderElements()
+//
+////  renderSkyBox(r.mappedTextures, r.meshes, r.shaders)
+//  renderer.finishRender(renderer.renderer.viewport.zw)
+//  globalState.cullFaces = false
+//}
 
 fun renderLabScenes(client: Client, data: GameViewRenderData) {
   val windowInfo = client.getWindowInfo()
@@ -125,7 +127,7 @@ fun renderLabScenes(client: Client, data: GameViewRenderData) {
     val sceneRenderer = renderer.createSceneRenderer(scene.main, viewport)
     val gameRenderer = GameSceneRenderer(scene, sceneRenderer)
     when (data.config.displayMode) {
-      GameDisplayMode.normal -> renderNormalScene(gameRenderer, config)
+      GameDisplayMode.normal -> renderScene(gameRenderer)
       GameDisplayMode.wireframe -> renderWireframeScene(gameRenderer)
     }
 

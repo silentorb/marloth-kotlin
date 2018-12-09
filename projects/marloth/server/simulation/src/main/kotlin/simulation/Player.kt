@@ -15,7 +15,7 @@ data class HoverCamera(
 )
 
 data class Player(
-    val character: Id,
+    val id: Id,
     val playerId: Int,
     val viewMode: ViewMode,
     val hoverCamera: HoverCamera = HoverCamera()
@@ -29,4 +29,4 @@ data class PlayerCharacter(
 typealias PlayerCharacters = List<PlayerCharacter>
 
 fun isPlayer(world: World, character: Character) =
-    world.players.any { it.character == character.id }
+    world.players.any { it.id == character.id }

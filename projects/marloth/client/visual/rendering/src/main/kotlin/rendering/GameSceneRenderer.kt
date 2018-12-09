@@ -9,6 +9,9 @@ import mythic.spatial.Vector4
 import org.joml.Vector2i
 import org.joml.Vector4i
 import rendering.meshes.ModelMap
+import rendering.shading.ObjectShaderConfig
+import rendering.shading.ScreenShader
+import rendering.shading.Shaders
 import scenery.Textures
 
 fun renderSkyBox(textures: TextureLibrary, meshes: ModelMap, shaders: Shaders) {
@@ -23,43 +26,48 @@ fun renderSkyBox(textures: TextureLibrary, meshes: ModelMap, shaders: Shaders) {
   */
 }
 
+typealias ScreenFilter = (Shaders) -> Unit
+
+fun getDisplayConfigFilters(config: DisplayConfig): List<ScreenFilter> =
+    if (config.depthOfField)
+      listOf<ScreenFilter>(
+          { it.depthOfField.activate() }
+      )
+    else
+      listOf()
+
 class GameSceneRenderer(
     val scene: GameScene,
     val renderer: SceneRenderer
 ) {
 
-  fun prepareRender() {
+  fun prepareRender(filters: List<ScreenFilter>) {
     globalState.depthEnabled = true
     val glow = renderer.renderer.glow
-    if (renderer.renderer.config.depthOfField) {
+    if (filters.any()) {
       val offscreenBuffer = renderer.renderer.offscreenBuffer
       val dimensions = Vector2i(offscreenBuffer.colorTexture.width, offscreenBuffer.colorTexture.height)
       glow.state.setFrameBuffer(offscreenBuffer.framebuffer.id)
       glow.state.viewport = Vector4i(0, 0, dimensions.x, dimensions.y)
     }
-    else {
-
-    }
     glow.operations.clearScreen()
   }
 
-  fun finishRender(dimensions: Vector2i) {
+  fun finishRender(dimensions: Vector2i, filters: List<ScreenFilter>) {
     globalState.cullFaces = false
     globalState.setFrameBuffer(0)
     globalState.viewport = Vector4i(0, 0, dimensions.x, dimensions.y)
-    if (renderer.renderer.config.depthOfField) {
-      applyFrameBufferTexture()
+    for (filter in filters) {
+      applyFrameBufferTexture(filter)
     }
-    else {
 
-    }
     globalState.cullFaces = true
   }
 
-  fun applyFrameBufferTexture() {
+  fun applyFrameBufferTexture(filter: ScreenFilter) {
     val canvasDependencies = getStaticCanvasDependencies()
     val offscreenBuffer = renderer.renderer.offscreenBuffer
-    renderer.renderer.shaders.screen.activate()
+    filter(renderer.renderer.shaders)
     activateTextures(listOf(offscreenBuffer.colorTexture, offscreenBuffer.depthTexture!!))
     canvasDependencies.meshes.image.draw(DrawMethod.triangleFan)
   }
@@ -77,8 +85,7 @@ class GameSceneRenderer(
         val texture = renderer.renderer.mappedTextures[textureId] ?: renderer.renderer.textures[textureId.toString()]!!
         texture.activate()
         sector.mesh.drawElement(DrawMethod.triangleFan, index++)
-      }
-      catch(ex:KotlinNullPointerException) {
+      } catch (ex: KotlinNullPointerException) {
         val k = 0
       }
     }
@@ -101,10 +108,10 @@ class GameSceneRenderer(
     }
   }
 
-  fun render() {
-    prepareRender()
-    renderWorldMesh()
-    renderElements()
-  }
+//  fun render() {
+//    prepareRender()
+//    renderWorldMesh()
+//    renderElements()
+//  }
 
 }

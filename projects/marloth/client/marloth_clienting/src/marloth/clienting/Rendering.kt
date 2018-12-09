@@ -6,13 +6,23 @@ import rendering.*
 
 
 fun renderScene(renderer: GameSceneRenderer) {
-  renderer.prepareRender()
+  val r = renderer.renderer.renderer
+  val filters = getDisplayConfigFilters(r.config).plus(renderer.scene.filters)
+  renderer.prepareRender(filters)
+  renderer.renderWorldMesh()
   renderer.renderElements()
 
-  val r = renderer.renderer.renderer
 //  renderSkyBox(r.mappedTextures, r.meshes, r.shaders)
-  renderer.finishRender(renderer.renderer.viewport.zw)
+  renderer.finishRender(renderer.renderer.viewport.zw, filters)
   globalState.cullFaces = false
+
+//  renderer.prepareRender()
+//  renderer.renderElements()
+//
+//  val r = renderer.renderer.renderer
+////  renderSkyBox(r.mappedTextures, r.meshes, r.shaders)
+//  renderer.finishRender(renderer.renderer.viewport.zw)
+//  globalState.cullFaces = false
 }
 
 fun renderScenes(client: Client, scenes: List<GameScene>) {

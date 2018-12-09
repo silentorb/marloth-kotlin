@@ -16,7 +16,7 @@ import marloth.clienting.Client
 import marloth.clienting.CommandType
 import marloth.clienting.newClientState
 import mythic.desktop.createDesktopPlatform
-import mythic.ent.pipeline
+import mythic.ent.pipe
 import mythic.platforming.Display
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
@@ -56,7 +56,7 @@ fun generateDefaultWorld(gameViewConfig: GameViewConfig): World {
       dice
   ))
 
-  return pipeline(initialWorld, listOf(
+  return pipe(initialWorld, listOf(
       { world ->
         if (gameViewConfig.haveEnemies)
           addEnemies(world, boundary, dice)
@@ -65,7 +65,7 @@ fun generateDefaultWorld(gameViewConfig: GameViewConfig): World {
       },
       { world ->
         if (!gameViewConfig.playerGravity) {
-          val id = world.players.first().character
+          val id = world.players.first().id
           val body = world.deck.bodies.first { it.id == id }
 //              .copy(gravity = false)
           world.copy(

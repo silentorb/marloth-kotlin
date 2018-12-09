@@ -36,5 +36,5 @@ fun updatePlayers(players: Players, commands: Commands): Players {
 //  if (filterCommands(players.first(), commands).size != commands.size)
 //    throw Error("")
 
-  return players.map { updatePlayer(it, filterCommands(it.character, commands)) }
+  return players.map { updatePlayer(it, filterCommands(it.id, commands)) }
 }

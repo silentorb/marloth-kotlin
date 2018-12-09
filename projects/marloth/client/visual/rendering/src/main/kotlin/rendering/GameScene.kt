@@ -7,7 +7,8 @@ import scenery.Scene
 data class GameScene(
     val main: Scene,
     val elementGroups: ElementGroups,
-    val player: Int
+    val player: Int,
+    val filters: List<ScreenFilter>
 ) {
 
   val camera: Camera
