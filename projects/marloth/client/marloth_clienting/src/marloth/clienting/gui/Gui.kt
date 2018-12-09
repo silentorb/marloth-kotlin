@@ -13,7 +13,6 @@ import mythic.typography.TextConfiguration
 import mythic.typography.TextStyle
 import mythic.typography.calculateTextDimensions
 import org.joml.Vector2i
-import rendering.SceneRenderer
 import simulation.World
 import java.text.DecimalFormat
 
@@ -85,19 +84,18 @@ fun hudLayout(world: World): Flower {
   val player = world.players.first().character
   val rows = listOf(
       label(textStyle, characterHealth(world, player)),
-      label(textStyle, characterVisibility(world, player))
+      label(textStyle, characterVisibility(world, player)),
+      label(textStyle, df.format(world.table.bodies[player]!!.velocity.length()))
   )
   return offset(Vector2i(10))(
       list(vertical, 10)(rows)
   )
 }
 
-fun renderGui(renderer: SceneRenderer, bounds: Bounds, canvas: Canvas, world: World, state: MenuState) {
+fun renderGui(bounds: Bounds, canvas: Canvas, world: World, state: MenuState) {
   val hudBoxes = hudLayout(world)(Seed(bounds = bounds))
   renderLayout(hudBoxes, canvas)
 
-//  canvas.drawText(bounds.position + Vector2i(10, 10), TextStyle(canvas.fonts[0], 12f, Vector4(1f)),
-//      "Testing")
   if (!state.isVisible)
     return
 

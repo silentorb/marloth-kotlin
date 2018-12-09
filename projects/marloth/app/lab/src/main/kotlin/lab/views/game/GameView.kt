@@ -17,7 +17,6 @@ import org.joml.zw
 import rendering.*
 import scenery.MeshId
 import scenery.Screen
-import simulation.Realm
 import simulation.World
 import visualizing.createScenes
 
@@ -143,7 +142,7 @@ fun renderLabScenes(client: Client, data: GameViewRenderData) {
     }
 
     if (config.draw.gui)
-      renderGui(sceneRenderer, Bounds(viewport), canvas, data.world, data.menuState)
+      renderGui(Bounds(viewport), canvas, data.world, data.menuState)
   }
 
   renderer.finishRender(windowInfo)
