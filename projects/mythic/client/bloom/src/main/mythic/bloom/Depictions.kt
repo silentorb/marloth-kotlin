@@ -4,8 +4,10 @@ import mythic.drawing.globalFonts
 import mythic.glowing.cropStack
 import mythic.spatial.Vector2
 import mythic.spatial.toVector2i
+import mythic.typography.IndexedTextStyle
 import mythic.typography.TextConfiguration
 import mythic.typography.calculateTextDimensions
+import mythic.typography.resolve
 
 fun textDepiction(style: IndexedTextStyle, content: String): Depiction = { b, c ->
   val position = b.position

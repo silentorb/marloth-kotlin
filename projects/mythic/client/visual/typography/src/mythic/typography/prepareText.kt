@@ -178,3 +178,19 @@ fun <T> prepareText(config: TextConfiguration, vertexSchema: VertexSchema<T>): T
       SimpleMesh(vertexSchema, vertexBuffer, offsetBuffer, countBuffer)
   )
 }
+
+data class IndexedTextStyle(
+    val font: Int,
+    val size: Float,
+    val color: Vector4
+)
+
+typealias TextStyleSource = (List<Font>) -> TextStyle
+
+fun resolve(style: IndexedTextStyle): TextStyleSource = { fonts: List<Font> ->
+  TextStyle(
+      font = fonts[style.font],
+      size = style.size,
+      color = style.color
+  )
+}

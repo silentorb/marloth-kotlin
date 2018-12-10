@@ -4,9 +4,11 @@ import mythic.spatial.*
 import org.joml.Vector2i
 import org.joml.plus
 
+private const val scrollbarWidth = 15
+
 fun scrollbar(offset: Int, contentLength: Int): Depiction = { b, c ->
   if (contentLength > b.dimensions.y) {
-    val width = 15
+    val width = scrollbarWidth
     val bounds = Bounds(
         x = b.end.x - width - 2,
         y = offset * b.dimensions.y / contentLength,
@@ -19,20 +21,6 @@ fun scrollbar(offset: Int, contentLength: Int): Depiction = { b, c ->
     c.drawSquare(viewport.xy(), viewport.zw, c.solid(Vector4(0.6f, 0.6f, 0.6f, 1f)))
   }
 }
-
-//fun clipChildren(child: Flower): Flower = { seed ->
-//  child(seed).map { box ->
-//    val depiction = if (box.depiction != null)
-//      clipBox(seed.bounds, box.depiction)
-//    else
-//      null
-//
-//    box.copy(
-//        depiction = depiction,
-//        clipBounds = seed.bounds
-//    )
-//  }
-//}
 
 fun clipBox(clipBounds: Bounds): (Box) -> Box = { box ->
   val depiction = if (box.depiction != null)
@@ -124,8 +112,16 @@ fun scrollBox(key: String, contentBounds: Bounds): Flower = { seed ->
 
 fun scrolling(key: String): (Flower) -> Flower = { child ->
   { seed ->
-    val childBoxes = offset(child)(extractOffset(key, seed.bag))(seed)
-        .map(clipBox(seed.bounds))
+    val innerSeed = seed.copy(
+        bounds = seed.bounds.copy(
+            dimensions = Vector2i(
+                seed.bounds.dimensions.x - scrollbarWidth,
+                seed.bounds.dimensions.y
+            )
+        )
+    )
+    val childBoxes = offset(child)(extractOffset(key, seed.bag))(innerSeed)
+        .map(clipBox(innerSeed.bounds))
     val contentBounds = accumulatedBounds(childBoxes)
     scrollBox(key, contentBounds)(seed)
         .plus(childBoxes)

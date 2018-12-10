@@ -58,7 +58,7 @@ fun sortWallVertices(sectorCenter: Vector3, vertices: Vertices): Vertices {
     sorted
 }
 
-fun createSecondaryNode(sectorCenter: Vector3, nextId: IdSource, isSolid: Boolean, biome: Biome = Biome.void): Node {
+fun createSecondaryNode(sectorCenter: Vector3, nextId: IdSource, isSolid: Boolean, biome: Biome): Node {
   val radius = 1f
 
   val node = Node(

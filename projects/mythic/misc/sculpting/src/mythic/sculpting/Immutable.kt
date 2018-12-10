@@ -87,21 +87,6 @@ data class ImmutableFace(
   fun edge(first: Vector3, second: Vector3): ImmutableEdgeReference? =
       edges.firstOrNull { it.edge.matches(first, second) }
 
-//  fun flipQuad() {
-//    edges.forEach {
-//      val a = it.next
-//      it.next = it.previous
-//      it.previous = a
-//      it.direction = !it.direction
-//    }
-//
-//    edges = listOf(
-//        edges[0],
-//        edges[3],
-//        edges[2],
-//        edges[1]
-//    ).toMutableList()
-//  }
 }
 
 fun flipFace(face: ImmutableFace): ImmutableFace =
@@ -110,8 +95,7 @@ fun flipFace(face: ImmutableFace): ImmutableFace =
           er.copy(
               direction = !er.direction
           )
-
-        }.toMutableList(),
+        }.reversed().toMutableList(),
         normal = face.normal * -1f
     )
 

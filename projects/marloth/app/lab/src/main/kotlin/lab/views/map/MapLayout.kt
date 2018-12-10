@@ -4,6 +4,7 @@ import lab.utility.white
 import marloth.clienting.Client
 import mythic.bloom.*
 import mythic.drawing.grayTone
+import mythic.typography.IndexedTextStyle
 import simulation.Node
 import simulation.Realm
 
@@ -24,7 +25,9 @@ private val nodeRow: ListItem<Node> = ListItem(20) { node ->
     else
       textStyle
 
-    textDepiction(style, node.id.toString())
+    val solid = if (node.isSolid) "S" else " "
+
+    textDepiction(style, "${node.id} $solid")
   }
 }
 

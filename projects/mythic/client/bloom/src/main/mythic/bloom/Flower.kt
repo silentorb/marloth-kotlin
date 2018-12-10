@@ -33,22 +33,6 @@ fun <T> getExistingOrNewState(initializer: () -> T): (Any?) -> T = { state ->
     initializer()
 }
 
-data class IndexedTextStyle(
-    val font: Int,
-    val size: Float,
-    val color: Vector4
-)
-
-typealias TextStyleSource = (List<Font>) -> TextStyle
-
-fun resolve(style: IndexedTextStyle): TextStyleSource = { fonts: List<Font> ->
-  TextStyle(
-      font = fonts[style.font],
-      size = style.size,
-      color = style.color
-  )
-}
-
 //fun padding(all: Int): (Flower) -> Flower = { flower ->
 //  {seed->
 //    flower()

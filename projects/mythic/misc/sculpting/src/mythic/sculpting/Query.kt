@@ -48,7 +48,7 @@ fun getEdgesCenter(edges: List<EdgeReference>) =
 
 
 fun getVerticesCenter(vertices: List<Vector3>): Vector3 {
-  if (vertices.size == 0)
+  if (vertices.isEmpty())
     return Vector3()
 
   var result = Vector3()

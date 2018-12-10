@@ -334,6 +334,9 @@ class SceneRenderer(
     )
   }
 
+  fun drawText(content: String, position: Vector3, style: IndexedTextStyle) =
+      drawText(content, position, resolve(style)(renderer.fonts))
+
   val meshes: ModelMeshMap
     get() = renderer.meshes
 }

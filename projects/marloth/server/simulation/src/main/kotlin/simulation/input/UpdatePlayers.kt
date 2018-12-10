@@ -21,20 +21,21 @@ fun updatePlayerView(viewMode: ViewMode, commands: Commands): ViewMode {
     viewMode
 }
 
-fun updatePlayer(player: Player, commands: Commands): Player {
+fun updatePlayer(commands: Commands): (Player) -> Player = { player ->
   val delta = simulationDelta
 //  val lookForce = updateField(Vector2(), updatePlayerLookForce(player, commands))
 //  val lookVelocity = transitionVector(lookForce, player.lookVelocity)
 //  applyPlayerLookCommands(player, commands, delta)
 
-  return player.copy(
-      viewMode = updatePlayerView(player.viewMode, commands)
+  val playerCommands = filterCommands(player.id, commands)
+  player.copy(
+      viewMode = updatePlayerView(player.viewMode, playerCommands)
   )
 }
 
-fun updatePlayers(players: Players, commands: Commands): Players {
-//  if (filterCommands(players.first(), commands).size != commands.size)
-//    throw Error("")
-
-  return players.map { updatePlayer(it, filterCommands(it.id, commands)) }
-}
+//fun updatePlayers(players: Players, commands: Commands): Players {
+////  if (filterCommands(players.first(), commands).size != commands.size)
+////    throw Error("")
+//
+//  return players.map { updatePlayer(it, filterCommands(it.id, commands)) }
+//}

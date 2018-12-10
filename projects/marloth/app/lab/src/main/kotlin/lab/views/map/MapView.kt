@@ -4,6 +4,7 @@ import haft.isActive
 import lab.LabCommandType
 import lab.views.LabCommandState
 import mythic.bloom.Bounds
+import mythic.ent.Id
 import mythic.platforming.WindowInfo
 import mythic.spatial.*
 import org.joml.minus
@@ -32,7 +33,7 @@ data class MapViewDisplayConfig(
 data class MapViewConfig(
     val camera: MapViewCamera = MapViewCamera(),
     val display: MapViewDisplayConfig = MapViewDisplayConfig(),
-    var selection: List<Int> = listOf(),
+    var selection: List<Id> = listOf(),
     var tempStart: Vector3 = Vector3(),
     var tempEnd: Vector3 = Vector3(),
     var raySkip: Int = 0
@@ -40,7 +41,7 @@ data class MapViewConfig(
 
 data class Hit(
     val position: Vector3,
-    val index: Int
+    val id: Id
 )
 
 private fun getFaceHits(start: Vector3, end: Vector3, world: Realm): List<Hit> {
@@ -48,15 +49,15 @@ private fun getFaceHits(start: Vector3, end: Vector3, world: Realm): List<Hit> {
 //      .take(1)
   val rayDirection = (end - start).normalize()
 
-  return faces.mapIndexedNotNull { i, it ->
-    val face = world.mesh.faces[it]!!
+  return faces.mapNotNull { id ->
+    val face = world.mesh.faces[id]!!
     if (face.normal.x == 0f && face.normal.y == 0f && face.normal.z == 0f)
       assert(false)
 //      it.updateNormal()
 
     val point = rayIntersectsPolygon3D(start, rayDirection, face.vertices, face.normal)
     if (point != null)
-      Hit(point, i)
+      Hit(point, id)
     else
       null
   }
@@ -88,9 +89,9 @@ private fun trySelect(config: MapViewConfig, world: Realm) {
     val sorted = hits.sortedBy { it.position.distance(start) }
     val index = config.raySkip % sorted.size
     val hit = sorted[index]
-    config.selection = listOf(hit.index).toMutableList()
+    config.selection = listOf(hit.id)
   } else {
-    config.selection = mutableListOf()
+    config.selection = listOf()
   }
 }
 

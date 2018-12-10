@@ -7,6 +7,7 @@ import mythic.bloom.*
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
 import mythic.spatial.*
+import mythic.typography.IndexedTextStyle
 import mythic.typography.TextStyle
 import org.lwjgl.opengl.GL11
 import rendering.*
@@ -29,7 +30,7 @@ fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, realm: Rea
       "lower" -> Vector4(1f, 0f, 1f, 1f)
       else -> color
     }
-    val thickness = if (config.selection.contains(faces.indexOf(face)))
+    val thickness = if (config.selection.contains(face))
       3f
     else
       1f
@@ -40,9 +41,10 @@ fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, realm: Rea
   }
 }
 
+private val textStyle = IndexedTextStyle(0, 0f, Vector4(0.5f, 1f, 1f, 1f))
+
 fun renderFaceIds(renderer: SceneRenderer, realm: Realm, nodes: Collection<Node>) {
   globalState.depthEnabled = true
-  val textStyle = TextStyle(renderer.renderer.fonts[0], 0f, Vector4(0.5f, 1f, 1f, 1f))
   for (faceId in nodes.flatMap { it.faces }) {
 //    for (faceId in node.faces) {
     val face = realm.mesh.faces[faceId]!!
@@ -53,14 +55,13 @@ fun renderFaceIds(renderer: SceneRenderer, realm: Realm, nodes: Collection<Node>
 
 fun renderNodeIds(renderer: SceneRenderer, nodes: Collection<Node>) {
   globalState.depthEnabled = true
-  val textStyle = TextStyle(renderer.renderer.fonts[0], 0f, Vector4(0.5f, 1f, 1f, 1f))
   for (node in nodes) {
     renderer.drawText(node.id.toString(), node.position, textStyle)
   }
 }
 
 fun renderMapMesh(renderer: SceneRenderer, realm: Realm, config: MapViewConfig, bag: StateBag) {
-  val worldMesh = renderer.renderer.worldMesh
+  val worldMesh = renderer.renderer.worldMesh!!
   val selectedNodes = selectionState(bag[nodeListSelectionKey])
   val nodes: Collection<Node> = if (selectedNodes.selection.none())
     realm.nodeList
@@ -73,48 +74,56 @@ fun renderMapMesh(renderer: SceneRenderer, realm: Realm, config: MapViewConfig, 
         .distinct()
         .map { realm.nodeTable[it]!! }
 
-  if (worldMesh != null) {
-    if (config.display.drawMode == MapViewDrawMode.wireframe) {
-      drawWireframeWorld(renderer, worldMesh, realm, config, nodes, Vector4(1f))
-    } else {
-      globalState.depthEnabled = false
-      globalState.cullFaces = false
-      globalState.blendEnabled = true
-      globalState.blendFunction = Pair(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
+  val sectors = if (selectedNodes.selection.none())
+    worldMesh.sectors
+  else
+    worldMesh.sectors.filter { selectedNodes.selection.contains(it.id.toString()) }
 
-      val lineHalfColor = Vector4(1f, 1f, 1f, 1f)
+  val faces = nodes.flatMap { it.faces }.map { realm.mesh.faces[it]!! }
+
+  if (config.display.drawMode == MapViewDrawMode.wireframe) {
+    drawWireframeWorld(renderer, worldMesh, realm, config, nodes, Vector4(1f))
+  } else {
+    globalState.depthEnabled = false
+    globalState.cullFaces = false
+    globalState.blendEnabled = true
+    globalState.blendFunction = Pair(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
+
+    val lineHalfColor = Vector4(1f, 1f, 1f, 1f)
 //      val lineHalfColor = Vector4(1f, 1f, 1f, 0.5f)
 //      drawWireframeWorld(renderer, worldMesh, realm, lineHalfColor)
-      globalState.depthEnabled = true
-      globalState.cullFaces = true
-      val sectors = if (selectedNodes.selection.any())
-        worldMesh.sectors
-      else
-        worldMesh.sectors.filter { selectedNodes.selection.contains(it.id.toString()) }
+    globalState.depthEnabled = true
+    globalState.cullFaces = true
 
-      for (sector in sectors) {
-        var index = 0
-        for (textureId in sector.textureIndex) {
-          val texture = renderer.renderer.mappedTextures[textureId]
-              ?: renderer.renderer.textures[textureId.toString()]!!
-          renderer.effects.texturedFlat.activate(ObjectShaderConfig(texture = texture))
-          sector.mesh.drawElement(DrawMethod.triangleFan, index++)
-        }
+    for (sector in sectors) {
+      var index = 0
+      for (textureId in sector.textureIndex) {
+        val texture = renderer.renderer.mappedTextures[textureId]
+            ?: renderer.renderer.textures[textureId.toString()]!!
+        renderer.effects.texturedFlat.activate(ObjectShaderConfig(texture = texture))
+        sector.mesh.drawElement(DrawMethod.triangleFan, index++)
       }
-      globalState.depthEnabled = false
-      globalState.cullFaces = false
-      drawWireframeWorld(renderer, worldMesh, realm, config, nodes, lineHalfColor)
     }
+    globalState.depthEnabled = false
+    globalState.cullFaces = false
+    drawWireframeWorld(renderer, worldMesh, realm, config, nodes, lineHalfColor)
+  }
 
-    if (config.display.normals)
-      renderFaceNormals(renderer, 0.3f, realm.mesh)
+  if (config.display.normals)
+    renderFaceNormals(renderer, 0.5f, faces)
 
-    if (config.display.faceIds) {
-      renderFaceIds(renderer, realm, nodes)
-    }
+  if (config.display.faceIds) {
+    renderFaceIds(renderer, realm, nodes)
+  }
 
-    if (config.display.nodeIds) {
-      renderNodeIds(renderer, nodes)
+  if (config.display.nodeIds) {
+    renderNodeIds(renderer, nodes)
+  }
+
+  for (id in config.selection) {
+    val face = realm.mesh.faces[id]!!
+    face.vertices.forEachIndexed { index, v ->
+      renderer.drawText(index.toString(), v, textStyle)
     }
   }
 

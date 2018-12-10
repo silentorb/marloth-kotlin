@@ -47,48 +47,84 @@ data class ArmatureAnimation(
     var timeOffset: Float
 ) : Entity
 
+// Currently this is such a simple function because it will likely get more complicated and I want to ensure
+// everything is already routing through a single point before things get more complicated.
+fun isAlive(health: Int): Boolean =
+    health > 0
+
 fun isAlive(world: World, id: Id) =
-    world.table.characters[id]!!.health.value > 0
+    isAlive(world.table.characters[id]!!.health.value)
 
 fun updateCharacter(world: World, character: Character, commands: Commands, collisions: List<Collision>,
                     activatedAbilities: List<Ability>, delta: Float): Character {
   val lookForce = characterLookForce(character, commands)
-  val lookVelocity = transitionVector(maxLookVelocityChange(),
-      Vector3(character.lookVelocity, 0f), Vector3(lookForce, 0f)).xy()
 
   val hits = collisions.filter { it.second == character.id }
-
   val health = modifyResource(character.health, hits.map { -50 }.sum())
-  if (hits.any()) {
-    val k = 0
-  }
   val abilities = updateAbilities(character, activatedAbilities)
-  val facingRotation = character.facingRotation + fpCameraRotation(lookVelocity, delta)
 
-  return character.copy(
-      isAlive = character.health.value > 0,
-      lookVelocity = lookVelocity,
-      facingRotation = Vector3(0f, facingRotation.y, facingRotation.z),
-      health = character.health.copy(value = health),
-      abilities = abilities
-  )
+  val isAlive = isAlive(health)
+  val justDied = !isAlive && isAlive(world, character.id)
+
+  return pipe(character, listOf(
+      { c ->
+        c.copy(
+            isAlive = isAlive,
+            health = character.health.copy(value = health),
+            abilities = abilities
+        )
+      },
+      { c ->
+        if (justDied) {
+          val hit = hits.first()
+          val attacker = world.table.missiles[hit.first]!!.owner
+          val facingVector = (world.bodyTable[attacker]!!.position - world.bodyTable[character.id]!!.position).normalize()
+          val lookAtAngle = getLookAtAngle(facingVector)
+          c.copy(
+              lookVelocity = Vector2(),
+              facingRotation = Vector3(0f, 0f, lookAtAngle)
+          )
+        } else {
+          val lookVelocity = transitionVector(maxLookVelocityChange(),
+              Vector3(character.lookVelocity, 0f), Vector3(lookForce, 0f)).xy()
+          val facingRotation = character.facingRotation + fpCameraRotation(lookVelocity, delta)
+
+          c.copy(
+              lookVelocity = lookVelocity,
+              facingRotation = Vector3(0f, facingRotation.y, facingRotation.z)
+          )
+        }
+      }
+  ))
 }
-
-fun updateCharacters(world: World, collisions: Collisions, commands: Commands, activatedAbilities: List<ActivatedAbility>): List<Character> {
+fun updateCharacter(world: World, collisions: Collisions, commands: Commands, activatedAbilities: List<ActivatedAbility>): (Character)->Character = { character ->
   val delta = simulationDelta
-  return world.characterTable.map { e ->
-    val character = e.value
-    val id = character.id
-    val abilities = activatedAbilities.filter { it.character.id == character.id }
-        .map { it.ability }
+  val id = character.id
+  val abilities = activatedAbilities.filter { it.character.id == character.id }
+      .map { it.ability }
 
-    val characterCommands = pipe(commands, listOf(
-        { c -> if (isAlive(world, id)) c else listOf() },
-        { c -> c.filter { it.target == id } }
-    ))
-    updateCharacter(world, character, characterCommands, collisions, abilities, delta)
-  }
+  val characterCommands = pipe(commands, listOf(
+      { c -> if (isAlive(world, id)) c else listOf() },
+      { c -> c.filter { it.target == id } }
+  ))
+  updateCharacter(world, character, characterCommands, collisions, abilities, delta)
 }
+
+//fun updateCharacters(world: World, collisions: Collisions, commands: Commands, activatedAbilities: List<ActivatedAbility>): List<Character> {
+//  val delta = simulationDelta
+//  return world.characterTable.map { e ->
+//    val character = e.value
+//    val id = character.id
+//    val abilities = activatedAbilities.filter { it.character.id == character.id }
+//        .map { it.ability }
+//
+//    val characterCommands = pipe(commands, listOf(
+//        { c -> if (isAlive(world, id)) c else listOf() },
+//        { c -> c.filter { it.target == id } }
+//    ))
+//    updateCharacter(world, character, characterCommands, collisions, abilities, delta)
+//  }
+//}
 
 fun characterMovementFp(commands: Commands, character: Character, body: Body): MovementForce? {
   var offset = joinInputVector(commands, playerMoveMap)

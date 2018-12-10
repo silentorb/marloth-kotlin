@@ -1,15 +1,20 @@
 package simulation
 
 import intellect.Spirit
+import mythic.ent.Entity
 import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.ent.entityMap
 import physics.Body
 
-typealias Players = List<Player>
-typealias IdentityMap<T> = Map<Id, T>
-typealias BodyTable = Map<Id, Body>
-typealias CharacterTable = Map<Id, Character>
+typealias BodyTable = IdentityMap<Body>
+typealias CharacterTable = IdentityMap<Character>
+
+data class IdentityMap<T>(
+    val values: Map<Id, T>
+) {
+  operator fun get(id: Id): T? = values[id]
+}
 
 data class Hand(
     val body: Body? = null,
@@ -51,23 +56,26 @@ data class Deck(
 
 data class Tables(
     val animations: IdentityMap<ArmatureAnimation>,
-    val bodies: BodyTable,
-    val characters: CharacterTable,
+    val bodies: IdentityMap<Body>,
+    val characters: IdentityMap<Character>,
     val depictions: IdentityMap<Depiction>,
     val doors: IdentityMap<Door>,
-    val missiles: Map<Id, Missile>,
-    val spirits: Map<Id, Spirit>
+    val missiles: IdentityMap<Missile>,
+    val spirits: IdentityMap<Spirit>
 )
+
+fun <T : Entity> entityMap2(list: Collection<T>): IdentityMap<T> =
+    IdentityMap(entityMap(list))
 
 fun toTables(deck: Deck): Tables =
     Tables(
-        bodies = entityMap(deck.bodies),
-        characters = entityMap(deck.characters),
-        animations = entityMap(deck.animations),
-        depictions = entityMap(deck.depictions),
-        doors = entityMap(deck.doors),
-        missiles = entityMap(deck.missiles),
-        spirits = entityMap(deck.spirits)
+        bodies = entityMap2(deck.bodies),
+        characters = entityMap2(deck.characters),
+        animations = entityMap2(deck.animations),
+        depictions = entityMap2(deck.depictions),
+        doors = entityMap2(deck.doors),
+        missiles = entityMap2(deck.missiles),
+        spirits = entityMap2(deck.spirits)
     )
 
 fun <T> nullableList(entity: T?): List<T> =
@@ -95,11 +103,11 @@ fun toDeck(hands: List<Hand>): Deck =
 data class World(
     val realm: Realm,
     val nextId: Id,
-    val deck: Deck
+    val deck: Deck,
+    val table: Tables = toTables(deck)
 ) {
-  val table: Tables = toTables(deck)
-  val bodyTable: BodyTable get() = table.bodies
-  val characterTable: CharacterTable get() = table.characters
+  val bodyTable: IdentityMap<Body> get() = table.bodies
+  val characterTable: IdentityMap<Character> get() = table.characters
 
   val players: List<Player>
     get() = deck.players

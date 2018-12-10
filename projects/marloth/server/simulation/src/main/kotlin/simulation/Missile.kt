@@ -18,6 +18,8 @@ data class Missile(
     val remainingDistance: Float
 ) : Entity
 
+private const val missileSpeed = 25f
+
 fun characterAttack(world: World, nextId: IdSource, character: Character, ability: Ability, direction: Vector3): Hand {
   val body = world.bodyTable[character.id]!!
   val id = nextId()
@@ -26,7 +28,7 @@ fun characterAttack(world: World, nextId: IdSource, character: Character, abilit
           id = id,
           position = body.position + direction * 0.5f + Vector3(0f, 0f, 1.0f),
           node = body.node,
-          velocity = direction * 14.0f,
+          velocity = direction * missileSpeed,
           shape = commonShapes[EntityType.missile]!!,
           orientation = Quaternion(),
           attributes = missileBodyAttributes,
@@ -41,11 +43,11 @@ fun characterAttack(world: World, nextId: IdSource, character: Character, abilit
   )
 }
 
-fun getBodyCollisions(bodyTable: BodyTable, characterTable: CharacterTable, missiles: Collection<Missile>): List<Collision> {
+fun getBodyCollisions(bodies: List<Body>, bodyTable: BodyTable, characterTable: CharacterTable, missiles: Collection<Missile>): List<Collision> {
   return missiles.flatMap { missile ->
     val body = bodyTable[missile.id]!!
     val owner = bodyTable[missile.owner]
-    bodyTable.values.filter { it !== body && it !== owner }
+    bodies.filter { it !== body && it !== owner }
         .filter { overlaps(it, body) }
         .map { hit ->
           Collision(
@@ -59,7 +61,7 @@ fun getBodyCollisions(bodyTable: BodyTable, characterTable: CharacterTable, miss
   }
 }
 
-fun updateMissile(world: World, missile: Missile, collisions: List<Collision>, delta: Float): Missile {
+fun updateMissile(world: World, collisions: List<Collision>, delta: Float): (Missile) -> Missile = { missile ->
   val body = world.table.bodies[missile.id]!!
   val offset = body.velocity * delta
   val hit = collisions.firstOrNull { it.first == missile.id }
@@ -73,7 +75,7 @@ fun updateMissile(world: World, missile: Missile, collisions: List<Collision>, d
   } else {
     missile.remainingDistance - offset.length()
   }
-  return missile.copy(remainingDistance = remainingDistance)
+  missile.copy(remainingDistance = remainingDistance)
 }
 //realm.walls.filter { isSolidWall(realm.faces[it.id]!!) }.any { hitsWall(it.edges[0].edge, position, body.radius!!)
 
@@ -87,7 +89,7 @@ fun getNewMissiles(world: World, nextId: IdSource, activatedAbilities: List<Acti
   })
 }
 
-fun updateMissiles(world: World, collisions: List<Collision>): List<Missile> {
-  return world.missiles
-      .map { updateMissile(world, it, collisions, simulationDelta) }
-}
+//fun updateMissiles(world: World, collisions: List<Collision>): List<Missile> {
+//  return world.missiles
+//      .map { updateMissile(world, it, collisions, simulationDelta) }
+//}

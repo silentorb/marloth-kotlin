@@ -93,12 +93,16 @@ fun updateAnimations(world: World, animationDurations: AnimationDurationMap, id:
   return result
 }
 
-fun updateDepictions(world: World, animationDurations: AnimationDurationMap): List<Depiction> =
-    world.deck.depictions.map { depiction ->
-      if (depiction.animations.none())
-        depiction
-      else
-        depiction.copy(
-            animations = updateAnimations(world, animationDurations, depiction.id, depiction.animations, simulationDelta)
-        )
-    }
+fun updateDepiction(world: World, animationDurations: AnimationDurationMap): (Depiction) -> Depiction = { depiction ->
+  if (depiction.animations.none())
+    depiction
+  else
+    depiction.copy(
+        animations = updateAnimations(world, animationDurations, depiction.id, depiction.animations, simulationDelta)
+    )
+}
+//
+//fun updateDepictions(world: World, animationDurations: AnimationDurationMap): List<Depiction> =
+//    world.deck.depictions.map { depiction ->
+//
+//    }

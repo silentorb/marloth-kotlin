@@ -9,6 +9,7 @@ import mythic.glowing.globalState
 import mythic.spatial.Vector4
 import mythic.spatial.toVector2
 import mythic.spatial.toVector2i
+import mythic.typography.IndexedTextStyle
 import mythic.typography.TextConfiguration
 import mythic.typography.TextStyle
 import mythic.typography.calculateTextDimensions

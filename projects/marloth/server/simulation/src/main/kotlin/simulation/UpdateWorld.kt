@@ -14,7 +14,7 @@ import physics.updateBodies
 import physics.MovingBody
 import physics.getWallCollisions
 import physics.wallsInCollisionRange
-import simulation.input.updatePlayers
+import simulation.input.updatePlayer
 
 fun <T> updateField(defaultValue: T, newValue: T?): T =
     if (newValue != null)
@@ -31,7 +31,7 @@ fun simplifyRotation(value: Float): Float =
       value
 
 fun getFinished(world: World): List<Id> {
-  return world.table.missiles.values
+  return world.deck.missiles
       .filter { isFinished(it) }
       .map { it.id }
       .plus(world.characters
@@ -69,7 +69,7 @@ fun generateIntermediateRecords(world: World, playerCommands: Commands, delta: F
         val walls = getWallCollisions(MovingBody(body.radius!!, body.position), offset, faces)
         walls.map { Collision(body.id, null, it.wall, it.hitPoint, it.directGap, it.travelingGap) }
       }
-      .plus(getBodyCollisions(world.bodyTable, world.characterTable, world.missiles))
+      .plus(getBodyCollisions(world.deck.bodies, world.bodyTable, world.characterTable, world.missiles))
   val activatedAbilities = getActivatedAbilities(world, commands)
 
   return Intermediate(
@@ -84,14 +84,16 @@ fun updateEntities(animationDurations: AnimationDurationMap, deck: Deck, world: 
 
   val bodies = updateBodies(world, commands, collisionMap)
   val bodyWorld = world.copy(
-      deck = deck.copy(bodies = bodies)
+      deck = deck.copy(bodies = bodies),
+      table = world.table
   )
 
-  return bodyWorld.deck.copy(
-      depictions = updateDepictions(bodyWorld, animationDurations),
-      characters = updateCharacters(bodyWorld, collisionMap, commands, activatedAbilities),
-      missiles = updateMissiles(bodyWorld, collisionMap),
-      players = updatePlayers(deck.players, data.commands),
+  return deck.copy(
+      bodies = bodies,
+      depictions = deck.depictions.map(updateDepiction(bodyWorld, animationDurations)),
+      characters = deck.characters.map(updateCharacter(bodyWorld, collisionMap, commands, activatedAbilities)),
+      missiles = deck.missiles.map(updateMissile(bodyWorld, collisionMap, simulationDelta)),
+      players = deck.players.map(updatePlayer(data.commands)),
       spirits = deck.spirits.map { updateAiState(bodyWorld, it) }
   )
 }

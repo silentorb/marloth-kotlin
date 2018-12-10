@@ -176,13 +176,7 @@ fun getDistinctEdges(edges: Edges) =
     edges.distinctBy { it.vertices.map { it.hashCode() }.sorted() }
 
 fun createSpaceNode(sectorCenter: Vector3, nextId: IdSource): Node {
-//  val isSolid = when(biome.enclosure){
-//    Enclosure.all -> true
-//    Enclosure.none -> false
-//    Enclosure.some -> dice.getInt(0, 3) > 0
-//  }
-
-  return createSecondaryNode(sectorCenter, nextId, true)
+  return createSecondaryNode(sectorCenter, nextId, true, Biome.void)
 }
 
 fun addSpaceNode(idSources: StructureIdSources, realm: StructureRealm, walls: List<ImmutableFace>): StructureRealm {
