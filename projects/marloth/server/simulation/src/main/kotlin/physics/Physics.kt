@@ -74,7 +74,7 @@ fun isGroundedOnNeighborNode(realm: Realm, body: Body): Boolean {
 
   val (nearestWall, distance) = node.walls
       .map {
-        val edge = getFloor(realm.mesh.faces [it]!!)
+        val edge = getFloor(realm.mesh.faces[it]!!)
         Pair(it, getPointToLineDistance(body.position, edge.first, edge.second))
       }
       .sortedBy { it.second }
@@ -112,8 +112,8 @@ fun updateBody(realm: Realm, body: Body, movementForces: List<MovementForce>, co
 }
 
 fun updatePhysicsBodies(world: World, collisions: Collisions, movementForces: List<MovementForce>,
-                        orientationForces: List<AbsoluteOrientationForce>, delta: Float): List<Body> {
-  return world.bodies.map { body ->
+                        orientationForces: List<AbsoluteOrientationForce>, delta: Float): Table<Body> {
+  return world.deck.bodies.mapValues { (_, body) ->
     updateBody(
         world.realm,
         body = body,

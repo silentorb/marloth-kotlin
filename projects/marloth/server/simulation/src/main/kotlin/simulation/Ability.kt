@@ -4,7 +4,8 @@ import mythic.ent.Id
 
 data class AbilityDefinition(
     val cooldown: Float,
-    val range: Float
+    val range: Float,
+    val maxSpeed: Float
 )
 
 data class Ability(

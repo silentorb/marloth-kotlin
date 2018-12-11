@@ -3,11 +3,9 @@ package rendering.shading
 import loadTextResource
 import mythic.glowing.*
 import mythic.spatial.Matrix
-import mythic.spatial.Vector2
 import mythic.spatial.Vector4
 import org.lwjgl.opengl.GL20.glGetUniformLocation
 import org.lwjgl.opengl.GL20.glUniform1i
-import randomly.Dice
 
 private val lighting = loadTextResource("shaders/lighting.glsl")
 
@@ -274,7 +272,8 @@ data class Shaders(
     val coloredAnimated: GeneralPerspectiveShader,
     val flatAnimated: GeneralPerspectiveShader,
     val depthOfField: ScreenShader,
-    val screenColor: ScreenColorShader
+    val screenColor: ScreenColorShader,
+    val screenDesaturation: ScreenShader
 )
 
 data class UniformBuffers(
@@ -309,6 +308,7 @@ fun createShaders(buffers: UniformBuffers): Shaders {
           skeleton = true
       )),
       depthOfField = ScreenShader(ShaderProgram(screenVertex, depthOfFieldFragment)),
-      screenColor = ScreenColorShader(ShaderProgram(screenVertex, screenColorFragment))
+      screenColor = ScreenColorShader(ShaderProgram(screenVertex, screenColorFragment)),
+      screenDesaturation = ScreenShader(ShaderProgram(screenVertex, screenDesaturation))
   )
 }

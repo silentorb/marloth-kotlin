@@ -7,31 +7,31 @@ import mythic.ent.Id
 import randomly.Dice
 import simulation.*
 
-fun getNextPathFace(knowledge: Knowledge, path: Path): Id? {
-  val body = knowledge.world.bodyTable[knowledge.spiritId]!!
-  val faces = knowledge.world.realm.faces
-  val node = knowledge.world.realm.nodeTable[body.node]!!
+fun getNextPathFace(world: World, knowledge: Knowledge, path: Path): Id? {
+  val body = world.bodyTable[knowledge.spiritId]!!
+  val faces = world.realm.faces
+  val node = world.realm.nodeTable[body.node]!!
   val nextNode = path.first()
   val nodeFaces = node.walls.map { faces[it]!! }
   return node.walls.firstOrNull { getOtherNode(node, faces[it]!!) == nextNode }
 }
 
-fun pathIsAccessible(knowledge: Knowledge, path: Path): Boolean =
-    getNextPathFace(knowledge, path) != null
+fun pathIsAccessible(world: World, knowledge: Knowledge, path: Path): Boolean =
+    getNextPathFace(world, knowledge, path) != null
 
-fun startRoaming(knowledge: Knowledge): Path {
-  val body = knowledge.world.bodyTable[knowledge.spiritId]!!
+fun startRoaming(world: World, knowledge: Knowledge): Path {
+  val body = world.bodyTable[knowledge.spiritId]!!
   val options = knowledge.nodes
       .filter {
-        val node = knowledge.world.realm.nodeTable[it]!!
+        val node = world.realm.nodeTable[it]!!
         node.id != body.node && node.isWalkable
       }
 
   val destination = Dice.global.getItem(options)
-  val path = findPath(knowledge.world.realm, body.node, destination)
+  val path = findPath(world.realm, body.node, destination)
   assert(path != null)
   assert(path!!.any())
-  assert(pathIsAccessible(knowledge, path))
+  assert(pathIsAccessible(world, knowledge, path))
   return path
 }
 
@@ -43,30 +43,30 @@ fun getRemainingPath(node: Id, path: Path): Path {
     path.drop(index + 1)
 }
 
-fun updateRoamingPath(knowledge: Knowledge, pursuit: Pursuit): Path {
-  return if (pursuit.path == null || !pathIsAccessible(knowledge, pursuit.path))
-    startRoaming(knowledge)
+fun updateRoamingPath(world: World, knowledge: Knowledge, pursuit: Pursuit): Path {
+  return if (pursuit.path == null || !pathIsAccessible(world, knowledge, pursuit.path))
+    startRoaming(world, knowledge)
   else {
-    val body = knowledge.world.bodyTable[knowledge.spiritId]!!
+    val body = world.bodyTable[knowledge.spiritId]!!
     val remainingPath = getRemainingPath(body.node, pursuit.path)
     if (remainingPath.any())
       remainingPath
     else
-      startRoaming(knowledge)
+      startRoaming(world, knowledge)
   }
 }
 
-fun updateAttackMovementPath(knowledge: Knowledge, targetEnemy: Id, path: Path?): Path? {
-  return if (path == null || !pathIsAccessible(knowledge, path)) {
-    val bodies = knowledge.world.bodyTable
+fun updateAttackMovementPath(world: World, knowledge: Knowledge, targetEnemy: Id, path: Path?): Path? {
+  return if (path == null || !pathIsAccessible(world, knowledge, path)) {
+    val bodies = world.bodyTable
     val body = bodies[knowledge.spiritId]!!
-    val targetBody = bodies[targetEnemy]!!
-    if (body.node == targetBody.node)
+    val target = knowledge.characters[targetEnemy]!!
+    if (body.node == target.node)
       null
     else
-      findPath(knowledge.world.realm, body.node, targetBody.node)
+      findPath(world.realm, body.node, target.node)
   } else {
-    val body = knowledge.world.bodyTable[knowledge.spiritId]!!
+    val body = world.bodyTable[knowledge.spiritId]!!
     val remainingPath = getRemainingPath(body.node, path)
     if (remainingPath.any())
       remainingPath

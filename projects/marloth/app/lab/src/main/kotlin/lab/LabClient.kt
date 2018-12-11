@@ -79,7 +79,7 @@ class LabClient(val config: LabConfig, val client: Client) {
 
   fun prepareClient(windowInfo: WindowInfo) {
     client.renderer.prepareRender(windowInfo)
-    client.platform.input.isMouseVisible(true)
+//    client.platform.input.isMouseVisible(true)
     client.platform.input.update()
   }
 

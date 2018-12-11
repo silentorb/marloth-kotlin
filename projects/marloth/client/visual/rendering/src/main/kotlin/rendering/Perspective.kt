@@ -11,9 +11,15 @@ fun createViewMatrix(position: Vector3, lookAt: Vector3): Matrix {
 }
 
 fun createViewMatrix(position: Vector3, orientation: Quaternion): Matrix {
-  val forward = Quaternion(orientation) * Vector3(1f, 0f, 0f)
-  val lookAt = position + forward
-  return createViewMatrix(position, lookAt)
+//  val forward = Quaternion(orientation) * Vector3(1f, 0f, 0f)
+//  val lookAt = position + forward
+//  return createViewMatrix(position, lookAt)
+  return Matrix()
+      //      .rotateZ(-Pi / 2f)
+      .rotateZ(Pi / 2f)
+      .rotateY(Pi / 2f)
+      .rotate(-orientation)
+      .translate(-position)
 }
 
 //fun createViewMatrix(position: Vector3, orientation: Quaternion): Matrix {

@@ -85,7 +85,6 @@ ${blurPrecalculations(blurRange)}
 val screenColorFragment = """
 in vec2 texCoords;
 out vec4 output_color;
-
 uniform sampler2D colorTexture;
 uniform vec4 inputColor;
 
@@ -93,6 +92,20 @@ void main()
 {
   vec3 primaryColorSample = texture(colorTexture, texCoords).xyz;
   vec3 rgb = min(vec3(1.0), primaryColorSample + inputColor.xyz * inputColor.w);
+  output_color = vec4(rgb, 1.0);
+}
+"""
+
+val screenDesaturation = """
+in vec2 texCoords;
+out vec4 output_color;
+uniform sampler2D colorTexture;
+
+void main()
+{
+  vec3 s = texture(colorTexture, texCoords).xyz;
+  float level = (s.x + s.y + s.z) / 3.0;
+  vec3 rgb = vec3(level);
   output_color = vec4(rgb, 1.0);
 }
 """

@@ -1,6 +1,7 @@
 package intellect.execution
 
 import intellect.acessment.Knowledge
+import intellect.acessment.character
 import mythic.spatial.*
 import simulation.*
 import physics.getLookAtAngle
@@ -24,8 +25,8 @@ fun facingDistance(character: Character, lookAt: Vector3): Float {
   return getAngleCourse(character.facingRotation.z, angle)
 }
 
-fun spiritFacingChange(knowledge: Knowledge, offset: Vector3): Commands {
-  val character = knowledge.character
+fun spiritFacingChange(world: World, knowledge: Knowledge, offset: Vector3): Commands {
+  val character = character(world, knowledge)
   val course = facingDistance(character, offset)
   val absCourse = Math.abs(course)
   return if (absCourse == 0f) {
@@ -39,13 +40,13 @@ fun spiritFacingChange(knowledge: Knowledge, offset: Vector3): Commands {
     return if (absCourse <= drift)
       listOf() // Don't need to rotate anymore.  The remaining momentum will get us there.
     else
-    listOf(Command(dir, knowledge.character.id, 1f))
+      listOf(Command(dir, character(world, knowledge).id, 1f))
   }
 }
 
-fun spiritNeedsFacing(knowledge: Knowledge, offset: Vector3, acceptableRange: Float, action: ()-> Commands): Commands {
-  val character = knowledge.character
-  val facingCommands = spiritFacingChange(knowledge, offset)
+fun spiritNeedsFacing(world: World, knowledge: Knowledge, offset: Vector3, acceptableRange: Float, action: () -> Commands): Commands {
+  val character = character(world, knowledge)
+  val facingCommands = spiritFacingChange(world, knowledge, offset)
   val course = facingDistance(character, offset)
   val absCourse = Math.abs(course)
   return if (absCourse <= acceptableRange)

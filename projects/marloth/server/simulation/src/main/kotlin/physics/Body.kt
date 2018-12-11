@@ -121,7 +121,7 @@ fun updateBodyNode(realm: Realm, body: Body): Id {
   }
 }
 
-fun updateBodies(world: World, commands: Commands, collisions: Collisions): List<Body> {
+fun updateBodies(world: World, commands: Commands, collisions: Collisions): Table<Body> {
   val delta = simulationDelta
   val movementForces = allCharacterMovements(world, commands)
   val orientationForces = allCharacterOrientations(world)

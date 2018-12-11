@@ -2,12 +2,15 @@ package intellect.design
 
 import intellect.Pursuit
 import intellect.acessment.Knowledge
+import intellect.acessment.character
 import intellect.acessment.getVisibleEnemies
 import intellect.execution.isInAttackRange
 import mythic.ent.Id
+import physics.voidNodeId
+import simulation.World
 
-fun updateTargetEnemy(knowledge: Knowledge, pursuit: Pursuit): Id? {
-  val visibleEnemies = getVisibleEnemies(knowledge.character, knowledge)
+fun updateTargetEnemy(world: World, knowledge: Knowledge, pursuit: Pursuit): Id? {
+  val visibleEnemies = getVisibleEnemies(character(world, knowledge), knowledge)
   return if (pursuit.targetEnemy != null && visibleEnemies.any { it.id == pursuit.targetEnemy })
     pursuit.targetEnemy
   else if (visibleEnemies.any())
@@ -16,20 +19,22 @@ fun updateTargetEnemy(knowledge: Knowledge, pursuit: Pursuit): Id? {
     null
 }
 
-fun updatePursuit(knowledge: Knowledge, pursuit: Pursuit): Pursuit {
-  val targetEnemy = updateTargetEnemy(knowledge, pursuit)
-  val path = if (targetEnemy != null) {
-    val bodies = knowledge.world.bodyTable
-    val targetBody = bodies[targetEnemy]!!
+fun updatePursuit(world: World, knowledge: Knowledge, pursuit: Pursuit): Pursuit {
+  if (world.bodyTable[knowledge.spiritId]!!.node == voidNodeId)
+    return Pursuit()
+  
+  val targetEnemy = updateTargetEnemy(world, knowledge, pursuit)
+  val target = knowledge.characters[pursuit.targetEnemy]
+  val path = if (target != null) {
+    val bodies = world.bodyTable
     val attackerBody = bodies[knowledge.spiritId]!!
-    val ability = knowledge.character.abilities[0]
-    if (isInAttackRange(attackerBody, targetBody, ability))
+    val ability = character(world, knowledge).abilities[0]
+    if (isInAttackRange(attackerBody, target.position, ability))
       null
     else
-      updateAttackMovementPath(knowledge, targetEnemy, pursuit.path)
-  }
-  else
-    updateRoamingPath(knowledge, pursuit)
+      updateAttackMovementPath(world, knowledge, target.id, pursuit.path)
+  } else
+    updateRoamingPath(world, knowledge, pursuit)
 
   return Pursuit(
       targetEnemy = targetEnemy,

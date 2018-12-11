@@ -10,7 +10,6 @@ import org.joml.Vector2i
 import org.joml.Vector4i
 import rendering.meshes.ModelMap
 import rendering.shading.ObjectShaderConfig
-import rendering.shading.ScreenShader
 import rendering.shading.Shaders
 import scenery.Textures
 
@@ -45,7 +44,7 @@ class GameSceneRenderer(
     globalState.depthEnabled = true
     val glow = renderer.renderer.glow
     if (filters.any()) {
-      val offscreenBuffer = renderer.renderer.offscreenBuffer
+      val offscreenBuffer = renderer.renderer.offscreenBuffers.first()
       val dimensions = Vector2i(offscreenBuffer.colorTexture.width, offscreenBuffer.colorTexture.height)
       glow.state.setFrameBuffer(offscreenBuffer.framebuffer.id)
       glow.state.viewport = Vector4i(0, 0, dimensions.x, dimensions.y)
@@ -55,10 +54,17 @@ class GameSceneRenderer(
 
   fun finishRender(dimensions: Vector2i, filters: List<ScreenFilter>) {
     globalState.cullFaces = false
-    globalState.setFrameBuffer(0)
     globalState.viewport = Vector4i(0, 0, dimensions.x, dimensions.y)
-    for (filter in filters) {
+
+    for (filter in filters.dropLast(1)) {
+//      globalState.setFrameBuffer(renderer.renderer.offscreenBuffers.first().framebuffer.id)
       applyFrameBufferTexture(filter)
+    }
+
+    globalState.setFrameBuffer(0)
+
+    if (filters.any()) {
+      applyFrameBufferTexture(filters.last())
     }
 
     globalState.cullFaces = true
@@ -66,7 +72,7 @@ class GameSceneRenderer(
 
   fun applyFrameBufferTexture(filter: ScreenFilter) {
     val canvasDependencies = getStaticCanvasDependencies()
-    val offscreenBuffer = renderer.renderer.offscreenBuffer
+    val offscreenBuffer = renderer.renderer.offscreenBuffers.first()
     filter(renderer.renderer.shaders)
     activateTextures(listOf(offscreenBuffer.colorTexture, offscreenBuffer.depthTexture!!))
     canvasDependencies.meshes.image.draw(DrawMethod.triangleFan)

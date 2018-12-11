@@ -3,13 +3,15 @@ package simulation
 import physics.BodyAttributes
 
 class AbilityDefinitions {
-  val shoot = AbilityDefinition(
-      cooldown = 0.2f,
-      range = 15f
-  )
+//  val shoot = AbilityDefinition(
+//      cooldown = 0.2f,
+//      range = 15f,
+//      maxSpeed = 35f
+//  )
   val slowShoot = AbilityDefinition(
       cooldown = 0.8f,
-      range = 15f
+      range = 20f,
+      maxSpeed = 35f
   )
 }
 
@@ -18,20 +20,23 @@ val abilityDefinitions = AbilityDefinitions()
 class CharacterDefinitions {
   val player = CharacterDefinition(
       health = 200,
-      abilities = listOf(abilityDefinitions.shoot),
-      depictionType = DepictionType.child
+      abilities = listOf(),
+      depictionType = DepictionType.child,
+      maxSpeed = 2.5f
   )
 
   val ally = CharacterDefinition(
       health = 100,
       abilities = listOf(abilityDefinitions.slowShoot),
-      depictionType = DepictionType.child
+      depictionType = DepictionType.child,
+      maxSpeed = 3f
   )
 
   val monster = CharacterDefinition(
       health = 100,
       abilities = listOf(abilityDefinitions.slowShoot),
-      depictionType = DepictionType.person
+      depictionType = DepictionType.person,
+      maxSpeed = 3f
   )
 }
 

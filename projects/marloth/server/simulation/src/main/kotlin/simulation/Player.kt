@@ -1,10 +1,11 @@
 package simulation
 
+import mythic.ent.Entity
 import mythic.ent.Id
 
 enum class ViewMode {
   firstPerson,
-//  topDown
+  //  topDown
   thirdPerson
 }
 
@@ -15,11 +16,11 @@ data class HoverCamera(
 )
 
 data class Player(
-    val id: Id,
+    override val id: Id,
     val playerId: Int,
     val viewMode: ViewMode,
     val hoverCamera: HoverCamera = HoverCamera()
-)
+) : Entity
 
 data class PlayerCharacter(
     val player: Player,
@@ -28,5 +29,5 @@ data class PlayerCharacter(
 
 typealias PlayerCharacters = List<PlayerCharacter>
 
-fun isPlayer(world: World, character: Character) =
-    world.players.any { it.id == character.id }
+fun isPlayer(deck: Deck, character: Character) =
+    deck.players.any { it.key == character.id }

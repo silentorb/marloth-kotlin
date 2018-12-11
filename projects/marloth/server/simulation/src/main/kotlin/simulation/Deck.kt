@@ -7,14 +7,10 @@ import mythic.ent.IdSource
 import mythic.ent.entityMap
 import physics.Body
 
-typealias BodyTable = IdentityMap<Body>
-typealias CharacterTable = IdentityMap<Character>
+typealias Table<T> = Map<Id, T>
 
-data class IdentityMap<T>(
-    val values: Map<Id, T>
-) {
-  operator fun get(id: Id): T? = values[id]
-}
+fun <T> mapTable(table: Table<T>, action: (T) -> T): Table<T> =
+    table.mapValues { (_, value) -> action(value) }
 
 data class Hand(
     val body: Body? = null,
@@ -29,16 +25,16 @@ data class Hand(
 )
 
 data class Deck(
-    val animations: List<ArmatureAnimation> = listOf(),
-    val bodies: List<Body> = listOf(),
-    val characters: List<Character> = listOf(),
-    val factions: List<Faction> = listOf(),
-    val depictions: List<Depiction> = listOf(),
-    val doors: List<Door> = listOf(),
-    val lights: List<Light> = listOf(),
-    val missiles: List<Missile> = listOf(),
-    val players: List<Player> = listOf(),
-    val spirits: List<Spirit> = listOf()
+    val animations: Table<ArmatureAnimation> = mapOf(),
+    val bodies: Table<Body> = mapOf(),
+    val characters: Table<Character> = mapOf(),
+    val factions: Table<Faction> = mapOf(),
+    val depictions: Table<Depiction> = mapOf(),
+    val doors: Table<Door> = mapOf(),
+    val lights: Table<Light> = mapOf(),
+    val missiles: Table<Missile> = mapOf(),
+    val players: Table<Player> = mapOf(),
+    val spirits: Table<Spirit> = mapOf()
 ) {
   fun plus(other: Deck) = this.copy(
       animations = animations.plus(other.animations),
@@ -54,35 +50,35 @@ data class Deck(
   )
 }
 
-data class Tables(
-    val animations: IdentityMap<ArmatureAnimation>,
-    val bodies: IdentityMap<Body>,
-    val characters: IdentityMap<Character>,
-    val depictions: IdentityMap<Depiction>,
-    val doors: IdentityMap<Door>,
-    val missiles: IdentityMap<Missile>,
-    val spirits: IdentityMap<Spirit>
-)
+//data class Tables(
+//    val animations: IdentityMap<ArmatureAnimation>,
+//    val bodies: IdentityMap<Body>,
+//    val characters: IdentityMap<Character>,
+//    val depictions: IdentityMap<Depiction>,
+//    val doors: IdentityMap<Door>,
+//    val missiles: IdentityMap<Missile>,
+//    val spirits: IdentityMap<Spirit>
+//)
+//
+//fun <T : Entity> entityMap2(list: Collection<T>): IdentityMap<T> =
+//    IdentityMap(entityMap(list))
 
-fun <T : Entity> entityMap2(list: Collection<T>): IdentityMap<T> =
-    IdentityMap(entityMap(list))
+//fun toTables(deck: Deck): Tables =
+//    Tables(
+//        bodies = entityMap2(deck.bodies),
+//        characters = entityMap2(deck.characters),
+//        animations = entityMap2(deck.animations),
+//        depictions = entityMap2(deck.depictions),
+//        doors = entityMap2(deck.doors),
+//        missiles = entityMap2(deck.missiles),
+//        spirits = entityMap2(deck.spirits)
+//    )
 
-fun toTables(deck: Deck): Tables =
-    Tables(
-        bodies = entityMap2(deck.bodies),
-        characters = entityMap2(deck.characters),
-        animations = entityMap2(deck.animations),
-        depictions = entityMap2(deck.depictions),
-        doors = entityMap2(deck.doors),
-        missiles = entityMap2(deck.missiles),
-        spirits = entityMap2(deck.spirits)
-    )
-
-fun <T> nullableList(entity: T?): List<T> =
+fun <T : Entity> nullableList(entity: T?): Table<T> =
     if (entity == null)
-      listOf()
+      mapOf()
     else
-      listOf(entity)
+      mapOf(entity.id to entity)
 
 fun toDeck(hand: Hand): Deck =
     Deck(
@@ -103,26 +99,25 @@ fun toDeck(hands: List<Hand>): Deck =
 data class World(
     val realm: Realm,
     val nextId: Id,
-    val deck: Deck,
-    val table: Tables = toTables(deck)
+    val deck: Deck
 ) {
-  val bodyTable: IdentityMap<Body> get() = table.bodies
-  val characterTable: IdentityMap<Character> get() = table.characters
+  val bodyTable: Table<Body> get() = deck.bodies
+  val characterTable: Table<Character> get() = deck.characters
 
   val players: List<Player>
-    get() = deck.players
+    get() = deck.players.values.toList()
 
   val characters: Collection<Character>
-    get() = deck.characters
+    get() = deck.characters.values
 
   val bodies: Collection<Body>
-    get() = deck.bodies
+    get() = deck.bodies.values
 
   val missiles: Collection<Missile>
-    get() = deck.missiles
+    get() = deck.missiles.values
 
   val spirits: Collection<Spirit>
-    get() = deck.spirits
+    get() = deck.spirits.values
 }
 
 fun addDeck(world: World, deck: Deck, nextId: IdSource): World {

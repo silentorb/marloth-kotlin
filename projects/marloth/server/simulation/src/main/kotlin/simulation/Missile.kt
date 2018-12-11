@@ -18,17 +18,15 @@ data class Missile(
     val remainingDistance: Float
 ) : Entity
 
-private const val missileSpeed = 25f
-
 fun characterAttack(world: World, nextId: IdSource, character: Character, ability: Ability, direction: Vector3): Hand {
   val body = world.bodyTable[character.id]!!
   val id = nextId()
   return Hand(
       body = Body(
           id = id,
-          position = body.position + direction * 0.5f + Vector3(0f, 0f, 1.0f),
+          position = body.position + direction * 0.5f + Vector3(0f, 0f, 1.4f),
           node = body.node,
-          velocity = direction * missileSpeed,
+          velocity = direction * ability.definition.maxSpeed,
           shape = commonShapes[EntityType.missile]!!,
           orientation = Quaternion(),
           attributes = missileBodyAttributes,
@@ -43,11 +41,11 @@ fun characterAttack(world: World, nextId: IdSource, character: Character, abilit
   )
 }
 
-fun getBodyCollisions(bodies: List<Body>, bodyTable: BodyTable, characterTable: CharacterTable, missiles: Collection<Missile>): List<Collision> {
+fun getBodyCollisions(bodies: Table<Body>, characterTable: Table<Character>, missiles: Collection<Missile>): List<Collision> {
   return missiles.flatMap { missile ->
-    val body = bodyTable[missile.id]!!
-    val owner = bodyTable[missile.owner]
-    bodies.filter { it !== body && it !== owner }
+    val body = bodies[missile.id]!!
+    val owner = bodies[missile.owner]
+    bodies.values.filter { it !== body && it !== owner }
         .filter { overlaps(it, body) }
         .map { hit ->
           Collision(
@@ -62,7 +60,7 @@ fun getBodyCollisions(bodies: List<Body>, bodyTable: BodyTable, characterTable: 
 }
 
 fun updateMissile(world: World, collisions: List<Collision>, delta: Float): (Missile) -> Missile = { missile ->
-  val body = world.table.bodies[missile.id]!!
+  val body = world.deck.bodies[missile.id]!!
   val offset = body.velocity * delta
   val hit = collisions.firstOrNull { it.first == missile.id }
 

@@ -6,6 +6,7 @@ import mythic.spatial.Vector2
 import org.joml.Vector2i
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWScrollCallback
+import java.lang.NullPointerException
 
 val GamepadIndices = GLFW_JOYSTICK_1..GLFW_JOYSTICK_LAST
 
@@ -18,18 +19,20 @@ val deadZone = 0.2f
 
 fun getGamepadAxes(device: Int, axisDirIndex: Int): Float {
   val axes = glfwGetJoystickAxes(device)
-  if (axisDirIndex < GAMEPAD_AXIS_TRIGGER_LEFT) {
+  return if (axes == null)
+    0f
+  else if (axisDirIndex < GAMEPAD_AXIS_TRIGGER_LEFT) {
     val axisIndex = axisDirIndex / 2
     val value = axes[axisIndex]
 
 //  println(axisDirIndex.toString() + ", " + axisIndex + ", " + value + ", " + (axisDirIndex % 2))
-    return if (axisDirIndex % 2 == 1)
+    if (axisDirIndex % 2 == 1)
       if (value > deadZone) value else 0f
     else
       if (value < -deadZone) -value else 0f
   } else {
     val value = axes[axisDirIndex - 4]
-    return if (value > deadZone) value else 0f
+    if (value > deadZone) value else 0f
   }
 }
 
@@ -57,8 +60,7 @@ class DesktopInput(val window: Long) : PlatformInput {
   override val KeyboardInputSource = { key: Int ->
     if (glfwGetKey(window, key) == GLFW_PRESS) {
       1f
-    }
-    else
+    } else
       0f
   }
 
@@ -67,7 +69,7 @@ class DesktopInput(val window: Long) : PlatformInput {
       getGamepadAxes(device, trigger)
     else {
       val buttons = glfwGetJoystickButtons(device)
-      if (buttons[trigger - GAMEPAD_BUTTON_A].toInt() == GLFW_PRESS)
+      if (buttons != null && buttons[trigger - GAMEPAD_BUTTON_A].toInt() == GLFW_PRESS)
         1f
       else
         0f

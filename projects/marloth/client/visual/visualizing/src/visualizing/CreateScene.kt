@@ -25,16 +25,15 @@ val simplePainterMap = MeshId.values().mapNotNull { meshId ->
         )
     )
 
-fun createFirstPersonCamera(body: Body, character: Character, isAlive: Boolean): Camera = Camera(
+fun firstPersonCamera(body: Body, character: Character, isAlive: Boolean): Camera = Camera(
     ProjectionType.perspective,
     body.position + if (isAlive) firstPersonCameraOffset else firstPersonDeadCameraOffset,
 //    world.player.orientation,
-    character.facingQuaternion
-    ,
+    if (isAlive) character.facingQuaternion else character.facingQuaternion * Quaternion().rotateX(Pi / -6f),
     45f
 )
 
-fun createThirdPersonCamera(body: Body, hoverCamera: HoverCamera): Camera {
+fun thirdPersonCamera(body: Body, hoverCamera: HoverCamera): Camera {
   val orientation = Quaternion()
       .rotateZ(hoverCamera.yaw)
       .rotateY(hoverCamera.pitch)
@@ -63,17 +62,17 @@ fun createCamera(world: World, screen: Screen): Camera {
   val character = world.characterTable[player.id]!!
   val body = world.bodyTable[player.id]!!
   return when (player.viewMode) {
-    ViewMode.firstPerson -> createFirstPersonCamera(body, character, isAlive(world, player.id))
-    ViewMode.thirdPerson -> createThirdPersonCamera(body, player.hoverCamera)
+    ViewMode.firstPerson -> firstPersonCamera(body, character, character.isAlive)
+    ViewMode.thirdPerson -> thirdPersonCamera(body, player.hoverCamera)
 //    ViewMode.topDown -> createTopDownCamera(body)
   }
 }
 
-fun filterDepictions(depictions: List<Depiction>, player: Player) =
+fun filterDepictions(depictions: Table<Depiction>, player: Player): Collection<Depiction> =
     if (player.viewMode == ViewMode.firstPerson)
-      depictions.filter { it.id != player.id }
+      depictions.values.filter { it.id != player.id }
     else
-      depictions
+      depictions.values
 
 fun convertSimpleDepiction(world: World, id: Id, mesh: MeshId): MeshElement? {
   val body = world.bodyTable[id]!!
@@ -189,10 +188,10 @@ fun gatherVisualElements(world: World, screen: Screen, player: Player): ElementG
 //          .plus(characters.mapNotNull {
 //            convertSimpleDepiction(world, it.id, it.definition.depictionType)
 //          })
-          .plus(world.deck.missiles.mapNotNull {
+          .plus(world.deck.missiles.values.mapNotNull {
             convertSimpleDepiction(world, it.id, MeshId.spikyBall)
           })
-          .plus(world.deck.doors.mapNotNull {
+          .plus(world.deck.doors.values.mapNotNull {
             convertSimpleDepiction(world, it.id, MeshId.prisonDoor)
           })
 
@@ -200,7 +199,7 @@ fun gatherVisualElements(world: World, screen: Screen, player: Player): ElementG
 }
 
 fun mapLights(world: World, player: Player) =
-    world.deck.lights
+    world.deck.lights.values
         .map { light ->
           Light(
               type = LightType.point,
@@ -225,8 +224,11 @@ fun createScene(world: World, screen: Screen, player: Player): GameScene {
       ),
       elementGroups = elementGroups,
       player = player.playerId,
-      filters = if (!isAlive(world, player.id))
-        listOf<ScreenFilter>({ it.screenColor.activate(Vector4(1f, 0f, 0f, 0.5f)) })
+      filters = if (!world.deck.characters[player.id]!!.isAlive)
+        listOf<ScreenFilter>(
+            { it.screenDesaturation.activate() },
+            { it.screenColor.activate(Vector4(1f, 0f, 0f, 0.4f)) }
+        )
       else
         listOf()
   )

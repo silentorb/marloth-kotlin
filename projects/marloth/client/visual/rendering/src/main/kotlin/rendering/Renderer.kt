@@ -141,26 +141,6 @@ fun mapAnimationDurations(armatures: Map<ArmatureId, Armature>): AnimationDurati
           armature.animations.mapValues { it.value.duration }
         }
 
-fun mapMeshDepictions(models: ModelMap): Map<MeshId, List<Primitive>> {
-  val keys = MeshId.values().associate { Pair(it.name, it) }
-  return models.flatMap { entry ->
-    val entryName = entry.key.toString()
-    val modelKey = keys[entryName]
-    if (modelKey != null)
-      listOf(Pair(modelKey, entry.value.primitives))
-    else
-      entry.value.primitives.mapNotNull { primitive ->
-        val name = toCamelCase(primitive.name).capitalize()
-        val key = keys[name]
-        if (key != null)
-          Pair(key, listOf(primitive))
-        else
-          null
-      }
-
-  }.associate { it }
-}
-
 typealias AnimationMap = Map<AnimationId, Animation>
 
 data class Armature(
@@ -169,18 +149,6 @@ data class Armature(
     val animations: AnimationMap,
     val transforms: List<Matrix>
 )
-
-//fun mapArmatures(models: ModelMap): Map<ArmatureId, Armature> {
-//  val keys = ArmatureId.values().associate { Pair(it.name, it) }
-//  return models.mapNotNull { entry ->
-//    val key = keys[entry.key.toString()]
-//    val armature = entry.value.armature
-//    if (key != null && armature != null)
-//      Pair(key, armature)
-//    else
-//      null
-//  }.associate { it }
-//}
 
 fun textureAttributesFromConfig(config: DisplayConfig) =
     TextureAttributes(
@@ -207,7 +175,9 @@ class Renderer(val config: DisplayConfig) {
   val animationDurations: AnimationDurationMap
   var mappedTextures: TextureLibrary = createTextureLibrary(defaultTextureScale)
   val textures: DynamicTextureLibrary = loadTextures(textureAttributesFromConfig(config))
-  val offscreenBuffer = prepareScreenFrameBuffer(config.width, config.height, true)
+  val offscreenBuffers: List<OffscreenBuffer> = (0..0).map {
+    prepareScreenFrameBuffer(config.width, config.height, true)
+  }
   val multisampler: Multisampler?
   val fonts = loadFonts(listOf(
       FontLoadInfo(

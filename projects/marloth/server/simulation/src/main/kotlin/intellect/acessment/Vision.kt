@@ -22,7 +22,7 @@ fun lightDistanceMod(world: World, body: Body, light: Light): Float {
 }
 
 private fun lightsMod(world: World, body: Body): Float =
-    Math.min(1f, world.deck.lights.map { light -> lightDistanceMod(world, body, light) }.sum())
+    Math.min(1f, world.deck.lights.values.map { light -> lightDistanceMod(world, body, light) }.sum())
 
 private const val maxVelocityMod = 10f
 private const val velocityModStrength = 0.4f
@@ -54,5 +54,5 @@ fun canSee(world: World, viewer: Character, target: Id): Boolean {
 }
 
 fun getVisibleCharacters(world: World, character: Character): List<Character> {
-  return world.characters.filter { it.id != character.id && canSee(world, character, it.id) }
+  return world.characters.filter { it.id != character.id && it.isAlive && canSee(world, character, it.id) }
 }

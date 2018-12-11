@@ -17,6 +17,7 @@ import simulation.input.filterCommands
 
 data class CharacterDefinition(
     val health: Int,
+    val maxSpeed: Float,
     val abilities: List<AbilityDefinition>,
     val depictionType: DepictionType
 )
@@ -52,9 +53,6 @@ data class ArmatureAnimation(
 fun isAlive(health: Int): Boolean =
     health > 0
 
-fun isAlive(world: World, id: Id) =
-    isAlive(world.table.characters[id]!!.health.value)
-
 fun updateCharacter(world: World, character: Character, commands: Commands, collisions: List<Collision>,
                     activatedAbilities: List<Ability>, delta: Float): Character {
   val lookForce = characterLookForce(character, commands)
@@ -64,7 +62,7 @@ fun updateCharacter(world: World, character: Character, commands: Commands, coll
   val abilities = updateAbilities(character, activatedAbilities)
 
   val isAlive = isAlive(health)
-  val justDied = !isAlive && isAlive(world, character.id)
+  val justDied = !isAlive && character.isAlive
 
   return pipe(character, listOf(
       { c ->
@@ -77,7 +75,7 @@ fun updateCharacter(world: World, character: Character, commands: Commands, coll
       { c ->
         if (justDied) {
           val hit = hits.first()
-          val attacker = world.table.missiles[hit.first]!!.owner
+          val attacker = world.deck.missiles[hit.first]!!.owner
           val facingVector = (world.bodyTable[attacker]!!.position - world.bodyTable[character.id]!!.position).normalize()
           val lookAtAngle = getLookAtAngle(facingVector)
           c.copy(
@@ -97,14 +95,15 @@ fun updateCharacter(world: World, character: Character, commands: Commands, coll
       }
   ))
 }
-fun updateCharacter(world: World, collisions: Collisions, commands: Commands, activatedAbilities: List<ActivatedAbility>): (Character)->Character = { character ->
+
+fun updateCharacter(world: World, collisions: Collisions, commands: Commands, activatedAbilities: List<ActivatedAbility>): (Character) -> Character = { character ->
   val delta = simulationDelta
   val id = character.id
   val abilities = activatedAbilities.filter { it.character.id == character.id }
       .map { it.ability }
 
   val characterCommands = pipe(commands, listOf(
-      { c -> if (isAlive(world, id)) c else listOf() },
+      { c -> if (world.deck.characters[id]!!.isAlive) c else listOf() },
       { c -> c.filter { it.target == id } }
   ))
   updateCharacter(world, character, characterCommands, collisions, abilities, delta)
@@ -129,7 +128,7 @@ fun updateCharacter(world: World, collisions: Collisions, commands: Commands, ac
 fun characterMovementFp(commands: Commands, character: Character, body: Body): MovementForce? {
   var offset = joinInputVector(commands, playerMoveMap)
   if (offset != null) {
-    offset = Quaternion().rotateZ(character.facingRotation.z - Pi / 2) * offset * characterMoveSpeed()
+    offset = Quaternion().rotateZ(character.facingRotation.z - Pi / 2) * offset * character.definition.maxSpeed
     return MovementForce(body = body.id, offset = offset)
   } else {
     return null
@@ -138,7 +137,7 @@ fun characterMovementFp(commands: Commands, character: Character, body: Body): M
 
 fun allCharacterMovements(world: World, commands: Commands): List<MovementForce> =
     world.characters
-        .filter { isAlive(world, it.id) }
+        .filter { world.deck.characters[it.id]!!.isAlive }
         .mapNotNull { characterMovementFp(filterCommands(it.id, commands), it, world.bodyTable[it.id]!!) }
 
 fun allCharacterOrientations(world: World): List<AbsoluteOrientationForce> =
@@ -170,7 +169,7 @@ fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id,
       character = Character(
           id = id,
           definition = definition,
-          turnSpeed = Vector2(1.5f, 1f),
+          turnSpeed = Vector2(2f, 1f),
           faction = faction,
           health = Resource(definition.health),
           abilities = abilities

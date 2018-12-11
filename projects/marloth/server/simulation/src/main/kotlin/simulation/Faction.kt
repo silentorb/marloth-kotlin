@@ -1,9 +1,9 @@
 package simulation
 
+import mythic.ent.Entity
 import mythic.ent.Id
 
 data class Faction(
-    val id: Id,
+   override val id: Id,
     val name: String
-) {
-}
+) : Entity

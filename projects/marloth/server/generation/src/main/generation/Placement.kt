@@ -5,6 +5,7 @@ import intellect.Pursuit
 import intellect.Spirit
 import mythic.ent.Id
 import mythic.ent.IdSource
+import mythic.ent.entityMap
 import mythic.ent.newIdSource
 import mythic.spatial.*
 import physics.Body
@@ -166,10 +167,10 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
   val scale = calculateWorldScale(input.boundary.dimensions)
   val nextId = newIdSource(1)
   val deck = Deck(
-      factions = listOf(
+      factions = entityMap(listOf(
           Faction(1, "Misfits"),
           Faction(2, "Monsters")
-      )
+      ))
   )
       .plus(toDeck(newPlayer(nextId, playerNode)))
       .plus(placeWallLamps(realm, nextId, input.dice, scale))

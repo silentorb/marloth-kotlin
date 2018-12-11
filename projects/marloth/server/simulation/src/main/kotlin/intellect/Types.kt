@@ -1,6 +1,6 @@
 package intellect
 
-import intellect.acessment.SpiritKnowledge
+import intellect.acessment.Knowledge
 import mythic.ent.Entity
 import mythic.ent.Id
 
@@ -13,6 +13,6 @@ data class Pursuit(
 
 data class Spirit(
     override val id: Id,
-    val knowledge: SpiritKnowledge? = null,
+    val knowledge: Knowledge? = null,
     val pursuit: Pursuit
 ) : Entity
