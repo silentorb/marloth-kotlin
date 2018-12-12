@@ -127,3 +127,6 @@ fun updateBodies(world: World, commands: Commands, collisions: Collisions): Tabl
   val orientationForces = allCharacterOrientations(world)
   return updatePhysicsBodies(world, collisions, movementForces, orientationForces, delta)
 }
+
+fun isInVoid(world: World, id: Id): Boolean =
+    world.bodyTable[id]!!.node == voidNodeId

@@ -43,7 +43,7 @@ fun gatherTriUnions(graph: Graph): List<List<Node>> {
 
 fun handleOverlapping(nodes: NodeTable): Graph {
   val overlapping = getOverlapping(nodes.values)
-  val (tooClose, initialUnions) = divide(overlapping.asSequence(), { areTooClose(it.first, it.second) })
+  val (tooClose, initialUnions) = divide(overlapping, { areTooClose(it.first, it.second) })
 //  val nodeTable = graph.nodes.associate { node ->
 //    Pair(node, groups.first.filter { it.first === node || it.second === node })
 //  }

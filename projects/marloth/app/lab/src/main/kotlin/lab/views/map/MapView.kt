@@ -150,7 +150,7 @@ fun updateMapState(config: MapViewConfig, world: Realm, input: LabCommandState, 
     config.camera.pitch = Math.max(-pitchRange, config.camera.pitch - rotateSpeed * delta)
 
   if (isActive(commands, LabCommandType.zoomOut))
-    config.camera.distance = Math.min(50f, config.camera.distance + zoomSpeed * delta * distanceOffset)
+    config.camera.distance = Math.min(200f, config.camera.distance + zoomSpeed * delta * distanceOffset)
 
   if (isActive(commands, LabCommandType.rotateLeft))
     config.camera.yaw = (config.camera.yaw - (rotateSpeed * delta)) % (Pi * 2)

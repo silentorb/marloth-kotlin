@@ -107,6 +107,7 @@ class MutableSimpleMesh<T>(val vertexSchema: VertexSchema<T>) : Drawable {
   var counts: IntBuffer = BufferUtils.createIntBuffer(1)
   val vertexBuffer = VertexBuffer(vertexSchema)
   val floatBuffer = BufferUtils.createFloatBuffer(64)
+  val custodian = FloatBufferCustodian(floatBuffer)
 
   override fun draw(method: DrawMethod) {
     vertexBuffer.activate()
@@ -117,7 +118,7 @@ class MutableSimpleMesh<T>(val vertexSchema: VertexSchema<T>) : Drawable {
     for (value in values) {
       floatBuffer.put(value)
     }
-    floatBuffer.flip()
+    custodian.finish()
     vertexBuffer.load(floatBuffer)
     offsets.put(0)
     offsets.flip()

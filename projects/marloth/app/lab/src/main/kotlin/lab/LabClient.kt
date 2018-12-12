@@ -79,7 +79,6 @@ class LabClient(val config: LabConfig, val client: Client) {
 
   fun prepareClient(windowInfo: WindowInfo) {
     client.renderer.prepareRender(windowInfo)
-//    client.platform.input.isMouseVisible(true)
     client.platform.input.update()
   }
 
@@ -174,6 +173,10 @@ class LabClient(val config: LabConfig, val client: Client) {
   }
 
   fun update(world: World, screens: List<Screen>, previousState: LabState, delta: Float): LabClientResult {
+    if (config.view != Views.game) {
+      client.platform.input.isMouseVisible(true)
+    }
+
     val windowInfo = client.platform.display.getInfo()
     return when (config.view) {
       Views.game -> updateGame(world, screens, previousState)

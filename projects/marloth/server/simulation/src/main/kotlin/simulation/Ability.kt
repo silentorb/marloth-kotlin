@@ -40,8 +40,8 @@ fun getActivatedAbilities(world: World, commands: Commands): List<ActivatedAbili
   return commands.filter { it.type == CommandType.attack }
       .mapNotNull {
         val character = world.characterTable[it.target]!!
-        val ability = character.abilities.first()
-        if (canUse(character, ability))
+        val ability = character.abilities.firstOrNull()
+        if (ability != null && canUse(character, ability))
           ActivatedAbility(character, ability)
         else
           null

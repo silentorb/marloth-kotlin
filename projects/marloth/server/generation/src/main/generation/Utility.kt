@@ -81,7 +81,7 @@ fun roughlyEquals(first: Vector2, second: Vector2, range: Float): Boolean {
       && first.y > second.y - r && first.y < second.y + r
 }
 
-tailrec fun <T> crossMap(items: Sequence<T>, accumulator: List<T> = listOf(), filter: (T, T) -> Boolean): List<T> {
+tailrec fun <T> crossMap(items: Collection<T>, accumulator: List<T> = listOf(), filter: (T, T) -> Boolean): List<T> {
   val sequence = items
       .drop(1)
 

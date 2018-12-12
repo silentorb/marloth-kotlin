@@ -120,6 +120,12 @@ fun renderMapMesh(renderer: SceneRenderer, realm: Realm, config: MapViewConfig, 
     renderNodeIds(renderer, nodes)
   }
 
+  renderer.drawPoint(Vector3(), Vector4(1f, 0f, 0f, 1f), 3f)
+
+//  renderer.drawPoint(Vector3(4.253298f, 64.679794f, 0.0f), Vector4(1f, 1f, 0f, 1f), 3f)
+//  renderer.drawPoint(Vector3(3.3128958f, 39.977787f, 0.0f), Vector4(1f, 0f, 1f, 1f), 3f)
+//  renderer.drawPoint(Vector3(16.027586f, 69.140396f, 0.0f), Vector4(0f, 1f, 1f, 1f), 3f)
+
   for (id in config.selection) {
     val face = realm.mesh.faces[id]!!
     face.vertices.forEachIndexed { index, v ->

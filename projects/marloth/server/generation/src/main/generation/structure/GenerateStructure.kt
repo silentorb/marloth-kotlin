@@ -101,7 +101,7 @@ fun fillCornerGaps(unorderedCorners: List<Corner>, node: Node): List<Corner> {
 const val minPointDistance = 0.01f
 
 fun withoutClosePoints(corners: List<Corner>): List<Corner> {
-  val tooClose = crossMap(corners.asSequence()) { a: Corner, b: Corner ->
+  val tooClose = crossMap(corners) { a: Corner, b: Corner ->
     //    println(a.distance(b))
     a.distance(b) < minPointDistance
   }
@@ -471,17 +471,17 @@ fun generateStructure(biomeGrid: BiomeGrid, idSources: StructureIdSources, graph
   val roomNodes = graph.nodes
   return pipe(initialRealm, listOf(
       { realm -> defineNegativeSpace(idSources, realm, dice) },
-      { realm -> realm.copy(nodes = fillNodeBiomesAndSolid(dice, realm, biomeGrid)) },
-      { realm -> fillBoundary(idSources, realm, dice) },
-      { realm -> expandVertically(idSources, realm, roomNodes.values, dice) },
-      { realm -> cleanupSolidNormals(realm) },
-      { realm ->
-        realm.copy(
-            mesh = realm.mesh.copy(
-                edges = entityMap(realm.mesh.faces.flatMap { er -> er.value.edges.map { it.edge } }.distinct())
-            )
-        )
-      },
+//      { realm -> realm.copy(nodes = fillNodeBiomesAndSolid(dice, realm, biomeGrid)) },
+//      { realm -> fillBoundary(idSources, realm, dice) },
+//      { realm -> expandVertically(idSources, realm, roomNodes.values, dice) },
+//      { realm -> cleanupSolidNormals(realm) },
+//      { realm ->
+//        realm.copy(
+//            mesh = realm.mesh.copy(
+//                edges = entityMap(realm.mesh.faces.flatMap { er -> er.value.edges.map { it.edge } }.distinct())
+//            )
+//        )
+//      },
       { realm -> realm }
   ))
 }

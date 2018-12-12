@@ -1,5 +1,6 @@
 package rendering.shading
 
+import mythic.glowing.BufferCustodian
 import mythic.spatial.Matrix
 import mythic.spatial.putMatrix
 import mythic.spatial.putVector3
@@ -16,22 +17,6 @@ const val sizeOfMatrix = 16 * sizeOfFloat
 fun padBuffer(buffer: ByteBuffer, count: Int) {
   for (i in 0 until count) {
     buffer.putFloat(0f)
-  }
-}
-
-class BufferCustodian(val buffer: ByteBuffer) {
-  private var bufferInitialized = false
-
-  fun finish() {
-    if (!bufferInitialized) {
-      while (buffer.position() != buffer.capacity()) {
-        buffer.put(1)
-      }
-      bufferInitialized = true
-    }
-//    buffer.position(buffer.capacity() - 1)
-    buffer.rewind()
-    assert(buffer.limit() == buffer.capacity())
   }
 }
 

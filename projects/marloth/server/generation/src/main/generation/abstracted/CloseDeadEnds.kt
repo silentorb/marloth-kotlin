@@ -9,7 +9,7 @@ import mythic.spatial.lineIntersectsCircle
 import org.joml.Intersectionf
 import simulation.*
 
-private val tunnelPadding = 0f
+private const val tunnelPadding = 0f
 
 fun isBetween(first: Float, second: Float, middle: Float) =
     if (first < second)

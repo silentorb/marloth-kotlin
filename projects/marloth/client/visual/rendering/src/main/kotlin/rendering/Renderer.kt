@@ -283,11 +283,10 @@ class SceneRenderer(
 
   fun drawText(content: String, position: Vector3, style: TextStyle) {
     val modelTransform = Matrix()
-        .translate(position + Vector3(0f, 0f, 0f))
+        .translate(position)
 
     val transform2 = cameraEffectsData.transform * modelTransform
-    val i2 = transform2.transform(Vector4(0f, 0f, 0f, 1f))
-    val i = -Vector2(i2.x, i2.y) / i2.z
+    val i = transform2.transform(Vector4(0f, 0f, 0f, 1f))
     val dimensions = Vector2i(viewport.z, viewport.w)
     val pos = Vector2(((i.x + 1) / 2) * dimensions.x, (1 - ((i.y + 1) / 2)) * dimensions.y)
     val config = TextConfiguration(content, pos, style)

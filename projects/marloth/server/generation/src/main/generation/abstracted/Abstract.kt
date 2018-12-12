@@ -6,10 +6,12 @@ import generation.assignBiomes
 import generation.crossMap
 import generation.getCenter
 import generation.structure.doorwayLength
+import generation.structure.getDoorFramePoints
 import mythic.ent.Id
 import mythic.ent.entityMap
 import mythic.ent.pipe
 import mythic.spatial.Vector3
+import mythic.spatial.lineSegmentIntersectsLineSegment
 import randomly.Dice
 import simulation.*
 
@@ -32,6 +34,9 @@ fun getOtherNode(graph: Graph, first: Id, pivot: Id): Node {
   assert(options.size == 1)
   return options.first()
 }
+
+fun faceNodes(info: ConnectionFace) =
+    listOf(info.firstNode, info.secondNode)
 
 fun createRoomNode(boundary: WorldBoundary, id: Id, dice: Dice): Node {
   val radius = dice.getFloat(5f, 10f)
@@ -62,12 +67,30 @@ fun getHome(graph: Graph): List<Node> {
 }
 
 fun getTwinTunnels(graph: Graph, tunnels: List<PreTunnel>): List<PreTunnel> =
-    crossMap(tunnels.asSequence()) { a: PreTunnel, b: PreTunnel ->
-      //      println("" + a.neighbors.any { b.neighbors.contains(it) } + ", " + a.position.distance(b.position))
-      val c = a.connection.nodes(graph).any { b.connection.nodes(graph).contains(it) }
-          && a.position.distance(b.position) < doorwayLength * 2f
-//      println(c)
-      c
+//    crossMap(tunnels.asSequence()) { a: PreTunnel, b: PreTunnel ->
+//      //      println("" + a.neighbors.any { b.neighbors.contains(it) } + ", " + a.position.distance(b.position))
+//      if (a.connection.contains(15) || b.connection.contains(15)) {
+//        val k = 0
+//      }
+//      val c = a.connection.nodes(graph).any { b.connection.nodes(graph).contains(it) }
+//          && a.position.distance(b.position) < doorwayLength * 2f
+////      println(c)
+//      c
+//    }
+    graph.nodes.values.flatMap { node ->
+      val nodeTunnels = tunnels.filter { tunnel -> tunnel.connection.contains(node.id) }
+      if (node.id == 15L) {
+        val k = 0
+      }
+      crossMap(nodeTunnels) { a, b ->
+        val first = getDoorFramePoints(node, a.connection.getOther(graph, node))
+        val second = getDoorFramePoints(node, b.connection.getOther(graph, node))
+        val (c, _) = lineSegmentIntersectsLineSegment(first[0], first[1], second[0], second[1])
+//        val c = a.position.distance(b.position) < doorwayLength * 2f
+      println(c)
+        c
+      }
+//      listOf<PreTunnel>()
     }
 
 fun cleanupWorld(graph: Graph): Graph {

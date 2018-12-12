@@ -26,8 +26,9 @@ private val nodeRow: ListItem<Node> = ListItem(20) { node ->
       textStyle
 
     val solid = if (node.isSolid) "S" else " "
+    val walkable = if (node.isWalkable) "W" else " "
 
-    textDepiction(style, "${node.id} $solid")
+    textDepiction(style, "${node.id} $solid $walkable")
   }
 }
 
