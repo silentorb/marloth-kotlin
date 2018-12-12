@@ -2,6 +2,7 @@ package generation.abstracted
 
 import generation.connectionOverlapsNeighborNodes
 import generation.getNodeDistance
+import generation.structure.doorwayLength
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.Vector3m
@@ -9,7 +10,7 @@ import mythic.spatial.lineIntersectsCircle
 import org.joml.Intersectionf
 import simulation.*
 
-private const val tunnelPadding = 0f
+private const val tunnelPadding = 1f + doorwayLength * 0.5f
 
 fun isBetween(first: Float, second: Float, middle: Float) =
     if (first < second)
@@ -33,8 +34,12 @@ fun intersects(lineStart: Vector2, lineEnd: Vector2, circleCenter: Vector2, radi
 
 fun nodesIntersectOther(first: Node, second: Node, nodes: Sequence<Node>) =
     nodes
-        .filter { it !== first && it !== second }
-        .any { lineIntersectsCircle(first.position.xy(), second.position.xy(), it.position.xy(), it.radius + tunnelPadding) }
+        .filter { it.id != first.id && it.id != second.id }
+        .any {
+          if (it.id == 67L && listOf(first.id, second.id).containsAll(listOf(52L, 62L))) {
+            val k = 0
+          }
+          lineIntersectsCircle(first.position.xy(), second.position.xy(), it.position.xy(), it.radius + tunnelPadding) }
 
 fun closeDeadEnd(node: Node, graph: Graph): InitialConnection? {
   val nodes = graph.nodes.values.asSequence()
