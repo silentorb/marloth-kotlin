@@ -37,3 +37,10 @@ fun onClick(logicModule: LogicModule): LogicModule = { bundle ->
     ))
   }
 }
+
+fun onClick(key: String): LogicModule = onClick { bundle ->
+  if (bundle.visibleBounds != null)
+    mapOf(key to bundle)
+  else
+    mapOf()
+}

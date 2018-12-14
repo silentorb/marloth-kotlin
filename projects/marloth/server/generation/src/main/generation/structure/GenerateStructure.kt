@@ -332,14 +332,8 @@ fun compileSectors(graph: Graph, idSources: GeometryIdSources): Map<Id, TempSect
     return allSectors
 }
 
-fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice): StructureRealm {
-  val allSectors = compileSectors(graph, idSources)
-
-  val floorsAndCeilings = splitFacePairTables(sinewFloorsAndCeilings(idSources, allSectors.values, ImmutableMesh()))
-  var mesh = ImmutableMesh(
-      faces = floorsAndCeilings.second,
-      edges = toEdgeTable(floorsAndCeilings.second.values)
-  )
+fun createWalls(graph: Graph, initialMesh: ImmutableMesh, idSources: GeometryIdSources, allSectors: Map<Id, TempSector>): Pair<List<FacePair>, ImmutableMesh> {
+  var mesh = initialMesh
 
   val pairs = allSectors.values.flatMap { sector ->
     val wallBases = mesh.faces[sector.node.floors.first()]!!.edges
@@ -347,8 +341,6 @@ fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice): Structu
       Pair(immutableEdgeReference, sector.node.id)
     }
   }
-
-  val nodeTable = graph.nodes
   val groups = pairs.groupBy { it.first.edge.id }
   val (singles, shared) = groups.entries.partition { it.value.size == 1 }
   val updatedWalls = singles.map { it.value.first() }.map {
@@ -357,7 +349,7 @@ fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice): Structu
         faces = mesh.faces.plus(Pair(face.id, face)),
         edges = mesh.edges.plus(entityMap(face.edges.map { it.edge }))
     )
-    nodeTable[it.second]!!.walls.add(face.id)
+    graph.nodes[it.second]!!.walls.add(face.id)
     FacePair(ConnectionFace(face.id, FaceType.wall, it.second, voidNodeId, null), face)
   }
       .plus(
@@ -367,13 +359,27 @@ fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice): Structu
                 faces = mesh.faces.plus(Pair(face.id, face)),
                 edges = mesh.edges.plus(entityMap(face.edges.map { it.edge }))
             )
-            nodeTable[it[0].second]!!.walls.add(face.id)
-            nodeTable[it[1].second]!!.walls.add(face.id)
+            graph.nodes[it[0].second]!!.walls.add(face.id)
+            graph.nodes[it[1].second]!!.walls.add(face.id)
             FacePair(ConnectionFace(face.id, FaceType.space, it[0].second, it[1].second, null), face)
           }
       )
+  return Pair(updatedWalls, mesh)
+}
+
+fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice): StructureRealm {
+  val allSectors = compileSectors(graph, idSources)
+
+  val floorsAndCeilings = splitFacePairTables(sinewFloorsAndCeilings(idSources, allSectors.values, ImmutableMesh()))
+
+    val initialMesh = ImmutableMesh(
+      faces = floorsAndCeilings.second,
+      edges = toEdgeTable(floorsAndCeilings.second.values)
+  )
+  val (updatedWalls, mesh) = createWalls(graph, initialMesh, idSources, allSectors)
+
   return StructureRealm(
-      nodes = nodeTable,
+      nodes = graph.nodes,
       connections = floorsAndCeilings.first.plus(entityMap(updatedWalls.map { it.info })),
       mesh = mesh
   )

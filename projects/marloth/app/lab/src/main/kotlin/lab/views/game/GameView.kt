@@ -48,9 +48,10 @@ fun renderFaceNormals(renderer: SceneRenderer, length: Float, faces: List<Immuta
   globalState.lineThickness = 2f
   for (face in faces) {
     val faceCenter = getVerticesCenter(face.unorderedVertices)
+    val straightVerticalHack = Vector3(0.00001f, 0f, 0f)
     val transform = Matrix()
         .translate(faceCenter)
-        .rotateTowards(Vector3m(face.normal), Vector3m(0f, 0f, 1f))
+        .rotateTowards(Vector3m(face.normal + straightVerticalHack), Vector3m(0f, 0f, 1f))
         .rotateY(-Pi * 0.5f)
         .scale(length)
 

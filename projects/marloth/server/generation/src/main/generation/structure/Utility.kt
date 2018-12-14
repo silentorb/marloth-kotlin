@@ -131,3 +131,38 @@ fun idSourceFromNodes(nodes: Collection<Node>): IdSource =
     else
       1L
     )
+
+fun zeroIfVoid(value: Id) =
+    if (value == voidNodeId)
+      0
+    else
+      1
+
+fun faceNodeCount(faceInfo: ConnectionFace) =
+    zeroIfVoid(faceInfo.firstNode) + zeroIfVoid(faceInfo.secondNode)
+
+fun faceNodeCount(faces: ConnectionTable, face: ImmutableFace) =
+    faceNodeCount(faces[face.id]!!)
+
+fun getSharedEdge(first: ImmutableFace, second: ImmutableFace): ImmutableEdge =
+    first.edges.first { edge -> second.edges.map { it.edge }.contains(edge.edge) }.edge
+
+// This algorithm only works on quads
+fun getOppositeQuadEdge(first: ImmutableFace, edge: ImmutableEdge) =
+    first.edges.first { e -> e.vertices.none { edge.vertices.contains(it) } }
+
+fun edgeDot(first: ImmutableFace, second: ImmutableFace): Float {
+  val sharedEdge = getSharedEdge(first, second)
+  val middle = sharedEdge.middle
+  val firstOuterEdge = getOppositeQuadEdge(first, sharedEdge)
+  val firstVector = (firstOuterEdge.middle - middle).normalize()
+  return firstVector.dot(second.normal)
+}
+
+fun isConcaveCorner(first: ImmutableFace, second: ImmutableFace): Boolean =
+    edgeDot(first, second) > 0f
+
+fun isConcaveCorner(a: Vector3, b: Vector3, bcNormal: Vector3): Boolean {
+  val firstVector = (a - b).normalize()
+  return firstVector.dot(bcNormal) > 0
+}

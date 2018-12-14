@@ -150,7 +150,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     prepareClient(windowInfo)
     val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
     val input = getInputState(client.platform.input, commands)
-    updateMapState(config.mapView, world.realm, input, windowInfo, delta)
+    updateMapState(config.mapView, world.realm, input, windowInfo, previousState.gameClientState.bloomState, delta)
     val layout = mapLayout(client, world.realm, config.mapView)
     val boxes = layout(Seed(
         bag = previousState.gameClientState.bloomState.bag,

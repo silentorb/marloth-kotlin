@@ -11,7 +11,7 @@ fun scrollbar(offset: Int, contentLength: Int): Depiction = { b, c ->
     val width = scrollbarWidth
     val bounds = Bounds(
         x = b.end.x - width - 2,
-        y = offset * b.dimensions.y / contentLength,
+        y = b.top + offset * b.dimensions.y / contentLength,
         width = width,
         height = b.dimensions.y * b.dimensions.y / contentLength
     )
@@ -74,12 +74,13 @@ fun scrollingInteraction(key: String, contentBounds: Bounds): LogicModule = { (b
     val input = bloomState.input
     val currentButton = input.current.mouseButtons[0]
     val previousButton = input.previous.mouseButtons[0]
+    val clip = minMax(0, contentBounds.dimensions.y - bounds.dimensions.y)
 
     val (dragOrigin, offsetOrigin) = if (currentButton == ButtonState.down && previousButton == ButtonState.up
         && isInBounds(input.current.mousePosition, bounds))
       Pair(input.current.mousePosition, state.offset)
     else if (currentButton == ButtonState.up)
-      Pair(null, state.offset)
+      Pair(null, state.offset) // Reclip the bounds in case the layout was changed independent of this code
     else
       Pair(state.dragOrigin, state.offsetOrigin)
 
@@ -87,14 +88,14 @@ fun scrollingInteraction(key: String, contentBounds: Bounds): LogicModule = { (b
       val mouseOffsetY = input.current.mousePosition.y - dragOrigin.y
       val mod = offsetOrigin + mouseOffsetY * contentBounds.dimensions.y / bounds.dimensions.y
 //    println(mod)
-      minMax(0, contentBounds.dimensions.y - bounds.dimensions.y, mod)
+      clip(mod)
     } else
       state.offset
 
     val newState = ScrollingState(
         dragOrigin = dragOrigin,
         offsetOrigin = offsetOrigin,
-        offset = offset
+        offset = clip(offset)
     )
     mapOf(key to newState)
   }
@@ -122,8 +123,12 @@ fun scrolling(key: String): (Flower) -> Flower = { child ->
     )
     val childBoxes = offset(child)(extractOffset(key, seed.bag))(innerSeed)
         .map(clipBox(innerSeed.bounds))
-    val contentBounds = accumulatedBounds(childBoxes)
-    scrollBox(key, contentBounds)(seed)
-        .plus(childBoxes)
+    if (childBoxes.any()) {
+      val contentBounds = accumulatedBounds(childBoxes)
+      scrollBox(key, contentBounds)(seed)
+          .plus(childBoxes)
+    } else {
+      listOf()
+    }
   }
 }

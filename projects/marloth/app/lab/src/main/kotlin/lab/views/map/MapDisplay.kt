@@ -1,6 +1,7 @@
 package lab.views.map
 
 import lab.utility.embedCameraView
+import lab.utility.yellow
 import lab.views.game.renderFaceNormals
 import marloth.clienting.Client
 import mythic.bloom.*
@@ -127,9 +128,11 @@ fun renderMapMesh(renderer: SceneRenderer, realm: Realm, config: MapViewConfig, 
 //  renderer.drawPoint(Vector3(16.027586f, 69.140396f, 0.0f), Vector4(0f, 1f, 1f, 1f), 3f)
 
   for (id in config.selection) {
-    val face = realm.mesh.faces[id]!!
-    face.vertices.forEachIndexed { index, v ->
-      renderer.drawText(index.toString(), v, textStyle)
+    val face = realm.mesh.faces[id]
+    if (face != null) {
+      face.vertices.forEachIndexed { index, v ->
+        renderer.drawText(index.toString(), v, textStyle)
+      }
     }
   }
 

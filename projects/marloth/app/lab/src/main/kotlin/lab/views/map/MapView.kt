@@ -3,6 +3,7 @@ package lab.views.map
 import haft.isActive
 import lab.LabCommandType
 import lab.views.LabCommandState
+import mythic.bloom.BloomState
 import mythic.bloom.Bounds
 import mythic.ent.Id
 import mythic.platforming.WindowInfo
@@ -95,14 +96,23 @@ private fun trySelect(config: MapViewConfig, world: Realm) {
   }
 }
 
-fun updateMapState(config: MapViewConfig, world: Realm, input: LabCommandState, windowInfo: WindowInfo, delta: Float) {
+fun updateMapState(config: MapViewConfig, world: Realm, input: LabCommandState, windowInfo: WindowInfo,
+                   bloomState: BloomState, delta: Float) {
   val commands = input.commands
 
-  if (isActive(commands, LabCommandType.select)) {
+  if (bloomState.bag["clickMap"] != null) {
     val bounds = Bounds(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
     config.raySkip = 0
     castSelectionRay(config, world, input.mousePosition, bounds)
+    val previousSelection = config.selection.firstOrNull()
     trySelect(config, world)
+    if (config.selection.firstOrNull() != null && config.selection.firstOrNull() == previousSelection) {
+      ++config.raySkip
+      trySelect(config, world)
+      if (config.selection.firstOrNull() == previousSelection) {
+        --config.raySkip
+      }
+    }
   }
 
   if (isActive(commands, LabCommandType.incrementRaySkip)) {

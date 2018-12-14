@@ -9,6 +9,7 @@ fun join(first: Flower, second: Flower): Flower =
     { first(it).plus(second(it)) }
 
 fun accumulatedBounds(boxes: Boxes): Bounds {
+  assert(boxes.any())
   val start = boxes.first().bounds.position
   val end = boxes.sortedByDescending { it.bounds.end.y }.first().bounds.end
   return Bounds(start, end - start)

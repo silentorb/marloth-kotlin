@@ -5,6 +5,7 @@ import marloth.clienting.gui.initialMenuState
 import marloth.clienting.gui.updateMenu
 import mythic.bloom.BloomState
 import mythic.bloom.ButtonState
+import mythic.drawing.setGlobalFonts
 import mythic.platforming.Platform
 import org.joml.Vector2i
 import rendering.DisplayConfig
@@ -41,6 +42,10 @@ class Client(val platform: Platform, displayConfig: DisplayConfig) {
   val renderer: Renderer = Renderer(displayConfig)
   val screens: List<Screen> = (1..maxPlayerCount).map { Screen(it) }
   fun getWindowInfo() = platform.display.getInfo()
+
+  init {
+    setGlobalFonts(renderer.fonts)
+  }
 }
 
 fun updateMousePointerVisibility(platform: Platform) {

@@ -103,6 +103,10 @@ private var _globalFonts: List<Font>? = null
 
 fun globalFonts(): List<Font> = _globalFonts!!
 
+fun setGlobalFonts(fonts: List<Font>) {
+  _globalFonts = fonts
+}
+
 class Canvas(
     val effects: DrawingEffects,
     val unitScaling: Vector2,
@@ -117,10 +121,6 @@ class Canvas(
   val dynamicTexturedMesh = dependencies.dynamicTexturedMesh
   val viewportDimensions = Vector2(dimensions.x.toFloat(), dimensions.y.toFloat())
   val pixelsToScalar = Matrix().scale(1f / dimensions.x, 1f / dimensions.y, 1f)
-
-  init {
-    _globalFonts = fonts
-  }
 
   fun transformScalar(position: Vector2, dimensions: Vector2) =
       Matrix()

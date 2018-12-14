@@ -12,6 +12,11 @@ data class Seed(
 
 typealias Flower = (Seed) -> Boxes
 
+operator fun Flower.plus(b: Flower): Flower = { seed ->
+  this(seed)
+      .plus(b(seed))
+}
+
 fun depict(depiction: StateDepiction): Flower = { s ->
   listOf(
       Box(
@@ -33,8 +38,4 @@ fun <T> getExistingOrNewState(initializer: () -> T): (Any?) -> T = { state ->
     initializer()
 }
 
-//fun padding(all: Int): (Flower) -> Flower = { flower ->
-//  {seed->
-//    flower()
-//  }
-//}
+val emptyFlower: Flower = { listOf() }

@@ -73,6 +73,11 @@ data class ImmutableFace(
   val vertices: List<Vector3>
     get() = edges.map { it.first }
 
+  init {
+    if (id == 1259L) {
+      val k = 0
+    }
+  }
 //  fun updateNormal() {
 ////    if (vertices.size > 2)
 //    normal = getNormal(unorderedVertices)

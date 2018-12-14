@@ -42,19 +42,19 @@ fun list(plane: Plane, padding: Int): (List<Flower>) -> Flower = { children ->
       val farthest = boxes.map { normalize(it.bounds).right }.sortedDescending().first()
       val normalizedLastBounds = normalize(lastBounds)
 
-      val offset = Vector2i(farthest + padding, 0)
+      val offset = Vector2i(farthest - lastBounds.top + padding, 0)
       lastBounds = normalize(Bounds(
           position = normalizedLastBounds.position + offset,
           dimensions = normalizedLastBounds.dimensions - offset
       ))
       boxes
-          .map {
-            it.copy(
-                bounds = it.bounds.copy(
-                    position = it.bounds.position + plane(offset)
-                )
-            )
-          }
+//          .map {
+//            it.copy(
+//                bounds = it.bounds.copy(
+//                    position = it.bounds.position + plane(offset)
+//                )
+//            )
+//          }
     }
   }
 }
@@ -73,6 +73,9 @@ fun <T> list(arrangement: LengthArrangement, listItem: ListItem<T>): ListFlower<
     applyBounds(b.bag, flowers, arrangement(b.bounds, lengths))
   }
 }
+
+fun fixedList(plane: Plane, padding: Int, lengths: List<Int?>): ParentFlower =
+    applyBounds(fixedLengthArranger(plane, padding, lengths))
 //
 //fun <T> list(arrangement: LengthArrangement): (List<Flower>) -> Flower = { flowers ->
 //  applyBounds(arrangement)(flowers)

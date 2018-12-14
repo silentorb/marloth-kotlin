@@ -65,34 +65,6 @@ fun menuLayout(bounds: Bounds, state: MenuState): Boxes {
       .plus(arrangeListComplex(lengthArranger(vertical, menuPadding), items, menuBounds))
 }
 
-private val textStyle = IndexedTextStyle(0, 12f, grayTone(0.7f))
-
-fun characterHealth(world: World, id: Id): String {
-  val resource = world.deck.characters[id]!!.health
-  val value = resource.value
-  val max = resource.max
-  return "$value / $max"
-}
-
-val df = DecimalFormat("#0.00")
-
-fun characterVisibility(world: World, id: Id): String {
-  val rating = lightRating(world, id)
-  return df.format(rating)
-}
-
-fun hudLayout(world: World): Flower {
-  val player = world.players.first().id
-  val rows = listOf(
-      label(textStyle, characterHealth(world, player)),
-      label(textStyle, characterVisibility(world, player)),
-      label(textStyle, df.format(world.deck.bodies[player]!!.velocity.length()))
-  )
-  return offset(Vector2i(10))(
-      list(vertical, 10)(rows)
-  )
-}
-
 fun renderGui(bounds: Bounds, canvas: Canvas, world: World, state: MenuState) {
   val hudBoxes = hudLayout(world)(Seed(bounds = bounds))
   renderLayout(hudBoxes, canvas)

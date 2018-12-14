@@ -1,6 +1,5 @@
 package generation.structure
 
-import mythic.ent.Id
 import mythic.sculpting.*
 import mythic.spatial.*
 import org.joml.plus
@@ -11,38 +10,6 @@ import mythic.ent.IdSource
 import mythic.ent.entityMap
 import simulation.getFloor
 import simulation.*
-
-fun zeroIfVoid(value: Id) =
-    if (value == voidNodeId)
-      0
-    else
-      1
-
-fun faceNodeCount(faceInfo: ConnectionFace) =
-    zeroIfVoid(faceInfo.firstNode) + zeroIfVoid(faceInfo.secondNode)
-
-fun faceNodeCount(faces: ConnectionTable, face: ImmutableFace) =
-    faceNodeCount(faces[face.id]!!)
-
-fun getSharedEdge(first: ImmutableFace, second: ImmutableFace): ImmutableEdge =
-    first.edges.first { edge -> second.edges.map { it.edge }.contains(edge.edge) }.edge
-
-// This algorithm only works on quads
-fun getOppositeQuadEdge(first: ImmutableFace, edge: ImmutableEdge) =
-    first.edges.first { e -> e.vertices.none { edge.vertices.contains(it) } }
-
-fun isConcaveCorner(first: ImmutableFace, second: ImmutableFace): Boolean {
-  val sharedEdge = getSharedEdge(first, second)
-  val middle = sharedEdge.middle
-  val firstOuterEdge = getOppositeQuadEdge(first, sharedEdge)
-  val firstVector = (firstOuterEdge.middle - middle).normalize()
-  return firstVector.dot(second.normal) > 0
-}
-
-fun isConcaveCorner(a: Vector3, b: Vector3, bcNormal: Vector3): Boolean {
-  val firstVector = (a - b).normalize()
-  return firstVector.dot(bcNormal) > 0
-}
 
 fun getIncompleteNeighbors(faces: ConnectionTable, face: ImmutableFace): Collection<ImmutableFace> =
     face.neighbors
@@ -114,16 +81,10 @@ fun shaveOffOccludedWalls(points: List<Vector3>, walls: List<ImmutableFace>, sha
   if (shaveCount >= points.size - 2)
     return shaveCount
 
-  if (_i == 3) {
-    val k = 0
-  }
-//  val a2 = points[1]
   val a = points[0]
   val b = points[points.size - shaveCount - 1]
-//  val b2 = points[points.size - shaveCount - 1]
   val firstNormal = walls[0].normal
   val secondNormal = walls[walls.size - shaveCount - 1].normal
-  val e = 0.001f
   return if (!isConcaveCorner(a, b, secondNormal) && !isConcaveCorner(b, a, firstNormal))
     shaveCount
   else
@@ -144,11 +105,13 @@ fun lineChainToVertexChain(edges: List<ImmutableEdge>): List<Vector3> =
         .plus(edges.drop(1).zip(edges.dropLast(1)) { c, d -> c.vertices.intersect(d.vertices).first() })
         .plus(edges.last().vertices.first { !edges[edges.size - 2].vertices.contains(it) })
 
-var _i: Int = 0
-fun gatherNewSectorFaces(faces: ConnectionTable, origin: ImmutableFace): List<ImmutableFace> {
-  ++_i
+fun gatherNewSectorFaces(faces: ConnectionTable, origin: ImmutableFace): List<ImmutableFace>? {
   val firstNeighbors = getIncompleteNeighbors(faces, origin).filter { !isConcaveCorner(origin, it) }.toList()
+  if (firstNeighbors.size != 2)
+    return null
+
   assert(firstNeighbors.size == 2)
+
   val (firstDir, firstNotUsed) = traceIncompleteWalls(faces, origin, firstNeighbors[0], origin)
   val (secondDir, secondNotUsed) = traceIncompleteWalls(faces, origin, firstNeighbors[1], firstDir.last())
   val notUsed = if (firstNotUsed.none())
@@ -161,6 +124,7 @@ fun gatherNewSectorFaces(faces: ConnectionTable, origin: ImmutableFace): List<Im
   assert(isChain(walls))
 
   return if (notUsed.any()) {
+//    listOf(firstDir.first(), origin, secondDir.first())
     val edges = walls.map { getFloor(it).edge }
     val points = lineChainToVertexChain(edges)
 
@@ -183,6 +147,9 @@ fun addSpaceNode(idSources: StructureIdSources, realm: StructureRealm, walls: Li
   val a = getEndEdgeReversed(walls, 0)
   val b = getEndEdge(walls, 0)
 
+//  if (walls.map { it.id }.contains(1090L)) {
+//    val k = 0
+//  }
   assert(walls.size > 2 || (walls.size > 1 && a != b))
 
   val edges = walls.flatMap { face ->
@@ -330,7 +297,6 @@ fun defineNegativeSpace(idSources: StructureIdSources, realm: StructureRealm, di
   var pass = 1
   var currentRealm = realm
   while (true) {
-    val lastRealm = currentRealm
     val faces = getIncomplete(currentRealm.connections, currentRealm.nodes.values)
         .map { currentRealm.mesh.faces[it]!! }
 
@@ -351,34 +317,41 @@ fun defineNegativeSpace(idSources: StructureIdSources, realm: StructureRealm, di
     }
 
     assert(invalid.none())
+
+    // Gather concave faces and sort them by most concave angles first
     val concaveFaces = faces
-        .filter { wall ->
+        .mapNotNull { wall ->
           val neighbors = getIncompleteNeighbors(currentRealm.connections, wall).toList()
-          neighbors.size > 1 && neighbors.all { !isConcaveCorner(wall, it) }
+          if (neighbors.size > 1) {
+            val dots = neighbors.map { edgeDot(wall, it) }
+            if (dots.all { it < 0f }) { // All are concave
+              if (wall.id == 616L || wall.id == 630L) {
+                val k = 0
+              }
+              Pair(wall, dots.sortedDescending().first())
+            } else {
+              null
+            }
+          } else {
+            null
+          }
         }
+        .sortedBy { it.second } // Sort by the sharpest angles (they will all be negative values)
+        .map { it.first }
 
-//    val convexFaces = faces
-//        .filter { wall ->
-//          val neighbors = getIncompleteNeighbors(currentRealm.connections, wall).toList()
-//          neighbors.size > 1 && neighbors.all { isConcaveCorner(wall, it) }
-//        }
-
-    if (concaveFaces.none()) {
-//      faces
-//          .filter { wall ->
-//            val neighbors = getIncompleteNeighbors(currentRealm.connections, wall).toList()
-//            neighbors.size < 2
-//          }.forEach {
-//            //        getFaceInfo(it).debugInfo = "space-d"
-//          }
+    if (concaveFaces.none())
       break
-    }
-//    concaveFaces.forEach { currentRealm.connections[it.id]!!.debugInfo = "space-d" }
-//    return realm
 
     for (originFace in concaveFaces) {
       if (faceNodeCount(currentRealm.connections, originFace) == 1) {
+        println(originFace.id)
+        if (originFace.id == 1233L) {
+          val k = 0
+        }
         val walls = gatherNewSectorFaces(currentRealm.connections, originFace)
+        if (walls == null)
+          continue
+
         if (walls.size < 2) {
           // Getting here means there is a bug but it is hard to debug without a map display so
           // let execution pass through instead of throwing an exception.
