@@ -28,6 +28,7 @@ fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, realm: Rea
 //      renderer.drawOutlinedFace(face.vertices, color)
     val debugInfo = realm.faces[face]!!.debugInfo
     val c = when (debugInfo) {
+      "incomplete" -> Vector4(1f, 1f, 0f, 1f)
       "lower" -> Vector4(1f, 0f, 1f, 1f)
       else -> color
     }

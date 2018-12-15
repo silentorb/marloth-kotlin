@@ -1,5 +1,6 @@
 package generation.structure
 
+import mythic.ent.Id
 import mythic.sculpting.*
 import mythic.spatial.*
 import org.joml.plus
@@ -11,13 +12,15 @@ import mythic.ent.entityMap
 import simulation.getFloor
 import simulation.*
 
+fun isIncompleteWall(faces: ConnectionTable): (Id) -> Boolean = { id ->
+  val info = faces[id]!!
+  val c = faceNodeCount(info) == 1
+  info.faceType == FaceType.wall && c
+}
+
 fun getIncompleteNeighbors(faces: ConnectionTable, face: ImmutableFace): Collection<ImmutableFace> =
     face.neighbors
-        .filter {
-          val info = faces[it.id]!!
-          val c = faceNodeCount(info) == 1
-          info.faceType == FaceType.wall && c
-        }
+        .filter { isIncompleteWall(faces)(it.id) }
 
 fun traceIncompleteWalls(faces: ConnectionTable, origin: ImmutableFace, first: ImmutableFace, otherEnd: ImmutableFace): Pair<MutableList<ImmutableFace>, List<ImmutableFace>> {
   var current = first
@@ -68,6 +71,10 @@ fun getEndPoint(walls: List<ImmutableEdge>, offset: Int): Vector3 {
   return last.vertices.first { !nextLast.vertices.contains(it) }
 }
 
+fun getEndPoint(first: ImmutableEdge, second: ImmutableEdge): Vector3 {
+  return second.vertices.first { !first.vertices.contains(it) }
+}
+
 fun getEndPointReversed(walls: List<ImmutableEdge>, offset: Int): Vector3 {
   val head = 0 + offset
   val last = walls[head]
@@ -75,7 +82,7 @@ fun getEndPointReversed(walls: List<ImmutableEdge>, offset: Int): Vector3 {
   return last.vertices.first { !nextLast.vertices.contains(it) }
 }
 
-fun shaveOffOccludedWalls(points: List<Vector3>, walls: List<ImmutableFace>, shaveCount: Int = 0): Int {
+fun shaveOffOccludedWallsOld(points: List<Vector3>, walls: List<ImmutableFace>, shaveCount: Int = 0): Int {
   // 3 is an estimate right now.  A sector needs at least 3 walls but this condition may not directly translate to wall count.
 //  assert(shaveCount < walls.size - 2)
   if (shaveCount >= points.size - 2)
@@ -88,7 +95,7 @@ fun shaveOffOccludedWalls(points: List<Vector3>, walls: List<ImmutableFace>, sha
   return if (!isConcaveCorner(a, b, secondNormal) && !isConcaveCorner(b, a, firstNormal))
     shaveCount
   else
-    shaveOffOccludedWalls(points, walls, shaveCount + 1)
+    shaveOffOccludedWallsOld(points, walls, shaveCount + 1)
 }
 
 fun chainIntegrity(walls: List<ImmutableFace>): List<Int> =
@@ -105,34 +112,75 @@ fun lineChainToVertexChain(edges: List<ImmutableEdge>): List<Vector3> =
         .plus(edges.drop(1).zip(edges.dropLast(1)) { c, d -> c.vertices.intersect(d.vertices).first() })
         .plus(edges.last().vertices.first { !edges[edges.size - 2].vertices.contains(it) })
 
-fun gatherNewSectorFaces(faces: ConnectionTable, origin: ImmutableFace): List<ImmutableFace>? {
-  val firstNeighbors = getIncompleteNeighbors(faces, origin).filter { !isConcaveCorner(origin, it) }.toList()
-  if (firstNeighbors.size != 2)
-    return null
+fun intersects(faces: ImmutableFaceTable, group: List<Id>, point: Vector3, secondPoint: Vector3): Boolean = group
+    .any { id ->
+      if (id == 436L) {
+        val k = 0
+      }
+      val face = faces[id]!!
+      val floor = getFloor(face)
+      val (hit, _) = lineSegmentIntersectsLineSegment(point, secondPoint, floor.first, floor.second)
+      if (hit) {
+        val k = 0
+        println("Hit " + id)
+      }
+      hit
+    }
 
+fun shaveOccluded(faces: ImmutableFaceTable, group: List<Id>, edges: List<ImmutableEdge>, point: Vector3): Int {
+  for (i in 1 until edges.size) {
+    val secondPoint = getEndPoint(edges[i - 1], edges[i])
+    if (intersects(faces, group, point, secondPoint)) {
+      return i
+    }
+  }
+  return edges.size
+}
+
+fun gatherNewSectorFaces(faces: ImmutableFaceTable, group: List<Id>, connections: ConnectionTable, origin: ImmutableFace): List<ImmutableFace>? {
+  val firstNeighbors = getIncompleteNeighbors(connections, origin).filter { !isConcaveCorner(origin, it) }.toList()
+  if (firstNeighbors.size != 2) {
+    if (firstNeighbors.none())
+      return null
+
+    val other = firstNeighbors.first()
+    val simpleResult = listOf(origin, other)
+    val floor = getFloor(origin).edge
+    val otherFloor = getFloor(other).edge
+    val filteredGroup = group.minus(simpleResult.plus(origin.neighbors).plus(other.neighbors).map { it.id })
+    return if (intersects(faces, filteredGroup, getEndPoint(floor, otherFloor), getEndPoint(otherFloor, floor)))
+      null
+    else
+      simpleResult
+  }
   assert(firstNeighbors.size == 2)
 
-  val (firstDir, firstNotUsed) = traceIncompleteWalls(faces, origin, firstNeighbors[0], origin)
-  val (secondDir, secondNotUsed) = traceIncompleteWalls(faces, origin, firstNeighbors[1], firstDir.last())
+  val (firstDir, firstNotUsed) = traceIncompleteWalls(connections, origin, firstNeighbors[0], origin)
+  val (secondDir, secondNotUsed) = traceIncompleteWalls(connections, origin, firstNeighbors[1], firstDir.last())
   val notUsed = if (firstNotUsed.none())
     listOf()
   else
     firstNotUsed.plus(secondNotUsed).distinct()
 
-  val walls = firstDir.reversed().plus(origin).plus(secondDir)
-  assert(walls.size > 1)
-  assert(isChain(walls))
-
   return if (notUsed.any()) {
-//    listOf(firstDir.first(), origin, secondDir.first())
-    val edges = walls.map { getFloor(it).edge }
-    val points = lineChainToVertexChain(edges)
+    val filteredGroup = group
+        .minus(firstDir.plus(origin).plus(secondDir).plus(notUsed).map { it.id })
+    val firstEdges = listOf(origin).plus(firstDir).map { getFloor(it).edge }
+    val secondEdges = listOf(origin).plus(secondDir).map { getFloor(it).edge }
+    val secondEndPoint = getEndPoint(secondEdges.dropLast(1).lastOrNull() ?: getFloor(origin).edge, secondEdges.last())
+    val firstCount = shaveOccluded(faces, filteredGroup, firstEdges, secondEndPoint) - 1
+    val updatedFirstDir = firstDir.take(firstCount)
+    if (updatedFirstDir.none())
+      return null
 
-    val shaveCount = shaveOffOccludedWalls(points, walls)
-    walls.dropLast(shaveCount)
+    val updatedFirstEdges = updatedFirstDir.map { getFloor(it).edge }
+    val firstEndPoint = getEndPoint(updatedFirstEdges.dropLast(1).lastOrNull()
+        ?: getFloor(origin).edge, updatedFirstEdges.last())
+    val secondCount = shaveOccluded(faces, filteredGroup, secondEdges, firstEndPoint) - 1
+    val updatedSecondDir = secondDir.take(secondCount)
+    updatedFirstDir.reversed().plus(origin).plus(updatedSecondDir)
   } else {
-    assert(walls.size > 2)
-    walls
+    firstDir.reversed().plus(origin).plus(secondDir)
   }
 }
 
@@ -143,7 +191,7 @@ fun createSpaceNode(sectorCenter: Vector3, nextId: IdSource): Node {
   return createSecondaryNode(sectorCenter, nextId, true, Biome.void)
 }
 
-fun addSpaceNode(idSources: StructureIdSources, realm: StructureRealm, walls: List<ImmutableFace>): StructureRealm {
+fun addSpaceNode(idSources: StructureIdSources, realm: StructureRealm, walls: List<ImmutableFace>): Triple<Node, ConnectionTable, ImmutableFaceTable> {
   val a = getEndEdgeReversed(walls, 0)
   val b = getEndEdge(walls, 0)
 
@@ -181,6 +229,7 @@ fun addSpaceNode(idSources: StructureIdSources, realm: StructureRealm, walls: Li
       gapVertices
 
     val newWall = realm.mesh.createStitchedFace(idSources.edge, idSources.face(), facingVertices)
+    println(newWall.id)
 
     node.walls.add(newWall.id)
     val connection = ConnectionFace(newWall.id, FaceType.wall, node.id, voidNodeId, null)
@@ -196,16 +245,14 @@ fun addSpaceNode(idSources: StructureIdSources, realm: StructureRealm, walls: Li
   val updatedConnections = newConnections
       .plus(entityMap(updatedWalls))
 
-  return realm.copy(
-      nodes = realm.nodes.plus(Pair(node.id, node)),
-      connections = realm.connections.plus(updatedConnections),
-      mesh = realm.mesh.copy(
-          faces = realm.mesh.faces.plus(newFaces)
-      )
+  return Triple(
+      node,
+      updatedConnections,
+      newFaces
   )
 }
 
-fun getIncomplete(faces: ConnectionTable, nodes: Collection<Node>) =
+fun getIncomplete(faces: ConnectionTable, nodes: Collection<Node>): List<Id> =
     nodes.flatMap { it.walls }
         .filter { faceNodeCount(faces[it]!!) == 1 }
 
@@ -293,42 +340,62 @@ data class StructureIdSources(
     override val edge: IdSource
 ) : GeometryIdSources
 
-fun defineNegativeSpace(idSources: StructureIdSources, realm: StructureRealm, dice: Dice): StructureRealm {
+fun getLoop(faces: ImmutableFaceTable, start: Id, available: Collection<Id>): List<Id> {
+  val result: MutableList<Id> = mutableListOf(start)
+  var current = start
+  do {
+    current = faces[current]!!.neighbors.first { it.id != current && available.contains(it.id) }.id
+    result.add(current)
+  } while (current != start)
+  return result
+}
+
+fun groupIncompleteFaces(faces: ImmutableFaceTable, incomplete: Collection<Id>): List<List<Id>> {
+  var available = incomplete
+  val result: MutableList<List<Id>> = mutableListOf()
+  while (available.any()) {
+    val start = available.first()
+    val strip: List<Id> = getLoop(faces, start, available)
+    result.add(strip)
+    available = available.minus(strip)
+  }
+  return result
+}
+
+fun fillIncompleteGroup(realm: StructureRealm, incomplete: List<Id>, idSources: StructureIdSources): StructureRealm {
   var pass = 1
   var currentRealm = realm
-  while (true) {
-    val faces = getIncomplete(currentRealm.connections, currentRealm.nodes.values)
-        .map { currentRealm.mesh.faces[it]!! }
+  var remaining = incomplete
+  while (remaining.any()) {
+//    val neighborLists = remaining.map { wall -> Pair(wall, getIncompleteNeighbors(currentRealm.connections, wall).toList()) }
+//    val invalid = neighborLists.filter { it.second.size > 2 }
+////    assert(invalid.none())
+//    if (invalid.any()) {
+//      val temp = invalid.map { (a, b) ->
+//        realm.connections[a.id]!!.debugInfo = "space-a"
+//        Pair(realm.connections[a.id]!!, b.map { realm.connections[it.id]!! })
+//      }
+//      val nd = temp.flatMap { (a, b) -> b.map { it.firstNode }.plus(a.firstNode) }
+//          .distinct()
+//      return currentRealm
+//    }
 
-    // For debug purposes only
-    val sortedFaces = faces.sortedBy { it.id }
-
-    val neighborLists = faces.map { wall -> Pair(wall, getIncompleteNeighbors(currentRealm.connections, wall).toList()) }
-    val invalid = neighborLists.filter { it.second.size > 2 }
 //    assert(invalid.none())
-    if (invalid.any()) {
-      val temp = invalid.map { (a, b) ->
-        realm.connections[a.id]!!.debugInfo = "space-a"
-        Pair(realm.connections[a.id]!!, b.map { realm.connections[it.id]!! })
-      }
-      val nd = temp.flatMap { (a, b) -> b.map { it.firstNode }.plus(a.firstNode) }
-          .distinct()
-      return currentRealm
-    }
-
-    assert(invalid.none())
 
     // Gather concave faces and sort them by most concave angles first
-    val concaveFaces = faces
-        .mapNotNull { wall ->
+    val concaveFaces = remaining
+        .mapNotNull { id ->
+          if (id == 507L || id == 514L) {
+            val k = 0
+          }
+          val wall = currentRealm.mesh.faces[id]!!
           val neighbors = getIncompleteNeighbors(currentRealm.connections, wall).toList()
-          if (neighbors.size > 1) {
+          if (neighbors.size > 1) { // Currently this should always be true but just in case surrounding code changes...
             val dots = neighbors.map { edgeDot(wall, it) }
-            if (dots.all { it < 0f }) { // All are concave
-              if (wall.id == 616L || wall.id == 630L) {
-                val k = 0
-              }
-              Pair(wall, dots.sortedDescending().first())
+            if (dots.any { it < 0f }) { // Any are concave
+              // If a wall has one convex neighbor it will incidentally be sorted near the end of the list
+              val priority = -(dots.sorted().last())
+              Pair(id, priority)
             } else {
               null
             }
@@ -336,19 +403,33 @@ fun defineNegativeSpace(idSources: StructureIdSources, realm: StructureRealm, di
             null
           }
         }
-        .sortedBy { it.second } // Sort by the sharpest angles (they will all be negative values)
+        .sortedByDescending { it.second }
         .map { it.first }
 
-    if (concaveFaces.none())
-      break
+    if (concaveFaces.none()) {
+//      throw Error("Should not be here")
+      return currentRealm.copy(
+          connections = currentRealm.connections.mapValues {
+            if (remaining.contains(it.key))
+              it.value.copy(
+                  debugInfo = "incomplete"
+              )
+            else
+              it.value
+          }
+      )
+    }
 
-    for (originFace in concaveFaces) {
+    val previousRealm = currentRealm
+
+    var newConnections: List<Id> = listOf()
+    for (id in concaveFaces) {
+      val originFace = currentRealm.mesh.faces[id]!!
       if (faceNodeCount(currentRealm.connections, originFace) == 1) {
-        println(originFace.id)
-        if (originFace.id == 1233L) {
+        if (id == 1366L) {
           val k = 0
         }
-        val walls = gatherNewSectorFaces(currentRealm.connections, originFace)
+        val walls = gatherNewSectorFaces(currentRealm.mesh.faces, remaining, currentRealm.connections, originFace)
         if (walls == null)
           continue
 
@@ -356,14 +437,50 @@ fun defineNegativeSpace(idSources: StructureIdSources, realm: StructureRealm, di
           // Getting here means there is a bug but it is hard to debug without a map display so
           // let execution pass through instead of throwing an exception.
           println("Negative space generation error.  Face id = " + originFace.id)
-          gatherNewSectorFaces(currentRealm.connections, originFace)
+//          gatherNewSectorFaces(currentRealm.connections, originFace)
           return currentRealm
         }
-        currentRealm = addSpaceNode(idSources, currentRealm, walls)
+        val (newNode, updatedConnections, newFaces) = addSpaceNode(idSources, currentRealm, walls)
+        currentRealm = currentRealm.copy(
+            nodes = currentRealm.nodes.plus(Pair(newNode.id, newNode)),
+            connections = currentRealm.connections.plus(updatedConnections),
+            mesh = currentRealm.mesh.copy(
+                faces = currentRealm.mesh.faces.plus(newFaces)
+            )
+        )
+        newConnections = newConnections.plus(updatedConnections.keys)
       }
     }
+
+    if (currentRealm === previousRealm)
+      return currentRealm
+
+    remaining = remaining
+        .plus(newConnections)
+        .filter(isIncompleteWall(currentRealm.connections))
+
     ++pass
   }
 
+  return currentRealm
+}
+
+fun defineNegativeSpace(idSources: StructureIdSources, realm: StructureRealm, dice: Dice): StructureRealm {
+  val incomplete = realm.connections.filterKeys(isIncompleteWall(realm.connections)).keys
+  val groups = groupIncompleteFaces(realm.mesh.faces, incomplete)
+  var currentRealm = realm
+//      .copy(
+//      connections = realm.connections.mapValues {
+//        if (incomplete.contains(it.key))
+//          it.value.copy(
+//              debugInfo = "incomplete"
+//          )
+//        else
+//          it.value
+//      }
+//  )
+  for (group in groups) {
+    currentRealm = fillIncompleteGroup(currentRealm, group, idSources)
+  }
   return currentRealm
 }
