@@ -74,7 +74,7 @@ data class ImmutableFace(
     get() = edges.map { it.first }
 
   init {
-    if (id == 1372L) {
+    if (id == 1276L) {
       val k = 0
     }
   }

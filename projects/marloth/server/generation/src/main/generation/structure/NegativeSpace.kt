@@ -22,7 +22,12 @@ fun getIncompleteNeighbors(faces: ConnectionTable, face: ImmutableFace): Collect
     face.neighbors
         .filter { isIncompleteWall(faces)(it.id) }
 
-fun traceIncompleteWalls(faces: ConnectionTable, origin: ImmutableFace, first: ImmutableFace, otherEnd: ImmutableFace): Pair<MutableList<ImmutableFace>, List<ImmutableFace>> {
+data class WallTraceResult(
+    val used: List<ImmutableFace>,
+    val notUsed: List<ImmutableFace>
+)
+
+fun traceIncompleteWalls(faces: ConnectionTable, origin: ImmutableFace, first: ImmutableFace, otherEnd: ImmutableFace): List<ImmutableFace> {
   var current = first
   var previous = origin
   val collected = mutableListOf(first)
@@ -37,10 +42,10 @@ fun traceIncompleteWalls(faces: ConnectionTable, origin: ImmutableFace, first: I
     if (next == null) {
       val notUsed = neighbors.toList()
       assert(notUsed.size < 2)
-      return Pair(collected, notUsed)
+      return collected
     }
     if (next == otherEnd) {
-      return Pair(collected, listOf())
+      return collected
     }
     collected.add(next)
     previous = current
@@ -107,19 +112,20 @@ fun isChain(walls: List<ImmutableFace>): Boolean =
     chainIntegrity(walls)
         .all { it == 1 }
 
-fun lineChainToVertexChain(edges: List<ImmutableEdge>): List<Vector3> =
-    listOf(edges[0].vertices.first { !edges[1].vertices.contains(it) })
-        .plus(edges.drop(1).zip(edges.dropLast(1)) { c, d -> c.vertices.intersect(d.vertices).first() })
-        .plus(edges.last().vertices.first { !edges[edges.size - 2].vertices.contains(it) })
+val lineChainToVertexChain: (List<ImmutableEdge>) -> List<Vector3> = { edges ->
+  listOf(edges[0].vertices.first { !edges[1].vertices.contains(it) })
+      .plus(edges.drop(1).zip(edges.dropLast(1)) { c, d -> c.vertices.intersect(d.vertices).first() })
+      .plus(edges.last().vertices.first { !edges[edges.size - 2].vertices.contains(it) })
+}
 
-fun intersects(faces: ImmutableFaceTable, group: List<Id>, point: Vector3, secondPoint: Vector3): Boolean = group
+fun intersects(faces: ImmutableFaceTable, group: List<Id>, points: List<Vector3>): Boolean = group
     .any { id ->
       if (id == 436L) {
         val k = 0
       }
       val face = faces[id]!!
       val floor = getFloor(face)
-      val (hit, _) = lineSegmentIntersectsLineSegment(point, secondPoint, floor.first, floor.second)
+      val (hit, _) = lineSegmentIntersectsLineSegment(points[0], points[1], floor.first, floor.second)
       if (hit) {
         val k = 0
         println("Hit " + id)
@@ -127,16 +133,80 @@ fun intersects(faces: ImmutableFaceTable, group: List<Id>, point: Vector3, secon
       hit
     }
 
-fun shaveOccluded(faces: ImmutableFaceTable, group: List<Id>, edges: List<ImmutableEdge>, point: Vector3): Int {
-  for (i in 1 until edges.size) {
-    val secondPoint = getEndPoint(edges[i - 1], edges[i])
-    if (intersects(faces, group, point, secondPoint)) {
-      return i
-    }
+fun shaveOccluded(faces: ImmutableFaceTable, group: List<Id>, origin: ImmutableFace, arms: List<List<ImmutableFace>>): List<Int>? {
+  if (arms.all { it.isEmpty() })
+    return null
+
+  val originFloor = getFloor(origin).edge
+  val edgeArms = arms.map { arm -> arm.map { getFloor(it).edge } }
+
+  val chains = edgeArms
+      .zip(edgeArms.reversed()) { a, b -> listOfNotNull(b.firstOrNull(), originFloor).plus(a) }
+      .map(lineChainToVertexChain)
+      .map { it.drop(2) }
+
+  val ignored = arms.flatMap { arm -> arm.flatMap { it.neighbors } }.plus(origin.neighbors)
+  val filteredGroup = group.minus(ignored.map { it.id })
+  val offsets = chains.map { it.size - 1 }.toMutableList()
+  var turn = chains.indexOfFirst { it.any() }
+
+  val intersects = { o: List<Int> ->
+    val points = chains.zip(o) { a, b -> a[b] }
+    intersects(faces, filteredGroup, points)
   }
-  return edges.size
+
+  while (offsets.sum() > 0) {
+    if (!intersects(offsets))
+      return offsets.toList()
+
+    --offsets[turn]
+    if (offsets[1 - turn] > 0)
+      turn = 1 - turn
+  }
+
+  // The way turns start and alternate its possible that the only non-occluded option was skipped
+  if (chains[1 - turn].size > 1) {
+    val offsets2 = (0..1).map { if (it == turn) 0 else 1 }
+    if (!intersects(offsets2))
+      return offsets2
+  }
+
+  return null
 }
 
+fun isALoop(arms: List<List<ImmutableFace>>): Boolean {
+  if (arms.all { it.none() })
+    return false
+
+  val arms2 = arms.zip(arms.reversed()) { arm, other -> if (arm.any()) arm else other }
+  return arms2[0].first().id == arms2[1].last().id
+}
+
+fun gatherNewSectorFaces(faces: ImmutableFaceTable, group: List<Id>, connections: ConnectionTable, origin: ImmutableFace): List<ImmutableFace>? {
+  val firstNeighbors = getIncompleteNeighbors(connections, origin).filter { !isConcaveCorner(origin, it) }.toList()
+  if (firstNeighbors.none())
+    return null
+
+  val bufferedNeighbors = (0..1).map { firstNeighbors.getOrNull(it) }
+  val arms = bufferedNeighbors.map {
+    if (it != null)
+      traceIncompleteWalls(connections, origin, it, origin)
+    else
+      listOf()
+  }
+
+  if (!isALoop(arms)) {
+    val offsets = shaveOccluded(faces, group, origin, arms)
+    return if (offsets == null)
+      null
+    else
+      arms[0].take(offsets[0]).reversed().plus(origin).plus(arms[1].take(offsets[1]))
+  }
+
+  return arms[0].reversed().plus(origin).plus(arms[1])
+}
+
+/*
 fun gatherNewSectorFaces(faces: ImmutableFaceTable, group: List<Id>, connections: ConnectionTable, origin: ImmutableFace): List<ImmutableFace>? {
   val firstNeighbors = getIncompleteNeighbors(connections, origin).filter { !isConcaveCorner(origin, it) }.toList()
   if (firstNeighbors.size != 2) {
@@ -167,7 +237,8 @@ fun gatherNewSectorFaces(faces: ImmutableFaceTable, group: List<Id>, connections
         .minus(firstDir.plus(origin).plus(secondDir).plus(notUsed).map { it.id })
     val firstEdges = listOf(origin).plus(firstDir).map { getFloor(it).edge }
     val secondEdges = listOf(origin).plus(secondDir).map { getFloor(it).edge }
-    val secondEndPoint = getEndPoint(secondEdges.dropLast(1).lastOrNull() ?: getFloor(origin).edge, secondEdges.last())
+    val secondEndPoint = getEndPoint(secondEdges.dropLast(1).lastOrNull()
+        ?: getFloor(origin).edge, secondEdges.last())
     val firstCount = shaveOccluded(faces, filteredGroup, firstEdges, secondEndPoint) - 1
     val updatedFirstDir = firstDir.take(firstCount)
     if (updatedFirstDir.none())
@@ -183,7 +254,7 @@ fun gatherNewSectorFaces(faces: ImmutableFaceTable, group: List<Id>, connections
     firstDir.reversed().plus(origin).plus(secondDir)
   }
 }
-
+*/
 fun getDistinctEdges(edges: Edges) =
     edges.distinctBy { it.vertices.map { it.hashCode() }.sorted() }
 
@@ -426,7 +497,7 @@ fun fillIncompleteGroup(realm: StructureRealm, incomplete: List<Id>, idSources: 
     for (id in concaveFaces) {
       val originFace = currentRealm.mesh.faces[id]!!
       if (faceNodeCount(currentRealm.connections, originFace) == 1) {
-        if (id == 1366L) {
+        if (id == 1186L) {
           val k = 0
         }
         val walls = gatherNewSectorFaces(currentRealm.mesh.faces, remaining, currentRealm.connections, originFace)
