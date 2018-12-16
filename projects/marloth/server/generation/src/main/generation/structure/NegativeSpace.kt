@@ -178,7 +178,7 @@ fun prepareNewSectorFaces(faces: ImmutableFaceTable, group: List<Id>, arms: List
       arms[0].take(offsets[0]).reversed().plus(origin).plus(arms[1].take(offsets[1]))
   }
 
-  return arms[0].reversed().plus(origin).plus(arms[1])
+  return listOf(origin).plus(arms[1])
 }
 
 fun getDistinctEdges(edges: Edges) =
@@ -188,7 +188,7 @@ fun createSpaceNode(sectorCenter: Vector3, nextId: IdSource): Node {
   return createSecondaryNode(sectorCenter, nextId, true, Biome.void)
 }
 
-fun addSpaceNode(idSources: StructureIdSources, realm: StructureRealm, walls: List<ImmutableFace>): Triple<Node, ConnectionTable, ImmutableFaceTable> {
+fun newSpaceNode(idSources: StructureIdSources, realm: StructureRealm, walls: List<ImmutableFace>): Triple<Node, ConnectionTable, ImmutableFaceTable> {
   val a = getEndEdgeReversed(walls, 0)
   val b = getEndEdge(walls, 0)
 
@@ -218,7 +218,9 @@ fun addSpaceNode(idSources: StructureIdSources, realm: StructureRealm, walls: Li
   val floor = createFloor(idSources, realm.mesh, node, floorVertices, flatCenter)
   val ceiling = createCeiling(idSources, realm.mesh, node, ceilingVertices, flatCenter)
 
-  val gapWall = if (a != b) {
+  val gapWall = if (a.id == b.id || a.faces.any { it.id == b.id }) {
+    listOf()
+  } else {
     val gapVertices = getNewWallVertices(sectorCenter, listOf(a, b))
     val facingVertices = if (!node.isSolid)
       flipVertices(gapVertices)
@@ -231,8 +233,7 @@ fun addSpaceNode(idSources: StructureIdSources, realm: StructureRealm, walls: Li
     node.walls.add(newWall.id)
     val connection = ConnectionFace(newWall.id, FaceType.wall, node.id, voidNodeId, null)
     listOf(FacePair(connection, newWall))
-  } else
-    listOf()
+  }
 
   val (newConnections, newFaces) = splitFacePairTables(
       listOf(floor, ceiling)
@@ -430,12 +431,12 @@ fun fillIncompleteGroup(realm: StructureRealm, incomplete: List<Id>, idSources: 
 
     sectorBundles.forEach { (originFace, arms) ->
       if (arms.all { arm -> arm.all { faceNodeCount(currentRealm.connections, it) == 1 } }) {
-        if (originFace.id == 1274L) {
+        if (originFace.id == 434L) {
           val k = 0
         }
         val walls = prepareNewSectorFaces(currentRealm.mesh.faces, remaining, arms, originFace)
         if (walls != null) {
-          val (newNode, updatedConnections, newFaces) = addSpaceNode(idSources, currentRealm, walls)
+          val (newNode, updatedConnections, newFaces) = newSpaceNode(idSources, currentRealm, walls)
           currentRealm = currentRealm.copy(
               nodes = currentRealm.nodes.plus(Pair(newNode.id, newNode)),
               connections = currentRealm.connections.plus(updatedConnections),

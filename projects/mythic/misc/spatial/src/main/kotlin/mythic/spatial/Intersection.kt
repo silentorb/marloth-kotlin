@@ -218,6 +218,7 @@ fun findIntersection(l1: LineF, l2: LineF): Vector2? {
   // If lines are parallel, intersection point will contain infinite values
   return Vector2((b2 * c1 - b1 * c2) / delta, (a1 * c2 - a2 * c1) / delta)
 }
+
 fun getLineAndLineIntersection(f1: Vector2fMinimal, f2: Vector2fMinimal, s1: Vector2fMinimal, s2: Vector2fMinimal): Vector2? {
   return findIntersection(LineF(f1, f2), LineF(s1, s2))
 }
@@ -281,28 +282,26 @@ fun simpleRayIntersectsLineSegmentAsNumber(rayStart: Vector2fMinimal, segmentSta
   return if (result != null) 1 else 0
 }
 
-fun rayIntersectsPolygon3D(rayStart: Vector3, rayDirection: Vector3, vertices: List<Vector3>, polygonNormal: Vector3): Vector3? {
-  val distance = rayPolygonDistance(rayStart, rayDirection, vertices.first(), polygonNormal)
-  if (distance == null)
-    return null
-
-  val planeIntersection = rayStart + rayDirection * distance
+fun transformPoints(vertices: List<Vector3>, polygonNormal: Vector3,
+                    planeIntersection: Vector3): Pair<List<Vector2>, Vector2> {
   val u = polygonNormal.cross((vertices[1] - vertices[0].normalize()))
   val v = polygonNormal.cross(u)
   val transformedPoints = vertices.map { Vector2(u.dot(it), v.dot(it)) }
   val transformedIntersection = Vector2(u.dot(planeIntersection), v.dot(planeIntersection))
+  return Pair(transformedPoints, transformedIntersection)
+}
+
+fun rayIntersectsPolygon3D(rayStart: Vector3, rayDirection: Vector3, vertices: List<Vector3>, polygonNormal: Vector3): Vector3? {
+  val distance = rayPolygonDistance(rayStart, rayDirection, vertices.first(), polygonNormal)
+      ?: rayPolygonDistance(rayStart, rayDirection, vertices.first(), -polygonNormal)
+  if (distance == null)
+    return null
+
+  val planeIntersection = rayStart + rayDirection * distance
+  val (transformedPoints, transformedIntersection) = transformPoints(vertices, polygonNormal, planeIntersection)
 
   return if (isInsidePolygon(transformedIntersection, transformedPoints))
     planeIntersection
   else
     null
-
-  // *** Test code ***
-//  val temp1 = Vector3m(-1f, -3f, 3f)
-//  val temp2 = Vector3m(-1f, -2f, 2f)
-//  val na = Vector3m(1f, 0f, 0f)
-//  val nb = Vector3m(0f, -1f, 0f)
-//  val quat = Quaternion().rotateTo(na, nb)
-//  val r1 = quat * temp1
-//  val r2 = quat * temp2
 }

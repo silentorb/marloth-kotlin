@@ -56,6 +56,9 @@ private fun getFaceHits(start: Vector3, end: Vector3, world: Realm): List<Hit> {
       assert(false)
 //      it.updateNormal()
 
+    if (id == 434L) {
+      val k = 0
+    }
     val point = rayIntersectsPolygon3D(start, rayDirection, face.vertices, face.normal)
     if (point != null)
       Hit(point, id)
@@ -80,6 +83,8 @@ private fun castSelectionRay(config: MapViewConfig, world: Realm, mousePosition:
   config.tempEnd = end
 }
 
+private var lastHits: List<Id> = listOf()
+
 private fun trySelect(config: MapViewConfig, world: Realm) {
   val start = config.tempStart
   val end = config.tempEnd
@@ -87,10 +92,19 @@ private fun trySelect(config: MapViewConfig, world: Realm) {
   config.tempEnd = end
   val hits = getFaceHits(start, end, world)
   if (hits.size > 0) {
-    val sorted = hits.sortedBy { it.position.distance(start) }
-    val index = config.raySkip % sorted.size
-    val hit = sorted[index]
-    config.selection = listOf(hit.id)
+    val sorted = hits.sortedBy { it.position.distance(start) }.map { it.id }
+    val hit = sorted[config.raySkip % sorted.size]
+    val isSame = lastHits == sorted
+    lastHits = sorted
+    if (!isSame)
+      config.raySkip = 0
+
+    if (config.selection.contains(hit)) {
+      config.raySkip = (config.raySkip + 1) % sorted.size
+      val hit2 = sorted[config.raySkip % sorted.size]
+      config.selection = listOf(hit2)
+    } else
+      config.selection = listOf(hit)
   } else {
     config.selection = listOf()
   }
@@ -102,21 +116,20 @@ fun updateMapState(config: MapViewConfig, world: Realm, input: LabCommandState, 
 
   if (bloomState.bag["clickMap"] != null) {
     val bounds = Bounds(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
-    config.raySkip = 0
     castSelectionRay(config, world, input.mousePosition, bounds)
     val previousSelection = config.selection.firstOrNull()
     trySelect(config, world)
-    if (config.selection.firstOrNull() != null && config.selection.firstOrNull() == previousSelection) {
-      ++config.raySkip
-      trySelect(config, world)
-      if (config.selection.firstOrNull() == previousSelection) {
-        --config.raySkip
-      }
-    }
+//    if (config.selection.firstOrNull() != null && config.selection.firstOrNull() == previousSelection) {
+//      ++config.raySkip
+//      trySelect(config, world)
+//      if (config.selection.firstOrNull() == previousSelection) {
+//        --config.raySkip
+//      }
+//    }
   }
 
   if (isActive(commands, LabCommandType.incrementRaySkip)) {
-    ++config.raySkip
+//    ++config.raySkip
     trySelect(config, world)
   }
 
