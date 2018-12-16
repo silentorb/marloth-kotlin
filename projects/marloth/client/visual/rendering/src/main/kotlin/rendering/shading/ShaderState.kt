@@ -22,7 +22,7 @@ fun padBuffer(buffer: ByteBuffer, count: Int) {
 
 private const val headerSize = 4 * sizeOfFloat
 private const val lightSize = 16 * sizeOfFloat
-private const val maxLights = 40
+private const val maxLights = 128
 const val sectionBufferSize = headerSize + lightSize * maxLights
 private val sectionMemoryBuffer = BufferUtils.createByteBuffer(sectionBufferSize)
 private val sectionBufferCustodian = BufferCustodian(sectionMemoryBuffer)

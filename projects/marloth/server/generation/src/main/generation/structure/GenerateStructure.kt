@@ -478,16 +478,16 @@ fun generateStructure(biomeGrid: BiomeGrid, idSources: StructureIdSources, graph
   return pipe(initialRealm, listOf(
       { realm -> defineNegativeSpace(idSources, realm, dice) },
       { realm -> realm.copy(nodes = fillNodeBiomesAndSolid(dice, realm, biomeGrid)) },
-//      { realm -> fillBoundary(idSources, realm, dice) },
-//      { realm -> expandVertically(idSources, realm, roomNodes.values, dice) },
-//      { realm -> cleanupSolidNormals(realm) },
-//      { realm ->
-//        realm.copy(
-//            mesh = realm.mesh.copy(
-//                edges = entityMap(realm.mesh.faces.flatMap { er -> er.value.edges.map { it.edge } }.distinct())
-//            )
-//        )
-//      },
+      { realm -> fillBoundary(idSources, realm, dice) },
+      { realm -> expandVertically(idSources, realm, roomNodes.values, dice) },
+      { realm -> cleanupSolidNormals(realm) },
+      { realm ->
+        realm.copy(
+            mesh = realm.mesh.copy(
+                edges = entityMap(realm.mesh.faces.flatMap { er -> er.value.edges.map { it.edge } }.distinct())
+            )
+        )
+      },
       { realm -> realm }
   ))
 }

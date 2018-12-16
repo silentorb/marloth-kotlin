@@ -151,6 +151,13 @@ fun getSharedEdge(first: ImmutableFace, second: ImmutableFace): ImmutableEdge =
 fun getOppositeQuadEdge(first: ImmutableFace, edge: ImmutableEdge) =
     first.edges.first { e -> e.vertices.none { edge.vertices.contains(it) } }
 
+fun edgeDot(firstVertices: List<Vector3>, secondVertices: List<Vector3>, secondNormal: Vector3): Float {
+  val middle = firstVertices.first { secondVertices.contains(it) }
+  val firstOuterEdge = firstVertices.first { it != middle }
+  val firstVector = (firstOuterEdge - middle).normalize()
+  return firstVector.dot(secondNormal)
+}
+
 fun edgeDot(first: ImmutableFace, second: ImmutableFace): Float {
   val sharedEdge = getSharedEdge(first, second)
   val middle = sharedEdge.middle
@@ -166,3 +173,18 @@ fun isConcaveCorner(a: Vector3, b: Vector3, bcNormal: Vector3): Boolean {
   val firstVector = (a - b).normalize()
   return firstVector.dot(bcNormal) > 0
 }
+
+//    val neighborLists = remaining.map { wall -> Pair(wall, getIncompleteNeighbors(currentRealm.connections, wall).toList()) }
+//    val invalid = neighborLists.filter { it.second.size > 2 }
+////    assert(invalid.none())
+//    if (invalid.any()) {
+//      val temp = invalid.map { (a, b) ->
+//        realm.connections[a.id]!!.debugInfo = "space-a"
+//        Pair(realm.connections[a.id]!!, b.map { realm.connections[it.id]!! })
+//      }
+//      val nd = temp.flatMap { (a, b) -> b.map { it.firstNode }.plus(a.firstNode) }
+//          .distinct()
+//      return currentRealm
+//    }
+
+//    assert(invalid.none())
