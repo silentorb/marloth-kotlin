@@ -24,6 +24,9 @@ class Glow {
 
 fun viewportStack(value: Vector4i, action: () -> Unit) {
   val current = getGLBounds(GL_VIEWPORT)
+  if (current == Vector4i(0, 0, 0, 0))
+    return
+
   globalState.viewport = value
   checkError("Setting Viewport")
   action()

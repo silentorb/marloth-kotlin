@@ -101,7 +101,7 @@ fun intersects(faces: ImmutableFaceTable, group: List<Id>, points: List<Vector3>
         val (hit, _) = lineSegmentIntersectsLineSegment(points[0], points[1], floor.first, floor.second)
         if (hit) {
           val k = 0
-          println("Hit " + id)
+//          println("Hit " + id)
         }
         hit
       }
@@ -228,7 +228,7 @@ fun newSpaceNode(idSources: StructureIdSources, realm: StructureRealm, walls: Li
       gapVertices
 
     val newWall = realm.mesh.createStitchedFace(idSources.edge, idSources.face(), facingVertices)
-    println(newWall.id)
+//    println(newWall.id)
 
     node.walls.add(newWall.id)
     val connection = ConnectionFace(newWall.id, FaceType.wall, node.id, voidNodeId, null)
