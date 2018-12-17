@@ -73,10 +73,10 @@ fun createVerticalNodes(idSources: StructureIdSources, realm: StructureRealm, mi
 }
 
 fun getLowerNode(faces: ConnectionTable, node: Node) =
-    getOtherNode(node, faces[node.floors.first()]!!)!!
+    getOtherNode(node.id, faces[node.floors.first()]!!)!!
 
 fun getUpperNode(faces: ConnectionTable, node: Node) =
-    getOtherNode(node, faces[node.ceilings.first()]!!)!!
+    getOtherNode(node.id, faces[node.ceilings.first()]!!)!!
 
 fun createAscendingSpaceWalls(idSources: StructureIdSources, realm: StructureRealm, nodes: Collection<Node>, facing: VerticalFacing): StructureRealm {
   val walls = nodes.flatMap { it.walls }
@@ -95,7 +95,7 @@ fun createAscendingSpaceWalls(idSources: StructureIdSources, realm: StructureRea
 
         val node = realm.nodes[nodeId]!!
         val upperNode = realm.nodes[facing.upperNode(realm.connections, node)]!!
-        val otherUpperNode = getOtherNode(node, realm.connections[upperWall]!!)!!
+        val otherUpperNode = getOtherNode(nodeId, realm.connections[upperWall]!!)!!
         val otherUpNode = realm.nodes[facing.upperNode(realm.connections, realm.nodes[otherUpperNode]!!)]!!
         val firstEdge = facing.wallVertices(realm.mesh.faces[upperWall]!!).upper
         val unorderedVertices = firstEdge.plus(firstEdge.map { it + offset })

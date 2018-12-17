@@ -80,7 +80,7 @@ fun isGroundedOnNeighborNode(realm: Realm, body: Body): Boolean {
       .sortedBy { it.second }
       .first()
 
-  return distance < 0.5f && isWalkable(realm.nodeTable[getOtherNode(node, realm.faces[nearestWall]!!)])
+  return distance < 0.5f && isWalkable(realm.nodeTable[getOtherNode(node.id, realm.faces[nearestWall]!!)])
 }
 
 fun isGrounded(realm: Realm, body: Body): Boolean {

@@ -10,7 +10,7 @@ fun newBiomeGrid(input: WorldInput, biomes: List<Biome>): Grid<Biome> {
   val dimensions = input.boundary.dimensions * gridScale
   val width = dimensions.x.toInt()
   val height = dimensions.y.toInt()
-  val anchorCount = (width * height * 0.2f).toInt()
+  val anchorCount = (width * height * 0.1f).toInt()
   val anchors = voronoiAnchors(biomes, anchorCount, input.dice)
   return voronoi(width, height, anchors)
 }

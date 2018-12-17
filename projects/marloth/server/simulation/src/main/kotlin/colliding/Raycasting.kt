@@ -53,7 +53,7 @@ fun rayCanHitPoint(realm: Realm, firstNode: Node, start: Vector3, end: Vector3):
     if (info.faceType != FaceType.space)
       return false
 
-    val nextNode = realm.nodeTable[getOtherNode(node, info)]
+    val nextNode = realm.nodeTable[getOtherNode(node.id, info)]
     if (nextNode == null)
       return true
 

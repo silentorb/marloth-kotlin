@@ -13,7 +13,7 @@ fun getNextPathFace(world: World, knowledge: Knowledge, path: Path): Id? {
   val node = world.realm.nodeTable[body.node]!!
   val nextNode = path.first()
   val nodeFaces = node.walls.map { faces[it]!! }
-  return node.walls.firstOrNull { getOtherNode(node, faces[it]!!) == nextNode }
+  return node.walls.firstOrNull { getOtherNode(node.id, faces[it]!!) == nextNode }
 }
 
 fun pathIsAccessible(world: World, knowledge: Knowledge, path: Path): Boolean =

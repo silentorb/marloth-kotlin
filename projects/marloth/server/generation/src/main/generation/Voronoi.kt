@@ -1,5 +1,6 @@
 package generation
 
+import mythic.ent.firstSortedBy
 import mythic.spatial.Vector2
 import mythic.spatial.minMax
 import randomly.Dice
@@ -37,8 +38,8 @@ fun <T> voronoi(width: Int, height: Int, anchors: List<VoronoiAnchor<T>>): Grid<
     val y = i / width
     val x = i - y * width
     val position = Vector2(x.toFloat() / width, y.toFloat() / height)
-    anchors.sortedBy { position.distance(it.position) }
-        .first().value
+    anchors.firstSortedBy { position.distance(it.position) }
+        .value
   }
 
 // The returned grid expects x and y to be between 0..1f
@@ -50,6 +51,11 @@ fun <T> voronoi(width: Int, height: Int, anchors: List<VoronoiAnchor<T>>): Grid<
     list[index]
   }
 }
+
+//fun <T> cachedVoronoi(width: Int, height: Int, anchors: List<VoronoiAnchor<T>>): Grid<T> {
+//  val cellResolution = anchors.size / 10
+//
+//}
 
 fun <T> clampGrid(grid: Grid<T>): Grid<T> = { x, y ->
   grid(

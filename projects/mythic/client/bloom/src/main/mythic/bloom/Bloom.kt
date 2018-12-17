@@ -131,7 +131,7 @@ fun renderLayout(layout: LayoutOld, canvas: Canvas) {
   val current = getGLBounds(GL11.GL_VIEWPORT)
   if (current.z == 0)
     return
-  
+
   globalState.depthEnabled = false
   globalState.blendEnabled = true
   globalState.blendFunction = Pair(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)

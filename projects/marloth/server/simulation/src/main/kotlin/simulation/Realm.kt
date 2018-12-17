@@ -54,7 +54,9 @@ data class ConnectionFace(
     val secondNode: Id,
     var texture: Textures? = null,
     var debugInfo: String? = null
-) : Entity
+) : Entity {
+  val nodes: List<Id> = listOf(firstNode, secondNode).minus(voidNodeId)
+}
 
 typealias ConnectionTable = Map<Id, ConnectionFace>
 typealias FaceList = Collection<ConnectionFace>
@@ -74,6 +76,7 @@ data class Realm(
 ) {
 
   val nodeTable: NodeTable = nodeList.associate { Pair(it.id, it) }
+  val nodeFaces: OneToManyMap = mapNodeFaces(nodeTable, faces)
 
   val locationNodes: List<Node>
     get() = nodeList.filter { it.isWalkable }
@@ -116,8 +119,8 @@ fun initializeFaceInfo(nodes: List<Node>, faces: ConnectionTable) {
   }
 }
 
-fun getOtherNode(node: Node, info: ConnectionFace): Id? {
-  return if (info.firstNode == node.id)
+fun getOtherNode(id: Id, info: ConnectionFace): Id? {
+  return if (info.firstNode == id)
     info.secondNode
   else
     info.firstNode

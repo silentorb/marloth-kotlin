@@ -98,7 +98,7 @@ fun updateBodyNode(realm: Realm, body: Body): Id {
   val newNode = if (position.z < horizontalNode.position.z) {
     val floors = getFloors(realm.faces.values, horizontalNode)
     if (floors.any())
-      realm.nodeTable[getOtherNode(node, floors.first())]
+      realm.nodeTable[getOtherNode(node.id, floors.first())]
     else
       voidNode
   } else

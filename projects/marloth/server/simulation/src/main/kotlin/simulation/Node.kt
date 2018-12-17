@@ -21,16 +21,15 @@ data class Node(
     get() = floors.plus(walls).plus(ceilings)
 }
 
-fun horizontalNeighbors(faces: ConnectionTable, node: Node) = node.walls.asSequence().mapNotNull { getOtherNode(node, faces[it]!!) }
+fun horizontalNeighbors(faces: ConnectionTable, node: Node) = node.walls.asSequence().mapNotNull { getOtherNode(node.id, faces[it]!!) }
 
-fun nodeNeighbors(faces: ConnectionTable, node: Node) = node.walls.asSequence().mapNotNull { getOtherNode(node, faces[it]!!) }
+fun nodeNeighbors(faces: ConnectionTable, node: Node) = node.walls.asSequence().mapNotNull { getOtherNode(node.id, faces[it]!!) }
 
 fun nodeNeighbors(nodes: NodeTable, faces: ConnectionTable, node: Id) = nodeNeighbors(faces, nodes[node]!!)
 
 fun nodeNeighbors(realm: Realm, id: Id): Collection<Id> {
-  val node = realm.nodeTable[id]!!
-  return node.faces
-      .mapNotNull { getOtherNode(node, realm.faces[it]!!) }
+  return realm.nodeFaces[id]!!
+      .mapNotNull { getOtherNode(id, realm.faces[it]!!) }
 }
 
 fun getPathNeighbors(nodes: NodeTable, faces: ConnectionTable, node: Id) =
@@ -38,3 +37,7 @@ fun getPathNeighbors(nodes: NodeTable, faces: ConnectionTable, node: Id) =
         .map { nodes[it]!! }
         .filter { it.isWalkable }
 
+typealias OneToManyMap = Map<Id, List<Id>>
+
+fun mapNodeFaces(nodes: NodeTable, connections: ConnectionTable): OneToManyMap =
+    nodes.mapValues { (_, node) -> connections.filter { it.value.nodes.contains(node.id) }.map { it.key } }
