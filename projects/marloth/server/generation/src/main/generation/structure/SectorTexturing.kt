@@ -6,8 +6,8 @@ import scenery.Textures
 import simulation.*
 
 fun determineFloorTexture(nodes: NodeTable, info: ConnectionFace): Textures? {
-  val first = nodes[info.firstNode]!!
-  return if (first.isWalkable)
+  val first = nodes[info.firstNode]
+  return if (first != null && first.isWalkable)
     biomeInfoMap[first.biome]!!.floorTexture
   else
     null
@@ -35,9 +35,9 @@ fun determineWallTexture(nodeTable: NodeTable, info: ConnectionFace): Textures? 
 }
 
 fun determineCeilingTexture(nodes: NodeTable, info: ConnectionFace): Textures? {
-  val first = nodes[info.firstNode]!!
+  val first = nodes[info.firstNode]
   val second = nodes[info.secondNode]
-  return if (second != null && second.isSolid)
+  return if (first != null && second != null && second.isSolid)
     biomeInfoMap[first.biome]!!.ceilingTexture
   else
     null

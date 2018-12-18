@@ -432,7 +432,7 @@ fun fillIncompleteGroup(realm: StructureRealm, incomplete: Set<Id>, idSources: S
 
     sectorBundles.forEach { (originFace, arms) ->
       if (arms.all { arm -> arm.all { faceNodeCount(currentRealm.connections, it) == 1 } }) {
-        if (originFace.id == 434L) {
+        if (originFace.id == 461L) {
           val k = 0
         }
         val walls = prepareNewSectorFaces(currentRealm.mesh.faces, remaining, arms, originFace)
@@ -445,7 +445,7 @@ fun fillIncompleteGroup(realm: StructureRealm, incomplete: Set<Id>, idSources: S
                   faces = currentRealm.mesh.faces.plus(newFaces)
               )
           )
-          if (newNode.id == 286L) {
+          if (newNode.id == 348L) {
             val k = 0
           }
           newConnections = newConnections.plus(updatedConnections.keys)
