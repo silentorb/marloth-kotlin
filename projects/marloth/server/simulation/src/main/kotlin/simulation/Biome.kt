@@ -49,8 +49,3 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
         floorTexture = Textures.none,
         enclosureRate = 0f)
 )
-
-val randomBiomes = listOf(
-    Biome.checkers,
-    Biome.forest
-)

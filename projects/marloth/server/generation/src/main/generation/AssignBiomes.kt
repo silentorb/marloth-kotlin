@@ -5,6 +5,11 @@ import simulation.*
 
 typealias BiomeMap = Map<Id, Biome>
 
+val randomBiomes = listOf(
+    Biome.checkers,
+    Biome.forest
+)
+
 fun newBiomeGrid(input: WorldInput, biomes: List<Biome>): Grid<Biome> {
   val gridScale = 0.5f
   val dimensions = input.boundary.dimensions * gridScale
@@ -43,16 +48,12 @@ typealias BiomeGrid = Grid<Biome>
 fun newBiomeGrid(input: WorldInput) =
     normalizeGrid(clampGrid(newBiomeGrid(input, randomBiomes)), input.boundary)
 
-fun assignBiomes(nodes: Collection<Node>, grid: BiomeGrid, home: List<Node>): BiomeMap {
-  return nodes.associate { node ->
-    val biome = if (home.any { it.id == node.id })
-      Biome.home
-    else
-      grid(node.position.x, node.position.y)
-
-    Pair(node.id, biome)
-  }
-}
+//fun assignBiomes(nodes: NodeTable, grid: BiomeGrid): BiomeMap {
+//  return nodes.mapValues { node ->
+//    val biome = grid(node.position.x, node.position.y)
+//    Pair(node.id, biome)
+//  }
+//}
 
 fun fillNodeBiomes(biomeGrid: BiomeGrid, nodes: NodeTable) =
     nodes.mapValues { (_, node) ->

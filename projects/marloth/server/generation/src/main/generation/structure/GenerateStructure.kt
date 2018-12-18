@@ -65,7 +65,7 @@ fun createVerticesForOverlappingCircles(node: Node, other: Node, others: List<No
 //        .filter { c -> !others.any { isInsideNodeHorizontally(c, it) } }
         .map { Vector3(it.x, it.y, 0f) }
 
-fun createNodeDoorways(graph: Graph, node: Node) =
+fun createNodeDoorways(graph: Graph, node: Node): List<List<Vector3>> =
     connections(graph, node)
         .filter { it.type != ConnectionType.union }
         .map { getDoorwayOrDoorFramePoints(graph.doorways, node, it.getOther(graph, node)) }
@@ -122,30 +122,48 @@ fun fillClusterCornerGaps(unorderedCorners: List<Corner>, node: Node, otherNodes
   return additional.filter { corner -> !otherNodes.any { isInsideNode(corner.xy(), it) } }
 }
 
-fun createClusterNodeStructure(graph: Graph, node: Node, cluster: List<Node>, corners: List<Corner>): List<Corner> {
-  val doorways = createNodeDoorways(graph, node)
+fun createClusterNodeStructure(node: Node, cluster: List<Node>, corners: List<Corner>,
+                               doorways: List<List<Vector3>>): List<Corner> {
   val moreCorners = corners.plus(doorways.flatten())
   val allCorners = moreCorners
       .plus(fillClusterCornerGaps(moreCorners, node, cluster.filter { it !== node }))
 
 //  return withoutClosePoints(allCorners)
   return allCorners
+      .distinct()
       .sortedBy { getAngle(node, it) }
 }
 
 data class SharedCorners(val nodes: List<Node>, val corners: List<Corner>)
 
 fun createClusterStructure(graph: Graph, cluster: Cluster): List<TempSector> {
+  if (cluster.map { it.id }.contains(78L)) {
+    val k = 0
+  }
+  val allDoorways = cluster.map { createNodeDoorways(graph, it) }
+  val doorwayPoints = allDoorways.flatten().flatten()
   val overlapPoints = getClusterUnions(graph.connections, cluster)
       .map { i ->
         val (first, second) = i.nodes(graph)
         SharedCorners(listOf(first, second),
             createVerticesForOverlappingCircles(first, second, cluster.filter { it.id != i.first && it.id != i.second }))
       }
+      .map { points ->
+        points.copy(
+            corners = points.corners.map { point ->
+              val nearbyDoorPoint = doorwayPoints.firstOrNull { point.distance(it) < 1f }
+              if (nearbyDoorPoint != null)
+                nearbyDoorPoint
+              else
+                point
+            }
+        )
+      }
 
-  return cluster.map { node ->
+  return cluster.zip(allDoorways) { node, doorways ->
     val overlapping = overlapPoints.filter { a -> a.nodes.any { it === node } }.flatMap { it.corners }
-    TempSector(node, createClusterNodeStructure(graph, node, cluster, overlapping))
+    val points = createClusterNodeStructure(node, cluster, overlapping, doorways)
+    TempSector(node, points)
   }
 }
 
@@ -372,7 +390,7 @@ fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice): Structu
 
   val floorsAndCeilings = splitFacePairTables(sinewFloorsAndCeilings(idSources, allSectors.values, ImmutableMesh()))
 
-    val initialMesh = ImmutableMesh(
+  val initialMesh = ImmutableMesh(
       faces = floorsAndCeilings.second,
       edges = toEdgeTable(floorsAndCeilings.second.values)
   )

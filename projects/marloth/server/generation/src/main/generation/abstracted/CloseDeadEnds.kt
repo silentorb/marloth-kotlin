@@ -64,5 +64,5 @@ fun getDeadEnds(graph: Graph) =
 
 fun closeDeadEnds(graph: Graph): InitialConnections =
     getDeadEnds(graph)
-        .drop(2) // Leaving room for a home biome, and a few dead ends are okay.
+        .drop(3) // Leaving room for a home biome, and a few dead ends are okay.
         .mapNotNull { closeDeadEnd(it, graph) }

@@ -88,7 +88,7 @@ val lineChainToVertexChain: (List<ImmutableEdge>) -> List<Vector3> = { edges ->
       .plus(edges.last().vertices.first { !edges[edges.size - 2].vertices.contains(it) })
 }
 
-fun intersects(faces: ImmutableFaceTable, group: List<Id>, points: List<Vector3>): Boolean =
+fun intersects(faces: ImmutableFaceTable, group: Collection<Id>, points: List<Vector3>): Boolean =
     group.any { id ->
       if (id == 436L) {
         val k = 0
@@ -107,7 +107,7 @@ fun intersects(faces: ImmutableFaceTable, group: List<Id>, points: List<Vector3>
       }
     }
 
-fun shaveOccluded(faces: ImmutableFaceTable, group: List<Id>, origin: ImmutableFace, arms: List<List<ImmutableFace>>): List<Int>? {
+fun shaveOccluded(faces: ImmutableFaceTable, group: Set<Id>, origin: ImmutableFace, arms: List<List<ImmutableFace>>): List<Int>? {
   if (arms.all { it.isEmpty() })
     return null
 
@@ -169,7 +169,7 @@ fun gatherNewSectorFaces(connections: ConnectionTable, origin: ImmutableFace): L
   }
 }
 
-fun prepareNewSectorFaces(faces: ImmutableFaceTable, group: List<Id>, arms: List<List<ImmutableFace>>, origin: ImmutableFace): List<ImmutableFace>? {
+fun prepareNewSectorFaces(faces: ImmutableFaceTable, group: Set<Id>, arms: List<List<ImmutableFace>>, origin: ImmutableFace): List<ImmutableFace>? {
   if (!isALoop(arms)) {
     val offsets = shaveOccluded(faces, group, origin, arms)
     return if (offsets == null)
@@ -338,22 +338,23 @@ data class StructureIdSources(
     override val edge: IdSource
 ) : GeometryIdSources
 
-fun getLoop(faces: ImmutableFaceTable, start: Id, available: Collection<Id>): List<Id> {
-  val result: MutableList<Id> = mutableListOf(start)
+fun getLoop(faces: ImmutableFaceTable, start: Id, available: Collection<Id>): Set<Id> {
+  val result: MutableSet<Id> = mutableSetOf(start)
   var current = start
   do {
     current = faces[current]!!.neighbors.first { it.id != current && available.contains(it.id) }.id
+    assert(!result.contains(current) || current == start)
     result.add(current)
   } while (current != start)
   return result
 }
 
-fun groupIncompleteFaces(faces: ImmutableFaceTable, incomplete: Collection<Id>): List<List<Id>> {
+fun groupIncompleteFaces(faces: ImmutableFaceTable, incomplete: Collection<Id>): List<Set<Id>> {
   var available = incomplete
-  val result: MutableList<List<Id>> = mutableListOf()
+  val result: MutableList<Set<Id>> = mutableListOf()
   while (available.any()) {
     val start = available.first()
-    val strip: List<Id> = getLoop(faces, start, available)
+    val strip: Set<Id> = getLoop(faces, start, available)
     result.add(strip)
     available = available.minus(strip)
   }
@@ -369,7 +370,7 @@ fun shapeEvenness(edges: List<ImmutableEdge>): Float {
   return lengths.first() / lengths.last()
 }
 
-fun fillIncompleteGroup(realm: StructureRealm, incomplete: List<Id>, idSources: StructureIdSources): StructureRealm {
+fun fillIncompleteGroup(realm: StructureRealm, incomplete: Set<Id>, idSources: StructureIdSources): StructureRealm {
   var pass = 1
   var currentRealm = realm
   var remaining = incomplete
@@ -457,7 +458,7 @@ fun fillIncompleteGroup(realm: StructureRealm, incomplete: List<Id>, idSources: 
 
     remaining = remaining
         .plus(newConnections)
-        .filter(isIncompleteWall(currentRealm.connections))
+        .filter(isIncompleteWall(currentRealm.connections)).toSet()
 
     ++pass
   }
