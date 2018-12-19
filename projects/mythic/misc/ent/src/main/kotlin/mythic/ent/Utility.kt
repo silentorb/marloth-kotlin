@@ -15,3 +15,13 @@ fun <T, N> firstSortedBy(comparison: (N, N) -> Boolean): (Collection<T>, (T) -> 
 
 fun <T> Collection<T>.firstSortedBy(accessor: (T) -> Float): T =
     firstSortedBy<T, Float> { a, b -> a < b }(this, accessor)
+
+fun <T, B> Collection<T>.firstNotNull(mapper: (T) -> B?): B? {
+  for (item in this) {
+    val result = mapper(item)
+    if (result != null)
+      return result
+  }
+  return null
+}
+

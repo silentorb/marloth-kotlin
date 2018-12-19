@@ -1,14 +1,12 @@
 package generation.structure
 
-import mythic.ent.Id
+import mythic.ent.*
 import mythic.sculpting.*
 import mythic.spatial.*
 import org.joml.plus
 import physics.voidNodeId
 import randomly.Dice
 import simulation.FaceType
-import mythic.ent.IdSource
-import mythic.ent.entityMap
 import simulation.getFloor
 import simulation.*
 
@@ -133,7 +131,8 @@ fun shaveOccluded(faces: ImmutableFaceTable, group: Set<Id>, origin: ImmutableFa
         return offsets.toList() //.mapIndexed { i, it -> arms[i].size - chains[i].size + 1 + it }
     }
     --offsets[turn]
-    if (offsets[1 - turn] > 0)
+    if (offsets[turn] == 0)
+//    if (offsets[1 - turn] > 0)
       turn = 1 - turn
   }
 
@@ -413,7 +412,7 @@ fun fillIncompleteGroup(realm: StructureRealm, incomplete: Set<Id>, idSources: S
 
     val previousRealm = currentRealm
 
-    var newConnections: List<Id> = listOf()
+    var newConnections: Set<Id> = setOf()
     val sectorBundles = concaveFaces.mapNotNull { (id, priority) ->
       val originFace = currentRealm.mesh.faces[id]!!
       val arms = gatherNewSectorFaces(currentRealm.connections, originFace)
@@ -430,27 +429,34 @@ fun fillIncompleteGroup(realm: StructureRealm, incomplete: Set<Id>, idSources: S
     }
         .sortedByDescending { it.third }
 
-    sectorBundles.forEach { (originFace, arms) ->
-      if (arms.all { arm -> arm.all { faceNodeCount(currentRealm.connections, it) == 1 } }) {
-        if (originFace.id == 461L) {
-          val k = 0
-        }
-        val walls = prepareNewSectorFaces(currentRealm.mesh.faces, remaining, arms, originFace)
-        if (walls != null) {
-          val (newNode, updatedConnections, newFaces) = newSpaceNode(idSources, currentRealm, walls)
-          currentRealm = currentRealm.copy(
-              nodes = currentRealm.nodes.plus(Pair(newNode.id, newNode)),
-              connections = currentRealm.connections.plus(updatedConnections),
-              mesh = currentRealm.mesh.copy(
-                  faces = currentRealm.mesh.faces.plus(newFaces)
-              )
+    // In the majority of cases only the remaining set needs to be checked for occlusion,
+    // but there are rare cases where they can still be hit and need to be checked against.
+    val occludingWalls = remaining.plus(incomplete)
+
+//    if (originFace.id == 533L) {
+//      val k = 0
+//    }
+
+//    val walls = prepareNewSectorFaces(currentRealm.mesh.faces, occludingWalls, arms, originFace)
+    val walls = sectorBundles.firstNotNull { (originFace, arms) ->
+      prepareNewSectorFaces(currentRealm.mesh.faces, occludingWalls, arms, originFace)
+    }
+    if (walls != null) {
+      val (newNode, updatedConnections, newFaces) = newSpaceNode(idSources, currentRealm, walls)
+      currentRealm = currentRealm.copy(
+          nodes = currentRealm.nodes.plus(Pair(newNode.id, newNode)),
+          connections = currentRealm.connections.plus(updatedConnections),
+          mesh = currentRealm.mesh.copy(
+              faces = currentRealm.mesh.faces.plus(newFaces)
           )
-          if (newNode.id == 348L) {
-            val k = 0
-          }
-          newConnections = newConnections.plus(updatedConnections.keys)
-        }
+      )
+      if (newNode.id == 289L) {
+        val k = 0
       }
+      newConnections = newConnections.plus(updatedConnections.keys)
+    }
+    else {
+      throw Error("Could not find a valid wall chain.")
     }
 
     if (currentRealm === previousRealm)
