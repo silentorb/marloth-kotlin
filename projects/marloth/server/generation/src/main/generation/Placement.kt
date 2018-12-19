@@ -163,7 +163,7 @@ fun addVoidNode(realm: Realm): Realm =
     )
 
 fun finalizeRealm(input: WorldInput, realm: Realm): World {
-  val playerNode = realm.nodeList.first()
+  val playerNode = realm.nodeTable.values.first { it.biome == Biome.home }
   val scale = calculateWorldScale(input.boundary.dimensions)
   val nextId = newIdSource(1)
   val deck = Deck(

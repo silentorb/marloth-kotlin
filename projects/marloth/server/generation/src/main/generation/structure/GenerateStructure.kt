@@ -16,6 +16,7 @@ import simulation.*
 const val doorwayLength = 2.5f
 const val doorLength = 1.75f
 const val wallHeight = 4f
+const val doorwayDepth = 0.5f
 
 typealias Corner = Vector3
 
@@ -211,7 +212,6 @@ fun horizontalExtrusionVector(points: List<Vector3>, targetPoint: Vector3): Vect
 
 fun getExtrudedDoorwayPoints(firstCorners: List<Vector3>, otherNodePosition: Vector3): List<Vector3> {
   val extrusionVector = horizontalExtrusionVector(firstCorners, otherNodePosition)
-  val doorwayDepth = 0.5f
   val offset = extrusionVector * doorwayDepth
   return firstCorners.map { it + offset }
 }

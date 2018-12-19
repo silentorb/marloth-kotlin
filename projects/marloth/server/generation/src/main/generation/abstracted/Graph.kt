@@ -34,6 +34,9 @@ data class InitialConnection(
   fun getOther(graph: Graph, node: Node) = graph.node(getOther(node))!!
 
   fun nodes(graph: Graph): List<Node> = listOf(graph.node(first)!!, graph.node(second)!!)
+
+  val nodes: List<Id> = listOf(first, second)
+
 }typealias InitialConnections = List<InitialConnection>
 
 data class Graph(
@@ -56,4 +59,10 @@ data class Graph(
           connections = connections.minus(oldConnections)
       )
 
+}
+
+fun tunnelLength(graph: Graph, connection: InitialConnection): Float {
+  val first = graph.nodes[connection.first]!!
+  val second = graph.nodes[connection.second]!!
+  return first.position.distance(second.position) - first.radius - second.radius
 }

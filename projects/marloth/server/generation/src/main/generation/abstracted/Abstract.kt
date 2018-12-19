@@ -4,6 +4,8 @@ import gatherNodes
 import generation.BiomeGrid
 import generation.crossMap
 import generation.getCenter
+import generation.structure.doorwayDepth
+import generation.structure.doorwayLength
 import generation.structure.getDoorFramePoints
 import mythic.ent.Id
 import mythic.ent.entityMap
@@ -82,11 +84,44 @@ fun getTwinTunnels(graph: Graph, tunnels: List<PreTunnel>): List<PreTunnel> =
 //      listOf<PreTunnel>()
     }
 
+fun collapseShortTunnels(graph: Graph): Graph {
+  val min = doorwayDepth + 0.1f
+  val tooShort = graph.connections.mapNotNull { connection ->
+    val length = tunnelLength(graph, connection)
+    if (length < min)
+      connection
+    else
+      null
+  }
+  val nodes = tooShort.map { it.nodes }
+      .flatten()
+      .distinct()
+
+  return graph.copy(
+      nodes = graph.nodes.mapValues { (key, node) ->
+        if (nodes.contains(key))
+          node.copy(
+              radius = node.radius + min
+          )
+        else
+          node
+      },
+      connections = graph.connections.map { connection ->
+        if (tooShort.contains(connection))
+          connection.copy(
+              type = ConnectionType.union
+          )
+        else
+          connection
+      }
+  )
+}
+
 fun cleanupWorld(graph: Graph): Graph {
   val unifyingConnections = unifyWorld(graph)
   val secondConnections = graph.connections.plus(unifyingConnections)
   val deadEndClosingConnections = closeDeadEnds(graph.copy(connections = secondConnections))
-  return graph.copy(connections = secondConnections.plus(deadEndClosingConnections))
+  return collapseShortTunnels(graph.copy(connections = secondConnections.plus(deadEndClosingConnections)))
 }
 
 fun applyInitialBiomes(biomeGrid: BiomeGrid, graph: Graph): NodeTable {
