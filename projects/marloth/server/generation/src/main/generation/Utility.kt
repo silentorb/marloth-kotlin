@@ -14,6 +14,9 @@ fun <T> divide(sequence: List<T>, filter: (T) -> Boolean) =
 fun getNodeDistance(first: Node, second: Node): Float =
     first.position.distance(second.position) - first.radius - second.radius
 
+fun getNodeDistance(first: Node, position: Vector3, radius: Float): Float =
+    first.position.distance(position) - first.radius - radius
+
 fun overlaps2D(first: Node, second: Node): Boolean {
   val distance = getNodeDistance(first, second)
   return distance < 0

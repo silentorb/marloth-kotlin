@@ -4,6 +4,7 @@ import gatherNodes
 import generation.BiomeGrid
 import generation.crossMap
 import generation.getCenter
+import generation.getNodeDistance
 import generation.structure.doorwayDepth
 import generation.structure.doorwayLength
 import generation.structure.getDoorFramePoints
@@ -14,6 +15,8 @@ import mythic.spatial.Vector3
 import mythic.spatial.lineSegmentIntersectsLineSegment
 import randomly.Dice
 import simulation.*
+
+const val minNodeDistance = 1.5f
 
 fun connections(graph: Graph, node: Node): List<InitialConnection> =
     graph.connections.filter { it.contains(node) }
@@ -38,14 +41,32 @@ fun getOtherNode(graph: Graph, first: Id, pivot: Id): Node {
 fun faceNodes(info: ConnectionFace) =
     listOf(info.firstNode, info.secondNode)
 
-fun createRoomNode(boundary: WorldBoundary, id: Id, dice: Dice): Node {
-  val radius = dice.getFloat(5f, 10f)
+fun newNodePosition(boundary: WorldBoundary, nodes: List<Node>, dice: Dice, radius: Float): Vector3? {
   val start = boundary.start + radius
   val end = boundary.end - radius
+  var step = 0
+  while (true) {
+    val position = Vector3(dice.getFloat(start.x, end.x), dice.getFloat(start.y, end.y), 0f)
+    if (nodes.all { getNodeDistance(it, position, radius) > minNodeDistance }) {
+      println(step)
+      return position
+    }
+    if (step++ > 30) {
+      println(step)
+      return null
+    }
+  }
+}
+
+fun createRoomNode(boundary: WorldBoundary, nodes: List<Node>, id: Id, dice: Dice): Node? {
+  val radius = dice.getFloat(5f, 10f)
+  val position = newNodePosition(boundary, nodes, dice, radius)
+  if (position == null)
+    return null
 
   return Node(
       id = id,
-      position = Vector3(dice.getFloat(start.x, end.x), dice.getFloat(start.y, end.y), 0f),
+      position = position,
       radius = radius,
       isSolid = false,
       isWalkable = true,
@@ -55,8 +76,12 @@ fun createRoomNode(boundary: WorldBoundary, id: Id, dice: Dice): Node {
 }
 
 fun createRoomNodes(boundary: WorldBoundary, count: Int, dice: Dice) =
-    (1L..count).map { id ->
-      createRoomNode(boundary, id, dice)
+    (1L..count).fold(listOf<Node>()) { nodes, id ->
+      val node = createRoomNode(boundary, nodes, id, dice)
+      if (node != null)
+        nodes.plus(node)
+      else
+        nodes
     }
 
 fun getDeadend(graph: Graph, offset: Int): List<Id> {
@@ -84,44 +109,11 @@ fun getTwinTunnels(graph: Graph, tunnels: List<PreTunnel>): List<PreTunnel> =
 //      listOf<PreTunnel>()
     }
 
-fun collapseShortTunnels(graph: Graph): Graph {
-  val min = doorwayDepth + 0.1f
-  val tooShort = graph.connections.mapNotNull { connection ->
-    val length = tunnelLength(graph, connection)
-    if (length < min)
-      connection
-    else
-      null
-  }
-  val nodes = tooShort.map { it.nodes }
-      .flatten()
-      .distinct()
-
-  return graph.copy(
-      nodes = graph.nodes.mapValues { (key, node) ->
-        if (nodes.contains(key))
-          node.copy(
-              radius = node.radius + min
-          )
-        else
-          node
-      },
-      connections = graph.connections.map { connection ->
-        if (tooShort.contains(connection))
-          connection.copy(
-              type = ConnectionType.union
-          )
-        else
-          connection
-      }
-  )
-}
-
 fun cleanupWorld(graph: Graph): Graph {
   val unifyingConnections = unifyWorld(graph)
   val secondConnections = graph.connections.plus(unifyingConnections)
   val deadEndClosingConnections = closeDeadEnds(graph.copy(connections = secondConnections))
-  return collapseShortTunnels(graph.copy(connections = secondConnections.plus(deadEndClosingConnections)))
+  return graph.copy(connections = secondConnections.plus(deadEndClosingConnections))
 }
 
 fun applyInitialBiomes(biomeGrid: BiomeGrid, graph: Graph): NodeTable {
@@ -176,7 +168,11 @@ fun <A, B> pass(action: (A) -> A): (Pair<A, B>) -> Pair<A, B> = { (a, b) ->
 fun generateAbstract(input: WorldInput, scale: Float, biomeGrid: BiomeGrid): Graph {
   val nodeCount = (20 * scale).toInt()
   val initialNodes = createRoomNodes(input.boundary, nodeCount, input.dice)
-  val initialGraph = handleOverlapping(entityMap(initialNodes))
+//  val initialGraph = handleOverlapping(entityMap(initialNodes))
+  val initialGraph = Graph(
+      nodes = entityMap(initialNodes),
+      connections = listOf()
+  )
   return pipe(initialGraph, listOf(
       { graph -> cleanupWorld(graph) },
       { graph -> createAndMixTunnels(graph) },
