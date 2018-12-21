@@ -1,6 +1,7 @@
 package lab.views.game
 
-import haft.*
+import haft.HaftCommand
+import haft.isActive
 import lab.LabCommandType
 import lab.LabConfig
 import lab.LabState
@@ -41,7 +42,8 @@ data class GameViewConfig(
     var playerGravity: Boolean = true,
     var displayMode: GameDisplayMode = GameDisplayMode.normal,
     var draw: GameViewDrawConfig = GameViewDrawConfig(),
-    var logDroppedFrames: Boolean = false
+    var logDroppedFrames: Boolean = false,
+    var autoNewGame: Boolean = true
 )
 
 fun renderFaceNormals(renderer: SceneRenderer, length: Float, faces: List<ImmutableFace>) {
@@ -160,9 +162,11 @@ fun updateLabGameState(config: GameViewConfig, commands: List<HaftCommand<LabCom
   }
 }
 
-fun updateGameView(client: Client, config: LabConfig, world: World, screens: List<Screen>, previousState: LabState): Pair<ClientState, UserCommands> {
-  val scenes = createScenes(world, screens)
-  renderLabScenes(client, GameViewRenderData(scenes, world, config.gameView, previousState.gameClientState.menu))
-  val players = world.players.map { it.playerId }
-  return updateClient(client, players, previousState.gameClientState)
+fun updateGameView(client: Client, config: LabConfig, world: World?, screens: List<Screen>, previousState: LabState): Pair<ClientState, UserCommands> {
+  if (world != null) {
+    val scenes = createScenes(world, screens)
+    renderLabScenes(client, GameViewRenderData(scenes, world, config.gameView, previousState.gameClientState.menu))
+  }
+  val players = screens.map { it.playerId }
+  return updateClient(client, players, previousState.gameClientState, world)
 }

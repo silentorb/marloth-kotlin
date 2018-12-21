@@ -1,7 +1,7 @@
 package marloth.clienting
 
 import marloth.clienting.gui.MenuState
-import marloth.clienting.gui.initialMenuState
+import marloth.clienting.gui.newMenuState
 import marloth.clienting.gui.updateMenu
 import mythic.bloom.BloomState
 import mythic.bloom.ButtonState
@@ -11,6 +11,7 @@ import org.joml.Vector2i
 import rendering.DisplayConfig
 import rendering.Renderer
 import scenery.Screen
+import simulation.World
 
 val maxPlayerCount = 4
 
@@ -28,7 +29,7 @@ fun newClientState(config: GameInputConfig) =
             gameProfiles = defaultGameInputProfiles(),
             menuProfiles = defaultMenuInputProfiles()
         ),
-        menu = initialMenuState(),
+        menu = newMenuState(),
         bloomState = BloomState(
             bag = mapOf(),
             input = mythic.bloom.InputState(
@@ -59,13 +60,13 @@ fun applyClientCommands(client: Client, commands: UserCommands) {
   }
 }
 
-fun updateClient(client: Client, players: List<Int>, previousState: ClientState): Pair<ClientState, UserCommands> {
+fun updateClient(client: Client, players: List<Int>, previousState: ClientState, world: World?): Pair<ClientState, UserCommands> {
   updateMousePointerVisibility(client.platform)
   val inputState = previousState.input
   val profiles = selectProfiles(previousState)
   val newDeviceState = updateInputDeviceState(client.platform.input, players, previousState.input, profiles)
   val newCommandState = getCommandState(newDeviceState, inputState.config, players.size)
-  val (nextMenuState, menuGlobalCommands) = updateMenu(previousState.menu, newCommandState.commands)
+  val (nextMenuState, menuGlobalCommands) = updateMenu(previousState.menu, newCommandState.commands, world != null)
 
   val allCommands = newCommandState.commands.plus(menuGlobalCommands)
 

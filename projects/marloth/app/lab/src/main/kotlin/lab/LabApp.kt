@@ -85,7 +85,7 @@ data class LabApp(
     val gameConfig: GameConfig,
     val display: Display = platform.display,
     val timer: DeltaTimer = DeltaTimer(),
-    var world: World,
+    var world: World?,
     val client: Client = Client(platform, gameConfig.display),
     val labClient: LabClient = LabClient(config, client),
     val labConfigManager: ConfigManager<LabConfig>
@@ -103,7 +103,9 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
 
   app.platform.process.pollEvents()
 
-  val (commands, nextState) = app.labClient.update(app.world, app.client.screens, previousState, delta)
+  val world = app.world
+
+  val (commands, nextState) = app.labClient.update(world, app.client.screens, previousState, delta)
 
   if (commands.any { it.type == CommandType.newGame }) {
     app.world = app.newWorld()
@@ -111,8 +113,8 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
     app.world = updateLabWorld(app, commands, delta)
   }
 
-  if (app.gameConfig.gameplay.defaultPlayerView != app.world.players[0].viewMode) {
-    app.gameConfig.gameplay.defaultPlayerView = app.world.players[0].viewMode
+  if (world != null && app.gameConfig.gameplay.defaultPlayerView != world.players[0].viewMode) {
+    app.gameConfig.gameplay.defaultPlayerView = world.players[0].viewMode
 //    saveGameConfig(app.gameConfig)
   }
 
@@ -132,10 +134,20 @@ fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
   globalProfiler().start("init-display")
   platform.display.initialize(gameConfig.display)
   globalProfiler().start("world-gen")
-  val world = generateDefaultWorld(config.gameView)
+  val world = if (config.gameView.autoNewGame)
+    generateDefaultWorld(config.gameView)
+  else
+    null
+
   globalProfiler().start("app")
-  val app = LabApp(platform, config, gameConfig, world = world, labConfigManager = ConfigManager(labConfigPath, config))
-  setWorldMesh(app.world.realm, app.client)
+  val app = LabApp(platform, config, gameConfig,
+      world = world,
+      labConfigManager = ConfigManager(labConfigPath, config)
+  )
+  if (world != null) {
+    setWorldMesh(world.realm, app.client)
+  }
+
   val clientState = newClientState(gameConfig.input)
   val state = LabState(
       labInput = mapOf(),

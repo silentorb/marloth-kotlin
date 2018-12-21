@@ -4,8 +4,8 @@ import front.mapCommands
 import haft.HaftCommands
 import lab.LabApp
 import marloth.clienting.CommandType
-import mythic.spatial.Vector3
 import mythic.ent.Id
+import mythic.spatial.Vector3
 import simulation.World
 import simulation.updateWorld
 
@@ -41,15 +41,17 @@ private var spiritMovementTallies = mapOf<Id, Pair<Float, Vector3>>()
 //  }
 //}
 
-fun updateLabWorld(app: LabApp, commands: HaftCommands<CommandType>, delta: Float): World {
+fun updateLabWorld(app: LabApp, commands: HaftCommands<CommandType>, delta: Float): World? {
   if (app.config.gameView.logDroppedFrames && app.timer.actualDelta > maxInterval) {
     val progress = app.timer.last - app.timer.start
     println("" + (progress.toDouble() / nSecond.toDouble()).toFloat() + ": " + app.timer.actualDelta)
   }
 //  val instantiator = Instantiator(app.world, InstantiatorConfig(app.gameConfig.gameplay.defaultPlayerView))
   val world = app.world
-  val characterCommands = mapCommands(world.players, commands)
-  return updateWorld(app.client.renderer.animationDurations, world, characterCommands, delta)
-
+  return if (world != null) {
+    val characterCommands = mapCommands(world.players, commands)
+    updateWorld(app.client.renderer.animationDurations, world, characterCommands, delta)
+  } else
+    null
 //  trackSpiritMovement(app.world, delta)
 }

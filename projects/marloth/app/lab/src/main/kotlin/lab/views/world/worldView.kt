@@ -3,7 +3,6 @@ package lab.views.world
 import lab.LabCommandType
 import lab.WorldViewConfig
 import lab.views.LabCommandMap
-import mythic.bloom.drawBorder
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.spatial.*
@@ -65,10 +64,13 @@ fun createMapLayout(realm: Realm, screenDimensions: Vector2i,
 //  return boxes
 }
 
-class WorldView(val config: WorldViewConfig, val realm: Realm, val renderer: Renderer) {
+class WorldView(val config: WorldViewConfig, val realm: Realm?, val renderer: Renderer) {
 
   fun createLayout(dimensions: Vector2i): Flower {
-    return createMapLayout(realm, dimensions, config, renderer)
+    return if (realm != null)
+      createMapLayout(realm, dimensions, config, renderer)
+    else
+      emptyFlower
   }
 
   fun getCommands(): LabCommandMap = mapOf(

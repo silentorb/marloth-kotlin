@@ -19,21 +19,27 @@ data class App(
 
 data class AppState(
     val client: ClientState,
-    val world: World
+    val players: List<Int>,
+    val world: World?
 )
 
 tailrec fun gameLoop(app: App, state: AppState) {
   app.display.swapBuffers()
-  val scenes = createScenes(state.world, app.client.screens)
-  renderScenes(app.client, scenes)
-  val players = state.world.players.map { it.playerId }
+  if (state.world != null) {
+    val scenes = createScenes(state.world, app.client.screens)
+    renderScenes(app.client, scenes)
+//    val players = state.world.players.map { it.playerId }
+  }
   app.platform.process.pollEvents()
-  val (nextClientState, commands) = updateClient(app.client, players, state.client)
+  val (nextClientState, commands) = updateClient(app.client, state.players, state.client, state.world)
   val delta = app.timer.update().toFloat()
-  val characterCommands = mapCommands(state.world.players, commands)
-  val nextWorld = updateWorld(app.client.renderer.animationDurations, state.world, characterCommands, delta)
+  val nextWorld = if (state.world != null) {
+    val characterCommands = mapCommands(state.world.players, commands)
+    updateWorld(app.client.renderer.animationDurations, state.world, characterCommands, delta)
+  } else
+    null
 
-  val nextState = AppState(
+  val nextState = state.copy(
       client = nextClientState,
       world = nextWorld
   )
@@ -52,6 +58,7 @@ fun runApp(platform: Platform, config: GameConfig) {
   setWorldMesh(world.realm, app.client)
   val state = AppState(
       client = newClientState(config.input),
+      players = listOf(1),
       world = world
   )
   gameLoop(app, state)

@@ -82,7 +82,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     client.platform.input.update()
   }
 
-  fun updateGame(world: World, screens: List<Screen>, previousState: LabState): LabClientResult {
+  fun updateGame(world: World?, screens: List<Screen>, previousState: LabState): LabClientResult {
     val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
     updateLabGameState(config.gameView, commands)
     val (nextClientState, globalCommands) = updateGameView(client, config, world, screens, previousState)
@@ -128,7 +128,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     )
   }
 
-  fun updateWorld(windowInfo: WindowInfo, metaWorld: Realm, previousState: LabState): LabClientResult {
+  fun updateWorld(windowInfo: WindowInfo, metaWorld: Realm?, previousState: LabState): LabClientResult {
     prepareClient(windowInfo)
     val view = WorldView(config.worldView, metaWorld, client.renderer)
 
@@ -146,12 +146,17 @@ class LabClient(val config: LabConfig, val client: Client) {
     )
   }
 
-  fun updateMap(windowInfo: WindowInfo, world: World, previousState: LabState, delta: Float): LabClientResult {
+  fun updateMap(windowInfo: WindowInfo, world: World?, previousState: LabState, delta: Float): LabClientResult {
     prepareClient(windowInfo)
     val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
-    val input = getInputState(client.platform.input, commands)
-    updateMapState(config.mapView, world.realm, input, windowInfo, previousState.gameClientState.bloomState, delta)
-    val layout = mapLayout(client, world.realm, config.mapView)
+    val layout = if (world != null) {
+      val input = getInputState(client.platform.input, commands)
+      updateMapState(config.mapView, world.realm, input, windowInfo, previousState.gameClientState.bloomState, delta)
+      mapLayout(client, world.realm, config.mapView)
+    }
+    else
+      emptyFlower
+
     val boxes = layout(Seed(
         bag = previousState.gameClientState.bloomState.bag,
         bounds = Bounds(dimensions = windowInfo.dimensions)
@@ -172,7 +177,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     )
   }
 
-  fun update(world: World, screens: List<Screen>, previousState: LabState, delta: Float): LabClientResult {
+  fun update(world: World?, screens: List<Screen>, previousState: LabState, delta: Float): LabClientResult {
     if (config.view != Views.game) {
       client.platform.input.isMouseVisible(true)
     }
@@ -182,7 +187,7 @@ class LabClient(val config: LabConfig, val client: Client) {
       Views.game -> updateGame(world, screens, previousState)
       Views.model -> updateModel(windowInfo, previousState, delta)
       Views.texture -> updateTexture(windowInfo, previousState)
-      Views.world -> updateWorld(windowInfo, world.realm, previousState)
+      Views.world -> updateWorld(windowInfo, world?.realm, previousState)
       Views.map -> updateMap(windowInfo, world, previousState, delta)
       else -> throw Error("Not supported")
     }
