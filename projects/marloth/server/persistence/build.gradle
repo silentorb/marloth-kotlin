@@ -1,0 +1,15 @@
+apply from: "$rootProject.projectDir/build_kotlin.gradle"
+
+repositories {
+  maven { url "https://dl.bintray.com/kotlin/exposed" }
+}
+
+dependencies {
+  compile 'org.jetbrains.exposed:exposed:0.10.2'
+  compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.21.0.1'
+  compile group: 'com.zaxxer', name: 'HikariCP', version: '2.7.9'
+  compile "org.jetbrains.kotlin:kotlin-stdlib"
+  compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+}
+
+requires 'simulation'
