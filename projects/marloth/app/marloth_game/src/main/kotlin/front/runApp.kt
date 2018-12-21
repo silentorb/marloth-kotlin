@@ -5,6 +5,8 @@ import marloth.clienting.*
 import mythic.platforming.Display
 import mythic.platforming.Platform
 import mythic.quartz.DeltaTimer
+import mythic.quartz.TimestepState
+import mythic.quartz.newTimestepState
 import simulation.World
 import simulation.updateWorld
 import visualizing.createScenes
@@ -20,7 +22,8 @@ data class App(
 data class AppState(
     val client: ClientState,
     val players: List<Int>,
-    val world: World?
+    val world: World?,
+    val timestep: TimestepState
 )
 
 tailrec fun gameLoop(app: App, state: AppState) {
@@ -59,7 +62,8 @@ fun runApp(platform: Platform, config: GameConfig) {
   val state = AppState(
       client = newClientState(config.input),
       players = listOf(1),
-      world = world
+      world = world,
+      timestep = newTimestepState()
   )
   gameLoop(app, state)
 }
