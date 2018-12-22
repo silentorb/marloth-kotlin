@@ -6,7 +6,7 @@ data class SelectionState(
     val selection: Set<String>
 )
 
-val selectionState = getExistingOrNewState {
+val selectionState = existingOrNewState {
   SelectionState(
       selection = setOf()
   )

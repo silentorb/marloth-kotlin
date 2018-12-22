@@ -66,7 +66,7 @@ class LabGui : Application() {
   }
 
   companion object {
-    @JvmStatic fun main(args: List<String>) {
+    @JvmStatic fun mainMenu(args: List<String>) {
       Application.launch(LabGui::class.java)
 //      launch()
     }

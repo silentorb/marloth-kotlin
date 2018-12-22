@@ -6,12 +6,14 @@ import haft.isActive
 import lab.LabCommandType
 import lab.LabState
 import marloth.clienting.*
-import marloth.clienting.gui.MenuState
+import marloth.clienting.gui.plantGui
+import mythic.bloom.Bounds
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
 import mythic.sculpting.ImmutableFace
 import mythic.sculpting.getVerticesCenter
 import mythic.spatial.*
+import org.joml.Vector4i
 import org.joml.zw
 import rendering.*
 import rendering.shading.ObjectShaderConfig
@@ -61,8 +63,7 @@ fun renderFaceNormals(renderer: SceneRenderer, length: Float, faces: List<Immuta
 data class GameViewRenderData(
     val scenes: List<GameScene>,
     val world: World,
-    val config: GameViewConfig,
-    val menuState: MenuState
+    val config: GameViewConfig
 )
 
 //fun renderStandardScene(renderers: List<GameSceneRenderer>, data: GameViewRenderData) {
@@ -123,7 +124,7 @@ fun renderWireframeScene(renderer: GameSceneRenderer) {
 //  val viewports = getPlayerViewports(data.scenes.size, windowInfo.dimensions).iterator()
 //  for (scene in data.scenes) {
 //    val viewport = viewports.next()
-//    val sceneRenderer = renderer.createSceneRenderer(scene.main, viewport)
+//    val sceneRenderer = renderer.createSceneRenderer(scene.mainMenu, viewport)
 //    val gameRenderer = GameSceneRenderer(scene, sceneRenderer)
 //    when (data.config.displayMode) {
 //      GameDisplayMode.normal -> renderScene(gameRenderer)
@@ -159,7 +160,9 @@ fun updateLabGameState(config: GameViewConfig, commands: List<HaftCommand<LabCom
 }
 
 fun updateGameView(client: Client, world: World?, state: LabState): Pair<ClientState, UserCommands> {
-  renderMain(client, state.app)
+  val windowInfo = client.getWindowInfo()
+  val boxes = plantGui(client, state.app.client, world, windowInfo)
+  renderMain(client, windowInfo, state.app, boxes)
   val players = client.screens.map { it.playerId }
-  return updateClient(client, players, state.app.client, world)
+  return updateClient(client, players, state.app.client, world, boxes)
 }

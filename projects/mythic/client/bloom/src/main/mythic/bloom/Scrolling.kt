@@ -48,7 +48,7 @@ data class ScrollingState(
     val offset: Int
 )
 
-val scrollingState = getExistingOrNewState {
+val scrollingState = existingOrNewState {
   ScrollingState(
       dragOrigin = null,
       offsetOrigin = 0,

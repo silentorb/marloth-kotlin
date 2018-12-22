@@ -13,6 +13,8 @@ import physics.getWallCollisions
 import physics.wallsInCollisionRange
 import simulation.input.updatePlayer
 
+const val simulationDelta = 1f / 60f
+
 fun <T> updateField(defaultValue: T, newValue: T?): T =
     if (newValue != null)
       newValue
@@ -123,25 +125,3 @@ fun updateWorld(animationDurations: AnimationDurationMap, deck: Deck, world: Wor
       nextId = nextId()
   )
 }
-
-const val simulationDelta = 1f / 60f
-
-//private var deltaAggregator = 0f
-
-//fun updateWorld(animationDurations: AnimationDurationMap, world: World, commands: Commands, delta: Float): World {
-//  deltaAggregator += delta
-//  if (deltaAggregator > simulationDelta) {
-//    deltaAggregator -= simulationDelta
-
-// The above subtraction, this condition, and the modulus could all be handled by a single modulus
-// but if deltaAggregator is more than twice the simulationHertz then the simulation is not keeping
-// up and I want that to be handled as a special case, not incidentally handled by a modulus.
-//    if (deltaAggregator > simulationDelta) {
-//      println("Skipped a frame.  deltaAggregator = " + deltaAggregator + " simulationDelta = " + simulationDelta)
-//      deltaAggregator = deltaAggregator % simulationDelta
-//    }
-//    return updateWorldMain(animationDurations, world.deck, world, commands, simulationDelta)
-//  } else {
-//    return world
-//  }
-//}

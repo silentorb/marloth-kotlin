@@ -31,9 +31,19 @@ fun depict(depiction: Depiction): Flower =
 
 typealias StateDepiction = (Seed) -> Depiction
 
-fun <T> getExistingOrNewState(initializer: () -> T): (Any?) -> T = { state ->
-  if (state != null)
-    state as T
+inline fun <reified T> existingOrNewState(crossinline initializer: () -> T): (Any?) -> T = { state ->
+  if (state is T)
+    state
+  else
+    initializer()
+}
+
+typealias BagGetter<T> = (StateBag) -> T
+
+inline fun <reified T> existingOrNewState(key: String, crossinline initializer: () -> T): BagGetter<T> = { bag ->
+  val value = bag[key]
+  if (value is T)
+    value
   else
     initializer()
 }

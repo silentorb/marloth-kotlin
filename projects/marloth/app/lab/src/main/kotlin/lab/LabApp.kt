@@ -28,7 +28,7 @@ const val labConfigPath = "labConfig.yaml"
 fun startGui() {
   thread(true, false, null, "JavaFX GUI", -1) {
     //    val gui = LabGui(setModelCode, getModelCode)
-//    LabGui.main(listOf())
+//    LabGui.mainMenu(listOf())
   }
 }
 

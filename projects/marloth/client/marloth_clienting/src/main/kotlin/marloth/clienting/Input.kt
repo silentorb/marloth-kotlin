@@ -1,6 +1,8 @@
 package marloth.clienting
 
 import haft.*
+import marloth.clienting.gui.ViewId
+import marloth.clienting.gui.currentView
 import mythic.bloom.ButtonState
 import mythic.platforming.PlatformInput
 import mythic.spatial.Vector2
@@ -165,7 +167,7 @@ private var previousMousePosition = Vector2()
 //)
 
 fun selectProfiles(clientState: ClientState): List<PlayerInputProfile> =
-    if (clientState.menu.isVisible)
+    if (currentView(clientState.bloomState.bag) != ViewId.none)
       clientState.input.menuProfiles
     else
       clientState.input.gameProfiles
@@ -215,5 +217,6 @@ fun newBloomInputState(input: PlatformInput) =
               ButtonState.down
             else
               ButtonState.up
-        )
+        ),
+        events = listOf()
     )

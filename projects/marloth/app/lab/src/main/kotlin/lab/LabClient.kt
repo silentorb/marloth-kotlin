@@ -153,10 +153,11 @@ class LabClient(val config: LabConfig, val client: Client) {
     } else
       emptyFlower
 
-    val boxes = layout(Seed(
+    val seed = Seed(
         bag = state.app.client.bloomState.bag,
         bounds = Bounds(dimensions = windowInfo.dimensions)
-    ))
+    )
+    val boxes = layout(seed)
     renderLab(windowInfo, boxes)
 
     val bloomInputState = newBloomInputState(client.platform.input)

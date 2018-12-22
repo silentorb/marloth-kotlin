@@ -7,9 +7,21 @@ enum class ButtonState {
   up
 }
 
+enum class BloomEvent {
+  activate,
+  back,
+  up,
+  down,
+  left,
+  right,
+  pageUp,
+  pageDown
+}
+
 data class InputState(
     val mousePosition: Vector2i,
-    val mouseButtons: List<ButtonState>
+    val mouseButtons: List<ButtonState>,
+    val events: List<BloomEvent>
 )
 
 data class HistoricalInputState(

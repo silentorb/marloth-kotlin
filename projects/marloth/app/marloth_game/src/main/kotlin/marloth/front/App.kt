@@ -2,6 +2,7 @@ package marloth.front
 
 import generation.generateDefaultWorld
 import marloth.clienting.*
+import marloth.clienting.gui.plantGui
 import marloth.integration.*
 import mythic.platforming.Display
 import mythic.platforming.Platform
@@ -18,9 +19,13 @@ data class App(
 
 tailrec fun gameLoop(app: App, state: AppState) {
   app.display.swapBuffers()
-  renderMain(app.client, state)
   app.platform.process.pollEvents()
-  val (nextClientState, commands) = updateClient(app.client, state.players, state.client, state.worlds.last())
+
+  val windowInfo = app.client.getWindowInfo()
+  val boxes = plantGui(app.client, state.client, state.worlds.lastOrNull(), windowInfo)
+  renderMain(app.client, windowInfo, state, boxes)
+
+  val (nextClientState, commands) = updateClient(app.client, state.players, state.client, state.worlds.last(), boxes)
   val (timestep, steps) = updateTimestep(state.timestep, simulationDelta.toDouble())
   val worlds = updateWorld(app.client.renderer.animationDurations, state, commands, steps)
 

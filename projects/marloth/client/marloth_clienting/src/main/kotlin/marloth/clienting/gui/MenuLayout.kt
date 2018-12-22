@@ -30,21 +30,33 @@ fun drawMenuButton(state: ButtonState): Depiction = { bounds: Bounds, canvas: Ca
   canvas.drawText(position, blackStyle, state.text)
 }
 
-fun menuLayout(textResources: TextResources, menu: Menu, bounds: Bounds, state: MenuState): Boxes {
+const val menuFocusIndexKey = "menuFocusIndex"
+
+fun menuFocusIndex(bag: StateBag): Int =
+    (bag[menuFocusIndexKey] ?: 0) as Int
+
+fun menuLogic(menu: Menu): LogicModule =
+    menuFocusIndexLogic(menu) + menuNavigationLogic(menu) + menuCommandLogic(menu)
+
+fun menuFlower(textResources: TextResources, menu: Menu): Flower = { seed ->
   val buttonHeight = 50
   val items = menu
       .mapIndexed { index, it ->
         val content = textResources[it.text]!!
         PartialBox(buttonHeight, drawMenuButton(
-            ButtonState(content, state.focusIndex == index)
+            ButtonState(content, menuFocusIndex(seed.bag) == index)
         ))
       }
 
   val itemLengths = items.map { it.length }
   val menuHeight = listContentLength(10, itemLengths)
-  val menuBounds = centeredBounds(bounds, Vector2i(200, menuHeight))
+  val menuBounds = centeredBounds(seed.bounds, Vector2i(200, menuHeight))
   val menuPadding = 10
 
-  return listOf(Box(menuBounds, menuBackground))
+  listOf(Box(
+      bounds = menuBounds,
+      depiction = menuBackground,
+      logic = menuLogic(menu)
+  ))
       .plus(arrangeListComplex(lengthArranger(vertical, menuPadding), items, menuBounds))
 }

@@ -2,13 +2,14 @@ package marloth.clienting
 
 import com.fasterxml.jackson.core.type.TypeReference
 import configuration.loadYamlResource
-import marloth.clienting.gui.MenuState
-import marloth.clienting.gui.TextResources
-import marloth.clienting.gui.newMenuState
-import marloth.clienting.gui.updateMenu
+import haft.simpleCommand
+import marloth.clienting.gui.*
 import mythic.bloom.BloomState
+import mythic.bloom.Boxes
 import mythic.bloom.ButtonState
+import mythic.bloom.updateBloomState
 import mythic.drawing.setGlobalFonts
+import mythic.ent.pipe
 import mythic.platforming.Platform
 import org.joml.Vector2i
 import rendering.DisplayConfig
@@ -20,9 +21,10 @@ val maxPlayerCount = 4
 
 data class ClientState(
     val input: InputState,
-    val menu: MenuState,
     val bloomState: BloomState
 )
+
+fun isGuiActive(state: ClientState): Boolean = currentView(state.bloomState.bag) == ViewId.none
 
 fun newClientState(config: GameInputConfig) =
     ClientState(
@@ -32,12 +34,12 @@ fun newClientState(config: GameInputConfig) =
             gameProfiles = defaultGameInputProfiles(),
             menuProfiles = defaultMenuInputProfiles()
         ),
-        menu = newMenuState(),
         bloomState = BloomState(
             bag = mapOf(),
             input = mythic.bloom.InputState(
                 mousePosition = Vector2i(),
-                mouseButtons = listOf(ButtonState.up)
+                mouseButtons = listOf(ButtonState.up),
+                events = listOf()
             )
         )
     )
@@ -63,29 +65,43 @@ fun updateMousePointerVisibility(platform: Platform) {
   platform.input.isMouseVisible(!windowHasFocus)
 }
 
-fun applyClientCommands(client: Client, commands: UserCommands) {
-  if (commands.any { it.type == CommandType.quit }) {
+fun applyClientCommands(client: Client, state: ClientState, commands: UserCommands): ClientState {
+  val c = commands.map { it.type }
+  if (c.contains(CommandType.quit)) {
     client.platform.process.close()
   }
+
+  return if (c.contains(CommandType.menu) && !isGuiActive(state)) {
+    state.copy(
+        bloomState = state.bloomState.copy(
+            bag = state.bloomState.bag.plus(currentViewKey to ViewId.mainMenu)
+        )
+    )
+  } else
+    state
 }
 
-fun updateClient(client: Client, players: List<Int>, previousState: ClientState, world: World?): Pair<ClientState, UserCommands> {
+fun updateClient(client: Client, players: List<Int>, previousState: ClientState, world: World?, boxes: Boxes): Pair<ClientState, UserCommands> {
   updateMousePointerVisibility(client.platform)
   val inputState = previousState.input
   val profiles = selectProfiles(previousState)
   val newDeviceState = updateInputDeviceState(client.platform.input, players, previousState.input, profiles)
   val newCommandState = getCommandState(newDeviceState, inputState.config, players.size)
-  val (nextMenuState, menuGlobalCommands) = updateMenu(previousState.menu, newCommandState.commands, world != null)
+  val bloomInputState = newBloomInputState(client.platform.input)
+      .copy(events = haftToBloom(newCommandState.commands))
+  val bloomState = updateBloomState(boxes, previousState.bloomState, bloomInputState)
 
-  val allCommands = newCommandState.commands.plus(menuGlobalCommands)
+  val allCommands = newCommandState.commands
+      .plus(menuCommands(bloomState.bag).map { simpleCommand(it, players.first()) })
 
-  applyClientCommands(client, allCommands)
-
-  val newClientState = previousState.copy(
-      input = previousState.input.copy(
-          device = newDeviceState
-      ),
-      menu = nextMenuState
-  )
+  val newClientState = pipe(previousState, listOf(
+      { state -> applyClientCommands(client, state, allCommands) },
+      { state ->
+        state.copy(
+            input = previousState.input.copy(
+                device = newDeviceState
+            ))
+      }
+  ))
   return Pair(newClientState, allCommands)
 }

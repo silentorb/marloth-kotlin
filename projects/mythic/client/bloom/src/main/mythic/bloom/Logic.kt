@@ -94,3 +94,8 @@ fun logic(logicModule: LogicModule): Flower = { seed ->
       )
   )
 }
+
+operator fun LogicModule.plus(b: LogicModule): LogicModule = { bundle ->
+  this(bundle)
+      .plus(b(bundle))
+}
