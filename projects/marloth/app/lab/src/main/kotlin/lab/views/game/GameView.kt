@@ -162,11 +162,11 @@ fun updateLabGameState(config: GameViewConfig, commands: List<HaftCommand<LabCom
   }
 }
 
-fun updateGameView(client: Client, config: LabConfig, world: World?, screens: List<Screen>, previousState: LabState): Pair<ClientState, UserCommands> {
+fun updateGameView(client: Client, config: LabConfig, world: World?, screens: List<Screen>, state: LabState): Pair<ClientState, UserCommands> {
   if (world != null) {
     val scenes = createScenes(world, screens)
-    renderLabScenes(client, GameViewRenderData(scenes, world, config.gameView, previousState.gameClientState.menu))
+    renderLabScenes(client, GameViewRenderData(scenes, world, config.gameView, state.app.client.menu))
   }
   val players = screens.map { it.playerId }
-  return updateClient(client, players, previousState.gameClientState, world)
+  return updateClient(client, players, state.app.client, world)
 }

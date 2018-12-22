@@ -1,5 +1,6 @@
 package lab
 
+import front.AppState
 import haft.*
 import lab.views.*
 import lab.views.game.updateGameView
@@ -10,7 +11,6 @@ import lab.views.model.ModelView
 import lab.views.model.ModelViewState
 import lab.views.world.WorldView
 import marloth.clienting.Client
-import marloth.clienting.ClientState
 import marloth.clienting.newBloomInputState
 import mythic.bloom.*
 import mythic.platforming.PlatformInput
@@ -23,9 +23,8 @@ import simulation.World
 
 data class LabState(
     val labInput: InputTriggerState<LabCommandType>,
-//    val gameInput: ProfileStates<CommandType>,
     val modelViewState: ModelViewState,
-    val gameClientState: ClientState
+    val app: AppState
 )
 
 fun createLabDeviceHandlers(input: PlatformInput): List<ScalarInputSource> {
@@ -61,10 +60,6 @@ class LabClient(val config: LabConfig, val client: Client) {
       LabCommandType.viewModel to { _ -> config.view = Views.model },
       LabCommandType.viewWorld to { _ -> config.view = Views.world },
       LabCommandType.viewTexture to { _ -> config.view = Views.texture }
-//      LabCommandType.menu to { _ ->
-//        if (config.view != "game")
-//          rendering.platform.process.close()
-//      }
   )
   val deviceHandlers = createLabDeviceHandlers(client.platform.input)
 
@@ -82,14 +77,16 @@ class LabClient(val config: LabConfig, val client: Client) {
     client.platform.input.update()
   }
 
-  fun updateGame(world: World?, screens: List<Screen>, previousState: LabState): LabClientResult {
-    val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
+  fun updateGame(world: World?, screens: List<Screen>, state: LabState): LabClientResult {
+    val (commands, nextLabInputState) = updateInput(mapOf(), state)
     updateLabGameState(config.gameView, commands)
-    val (nextClientState, globalCommands) = updateGameView(client, config, world, screens, previousState)
+    val (nextClientState, globalCommands) = updateGameView(client, config, world, screens, state)
 
-    val newLabState = previousState.copy(
+    val newLabState = state.copy(
         labInput = nextLabInputState,
-        gameClientState = nextClientState
+        app = state.app.copy(
+            client = nextClientState
+        )
     )
 
     return LabClientResult(globalCommands, newLabState)
@@ -134,7 +131,7 @@ class LabClient(val config: LabConfig, val client: Client) {
 
     val layout = view.createLayout(windowInfo.dimensions)
     val boxes = layout(Seed(
-        bag = previousState.gameClientState.bloomState.bag,
+        bag = previousState.app.client.bloomState.bag,
         bounds = Bounds(dimensions = windowInfo.dimensions)
     ))
     val (_, nextLabInputState) = updateInput(view.getCommands(), previousState)
@@ -146,32 +143,33 @@ class LabClient(val config: LabConfig, val client: Client) {
     )
   }
 
-  fun updateMap(windowInfo: WindowInfo, world: World?, previousState: LabState, delta: Float): LabClientResult {
+  fun updateMap(windowInfo: WindowInfo, world: World?, state: LabState, delta: Float): LabClientResult {
     prepareClient(windowInfo)
-    val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
+    val (commands, nextLabInputState) = updateInput(mapOf(), state)
     val layout = if (world != null) {
       val input = getInputState(client.platform.input, commands)
-      updateMapState(config.mapView, world.realm, input, windowInfo, previousState.gameClientState.bloomState, delta)
+      updateMapState(config.mapView, world.realm, input, windowInfo, state.app.client.bloomState, delta)
       mapLayout(client, world.realm, config.mapView)
-    }
-    else
+    } else
       emptyFlower
 
     val boxes = layout(Seed(
-        bag = previousState.gameClientState.bloomState.bag,
+        bag = state.app.client.bloomState.bag,
         bounds = Bounds(dimensions = windowInfo.dimensions)
     ))
     renderLab(windowInfo, boxes)
 
     val bloomInputState = newBloomInputState(client.platform.input)
-    val newBloomState = updateBloomState(boxes, previousState.gameClientState.bloomState, bloomInputState)
+    val newBloomState = updateBloomState(boxes, state.app.client.bloomState, bloomInputState)
 
     return LabClientResult(
         listOf(),
-        previousState.copy(
+        state.copy(
             labInput = nextLabInputState,
-            gameClientState = previousState.gameClientState.copy(
-                bloomState = newBloomState
+            app = state.app.copy(
+                client = state.app.client.copy(
+                    bloomState = newBloomState
+                )
             )
         )
     )

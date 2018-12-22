@@ -3,14 +3,11 @@ package lab
 import configuration.ConfigManager
 import configuration.loadConfig
 import configuration.saveConfig
-import front.GameConfig
-import front.loadGameConfig
-import front.setWorldMesh
+import front.*
 import generation.addEnemies
 import generation.generateWorld
 import lab.utility.updateWatching
 import lab.views.game.GameViewConfig
-import lab.views.game.updateLabWorld
 import lab.views.model.newModelViewState
 import marloth.clienting.Client
 import marloth.clienting.CommandType
@@ -19,14 +16,11 @@ import mythic.desktop.createDesktopPlatform
 import mythic.ent.pipe
 import mythic.platforming.Display
 import mythic.platforming.Platform
-import mythic.quartz.DeltaTimer
 import mythic.quartz.globalProfiler
+import mythic.quartz.newTimestepState
 import mythic.quartz.printProfiler
 import randomly.Dice
-import simulation.World
-import simulation.WorldInput
-import simulation.createWorldBoundary
-import simulation.replace
+import simulation.*
 import kotlin.concurrent.thread
 
 const val labConfigPath = "labConfig.yaml"
@@ -84,8 +78,6 @@ data class LabApp(
     val config: LabConfig,
     val gameConfig: GameConfig,
     val display: Display = platform.display,
-    val timer: DeltaTimer = DeltaTimer(),
-    var world: World?,
     val client: Client = Client(platform, gameConfig.display),
     val labClient: LabClient = LabClient(config, client),
     val labConfigManager: ConfigManager<LabConfig>
@@ -97,20 +89,20 @@ data class LabApp(
 
 private var saveIncrement = 0f
 
-tailrec fun labLoop(app: LabApp, previousState: LabState) {
+tailrec fun labLoop(app: LabApp, state: LabState) {
   app.display.swapBuffers()
-  val delta = app.timer.update().toFloat()
+  val (timestep, steps) = updateAppTimestep(state.app.timestep)
 
   app.platform.process.pollEvents()
 
-  val world = app.world
+  val world = state.app.world
 
-  val (commands, nextState) = app.labClient.update(world, app.client.screens, previousState, delta)
+  val (commands, nextState) = app.labClient.update(world, app.client.screens, state, timestep.delta.toFloat())
 
-  if (commands.any { it.type == CommandType.newGame }) {
-    app.world = app.newWorld()
-  } else if (app.config.view == Views.game && !nextState.gameClientState.menu.isVisible) {
-    app.world = updateLabWorld(app, commands, delta)
+  val newWorld = when {
+    commands.any { it.type == CommandType.newGame } -> app.newWorld()
+    app.config.view == Views.game -> updateWorld(app.client.renderer.animationDurations, state.app, commands, steps)
+    else -> world
   }
 
   if (world != null && app.gameConfig.gameplay.defaultPlayerView != world.players[0].viewMode) {
@@ -118,7 +110,7 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
 //    saveGameConfig(app.gameConfig)
   }
 
-  saveIncrement += 1f * delta
+  saveIncrement += 1f * timestep.delta.toFloat()
   if (saveIncrement > 1f) {
     saveIncrement = 0f
 //    saveLabConfig(app.config)
@@ -127,7 +119,12 @@ tailrec fun labLoop(app: LabApp, previousState: LabState) {
   }
 
   if (!app.platform.process.isClosing())
-    labLoop(app, nextState)
+    labLoop(app, nextState.copy(
+        app = nextState.app.copy(
+            world = newWorld,
+            timestep = timestep
+        )
+    ))
 }
 
 fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
@@ -141,7 +138,6 @@ fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
 
   globalProfiler().start("app")
   val app = LabApp(platform, config, gameConfig,
-      world = world,
       labConfigManager = ConfigManager(labConfigPath, config)
   )
   if (world != null) {
@@ -152,7 +148,12 @@ fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
   val state = LabState(
       labInput = mapOf(),
       modelViewState = newModelViewState(),
-      gameClientState = clientState
+      app = AppState(
+          world = world,
+          client = clientState,
+          timestep = newTimestepState(),
+          players = listOf(1)
+      )
   )
   globalProfiler().stop()
   printProfiler(globalProfiler())

@@ -41,17 +41,17 @@ private var spiritMovementTallies = mapOf<Id, Pair<Float, Vector3>>()
 //  }
 //}
 
-fun updateLabWorld(app: LabApp, commands: HaftCommands<CommandType>, delta: Float): World? {
-  if (app.config.gameView.logDroppedFrames && app.timer.actualDelta > maxInterval) {
-    val progress = app.timer.last - app.timer.start
-    println("" + (progress.toDouble() / nSecond.toDouble()).toFloat() + ": " + app.timer.actualDelta)
-  }
-//  val instantiator = Instantiator(app.world, InstantiatorConfig(app.gameConfig.gameplay.defaultPlayerView))
-  val world = app.world
-  return if (world != null) {
-    val characterCommands = mapCommands(world.players, commands)
-    updateWorld(app.client.renderer.animationDurations, world, characterCommands, delta)
-  } else
-    null
-//  trackSpiritMovement(app.world, delta)
-}
+//fun updateLabWorld(app: LabApp, commands: HaftCommands<CommandType>, delta: Float): World? {
+////  if (app.config.gameView.logDroppedFrames && app.timer.actualDelta > maxInterval) {
+////    val progress = app.timer.last - app.timer.start
+////    println("" + (progress.toDouble() / nSecond.toDouble()).toFloat() + ": " + app.timer.actualDelta)
+////  }
+////  val instantiator = Instantiator(app.world, InstantiatorConfig(app.gameConfig.gameplay.defaultPlayerView))
+//  val world = app.world
+//  return if (world != null) {
+//    val characterCommands = mapCommands(world.players, commands)
+//    updateWorld(app.client.renderer.animationDurations, world.deck, world, characterCommands, delta)
+//  } else
+//    null
+////  trackSpiritMovement(app.world, delta)
+//}

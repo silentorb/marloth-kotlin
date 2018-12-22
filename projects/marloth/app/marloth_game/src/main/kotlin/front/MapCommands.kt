@@ -25,7 +25,7 @@ private val commandTypeMap: Map<UserCommandType, CharacterCommandType> =
 //    UserCommandType.lookDown to CommandType.lookDown
 //)
 
-fun mapCommands(players: List<Player>, userCommands: UserCommands): List<Command> =
+fun mapCommands(players: List<Int>, userCommands: UserCommands): List<Command> =
     userCommands.mapNotNull {
       val type = commandTypeMap[it.type]
       if (type == null)
@@ -33,7 +33,7 @@ fun mapCommands(players: List<Player>, userCommands: UserCommands): List<Command
       else
         Command(
             type = type,
-            target = players[it.target - 1].id,
+            target = players[it.target - 1].toLong(),
             value = it.value
         )
     }

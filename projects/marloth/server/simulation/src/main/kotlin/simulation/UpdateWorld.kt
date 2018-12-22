@@ -104,7 +104,7 @@ fun newEntities(world: World, nextId: IdSource, data: Intermediate): (Deck) -> D
   deck.plus(getNewMissiles(world.copy(deck = deck), nextId, data.activatedAbilities))
 }
 
-fun updateWorldMain(animationDurations: AnimationDurationMap, deck: Deck, world: World, playerCommands: Commands, delta: Float): World {
+fun updateWorld(animationDurations: AnimationDurationMap, deck: Deck, world: World, playerCommands: Commands, delta: Float): World {
   val nextId: IdSource = newIdSource(world.nextId)
   val data = generateIntermediateRecords(world, playerCommands, delta)
 
@@ -126,22 +126,24 @@ fun updateWorldMain(animationDurations: AnimationDurationMap, deck: Deck, world:
 
 const val simulationDelta = 1f / 60f
 
-private var deltaAggregator = 0f
+//private var deltaAggregator = 0f
 
-fun updateWorld(animationDurations: AnimationDurationMap, world: World, commands: Commands, delta: Float): World {
-  deltaAggregator += delta
-  if (deltaAggregator > simulationDelta) {
-    deltaAggregator -= simulationDelta
+//fun updateWorld(animationDurations: AnimationDurationMap, world: World, commands: Commands, delta: Float): World {
+//  deltaAggregator += delta
+//  if (deltaAggregator > simulationDelta) {
+//    deltaAggregator -= simulationDelta
 
-    // The above subtraction, this condition, and the modulus could all be handled by a single modulus
-    // but if deltaAggregator is more than twice the simulationHertz then the simulation is not keeping
-    // up and I want that to be handled as a special case, not incidentally handled by a modulus.
-    if (deltaAggregator > simulationDelta) {
+// The above subtraction, this condition, and the modulus could all be handled by a single modulus
+// but if deltaAggregator is more than twice the simulationHertz then the simulation is not keeping
+// up and I want that to be handled as a special case, not incidentally handled by a modulus.
+//    if (deltaAggregator > simulationDelta) {
 //      println("Skipped a frame.  deltaAggregator = " + deltaAggregator + " simulationDelta = " + simulationDelta)
-      deltaAggregator = deltaAggregator % simulationDelta
-    }
-    return updateWorldMain(animationDurations, world.deck, world, commands, simulationDelta)
-  } else {
-    return world
-  }
-}
+//      deltaAggregator = deltaAggregator % simulationDelta
+//    }
+//    return updateWorldMain(animationDurations, world.deck, world, commands, simulationDelta)
+//  } else {
+//    return world
+//  }
+//}
+
+
