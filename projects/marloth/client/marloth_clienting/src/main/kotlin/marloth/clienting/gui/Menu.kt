@@ -10,14 +10,19 @@ enum class MenuId {
   main
 }
 
-enum class MenuActionType {
+enum class MenuAction {
   none,
   newGame,
   continueGame,
   quit
 }
 
-typealias Menu = List<MenuActionType>
+data class MenuOption(
+    val command: CommandType,
+    val text: Text
+)
+
+typealias Menu = List<MenuOption>
 
 data class MenuState(
     var isVisible: Boolean,
@@ -33,11 +38,11 @@ fun possibleToggle(value: Boolean, shouldToggle: Boolean) =
 
 fun cycle(value: Int, max: Int) = (value + max) % max
 
-val menuCommands: Map<MenuActionType, CommandType> = mapOf(
-    MenuActionType.continueGame to CommandType.menuBack,
-    MenuActionType.newGame to CommandType.newGame,
-    MenuActionType.quit to CommandType.quit
-)
+//val menuCommands: Map<MenuAction, CommandType> = mapOf(
+//    MenuAction.continueGame to CommandType.menuBack,
+//    MenuAction.newGame to CommandType.newGame,
+//    MenuAction.quit to CommandType.quit
+//)
 
 val menuCommandAliases: Map<CommandType, CommandType> = mapOf(
     CommandType.lookUp to CommandType.moveUp,
@@ -48,8 +53,7 @@ val menuCommandAliases: Map<CommandType, CommandType> = mapOf(
 
 fun applyMenuSelect(menu: Menu, focusIndex: Int, target: Int): UserCommand {
   val menuButton = menu[focusIndex]
-  val commandType = menuCommands[menuButton]!!
-  return simpleCommand(commandType, target)
+  return simpleCommand(menuButton.command, target)
 }
 
 fun mapMenuCommandAliases(commands: UserCommands): UserCommands {

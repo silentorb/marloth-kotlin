@@ -80,7 +80,7 @@ class LabClient(val config: LabConfig, val client: Client) {
   fun updateGame(world: World?, screens: List<Screen>, state: LabState): LabClientResult {
     val (commands, nextLabInputState) = updateInput(mapOf(), state)
     updateLabGameState(config.gameView, commands)
-    val (nextClientState, globalCommands) = updateGameView(client, config, world, screens, state)
+    val (nextClientState, globalCommands) = updateGameView(client, world, state)
 
     val newLabState = state.copy(
         labInput = nextLabInputState,

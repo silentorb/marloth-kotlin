@@ -5,7 +5,6 @@ import haft.*
 import lab.LabCommandType
 import marloth.clienting.GeneralCommandState
 import marloth.clienting.CommandType
-import marloth.clienting.gui.MenuActionType
 
 data class LabClientResult(
     val commands: HaftCommands<CommandType>,

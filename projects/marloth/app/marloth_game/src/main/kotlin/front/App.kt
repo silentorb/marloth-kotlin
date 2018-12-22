@@ -7,7 +7,6 @@ import mythic.platforming.Platform
 import mythic.quartz.newTimestepState
 import mythic.quartz.updateTimestep
 import simulation.simulationDelta
-import visualizing.createScenes
 
 data class App(
     val platform: Platform,
@@ -18,10 +17,7 @@ data class App(
 
 tailrec fun gameLoop(app: App, state: AppState) {
   app.display.swapBuffers()
-  if (state.world != null) {
-    val scenes = createScenes(state.world, app.client.screens)
-    renderScenes(app.client, scenes)
-  }
+  renderMain(app.client, state)
   app.platform.process.pollEvents()
   val (nextClientState, commands) = updateClient(app.client, state.players, state.client, state.world)
   val (timestep, steps) = updateTimestep(state.timestep, simulationDelta.toDouble())

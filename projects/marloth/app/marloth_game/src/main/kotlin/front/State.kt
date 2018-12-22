@@ -32,6 +32,6 @@ fun updateWorld(animationDurations: AnimationDurationMap, state: AppState, userC
       }
     }
 
-    else -> null
+    else -> world
   }
 }

@@ -1,12 +1,13 @@
 package marloth.clienting.gui
 
 import haft.filterKeystrokeCommands
+import marloth.clienting.CommandType
 import marloth.clienting.UserCommands
 
 fun mainMenu(isGameActive: Boolean): Menu = listOfNotNull(
-    if (isGameActive) MenuActionType.continueGame else null,
-    MenuActionType.newGame,
-    MenuActionType.quit
+    if (isGameActive) MenuOption(CommandType.menuBack, Text.continueGame) else null,
+    MenuOption(CommandType.newGame, Text.newGame),
+    MenuOption(CommandType.quit, Text.quit)
 )
 
 fun updateMenu(state: MenuState, commands: UserCommands, isGameActive: Boolean): Pair<MenuState, UserCommands> {

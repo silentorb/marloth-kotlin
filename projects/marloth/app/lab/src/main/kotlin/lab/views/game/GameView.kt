@@ -1,9 +1,9 @@
 package lab.views.game
 
+import front.renderMain
 import haft.HaftCommand
 import haft.isActive
 import lab.LabCommandType
-import lab.LabConfig
 import lab.LabState
 import marloth.clienting.*
 import marloth.clienting.gui.MenuState
@@ -18,9 +18,7 @@ import org.joml.zw
 import rendering.*
 import rendering.shading.ObjectShaderConfig
 import scenery.MeshId
-import scenery.Screen
 import simulation.World
-import visualizing.createScenes
 
 enum class GameDisplayMode {
   normal,
@@ -162,11 +160,8 @@ fun updateLabGameState(config: GameViewConfig, commands: List<HaftCommand<LabCom
   }
 }
 
-fun updateGameView(client: Client, config: LabConfig, world: World?, screens: List<Screen>, state: LabState): Pair<ClientState, UserCommands> {
-  if (world != null) {
-    val scenes = createScenes(world, screens)
-    renderLabScenes(client, GameViewRenderData(scenes, world, config.gameView, state.app.client.menu))
-  }
-  val players = screens.map { it.playerId }
+fun updateGameView(client: Client, world: World?, state: LabState): Pair<ClientState, UserCommands> {
+  renderMain(client, state.app)
+  val players = client.screens.map { it.playerId }
   return updateClient(client, players, state.app.client, world)
 }

@@ -1,21 +1,17 @@
 package marloth.clienting.gui
 
-import intellect.acessment.lightRating
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
-import mythic.ent.Id
 import mythic.glowing.globalState
 import mythic.spatial.Vector4
 import mythic.spatial.toVector2
 import mythic.spatial.toVector2i
-import mythic.typography.IndexedTextStyle
 import mythic.typography.TextConfiguration
 import mythic.typography.TextStyle
 import mythic.typography.calculateTextDimensions
 import org.joml.Vector2i
 import simulation.World
-import java.text.DecimalFormat
 
 data class ButtonState(
     val text: String,
@@ -65,12 +61,13 @@ fun menuLayout(bounds: Bounds, state: MenuState): Boxes {
       .plus(arrangeListComplex(lengthArranger(vertical, menuPadding), items, menuBounds))
 }
 
-fun renderGui(bounds: Bounds, canvas: Canvas, world: World, state: MenuState) {
-  val hudBoxes = hudLayout(world)(Seed(bounds = bounds))
-  renderLayout(hudBoxes, canvas)
+fun renderGui(bounds: Bounds, canvas: Canvas, world: World?, menuState: MenuState) {
+  if (world != null) {
+    val hudBoxes = hudLayout(world)(Seed(bounds = bounds))
+    renderLayout(hudBoxes, canvas)
+  }
 
-  if (!state.isVisible)
-    return
-
-  renderLayout(menuLayout(bounds, state), canvas)
+  if (menuState.isVisible) {
+    renderLayout(menuLayout(bounds, menuState), canvas)
+  }
 }

@@ -1,8 +1,14 @@
 package marloth.clienting
 
+import marloth.clienting.gui.renderGui
+import mythic.bloom.Bounds
+import mythic.drawing.Canvas
 import mythic.glowing.globalState
+import mythic.platforming.WindowInfo
+import org.joml.Vector4i
 import org.joml.zw
 import rendering.*
+import simulation.World
 
 
 fun renderScene(renderer: GameSceneRenderer) {
@@ -25,7 +31,7 @@ fun renderScene(renderer: GameSceneRenderer) {
 //  globalState.cullFaces = false
 }
 
-fun renderScenes(client: Client, scenes: List<GameScene>) {
+fun renderScenesOld(client: Client, scenes: List<GameScene>) {
   val windowInfo = client.getWindowInfo()
   val renderer = client.renderer
   renderer.prepareRender(windowInfo)
@@ -41,6 +47,17 @@ fun renderScenes(client: Client, scenes: List<GameScene>) {
 //    if (config.draw.gui)
 //      renderGui(sceneRenderer, Bounds(viewport.toVector4()), canvas, data.menuState)
   }
+
+  renderer.finishRender(windowInfo)
+}
+
+fun renderContainer(client: Client, action: (Canvas, WindowInfo) -> Unit) {
+  val windowInfo = client.getWindowInfo()
+  val renderer = client.renderer
+  renderer.prepareRender(windowInfo)
+  val canvas = createCanvas(client.renderer, windowInfo)
+
+  action(canvas, windowInfo)
 
   renderer.finishRender(windowInfo)
 }
