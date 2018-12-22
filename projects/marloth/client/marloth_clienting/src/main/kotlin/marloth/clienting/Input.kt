@@ -114,8 +114,8 @@ fun checkForNewGamepads1(arguments: InputArguments): ProfileStates<CommandType> 
 
 fun checkForNewGamepads2(events: ProfileStates<CommandType>, playerCount: Int): HaftCommands<CommandType> {
   val commands = gatherProfileCommands3(events)
-//  if (commands.size > 0)
-//    println(commands.size)
+  if (commands.size > 0)
+    println(commands.size)
   var playerCounter = playerCount
   val keystrokes = filterKeystrokeCommands(commands, listOf(CommandType.activateDevice, CommandType.joinGame))
   for (command in keystrokes) {
@@ -176,7 +176,6 @@ fun updateInputDeviceState(input: PlatformInput, players: List<Int>, inputState:
   input.update()
   val properties = getInputArguments(input, inputState.device, players)
   val mainEvents = updateGameInput1(properties, profiles)
-//    rendering.updateGameInput(properties, rendering.inputProfiles)
 
   val waitingEvents = checkForNewGamepads1(properties)
 
