@@ -1,7 +1,7 @@
 package desktop
 
-import front.loadGameConfig
-import front.runApp
+import marloth.integration.loadGameConfig
+import marloth.front.runApp
 import mythic.desktop.createDesktopPlatform
 
 object App {

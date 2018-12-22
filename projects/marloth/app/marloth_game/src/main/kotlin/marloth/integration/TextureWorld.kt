@@ -1,4 +1,4 @@
-package front
+package marloth.integration
 
 import generation.structure.getWallVertices
 import marloth.clienting.Client

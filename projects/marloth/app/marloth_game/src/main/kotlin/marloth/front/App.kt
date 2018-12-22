@@ -1,7 +1,8 @@
-package front
+package marloth.front
 
 import generation.generateDefaultWorld
 import marloth.clienting.*
+import marloth.integration.*
 import mythic.platforming.Display
 import mythic.platforming.Platform
 import mythic.quartz.newTimestepState
@@ -19,13 +20,13 @@ tailrec fun gameLoop(app: App, state: AppState) {
   app.display.swapBuffers()
   renderMain(app.client, state)
   app.platform.process.pollEvents()
-  val (nextClientState, commands) = updateClient(app.client, state.players, state.client, state.world)
+  val (nextClientState, commands) = updateClient(app.client, state.players, state.client, state.worlds.last())
   val (timestep, steps) = updateTimestep(state.timestep, simulationDelta.toDouble())
-    val nextWorld = updateWorld(app.client.renderer.animationDurations, state, commands, steps)
+  val worlds = updateWorld(app.client.renderer.animationDurations, state, commands, steps)
 
   val nextState = state.copy(
       client = nextClientState,
-      world = nextWorld,
+      worlds = worlds,
       timestep = timestep
   )
 
@@ -44,7 +45,7 @@ fun runApp(platform: Platform, config: GameConfig) {
   val state = AppState(
       client = newClientState(config.input),
       players = listOf(1),
-      world = world,
+      worlds = listOf(world),
       timestep = newTimestepState()
   )
   gameLoop(app, state)

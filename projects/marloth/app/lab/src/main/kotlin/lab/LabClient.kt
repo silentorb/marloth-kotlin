@@ -1,6 +1,6 @@
 package lab
 
-import front.AppState
+import marloth.integration.AppState
 import haft.*
 import lab.views.*
 import lab.views.game.updateGameView

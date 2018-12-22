@@ -1,7 +1,7 @@
 package lab
 
 import configuration.loadConfig
-import front.loadGameConfig
+import marloth.integration.loadGameConfig
 import mythic.desktop.createDesktopPlatform
 
 object WorldGenProfiler {

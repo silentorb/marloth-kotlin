@@ -1,9 +1,8 @@
-package front
+package marloth.integration
 
 import configuration.loadConfig
 import configuration.saveConfig
 import marloth.clienting.GameInputConfig
-import mythic.platforming.PlatformDisplayConfig
 import rendering.DisplayConfig
 import simulation.ViewMode
 

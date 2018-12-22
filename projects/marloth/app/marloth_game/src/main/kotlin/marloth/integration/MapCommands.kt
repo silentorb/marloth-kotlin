@@ -1,8 +1,7 @@
-package front
+package marloth.integration
 
 import marloth.clienting.UserCommands
 import simulation.Command
-import simulation.Player
 
 private typealias UserCommandType = marloth.clienting.CommandType
 private typealias CharacterCommandType = simulation.CommandType

@@ -145,5 +145,3 @@ const val simulationDelta = 1f / 60f
 //    return world
 //  }
 //}
-
-

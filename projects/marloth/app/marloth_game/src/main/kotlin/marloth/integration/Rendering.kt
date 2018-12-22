@@ -1,4 +1,4 @@
-package front
+package marloth.integration
 
 import marloth.clienting.Client
 import marloth.clienting.gui.renderGui
@@ -8,12 +8,12 @@ import mythic.bloom.Bounds
 import org.joml.Vector4i
 import rendering.GameSceneRenderer
 import rendering.getPlayerViewports
-import scenery.Screen
+import simulation.interpolateWorlds
 import visualizing.createScenes
 
 fun renderMain(client: Client, appState: AppState) {
   renderContainer(client) { canvas, windowInfo ->
-    val world = appState.world
+    val world = interpolateWorlds(appState.timestep.accumulator, appState.worlds)
     if (world != null) {
       val scenes = createScenes(world, client.screens)
       val viewports = getPlayerViewports(scenes.size, windowInfo.dimensions).iterator()

@@ -3,7 +3,6 @@ package lab
 import configuration.ConfigManager
 import configuration.loadConfig
 import configuration.saveConfig
-import front.*
 import generation.addEnemies
 import generation.generateWorld
 import lab.utility.updateWatching
@@ -12,6 +11,7 @@ import lab.views.model.newModelViewState
 import marloth.clienting.Client
 import marloth.clienting.CommandType
 import marloth.clienting.newClientState
+import marloth.integration.*
 import mythic.desktop.createDesktopPlatform
 import mythic.ent.pipe
 import mythic.platforming.Display
@@ -95,14 +95,15 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
 
   app.platform.process.pollEvents()
 
-  val world = state.app.world
+  val worlds = state.app.worlds
+  val world = state.app.worlds.lastOrNull()
 
   val (commands, nextState) = app.labClient.update(world, app.client.screens, state, timestep.delta.toFloat())
 
-  val newWorld = when {
-    commands.any { it.type == CommandType.newGame } -> app.newWorld()
+  val newWorlds = when {
+    commands.any { it.type == CommandType.newGame } -> listOf(app.newWorld())
     app.config.view == Views.game -> updateWorld(app.client.renderer.animationDurations, state.app, commands, steps)
-    else -> world
+    else -> worlds
   }
 
   if (world != null && app.gameConfig.gameplay.defaultPlayerView != world.players[0].viewMode) {
@@ -121,7 +122,7 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
   if (!app.platform.process.isClosing())
     labLoop(app, nextState.copy(
         app = nextState.app.copy(
-            world = newWorld,
+            worlds = newWorlds,
             timestep = timestep
         )
     ))
@@ -149,7 +150,7 @@ fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
       labInput = mapOf(),
       modelViewState = newModelViewState(),
       app = AppState(
-          world = world,
+          worlds = listOfNotNull(world),
           client = clientState,
           timestep = newTimestepState(),
           players = listOf(1)

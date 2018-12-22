@@ -38,12 +38,6 @@ fun possibleToggle(value: Boolean, shouldToggle: Boolean) =
 
 fun cycle(value: Int, max: Int) = (value + max) % max
 
-//val menuCommands: Map<MenuAction, CommandType> = mapOf(
-//    MenuAction.continueGame to CommandType.menuBack,
-//    MenuAction.newGame to CommandType.newGame,
-//    MenuAction.quit to CommandType.quit
-//)
-
 val menuCommandAliases: Map<CommandType, CommandType> = mapOf(
     CommandType.lookUp to CommandType.moveUp,
     CommandType.lookDown to CommandType.moveDown,
@@ -97,8 +91,10 @@ fun updateMenuState(menu: Menu, state: MenuState, commands: HaftCommands<Command
     return state
   }
 
-  val focusIndex = if (!state.isVisible)
-    0 // Menu just appeared
+  val menuJustAppeared = !state.isVisible
+
+  val focusIndex = if (menuJustAppeared)
+    0
   else
     cycle(state.focusIndex + menuFocusMod(isActive), menu.size)
 

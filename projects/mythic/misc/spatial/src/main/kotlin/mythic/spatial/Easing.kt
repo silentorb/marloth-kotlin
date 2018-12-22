@@ -12,3 +12,9 @@ fun quadOut(t: Float): Float {
 fun cubicOut(t: Float): Float {
   return t * (2 - t)
 }
+
+fun interpolate(scalar: Float, a: Vector3, b: Vector3): Vector3 =
+    b * scalar + a * (1f - scalar)
+
+fun interpolate(scalar: Float, a: Quaternion, b: Quaternion): Quaternion =
+    Quaternion(a).slerp(b, scalar)
