@@ -1,6 +1,9 @@
 package marloth.clienting
 
+import com.fasterxml.jackson.core.type.TypeReference
+import configuration.loadYamlResource
 import marloth.clienting.gui.MenuState
+import marloth.clienting.gui.TextResources
 import marloth.clienting.gui.newMenuState
 import marloth.clienting.gui.updateMenu
 import mythic.bloom.BloomState
@@ -39,9 +42,15 @@ fun newClientState(config: GameInputConfig) =
         )
     )
 
+fun loadTextResource(): TextResources {
+  val typeref = object : TypeReference<TextResources>() {}
+  return loadYamlResource("text/english.yaml", typeref)
+}
+
 class Client(val platform: Platform, displayConfig: DisplayConfig) {
   val renderer: Renderer = Renderer(displayConfig)
   val screens: List<Screen> = (1..maxPlayerCount).map { Screen(it) }
+  val textResources: TextResources = loadTextResource()
   fun getWindowInfo() = platform.display.getInfo()
 
   init {

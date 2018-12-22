@@ -75,6 +75,13 @@ fun mapMenuCommandsToGlobalCommands(menu: Menu, state: MenuState, commands: User
   }
 }
 
+fun menuFocusMod(isActive: (CommandType) -> Boolean): Int =
+    when {
+      isActive(CommandType.moveDown) -> 1
+      isActive(CommandType.moveUp) -> -1
+      else -> 0
+    }
+
 fun updateMenuState(menu: Menu, state: MenuState, commands: HaftCommands<CommandType>): MenuState {
   if (commands.isEmpty())
     return state
@@ -82,22 +89,22 @@ fun updateMenuState(menu: Menu, state: MenuState, commands: HaftCommands<Command
   val isActive = haft.isActive(commands)
 
   val isVisible = possibleToggle(state.isVisible, isActive(CommandType.menu))
-      && !isActive(CommandType.menuSelect)// This line will work until there are sub-menus
+      && !isActive(CommandType.menuSelect) // This line will work until there are sub-menus
+      && !isActive(CommandType.menuBack) // This line will work until there are sub-menus
 
   if (!isVisible) {
     state.isVisible = false  // A compromise in the stead of partial immutable updates
     return state
   }
 
-  val focusMod = when {
-    isActive(CommandType.moveDown) -> 1
-    isActive(CommandType.moveUp) -> -1
-    else -> 0
-  }
+  val focusIndex = if (!state.isVisible)
+    0 // Menu just appeared
+  else
+    cycle(state.focusIndex + menuFocusMod(isActive), menu.size)
 
   return state.copy(
       isVisible = isVisible,
-      focusIndex = cycle(state.focusIndex + focusMod, menu.size)
+      focusIndex = focusIndex
   )
 }
 

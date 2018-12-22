@@ -114,42 +114,42 @@ fun renderWireframeScene(renderer: GameSceneRenderer) {
 //  globalState.cullFaces = false
 //}
 
-fun renderLabScenes(client: Client, data: GameViewRenderData) {
-  val windowInfo = client.getWindowInfo()
-  val renderer = client.renderer
-  renderer.prepareRender(windowInfo)
-
-  val canvas = createCanvas(client.renderer, windowInfo)
-  val config = data.config
-
-  val viewports = getPlayerViewports(data.scenes.size, windowInfo.dimensions).iterator()
-  for (scene in data.scenes) {
-    val viewport = viewports.next()
-    val sceneRenderer = renderer.createSceneRenderer(scene.main, viewport)
-    val gameRenderer = GameSceneRenderer(scene, sceneRenderer)
-    when (data.config.displayMode) {
-      GameDisplayMode.normal -> renderScene(gameRenderer)
-      GameDisplayMode.wireframe -> renderWireframeScene(gameRenderer)
-    }
-
-//    if (config.draw.normals)
-//      renderFaceNormals(sceneRenderer, 1f, data.world.realm.mesh)
-
-    if (config.draw.skeletons) {
-//      scene.elements.filter { it.depiction == DepictionType.child || it.depiction == DepictionType.monster }
-//          .forEach {
-//            val info = it.animation!!
-//            val armature = info.armature
-//            drawSkeleton(sceneRenderer, armature.bones, it.transform)
-//          }
-    }
-
-    if (config.draw.gui)
-      renderGui(Bounds(viewport), canvas, data.world, data.menuState)
-  }
-
-  renderer.finishRender(windowInfo)
-}
+//fun renderLabScenes(client: Client, data: GameViewRenderData) {
+//  val windowInfo = client.getWindowInfo()
+//  val renderer = client.renderer
+//  renderer.prepareRender(windowInfo)
+//
+//  val canvas = createCanvas(client.renderer, windowInfo)
+//  val config = data.config
+//
+//  val viewports = getPlayerViewports(data.scenes.size, windowInfo.dimensions).iterator()
+//  for (scene in data.scenes) {
+//    val viewport = viewports.next()
+//    val sceneRenderer = renderer.createSceneRenderer(scene.main, viewport)
+//    val gameRenderer = GameSceneRenderer(scene, sceneRenderer)
+//    when (data.config.displayMode) {
+//      GameDisplayMode.normal -> renderScene(gameRenderer)
+//      GameDisplayMode.wireframe -> renderWireframeScene(gameRenderer)
+//    }
+//
+////    if (config.draw.normals)
+////      renderFaceNormals(sceneRenderer, 1f, data.world.realm.mesh)
+//
+//    if (config.draw.skeletons) {
+////      scene.elements.filter { it.depiction == DepictionType.child || it.depiction == DepictionType.monster }
+////          .forEach {
+////            val info = it.animation!!
+////            val armature = info.armature
+////            drawSkeleton(sceneRenderer, armature.bones, it.transform)
+////          }
+//    }
+//
+//    if (config.draw.gui)
+//      renderGui(Bounds(viewport), canvas, data.world, data.menuState)
+//  }
+//
+//  renderer.finishRender(windowInfo)
+//}
 
 fun updateLabGameState(config: GameViewConfig, commands: List<HaftCommand<LabCommandType>>) {
   if (isActive(commands, LabCommandType.toggleMeshDisplay)) {

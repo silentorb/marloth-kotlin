@@ -24,6 +24,7 @@ fun renderMain(client: Client, appState: AppState) {
       }
     }
 
-    renderGui(Bounds(Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)), canvas, world, appState.client.menu)
+    val bounds = Bounds(Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y))
+    renderGui(client.textResources, bounds, canvas, world, appState.client.menu)
   }
 }

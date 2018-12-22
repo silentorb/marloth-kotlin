@@ -149,11 +149,11 @@ fun <T> createStrokeBindings(device: Int, target: Int, bindings: Map<Int, T>) =
 
 fun <T> createStrokeBindings(device: Int, bindings: Map<Int, T>) = createStrokeBindings(device, 0, bindings)
 
-fun <T> isActive(commands: List<HaftCommand<T>>, commandType: T) =
+fun <T> isActive(commands: List<HaftCommand<T>>, commandType: T): Boolean =
     commands.any { it.type == commandType }
 
-fun <T> isActive(commands: List<HaftCommand<T>>) =
-    { commandType: T -> haft.isActive(commands, commandType) }
+fun <T> isActive(commands: List<HaftCommand<T>>): (T) -> Boolean =
+    { commandType -> haft.isActive(commands, commandType) }
 
 fun <T> getCommand(commands: List<HaftCommand<T>>, commandType: T) =
     commands.first { it.type == commandType }
