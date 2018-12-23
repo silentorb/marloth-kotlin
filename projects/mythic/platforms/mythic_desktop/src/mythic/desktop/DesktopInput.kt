@@ -1,6 +1,7 @@
 package mythic.desktop
 
 import haft.*
+import mythic.platforming.InputEvent
 import mythic.platforming.PlatformInput
 import mythic.spatial.Vector2
 import org.joml.Vector2i
@@ -107,5 +108,9 @@ class DesktopInput(val window: Long) : PlatformInput {
   override fun isMouseVisible(value: Boolean) {
     val mode = if (value == true) GLFW_CURSOR_NORMAL else GLFW_CURSOR_DISABLED
     glfwSetInputMode(window, GLFW_CURSOR, mode)
+  }
+
+  override fun getEvents(): List<InputEvent> {
+    return listOf()
   }
 }

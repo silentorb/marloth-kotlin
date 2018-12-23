@@ -8,6 +8,12 @@ import org.joml.Vector2i
 
 data class WindowInfo(val dimensions: Vector2i)
 
+data class InputEvent(
+    val device: Int,
+    val index: Int,
+    val value: Float
+)
+
 interface PlatformInput {
   val KeyboardInputSource: ScalarInputSource
   val GamepadInputSource: MultiDeviceScalarInputSource
@@ -16,6 +22,7 @@ interface PlatformInput {
   fun getMousePosition(): Vector2
   fun getGamepads(): List<Gamepad>
   fun isMouseVisible(value: Boolean)
+  fun getEvents(): List<InputEvent>
 }
 
 interface PlatformDisplayConfig {

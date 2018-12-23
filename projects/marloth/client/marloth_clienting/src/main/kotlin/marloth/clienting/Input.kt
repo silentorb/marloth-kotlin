@@ -4,6 +4,7 @@ import haft.*
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.currentView
 import mythic.bloom.ButtonState
+import mythic.platforming.InputEvent
 import mythic.platforming.PlatformInput
 import mythic.spatial.Vector2
 import mythic.spatial.toVector2i
@@ -16,8 +17,8 @@ typealias UserCommand = HaftCommand<CommandType>
 
 typealias UserCommands = List<UserCommand>
 
-data class GeneralInputDeviceState<CT>(
-    val profileStates: ProfileStates<CT>,
+data class GeneralInputDeviceState(
+    val profileStates: List<InputEvent>,
     val mousePosition: Vector2
 )
 
@@ -29,7 +30,7 @@ data class GeneralCommandState<CT>(
 
 typealias CommandState = GeneralCommandState<CommandType>
 
-typealias InputDeviceState = GeneralInputDeviceState<CommandType>
+typealias InputDeviceState = GeneralInputDeviceState
 
 data class GameInputConfig(
     var mouseInput: Boolean = true
@@ -39,7 +40,8 @@ data class InputState(
     val device: InputDeviceState,
     val config: GameInputConfig,
     val gameProfiles: List<PlayerInputProfile>,
-    val menuProfiles: List<PlayerInputProfile>
+    val menuProfiles: List<PlayerInputProfile>,
+    val deviceMap: DeviceMap
 )
 
 fun newInputDeviceState() =
@@ -48,34 +50,34 @@ fun newInputDeviceState() =
         mousePosition = Vector2()
     )
 
-fun initialGameInputState(): ProfileStates<CommandType> = mapOf()
-//        , (1..maxPlayerCount).map { null }
-//)
+//fun initialGameInputState(): ProfileStates<CommandType> = mapOf()
+////        , (1..maxPlayerCount).map { null }
+////)
 
-fun updateGamepadSlots(input: PlatformInput, previousMap: GamepadSlots): GamepadSlots =
-    updateGamepadSlots(input.getGamepads().map { it.id }, previousMap)
+//fun updateGamepadSlots(input: PlatformInput, previousMap: GamepadSlots): GamepadSlots =
+//    updateGamepadSlots(input.getGamepads().map { it.id }, previousMap)
+//
+//fun selectGamepadHandler(GamepadInputSource: MultiDeviceScalarInputSource, gamepad: Int?, isActive: Boolean) =
+//    if (gamepad != null && isActive)
+//      { trigger: Int -> GamepadInputSource(gamepad, trigger) }
+//    else
+//      disconnectedScalarInputSource
 
-fun selectGamepadHandler(GamepadInputSource: MultiDeviceScalarInputSource, gamepad: Int?, isActive: Boolean) =
-    if (gamepad != null && isActive)
-      { trigger: Int -> GamepadInputSource(gamepad, trigger) }
-    else
-      disconnectedScalarInputSource
-
-fun getWaitingDevices(gamepadAssignments: MutableMap<Int, Int>, gamepads: List<GamepadDeviceId>) =
-    gamepads.filter { d -> !gamepadAssignments.any { it.key == d } }
-
-fun createDeviceHandlers(input: PlatformInput, gamepadAssignments: MutableMap<Int, Int>): List<ScalarInputSource> {
-  return listOf(
-      input.KeyboardInputSource,
-      input.MouseInputSource
-  )
-      .plus(gamepadAssignments.map {
-        { trigger: Int -> input.GamepadInputSource(it.key, trigger) }
-      })
-      .plus((1..(maxPlayerCount - gamepadAssignments.size)).map {
-        disconnectedScalarInputSource
-      })
-}
+//fun getWaitingDevices(gamepadAssignments: MutableMap<Int, Int>, gamepads: List<GamepadDeviceId>) =
+//    gamepads.filter { d -> !gamepadAssignments.any { it.key == d } }
+//
+//fun createDeviceHandlers(input: PlatformInput, gamepadAssignments: MutableMap<Int, Int>): List<ScalarInputSource> {
+//  return listOf(
+//      input.KeyboardInputSource,
+//      input.MouseInputSource
+//  )
+//      .plus(gamepadAssignments.map {
+//        { trigger: Int -> input.GamepadInputSource(it.key, trigger) }
+//      })
+//      .plus((1..(maxPlayerCount - gamepadAssignments.size)).map {
+//        disconnectedScalarInputSource
+//      })
+//}
 
 data class PlayerInputProfile(
     val player: Int,
@@ -83,20 +85,20 @@ data class PlayerInputProfile(
     val menuBindings: Bindings<CommandType>
 )
 
-data class AvailableInputProfiles(
-    val playerInputProfiles: List<PlayerInputProfile>
-)
+//data class AvailableInputProfiles(
+//    val playerInputProfiles: List<PlayerInputProfile>
+//)
 
-fun selectActiveInputProfiles(playerInputProfiles: List<PlayerInputProfile>, players: List<Int>) =
-    playerInputProfiles.filter { players.contains(it.player) }
-        .map { it.gameBindings }
+//fun selectActiveInputProfiles(playerInputProfiles: List<PlayerInputProfile>, players: List<Int>) =
+//    playerInputProfiles.filter { players.contains(it.player) }
+//        .map { it.gameBindings }
 
-data class InputArguments(
-    val deviceHandlers: List<ScalarInputSource>,
-    val waitingDevices: List<GamepadDeviceId>,
-    val previousState: InputDeviceState,
-    val players: List<Int>
-)
+//data class InputArguments(
+//    val deviceHandlers: List<ScalarInputSource>,
+//    val waitingDevices: List<GamepadDeviceId>,
+//    val previousState: InputDeviceState,
+//    val players: List<Int>
+//)
 
 //val playerInputProfiles = defaultGameInputProfiles()
 //val menuInputProfiles = defaultMenuInputProfiles()
@@ -106,34 +108,34 @@ val gamepadAssignments: MutableMap<Int, Int> = mutableMapOf()
 
 //class ClientInput(val input: PlatformInput, val config: GameInputConfig) {
 
-fun checkForNewGamepads1(arguments: InputArguments): ProfileStates<CommandType> {
-  val (deviceHandlers, waitingDevices, previousState, players) = arguments
-  val profiles = createWaitingGamepadProfiles(waitingDevices.size, gamepadAssignments.size)
-  return gatherProfileCommands2(profiles, previousState.profileStates, deviceHandlers)
-}
-
-fun checkForNewGamepads2(events: ProfileStates<CommandType>, playerCount: Int): HaftCommands<CommandType> {
-  val commands = gatherProfileCommands3(events)
-  if (commands.size > 0)
-    println(commands.size)
-  var playerCounter = playerCount
-  val keystrokes = filterKeystrokeCommands(commands, listOf(CommandType.activateDevice, CommandType.joinGame))
-  for (command in keystrokes) {
-    gamepadAssignments[command.target - 10] = playerCounter++
-  }
-  return commands
-}
-
-fun updateGameInput1(arguments: InputArguments, inputProfiles: List<PlayerInputProfile>): ProfileStates<CommandType> {
-  val profiles = selectActiveInputProfiles(inputProfiles, arguments.players)
-  return gatherProfileCommands2(profiles, arguments.previousState.profileStates, arguments.deviceHandlers)
-}
+//fun checkForNewGamepads1(arguments: InputArguments): ProfileStates<CommandType> {
+//  val (deviceHandlers, waitingDevices, previousState, players) = arguments
+//  val profiles = createWaitingGamepadProfiles(waitingDevices.size, gamepadAssignments.size)
+//  return gatherProfileCommands2(profiles, previousState.profileStates, deviceHandlers)
+//}
+//
+//fun checkForNewGamepads2(events: ProfileStates<CommandType>, playerCount: Int): HaftCommands<CommandType> {
+//  val commands = gatherProfileCommands3(events)
+//  if (commands.size > 0)
+//    println(commands.size)
+//  var playerCounter = playerCount
+//  val keystrokes = filterKeystrokeCommands(commands, listOf(CommandType.activateDevice, CommandType.joinGame))
+//  for (command in keystrokes) {
+//    gamepadAssignments[command.target - 10] = playerCounter++
+//  }
+//  return commands
+//}
+//
+//fun updateGameInput1(arguments: InputArguments, inputProfiles: List<PlayerInputProfile>): ProfileStates<CommandType> {
+//  val profiles = selectActiveInputProfiles(inputProfiles, arguments.players)
+//  return gatherProfileCommands2(profiles, arguments.previousState.profileStates, arguments.deviceHandlers)
+//}
 
 fun applyMouseAxis(value: Float, firstCommandType: CommandType, secondCommandType: CommandType, scale: Float) =
     if (value > 0)
-      listOf(HaftCommand(firstCommandType, 1, value * scale, TriggerLifetime.pressed))
+      listOf(HaftCommand(firstCommandType, 1, value * scale))
     else if (value < 0)
-      listOf(HaftCommand(secondCommandType, 1, -value * scale, TriggerLifetime.pressed))
+      listOf(HaftCommand(secondCommandType, 1, -value * scale))
     else
       listOf()
 
@@ -143,20 +145,20 @@ fun applyMouseMovement(mouseOffset: Vector2): HaftCommands<CommandType> {
       .plus(applyMouseAxis(mouseOffset.y, CommandType.lookDown, CommandType.lookUp, 1f))
 }
 
-fun getInputArguments(input: PlatformInput, state: InputDeviceState, players: List<Int>): InputArguments {
-  val gamepads = input.getGamepads().map { it.id }
-  val waitingDevices = getWaitingDevices(gamepadAssignments, gamepads)
-  val deviceHandlers = createDeviceHandlers(input, gamepadAssignments)
-      .plus(waitingDevices.map {
-        { trigger: Int -> input.GamepadInputSource(it, trigger) }
-      })
-  return InputArguments(
-      deviceHandlers,
-      waitingDevices,
-      state,
-      players
-  )
-}
+//fun getInputArguments(input: PlatformInput, state: InputDeviceState, players: List<Int>): InputArguments {
+//  val gamepads = input.getGamepads().map { it.id }
+//  val waitingDevices = getWaitingDevices(gamepadAssignments, gamepads)
+//  val deviceHandlers = createDeviceHandlers(input, gamepadAssignments)
+//      .plus(waitingDevices.map {
+//        { trigger: Int -> input.GamepadInputSource(it, trigger) }
+//      })
+//  return InputArguments(
+//      deviceHandlers,
+//      waitingDevices,
+//      state,
+//      players
+//  )
+//}
 
 private var previousMousePosition = Vector2()
 
@@ -174,10 +176,21 @@ fun selectProfiles(clientState: ClientState): List<PlayerInputProfile> =
 
 fun updateInputDeviceState(input: PlatformInput, players: List<Int>, inputState: InputState, profiles: List<PlayerInputProfile>): InputDeviceState {
   input.update()
-  val properties = getInputArguments(input, inputState.device, players)
-  val mainEvents = updateGameInput1(properties, profiles)
+  val events = input.getEvents()
+  val mappedEvents = events.mapNotNull { event ->
+    val device = inputState.deviceMap[event.device]
+    if (device != null)
+      event.copy(
+          device = device
+      )
+    else
+      null
+  }
 
-  val waitingEvents = checkForNewGamepads1(properties)
+//  val properties = getInputArguments(input, inputState.device, players)
+//  val mainEvents = updateGameInput1(properties, profiles)
+//
+//  val waitingEvents = checkForNewGamepads1(properties)
 
   val mousePosition = input.getMousePosition()
   return InputDeviceState(
