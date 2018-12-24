@@ -32,7 +32,7 @@ fun mapCommands(players: List<Int>, userCommands: UserCommands): List<Command> =
       else
         Command(
             type = type,
-            target = players[it.target - 1].toLong(),
+            target = it.target.toLong(),
             value = it.value
         )
     }

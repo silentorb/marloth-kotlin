@@ -27,7 +27,7 @@ data class ClientState(
     val bloomState: BloomState
 )
 
-fun isGuiActive(state: ClientState): Boolean = currentView(state.bloomState.bag) == ViewId.none
+fun isGuiActive(state: ClientState): Boolean = currentView(state.bloomState.bag) != ViewId.none
 
 fun newClientState(config: GameInputConfig) =
     ClientState(
