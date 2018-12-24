@@ -1,5 +1,8 @@
 package haft
 
+import mythic.platforming.InputEvent
+import mythic.spatial.Vector2
+
 //enum class TriggerLifetime {
 //  pressed,
 //  end
@@ -10,11 +13,16 @@ package haft
 //    val value: Float
 //)
 
+enum class DeviceIndex {
+  keyboard,
+  mouse,
+  gamepad
+}
+
 data class Binding<T>(
-    val device: Int,
+    val device: DeviceIndex,
     val trigger: Int,
-    val type: T,
-    val target: Int
+    val command: T
 )
 
 data class HaftCommand<T>(
@@ -46,11 +54,26 @@ typealias MultiDeviceScalarInputSource = (device: Int, trigger: Int) -> Float
 
 typealias InputProfiles<T> = List<Bindings<T>>
 
-typealias DestinationIndex = Int
-typealias SourceIndex = Int
-typealias DeviceMap = Map<SourceIndex, DestinationIndex>
-
 val disconnectedScalarInputSource: ScalarInputSource = { 0f }
+
+const val MouseMovementLeft = 5
+const val MouseMovementRight = 6
+const val MouseMovementUp = 7
+const val MouseMovementDown = 8
+
+fun applyMouseAxis(device: Int, value: Float, firstIndex: Int, secondIndex: Int, scale: Float) =
+    if (value > 0)
+      InputEvent(device, firstIndex, value * scale)
+    else if (value < 0)
+      InputEvent(device, secondIndex, -value * scale)
+    else
+      null
+
+fun applyMouseMovement(device: Int, mouseOffset: Vector2): List<InputEvent> =
+    listOfNotNull(
+        applyMouseAxis(device, mouseOffset.x, MouseMovementRight, MouseMovementLeft, 1f),
+        applyMouseAxis(device, mouseOffset.y, MouseMovementDown, MouseMovementUp, 1f)
+    )
 
 //fun getState(source: ScalarInputSource, trigger: Int, previousState: TriggerState?): TriggerState? {
 //  val value = source(trigger)
@@ -122,15 +145,8 @@ fun <T> applyCommands(commands: HaftCommands<T>, actions: Map<T, (HaftCommand<T>
       .forEach({ actions[it.type]!!(it) })
 }
 
-fun <T> createBindings(device: Int, target: Int, bindings: Map<Int, T>) =
-    bindings.map({ Binding(device, it.key, it.value, target) })
-
-fun <T> createBindings(device: Int, bindings: Map<Int, T>) = createBindings(device, 0, bindings)
-
-fun <T> createStrokeBindings(device: Int, target: Int, bindings: Map<Int, T>) =
-    bindings.map({ Binding(device, it.key, it.value, target) })
-
-fun <T> createStrokeBindings(device: Int, bindings: Map<Int, T>) = createStrokeBindings(device, 0, bindings)
+fun <T> createBindings(device: DeviceIndex, bindings: Map<Int, T>) =
+    bindings.map({ Binding(device, it.key, it.value) })
 
 fun <T> isActive(commands: List<HaftCommand<T>>, commandType: T): Boolean =
     commands.any { it.type == commandType }

@@ -3,7 +3,6 @@ package marloth.clienting
 import haft.*
 import org.lwjgl.glfw.GLFW
 
-
 fun defaultKeyboardGameBindings() = mapOf(
     GLFW.GLFW_KEY_W to CommandType.moveUp,
     GLFW.GLFW_KEY_A to CommandType.moveLeft,
@@ -85,49 +84,33 @@ fun allGamepadBindings() =
     commonGamepadBindings()
         .plus(firstPersonGamepadBindings)
 
-fun createDefaultGamepadBindings(gamepad: Int, player: Int) =
-    createBindings(gamepad, player, allGamepadBindings())
-        .plus(createStrokeBindings(gamepad, player, allGamepadStrokeBindings))
+fun createDefaultGamepadBindings() =
+    createBindings(DeviceIndex.gamepad, allGamepadBindings())
+        .plus(createBindings(DeviceIndex.gamepad, allGamepadStrokeBindings))
 
-fun primaryGameInputProfile(player: Int, gamepad: Int) =
-    PlayerInputProfile(player,
-        createBindings(0, player, defaultKeyboardGameBindings())
-            .plus(createStrokeBindings(0, player, defaultKeyboardStrokeBindings()))
-            .plus(createBindings(1, player, defaultMouseGameStrokeBindings()))
-            .plus(createDefaultGamepadBindings(gamepad, player)),
-        listOf()
+fun defaultGameInputProfile() =
+    createBindings(DeviceIndex.keyboard, defaultKeyboardGameBindings())
+        .plus(createBindings(DeviceIndex.keyboard, defaultKeyboardStrokeBindings()))
+        .plus(createBindings(DeviceIndex.mouse, defaultMouseGameStrokeBindings()))
+        .plus(createDefaultGamepadBindings())
+
+fun defaultMenuInputProfile() =
+    createBindings(DeviceIndex.keyboard, defaultKeyboardMenuBindings())
+        .plus(createBindings(DeviceIndex.gamepad, defaultGamepadMenuBindings()))
+
+fun defaultInputProfile(): InputProfile = InputProfile(
+    bindings = mapOf(
+        BindingMode.game to defaultGameInputProfile(),
+        BindingMode.menu to defaultMenuInputProfile()
     )
-
-fun primaryMenuInputProfile(player: Int, gamepad: Int) =
-    PlayerInputProfile(player,
-        createStrokeBindings(0, player, defaultKeyboardMenuBindings())
-            .plus(createStrokeBindings(gamepad, player, defaultGamepadMenuBindings())),
-        listOf()
-    )
-
-fun createSecondaryInputProfile(player: Int, device: Int) =
-    PlayerInputProfile(player,
-        createDefaultGamepadBindings(device, player),
-        listOf()
-    )
-
-fun defaultGameInputProfiles() = listOf(
-    primaryGameInputProfile(1, 2),
-    createSecondaryInputProfile(2, 3),
-    createSecondaryInputProfile(3, 4),
-    createSecondaryInputProfile(4, 5)
 )
 
-fun defaultMenuInputProfiles() = listOf(
-    primaryMenuInputProfile(1, 2)
-)
-
-fun createWaitingGamepadProfiles(count: Int, assignedGamepadCount: Int) =
-    (0 until count).map {
-      val bindings = if (assignedGamepadCount == 0)
-        mapOf(GAMEPAD_BUTTON_START to CommandType.activateDevice)
-      else
-        mapOf(GAMEPAD_BUTTON_START to CommandType.joinGame)
-
-      createStrokeBindings(gamepadSlotStart + maxPlayerCount + it, it + 10, bindings)
-    }
+//fun createWaitingGamepadProfiles(count: Int, assignedGamepadCount: Int) =
+//    (0 until count).map {
+//      val bindings = if (assignedGamepadCount == 0)
+//        mapOf(GAMEPAD_BUTTON_START to CommandType.activateDevice)
+//      else
+//        mapOf(GAMEPAD_BUTTON_START to CommandType.joinGame)
+//
+//      createBindings(gamepadSlotStart + maxPlayerCount + it, bindings)
+//    }

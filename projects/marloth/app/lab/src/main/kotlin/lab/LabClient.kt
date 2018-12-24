@@ -22,7 +22,7 @@ import simulation.Realm
 import simulation.World
 
 data class LabState(
-    val labInput: InputTriggerState<LabCommandType>,
+//    val labInput: InputTriggerState<LabCommandType>,
     val modelViewState: ModelViewState,
     val app: AppState
 )

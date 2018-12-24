@@ -29,10 +29,13 @@ fun isGuiActive(state: ClientState): Boolean = currentView(state.bloomState.bag)
 fun newClientState(config: GameInputConfig) =
     ClientState(
         input = InputState(
-            device = newInputDeviceState(),
+            deviceStates = listOf(newInputDeviceState()),
             config = config,
-            gameProfiles = defaultGameInputProfiles(),
-            menuProfiles = defaultMenuInputProfiles()
+            profiles = mapOf(1L to defaultInputProfile()),
+            playerProfiles = listOf(),
+            deviceMap = mapOf()
+//            gameProfiles = defaultGameInputProfile(),
+//            menuProfiles = defaultMenuInputProfile()
         ),
         bloomState = BloomState(
             bag = mapOf(),
@@ -84,14 +87,14 @@ fun applyClientCommands(client: Client, state: ClientState, commands: UserComman
 fun updateClient(client: Client, players: List<Int>, previousState: ClientState, world: World?, boxes: Boxes): Pair<ClientState, UserCommands> {
   updateMousePointerVisibility(client.platform)
   val inputState = previousState.input
-  val profiles = selectProfiles(previousState)
-  val newDeviceState = updateInputDeviceState(client.platform.input, players, previousState.input, profiles)
-  val newCommandState = getCommandState(newDeviceState, inputState.config, players.size)
+  val newDeviceState = updateInputDeviceState(client.platform.input)
+  val deviceStates = listOf(inputState.deviceStates.last(), newDeviceState)
+  val commands = mapEventsToCommands(deviceStates, inputState, bindingMode(previousState))
   val bloomInputState = newBloomInputState(client.platform.input)
-      .copy(events = haftToBloom(newCommandState.commands))
+      .copy(events = haftToBloom(commands))
   val bloomState = updateBloomState(boxes, previousState.bloomState, bloomInputState)
 
-  val allCommands = newCommandState.commands
+  val allCommands = commands
       .plus(menuCommands(bloomState.bag).map { simpleCommand(it, players.first()) })
 
   val newClientState = pipe(previousState, listOf(
@@ -99,7 +102,7 @@ fun updateClient(client: Client, players: List<Int>, previousState: ClientState,
       { state ->
         state.copy(
             input = previousState.input.copy(
-                device = newDeviceState
+                deviceStates = deviceStates
             ))
       }
   ))
