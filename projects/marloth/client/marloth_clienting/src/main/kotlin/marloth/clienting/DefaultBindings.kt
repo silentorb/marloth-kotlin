@@ -100,8 +100,8 @@ fun defaultMenuInputProfile() =
 
 fun defaultInputProfile(): InputProfile = InputProfile(
     bindings = mapOf(
-        BindingMode.game to defaultGameInputProfile(),
-        BindingMode.menu to defaultMenuInputProfile()
+        BindingContext.game to defaultGameInputProfile(),
+        BindingContext.menu to defaultMenuInputProfile()
     )
 )
 

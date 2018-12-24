@@ -19,6 +19,11 @@ enum class DeviceIndex {
   gamepad
 }
 
+data class InputDeviceState(
+    val events: List<InputEvent>,
+    val mousePosition: Vector2
+)
+
 data class Binding<T>(
     val device: DeviceIndex,
     val trigger: Int,
@@ -75,70 +80,41 @@ fun applyMouseMovement(device: Int, mouseOffset: Vector2): List<InputEvent> =
         applyMouseAxis(device, mouseOffset.y, MouseMovementDown, MouseMovementUp, 1f)
     )
 
-//fun getState(source: ScalarInputSource, trigger: Int, previousState: TriggerState?): TriggerState? {
-//  val value = source(trigger)
-//  if (value != 0f)
-//    return TriggerState(TriggerLifetime.pressed, value)
-//
-//  if (previousState != null && previousState.lifetime == TriggerLifetime.pressed)
-//    return TriggerState(TriggerLifetime.end, value)
-//
-//  return null
-//}
+typealias BindingSourceTarget = Int
+typealias BindingSource<T> = (InputEvent) -> Pair<Binding<T>, BindingSourceTarget>?
 
-//fun <T> getCurrentInputState(bindings: Bindings<T>, handlers: List<ScalarInputSource>,
-//                             previousState: InputTriggerState<T>): InputTriggerState<T> =
-//    bindings.associate { Pair(it, getState(handlers[it.device], it.trigger, previousState[it])) }
-//
-//fun <T> createEmptyInputState(bindings: Bindings<T>): InputTriggerState<T> =
-//    bindings.associate { Pair(it, null) }
-//
-//fun <T> gatherCommands(state: InputTriggerState<T>): HaftCommands<T> {
-//  return state
-//      .filter({ it.value != null && (!it.key.isStroke || it.value!!.lifetime == TriggerLifetime.end) })
-//      .map({
-//        HaftCommand<T>(
-//            type = it.key.type,
-//            target = it.key.target,
-//            value = it.value!!.value,
-//            lifetime = it.value!!.lifetime
-//        )
-//      })
-//}
-//
-////typealias ProfileStates<T> = Map<Bindings<T>, InputTriggerState<T>>
-//
-//fun <T> gatherProfileCommands2(profiles: List<Bindings<T>>, profileStates: ProfileStates<T>,
-//                               deviceHandlers: List<ScalarInputSource>): ProfileStates<T> {
-//  val previous = profiles.associate { profile ->
-//    Pair(profile, profileStates[profile] ?: createEmptyInputState(profile))
-//  }
-//
-//  return profiles.associate { profile ->
-//    Pair(profile, getCurrentInputState(profile, deviceHandlers, previous[profile]!!))
-//  }
-//}
-//
-//fun <T> gatherProfileCommands3(states: ProfileStates<T>): HaftCommands<T> =
-//    states.flatMap { gatherCommands(it.value) }
-//
-//fun <T> gatherInputCommands(bindings: Bindings<T>, deviceHandlers: List<ScalarInputSource>,
-//                            previousState: InputTriggerState<T>?): Pair<HaftCommands<T>, InputTriggerState<T>> {
-//  val previous = previousState ?: createEmptyInputState(bindings)
-//  val next = getCurrentInputState(bindings, deviceHandlers, previous)
-//  return Pair(gatherCommands(next), next)
-//}
+fun matches(event: InputEvent): (InputEvent) -> Boolean = { other ->
+  event.device == other.device && event.index == other.index
+}
 
-//fun <T> filterKeystrokeCommands(commands: HaftCommands<T>) =
-//    commands.filter({ it.lifetime == TriggerLifetime.end })
-//
-//fun <T> filterKeystrokeCommands(commands: HaftCommands<T>, bindings: List<T>) =
-//    commands.filter({ bindings.contains(it.type) && it.lifetime == TriggerLifetime.end })
-//
-//fun <T> handleKeystrokeCommands(commands: HaftCommands<T>, keyStrokeCommands: Map<T, (HaftCommand<T>) -> Unit>) {
-//  commands.filter({ keyStrokeCommands.containsKey(it.type) && it.lifetime == TriggerLifetime.end })
-//      .forEach({ keyStrokeCommands[it.type]!!(it) })
-//}
+fun <T> mapEventsToCommands(deviceStates: List<InputDeviceState>, strokes: Set<T>, getBinding: BindingSource<T>): HaftCommands<T> =
+    deviceStates.last().events
+        .mapNotNull { event ->
+          val bindingPair = getBinding(event)
+          if (bindingPair != null) {
+            val (binding, index) = bindingPair
+            val isStroke = strokes.contains(binding.command)
+            if (!isStroke || deviceStates.dropLast(1).last().events.any(matches(event)))
+              HaftCommand(
+                  type = binding.command,
+                  target = index,
+                  value = event.value
+              )
+            else
+              null
+          } else
+            null
+        }
+
+fun <T> getBinding(bindings: List<Binding<T>>): BindingSource<T> = { event ->
+  val binding = bindings.firstOrNull {
+    it.device == DeviceIndex.values()[event.device] && it.trigger == event.index
+  }
+  if (binding != null)
+    Pair(binding, 0)
+  else
+    null
+}
 
 fun <T> applyCommands(commands: HaftCommands<T>, actions: Map<T, (HaftCommand<T>) -> Unit>) {
   commands.filter({ actions.containsKey(it.type) })

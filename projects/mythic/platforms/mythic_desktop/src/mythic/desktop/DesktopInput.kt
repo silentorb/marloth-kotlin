@@ -32,8 +32,55 @@ fun getGamepadAxes(device: Int, axisDirIndex: Int): Float {
     else
       if (value < -deadZone) -value else 0f
   } else {
-    val value = axes[axisDirIndex - 4]
-    if (value > deadZone) value else 0f
+    val index = axisDirIndex - 4
+    if (axes.capacity() <= index)
+      0f
+    else {
+      val value = axes[index]
+      if (value > deadZone) value else 0f
+    }
+  }
+}
+
+private val gamepadInputSource = { device: Int, trigger: Int ->
+  if (trigger < GAMEPAD_BUTTON_A)
+    getGamepadAxes(device, trigger)
+  else {
+    val buttons = glfwGetJoystickButtons(device)
+    if (buttons != null && buttons[trigger - GAMEPAD_BUTTON_A].toInt() == GLFW_PRESS)
+      1f
+    else
+      0f
+  }
+}
+
+fun getKeyboardEvents(window: Long): List<InputEvent> {
+  return keyboardKeys.mapNotNull { key ->
+    if (glfwGetKey(window, key) == GLFW_PRESS)
+      InputEvent(
+          device = 0,
+          index = key,
+          value = 1f
+      )
+    else
+      null
+  }
+}
+
+fun getGamepadEvents(): List<InputEvent> {
+  val gamepads = enumerateActiveGamepadIds()
+  return gamepads.flatMap { gamepad ->
+    (GAMEPAD_AXIS_LEFT_LEFT..GAMEPAD_BUTTON_DPAD_LEFT).mapNotNull { button ->
+      val value = gamepadInputSource(gamepad, button)
+      if (value != 0f)
+        InputEvent(
+            device = gamepad + 2,
+            index = button,
+            value = value
+        )
+      else
+        null
+    }
   }
 }
 
@@ -44,9 +91,9 @@ class DesktopInput(val window: Long) : PlatformInput {
 
   init {
     glfwSetInputMode(window, GLFW_STICKY_KEYS, 1)
-    glfwSetScrollCallback(window, GLFWScrollCallback.create({ window, xoffset, yoffset ->
+    glfwSetScrollCallback(window, GLFWScrollCallback.create { window, xoffset, yoffset ->
       mouseScrollYBuffer = yoffset.toFloat()
-    }))
+    })
   }
 
   override fun update() {
@@ -65,17 +112,7 @@ class DesktopInput(val window: Long) : PlatformInput {
       0f
   }
 
-  override val GamepadInputSource = { device: Int, trigger: Int ->
-    if (trigger < GAMEPAD_BUTTON_A)
-      getGamepadAxes(device, trigger)
-    else {
-      val buttons = glfwGetJoystickButtons(device)
-      if (buttons != null && buttons[trigger - GAMEPAD_BUTTON_A].toInt() == GLFW_PRESS)
-        1f
-      else
-        0f
-    }
-  }
+  override val GamepadInputSource = gamepadInputSource
 
   override val MouseInputSource = { key: Int ->
     if (key < MOUSE_SKIP) {
@@ -111,6 +148,7 @@ class DesktopInput(val window: Long) : PlatformInput {
   }
 
   override fun getEvents(): List<InputEvent> {
-    return listOf()
+    return getGamepadEvents()
+        .plus(getKeyboardEvents(window))
   }
 }

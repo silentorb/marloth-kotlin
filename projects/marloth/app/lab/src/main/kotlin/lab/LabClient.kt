@@ -10,8 +10,7 @@ import lab.views.map.updateMapState
 import lab.views.model.ModelView
 import lab.views.model.ModelViewState
 import lab.views.world.WorldView
-import marloth.clienting.Client
-import marloth.clienting.newBloomInputState
+import marloth.clienting.*
 import mythic.bloom.*
 import mythic.platforming.PlatformInput
 import mythic.platforming.WindowInfo
@@ -65,25 +64,25 @@ class LabClient(val config: LabConfig, val client: Client) {
 
   fun getBindings() = labInputConfig[Views.global]!!.plus(labInputConfig[config.view]!!)
 
-  fun updateInput(viewCommands: LabCommandMap, previousState: LabState): Pair<HaftCommands<LabCommandType>,
-      InputTriggerState<LabCommandType>> {
-    val (commands, nextLabInputState) = gatherInputCommands(getBindings(), deviceHandlers, previousState.labInput)
+  fun updateInput(viewCommands: LabCommandMap,
+                  previousState: LabState): Pair<HaftCommands<LabCommandType>, List<InputDeviceState>> {
+    val bindings = getBindings()
+    val newDeviceStates = updateInputState(client.platform.input, previousState.app.client.input)
+    val commands = mapEventsToCommands(newDeviceStates, labCommandStrokes, haft.getBinding(bindings))
     applyCommands(commands, viewCommands.plus(globalKeyPressCommands))
-    return Pair(commands, nextLabInputState)
+    return Pair(commands, newDeviceStates)
   }
 
   fun prepareClient(windowInfo: WindowInfo) {
     client.renderer.prepareRender(windowInfo)
-    client.platform.input.update()
   }
 
   fun updateGame(world: World?, screens: List<Screen>, state: LabState): LabClientResult {
-    val (commands, nextLabInputState) = updateInput(mapOf(), state)
-    updateLabGameState(config.gameView, commands)
+//    val (commands, nextLabInputState) = updateInput(mapOf(), state)
+//    updateLabGameState(config.gameView, commands)
     val (nextClientState, globalCommands) = updateGameView(client, world, state)
 
     val newLabState = state.copy(
-        labInput = nextLabInputState,
         app = state.app.copy(
             client = nextClientState
         )
@@ -97,15 +96,15 @@ class LabClient(val config: LabConfig, val client: Client) {
     val view = ModelView(config.modelView, client.renderer, client.platform.input.getMousePosition())
 
     val layout = view.createLayout(windowInfo.dimensions, previousState.modelViewState)
-    val (commands, nextLabInputState) = updateInput(view.getCommands(), previousState)
-    val input = getInputState(client.platform.input, commands)
+//    val (commands, nextLabInputState) = updateInput(view.getCommands(), previousState)
+//    val input = getInputState(client.platform.input, commands)
     renderLab(windowInfo, layout.boxes)
-    val modelViewState = view.updateState(layout, input, previousState.modelViewState, delta)
+//    val modelViewState = view.updateState(layout, input, previousState.modelViewState, delta)
     view.release()
 
     return LabClientResult(
         listOf(),
-        previousState.copy(labInput = nextLabInputState, modelViewState = modelViewState)
+        previousState//.copy(labInput = nextLabInputState, modelViewState = modelViewState)
     )
   }
 
@@ -114,14 +113,14 @@ class LabClient(val config: LabConfig, val client: Client) {
     val view = TextureView()
 
     val layout = view.createLayout(client.renderer, config.textureView, windowInfo.dimensions)
-    val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
-    val input = getInputState(client.platform.input, commands)
+//    val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
+//    val input = getInputState(client.platform.input, commands)
 
     renderLab(windowInfo, layout.boxes)
-    updateTextureState(layout, input, config.textureView, client.renderer)
+//    updateTextureState(layout, input, config.textureView, client.renderer)
     return LabClientResult(
         listOf(),
-        previousState.copy(labInput = nextLabInputState)
+        previousState//.copy(labInput = nextLabInputState)
     )
   }
 
@@ -134,12 +133,12 @@ class LabClient(val config: LabConfig, val client: Client) {
         bag = previousState.app.client.bloomState.bag,
         bounds = Bounds(dimensions = windowInfo.dimensions)
     ))
-    val (_, nextLabInputState) = updateInput(view.getCommands(), previousState)
+//    val (_, nextLabInputState) = updateInput(view.getCommands(), previousState)
 
     renderLab(windowInfo, boxes)
     return LabClientResult(
         listOf(),
-        previousState.copy(labInput = nextLabInputState)
+        previousState//.copy(labInput = nextLabInputState)
     )
   }
 
@@ -166,7 +165,6 @@ class LabClient(val config: LabConfig, val client: Client) {
     return LabClientResult(
         listOf(),
         state.copy(
-            labInput = nextLabInputState,
             app = state.app.copy(
                 client = state.app.client.copy(
                     bloomState = newBloomState

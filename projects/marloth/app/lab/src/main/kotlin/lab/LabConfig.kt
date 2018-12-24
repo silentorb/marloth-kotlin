@@ -58,10 +58,44 @@ enum class LabCommandType {
   selectEdgeLoop
 }
 
+val labCommandStrokes = setOf(
+   LabCommandType.viewGame,
+   LabCommandType.viewMap,
+   LabCommandType.viewModel,
+   LabCommandType.viewWorld,
+   LabCommandType.viewTexture,
+   LabCommandType.toggleAbstractView,
+   LabCommandType.toggleStructureView,
+   LabCommandType.menu,
+   LabCommandType.update,
+   LabCommandType.select,
+   LabCommandType.incrementRaySkip,
+   LabCommandType.decrementRaySkip,
+
+   LabCommandType.cameraViewFront,
+   LabCommandType.cameraViewBack,
+   LabCommandType.cameraViewTop,
+   LabCommandType.cameraViewBottom,
+   LabCommandType.cameraViewRight,
+   LabCommandType.cameraViewLeft,
+
+   LabCommandType.selectModeEdges,
+   LabCommandType.selectModeFaces,
+   LabCommandType.selectModeVertices,
+   LabCommandType.toggleSelection,
+
+   LabCommandType.toggleMeshDisplay,
+   LabCommandType.toggleNormals,
+   LabCommandType.toggleFaceIds,
+   LabCommandType.toggleNodeIds,
+
+   LabCommandType.selectEdgeLoop
+)
+
 typealias LabInputConfig = MutableMap<Views, Bindings<LabCommandType>>
 
 fun createLabInputBindings() = mutableMapOf(
-    Views.global to createStrokeBindings(0, mapOf(
+    Views.global to createBindings(DeviceIndex.keyboard, mapOf(
         GLFW.GLFW_KEY_F1 to LabCommandType.viewGame,
         GLFW.GLFW_KEY_F2 to LabCommandType.viewMap,
         GLFW.GLFW_KEY_F3 to LabCommandType.viewWorld,
@@ -69,25 +103,25 @@ fun createLabInputBindings() = mutableMapOf(
         GLFW.GLFW_KEY_F5 to LabCommandType.viewTexture
     ))
         .plus(
-            createStrokeBindings(2, mapOf(
+            createBindings(DeviceIndex.gamepad, mapOf(
                 GAMEPAD_BUTTON_START to LabCommandType.menu
             ))
         ),
-    Views.game to createStrokeBindings<LabCommandType>(0, mapOf(
+    Views.game to createBindings<LabCommandType>(DeviceIndex.keyboard, mapOf(
 
     ))
-        .plus(createStrokeBindings(0, mapOf(
+        .plus(createBindings(DeviceIndex.keyboard, mapOf(
             GLFW.GLFW_KEY_X to LabCommandType.toggleMeshDisplay
         ))),
-    Views.model to createBindings(2, mapOf(
+    Views.model to createBindings(DeviceIndex.gamepad, mapOf(
         GAMEPAD_AXIS_RIGHT_UP to LabCommandType.rotateUp,
         GAMEPAD_AXIS_RIGHT_DOWN to LabCommandType.rotateDown,
         GAMEPAD_AXIS_RIGHT_LEFT to LabCommandType.rotateLeft,
         GAMEPAD_AXIS_RIGHT_RIGHT to LabCommandType.rotateRight
-    )).plus(createStrokeBindings(2, mapOf(
+    )).plus(createBindings(DeviceIndex.gamepad, mapOf(
         GAMEPAD_BUTTON_Y to LabCommandType.update
     )))
-        .plus(createStrokeBindings(0, mapOf(
+        .plus(createBindings(DeviceIndex.keyboard, mapOf(
             GLFW.GLFW_KEY_KP_1 to LabCommandType.cameraViewFront,
             GLFW.GLFW_KEY_KP_3 to LabCommandType.cameraViewBack,
             GLFW.GLFW_KEY_KP_4 to LabCommandType.cameraViewLeft,
@@ -104,28 +138,28 @@ fun createLabInputBindings() = mutableMapOf(
             GLFW.GLFW_KEY_F to LabCommandType.selectModeFaces,
             GLFW.GLFW_KEY_V to LabCommandType.selectModeVertices
         )))
-        .plus(createBindings(0, mapOf(
+        .plus(createBindings(DeviceIndex.keyboard, mapOf(
             GLFW.GLFW_KEY_W to LabCommandType.pan,
             GLFW.GLFW_KEY_LEFT to LabCommandType.rotateLeft,
             GLFW.GLFW_KEY_RIGHT to LabCommandType.rotateRight
 
         )))
-        .plus(createBindings(1, mapOf(
+        .plus(createBindings(DeviceIndex.mouse, mapOf(
             GLFW.GLFW_MOUSE_BUTTON_2 to LabCommandType.rotate,
             MOUSE_SCROLL_UP to LabCommandType.zoomIn,
             MOUSE_SCROLL_DOWN to LabCommandType.zoomOut
         )))
-        .plus(createStrokeBindings(1, mapOf(
+        .plus(createBindings(DeviceIndex.mouse, mapOf(
             GLFW.GLFW_MOUSE_BUTTON_1 to LabCommandType.select
         ))),
-    Views.world to createStrokeBindings(0, mapOf(
+    Views.world to createBindings(DeviceIndex.keyboard, mapOf(
         GLFW.GLFW_KEY_1 to LabCommandType.toggleAbstractView,
         GLFW.GLFW_KEY_2 to LabCommandType.toggleStructureView
     )),
-    Views.texture to createBindings<LabCommandType>(0, mapOf(
+    Views.texture to createBindings<LabCommandType>(DeviceIndex.keyboard, mapOf(
 
     ))
-        .plus(createStrokeBindings(1, mapOf(
+        .plus(createBindings(DeviceIndex.mouse, mapOf(
             GLFW.GLFW_MOUSE_BUTTON_1 to LabCommandType.select
         ))),
     Views.map to mapViewBindings()

@@ -1,14 +1,14 @@
 package lab.views.map
 
+import haft.DeviceIndex
 import haft.MOUSE_SCROLL_DOWN
 import haft.MOUSE_SCROLL_UP
 import haft.createBindings
-import haft.createStrokeBindings
 import lab.LabCommandType
 import org.lwjgl.glfw.GLFW
 
 fun mapViewBindings() =
-    createStrokeBindings<LabCommandType>(0, mapOf(
+    createBindings<LabCommandType>(DeviceIndex.keyboard, mapOf(
         GLFW.GLFW_KEY_M to LabCommandType.toggleMeshDisplay,
         GLFW.GLFW_KEY_N to LabCommandType.toggleNormals,
         GLFW.GLFW_KEY_I to LabCommandType.toggleFaceIds,
@@ -16,7 +16,7 @@ fun mapViewBindings() =
         GLFW.GLFW_KEY_LEFT_BRACKET to LabCommandType.decrementRaySkip,
         GLFW.GLFW_KEY_RIGHT_BRACKET to LabCommandType.incrementRaySkip
     ))
-        .plus(createBindings<LabCommandType>(0, mapOf(
+        .plus(createBindings<LabCommandType>(DeviceIndex.keyboard, mapOf(
             GLFW.GLFW_KEY_UP to LabCommandType.moveUp,
             GLFW.GLFW_KEY_DOWN to LabCommandType.moveDown,
             GLFW.GLFW_KEY_LEFT to LabCommandType.moveLeft,
@@ -34,7 +34,7 @@ fun mapViewBindings() =
             GLFW.GLFW_KEY_PAGE_UP to LabCommandType.zoomIn,
             GLFW.GLFW_KEY_PAGE_DOWN to LabCommandType.zoomOut
         )))
-        .plus(createBindings(1, mapOf(
+        .plus(createBindings(DeviceIndex.mouse, mapOf(
             GLFW.GLFW_MOUSE_BUTTON_1 to LabCommandType.select,
             MOUSE_SCROLL_UP to LabCommandType.zoomIn,
             MOUSE_SCROLL_DOWN to LabCommandType.zoomOut

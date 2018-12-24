@@ -147,7 +147,6 @@ fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
 
   val clientState = newClientState(gameConfig.input)
   val state = LabState(
-      labInput = mapOf(),
       modelViewState = newModelViewState(),
       app = AppState(
           worlds = listOfNotNull(world),
