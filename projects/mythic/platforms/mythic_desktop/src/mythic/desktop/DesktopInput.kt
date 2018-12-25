@@ -4,12 +4,12 @@ import haft.*
 import mythic.platforming.InputEvent
 import mythic.platforming.PlatformInput
 import mythic.spatial.Vector2
-import org.joml.Vector2i
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWScrollCallback
-import java.lang.NullPointerException
 
 val GamepadIndices = GLFW_JOYSTICK_1..GLFW_JOYSTICK_LAST
+const val keyboardDeviceIndex = 0
+const val mouseDeviceIndex = 1
 
 fun enumerateActiveGamepadIds(): List<Int> =
     GamepadIndices
@@ -58,7 +58,7 @@ fun getKeyboardEvents(window: Long): List<InputEvent> {
   return keyboardKeys.mapNotNull { key ->
     if (glfwGetKey(window, key) == GLFW_PRESS)
       InputEvent(
-          device = 0,
+          device = keyboardDeviceIndex,
           index = key,
           value = 1f
       )
@@ -84,10 +84,53 @@ fun getGamepadEvents(): List<InputEvent> {
   }
 }
 
-class DesktopInput(val window: Long) : PlatformInput {
+private var mouseScrollYBuffer: Float = 0f
+private var mouseScrollY: Float = 0f
 
-  private var mouseScrollYBuffer: Float = 0f
-  private var mouseScrollY: Float = 0f
+private fun mouseInputSource(window: Long) = { key: Int ->
+  if (key < MOUSE_SKIP) {
+    if (glfwGetMouseButton(window, key) == GLFW_PRESS)
+      1f
+    else
+      0f
+  } else if (key == MOUSE_SCROLL_UP) {
+    if (mouseScrollY > 0)
+      mouseScrollY
+    else
+      0f
+  } else if (key == MOUSE_SCROLL_DOWN) {
+    if (mouseScrollY < 0)
+      -mouseScrollY
+    else
+      0f
+  } else {
+    0f
+  }
+}
+
+fun getMouseEvents(window: Long): List<InputEvent> {
+  val getValue = mouseInputSource(window)
+  return listOf(
+      GLFW_MOUSE_BUTTON_1,
+      GLFW_MOUSE_BUTTON_2,
+      GLFW_MOUSE_BUTTON_3,
+      MOUSE_SCROLL_DOWN,
+      MOUSE_SCROLL_UP
+  )
+      .mapNotNull { button ->
+        val value = getValue(button)
+        if (value != 0f)
+          InputEvent(
+              device = mouseDeviceIndex,
+              index = button,
+              value = value
+          )
+        else
+          null
+      }
+}
+
+class DesktopInput(val window: Long) : PlatformInput {
 
   init {
     glfwSetInputMode(window, GLFW_STICKY_KEYS, 1)
@@ -114,26 +157,7 @@ class DesktopInput(val window: Long) : PlatformInput {
 
   override val GamepadInputSource = gamepadInputSource
 
-  override val MouseInputSource = { key: Int ->
-    if (key < MOUSE_SKIP) {
-      if (glfwGetMouseButton(window, key) == GLFW_PRESS)
-        1f
-      else
-        0f
-    } else if (key == MOUSE_SCROLL_UP) {
-      if (mouseScrollY > 0)
-        mouseScrollY
-      else
-        0f
-    } else if (key == MOUSE_SCROLL_DOWN) {
-      if (mouseScrollY < 0)
-        -mouseScrollY
-      else
-        0f
-    } else {
-      0f
-    }
-  }
+  override val MouseInputSource = mouseInputSource(window)
 
   override fun getMousePosition(): Vector2 {
     val tempX = DoubleArray(1)
@@ -148,7 +172,8 @@ class DesktopInput(val window: Long) : PlatformInput {
   }
 
   override fun getEvents(): List<InputEvent> {
-    return getGamepadEvents()
-        .plus(getKeyboardEvents(window))
+    return getKeyboardEvents(window)
+        .plus(getMouseEvents(window))
+        .plus(getGamepadEvents())
   }
 }

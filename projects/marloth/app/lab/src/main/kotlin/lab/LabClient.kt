@@ -4,7 +4,6 @@ import marloth.integration.AppState
 import haft.*
 import lab.views.*
 import lab.views.game.updateGameView
-import lab.views.game.updateLabGameState
 import lab.views.map.mapLayout
 import lab.views.map.updateMapState
 import lab.views.model.ModelView
@@ -64,13 +63,11 @@ class LabClient(val config: LabConfig, val client: Client) {
 
   fun getBindings() = labInputConfig[Views.global]!!.plus(labInputConfig[config.view]!!)
 
-  fun updateInput(viewCommands: LabCommandMap,
-                  previousState: LabState): Pair<HaftCommands<LabCommandType>, List<InputDeviceState>> {
+  fun updateInput(viewCommands: LabCommandMap, deviceStates: List<InputDeviceState>): HaftCommands<LabCommandType> {
     val bindings = getBindings()
-    val newDeviceStates = updateInputState(client.platform.input, previousState.app.client.input)
-    val commands = mapEventsToCommands(newDeviceStates, labCommandStrokes, haft.getBinding(bindings))
+    val commands = mapEventsToCommands(deviceStates, labCommandStrokes, haft.getBinding(bindings))
     applyCommands(commands, viewCommands.plus(globalKeyPressCommands))
-    return Pair(commands, newDeviceStates)
+    return commands
   }
 
   fun prepareClient(windowInfo: WindowInfo) {
@@ -78,9 +75,9 @@ class LabClient(val config: LabConfig, val client: Client) {
   }
 
   fun updateGame(world: World?, screens: List<Screen>, state: LabState): LabClientResult {
-//    val (commands, nextLabInputState) = updateInput(mapOf(), state)
 //    updateLabGameState(config.gameView, commands)
     val (nextClientState, globalCommands) = updateGameView(client, world, state)
+    val commands = updateInput(mapOf(), nextClientState.input.deviceStates)
 
     val newLabState = state.copy(
         app = state.app.copy(
@@ -144,7 +141,8 @@ class LabClient(val config: LabConfig, val client: Client) {
 
   fun updateMap(windowInfo: WindowInfo, world: World?, state: LabState, delta: Float): LabClientResult {
     prepareClient(windowInfo)
-    val (commands, nextLabInputState) = updateInput(mapOf(), state)
+    val newDeviceStates = updateInputState(client.platform.input, state.app.client.input)
+    val commands = updateInput(mapOf(), newDeviceStates)
     val layout = if (world != null) {
       val input = getInputState(client.platform.input, commands)
       updateMapState(config.mapView, world.realm, input, windowInfo, state.app.client.bloomState, delta)
@@ -167,7 +165,10 @@ class LabClient(val config: LabConfig, val client: Client) {
         state.copy(
             app = state.app.copy(
                 client = state.app.client.copy(
-                    bloomState = newBloomState
+                    bloomState = newBloomState,
+                    input = state.app.client.input.copy(
+                        deviceStates = newDeviceStates
+                    )
                 )
             )
         )
