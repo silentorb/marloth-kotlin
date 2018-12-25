@@ -1,6 +1,5 @@
 package marloth.clienting.gui
 
-import haft.filterKeystrokeCommands
 import marloth.clienting.CommandType
 import marloth.clienting.UserCommands
 

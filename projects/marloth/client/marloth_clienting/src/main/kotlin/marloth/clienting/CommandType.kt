@@ -45,4 +45,14 @@ private fun standardStrokes() = setOf(
 val clientCommandStrokes = mapOf(
     BindingContext.game to standardStrokes(),
     BindingContext.menu to standardStrokes()
+        .plus(setOf(
+            CommandType.lookLeft,
+            CommandType.lookRight,
+            CommandType.lookUp,
+            CommandType.lookDown,
+            CommandType.moveUp,
+            CommandType.moveDown,
+            CommandType.moveLeft,
+            CommandType.moveRight
+        ))
 )

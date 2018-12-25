@@ -124,14 +124,16 @@ fun updateClient(client: Client, players: List<Int>, clientState: ClientState, w
       .plus(menuCommands(bloomState.bag).map { simpleCommand(it, players.first()) })
 
   val newClientState = pipe(clientState, listOf(
-      { state -> applyClientCommands(client, state, allCommands) },
       { state ->
         state.copy(
             input = state.input.copy(
                 deviceStates = newDeviceStates
-            )
+            ),
+            bloomState = bloomState
         )
-      }
-  ))
+      },
+      // This needs to happen after applying updateBloomState to override flower state settings
+      { state -> applyClientCommands(client, state, allCommands) }
+      ))
   return Pair(newClientState, allCommands)
 }
