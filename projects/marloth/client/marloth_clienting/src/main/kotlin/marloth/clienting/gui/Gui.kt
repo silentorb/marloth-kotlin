@@ -13,6 +13,12 @@ import mythic.spatial.Vector4
 import org.joml.Vector4i
 import simulation.World
 
+enum class ViewId {
+  mainMenu,
+  none,
+  victory
+}
+
 const val currentViewKey = "currentViewKey"
 val currentView = existingOrNewState(currentViewKey) { ViewId.none }
 
@@ -49,45 +55,30 @@ fun haftToBloom(commands: HaftCommands<CommandType>): List<BloomEvent> =
       }
     }
 
+fun victoryMenu(): Menu = listOfNotNull(
+    MenuOption(CommandType.menu, Text.victory)
+)
+
+fun viewSelect(textResources: TextResources, bloomState: BloomState, world: World?): Flower? {
+  val view = currentView(bloomState.bag)
+
+  return when (view) {
+    ViewId.mainMenu -> menuFlower(textResources, mainMenu(world != null))
+
+    ViewId.victory -> menuFlower(textResources, victoryMenu())
+
+    ViewId.none -> null
+  }
+}
+
 fun guiLayout(client: Client, clientState: ClientState, world: World?): Flower {
   val bloomState = clientState.bloomState
-  val view = currentView(bloomState.bag)
   return listOfNotNull(
       if (world != null) hudLayout(world) else null,
-      if (view == ViewId.mainMenu) {
-        val menu = mainMenu(world != null)
-        menuFlower(client.textResources, menu)
-      } else
-        null
+      viewSelect(client.textResources, bloomState, world)
   )
       .reduce { a, b -> a + b }
 }
-
-//fun renderGui(client: Client, bounds: Bounds, canvas: Canvas, world: World?, clientState: ClientState): BloomState {
-//  if (world != null) {
-//    val hudBoxes = hudLayout(world)(Seed(bounds = bounds))
-//    renderLayout(hudBoxes, canvas)
-//  }
-//
-//  val bloomState = clientState.bloomState
-//
-//  val view = currentView(bloomState.bag)
-//
-//  return if (view == ViewId.mainMenu) {
-//    val menu = mainMenu(world != null)
-//    val layout = menuFlower(client.textResources, menu)
-//    val seed = Seed(
-//        bag = bloomState.bag,
-//        bounds = bounds
-//    )
-//    val boxes = layout(seed)
-//    renderLayout(boxes, canvas)
-//    val bloomInputState = newBloomInputState(client.platform.input)
-//        .copy(events = listOf())
-//    updateBloomState(boxes, bloomState, bloomInputState)
-//  } else
-//    bloomState
-//}
 
 fun plantGui(client: Client, clientState: ClientState, world: World?, windowInfo: WindowInfo): Boxes {
   val bounds = Bounds(Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y))

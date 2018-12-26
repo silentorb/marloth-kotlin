@@ -84,10 +84,16 @@ fun applyClientCommands(client: Client, state: ClientState, commands: UserComman
     client.platform.process.close()
   }
 
-  return if (c.contains(CommandType.menu) && !isGuiActive(state)) {
+  return if (c.contains(CommandType.menu)) {
+    val view = currentView(state.bloomState.bag)
+    val newView = if (view == ViewId.mainMenu)
+      ViewId.none
+    else
+      ViewId.mainMenu
+
     state.copy(
         bloomState = state.bloomState.copy(
-            bag = state.bloomState.bag.plus(currentViewKey to ViewId.mainMenu)
+            bag = state.bloomState.bag.plus(currentViewKey to newView)
         )
     )
   } else
@@ -134,6 +140,6 @@ fun updateClient(client: Client, players: List<Int>, clientState: ClientState, w
       },
       // This needs to happen after applying updateBloomState to override flower state settings
       { state -> applyClientCommands(client, state, allCommands) }
-      ))
+  ))
   return Pair(newClientState, allCommands)
 }

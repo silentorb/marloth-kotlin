@@ -1,5 +1,6 @@
 package marloth.clienting.gui
 
+import marloth.clienting.CommandType
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
@@ -12,8 +13,56 @@ import mythic.typography.TextStyle
 import mythic.typography.calculateTextDimensions
 import org.joml.Vector2i
 
+data class MenuOption(
+    val command: CommandType,
+    val text: Text
+)
+
+typealias Menu = List<MenuOption>
+
+fun cycle(value: Int, max: Int) = (value + max) % max
+
+fun menuFocusIndexLogic(menu: Menu): LogicModule = { bundle ->
+  val events = bundle.state.input.current.events
+  val index = menuFocusIndex(bundle.state.bag)
+  val newIndex = when {
+    events.contains(BloomEvent.down) -> cycle(index + 1, menu.size)
+    events.contains(BloomEvent.up) -> cycle(index - 1, menu.size)
+    else -> index
+  }
+  mapOf(menuFocusIndexKey to newIndex)
+}
+
+fun menuNavigationLogic(menu: Menu): LogicModule = { bundle ->
+  val events = bundle.state.input.current.events
+  val bag = bundle.state.bag
+  val view = currentView(bag)
+  val activated = events.contains(BloomEvent.activate)
+  val newView = if (activated || events.contains(BloomEvent.back))
+    ViewId.none
+  else
+    view
+
+  mapOf(
+      currentViewKey to newView
+  )
+}
+
+fun menuCommandLogic(menu: Menu): LogicModule = { bundle ->
+  val events = bundle.state.input.current.events
+  val bag = bundle.state.bag
+  val activated = events.contains(BloomEvent.activate)
+  val commands = if (activated)
+    listOf(menu[menuFocusIndex(bag)].command)
+  else
+    listOf()
+
+  mapOf(
+      menuCommandsKey to commands
+  )
+}
+
 fun drawMenuButton(state: ButtonState): Depiction = { bounds: Bounds, canvas: Canvas ->
-  //  menuBackground(bounds, canvas)
   globalState.depthEnabled = false
   drawFill(bounds, canvas, grayTone(0.5f))
   val style = if (state.hasFocus)
