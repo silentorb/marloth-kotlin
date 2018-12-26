@@ -18,6 +18,7 @@ data class HoverCamera(
 data class Player(
     override val id: Id,
     val playerId: Int,
+    val name: String,
     val viewMode: ViewMode,
     val hoverCamera: HoverCamera = HoverCamera()
 ) : Entity

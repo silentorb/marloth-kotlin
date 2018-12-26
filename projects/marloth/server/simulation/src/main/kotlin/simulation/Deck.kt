@@ -50,30 +50,6 @@ data class Deck(
   )
 }
 
-//data class Tables(
-//    val animations: IdentityMap<ArmatureAnimation>,
-//    val bodies: IdentityMap<Body>,
-//    val characters: IdentityMap<Character>,
-//    val depictions: IdentityMap<Depiction>,
-//    val doors: IdentityMap<Door>,
-//    val missiles: IdentityMap<Missile>,
-//    val spirits: IdentityMap<Spirit>
-//)
-//
-//fun <T : Entity> entityMap2(list: Collection<T>): IdentityMap<T> =
-//    IdentityMap(entityMap(list))
-
-//fun toTables(deck: Deck): Tables =
-//    Tables(
-//        bodies = entityMap2(deck.bodies),
-//        characters = entityMap2(deck.characters),
-//        animations = entityMap2(deck.animations),
-//        depictions = entityMap2(deck.depictions),
-//        doors = entityMap2(deck.doors),
-//        missiles = entityMap2(deck.missiles),
-//        spirits = entityMap2(deck.spirits)
-//    )
-
 fun <T : Entity> nullableList(entity: T?): Table<T> =
     if (entity == null)
       mapOf()
@@ -99,7 +75,8 @@ fun toDeck(hands: List<Hand>): Deck =
 data class World(
     val realm: Realm,
     val nextId: Id,
-    val deck: Deck
+    val deck: Deck,
+    val gameOver: GameOver? = null
 ) {
   val bodyTable: Table<Body> get() = deck.bodies
   val characterTable: Table<Character> get() = deck.characters
@@ -112,12 +89,6 @@ data class World(
 
   val bodies: Collection<Body>
     get() = deck.bodies.values
-
-  val missiles: Collection<Missile>
-    get() = deck.missiles.values
-
-  val spirits: Collection<Spirit>
-    get() = deck.spirits.values
 }
 
 fun addDeck(world: World, deck: Deck, nextId: IdSource): World {

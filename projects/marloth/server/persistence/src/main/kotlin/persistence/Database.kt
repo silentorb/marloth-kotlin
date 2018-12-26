@@ -1,14 +1,30 @@
 package persistence
 
+import com.zaxxer.hikari.HikariDataSource
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Database as ExposedDatabase
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import simulation.PlayerStats
 import simulation.Victory
+import java.sql.Connection
 import java.sql.ResultSet
 
+// Wrap the Exposed Database to minimize the librarise that directly depend on Exposed
+data class Database(
+   val db: ExposedDatabase
+)
+
+fun newDatabase(filepath: String): Database {
+  val source = HikariDataSource()
+  source.jdbcUrl = "jdbc:sqlite:$filepath"
+  val db = ExposedDatabase.connect(source)
+  TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
+  return Database(db)
+}
+
 // Thin wrapper for later additional features like being able to toggle global SQL logging
-fun <T> t(db: Database? = null, statement: Transaction.() -> T): T = transaction(db, statement)
+fun <T> t(db: Database, statement: Transaction.() -> T): T = transaction(db.db, statement)
 
 //object PlayerStatsTable : Table("player_stats") {
 //  val name = varchar("name", 255).primaryKey()

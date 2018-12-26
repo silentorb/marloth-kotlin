@@ -4,21 +4,22 @@ import generation.generateDefaultWorld
 import marloth.clienting.*
 import marloth.clienting.gui.plantGui
 import marloth.integration.*
-import mythic.platforming.Display
 import mythic.platforming.Platform
 import mythic.quartz.newTimestepState
 import mythic.quartz.updateTimestep
+import persistence.Database
+import persistence.newDatabase
 import simulation.simulationDelta
 
-data class App(
+data class GameApp(
     val platform: Platform,
     val config: GameConfig,
-    val display: Display = platform.display,
-    val client: Client = Client(platform, config.display)
+    val client: Client = Client(platform, config.display),
+    val db: Database = newDatabase("game.db")
 )
 
-tailrec fun gameLoop(app: App, state: AppState) {
-  app.display.swapBuffers()
+tailrec fun gameLoop(app: GameApp, state: AppState) {
+  app.platform.display.swapBuffers()
   app.platform.process.pollEvents()
 
   val windowInfo = app.client.getWindowInfo()
@@ -27,7 +28,7 @@ tailrec fun gameLoop(app: App, state: AppState) {
 
   val (nextClientState, commands) = updateClient(app.client, state.players, state.client, state.worlds.last(), boxes)
   val (timestep, steps) = updateTimestep(state.timestep, simulationDelta.toDouble())
-  val worlds = updateWorld(app.client.renderer.animationDurations, state, commands, steps)
+  val worlds = updateWorld(app.db, app.client.renderer.animationDurations, state, commands, steps)
 
   val nextState = state.copy(
       client = nextClientState,
@@ -41,7 +42,7 @@ tailrec fun gameLoop(app: App, state: AppState) {
 
 fun runApp(platform: Platform, config: GameConfig) {
   platform.display.initialize(config.display)
-  val app = App(
+  val app = GameApp(
       platform = platform,
       config = config
   )

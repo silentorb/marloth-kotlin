@@ -11,6 +11,7 @@ import lab.views.model.newModelViewState
 import marloth.clienting.Client
 import marloth.clienting.CommandType
 import marloth.clienting.newClientState
+import marloth.front.GameApp
 import marloth.integration.*
 import mythic.desktop.createDesktopPlatform
 import mythic.ent.pipe
@@ -74,12 +75,9 @@ fun generateDefaultWorld(gameViewConfig: GameViewConfig): World {
 }
 
 data class LabApp(
-    val platform: Platform,
+    val gameApp: GameApp,
     val config: LabConfig,
-    val gameConfig: GameConfig,
-    val display: Display = platform.display,
-    val client: Client = Client(platform, gameConfig.display),
-    val labClient: LabClient = LabClient(config, client),
+    val labClient: LabClient,
     val labConfigManager: ConfigManager<LabConfig>
 ) {
 
@@ -90,24 +88,25 @@ data class LabApp(
 private var saveIncrement = 0f
 
 tailrec fun labLoop(app: LabApp, state: LabState) {
-  app.display.swapBuffers()
+  val gameApp = app.gameApp
+  gameApp.platform.display.swapBuffers()
   val (timestep, steps) = updateAppTimestep(state.app.timestep)
 
-  app.platform.process.pollEvents()
+  gameApp.platform.process.pollEvents()
 
   val worlds = state.app.worlds
   val world = state.app.worlds.lastOrNull()
 
-  val (commands, nextState) = app.labClient.update(world, app.client.screens, state, timestep.delta.toFloat())
+  val (commands, nextState) = app.labClient.update(world, gameApp.client.screens, state, timestep.delta.toFloat())
 
   val newWorlds = when {
     commands.any { it.type == CommandType.newGame } -> listOf(app.newWorld())
-    app.config.view == Views.game -> updateWorld(app.client.renderer.animationDurations, state.app, commands, steps)
+    app.config.view == Views.game -> updateWorld(gameApp.db, gameApp.client.renderer.animationDurations, state.app, commands, steps)
     else -> worlds
   }
 
-  if (world != null && app.gameConfig.gameplay.defaultPlayerView != world.players[0].viewMode) {
-    app.gameConfig.gameplay.defaultPlayerView = world.players[0].viewMode
+  if (world != null && gameApp.config.gameplay.defaultPlayerView != world.players[0].viewMode) {
+    gameApp.config.gameplay.defaultPlayerView = world.players[0].viewMode
 //    saveGameConfig(app.gameConfig)
   }
 
@@ -119,7 +118,7 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
     updateWatching(app)
   }
 
-  if (!app.platform.process.isClosing())
+  if (!gameApp.platform.process.isClosing())
     labLoop(app, nextState.copy(
         app = nextState.app.copy(
             worlds = newWorlds,
@@ -128,9 +127,9 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
     ))
 }
 
-fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
+fun runApp(gameApp: GameApp, config: LabConfig) {
   globalProfiler().start("init-display")
-  platform.display.initialize(gameConfig.display)
+  gameApp.platform.display.initialize(gameApp.config.display)
   globalProfiler().start("world-gen")
   val world = if (config.gameView.autoNewGame)
     generateDefaultWorld(config.gameView)
@@ -138,14 +137,15 @@ fun runApp(platform: Platform, config: LabConfig, gameConfig: GameConfig) {
     null
 
   globalProfiler().start("app")
-  val app = LabApp(platform, config, gameConfig,
-      labConfigManager = ConfigManager(labConfigPath, config)
+  val app = LabApp(gameApp, config,
+      labConfigManager = ConfigManager(labConfigPath, config),
+      labClient = LabClient(config, gameApp.client)
   )
   if (world != null) {
-    setWorldMesh(world.realm, app.client)
+    setWorldMesh(world.realm, gameApp.client)
   }
 
-  val clientState = newClientState(gameConfig.input)
+  val clientState = newClientState(gameApp.config.input)
   val state = LabState(
       modelViewState = newModelViewState(),
       app = AppState(
@@ -171,6 +171,8 @@ object App {
     val gameConfig = loadGameConfig()
 //    startGui()
     globalProfiler().start("otherStart")
-    runApp(createDesktopPlatform("Dev Lab", gameConfig.display), config, gameConfig)
+    val platform = createDesktopPlatform("Dev Lab", gameConfig.display)
+    val gameApp = GameApp(platform, gameConfig)
+    runApp(gameApp, config)
   }
 }

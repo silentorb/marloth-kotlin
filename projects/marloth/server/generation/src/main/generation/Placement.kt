@@ -153,6 +153,7 @@ fun newPlayer(nextId: IdSource, playerNode: Node): Hand =
         player = Player(
             playerId = 1,
             id = 0,
+            name = "Unknown Hero",
             viewMode = ViewMode.firstPerson
         )
     )
@@ -168,8 +169,8 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
   val nextId = newIdSource(1)
   val deck = Deck(
       factions = entityMap(listOf(
-          Faction(1, "Misfits"),
-          Faction(2, "Monsters")
+          Faction(misfitsFaction, "Misfits"),
+          Faction(monstersFaction, "Monsters")
       ))
   )
       .plus(toDeck(newPlayer(nextId, playerNode)))

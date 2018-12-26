@@ -1,7 +1,7 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
 requires 'marloth_clienting', 'visualizing', 'configuration',
-    'quartz', 'platforming', 'generation', 'randomly', 'simulation', 'haft'
+    'quartz', 'platforming', 'generation', 'randomly', 'simulation', 'haft', 'persistence'
 
 buildscript {
   repositories {

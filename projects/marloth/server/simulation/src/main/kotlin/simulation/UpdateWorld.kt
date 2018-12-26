@@ -57,7 +57,7 @@ data class Intermediate(
 )
 
 fun generateIntermediateRecords(world: World, playerCommands: Commands, delta: Float): Intermediate {
-  val spiritCommands = pursueGoals(world, world.spirits)
+  val spiritCommands = pursueGoals(world, world.deck.spirits.values)
   val commands = playerCommands.plus(spiritCommands)
   val collisions: Collisions = world.bodies
       .filter { it.velocity != Vector3.zero }
@@ -68,7 +68,7 @@ fun generateIntermediateRecords(world: World, playerCommands: Commands, delta: F
         val walls = getWallCollisions(MovingBody(body.radius!!, body.position), offset, faces)
         walls.map { Collision(body.id, null, it.wall, it.hitPoint, it.directGap, it.travelingGap) }
       }
-      .plus(getBodyCollisions(world.deck.bodies, world.characterTable, world.missiles))
+      .plus(getBodyCollisions(world.deck.bodies, world.characterTable, world.deck.missiles.values))
   val activatedAbilities = getActivatedAbilities(world, commands)
 
   return Intermediate(
@@ -106,22 +106,35 @@ fun newEntities(world: World, nextId: IdSource, data: Intermediate): (Deck) -> D
   deck.plus(getNewMissiles(world.copy(deck = deck), nextId, data.activatedAbilities))
 }
 
-fun updateWorld(animationDurations: AnimationDurationMap, deck: Deck, world: World, playerCommands: Commands, delta: Float): World {
-  val nextId: IdSource = newIdSource(world.nextId)
-  val data = generateIntermediateRecords(world, playerCommands, delta)
+fun updateWorldDeck(animationDurations: AnimationDurationMap, playerCommands: Commands, delta: Float): (World) -> World =
+    { world ->
+      val nextId: IdSource = newIdSource(world.nextId)
+      val data = generateIntermediateRecords(world, playerCommands, delta)
 
-  val finalDeck = pipe(deck, listOf(
-      updateEntities(animationDurations, world, data),
-      removeEntities,
-      newEntities(world, nextId, data)
-  ))
+      val newDeck = pipe(world.deck, listOf(
+          updateEntities(animationDurations, world, data),
+          removeEntities,
+          newEntities(world, nextId, data)
+      ))
+      world.copy(
+          deck = newDeck,
+          nextId = nextId()
+      )
+    }
 
-//  val updatedDeck = updateEntities(animationDurations, deck, world, data)
-//  val finalDeck = removeEntities(updatedDeck, world)
-//      .plus(newEntities(world, nextId, data))
-
-  return world.copy(
-      deck = finalDeck,
-      nextId = nextId()
-  )
+val updateGlobalDetails: (World) -> World = { world ->
+  if (world.gameOver == null && isVictory(world))
+    world.copy(
+        gameOver = GameOver(
+            winningFaction = misfitsFaction
+        )
+    )
+  else
+    world
 }
+
+fun updateWorld(animationDurations: AnimationDurationMap, world: World, playerCommands: Commands, delta: Float): World =
+    pipe(world, listOf(
+        updateWorldDeck(animationDurations, playerCommands, delta),
+        updateGlobalDetails
+    ))
