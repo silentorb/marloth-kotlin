@@ -3,13 +3,13 @@ package mythic.desktop
 import haft.*
 import mythic.platforming.InputEvent
 import mythic.platforming.PlatformInput
+import mythic.platforming.keyboardDeviceIndex
+import mythic.platforming.mouseDeviceIndex
 import mythic.spatial.Vector2
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWScrollCallback
 
 val GamepadIndices = GLFW_JOYSTICK_1..GLFW_JOYSTICK_LAST
-const val keyboardDeviceIndex = 0
-const val mouseDeviceIndex = 1
 
 fun enumerateActiveGamepadIds(): List<Int> =
     GamepadIndices
@@ -144,20 +144,20 @@ class DesktopInput(val window: Long) : PlatformInput {
     mouseScrollYBuffer = 0f
   }
 
-  override fun getGamepads(): List<Gamepad> =
-      enumerateActiveGamepadIds()
-          .map { Gamepad(it, glfwGetJoystickName(it)) }
-
-  override val KeyboardInputSource = { key: Int ->
-    if (glfwGetKey(window, key) == GLFW_PRESS) {
-      1f
-    } else
-      0f
-  }
-
-  override val GamepadInputSource = gamepadInputSource
-
-  override val MouseInputSource = mouseInputSource(window)
+//  override fun getGamepads(): List<Gamepad> =
+//      enumerateActiveGamepadIds()
+//          .map { Gamepad(it, glfwGetJoystickName(it)) }
+//
+//  override val KeyboardInputSource = { key: Int ->
+//    if (glfwGetKey(window, key) == GLFW_PRESS) {
+//      1f
+//    } else
+//      0f
+//  }
+//
+//  override val GamepadInputSource = gamepadInputSource
+//
+//  override val MouseInputSource = mouseInputSource(window)
 
   override fun getMousePosition(): Vector2 {
     val tempX = DoubleArray(1)

@@ -128,8 +128,6 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
 }
 
 fun runApp(gameApp: GameApp, config: LabConfig) {
-  globalProfiler().start("init-display")
-  gameApp.platform.display.initialize(gameApp.config.display)
   globalProfiler().start("world-gen")
   val world = if (config.gameView.autoNewGame)
     generateDefaultWorld(config.gameView)
@@ -169,9 +167,9 @@ object App {
     val config = loadConfig<LabConfig>(labConfigPath) ?: LabConfig()
     globalProfiler().start("gameConfig")
     val gameConfig = loadGameConfig()
-//    startGui()
     globalProfiler().start("otherStart")
     val platform = createDesktopPlatform("Dev Lab", gameConfig.display)
+    platform.display.initialize(gameConfig.display)
     val gameApp = GameApp(platform, gameConfig)
     runApp(gameApp, config)
   }

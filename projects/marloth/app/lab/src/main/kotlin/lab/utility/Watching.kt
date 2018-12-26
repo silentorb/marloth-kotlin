@@ -75,8 +75,8 @@ fun reloadMeshes(renderer: Renderer){
 fun onPackageChanged(app: LabApp, watchedPackage: WatchedPackage) {
   when (watchedPackage) {
     WatchedPackage.rendering -> {
-      reloadTextures(app.client.renderer)
-      reloadMeshes(app.client.renderer)
+      reloadTextures(app.gameApp.client.renderer)
+      reloadMeshes(app.gameApp.client.renderer)
     }
   }
 }

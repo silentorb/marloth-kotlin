@@ -5,9 +5,12 @@ import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.currentView
 import mythic.bloom.ButtonState
 import mythic.ent.Id
+import mythic.platforming.InputEvent
 import mythic.platforming.PlatformInput
+import mythic.platforming.mouseDeviceIndex
 import mythic.spatial.Vector2
 import mythic.spatial.toVector2i
+import org.joml.Vector2i
 
 val gamepadSlotStart = 2
 
@@ -91,11 +94,11 @@ fun mouseMovementEvents(deviceStates: List<InputDeviceState>): HaftCommands<Comm
 //    listOf()
 }
 
-fun newBloomInputState(input: PlatformInput) =
+fun newBloomInputState(deviceState: InputDeviceState) =
     mythic.bloom.InputState(
-        mousePosition = input.getMousePosition().toVector2i(),
+        mousePosition = deviceState.mousePosition.toVector2i(),
         mouseButtons = listOf(
-            if (input.MouseInputSource(0) == 1f)
+            if (deviceState.events.any { it.device == mouseDeviceIndex && it.index == 0 })
               ButtonState.down
             else
               ButtonState.up

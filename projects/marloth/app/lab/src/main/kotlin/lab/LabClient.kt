@@ -25,18 +25,6 @@ data class LabState(
     val app: AppState
 )
 
-fun createLabDeviceHandlers(input: PlatformInput): List<ScalarInputSource> {
-  val gamepad = input.getGamepads().firstOrNull()
-  return listOf(
-      input.KeyboardInputSource,
-      input.MouseInputSource,
-      if (gamepad != null)
-        { trigger: Int -> input.GamepadInputSource(gamepad.id, trigger) }
-      else
-        disconnectedScalarInputSource
-  )
-}
-
 private var previousMousePosition = Vector2()
 
 fun getInputState(platformInput: PlatformInput, commands: List<HaftCommand<LabCommandType>>): LabCommandState {
@@ -59,7 +47,6 @@ class LabClient(val config: LabConfig, val client: Client) {
       LabCommandType.viewWorld to { _ -> config.view = Views.world },
       LabCommandType.viewTexture to { _ -> config.view = Views.texture }
   )
-  val deviceHandlers = createLabDeviceHandlers(client.platform.input)
 
   fun getBindings() = labInputConfig[Views.global]!!.plus(labInputConfig[config.view]!!)
 
@@ -157,7 +144,11 @@ class LabClient(val config: LabConfig, val client: Client) {
     val boxes = layout(seed)
     renderLab(windowInfo, boxes)
 
-    val bloomInputState = newBloomInputState(client.platform.input)
+    val newInputState = state.app.client.input.copy(
+        deviceStates = newDeviceStates
+    )
+
+    val bloomInputState = newBloomInputState(newDeviceStates.last())
     val newBloomState = updateBloomState(boxes, state.app.client.bloomState, bloomInputState)
 
     return LabClientResult(
@@ -166,9 +157,7 @@ class LabClient(val config: LabConfig, val client: Client) {
             app = state.app.copy(
                 client = state.app.client.copy(
                     bloomState = newBloomState,
-                    input = state.app.client.input.copy(
-                        deviceStates = newDeviceStates
-                    )
+                    input = newInputState
                 )
             )
         )

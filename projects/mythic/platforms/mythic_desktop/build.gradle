@@ -8,4 +8,4 @@ dependencies {
     compile "org.lwjgl:lwjgl-glfw:$lwjglVersion:$lwjglNatives"
 }
 
-requires 'platforming'
+requires 'platforming', 'haft'

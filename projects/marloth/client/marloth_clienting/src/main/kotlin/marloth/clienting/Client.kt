@@ -122,7 +122,7 @@ fun updateClient(client: Client, players: List<Int>, clientState: ClientState, w
   val strokes = clientCommandStrokes[bindingContext]!!
   val commands = mapEventsToCommands(newDeviceStates, strokes, getBinding)
 
-  val bloomInputState = newBloomInputState(client.platform.input)
+  val bloomInputState = newBloomInputState(newDeviceStates.last())
       .copy(events = haftToBloom(commands))
   val bloomState = updateBloomState(boxes, clientState.bloomState, bloomInputState)
 

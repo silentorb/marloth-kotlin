@@ -1,8 +1,5 @@
 package mythic.platforming
 
-import haft.Gamepad
-import haft.MultiDeviceScalarInputSource
-import haft.ScalarInputSource
 import mythic.spatial.Vector2
 import org.joml.Vector2i
 
@@ -13,14 +10,16 @@ data class InputEvent(
     val index: Int,
     val value: Float
 )
+const val keyboardDeviceIndex = 0
+const val mouseDeviceIndex = 1
 
 interface PlatformInput {
-  val KeyboardInputSource: ScalarInputSource
-  val GamepadInputSource: MultiDeviceScalarInputSource
-  val MouseInputSource: ScalarInputSource
+//  val KeyboardInputSource: ScalarInputSource
+//  val GamepadInputSource: MultiDeviceScalarInputSource
+//  val MouseInputSource: ScalarInputSource
   fun update()
   fun getMousePosition(): Vector2
-  fun getGamepads(): List<Gamepad>
+//  fun getGamepads(): List<Gamepad>
   fun isMouseVisible(value: Boolean)
   fun getEvents(): List<InputEvent>
 }

@@ -15,7 +15,6 @@
 && !(this instanceof java.lang.NoClassDefFoundError)
 && !(this instanceof java.lang.IncompatibleClassChangeError)
 && !(this instanceof java.lang.InterruptedException)
-&& !(this instanceof kotlin.reflect.jvm.internal.KotlinReflectionInternalError)
 && !(this instanceof sun.nio.fs.WindowsException)
 ```
 
