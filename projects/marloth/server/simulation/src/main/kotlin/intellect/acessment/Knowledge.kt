@@ -4,16 +4,17 @@ import mythic.ent.Entity
 import simulation.Character
 import mythic.ent.Id
 import mythic.spatial.Vector3
+import physics.SimpleBody
 import simulation.Table
 import simulation.World
 
 data class CharacterMemory(
     val lastSeen: Float,
     override val id: Id,
-    val position: Vector3,
-    val node: Id,
+    override val position: Vector3,
+    override val node: Id,
     val faction: Id
-) : Entity
+) : Entity, SimpleBody
 
 data class Knowledge(
     val spiritId: Id,

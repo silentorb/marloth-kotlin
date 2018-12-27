@@ -136,7 +136,7 @@ fun getSlideOffset(firstWall: ImmutableFace, others: List<WallCollision3>, offse
 
 var _i = 0
 fun getWallCollisionMovementOffset(collisions: List<WallCollision3>, offset: Vector3, body: MovingBody): WallCollision {
-  assert(collisions.size < 3)
+//  assert(collisions.size < 3)
   val walls = collisions.map { it.wall }
   val firstWall = walls.first()
   val normalizedOffset = offset.normalize()

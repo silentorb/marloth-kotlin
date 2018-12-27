@@ -108,7 +108,8 @@ fun <T> mapEventsToCommands(deviceStates: List<InputDeviceState>, strokes: Set<T
 
 fun <T> getBinding(bindings: List<Binding<T>>): BindingSource<T> = { event ->
   val binding = bindings.firstOrNull {
-    it.device == DeviceIndex.values()[event.device] && it.trigger == event.index
+    val values = DeviceIndex.values()
+    it.device == values[event.device] && it.trigger == event.index
   }
   if (binding != null)
     Pair(binding, 0)

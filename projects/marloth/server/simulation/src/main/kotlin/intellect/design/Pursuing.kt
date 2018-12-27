@@ -5,6 +5,7 @@ import intellect.acessment.Knowledge
 import intellect.acessment.character
 import intellect.acessment.getVisibleEnemies
 import intellect.execution.isInAttackRange
+import intellect.execution.spiritAttackRangeBuffer
 import mythic.ent.Id
 import physics.isInVoid
 import physics.voidNodeId
@@ -26,19 +27,23 @@ fun updatePursuit(world: World, knowledge: Knowledge, pursuit: Pursuit): Pursuit
 
   val targetEnemy = updateTargetEnemy(world, knowledge, pursuit)
   val target = knowledge.characters[pursuit.targetEnemy]
-  val path = if (target != null) {
+  val (path, targetPosition) = if (target != null) {
     val bodies = world.bodyTable
     val attackerBody = bodies[knowledge.spiritId]!!
     val ability = character(world, knowledge).abilities[0]
-    if (isInAttackRange(attackerBody, target.position, ability))
-      null
+    val range = ability.definition.range - spiritAttackRangeBuffer
+    val distance = attackerBody.position.distance(target.position)
+    val gap = distance - range
+    if (gap > 0f && attackerBody.node == target.node)
+      Pair(null, (target.position - attackerBody.position).normalize() * gap)
     else
-      updateAttackMovementPath(world, knowledge, target.id, pursuit.path)
+      Pair(updateAttackMovementPath(world, knowledge, target.id, pursuit.path), null)
   } else
-    updateRoamingPath(world, knowledge, pursuit)
+    Pair(updateRoamingPath(world, knowledge, pursuit), null)
 
   return Pursuit(
       targetEnemy = targetEnemy,
-      path = path
+      path = path,
+      targetPosition = targetPosition
   )
 }

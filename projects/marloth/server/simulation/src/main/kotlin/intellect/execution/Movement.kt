@@ -20,7 +20,7 @@ fun getPathTargetPosition(world: World, knowledge: Knowledge, path: Path): Vecto
   return (edge.middle + nearestPoint) / 2f
 }
 
-fun moveSpirit(world: World, knowledge: Knowledge, target: Vector3): Commands {
+fun moveStraightTowardPosition(world: World, knowledge: Knowledge, target: Vector3): Commands {
   val body = world.bodyTable[knowledge.spiritId]!!
   val position = body.position
   val offset = (target - position).normalize()
@@ -30,4 +30,4 @@ fun moveSpirit(world: World, knowledge: Knowledge, target: Vector3): Commands {
 }
 
 fun moveSpirit(world: World, knowledge: Knowledge, path: Path): Commands =
-    moveSpirit(world, knowledge, getPathTargetPosition(world, knowledge, path))
+    moveStraightTowardPosition(world, knowledge, getPathTargetPosition(world, knowledge, path))

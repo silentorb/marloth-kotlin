@@ -30,18 +30,23 @@ val voidNode: Node = Node(
     biome = Biome.void
 )
 
+interface SimpleBody {
+  val position: Vector3
+  val node: Id
+}
+
 data class Body(
     override val id: Id,
     val shape: Shape?,
-    val position: Vector3,
+    override val position: Vector3,
     val orientation: Quaternion,
     val velocity: Vector3 = Vector3(),
     val attributes: BodyAttributes,
     val gravity: Boolean,
 //    val friction: Float,
-    val node: Id,
+    override val node: Id,
     val perpetual: Boolean = false
-) : Entity {
+) : Entity, SimpleBody {
 
   val radius: Float?
     get() = shape?.getRadiusOrNull()
