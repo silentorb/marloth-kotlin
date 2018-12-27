@@ -3,7 +3,6 @@ package lab
 import marloth.integration.AppState
 import haft.*
 import lab.views.*
-import lab.views.game.updateGameView
 import lab.views.map.mapLayout
 import lab.views.map.updateMapState
 import lab.views.model.ModelView
@@ -61,19 +60,19 @@ class LabClient(val config: LabConfig, val client: Client) {
     client.renderer.prepareRender(windowInfo)
   }
 
-  fun updateGame(world: World?, screens: List<Screen>, state: LabState): LabClientResult {
-//    updateLabGameState(config.gameView, commands)
-    val (nextClientState, globalCommands) = updateGameView(client, world, state)
-    val commands = updateInput(mapOf(), nextClientState.input.deviceStates)
-
-    val newLabState = state.copy(
-        app = state.app.copy(
-            client = nextClientState
-        )
-    )
-
-    return LabClientResult(globalCommands, newLabState)
-  }
+//  fun updateGame(world: World?, screens: List<Screen>, state: LabState): LabClientResult {
+////    updateLabGameState(config.gameView, commands)
+//    val (nextClientState, globalCommands) = updateGameView(client, world, state)
+//    val commands = updateInput(mapOf(), nextClientState.input.deviceStates)
+//
+//    val newLabState = state.copy(
+//        app = state.app.copy(
+//            client = nextClientState
+//        )
+//    )
+//
+//    return LabClientResult(globalCommands, newLabState)
+//  }
 
   fun updateModel(windowInfo: WindowInfo, previousState: LabState, delta: Float): LabClientResult {
     prepareClient(windowInfo)
@@ -165,13 +164,13 @@ class LabClient(val config: LabConfig, val client: Client) {
   }
 
   fun update(world: World?, screens: List<Screen>, previousState: LabState, delta: Float): LabClientResult {
-    if (config.view != Views.game) {
+//    if (config.view != Views.game) {
       client.platform.input.isMouseVisible(true)
-    }
+//    }
 
     val windowInfo = client.platform.display.getInfo()
     return when (config.view) {
-      Views.game -> updateGame(world, screens, previousState)
+//      Views.game -> updateGame(world, screens, previousState)
       Views.model -> updateModel(windowInfo, previousState, delta)
       Views.texture -> updateTexture(windowInfo, previousState)
       Views.world -> updateWorld(windowInfo, world?.realm, previousState)

@@ -12,7 +12,10 @@ fun pursueGoal(world: World, knowledge: Knowledge, pursuit: Pursuit): Commands {
     isInVoid(world, knowledge.spiritId) -> listOf()
     pursuit.path != null -> moveSpirit(world, knowledge, pursuit.path)
     pursuit.targetEnemy != null -> spiritAttack(world, knowledge, pursuit)
-    else -> throw Error("Not supported")
+    else -> {
+      println("AI Error")
+      listOf()
+    }
   }
 }
 

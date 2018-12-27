@@ -7,10 +7,8 @@ import haft.DeviceIndex
 import haft.mapEventsToCommands
 import haft.simpleCommand
 import marloth.clienting.gui.*
-import mythic.bloom.BloomState
-import mythic.bloom.Boxes
+import mythic.bloom.*
 import mythic.bloom.ButtonState
-import mythic.bloom.updateBloomState
 import mythic.drawing.setGlobalFonts
 import mythic.ent.pipe
 import mythic.platforming.Platform
@@ -24,10 +22,11 @@ val maxPlayerCount = 4
 
 data class ClientState(
     val input: InputState,
-    val bloomState: BloomState
+    val bloomState: BloomState,
+    val view: ViewId
 )
 
-fun isGuiActive(state: ClientState): Boolean = currentView(state.bloomState.bag) != ViewId.none
+fun isGuiActive(state: ClientState): Boolean = state.view != ViewId.none
 
 fun newClientState(config: GameInputConfig) =
     ClientState(
@@ -54,7 +53,8 @@ fun newClientState(config: GameInputConfig) =
                 mouseButtons = listOf(ButtonState.up),
                 events = listOf()
             )
-        )
+        ),
+        view = ViewId.none
     )
 
 fun loadTextResource(): TextResources {
@@ -92,9 +92,7 @@ fun applyClientCommands(client: Client, state: ClientState, commands: UserComman
       ViewId.mainMenu
 
     state.copy(
-        bloomState = state.bloomState.copy(
-            bag = state.bloomState.bag.plus(currentViewKey to newView)
-        )
+        view = newView
     )
   } else
     state
@@ -135,7 +133,8 @@ fun updateClient(client: Client, players: List<Int>, clientState: ClientState, w
             input = state.input.copy(
                 deviceStates = newDeviceStates
             ),
-            bloomState = bloomState
+            bloomState = bloomState,
+            view = existingOrNewState(currentViewKey) { state.view }(bloomState.bag)
         )
       },
       // This needs to happen after applying updateBloomState to override flower state settings

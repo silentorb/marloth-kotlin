@@ -22,7 +22,7 @@ class CharacterDefinitions {
       health = 200,
       abilities = listOf(),
       depictionType = DepictionType.child,
-      maxSpeed = 2.5f
+      maxSpeed = 5f
   )
 
   val ally = CharacterDefinition(

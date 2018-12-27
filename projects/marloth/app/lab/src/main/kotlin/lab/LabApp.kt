@@ -26,13 +26,6 @@ import kotlin.concurrent.thread
 
 const val labConfigPath = "labConfig.yaml"
 
-fun startGui() {
-  thread(true, false, null, "JavaFX GUI", -1) {
-    //    val gui = LabGui(setModelCode, getModelCode)
-//    LabGui.mainMenu(listOf())
-  }
-}
-
 fun saveLabConfig(config: LabConfig) {
   saveConfig("labConfig.yaml", config)
 }
@@ -81,50 +74,54 @@ data class LabApp(
     val labConfigManager: ConfigManager<LabConfig>
 ) {
 
-  fun newWorld() =
-      generateDefaultWorld(config.gameView)
+  val newWorld = { generateDefaultWorld(config.gameView) }
 }
 
 private var saveIncrement = 0f
 
 tailrec fun labLoop(app: LabApp, state: LabState) {
   val gameApp = app.gameApp
-  gameApp.platform.display.swapBuffers()
-  val (timestep, steps) = updateAppTimestep(state.app.timestep)
+  val newAppState = if (app.config.view == Views.game) {
+    val newState = updateAppState(gameApp, app.newWorld)(state.app)
+    app.labClient.updateInput(mapOf(), newState.client.input.deviceStates)
+    newState
+  } else {
+    gameApp.platform.display.swapBuffers()
+    val (timestep, steps) = updateAppTimestep(state.app.timestep)
 
-  gameApp.platform.process.pollEvents()
+    gameApp.platform.process.pollEvents()
 
-  val worlds = state.app.worlds
-  val world = state.app.worlds.lastOrNull()
+    val worlds = state.app.worlds
+    val world = state.app.worlds.lastOrNull()
 
-  val (commands, nextState) = app.labClient.update(world, gameApp.client.screens, state, timestep.delta.toFloat())
+    val (commands, newState) = app.labClient.update(world, gameApp.client.screens, state, timestep.delta.toFloat())
 
-  val newWorlds = when {
-    commands.any { it.type == CommandType.newGame } -> listOf(app.newWorld())
-    app.config.view == Views.game -> updateWorld(gameApp.db, gameApp.client.renderer.animationDurations, state.app, commands, steps)
-    else -> worlds
-  }
+//    val newWorlds = when {
+//      commands.any { it.type == CommandType.newGame } -> listOf(app.newWorld())
+//      app.config.view == Views.game -> updateWorld(gameApp.db, gameApp.client.renderer.animationDurations, state.app, commands, steps)
+//      else -> worlds
+//    }
 
-  if (world != null && gameApp.config.gameplay.defaultPlayerView != world.players[0].viewMode) {
-    gameApp.config.gameplay.defaultPlayerView = world.players[0].viewMode
-//    saveGameConfig(app.gameConfig)
-  }
+    if (world != null && gameApp.config.gameplay.defaultPlayerView != world.players[0].viewMode) {
+      gameApp.config.gameplay.defaultPlayerView = world.players[0].viewMode
+    }
 
-  saveIncrement += 1f * timestep.delta.toFloat()
-  if (saveIncrement > 1f) {
-    saveIncrement = 0f
+    saveIncrement += 1f * timestep.delta.toFloat()
+    if (saveIncrement > 1f || app.config.view == Views.game) {
+      saveIncrement = 0f
 //    saveLabConfig(app.config)
-    app.labConfigManager.save()
-    updateWatching(app)
+      app.labConfigManager.save()
+      updateWatching(app)
+    }
+    newState.app.copy(
+        timestep = timestep
+    )
   }
 
   if (!gameApp.platform.process.isClosing())
-    labLoop(app, nextState.copy(
-        app = nextState.app.copy(
-            worlds = newWorlds,
-            timestep = timestep
-        )
-    ))
+    labLoop(app, state.copy(
+        app = newAppState)
+    )
 }
 
 fun runApp(gameApp: GameApp, config: LabConfig) {

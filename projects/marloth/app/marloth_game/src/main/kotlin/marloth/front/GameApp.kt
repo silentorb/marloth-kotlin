@@ -2,7 +2,7 @@ package marloth.front
 
 import generation.generateDefaultWorld
 import marloth.clienting.*
-import marloth.clienting.gui.plantGui
+import marloth.clienting.gui.layoutGui
 import marloth.integration.*
 import mythic.platforming.Platform
 import mythic.quartz.newTimestepState
@@ -19,22 +19,7 @@ data class GameApp(
 )
 
 tailrec fun gameLoop(app: GameApp, state: AppState) {
-  app.platform.display.swapBuffers()
-  app.platform.process.pollEvents()
-
-  val windowInfo = app.client.getWindowInfo()
-  val boxes = plantGui(app.client, state.client, state.worlds.lastOrNull(), windowInfo)
-  renderMain(app.client, windowInfo, state, boxes)
-
-  val (nextClientState, commands) = updateClient(app.client, state.players, state.client, state.worlds.last(), boxes)
-  val (timestep, steps) = updateTimestep(state.timestep, simulationDelta.toDouble())
-  val worlds = updateWorld(app.db, app.client.renderer.animationDurations, state, commands, steps)
-
-  val nextState = state.copy(
-      client = nextClientState,
-      worlds = worlds,
-      timestep = timestep
-  )
+  val nextState = updateAppState(app, { throw Error("Not yet implemented.") })(state)
 
   if (!app.platform.process.isClosing())
     gameLoop(app, nextState)

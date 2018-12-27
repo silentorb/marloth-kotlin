@@ -2,7 +2,6 @@ package marloth.clienting
 
 import haft.*
 import marloth.clienting.gui.ViewId
-import marloth.clienting.gui.currentView
 import mythic.bloom.ButtonState
 import mythic.ent.Id
 import mythic.platforming.InputEvent
@@ -10,9 +9,6 @@ import mythic.platforming.PlatformInput
 import mythic.platforming.mouseDeviceIndex
 import mythic.spatial.Vector2
 import mythic.spatial.toVector2i
-import org.joml.Vector2i
-
-val gamepadSlotStart = 2
 
 typealias UserCommand = HaftCommand<CommandType>
 
@@ -39,11 +35,6 @@ data class InputProfile(
     val bindings: GroupedBindings
 )
 
-data class PlayerInputProfile(
-    val player: Int,
-    val profile: Id
-)
-
 data class PlayerDevice(
     val player: Id,
     val device: DeviceIndex
@@ -66,7 +57,7 @@ fun newInputDeviceState() =
     )
 
 fun bindingContext(clientState: ClientState): BindingContext =
-    if (currentView(clientState.bloomState.bag) != ViewId.none)
+    if (clientState.view != ViewId.none)
       BindingContext.menu
     else
       BindingContext.game

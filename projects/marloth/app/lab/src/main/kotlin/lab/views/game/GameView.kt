@@ -6,14 +6,12 @@ import haft.isActive
 import lab.LabCommandType
 import lab.LabState
 import marloth.clienting.*
-import marloth.clienting.gui.plantGui
-import mythic.bloom.Bounds
+import marloth.clienting.gui.layoutGui
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
 import mythic.sculpting.ImmutableFace
 import mythic.sculpting.getVerticesCenter
 import mythic.spatial.*
-import org.joml.Vector4i
 import org.joml.zw
 import rendering.*
 import rendering.shading.ObjectShaderConfig
@@ -150,19 +148,19 @@ fun renderWireframeScene(renderer: GameSceneRenderer) {
 //  renderer.finishRender(windowInfo)
 //}
 
-fun updateLabGameState(config: GameViewConfig, commands: List<HaftCommand<LabCommandType>>) {
-  if (isActive(commands, LabCommandType.toggleMeshDisplay)) {
-    config.displayMode = if (config.displayMode == GameDisplayMode.normal)
-      GameDisplayMode.wireframe
-    else
-      GameDisplayMode.normal
-  }
-}
+//fun updateLabGameState(config: GameViewConfig, commands: List<HaftCommand<LabCommandType>>) {
+//  if (isActive(commands, LabCommandType.toggleMeshDisplay)) {
+//    config.displayMode = if (config.displayMode == GameDisplayMode.normal)
+//      GameDisplayMode.wireframe
+//    else
+//      GameDisplayMode.normal
+//  }
+//}
 
-fun updateGameView(client: Client, world: World?, state: LabState): Pair<ClientState, UserCommands> {
-  val windowInfo = client.getWindowInfo()
-  val boxes = plantGui(client, state.app.client, world, windowInfo)
-  renderMain(client, windowInfo, state.app, boxes)
-  val players = client.screens.map { it.playerId }
-  return updateClient(client, players, state.app.client, world, boxes)
-}
+//fun updateGameView(client: Client, world: World?, state: LabState): Pair<ClientState, UserCommands> {
+//  val windowInfo = client.getWindowInfo()
+//  val boxes = layoutGui(client, state.app.client, world, windowInfo)
+//  renderMain(client, windowInfo, state.app, boxes)
+//  val players = client.screens.map { it.playerId }
+//  return updateClient(client, players, state.app.client, world, boxes)
+//}

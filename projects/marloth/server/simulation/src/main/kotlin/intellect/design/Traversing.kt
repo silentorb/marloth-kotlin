@@ -19,7 +19,7 @@ fun getNextPathFace(world: World, knowledge: Knowledge, path: Path): Id? {
 fun pathIsAccessible(world: World, knowledge: Knowledge, path: Path): Boolean =
     getNextPathFace(world, knowledge, path) != null
 
-fun startRoaming(world: World, knowledge: Knowledge): Path {
+fun startRoaming(world: World, knowledge: Knowledge): Path? {
   val body = world.bodyTable[knowledge.spiritId]!!
   val options = knowledge.nodes
       .filter {
@@ -29,9 +29,9 @@ fun startRoaming(world: World, knowledge: Knowledge): Path {
 
   val destination = Dice.global.getItem(options)
   val path = findPath(world.realm, body.node, destination)
-  assert(path != null)
-  assert(path!!.any())
-  assert(pathIsAccessible(world, knowledge, path))
+//  assert(path != null)
+//  assert(path!!.any())
+//  assert(pathIsAccessible(world, knowledge, path))
   return path
 }
 
@@ -43,7 +43,7 @@ fun getRemainingPath(node: Id, path: Path): Path {
     path.drop(index + 1)
 }
 
-fun updateRoamingPath(world: World, knowledge: Knowledge, pursuit: Pursuit): Path {
+fun updateRoamingPath(world: World, knowledge: Knowledge, pursuit: Pursuit): Path? {
   return if (pursuit.path == null || !pathIsAccessible(world, knowledge, pursuit.path))
     startRoaming(world, knowledge)
   else {

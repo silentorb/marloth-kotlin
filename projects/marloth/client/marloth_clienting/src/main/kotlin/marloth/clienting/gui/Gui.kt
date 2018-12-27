@@ -59,11 +59,12 @@ fun victoryMenu(): Menu = listOfNotNull(
     MenuOption(CommandType.menu, Text.victory)
 )
 
-fun viewSelect(textResources: TextResources, bloomState: BloomState, world: World?): Flower? {
-  val view = currentView(bloomState.bag)
+fun isGameActive(world: World?): Boolean =
+    world != null && world.gameOver == null
 
+fun viewSelect(textResources: TextResources, world: World?, view: ViewId): Flower? {
   return when (view) {
-    ViewId.mainMenu -> menuFlower(textResources, mainMenu(world != null))
+    ViewId.mainMenu -> menuFlower(textResources, mainMenu(isGameActive(world)))
 
     ViewId.victory -> menuFlower(textResources, victoryMenu())
 
@@ -75,12 +76,12 @@ fun guiLayout(client: Client, clientState: ClientState, world: World?): Flower {
   val bloomState = clientState.bloomState
   return listOfNotNull(
       if (world != null) hudLayout(world) else null,
-      viewSelect(client.textResources, bloomState, world)
+      viewSelect(client.textResources, world, clientState.view)
   )
       .reduce { a, b -> a + b }
 }
 
-fun plantGui(client: Client, clientState: ClientState, world: World?, windowInfo: WindowInfo): Boxes {
+fun layoutGui(client: Client, clientState: ClientState, world: World?, windowInfo: WindowInfo): Boxes {
   val bounds = Bounds(Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y))
   val layout = guiLayout(client, clientState, world)
   val seed = Seed(
