@@ -56,6 +56,23 @@ fun newInputDeviceState() =
         mousePosition = Vector2()
     )
 
+fun newInputState(config: GameInputConfig) =
+    InputState(
+        deviceStates = listOf(newInputDeviceState()),
+        config = config,
+        profiles = mapOf(1L to defaultInputProfile()),
+        playerProfiles = mapOf(
+            1L to 1L
+        ),
+        deviceMap = mapOf(
+            0 to PlayerDevice(1, DeviceIndex.keyboard),
+            1 to PlayerDevice(1, DeviceIndex.keyboard),
+            2 to PlayerDevice(1, DeviceIndex.gamepad),
+            3 to PlayerDevice(1, DeviceIndex.gamepad),
+            4 to PlayerDevice(1, DeviceIndex.gamepad),
+            5 to PlayerDevice(1, DeviceIndex.gamepad)
+        )
+    )
 fun bindingContext(clientState: ClientState): BindingContext =
     if (clientState.view != ViewId.none)
       BindingContext.menu

@@ -5,11 +5,13 @@ import marloth.clienting.Client
 import marloth.clienting.ClientState
 import marloth.clienting.CommandType
 import mythic.bloom.*
+import mythic.bloom.ButtonState
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
 import mythic.glowing.globalState
 import mythic.platforming.WindowInfo
 import mythic.spatial.Vector4
+import org.joml.Vector2i
 import org.joml.Vector4i
 import simulation.World
 
@@ -24,6 +26,16 @@ val currentView = existingOrNewState(currentViewKey) { ViewId.none }
 
 const val menuCommandsKey = "menuCommands"
 val menuCommands = existingOrNewState(menuCommandsKey) { listOf<CommandType>() }
+
+fun newBloomState() =
+    BloomState(
+        bag = mapOf(),
+        input = mythic.bloom.InputState(
+            mousePosition = Vector2i(),
+            mouseButtons = listOf(ButtonState.up),
+            events = listOf()
+        )
+    )
 
 data class ButtonState(
     val text: String,

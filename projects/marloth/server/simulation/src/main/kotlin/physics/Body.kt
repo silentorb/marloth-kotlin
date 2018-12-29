@@ -7,6 +7,7 @@ import colliding.Shape
 import colliding.Sphere
 import mythic.ent.Entity
 import mythic.ent.Id
+import mythic.ent.Table
 import mythic.sculpting.ImmutableFaceTable
 import mythic.spatial.isInsidePolygon
 import simulation.*

@@ -1,5 +1,6 @@
 package simulation
 
+import mythic.ent.Table
 import mythic.spatial.interpolate
 
 fun <T> interpolateTables(scalar: Float, first: Table<T>, second: Table<T>, action: (Float, T, T) -> T): Table<T> =

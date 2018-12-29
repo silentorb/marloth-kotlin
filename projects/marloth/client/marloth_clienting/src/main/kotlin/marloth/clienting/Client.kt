@@ -3,16 +3,14 @@ package marloth.clienting
 import com.fasterxml.jackson.core.type.TypeReference
 import configuration.loadYamlResource
 import haft.BindingSource
-import haft.DeviceIndex
 import haft.mapEventsToCommands
 import haft.simpleCommand
 import marloth.clienting.gui.*
+import mythic.aura.SoundLibrary
 import mythic.bloom.*
-import mythic.bloom.ButtonState
 import mythic.drawing.setGlobalFonts
 import mythic.ent.pipe
 import mythic.platforming.Platform
-import org.joml.Vector2i
 import rendering.DisplayConfig
 import rendering.Renderer
 import scenery.Screen
@@ -23,37 +21,17 @@ val maxPlayerCount = 4
 data class ClientState(
     val input: InputState,
     val bloomState: BloomState,
-    val view: ViewId
+    val view: ViewId,
+    val audio: AudioState
 )
 
 fun isGuiActive(state: ClientState): Boolean = state.view != ViewId.none
 
 fun newClientState(config: GameInputConfig) =
     ClientState(
-        input = InputState(
-            deviceStates = listOf(newInputDeviceState()),
-            config = config,
-            profiles = mapOf(1L to defaultInputProfile()),
-            playerProfiles = mapOf(
-                1L to 1L
-            ),
-            deviceMap = mapOf(
-                0 to PlayerDevice(1, DeviceIndex.keyboard),
-                1 to PlayerDevice(1, DeviceIndex.keyboard),
-                2 to PlayerDevice(1, DeviceIndex.gamepad),
-                3 to PlayerDevice(1, DeviceIndex.gamepad),
-                4 to PlayerDevice(1, DeviceIndex.gamepad),
-                5 to PlayerDevice(1, DeviceIndex.gamepad)
-            )
-        ),
-        bloomState = BloomState(
-            bag = mapOf(),
-            input = mythic.bloom.InputState(
-                mousePosition = Vector2i(),
-                mouseButtons = listOf(ButtonState.up),
-                events = listOf()
-            )
-        ),
+        input = newInputState(config),
+        bloomState = newBloomState(),
+        audio = newAudioState(),
         view = ViewId.none
     )
 
@@ -66,10 +44,16 @@ class Client(val platform: Platform, displayConfig: DisplayConfig) {
   val renderer: Renderer = Renderer(displayConfig)
   val screens: List<Screen> = (1..maxPlayerCount).map { Screen(it) }
   val textResources: TextResources = loadTextResource()
+  val soundLibrary: SoundLibrary = mapOf()
   fun getWindowInfo() = platform.display.getInfo()
 
   init {
     setGlobalFonts(renderer.fonts)
+    platform.audio.start()
+  }
+
+  fun shutdown(){
+    platform.audio.stop()
   }
 }
 
@@ -78,13 +62,13 @@ fun updateMousePointerVisibility(platform: Platform) {
   platform.input.isMouseVisible(!windowHasFocus)
 }
 
-fun applyClientCommands(client: Client, state: ClientState, commands: UserCommands): ClientState {
+fun applyClientCommands(client: Client, commands: UserCommands): (ClientState) -> ClientState = { state ->
   val c = commands.map { it.type }
   if (c.contains(CommandType.quit)) {
     client.platform.process.close()
   }
 
-  return if (c.contains(CommandType.menu)) {
+  if (c.contains(CommandType.menu)) {
     val view = currentView(state.bloomState.bag)
     val newView = if (view == ViewId.mainMenu)
       ViewId.none
@@ -138,7 +122,8 @@ fun updateClient(client: Client, players: List<Int>, clientState: ClientState, w
         )
       },
       // This needs to happen after applying updateBloomState to override flower state settings
-      { state -> applyClientCommands(client, state, allCommands) }
+      applyClientCommands(client, allCommands),
+      updateClientStateAudio(client)
   ))
   return Pair(newClientState, allCommands)
 }

@@ -7,6 +7,7 @@ import rendering.*
 import scenery.*
 import simulation.*
 import mythic.ent.Id
+import mythic.ent.Table
 import scenery.Light
 
 val firstPersonCameraOffset = Vector3(0f, 0f, 1.4f)

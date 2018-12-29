@@ -148,6 +148,7 @@ fun runApp(gameApp: GameApp, config: LabConfig) {
   globalProfiler().stop()
   printProfiler(globalProfiler())
   labLoop(app, state)
+  app.gameApp.client.shutdown()
 }
 
 object App {

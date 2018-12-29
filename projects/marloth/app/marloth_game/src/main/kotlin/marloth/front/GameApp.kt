@@ -40,4 +40,5 @@ fun runApp(platform: Platform, config: GameConfig) {
       timestep = newTimestepState()
   )
   gameLoop(app, state)
+  app.client.shutdown()
 }

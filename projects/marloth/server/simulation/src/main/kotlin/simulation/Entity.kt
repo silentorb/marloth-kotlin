@@ -1,6 +1,7 @@
 package simulation
 
 import mythic.ent.Entity
+import mythic.ent.Table
 
 enum class EntityType {
   character,

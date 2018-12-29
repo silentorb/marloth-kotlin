@@ -1,6 +1,7 @@
 package physics
 
 import mythic.ent.Id
+import mythic.ent.Table
 import mythic.sculpting.ImmutableFace
 import mythic.spatial.*
 import simulation.*

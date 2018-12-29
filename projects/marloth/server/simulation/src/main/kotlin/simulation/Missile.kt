@@ -3,6 +3,7 @@ package simulation
 import mythic.ent.Entity
 import mythic.ent.Id
 import mythic.ent.IdSource
+import mythic.ent.Table
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3

@@ -3,9 +3,9 @@ package intellect.acessment
 import mythic.ent.Entity
 import simulation.Character
 import mythic.ent.Id
+import mythic.ent.Table
 import mythic.spatial.Vector3
 import physics.SimpleBody
-import simulation.Table
 import simulation.World
 
 data class CharacterMemory(
