@@ -1,6 +1,6 @@
 package mythic.desktop
 
-import mythic.platforming.Display
+import mythic.platforming.PlatformDisplay
 import mythic.platforming.PlatformDisplayConfig
 import mythic.platforming.WindowInfo
 import org.joml.Vector2i
@@ -75,7 +75,7 @@ fun getWindowInfo(window: Long): WindowInfo {
   }
 }
 
-class DesktopDisplay(val window: Long) : Display {
+class DesktopDisplay(val window: Long) : PlatformDisplay {
 
   override fun initialize(config: PlatformDisplayConfig) = initializeWindow(window, config)
 

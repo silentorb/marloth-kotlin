@@ -33,11 +33,18 @@ interface PlatformDisplayConfig {
   var multisamples: Int
 }
 
-interface Display {
+interface PlatformDisplay {
   fun initialize(config: PlatformDisplayConfig)
   fun swapBuffers()
   fun getInfo(): WindowInfo
   fun hasFocus(): Boolean
+}
+
+interface PlatformAudio {
+  fun start()
+  val bufferSize: Int
+  fun update(bytes: ByteArray): Int
+  fun stop()
 }
 
 interface PlatformProcess {
@@ -47,7 +54,8 @@ interface PlatformProcess {
 }
 
 data class Platform(
-    val display: Display,
+    val audio: PlatformAudio,
+    val display: PlatformDisplay,
     val input: PlatformInput,
     val process: PlatformProcess
 )

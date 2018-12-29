@@ -26,7 +26,6 @@ class DesktopProcess(val window: Long) : PlatformProcess {
   }
 
   override fun isClosing(): Boolean = GLFW.glfwWindowShouldClose(window)
-
 }
 
 fun createDesktopPlatform(title: String, config: PlatformDisplayConfig): Platform {
@@ -36,8 +35,9 @@ fun createDesktopPlatform(title: String, config: PlatformDisplayConfig): Platfor
 
   val window = createWindow(title, config)
   return Platform(
-      DesktopDisplay(window),
-      DesktopInput(window),
-      DesktopProcess(window)
+      audio = DesktopAudio(),
+      display = DesktopDisplay(window),
+      input = DesktopInput(window),
+      process = DesktopProcess(window)
   )
 }

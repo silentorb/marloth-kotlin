@@ -1,6 +1,7 @@
 package mythic.ent
 
 typealias Id = Long
+typealias Table<T> = Map<Id, T>
 
 interface Entity {
   val id: Id

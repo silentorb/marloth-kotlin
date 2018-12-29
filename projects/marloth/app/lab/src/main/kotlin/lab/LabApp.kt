@@ -8,21 +8,16 @@ import generation.generateWorld
 import lab.utility.updateWatching
 import lab.views.game.GameViewConfig
 import lab.views.model.newModelViewState
-import marloth.clienting.Client
-import marloth.clienting.CommandType
 import marloth.clienting.newClientState
 import marloth.front.GameApp
 import marloth.integration.*
 import mythic.desktop.createDesktopPlatform
 import mythic.ent.pipe
-import mythic.platforming.Display
-import mythic.platforming.Platform
 import mythic.quartz.globalProfiler
 import mythic.quartz.newTimestepState
 import mythic.quartz.printProfiler
 import randomly.Dice
 import simulation.*
-import kotlin.concurrent.thread
 
 const val labConfigPath = "labConfig.yaml"
 

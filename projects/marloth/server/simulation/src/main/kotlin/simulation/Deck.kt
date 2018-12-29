@@ -1,13 +1,8 @@
 package simulation
 
 import intellect.Spirit
-import mythic.ent.Entity
-import mythic.ent.Id
-import mythic.ent.IdSource
-import mythic.ent.entityMap
+import mythic.ent.*
 import physics.Body
-
-typealias Table<T> = Map<Id, T>
 
 fun <T> mapTable(table: Table<T>, action: (T) -> T): Table<T> =
     table.mapValues { (_, value) -> action(value) }
