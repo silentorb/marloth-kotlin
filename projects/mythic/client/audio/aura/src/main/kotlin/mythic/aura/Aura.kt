@@ -5,36 +5,77 @@ import mythic.ent.Id
 import mythic.ent.Table
 import mythic.ent.pipe
 import mythic.platforming.PlatformAudio
+import java.nio.ByteBuffer
 
 data class SoundData(
     override val id: Id,
     val buffer: ByteArray,
-    val duration: Long
+    val duration: Double
 ) : Entity
 
 data class Sound(
     override val id: Id,
     val type: Id,
-    val progress: Long = 0L
+    val progress: Double = 0.0
 ) : Entity
+
+data class BufferState(
+    val maxSize: Int,
+    val bufferedBytes: Int
+)
+
+fun newBufferState(audio: PlatformAudio) =
+    BufferState(
+        maxSize = audio.bufferSize,
+        bufferedBytes = 0
+    )
 
 typealias SoundTable = Table<Sound>
 typealias SoundLibrary = Table<SoundData>
 
+
+data class AudioState(
+    val sounds: SoundTable,
+    val buffer: BufferState
+)
+
+fun newAudioState(audio: PlatformAudio) =
+    AudioState(
+        sounds = mapOf(),
+        buffer = newBufferState(audio)
+    )
+
+//fun updateAudioBuffer(state: BufferState, delta: Float): Pair<BufferState, Int> {
+//  val samplesPerSecond = 44100
+//  val bytesPerSample = 2 * 2
+//  return Math.ceil(samplesPerSecond * bytesPerSample * delta).toInt()
+//}
+
 private var kz = 0L
 
-fun updateSounds(audio: PlatformAudio, library: SoundLibrary): (SoundTable) -> SoundTable = { sounds ->
-  val bufferSize = audio.bufferSize
-  val progress = bufferSize.toLong()
-  val buffer = ByteArray(bufferSize) { i -> Math.sin((kz + i).toDouble() * 0.001f).toByte() }
-  kz += bufferSize
-  audio.update(buffer)
+fun updateSounds(audio: PlatformAudio, library: SoundLibrary, delta: Float): (SoundTable) -> SoundTable = { sounds ->
+  val samplesPerSecond = 44100
+  val bytesPerSample = 2 * 2
+  val samples = Math.ceil(samplesPerSecond * delta.toDouble()).toInt()
+  val bufferSize = bytesPerSample * samples
+  val buffer = ByteBuffer.allocate(bufferSize)
+  (0 until samples).forEach { i ->
+    val value = (Math.sin((kz + i).toDouble() * 0.1) * Short.MAX_VALUE * 0.99).toShort()
+    buffer.putShort(value)
+    buffer.putShort(value)
+  }
+
+  kz += samples
+  val b = ByteArray(bufferSize)
+  buffer.position(0)
+  buffer.get(b)
+  audio.update(b)
 
   pipe(sounds, listOf(
       { s ->
         s.mapValues { (_, sound) ->
           sound.copy(
-              progress = sound.progress + progress
+              progress = sound.progress + delta
           )
         }
       },

@@ -9,7 +9,7 @@ fun defaultAudioFormat(): AudioFormat =
     AudioFormat(
         44100f,
         16,
-        1,
+        2,
         true,
         true // big endian like Java
     )
@@ -19,47 +19,38 @@ class DesktopAudio : PlatformAudio {
   val format = defaultAudioFormat()
 
   override fun start() {
-//    val devices = AudioSystem.getMixerInfo()
-//    if (devices.any()) {
-//      val source = AudioSystem.getSourceDataLine(format)!!
-//      sourceLine = source
-//    }
+    val devices = AudioSystem.getMixerInfo()
+    if (devices.any()) {
+      val source = AudioSystem.getSourceDataLine(format)!!
+      source.open(format)
+      source.start()
+      sourceLine = source
+    }
   }
-
 
   override val bufferSize: Int
     get() {
-      val source = AudioSystem.getSourceDataLine(format)
+      val source = sourceLine
       return if (source != null) {
-        source.open(format)
         val result = source.available()
-        source.close()
         result
       } else
         0
     }
 
   override fun update(bytes: ByteArray): Int {
-    val source = AudioSystem.getSourceDataLine(format)
-//    val source = sourceLine
+    val source = sourceLine
     return if (source != null) {
-      try {
-        source.open(format)
-        source.start()
-        source.write(bytes, 0, bytes.size)
-      }
-      finally {
-        source.drain()
-        source.close()
-      }
+      source.write(bytes, 0, bytes.size)
     } else
       0
   }
 
   override fun stop() {
-//    val source =  AudioSystem.getSourceDataLine(format)
-//    if (source != null) {
-//      source.close()
-//    }
+    val source = sourceLine
+    if (source != null) {
+      source.drain()
+      source.close()
+    }
   }
 }

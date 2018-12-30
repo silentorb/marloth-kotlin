@@ -69,7 +69,7 @@ fun updateAppState(app: GameApp, newWorld: () -> World): (AppState) -> AppState 
   renderMain(app.client, windowInfo, state, boxes)
 
   val (timestep, steps) = updateTimestep(state.timestep, simulationDelta.toDouble())
-  val (nextClientState, commands) = updateClient(app.client, state.players, updatedClient, state.worlds.last(), boxes)
+  val (nextClientState, commands) = updateClient(app.client, state.players, updatedClient, state.worlds.last(), boxes, timestep.delta.toFloat())
   val worlds = updateWorld(app.db, app.client.renderer.animationDurations, state, commands, steps, newWorld)
 
   state.copy(

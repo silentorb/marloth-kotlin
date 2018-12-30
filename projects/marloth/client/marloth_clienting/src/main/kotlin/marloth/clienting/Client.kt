@@ -6,7 +6,9 @@ import haft.BindingSource
 import haft.mapEventsToCommands
 import haft.simpleCommand
 import marloth.clienting.gui.*
+import mythic.aura.AudioState
 import mythic.aura.SoundLibrary
+import mythic.aura.newAudioState
 import mythic.bloom.*
 import mythic.drawing.setGlobalFonts
 import mythic.ent.pipe
@@ -27,11 +29,11 @@ data class ClientState(
 
 fun isGuiActive(state: ClientState): Boolean = state.view != ViewId.none
 
-fun newClientState(config: GameInputConfig) =
+fun newClientState(platform: Platform, config: GameInputConfig) =
     ClientState(
         input = newInputState(config),
         bloomState = newBloomState(),
-        audio = newAudioState(),
+        audio = newAudioState(platform.audio),
         view = ViewId.none
     )
 
@@ -96,7 +98,7 @@ fun getBinding(inputState: InputState, bindingMode: BindingContext): BindingSour
     null
 }
 
-fun updateClient(client: Client, players: List<Int>, clientState: ClientState, world: World?, boxes: Boxes): Pair<ClientState, UserCommands> {
+fun updateClient(client: Client, players: List<Int>, clientState: ClientState, world: World?, boxes: Boxes, delta: Float): Pair<ClientState, UserCommands> {
   updateMousePointerVisibility(client.platform)
   val bindingContext = bindingContext(clientState)
   val getBinding = getBinding(clientState.input, bindingContext)
@@ -123,7 +125,7 @@ fun updateClient(client: Client, players: List<Int>, clientState: ClientState, w
       },
       // This needs to happen after applying updateBloomState to override flower state settings
       applyClientCommands(client, allCommands),
-      updateClientStateAudio(client)
+      updateClientStateAudio(client, delta)
   ))
   return Pair(newClientState, allCommands)
 }
