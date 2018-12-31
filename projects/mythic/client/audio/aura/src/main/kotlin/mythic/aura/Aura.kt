@@ -6,10 +6,11 @@ import mythic.ent.Table
 import mythic.ent.pipe
 import mythic.platforming.PlatformAudio
 import java.nio.ByteBuffer
+import java.nio.ShortBuffer
 
 data class SoundData(
     override val id: Id,
-    val buffer: ByteArray,
+    val buffer: ShortBuffer,
     val duration: Double
 ) : Entity
 
@@ -33,10 +34,10 @@ fun newBufferState(audio: PlatformAudio) =
 typealias SoundTable = Table<Sound>
 typealias SoundLibrary = Table<SoundData>
 
-
 data class AudioState(
     val sounds: SoundTable,
-    val buffer: BufferState
+    val buffer: BufferState,
+    val nextSoundId: Id = 0L
 )
 
 fun newAudioState(audio: PlatformAudio) =

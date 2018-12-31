@@ -5,6 +5,9 @@ import configuration.loadYamlResource
 import haft.BindingSource
 import haft.mapEventsToCommands
 import haft.simpleCommand
+import marloth.clienting.audio.loadSounds
+import marloth.clienting.audio.newClientSounds
+import marloth.clienting.audio.updateClientStateAudio
 import marloth.clienting.gui.*
 import mythic.aura.AudioState
 import mythic.aura.SoundLibrary
@@ -46,7 +49,7 @@ class Client(val platform: Platform, displayConfig: DisplayConfig) {
   val renderer: Renderer = Renderer(displayConfig)
   val screens: List<Screen> = (1..maxPlayerCount).map { Screen(it) }
   val textResources: TextResources = loadTextResource()
-  val soundLibrary: SoundLibrary = mapOf()
+  val soundLibrary: SoundLibrary = loadSounds(platform.audio)
   fun getWindowInfo() = platform.display.getInfo()
 
   init {
@@ -54,7 +57,7 @@ class Client(val platform: Platform, displayConfig: DisplayConfig) {
     platform.audio.start()
   }
 
-  fun shutdown(){
+  fun shutdown() {
     platform.audio.stop()
   }
 }
@@ -125,7 +128,8 @@ fun updateClient(client: Client, players: List<Int>, clientState: ClientState, w
       },
       // This needs to happen after applying updateBloomState to override flower state settings
       applyClientCommands(client, allCommands),
-      updateClientStateAudio(client, delta)
+      updateClientStateAudio(client, delta),
+      newClientSounds(clientState)
   ))
   return Pair(newClientState, allCommands)
 }
