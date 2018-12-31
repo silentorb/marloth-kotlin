@@ -5,6 +5,7 @@ import mythic.ent.Id
 import mythic.ent.Table
 import mythic.ent.pipe
 import mythic.platforming.PlatformAudio
+import mythic.spatial.Vector3
 import java.nio.ByteBuffer
 import java.nio.ShortBuffer
 
@@ -17,7 +18,8 @@ data class SoundData(
 data class Sound(
     override val id: Id,
     val type: Id,
-    val progress: Long = 0L
+    val progress: Long = 0L,
+    val position: Vector3? = null
 ) : Entity
 
 data class BufferState(
@@ -53,19 +55,58 @@ fun audioBufferSamples(delta: Float): Int {
 
 private var kz = 0L
 
-fun updateSounds(audio: PlatformAudio, library: SoundLibrary, samples: Int): (SoundTable) -> SoundTable = { sounds ->
+private data class CalculatedSound(
+    val remainingSamples: Int,
+    val progress: Int,
+    val buffer: ShortBuffer,
+    val gain: Float
+)
+
+val maxSoundRange = 20f
+
+fun toDb(value: Float): Float {
+  val base = 10
+  val result = (Math.pow(base.toDouble(), value.toDouble()) - 1) / (base - 1)
+  return result.toFloat()
+}
+
+fun applyDistanceAttenuation(listenerPosition: Vector3?, sound: Sound, info: SoundData): Float =
+    if (sound.position != null) {
+      if (listenerPosition == null)
+        0f
+      else {
+        val distance = listenerPosition.distance(sound.position) - 2f
+        if (distance < 0f)
+          1f
+        else
+          toDb(1f - Math.min(1f, distance / 20f))
+      }
+    } else
+      1f
+
+fun updateSounds(audio: PlatformAudio, library: SoundLibrary, samples: Int, listenerPosition: Vector3?): (SoundTable) -> SoundTable = { sounds ->
   val bytesPerSample = 2 * 2
   val bufferSize = bytesPerSample * samples
   val buffer = ByteBuffer.allocate(bufferSize)
-  val activeSounds = sounds.values.map { sound ->
-    val info = library[sound.type]!!
-    Triple(info.duration - sound.progress, sound.progress, info.buffer)
-  }
+  val activeSounds = sounds.values
+      .map { sound ->
+        val info = library[sound.type]!!
+        val gain = applyDistanceAttenuation(listenerPosition, sound, info)
+
+        CalculatedSound(
+            remainingSamples = (info.duration - sound.progress).toInt(),
+            progress = sound.progress.toInt(),
+            buffer = info.buffer,
+            gain = gain
+        )
+      }
+      .filter { it.gain > 0f }
+
   (0 until samples).forEach { i ->
     //    val value = (Math.sin((kz + i).toDouble() * 0.1) * Short.MAX_VALUE * 0.99).toShort()
     val value: Short = activeSounds
-        .filter { i < it.first }
-        .map { it.third.get(it.second.toInt() + i) }
+        .filter { i < it.remainingSamples }
+        .map { it.buffer.get(it.progress + i) * it.gain }
         .sum()
         .toShort()
 

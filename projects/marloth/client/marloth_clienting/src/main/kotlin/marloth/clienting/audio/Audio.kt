@@ -5,16 +5,18 @@ import marloth.clienting.Client
 import marloth.clienting.ClientState
 import mythic.aura.*
 import mythic.ent.Id
+import mythic.ent.entityMap
 import mythic.ent.newIdSource
 import mythic.platforming.PlatformAudio
+import mythic.spatial.Vector3
 import scenery.Sounds
 import simulation.World
 import java.nio.ShortBuffer
 
-fun updateAudioStateSounds(client: Client): (AudioState) -> AudioState = { state ->
+fun updateAudioStateSounds(client: Client, listenerPosition: Vector3?): (AudioState) -> AudioState = { state ->
   val samples = client.platform.audio.availableBuffer / 4
   val newSounds = if (samples > 0)
-    updateSounds(client.platform.audio, client.soundLibrary, samples)(state.sounds)
+    updateSounds(client.platform.audio, client.soundLibrary, samples, listenerPosition)(state.sounds)
   else
     state.sounds
 
@@ -23,8 +25,8 @@ fun updateAudioStateSounds(client: Client): (AudioState) -> AudioState = { state
   )
 }
 
-fun updateClientStateAudio(client: Client): (ClientState) -> ClientState = { state ->
-  val newAudio = updateAudioStateSounds(client)(state.audio)
+fun updateClientStateAudio(client: Client, listenerPosition: Vector3?): (ClientState) -> ClientState = { state ->
+  val newAudio = updateAudioStateSounds(client, listenerPosition)(state.audio)
   state.copy(
       audio = newAudio
   )
@@ -32,16 +34,9 @@ fun updateClientStateAudio(client: Client): (ClientState) -> ClientState = { sta
 
 fun newClientStateSounds(previous: ClientState, worlds: List<World>): (ClientState) -> ClientState = { state ->
   val nextId = newIdSource(state.audio.nextSoundId)
-  val newSounds = newClientSounds(previous, state)
-      .plus(newGameSounds(worlds))
-      .associate {
-        val id = nextId()
-        val sound = Sound(
-            id = id,
-            type = it.ordinal.toLong()
-        )
-        Pair(id, sound)
-      }
+  val newSounds = newClientSounds(nextId, previous, state)
+      .plus(entityMap(newGameSounds(nextId, worlds)))
+
   state.copy(
       audio = state.audio.copy(
           sounds = state.audio.sounds.plus(newSounds),

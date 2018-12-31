@@ -1,6 +1,7 @@
 package simulation
 
 import physics.BodyAttributes
+import scenery.Sounds
 
 class AbilityDefinitions {
 //  val shoot = AbilityDefinition(
@@ -22,21 +23,24 @@ class CharacterDefinitions {
       health = 200,
       abilities = listOf(),
       depictionType = DepictionType.child,
-      maxSpeed = 5f
+      maxSpeed = 5f,
+      deathSound = Sounds.girlScream
   )
 
   val ally = CharacterDefinition(
       health = 100,
       abilities = listOf(abilityDefinitions.slowShoot),
       depictionType = DepictionType.child,
-      maxSpeed = 3f
+      maxSpeed = 3f,
+      deathSound = Sounds.girlScream
   )
 
   val monster = CharacterDefinition(
       health = 100,
       abilities = listOf(abilityDefinitions.slowShoot),
       depictionType = DepictionType.person,
-      maxSpeed = 3f
+      maxSpeed = 3f,
+      deathSound = Sounds.hogDeath
   )
 }
 

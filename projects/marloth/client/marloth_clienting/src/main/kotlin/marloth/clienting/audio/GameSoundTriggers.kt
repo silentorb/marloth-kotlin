@@ -1,25 +1,52 @@
 package marloth.clienting.audio
 
+import mythic.aura.Sound
+import mythic.ent.IdSource
+import mythic.spatial.Vector3
 import scenery.Sounds
+import scenery.soundId
 import simulation.World
 import simulation.WorldPair
 
-fun isPlayerAlive(world: World): Boolean {
-  val player = world.players[0]
-  val character = world.deck.characters[player.id]!!
-  return character.isAlive
-}
+//fun isPlayerAlive(world: World): Boolean {
+//  val player = world.players[0]
+//  val character = world.deck.characters[player.id]!!
+//  return character.isAlive
+//}
+//
+//val characterDied: (WorldPair) -> Boolean = { worlds ->
+//  isPlayerAlive(worlds.first) && !isPlayerAlive(worlds.second)
+//}
 
-val playerDied: (WorldPair) -> Boolean = { worlds ->
-  isPlayerAlive(worlds.first) && !isPlayerAlive(worlds.second)
-}
+data class NewSound(
+    val type: Sounds,
+    val position: Vector3
+)
 
-fun newGameSounds(worldList: List<World>): List<Sounds> =
+fun deathSounds(worlds: WorldPair): List<NewSound> =
+    worlds.second.deck.characters.filter { (key, value) ->
+      val previous = worlds.first.deck.characters[key]
+      previous != null && previous.isAlive && !value.isAlive
+    }
+        .map {
+          val body = worlds.second.deck.bodies[it.key]!!
+          NewSound(
+              type = it.value.definition.deathSound,
+              position = body.position
+          )
+        }
+
+fun newGameSounds(nextId: IdSource, worldList: List<World>): List<Sound> =
     if (worldList.size != 2)
       listOf()
     else {
       val worlds = Pair(worldList.first(), worldList.last())
-      filterNewSounds(worlds, listOf(
-          Pair(playerDied, Sounds.girlScream)
-      ))
+      deathSounds(worlds)
+          .map {
+            Sound(
+                id = nextId(),
+                type = soundId(it.type),
+                position = it.position
+            )
+          }
     }

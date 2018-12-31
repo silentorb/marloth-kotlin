@@ -16,9 +16,11 @@ import mythic.bloom.*
 import mythic.drawing.setGlobalFonts
 import mythic.ent.pipe
 import mythic.platforming.Platform
+import mythic.spatial.Vector3
 import rendering.DisplayConfig
 import rendering.Renderer
 import scenery.Screen
+import simulation.Deck
 import simulation.World
 
 val maxPlayerCount = 4
@@ -101,6 +103,12 @@ fun getBinding(inputState: InputState, bindingMode: BindingContext): BindingSour
     null
 }
 
+fun getListenerPosition(deck: Deck): Vector3? {
+  val player = deck.players.keys.firstOrNull()
+  val body = deck.bodies[player]
+  return body?.position
+}
+
 fun updateClient(client: Client, players: List<Int>, clientState: ClientState, worlds: List<World>, boxes: Boxes, delta: Float): Pair<ClientState, UserCommands> {
   updateMousePointerVisibility(client.platform)
   val bindingContext = bindingContext(clientState)
@@ -128,7 +136,7 @@ fun updateClient(client: Client, players: List<Int>, clientState: ClientState, w
       },
       // This needs to happen after applying updateBloomState to override flower state settings
       applyClientCommands(client, allCommands),
-      updateClientStateAudio(client),
+      updateClientStateAudio(client, getListenerPosition(worlds.last().deck)),
       newClientStateSounds(clientState, worlds)
   ))
   return Pair(newClientState, allCommands)

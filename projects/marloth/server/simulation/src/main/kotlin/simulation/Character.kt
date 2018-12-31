@@ -12,6 +12,7 @@ import mythic.spatial.Vector3
 import org.joml.times
 import physics.*
 import scenery.AnimationId
+import scenery.Sounds
 import simulation.changing.*
 import simulation.input.filterCommands
 
@@ -19,7 +20,8 @@ data class CharacterDefinition(
     val health: Int,
     val maxSpeed: Float,
     val abilities: List<AbilityDefinition>,
-    val depictionType: DepictionType
+    val depictionType: DepictionType,
+    val deathSound: Sounds
 )
 
 data class Character(

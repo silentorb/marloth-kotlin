@@ -1,5 +1,6 @@
 package simulation
 
+import intellect.Spirit
 import intellect.execution.pursueGoals
 import intellect.updateAiState
 import mythic.ent.*
@@ -33,9 +34,9 @@ fun getFinished(deck: Deck): List<Id> {
   return deck.missiles.values
       .filter { isFinished(it) }
       .map { it.id }
-      .plus(deck.characters.values
-          .filter { !it.isAlive && !isPlayer(deck, it) }
-          .map { it.id })
+//      .plus(deck.characters.values
+//          .filter { !it.isAlive && !isPlayer(deck, it) }
+//          .map { it.id })
 }
 
 fun removeFinished(deck: Deck, finishedIds: List<Id>): Deck {
@@ -56,8 +57,14 @@ data class Intermediate(
     val collisions: Collisions
 )
 
+fun aliveSpirits(deck: Deck): Table<Spirit> =
+    deck.spirits.filterKeys {
+      val character = deck.characters[it]!!
+      character.isAlive
+    }
+
 fun generateIntermediateRecords(world: World, playerCommands: Commands, delta: Float): Intermediate {
-  val spiritCommands = pursueGoals(world, world.deck.spirits.values)
+  val spiritCommands = pursueGoals(world, aliveSpirits(world.deck).values)
   val commands = playerCommands.plus(spiritCommands)
   val collisions: Collisions = world.bodies
       .filter { it.velocity != Vector3.zero }
