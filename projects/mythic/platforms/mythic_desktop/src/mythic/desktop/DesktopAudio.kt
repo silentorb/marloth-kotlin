@@ -65,7 +65,7 @@ class DesktopAudio : PlatformAudio {
     }
   }
 
-  override val bufferSize: Int
+  override val availableBuffer: Int
     get() {
       val source = sourceLine
       return if (source != null) {

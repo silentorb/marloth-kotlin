@@ -1,4 +1,4 @@
-package visualizing
+package marloth.integration
 
 import mythic.spatial.*
 import org.joml.times
@@ -209,12 +209,12 @@ fun mapLights(world: World, player: Player) =
               direction = Vector4(0f, 0f, 0f, light.range)
           )
         }
-        .plus(Light(
-            type = LightType.point,
-            color = Vector4(1f, 1f, 1f, 0.5f),
-            position = world.bodyTable[player.id]!!.position + Vector3(0f, 0f, 2f),
-            direction = Vector4(0f, 0f, 0f, 10f)
-        ))
+//        .plus(Light(
+//            type = LightType.point,
+//            color = Vector4(1f, 1f, 1f, 0.5f),
+//            position = world.bodyTable[player.id]!!.position + Vector3(0f, 0f, 2f),
+//            direction = Vector4(0f, 0f, 0f, 10f)
+//        ))
 
 fun createScene(world: World, screen: Screen, player: Player): GameScene {
   val elementGroups = gatherVisualElements(world, screen, player)

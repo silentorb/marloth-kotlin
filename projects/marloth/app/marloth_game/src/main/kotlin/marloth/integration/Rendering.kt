@@ -3,16 +3,12 @@ package marloth.integration
 import marloth.clienting.Client
 import marloth.clienting.renderContainer
 import marloth.clienting.renderScene
-import mythic.bloom.BloomState
-import mythic.bloom.Bounds
 import mythic.bloom.Boxes
 import mythic.bloom.renderLayout
 import mythic.platforming.WindowInfo
-import org.joml.Vector4i
 import rendering.GameSceneRenderer
 import rendering.getPlayerViewports
 import simulation.interpolateWorlds
-import visualizing.createScenes
 
 fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: Boxes) =
     renderContainer(client, windowInfo) { canvas ->

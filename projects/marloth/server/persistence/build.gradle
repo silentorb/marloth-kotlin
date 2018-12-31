@@ -2,7 +2,6 @@ apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
 dependencies {
   compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.21.0.1'
-  compile group: 'com.zaxxer', name: 'HikariCP', version: '2.7.9'
   compile "org.jetbrains.kotlin:kotlin-stdlib"
   compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }

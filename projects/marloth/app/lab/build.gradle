@@ -2,6 +2,6 @@ apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
 requires(
     'spatial', 'drawing', 'bloom', 'generation', 'mythic_desktop',
-    'marloth_clienting', 'visualizing', 'quartz', 'platforming', 'marloth_game',
+    'marloth_clienting', 'quartz', 'platforming', 'marloth_game',
     'texture_generation', 'simulation', 'configuration'
 )

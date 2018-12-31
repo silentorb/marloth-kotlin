@@ -1,6 +1,7 @@
 package marloth.integration
 
 import marloth.clienting.ClientState
+import marloth.clienting.gui.gameIsActiveByClient
 import marloth.clienting.isGuiActive
 import mythic.quartz.TimestepState
 import mythic.quartz.updateTimestep
@@ -16,4 +17,5 @@ data class AppState(
 
 fun updateAppTimestep(timestepState: TimestepState) = updateTimestep(timestepState, simulationDelta.toDouble())
 
-fun gameIsActive(state: AppState): Boolean = !isGuiActive(state.client)
+fun gameIsActive(state: AppState): Boolean = gameIsActiveByClient(state.client)
+

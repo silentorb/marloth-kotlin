@@ -32,7 +32,7 @@ fun updateWorld(db: Database, animationDurations: AnimationDurationMap, state: A
   return when {
     userCommands.any { it.type == CommandType.newGame } -> listOf(newWorld())
 
-    worlds.any() && gameIsActive(state) -> {
+    worlds.any() -> {
       (1..steps).fold(worlds) { w, _ ->
         val world = w.last()
         val newWorld = simulation.updateWorld(animationDurations, world, commands, simulationDelta)
@@ -69,8 +69,11 @@ fun updateAppState(app: GameApp, newWorld: () -> World): (AppState) -> AppState 
   renderMain(app.client, windowInfo, state, boxes)
 
   val (timestep, steps) = updateTimestep(state.timestep, simulationDelta.toDouble())
-  val (nextClientState, commands) = updateClient(app.client, state.players, updatedClient, state.worlds.last(), boxes, timestep.delta.toFloat())
-  val worlds = updateWorld(app.db, app.client.renderer.animationDurations, state, commands, steps, newWorld)
+  val (nextClientState, commands) = updateClient(app.client, state.players, updatedClient, state.worlds, boxes, timestep.delta.toFloat())
+  val worlds = if (gameIsActive(state))
+    updateWorld(app.db, app.client.renderer.animationDurations, state, commands, steps, newWorld)
+  else
+    state.worlds.takeLast(1)
 
   state.copy(
       client = updateClientFromWorld(worlds, nextClientState),

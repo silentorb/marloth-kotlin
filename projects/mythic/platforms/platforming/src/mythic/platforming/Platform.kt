@@ -46,7 +46,7 @@ interface PlatformDisplay {
 
 interface PlatformAudio {
   fun start(latency: Int)
-  val bufferSize: Int
+  val availableBuffer: Int
   fun update(bytes: ByteArray): Int
   fun loadSound(filename: String): ShortBuffer
   fun stop()

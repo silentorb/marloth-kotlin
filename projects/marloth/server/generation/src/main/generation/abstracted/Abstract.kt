@@ -116,11 +116,11 @@ fun cleanupWorld(graph: Graph): Graph {
 
 fun applyInitialBiomes(biomeGrid: BiomeGrid, graph: Graph): NodeTable {
   val home = getDeadend(graph, 0)
-  val exit = getDeadend(graph, 1)
-  val remainingNodes = graph.nodes.minus(home.plus(exit))
+//  val exit = getDeadend(graph, 1)
+  val remainingNodes = graph.nodes.minus(home/*.plus(exit)*/)
   val biomeMap = remainingNodes.mapValues { (_, node) -> biomeGrid(node.position.x, node.position.y) }
       .plus(home.associate { Pair(it, Biome.home) })
-      .plus(exit.associate { Pair(it, Biome.exit) })
+//      .plus(exit.associate { Pair(it, Biome.exit) })
 
   return graph.nodes.mapValues {
     it.value.copy(

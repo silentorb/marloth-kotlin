@@ -27,7 +27,7 @@ data class BufferState(
 
 fun newBufferState(audio: PlatformAudio) =
     BufferState(
-        maxSize = audio.bufferSize,
+        maxSize = audio.availableBuffer,
         bufferedBytes = 0
     )
 

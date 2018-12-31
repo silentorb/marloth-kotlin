@@ -86,6 +86,8 @@ data class World(
     get() = deck.bodies.values
 }
 
+typealias WorldPair = Pair<World, World>
+
 fun addDeck(world: World, deck: Deck, nextId: IdSource): World {
   val newDeck = world.deck.plus(deck)
   return world.copy(

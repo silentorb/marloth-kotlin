@@ -1,6 +1,6 @@
 package persistence
 
-import com.zaxxer.hikari.HikariDataSource
+import org.sqlite.SQLiteDataSource
 import simulation.PlayerStats
 import simulation.Victory
 import java.io.File
@@ -12,8 +12,8 @@ data class Database(
 )
 
 fun newDatabase(filepath: String): Database {
-  val source = HikariDataSource()
-  source.jdbcUrl = "jdbc:sqlite:$filepath"
+  val source = SQLiteDataSource()
+  source.url = "jdbc:sqlite:$filepath"
   val db = Database(source)
   if (!File(filepath).exists())
     initializeDatabase(db)

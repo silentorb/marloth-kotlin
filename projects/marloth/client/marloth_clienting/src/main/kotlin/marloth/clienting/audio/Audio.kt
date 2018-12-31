@@ -8,16 +8,11 @@ import mythic.ent.Id
 import mythic.ent.newIdSource
 import mythic.platforming.PlatformAudio
 import scenery.Sounds
+import simulation.World
 import java.nio.ShortBuffer
 
-fun updateAudioStateSounds(client: Client, delta: Float): (AudioState) -> AudioState = { state ->
-  val availableBufferSize = client.platform.audio.bufferSize / 4
-  val deltaSamples = audioBufferSamples(delta)
-//  val samples = Math.min(deltaSamples, availableBufferSize)
-//  if (deltaSamples > availableBufferSize)
-//    println("$deltaSamples $availableBufferSize")
-
-  val samples = availableBufferSize
+fun updateAudioStateSounds(client: Client): (AudioState) -> AudioState = { state ->
+  val samples = client.platform.audio.availableBuffer / 4
   val newSounds = if (samples > 0)
     updateSounds(client.platform.audio, client.soundLibrary, samples)(state.sounds)
   else
@@ -28,16 +23,17 @@ fun updateAudioStateSounds(client: Client, delta: Float): (AudioState) -> AudioS
   )
 }
 
-fun updateClientStateAudio(client: Client, delta: Float): (ClientState) -> ClientState = { state ->
-  val newAudio = updateAudioStateSounds(client, delta)(state.audio)
+fun updateClientStateAudio(client: Client): (ClientState) -> ClientState = { state ->
+  val newAudio = updateAudioStateSounds(client)(state.audio)
   state.copy(
       audio = newAudio
   )
 }
 
-fun newClientSounds(previous: ClientState): (ClientState) -> ClientState = { state ->
+fun newClientStateSounds(previous: ClientState, worlds: List<World>): (ClientState) -> ClientState = { state ->
   val nextId = newIdSource(state.audio.nextSoundId)
-  val newSounds = getClientSounds(previous, state)
+  val newSounds = newClientSounds(previous, state)
+      .plus(newGameSounds(worlds))
       .associate {
         val id = nextId()
         val sound = Sound(

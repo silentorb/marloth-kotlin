@@ -40,7 +40,7 @@ fun lightRating(world: World, id: Id): Float {
 
 // Even in darkness AI will spot others if close enough
 fun nearMod(distance: Float): Float =
-    (1 - unitRange(4f, distance)) * 1.2f
+    (1 - unitRange(3f, distance)) * 1.2f
 
 fun canSee(world: World, viewer: Character, target: Id): Boolean {
   val viewerBody = world.bodyTable[viewer.id]!!
@@ -54,5 +54,5 @@ fun canSee(world: World, viewer: Character, target: Id): Boolean {
 }
 
 fun getVisibleCharacters(world: World, character: Character): List<Character> {
-  return world.characters.filter { it.id != character.id && it.isAlive && canSee(world, character, it.id) }
+  return world.characters.filter { it.id != character.id && canSee(world, character, it.id) }
 }

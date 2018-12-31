@@ -4,6 +4,7 @@ import haft.HaftCommands
 import marloth.clienting.Client
 import marloth.clienting.ClientState
 import marloth.clienting.CommandType
+import marloth.clienting.isGuiActive
 import mythic.bloom.*
 import mythic.bloom.ButtonState
 import mythic.drawing.Canvas
@@ -20,6 +21,11 @@ enum class ViewId {
   none,
   victory
 }
+
+fun gameIsActive(world: World?): Boolean =
+    world != null && world.gameOver == null
+
+fun gameIsActiveByClient(state: ClientState): Boolean = !isGuiActive(state)
 
 const val currentViewKey = "currentViewKey"
 val currentView = existingOrNewState(currentViewKey) { ViewId.none }
@@ -71,12 +77,9 @@ fun victoryMenu(): Menu = listOfNotNull(
     MenuOption(CommandType.menu, Text.victory)
 )
 
-fun isGameActive(world: World?): Boolean =
-    world != null && world.gameOver == null
-
 fun viewSelect(textResources: TextResources, world: World?, view: ViewId): Flower? {
   return when (view) {
-    ViewId.mainMenu -> menuFlower(textResources, mainMenu(isGameActive(world)))
+    ViewId.mainMenu -> menuFlower(textResources, mainMenu(gameIsActive(world)))
 
     ViewId.victory -> menuFlower(textResources, victoryMenu())
 

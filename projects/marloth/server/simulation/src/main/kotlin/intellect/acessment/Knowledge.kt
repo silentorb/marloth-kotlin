@@ -6,6 +6,7 @@ import mythic.ent.Id
 import mythic.ent.Table
 import mythic.spatial.Vector3
 import physics.SimpleBody
+import simulation.Biome
 import simulation.World
 
 data class CharacterMemory(
@@ -13,7 +14,8 @@ data class CharacterMemory(
     override val id: Id,
     override val position: Vector3,
     override val node: Id,
-    val faction: Id
+    val faction: Id,
+    val targetable: Boolean
 ) : Entity, SimpleBody
 
 data class Knowledge(
@@ -30,12 +32,14 @@ fun character(world: World, knowledge: Knowledge): Character =
 fun updateCharacterKnowledge(world: World, character: Character, knowledge: Knowledge, delta: Float): Table<CharacterMemory> {
   val fresh = getVisibleCharacters(world, character).associate { c ->
     val body = world.deck.bodies[c.id]!!
+    val node = world.realm.nodeTable[body.node]
     Pair(c.id, CharacterMemory(
         lastSeen = 0f,
         id = c.id,
         position = body.position,
         node = body.node,
-        faction = c.faction
+        faction = c.faction,
+        targetable = c.isAlive && (node == null || node.biome != Biome.home)
     ))
   }
 
@@ -60,4 +64,4 @@ fun updateKnowledge(world: World, character: Character, knowledge: Knowledge, de
 
 fun getVisibleEnemies(character: Character, knowledge: Knowledge): List<CharacterMemory> =
     knowledge.characters.values
-        .filter { it.faction != character.faction }
+        .filter { it.faction != character.faction && it.targetable }

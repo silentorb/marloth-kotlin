@@ -1,6 +1,6 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
-requires 'marloth_clienting', 'visualizing', 'configuration',
+requires 'marloth_clienting', 'configuration',
     'quartz', 'platforming', 'generation', 'randomly', 'simulation', 'haft', 'persistence'
 
 buildscript {
