@@ -48,11 +48,9 @@ fun newNodePosition(boundary: WorldBoundary, nodes: List<Node>, dice: Dice, radi
   while (true) {
     val position = Vector3(dice.getFloat(start.x, end.x), dice.getFloat(start.y, end.y), 0f)
     if (nodes.all { getNodeDistance(it, position, radius) > minNodeDistance }) {
-      println(step)
       return position
     }
     if (step++ > 30) {
-      println(step)
       return null
     }
   }

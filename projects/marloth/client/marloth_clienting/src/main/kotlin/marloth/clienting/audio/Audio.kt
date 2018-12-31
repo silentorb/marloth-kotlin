@@ -3,10 +3,7 @@ package marloth.clienting.audio
 import getResourceUrl
 import marloth.clienting.Client
 import marloth.clienting.ClientState
-import mythic.aura.AudioState
-import mythic.aura.Sound
-import mythic.aura.SoundData
-import mythic.aura.updateSounds
+import mythic.aura.*
 import mythic.ent.Id
 import mythic.ent.newIdSource
 import mythic.platforming.PlatformAudio
@@ -14,7 +11,17 @@ import scenery.Sounds
 import java.nio.ShortBuffer
 
 fun updateAudioStateSounds(client: Client, delta: Float): (AudioState) -> AudioState = { state ->
-  val newSounds = updateSounds(client.platform.audio, client.soundLibrary, delta)(state.sounds)
+  val availableBufferSize = client.platform.audio.bufferSize / 4
+  val deltaSamples = audioBufferSamples(delta)
+//  val samples = Math.min(deltaSamples, availableBufferSize)
+//  if (deltaSamples > availableBufferSize)
+//    println("$deltaSamples $availableBufferSize")
+
+  val samples = availableBufferSize
+  val newSounds = if (samples > 0)
+    updateSounds(client.platform.audio, client.soundLibrary, samples)(state.sounds)
+  else
+    state.sounds
 
   state.copy(
       sounds = newSounds
@@ -56,7 +63,7 @@ fun loadSounds(audio: PlatformAudio): Map<Id, SoundData> =
       val sound = SoundData(
           id = i.toLong(),
           buffer = buffer,
-          duration = buffer.limit().toDouble() / 44100
+          duration = buffer.limit().toLong()
       )
       Pair(sound.id, sound)
     }

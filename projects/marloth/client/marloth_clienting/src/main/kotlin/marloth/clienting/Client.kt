@@ -54,7 +54,7 @@ class Client(val platform: Platform, displayConfig: DisplayConfig) {
 
   init {
     setGlobalFonts(renderer.fonts)
-    platform.audio.start()
+    platform.audio.start(30)
   }
 
   fun shutdown() {

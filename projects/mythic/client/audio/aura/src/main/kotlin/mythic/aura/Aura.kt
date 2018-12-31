@@ -11,13 +11,13 @@ import java.nio.ShortBuffer
 data class SoundData(
     override val id: Id,
     val buffer: ShortBuffer,
-    val duration: Double
+    val duration: Long
 ) : Entity
 
 data class Sound(
     override val id: Id,
     val type: Id,
-    val progress: Double = 0.0
+    val progress: Long = 0L
 ) : Entity
 
 data class BufferState(
@@ -46,22 +46,29 @@ fun newAudioState(audio: PlatformAudio) =
         buffer = newBufferState(audio)
     )
 
-//fun updateAudioBuffer(state: BufferState, delta: Float): Pair<BufferState, Int> {
-//  val samplesPerSecond = 44100
-//  val bytesPerSample = 2 * 2
-//  return Math.ceil(samplesPerSecond * bytesPerSample * delta).toInt()
-//}
+fun audioBufferSamples(delta: Float): Int {
+  val samplesPerSecond = 44100
+  return Math.ceil(samplesPerSecond * delta.toDouble()).toInt()
+}
 
 private var kz = 0L
 
-fun updateSounds(audio: PlatformAudio, library: SoundLibrary, delta: Float): (SoundTable) -> SoundTable = { sounds ->
-  val samplesPerSecond = 44100
+fun updateSounds(audio: PlatformAudio, library: SoundLibrary, samples: Int): (SoundTable) -> SoundTable = { sounds ->
   val bytesPerSample = 2 * 2
-  val samples = Math.ceil(samplesPerSecond * delta.toDouble()).toInt()
   val bufferSize = bytesPerSample * samples
   val buffer = ByteBuffer.allocate(bufferSize)
+  val activeSounds = sounds.values.map { sound ->
+    val info = library[sound.type]!!
+    Triple(info.duration - sound.progress, sound.progress, info.buffer)
+  }
   (0 until samples).forEach { i ->
-    val value = (Math.sin((kz + i).toDouble() * 0.1) * Short.MAX_VALUE * 0.99).toShort()
+    //    val value = (Math.sin((kz + i).toDouble() * 0.1) * Short.MAX_VALUE * 0.99).toShort()
+    val value: Short = activeSounds
+        .filter { i < it.first }
+        .map { it.third.get(it.second.toInt() + i) }
+        .sum()
+        .toShort()
+
     buffer.putShort(value)
     buffer.putShort(value)
   }
@@ -76,7 +83,7 @@ fun updateSounds(audio: PlatformAudio, library: SoundLibrary, delta: Float): (So
       { s ->
         s.mapValues { (_, sound) ->
           sound.copy(
-              progress = sound.progress + delta
+              progress = sound.progress + samples
           )
         }
       },

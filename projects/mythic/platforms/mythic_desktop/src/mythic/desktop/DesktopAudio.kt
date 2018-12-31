@@ -41,16 +41,26 @@ fun loadSoundFromFile(filename: String): ShortBuffer {
   return rawAudioBuffer
 }
 
+fun millisecondsToBytes(milliseconds: Int): Int {
+  val sampleRate = 44100
+  val channels = 2
+  val byteDepth = 2
+  return milliseconds * sampleRate * channels * byteDepth / 1000
+}
+
 class DesktopAudio : PlatformAudio {
   var sourceLine: SourceDataLine? = null
   val format = defaultAudioFormat()
 
-  override fun start() {
-    val devices = AudioSystem.getMixerInfo()
-    if (devices.any()) {
-      val source = AudioSystem.getSourceDataLine(format)!!
-      source.open(format)
+  override fun start(latency: Int) {
+    val source = AudioSystem.getSourceDataLine(format)
+    if (source != null) {
+      val bufferSize = millisecondsToBytes(20)
+//      source.open(format)
+      source.open(format, bufferSize)
       source.start()
+      val actualSize = source.getBufferSize()
+      println("Audio buffer size: $actualSize, ${actualSize / 4}")
       sourceLine = source
     }
   }
