@@ -51,7 +51,7 @@ class LabClient(val config: LabConfig, val client: Client) {
 
   fun updateInput(viewCommands: LabCommandMap, deviceStates: List<InputDeviceState>): HaftCommands<LabCommandType> {
     val bindings = getBindings()
-    val commands = mapEventsToCommands(deviceStates, labCommandStrokes, haft.getBinding(bindings))
+    val commands = mapEventsToCommands(deviceStates, labCommandStrokes, haft.getBindingSimple(bindings))
     applyCommands(commands, viewCommands.plus(globalKeyPressCommands))
     return commands
   }

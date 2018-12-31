@@ -31,6 +31,7 @@ data class Character(
     val abilities: List<Ability> = listOf(),
     val faction: Id,
     val health: Resource,
+    val sanity: Resource,
     val isAlive: Boolean = true,
     val facingRotation: Vector3 = Vector3(),
     val lookVelocity: Vector2 = Vector2()
@@ -174,6 +175,7 @@ fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id,
           turnSpeed = Vector2(2f, 1f),
           faction = faction,
           health = Resource(definition.health),
+          sanity = Resource(100),
           abilities = abilities
       ),
       depiction = Depiction(
