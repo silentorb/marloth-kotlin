@@ -48,96 +48,56 @@ fun newAudioState(audio: PlatformAudio) =
         buffer = newBufferState(audio)
     )
 
-fun audioBufferSamples(delta: Float): Int {
-  val samplesPerSecond = 44100
-  return Math.ceil(samplesPerSecond * delta.toDouble()).toInt()
-}
-
-private var kz = 0L
-
-private data class CalculatedSound(
+data class CalculatedSound(
     val remainingSamples: Int,
     val progress: Int,
-    val buffer: ShortBuffer,
+    val instrument: (Int) -> Short,
     val gain: Float
 )
 
-val maxSoundRange = 40f
+fun prepareSounds(sounds: SoundTable, library: SoundLibrary, listenerPosition: Vector3?): List<CalculatedSound> =
+    sounds.values
+        .map { sound ->
+          val info = library[sound.type]!!
+          val gain = distanceAttenuation(listenerPosition, sound.position)
 
-fun toDb(value: Float): Float {
-  val base = 10
-  val result = (Math.pow(base.toDouble(), value.toDouble()) - 1) / (base - 1)
-  return result.toFloat()
-}
+          CalculatedSound(
+              remainingSamples = (info.duration - sound.progress).toInt(),
+              progress = sound.progress.toInt(),
+              instrument = { info.buffer.get(it) },
+              gain = gain
+          )
+        }
+        .filter { it.gain > 0f }
 
-fun applyDistanceAttenuation(listenerPosition: Vector3?, sound: Sound, info: SoundData): Float =
-    if (sound.position != null) {
-      if (listenerPosition == null)
-        0f
-      else {
-        val distance = listenerPosition.distance(sound.position) - 2f
-        if (distance < 0f)
-          1f
-        else
-          1f - Math.min(1f, distance / maxSoundRange)
-//        toDb(1f - Math.min(1f, distance / maxSoundRange))
-      }
-    } else
-      1f
+private const val useSineTest: Boolean = false
 
-private val cutoff: Int = (Short.MAX_VALUE * 0.7f).toInt()
-
-fun applyCutoff(value: Int): Int =
-    cutoff + (value - cutoff) / 8
-
-fun compress(value: Int): Int {
-  return when {
-    value > cutoff -> applyCutoff(value)
-    value < -cutoff -> -applyCutoff(-value)
-    else -> value
-  }
-}
-
-fun updateSounds(audio: PlatformAudio, library: SoundLibrary, samples: Int, listenerPosition: Vector3?): (SoundTable) -> SoundTable = { sounds ->
-  val bytesPerSample = 2 * 2
-  val bufferSize = bytesPerSample * samples
-  val buffer = ByteBuffer.allocate(bufferSize)
-  val activeSounds = sounds.values
-      .map { sound ->
-        val info = library[sound.type]!!
-        val gain = applyDistanceAttenuation(listenerPosition, sound, info)
-
-        CalculatedSound(
-            remainingSamples = (info.duration - sound.progress).toInt(),
-            progress = sound.progress.toInt(),
-            buffer = info.buffer,
-            gain = gain
-        )
-      }
-      .filter { it.gain > 0f }
+fun renderAudio(library: SoundLibrary, samples: Int, listenerPosition: Vector3?, sounds: SoundTable, buffer: ByteBuffer) {
+  val activeSounds = if (useSineTest)
+    sineTest(listenerPosition)
+  else
+    prepareSounds(sounds, library, listenerPosition)
 
   (0 until samples).forEach { i ->
-    //    val value = (Math.sin((kz + i).toDouble() * 0.1) * Short.MAX_VALUE * 0.99).toShort()
     val value: Int = activeSounds
         .filter { i < it.remainingSamples }
-        .map { (it.buffer.get(it.progress + i) * it.gain).toInt() }
+        .map { (it.instrument(it.progress + i) * it.gain).toInt() }
         .sum()
 
-    val compressedValue = compress(value)
+    val finalValue = pipe(value, listOf(
+        compress,
+        clip
+    ))
 
-    if (compressedValue < Short.MIN_VALUE || compressedValue > Short.MAX_VALUE) {
-      println("Exceeded buffer $value -> $compressedValue")
-    }
-    buffer.putShort(compressedValue.toShort())
-    buffer.putShort(compressedValue.toShort())
+    buffer.putShort(finalValue.toShort())
+    buffer.putShort(finalValue.toShort())
   }
 
-  kz += samples
-  val b = ByteArray(bufferSize)
-  buffer.position(0)
-  buffer.get(b)
-  audio.update(b)
+  if (useSineTest)
+    updateSineTest(samples)
+}
 
+fun updateSounds(library: SoundLibrary, samples: Int): (SoundTable) -> SoundTable = { sounds ->
   pipe(sounds, listOf(
       { s ->
         s.mapValues { (_, sound) ->
@@ -153,4 +113,17 @@ fun updateSounds(audio: PlatformAudio, library: SoundLibrary, samples: Int, list
         }
       }
   ))
+}
+
+fun getBufferSize(samples: Int): Int {
+  val bytesPerSample = 2 * 2
+  return bytesPerSample * samples
+}
+
+fun updateSounds(audio: PlatformAudio, library: SoundLibrary, samples: Int, listenerPosition: Vector3?): (SoundTable) -> SoundTable = { sounds ->
+  val bufferSize = getBufferSize(samples)
+  val buffer = getMixBuffer(bufferSize)
+  renderAudio(library, samples, listenerPosition, sounds, buffer)
+  updateAudioDeviceBuffer(audio, buffer, bufferSize)
+  updateSounds(library, samples)(sounds)
 }

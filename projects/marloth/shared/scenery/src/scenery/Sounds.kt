@@ -5,7 +5,8 @@ enum class Sounds {
   hogAmbient01,
   hogAmbient02,
   hogAmbient03,
-  hogDeath
+  hogDeath,
+  throwWeapon
 }
 
 fun soundId(sound: Sounds): Long = sound.ordinal.toLong()

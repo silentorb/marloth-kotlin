@@ -73,6 +73,8 @@ fun placeDoors(realm: Realm, nextId: IdSource): Deck =
         realm.doorFrameNodes.map { nodeId ->
           val node = realm.nodeTable[nodeId]!!
           val face = node.walls.first { realm.faces[it]!!.faceType != FaceType.wall }
+          val position = getCenter(realm.mesh.faces[node.floors.first()]!!.vertices)
+          mythic.spatial.globalPosition = position
           val id = nextId()
           Hand(
               door = Door(
@@ -80,7 +82,7 @@ fun placeDoors(realm: Realm, nextId: IdSource): Deck =
               ),
               body = Body(
                   id = id,
-                  position = getCenter(realm.mesh.faces[node.floors.first()]!!.vertices),
+                  position = position,
                   orientation = Quaternion().rotateTo(Vector3(0f, 1f, 0f), realm.mesh.faces[face]!!.normal),
                   attributes = doodadBodyAttributes,
                   shape = null,

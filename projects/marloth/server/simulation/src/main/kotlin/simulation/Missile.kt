@@ -45,8 +45,10 @@ fun characterAttack(world: World, nextId: IdSource, character: Character, abilit
 fun getBodyCollisions(bodies: Table<Body>, characterTable: Table<Character>, missiles: Collection<Missile>): List<Collision> {
   return missiles.flatMap { missile ->
     val body = bodies[missile.id]!!
-    val owner = bodies[missile.owner]
-    bodies.values.filter { it !== body && it !== owner }
+    bodies.values.filter {
+      val character = characterTable[it.id]
+      it.id != body.id && it.id != missile.owner && (character == null || character.isAlive)
+    }
         .filter { overlaps(it, body) }
         .map { hit ->
           Collision(
@@ -87,8 +89,3 @@ fun getNewMissiles(world: World, nextId: IdSource, activatedAbilities: List<Acti
     characterAttack(world, nextId, character, ability, character.facingVector)
   })
 }
-
-//fun updateMissiles(world: World, collisions: List<Collision>): List<Missile> {
-//  return world.missiles
-//      .map { updateMissile(world, it, collisions, simulationDelta) }
-//}

@@ -29,7 +29,6 @@ class Creatures {
       deathSound = Sounds.hogDeath,
       ambientSounds = listOf(
           Sounds.hogAmbient01,
-          Sounds.hogAmbient02,
           Sounds.hogAmbient03
       )
   )

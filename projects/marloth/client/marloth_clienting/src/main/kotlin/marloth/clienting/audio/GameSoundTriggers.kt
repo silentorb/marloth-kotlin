@@ -38,12 +38,22 @@ val deathSounds: (worlds: WorldPair) -> List<NewSound> = { worlds ->
 }
 
 val ambientSounds: (worlds: WorldPair) -> List<NewSound> = { worlds ->
-  worlds.second.deck.ambientSounds.values.filter { emitter ->
+  worlds.second.deck.ambientSounds.filter { (_, emitter) ->
     emitter.sound != null && worlds.first.deck.ambientSounds[emitter.id]?.sound == null
   }
-      .map { emitter ->
+      .map { (_, emitter) ->
         val body = worlds.second.deck.bodies[emitter.id]!!
         NewSound(emitter.sound!!, body.position)
+      }
+}
+
+val missileSounds: (worlds: WorldPair) -> List<NewSound> = { worlds ->
+  worlds.second.deck.missiles.filterKeys { id ->
+    worlds.first.deck.missiles[id] == null
+  }
+      .map { entry ->
+        val body = worlds.second.deck.bodies[entry.key]!!
+        NewSound(Sounds.throwWeapon, body.position)
       }
 }
 
@@ -54,7 +64,8 @@ fun newGameSounds(nextId: IdSource, worldList: List<World>): List<Sound> =
       val worlds = Pair(worldList.first(), worldList.last())
       listOf(
           ambientSounds,
-          deathSounds
+          deathSounds,
+          missileSounds
       )
           .flatMap { it(worlds) }
           .map {
