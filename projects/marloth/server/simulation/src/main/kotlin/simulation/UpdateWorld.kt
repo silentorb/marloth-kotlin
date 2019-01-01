@@ -12,6 +12,7 @@ import physics.updateBodies
 import physics.MovingBody
 import physics.getWallCollisions
 import physics.wallsInCollisionRange
+import randomly.Dice
 import simulation.input.updatePlayer
 
 const val simulationDelta = 1f / 60f
@@ -85,7 +86,7 @@ fun generateIntermediateRecords(world: World, playerCommands: Commands, delta: F
   )
 }
 
-fun updateEntities(animationDurations: AnimationDurationMap, world: World, data: Intermediate): (Deck) -> Deck =
+fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: World, data: Intermediate): (Deck) -> Deck =
     { deck ->
       val (commands, activatedAbilities, collisionMap) = data
 
@@ -95,6 +96,7 @@ fun updateEntities(animationDurations: AnimationDurationMap, world: World, data:
       )
 
       deck.copy(
+          ambientSounds = updateAmbientAudio(dice, deck),
           bodies = bodies,
           depictions = mapTable(deck.depictions, updateDepiction(bodyWorld, animationDurations)),
           characters = mapTable(deck.characters, updateCharacter(bodyWorld, collisionMap, commands, activatedAbilities)),
@@ -119,7 +121,7 @@ fun updateWorldDeck(animationDurations: AnimationDurationMap, playerCommands: Co
       val data = generateIntermediateRecords(world, playerCommands, delta)
 
       val newDeck = pipe(world.deck, listOf(
-          updateEntities(animationDurations, world, data),
+          updateEntities(world.dice, animationDurations, world, data),
           removeEntities,
           newEntities(world, nextId, data)
       ))

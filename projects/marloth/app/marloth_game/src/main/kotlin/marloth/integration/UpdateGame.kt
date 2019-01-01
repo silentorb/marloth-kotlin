@@ -11,7 +11,6 @@ import marloth.front.GameApp
 import mythic.quartz.updateTimestep
 import persistence.Database
 import persistence.createVictory
-import simulation.AnimationDurationMap
 import simulation.Victory
 import simulation.World
 import simulation.simulationDelta
@@ -26,24 +25,18 @@ fun updateSimulationDatabase(db: Database, next: World, previous: World) {
   }
 }
 
-fun updateWorld(db: Database, animationDurations: AnimationDurationMap, state: AppState, userCommands: UserCommands, steps: Int, newWorld: () -> World): List<World> {
+fun updateWorld(app: GameApp, state: AppState, userCommands: UserCommands, steps: Int): List<World> {
   val commands = mapCommands(state.players, userCommands)
   val worlds = state.worlds
-  return when {
-    userCommands.any { it.type == CommandType.newGame } -> listOf(newWorld())
-
-    worlds.any() -> {
-      (1..steps).fold(worlds) { w, _ ->
-        val world = w.last()
-        val newWorld = simulation.updateWorld(animationDurations, world, commands, simulationDelta)
-        updateSimulationDatabase(db, newWorld, world)
-        w.plus(newWorld)
-      }
-          .takeLast(2)
+  return if (worlds.any()) {
+    (1..steps).fold(worlds) { w, _ ->
+      val world = w.last()
+      val newWorld = simulation.updateWorld(app.client.renderer.animationDurations, world, commands, simulationDelta)
+      updateSimulationDatabase(app.db, newWorld, world)
+      w.plus(newWorld)
     }
-
-    else -> worlds
-  }
+        .takeLast(2)
+  } else worlds
 }
 
 fun updateClientFromWorld(worlds: List<World>, client: ClientState): ClientState {
@@ -70,10 +63,11 @@ fun updateAppState(app: GameApp, newWorld: () -> World): (AppState) -> AppState 
 
   val (timestep, steps) = updateTimestep(state.timestep, simulationDelta.toDouble())
   val (nextClientState, commands) = updateClient(app.client, state.players, updatedClient, state.worlds, boxes, timestep.delta.toFloat())
-  val worlds = if (gameIsActive(state))
-    updateWorld(app.db, app.client.renderer.animationDurations, state, commands, steps, newWorld)
-  else
-    state.worlds.takeLast(1)
+  val worlds = when {
+    commands.any { it.type == CommandType.newGame } -> listOf(newWorld())
+    gameIsActive(state) -> updateWorld(app, state, commands, steps)
+    else -> state.worlds.takeLast(1)
+  }
 
   state.copy(
       client = updateClientFromWorld(worlds, nextClientState),

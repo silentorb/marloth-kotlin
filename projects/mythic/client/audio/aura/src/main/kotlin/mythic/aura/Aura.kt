@@ -62,7 +62,7 @@ private data class CalculatedSound(
     val gain: Float
 )
 
-val maxSoundRange = 20f
+val maxSoundRange = 40f
 
 fun toDb(value: Float): Float {
   val base = 10
@@ -79,10 +79,24 @@ fun applyDistanceAttenuation(listenerPosition: Vector3?, sound: Sound, info: Sou
         if (distance < 0f)
           1f
         else
-          toDb(1f - Math.min(1f, distance / 20f))
+          1f - Math.min(1f, distance / maxSoundRange)
+//        toDb(1f - Math.min(1f, distance / maxSoundRange))
       }
     } else
       1f
+
+private val cutoff: Int = (Short.MAX_VALUE * 0.7f).toInt()
+
+fun applyCutoff(value: Int): Int =
+    cutoff + (value - cutoff) / 8
+
+fun compress(value: Int): Int {
+  return when {
+    value > cutoff -> applyCutoff(value)
+    value < -cutoff -> -applyCutoff(-value)
+    else -> value
+  }
+}
 
 fun updateSounds(audio: PlatformAudio, library: SoundLibrary, samples: Int, listenerPosition: Vector3?): (SoundTable) -> SoundTable = { sounds ->
   val bytesPerSample = 2 * 2
@@ -104,14 +118,18 @@ fun updateSounds(audio: PlatformAudio, library: SoundLibrary, samples: Int, list
 
   (0 until samples).forEach { i ->
     //    val value = (Math.sin((kz + i).toDouble() * 0.1) * Short.MAX_VALUE * 0.99).toShort()
-    val value: Short = activeSounds
+    val value: Int = activeSounds
         .filter { i < it.remainingSamples }
-        .map { it.buffer.get(it.progress + i) * it.gain }
+        .map { (it.buffer.get(it.progress + i) * it.gain).toInt() }
         .sum()
-        .toShort()
 
-    buffer.putShort(value)
-    buffer.putShort(value)
+    val compressedValue = compress(value)
+
+    if (compressedValue < Short.MIN_VALUE || compressedValue > Short.MAX_VALUE) {
+      println("Exceeded buffer $value -> $compressedValue")
+    }
+    buffer.putShort(compressedValue.toShort())
+    buffer.putShort(compressedValue.toShort())
   }
 
   kz += samples

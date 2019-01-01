@@ -14,6 +14,7 @@ import physics.*
 import scenery.AnimationId
 import scenery.Sounds
 import simulation.changing.*
+import simulation.data.characterBodyAttributes
 import simulation.input.filterCommands
 
 data class CharacterDefinition(
@@ -21,7 +22,8 @@ data class CharacterDefinition(
     val maxSpeed: Float,
     val abilities: List<AbilityDefinition>,
     val depictionType: DepictionType,
-    val deathSound: Sounds
+    val deathSound: Sounds,
+    val ambientSounds: List<Sounds> = listOf()
 )
 
 data class Character(
@@ -112,22 +114,6 @@ fun updateCharacter(world: World, collisions: Collisions, commands: Commands, ac
   updateCharacter(world, character, characterCommands, collisions, abilities, delta)
 }
 
-//fun updateCharacters(world: World, collisions: Collisions, commands: Commands, activatedAbilities: List<ActivatedAbility>): List<Character> {
-//  val delta = simulationDelta
-//  return world.characterTable.map { e ->
-//    val character = e.value
-//    val id = character.id
-//    val abilities = activatedAbilities.filter { it.character.id == character.id }
-//        .map { it.ability }
-//
-//    val characterCommands = pipe(commands, listOf(
-//        { c -> if (isAlive(world, id)) c else listOf() },
-//        { c -> c.filter { it.target == id } }
-//    ))
-//    updateCharacter(world, character, characterCommands, collisions, abilities, delta)
-//  }
-//}
-
 fun characterMovementFp(commands: Commands, character: Character, body: Body): MovementForce? {
   var offset = joinInputVector(commands, playerMoveMap)
   if (offset != null) {
@@ -159,6 +145,13 @@ fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id,
     )
   }
   return Hand(
+      ambientAudioEmitter = if (definition.ambientSounds.any())
+        AmbientAudioEmitter(
+            id = id,
+            delay = position.length() % 2.0
+        )
+      else
+        null,
       body = Body(
           id = id,
           shape = commonShapes[EntityType.character]!!,

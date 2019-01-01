@@ -3,11 +3,13 @@ package simulation
 import intellect.Spirit
 import mythic.ent.*
 import physics.Body
+import randomly.Dice
 
 fun <T> mapTable(table: Table<T>, action: (T) -> T): Table<T> =
     table.mapValues { (_, value) -> action(value) }
 
 data class Hand(
+    val ambientAudioEmitter: AmbientAudioEmitter? = null,
     val body: Body? = null,
     val character: Character? = null,
     val animation: ArmatureAnimation? = null,
@@ -20,6 +22,7 @@ data class Hand(
 )
 
 data class Deck(
+    val ambientSounds: Table<AmbientAudioEmitter> = mapOf(),
     val animations: Table<ArmatureAnimation> = mapOf(),
     val bodies: Table<Body> = mapOf(),
     val characters: Table<Character> = mapOf(),
@@ -32,6 +35,7 @@ data class Deck(
     val spirits: Table<Spirit> = mapOf()
 ) {
   fun plus(other: Deck) = this.copy(
+      ambientSounds = ambientSounds.plus(other.ambientSounds),
       animations = animations.plus(other.animations),
       bodies = bodies.plus(other.bodies),
       characters = characters.plus(other.characters),
@@ -53,6 +57,7 @@ fun <T : Entity> nullableList(entity: T?): Table<T> =
 
 fun toDeck(hand: Hand): Deck =
     Deck(
+        ambientSounds = nullableList(hand.ambientAudioEmitter),
         animations = nullableList(hand.animation),
         bodies = nullableList(hand.body),
         characters = nullableList(hand.character),
@@ -71,6 +76,7 @@ data class World(
     val realm: Realm,
     val nextId: Id,
     val deck: Deck,
+    val dice: Dice,
     val gameOver: GameOver? = null
 ) {
   val bodyTable: Table<Body> get() = deck.bodies

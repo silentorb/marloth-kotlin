@@ -11,7 +11,7 @@ import physics.Body
 import physics.Collision
 import physics.commonShapes
 import physics.overlaps
-import physics.hitsWall
+import simulation.data.missileBodyAttributes
 
 data class Missile(
     override val id: Id,

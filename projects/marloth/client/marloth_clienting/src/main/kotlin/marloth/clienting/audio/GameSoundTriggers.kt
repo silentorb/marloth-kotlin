@@ -23,25 +23,40 @@ data class NewSound(
     val position: Vector3
 )
 
-fun deathSounds(worlds: WorldPair): List<NewSound> =
-    worlds.second.deck.characters.filter { (key, value) ->
-      val previous = worlds.first.deck.characters[key]
-      previous != null && previous.isAlive && !value.isAlive
-    }
-        .map {
-          val body = worlds.second.deck.bodies[it.key]!!
-          NewSound(
-              type = it.value.definition.deathSound,
-              position = body.position
-          )
-        }
+val deathSounds: (worlds: WorldPair) -> List<NewSound> = { worlds ->
+  worlds.second.deck.characters.filter { (key, value) ->
+    val previous = worlds.first.deck.characters[key]
+    previous != null && previous.isAlive && !value.isAlive
+  }
+      .map {
+        val body = worlds.second.deck.bodies[it.key]!!
+        NewSound(
+            type = it.value.definition.deathSound,
+            position = body.position
+        )
+      }
+}
+
+val ambientSounds: (worlds: WorldPair) -> List<NewSound> = { worlds ->
+  worlds.second.deck.ambientSounds.values.filter { emitter ->
+    emitter.sound != null && worlds.first.deck.ambientSounds[emitter.id]?.sound == null
+  }
+      .map { emitter ->
+        val body = worlds.second.deck.bodies[emitter.id]!!
+        NewSound(emitter.sound!!, body.position)
+      }
+}
 
 fun newGameSounds(nextId: IdSource, worldList: List<World>): List<Sound> =
     if (worldList.size != 2)
       listOf()
     else {
       val worlds = Pair(worldList.first(), worldList.last())
-      deathSounds(worlds)
+      listOf(
+          ambientSounds,
+          deathSounds
+      )
+          .flatMap { it(worlds) }
           .map {
             Sound(
                 id = nextId(),

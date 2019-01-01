@@ -12,6 +12,8 @@ import physics.Body
 import physics.voidNode
 import randomly.Dice
 import simulation.*
+import simulation.data.creatures
+import simulation.data.doodadBodyAttributes
 
 data class CharacterTemplate(
     val faction: Id,
@@ -50,11 +52,11 @@ fun placeCharacters(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): D
   val templates = listOf(
       CharacterTemplate(
           faction = 1,
-          definition = characterDefinitions.ally
+          definition = creatures.ally
       ),
       CharacterTemplate(
           faction = 2,
-          definition = characterDefinitions.monster
+          definition = creatures.monster
       )
   )
 
@@ -147,7 +149,7 @@ fun newPlayer(nextId: IdSource, playerNode: Node): Hand =
     newCharacter(
         nextId = nextId,
         faction = 1,
-        definition = characterDefinitions.player,
+        definition = creatures.player,
         position = playerNode.position,
         node = playerNode.id,
         player = Player(
@@ -180,6 +182,7 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
   return World(
       deck = deck,
       nextId = nextId(),
-      realm = addVoidNode(realm)
+      realm = addVoidNode(realm),
+      dice = Dice()
   )
 }
