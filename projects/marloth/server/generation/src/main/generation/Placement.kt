@@ -147,20 +147,33 @@ fun placeWallLamps(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): De
   return toDeck(hands)
 }
 
-fun newPlayer(nextId: IdSource, playerNode: Node): Hand =
-    newCharacter(
-        nextId = nextId,
-        faction = 1,
-        definition = creatures.player,
-        position = playerNode.position,
-        node = playerNode.id,
-        player = Player(
-            playerId = 1,
-            id = 0,
-            name = "Unknown Hero",
-            viewMode = ViewMode.firstPerson
-        )
-    )
+fun newPlayer(nextId: IdSource, playerNode: Node): Deck {
+  val characterHand = newCharacter(
+      nextId = nextId,
+      faction = 1,
+      definition = creatures.player,
+      position = playerNode.position,
+      node = playerNode.id,
+      player = Player(
+          playerId = 1,
+          id = 0,
+          name = "Unknown Hero",
+          viewMode = ViewMode.firstPerson
+      )
+  )
+
+  val candle = Item(
+      id = nextId(),
+      owner = characterHand.character!!.id,
+      slot = 2,
+      type = ItemType.candle
+  )
+
+  return toDeck(characterHand.copy(character = characterHand.character!! equip candle.id))
+      .plus(toDeck(Hand(
+          item = candle
+      )))
+}
 
 fun addVoidNode(realm: Realm): Realm =
     realm.copy(
@@ -177,7 +190,7 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
           Faction(monstersFaction, "Monsters")
       ))
   )
-      .plus(toDeck(newPlayer(nextId, playerNode)))
+      .plus(newPlayer(nextId, playerNode))
       .plus(placeWallLamps(realm, nextId, input.dice, scale))
       .plus(placeDoors(realm, nextId))
 

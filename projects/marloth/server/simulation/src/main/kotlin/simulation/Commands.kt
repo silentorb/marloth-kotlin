@@ -5,6 +5,11 @@ import mythic.ent.Id
 enum class CommandType {
   none,
 
+  equipSlot0,
+  equipSlot1,
+  equipSlot2,
+  equipSlot3,
+
   lookLeft,
   lookRight,
   lookUp,

@@ -76,6 +76,10 @@ val firstPersonGamepadBindings = mapOf(
 )
 
 val allGamepadStrokeBindings = mapOf(
+    GAMEPAD_BUTTON_DPAD_UP to CommandType.equipSlot0,
+    GAMEPAD_BUTTON_DPAD_LEFT to CommandType.equipSlot1,
+    GAMEPAD_BUTTON_DPAD_RIGHT to CommandType.equipSlot2,
+    GAMEPAD_BUTTON_DPAD_DOWN to CommandType.equipSlot3,
     GAMEPAD_BUTTON_BACK to CommandType.switchView,
     GAMEPAD_BUTTON_START to CommandType.menu
 )

@@ -1,6 +1,7 @@
 package scenery
 
 enum class MeshId {
+  candle,
   childBody,
   childBoyClothes,
   childBoyHair,

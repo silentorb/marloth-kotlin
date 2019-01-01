@@ -3,6 +3,11 @@ package marloth.clienting
 enum class CommandType {
   none,
 
+  equipSlot0,
+  equipSlot1,
+  equipSlot2,
+  equipSlot3,
+
   lookLeft,
   lookRight,
   lookUp,
@@ -32,6 +37,10 @@ enum class CommandType {
 }
 
 private fun standardStrokes() = setOf(
+    CommandType.equipSlot0,
+    CommandType.equipSlot1,
+    CommandType.equipSlot2,
+    CommandType.equipSlot3,
     CommandType.switchView,
     CommandType.activateDevice,
     CommandType.joinGame,

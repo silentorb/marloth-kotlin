@@ -36,7 +36,8 @@ data class Character(
     val sanity: Resource,
     val isAlive: Boolean = true,
     val facingRotation: Vector3 = Vector3(),
-    val lookVelocity: Vector2 = Vector2()
+    val lookVelocity: Vector2 = Vector2(),
+    val equippedItem: Id? = null
 ) : Entity {
   val facingQuaternion: Quaternion
     get() = Quaternion()
@@ -58,6 +59,30 @@ data class ArmatureAnimation(
 fun isAlive(health: Int): Boolean =
     health > 0
 
+val equipCommandSlots: Map<CommandType, Int> = listOf(
+    CommandType.equipSlot0,
+    CommandType.equipSlot1,
+    CommandType.equipSlot2,
+    CommandType.equipSlot3
+).mapIndexed { index, commandType -> Pair(commandType, index) }
+    .associate { it }
+
+fun updateEquippedItem(deck: Deck, character: Character, commands: Commands): Id? {
+  val slot = commands
+      .mapNotNull { equipCommandSlots[it.type] }
+      .firstOrNull()
+
+  return if (slot != null) {
+    val itemId = getItemInSlot(deck, character.id, slot)
+        ?.id
+    if (itemId == character.equippedItem)
+      null
+    else
+      itemId
+  } else
+    character.equippedItem
+}
+
 fun updateCharacter(world: World, character: Character, commands: Commands, collisions: List<Collision>,
                     activatedAbilities: List<Ability>, delta: Float): Character {
   val lookForce = characterLookForce(character, commands)
@@ -74,7 +99,8 @@ fun updateCharacter(world: World, character: Character, commands: Commands, coll
         c.copy(
             isAlive = isAlive,
             health = character.health.copy(value = health),
-            abilities = abilities
+            abilities = abilities,
+            equippedItem = updateEquippedItem(world.deck, character, commands)
         )
       },
       { c ->

@@ -209,12 +209,17 @@ fun mapLights(world: World, player: Player) =
               direction = Vector4(0f, 0f, 0f, light.range)
           )
         }
-//        .plus(Light(
-//            type = LightType.point,
-//            color = Vector4(1f, 1f, 1f, 0.5f),
-//            position = world.bodyTable[player.id]!!.position + Vector3(0f, 0f, 2f),
-//            direction = Vector4(0f, 0f, 0f, 10f)
-//        ))
+        .plus(listOfNotNull(
+            if (isHolding(world.deck, player.id)(ItemType.candle))
+              Light(
+                  type = LightType.point,
+                  color = Vector4(1f, 1f, 1f, 0.6f),
+                  position = world.bodyTable[player.id]!!.position + Vector3(0f, 0f, 2f),
+                  direction = Vector4(0f, 0f, 0f, 18f)
+              )
+            else
+              null
+        ))
 
 fun createScene(world: World, screen: Screen, player: Player): GameScene {
   val elementGroups = gatherVisualElements(world, screen, player)
