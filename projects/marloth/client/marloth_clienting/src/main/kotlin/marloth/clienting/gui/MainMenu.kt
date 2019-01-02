@@ -1,9 +1,9 @@
 package marloth.clienting.gui
 
-import marloth.clienting.CommandType
+import marloth.clienting.input.GuiCommandType
 
 fun mainMenu(isGameActive: Boolean): Menu = listOfNotNull(
-    if (isGameActive) MenuOption(CommandType.menuBack, Text.continueGame) else null,
-    MenuOption(CommandType.newGame, Text.newGame),
-    MenuOption(CommandType.quit, Text.quit)
+    if (isGameActive) MenuOption(GuiCommandType.menuBack, Text.continueGame) else null,
+    MenuOption(GuiCommandType.newGame, Text.newGame),
+    MenuOption(GuiCommandType.quit, Text.quit)
 )

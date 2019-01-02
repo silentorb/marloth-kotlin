@@ -6,9 +6,9 @@ import haft.BindingSource
 import haft.mapEventsToCommands
 import haft.simpleCommand
 import marloth.clienting.audio.loadSounds
-import marloth.clienting.audio.newClientStateSounds
-import marloth.clienting.audio.updateClientStateAudio
 import marloth.clienting.gui.*
+import marloth.clienting.input.*
+import marloth.clienting.input.InputState
 import mythic.aura.AudioState
 import mythic.aura.SoundLibrary
 import mythic.aura.newAudioState
@@ -21,7 +21,6 @@ import rendering.DisplayConfig
 import rendering.Renderer
 import scenery.Screen
 import simulation.Deck
-import simulation.World
 
 val maxPlayerCount = 4
 
@@ -71,11 +70,11 @@ fun updateMousePointerVisibility(platform: Platform) {
 
 fun applyClientCommands(client: Client, commands: UserCommands): (ClientState) -> ClientState = { state ->
   val c = commands.map { it.type }
-  if (c.contains(CommandType.quit)) {
+  if (c.contains(GuiCommandType.quit)) {
     client.platform.process.close()
   }
 
-  if (c.contains(CommandType.menu)) {
+  if (c.contains(GuiCommandType.menu)) {
     val view = currentView(state.bloomState.bag)
     val newView = if (view == ViewId.mainMenu)
       ViewId.none
@@ -89,12 +88,12 @@ fun applyClientCommands(client: Client, commands: UserCommands): (ClientState) -
     state
 }
 
-fun getBinding(inputState: InputState, bindingMode: BindingContext): BindingSource<CommandType> = { event ->
+fun <T> getBinding(inputState: InputState, inputProfiles: Map<BloomId, InputProfile<T>>): BindingSource<T> = { event ->
   val playerDevice = inputState.deviceMap[event.device]
   if (playerDevice != null) {
     val playerProfile = inputState.playerProfiles[playerDevice.player]!!
-    val profile = inputState.profiles[playerProfile]!!
-    val binding = profile.bindings[bindingMode]!!.firstOrNull { it.device == playerDevice.device && it.trigger == event.index }
+    val profile = inputProfiles[playerProfile]!!
+    val binding = profile.bindings.firstOrNull { it.device == playerDevice.device && it.trigger == event.index }
     if (binding != null)
       Pair(binding, playerProfile.toInt())
     else
@@ -109,15 +108,24 @@ fun getListenerPosition(deck: Deck): Vector3? {
   return body?.position
 }
 
-fun updateClient(client: Client, players: List<Int>, clientState: ClientState, worlds: List<World>, boxes: Boxes, delta: Float): Pair<ClientState, UserCommands> {
+fun updateClientInput(client: Client): (ClientState) -> ClientState = { state ->
+  val newDeviceStates = updateInputState(client.platform.input, state.input)
+  state.copy(
+      input = state.input.copy(
+          deviceStates = newDeviceStates
+      )
+  )
+}
+
+fun updateClient(client: Client, players: List<Int>, boxes: Boxes): (ClientState) -> ClientState = { clientState ->
   updateMousePointerVisibility(client.platform)
   val bindingContext = bindingContext(clientState)
-  val getBinding = getBinding(clientState.input, bindingContext)
-  val newDeviceStates = updateInputState(client.platform.input, clientState.input)
+  val getBinding = getBinding(clientState.input, clientState.input.guiInputProfiles)
   val strokes = clientCommandStrokes[bindingContext]!!
-  val commands = mapEventsToCommands(newDeviceStates, strokes, getBinding)
+  val deviceStates = clientState.input.deviceStates
+  val commands = mapEventsToCommands(deviceStates, strokes, getBinding)
 
-  val bloomInputState = newBloomInputState(newDeviceStates.last())
+  val bloomInputState = newBloomInputState(deviceStates.last())
       .copy(events = haftToBloom(commands))
   val bloomState = updateBloomState(boxes, clientState.bloomState, bloomInputState)
 
@@ -128,7 +136,7 @@ fun updateClient(client: Client, players: List<Int>, clientState: ClientState, w
       { state ->
         state.copy(
             input = state.input.copy(
-                deviceStates = newDeviceStates
+                deviceStates = deviceStates
             ),
             bloomState = bloomState,
             view = existingOrNewState(currentViewKey) { state.view }(bloomState.bag)
@@ -136,8 +144,14 @@ fun updateClient(client: Client, players: List<Int>, clientState: ClientState, w
       },
       // This needs to happen after applying updateBloomState to override flower state settings
       applyClientCommands(client, allCommands),
-      updateClientStateAudio(client, getListenerPosition(worlds.last().deck)),
-      newClientStateSounds(clientState, worlds)
+      { state ->
+        state.copy(
+            bloomState = state.bloomState.copy(
+                bag = state.bloomState.bag.plus(currentViewKey to state.view)
+            )
+        )
+      }
   ))
-  return Pair(newClientState, allCommands)
+
+  newClientState
 }

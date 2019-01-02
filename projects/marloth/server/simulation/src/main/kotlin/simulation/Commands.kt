@@ -14,7 +14,7 @@ enum class CommandType {
   lookRight,
   lookUp,
   lookDown,
-  
+
   cameraLookLeft,
   cameraLookRight,
   cameraLookUp,
@@ -41,3 +41,12 @@ data class Command(
 )
 
 typealias Commands = List<Command>
+
+val gameStrokes = setOf(
+    CommandType.equipSlot0,
+    CommandType.equipSlot1,
+    CommandType.equipSlot2,
+    CommandType.equipSlot3,
+    CommandType.switchView,
+    CommandType.joinGame
+)

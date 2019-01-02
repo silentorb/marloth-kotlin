@@ -9,6 +9,8 @@ import lab.views.model.ModelView
 import lab.views.model.ModelViewState
 import lab.views.world.WorldView
 import marloth.clienting.*
+import marloth.clienting.input.newBloomInputState
+import marloth.clienting.input.updateInputState
 import mythic.bloom.*
 import mythic.platforming.PlatformInput
 import mythic.platforming.WindowInfo

@@ -3,7 +3,7 @@ package marloth.clienting.gui
 import haft.HaftCommands
 import marloth.clienting.Client
 import marloth.clienting.ClientState
-import marloth.clienting.CommandType
+import marloth.clienting.input.GuiCommandType
 import marloth.clienting.isGuiActive
 import mythic.bloom.*
 import mythic.bloom.ButtonState
@@ -31,7 +31,7 @@ const val currentViewKey = "currentViewKey"
 val currentView = existingOrNewState(currentViewKey) { ViewId.none }
 
 const val menuCommandsKey = "menuCommands"
-val menuCommands = existingOrNewState(menuCommandsKey) { listOf<CommandType>() }
+val menuCommands = existingOrNewState(menuCommandsKey) { listOf<GuiCommandType>() }
 
 fun newBloomState() =
     BloomState(
@@ -56,25 +56,21 @@ fun depictBackground(backgroundColor: Vector4): Depiction = { b: Bounds, canvas:
 
 val menuBackground: Depiction = depictBackground(grayTone(0.5f))
 
-fun haftToBloom(commands: HaftCommands<CommandType>): List<BloomEvent> =
+fun haftToBloom(commands: HaftCommands<GuiCommandType>): List<BloomEvent> =
     commands.mapNotNull {
       when (it.type) {
-        CommandType.lookUp -> BloomEvent.up
-        CommandType.lookDown -> BloomEvent.down
-        CommandType.lookLeft -> BloomEvent.left
-        CommandType.lookRight -> BloomEvent.right
-        CommandType.moveUp -> BloomEvent.up
-        CommandType.moveDown -> BloomEvent.down
-        CommandType.moveLeft -> BloomEvent.left
-        CommandType.moveRight -> BloomEvent.right
-        CommandType.menuBack -> BloomEvent.back
-        CommandType.menuSelect -> BloomEvent.activate
+        GuiCommandType.moveUp -> BloomEvent.up
+        GuiCommandType.moveDown -> BloomEvent.down
+        GuiCommandType.moveLeft -> BloomEvent.left
+        GuiCommandType.moveRight -> BloomEvent.right
+        GuiCommandType.menuBack -> BloomEvent.back
+        GuiCommandType.menuSelect -> BloomEvent.activate
         else -> null
       }
     }
 
 fun victoryMenu(): Menu = listOfNotNull(
-    MenuOption(CommandType.menu, Text.victory)
+    MenuOption(GuiCommandType.menu, Text.victory)
 )
 
 fun viewSelect(textResources: TextResources, world: World?, view: ViewId): Flower? {

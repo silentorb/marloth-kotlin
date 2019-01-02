@@ -3,10 +3,12 @@ package marloth.clienting.audio
 import getResourceUrl
 import marloth.clienting.Client
 import marloth.clienting.ClientState
+import marloth.clienting.getListenerPosition
 import mythic.aura.*
 import mythic.ent.Id
 import mythic.ent.entityMap
 import mythic.ent.newIdSource
+import mythic.ent.pipe
 import mythic.platforming.PlatformAudio
 import mythic.spatial.Vector3
 import scenery.Sounds
@@ -59,3 +61,10 @@ fun loadSounds(audio: PlatformAudio): Map<Id, SoundData> =
       Pair(sound.id, sound)
     }
         .associate { it }
+
+fun updateAppStateAudio(client: Client, worlds: List<World>): (ClientState) -> ClientState = { state ->
+  pipe(state, listOf(
+      updateClientStateAudio(client, getListenerPosition(worlds.last().deck)),
+      newClientStateSounds(state, worlds)
+  ))
+}

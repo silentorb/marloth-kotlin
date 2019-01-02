@@ -1,16 +1,16 @@
-package marloth.clienting
+package marloth.clienting.input
 
 import haft.*
+import marloth.clienting.ClientState
 import marloth.clienting.gui.ViewId
+import mythic.bloom.BloomId
 import mythic.bloom.ButtonState
-import mythic.ent.Id
-import mythic.platforming.InputEvent
 import mythic.platforming.PlatformInput
 import mythic.platforming.mouseDeviceIndex
 import mythic.spatial.Vector2
 import mythic.spatial.toVector2i
 
-typealias UserCommand = HaftCommand<CommandType>
+typealias UserCommand = HaftCommand<GuiCommandType>
 
 typealias UserCommands = List<UserCommand>
 
@@ -29,14 +29,14 @@ enum class BindingContext {
   menu
 }
 
-typealias GroupedBindings = Map<BindingContext, Bindings<CommandType>>
+//typealias GroupedBindings<T> = Map<BindingContext, Bindings<T>>
 
-data class InputProfile(
-    val bindings: GroupedBindings
+data class InputProfile<T>(
+    val bindings: Bindings<T>
 )
 
 data class PlayerDevice(
-    val player: Id,
+    val player: BloomId,
     val device: DeviceIndex
 )
 
@@ -45,8 +45,9 @@ typealias DeviceMap = Map<Int, PlayerDevice>
 data class InputState(
     val deviceStates: List<InputDeviceState>,
     val config: GameInputConfig,
-    val profiles: Map<Id, InputProfile>,
-    val playerProfiles: Map<Id, Id>,
+    val guiInputProfiles: Map<BloomId, InputProfile<GuiCommandType>>,
+    val gameInputProfiles: Map<BloomId, InputProfile<simulation.CommandType>>,
+    val playerProfiles: Map<BloomId, BloomId>,
     val deviceMap: DeviceMap
 )
 
@@ -60,9 +61,10 @@ fun newInputState(config: GameInputConfig) =
     InputState(
         deviceStates = listOf(newInputDeviceState()),
         config = config,
-        profiles = mapOf(1L to defaultInputProfile()),
+        guiInputProfiles = mapOf(1 to defaultInputProfile()),
+        gameInputProfiles = mapOf(1 to defaultGameInputProfile()),
         playerProfiles = mapOf(
-            1L to 1L
+            1 to 1
         ),
         deviceMap = mapOf(
             0 to PlayerDevice(1, DeviceIndex.keyboard),
@@ -73,6 +75,7 @@ fun newInputState(config: GameInputConfig) =
             5 to PlayerDevice(1, DeviceIndex.gamepad)
         )
     )
+
 fun bindingContext(clientState: ClientState): BindingContext =
     if (clientState.view != ViewId.none)
       BindingContext.menu
@@ -92,7 +95,7 @@ fun updateInputState(input: PlatformInput, inputState: InputState): List<InputDe
   return listOf(inputState.deviceStates.last(), newDeviceState)
 }
 
-fun mouseMovementEvents(deviceStates: List<InputDeviceState>): HaftCommands<CommandType> {
+fun mouseMovementEvents(deviceStates: List<InputDeviceState>): HaftCommands<GuiCommandType> {
   throw Error("Not implemented")
 //  val mousePosition = deviceStates[1].mousePosition
 //  val mouseOffset = mousePosition - deviceStates[0].mousePosition

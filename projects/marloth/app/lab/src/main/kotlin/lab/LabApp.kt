@@ -92,7 +92,7 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
     val (commands, newState) = app.labClient.update(world, gameApp.client.screens, state, timestep.delta.toFloat())
 
 //    val newWorlds = when {
-//      commands.any { it.type == CommandType.newGame } -> listOf(app.newWorld())
+//      commands.any { it.type == GuiCommandType.newGame } -> listOf(app.newWorld())
 //      app.config.view == Views.game -> updateWorld(gameApp.db, gameApp.client.renderer.animationDurations, state.app, commands, steps)
 //      else -> worlds
 //    }

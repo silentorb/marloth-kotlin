@@ -14,25 +14,25 @@ class FlexProperty {
   }
 }
 
-typealias Id = Int
+typealias BloomId = Int
 
 typealias FlexPair = Pair<FlexBounds, List<FlexBounds>>
 typealias FlexTriple = Triple<FlexBounds, FlexBounds, List<FlexBounds>>
 typealias Arranger = (FlexTriple) -> FlexPair
 
-typealias ArrangerMap = Map<Id, Arranger>
-typealias IdMap = Map<Id, Id>
-typealias FlexBoundsMap = Map<Id, FlexBounds>
-typealias BoundsMap = Map<Id, Bounds>
+typealias ArrangerMap = Map<BloomId, Arranger>
+typealias IdMap = Map<BloomId, BloomId>
+typealias FlexBoundsMap = Map<BloomId, FlexBounds>
+typealias BoundsMap = Map<BloomId, Bounds>
 
-//fun newInitialFlexBounds(ids: Collection<Id>, rootId: Id, rootBounds: FlexBounds) =
+//fun newInitialFlexBounds(ids: Collection<BloomId>, rootId: BloomId, rootBounds: FlexBounds) =
 //    ids.map { Pair(it, listOf(null, null, null, null, null, null)) }
 //        .associate { it }
 //        .plus(Pair(rootId, rootBounds))
 
 val emptyBounds = listOf(null, null, null, null, null, null)
 
-fun newInitialFlexBounds(ids: Collection<Id>) =
+fun newInitialFlexBounds(ids: Collection<BloomId>) =
     ids.map { Pair(it, emptyBounds) }
         .associate { it }
 

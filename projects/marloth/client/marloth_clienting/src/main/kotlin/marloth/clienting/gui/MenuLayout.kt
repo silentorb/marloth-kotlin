@@ -1,6 +1,6 @@
 package marloth.clienting.gui
 
-import marloth.clienting.CommandType
+import marloth.clienting.input.GuiCommandType
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
@@ -14,7 +14,7 @@ import mythic.typography.calculateTextDimensions
 import org.joml.Vector2i
 
 data class MenuOption(
-    val command: CommandType,
+    val command: GuiCommandType,
     val text: Text
 )
 

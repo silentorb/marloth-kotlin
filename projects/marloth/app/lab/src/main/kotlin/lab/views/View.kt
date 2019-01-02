@@ -3,11 +3,11 @@ package lab.views
 import lab.LabState
 import haft.*
 import lab.LabCommandType
-import marloth.clienting.GeneralCommandState
-import marloth.clienting.CommandType
+import marloth.clienting.input.GeneralCommandState
+import marloth.clienting.input.GuiCommandType
 
 data class LabClientResult(
-    val commands: HaftCommands<CommandType>,
+    val commands: HaftCommands<GuiCommandType>,
     val state: LabState
 )
 

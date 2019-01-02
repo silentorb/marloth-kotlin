@@ -2,7 +2,7 @@ package marloth.integration
 
 import configuration.loadConfig
 import configuration.saveConfig
-import marloth.clienting.GameInputConfig
+import marloth.clienting.input.GameInputConfig
 import rendering.DisplayConfig
 import simulation.ViewMode
 
