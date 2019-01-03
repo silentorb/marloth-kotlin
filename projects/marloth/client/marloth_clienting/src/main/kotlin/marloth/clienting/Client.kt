@@ -95,7 +95,7 @@ fun <T> getBinding(inputState: InputState, inputProfiles: Map<BloomId, InputProf
     val profile = inputProfiles[playerProfile]!!
     val binding = profile.bindings.firstOrNull { it.device == playerDevice.device && it.trigger == event.index }
     if (binding != null)
-      Pair(binding, playerProfile.toInt())
+      Pair(binding, playerProfile)
     else
       null
   } else

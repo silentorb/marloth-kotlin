@@ -2,11 +2,13 @@ package marloth.integration
 
 import haft.mapEventsToCommands
 import marloth.clienting.*
+import marloth.clienting.audio.updateAppStateAudio
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.currentViewKey
 import marloth.clienting.gui.layoutGui
 import marloth.front.GameApp
 import mythic.bloom.Boxes
+import mythic.ent.pipe
 import mythic.quartz.updateTimestep
 import persistence.Database
 import persistence.createVictory
@@ -51,10 +53,17 @@ fun updateWorld(app: GameApp, state: AppState): List<World> {
 
 fun updateFixedInterval(app: GameApp, boxes: Boxes, newWorld: () -> World): (AppState) -> AppState = { state ->
   app.platform.process.pollEvents()
-  val nextClientState = updateClient(app.client, state.players, boxes)(state.client)
+  val nextClientState = pipe(state.client, listOf(
+      updateClientInput(app.client),
+      updateClient(app.client, state.players, boxes),
+      updateAppStateAudio(app.client, state.worlds)
+  ))
+  val newAppState = state.copy(
+      client = nextClientState
+  )
   val worlds = when {
 //    commands.any { it.type == GuiCommandType.newGame } -> listOf(newWorld())
-    gameIsActive(state) -> updateWorld(app, state)
+    gameIsActive(state) -> updateWorld(app, newAppState)
     else -> state.worlds
   }
 
