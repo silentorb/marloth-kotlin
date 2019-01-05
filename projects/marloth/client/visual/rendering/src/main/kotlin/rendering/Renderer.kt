@@ -154,7 +154,8 @@ fun textureAttributesFromConfig(config: DisplayConfig) =
     TextureAttributes(
         repeating = true,
         mipmap = config.textureAntialiasing == TextureAntialiasing.trilinear,
-        smooth = config.textureAntialiasing != TextureAntialiasing.none
+        smooth = config.textureAntialiasing != TextureAntialiasing.none,
+        storageUnit = TextureStorageUnit.unsigned_byte
     )
 
 class Renderer(val config: DisplayConfig) {

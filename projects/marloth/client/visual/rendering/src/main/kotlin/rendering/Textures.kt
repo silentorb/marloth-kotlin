@@ -4,6 +4,7 @@ import getResourceUrl
 import marloth.texture_generation.*
 import mythic.glowing.Texture
 import mythic.glowing.TextureAttributes
+import mythic.glowing.TextureStorageUnit
 import mythic.glowing.loadImageBuffer
 import mythic.quartz.globalProfiler
 import mythic.spatial.Vector3
@@ -87,16 +88,16 @@ private fun miscTextureGenerators(): TextureGeneratorMap = mapOf(
         Vector3(0.15f),
         Vector3(0.25f),
         simpleNoise(listOf(12f, 37f))
-    ), 512, TextureAttributes(repeating = false)),
+    ), 512, TextureAttributes(repeating = false, storageUnit = TextureStorageUnit.unsigned_byte)),
     Textures.grass to applyAlgorithm(colorize(
         Vector3(0.25f, 0.35f, 0.05f),
         Vector3(0.5f, 0.65f, 0.2f),
         simpleNoise(listOf(62f, 37f))
-    ), 512, TextureAttributes(repeating = true, mipmap = true))
+    ), 512, TextureAttributes(repeating = true, mipmap = true, storageUnit = TextureStorageUnit.unsigned_byte))
 )
 
 private fun basicTextureGenerators(): TextureGeneratorMap = basicTextures().mapValues { algorithm ->
-  applyAlgorithm(algorithm.value(), 256, TextureAttributes(repeating = true, mipmap = true))
+  applyAlgorithm(algorithm.value(), 256, TextureAttributes(repeating = true, mipmap = true, storageUnit = TextureStorageUnit.unsigned_byte))
 }
 
 fun textureGenerators(): TextureGeneratorMap =

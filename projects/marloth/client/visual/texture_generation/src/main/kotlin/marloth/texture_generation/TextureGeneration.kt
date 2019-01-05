@@ -3,6 +3,7 @@ package marloth.texture_generation
 import mythic.spatial.Vector3
 import mythic.spatial.put
 import org.lwjgl.BufferUtils
+import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 
 typealias OpaqueColor = mythic.spatial.Vector3
@@ -70,11 +71,14 @@ fun colorize(a: OpaqueColor, b: OpaqueColor, algorithm: ScalarTextureAlgorithm):
   colorize(a, b, algorithm(x, y))
 }
 
-fun createTextureBuffer(algorithm: OpaqueTextureAlgorithm, width: Int, height: Int = width): FloatBuffer {
-  val buffer = BufferUtils.createFloatBuffer(width * height * 3)
+fun createTextureBuffer(algorithm: OpaqueTextureAlgorithm, width: Int, height: Int = width): ByteBuffer {
+  val buffer = BufferUtils.createByteBuffer(width * height * 3)
   for (y in 0 until width) {
     for (x in 0 until height) {
-      buffer.put(algorithm(x / width.toFloat(), y / height.toFloat()))
+      val value = algorithm(x / width.toFloat(), y / height.toFloat())
+      buffer.put((value.x * 255).toByte())
+      buffer.put((value.y * 255).toByte())
+      buffer.put((value.z * 255).toByte())
     }
   }
   buffer.flip()

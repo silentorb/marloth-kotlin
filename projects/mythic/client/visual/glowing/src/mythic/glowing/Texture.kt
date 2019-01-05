@@ -5,6 +5,7 @@ import org.lwjgl.opengl.EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EX
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL13.*
 import org.lwjgl.opengl.GL30.glGenerateMipmap
+import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 
 typealias TextureInitializer = (width: Int, height: Int, buffer: FloatBuffer?) -> Unit
@@ -23,7 +24,7 @@ data class TextureAttributes(
     val repeating: Boolean = true,
     val smooth: Boolean = true,
     val format: TextureFormat = TextureFormat.rgb,
-    val storageUnit: TextureStorageUnit = TextureStorageUnit.float,
+    val storageUnit: TextureStorageUnit,
     val mipmap: Boolean = false
 )
 
@@ -37,7 +38,7 @@ fun getMaxAnistropy(): Float {
   return _maxAnistropy!!
 }
 
-fun initializeTexture(width: Int, height: Int, attributes: TextureAttributes, buffer: FloatBuffer? = null) {
+fun initializeTexture(width: Int, height: Int, attributes: TextureAttributes, buffer: ByteBuffer? = null) {
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1) // Disable byte-alignment restriction
   val wrapMode = if (attributes.repeating)
     GL_REPEAT
@@ -107,7 +108,7 @@ class Texture(val width: Int, val height: Int, val target: TextureTarget) {
     initializer(width, height, buffer)
   }
 
-  constructor(width: Int, height: Int, attributes: TextureAttributes, buffer: FloatBuffer? = null, target: TextureTarget = TextureTarget.general) : this(width, height, target) {
+  constructor(width: Int, height: Int, attributes: TextureAttributes, buffer: ByteBuffer? = null, target: TextureTarget = TextureTarget.general) : this(width, height, target) {
     initializeTexture(width, height, attributes, buffer)
   }
 
