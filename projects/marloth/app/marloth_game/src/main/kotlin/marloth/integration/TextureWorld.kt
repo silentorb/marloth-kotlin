@@ -10,6 +10,9 @@ import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import rendering.*
 import rendering.meshes.convertMesh
+import rendering.texturing.TextureFace
+import rendering.texturing.TextureLibrary
+import rendering.texturing.texturedVertexSerializer
 import scenery.Textures
 import simulation.*
 import kotlin.math.roundToInt

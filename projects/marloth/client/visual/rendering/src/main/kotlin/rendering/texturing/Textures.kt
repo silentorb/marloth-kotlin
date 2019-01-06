@@ -1,15 +1,25 @@
-package rendering
+package rendering.texturing
 
 import getResourceUrl
 import marloth.texture_generation.*
+import metahub.Engine
+import metahub.Graph
+import metahub.executeAndFormat
+import metahub.mapValues
+import mythic.ent.pipe
 import mythic.glowing.Texture
 import mythic.glowing.TextureAttributes
 import mythic.glowing.TextureStorageUnit
 import mythic.glowing.loadImageBuffer
 import mythic.quartz.globalProfiler
 import mythic.spatial.Vector3
+import rendering.meshes.loading.loadJsonResource
+import rendering.texturing.functions.newTextureEngine
+import rendering.toCamelCase
+import scanResources
 import scanTextureResources
 import scenery.Textures
+import java.nio.ByteBuffer
 import java.nio.file.Paths
 
 fun mix(first: OpaqueTextureAlgorithm, firstPercentage: Float, second: OpaqueTextureAlgorithm) = { x: Float, y: Float ->
@@ -58,7 +68,7 @@ typealias TextureGeneratorMap = Map<Textures, TextureGenerator>
 fun basicTextures(): Map<Textures, OpaqueTextureAlgorithmSource> = mapOf(
 
     Textures.checkers to createCheckers(),
-    Textures.darkCheckers to createDarkCheckers(),
+//    Textures.darkCheckers to createDarkCheckers(),
     Textures.debugCyan to { solidColor(Vector3(0f, 1f, 1f)) },
     Textures.debugMagenta to { solidColor(Vector3(1f, 0f, 1f)) },
     Textures.debugYellow to { solidColor(Vector3(1f, 1f, 0f)) },
@@ -81,6 +91,13 @@ fun applyAlgorithm(algorithm: OpaqueTextureAlgorithm, length: Int, attributes: T
 fun loadTextureFromFile(path: String, attributes: TextureAttributes): Texture {
   val (buffer, dimensions) = loadImageBuffer(getResourceUrl(path))
   return Texture(dimensions.x, dimensions.y, attributes, buffer)
+}
+
+fun loadProceduralTextureFromFile(engine: Engine, path: String, attributes: TextureAttributes, length: Int): Texture {
+  val graph = pipe(loadJsonResource<Graph>(path), listOf(mapValues(engine)))
+  val values = executeAndFormat(engine, graph)
+  val diffuse = values["diffuse"]!! as ByteBuffer
+  return Texture(length, length, attributes, diffuse)
 }
 
 private fun miscTextureGenerators(): TextureGeneratorMap = mapOf(
@@ -107,7 +124,19 @@ fun textureGenerators(): TextureGeneratorMap =
 fun createTextureLibrary(scale: Float) =
     textureGenerators().mapValues { it.value(scale) }
 
-fun loadTextures(attributes: TextureAttributes) =
+fun loadProceduralTextures(attributes: TextureAttributes): Map<String, Texture> {
+  val length = 256
+  val engine = newTextureEngine(length)
+  return scanResources("procedural/textures", listOf(".json"))
+      .associate {
+        Pair(
+            toCamelCase(Paths.get(it).fileName.toString().substringBeforeLast(".")),
+            loadProceduralTextureFromFile(engine, it, attributes, length)
+        )
+      }
+}
+
+fun loadTextures(attributes: TextureAttributes): Map<String, Texture> =
     globalProfiler().wrap("textures") {
       scanTextureResources("models")
           .plus(scanTextureResources("textures"))
@@ -117,4 +146,5 @@ fun loadTextures(attributes: TextureAttributes) =
                 loadTextureFromFile(it, attributes)
             )
           }
+          .plus(loadProceduralTextures(attributes))
     }

@@ -1,6 +1,5 @@
-package rendering
+package rendering.texturing
 
-import mythic.sculpting.ImmutableFace
 import mythic.sculpting.VertexNormalTexture
 import mythic.spatial.Vector3
 import mythic.spatial.put

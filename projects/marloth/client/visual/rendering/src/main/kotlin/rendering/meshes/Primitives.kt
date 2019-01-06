@@ -1,13 +1,5 @@
 package rendering.meshes
 
-import mythic.sculpting.*
-import mythic.spatial.Vector2
-import mythic.spatial.Vector3
-import mythic.spatial.Vector4
-import rendering.FaceTextureMap
-import rendering.Material
-import rendering.Model
-import rendering.mapMaterialToMesh
 /*
 val createCube = {
   val mesh = ImmutableMesh()

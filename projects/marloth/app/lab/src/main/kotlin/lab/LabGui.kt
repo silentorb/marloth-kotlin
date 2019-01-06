@@ -1,5 +1,5 @@
 package lab
-/*
+
 import javafx.application.Application
 import javafx.event.EventHandler
 import javafx.scene.Scene
@@ -71,4 +71,4 @@ class LabGui : Application() {
 //      launch()
     }
   }
-}*/
+}

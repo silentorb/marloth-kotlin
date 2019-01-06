@@ -15,10 +15,12 @@ import org.lwjgl.opengl.GL30.*
 import org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE
 import org.lwjgl.opengl.GL32.glTexImage2DMultisample
 import rendering.meshes.AttributeName
-import rendering.meshes.ModelMap
-import rendering.meshes.Primitive
 import rendering.meshes.createVertexSchemas
 import rendering.shading.*
+import rendering.texturing.DynamicTextureLibrary
+import rendering.texturing.TextureLibrary
+import rendering.texturing.createTextureLibrary
+import rendering.texturing.loadTextures
 import scenery.*
 import java.nio.FloatBuffer
 

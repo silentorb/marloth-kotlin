@@ -64,7 +64,7 @@ fun updateFixedInterval(app: GameApp, boxes: Boxes, newWorld: () -> World): (App
   val worlds = when {
 //    commands.any { it.type == GuiCommandType.newGame } -> listOf(newWorld())
     gameIsActive(state) -> updateWorld(app, newAppState)
-    else -> state.worlds
+    else -> state.worlds.takeLast(1)
   }
 
   state.copy(

@@ -18,11 +18,19 @@ import mythic.quartz.newTimestepState
 import mythic.quartz.printProfiler
 import randomly.Dice
 import simulation.*
+import kotlin.concurrent.thread
 
 const val labConfigPath = "labConfig.yaml"
 
 fun saveLabConfig(config: LabConfig) {
   saveConfig("labConfig.yaml", config)
+}
+
+fun startGui() {
+  thread(true, false, null, "JavaFX GUI", -1) {
+        val gui = LabGui()
+    LabGui.mainMenu(listOf())
+  }
 }
 
 fun createDice(config: GameViewConfig) =
@@ -164,6 +172,7 @@ object App {
     val platform = createDesktopPlatform("Dev Lab", gameConfig.display)
     platform.display.initialize(gameConfig.display)
     val gameApp = GameApp(platform, gameConfig)
+    startGui()
     runApp(gameApp, config)
   }
 }

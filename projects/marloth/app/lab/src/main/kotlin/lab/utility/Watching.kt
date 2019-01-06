@@ -2,6 +2,7 @@ package lab.utility
 
 import lab.LabApp
 import rendering.*
+import rendering.texturing.createTextureLibrary
 import java.io.File
 import java.net.URI
 

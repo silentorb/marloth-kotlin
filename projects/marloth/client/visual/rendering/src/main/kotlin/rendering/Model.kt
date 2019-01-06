@@ -6,6 +6,7 @@ import mythic.sculpting.ImmutableMesh
 import mythic.spatial.Vector3
 import rendering.meshes.MeshInfo
 import rendering.meshes.Primitives
+import rendering.texturing.FaceTextureMap
 import scenery.ArmatureId
 import scenery.MeshId
 

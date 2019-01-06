@@ -9,8 +9,8 @@ import javax.imageio.ImageIO
 
 fun loadImageBuffer(url: URL): Pair<ByteBuffer, Vector2i> {
   val image = ImageIO.read(url)
-  val width = image.getWidth()
-  val height = image.getHeight()
+  val width = image.width
+  val height = image.height
 
   val buffer = BufferUtils.createByteBuffer(width * height * 3)
 

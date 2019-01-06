@@ -2,6 +2,7 @@ package marloth.texture_generation
 
 import mythic.spatial.Vector3
 import mythic.spatial.put
+import org.joml.Vector3i
 import org.lwjgl.BufferUtils
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
@@ -28,28 +29,16 @@ val checkerPattern = { first: OpaqueColor, second: OpaqueColor ->
   }
 }
 
-val noiseSource = OpenSimplexNoiseKotlin(1)
+val checkerPattern2 = { first: Vector3i, second: Vector3i ->
+  { x: Float, y: Float ->
+    if (flip(x < 0.5f, y < 0.5f))
+      first
+    else
+      second
+  }
+}
 
-//fun tileable2DNoise(source: OpenSimplexNoiseKotlin, x: Float, y: Float, scale: Float): Float {
-//  // Noise range
-//  val x1 = 0f
-//  val x2 = scale
-//  val y1 = 0f
-//  val y2 = scale
-//  val dx = x2 - x1
-//  val dy = y2 - y1
-//
-//  // Sample noise at smaller intervals
-//  val s = x / 1f
-//  val t = y / 1f
-//
-//  // Calculate our 4D coordinates
-//  val nx = x1 + Math.cos((s * 2f * Pi).toDouble()).toFloat() * dx / (2 * Pi)
-//  val ny = y1 + Math.cos((t * 2f * Pi).toDouble()).toFloat() * dy / (2 * Pi)
-//  val nz = x1 + Math.sin((s * 2f * Pi).toDouble()).toFloat() * dx / (2 * Pi)
-//  val nw = y1 + Math.sin((t * 2f * Pi).toDouble()).toFloat() * dy / (2 * Pi)
-//  return source.eval(nx, ny, nz, nw).toFloat()
-//}
+val noiseSource = OpenSimplexNoiseKotlin(1)
 
 fun simpleNoise(scale: Float): ScalarTextureAlgorithm =
     { x, y ->

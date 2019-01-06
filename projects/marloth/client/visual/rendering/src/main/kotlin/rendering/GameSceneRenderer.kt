@@ -11,6 +11,7 @@ import org.joml.Vector4i
 import rendering.meshes.ModelMap
 import rendering.shading.ObjectShaderConfig
 import rendering.shading.Shaders
+import rendering.texturing.TextureLibrary
 import scenery.Textures
 
 fun renderSkyBox(textures: TextureLibrary, meshes: ModelMap, shaders: Shaders) {

@@ -21,20 +21,23 @@ fun loadTextResource(name: String): String {
   return result
 }
 
-fun scanTextureResources(rootPath: String): List<String> {
+fun scanResources(rootPath: String, extensions: List<String>): List<String> {
   val modelRoot = getResourceUrl(rootPath)
   val modelRootPath = Paths.get(modelRoot.toURI())
   val pathPrefix = modelRootPath.toString().length - rootPath.length
   val walk = Files.walk(modelRootPath, 10)
   val it = walk.iterator()
-  val imageFiles = mutableListOf<String>()
+  val files = mutableListOf<String>()
   while (it.hasNext()) {
     val path = it.next()
     val stringPath = path.toString()
-    if (stringPath.endsWith(".jpg") || stringPath.endsWith(".png")) {
-      imageFiles.add(stringPath.substring(pathPrefix).replace("\\", "/"))
+    if (extensions.any { stringPath.endsWith(it) }) {
+      files.add(stringPath.substring(pathPrefix).replace("\\", "/"))
     }
   }
 
-  return imageFiles.toList()
+  return files.toList()
 }
+
+fun scanTextureResources(rootPath: String): List<String> =
+    scanResources(rootPath, listOf(".jpg", ".png"))
