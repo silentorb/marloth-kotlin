@@ -5,11 +5,14 @@ import javafx.scene.Node
 import javafx.scene.canvas.Canvas
 import javafx.scene.control.Label
 import javafx.scene.image.Image
+import javafx.scene.image.PixelFormat
+import javafx.scene.image.WritableImage
 import javafx.scene.layout.Pane
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
 import lab.gui.Emitter
 import lab.gui.State
+import lab.gui.textureLength
 import metahub.Engine
 import metahub.Graph
 import metahub.arrangeGraphStages
@@ -26,10 +29,11 @@ fun nodeIcon(emit: Emitter, graph: Graph, id: Id, buffer: ByteBuffer): Node {
   val byteArray = ByteArray(buffer.capacity())
   buffer.get(byteArray)
   val canvas = Canvas()
-  val image = Image(ByteArrayInputStream(byteArray))
-//  image.setStyle("-fx-background-color: blue;")
+  val image = WritableImage(textureLength, textureLength)
+  image.pixelWriter.setPixels(0, 0, textureLength, textureLength,
+      PixelFormat.getByteRgbInstance(),
+      byteArray, 0, textureLength * 3);
   canvas.width = nodeLength
-//  image.setPrefHeight(nodeLength)
   canvas.height = nodeLength
   canvas.graphicsContext2D.drawImage(image, 0.0, 0.0, nodeLength, nodeLength)
   val name = graph.functions[id] ?: "Unknown"

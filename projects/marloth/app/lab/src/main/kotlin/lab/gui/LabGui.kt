@@ -11,9 +11,11 @@ import javafx.scene.layout.BorderPane
 import javafx.stage.Stage
 import javafx.util.Duration
 import lab.gui.views.graphView
+import lab.gui.views.menuBarView
 import lab.gui.views.textureList
 import lab.mainAppClosed
 import rendering.texturing.functions.newTextureEngine
+import rendering.texturing.listProceduralTextures
 
 fun periodicUpdate(gui: LabGui) {
   val updater = Timeline(KeyFrame(Duration.seconds(0.5), EventHandler {
@@ -36,19 +38,26 @@ class LabGui : Application() {
         engine = newTextureEngine(textureLength)
     )
 
+    val textures = listProceduralTextures()
+
     val root = BorderPane()
-    var state = newState()
+    var state = refreshState(village, State(
+        textureName = textures.firstOrNull()?.second
+    ))
+
     var emit: Emitter? = null
+    val updateGraphView = { root.center = graphView(emit!!, village.engine, state) }
     emit = { event ->
       val previousState = state
       state = updateState(village, state, event)
-      if (state.graph != previousState.graph) {
-        root.center = graphView(emit!!, village.engine, state)
+      if (state.graph != previousState.graph || event.type == EventType.refresh) {
+        updateGraphView()
       }
     }
 
-    root.left = textureList(emit)
-    root.center = graphView(emit, village.engine, state)
+    root.top = menuBarView(emit)
+    root.left = textureList(emit, textures)
+    updateGraphView()
 
     val scene = Scene(root, 1200.0, 600.0)
     val s = getResourceUrl("style.css")
@@ -62,5 +71,12 @@ class LabGui : Application() {
     fun mainMenu(args: List<String>) {
       Application.launch(LabGui::class.java)
     }
+  }
+}
+
+object TextureApp {
+  @JvmStatic
+  fun main(args: Array<String>) {
+    LabGui.mainMenu(listOf())
   }
 }

@@ -67,5 +67,6 @@ fun getObjectMapper(): ObjectMapper {
 
 inline fun <reified T> loadJsonResource(path: String): T {
   val content = getResourceStream(path)
-  return getObjectMapper().readValue(content, T::class.java)
+  val result = getObjectMapper().readValue(content, T::class.java)
+  return result
 }
