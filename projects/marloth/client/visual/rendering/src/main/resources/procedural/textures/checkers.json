@@ -1,0 +1,16 @@
+{
+  "nodes": [1],
+  "connections": [],
+  "functions": {
+    "1": "checkers"
+  },
+  "values": {
+    "1": {
+      "firstColor": [0, 1, 0],
+      "secondColor": [1, 1, 1]
+    }
+  },
+  "outputs": {
+    "diffuse": 1
+  }
+}

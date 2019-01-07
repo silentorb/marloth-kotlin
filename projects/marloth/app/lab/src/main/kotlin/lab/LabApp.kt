@@ -5,6 +5,7 @@ import configuration.loadConfig
 import configuration.saveConfig
 import generation.addEnemies
 import generation.generateWorld
+import lab.gui.LabGui
 import lab.utility.updateWatching
 import lab.views.game.GameViewConfig
 import lab.views.model.newModelViewState
@@ -26,10 +27,15 @@ fun saveLabConfig(config: LabConfig) {
   saveConfig("labConfig.yaml", config)
 }
 
+var guiClosed = false
+var mainAppClosed = false
+var gui: LabGui? = null
+
 fun startGui() {
   thread(true, false, null, "JavaFX GUI", -1) {
-        val gui = LabGui()
+//    gui = LabGui()
     LabGui.mainMenu(listOf())
+    guiClosed = true
   }
 }
 
@@ -121,7 +127,7 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
     )
   }
 
-  if (!gameApp.platform.process.isClosing())
+  if (!gameApp.platform.process.isClosing() && !guiClosed)
     labLoop(app, state.copy(
         app = newAppState)
     )
@@ -156,6 +162,9 @@ fun runApp(gameApp: GameApp, config: LabConfig) {
   globalProfiler().stop()
   printProfiler(globalProfiler())
   labLoop(app, state)
+  if (!guiClosed) {
+    mainAppClosed = true
+  }
   app.gameApp.client.shutdown()
 }
 

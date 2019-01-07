@@ -93,8 +93,11 @@ fun loadTextureFromFile(path: String, attributes: TextureAttributes): Texture {
   return Texture(dimensions.x, dimensions.y, attributes, buffer)
 }
 
+fun loadTextureGraph(engine: Engine, path: String): Graph =
+    pipe(loadJsonResource<Graph>(path), listOf(mapValues(engine)))
+
 fun loadProceduralTextureFromFile(engine: Engine, path: String, attributes: TextureAttributes, length: Int): Texture {
-  val graph = pipe(loadJsonResource<Graph>(path), listOf(mapValues(engine)))
+  val graph = loadTextureGraph(engine, path)
   val values = executeAndFormat(engine, graph)
   val diffuse = values["diffuse"]!! as ByteBuffer
   return Texture(length, length, attributes, diffuse)
@@ -124,15 +127,20 @@ fun textureGenerators(): TextureGeneratorMap =
 fun createTextureLibrary(scale: Float) =
     textureGenerators().mapValues { it.value(scale) }
 
+fun getFileShortName(path: String): String =
+    toCamelCase(Paths.get(path).fileName.toString().substringBeforeLast("."))
+
+fun listProceduralTextures(): List<Pair<String, String>> =
+    scanResources("procedural/textures", listOf(".json"))
+        .map { Pair(it, getFileShortName(it)) }
+
 fun loadProceduralTextures(attributes: TextureAttributes): Map<String, Texture> {
   val length = 256
   val engine = newTextureEngine(length)
-  return scanResources("procedural/textures", listOf(".json"))
-      .associate {
-        Pair(
-            toCamelCase(Paths.get(it).fileName.toString().substringBeforeLast(".")),
-            loadProceduralTextureFromFile(engine, it, attributes, length)
-        )
+  return listProceduralTextures()
+      .associate { (path, name) ->
+        val texture = loadProceduralTextureFromFile(engine, path, attributes, length)
+        Pair(name, texture)
       }
 }
 
@@ -142,7 +150,7 @@ fun loadTextures(attributes: TextureAttributes): Map<String, Texture> =
           .plus(scanTextureResources("textures"))
           .associate {
             Pair(
-                toCamelCase(Paths.get(it).fileName.toString().substringBeforeLast(".")),
+                getFileShortName(it),
                 loadTextureFromFile(it, attributes)
             )
           }
