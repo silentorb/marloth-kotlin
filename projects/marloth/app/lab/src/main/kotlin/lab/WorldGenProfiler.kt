@@ -1,6 +1,6 @@
 package lab
 
-import configuration.loadConfig
+import configuration.loadYamlFile
 import marloth.integration.loadGameConfig
 import mythic.desktop.createDesktopPlatform
 
@@ -8,7 +8,7 @@ object WorldGenProfiler {
   @JvmStatic
   fun main(args: Array<String>) {
     System.setProperty("joml.format", "false")
-    val config = loadConfig<LabConfig>(labConfigPath) ?: LabConfig()
+    val config = loadYamlFile<LabConfig>(labConfigPath) ?: LabConfig()
     val gameConfig = loadGameConfig()
     val platform = createDesktopPlatform("WorldGenProfiler", gameConfig.display)
     platform.display.initialize(gameConfig.display)

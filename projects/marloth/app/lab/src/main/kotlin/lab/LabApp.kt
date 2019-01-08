@@ -1,11 +1,9 @@
 package lab
 
 import configuration.ConfigManager
-import configuration.loadConfig
-import configuration.saveConfig
+import configuration.loadYamlFile
 import generation.addEnemies
 import generation.generateWorld
-import lab.gui.LabGui
 import lab.utility.updateWatching
 import lab.views.game.GameViewConfig
 import lab.views.model.newModelViewState
@@ -19,25 +17,22 @@ import mythic.quartz.newTimestepState
 import mythic.quartz.printProfiler
 import randomly.Dice
 import simulation.*
-import kotlin.concurrent.thread
 
 const val labConfigPath = "labConfig.yaml"
 
-fun saveLabConfig(config: LabConfig) {
-  saveConfig("labConfig.yaml", config)
-}
+//fun saveLabConfig(config: LabConfig) {
+//  saveConfig("labConfig.yaml", config)
+//}
 
-var guiClosed = false
-var mainAppClosed = false
-var gui: LabGui? = null
-
-fun startGui() {
-  thread(true, false, null, "JavaFX GUI", -1) {
-//    gui = LabGui()
-    LabGui.mainMenu(listOf())
-    guiClosed = true
-  }
-}
+//var guiClosed = false
+//var mainAppClosed = false
+//
+//fun startGui() {
+//  thread(true, false, null, "JavaFX GUI", -1) {
+////    gui = LabGui()
+//    guiClosed = true
+//  }
+//}
 
 fun createDice(config: GameViewConfig) =
     if (config.UseRandomSeed)
@@ -127,7 +122,7 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
     )
   }
 
-  if (!gameApp.platform.process.isClosing() && !guiClosed)
+  if (!gameApp.platform.process.isClosing())
     labLoop(app, state.copy(
         app = newAppState)
     )
@@ -162,9 +157,6 @@ fun runApp(gameApp: GameApp, config: LabConfig) {
   globalProfiler().stop()
   printProfiler(globalProfiler())
   labLoop(app, state)
-  if (!guiClosed) {
-    mainAppClosed = true
-  }
   app.gameApp.client.shutdown()
 }
 
@@ -174,14 +166,14 @@ object App {
     globalProfiler().start("start")
     System.setProperty("joml.format", "false")
     globalProfiler().start("labConfig")
-    val config = loadConfig<LabConfig>(labConfigPath) ?: LabConfig()
+    val config = loadYamlFile<LabConfig>(labConfigPath) ?: LabConfig()
     globalProfiler().start("gameConfig")
     val gameConfig = loadGameConfig()
     globalProfiler().start("otherStart")
     val platform = createDesktopPlatform("Dev Lab", gameConfig.display)
     platform.display.initialize(gameConfig.display)
     val gameApp = GameApp(platform, gameConfig)
-    startGui()
+//    startGui()
     runApp(gameApp, config)
   }
 }

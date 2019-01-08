@@ -1,6 +1,6 @@
 package marloth.integration
 
-import configuration.loadConfig
+import configuration.loadYamlFile
 import configuration.saveConfig
 import marloth.clienting.input.GameInputConfig
 import rendering.DisplayConfig
@@ -23,7 +23,7 @@ fun saveGameConfig(config: GameConfig) {
 }
 
 fun loadGameConfig(): GameConfig {
-  val config = loadConfig<GameConfig>(gameConfigFile)
+  val config = loadYamlFile<GameConfig>(gameConfigFile)
   if (config != null)
     return config
 

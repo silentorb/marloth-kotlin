@@ -1,7 +1,7 @@
 package rendering.texturing
 
 import getResourceUrl
-import marloth.texture_generation.*
+import mythic.imaging.*
 import metahub.Engine
 import metahub.Graph
 import metahub.executeAndFormat
@@ -14,7 +14,7 @@ import mythic.glowing.loadImageBuffer
 import mythic.quartz.globalProfiler
 import mythic.spatial.Vector3
 import rendering.meshes.loading.loadJsonResource
-import rendering.texturing.functions.newTextureEngine
+import mythic.imaging.newTextureEngine
 import rendering.toCamelCase
 import scanResources
 import scanTextureResources
