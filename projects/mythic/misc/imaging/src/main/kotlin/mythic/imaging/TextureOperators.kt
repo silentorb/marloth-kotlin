@@ -69,6 +69,9 @@ private val typeMappers: List<TypeMapper> = listOf(
       if (value is List<*>) {
         val list = value as ArrayList<Float>
         Vector3(list[0], list[1], list[2])
+      } else if (value is Map<*, *>) {
+        val map = value as Map<String, Double>
+        Vector3(value["x"]!!.toFloat(), value["y"]!!.toFloat(), value["z"]!!.toFloat())
       } else
         null
     }

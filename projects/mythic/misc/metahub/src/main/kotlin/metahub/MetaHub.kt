@@ -8,12 +8,6 @@ data class Connection(
     val port: String
 )
 
-data class PortValue(
-    val node: Id,
-    val port: String,
-    val value: Any
-)
-
 data class Graph(
     val nodes: Set<Id>,
     val connections: List<Connection>,

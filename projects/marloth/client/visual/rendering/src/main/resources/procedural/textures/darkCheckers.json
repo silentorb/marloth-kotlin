@@ -1,16 +1,24 @@
 {
-  "nodes": [1],
-  "connections": [],
-  "functions": {
-    "1": "checkers"
+  "nodes" : [ 1 ],
+  "connections" : [ ],
+  "functions" : {
+    "1" : "checkers"
   },
-  "values": {
-    "1": {
-      "firstColor": [0.0, 0.2, 0.0],
-      "secondColor": [0.5, 0.3, 0.1]
+  "values" : {
+    "1" : {
+      "firstColor" : {
+        "x" : 0.0,
+        "y" : 0.2,
+        "z" : 0.0
+      },
+      "secondColor" : {
+        "x" : 0.5,
+        "y" : 0.3,
+        "z" : 0.1
+      }
     }
   },
-  "outputs": {
-    "diffuse": 1
+  "outputs" : {
+    "diffuse" : 1
   }
 }

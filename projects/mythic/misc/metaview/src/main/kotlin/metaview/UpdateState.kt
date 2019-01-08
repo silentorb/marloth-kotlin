@@ -1,20 +1,28 @@
 package metaview
 
 import metahub.Engine
+import metahub.Graph
 import metahub.loadGraphFromFile
+import mythic.ent.Id
 
-fun loadTextureGraph(engine: Engine, state: State, name: String) =
-    loadGraphFromFile(engine, "${state.config.projectPath}/$name.json")
+typealias StateTransform = (State) -> State
 
-fun selectTexture(village: Village, state: State, name: String): State {
-  return state.copy(
+fun texturePath(state: State, name: String): String =
+    "${state.config.projectPath}/$name.json"
+
+fun loadTextureGraph(engine: Engine, state: State, name: String): Graph =
+    loadGraphFromFile(engine, texturePath(state, name))
+
+fun selectTexture(village: Village, name: String): StateTransform = { state ->
+  state.copy(
       textureName = name,
-      graph = loadTextureGraph(village.engine, state, name)
+      graph = loadTextureGraph(village.engine, state, name),
+      nodeSelection = listOf()
   )
 }
 
-fun refreshState(village: Village, state: State): State {
-  return state.copy(
+fun refreshState(village: Village): StateTransform = { state ->
+  state.copy(
       graph = if (state.textureName != null)
         loadTextureGraph(village.engine, state, state.textureName)
       else
@@ -22,9 +30,36 @@ fun refreshState(village: Village, state: State): State {
   )
 }
 
+fun selectNode(id: Id): StateTransform = { state ->
+  state.copy(
+      nodeSelection = if (state.nodeSelection.contains(id))
+        state.nodeSelection.minus(id)
+      else
+        listOf(id)
+  )
+}
+
+fun changeInputValue(change: InputValueChange): StateTransform = { state ->
+  val graph = state.graph!!
+  val nodeValues = (graph.values[change.node] ?: mapOf())
+      .plus(change.input to change.value)
+
+  state.copy(
+      graph = graph.copy(
+          values = graph.values.plus(
+              change.node to nodeValues
+          )
+      )
+  )
+}
+
 fun updateState(village: Village, state: State, event: Event): State {
-  return when (event.type) {
-    EventType.textureSelect -> selectTexture(village, state, event.data as String)
-    EventType.refresh -> refreshState(village, state)
+  val transform = when (event.type) {
+    EventType.inputValueChanged -> changeInputValue(event.data as InputValueChange)
+    EventType.textureSelect -> selectTexture(village, event.data as String)
+    EventType.nodeSelect -> selectNode(event.data as Id)
+    EventType.refresh -> refreshState(village)
   }
+
+  return transform(state)
 }
