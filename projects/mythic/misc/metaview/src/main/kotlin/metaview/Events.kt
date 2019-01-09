@@ -6,6 +6,7 @@ enum class EventType {
   inputValueChanged,
   refresh,
   renameTexture,
+  newTexture,
   nodeSelect,
   textureSelect
 }
@@ -24,4 +25,7 @@ data class Event(
 
 typealias Emitter = (Event) -> Unit
 
-typealias Renaming = Pair<String, String>
+data class Renaming(
+    val previousName: String,
+    val newName: String
+)

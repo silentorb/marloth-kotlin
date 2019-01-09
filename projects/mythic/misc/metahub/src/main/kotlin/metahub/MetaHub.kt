@@ -9,11 +9,11 @@ data class Connection(
 )
 
 data class Graph(
-    val nodes: Set<Id>,
-    val connections: List<Connection>,
-    val functions: Map<Id, String>,
-    val values: Map<Id, Map<String, Any>>,
-    val outputs: Map<String, Id>
+    val nodes: Set<Id> = setOf(),
+    val connections: List<Connection> = listOf(),
+    val functions: Map<Id, String> = mapOf(),
+    val values: Map<Id, Map<String, Any>> = mapOf(),
+    val outputs: Map<String, Id> = mapOf()
 )
 
 typealias Arguments = Map<String, Any>

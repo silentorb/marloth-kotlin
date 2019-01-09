@@ -57,17 +57,25 @@ fun changeInputValue(change: InputValueChange): StateTransform = { state ->
 
 fun renameTexture(change: Renaming): StateTransform = { state ->
   Files.move(
-      Paths.get(texturePath(state, change.first)),
-      Paths.get(texturePath(state, change.second))
+      Paths.get(texturePath(state, change.previousName)),
+      Paths.get(texturePath(state, change.newName))
   )
   state.copy(
-      textureName = change.second,
+      textureName = change.newName,
       textures = state.textures.map {
-        if (it == change.first)
-          change.second
+        if (it == change.previousName)
+          change.newName
         else
           it
       }
+  )
+}
+
+fun newTexture(name: String): StateTransform = { state ->
+  state.copy(
+      textures = state.textures.plus(name).sorted(),
+      textureName = name ,
+      graph = Graph()
   )
 }
 
@@ -75,6 +83,7 @@ fun updateState(village: Village, state: State, event: Event): State {
   val transform = when (event.type) {
     EventType.inputValueChanged -> changeInputValue(event.data as InputValueChange)
     EventType.textureSelect -> selectTexture(village, event.data as String)
+    EventType.newTexture -> newTexture(event.data as String)
     EventType.nodeSelect -> selectNode(event.data as Id)
     EventType.refresh -> refreshState(village)
     EventType.renameTexture -> renameTexture(event.data as Renaming)

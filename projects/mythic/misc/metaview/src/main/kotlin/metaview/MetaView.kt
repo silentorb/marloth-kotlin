@@ -48,6 +48,7 @@ fun listProjectTextures(path: String): List<String> {
   return File(path).listFiles()
       .filter { it.extension == "json" }
       .map { it.nameWithoutExtension }
+      .sorted()
 }
 
 fun newState(): State {
@@ -83,6 +84,11 @@ class LabGui : Application() {
     var state = newState()
 
     var emit: Emitter? = null
+
+    val updateTextureListView = { st: State ->
+      root.left = textureList(emit!!, st)
+    }
+
     val updateGraphView = { st: State, stages: List<List<Id>>, values: OutputValues ->
       root.center = graphView(emit!!, village.engine, st, stages, values)
     }
@@ -102,18 +108,22 @@ class LabGui : Application() {
         Pair(listOf(), mapOf())
       updateGraphView(newState, stages, values)
       updatePropertiesView(newState, values)
+      if(event.type == EventType.newTexture)
+        updateTextureListView(newState)
 
       if (!event.preview) {
         state = newState
-        if (state.textureName != null && state.graph != null && state.graph != previousState.graph && previousState.graph != null && state.textureName == previousState.textureName) {
+        if (state.graph != null && ((state.textureName != null && state.textureName == previousState.textureName) || (state.graph != previousState.graph && previousState.graph != null))) {
           saveJsonFile(texturePath(state, state.textureName!!), state.graph!!)
         }
       }
     }
 
     root.top = menuBarView(emit)
-    root.left = textureList(emit, state.textures)
+    updateTextureListView(state)
+
     emit(Event(EventType.refresh))
+
     primaryStage.show()
   }
 
