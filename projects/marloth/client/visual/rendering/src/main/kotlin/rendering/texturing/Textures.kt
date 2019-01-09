@@ -20,6 +20,7 @@ import scanResources
 import scanTextureResources
 import scenery.Textures
 import java.nio.ByteBuffer
+import java.nio.FloatBuffer
 import java.nio.file.Paths
 
 fun mix(first: OpaqueTextureAlgorithm, firstPercentage: Float, second: OpaqueTextureAlgorithm) = { x: Float, y: Float ->
@@ -99,8 +100,8 @@ fun loadTextureGraph(engine: Engine, path: String): Graph =
 fun loadProceduralTextureFromFile(engine: Engine, path: String, attributes: TextureAttributes, length: Int): Texture {
   val graph = loadTextureGraph(engine, path)
   val values = executeAndFormat(engine, graph)
-  val diffuse = values["diffuse"]!! as ByteBuffer
-  return Texture(length, length, attributes, diffuse)
+  val diffuse = values["diffuse"]!! as FloatBuffer
+  return Texture(length, length, attributes, floatTextureToBytes(diffuse))
 }
 
 private fun miscTextureGenerators(): TextureGeneratorMap = mapOf(

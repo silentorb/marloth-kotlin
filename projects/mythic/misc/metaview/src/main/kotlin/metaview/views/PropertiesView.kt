@@ -7,7 +7,9 @@ import javafx.scene.layout.VBox
 import metahub.Engine
 import metahub.OutputValues
 import metaview.*
+import mythic.imaging.floatTextureToBytes
 import java.nio.ByteBuffer
+import java.nio.FloatBuffer
 
 fun propertiesView(emit: Emitter, engine: Engine, state: State, values: OutputValues): Node {
   return if (state.nodeSelection.size != 1) {
@@ -17,7 +19,7 @@ fun propertiesView(emit: Emitter, engine: Engine, state: State, values: OutputVa
     panel.alignment = Pos.BASELINE_CENTER
     val id = state.nodeSelection.first()
     val graph = state.graph!!
-    val preview = outputImage(values[id]!! as ByteBuffer, 100.0)
+    val preview = outputImage(floatTextureToBytes(values[id]!! as FloatBuffer), 100.0)
     val functionName = graph.functions[id]!!
     val label = Label(functionName)
 
