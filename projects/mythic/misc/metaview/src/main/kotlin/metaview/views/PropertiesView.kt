@@ -13,6 +13,7 @@ fun propertiesView(emit: Emitter, engine: Engine, state: State, values: OutputVa
     VBox()
   } else {
     val panel = VBox()
+    panel.spacing = 5.0
     panel.alignment = Pos.BASELINE_CENTER
     val id = state.nodeSelection.first()
     val graph = state.graph!!
