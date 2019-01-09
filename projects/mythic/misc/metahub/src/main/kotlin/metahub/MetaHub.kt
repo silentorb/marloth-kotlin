@@ -10,8 +10,8 @@ data class Connection(
 
 data class Graph(
     val nodes: Set<Id> = setOf(),
-    val connections: List<Connection> = listOf(),
     val functions: Map<Id, String> = mapOf(),
+    val connections: List<Connection> = listOf(),
     val values: Map<Id, Map<String, Any>> = mapOf(),
     val outputs: Map<String, Id> = mapOf()
 )
@@ -28,7 +28,7 @@ data class Engine(
 )
 
 fun nextStage(nodes: Set<Id>, connections: Collection<Connection>): List<Id> {
-  return nodes.filter { node -> connections.none { it.input == node } }
+  return nodes.filter { node -> connections.none { it.output == node } }
       .map { it }
 }
 

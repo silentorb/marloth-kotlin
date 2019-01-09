@@ -6,6 +6,7 @@ import javafx.animation.Timeline
 import javafx.event.EventHandler
 import javafx.geometry.Insets
 import javafx.scene.Node
+import javafx.scene.control.Label
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.CornerRadii
@@ -60,10 +61,10 @@ val valueViews = mapOf(
     "color" to colorView
 )
 
-fun valueView(changed: OnChange, value: Any, type: String): Node {
+fun valueView(changed: OnChange, value: Any, type: String): Node? {
   val view = valueViews[type]
-  if (view == null)
-    throw Error("No view for properties of type $type")
-
-  return view(value, changed)
+  return if (view != null)
+    view(value, changed)
+  else
+    null
 }

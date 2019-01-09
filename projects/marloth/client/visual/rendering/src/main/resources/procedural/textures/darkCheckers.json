@@ -1,9 +1,9 @@
 {
   "nodes" : [ 1 ],
-  "connections" : [ ],
   "functions" : {
-    "1" : "checkers"
+    "1" : "coloredCheckers"
   },
+  "connections" : [ ],
   "values" : {
     "1" : {
       "firstColor" : {

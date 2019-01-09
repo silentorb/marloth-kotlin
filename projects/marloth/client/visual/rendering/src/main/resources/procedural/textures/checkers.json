@@ -1,24 +1,29 @@
 {
-  "nodes" : [ 1 ],
-  "connections" : [ ],
+  "nodes" : [ 1, 2 ],
   "functions" : {
-    "1" : "checkers"
+    "1" : "checkers",
+    "2" : "colorize"
   },
+  "connections" : [ {
+    "input" : 1,
+    "output" : 2,
+    "port" : "grayscale"
+  } ],
   "values" : {
-    "1" : {
+    "2" : {
       "firstColor" : {
-        "x" : 1.0,
-        "y" : 0.99767035,
-        "z" : 0.8634812
+        "x" : 0.41638225,
+        "y" : 0.4160185,
+        "z" : 0.39506575
       },
       "secondColor" : {
-        "x" : 0.33105803,
-        "y" : 0.26326457,
-        "z" : 0.26326457
+        "x" : 0.97611064,
+        "y" : 0.97952217,
+        "z" : 0.90263134
       }
     }
   },
   "outputs" : {
-    "diffuse" : 1
+    "diffuse" : 2
   }
 }

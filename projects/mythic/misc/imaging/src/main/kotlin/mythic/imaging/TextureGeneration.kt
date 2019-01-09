@@ -18,6 +18,13 @@ fun flip(a: Boolean, b: Boolean) = if (b) a else !a
 
 fun solidColor(color: OpaqueColor): OpaqueTextureAlgorithm = { x, y -> color }
 
+fun <T> checkerOp(first: T, second: T) = { x: Float, y: Float ->
+  if (flip(x < 0.5f, y < 0.5f))
+    first
+  else
+    second
+}
+
 val checkerPattern = { first: OpaqueColor, second: OpaqueColor ->
   { x: Float, y: Float ->
     if (flip(x < 0.5f, y < 0.5f))
@@ -40,7 +47,7 @@ val noiseSource = OpenSimplexNoiseKotlin(1)
 
 fun simpleNoise(scale: Float): ScalarTextureAlgorithm =
     { x, y ->
-//      noiseSource.eval2(x * scale, y * scale)
+      //      noiseSource.eval2(x * scale, y * scale)
       noiseSource.eval(x * scale, y * scale)
 //      tileable2DNoise(noiseSource, x, y, scale)
     }

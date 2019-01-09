@@ -9,13 +9,26 @@ import metahub.Graph
 import metaview.Emitter
 import metaview.Event
 import metaview.EventType
+import metaview.nodeDefinitions
 import mythic.ent.Id
 import mythic.imaging.floatTextureToBytes
+import mythic.imaging.grayscaleTextureToBytes
+import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 
-fun nodeIcon(emit: Emitter, graph: Graph, id: Id, buffer: FloatBuffer, selection: List<Id>): Node {
+fun getNodePreviewBuffer(graph: Graph, node: Id, value: Any): ByteBuffer {
+  val function = graph.functions[node]!!
+  val definition = nodeDefinitions[function]!!
+  return when (definition.outputType) {
+    "bitmap" -> floatTextureToBytes(value as FloatBuffer)
+    "grayscale" -> grayscaleTextureToBytes(value as FloatBuffer)
+    else -> throw Error("Not supported")
+  }
+}
+
+fun nodeIcon(emit: Emitter, graph: Graph, id: Id, buffer: ByteBuffer, selection: List<Id>): Node {
   val container = VBox()
-  val canvas = outputImage(floatTextureToBytes(buffer), nodeLength)
+  val canvas = outputImage(buffer, nodeLength)
   val name = graph.functions[id] ?: "Unknown"
   val label = Label(name)
   container.alignment = Pos.BASELINE_CENTER
@@ -31,3 +44,4 @@ fun nodeIcon(emit: Emitter, graph: Graph, id: Id, buffer: FloatBuffer, selection
   }
   return container
 }
+

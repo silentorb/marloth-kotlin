@@ -31,6 +31,19 @@ fun floatTextureToBytes(buffer: FloatBuffer): ByteBuffer {
   return byteBuffer
 }
 
+fun grayscaleTextureToBytes(buffer: FloatBuffer): ByteBuffer {
+  val byteBuffer = BufferUtils.createByteBuffer(buffer.capacity() * 3)
+  buffer.rewind()
+  (1..buffer.capacity()).forEach {
+    val value = (buffer.get() * 255).toByte()
+    byteBuffer.put(value)
+    byteBuffer.put(value)
+    byteBuffer.put(value)
+  }
+  byteBuffer.rewind()
+  return byteBuffer
+}
+
 fun ByteBuffer.put(color: Vector3i) {
   this.put(color.x.toByte())
   this.put(color.y.toByte())
@@ -43,13 +56,29 @@ fun FloatBuffer.put(color: Vector3) {
   this.put(color.z)
 }
 
-fun withNewBuffer(function: (Int, FloatBuffer, Arguments) -> Any): TextureFunction = { length ->
-  { arguments ->
-    val buffer = allocateFloatTextureBuffer(length)
-    function(length, buffer, arguments)
-    buffer.rewind()
-    buffer
+fun <T> withBuffer(depth: Int, setter: (FloatBuffer, T) -> Unit): ((Arguments) -> (Float, Float) -> T) -> TextureFunction = { function ->
+  { length ->
+    { arguments ->
+      val buffer = BufferUtils.createFloatBuffer(length * length * depth)
+      val getter = function(arguments)
+      for (y in 0 until length) {
+        for (x in 0 until length) {
+          val value = getter(x.toFloat() / length, y.toFloat() / length)
+          setter(buffer, value)
+        }
+      }
+      buffer.rewind()
+      buffer
+    }
   }
+}
+
+val withBitmapBuffer = withBuffer<Vector3>(3) { buffer, value ->
+  buffer.put(value)
+}
+
+val withGrayscaleBuffer = withBuffer<Float>(1) { buffer, value ->
+  buffer.put(value)
 }
 
 fun convertColor(value: Vector3): Vector3i =
@@ -59,29 +88,36 @@ fun convertColor(value: Vector3): Vector3i =
         (value.z * 255).toInt()
     )
 
-val solidColor: TextureFunction = withNewBuffer { length, buffer, arguments ->
+val solidColor: TextureFunction = withBitmapBuffer { arguments ->
   val color = arguments["color"]!! as SolidColor
-  for (i in 1..length * length) {
-    buffer.put(color)
-  }
-  buffer
+  { _, _ -> color }
 }
 
-val checkers: TextureFunction = withNewBuffer { length, buffer, arguments ->
+val coloredCheckers: TextureFunction = withBitmapBuffer { arguments ->
   val first = arguments["firstColor"]!! as SolidColor
   val second = arguments["secondColor"]!! as SolidColor
-  val pattern = checkerPattern(first, second)
+  checkerPattern(first, second)
+}
 
-  for (y in 0 until length) {
-    for (x in 0 until length) {
-      val color = pattern(x.toFloat() / length, y.toFloat() / length)
-      buffer.put(color)
-    }
+val grayscaleCheckers: TextureFunction = withGrayscaleBuffer { arguments ->
+  checkerOp(0f, 1f)
+}
+
+val colorize: TextureFunction = withBitmapBuffer { arguments ->
+  val grayscale = arguments["grayscale"]!! as FloatBuffer
+  grayscale.rewind()
+  val first = arguments["firstColor"]!! as SolidColor
+  val second = arguments["secondColor"]!! as SolidColor
+  { x, y ->
+    val unit = grayscale.get()
+    first * (1f - unit) + second * unit
   }
 }
 
 private val textureFunctions = mapOf(
-    "checkers" to checkers,
+    "coloredCheckers" to coloredCheckers,
+    "checkers" to grayscaleCheckers,
+    "colorize" to colorize,
     "solidColor" to solidColor
 )
 

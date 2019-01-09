@@ -7,9 +7,6 @@ import javafx.scene.layout.VBox
 import metahub.Engine
 import metahub.OutputValues
 import metaview.*
-import mythic.imaging.floatTextureToBytes
-import java.nio.ByteBuffer
-import java.nio.FloatBuffer
 
 fun propertiesView(emit: Emitter, engine: Engine, state: State, values: OutputValues): Node {
   return if (state.nodeSelection.size != 1) {
@@ -19,19 +16,20 @@ fun propertiesView(emit: Emitter, engine: Engine, state: State, values: OutputVa
     panel.alignment = Pos.BASELINE_CENTER
     val id = state.nodeSelection.first()
     val graph = state.graph!!
-    val preview = outputImage(floatTextureToBytes(values[id]!! as FloatBuffer), 100.0)
+    val previewImage = outputImage(getNodePreviewBuffer(graph, id, values[id]!!), 100.0)
     val functionName = graph.functions[id]!!
     val label = Label(functionName)
 
-    panel.children.addAll(preview, label)
+    panel.children.addAll(previewImage, label)
 
     val definition = nodeDefinitions[functionName]!!
     val nodeValues = graph.values[id] ?: mapOf()
 
     for ((name, input) in definition.inputs) {
-      val propertyLabel = Label(name)
-      val value = nodeValues[name]
-      val view = if (value != null) {
+      val viewFactory = valueViews[input.type]
+      if (viewFactory != null) {
+        val propertyLabel = Label(name)
+        val value = nodeValues[name]!!
         val changed: OnChange = { newValue, preview ->
           //          if (newValue != value) {
           val data = InputValueChange(
@@ -42,11 +40,10 @@ fun propertiesView(emit: Emitter, engine: Engine, state: State, values: OutputVa
           emit(Event(EventType.inputValueChanged, data, preview))
 //          }
         }
-        valueView(changed, value, input.type)
-      } else
-        Label("---")
 
-      panel.children.addAll(view, propertyLabel)
+        val view = viewFactory(value, changed)
+        panel.children.addAll(view, propertyLabel)
+      }
     }
     panel
   }
