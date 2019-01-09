@@ -50,6 +50,19 @@ fun listProjectTextures(path: String): List<String> {
       .map { it.nameWithoutExtension }
 }
 
+fun newState(): State {
+  val config = loadYamlFile<Config>("metaview.yaml")
+  if (config == null)
+    throw Error("Could not find required configuration file metaview.yaml")
+
+  val textures = listProjectTextures(config.projectPath)
+  return State(
+      config = config,
+      textures = textures,
+      textureName = textures.firstOrNull()
+  )
+}
+
 class LabGui : Application() {
 
   override fun start(primaryStage: Stage) {
@@ -60,12 +73,6 @@ class LabGui : Application() {
         engine = newTextureEngine(textureLength)
     )
 
-    val config = loadYamlFile<Config>("metaview.yaml")
-    if (config == null)
-      throw Error("Could not find required configuration file metaview.yaml")
-
-    val textures = listProjectTextures(config.projectPath)
-
     val root = BorderPane()
     val scene = Scene(root, 1200.0, 600.0)
     val s = getResourceUrl("style.css")
@@ -73,10 +80,7 @@ class LabGui : Application() {
     primaryStage.scene = scene
     _globalWindow = scene.window
 
-    var state = State(
-        config = config,
-        textureName = textures.firstOrNull()
-    )
+    var state = newState()
 
     var emit: Emitter? = null
     val updateGraphView = { st: State, stages: List<List<Id>>, values: OutputValues ->
@@ -108,7 +112,7 @@ class LabGui : Application() {
     }
 
     root.top = menuBarView(emit)
-    root.left = textureList(emit, textures)
+    root.left = textureList(emit, state.textures)
     emit(Event(EventType.refresh))
     primaryStage.show()
   }

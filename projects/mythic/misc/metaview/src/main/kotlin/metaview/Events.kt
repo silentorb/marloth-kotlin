@@ -5,6 +5,7 @@ import mythic.ent.Id
 enum class EventType {
   inputValueChanged,
   refresh,
+  renameTexture,
   nodeSelect,
   textureSelect
 }
@@ -22,3 +23,5 @@ data class Event(
 )
 
 typealias Emitter = (Event) -> Unit
+
+typealias Renaming = Pair<String, String>

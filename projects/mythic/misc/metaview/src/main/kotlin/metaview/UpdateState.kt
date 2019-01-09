@@ -4,6 +4,8 @@ import metahub.Engine
 import metahub.Graph
 import metahub.loadGraphFromFile
 import mythic.ent.Id
+import java.nio.file.Files
+import java.nio.file.Paths
 
 typealias StateTransform = (State) -> State
 
@@ -53,12 +55,29 @@ fun changeInputValue(change: InputValueChange): StateTransform = { state ->
   )
 }
 
+fun renameTexture(change: Renaming): StateTransform = { state ->
+  Files.move(
+      Paths.get(texturePath(state, change.first)),
+      Paths.get(texturePath(state, change.second))
+  )
+  state.copy(
+      textureName = change.second,
+      textures = state.textures.map {
+        if (it == change.first)
+          change.second
+        else
+          it
+      }
+  )
+}
+
 fun updateState(village: Village, state: State, event: Event): State {
   val transform = when (event.type) {
     EventType.inputValueChanged -> changeInputValue(event.data as InputValueChange)
     EventType.textureSelect -> selectTexture(village, event.data as String)
     EventType.nodeSelect -> selectNode(event.data as Id)
     EventType.refresh -> refreshState(village)
+    EventType.renameTexture -> renameTexture(event.data as Renaming)
   }
 
   return transform(state)

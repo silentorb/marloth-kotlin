@@ -12,7 +12,8 @@ data class State(
     val config: Config,
     val textureName: String? = null,
     val nodeSelection: List<Id> = listOf(),
-    val graph: Graph? = null
+    val graph: Graph? = null,
+    val textures: List<String>
 )
 
 data class Village(
