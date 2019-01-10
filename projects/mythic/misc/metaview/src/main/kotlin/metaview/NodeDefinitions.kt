@@ -1,6 +1,9 @@
 package metaview
 
-val nodeDefinitions = mapOf(
+import metahub.InputDefinition
+import metahub.NodeDefinition
+
+val nodeDefinitions: Map<String, NodeDefinition> = mapOf(
     "coloredCheckers" to NodeDefinition(
         inputs = mapOf(
             "firstColor" to InputDefinition(

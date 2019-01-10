@@ -1,9 +1,8 @@
 package metaview
 
-import metahub.Engine
-import metahub.Graph
-import metahub.loadGraphFromFile
+import metahub.*
 import mythic.ent.Id
+import mythic.ent.replace
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -41,16 +40,12 @@ fun selectNode(id: Id): StateTransform = { state ->
   )
 }
 
-fun changeInputValue(change: InputValueChange): StateTransform = { state ->
+fun changeInputValue(change: InputValue): StateTransform = { state ->
   val graph = state.graph!!
-  val nodeValues = (graph.values[change.node] ?: mapOf())
-      .plus(change.input to change.value)
-
+  val newValues = replace(graph.values, change, ::isSameInput)
   state.copy(
       graph = graph.copy(
-          values = graph.values.plus(
-              change.node to nodeValues
-          )
+          values = newValues
       )
   )
 }
@@ -74,14 +69,14 @@ fun renameTexture(change: Renaming): StateTransform = { state ->
 fun newTexture(name: String): StateTransform = { state ->
   state.copy(
       textures = state.textures.plus(name).sorted(),
-      textureName = name ,
+      textureName = name,
       graph = Graph()
   )
 }
 
 fun updateState(village: Village, state: State, event: Event): State {
   val transform = when (event.type) {
-    EventType.inputValueChanged -> changeInputValue(event.data as InputValueChange)
+    EventType.inputValueChanged -> changeInputValue(event.data as InputValue)
     EventType.textureSelect -> selectTexture(village, event.data as String)
     EventType.newTexture -> newTexture(event.data as String)
     EventType.nodeSelect -> selectNode(event.data as Id)

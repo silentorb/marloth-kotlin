@@ -11,12 +11,6 @@ enum class EventType {
   textureSelect
 }
 
-data class InputValueChange(
-    val node: Id,
-    val input: String,
-    val value: Any
-)
-
 data class Event(
     val type: EventType,
     val data: Any = 0,

@@ -5,7 +5,9 @@ import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.layout.VBox
 import metahub.Engine
+import metahub.InputValue
 import metahub.OutputValues
+import metahub.getInputValue
 import metaview.*
 
 fun propertiesView(emit: Emitter, engine: Engine, state: State, values: OutputValues): Node {
@@ -24,18 +26,17 @@ fun propertiesView(emit: Emitter, engine: Engine, state: State, values: OutputVa
     panel.children.addAll(previewImage, label)
 
     val definition = nodeDefinitions[functionName]!!
-    val nodeValues = graph.values[id] ?: mapOf()
 
     for ((name, input) in definition.inputs) {
       val viewFactory = valueViews[input.type]
       if (viewFactory != null) {
         val propertyLabel = Label(name)
-        val value = nodeValues[name]!!
+        val value = getInputValue(graph)(id, name)!!
         val changed: OnChange = { newValue, preview ->
           //          if (newValue != value) {
-          val data = InputValueChange(
+          val data = InputValue(
               node = id,
-              input = name,
+              port = name,
               value = newValue
           )
           emit(Event(EventType.inputValueChanged, data, preview))

@@ -6,14 +6,10 @@ import javafx.scene.canvas.Canvas
 import javafx.scene.control.Label
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
-import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
-import metahub.Engine
-import metahub.Graph
-import metahub.OutputValues
+import metahub.*
 import metaview.Emitter
-import metaview.NodeDefinition
 import metaview.State
 import metaview.nodeDefinitions
 import mythic.ent.Id
@@ -48,7 +44,7 @@ fun getBoundsRelativeToParent(parent: Node, child: Node): Point2D {
   return position.subtract(parent.localToScene(0.0, 0.0))
 }
 
-fun graphView(emit: Emitter, engine: Engine, state: State, stages: List<List<Id>>, values: OutputValues): Node {
+fun graphView(emit: Emitter, engine: Engine, state: State, values: OutputValues): Node {
   val stack = Pane()
   val canvas = Canvas(800.0, 600.0)
   val pane = Pane()
@@ -58,6 +54,7 @@ fun graphView(emit: Emitter, engine: Engine, state: State, stages: List<List<Id>
     val nodeNodes = mutableMapOf<Id, Pair<Node, List<Node>>>()
     val strideX = nodeLength + nodePadding + portPadding
     val strideY = nodeLength + nodePadding
+    val stages = arrangeGraphStages(graph)
     stages.forEachIndexed { x, stage ->
       stage.forEachIndexed { y, nodeId ->
         {}
