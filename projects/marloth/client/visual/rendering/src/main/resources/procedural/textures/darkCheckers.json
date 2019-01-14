@@ -1,30 +1,27 @@
 {
-  "nodes": [1],
-  "functions": {
-    "1": "coloredCheckers"
+  "nodes" : [ 1 ],
+  "functions" : {
+    "1" : "coloredCheckers"
   },
-  "connections": [],
-  "values": [
-    {
-      "node": "2",
-      "port": "firstColor",
-      "value": {
-        "x": 0.0,
-        "y": 0.2,
-        "z": 0.0
-      }
+  "connections" : [ ],
+  "values" : [ {
+    "value" : {
+      "x" : 0.0,
+      "y" : 0.2,
+      "z" : 0.0
     },
-    {
-      "node": "2",
-      "port": "secondColor",
-      "value": {
-        "x": 0.5,
-        "y": 0.3,
-        "z": 0.1
-      }
-    }
-  ],
-  "outputs": {
-    "diffuse": 1
+    "node" : 1,
+    "port" : "firstColor"
+  }, {
+    "value" : {
+      "x" : 0.5,
+      "y" : 0.3,
+      "z" : 0.1
+    },
+    "node" : 1,
+    "port" : "secondColor"
+  } ],
+  "outputs" : {
+    "diffuse" : 1
   }
 }

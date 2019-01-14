@@ -19,3 +19,10 @@ fun newIdSource(initialValue: Id): IdSource {
 
 fun <T> pipe(initial: T, steps: List<(T) -> T>): T =
     steps.fold(initial) { a, b -> b(a) }
+
+fun <T> pipe(initial: T, vararg steps: (T) -> T): T =
+    steps.fold(initial) { a, b -> b(a) }
+
+fun <T> pipe(vararg steps: (T) -> T): (T) -> T = {
+  steps.fold(it) { a, b -> b(a) }
+}

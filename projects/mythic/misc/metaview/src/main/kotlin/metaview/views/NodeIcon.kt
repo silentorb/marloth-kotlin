@@ -35,7 +35,7 @@ fun nodeIcon(emit: Emitter, graph: Graph, id: Id, buffer: ByteBuffer, selection:
   container.children.addAll(canvas, label)
 
   container.setOnMouseClicked {
-    emit(Event(EventType.nodeSelect, id))
+    emit(Event(EventType.selectNode, id))
   }
 
   if (selection.contains(id)) {

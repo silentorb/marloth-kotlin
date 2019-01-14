@@ -4,16 +4,11 @@ import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.canvas.Canvas
 import javafx.scene.control.Label
-import javafx.scene.layout.HBox
-import javafx.scene.layout.Pane
-import javafx.scene.layout.VBox
+import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import metahub.*
-import metaview.Emitter
-import metaview.State
-import metaview.nodeDefinitions
+import metaview.*
 import mythic.ent.Id
-import org.joml.Vector2d
 
 const val nodeLength: Double = 75.0
 const val nodePadding: Double = 40.0
@@ -24,23 +19,24 @@ fun getDefinition(graph: Graph, node: Id): NodeDefinition {
   return nodeDefinitions[function]!!
 }
 
-fun portLabels(graph: Graph, nodeId: Id): List<Node> {
+fun portLabels(graph: Graph, emit: Emitter, selection: List<Port>, nodeId: Id): List<Node> {
   val definition = getDefinition(graph, nodeId)
-  return definition.inputs.map { input ->
-    val label = Label(input.key)
-    label
-  }
+  return definition.inputs
+//      .filter { input -> graph.connections.any { it.output == nodeId && it.port == input.key } }
+      .map { input ->
+        val label = Label(input.key)
+        val port = Port(node = nodeId, input = input.key)
+        label.setOnMouseClicked { emit(Event(EventType.selectInput, port)) }
+        if (selection.contains(port)) {
+          val borderStroke = BorderStroke(Color.BLUEVIOLET, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)
+          label.border = Border(borderStroke)
+        }
+        label
+      }
 }
 
 fun getBoundsRelativeToParent(parent: Node, child: Node): Point2D {
   val position = child.localToScene(0.0, 0.0)
-//  var current = child
-//  while (current.parent != parent) {
-//    current = current.parent
-//    val bounds = current.localToScene(0.0, 0.0)
-//    position = position.add(bounds)
-//  }
-
   return position.subtract(parent.localToScene(0.0, 0.0))
 }
 
@@ -57,14 +53,13 @@ fun graphView(emit: Emitter, engine: Engine, state: State, values: OutputValues)
     val stages = arrangeGraphStages(graph)
     stages.forEachIndexed { x, stage ->
       stage.forEachIndexed { y, nodeId ->
-        {}
         val buffer = getNodePreviewBuffer(graph, nodeId, values[nodeId]!!)
         val hbox = HBox()
-        val icon = nodeIcon(emit, graph, nodeId, buffer, state.nodeSelection)
+        val icon = nodeIcon(emit, graph, nodeId, buffer, state.graphInteraction.nodeSelection)
         hbox.relocate(nodePadding + x * strideX, nodePadding + y * strideY)
         val portsPanel = VBox()
         portsPanel.spacing = 5.0
-        val portLabels = portLabels(graph, nodeId)
+        val portLabels = portLabels(graph, emit,state.graphInteraction.portSelection, nodeId)
         portsPanel.children.addAll(portLabels)
         nodeNodes[nodeId] = Pair(icon, portLabels)
         hbox.children.addAll(portsPanel, icon)

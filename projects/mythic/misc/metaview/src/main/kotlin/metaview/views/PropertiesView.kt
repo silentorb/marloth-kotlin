@@ -11,13 +11,13 @@ import metahub.getInputValue
 import metaview.*
 
 fun propertiesView(emit: Emitter, engine: Engine, state: State, values: OutputValues): Node {
-  return if (state.nodeSelection.size != 1) {
+  val id = state.graphInteraction.nodeSelection.firstOrNull() ?: state.graphInteraction.portSelection.firstOrNull()?.node
+  return if (id == null) {
     VBox()
   } else {
     val panel = VBox()
     panel.spacing = 5.0
     panel.alignment = Pos.BASELINE_CENTER
-    val id = state.nodeSelection.first()
     val graph = state.graph!!
     val previewImage = outputImage(getNodePreviewBuffer(graph, id, values[id]!!), 100.0)
     val functionName = graph.functions[id]!!
@@ -43,7 +43,7 @@ fun propertiesView(emit: Emitter, engine: Engine, state: State, values: OutputVa
 //          }
         }
 
-        val view = viewFactory(value, changed)
+        val view = viewFactory(value.value, changed)
         panel.children.addAll(view, propertyLabel)
       }
     }

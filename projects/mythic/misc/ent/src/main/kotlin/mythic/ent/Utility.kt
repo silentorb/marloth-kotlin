@@ -32,3 +32,11 @@ fun <T> replace(collection: Collection<T>, newItem: T, matches: (T, T) -> Boolea
       else
         it
     }
+
+fun <T> transformNotNull(value: T?, action: (T) -> T): T? =
+    if (value != null)
+      action(value)
+    else
+      null
+
+fun <T> pass(value: T): T = value

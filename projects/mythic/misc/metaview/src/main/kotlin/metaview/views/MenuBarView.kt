@@ -11,6 +11,7 @@ import javafx.scene.input.KeyCodeCombination
 import metaview.Emitter
 import metaview.Event
 import metaview.EventType
+import metaview.nodeDefinitions
 
 fun newTextureDialog(emit: Emitter) {
   val dialog = TextInputDialog()
@@ -24,19 +25,48 @@ fun newTextureDialog(emit: Emitter) {
   }
 }
 
-fun menuBarView(emit: Emitter): Node {
-  val menu = MenuBar()
-  val file = Menu("File")
+val fileMenu: (Emitter) -> Menu = { emit ->
+  val file = Menu("_File")
 
-  val newTexture = MenuItem("New Texture")
+  val newTexture = MenuItem("_New Texture")
   newTexture.onAction = EventHandler { newTextureDialog(emit) }
   newTexture.accelerator = KeyCodeCombination(KeyCode.N, KeyCodeCombination.CONTROL_DOWN)
 
-  val refresh = MenuItem("Refresh")
+  val refresh = MenuItem("_Refresh")
   refresh.onAction = EventHandler { emit(Event(EventType.refresh)) }
   refresh.accelerator = KeyCodeCombination(KeyCode.F5)
 
   file.items.addAll(newTexture, refresh)
-  menu.menus.addAll(file)
+  file
+}
+
+val editMenu: (Emitter) -> Menu = { emit ->
+  val edit = Menu("_Edit")
+  val deleteNode = MenuItem("_Delete")
+  deleteNode.setOnAction { emit(Event(EventType.deleteSelected)) }
+  deleteNode.accelerator = KeyCodeCombination(KeyCode.DELETE)
+
+  edit.items.addAll(deleteNode)
+  edit
+}
+
+val addMenu: (Emitter) -> Menu = { emit ->
+  val add = Menu("_Add")
+  val options = nodeDefinitions.map { (key, _) ->
+    val item = MenuItem(key)
+    item.setOnAction { emit(Event(EventType.addNode, key)) }
+    item
+  }
+  add.items.addAll(options)
+  add
+}
+
+fun menuBarView(emit: Emitter): Node {
+  val menu = MenuBar()
+  menu.menus.addAll(listOf(
+      fileMenu,
+      editMenu,
+      addMenu
+  ).map { it(emit) })
   return menu
 }

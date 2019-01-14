@@ -15,7 +15,7 @@ val defaultGrayscale: (Int) -> FloatBuffer = { length ->
   BufferUtils.createFloatBuffer(length * length)
 }
 
-fun defaultTypeValues(length: Int): ValueMap = mapOf(
+fun fillerTypeValues(length: Int): ValueMap = mapOf(
     "bitmap" to defaultBitmap,
     "grayscale" to defaultGrayscale
 ).mapValues { { it.value(length) } }
@@ -36,8 +36,11 @@ fun sanitizeGraph(defaultValues: ValueMap): (Graph) -> Graph = { graph ->
   }
 
   val newValues = changes.map { (node, input) ->
+    val getValue = defaultValues[input.value.type]
+    if (getValue == null)
+      throw Error("Type ${input.key} cannot be null")
     InputValue(
-        value = defaultValues[input.value.type]!!(),
+        value = getValue(),
         node = node,
         port = input.key
     )
@@ -49,7 +52,7 @@ fun sanitizeGraph(defaultValues: ValueMap): (Graph) -> Graph = { graph ->
 }
 
 fun executeSanitized(engine: Engine, graph: Graph): OutputValues {
-  val defaultValues = defaultTypeValues(textureLength)
+  val defaultValues = fillerTypeValues(textureLength)
   val tempGraph = sanitizeGraph(defaultValues)(graph)
   return execute(engine, tempGraph)
 }

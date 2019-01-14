@@ -3,7 +3,10 @@ package metaview
 import configuration.loadYamlFile
 import configuration.saveJsonFile
 import javafx.application.Application
+import javafx.scene.Node
 import javafx.scene.Scene
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import javafx.scene.layout.BorderPane
 import javafx.stage.Stage
 import javafx.stage.Window
@@ -12,10 +15,10 @@ import metaview.views.graphView
 import metaview.views.menuBarView
 import metaview.views.propertiesView
 import metaview.views.textureList
-import mythic.ent.Id
 import mythic.imaging.newTextureEngine
+import java.awt.MouseInfo
+import java.awt.Point
 import java.io.File
-import java.lang.Exception
 import java.net.URL
 
 fun getResourceUrl(path: String): URL {
@@ -27,16 +30,7 @@ private var _globalWindow: Window? = null
 
 fun globalWindow() = _globalWindow!!
 
-//fun periodicUpdate(gui: LabGui) {
-//  val updater = Timeline(KeyFrame(Duration.seconds(0.5), EventHandler {
-//    if (mainAppClosed)
-//      Platform.exit()
-//  }))
-//  updater.cycleCount = Timeline.INDEFINITE
-//  updater.play()
-//}
-
-val textureLength = 256
+const val textureLength = 256
 
 fun listProjectTextures(path: String): List<String> {
   return File(path).listFiles()
@@ -58,10 +52,46 @@ fun newState(): State {
   )
 }
 
+fun isOver(point: Point, node: Node): Boolean {
+  val position = node.localToScene(0.0, 0.0)
+  val bounds = node.boundsInLocal
+  return point.x >= position.x
+      && point.x < position.x + bounds.width
+      && point.y >= position.y
+      && point.y < position.y + bounds.height
+}
+
+fun getFocus(root: BorderPane): FocusContext {
+  val screenMouse = MouseInfo.getPointerInfo().location
+  val mouse = Point(screenMouse.x - globalWindow().x.toInt(), screenMouse.y - globalWindow().y.toInt())
+  val isOver = { node: Node? ->
+    if (node != null) isOver(mouse, node)
+    else false
+  }
+  return when {
+    isOver(root.left) -> FocusContext.graphs
+    isOver(root.center) -> FocusContext.graph
+    else -> FocusContext.none
+  }
+}
+
+fun listenForKeypresses(node: Node, emit: Emitter) {
+  node.addEventHandler(KeyEvent.KEY_PRESSED) { event ->
+    val type: EventType? = when (event.code) {
+      KeyCode.C -> EventType.connecting
+      else -> null
+    }
+
+    if (type != null)
+      emit(Event(type))
+  }
+}
+
 fun coreLogic(root: BorderPane, village: Village) {
   var state = newState()
 
   var emit: Emitter? = null
+
 
   val updateTextureListView = { st: State ->
     root.left = textureList(emit!!, st)
@@ -77,7 +107,8 @@ fun coreLogic(root: BorderPane, village: Village) {
 
   emit = { event ->
     val previousState = state
-    val newState = updateState(village, state, event)
+    val focus = getFocus(root)
+    val newState = updateState(village, getFocus(root), state, event)
     val graph = newState.graph
     val values = if (graph != null)
       executeSanitized(village.engine, graph)
@@ -85,7 +116,7 @@ fun coreLogic(root: BorderPane, village: Village) {
       mapOf()
     updateGraphView(newState, values)
     updatePropertiesView(newState, values)
-    if (event.type == EventType.newTexture)
+    if (newState.textures.size != previousState.textures.size)
       updateTextureListView(newState)
 
     if (!event.preview) {
@@ -98,6 +129,8 @@ fun coreLogic(root: BorderPane, village: Village) {
 
   root.top = menuBarView(emit)
   updateTextureListView(state)
+
+  listenForKeypresses(root, emit)
 
   emit(Event(EventType.refresh))
 }

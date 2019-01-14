@@ -1,13 +1,15 @@
 package metaview
 
-import mythic.ent.Id
-
 enum class EventType {
+  addNode,
+  connecting,
+  deleteSelected,
   inputValueChanged,
   refresh,
   renameTexture,
   newTexture,
-  nodeSelect,
+  selectInput,
+  selectNode,
   textureSelect
 }
 
