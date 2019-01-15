@@ -56,6 +56,13 @@ fun FloatBuffer.put(color: Vector3) {
   this.put(color.z)
 }
 
+fun FloatBuffer.getVector3() =
+    Vector3(
+        this.get(),
+        this.get(),
+        this.get()
+    )
+
 fun <T> withBuffer(depth: Int, setter: (FloatBuffer, T) -> Unit): ((Arguments) -> (Float, Float) -> T) -> TextureFunction = { function ->
   { length ->
     { arguments ->
@@ -111,6 +118,36 @@ val colorize: TextureFunction = withBitmapBuffer { arguments ->
   { x, y ->
     val unit = grayscale.get()
     first * (1f - unit) + second * unit
+  }
+}
+
+fun floatBufferArgument(arguments: Arguments, name: String): FloatBuffer {
+  val result = arguments[name]!! as FloatBuffer
+  result.rewind()
+  return result
+}
+
+val mixBitmaps: TextureFunction = withBitmapBuffer { arguments ->
+  val degree = arguments["degree"]!! as Float
+  val first = floatBufferArgument(arguments, "first")
+  val second = floatBufferArgument(arguments, "second")
+  val k = 0
+  { x, y ->
+    first.getVector3() * (1f - degree) + second.getVector3() * degree
+  }
+}
+
+val noiseSource = OpenSimplexNoiseKotlin(1)
+
+fun simpleNoise(scale: Float): ScalarTextureAlgorithm =
+    { x, y ->
+      noiseSource.eval(x * scale, y * scale)
+    }
+
+val simpleNoiseOperator: TextureFunction = withGrayscaleBuffer { arguments ->
+  val scale = arguments["degree"]!! as Float
+  { x, y ->
+    noiseSource.eval(x * scale, y * scale)
   }
 }
 

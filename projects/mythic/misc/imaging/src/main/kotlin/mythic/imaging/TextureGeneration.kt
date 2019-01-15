@@ -43,15 +43,6 @@ val checkerPattern2 = { first: Vector3i, second: Vector3i ->
   }
 }
 
-val noiseSource = OpenSimplexNoiseKotlin(1)
-
-fun simpleNoise(scale: Float): ScalarTextureAlgorithm =
-    { x, y ->
-      //      noiseSource.eval2(x * scale, y * scale)
-      noiseSource.eval(x * scale, y * scale)
-//      tileable2DNoise(noiseSource, x, y, scale)
-    }
-
 fun simpleNoise(scales: List<Float>): ScalarTextureAlgorithm =
     { x, y ->
       scales.map { simpleNoise(it)(x, y) / scales.size }
