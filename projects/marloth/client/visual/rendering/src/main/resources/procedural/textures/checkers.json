@@ -26,5 +26,7 @@
     "node" : 2,
     "port" : "secondColor"
   } ],
-  "outputs" : { }
+  "outputs" : {
+    "diffuse" : 2
+  }
 }

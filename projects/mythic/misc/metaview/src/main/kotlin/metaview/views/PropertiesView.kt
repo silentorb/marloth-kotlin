@@ -12,7 +12,7 @@ import metaview.*
 
 fun propertiesView(emit: Emitter, engine: Engine, state: State, values: OutputValues): Node {
   val id = state.graphInteraction.nodeSelection.firstOrNull() ?: state.graphInteraction.portSelection.firstOrNull()?.node
-  return if (id == null) {
+  return if (id == null || id == 0L) {
     VBox()
   } else {
     val panel = VBox()

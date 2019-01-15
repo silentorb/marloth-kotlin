@@ -3,6 +3,7 @@ package metaview.views
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.canvas.Canvas
+import javafx.scene.canvas.GraphicsContext
 import javafx.scene.control.Label
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
@@ -19,25 +20,42 @@ fun getDefinition(graph: Graph, node: Id): NodeDefinition {
   return nodeDefinitions[function]!!
 }
 
+fun portLabel(port: Port, emit: Emitter, selection: List<Port>): Node {
+  val label = Label(port.input)
+  label.setOnMouseClicked { emit(Event(EventType.selectInput, port)) }
+  if (selection.contains(port)) {
+    val borderStroke = BorderStroke(Color.BLUEVIOLET, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)
+    label.border = Border(borderStroke)
+  }
+  return label
+}
+
 fun portLabels(graph: Graph, emit: Emitter, selection: List<Port>, nodeId: Id): List<Node> {
   val definition = getDefinition(graph, nodeId)
   return definition.inputs
 //      .filter { input -> graph.connections.any { it.output == nodeId && it.port == input.key } }
       .map { input ->
-        val label = Label(input.key)
         val port = Port(node = nodeId, input = input.key)
-        label.setOnMouseClicked { emit(Event(EventType.selectInput, port)) }
-        if (selection.contains(port)) {
-          val borderStroke = BorderStroke(Color.BLUEVIOLET, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)
-          label.border = Border(borderStroke)
-        }
-        label
+        portLabel(port, emit, selection)
       }
 }
 
 fun getBoundsRelativeToParent(parent: Node, child: Node): Point2D {
   val position = child.localToScene(0.0, 0.0)
   return position.subtract(parent.localToScene(0.0, 0.0))
+}
+
+fun drawConnection(gc: GraphicsContext, pane: Node, nodeNode: Node, port: Node) {
+  val a = getBoundsRelativeToParent(pane, nodeNode)
+  val b = getBoundsRelativeToParent(pane, port)
+  gc.stroke = Color.GREEN
+  gc.lineWidth = 2.0
+  gc.strokeLine(
+      a.x + nodeNode.boundsInParent.width + 7,
+      a.y + nodeNode.boundsInParent.height / 2,
+      b.x - 7,
+      b.y + 10.0
+  )
 }
 
 fun graphView(emit: Emitter, engine: Engine, state: State, values: OutputValues): Node {
@@ -59,7 +77,7 @@ fun graphView(emit: Emitter, engine: Engine, state: State, values: OutputValues)
         hbox.relocate(nodePadding + x * strideX, nodePadding + y * strideY)
         val portsPanel = VBox()
         portsPanel.spacing = 5.0
-        val portLabels = portLabels(graph, emit,state.graphInteraction.portSelection, nodeId)
+        val portLabels = portLabels(graph, emit, state.graphInteraction.portSelection, nodeId)
         portsPanel.children.addAll(portLabels)
         nodeNodes[nodeId] = Pair(icon, portLabels)
         hbox.children.addAll(portsPanel, icon)
@@ -76,17 +94,29 @@ fun graphView(emit: Emitter, engine: Engine, state: State, values: OutputValues)
       val output = nodeNodes[connection.output]!!
       val outputDefinition = getDefinition(graph, connection.output)
       val port = output.second[outputDefinition.inputs.keys.indexOf(connection.port)]
-      val a = getBoundsRelativeToParent(pane, input.first)
-      val b = getBoundsRelativeToParent(pane, port)
-      gc.stroke = Color.GREEN
-      gc.lineWidth = 2.0
-      gc.strokeLine(
-          a.x + input.first.boundsInParent.width + 7,
-          a.y + input.first.boundsInParent.height / 2,
-          b.x - 7,
-          b.y + 10.0
-      )
+      drawConnection(gc, pane, input.first, port)
+//      val a = getBoundsRelativeToParent(pane, input.first)
+//      val b = getBoundsRelativeToParent(pane, port)
+//      gc.stroke = Color.GREEN
+//      gc.lineWidth = 2.0
+//      gc.strokeLine(
+//          a.x + input.first.boundsInParent.width + 7,
+//          a.y + input.first.boundsInParent.height / 2,
+//          b.x - 7,
+//          b.y + 10.0
+//      )
     }
+
+    listOf("diffuse")
+        .forEachIndexed { index, name ->
+          val label = portLabel(Port(0L, name), emit, state.graphInteraction.portSelection)
+          label.relocate(nodePadding + (stages.size + 1) * strideX, nodePadding + (index + 1) * strideY)
+          pane.children.add(label)
+          val output = graph.outputs[name]
+          if (output != null) {
+            drawConnection(gc, pane, nodeNodes[output]!!.first, label)
+          }
+        }
   }
 
   return stack

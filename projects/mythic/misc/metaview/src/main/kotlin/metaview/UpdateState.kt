@@ -38,25 +38,42 @@ fun refreshState(village: Village): StateTransform = { state ->
   )
 }
 
-fun selectNode(id: Id): StateTransform = { state ->
-  val reselecting = state.graphInteraction.nodeSelection.contains(id)
-  if (state.graphInteraction.mode == GraphMode.connecting)
-    if (reselecting)
-      state
+fun isReselecting(id: Id, state: State): Boolean =
+    state.graphInteraction.nodeSelection.contains(id)
+
+fun connectNodes(id: Id): StateTransform = { state ->
+  if (isReselecting(id, state))
+    state
+  else {
+    val port = state.graphInteraction.portSelection.first()
+    val newGraph = if (port.node == 0L)
+      setOutput(id, port.input)
     else
-      state.copy(
-          graphInteraction = state.graphInteraction.copy(
-              mode = GraphMode.normal
-          ),
-          graph = newConnection(id, state.graphInteraction.portSelection.first())(state.graph!!)
-      )
-  else
+      newConnection(id, port)
+
     state.copy(
-        graphInteraction = if (reselecting)
-          state.graphInteraction.copy(nodeSelection = state.graphInteraction.nodeSelection.minus(id))
-        else
-          GraphInteraction(nodeSelection = listOf(id))
+        graphInteraction = state.graphInteraction.copy(
+            mode = GraphMode.normal
+        ),
+        graph = newGraph(state.graph!!)
     )
+  }
+}
+
+fun toggleNodeSelection(id: Id): StateTransform = { state ->
+  state.copy(
+      graphInteraction = if (isReselecting(id, state))
+        state.graphInteraction.copy(nodeSelection = state.graphInteraction.nodeSelection.minus(id))
+      else
+        GraphInteraction(nodeSelection = listOf(id))
+  )
+}
+
+fun selectNode(id: Id): StateTransform = { state ->
+  if (state.graphInteraction.mode == GraphMode.connecting)
+    connectNodes(id)(state)
+  else
+    toggleNodeSelection(id)(state)
 }
 
 fun selectInput(port: Port): StateTransform = { state ->
@@ -127,10 +144,21 @@ fun addNode(name: String): StateTransform = { state ->
   }
 }
 
+
+fun deleteConnectionsOrOutputConnections(ports: List<Port>): GraphTransform {
+  val (outputConnections, connections) = ports.partition { it.node == 0L }
+  return pipe(deleteConnections(connections), deleteOutputConnections(outputConnections))
+}
+
 val deleteGraphSelection: StateTransform = { state ->
   val selection = state.graphInteraction
+  val newGraph = transformNotNull(state.graph, pipe(
+      deleteNodes(selection.nodeSelection),
+      deleteConnectionsOrOutputConnections(selection.portSelection)
+  ))
+
   state.copy(
-      graph = transformNotNull(state.graph, pipe(deleteNodes(selection.nodeSelection), deleteConnection(selection.portSelection))),
+      graph = newGraph,
       graphInteraction = GraphInteraction()
   )
 }

@@ -120,10 +120,24 @@ fun newConnection(node: Id, port: Port): GraphTransform = { graph ->
   )
 }
 
-fun deleteConnection(ports: List<Port>): GraphTransform = { graph ->
+fun setOutput(node: Id, output: String): GraphTransform = { graph->
+  graph.copy(
+      outputs = graph.outputs.plus(Pair(output, node))
+  )
+}
+
+fun deleteConnections(ports: List<Port>): GraphTransform = { graph ->
   graph.copy(
       connections = graph.connections.filter { connection ->
         ports.none { it.node == connection.output && it.input == connection.port }
+      }
+  )
+}
+
+fun deleteOutputConnections(ports: List<Port>): GraphTransform = { graph ->
+  graph.copy(
+      outputs = graph.outputs.filter { output ->
+        ports.none { it.input == output.key }
       }
   )
 }
