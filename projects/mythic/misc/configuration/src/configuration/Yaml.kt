@@ -1,14 +1,11 @@
 package configuration
 
 import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import java.io.File
-import java.io.FileInputStream
 import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -64,14 +61,14 @@ inline fun <reified T> loadYamlResource(path: String, typeref: TypeReference<T>)
   return getYamlObjectMapper().readValue(content, typeref)
 }
 
-fun <T> saveConfig(mapper: YAMLMapper, path: String, config: T) {
+fun <T> saveYamlFile(mapper: YAMLMapper, path: String, config: T) {
   Files.newBufferedWriter(Paths.get(path)).use {
     mapper.writeValue(it, config)
   }
 }
 
-fun <T> saveConfig(path: String, config: T) {
-  saveConfig(getYamlObjectMapper(), path, config)
+fun <T> saveYamlFile(path: String, config: T) {
+  saveYamlFile(getYamlObjectMapper(), path, config)
 }
 
 class ConfigManager<T>(private val path: String, private val config: T) {
@@ -86,7 +83,7 @@ class ConfigManager<T>(private val path: String, private val config: T) {
     val mapper = getYamlObjectMapper()
     val newString = mapper.writeValueAsString(config)
     if (newString != previous) {
-      saveConfig(mapper, path, config)
+      saveYamlFile(mapper, path, config)
       previous = newString
     }
   }

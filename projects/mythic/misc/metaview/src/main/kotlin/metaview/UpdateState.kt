@@ -15,19 +15,27 @@ enum class FocusContext {
   none
 }
 
+fun activeGraphChanged(name: String?): StateTransform = { state ->
+  state.copy(
+      textureName = name,
+      graphInteraction = GraphInteraction(),
+      config = state.config.copy(
+          activeGraph = name
+      )
+  )
+}
+
 fun texturePath(state: State, name: String): String =
     "${state.config.projectPath}/$name.json"
 
 fun loadTextureGraph(engine: Engine, state: State, name: String): Graph =
     loadGraphFromFile(engine, texturePath(state, name))
 
-fun selectTexture(village: Village, name: String): StateTransform = { state ->
+fun selectTexture(village: Village, name: String): StateTransform = pipe({ state: State ->
   state.copy(
-      textureName = name,
-      graph = loadTextureGraph(village.engine, state, name),
-      graphInteraction = GraphInteraction()
+      graph = loadTextureGraph(village.engine, state, name)
   )
-}
+}, activeGraphChanged(name))
 
 fun refreshState(village: Village): StateTransform = { state ->
   state.copy(
@@ -115,13 +123,12 @@ fun renameTexture(change: Renaming): StateTransform = { state ->
   )
 }
 
-fun newTexture(name: String): StateTransform = { state ->
+fun newTexture(name: String): StateTransform = pipe({ state ->
   state.copy(
       textures = state.textures.plus(name).sorted(),
-      textureName = name,
       graph = Graph()
   )
-}
+}, activeGraphChanged(name))
 
 fun addNode(name: String): StateTransform = { state ->
   if (state.graph == null)
@@ -181,10 +188,11 @@ val deleteGraph: StateTransform = { state ->
     Files.delete(Paths.get(texturePath(state, name)))
     val index = state.textures.indexOf(name)
     val newTextures = state.textures.minus(name)
-    state.copy(
-        textures = newTextures,
-        textureName = state.textures.getOrNull(index) ?: state.textures.firstOrNull()
-    )
+    val newName = state.textures.getOrNull(index) ?: state.textures.firstOrNull()
+
+    pipe(state.copy(
+        textures = newTextures
+    ), listOf(activeGraphChanged(newName)))
   } else
     state
 }

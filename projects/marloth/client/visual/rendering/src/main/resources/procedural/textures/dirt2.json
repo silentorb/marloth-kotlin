@@ -1,0 +1,13 @@
+{
+  "nodes" : [ 1 ],
+  "functions" : {
+    "1" : "perlinNoise"
+  },
+  "connections" : [ ],
+  "values" : [ {
+    "value" : 12.0,
+    "node" : 1,
+    "port" : "degree"
+  } ],
+  "outputs" : { }
+}

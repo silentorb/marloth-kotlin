@@ -6,7 +6,8 @@ import metahub.Port
 import mythic.ent.Id
 
 data class Config(
-    val projectPath: String
+    val projectPath: String,
+    val activeGraph: String? = null
 )
 
 data class GraphInteraction(

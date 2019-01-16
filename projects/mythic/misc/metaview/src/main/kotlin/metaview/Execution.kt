@@ -16,8 +16,8 @@ val defaultGrayscale: (Int) -> FloatBuffer = { length ->
 }
 
 fun fillerTypeValues(length: Int): ValueMap = mapOf(
-    "bitmap" to defaultBitmap,
-    "grayscale" to defaultGrayscale
+    bitmapType to defaultBitmap,
+    grayscaleType to defaultGrayscale
 ).mapValues { { it.value(length) } }
 
 fun sanitizeGraph(defaultValues: ValueMap): (Graph) -> Graph = { graph ->

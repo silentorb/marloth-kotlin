@@ -1,7 +1,7 @@
 package marloth.integration
 
 import configuration.loadYamlFile
-import configuration.saveConfig
+import configuration.saveYamlFile
 import marloth.clienting.input.GameInputConfig
 import rendering.DisplayConfig
 import simulation.ViewMode
@@ -19,7 +19,7 @@ data class GameConfig(
 val gameConfigFile = "gameConfig.yaml"
 
 fun saveGameConfig(config: GameConfig) {
-  saveConfig(gameConfigFile, config)
+  saveYamlFile(gameConfigFile, config)
 }
 
 fun loadGameConfig(): GameConfig {

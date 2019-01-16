@@ -2,6 +2,7 @@ package metaview
 
 import configuration.loadYamlFile
 import configuration.saveJsonFile
+import configuration.saveYamlFile
 import javafx.application.Application
 import javafx.scene.Node
 import javafx.scene.Scene
@@ -50,6 +51,10 @@ fun newState(): State {
       textures = textures,
       textureName = textures.firstOrNull()
   )
+}
+
+fun saveConfig(config: Config) {
+  saveYamlFile("metaview.yaml", config)
 }
 
 fun isOver(point: Point, node: Node): Boolean {
@@ -123,6 +128,10 @@ fun coreLogic(root: BorderPane, village: Village) {
       state = newState
       if (state.graph != null && ((state.textureName != null && state.textureName == previousState.textureName) || (state.graph != previousState.graph && previousState.graph != null))) {
         saveJsonFile(texturePath(state, state.textureName!!), state.graph!!)
+      }
+
+      if (state.config != previousState.config) {
+        saveConfig(state.config)
       }
     }
   }

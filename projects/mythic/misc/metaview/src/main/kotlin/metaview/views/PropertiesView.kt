@@ -43,7 +43,7 @@ fun propertiesView(emit: Emitter, engine: Engine, state: State, values: OutputVa
 //          }
         }
 
-        val view = viewFactory(value.value, changed)
+        val view = viewFactory(input)(value.value, changed)
         panel.children.addAll(view, propertyLabel)
       }
     }

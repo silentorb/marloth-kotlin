@@ -7,6 +7,7 @@ import javafx.event.EventHandler
 import javafx.geometry.Insets
 import javafx.scene.Node
 import javafx.scene.control.Label
+import javafx.scene.control.TextField
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.CornerRadii
@@ -19,8 +20,12 @@ import mythic.spatial.Vector3
 typealias OnChange = (Any, Boolean) -> Unit
 typealias ValueView = (value: Any, OnChange) -> Node
 
+typealias ValueViewSource = (InputDefinition) -> ValueView
+
 fun convertColor(color: Color) =
     Vector3(color.red.toFloat(), color.green.toFloat(), color.blue.toFloat())
+
+//fun valueViewSource(valueView: ValueView) = { }
 
 val colorView: ValueView = { value, changed ->
   val color = value as Vector3
@@ -57,14 +62,28 @@ val colorView: ValueView = { value, changed ->
   image
 }
 
-val valueViews = mapOf(
-    "color" to colorView
+val numericFloatView: ValueViewSource = { definition ->
+  { value, changed ->
+    val field = TextField()
+    field.text = (value as Float).toString()
+    field.textProperty().addListener { event ->
+      changed(field.text.toFloat(), false)
+    }
+    field.setOnInputMethodTextChanged { event ->
+    }
+    field
+  }
+}
+
+val valueViews: Map<String, ValueViewSource> = mapOf(
+    colorType to { _ -> colorView },
+    floatType to numericFloatView
 )
 
-fun valueView(changed: OnChange, value: Any, type: String): Node? {
-  val view = valueViews[type]
-  return if (view != null)
-    view(value, changed)
-  else
-    null
-}
+//fun valueView(changed: OnChange, value: Any, type: String, definition: InputDefinition): Node? {
+//  val view = valueViews[type]
+//  return if (view != null)
+//    view(definition)(value, changed)
+//  else
+//    null
+//}

@@ -6,10 +6,7 @@ import javafx.scene.control.Label
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import metahub.Graph
-import metaview.Emitter
-import metaview.Event
-import metaview.EventType
-import metaview.nodeDefinitions
+import metaview.*
 import mythic.ent.Id
 import mythic.imaging.floatTextureToBytes
 import mythic.imaging.grayscaleTextureToBytes
@@ -20,8 +17,8 @@ fun getNodePreviewBuffer(graph: Graph, node: Id, value: Any): ByteBuffer {
   val function = graph.functions[node]!!
   val definition = nodeDefinitions[function]!!
   return when (definition.outputType) {
-    "bitmap" -> floatTextureToBytes(value as FloatBuffer)
-    "grayscale" -> grayscaleTextureToBytes(value as FloatBuffer)
+    bitmapType -> floatTextureToBytes(value as FloatBuffer)
+    grayscaleType -> grayscaleTextureToBytes(value as FloatBuffer)
     else -> throw Error("Not supported")
   }
 }

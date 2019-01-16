@@ -21,7 +21,7 @@ import simulation.*
 const val labConfigPath = "labConfig.yaml"
 
 //fun saveLabConfig(config: LabConfig) {
-//  saveConfig("labConfig.yaml", config)
+//  saveYamlFile("labConfig.yaml", config)
 //}
 
 //var guiClosed = false

@@ -137,6 +137,16 @@ val mixBitmaps: TextureFunction = withBitmapBuffer { arguments ->
   }
 }
 
+val mixGrayscales: TextureFunction = withGrayscaleBuffer { arguments ->
+  val degree = arguments["degree"]!! as Float
+  val first = floatBufferArgument(arguments, "first")
+  val second = floatBufferArgument(arguments, "second")
+  val k = 0
+  { x, y ->
+    first.get() * (1f - degree) + second.get() * degree
+  }
+}
+
 val noiseSource = OpenSimplexNoiseKotlin(1)
 
 fun simpleNoise(scale: Float): ScalarTextureAlgorithm =
@@ -155,7 +165,10 @@ private val textureFunctions = mapOf(
     "coloredCheckers" to coloredCheckers,
     "checkers" to grayscaleCheckers,
     "colorize" to colorize,
-    "solidColor" to solidColor
+    "solidColor" to solidColor,
+    "mixBitmaps" to mixBitmaps,
+    "mixGrayscales" to mixGrayscales,
+    "perlinNoise" to simpleNoiseOperator
 )
 
 private val typeMappers: List<TypeMapper> = listOf(
@@ -166,7 +179,9 @@ private val typeMappers: List<TypeMapper> = listOf(
       } else if (value is Map<*, *>) {
         val map = value as Map<String, Double>
         Vector3(value["x"]!!.toFloat(), value["y"]!!.toFloat(), value["z"]!!.toFloat())
-      } else
+      } else if (value is Double)
+        value.toFloat()
+      else
         null
     }
 )
