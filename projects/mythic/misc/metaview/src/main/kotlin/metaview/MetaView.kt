@@ -9,13 +9,11 @@ import javafx.scene.Scene
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.BorderPane
+import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import javafx.stage.Window
 import metahub.OutputValues
-import metaview.views.graphView
-import metaview.views.menuBarView
-import metaview.views.propertiesView
-import metaview.views.textureList
+import metaview.views.*
 import mythic.imaging.newTextureEngine
 import java.awt.MouseInfo
 import java.awt.Point
@@ -97,6 +95,10 @@ fun coreLogic(root: BorderPane, village: Village) {
 
   var emit: Emitter? = null
 
+  val rightPanel = VBox()
+  rightPanel.children.addAll(VBox(), VBox())
+
+  root.right = rightPanel
 
   val updateTextureListView = { st: State ->
     root.left = textureList(emit!!, st)
@@ -106,8 +108,12 @@ fun coreLogic(root: BorderPane, village: Village) {
     root.center = graphView(emit!!, village.engine, st, values)
   }
 
-  val updatePropertiesView = { st: State, values: OutputValues ->
-    root.right = propertiesView(emit!!, village.engine, st, values)
+  val updatePreviewView = { st: State, values: OutputValues ->
+    rightPanel.children.set(0, previewView(values)(st))
+  }
+
+  val updatePropertiesView = { st: State ->
+    rightPanel.children.set(1, propertiesView(emit!!)(st))
   }
 
   emit = { event ->
@@ -120,7 +126,7 @@ fun coreLogic(root: BorderPane, village: Village) {
     else
       mapOf()
     updateGraphView(newState, values)
-    updatePropertiesView(newState, values)
+    updatePreviewView(newState, values)
     if (newState.textures.size != previousState.textures.size)
       updateTextureListView(newState)
 
@@ -132,6 +138,10 @@ fun coreLogic(root: BorderPane, village: Village) {
 
       if (state.config != previousState.config) {
         saveConfig(state.config)
+      }
+
+      if (state.textureName != previousState.textureName || state.graphInteraction.nodeSelection != previousState.graphInteraction.nodeSelection) {
+        updatePropertiesView(state)
       }
     }
   }
