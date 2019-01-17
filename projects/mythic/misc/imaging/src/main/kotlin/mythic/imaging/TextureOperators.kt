@@ -166,8 +166,9 @@ fun simpleNoise(scale: Float): ScalarTextureAlgorithm =
 val simpleNoiseOperator: TextureFunction = withGrayscaleBuffer { arguments ->
   val scale = arguments["degree"]!! as Float
   { x, y ->
-    noiseSource2.SetFrequency(scale)
-    noiseSource2.GetSimplex(x, y)
+//    noiseSource2.SetFrequency(scale)
+//    noiseSource2.GetSimplex(x, y)
+    perlin3d(0, x * scale, y * scale)
   }
 }
 

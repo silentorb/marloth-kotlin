@@ -5,7 +5,7 @@
   },
   "connections" : [ ],
   "values" : [ {
-    "value" : 300.0,
+    "value" : 20.0,
     "node" : 1,
     "port" : "degree"
   } ],

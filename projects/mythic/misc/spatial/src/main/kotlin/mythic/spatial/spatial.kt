@@ -324,3 +324,9 @@ fun minMax(value: Float, min: Float, max: Float): Float =
       max
     else
       value
+
+operator fun Vector3i.plus(other: Vector3i): Vector3i = Vector3i(x + other.x, y + other.y, z + other.z)
+operator fun Vector3i.plus(other: Int): Vector3i = Vector3i(x + other, y + other, z + other)
+operator fun Vector2f.minus(other: Float): Vector2f = Vector2f(x - other, y - other)
+
+fun Vector3i.toVector3(): Vector3 = Vector3(x.toFloat(), y.toFloat(), z.toFloat())

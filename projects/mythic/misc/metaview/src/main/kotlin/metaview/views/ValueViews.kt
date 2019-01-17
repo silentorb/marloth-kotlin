@@ -6,7 +6,6 @@ import javafx.animation.Timeline
 import javafx.event.EventHandler
 import javafx.geometry.Insets
 import javafx.scene.Node
-import javafx.scene.control.Label
 import javafx.scene.control.TextField
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
@@ -14,7 +13,10 @@ import javafx.scene.layout.CornerRadii
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.util.Duration
-import metaview.*
+import metaview.InputDefinition
+import metaview.colorType
+import metaview.floatType
+import metaview.globalWindow
 import mythic.spatial.Vector3
 
 typealias OnChange = (Any, Boolean) -> Unit
@@ -67,7 +69,9 @@ val numericFloatView: ValueViewSource = { definition ->
     val field = TextField()
     field.text = (value as Float).toString()
     field.textProperty().addListener { event ->
-      changed(field.text.toFloat(), false)
+      val newValue = field.text.toFloatOrNull()
+      if (newValue != null)
+        changed(newValue, false)
     }
     field.setOnInputMethodTextChanged { event ->
     }
