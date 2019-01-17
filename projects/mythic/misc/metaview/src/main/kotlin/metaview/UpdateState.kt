@@ -221,19 +221,27 @@ fun onConnecting(focus: FocusContext): StateTransform =
       else -> ::pass
     }
 
-fun updateState(village: Village, focus: FocusContext, state: State, event: Event): State {
-  val transform = when (event.type) {
-    EventType.addNode -> addNode(event.data as String)
-    EventType.deleteSelected -> deleteSelected(focus)
-    EventType.connecting -> onConnecting(focus)
-    EventType.inputValueChanged -> changeInputValue(event.data as InputValue)
-    EventType.textureSelect -> selectTexture(village, event.data as String)
-    EventType.newTexture -> newTexture(event.data as String)
-    EventType.selectInput -> selectInput(event.data as Port)
-    EventType.selectNode -> selectNode(event.data as Id)
-    EventType.refresh -> refreshState(village)
-    EventType.renameTexture -> renameTexture(event.data as Renaming)
-  }
+fun updateState(village: Village, focus: FocusContext, event: Event): StateTransform =
+    when (event.type) {
+      EventType.addNode -> addNode(event.data as String)
+      EventType.deleteSelected -> deleteSelected(focus)
+      EventType.connecting -> onConnecting(focus)
+      EventType.inputValueChanged -> changeInputValue(event.data as InputValue)
+      EventType.textureSelect -> selectTexture(village, event.data as String)
+      EventType.newTexture -> newTexture(event.data as String)
+      EventType.selectInput -> selectInput(event.data as Port)
+      EventType.selectNode -> selectNode(event.data as Id)
+      EventType.refresh -> refreshState(village)
+      EventType.renameTexture -> renameTexture(event.data as Renaming)
+    }
 
-  return transform(state)
+fun updateConfig(previous: State): StateTransform = { state ->
+  if (state.textureName != previous.textureName)
+    state.copy(
+        config = state.config.copy(
+            activeGraph = state.textureName
+        )
+    )
+  else
+    state
 }

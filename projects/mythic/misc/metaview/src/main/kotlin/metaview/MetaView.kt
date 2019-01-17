@@ -14,6 +14,7 @@ import javafx.stage.Stage
 import javafx.stage.Window
 import metahub.OutputValues
 import metaview.views.*
+import mythic.ent.pipe
 import mythic.imaging.newTextureEngine
 import java.awt.MouseInfo
 import java.awt.Point
@@ -29,7 +30,7 @@ private var _globalWindow: Window? = null
 
 fun globalWindow() = _globalWindow!!
 
-const val textureLength = 256
+const val textureLength = 512
 
 fun listProjectTextures(path: String): List<String> {
   return File(path).listFiles()
@@ -47,7 +48,7 @@ fun newState(): State {
   return State(
       config = config,
       textures = textures,
-      textureName = textures.firstOrNull()
+      textureName = config.activeGraph ?: textures.firstOrNull()
   )
 }
 
@@ -119,7 +120,10 @@ fun coreLogic(root: BorderPane, village: Village) {
   emit = { event ->
     val previousState = state
     val focus = getFocus(root)
-    val newState = updateState(village, getFocus(root), state, event)
+    val newState = pipe(state, listOf(
+        updateState(village, getFocus(root), event),
+        updateConfig(previousState)
+    ))
     val graph = newState.graph
     val values = if (graph != null)
       executeSanitized(village.engine, graph)
@@ -166,7 +170,7 @@ class LabGui : Application() {
       )
 
       val root = BorderPane()
-      val scene = Scene(root, 1200.0, 600.0)
+      val scene = Scene(root, 1400.0, 800.0)
       val s = getResourceUrl("style.css")
       scene.getStylesheets().add(s.toString())
       primaryStage.scene = scene

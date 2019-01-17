@@ -1,5 +1,6 @@
 package mythic.imaging
 
+import fastnoise.FastNoise
 import java.nio.ByteBuffer
 import metahub.Function
 import metahub.Arguments
@@ -149,6 +150,14 @@ val mixGrayscales: TextureFunction = withGrayscaleBuffer { arguments ->
 
 val noiseSource = OpenSimplexNoiseKotlin(1)
 
+fun newNoiseSource():FastNoise {
+  val source = FastNoise()
+  source.SetNoiseType(FastNoise.NoiseType.Simplex)
+  return source
+}
+
+val noiseSource2 = newNoiseSource()
+
 fun simpleNoise(scale: Float): ScalarTextureAlgorithm =
     { x, y ->
       noiseSource.eval(x * scale, y * scale)
@@ -157,7 +166,8 @@ fun simpleNoise(scale: Float): ScalarTextureAlgorithm =
 val simpleNoiseOperator: TextureFunction = withGrayscaleBuffer { arguments ->
   val scale = arguments["degree"]!! as Float
   { x, y ->
-    noiseSource.eval(x * scale, y * scale)
+    noiseSource2.SetFrequency(scale)
+    noiseSource2.GetSimplex(x, y)
   }
 }
 

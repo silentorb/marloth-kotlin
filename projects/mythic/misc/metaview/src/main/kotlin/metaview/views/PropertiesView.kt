@@ -23,7 +23,7 @@ fun ifSelectedNode(action: (State, Id) -> Node): (State) -> Node = { state ->
 
 fun previewView(values: OutputValues) =
     ifSelectedNode { state, id ->
-      outputImage(getNodePreviewBuffer(state.graph!!, id, values[id]!!), 100.0)
+      outputImage(getNodePreviewBuffer(state.graph!!, id, values[id]!!), 400.0)
     }
 
 fun propertiesView(emit: Emitter) = ifSelectedNode { state, id ->
