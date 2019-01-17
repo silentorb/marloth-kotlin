@@ -131,7 +131,17 @@ fun perlin3d(seed: Int, x: Float, y: Float, z: Float = 0f): Float {
 private val GRAD_2D = arrayOf(Vector2(-1f, -1f), Vector2(1f, -1f),
     Vector2(-1f, 1f), Vector2(1f, 1f), Vector2(0f, -1f),
     Vector2(-1f, 0f), Vector2(0f, 1f), Vector2(1f, 0f))
-fun dotGridGradient(x: Float, y: Float): (Int, Int) -> Float = { ix, iy ->
+
+fun dotGridGradient(seed: Int, x: Float, y: Float): (Int, Int) -> Float = { ix, iy ->
+//  val hash1 = seed xor X_PRIME * ix
+//  val hash2 = hash1 xor Y_PRIME * iy
+//
+//  val hash3 = hash2 * hash2 * hash2 * 60493
+//  val hash4 = hash3 shr 13 xor hash3
+//
+//  val g = GRAD_2D[hash4 and 7]
+//
+//  x * g.x + y * g.y
 
   // Precomputed (or otherwise) gradient vectors at each grid node
   // Compute the distance vector
@@ -142,13 +152,13 @@ fun dotGridGradient(x: Float, y: Float): (Int, Int) -> Float = { ix, iy ->
   (dx * GRAD_2D[iy][ix][0] + dy * GRAD_2D[iy][ix][1]);
 }
 
-fun perlin2d(x: Float, y: Float): Float {
+fun perlin2d(seed: Int, x: Float, y: Float): Float {
   val input = Vector2(x, y)
   val a = Vector2i(fastFloor(x), fastFloor(y))
   val b = a + 1
   val s = input - a.toVector2()
 
-  val grid = dotGridGradient(x, y)
+  val grid = dotGridGradient(seed, x, y)
 
   val ix0 = lerp(grid(a.x, a.y), grid(b.x, a.y), s.x)
   val ix1 = lerp(grid(a.x, b.y), grid(b.x, b.y), s.x)

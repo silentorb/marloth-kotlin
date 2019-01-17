@@ -168,7 +168,7 @@ val simpleNoiseOperator: TextureFunction = withGrayscaleBuffer { arguments ->
   { x, y ->
 //    noiseSource2.SetFrequency(scale)
 //    noiseSource2.GetSimplex(x, y)
-    perlin3d(0, x * scale, y * scale)
+    perlin2d(1, x * scale, y * scale)
   }
 }
 
