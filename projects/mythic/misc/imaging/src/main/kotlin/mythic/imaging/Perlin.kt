@@ -4,6 +4,7 @@ import mythic.spatial.*
 import org.joml.Vector2i
 import org.joml.Vector3i
 import org.joml.plus
+import kotlin.random.Random
 
 private val permutation = intArrayOf(
     151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225,
@@ -128,12 +129,23 @@ fun perlin3d(seed: Int, x: Float, y: Float, z: Float = 0f): Float {
   return lerp(yf0, yf1, s.z)
 }
 
-private val GRAD_2D = arrayOf(Vector2(-1f, -1f), Vector2(1f, -1f),
-    Vector2(-1f, 1f), Vector2(1f, 1f), Vector2(0f, -1f),
-    Vector2(-1f, 0f), Vector2(0f, 1f), Vector2(1f, 0f))
+fun random2dGrid(length: Int): List<Vector2> {
+  val dice = Random(1)
+  return (1..length * length).map {
+    Vector2(dice.nextInt(-1, 1).toFloat(), dice.nextInt(-1, 1).toFloat())
+  }
+}
+
+//private val GRAD_2D = arrayOf(
+//    Vector2(-1f, -1f), Vector2(1f, -1f),
+//    Vector2(-1f, 1f), Vector2(1f, 1f),
+//    Vector2(0f, -1f), Vector2(-1f, 0f),
+//    Vector2(0f, 1f), Vector2(1f, 0f))
+
+private val GRAD_2D = random2dGrid(8)
 
 fun dotGridGradient(seed: Int, x: Float, y: Float): (Int, Int) -> Float = { ix, iy ->
-//  val hash1 = seed xor X_PRIME * ix
+  //  val hash1 = seed xor X_PRIME * ix
 //  val hash2 = hash1 xor Y_PRIME * iy
 //
 //  val hash3 = hash2 * hash2 * hash2 * 60493
@@ -149,7 +161,10 @@ fun dotGridGradient(seed: Int, x: Float, y: Float): (Int, Int) -> Float = { ix, 
   val dy = y - iy.toFloat();
 
   // Compute the dot-product
-  (dx * GRAD_2D[iy][ix][0] + dy * GRAD_2D[iy][ix][1]);
+  val length = 8
+  val index = (iy % length) * length + (ix % length)
+  val sample = GRAD_2D[index]
+  dx * sample.x + dy * sample.y
 }
 
 fun perlin2d(seed: Int, x: Float, y: Float): Float {
@@ -163,6 +178,7 @@ fun perlin2d(seed: Int, x: Float, y: Float): Float {
   val ix0 = lerp(grid(a.x, a.y), grid(b.x, a.y), s.x)
   val ix1 = lerp(grid(a.x, b.y), grid(b.x, b.y), s.x)
 
+//  return grid(a.x, b.y)
   return lerp(ix0, ix1, s.y)
 }
 
