@@ -67,14 +67,16 @@ fun FloatBuffer.getVector3() =
 fun <T> withBuffer(depth: Int, setter: (FloatBuffer, T) -> Unit): ((Arguments) -> (Float, Float) -> T) -> TextureFunction = { function ->
   { length ->
     { arguments ->
+      resetMinMax()
       val buffer = BufferUtils.createFloatBuffer(length * length * depth)
       val getter = function(arguments)
       for (y in 0 until length) {
         for (x in 0 until length) {
-          val value = getter(x.toFloat() / length, y.toFloat() / length)
+          val value = getter(x.toFloat() / length, length - y.toFloat() / length)
           setter(buffer, value)
         }
       }
+      printMinMax()
       buffer.rewind()
       buffer
     }
@@ -169,6 +171,7 @@ val simpleNoiseOperator: TextureFunction = withGrayscaleBuffer { arguments ->
 //    noiseSource2.SetFrequency(scale)
 //    noiseSource2.GetSimplex(x, y)
     perlin2d(1, x * scale, y * scale)
+
   }
 }
 

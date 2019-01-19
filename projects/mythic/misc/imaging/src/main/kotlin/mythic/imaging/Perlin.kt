@@ -1,6 +1,7 @@
 package mythic.imaging
 
 import mythic.spatial.*
+import org.joml.Vector2f
 import org.joml.Vector2i
 import org.joml.Vector3i
 import org.joml.plus
@@ -82,7 +83,9 @@ enum class Interp {
 }
 
 private fun lerp(a: Float, b: Float, t: Float): Float {
-  return a + t * (b - a)
+  val value = t * t * t * (t * (t * 6 - 15) + 10)
+  return a + value * (b - a)
+//  return a + t * (b - a)
 }
 
 private val GRAD_3D = arrayOf(Vector3(1f, 1f, 0f), Vector3(-1f, 1f, 0f),
@@ -131,9 +134,23 @@ fun perlin3d(seed: Int, x: Float, y: Float, z: Float = 0f): Float {
 
 fun random2dGrid(length: Int): List<Vector2> {
   val dice = Random(1)
-  return (1..length * length).map {
-    Vector2(dice.nextInt(-1, 1).toFloat(), dice.nextInt(-1, 1).toFloat())
+  val options = listOf(
+      Vector2(1f, 0f),
+      Vector2(0f, 1f),
+      Vector2(-1f, 0f),
+      Vector2(0f, -1f)
+  )
+  val result = (1..length * length).map {
+    options[dice.nextInt(0, 4)]
+//    Vector2f(dice.nextFloat() - 0.5f, dice.nextFloat() - 0.5f).normalize()
+//    Vector2(dice.nextInt(-1, 1).toFloat(), dice.nextInt(-1, 1).toFloat())
   }
+//  for (y in 0 until length) {
+//    val line = result.drop(y * length).take(length).map { "(${it.x}, ${it.y})" }.joinToString(" ")
+//    println(line)
+//  }
+
+  return result
 }
 
 //private val GRAD_2D = arrayOf(
@@ -144,27 +161,31 @@ fun random2dGrid(length: Int): List<Vector2> {
 
 private val GRAD_2D = random2dGrid(8)
 
-fun dotGridGradient(seed: Int, x: Float, y: Float): (Int, Int) -> Float = { ix, iy ->
-  //  val hash1 = seed xor X_PRIME * ix
-//  val hash2 = hash1 xor Y_PRIME * iy
-//
-//  val hash3 = hash2 * hash2 * hash2 * 60493
-//  val hash4 = hash3 shr 13 xor hash3
-//
-//  val g = GRAD_2D[hash4 and 7]
-//
-//  x * g.x + y * g.y
-
-  // Precomputed (or otherwise) gradient vectors at each grid node
-  // Compute the distance vector
-  val dx = x - ix.toFloat();
-  val dy = y - iy.toFloat();
-
-  // Compute the dot-product
+fun gradientSample(ix: Int, iy: Int): Vector2 {
   val length = 8
   val index = (iy % length) * length + (ix % length)
-  val sample = GRAD_2D[index]
+  return GRAD_2D[index]
+}
+
+fun dotGridGradient(seed: Int, x: Float, y: Float): (Int, Int) -> Float = { ix, iy ->
+  val dx = x - ix.toFloat()
+  val dy = y - iy.toFloat()
+  val sample = gradientSample(ix, iy)
+//  val dx = ix.toFloat() - x
+//  val dy = iy.toFloat() - y
   dx * sample.x + dy * sample.y
+}
+
+var minValue: Float = 0f
+var maxValue: Float = 0f
+
+fun resetMinMax() {
+  minValue = 0f;
+  maxValue = 0f
+}
+
+fun printMinMax() {
+  println("min/max = $minValue, $maxValue")
 }
 
 fun perlin2d(seed: Int, x: Float, y: Float): Float {
@@ -178,31 +199,22 @@ fun perlin2d(seed: Int, x: Float, y: Float): Float {
   val ix0 = lerp(grid(a.x, a.y), grid(b.x, a.y), s.x)
   val ix1 = lerp(grid(a.x, b.y), grid(b.x, b.y), s.x)
 
-//  return grid(a.x, b.y)
-  return lerp(ix0, ix1, s.y)
+  val value = lerp(ix0, ix1, s.y)
+  if (value > maxValue)
+    maxValue = value
+  if (value < minValue)
+    minValue = value
+
+  val mod = 0.5f / 0.6f
+  val final = value * mod + 0.5f
+//  val nearest = listOf(Vector2i(a.x, a.y), Vector2i(b.x, a.y), Vector2i(a.x, b.y), Vector2i(b.x, b.y))
+//      .sortedBy { input.distance(it.toVector2()) }
+//      .first()
+//  val sample = gradientSample(nearest.x, nearest.y)
+//  if (lineIntersectsSphere(nearest.toVector2().toVector3m(), (nearest.toVector2() + sample * 0.2f).toVector3m(), input.toVector3m(), 0.05f))
+//  {
+//    return 0f
+//  }
+
+  return final
 }
-
-/*
-  // Determine grid cell coordinates
-    int x0 = int(x);
-    int x1 = x0 + 1;
-    int y0 = int(y);
-    int y1 = y0 + 1;
-
-    // Determine interpolation weights
-    // Could also use higher order polynomial/s-curve here
-    float sx = x - (float)x0;
-    float sy = y - (float)y0;
-
-    // Interpolate between grid point gradients
-    float n0, n1, ix0, ix1, value;
-    n0 = dotGridGradient(x0, y0, x, y);
-    n1 = dotGridGradient(x1, y0, x, y);
-    ix0 = lerp(n0, n1, sx);
-    n0 = dotGridGradient(x0, y1, x, y);
-    n1 = dotGridGradient(x1, y1, x, y);
-    ix1 = lerp(n0, n1, sx);
-    value = lerp(ix0, ix1, sy);
-
-    return value;
- */
