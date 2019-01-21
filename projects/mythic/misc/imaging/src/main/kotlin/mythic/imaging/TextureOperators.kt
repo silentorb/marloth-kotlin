@@ -72,7 +72,7 @@ fun <T> withBuffer(depth: Int, setter: (FloatBuffer, T) -> Unit): ((Arguments) -
       val getter = function(arguments)
       for (y in 0 until length) {
         for (x in 0 until length) {
-          val value = getter(x.toFloat() / length, length - y.toFloat() / length)
+          val value = getter(x.toFloat() / length, 1f - y.toFloat() / length)
           setter(buffer, value)
         }
       }
@@ -152,7 +152,7 @@ val mixGrayscales: TextureFunction = withGrayscaleBuffer { arguments ->
 
 val noiseSource = OpenSimplexNoiseKotlin(1)
 
-fun newNoiseSource():FastNoise {
+fun newNoiseSource(): FastNoise {
   val source = FastNoise()
   source.SetNoiseType(FastNoise.NoiseType.Simplex)
   return source
@@ -166,11 +166,13 @@ fun simpleNoise(scale: Float): ScalarTextureAlgorithm =
     }
 
 val simpleNoiseOperator: TextureFunction = withGrayscaleBuffer { arguments ->
-  val scale = arguments["degree"]!! as Float
+  val periods = arguments["periods"]!! as Int
+  val grid = dotGridGradient(periods)
+  val k = 0
   { x, y ->
-//    noiseSource2.SetFrequency(scale)
+    //    noiseSource2.SetFrequency(scale)
 //    noiseSource2.GetSimplex(x, y)
-    perlin2d(1, x * scale, y * scale)
+    perlin2d(grid, x * periods.toFloat(), y * periods.toFloat())
 
   }
 }
@@ -192,7 +194,7 @@ private val typeMappers: List<TypeMapper> = listOf(
         Vector3(list[0], list[1], list[2])
       } else if (value is Map<*, *>) {
         val map = value as Map<String, Double>
-        Vector3(value["x"]!!.toFloat(), value["y"]!!.toFloat(), value["z"]!!.toFloat())
+        Vector3(map["x"]!!.toFloat(), map["y"]!!.toFloat(), map["z"]!!.toFloat())
       } else if (value is Double)
         value.toFloat()
       else

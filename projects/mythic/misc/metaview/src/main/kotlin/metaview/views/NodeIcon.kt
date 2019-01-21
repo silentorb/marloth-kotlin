@@ -25,7 +25,7 @@ fun getNodePreviewBuffer(graph: Graph, node: Id, value: Any): ByteBuffer {
 
 fun nodeIcon(emit: Emitter, graph: Graph, id: Id, buffer: ByteBuffer, selection: List<Id>): Node {
   val container = VBox()
-  val canvas = outputImage(buffer, nodeLength)
+  val canvas = outputImage(newImage(buffer), nodeLength)
   val name = graph.functions[id] ?: "Unknown"
   val label = Label(name)
   container.alignment = Pos.BASELINE_CENTER

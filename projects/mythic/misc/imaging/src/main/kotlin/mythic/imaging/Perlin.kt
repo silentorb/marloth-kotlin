@@ -140,10 +140,17 @@ fun random2dGrid(length: Int): List<Vector2> {
       Vector2(-1f, 0f),
       Vector2(0f, -1f)
   )
+  var last = Vector2()
+
   val result = (1..length * length).map {
-    options[dice.nextInt(0, 4)]
-//    Vector2f(dice.nextFloat() - 0.5f, dice.nextFloat() - 0.5f).normalize()
-//    Vector2(dice.nextInt(-1, 1).toFloat(), dice.nextInt(-1, 1).toFloat())
+    //        options[dice.nextInt(0, 4)]
+    val value = Vector2f(dice.nextFloat() - 0.5f, dice.nextFloat() - 0.5f).normalize()
+    last = if (Math.abs(value.dot(last)) < 0.2f)
+      Vector2f(dice.nextFloat() - 0.5f, dice.nextFloat() - 0.5f).normalize()
+    else
+      value
+
+    last
   }
 //  for (y in 0 until length) {
 //    val line = result.drop(y * length).take(length).map { "(${it.x}, ${it.y})" }.joinToString(" ")
@@ -153,24 +160,21 @@ fun random2dGrid(length: Int): List<Vector2> {
   return result
 }
 
-//private val GRAD_2D = arrayOf(
-//    Vector2(-1f, -1f), Vector2(1f, -1f),
-//    Vector2(-1f, 1f), Vector2(1f, 1f),
-//    Vector2(0f, -1f), Vector2(-1f, 0f),
-//    Vector2(0f, 1f), Vector2(1f, 0f))
+private const val gradLength = 64
+private val GRAD_2D = random2dGrid(gradLength)
 
-private val GRAD_2D = random2dGrid(8)
-
-fun gradientSample(ix: Int, iy: Int): Vector2 {
-  val length = 8
-  val index = (iy % length) * length + (ix % length)
+fun gradientSample(periods: Int, ix: Int, iy: Int): Vector2 {
+  val index = ((iy % periods) * periods + (ix % periods)) % (gradLength * gradLength)
+//  val index = (iy * periods + ix) % (8 * 8)
   return GRAD_2D[index]
 }
 
-fun dotGridGradient(seed: Int, x: Float, y: Float): (Int, Int) -> Float = { ix, iy ->
+typealias PerlinGrid = (Int, Int, Float, Float) -> Float
+
+fun dotGridGradient(periods: Int): PerlinGrid = { ix, iy, x, y ->
   val dx = x - ix.toFloat()
   val dy = y - iy.toFloat()
-  val sample = gradientSample(ix, iy)
+  val sample = gradientSample(periods, ix, iy)
 //  val dx = ix.toFloat() - x
 //  val dy = iy.toFloat() - y
   dx * sample.x + dy * sample.y
@@ -188,16 +192,14 @@ fun printMinMax() {
   println("min/max = $minValue, $maxValue")
 }
 
-fun perlin2d(seed: Int, x: Float, y: Float): Float {
+fun perlin2d(grid: PerlinGrid, x: Float, y: Float): Float {
   val input = Vector2(x, y)
   val a = Vector2i(fastFloor(x), fastFloor(y))
   val b = a + 1
   val s = input - a.toVector2()
 
-  val grid = dotGridGradient(seed, x, y)
-
-  val ix0 = lerp(grid(a.x, a.y), grid(b.x, a.y), s.x)
-  val ix1 = lerp(grid(a.x, b.y), grid(b.x, b.y), s.x)
+  val ix0 = lerp(grid(a.x, a.y, x, y), grid(b.x, a.y, x, y), s.x)
+  val ix1 = lerp(grid(a.x, b.y, x, y), grid(b.x, b.y, x, y), s.x)
 
   val value = lerp(ix0, ix1, s.y)
   if (value > maxValue)
@@ -205,7 +207,7 @@ fun perlin2d(seed: Int, x: Float, y: Float): Float {
   if (value < minValue)
     minValue = value
 
-  val mod = 0.5f / 0.6f
+  val mod = 0.5f / 0.704f
   val final = value * mod + 0.5f
 //  val nearest = listOf(Vector2i(a.x, a.y), Vector2i(b.x, a.y), Vector2i(a.x, b.y), Vector2i(b.x, b.y))
 //      .sortedBy { input.distance(it.toVector2()) }

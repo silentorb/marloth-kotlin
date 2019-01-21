@@ -60,7 +60,7 @@ fun drawConnection(gc: GraphicsContext, pane: Node, nodeNode: Node, port: Node) 
 
 fun graphView(emit: Emitter, engine: Engine, state: State, values: OutputValues): Node {
   val stack = Pane()
-  val canvas = Canvas(800.0, 600.0)
+  val canvas = Canvas()
   val pane = Pane()
   stack.children.addAll(canvas, pane)
   val graph = state.graph
@@ -73,11 +73,11 @@ fun graphView(emit: Emitter, engine: Engine, state: State, values: OutputValues)
       stage.forEachIndexed { y, nodeId ->
         val buffer = getNodePreviewBuffer(graph, nodeId, values[nodeId]!!)
         val hbox = HBox()
-        val icon = nodeIcon(emit, graph, nodeId, buffer, state.graphInteraction.nodeSelection)
+        val icon = nodeIcon(emit, graph, nodeId, buffer, state.gui.graphInteraction.nodeSelection)
         hbox.relocate(nodePadding + x * strideX, nodePadding + y * strideY)
         val portsPanel = VBox()
         portsPanel.spacing = 5.0
-        val portLabels = portLabels(graph, emit, state.graphInteraction.portSelection, nodeId)
+        val portLabels = portLabels(graph, emit, state.gui.graphInteraction.portSelection, nodeId)
         portsPanel.children.addAll(portLabels)
         nodeNodes[nodeId] = Pair(icon, portLabels)
         hbox.children.addAll(portsPanel, icon)
@@ -109,7 +109,7 @@ fun graphView(emit: Emitter, engine: Engine, state: State, values: OutputValues)
 
     listOf("diffuse")
         .forEachIndexed { index, name ->
-          val label = portLabel(Port(0L, name), emit, state.graphInteraction.portSelection)
+          val label = portLabel(Port(0L, name), emit, state.gui.graphInteraction.portSelection)
           label.relocate(nodePadding + (stages.size + 1) * strideX, nodePadding + (index + 1) * strideY)
           pane.children.add(label)
           val output = graph.outputs[name]

@@ -10,6 +10,7 @@ enum class EventType {
   newTexture,
   selectInput,
   selectNode,
+  setTilePreview,
   textureSelect
 }
 

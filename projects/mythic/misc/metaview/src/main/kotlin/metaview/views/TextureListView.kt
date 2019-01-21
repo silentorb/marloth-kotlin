@@ -49,7 +49,7 @@ fun textureList(emit: Emitter, state: State): Node {
     emit(Event(EventType.renameTexture, change))
 //    }
   }
-  list.selectionModel.select(state.textureName)
+  list.selectionModel.select(state.gui.activeGraph)
   return list
 //  panel.children.addAll(plus, list)
 //  return panel

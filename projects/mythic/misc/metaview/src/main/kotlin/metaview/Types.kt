@@ -5,9 +5,11 @@ import metahub.Graph
 import metahub.Port
 import mythic.ent.Id
 
-data class Config(
+data class GuiState(
     val projectPath: String,
-    val activeGraph: String? = null
+    val activeGraph: String? = null,
+    val graphInteraction: GraphInteraction = GraphInteraction(),
+    val tilePreview: Boolean = false
 )
 
 data class GraphInteraction(
@@ -22,9 +24,7 @@ enum class GraphMode {
 }
 
 data class State(
-    val config: Config,
-    val textureName: String? = null,
-    val graphInteraction: GraphInteraction = GraphInteraction(),
+    val gui: GuiState,
     val graph: Graph? = null,
     val textures: List<String>
 )

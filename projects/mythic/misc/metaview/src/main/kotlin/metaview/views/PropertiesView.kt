@@ -5,13 +5,12 @@ import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.layout.VBox
 import metahub.InputValue
-import metahub.OutputValues
 import metahub.getInputValue
 import metaview.*
 import mythic.ent.Id
 
 fun selectedNode(state: State): Id? =
-    state.graphInteraction.nodeSelection.firstOrNull() ?: state.graphInteraction.portSelection.firstOrNull()?.node
+    state.gui.graphInteraction.nodeSelection.firstOrNull() ?: state.gui.graphInteraction.portSelection.firstOrNull()?.node
 
 fun ifSelectedNode(action: (State, Id) -> Node): (State) -> Node = { state ->
   val id = selectedNode(state)
@@ -20,11 +19,6 @@ fun ifSelectedNode(action: (State, Id) -> Node): (State) -> Node = { state ->
   else
     action(state, id)
 }
-
-fun previewView(values: OutputValues) =
-    ifSelectedNode { state, id ->
-      outputImage(getNodePreviewBuffer(state.graph!!, id, values[id]!!), 400.0)
-    }
 
 fun propertiesView(emit: Emitter) = ifSelectedNode { state, id ->
   val panel = VBox()

@@ -13,10 +13,7 @@ import javafx.scene.layout.CornerRadii
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.util.Duration
-import metaview.InputDefinition
-import metaview.colorType
-import metaview.floatType
-import metaview.globalWindow
+import metaview.*
 import mythic.spatial.Vector3
 
 typealias OnChange = (Any, Boolean) -> Unit
@@ -79,9 +76,25 @@ val numericFloatView: ValueViewSource = { definition ->
   }
 }
 
+val numericIntView: ValueViewSource = { definition ->
+  { value, changed ->
+    val field = TextField()
+    field.text = (value as Int).toString()
+    field.textProperty().addListener { event ->
+      val newValue = field.text.toIntOrNull()
+      if (newValue != null)
+        changed(newValue, false)
+    }
+    field.setOnInputMethodTextChanged { event ->
+    }
+    field
+  }
+}
+
 val valueViews: Map<String, ValueViewSource> = mapOf(
     colorType to { _ -> colorView },
-    floatType to numericFloatView
+    floatType to numericFloatView,
+    intType to numericIntView
 )
 
 //fun valueView(changed: OnChange, value: Any, type: String, definition: InputDefinition): Node? {

@@ -22,6 +22,7 @@ const val bitmapType = "Bitmap"
 const val colorType = "Color"
 const val grayscaleType = "Grayscale"
 const val floatType = "Float"
+const val intType = "Int"
 
 val nodeDefinitions: Map<String, NodeDefinition> = mapOf(
     "coloredCheckers" to NodeDefinition(
@@ -89,10 +90,9 @@ val nodeDefinitions: Map<String, NodeDefinition> = mapOf(
     ),
     "perlinNoise" to NodeDefinition(
         inputs = mapOf(
-            "degree" to InputDefinition(
-                type = floatType,
-                defaultValue = 0.5f,
-                range = FloatRange(0f, 1f)
+            "periods" to InputDefinition(
+                type = intType,
+                defaultValue = 0.5f
             )
         ),
         outputType = grayscaleType

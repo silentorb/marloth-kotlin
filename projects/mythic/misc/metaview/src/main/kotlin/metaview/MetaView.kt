@@ -6,6 +6,7 @@ import configuration.saveYamlFile
 import javafx.application.Application
 import javafx.scene.Node
 import javafx.scene.Scene
+import javafx.scene.control.Button
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.BorderPane
@@ -40,19 +41,20 @@ fun listProjectTextures(path: String): List<String> {
 }
 
 fun newState(): State {
-  val config = loadYamlFile<Config>("metaview.yaml")
+  val config = loadYamlFile<GuiState>("metaview.yaml")
   if (config == null)
     throw Error("Could not find required configuration file metaview.yaml")
 
   val textures = listProjectTextures(config.projectPath)
   return State(
-      config = config,
-      textures = textures,
-      textureName = config.activeGraph ?: textures.firstOrNull()
+      gui = config.copy(
+          activeGraph = config.activeGraph ?: textures.firstOrNull()
+      ),
+      textures = textures
   )
 }
 
-fun saveConfig(config: Config) {
+fun saveConfig(config: GuiState) {
   saveYamlFile("metaview.yaml", config)
 }
 
@@ -97,6 +99,7 @@ fun coreLogic(root: BorderPane, village: Village) {
   var emit: Emitter? = null
 
   val rightPanel = VBox()
+  rightPanel.prefWidth = 400.0
   rightPanel.children.addAll(VBox(), VBox())
 
   root.right = rightPanel
@@ -110,7 +113,7 @@ fun coreLogic(root: BorderPane, village: Village) {
   }
 
   val updatePreviewView = { st: State, values: OutputValues ->
-    rightPanel.children.set(0, previewView(values)(st))
+    rightPanel.children.set(0, previewView(emit!!, values)(st))
   }
 
   val updatePropertiesView = { st: State ->
@@ -120,10 +123,7 @@ fun coreLogic(root: BorderPane, village: Village) {
   emit = { event ->
     val previousState = state
     val focus = getFocus(root)
-    val newState = pipe(state, listOf(
-        updateState(village, getFocus(root), event),
-        updateConfig(previousState)
-    ))
+    val newState = updateState(village, getFocus(root), event)(state)
     val graph = newState.graph
     val values = if (graph != null)
       executeSanitized(village.engine, graph)
@@ -136,15 +136,15 @@ fun coreLogic(root: BorderPane, village: Village) {
 
     if (!event.preview) {
       state = newState
-      if (state.graph != null && ((state.textureName != null && state.textureName == previousState.textureName) || (state.graph != previousState.graph && previousState.graph != null))) {
-        saveJsonFile(texturePath(state, state.textureName!!), state.graph!!)
+      if (state.graph != null && ((state.gui.activeGraph != null && state.gui.activeGraph == previousState.gui.activeGraph) || (state.graph != previousState.graph && previousState.graph != null))) {
+        saveJsonFile(texturePath(state, state.gui.activeGraph!!), state.graph!!)
       }
 
-      if (state.config != previousState.config) {
-        saveConfig(state.config)
+      if (state.gui != previousState.gui) {
+        saveConfig(state.gui)
       }
 
-      if (state.textureName != previousState.textureName || state.graphInteraction.nodeSelection != previousState.graphInteraction.nodeSelection) {
+      if (state.gui.activeGraph != previousState.gui.activeGraph || state.gui.graphInteraction.nodeSelection != previousState.gui.graphInteraction.nodeSelection) {
         updatePropertiesView(state)
       }
     }
