@@ -15,7 +15,7 @@ import org.joml.Vector2i
 
 const val nodeLength: Int = 75
 const val nodePadding: Int = 40
-const val portPadding: Int = 40
+const val portPadding: Int = 140
 
 fun getDefinition(graph: Graph, node: Id): NodeDefinition {
   val function = graph.functions[node]!!
@@ -53,7 +53,7 @@ fun drawConnection(gc: GraphicsContext, pane: Node, nodeNode: Node, port: Node) 
   gc.stroke = Color.GREEN
   gc.lineWidth = 2.0
   gc.strokeLine(
-      a.x + nodeNode.boundsInParent.width + 7,
+      a.x + 183,
       a.y + nodeNode.boundsInParent.height / 2,
       b.x - 7,
       b.y + 10.0
@@ -115,6 +115,7 @@ fun graphView(emit: Emitter, state: State, values: OutputValues): Node {
         hbox.relocate(position.x.toDouble(), position.y.toDouble())
         val portsPanel = VBox()
         portsPanel.spacing = 5.0
+        portsPanel.prefWidth = 100.0
         val portLabels = portLabels(graph, emit, state.gui.graphInteraction.portSelection, nodeId)
         portsPanel.children.addAll(portLabels)
         nodeNodes[nodeId] = Pair(hbox, portLabels)
@@ -126,7 +127,7 @@ fun graphView(emit: Emitter, state: State, values: OutputValues): Node {
     val outputs = listOf("diffuse")
         .mapIndexed { index, name ->
           val label = portLabel(Port(0L, name), emit, state.gui.graphInteraction.portSelection)
-          label.relocate(nodePadding + (stages.size + 1) * strideX.toDouble(), nodePadding + (index + 1) * strideY.toDouble())
+          label.relocate(nodePadding + (stages.size) * strideX.toDouble(), nodePadding + (index + 1) * strideY.toDouble())
           pane.children.add(label)
           Pair(name, label)
         }.associate { it }

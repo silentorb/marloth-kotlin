@@ -5,6 +5,7 @@ enum class EventType {
   connecting,
   deleteSelected,
   inputValueChanged,
+  insertNode,
   refresh,
   renameTexture,
   newTexture,

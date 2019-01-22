@@ -3,6 +3,7 @@ package metaview
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import metahub.*
+import metaview.views.getDefinition
 import mythic.ent.*
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -18,6 +19,12 @@ enum class FocusContext {
 fun guiTransform(transform: (GuiState) -> GuiState): StateTransform = { state ->
   state.copy(
       gui = transform(state.gui)
+  )
+}
+
+fun graphTransform(transform: GraphTransform): StateTransform = { state ->
+  state.copy(
+      graph = transformNotNull(state.graph, transform)
   )
 }
 
@@ -143,29 +150,66 @@ fun newTexture(name: String): StateTransform = pipe({ state ->
   )
 }, activeGraphChanged(name))
 
-fun addNode(name: String): StateTransform = { state ->
-  if (state.graph == null)
-    state
-  else {
-    val definition = nodeDefinitions[name]!!
-    val values = definition.inputs.mapNotNull {
-      val defaultValue = it.value.defaultValue
-      if (defaultValue != null)
-        Pair(it.key, defaultValue)
-      else
-        null
-    }
-        .associate { it }
-
-    state.copy(
-        graph = newNode(name, values)(state.graph),
-        gui = state.gui.copy(
-            graphInteraction = GraphInteraction()
-        )
-    )
+fun newNodeWithDefaults(name: String, id: Id): GraphTransform {
+  val definition = nodeDefinitions[name]!!
+  val values = definition.inputs.mapNotNull {
+    val defaultValue = it.value.defaultValue
+    if (defaultValue != null)
+      Pair(it.key, defaultValue)
+    else
+      null
   }
+      .associate { it }
+
+  return newNode(name, values, id)
 }
 
+fun newNode(name: String): StateTransform = { state ->
+  val id = nextNodeId(state.graph!!)
+  state.copy(
+      graph = newNodeWithDefaults(name, id)(state.graph),
+      gui = state.gui.copy(
+          graphInteraction = GraphInteraction(
+              nodeSelection = listOf(id)
+          )
+      )
+  )
+}
+
+fun addNode(name: String): StateTransform = { state ->
+  newNode(name)(state)
+}
+
+fun insertNode(name: String): StateTransform = pipe(
+    { state ->
+      val graph = state.graph!!
+      val middleNode = nextNodeId(graph)
+      val outputNode = state.gui.graphInteraction.nodeSelection.first()
+      val port = Port(outputNode, name)
+      val existingConnection = getConnection(graph, port)
+      val input = if (existingConnection != null) {
+        val inputNode = existingConnection.input
+        val inputDefinition = getDefinition(graph, inputNode)
+        val outputDefinition = getDefinition(graph, outputNode)
+        outputDefinition.inputs.entries.firstOrNull { it.value.type == inputDefinition.outputType }
+      } else
+        null
+
+      state.copy(
+          graph = pipe(
+              newConnection(middleNode, port),
+              if (existingConnection != null && input != null)
+                pipe(
+                    newConnection(existingConnection.input, Port(middleNode, input.key)),
+                    deleteConnections(listOf(Port(existingConnection.output, existingConnection.port)))
+                )
+              else
+                ::pass
+          )(graph)
+      )
+    },
+    newNode(name)
+)
 
 fun deleteConnectionsOrOutputConnections(ports: List<Port>): GraphTransform {
   val (outputConnections, connections) = ports.partition { it.node == 0L }
@@ -252,6 +296,7 @@ fun updateState(village: Village, focus: FocusContext, event: Event): StateTrans
       EventType.deleteSelected -> deleteSelected(focus)
       EventType.connecting -> onConnecting(focus)
       EventType.inputValueChanged -> changeInputValue(event.data as InputValue)
+      EventType.insertNode -> insertNode(event.data as String)
       EventType.textureSelect -> selectTexture(village, event.data as String)
       EventType.newTexture -> newTexture(event.data as String)
       EventType.selectInput -> selectInput(event.data as Port)

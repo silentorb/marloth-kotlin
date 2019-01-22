@@ -83,8 +83,10 @@ fun mapValues(engine: Engine): GraphTransform = { graph ->
   graph.copy(values = values)
 }
 
-fun newNode(function: String, defaultValues: Map<String, Any>): GraphTransform = { graph ->
-  val id = (graph.nodes.sortedDescending().firstOrNull() ?: 0L) + 1L
+fun nextNodeId(graph: Graph): Id =
+    (graph.nodes.sortedDescending().firstOrNull() ?: 0L) + 1L
+
+fun newNode(function: String, defaultValues: Map<String, Any>, id: Id): GraphTransform = { graph ->
   val newValues = defaultValues.map { (key, value) ->
     InputValue(
         node = id,
@@ -120,7 +122,7 @@ fun newConnection(node: Id, port: Port): GraphTransform = { graph ->
   )
 }
 
-fun setOutput(node: Id, output: String): GraphTransform = { graph->
+fun setOutput(node: Id, output: String): GraphTransform = { graph ->
   graph.copy(
       outputs = graph.outputs.plus(Pair(output, node))
   )
@@ -141,3 +143,6 @@ fun deleteOutputConnections(ports: List<Port>): GraphTransform = { graph ->
       }
   )
 }
+
+fun getConnection(graph: Graph, port: Port): Connection? =
+    graph.connections.firstOrNull { it.output == port.node && it.port == port.input }

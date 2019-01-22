@@ -7,8 +7,6 @@ import javafx.application.Application
 import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.control.ScrollPane
-import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyEvent
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
@@ -80,18 +78,6 @@ fun getFocus(root: BorderPane): FocusContext {
   }
 }
 
-fun listenForKeypresses(node: Node, emit: Emitter) {
-  node.addEventHandler(KeyEvent.KEY_PRESSED) { event ->
-    val type: EventType? = when (event.code) {
-      KeyCode.C -> EventType.connecting
-      else -> null
-    }
-
-    if (type != null)
-      emit(Event(type))
-  }
-}
-
 fun coreLogic(root: BorderPane, village: Village) {
   var state = newState()
 
@@ -154,10 +140,10 @@ fun coreLogic(root: BorderPane, village: Village) {
   root.top = menuBarView(emit)
   updateTextureListView(state)
 
-  listenForKeypresses(root, emit)
+  listenForKeypresses(root, emit, { state })
 
   emit(Event(EventType.refresh))
-  
+
   updatePropertiesView(state)
 }
 
