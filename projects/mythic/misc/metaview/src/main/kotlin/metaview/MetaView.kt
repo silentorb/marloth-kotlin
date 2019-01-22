@@ -2,9 +2,7 @@ package metaview
 
 import configuration.loadYamlFile
 import configuration.saveJsonFile
-import configuration.saveYamlFile
 import javafx.application.Application
-import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.control.ScrollPane
 import javafx.scene.layout.BorderPane
@@ -14,9 +12,6 @@ import javafx.stage.Window
 import metahub.OutputValues
 import metaview.views.*
 import mythic.imaging.newTextureEngine
-import java.awt.MouseInfo
-import java.awt.Point
-import java.io.File
 import java.net.URL
 
 fun getResourceUrl(path: String): URL {
@@ -29,13 +24,6 @@ private var _globalWindow: Window? = null
 fun globalWindow() = _globalWindow!!
 
 const val textureLength = 512
-
-fun listProjectTextures(path: String): List<String> {
-  return File(path).listFiles()
-      .filter { it.extension == "json" }
-      .map { it.nameWithoutExtension }
-      .sorted()
-}
 
 fun newState(): State {
   val config = loadYamlFile<GuiState>("metaview.yaml")
@@ -51,37 +39,31 @@ fun newState(): State {
   )
 }
 
-fun saveConfig(config: GuiState) {
-  saveYamlFile("metaview.yaml", config)
-}
-
-fun isOver(point: Point, node: Node): Boolean {
-  val position = node.localToScene(0.0, 0.0)
-  val bounds = node.boundsInLocal
-  return point.x >= position.x
-      && point.x < position.x + bounds.width
-      && point.y >= position.y
-      && point.y < position.y + bounds.height
-}
-
-fun getFocus(root: BorderPane): FocusContext {
-  val screenMouse = MouseInfo.getPointerInfo().location
-  val mouse = Point(screenMouse.x - globalWindow().x.toInt(), screenMouse.y - globalWindow().y.toInt())
-  val isOver = { node: Node? ->
-    if (node != null) isOver(mouse, node)
-    else false
-  }
-  return when {
-    isOver(root.left) -> FocusContext.graphs
-    isOver(root.center) -> FocusContext.graph
-    else -> FocusContext.none
-  }
-}
-
 fun coreLogic(root: BorderPane, village: Village) {
   var state = newState()
 
   var emit: Emitter? = null
+  var history: List<State> = listOf()
+  var future: List<State> = listOf()
+  val maxHistory = 10
+
+  val undo: StateTransform = { s ->
+    if (history.size > 1) {
+      future = history.takeLast(1).plus(future)
+      history = history.dropLast(1)
+      history.last()
+    } else
+      state
+  }
+
+  val redo: StateTransform = { s ->
+    if (future.any()) {
+      history = history.plus(future.first())
+      future = future.drop(1)
+      history.last()
+    } else
+      state
+  }
 
   val rightPanel = VBox()
   rightPanel.prefWidth = 400.0
@@ -110,7 +92,7 @@ fun coreLogic(root: BorderPane, village: Village) {
   emit = { event ->
     val previousState = state
     val focus = getFocus(root)
-    val newState = updateState(village, getFocus(root), event)(state)
+    val newState = updateState(village, getFocus(root), event, undo, redo)(state)
     val graph = newState.graph
     val values = if (graph != null)
       executeSanitized(village.engine, graph)
@@ -134,6 +116,13 @@ fun coreLogic(root: BorderPane, village: Village) {
       if (state.gui.activeGraph != previousState.gui.activeGraph || state.gui.graphInteraction.nodeSelection != previousState.gui.graphInteraction.nodeSelection) {
         updatePropertiesView(state)
       }
+
+      if (event.type != EventType.undo && event.type != EventType.redo && newState.graph != previousState.graph) {
+        // maxHistory + 1 because the current state is stored in history, taking up one slot for a state that isn't actually a historical record
+        // This way, when maxHistory is set to 10 then the user can actually undo 10 times instead of 9.
+        history = history.plus(newState).take(maxHistory + 1)
+        future = listOf() // Creating new history entries erases any possible forks
+      }
     }
   }
 
@@ -153,7 +142,6 @@ class LabGui : Application() {
     try {
       primaryStage.title = "Texture Generation"
 
-//    periodicUpdate(this)
       val village = Village(
           engine = newTextureEngine(textureLength)
       )

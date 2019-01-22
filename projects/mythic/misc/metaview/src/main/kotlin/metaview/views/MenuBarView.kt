@@ -8,6 +8,7 @@ import javafx.scene.control.MenuItem
 import javafx.scene.control.TextInputDialog
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
+import javafx.scene.input.KeyCombination
 import metaview.Emitter
 import metaview.Event
 import metaview.EventType
@@ -40,15 +41,27 @@ val fileMenu: (Emitter) -> Menu = { emit ->
   file
 }
 
-val editMenu: (Emitter) -> Menu = { emit ->
-  val edit = Menu("_Edit")
-  val deleteNode = MenuItem("_Delete")
-  deleteNode.setOnAction { emit(Event(EventType.deleteSelected)) }
-  deleteNode.accelerator = KeyCodeCombination(KeyCode.DELETE)
+typealias MenuItemDefinition = (Emitter) -> MenuItem
+typealias MenuItems = List<MenuItemDefinition>
 
-  edit.items.addAll(deleteNode)
-  edit
+private fun menuItem(name: String, handler: (Emitter) -> Unit, keyCombination: KeyCombination): MenuItemDefinition = { emit ->
+  val item = MenuItem(name)
+  item.setOnAction { handler(emit) }
+  item.accelerator = keyCombination
+  item
 }
+
+fun menu(name: String, items: MenuItems): (Emitter) -> Menu = { emit ->
+  val result = Menu(name)
+  result.items.addAll(items.map { it(emit) })
+  result
+}
+
+val editMenu: MenuItems = listOf(
+    menuItem("_Delete", { it(Event(EventType.deleteSelected)) }, KeyCodeCombination(KeyCode.DELETE)),
+    menuItem("_Undo", { it(Event(EventType.undo)) }, KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN)),
+    menuItem("_Redo", { it(Event(EventType.redo)) }, KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN))
+)
 
 val addMenu: (Emitter) -> Menu = { emit ->
   val add = Menu("_Add")
@@ -65,7 +78,7 @@ fun menuBarView(emit: Emitter): Node {
   val menu = MenuBar()
   menu.menus.addAll(listOf(
       fileMenu,
-      editMenu,
+      menu("_Edit", editMenu),
       addMenu
   ).map { it(emit) })
   return menu

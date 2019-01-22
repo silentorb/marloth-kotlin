@@ -105,11 +105,3 @@ val valueViews: Map<String, ValueViewSource> = mapOf(
     floatType to numericFloatView,
     intType to numericIntView
 )
-
-//fun valueView(changed: OnChange, value: Any, type: String, definition: InputDefinition): Node? {
-//  val view = valueViews[type]
-//  return if (view != null)
-//    view(definition)(value, changed)
-//  else
-//    null
-//}

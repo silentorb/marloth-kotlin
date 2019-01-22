@@ -314,7 +314,7 @@ fun setTilePreview(value: Boolean): StateTransform = guiTransform { gui ->
   )
 }
 
-fun updateState(village: Village, focus: FocusContext, event: Event): StateTransform =
+fun updateState(village: Village, focus: FocusContext, event: Event, undo: StateTransform, redo: StateTransform): StateTransform =
     when (event.type) {
       EventType.addNode -> addNode(event.data as String)
       EventType.deleteSelected -> deleteSelected(focus)
@@ -323,9 +323,11 @@ fun updateState(village: Village, focus: FocusContext, event: Event): StateTrans
       EventType.insertNode -> insertNode(event.data as String)
       EventType.textureSelect -> selectTexture(village, event.data as String)
       EventType.newTexture -> newGraph(event.data as String)
+      EventType.redo -> redo
       EventType.selectInput -> selectInput(event.data as Port)
       EventType.selectNode -> selectNode(event.data as Id)
       EventType.setTilePreview -> setTilePreview(event.data as Boolean)
+      EventType.undo -> undo
       EventType.refresh -> refreshState(village)
       EventType.renameTexture -> renameTexture(event.data as Renaming)
     }

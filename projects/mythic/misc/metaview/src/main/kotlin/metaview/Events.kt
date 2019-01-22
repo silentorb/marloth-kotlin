@@ -6,13 +6,15 @@ enum class EventType {
   deleteSelected,
   inputValueChanged,
   insertNode,
+  redo,
   refresh,
   renameTexture,
   newTexture,
   selectInput,
   selectNode,
   setTilePreview,
-  textureSelect
+  textureSelect,
+  undo
 }
 
 data class Event(
