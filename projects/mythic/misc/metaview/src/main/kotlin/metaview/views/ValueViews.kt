@@ -32,8 +32,8 @@ val colorView: ValueView = { value, changed ->
   val fxColor = Color(color.x.toDouble(), color.y.toDouble(), color.z.toDouble(), 1.0)
   val fill = BackgroundFill(fxColor, CornerRadii.EMPTY, Insets.EMPTY)
   image.background = Background(fill)
-  image.prefWidth = nodeLength
-  image.prefHeight = nodeLength
+  image.prefWidth = nodeLength.toDouble()
+  image.prefHeight = nodeLength.toDouble()
   image.setOnMouseClicked {
     val dialog = CustomColorDialog(globalWindow())
     dialog.currentColor = fxColor

@@ -6,7 +6,7 @@ import configuration.saveYamlFile
 import javafx.application.Application
 import javafx.scene.Node
 import javafx.scene.Scene
-import javafx.scene.control.Button
+import javafx.scene.control.ScrollPane
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.BorderPane
@@ -15,7 +15,6 @@ import javafx.stage.Stage
 import javafx.stage.Window
 import metahub.OutputValues
 import metaview.views.*
-import mythic.ent.pipe
 import mythic.imaging.newTextureEngine
 import java.awt.MouseInfo
 import java.awt.Point
@@ -103,13 +102,15 @@ fun coreLogic(root: BorderPane, village: Village) {
   rightPanel.children.addAll(VBox(), VBox())
 
   root.right = rightPanel
+  val graphContainer = ScrollPane()
+  root.center = graphContainer
 
   val updateTextureListView = { st: State ->
     root.left = textureList(emit!!, st)
   }
 
   val updateGraphView = { st: State, values: OutputValues ->
-    root.center = graphView(emit!!, village.engine, st, values)
+    graphContainer.content = graphView(emit!!, st, values)
   }
 
   val updatePreviewView = { st: State, values: OutputValues ->
@@ -156,6 +157,8 @@ fun coreLogic(root: BorderPane, village: Village) {
   listenForKeypresses(root, emit)
 
   emit(Event(EventType.refresh))
+  
+  updatePropertiesView(state)
 }
 
 class LabGui : Application() {

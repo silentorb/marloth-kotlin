@@ -9,5 +9,7 @@
     "node" : 1,
     "port" : "periods"
   } ],
-  "outputs" : { }
+  "outputs" : {
+    "diffuse" : 1
+  }
 }
