@@ -193,48 +193,33 @@ fun addNode(name: String): StateTransform = { state ->
   newNode(name)(state)
 }
 
-fun getPossibleInput(graph: Graph, inputNode: Id, outputNode: Id): String? {
-  val inputDefinition = getDefinition(graph, inputNode)
-  val outputDefinition = getDefinition(graph, outputNode)
-  val input = outputDefinition.inputs.entries.firstOrNull { it.value.type == inputDefinition.outputType }
-  return input?.key
-}
+//fun getPossibleInput(graph: Graph, inputNode: Id, outputNode: Id): String? {
+//  val inputDefinition = getDefinition(graph, inputNode)
+//  val outputDefinition = getDefinition(graph, outputNode)
+//  val input = outputDefinition.inputs.entries.firstOrNull { it.value.type == inputDefinition.outputType }
+//  return input?.key
+//}
 
 fun insertNode(name: String): StateTransform = pipe(
     { state ->
       val graph = state.graph!!
       val port = state.gui.graphInteraction.portSelection.first()
       val middleNode = nextNodeId(graph)
-      val outputNode = port.node
-//      val changes: GraphTransform =
-//          if (port.node == 0L) {
-//        val existing = graph.outputs[port.input]
-//        val additional = if (existing != null) {
-////          val input = outputDefinition.inputs.entries.firstOrNull { it.value.type == inputDefinition.outputType }
-////          val input = getPossibleInput(graph, existing, outputNode)
-////          if (input != null)
-////            newConnection(existing, Port(middleNode, input))
-////          else
-//            ::pass
-//        } else
-//          ::pass
-//      throw Error("")
-//        pipe(
-//            setOutput(middleNode, port.input),
-//            additional
-//        )
-//      } else {
       val existingConnection = getConnection(graph, port)
       val additional = if (existingConnection != null) {
+        val deletion = deleteConnections(listOf(Port(existingConnection.output, existingConnection.port)))
         val inputNode = existingConnection.input
-        val input = getPossibleInput(graph, inputNode, outputNode)
+        val inputDefinition = getDefinition(graph, inputNode)
+        val outputDefinition = nodeDefinitions[name]!!
+        val input = outputDefinition.inputs.entries
+            .firstOrNull { it.value.type == inputDefinition.outputType }?.key
         if (input != null)
           pipe(
               newConnection(existingConnection.input, Port(middleNode, input)),
-              deleteConnections(listOf(Port(existingConnection.output, existingConnection.port)))
+              deletion
           )
         else
-          ::pass
+          deletion
       } else
         ::pass
 
@@ -242,7 +227,6 @@ fun insertNode(name: String): StateTransform = pipe(
           newConnection(middleNode, port),
           additional
       )
-//      }
 
       state.copy(
           graph = changes(graph)

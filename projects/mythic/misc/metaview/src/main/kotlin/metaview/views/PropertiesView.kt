@@ -40,7 +40,8 @@ fun propertiesView(emit: Emitter) = ifSelectedNode { state, id ->
 
   val definition = nodeDefinitions[functionName]!!
 
-  definition.inputs.entries.forEachIndexed { index, (name, input) ->
+  var index = 1
+  definition.inputs.entries.forEach { (name, input) ->
     val viewFactory = valueViews[input.type]
     if (viewFactory != null) {
       val propertyLabel = Label(name)
@@ -58,9 +59,10 @@ fun propertiesView(emit: Emitter) = ifSelectedNode { state, id ->
 
       val view = viewFactory(input)(value.value, changed)
 
-      GridPane.setConstraints(propertyLabel, 1, index + 1)
-      GridPane.setConstraints(view, 2, index + 1)
+      GridPane.setConstraints(propertyLabel, 1, index )
+      GridPane.setConstraints(view, 2, index)
       grid.children.addAll(propertyLabel, view)
+      index++
     }
   }
   panel

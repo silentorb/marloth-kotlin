@@ -29,9 +29,11 @@ fun convertColor(color: Color) =
 val colorView: ValueView = { value, changed ->
   val color = value as Vector3
   val image = Pane()
-  val fxColor = Color(color.x.toDouble(), color.y.toDouble(), color.z.toDouble(), 1.0)
-  val fill = BackgroundFill(fxColor, CornerRadii.EMPTY, Insets.EMPTY)
-  image.background = Background(fill)
+  var fxColor = Color(color.x.toDouble(), color.y.toDouble(), color.z.toDouble(), 1.0)
+  fun updateColorSample() {
+    image.background = Background(BackgroundFill(fxColor, CornerRadii.EMPTY, Insets.EMPTY))
+  }
+  updateColorSample()
   image.prefWidth = nodeLength.toDouble()
   image.prefHeight = nodeLength.toDouble()
   image.setOnMouseClicked {
@@ -39,20 +41,27 @@ val colorView: ValueView = { value, changed ->
     dialog.currentColor = fxColor
     dialog.show()
     val updater = Timeline(KeyFrame(Duration.seconds(0.5), EventHandler {
+      fxColor = dialog.customColor
+      updateColorSample()
       val newColor = convertColor(dialog.customColor)
       changed(newColor, true)
+
     }))
     updater.cycleCount = Timeline.INDEFINITE
     updater.play()
 
     val save = {
       updater.stop()
+      fxColor = dialog.customColor
+      updateColorSample()
       val newColor = convertColor(dialog.customColor)
       changed(newColor, false)
     }
 
     dialog.setOnCancel {
       updater.stop()
+      fxColor = Color(color.x.toDouble(), color.y.toDouble(), color.z.toDouble(), 1.0)
+      updateColorSample()
       changed(color, true)
     }
     dialog.setOnSave(save)
