@@ -22,7 +22,7 @@ fun nodeFunctionDialog(title: String): String? {
 
 val addNodeDialog: KeyHandler = { emit, _ ->
   val name = nodeFunctionDialog("Add Node")
-  if (name!= null) {
+  if (name != null) {
     emit(Event(EventType.addNode, name))
   }
 }
@@ -36,12 +36,21 @@ val insertNodeDialog: KeyHandler = { emit, state ->
   }
 }
 
+val duplicateNodeHandler: KeyHandler = { emit, state ->
+  val selections = state.gui.graphInteraction
+  val node = selections.nodeSelection.firstOrNull() ?: selections.portSelection.firstOrNull()?.node
+  if (node != null) {
+    emit(Event(EventType.duplicateNode, node))
+  }
+}
+
 val keyEvents: Map<KeyCode, EventType> = mapOf(
     KeyCode.C to EventType.connecting
 )
 
 val keyHandlers: Map<KeyCode, KeyHandler> = mapOf(
     KeyCode.A to addNodeDialog,
+    KeyCode.D to duplicateNodeHandler,
     KeyCode.I to insertNodeDialog
 )
 

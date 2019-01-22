@@ -1,14 +1,38 @@
 {
-  "nodes" : [ 1, 2, 3 ],
+  "nodes" : [ 1, 2, 3, 4, 5, 6, 7 ],
   "functions" : {
     "1" : "perlinNoise",
     "2" : "textureOutput",
-    "3" : "colorize"
+    "3" : "colorize",
+    "4" : "mixGrayscales",
+    "5" : "perlinNoise",
+    "6" : "perlinNoise",
+    "7" : "mixGrayscales"
   },
   "connections" : [ {
+    "input" : 3,
+    "output" : 2,
+    "port" : "diffuse"
+  }, {
     "input" : 1,
+    "output" : 4,
+    "port" : "first"
+  }, {
+    "input" : 4,
     "output" : 3,
     "port" : "grayscale"
+  }, {
+    "input" : 5,
+    "output" : 7,
+    "port" : "first"
+  }, {
+    "input" : 7,
+    "output" : 4,
+    "port" : "second"
+  }, {
+    "input" : 6,
+    "output" : 7,
+    "port" : "second"
   } ],
   "values" : [ {
     "value" : 12,
@@ -24,11 +48,27 @@
     "port" : "firstColor"
   }, {
     "value" : {
-      "x" : 0.48464164,
-      "y" : 0.38010234,
-      "z" : 0.32915935
+      "x" : 0.32423207,
+      "y" : 0.26368287,
+      "z" : 0.21799904
     },
     "node" : 3,
     "port" : "secondColor"
+  }, {
+    "value" : 0.5,
+    "node" : 4,
+    "port" : "degree"
+  }, {
+    "value" : 6,
+    "node" : 5,
+    "port" : "periods"
+  }, {
+    "value" : 32,
+    "node" : 6,
+    "port" : "periods"
+  }, {
+    "value" : 0.5,
+    "node" : 7,
+    "port" : "degree"
   } ]
 }

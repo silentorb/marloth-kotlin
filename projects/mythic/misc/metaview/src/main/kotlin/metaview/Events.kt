@@ -4,6 +4,7 @@ enum class EventType {
   addNode,
   connecting,
   deleteSelected,
+  duplicateNode,
   inputValueChanged,
   insertNode,
   redo,

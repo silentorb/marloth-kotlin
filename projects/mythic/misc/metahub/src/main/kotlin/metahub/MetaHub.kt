@@ -112,16 +112,18 @@ fun deleteNodes(ids: Collection<Id>): GraphTransform = { graph ->
   )
 }
 
-fun newConnection(node: Id, port: Port): GraphTransform = { graph ->
+fun newConnection(input: Id, output: Id, port: String): GraphTransform = { graph ->
   val connection = Connection(
-      input = node,
-      output = port.node,
-      port = port.input
+      input = input,
+      output = output,
+      port = port
   )
   graph.copy(
       connections = graph.connections.plus(connection)
   )
 }
+
+fun newConnection(node: Id, port: Port): GraphTransform = newConnection(node, port.node, port.input)
 
 fun deleteConnections(ports: List<Port>): GraphTransform = { graph ->
   graph.copy(
@@ -136,4 +138,16 @@ fun getConnection(graph: Graph, port: Port): Connection? =
 
 fun isOutputNode(outputTypes: Set<String>): (Graph, Id) -> Boolean = { graph, id ->
   outputTypes.contains(graph.functions[id])
+}
+
+fun setValue(node: Id, port: String, value: Any): GraphTransform = { graph ->
+  val truncatedValues = graph.values.filter { it.node != node || it.port != port }
+  val newValues = truncatedValues.plus(InputValue(
+      value = value,
+      node = node,
+      port = port
+  ))
+  graph.copy(
+      values = newValues
+  )
 }

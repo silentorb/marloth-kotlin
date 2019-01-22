@@ -215,7 +215,7 @@ fun insertNode(name: String): StateTransform = pipe(
             .firstOrNull { it.value.type == inputDefinition.outputType }?.key
         if (input != null)
           pipe(
-              newConnection(existingConnection.input, Port(middleNode, input)),
+              newConnection(existingConnection.input, middleNode, input),
               deletion
           )
         else
@@ -223,9 +223,13 @@ fun insertNode(name: String): StateTransform = pipe(
       } else
         ::pass
 
+      // Additional needs to come first because it sometimes deletes the current connection
+      // solely based on the output port, not which source node it is connected to,
+      // which would match and delete the new connection.
       val changes = pipe(
-          newConnection(middleNode, port),
-          additional
+          additional,
+          newConnection(middleNode, port)
+
       )
 
       state.copy(
@@ -314,10 +318,29 @@ fun setTilePreview(value: Boolean): StateTransform = guiTransform { gui ->
   )
 }
 
+fun copyNodeProperties(first: Id, second: Id): GraphTransform = { graph ->
+  val newConnections = graph.connections.filter { it.output == first }
+      .map { newConnection(it.input, second, it.port) }
+
+  val newValues = graph.values.filter { it.node == first }
+      .map { setValue(second, it.port, it.value) }
+
+  pipe(newConnections.plus(newValues))(graph)
+}
+
+fun duplicateNode(node: Id): StateTransform = { state ->
+  val graph = state.graph!!
+  val id = nextNodeId(graph)
+  val name = graph.functions[node]!!
+  val newState = newNode(name)(state)
+  graphTransform(copyNodeProperties(node, id))(newState)
+}
+
 fun updateState(village: Village, focus: FocusContext, event: Event, undo: StateTransform, redo: StateTransform): StateTransform =
     when (event.type) {
       EventType.addNode -> addNode(event.data as String)
       EventType.deleteSelected -> deleteSelected(focus)
+      EventType.duplicateNode -> duplicateNode(event.data as Id)
       EventType.connecting -> onConnecting(focus)
       EventType.inputValueChanged -> changeInputValue(event.data as InputValue)
       EventType.insertNode -> insertNode(event.data as String)
