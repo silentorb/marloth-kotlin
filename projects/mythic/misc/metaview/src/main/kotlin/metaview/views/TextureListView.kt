@@ -3,10 +3,7 @@ package metaview.views
 import javafx.scene.Node
 import javafx.scene.control.ListView
 import javafx.scene.control.cell.TextFieldListCell
-import metaview.Emitter
-import metaview.Event
-import metaview.EventType
-import metaview.State
+import metaview.*
 
 fun textureList(emit: Emitter, state: State): Node {
 //  val panel = VBox()
@@ -41,7 +38,7 @@ fun textureList(emit: Emitter, state: State): Node {
 //      editingNewItem = false
 //      emit(Event(EventType.newGraph, list.items[event.index]))
 //    } else {
-    val change = Pair(list.items[event.index], event.newValue)
+    val change = Renaming(list.items[event.index], event.newValue)
     list.items[event.index] = event.newValue
     emit(Event(EventType.renameTexture, change))
 //    }

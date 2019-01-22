@@ -3,7 +3,7 @@ package scenery
 enum class Textures {
   none,
   background,
-  brownLeaves,
+  dirt,
   checkers,
   cobblestone,
   darkCheckers,
