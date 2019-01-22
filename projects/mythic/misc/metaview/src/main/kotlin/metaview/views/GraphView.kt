@@ -1,7 +1,6 @@
 package metaview.views
 
 import javafx.application.Platform
-import javafx.geometry.Insets
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.canvas.Canvas
@@ -37,12 +36,22 @@ fun portLabel(port: Port, emit: Emitter, selection: List<Port>): Node {
   return label
 }
 
-fun portLabels(graph: Graph, emit: Emitter, selection: List<Port>, nodeId: Id): List<Node> {
-  val definition = getDefinition(graph, nodeId)
+fun getInputs(graph: Graph, node: Id): Map<String, InputDefinition> {
+  val definition = getDefinition(graph, node)
+  val additionalInputs = if (definition.variableInputs != null) {
+    getDynamicPorts(graph, node, definition.variableInputs)
+        .plus(Pair(newPortString, InputDefinition(type = definition.variableInputs)))
+  } else
+    mapOf()
   return definition.inputs
-//      .filter { input -> graph.connections.any { it.output == nodeId && it.port == input.key } }
+      .filterValues { connectableTypes.contains(it.type) }
+      .plus(additionalInputs)
+}
+
+fun portLabels(graph: Graph, emit: Emitter, selection: List<Port>, node: Id): List<Node> {
+  return getInputs(graph, node)
       .map { input ->
-        val port = Port(node = nodeId, input = input.key)
+        val port = Port(node = node, input = input.key)
         portLabel(port, emit, selection)
       }
 }
@@ -87,8 +96,8 @@ fun graphCanvas(graph: Graph, stages: List<List<Id>>, pane: Pane, nodeNodes: Map
     graph.connections.forEach { connection ->
       val input = nodeNodes[connection.input]!!
       val output = nodeNodes[connection.output]!!
-      val outputDefinition = getDefinition(graph, connection.output)
-      val port = output.second[outputDefinition.inputs.keys.indexOf(connection.port)]
+      val inputs = getInputs(graph, connection.output)
+      val port = output.second[inputs.keys.indexOf(connection.port)]
       drawConnection(gc, pane, input.first, port)
     }
 
@@ -119,13 +128,6 @@ fun graphView(emit: Emitter, state: State, values: OutputValues): Node {
           val buffer = getNodePreviewBuffer(graph, nodeId, nodeValue)
           nodeIcon(emit, graph, nodeId, buffer, state.gui.graphInteraction.nodeSelection)
         } else {
-//          val image = Pane()
-////          val fxColor = Color(0.5, 0.5, 0.5, 1.0)
-////          val fill = BackgroundFill(fxColor, CornerRadii.EMPTY, Insets.EMPTY)
-////          image.background = Background(fill)
-//          image.prefWidth = nodeLength.toDouble()
-//          image.prefHeight = nodeLength.toDouble()
-//          image
           Pane()
         }
         val position = nodePosition(x, y)
@@ -141,14 +143,6 @@ fun graphView(emit: Emitter, state: State, values: OutputValues): Node {
         pane.children.add(hbox)
       }
     }
-
-//    val outputs = listOf("diffuse")
-//        .mapIndexed { index, name ->
-//          val label = portLabel(Port(0L, name), emit, state.gui.graphInteraction.portSelection)
-//          label.relocate(nodePadding + (stages.size) * strideX.toDouble(), nodePadding + (index + 1) * strideY.toDouble())
-//          pane.children.add(label)
-//          Pair(name, label)
-//        }.associate { it }
 
     val canvas = graphCanvas(graph, stages, pane, nodeNodes)
     pane.children.add(0, canvas)

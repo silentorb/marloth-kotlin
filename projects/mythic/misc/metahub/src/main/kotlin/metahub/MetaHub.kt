@@ -151,3 +151,8 @@ fun setValue(node: Id, port: String, value: Any): GraphTransform = { graph ->
       values = newValues
   )
 }
+
+fun <T> modifyValue(node: Id, port: String, transform: (T) -> T): GraphTransform = { graph ->
+  val value = transform(graph.values.first { it.node == node && it.port == port }.value as T)
+  setValue(node, port, value as Any)(graph)
+}

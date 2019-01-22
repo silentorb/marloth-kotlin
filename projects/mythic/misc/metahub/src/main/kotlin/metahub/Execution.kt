@@ -2,7 +2,6 @@ package metahub
 
 import mythic.ent.Id
 
-
 typealias OutputValues = Map<Id, Any>
 
 fun prepareArguments(graph: Graph, outputValues: OutputValues, nodeId: Id): Map<String, Any> {

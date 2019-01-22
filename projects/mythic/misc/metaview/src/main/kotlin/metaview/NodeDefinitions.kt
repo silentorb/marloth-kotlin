@@ -11,10 +11,13 @@ const val bitmapType = "Bitmap"
 const val colorType = "Color"
 const val grayscaleType = "Grayscale"
 const val floatType = "Float"
+const val floatListType = "FloatList"
 const val intType = "Int"
 const val noneType = "None"
 
 const val textureOutput = "textureOutput"
+
+val connectableTypes = setOf(bitmapType, grayscaleType)
 
 data class InputDefinition(
     val type: String,
@@ -23,12 +26,13 @@ data class InputDefinition(
 
 data class NodeDefinition(
     val inputs: Map<String, InputDefinition>,
-    val outputType: String
+    val outputType: String,
+    val variableInputs: String? = null
 )
 
 typealias NodeDefinitionMap = Map<String, NodeDefinition>
 
-val nodeDefinitions: Map<String, NodeDefinition> = mapOf(
+val nodeDefinitions: NodeDefinitionMap = mapOf(
     "coloredCheckers" to NodeDefinition(
         inputs = mapOf(
             "firstColor" to InputDefinition(
@@ -64,31 +68,22 @@ val nodeDefinitions: Map<String, NodeDefinition> = mapOf(
     ),
     "mixBitmaps" to NodeDefinition(
         inputs = mapOf(
-            "first" to InputDefinition(
-                type = bitmapType
-            ),
-            "second" to InputDefinition(
-                type = bitmapType
-            ),
-            "degree" to InputDefinition(
-                type = floatType
+            "mixer" to InputDefinition(
+                type = floatListType,
+                defaultValue = listOf<Float>()
             )
         ),
+        variableInputs = bitmapType,
         outputType = bitmapType
     ),
     "mixGrayscales" to NodeDefinition(
         inputs = mapOf(
-            "first" to InputDefinition(
-                type = grayscaleType
-            ),
-            "second" to InputDefinition(
-                type = grayscaleType
-            ),
-            "degree" to InputDefinition(
-                type = floatType,
-                defaultValue = 0.5f
+            "weights" to InputDefinition(
+                type = floatListType,
+                defaultValue = listOf<Float>()
             )
         ),
+        variableInputs = grayscaleType,
         outputType = grayscaleType
     ),
     "perlinNoise" to NodeDefinition(

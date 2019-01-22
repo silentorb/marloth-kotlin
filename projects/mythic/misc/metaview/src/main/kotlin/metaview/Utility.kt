@@ -3,9 +3,13 @@ package metaview
 import configuration.saveYamlFile
 import javafx.scene.Node
 import javafx.scene.layout.BorderPane
+import metahub.Graph
+import mythic.ent.Id
 import java.awt.MouseInfo
 import java.awt.Point
 import java.io.File
+
+const val newPortString = "New"
 
 fun listProjectTextures(path: String): List<String> {
   return File(path).listFiles()
@@ -40,3 +44,9 @@ fun getFocus(root: BorderPane): FocusContext {
     else -> FocusContext.none
   }
 }
+
+fun getDynamicPorts(graph: Graph, node: Id, type: String): Map<String, InputDefinition> =
+    graph.connections.filter { it.output == node && it.port.toIntOrNull() != null }
+        .associate {
+          Pair(it.port, InputDefinition(type = type))
+        }

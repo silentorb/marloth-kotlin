@@ -19,7 +19,6 @@ import rendering.toCamelCase
 import scanResources
 import scanTextureResources
 import scenery.Textures
-import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import java.nio.file.Paths
 

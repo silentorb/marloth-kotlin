@@ -141,12 +141,16 @@ val mixBitmaps: TextureFunction = withBitmapBuffer { arguments ->
 }
 
 val mixGrayscales: TextureFunction = withGrayscaleBuffer { arguments ->
-  val degree = arguments["degree"]!! as Float
-  val first = floatBufferArgument(arguments, "first")
-  val second = floatBufferArgument(arguments, "second")
+  val weights = arguments["weights"]!! as List<Float>
+  val buffers = weights.mapIndexed { index, value ->
+    Pair(floatBufferArgument(arguments, index.toString()), value)
+  }
+//  val first = floatBufferArgument(arguments, "first")
+//  val second = floatBufferArgument(arguments, "second")
   val k = 0
   { x, y ->
-    first.get() * (1f - degree) + second.get() * degree
+    buffers.fold(0f) { a, b -> a + b.first.get() * b.second }
+//    first.get() * (1f - degrees) + second.get() * degrees
   }
 }
 
@@ -193,7 +197,7 @@ private val typeMappers: List<TypeMapper> = listOf(
     { value ->
       if (value is List<*>) {
         val list = value as ArrayList<Float>
-        Vector3(list[0], list[1], list[2])
+        list.toList()
       } else if (value is Map<*, *>) {
         val map = value as Map<String, Double>
         Vector3(map["x"]!!.toFloat(), map["y"]!!.toFloat(), map["z"]!!.toFloat())

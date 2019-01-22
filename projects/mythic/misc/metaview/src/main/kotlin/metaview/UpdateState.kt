@@ -71,15 +71,23 @@ fun isReselecting(id: Id, state: State): Boolean =
 val isOutputNode = isOutputNode(textureOutputTypes)
 
 fun connectNodes(id: Id): StateTransform = { state ->
-  if (isReselecting(id, state) || isOutputNode(state.graph!!, id))
+  val graph = state.graph!!
+  if (isReselecting(id, state) || isOutputNode(graph, id))
     state
   else {
-    val port = state.gui.graphInteraction.portSelection.first()
-    val newGraph =
-//        if (port.node == 0L)
-//      setOutput(id, port.input)
-//    else
-        newConnection(id, port)
+    val selectedPort = state.gui.graphInteraction.portSelection.first()
+    val isNewPort = selectedPort.input == newPortString
+    val port = if (isNewPort)
+      Port(selectedPort.node, state.graph.connections.count { it.output == selectedPort.node }.toString())
+    else
+      selectedPort
+
+    val additional = if (isNewPort)
+      modifyValue<List<Float>>(port.node, "weights") { it.plus(0.5f) }
+    else
+      ::pass
+
+    val newGraph = pipe(newConnection(id, port), additional)
 
     state.copy(
         gui = state.gui.copy(
@@ -87,7 +95,7 @@ fun connectNodes(id: Id): StateTransform = { state ->
                 mode = GraphMode.normal
             )
         ),
-        graph = newGraph(state.graph)
+        graph = newGraph(graph)
     )
   }
 }
@@ -192,13 +200,6 @@ fun newNode(name: String): StateTransform = { state ->
 fun addNode(name: String): StateTransform = { state ->
   newNode(name)(state)
 }
-
-//fun getPossibleInput(graph: Graph, inputNode: Id, outputNode: Id): String? {
-//  val inputDefinition = getDefinition(graph, inputNode)
-//  val outputDefinition = getDefinition(graph, outputNode)
-//  val input = outputDefinition.inputs.entries.firstOrNull { it.value.type == inputDefinition.outputType }
-//  return input?.key
-//}
 
 fun insertNode(name: String): StateTransform = pipe(
     { state ->
