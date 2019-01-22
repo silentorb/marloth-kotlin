@@ -44,18 +44,24 @@ fun loadTextureGraph(engine: Engine, state: State, name: String): Graph =
     loadGraphFromFile(engine, texturePath(state, name))
 
 fun selectTexture(village: Village, name: String): StateTransform = pipe({ state: State ->
+  val graph = loadTextureGraph(village.engine, state, name)
+  val gui = state.gui
   state.copy(
-      graph = loadTextureGraph(village.engine, state, name)
+      graph = graph,
+      gui = gui.copy(
+          graphInteraction = gui.graphInteraction.copy(
+              nodeSelection = gui.graphInteraction.nodeSelection.filter { graph.nodes.contains(it) },
+              portSelection = gui.graphInteraction.portSelection.filter { graph.nodes.contains(it.node) }
+          )
+      )
   )
 }, activeGraphChanged(name))
 
 fun refreshState(village: Village): StateTransform = { state ->
-  state.copy(
-      graph = if (state.gui.activeGraph != null)
-        loadTextureGraph(village.engine, state, state.gui.activeGraph)
-      else
-        null
-  )
+  if (state.gui.activeGraph != null)
+    selectTexture(village, state.gui.activeGraph)(state)
+  else
+    state
 }
 
 fun isReselecting(id: Id, state: State): Boolean =
@@ -183,29 +189,38 @@ fun addNode(name: String): StateTransform = { state ->
 fun insertNode(name: String): StateTransform = pipe(
     { state ->
       val graph = state.graph!!
+      val port = state.gui.graphInteraction.portSelection.first()
       val middleNode = nextNodeId(graph)
-      val outputNode = state.gui.graphInteraction.nodeSelection.first()
-      val port = Port(outputNode, name)
+      val outputNode = port.node
       val existingConnection = getConnection(graph, port)
-      val input = if (existingConnection != null) {
-        val inputNode = existingConnection.input
-        val inputDefinition = getDefinition(graph, inputNode)
-        val outputDefinition = getDefinition(graph, outputNode)
-        outputDefinition.inputs.entries.firstOrNull { it.value.type == inputDefinition.outputType }
-      } else
-        null
-
+      val changes: GraphTransform = if (port.node == 0L) {
+        pipe(
+            newConnection(existingConnection.input, Port(middleNode, input.key)),
+            deleteConnections(listOf(Port(existingConnection.output, existingConnection.port)))
+        )
+      } else {
+        val additional = if (existingConnection != null) {
+          val inputNode = existingConnection.input
+          val inputDefinition = getDefinition(graph, inputNode)
+          val outputDefinition = getDefinition(graph, outputNode)
+          val input = outputDefinition.inputs.entries.firstOrNull { it.value.type == inputDefinition.outputType }
+          if (input != null)
+            pipe(
+                newConnection(existingConnection.input, Port(middleNode, input.key)),
+                deleteConnections(listOf(Port(existingConnection.output, existingConnection.port)))
+            )
+          else
+            ::pass
+        } else
+          ::pass
+        
+        pipe(
+            newConnection(middleNode, port),
+            additional
+        )
+      }
       state.copy(
-          graph = pipe(
-              newConnection(middleNode, port),
-              if (existingConnection != null && input != null)
-                pipe(
-                    newConnection(existingConnection.input, Port(middleNode, input.key)),
-                    deleteConnections(listOf(Port(existingConnection.output, existingConnection.port)))
-                )
-              else
-                ::pass
-          )(graph)
+          graph = changes(graph)
       )
     },
     newNode(name)
