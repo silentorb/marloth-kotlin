@@ -7,10 +7,18 @@ data class FloatRange(
     val max: Float
 )
 
+const val bitmapType = "Bitmap"
+const val colorType = "Color"
+const val grayscaleType = "Grayscale"
+const val floatType = "Float"
+const val intType = "Int"
+const val noneType = "None"
+
+const val textureOutput = "textureOutput"
+
 data class InputDefinition(
     val type: String,
-    val defaultValue: Any? = null,
-    val range: FloatRange? = null
+    val defaultValue: Any? = null
 )
 
 data class NodeDefinition(
@@ -18,11 +26,7 @@ data class NodeDefinition(
     val outputType: String
 )
 
-const val bitmapType = "Bitmap"
-const val colorType = "Color"
-const val grayscaleType = "Grayscale"
-const val floatType = "Float"
-const val intType = "Int"
+typealias NodeDefinitionMap = Map<String, NodeDefinition>
 
 val nodeDefinitions: Map<String, NodeDefinition> = mapOf(
     "coloredCheckers" to NodeDefinition(
@@ -82,8 +86,7 @@ val nodeDefinitions: Map<String, NodeDefinition> = mapOf(
             ),
             "degree" to InputDefinition(
                 type = floatType,
-                defaultValue = 0.5f,
-                range = FloatRange(0f, 1f)
+                defaultValue = 0.5f
             )
         ),
         outputType = grayscaleType
@@ -96,5 +99,13 @@ val nodeDefinitions: Map<String, NodeDefinition> = mapOf(
             )
         ),
         outputType = grayscaleType
+    ),
+    textureOutput to NodeDefinition(
+        inputs = mapOf(
+            "diffuse" to InputDefinition(
+                type = bitmapType
+            )
+        ),
+        outputType = noneType
     )
 )

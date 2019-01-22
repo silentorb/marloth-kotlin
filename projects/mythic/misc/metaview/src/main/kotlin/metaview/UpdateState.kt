@@ -5,6 +5,7 @@ import javafx.scene.control.ButtonType
 import metahub.*
 import metaview.views.getDefinition
 import mythic.ent.*
+import mythic.imaging.textureOutputTypes
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -67,15 +68,18 @@ fun refreshState(village: Village): StateTransform = { state ->
 fun isReselecting(id: Id, state: State): Boolean =
     state.gui.graphInteraction.nodeSelection.contains(id)
 
+val isOutputNode = isOutputNode(textureOutputTypes)
+
 fun connectNodes(id: Id): StateTransform = { state ->
-  if (isReselecting(id, state))
+  if (isReselecting(id, state) || isOutputNode(state.graph!!, id))
     state
   else {
     val port = state.gui.graphInteraction.portSelection.first()
-    val newGraph = if (port.node == 0L)
-      setOutput(id, port.input)
-    else
-      newConnection(id, port)
+    val newGraph =
+//        if (port.node == 0L)
+//      setOutput(id, port.input)
+//    else
+        newConnection(id, port)
 
     state.copy(
         gui = state.gui.copy(
@@ -83,7 +87,7 @@ fun connectNodes(id: Id): StateTransform = { state ->
                 mode = GraphMode.normal
             )
         ),
-        graph = newGraph(state.graph!!)
+        graph = newGraph(state.graph)
     )
   }
 }
@@ -140,7 +144,7 @@ fun renameTexture(change: Renaming): StateTransform = { state ->
       gui = state.gui.copy(
           activeGraph = change.newName
       ),
-      textures = state.textures.map {
+      graphNames = state.graphNames.map {
         if (it == change.previousName)
           change.newName
         else
@@ -149,10 +153,13 @@ fun renameTexture(change: Renaming): StateTransform = { state ->
   )
 }
 
-fun newTexture(name: String): StateTransform = pipe({ state ->
+fun newGraph(name: String): StateTransform = pipe({ state ->
   state.copy(
-      textures = state.textures.plus(name).sorted(),
-      graph = Graph()
+      graphNames = state.graphNames.plus(name).sorted(),
+      graph = Graph(
+          nodes = setOf(1L),
+          functions = mapOf(1L to textureOutput)
+      )
   )
 }, activeGraphChanged(name))
 
@@ -199,42 +206,44 @@ fun insertNode(name: String): StateTransform = pipe(
       val port = state.gui.graphInteraction.portSelection.first()
       val middleNode = nextNodeId(graph)
       val outputNode = port.node
-      val changes: GraphTransform = if (port.node == 0L) {
-        val existing = graph.outputs[port.input]
-        val additional = if (existing != null) {
-          val input = outputDefinition.inputs.entries.firstOrNull { it.value.type == inputDefinition.outputType }
-          val input = getPossibleInput(graph, existing, outputNode)
-          if (input != null)
-            newConnection(existing, Port(middleNode, input))
-          else
-            ::pass
-        } else
+//      val changes: GraphTransform =
+//          if (port.node == 0L) {
+//        val existing = graph.outputs[port.input]
+//        val additional = if (existing != null) {
+////          val input = outputDefinition.inputs.entries.firstOrNull { it.value.type == inputDefinition.outputType }
+////          val input = getPossibleInput(graph, existing, outputNode)
+////          if (input != null)
+////            newConnection(existing, Port(middleNode, input))
+////          else
+//            ::pass
+//        } else
+//          ::pass
+//      throw Error("")
+//        pipe(
+//            setOutput(middleNode, port.input),
+//            additional
+//        )
+//      } else {
+      val existingConnection = getConnection(graph, port)
+      val additional = if (existingConnection != null) {
+        val inputNode = existingConnection.input
+        val input = getPossibleInput(graph, inputNode, outputNode)
+        if (input != null)
+          pipe(
+              newConnection(existingConnection.input, Port(middleNode, input)),
+              deleteConnections(listOf(Port(existingConnection.output, existingConnection.port)))
+          )
+        else
           ::pass
+      } else
+        ::pass
 
-        pipe(
-            setOutput(middleNode, port.input),
-            additional
-        )
-      } else {
-        val existingConnection = getConnection(graph, port)
-        val additional = if (existingConnection != null) {
-          val inputNode = existingConnection.input
-          val input = getPossibleInput(graph, inputNode, outputNode)
-          if (input != null)
-            pipe(
-                newConnection(existingConnection.input, Port(middleNode, input)),
-                deleteConnections(listOf(Port(existingConnection.output, existingConnection.port)))
-            )
-          else
-            ::pass
-        } else
-          ::pass
+      val changes = pipe(
+          newConnection(middleNode, port),
+          additional
+      )
+//      }
 
-        pipe(
-            newConnection(middleNode, port),
-            additional
-        )
-      }
       state.copy(
           graph = changes(graph)
       )
@@ -242,16 +251,16 @@ fun insertNode(name: String): StateTransform = pipe(
     newNode(name)
 )
 
-fun deleteConnectionsOrOutputConnections(ports: List<Port>): GraphTransform {
-  val (outputConnections, connections) = ports.partition { it.node == 0L }
-  return pipe(deleteConnections(connections), deleteOutputConnections(outputConnections))
-}
+//fun deleteConnectionsOrOutputConnections(ports: List<Port>): GraphTransform {
+//  val (outputConnections, connections) = ports.partition { it.node == 0L }
+//  return pipe(deleteConnections(connections), deleteOutputConnections(outputConnections))
+//}
 
 val deleteGraphSelection: StateTransform = { state ->
   val selection = state.gui.graphInteraction
   val newGraph = transformNotNull(state.graph, pipe(
-      deleteNodes(selection.nodeSelection),
-      deleteConnectionsOrOutputConnections(selection.portSelection)
+      deleteNodes(selection.nodeSelection.filter { !isOutputNode(state.graph!!, it) }),
+      deleteConnections(selection.portSelection)
   ))
 
   state.copy(
@@ -278,12 +287,12 @@ val deleteGraph: StateTransform = { state ->
   val name = state.gui.activeGraph
   if (name != null && confirmFileDeletion(name)) {
     Files.delete(Paths.get(texturePath(state, name)))
-    val index = state.textures.indexOf(name)
-    val newTextures = state.textures.minus(name)
-    val newName = state.textures.getOrNull(index) ?: state.textures.firstOrNull()
+    val index = state.graphNames.indexOf(name)
+    val newTextures = state.graphNames.minus(name)
+    val newName = state.graphNames.getOrNull(index) ?: state.graphNames.firstOrNull()
 
     pipe(state.copy(
-        textures = newTextures
+        graphNames = newTextures
     ), listOf(activeGraphChanged(newName)))
   } else
     state
@@ -329,7 +338,7 @@ fun updateState(village: Village, focus: FocusContext, event: Event): StateTrans
       EventType.inputValueChanged -> changeInputValue(event.data as InputValue)
       EventType.insertNode -> insertNode(event.data as String)
       EventType.textureSelect -> selectTexture(village, event.data as String)
-      EventType.newTexture -> newTexture(event.data as String)
+      EventType.newTexture -> newGraph(event.data as String)
       EventType.selectInput -> selectInput(event.data as Port)
       EventType.selectNode -> selectNode(event.data as Id)
       EventType.setTilePreview -> setTilePreview(event.data as Boolean)

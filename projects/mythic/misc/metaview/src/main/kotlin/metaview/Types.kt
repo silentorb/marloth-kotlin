@@ -26,7 +26,7 @@ enum class GraphMode {
 data class State(
     val gui: GuiState,
     val graph: Graph? = null,
-    val textures: List<String>
+    val graphNames: List<String>
 )
 
 data class Village(

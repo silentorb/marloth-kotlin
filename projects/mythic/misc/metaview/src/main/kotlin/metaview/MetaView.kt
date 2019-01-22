@@ -47,7 +47,7 @@ fun newState(): State {
       gui = config.copy(
           activeGraph = config.activeGraph ?: textures.firstOrNull()
       ),
-      textures = textures
+      graphNames = textures
   )
 }
 
@@ -118,7 +118,7 @@ fun coreLogic(root: BorderPane, village: Village) {
       mapOf()
     updateGraphView(newState, values)
     updatePreviewView(newState, values)
-    if (newState.textures.size != previousState.textures.size)
+    if (newState.graphNames.size != previousState.graphNames.size)
       updateTextureListView(newState)
 
     if (!event.preview) {

@@ -17,7 +17,7 @@ fun selectedNode(state: State): Id? =
 
 fun ifSelectedNode(action: (State, Id) -> Node): (State) -> Node = { state ->
   val id = selectedNode(state)
-  if (id == null || id == 0L)
+  if (id == null || isOutputNode(state.graph!!, id))
     VBox()
   else
     action(state, id)

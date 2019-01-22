@@ -1,11 +1,8 @@
 package metaview.views
 
 import javafx.scene.Node
-import javafx.scene.control.Button
-import javafx.scene.control.ListCell
 import javafx.scene.control.ListView
 import javafx.scene.control.cell.TextFieldListCell
-import javafx.scene.layout.VBox
 import metaview.Emitter
 import metaview.Event
 import metaview.EventType
@@ -26,7 +23,7 @@ fun textureList(emit: Emitter, state: State): Node {
 
   list.isEditable = true
   list.cellFactory = TextFieldListCell.forListView()
-  state.textures.forEach { list.items.add(it) }
+  state.graphNames.forEach { list.items.add(it) }
   list.setOnMouseClicked {
     val name = list.selectionModel.selectedItem.toString()
     emit(Event(EventType.textureSelect, name))
@@ -42,7 +39,7 @@ fun textureList(emit: Emitter, state: State): Node {
   list.setOnEditCommit { event ->
     //    if (editingNewItem) {
 //      editingNewItem = false
-//      emit(Event(EventType.newTexture, list.items[event.index]))
+//      emit(Event(EventType.newGraph, list.items[event.index]))
 //    } else {
     val change = Pair(list.items[event.index], event.newValue)
     list.items[event.index] = event.newValue

@@ -30,8 +30,7 @@ data class Graph(
     val nodes: Set<Id> = setOf(),
     val functions: Map<Id, String> = mapOf(),
     val connections: List<Connection> = listOf(),
-    val values: List<InputValue> = listOf(),
-    val outputs: Map<String, Id> = mapOf()
+    val values: List<InputValue> = listOf()
 )
 
 typealias GraphTransform = (Graph) -> Graph
@@ -42,9 +41,12 @@ typealias Function = (Map<String, Any>) -> Any
 
 typealias TypeMapper = (Any) -> Any?
 
+typealias OutputTypes = Set<String>
+
 data class Engine(
     val functions: Map<String, Function>,
-    val typeMappers: List<TypeMapper>
+    val typeMappers: List<TypeMapper>,
+    val outputTypes: OutputTypes
 )
 
 fun nextStage(nodes: Set<Id>, connections: Collection<Connection>): List<Id> {
@@ -56,8 +58,8 @@ fun getInputValue(graph: Graph): (Id, String) -> InputValue? = { node, port ->
   graph.values.firstOrNull { it.node == node && it.port == port }
 }
 
-fun arrangeGraphStages(graph: Graph): List<List<Id>> {
-  var nodes = graph.nodes
+fun arrangeGraphStages(outputTypes: OutputTypes, graph: Graph): List<List<Id>> {
+  var nodes = graph.nodes.filter { !outputTypes.contains(graph.functions[it]) }.toSet()
   var connections = graph.connections
   var result = listOf<List<Id>>()
 
@@ -106,8 +108,7 @@ fun deleteNodes(ids: Collection<Id>): GraphTransform = { graph ->
       nodes = graph.nodes.minus(ids),
       connections = graph.connections.filter { !ids.contains(it.input) && !ids.contains(it.output) },
       values = graph.values.filter { !ids.contains(it.node) },
-      functions = graph.functions.minus(ids),
-      outputs = graph.outputs.filterValues { !ids.contains(it) }
+      functions = graph.functions.minus(ids)
   )
 }
 
@@ -122,12 +123,6 @@ fun newConnection(node: Id, port: Port): GraphTransform = { graph ->
   )
 }
 
-fun setOutput(node: Id, output: String): GraphTransform = { graph ->
-  graph.copy(
-      outputs = graph.outputs.plus(Pair(output, node))
-  )
-}
-
 fun deleteConnections(ports: List<Port>): GraphTransform = { graph ->
   graph.copy(
       connections = graph.connections.filter { connection ->
@@ -136,13 +131,9 @@ fun deleteConnections(ports: List<Port>): GraphTransform = { graph ->
   )
 }
 
-fun deleteOutputConnections(ports: List<Port>): GraphTransform = { graph ->
-  graph.copy(
-      outputs = graph.outputs.filter { output ->
-        ports.none { it.input == output.key }
-      }
-  )
-}
-
 fun getConnection(graph: Graph, port: Port): Connection? =
     graph.connections.firstOrNull { it.output == port.node && it.port == port.input }
+
+fun isOutputNode(outputTypes: Set<String>): (Graph, Id) -> Boolean = { graph, id ->
+  outputTypes.contains(graph.functions[id])
+}

@@ -1,9 +1,14 @@
 {
-  "nodes" : [ 1 ],
+  "nodes" : [ 1, 2 ],
   "functions" : {
-    "1" : "coloredCheckers"
+    "1" : "coloredCheckers",
+    "2" : "textureOutput"
   },
-  "connections" : [ ],
+  "connections" : [ {
+    "input" : 1,
+    "output" : 2,
+    "port" : "diffuse"
+  } ],
   "values" : [ {
     "value" : {
       "x" : 0.0,
@@ -20,8 +25,5 @@
     },
     "node" : 1,
     "port" : "secondColor"
-  } ],
-  "outputs" : {
-    "diffuse" : 1
-  }
+  } ]
 }

@@ -1,15 +1,17 @@
 {
-  "nodes" : [ 1 ],
+  "nodes" : [ 1, 2 ],
   "functions" : {
-    "1" : "perlinNoise"
+    "1" : "perlinNoise",
+    "2" : "textureOutput"
   },
-  "connections" : [ ],
+  "connections" : [ {
+    "input" : 1,
+    "output" : 2,
+    "port" : "diffuse"
+  } ],
   "values" : [ {
     "value" : 12,
     "node" : 1,
     "port" : "periods"
-  } ],
-  "outputs" : {
-    "diffuse" : 1
-  }
+  } ]
 }

@@ -1,6 +1,7 @@
 package metaview.views
 
 import javafx.application.Platform
+import javafx.geometry.Insets
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.canvas.Canvas
@@ -8,9 +9,13 @@ import javafx.scene.canvas.GraphicsContext
 import javafx.scene.control.Label
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
-import metahub.*
+import metahub.Graph
+import metahub.OutputValues
+import metahub.Port
+import metahub.arrangeGraphStages
 import metaview.*
 import mythic.ent.Id
+import mythic.imaging.textureOutputTypes
 import org.joml.Vector2i
 
 const val nodeLength: Int = 75
@@ -70,7 +75,7 @@ fun nodePosition(x: Int, y: Int): Vector2i {
   )
 }
 
-fun graphCanvas(graph: Graph, stages: List<List<Id>>, pane: Pane, nodeNodes: Map<Id, Pair<Node, List<Node>>>, outputs: Map<String, Node>): Node {
+fun graphCanvas(graph: Graph, stages: List<List<Id>>, pane: Pane, nodeNodes: Map<Id, Pair<Node, List<Node>>>): Node {
   val tempPosition = nodePosition(stages.size + 2, stages.map { it.size }.sortedDescending().first() + 1)
   val canvas = Canvas(tempPosition.x.toDouble(), tempPosition.y.toDouble())
 
@@ -87,12 +92,12 @@ fun graphCanvas(graph: Graph, stages: List<List<Id>>, pane: Pane, nodeNodes: Map
       drawConnection(gc, pane, input.first, port)
     }
 
-    outputs.entries.forEachIndexed { index, (name, label) ->
-      val output = graph.outputs[name]
-      if (output != null) {
-        drawConnection(gc, pane, nodeNodes[output]!!.first, label)
-      }
-    }
+//    outputs.entries.forEachIndexed { index, (name, label) ->
+//      val output = graph.outputs[name]
+//      if (output != null) {
+//        drawConnection(gc, pane, nodeNodes[output]!!.first, label)
+//      }
+//    }
   }
 
   return canvas
@@ -104,14 +109,27 @@ fun graphView(emit: Emitter, state: State, values: OutputValues): Node {
   if (graph != null) {
     val nodeNodes = mutableMapOf<Id, Pair<Node, List<Node>>>()
 
-    val stages = arrangeGraphStages(graph)
+    val stages = arrangeGraphStages(textureOutputTypes, graph)
+        .plusElement(graph.nodes.filter { textureOutputTypes.contains(graph.functions[it]) })
 
     stages.forEachIndexed { x, stage ->
       stage.forEachIndexed { y, nodeId ->
-        val buffer = getNodePreviewBuffer(graph, nodeId, values[nodeId]!!)
-        val hbox = HBox()
-        val icon = nodeIcon(emit, graph, nodeId, buffer, state.gui.graphInteraction.nodeSelection)
+        val nodeValue = values[nodeId]
+        val icon = if (nodeValue != null) {
+          val buffer = getNodePreviewBuffer(graph, nodeId, nodeValue)
+          nodeIcon(emit, graph, nodeId, buffer, state.gui.graphInteraction.nodeSelection)
+        } else {
+//          val image = Pane()
+////          val fxColor = Color(0.5, 0.5, 0.5, 1.0)
+////          val fill = BackgroundFill(fxColor, CornerRadii.EMPTY, Insets.EMPTY)
+////          image.background = Background(fill)
+//          image.prefWidth = nodeLength.toDouble()
+//          image.prefHeight = nodeLength.toDouble()
+//          image
+          Pane()
+        }
         val position = nodePosition(x, y)
+        val hbox = HBox()
         hbox.relocate(position.x.toDouble(), position.y.toDouble())
         val portsPanel = VBox()
         portsPanel.spacing = 5.0
@@ -124,15 +142,15 @@ fun graphView(emit: Emitter, state: State, values: OutputValues): Node {
       }
     }
 
-    val outputs = listOf("diffuse")
-        .mapIndexed { index, name ->
-          val label = portLabel(Port(0L, name), emit, state.gui.graphInteraction.portSelection)
-          label.relocate(nodePadding + (stages.size) * strideX.toDouble(), nodePadding + (index + 1) * strideY.toDouble())
-          pane.children.add(label)
-          Pair(name, label)
-        }.associate { it }
+//    val outputs = listOf("diffuse")
+//        .mapIndexed { index, name ->
+//          val label = portLabel(Port(0L, name), emit, state.gui.graphInteraction.portSelection)
+//          label.relocate(nodePadding + (stages.size) * strideX.toDouble(), nodePadding + (index + 1) * strideY.toDouble())
+//          pane.children.add(label)
+//          Pair(name, label)
+//        }.associate { it }
 
-    val canvas = graphCanvas(graph, stages, pane, nodeNodes, outputs)
+    val canvas = graphCanvas(graph, stages, pane, nodeNodes)
     pane.children.add(0, canvas)
   }
 

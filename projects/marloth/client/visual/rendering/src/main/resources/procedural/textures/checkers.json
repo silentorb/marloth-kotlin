@@ -1,13 +1,18 @@
 {
-  "nodes" : [ 1, 2 ],
+  "nodes" : [ 1, 2, 3 ],
   "functions" : {
     "1" : "checkers",
-    "2" : "colorize"
+    "2" : "colorize",
+    "3" : "textureOutput"
   },
   "connections" : [ {
     "input" : 1,
     "output" : 2,
     "port" : "grayscale"
+  }, {
+    "input" : 2,
+    "output" : 3,
+    "port" : "diffuse"
   } ],
   "values" : [ {
     "value" : {
@@ -25,8 +30,5 @@
     },
     "node" : 2,
     "port" : "secondColor"
-  } ],
-  "outputs" : {
-    "diffuse" : 2
-  }
+  } ]
 }

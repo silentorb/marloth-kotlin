@@ -37,14 +37,17 @@ fun execute(engine: Engine, graph: Graph, stages: List<List<Id>>): OutputValues 
 }
 
 fun execute(engine: Engine, graph: Graph): OutputValues {
-  val stages = arrangeGraphStages(graph)
+  val stages = arrangeGraphStages(engine.outputTypes, graph)
   return execute(engine, graph, stages)
 }
 
-fun getGraphOutput(graph: Graph, values: OutputValues): Map<String, Any> =
-    graph.outputs.mapValues { values[it.value]!! }
+fun getGraphOutput(outputTypes: OutputTypes, graph: Graph, values: OutputValues): Map<String, Any> {
+  val outputNode = graph.functions.entries.first { outputTypes.contains(it.value) }
+  return graph.connections.filter { it.output == outputNode.key }
+      .associate { Pair(it.port, values[it.input]!!) }
+}
 
 fun executeAndFormat(engine: Engine, graph: Graph): Map<String, Any> {
   val values = execute(engine, graph)
-  return getGraphOutput(graph, values)
+  return getGraphOutput(engine.outputTypes, graph, values)
 }

@@ -187,6 +187,8 @@ private val textureFunctions = mapOf(
     "perlinNoise" to simpleNoiseOperator
 )
 
+val textureOutputTypes = setOf("textureOutput")
+
 private val typeMappers: List<TypeMapper> = listOf(
     { value ->
       if (value is List<*>) {
@@ -205,5 +207,6 @@ private val typeMappers: List<TypeMapper> = listOf(
 fun newTextureEngine(length: Int): Engine =
     Engine(
         functions = textureFunctions.mapValues { it.value(length) },
-        typeMappers = typeMappers
+        typeMappers = typeMappers,
+        outputTypes = textureOutputTypes
     )
