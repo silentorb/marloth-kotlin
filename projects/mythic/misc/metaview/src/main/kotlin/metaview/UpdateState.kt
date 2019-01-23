@@ -240,11 +240,6 @@ fun insertNode(name: String): StateTransform = pipe(
     newNode(name)
 )
 
-//fun deleteConnectionsOrOutputConnections(ports: List<Port>): GraphTransform {
-//  val (outputConnections, connections) = ports.partition { it.node == 0L }
-//  return pipe(deleteConnections(connections), deleteOutputConnections(outputConnections))
-//}
-
 fun cleanupDynamicValuesForDeletedConnections(deletedPorts: List<Port>): GraphTransform = { graph ->
   val deletedDynamicPorts = deletedPorts.filter { it.input.toIntOrNull() != null }
   if (deletedDynamicPorts.size > 1)

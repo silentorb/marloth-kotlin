@@ -55,7 +55,6 @@ fun balanceWeights(index: Int, value: Float, locks: List<Boolean>): (List<Float>
   val currentVariableTotal = weights.filterIndexed { i, _ -> i != index && !locks[i] }.sum()
   val lockedAmount = weights.filterIndexed { i, _ -> i != index && locks[i] }.sum()
   val newVariableTotal = 1f - value - lockedAmount
-//  val variableTotal = weights.filterIndexed { i, _ -> i != index && !locks[i] }.sum()
   val scalar = newVariableTotal / currentVariableTotal
 
   val result = weights.mapIndexed { i, weight ->
