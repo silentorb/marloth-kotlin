@@ -6,13 +6,14 @@ import javafx.animation.Timeline
 import javafx.event.EventHandler
 import javafx.geometry.Insets
 import javafx.scene.Node
+import javafx.scene.control.Button
+import javafx.scene.control.CheckBox
 import javafx.scene.control.Slider
 import javafx.scene.control.TextField
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.util.Duration
 import metaview.*
-import mythic.ent.replaceIndex
 import mythic.spatial.Vector3
 
 typealias OnChange = (Any, Boolean) -> Unit
@@ -101,24 +102,73 @@ val numericIntView: ValueViewSource = { definition ->
 
 val weightsView: ValueViewSource = { definition ->
   { value, changed ->
-    val box = VBox()
+    val sliderPanel = VBox(5.0)
     var weights = value as List<Float>
-    val rows = weights.mapIndexed { i, weight ->
-      val slider = Slider(0.0, 1.0, weight.toDouble())
-      slider.valueProperty().addListener { event ->
-        println("a")
-        weights = replaceIndex(weights, i, slider.value.toFloat())
-        changed(weights, true)
+    var listen = true
+    var sliders: List<Slider> = listOf()
+
+    val lockBoxes = weights.mapIndexed { i, weight ->
+      CheckBox()
+    }
+
+    val getLocks = {
+      lockBoxes.map { it.isSelected }
+    }
+
+    val updateSliders = { index: Int ->
+      listen = false
+      sliders.forEachIndexed { ri, s ->
+        if (ri != index) {
+          s.value = weights[ri].toDouble()
+        }
       }
-      slider.setOnMouseReleased { event ->
-        println("b")
-        weights = replaceIndex(weights, i, slider.value.toFloat())
-        changed(weights, false)
+      listen = true
+    }
+
+    sliders = weights.mapIndexed { i, weight ->
+      val slider = Slider(0.0, 1.0, weight.toDouble())
+      slider.valueProperty().addListener { _ ->
+        if (listen) {
+          println("a $i")
+          weights = balanceWeights(i, slider.value.toFloat(), getLocks())(weights)
+          updateSliders(i)
+          listen = true
+          changed(weights, true)
+        }
+      }
+
+      slider.setOnMouseReleased {
+        if (listen) {
+          println("b $i")
+          weights = balanceWeights(i, slider.value.toFloat(), getLocks())(weights)
+          changed(weights, false)
+        }
       }
       slider
     }
-    box.children.addAll(rows)
-    box
+
+    val rows = lockBoxes.zip(sliders) { lock, slider ->
+      HBox(5.0, lock, slider)
+    }
+
+    sliderPanel.children.addAll(rows)
+    val alignWaits = Button("Align")
+    alignWaits.setOnMouseClicked {
+      val locks = getLocks()
+      val lockedAmount = weights.filterIndexed { i, _ -> locks[i] }.sum()
+      val newValue = (1f - lockedAmount) / weights.size.toFloat()
+
+      weights = weights.mapIndexed { i, currentValue ->
+        if (locks[i])
+          currentValue
+        else
+          newValue
+      }
+
+      updateSliders(-1)
+      changed(weights, false)
+    }
+    HBox(5.0, sliderPanel, alignWaits)
   }
 }
 

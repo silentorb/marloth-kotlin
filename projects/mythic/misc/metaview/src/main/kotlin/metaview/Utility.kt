@@ -50,3 +50,25 @@ fun getDynamicPorts(graph: Graph, node: Id, type: String): Map<String, InputDefi
         .associate {
           Pair(it.port, InputDefinition(type = type))
         }
+
+fun balanceWeights(index: Int, value: Float, locks: List<Boolean>): (List<Float>) -> List<Float> = { weights ->
+  val currentVariableTotal = weights.filterIndexed { i, _ -> i != index && !locks[i] }.sum()
+  val lockedAmount = weights.filterIndexed { i, _ -> i != index && locks[i] }.sum()
+  val newVariableTotal = 1f - value - lockedAmount
+//  val variableTotal = weights.filterIndexed { i, _ -> i != index && !locks[i] }.sum()
+  val scalar = newVariableTotal / currentVariableTotal
+
+  val result = weights.mapIndexed { i, weight ->
+    if (i == index)
+      value
+    else if (locks[i])
+      weight
+    else
+      weight * scalar
+  }
+
+  if (result.sum() > 1.000001f) {
+    val k = 0
+  }
+  result
+}
