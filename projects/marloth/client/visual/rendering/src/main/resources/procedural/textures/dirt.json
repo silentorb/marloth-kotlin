@@ -15,19 +15,19 @@
   }, {
     "input" : 1,
     "output" : 7,
-    "port" : "0"
-  }, {
-    "input" : 5,
-    "output" : 7,
     "port" : "1"
   }, {
-    "input" : 6,
+    "input" : 5,
     "output" : 7,
     "port" : "2"
   }, {
     "input" : 7,
     "output" : 3,
     "port" : "grayscale"
+  }, {
+    "input" : 6,
+    "output" : 7,
+    "port" : "3"
   } ],
   "values" : [ {
     "value" : 12,
@@ -58,7 +58,7 @@
     "node" : 6,
     "port" : "periods"
   }, {
-    "value" : [ 0.3, 0.3, 0.4 ],
+    "value" : [ 0.3, 0.38130084, 0.5 ],
     "node" : 7,
     "port" : "weights"
   } ]

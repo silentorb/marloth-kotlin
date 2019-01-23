@@ -11,7 +11,7 @@ const val bitmapType = "Bitmap"
 const val colorType = "Color"
 const val grayscaleType = "Grayscale"
 const val floatType = "Float"
-const val floatListType = "FloatList"
+const val weightsType = "FloatList"
 const val intType = "Int"
 const val noneType = "None"
 
@@ -69,7 +69,7 @@ val nodeDefinitions: NodeDefinitionMap = mapOf(
     "mixBitmaps" to NodeDefinition(
         inputs = mapOf(
             "mixer" to InputDefinition(
-                type = floatListType,
+                type = weightsType,
                 defaultValue = listOf<Float>()
             )
         ),
@@ -79,7 +79,7 @@ val nodeDefinitions: NodeDefinitionMap = mapOf(
     "mixGrayscales" to NodeDefinition(
         inputs = mapOf(
             "weights" to InputDefinition(
-                type = floatListType,
+                type = weightsType,
                 defaultValue = listOf<Float>()
             )
         ),

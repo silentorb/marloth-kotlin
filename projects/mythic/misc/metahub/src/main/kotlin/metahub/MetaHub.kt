@@ -1,6 +1,8 @@
 package metahub
 
 import mythic.ent.Id
+import mythic.ent.pipe
+import mythic.ent.replace
 
 data class Connection(
     val input: Id,
@@ -112,16 +114,18 @@ fun deleteNodes(ids: Collection<Id>): GraphTransform = { graph ->
   )
 }
 
-fun newConnection(input: Id, output: Id, port: String): GraphTransform = { graph ->
-  val connection = Connection(
-      input = input,
-      output = output,
-      port = port
-  )
+fun newConnection(connection: Connection): GraphTransform = { graph ->
   graph.copy(
       connections = graph.connections.plus(connection)
   )
 }
+
+fun newConnection(input: Id, output: Id, port: String): GraphTransform =
+    newConnection(Connection(
+        input = input,
+        output = output,
+        port = port
+    ))
 
 fun newConnection(node: Id, port: Port): GraphTransform = newConnection(node, port.node, port.input)
 
@@ -130,6 +134,18 @@ fun deleteConnections(ports: List<Port>): GraphTransform = { graph ->
       connections = graph.connections.filter { connection ->
         ports.none { it.node == connection.output && it.input == connection.port }
       }
+  )
+}
+
+fun replaceConnection(old: Port, new: Connection): GraphTransform =
+    pipe(
+        deleteConnections(listOf(old)),
+        newConnection(new)
+    )
+
+fun renameInput(connection: Connection, newName: String): GraphTransform = { graph ->
+  graph.copy(
+      connections = replace(graph.connections, { it === connection }) { connection.copy(port = newName) }
   )
 }
 
@@ -152,7 +168,8 @@ fun setValue(node: Id, port: String, value: Any): GraphTransform = { graph ->
   )
 }
 
-fun <T> modifyValue(node: Id, port: String, transform: (T) -> T): GraphTransform = { graph ->
+fun <T> replaceValue(node: Id, port: String, transform: (T) -> T): GraphTransform = { graph ->
   val value = transform(graph.values.first { it.node == node && it.port == port }.value as T)
   setValue(node, port, value as Any)(graph)
 }
+

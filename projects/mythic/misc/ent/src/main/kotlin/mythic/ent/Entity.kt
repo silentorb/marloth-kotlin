@@ -30,3 +30,20 @@ fun <T> pipe(vararg steps: (T) -> T): (T) -> T = {
 fun <T> pipe(steps: List<(T) -> T>): (T) -> T = {
   steps.fold(it) { a, b -> b(a) }
 }
+
+fun <T> replace(collection: Collection<T>, condition: (T) -> Boolean, transform: (T) -> T) =
+    collection.map { item ->
+      if (condition(item))
+        transform(item)
+      else
+        item
+    }
+
+
+fun <T> replaceIndex(collection: Collection<T>, index: Int, newValue: T) =
+    collection.mapIndexed { i, item ->
+      if (i == index)
+        newValue
+      else
+        item
+    }

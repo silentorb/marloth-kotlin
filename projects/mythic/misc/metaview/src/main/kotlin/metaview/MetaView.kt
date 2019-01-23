@@ -78,6 +78,7 @@ fun coreLogic(root: BorderPane, village: Village) {
   }
 
   val updateGraphView = { st: State, values: OutputValues ->
+    graphContainer.content = null // JavaFX has some weird caching/race condition that this prevents
     graphContainer.content = graphView(emit!!, st, values)
   }
 

@@ -1,14 +1,14 @@
 package mythic.imaging
 
 import fastnoise.FastNoise
-import java.nio.ByteBuffer
-import metahub.Function
 import metahub.Arguments
 import metahub.Engine
+import metahub.Function
 import metahub.TypeMapper
 import mythic.spatial.Vector3
 import org.joml.Vector3i
 import org.lwjgl.BufferUtils
+import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 
 typealias SolidColor = Vector3
@@ -143,7 +143,7 @@ val mixBitmaps: TextureFunction = withBitmapBuffer { arguments ->
 val mixGrayscales: TextureFunction = withGrayscaleBuffer { arguments ->
   val weights = arguments["weights"]!! as List<Float>
   val buffers = weights.mapIndexed { index, value ->
-    Pair(floatBufferArgument(arguments, index.toString()), value)
+    Pair(floatBufferArgument(arguments, (index + 1).toString()), value)
   }
 //  val first = floatBufferArgument(arguments, "first")
 //  val second = floatBufferArgument(arguments, "second")

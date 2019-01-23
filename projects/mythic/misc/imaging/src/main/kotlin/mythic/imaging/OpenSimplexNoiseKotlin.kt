@@ -671,7 +671,7 @@ class OpenSimplexNoiseKotlin {
           bPoint = 0x0A
         }
 
-        //Closer between (1,0,0,1) and (0,1,1,0) will replace the further of a and b, if closer.
+        //Closer between (1,0,0,1) and (0,1,1,0) will replaceSingle the further of a and b, if closer.
         if (ins.x + ins.w > ins.y + ins.z) {
           val score = ins.x + ins.w
           if (aScore >= bScore && score > bScore) {
@@ -1119,7 +1119,7 @@ class OpenSimplexNoiseKotlin {
           bPoint = 0x05
         }
 
-        //Closer between (0,1,1,0) and (1,0,0,1) will replace the further of a and b, if closer.
+        //Closer between (0,1,1,0) and (1,0,0,1) will replaceSingle the further of a and b, if closer.
         if (ins.x + ins.w < ins.y + ins.z) {
           val score = ins.x + ins.w
           if (aScore <= bScore && score < bScore) {

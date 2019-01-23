@@ -25,7 +25,7 @@ fun <T, B> Collection<T>.firstNotNull(mapper: (T) -> B?): B? {
   return null
 }
 
-fun <T> replace(collection: Collection<T>, newItem: T, matches: (T, T) -> Boolean) =
+fun <T> replaceSingle(collection: Collection<T>, newItem: T, matches: (T, T) -> Boolean) =
     collection.map {
       if (matches(it, newItem))
         newItem

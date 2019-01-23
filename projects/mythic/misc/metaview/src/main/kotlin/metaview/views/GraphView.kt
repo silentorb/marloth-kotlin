@@ -100,13 +100,6 @@ fun graphCanvas(graph: Graph, stages: List<List<Id>>, pane: Pane, nodeNodes: Map
       val port = output.second[inputs.keys.indexOf(connection.port)]
       drawConnection(gc, pane, input.first, port)
     }
-
-//    outputs.entries.forEachIndexed { index, (name, label) ->
-//      val output = graph.outputs[name]
-//      if (output != null) {
-//        drawConnection(gc, pane, nodeNodes[output]!!.first, label)
-//      }
-//    }
   }
 
   return canvas

@@ -6,14 +6,13 @@ import javafx.animation.Timeline
 import javafx.event.EventHandler
 import javafx.geometry.Insets
 import javafx.scene.Node
+import javafx.scene.control.Slider
 import javafx.scene.control.TextField
-import javafx.scene.layout.Background
-import javafx.scene.layout.BackgroundFill
-import javafx.scene.layout.CornerRadii
-import javafx.scene.layout.Pane
+import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.util.Duration
 import metaview.*
+import mythic.ent.replaceIndex
 import mythic.spatial.Vector3
 
 typealias OnChange = (Any, Boolean) -> Unit
@@ -100,8 +99,32 @@ val numericIntView: ValueViewSource = { definition ->
   }
 }
 
+val weightsView: ValueViewSource = { definition ->
+  { value, changed ->
+    val box = VBox()
+    var weights = value as List<Float>
+    val rows = weights.mapIndexed { i, weight ->
+      val slider = Slider(0.0, 1.0, weight.toDouble())
+      slider.valueProperty().addListener { event ->
+        println("a")
+        weights = replaceIndex(weights, i, slider.value.toFloat())
+        changed(weights, true)
+      }
+      slider.setOnMouseReleased { event ->
+        println("b")
+        weights = replaceIndex(weights, i, slider.value.toFloat())
+        changed(weights, false)
+      }
+      slider
+    }
+    box.children.addAll(rows)
+    box
+  }
+}
+
 val valueViews: Map<String, ValueViewSource> = mapOf(
     colorType to { _ -> colorView },
     floatType to numericFloatView,
-    intType to numericIntView
+    intType to numericIntView,
+    weightsType to weightsView
 )

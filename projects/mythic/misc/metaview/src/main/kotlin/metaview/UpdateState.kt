@@ -78,12 +78,12 @@ fun connectNodes(id: Id): StateTransform = { state ->
     val selectedPort = state.gui.graphInteraction.portSelection.first()
     val isNewPort = selectedPort.input == newPortString
     val port = if (isNewPort)
-      Port(selectedPort.node, state.graph.connections.count { it.output == selectedPort.node }.toString())
+      Port(selectedPort.node, (state.graph.connections.count { it.output == selectedPort.node } + 1).toString())
     else
       selectedPort
 
     val additional = if (isNewPort)
-      modifyValue<List<Float>>(port.node, "weights") { it.plus(0.5f) }
+      replaceValue<List<Float>>(port.node, "weights") { it.plus(0.5f) }
     else
       ::pass
 
@@ -135,7 +135,7 @@ fun selectInput(port: Port): StateTransform = { state ->
 
 fun changeInputValue(change: InputValue): StateTransform = { state ->
   val graph = state.graph!!
-  val newValues = replace(graph.values, change, ::isSameInput)
+  val newValues = replaceSingle(graph.values, change, ::isSameInput)
   state.copy(
       graph = graph.copy(
           values = newValues
@@ -245,11 +245,36 @@ fun insertNode(name: String): StateTransform = pipe(
 //  return pipe(deleteConnections(connections), deleteOutputConnections(outputConnections))
 //}
 
+fun cleanupDynamicValuesForDeletedConnections(deletedPorts: List<Port>): GraphTransform = { graph ->
+  val deletedDynamicPorts = deletedPorts.filter { it.input.toIntOrNull() != null }
+  if (deletedDynamicPorts.size > 1)
+    throw Error("Does not yet support deleting multiple dynamic connections at once. (Race conditions)")
+
+  val port = deletedDynamicPorts.first()
+  val id = port.input.toInt()
+  val higherPorts = graph.connections.filter {
+    it.output == port.node && it.port.toIntOrNull() != null && it.port.toInt() > id
+  }
+      .map { Pair(it, it.port.toInt()) }
+
+  val modifiedConnections = higherPorts.map { (connection, portId) ->
+    renameInput(connection, (portId - 1).toString())
+  }
+
+  val g2 = pipe(
+      replaceValue<List<Float>>(port.node, "weights") { it.filterIndexed { i, _ -> i != id - 1 } },
+      pipe(modifiedConnections)
+  )(graph)
+
+  g2
+}
+
 val deleteGraphSelection: StateTransform = { state ->
   val selection = state.gui.graphInteraction
   val newGraph = transformNotNull(state.graph, pipe(
       deleteNodes(selection.nodeSelection.filter { !isOutputNode(state.graph!!, it) }),
-      deleteConnections(selection.portSelection)
+      deleteConnections(selection.portSelection),
+      cleanupDynamicValuesForDeletedConnections(selection.portSelection)
   ))
 
   state.copy(
