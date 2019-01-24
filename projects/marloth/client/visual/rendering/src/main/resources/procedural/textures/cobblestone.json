@@ -1,0 +1,9 @@
+{
+  "nodes" : [ 1, 2 ],
+  "functions" : {
+    "1" : "textureOutput",
+    "2" : "voronoiBoundaries"
+  },
+  "connections" : [ ],
+  "values" : [ ]
+}

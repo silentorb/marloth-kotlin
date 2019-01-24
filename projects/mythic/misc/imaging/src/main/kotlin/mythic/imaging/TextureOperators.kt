@@ -8,6 +8,7 @@ import metahub.TypeMapper
 import mythic.spatial.Vector3
 import org.joml.Vector3i
 import org.lwjgl.BufferUtils
+import randomly.Dice
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 
@@ -181,6 +182,15 @@ val simpleNoiseOperator: TextureFunction = withGrayscaleBuffer { arguments ->
   }
 }
 
+val voronoiBoundaryOperator: TextureFunction = withGrayscaleBuffer { arguments ->
+  val dice = Dice(1)
+  val grid = newAnchorGrid(dice, 10, 10)
+  val k = 0
+  voronoiBoundaryHighlight(grid, 0.05f)
+//  { x, y ->
+//0f
+//  }
+}
 private val textureFunctions = mapOf(
     "coloredCheckers" to coloredCheckers,
     "checkers" to grayscaleCheckers,
@@ -188,7 +198,8 @@ private val textureFunctions = mapOf(
     "solidColor" to solidColor,
     "mixBitmaps" to mixBitmaps,
     "mixGrayscales" to mixGrayscales,
-    "perlinNoise" to simpleNoiseOperator
+    "perlinNoise" to simpleNoiseOperator,
+    "voronoiBoundaries" to voronoiBoundaryOperator
 )
 
 val textureOutputTypes = setOf("textureOutput")

@@ -95,6 +95,11 @@ val nodeDefinitions: NodeDefinitionMap = mapOf(
         ),
         outputType = grayscaleType
     ),
+    "voronoiBoundaries" to NodeDefinition(
+        inputs = mapOf(
+        ),
+        outputType = grayscaleType
+    ),
     textureOutput to NodeDefinition(
         inputs = mapOf(
             "diffuse" to InputDefinition(
