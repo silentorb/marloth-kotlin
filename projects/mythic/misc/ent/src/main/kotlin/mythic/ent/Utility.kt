@@ -71,3 +71,17 @@ fun <T> replaceIndex(collection: Collection<T>, index: Int, newValue: T) =
       else
         item
     }
+
+fun <Key, Value> cached(source: (Key) -> Value): (Key) -> Value {
+  val cache: MutableMap<Key, Value> = mutableMapOf()
+  return { key ->
+    val existing = cache[key]
+    if (existing != null)
+      existing
+    else {
+      val newEntry = source(key)
+      cache[key] = newEntry
+      newEntry
+    }
+  }
+}

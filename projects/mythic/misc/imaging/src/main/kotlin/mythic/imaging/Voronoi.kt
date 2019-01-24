@@ -1,5 +1,6 @@
 package mythic.imaging
 
+import mythic.ent.cached
 import mythic.spatial.Vector2
 import mythic.spatial.toVector2
 import mythic.spatial.toVector2i
@@ -12,10 +13,10 @@ data class AnchorGrid(
     val cells: List<Vector2?>
 )
 
-fun newAnchorGrid(dice: Dice, resolution: Int, roughAnchorCount: Int): AnchorGrid {
+fun newAnchorGrid(dice: Dice, length: Int, roughAnchorCount: Int): AnchorGrid {
 
-  val cellCount = resolution * resolution
-  val cellLength = 1f / resolution.toFloat()
+  val cellCount = length * length
+  val cellLength = 1f / length.toFloat()
   val cellAnchorChance = roughAnchorCount.toFloat() / cellCount.toFloat()
   val cells = Array<Vector2?>(cellCount) { null }
 
@@ -27,22 +28,20 @@ fun newAnchorGrid(dice: Dice, resolution: Int, roughAnchorCount: Int): AnchorGri
   // the cell can still hold an anchor in its middle.
   // This is an extreme case to be worried about, but I've found that in generation code randomness needs
   // to be completely controlled or endless woes and surprises follow.
-//  assert(minDistance < resolution.toFloat() / 2f)
+//  assert(minDistance < length.toFloat() / 2f)
 
   var i = 0
 
   val getRange = { step: Int, previous: Float?, next: Float? ->
-    val start = step * cellLength
-    val end = start + cellLength
     val paddedStart = if (previous != null)
-      Math.max(start, previous + minDistance)
+      Math.max(0f, previous + minDistance - 1f)
     else
-      start
+      0f
 
     val paddedEnd = if (next != null)
-      Math.min(end, next - minDistance)
+      Math.min(1f, next - minDistance + 1f)
     else
-      end
+      1f
 
     dice.getFloat(paddedStart, paddedEnd)
   }
@@ -62,17 +61,17 @@ fun newAnchorGrid(dice: Dice, resolution: Int, roughAnchorCount: Int): AnchorGri
   }
 
   val above = { j: Int ->
-    if (j + resolution < cellCount)
-      j + resolution
+    if (j + length < cellCount)
+      j + length
     else
-      j + resolution - cellCount
+      j + length - cellCount
   }
 
   val below = { j: Int ->
-    if (j >= resolution)
-      j - resolution
+    if (j >= length)
+      j - length
     else
-      j + cellCount - resolution
+      j + cellCount - length
   }
 
   val getX = { getter: (Int) -> Int ->
@@ -83,8 +82,8 @@ fun newAnchorGrid(dice: Dice, resolution: Int, roughAnchorCount: Int): AnchorGri
     cells[getter(i)]?.y
   }
 
-  for (y in 0 until resolution) {
-    for (x in 0 until resolution) {
+  for (y in 0 until length) {
+    for (x in 0 until length) {
       val hasAnchor = dice.getFloat() < cellAnchorChance
       if (hasAnchor) {
         val anchor = Vector2(
@@ -98,13 +97,22 @@ fun newAnchorGrid(dice: Dice, resolution: Int, roughAnchorCount: Int): AnchorGri
   }
   return AnchorGrid(
       cells = cells.toList(),
-      length = resolution
+      length = length
   )
 }
 
-fun anchorGridCell(grid: AnchorGrid, x: Int, y: Int): Vector2? {
+// Faster than a full modulus
+fun singleModulus(x: Int, divisor: Int): Int =
+    when {
+      x < 0 -> x + divisor
+      x >= divisor -> x - divisor
+      else -> x
+    }
+
+fun anchorGridCell(grid: AnchorGrid): (Vector2i) -> Vector2? = { input ->
   val cellCount = grid.length * grid.length
-  val i = y * grid.length + x
+  val x = singleModulus(input.x, grid.length)
+  val i = input.y * grid.length + x
   val i2 = if (i < 0)
     i + cellCount
   else if (i >= cellCount)
@@ -112,14 +120,14 @@ fun anchorGridCell(grid: AnchorGrid, x: Int, y: Int): Vector2? {
   else
     i
 
-  return grid.cells[i2]
+  grid.cells[i2]
 }
 
 //private fun offsets() = (-1..1).asSequence().flatMap { y ->
 //  (-1..1).asSequence().map { x -> Vector2i(x, y) }
 //}
 
-private fun offsets(step: Int): Sequence<Vector2i> {
+private fun newOffsets(step: Int): List<Vector2i> {
   // Forms a boundary like:
   //
   //   ###
@@ -127,69 +135,86 @@ private fun offsets(step: Int): Sequence<Vector2i> {
   //   ###
 
   val short = step - 1
-  val fullRange = (-step..step).asSequence()
-  val shortRange = (-short..short).asSequence()
+  val fullRange = (-step..step)
+  val shortRange = (-short..short)
   return fullRange.map { Vector2i(it, -step) } +
       shortRange.map { Vector2i(-step, it) } +
       shortRange.map { Vector2i(step, it) } +
       fullRange.map { Vector2i(it, step) }
 }
 
-fun getNearestCells(grid: AnchorGrid, i: Vector2i, minimumCount: Int): List<Vector2> {
-  var step = 1
-  var cells = listOfNotNull(anchorGridCell(grid, i.x, i.y))
+typealias CellsSource = (Vector2i) -> List<Vector2>
 
-  val gatherCells = { s: Int ->
-    cells +
-        offsets(s)
-            .mapNotNull {
-              val result = anchorGridCell(grid, it.x + i.x, it.y + i.y)
-              if (result != null) {
-//                val m = (it + i).toVector2() + result - result.toVector2i().toVector2()
-                result
-              } else
-                null
-            }.toList()
-  }
+fun getNearestCells(grid: AnchorGrid, minimumCount: Int): CellsSource {
+  val offsets = cached(::newOffsets)
+//  val cell = cached(anchorGridCell(grid))
+  return { i ->
+    var step = 1
 
-  while (true) {
-    cells = gatherCells(step)
+    val cellOffset = { point: Vector2i ->
+      val fineOffset = anchorGridCell(grid)(point)
+      if (fineOffset != null) {
+        val roughOffset = point.toVector2()
+        val m = roughOffset + fineOffset
+        m
+      } else
+        null
+    }
 
-    if (cells.size >= minimumCount)
-      return gatherCells(step + 1)
+    var cells = listOfNotNull(cellOffset(i))
 
-    if (step++ >= grid.length / 2)
-      throw Error("Anchor grid does not have enough cells")
+    val gatherCells = { s: Int ->
+      cells +
+          offsets(s)
+              .mapNotNull {
+                cellOffset(it + i)
+              }.toList()
+    }
+
+    do {
+      if (step > grid.length / 2)
+        throw Error("Anchor grid does not have enough cells")
+
+      cells = gatherCells(step)
+      ++step
+    } while (cells.size < minimumCount)
+    gatherCells(step)
   }
 }
 
-fun voronoiBoundaryHighlight(grid: AnchorGrid, thickness: Float): Sampler = { x, y ->
-  val input = Vector2(x, y)
-  val i = (input * grid.length.toFloat()).toVector2i()
-  val offset = input - i.toVector2()
-  val options = getNearestCells(grid, i, 2)
+fun manhattanDistance(a: Vector2): (Vector2) -> Float = { b ->
+  Math.abs(a.x - b.x) + Math.abs(a.y - b.y)
+}
+
+fun voronoiBoundaryHighlight(length: Int, nearestCells: CellsSource, thickness: Float): Sampler = { x, y ->
+  val input = Vector2(x, y) * length.toFloat()
+  val i = input.toVector2i()
+//  val offset = input - i.toVector2()
+  val options = nearestCells(i)
 //  val options = grid.cells.filterNotNull()
   val nearestPair = options.sortedBy { it.distance(input) }.take(2)
-  val gap = Math.abs(nearestPair[0].distance(input) - nearestPair[1].distance(input))
-  if (anchorGridCell(grid, i.x, i.y) != null) {
+//  val nearestPair = options.sortedBy(manhattanDistance(input)).take(2)
+  if (nearestPair[0] == nearestPair[1]) {
     val k = 0
   }
-  val overlay = if (anchorGridCell(grid, i.x, i.y) != null)
-    0f
-  else
-    0.2f
+  val gap = Math.abs(nearestPair[0].distance(input) - nearestPair[1].distance(input))
+//  if (anchorGridCell(grid, i.x, i.y) != null) {
+//    val k = 0
+//  }
+//  val overlay = if (anchorGridCell(grid, i.x, i.y) != null)
+//    0f
+//  else
+//    0.2f
 
   val result = if (gap < thickness / 2f)
     0f
   else
-    0.8f
+    1f
 
-  if (nearestPair[0].distance(input) < 0.01f)
-    0f
-  else
-    result + overlay
-//  if (anchorGridCell(grid, i.x, i.y) == null)
+//  if (nearestPair[0].distance(input) < 0.1f)
 //    0f
 //  else
-//    1f
+//    result + overlay
+
+  result
 }

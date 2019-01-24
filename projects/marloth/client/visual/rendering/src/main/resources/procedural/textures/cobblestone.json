@@ -1,9 +1,70 @@
 {
-  "nodes" : [ 1, 2 ],
+  "nodes" : [ 1, 2, 3, 4, 5, 6, 7 ],
   "functions" : {
     "1" : "textureOutput",
-    "2" : "voronoiBoundaries"
+    "2" : "voronoiBoundaries",
+    "3" : "colorize",
+    "4" : "perlinNoise",
+    "5" : "mixGrayscales",
+    "6" : "perlinNoise",
+    "7" : "perlinNoise"
   },
-  "connections" : [ ],
-  "values" : [ ]
+  "connections" : [ {
+    "input" : 3,
+    "output" : 1,
+    "port" : "diffuse"
+  }, {
+    "input" : 5,
+    "output" : 3,
+    "port" : "grayscale"
+  }, {
+    "input" : 2,
+    "output" : 5,
+    "port" : "1"
+  }, {
+    "input" : 4,
+    "output" : 5,
+    "port" : "2"
+  }, {
+    "input" : 6,
+    "output" : 5,
+    "port" : "3"
+  }, {
+    "input" : 7,
+    "output" : 5,
+    "port" : "4"
+  } ],
+  "values" : [ {
+    "value" : {
+      "x" : 0.0,
+      "y" : 0.0,
+      "z" : 0.0
+    },
+    "node" : 3,
+    "port" : "firstColor"
+  }, {
+    "value" : {
+      "x" : 0.668942,
+      "y" : 0.6567863,
+      "z" : 0.6141481
+    },
+    "node" : 3,
+    "port" : "secondColor"
+  }, {
+    "value" : 8,
+    "node" : 4,
+    "port" : "periods"
+  }, {
+    "value" : 16,
+    "node" : 6,
+    "port" : "periods"
+  }, {
+    "value" : 32,
+    "node" : 7,
+    "port" : "periods"
+  }, {
+    "value" : [ 0.5345529, 0.15514904, 0.15514904, 0.15514904 ],
+    "node" : 5,
+    "port" : "weights"
+  } ]
 }

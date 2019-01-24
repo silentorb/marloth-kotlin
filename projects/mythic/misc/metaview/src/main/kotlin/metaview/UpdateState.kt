@@ -245,23 +245,27 @@ fun cleanupDynamicValuesForDeletedConnections(deletedPorts: List<Port>): GraphTr
   if (deletedDynamicPorts.size > 1)
     throw Error("Does not yet support deleting multiple dynamic connections at once. (Race conditions)")
 
-  val port = deletedDynamicPorts.first()
-  val id = port.input.toInt()
-  val higherPorts = graph.connections.filter {
-    it.output == port.node && it.port.toIntOrNull() != null && it.port.toInt() > id
+  if (deletedDynamicPorts.none())
+    graph
+  else {
+    val port = deletedDynamicPorts.first()
+    val id = port.input.toInt()
+    val higherPorts = graph.connections.filter {
+      it.output == port.node && it.port.toIntOrNull() != null && it.port.toInt() > id
+    }
+        .map { Pair(it, it.port.toInt()) }
+
+    val modifiedConnections = higherPorts.map { (connection, portId) ->
+      renameInput(connection, (portId - 1).toString())
+    }
+
+    val g2 = pipe(
+        replaceValue<List<Float>>(port.node, "weights") { it.filterIndexed { i, _ -> i != id - 1 } },
+        pipe(modifiedConnections)
+    )(graph)
+
+    g2
   }
-      .map { Pair(it, it.port.toInt()) }
-
-  val modifiedConnections = higherPorts.map { (connection, portId) ->
-    renameInput(connection, (portId - 1).toString())
-  }
-
-  val g2 = pipe(
-      replaceValue<List<Float>>(port.node, "weights") { it.filterIndexed { i, _ -> i != id - 1 } },
-      pipe(modifiedConnections)
-  )(graph)
-
-  g2
 }
 
 val deleteGraphSelection: StateTransform = { state ->

@@ -90,7 +90,7 @@ val nodeDefinitions: NodeDefinitionMap = mapOf(
         inputs = mapOf(
             "periods" to InputDefinition(
                 type = intType,
-                defaultValue = 0.5f
+                defaultValue = 8
             )
         ),
         outputType = grayscaleType

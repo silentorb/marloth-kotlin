@@ -5,6 +5,7 @@ import metahub.Arguments
 import metahub.Engine
 import metahub.Function
 import metahub.TypeMapper
+import mythic.ent.cached
 import mythic.spatial.Vector3
 import org.joml.Vector3i
 import org.lwjgl.BufferUtils
@@ -184,9 +185,10 @@ val simpleNoiseOperator: TextureFunction = withGrayscaleBuffer { arguments ->
 
 val voronoiBoundaryOperator: TextureFunction = withGrayscaleBuffer { arguments ->
   val dice = Dice(1)
-  val grid = newAnchorGrid(dice, 10, 10)
-  val k = 0
-  voronoiBoundaryHighlight(grid, 0.05f)
+  val length = 10
+  val grid = newAnchorGrid(dice, length, 10)
+  val nearestCells = cached(getNearestCells(grid, 2))
+  voronoiBoundaryHighlight(length, nearestCells, 0.05f * grid.length.toFloat())
 //  { x, y ->
 //0f
 //  }
