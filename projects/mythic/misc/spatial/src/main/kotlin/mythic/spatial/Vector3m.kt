@@ -1748,7 +1748,7 @@ class Vector3m : Externalizable, Vector3fc, Vector2fMinimal {
   }
 
   override operator fun minus(v: Vector2fMinimal): Vector2 =
-      Vector2f(x - v.x, y - v.y)
+      Vector2(x - v.x, y - v.y)
 
   operator fun minus(v: Vector3m): Vector3m =
       Vector3m(x - v.x, y - v.y, z - v.z)

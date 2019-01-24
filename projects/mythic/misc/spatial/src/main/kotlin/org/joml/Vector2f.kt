@@ -858,12 +858,12 @@ class Vector2f : Externalizable, Vector2fc {
   }
 
   override operator fun minus(v: Vector2fMinimal): Vector2 =
-      Vector2f(x - v.x, y - v.y)
+      Vector2(x - v.x, y - v.y)
 
   companion object {
 
     private val serialVersionUID = 1L
   }
 
-  override fun xy(): Vector2f = this
+  override fun xy(): Vector2 = Vector2(x, y)
 }

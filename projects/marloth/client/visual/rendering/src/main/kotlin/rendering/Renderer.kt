@@ -294,9 +294,9 @@ class SceneRenderer(
     val pos = Vector2(((i.x + 1) / 2) * dimensions.x, (1 - ((i.y + 1) / 2)) * dimensions.y)
     val config = TextConfiguration(content, pos, style)
     val textDimensions = calculateTextDimensions(config)
-    pos.x -= textDimensions.x / 2f
+    val pos2 = Vector2(pos.x - textDimensions.x / 2f, pos.y)
     val pixelsToScalar = Matrix().scale(1f / dimensions.x, 1f / dimensions.y, 1f)
-    val transform = prepareTextMatrix(pixelsToScalar, pos)
+    val transform = prepareTextMatrix(pixelsToScalar, pos2)
 
     drawTextRaw(
         config,

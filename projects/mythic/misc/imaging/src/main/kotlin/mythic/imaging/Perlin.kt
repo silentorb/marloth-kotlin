@@ -144,9 +144,9 @@ fun random2dGrid(length: Int): List<Vector2> {
 
   val result = (1..length * length).map {
     //        options[dice.nextInt(0, 4)]
-    val value = Vector2f(dice.nextFloat() - 0.5f, dice.nextFloat() - 0.5f).normalize()
+    val value = Vector2(dice.nextFloat() - 0.5f, dice.nextFloat() - 0.5f).normalize()
     last = if (Math.abs(value.dot(last)) < 0.2f)
-      Vector2f(dice.nextFloat() - 0.5f, dice.nextFloat() - 0.5f).normalize()
+      Vector2(dice.nextFloat() - 0.5f, dice.nextFloat() - 0.5f).normalize()
     else
       value
 

@@ -1,8 +1,6 @@
 package mythic.spatial
 
 import org.joml.*
-import org.joml.internal.Options
-import org.joml.internal.Runtime
 import java.text.NumberFormat
 
 private val _zero = Vector3()
@@ -33,7 +31,7 @@ data class Vector3(
   }
 
   override operator fun minus(v: Vector2fMinimal): Vector2 =
-      Vector2f(x - v.x, y - v.y)
+      Vector2(x - v.x, y - v.y)
 
   operator fun minus(v: Vector3): Vector3 =
       Vector3(x - v.x, y - v.y, z - v.z)

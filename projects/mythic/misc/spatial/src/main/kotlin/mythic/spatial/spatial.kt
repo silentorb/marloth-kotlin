@@ -6,7 +6,6 @@ import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import java.text.DecimalFormat
 
-typealias Vector2 = org.joml.Vector2f
 typealias Vector4 = org.joml.Vector4f
 typealias Matrix = org.joml.Matrix4f
 typealias Quaternion = org.joml.Quaternionf
@@ -14,8 +13,8 @@ typealias Quaternion = org.joml.Quaternionf
 private val initialQuaternion = Quaternion()
 
 operator fun Vector3m.times(other: Matrix): Vector3m = mulDirection(other)
-operator fun Vector2.times(other: Vector2): Vector2 = mul(other, Vector2())
-operator fun Vector2.times(other: Float): Vector2 = mul(other, Vector2())
+//operator fun Vector2.times(other: Vector2): Vector2 = mul(other, Vector2())
+//operator fun Vector2.times(other: Float): Vector2 = mul(other, Vector2())
 operator fun Vector3m.times(other: Float): Vector3m = mul(other, Vector3m())
 operator fun Vector3m.times(other: Vector3m): Vector3m = mul(other, Vector3m())
 
@@ -220,7 +219,6 @@ val Vector4.zw: Vector2
 //val Vector4.xy(): Vector2
 //  get() = Vector2(x, y)
 
-fun Vector2.copy() = Vector2(this)
 fun Vector3m.copy() = Vector3m(this)
 
 fun Vector3m.transform(m: Matrix) = m.transform(Vector4(this, 1f)).xyz
