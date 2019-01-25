@@ -46,6 +46,15 @@ val nodeDefinitions: NodeDefinitionMap = mapOf(
         ),
         outputType = bitmapType
     ),
+    "solidColor" to NodeDefinition(
+        inputs = mapOf(
+            "color" to InputDefinition(
+                type = colorType,
+                defaultValue = Vector3(0f)
+            )
+        ),
+        outputType = bitmapType
+    ),
     "checkers" to NodeDefinition(
         inputs = mapOf(),
         outputType = grayscaleType
@@ -62,6 +71,20 @@ val nodeDefinitions: NodeDefinitionMap = mapOf(
             "secondColor" to InputDefinition(
                 type = colorType,
                 defaultValue = Vector3(1f)
+            )
+        ),
+        outputType = bitmapType
+    ),
+    "mask" to NodeDefinition(
+        inputs = mapOf(
+            "first" to InputDefinition(
+                type = bitmapType
+            ),
+            "second" to InputDefinition(
+                type = bitmapType
+            ),
+            "mask" to InputDefinition(
+                type = grayscaleType
             )
         ),
         outputType = bitmapType

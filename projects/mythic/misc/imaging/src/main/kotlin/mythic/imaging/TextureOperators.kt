@@ -132,6 +132,17 @@ fun floatBufferArgument(arguments: Arguments, name: String): FloatBuffer {
   return result
 }
 
+val maskOperator: TextureFunction = withBitmapBuffer { arguments ->
+  val first = floatBufferArgument(arguments, "first")
+  val second = floatBufferArgument(arguments, "second")
+  val mask = floatBufferArgument(arguments, "mask")
+  val k = 0
+  { x, y ->
+    val degree = mask.get()
+    first.getVector3() * (1f - degree) + second.getVector3() * degree
+  }
+}
+
 val mixBitmaps: TextureFunction = withBitmapBuffer { arguments ->
   val degree = arguments["degree"]!! as Float
   val first = floatBufferArgument(arguments, "first")
@@ -198,6 +209,7 @@ private val textureFunctions = mapOf(
     "checkers" to grayscaleCheckers,
     "colorize" to colorize,
     "solidColor" to solidColor,
+    "mask" to maskOperator,
     "mixBitmaps" to mixBitmaps,
     "mixGrayscales" to mixGrayscales,
     "perlinNoise" to simpleNoiseOperator,
