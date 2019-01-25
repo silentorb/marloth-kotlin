@@ -1,6 +1,5 @@
 package mythic.imaging
 
-import fastnoise.FastNoise
 import metahub.Arguments
 import metahub.Engine
 import metahub.Function
@@ -168,14 +167,6 @@ val mixGrayscales: TextureFunction = withGrayscaleBuffer { arguments ->
 }
 
 val noiseSource = OpenSimplexNoiseKotlin(1)
-
-fun newNoiseSource(): FastNoise {
-  val source = FastNoise()
-  source.SetNoiseType(FastNoise.NoiseType.Simplex)
-  return source
-}
-
-val noiseSource2 = newNoiseSource()
 
 fun simpleNoise(scale: Float): ScalarTextureAlgorithm =
     { x, y ->

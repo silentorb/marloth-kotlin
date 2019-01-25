@@ -9,7 +9,8 @@ data class GuiState(
     val projectPath: String,
     val activeGraph: String? = null,
     val graphInteraction: GraphInteraction = GraphInteraction(),
-    val tilePreview: Boolean = false
+    val tilePreview: Boolean = false,
+    val previewFinal: Boolean = false
 )
 
 data class GraphInteraction(

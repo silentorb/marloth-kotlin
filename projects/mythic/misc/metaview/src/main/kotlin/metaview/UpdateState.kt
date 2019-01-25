@@ -70,6 +70,9 @@ fun isReselecting(id: Id, state: State): Boolean =
 
 val isOutputNode = isOutputNode(textureOutputTypes)
 
+fun outputNode(graph: Graph): Id =
+    graph.nodes.first { isOutputNode(graph, it) }
+
 fun connectNodes(id: Id): StateTransform = { state ->
   val graph = state.graph!!
   if (isReselecting(id, state) || isOutputNode(graph, id))
@@ -337,6 +340,12 @@ fun onConnecting(focus: FocusContext): StateTransform =
       else -> ::pass
     }
 
+fun setPreviewFinal(value: Boolean): StateTransform = guiTransform { gui ->
+  gui.copy(
+      previewFinal = value
+  )
+}
+
 fun setTilePreview(value: Boolean): StateTransform = guiTransform { gui ->
   gui.copy(
       tilePreview = value
@@ -375,6 +384,7 @@ fun updateState(village: Village, focus: FocusContext, event: Event, undo: State
       EventType.selectInput -> selectInput(event.data as Port)
       EventType.selectNode -> selectNode(event.data as Id)
       EventType.setTilePreview -> setTilePreview(event.data as Boolean)
+      EventType.setPreviewFinal -> setPreviewFinal(event.data as Boolean)
       EventType.undo -> undo
       EventType.refresh -> refreshState(village)
       EventType.renameTexture -> renameTexture(event.data as Renaming)

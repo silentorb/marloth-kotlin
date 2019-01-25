@@ -40,12 +40,15 @@ val colorView: ValueView = { value, changed ->
     val dialog = CustomColorDialog(globalWindow())
     dialog.currentColor = fxColor
     dialog.show()
+    var lastColor = dialog.customColor
     val updater = Timeline(KeyFrame(Duration.seconds(0.5), EventHandler {
-      fxColor = dialog.customColor
-      updateColorSample()
-      val newColor = convertColor(dialog.customColor)
-      changed(newColor, true)
-
+      if (dialog.customColor != lastColor) {
+        lastColor = dialog.customColor
+        fxColor = dialog.customColor
+        updateColorSample()
+        val newColor = convertColor(dialog.customColor)
+        changed(newColor, true)
+      }
     }))
     updater.cycleCount = Timeline.INDEFINITE
     updater.play()

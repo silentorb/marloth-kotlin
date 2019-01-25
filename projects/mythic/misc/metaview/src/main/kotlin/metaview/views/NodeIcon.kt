@@ -13,14 +13,18 @@ import mythic.imaging.grayscaleTextureToBytes
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 
-fun getNodePreviewBuffer(graph: Graph, node: Id, value: Any): ByteBuffer {
-  val function = graph.functions[node]!!
-  val definition = nodeDefinitions[function]!!
-  return when (definition.outputType) {
+fun getNodePreviewBuffer(type: String, value: Any): ByteBuffer {
+  return when (type) {
     bitmapType -> floatTextureToBytes(value as FloatBuffer)
     grayscaleType -> grayscaleTextureToBytes(value as FloatBuffer)
     else -> throw Error("Not supported")
   }
+}
+
+fun getNodePreviewBuffer(graph: Graph, node: Id, value: Any): ByteBuffer {
+  val function = graph.functions[node]!!
+  val definition = nodeDefinitions[function]!!
+  return getNodePreviewBuffer(definition.outputType, value)
 }
 
 fun nodeIcon(emit: Emitter, graph: Graph, id: Id, buffer: ByteBuffer, selection: List<Id>): Node {

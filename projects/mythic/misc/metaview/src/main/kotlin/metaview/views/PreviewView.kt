@@ -1,22 +1,25 @@
 package metaview.views
 
 import javafx.scene.Node
-import javafx.scene.control.Button
 import javafx.scene.control.CheckBox
 import javafx.scene.image.ImageView
-import javafx.scene.layout.FlowPane
 import javafx.scene.layout.GridPane
-import javafx.scene.layout.Pane
+import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import metahub.OutputValues
-import metaview.Emitter
-import metaview.Event
-import metaview.EventType
+import metahub.getGraphOutput
+import metaview.*
+import mythic.imaging.textureOutputTypes
 
 fun previewView(emit: Emitter, values: OutputValues) =
     ifSelectedNode { state, id ->
-      val length = 40.0
-      val image = newImage(getNodePreviewBuffer(state.graph!!, id, values[id]!!))
+      val buffer = if (state.gui.previewFinal) {
+        val output = getGraphOutput(textureOutputTypes, state.graph!!, values)
+        getNodePreviewBuffer(bitmapType, output["diffuse"]!!)
+      } else
+        getNodePreviewBuffer(state.graph!!, id, values[id]!!)
+
+      val image = newImage(buffer)
       val newImageView = { len: Double ->
         val imageView = ImageView(image)
         imageView.fitWidth = len
@@ -48,7 +51,13 @@ fun previewView(emit: Emitter, values: OutputValues) =
       toggleTiling.selectedProperty().addListener { _ ->
         emit(Event(EventType.setTilePreview, toggleTiling.isSelected))
       }
+      val toggleFinal = CheckBox()
+      toggleFinal.text = "Final"
+      toggleFinal.isSelected = state.gui.previewFinal
+      toggleFinal.selectedProperty().addListener { _ ->
+        emit(Event(EventType.setPreviewFinal, toggleFinal.isSelected))
+      }
       val panel = VBox()
-       panel.children.addAll(preview, toggleTiling)
+      panel.children.addAll(preview, HBox(5.0, toggleTiling, toggleFinal))
       panel
     }
