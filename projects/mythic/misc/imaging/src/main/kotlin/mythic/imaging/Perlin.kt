@@ -163,18 +163,17 @@ fun random2dGrid(length: Int): List<Vector2> {
 private const val gradLength = 64
 private val GRAD_2D = random2dGrid(gradLength)
 
-fun gradientSample(periods: Int, ix: Int, iy: Int): Vector2 {
-  val index = ((iy % periods) * periods + (ix % periods)) % (gradLength * gradLength)
-//  val index = (iy * periods + ix) % (8 * 8)
+fun gradientSample(periods: Int, offset: Int, ix: Int, iy: Int): Vector2 {
+  val index = ((iy % periods) * periods + (ix % periods) + offset) % (gradLength * gradLength)
   return GRAD_2D[index]
 }
 
 typealias PerlinGrid = (Int, Int, Float, Float) -> Float
 
-fun dotGridGradient(periods: Int): PerlinGrid = { ix, iy, x, y ->
+fun dotGridGradient(periods: Int, offset: Int): PerlinGrid = { ix, iy, x, y ->
   val dx = x - ix.toFloat()
   val dy = y - iy.toFloat()
-  val sample = gradientSample(periods, ix, iy)
+  val sample = gradientSample(periods, offset, ix, iy)
 //  val dx = ix.toFloat() - x
 //  val dy = iy.toFloat() - y
   dx * sample.x + dy * sample.y

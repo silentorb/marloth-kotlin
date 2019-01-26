@@ -36,8 +36,8 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
     Biome.forest to BiomeInfo("forest",
         enclosureRate = 0.25f,
         floorTexture = Textures.dirt,
-        ceilingTexture = Textures.greenLeaves,
-        wallTexture = Textures.greenLeaves
+        ceilingTexture = Textures.dirt,
+        wallTexture = Textures.dirt
     ),
     Biome.home to BiomeInfo("home",
         enclosureRate = 1f,

@@ -84,5 +84,17 @@
     },
     "node" : 9,
     "port" : "color"
+  }, {
+    "value" : 0,
+    "node" : 4,
+    "port" : "offset"
+  }, {
+    "value" : 0,
+    "node" : 6,
+    "port" : "offset"
+  }, {
+    "value" : 0,
+    "node" : 7,
+    "port" : "offset"
   } ]
 }

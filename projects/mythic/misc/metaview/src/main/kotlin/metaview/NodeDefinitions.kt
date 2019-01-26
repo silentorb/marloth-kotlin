@@ -111,6 +111,10 @@ val nodeDefinitions: NodeDefinitionMap = mapOf(
     ),
     "perlinNoise" to NodeDefinition(
         inputs = mapOf(
+            "offset" to InputDefinition(
+                type = intType,
+                defaultValue = 0
+            ),
             "periods" to InputDefinition(
                 type = intType,
                 defaultValue = 8

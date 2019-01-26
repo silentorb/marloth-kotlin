@@ -174,12 +174,11 @@ fun simpleNoise(scale: Float): ScalarTextureAlgorithm =
     }
 
 val simpleNoiseOperator: TextureFunction = withGrayscaleBuffer { arguments ->
+  val offset = arguments["offset"]!! as Int
   val periods = arguments["periods"]!! as Int
-  val grid = dotGridGradient(periods)
+  val grid = dotGridGradient(periods, offset)
   val k = 0
   { x, y ->
-    //    noiseSource2.SetFrequency(scale)
-//    noiseSource2.GetSimplex(x, y)
     perlin2d(grid, x * periods.toFloat(), y * periods.toFloat())
 
   }

@@ -44,8 +44,29 @@ fun texturePath(state: State, name: String): String =
 fun loadTextureGraph(engine: Engine, state: State, name: String): Graph =
     loadGraphFromFile(engine, texturePath(state, name))
 
+val fillInDefaults: GraphTransform = { graph ->
+  val newValues = graph.functions.flatMap { f ->
+    val definition = getDefinition(graph, f.key)
+    definition.inputs.filter { input ->
+      input.value.defaultValue != null && graph.values.none {
+        it.node == f.key && it.port == input.key
+      }
+    }
+        .map { (inputName, input) ->
+          InputValue(
+              node = f.key,
+              port = inputName,
+              value = input.defaultValue!!
+          )
+        }
+  }
+  graph.copy(
+      values = graph.values.plus(newValues)
+  )
+}
+
 fun selectTexture(village: Village, name: String): StateTransform = pipe({ state: State ->
-  val graph = loadTextureGraph(village.engine, state, name)
+  val graph = fillInDefaults(loadTextureGraph(village.engine, state, name))
   val gui = state.gui
   state.copy(
       graph = graph,
