@@ -1,0 +1,128 @@
+package metahub.metaview.front
+
+import metahub.metaview.common.InputDefinition
+import metahub.metaview.common.NodeDefinition
+import metahub.metaview.common.NodeDefinitionMap
+import mythic.spatial.Vector3
+
+data class FloatRange(
+    val min: Float,
+    val max: Float
+)
+
+const val bitmapType = "Bitmap"
+const val colorType = "Color"
+const val grayscaleType = "Grayscale"
+const val floatType = "Float"
+const val weightsType = "FloatList"
+const val intType = "Int"
+const val noneType = "None"
+
+const val textureOutput = "textureOutput"
+
+val connectableTypes = setOf(bitmapType, grayscaleType)
+
+val nodeDefinitions: NodeDefinitionMap = mapOf(
+    "coloredCheckers" to NodeDefinition(
+        inputs = mapOf(
+            "firstColor" to InputDefinition(
+                type = colorType,
+                defaultValue = Vector3(0f)
+            ),
+            "secondColor" to InputDefinition(
+                type = colorType,
+                defaultValue = Vector3(1f)
+            )
+        ),
+        outputType = bitmapType
+    ),
+    "solidColor" to NodeDefinition(
+        inputs = mapOf(
+            "color" to InputDefinition(
+                type = colorType,
+                defaultValue = Vector3(0f)
+            )
+        ),
+        outputType = bitmapType
+    ),
+    "checkers" to NodeDefinition(
+        inputs = mapOf(),
+        outputType = grayscaleType
+    ),
+    "colorize" to NodeDefinition(
+        inputs = mapOf(
+            "grayscale" to InputDefinition(
+                type = grayscaleType
+            ),
+            "firstColor" to InputDefinition(
+                type = colorType,
+                defaultValue = Vector3(0f)
+            ),
+            "secondColor" to InputDefinition(
+                type = colorType,
+                defaultValue = Vector3(1f)
+            )
+        ),
+        outputType = bitmapType
+    ),
+    "mask" to NodeDefinition(
+        inputs = mapOf(
+            "first" to InputDefinition(
+                type = bitmapType
+            ),
+            "second" to InputDefinition(
+                type = bitmapType
+            ),
+            "mask" to InputDefinition(
+                type = grayscaleType
+            )
+        ),
+        outputType = bitmapType
+    ),
+    "mixBitmaps" to NodeDefinition(
+        inputs = mapOf(
+            "mixer" to InputDefinition(
+                type = weightsType,
+                defaultValue = listOf<Float>()
+            )
+        ),
+        variableInputs = bitmapType,
+        outputType = bitmapType
+    ),
+    "mixGrayscales" to NodeDefinition(
+        inputs = mapOf(
+            "weights" to InputDefinition(
+                type = weightsType,
+                defaultValue = listOf<Float>()
+            )
+        ),
+        variableInputs = grayscaleType,
+        outputType = grayscaleType
+    ),
+    "perlinNoise" to NodeDefinition(
+        inputs = mapOf(
+            "offset" to InputDefinition(
+                type = intType,
+                defaultValue = 0
+            ),
+            "periods" to InputDefinition(
+                type = intType,
+                defaultValue = 8
+            )
+        ),
+        outputType = grayscaleType
+    ),
+    "voronoiBoundaries" to NodeDefinition(
+        inputs = mapOf(
+        ),
+        outputType = grayscaleType
+    ),
+    textureOutput to NodeDefinition(
+        inputs = mapOf(
+            "diffuse" to InputDefinition(
+                type = bitmapType
+            )
+        ),
+        outputType = noneType
+    )
+)

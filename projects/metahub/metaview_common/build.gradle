@@ -1,5 +1,7 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
+requires 'metahub_core', 'spatial'
+
 dependencies {
   compile "org.openjfx:javafx-base:11.0.1"
   compile "org.openjfx:javafx-base:11.0.1:win"
