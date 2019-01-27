@@ -1,7 +1,5 @@
 package mythic.sculpting
 
-import mythic.ent.IdSource
-import mythic.ent.newIdSource
 import mythic.spatial.*
 import kotlin.math.cos
 import kotlin.math.sin

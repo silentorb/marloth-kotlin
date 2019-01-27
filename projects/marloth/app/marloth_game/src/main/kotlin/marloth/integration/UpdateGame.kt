@@ -4,7 +4,6 @@ import haft.mapEventsToCommands
 import marloth.clienting.*
 import marloth.clienting.audio.updateAppStateAudio
 import marloth.clienting.gui.ViewId
-import marloth.clienting.gui.currentViewKey
 import marloth.clienting.gui.layoutGui
 import marloth.front.GameApp
 import mythic.bloom.Boxes

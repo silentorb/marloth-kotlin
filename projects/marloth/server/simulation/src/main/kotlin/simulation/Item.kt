@@ -2,11 +2,6 @@ package simulation
 
 import mythic.ent.Entity
 import mythic.ent.Id
-import mythic.spatial.Quaternion
-import mythic.spatial.Vector3
-import physics.Body
-import physics.commonShapes
-import simulation.data.missileBodyAttributes
 
 enum class ItemType {
   candle

@@ -8,7 +8,6 @@ import mythic.ent.entityMap
 import mythic.ent.pipe
 import mythic.sculpting.*
 import mythic.spatial.*
-import org.joml.plus
 import physics.voidNodeId
 import randomly.Dice
 import simulation.*

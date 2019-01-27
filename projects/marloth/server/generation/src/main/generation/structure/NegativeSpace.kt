@@ -3,7 +3,6 @@ package generation.structure
 import mythic.ent.*
 import mythic.sculpting.*
 import mythic.spatial.*
-import org.joml.plus
 import physics.voidNodeId
 import randomly.Dice
 import simulation.FaceType

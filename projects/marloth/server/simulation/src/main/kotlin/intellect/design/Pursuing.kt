@@ -4,11 +4,9 @@ import intellect.Pursuit
 import intellect.acessment.Knowledge
 import intellect.acessment.character
 import intellect.acessment.getVisibleEnemies
-import intellect.execution.isInAttackRange
 import intellect.execution.spiritAttackRangeBuffer
 import mythic.ent.Id
 import physics.isInVoid
-import physics.voidNodeId
 import simulation.World
 
 fun updateTargetEnemy(world: World, knowledge: Knowledge, pursuit: Pursuit): Id? {

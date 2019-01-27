@@ -1,7 +1,6 @@
 package colliding
 
 import mythic.ent.Id
-import mythic.sculpting.ImmutableFace
 import mythic.spatial.Vector3
 import mythic.spatial.lineSegmentIntersectsLineSegment
 import simulation.*

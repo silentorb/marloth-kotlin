@@ -1,7 +1,6 @@
 package marloth.clienting.audio
 
 import marloth.clienting.ClientState
-import marloth.clienting.gui.ViewId
 import mythic.aura.Sound
 import mythic.ent.IdSource
 import mythic.ent.Table

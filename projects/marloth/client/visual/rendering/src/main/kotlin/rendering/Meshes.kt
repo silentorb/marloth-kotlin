@@ -6,7 +6,6 @@ import rendering.meshes.*
 import rendering.meshes.loading.loadGltf
 import scenery.MeshId
 import java.io.File
-import java.nio.file.Paths
 import mythic.glowing.VertexSchema as GenericVertexSchema
 
 enum class MeshType {

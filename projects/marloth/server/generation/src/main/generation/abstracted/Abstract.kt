@@ -5,8 +5,6 @@ import generation.BiomeGrid
 import generation.crossMap
 import generation.getCenter
 import generation.getNodeDistance
-import generation.structure.doorwayDepth
-import generation.structure.doorwayLength
 import generation.structure.getDoorFramePoints
 import mythic.ent.Id
 import mythic.ent.entityMap
