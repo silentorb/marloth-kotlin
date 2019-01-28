@@ -1,9 +1,9 @@
 package mythic.imaging
 
-import metahub.core.Arguments
-import metahub.core.Engine
-import metahub.core.Function
-import metahub.core.TypeMapper
+import silentorb.metahub.core.Arguments
+import silentorb.metahub.core.Engine
+import silentorb.metahub.core.Function
+import silentorb.metahub.core.TypeMapper
 import mythic.ent.cached
 import mythic.spatial.Vector3
 import org.joml.Vector3i

@@ -2,10 +2,10 @@ package rendering.texturing
 
 import getResourceUrl
 import mythic.imaging.*
-import metahub.core.Engine
-import metahub.core.Graph
-import metahub.core.executeAndFormat
-import metahub.core.mapValues
+import silentorb.metahub.core.Engine
+import silentorb.metahub.core.Graph
+import silentorb.metahub.core.executeAndFormat
+import silentorb.metahub.core.mapValues
 import mythic.ent.pipe
 import mythic.glowing.Texture
 import mythic.glowing.TextureAttributes
