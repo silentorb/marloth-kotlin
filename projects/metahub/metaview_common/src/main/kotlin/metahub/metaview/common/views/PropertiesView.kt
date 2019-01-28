@@ -6,12 +6,11 @@ import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.layout.GridPane
 import javafx.scene.layout.VBox
+import metahub.core.Engine
 import metahub.core.InputValue
 import metahub.core.getInputValue
-import metahub.metaview.common.Emitter
-import metahub.metaview.common.Event
-import metahub.metaview.common.CommonEvent
-import metahub.metaview.common.isOutputNode
+import metahub.core.isOutputNode
+import metahub.metaview.common.*
 
 import mythic.ent.Id
 
@@ -19,15 +18,15 @@ fun selectedNode(state: CommonState): Id? =
     state.gui.graphInteraction.nodeSelection.firstOrNull()
         ?: state.gui.graphInteraction.portSelection.firstOrNull()?.node
 
-fun ifSelectedNode(action: (CommonState, Id) -> Node): (CommonState) -> Node = { state ->
+fun ifSelectedNode(engine: Engine, action: (CommonState, Id) -> Node): (CommonState) -> Node = { state ->
   val id = selectedNode(state)
-  if (id == null || isOutputNode(state.graph!!, id))
+  if (id == null || isOutputNode(engine.outputTypes)(state.graph!!, id))
     VBox()
   else
     action(state, id)
 }
 
-fun propertiesView(emit: Emitter) = ifSelectedNode { state, id ->
+fun propertiesView(nodeDefinitions: NodeDefinitionMap, engine: Engine, emit: Emitter) = ifSelectedNode(engine) { state, id ->
   val panel = VBox()
   panel.spacing = 5.0
   panel.alignment = Pos.BASELINE_CENTER

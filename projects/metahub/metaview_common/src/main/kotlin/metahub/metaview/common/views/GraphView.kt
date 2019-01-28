@@ -12,7 +12,6 @@ import metahub.core.*
 import metahub.metaview.common.*
 
 import mythic.ent.Id
-import mythic.imaging.textureOutputTypes
 import org.joml.Vector2i
 
 const val nodeLength: Int = 75
@@ -29,8 +28,8 @@ fun portLabel(port: Port, emit: Emitter, selection: List<Port>): Node {
   return label
 }
 
-fun getInputs(nodeDefinitions: NodeDefinitionMap,graph: Graph, node: Id): Map<String, InputDefinition> {
-  val definition = getDefinition(graph, node)
+fun getInputs(nodeDefinitions: NodeDefinitionMap, connectableTypes: Set<String>, graph: Graph, node: Id): Map<String, InputDefinition> {
+  val definition = getDefinition(nodeDefinitions)(graph, node)
   val additionalInputs = if (definition.variableInputs != null) {
     getDynamicPorts(graph, node, definition.variableInputs)
         .plus(Pair(newPortString, InputDefinition(type = definition.variableInputs)))
@@ -41,8 +40,8 @@ fun getInputs(nodeDefinitions: NodeDefinitionMap,graph: Graph, node: Id): Map<St
       .plus(additionalInputs)
 }
 
-fun portLabels(graph: Graph, emit: Emitter, selection: List<Port>, node: Id): List<Node> {
-  return getInputs(graph, node)
+fun portLabels(nodeDefinitions: NodeDefinitionMap, connectableTypes: Set<String>, graph: Graph, emit: Emitter, selection: List<Port>, node: Id): List<Node> {
+  return getInputs(nodeDefinitions, connectableTypes, graph, node)
       .map { input ->
         val port = Port(node = node, input = input.key)
         portLabel(port, emit, selection)
@@ -77,7 +76,7 @@ fun nodePosition(x: Int, y: Int): Vector2i {
   )
 }
 
-fun graphCanvas(nodeDefinitions: NodeDefinitionMap,graph: Graph, stages: List<List<Id>>, pane: Pane, nodeNodes: Map<Id, Pair<Node, List<Node>>>): Node {
+fun graphCanvas(nodeDefinitions: NodeDefinitionMap, connectableTypes: Set<String>, graph: Graph, stages: List<List<Id>>, pane: Pane, nodeNodes: Map<Id, Pair<Node, List<Node>>>): Node {
   val tempPosition = nodePosition(stages.size + 2, stages.map { it.size }.sortedDescending().first() + 1)
   val canvas = Canvas(tempPosition.x.toDouble(), tempPosition.y.toDouble())
 
@@ -89,7 +88,7 @@ fun graphCanvas(nodeDefinitions: NodeDefinitionMap,graph: Graph, stages: List<Li
     graph.connections.forEach { connection ->
       val input = nodeNodes[connection.input]!!
       val output = nodeNodes[connection.output]!!
-      val inputs = getInputs(nodeDefinitions,graph, connection.output)
+      val inputs = getInputs(nodeDefinitions, connectableTypes, graph, connection.output)
       val port = output.second[inputs.keys.indexOf(connection.port)]
       drawConnection(gc, pane, input.first, port)
     }
@@ -98,7 +97,7 @@ fun graphCanvas(nodeDefinitions: NodeDefinitionMap,graph: Graph, stages: List<Li
   return canvas
 }
 
-fun graphView(engine: Engine, nodeDefinitions: NodeDefinitionMap, emit: Emitter, state: CommonState, values: OutputValues): Node {
+fun graphView(engine: Engine, nodeDefinitions: NodeDefinitionMap, connectableTypes: Set<String>, valueDisplays: ValueDisplayMap, emit: Emitter, state: CommonState, values: OutputValues): Node {
   val pane = Pane()
   val graph = state.graph
   if (graph != null) {
@@ -110,11 +109,10 @@ fun graphView(engine: Engine, nodeDefinitions: NodeDefinitionMap, emit: Emitter,
     stages.forEachIndexed { x, stage ->
       stage.forEachIndexed { y, nodeId ->
         val nodeValue = values[nodeId]
-        val icon = if (nodeValue != null) {
-          val buffer = getNodePreviewBuffer(nodeDefinitions,graph, nodeId, nodeValue)
-          nodeIcon(emit, graph, nodeId, buffer, state.gui.graphInteraction.nodeSelection)
-        } else {
-          Pane()
+        val icon = nodeIcon(valueDisplays, nodeDefinitions, emit, graph, nodeId, nodeValue) ?: Pane()
+        if (state.gui.graphInteraction.nodeSelection.contains(nodeId)) {
+          val borderStroke = BorderStroke(Color.BLUEVIOLET, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)
+          icon.border = Border(borderStroke)
         }
         val position = nodePosition(x, y)
         val hbox = HBox()
@@ -122,7 +120,7 @@ fun graphView(engine: Engine, nodeDefinitions: NodeDefinitionMap, emit: Emitter,
         val portsPanel = VBox()
         portsPanel.spacing = 5.0
         portsPanel.prefWidth = 70.0
-        val portLabels = portLabels(graph, emit, state.gui.graphInteraction.portSelection, nodeId)
+        val portLabels = portLabels(nodeDefinitions, connectableTypes, graph, emit, state.gui.graphInteraction.portSelection, nodeId)
         portsPanel.children.addAll(portLabels)
         nodeNodes[nodeId] = Pair(hbox, portLabels)
         hbox.children.addAll(portsPanel, icon)
@@ -130,7 +128,7 @@ fun graphView(engine: Engine, nodeDefinitions: NodeDefinitionMap, emit: Emitter,
       }
     }
 
-    val canvas = graphCanvas(nodeDefinitions,graph, stages, pane, nodeNodes)
+    val canvas = graphCanvas(nodeDefinitions,connectableTypes, graph, stages, pane, nodeNodes)
     pane.children.add(0, canvas)
   }
 

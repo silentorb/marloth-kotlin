@@ -7,6 +7,7 @@ import javafx.scene.input.KeyEvent
 import metahub.metaview.common.Emitter
 import metahub.metaview.common.Event
 import metahub.metaview.common.CommonEvent
+import metahub.metaview.texturing.nodeDefinitions
 
 typealias KeyHandler = (Emitter, CommonState) -> Unit
 

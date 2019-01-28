@@ -1,28 +1,12 @@
-package metahub.metaview.front
+package metahub.metaview.common
 
 import metahub.core.*
-import metahub.metaview.views.getDefinition
-import org.lwjgl.BufferUtils
-import java.nio.FloatBuffer
 
 typealias ValueMap = Map<String, () -> Any>
 
-val defaultBitmap: (Int) -> FloatBuffer = { length ->
-  BufferUtils.createFloatBuffer(length * length * 3)
-}
-
-val defaultGrayscale: (Int) -> FloatBuffer = { length ->
-  BufferUtils.createFloatBuffer(length * length)
-}
-
-fun fillerTypeValues(length: Int): ValueMap = mapOf(
-    bitmapType to defaultBitmap,
-    grayscaleType to defaultGrayscale
-).mapValues { { it.value(length) } }
-
-fun sanitizeGraph(defaultValues: ValueMap): (Graph) -> Graph = { graph ->
+fun sanitizeGraph(nodeDefinitions: NodeDefinitionMap, defaultValues: ValueMap): (Graph) -> Graph = { graph ->
   val changes = graph.nodes.flatMap { node ->
-    val definition = getDefinition(graph, node)
+    val definition = getDefinition(nodeDefinitions)(graph, node)
     definition.inputs.mapNotNull { input ->
       val connection = graph.connections
           .filter { it.output == node && it.port == input.key }
@@ -51,8 +35,7 @@ fun sanitizeGraph(defaultValues: ValueMap): (Graph) -> Graph = { graph ->
   )
 }
 
-fun executeSanitized(engine: Engine, graph: Graph): OutputValues {
-  val defaultValues = fillerTypeValues(textureLength)
-  val tempGraph = sanitizeGraph(defaultValues)(graph)
+fun executeSanitized(nodeDefinitions: NodeDefinitionMap, defaultValues: ValueMap, engine: Engine, graph: Graph): OutputValues {
+  val tempGraph = sanitizeGraph(nodeDefinitions, defaultValues)(graph)
   return execute(engine, tempGraph)
 }

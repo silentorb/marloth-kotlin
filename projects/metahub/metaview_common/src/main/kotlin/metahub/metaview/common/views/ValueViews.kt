@@ -13,7 +13,7 @@ import javafx.scene.control.TextField
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.util.Duration
-import metahub.metaview.common.balanceWeights
+import metahub.metaview.common.*
 
 import mythic.spatial.Vector3
 
@@ -24,8 +24,6 @@ typealias ValueViewSource = (InputDefinition) -> ValueView
 
 fun convertColor(color: Color) =
     Vector3(color.red.toFloat(), color.green.toFloat(), color.blue.toFloat())
-
-//fun valueViewSource(valueView: ValueView) = { }
 
 val colorView: ValueView = { value, changed ->
   val color = value as Vector3

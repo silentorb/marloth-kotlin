@@ -1,21 +1,21 @@
-package metahub.metaview.front.views
+package metahub.metaview.common.views
 
 import javafx.scene.Node
 import javafx.scene.canvas.Canvas
 import javafx.scene.image.Image
 import javafx.scene.image.PixelFormat
 import javafx.scene.image.WritableImage
-import metahub.metaview.textureLength
+import org.joml.Vector2i
 import java.nio.ByteBuffer
 
-fun newImage(buffer: ByteBuffer): Image {
+fun newImage(dimensions: Vector2i, buffer: ByteBuffer): Image {
   buffer.rewind()
   val byteArray = ByteArray(buffer.capacity())
   buffer.get(byteArray)
-  val image = WritableImage(textureLength, textureLength)
-  image.pixelWriter.setPixels(0, 0, textureLength, textureLength,
+  val image = WritableImage(dimensions.x, dimensions.y)
+  image.pixelWriter.setPixels(0, 0, dimensions.x, dimensions.y,
       PixelFormat.getByteRgbInstance(),
-      byteArray, 0, textureLength * 3)
+      byteArray, 0, dimensions.x * 3)
   return image
 }
 

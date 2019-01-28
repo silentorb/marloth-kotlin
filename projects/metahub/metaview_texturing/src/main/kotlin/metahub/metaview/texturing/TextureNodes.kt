@@ -1,8 +1,6 @@
-package metahub.metaview.front
+package metahub.metaview.texturing
 
-import metahub.metaview.common.InputDefinition
-import metahub.metaview.common.NodeDefinition
-import metahub.metaview.common.NodeDefinitionMap
+import metahub.metaview.common.*
 import mythic.spatial.Vector3
 
 data class FloatRange(
@@ -10,17 +8,7 @@ data class FloatRange(
     val max: Float
 )
 
-const val bitmapType = "Bitmap"
-const val colorType = "Color"
-const val grayscaleType = "Grayscale"
-const val floatType = "Float"
-const val weightsType = "FloatList"
-const val intType = "Int"
-const val noneType = "None"
-
 const val textureOutput = "textureOutput"
-
-val connectableTypes = setOf(bitmapType, grayscaleType)
 
 val nodeDefinitions: NodeDefinitionMap = mapOf(
     "coloredCheckers" to NodeDefinition(

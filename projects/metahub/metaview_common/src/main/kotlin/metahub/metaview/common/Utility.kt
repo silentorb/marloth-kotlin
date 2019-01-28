@@ -27,7 +27,7 @@ fun isOver(point: Point, node: Node): Boolean {
       && point.y < position.y + bounds.height
 }
 
-private var _globalWindow: Window? = null
+var _globalWindow: Window? = null
 
 fun globalWindow() = _globalWindow!!
 

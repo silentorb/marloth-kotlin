@@ -413,12 +413,3 @@ fun updateCommonState(engine: Engine, nodeDefinitions: NodeDefinitionMap, onNewG
         CommonEvent.renameGraph -> renameGraph(data as Renaming)
       }
     }
-
-typealias HistoryUpdater<T> = (HistoryEvent) -> (T) -> T
-
-fun <T> updateHistory(undo: (T) -> T, redo: (T) -> T): (HistoryEvent) -> (T) -> T = { event ->
-  when (event) {
-    HistoryEvent.redo -> redo
-    HistoryEvent.undo -> undo
-  }
-}

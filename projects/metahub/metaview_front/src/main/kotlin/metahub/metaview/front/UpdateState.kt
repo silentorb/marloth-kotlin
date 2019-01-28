@@ -5,6 +5,7 @@ import metahub.core.GraphTransform
 import metahub.metaview.common.*
 import metahub.metaview.texturing.TexturingEvent
 import metahub.metaview.texturing.TexturingTransform
+import metahub.metaview.texturing.textureOutput
 import metahub.metaview.texturing.updateTexturingState
 import mythic.ent.pipe
 import mythic.ent.transformIf
