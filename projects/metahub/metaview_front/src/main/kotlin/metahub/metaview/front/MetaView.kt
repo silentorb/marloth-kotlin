@@ -12,11 +12,9 @@ import metahub.metaview.common.*
 import metahub.metaview.common.views.*
 import metahub.metaview.front.views.previewView
 import metahub.metaview.front.views.toolBarView
-import metahub.metaview.texturing.TexturingState
-import metahub.metaview.texturing.fillerTypeValues
-import metahub.metaview.texturing.nodeDefinitions
-import metahub.metaview.texturing.texturingListener
+import metahub.metaview.texturing.*
 import mythic.imaging.newTextureEngine
+import org.joml.Vector2i
 import java.net.URL
 
 fun getResourceUrl(path: String): URL {
@@ -27,31 +25,6 @@ fun getResourceUrl(path: String): URL {
 const val textureLength = 512
 
 val connectableTypes = setOf(bitmapType, grayscaleType)
-
-//fun commonListener(listener: StateTransformListener<CommonState>): StateTransformListener<AppState> = { change ->
-//  { state ->
-//    val commonChange = StateTransformChange(
-//        previous = change.previous.common,
-//        event = change.event
-//    )
-//    state.copy(
-//        common = listener(commonChange)(state.common)
-//    )
-//  }
-//}
-//
-
-//fun texturingListener(listener: StateTransformListener<TexturingState>): StateTransformListener<AppState> = { change ->
-//  { state ->
-//    val commonChange = StateTransformChange(
-//        previous = change.previous.common,
-//        event = change.event
-//    )
-//    state.copy(
-//        common = listener(commonChange)(state.common)
-//    )
-//  }
-//}
 
 val commonListener = wrapListener<AppState, CommonState>({ it.common }) { a, b -> a.copy(common = b) }
 
@@ -73,9 +46,8 @@ fun graphSaving(): SideEffectStateListener<AppState> = { change ->
   }
 }
 
-fun newValueDisplays(): ValueDisplayMap = mapOf(
-
-)
+fun newValueDisplays(): ValueDisplayMap =
+    textureValueDisplays(Vector2i(textureLength))
 
 fun coreLogic(root: BorderPane, engine: Engine) {
   val rightPanel = VBox()
@@ -91,7 +63,7 @@ fun coreLogic(root: BorderPane, engine: Engine) {
       texturingWrapper(texturingListener)
   )
       .plus(listOf<StateTransformListener<CommonState>>(
-          commonStateListener(engine, nodeDefinitions) { getFocus(root)},
+          commonStateListener(engine, nodeDefinitions) { getFocus(root) },
           stateTransformListener(graphTransform(onNewGraph)),
           onGraphChanged(nodeDefinitions, fillerTypeValues(textureLength), engine),
           historyStateListener(10)
@@ -135,7 +107,7 @@ fun coreLogic(root: BorderPane, engine: Engine) {
     }
   }
 
-  sideEffectListeners.plus(listOf(
+  sideEffectListeners.addAll(listOf(
       updateTextureListView,
       updateGraphView,
       updatePreviewView,
@@ -146,7 +118,7 @@ fun coreLogic(root: BorderPane, engine: Engine) {
 
   root.top = VBox(5.0, menuBarView(emit), toolBarView(initialState, emit))
 
-  listenForKeypresses(root, emit, { getState().common })
+  listenForKeypresses(nodeDefinitions, root, emit, { getState().common })
 
   emit(Event(CommonEvent.refresh))
 

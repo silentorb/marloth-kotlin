@@ -16,10 +16,6 @@ data class ConfigState(
     val texturing: TexturingState = TexturingState()
 )
 
-data class Village(
-    val engine: Engine
-)
-
 data class AppState(
     val common: CommonState,
     val domain: Domain = Domain.texturing,

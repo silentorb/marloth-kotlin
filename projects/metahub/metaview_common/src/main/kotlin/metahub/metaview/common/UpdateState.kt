@@ -208,10 +208,6 @@ fun newNode(nodeDefinitions: NodeDefinitionMap, name: String): CommonTransform =
   )
 }
 
-//fun addNode(name: String): CommonTransform = { state ->
-//  newNode(name)(state)
-//}
-
 fun insertNode(nodeDefinitions: NodeDefinitionMap, name: String): CommonTransform = pipe(
     { state ->
       val graph = state.graph!!
@@ -353,14 +349,6 @@ fun setPreviewFinal(value: Boolean): CommonTransform = guiTransform { gui ->
       previewFinal = value
   )
 }
-
-//fun setTilePreview(value: Boolean): CommonTransform = guiTransform { gui ->
-//  gui.copy(
-//      common = gui.common.copy(
-//          tilePreview = value
-//      )
-//  )
-//}
 
 fun copyNodeProperties(first: Id, second: Id): GraphTransform = { graph ->
   val newConnections = graph.connections.filter { it.output == first }

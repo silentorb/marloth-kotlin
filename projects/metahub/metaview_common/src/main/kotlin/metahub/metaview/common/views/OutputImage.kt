@@ -19,9 +19,9 @@ fun newImage(dimensions: Vector2i, buffer: ByteBuffer): Image {
   return image
 }
 
-fun outputImage(image: Image, length: Double): Node {
-  val canvas = Canvas(length, length)
-  canvas.isMouseTransparent = true
-  canvas.graphicsContext2D.drawImage(image, 0.0, 0.0, length, length)
-  return canvas
-}
+//fun outputImage(image: Image, length: Double): Node {
+//  val canvas = Canvas(length, length)
+//  canvas.isMouseTransparent = true
+//  canvas.graphicsContext2D.drawImage(image, 0.0, 0.0, length, length)
+//  return canvas
+//}

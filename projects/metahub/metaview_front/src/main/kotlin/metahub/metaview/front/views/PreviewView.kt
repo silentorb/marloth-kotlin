@@ -24,7 +24,8 @@ fun previewView(engine: Engine, nodeDefinitions: NodeDefinitionMap, valueDisplay
     ifSelectedNode(engine) { state, id ->
       val image = if (state.gui.previewFinal) {
 //        val output = getGraphOutput(textureOutputTypes, state.graph!!, values)
-        throw Error("Not implemented")
+//        throw Error("Not implemented")
+        getNodePreviewBuffer(valueDisplays, nodeDefinitions, state.graph!!, id, state.outputValues[id]!!)
 //        getNodePreviewBuffer(valueDisplays, bitmapType, output["diffuse"]!!)
       } else
         getNodePreviewBuffer(valueDisplays, nodeDefinitions, state.graph!!, id, state.outputValues[id]!!)

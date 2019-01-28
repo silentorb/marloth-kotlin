@@ -45,11 +45,13 @@ fun nodeIcon(valueDisplays: ValueDisplayMap, nodeDefinitions: NodeDefinitionMap,
     return null
 
   val container = VBox()
-  val canvas = ImageView(image)
+  val imageView = ImageView(image)
+  imageView.fitWidth = nodeLength.toDouble()
+  imageView.fitHeight = nodeLength.toDouble()
   val name = graph.functions[id] ?: "Unknown"
   val label = Label(name)
   container.alignment = Pos.BASELINE_CENTER
-  container.children.addAll(canvas, label)
+  container.children.addAll(imageView, label)
 
   container.setOnMouseClicked {
     emit(Event(CommonEvent.selectNode, id))

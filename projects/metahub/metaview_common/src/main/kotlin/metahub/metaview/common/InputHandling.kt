@@ -1,18 +1,13 @@
-package metahub.metaview.front
+package metahub.metaview.common
 
 import javafx.scene.Node
 import javafx.scene.control.ChoiceDialog
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
-import metahub.metaview.common.Emitter
-import metahub.metaview.common.Event
-import metahub.metaview.common.CommonEvent
-import metahub.metaview.common.CommonState
-import metahub.metaview.texturing.nodeDefinitions
 
 typealias KeyHandler = (Emitter, CommonState) -> Unit
 
-fun nodeFunctionDialog(title: String): String? {
+fun nodeFunctionDialog(nodeDefinitions: NodeDefinitionMap, title: String): String? {
   val choices = nodeDefinitions.keys
   val dialog = ChoiceDialog(choices.first(), choices)
   dialog.title = title
@@ -25,16 +20,16 @@ fun nodeFunctionDialog(title: String): String? {
   else null
 }
 
-val addNodeDialog: KeyHandler = { emit, _ ->
-  val name = nodeFunctionDialog("Add Node")
+fun addNodeDialog(nodeDefinitions: NodeDefinitionMap): KeyHandler = { emit, _ ->
+  val name = nodeFunctionDialog(nodeDefinitions, "Add Node")
   if (name != null) {
     emit(Event(CommonEvent.addNode, name))
   }
 }
 
-val insertNodeDialog: KeyHandler = { emit, state ->
+fun insertNodeDialog(nodeDefinitions: NodeDefinitionMap): KeyHandler = { emit, state ->
   if (state.gui.graphInteraction.portSelection.any()) {
-    val name = nodeFunctionDialog("Insert Node")
+    val name = nodeFunctionDialog(nodeDefinitions, "Insert Node")
     if (name != null) {
       emit(Event(CommonEvent.insertNode, name))
     }
@@ -53,19 +48,19 @@ val keyEvents: Map<KeyCode, CommonEvent> = mapOf(
     KeyCode.C to CommonEvent.connecting
 )
 
-val keyHandlers: Map<KeyCode, KeyHandler> = mapOf(
-    KeyCode.A to addNodeDialog,
+fun keyHandlers(nodeDefinitions: NodeDefinitionMap): Map<KeyCode, KeyHandler> = mapOf(
+    KeyCode.A to addNodeDialog(nodeDefinitions),
     KeyCode.D to duplicateNodeHandler,
-    KeyCode.I to insertNodeDialog
+    KeyCode.I to insertNodeDialog(nodeDefinitions)
 )
 
-fun listenForKeypresses(node: Node, emit: Emitter, state: () -> CommonState) {
+fun listenForKeypresses(nodeDefinitions: NodeDefinitionMap, node: Node, emit: Emitter, state: () -> CommonState) {
   node.addEventHandler(KeyEvent.KEY_PRESSED) { event ->
     val type = keyEvents[event.code]
     if (type != null)
       emit(Event(type))
     else {
-      val handler = keyHandlers[event.code]
+      val handler = keyHandlers(nodeDefinitions)[event.code]
       if (handler != null)
         handler(emit, state())
     }

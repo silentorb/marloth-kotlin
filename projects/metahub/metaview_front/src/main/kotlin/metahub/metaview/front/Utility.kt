@@ -5,7 +5,6 @@ import configuration.saveYamlFile
 import metahub.metaview.common.CommonState
 import metahub.metaview.common.loadGraphs
 
-
 fun newState(): AppState {
   val config = loadYamlFile<ConfigState>("metaview.yaml")
   if (config == null)

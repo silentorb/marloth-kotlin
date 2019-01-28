@@ -61,14 +61,3 @@ fun domainListener(engine: Engine, nodeDefinitions: NodeDefinitionMap): StateTra
   else
     ::pass
 }
-
-//fun updateAppState(engine: Engine, nodeDefinitions: NodeDefinitionMap, commonUpdater: CommonStateUpdater, updateHistory: HistoryUpdater<AppState>, focus: FocusContext, event: Event): AppTransform {
-//  val eventType = event.type
-//  return when {
-//    eventType is DomainEvent -> updateDomainState(engine, nodeDefinitions, eventType, event.data)
-//    eventType is CommonEvent -> commonTransform(commonUpdater(focus, eventType, event.data))
-//    eventType is HistoryEvent -> updateHistory(eventType)
-//    eventType is TexturingEvent -> texturingTransform(updateTexturingState(eventType, event.data))
-//    else -> throw Error("Unsupported event type")
-//  }
-//}
