@@ -20,14 +20,14 @@ import metahub.metaview.common.views.newImage
 
 import mythic.imaging.textureOutputTypes
 
-fun previewView(engine: Engine, nodeDefinitions: NodeDefinitionMap, valueDisplays: ValueDisplayMap, emit: Emitter, values: OutputValues) =
+fun previewView(engine: Engine, nodeDefinitions: NodeDefinitionMap, valueDisplays: ValueDisplayMap, emit: Emitter) =
     ifSelectedNode(engine) { state, id ->
       val image = if (state.gui.previewFinal) {
 //        val output = getGraphOutput(textureOutputTypes, state.graph!!, values)
         throw Error("Not implemented")
 //        getNodePreviewBuffer(valueDisplays, bitmapType, output["diffuse"]!!)
       } else
-        getNodePreviewBuffer(valueDisplays, nodeDefinitions, state.graph!!, id, values[id]!!)
+        getNodePreviewBuffer(valueDisplays, nodeDefinitions, state.graph!!, id, state.outputValues[id]!!)
 
 //      val image = newImage(buffer)
       val newImageView = { len: Double ->
@@ -37,7 +37,8 @@ fun previewView(engine: Engine, nodeDefinitions: NodeDefinitionMap, valueDisplay
         imageView
       }
 
-      val preview = if (state.texturing.tilePreview) {
+//      val preview = if (state.texturing.tilePreview) {
+        val preview = if (false) {
         val panel = GridPane()
         fun addCell(x: Int, y: Int, node: Node) {
           GridPane.setColumnIndex(node, x)
@@ -57,9 +58,8 @@ fun previewView(engine: Engine, nodeDefinitions: NodeDefinitionMap, valueDisplay
 
       val toggleTiling = CheckBox()
       toggleTiling.text = "Tile"
-      toggleTiling.isSelected = state.texturing.tilePreview
+//      toggleTiling.isSelected = state.texturing.tilePreview
       toggleTiling.selectedProperty().addListener { _ ->
-        //        emit(Event(CommonEvent.setTilePreview, toggleTiling.isSelected))
       }
       val toggleFinal = CheckBox()
       toggleFinal.text = "Final"

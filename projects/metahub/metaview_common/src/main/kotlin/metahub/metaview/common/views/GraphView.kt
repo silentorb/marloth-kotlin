@@ -97,7 +97,7 @@ fun graphCanvas(nodeDefinitions: NodeDefinitionMap, connectableTypes: Set<String
   return canvas
 }
 
-fun graphView(engine: Engine, nodeDefinitions: NodeDefinitionMap, connectableTypes: Set<String>, valueDisplays: ValueDisplayMap, emit: Emitter, state: CommonState, values: OutputValues): Node {
+fun graphView(engine: Engine, nodeDefinitions: NodeDefinitionMap, connectableTypes: Set<String>, valueDisplays: ValueDisplayMap, emit: Emitter, state: CommonState): Node {
   val pane = Pane()
   val graph = state.graph
   if (graph != null) {
@@ -108,7 +108,7 @@ fun graphView(engine: Engine, nodeDefinitions: NodeDefinitionMap, connectableTyp
 
     stages.forEachIndexed { x, stage ->
       stage.forEachIndexed { y, nodeId ->
-        val nodeValue = values[nodeId]
+        val nodeValue = state.outputValues[nodeId]
         val icon = nodeIcon(valueDisplays, nodeDefinitions, emit, graph, nodeId, nodeValue) ?: Pane()
         if (state.gui.graphInteraction.nodeSelection.contains(nodeId)) {
           val borderStroke = BorderStroke(Color.BLUEVIOLET, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)

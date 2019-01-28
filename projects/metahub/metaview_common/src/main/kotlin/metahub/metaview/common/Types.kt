@@ -1,6 +1,7 @@
 package metahub.metaview.common
 
 import metahub.core.Graph
+import metahub.core.OutputValues
 import metahub.core.Port
 import mythic.ent.Id
 
@@ -36,6 +37,7 @@ data class CommonState(
     val gui: GuiState,
     val graph: Graph? = null,
     val graphNames: List<String> = listOf(),
-    var history: List<Graph> = listOf(),
-    var future: List<Graph> = listOf()
+    val history: List<Graph> = listOf(),
+    val future: List<Graph> = listOf(),
+    val outputValues: OutputValues = mapOf()
 )

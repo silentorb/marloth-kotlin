@@ -4,10 +4,12 @@ import javafx.application.Platform
 import mythic.ent.pass
 import mythic.ent.pipe
 
-fun <T> appLogic(transformListeners: List<StateTransformListener<T>>, sideEffectListeners: List<SideEffectStateListener<T>>, initialState: T): (Event) -> Unit {
+fun <T> appLogic(transformListeners: List<StateTransformListener<T>>,
+                 sideEffectListeners: List<SideEffectStateListener<T>>,
+                 initialState: T): Pair<(Event) -> Unit, () -> T> {
   var state = initialState
 
-  return { event ->
+  val emit: (Event) -> Unit = { event ->
     Platform.runLater {
       val previousState = state
 //      val focus = getFocus(root)
@@ -64,7 +66,14 @@ fun <T> appLogic(transformListeners: List<StateTransformListener<T>>, sideEffect
       */
     }
   }
+
+  return Pair(emit, { state })
 }
+
+//fun <T> notPreview(listener: SideEffectStateListener<T>): SideEffectStateListener<T> = { change ->
+//  if (!change.event.preview)
+//    listener(change)
+//}
 
 fun <T> notPreview(listener: StateTransformListener<T>): StateTransformListener<T> = { change ->
   if (!change.event.preview)

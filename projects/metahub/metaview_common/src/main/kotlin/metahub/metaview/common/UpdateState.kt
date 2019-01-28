@@ -175,12 +175,10 @@ fun renameGraph(change: Renaming): CommonTransform = { state ->
   )
 }
 
-fun newGraph(onNewGraph: GraphTransform, name: String): CommonTransform = pipe({ state ->
-  // onNewGraph's logic could be applied afterwards by calling code but it is instead enforced here because in
-  // normal cases a graph this uninitialized is invalid.
+fun newGraph(name: String): CommonTransform = pipe({ state ->
   state.copy(
       graphNames = state.graphNames.plus(name).sorted(),
-      graph = onNewGraph(Graph())
+      graph = Graph()
   )
 }, activeGraphChanged(name))
 
@@ -393,23 +391,22 @@ val loadGraphs: CommonTransform = { state ->
   )
 }
 
-typealias CommonStateUpdater = (FocusContext, CommonEvent, Any) -> CommonTransform
-
-fun updateCommonState(engine: Engine, nodeDefinitions: NodeDefinitionMap, onNewGraph: GraphTransform): CommonStateUpdater =
-    { focus, event, data ->
-      when (event) {
-        CommonEvent.addNode -> newNode(nodeDefinitions, data as String)
-        CommonEvent.deleteSelected -> deleteSelected(engine, focus)
-        CommonEvent.duplicateNode -> duplicateNode(nodeDefinitions, data as Id)
-        CommonEvent.connecting -> onConnecting(focus)
-        CommonEvent.inputValueChanged -> changeInputValue(data as InputValue)
-        CommonEvent.insertNode -> insertNode(nodeDefinitions, data as String)
-        CommonEvent.graphSelect -> selectGraph(engine, nodeDefinitions, data as String)
-        CommonEvent.newGraph -> newGraph(onNewGraph, data as String)
-        CommonEvent.selectInput -> selectInput(data as Port)
-        CommonEvent.selectNode -> selectNode(engine, data as Id)
-        CommonEvent.setPreviewFinal -> setPreviewFinal(data as Boolean)
-        CommonEvent.refresh -> selectGraph(engine, nodeDefinitions)
-        CommonEvent.renameGraph -> renameGraph(data as Renaming)
-      }
-    }
+fun commonStateListener(engine: Engine, nodeDefinitions: NodeDefinitionMap,
+                        focus: () -> FocusContext):
+    StateTransformListener<CommonState> = eventTypeSwitch { eventType: CommonEvent, data ->
+  when (eventType) {
+    CommonEvent.addNode -> newNode(nodeDefinitions, data as String)
+    CommonEvent.deleteSelected -> deleteSelected(engine, focus())
+    CommonEvent.duplicateNode -> duplicateNode(nodeDefinitions, data as Id)
+    CommonEvent.connecting -> onConnecting(focus())
+    CommonEvent.inputValueChanged -> changeInputValue(data as InputValue)
+    CommonEvent.insertNode -> insertNode(nodeDefinitions, data as String)
+    CommonEvent.graphSelect -> selectGraph(engine, nodeDefinitions, data as String)
+    CommonEvent.newGraph -> newGraph(data as String)
+    CommonEvent.selectInput -> selectInput(data as Port)
+    CommonEvent.selectNode -> selectNode(engine, data as Id)
+    CommonEvent.setPreviewFinal -> setPreviewFinal(data as Boolean)
+    CommonEvent.refresh -> selectGraph(engine, nodeDefinitions)
+    CommonEvent.renameGraph -> renameGraph(data as Renaming)
+  }
+}

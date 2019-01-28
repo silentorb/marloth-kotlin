@@ -3,10 +3,9 @@ package metahub.metaview.front
 import metahub.core.Engine
 import metahub.core.GraphTransform
 import metahub.metaview.common.*
-import metahub.metaview.texturing.TexturingEvent
 import metahub.metaview.texturing.TexturingTransform
 import metahub.metaview.texturing.textureOutput
-import metahub.metaview.texturing.updateTexturingState
+import mythic.ent.pass
 import mythic.ent.pipe
 import mythic.ent.transformIf
 
@@ -46,19 +45,30 @@ fun updateDomainState(engine: Engine, nodeDefinitions: NodeDefinitionMap, event:
     }
 
 val onNewGraph: GraphTransform = { graph ->
-  graph.copy(
-      nodes = graph.nodes.plus(setOf(1L)),
-      functions = graph.functions.plus(mapOf(1L to textureOutput))
-  )
+  if (graph.nodes.none())
+    graph.copy(
+        nodes = graph.nodes.plus(setOf(1L)),
+        functions = graph.functions.plus(mapOf(1L to textureOutput))
+    )
+  else
+    graph
 }
 
-fun updateAppState(engine: Engine, nodeDefinitions: NodeDefinitionMap, commonUpdater: CommonStateUpdater, updateHistory: HistoryUpdater<AppState>, focus: FocusContext, event: Event): AppTransform {
-  val eventType = event.type
-  return when {
-    eventType is DomainEvent -> updateDomainState(engine, nodeDefinitions, eventType, event.data)
-    eventType is CommonEvent -> commonTransform(commonUpdater(focus, eventType, event.data))
-    eventType is HistoryEvent -> updateHistory(eventType)
-    eventType is TexturingEvent -> texturingTransform(updateTexturingState(eventType, event.data))
-    else -> throw Error("Unsupported event type")
-  }
+fun domainListener(engine: Engine, nodeDefinitions: NodeDefinitionMap): StateTransformListener<AppState> = { change ->
+  val eventType = change.event.type
+  if (eventType is DomainEvent)
+    updateDomainState(engine, nodeDefinitions, eventType, change.event.data)
+  else
+    ::pass
 }
+
+//fun updateAppState(engine: Engine, nodeDefinitions: NodeDefinitionMap, commonUpdater: CommonStateUpdater, updateHistory: HistoryUpdater<AppState>, focus: FocusContext, event: Event): AppTransform {
+//  val eventType = event.type
+//  return when {
+//    eventType is DomainEvent -> updateDomainState(engine, nodeDefinitions, eventType, event.data)
+//    eventType is CommonEvent -> commonTransform(commonUpdater(focus, eventType, event.data))
+//    eventType is HistoryEvent -> updateHistory(eventType)
+//    eventType is TexturingEvent -> texturingTransform(updateTexturingState(eventType, event.data))
+//    else -> throw Error("Unsupported event type")
+//  }
+//}
