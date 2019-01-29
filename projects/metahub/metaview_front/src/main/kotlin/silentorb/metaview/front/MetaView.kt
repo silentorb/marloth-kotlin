@@ -26,9 +26,11 @@ const val textureLength = 512
 
 val connectableTypes = setOf(bitmapType, grayscaleType)
 
-val commonListener = wrapListener<AppState, CommonState>({ it.common }) { a, b -> a.copy(common = b) }
+val commonListener = wrapStateListener<AppState, CommonState>({ it.common }) { a, b -> a.copy(common = b) }
 
-val texturingWrapper = wrapListener<AppState, TexturingState>({ it.texturing }) { a, b -> a.copy(texturing = b) }
+val commonSideEffectListener = wrapSideEffectListener<AppState, CommonState> { it.common }
+
+val texturingWrapper = wrapStateListener<AppState, TexturingState>({ it.texturing }) { a, b -> a.copy(texturing = b) }
 
 val configSaving: SideEffectStateListener<AppState> = { change ->
   val state = change.next
@@ -88,12 +90,11 @@ fun coreLogic(root: BorderPane, engine: Engine) {
     }
   }
 
-  val updateGraphView: SideEffectStateListener<AppState> = { change ->
-    if (change.next.common.graph != change.previous.common.graph) {
-      graphContainer.content = null // JavaFX has some weird caching/race condition that this prevents
-      graphContainer.content = graphView(engine, nodeDefinitions, connectableTypes, valueDisplays, emit, change.next.common)
-    }
-  }
+  val updateGraphView = commonSideEffectListener(
+      graphViewListener(engine, nodeDefinitions, connectableTypes, valueDisplays, emit) {
+        graphContainer.content = null // JavaFX has some weird caching/race condition that this prevents
+        graphContainer.content = it
+      })
 
   val updatePreviewView: SideEffectStateListener<AppState> = { change ->
     rightPanel.children.set(0, previewView(engine, nodeDefinitions, valueDisplays, emit)(change.next.common))
@@ -141,6 +142,7 @@ class LabGui : Application() {
 
       coreLogic(root, engine)
       primaryStage.show()
+      primaryStage.isMaximized = true
     } catch (exception: Exception) {
       println(exception.stackTrace)
     }

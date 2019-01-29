@@ -8,7 +8,6 @@ import javafx.scene.canvas.GraphicsContext
 import javafx.scene.control.Label
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
-import silentorb.metahub.core.*
 import silentorb.metaview.common.*
 
 import mythic.ent.Id
@@ -132,9 +131,20 @@ fun graphView(engine: Engine, nodeDefinitions: NodeDefinitionMap, connectableTyp
       }
     }
 
-    val canvas = graphCanvas(nodeDefinitions,connectableTypes, graph, stages, pane, nodeNodes)
+    val canvas = graphCanvas(nodeDefinitions, connectableTypes, graph, stages, pane, nodeNodes)
     pane.children.add(0, canvas)
   }
 
   return pane
+}
+
+fun graphViewListener(engine: Engine, nodeDefinitions: NodeDefinitionMap,
+                      connectableTypes: Set<String>, valueDisplays: ValueDisplayMap,
+                      emit: Emitter, setter: (Node) -> Unit): SideEffectStateListener<CommonState> = { change ->
+  val next = change.next
+  val previous = change.previous
+  if (next.graph != previous.graph || next.gui != previous.gui) {
+    val view = graphView(engine, nodeDefinitions, connectableTypes, valueDisplays, emit, change.next)
+    setter(view)
+  }
 }

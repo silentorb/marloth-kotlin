@@ -62,22 +62,39 @@ fun fillInDefaults(nodeDefinitions: NodeDefinitionMap): GraphTransform = { graph
   )
 }
 
-fun selectGraph(engine: Engine, nodeDefinitions: NodeDefinitionMap, name: String): CommonTransform = pipe({ state: CommonState ->
-  val graph = fillInDefaults(nodeDefinitions)(loadTextureGraph(engine, state, name))
+fun selectGraph(engine: Engine, nodeDefinitions: NodeDefinitionMap, name: String?): CommonTransform = pipe({ state: CommonState ->
+  val graph = if (name != null)
+    fillInDefaults(nodeDefinitions)(loadTextureGraph(engine, state, name))
+  else
+    null
+
   val gui = state.gui
+  val interaction = gui.graphInteraction
+
+  val nodeSelection = if (graph != null)
+    interaction.nodeSelection.filter { graph.nodes.contains(it) }
+  else
+    listOf()
+
+  val portSelection = if (graph != null)
+    interaction.portSelection.filter { graph.nodes.contains(it.node) }
+  else
+    listOf()
+
   state.copy(
       graph = graph,
       gui = gui.copy(
-          graphInteraction = gui.graphInteraction.copy(
-              nodeSelection = gui.graphInteraction.nodeSelection.filter { graph.nodes.contains(it) },
-              portSelection = gui.graphInteraction.portSelection.filter { graph.nodes.contains(it.node) }
+          graphInteraction = interaction.copy(
+              nodeSelection = nodeSelection,
+              portSelection = portSelection
           )
       )
   )
 }, activeGraphChanged(name))
 
-fun selectGraph(engine: Engine, nodeDefinitions: NodeDefinitionMap): CommonTransform =
-    ifNotNull({ state: CommonState -> state.gui.activeGraph }) { selectGraph(engine, nodeDefinitions, it) }
+fun selectGraph(engine: Engine, nodeDefinitions: NodeDefinitionMap): CommonTransform = peek { state ->
+  selectGraph(engine, nodeDefinitions, state.gui.activeGraph)
+}
 
 fun isReselecting(id: Id, state: CommonState): Boolean =
     state.gui.graphInteraction.nodeSelection.contains(id)

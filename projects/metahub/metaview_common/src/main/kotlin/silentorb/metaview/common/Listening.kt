@@ -47,7 +47,7 @@ inline fun <reified EventType, T> eventTypeSwitch(crossinline transform: (EventT
     ::pass
 }
 
-fun <A, B> wrapListener(get: (A) -> B, set: (A, B) -> A): (StateTransformListener<B>) -> StateTransformListener<A> = { listener ->
+fun <A, B> wrapStateListener(get: (A) -> B, set: (A, B) -> A): (StateTransformListener<B>) -> StateTransformListener<A> = { listener ->
   { change ->
     { state ->
       val commonChange = StateTransformChange(
@@ -56,5 +56,16 @@ fun <A, B> wrapListener(get: (A) -> B, set: (A, B) -> A): (StateTransformListene
       )
       set(state, listener(commonChange)(get(state)))
     }
+  }
+}
+
+fun <A, B> wrapSideEffectListener(get: (A) -> B): (SideEffectStateListener<B>) -> SideEffectStateListener<A> = { listener ->
+  { change ->
+    val commonChange = StateChange(
+        next = get(change.next),
+        previous = get(change.previous),
+        event = change.event
+    )
+    listener(commonChange)
   }
 }

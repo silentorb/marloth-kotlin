@@ -20,7 +20,7 @@ fun selectedNode(state: CommonState): Id? =
 
 fun ifSelectedNode(engine: Engine, action: (CommonState, Id) -> Node): (CommonState) -> Node = { state ->
   val id = selectedNode(state)
-  if (id == null || isOutputNode(engine.outputTypes)(state.graph!!, id))
+  if (id == null || state.graph == null || isOutputNode(engine.outputTypes)(state.graph, id))
     VBox()
   else
     action(state, id)
