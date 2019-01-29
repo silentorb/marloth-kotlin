@@ -137,6 +137,7 @@ fun listProceduralTextures(): List<Pair<String, String>> =
 fun loadProceduralTextures(attributes: TextureAttributes): Map<String, Texture> {
   val length = 256
   val engine = newTextureEngine(length)
+
   return listProceduralTextures()
       .associate { (path, name) ->
         val texture = loadProceduralTextureFromFile(engine, path, attributes, length)

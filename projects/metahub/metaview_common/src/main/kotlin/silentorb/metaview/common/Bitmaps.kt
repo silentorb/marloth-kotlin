@@ -1,8 +1,5 @@
-package silentorb.metaview.texturing
+package silentorb.metaview.common
 
-import silentorb.metaview.common.ValueMap
-import silentorb.metaview.common.bitmapType
-import silentorb.metaview.common.grayscaleType
 import silentorb.metaview.common.views.ValueDisplayMap
 import silentorb.metaview.common.views.newImage
 import mythic.imaging.floatTextureToBytes
