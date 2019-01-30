@@ -4,7 +4,6 @@ import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import silentorb.metahub.core.*
 import mythic.ent.*
-import silentorb.metahub.core.*
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -62,7 +61,7 @@ fun fillInDefaults(nodeDefinitions: NodeDefinitionMap): GraphTransform = { graph
   )
 }
 
-fun selectGraph(engine: Engine, nodeDefinitions: NodeDefinitionMap, name: String?): CommonTransform = pipe({ state: CommonState ->
+fun selectGraphInternal(engine: Engine, nodeDefinitions: NodeDefinitionMap, name: String?): CommonTransform = { state: CommonState ->
   val graph = if (name != null)
     fillInDefaults(nodeDefinitions)(loadTextureGraph(engine, state, name))
   else
@@ -90,10 +89,15 @@ fun selectGraph(engine: Engine, nodeDefinitions: NodeDefinitionMap, name: String
           )
       )
   )
-}, activeGraphChanged(name))
+}
 
-fun selectGraph(engine: Engine, nodeDefinitions: NodeDefinitionMap): CommonTransform = peek { state ->
-  selectGraph(engine, nodeDefinitions, state.gui.activeGraph)
+fun selectGraph(engine: Engine, nodeDefinitions: NodeDefinitionMap, name: String?): CommonTransform = pipe(
+    selectGraphInternal(engine, nodeDefinitions, name),
+    activeGraphChanged(name)
+)
+
+fun refreshGraph(engine: Engine, nodeDefinitions: NodeDefinitionMap): CommonTransform = peek { state ->
+  selectGraphInternal(engine, nodeDefinitions, state.gui.activeGraph)
 }
 
 fun isReselecting(id: Id, state: CommonState): Boolean =
@@ -217,7 +221,7 @@ fun newNodeWithDefaults(nodeDefinitions: NodeDefinitionMap, name: String, id: Id
 fun newNode(nodeDefinitions: NodeDefinitionMap, name: String): CommonTransform = { state ->
   val id = nextNodeId(state.graph!!)
   state.copy(
-      graph = newNodeWithDefaults(nodeDefinitions, name, id)(state.graph!!),
+      graph = newNodeWithDefaults(nodeDefinitions, name, id)(state.graph),
       gui = state.gui.copy(
           graphInteraction = GraphInteraction(
               nodeSelection = listOf(id)
@@ -412,7 +416,7 @@ fun commonStateListener(engine: Engine, nodeDefinitions: NodeDefinitionMap,
     CommonEvent.selectInput -> selectInput(data as Port)
     CommonEvent.selectNode -> selectNode(engine, data as Id)
     CommonEvent.setPreviewFinal -> setPreviewFinal(data as Boolean)
-    CommonEvent.refresh -> selectGraph(engine, nodeDefinitions)
+    CommonEvent.refresh -> refreshGraph(engine, nodeDefinitions)
     CommonEvent.renameGraph -> renameGraph(data as Renaming)
   }
 }

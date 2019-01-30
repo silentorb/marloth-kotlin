@@ -9,6 +9,7 @@ import mythic.spatial.Vector3
 import org.joml.Vector3i
 import org.lwjgl.BufferUtils
 import randomly.Dice
+import silentorb.raymarching.renderSomething
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 
@@ -194,6 +195,11 @@ val voronoiBoundaryOperator: TextureFunction = withGrayscaleBuffer { arguments -
 //0f
 //  }
 }
+
+val rayMarchOperator: TextureFunction = withBitmapBuffer { arguments ->
+  renderSomething()
+}
+
 private val textureFunctions = mapOf(
     "coloredCheckers" to coloredCheckers,
     "checkers" to grayscaleCheckers,
@@ -203,6 +209,7 @@ private val textureFunctions = mapOf(
     "mixBitmaps" to mixBitmaps,
     "mixGrayscales" to mixGrayscales,
     "perlinNoise" to simpleNoiseOperator,
+    "rayMarch" to rayMarchOperator,
     "voronoiBoundaries" to voronoiBoundaryOperator
 )
 

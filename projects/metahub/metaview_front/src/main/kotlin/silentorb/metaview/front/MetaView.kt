@@ -142,7 +142,7 @@ class LabGui : Application() {
 
       coreLogic(root, engine)
       primaryStage.show()
-      primaryStage.isMaximized = true
+//      primaryStage.isMaximized = true
     } catch (exception: Exception) {
       println(exception.stackTrace)
     }

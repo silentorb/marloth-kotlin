@@ -100,6 +100,11 @@ val nodeDefinitions: NodeDefinitionMap = mapOf(
         ),
         outputType = grayscaleType
     ),
+    "rayMarch" to NodeDefinition(
+        inputs = mapOf(
+        ),
+        outputType = bitmapType
+    ),
     "voronoiBoundaries" to NodeDefinition(
         inputs = mapOf(
         ),

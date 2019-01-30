@@ -23,7 +23,7 @@ typealias SideEffectStateListener<T> = (StateChange<T>) -> Unit
 fun onGraphChanged(nodeDefinitions: NodeDefinitionMap, defaultValues: ValueMap, engine: Engine): StateTransformListener<CommonState> = { change ->
   val previous = change.previous
   { state ->
-    if (state.graph != null && state.graph != previous.graph) {
+    if (state.graph != null && (state.graph != previous.graph || change.event.type == CommonEvent.refresh)) {
       val values = executeSanitized(nodeDefinitions, defaultValues, engine, state.graph)
       state.copy(
           outputValues = values

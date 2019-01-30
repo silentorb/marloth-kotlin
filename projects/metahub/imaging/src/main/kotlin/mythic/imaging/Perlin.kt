@@ -81,7 +81,7 @@ enum class Interp {
   Linear, Hermite, Quintic
 }
 
-private fun lerp(a: Float, b: Float, t: Float): Float {
+fun lerp(a: Float, b: Float, t: Float): Float {
   val value = t * t * t * (t * (t * 6 - 15) + 10)
   return a + value * (b - a)
 //  return a + t * (b - a)
@@ -178,18 +178,6 @@ fun dotGridGradient(periods: Int, offset: Int): PerlinGrid = { ix, iy, x, y ->
   dx * sample.x + dy * sample.y
 }
 
-var minValue: Float = 0f
-var maxValue: Float = 0f
-
-fun resetMinMax() {
-  minValue = 0f;
-  maxValue = 0f
-}
-
-fun printMinMax() {
-  println("min/max = $minValue, $maxValue")
-}
-
 fun perlin2d(grid: PerlinGrid, x: Float, y: Float): Float {
   val input = Vector2(x, y)
   val a = Vector2i(fastFloor(x), fastFloor(y))
@@ -200,10 +188,6 @@ fun perlin2d(grid: PerlinGrid, x: Float, y: Float): Float {
   val ix1 = lerp(grid(a.x, b.y, x, y), grid(b.x, b.y, x, y), s.x)
 
   val value = lerp(ix0, ix1, s.y)
-  if (value > maxValue)
-    maxValue = value
-  if (value < minValue)
-    minValue = value
 
   val mod = 0.5f / 0.704f
   val final = value * mod + 0.5f

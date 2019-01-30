@@ -36,7 +36,7 @@ private fun changeDomain(domain: Domain): AppTransform = { state ->
 fun selectDomain(engine: Engine, nodeDefinitions: NodeDefinitionMap, domain: Domain): AppTransform =
     transformIf({ it.domain != domain }, pipe(
         changeDomain(domain),
-        commonTransform(pipe(loadGraphs, selectGraph(engine, nodeDefinitions)))
+        commonTransform(pipe(loadGraphs, refreshGraph(engine, nodeDefinitions)))
     ))
 
 fun updateDomainState(engine: Engine, nodeDefinitions: NodeDefinitionMap, event: DomainEvent, data: Any) =

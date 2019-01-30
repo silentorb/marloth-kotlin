@@ -9,6 +9,10 @@ fun quadOut(t: Float): Float {
   return t * (2 - t)
 }
 
+fun quadIn(t: Float): Float = t * t
+
+fun cubicIn(t: Float): Float = t * t * t
+
 fun cubicOut(t: Float): Float {
   return t * (2 - t)
 }
