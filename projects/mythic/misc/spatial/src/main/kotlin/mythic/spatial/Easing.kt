@@ -14,7 +14,8 @@ fun quadIn(t: Float): Float = t * t
 fun cubicIn(t: Float): Float = t * t * t
 
 fun cubicOut(t: Float): Float {
-  return t * (2 - t)
+  val n = t - 1
+  return n * n * n + 1
 }
 
 fun interpolate(scalar: Float, a: Vector3, b: Vector3): Vector3 =

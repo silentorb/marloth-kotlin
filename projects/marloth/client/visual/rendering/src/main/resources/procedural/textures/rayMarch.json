@@ -1,9 +1,18 @@
 {
-  "nodes" : [ 1, 2 ],
+  "nodes" : [ 1, 2, 3 ],
   "functions" : {
     "1" : "textureOutput",
-    "2" : "rayMarch"
+    "2" : "rayMarch",
+    "3" : "hdr"
   },
-  "connections" : [ ],
+  "connections" : [ {
+    "input" : 3,
+    "output" : 1,
+    "port" : "diffuse"
+  }, {
+    "input" : 2,
+    "output" : 3,
+    "port" : "input"
+  } ],
   "values" : [ ]
 }

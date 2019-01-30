@@ -53,6 +53,14 @@ val nodeDefinitions: NodeDefinitionMap = mapOf(
         ),
         outputType = bitmapType
     ),
+    "hdr" to NodeDefinition(
+        inputs = mapOf(
+            "input" to InputDefinition(
+                type = bitmapType
+            )
+        ),
+        outputType = bitmapType
+    ),
     "mask" to NodeDefinition(
         inputs = mapOf(
             "first" to InputDefinition(

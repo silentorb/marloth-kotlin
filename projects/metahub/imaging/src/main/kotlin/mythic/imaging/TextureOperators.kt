@@ -9,6 +9,7 @@ import mythic.spatial.Vector3
 import org.joml.Vector3i
 import org.lwjgl.BufferUtils
 import randomly.Dice
+import silentorb.raymarching.compressRange
 import silentorb.raymarching.renderSomething
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
@@ -66,32 +67,44 @@ fun FloatBuffer.getVector3() =
         this.get()
     )
 
-fun <T> withBuffer(depth: Int, setter: (FloatBuffer, T) -> Unit): ((Arguments) -> (Float, Float) -> T) -> TextureFunction = { function ->
-  { length ->
-    { arguments ->
-      resetMinMax()
-      val buffer = BufferUtils.createFloatBuffer(length * length * depth)
-      val getter = function(arguments)
-      for (y in 0 until length) {
-        for (x in 0 until length) {
-          val value = getter(x.toFloat() / length, 1f - y.toFloat() / length)
-          setter(buffer, value)
+fun fillBuffer(depth: Int, length: Int, action: (FloatBuffer) -> Unit): FloatBuffer {
+  val buffer = BufferUtils.createFloatBuffer(length * length * depth)
+  action(buffer)
+  buffer.rewind()
+  return buffer
+}
+
+data class BufferInfo<T>(
+    val depth: Int,
+    val setter: (FloatBuffer, T) -> Unit
+)
+
+fun <T> withBuffer(bufferInfo: BufferInfo<T>, function: (Arguments) -> (Float, Float) -> T): TextureFunction =
+    { length ->
+      { arguments ->
+        fillBuffer(bufferInfo.depth, length) { buffer ->
+          val getter = function(arguments)
+          for (y in 0 until length) {
+            for (x in 0 until length) {
+              val value = getter(x.toFloat() / length, 1f - y.toFloat() / length)
+              bufferInfo.setter(buffer, value)
+            }
+          }
         }
       }
-      printMinMax()
-      buffer.rewind()
-      buffer
     }
-  }
-}
 
-val withBitmapBuffer = withBuffer<Vector3>(3) { buffer, value ->
+val withBitmapBuffer = BufferInfo<Vector3>(3) { buffer, value ->
   buffer.put(value)
 }
 
-val withGrayscaleBuffer = withBuffer<Float>(1) { buffer, value ->
+val withGrayscaleBuffer = BufferInfo<Float>(1) { buffer, value ->
   buffer.put(value)
 }
+
+//val withGrayscaleBuffer = fillBuffer<Float>(1) { buffer, value ->
+//  buffer.put(value)
+//}
 
 fun convertColor(value: Vector3): Vector3i =
     Vector3i(
@@ -100,22 +113,22 @@ fun convertColor(value: Vector3): Vector3i =
         (value.z * 255).toInt()
     )
 
-val solidColor: TextureFunction = withBitmapBuffer { arguments ->
+val solidColor: TextureFunction = withBuffer(withBitmapBuffer) { arguments ->
   val color = arguments["color"]!! as SolidColor
   { _, _ -> color }
 }
 
-val coloredCheckers: TextureFunction = withBitmapBuffer { arguments ->
+val coloredCheckers: TextureFunction = withBuffer(withBitmapBuffer) { arguments ->
   val first = arguments["firstColor"]!! as SolidColor
   val second = arguments["secondColor"]!! as SolidColor
   checkerPattern(first, second)
 }
 
-val grayscaleCheckers: TextureFunction = withGrayscaleBuffer { arguments ->
+val grayscaleCheckers: TextureFunction = withBuffer(withGrayscaleBuffer) { arguments ->
   checkerOp(0f, 1f)
 }
 
-val colorize: TextureFunction = withBitmapBuffer { arguments ->
+val colorize: TextureFunction = withBuffer(withBitmapBuffer) { arguments ->
   val grayscale = arguments["grayscale"]!! as FloatBuffer
   grayscale.rewind()
   val first = arguments["firstColor"]!! as SolidColor
@@ -132,7 +145,7 @@ fun floatBufferArgument(arguments: Arguments, name: String): FloatBuffer {
   return result
 }
 
-val maskOperator: TextureFunction = withBitmapBuffer { arguments ->
+val maskOperator: TextureFunction = withBuffer(withBitmapBuffer) { arguments ->
   val first = floatBufferArgument(arguments, "first")
   val second = floatBufferArgument(arguments, "second")
   val mask = floatBufferArgument(arguments, "mask")
@@ -143,7 +156,7 @@ val maskOperator: TextureFunction = withBitmapBuffer { arguments ->
   }
 }
 
-val mixBitmaps: TextureFunction = withBitmapBuffer { arguments ->
+val mixBitmaps: TextureFunction = withBuffer(withBitmapBuffer) { arguments ->
   val degree = arguments["degree"]!! as Float
   val first = floatBufferArgument(arguments, "first")
   val second = floatBufferArgument(arguments, "second")
@@ -153,7 +166,7 @@ val mixBitmaps: TextureFunction = withBitmapBuffer { arguments ->
   }
 }
 
-val mixGrayscales: TextureFunction = withGrayscaleBuffer { arguments ->
+val mixGrayscales: TextureFunction = withBuffer(withGrayscaleBuffer) { arguments ->
   val weights = arguments["weights"]!! as List<Float>
   val buffers = weights.mapIndexed { index, value ->
     Pair(floatBufferArgument(arguments, (index + 1).toString()), value)
@@ -174,7 +187,7 @@ fun simpleNoise(scale: Float): ScalarTextureAlgorithm =
       noiseSource.eval(x * scale, y * scale)
     }
 
-val simpleNoiseOperator: TextureFunction = withGrayscaleBuffer { arguments ->
+val simpleNoiseOperator: TextureFunction = withBuffer(withGrayscaleBuffer) { arguments ->
   val offset = arguments["offset"]!! as Int
   val periods = arguments["periods"]!! as Int
   val grid = dotGridGradient(periods, offset)
@@ -185,7 +198,7 @@ val simpleNoiseOperator: TextureFunction = withGrayscaleBuffer { arguments ->
   }
 }
 
-val voronoiBoundaryOperator: TextureFunction = withGrayscaleBuffer { arguments ->
+val voronoiBoundaryOperator: TextureFunction = withBuffer(withGrayscaleBuffer) { arguments ->
   val dice = Dice(1)
   val length = 10
   val grid = newAnchorGrid(dice, length, 10)
@@ -196,14 +209,23 @@ val voronoiBoundaryOperator: TextureFunction = withGrayscaleBuffer { arguments -
 //  }
 }
 
-val rayMarchOperator: TextureFunction = withBitmapBuffer { arguments ->
+val rayMarchOperator: TextureFunction = withBuffer(withBitmapBuffer) { arguments ->
   renderSomething()
 }
+
+val hdrOperator: TextureFunction =
+    { length ->
+      { arguments ->
+        val input = arguments["input"]!! as FloatBuffer
+        compressRange(input)
+      }
+    }
 
 private val textureFunctions = mapOf(
     "coloredCheckers" to coloredCheckers,
     "checkers" to grayscaleCheckers,
     "colorize" to colorize,
+    "hdr" to hdrOperator,
     "solidColor" to solidColor,
     "mask" to maskOperator,
     "mixBitmaps" to mixBitmaps,

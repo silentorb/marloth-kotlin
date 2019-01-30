@@ -143,7 +143,7 @@ fun graphViewListener(engine: Engine, nodeDefinitions: NodeDefinitionMap,
                       emit: Emitter, setter: (Node) -> Unit): SideEffectStateListener<CommonState> = { change ->
   val next = change.next
   val previous = change.previous
-  if (next.graph != previous.graph || next.gui != previous.gui) {
+  if (next.graph != previous.graph || next.gui != previous.gui || change.event.type == CommonEvent.refresh) {
     val view = graphView(engine, nodeDefinitions, connectableTypes, valueDisplays, emit, change.next)
     setter(view)
   }
