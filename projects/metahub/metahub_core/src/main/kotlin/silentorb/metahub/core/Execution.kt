@@ -11,7 +11,15 @@ fun prepareArguments(graph: Graph, outputValues: OutputValues, nodeId: Id): Map<
 
   return graph.connections
       .filter { it.output == nodeId }
-      .map { Pair(it.port, outputValues[it.input]!!) }
+      .map {
+        val rawValue = outputValues[it.input]!!
+        val value = if (it.outPort != null)
+          (rawValue as Map<String, Any>)[it.outPort]!!
+        else
+          rawValue
+
+        Pair(it.port, value)
+      }
       .plus(values)
       .associate { it }
 }

@@ -24,7 +24,7 @@ fun getResourceUrl(path: String): URL {
 
 const val textureLength = 512
 
-val connectableTypes = setOf(bitmapType, grayscaleType)
+val connectableTypes = setOf(bitmapType, grayscaleType, normalsType, positionsType, depthsType)
 
 val commonListener = wrapStateListener<AppState, CommonState>({ it.common }) { a, b -> a.copy(common = b) }
 
@@ -134,7 +134,7 @@ class LabGui : Application() {
       val engine = newTextureEngine(textureLength)
 
       val root = BorderPane()
-      val scene = Scene(root, 1400.0, 800.0)
+      val scene = Scene(root, 1600.0, 800.0)
       val s = getResourceUrl("style.css")
       scene.getStylesheets().add(s.toString())
       primaryStage.scene = scene

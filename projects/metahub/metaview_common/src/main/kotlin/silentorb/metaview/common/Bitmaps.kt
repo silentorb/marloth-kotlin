@@ -18,7 +18,10 @@ val defaultGrayscale: (Int) -> FloatBuffer = { length ->
 
 fun fillerTypeValues(length: Int): ValueMap = mapOf(
     bitmapType to defaultBitmap,
-    grayscaleType to defaultGrayscale
+    grayscaleType to defaultGrayscale,
+    depthsType to defaultGrayscale,
+    positionsType to defaultBitmap,
+    normalsType to defaultBitmap
 ).mapValues { { it.value(length) } }
 
 fun textureValueDisplays(dimensions: Vector2i): ValueDisplayMap = mapOf(
@@ -29,4 +32,10 @@ fun textureValueDisplays(dimensions: Vector2i): ValueDisplayMap = mapOf(
     val buffer = value as FloatBuffer
     newImage(dimensions, toBytes(buffer))
   }
-}
+}.plus(mapOf(
+    multiType to { value: Any ->
+      val map = value as Map<String, Any>
+      val buffer = map["color"] as FloatBuffer
+      newImage(dimensions, floatTextureToBytes(buffer))
+    }
+))

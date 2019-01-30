@@ -7,7 +7,8 @@ import mythic.ent.replace
 data class Connection(
     val input: Id,
     val output: Id,
-    val port: String
+    val port: String,
+    val outPort: String? = null
 )
 
 data class InputValue(

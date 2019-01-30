@@ -53,13 +53,13 @@ val nodeDefinitions: NodeDefinitionMap = mapOf(
         ),
         outputType = bitmapType
     ),
-    "hdr" to NodeDefinition(
+    "toneMap" to NodeDefinition(
         inputs = mapOf(
             "input" to InputDefinition(
-                type = bitmapType
+                type = grayscaleType
             )
         ),
-        outputType = bitmapType
+        outputType = grayscaleType
     ),
     "mask" to NodeDefinition(
         inputs = mapOf(
@@ -108,10 +108,41 @@ val nodeDefinitions: NodeDefinitionMap = mapOf(
         ),
         outputType = grayscaleType
     ),
+    "illumination" to NodeDefinition(
+        inputs = mapOf(
+            "depth" to InputDefinition(
+                type = depthsType
+            ),
+            "position" to InputDefinition(
+                type = positionsType
+            ),
+            "normal" to InputDefinition(
+                type = normalsType
+            )
+        ),
+        outputType = grayscaleType
+    ),
+    "mixScene" to NodeDefinition(
+        inputs = mapOf(
+            "color" to InputDefinition(
+                type = bitmapType
+            ),
+            "illumination" to InputDefinition(
+                type = grayscaleType
+            )
+        ),
+        outputType = grayscaleType
+    ),
     "rayMarch" to NodeDefinition(
         inputs = mapOf(
         ),
-        outputType = bitmapType
+        outputType = multiType,
+        outputs = mapOf(
+            "color" to bitmapType,
+            "depth" to depthsType,
+            "position" to positionsType,
+            "normal" to normalsType
+        )
     ),
     "voronoiBoundaries" to NodeDefinition(
         inputs = mapOf(

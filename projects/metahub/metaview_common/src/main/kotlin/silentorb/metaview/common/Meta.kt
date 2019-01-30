@@ -9,6 +9,7 @@ data class InputDefinition(
 data class NodeDefinition(
     val inputs: Map<String, InputDefinition>,
     val outputType: String,
+    val outputs: Map<String, String> = mapOf(),
     val variableInputs: String? = null
 )
 

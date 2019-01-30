@@ -112,13 +112,8 @@ fun graphView(engine: Engine, nodeDefinitions: NodeDefinitionMap, connectableTyp
     stages.forEachIndexed { x, stage ->
       stage.forEachIndexed { y, nodeId ->
         val nodeValue = state.outputValues[nodeId]
-        val icon = nodeIcon(valueDisplays, nodeDefinitions, emit, graph, nodeId, nodeValue) ?: Pane()
-        if (state.gui.graphInteraction.nodeSelection.contains(nodeId)) {
-          val borderStroke = BorderStroke(Color.BLUEVIOLET, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)
-          icon.border = Border(borderStroke)
-        }
-        val position = nodePosition(x, y)
         val hbox = HBox()
+         val position = nodePosition(x, y)
         hbox.relocate(position.x.toDouble(), position.y.toDouble())
         val portsPanel = VBox()
         portsPanel.spacing = 5.0
@@ -126,7 +121,16 @@ fun graphView(engine: Engine, nodeDefinitions: NodeDefinitionMap, connectableTyp
         val portLabels = portLabels(nodeDefinitions, connectableTypes, graph, emit, state.gui.graphInteraction.portSelection, nodeId)
         portsPanel.children.addAll(portLabels)
         nodeNodes[nodeId] = Pair(hbox, portLabels)
-        hbox.children.addAll(portsPanel, icon)
+        hbox.children.add(portsPanel)
+        if (nodeValue != null) {
+          val icon = nodeIcon(valueDisplays, nodeDefinitions, emit, graph, nodeId, nodeValue)
+          if (state.gui.graphInteraction.nodeSelection.contains(nodeId)) {
+            val borderStroke = BorderStroke(Color.BLUEVIOLET, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)
+            icon.border = Border(borderStroke)
+          }
+          hbox.children.add(icon)
+        }
+
         pane.children.add(hbox)
       }
     }

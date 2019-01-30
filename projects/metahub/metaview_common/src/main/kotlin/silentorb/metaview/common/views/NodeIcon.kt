@@ -30,24 +30,33 @@ fun getNodePreviewBuffer(valueDisplays: ValueDisplayMap, type: String, value: An
 //  }
 }
 
+fun emptyNode(): Pane {
+  val box = Pane()
+  box.prefWidth = nodeLength.toDouble()
+  box.prefHeight = nodeLength.toDouble()
+  return box
+}
+
 fun getNodePreviewBuffer(valueDisplays: ValueDisplayMap, nodeDefinitions: NodeDefinitionMap, graph: Graph, node: Id, value: Any): Image? {
   val function = graph.functions[node]!!
   val definition = nodeDefinitions[function]!!
   return getNodePreviewBuffer(valueDisplays, definition.outputType, value)
 }
 
-fun nodeIcon(valueDisplays: ValueDisplayMap, nodeDefinitions: NodeDefinitionMap, emit: Emitter, graph: Graph, id: Id, value: Any?): Region? {
-  if (value == null)
-    return null
-
-  val image = getNodePreviewBuffer(valueDisplays, nodeDefinitions, graph, id, value)
-  if (image == null)
-    return null
+fun nodeIcon(valueDisplays: ValueDisplayMap, nodeDefinitions: NodeDefinitionMap, emit: Emitter, graph: Graph, id: Id, value: Any?): Region {
+  val imageView = if (value != null) {
+    val image = getNodePreviewBuffer(valueDisplays, nodeDefinitions, graph, id, value)
+    if (image != null) {
+      val v = ImageView(image)
+      v.fitWidth = nodeLength.toDouble()
+      v.fitHeight = nodeLength.toDouble()
+      v
+    } else
+      emptyNode()
+  } else
+    emptyNode()
 
   val container = VBox()
-  val imageView = ImageView(image)
-  imageView.fitWidth = nodeLength.toDouble()
-  imageView.fitHeight = nodeLength.toDouble()
   val name = graph.functions[id] ?: "Unknown"
   val label = Label(name)
   container.alignment = Pos.BASELINE_CENTER

@@ -14,6 +14,10 @@ const val floatType = "Float"
 const val weightsType = "FloatList"
 const val intType = "Int"
 const val noneType = "None"
+const val normalsType = "Normals"
+const val positionsType = "Positions"
+const val depthsType = "Depths"
+const val multiType = "Multi"
 
 data class GraphInteraction(
     val nodeSelection: List<Id> = listOf(),

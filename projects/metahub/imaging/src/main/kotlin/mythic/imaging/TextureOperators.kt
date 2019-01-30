@@ -9,8 +9,7 @@ import mythic.spatial.Vector3
 import org.joml.Vector3i
 import org.lwjgl.BufferUtils
 import randomly.Dice
-import silentorb.raymarching.compressRange
-import silentorb.raymarching.renderSomething
+import silentorb.raymarching.*
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 
@@ -209,11 +208,82 @@ val voronoiBoundaryOperator: TextureFunction = withBuffer(withGrayscaleBuffer) {
 //  }
 }
 
-val rayMarchOperator: TextureFunction = withBuffer(withBitmapBuffer) { arguments ->
-  renderSomething()
+data class MarchedBuffers(
+    val color: FloatBuffer,
+    val depth: FloatBuffer,
+    val position: FloatBuffer,
+    val normal: FloatBuffer
+)
+
+val rayMarchOperator: TextureFunction =
+    { length ->
+      { arguments ->
+        val marcher = Marcher(
+            end = 2f,
+            maxSteps = 100
+        )
+
+        val camera = Camera(
+            position = Vector3(),
+            direction = Vector3(0f, 1f, 0f).normalize()
+        )
+        val area = length * length
+        val buffers = MarchedBuffers(
+            color = BufferUtils.createFloatBuffer(area * 3),
+            depth = BufferUtils.createFloatBuffer(area),
+            position = BufferUtils.createFloatBuffer(area * 3),
+            normal = BufferUtils.createFloatBuffer(area * 3)
+        )
+
+        val render = renderSomething(marcher, camera)
+
+        for (y in 0 until length) {
+          for (x in 0 until length) {
+            val point = render(x.toFloat() / length, 1f - y.toFloat() / length)
+            buffers.color.put(point.color)
+            buffers.depth.put(point.depth)
+            buffers.position.put(point.position)
+            buffers.normal.put(point.normal)
+          }
+        }
+
+        buffers.color.rewind()
+        buffers.depth.rewind()
+        buffers.position.rewind()
+        buffers.normal.rewind()
+
+        mapOf(
+            "color" to buffers.color,
+            "depth" to buffers.depth,
+            "position" to buffers.position,
+            "normal" to buffers.normal
+        )
+      }
+    }
+
+val illuminationOperator: TextureFunction = withBuffer(withGrayscaleBuffer) { arguments ->
+  val depth = floatBufferArgument(arguments, "depth")
+  val position = floatBufferArgument(arguments, "position")
+  val normal = floatBufferArgument(arguments, "normal")
+  val k = 0
+  { x, y ->
+    illuminatePoint(depth.get(), position.getVector3(), normal.getVector3())
+  }
 }
 
-val hdrOperator: TextureFunction =
+val mixSceneOperator: TextureFunction =
+    { length ->
+      { arguments ->
+        val color = floatBufferArgument(arguments, "color")
+        val illumination = floatBufferArgument(arguments, "illumination")
+        val k = 0
+        fillBuffer(3, length) { buffer ->
+          buffer.put(mixScenePoint(color.getVector3(), illumination.get()))
+        }
+      }
+    }
+
+val toneMapping: TextureFunction =
     { length ->
       { arguments ->
         val input = arguments["input"]!! as FloatBuffer
@@ -225,11 +295,13 @@ private val textureFunctions = mapOf(
     "coloredCheckers" to coloredCheckers,
     "checkers" to grayscaleCheckers,
     "colorize" to colorize,
-    "hdr" to hdrOperator,
+    "toneMap" to toneMapping,
     "solidColor" to solidColor,
     "mask" to maskOperator,
     "mixBitmaps" to mixBitmaps,
     "mixGrayscales" to mixGrayscales,
+    "mixScene" to mixSceneOperator,
+    "illumination" to illuminationOperator,
     "perlinNoise" to simpleNoiseOperator,
     "rayMarch" to rayMarchOperator,
     "voronoiBoundaries" to voronoiBoundaryOperator

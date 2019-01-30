@@ -67,6 +67,7 @@ data class Vector3(
   operator fun minus(other: Vector3fc) = Vector3m(x - other.x, y - other.y, z - other.z)
   operator fun minus(v: Float) = Vector3m(x - v, y - v, z - v)
   operator fun div(v: Float) = Vector3(x / v, y / v, z / v)
+  operator fun div(v: Vector3) = Vector3(x / v.x, y / v.y, z / v.z)
 
   fun cross(v: Vector3): Vector3 =
       Vector3(y * v.z - z * v.y,
