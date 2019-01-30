@@ -116,8 +116,8 @@ fun applyCompression(buffer: FloatBuffer, min: Float, max: Float): FloatBuffer {
   loopFloatBuffer(buffer) { color ->
     //    val bottom = getSmallest(color)
 //    val floored = Vector3(floor(color.x), floor(color.y), floor(color.z))
-    val n = color + min * mod
-    val n2 = n / (n + 1f)
+    val n = (color - min) * mod
+//    val n2 = n / (n + 1f)
 //    val n2 = if (n.x > 1f || n.y > 1f || n.z > 1f) {
 //      val j = listOf(n.x, n.y, n.z)
 //      val spillOver = j.map { if (it > 1f) it - 1f else 0f }.sum() / 3
@@ -135,8 +135,10 @@ fun applyCompression(buffer: FloatBuffer, min: Float, max: Float): FloatBuffer {
 //    output.put(mix(n2.x, color.x))
 //    output.put(mix(n2.y, color.y))
 //    output.put(mix(n2.y, color.z))
-
-    output.put(cleanup(n2))
+    if (color > 0.5f) {
+      val k = 0
+    }
+    output.put(cleanup(n))
 //    output.put(cleanup(n2.y))
 //    output.put(cleanup(n2.y))
   }

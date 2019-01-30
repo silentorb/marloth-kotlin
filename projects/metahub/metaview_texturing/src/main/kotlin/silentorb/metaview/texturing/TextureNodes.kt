@@ -131,7 +131,7 @@ val nodeDefinitions: NodeDefinitionMap = mapOf(
                 type = grayscaleType
             )
         ),
-        outputType = grayscaleType
+        outputType = bitmapType
     ),
     "rayMarch" to NodeDefinition(
         inputs = mapOf(

@@ -278,7 +278,11 @@ val mixSceneOperator: TextureFunction =
         val illumination = floatBufferArgument(arguments, "illumination")
         val k = 0
         fillBuffer(3, length) { buffer ->
-          buffer.put(mixScenePoint(color.getVector3(), illumination.get()))
+          for (y in 0 until length) {
+            for (x in 0 until length) {
+              buffer.put(mixScenePoint(color.getVector3(), illumination.get()))      }
+          }
+//          buffer.put(Vector3(1f, 0f, 1f))
         }
       }
     }
