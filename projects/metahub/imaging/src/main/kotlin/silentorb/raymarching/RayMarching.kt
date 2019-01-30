@@ -48,8 +48,9 @@ fun illuminatePoint(depth: Float, position: Vector3, normal: Vector3): Float {
   val depthShading = 1f - depth * 0.5f
   val lightPosition = Vector3(3f, -3f, 3f)
   val dot = (lightPosition - position).normalize().dot(normal)
-  val lighting = cubicIn(dot * 0.5f + 0.5f)
-  val value = depthShading * 0.2f + lighting * 0.8f
+  val lighting = cubicIn(dot * 0.5f + 0.5f) * 2f - 1f
+  val value = depthShading * 0.5f + lighting
+//  val value = depthShading * 0.2f + lighting * 0.8f
   return minMax(value, 0f, 1f)
 }
 
