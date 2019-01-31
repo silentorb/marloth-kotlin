@@ -21,8 +21,6 @@ data class PointDistance(
     val normal: Normal = zeroNormal
 )
 
-typealias Sdf = (Vector3) -> PointDistance
-
 private const val normalStep = 0.001f
 
 fun calculateNormal(sdf: Sdf, position: Vector3): Vector3 {
@@ -34,10 +32,6 @@ fun calculateNormal(sdf: Sdf, position: Vector3): Vector3 {
       accumulateDimension(Vector3(0f, 0f + normalStep, 0f)),
       accumulateDimension(Vector3(0f, 0f, 0f + normalStep))
   ).normalize()
-}
-
-fun sceneSdf(position: Vector3): PointDistance {
-  return PointDistance(position.length() - 1.0f)
 }
 
 data class Marcher(
@@ -60,7 +54,10 @@ tailrec fun march(marcher: Marcher, sdf: Sdf, ray: Ray, depth: Float, steps: Int
   val point = projectPoint(ray, depth)
   val distance = sdf(point)
 
-  return if (distance.value < epsilon)
+  // If this is too small it will pass through smaller objects
+  val rayHitRange = 0.001f
+
+  return if (distance.value < rayHitRange)
     PointDistance(depth, distance.normal)
   else {
     val newDepth = depth + distance.value
@@ -115,5 +112,11 @@ fun pixelRenderer(marcher: Marcher, scene: Scene): (Float, Float) -> MarchedPoin
     missedPoint(ray, hit.value)
 }
 
-fun mixScenePoint(color: Vector3, illumination: Float): Vector3 =
-    color * illumination
+fun mixColorLuminance(color: Vector3, luminance: Float): Vector3 {
+  val max = getBiggest(color)
+  val min = getSmallest(color)
+  val gap = max - min
+  val saturationMod = 2.0f
+
+  return color * luminance // * gap * saturationMod
+}

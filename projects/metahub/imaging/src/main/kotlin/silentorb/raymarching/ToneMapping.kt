@@ -72,7 +72,7 @@ fun getLuminanceRange(buffer: FloatBuffer): Pair<Float, Float> {
 //  return ranges.map { Pair(it[0], it[1]) }
 //}
 
-fun getLargest(v: Vector3): Float =
+fun getBiggest(v: Vector3): Float =
     if (v.x > v.y)
       if (v.x > v.z)
         v.x
@@ -102,45 +102,13 @@ fun applyCompression(buffer: FloatBuffer, min: Float, max: Float): FloatBuffer {
   fun cleanup(value: Float) =
       minMax(value, 0f, 1f)
 
-//  fun normalize1(value: Float) =
-//      (value - min) * mod
-
-//  fun normalize2(value: Float) =
-//      quadOut(minMax((value - min) * mod, 0f, 1f))
-
-  fun mix(a: Float, b: Float): Float =
-      Math.min(1f, cleanup(a) * 0.3f + b * 0.7f)
-
-  fun floor(value: Float) = Math.max(0f, value)
-
   loopFloatBuffer(buffer) { color ->
-    //    val bottom = getSmallest(color)
-//    val floored = Vector3(floor(color.x), floor(color.y), floor(color.z))
     val n = (color - min) * mod
-//    val n2 = n / (n + 1f)
-//    val n2 = if (n.x > 1f || n.y > 1f || n.z > 1f) {
-//      val j = listOf(n.x, n.y, n.z)
-//      val spillOver = j.map { if (it > 1f) it - 1f else 0f }.sum() / 3
-//      val m = j.map {
-//        if (it > 1f)
-//          1f
-//        else {
-//          Math.min(1f, it + spillOver)
-//        }
-//      }
-//      Vector3(m[0], m[1], m[2])
-//    } else
-//      n
 
-//    output.put(mix(n2.x, color.x))
-//    output.put(mix(n2.y, color.y))
-//    output.put(mix(n2.y, color.z))
     if (color > 0.5f) {
       val k = 0
     }
     output.put(cleanup(n))
-//    output.put(cleanup(n2.y))
-//    output.put(cleanup(n2.y))
   }
 
   output.rewind()
@@ -150,6 +118,4 @@ fun applyCompression(buffer: FloatBuffer, min: Float, max: Float): FloatBuffer {
 fun compressRange(buffer: FloatBuffer): FloatBuffer {
   val (min, max) = getLuminanceRange(buffer)
   return applyCompression(buffer, min, max)
-//  val ranges = getChannelLuminanceRange(buffer)
-//  return applyCompression(buffer, ranges)
 }

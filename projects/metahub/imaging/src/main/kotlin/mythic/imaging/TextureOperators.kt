@@ -228,7 +228,7 @@ val rayMarchOperator: TextureFunction =
                 position = Vector3(),
                 direction = Vector3(0f, 1f, 0f).normalize()
             ),
-            sdf = ::sceneSdf
+            sdf = sampleScene()
         )
         val area = length * length
         val buffers = MarchedBuffers(
@@ -283,10 +283,9 @@ val mixSceneOperator: TextureFunction =
         fillBuffer(3, length) { buffer ->
           for (y in 0 until length) {
             for (x in 0 until length) {
-              buffer.put(mixScenePoint(color.getVector3(), illumination.get()))
+              buffer.put(mixColorLuminance(color.getVector3(), illumination.get()))
             }
           }
-//          buffer.put(Vector3(1f, 0f, 1f))
         }
       }
     }
