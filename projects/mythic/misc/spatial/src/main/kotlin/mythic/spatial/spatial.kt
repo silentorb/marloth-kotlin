@@ -101,7 +101,7 @@ fun isBetween(middle: Vector2fMinimal, first: Vector2fMinimal, second: Vector2fM
     isBetween(middle.x, first.x, second.x)
         && isBetween(middle.y, first.y, second.y)
 
-val epsilon = 0.00000001f
+const val epsilon = 0.00000001f
 
 fun rayPolygonDistance(rayStart: Vector3, rayDirection: Vector3, polygonPoint: Vector3, polygonNormal: Vector3): Float? {
   val denominator = -polygonNormal.dot(rayDirection)

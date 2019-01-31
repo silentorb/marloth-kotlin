@@ -123,4 +123,12 @@ data class Vector3(
       x >= value.x - epsilon && x <= value.x + epsilon
           && y >= value.y - epsilon && y <= value.y + epsilon
           && z >= value.z - epsilon && z <= value.z + epsilon
+
+  operator fun get(i: Int): Float =
+      when (i) {
+        0 -> x
+        1 -> y
+        2 -> z
+        else -> throw Error("Invalid index $i")
+      }
 }

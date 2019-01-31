@@ -223,9 +223,12 @@ val rayMarchOperator: TextureFunction =
             maxSteps = 100
         )
 
-        val camera = Camera(
-            position = Vector3(),
-            direction = Vector3(0f, 1f, 0f).normalize()
+        val scene = Scene(
+            camera = Camera(
+                position = Vector3(),
+                direction = Vector3(0f, 1f, 0f).normalize()
+            ),
+            sdf = ::sceneSdf
         )
         val area = length * length
         val buffers = MarchedBuffers(
@@ -235,7 +238,7 @@ val rayMarchOperator: TextureFunction =
             normal = BufferUtils.createFloatBuffer(area * 3)
         )
 
-        val render = renderSomething(marcher, camera)
+        val render = pixelRenderer(marcher, scene)
 
         for (y in 0 until length) {
           for (x in 0 until length) {
@@ -280,7 +283,8 @@ val mixSceneOperator: TextureFunction =
         fillBuffer(3, length) { buffer ->
           for (y in 0 until length) {
             for (x in 0 until length) {
-              buffer.put(mixScenePoint(color.getVector3(), illumination.get()))      }
+              buffer.put(mixScenePoint(color.getVector3(), illumination.get()))
+            }
           }
 //          buffer.put(Vector3(1f, 0f, 1f))
         }
