@@ -202,7 +202,7 @@ val voronoiBoundaryOperator: TextureFunction = withBuffer(withGrayscaleBuffer) {
   val length = 10
   val grid = newAnchorGrid(dice, length, 10)
   val nearestCells = cached(getNearestCells(grid, 2))
-  voronoiBoundaryHighlight(length, nearestCells, 0.05f * grid.length.toFloat())
+  voronoi(length, nearestCells, voronoiBoundaries(0.05f * grid.length.toFloat()))
 //  { x, y ->
 //0f
 //  }

@@ -186,12 +186,9 @@ fun manhattanDistance(a: Vector2): (Vector2) -> Float = { b ->
   Math.abs(a.x - b.x) + Math.abs(a.y - b.y)
 }
 
-fun voronoiBoundaryHighlight(length: Int, nearestCells: CellsSource, thickness: Float): Sampler = { x, y ->
-  val input = Vector2(x, y) * length.toFloat()
-  val i = input.toVector2i()
-//  val offset = input - i.toVector2()
-  val options = nearestCells(i)
-//  val options = grid.cells.filterNotNull()
+typealias VoronoiApp = (Vector2, List<Vector2>) -> Float
+
+fun voronoiBoundaries(thickness: Float): VoronoiApp = { input, options ->
   val nearestPair = options.sortedBy { it.distance(input) }.take(2)
 //  val nearestPair = options.sortedBy(manhattanDistance(input)).take(2)
   if (nearestPair[0] == nearestPair[1]) {
@@ -217,4 +214,13 @@ fun voronoiBoundaryHighlight(length: Int, nearestCells: CellsSource, thickness: 
 //    result + overlay
 
   result
+}
+
+fun voronoi(length: Int, nearestCells: CellsSource, app: VoronoiApp): Sampler = { x, y ->
+  val input = Vector2(x, y) * length.toFloat()
+  val i = input.toVector2i()
+//  val offset = input - i.toVector2()
+  val options = nearestCells(i)
+
+  app(input, options)
 }
