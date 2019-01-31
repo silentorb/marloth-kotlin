@@ -14,6 +14,20 @@ fun plus(vararg items: Sdf): Sdf = { point ->
       .firstSortedBy { it.value }
 }
 
+fun blend(range: Float, vararg items: Sdf): Sdf = { point ->
+  val sorted = items.map { it(point) }
+      .sortedBy { it.value }
+
+  if (sorted.size > 1) {
+    val gap = Math.abs(sorted[0].value - sorted[1].value)
+    if (sorted[0].value < range && sorted[1].value < range && gap <= range)
+      PointDistance(0f)
+    else
+      sorted.first()
+  } else
+    sorted.first()
+}
+
 fun diff(a: Sdf, b: Sdf): Sdf = { point ->
   PointDistance(Math.max(a(point).value, b(point).value))
 }

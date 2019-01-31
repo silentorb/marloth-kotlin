@@ -228,7 +228,8 @@ val rayMarchOperator: TextureFunction =
                 position = Vector3(),
                 direction = Vector3(0f, 1f, 0f).normalize()
             ),
-            sdf = sampleScene()
+            sdf = sampleScene(),
+            lights = listOf()
         )
         val area = length * length
         val buffers = MarchedBuffers(
@@ -268,9 +269,13 @@ val illuminationOperator: TextureFunction = withBuffer(withGrayscaleBuffer) { ar
   val depth = floatBufferArgument(arguments, "depth")
   val position = floatBufferArgument(arguments, "position")
   val normal = floatBufferArgument(arguments, "normal")
+  val lights = listOf(
+      Light(position = Vector3(3f, -3f, 3f), brightness = 1f),
+      Light(position = Vector3(-3f, 0f, 2f), brightness = 0.8f)
+  )
   val k = 0
   { x, y ->
-    illuminatePoint(depth.get(), position.getVector3(), normal.getVector3())
+    illuminatePoint(lights, depth.get(), position.getVector3(), normal.getVector3())
   }
 }
 
@@ -283,7 +288,7 @@ val mixSceneOperator: TextureFunction =
         fillBuffer(3, length) { buffer ->
           for (y in 0 until length) {
             for (x in 0 until length) {
-              buffer.put(mixColorLuminance(color.getVector3(), illumination.get()))
+              buffer.put(mixColorAndLuminance(color.getVector3(), illumination.get()))
             }
           }
         }

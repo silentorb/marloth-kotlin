@@ -1,25 +1,6 @@
 package silentorb.raymarching
 
 import mythic.spatial.Vector3
-import mythic.spatial.cubicIn
-import mythic.spatial.epsilon
-
-data class Camera(
-    val position: Vector3,
-    val direction: Vector3
-)
-
-data class Ray(
-    val position: Vector3,
-    val direction: Vector3
-)
-
-typealias Normal = (Vector3) -> Vector3
-
-data class PointDistance(
-    val value: Float,
-    val normal: Normal = zeroNormal
-)
 
 private const val normalStep = 0.001f
 
@@ -33,16 +14,6 @@ fun calculateNormal(sdf: Sdf, position: Vector3): Vector3 {
       accumulateDimension(Vector3(0f, 0f, 0f + normalStep))
   ).normalize()
 }
-
-data class Marcher(
-    val end: Float,
-    val maxSteps: Int
-)
-
-data class Scene(
-    val sdf: Sdf,
-    val camera: Camera
-)
 
 val zeroNormal: Normal = { Vector3.zero }
 
@@ -68,15 +39,6 @@ tailrec fun march(marcher: Marcher, sdf: Sdf, ray: Ray, depth: Float, steps: Int
     else
       march(marcher, sdf, ray, newDepth, steps + 1)
   }
-}
-
-fun illuminatePoint(depth: Float, position: Vector3, normal: Vector3): Float {
-  val depthShading = 1f - depth * 0.5f
-  val lightPosition = Vector3(3f, -3f, 3f)
-  val dot = (lightPosition - position).normalize().dot(normal)
-  val lighting = cubicIn(dot * 0.5f + 0.5f) * 2f - 1f
-  val value = depthShading * 0.5f + lighting
-  return value
 }
 
 data class MarchedPoint(
@@ -112,7 +74,7 @@ fun pixelRenderer(marcher: Marcher, scene: Scene): (Float, Float) -> MarchedPoin
     missedPoint(ray, hit.value)
 }
 
-fun mixColorLuminance(color: Vector3, luminance: Float): Vector3 {
+fun mixColorAndLuminance(color: Vector3, luminance: Float): Vector3 {
   val max = getBiggest(color)
   val min = getSmallest(color)
   val gap = max - min
