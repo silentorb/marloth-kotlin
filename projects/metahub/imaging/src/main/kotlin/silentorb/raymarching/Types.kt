@@ -12,6 +12,13 @@ data class Ray(
     val direction: Vector3
 )
 
+data class MarchedPoint(
+    val color: Vector3,
+    val depth: Float,
+    val position: Vector3,
+    val normal: Vector3
+)
+
 typealias Normal = (Vector3) -> Vector3
 
 data class PointDistance(

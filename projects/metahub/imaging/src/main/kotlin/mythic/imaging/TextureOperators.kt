@@ -219,7 +219,7 @@ val rayMarchOperator: TextureFunction =
     { length ->
       { arguments ->
         val marcher = Marcher(
-            end = 2f,
+            end = 5f,
             maxSteps = 100
         )
 

@@ -20,11 +20,13 @@ fun cubicOut(t: Float): Float {
 
 fun quadInOut(t: Float): Float {
   val n = t * 2;
-  return if (n < 1f)
+  return if (t < 0.5f)
     0.5f * n * n
+//  t
   else {
     val j = n - 1
     -0.5f * (j * (j - 2) - 1)
+    t
   }
 }
 

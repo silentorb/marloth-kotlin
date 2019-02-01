@@ -20,15 +20,25 @@ val zeroNormal: Normal = { Vector3.zero }
 fun projectPoint(ray: Ray, depth: Float): Vector3 =
     ray.position + ray.direction * depth
 
+fun missedPoint(ray: Ray, depth: Float) = MarchedPoint(
+    depth = depth,
+    color = Vector3.zero,
+    position = projectPoint(ray, depth),
+    normal = Vector3.zero
+)
+
+const private val rayHitRange = 0.001f
+
+fun isRayHit(distance:Float): Boolean = distance < rayHitRange
+
 tailrec fun march(marcher: Marcher, sdf: Sdf, ray: Ray, depth: Float, steps: Int): PointDistance {
 
   val point = projectPoint(ray, depth)
   val distance = sdf(point)
 
   // If this is too small it will pass through smaller objects
-  val rayHitRange = 0.001f
 
-  return if (distance.value < rayHitRange)
+  return if (isRayHit(distance.value))
     PointDistance(depth, distance.normal)
   else {
     val newDepth = depth + distance.value
@@ -40,20 +50,6 @@ tailrec fun march(marcher: Marcher, sdf: Sdf, ray: Ray, depth: Float, steps: Int
       march(marcher, sdf, ray, newDepth, steps + 1)
   }
 }
-
-data class MarchedPoint(
-    val color: Vector3,
-    val depth: Float,
-    val position: Vector3,
-    val normal: Vector3
-)
-
-fun missedPoint(ray: Ray, depth: Float) = MarchedPoint(
-    depth = depth,
-    color = Vector3.zero,
-    position = projectPoint(ray, depth),
-    normal = Vector3.zero
-)
 
 fun pixelRenderer(marcher: Marcher, scene: Scene): (Float, Float) -> MarchedPoint = { x, y ->
   val sdf = scene.sdf
