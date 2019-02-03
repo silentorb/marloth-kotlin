@@ -271,9 +271,10 @@ data class Shaders(
     val flat: GeneralPerspectiveShader,
     val coloredAnimated: GeneralPerspectiveShader,
     val flatAnimated: GeneralPerspectiveShader,
-    val depthOfField: ScreenShader,
+    val depthOfField: DepthScreenShader,
     val screenColor: ScreenColorShader,
-    val screenDesaturation: ScreenShader
+    val screenDesaturation: DepthScreenShader,
+    val screenTexture: SimpleScreenShader
 )
 
 data class UniformBuffers(
@@ -307,8 +308,9 @@ fun createShaders(buffers: UniformBuffers): Shaders {
       flatAnimated = GeneralPerspectiveShader(buffers, flatFragment, ShaderFeatureConfig(
           skeleton = true
       )),
-      depthOfField = ScreenShader(ShaderProgram(screenVertex, depthOfFieldFragment)),
+      depthOfField = DepthScreenShader(ShaderProgram(screenVertex, depthOfFieldFragment)),
       screenColor = ScreenColorShader(ShaderProgram(screenVertex, screenColorFragment)),
-      screenDesaturation = ScreenShader(ShaderProgram(screenVertex, screenDesaturation))
+      screenDesaturation = DepthScreenShader(ShaderProgram(screenVertex, screenDesaturation)),
+      screenTexture = SimpleScreenShader(ShaderProgram(screenVertex, screenTextureFragment))
   )
 }

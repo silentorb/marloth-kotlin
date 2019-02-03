@@ -1,6 +1,10 @@
 package silentorb.raymarching
 
+import mythic.spatial.Matrix
+import mythic.spatial.Vector2
 import mythic.spatial.Vector3
+import org.joml.Math
+import org.joml.times
 
 private const val normalStep = 0.001f
 
@@ -29,7 +33,7 @@ fun missedPoint(ray: Ray, depth: Float) = MarchedPoint(
 
 const private val rayHitRange = 0.001f
 
-fun isRayHit(distance:Float): Boolean = distance < rayHitRange
+fun isRayHit(distance: Float): Boolean = distance < rayHitRange
 
 tailrec fun march(marcher: Marcher, sdf: Sdf, ray: Ray, depth: Float, steps: Int): PointDistance {
 
@@ -51,12 +55,23 @@ tailrec fun march(marcher: Marcher, sdf: Sdf, ray: Ray, depth: Float, steps: Int
   }
 }
 
-fun pixelRenderer(marcher: Marcher, scene: Scene): (Float, Float) -> MarchedPoint = { x, y ->
+fun newCameraTransform(camera: Camera): Matrix {
+  val fov = 90f
+  val fovRadians = Math.toRadians(fov.toDouble()).toFloat()
+  val tangent = Math.tan((fovRadians * 0.5f).toDouble()).toFloat()
+
+}
+
+fun pixelRenderer(marcher: Marcher, scene: Scene, cameraTransform: Matrix): (Vector2) -> MarchedPoint = { unitPoint ->
   val sdf = scene.sdf
+  val camera = scene.camera
+//  val half = camera.dimensions * 0.5f
+//  val offset = scene.camera.orientation * Vector3(0f, x * half.x, y * half.y)
   val ray = Ray(
-      position = Vector3(x * 4f - 2f, -2f, y * 4f - 2f),
-      direction = scene.camera.direction
+      position = camera.position + Vector3(unitPoint.x, 0f, unitPoint.y).transform(cameraTransform),
+      direction = scene.camera.orientation * Vector3(1f, 0f, 0f)
   )
+
   val hit = march(marcher, sdf, ray, 0f, 0)
   if (hit.value < marcher.end) {
     val position = projectPoint(ray, hit.value)

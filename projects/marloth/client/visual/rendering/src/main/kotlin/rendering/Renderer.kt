@@ -10,6 +10,7 @@ import mythic.platforming.WindowInfo
 import mythic.spatial.*
 import mythic.typography.*
 import org.joml.*
+import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30.*
 import org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE
@@ -22,6 +23,7 @@ import rendering.texturing.TextureLibrary
 import rendering.texturing.createTextureLibrary
 import rendering.texturing.loadTextures
 import scenery.*
+import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 
 enum class TextureAntialiasing {
@@ -162,6 +164,8 @@ fun textureAttributesFromConfig(config: DisplayConfig) =
 
 class Renderer(val config: DisplayConfig) {
   val glow = Glow()
+  var renderTextureBuffer: ByteBuffer? = null
+  var renderTexture: Texture? = null
   val sceneBuffer = UniformBuffer(sceneBufferSize)
   val sectionBuffer = UniformBuffer(sectionBufferSize)
   val boneBuffer = UniformBuffer(boneBufferSize)
@@ -223,9 +227,26 @@ class Renderer(val config: DisplayConfig) {
     glow.state.viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
     glow.state.depthEnabled = true
     glow.operations.clearScreen()
+    renderTextureBuffer = renderTextureBuffer
+        ?: BufferUtils.createByteBuffer(windowInfo.dimensions.x * windowInfo.dimensions.y * 3)
   }
 
   fun finishRender(windowInfo: WindowInfo) {
+    if (renderTexture == null) {
+      val textureAttributes = TextureAttributes(
+          repeating = false,
+          smooth = false,
+          storageUnit = TextureStorageUnit.unsigned_byte
+      )
+      renderTexture = Texture(windowInfo.dimensions.x, windowInfo.dimensions.y, textureAttributes)
+    }
+    renderTexture!!.update(renderTextureBuffer!!)
+
+    shaders.screenTexture.activate()
+    val canvasDependencies = getStaticCanvasDependencies()
+    activateTextures(listOf(renderTexture!!))
+    canvasDependencies.meshes.image.draw(DrawMethod.triangleFan)
+
     if (multisampler != null) {
       val width = windowInfo.dimensions.x
       val height = windowInfo.dimensions.y

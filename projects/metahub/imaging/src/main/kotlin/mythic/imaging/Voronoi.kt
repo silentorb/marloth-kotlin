@@ -1,6 +1,6 @@
 package mythic.imaging
 
-import mythic.ent.cached
+import mythic.ent.mappedCache
 import mythic.spatial.Vector2
 import mythic.spatial.toVector2
 import mythic.spatial.toVector2i
@@ -146,8 +146,8 @@ private fun newOffsets(step: Int): List<Vector2i> {
 typealias CellsSource = (Vector2i) -> List<Vector2>
 
 fun getNearestCells(grid: AnchorGrid, minimumCount: Int): CellsSource {
-  val offsets = cached(::newOffsets)
-//  val cell = cached(anchorGridCell(grid))
+  val offsets = mappedCache(::newOffsets)
+//  val cell = mappedCache(anchorGridCell(grid))
   return { i ->
     var step = 1
 

@@ -5,6 +5,7 @@ import org.lwjgl.opengl.EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EX
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL13.*
 import org.lwjgl.opengl.GL30.glGenerateMipmap
+import org.lwjgl.opengl.GL45.glTextureSubImage2D
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 
@@ -76,6 +77,10 @@ fun initializeTexture(width: Int, height: Int, attributes: TextureAttributes, bu
     TextureStorageUnit.unsigned_byte -> GL_UNSIGNED_BYTE
   }
 
+  if (width != height) {
+    val k = 0
+  }
+
   glTexImage2D(
       GL_TEXTURE_2D, 0, internalFormat,
       width,
@@ -115,6 +120,10 @@ class Texture(val width: Int, val height: Int, val target: TextureTarget) {
   fun dispose() {
     glDeleteTextures(id)
     id = 0
+  }
+
+  fun update(buffer: ByteBuffer) {
+    glTextureSubImage2D(id, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, buffer)
   }
 
   private fun bind() {

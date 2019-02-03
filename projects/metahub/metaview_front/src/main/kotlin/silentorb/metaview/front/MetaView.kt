@@ -131,7 +131,7 @@ class LabGui : Application() {
     try {
       primaryStage.title = "Texture Generation"
 
-      val engine = newTextureEngine(textureLength)
+      val engine = newTextureEngine(Vector2i(textureLength))
 
       val root = BorderPane()
       val scene = Scene(root, 1600.0, 800.0)

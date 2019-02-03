@@ -24,6 +24,11 @@ fun plus(vararg items: Sdf): Sdf = { point ->
       .firstSortedBy { it.value }
 }
 
+fun plus(items: List<Sdf>): Sdf = { point ->
+  items.map { it(point) }
+      .firstSortedBy { it.value }
+}
+
 fun blend(range: Float, vararg items: Sdf): Sdf = { point ->
   val sorted = items.map { it(point) }
       .sortedBy { it.value }

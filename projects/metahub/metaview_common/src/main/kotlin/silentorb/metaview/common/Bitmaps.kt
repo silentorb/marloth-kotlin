@@ -2,7 +2,7 @@ package silentorb.metaview.common
 
 import silentorb.metaview.common.views.ValueDisplayMap
 import silentorb.metaview.common.views.newImage
-import mythic.imaging.floatTextureToBytes
+import mythic.imaging.rgbFloatToBytes
 import mythic.imaging.grayscaleTextureToBytes
 import org.joml.Vector2i
 import org.lwjgl.BufferUtils
@@ -25,17 +25,18 @@ fun fillerTypeValues(length: Int): ValueMap = mapOf(
 ).mapValues { { it.value(length) } }
 
 fun textureValueDisplays(dimensions: Vector2i): ValueDisplayMap = mapOf(
-    bitmapType to ::floatTextureToBytes,
+    bitmapType to ::rgbFloatToBytes,
     grayscaleType to ::grayscaleTextureToBytes
 ).mapValues { (_, toBytes) ->
   { value: Any ->
     val buffer = value as FloatBuffer
+    val output = BufferUtils.createByteBuffer(buffer.capacity())
     newImage(dimensions, toBytes(buffer))
   }
 }.plus(mapOf(
     multiType to { value: Any ->
       val map = value as Map<String, Any>
       val buffer = map["color"] as FloatBuffer
-      newImage(dimensions, floatTextureToBytes(buffer))
+      newImage(dimensions, rgbFloatToBytes(buffer))
     }
 ))

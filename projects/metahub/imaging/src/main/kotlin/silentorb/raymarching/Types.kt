@@ -1,10 +1,13 @@
 package silentorb.raymarching
 
+import mythic.spatial.Quaternion
+import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 
 data class Camera(
     val position: Vector3,
-    val direction: Vector3
+    val orientation: Quaternion,
+    val dimensions: Vector2
 )
 
 data class Ray(

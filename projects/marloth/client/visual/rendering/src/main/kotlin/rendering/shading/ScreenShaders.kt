@@ -96,6 +96,18 @@ void main()
 }
 """
 
+val screenTextureFragment = """
+in vec2 texCoords;
+out vec4 output_color;
+uniform sampler2D colorTexture;
+
+void main()
+{
+  vec3 primaryColorSample = texture(colorTexture, texCoords).xyz;
+  output_color = vec4(primaryColorSample, 1.0);
+}
+"""
+
 val screenDesaturation = """
 in vec2 texCoords;
 out vec4 output_color;
@@ -110,7 +122,18 @@ void main()
 }
 """
 
-class ScreenShader(val program: ShaderProgram) {
+class SimpleScreenShader(val program: ShaderProgram) {
+
+  init {
+    routeTexture(program, "colorTexture", 0)
+  }
+
+  fun activate() {
+    program.activate()
+  }
+}
+
+class DepthScreenShader(val program: ShaderProgram) {
 
   init {
     routeTexture(program, "colorTexture", 0)

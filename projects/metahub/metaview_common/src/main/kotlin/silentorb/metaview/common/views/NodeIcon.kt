@@ -24,7 +24,7 @@ fun getNodePreviewBuffer(valueDisplays: ValueDisplayMap, type: String, value: An
     null
 
 //  return when (type) {
-//    bitmapType -> floatTextureToBytes(value as FloatBuffer)
+//    bitmapType -> rgbFloatToBytes(value as FloatBuffer)
 //    grayscaleType -> grayscaleTextureToBytes(value as FloatBuffer)
 //    else -> throw Error("Not supported")
 //  }

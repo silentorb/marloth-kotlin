@@ -15,6 +15,7 @@ import mythic.quartz.globalProfiler
 import mythic.spatial.Vector3
 import rendering.meshes.loading.loadJsonResource
 import mythic.imaging.newTextureEngine
+import org.joml.Vector2i
 import rendering.toCamelCase
 import scanResources
 import scanTextureResources
@@ -100,7 +101,7 @@ fun loadProceduralTextureFromFile(engine: Engine, path: String, attributes: Text
   val graph = loadTextureGraph(engine, path)
   val values = executeAndFormat(engine, graph)
   val diffuse = values["diffuse"]!! as FloatBuffer
-  return Texture(length, length, attributes, floatTextureToBytes(diffuse))
+  return Texture(length, length, attributes, rgbFloatToBytes(diffuse))
 }
 
 private fun miscTextureGenerators(): TextureGeneratorMap = mapOf(
@@ -136,7 +137,7 @@ fun listProceduralTextures(): List<Pair<String, String>> =
 
 fun loadProceduralTextures(attributes: TextureAttributes): Map<String, Texture> {
   val length = 256
-  val engine = newTextureEngine(length)
+  val engine = newTextureEngine(Vector2i(length))
 
   return listProceduralTextures()
       .associate { (path, name) ->

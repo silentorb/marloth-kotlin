@@ -48,6 +48,7 @@ data class Vector2(
 //  operator fun minus(other: Vector2fc) = Vector2(x - other.x, y - other.y)
   operator fun minus(v: Float) = Vector2(x - v, y - v)
   operator fun div(v: Float) = Vector2(x / v, y / v)
+  operator fun div(v: Vector2) = Vector2(x / v.x, y / v.y)
 
   fun distance(other: Vector2): Float {
     val dx = this.x - other.x

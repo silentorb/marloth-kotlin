@@ -28,7 +28,7 @@ fun executeNode(graph: Graph, engine: Engine, values: OutputValues, id: Id): Any
   val functionName = graph.functions[id]
   val function = engine.functions[functionName]!!
   val arguments = prepareArguments(graph, values, id)
-  return function(arguments)
+  return function(id, arguments)
 }
 
 fun executeStage(graph: Graph, engine: Engine): (OutputValues, List<Id>) -> OutputValues = { values, stage ->

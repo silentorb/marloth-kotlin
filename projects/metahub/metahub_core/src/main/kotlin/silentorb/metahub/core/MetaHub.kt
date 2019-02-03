@@ -40,7 +40,7 @@ typealias GraphTransform = (Graph) -> Graph
 
 typealias Arguments = Map<String, Any>
 
-typealias Function = (Map<String, Any>) -> Any
+typealias Function = (id: Id, Map<String, Any>) -> Any
 
 typealias TypeMapper = (Any) -> Any?
 
