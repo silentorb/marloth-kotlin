@@ -1,5 +1,6 @@
 package silentorb.raymarching
 
+import kotlinx.coroutines.*
 import mythic.imaging.*
 import mythic.spatial.Vector2
 import mythic.spatial.toVector2
@@ -23,18 +24,30 @@ fun rewindMarchBuffers(buffers: MarchedBuffers) {
   buffers.normal.rewind()
 }
 
-fun renderToMarchBuffers(buffers: MarchedBuffers, marcher: Marcher, scene: Scene, dimensions: Vector2i) {
-  val cameraTransform = newCameraTransform(scene.camera)
-  val render = pixelRenderer(marcher, scene, cameraTransform)
-  rewindMarchBuffers(buffers)
+fun sliceBuffers(buffers: MarchedBuffers): (Int, Int) -> MarchedBuffers = { offset, length ->
+  fun slice(buffer: FloatBuffer, stride: Int): FloatBuffer =
+      buffer.position(offset * stride).slice()//.limit(length * stride)
 
-  val aspect = 1 / 1.333f
-  val mod = Vector2(1f) * 2f / dimensions.toVector2()
+  MarchedBuffers(
+      color = slice(buffers.color, 3),
+      depth = slice(buffers.depth, 1),
+      position = slice(buffers.position, 3),
+      normal = slice(buffers.normal, 3)
+  )
+}
 
-  for (y in 0 until dimensions.y) {
-    for (x in 0 until dimensions.x) {
+fun hookCounter(): () -> Int {
+  var counter = 0
+  return {
+    counter++
+  }
+}
+
+fun renderSection(horizontal: IntRange, vertical: IntRange, mod: Vector2, render: PixelRenderer, buffers: MarchedBuffers) {
+  for (y in vertical) {
+    for (x in horizontal) {
       val input = Vector2(
-          (x.toFloat() * mod.x - 1f) * aspect,
+          (x.toFloat() * mod.x - 1f),// * aspect
           1f - y.toFloat() * mod.y
       )
       val point = render(input)
@@ -42,6 +55,61 @@ fun renderToMarchBuffers(buffers: MarchedBuffers, marcher: Marcher, scene: Scene
       buffers.depth.put(point.depth)
       buffers.position.put(point.position)
       buffers.normal.put(point.normal)
+    }
+  }
+}
+
+private const val renderThreadCount: Int = 4
+
+val renderThreadPool = newFixedThreadPoolContext(renderThreadCount, "RenderThread")
+
+suspend fun renderSections(mod: Vector2, render: PixelRenderer, buffers: MarchedBuffers, dimensions: Vector2i) {
+  val localSlice = sliceBuffers(buffers)
+  val sliceCount = renderThreadCount
+  val area = dimensions.x * dimensions.y
+  val sliceSize = area / sliceCount
+  val slices = (0 until sliceCount).map { localSlice(it * sliceSize, sliceSize) }
+  val sliceHeight = sliceSize / dimensions.x
+  val tasks = slices.mapIndexed { index, slice ->
+    val startY = index * sliceHeight
+    val endY = startY + sliceHeight
+    GlobalScope.async(renderThreadPool) {
+      //      println("Start $index")
+      renderSection((0 until dimensions.x), (startY until endY), mod, render, slice)
+//      println("End $index")
+    }
+  }
+  tasks.map { it.await() }//.reduce { acc, job -> acc. + job }
+}
+
+fun renderToMarchBuffers(buffers: MarchedBuffers, marcher: Marcher, scene: Scene, cast: RayCaster, dimensions: Vector2i) {
+  val calls = mutableListOf(0, 0)
+  val render = pixelRenderer(marcher, scene, cast, { calls[0] += 1 }) { calls[1] += 1 }
+
+  rewindMarchBuffers(buffers)
+
+  val aspect = 1 / 1.333f
+  val mod = Vector2(1f) * 2f / dimensions.toVector2()
+//  println("Starting")
+  if (renderThreadCount > 1) {
+    runBlocking {
+      renderSections(mod, render, buffers, dimensions)
+    }
+  }
+//  println("Ending")
+  else {
+    for (y in 0 until dimensions.y) {
+      for (x in 0 until dimensions.x) {
+        val input = Vector2(
+            (x.toFloat() * mod.x - 1f),// * aspect
+            1f - y.toFloat() * mod.y
+        )
+        val point = render(input)
+        buffers.color.put(point.color)
+        buffers.depth.put(point.depth)
+        buffers.position.put(point.position)
+        buffers.normal.put(point.normal)
+      }
     }
   }
 

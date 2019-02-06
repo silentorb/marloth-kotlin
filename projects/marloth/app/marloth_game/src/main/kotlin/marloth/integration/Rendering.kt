@@ -6,9 +6,6 @@ import mythic.bloom.Boxes
 import mythic.bloom.renderLayout
 import mythic.ent.singleCache
 import mythic.platforming.WindowInfo
-import mythic.spatial.Vector2
-import mythic.spatial.Vector3
-import org.joml.times
 import rendering.GameSceneRenderer
 import rendering.getPlayerViewports
 import silentorb.raymarching.*
@@ -20,7 +17,7 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
   client.platform.display.swapBuffers()
 
   val marcher = Marcher(
-      end = 20f,
+      end = 100f,
       maxSteps = 100
   )
 
@@ -39,15 +36,18 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
             camera = Camera(
                 position = s.camera.position,
                 orientation = s.camera.orientation,
-                dimensions = Vector2(8f, 6f)
+                near = 0.01f,
+                far = 1000f
             ),
             sdf = prepareSceneSdf(world.players.first().id, world),
             lights = listOf()
         )
-        renderToMarchBuffers(buffers, marcher, scene, dimensions)
+        val cast = perspectiveRay(scene.camera)
+
+        renderToMarchBuffers(buffers, marcher, scene, cast, dimensions)
         val buffer = client.renderer.renderTextureBuffer!!
         postPipeline(dimensions, buffers, buffer)
-//        renderScene(gameRenderer)
+        client.renderer.applyRenderBuffer(windowInfo)
       }
     }
 

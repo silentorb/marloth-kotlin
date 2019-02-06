@@ -231,7 +231,7 @@ class Renderer(val config: DisplayConfig) {
         ?: BufferUtils.createByteBuffer(windowInfo.dimensions.x * windowInfo.dimensions.y * 3)
   }
 
-  fun finishRender(windowInfo: WindowInfo) {
+  fun applyRenderBuffer(windowInfo: WindowInfo) {
     if (renderTexture == null) {
       val textureAttributes = TextureAttributes(
           repeating = false,
@@ -246,7 +246,9 @@ class Renderer(val config: DisplayConfig) {
     val canvasDependencies = getStaticCanvasDependencies()
     activateTextures(listOf(renderTexture!!))
     canvasDependencies.meshes.image.draw(DrawMethod.triangleFan)
+  }
 
+  fun finishRender(windowInfo: WindowInfo) {
     if (multisampler != null) {
       val width = windowInfo.dimensions.x
       val height = windowInfo.dimensions.y

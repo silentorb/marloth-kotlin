@@ -186,7 +186,7 @@ fun gatherVisualElements(world: World, screen: Screen, player: Player): ElementG
       simple.mapNotNull {
         convertSimpleDepiction(world, it.id, it.type)
       }
-//          .plus(characters.mapNotNull {
+//          .plusBounded(characters.mapNotNull {
 //            convertSimpleDepiction(world, it.id, it.definition.depictionType)
 //          })
           .plus(world.deck.missiles.values.mapNotNull {

@@ -1,36 +1,155 @@
 package silentorb.raymarching
 
-import mythic.ent.firstSortedBy
-import mythic.spatial.Vector3
-import mythic.spatial.cubicIn
-import mythic.spatial.quadIn
-import mythic.spatial.quadInOut
+import mythic.spatial.*
 
-typealias Sdf = (Vector3) -> PointDistance
+typealias SdfHook = () -> Unit
 
-fun sphereSdf(center: Vector3, radius: Float): Sdf = { point ->
-  PointDistance(point.distance(center) - radius)
+typealias Sdf = (SdfHook, Vector3) -> PointDistance
+typealias RaySdf = (Ray) -> Sdf
+
+typealias MinimalSdf = (Vector3) -> Float
+
+data class BoundedSdf(
+    val sdf: Sdf,
+    val position: Vector3,
+    val radius: Float
+)
+
+fun fromMinimal(geometry: Geometry, sdf: MinimalSdf): Sdf = { hook, point ->
+  hook()
+  PointDistance(value = sdf(point), geometry = geometry)
 }
+
+fun sphereNormal(center: Vector3): Normal = { _, point -> (point - center).normalize() }
+
+fun sphereSdf(center: Vector3, radius: Float): Sdf = fromMinimal(Geometry(normal = sphereNormal(center))) { point ->
+  point.distance(center) - radius
+}
+
+fun boundedSphere(center: Vector3, radius: Float) =
+    BoundedSdf(
+        sdf = sphereSdf(center, radius),
+        position = center,
+        radius = radius
+    )
 
 fun diff(a: Float, b: Float): Float =
     Math.max(a, -b)
 
-fun diff(a: Sdf, b: Sdf): Sdf = { point ->
-  PointDistance(diff(a(point).value, b(point).value))
+fun diff(a: Sdf, b: Sdf): Sdf = { hook, point ->
+  PointDistance(diff(a(hook, point).value, b(hook, point).value))
 }
 
-fun plus(vararg items: Sdf): Sdf = { point ->
-  items.map { it(point) }
-      .firstSortedBy { it.value }
+fun plusBounded(items: List<BoundedSdf>): RaySdf = { ray ->
+  val b = ray.position + ray.direction
+  val project = projectPointOnLine(ray.position, b)
+  val filtered = items
+      .filter {
+        val projected = project(it.position)
+        withinRange(projected, it.position, it.radius)
+      }
+      .map { it.sdf }
+//  val filtered = items.take(1).map { it.sdf }
+//  val filtered = listOf(items[0].sdf)
+  plusSdf(filtered)
 }
 
-fun plus(items: List<Sdf>): Sdf = { point ->
-  items.map { it(point) }
-      .firstSortedBy { it.value }
+fun plusSdf(items: List<Sdf>): Sdf = { hook, point ->
+  var nearest: PointDistance = rayMiss
+  for (item in items) {
+    val distance = item(hook, point)
+    if (distance.value < nearest.value)
+      nearest = distance
+  }
+
+  nearest
 }
 
-fun blend(range: Float, vararg items: Sdf): Sdf = { point ->
-  val sorted = items.map { it(point) }
+fun plusDetailed(items: List<Sdf>, hook: SdfHook, point: Vector3): Pair<Sdf?, PointDistance> {
+  var sdf: Sdf? = null
+  var nearest: PointDistance = rayMiss
+  for (item in items) {
+    val distance = item(hook, point)
+    if (distance.value < nearest.value) {
+      sdf = item
+      nearest = distance
+    }
+  }
+
+  return Pair(sdf, nearest)
+}
+
+private fun sortOptions(items: List<Sdf>, hook: SdfHook, point: Vector3) =
+    items
+        .map { Pair(it, it(hook, point)) }
+        .sortedBy { it.second.value }
+
+//fun arrangedPlus(sorted: List<Sdf>, lastDistance: Float): Sdf = { hook, point ->
+//  val latest = sorted.first()(hook, point)
+//  if (latest.value > lastDistance) {
+//    if (sorted.size == 1)
+//      rayMiss
+//    else {
+////      val current = sorted[1](hook, point)
+//      val resorted = sortOptions(sorted.drop(1), hook, point)
+//      val closest = resorted.first()
+////      val j = sortOptions(sorted, hook, point)
+////      val a = j.map {it.first}
+////      val b = j.map {it.second}
+////      val skip = sorted.indexOf(closest.first!!)
+//      closest.second.copy(
+//          nextSdf = arrangedPlus(resorted.map { it.first }, closest.second.value)
+//      )
+//    }
+//  } else {
+//    val resorted = sortOptions(sorted.drop(1), hook, point)
+//    if (resorted.first().first != sorted.first()) {
+//      val a = resorted.map { it.first }
+//      val k = 0
+//    }
+//    latest.copy(
+//        nextSdf = arrangedPlus(sorted, latest.value)
+//    )
+//  }
+//}
+//
+//fun arrangedPlus(items: List<Sdf>): Sdf = { hook, point ->
+//  val sorted = sortOptions(items, hook, point)
+//  val first = sorted.first()
+//  first.second.copy(
+//      nextSdf = arrangedPlus(sorted.map { it.first }, first.second.value)
+//  )
+//}
+
+//fun arrangedPlus2(items: List<Sdf>): Sdf {
+//  val lastDistances: MutableList<Float?> = items.map { 100000f }.toMutableList()
+//  return { hook, point ->
+//    var nearest: PointDistance = rayMiss
+//    var j = -1
+//    items.forEachIndexed { i, item ->
+//      val last = lastDistances[i]
+////      if (last != null) {
+//        val distance = item(hook, point)
+//        if (distance.value < nearest.value) {
+//          nearest = distance
+//          j = i
+//        }
+//        lastDistances[i] = if (last == null || distance.value > last)
+//          null
+//        else
+//          distance.value
+////      }
+//    }
+//
+//    if (lastDistances[j] == null) {
+//      val k = 0
+//    }
+//    nearest
+//  }
+//}
+
+fun blend(range: Float, vararg items: Sdf): Sdf = { hook, point ->
+  val sorted = items.map { it(hook, point) }
       .sortedBy { it.value }
 
   if (sorted.size > 1) {

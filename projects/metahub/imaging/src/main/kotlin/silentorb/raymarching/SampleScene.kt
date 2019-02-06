@@ -11,10 +11,10 @@ fun sampleScene(): Sdf =
     )
 
 fun sampleScene2(): Sdf =
-    plus(
-        sphereSdf(Vector3(-0.7f, 0f, 0f), 0.6f),
-        sphereSdf(Vector3(0.7f, 0f, 0f), 0.6f)
-    )
+    plusSdf(listOf(
+        sphereSdf(Vector3(0f, -0.7f, 0f), 0.6f),
+        sphereSdf(Vector3(0f, 0.7f, 0f), 0.6f)
+    ))
 //    blend(0.3f,
 //        sphereSdf(Vector3(-0.5f, 0f, 0f), 1f),
 //        sphereSdf(Vector3(0.7f, 0f, 0.3f), 0.7f),

@@ -1,10 +1,12 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
 dependencies {
-    compile "org.lwjgl:lwjgl:$lwjglVersion"
-    compile "org.lwjgl:lwjgl:$lwjglVersion:$lwjglNatives"
-    compile "org.lwjgl:lwjgl-opengl:$lwjglVersion"
-    compile "org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives"
+  compile "org.lwjgl:lwjgl:$lwjglVersion"
+  compile "org.lwjgl:lwjgl:$lwjglVersion:$lwjglNatives"
+  compile "org.lwjgl:lwjgl-opengl:$lwjglVersion"
+  compile "org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives"
+  
+  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1'
 }
 
 requires 'spatial', 'glowing', 'metahub_core', 'randomly'

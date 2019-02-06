@@ -118,7 +118,7 @@ fun updateClientInput(client: Client): (ClientState) -> ClientState = { state ->
 }
 
 fun updateClient(client: Client, players: List<Int>, boxes: Boxes): (ClientState) -> ClientState = { clientState ->
-  updateMousePointerVisibility(client.platform)
+//  updateMousePointerVisibility(client.platform)
   val bindingContext = bindingContext(clientState)
   val getBinding = getBinding(clientState.input, clientState.input.guiInputProfiles)
   val strokes = clientCommandStrokes[bindingContext]!!

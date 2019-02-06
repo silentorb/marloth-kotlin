@@ -1,6 +1,6 @@
 package mythic.ent
 
-fun <T, N> firstSortedBy(comparison: (N, N) -> Boolean): (Collection<T>, (T) -> N) -> T = { list, accessor ->
+fun <T, N> firstSortedBy(comparison: (N, N) -> Boolean): (Sequence<T>, (T) -> N) -> T = { list, accessor ->
   var result = list.first()
   var value = accessor(result)
   for (item in list.asSequence().drop(1)) {
@@ -14,6 +14,9 @@ fun <T, N> firstSortedBy(comparison: (N, N) -> Boolean): (Collection<T>, (T) -> 
 }
 
 fun <T> Collection<T>.firstSortedBy(accessor: (T) -> Float): T =
+    firstSortedBy<T, Float> { a, b -> a < b }(this.asSequence(), accessor)
+
+fun <T> Sequence<T>.firstSortedBy(accessor: (T) -> Float): T =
     firstSortedBy<T, Float> { a, b -> a < b }(this, accessor)
 
 fun <T, B> Collection<T>.firstNotNull(mapper: (T) -> B?): B? {

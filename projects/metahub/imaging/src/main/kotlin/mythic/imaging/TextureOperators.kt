@@ -4,7 +4,6 @@ import mythic.ent.Id
 import mythic.ent.mappedCache
 import mythic.ent.singleCache
 import mythic.spatial.Quaternion
-import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import org.joml.Vector2i
 import org.joml.Vector3i
@@ -178,34 +177,30 @@ val voronoiBoundaryOperator: TextureFunction = withBuffer(withGrayscaleBuffer) {
 //  }
 }
 
-data class MarchedBuffers(
-    val color: FloatBuffer,
-    val depth: FloatBuffer,
-    val position: FloatBuffer,
-    val normal: FloatBuffer
-)
-
 val rayMarchOperator: TextureFunction =
     { dimensions ->
       { id, arguments ->
         val marcher = Marcher(
-            end = 5f,
+            end = 50f,
             maxSteps = 100
         )
 
         val scene = Scene(
             camera = Camera(
-                position = Vector3(),
+                position = Vector3(-5f, 0f, 0f),
                 orientation = Quaternion(),
-                dimensions = Vector2(1f, 1f)
+                near = 0.01f,
+                far = 100f
             ),
-            sdf = sampleScene(),
+            sdf = { sampleScene2() },
             lights = listOf()
         )
 
         val buffers = newMarchBuffers(dimensions.x * dimensions.y)
 
-        renderToMarchBuffers(buffers, marcher, scene, dimensions)
+//        val cast = orthogonalRay(scene.camera, 1f)
+        val cast = perspectiveRay(scene.camera)
+        renderToMarchBuffers(buffers, marcher, scene, cast, dimensions)
 
         mapOf(
             "color" to buffers.color,

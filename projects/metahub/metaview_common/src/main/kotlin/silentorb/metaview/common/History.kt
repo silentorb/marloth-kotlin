@@ -8,7 +8,7 @@ import silentorb.metahub.core.Graph
 //  if (history.size > 1) {
 //    val newHistory = history.dropLast(1)
 //    state.copy(
-//        future = history.takeLast(1).plus(future),
+//        future = history.takeLast(1).plusBounded(future),
 //        history = newHistory,
 //        graph = history.last()
 //    )
@@ -20,7 +20,7 @@ import silentorb.metahub.core.Graph
 //  val history = state.history
 //  val future = state.future
 //  if (future.any()) {
-//    val newHistory = history.plus(future.first())
+//    val newHistory = history.plusBounded(future.first())
 //    state.copy(
 //        future = future.drop(1),
 //        history = newHistory,

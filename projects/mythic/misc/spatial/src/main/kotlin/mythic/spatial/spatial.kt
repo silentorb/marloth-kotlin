@@ -16,6 +16,7 @@ operator fun Vector3m.times(other: Matrix): Vector3m = mulDirection(other)
 //operator fun Vector2.times(other: Vector2): Vector2 = mul(other, Vector2())
 //operator fun Vector2.times(other: Float): Vector2 = mul(other, Vector2())
 operator fun Vector3m.times(other: Float): Vector3m = mul(other, Vector3m())
+
 operator fun Vector3m.times(other: Vector3m): Vector3m = mul(other, Vector3m())
 
 //operator fun Matrix.times(other: Matrix): Matrix = Matrix(this).mul(other)
@@ -182,6 +183,15 @@ fun getPointToLineDistance(v: Vector3, u1: Vector3, u2: Vector3): Float {
   return v.distance(projectedPoint)
 }
 
+fun projectPointOnLine(u1: Vector3, u2: Vector3): (Vector3) -> Vector3 {
+  val u = u2 - u1
+  val mod = u / u.dot(u)
+  return { v ->
+    val relative = mod * u.dot(v - u1)
+    relative + u1
+  }
+}
+
 fun projectPointOntoLineSegment(v: Vector2, u1: Vector2, u2: Vector2): Vector2? {
   val result = projectPointOntoLine(v, u1, u2)
   if (isBetween(result, u1, u2))
@@ -328,3 +338,37 @@ operator fun Vector3i.plus(other: Int): Vector3i = Vector3i(x + other, y + other
 //operator fun Vector2f.minus(other: Float): Vector2f = Vector2f(x - other, y - other)
 
 fun Vector3i.toVector3(): Vector3 = Vector3(x.toFloat(), y.toFloat(), z.toFloat())
+
+
+fun manhattanDistance(a: Vector3, b: Vector3): Float =
+    java.lang.Math.abs(a.x - b.x) + java.lang.Math.abs(a.y - b.y)
+
+//private val mk = mutableListOf(0, 0, 0, 0, 0)
+
+// Faster than a regular distance check
+fun withinRange(a: Vector3, b: Vector3, range: Float): Boolean {
+  val c = java.lang.Math.abs(a.x - b.x)
+  if (c > range) {
+//    mk[0]++
+    return false
+  }
+
+  val d = java.lang.Math.abs(a.y - b.y)
+  if (d > range) {
+//    mk[1]++
+    return false
+  }
+
+  val m = c + d
+
+  return if (m <= range) {
+//    mk[2]++
+    true
+  } else if (m * 0.70710677 <= range) {
+//    mk[3]++
+    a.distance(b) <= range
+  } else {
+//    mk[4]++
+    false
+  }
+}

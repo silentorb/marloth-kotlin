@@ -140,6 +140,7 @@ fun loadProceduralTextures(attributes: TextureAttributes): Map<String, Texture> 
   val engine = newTextureEngine(Vector2i(length))
 
   return listProceduralTextures()
+      .filter { it.second != "rayMarch" }
       .associate { (path, name) ->
         val texture = loadProceduralTextureFromFile(engine, path, attributes, length)
         Pair(name, texture)

@@ -59,7 +59,7 @@ fun <T> appLogic(transformListeners: List<StateTransformListener<T>>,
         if (event.type != HistoryEvent.undo && event.type != HistoryEvent.redo && newState.common.graph != previousState.common.graph) {
           // maxHistory + 1 because the current state is stored in history, taking up one slot for a state that isn't actually a historical record
           // This way, when maxHistory is set to 10 then the user can actually undo 10 times instead of 9.
-          history = history.plus(newState).take(maxHistory + 1)
+          history = history.plusBounded(newState).take(maxHistory + 1)
           future = listOf() // Creating new history entries erases any possible forks
         }
       }

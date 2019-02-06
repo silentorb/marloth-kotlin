@@ -9,7 +9,7 @@ data class Light(
 )
 
 fun illuminatePoint(lights: List<Light>, depth: Float, position: Vector3, normal: Vector3): Float {
-  val depthShading = 1f - depth * 0.5f
+//  val depthShading = 1f - depth * 0.5f
   val lightValues = lights
       .map { light ->
         val dot = (light.position - position).normalize().dot(normal)
@@ -17,6 +17,6 @@ fun illuminatePoint(lights: List<Light>, depth: Float, position: Vector3, normal
       }
 
   val lighting = lightValues.sum()
-  val value = depthShading * 0.5f + lighting
+  val value = lighting
   return value
 }
