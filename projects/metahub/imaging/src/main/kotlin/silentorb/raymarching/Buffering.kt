@@ -6,7 +6,6 @@ import mythic.spatial.Vector2
 import mythic.spatial.toVector2
 import org.joml.Vector2i
 import org.lwjgl.BufferUtils
-import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 
 fun newMarchBuffers(area: Int) =
@@ -117,7 +116,7 @@ fun renderToMarchBuffers(buffers: MarchedBuffers, marcher: Marcher, scene: Scene
   rewindMarchBuffers(buffers)
 }
 
-fun postPipeline(dimensions: Vector2i, buffers: MarchedBuffers, output: ByteBuffer) {
+fun postPipeline(dimensions: Vector2i, buffers: MarchedBuffers): FloatBuffer {
   val illumination = illuminationOperator(dimensions)(1, mapOf(
       "depth" to buffers.depth,
       "position" to buffers.position,
@@ -128,10 +127,20 @@ fun postPipeline(dimensions: Vector2i, buffers: MarchedBuffers, output: ByteBuff
       "input" to illumination
   )) as FloatBuffer
 
-  val mix = mixSceneOperator(dimensions)(3, mapOf(
+  return mixSceneOperator(dimensions)(3, mapOf(
       "color" to buffers.color,
       "illumination" to toned
   )) as FloatBuffer
+}
 
-  rgbFloatToBytes(mix, output)
+fun normalizeDepthBuffer(near: Float, far: Float, input: FloatBuffer, output: FloatBuffer) {
+  input.rewind()
+  output.rewind()
+  val inverseNear = 1 / near
+  val bottom = (1 / far - inverseNear)
+
+  for (i in 0 until input.capacity()) {
+    val value = input.get()
+    output.put((1 / value - inverseNear) / bottom)
+  }
 }

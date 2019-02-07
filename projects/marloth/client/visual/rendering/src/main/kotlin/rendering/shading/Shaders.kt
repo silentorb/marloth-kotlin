@@ -274,7 +274,7 @@ data class Shaders(
     val depthOfField: DepthScreenShader,
     val screenColor: ScreenColorShader,
     val screenDesaturation: DepthScreenShader,
-    val screenTexture: SimpleScreenShader
+    val screenTexture: DepthScreenShader
 )
 
 data class UniformBuffers(
@@ -311,6 +311,6 @@ fun createShaders(buffers: UniformBuffers): Shaders {
       depthOfField = DepthScreenShader(ShaderProgram(screenVertex, depthOfFieldFragment)),
       screenColor = ScreenColorShader(ShaderProgram(screenVertex, screenColorFragment)),
       screenDesaturation = DepthScreenShader(ShaderProgram(screenVertex, screenDesaturation)),
-      screenTexture = SimpleScreenShader(ShaderProgram(screenVertex, screenTextureFragment))
+      screenTexture = DepthScreenShader(ShaderProgram(screenVertex, screenTextureFragment))
   )
 }

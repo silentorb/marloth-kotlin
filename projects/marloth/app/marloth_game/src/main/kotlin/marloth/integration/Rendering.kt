@@ -1,11 +1,10 @@
 package marloth.integration
 
-import marloth.clienting.Client
-import marloth.clienting.renderContainer
-import marloth.clienting.renderScene
+import marloth.clienting.*
 import mythic.bloom.Boxes
 import mythic.bloom.renderLayout
 import mythic.ent.singleCache
+import mythic.imaging.rgbFloatToBytes
 import mythic.platforming.WindowInfo
 import rendering.GameSceneRenderer
 import rendering.getPlayerViewports
@@ -30,27 +29,31 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
       val viewports = getPlayerViewports(scenes.size, dimensions).iterator()
       val buffers = getMarchedBuffers(dimensions.x * dimensions.y)
 
-      for (s in scenes) {
-        val sceneRenderer = client.renderer.createSceneRenderer(s.main, viewports.next())
-        val gameRenderer = GameSceneRenderer(s, sceneRenderer)
-        val scene = Scene(
-            camera = Camera(
-                position = s.camera.position,
-                orientation = s.camera.orientation,
-                near = 0.01f,
-                far = 1000f
-            ),
-            sdf = prepareSceneSdf(world.players.first().id, world),
-            lights = listOf()
-        )
-        val cast = perspectiveRay(scene.camera)
+      val s = scenes.first()
+//      for (s in scenes) {
+      val sceneRenderer = client.renderer.createSceneRenderer(s.main, viewports.next())
+      val gameRenderer = GameSceneRenderer(s, sceneRenderer)
+      val filters = prepareRender(gameRenderer)
+      renderScene(gameRenderer)
+      val scene = Scene(
+          camera = Camera(
+              position = s.camera.position,
+              orientation = s.camera.orientation,
+              near = 0.01f,
+              far = 1000f
+          ),
+          sdf = prepareSceneSdf(world.players.first().id, world),
+          lights = listOf()
+      )
+      val cast = perspectiveRay(scene.camera)
 
-        renderToMarchBuffers(buffers, marcher, scene, cast, dimensions)
-        val buffer = client.renderer.renderTextureBuffer!!
-        postPipeline(dimensions, buffers, buffer)
-        client.renderer.applyRenderBuffer(windowInfo)
-        renderScene(gameRenderer)
-      }
+      renderToMarchBuffers(buffers, marcher, scene, cast, dimensions)
+      val mix = postPipeline(dimensions, buffers)
+      rgbFloatToBytes(mix, client.renderer.renderColor.buffer!!)
+      normalizeDepthBuffer(0.01f, 1000f, buffers.depth, client.renderer.renderDepth.buffer!!)
+      client.renderer.applyRenderBuffer(windowInfo)
+      finishRender(gameRenderer, filters)
+//      }
     }
 
 //      val bounds = Bounds(Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y))

@@ -68,7 +68,7 @@ class GameSceneRenderer(
       applyFrameBufferTexture(filters.last())
     }
 
-    globalState.cullFaces = true
+//    globalState.cullFaces = true
   }
 
   fun applyFrameBufferTexture(filter: ScreenFilter) {

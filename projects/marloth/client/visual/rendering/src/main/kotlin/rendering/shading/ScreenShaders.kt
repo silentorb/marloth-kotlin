@@ -99,12 +99,23 @@ void main()
 val screenTextureFragment = """
 in vec2 texCoords;
 out vec4 output_color;
+
 uniform sampler2D colorTexture;
+uniform sampler2D depthTexture;
 
 void main()
 {
   vec3 primaryColorSample = texture(colorTexture, texCoords).xyz;
+
+//  float near = 0.01;
+//  float far = 1000.0;
+//  float inverseNear = 1 / near;
+//  float bottom = (1 / far - inverseNear);
+
+  float depth = texture(depthTexture, texCoords).x;
+  float alpha = depth > 0.9 ? 0.0 : 1.0;
   output_color = vec4(primaryColorSample, 1.0);
+  gl_FragDepth = depth;
 }
 """
 

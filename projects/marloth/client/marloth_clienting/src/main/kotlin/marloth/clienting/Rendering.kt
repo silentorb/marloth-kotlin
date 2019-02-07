@@ -7,24 +7,20 @@ import org.joml.zw
 import rendering.*
 
 
-fun renderScene(renderer: GameSceneRenderer) {
+fun prepareRender(renderer: GameSceneRenderer): List<ScreenFilter> {
   val r = renderer.renderer.renderer
   val filters = getDisplayConfigFilters(r.config).plus(renderer.scene.filters)
   renderer.prepareRender(filters)
+  return filters
+}
+
+fun renderScene(renderer: GameSceneRenderer) {
   renderer.renderWorldMesh()
   renderer.renderElements()
+}
 
-//  renderSkyBox(r.mappedTextures, r.meshes, r.shaders)
+fun finishRender(renderer: GameSceneRenderer, filters: List<ScreenFilter>) {
   renderer.finishRender(renderer.renderer.viewport.zw, filters)
-  globalState.cullFaces = false
-
-//  renderer.prepareRender()
-//  renderer.renderElements()
-//
-//  val r = renderer.renderer.renderer
-////  renderSkyBox(r.mappedTextures, r.meshes, r.shaders)
-//  renderer.finishRender(renderer.renderer.viewport.zw)
-//  globalState.cullFaces = false
 }
 
 fun renderScenesOld(client: Client, scenes: List<GameScene>) {

@@ -154,6 +154,30 @@ data class Armature(
     val transforms: List<Matrix>
 )
 
+data class ByteTextureBuffer(
+    var texture: Texture? = null,
+    var buffer: ByteBuffer? = null
+)
+
+data class FloatTextureBuffer(
+    var texture: Texture? = null,
+    var buffer: FloatBuffer? = null
+)
+
+fun updateTextureBuffer(dimensions: Vector2i, buffer: ByteTextureBuffer, attributes: () -> TextureAttributes) {
+  if (buffer.texture == null) {
+    buffer.texture = Texture(dimensions.x, dimensions.y, attributes())
+  }
+  buffer.texture!!.update(buffer.buffer!!)
+}
+
+fun updateTextureBuffer(dimensions: Vector2i, buffer: FloatTextureBuffer, attributes: () -> TextureAttributes) {
+  if (buffer.texture == null) {
+    buffer.texture = Texture(dimensions.x, dimensions.y, attributes())
+  }
+  buffer.texture!!.update(buffer.buffer!!)
+}
+
 fun textureAttributesFromConfig(config: DisplayConfig) =
     TextureAttributes(
         repeating = true,
@@ -164,8 +188,8 @@ fun textureAttributesFromConfig(config: DisplayConfig) =
 
 class Renderer(val config: DisplayConfig) {
   val glow = Glow()
-  var renderTextureBuffer: ByteBuffer? = null
-  var renderTexture: Texture? = null
+  var renderColor: ByteTextureBuffer = ByteTextureBuffer()
+  var renderDepth: FloatTextureBuffer = FloatTextureBuffer()
   val sceneBuffer = UniformBuffer(sceneBufferSize)
   val sectionBuffer = UniformBuffer(sectionBufferSize)
   val boneBuffer = UniformBuffer(boneBufferSize)
@@ -227,24 +251,34 @@ class Renderer(val config: DisplayConfig) {
     glow.state.viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
     glow.state.depthEnabled = true
     glow.operations.clearScreen()
-    renderTextureBuffer = renderTextureBuffer
+    renderColor.buffer = renderColor.buffer
         ?: BufferUtils.createByteBuffer(windowInfo.dimensions.x * windowInfo.dimensions.y * 3)
+
+    renderDepth.buffer = renderDepth.buffer
+        ?: BufferUtils.createFloatBuffer(windowInfo.dimensions.x * windowInfo.dimensions.y)
   }
 
   fun applyRenderBuffer(windowInfo: WindowInfo) {
-    if (renderTexture == null) {
-      val textureAttributes = TextureAttributes(
+    updateTextureBuffer(windowInfo.dimensions, renderColor) {
+      TextureAttributes(
           repeating = false,
           smooth = false,
           storageUnit = TextureStorageUnit.unsigned_byte
       )
-      renderTexture = Texture(windowInfo.dimensions.x, windowInfo.dimensions.y, textureAttributes)
     }
-    renderTexture!!.update(renderTextureBuffer!!)
+
+    updateTextureBuffer(windowInfo.dimensions, renderDepth) {
+      TextureAttributes(
+          repeating = false,
+          smooth = false,
+          storageUnit = TextureStorageUnit.float,
+          format = TextureFormat.depth
+      )
+    }
 
     shaders.screenTexture.activate()
     val canvasDependencies = getStaticCanvasDependencies()
-    activateTextures(listOf(renderTexture!!))
+    activateTextures(listOf(renderColor.texture!!, renderDepth.texture!!))
     canvasDependencies.meshes.image.draw(DrawMethod.triangleFan)
   }
 
@@ -258,13 +292,6 @@ class Renderer(val config: DisplayConfig) {
       glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST)
     }
   }
-
-//  fun renderGameScenes(scenes: List<GameScene>, windowInfo: WindowInfo) {
-//    prepareRender(windowInfo)
-//    val renderers = mapGameSceneRenderers(this, scenes, windowInfo)
-//    renderers.forEach { it.render() }
-//    finishRender(windowInfo)
-//  }
 
 }
 

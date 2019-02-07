@@ -13,7 +13,8 @@ typealias TextureInitializer = (width: Int, height: Int, buffer: FloatBuffer?) -
 
 enum class TextureFormat {
   rgb,
-  depth
+  depth,
+  scalar,
 }
 
 enum class TextureStorageUnit {
@@ -69,6 +70,7 @@ fun initializeTexture(width: Int, height: Int, attributes: TextureAttributes, bu
 
   val internalFormat = when (attributes.format) {
     TextureFormat.rgb -> GL_RGB
+    TextureFormat.scalar -> GL_RED
     TextureFormat.depth -> GL_DEPTH_COMPONENT
   }
 
@@ -123,7 +125,13 @@ class Texture(val width: Int, val height: Int, val target: TextureTarget) {
   }
 
   fun update(buffer: ByteBuffer) {
+    buffer.rewind()
     glTextureSubImage2D(id, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, buffer)
+  }
+
+  fun update(buffer: FloatBuffer) {
+    buffer.rewind()
+    glTextureSubImage2D(id, 0, 0, 0, width, height, GL_DEPTH_COMPONENT, GL_FLOAT, buffer)
   }
 
   private fun bind() {
