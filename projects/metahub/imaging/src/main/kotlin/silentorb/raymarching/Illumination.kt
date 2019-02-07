@@ -10,13 +10,13 @@ data class Light(
 
 fun illuminatePoint(lights: List<Light>, depth: Float, position: Vector3, normal: Vector3): Float {
 //  val depthShading = 1f - depth * 0.5f
-  val lightValues = lights
-      .map { light ->
-        val dot = (light.position - position).normalize().dot(normal)
-        cubicIn(dot * 0.5f + 0.5f) * light.brightness
-      }
+  if (normal == Vector3.zero)
+    return 0f
 
-  val lighting = lightValues.sum()
-  val value = lighting
-  return value
+  var sum = 0f
+  for (light in lights) {
+    val dot = (light.position - position).normalize().dot(normal)
+    sum += cubicIn(dot * 0.5f + 0.5f) * light.brightness
+  }
+  return sum
 }

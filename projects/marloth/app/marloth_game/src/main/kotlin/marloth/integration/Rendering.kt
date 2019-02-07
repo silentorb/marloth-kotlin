@@ -2,6 +2,7 @@ package marloth.integration
 
 import marloth.clienting.Client
 import marloth.clienting.renderContainer
+import marloth.clienting.renderScene
 import mythic.bloom.Boxes
 import mythic.bloom.renderLayout
 import mythic.ent.singleCache
@@ -48,6 +49,7 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
         val buffer = client.renderer.renderTextureBuffer!!
         postPipeline(dimensions, buffers, buffer)
         client.renderer.applyRenderBuffer(windowInfo)
+        renderScene(gameRenderer)
       }
     }
 

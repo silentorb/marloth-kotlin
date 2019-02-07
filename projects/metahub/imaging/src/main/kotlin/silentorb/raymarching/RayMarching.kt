@@ -53,13 +53,36 @@ fun orthogonalRay(camera: Camera, scale: Float): (Vector2) -> Ray = { unitPoint 
 
 fun perspectiveRay(camera: Camera): (Vector2) -> Ray {
   val (near, far) = cameraPerspectiveWidths(camera)
+  val positionXVector = camera.orientation * Vector3(0f, -1f, 0f)
+  val positionYVector = camera.orientation * Vector3(0f, 0f, 1f)
+  val directionBase = camera.orientation * Vector3(1f, 0f, 0f)
+  val angleSpread = far - near
+  val angleDepth = camera.far - camera.near
+  val angleRate = angleSpread / angleDepth
+  val directionXVector = camera.orientation * Vector3(0f, -angleRate, 0f)
+  val directionYVector = camera.orientation * Vector3(0f, 0f, angleRate)
+  val positionBase = camera.position + camera.orientation * Vector3(camera.near, 0f, 0f)
+
   return { unitPoint ->
-    val nearPoint = Vector3(near, near * unitPoint.x, near * unitPoint.y)
-    val farPoint = Vector3(far, far * unitPoint.x, far * unitPoint.y)
-    val initialDirection = (farPoint - nearPoint).normalize()
+    //    val nearPoint = Vector3(near, near * unitPoint.x, near * unitPoint.y)
+//    val farPoint = Vector3(far, far * unitPoint.x, far * unitPoint.y)
+//    val initialDirection = (farPoint - nearPoint).normalize()
+
+//    val initialDirection = (Vector3(1f, -unitPoint.x, unitPoint.y) * angleRateX).normalize()
+
+//    val un = near.toDouble() * unitPoint.x.toDouble()
+//    val uf = far.toDouble() * unitPoint.x.toDouble()
+//    val p =  uf - un
+//
+//    val w = unitPoint.x.toDouble() * (far.toDouble() - near.toDouble())
+//
+//    assert(h == initialDirection)
+
+    val p = (directionBase + directionXVector * -unitPoint.x + directionYVector * unitPoint.y)
     Ray(
-        position = camera.position + camera.orientation * nearPoint,
-        direction = camera.orientation * initialDirection
+        position = positionBase + positionXVector * unitPoint.x + positionYVector * unitPoint.y,
+        direction = p.normalize()
+        // direction = camera.orientation * initialDirection
     )
   }
 }

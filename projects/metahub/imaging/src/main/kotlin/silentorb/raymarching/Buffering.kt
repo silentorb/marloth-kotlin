@@ -44,10 +44,11 @@ fun hookCounter(): () -> Int {
 }
 
 fun renderSection(horizontal: IntRange, vertical: IntRange, mod: Vector2, render: PixelRenderer, buffers: MarchedBuffers) {
+  val aspect = 1.333f
   for (y in vertical) {
     for (x in horizontal) {
       val input = Vector2(
-          (x.toFloat() * mod.x - 1f),// * aspect
+          (x.toFloat() * mod.x - 1f) * aspect,// * aspect
           1f - y.toFloat() * mod.y
       )
       val point = render(input)
