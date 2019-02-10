@@ -22,7 +22,7 @@ val simplePainterMap = MeshId.values().mapNotNull { meshId ->
 }.associate { it }
     .plus(
         mapOf(
-            DepictionType.child to MeshId.childBody
+            DepictionType.child to MeshId.personBody
         )
     )
 
@@ -120,12 +120,11 @@ fun convertComplexDepiction(world: World, depiction: Depiction): ElementGroup {
 
   return if (depiction.type == DepictionType.child) {
     val commonMeshes = listOf(
-        MeshId.childBody,
-        MeshId.childEyes
+        MeshId.personBody
     )
-    val girlMeshes = listOf(
-        MeshId.childGown,
-        MeshId.childLongHair
+    val girlMeshes = listOf<MeshId>(
+//        MeshId.childGown,
+//        MeshId.childLongHair
     )
 
     val meshes = commonMeshes.plus(girlMeshes)
@@ -138,7 +137,7 @@ fun convertComplexDepiction(world: World, depiction: Depiction): ElementGroup {
               transform = transform
           )
         },
-        armature = ArmatureId.child,
+        armature = ArmatureId.person,
         animations = animations
     )
   } else {
@@ -153,7 +152,9 @@ fun convertComplexDepiction(world: World, depiction: Depiction): ElementGroup {
                   mesh = it,
                   transform = transform.scale(0.75f)
               )
-            }
+            },
+        armature = ArmatureId.person,
+        animations = animations
     )
 //        armature = ArmatureId.child,
 //        animations = animations
@@ -161,7 +162,7 @@ fun convertComplexDepiction(world: World, depiction: Depiction): ElementGroup {
 }
 
 private val complexDepictions = setOf(
-    DepictionType.child,
+//    DepictionType.child,
     DepictionType.person
 )
 

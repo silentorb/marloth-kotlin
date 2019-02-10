@@ -32,17 +32,17 @@ data class Depiction(
 ) : Entity
 
 fun mapAnimation(world: World, id: AnimationId): AnimationId {
-  if (id == AnimationId.stand)
-    return AnimationId.girlStand
+//  if (id == AnimationId.stand)
+//    return AnimationId.stand
 
   return id
 }
 
 fun updateAnimation(world: World, animationDurations: AnimationDurationMap, animation: DepictionAnimation, strength: Float, delta: Float): DepictionAnimation {
   val animationId = mapAnimation(world, animation.animationId)
-  val duration = animationDurations[ArmatureId.child]!![animationId]!!
+  val duration = animationDurations[ArmatureId.person]!![animationId]
   val nextValue = animation.animationOffset + 1f * delta
-  val finalValue = if (nextValue >= duration)
+  val finalValue = if (duration != null && nextValue >= duration)
     nextValue % duration
   else
     nextValue

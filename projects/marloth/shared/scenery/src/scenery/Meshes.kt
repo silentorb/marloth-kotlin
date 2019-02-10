@@ -2,12 +2,12 @@ package scenery
 
 enum class MeshId {
   candle,
-  childBody,
-  childBoyClothes,
-  childBoyHair,
-  childEyes,
-  childGown,
-  childLongHair,
+//  childBody,
+//  childBoyClothes,
+//  childBoyHair,
+//  childEyes,
+//  childGown,
+//  childLongHair,
   cube,
   eyeball,
   hogHead,
@@ -20,11 +20,10 @@ enum class MeshId {
 }
 
 enum class ArmatureId {
-  child
+  person
 }
 
 enum class AnimationId {
-  girlStand,
   none,
   run,
   stand,

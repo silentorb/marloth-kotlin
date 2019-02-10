@@ -16,4 +16,4 @@ def export_model(filename):
 # for file in files:
 #     export_model(file)
 
-export_model('child.blend')
+export_model('person.blend')

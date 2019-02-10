@@ -60,7 +60,7 @@ def prepare_armature(armature):
                 if armature.pose and 'pose.bones' in data_path:
                     target_name = data_path.split('"')[1]
                     transform = data_path.split('.')[-1]
-                    print(' * * ' +target_name)
+                    print(' * * ' + target_name)
         # for fcurve in action.fcurves:
         #     data_path = fcurve.data_path
         #     target_name = data_path.split('"')[1]
@@ -82,10 +82,16 @@ def get_export_filepath():
     script_path = os.path.realpath(__file__)
     return os.path.abspath(os.path.join(os.path.dirname(script_path), '../../', models_path, name, name + '.gltf'))
 
+# This little hack allows Blender files to treat the render visibility flag as a
+# flag for whether a node should be exported.
+# This way, objects can be visible in the blender file but and not exported, (Such as helper objects)
+# while other objects can be hidden in the blender file but exported, such as objects that are not
+# currently being worked on.  This comes into play a lot when a blender file has many different versions
+# of an asset that should only be used one at a time, such as multiple outfits.  When working with such
+# a file usually only one outfit is visible at a time.
 def hide_unrenderable():
     for obj in bpy.context.scene.objects:
-        if obj.hide:
-            obj.hide_render = False
+        obj.hide = obj.hide_render
 
 def export_gltf():
     filepath = get_export_filepath()
@@ -100,7 +106,7 @@ def export_gltf():
         # settings_KHR_technique_webgl.name = '',
         # settings_KHR_technique_webgl.embed_shaders = False,
         draft_prop = False,
-        nodes_export_hidden = True,
+        nodes_export_hidden = False,
         nodes_selected_only = False,
         materials_disable = False,
         meshes_apply_modifiers = True,

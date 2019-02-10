@@ -258,8 +258,8 @@ class Renderer(val config: DisplayConfig) {
         ?: BufferUtils.createFloatBuffer(windowInfo.dimensions.x * windowInfo.dimensions.y)
   }
 
-  fun applyRenderBuffer(windowInfo: WindowInfo) {
-    updateTextureBuffer(windowInfo.dimensions, renderColor) {
+  fun applyRenderBuffer(dimensions: Vector2i) {
+    updateTextureBuffer(dimensions, renderColor) {
       TextureAttributes(
           repeating = false,
           smooth = false,
@@ -267,7 +267,7 @@ class Renderer(val config: DisplayConfig) {
       )
     }
 
-    updateTextureBuffer(windowInfo.dimensions, renderDepth) {
+    updateTextureBuffer(dimensions, renderDepth) {
       TextureAttributes(
           repeating = false,
           smooth = false,

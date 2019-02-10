@@ -7,7 +7,6 @@ import org.lwjgl.BufferUtils
 import rendering.*
 import rendering.meshes.*
 import scenery.AnimationId
-import scenery.MeshId
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
@@ -241,7 +240,7 @@ fun loadAnimation(buffer: ByteBuffer, info: GltfInfo, source: IndexedAnimation, 
 
 fun loadAnimations(buffer: ByteBuffer, info: GltfInfo, animations: List<IndexedAnimation>, bones: List<Bone>, boneIndexMap: Map<Int, BoneNode>): AnimationMap {
   return animations.mapNotNull { source ->
-    val name = toCamelCase(source.name.replace("metarig_", ""))
+    val name = toCamelCase(source.name.replace("rig_", ""))
     val key = AnimationId.values().firstOrNull { it.name == name }
     if (key != null)
       Pair(key, loadAnimation(buffer, info, source, boneIndexMap))
@@ -278,20 +277,23 @@ data class BoneNode(
 
 typealias BoneMap = Map<Int, BoneNode>
 
-fun gatherBoneHierarchy(nodes: List<Node>, root: Int, level: Int = 0, parent: Int = -1): List<InitialBoneNode> {
+fun gatherBoneHierarchy(deformingBones: List<Int>, nodes: List<Node>, root: Int, level: Int = 0, parent: Int = -1): List<InitialBoneNode> {
   val node = nodes[root]
   val children = node.children
   val descendents: List<InitialBoneNode> = if (children == null) listOf() else children.flatMap { child ->
-    gatherBoneHierarchy(nodes, child, level + 1, root).toList()
+    gatherBoneHierarchy(deformingBones, nodes, child, level + 1, root).toList()
   }
 
-  return listOf(InitialBoneNode(
+  return  if (deformingBones.contains(root))
+    listOf(InitialBoneNode(
       name = node.name,
       originalIndex = root,
       level = level,
       parent = parent
   ))
       .plus(descendents)
+  else
+    descendents
 }
 
 fun orderBoneHierarchy(levelMap: List<InitialBoneNode>): List<InitialBoneNode> {
@@ -302,8 +304,16 @@ fun orderBoneHierarchy(levelMap: List<InitialBoneNode>): List<InitialBoneNode> {
 }
 
 fun loadBoneMap(info: GltfInfo): BoneMap {
-  val root = info.nodes.indexOfFirst { it.name == "metarig" }
-  val levelMap = gatherBoneHierarchy(info.nodes, root)
+  val animations = info.animations
+  if (animations == null)
+    return mapOf()
+
+  val deformingBones = animations
+      .flatMap { animation -> animation.channels.map { it.target.node } }
+      .distinct()
+
+  val root = info.nodes.indexOfFirst { it.name == "rig" }
+  val levelMap = gatherBoneHierarchy(deformingBones, info.nodes, root)
   val orderMap = orderBoneHierarchy(levelMap)
   val result = orderMap
       .mapIndexed { i,
@@ -324,7 +334,6 @@ fun loadBoneMap(info: GltfInfo): BoneMap {
 fun loadArmature(buffer: ByteBuffer, info: GltfInfo, filename: String, boneMap: BoneMap): Armature? {
   if (info.animations == null || info.animations.none())
     return null
-//  logBuffer(buffer, info)
   val bones = boneMap.map { (_, item) ->
     val node = info.nodes[item.originalIndex]
     nodeToBone(node, item.index, item.parent)
@@ -369,7 +378,7 @@ fun loadGltf(vertexSchemas: VertexSchemas, filename: String, resourcePath: Strin
         val primitive = loadPrimitive(buffer, info, vertexSchemas, primitiveSource, name2, converter)
         val nodeIndex = info.nodes.indexOfFirst { it.mesh == meshIndex }
         val parent = info.nodes.firstOrNull { it.children != null && it.children.contains(nodeIndex) }
-        val name = if (parent != null && parent.name != "metarig")
+        val name = if (parent != null && parent.name != "rig")
           parent.name
         else
           info.nodes[nodeIndex].name

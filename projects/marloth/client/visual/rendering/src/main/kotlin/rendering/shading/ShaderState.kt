@@ -54,9 +54,10 @@ private val boneMemoryBuffer = BufferUtils.createByteBuffer(boneBufferSize)
 private val boneBufferCustodian = BufferCustodian(boneMemoryBuffer)
 
 fun createBoneTransformBuffer(originalTransforms: List<Matrix>, transforms: List<Matrix>): ByteBuffer {
-//  boneMemoryBuffer.rewind()
+  assert(transforms.size <= 128)
+
   val originalIterator = originalTransforms.iterator()
-  transforms.forEach { transform ->
+  transforms.forEachIndexed { i, transform ->
     val originalTransform = originalIterator.next()
     val diff = Matrix(transform) * Matrix(originalTransform).invert()
     diff.get(boneMemoryBuffer)

@@ -43,7 +43,7 @@ fun hookCounter(): () -> Int {
 }
 
 fun renderSection(horizontal: IntRange, vertical: IntRange, mod: Vector2, render: PixelRenderer, buffers: MarchedBuffers) {
-  val aspect = 1.333f
+  val aspect = 1 / 1.333f
   for (y in vertical) {
     for (x in horizontal) {
       val input = Vector2(
