@@ -186,9 +186,7 @@ fun convertChannelType(source: String): ChannelType =
       else -> throw Error("Unsupported channel type: " + source)
     }
 
-fun loadChannel(target: ChannelTarget, buffer: ByteBuffer, info: GltfInfo, sampler: AnimationSampler,
-                boneIndexMap: Map<Int, BoneNode>): mythic.breeze.AnimationChannel {
-  val boneIndex = boneIndexMap[target.node]!!
+fun loadChannel(target: ChannelTarget, buffer: ByteBuffer, info: GltfInfo, sampler: AnimationSampler, boneIndex: BoneNode): mythic.breeze.AnimationChannel {
   val inputAccessor = info.accessors[sampler.input]
   val inputBufferView = info.bufferViews[inputAccessor.bufferView]
   val outputAccessor = info.accessors[sampler.output]
@@ -211,14 +209,19 @@ fun loadAnimation(buffer: ByteBuffer, info: GltfInfo, source: IndexedAnimation, 
   var duration = 0f
   val channels = source.channels
       .filter { it.target.path != "scale" }
-      .map {
-        val channel = loadChannel(it.target, buffer, info, source.samplers[it.sampler], boneIndexMap)
+      .mapNotNull {
+        val boneIndex = boneIndexMap[it.target.node]
+        if (boneIndex == null)
+          null
+        else {
+          val channel = loadChannel(it.target, buffer, info, source.samplers[it.sampler], boneIndex)
 
-        val lastTime = channel.keys.last().time
-        if (lastTime > duration)
-          duration = lastTime
+          val lastTime = channel.keys.last().time
+          if (lastTime > duration)
+            duration = lastTime
 
-        channel
+          channel
+        }
       }
 
   val d = source.channels.map {
@@ -277,23 +280,20 @@ data class BoneNode(
 
 typealias BoneMap = Map<Int, BoneNode>
 
-fun gatherBoneHierarchy(deformingBones: List<Int>, nodes: List<Node>, root: Int, level: Int = 0, parent: Int = -1): List<InitialBoneNode> {
+fun gatherBoneHierarchy(nodes: List<Node>, root: Int, level: Int = 0, parent: Int = -1): List<InitialBoneNode> {
   val node = nodes[root]
   val children = node.children
   val descendents: List<InitialBoneNode> = if (children == null) listOf() else children.flatMap { child ->
-    gatherBoneHierarchy(deformingBones, nodes, child, level + 1, root).toList()
+    gatherBoneHierarchy(nodes, child, level + 1, root).toList()
   }
 
-  return  if (deformingBones.contains(root))
-    listOf(InitialBoneNode(
+  return listOf(InitialBoneNode(
       name = node.name,
       originalIndex = root,
       level = level,
       parent = parent
   ))
       .plus(descendents)
-  else
-    descendents
 }
 
 fun orderBoneHierarchy(levelMap: List<InitialBoneNode>): List<InitialBoneNode> {
@@ -303,18 +303,43 @@ fun orderBoneHierarchy(levelMap: List<InitialBoneNode>): List<InitialBoneNode> {
   }
 }
 
+fun getAncestors(nodes: List<Node>, bone: Int): List<Int> {
+  val parent = nodes.indexOfFirst { it.children != null && it.children.contains(bone) }
+  return if (parent == -1)
+    listOf()
+  else
+    listOf(parent).plus(getAncestors(nodes, parent))
+}
+
 fun loadBoneMap(info: GltfInfo): BoneMap {
-  val animations = info.animations
-  if (animations == null)
+  val skins = info.skins
+  if (skins == null)
     return mapOf()
 
-  val deformingBones = animations
-      .flatMap { animation -> animation.channels.map { it.target.node } }
+//  val deformingBones = animations
+//      .flatMap { animation -> animation.channels.map { it.target.node } }
+//      .distinct()
+
+  val deformingBones = skins
+      .flatMap { skin -> skin.joints }
+      .distinct()
+
+  val ancestors = deformingBones
+      .flatMap { getAncestors(info.nodes, it) }
+      .distinct()
+
+  val deformingBonesAndAncestors = deformingBones
+      .plus(ancestors)
       .distinct()
 
   val root = info.nodes.indexOfFirst { it.name == "rig" }
-  val levelMap = gatherBoneHierarchy(deformingBones, info.nodes, root)
+  val levelMap = gatherBoneHierarchy(info.nodes, root)
   val orderMap = orderBoneHierarchy(levelMap)
+      .filter {
+        deformingBonesAndAncestors.contains(it.originalIndex)
+//            || deformingBones.any { d -> info.nodes[it.originalIndex].children?.contains(d) ?: false }
+      }
+
   val result = orderMap
       .mapIndexed { i,
                     item ->

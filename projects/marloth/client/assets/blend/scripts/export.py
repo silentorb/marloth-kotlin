@@ -41,7 +41,7 @@ def prepare_armature(armature):
     constraints = gather_ik_bones(armature.pose)
     # print(json.dumps(constraints, indent=4))
     for action in bpy.data.actions:
-        print(action.name)
+        print("Action: " + action.name)
         if action.name != 'walk':
             continue
 
@@ -92,6 +92,7 @@ def get_export_filepath():
 def hide_unrenderable():
     for obj in bpy.context.scene.objects:
         obj.hide = obj.hide_render
+        # print("node :" + obj.name)
 
 def export_gltf():
     filepath = get_export_filepath()
