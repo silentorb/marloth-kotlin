@@ -42,11 +42,17 @@ fun updateAnimation(world: World, animationDurations: AnimationDurationMap, anim
   val animationId = mapAnimation(world, animation.animationId)
   val duration = animationDurations[ArmatureId.person]!![animationId]
   val nextValue = animation.animationOffset + 1f * delta
-  val finalValue = if (duration != null && nextValue >= duration)
-    nextValue % duration
+  val finalValue = if (duration != null)
+    if (duration == 0f)
+      0f
+    else if (nextValue >= duration)
+      nextValue % duration
+    else
+      nextValue
   else
     nextValue
 
+  assert(!finalValue.isNaN())
   return animation.copy(
       animationOffset = finalValue,
       strength = strength

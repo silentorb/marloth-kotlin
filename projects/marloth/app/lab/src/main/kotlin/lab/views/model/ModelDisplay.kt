@@ -2,7 +2,6 @@ package lab.views.model
 
 import lab.utility.*
 import lab.views.game.renderFaceNormals
-import lab.views.shared.drawSkeleton
 import mythic.bloom.*
 import mythic.breeze.MultiAnimationPart
 import mythic.breeze.transformAnimatedSkeleton

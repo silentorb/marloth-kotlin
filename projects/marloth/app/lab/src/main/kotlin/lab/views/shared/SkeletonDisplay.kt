@@ -19,14 +19,3 @@ import rendering.*
 //  }
 //  return armature.bones
 //}
-
-fun drawSkeleton(renderer: SceneRenderer, armature: Armature, transforms: List<Matrix>, modelTransform: Matrix) {
-  armature.bones
-      .filter { it.parent != -1 }
-//      .filter  { it.name == "Armature_head"}
-      .forEach { bone ->
-        val a = Vector3().transform(transforms[bone.index])
-        val b =  Vector3().transform(transforms[bone.parent])
-        renderer.drawLine(a, b, white, 2f)
-      }
-}

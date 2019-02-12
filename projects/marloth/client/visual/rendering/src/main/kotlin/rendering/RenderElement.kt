@@ -3,6 +3,7 @@ package rendering
 import mythic.breeze.MultiAnimationPart
 import mythic.breeze.transformAnimatedSkeleton
 import mythic.glowing.DrawMethod
+import mythic.spatial.Matrix
 import mythic.spatial.getRotationMatrix
 import org.joml.times
 import rendering.meshes.Primitive
@@ -42,10 +43,7 @@ fun simplePainter(renderer: SceneRenderer, primitive: Primitive, element: MeshEl
   primitive.mesh.draw(DrawMethod.triangleFan)
 }
 
-fun renderElementGroup(gameRenderer: GameSceneRenderer, group: ElementGroup) {
-  val sceneRenderer = gameRenderer.renderer
-  val armature = sceneRenderer.renderer.armatures[group.armature]
-  val transforms = if (armature != null) {
+fun armatureTransforms(armature: Armature, group: ElementGroup): List<Matrix> =
     if (group.animations.size == 1) {
       val animation = group.animations.first()
       transformAnimatedSkeleton(armature.bones, armature.animations[animation.animationId]!!, animation.timeOffset)
@@ -59,7 +57,13 @@ fun renderElementGroup(gameRenderer: GameSceneRenderer, group: ElementGroup) {
       }
       transformAnimatedSkeleton(armature.bones, animations)
     }
-  } else
+
+fun renderElementGroup(gameRenderer: GameSceneRenderer, group: ElementGroup) {
+  val sceneRenderer = gameRenderer.renderer
+  val armature = sceneRenderer.renderer.armatures[group.armature]
+  val transforms = if (armature != null)
+    armatureTransforms(armature, group)
+  else
     null
 
   if (transforms != null) {

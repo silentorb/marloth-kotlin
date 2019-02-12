@@ -31,6 +31,7 @@ fun createVertexConverter(info: GltfInfo, transformBuffer: ByteBuffer, boneMap: 
   val skin = info.skins?.get(node?.skin!!)
 
   return if (skin != null) {
+    val names = boneMap.map { it.value.name }
     val jointMap = skin.joints.mapIndexed { index, jointIndex ->
       Pair(index, jointIndex)
     }.associate { it }
@@ -40,9 +41,6 @@ fun createVertexConverter(info: GltfInfo, transformBuffer: ByteBuffer, boneMap: 
     var lastWeights: List<Float> = listOf()
     return { buffer, vertices, attribute, vertexIndex ->
       if (attribute.name == AttributeName.weights) {
-        if (node?.name == "hair" && vertexIndex == 44) {
-          val k = 0
-        }
         lastWeights = (0 until attribute.size).map {
           val value = buffer.getFloat()
           vertices.put(value)
@@ -55,9 +53,6 @@ fun createVertexConverter(info: GltfInfo, transformBuffer: ByteBuffer, boneMap: 
           val value = byteValue.toInt() and 0xFF
           val jointIndex = jointMap[value]!!
           val converted = boneMap[jointIndex]!!.index
-          if (node?.name == "hair" && vertexIndex == 44) {
-            val k = position
-          }
           vertices.put(converted.toFloat())
           value
         }
@@ -207,6 +202,7 @@ fun loadChannel(target: ChannelTarget, buffer: ByteBuffer, info: GltfInfo, sampl
 
 fun loadAnimation(buffer: ByteBuffer, info: GltfInfo, source: IndexedAnimation, boneIndexMap: Map<Int, BoneNode>): Animation {
   var duration = 0f
+  val n = source.channels.map {info.nodes[it.target.node]}
   val channels = source.channels
       .filter { it.target.path != "scale" }
       .mapNotNull {

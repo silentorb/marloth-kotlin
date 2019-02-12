@@ -5,9 +5,11 @@ import mythic.glowing.DrawMethod
 import mythic.glowing.activateTextures
 import mythic.glowing.globalState
 import mythic.spatial.Matrix
+import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import org.joml.Vector2i
 import org.joml.Vector4i
+import org.joml.times
 import rendering.meshes.ModelMap
 import rendering.shading.ObjectShaderConfig
 import rendering.shading.Shaders
@@ -27,6 +29,29 @@ fun renderSkyBox(textures: TextureLibrary, meshes: ModelMap, shaders: Shaders) {
 }
 
 typealias ScreenFilter = (Shaders) -> Unit
+
+fun drawSkeleton(renderer: SceneRenderer, armature: Armature, transforms: List<Matrix>, modelTransform: Matrix) {
+  armature.bones
+      .filter { it.parent != -1 }
+      .forEach { bone ->
+        val a = Vector3().transform(modelTransform * transforms[bone.index])
+        val b = Vector3().transform(modelTransform * transforms[bone.parent])
+        val white = Vector4(1f)
+        renderer.drawLine(a, b, white, 2f)
+      }
+}
+
+fun renderArmatures(renderer: GameSceneRenderer) {
+  if (true) {
+    globalState.depthEnabled = false
+    renderer.scene.elementGroups.filter { it.armature != null }
+        .forEach { group ->
+          val armature = renderer.renderer.renderer.armatures[group.armature]!!
+          drawSkeleton(renderer.renderer, armature, armatureTransforms(armature, group), group.meshes.first().transform)
+        }
+    globalState.depthEnabled = true
+  }
+}
 
 fun getDisplayConfigFilters(config: DisplayConfig): List<ScreenFilter> =
     if (config.depthOfField)

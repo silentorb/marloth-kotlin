@@ -17,6 +17,7 @@ fun prepareRender(renderer: GameSceneRenderer): List<ScreenFilter> {
 fun renderScene(renderer: GameSceneRenderer) {
   renderer.renderWorldMesh()
   renderer.renderElements()
+  renderArmatures(renderer)
 }
 
 fun finishRender(renderer: GameSceneRenderer, filters: List<ScreenFilter>) {

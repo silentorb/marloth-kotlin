@@ -33,25 +33,32 @@ def add_keyframe_if_missing(curves, obj_name, property_name, values):
             return
 
     for i, value in enumerate(values):
-        print('adding curve ' + data_path)
+        # print('adding curve ' + data_path)
         curve = curves.new(data_path, i, obj_name)
         curve.keyframe_points.insert(0, value)
 
 def prepare_armature(armature):
     constraints = gather_ik_bones(armature.pose)
     # print(json.dumps(constraints, indent=4))
+    bones = []
+    if 'rig' in bpy.data.objects.keys():
+        rig = bpy.data.objects['rig']
+        bones = [bone.name for bone in rig.data.bones if bone.use_deform]
+
     for action in bpy.data.actions:
         print("Action: " + action.name)
         if action.name != 'walk':
             continue
 
-        for k, ik in constraints.items():
-            for bone_name in ik:
-                if next((g for g in action.groups if g.name == bone_name), None) == None:
-                    action.groups.new(bone_name)
+        # for k, ik in constraints.items():
+        #     for bone_name in ik:
+        for bone_name in bones:
+            print("adding keyframes " + bone_name)
+            if next((g for g in action.groups if g.name == bone_name), None) == None:
+                action.groups.new(bone_name)
 
-                add_keyframe_if_missing(action.fcurves, bone_name, 'location',[0,0,0])
-                add_keyframe_if_missing(action.fcurves, bone_name, 'rotation_quaternion',[1,0,0,0])
+            add_keyframe_if_missing(action.fcurves, bone_name, 'location',[0,0,0])
+            add_keyframe_if_missing(action.fcurves, bone_name, 'rotation_quaternion',[1,0,0,0])
 
         for group in action.groups:
             print (group.name)
@@ -60,7 +67,7 @@ def prepare_armature(armature):
                 if armature.pose and 'pose.bones' in data_path:
                     target_name = data_path.split('"')[1]
                     transform = data_path.split('.')[-1]
-                    print(' * * ' + target_name)
+                    # print(' * * ' + target_name)
         # for fcurve in action.fcurves:
         #     data_path = fcurve.data_path
         #     target_name = data_path.split('"')[1]
