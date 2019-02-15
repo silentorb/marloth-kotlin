@@ -10,7 +10,12 @@ data class GameplayConfig(
     var defaultPlayerView: ViewMode = ViewMode.thirdPerson
 )
 
+data class AudioConfig(
+    var soundVolume: Float = 0.75f
+)
+
 data class GameConfig(
+    var audio: AudioConfig = AudioConfig(),
     var display: DisplayConfig = DisplayConfig(),
     var gameplay: GameplayConfig = GameplayConfig(),
     var input: GameInputConfig = GameInputConfig()
