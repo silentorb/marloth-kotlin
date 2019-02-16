@@ -15,10 +15,14 @@ import scenery.Sounds
 import simulation.World
 import java.nio.ShortBuffer
 
-fun updateAudioStateSounds(client: Client, listenerPosition: Vector3?): (AudioState) -> AudioState = { state ->
+data class AudioConfig(
+    var soundVolume: Float = 0.75f
+)
+
+fun updateAudioStateSounds(client: Client, listenerPosition: Vector3?, volume: Float): (AudioState) -> AudioState = { state ->
   val samples = client.platform.audio.availableBuffer / 4
   val newSounds = if (samples > 0)
-    updateSounds(client.platform.audio, client.soundLibrary, samples, listenerPosition)(state.sounds)
+    updateSounds(client.platform.audio, client.soundLibrary, samples, listenerPosition, volume)(state.sounds)
   else
     state.sounds
 
@@ -28,7 +32,7 @@ fun updateAudioStateSounds(client: Client, listenerPosition: Vector3?): (AudioSt
 }
 
 fun updateClientStateAudio(client: Client, listenerPosition: Vector3?): (ClientState) -> ClientState = { state ->
-  val newAudio = updateAudioStateSounds(client, listenerPosition)(state.audio)
+  val newAudio = updateAudioStateSounds(client, listenerPosition, state.audio.volume)(state.audio)
   state.copy(
       audio = newAudio
   )

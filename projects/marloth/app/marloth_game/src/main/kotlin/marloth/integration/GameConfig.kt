@@ -2,6 +2,7 @@ package marloth.integration
 
 import configuration.loadYamlFile
 import configuration.saveYamlFile
+import marloth.clienting.audio.AudioConfig
 import marloth.clienting.input.GameInputConfig
 import rendering.DisplayConfig
 import simulation.ViewMode
@@ -10,9 +11,6 @@ data class GameplayConfig(
     var defaultPlayerView: ViewMode = ViewMode.thirdPerson
 )
 
-data class AudioConfig(
-    var soundVolume: Float = 0.75f
-)
 
 data class GameConfig(
     var audio: AudioConfig = AudioConfig(),

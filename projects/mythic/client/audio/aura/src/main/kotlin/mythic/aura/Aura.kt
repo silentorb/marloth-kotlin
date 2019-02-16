@@ -39,13 +39,15 @@ typealias SoundLibrary = Table<SoundData>
 data class AudioState(
     val sounds: SoundTable,
     val buffer: BufferState,
-    val nextSoundId: Id = 0L
+    val nextSoundId: Id = 0L,
+    val volume: Float
 )
 
-fun newAudioState(audio: PlatformAudio) =
+fun newAudioState(audio: PlatformAudio, volume: Float) =
     AudioState(
         sounds = mapOf(),
-        buffer = newBufferState(audio)
+        buffer = newBufferState(audio),
+        volume = volume
     )
 
 data class CalculatedSound(
@@ -97,6 +99,13 @@ fun renderAudio(library: SoundLibrary, samples: Int, listenerPosition: Vector3?,
     updateSineTest(samples)
 }
 
+fun renderSilence(samples: Int, buffer: ByteBuffer) {
+  (0 until samples).forEach { i ->
+    buffer.putShort(0.toShort())
+    buffer.putShort(0.toShort())
+  }
+}
+
 fun updateSounds(library: SoundLibrary, samples: Int): (SoundTable) -> SoundTable = { sounds ->
   pipe(sounds, listOf(
       { s ->
@@ -120,10 +129,14 @@ fun getBufferSize(samples: Int): Int {
   return bytesPerSample * samples
 }
 
-fun updateSounds(audio: PlatformAudio, library: SoundLibrary, samples: Int, listenerPosition: Vector3?): (SoundTable) -> SoundTable = { sounds ->
+fun updateSounds(audio: PlatformAudio, library: SoundLibrary, samples: Int, listenerPosition: Vector3?, volume: Float): (SoundTable) -> SoundTable = { sounds ->
   val bufferSize = getBufferSize(samples)
   val buffer = getMixBuffer(bufferSize)
-  renderAudio(library, samples, listenerPosition, sounds, buffer)
+  if (volume == 0f) {
+    renderSilence(samples, buffer)
+  } else {
+    renderAudio(library, samples, listenerPosition, sounds, buffer)
+  }
   updateAudioDeviceBuffer(audio, buffer, bufferSize)
   updateSounds(library, samples)(sounds)
 }

@@ -34,7 +34,7 @@ fun runApp(platform: Platform, config: GameConfig) {
   val world = generateDefaultWorld()
   setWorldMesh(world.realm, app.client)
   val state = AppState(
-      client = newClientState(platform, config.input),
+      client = newClientState(platform, config.input, config.audio),
       players = listOf(1),
       worlds = listOf(world),
       timestep = newTimestepState()

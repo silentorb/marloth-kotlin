@@ -42,7 +42,6 @@ fun drawSkeleton(renderer: SceneRenderer, armature: Armature, transforms: List<M
 }
 
 fun renderArmatures(renderer: GameSceneRenderer) {
-  if (true) {
     globalState.depthEnabled = false
     renderer.scene.elementGroups.filter { it.armature != null }
         .forEach { group ->
@@ -50,7 +49,6 @@ fun renderArmatures(renderer: GameSceneRenderer) {
           drawSkeleton(renderer.renderer, armature, armatureTransforms(armature, group), group.meshes.first().transform)
         }
     globalState.depthEnabled = true
-  }
 }
 
 fun getDisplayConfigFilters(config: DisplayConfig): List<ScreenFilter> =

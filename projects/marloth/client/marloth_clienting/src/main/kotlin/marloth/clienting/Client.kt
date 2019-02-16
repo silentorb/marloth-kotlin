@@ -5,6 +5,7 @@ import configuration.loadYamlResource
 import haft.BindingSource
 import haft.mapEventsToCommands
 import haft.simpleCommand
+import marloth.clienting.audio.AudioConfig
 import marloth.clienting.audio.loadSounds
 import marloth.clienting.gui.*
 import marloth.clienting.input.*
@@ -33,11 +34,11 @@ data class ClientState(
 
 fun isGuiActive(state: ClientState): Boolean = state.view != ViewId.none
 
-fun newClientState(platform: Platform, config: GameInputConfig) =
+fun newClientState(platform: Platform, inputConfig: GameInputConfig, audioConfig: AudioConfig) =
     ClientState(
-        input = newInputState(config),
+        input = newInputState(inputConfig),
         bloomState = newBloomState(),
-        audio = newAudioState(platform.audio),
+        audio = newAudioState(platform.audio, audioConfig.soundVolume),
         view = ViewId.none
     )
 

@@ -144,7 +144,7 @@ fun runApp(gameApp: GameApp, config: LabConfig) {
     setWorldMesh(world.realm, gameApp.client)
   }
 
-  val clientState = newClientState(gameApp.platform, gameApp.config.input)
+  val clientState = newClientState(gameApp.platform, gameApp.config.input, gameApp.config.audio)
   val state = LabState(
       modelViewState = newModelViewState(),
       app = AppState(
