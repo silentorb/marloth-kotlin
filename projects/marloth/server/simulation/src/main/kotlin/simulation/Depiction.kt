@@ -107,8 +107,3 @@ fun updateDepiction(world: World, animationDurations: AnimationDurationMap): (De
         animations = updateAnimations(world, animationDurations, depiction.id, depiction.animations, simulationDelta)
     )
 }
-//
-//fun updateDepictions(world: World, animationDurations: AnimationDurationMap): List<Depiction> =
-//    world.deck.depictions.map { depiction ->
-//
-//    }

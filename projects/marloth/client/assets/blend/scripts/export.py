@@ -46,14 +46,12 @@ def prepare_armature(armature):
         bones = [bone.name for bone in rig.data.bones if bone.use_deform]
 
     for action in bpy.data.actions:
-        print("Action: " + action.name)
-        if action.name != 'walk':
-            continue
+        # print("Action: " + action.name)
 
         # for k, ik in constraints.items():
         #     for bone_name in ik:
         for bone_name in bones:
-            print("adding keyframes " + bone_name)
+            # print("adding keyframes " + bone_name)
             if next((g for g in action.groups if g.name == bone_name), None) == None:
                 action.groups.new(bone_name)
 

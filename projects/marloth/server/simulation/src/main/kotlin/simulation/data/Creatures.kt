@@ -17,7 +17,7 @@ class Creatures {
       health = 100,
       abilities = listOf(abilityDefinitions.slowShoot),
       depictionType = DepictionType.child,
-      maxSpeed = 3f,
+      maxSpeed = 2f,
       deathSound = Sounds.girlScream
   )
 
@@ -25,7 +25,7 @@ class Creatures {
       health = 100,
       abilities = listOf(abilityDefinitions.slowShoot),
       depictionType = DepictionType.person,
-      maxSpeed = 3f,
+      maxSpeed = 2f,
       deathSound = Sounds.hogDeath,
       ambientSounds = listOf(
           Sounds.hogAmbient01,

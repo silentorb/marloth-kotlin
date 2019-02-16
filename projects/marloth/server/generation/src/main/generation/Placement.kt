@@ -39,7 +39,8 @@ fun placeCharacter(realm: Realm, template: CharacterTemplate, nextId: IdSource, 
 
 fun placeCharacters(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): Deck {
 //  val enemyCount = (10f * scale).toInt()
-  val counts = listOf(2, 2)
+  //  val counts = listOf(2, 2)
+  val counts = listOf(8, 0)
   val total = counts.sum()
 
   val walls = realm.locationNodes

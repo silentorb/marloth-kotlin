@@ -3,6 +3,7 @@ package marloth.clienting
 import com.fasterxml.jackson.core.type.TypeReference
 import configuration.loadYamlResource
 import haft.BindingSource
+import haft.HaftCommand
 import haft.mapEventsToCommands
 import haft.simpleCommand
 import marloth.clienting.audio.AudioConfig
@@ -29,7 +30,8 @@ data class ClientState(
     val input: InputState,
     val bloomState: BloomState,
     val view: ViewId,
-    val audio: AudioState
+    val audio: AudioState,
+    val commands: List<HaftCommand<GuiCommandType>>
 )
 
 fun isGuiActive(state: ClientState): Boolean = state.view != ViewId.none
@@ -39,7 +41,8 @@ fun newClientState(platform: Platform, inputConfig: GameInputConfig, audioConfig
         input = newInputState(inputConfig),
         bloomState = newBloomState(),
         audio = newAudioState(platform.audio, audioConfig.soundVolume),
-        view = ViewId.none
+        view = ViewId.none,
+        commands = listOf()
     )
 
 fun loadTextResource(): TextResources {
@@ -140,7 +143,8 @@ fun updateClient(client: Client, players: List<Int>, boxes: Boxes): (ClientState
                 deviceStates = deviceStates
             ),
             bloomState = bloomState,
-            view = existingOrNewState(currentViewKey) { state.view }(bloomState.bag)
+            view = existingOrNewState(currentViewKey) { state.view }(bloomState.bag),
+            commands = allCommands
         )
       },
       // This needs to happen after applying updateBloomState to override flower state settings

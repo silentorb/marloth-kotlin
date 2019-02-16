@@ -117,52 +117,32 @@ fun convertComplexDepiction(world: World, depiction: Depiction): ElementGroup {
 //        strength = 1f / depiction.animations.size
     )
   }
-
-  return if (depiction.type == DepictionType.child) {
-    val commonMeshes = listOf(
+  val meshes = when {
+    depiction.type == DepictionType.child -> listOf(
         MeshId.personBody
     )
-    val girlMeshes = listOf<MeshId>(
-//        MeshId.childGown,
-//        MeshId.childLongHair
+    else -> listOf(
+        MeshId.personBody,
+        MeshId.hogHead
     )
-
-    val meshes = commonMeshes.plus(girlMeshes)
-
-    ElementGroup(
-        meshes = meshes.map {
-          MeshElement(
-              id = 0,
-              mesh = it,
-              transform = transform
-          )
-        },
-        armature = ArmatureId.person,
-        animations = animations
-    )
-  } else {
-    ElementGroup(
-        meshes = listOf(
-            MeshId.personBody,
-            MeshId.hogHead
-        )
-            .map {
-              MeshElement(
-                  id = id,
-                  mesh = it,
-                  transform = transform.scale(0.75f)
-              )
-            },
-        armature = ArmatureId.person,
-        animations = animations
-    )
-//        armature = ArmatureId.child,
-//        animations = animations
   }
+
+  return ElementGroup(
+      meshes = meshes
+          .map {
+            MeshElement(
+                id = id,
+                mesh = it,
+                transform = transform.scale(0.75f)
+            )
+          },
+      armature = ArmatureId.person,
+      animations = animations
+  )
 }
 
 private val complexDepictions = setOf(
-//    DepictionType.child,
+    DepictionType.child,
     DepictionType.person
 )
 
