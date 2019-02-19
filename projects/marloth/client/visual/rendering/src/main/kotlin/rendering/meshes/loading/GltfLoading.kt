@@ -27,10 +27,14 @@ fun loadIndices(buffer: ByteBuffer, info: GltfInfo, primitive: Primitive): IntBu
 typealias VertexConverter = (ByteBuffer, FloatBuffer, VertexAttributeDetail<AttributeName>, Int) -> Unit
 
 fun createVertexConverter(info: GltfInfo, transformBuffer: ByteBuffer, boneMap: BoneMap, meshIndex: Int): VertexConverter {
-  val node = info.nodes.firstOrNull { it.mesh == meshIndex && it.skin != null }
-  val skin = info.skins?.get(node?.skin!!)
+  val meshNode = info.nodes.first { it.mesh == meshIndex }
+  val skin = if (meshNode.skin != null) info.skins?.get(meshNode.skin) else null
+  println("Skinned: ${meshNode.name} ${skin != null}")
 
   return if (skin != null) {
+    if (skin.joints.none())
+      throw Error("Invalid mesh skin.")
+
     val names = boneMap.map { it.value.name }
     val jointMap = skin.joints.mapIndexed { index, jointIndex ->
       Pair(index, jointIndex)
@@ -202,7 +206,7 @@ fun loadChannel(target: ChannelTarget, buffer: ByteBuffer, info: GltfInfo, sampl
 
 fun loadAnimation(buffer: ByteBuffer, info: GltfInfo, source: IndexedAnimation, boneIndexMap: Map<Int, BoneNode>): Animation {
   var duration = 0f
-  val n = source.channels.map {info.nodes[it.target.node]}
+  val n = source.channels.map { info.nodes[it.target.node] }
   val channels = source.channels
       .filter { it.target.path != "scale" }
       .mapNotNull {

@@ -119,11 +119,15 @@ fun convertComplexDepiction(world: World, depiction: Depiction): ElementGroup {
   }
   val meshes = when {
     depiction.type == DepictionType.child -> listOf(
-        MeshId.personBody
+        MeshId.personBody,
+        MeshId.pants,
+        MeshId.shirt
     )
     else -> listOf(
         MeshId.personBody,
-        MeshId.hogHead
+        MeshId.hogHead,
+        MeshId.pants,
+        MeshId.shirt
     )
   }
 

@@ -12,8 +12,10 @@ enum class MeshId {
   eyeball,
   hogHead,
   line,
+  pants,
   personBody,
   prisonDoor,
+  shirt,
   sphere,
   spikyBall,
   wallLamp
