@@ -4,7 +4,11 @@ import mythic.spatial.*
 
 typealias SdfHook = () -> Unit
 
-typealias Sdf = (SdfHook, Vector3) -> PointDistance
+data class SdfHitInfo(
+    var geometry: Geometry? = null
+)
+
+typealias Sdf = (SdfHook, SdfHitInfo, Vector3) -> Float
 typealias RaySdf = (Ray) -> Sdf
 
 typealias MinimalSdf = (Vector3) -> Float
@@ -15,9 +19,10 @@ data class BoundedSdf(
     val radius: Float
 )
 
-fun fromMinimal(geometry: Geometry, sdf: MinimalSdf): Sdf = { hook, point ->
+fun fromMinimal(geometry: Geometry, sdf: MinimalSdf): Sdf = { hook, info, point ->
   hook()
-  PointDistance(value = sdf(point), geometry = geometry)
+  info.geometry = geometry
+  sdf(point)
 }
 
 fun sphereNormal(center: Vector3): Normal = { _, point -> (point - center).normalize() }
@@ -36,13 +41,13 @@ fun boundedSphere(center: Vector3, radius: Float) =
 fun diff(a: Float, b: Float): Float =
     Math.max(a, -b)
 
-fun diff(a: Sdf, b: Sdf): Sdf = { hook, point ->
-  PointDistance(diff(a(hook, point).value, b(hook, point).value))
-}
+//fun diff(a: Sdf, b: Sdf): Sdf = { hook, info, point ->
+//  PointDistance(diff(a(hook, point).value, b(hook, point).value))
+//}
 
 fun plusBounded(items: List<BoundedSdf>): RaySdf = { ray ->
-  val b = ray.position + ray.direction
-  val project = projectPointOnLine(ray.position, b)
+  val b = Vector3(ray.position) + Vector3(ray.direction)
+  val project = projectPointOnLine(Vector3(ray.position), b)
   val filtered = items
       .filter {
         val projected = project(it.position)
@@ -54,35 +59,39 @@ fun plusBounded(items: List<BoundedSdf>): RaySdf = { ray ->
   plusSdf(filtered)
 }
 
-fun plusSdf(items: List<Sdf>): Sdf = { hook, point ->
-  var nearest: PointDistance = rayMiss
+fun plusSdf(items: List<Sdf>): Sdf = { hook, info, point ->
+  var nearest: Float = rayMissValue
   for (item in items) {
-    val distance = item(hook, point)
-    if (distance.value < nearest.value)
+    val subInfo = SdfHitInfo()
+    val distance = item(hook, subInfo, point)
+    if (distance < nearest) {
       nearest = distance
+      info.geometry = subInfo.geometry
+    }
+    break
   }
 
   nearest
 }
 
-fun plusDetailed(items: List<Sdf>, hook: SdfHook, point: Vector3): Pair<Sdf?, PointDistance> {
-  var sdf: Sdf? = null
-  var nearest: PointDistance = rayMiss
-  for (item in items) {
-    val distance = item(hook, point)
-    if (distance.value < nearest.value) {
-      sdf = item
-      nearest = distance
-    }
-  }
+//fun plusDetailed(items: List<Sdf>, hook: SdfHook, point: Vector3): Pair<Sdf?, PointDistance> {
+//  var sdf: Sdf? = null
+//  var nearest: PointDistance = rayMiss
+//  for (item in items) {
+//    val distance = item(hook, point)
+//    if (distance.value < nearest.value) {
+//      sdf = item
+//      nearest = distance
+//    }
+//  }
+//
+//  return Pair(sdf, nearest)
+//}
 
-  return Pair(sdf, nearest)
-}
-
-private fun sortOptions(items: List<Sdf>, hook: SdfHook, point: Vector3) =
-    items
-        .map { Pair(it, it(hook, point)) }
-        .sortedBy { it.second.value }
+//private fun sortOptions(items: List<Sdf>, hook: SdfHook, point: Vector3) =
+//    items
+//        .map { Pair(it, it(hook, point)) }
+//        .sortedBy { it.second.value }
 
 //fun arrangedPlus(sorted: List<Sdf>, lastDistance: Float): Sdf = { hook, point ->
 //  val latest = sorted.first()(hook, point)
@@ -148,32 +157,32 @@ private fun sortOptions(items: List<Sdf>, hook: SdfHook, point: Vector3) =
 //  }
 //}
 
-fun blend(range: Float, vararg items: Sdf): Sdf = { hook, point ->
-  val sorted = items.map { it(hook, point) }
-      .sortedBy { it.value }
-
-  if (sorted.size > 1) {
-    val a = sorted[0].value
-    val b = sorted[1].value
-    val gap = Math.abs(a - b)
-    val scale = Math.min(range, gap)
-    val curved = quadIn(scale)
-//    val rangeValue = (range + Math.min(range, gap)) / 2f
-    val scaledRange = range + curved
-    val j = a + b - scaledRange
-    val c = listOf(a, j).sorted().first()
-    val h = a + b - range * 2f
-    if (point.x == 0f && point.z == 0f) {
-//      if (point.x > -0.01f && point.x < 0.01f && point.z > -0.01f && point.z < 0.01f) {
-//      println("${point.z} $a, $j, $gap")
-      println("${point.z} $h")
-    }
-    if (isRayHit(j)) {
-      val k = 0
-    }
-//    println("${point.z} $h")
-//    println(h)
-    PointDistance(diff(h, a))
-  } else
-    sorted.first()
-}
+//fun blend(range: Float, vararg items: Sdf): Sdf = { hook, point ->
+//  val sorted = items.map { it(hook, point) }
+//      .sortedBy { it.value }
+//
+//  if (sorted.size > 1) {
+//    val a = sorted[0].value
+//    val b = sorted[1].value
+//    val gap = Math.abs(a - b)
+//    val scale = Math.min(range, gap)
+//    val curved = quadIn(scale)
+////    val rangeValue = (range + Math.min(range, gap)) / 2f
+//    val scaledRange = range + curved
+//    val j = a + b - scaledRange
+//    val c = listOf(a, j).sorted().first()
+//    val h = a + b - range * 2f
+//    if (point.x == 0f && point.z == 0f) {
+////      if (point.x > -0.01f && point.x < 0.01f && point.z > -0.01f && point.z < 0.01f) {
+////      println("${point.z} $a, $j, $gap")
+//      println("${point.z} $h")
+//    }
+//    if (isRayHit(j)) {
+//      val k = 0
+//    }
+////    println("${point.z} $h")
+////    println(h)
+//    PointDistance(diff(h, a))
+//  } else
+//    sorted.first()
+//}

@@ -8,12 +8,14 @@ private val _zero = Vector3()
 data class Vector3(
     override val x: Float = 0f,
     override val y: Float = 0f,
-    val z: Float = 0f
-) : Vector2fMinimal {
+    override val z: Float = 0f
+) : Vector2fMinimal, Vector3int {
 
   constructor(d: Float) : this(d, d, d) {}
 
   constructor(v: Vector3fc) : this(v.x, v.y, v.z) {}
+
+  constructor(v: Vector3int) : this(v.x, v.y, v.z) {}
 
   constructor(v: Vector2fc, z: Float) : this(v.x, v.y, z) {}
 

@@ -27,19 +27,19 @@ fun prepareSceneSdf(player: Id, world: World): RaySdf {
 
 //  return plusBounded(walls)
 
-  return { ray ->
-    val localPlus = plusBounded(walls)(ray)
-    val k = 0
-    { hook, point ->
-      if (isInsideNode(point.xy(), node))
-//    if (node.position.xy().distance(point.xy()) < node.radius + 10f)
-        localPlus(hook, point)
-      else
-        rayMiss
-    }
-  }
-
-//  return sphereSdf(Vector3(-40.23136f, 20.66085f, 1.4f), 1f)
+//  return { ray ->
+//    val localPlus = plusBounded(walls)(ray)
+//    val k = 0
+//    { hook, point ->
+//      if (isInsideNode(point.xy(), node))
+////    if (node.position.xy().distance(point.xy()) < node.radius + 10f)
+//        localPlus(hook, point)
+//      else
+//        rayMiss
+//    }
+//  }
+val j = sphereSdf(Vector3(-40.23136f, 20.66085f, 1.4f), 1f)
+  return { j }
 }
 
 fun prepareSceneSdf2(player: Id, world: World): Sdf {

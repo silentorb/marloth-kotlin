@@ -1,8 +1,7 @@
 package silentorb.raymarching
 
-import mythic.spatial.Quaternion
-import mythic.spatial.Vector2
-import mythic.spatial.Vector3
+import mythic.spatial.*
+import org.joml.Vector3f
 import java.nio.FloatBuffer
 
 data class Camera(
@@ -17,18 +16,23 @@ data class CameraPerspective(
     val farHalfWidth: Float
 )
 
-typealias RayCaster = (Vector2) -> Ray
+interface Ray {
+  val position: Vector3int
+  val direction: Vector3int
+}
 
-data class Ray(
-    val position: Vector3,
-    val direction: Vector3
-)
+data class MutableRay(
+    override var position: MutableVector3,
+    override var direction: MutableVector3
+) : Ray
+
+typealias RayCaster = (Vector2, MutableRay) -> Unit
 
 data class MarchedPoint(
-    val color: Vector3,
-    val depth: Float,
-    val position: Vector3,
-    val normal: Vector3
+    var color: MutableVector3 = MutableVector3(),
+    var depth: Float = 0f,
+    var position: MutableVector3 = MutableVector3(),
+    var normal: MutableVector3= MutableVector3()
 )
 
 typealias Normal = (SdfHook, Vector3) -> Vector3
@@ -37,12 +41,13 @@ data class Geometry(
     val normal: Normal
 )
 
-data class PointDistance(
-    val value: Float,
-    val geometry: Geometry? = null
-)
+//data class PointDistance(
+//    val value: Float,
+//    val geometry: Geometry? = null
+//)
 
-val rayMiss = PointDistance(100000f)
+val rayMissValue = 100000f
+//val rayMiss = PointDistance(100000f)
 
 data class Marcher(
     val end: Float,

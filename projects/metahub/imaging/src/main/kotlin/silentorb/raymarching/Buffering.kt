@@ -44,22 +44,23 @@ fun hookCounter(): () -> Int {
 
 fun renderSection(horizontal: IntRange, vertical: IntRange, mod: Vector2, render: PixelRenderer, buffers: MarchedBuffers) {
   val aspect = 1 / 1.333f
+  val marchedPoint = MarchedPoint()
   for (y in vertical) {
     for (x in horizontal) {
       val input = Vector2(
           (x.toFloat() * mod.x - 1f) * aspect,// * aspect
           1f - y.toFloat() * mod.y
       )
-      val point = render(input)
-      buffers.color.put(point.color)
-      buffers.depth.put(point.depth)
-      buffers.position.put(point.position)
-      buffers.normal.put(point.normal)
+      render(input, marchedPoint)
+      buffers.color.put(marchedPoint.color)
+      buffers.depth.put(marchedPoint.depth)
+      buffers.position.put(marchedPoint.position)
+      buffers.normal.put(marchedPoint.normal)
     }
   }
 }
 
-private const val renderThreadCount: Int = 4
+private const val renderThreadCount: Int = 1
 
 val renderThreadPool = newFixedThreadPoolContext(renderThreadCount, "RenderThread")
 
@@ -82,6 +83,7 @@ suspend fun renderSections(mod: Vector2, render: PixelRenderer, buffers: Marched
   tasks.map { it.await() }//.reduce { acc, job -> acc. + job }
 }
 
+val tj = FloatArray(1200 * 1200)
 fun renderToMarchBuffers(buffers: MarchedBuffers, marcher: Marcher, scene: Scene, cast: RayCaster, dimensions: Vector2i) {
   val calls = mutableListOf(0, 0)
   val render = pixelRenderer(marcher, scene, cast, { calls[0] += 1 }) { calls[1] += 1 }
@@ -98,18 +100,33 @@ fun renderToMarchBuffers(buffers: MarchedBuffers, marcher: Marcher, scene: Scene
   }
 //  println("Ending")
   else {
+    var i = 0
+    val marchedPoint = MarchedPoint()
     for (y in 0 until dimensions.y) {
       for (x in 0 until dimensions.x) {
         val input = Vector2(
             (x.toFloat() * mod.x - 1f),// * aspect
             1f - y.toFloat() * mod.y
         )
-        val point = render(input)
-        buffers.color.put(point.color)
-        buffers.depth.put(point.depth)
-        buffers.position.put(point.position)
-        buffers.normal.put(point.normal)
+        render(input, marchedPoint)
+//        tj[i] = marchedPoint.color.x
+//        ++i
+//        buffers.color.put(marchedPoint.color)
+//        buffers.depth.put(marchedPoint.depth)
+//        buffers.position.put(marchedPoint.position)
+//        buffers.normal.put(marchedPoint.normal)
       }
+    }
+//    for (y in 0 until dimensions.y) {
+//      for (x in 0 until dimensions.x) {
+//        tj[i] = 0f
+//        ++i
+//      }
+////      i = 0
+//    }
+
+    for (i2 in 0 until 1200 * 1200) {
+      tj[i2] = 0f
     }
   }
 

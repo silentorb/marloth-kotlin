@@ -32,10 +32,10 @@ fun renderRayMarching(gameScene: GameScene, dimensions: Vector2i, world: World, 
   val cast = perspectiveRay(scene.camera)
 
   renderToMarchBuffers(buffers, marcher, scene, cast, dimensions)
-  val mix = postPipeline(dimensions, buffers)
-  rgbFloatToBytes(mix, renderer.renderColor.buffer!!)
-  normalizeDepthBuffer(0.01f, 1000f, buffers.depth, renderer.renderDepth.buffer!!)
-  renderer.applyRenderBuffer(dimensions)
+//  val mix = postPipeline(dimensions, buffers)
+//  rgbFloatToBytes(mix, renderer.renderColor.buffer!!)
+//  normalizeDepthBuffer(0.01f, 1000f, buffers.depth, renderer.renderDepth.buffer!!)
+//  renderer.applyRenderBuffer(dimensions)
 }
 
 fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: Boxes) {
@@ -57,9 +57,12 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
       val sceneRenderer = client.renderer.createSceneRenderer(scene.main, viewports.next())
       val gameRenderer = GameSceneRenderer(scene, sceneRenderer)
       val filters = prepareRender(gameRenderer)
-      renderScene(gameRenderer)
 
       if (false) {
+        renderScene(gameRenderer)
+      }
+
+      if (true) {
         renderRayMarching(scene, dimensions, world, client.renderer, marcher)
       }
 

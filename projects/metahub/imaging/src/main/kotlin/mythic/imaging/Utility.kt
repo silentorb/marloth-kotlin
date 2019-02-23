@@ -1,6 +1,8 @@
 package mythic.imaging
 
+import mythic.spatial.MutableVector3
 import mythic.spatial.Vector3
+import mythic.spatial.Vector3int
 import org.joml.Vector3i
 import org.lwjgl.BufferUtils
 import java.nio.ByteBuffer
@@ -10,6 +12,12 @@ fun ByteBuffer.put(color: Vector3i) {
   this.put(color.x.toByte())
   this.put(color.y.toByte())
   this.put(color.z.toByte())
+}
+
+fun FloatBuffer.put(color: MutableVector3) {
+  this.put(color.x)
+  this.put(color.y)
+  this.put(color.z)
 }
 
 fun FloatBuffer.put(color: Vector3) {

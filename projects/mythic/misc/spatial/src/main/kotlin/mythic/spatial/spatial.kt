@@ -339,7 +339,6 @@ operator fun Vector3i.plus(other: Int): Vector3i = Vector3i(x + other, y + other
 
 fun Vector3i.toVector3(): Vector3 = Vector3(x.toFloat(), y.toFloat(), z.toFloat())
 
-
 fun manhattanDistance(a: Vector3, b: Vector3): Float =
     java.lang.Math.abs(a.x - b.x) + java.lang.Math.abs(a.y - b.y)
 
