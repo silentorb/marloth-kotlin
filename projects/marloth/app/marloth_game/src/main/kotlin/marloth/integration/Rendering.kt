@@ -58,11 +58,11 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
       val gameRenderer = GameSceneRenderer(scene, sceneRenderer)
       val filters = prepareRender(gameRenderer)
 
-      if (false) {
+      if (true) {
         renderScene(gameRenderer)
       }
 
-      if (true) {
+      if (false) {
         renderRayMarching(scene, dimensions, world, client.renderer, marcher)
       }
 

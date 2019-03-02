@@ -59,7 +59,7 @@ def prepare_armature(armature):
             add_keyframe_if_missing(action.fcurves, bone_name, 'rotation_quaternion',[1,0,0,0])
 
         for group in action.groups:
-            print (group.name)
+            # print (group.name)
             for channel in group.channels:
                 data_path = channel.data_path
                 if armature.pose and 'pose.bones' in data_path:
