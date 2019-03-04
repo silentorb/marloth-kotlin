@@ -91,7 +91,8 @@ data class Primitive(
 
 data class MeshInfo2(
     val primitives: List<Primitive>,
-    val name: String
+    val name: String,
+    val extras: Map<String, Any>?
 )
 
 data class TextureReference(

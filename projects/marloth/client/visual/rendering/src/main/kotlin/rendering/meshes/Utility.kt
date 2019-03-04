@@ -59,6 +59,7 @@ data class Primitive(
     val mesh: Drawable,
     val material: Material,
     val transform: Matrix? = null,
+    val parentBone: Int? = null,
     val name: String = ""
 )
 

@@ -1,6 +1,7 @@
 package rendering.meshes.loading
 
 import mythic.breeze.*
+import mythic.glowing.Drawable
 import mythic.glowing.SimpleTriangleMesh
 import mythic.glowing.VertexAttributeDetail
 import org.lwjgl.BufferUtils
@@ -152,8 +153,15 @@ fun loadMaterial(info: GltfInfo, materialIndex: Int): Material {
   )
 }
 
+fun getParentBone(info: GltfInfo, mesh: MeshInfo2, boneMap: BoneMap): Int? =
+    if (mesh.extras != null && mesh.extras.containsKey("parent")) {
+      val parentName = mesh.extras["parent"] as String
+      boneMap.values.first { it.name == parentName }.index
+    } else
+      null
+
 fun loadPrimitive(buffer: ByteBuffer, info: GltfInfo, vertexSchemas: VertexSchemas, primitive: Primitive,
-                  name: String, converter: VertexConverter): rendering.meshes.Primitive {
+                  converter: VertexConverter): Drawable {
   val vertexSchema = if (primitive.attributes.containsKey(AttributeType.JOINTS_0))
     vertexSchemas.animated
   else if (primitive.attributes.containsKey(AttributeType.TEXCOORD_0))
@@ -167,14 +175,7 @@ fun loadPrimitive(buffer: ByteBuffer, info: GltfInfo, vertexSchemas: VertexSchem
   vertices.position(0)
   indices.position(0)
 
-  val material = loadMaterial(info, primitive.material)
-
-  return Primitive(
-      mesh = SimpleTriangleMesh(vertexSchema, vertices, indices),
-      transform = null,
-      material = material,
-      name = name
-  )
+  return SimpleTriangleMesh(vertexSchema, vertices, indices)
 }
 
 fun convertChannelType(source: String): ChannelType =
@@ -400,13 +401,22 @@ fun loadGltf(vertexSchemas: VertexSchemas, filename: String, resourcePath: Strin
       .map { (primitiveSource, meshIndex, mesh) ->
         val name2 = mesh.name.replace(".001", "")
         val converter = createVertexConverter(info, buffer, boneMap, meshIndex)
-        val primitive = loadPrimitive(buffer, info, vertexSchemas, primitiveSource, name2, converter)
         val nodeIndex = info.nodes.indexOfFirst { it.mesh == meshIndex }
         val parent = info.nodes.firstOrNull { it.children != null && it.children.contains(nodeIndex) }
+        val node = info.nodes[nodeIndex]
+        val parentBone = getParentBone(info, mesh, boneMap)
+        val material = loadMaterial(info, primitiveSource.material)
+        val primitive = Primitive(
+            mesh = loadPrimitive(buffer, info, vertexSchemas, primitiveSource, converter),
+            transform = null,
+            material = material,
+            name = name2,
+            parentBone = parentBone
+        )
         val name = if (parent != null && parent.name != "rig")
           parent.name
         else
-          info.nodes[nodeIndex].name
+          node.name
 
         val id = getMeshId(name)
         Pair(id, primitive)

@@ -15,6 +15,7 @@ enum class MeshId {
   pants,
   personBody,
   prisonDoor,
+  pumpkinHead,
   shirt,
   sphere,
   spikyBall,
