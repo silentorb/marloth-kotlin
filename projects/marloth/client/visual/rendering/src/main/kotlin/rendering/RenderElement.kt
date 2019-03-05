@@ -4,15 +4,18 @@ import mythic.breeze.MultiAnimationPart
 import mythic.breeze.transformAnimatedSkeleton
 import mythic.glowing.DrawMethod
 import mythic.spatial.Matrix
+import mythic.spatial.Pi
 import mythic.spatial.getRotationMatrix
 import org.joml.times
 import rendering.meshes.Primitive
 import rendering.shading.ObjectShaderConfig
 import rendering.shading.populateBoneBuffer
 
-fun simplePainter(renderer: SceneRenderer, primitive: Primitive, element: MeshElement, isAnimated: Boolean) {
+fun simplePainter(renderer: SceneRenderer, primitive: Primitive, element: MeshElement, isAnimated: Boolean, transforms: List<Matrix>?) {
   val transform = if (primitive.transform != null)
     element.transform * primitive.transform
+  else if (primitive.parentBone != null && transforms != null)
+    element.transform * transforms[primitive.parentBone] * Matrix().rotateX(-Pi / 2f)
   else
     element.transform
 
@@ -74,7 +77,7 @@ fun renderElementGroup(gameRenderer: GameSceneRenderer, group: ElementGroup) {
   for (element in group.meshes) {
     val mesh = meshes[element.mesh]!!
     for (primitive in mesh.primitives) {
-      simplePainter(gameRenderer.renderer, primitive, element, armature != null)
+      simplePainter(gameRenderer.renderer, primitive, element, armature != null, transforms)
     }
   }
 }

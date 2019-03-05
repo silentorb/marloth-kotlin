@@ -107,7 +107,7 @@ fun convertComplexDepiction(world: World, depiction: Depiction): ElementGroup {
       .translate(body.position)
       .rotate(character.facingQuaternion)
       .rotateZ(Pi / 2f)
-      .scale(1.75f)
+      .scale(2f)
 
   val animations = depiction.animations.map {
     ElementAnimation(
@@ -121,7 +121,8 @@ fun convertComplexDepiction(world: World, depiction: Depiction): ElementGroup {
     depiction.type == DepictionType.child -> listOf(
         MeshId.personBody,
         MeshId.pants,
-        MeshId.shirt
+        MeshId.shirt,
+        MeshId.pumpkinHead
     )
     else -> listOf(
         MeshId.personBody,
