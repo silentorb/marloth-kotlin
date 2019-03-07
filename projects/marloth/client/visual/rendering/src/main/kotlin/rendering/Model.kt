@@ -60,13 +60,9 @@ fun dispose(model: AdvancedModel) {
   model.primitives.forEach { it.mesh.dispose() }
 }
 
-fun getMeshId(name: String): MeshId {
+fun getMeshId(name: String): MeshId? {
   val formattedName = toCamelCase(name)
-  val id = MeshId.values().firstOrNull { it.name == formattedName }
-  if (id == null)
-    throw Error("Could not find MeshId " + formattedName)
-
-  return id
+  return MeshId.values().firstOrNull { it.name == formattedName }
 }
 
 fun getArmatureId(name: String): ArmatureId {

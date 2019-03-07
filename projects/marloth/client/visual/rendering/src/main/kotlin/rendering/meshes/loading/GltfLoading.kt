@@ -8,6 +8,7 @@ import org.lwjgl.BufferUtils
 import rendering.*
 import rendering.meshes.*
 import scenery.AnimationId
+import scenery.MeshId
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
@@ -378,6 +379,18 @@ data class ModelImport(
     val armatures: List<Armature>
 )
 
+fun getMeshId(info: GltfInfo, meshIndex: Int): MeshId? {
+  val nodeIndex = info.nodes.indexOfFirst { it.mesh == meshIndex }
+  val parent = info.nodes.firstOrNull { it.children != null && it.children.contains(nodeIndex) }
+  val node = info.nodes[nodeIndex]
+  val name = if (parent != null && parent.name != "rig")
+    parent.name
+  else
+    node.name
+
+  return getMeshId(name)
+}
+
 fun loadGltf(vertexSchemas: VertexSchemas, filename: String, resourcePath: String): ModelImport {
   val info = loadJsonResource<GltfInfo>(resourcePath + ".gltf")
   val directoryPath = resourcePath.split("/").dropLast(1).joinToString("/")
@@ -398,28 +411,26 @@ fun loadGltf(vertexSchemas: VertexSchemas, filename: String, resourcePath: Strin
         mesh.primitives.map { Triple(it, index, mesh) }
       }
       .flatten()
-      .map { (primitiveSource, meshIndex, mesh) ->
-        val name2 = mesh.name.replace(".001", "")
-        val converter = createVertexConverter(info, buffer, boneMap, meshIndex)
-        val nodeIndex = info.nodes.indexOfFirst { it.mesh == meshIndex }
-        val parent = info.nodes.firstOrNull { it.children != null && it.children.contains(nodeIndex) }
-        val node = info.nodes[nodeIndex]
-        val parentBone = getParentBone(info, mesh, boneMap)
-        val material = loadMaterial(info, primitiveSource.material)
-        val primitive = Primitive(
-            mesh = loadPrimitive(buffer, info, vertexSchemas, primitiveSource, converter),
-            transform = null,
-            material = material,
-            name = name2,
-            parentBone = parentBone
-        )
-        val name = if (parent != null && parent.name != "rig")
-          parent.name
-        else
-          node.name
+      .mapNotNull { (primitiveSource, meshIndex, mesh) ->
+        val id = getMeshId(info, meshIndex)
+        if (id == null)
+          null
+        else {
+          val name2 = mesh.name.replace(".001", "")
 
-        val id = getMeshId(name)
-        Pair(id, primitive)
+          val parentBone = getParentBone(info, mesh, boneMap)
+          val material = loadMaterial(info, primitiveSource.material)
+          val converter = createVertexConverter(info, buffer, boneMap, meshIndex)
+          val primitive = Primitive(
+              mesh = loadPrimitive(buffer, info, vertexSchemas, primitiveSource, converter),
+              transform = null,
+              material = material,
+              name = name2,
+              parentBone = parentBone
+          )
+
+          Pair(id, primitive)
+        }
       }
       .groupBy { it.first }
       .map { ModelMesh(it.key, it.value.map { it.second }) }

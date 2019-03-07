@@ -225,9 +225,9 @@ class Renderer(val config: DisplayConfig) {
     else
       createMultiSampler(glow, config)
 
-    val imports = createMeshes(vertexSchemas)
-    meshes = imports.first
-    armatures = imports.second.associate { Pair(it.id, it) }
+    val (loadedMeshes, loadedArmatures) = createMeshes(vertexSchemas)
+    meshes = loadedMeshes
+    armatures = loadedArmatures.associate { Pair(it.id, it) }
     animationDurations = mapAnimationDurations(armatures)
   }
 
