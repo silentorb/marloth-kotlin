@@ -154,12 +154,14 @@ fun loadMaterial(info: GltfInfo, materialIndex: Int): Material {
   )
 }
 
-fun getParentBone(info: GltfInfo, mesh: MeshInfo2, boneMap: BoneMap): Int? =
-    if (mesh.extras != null && mesh.extras.containsKey("parent")) {
-      val parentName = mesh.extras["parent"] as String
-      boneMap.values.first { it.name == parentName }.index
-    } else
-      null
+fun getParentBone(info: GltfInfo, nodeIndex: Int, boneMap: BoneMap): Int? {
+  val node = info.nodes[nodeIndex]
+  return if (node.extras != null && node.extras.containsKey("parent")) {
+    val parentName = node.extras["parent"] as String
+    boneMap.values.first { it.name == parentName }.index
+  } else
+    null
+}
 
 fun loadPrimitive(buffer: ByteBuffer, info: GltfInfo, vertexSchemas: VertexSchemas, primitive: Primitive,
                   converter: VertexConverter): Drawable {
@@ -379,8 +381,7 @@ data class ModelImport(
     val armatures: List<Armature>
 )
 
-fun getMeshId(info: GltfInfo, meshIndex: Int): MeshId? {
-  val nodeIndex = info.nodes.indexOfFirst { it.mesh == meshIndex }
+fun getMeshId(info: GltfInfo, nodeIndex: Int): MeshId? {
   val parent = info.nodes.firstOrNull { it.children != null && it.children.contains(nodeIndex) }
   val node = info.nodes[nodeIndex]
   val name = if (parent != null && parent.name != "rig")
@@ -412,13 +413,14 @@ fun loadGltf(vertexSchemas: VertexSchemas, filename: String, resourcePath: Strin
       }
       .flatten()
       .mapNotNull { (primitiveSource, meshIndex, mesh) ->
-        val id = getMeshId(info, meshIndex)
+        val nodeIndex = info.nodes.indexOfFirst { it.mesh == meshIndex }
+        val id = getMeshId(info, nodeIndex)
         if (id == null)
           null
         else {
           val name2 = mesh.name.replace(".001", "")
 
-          val parentBone = getParentBone(info, mesh, boneMap)
+          val parentBone = getParentBone(info, nodeIndex, boneMap)
           val material = loadMaterial(info, primitiveSource.material)
           val converter = createVertexConverter(info, buffer, boneMap, meshIndex)
           val primitive = Primitive(

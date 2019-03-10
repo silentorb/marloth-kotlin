@@ -75,7 +75,8 @@ data class Node(
     val rotation: Vector4?,
     val translation: Vector3?,
     val mesh: Int?,
-    val skin: Int?
+    val skin: Int?,
+    val extras: Map<String, Any>?
 )
 
 data class BufferInfo(
@@ -91,8 +92,7 @@ data class Primitive(
 
 data class MeshInfo2(
     val primitives: List<Primitive>,
-    val name: String,
-    val extras: Map<String, Any>?
+    val name: String
 )
 
 data class TextureReference(
