@@ -75,9 +75,14 @@ fun renderElementGroup(gameRenderer: GameSceneRenderer, group: ElementGroup) {
 
   val meshes = sceneRenderer.renderer.meshes
   for (element in group.meshes) {
-    val mesh = meshes[element.mesh]!!
-    for (primitive in mesh.primitives) {
-      simplePainter(gameRenderer.renderer, primitive, element, armature != null, transforms)
+    val mesh = meshes[element.mesh]
+    if (mesh == null) {
+      val k = 0
+    }
+    else {
+      for (primitive in mesh.primitives) {
+        simplePainter(gameRenderer.renderer, primitive, element, armature != null, transforms)
+      }
     }
   }
 }
