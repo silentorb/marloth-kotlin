@@ -57,8 +57,8 @@ def bake_selected():
 
 def initialize_texture(image_name):
     image = bpy.data.images.new(image_name, 512, 512)
-    image.filepath_raw = '//images/' + '.jpg'
-    image.file_format = 'JPG'
+    image.filepath_raw = '//images/' + image_name + '.jpg'
+    image.file_format = 'JPEG'
     image.save()
 
 
@@ -120,6 +120,15 @@ class MythicBakeAllTexturesOperator(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class MythicInitializeObjectTextureOperator(bpy.types.Operator):
+    bl_idname = "mythic.initialize_object_texture"
+    bl_label = "Inititalize Object Texture"
+
+    def execute(self, context):
+        initialize_object_texture(bpy.context.active_object)
+        return {'FINISHED'}
+
+
 class MainMythicMenu(bpy.types.Menu):
     bl_label = "Mythic"
     bl_idname = "mythic_menu_main"
@@ -129,6 +138,7 @@ class MainMythicMenu(bpy.types.Menu):
 
         layout.operator("mythic.bake_object_texture")
         layout.operator("mythic.bake_all_textures")
+        layout.operator("mythic.initialize_object_texture")
 
 
 def append_mythic_menu(self, context):
@@ -141,10 +151,12 @@ def append_mythic_menu(self, context):
     print('appending')
     layout = self.layout
     layout.menu("mythic_menu_main")
+
 
 components = [
     MythicBakeObjectTextureOperator,
     MythicBakeAllTexturesOperator,
+    MythicInitializeObjectTextureOperator,
     MainMythicMenu
 ]
 

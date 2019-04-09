@@ -92,12 +92,12 @@ fun <T> mapEventsToCommands(deviceStates: List<InputDeviceState>, strokes: Set<T
         .mapNotNull { event ->
           val bindingPair = getBinding(event)
           if (bindingPair != null) {
-            val (binding, index) = bindingPair
+            val (binding, target) = bindingPair
             val isStroke = strokes.contains(binding.command)
             if (!isStroke || deviceStates.dropLast(1).last().events.none(matches(event)))
               HaftCommand(
                   type = binding.command,
-                  target = index,
+                  target = target,
                   value = event.value
               )
             else

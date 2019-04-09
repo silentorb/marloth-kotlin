@@ -99,7 +99,7 @@ fun <T> getBinding(inputState: InputState, inputProfiles: Map<BloomId, InputProf
     val profile = inputProfiles[playerProfile]!!
     val binding = profile.bindings.firstOrNull { it.device == playerDevice.device && it.trigger == event.index }
     if (binding != null)
-      Pair(binding, playerProfile)
+      Pair(binding, playerDevice.player)
     else
       null
   } else
@@ -122,7 +122,7 @@ fun updateClientInput(client: Client): (ClientState) -> ClientState = { state ->
 }
 
 fun updateClient(client: Client, players: List<Int>, boxes: Boxes): (ClientState) -> ClientState = { clientState ->
-//  updateMousePointerVisibility(client.platform)
+  //  updateMousePointerVisibility(client.platform)
   val bindingContext = bindingContext(clientState)
   val getBinding = getBinding(clientState.input, clientState.input.guiInputProfiles)
   val strokes = clientCommandStrokes[bindingContext]!!
@@ -139,9 +139,7 @@ fun updateClient(client: Client, players: List<Int>, boxes: Boxes): (ClientState
   val newClientState = pipe(clientState, listOf(
       { state ->
         state.copy(
-            input = state.input.copy(
-                deviceStates = deviceStates
-            ),
+            input = updateInputState(deviceStates, state.input),
             bloomState = bloomState,
             view = existingOrNewState(currentViewKey) { state.view }(bloomState.bag),
             commands = allCommands

@@ -66,6 +66,9 @@ fun aliveSpirits(deck: Deck): Table<Spirit> =
 
 fun generateIntermediateRecords(world: World, playerCommands: Commands, delta: Float): Intermediate {
   val spiritCommands = pursueGoals(world, aliveSpirits(world.deck).values)
+  if (playerCommands.any()) {
+    val k = 0
+  }
   val commands = playerCommands.plus(spiritCommands)
   val collisions: Collisions = world.bodies
       .filter { it.velocity != Vector3.zero }

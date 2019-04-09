@@ -1,3 +1,4 @@
 config.json
 src/main/resources/models
 blend/models/images
+__pycache__

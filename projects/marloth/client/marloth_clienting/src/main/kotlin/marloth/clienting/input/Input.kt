@@ -64,15 +64,14 @@ fun newInputState(config: GameInputConfig) =
         guiInputProfiles = mapOf(1 to defaultInputProfile()),
         gameInputProfiles = mapOf(1 to defaultGameInputProfile()),
         playerProfiles = mapOf(
-            1 to 1
+            1 to 1,
+            2 to 1,
+            3 to 1,
+            4 to 1
         ),
         deviceMap = mapOf(
             0 to PlayerDevice(1, DeviceIndex.keyboard),
-            1 to PlayerDevice(1, DeviceIndex.keyboard),
-            2 to PlayerDevice(1, DeviceIndex.gamepad),
-            3 to PlayerDevice(1, DeviceIndex.gamepad),
-            4 to PlayerDevice(1, DeviceIndex.gamepad),
-            5 to PlayerDevice(1, DeviceIndex.gamepad)
+            1 to PlayerDevice(1, DeviceIndex.mouse)
         )
     )
 
@@ -95,16 +94,6 @@ fun updateInputState(input: PlatformInput, inputState: InputState): List<InputDe
   return listOf(inputState.deviceStates.last(), newDeviceState)
 }
 
-fun mouseMovementEvents(deviceStates: List<InputDeviceState>): HaftCommands<GuiCommandType> {
-  throw Error("Not implemented")
-//  val mousePosition = deviceStates[1].mousePosition
-//  val mouseOffset = mousePosition - deviceStates[0].mousePosition
-//  return if (config.mouseInput)
-//    applyMouseMovement(mouseOffset)
-//  else
-//    listOf()
-}
-
 fun newBloomInputState(deviceState: InputDeviceState) =
     mythic.bloom.InputState(
         mousePosition = deviceState.mousePosition.toVector2i(),
@@ -116,3 +105,31 @@ fun newBloomInputState(deviceState: InputDeviceState) =
         ),
         events = listOf()
     )
+
+fun updateDeviceMap(deviceStates: List<InputDeviceState>, input: InputState): DeviceMap {
+  val currentDevices = input.deviceMap.keys
+  val gamePadSelectCommands = deviceStates.last().events.filter { !currentDevices.contains(it.device) }
+  if (gamePadSelectCommands.none())
+    return input.deviceMap
+
+  val currentGamepadPlayers = input.deviceMap
+      .filter { it.value.device == DeviceIndex.gamepad }
+      .map { it.value.player }.distinct()
+
+  val playersWithoutGamepads = (1..4).minus(currentGamepadPlayers)
+
+  return input.deviceMap.plus(gamePadSelectCommands.mapIndexed { i, it ->
+    println("gamepad " + it.device + " " + playersWithoutGamepads[i])
+    Pair(it.device, PlayerDevice(
+        player = playersWithoutGamepads[i],
+        device = DeviceIndex.gamepad
+    ))
+  })
+}
+
+fun updateInputState(deviceStates: List<InputDeviceState>, input: InputState): InputState {
+  return input.copy(
+      deviceStates = deviceStates,
+      deviceMap = updateDeviceMap(deviceStates, input)
+  )
+}
