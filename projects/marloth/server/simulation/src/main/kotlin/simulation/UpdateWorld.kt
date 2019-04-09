@@ -1,5 +1,6 @@
 package simulation
 
+import com.badlogic.gdx.physics.bullet.Bullet
 import intellect.Spirit
 import intellect.execution.pursueGoals
 import intellect.updateAiState
@@ -150,3 +151,14 @@ fun updateWorld(animationDurations: AnimationDurationMap, world: World, playerCo
         updateWorldDeck(animationDurations, playerCommands, delta),
         updateGlobalDetails
     ))
+
+private var isInitialized = false
+
+fun initializeSimulation() {
+  if (isInitialized)
+    return
+
+  isInitialized = true
+
+  Bullet.init()
+}

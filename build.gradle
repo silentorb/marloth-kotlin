@@ -36,7 +36,7 @@ allprojects {
   version = '1.0'
   ext {
     appName = "marloth"
-    gdxVersion = '1.9.8'
+    gdxVersion = '1.9.9'
     lwjglVersion = "3.1.5"
     lwjglNatives = _lwjglNatives
     jomlVersion = "1.9.8"

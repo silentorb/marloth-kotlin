@@ -12,10 +12,7 @@ import mythic.ent.pipe
 import mythic.quartz.updateTimestep
 import persistence.Database
 import persistence.createVictory
-import simulation.Victory
-import simulation.World
-import simulation.gameStrokes
-import simulation.simulationDelta
+import simulation.*
 
 fun updateSimulationDatabase(db: Database, next: World, previous: World) {
   val nextGameOver = next.gameOver
@@ -37,6 +34,7 @@ fun updateClientFromWorld(worlds: List<World>, client: ClientState): ClientState
 }
 
 fun updateWorld(app: GameApp, state: AppState): List<World> {
+  initializeSimulation()
   val getBinding = getBinding(state.client.input, state.client.input.gameInputProfiles)
   val commands = mapGameCommands(mapEventsToCommands(state.client.input.deviceStates, gameStrokes, getBinding))
   val worlds = state.worlds
