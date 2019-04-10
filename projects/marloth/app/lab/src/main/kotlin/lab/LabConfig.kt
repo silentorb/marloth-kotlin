@@ -54,42 +54,44 @@ enum class LabCommandType {
   toggleNormals,
   toggleFaceIds,
   toggleNodeIds,
+  toggleDrawPhysics,
 
   selectEdgeLoop
 }
 
 val labCommandStrokes = setOf(
-   LabCommandType.viewGame,
-   LabCommandType.viewMap,
-   LabCommandType.viewModel,
-   LabCommandType.viewWorld,
-   LabCommandType.viewTexture,
-   LabCommandType.toggleAbstractView,
-   LabCommandType.toggleStructureView,
-   LabCommandType.menu,
-   LabCommandType.update,
-   LabCommandType.select,
-   LabCommandType.incrementRaySkip,
-   LabCommandType.decrementRaySkip,
+    LabCommandType.viewGame,
+    LabCommandType.viewMap,
+    LabCommandType.viewModel,
+    LabCommandType.viewWorld,
+    LabCommandType.viewTexture,
+    LabCommandType.toggleAbstractView,
+    LabCommandType.toggleStructureView,
+    LabCommandType.menu,
+    LabCommandType.update,
+    LabCommandType.select,
+    LabCommandType.incrementRaySkip,
+    LabCommandType.decrementRaySkip,
 
-   LabCommandType.cameraViewFront,
-   LabCommandType.cameraViewBack,
-   LabCommandType.cameraViewTop,
-   LabCommandType.cameraViewBottom,
-   LabCommandType.cameraViewRight,
-   LabCommandType.cameraViewLeft,
+    LabCommandType.cameraViewFront,
+    LabCommandType.cameraViewBack,
+    LabCommandType.cameraViewTop,
+    LabCommandType.cameraViewBottom,
+    LabCommandType.cameraViewRight,
+    LabCommandType.cameraViewLeft,
 
-   LabCommandType.selectModeEdges,
-   LabCommandType.selectModeFaces,
-   LabCommandType.selectModeVertices,
-   LabCommandType.toggleSelection,
+    LabCommandType.selectModeEdges,
+    LabCommandType.selectModeFaces,
+    LabCommandType.selectModeVertices,
+    LabCommandType.toggleSelection,
 
-   LabCommandType.toggleMeshDisplay,
-   LabCommandType.toggleNormals,
-   LabCommandType.toggleFaceIds,
-   LabCommandType.toggleNodeIds,
+    LabCommandType.toggleMeshDisplay,
+    LabCommandType.toggleNormals,
+    LabCommandType.toggleFaceIds,
+    LabCommandType.toggleNodeIds,
+    LabCommandType.toggleDrawPhysics,
 
-   LabCommandType.selectEdgeLoop
+    LabCommandType.selectEdgeLoop
 )
 
 typealias LabInputConfig = MutableMap<Views, Bindings<LabCommandType>>
@@ -100,7 +102,9 @@ fun createLabInputBindings() = mutableMapOf(
         GLFW.GLFW_KEY_F2 to LabCommandType.viewMap,
         GLFW.GLFW_KEY_F3 to LabCommandType.viewWorld,
         GLFW.GLFW_KEY_F4 to LabCommandType.viewModel,
-        GLFW.GLFW_KEY_F5 to LabCommandType.viewTexture
+        GLFW.GLFW_KEY_F5 to LabCommandType.viewTexture,
+        GLFW.GLFW_KEY_P to LabCommandType.toggleDrawPhysics
+
     ))
         .plus(
             createBindings(DeviceIndex.gamepad, mapOf(

@@ -84,7 +84,7 @@ class SimpleTriangleMesh<T>(val vertexBuffer: VertexBuffer<T>, val indices: IntB
 
   override fun draw(method: DrawMethod) {
     vertexBuffer.activate()
-    val convertedMethod = when(method) {
+    val convertedMethod = when (method) {
       DrawMethod.triangleFan -> DrawMethod.triangles
       DrawMethod.lineLoop -> DrawMethod.lineStrip
       else -> method
@@ -105,9 +105,9 @@ class SimpleTriangleMesh<T>(val vertexBuffer: VertexBuffer<T>, val indices: IntB
 class MutableSimpleMesh<T>(val vertexSchema: VertexSchema<T>) : Drawable {
   var offsets: IntBuffer = BufferUtils.createIntBuffer(1)
   var counts: IntBuffer = BufferUtils.createIntBuffer(1)
-  val vertexBuffer = VertexBuffer(vertexSchema)
-  val floatBuffer = BufferUtils.createFloatBuffer(64)
-  val custodian = FloatBufferCustodian(floatBuffer)
+  private val vertexBuffer = VertexBuffer(vertexSchema)
+  private var floatBuffer = BufferUtils.createFloatBuffer(64)
+  private var custodian = FloatBufferCustodian(floatBuffer)
 
   override fun draw(method: DrawMethod) {
     vertexBuffer.activate()
@@ -115,6 +115,11 @@ class MutableSimpleMesh<T>(val vertexSchema: VertexSchema<T>) : Drawable {
   }
 
   fun load(values: List<Float>) {
+    if (values.size > floatBuffer.capacity()) {
+      floatBuffer = BufferUtils.createFloatBuffer(values.size)
+      custodian = FloatBufferCustodian(floatBuffer)
+    }
+
     for (value in values) {
       floatBuffer.put(value)
     }

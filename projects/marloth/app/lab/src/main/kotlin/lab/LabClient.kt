@@ -49,12 +49,22 @@ class LabClient(val config: LabConfig, val client: Client) {
       LabCommandType.viewTexture to { _ -> config.view = Views.texture }
   )
 
+  val gameKeyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
+      LabCommandType.toggleDrawPhysics to { _ -> config.gameView.drawPhysics = !config.gameView.drawPhysics }
+  )
+
   fun getBindings() = labInputConfig[Views.global]!!.plus(labInputConfig[config.view]!!)
 
   fun updateInput(viewCommands: LabCommandMap, deviceStates: List<InputDeviceState>): HaftCommands<LabCommandType> {
     val bindings = getBindings()
     val commands = mapEventsToCommands(deviceStates, labCommandStrokes, haft.getBindingSimple(bindings))
-    applyCommands(commands, viewCommands.plus(globalKeyPressCommands))
+    val moreCommands = viewCommands.plus(globalKeyPressCommands)
+    val allCommands = if (config.view == Views.game)
+      moreCommands.plus(gameKeyPressCommands)
+    else
+      moreCommands
+
+    applyCommands(commands, allCommands)
     return commands
   }
 
@@ -167,7 +177,7 @@ class LabClient(val config: LabConfig, val client: Client) {
 
   fun update(world: World?, screens: List<Screen>, previousState: LabState, delta: Float): LabClientResult {
 //    if (config.view != Views.game) {
-      client.platform.input.isMouseVisible(true)
+    client.platform.input.isMouseVisible(true)
 //    }
 
     val windowInfo = client.platform.display.getInfo()

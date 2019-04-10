@@ -2,10 +2,12 @@ package lab
 
 import configuration.ConfigManager
 import configuration.loadYamlFile
+import configuration.saveYamlFile
 import generation.addEnemies
 import generation.generateWorld
 import lab.utility.updateWatching
 import lab.views.game.GameViewConfig
+import lab.views.game.drawBulletDebug
 import lab.views.model.newModelViewState
 import marloth.clienting.newClientState
 import marloth.front.GameApp
@@ -15,24 +17,17 @@ import mythic.ent.pipe
 import mythic.quartz.globalProfiler
 import mythic.quartz.newTimestepState
 import mythic.quartz.printProfiler
+import physics.newBulletState
 import randomly.Dice
 import simulation.*
 
 const val labConfigPath = "labConfig.yaml"
 
-//fun saveLabConfig(config: LabConfig) {
-//  saveYamlFile("labConfig.yaml", config)
-//}
-
-//var guiClosed = false
-//var mainAppClosed = false
-//
-//fun startGui() {
-//  thread(true, false, null, "JavaFX GUI", -1) {
-////    gui = LabGui()
-//    guiClosed = true
-//  }
-//}
+fun saveLabConfig(config: LabConfig) {
+  Thread {
+    saveYamlFile("labConfig.yaml", config)
+  }
+}
 
 fun createDice(config: GameViewConfig) =
     if (config.UseRandomSeed)
@@ -86,40 +81,42 @@ private var saveIncrement = 0f
 tailrec fun labLoop(app: LabApp, state: LabState) {
   val gameApp = app.gameApp
   val newAppState = if (app.config.view == Views.game) {
-    val newState = updateAppState(gameApp, app.newWorld)(state.app)
-    app.labClient.updateInput(mapOf(), newState.client.input.deviceStates)
-    newState
+    val hooks = GameHooks(
+        onRender = if (app.config.gameView.drawPhysics)
+          drawBulletDebug(gameApp)
+        else
+          { _ -> },
+        onUpdate = { appState ->
+          app.labClient.updateInput(mapOf(), appState.client.input.deviceStates)
+        }
+    )
+
+    updateAppState(gameApp, app.newWorld, hooks)(state.app)
   } else {
     gameApp.platform.display.swapBuffers()
     val (timestep, steps) = updateAppTimestep(state.app.timestep)
 
     gameApp.platform.process.pollEvents()
 
-    val worlds = state.app.worlds
     val world = state.app.worlds.lastOrNull()
 
     val (commands, newState) = app.labClient.update(world, gameApp.client.screens, state, timestep.delta.toFloat())
-
-//    val newWorlds = when {
-//      commands.any { it.type == GuiCommandType.newGame } -> listOf(app.newWorld())
-//      app.config.view == Views.game -> updateWorld(gameApp.db, gameApp.client.renderer.animationDurations, state.app, commands, steps)
-//      else -> worlds
-//    }
 
     if (world != null && gameApp.config.gameplay.defaultPlayerView != world.players[0].viewMode) {
       gameApp.config.gameplay.defaultPlayerView = world.players[0].viewMode
     }
 
-    saveIncrement += 1f * timestep.delta.toFloat()
-    if (saveIncrement > 1f || app.config.view == Views.game) {
-      saveIncrement = 0f
-//    saveLabConfig(app.config)
-      app.labConfigManager.save()
-      updateWatching(app)
-    }
     newState.app.copy(
         timestep = timestep
     )
+  }
+
+  saveIncrement += 1f * newAppState.timestep.delta.toFloat()
+  if (saveIncrement > 5f) {
+    saveIncrement = 0f
+    saveLabConfig(app.config)
+    app.labConfigManager.save()
+    updateWatching(app)
   }
 
   if (!gameApp.platform.process.isClosing())
@@ -172,7 +169,9 @@ object App {
     globalProfiler().start("otherStart")
     val platform = createDesktopPlatform("Dev Lab", gameConfig.display)
     platform.display.initialize(gameConfig.display)
-    val gameApp = GameApp(platform, gameConfig)
+    val gameApp = GameApp(platform, gameConfig,
+        bulletState = newBulletState()
+    )
 //    startGui()
     runApp(gameApp, config)
   }

@@ -1,18 +1,12 @@
 package simulation
 
-import com.badlogic.gdx.physics.bullet.Bullet
 import intellect.Spirit
 import intellect.execution.pursueGoals
 import intellect.updateAiState
 import mythic.ent.*
 import mythic.spatial.Pi2
 import mythic.spatial.Vector3
-import physics.Collision
-import physics.Collisions
-import physics.updateBodies
-import physics.MovingBody
-import physics.getWallCollisions
-import physics.wallsInCollisionRange
+import physics.*
 import randomly.Dice
 import simulation.input.updatePlayer
 
@@ -146,19 +140,9 @@ val updateGlobalDetails: (World) -> World = { world ->
     world
 }
 
-fun updateWorld(animationDurations: AnimationDurationMap, world: World, playerCommands: Commands, delta: Float): World =
+fun updateWorld(bulletState: BulletState, animationDurations: AnimationDurationMap, world: World, playerCommands: Commands, delta: Float): World =
     pipe(world, listOf(
         updateWorldDeck(animationDurations, playerCommands, delta),
-        updateGlobalDetails
+        updateGlobalDetails,
+        updateBulletPhysics(bulletState)
     ))
-
-private var isInitialized = false
-
-fun initializeSimulation() {
-  if (isInitialized)
-    return
-
-  isInitialized = true
-
-  Bullet.init()
-}

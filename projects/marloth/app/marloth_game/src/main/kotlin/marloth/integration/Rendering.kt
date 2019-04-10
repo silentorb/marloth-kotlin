@@ -1,10 +1,10 @@
 package marloth.integration
 
 import marloth.clienting.*
+import marloth.front.RenderHook
 import mythic.bloom.Boxes
 import mythic.bloom.renderLayout
 import mythic.ent.singleCache
-import mythic.imaging.rgbFloatToBytes
 import mythic.platforming.WindowInfo
 import org.joml.Vector2i
 import rendering.GameScene
@@ -38,7 +38,7 @@ fun renderRayMarching(gameScene: GameScene, dimensions: Vector2i, world: World, 
 //  renderer.applyRenderBuffer(dimensions)
 }
 
-fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: Boxes) {
+fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: Boxes, onRender: RenderHook?) {
   client.platform.display.swapBuffers()
 
   val marcher = Marcher(
@@ -64,6 +64,10 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
 
       if (false) {
         renderRayMarching(scene, dimensions, world, client.renderer, marcher)
+      }
+
+      if (onRender != null) {
+        onRender(sceneRenderer)
       }
 
       finishRender(gameRenderer, filters)

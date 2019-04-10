@@ -127,7 +127,8 @@ fun updateClient(client: Client, players: List<Int>, boxes: Boxes): (ClientState
   val getBinding = getBinding(clientState.input, clientState.input.guiInputProfiles)
   val strokes = clientCommandStrokes[bindingContext]!!
   val deviceStates = clientState.input.deviceStates
-  val commands = mapEventsToCommands(deviceStates, strokes, getBinding)
+//  val commands = mapEventsToCommands(deviceStates, strokes, getBinding)
+  val commands = listOf<HaftCommand<GuiCommandType>>()
 
   val bloomInputState = newBloomInputState(deviceStates.last())
       .copy(events = haftToBloom(commands))

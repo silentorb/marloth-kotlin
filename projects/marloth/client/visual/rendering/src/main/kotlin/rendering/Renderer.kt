@@ -312,6 +312,14 @@ class SceneRenderer(
     renderer.dynamicMesh.draw(DrawMethod.lines)
   }
 
+  fun drawLines(values: List<Float>, color: Vector4, thickness: Float = 1f) {
+    globalState.lineThickness = thickness
+    renderer.dynamicMesh.load(values)
+
+    effects.flat.activate(ObjectShaderConfig(transform = Matrix(), color = color))
+    renderer.dynamicMesh.draw(DrawMethod.lines)
+  }
+
   fun drawPoint(position: Vector3, color: Vector4, size: Float = 1f) {
     globalState.pointSize = size
     renderer.dynamicMesh.load(listOf(position.x, position.y, position.z))

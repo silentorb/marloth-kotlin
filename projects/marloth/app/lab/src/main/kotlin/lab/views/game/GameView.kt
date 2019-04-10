@@ -39,7 +39,8 @@ data class GameViewConfig(
     var displayMode: GameDisplayMode = GameDisplayMode.normal,
     var draw: GameViewDrawConfig = GameViewDrawConfig(),
     var logDroppedFrames: Boolean = false,
-    var autoNewGame: Boolean = true
+    var autoNewGame: Boolean = true,
+    var drawPhysics: Boolean = false
 )
 
 fun renderFaceNormals(renderer: SceneRenderer, length: Float, faces: List<ImmutableFace>) {
