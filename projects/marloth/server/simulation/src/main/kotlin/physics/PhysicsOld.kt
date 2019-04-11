@@ -106,7 +106,7 @@ fun updateBody(realm: Realm, body: Body, movementForces: List<MovementForce>, co
                orientationForces: List<AbsoluteOrientationForce>, delta: Float): Body {
   return body.copy(
       velocity = applyForces(body, movementForces, body.attributes.resistance, delta),
-      position = moveBody(realm, body, body.velocity, collisions, delta),
+//      position = moveBody(realm, body, body.velocity, collisions, delta),
       orientation = orientationForces.firstOrNull()?.orientation ?: body.orientation,
       node = updateBodyNode(realm, body)
   )

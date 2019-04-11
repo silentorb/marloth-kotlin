@@ -72,20 +72,6 @@ class LabClient(val config: LabConfig, val client: Client) {
     client.renderer.prepareRender(windowInfo)
   }
 
-//  fun updateGame(world: World?, screens: List<Screen>, state: LabState): LabClientResult {
-////    updateLabGameState(config.gameView, commands)
-//    val (nextClientState, globalCommands) = updateGameView(client, world, state)
-//    val commands = updateInput(mapOf(), nextClientState.input.deviceStates)
-//
-//    val newLabState = state.copy(
-//        app = state.app.copy(
-//            client = nextClientState
-//        )
-//    )
-//
-//    return LabClientResult(globalCommands, newLabState)
-//  }
-
   fun updateModel(windowInfo: WindowInfo, previousState: LabState, delta: Float): LabClientResult {
     prepareClient(windowInfo)
     val view = ModelView(config.modelView, client.renderer, client.platform.input.getMousePosition())

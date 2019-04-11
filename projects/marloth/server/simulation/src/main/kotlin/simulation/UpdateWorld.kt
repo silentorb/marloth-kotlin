@@ -59,12 +59,7 @@ fun aliveSpirits(deck: Deck): Table<Spirit> =
       character.isAlive
     }
 
-fun generateIntermediateRecords(world: World, playerCommands: Commands, delta: Float): Intermediate {
-  val spiritCommands = pursueGoals(world, aliveSpirits(world.deck).values)
-  if (playerCommands.any()) {
-    val k = 0
-  }
-  val commands = playerCommands.plus(spiritCommands)
+fun generateIntermediateRecords(world: World, commands: Commands, delta: Float): Intermediate {
   val collisions: Collisions = world.bodies
       .filter { it.velocity != Vector3.zero }
       .flatMap { body ->
@@ -113,10 +108,10 @@ fun newEntities(world: World, nextId: IdSource, data: Intermediate): (Deck) -> D
   deck.plus(getNewMissiles(world.copy(deck = deck), nextId, data.activatedAbilities))
 }
 
-fun updateWorldDeck(animationDurations: AnimationDurationMap, playerCommands: Commands, delta: Float): (World) -> World =
+fun updateWorldDeck(animationDurations: AnimationDurationMap, commands: Commands, delta: Float): (World) -> World =
     { world ->
       val nextId: IdSource = newIdSource(world.nextId)
-      val data = generateIntermediateRecords(world, playerCommands, delta)
+      val data = generateIntermediateRecords(world, commands, delta)
 
       val newDeck = pipe(world.deck, listOf(
           updateEntities(world.dice, animationDurations, world, data),
@@ -140,9 +135,12 @@ val updateGlobalDetails: (World) -> World = { world ->
     world
 }
 
-fun updateWorld(bulletState: BulletState, animationDurations: AnimationDurationMap, world: World, playerCommands: Commands, delta: Float): World =
-    pipe(world, listOf(
-        updateWorldDeck(animationDurations, playerCommands, delta),
-        updateGlobalDetails,
-        updateBulletPhysics(bulletState)
-    ))
+fun updateWorld(bulletState: BulletState, animationDurations: AnimationDurationMap, world: World, playerCommands: Commands, delta: Float): World {
+  val spiritCommands = pursueGoals(world, aliveSpirits(world.deck).values)
+  val commands = playerCommands.plus(spiritCommands)
+  return pipe(world, listOf(
+      updateWorldDeck(animationDurations, commands, delta),
+      updateGlobalDetails,
+      updateBulletPhysics(bulletState, world)
+  ))
+}

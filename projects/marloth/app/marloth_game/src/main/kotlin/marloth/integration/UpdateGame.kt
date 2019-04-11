@@ -1,5 +1,6 @@
 package marloth.integration
 
+import haft.mapEventsToCommands
 import marloth.clienting.*
 import marloth.clienting.audio.updateAppStateAudio
 import marloth.clienting.gui.ViewId
@@ -14,7 +15,7 @@ import persistence.Database
 import persistence.createVictory
 import physics.newBulletState
 import physics.releaseBulletState
-import physics.syncBulletToWorld
+import physics.syncNewBodies
 import simulation.*
 
 fun updateSimulationDatabase(db: Database, next: World, previous: World) {
@@ -38,8 +39,7 @@ fun updateClientFromWorld(worlds: List<World>, client: ClientState): ClientState
 
 fun updateWorld(app: GameApp, state: AppState): List<World> {
   val getBinding = getBinding(state.client.input, state.client.input.gameInputProfiles)
-//  val commands = mapGameCommands(mapEventsToCommands(state.client.input.deviceStates, gameStrokes, getBinding))
-  val commands = listOf<Command>()
+  val commands = mapGameCommands(mapEventsToCommands(state.client.input.deviceStates, gameStrokes, getBinding))
   val worlds = state.worlds
   val world = worlds.last()
   val nextWorld = simulation.updateWorld(app.bulletState, app.client.renderer.animationDurations, world, commands, simulationDelta)
@@ -54,7 +54,7 @@ fun restartWorld(app: GameApp, newWorld: () -> World): List<World> {
 
   val world = newWorld()
   app.bulletState = newBulletState()
-  syncBulletToWorld(world, app.bulletState)
+  syncNewBodies(world, mapOf(), app.bulletState)
 
   return listOf(world)
 }
