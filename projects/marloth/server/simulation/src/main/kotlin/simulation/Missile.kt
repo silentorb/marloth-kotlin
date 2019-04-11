@@ -10,7 +10,6 @@ import mythic.spatial.Vector3
 import physics.Body
 import physics.Collision
 import physics.commonShapes
-import physics.overlaps
 import simulation.data.missileBodyAttributes
 
 data class Missile(
@@ -42,25 +41,25 @@ fun characterAttack(world: World, nextId: IdSource, character: Character, abilit
   )
 }
 
-fun getBodyCollisions(bodies: Table<Body>, characterTable: Table<Character>, missiles: Collection<Missile>): List<Collision> {
-  return missiles.flatMap { missile ->
-    val body = bodies[missile.id]!!
-    bodies.values.filter {
-      val character = characterTable[it.id]
-      it.id != body.id && it.id != missile.owner && (character == null || character.isAlive)
-    }
-        .filter { overlaps(it, body) }
-        .map { hit ->
-          Collision(
-              first = missile.id,
-              second = hit.id,
-              hitPoint = Vector2(),
-              directGap = 0f,
-              travelingGap = 0f
-          )
-        }
-  }
-}
+//fun getBodyCollisions(bodies: Table<Body>, characterTable: Table<Character>, missiles: Collection<Missile>): List<Collision> {
+//  return missiles.flatMap { missile ->
+//    val body = bodies[missile.id]!!
+//    bodies.values.filter {
+//      val character = characterTable[it.id]
+//      it.id != body.id && it.id != missile.owner && (character == null || character.isAlive)
+//    }
+//        .filter { overlaps(it, body) }
+//        .map { hit ->
+//          Collision(
+//              first = missile.id,
+//              second = hit.id,
+//              hitPoint = Vector2(),
+//              directGap = 0f,
+//              travelingGap = 0f
+//          )
+//        }
+//  }
+//}
 
 fun updateMissile(world: World, collisions: List<Collision>, delta: Float): (Missile) -> Missile = { missile ->
   val body = world.deck.bodies[missile.id]!!

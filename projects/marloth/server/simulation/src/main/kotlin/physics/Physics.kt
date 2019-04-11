@@ -8,7 +8,6 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState
 import mythic.ent.Id
-import mythic.ent.Table
 import mythic.sculpting.ImmutableFace
 import mythic.spatial.Matrix
 import mythic.spatial.Vector3
@@ -134,7 +133,7 @@ fun syncMapGeometryAndPhysics(world: World, bulletState: BulletState) {
 //    bulletState.dynamicBodies = bulletState.dynamicBodies.plus(newFaceBodies)
 }
 
-fun syncNewBodies(world: World, previousBodies: Table<Body>, bulletState: BulletState) {
+fun syncNewBodies(world: World, bulletState: BulletState) {
   val newBtBodies = world.deck.bodies
       .filterKeys { !bulletState.dynamicBodies.containsKey(it) }
 //      .filterKeys { !previousBodies.containsKey(it) }
@@ -164,11 +163,6 @@ fun syncNewBodies(world: World, previousBodies: Table<Body>, bulletState: Bullet
 }
 
 fun applyImpulses(world: World, bulletState: BulletState) {
-//  val movementForces = allCharacterMovements(world, commands)
-//  movementForces.forEach { force ->
-//    val body = bulletState.dynamicBodies[force.body]!!
-//    body.linearVelocity = toGdxVector3(force.offset)
-//  }
   world.deck.bodies.forEach { (_, body) ->
     if (body.velocity != Vector3.zero) {
       val btBody = bulletState.dynamicBodies[body.id]
@@ -200,8 +194,8 @@ fun syncWorldToBullet(bulletState: BulletState): (World) -> World = { world ->
   )
 }
 
-fun updateBulletPhysics(bulletState: BulletState, previousWorld: World): (World) -> World = { world ->
-  syncNewBodies(world, previousWorld.deck.bodies, bulletState)
+fun updateBulletPhysics(bulletState: BulletState): (World) -> World = { world ->
+  syncNewBodies(world, bulletState)
   applyImpulses(world, bulletState)
   bulletState.dynamicsWorld.stepSimulation(1f / 60f, 10)
   syncWorldToBullet(bulletState)(world)

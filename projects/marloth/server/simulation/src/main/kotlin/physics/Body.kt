@@ -49,17 +49,12 @@ data class Body(
     val perpetual: Boolean = false
 ) : Entity, SimpleBody {
 
-  val radius: Float?
-    get() = shape?.getRadiusOrNull()
 }
 
 val commonShapes = mapOf(
     EntityType.character to Cylinder(0.5f, 1f),
     EntityType.missile to Sphere(0.2f)
 )
-
-fun overlaps(first: Body, second: Body) =
-    colliding.overlaps(first.shape, first.position, second.shape, second.position)
 
 fun isInsideNodeHorizontally(faces: ImmutableFaceTable, node: Node, position: Vector3) =
     node.floors.any { isInsidePolygon(position, faces[it]!!.vertices) }

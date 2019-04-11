@@ -60,22 +60,22 @@ fun aliveSpirits(deck: Deck): Table<Spirit> =
     }
 
 fun generateIntermediateRecords(world: World, commands: Commands, delta: Float): Intermediate {
-  val collisions: Collisions = world.bodies
-      .filter { it.velocity != Vector3.zero }
-      .flatMap { body ->
-        val offset = body.velocity * delta
-        val wallsInRange = wallsInCollisionRange(world.realm, body.node)
-        val faces = wallsInRange.map { world.realm.mesh.faces[it]!! }
-        val walls = getWallCollisions(MovingBody(body.radius!!, body.position), offset, faces)
-        walls.map { Collision(body.id, null, it.wall, it.hitPoint, it.directGap, it.travelingGap) }
-      }
-      .plus(getBodyCollisions(world.deck.bodies, world.characterTable, world.deck.missiles.values))
+//  val collisions: Collisions = world.bodies
+//      .filter { it.velocity != Vector3.zero }
+//      .flatMap { body ->
+//        val offset = body.velocity * delta
+//        val wallsInRange = wallsInCollisionRange(world.realm, body.node)
+//        val faces = wallsInRange.map { world.realm.mesh.faces[it]!! }
+////        val walls = getWallCollisions(MovingBody(body.radius!!, body.position), offset, faces)
+////        walls.map { Collision(body.id, null, it.wall, it.hitPoint, it.directGap, it.travelingGap) }
+//      }
+//      .plus(getBodyCollisions(world.deck.bodies, world.characterTable, world.deck.missiles.values))
   val activatedAbilities = getActivatedAbilities(world, commands)
 
   return Intermediate(
       commands = commands,
       activatedAbilities = activatedAbilities,
-      collisions = collisions
+      collisions = listOf()
   )
 }
 
@@ -141,6 +141,6 @@ fun updateWorld(bulletState: BulletState, animationDurations: AnimationDurationM
   return pipe(world, listOf(
       updateWorldDeck(animationDurations, commands, delta),
       updateGlobalDetails,
-      updateBulletPhysics(bulletState, world)
+      updateBulletPhysics(bulletState)
   ))
 }

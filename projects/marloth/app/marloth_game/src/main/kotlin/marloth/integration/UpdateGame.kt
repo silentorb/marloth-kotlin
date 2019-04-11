@@ -54,7 +54,7 @@ fun restartWorld(app: GameApp, newWorld: () -> World): List<World> {
 
   val world = newWorld()
   app.bulletState = newBulletState()
-  syncNewBodies(world, mapOf(), app.bulletState)
+  syncNewBodies(world, app.bulletState)
 
   return listOf(world)
 }

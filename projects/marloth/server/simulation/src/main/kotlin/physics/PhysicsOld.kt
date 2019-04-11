@@ -88,19 +88,19 @@ fun isGrounded(realm: Realm, body: Body): Boolean {
   return !body.gravity || realm.nodeTable[body.node]!!.isWalkable || isGroundedOnNeighborNode(realm, body)
 }
 
-fun moveBody(realm: Realm, body: Body, offset: Vector3, walls: List<Collision>, delta: Float): Vector3 {
-  val position = if (offset == Vector3())
-    body.position
-  else
-    checkWallCollision(MovingBody(body.radius!!, body.position), offset * delta, walls.map {
-      WallCollision3(it.wall!!, it.hitPoint, it.directGap, it.travelingGap)
-    })
-
-  return if (!isGrounded(realm, body))
-    position + Vector3(0f, 0f, -4f * delta)
-  else
-    position
-}
+//fun moveBody(realm: Realm, body: Body, offset: Vector3, walls: List<Collision>, delta: Float): Vector3 {
+//  val position = if (offset == Vector3())
+//    body.position
+//  else
+//    checkWallCollision(MovingBody(body.radius!!, body.position), offset * delta, walls.map {
+//      WallCollision3(it.wall!!, it.hitPoint, it.directGap, it.travelingGap)
+//    })
+//
+//  return if (!isGrounded(realm, body))
+//    position + Vector3(0f, 0f, -4f * delta)
+//  else
+//    position
+//}
 
 fun updateBody(realm: Realm, body: Body, movementForces: List<MovementForce>, collisions: List<Collision>,
                orientationForces: List<AbsoluteOrientationForce>, delta: Float): Body {
