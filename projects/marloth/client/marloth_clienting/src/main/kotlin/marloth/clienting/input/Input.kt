@@ -109,6 +109,7 @@ fun newBloomInputState(deviceState: InputDeviceState) =
 fun updateDeviceMap(deviceStates: List<InputDeviceState>, input: InputState): DeviceMap {
   val currentDevices = input.deviceMap.keys
   val gamePadSelectCommands = deviceStates.last().events.filter { !currentDevices.contains(it.device) }
+      .distinctBy { it.device }
   if (gamePadSelectCommands.none())
     return input.deviceMap
 
