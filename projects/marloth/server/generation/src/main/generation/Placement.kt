@@ -1,5 +1,6 @@
 package generation
 
+import colliding.ShapeOffset
 import colliding.Sphere
 import intellect.Pursuit
 import intellect.Spirit
@@ -9,11 +10,13 @@ import mythic.ent.entityMap
 import mythic.ent.newIdSource
 import mythic.spatial.*
 import physics.Body
+import physics.DynamicBody
 import physics.voidNode
 import randomly.Dice
 import simulation.*
+import simulation.data.EntityTemplate
 import simulation.data.creatures
-import simulation.data.doodadBodyAttributes
+import simulation.data.entityTemplates
 
 data class CharacterTemplate(
     val faction: Id,
@@ -24,7 +27,9 @@ fun placeCharacter(realm: Realm, template: CharacterTemplate, nextId: IdSource, 
 //  val node = dice.getItem(realm.locationNodes.drop(1))// Skip the node where the player starts
 //  val wall = dice.getItem(node.walls)
 //  val position = getVector3Center(node.position, realm.mesh.faces[wall]!!.edges[0].first)
+  val id = nextId()
   return newCharacter(
+      id = id,
       nextId = nextId,
       faction = template.faction,
       definition = template.definition,
@@ -78,6 +83,7 @@ fun placeDoors(realm: Realm, nextId: IdSource): Deck =
           mythic.spatial.globalPosition = position
           val id = nextId()
           Hand(
+              id = id,
               door = Door(
                   id = id
               ),
@@ -85,10 +91,12 @@ fun placeDoors(realm: Realm, nextId: IdSource): Deck =
                   id = id,
                   position = position,
                   orientation = Quaternion().rotateTo(Vector3(0f, 1f, 0f), realm.mesh.faces[face]!!.normal),
-                  attributes = doodadBodyAttributes,
-                  shape = null,
-                  gravity = false,
                   node = nodeId
+              ),
+              dynamicBody = DynamicBody(
+                  gravity = false,
+                  mass = 50f,
+                  resistance = 4f
               )
           )
 
@@ -120,25 +128,14 @@ fun placeWallLamps(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): De
           Vector3(0f, 0f, 0.9f) + wall.normal * -0.1f
       val angle = Quaternion().rotateTo(Vector3(1f, 0f, 0f), wall.normal)
       val id = nextId()
-      Hand(
+      entityTemplates[EntityTemplate.wallLamp]!!.copy(
+          id = id,
           body = Body(
               id = id,
-              shape = Sphere(0.3f),
               position = position,
               orientation = angle,
               velocity = Vector3(),
-              node = node.id,
-              attributes = doodadBodyAttributes,
-              gravity = false
-          ),
-          depiction = Depiction(
-              id = id,
-              type = DepictionType.wallLamp
-          ),
-          light = Light(
-              id = id,
-              color = Vector4(1f),
-              range = 15f
+              node = node.id
           )
       )
     } else
@@ -149,7 +146,10 @@ fun placeWallLamps(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): De
 }
 
 fun newPlayer(nextId: IdSource, playerNode: Node): Deck {
+  val characterId = nextId()
+
   val characterHand = newCharacter(
+      id = characterId,
       nextId = nextId,
       faction = 1,
       definition = creatures.player,
@@ -163,8 +163,10 @@ fun newPlayer(nextId: IdSource, playerNode: Node): Deck {
       )
   )
 
+  val candleId = nextId()
+
   val candle = Item(
-      id = nextId(),
+      id = candleId,
       owner = characterHand.character!!.id,
       slot = 2,
       type = ItemType.candle
@@ -172,6 +174,7 @@ fun newPlayer(nextId: IdSource, playerNode: Node): Deck {
 
   return toDeck(characterHand.copy(character = characterHand.character!! equip candle.id))
       .plus(toDeck(Hand(
+          id = candleId,
           item = candle
       )))
 }

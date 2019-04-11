@@ -6,14 +6,16 @@ import marloth.front.GameApp
 import marloth.front.RenderHook
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
+import mythic.spatial.manhattanDistance
 import physics.toVector3
 import rendering.SceneRenderer
 import com.badlogic.gdx.math.Vector3 as GdxVector3
 
-class BulletDebugDrawer() : btIDebugDraw(), Disposable {
-  var _debugMode = btIDebugDraw.DebugDrawModes.DBG_NoDebug
+class BulletDebugDrawer : btIDebugDraw(), Disposable {
+  var _debugMode = DebugDrawModes.DBG_NoDebug
   var sceneRenderer: SceneRenderer? = null
   val lineData = mutableMapOf<Vector3, MutableList<Float>>()
+  var origin: Vector3 = Vector3()
 
   override fun setDebugMode(debugMode: Int) {
     this._debugMode = debugMode
@@ -24,7 +26,9 @@ class BulletDebugDrawer() : btIDebugDraw(), Disposable {
   }
 
   override fun drawLine(from: GdxVector3, to: GdxVector3, color: GdxVector3) {
-//    sceneRenderer!!.drawLine(toVector3(from), toVector3(to), Vector4(1f, 0f, 0f, 1f))
+    if (manhattanDistance(origin, toVector3(from)) > 40f)
+      return
+
     val c = toVector3(color)
     val data = if (lineData.containsKey(c))
       lineData[c]!!
@@ -44,18 +48,19 @@ class BulletDebugDrawer() : btIDebugDraw(), Disposable {
 
 private var debugDrawer: BulletDebugDrawer? = null
 
-fun drawBulletDebug(gameApp: GameApp): RenderHook = { sceneRenderer: SceneRenderer ->
+fun drawBulletDebug(gameApp: GameApp, origin: Vector3): RenderHook = { sceneRenderer: SceneRenderer ->
   val dynamicsWorld = gameApp.bulletState.dynamicsWorld
   val drawer = if (debugDrawer == null) {
     debugDrawer = BulletDebugDrawer()
-//          dynamicsWorld.debugDrawer = debugDrawer
-    dynamicsWorld.setDebugDrawer(debugDrawer)
-    dynamicsWorld.debugDrawer.debugMode = btIDebugDraw.DebugDrawModes.DBG_DrawWireframe
+    debugDrawer!!.debugMode = btIDebugDraw.DebugDrawModes.DBG_DrawWireframe
     debugDrawer!!
   } else
     debugDrawer!!
 
+  dynamicsWorld.setDebugDrawer(drawer)
+
   drawer.sceneRenderer = sceneRenderer
+  drawer.origin = origin
   dynamicsWorld.debugDrawWorld()
   for ((color, data) in drawer.lineData) {
     sceneRenderer.drawLines(data, Vector4(color.x, color.y, color.z, 1f))

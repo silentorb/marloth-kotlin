@@ -1,10 +1,8 @@
 package physics
 
-import colliding.Cylinder
+import colliding.*
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
-import colliding.Shape
-import colliding.Sphere
 import mythic.ent.Entity
 import mythic.ent.Id
 import mythic.ent.Table
@@ -12,10 +10,6 @@ import mythic.sculpting.ImmutableFaceTable
 import mythic.spatial.isInsidePolygon
 import simulation.*
 import simulation.simulationDelta
-
-data class BodyAttributes(
-    val resistance: Float
-)
 
 private const val voidNodeHeight = 10000f
 
@@ -38,22 +32,17 @@ interface SimpleBody {
 
 data class Body(
     override val id: Id,
-    val shape: Shape?,
     override val position: Vector3,
-    val orientation: Quaternion,
     val velocity: Vector3 = Vector3(),
-    val attributes: BodyAttributes,
+    val orientation: Quaternion,
+    override val node: Id
+) : Entity, SimpleBody
+
+data class DynamicBody(
     val gravity: Boolean,
-//    val friction: Float,
-    override val node: Id,
-    val perpetual: Boolean = false
-) : Entity, SimpleBody {
-
-}
-
-val commonShapes = mapOf(
-    EntityType.character to Cylinder(0.5f, 1f),
-    EntityType.missile to Sphere(0.2f)
+    val mass: Float,
+    val resistance: Float,
+    val friction: Float = 0.5f
 )
 
 fun isInsideNodeHorizontally(faces: ImmutableFaceTable, node: Node, position: Vector3) =

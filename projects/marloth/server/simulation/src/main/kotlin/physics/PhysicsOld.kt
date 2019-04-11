@@ -52,8 +52,8 @@ fun transitionVector(maxChange: Float, current: Vector3, target: Vector3): Vecto
 }
 
 fun applyForces(body: Body, forces: List<MovementForce>, resistance: Float, delta: Float): Vector3 {
-  if (body.perpetual)
-    return body.velocity
+//  if (body.perpetual)
+//    return body.velocity
 
   if (forces.size > 2)
     throw Error("Not yet supported")
@@ -84,9 +84,9 @@ fun isGroundedOnNeighborNode(realm: Realm, body: Body): Boolean {
   return distance < 0.5f && isWalkable(realm.nodeTable[getOtherNode(node.id, realm.faces[nearestWall]!!)])
 }
 
-fun isGrounded(realm: Realm, body: Body): Boolean {
-  return !body.gravity || realm.nodeTable[body.node]!!.isWalkable || isGroundedOnNeighborNode(realm, body)
-}
+//fun isGrounded(realm: Realm, body: Body): Boolean {
+//  return !body.gravity || realm.nodeTable[body.node]!!.isWalkable || isGroundedOnNeighborNode(realm, body)
+//}
 
 //fun moveBody(realm: Realm, body: Body, offset: Vector3, walls: List<Collision>, delta: Float): Vector3 {
 //  val position = if (offset == Vector3())
@@ -102,10 +102,10 @@ fun isGrounded(realm: Realm, body: Body): Boolean {
 //    position
 //}
 
-fun updateBody(realm: Realm, body: Body, movementForces: List<MovementForce>, collisions: List<Collision>,
+fun updateBody(realm: Realm, body: Body, dynamicBody: DynamicBody, movementForces: List<MovementForce>, collisions: List<Collision>,
                orientationForces: List<AbsoluteOrientationForce>, delta: Float): Body {
   return body.copy(
-      velocity = applyForces(body, movementForces, body.attributes.resistance, delta),
+      velocity = applyForces(body, movementForces, dynamicBody.resistance, delta),
 //      position = moveBody(realm, body, body.velocity, collisions, delta),
       orientation = orientationForces.firstOrNull()?.orientation ?: body.orientation,
       node = updateBodyNode(realm, body)
@@ -118,6 +118,7 @@ fun updatePhysicsBodies(world: World, collisions: Collisions, movementForces: Li
     updateBody(
         world.realm,
         body = body,
+        dynamicBody = world.deck.dynamicBodies[body.id]!!,
         movementForces = movementForces.filter { it.body == body.id },
         orientationForces = orientationForces.filter { it.body == body.id },
         collisions = collisions.filter { it.first == body.id && it.wall != null },

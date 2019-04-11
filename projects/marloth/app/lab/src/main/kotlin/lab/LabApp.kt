@@ -82,9 +82,10 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
   val gameApp = app.gameApp
   val newAppState = if (app.config.view == Views.game) {
     val hooks = GameHooks(
-        onRender = if (app.config.gameView.drawPhysics)
-          drawBulletDebug(gameApp)
-        else
+        onRender = if (app.config.gameView.drawPhysics) {
+          val deck = state.app.worlds.last().deck
+          drawBulletDebug(gameApp, deck.bodies[deck.players.values.first { it.playerId == 1 }.id]!!.position)
+        } else
           { _ -> },
         onUpdate = { appState ->
           app.labClient.updateInput(mapOf(), appState.client.input.deviceStates)

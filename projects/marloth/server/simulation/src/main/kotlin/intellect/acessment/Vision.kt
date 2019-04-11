@@ -14,15 +14,15 @@ const val minimumLightRating = 0.2f
 fun isInAngleOfView(viewer: Character, viewerBody: Body, targetBody: Body): Boolean =
     viewer.facingVector.dot((targetBody.position - viewerBody.position).normalize()) > 0.5f
 
-fun lightDistanceMod(world: World, body: Body, light: Light): Float {
-  val lightBody = world.bodyTable[light.id]!!
+fun lightDistanceMod(world: World, body: Body, id: Id, light: Light): Float {
+  val lightBody = world.bodyTable[id]!!
   val distance = body.position.distance(lightBody.position)
   val distanceMod = 1f - Math.min(1f, distance / light.range)
   return quadOut(distanceMod)
 }
 
 private fun lightsMod(world: World, body: Body): Float =
-    Math.min(1f, world.deck.lights.values.map { light -> lightDistanceMod(world, body, light) }.sum())
+    Math.min(1f, world.deck.lights.map { (id, light) -> lightDistanceMod(world, body, id, light) }.sum())
 
 private const val maxVelocityMod = 10f
 private const val velocityModStrength = 0.4f

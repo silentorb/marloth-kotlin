@@ -1,20 +1,18 @@
 package simulation
 
+import colliding.Capsule
+import colliding.ShapeOffset
 import intellect.Spirit
 import mythic.ent.Entity
 import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.ent.pipe
-import mythic.spatial.Pi
-import mythic.spatial.Quaternion
-import mythic.spatial.Vector2
-import mythic.spatial.Vector3
+import mythic.spatial.*
 import org.joml.times
 import physics.*
 import scenery.AnimationId
 import scenery.Sounds
 import simulation.changing.*
-import simulation.data.characterBodyAttributes
 import simulation.input.filterCommands
 
 data class CharacterDefinition(
@@ -161,9 +159,8 @@ fun allCharacterOrientations(world: World): List<AbsoluteOrientationForce> =
           .rotateZ(it.facingRotation.z))
     }
 
-fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id, position: Vector3, node: Id,
+fun newCharacter(id: Id,nextId: IdSource, definition: CharacterDefinition, faction: Id, position: Vector3, node: Id,
                  player: Player? = null, spirit: Spirit? = null): Hand {
-  val id = nextId()
   val abilities = definition.abilities.map {
     Ability(
         id = nextId(),
@@ -171,6 +168,7 @@ fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id,
     )
   }
   return Hand(
+      id = id,
       ambientAudioEmitter = if (definition.ambientSounds.any())
         AmbientAudioEmitter(
             id = id,
@@ -180,13 +178,10 @@ fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id,
         null,
       body = Body(
           id = id,
-          shape = commonShapes[EntityType.character]!!,
           position = position,
           orientation = Quaternion(),
           velocity = Vector3(),
-          node = node,
-          attributes = characterBodyAttributes,
-          gravity = true
+          node = node
       ),
       character = Character(
           id = id,
@@ -197,8 +192,8 @@ fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id,
           sanity = Resource(100),
           abilities = abilities
       ),
+      collisionShape = ShapeOffset(Matrix().translate(0f, 0f, 0.75f), Capsule(0.3f, 1.5f)),
       depiction = Depiction(
-          id = id,
           type = definition.depictionType,
           animations = listOf(
               DepictionAnimation(
@@ -206,6 +201,11 @@ fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id,
                   animationOffset = 0f
               )
           )
+      ),
+      dynamicBody = DynamicBody(
+          gravity = true,
+          mass = 45f,
+          resistance = 4f
       ),
       player = player?.copy(id = id),
       spirit = spirit?.copy(id = id)

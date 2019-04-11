@@ -1,14 +1,14 @@
 package marloth.integration
 
+import mythic.ent.Id
+import mythic.ent.Table
 import mythic.spatial.*
 import org.joml.times
 import physics.Body
 import rendering.*
 import scenery.*
-import simulation.*
-import mythic.ent.Id
-import mythic.ent.Table
 import scenery.Light
+import simulation.*
 
 val firstPersonCameraOffset = Vector3(0f, 0f, 1.4f)
 val firstPersonDeadCameraOffset = Vector3(0f, 0f, 0.4f)
@@ -69,11 +69,11 @@ fun createCamera(world: World, screen: Screen): Camera {
   }
 }
 
-fun filterDepictions(depictions: Table<Depiction>, player: Player): Collection<Depiction> =
+fun filterDepictions(depictions: Table<Depiction>, player: Player): Table<Depiction> =
     if (player.viewMode == ViewMode.firstPerson)
-      depictions.values.filter { it.id != player.id }
+      depictions.filter { it.key != player.id }
     else
-      depictions.values
+      depictions
 
 fun convertSimpleDepiction(world: World, id: Id, mesh: MeshId): MeshElement? {
   val body = world.bodyTable[id]!!
@@ -99,8 +99,7 @@ fun convertSimpleDepiction(world: World, id: Id, type: DepictionType): MeshEleme
   return convertSimpleDepiction(world, id, mesh)
 }
 
-fun convertComplexDepiction(world: World, depiction: Depiction): ElementGroup {
-  val id = depiction.id
+fun convertComplexDepiction(world: World, id: Id, depiction: Depiction): ElementGroup {
   val body = world.bodyTable[id]!!
   val character = world.characterTable[id]!!
   val transform = Matrix()
@@ -161,16 +160,18 @@ fun gatherVisualElements(world: World, screen: Screen, player: Player): ElementG
 //    it.type == DepictionType.child || it.type == DepictionType.monster
 //  }
 
-  val (complex, simple) = filterDepictions(world.deck.depictions, player).partition(isComplexDepiction)
+  val (complex, simple) =
+      filterDepictions(world.deck.depictions, player)
+          .entries.partition { isComplexDepiction(it.value) }
 
   val complexElements = complex.map {
-    convertComplexDepiction(world, it)
+    convertComplexDepiction(world, it.key, it.value)
   }
 
 //  val characters = world.characters.asIterable().filter { !isPlayer(world, it) }
   val simpleElements =
       simple.mapNotNull {
-        convertSimpleDepiction(world, it.id, it.type)
+        convertSimpleDepiction(world, it.key, it.value.type)
       }
 //          .plusBounded(characters.mapNotNull {
 //            convertSimpleDepiction(world, it.id, it.definition.depictionType)
@@ -186,12 +187,12 @@ fun gatherVisualElements(world: World, screen: Screen, player: Player): ElementG
 }
 
 fun mapLights(world: World, player: Player) =
-    world.deck.lights.values
-        .map { light ->
+    world.deck.lights
+        .map { (id, light) ->
           Light(
               type = LightType.point,
               color = light.color,
-              position = world.bodyTable[light.id]!!.position + Vector3(0f, 0f, 2.2f),
+              position = world.bodyTable[id]!!.position + Vector3(0f, 0f, 2.2f),
               direction = Vector4(0f, 0f, 0f, light.range)
           )
         }

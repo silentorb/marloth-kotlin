@@ -26,10 +26,9 @@ data class DepictionAnimation(
 )
 
 data class Depiction(
-    override val id: Id,
     val type: DepictionType,
     val animations: List<DepictionAnimation> = listOf()
-) : Entity
+)
 
 fun mapAnimation(world: World, id: AnimationId): AnimationId {
 //  if (id == AnimationId.stand)
@@ -99,11 +98,11 @@ fun updateAnimations(world: World, animationDurations: AnimationDurationMap, id:
   return result
 }
 
-fun updateDepiction(world: World, animationDurations: AnimationDurationMap): (Depiction) -> Depiction = { depiction ->
+fun updateDepiction(world: World, animationDurations: AnimationDurationMap): (Id, Depiction) -> Depiction = { id, depiction ->
   if (depiction.animations.none())
     depiction
   else
     depiction.copy(
-        animations = updateAnimations(world, animationDurations, depiction.id, depiction.animations, simulationDelta)
+        animations = updateAnimations(world, animationDurations, id, depiction.animations, simulationDelta)
     )
 }

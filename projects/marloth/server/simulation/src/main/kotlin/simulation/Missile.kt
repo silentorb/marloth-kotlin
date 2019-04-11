@@ -1,16 +1,14 @@
 package simulation
 
+import colliding.Sphere
 import mythic.ent.Entity
 import mythic.ent.Id
 import mythic.ent.IdSource
-import mythic.ent.Table
 import mythic.spatial.Quaternion
-import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import physics.Body
 import physics.Collision
-import physics.commonShapes
-import simulation.data.missileBodyAttributes
+import physics.DynamicBody
 
 data class Missile(
     override val id: Id,
@@ -22,16 +20,19 @@ fun characterAttack(world: World, nextId: IdSource, character: Character, abilit
   val body = world.bodyTable[character.id]!!
   val id = nextId()
   return Hand(
+      id = id,
       body = Body(
           id = id,
           position = body.position + direction * 0.5f + Vector3(0f, 0f, 1.4f),
           node = body.node,
           velocity = direction * ability.definition.maxSpeed,
-          shape = commonShapes[EntityType.missile]!!,
-          orientation = Quaternion(),
-          attributes = missileBodyAttributes,
+          orientation = Quaternion()
+      ),
+      collisionShape = Sphere(0.2f),
+      dynamicBody = DynamicBody(
           gravity = false,
-          perpetual = true
+          mass = 10f,
+          resistance = 4f
       ),
       missile = Missile(
           id = id,

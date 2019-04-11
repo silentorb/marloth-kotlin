@@ -5,7 +5,6 @@ import intellect.execution.pursueGoals
 import intellect.updateAiState
 import mythic.ent.*
 import mythic.spatial.Pi2
-import mythic.spatial.Vector3
 import physics.*
 import randomly.Dice
 import simulation.input.updatePlayer
@@ -92,10 +91,10 @@ fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: 
           ambientSounds = updateAmbientAudio(dice, deck),
           bodies = bodies,
           depictions = mapTable(deck.depictions, updateDepiction(bodyWorld, animationDurations)),
-          characters = mapTable(deck.characters, updateCharacter(bodyWorld, collisionMap, commands, activatedAbilities)),
-          missiles = mapTable(deck.missiles, updateMissile(bodyWorld, collisionMap, simulationDelta)),
-          players = mapTable(deck.players, updatePlayer(data.commands)),
-          spirits = mapTable(deck.spirits, updateAiState(bodyWorld, simulationDelta))
+          characters = mapTableValues(deck.characters, updateCharacter(bodyWorld, collisionMap, commands, activatedAbilities)),
+          missiles = mapTableValues(deck.missiles, updateMissile(bodyWorld, collisionMap, simulationDelta)),
+          players = mapTableValues(deck.players, updatePlayer(data.commands)),
+          spirits = mapTableValues(deck.spirits, updateAiState(bodyWorld, simulationDelta))
       )
     }
 

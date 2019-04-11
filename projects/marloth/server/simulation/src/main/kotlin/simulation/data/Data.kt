@@ -1,6 +1,5 @@
 package simulation.data
 
-import physics.BodyAttributes
 import simulation.AbilityDefinition
 
 class AbilityDefinitions {
@@ -18,15 +17,15 @@ class AbilityDefinitions {
 
 val abilityDefinitions = AbilityDefinitions()
 
-val doodadBodyAttributes = BodyAttributes(
-    resistance = 4f
-)
-
-val missileBodyAttributes = BodyAttributes(
-    resistance = 0f
-)
-
-val characterBodyAttributes = BodyAttributes(
-    resistance = 4f
-//        resistance = 8f
-)
+//val propBodyAttributes = BodyAttributes(
+//    resistance = 4f
+//)
+//
+//val missileBodyAttributes = BodyAttributes(
+//    resistance = 0f
+//)
+//
+//val characterBodyAttributes = BodyAttributes(
+//    resistance = 4f
+////        resistance = 8f
+//)
