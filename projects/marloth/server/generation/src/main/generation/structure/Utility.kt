@@ -68,7 +68,7 @@ fun createSecondaryNode(sectorCenter: Vector3, nextId: IdSource, isSolid: Boolea
       isSolid = isSolid,
       isWalkable = false,
       biome = biome,
-      height = 0f
+      height = wallHeight
   )
   return node
 }

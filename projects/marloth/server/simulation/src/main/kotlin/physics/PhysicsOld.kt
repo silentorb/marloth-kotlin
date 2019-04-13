@@ -114,15 +114,17 @@ fun updateBody(realm: Realm, body: Body, dynamicBody: DynamicBody, movementForce
 
 fun updatePhysicsBodies(world: World, collisions: Collisions, movementForces: List<MovementForce>,
                         orientationForces: List<AbsoluteOrientationForce>, delta: Float): Table<Body> {
-  return world.deck.bodies.mapValues { (_, body) ->
+  val updated = world.deck.dynamicBodies.mapValues { (id, dynamicBody) ->
+    val body = world.deck.bodies[id]!!
     updateBody(
         world.realm,
         body = body,
-        dynamicBody = world.deck.dynamicBodies[body.id]!!,
+        dynamicBody = dynamicBody,
         movementForces = movementForces.filter { it.body == body.id },
         orientationForces = orientationForces.filter { it.body == body.id },
         collisions = collisions.filter { it.first == body.id && it.wall != null },
         delta = delta
     )
   }
+  return world.deck.bodies.plus(updated)
 }

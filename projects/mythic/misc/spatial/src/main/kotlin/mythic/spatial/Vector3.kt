@@ -4,6 +4,7 @@ import org.joml.*
 import java.text.NumberFormat
 
 private val _zero = Vector3()
+private val _unit = Vector3(1f, 1f, 1f)
 
 data class Vector3(
     override val x: Float = 0f,
@@ -30,6 +31,7 @@ data class Vector3(
   companion object {
 
     val zero: Vector3 = _zero
+    val unit: Vector3 = _unit
   }
 
   override operator fun minus(v: Vector2fMinimal): Vector2 =

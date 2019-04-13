@@ -4,6 +4,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw
 import com.badlogic.gdx.utils.Disposable
 import marloth.front.GameApp
 import marloth.front.RenderHook
+import mythic.glowing.globalState
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import mythic.spatial.manhattanDistance
@@ -52,7 +53,8 @@ fun drawBulletDebug(gameApp: GameApp, origin: Vector3): RenderHook = { sceneRend
   val dynamicsWorld = gameApp.bulletState.dynamicsWorld
   val drawer = if (debugDrawer == null) {
     debugDrawer = BulletDebugDrawer()
-    debugDrawer!!.debugMode = btIDebugDraw.DebugDrawModes.DBG_DrawWireframe
+    debugDrawer!!.debugMode = //btIDebugDraw.DebugDrawModes.DBG_DrawWireframe +
+        btIDebugDraw.DebugDrawModes.DBG_DrawConstraints or btIDebugDraw.DebugDrawModes.DBG_DrawConstraintLimits
     debugDrawer!!
   } else
     debugDrawer!!
@@ -62,9 +64,11 @@ fun drawBulletDebug(gameApp: GameApp, origin: Vector3): RenderHook = { sceneRend
   drawer.sceneRenderer = sceneRenderer
   drawer.origin = origin
   dynamicsWorld.debugDrawWorld()
+  globalState.depthEnabled = false
   for ((color, data) in drawer.lineData) {
     sceneRenderer.drawLines(data, Vector4(color.x, color.y, color.z, 1f))
   }
+  globalState.depthEnabled = true
   drawer.lineData.forEach { it.value.clear() }
   drawer.sceneRenderer = null
 }

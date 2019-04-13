@@ -87,7 +87,7 @@ fun convertSimpleDepiction(world: World, id: Id, mesh: MeshId): MeshElement? {
   return MeshElement(
       id = id,
       mesh = mesh,
-      transform = transform
+      transform = transform.scale(body.scale)
   )
 }
 
@@ -179,8 +179,8 @@ fun gatherVisualElements(world: World, screen: Screen, player: Player): ElementG
           .plus(world.deck.missiles.values.mapNotNull {
             convertSimpleDepiction(world, it.id, MeshId.spikyBall)
           })
-          .plus(world.deck.doors.values.mapNotNull {
-            convertSimpleDepiction(world, it.id, MeshId.prisonDoor)
+          .plus(world.deck.doors.mapNotNull {
+            convertSimpleDepiction(world, it.key, MeshId.prisonDoor)
           })
 
   return complexElements.plus(ElementGroup(simpleElements))

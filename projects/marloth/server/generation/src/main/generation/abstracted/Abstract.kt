@@ -6,6 +6,7 @@ import generation.crossMap
 import generation.getCenter
 import generation.getNodeDistance
 import generation.structure.getDoorFramePoints
+import generation.structure.wallHeight
 import mythic.ent.Id
 import mythic.ent.entityMap
 import mythic.ent.pipe
@@ -67,7 +68,7 @@ fun createRoomNode(boundary: WorldBoundary, nodes: List<Node>, id: Id, dice: Dic
       isSolid = false,
       isWalkable = true,
       biome = Biome.void,
-      height = 0f
+      height = wallHeight
   )
 }
 

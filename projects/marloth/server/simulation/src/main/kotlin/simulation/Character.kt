@@ -192,7 +192,7 @@ fun newCharacter(id: Id,nextId: IdSource, definition: CharacterDefinition, facti
           sanity = Resource(100),
           abilities = abilities
       ),
-      collisionShape = ShapeOffset(Matrix().translate(0f, 0f, 0.75f), Capsule(0.3f, 1.5f)),
+      collisionShape = ShapeOffset(Matrix().translate(0f, 0f,0.75f), Capsule(0.4f, 1.5f)),
       depiction = Depiction(
           type = definition.depictionType,
           animations = listOf(

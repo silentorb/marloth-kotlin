@@ -3,16 +3,16 @@ package simulation.data
 import simulation.AbilityDefinition
 
 class AbilityDefinitions {
-//  val shoot = AbilityDefinition(
+  //  val shoot = AbilityDefinition(
 //      cooldown = 0.2f,
 //      range = 15f,
 //      maxSpeed = 35f
 //  )
   val slowShoot = AbilityDefinition(
-    cooldown = 0.8f,
-    range = 20f,
-    maxSpeed = 35f
-)
+      cooldown = 0.8f,
+      range = 20f,
+      maxSpeed = 35f
+  )
 }
 
 val abilityDefinitions = AbilityDefinitions()

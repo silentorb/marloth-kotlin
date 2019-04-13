@@ -1,16 +1,16 @@
 package generation
 
-import colliding.ShapeOffset
-import colliding.Sphere
 import intellect.Pursuit
 import intellect.Spirit
 import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.ent.entityMap
 import mythic.ent.newIdSource
-import mythic.spatial.*
+import mythic.spatial.Quaternion
+import mythic.spatial.Vector3
+import mythic.spatial.getCenter
+import mythic.spatial.getVector3Center
 import physics.Body
-import physics.DynamicBody
 import physics.voidNode
 import randomly.Dice
 import simulation.*
@@ -74,33 +74,33 @@ fun placeCharacters(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): D
   })
 }
 
+fun newDoor(realm: Realm, nextId: IdSource): (Id) -> Hand = { nodeId ->
+  val node = realm.nodeTable[nodeId]!!
+  val j = node.walls.map {realm.faces[it]!!}
+  val face = node.walls.first { realm.faces[it]!!.faceType != FaceType.wall }
+  val meshFace = realm.mesh.faces[face]!!
+  val edge = getFloor(meshFace)
+  val margin = 0.9f
+  val length = edge.first.distance(edge.second) * margin
+  val height = node.height
+  val position = getCenter(meshFace.vertices)
+  val id = nextId()
+  entityTemplates[EntityTemplate.door]!!.copy(
+      id = id,
+      body = Body(
+          id = id,
+          position = position,
+          orientation = Quaternion().rotateTo(Vector3(0f, 1f, 0f), realm.mesh.faces[face]!!.normal),
+          scale = Vector3(length, 1f, height * margin),
+          node = nodeId
+      )
+  )
+}
+
 fun placeDoors(realm: Realm, nextId: IdSource): Deck =
     toDeck(
-        realm.doorFrameNodes.map { nodeId ->
-          val node = realm.nodeTable[nodeId]!!
-          val face = node.walls.first { realm.faces[it]!!.faceType != FaceType.wall }
-          val position = getCenter(realm.mesh.faces[node.floors.first()]!!.vertices)
-          mythic.spatial.globalPosition = position
-          val id = nextId()
-          Hand(
-              id = id,
-              door = Door(
-                  id = id
-              ),
-              body = Body(
-                  id = id,
-                  position = position,
-                  orientation = Quaternion().rotateTo(Vector3(0f, 1f, 0f), realm.mesh.faces[face]!!.normal),
-                  node = nodeId
-              ),
-              dynamicBody = DynamicBody(
-                  gravity = false,
-                  mass = 50f,
-                  resistance = 4f
-              )
-          )
-
-        })
+        realm.doorFrameNodes.map(newDoor(realm, nextId))
+    )
 
 val isValidLampWall = { info: ConnectionFace ->
   info.faceType == FaceType.wall && info.texture != null

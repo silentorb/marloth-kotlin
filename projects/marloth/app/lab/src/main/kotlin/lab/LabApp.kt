@@ -167,7 +167,7 @@ object App {
     val config = loadYamlFile<LabConfig>(labConfigPath) ?: LabConfig()
     globalProfiler().start("gameConfig")
     val gameConfig = loadGameConfig()
-    globalProfiler().start("otherStart")
+    globalProfiler().stop()
     val platform = createDesktopPlatform("Dev Lab", gameConfig.display)
     platform.display.initialize(gameConfig.display)
     val gameApp = GameApp(platform, gameConfig,

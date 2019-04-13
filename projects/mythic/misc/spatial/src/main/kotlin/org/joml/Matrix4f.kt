@@ -4758,6 +4758,10 @@ class Matrix4f : Externalizable, Matrix4fc {
     return scale(xyz.x, xyz.y, xyz.z, thisOrNew())
   }
 
+  fun scale(xyz: Vector3): Matrix4f {
+    return scale(xyz.x, xyz.y, xyz.z, thisOrNew())
+  }
+
   /* (non-Javadoc)
      * @see org.joml.Matrix4fc#scale(float, org.joml.Matrix4f)
      */

@@ -1,50 +1,49 @@
 package physics
 
-import colliding.Capsule
-import colliding.Shape
-import colliding.ShapeOffset
-import colliding.Sphere
+import colliding.*
 import com.badlogic.gdx.physics.bullet.collision.*
+import com.badlogic.gdx.physics.bullet.dynamics.btHingeConstraint
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState
 import mythic.sculpting.ImmutableFace
 import mythic.spatial.Matrix
+import mythic.spatial.Pi
 import mythic.spatial.Vector3
 import mythic.spatial.getCenter
-import simulation.Deck
 import simulation.FaceType
 import simulation.World
+import com.badlogic.gdx.math.Vector3 as GdxVector3
+
+fun createCollisionShape(source: Shape, scale: Vector3): btCollisionShape {
+  return when {
+
+    source is ShapeOffset -> {
+      val shape = btCompoundShape()
+      shape.addChildShape(toGdxMatrix4(source.transform), createCollisionShape(source.shape, scale))
+      shape
+    }
+
+    source is Box -> btBoxShape(toGdxVector3(source.halfExtents * scale))
+
+    source is Sphere -> btSphereShape(source.radius * scale.x)
+
+    source is Capsule -> btCapsuleShapeZ(source.radius * scale.x, source.height * scale.z)
+
+    else -> throw Error("Not supported")
+  }
+}
 
 fun createBulletDynamicObject(body: Body, dynamicBody: DynamicBody, shape: btCollisionShape): btRigidBody {
-  val groundTransform = Matrix().translate(body.position + Vector3(0f, 0f, 1f))
+  val transform = Matrix().translate(body.position).rotate(body.orientation)
   val localInertia = com.badlogic.gdx.math.Vector3(0f, 0f, 0f)
-//  val isDynamic = mass != 0f
-//  if (isDynamic)
-//    shape.calculateLocalInertia(mass, localInertia)
+  shape.calculateLocalInertia(dynamicBody.mass, localInertia)
 
-  val myMotionState = btDefaultMotionState(toGdxMatrix4(groundTransform))
+  val myMotionState = btDefaultMotionState(toGdxMatrix4(transform))
   val rbInfo = btRigidBody.btRigidBodyConstructionInfo(dynamicBody.mass, myMotionState, shape, localInertia)
   val btBody = btRigidBody(rbInfo)
   btBody.activationState = CollisionConstants.DISABLE_DEACTIVATION
   btBody.friction = dynamicBody.friction
   return btBody
-}
-
-fun createCollisionShape(source: Shape): btCollisionShape {
-  return when {
-
-    source is ShapeOffset -> {
-      val shape = btCompoundShape()
-      shape.addChildShape(toGdxMatrix4(source.transform), createCollisionShape(source.shape))
-      shape
-    }
-
-    source is Sphere -> btSphereShape(source.radius)
-
-    source is Capsule -> btCapsuleShapeZ(source.radius, source.height)
-
-    else -> throw Error("Not supported")
-  }
 }
 
 fun createStaticFaceBody(face: ImmutableFace): btCollisionObject {
@@ -90,10 +89,25 @@ fun syncNewBodies(world: World, bulletState: BulletState) {
       }
       .map { (key, dynamicBody) ->
         val body = deck.bodies[key]!!
-        val shape = createCollisionShape(deck.collisionShapes[key]!!)
-        val btBody = createBulletDynamicObject(body, dynamicBody, shape)
-        bulletState.dynamicsWorld.addRigidBody(btBody)
-        Pair(key, btBody)
+        val shape = createCollisionShape(deck.collisionShapes[key]!!, body.scale)
+        val bulletBody = createBulletDynamicObject(body, dynamicBody, shape)
+        val hingeInfo = dynamicBody.hinge
+        if (hingeInfo != null) {
+          val hinge = btHingeConstraint(bulletBody, toGdxVector3(hingeInfo.pivot * body.scale), toGdxVector3(hingeInfo.axis), true)
+//          hinge.enableAngularMotor(true, 1f, 1f)
+//          hinge.setLimit(-Pi * 0.2f, Pi  * 0.2f)
+          val offset = Pi / 2f
+//          hinge.setLimit(-Pi * 0.2f - offset, Pi  * 0.2f - offset)
+          hinge.setLimit(-Pi, Pi)
+          val j = hinge.hingeAngle
+
+          bulletState.dynamicsWorld.addConstraint(hinge)
+          hinge.setDbgDrawSize(5f)
+//          bulletBody.setAngularVelocity(GdxVector3(0f, 0f, 1f))
+
+        }
+        bulletState.dynamicsWorld.addRigidBody(bulletBody)
+        Pair(key, bulletBody)
       }
 
   val newStaticBodies = deck.collisionShapes
@@ -101,8 +115,8 @@ fun syncNewBodies(world: World, bulletState: BulletState) {
         !deck.dynamicBodies.containsKey(key) && !bulletState.staticBodies.containsKey(key)
       }
       .map { (key, shapeDefinition) ->
-        val shape = createCollisionShape(shapeDefinition)
         val body = deck.bodies[key]!!
+        val shape = createCollisionShape(shapeDefinition, body.scale)
         val collisionObject = createStaticBody(body, shape)
         bulletState.dynamicsWorld.addCollisionObject(collisionObject)
         Pair(key, collisionObject)

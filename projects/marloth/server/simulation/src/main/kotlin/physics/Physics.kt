@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver
 import mythic.ent.Id
 import mythic.spatial.Matrix
+import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import simulation.*
 import com.badlogic.gdx.math.Vector3 as GdxVector3
@@ -50,7 +51,6 @@ fun newBulletState(): BulletState {
   val solver = btSequentialImpulseConstraintSolver()
 
   val dynamicsWorld = btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfig)
-
   dynamicsWorld.gravity = GdxVector3(0f, 0f, -10f)
 
   return BulletState(
@@ -74,6 +74,7 @@ fun applyImpulses(world: World, bulletState: BulletState) {
 }
 
 fun syncWorldToBullet(bulletState: BulletState): (World) -> World = { world ->
+  val quat = com.badlogic.gdx.math.Quaternion()
   world.copy(
       deck = world.deck.copy(
           bodies = world.deck.bodies.mapValues { (key, body) ->
@@ -81,9 +82,12 @@ fun syncWorldToBullet(bulletState: BulletState): (World) -> World = { world ->
             if (btBody == null)
               body
             else {
-              val transform = btBody.worldTransform.getValues()
+              val worldTransform = btBody.worldTransform
+              val transform = worldTransform.getValues()
+              worldTransform.getRotation(quat)
               body.copy(
-                  position = Vector3(transform[Matrix4.M03], transform[Matrix4.M13], transform[Matrix4.M23])
+                  position = Vector3(transform[Matrix4.M03], transform[Matrix4.M13], transform[Matrix4.M23]),
+                  orientation = Quaternion(quat.x, quat.y, quat.z, quat.w)
               )
             }
           }

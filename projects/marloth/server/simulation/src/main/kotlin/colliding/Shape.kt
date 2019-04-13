@@ -1,6 +1,7 @@
 package colliding
 
 import mythic.spatial.Matrix
+import mythic.spatial.Vector3
 
 interface Shape
 
@@ -21,4 +22,8 @@ class Capsule(
 
 class Sphere(
     val radius: Float
+) : Shape
+
+class Box(
+    val halfExtents: Vector3
 ) : Shape
