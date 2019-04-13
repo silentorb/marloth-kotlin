@@ -17,6 +17,9 @@ operator fun Flower.plus(b: Flower): Flower = { seed ->
       .plus(b(seed))
 }
 
+fun addFlowers(flowers: List<Flower>) =
+    flowers.reduce { a, b -> a.plus(b) }
+
 fun depict(depiction: StateDepiction): Flower = { s ->
   listOf(
       Box(

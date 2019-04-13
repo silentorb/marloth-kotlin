@@ -10,6 +10,7 @@ import marloth.front.GameApp
 import marloth.front.RenderHook
 import mythic.bloom.Boxes
 import mythic.ent.pipe
+import mythic.platforming.WindowInfo
 import mythic.quartz.updateTimestep
 import persistence.Database
 import persistence.createVictory
@@ -88,9 +89,19 @@ data class GameHooks(
     val onUpdate: GameUpdateHook
 )
 
+fun layoutGui(app: GameApp, appState: AppState, windowInfo: WindowInfo): Boxes {
+  val world = appState.worlds.lastOrNull()
+  val hudData = if (world != null)
+    gatherHudData(world)
+  else
+    null
+
+  return layoutGui(app.client, appState.client, world, hudData, windowInfo)
+}
+
 fun updateAppState(app: GameApp, newWorld: () -> World, hooks: GameHooks? = null): (AppState) -> AppState = { appState ->
   val windowInfo = app.client.getWindowInfo()
-  val boxes = layoutGui(app.client, appState.client, appState.worlds.lastOrNull(), windowInfo)
+  val boxes = layoutGui(app, appState, windowInfo)
   val (timestep, steps) = updateTimestep(appState.timestep, simulationDelta.toDouble())
 
   if (steps <= 1) {
@@ -101,7 +112,7 @@ fun updateAppState(app: GameApp, newWorld: () -> World, hooks: GameHooks? = null
     val newBoxes = if (step == 1)
       boxes
     else
-      layoutGui(app.client, state.client, state.worlds.lastOrNull(), windowInfo)
+      layoutGui(app, state, windowInfo)
 
     val result = updateFixedInterval(app, newBoxes, newWorld)(state)
     if (hooks != null) {

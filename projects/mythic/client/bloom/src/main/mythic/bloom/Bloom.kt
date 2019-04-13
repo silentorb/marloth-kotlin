@@ -70,22 +70,6 @@ fun listBounds(plane: Plane, padding: Int, bounds: Bounds, lengths: List<Int>): 
 
 typealias LengthArrangement = (bounds: Bounds, lengths: List<Int>) -> List<Bounds>
 
-//fun horizontalFromLengths(padding: Int): LengthArrangement = { bounds: Bounds, lengths: List<Int> ->
-//  listBounds(horizontalPlane, padding, bounds, lengths)
-//}
-
-//fun verticalFromLengths(padding: Int): LengthArrangement = { bounds: Bounds, lengths: List<Int> ->
-//  listBounds(verticalPlane, padding, bounds, lengths)
-//}
-
-//fun horizontal(padding: Int, lengths: List<Int?>): FixedChildArranger = { bounds ->
-//  horizontalFromLengths(padding)(bounds, resolveLengths(bounds.dimensions.x, lengths))
-//}
-
-//fun vertical(padding: Int, lengths: List<Int?>): FixedChildArranger = { bounds ->
-//  verticalFromLengths(padding)(bounds, resolveLengths(bounds.dimensions.y, lengths))
-//}
-
 fun lengthArranger(plane: Plane, padding: Int): LengthArrangement = { bounds: Bounds, lengths: List<Int> ->
   listBounds(plane, padding, bounds, lengths)
 }

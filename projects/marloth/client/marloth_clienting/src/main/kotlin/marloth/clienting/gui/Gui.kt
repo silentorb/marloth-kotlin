@@ -14,7 +14,10 @@ import mythic.platforming.WindowInfo
 import mythic.spatial.Vector4
 import org.joml.Vector2i
 import org.joml.Vector4i
+import scenery.Text
 import simulation.World
+
+typealias TextResources = Map<Text, String>
 
 enum class ViewId {
   mainMenu,
@@ -83,18 +86,18 @@ fun viewSelect(textResources: TextResources, world: World?, view: ViewId): Flowe
   }
 }
 
-fun guiLayout(client: Client, clientState: ClientState, world: World?): Flower {
+fun guiLayout(client: Client, clientState: ClientState, world: World?, hudData: HudData?): Flower {
   val bloomState = clientState.bloomState
   return listOfNotNull(
-      if (world != null) hudLayout(world) else null,
+      if (hudData != null) hudLayout(hudData) else null,
       viewSelect(client.textResources, world, clientState.view)
   )
       .reduce { a, b -> a + b }
 }
 
-fun layoutGui(client: Client, clientState: ClientState, world: World?, windowInfo: WindowInfo): Boxes {
+fun layoutGui(client: Client, clientState: ClientState, world: World?, hudData: HudData?, windowInfo: WindowInfo): Boxes {
   val bounds = Bounds(Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y))
-  val layout = guiLayout(client, clientState, world)
+  val layout = guiLayout(client, clientState, world, hudData)
   val seed = Seed(
       bag = clientState.bloomState.bag,
       bounds = bounds

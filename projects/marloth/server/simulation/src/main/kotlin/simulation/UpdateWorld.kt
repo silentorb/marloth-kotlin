@@ -34,18 +34,6 @@ fun getFinished(deck: Deck): List<Id> {
 //          .map { it.id })
 }
 
-fun removeFinished(deck: Deck, finishedIds: List<Id>): Deck {
-  val isActive = { id: Id -> !finishedIds.contains(id) }
-
-  return deck.copy(
-      characters = deck.characters.filterKeys(isActive),
-      depictions = deck.depictions.filterKeys(isActive),
-      missiles = deck.missiles.filterKeys(isActive),
-      bodies = deck.bodies.filterKeys(isActive),
-      spirits = deck.spirits.filterKeys(isActive)
-  )
-}
-
 data class Intermediate(
     val commands: Commands,
     val activatedAbilities: List<ActivatedAbility>,
@@ -100,7 +88,7 @@ fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: 
 
 val removeEntities: (Deck) -> Deck = { deck ->
   val finished = getFinished(deck)
-  removeFinished(deck, finished)
+  removeEntities(deck, finished)
 }
 
 fun newEntities(world: World, nextId: IdSource, data: Intermediate): (Deck) -> Deck = { deck ->

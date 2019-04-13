@@ -12,6 +12,7 @@ import mythic.typography.TextConfiguration
 import mythic.typography.TextStyle
 import mythic.typography.calculateTextDimensions
 import org.joml.Vector2i
+import scenery.Text
 
 data class MenuOption(
     val command: GuiCommandType,

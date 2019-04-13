@@ -1,13 +1,17 @@
 package marloth.clienting.gui
 
-import mythic.bloom.Flower
-import mythic.bloom.list
-import mythic.bloom.vertical
-import mythic.ent.Id
+import mythic.bloom.*
 import org.joml.Vector2i
+import simulation.Interactable
 import simulation.Resource
 
 private val textStyle = mythic.typography.IndexedTextStyle(0, 12f, mythic.drawing.grayTone(0.7f))
+
+data class HudData(
+    val health: Resource,
+    val sanity: Resource,
+    val interactable: Interactable?
+)
 
 fun resourceString(resource: Resource): String {
   val value = resource.value
@@ -15,32 +19,35 @@ fun resourceString(resource: Resource): String {
   return "$value / $max"
 }
 
-fun characterHealth(world: simulation.World, id: Id): String {
-  val resource = world.deck.characters[id]!!.health
-  return "HP: ${resourceString(resource)}"
-}
-
-fun characterSanity(world: simulation.World, id: Id): String {
-  val resource = world.deck.characters[id]!!.sanity
-  return "SAN: ${resourceString(resource)}"
-}
-
 val df = java.text.DecimalFormat("#0.00")
 
-fun characterVisibility(world: simulation.World, id: Id): String {
-  val rating = intellect.acessment.lightRating(world, id)
-  return "vis: " + df.format(rating)
-}
+//fun characterVisibility(data: HudData, id: Id): String {
+//  val rating = intellect.acessment.lightRating(world, id)
+//  return "vis: " + df.format(rating)
+//}
 
-fun hudLayout(world: simulation.World): Flower {
-  val player = world.players.first().id
+fun interactionDialog(interactable: Interactable): Flower {
   val rows = listOf(
-      mythic.bloom.label(textStyle, characterHealth(world, player)),
-      mythic.bloom.label(textStyle, characterSanity(world, player)),
-      mythic.bloom.label(textStyle, characterVisibility(world, player)),
-      mythic.bloom.label(textStyle, "vel: " + df.format(world.deck.bodies[player]!!.velocity.length()))
+      label(textStyle, "a"),
+      label(textStyle, "bee")
   )
-  return (mythic.bloom.offset(Vector2i(10)))(
+  return centeredHorizontal(
       list(vertical, 10)(rows)
   )
+}
+
+fun hudLayout(data: HudData): Flower {
+  val rows = listOf(
+      label(textStyle, "HP: ${resourceString(data.health)}"),
+      label(textStyle, "SAN: ${resourceString(data.sanity)}")
+//      mythic.bloom.label(textStyle, characterVisibility(data, player)),
+//      mythic.bloom.label(textStyle, "vel: " + df.format(world.deck.bodies[player]!!.velocity.length()))
+  )
+
+  return addFlowers(listOfNotNull(
+      offset(Vector2i(10))(
+          list(vertical, 10)(rows)
+      ),
+      if (data.interactable != null) interactionDialog(data.interactable) else null
+  ))
 }

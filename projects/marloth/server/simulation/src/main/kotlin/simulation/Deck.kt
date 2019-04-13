@@ -2,7 +2,10 @@ package simulation
 
 import colliding.Shape
 import intellect.Spirit
-import mythic.ent.*
+import mythic.ent.Entity
+import mythic.ent.Id
+import mythic.ent.IdSource
+import mythic.ent.Table
 import physics.Body
 import physics.DynamicBody
 import randomly.Dice
@@ -22,12 +25,12 @@ data class Deck(
     val depictions: Table<Depiction> = mapOf(),
     val doors: Table<Door> = mapOf(),
     val dynamicBodies: Table<DynamicBody> = mapOf(),
-    val factions: Table<Faction> = mapOf(),
     val items: Table<Item> = mapOf(),
     val lights: Table<Light> = mapOf(),
     val missiles: Table<Missile> = mapOf(),
     val players: Table<Player> = mapOf(),
-    val spirits: Table<Spirit> = mapOf()
+    val spirits: Table<Spirit> = mapOf(),
+    val interactables: Table<Interactable> = mapOf()
 ) {
   fun plus(other: Deck) = this.copy(
       ambientSounds = ambientSounds.plus(other.ambientSounds),
@@ -38,12 +41,12 @@ data class Deck(
       depictions = depictions.plus(other.depictions),
       doors = doors.plus(other.doors),
       dynamicBodies = dynamicBodies.plus(other.dynamicBodies),
-      factions = factions.plus(other.factions),
       items = items.plus(other.items),
       lights = lights.plus(other.lights),
       missiles = missiles.plus(other.missiles),
       players = players.plus(other.players),
-      spirits = spirits.plus(other.spirits)
+      spirits = spirits.plus(other.spirits),
+      interactables = interactables.plus(other.interactables)
   )
 }
 
@@ -73,7 +76,8 @@ fun toDeck(hand: Hand): Deck =
         lights = nullableList(hand.id, hand.light),
         missiles = nullableList(hand.missile),
         players = nullableList(hand.player),
-        spirits = nullableList(hand.spirit)
+        spirits = nullableList(hand.spirit),
+        interactables = nullableList(hand.id, hand.interactable)
     )
 
 fun toDeck(hands: List<Hand>): Deck =
@@ -106,5 +110,26 @@ fun addDeck(world: World, deck: Deck, nextId: IdSource): World {
   return world.copy(
       deck = newDeck,
       nextId = nextId()
+  )
+}
+
+fun removeEntities(deck: Deck, removeIds: List<Id>): Deck {
+  val isActive = { id: Id -> !removeIds.contains(id) }
+
+  return deck.copy(
+      ambientSounds = deck.ambientSounds.filterKeys(isActive),
+      animations = deck.animations.filterKeys(isActive),
+      bodies = deck.bodies.filterKeys(isActive),
+      characters = deck.characters.filterKeys(isActive),
+      collisionShapes = deck.collisionShapes.filterKeys(isActive),
+      depictions = deck.depictions.filterKeys(isActive),
+      dynamicBodies = deck.dynamicBodies.filterKeys(isActive),
+      doors = deck.doors.filterKeys(isActive),
+      items = deck.items.filterKeys(isActive),
+      lights = deck.lights.filterKeys(isActive),
+      missiles = deck.missiles.filterKeys(isActive),
+      players = deck.players.filterKeys(isActive),
+      spirits = deck.spirits.filterKeys(isActive),
+      interactables = deck.interactables.filterKeys(isActive)
   )
 }

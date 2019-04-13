@@ -14,9 +14,8 @@ import physics.Body
 import physics.voidNode
 import randomly.Dice
 import simulation.*
-import simulation.data.EntityTemplate
+import simulation.data.EntityTemplates
 import simulation.data.creatures
-import simulation.data.entityTemplates
 
 data class CharacterTemplate(
     val faction: Id,
@@ -85,7 +84,7 @@ fun newDoor(realm: Realm, nextId: IdSource): (Id) -> Hand = { nodeId ->
   val height = node.height
   val position = getCenter(meshFace.vertices)
   val id = nextId()
-  entityTemplates[EntityTemplate.door]!!.copy(
+  EntityTemplates.door.copy(
       id = id,
       body = Body(
           id = id,
@@ -128,7 +127,7 @@ fun placeWallLamps(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): De
           Vector3(0f, 0f, 0.9f) + wall.normal * -0.1f
       val angle = Quaternion().rotateTo(Vector3(1f, 0f, 0f), wall.normal)
       val id = nextId()
-      entityTemplates[EntityTemplate.wallLamp]!!.copy(
+      EntityTemplates.wallLamp.copy(
           id = id,
           body = Body(
               id = id,
@@ -189,10 +188,10 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
   val scale = calculateWorldScale(input.boundary.dimensions)
   val nextId = newIdSource(1)
   val deck = Deck(
-      factions = entityMap(listOf(
-          Faction(misfitsFaction, "Misfits"),
-          Faction(monstersFaction, "Monsters")
-      ))
+//      factions = entityMap(listOf(
+//          Faction(misfitsFaction, "Misfits"),
+//          Faction(monstersFaction, "Monsters")
+//      ))
   )
       .plus(newPlayer(nextId, playerNode))
       .plus(placeWallLamps(realm, nextId, input.dice, scale))

@@ -25,6 +25,9 @@ enum class CommandType {
   moveLeft,
   moveRight,
 
+  interactPrimary,
+  interactSecondary,
+
   jump,
   attack,
   duck,

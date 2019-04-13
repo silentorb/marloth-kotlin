@@ -34,14 +34,6 @@ fun clipBox(clipBounds: Bounds): (Box) -> Box = { box ->
   )
 }
 
-fun offset(flower: Flower): (Vector2i) -> Flower = { value ->
-  { flower(Seed(it.bag, Bounds(it.bounds.position + value, it.bounds.dimensions))) }
-}
-
-fun offset(value: Vector2i): (Flower) -> Flower = { flower ->
-  { flower(Seed(it.bag, Bounds(it.bounds.position + value, it.bounds.dimensions))) }
-}
-
 data class ScrollingState(
     val dragOrigin: Vector2i?,
     val offsetOrigin: Int,

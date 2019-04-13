@@ -20,5 +20,6 @@ data class Hand(
     val light: Light? = null,
     val missile: Missile? = null,
     val player: Player? = null,
-    val spirit: Spirit? = null
+    val spirit: Spirit? = null,
+    val interactable: Interactable? = null
 )

@@ -8,18 +8,13 @@ import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import physics.DynamicBody
 import physics.HingeConstraint
+import scenery.Text
 import simulation.*
 
-enum class EntityTemplate {
-  character,
-  door,
-  wallLamp,
-  missile
-}
+class EntityTemplates {
+  companion object {
 
-val entityTemplates: Map<EntityTemplate, Hand> = mapOf(
-
-    EntityTemplate.door to Hand(
+    val door = Hand(
         id = 0,
         collisionShape = Box(halfExtents = Vector3(.5f, .165f / 2f, .5f)),
         door = Door(
@@ -31,13 +26,20 @@ val entityTemplates: Map<EntityTemplate, Hand> = mapOf(
             resistance = 4f,
             hinge = HingeConstraint(
                 pivot = Vector3(0.55f, 0f, 0f),
-//                pivot = Vector3(0f, 0f, 0f),
                 axis = Vector3(0f, 0f, 1f)
             )
+        ),
+        interactable = Interactable(
+            primaryCommand = WidgetCommand(
+                text = Text.open
+            ),
+            secondaryCommand = WidgetCommand(
+                text = Text.close
+            )
         )
-    ),
+    )
 
-    EntityTemplate.wallLamp to Hand(
+    val wallLamp = Hand(
         id = 0,
         collisionShape = ShapeOffset(Matrix().translate(1f, 0f, 0.8f), Sphere(1f)),
         depiction = Depiction(
@@ -49,4 +51,5 @@ val entityTemplates: Map<EntityTemplate, Hand> = mapOf(
         )
     )
 
-)
+  }
+}

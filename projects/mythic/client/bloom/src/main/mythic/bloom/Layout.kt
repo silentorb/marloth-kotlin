@@ -1,5 +1,8 @@
 package mythic.bloom
 
+import org.joml.Vector2i
+import org.joml.plus
+
 typealias FlexBounds = List<Int?> // Size = 6
 
 class FlexProperty {
@@ -24,6 +27,7 @@ typealias ArrangerMap = Map<BloomId, Arranger>
 typealias IdMap = Map<BloomId, BloomId>
 typealias FlexBoundsMap = Map<BloomId, FlexBounds>
 typealias BoundsMap = Map<BloomId, Bounds>
+typealias FlowerTransform = (Flower) -> Flower
 
 //fun newInitialFlexBounds(ids: Collection<BloomId>, rootId: BloomId, rootBounds: FlexBounds) =
 //    ids.map { Pair(it, listOf(null, null, null, null, null, null)) }
@@ -118,3 +122,75 @@ fun applyLengths(start: Int, lengths: List<Int>, planeOffset: Int, bounds: Colle
 }
 
 val isResolved = { b: FlexBounds -> b.all { it != null } }
+
+fun independentBoundsTransform(transform: (Bounds) -> Bounds): FlowerTransform = { flower ->
+  { flower(Seed(it.bag, transform(it.bounds))) }
+}
+
+fun dependentBoundsTransform(transform: (Vector2i, Vector2i) -> Vector2i): FlowerTransform = { flower ->
+  { seed ->
+    val boxes = flower(seed)
+    if (boxes.none())
+      boxes
+    else {
+      val offset = transform(seed.bounds.dimensions, boxes.first().bounds.dimensions)
+      boxes.map {
+        it.copy(
+            bounds = it.bounds.copy(
+                position = it.bounds.position + offset
+            )
+        )
+      }
+    }
+  }
+}
+
+fun offset(flower: Flower): (Vector2i) -> Flower = { value ->
+  { flower(Seed(it.bag, Bounds(it.bounds.position + value, it.bounds.dimensions))) }
+}
+
+fun offset(value: Vector2i): FlowerTransform = independentBoundsTransform {
+  Bounds(it.position + value, it.dimensions)
+}
+
+fun centeredHorizontalVertical(bounds: Bounds, contentDimensions: Vector2i): Vector2i =
+    Vector2i(
+        centeredPosition(horizontal, bounds.dimensions, contentDimensions.x),
+        centeredPosition(vertical, bounds.dimensions, contentDimensions.y)
+    )
+
+fun moveBounds(mover: (Bounds, Vector2i) -> Vector2i): (Bounds, Vector2i) -> Bounds = { bounds, contentDimensions ->
+  Bounds(
+      mover(bounds, contentDimensions) + bounds.position,
+      contentDimensions
+  )
+}
+
+fun centeredHorizontalPosition(bounds: Bounds, contentDimensions: Vector2i): Vector2i {
+  val dimensions = bounds.dimensions
+  return bounds.position + Vector2i(
+      centeredPosition(horizontal, dimensions, contentDimensions.x),
+      dimensions.y
+  )
+}
+
+val centeredHorizontal: FlowerTransform = dependentBoundsTransform { parent, child ->
+  Vector2i(
+      (parent.x - child.x) / 2,
+      0
+  )
+}
+
+val centeredVertical: FlowerTransform = dependentBoundsTransform { parent, child ->
+  Vector2i(
+      0,
+      (parent.y - child.y) / 2
+  )
+}
+
+val centeredBoth: FlowerTransform = dependentBoundsTransform { parent, child ->
+  Vector2i(
+      (parent.x - child.x) / 2,
+      (parent.y - child.y) / 2
+  )
+}
