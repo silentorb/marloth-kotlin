@@ -48,13 +48,17 @@ fun <T> list(arranger: ChildArranger<T>, interaction: ChildInteraction<T>): List
     val preparedChildren = arranger(seed.bounds, items)
     val (_, flowers, itemBounds) = preparedChildren
     val childBoxes = applyBounds(seed.bag, flowers, itemBounds)
-    childBoxes
-        .plus(
-            Box(
-                bounds = accumulatedBounds(childBoxes),
-                logic = interaction(preparedChildren)
-            )
-        )
+    Blossom(
+        boxes = childBoxes
+            .plus(
+                Box(
+                    bounds = accumulatedBounds(childBoxes),
+                    logic = interaction(preparedChildren)
+                )
+            ),
+        bounds = seed.bounds // TODO: Not sure if seed.bounds is the right bounds.
+    )
+
   }
 }
 

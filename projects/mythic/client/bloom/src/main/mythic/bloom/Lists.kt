@@ -26,43 +26,47 @@ fun <T> children(arrangement: LengthArrangement, listItem: ListItem<T>): ChildAr
 }
 
 fun applyBounds(bag: StateBag, children: List<Flower>, bounds: List<Bounds>): Boxes =
-    bounds.zip(children) { b, child -> child(Seed(bag, b)) }
+    bounds.zip(children) { b, child -> child(Seed(bag, b)).boxes }
         .flatten()
 
-fun applyBounds(arranger: FixedChildArranger): ParentFlower = { children ->
-  { applyBounds(it.bag, children, arranger(it.bounds)) }
+fun applyBounds(arranger: FixedChildArranger): (List<Flower>) -> Flower = { flowers ->
+  {
+    Blossom(
+        boxes = applyBounds(it.bag, flowers, arranger(it.bounds)),
+        bounds = emptyBounds
+    )
+  }
 }
 
 fun list(plane: Plane, padding: Int): (List<Flower>) -> Flower = { children ->
   { seed ->
     val normalize = normalizeBounds(plane)
     var lastBounds = seed.bounds
-    children.flatMap { flower ->
-      val boxes = flower(seed.copy(bounds = lastBounds))
-      val farthest = boxes.map { normalize(it.bounds).right }.sortedDescending().first()
-      val normalizedLastBounds = normalize(lastBounds)
+    Blossom(
+        boxes = children.flatMap { flower ->
+          val blossom = flower(seed.copy(bounds = lastBounds))
+          val farthest = blossom.boxes.map { normalize(it.bounds).right }.sortedDescending().first()
+          val normalizedLastBounds = normalize(lastBounds)
 
-      val offset = Vector2i(farthest - lastBounds.top + padding, 0)
-      lastBounds = normalize(Bounds(
-          position = normalizedLastBounds.position + offset,
-          dimensions = normalizedLastBounds.dimensions - offset
-      ))
-      boxes
-//          .map {
-//            it.copy(
-//                bounds = it.bounds.copy(
-//                    position = it.bounds.position + plane(offset)
-//                )
-//            )
-//          }
-    }
+          val offset = Vector2i(farthest - lastBounds.top + padding, 0)
+          lastBounds = normalize(Bounds(
+              position = normalizedLastBounds.position + offset,
+              dimensions = normalizedLastBounds.dimensions - offset
+          ))
+          blossom.boxes
+        },
+        bounds = emptyBounds
+    )
   }
 }
 
 fun <T> list(arranger: ChildArranger<T>): ListFlower<T> = { items ->
   { seed ->
     val (_, flowers, itemBounds) = arranger(seed.bounds, items)
-    applyBounds(seed.bag, flowers, itemBounds)
+    Blossom(
+        boxes = applyBounds(seed.bag, flowers, itemBounds),
+        bounds = emptyBounds
+    )
   }
 }
 
@@ -70,7 +74,10 @@ fun <T> list(arrangement: LengthArrangement, listItem: ListItem<T>): ListFlower<
   { b ->
     val lengths = items.map { listItem.length }
     val flowers = items.map(listItem.itemFlower)
-    applyBounds(b.bag, flowers, arrangement(b.bounds, lengths))
+    Blossom(
+        boxes = applyBounds(b.bag, flowers, arrangement(b.bounds, lengths)),
+        bounds = emptyBounds
+    )
   }
 }
 

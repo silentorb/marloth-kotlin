@@ -15,13 +15,13 @@ fun accumulatedBounds(boxes: Boxes): Bounds {
   return Bounds(start, end - start)
 }
 
-fun joinChildren(child: Flower, parent: (Seed) -> Flower): Flower =
-    {
-      val childBoxes = child(it)
-      val start = childBoxes.first().bounds.position
-      val end = childBoxes.sortedByDescending { it.bounds.end.y }.first().bounds.end
-      val childBounds = Bounds(start, end - start)
-
-      parent(Seed(it.bag, childBounds))(it)
-          .plus(childBoxes)
-    }
+//fun joinChildren(child: Flower, parent: (Seed) -> Flower): Flower =
+//    {
+//      val childBoxes = child(it)
+//      val start = childBoxes.first().bounds.position
+//      val end = childBoxes.sortedByDescending { it.bounds.end.y }.first().bounds.end
+//      val childBounds = Bounds(start, end - start)
+//
+//      parent(Seed(it.bag, childBounds))(it)
+//          .plus(childBoxes)
+//    }

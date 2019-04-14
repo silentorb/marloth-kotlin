@@ -1,16 +1,46 @@
 package mythic.bloom
 
-import mythic.spatial.Vector4
-import mythic.typography.Font
-import mythic.typography.TextStyle
-
 data class Seed(
     val bag: StateBag = mapOf(),
     val bounds: Bounds,
     val clipBounds: Bounds? = null
 )
 
-typealias Flower = (Seed) -> Boxes
+fun maxBounds(a: Bounds, b: Bounds): Bounds {
+  val x1 = Math.min(a.position.x, b.position.x)
+  val y1 = Math.min(a.position.y, b.position.y)
+  val x2 = Math.max(a.position.x + a.dimensions.x, b.position.x + b.dimensions.x)
+  val y2 = Math.max(a.position.y + a.dimensions.y, b.position.y + b.dimensions.y)
+  return Bounds(x1, y1, x2 - x1, y2 - y1)
+}
+
+data class Blossom(
+    val boxes: Boxes,
+    val bounds: Bounds
+) {
+  fun plus(other: Blossom) = this.copy(
+      boxes = boxes.plus(other.boxes),
+      bounds = maxBounds(bounds, other.bounds)
+  )
+
+  fun plus(other: Boxes) = this.copy(
+      boxes = boxes.plus(other)
+  )
+}
+
+fun newBlossom(box: Box): Blossom =
+    Blossom(
+        boxes = listOf(box),
+        bounds = box.bounds
+    )
+
+val emptyBlossom =
+    Blossom(
+        boxes = listOf(),
+        bounds = emptyBounds
+    )
+
+typealias Flower = (Seed) -> Blossom
 
 operator fun Flower.plus(b: Flower): Flower = { seed ->
   this(seed)
@@ -21,12 +51,10 @@ fun addFlowers(flowers: List<Flower>) =
     flowers.reduce { a, b -> a.plus(b) }
 
 fun depict(depiction: StateDepiction): Flower = { s ->
-  listOf(
-      Box(
-          bounds = s.bounds,
-          depiction = depiction(s)
-      )
-  )
+  newBlossom(Box(
+      bounds = s.bounds,
+      depiction = depiction(s)
+  ))
 }
 
 fun depict(depiction: Depiction): Flower =
@@ -51,4 +79,4 @@ inline fun <reified T> existingOrNewState(key: String, crossinline initializer: 
     initializer()
 }
 
-val emptyFlower: Flower = { listOf() }
+val emptyFlower: Flower = { emptyBlossom }

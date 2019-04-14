@@ -35,6 +35,8 @@ data class Bounds(
   }
 }
 
+val emptyBounds = Bounds(0, 0, 0, 0)
+
 typealias Depiction = (Bounds, Canvas) -> Unit
 typealias StateBag = Map<String, Any>
 typealias StateBagMods = StateBag

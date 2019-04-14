@@ -17,7 +17,7 @@ fun textDepiction(style: IndexedTextStyle, content: String): Depiction = { b, c 
 fun label(style: IndexedTextStyle, content: String): Flower = { seed ->
   val config = TextConfiguration(content, Vector2(), resolve(style)(globalFonts()))
   val dimensions = calculateTextDimensions(config)
-  listOf(
+  newBlossom(
       Box(
           bounds = seed.bounds.copy(
               dimensions = dimensions.toVector2i()

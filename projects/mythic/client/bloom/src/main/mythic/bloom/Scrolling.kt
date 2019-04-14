@@ -94,7 +94,7 @@ fun scrollingInteraction(key: String, contentBounds: Bounds): LogicModule = { (b
 }
 
 fun scrollBox(key: String, contentBounds: Bounds): Flower = { seed ->
-  listOf(
+  newBlossom(
       Box(
           bounds = seed.bounds,
           depiction = scrollbar(scrollingState(seed.bag[key]).offset, contentBounds.dimensions.y),
@@ -113,14 +113,14 @@ fun scrolling(key: String): (Flower) -> Flower = { child ->
             )
         )
     )
-    val childBoxes = offset(child)(extractOffset(key, seed.bag))(innerSeed)
-        .map(clipBox(innerSeed.bounds))
+    val blossom = offset(child)(extractOffset(key, seed.bag))(innerSeed)
+    val childBoxes = blossom.boxes
     if (childBoxes.any()) {
       val contentBounds = accumulatedBounds(childBoxes)
       scrollBox(key, contentBounds)(seed)
           .plus(childBoxes)
     } else {
-      listOf()
+      emptyBlossom
     }
   }
 }

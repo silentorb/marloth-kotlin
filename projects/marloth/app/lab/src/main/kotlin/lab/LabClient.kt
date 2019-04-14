@@ -113,7 +113,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     val boxes = layout(Seed(
         bag = previousState.app.client.bloomState.bag,
         bounds = Bounds(dimensions = windowInfo.dimensions)
-    ))
+    )).boxes
 //    val (_, nextLabInputState) = updateInput(view.getCommands(), previousState)
 
     renderLab(windowInfo, boxes)
@@ -138,7 +138,7 @@ class LabClient(val config: LabConfig, val client: Client) {
         bag = state.app.client.bloomState.bag,
         bounds = Bounds(dimensions = windowInfo.dimensions)
     )
-    val boxes = layout(seed)
+    val boxes = layout(seed).boxes
     renderLab(windowInfo, boxes)
 
     val newInputState = state.app.client.input.copy(

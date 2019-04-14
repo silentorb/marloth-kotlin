@@ -103,10 +103,14 @@ fun menuFlower(textResources: TextResources, menu: Menu): Flower = { seed ->
   val menuBounds = centeredBounds(seed.bounds, Vector2i(200, menuHeight))
   val menuPadding = 10
 
-  listOf(Box(
-      bounds = menuBounds,
-      depiction = menuBackground,
-      logic = menuLogic(menu)
-  ))
-      .plus(arrangeListComplex(lengthArranger(vertical, menuPadding), items, menuBounds))
+  Blossom(
+      boxes = listOf(Box(
+          bounds = menuBounds,
+          depiction = menuBackground,
+          logic = menuLogic(menu)
+      ))
+          .plus(arrangeListComplex(lengthArranger(vertical, menuPadding), items, menuBounds)),
+      bounds = emptyBounds
+  )
+
 }

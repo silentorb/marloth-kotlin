@@ -26,18 +26,18 @@ typealias Arranger = (FlexTriple) -> FlexPair
 typealias ArrangerMap = Map<BloomId, Arranger>
 typealias IdMap = Map<BloomId, BloomId>
 typealias FlexBoundsMap = Map<BloomId, FlexBounds>
-typealias BoundsMap = Map<BloomId, Bounds>
 typealias FlowerTransform = (Flower) -> Flower
 
-//fun newInitialFlexBounds(ids: Collection<BloomId>, rootId: BloomId, rootBounds: FlexBounds) =
-//    ids.map { Pair(it, listOf(null, null, null, null, null, null)) }
-//        .associate { it }
-//        .plus(Pair(rootId, rootBounds))
+val emptyFlexBounds = listOf(null, null, null, null, null, null)
 
-val emptyBounds = listOf(null, null, null, null, null, null)
+fun mapBlossomBoxes(transform: (Boxes) -> Boxes): (Blossom) -> Blossom = { blossom ->
+  blossom.copy(
+      boxes = transform(blossom.boxes)
+  )
+}
 
 fun newInitialFlexBounds(ids: Collection<BloomId>) =
-    ids.map { Pair(it, emptyBounds) }
+    ids.map { Pair(it, emptyFlexBounds) }
         .associate { it }
 
 fun arrange(parentMap: IdMap, arrangers: ArrangerMap, initialBounds: FlexBoundsMap): FlexBoundsMap {
@@ -62,7 +62,7 @@ fun arrange(parentMap: IdMap, arrangers: ArrangerMap, initialBounds: FlexBoundsM
 
     for (id in remaining) {
       val arranger = arrangers[id]!!
-      val parent = bounds[parentMap[id]] ?: emptyBounds
+      val parent = bounds[parentMap[id]] ?: emptyFlexBounds
       val childIds = childrenMap[id]!!
       val self = bounds[id]!!
       val children = childIds.map { bounds[it]!! }
@@ -127,20 +127,30 @@ fun independentBoundsTransform(transform: (Bounds) -> Bounds): FlowerTransform =
   { flower(Seed(it.bag, transform(it.bounds))) }
 }
 
+fun moveBounds(offset: Vector2i): (Bounds) -> Bounds = { bounds ->
+  bounds.copy(
+      position = bounds.position + offset
+  )
+}
+
 fun dependentBoundsTransform(transform: (Vector2i, Vector2i) -> Vector2i): FlowerTransform = { flower ->
   { seed ->
-    val boxes = flower(seed)
+    val result = flower(seed)
+    val boxes = result.boxes
     if (boxes.none())
-      boxes
+      result
     else {
       val offset = transform(seed.bounds.dimensions, boxes.first().bounds.dimensions)
-      boxes.map {
-        it.copy(
-            bounds = it.bounds.copy(
-                position = it.bounds.position + offset
+      Blossom(
+          boxes = boxes.map {
+            it.copy(
+                bounds = it.bounds.copy(
+                    position = it.bounds.position + offset
+                )
             )
-        )
-      }
+          },
+          bounds = moveBounds(offset)(result.bounds)
+      )
     }
   }
 }

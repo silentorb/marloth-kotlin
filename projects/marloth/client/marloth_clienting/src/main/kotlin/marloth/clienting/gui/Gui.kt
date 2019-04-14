@@ -102,5 +102,5 @@ fun layoutGui(client: Client, clientState: ClientState, world: World?, hudData: 
       bag = clientState.bloomState.bag,
       bounds = bounds
   )
-  return layout(seed)
+  return layout(seed).boxes
 }

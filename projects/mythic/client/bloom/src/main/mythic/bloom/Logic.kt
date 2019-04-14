@@ -87,7 +87,7 @@ fun isInBounds(position: Vector2i, bounds: Bounds): Boolean =
         position.y < bounds.position.y + bounds.dimensions.y
 
 fun logic(logicModule: LogicModule): Flower = { seed ->
-  listOf(
+  newBlossom(
       Box(
           bounds = seed.bounds,
           logic = logicModule
