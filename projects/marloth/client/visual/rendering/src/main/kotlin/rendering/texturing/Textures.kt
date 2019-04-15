@@ -11,7 +11,6 @@ import mythic.glowing.Texture
 import mythic.glowing.TextureAttributes
 import mythic.glowing.TextureStorageUnit
 import mythic.glowing.loadImageBuffer
-import mythic.quartz.globalProfiler
 import mythic.spatial.Vector3
 import rendering.meshes.loading.loadJsonResource
 import mythic.imaging.newTextureEngine
@@ -148,14 +147,12 @@ fun loadProceduralTextures(attributes: TextureAttributes): Map<String, Texture> 
 }
 
 fun loadTextures(attributes: TextureAttributes): Map<String, Texture> =
-    globalProfiler().wrap("textures") {
-      scanTextureResources("models")
-          .plus(scanTextureResources("textures"))
-          .associate {
-            Pair(
-                getFileShortName(it),
-                loadTextureFromFile(it, attributes)
-            )
-          }
-          .plus(loadProceduralTextures(attributes))
-    }
+    scanTextureResources("models")
+        .plus(scanTextureResources("textures"))
+        .associate {
+          Pair(
+              getFileShortName(it),
+              loadTextureFromFile(it, attributes)
+          )
+        }
+        .plus(loadProceduralTextures(attributes))

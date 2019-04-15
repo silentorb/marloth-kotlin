@@ -56,6 +56,7 @@ interface PlatformProcess {
   fun close()
   fun isClosing(): Boolean
   fun pollEvents()
+  fun shutdownPlatform()
 }
 
 data class Platform(

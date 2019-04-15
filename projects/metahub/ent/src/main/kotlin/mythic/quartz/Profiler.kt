@@ -39,10 +39,10 @@ fun printProfiler(profiler: Profiler) {
 
 private var profiler: Profiler? = null
 
-fun globalProfiler(): Profiler {
-  if (profiler == null)
-    profiler = Profiler()
-
-  return profiler!!
-}
+//fun globalProfiler(): Profiler {
+//  if (profiler == null)
+//    profiler = Profiler()
+//
+//  return profiler!!
+//}
 

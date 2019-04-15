@@ -14,7 +14,6 @@ import marloth.front.GameApp
 import marloth.integration.*
 import mythic.desktop.createDesktopPlatform
 import mythic.ent.pipe
-import mythic.quartz.globalProfiler
 import mythic.quartz.newTimestepState
 import mythic.quartz.printProfiler
 import physics.newBulletState
@@ -126,24 +125,23 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
     )
 }
 
-fun runApp(gameApp: GameApp, config: LabConfig) {
-  globalProfiler().start("world-gen")
+fun shutdownGameApp(gameApp: GameApp) {
+  gameApp.client.shutdown()
+  gameApp.platform.process.shutdownPlatform()
+}
+
+fun newLabState(gameApp: GameApp, config: LabConfig): LabState {
   val world = if (config.gameView.autoNewGame)
     generateDefaultWorld(config.gameView)
   else
     null
 
-  globalProfiler().start("app")
-  val app = LabApp(gameApp, config,
-      labConfigManager = ConfigManager(labConfigPath, config),
-      labClient = LabClient(config, gameApp.client)
-  )
   if (world != null) {
     setWorldMesh(world.realm, gameApp.client)
   }
 
   val clientState = newClientState(gameApp.platform, gameApp.config.input, gameApp.config.audio)
-  val state = LabState(
+  return LabState(
       modelViewState = newModelViewState(),
       app = AppState(
           worlds = listOfNotNull(world),
@@ -152,28 +150,32 @@ fun runApp(gameApp: GameApp, config: LabConfig) {
           players = listOf(1)
       )
   )
-  globalProfiler().stop()
-  printProfiler(globalProfiler())
-  labLoop(app, state)
-  app.gameApp.client.shutdown()
+}
+
+fun loadLabConfig(): LabConfig =
+    loadYamlFile<LabConfig>(labConfigPath) ?: LabConfig()
+
+fun newGameApp(): GameApp {
+  val gameConfig = loadGameConfig()
+  val platform = createDesktopPlatform("Dev Lab", gameConfig.display)
+  platform.display.initialize(gameConfig.display)
+  return GameApp(platform, gameConfig,
+      bulletState = newBulletState()
+  )
 }
 
 object App {
   @JvmStatic
   fun main(args: Array<String>) {
-    globalProfiler().start("start")
     System.setProperty("joml.format", "false")
-    globalProfiler().start("labConfig")
-    val config = loadYamlFile<LabConfig>(labConfigPath) ?: LabConfig()
-    globalProfiler().start("gameConfig")
-    val gameConfig = loadGameConfig()
-    globalProfiler().stop()
-    val platform = createDesktopPlatform("Dev Lab", gameConfig.display)
-    platform.display.initialize(gameConfig.display)
-    val gameApp = GameApp(platform, gameConfig,
-        bulletState = newBulletState()
+    val config = loadLabConfig()
+    val gameApp = newGameApp()
+    val state = newLabState(gameApp, config)
+    val app = LabApp(gameApp, config,
+        labConfigManager = ConfigManager(labConfigPath, config),
+        labClient = LabClient(config, gameApp.client)
     )
-//    startGui()
-    runApp(gameApp, config)
+    labLoop(app, state)
+    shutdownGameApp(app.gameApp)
   }
 }

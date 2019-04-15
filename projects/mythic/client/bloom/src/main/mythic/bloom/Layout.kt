@@ -163,27 +163,6 @@ fun offset(value: Vector2i): FlowerTransform = independentBoundsTransform {
   Bounds(it.position + value, it.dimensions)
 }
 
-fun centeredHorizontalVertical(bounds: Bounds, contentDimensions: Vector2i): Vector2i =
-    Vector2i(
-        centeredPosition(horizontal, bounds.dimensions, contentDimensions.x),
-        centeredPosition(vertical, bounds.dimensions, contentDimensions.y)
-    )
-
-fun moveBounds(mover: (Bounds, Vector2i) -> Vector2i): (Bounds, Vector2i) -> Bounds = { bounds, contentDimensions ->
-  Bounds(
-      mover(bounds, contentDimensions) + bounds.position,
-      contentDimensions
-  )
-}
-
-fun centeredHorizontalPosition(bounds: Bounds, contentDimensions: Vector2i): Vector2i {
-  val dimensions = bounds.dimensions
-  return bounds.position + Vector2i(
-      centeredPosition(horizontal, dimensions, contentDimensions.x),
-      dimensions.y
-  )
-}
-
 val centeredHorizontal: FlowerTransform = dependentBoundsTransform { parent, child ->
   Vector2i(
       (parent.x - child.x) / 2,
