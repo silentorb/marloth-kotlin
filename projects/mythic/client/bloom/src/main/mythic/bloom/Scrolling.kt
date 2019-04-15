@@ -2,7 +2,6 @@ package mythic.bloom
 
 import mythic.spatial.*
 import org.joml.Vector2i
-import org.joml.plus
 
 private const val scrollbarWidth = 15
 
@@ -50,7 +49,7 @@ val scrollingState = existingOrNewState {
 
 //fun extractOffset(key: String, input: (Vector2i) -> Flower): Flower = { seed ->
 //  val state = scrollingState(seed.bag[key])
-//  input(Vector2i(0, -state.offset))(seed)
+//  input(Vector2i(0, -state.withOffset))(seed)
 //}
 
 fun extractOffset(key: String, bag: StateBag): Vector2i {
@@ -113,7 +112,7 @@ fun scrolling(key: String): (Flower) -> Flower = { child ->
             )
         )
     )
-    val blossom = offset(child)(extractOffset(key, seed.bag))(innerSeed)
+    val blossom = withOffset(child)(extractOffset(key, seed.bag))(innerSeed)
     val childBoxes = blossom.boxes
     if (childBoxes.any()) {
       val contentBounds = accumulatedBounds(childBoxes)

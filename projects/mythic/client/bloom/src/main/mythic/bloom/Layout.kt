@@ -155,31 +155,38 @@ fun dependentBoundsTransform(transform: (Vector2i, Vector2i) -> Vector2i): Flowe
   }
 }
 
-fun offset(flower: Flower): (Vector2i) -> Flower = { value ->
+fun withOffset(flower: Flower): (Vector2i) -> Flower = { value ->
   { flower(Seed(it.bag, Bounds(it.bounds.position + value, it.bounds.dimensions))) }
 }
 
-fun offset(value: Vector2i): FlowerTransform = independentBoundsTransform {
+fun withOffset(value: Vector2i): FlowerTransform = independentBoundsTransform {
   Bounds(it.position + value, it.dimensions)
 }
 
-val centeredHorizontal: FlowerTransform = dependentBoundsTransform { parent, child ->
-  Vector2i(
-      (parent.x - child.x) / 2,
-      0
-  )
+typealias PlanePositioner = (PlaneMap) -> (Vector2i, Vector2i) -> Int
+
+val centered: PlanePositioner = { plane ->
+  { parent, child ->
+    (plane.x(parent) - plane.x(child)) / 2
+  }
 }
 
-val centeredVertical: FlowerTransform = dependentBoundsTransform { parent, child ->
-  Vector2i(
-      0,
-      (parent.y - child.y) / 2
-  )
+fun absolute(value: Int): PlanePositioner = { plane ->
+  { _, _ ->
+    value
+  }
 }
 
-val centeredBoth: FlowerTransform = dependentBoundsTransform { parent, child ->
-  Vector2i(
-      (parent.x - child.x) / 2,
-      (parent.y - child.y) / 2
-  )
+fun percentage(value: Float): PlanePositioner = { plane ->
+  { parent, _ ->
+    (plane.x(parent).toFloat() * value).toInt()
+  }
 }
+
+fun position(horizontal: PlanePositioner, vertical: PlanePositioner): FlowerTransform =
+    dependentBoundsTransform { parent, child ->
+      Vector2i(
+          horizontal(horizontalPlaneMap)(parent, child),
+          vertical(verticalPlaneMap)(parent, child)
+      )
+    }

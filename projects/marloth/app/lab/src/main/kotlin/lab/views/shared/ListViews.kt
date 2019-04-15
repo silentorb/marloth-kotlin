@@ -53,7 +53,7 @@ fun drawSelectableList(items: List<SelectableItem>, list: SelectableListType, bo
 //  list(
 //      children(verticalFromLengths(15), nodeRow)
 
-  val buttonBoxes = arrangeListComplex(lengthArranger(vertical, padding), partialBoxes, bounds)
+  val buttonBoxes = arrangeListComplex(lengthArranger(verticalPlane, padding), partialBoxes, bounds)
   val boxes = listOf<Box>(
 //      Box(bounds, drawSidePanel())
   )

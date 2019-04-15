@@ -109,7 +109,7 @@ fun menuFlower(textResources: TextResources, menu: Menu): Flower = { seed ->
           depiction = menuBackground,
           logic = menuLogic(menu)
       ))
-          .plus(arrangeListComplex(lengthArranger(vertical, menuPadding), items, menuBounds)),
+          .plus(arrangeListComplex(lengthArranger(verticalPlane, menuPadding), items, menuBounds)),
       bounds = emptyBounds
   )
 

@@ -158,7 +158,7 @@ fun getParentBone(info: GltfInfo, nodeIndex: Int, boneMap: BoneMap): Int? {
   val node = info.nodes[nodeIndex]
   return if (node.extras != null && node.extras.containsKey("parent")) {
     val parentName = node.extras["parent"] as String
-    boneMap.values.first { it.name == parentName }.index
+    boneMap.values.firstOrNull { it.name == parentName }?.index
   } else
     null
 }

@@ -54,14 +54,14 @@ fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Can
   val spaceSolid = canvas.solid(Vector4(0.7f, 0.6f, 0.5f, 0.3f))
   val outline = canvas.outline(Vector4(0.3f, 0f, 0f, 0.8f), 3f)
   val scale = getScale(bounds, world.boundary.dimensions)
-//  val offset = bounds.position + worldPadding
+//  val withOffset = bounds.position + worldPadding
 
-//  fun getPosition(position: Vector2) = offset + (Vector2(position.x, -position.y)
+//  fun getPosition(position: Vector2) = withOffset + (Vector2(position.x, -position.y)
 //      - world.boundary.start.xy()) * scale
 
   fun getNodePosition(node: Node) = getPosition(node.position.xy())
 
-//  fun getPosition(node: Node) = offset + (Vector2(node.position.x, -node.position.y)
+//  fun getPosition(node: Node) = withOffset + (Vector2(node.position.x, -node.position.y)
 //      - world.boundary.start.xy()) * scale
 
   val style = TextStyle(

@@ -16,7 +16,7 @@ private val selectedTextStyle = IndexedTextStyle(0, 12f, white)
 
 private val mainPanel: ParentFlower =
 //    fixedList(horizontal, 0, listOf(null, 250))
-    fixedList(horizontal, 0, listOf(null, 350))
+    fixedList(horizontalPlane, 0, listOf(null, 350))
 
 private fun mapDisplay(client: Client, realm: Realm, config: MapViewConfig): Flower =
     depict(renderMapView(client, realm, config)) + logic(onClick("clickMap"))
@@ -39,8 +39,8 @@ private fun faceInfo(realm: Realm, id: Id): Flower {
       .plus("-")
       .map { mythic.bloom.label(textStyle, it) }
 
-  return (mythic.bloom.offset(Vector2i(10)))(
-      list(vertical, 10)(rows)
+  return (mythic.bloom.withOffset(Vector2i(10)))(
+      list(verticalPlane, 10)(rows)
   )
 }
 
@@ -69,13 +69,13 @@ const val nodeListSelectionKey = "nodeList-selection"
 private val nodeList: ListFlower<Node> = wrap(
     scrolling("nodeList-scrolling"),
     list(
-        children(lengthArranger(vertical, 15), nodeRow),
+        children(lengthArranger(verticalPlane, 15), nodeRow),
         selectable(nodeListSelectionKey, optionalSingleSelection) { it.id.toString() }
     )
 )
 
 private fun rightPanel(realm: Realm, config: MapViewConfig): Flower =
-    fixedList(vertical, 10, listOf(400, null))(listOf(
+    fixedList(verticalPlane, 10, listOf(400, null))(listOf(
         scrolling("infoPanel-scrolling")(infoPanel(realm, config)),
         nodeList(realm.nodeList)
     ))

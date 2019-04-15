@@ -2,29 +2,32 @@ package mythic.bloom
 
 import org.joml.Vector2i
 
-//interface Plane {
-//  fun x(value: Vector2i): Int
-//  fun y(value: Vector2i): Int
-//
-//  fun vector(first: Int, second: Int): Vector2i
-//  fun vector(value: Vector2i): Vector2i
-//}
-//
-//class HorizontalPlane : Plane {
-//  override fun x(value: Vector2i) = value.x
-//  override fun y(value: Vector2i) = value.y
-//
-//  override fun vector(first: Int, second: Int): Vector2i = Vector2i(first, second)
-//  override fun vector(value: Vector2i): Vector2i = value
-//}
-//
-//class VerticalPlane : Plane {
-//  override fun x(value: Vector2i) = value.y
-//  override fun y(value: Vector2i) = value.x
-//
-//  override fun vector(first: Int, second: Int): Vector2i = Vector2i(second, first)
-//  override fun vector(value: Vector2i): Vector2i = Vector2i(value.y, value.x)
-//}
+interface PlaneMap {
+  fun x(value: Vector2i): Int
+  fun y(value: Vector2i): Int
+
+  fun vector(first: Int, second: Int): Vector2i
+  fun vector(value: Vector2i): Vector2i
+}
+
+class HorizontalPlane : PlaneMap {
+  override fun x(value: Vector2i) = value.x
+  override fun y(value: Vector2i) = value.y
+
+  override fun vector(first: Int, second: Int): Vector2i = Vector2i(first, second)
+  override fun vector(value: Vector2i): Vector2i = value
+}
+
+class VerticalPlane : PlaneMap {
+  override fun x(value: Vector2i) = value.y
+  override fun y(value: Vector2i) = value.x
+
+  override fun vector(first: Int, second: Int): Vector2i = Vector2i(second, first)
+  override fun vector(value: Vector2i): Vector2i = Vector2i(value.y, value.x)
+}
+
+val horizontalPlaneMap = HorizontalPlane()
+val verticalPlaneMap = VerticalPlane()
 
 typealias Plane = (Vector2i) -> Vector2i
 
@@ -35,5 +38,16 @@ fun normalizeBounds(plane: Plane): (Bounds) -> Bounds = { bounds ->
   )
 }
 
-val horizontal: Plane = { Vector2i(it.x, it.y) }
-val vertical: Plane = { Vector2i(it.y, it.x) }
+val horizontalPlane: Plane = { Vector2i(it.x, it.y) }
+val verticalPlane: Plane = { Vector2i(it.y, it.x) }
+
+//enum class Plane {
+//  horizontal,
+//  vertical
+//}
+//
+//fun planeMap(plane: Plane): Plane =
+//    if (plane == Plane.horizontal)
+//      horizontalPlane
+//    else
+//      verticalPlane

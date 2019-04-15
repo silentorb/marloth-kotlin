@@ -31,8 +31,8 @@ fun interactionDialog(interactable: Interactable): Flower {
       label(textStyle, "a"),
       label(textStyle, "bee")
   )
-  return centeredHorizontal(
-      list(vertical, 10)(rows)
+  return position(centered, percentage(0.8f))(
+      list(verticalPlane, 10)(rows)
   )
 }
 
@@ -45,8 +45,8 @@ fun hudLayout(data: HudData): Flower {
   )
 
   return addFlowers(listOfNotNull(
-      offset(Vector2i(10))(
-          list(vertical, 10)(rows)
+      withOffset(Vector2i(10))(
+          list(verticalPlane, 10)(rows)
       ),
       if (data.interactable != null) interactionDialog(data.interactable) else null
   ))

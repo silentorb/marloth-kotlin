@@ -132,8 +132,8 @@ fun renderLayout(layout: LayoutOld, canvas: Canvas) {
 fun centeredPosition(bounds: Bounds, contentDimensions: Vector2i): Vector2i {
   val dimensions = bounds.dimensions
   return bounds.position + Vector2i(
-      centeredPosition(horizontal, dimensions, contentDimensions.x),
-      centeredPosition(vertical, dimensions, contentDimensions.y)
+      centeredPosition(horizontalPlane, dimensions, contentDimensions.x),
+      centeredPosition(verticalPlane, dimensions, contentDimensions.y)
   )
 }
 
