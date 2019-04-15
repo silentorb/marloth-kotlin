@@ -5,6 +5,7 @@ import mythic.breeze.Bones
 import mythic.drawing.*
 import mythic.ent.Id
 import mythic.glowing.*
+import mythic.platforming.PlatformDisplay
 import mythic.platforming.PlatformDisplayConfig
 import mythic.platforming.WindowInfo
 import mythic.spatial.*
@@ -186,7 +187,7 @@ fun textureAttributesFromConfig(config: DisplayConfig) =
         storageUnit = TextureStorageUnit.unsigned_byte
     )
 
-class Renderer(val config: DisplayConfig) {
+class Renderer(val config: DisplayConfig, display: PlatformDisplay) {
   val glow = Glow()
   var renderColor: ByteTextureBuffer = ByteTextureBuffer()
   var renderDepth: FloatTextureBuffer = FloatTextureBuffer()
@@ -205,7 +206,7 @@ class Renderer(val config: DisplayConfig) {
   val armatures: Map<ArmatureId, Armature>
   val animationDurations: AnimationDurationMap
   var mappedTextures: TextureLibrary = createTextureLibrary(defaultTextureScale)
-  val textures: DynamicTextureLibrary = loadTextures(textureAttributesFromConfig(config))
+  val textures: DynamicTextureLibrary = loadTextures(display.loadImage, textureAttributesFromConfig(config))
   val offscreenBuffers: List<OffscreenBuffer> = (0..0).map {
     prepareScreenFrameBuffer(config.width, config.height, true)
   }

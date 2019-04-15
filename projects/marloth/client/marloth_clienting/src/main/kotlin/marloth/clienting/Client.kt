@@ -51,7 +51,7 @@ fun loadTextResource(): TextResources {
 }
 
 class Client(val platform: Platform, displayConfig: DisplayConfig) {
-  val renderer: Renderer = Renderer(displayConfig)
+  val renderer: Renderer = Renderer(displayConfig, platform.display)
   val screens: List<Screen> = (1..maxPlayerCount).map { Screen(it) }
   val textResources: TextResources = loadTextResource()
   val soundLibrary: SoundLibrary = loadSounds(platform.audio)

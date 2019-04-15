@@ -2,6 +2,7 @@ package mythic.platforming
 
 import mythic.spatial.Vector2
 import org.joml.Vector2i
+import java.nio.ByteBuffer
 import java.nio.ShortBuffer
 
 data class WindowInfo(val dimensions: Vector2i)
@@ -37,11 +38,20 @@ interface PlatformDisplayConfig {
   var multisamples: Int
 }
 
+data class RawImage(
+    val buffer: ByteBuffer,
+    val width: Int,
+    val height: Int
+)
+
+typealias ImageLoader = (String) -> RawImage?
+
 interface PlatformDisplay {
   fun initialize(config: PlatformDisplayConfig)
   fun swapBuffers()
   fun getInfo(): WindowInfo
   fun hasFocus(): Boolean
+  val loadImage: ImageLoader
 }
 
 interface PlatformAudio {

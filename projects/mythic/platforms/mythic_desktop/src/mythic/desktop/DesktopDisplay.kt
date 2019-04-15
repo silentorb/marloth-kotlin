@@ -1,12 +1,12 @@
 package mythic.desktop
 
-import mythic.platforming.PlatformDisplay
-import mythic.platforming.PlatformDisplayConfig
-import mythic.platforming.WindowInfo
+import mythic.platforming.*
 import org.joml.Vector2i
 import org.lwjgl.glfw.GLFW.*
+import org.lwjgl.stb.STBImage.*
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil
+import java.nio.ByteBuffer
 
 fun createWindow(title: String, config: PlatformDisplayConfig): Long {
 //  val pid = ManagementFactory.getRuntimeMXBean().getName()
@@ -75,8 +75,38 @@ fun getWindowInfo(window: Long): WindowInfo {
   }
 }
 
-class DesktopDisplay(val window: Long) : PlatformDisplay {
+val loadImageFromFile: ImageLoader = { path ->
+  var buffer: ByteBuffer? = null
+  var width = 0
+  var height = 0
+  MemoryStack.stackPush().use { stack ->
+    val w = stack.mallocInt(1)
+    val h = stack.mallocInt(1)
+    val comp = stack.mallocInt(1)
 
+//    stbi_set_flip_vertically_on_load(true)
+    buffer = stbi_load(path, w, h, comp, 3)
+    if (buffer == null) {
+      val reason = stbi_failure_reason()
+      throw RuntimeException("Failed to load a texture file!"
+          + System.lineSeparator() + reason)
+    }
+
+    width = w.get()
+    height = h.get()
+  }
+
+  if (buffer != null)
+    RawImage(
+        buffer = buffer!!,
+        width = width,
+        height = height
+    )
+  else
+    null
+}
+
+class DesktopDisplay(val window: Long) : PlatformDisplay {
   override fun initialize(config: PlatformDisplayConfig) = initializeWindow(window, config)
 
   override fun getInfo(): WindowInfo = getWindowInfo(window)
@@ -84,4 +114,7 @@ class DesktopDisplay(val window: Long) : PlatformDisplay {
   override fun swapBuffers() = glfwSwapBuffers(window)
 
   override fun hasFocus() = glfwGetWindowAttrib(window, GLFW_FOCUSED) == 1
+
+  override val loadImage: ImageLoader
+    get() = loadImageFromFile
 }

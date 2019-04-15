@@ -10,10 +10,10 @@ import mythic.ent.pipe
 import mythic.glowing.Texture
 import mythic.glowing.TextureAttributes
 import mythic.glowing.TextureStorageUnit
-import mythic.glowing.loadImageBuffer
 import mythic.spatial.Vector3
 import rendering.meshes.loading.loadJsonResource
 import mythic.imaging.newTextureEngine
+import mythic.platforming.ImageLoader
 import org.joml.Vector2i
 import rendering.toCamelCase
 import scanResources
@@ -21,6 +21,7 @@ import scanTextureResources
 import scenery.Textures
 import java.nio.FloatBuffer
 import java.nio.file.Paths
+
 
 fun mix(first: OpaqueTextureAlgorithm, firstPercentage: Float, second: OpaqueTextureAlgorithm) = { x: Float, y: Float ->
   first(x, y) * firstPercentage + second(x, y) * (1 - firstPercentage)
@@ -88,9 +89,11 @@ fun applyAlgorithm(algorithm: OpaqueTextureAlgorithm, length: Int, attributes: T
   Texture(scaledLength, scaledLength, attributes, buffer)
 }
 
-fun loadTextureFromFile(path: String, attributes: TextureAttributes): Texture {
-  val (buffer, dimensions) = loadImageBuffer(getResourceUrl(path))
-  return Texture(dimensions.x, dimensions.y, attributes, buffer)
+fun loadTextureFromFile(loadImage: ImageLoader, path: String, attributes: TextureAttributes): Texture {
+  val fullPath = getResourceUrl(path).path.substring(1)
+  println("Image " + path)
+  val image = loadImage(fullPath)!!
+  return Texture(image.width, image.height, attributes, image.buffer)
 }
 
 fun loadTextureGraph(engine: Engine, path: String): Graph =
@@ -146,13 +149,13 @@ fun loadProceduralTextures(attributes: TextureAttributes): Map<String, Texture> 
       }
 }
 
-fun loadTextures(attributes: TextureAttributes): Map<String, Texture> =
+fun loadTextures(loadImage: ImageLoader, attributes: TextureAttributes): Map<String, Texture> =
     scanTextureResources("models")
         .plus(scanTextureResources("textures"))
         .associate {
           Pair(
               getFileShortName(it),
-              loadTextureFromFile(it, attributes)
+              loadTextureFromFile(loadImage, it, attributes)
           )
         }
         .plus(loadProceduralTextures(attributes))
