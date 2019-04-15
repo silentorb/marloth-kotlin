@@ -19,10 +19,7 @@ import org.lwjgl.opengl.GL32.glTexImage2DMultisample
 import rendering.meshes.AttributeName
 import rendering.meshes.createVertexSchemas
 import rendering.shading.*
-import rendering.texturing.DynamicTextureLibrary
-import rendering.texturing.TextureLibrary
-import rendering.texturing.createTextureLibrary
-import rendering.texturing.loadTextures
+import rendering.texturing.*
 import scenery.*
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
@@ -206,7 +203,8 @@ class Renderer(val config: DisplayConfig, display: PlatformDisplay) {
   val armatures: Map<ArmatureId, Armature>
   val animationDurations: AnimationDurationMap
   var mappedTextures: TextureLibrary = createTextureLibrary(defaultTextureScale)
-  val textures: DynamicTextureLibrary = loadTextures(display.loadImage, textureAttributesFromConfig(config))
+  val textures: DynamicTextureLibrary = mutableMapOf()
+  val textureLoader = AsyncTextureLoader(gatherTextures(display.loadImage, textureAttributesFromConfig(config)))
   val offscreenBuffers: List<OffscreenBuffer> = (0..0).map {
     prepareScreenFrameBuffer(config.width, config.height, true)
   }
@@ -246,6 +244,7 @@ class Renderer(val config: DisplayConfig, display: PlatformDisplay) {
   }
 
   fun prepareRender(windowInfo: WindowInfo) {
+    updateAsyncTextureLoading(textureLoader, textures)
     if (multisampler != null) {
       multisampler.framebuffer.activateDraw()
     }

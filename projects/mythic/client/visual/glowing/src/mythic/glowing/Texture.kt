@@ -147,6 +147,11 @@ class Texture(val width: Int, val height: Int, val target: TextureTarget) {
   }
 }
 
+fun unbindTexture() {
+  globalState.bound2dTexture = 0
+  globalState.bound2dMultisampleTexture = 0
+}
+
 fun activateTextures(textures: List<Texture>) {
   textures.forEachIndexed { index, texture ->
     texture.activate(GL_TEXTURE0 + index)

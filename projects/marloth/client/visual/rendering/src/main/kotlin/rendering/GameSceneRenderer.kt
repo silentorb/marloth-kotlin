@@ -4,6 +4,7 @@ import mythic.drawing.getStaticCanvasDependencies
 import mythic.glowing.DrawMethod
 import mythic.glowing.activateTextures
 import mythic.glowing.globalState
+import mythic.glowing.unbindTexture
 import mythic.spatial.Matrix
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
@@ -42,13 +43,13 @@ fun drawSkeleton(renderer: SceneRenderer, armature: Armature, transforms: List<M
 }
 
 fun renderArmatures(renderer: GameSceneRenderer) {
-    globalState.depthEnabled = false
-    renderer.scene.elementGroups.filter { it.armature != null }
-        .forEach { group ->
-          val armature = renderer.renderer.renderer.armatures[group.armature]!!
-          drawSkeleton(renderer.renderer, armature, armatureTransforms(armature, group), group.meshes.first().transform)
-        }
-    globalState.depthEnabled = true
+  globalState.depthEnabled = false
+  renderer.scene.elementGroups.filter { it.armature != null }
+      .forEach { group ->
+        val armature = renderer.renderer.renderer.armatures[group.armature]!!
+        drawSkeleton(renderer.renderer, armature, armatureTransforms(armature, group), group.meshes.first().transform)
+      }
+  globalState.depthEnabled = true
 }
 
 fun getDisplayConfigFilters(config: DisplayConfig): List<ScreenFilter> =
@@ -111,13 +112,13 @@ class GameSceneRenderer(
   fun renderSectorMesh(sector: SectorMesh) {
     var index = 0
     for (textureId in sector.textureIndex) {
-      try {
-        val texture = renderer.renderer.mappedTextures[textureId] ?: renderer.renderer.textures[textureId.toString()]!!
+      val texture = renderer.renderer.mappedTextures[textureId] ?: renderer.renderer.textures[textureId.toString()]
+      if (texture != null)
         texture.activate()
-        sector.mesh.drawElement(DrawMethod.triangleFan, index++)
-      } catch (ex: KotlinNullPointerException) {
-        val k = 0
-      }
+      else
+        unbindTexture()
+
+      sector.mesh.drawElement(DrawMethod.triangleFan, index++)
     }
   }
 
