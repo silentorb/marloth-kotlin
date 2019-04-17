@@ -1,18 +1,16 @@
 package lab.views.map
 
-import lab.utility.white
 import marloth.clienting.Client
+import marloth.clienting.gui.TextStyles
 import mythic.bloom.*
-import mythic.drawing.grayTone
 import mythic.ent.Id
-import mythic.typography.IndexedTextStyle
 import org.joml.Vector2i
 import simulation.Node
 import simulation.Realm
 
-private val textStyle = IndexedTextStyle(0, 12f, grayTone(0.7f))
+private val textStyle = TextStyles.gray
 
-private val selectedTextStyle = IndexedTextStyle(0, 12f, white)
+private val selectedTextStyle = TextStyles.smallWhite
 
 private val mainPanel: ParentFlower =
 //    fixedList(horizontal, 0, listOf(null, 250))

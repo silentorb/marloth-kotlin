@@ -6,6 +6,7 @@ import lab.utility.sceneBackgroundColor
 import lab.views.shared.SelectableItem
 import lab.views.shared.drawSelectableEnumList
 import lab.views.shared.drawSelectableList
+import marloth.clienting.gui.TextStyles
 import mythic.bloom.Bounds
 import mythic.bloom.Box
 import mythic.bloom.ClickBox
@@ -13,7 +14,6 @@ import mythic.bloom.Depiction
 import mythic.drawing.Canvas
 import mythic.spatial.Vector2
 import mythic.spatial.toString
-import mythic.typography.TextStyle
 import org.joml.Vector2i
 import org.joml.plus
 import rendering.AdvancedModel
@@ -32,9 +32,8 @@ fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: AdvancedMo
   drawSidePanel()(bounds, canvas)
   var row = 1
 
-  val textStyle = TextStyle(canvas.fonts[0], 12f, black)
   fun drawText(content: String) {
-    canvas.drawText(bounds.position + Vector2i(5, 5 + row++ * 20), textStyle, content)
+    canvas.drawText(bounds.position + Vector2i(5, 5 + row++ * 20), TextStyles.smallBlack, content)
   }
   drawText("Mouse: " + mousePosition.x.toString() + ", " + mousePosition.y.toString())
 //  canvas.drawText(TextConfiguration("Mouse: " + mousePosition.x.toString() + ", " + mousePosition.y.toString(),

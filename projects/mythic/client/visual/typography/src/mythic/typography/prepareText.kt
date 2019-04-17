@@ -14,7 +14,6 @@ private val line_height = 2f
 
 data class TextStyle(
     val font: Font,
-    val size: Float,
     val color: Vector4
 )
 
@@ -43,13 +42,13 @@ data class TypeArrangement(
 fun arrangeType(config: TextConfiguration): TypeArrangement? {
   val content = config.content
   val font = config.style.font
-  val size = config.style.size
+  val size = font.dimensions.y
   val characters = font.characters
   val inserted_newlines: MutableList<Int> = mutableListOf()
   var block_dimensionsX = 0f
   var block_dimensionsY = 0f
 
-  val characterCount = content.length - content.count{ it == ' '}
+  val characterCount = content.length - content.count { it == ' ' }
   if (characterCount == 0) {
     return null
   }
@@ -158,7 +157,7 @@ fun <T> prepareText(config: TextConfiguration, vertexSchema: VertexSchema<T>): T
     val y = arrangedCharacter.y
     val width = glyph.info.sizeX
     val height = glyph.info.sizeY.toFloat()
-    val texture_width = (width +0).toFloat() / config.style.font.dimensions.x
+    val texture_width = (width + 0).toFloat() / config.style.font.dimensions.x
 
     vertexBuffer.put(x + width, y - height, texture_width, glyph.offset)
     vertexBuffer.put(x + width, y, texture_width, glyph.offset + glyph.height)
@@ -181,16 +180,12 @@ fun <T> prepareText(config: TextConfiguration, vertexSchema: VertexSchema<T>): T
 
 data class IndexedTextStyle(
     val font: Int,
-    val size: Float,
+    val size: Int,
     val color: Vector4
 )
 
-typealias TextStyleSource = (List<Font>) -> TextStyle
-
-fun resolve(style: IndexedTextStyle): TextStyleSource = { fonts: List<Font> ->
-  TextStyle(
-      font = fonts[style.font],
-      size = style.size,
-      color = style.color
-  )
-}
+fun resolveTextStyle(fonts: List<FontSet>, style: IndexedTextStyle) =
+    TextStyle(
+        font = fonts[style.font][style.size]!!,
+        color = style.color
+    )

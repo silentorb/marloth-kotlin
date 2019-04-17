@@ -2,9 +2,7 @@ package mythic.drawing
 
 import mythic.glowing.*
 import mythic.spatial.*
-import mythic.typography.Font
-import mythic.typography.TextConfiguration
-import mythic.typography.TextStyle
+import mythic.typography.*
 import org.joml.Vector2i
 import org.joml.Vector4i
 import kotlin.math.cos
@@ -99,18 +97,18 @@ fun getStaticCanvasDependencies(): CanvasDependencies {
 
 typealias Brush = (Matrix, Drawable) -> Unit
 
-private var _globalFonts: List<Font>? = null
+private var _globalFonts: List<FontSet>? = null
 
-fun globalFonts(): List<Font> = _globalFonts!!
+fun globalFonts(): List<FontSet> = _globalFonts!!
 
-fun setGlobalFonts(fonts: List<Font>) {
+fun setGlobalFonts(fonts: List<FontSet>) {
   _globalFonts = fonts
 }
 
 class Canvas(
     val effects: DrawingEffects,
     val unitScaling: Vector2,
-    val fonts: List<Font>,
+    val fonts: List<FontSet>,
     dimensions: Vector2i,
     dependencies: CanvasDependencies = getStaticCanvasDependencies()
 ) {
@@ -182,12 +180,13 @@ class Canvas(
     drawTextRaw(config, effects.coloredImage, vertexSchemas.image, transform)
   }
 
-  fun drawText(position: Vector2, style: TextStyle, content: String) {
+  fun drawText(position: Vector2, style: IndexedTextStyle, content: String) {
     val transform = prepareTextMatrix(pixelsToScalar, position)
-    drawTextRaw(TextConfiguration(content, position, style), effects.coloredImage, vertexSchemas.image, transform)
+    val textStyle = resolveTextStyle(fonts, style)
+    drawTextRaw(TextConfiguration(content, position, textStyle), effects.coloredImage, vertexSchemas.image, transform)
   }
 
-  fun drawText(position: Vector2i, style: TextStyle, content: String) =
+  fun drawText(position: Vector2i, style: IndexedTextStyle, content: String) =
       drawText(position.toVector2(), style, content)
 
   fun crop(value: Vector4i, action: () -> Unit) = cropStack(value, action)

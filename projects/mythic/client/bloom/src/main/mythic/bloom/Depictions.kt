@@ -7,15 +7,15 @@ import mythic.spatial.toVector2i
 import mythic.typography.IndexedTextStyle
 import mythic.typography.TextConfiguration
 import mythic.typography.calculateTextDimensions
-import mythic.typography.resolve
+import mythic.typography.resolveTextStyle
 
 fun textDepiction(style: IndexedTextStyle, content: String): Depiction = { b, c ->
   val position = b.position
-  c.drawText(position, resolve(style)(c.fonts), content)
+  c.drawText(position, style, content)
 }
 
 fun label(style: IndexedTextStyle, content: String): Flower = { seed ->
-  val config = TextConfiguration(content, Vector2(), resolve(style)(globalFonts()))
+  val config = TextConfiguration(content, Vector2(), resolveTextStyle(globalFonts(), style))
   val dimensions = calculateTextDimensions(config)
   newBlossom(
       Box(

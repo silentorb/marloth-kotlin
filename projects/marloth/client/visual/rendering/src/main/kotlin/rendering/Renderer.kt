@@ -184,7 +184,7 @@ fun textureAttributesFromConfig(config: DisplayConfig) =
         storageUnit = TextureStorageUnit.unsigned_byte
     )
 
-class Renderer(val config: DisplayConfig, display: PlatformDisplay) {
+class Renderer(val config: DisplayConfig, display: PlatformDisplay, fontList: List<RangedFontLoadInfo>) {
   val glow = Glow()
   var renderColor: ByteTextureBuffer = ByteTextureBuffer()
   var renderDepth: FloatTextureBuffer = FloatTextureBuffer()
@@ -209,12 +209,7 @@ class Renderer(val config: DisplayConfig, display: PlatformDisplay) {
     prepareScreenFrameBuffer(config.width, config.height, true)
   }
   val multisampler: Multisampler?
-  val fonts = loadFonts(listOf(
-      FontLoadInfo(
-          filename = "fonts/cour.ttf",
-          pixelHeight = 16
-      )
-  ))
+  val fonts = loadFontSets(fontList)
   val dynamicMesh = MutableSimpleMesh(vertexSchemas.flat)
 
   init {
@@ -365,7 +360,7 @@ class SceneRenderer(
   }
 
   fun drawText(content: String, position: Vector3, style: IndexedTextStyle) =
-      drawText(content, position, resolve(style)(renderer.fonts))
+      drawText(content, position, resolveTextStyle(renderer.fonts, style))
 
   val meshes: ModelMeshMap
     get() = renderer.meshes

@@ -1,5 +1,6 @@
 package lab.views.world
 
+import marloth.clienting.gui.TextStyles
 import simulation.WorldBoundary
 import mythic.bloom.Bounds
 import mythic.drawing.Canvas
@@ -7,7 +8,6 @@ import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import mythic.spatial.toVector2
-import mythic.typography.TextStyle
 import org.joml.plus
 import rendering.Renderer
 import simulation.*
@@ -64,12 +64,6 @@ fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Can
 //  fun getPosition(node: Node) = withOffset + (Vector2(node.position.x, -node.position.y)
 //      - world.boundary.start.xy()) * scale
 
-  val style = TextStyle(
-      canvas.fonts[0],
-      12f,
-      Vector4(1f, 1f, 1f, 1f)
-  )
-
   val nodes = world.nodeList.filter {it.position.z == 0f}
   for (node in nodes) {
     val radius = 2f * scale
@@ -98,7 +92,7 @@ fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Can
       val position = getNodePosition(node)
       // + " " + node.floors.first().unorderedVertices.size.toString()
       canvas.drawText(position,
-          style,
+          TextStyles.smallWhite,
           node.id.toString())
 //    }
   }

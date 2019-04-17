@@ -6,7 +6,6 @@ import mythic.drawing.Canvas
 import mythic.sculpting.ImmutableEdge
 import mythic.sculpting.ImmutableMesh
 import mythic.spatial.Vector4
-import mythic.typography.TextStyle
 import org.joml.plus
 import simulation.*
 
@@ -30,11 +29,6 @@ fun drawVertices(faces: ConnectionTable, bounds: Bounds, getPosition: PositionFu
   val solid = canvas.solid(Vector4(1f, 0.6f, 0.0f, 1f))
   val lineColor = Vector4(0f, 0f, 1f, 1f)
   val edges = mesh.edges.values.filter { it.vertices[0].z == it.vertices[1].z && it.vertices[1].z == 0f }
-  val style = TextStyle(
-      canvas.fonts[0],
-      12f,
-      Vector4(1f, 1f, 1f, 1f)
-  )
   for (edge in edges) {
     val wallFaces = edge.faces.filter { faces[it.id]!!.faceType == FaceType.wall }
 //    assert(wallFaces.size < 2)

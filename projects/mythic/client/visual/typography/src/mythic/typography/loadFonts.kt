@@ -104,3 +104,34 @@ fun loadFonts(files: List<FontLoadInfo>): List<Font> {
     FaceLoader.releaseFreetype(freetype)
   }
 }
+
+data class RangedFontLoadInfo(
+    val info: FontLoadInfo,
+    val pixelHeights: List<Int>
+)
+
+typealias FontSet = Map<Int, Font>
+
+fun loadFontSets(files: List<RangedFontLoadInfo>): List<Map<Int, Font>> {
+  return files.map { (info, pixelHeights) ->
+    val typesets = pixelHeights.map { pixelHeight ->
+      info.copy(
+          pixelHeight = pixelHeight
+      )
+    }
+    pixelHeights.zip(loadFonts(typesets)) { pixelHeight, font ->
+      Pair(pixelHeight, font)
+    }
+        .associate { it }
+  }
+}
+
+fun extractFontSets(fonts: List<FontLoadInfo>, styles: List<IndexedTextStyle>): List<RangedFontLoadInfo> =
+    styles.groupBy { it.font }
+        .mapValues { it.value.map { it.size }.distinct() }
+        .map {
+          RangedFontLoadInfo(
+              info = fonts[it.key],
+              pixelHeights = it.value
+          )
+        }

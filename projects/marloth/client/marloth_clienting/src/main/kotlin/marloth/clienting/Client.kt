@@ -19,6 +19,8 @@ import mythic.drawing.setGlobalFonts
 import mythic.ent.pipe
 import mythic.platforming.Platform
 import mythic.spatial.Vector3
+import mythic.typography.FontLoadInfo
+import mythic.typography.extractFontSets
 import rendering.DisplayConfig
 import rendering.Renderer
 import scenery.Screen
@@ -50,8 +52,17 @@ fun loadTextResource(): TextResources {
   return loadYamlResource("text/english.yaml", typeref)
 }
 
+private val baseFonts = listOf(
+    FontLoadInfo(
+        filename = "fonts/cour.ttf",
+        pixelHeight = 0
+    )
+)
+
+private fun gatherFontSets() = extractFontSets(baseFonts, enumerateTextStyles(TextStyles))
+
 class Client(val platform: Platform, displayConfig: DisplayConfig) {
-  val renderer: Renderer = Renderer(displayConfig, platform.display)
+  val renderer: Renderer = Renderer(displayConfig, platform.display, gatherFontSets())
   val screens: List<Screen> = (1..maxPlayerCount).map { Screen(it) }
   val textResources: TextResources = loadTextResource()
   val soundLibrary: SoundLibrary = loadSounds(platform.audio)

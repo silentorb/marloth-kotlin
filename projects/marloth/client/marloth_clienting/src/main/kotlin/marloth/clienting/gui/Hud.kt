@@ -5,7 +5,7 @@ import org.joml.Vector2i
 import simulation.Interactable
 import simulation.Resource
 
-private val textStyle = mythic.typography.IndexedTextStyle(0, 12f, mythic.drawing.grayTone(0.7f))
+private val textStyle = TextStyles.gray
 
 data class HudData(
     val health: Resource,

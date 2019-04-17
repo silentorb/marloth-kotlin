@@ -2,6 +2,7 @@ package lab.views.shared
 
 import lab.views.model.SelectableListType
 import lab.views.model.SelectionEvent
+import marloth.clienting.gui.TextStyles
 import mythic.bloom.*
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
@@ -10,8 +11,8 @@ import mythic.spatial.Vector4
 import mythic.spatial.toVector2
 import mythic.spatial.toVector2i
 import mythic.typography.TextConfiguration
-import mythic.typography.TextStyle
 import mythic.typography.calculateTextDimensions
+import mythic.typography.resolveTextStyle
 import org.joml.Vector2i
 
 
@@ -19,18 +20,17 @@ fun drawListItem(text: String, isSelected: Boolean): Depiction = { bounds: Bound
   globalState.depthEnabled = false
   drawFill(bounds, canvas, grayTone(0.5f))
   val style = if (isSelected)
-    Pair(12f, LineStyle(Vector4(1f), 2f))
+    Pair(TextStyles.smallBlack, LineStyle(Vector4(1f), 2f))
   else
-    Pair(12f, LineStyle(Vector4(0f, 0f, 0f, 1f), 1f))
+    Pair(TextStyles.smallBlack, LineStyle(Vector4(0f, 0f, 0f, 1f), 1f))
 
   drawBorder(bounds, canvas, style.second)
 
-  val blackStyle = TextStyle(canvas.fonts[0], style.first, Vector4(0f, 0f, 0f, 1f))
-  val textConfig = TextConfiguration(text, bounds.position.toVector2(), blackStyle)
+  val textConfig = TextConfiguration(text, bounds.position.toVector2(), resolveTextStyle(canvas.fonts, style.first))
   val textDimensions = calculateTextDimensions(textConfig).toVector2i()
   val centered = centeredPosition(bounds, textDimensions)
   val position = Vector2i(bounds.position.x + 10, centered.y)
-  canvas.drawText(position, blackStyle, text)
+  canvas.drawText(position, style.first, text)
 }
 
 data class SelectableItem(

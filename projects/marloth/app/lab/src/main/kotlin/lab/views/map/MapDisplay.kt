@@ -3,13 +3,13 @@ package lab.views.map
 import lab.utility.embedCameraView
 import lab.utility.yellow
 import lab.views.game.renderFaceNormals
+import lab.views.shared.LabTextStyles
 import marloth.clienting.Client
 import mythic.bloom.*
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
 import mythic.spatial.*
 import mythic.typography.IndexedTextStyle
-import mythic.typography.TextStyle
 import org.lwjgl.opengl.GL11
 import rendering.*
 import rendering.shading.ObjectShaderConfig
@@ -43,14 +43,12 @@ fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, realm: Rea
   }
 }
 
-private val textStyle = IndexedTextStyle(0, 0f, Vector4(0.5f, 1f, 1f, 1f))
-
 fun renderFaceIds(renderer: SceneRenderer, realm: Realm, nodes: Collection<Node>) {
   globalState.depthEnabled = true
   for (faceId in nodes.flatMap { it.faces }) {
 //    for (faceId in node.faces) {
     val face = realm.mesh.faces[faceId]!!
-    renderer.drawText(face.id.toString(), getCenter(face.vertices), textStyle)
+    renderer.drawText(face.id.toString(), getCenter(face.vertices), LabTextStyles.lessRed)
 //    }
   }
 }
@@ -58,7 +56,7 @@ fun renderFaceIds(renderer: SceneRenderer, realm: Realm, nodes: Collection<Node>
 fun renderNodeIds(renderer: SceneRenderer, nodes: Collection<Node>) {
   globalState.depthEnabled = true
   for (node in nodes) {
-    renderer.drawText(node.id.toString(), node.position, textStyle)
+    renderer.drawText(node.id.toString(), node.position, LabTextStyles.lessRed)
   }
 }
 
@@ -132,7 +130,7 @@ fun renderMapMesh(renderer: SceneRenderer, realm: Realm, config: MapViewConfig, 
     val face = realm.mesh.faces[id]
     if (face != null) {
       face.vertices.forEachIndexed { index, v ->
-        renderer.drawText(index.toString(), v, textStyle)
+        renderer.drawText(index.toString(), v, LabTextStyles.lessRed)
       }
     }
   }
