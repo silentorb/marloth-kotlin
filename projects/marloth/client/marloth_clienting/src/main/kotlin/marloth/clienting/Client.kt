@@ -52,13 +52,6 @@ fun loadTextResource(): TextResources {
   return loadYamlResource("text/english.yaml", typeref)
 }
 
-private val baseFonts = listOf(
-    FontLoadInfo(
-        filename = "fonts/cour.ttf",
-        pixelHeight = 0
-    )
-)
-
 private fun gatherFontSets() = extractFontSets(baseFonts, enumerateTextStyles(TextStyles))
 
 class Client(val platform: Platform, displayConfig: DisplayConfig) {

@@ -26,20 +26,30 @@ val df = java.text.DecimalFormat("#0.00")
 //  return "vis: " + df.format(rating)
 //}
 
+val interactionBar: FlowerTransform =
+    position(centered, percentage(0.8f))
+//fork        depict(solidBackground(black))
+
 fun interactionDialog(interactable: Interactable): Flower {
   val rows = listOf(
       label(textStyle, "a"),
       label(textStyle, "bee")
   )
-  return position(centered, percentage(0.8f))(
-      list(verticalPlane, 10)(rows)
+
+  return interactionBar(
+      position(centered, centered)(
+          list(verticalPlane, 10)(rows)
+      )
   )
+
+//  return position(centered, percentage(0.8f))(
+//      list(verticalPlane, 10)(rows)
 }
 
 fun hudLayout(data: HudData): Flower {
   val rows = listOf(
-      label(textStyle, "HP: ${resourceString(data.health)}"),
-      label(textStyle, "SAN: ${resourceString(data.sanity)}")
+      label(textStyle, "Health: ${resourceString(data.health)}"),
+      label(textStyle, "Sanity: ${resourceString(data.sanity)}")
 //      mythic.bloom.label(textStyle, characterVisibility(data, player)),
 //      mythic.bloom.label(textStyle, "vel: " + df.format(world.deck.bodies[player]!!.velocity.length()))
   )

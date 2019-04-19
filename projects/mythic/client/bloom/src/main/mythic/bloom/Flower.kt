@@ -18,12 +18,16 @@ data class Blossom(
     val boxes: Boxes,
     val bounds: Bounds
 ) {
-  fun plus(other: Blossom) = this.copy(
+  operator fun plus(other: Blossom) = this.copy(
       boxes = boxes.plus(other.boxes),
       bounds = maxBounds(bounds, other.bounds)
   )
 
-  fun plus(other: Boxes) = this.copy(
+  fun append(other: Blossom) = this.copy(
+      boxes = boxes.plus(other.boxes)
+  )
+
+  operator fun plus(other: Boxes) = this.copy(
       boxes = boxes.plus(other)
   )
 }
@@ -43,8 +47,7 @@ val emptyBlossom =
 typealias Flower = (Seed) -> Blossom
 
 operator fun Flower.plus(b: Flower): Flower = { seed ->
-  this(seed)
-      .plus(b(seed))
+  this(seed) + b(seed)
 }
 
 fun addFlowers(flowers: List<Flower>) =

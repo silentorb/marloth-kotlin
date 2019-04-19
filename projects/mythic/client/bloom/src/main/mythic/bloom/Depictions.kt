@@ -1,8 +1,10 @@
 package mythic.bloom
 
+import mythic.drawing.Canvas
 import mythic.drawing.globalFonts
 import mythic.glowing.cropStack
 import mythic.spatial.Vector2
+import mythic.spatial.Vector4
 import mythic.spatial.toVector2i
 import mythic.typography.IndexedTextStyle
 import mythic.typography.TextConfiguration
@@ -38,4 +40,9 @@ fun clipBox(bounds: Bounds, depiction: Depiction): Depiction = { b, c ->
     depiction(b, c)
   }
 //  }
+}
+
+fun solidBackground(backgroundColor: Vector4): Depiction = { b: Bounds, canvas: Canvas ->
+  drawFill(b, canvas, backgroundColor)
+  drawBorder(b, canvas, Vector4(0f, 0f, 0f, 1f))
 }

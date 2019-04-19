@@ -6,7 +6,7 @@ fun <A, B> wrap(outer: (A) -> A, inner: (B) -> A): (B) -> A =
     { outer(inner(it)) }
 
 fun join(first: Flower, second: Flower): Flower =
-    { first(it).plus(second(it)) }
+    { first(it) + second(it) }
 
 fun accumulatedBounds(boxes: Boxes): Bounds {
   assert(boxes.any())

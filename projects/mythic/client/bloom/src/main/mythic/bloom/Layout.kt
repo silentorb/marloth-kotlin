@@ -127,9 +127,24 @@ fun independentBoundsTransform(transform: (Bounds) -> Bounds): FlowerTransform =
   { flower(Seed(it.bag, transform(it.bounds))) }
 }
 
-fun moveBounds(offset: Vector2i): (Bounds) -> Bounds = { bounds ->
-  bounds.copy(
-      position = bounds.position + offset
+fun clippedDimensions(parent: Bounds, childPosition: Vector2i, childDimensions: Vector2i): Vector2i {
+  return if (childPosition.x + childDimensions.x > parent.right ||
+      childPosition.y + childDimensions.y > parent.bottom)
+    Vector2i(
+        x = Math.min(childDimensions.x, parent.right - childPosition.x),
+        y = Math.min(childDimensions.y, parent.bottom - childPosition.y)
+    )
+  else
+    childDimensions
+}
+
+fun moveBounds(offset: Vector2i, parent: Bounds): (Bounds) -> Bounds = { child ->
+  val newPosition = child.position + offset
+  val newDimensions = clippedDimensions(parent, newPosition, child.dimensions)
+
+  child.copy(
+      position = newPosition,
+      dimensions = newDimensions
   )
 }
 
@@ -149,7 +164,7 @@ fun dependentBoundsTransform(transform: (Vector2i, Vector2i) -> Vector2i): Flowe
                 )
             )
           },
-          bounds = moveBounds(offset)(result.bounds)
+          bounds = moveBounds(offset, seed.bounds)(result.bounds)
       )
     }
   }
@@ -190,3 +205,23 @@ fun position(horizontal: PlanePositioner, vertical: PlanePositioner): FlowerTran
           vertical(verticalPlaneMap)(parent, child)
       )
     }
+
+fun FlowerTransform.plus(other: FlowerTransform): FlowerTransform = { flower ->
+  val transition = this(flower)
+  other(transition)
+}
+
+//infix fun FlowerTransform.fork(a: Flower): FlowerTransform = { b ->
+//  this(b) + a
+//}
+
+infix fun FlowerTransform.fork(a: Flower): FlowerTransform = { b ->
+  //  val transition = this(b)
+  this { seed ->
+    val blossom = b(seed)
+    val newSeed = seed.copy(
+        bounds = blossom.bounds
+    )
+    blossom.append(a(newSeed))
+  }
+}
