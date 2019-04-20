@@ -7,7 +7,9 @@ import marloth.clienting.input.GuiCommandType
 import marloth.clienting.isGuiActive
 import mythic.bloom.*
 import mythic.bloom.ButtonState
+import mythic.bloom.next.Flower
 import mythic.bloom.next.flattenBoxes
+import mythic.bloom.next.groupFlowers
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
 import mythic.glowing.globalState
@@ -77,7 +79,7 @@ fun victoryMenu(): Menu = listOfNotNull(
     MenuOption(GuiCommandType.menu, Text.victory)
 )
 
-fun viewSelect(textResources: TextResources, world: World?, view: ViewId): FlowerOld? {
+fun viewSelect(textResources: TextResources, world: World?, view: ViewId): Flower? {
   return when (view) {
     ViewId.mainMenu -> menuFlower(textResources, mainMenu(gameIsActive(world)))
 
@@ -87,18 +89,17 @@ fun viewSelect(textResources: TextResources, world: World?, view: ViewId): Flowe
   }
 }
 
-fun guiLayout(client: Client, clientState: ClientState, world: World?, hudData: HudData?): FlowerOld {
+fun guiLayout(client: Client, clientState: ClientState, world: World?, hudData: HudData?): Flower {
   val bloomState = clientState.bloomState
-  return listOfNotNull(
-      if (hudData != null) convertFlower(hudLayout(hudData)) else null,
+  return groupFlowers(listOfNotNull(
+      if (hudData != null) hudLayout(hudData) else null,
       viewSelect(client.textResources, world, clientState.view)
-  )
-      .reduce { a, b -> a + b }
+  ))
 }
 
 fun layoutGui(client: Client, clientState: ClientState, world: World?, hudData: HudData?, windowInfo: WindowInfo): FlatBoxes {
   val bounds = Bounds(Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y))
-  val layout = guiLayout(client, clientState, world, hudData)
+  val layout = convertFlower(guiLayout(client, clientState, world, hudData))
   val seed = SeedOld(
       bag = clientState.bloomState.bag,
       bounds = bounds

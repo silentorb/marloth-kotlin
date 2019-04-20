@@ -17,7 +17,7 @@ val baseFonts = listOf(
     )
 )
 
-val mainFontSize = 48
+val mainFontSize = 36
 
 class TextStyles {
   companion object {

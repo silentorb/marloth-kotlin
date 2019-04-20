@@ -2,6 +2,7 @@ package marloth.clienting.gui
 
 import marloth.clienting.input.GuiCommandType
 import mythic.bloom.*
+import mythic.bloom.next.*
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
 import mythic.glowing.globalState
@@ -87,7 +88,7 @@ fun menuFocusIndex(bag: StateBag): Int =
 fun menuLogic(menu: Menu): LogicModule =
     menuFocusIndexLogic(menu) + menuNavigationLogic(menu) + menuCommandLogic(menu)
 
-fun menuFlower(textResources: TextResources, menu: Menu): FlowerOld = { seed ->
+fun menuFlowerOld(textResources: TextResources, menu: Menu): FlowerOld = { seed ->
   val buttonHeight = 50
   val items = menu
       .mapIndexed { index, it ->
@@ -113,3 +114,39 @@ fun menuFlower(textResources: TextResources, menu: Menu): FlowerOld = { seed ->
   )
 
 }
+
+private val buttonDimensions = Vector2i(200, 50)
+
+fun menuButton(content: String, index: Int): Flower = { seed: Seed ->
+  Box(
+      bounds = Bounds(
+          dimensions = buttonDimensions
+      ),
+      depiction = drawMenuButton(
+          ButtonState(content, menuFocusIndex(seed.bag) == index)
+      )
+  )
+}
+
+fun menuFlower(textResources: TextResources, menu: Menu): Flower {
+  val rows = menu
+      .mapIndexed { index, it ->
+        val content = textResources[it.text]!!
+        menuButton(content, index)
+      }
+
+  val gap = 20
+
+  val menuBox = div(
+      reverse = reverseOffset(left = centered, top = centered) + shrink,
+      depiction = menuBackground,
+      logic = menuLogic(menu)
+  )
+
+  return menuBox(
+      margin(all = gap)(
+          list(verticalPlane, gap)(rows)
+      )
+  )
+}
+

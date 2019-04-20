@@ -36,7 +36,8 @@ private val reversePass: ReverseLayout = { _, bounds, _ -> bounds }
 fun div(name: String = "",
         forward: ForwardLayout = forwardPass,
         reverse: ReverseLayout = reversePass,
-        depiction: Depiction? = null): FlowerWrapper = { flower ->
+        depiction: Depiction? = null,
+        logic: LogicModule? = null): FlowerWrapper = { flower ->
   { seed ->
     val bounds = forward(seed.dimensions)
     val childSeed = seed.copy(
@@ -49,7 +50,8 @@ fun div(name: String = "",
         name = name,
         bounds = finalBounds,
         boxes = listOf(childBox),
-        depiction = depiction
+        depiction = depiction,
+        logic = logic
     )
   }
 }
