@@ -6,6 +6,9 @@ import lab.views.game.renderFaceNormals
 import lab.views.shared.LabTextStyles
 import marloth.clienting.Client
 import mythic.bloom.*
+import mythic.bloom.StateBag
+import mythic.bloom.StateDepiction
+import mythic.bloom.selectionState
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
 import mythic.spatial.*

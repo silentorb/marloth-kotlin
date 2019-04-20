@@ -21,7 +21,7 @@ fun scrollbar(offset: Int, contentLength: Int): Depiction = { b, c ->
   }
 }
 
-fun clipBox(clipBounds: Bounds): (Box) -> Box = { box ->
+fun clipBox(clipBounds: Bounds): (FlatBox) -> FlatBox = { box ->
   val depiction = if (box.depiction != null)
     clipBox(clipBounds, box.depiction)
   else
@@ -92,9 +92,9 @@ fun scrollingInteraction(key: String, contentBounds: Bounds): LogicModule = { (b
   }
 }
 
-fun scrollBox(key: String, contentBounds: Bounds): Flower = { seed ->
+fun scrollBox(key: String, contentBounds: Bounds): FlowerOld = { seed ->
   newBlossom(
-      Box(
+      FlatBox(
           bounds = seed.bounds,
           depiction = scrollbar(scrollingState(seed.bag[key]).offset, contentBounds.dimensions.y),
           logic = scrollingInteraction(key, contentBounds)
@@ -102,7 +102,7 @@ fun scrollBox(key: String, contentBounds: Bounds): Flower = { seed ->
   )
 }
 
-fun scrolling(key: String): (Flower) -> Flower = { child ->
+fun scrolling(key: String): (FlowerOld) -> FlowerOld = { child ->
   { seed ->
     val innerSeed = seed.copy(
         bounds = seed.bounds.copy(

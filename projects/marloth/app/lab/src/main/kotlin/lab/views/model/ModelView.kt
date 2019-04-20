@@ -9,11 +9,12 @@ import org.joml.*
 import rendering.*
 import scenery.Camera
 import lab.views.*
+
 import mythic.sculpting.*
 import scenery.AnimationId
 
 data class ModelLayout(
-    val boxes: List<Box>,
+    val boxes: List<FlatBox>,
     val modelPanelBounds: Bounds,
     val clickBoxes: List<ClickBox<SelectionEvent>>
 )
@@ -211,7 +212,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
 //      loadGeneratedModel(config, renderer)
 
     // When the model view changes to viewing a different model,
-    // the list of visible subgroups needs to be reinitialized.
+    // the listOld of visible subgroups needs to be reinitialized.
     val m = model.model
     if (m != null && m.groups.size > 0) {
       if (config.visibleGroups.size != m.groups.size)
@@ -232,8 +233,8 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     val bounds = Bounds(Vector2i(), dimensions)
     val initialLengths = listOf(200, null, 300)
 
-    val middle = { b: Bounds -> Box(b, drawScenePanel(config, state, renderer, model, camera)) }
-    val right = { b: Bounds -> Box(b, drawInfoPanel(config, renderer, model, mousePosition)) }
+    val middle = { b: Bounds -> FlatBox(b, drawScenePanel(config, state, renderer, model, camera)) }
+    val right = { b: Bounds -> FlatBox(b, drawInfoPanel(config, renderer, model, mousePosition)) }
     val lengths = resolveLengths(dimensions.x, initialLengths)
     val panelBounds = lengthArranger(horizontalPlane, 0)(bounds, lengths)
     val boxes = panelBounds.drop(1)

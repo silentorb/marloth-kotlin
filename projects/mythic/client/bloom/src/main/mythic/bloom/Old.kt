@@ -1,26 +1,37 @@
 package mythic.bloom
 
-import org.joml.Vector2i
+import mythic.bloom.next.Flower
+import mythic.bloom.next.Seed
+import mythic.bloom.next.flattenBoxes
 
-data class ClickBox<T>(
+data class SeedOld(
+    val bag: StateBag = mapOf(),
     val bounds: Bounds,
-    val value: T
+    val clipBounds: Bounds? = null
 )
 
-data class PartialBox(
-    val length: Int,
+typealias FlowerOld = (SeedOld) -> Blossom
+
+data class FlatBox(
+    val bounds: Bounds,
     val depiction: Depiction? = null,
-    val handler: Any? = null
+    val clipBounds: Bounds? = null,
+    val handler: Any? = null,
+    val logic: LogicModule? = null
 )
 
-fun listContentLength(padding: Int, lengths: Collection<Int>): Int =
-    lengths.sum() + (lengths.size + 1) * padding
+typealias FlatBoxes = List<FlatBox>
 
-fun arrangeListComplex(arrangement: LengthArrangement, panels: List<PartialBox>, bounds: Bounds): List<Box> {
-  return arrangement(bounds, panels.map { it.length })
-      .zip(panels, { a, b -> Box(a, b.depiction) })
-}
+fun convertFlower(flower: Flower): FlowerOld = { seed ->
+  val newSeed = Seed(
+      bag = seed.bag,
+      dimensions = seed.bounds.dimensions,
+      clipBounds = seed.clipBounds
+  )
+  val box = flower(newSeed)
 
-fun <T> filterMouseOverBoxes(boxes: List<ClickBox<T>>, mousePosition: Vector2i): ClickBox<T>? {
-  return boxes.filter { box -> isInBounds(mousePosition, box.bounds) }.firstOrNull()
+  Blossom(
+      boxes = flattenBoxes(true, box, seed.bounds.position),
+      bounds = seed.bounds
+  )
 }

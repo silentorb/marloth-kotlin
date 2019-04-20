@@ -4,6 +4,7 @@ import lab.views.model.SelectableListType
 import lab.views.model.SelectionEvent
 import marloth.clienting.gui.TextStyles
 import mythic.bloom.*
+
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
 import mythic.glowing.globalState
@@ -38,7 +39,7 @@ data class SelectableItem(
     val isSelected: Boolean
 )
 
-typealias SelectionResult = Pair<List<Box>, List<ClickBox<SelectionEvent>>>
+typealias SelectionResult = Pair<List<FlatBox>, List<ClickBox<SelectionEvent>>>
 
 fun drawSelectableList(items: List<SelectableItem>, list: SelectableListType, bounds: Bounds): SelectionResult {
   val padding = 10
@@ -50,11 +51,11 @@ fun drawSelectableList(items: List<SelectableItem>, list: SelectableListType, bo
         PartialBox(itemHeight, drawListItem(it.name, it.isSelected))
       }
 
-//  list(
+//  listOld(
 //      children(verticalFromLengths(15), nodeRow)
 
   val buttonBoxes = arrangeListComplex(lengthArranger(verticalPlane, padding), partialBoxes, bounds)
-  val boxes = listOf<Box>(
+  val boxes = listOf<FlatBox>(
 //      Box(bounds, drawSidePanel())
   )
       .plus(buttonBoxes)

@@ -37,7 +37,7 @@ private fun drawLeftPanel(textures: List<Textures>, config: TextureViewConfig, b
 }
 
 data class TextureViewLayout(
-    val boxes: List<Box>,
+    val boxes: List<FlatBox>,
     val clickBoxes: List<ClickBox<SelectionEvent>>
 )
 
@@ -60,7 +60,7 @@ class TextureView {
     val bounds = Bounds(Vector2i(), dimensions)
     val initialLengths = listOf(200, null)
 
-    val middle = { b: Bounds -> Box(b, { b, c -> drawTextureView(renderer, config, b, c) }) }
+    val middle = { b: Bounds -> FlatBox(b, { b, c -> drawTextureView(renderer, config, b, c) }) }
     val lengths = resolveLengths(dimensions.x, initialLengths)
     val panelBounds = lengthArranger(horizontalPlane, 0)(bounds, lengths)
     val boxes = panelBounds.drop(1)

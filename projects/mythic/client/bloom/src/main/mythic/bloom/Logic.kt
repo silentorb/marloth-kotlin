@@ -25,7 +25,7 @@ typealias LogicModule = (LogicBundle) -> StateBagMods
 //    val function: LogicModule
 //)
 
-fun visibleBounds(box: Box): Bounds? =
+fun visibleBounds(box: FlatBox): Bounds? =
     if (box.clipBounds == null)
       box.bounds
     else {
@@ -44,13 +44,13 @@ fun visibleBounds(box: Box): Bounds? =
         clippedBounds
     }
 
-fun updateStateBag(boxes: Boxes, state: HistoricalBloomState): StateBag =
+fun updateStateBag(boxes: FlatBoxes, state: HistoricalBloomState): StateBag =
     boxes.filter { it.logic != null }
 //        .fold(state.bag) { bag, box -> box.logic!!(HistoricalBloomState(bag, state.input), box.bounds) }
         .flatMap { box -> box.logic!!(LogicBundle(state, box.bounds, visibleBounds(box))).entries }
         .associate { it.toPair() }
 
-fun updateBloomState(boxes: Boxes, previousState: BloomState, currentInput: InputState): BloomState {
+fun updateBloomState(boxes: FlatBoxes, previousState: BloomState, currentInput: InputState): BloomState {
   val historicalState = HistoricalBloomState(
       input = HistoricalInputState(
           previous = previousState.input,
@@ -86,9 +86,9 @@ fun isInBounds(position: Vector2i, bounds: Bounds): Boolean =
         position.y >= bounds.position.y &&
         position.y < bounds.position.y + bounds.dimensions.y
 
-fun logic(logicModule: LogicModule): Flower = { seed ->
+fun logic(logicModule: LogicModule): FlowerOld = { seed ->
   newBlossom(
-      Box(
+      FlatBox(
           bounds = seed.bounds,
           logic = logicModule
       )

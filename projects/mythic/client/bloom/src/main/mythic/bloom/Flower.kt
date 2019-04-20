@@ -1,11 +1,5 @@
 package mythic.bloom
 
-data class Seed(
-    val bag: StateBag = mapOf(),
-    val bounds: Bounds,
-    val clipBounds: Bounds? = null
-)
-
 fun maxBounds(a: Bounds, b: Bounds): Bounds {
   val x1 = Math.min(a.position.x, b.position.x)
   val y1 = Math.min(a.position.y, b.position.y)
@@ -15,7 +9,7 @@ fun maxBounds(a: Bounds, b: Bounds): Bounds {
 }
 
 data class Blossom(
-    val boxes: Boxes,
+    val boxes: FlatBoxes,
     val bounds: Bounds
 ) {
   operator fun plus(other: Blossom) = this.copy(
@@ -27,12 +21,12 @@ data class Blossom(
       boxes = boxes.plus(other.boxes)
   )
 
-  operator fun plus(other: Boxes) = this.copy(
+  operator fun plus(other: FlatBoxes) = this.copy(
       boxes = boxes.plus(other)
   )
 }
 
-fun newBlossom(box: Box): Blossom =
+fun newBlossom(box: FlatBox): Blossom =
     Blossom(
         boxes = listOf(box),
         bounds = box.bounds
@@ -44,26 +38,24 @@ val emptyBlossom =
         bounds = emptyBounds
     )
 
-typealias Flower = (Seed) -> Blossom
-
-operator fun Flower.plus(b: Flower): Flower = { seed ->
+operator fun FlowerOld.plus(b: FlowerOld): FlowerOld = { seed ->
   this(seed) + b(seed)
 }
 
-fun addFlowers(flowers: List<Flower>) =
+fun addFlowersOld(flowers: List<FlowerOld>) =
     flowers.reduce { a, b -> a.plus(b) }
 
-fun depict(depiction: StateDepiction): Flower = { s ->
-  newBlossom(Box(
+fun depict(depiction: StateDepiction): FlowerOld = { s ->
+  newBlossom(FlatBox(
       bounds = s.bounds,
       depiction = depiction(s)
   ))
 }
 
-fun depict(depiction: Depiction): Flower =
-    depict { s: Seed -> depiction }
+fun depict(depiction: Depiction): FlowerOld =
+    depict { s: SeedOld -> depiction }
 
-typealias StateDepiction = (Seed) -> Depiction
+typealias StateDepiction = (SeedOld) -> Depiction
 
 inline fun <reified T> existingOrNewState(crossinline initializer: () -> T): (Any?) -> T = { state ->
   if (state is T)
@@ -82,4 +74,4 @@ inline fun <reified T> existingOrNewState(key: String, crossinline initializer: 
     initializer()
 }
 
-val emptyFlower: Flower = { emptyBlossom }
+val emptyFlower: FlowerOld = { emptyBlossom }

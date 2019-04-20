@@ -94,8 +94,8 @@ fun plusSdf(items: List<Sdf>): Sdf = { hook, info, point ->
 //        .sortedBy { it.second.value }
 
 //fun arrangedPlus(sorted: List<Sdf>, lastDistance: Float): Sdf = { hook, point ->
-//  val latest = sorted.first()(hook, point)
-//  if (latest.value > lastDistance) {
+//  val next = sorted.first()(hook, point)
+//  if (next.value > lastDistance) {
 //    if (sorted.size == 1)
 //      rayMiss
 //    else {
@@ -116,8 +116,8 @@ fun plusSdf(items: List<Sdf>): Sdf = { hook, info, point ->
 //      val a = resorted.map { it.first }
 //      val k = 0
 //    }
-//    latest.copy(
-//        nextSdf = arrangedPlus(sorted, latest.value)
+//    next.copy(
+//        nextSdf = arrangedPlus(sorted, next.value)
 //    )
 //  }
 //}

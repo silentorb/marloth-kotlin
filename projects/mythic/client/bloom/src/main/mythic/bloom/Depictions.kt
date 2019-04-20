@@ -1,5 +1,7 @@
 package mythic.bloom
 
+import mythic.bloom.next.Box
+import mythic.bloom.next.Flower
 import mythic.drawing.Canvas
 import mythic.drawing.globalFonts
 import mythic.glowing.cropStack
@@ -16,16 +18,27 @@ fun textDepiction(style: IndexedTextStyle, content: String): Depiction = { b, c 
   c.drawText(position, style, content)
 }
 
-fun label(style: IndexedTextStyle, content: String): Flower = { seed ->
+fun labelOld(style: IndexedTextStyle, content: String): FlowerOld = { seed ->
   val config = TextConfiguration(content, Vector2(), resolveTextStyle(globalFonts(), style))
   val dimensions = calculateTextDimensions(config)
   newBlossom(
-      Box(
+      FlatBox(
           bounds = seed.bounds.copy(
               dimensions = dimensions.toVector2i()
           ),
           depiction = textDepiction(style, content)
       )
+  )
+}
+
+fun label(style: IndexedTextStyle, content: String): Flower = { seed ->
+  val config = TextConfiguration(content, Vector2(), resolveTextStyle(globalFonts(), style))
+  val dimensions = calculateTextDimensions(config)
+  Box(
+      bounds = Bounds(
+          dimensions = dimensions.toVector2i()
+      ),
+      depiction = textDepiction(style, content)
   )
 }
 

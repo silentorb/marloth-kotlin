@@ -2,7 +2,7 @@ package marloth.integration
 
 import marloth.clienting.*
 import marloth.front.RenderHook
-import mythic.bloom.Boxes
+import mythic.bloom.FlatBoxes
 import mythic.bloom.renderLayout
 import mythic.ent.singleCache
 import mythic.platforming.WindowInfo
@@ -38,7 +38,7 @@ fun renderRayMarching(gameScene: GameScene, dimensions: Vector2i, world: World, 
 //  renderer.applyRenderBuffer(dimensions)
 }
 
-fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: Boxes, onRender: RenderHook?) {
+fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: FlatBoxes, onRender: RenderHook?) {
   client.platform.display.swapBuffers()
 
   val marcher = Marcher(

@@ -47,7 +47,7 @@ fun drawGeneratedWorld(bounds: Bounds, canvas: Canvas, realm: Realm,
 }
 
 fun createMapLayout(realm: Realm, screenDimensions: Vector2i,
-                    config: WorldViewConfig, renderer: Renderer): Flower {
+                    config: WorldViewConfig, renderer: Renderer): FlowerOld {
   val draw = { b: Bounds, c: Canvas -> drawBorder(b, c, Vector4(0f, 0f, 1f, 1f)) }
   val drawWorld = { b: Bounds, c: Canvas ->
     crop(b, c, { drawGeneratedWorld(b, c, realm, config, renderer) })
@@ -66,7 +66,7 @@ fun createMapLayout(realm: Realm, screenDimensions: Vector2i,
 
 class WorldView(val config: WorldViewConfig, val realm: Realm?, val renderer: Renderer) {
 
-  fun createLayout(dimensions: Vector2i): Flower {
+  fun createLayout(dimensions: Vector2i): FlowerOld {
     return if (realm != null)
       createMapLayout(realm, dimensions, config, renderer)
     else

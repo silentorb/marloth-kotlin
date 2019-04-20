@@ -1,7 +1,7 @@
 package lab.utility
 
 import mythic.bloom.Depiction
-import mythic.bloom.Flower
+import mythic.bloom.FlowerOld
 import mythic.bloom.depict
 import mythic.glowing.cropStack
 import mythic.glowing.viewportStack
@@ -15,5 +15,5 @@ fun embedCameraView(action: Depiction): Depiction = { b, c ->
   }
 }
 
-fun depictScene(action: Depiction): Flower =
+fun depictScene(action: Depiction): FlowerOld =
     depict(embedCameraView(action))

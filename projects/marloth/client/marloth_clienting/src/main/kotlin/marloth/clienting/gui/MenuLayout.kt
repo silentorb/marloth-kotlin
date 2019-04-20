@@ -87,7 +87,7 @@ fun menuFocusIndex(bag: StateBag): Int =
 fun menuLogic(menu: Menu): LogicModule =
     menuFocusIndexLogic(menu) + menuNavigationLogic(menu) + menuCommandLogic(menu)
 
-fun menuFlower(textResources: TextResources, menu: Menu): Flower = { seed ->
+fun menuFlower(textResources: TextResources, menu: Menu): FlowerOld = { seed ->
   val buttonHeight = 50
   val items = menu
       .mapIndexed { index, it ->
@@ -103,7 +103,7 @@ fun menuFlower(textResources: TextResources, menu: Menu): Flower = { seed ->
   val menuPadding = 10
 
   Blossom(
-      boxes = listOf(Box(
+      boxes = listOf(FlatBox(
           bounds = menuBounds,
           depiction = menuBackground,
           logic = menuLogic(menu)

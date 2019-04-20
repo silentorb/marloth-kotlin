@@ -8,7 +8,7 @@ import marloth.clienting.gui.layoutGui
 import marloth.clienting.input.GuiCommandType
 import marloth.front.GameApp
 import marloth.front.RenderHook
-import mythic.bloom.Boxes
+import mythic.bloom.FlatBoxes
 import mythic.ent.pipe
 import mythic.platforming.WindowInfo
 import mythic.quartz.updateTimestep
@@ -60,7 +60,7 @@ fun restartWorld(app: GameApp, newWorld: () -> World): List<World> {
   return listOf(world)
 }
 
-fun updateFixedInterval(app: GameApp, boxes: Boxes, newWorld: () -> World): (AppState) -> AppState = { state ->
+fun updateFixedInterval(app: GameApp, boxes: FlatBoxes, newWorld: () -> World): (AppState) -> AppState = { state ->
   app.platform.process.pollEvents()
   val nextClientState = pipe(state.client, listOf(
       updateClientInput(app.client),
@@ -89,7 +89,7 @@ data class GameHooks(
     val onUpdate: GameUpdateHook
 )
 
-fun layoutGui(app: GameApp, appState: AppState, windowInfo: WindowInfo): Boxes {
+fun layoutGui(app: GameApp, appState: AppState, windowInfo: WindowInfo): FlatBoxes {
   val world = appState.worlds.lastOrNull()
   val hudData = if (world != null)
     gatherHudData(world)

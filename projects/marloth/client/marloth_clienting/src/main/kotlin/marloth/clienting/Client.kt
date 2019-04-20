@@ -15,6 +15,7 @@ import mythic.aura.AudioState
 import mythic.aura.SoundLibrary
 import mythic.aura.newAudioState
 import mythic.bloom.*
+
 import mythic.drawing.setGlobalFonts
 import mythic.ent.pipe
 import mythic.platforming.Platform
@@ -125,7 +126,7 @@ fun updateClientInput(client: Client): (ClientState) -> ClientState = { state ->
   )
 }
 
-fun updateClient(client: Client, players: List<Int>, boxes: Boxes): (ClientState) -> ClientState = { clientState ->
+fun updateClient(client: Client, players: List<Int>, boxes: FlatBoxes): (ClientState) -> ClientState = { clientState ->
   //  updateMousePointerVisibility(client.platform)
   val bindingContext = bindingContext(clientState)
   val getBinding = getBinding(clientState.input, clientState.input.guiInputProfiles)

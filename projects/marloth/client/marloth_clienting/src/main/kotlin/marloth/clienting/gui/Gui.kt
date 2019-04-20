@@ -7,6 +7,7 @@ import marloth.clienting.input.GuiCommandType
 import marloth.clienting.isGuiActive
 import mythic.bloom.*
 import mythic.bloom.ButtonState
+import mythic.bloom.next.flattenBoxes
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
 import mythic.glowing.globalState
@@ -39,7 +40,7 @@ val menuCommands = existingOrNewState(menuCommandsKey) { listOf<GuiCommandType>(
 fun newBloomState() =
     BloomState(
         bag = mapOf(),
-        input = mythic.bloom.InputState(
+        input = InputState(
             mousePosition = Vector2i(),
             mouseButtons = listOf(ButtonState.up),
             events = listOf()
@@ -76,7 +77,7 @@ fun victoryMenu(): Menu = listOfNotNull(
     MenuOption(GuiCommandType.menu, Text.victory)
 )
 
-fun viewSelect(textResources: TextResources, world: World?, view: ViewId): Flower? {
+fun viewSelect(textResources: TextResources, world: World?, view: ViewId): FlowerOld? {
   return when (view) {
     ViewId.mainMenu -> menuFlower(textResources, mainMenu(gameIsActive(world)))
 
@@ -86,19 +87,19 @@ fun viewSelect(textResources: TextResources, world: World?, view: ViewId): Flowe
   }
 }
 
-fun guiLayout(client: Client, clientState: ClientState, world: World?, hudData: HudData?): Flower {
+fun guiLayout(client: Client, clientState: ClientState, world: World?, hudData: HudData?): FlowerOld {
   val bloomState = clientState.bloomState
   return listOfNotNull(
-      if (hudData != null) hudLayout(hudData) else null,
+      if (hudData != null) convertFlower(hudLayout(hudData)) else null,
       viewSelect(client.textResources, world, clientState.view)
   )
       .reduce { a, b -> a + b }
 }
 
-fun layoutGui(client: Client, clientState: ClientState, world: World?, hudData: HudData?, windowInfo: WindowInfo): Boxes {
+fun layoutGui(client: Client, clientState: ClientState, world: World?, hudData: HudData?, windowInfo: WindowInfo): FlatBoxes {
   val bounds = Bounds(Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y))
   val layout = guiLayout(client, clientState, world, hudData)
-  val seed = Seed(
+  val seed = SeedOld(
       bag = clientState.bloomState.bag,
       bounds = bounds
   )

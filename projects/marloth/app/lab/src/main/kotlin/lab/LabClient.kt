@@ -12,6 +12,7 @@ import marloth.clienting.*
 import marloth.clienting.input.newBloomInputState
 import marloth.clienting.input.updateInputState
 import mythic.bloom.*
+
 import mythic.platforming.PlatformInput
 import mythic.platforming.WindowInfo
 import mythic.spatial.Vector2
@@ -110,7 +111,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     val view = WorldView(config.worldView, metaWorld, client.renderer)
 
     val layout = view.createLayout(windowInfo.dimensions)
-    val boxes = layout(Seed(
+    val boxes = layout(SeedOld(
         bag = previousState.app.client.bloomState.bag,
         bounds = Bounds(dimensions = windowInfo.dimensions)
     )).boxes
@@ -134,7 +135,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     } else
       emptyFlower
 
-    val seed = Seed(
+    val seed = SeedOld(
         bag = state.app.client.bloomState.bag,
         bounds = Bounds(dimensions = windowInfo.dimensions)
     )
@@ -177,7 +178,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     }
   }
 
-  fun renderLab(windowInfo: WindowInfo, boxes: List<Box>) {
+  fun renderLab(windowInfo: WindowInfo, boxes: List<FlatBox>) {
     val canvas = createCanvas(client.renderer, windowInfo)
     renderLayout(boxes, canvas)
   }

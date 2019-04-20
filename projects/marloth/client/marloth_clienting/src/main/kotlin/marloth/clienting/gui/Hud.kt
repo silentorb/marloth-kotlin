@@ -1,6 +1,8 @@
 package marloth.clienting.gui
 
 import mythic.bloom.*
+import mythic.bloom.next.*
+
 import org.joml.Vector2i
 import simulation.Interactable
 import simulation.Resource
@@ -26,24 +28,27 @@ val df = java.text.DecimalFormat("#0.00")
 //  return "vis: " + df.format(rating)
 //}
 
-val interactionBar: FlowerTransform =
-    position(centered, percentage(0.8f))
-//fork        depict(solidBackground(black))
+private val interactionBar =
+    div("a",
+        forward = forwardOffset(top = percentage(0.8f)),
+        reverse = reverseOffset(left = centered) + reverseDimensions(height = shrinkWrap),
+        depiction = solidBackground(black)
+    )
 
 fun interactionDialog(interactable: Interactable): Flower {
   val rows = listOf(
-      label(textStyle, "a"),
+      label(textStyle, "b"),
       label(textStyle, "bee")
   )
 
+  val gap = 20
   return interactionBar(
-      position(centered, centered)(
-          list(verticalPlane, 10)(rows)
+      div("b", reverse = reverseOffset(left = centered) + reverseDimensions(height = shrinkWrap))(
+          margin(top = gap, bottom = gap)(
+              list(verticalPlane, gap)(rows)
+          )
       )
   )
-
-//  return position(centered, percentage(0.8f))(
-//      list(verticalPlane, 10)(rows)
 }
 
 fun hudLayout(data: HudData): Flower {
@@ -54,9 +59,13 @@ fun hudLayout(data: HudData): Flower {
 //      mythic.bloom.label(textStyle, "vel: " + df.format(world.deck.bodies[player]!!.velocity.length()))
   )
 
-  return addFlowers(listOfNotNull(
-      withOffset(Vector2i(10))(
-          list(verticalPlane, 10)(rows)
+  return groupFlowers(listOfNotNull(
+      div(forward = fixedOffset(Vector2i(10)))(
+          div(reverse = shrink, depiction = solidBackground(black))(
+              margin(20)(
+                  list(verticalPlane, 10)(rows)
+              )
+          )
       ),
       if (data.interactable != null) interactionDialog(data.interactable) else null
   ))

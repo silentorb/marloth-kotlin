@@ -6,7 +6,6 @@ import mythic.drawing.Canvas
 import mythic.sculpting.ImmutableEdge
 import mythic.sculpting.ImmutableMesh
 import mythic.spatial.Vector4
-import org.joml.plus
 import simulation.*
 
 private fun getLineColor(faces: ConnectionTable, edge: ImmutableEdge): Vector4 {

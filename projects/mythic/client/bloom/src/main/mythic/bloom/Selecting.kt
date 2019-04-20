@@ -43,7 +43,7 @@ fun <T> selectable(key: String, selectionLogic: SelectionLogic, idSelector: IdSe
   })
 }
 
-fun <T> list(arranger: ChildArranger<T>, interaction: ChildInteraction<T>): ListFlower<T> = { items ->
+fun <T> listOld(arranger: ChildArranger<T>, interaction: ChildInteraction<T>): ListFlower<T> = { items ->
   { seed ->
     val preparedChildren = arranger(seed.bounds, items)
     val (_, flowers, itemBounds) = preparedChildren
@@ -51,7 +51,7 @@ fun <T> list(arranger: ChildArranger<T>, interaction: ChildInteraction<T>): List
     Blossom(
         boxes = childBoxes
             .plus(
-                Box(
+                FlatBox(
                     bounds = accumulatedBounds(childBoxes),
                     logic = interaction(preparedChildren)
                 )
@@ -62,7 +62,7 @@ fun <T> list(arranger: ChildArranger<T>, interaction: ChildInteraction<T>): List
   }
 }
 
-fun depictSelectable(key: String, id: String, depiction: (Seed, Boolean) -> Depiction): Flower = { seed ->
+fun depictSelectable(key: String, id: String, depiction: (SeedOld, Boolean) -> Depiction): FlowerOld = { seed ->
   val state = selectionState(seed.bag[key])
   val selected = state.selection.contains(id)
   depict(depiction(seed, selected))(seed)

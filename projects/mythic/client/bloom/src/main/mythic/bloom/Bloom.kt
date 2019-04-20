@@ -20,12 +20,12 @@ data class Bounds(
   constructor(values: Vector4i) :
       this(Vector2i(values.x, values.y), Vector2i(values.z, values.w))
 
-  val left: Int = position.x
-  val top: Int = position.y
-  val right: Int = position.x + dimensions.x
-  val bottom: Int = position.y + dimensions.y
+  val left: Int get() = position.x
+  val top: Int get() = position.y
+  val right: Int get() = position.x + dimensions.x
+  val bottom: Int get() = position.y + dimensions.y
 
-  val end: Vector2i = position + dimensions
+  val end: Vector2i get() = position + dimensions
 
   fun toVector4i() = Vector4i(position.x, position.y, dimensions.x, dimensions.y)
 
@@ -40,16 +40,6 @@ val emptyBounds = Bounds(0, 0, 0, 0)
 typealias Depiction = (Bounds, Canvas) -> Unit
 typealias StateBag = Map<String, Any>
 typealias StateBagMods = StateBag
-
-data class Box(
-    val bounds: Bounds,
-    val depiction: Depiction? = null,
-    val clipBounds: Bounds? = null,
-    val handler: Any? = null,
-    val logic: LogicModule? = null
-)
-
-typealias Boxes = List<Box>
 
 fun crop(bounds: Bounds, canvas: Canvas, action: () -> Unit) = canvas.crop(bounds.toVector4i(), action)
 
@@ -111,7 +101,7 @@ fun drawFill(bounds: Bounds, canvas: Canvas, color: Vector4) {
   canvas.drawSquare(bounds.position.toVector2(), bounds.dimensions.toVector2(), canvas.solid(color))
 }
 
-typealias LayoutOld = List<Box>
+typealias LayoutOld = List<FlatBox>
 
 fun renderLayout(layout: LayoutOld, canvas: Canvas) {
   val current = getGLBounds(GL11.GL_VIEWPORT)

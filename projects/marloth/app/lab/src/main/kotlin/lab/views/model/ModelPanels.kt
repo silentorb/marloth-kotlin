@@ -1,6 +1,5 @@
 package lab.views.model
 
-import lab.utility.black
 import lab.utility.panelColor
 import lab.utility.sceneBackgroundColor
 import lab.views.shared.SelectableItem
@@ -8,7 +7,7 @@ import lab.views.shared.drawSelectableEnumList
 import lab.views.shared.drawSelectableList
 import marloth.clienting.gui.TextStyles
 import mythic.bloom.Bounds
-import mythic.bloom.Box
+import mythic.bloom.FlatBox
 import mythic.bloom.ClickBox
 import mythic.bloom.Depiction
 import mythic.drawing.Canvas
@@ -78,7 +77,7 @@ fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: AdvancedMo
 }
 
 fun drawLeftPanel(meshTypes: List<MeshType>, config: ModelViewConfig, model: AdvancedModel,
-                  bounds: Bounds): Pair<List<Box>, List<ClickBox<SelectionEvent>>> {
+                  bounds: Bounds): Pair<List<FlatBox>, List<ClickBox<SelectionEvent>>> {
   val gap = 2
   val halfGap = gap / 2
   val halfDimensions = Vector2i(bounds.dimensions.x, bounds.dimensions.y / 2 - halfGap)
