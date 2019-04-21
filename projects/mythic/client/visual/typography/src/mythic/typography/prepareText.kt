@@ -70,7 +70,7 @@ fun arrangeType(config: TextConfiguration): TypeArrangement? {
     if (c == ' ') {
       last_space_x = x
       last_space_index = i
-      x += font.dimensions.x
+      x += font.spaceWidth
       following_visible_character = false
       continue
     }

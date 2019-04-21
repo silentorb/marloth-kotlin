@@ -92,7 +92,7 @@ fun viewSelect(textResources: TextResources, world: World?, view: ViewId): Flowe
 fun guiLayout(client: Client, clientState: ClientState, world: World?, hudData: HudData?): Flower {
   val bloomState = clientState.bloomState
   return groupFlowers(listOfNotNull(
-      if (hudData != null) hudLayout(hudData) else null,
+      if (hudData != null) hudLayout(client.textResources, hudData) else null,
       viewSelect(client.textResources, world, clientState.view)
   ))
 }

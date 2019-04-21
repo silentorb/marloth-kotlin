@@ -115,7 +115,3 @@ fun list(plane: Plane, spacing: Int): (List<Flower>) -> Flower = { children ->
 
 fun fixedList(plane: Plane, padding: Int, lengths: List<Int?>): ParentFlower =
     applyBounds(fixedLengthArranger(plane, padding, lengths))
-//
-//fun <T> listOld(arrangement: LengthArrangement): (List<Flower>) -> Flower = { flowers ->
-//  applyBounds(arrangement)(flowers)
-//}
