@@ -28,7 +28,8 @@ data class MapViewDisplayConfig(
     var drawMode: MapViewDrawMode = MapViewDrawMode.solid,
     var normals: Boolean = false,
     var faceIds: Boolean = false,
-    var nodeIds: Boolean = false
+    var nodeIds: Boolean = false,
+    var isolateSelection: Boolean = false
 )
 
 data class MapViewConfig(
@@ -196,5 +197,8 @@ fun updateMapState(config: MapViewConfig, world: Realm, input: LabCommandState, 
 
   if (isActive(commands, LabCommandType.toggleNodeIds))
     config.display.nodeIds = !config.display.nodeIds
+
+  if (isActive(commands, LabCommandType.toggleIsolateSelection))
+    config.display.isolateSelection = !config.display.isolateSelection
 
 }

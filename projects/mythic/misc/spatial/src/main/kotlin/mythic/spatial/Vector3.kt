@@ -124,9 +124,9 @@ data class Vector3(
           && z >= value.z - margin && z <= value.z + margin
 
   fun roughlyEquals(value: Vector3): Boolean =
-      x >= value.x - epsilon && x <= value.x + epsilon
-          && y >= value.y - epsilon && y <= value.y + epsilon
-          && z >= value.z - epsilon && z <= value.z + epsilon
+      x >= value.x - lowResEpsilon && x <= value.x + lowResEpsilon
+          && y >= value.y - lowResEpsilon && y <= value.y + lowResEpsilon
+          && z >= value.z - lowResEpsilon && z <= value.z + lowResEpsilon
 
   operator fun get(i: Int): Float =
       when (i) {

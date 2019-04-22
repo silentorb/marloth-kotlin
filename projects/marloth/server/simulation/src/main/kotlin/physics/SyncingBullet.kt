@@ -33,10 +33,11 @@ fun createCollisionShape(source: Shape, scale: Vector3): btCollisionShape {
   }
 }
 
-fun createBulletDynamicObject(body: Body, dynamicBody: DynamicBody, shape: btCollisionShape): btRigidBody {
+fun createBulletDynamicObject(body: Body, dynamicBody: DynamicBody, shape: btCollisionShape, rotationalInertia: Boolean): btRigidBody {
   val transform = Matrix().translate(body.position).rotate(body.orientation)
   val localInertia = com.badlogic.gdx.math.Vector3(0f, 0f, 0f)
-  shape.calculateLocalInertia(dynamicBody.mass, localInertia)
+  if (rotationalInertia)
+    shape.calculateLocalInertia(dynamicBody.mass, localInertia)
 
   val myMotionState = btDefaultMotionState(toGdxMatrix4(transform))
   val rbInfo = btRigidBody.btRigidBodyConstructionInfo(dynamicBody.mass, myMotionState, shape, localInertia)
@@ -90,8 +91,8 @@ fun syncNewBodies(world: World, bulletState: BulletState) {
       .map { (key, dynamicBody) ->
         val body = deck.bodies[key]!!
         val shape = createCollisionShape(deck.collisionShapes[key]!!, body.scale)
-        val bulletBody = createBulletDynamicObject(body, dynamicBody, shape)
         val hingeInfo = dynamicBody.hinge
+        val bulletBody = createBulletDynamicObject(body, dynamicBody, shape, hingeInfo != null)
         if (hingeInfo != null) {
           val hinge = btHingeConstraint(bulletBody, toGdxVector3(hingeInfo.pivot * body.scale), toGdxVector3(hingeInfo.axis), true)
 //          hinge.enableAngularMotor(true, 1f, 1f)

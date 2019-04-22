@@ -47,6 +47,13 @@ val isSolidWall = { face: ConnectionFace ->
 }
 val isSpace = { face: ConnectionFace -> face.faceType == FaceType.space }
 
+private fun debugId(id: Id): Id {
+  if (id == 41L) {
+    val k = 0
+  }
+  return id
+}
+
 data class ConnectionFace(
     override val id: Id,
     var faceType: FaceType,
@@ -56,6 +63,10 @@ data class ConnectionFace(
     var debugInfo: String? = null
 ) : Entity {
   val nodes: List<Id> = listOf(firstNode, secondNode).minus(voidNodeId)
+  val _deleteme = if (id == 41L)
+    1
+  else
+    0
 }
 
 typealias ConnectionTable = Map<Id, ConnectionFace>

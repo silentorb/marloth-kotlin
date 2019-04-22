@@ -55,6 +55,7 @@ enum class LabCommandType {
   toggleFaceIds,
   toggleNodeIds,
   toggleDrawPhysics,
+  toggleIsolateSelection,
 
   selectEdgeLoop
 }
@@ -88,6 +89,7 @@ val labCommandStrokes = setOf(
     LabCommandType.toggleMeshDisplay,
     LabCommandType.toggleNormals,
     LabCommandType.toggleFaceIds,
+    LabCommandType.toggleIsolateSelection,
     LabCommandType.toggleNodeIds,
     LabCommandType.toggleDrawPhysics,
 

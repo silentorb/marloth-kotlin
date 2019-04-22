@@ -55,8 +55,21 @@ data class ImmutableEdgeReference(
 
 }
 
-fun getNormal(vertices: Vertices) =
-    (vertices[2] - vertices[1]).cross(vertices[0] - vertices[1]).normalize()
+fun getNormal(vertices: Vertices): Vector3 {
+  for (i in 0 until vertices.size - 2) {
+    val a = vertices[i + 0]
+    val b = vertices[i + 1]
+    val c = vertices[i + 2]
+
+    val first = a - b
+    if ((b - c).normalize().roughlyEquals(first.normalize()))
+      continue
+
+    return (c - b).cross(first).normalize()
+  }
+
+  throw Error("Could not determine face normal.")
+}
 
 private var flexibleFaceDebugCounter = 0L
 
@@ -135,7 +148,7 @@ data class ImmutableMesh(
     get() = distinctVertices(redundantVertices)
 
   fun createFace(nextEdgeId: IdSource, id: Long, vertices: List<Vector3>): ImmutableFace {
-    if (id == 110L) {
+    if (id == 41L) {
       val k = 0
     }
     assert(vertices.distinct().size == vertices.size) // Check for duplicate vertices

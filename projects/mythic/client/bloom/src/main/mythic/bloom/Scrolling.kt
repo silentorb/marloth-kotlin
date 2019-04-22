@@ -114,6 +114,7 @@ fun scrolling(key: String): (FlowerOld) -> FlowerOld = { child ->
     )
     val blossom = withOffset(child)(extractOffset(key, seed.bag))(innerSeed)
     val childBoxes = blossom.boxes
+        .map(clipBox(innerSeed.bounds))
     if (childBoxes.any()) {
       val contentBounds = accumulatedBounds(childBoxes)
       scrollBox(key, contentBounds)(seed)

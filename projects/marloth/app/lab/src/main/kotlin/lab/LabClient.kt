@@ -106,21 +106,22 @@ class LabClient(val config: LabConfig, val client: Client) {
     )
   }
 
-  fun updateWorld(windowInfo: WindowInfo, metaWorld: Realm?, previousState: LabState): LabClientResult {
+  fun updateWorld(windowInfo: WindowInfo, metaWorld: Realm?, state: LabState): LabClientResult {
     prepareClient(windowInfo)
     val view = WorldView(config.worldView, metaWorld, client.renderer)
 
     val layout = view.createLayout(windowInfo.dimensions)
     val boxes = layout(SeedOld(
-        bag = previousState.app.client.bloomState.bag,
+        bag = state.app.client.bloomState.bag,
         bounds = Bounds(dimensions = windowInfo.dimensions)
     )).boxes
-//    val (_, nextLabInputState) = updateInput(view.getCommands(), previousState)
+    val newDeviceStates = updateInputState(client.platform.input, state.app.client.input)
+    val commands = updateInput(view.getCommands(), newDeviceStates)
 
     renderLab(windowInfo, boxes)
     return LabClientResult(
         listOf(),
-        previousState//.copy(labInput = nextLabInputState)
+        state//.copy(labInput = nextLabInputState)
     )
   }
 

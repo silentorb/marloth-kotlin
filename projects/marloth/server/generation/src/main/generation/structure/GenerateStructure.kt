@@ -442,7 +442,10 @@ fun fillNodeBiomesAndSolid(dice: Dice, realm: StructureRealm, biomeGrid: BiomeGr
     }
 
 fun cleanupSolidNormals(realm: StructureRealm): StructureRealm {
-  val needingFlipped = realm.mesh.faces.filter { (_, face) ->
+  val backwards = realm.mesh.faces.filter { (_, face) ->
+    if (face.id == 41L) {
+      val k = 0
+    }
     val info = realm.connections[face.id]!!
     val firstNode = realm.nodes[info.firstNode]!!
     val nodes = listOf(
@@ -466,14 +469,14 @@ fun cleanupSolidNormals(realm: StructureRealm): StructureRealm {
       .map { it.value.id }
 
   val updatedFaces = realm.mesh.faces.mapValues { (_, face) ->
-    if (needingFlipped.contains(face.id))
+    if (backwards.contains(face.id))
       flipFace(face)
     else
       face
   }
 
   val updatedConnections = realm.connections.mapValues { (_, connection) ->
-    if (needingFlipped.contains(connection.id))
+    if (backwards.contains(connection.id))
       connection.copy(
           firstNode = connection.secondNode,
           secondNode = connection.firstNode

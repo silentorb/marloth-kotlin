@@ -11,6 +11,7 @@ import mythic.bloom.StateDepiction
 import mythic.bloom.selectionState
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
+import mythic.glowing.unbindTexture
 import mythic.spatial.*
 import mythic.typography.IndexedTextStyle
 import org.lwjgl.opengl.GL11
@@ -24,8 +25,12 @@ import simulation.Realm
 import simulation.nodeNeighbors
 
 fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, realm: Realm, config: MapViewConfig, nodes: Collection<Node>, color: Vector4) {
-  val faces = nodes.flatMap { it.faces }.distinct()
+  val faces = if (config.display.isolateSelection && config.selection.any())
+    config.selection
+  else
+    nodes.flatMap { it.faces }.distinct()
 //      .take(1)
+
   for (face in faces) {
 //      renderer.effects.flat.activate(ObjectShaderConfig(color = color))
 //      renderer.drawOutlinedFace(face.vertices, color)
@@ -82,7 +87,11 @@ fun renderMapMesh(renderer: SceneRenderer, realm: Realm, config: MapViewConfig, 
   else
     worldMesh.sectors.filter { selectedNodes.selection.contains(it.id.toString()) }
 
-  val faces = nodes.flatMap { it.faces }.map { realm.mesh.faces[it]!! }
+  val faces = (if (config.display.isolateSelection && config.selection.any())
+    config.selection
+  else
+    nodes.flatMap { it.faces })
+      .map { realm.mesh.faces[it]!! }
 
   if (config.display.drawMode == MapViewDrawMode.wireframe) {
     drawWireframeWorld(renderer, worldMesh, realm, config, nodes, Vector4(1f))
@@ -102,8 +111,13 @@ fun renderMapMesh(renderer: SceneRenderer, realm: Realm, config: MapViewConfig, 
       var index = 0
       for (textureId in sector.textureIndex) {
         val texture = renderer.renderer.mappedTextures[textureId]
-            ?: renderer.renderer.textures[textureId.toString()]!!
-        renderer.effects.texturedFlat.activate(ObjectShaderConfig(texture = texture))
+            ?: renderer.renderer.textures[textureId.toString()]
+
+        if (texture != null)
+          renderer.effects.texturedFlat.activate(ObjectShaderConfig(texture = texture))
+        else
+          unbindTexture()
+
         sector.mesh.drawElement(DrawMethod.triangleFan, index++)
       }
     }

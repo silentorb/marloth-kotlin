@@ -29,6 +29,7 @@ private fun faceInfo(realm: Realm, id: Id): FlowerOld {
 
   val rows = listOf(
       id.toString(),
+      connection.texture?.name ?: "no texture",
       "nodes: ${connection.firstNode}, ${connection.secondNode}",
       "neighbors: "
   )

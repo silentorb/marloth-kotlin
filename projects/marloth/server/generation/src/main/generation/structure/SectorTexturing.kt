@@ -44,7 +44,7 @@ fun determineCeilingTexture(nodes: NodeTable, info: ConnectionFace): Textures? {
 }
 
 fun determineFaceTexture(nodes: NodeTable, info: ConnectionFace): Textures? {
-  if (info.id == 117L) {
+  if (info.id == 41L) {
     val k = 0
   }
 

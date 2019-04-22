@@ -168,6 +168,7 @@ object App {
   @JvmStatic
   fun main(args: Array<String>) {
     System.setProperty("joml.format", "false")
+    println("Starting Lab App")
     val config = loadLabConfig()
     val gameApp = newGameApp()
     val state = newLabState(gameApp, config)
