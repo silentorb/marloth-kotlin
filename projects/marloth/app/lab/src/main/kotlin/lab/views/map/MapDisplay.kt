@@ -1,11 +1,9 @@
 package lab.views.map
 
 import lab.utility.embedCameraView
-import lab.utility.yellow
 import lab.views.game.renderFaceNormals
 import lab.views.shared.LabTextStyles
 import marloth.clienting.Client
-import mythic.bloom.*
 import mythic.bloom.StateBag
 import mythic.bloom.StateDepiction
 import mythic.bloom.selectionState
@@ -13,7 +11,6 @@ import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
 import mythic.glowing.unbindTexture
 import mythic.spatial.*
-import mythic.typography.IndexedTextStyle
 import org.lwjgl.opengl.GL11
 import rendering.*
 import rendering.shading.ObjectShaderConfig
@@ -93,9 +90,9 @@ fun renderMapMesh(renderer: SceneRenderer, realm: Realm, config: MapViewConfig, 
     nodes.flatMap { it.faces })
       .map { realm.mesh.faces[it]!! }
 
-  if (config.display.drawMode == MapViewDrawMode.wireframe) {
+  if (config.display.wireframe && !config.display.solid) {
     drawWireframeWorld(renderer, worldMesh, realm, config, nodes, Vector4(1f))
-  } else {
+  } else if (config.display.solid) {
     globalState.depthEnabled = false
     globalState.cullFaces = false
     globalState.blendEnabled = true
@@ -123,8 +120,16 @@ fun renderMapMesh(renderer: SceneRenderer, realm: Realm, config: MapViewConfig, 
     }
     globalState.depthEnabled = false
     globalState.cullFaces = false
-    drawWireframeWorld(renderer, worldMesh, realm, config, nodes, lineHalfColor)
+
+    if (config.display.wireframe)
+      drawWireframeWorld(renderer, worldMesh, realm, config, nodes, lineHalfColor)
   }
+
+  if (config.display.abstract) {
+    drawAbstractNodes(renderer, nodes)
+  }
+
+  globalState.depthEnabled = false
 
   if (config.display.normals)
     renderFaceNormals(renderer, 0.5f, faces)

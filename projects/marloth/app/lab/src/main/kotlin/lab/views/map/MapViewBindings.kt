@@ -14,6 +14,8 @@ fun mapViewBindings() =
         GLFW.GLFW_KEY_I to LabCommandType.toggleFaceIds,
         GLFW.GLFW_KEY_U to LabCommandType.toggleIsolateSelection,
         GLFW.GLFW_KEY_O to LabCommandType.toggleNodeIds,
+        GLFW.GLFW_KEY_B to LabCommandType.toggleAbstract,
+        GLFW.GLFW_KEY_Z to LabCommandType.toggleWireframe,
         GLFW.GLFW_KEY_LEFT_BRACKET to LabCommandType.decrementRaySkip,
         GLFW.GLFW_KEY_RIGHT_BRACKET to LabCommandType.incrementRaySkip
     ))

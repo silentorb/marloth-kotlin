@@ -164,7 +164,7 @@ fun <A, B> pass(action: (A) -> A): (Pair<A, B>) -> Pair<A, B> = { (a, b) ->
 
 fun generateAbstract(input: WorldInput, scale: Float, biomeGrid: BiomeGrid): Graph {
   val nodeCount = (20 * scale).toInt()
-  val initialNodes = createRoomNodes(input.boundary, nodeCount, input.dice)
+  val initialNodes = distributeNodes(input.boundary, nodeCount, input.dice)
 //  val initialGraph = handleOverlapping(entityMap(initialNodes))
   val initialGraph = Graph(
       nodes = entityMap(initialNodes),

@@ -235,7 +235,7 @@ class Renderer(val config: DisplayConfig, display: PlatformDisplay, fontList: Li
     val dimensions = Vector2i(viewport.z, viewport.w)
     val cameraEffectsData = createCameraEffectsData(dimensions, scene.camera)
     updateShaders(scene, dimensions, cameraEffectsData)
-    return SceneRenderer(viewport, this, cameraEffectsData)
+    return SceneRenderer(viewport, this, scene.camera, cameraEffectsData)
   }
 
   fun prepareRender(windowInfo: WindowInfo) {
@@ -290,9 +290,19 @@ class Renderer(val config: DisplayConfig, display: PlatformDisplay, fontList: Li
 
 }
 
+fun rasterizeCoordinates(position: Vector3, cameraEffectsData: CameraEffectsData, dimensions: Vector2i): Vector2 {
+  val modelTransform = Matrix()
+      .translate(position)
+
+  val transform2 = cameraEffectsData.transform * modelTransform
+  val i = transform2.transform(Vector4(0f, 0f, 0f, 1f))
+  return Vector2(((i.x + 1) / 2) * dimensions.x, (1 - ((i.y + 1) / 2)) * dimensions.y)
+}
+
 class SceneRenderer(
     val viewport: Vector4i,
     val renderer: Renderer,
+    val camera: Camera,
     val cameraEffectsData: CameraEffectsData
 ) {
 
@@ -338,13 +348,8 @@ class SceneRenderer(
   }
 
   fun drawText(content: String, position: Vector3, style: TextStyle) {
-    val modelTransform = Matrix()
-        .translate(position)
-
-    val transform2 = cameraEffectsData.transform * modelTransform
-    val i = transform2.transform(Vector4(0f, 0f, 0f, 1f))
     val dimensions = Vector2i(viewport.z, viewport.w)
-    val pos = Vector2(((i.x + 1) / 2) * dimensions.x, (1 - ((i.y + 1) / 2)) * dimensions.y)
+    val pos = rasterizeCoordinates(position, cameraEffectsData, dimensions)
     val config = TextConfiguration(content, pos, style)
     val textDimensions = calculateTextDimensions(config)
     val pos2 = Vector2(pos.x - textDimensions.x / 2f, pos.y)
@@ -357,6 +362,20 @@ class SceneRenderer(
         renderer.vertexSchemas.drawing.image,
         transform
     )
+  }
+
+  fun drawCircle(position: Vector3, radius: Float, method: DrawMethod) {
+    val resources = getStaticCanvasDependencies()
+    val mesh = resources.meshes.circle
+    val transform = Matrix()
+        .billboardSpherical(position, camera.position, Vector3(0f, 0f, 1f))
+        .scale(radius)
+    effects.flat.activate(ObjectShaderConfig(
+        transform = transform,
+        color = Vector4(0.5f, 0.5f, 0f, 0.4f)
+    ))
+
+    mesh.draw(method)
   }
 
   fun drawText(content: String, position: Vector3, style: IndexedTextStyle) =

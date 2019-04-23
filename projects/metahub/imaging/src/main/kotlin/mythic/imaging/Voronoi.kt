@@ -123,10 +123,6 @@ fun anchorGridCell(grid: AnchorGrid): (Vector2i) -> Vector2? = { input ->
   grid.cells[i2]
 }
 
-//private fun offsets() = (-1..1).asSequence().flatMap { y ->
-//  (-1..1).asSequence().map { x -> Vector2i(x, y) }
-//}
-
 private fun newOffsets(step: Int): List<Vector2i> {
   // Forms a boundary like:
   //
@@ -190,28 +186,11 @@ typealias VoronoiApp = (Vector2, List<Vector2>) -> Float
 
 fun voronoiBoundaries(thickness: Float): VoronoiApp = { input, options ->
   val nearestPair = options.sortedBy { it.distance(input) }.take(2)
-//  val nearestPair = options.sortedBy(manhattanDistance(input)).take(2)
-  if (nearestPair[0] == nearestPair[1]) {
-    val k = 0
-  }
   val gap = Math.abs(nearestPair[0].distance(input) - nearestPair[1].distance(input))
-//  if (anchorGridCell(grid, i.x, i.y) != null) {
-//    val k = 0
-//  }
-//  val overlay = if (anchorGridCell(grid, i.x, i.y) != null)
-//    0f
-//  else
-//    0.2f
-
   val result = if (gap < thickness / 2f)
     0f
   else
     1f
-
-//  if (nearestPair[0].distance(input) < 0.1f)
-//    0f
-//  else
-//    result + overlay
 
   result
 }
@@ -219,8 +198,6 @@ fun voronoiBoundaries(thickness: Float): VoronoiApp = { input, options ->
 fun voronoi(length: Int, nearestCells: CellsSource, app: VoronoiApp): Sampler = { x, y ->
   val input = Vector2(x, y) * length.toFloat()
   val i = input.toVector2i()
-//  val offset = input - i.toVector2()
   val options = nearestCells(i)
-
   app(input, options)
 }

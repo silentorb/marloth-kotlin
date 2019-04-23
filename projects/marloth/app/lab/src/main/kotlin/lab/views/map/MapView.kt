@@ -25,11 +25,13 @@ enum class MapViewDrawMode {
 }
 
 data class MapViewDisplayConfig(
-    var drawMode: MapViewDrawMode = MapViewDrawMode.solid,
+    var solid: Boolean = true,
+    var wireframe: Boolean = true,
     var normals: Boolean = false,
     var faceIds: Boolean = false,
     var nodeIds: Boolean = false,
-    var isolateSelection: Boolean = false
+    var isolateSelection: Boolean = false,
+    var abstract: Boolean = false
 )
 
 data class MapViewConfig(
@@ -183,10 +185,11 @@ fun updateMapState(config: MapViewConfig, world: Realm, input: LabCommandState, 
     config.camera.yaw = (config.camera.yaw + (rotateSpeed * delta)) % (Pi * 2)
 
   if (isActive(commands, LabCommandType.toggleMeshDisplay)) {
-    config.display.drawMode = if (config.display.drawMode == MapViewDrawMode.wireframe)
-      MapViewDrawMode.solid
-    else
-      MapViewDrawMode.wireframe
+    config.display.solid = !config.display.solid
+  }
+
+  if (isActive(commands, LabCommandType.toggleWireframe)) {
+    config.display.wireframe = !config.display.wireframe
   }
 
   if (isActive(commands, LabCommandType.toggleNormals))
@@ -200,5 +203,8 @@ fun updateMapState(config: MapViewConfig, world: Realm, input: LabCommandState, 
 
   if (isActive(commands, LabCommandType.toggleIsolateSelection))
     config.display.isolateSelection = !config.display.isolateSelection
+
+  if (isActive(commands, LabCommandType.toggleAbstract))
+    config.display.abstract = !config.display.abstract
 
 }

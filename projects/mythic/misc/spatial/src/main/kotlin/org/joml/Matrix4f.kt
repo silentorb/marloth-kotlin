@@ -12782,7 +12782,7 @@ class Matrix4f : Externalizable, Matrix4fc {
    * the rotation axis (must be [normalized][Vector3m.normalize])
    * @return this
    */
-  fun billboardCylindrical(objPos: Vector3fc, targetPos: Vector3fc, up: Vector3fc): Matrix4f {
+  fun billboardCylindrical(objPos: Vector3, targetPos: Vector3, up: Vector3): Matrix4f {
     var dirX = targetPos.x - objPos.x
     var dirY = targetPos.y - objPos.y
     var dirZ = targetPos.z - objPos.z
@@ -12847,7 +12847,7 @@ class Matrix4f : Externalizable, Matrix4fc {
    * the up axis used to orient the object
    * @return this
    */
-  fun billboardSpherical(objPos: Vector3fc, targetPos: Vector3fc, up: Vector3fc): Matrix4f {
+  fun billboardSpherical(objPos: Vector3, targetPos: Vector3, up: Vector3): Matrix4f {
     var dirX = targetPos.x - objPos.x
     var dirY = targetPos.y - objPos.y
     var dirZ = targetPos.z - objPos.z
@@ -12909,7 +12909,7 @@ class Matrix4f : Externalizable, Matrix4fc {
    * the position of the target (for example the camera) towards which to rotate the object
    * @return this
    */
-  fun billboardSpherical(objPos: Vector3fc, targetPos: Vector3fc): Matrix4f {
+  fun billboardSpherical(objPos: Vector3, targetPos: Vector3): Matrix4f {
     val toDirX = targetPos.x - objPos.x
     val toDirY = targetPos.y - objPos.y
     val toDirZ = targetPos.z - objPos.z
