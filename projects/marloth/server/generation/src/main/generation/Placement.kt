@@ -75,7 +75,7 @@ fun placeCharacters(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): D
 
 fun newDoor(realm: Realm, nextId: IdSource): (Id) -> Hand = { nodeId ->
   val node = realm.nodeTable[nodeId]!!
-  val j = node.walls.map {realm.faces[it]!!}
+  val j = node.walls.map { realm.faces[it]!! }
   val face = node.walls.first { realm.faces[it]!!.faceType != FaceType.wall }
   val meshFace = realm.mesh.faces[face]!!
   val edge = getFloor(meshFace)
@@ -187,15 +187,10 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
   val playerNode = realm.nodeTable.values.first { it.biome == Biome.home }
   val scale = calculateWorldScale(input.boundary.dimensions)
   val nextId = newIdSource(1)
-  val deck = Deck(
-//      factions = entityMap(listOf(
-//          Faction(misfitsFaction, "Misfits"),
-//          Faction(monstersFaction, "Monsters")
-//      ))
-  )
+  val deck = Deck()
       .plus(newPlayer(nextId, playerNode))
-      .plus(placeWallLamps(realm, nextId, input.dice, scale))
-      .plus(placeDoors(realm, nextId))
+//      .plus(placeWallLamps(realm, nextId, input.dice, scale))
+//      .plus(placeDoors(realm, nextId))
 
   return World(
       deck = deck,

@@ -8,7 +8,7 @@ import randomly.Dice
 import simulation.*
 
 fun calculateWorldScale(dimensions: Vector3) =
-    (dimensions.x * dimensions.y) / (100 * 100)
+    (dimensions.x * dimensions.y * dimensions.z) / (100 * 100 * 100)
 
 fun generateWorld(input: WorldInput): World {
   val scale = calculateWorldScale(input.boundary.dimensions)
