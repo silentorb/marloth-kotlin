@@ -1,7 +1,10 @@
 package generation.abstracted
+
 import simulation.*
 
 import generation.getNodeDistance
+
+const val maxTunnelVerticalRange = 10
 
 typealias NodeGroup = List<Node>
 
@@ -13,15 +16,19 @@ fun getNeighborsByDistance(node: Node, nodes: Sequence<Node>) = nodes.asSequence
     .toList()
     .sortedBy { it.distance }
 
-//fun findNearestNode(node: Node, nodes: Sequence<Node>) =
-//    getNeighborsByDistance(node, nodes)
-//        .firstOrNull()
-
 data class NodeGap(val first: Node, val second: Node, val distance: Float)
 
-fun findNearestGap(graph: Graph, node: Node, nodes: Sequence<Node>): NodeGap? {
-  val neighbors = getNeighborsByDistance(node, nodes)
-      .filter { !isConnected(graph,it.node, node) }
+typealias NodeSequenceTransform = (Node, Sequence<Node>) -> Sequence<Node>
+
+fun findNearestGap(graph: Graph, node: Node, nodes: Sequence<Node>, filter: NodeSequenceTransform): NodeGap? {
+//  val withinHeightRange = nodes
+//      .filter { Math.abs(it.position.z - node.position.z) < maxTunnelVerticalRange }
+
+  val filteredNodes = filter(node, nodes)
+
+  val neighbors = getNeighborsByDistance(node, filteredNodes)
+      .filter { !isConnected(graph, it.node, node) }
+
   val nearest = neighbors
       .firstOrNull()
 
@@ -31,8 +38,9 @@ fun findNearestGap(graph: Graph, node: Node, nodes: Sequence<Node>): NodeGap? {
     null
 }
 
-fun findShortestGap(graph: Graph, firstGroup: Sequence<Node>, secondGroup: Sequence<Node>): NodeGap? =
-    firstGroup.map { findNearestGap(graph, it, secondGroup) }
+fun findShortestGap(graph: Graph, firstGroup: Sequence<Node>, secondGroup: Sequence<Node>,
+                    filter: NodeSequenceTransform): NodeGap? =
+    firstGroup.map { findNearestGap(graph, it, secondGroup, filter) }
         .filterNotNull()
         .sortedBy { it.distance }
         .firstOrNull()
@@ -46,15 +54,21 @@ fun scanChanged(graph: Graph, changed: List<Node>, group: NodeGroup) =
         .flatten()
         .distinct()
 
+val verticalFilter: NodeSequenceTransform = { node, nodes ->
+  nodes.filter { Math.abs(it.position.z - node.position.z) < maxTunnelVerticalRange }
+}
+
 tailrec fun scanNodes(graph: Graph, previousChanged: List<Node>, mainGroup: List<Node>, outerGroup: List<Node>,
                       connections: InitialConnections): InitialConnections {
   val possibleChanged = scanChanged(graph, previousChanged, mainGroup).toList()
   val (changed, newConnections) = if (possibleChanged.isEmpty()) {
-    val gap = findShortestGap(graph, mainGroup.asSequence(), outerGroup.asSequence())
+
+    val gap = findShortestGap(graph, mainGroup.asSequence(), outerGroup.asSequence(), verticalFilter)
+        ?: findShortestGap(graph, mainGroup.asSequence(), outerGroup.asSequence()) { node, nodes -> nodes }
+
     if (gap == null)
       throw Error("Could not find gap to fill.")
 
-//    println("" + gap.first.index + " " + gap.second.index)
     Pair(listOf(gap.second), connections.plus(InitialConnection(gap.first.id, gap.second.id, ConnectionType.tunnel, FaceType.space)))
   } else {
     Pair(possibleChanged, connections)

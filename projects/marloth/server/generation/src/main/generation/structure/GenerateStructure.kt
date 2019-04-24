@@ -493,12 +493,12 @@ fun cleanupSolidNormals(realm: StructureRealm): StructureRealm {
 }
 
 fun generateStructure(biomeGrid: BiomeGrid, idSources: StructureIdSources, graph: Graph, dice: Dice): StructureRealm {
-//  val initialRealm = createRooms(graph, idSources, dice)
-  val initialRealm = StructureRealm(
-      nodes = graph.nodes,
-      connections = mapOf(),
-      mesh = ImmutableMesh()
-  )
+  val initialRealm = createRooms(graph, idSources, dice)
+//  val initialRealm = StructureRealm(
+//      nodes = graph.nodes,
+//      connections = mapOf(),
+//      mesh = ImmutableMesh()
+//  )
   val roomNodes = graph.nodes
   return pipe(initialRealm, listOf(
 //      { realm -> defineNegativeSpace(idSources, realm, dice) },

@@ -111,8 +111,9 @@ fun getTwinTunnels(graph: Graph, tunnels: List<PreTunnel>): List<PreTunnel> =
 fun cleanupWorld(graph: Graph): Graph {
   val unifyingConnections = unifyWorld(graph)
   val secondConnections = graph.connections.plus(unifyingConnections)
-  val deadEndClosingConnections = closeDeadEnds(graph.copy(connections = secondConnections))
-  return graph.copy(connections = secondConnections.plus(deadEndClosingConnections))
+//  val deadEndClosingConnections = closeDeadEnds(graph.copy(connections = secondConnections))
+//  return graph.copy(connections = secondConnections.plus(deadEndClosingConnections))
+  return graph.copy(connections = secondConnections)
 }
 
 fun applyInitialBiomes(biomeGrid: BiomeGrid, graph: Graph): NodeTable {
@@ -174,8 +175,8 @@ fun generateAbstract(input: WorldInput, scale: Float, biomeGrid: BiomeGrid): Gra
   )
   return pipe(initialGraph, listOf(
       { graph -> cleanupWorld(graph) },
-      { graph -> createAndMixTunnels(graph) },
-      { graph -> graph.copy(nodes = applyInitialBiomes(biomeGrid, graph)) },
-      { graph -> prepareDoorways(graph) }
+//      { graph -> createAndMixTunnels(graph) },
+      { graph -> graph.copy(nodes = applyInitialBiomes(biomeGrid, graph)) }
+//      { graph -> prepareDoorways(graph) }
   ))
 }
