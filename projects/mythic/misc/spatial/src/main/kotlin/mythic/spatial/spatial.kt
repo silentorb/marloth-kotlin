@@ -346,7 +346,7 @@ fun manhattanDistance(a: Vector3, b: Vector3): Float =
 //private val mk = mutableListOf(0, 0, 0, 0, 0)
 
 // Faster than a regular distance check
-fun withinRange(a: Vector3, b: Vector3, range: Float): Boolean {
+fun withinRangeFast(a: Vector3, b: Vector3, range: Float): Boolean {
   val c = java.lang.Math.abs(a.x - b.x)
   if (c > range) {
 //    mk[0]++

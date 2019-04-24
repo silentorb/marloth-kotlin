@@ -51,7 +51,7 @@ fun plusBounded(items: List<BoundedSdf>): RaySdf = { ray ->
   val filtered = items
       .filter {
         val projected = project(it.position)
-        withinRange(projected, it.position, it.radius)
+        withinRangeFast(projected, it.position, it.radius)
       }
       .map { it.sdf }
 //  val filtered = items.take(1).map { it.sdf }

@@ -59,7 +59,7 @@ fun renderFaceIds(renderer: SceneRenderer, realm: Realm, nodes: Collection<Node>
 }
 
 fun renderNodeIds(renderer: SceneRenderer, nodes: Collection<Node>) {
-  globalState.depthEnabled = true
+  globalState.depthEnabled = false
   for (node in nodes) {
     renderer.drawText(node.id.toString(), node.position, LabTextStyles.lessRed)
   }

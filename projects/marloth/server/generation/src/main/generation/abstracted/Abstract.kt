@@ -15,7 +15,9 @@ import mythic.spatial.lineSegmentIntersectsLineSegment
 import randomly.Dice
 import simulation.*
 
-const val minNodeDistance = 1.5f
+const val minInitialNodeDistance = 1.5f
+const val minInitialNodeSize = 5f
+const val maxInitialNodeSize = 10f
 
 fun connections(graph: Graph, node: Node): List<InitialConnection> =
     graph.connections.filter { it.contains(node) }
@@ -46,7 +48,7 @@ fun newNodePosition(boundary: WorldBoundary, nodes: List<Node>, dice: Dice, radi
   var step = 0
   while (true) {
     val position = Vector3(dice.getFloat(start.x, end.x), dice.getFloat(start.y, end.y), 0f)
-    if (nodes.all { getNodeDistance(it, position, radius) > minNodeDistance }) {
+    if (nodes.all { getNodeDistance(it, position, radius) > minInitialNodeDistance }) {
       return position
     }
     if (step++ > 30) {
