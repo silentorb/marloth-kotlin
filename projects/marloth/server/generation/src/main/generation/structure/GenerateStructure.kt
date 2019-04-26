@@ -41,7 +41,7 @@ fun getDoorwayPoints(width: Float, node: Node, other: Node): List<Vector2> {
 
 fun getDoorwayPoints3(width: Float, node: Node, other: Node): List<Vector3> =
     getDoorwayPoints(width, node, other)
-        .map { Vector3(it.x, it.y, 0f) }
+        .map { Vector3(it.x, it.y, node.position.z) }
 
 fun getInnerDoorwayLength(doorFrameWalls: List<Id>, firstNode: Id, secondNode: Id): Float =
     if (doorFrameWalls.contains(firstNode) || doorFrameWalls.contains(secondNode))
@@ -63,7 +63,7 @@ fun createVerticesForOverlappingCircles(node: Node, other: Node, others: List<No
     circleIntersection(node.position.xy(), node.radius, other.position.xy(), other.radius)
         // Only needed for tri-unions
 //        .filter { c -> !others.any { isInsideNodeHorizontally(c, it) } }
-        .map { Vector3(it.x, it.y, 0f) }
+        .map { Vector3(it.x, it.y, node.position.z) }
 
 fun createNodeDoorways(graph: Graph, node: Node): List<List<Vector3>> =
     connections(graph, node)
@@ -80,9 +80,10 @@ fun getGaps(corners: List<NodeCorner>, minAngle: Float) =
         .filter { it.second.angle - it.first.angle > minAngle }
         .map { CornerGap(it.first, it.second, it.second.angle - it.first.angle) }
 
+private val minAngle = Pi * 0.3f
+
 fun fillCornerGaps(unorderedCorners: List<Corner>, node: Node): List<Corner> {
   val corners = mapCorners(unorderedCorners, node).sortedBy { getAngle(node, it.position) }
-  val minAngle = Pi * 0.3f
   val gaps = getGaps(corners, minAngle)
   val newCorners = mutableListOf<Corner>()
   for (gap in gaps) {
@@ -93,6 +94,21 @@ fun fillCornerGaps(unorderedCorners: List<Corner>, node: Node): List<Corner> {
       val position = project2D(angle, node.radius).toVector3() + node.position
       newCorners.add(position)
     }
+  }
+
+  return newCorners
+}
+
+fun createRoomCorners(node: Node): List<Corner> {
+  val newCorners = mutableListOf<Corner>()
+  val count = 6
+  val entropy = node.position.x + node.position.y * 100 + node.position.z * 10000 % 1f
+  val increment = Pi * 2f / count
+  val start = Pi * 2f * entropy
+  for (i in 1..count) {
+    val angle = start + increment * i
+    val position = project2D(angle, node.radius).toVector3() + node.position
+    newCorners.add(position)
   }
 
   return newCorners
@@ -110,8 +126,13 @@ fun withoutClosePoints(corners: List<Corner>): List<Corner> {
 
 fun createSingleNodeStructure(graph: Graph, node: Node): TempSector {
   val doorways = createNodeDoorways(graph, node)
-  val points = withoutClosePoints(doorways.flatten())
-  return TempSector(node, points.plus(fillCornerGaps(points, node)).sortedBy { getAngle(node, it) })
+  val corners = if (doorways.any()) {
+    val points = withoutClosePoints(doorways.flatten())
+    points.plus(fillCornerGaps(points, node)).sortedBy { getAngle(node, it) }
+  } else
+    createRoomCorners(node)
+
+  return TempSector(node, corners)
 }
 
 fun getClusterUnions(connections: InitialConnections, cluster: Cluster): List<InitialConnection> =

@@ -3,8 +3,10 @@ package generation.abstracted
 import simulation.*
 
 import generation.getNodeDistance
+import mythic.spatial.Vector3
 
 const val maxTunnelVerticalRange = 10
+const val maxTunnelDot = 0.96
 
 typealias NodeGroup = List<Node>
 
@@ -58,27 +60,46 @@ val verticalFilter: NodeSequenceTransform = { node, nodes ->
   nodes.filter { Math.abs(it.position.z - node.position.z) < maxTunnelVerticalRange }
 }
 
-tailrec fun scanNodes(graph: Graph, previousChanged: List<Node>, mainGroup: List<Node>, outerGroup: List<Node>,
+private val tunnelAngleFilter: NodeSequenceTransform = { node, nodes ->
+  nodes.filter {
+    val rawVector = it.position - node.position
+    val flatVector = Vector3(rawVector.x, rawVector.y, 0f).normalize()
+    val slopedVector = rawVector.normalize()
+    val dot = flatVector.dot(slopedVector)
+    dot > maxTunnelDot
+  }
+}
+
+tailrec fun scanNodes(graph: Graph, previousChanged: List<Node>, mainGroup: List<Node>, ungrouped: List<Node>,
                       connections: InitialConnections): InitialConnections {
   val possibleChanged = scanChanged(graph, previousChanged, mainGroup).toList()
   val (changed, newConnections) = if (possibleChanged.isEmpty()) {
 
-    val gap = findShortestGap(graph, mainGroup.asSequence(), outerGroup.asSequence(), verticalFilter)
-        ?: findShortestGap(graph, mainGroup.asSequence(), outerGroup.asSequence()) { node, nodes -> nodes }
+    val gap = findShortestGap(graph, mainGroup.asSequence(), ungrouped.asSequence(), tunnelAngleFilter)
+//        ?: findShortestGap(graph, mainGroup.asSequence(), ungrouped.asSequence()) { node, nodes -> nodes }
 
     if (gap == null)
-      throw Error("Could not find gap to fill.")
-
-    Pair(listOf(gap.second), connections.plus(InitialConnection(gap.first.id, gap.second.id, ConnectionType.tunnel, FaceType.space)))
+      Pair(listOf(), connections)
+//      throw Error("Could not find gap to fill.")
+    else
+      Pair(listOf(gap.second), connections.plus(InitialConnection(gap.first.id, gap.second.id, ConnectionType.tunnel, FaceType.space)))
   } else {
     Pair(possibleChanged, connections)
   }
 
-  val nextMainGroup = mainGroup.plus(changed)
-  return if (nextMainGroup.size == graph.nodes.size)
-    newConnections
-  else
-    scanNodes(graph, changed, nextMainGroup, outerGroup.subtract(changed).toList(), newConnections)
+  return if (changed.none()) {
+    if (ungrouped.size > 1) {
+      val nextMainGroup = ungrouped.take(1)
+      scanNodes(graph, nextMainGroup, nextMainGroup, ungrouped.drop(1).toList(), newConnections)
+    } else
+      newConnections
+  } else {
+    val nextMainGroup = mainGroup.plus(changed)
+    if (nextMainGroup.size == graph.nodes.size)
+      newConnections
+    else
+      scanNodes(graph, changed, nextMainGroup, ungrouped.subtract(changed).toList(), newConnections)
+  }
 }
 
 fun unifyWorld(graph: Graph): InitialConnections {
@@ -87,6 +108,6 @@ fun unifyWorld(graph: Graph): InitialConnections {
 
   val first = graph.nodes.values.first()
   val mainGroup = listOf(first)
-  val outerGroup = graph.nodes.values.filter { it !== first }
-  return scanNodes(graph, mainGroup, mainGroup, outerGroup, listOf())
+  val ungrouped = graph.nodes.values.filter { it !== first }
+  return scanNodes(graph, mainGroup, mainGroup, ungrouped, listOf())
 }

@@ -175,7 +175,7 @@ fun generateAbstract(input: WorldInput, scale: Float, biomeGrid: BiomeGrid): Gra
   )
   return pipe(initialGraph, listOf(
       { graph -> cleanupWorld(graph) },
-//      { graph -> createAndMixTunnels(graph) },
+      { graph -> createAndMixTunnels(graph) },
       { graph -> graph.copy(nodes = applyInitialBiomes(biomeGrid, graph)) }
 //      { graph -> prepareDoorways(graph) }
   ))
