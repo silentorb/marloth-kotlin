@@ -11,6 +11,9 @@ import simulation.Biome
 import simulation.Node
 import simulation.WorldBoundary
 
+val worldCellLength = 20
+val maxTunnelLength = worldCellLength.toFloat() * 1.5f
+
 private fun clipFloat(unitLength: Int, value: Float): Int =
     value.toInt() / unitLength
 
@@ -79,23 +82,25 @@ private fun moveNodeAlongAxis(a: Int, position: Vector3, radius: Float, nodes: L
   val cMax = position[c] + padding
 
   val aligned = nodes.filter {
-    it.position[a] < aCenter &&
-        it.position[b] + it.radius > bMin &&
+    it.position[b] + it.radius > bMin &&
         it.position[b] - it.radius < bMax &&
         it.position[c] + it.radius > cMin &&
         it.position[c] - it.radius < cMax
   }
-      .map { it.position[a] }
 
-  val minWall = aligned.filter {
-    it < aCenter
-  }
+  val minWall = aligned
+      .filter {
+        it.position[a] < aCenter
+      }
+      .map { it.position[a] + it.radius }
       .sortedByDescending { it }
       .firstOrNull()
 
-  val maxWall = aligned.filter {
-    it > aCenter
-  }
+  val maxWall = aligned
+      .filter {
+        it.position[a] > aCenter
+      }
+      .map { it.position[a] - it.radius }
       .sortedBy { it }
       .firstOrNull()
 
@@ -103,12 +108,12 @@ private fun moveNodeAlongAxis(a: Int, position: Vector3, radius: Float, nodes: L
   val freeRangeMax = position[a] + moveRange
 
   val min = if (minWall != null)
-    Math.max(freeRangeMin, minWall)
+    Math.max(freeRangeMin, minWall + radius + minInitialNodeDistance)
   else
     freeRangeMin
 
   val max = if (maxWall != null)
-    Math.min(freeRangeMax, maxWall)
+    Math.min(freeRangeMax, maxWall - radius - minInitialNodeDistance)
   else
     freeRangeMax
 
@@ -142,13 +147,12 @@ private fun moveNodes(nodes: MutableList<Node>, moveRange: Float, dice: Dice) {
 }
 
 fun distributeNodes(boundary: WorldBoundary, count: Int, dice: Dice): List<Node> {
-  val cellLength = 20
-  val cellDimensions = clipDimensions(cellLength, boundary.dimensions)
+  val cellDimensions = clipDimensions(worldCellLength, boundary.dimensions)
   val dimensionsUnit = Vector3(
       cellDimensions.x.toFloat(),
       cellDimensions.y.toFloat(),
       cellDimensions.z.toFloat()
-  ) * cellLength.toFloat() * 0.5f
+  ) * worldCellLength.toFloat() * 0.5f
 
   val cellCount = cellDimensions.x * cellDimensions.y * cellDimensions.z
 //  val matrix: MutableList<Long?> = MutableList(cellCount) { null }
@@ -158,7 +162,7 @@ fun distributeNodes(boundary: WorldBoundary, count: Int, dice: Dice): List<Node>
   val nodes = mutableListOf<Node>()
 
   for (i in 0 until cellCount) {
-    val position = getPosition(cellDimensions, i) * cellLength.toFloat()
+    val position = getPosition(cellDimensions, i) * worldCellLength.toFloat()
     val distanceUnit = (position / dimensionsUnit).length()
     if (distanceUnit > 1f)
       continue
@@ -180,6 +184,6 @@ fun distributeNodes(boundary: WorldBoundary, count: Int, dice: Dice): List<Node>
     }
   }
 
-  moveNodes(nodes, cellLength * 0.5f, dice)
+  moveNodes(nodes, worldCellLength * 0.5f, dice)
   return nodes
 }

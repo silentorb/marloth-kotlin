@@ -21,8 +21,8 @@ data class WorldBoundary(
 fun createWorldBoundary(length: Float): WorldBoundary {
   val half = length / 2f
   return WorldBoundary(
-      Vector3(-half, -half, -half * 0.5f),
-      Vector3(half, half, half * 0.5f)
+      Vector3(-half, -half, -half * 0.75f),
+      Vector3(half, half, half * 0.75f)
   )
 }
 

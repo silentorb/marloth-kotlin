@@ -15,6 +15,7 @@ data class NearestNodeResult(val node: Node, val distance: Float)
 fun getNeighborsByDistance(node: Node, nodes: Sequence<Node>) = nodes.asSequence()
     .filter { it !== node }
     .map { NearestNodeResult(it, getNodeDistance(node, it)) }
+    .filter {it.distance <= maxTunnelLength}
     .toList()
     .sortedBy { it.distance }
 
@@ -73,7 +74,7 @@ private val tunnelAngleFilter: NodeSequenceTransform = { node, nodes ->
 //      println("${it.id} ${node.id} ${dot}")
 //    }
 
-    val c = 6L
+    val c = 7L
     val d = 10L
     if ((it.id == c && node.id == d) || (it.id == d && node.id == c)) {
       val k = 0

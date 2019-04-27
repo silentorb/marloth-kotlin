@@ -26,11 +26,14 @@ private fun faceInfo(realm: Realm, id: Id): FlowerOld {
     return emptyFlower
 
   val face = realm.mesh.faces[id]!!
-
-  val rows = listOf(
+  val firstNode = realm.nodeTable[connection.firstNode]
+  val secondNode = realm.nodeTable[connection.secondNode]
+  val rows = listOfNotNull(
       id.toString(),
       connection.texture?.name ?: "no texture",
       "nodes: ${connection.firstNode}, ${connection.secondNode}",
+      if (firstNode != null) "${firstNode.radius} ${firstNode.position}" else null,
+      if (secondNode != null) "${secondNode.radius} ${secondNode.position}" else null,
       "neighbors: "
   )
       .plus(face.neighbors.map { "  ${it.id} ${realm.faces[it.id]!!.faceType}" })
