@@ -6,7 +6,7 @@ import generation.getNodeDistance
 import mythic.spatial.Vector3
 
 const val maxTunnelVerticalRange = 10
-const val maxTunnelDot = 0.96
+const val maxTunnelDot = 0.5
 
 typealias NodeGroup = List<Node>
 
@@ -23,14 +23,9 @@ data class NodeGap(val first: Node, val second: Node, val distance: Float)
 typealias NodeSequenceTransform = (Node, Sequence<Node>) -> Sequence<Node>
 
 fun findNearestGap(graph: Graph, node: Node, nodes: Sequence<Node>, filter: NodeSequenceTransform): NodeGap? {
-//  val withinHeightRange = nodes
-//      .filter { Math.abs(it.position.z - node.position.z) < maxTunnelVerticalRange }
-
   val filteredNodes = filter(node, nodes)
-
   val neighbors = getNeighborsByDistance(node, filteredNodes)
       .filter { !isConnected(graph, it.node, node) }
-
   val nearest = neighbors
       .firstOrNull()
 
@@ -60,13 +55,30 @@ val verticalFilter: NodeSequenceTransform = { node, nodes ->
   nodes.filter { Math.abs(it.position.z - node.position.z) < maxTunnelVerticalRange }
 }
 
+private val upVector = Vector3(0f, 0f, 1f)
+
 private val tunnelAngleFilter: NodeSequenceTransform = { node, nodes ->
   nodes.filter {
+    // TODO: This math can be simplified a lot for better performance.
     val rawVector = it.position - node.position
-    val flatVector = Vector3(rawVector.x, rawVector.y, 0f).normalize()
-    val slopedVector = rawVector.normalize()
-    val dot = flatVector.dot(slopedVector)
-    dot > maxTunnelDot
+    val initialVector = Vector3(rawVector.x, rawVector.y, 0f).normalize()
+    val a = it.position - initialVector * it.radius
+    val b = node.position + initialVector * it.radius
+    val slopeVector = (a - b).normalize()
+    val dot = Math.abs(upVector.dot(slopeVector))
+//    if (dot < maxTunnelDot) {
+//      if (it.id == 4L) {
+//        val k = 0
+//      }
+//      println("${it.id} ${node.id} ${dot}")
+//    }
+
+    val c = 6L
+    val d = 10L
+    if ((it.id == c && node.id == d) || (it.id == d && node.id == c)) {
+      val k = 0
+    }
+    dot < maxTunnelDot
   }
 }
 

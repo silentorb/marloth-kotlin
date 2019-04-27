@@ -9,7 +9,7 @@ import org.joml.Vector2i
 import simulation.Node
 import simulation.Realm
 
-private val textStyle = TextStyles.gray
+private val textStyle = TextStyles.smallGray
 
 private val selectedTextStyle = TextStyles.smallWhite
 

@@ -32,7 +32,7 @@ fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: AdvancedMo
   var row = 1
 
   fun drawText(content: String) {
-    canvas.drawText(bounds.position + Vector2i(5, 5 + row++ * 20), TextStyles.smallBlack, content)
+    canvas.drawText(bounds.position + Vector2i(5, 5 + row++ * 20), TextStyles.mediumBlack, content)
   }
   drawText("Mouse: " + mousePosition.x.toString() + ", " + mousePosition.y.toString())
 //  canvas.drawText(TextConfiguration("Mouse: " + mousePosition.x.toString() + ", " + mousePosition.y.toString(),

@@ -1,6 +1,6 @@
 package lab.views.shared
 
-import marloth.clienting.gui.mainFontSize
+import marloth.clienting.gui.smallFontSize
 import mythic.spatial.Vector4
 import mythic.typography.IndexedTextStyle
 
@@ -11,7 +11,7 @@ class LabTextStyles {
 
     val lessRed = IndexedTextStyle(
         0,
-        mainFontSize,
+        smallFontSize,
         color = lessRedColor
     )
 

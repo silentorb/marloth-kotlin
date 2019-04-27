@@ -19,16 +19,30 @@ val baseFonts = listOf(
 
 val mainFontSize = 36
 
+val smallFontSize = 22
+
 class TextStyles {
   companion object {
 
     val smallBlack = IndexedTextStyle(
         0,
-        mainFontSize,
+        smallFontSize,
         color = black
     )
 
     val smallWhite = IndexedTextStyle(
+        0,
+        smallFontSize,
+        color = white
+    )
+
+    val mediumBlack = IndexedTextStyle(
+        0,
+        mainFontSize,
+        color = black
+    )
+
+    val mediumWhite = IndexedTextStyle(
         0,
         mainFontSize,
         color = white
@@ -37,6 +51,12 @@ class TextStyles {
     val gray = IndexedTextStyle(
         0,
         mainFontSize,
+        color = grayColor
+    )
+
+    val smallGray = IndexedTextStyle(
+        0,
+        smallFontSize,
         color = grayColor
     )
   }
