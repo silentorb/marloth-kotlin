@@ -158,10 +158,23 @@ fun getFloor(face: ImmutableFace): ImmutableEdgeReference {
   return if (horizontalEdges.any()) {
     horizontalEdges
         .firstSortedBy { it.first.z + it.second.z }
-
   } else {
     val center = getCenter(face.vertices)
     face.edges
         .firstSortedBy { (it.middle - center).normalize().z }
+  }
+}
+
+fun getCeiling(face: ImmutableFace): ImmutableEdgeReference {
+  val horizontalEdges = face.edges
+      .filter(isHorizontalEdge)
+
+  return if (horizontalEdges.any()) {
+    horizontalEdges
+        .firstSortedBy { -(it.first.z + it.second.z) }
+  } else {
+    val center = getCenter(face.vertices)
+    face.edges
+        .firstSortedBy { -(it.middle - center).normalize().z }
   }
 }

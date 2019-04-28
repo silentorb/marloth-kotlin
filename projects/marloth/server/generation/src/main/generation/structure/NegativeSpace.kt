@@ -190,20 +190,19 @@ fun newSpaceNode(idSources: StructureIdSources, realm: StructureRealm, walls: Li
   val a = getEndEdgeReversed(walls, 0)
   val b = getEndEdge(walls, 0)
 
-//  if (walls.map { it.id }.contains(1090L)) {
-//    val k = 0
-//  }
   assert(walls.size > 2 || (walls.size > 1 && a != b))
 
-  val edges = walls.flatMap { face ->
-    face.edges
-        .filter(isVerticalEdge)
-        .map { it.edge }
-  }.distinct()
+  val floorVertices = walls
+      .flatMap { getFloor(it).vertices }
+      .distinct()
 
-  val floorVertices = edges.map { edge -> edge.vertices.sortedBy { it.z }.first() }
-  val ceilingVertices = edges.map { edge -> edge.vertices.sortedBy { it.z }.last() }
+  val ceilingVertices = walls
+      .flatMap { getCeiling(it).vertices }
+      .distinct()
+
   assert(hasNoDuplicates(floorVertices))
+  assert(hasNoDuplicates(ceilingVertices))
+
   val sectorCenter = getCenter(floorVertices)
   val flatCenter = sectorCenter.xy()
 
