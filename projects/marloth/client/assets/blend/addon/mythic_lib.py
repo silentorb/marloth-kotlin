@@ -142,13 +142,11 @@ class MainMythicMenu(bpy.types.Menu):
 
 
 def append_mythic_menu(self, context):
-    print('appending')
     layout = self.layout
     layout.menu("mythic_menu_main")
 
 
 def append_mythic_menu(self, context):
-    print('appending')
     layout = self.layout
     layout.menu("mythic_menu_main")
 
@@ -165,7 +163,6 @@ original_main_menu_function = None
 
 
 def main_menu_wrapper(layout, context):
-    print('appending')
     original_main_menu_function(layout, context)
     layout.menu("mythic_menu_main")
 

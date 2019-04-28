@@ -151,7 +151,7 @@ data class ImmutableMesh(
     if (id == 41L) {
       val k = 0
     }
-    assert(vertices.distinct().size == vertices.size) // Check for duplicate vertices
+    assert(hasNoDuplicates(vertices))
     val face = ImmutableFace(
         id = id,
         normal = getNormal(vertices)
@@ -210,3 +210,6 @@ fun calculateNormals(mesh: ImmutableMesh): ImmutableMesh {
       }
   )
 }
+
+fun hasNoDuplicates(vertices: List<Vector3>) =
+    vertices.distinct().size == vertices.size

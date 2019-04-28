@@ -2,9 +2,12 @@ package simulation
 
 import mythic.ent.Entity
 import mythic.ent.Id
+import mythic.ent.firstSortedBy
+import mythic.sculpting.ImmutableEdgeReference
 import mythic.sculpting.ImmutableFace
 import mythic.sculpting.ImmutableMesh
 import mythic.spatial.Vector3
+import mythic.spatial.getCenter
 import physics.voidNodeId
 import randomly.Dice
 import scenery.Textures
@@ -140,7 +143,25 @@ fun getOtherNode(id: Id, info: ConnectionFace): Id? {
 fun getNode(realm: Realm, id: Id) =
     realm.nodeList.firstOrNull { it.id == id }
 
-fun getFloor(face: ImmutableFace) =
-    face.edges.filter { it.first.z == it.second.z }
-        .sortedBy { it.first.z }
-        .first()
+val isVerticalEdge = { edge: ImmutableEdgeReference ->
+  val horizontal = Vector3(edge.first.x - edge.second.x, edge.first.y - edge.second.y, 0f).length()
+  val vertical = Math.abs(edge.first.z - edge.second.z)
+  vertical > horizontal
+}
+
+val isHorizontalEdge = { edge: ImmutableEdgeReference -> !isVerticalEdge(edge) }
+
+fun getFloor(face: ImmutableFace): ImmutableEdgeReference {
+  val horizontalEdges = face.edges
+      .filter(isHorizontalEdge)
+
+  return if (horizontalEdges.any()) {
+    horizontalEdges
+        .firstSortedBy { it.first.z + it.second.z }
+
+  } else {
+    val center = getCenter(face.vertices)
+    face.edges
+        .firstSortedBy { (it.middle - center).normalize().z }
+  }
+}

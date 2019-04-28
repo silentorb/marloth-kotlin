@@ -196,13 +196,14 @@ fun newSpaceNode(idSources: StructureIdSources, realm: StructureRealm, walls: Li
   assert(walls.size > 2 || (walls.size > 1 && a != b))
 
   val edges = walls.flatMap { face ->
-    face.edges.filter { edge ->
-      edge.first.z != edge.second.z
-    }.map { it.edge }
+    face.edges
+        .filter(isVerticalEdge)
+        .map { it.edge }
   }.distinct()
 
   val floorVertices = edges.map { edge -> edge.vertices.sortedBy { it.z }.first() }
   val ceilingVertices = edges.map { edge -> edge.vertices.sortedBy { it.z }.last() }
+  assert(hasNoDuplicates(floorVertices))
   val sectorCenter = getCenter(floorVertices)
   val flatCenter = sectorCenter.xy()
 
@@ -453,8 +454,7 @@ fun fillIncompleteGroup(realm: StructureRealm, incomplete: Set<Id>, idSources: S
         val k = 0
       }
       newConnections = newConnections.plus(updatedConnections.keys)
-    }
-    else {
+    } else {
       throw Error("Could not find a valid wall chain.")
     }
 
@@ -475,16 +475,7 @@ fun defineNegativeSpace(idSources: StructureIdSources, realm: StructureRealm, di
   val incomplete = realm.connections.filterKeys(isIncompleteWall(realm.connections)).keys
   val groups = groupIncompleteFaces(realm.mesh.faces, incomplete)
   var currentRealm = realm
-//      .copy(
-//      connections = realm.connections.mapValues {
-//        if (incomplete.contains(it.key))
-//          it.value.copy(
-//              debugInfo = "incomplete"
-//          )
-//        else
-//          it.value
-//      }
-//  )
+
   for (group in groups) {
     currentRealm = fillIncompleteGroup(currentRealm, group, idSources)
   }
