@@ -70,7 +70,7 @@ class WorldView(val config: WorldViewConfig, val realm: Realm?, val renderer: Re
     return if (realm != null)
       createMapLayout(realm, dimensions, config, renderer)
     else
-      emptyFlower
+      emptyFlowerOld
   }
 
   fun getCommands(): LabCommandMap = mapOf(

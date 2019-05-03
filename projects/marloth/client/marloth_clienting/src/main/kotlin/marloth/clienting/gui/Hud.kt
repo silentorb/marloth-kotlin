@@ -72,7 +72,7 @@ fun interactionDialog(textResources: TextResources, interactable: Interactable):
 }
 
 fun hudLayout(textResources: TextResources, data: HudData): Flower {
-  return groupFlowers(listOfNotNull(
+  return overlay(listOfNotNull(
       playerStats(data),
       if (data.interactable != null) interactionDialog(textResources, data.interactable) else null
   ))

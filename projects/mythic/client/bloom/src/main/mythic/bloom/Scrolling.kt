@@ -1,5 +1,7 @@
 package mythic.bloom
 
+import mythic.bloom.accumulatedBounds
+import mythic.bloom.next.*
 import mythic.spatial.*
 import org.joml.Vector2i
 
@@ -92,35 +94,36 @@ fun scrollingInteraction(key: String, contentBounds: Bounds): LogicModule = { (b
   }
 }
 
-fun scrollBox(key: String, contentBounds: Bounds): FlowerOld = { seed ->
-  newBlossom(
-      FlatBox(
-          bounds = seed.bounds,
-          depiction = scrollbar(scrollingState(seed.bag[key]).offset, contentBounds.dimensions.y),
-          logic = scrollingInteraction(key, contentBounds)
-      )
+fun scrollBox(key: String, contentBounds: Bounds): Flower = { seed ->
+  Box(
+      bounds = Bounds(dimensions = seed.dimensions),
+      depiction = scrollbar(scrollingState(seed.bag[key]).offset, contentBounds.dimensions.y),
+      logic = scrollingInteraction(key, contentBounds)
   )
 }
 
-fun scrolling(key: String): (FlowerOld) -> FlowerOld = { child ->
+fun scrolling(key: String): (Flower) -> Flower = { child ->
   { seed ->
     val innerSeed = seed.copy(
-        bounds = seed.bounds.copy(
-            dimensions = Vector2i(
-                seed.bounds.dimensions.x - scrollbarWidth,
-                seed.bounds.dimensions.y
-            )
+        dimensions = Vector2i(
+            seed.dimensions.x - scrollbarWidth,
+            seed.dimensions.y
         )
     )
-    val blossom = withOffset(child)(extractOffset(key, seed.bag))(innerSeed)
-    val childBoxes = blossom.boxes
-        .map(clipBox(innerSeed.bounds))
-    if (childBoxes.any()) {
-      val contentBounds = accumulatedBounds(childBoxes)
-      scrollBox(key, contentBounds)(seed)
-          .plus(childBoxes)
+//    val blossom = withOffset(child)(extractOffset(key, seed.bag))(innerSeed)
+    val offset = extractOffset(key, seed.bag)
+    val box = margin(top = offset.y)(child)(innerSeed)
+    if (box.boxes.any()) {
+//      val childBoxes = box.boxes
+//          .map(clipBox(innerSeed.bounds))
+      val contentBounds = accumulatedBounds(box.boxes)
+      val result = scrollBox(key, contentBounds)(seed)
+      result.copy(
+          boxes = result.boxes.plus(box)
+      )
+
     } else {
-      emptyBlossom
+      emptyBox
     }
   }
 }

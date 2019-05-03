@@ -38,12 +38,10 @@ val emptyBlossom =
         bounds = emptyBounds
     )
 
-operator fun FlowerOld.plus(b: FlowerOld): FlowerOld = { seed ->
-  this(seed) + b(seed)
-}
+//fun FlowerOld.plus(b: FlowerOld): FlowerOld = { seed ->
+//  this(seed) + b(seed)
+//}
 
-fun addFlowersOld(flowers: List<FlowerOld>) =
-    flowers.reduce { a, b -> a.plus(b) }
 
 fun depict(depiction: StateDepiction): FlowerOld = { s ->
   newBlossom(FlatBox(
@@ -74,4 +72,4 @@ inline fun <reified T> existingOrNewState(key: String, crossinline initializer: 
     initializer()
 }
 
-val emptyFlower: FlowerOld = { emptyBlossom }
+val emptyFlowerOld: FlowerOld = { emptyBlossom }

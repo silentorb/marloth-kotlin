@@ -2,6 +2,7 @@ package mythic.bloom.next
 
 import mythic.bloom.*
 import org.joml.Vector2i
+import org.joml.minus
 import org.joml.plus
 
 private val emptyBoxList: List<Box> = listOf()
@@ -33,6 +34,14 @@ typealias ReverseLayout = (Vector2i, Bounds, Bounds) -> Bounds
 private val forwardPass: ForwardLayout = { Bounds(dimensions = it) }
 private val reversePass: ReverseLayout = { _, bounds, _ -> bounds }
 
+val emptyBox = Box(
+    bounds = Bounds(
+        dimensions = Vector2i()
+    )
+)
+
+val emptyFlower: Flower = { emptyBox }
+
 fun div(name: String = "",
         forward: ForwardLayout = forwardPass,
         reverse: ReverseLayout = reversePass,
@@ -56,7 +65,14 @@ fun div(name: String = "",
   }
 }
 
-fun groupFlowers(flowers: List<Flower>): Flower = { seed ->
+fun overlay(flowers: List<Flower>): Flower = { seed ->
+  Box(
+      bounds = Bounds(dimensions = seed.dimensions),
+      boxes = flowers.map { it(seed) }
+  )
+}
+
+fun overlay(vararg flowers: Flower): Flower = { seed ->
   Box(
       bounds = Bounds(dimensions = seed.dimensions),
       boxes = flowers.map { it(seed) }
@@ -97,28 +113,7 @@ fun fixedOffset(offset: Vector2i): ForwardLayout = { container ->
 }
 
 fun fixed(value: Int): PlanePositioner = { plane -> { value } }
-/*
-fun forwardBox(left: PlanePositioner? = null,
-               top: PlanePositioner? = null,
-               width: PlanePositioner? = null,
-               height: PlanePositioner? = null): ForwardLayout = { container ->
-  val position = Vector2i(
-      if (left != null) left(horizontalPlaneMap)(container) else 0,
-      if (top != null) top(verticalPlaneMap)(container) else 0
-  )
 
-  val dimensions = Vector2i(
-      x = if (width != null) width(horizontalPlaneMap)(container) else container.x,
-      y = if (height != null) height(verticalPlaneMap)(container) else container.y
-  )
-  val newDimensions = clippedDimensions(container, position, dimensions)
-
-  Bounds(
-      position = position,
-      dimensions = newDimensions
-  )
-}
-*/
 fun forwardOffset(left: PlanePositioner? = null,
                   top: PlanePositioner? = null): ForwardLayout = { container ->
   val position = Vector2i(
@@ -199,3 +194,10 @@ fun margin(all: Int = 0, left: Int = all, top: Int = all, bottom: Int = all, rig
       )
     }
 )
+
+fun accumulatedBounds(boxes: List<Box>): Bounds {
+  assert(boxes.any())
+  val start = boxes.first().bounds.position
+  val end = boxes.sortedByDescending { it.bounds.end.y }.first().bounds.end
+  return Bounds(start, end - start)
+}

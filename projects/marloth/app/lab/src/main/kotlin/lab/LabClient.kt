@@ -134,7 +134,7 @@ class LabClient(val config: LabConfig, val client: Client) {
       updateMapState(config.mapView, world.realm, input, windowInfo, state.app.client.bloomState, delta)
       mapLayout(client, world.realm, config.mapView)
     } else
-      emptyFlower
+      emptyFlowerOld
 
     val seed = SeedOld(
         bag = state.app.client.bloomState.bag,

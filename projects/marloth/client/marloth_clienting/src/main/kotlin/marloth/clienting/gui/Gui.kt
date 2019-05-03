@@ -8,8 +8,7 @@ import marloth.clienting.isGuiActive
 import mythic.bloom.*
 import mythic.bloom.ButtonState
 import mythic.bloom.next.Flower
-import mythic.bloom.next.flattenBoxes
-import mythic.bloom.next.groupFlowers
+import mythic.bloom.next.overlay
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
 import mythic.glowing.globalState
@@ -91,7 +90,7 @@ fun viewSelect(textResources: TextResources, world: World?, view: ViewId): Flowe
 
 fun guiLayout(client: Client, clientState: ClientState, world: World?, hudData: HudData?): Flower {
   val bloomState = clientState.bloomState
-  return groupFlowers(listOfNotNull(
+  return overlay(listOfNotNull(
       if (hudData != null) hudLayout(client.textResources, hudData) else null,
       viewSelect(client.textResources, world, clientState.view)
   ))

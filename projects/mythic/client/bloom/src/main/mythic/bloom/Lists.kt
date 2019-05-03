@@ -7,7 +7,7 @@ import org.joml.minus
 import org.joml.plus
 
 typealias FixedChildArranger = (Bounds) -> List<Bounds>
-typealias ParentFlower = (List<FlowerOld>) -> FlowerOld
+typealias ParentFlower = (List<Flower>) -> Flower
 typealias ItemFlower<T> = (T) -> FlowerOld
 
 data class ListItem<T>(
@@ -57,27 +57,6 @@ fun listOld(plane: Plane, padding: Int): (List<FlowerOld>) -> FlowerOld = { chil
           ))
           blossom.boxes
         },
-        bounds = emptyBounds
-    )
-  }
-}
-
-fun <T> listOld(arranger: ChildArranger<T>): ListFlower<T> = { items ->
-  { seed ->
-    val (_, flowers, itemBounds) = arranger(seed.bounds, items)
-    Blossom(
-        boxes = applyBounds(seed.bag, flowers, itemBounds),
-        bounds = emptyBounds
-    )
-  }
-}
-
-fun <T> listOld(arrangement: LengthArrangement, listItem: ListItem<T>): ListFlower<T> = { items ->
-  { b ->
-    val lengths = items.map { listItem.length }
-    val flowers = items.map(listItem.itemFlower)
-    Blossom(
-        boxes = applyBounds(b.bag, flowers, arrangement(b.bounds, lengths)),
         bounds = emptyBounds
     )
   }

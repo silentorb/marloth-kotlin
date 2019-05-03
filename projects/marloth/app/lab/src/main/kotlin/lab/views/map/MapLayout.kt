@@ -3,6 +3,9 @@ package lab.views.map
 import marloth.clienting.Client
 import marloth.clienting.gui.TextStyles
 import mythic.bloom.*
+import mythic.bloom.next.Flower
+import mythic.bloom.next.emptyFlower
+import mythic.bloom.next.overlay
 
 import mythic.ent.Id
 import org.joml.Vector2i
@@ -17,10 +20,10 @@ private val mainPanel: ParentFlower =
 //    fixedList(horizontal, 0, listOf(null, 250))
     fixedList(horizontalPlane, 0, listOf(null, 350))
 
-private fun mapDisplay(client: Client, realm: Realm, config: MapViewConfig): FlowerOld =
+private fun mapDisplay(client: Client, realm: Realm, config: MapViewConfig): Flower =
     depict(renderMapView(client, realm, config)) + logic(onClick("clickMap"))
 
-private fun faceInfo(realm: Realm, id: Id): FlowerOld {
+private fun faceInfo(realm: Realm, id: Id): Flower {
   val connection = realm.faces[id]
   if (connection == null)
     return emptyFlower
@@ -47,7 +50,7 @@ private fun faceInfo(realm: Realm, id: Id): FlowerOld {
   )
 }
 
-private fun infoPanel(realm: Realm, config: MapViewConfig): FlowerOld =
+private fun infoPanel(realm: Realm, config: MapViewConfig): Flower =
     when {
       config.selection.any() -> faceInfo(realm, config.selection.first())
       else -> emptyFlower
@@ -69,23 +72,28 @@ private val nodeRow: ListItem<Node> = ListItem(20) { node ->
 
 const val nodeListSelectionKey = "nodeList-selection"
 
-private val nodeList: ListFlower<Node> = wrap(
-    scrolling("nodeList-scrolling"),
-    listOld(
-        children(lengthArranger(verticalPlane, 15), nodeRow),
-        selectable(nodeListSelectionKey, optionalSingleSelection) { it.id.toString() }
-    )
-)
+private val nodeListSelectable = selectable(nodeListSelectionKey, optionalSingleSelection)
 
-private fun rightPanel(realm: Realm, config: MapViewConfig): FlowerOld =
-    fixedList(verticalPlane, 10, listOf(400, null))(listOf(
+private fun nodeList(nodes: List<Node>): Flower =
+    scrolling("nodeList-scrolling")(
+        list(
+            children(lengthArranger(verticalPlane, 15), nodeRow),
+            nodeListSelectable{ it.id.toString() }
+        )
+    )
+
+private fun rightPanel(realm: Realm, config: MapViewConfig): Flower =
+    list(verticalPlane, 10)(listOf(
         scrolling("infoPanel-scrolling")(infoPanel(realm, config)),
         nodeList(realm.nodeList)
     ))
 
-fun mapLayout(client: Client, realm: Realm, config: MapViewConfig): FlowerOld {
+fun mapLayout(client: Client, realm: Realm, config: MapViewConfig): Flower {
+//  return list(verticalPlane, 0)(listOf(
   return mainPanel(listOf(
       mapDisplay(client, realm, config),
       rightPanel(realm, config)
   ))
+//  ))
+
 }
