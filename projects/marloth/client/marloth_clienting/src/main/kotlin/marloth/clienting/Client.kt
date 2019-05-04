@@ -15,12 +15,12 @@ import mythic.aura.AudioState
 import mythic.aura.SoundLibrary
 import mythic.aura.newAudioState
 import mythic.bloom.*
+import mythic.bloom.next.Box
 
 import mythic.drawing.setGlobalFonts
 import mythic.ent.pipe
 import mythic.platforming.Platform
 import mythic.spatial.Vector3
-import mythic.typography.FontLoadInfo
 import mythic.typography.extractFontSets
 import rendering.DisplayConfig
 import rendering.Renderer
@@ -126,7 +126,7 @@ fun updateClientInput(client: Client): (ClientState) -> ClientState = { state ->
   )
 }
 
-fun updateClient(client: Client, players: List<Int>, boxes: FlatBoxes): (ClientState) -> ClientState = { clientState ->
+fun updateClient(client: Client, players: List<Int>, box: Box): (ClientState) -> ClientState = { clientState ->
   //  updateMousePointerVisibility(client.platform)
   val bindingContext = bindingContext(clientState)
   val getBinding = getBinding(clientState.input, clientState.input.guiInputProfiles)
@@ -136,7 +136,7 @@ fun updateClient(client: Client, players: List<Int>, boxes: FlatBoxes): (ClientS
 
   val bloomInputState = newBloomInputState(deviceStates.last())
       .copy(events = haftToBloom(commands))
-  val bloomState = updateBloomState(boxes, clientState.bloomState, bloomInputState)
+  val bloomState = updateBloomState(box, clientState.bloomState, bloomInputState)
 
   val allCommands = commands
       .plus(menuCommands(bloomState.bag).map { simpleCommand(it, players.first()) })

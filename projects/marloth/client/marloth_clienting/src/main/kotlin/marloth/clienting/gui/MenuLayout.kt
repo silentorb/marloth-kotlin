@@ -88,32 +88,32 @@ fun menuFocusIndex(bag: StateBag): Int =
 fun menuLogic(menu: Menu): LogicModule =
     menuFocusIndexLogic(menu) + menuNavigationLogic(menu) + menuCommandLogic(menu)
 
-fun menuFlowerOld(textResources: TextResources, menu: Menu): FlowerOld = { seed ->
-  val buttonHeight = 50
-  val items = menu
-      .mapIndexed { index, it ->
-        val content = textResources[it.text]!!
-        PartialBox(buttonHeight, drawMenuButton(
-            ButtonState(content, menuFocusIndex(seed.bag) == index)
-        ))
-      }
-
-  val itemLengths = items.map { it.length }
-  val menuHeight = listContentLength(10, itemLengths)
-  val menuBounds = centeredBounds(seed.bounds, Vector2i(200, menuHeight))
-  val menuPadding = 10
-
-  Blossom(
-      boxes = listOf(FlatBox(
-          bounds = menuBounds,
-          depiction = menuBackground,
-          logic = menuLogic(menu)
-      ))
-          .plus(arrangeListComplex(lengthArranger(verticalPlane, menuPadding), items, menuBounds)),
-      bounds = emptyBounds
-  )
-
-}
+//fun menuFlowerOld(textResources: TextResources, menu: Menu): FlowerOld = { seed ->
+//  val buttonHeight = 50
+//  val items = menu
+//      .mapIndexed { index, it ->
+//        val content = textResources[it.text]!!
+//        PartialBox(buttonHeight, drawMenuButton(
+//            ButtonState(content, menuFocusIndex(seed.bag) == index)
+//        ))
+//      }
+//
+//  val itemLengths = items.map { it.length }
+//  val menuHeight = listContentLength(10, itemLengths)
+//  val menuBounds = centeredBounds(seed.bounds, Vector2i(200, menuHeight))
+//  val menuPadding = 10
+//
+//  Blossom(
+//      boxes = listOf(FlatBox(
+//          bounds = menuBounds,
+//          depiction = menuBackground,
+//          logic = menuLogic(menu)
+//      ))
+//          .plus(arrangeListComplex(lengthArranger(verticalPlane, menuPadding), items, menuBounds)),
+//      bounds = emptyBounds
+//  )
+//
+//}
 
 private val buttonDimensions = Vector2i(200, 50)
 

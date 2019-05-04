@@ -1,5 +1,7 @@
 package mythic.glowing
 
+import mythic.spatial.Vector2
+import mythic.spatial.Vector4
 import org.lwjgl.opengl.GL11.*
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer

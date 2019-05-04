@@ -214,7 +214,7 @@ val centered: ReversePlanePositioner = { plane ->
   }
 }
 
-fun fixed(value: Int): ReversePlanePositioner = { plane ->
+fun fixedReverse(value: Int): ReversePlanePositioner = { plane ->
   { _, _, _ ->
     value
   }

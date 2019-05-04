@@ -1,5 +1,9 @@
 package mythic.bloom
 
+import mythic.bloom.next.Box
+import mythic.bloom.next.Flower
+import mythic.bloom.next.Seed
+
 fun maxBounds(a: Bounds, b: Bounds): Bounds {
   val x1 = Math.min(a.position.x, b.position.x)
   val y1 = Math.min(a.position.y, b.position.y)
@@ -43,17 +47,29 @@ val emptyBlossom =
 //}
 
 
-fun depict(depiction: StateDepiction): FlowerOld = { s ->
+fun depictOld(depiction: StateDepictionOld): FlowerOld = { s ->
   newBlossom(FlatBox(
       bounds = s.bounds,
       depiction = depiction(s)
   ))
 }
 
-fun depict(depiction: Depiction): FlowerOld =
-    depict { s: SeedOld -> depiction }
+fun depictOld(depiction: Depiction): FlowerOld =
+    depictOld { s: SeedOld -> depiction }
 
-typealias StateDepiction = (SeedOld) -> Depiction
+fun depict(depiction: StateDepiction): Flower = { seed ->
+  Box(
+      bounds = Bounds(dimensions = seed.dimensions),
+      depiction = depiction(seed)
+  )
+}
+
+fun depict(depiction: Depiction): Flower =
+    depict { s: Seed -> depiction }
+
+typealias StateDepictionOld = (SeedOld) -> Depiction
+
+typealias StateDepiction = (Seed) -> Depiction
 
 inline fun <reified T> existingOrNewState(crossinline initializer: () -> T): (Any?) -> T = { state ->
   if (state is T)

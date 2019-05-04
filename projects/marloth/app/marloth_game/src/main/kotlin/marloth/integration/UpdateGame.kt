@@ -8,10 +8,12 @@ import marloth.clienting.gui.layoutGui
 import marloth.clienting.input.GuiCommandType
 import marloth.front.GameApp
 import marloth.front.RenderHook
-import mythic.bloom.FlatBoxes
+import mythic.bloom.next.Box
+import mythic.bloom.toAbsoluteBounds
 import mythic.ent.pipe
 import mythic.platforming.WindowInfo
 import mythic.quartz.updateTimestep
+import org.joml.Vector2i
 import persistence.Database
 import persistence.createVictory
 import physics.newBulletState
@@ -60,11 +62,11 @@ fun restartWorld(app: GameApp, newWorld: () -> World): List<World> {
   return listOf(world)
 }
 
-fun updateFixedInterval(app: GameApp, boxes: FlatBoxes, newWorld: () -> World): (AppState) -> AppState = { state ->
+fun updateFixedInterval(app: GameApp, box: Box, newWorld: () -> World): (AppState) -> AppState = { state ->
   app.platform.process.pollEvents()
   val nextClientState = pipe(state.client, listOf(
       updateClientInput(app.client),
-      updateClient(app.client, state.players, boxes),
+      updateClient(app.client, state.players, box),
       updateAppStateAudio(app.client, state.worlds)
   ))
   val newAppState = state.copy(
@@ -89,7 +91,7 @@ data class GameHooks(
     val onUpdate: GameUpdateHook
 )
 
-fun layoutGui(app: GameApp, appState: AppState, windowInfo: WindowInfo): FlatBoxes {
+fun layoutGui(app: GameApp, appState: AppState, windowInfo: WindowInfo): Box {
   val world = appState.worlds.lastOrNull()
   val hudData = if (world != null)
     gatherHudData(world)
@@ -101,16 +103,16 @@ fun layoutGui(app: GameApp, appState: AppState, windowInfo: WindowInfo): FlatBox
 
 fun updateAppState(app: GameApp, newWorld: () -> World, hooks: GameHooks? = null): (AppState) -> AppState = { appState ->
   val windowInfo = app.client.getWindowInfo()
-  val boxes = layoutGui(app, appState, windowInfo)
+  val box = toAbsoluteBounds(Vector2i.zero, layoutGui(app, appState, windowInfo))
   val (timestep, steps) = updateTimestep(appState.timestep, simulationDelta.toDouble())
 
   if (steps <= 1) {
-    renderMain(app.client, windowInfo, appState, boxes, hooks?.onRender)
+    renderMain(app.client, windowInfo, appState, box, hooks?.onRender)
   }
 
   (1..steps).fold(appState) { state, step ->
     val newBoxes = if (step == 1)
-      boxes
+      box
     else
       layoutGui(app, state, windowInfo)
 

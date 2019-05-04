@@ -65,14 +65,14 @@ fun div(name: String = "",
   }
 }
 
-fun overlay(flowers: List<Flower>): Flower = { seed ->
+fun compose(flowers: List<Flower>): Flower = { seed ->
   Box(
       bounds = Bounds(dimensions = seed.dimensions),
       boxes = flowers.map { it(seed) }
   )
 }
 
-fun overlay(vararg flowers: Flower): Flower = { seed ->
+fun compose(vararg flowers: Flower): Flower = { seed ->
   Box(
       bounds = Bounds(dimensions = seed.dimensions),
       boxes = flowers.map { it(seed) }
@@ -140,7 +140,19 @@ fun forwardDimensions(
   )
 }
 
-operator fun ForwardLayout.plus(other: ForwardLayout): ForwardLayout = { container ->
+infix fun Flower.plusLogic(logic: LogicModule): Flower = { seed ->
+  val box = this(seed)
+  val newLogic = if (box.logic == null)
+    logic
+  else
+    box.logic + logic
+
+  box.copy(
+      logic = newLogic
+  )
+}
+
+fun ForwardLayout.plus2(other: ForwardLayout): ForwardLayout = { container ->
   val a = this(container)
   val b = other(a.dimensions)
   Bounds(

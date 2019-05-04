@@ -12,10 +12,14 @@ import marloth.clienting.*
 import marloth.clienting.input.newBloomInputState
 import marloth.clienting.input.updateInputState
 import mythic.bloom.*
+import mythic.bloom.next.Box
+import mythic.bloom.next.Seed
+import mythic.bloom.next.emptyFlower
 
 import mythic.platforming.PlatformInput
 import mythic.platforming.WindowInfo
 import mythic.spatial.Vector2
+import org.joml.Vector2i
 import rendering.createCanvas
 import scenery.Screen
 import simulation.Realm
@@ -77,10 +81,10 @@ class LabClient(val config: LabConfig, val client: Client) {
     prepareClient(windowInfo)
     val view = ModelView(config.modelView, client.renderer, client.platform.input.getMousePosition())
 
-    val layout = view.createLayout(windowInfo.dimensions, previousState.modelViewState)
+//    val layout = view.createLayout(windowInfo.dimensions, previousState.modelViewState)
 //    val (commands, nextLabInputState) = updateInput(view.getCommands(), previousState)
 //    val input = getInputState(client.platform.input, commands)
-    renderLab(windowInfo, layout.boxes)
+//    renderLab(windowInfo, layout.boxes)
 //    val modelViewState = view.updateState(layout, input, previousState.modelViewState, delta)
     view.release()
 
@@ -94,11 +98,11 @@ class LabClient(val config: LabConfig, val client: Client) {
     prepareClient(windowInfo)
     val view = TextureView()
 
-    val layout = view.createLayout(client.renderer, config.textureView, windowInfo.dimensions)
+//    val layout = view.createLayout(client.renderer, config.textureView, windowInfo.dimensions)
 //    val (commands, nextLabInputState) = updateInput(mapOf(), previousState)
 //    val input = getInputState(client.platform.input, commands)
 
-    renderLab(windowInfo, layout.boxes)
+//    renderLab(windowInfo, layout.boxes)
 //    updateTextureState(layout, input, config.textureView, client.renderer)
     return LabClientResult(
         listOf(),
@@ -111,14 +115,14 @@ class LabClient(val config: LabConfig, val client: Client) {
     val view = WorldView(config.worldView, metaWorld, client.renderer)
 
     val layout = view.createLayout(windowInfo.dimensions)
-    val boxes = layout(SeedOld(
-        bag = state.app.client.bloomState.bag,
-        bounds = Bounds(dimensions = windowInfo.dimensions)
-    )).boxes
+//    val boxes = layout(SeedOld(
+//        bag = state.app.client.bloomState.bag,
+//        bounds = Bounds(dimensions = windowInfo.dimensions)
+//    )).boxes
     val newDeviceStates = updateInputState(client.platform.input, state.app.client.input)
     val commands = updateInput(view.getCommands(), newDeviceStates)
 
-    renderLab(windowInfo, boxes)
+//    renderLab(windowInfo, boxes)
     return LabClientResult(
         listOf(),
         state//.copy(labInput = nextLabInputState)
@@ -134,21 +138,21 @@ class LabClient(val config: LabConfig, val client: Client) {
       updateMapState(config.mapView, world.realm, input, windowInfo, state.app.client.bloomState, delta)
       mapLayout(client, world.realm, config.mapView)
     } else
-      emptyFlowerOld
+      emptyFlower
 
-    val seed = SeedOld(
+    val seed = Seed(
         bag = state.app.client.bloomState.bag,
-        bounds = Bounds(dimensions = windowInfo.dimensions)
+        dimensions = windowInfo.dimensions
     )
-    val boxes = layout(seed).boxes
-    renderLab(windowInfo, boxes)
+    val box = toAbsoluteBounds(Vector2i(), layout(seed))
+    renderLab(windowInfo, box)
 
     val newInputState = state.app.client.input.copy(
         deviceStates = newDeviceStates
     )
 
     val bloomInputState = newBloomInputState(newDeviceStates.last())
-    val newBloomState = updateBloomState(boxes, state.app.client.bloomState, bloomInputState)
+    val newBloomState = updateBloomState(box, state.app.client.bloomState, bloomInputState)
 
     return LabClientResult(
         listOf(),
@@ -179,9 +183,9 @@ class LabClient(val config: LabConfig, val client: Client) {
     }
   }
 
-  fun renderLab(windowInfo: WindowInfo, boxes: List<FlatBox>) {
+  fun renderLab(windowInfo: WindowInfo, box: Box) {
     val canvas = createCanvas(client.renderer, windowInfo)
-    renderLayout(boxes, canvas)
+    renderLayout(box, canvas)
   }
 
 }

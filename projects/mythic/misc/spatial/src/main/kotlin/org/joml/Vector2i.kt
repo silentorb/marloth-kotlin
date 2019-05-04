@@ -35,6 +35,8 @@ import java.nio.IntBuffer
 import java.text.DecimalFormat
 import java.text.NumberFormat
 
+private val _zero = Vector2i()
+
 /**
  * Represents a 2D vector with single-precision.
  *
@@ -554,9 +556,6 @@ class Vector2i : Externalizable, Vector2ic {
    *
    * @return a vector holding the result
    */
-  fun zero(): Vector2i {
-    return thisOrNew().set(0, 0)
-  }
 
   @Throws(IOException::class)
   override fun writeExternal(out: ObjectOutput) {
@@ -673,7 +672,7 @@ class Vector2i : Externalizable, Vector2ic {
   }
 
   companion object {
-
+    val zero: Vector2i get() = _zero
     private val serialVersionUID = 1L
   }
 

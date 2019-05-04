@@ -229,27 +229,27 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
 //    }
   }
 
-  fun createLayout(dimensions: Vector2i, state: ModelViewState): ModelLayout {
-    val bounds = Bounds(Vector2i(), dimensions)
-    val initialLengths = listOf(200, null, 300)
-
-    val middle = { b: Bounds -> FlatBox(b, drawScenePanel(config, state, renderer, model, camera)) }
-    val right = { b: Bounds -> FlatBox(b, drawInfoPanel(config, renderer, model, mousePosition)) }
-    val lengths = resolveLengths(dimensions.x, initialLengths)
-    val panelBounds = lengthArranger(horizontalPlane, 0)(bounds, lengths)
-    val boxes = panelBounds.drop(1)
-        .zip(listOf(middle, right), { b, p -> p(b) })
-
-//    val (leftBoxes, leftClickBoxes) = drawLeftPanel(renderer.meshes.keys.toList(), config, model, panelBounds[0])
-    val (leftBoxes, leftClickBoxes) = drawLeftPanel(listOf(), config, model, panelBounds[0])
-
-    return ModelLayout(
-        boxes = leftBoxes
-            .plus(boxes),
-        modelPanelBounds = panelBounds[1],
-        clickBoxes = leftClickBoxes
-    )
-  }
+//  fun createLayout(dimensions: Vector2i, state: ModelViewState): ModelLayout {
+//    val bounds = Bounds(Vector2i(), dimensions)
+//    val initialLengths = listOf(200, null, 300)
+//
+//    val middle = { b: Bounds -> FlatBox(b, drawScenePanel(config, state, renderer, model, camera)) }
+//    val right = { b: Bounds -> FlatBox(b, drawInfoPanel(config, renderer, model, mousePosition)) }
+//    val lengths = resolveLengths(dimensions.x, initialLengths)
+//    val panelBounds = lengthArranger(horizontalPlane, 0)(bounds, lengths)
+//    val boxes = panelBounds.drop(1)
+//        .zip(listOf(middle, right), { b, p -> p(b) })
+//
+////    val (leftBoxes, leftClickBoxes) = drawLeftPanel(renderer.meshes.keys.toList(), config, model, panelBounds[0])
+//    val (leftBoxes, leftClickBoxes) = drawLeftPanel(listOf(), config, model, panelBounds[0])
+//
+//    return ModelLayout(
+//        boxes = leftBoxes
+//            .plus(boxes),
+//        modelPanelBounds = panelBounds[1],
+//        clickBoxes = leftClickBoxes
+//    )
+//  }
 
   fun onListItemSelection(event: SelectionEvent) {
     when (event.list) {

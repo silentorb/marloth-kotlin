@@ -54,7 +54,7 @@ fun createMapLayout(realm: Realm, screenDimensions: Vector2i,
     draw(b, c)
   }
 
-  return depict(drawWorld)
+  return depictOld(drawWorld)
 //  val panels = listOf(
 ////      Pair(Measurement(Measurements.pixel, 200f), depictBackground),
 //      Pair(Measurement(Measurements.stretch, 0), drawWorld)

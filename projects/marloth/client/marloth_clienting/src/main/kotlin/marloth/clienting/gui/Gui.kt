@@ -7,8 +7,10 @@ import marloth.clienting.input.GuiCommandType
 import marloth.clienting.isGuiActive
 import mythic.bloom.*
 import mythic.bloom.ButtonState
+import mythic.bloom.next.Box
 import mythic.bloom.next.Flower
-import mythic.bloom.next.overlay
+import mythic.bloom.next.Seed
+import mythic.bloom.next.compose
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
 import mythic.glowing.globalState
@@ -90,18 +92,17 @@ fun viewSelect(textResources: TextResources, world: World?, view: ViewId): Flowe
 
 fun guiLayout(client: Client, clientState: ClientState, world: World?, hudData: HudData?): Flower {
   val bloomState = clientState.bloomState
-  return overlay(listOfNotNull(
+  return compose(listOfNotNull(
       if (hudData != null) hudLayout(client.textResources, hudData) else null,
       viewSelect(client.textResources, world, clientState.view)
   ))
 }
 
-fun layoutGui(client: Client, clientState: ClientState, world: World?, hudData: HudData?, windowInfo: WindowInfo): FlatBoxes {
-  val bounds = Bounds(Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y))
-  val layout = convertFlower(guiLayout(client, clientState, world, hudData))
-  val seed = SeedOld(
+fun layoutGui(client: Client, clientState: ClientState, world: World?, hudData: HudData?, windowInfo: WindowInfo): Box {
+  val layout = guiLayout(client, clientState, world, hudData)
+  val seed = Seed(
       bag = clientState.bloomState.bag,
-      bounds = bounds
+      dimensions = windowInfo.dimensions
   )
-  return layout(seed).boxes
+  return layout(seed)
 }

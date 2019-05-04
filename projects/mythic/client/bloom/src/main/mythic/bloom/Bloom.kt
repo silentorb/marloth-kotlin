@@ -1,5 +1,6 @@
 package mythic.bloom
 
+import mythic.bloom.next.Box
 import mythic.drawing.Canvas
 import mythic.glowing.getGLBounds
 import mythic.glowing.globalState
@@ -43,13 +44,13 @@ typealias StateBagMods = StateBag
 
 fun crop(bounds: Bounds, canvas: Canvas, action: () -> Unit) = canvas.crop(bounds.toVector4i(), action)
 
-fun listBounds(plane: Plane, padding: Int, bounds: Bounds, lengths: List<Int>): List<Bounds> {
+fun listBounds(plane: Plane, padding: Int, dimensions: Vector2i, lengths: List<Int>): List<Bounds> {
   var progress = 0
-  val otherLength = plane(bounds.dimensions).y
+  val otherLength = plane(dimensions).y
 
   return lengths.mapIndexed { i, length ->
     val b = Bounds(
-        plane(Vector2i(progress, 0)) + bounds.position,
+        plane(Vector2i(progress, 0)),
         plane(Vector2i(length, otherLength))
     )
     progress += length
@@ -60,20 +61,20 @@ fun listBounds(plane: Plane, padding: Int, bounds: Bounds, lengths: List<Int>): 
   }
 }
 
-typealias LengthArrangement = (bounds: Bounds, lengths: List<Int>) -> List<Bounds>
+typealias LengthArrangement = (dimensions: Vector2i, lengths: List<Int>) -> List<Bounds>
 
-fun lengthArranger(plane: Plane, padding: Int): LengthArrangement = { bounds: Bounds, lengths: List<Int> ->
-  listBounds(plane, padding, bounds, lengths)
+fun lengthArranger(plane: Plane, padding: Int): LengthArrangement = { dimensions, lengths: List<Int> ->
+  listBounds(plane, padding, dimensions, lengths)
 }
 
-fun fixedLengthArranger(plane: Plane, padding: Int, lengths: List<Int?>): FixedChildArranger = { bounds ->
-  lengthArranger(plane, padding)(bounds, resolveLengths(plane(bounds.dimensions).x, lengths))
+fun fixedLengthArranger(plane: Plane, padding: Int, lengths: List<Int?>): FixedChildArranger = { dimensions ->
+  lengthArranger(plane, padding)(dimensions, resolveLengths(plane(dimensions).x, lengths))
 }
 
-fun boundsArranger(plane: Plane, padding: Int): (Bounds, List<Bounds>) -> List<Bounds> = { bounds, b ->
-  val lengths = b.map { plane(it.dimensions).x }
-  listBounds(plane, padding, bounds, lengths)
-}
+//fun boundsArranger(plane: Plane, padding: Int): (Bounds, List<Bounds>) -> List<Bounds> = { dimensions, b ->
+//  val lengths = b.map { plane(it.dimensions).x }
+//  listBounds(plane, padding, bounds, lengths)
+//}
 
 fun centeredPosition(boundsLength: Int, length: Int): Int =
     (boundsLength - length) / 2
@@ -101,9 +102,27 @@ fun drawFill(bounds: Bounds, canvas: Canvas, color: Vector4) {
   canvas.drawSquare(bounds.position.toVector2(), bounds.dimensions.toVector2(), canvas.solid(color))
 }
 
-typealias LayoutOld = List<FlatBox>
+fun toAbsoluteBounds(parentOffset: Vector2i, box: Box): Box {
+  val localOffset = parentOffset + box.bounds.position
+  return box.copy(
+      bounds = box.bounds.copy(
+          position = localOffset
+      ),
+      boxes = box.boxes.map { toAbsoluteBounds(localOffset, it) }
+  )
+}
 
-fun renderLayout(layout: LayoutOld, canvas: Canvas) {
+fun renderBox(canvas: Canvas, box: Box) {
+  val depiction = box.depiction
+  if (depiction != null)
+    depiction(box.bounds, canvas)
+
+  for (child in box.boxes) {
+    renderBox(canvas, child)
+  }
+}
+
+fun renderLayout(box: Box, canvas: Canvas) {
   val current = getGLBounds(GL11.GL_VIEWPORT)
   if (current.z == 0)
     return
@@ -112,11 +131,7 @@ fun renderLayout(layout: LayoutOld, canvas: Canvas) {
   globalState.blendEnabled = true
   globalState.blendFunction = Pair(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
 
-  for (box in layout) {
-    val depiction = box.depiction
-    if (depiction != null)
-      depiction(box.bounds, canvas)
-  }
+  renderBox(canvas, box)
 }
 
 fun centeredPosition(bounds: Bounds, contentDimensions: Vector2i): Vector2i {

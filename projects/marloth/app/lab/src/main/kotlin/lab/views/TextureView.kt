@@ -62,18 +62,19 @@ class TextureView {
 
     val middle = { b: Bounds -> FlatBox(b, { b, c -> drawTextureView(renderer, config, b, c) }) }
     val lengths = resolveLengths(dimensions.x, initialLengths)
-    val panelBounds = lengthArranger(horizontalPlane, 0)(bounds, lengths)
-    val boxes = panelBounds.drop(1)
-        .zip(listOf(middle), { b, p -> p(b) })
+    throw Error("No longer supported")
+//    val panelBounds = lengthArranger(horizontalPlane, 0)(bounds, lengths)
+//    val boxes = panelBounds.drop(1)
+//        .zip(listOf(middle), { b, p -> p(b) })
 
-    val left = drawLeftPanel(renderer.mappedTextures.keys.toList(), config, panelBounds[0])
-    val (leftBoxes, leftClickBoxes) = left
-
-    return TextureViewLayout(
-        boxes = leftBoxes
-            .plus(boxes),
-        clickBoxes = leftClickBoxes
-    )
+//    val left = drawLeftPanel(renderer.mappedTextures.keys.toList(), config, panelBounds[0])
+//    val (leftBoxes, leftClickBoxes) = left
+//
+//    return TextureViewLayout(
+//        boxes = leftBoxes
+//            .plus(boxes),
+//        clickBoxes = leftClickBoxes
+//    )
   }
 }
 

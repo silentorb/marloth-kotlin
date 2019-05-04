@@ -42,24 +42,25 @@ data class SelectableItem(
 typealias SelectionResult = Pair<List<FlatBox>, List<ClickBox<SelectionEvent>>>
 
 fun drawSelectableList(items: List<SelectableItem>, list: SelectableListType, bounds: Bounds): SelectionResult {
-  val padding = 10
-  val itemHeight = 30
-
-  val partialBoxes = items
-      .map {
-        assert(it.name != "")
-        PartialBox(itemHeight, drawListItem(it.name, it.isSelected))
-      }
-
-//  listOld(
-//      children(verticalFromLengths(15), nodeRow)
-
-  val buttonBoxes = arrangeListComplex(lengthArranger(verticalPlane, padding), partialBoxes, bounds)
-  val boxes = listOf<FlatBox>(
-//      Box(bounds, drawSidePanel())
-  )
-      .plus(buttonBoxes)
-  return Pair(boxes, buttonBoxes.mapIndexed { i, b -> ClickBox(b.bounds, SelectionEvent(list, i)) })
+  throw Error("Not longer supported")
+//  val padding = 10
+//  val itemHeight = 30
+//
+//  val partialBoxes = items
+//      .map {
+//        assert(it.name != "")
+//        PartialBox(itemHeight, drawListItem(it.name, it.isSelected))
+//      }
+//
+////  listOld(
+////      children(verticalFromLengths(15), nodeRow)
+//
+//  val buttonBoxes = arrangeListComplex(lengthArranger(verticalPlane, padding), partialBoxes, bounds)
+//  val boxes = listOf<FlatBox>(
+////      Box(bounds, drawSidePanel())
+//  )
+//      .plus(buttonBoxes)
+//  return Pair(boxes, buttonBoxes.mapIndexed { i, b -> ClickBox(b.bounds, SelectionEvent(list, i)) })
 }
 
 fun <T> drawSelectableEnumList(meshTypes: List<T>, selected: T, bounds: Bounds): SelectionResult

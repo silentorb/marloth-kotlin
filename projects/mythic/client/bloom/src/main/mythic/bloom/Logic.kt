@@ -1,5 +1,7 @@
 package mythic.bloom
 
+import mythic.bloom.next.Box
+import mythic.bloom.next.Flower
 import org.joml.Vector2i
 
 data class BloomState(
@@ -25,7 +27,7 @@ typealias LogicModule = (LogicBundle) -> StateBagMods
 //    val function: LogicModule
 //)
 
-fun visibleBounds(box: FlatBox): Bounds? =
+fun visibleBounds(box: Box): Bounds? =
     if (box.clipBounds == null)
       box.bounds
     else {
@@ -44,13 +46,21 @@ fun visibleBounds(box: FlatBox): Bounds? =
         clippedBounds
     }
 
-fun updateStateBag(boxes: FlatBoxes, state: HistoricalBloomState): StateBag =
-    boxes.filter { it.logic != null }
-//        .fold(state.bag) { bag, box -> box.logic!!(HistoricalBloomState(bag, state.input), box.bounds) }
+fun gatherLogicBoxes(box: Box): List<Box> {
+  val localList = if (box.logic != null)
+    listOf(box)
+  else
+    listOf()
+
+  return localList.plus(box.boxes.flatMap { gatherLogicBoxes(it) })
+}
+
+fun updateStateBag(rootBox: Box, state: HistoricalBloomState): StateBag =
+    gatherLogicBoxes(rootBox)
         .flatMap { box -> box.logic!!(LogicBundle(state, box.bounds, visibleBounds(box))).entries }
         .associate { it.toPair() }
 
-fun updateBloomState(boxes: FlatBoxes, previousState: BloomState, currentInput: InputState): BloomState {
+fun updateBloomState(box: Box, previousState: BloomState, currentInput: InputState): BloomState {
   val historicalState = HistoricalBloomState(
       input = HistoricalInputState(
           previous = previousState.input,
@@ -59,7 +69,7 @@ fun updateBloomState(boxes: FlatBoxes, previousState: BloomState, currentInput: 
       bag = previousState.bag
   )
 
-  val newBag = updateStateBag(boxes, historicalState)
+  val newBag = updateStateBag(box, historicalState)
 
   return BloomState(
       input = currentInput,
@@ -86,12 +96,10 @@ fun isInBounds(position: Vector2i, bounds: Bounds): Boolean =
         position.y >= bounds.position.y &&
         position.y < bounds.position.y + bounds.dimensions.y
 
-fun logic(logicModule: LogicModule): FlowerOld = { seed ->
-  newBlossom(
-      FlatBox(
-          bounds = seed.bounds,
-          logic = logicModule
-      )
+fun logic(logicModule: LogicModule): Flower = { seed ->
+  Box(
+      bounds = Bounds(dimensions = seed.dimensions),
+      logic = logicModule
   )
 }
 

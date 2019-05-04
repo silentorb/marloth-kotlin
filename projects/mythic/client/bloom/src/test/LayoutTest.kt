@@ -1,7 +1,7 @@
 //import mythic.bloom.Bounds
 //import mythic.bloom.IdMap
 //import mythic.bloom.arrangeWithInitial
-//import mythic.bloom.arranging.fixed
+//import mythic.bloom.arranging.fixedReverse
 //import mythic.bloom.arranging.hlistOld
 //import mythic.bloom.arranging.inherit
 //import org.junit.jupiter.api.Assertions
@@ -13,7 +13,7 @@ class LayoutTest {
   fun basicStretch() {
 //    val parentMap: IdMap = mapOf(1 to 0)
 //    val arrangers = mapOf(
-//        0 to fixed(Bounds(0, 0, 320, 200)),
+//        0 to fixedReverse(Bounds(0, 0, 320, 200)),
 //        1 to inherit
 //    )
 //
@@ -31,7 +31,7 @@ class LayoutTest {
 //        3 to 1
 //    )
 //    val arrangers = mapOf(
-//        0 to fixed(Bounds(0, 0, 320, 200)),
+//        0 to fixedReverse(Bounds(0, 0, 320, 200)),
 //        1 to hlistOld(listOf(null, 100)),
 //        2 to inherit,
 //        3 to inherit

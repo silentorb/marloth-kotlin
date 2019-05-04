@@ -1,6 +1,7 @@
 package mythic.bloom
 
 import mythic.bloom.next.Flower
+import mythic.bloom.next.margin
 import mythic.typography.IndexedTextStyle
 
 data class MenuItem(
@@ -29,7 +30,7 @@ fun menuBar(key: String, style: IndexedTextStyle, menus: List<Menu>): Flower {
     label(style, menu.name)
   }
 
-  return bar(items)
+  return margin(all = 10)(bar(items))
 
 //  return { seed ->
 //    val globalState = globalMenuState(seed.bag[key])

@@ -3,12 +3,9 @@ package lab.views.map
 import marloth.clienting.Client
 import marloth.clienting.gui.TextStyles
 import mythic.bloom.*
-import mythic.bloom.next.Flower
-import mythic.bloom.next.emptyFlower
-import mythic.bloom.next.overlay
+import mythic.bloom.next.*
 
 import mythic.ent.Id
-import org.joml.Vector2i
 import simulation.Node
 import simulation.Realm
 
@@ -16,12 +13,23 @@ private val textStyle = TextStyles.smallGray
 
 private val selectedTextStyle = TextStyles.smallWhite
 
-private val mainPanel: ParentFlower =
-//    fixedList(horizontal, 0, listOf(null, 250))
-    fixedList(horizontalPlane, 0, listOf(null, 350))
+private val mapMenu: Flower = menuBar("mapMenu", textStyle, listOf(
+    Menu(
+        name = "View",
+        character = "v",
+        items = listOf(
+            MenuItem(
+                name = "Toggle normals"
+            )
+        )
+    )
+))
+
+private val horizontalPanel: ParentFlower =
+    fixedList(horizontalPlane, 0, listOf(null, 250))
 
 private fun mapDisplay(client: Client, realm: Realm, config: MapViewConfig): Flower =
-    depict(renderMapView(client, realm, config)) + logic(onClick("clickMap"))
+    depict(renderMapView(client, realm, config)) plusLogic onClick("clickMap")
 
 private fun faceInfo(realm: Realm, id: Id): Flower {
   val connection = realm.faces[id]
@@ -43,10 +51,10 @@ private fun faceInfo(realm: Realm, id: Id): Flower {
       .plus("points:")
       .plus(face.vertices.map { "  " + it.toString() })
       .plus("-")
-      .map { labelOld(textStyle, it) }
+      .map { label(textStyle, it) }
 
-  return withOffset(Vector2i(10))(
-      listOld(verticalPlane, 10)(rows)
+  return margin(all = 10)(
+      list(verticalPlane, 10)(rows)
   )
 }
 
@@ -56,7 +64,11 @@ private fun infoPanel(realm: Realm, config: MapViewConfig): Flower =
       else -> emptyFlower
     }
 
-private val nodeRow: ListItem<Node> = ListItem(20) { node ->
+const val nodeListSelectionKey = "nodeList-selection"
+
+private val nodeListSelectable = selectable<Node>(nodeListSelectionKey, optionalSingleSelection) { it.id.toString() }
+
+private val nodeRow: (Node) -> Flower = { node ->
   depictSelectable(nodeListSelectionKey, node.id.toString()) { seed, selected ->
     val style = if (selected)
       selectedTextStyle
@@ -67,19 +79,16 @@ private val nodeRow: ListItem<Node> = ListItem(20) { node ->
     val walkable = if (node.isWalkable) "W" else " "
 
     textDepiction(style, " ${node.id} $solid $walkable")
-  }
+  } plusLogic nodeListSelectable(node)
 }
-
-const val nodeListSelectionKey = "nodeList-selection"
-
-private val nodeListSelectable = selectable(nodeListSelectionKey, optionalSingleSelection)
 
 private fun nodeList(nodes: List<Node>): Flower =
     scrolling("nodeList-scrolling")(
-        list(
-            children(lengthArranger(verticalPlane, 15), nodeRow),
-            nodeListSelectable{ it.id.toString() }
-        )
+        list(verticalPlane, 10)(nodes.map { node ->
+          nodeRow(node)
+        })
+//            children(lengthArranger(verticalPlane, 15), nodeRow),
+//            nodeListSelectable{ it.id.toString() }
     )
 
 private fun rightPanel(realm: Realm, config: MapViewConfig): Flower =
@@ -89,11 +98,12 @@ private fun rightPanel(realm: Realm, config: MapViewConfig): Flower =
     ))
 
 fun mapLayout(client: Client, realm: Realm, config: MapViewConfig): Flower {
-//  return list(verticalPlane, 0)(listOf(
-  return mainPanel(listOf(
-      mapDisplay(client, realm, config),
-      rightPanel(realm, config)
+  return list(verticalPlane, 0)(listOf(
+      mapMenu,
+      horizontalPanel(listOf(
+          mapDisplay(client, realm, config),
+          rightPanel(realm, config)
+      ))
   ))
-//  ))
 
 }
