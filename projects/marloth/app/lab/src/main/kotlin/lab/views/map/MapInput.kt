@@ -170,7 +170,7 @@ fun updateMapState(config: MapViewConfig, world: Realm, input: LabCommandState, 
   }
 
   val moveSpeed = 50
-  val zoomSpeed = 120
+  val zoomSpeed = 200
   val rotateSpeed = 2
 
   val moveOffset = Vector3(

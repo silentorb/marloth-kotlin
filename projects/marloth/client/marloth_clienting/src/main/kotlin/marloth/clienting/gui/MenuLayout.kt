@@ -86,7 +86,7 @@ fun menuFocusIndex(bag: StateBag): Int =
     (bag[menuFocusIndexKey] ?: 0) as Int
 
 fun menuLogic(menu: Menu): LogicModule =
-    menuFocusIndexLogic(menu) combinLogic menuNavigationLogic(menu) combinLogic menuCommandLogic(menu)
+    menuFocusIndexLogic(menu) combineLogic menuNavigationLogic(menu) combineLogic menuCommandLogic(menu)
 
 //fun menuFlowerOld(textResources: TextResources, menu: Menu): FlowerOld = { seed ->
 //  val buttonHeight = 50

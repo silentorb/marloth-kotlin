@@ -22,6 +22,15 @@ data class LogicBundle(
 
 typealias LogicModule = (LogicBundle) -> StateBagMods
 
+typealias LogicModuleTransform = (LogicModule) -> LogicModule
+
+fun logicWrapper(wrapper: (LogicBundle, StateBagMods) -> StateBagMods): LogicModuleTransform = { logicModule ->
+  { bundle ->
+    val result = logicModule(bundle)
+    wrapper(bundle, result)
+  }
+}
+
 //data class LogicModule(
 //    val key: String?,
 //    val function: LogicModule
@@ -112,7 +121,7 @@ fun logic(logicModule: LogicModule): Flower = { seed ->
   )
 }
 
-infix fun LogicModule.combinLogic(b: LogicModule): LogicModule = { bundle ->
+infix fun LogicModule.combineLogic(b: LogicModule): LogicModule = { bundle ->
   val first = this(bundle)
   val second = b(bundle)
   if (first != null) {

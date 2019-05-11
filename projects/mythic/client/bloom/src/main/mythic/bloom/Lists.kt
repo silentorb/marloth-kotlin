@@ -47,7 +47,7 @@ fun applyBounds(arranger: FixedChildArranger): (List<Flower>) -> Flower = { flow
 //  }
 //}
 
-fun list(plane: Plane, spacing: Int): (List<Flower>) -> Flower = { children ->
+fun list(plane: Plane, spacing: Int = 0, drawReversed: Boolean = false): (List<Flower>) -> Flower = { children ->
   { seed ->
     var lastOffset = 0
     var otherLength = 0
@@ -69,7 +69,7 @@ fun list(plane: Plane, spacing: Int): (List<Flower>) -> Flower = { children ->
 
     Box(
         name = "list",
-        boxes = boxes,
+        boxes = if (drawReversed) boxes.reversed() else boxes,
         bounds = Bounds(
             dimensions = plane(Vector2i(lastOffset, otherLength))
         )

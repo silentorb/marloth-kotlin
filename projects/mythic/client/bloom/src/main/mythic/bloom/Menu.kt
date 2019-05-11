@@ -15,9 +15,21 @@ data class Menu(
     val items: List<MenuItem>
 )
 
+
 private const val globalMenuSelectionKey = "menuSelection"
-private val selectableMenu = selectable<Menu>(globalMenuSelectionKey, optionalSingleSelection) {
+private val basicSelectableMenu = selectable<Menu>(globalMenuSelectionKey, optionalSingleSelection) {
   it.hashCode().toString()
+}
+
+private val childSelected: LogicModuleTransform = logicWrapper { bundle, result ->
+  if (bundle.state.bag[bagMenuItemSelection] != null)
+    null
+  else
+    result
+}
+
+private val selectableMenu: (Menu) -> LogicModule = { seed ->
+  childSelected(onClickPersisted(globalMenuSelectionKey, basicSelectableMenu(seed)))
 }
 
 private val invertColor = { color: Vector4 ->
@@ -25,7 +37,7 @@ private val invertColor = { color: Vector4 ->
 }
 
 private val menuFlower = { menu: Menu, style: IndexedTextStyle ->
-  padding(all = 10)(label(style, menu.name)) plusLogic selectableMenu(menu) plusLogic persist()
+  padding(all = 10)(label(style, menu.name)) plusLogic selectableMenu(menu)
 }
 
 const val bagMenuItemSelection = "selectedMenuValue"
@@ -43,13 +55,13 @@ private fun selectedMenu(menu: Menu, style: IndexedTextStyle): Flower {
       color = invertColor(style.color)
   )
   val items = menu.items.map { item ->
-//    padding(all = 10)(label(newStyle, item.name)) plusLogic
+    //    padding(all = 10)(label(newStyle, item.name)) plusLogic
 //        onClick(bagMenuItemSelection, item.value) plusLogic selectableMenu(menu)
-    padding(all = 10)(label(newStyle, item.name)) plusLogic selectableMenu(menu)
+    padding(all = 10)(label(newStyle, item.name)) plusLogic onClick(bagMenuItemSelection, item.value)
   }
-  return list(verticalPlane, 0)(listOf(
+  return list(verticalPlane)(listOf(
       menuFlower(menu, newStyle) depictBehind solidBackground(style.color),
-      list(verticalPlane, 10)(items) depictBehind solidBackground(style.color)
+      breakReverse(list(verticalPlane, 10)(items) depictBehind solidBackground(style.color))
   ))
 }
 

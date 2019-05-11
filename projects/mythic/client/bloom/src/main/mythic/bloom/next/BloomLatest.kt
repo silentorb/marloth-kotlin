@@ -150,7 +150,7 @@ infix fun Flower.plusLogic(logic: LogicModule): Flower = { seed ->
   val newLogic = if (box.logic == null)
     logic
   else
-    box.logic combinLogic logic
+    box.logic combineLogic logic
 
   box.copy(
       logic = newLogic
@@ -267,3 +267,14 @@ fun depictBehind2(depiction: Depiction): (Flower) -> Flower = { flower ->
 
 infix fun Flower.depictBehind(depiction: Depiction): Flower =
     depictBehind2(depiction)(this)
+
+fun breakReverse(child: Flower): Flower {
+  return { seed ->
+    val box = child(seed)
+    Box(
+        name = "breakReverse",
+        bounds = Bounds(dimensions = Vector2i()),
+        boxes = listOf(box)
+    )
+  }
+}

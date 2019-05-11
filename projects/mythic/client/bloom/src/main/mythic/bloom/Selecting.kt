@@ -15,6 +15,12 @@ val selectionState = existingOrNewState {
   )
 }
 
+val singleSelectionState = existingOrNewState {
+  SelectionState(
+      selection = setOf()
+  )
+}
+
 typealias SelectionLogic = (Set<String>, String) -> Set<String>
 
 //val singleSelection: SelectionLogic = { _, item ->
@@ -30,7 +36,7 @@ val optionalSingleSelection: SelectionLogic = { selection, item ->
 
 fun <T> selectable(key: String, selectionLogic: SelectionLogic, idSelector: IdSelector<T>): (T) -> LogicModule =
     { seed ->
-      onClick({ (bloomState) ->
+      { (bloomState) ->
         val state = selectionState(bloomState.bag[key])
         val id = idSelector(seed)
         val selection = selectionLogic(state.selection, id)
@@ -43,7 +49,12 @@ fun <T> selectable(key: String, selectionLogic: SelectionLogic, idSelector: IdSe
 
           mapOf(key to newState)
         }
-      })
+      }
+    }
+
+fun <T> persistedSelectable(key: String, selectionLogic: SelectionLogic, idSelector: IdSelector<T>): (T) -> LogicModule =
+    { seed ->
+      onClickPersisted(key, selectable(key, selectionLogic, idSelector)(seed))
     }
 
 fun depictSelectable(key: String, id: String, depiction: (Seed, Boolean) -> Depiction): Flower = { seed ->

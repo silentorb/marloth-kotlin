@@ -43,11 +43,20 @@ fun onClick(logicModule: LogicModule): LogicModule = { bundle ->
   val visibleBounds = bundle.visibleBounds
   if (visibleBounds != null && isClickInside(visibleBounds, bundle.state.input))
     logicModule(bundle)
+  else
+    null
+}
+
+fun onClickPersisted(key: String, logicModule: LogicModule): LogicModule = { bundle ->
+  val visibleBounds = bundle.visibleBounds
+  if (visibleBounds != null && isClickInside(visibleBounds, bundle.state.input))
+    logicModule(bundle)
   else {
-    val childBundle = bundle.copy(
-        visibleBounds = null
-    )
-    logicModule(childBundle)
+    val flowerState = bundle.state.bag[key]
+    if (flowerState != null)
+      mapOf(key to flowerState)
+    else
+      null
   }
 }
 

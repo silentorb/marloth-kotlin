@@ -94,7 +94,9 @@ private fun infoPanel(realm: Realm, config: MapViewConfig): Flower =
 
 const val nodeListSelectionKey = "nodeList-selection"
 
-private val nodeListSelectable = selectable<Node>(nodeListSelectionKey, optionalSingleSelection) { it.id.toString() }
+private val nodeListSelectable = persistedSelectable<Node>(nodeListSelectionKey, optionalSingleSelection) {
+  it.id.toString()
+}
 
 private val nodeRow: (Node) -> Flower = { node ->
   depictSelectable(nodeListSelectionKey, node.id.toString()) { seed, selected ->
@@ -126,7 +128,7 @@ private fun rightPanel(realm: Realm, config: MapViewConfig): Flower =
     ))
 
 fun mapLayout(client: Client, realm: Realm, config: MapViewConfig): Flower {
-  return list(verticalPlane, 0)(listOf(
+  return list(verticalPlane, drawReversed = true)(listOf(
       mapMenu,
       horizontalPanel(listOf(
           mapDisplay(client, realm, config),
