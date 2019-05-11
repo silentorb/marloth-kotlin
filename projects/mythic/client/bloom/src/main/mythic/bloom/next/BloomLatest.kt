@@ -79,6 +79,9 @@ fun compose(vararg flowers: Flower): Flower = { seed ->
   )
 }
 
+infix fun Flower.plusFlower(second: Flower): Flower =
+    compose(this, second)
+
 fun flattenBoxes(includeEmpty: Boolean, box: Box, parentOffset: Vector2i): List<FlatBox> {
   val offset = parentOffset + box.bounds.position
   val children = box.boxes.flatMap { child ->
@@ -213,3 +216,20 @@ fun accumulatedBounds(boxes: List<Box>): Bounds {
   val end = boxes.sortedByDescending { it.bounds.end.y }.first().bounds.end
   return Bounds(start, end - start)
 }
+
+fun depictBehind2(depiction: Depiction): (Flower) -> Flower = { flower ->
+  { seed ->
+    val box = flower(seed)
+    val boxDepiction = box.depiction
+    box.copy(
+        depiction = { b, c ->
+          depiction(b, c)
+          if (boxDepiction != null)
+            boxDepiction(b, c)
+        }
+    )
+  }
+}
+
+infix fun Flower.depictBehind(depiction: Depiction): Flower =
+    depictBehind2(depiction)(this)

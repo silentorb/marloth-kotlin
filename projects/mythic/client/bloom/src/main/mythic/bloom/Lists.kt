@@ -84,6 +84,7 @@ fun fixedList(plane: Plane, padding: Int, lengths: List<Int?>): ParentFlower = {
   { seed ->
     val boundsList = fixedLengthArranger(plane, padding, lengths)(seed.dimensions)
     Box(
+        name = "fixedList",
         bounds = Bounds(dimensions = seed.dimensions),
         boxes = flowers.zip(boundsList) { flower, bounds ->
           val box = flower(seed.copy(dimensions = bounds.dimensions))

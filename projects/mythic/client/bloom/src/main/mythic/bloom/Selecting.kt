@@ -28,25 +28,6 @@ val optionalSingleSelection: SelectionLogic = { selection, item ->
     setOf(item)
 }
 
-typealias ChildInteraction<T> = (PreparedChildren<T>) -> LogicModule
-
-//fun <T> selectableOld(key: String, selectionLogic: SelectionLogic, idSelector: IdSelector<T>): ChildInteraction<T> =
-//    { (items, _, itemBounds) ->
-//      onClick(persist(key) { (bloomState) ->
-//        val state = selectionState(bloomState.bag[key])
-//        val selectedIndex = itemBounds.indexOfFirst { isInBounds(bloomState.input.current.mousePosition, it) }
-//        val newState = if (selectedIndex != -1) {
-//          val id = idSelector(items.toList()[selectedIndex])
-//          SelectionState(
-//              selection = selectionLogic(state.selection, id)
-//          )
-//        } else
-//          state
-//
-//        mapOf(key to newState)
-//      })
-//    }
-
 fun <T> selectable(key: String, selectionLogic: SelectionLogic, idSelector: IdSelector<T>): (T) -> LogicModule =
     { seed ->
       onClick(persist(key) { (bloomState) ->
@@ -60,27 +41,14 @@ fun <T> selectable(key: String, selectionLogic: SelectionLogic, idSelector: IdSe
       })
     }
 
-//fun <T> listOld(arranger: ChildArranger<T>, interaction: ChildInteraction<T>): ListFlower<T> = { items ->
-//  { seed ->
-//    val preparedChildren = arranger(seed.bounds, items)
-//    val (_, flowers, itemBounds) = preparedChildren
-//    val childBoxes = applyBounds(seed.bag, flowers, itemBounds)
-//    Blossom(
-//        boxes = childBoxes
-//            .plus(
-//                FlatBox(
-//                    bounds = accumulatedBounds(childBoxes),
-//                    logic = interaction(preparedChildren)
-//                )
-//            ),
-//        bounds = seed.bounds // TODO: Not sure if seed.bounds is the right bounds.
-//    )
-//
-//  }
-//}
-
 fun depictSelectable(key: String, id: String, depiction: (Seed, Boolean) -> Depiction): Flower = { seed ->
   val state = selectionState(seed.bag[key])
   val selected = state.selection.contains(id)
   depict(depiction(seed, selected))(seed)
+}
+
+fun selectableFlower(key: String, id: String, flower: (Seed, Boolean) -> Flower): Flower = { seed ->
+  val state = selectionState(seed.bag[key])
+  val selected = state.selection.contains(id)
+  flower(seed, selected)(seed)
 }

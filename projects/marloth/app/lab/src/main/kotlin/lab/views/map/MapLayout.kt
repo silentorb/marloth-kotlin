@@ -13,7 +13,7 @@ private val textStyle = TextStyles.smallGray
 
 private val selectedTextStyle = TextStyles.smallWhite
 
-private val mapMenu: Flower = menuBar("mapMenu", textStyle, listOf(
+private val mapMenu: Flower = menuBar(textStyle, listOf(
     Menu(
         name = "View",
         character = "v",

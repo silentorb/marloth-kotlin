@@ -144,7 +144,8 @@ class LabClient(val config: LabConfig, val client: Client) {
         bag = state.app.client.bloomState.bag,
         dimensions = windowInfo.dimensions
     )
-    val box = toAbsoluteBounds(Vector2i(), layout(seed))
+    val relativeBox = layout(seed)
+    val box = toAbsoluteBounds(Vector2i(), relativeBox)
     renderLab(windowInfo, box)
 
     val newInputState = state.app.client.input.copy(

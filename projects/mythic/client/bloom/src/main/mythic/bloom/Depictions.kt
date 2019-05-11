@@ -18,19 +18,6 @@ fun textDepiction(style: IndexedTextStyle, content: String): Depiction = { b, c 
   c.drawText(position, style, content)
 }
 
-fun labelOld(style: IndexedTextStyle, content: String): FlowerOld = { seed ->
-  val config = TextConfiguration(content, Vector2(), resolveTextStyle(globalFonts(), style))
-  val dimensions = calculateTextDimensions(config)
-  newBlossom(
-      FlatBox(
-          bounds = seed.bounds.copy(
-              dimensions = dimensions.toVector2i()
-          ),
-          depiction = textDepiction(style, content)
-      )
-  )
-}
-
 fun label(style: IndexedTextStyle, content: String): Flower = { seed ->
   val config = TextConfiguration(content, Vector2(), resolveTextStyle(globalFonts(), style))
   val dimensions = calculateTextDimensions(config)
@@ -43,16 +30,10 @@ fun label(style: IndexedTextStyle, content: String): Flower = { seed ->
 }
 
 fun clipBox(bounds: Bounds, depiction: Depiction): Depiction = { b, c ->
-  //  if (isInside(outer, inner))
-//    depiction
-//  else if (isOutside(outer, inner))
-//  { b: Bounds, c: Canvas -> val k = 0 }
-//  else {
   val viewport = c.flipViewport(bounds.toVector4i())
   cropStack(viewport) {
     depiction(b, c)
   }
-//  }
 }
 
 fun solidBackground(backgroundColor: Vector4): Depiction = { b: Bounds, canvas: Canvas ->
