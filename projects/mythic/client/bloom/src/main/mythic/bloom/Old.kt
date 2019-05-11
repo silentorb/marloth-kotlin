@@ -1,9 +1,5 @@
 package mythic.bloom
 
-import mythic.bloom.next.Flower
-import mythic.bloom.next.Seed
-import mythic.bloom.next.flattenBoxes
-
 data class SeedOld(
     val bag: StateBag = mapOf(),
     val bounds: Bounds,
@@ -22,16 +18,16 @@ data class FlatBox(
 
 typealias FlatBoxes = List<FlatBox>
 
-fun convertFlower(flower: Flower): FlowerOld = { seed ->
-  val newSeed = Seed(
-      bag = seed.bag,
-      dimensions = seed.bounds.dimensions,
-      clipBounds = seed.clipBounds
-  )
-  val box = flower(newSeed)
-
-  Blossom(
-      boxes = flattenBoxes(true, box, seed.bounds.position),
-      bounds = seed.bounds
-  )
-}
+//fun convertFlower(flower: Flower): FlowerOld = { seed ->
+//  val newSeed = Seed(
+//      bag = seed.bag,
+//      dimensions = seed.bounds.dimensions,
+//      clipBounds = seed.clipBounds
+//  )
+//  val box = flower(newSeed)
+//
+//  Blossom(
+//      boxes = flattenBoxes(true, box, seed.bounds.position),
+//      bounds = seed.bounds
+//  )
+//}

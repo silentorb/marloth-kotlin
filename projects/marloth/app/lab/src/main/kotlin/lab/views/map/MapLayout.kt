@@ -1,5 +1,6 @@
 package lab.views.map
 
+import lab.LabCommandType
 import marloth.clienting.Client
 import marloth.clienting.gui.TextStyles
 import mythic.bloom.*
@@ -19,7 +20,32 @@ private val mapMenu: Flower = menuBar(textStyle, listOf(
         character = "v",
         items = listOf(
             MenuItem(
-                name = "Toggle normals"
+                name = "Normals",
+                value = LabCommandType.toggleNormals
+            ),
+            MenuItem(
+                name = "Node ids",
+                value = LabCommandType.toggleNodeIds
+            ),
+            MenuItem(
+                name = "Solid",
+                value = LabCommandType.toggleMeshDisplay
+            ),
+            MenuItem(
+                name = "Wireframe",
+                value = LabCommandType.toggleWireframe
+            ),
+            MenuItem(
+                name = "Face ids",
+                value = LabCommandType.toggleFaceIds
+            ),
+            MenuItem(
+                name = "Isolate selection",
+                value = LabCommandType.toggleIsolateSelection
+            ),
+            MenuItem(
+                name = "Abstract",
+                value = LabCommandType.toggleAbstract
             )
         )
     )
@@ -28,8 +54,10 @@ private val mapMenu: Flower = menuBar(textStyle, listOf(
 private val horizontalPanel: ParentFlower =
     fixedList(horizontalPlane, 0, listOf(null, 250))
 
+const val bagClickMap = "clickMap"
+
 private fun mapDisplay(client: Client, realm: Realm, config: MapViewConfig): Flower =
-    depict(renderMapView(client, realm, config)) plusLogic onClick("clickMap")
+    depict(renderMapView(client, realm, config)) plusLogic onClick(bagClickMap)
 
 private fun faceInfo(realm: Realm, id: Id): Flower {
   val connection = realm.faces[id]

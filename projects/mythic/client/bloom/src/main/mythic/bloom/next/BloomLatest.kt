@@ -82,25 +82,25 @@ fun compose(vararg flowers: Flower): Flower = { seed ->
 infix fun Flower.plusFlower(second: Flower): Flower =
     compose(this, second)
 
-fun flattenBoxes(includeEmpty: Boolean, box: Box, parentOffset: Vector2i): List<FlatBox> {
-  val offset = parentOffset + box.bounds.position
-  val children = box.boxes.flatMap { child ->
-    flattenBoxes(includeEmpty, child, offset)
-  }
-  return if (includeEmpty || box.depiction != null || box.handler != null || box.logic != null)
-    listOf(FlatBox(
-        bounds = box.bounds.copy(
-            position = offset
-        ),
-        depiction = box.depiction,
-        clipBounds = box.clipBounds,
-        handler = box.handler,
-        logic = box.logic
-    ))
-        .plus(children)
-  else
-    children
-}
+//fun flattenBoxes(includeEmpty: Boolean, box: Box, parentOffset: Vector2i): List<FlatBox> {
+//  val offset = parentOffset + box.bounds.position
+//  val children = box.boxes.flatMap { child ->
+//    flattenBoxes(includeEmpty, child, offset)
+//  }
+//  return if (includeEmpty || box.depiction != null || box.handler != null || box.logic != null)
+//    listOf(FlatBox(
+//        bounds = box.bounds.copy(
+//            position = offset
+//        ),
+//        depiction = box.depiction,
+//        clipBounds = box.clipBounds,
+//        handler = box.handler,
+//        logic = box.logic
+//    ))
+//        .plus(children)
+//  else
+//    children
+//}
 
 fun dependentBoundsTransform(transform: (Vector2i, Bounds, Bounds) -> Vector2i): ReverseLayout = { parent, bounds, child ->
   val offset = transform(parent, bounds, child)
@@ -114,6 +114,8 @@ fun fixedOffset(offset: Vector2i): ForwardLayout = { container ->
       dimensions = newDimensions
   )
 }
+
+fun fixedOffset(left: Int = 0, top: Int = 0): ForwardLayout = fixedOffset(Vector2i(left, top))
 
 fun fixed(value: Int): PlanePositioner = { plane -> { value } }
 
@@ -148,7 +150,7 @@ infix fun Flower.plusLogic(logic: LogicModule): Flower = { seed ->
   val newLogic = if (box.logic == null)
     logic
   else
-    box.logic + logic
+    box.logic combinLogic logic
 
   box.copy(
       logic = newLogic
@@ -209,6 +211,38 @@ fun margin(all: Int = 0, left: Int = all, top: Int = all, bottom: Int = all, rig
       )
     }
 )
+
+fun padding2(all: Int = 0, left: Int = all, top: Int = all, bottom: Int = all, right: Int = all): FlowerWrapper = div(
+    forward = fixedOffset(left, top),
+    reverse = { _, bounds, child ->
+      bounds.copy(
+          dimensions = child.dimensions + Vector2i(left + right, top + bottom)
+      )
+    }
+)
+
+fun padding(all: Int = 0, left: Int = all, top: Int = all, bottom: Int = all, right: Int = all): FlowerWrapper = { flower ->
+  { seed ->
+    val paddingWidth = left + right
+    val paddingHeight = top + bottom
+    val paddingDimensions = Vector2i(paddingWidth, paddingHeight)
+    val childDimensions = seed.dimensions - paddingDimensions
+    val childSeed = seed.copy(
+        dimensions = childDimensions
+    )
+    val box = flower(childSeed)
+    val offsetBox = box.copy(
+        bounds = box.bounds.copy(
+            position = box.bounds.position + Vector2i(left, top)
+        )
+    )
+    Box(
+        name = "padding",
+        bounds = Bounds(dimensions = box.bounds.dimensions + paddingDimensions),
+        boxes = listOf(offsetBox)
+    )
+  }
+}
 
 fun accumulatedBounds(boxes: List<Box>): Bounds {
   assert(boxes.any())

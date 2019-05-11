@@ -40,7 +40,7 @@ val emptyBounds = Bounds(0, 0, 0, 0)
 
 typealias Depiction = (Bounds, Canvas) -> Unit
 typealias StateBag = Map<String, Any>
-typealias StateBagMods = StateBag
+typealias StateBagMods = StateBag?
 
 fun crop(bounds: Bounds, canvas: Canvas, action: () -> Unit) = canvas.crop(bounds.toVector4i(), action)
 

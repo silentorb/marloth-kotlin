@@ -55,10 +55,19 @@ fun gatherLogicBoxes(box: Box): List<Box> {
   return localList.plus(box.boxes.flatMap { gatherLogicBoxes(it) })
 }
 
-fun updateStateBag(rootBox: Box, state: HistoricalBloomState): StateBag =
-    gatherLogicBoxes(rootBox)
-        .flatMap { box -> box.logic!!(LogicBundle(state, box.bounds, visibleBounds(box))).entries }
-        .associate { it.toPair() }
+fun updateStateBag(rootBox: Box, state: HistoricalBloomState): StateBag {
+  val logicBoxes = gatherLogicBoxes(rootBox)
+  val active = logicBoxes.mapNotNull { box ->
+    box.logic!!(LogicBundle(state, box.bounds, visibleBounds(box)))
+  }
+  if (active.any()) {
+    val k = 0
+  }
+  val result = active
+      .flatMap { it.entries }
+      .associate { it.toPair() }
+  return result
+}
 
 fun updateBloomState(box: Box, previousState: BloomState, currentInput: InputState): BloomState {
   val historicalState = HistoricalBloomState(
@@ -86,7 +95,7 @@ fun persist(key: String, logicModule: LogicModule): LogicModule = { bundle ->
     if (flowerState != null)
       mapOf(key to flowerState)
     else
-      mapOf()
+      null
   }
 }
 
@@ -103,7 +112,18 @@ fun logic(logicModule: LogicModule): Flower = { seed ->
   )
 }
 
-operator fun LogicModule.plus(b: LogicModule): LogicModule = { bundle ->
-  this(bundle)
-      .plus(b(bundle))
+infix fun LogicModule.combinLogic(b: LogicModule): LogicModule = { bundle ->
+  val first = this(bundle)
+  val second = b(bundle)
+  if (first != null) {
+    if (second != null) {
+      first.plus(second)
+    } else {
+      first
+    }
+  } else if (second != null) {
+    second
+  } else {
+    null
+  }
 }

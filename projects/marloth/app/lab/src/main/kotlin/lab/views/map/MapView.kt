@@ -1,10 +1,12 @@
 package lab.views.map
 
+import haft.HaftCommand
 import haft.isActive
 import lab.LabCommandType
 import lab.views.LabCommandState
 import mythic.bloom.BloomState
 import mythic.bloom.Bounds
+import mythic.bloom.selectedMenuValue
 import mythic.ent.Id
 import mythic.platforming.WindowInfo
 import mythic.spatial.*
@@ -113,11 +115,47 @@ private fun trySelect(config: MapViewConfig, world: Realm) {
   }
 }
 
+fun applyMapStateCommand(config: MapViewConfig, world: Realm, input: LabCommandState, windowInfo: WindowInfo,
+                         bloomState: BloomState, delta: Float, command: LabCommandType) {
+  when (command) {
+    LabCommandType.incrementRaySkip -> trySelect(config, world)
+
+    LabCommandType.decrementRaySkip -> {
+      --config.raySkip
+      trySelect(config, world)
+    }
+
+    LabCommandType.toggleMeshDisplay -> config.display.solid = !config.display.solid
+
+    LabCommandType.toggleWireframe -> config.display.wireframe = !config.display.wireframe
+
+    LabCommandType.toggleNormals -> config.display.normals = !config.display.normals
+
+    LabCommandType.toggleFaceIds -> config.display.faceIds = !config.display.faceIds
+
+    LabCommandType.toggleNodeIds -> config.display.nodeIds = !config.display.nodeIds
+
+    LabCommandType.toggleIsolateSelection -> config.display.isolateSelection = !config.display.isolateSelection
+
+    LabCommandType.toggleAbstract -> config.display.abstract = !config.display.abstract
+
+    else -> {
+    }
+  }
+}
+
 fun updateMapState(config: MapViewConfig, world: Realm, input: LabCommandState, windowInfo: WindowInfo,
                    bloomState: BloomState, delta: Float) {
+  val menuCommandType = selectedMenuValue<LabCommandType>(bloomState.bag)
+
   val commands = input.commands
 
-  if (bloomState.bag["clickMap"] != null) {
+  val command = commands.firstOrNull()?.type ?: menuCommandType
+  if (command != null) {
+    applyMapStateCommand(config, world, input, windowInfo, bloomState, delta, command)
+  }
+
+  if (bloomState.bag[bagClickMap] != null) {
     val bounds = Bounds(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
     castSelectionRay(config, world, input.mousePosition, bounds)
     val previousSelection = config.selection.firstOrNull()
@@ -129,16 +167,6 @@ fun updateMapState(config: MapViewConfig, world: Realm, input: LabCommandState, 
 //        --config.raySkip
 //      }
 //    }
-  }
-
-  if (isActive(commands, LabCommandType.incrementRaySkip)) {
-//    ++config.raySkip
-    trySelect(config, world)
-  }
-
-  if (isActive(commands, LabCommandType.decrementRaySkip)) {
-    --config.raySkip
-    trySelect(config, world)
   }
 
   val moveSpeed = 50
@@ -183,28 +211,4 @@ fun updateMapState(config: MapViewConfig, world: Realm, input: LabCommandState, 
 
   if (isActive(commands, LabCommandType.rotateRight))
     config.camera.yaw = (config.camera.yaw + (rotateSpeed * delta)) % (Pi * 2)
-
-  if (isActive(commands, LabCommandType.toggleMeshDisplay)) {
-    config.display.solid = !config.display.solid
-  }
-
-  if (isActive(commands, LabCommandType.toggleWireframe)) {
-    config.display.wireframe = !config.display.wireframe
-  }
-
-  if (isActive(commands, LabCommandType.toggleNormals))
-    config.display.normals = !config.display.normals
-
-  if (isActive(commands, LabCommandType.toggleFaceIds))
-    config.display.faceIds = !config.display.faceIds
-
-  if (isActive(commands, LabCommandType.toggleNodeIds))
-    config.display.nodeIds = !config.display.nodeIds
-
-  if (isActive(commands, LabCommandType.toggleIsolateSelection))
-    config.display.isolateSelection = !config.display.isolateSelection
-
-  if (isActive(commands, LabCommandType.toggleAbstract))
-    config.display.abstract = !config.display.abstract
-
 }

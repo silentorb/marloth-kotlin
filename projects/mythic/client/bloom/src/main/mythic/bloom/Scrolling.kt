@@ -61,7 +61,7 @@ fun extractOffset(key: String, bag: StateBag): Vector2i {
 
 fun scrollingInteraction(key: String, contentBounds: Bounds): LogicModule = { (bloomState, bounds) ->
   if (contentBounds.dimensions.y <= bounds.dimensions.y) {
-    mapOf()
+    null
   } else {
     val state = scrollingState(bloomState.bag[key])
     val input = bloomState.input

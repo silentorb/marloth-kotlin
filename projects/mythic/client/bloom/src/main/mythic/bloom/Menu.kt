@@ -3,10 +3,10 @@ package mythic.bloom
 import mythic.bloom.next.*
 import mythic.spatial.Vector4
 import mythic.typography.IndexedTextStyle
-import org.joml.minus
 
 data class MenuItem(
-    val name: String
+    val name: String,
+    val value: Any
 )
 
 data class Menu(
@@ -15,17 +15,7 @@ data class Menu(
     val items: List<MenuItem>
 )
 
-//data class GlobalMenuState(
-//    val activeMenu: String?
-//)
-//
-//private val globalMenuState = existingOrNewState {
-//  GlobalMenuState(
-//      activeMenu = null
-//  )
-//}
-
-private val globalMenuSelectionKey = "menuSelection"
+private const val globalMenuSelectionKey = "menuSelection"
 private val selectableMenu = selectable<Menu>(globalMenuSelectionKey, optionalSingleSelection) {
   it.hashCode().toString()
 }
@@ -34,33 +24,46 @@ private val invertColor = { color: Vector4 ->
   Vector4(1f - color.x, 1f - color.y, 1f - color.z, 1f)
 }
 
+private val menuFlower = { menu: Menu, style: IndexedTextStyle ->
+  padding(all = 10)(label(style, menu.name)) plusLogic selectableMenu(menu) plusLogic persist()
+}
+
+const val bagMenuItemSelection = "selectedMenuValue"
+
+inline fun <reified T> selectedMenuValue(bag: StateBag): T? {
+  val entry = bag[bagMenuItemSelection]
+  return if (entry is T)
+    entry
+  else
+    null
+}
+
+private fun selectedMenu(menu: Menu, style: IndexedTextStyle): Flower {
+  val newStyle = style.copy(
+      color = invertColor(style.color)
+  )
+  val items = menu.items.map { item ->
+//    padding(all = 10)(label(newStyle, item.name)) plusLogic
+//        onClick(bagMenuItemSelection, item.value) plusLogic selectableMenu(menu)
+    padding(all = 10)(label(newStyle, item.name)) plusLogic selectableMenu(menu)
+  }
+  return list(verticalPlane, 0)(listOf(
+      menuFlower(menu, newStyle) depictBehind solidBackground(style.color),
+      list(verticalPlane, 10)(items) depictBehind solidBackground(style.color)
+  ))
+}
+
 fun menuBar(style: IndexedTextStyle, menus: List<Menu>): Flower {
   val bar = list(horizontalPlane, 10)
   val items = menus.map { menu ->
     val depiction = selectableFlower(globalMenuSelectionKey, menu.hashCode().toString()) { seed, selected ->
       if (selected) {
-        val newStyle = style.copy(
-            color = invertColor(style.color)
-//            color = Vector4(1f, 0f, 0f, 1f)
-        )
-//        div(reverse = shrink)(depict(solidBackground(style.color)) plusFlower label(newStyle, menu.name))
-        div(reverse = shrink)(margin(all = 10)(label(newStyle, menu.name)) depictBehind solidBackground(style.color))
-//        depict(solidBackground(style.color)) plusFlower
-//        label(newStyle, menu.name)
+        selectedMenu(menu, style)
       } else
-        label(style, menu.name)
-//        margin(all = 10)(label(style, menu.name))
+        menuFlower(menu, style)
     }
-    depiction plusLogic selectableMenu(menu)
+    depiction
   }
 
   return bar(items)
-
-//  return { seed ->
-//    val globalState = globalMenuState(seed.bag[key])
-//    val menuItems = menus.map {
-//
-//    }
-//    bar(menus)
-//  }
 }

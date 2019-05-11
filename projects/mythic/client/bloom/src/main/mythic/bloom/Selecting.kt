@@ -30,14 +30,19 @@ val optionalSingleSelection: SelectionLogic = { selection, item ->
 
 fun <T> selectable(key: String, selectionLogic: SelectionLogic, idSelector: IdSelector<T>): (T) -> LogicModule =
     { seed ->
-      onClick(persist(key) { (bloomState) ->
+      onClick({ (bloomState) ->
         val state = selectionState(bloomState.bag[key])
         val id = idSelector(seed)
-        val newState = SelectionState(
-            selection = selectionLogic(state.selection, id)
-        )
+        val selection = selectionLogic(state.selection, id)
+        if (selection.none())
+          null
+        else {
+          val newState = SelectionState(
+              selection = selection
+          )
 
-        mapOf(key to newState)
+          mapOf(key to newState)
+        }
       })
     }
 

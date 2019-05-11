@@ -44,9 +44,10 @@ fun onClick(logicModule: LogicModule): LogicModule = { bundle ->
   if (visibleBounds != null && isClickInside(visibleBounds, bundle.state.input))
     logicModule(bundle)
   else {
-    logicModule(bundle.copy(
+    val childBundle = bundle.copy(
         visibleBounds = null
-    ))
+    )
+    logicModule(childBundle)
   }
 }
 
@@ -54,5 +55,12 @@ fun onClick(key: String): LogicModule = onClick { bundle ->
   if (bundle.visibleBounds != null)
     mapOf(key to bundle)
   else
-    mapOf()
+    null
+}
+
+fun onClick(key: String, value: Any): LogicModule = onClick { bundle ->
+  if (bundle.visibleBounds != null)
+    mapOf(key to value)
+  else
+    null
 }
