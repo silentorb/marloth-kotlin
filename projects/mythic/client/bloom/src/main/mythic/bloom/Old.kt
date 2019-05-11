@@ -17,17 +17,3 @@ data class FlatBox(
 )
 
 typealias FlatBoxes = List<FlatBox>
-
-//fun convertFlower(flower: Flower): FlowerOld = { seed ->
-//  val newSeed = Seed(
-//      bag = seed.bag,
-//      dimensions = seed.bounds.dimensions,
-//      clipBounds = seed.clipBounds
-//  )
-//  val box = flower(newSeed)
-//
-//  Blossom(
-//      boxes = flattenBoxes(true, box, seed.bounds.position),
-//      bounds = seed.bounds
-//  )
-//}

@@ -31,11 +31,6 @@ fun logicWrapper(wrapper: (LogicBundle, StateBagMods) -> StateBagMods): LogicMod
   }
 }
 
-//data class LogicModule(
-//    val key: String?,
-//    val function: LogicModule
-//)
-
 fun visibleBounds(box: Box): Bounds? =
     if (box.clipBounds == null)
       box.bounds

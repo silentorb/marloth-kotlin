@@ -259,6 +259,12 @@ fun createBoundarySector(idSources: StructureIdSources, realm: StructureRealm, o
     val projected = it.xy() + it.xy().normalize() * 10f
     Vector3(projected.x, projected.y, it.z)
   }
+  val getOriginalEdge = { newEdge: ImmutableEdgeReference ->
+    val indexes = newEdge.vertices.map { newPoints.indexOf(it) }
+    val originalPoints = indexes.map { originFace.vertices[it] }
+    originFace.edge(originalPoints[0], originalPoints[1])!!
+  }
+
   val newWall = getWallVertices(newPoints)
   val floorVertices = originalWall.upper.plus(newWall.upper)
   val sectorCenter = getCenter(floorVertices)
@@ -267,7 +273,7 @@ fun createBoundarySector(idSources: StructureIdSources, realm: StructureRealm, o
 
   val floor = createFloor(idSources, realm.mesh, node, floorVertices, sectorCenter.xy())
   val ceiling = createCeiling(idSources, realm.mesh, node, floorVertices, sectorCenter.xy())
-//  initializeFaceInfo(FaceType.wall, node, floor, Textures.ground)
+
   node.walls.add(originFace.id)
   val updatedOriginFace = realm.connections[originFace.id]!!.copy(secondNode = node.id)
   val outerWall = createWall(idSources, realm.mesh, node, newPoints)
@@ -277,12 +283,11 @@ fun createBoundarySector(idSources: StructureIdSources, realm: StructureRealm, o
       .plus(FacePair(updatedOriginFace, originFace))
 
   val faceTable = realm.connections.plus(entityMap(faces1.map { it.info }))
-
   val missingWallsAccumulator = mutableListOf<FacePair>()
-  val sideWalls = (0..1).filter { i ->
-    val outerSideEdge = outerWall.geometry.edge(newWall.lower[i], newWall.upper[1 - i])
-    assert(outerSideEdge != null)
-    val neighborWalls = outerSideEdge!!.faces.filter { faceTable[it.id]!!.faceType == FaceType.wall }
+  val sideEdges = outerWall.geometry.edges.filter(isVerticalEdge)
+  assert(sideEdges.size == 2)
+  val sideWalls = sideEdges.filter { sideEdge ->
+    val neighborWalls = sideEdge.faces.filter { faceTable[it.id]!!.faceType == FaceType.wall }
     if (neighborWalls.size > 1) {
       val missingWalls = neighborWalls.filter { !node.walls.contains(it.id) && it.edges.any { originFace.edges.map { it.edge }.contains(it.edge) } }
       node.walls.addAll(missingWalls.map { it.id })
@@ -291,13 +296,9 @@ fun createBoundarySector(idSources: StructureIdSources, realm: StructureRealm, o
       false
     } else
       true
-  }.map { i ->
-    val sidePoints = listOf(
-        originalWall.lower[i],
-        newWall.lower[i],
-        newWall.upper[1 - i],
-        originalWall.upper[1 - i]
-    )
+  }.map { sideEdge ->
+    val originalSideEdge = getOriginalEdge(sideEdge)
+    val sidePoints = originalSideEdge.vertices.plus(sideEdge.vertices)
     val wall = createWall(idSources, realm.mesh, node, sidePoints)
     wall
   }

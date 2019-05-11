@@ -71,11 +71,6 @@ fun fixedLengthArranger(plane: Plane, padding: Int, lengths: List<Int?>): FixedC
   lengthArranger(plane, padding)(dimensions, resolveLengths(plane(dimensions).x, lengths))
 }
 
-//fun boundsArranger(plane: Plane, padding: Int): (Bounds, List<Bounds>) -> List<Bounds> = { dimensions, b ->
-//  val lengths = b.map { plane(it.dimensions).x }
-//  listBounds(plane, padding, bounds, lengths)
-//}
-
 fun centeredPosition(boundsLength: Int, length: Int): Int =
     (boundsLength - length) / 2
 

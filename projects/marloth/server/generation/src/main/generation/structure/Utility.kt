@@ -173,18 +173,3 @@ fun isConcaveCorner(a: Vector3, b: Vector3, bcNormal: Vector3): Boolean {
   val firstVector = (a - b).normalize()
   return firstVector.dot(bcNormal) > 0
 }
-
-//    val neighborLists = remaining.map { wall -> Pair(wall, getIncompleteNeighbors(currentRealm.connections, wall).toList()) }
-//    val invalid = neighborLists.filter { it.second.size > 2 }
-////    assert(invalid.none())
-//    if (invalid.any()) {
-//      val temp = invalid.map { (a, b) ->
-//        realm.connections[a.id]!!.debugInfo = "space-a"
-//        Pair(realm.connections[a.id]!!, b.map { realm.connections[it.id]!! })
-//      }
-//      val nd = temp.flatMap { (a, b) -> b.map { it.firstNode }.plus(a.firstNode) }
-//          .distinct()
-//      return currentRealm
-//    }
-
-//    assert(invalid.none())
