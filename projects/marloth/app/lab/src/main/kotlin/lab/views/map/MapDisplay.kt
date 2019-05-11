@@ -172,7 +172,7 @@ fun createTopDownCamera(camera: MapViewCamera): Camera {
       .translate(camera.target)
       .rotateZ(camera.yaw)
       .rotateX(-camera.pitch)
-      .translate(Vector3(0f, -camera.distance * 2f, 0f))
+      .translate(Vector3(0f, -camera.distance * 4f, 0f))
 //      .translate(camera.target)
 //      .rotateZ(camera.yaw)
 //      .translate(Vector3(0f, -camera.distance, camera.distance))
