@@ -9,7 +9,6 @@ import lab.views.shared.LabTextStyles
 import marloth.clienting.Client
 import mythic.bloom.StateBag
 import mythic.bloom.StateDepiction
-import mythic.bloom.StateDepictionOld
 import mythic.bloom.selectionState
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
@@ -167,21 +166,17 @@ fun renderMapMesh(renderer: SceneRenderer, realm: Realm, config: MapViewConfig, 
 //  renderer.drawLine(config.tempStart, config.tempEnd, yellow)
 }
 
-fun createTopDownCamera(camera: MapViewCamera): Camera {
+fun createOrbitalCamera(camera: MapViewOrbitalCamera): Camera {
   val position = Vector3().transform(Matrix()
       .translate(camera.target)
       .rotateZ(camera.yaw)
       .rotateX(-camera.pitch)
       .translate(Vector3(0f, -camera.distance * 4f, 0f))
-//      .translate(camera.target)
-//      .rotateZ(camera.yaw)
-//      .translate(Vector3(0f, -camera.distance, camera.distance))
   )
   return Camera(
       ProjectionType.orthographic,
       position,
       Quaternion(),
-//      45f,
       nearClip = 0.001f,
       angleOrZoom = camera.distance,
 
@@ -189,9 +184,27 @@ fun createTopDownCamera(camera: MapViewCamera): Camera {
   )
 }
 
+fun createFirstPersonCamera(camera: MapViewFirstPersonCamera): Camera {
+  return Camera(
+      ProjectionType.perspective,
+      camera.position,
+      Quaternion()
+          .rotateZ(camera.yaw)
+          .rotateY(camera.pitch),
+//      if (isAlive) character.facingQuaternion else character.facingQuaternion * Quaternion().rotateX(Pi / -6f),
+      45f
+  )
+}
+
+fun createMapViewCamera(config: MapViewConfig) =
+    if (config.cameraMode == MapViewCameraMode.orbital)
+      createOrbitalCamera(config.orbitalCamera)
+    else
+      createFirstPersonCamera(config.firstPersonCamera)
+
 fun renderMapView(client: Client, realm: Realm, config: MapViewConfig): StateDepiction = { seed ->
   embedCameraView { b, c ->
-    val camera = createTopDownCamera(config.camera)
+    val camera = createMapViewCamera(config)
     val windowInfo = client.getWindowInfo()
     val renderer = client.renderer
     renderer.prepareRender(windowInfo)

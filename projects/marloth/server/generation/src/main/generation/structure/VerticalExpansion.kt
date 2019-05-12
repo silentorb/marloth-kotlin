@@ -2,6 +2,7 @@ package generation.structure
 
 import mythic.ent.Id
 import mythic.ent.entityMap
+import mythic.sculpting.ImmutableEdgeReference
 import mythic.sculpting.ImmutableFace
 import mythic.spatial.Vector3
 import physics.voidNodeId
@@ -20,7 +21,7 @@ interface VerticalFacing {
   fun ceilings(node: Node): MutableList<Id>
   fun floors(node: Node): MutableList<Id>
   fun upperNode(faces: ConnectionTable, node: Node): Id
-  fun wallVertices(face: ImmutableFace): WallVertices
+  fun ceilingEdge(face: ImmutableFace): ImmutableEdgeReference
 }
 
 class VerticalFacingUp : VerticalFacing {
@@ -29,7 +30,7 @@ class VerticalFacingUp : VerticalFacing {
   override fun ceilings(node: Node): MutableList<Id> = node.ceilings
   override fun floors(node: Node): MutableList<Id> = node.floors
   override fun upperNode(faces: ConnectionTable, node: Node): Id = getUpperNode(faces, node)
-  override fun wallVertices(face: ImmutableFace): WallVertices = getWallVertices(face)
+  override fun ceilingEdge(face: ImmutableFace): ImmutableEdgeReference = getCeiling(face)
 }
 
 class VerticalFacingDown : VerticalFacing {
@@ -38,16 +39,13 @@ class VerticalFacingDown : VerticalFacing {
   override fun ceilings(node: Node): MutableList<Id> = node.floors
   override fun floors(node: Node): MutableList<Id> = node.ceilings
   override fun upperNode(faces: ConnectionTable, node: Node): Id = getLowerNode(faces, node)
-  override fun wallVertices(face: ImmutableFace): WallVertices {
-    val result = getWallVertices(face)
-    return WallVertices(upper = result.lower, lower = result.upper)
-  }
+  override fun ceilingEdge(face: ImmutableFace): ImmutableEdgeReference = getFloor(face)
 }
 
 fun createVerticalNodes(idSources: StructureIdSources, realm: StructureRealm, middleNodes: Collection<Node>, roomNodes: Collection<Node>, dice: Dice,
                         facing: VerticalFacing, shouldBeSolid: (original: Node) -> Boolean): StructureRealm {
   val newNodes = middleNodes.map { node ->
-    val depth = wallHeight
+    val depth = wallHeight / 3f
     val offset = Vector3(0f, 0f, depth * facing.dirMod)
 
     createSecondaryNode(node.position + offset, idSources.node,
@@ -97,8 +95,8 @@ fun createAscendingSpaceWalls(idSources: StructureIdSources, realm: StructureRea
         val upperNode = realm.nodes[facing.upperNode(realm.connections, node)]!!
         val otherUpperNode = getOtherNode(nodeId, realm.connections[upperWall]!!)!!
         val otherUpNode = realm.nodes[facing.upperNode(realm.connections, realm.nodes[otherUpperNode]!!)]!!
-        val firstEdge = facing.wallVertices(realm.mesh.faces[upperWall]!!).upper
-        val unorderedVertices = firstEdge.plus(firstEdge.map { it + offset })
+        val firstEdge = facing.ceilingEdge(realm.mesh.faces[upperWall]!!)
+        val unorderedVertices = firstEdge.vertices.plus(firstEdge.vertices.map { it + offset })
         val emptyNode = if (!upperNode.isSolid)
           upperNode
         else
@@ -137,15 +135,6 @@ fun expandVertically(idSources: StructureIdSources, realm: StructureRealm, roomN
       },
       VerticalDirection.up to { node: Node ->
         dice.getInt(0, 4) != 0
-//        val biome = biomeMap[node.id]!!
-//        when (biome.enclosure) {
-//          Enclosure.all -> dice.getInt(0, 4) != 0
-//          Enclosure.none -> dice.getInt(0, 4) != 0
-//          Enclosure.some -> dice.getInt(0, 4) != 0
-//        }
-//        if (!node.biome.hasEnclosedRooms || (!roomNodes.contains(node) && !node.isSolid))
-//          false
-//        else dice.getInt(0, 4) != 0
       })
   var currentRealm = realm
   listOf(VerticalFacingDown(), VerticalFacingUp())

@@ -11,39 +11,13 @@ import mythic.ent.Id
 import mythic.platforming.WindowInfo
 import mythic.spatial.*
 import org.joml.minus
+import org.joml.times
+import physics.joinInputVector
+import physics.playerMoveMap
 import rendering.createCameraEffectsData
+import simulation.Command
+import simulation.CommandType
 import simulation.Realm
-
-data class MapViewCamera(
-    var target: Vector3 = Vector3(),
-    var distance: Float = 20f,
-    var yaw: Float = 0f,
-    var pitch: Float = Pi / 4f
-)
-
-enum class MapViewDrawMode {
-  solid,
-  wireframe
-}
-
-data class MapViewDisplayConfig(
-    var solid: Boolean = true,
-    var wireframe: Boolean = true,
-    var normals: Boolean = false,
-    var faceIds: Boolean = false,
-    var nodeIds: Boolean = false,
-    var isolateSelection: Boolean = false,
-    var abstract: Boolean = false
-)
-
-data class MapViewConfig(
-    val camera: MapViewCamera = MapViewCamera(),
-    val display: MapViewDisplayConfig = MapViewDisplayConfig(),
-    var selection: List<Id> = listOf(),
-    var tempStart: Vector3 = Vector3(),
-    var tempEnd: Vector3 = Vector3(),
-    var raySkip: Int = 0
-)
 
 data class Hit(
     val position: Vector3,
@@ -73,7 +47,8 @@ private fun getFaceHits(start: Vector3, end: Vector3, world: Realm): List<Hit> {
 }
 
 private fun castSelectionRay(config: MapViewConfig, world: Realm, mousePosition: Vector2, bounds: Bounds) {
-  val camera = createTopDownCamera(config.camera)
+  val camera = createMapViewCamera(config)
+
   val dimensions = bounds.dimensions
   val cursor = mousePosition.toVector2i() - bounds.position
   val cameraData = createCameraEffectsData(dimensions, camera)
@@ -115,8 +90,14 @@ private fun trySelect(config: MapViewConfig, world: Realm) {
   }
 }
 
-fun applyMapStateCommand(config: MapViewConfig, world: Realm, input: LabCommandState, windowInfo: WindowInfo,
-                         bloomState: BloomState, delta: Float, command: LabCommandType) {
+private fun switchCameraMode(config: MapViewConfig) {
+  config.cameraMode = if (config.cameraMode == MapViewCameraMode.orbital)
+    MapViewCameraMode.firstPerson
+  else
+    MapViewCameraMode.orbital
+}
+
+fun applyMapStateCommand(config: MapViewConfig, world: Realm, command: LabCommandType) {
   when (command) {
     LabCommandType.incrementRaySkip -> trySelect(config, world)
 
@@ -139,38 +120,16 @@ fun applyMapStateCommand(config: MapViewConfig, world: Realm, input: LabCommandS
 
     LabCommandType.toggleAbstract -> config.display.abstract = !config.display.abstract
 
+    LabCommandType.switchCamera -> switchCameraMode(config)
+
     else -> {
     }
   }
 }
 
-fun updateMapState(config: MapViewConfig, world: Realm, input: LabCommandState, windowInfo: WindowInfo,
-                   bloomState: BloomState, delta: Float) {
-  val menuCommandType = selectedMenuValue<LabCommandType>(bloomState.bag)
-
-  val commands = input.commands
-
-  val command = commands.firstOrNull()?.type ?: menuCommandType
-  if (command != null) {
-    applyMapStateCommand(config, world, input, windowInfo, bloomState, delta, command)
-  }
-
-  if (bloomState.bag[bagClickMap] != null) {
-    val bounds = Bounds(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
-    castSelectionRay(config, world, input.mousePosition, bounds)
-    val previousSelection = config.selection.firstOrNull()
-    trySelect(config, world)
-//    if (config.selection.firstOrNull() != null && config.selection.firstOrNull() == previousSelection) {
-//      ++config.raySkip
-//      trySelect(config, world)
-//      if (config.selection.firstOrNull() == previousSelection) {
-//        --config.raySkip
-//      }
-//    }
-  }
-
-  val moveSpeed = 50
+fun updateOrbitalCamera(camera: MapViewOrbitalCamera, commands: List<HaftCommand<LabCommandType>>, delta: Float) {
   val zoomSpeed = 200
+  val moveSpeed = 50
   val rotateSpeed = 2
 
   val moveOffset = Vector3(
@@ -188,27 +147,89 @@ fun updateMapState(config: MapViewConfig, world: Realm, input: LabCommandState, 
         0f
   )
 
-  val distanceOffset = config.camera.distance / 50f
+  val distanceOffset = camera.distance / 50f
 
   if (moveOffset != Vector3())
-    config.camera.target += moveOffset.transform(Matrix().rotateZ(config.camera.yaw)) * (moveSpeed * delta * distanceOffset)
+    camera.target += moveOffset.transform(Matrix().rotateZ(camera.yaw)) * (moveSpeed * delta * distanceOffset)
 
   if (isActive(commands, LabCommandType.zoomIn))
-    config.camera.distance = Math.max(1f, config.camera.distance - zoomSpeed * delta * distanceOffset)
+    camera.distance = Math.max(1f, camera.distance - zoomSpeed * delta * distanceOffset)
 
   val pitchRange = Pi / 2f - 0.001f
   if (isActive(commands, LabCommandType.rotateUp))
-    config.camera.pitch = Math.min(pitchRange, config.camera.pitch + rotateSpeed * delta)
+    camera.pitch = Math.min(pitchRange, camera.pitch + rotateSpeed * delta)
 
   if (isActive(commands, LabCommandType.rotateDown))
-    config.camera.pitch = Math.max(-pitchRange, config.camera.pitch - rotateSpeed * delta)
+    camera.pitch = Math.max(-pitchRange, camera.pitch - rotateSpeed * delta)
 
   if (isActive(commands, LabCommandType.zoomOut))
-    config.camera.distance = Math.min(200f, config.camera.distance + zoomSpeed * delta * distanceOffset)
+    camera.distance = Math.min(200f, camera.distance + zoomSpeed * delta * distanceOffset)
 
   if (isActive(commands, LabCommandType.rotateLeft))
-    config.camera.yaw = (config.camera.yaw - (rotateSpeed * delta)) % (Pi * 2)
+    camera.yaw = (camera.yaw - (rotateSpeed * delta)) % (Pi * 2)
 
   if (isActive(commands, LabCommandType.rotateRight))
-    config.camera.yaw = (config.camera.yaw + (rotateSpeed * delta)) % (Pi * 2)
+    camera.yaw = (camera.yaw + (rotateSpeed * delta)) % (Pi * 2)
+}
+
+fun updateFirstPersonCamera(camera: MapViewFirstPersonCamera, commands: List<HaftCommand<LabCommandType>>, delta: Float) {
+  val moveSpeed = 50f
+  val rotateSpeed = 2
+
+  val playerCommands = commands.mapNotNull {
+    when (it.type) {
+      LabCommandType.moveLeft -> CommandType.moveLeft
+      LabCommandType.moveRight -> CommandType.moveRight
+      LabCommandType.moveDown -> CommandType.moveDown
+      LabCommandType.moveUp -> CommandType.moveUp
+      else -> null
+    }
+  }.map { Command(type = it, target = 0, value = 1f) }
+
+  val moveOffset = joinInputVector(playerCommands, playerMoveMap)
+
+  if (moveOffset != null) {
+    val rotation = Quaternion().rotateZ(camera.yaw - Pi / 2).rotateY(camera.pitch)
+    val offset = rotation * moveOffset * delta * moveSpeed
+//    val rotationMatrix = Matrix().rotateZ(camera.yaw).rotateY(camera.pitch)
+    camera.position += offset
+  }
+
+  val pitchRange = Pi / 2f - 0.001f
+  if (isActive(commands, LabCommandType.rotateUp))
+    camera.pitch = Math.min(pitchRange, camera.pitch + rotateSpeed * delta)
+
+  if (isActive(commands, LabCommandType.rotateDown))
+    camera.pitch = Math.max(-pitchRange, camera.pitch - rotateSpeed * delta)
+
+  if (isActive(commands, LabCommandType.rotateLeft))
+    camera.yaw = (camera.yaw - (rotateSpeed * delta)) % (Pi * 2)
+
+  if (isActive(commands, LabCommandType.rotateRight))
+    camera.yaw = (camera.yaw + (rotateSpeed * delta)) % (Pi * 2)
+}
+
+fun updateMapState(config: MapViewConfig, world: Realm, input: LabCommandState, windowInfo: WindowInfo,
+                   bloomState: BloomState, delta: Float) {
+  val menuCommandType = selectedMenuValue<LabCommandType>(bloomState.bag)
+
+  val commands = input.commands
+
+  val command = commands.firstOrNull()?.type ?: menuCommandType
+  if (command != null) {
+    applyMapStateCommand(config, world, command)
+  }
+
+  if (bloomState.bag[bagClickMap] != null) {
+    val bounds = Bounds(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
+    castSelectionRay(config, world, input.mousePosition, bounds)
+    trySelect(config, world)
+  }
+
+
+  if (config.cameraMode == MapViewCameraMode.orbital) {
+    updateOrbitalCamera(config.orbitalCamera, commands, delta)
+  } else {
+    updateFirstPersonCamera(config.firstPersonCamera, commands, delta)
+  }
 }

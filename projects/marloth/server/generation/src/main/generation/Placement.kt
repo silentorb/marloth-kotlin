@@ -81,9 +81,10 @@ fun newDoor(realm: Realm, nextId: IdSource): (Id) -> Hand = { nodeId ->
   val edge = getFloor(meshFace)
   val margin = 0.9f
   val length = edge.first.distance(edge.second) * margin
-  val height = node.height
   val position = getCenter(meshFace.vertices)
   val id = nextId()
+  val sideEdge = realm.mesh.faces[face]!!.edges.filter(isVerticalEdgeLimited).first()
+  val height = Math.abs(sideEdge.first.z - sideEdge.second.z)
   EntityTemplates.door.copy(
       id = id,
       body = Body(
@@ -189,7 +190,7 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
   val nextId = newIdSource(1)
   val deck = Deck()
       .plus(newPlayer(nextId, playerNode))
-//      .plus(placeWallLamps(realm, nextId, input.dice, scale))
+      .plus(placeWallLamps(realm, nextId, input.dice, scale))
 //      .plus(placeDoors(realm, nextId))
 
   return World(

@@ -34,7 +34,6 @@ fun createTunnelNodes(graph: Graph, preTunnels: List<PreTunnel>): Graph {
             radius = tunnelRadius,
             isSolid = false,
             isWalkable = true,
-            height = wallHeight,
             biome = Biome.void
         )
       }

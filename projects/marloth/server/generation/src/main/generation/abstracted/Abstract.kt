@@ -69,8 +69,7 @@ fun createRoomNode(boundary: WorldBoundary, nodes: List<Node>, id: Id, dice: Dic
       radius = radius,
       isSolid = false,
       isWalkable = true,
-      biome = Biome.void,
-      height = wallHeight
+      biome = Biome.void
   )
 }
 

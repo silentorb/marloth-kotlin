@@ -150,9 +150,6 @@ class SimulationSpec : Spek({
         val dots = offsets.dropLast(1).zip(offsets.drop(1)) { a, b ->
           a.normalize().dot(b.normalize())
         }
-        val primaryWalls = collisions.map {
-          it[0].wall.debugIndex
-        }
         val distances = positions.map { it.distance(cornerPoint) }
 
         val all = dots.mapIndexed { i, dot ->

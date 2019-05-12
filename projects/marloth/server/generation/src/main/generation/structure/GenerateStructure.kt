@@ -158,9 +158,6 @@ fun createClusterNodeStructure(node: Node, cluster: List<Node>, corners: List<Co
 data class SharedCorners(val nodes: List<Node>, val corners: List<Corner>)
 
 fun createClusterStructure(graph: Graph, cluster: Cluster): List<TempSector> {
-  if (cluster.map { it.id }.contains(78L)) {
-    val k = 0
-  }
   val allDoorways = cluster.map { createNodeDoorways(graph, it) }
   val doorwayPoints = allDoorways.flatten().flatten()
   val overlapPoints = getClusterUnions(graph.connections, cluster)
@@ -282,9 +279,12 @@ fun sinewFloorsAndCeilings(idSources: GeometryIdSources, nodeSectors: Collection
   var currentMesh = mesh
   return nodeSectors.flatMap { sector ->
     val sectorCenter = getCenter(sector.corners).xy()
-    val vertices = sector.corners.map { it }
-    val result = listOf(createFloor(idSources, currentMesh, sector.node, vertices, sectorCenter),
-        createCeiling(idSources, currentMesh, sector.node, vertices, sectorCenter)
+    val heightOffset = Vector3(0f, 0f, wallHeight / 2f)
+    val ceilingVertices = sector.corners.map { it + heightOffset }
+    val floorVertices = sector.corners.map { it - heightOffset }
+    val result = listOf(
+        createCeiling(idSources, currentMesh, sector.node, ceilingVertices, sectorCenter),
+        createFloor(idSources, currentMesh, sector.node, floorVertices, sectorCenter)
     )
     currentMesh = currentMesh.copy(edges = currentMesh.edges.plus(entityMap(result.flatMap { er -> er.geometry.edges.map { it.edge } })))
     result
@@ -462,25 +462,21 @@ fun fillNodeBiomesAndSolid(dice: Dice, realm: StructureRealm, biomeGrid: BiomeGr
         node
     }
 
+fun isFacingOutward(face: ImmutableFace, nodeCenter: Vector3): Boolean {
+  val nodeNormal = (nodeCenter - getCenter(face.vertices)).normalize()
+  return isFacingSameDirection(face.normal, nodeNormal)
+}
+
 fun cleanupSolidNormals(realm: StructureRealm): StructureRealm {
   val backwards = realm.mesh.faces.filter { (_, face) ->
-    if (face.id == 41L) {
-      val k = 0
-    }
     val info = realm.connections[face.id]!!
     val firstNode = realm.nodes[info.firstNode]!!
     val nodes = listOf(
         firstNode,
         realm.nodes[info.secondNode]
     )
-    val height = if (firstNode.height == 0f)
-      2f
-    else
-      firstNode.height
 
-    val nodeCenter = firstNode.position + Vector3(0f, 0f, height / 2f)
-    val nodeNormal = (nodeCenter - getCenter(face.vertices)).normalize()
-    val outerWall = if (isFacingSameDirection(face.normal, nodeNormal))
+    val outerWall = if (isFacingOutward(face, firstNode.position))
       0
     else
       1
@@ -515,18 +511,12 @@ fun cleanupSolidNormals(realm: StructureRealm): StructureRealm {
 
 fun generateStructure(biomeGrid: BiomeGrid, idSources: StructureIdSources, graph: Graph, dice: Dice): StructureRealm {
   val initialRealm = createRooms(graph, idSources, dice)
-//  val initialRealm = StructureRealm(
-//      nodes = graph.nodes,
-//      connections = mapOf(),
-//      mesh = ImmutableMesh()
-//  )
-  val roomNodes = graph.nodes
   return pipe(initialRealm, listOf(
       { realm -> defineNegativeSpace(idSources, realm, dice) },
       { realm -> realm.copy(nodes = fillNodeBiomesAndSolid(dice, realm, biomeGrid)) },
       { realm -> fillBoundary(idSources, realm, dice) },
-//      { realm -> expandVertically(idSources, realm, roomNodes.values, dice) },
-//      { realm -> cleanupSolidNormals(realm) },
+      { realm -> expandVertically(idSources, realm, graph.nodes.values, dice) },
+      { realm -> cleanupSolidNormals(realm) },
       { realm ->
         realm.copy(
             mesh = realm.mesh.copy(

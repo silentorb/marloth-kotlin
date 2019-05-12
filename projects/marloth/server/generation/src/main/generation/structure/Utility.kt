@@ -10,20 +10,20 @@ import mythic.ent.entityMap
 import mythic.ent.newIdSource
 import simulation.*
 
-data class WallVertices(
-    val lower: Vertices,
-    val upper: Vertices
-)
-
-fun getWallVertices(vertices: Vertices): WallVertices {
-  val sortedOriginalPoints = vertices.sortedBy { it.z }
-  return WallVertices(sortedOriginalPoints.take(2),
-      sortedOriginalPoints.drop(2)
-  )
-}
-
-fun getWallVertices(face: ImmutableFace): WallVertices =
-    getWallVertices(face.vertices)
+//data class WallVertices(
+//    val lower: Vertices,
+//    val upper: Vertices
+//)
+//
+//fun getWallVertices(vertices: Vertices): WallVertices {
+//  val sortedOriginalPoints = vertices.sortedBy { it.z }
+//  return WallVertices(sortedOriginalPoints.take(2),
+//      sortedOriginalPoints.drop(2)
+//  )
+//}
+//
+//fun getWallVertices(face: ImmutableFace): WallVertices =
+//    getWallVertices(face.vertices)
 
 
 fun getNewWallVertices(sectorCenter: Vector3, edges: Edges): Vertices {
@@ -67,8 +67,7 @@ fun createSecondaryNode(sectorCenter: Vector3, nextId: IdSource, isSolid: Boolea
       radius = radius,
       isSolid = isSolid,
       isWalkable = false,
-      biome = biome,
-      height = wallHeight
+      biome = biome
   )
   return node
 }
@@ -109,7 +108,6 @@ fun createFloor(idSources: GeometryIdSources, mesh: ImmutableMesh, node: Node, v
 fun createCeiling(idSources: GeometryIdSources, mesh: ImmutableMesh, node: Node, vertices: Vertices, center: Vector2): FacePair {
   val sortedFloorVertices = vertices
       .sortedByDescending { atan(it.xy() - center) }
-//      .map { it + Vector3(0f, 0f, wallHeight) }
 
   val result = createSurface(idSources.edge, mesh, idSources.face(), node.id, sortedFloorVertices, FaceType.ceiling)
   node.ceilings.add(result.geometry.id)

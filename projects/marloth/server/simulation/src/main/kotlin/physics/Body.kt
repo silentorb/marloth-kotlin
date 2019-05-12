@@ -16,7 +16,6 @@ const val voidNodeId = -1L
 val voidNode: Node = Node(
     id = voidNodeId,
     position = Vector3(0f, 0f, -voidNodeHeight),
-    height = voidNodeHeight,
     radius = 0f,
     isSolid = false,
     isWalkable = false,

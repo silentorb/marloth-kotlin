@@ -59,6 +59,8 @@ enum class LabCommandType {
   toggleIsolateSelection,
   toggleWireframe,
 
+  switchCamera,
+
   selectEdgeLoop
 }
 

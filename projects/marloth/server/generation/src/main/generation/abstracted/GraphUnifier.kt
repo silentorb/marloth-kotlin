@@ -15,7 +15,7 @@ data class NearestNodeResult(val node: Node, val distance: Float)
 fun getNeighborsByDistance(node: Node, nodes: Sequence<Node>) = nodes.asSequence()
     .filter { it !== node }
     .map { NearestNodeResult(it, getNodeDistance(node, it)) }
-    .filter {it.distance <= maxTunnelLength}
+    .filter { it.distance <= maxTunnelLength }
     .toList()
     .sortedBy { it.distance }
 
@@ -67,13 +67,6 @@ private val tunnelAngleFilter: NodeSequenceTransform = { node, nodes ->
     val b = node.position + initialVector * it.radius
     val slopeVector = (a - b).normalize()
     val dot = Math.abs(upVector.dot(slopeVector))
-//    if (dot < maxTunnelDot) {
-//      if (it.id == 4L) {
-//        val k = 0
-//      }
-//      println("${it.id} ${node.id} ${dot}")
-//    }
-
     val c = 7L
     val d = 10L
     if ((it.id == c && node.id == d) || (it.id == d && node.id == c)) {
@@ -83,19 +76,24 @@ private val tunnelAngleFilter: NodeSequenceTransform = { node, nodes ->
   }
 }
 
+private fun gapToInitialConnection(connections: InitialConnections, gap: NodeGap, connectionType: ConnectionType) =
+    Pair(listOf(gap.second), connections.plus(InitialConnection(gap.first.id, gap.second.id, connectionType, FaceType.space)))
+
 tailrec fun scanNodes(graph: Graph, previousChanged: List<Node>, mainGroup: List<Node>, ungrouped: List<Node>,
                       connections: InitialConnections): InitialConnections {
   val possibleChanged = scanChanged(graph, previousChanged, mainGroup).toList()
   val (changed, newConnections) = if (possibleChanged.isEmpty()) {
 
     val gap = findShortestGap(graph, mainGroup.asSequence(), ungrouped.asSequence(), tunnelAngleFilter)
-//        ?: findShortestGap(graph, mainGroup.asSequence(), ungrouped.asSequence()) { node, nodes -> nodes }
 
-    if (gap == null)
-      Pair(listOf(), connections)
-//      throw Error("Could not find gap to fill.")
-    else
-      Pair(listOf(gap.second), connections.plus(InitialConnection(gap.first.id, gap.second.id, ConnectionType.tunnel, FaceType.space)))
+    if (gap == null) {
+      val verticalGap = findShortestGap(graph, mainGroup.asSequence(), ungrouped.asSequence()) { node, nodes -> nodes }
+      if (verticalGap == null)
+        throw Error("Could not find gap to fill.")
+
+      gapToInitialConnection(connections, verticalGap, ConnectionType.vertical)
+    } else
+      gapToInitialConnection(connections, gap, ConnectionType.tunnel)
   } else {
     Pair(possibleChanged, connections)
   }

@@ -202,7 +202,7 @@ fun mapLights(world: World, player: Player) =
                   type = LightType.point,
                   color = Vector4(1f, 1f, 1f, 0.6f),
                   position = world.bodyTable[player.id]!!.position + Vector3(0f, 0f, 2f),
-                  direction = Vector4(0f, 0f, 0f, 18f)
+                  direction = Vector4(0f, 0f, 0f, 26f)
               )
             else
               null

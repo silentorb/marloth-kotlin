@@ -176,8 +176,7 @@ fun distributeNodes(boundary: WorldBoundary, count: Int, dice: Dice): List<Node>
           radius = calculateRadius(position, nodes, dice),
           isSolid = false,
           isWalkable = true,
-          biome = Biome.void,
-          height = wallHeight
+          biome = Biome.void
       )
 //      matrix[i] = node.id
       nodes.add(node)

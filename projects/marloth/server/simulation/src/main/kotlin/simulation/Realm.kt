@@ -143,17 +143,19 @@ fun getOtherNode(id: Id, info: ConnectionFace): Id? {
 fun getNode(realm: Realm, id: Id) =
     realm.nodeList.firstOrNull { it.id == id }
 
-val isVerticalEdge = { edge: ImmutableEdgeReference ->
+// This function does not work with walls containing extreme floor slopes
+val isVerticalEdgeLimited = { edge: ImmutableEdgeReference ->
   val horizontal = Vector3(edge.first.x - edge.second.x, edge.first.y - edge.second.y, 0f).length()
   val vertical = Math.abs(edge.first.z - edge.second.z)
   vertical > horizontal
 }
 
-val isHorizontalEdge = { edge: ImmutableEdgeReference -> !isVerticalEdge(edge) }
+// This function does not work with walls containing extreme floor slopes
+val isHorizontalEdgeLimited = { edge: ImmutableEdgeReference -> !isVerticalEdgeLimited(edge) }
 
 fun getFloor(face: ImmutableFace): ImmutableEdgeReference {
   val horizontalEdges = face.edges
-      .filter(isHorizontalEdge)
+      .filter(isHorizontalEdgeLimited)
 
   return if (horizontalEdges.any()) {
     horizontalEdges
@@ -167,7 +169,7 @@ fun getFloor(face: ImmutableFace): ImmutableEdgeReference {
 
 fun getCeiling(face: ImmutableFace): ImmutableEdgeReference {
   val horizontalEdges = face.edges
-      .filter(isHorizontalEdge)
+      .filter(isHorizontalEdgeLimited)
 
   return if (horizontalEdges.any()) {
     horizontalEdges

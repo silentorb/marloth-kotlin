@@ -1,6 +1,5 @@
 package marloth.integration
 
-import generation.structure.getWallVertices
 import marloth.clienting.Client
 import mythic.sculpting.ImmutableFace
 import mythic.sculpting.ImmutableFaceTable
@@ -45,8 +44,8 @@ fun createTexturedWall(face: ImmutableFace, texture: Textures): TextureFace {
   val bounds = getBounds(vertices)
   val dimensions = bounds.dimensions
   val scale = .5f
-  val edge = getWallVertices(face).upper
-  val length = edge.first().distance(edge.last()) * scale
+  val edge = getCeiling(face).edge
+  val length = edge.first.distance(edge.second) * scale
   val uvs = listOf(
       Vector2(0f, 0f),
       Vector2(length, 0f),

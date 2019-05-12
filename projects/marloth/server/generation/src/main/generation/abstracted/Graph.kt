@@ -10,7 +10,8 @@ enum class ConnectionType {
   tunnel,
   obstacle,
   union,
-  ceilingFloor
+  ceilingFloor,
+  vertical
 }
 
 data class InitialConnection(

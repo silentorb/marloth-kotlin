@@ -203,7 +203,7 @@ fun newSpaceNode(idSources: StructureIdSources, realm: StructureRealm, walls: Li
   assert(hasNoDuplicates(floorVertices))
   assert(hasNoDuplicates(ceilingVertices))
 
-  val sectorCenter = getCenter(floorVertices)
+  val sectorCenter = getCenter(floorVertices.plus(ceilingVertices))
   val flatCenter = sectorCenter.xy()
 
   val node = createSpaceNode(sectorCenter, idSources.node)
@@ -215,6 +215,10 @@ fun newSpaceNode(idSources: StructureIdSources, realm: StructureRealm, walls: Li
 
   val floor = createFloor(idSources, realm.mesh, node, floorVertices, flatCenter)
   val ceiling = createCeiling(idSources, realm.mesh, node, ceilingVertices, flatCenter)
+
+  // Temporary assertions
+  isFacingOutward(ceiling.geometry, node.position)
+  isFacingOutward(floor.geometry, node.position)
 
   val gapWall = if (a.id == b.id || a.faces.any { it.id == b.id }) {
     listOf()
@@ -253,7 +257,7 @@ fun getIncomplete(faces: ConnectionTable, nodes: Collection<Node>): List<Id> =
         .filter { faceNodeCount(faces[it]!!) == 1 }
 
 fun createBoundarySector(idSources: StructureIdSources, realm: StructureRealm, originFace: ImmutableFace, dice: Dice): StructureRealm {
-  val originalWall = getWallVertices(originFace.vertices)
+//  val originalWall = getWallVertices(originFace.vertices)
 
   val newPoints = originFace.vertices.map {
     val projected = it.xy() + it.xy().normalize() * 10f
@@ -265,18 +269,22 @@ fun createBoundarySector(idSources: StructureIdSources, realm: StructureRealm, o
     originFace.edge(originalPoints[0], originalPoints[1])!!
   }
 
-  val newWall = getWallVertices(newPoints)
-  val floorVertices = originalWall.upper.plus(newWall.upper)
-  val sectorCenter = getCenter(floorVertices)
-
+  val sectorCenter = getCenter(originFace.vertices.plus(newPoints))
   val node = createSpaceNode(sectorCenter, idSources.node)
+  val outerWall = createWall(idSources, realm.mesh, node, newPoints)
+  val floorVertices = getFloor(originFace).vertices.plus(getFloor(outerWall.geometry).vertices)
+  val ceilingVertices = getCeiling(originFace).vertices.plus(getCeiling(outerWall.geometry).vertices)
 
   val floor = createFloor(idSources, realm.mesh, node, floorVertices, sectorCenter.xy())
-  val ceiling = createCeiling(idSources, realm.mesh, node, floorVertices, sectorCenter.xy())
+  val ceiling = createCeiling(idSources, realm.mesh, node, ceilingVertices, sectorCenter.xy())
+
+  // Temporary assertions
+  isFacingOutward(outerWall.geometry, node.position)
+  isFacingOutward(ceiling.geometry, node.position)
+  isFacingOutward(floor.geometry, node.position)
 
   node.walls.add(originFace.id)
   val updatedOriginFace = realm.connections[originFace.id]!!.copy(secondNode = node.id)
-  val outerWall = createWall(idSources, realm.mesh, node, newPoints)
   val faces1 = listOf(outerWall)
       .plus(floor)
       .plus(ceiling)
@@ -284,7 +292,7 @@ fun createBoundarySector(idSources: StructureIdSources, realm: StructureRealm, o
 
   val faceTable = realm.connections.plus(entityMap(faces1.map { it.info }))
   val missingWallsAccumulator = mutableListOf<FacePair>()
-  val sideEdges = outerWall.geometry.edges.filter(isVerticalEdge)
+  val sideEdges = outerWall.geometry.edges.filter(isVerticalEdgeLimited)
   assert(sideEdges.size == 2)
   val sideWalls = sideEdges.filter { sideEdge ->
     val neighborWalls = sideEdge.faces.filter { faceTable[it.id]!!.faceType == FaceType.wall }
@@ -298,7 +306,9 @@ fun createBoundarySector(idSources: StructureIdSources, realm: StructureRealm, o
       true
   }.map { sideEdge ->
     val originalSideEdge = getOriginalEdge(sideEdge)
-    val sidePoints = originalSideEdge.vertices.plus(sideEdge.vertices)
+    val sidePoints = originalSideEdge.vertices
+        .sortedBy { it.z }
+        .plus(sideEdge.vertices.sortedByDescending { it.z })
     val wall = createWall(idSources, realm.mesh, node, sidePoints)
     wall
   }

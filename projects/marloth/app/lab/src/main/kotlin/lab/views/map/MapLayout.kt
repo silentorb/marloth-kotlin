@@ -46,6 +46,10 @@ private val mapMenu: Flower = menuBar(textStyle, listOf(
             MenuItem(
                 name = "Abstract",
                 value = LabCommandType.toggleAbstract
+            ),
+            MenuItem(
+                name = "Camera mode",
+                value = LabCommandType.switchCamera
             )
         )
     )

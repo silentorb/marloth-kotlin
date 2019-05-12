@@ -8,7 +8,6 @@ data class Node(
     override val id: Id,
     val position: Vector3,
     val radius: Float,
-    val height: Float,
     val isWalkable: Boolean,
     val biome: Biome,
     val isSolid: Boolean,

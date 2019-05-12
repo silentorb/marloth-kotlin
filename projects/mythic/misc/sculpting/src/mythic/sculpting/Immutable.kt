@@ -79,7 +79,6 @@ data class ImmutableFace(
 //    var data: Any? = null,
     val normal: Vector3 = Vector3()
 ) : Entity {
-  val debugIndex = flexibleFaceDebugCounter++
   val unorderedVertices: List<Vector3>
     get() = edges.map { it.first }
 
@@ -87,14 +86,10 @@ data class ImmutableFace(
     get() = edges.map { it.first }
 
   init {
-    if (id == 1470L) {
+    if (id == 203L) {
       val k = 0
     }
   }
-//  fun updateNormal() {
-////    if (vertices.size > 2)
-//    normal = getNormal(unorderedVertices)
-//  }
 
   val neighbors: List<ImmutableFace>
     get() = edges.flatMap {
