@@ -191,7 +191,6 @@ fun createFirstPersonCamera(camera: MapViewFirstPersonCamera): Camera {
       Quaternion()
           .rotateZ(camera.yaw)
           .rotateY(camera.pitch),
-//      if (isAlive) character.facingQuaternion else character.facingQuaternion * Quaternion().rotateX(Pi / -6f),
       45f
   )
 }

@@ -189,7 +189,7 @@ fun updateFirstPersonCamera(camera: MapViewFirstPersonCamera, commands: List<Haf
   val moveOffset = joinInputVector(playerCommands, playerMoveMap)
 
   if (moveOffset != null) {
-    val rotation = Quaternion().rotateZ(camera.yaw - Pi / 2).rotateY(camera.pitch)
+    val rotation = Quaternion().rotateZ(camera.yaw - Pi / 2).rotateX(-camera.pitch)
     val offset = rotation * moveOffset * delta * moveSpeed
 //    val rotationMatrix = Matrix().rotateZ(camera.yaw).rotateY(camera.pitch)
     camera.position += offset
@@ -197,16 +197,16 @@ fun updateFirstPersonCamera(camera: MapViewFirstPersonCamera, commands: List<Haf
 
   val pitchRange = Pi / 2f - 0.001f
   if (isActive(commands, LabCommandType.rotateUp))
-    camera.pitch = Math.min(pitchRange, camera.pitch + rotateSpeed * delta)
-
-  if (isActive(commands, LabCommandType.rotateDown))
     camera.pitch = Math.max(-pitchRange, camera.pitch - rotateSpeed * delta)
 
+  if (isActive(commands, LabCommandType.rotateDown))
+    camera.pitch = Math.min(pitchRange, camera.pitch + rotateSpeed * delta)
+
   if (isActive(commands, LabCommandType.rotateLeft))
-    camera.yaw = (camera.yaw - (rotateSpeed * delta)) % (Pi * 2)
+    camera.yaw = (camera.yaw + (rotateSpeed * delta)) % (Pi * 2)
 
   if (isActive(commands, LabCommandType.rotateRight))
-    camera.yaw = (camera.yaw + (rotateSpeed * delta)) % (Pi * 2)
+    camera.yaw = (camera.yaw - (rotateSpeed * delta)) % (Pi * 2)
 }
 
 fun updateMapState(config: MapViewConfig, world: Realm, input: LabCommandState, windowInfo: WindowInfo,
