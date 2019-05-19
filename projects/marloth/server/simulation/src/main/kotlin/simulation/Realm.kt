@@ -70,6 +70,17 @@ data class ConnectionFace(
     1
   else
     0
+
+  fun contains(node: Id) = nodes.contains(node)
+
+  fun other(id: Id): Id? =
+      if (firstNode == id)
+        secondNode
+      else if (id == secondNode)
+        firstNode
+      else
+        null
+
 }
 
 typealias ConnectionTable = Map<Id, ConnectionFace>

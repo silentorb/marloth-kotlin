@@ -104,18 +104,33 @@ private fun moveNodeAlongAxis(a: Int, position: Vector3, radius: Float, nodes: L
       .sortedBy { it }
       .firstOrNull()
 
+  val debugMaxWall = aligned
+      .filter {
+        it.position[a] > aCenter
+      }
+      .sortedBy { it.position[a] - it.radius }
+      .firstOrNull()
+
   val freeRangeMin = position[a] - moveRange
   val freeRangeMax = position[a] + moveRange
 
   val min = if (minWall != null)
-    Math.max(freeRangeMin, minWall + radius + minInitialNodeDistance)
+    Math.min(
+        Math.max(freeRangeMin, minWall + radius + minInitialNodeDistance),
+        position[a]
+    )
   else
     freeRangeMin
 
   val max = if (maxWall != null)
-    Math.min(freeRangeMax, maxWall - radius - minInitialNodeDistance)
+    Math.max(
+        Math.min(freeRangeMax, maxWall - radius - minInitialNodeDistance),
+        position[a]
+    )
   else
     freeRangeMax
+
+  assert(max >= min)
 
   return dice.getFloat(min, max)
 }
@@ -125,14 +140,20 @@ private fun moveNodes(nodes: MutableList<Node>, moveRange: Float, dice: Dice) {
   for (i in 0 until nodes.size) {
     val node = nodes[i]
     var position = node.position
-
+//    if (i == 8) {
+//      break
+//    }
+    if (node.id == 23L) {
+      val k = 0
+    }
     val pool = nodes
         .asSequence()
         .filter { it.id != node.id }
         .filter { withinRangeFast(it.position, position, it.radius + node.radius + minGap) }
         .toList()
 
-    for (a in 0 until 3) {
+//    for (a in 0 until 3) {
+    for (a in 0 until 2) {
       val newValue = moveNodeAlongAxis(a, position, node.radius, pool, dice, moveRange)
       position = when (a) {
         0 -> position.copy(x = newValue)
@@ -148,6 +169,8 @@ private fun moveNodes(nodes: MutableList<Node>, moveRange: Float, dice: Dice) {
 
 fun distributeNodes(boundary: WorldBoundary, count: Int, dice: Dice): List<Node> {
   val cellDimensions = clipDimensions(worldCellLength, boundary.dimensions)
+  cellDimensions.z = 1
+
   val dimensionsUnit = Vector3(
       cellDimensions.x.toFloat(),
       cellDimensions.y.toFloat(),
@@ -163,12 +186,13 @@ fun distributeNodes(boundary: WorldBoundary, count: Int, dice: Dice): List<Node>
 
   for (i in 0 until cellCount) {
     val position = getPosition(cellDimensions, i) * worldCellLength.toFloat()
-    val distanceUnit = (position / dimensionsUnit).length()
-    if (distanceUnit > 1f)
-      continue
-
-    val falloffModifier = (1f - distanceUnit)
-    val chance = cellChance * falloffModifier * 6f
+//    val distanceUnit = (position / dimensionsUnit).length()
+//    if (distanceUnit > 1f)
+//      continue
+//
+//    val falloffModifier = (1f - distanceUnit)
+//    val chance = cellChance * falloffModifier * 6f
+    val chance = cellChance * 6f
     if (dice.getFloat() < chance) {
       val node = Node(
           id = id++,

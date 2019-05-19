@@ -26,6 +26,8 @@ fun nodeNeighbors(faces: ConnectionTable, node: Node) = node.walls.asSequence().
 
 fun nodeNeighbors(nodes: NodeTable, faces: ConnectionTable, node: Id) = nodeNeighbors(faces, nodes[node]!!)
 
+fun nodeNeighbors(faces: ConnectionTable, id: Id) = faces.mapNotNull { it.value.other(id) }
+
 fun nodeNeighbors(realm: Realm, id: Id): Collection<Id> {
   return realm.nodeFaces[id]!!
       .mapNotNull { getOtherNode(id, realm.faces[it]!!) }

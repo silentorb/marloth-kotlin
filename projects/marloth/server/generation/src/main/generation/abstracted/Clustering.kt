@@ -25,7 +25,7 @@ fun gatherClusters(graph: Graph, allNodes: Collection<Node>): Clusters {
   for (node in nodes) {
     val cluster = getCluster(node) ?: createCluster(clusters)
     for (connection in connections(graph, node).filter { it.type == ConnectionType.union }) {
-      val other = connection.getOther(graph, node)
+      val other = connection.other(graph, node)
       val otherCluster = getCluster(other)
       if (otherCluster == null) {
         cluster.add(other)

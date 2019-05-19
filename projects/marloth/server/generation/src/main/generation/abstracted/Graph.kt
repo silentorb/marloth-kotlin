@@ -29,10 +29,17 @@ data class InitialConnection(
   fun contains(id: Id) = first == id || second == id
   fun contains(node: Node) = contains(node.id)
 
-  fun getOther(node: Node) = if (node.id == first) second else first
-  fun getOther(node: Id) = if (node == first) second else first
+  fun other(node: Node) = if (node.id == first) second else first
+  fun other(node: Id) = if (node == first) second else first
 
-  fun getOther(graph: Graph, node: Node) = graph.node(getOther(node))!!
+  fun other(graph: Graph, node: Node) = graph.node(other(node))!!
+
+  fun otherOrNull(node: Id): Id? =
+      if (node == first)
+        second
+      else if (node == second)
+        first
+      else null
 
   fun nodes(graph: Graph): List<Node> = listOf(graph.node(first)!!, graph.node(second)!!)
 
@@ -61,6 +68,9 @@ data class Graph(
       )
 
 }
+
+fun nodeNeighbors(faces: InitialConnections, id: Id) = faces.mapNotNull { it.otherOrNull(id) }
+
 
 fun tunnelLength(graph: Graph, connection: InitialConnection): Float {
   val first = graph.nodes[connection.first]!!

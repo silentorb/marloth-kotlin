@@ -68,7 +68,7 @@ fun createVerticesForOverlappingCircles(node: Node, other: Node, others: List<No
 fun createNodeDoorways(graph: Graph, node: Node): List<List<Vector3>> =
     connections(graph, node)
         .filter { it.type != ConnectionType.union }
-        .map { getDoorwayOrDoorFramePoints(graph.doorways, node, it.getOther(graph, node)) }
+        .map { getDoorwayOrDoorFramePoints(graph.doorways, node, it.other(graph, node)) }
 
 data class CornerGap(val first: NodeCorner, val second: NodeCorner, val length: Float)
 

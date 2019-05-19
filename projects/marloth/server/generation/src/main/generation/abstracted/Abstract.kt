@@ -6,7 +6,6 @@ import generation.crossMap
 import generation.getCenter
 import generation.getNodeDistance
 import generation.structure.getDoorFramePoints
-import generation.structure.wallHeight
 import mythic.ent.Id
 import mythic.ent.entityMap
 import mythic.ent.pipe
@@ -22,12 +21,12 @@ const val maxInitialNodeSize = 10f
 fun connections(graph: Graph, node: Node): List<InitialConnection> =
     graph.connections.filter { it.contains(node) }
 
-fun neighbors(graph: Graph, node: Node): Sequence<Node> = connections(graph, node).asSequence().mapNotNull { graph.node(it.getOther(node)) }
+fun neighbors(graph: Graph, node: Node): Sequence<Node> = connections(graph, node).asSequence().mapNotNull { graph.node(it.other(node)) }
 
 fun connections(graph: Graph, node: Id): List<InitialConnection> =
     graph.connections.filter { it.contains(node) }
 
-fun neighbors(graph: Graph, node: Id): Sequence<Node> = connections(graph, node).asSequence().mapNotNull { graph.node(it.getOther(node)) }
+fun neighbors(graph: Graph, node: Id): Sequence<Node> = connections(graph, node).asSequence().mapNotNull { graph.node(it.other(node)) }
 
 fun getConnection(graph: Graph, node: Node, other: Node) = graph.connections.firstOrNull { it.contains(node) && it.contains(other) }
 
@@ -97,8 +96,8 @@ fun getTwinTunnels(graph: Graph, tunnels: List<PreTunnel>): List<PreTunnel> =
         val k = 0
       }
       crossMap(nodeTunnels) { a, b ->
-        val first = getDoorFramePoints(node, a.connection.getOther(graph, node))
-        val second = getDoorFramePoints(node, b.connection.getOther(graph, node))
+        val first = getDoorFramePoints(node, a.connection.other(graph, node))
+        val second = getDoorFramePoints(node, b.connection.other(graph, node))
         val (c, _) = lineSegmentIntersectsLineSegment(first[0], first[1], second[0], second[1])
 //        val c = a.position.distance(b.position) < doorwayLength * 2f
 //      println(c)
@@ -142,7 +141,7 @@ fun prepareDoorways(graph: Graph): Graph {
   val homeNodes = graph.nodes.values.filter { it.biome == Biome.home }
   val doorways = homeNodes.flatMap { node ->
     connections(graph, node).mapNotNull { connection ->
-      val otherNode = connection.getOther(graph, node)
+      val otherNode = connection.other(graph, node)
       if (otherNode.biome != Biome.home && connection.type == ConnectionType.tunnel) {
         val origin = getCenter(node, otherNode)
         val position = origin + (otherNode.position - node.position).normalize() * 0.2f
@@ -175,6 +174,7 @@ fun generateAbstract(input: WorldInput, scale: Float, biomeGrid: BiomeGrid): Gra
   return pipe(initialGraph, listOf(
       { graph -> cleanupWorld(graph) },
       { graph -> createAndMixTunnels(graph) },
+      variableHeights(input.dice),
       { graph -> graph.copy(nodes = applyInitialBiomes(biomeGrid, graph)) },
       { graph -> prepareDoorways(graph) }
   ))

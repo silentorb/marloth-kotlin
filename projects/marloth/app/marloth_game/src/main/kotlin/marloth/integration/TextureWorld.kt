@@ -44,20 +44,27 @@ fun createTexturedWall(face: ImmutableFace, texture: Textures): TextureFace {
   val bounds = getBounds(vertices)
   val dimensions = bounds.dimensions
   val scale = .5f
-  val edge = getCeiling(face).edge
-  val length = edge.first.distance(edge.second) * scale
+  val ceilingEdge = getCeiling(face).edge
+  val length = ceilingEdge.first.distance(ceilingEdge.second) * scale
   val uvs = listOf(
       Vector2(0f, 0f),
       Vector2(length, 0f),
       Vector2(length, 2f),
       Vector2(0f, 2f)
   )
-  val alignedUvs = if (vertices[0].z != vertices[1].z)
-    listOf(uvs.last()).plus(uvs.dropLast(1))
-  else
+  val floorEdge = getFloor(face).edge
+  val isFirstEdgeHorizontal = ceilingEdge.matches(vertices[0], vertices[1])
+      || floorEdge.matches(vertices[0], vertices[1])
+
+  val alignedUvs = if (isFirstEdgeHorizontal)
     uvs
+  else
+    listOf(uvs.last()).plus(uvs.dropLast(1))
 
   val uvIterator = alignedUvs.listIterator()
+  if (face.id == 392L) {
+    val k = 0
+  }
   return TextureFace(face.id, vertices.associate { vertex ->
     Pair(vertex, VertexNormalTexture(
         Vector3(0f, 0f, 1f),
