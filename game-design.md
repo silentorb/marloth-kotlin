@@ -1,5 +1,13 @@
 # Game Design
 
+## Core Gameplay
+
+What is the core gameplay of Marloth.  Every good game I've ever played has had a simple core.  A core that is still marginally fun even if all the other layers of content and depth were stripped away.  This game has yet to have such a core.
+
+## Micro / Macro
+
+Good games have layers.  Choices contained within encounters contained within chapters contained within campaigns.
+
 ## Growth
 
 Growth in games is fun.  It gives players a heightened sense of accomplishment, and it can be used to morph game mechanics over the course of a game session.
@@ -14,7 +22,7 @@ Most games do not have unbridled growth.  Most games use one or more methods to 
 
 ### Grinding
 
-Rewarding the player for labor instead of skill.  I don't like grinding and want to avoid it in any game I make with one exception, grinding can sometimes be a useful *fallback* as long as its possible to bypass the grinding with enough skill.
+Rewarding the player for labor instead of skill.  I don't like grinding and want to avoid it in any game I make with one exception, grinding can sometimes be a useful *fallback* as long as its possible to bypass the grinding with enough skill.
 
 ### Check point limits
 
