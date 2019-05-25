@@ -1,11 +1,9 @@
 package lab
 
 import configuration.ConfigManager
-import marloth.front.GameApp
+import marloth.front.newGameApp
 import marloth.integration.loadGameConfig
 import mythic.desktop.createDesktopPlatform
-import mythic.quartz.printProfiler
-import physics.newBulletState
 
 object StartupProfiler {
   @JvmStatic
@@ -18,9 +16,7 @@ object StartupProfiler {
       val gameConfig = loadGameConfig()
       val platform = createDesktopPlatform("Dev Lab", gameConfig.display)
       platform.display.initialize(gameConfig.display)
-      val gameApp = GameApp(platform, gameConfig,
-          bulletState = newBulletState()
-      )
+      val gameApp = newGameApp(platform, gameConfig)
       val state = newLabState(gameApp, labConfig)
       val app = LabApp(gameApp, labConfig,
           labConfigManager = ConfigManager(labConfigPath, labConfig),

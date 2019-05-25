@@ -1,10 +1,11 @@
 package rendering
 
 import mythic.glowing.UniformBuffer
+import rendering.shading.LightingConfig
 import rendering.shading.createLightBuffer
 import scenery.Light
 
-fun updateLights(lights: List<Light>, uniformBuffer: UniformBuffer) {
-  val byteBuffer = createLightBuffer(lights)
+fun updateLights(config: LightingConfig, lights: List<Light>, uniformBuffer: UniformBuffer) {
+  val byteBuffer = createLightBuffer(config, lights)
   uniformBuffer.load(byteBuffer)
 }

@@ -7,6 +7,7 @@ struct Light {
 
 struct Section {
     int lightCount;
+    float ambient;
     Light lights[40];
 };
 
@@ -19,8 +20,6 @@ const float linear_attenuation = 0.2;
 const float quadratic_attenuation = 0.05;
 const float shininess = 0.9;
 const float strength = 0.3;
-//const vec3 ambient = vec3(0.5);
-vec3 ambient = vec3(0.0f);
 
 struct Relationship {
     vec3 direction;
@@ -65,12 +64,10 @@ vec3 processLight(Light light, vec4 input_color, vec3 normal, vec3 cameraDirecti
 }
 
 vec3 processLights(vec4 input_color, vec3 normal, vec3 cameraDirection, vec3 position, float glow) {
-	vec3 result = vec3(0);
+	vec3 result = input_color.xyz * (glow + section.ambient);
 	for(int i = 0; i < section.lightCount; ++i) {
 		result += processLight(section.lights[i], input_color, normal, cameraDirection, position);
 	}
-
-    result += glow + ambient;
 
 	return min(result, vec3(1.0));
 }

@@ -24,6 +24,7 @@ import mythic.spatial.Vector3
 import mythic.typography.extractFontSets
 import rendering.DisplayConfig
 import rendering.Renderer
+import rendering.shading.LightingConfig
 import scenery.Screen
 import simulation.Deck
 
@@ -55,8 +56,8 @@ fun loadTextResource(): TextResources {
 
 private fun gatherFontSets() = extractFontSets(baseFonts, enumerateTextStyles(TextStyles))
 
-class Client(val platform: Platform, displayConfig: DisplayConfig) {
-  val renderer: Renderer = Renderer(displayConfig, platform.display, gatherFontSets())
+class Client(val platform: Platform, displayConfig: DisplayConfig, lightingConfig: LightingConfig = LightingConfig()) {
+  val renderer: Renderer = Renderer(displayConfig, platform.display, gatherFontSets(), lightingConfig)
   val screens: List<Screen> = (1..maxPlayerCount).map { Screen(it) }
   val textResources: TextResources = loadTextResource()
   val soundLibrary: SoundLibrary = loadSounds(platform.audio)

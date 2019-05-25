@@ -17,3 +17,9 @@ I'd also love to have as much strategy and simulation in this game as possible, 
 * Diablo II
 * Grim Dawn
 
+### Character Growth
+
+My single favorite part of games is the screen where you select new abilities when you level up.  It's the part of the game I've always felt like every RPG I've ever played has downplayed.  I've always wanted to play an RPG that was designed to make you regularly visiting that screen without increasing grind.
+
+
+

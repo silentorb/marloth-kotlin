@@ -184,7 +184,12 @@ fun textureAttributesFromConfig(config: DisplayConfig) =
         storageUnit = TextureStorageUnit.unsigned_byte
     )
 
-class Renderer(val config: DisplayConfig, display: PlatformDisplay, fontList: List<RangedFontLoadInfo>) {
+class Renderer(
+    val config: DisplayConfig,
+    display: PlatformDisplay,
+    fontList: List<RangedFontLoadInfo>,
+    val lightingConfig: LightingConfig
+) {
   val glow = Glow()
   var renderColor: ByteTextureBuffer = ByteTextureBuffer()
   var renderDepth: FloatTextureBuffer = FloatTextureBuffer()
@@ -227,7 +232,7 @@ class Renderer(val config: DisplayConfig, display: PlatformDisplay, fontList: Li
 
   fun updateShaders(scene: Scene, dimensions: Vector2i, cameraEffectsData: CameraEffectsData) {
     val effectsData = gatherEffectsData(dimensions, scene, cameraEffectsData)
-    updateLights(effectsData.lights, sectionBuffer)
+    updateLights(lightingConfig, effectsData.lights, sectionBuffer)
     sceneBuffer.load(createSceneBuffer(effectsData))
   }
 

@@ -1,8 +1,12 @@
 package marloth.front
 
 import generation.generateDefaultWorld
-import marloth.clienting.*
-import marloth.integration.*
+import marloth.clienting.Client
+import marloth.clienting.newClientState
+import marloth.integration.AppState
+import marloth.integration.GameConfig
+import marloth.integration.setWorldMesh
+import marloth.integration.updateAppState
 import mythic.platforming.Platform
 import mythic.quartz.newTimestepState
 import persistence.Database
@@ -16,7 +20,7 @@ typealias RenderHook = (SceneRenderer) -> Unit
 data class GameApp(
     val platform: Platform,
     val config: GameConfig,
-    val client: Client = Client(platform, config.display),
+    val client: Client,
     val db: Database = newDatabase("game.db"),
     var bulletState: BulletState
 )
@@ -28,13 +32,16 @@ tailrec fun gameLoop(app: GameApp, state: AppState) {
     gameLoop(app, nextState)
 }
 
+fun newGameApp(platform: Platform, config: GameConfig) = GameApp(
+    platform = platform,
+    config = config,
+    bulletState = newBulletState(),
+    client = Client(platform, config.display)
+)
+
 fun runApp(platform: Platform, config: GameConfig) {
   platform.display.initialize(config.display)
-  val app = GameApp(
-      platform = platform,
-      config = config,
-      bulletState = newBulletState()
-  )
+  val app = newGameApp(platform, config)
   val world = generateDefaultWorld()
   setWorldMesh(world.realm, app.client)
   val state = AppState(

@@ -9,13 +9,13 @@ import lab.utility.updateWatching
 import lab.views.game.GameViewConfig
 import lab.views.game.drawBulletDebug
 import lab.views.model.newModelViewState
+import marloth.clienting.Client
 import marloth.clienting.newClientState
 import marloth.front.GameApp
 import marloth.integration.*
 import mythic.desktop.createDesktopPlatform
 import mythic.ent.pipe
 import mythic.quartz.newTimestepState
-import mythic.quartz.printProfiler
 import physics.newBulletState
 import randomly.Dice
 import simulation.*
@@ -155,12 +155,13 @@ fun newLabState(gameApp: GameApp, config: LabConfig): LabState {
 fun loadLabConfig(): LabConfig =
     loadYamlFile<LabConfig>(labConfigPath) ?: LabConfig()
 
-fun newGameApp(): GameApp {
+fun newLabGameApp(labConfig: LabConfig): GameApp {
   val gameConfig = loadGameConfig()
   val platform = createDesktopPlatform("Dev Lab", gameConfig.display)
   platform.display.initialize(gameConfig.display)
   return GameApp(platform, gameConfig,
-      bulletState = newBulletState()
+      bulletState = newBulletState(),
+      client = Client(platform, gameConfig.display, labConfig.gameView.lighting)
   )
 }
 
@@ -170,7 +171,7 @@ object App {
     System.setProperty("joml.format", "false")
     println("Starting Lab App")
     val config = loadLabConfig()
-    val gameApp = newGameApp()
+    val gameApp = newLabGameApp(config)
     val state = newLabState(gameApp, config)
     val app = LabApp(gameApp, config,
         labConfigManager = ConfigManager(labConfigPath, config),

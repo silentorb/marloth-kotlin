@@ -1,10 +1,7 @@
 package rendering.shading
 
 import mythic.glowing.BufferCustodian
-import mythic.spatial.Matrix
-import mythic.spatial.putMatrix
-import mythic.spatial.putVector3
-import mythic.spatial.putVector4
+import mythic.spatial.*
 import org.joml.times
 import org.lwjgl.BufferUtils
 import rendering.EffectsData
@@ -27,17 +24,18 @@ const val sectionBufferSize = headerSize + lightSize * maxLights
 private val sectionMemoryBuffer = BufferUtils.createByteBuffer(sectionBufferSize)
 private val sectionBufferCustodian = BufferCustodian(sectionMemoryBuffer)
 
-fun createLightBuffer(lights: List<Light>): ByteBuffer {
-//  val lightSize = 12
+data class LightingConfig(
+    val ambient: Float = 0f
+)
 
-//  val totalSize = sectionBufferSize
+fun createLightBuffer(config: LightingConfig, lights: List<Light>): ByteBuffer {
   val buffer = sectionMemoryBuffer
-
-//  buffer.limit(sectionBufferSize)
   buffer.putInt(lights.size)
-  padBuffer(buffer, 3)
+  buffer.putFloat(config.ambient)
+  padBuffer(buffer, 2)
   for (light in lights) {
-    buffer.putInt(light.type.value)
+//    buffer.putInt(light.type.value)
+    buffer.putInt(5)
     padBuffer(buffer, 3)
     buffer.putVector4(light.color)
     buffer.putVector3(light.position)

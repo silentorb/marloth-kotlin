@@ -14,6 +14,7 @@ import mythic.sculpting.getVerticesCenter
 import mythic.spatial.*
 import org.joml.zw
 import rendering.*
+import rendering.shading.LightingConfig
 import rendering.shading.ObjectShaderConfig
 import scenery.MeshId
 import simulation.World
@@ -40,7 +41,8 @@ data class GameViewConfig(
     var draw: GameViewDrawConfig = GameViewDrawConfig(),
     var logDroppedFrames: Boolean = false,
     var autoNewGame: Boolean = true,
-    var drawPhysics: Boolean = false
+    var drawPhysics: Boolean = false,
+    val lighting: LightingConfig = LightingConfig()
 )
 
 fun renderFaceNormals(renderer: SceneRenderer, length: Float, faces: List<ImmutableFace>) {
