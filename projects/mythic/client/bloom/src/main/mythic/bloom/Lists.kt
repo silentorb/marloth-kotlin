@@ -47,15 +47,22 @@ fun applyBounds(arranger: FixedChildArranger): (List<Flower>) -> Flower = { flow
 //  }
 //}
 
-fun list(plane: Plane, spacing: Int = 0, drawReversed: Boolean = false): (List<Flower>) -> Flower = { children ->
+fun list(plane: Plane, spacing: Int = 0, drawReversed: Boolean = false, name: String = "list"): (List<Flower>) -> Flower = { children ->
   { seed ->
     var lastOffset = 0
     var otherLength = 0
+    if (name == "map-layout-root") {
+      val k = 0
+    }
     val boxes = children.mapIndexed { i, flower ->
-      val initialBox = flower(seed)
+      val offsetVector = plane(Vector2i(lastOffset, 0))
+      val localSeed = seed.copy(
+          dimensions = seed.dimensions - offsetVector
+      )
+      val initialBox = flower(localSeed)
       val box = initialBox.copy(
           bounds = initialBox.bounds.copy(
-              position = initialBox.bounds.position + plane(Vector2i(lastOffset, 0))
+              position = initialBox.bounds.position + offsetVector
           )
       )
       val childDimensions = plane(box.bounds.end)
@@ -68,7 +75,7 @@ fun list(plane: Plane, spacing: Int = 0, drawReversed: Boolean = false): (List<F
     }
 
     Box(
-        name = "list",
+        name = name,
         boxes = if (drawReversed) boxes.reversed() else boxes,
         bounds = Bounds(
             dimensions = plane(Vector2i(lastOffset, otherLength))

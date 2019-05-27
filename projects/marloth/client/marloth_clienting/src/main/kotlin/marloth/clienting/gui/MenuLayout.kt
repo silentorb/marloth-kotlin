@@ -124,7 +124,8 @@ fun menuButton(content: String, index: Int): Flower = { seed: Seed ->
       ),
       depiction = drawMenuButton(
           ButtonState(content, menuFocusIndex(seed.bag) == index)
-      )
+      ),
+      name = "menu button"
   )
 }
 

@@ -13,6 +13,7 @@ import physics.*
 import scenery.AnimationId
 import scenery.Sounds
 import simulation.changing.*
+import simulation.combat.DamageMap
 import simulation.input.filterCommands
 
 data class CharacterDefinition(
@@ -21,7 +22,8 @@ data class CharacterDefinition(
     val abilities: List<AbilityDefinition>,
     val depictionType: DepictionType,
     val deathSound: Sounds,
-    val ambientSounds: List<Sounds> = listOf()
+    val ambientSounds: List<Sounds> = listOf(),
+    val damageMap: DamageMap = mapOf()
 )
 
 data class Character(

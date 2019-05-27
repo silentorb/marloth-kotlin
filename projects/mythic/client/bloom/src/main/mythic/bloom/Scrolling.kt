@@ -1,9 +1,9 @@
 package mythic.bloom
 
-import mythic.bloom.accumulatedBounds
 import mythic.bloom.next.*
 import mythic.spatial.*
 import org.joml.Vector2i
+import org.joml.plus
 
 private const val scrollbarWidth = 15
 
@@ -23,17 +23,17 @@ fun scrollbar(offset: Int, contentLength: Int): Depiction = { b, c ->
   }
 }
 
-fun clipBox(clipBounds: Bounds): (FlatBox) -> FlatBox = { box ->
-  val depiction = if (box.depiction != null)
-    clipBox(clipBounds, box.depiction)
-  else
-    null
-
-  box.copy(
-      depiction = depiction,
-      clipBounds = clipBounds
-  )
-}
+//fun clipBox(clipBounds: Bounds): (FlatBox) -> FlatBox = { box ->
+//  val depiction = if (box.depiction != null)
+//    clipBox(clipBounds, box.depiction)
+//  else
+//    null
+//
+//  box.copy(
+//      depiction = depiction,
+//      clipBounds = clipBounds
+//  )
+//}
 
 data class ScrollingState(
     val dragOrigin: Vector2i?,
@@ -95,32 +95,73 @@ fun scrollingInteraction(key: String, contentBounds: Bounds): LogicModule = { (b
 }
 
 fun scrollBox(key: String, contentBounds: Bounds): Flower = { seed ->
+  val bounds = Bounds(dimensions = seed.dimensions)
   Box(
-      bounds = Bounds(dimensions = seed.dimensions),
+      bounds = bounds,
       depiction = scrollbar(scrollingState(seed.bag[key]).offset, contentBounds.dimensions.y),
-      logic = scrollingInteraction(key, contentBounds)
+      logic = scrollingInteraction(key, contentBounds),
+      name = "scroll box"
   )
 }
 
+private fun pruneClippedBoxes(dimensions: Vector2i, offset: Vector2i, boxes: List<Box>): List<Box> {
+  return boxes.filter { box ->
+    val result = offset.y + box.bounds.top <= dimensions.y && offset.y + box.bounds.bottom >= 0
+    if (boxes.size > 16) {
+      val k = 0
+    }
+    if (!result) {
+      val k = 0
+    }
+    result
+  }
+      .map { box ->
+        box.copy(
+            boxes = pruneClippedBoxes(box.bounds.dimensions, offset + box.bounds.position, box.boxes)
+        )
+      }
+}
+
+private fun reverseFixedOffset(left: Int = 0, top: Int = 0): FlowerWrapper = div(
+    reverse = { _, bounds, child ->
+      bounds.copy(
+          position = Vector2i(left, top),
+          dimensions = child.dimensions
+      )
+    }
+)
+
 fun scrolling(key: String): (Flower) -> Flower = { child ->
   { seed ->
-    val innerSeed = seed.copy(
-        dimensions = Vector2i(
-            seed.dimensions.x - scrollbarWidth,
-            seed.dimensions.y
-        )
+    val clippedDimensions = Vector2i(
+        seed.dimensions.x - scrollbarWidth - 5,
+        seed.dimensions.y
     )
-//    val blossom = withOffset(child)(extractOffset(key, seed.bag))(innerSeed)
+    val innerSeed = seed.copy(
+        dimensions = clippedDimensions
+    )
     val offset = extractOffset(key, seed.bag)
-    val box = margin(top = offset.y)(child)(innerSeed)
+    val box = reverseFixedOffset(top = offset.y)(child)(innerSeed)
     if (box.boxes.any()) {
-//      val childBoxes = box.boxes
-//          .map(clipBox(innerSeed.bounds))
       val contentBounds = accumulatedBounds(box.boxes)
-      val result = scrollBox(key, contentBounds)(seed)
-      result.copy(
-          boxes = result.boxes.plus(box)
-      )
+      if (contentBounds.dimensions.y <= clippedDimensions.y) {
+        box
+      } else {
+        val result = scrollBox(key, contentBounds)(seed)
+        result.copy(
+            boxes = listOf(
+                Box(
+                    bounds = result.bounds.copy(
+                        dimensions = clippedDimensions
+                    ),
+                    boxes = pruneClippedBoxes(clippedDimensions, Vector2i(), listOf(box)),
+                    clipBounds = true,
+                    name = "clipped box"
+                )
+            )
+//              result.boxes.plus(box)
+        )
+      }
 
     } else {
       emptyBox

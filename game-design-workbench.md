@@ -69,3 +69,4 @@ Both Tales of Maj'Eyal and Dark Souls have tactics and strategy but the differen
 * In Dark Souls most of the decisions of execution are made prior to the encounter
 
 The one exception to TOME is on the harder difficulties players sometimes use completely different equipment for different encounters.  This isn't needed for the normal or nightmare difficulties.  It's also noted that at that point while different loadouts are important, the game wasn't really designed for that and doing so is a little bit of a tedious hack.
+

@@ -25,7 +25,8 @@ fun label(style: IndexedTextStyle, content: String): Flower = { seed ->
       bounds = Bounds(
           dimensions = dimensions.toVector2i()
       ),
-      depiction = textDepiction(style, content)
+      depiction = textDepiction(style, content),
+      name = if (content.length < 32) content else content.substring(0, 32)
   )
 }
 

@@ -2,6 +2,8 @@ package mythic.bloom
 
 import mythic.bloom.next.Box
 import mythic.drawing.Canvas
+import mythic.glowing.cropStack
+import mythic.glowing.debugMarkPass
 import mythic.glowing.getGLBounds
 import mythic.glowing.globalState
 import mythic.spatial.Vector4
@@ -68,7 +70,9 @@ fun lengthArranger(plane: Plane, padding: Int): LengthArrangement = { dimensions
 }
 
 fun fixedLengthArranger(plane: Plane, padding: Int, lengths: List<Int?>): FixedChildArranger = { dimensions ->
-  lengthArranger(plane, padding)(dimensions, resolveLengths(plane(dimensions).x, lengths))
+  val totalPadding = padding * (lengths.size - 1)
+  val boundLength = plane(dimensions).x - totalPadding
+  lengthArranger(plane, padding)(dimensions, resolveLengths(boundLength, lengths))
 }
 
 fun centeredPosition(boundsLength: Int, length: Int): Int =
@@ -107,26 +111,40 @@ fun toAbsoluteBounds(parentOffset: Vector2i, box: Box): Box {
   )
 }
 
-fun renderBox(canvas: Canvas, box: Box) {
+fun renderBox(canvas: Canvas, box: Box, debug: Boolean = false) {
   val depiction = box.depiction
-  if (depiction != null)
-    depiction(box.bounds, canvas)
-
-  for (child in box.boxes) {
-    renderBox(canvas, child)
+  if (depiction != null) {
+    debugMarkPass(debug, box.name) {
+      depiction(box.bounds, canvas)
+    }
   }
+
+  val renderChildren = {
+    for (child in box.boxes) {
+      renderBox(canvas, child)
+    }
+  }
+
+  if (box.clipBounds) {
+    val viewport = canvas.flipViewport(box.bounds.toVector4i())
+    cropStack(viewport) {
+      renderChildren()
+    }
+  } else
+    renderChildren()
 }
 
-fun renderLayout(box: Box, canvas: Canvas) {
+fun renderLayout(box: Box, canvas: Canvas, debug: Boolean = false) {
   val current = getGLBounds(GL11.GL_VIEWPORT)
   if (current.z == 0)
     return
 
-  globalState.depthEnabled = false
-  globalState.blendEnabled = true
-  globalState.blendFunction = Pair(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
-
-  renderBox(canvas, box)
+  debugMarkPass(debug, "Bloom GUI Pass") {
+    globalState.depthEnabled = false
+    globalState.blendEnabled = true
+    globalState.blendFunction = Pair(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
+    renderBox(canvas, box)
+  }
 }
 
 fun centeredPosition(bounds: Bounds, contentDimensions: Vector2i): Vector2i {

@@ -60,12 +60,24 @@ fun depictOld(depiction: Depiction): FlowerOld =
 fun depict(depiction: StateDepiction): Flower = { seed ->
   Box(
       bounds = Bounds(dimensions = seed.dimensions),
-      depiction = depiction(seed)
+      depiction = depiction(seed),
+      name = "depiction"
+  )
+}
+
+fun depict(name: String, depiction: StateDepiction): Flower = { seed ->
+  Box(
+      bounds = Bounds(dimensions = seed.dimensions),
+      depiction = depiction(seed),
+      name = name
   )
 }
 
 fun depict(depiction: Depiction): Flower =
     depict { s: Seed -> depiction }
+
+fun depict(name: String, depiction: Depiction): Flower =
+    depict(name) { s: Seed -> depiction }
 
 typealias StateDepictionOld = (SeedOld) -> Depiction
 

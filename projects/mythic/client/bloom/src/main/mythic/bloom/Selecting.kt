@@ -57,12 +57,6 @@ fun <T> persistedSelectable(key: String, selectionLogic: SelectionLogic, idSelec
       onClickPersisted(key, selectable(key, selectionLogic, idSelector)(seed))
     }
 
-fun depictSelectable(key: String, id: String, depiction: (Seed, Boolean) -> Depiction): Flower = { seed ->
-  val state = selectionState(seed.bag[key])
-  val selected = state.selection.contains(id)
-  depict(depiction(seed, selected))(seed)
-}
-
 fun selectableFlower(key: String, id: String, flower: (Seed, Boolean) -> Flower): Flower = { seed ->
   val state = selectionState(seed.bag[key])
   val selected = state.selection.contains(id)

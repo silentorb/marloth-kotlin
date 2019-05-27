@@ -3,7 +3,8 @@ package mythic.glowing
 import org.joml.Vector4i
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11.*
-import org.lwjgl.opengl.GL31.GL_MAX_UNIFORM_BUFFER_BINDINGS
+import java.nio.ByteBuffer
+import org.lwjgl.opengl.GL43.*
 
 class Glow {
   val operations = Operations()
@@ -41,4 +42,15 @@ fun cropStack(value: Vector4i, action: () -> Unit) {
   action()
   globalState.cropBounds = currentBounds
   globalState.cropEnabled = cropEnabled
+}
+
+fun debugMarkPass(enabled: Boolean, message: String, action: () -> Unit) {
+  if (enabled) {
+    glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, message)
+    action()
+    glPopDebugGroup()
+  }
+  else {
+    action()
+  }
 }

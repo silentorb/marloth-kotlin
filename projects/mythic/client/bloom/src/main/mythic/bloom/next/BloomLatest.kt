@@ -12,7 +12,7 @@ data class Box(
     val bounds: Bounds,
     val boxes: List<Box> = emptyBoxList,
     val depiction: Depiction? = null,
-    val clipBounds: Bounds? = null,
+    val clipBounds: Boolean = false,
     val handler: Any? = null,
     val logic: LogicModule? = null
 )
