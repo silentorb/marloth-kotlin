@@ -91,6 +91,14 @@ fun updateBloomState(box: Box, previousState: BloomState, currentInput: InputSta
   )
 }
 
+fun persist(key: String): LogicModule = { bundle ->
+  val flowerState = bundle.state.bag[key]
+  if (flowerState != null)
+    mapOf(key to flowerState)
+  else
+    null
+}
+
 fun persist(key: String, logicModule: LogicModule): LogicModule = { bundle ->
   val visibleBounds = bundle.visibleBounds
   if (visibleBounds != null)

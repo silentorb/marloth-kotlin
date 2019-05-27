@@ -56,7 +56,7 @@ private fun infoPanel(realm: Realm, config: MapViewConfig): Flower =
 
 const val nodeListSelectionKey = "nodeList-selection"
 
-private val nodeListSelectable = persistedSelectable<Node>(nodeListSelectionKey, optionalSingleSelection) {
+private val nodeListSelectable = selectable<Node>(nodeListSelectionKey, optionalSingleSelection) {
   it.id.toString()
 }
 
@@ -71,13 +71,13 @@ private val nodeRow: (Node) -> Flower = { node ->
     val walkable = if (node.isWalkable) "W" else " "
 
     label(style, " ${node.id} $solid $walkable")
-  } plusLogic nodeListSelectable(node)
+  } plusLogic onClick(nodeListSelectable(node))
 }
 
 private fun nodeList(nodes: List<Node>): Flower =
     list(verticalPlane, 10)(nodes.map { node ->
       nodeRow(node)
-    })
+    }) plusLogic persist(nodeListSelectionKey)
 
 private fun rightPanel(realm: Realm, config: MapViewConfig): Flower =
     fixedList(verticalPlane, 10, listOf(250, null))(listOf(
