@@ -14,7 +14,7 @@ fun pursueGoal(world: World, knowledge: Knowledge, pursuit: Pursuit): Commands {
     pursuit.targetPosition != null -> moveStraightTowardPosition(world, knowledge, pursuit.targetPosition)
     pursuit.targetEnemy != null -> spiritAttack(world, knowledge, pursuit)
     else -> {
-      println("AI Error")
+//      println("AI Error")
       listOf()
     }
   }

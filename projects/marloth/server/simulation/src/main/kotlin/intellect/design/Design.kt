@@ -36,6 +36,9 @@ fun updatePursuit(world: World, knowledge: Knowledge, pursuit: Pursuit): Pursuit
       Pair(null, (target.position - attackerBody.position).normalize() * gap)
     else
       Pair(updateAttackMovementPath(world, knowledge, target.id, pursuit.path), null)
+  } else if (true) {
+    // Guard room
+    Pair(null, null)
   } else
     Pair(updateRoamingPath(world, knowledge, pursuit), null)
 
