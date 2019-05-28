@@ -89,14 +89,15 @@ fun updateBodyNode(realm: Realm, body: Body): Id {
   if (horizontalNode.id == voidNodeId)
     return voidNodeId
 
-  val newNode = if (position.z < horizontalNode.position.z) {
-    val floors = getFloors(realm.faces.values, horizontalNode)
-    if (floors.any())
-      realm.nodeTable[getOtherNode(node.id, floors.first())]
-    else
-      voidNode
-  } else
-    horizontalNode
+//  val floors = getFloors(realm.faces.values, horizontalNode)
+  val newNode = horizontalNode
+//  val newNode = if (position.z < floors.flatMap {  }) {
+//    if (floors.any())
+//      realm.nodeTable[getOtherNode(node.id, floors.first())]
+//    else
+//      voidNode
+//  } else
+//    horizontalNode
 
   return if (newNode == null) {
 //    isInsideNodeHorizontally(node, position)
@@ -104,6 +105,7 @@ fun updateBodyNode(realm: Realm, body: Body): Id {
     assert(false)
     body.node
   } else {
+    assert(!newNode.isSolid)
 //    if (newNode.id != node.id && !newNode.isWalkable) {
 //      assert(false)
 //    }
