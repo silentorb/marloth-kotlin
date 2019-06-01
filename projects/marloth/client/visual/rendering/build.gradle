@@ -8,6 +8,6 @@ dependencies {
 }
 
 requires('assets', 'platforming', 'spatial', 'scenery', 'sculpting', 'glowing', 'typography', 'drawing',
-        'imaging', 'breeze', 'rigging', 'randomly', 'configuration', 'metahub_core')
+        'imaging', 'breeze', 'randomly', 'configuration', 'metahub_core')
 
 apply plugin: 'java'

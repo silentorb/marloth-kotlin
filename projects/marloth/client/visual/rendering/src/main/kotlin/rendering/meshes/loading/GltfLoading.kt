@@ -307,6 +307,16 @@ fun orderBoneHierarchy(levelMap: List<InitialBoneNode>): List<InitialBoneNode> {
   }
 }
 
+fun getSockets(nodes: List<Node>): SocketMap =
+    nodes.mapIndexedNotNull { index, node ->
+      val socket = node.extras?.get("socket")
+      if (socket is String)
+        Pair(socket, index)
+      else
+        null
+    }
+        .associate { it }
+
 fun getAncestors(nodes: List<Node>, bone: Int): List<Int> {
   val parent = nodes.indexOfFirst { it.children != null && it.children.contains(bone) }
   return if (parent == -1)
@@ -315,14 +325,10 @@ fun getAncestors(nodes: List<Node>, bone: Int): List<Int> {
     listOf(parent).plus(getAncestors(nodes, parent))
 }
 
-fun loadBoneMap(info: GltfInfo): BoneMap {
+fun getBoneMap(info: GltfInfo, additionalBones: Collection<Int>): BoneMap {
   val skins = info.skins
   if (skins == null)
     return mapOf()
-
-//  val deformingBones = animations
-//      .flatMap { animation -> animation.channels.map { it.target.node } }
-//      .distinct()
 
   val deformingBones = skins
       .flatMap { skin -> skin.joints }
@@ -334,6 +340,7 @@ fun loadBoneMap(info: GltfInfo): BoneMap {
 
   val deformingBonesAndAncestors = deformingBones
       .plus(ancestors)
+      .plus(additionalBones)
       .distinct()
 
   val root = info.nodes.indexOfFirst { it.name == "rig" }
@@ -341,7 +348,6 @@ fun loadBoneMap(info: GltfInfo): BoneMap {
   val orderMap = orderBoneHierarchy(levelMap)
       .filter {
         deformingBonesAndAncestors.contains(it.originalIndex)
-//            || deformingBones.any { d -> info.nodes[it.originalIndex].children?.contains(d) ?: false }
       }
 
   val result = orderMap
@@ -360,7 +366,7 @@ fun loadBoneMap(info: GltfInfo): BoneMap {
   return result
 }
 
-fun loadArmature(buffer: ByteBuffer, info: GltfInfo, filename: String, boneMap: BoneMap): Armature? {
+fun loadArmature(buffer: ByteBuffer, info: GltfInfo, filename: String, boneMap: BoneMap, socketMap: SocketMap): Armature? {
   if (info.animations == null || info.animations.none())
     return null
   val bones = boneMap.map { (_, item) ->
@@ -372,7 +378,8 @@ fun loadArmature(buffer: ByteBuffer, info: GltfInfo, filename: String, boneMap: 
       id = getArmatureId(filename),
       bones = bones,
       animations = loadAnimations(buffer, info, info.animations, bones, boneMap),
-      transforms = transformSkeleton(bones)
+      transforms = transformSkeleton(bones),
+      sockets = socketMap
   )
 }
 
@@ -397,15 +404,24 @@ fun loadGltf(vertexSchemas: VertexSchemas, filename: String, resourcePath: Strin
   val directoryPath = resourcePath.split("/").dropLast(1).joinToString("/")
   val buffer = loadGltfByteBuffer(directoryPath, info)
 
-  val boneMap = if (info.skins != null)
-    loadBoneMap(info)
+  val originalSocketMap = if (info.skins != null)
+    getSockets(info.nodes)
   else
     mapOf()
+
+  val boneMap = if (info.skins != null)
+    getBoneMap(info, originalSocketMap.values)
+  else
+    mapOf()
+
+  val newSocketMap = originalSocketMap.mapValues { (_, index) ->
+    boneMap[index]!!.index
+  }
 
   val armatures = if (info.animations == null || info.animations.none())
     listOf()
   else
-    listOf(loadArmature(buffer, info, filename, boneMap)).mapNotNull { it }
+    listOf(loadArmature(buffer, info, filename, boneMap, newSocketMap)).mapNotNull { it }
 
   val meshes = info.meshes
       .mapIndexed { index, mesh ->

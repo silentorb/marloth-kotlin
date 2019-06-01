@@ -145,11 +145,14 @@ fun mapAnimationDurations(armatures: Map<ArmatureId, Armature>): AnimationDurati
 
 typealias AnimationMap = Map<AnimationId, Animation>
 
+typealias SocketMap = Map<String, Int>
+
 data class Armature(
     val id: ArmatureId,
     val bones: Bones,
     val animations: AnimationMap,
-    val transforms: List<Matrix>
+    val transforms: List<Matrix>,
+    val sockets: SocketMap = mapOf()
 )
 
 data class ByteTextureBuffer(

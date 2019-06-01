@@ -106,7 +106,7 @@ fun convertComplexDepiction(world: World, id: Id, depiction: Depiction): Element
       .translate(body.position)
       .rotate(character.facingQuaternion)
       .rotateZ(Pi / 2f)
-      .scale(2f)
+      .scale(1.5f)
 
   val animations = depiction.animations.map {
     ElementAnimation(
@@ -137,11 +137,21 @@ fun convertComplexDepiction(world: World, id: Id, depiction: Depiction): Element
             MeshElement(
                 id = id,
                 mesh = it,
-                transform = transform.scale(0.75f)
+                transform = transform
             )
           },
       armature = ArmatureId.person,
-      animations = animations
+      animations = animations,
+      attachments = listOf(
+          AttachedMesh(
+              socket = ArmatureSockets.rightHand.toString(),
+              mesh = MeshElement(
+                  id = id,
+                  mesh = MeshId.pistol,
+                  transform = transform
+              )
+          )
+      )
   )
 }
 

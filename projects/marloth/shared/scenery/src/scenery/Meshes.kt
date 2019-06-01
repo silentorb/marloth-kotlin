@@ -14,6 +14,7 @@ enum class MeshId {
   line,
   pants,
   personBody,
+  pistol,
   prisonDoor,
   pumpkinHead,
   shirt,
@@ -31,6 +32,10 @@ enum class AnimationId {
   run,
   stand,
   walk
+}
+
+enum class ArmatureSockets{
+  rightHand
 }
 
 enum class MaterialId {

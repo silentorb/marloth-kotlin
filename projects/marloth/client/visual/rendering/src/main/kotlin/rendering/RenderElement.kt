@@ -3,28 +3,20 @@ package rendering
 import mythic.breeze.MultiAnimationPart
 import mythic.breeze.transformAnimatedSkeleton
 import mythic.glowing.DrawMethod
-import mythic.spatial.Matrix
-import mythic.spatial.Pi
-import mythic.spatial.getRotationMatrix
+import mythic.spatial.*
 import org.joml.times
 import rendering.meshes.Primitive
 import rendering.shading.ObjectShaderConfig
 import rendering.shading.populateBoneBuffer
+import scenery.MeshId
 
-fun simplePainter(renderer: SceneRenderer, primitive: Primitive, element: MeshElement, isAnimated: Boolean, transforms: List<Matrix>?) {
-  val transform = if (primitive.transform != null)
-    element.transform * primitive.transform
-  else if (primitive.parentBone != null && transforms != null)
-    element.transform * transforms[primitive.parentBone] * Matrix().rotateX(-Pi / 2f)
-  else
-    element.transform
-
+fun renderElement(renderer: SceneRenderer, primitive: Primitive, transform: Matrix, isAnimated: Boolean) {
   val orientationTransform = getRotationMatrix(transform)
   val material = primitive.material
   val texture = renderer.renderer.textures[material.texture]
 
   if (material.texture != null && texture == null) {
-    val k = 0
+    val debugMissingTexture = 0
   }
   val config = ObjectShaderConfig(
       transform,
@@ -61,6 +53,24 @@ fun armatureTransforms(armature: Armature, group: ElementGroup): List<Matrix> =
       transformAnimatedSkeleton(armature.bones, animations)
     }
 
+fun getElementTransform(element: MeshElement, primitive: Primitive, transforms: List<Matrix>?): Matrix {
+  return if (primitive.transform != null)
+    element.transform * primitive.transform
+  else if (primitive.parentBone != null && transforms != null)
+    element.transform * transforms[primitive.parentBone] * Matrix().rotateX(-Pi / 2f)
+  else
+    element.transform
+}
+
+private fun useMesh(meshes: ModelMeshMap, meshId: MeshId, action: (ModelMesh) -> Unit) {
+  val mesh = meshes[meshId]
+  if (mesh == null) {
+    val debugMeshNotFound = 0
+  } else {
+    action(mesh)
+  }
+}
+
 fun renderElementGroup(gameRenderer: GameSceneRenderer, group: ElementGroup) {
   val sceneRenderer = gameRenderer.renderer
   val armature = sceneRenderer.renderer.armatures[group.armature]
@@ -74,14 +84,32 @@ fun renderElementGroup(gameRenderer: GameSceneRenderer, group: ElementGroup) {
   }
 
   val meshes = sceneRenderer.renderer.meshes
+
   for (element in group.meshes) {
-    val mesh = meshes[element.mesh]
-    if (mesh == null) {
-      val k = 0
-    }
-    else {
+    useMesh(meshes, element.mesh) { mesh ->
       for (primitive in mesh.primitives) {
-        simplePainter(gameRenderer.renderer, primitive, element, armature != null, transforms)
+        val transform = getElementTransform(element, primitive, transforms)
+        renderElement(gameRenderer.renderer, primitive, transform, armature != null)
+      }
+    }
+  }
+
+  if (armature != null) {
+    for ((socketName, element) in group.attachments) {
+      val bone = armature.sockets[socketName]
+      if (bone == null) {
+        val debugMissingBone = 0
+      } else {
+        useMesh(meshes, element.mesh) { mesh ->
+          for (primitive in mesh.primitives) {
+            val a: Vector3m = Vector3m()
+            element.transform.getTranslation(a)
+            val b: Vector3m= Vector3m()
+            transforms!![bone].getTranslation(b)
+            val transform = element.transform * transforms!![bone]// * Matrix().rotateX(-Pi / 2f)
+            renderElement(gameRenderer.renderer, primitive, transform, false)
+          }
+        }
       }
     }
   }

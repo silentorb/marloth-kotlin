@@ -17,10 +17,16 @@ data class MeshElement(
     val transform: Matrix
 )
 
+data class AttachedMesh(
+    val socket: String,
+    val mesh: MeshElement
+)
+
 data class ElementGroup(
     val meshes: List<MeshElement>,
     val armature: ArmatureId? = null,
-    val animations: List<ElementAnimation> = listOf()
+    val animations: List<ElementAnimation> = listOf(),
+    val attachments: List<AttachedMesh> = listOf()
 )
 
 typealias ElementGroups = List<ElementGroup>
