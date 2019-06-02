@@ -1,9 +1,13 @@
 import bpy
 import os
 import os.path
-import json
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'addon'))
+from mythic_lib import get_material_texture_node
 
 models_path = 'src/main/resources/models'
+
 
 def add_to_map_list(map, key, item):
     if key in map:
@@ -11,8 +15,46 @@ def add_to_map_list(map, key, item):
     else:
         map[key] = [item]
 
+
 def of_type(list, type):
     return [c for c in list if c.type == type]
+
+
+def has_dominant_material(obj):
+    return any(m.name == obj.name for m in obj.material_slots)
+
+
+# Used for objects that have a primary material for baking and secondary materials to assist in baking
+def prune_materials(object):
+    if has_dominant_material(object):
+        not_needed = [i for i, m in enumerate(object.material_slots) if m.name != object.name]
+        for i in reversed(not_needed):
+            object.active_material_index = i
+            bpy.ops.object.material_slot_remove()
+
+
+# Blender Cycles is duct-taped ontop of the older Blender Renderer.  One side effect of this duct-taping is
+# Blender Cycles does not need Texture objects and can use Texture nodes instead, but the blendergltf exporter mythic
+# only looks for Texture objects.
+# Blender Texture objects are not the same thing as Blender Image objects.
+# (Mythic's python code does not make such a distinction.)
+# Depending on silly hidden nuances in Blender's GUI, using Cycles may or may not result in texture objects getting
+# created and assigned to a materials.  (Cycles works the same whether that happens or not.)
+# This function ensures all materials using texture nodes also have texture objects.
+def create_missing_image_textures():
+    for material in bpy.data.materials:
+        texture_node = get_material_texture_node(material)
+        if texture_node:
+            texture_name = material.name
+            current_texture = bpy.data.textures.get(texture_name)
+            if not current_texture:
+                image = bpy.data.images[texture_name]
+                if image:
+                    print('creating texture record for ' + texture_name)
+                    texture = bpy.data.textures.new(texture_name, 'IMAGE')
+                    texture.image = image
+                    material.active_texture = texture
+
 
 def gather_ik_bones(pose):
     constraints = {}
@@ -26,6 +68,7 @@ def gather_ik_bones(pose):
                 add_to_map_list(constraints, key, b.name)
     return constraints
 
+
 def add_keyframe_if_missing(curves, obj_name, property_name, values):
     data_path = 'pose.bones["' + obj_name + '"].' + property_name
     for curve in curves:
@@ -33,59 +76,24 @@ def add_keyframe_if_missing(curves, obj_name, property_name, values):
             return
 
     for i, value in enumerate(values):
-        # print('adding curve ' + data_path)
         curve = curves.new(data_path, i, obj_name)
         curve.keyframe_points.insert(0, value)
 
+
 def prepare_armature(armature):
-    constraints = gather_ik_bones(armature.pose)
-    # print(json.dumps(constraints, indent=4))
     bones = []
     if 'rig' in bpy.data.objects.keys():
         rig = bpy.data.objects['rig']
         bones = [bone.name for bone in rig.data.bones if bone.use_deform]
 
     for action in bpy.data.actions:
-        # print("Action: " + action.name)
-
-        # for k, ik in constraints.items():
-        #     for bone_name in ik:
         for bone_name in bones:
-            # print("adding keyframes " + bone_name)
-            if next((g for g in action.groups if g.name == bone_name), None) == None:
+            if next((g for g in action.groups if g.name == bone_name), None) is None:
                 action.groups.new(bone_name)
 
-            add_keyframe_if_missing(action.fcurves, bone_name, 'location',[0,0,0])
-            add_keyframe_if_missing(action.fcurves, bone_name, 'rotation_quaternion',[1,0,0,0])
+            add_keyframe_if_missing(action.fcurves, bone_name, 'location', [0, 0, 0])
+            add_keyframe_if_missing(action.fcurves, bone_name, 'rotation_quaternion', [1, 0, 0, 0])
 
-        for group in action.groups:
-            # print (group.name)
-            for channel in group.channels:
-                data_path = channel.data_path
-                if armature.pose and 'pose.bones' in data_path:
-                    target_name = data_path.split('"')[1]
-                    transform = data_path.split('.')[-1]
-                    # print(' * * ' + target_name)
-        # for fcurve in action.fcurves:
-        #     data_path = fcurve.data_path
-        #     target_name = data_path.split('"')[1]
-        #     transform = data_path.split('.')[-1]
-        #     print('  ' + fcurve.data_path + ' ' + str(fcurve.array_index))
-    # pose_bones = set()
-
-
-def prepare_scene():
-    for armature in of_type(bpy.data.objects, 'ARMATURE'):
-        prepare_armature(armature)
-
-def get_blend_filename():
-    filepath = bpy.data.filepath
-    return os.path.splitext(os.path.basename(filepath))[0]
-
-def get_export_filepath():
-    name = get_blend_filename()
-    script_path = os.path.realpath(__file__)
-    return os.path.abspath(os.path.join(os.path.dirname(script_path), '../../', models_path, name, name + '.gltf'))
 
 # This little hack allows Blender files to treat the render visibility flag as a
 # flag for whether a node should be exported.
@@ -97,47 +105,67 @@ def get_export_filepath():
 def hide_unrenderable():
     for obj in bpy.context.scene.objects:
         obj.hide = obj.hide_render
-        # print("node :" + obj.name)
+
+
+def prepare_scene():
+    for armature in of_type(bpy.data.objects, 'ARMATURE'):
+        prepare_armature(armature)
+
+    hide_unrenderable()
+
+    for obj in bpy.context.scene.objects:
+        if not obj.hide:
+            prune_materials(obj)
+
+    create_missing_image_textures()
+
+
+def get_blend_filename():
+    filepath = bpy.data.filepath
+    return os.path.splitext(os.path.basename(filepath))[0]
+
+
+def get_export_filepath():
+    name = get_blend_filename()
+    script_path = os.path.realpath(__file__)
+    return os.path.abspath(os.path.join(os.path.dirname(script_path), '../../', models_path, name, name + '.gltf'))
+
 
 def export_gltf():
     filepath = get_export_filepath()
-    os.makedirs(os.path.dirname(filepath), exist_ok = True)
-    hide_unrenderable()
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
     bpy.ops.export_scene.gltf(
-        filepath = filepath,
-        axis_forward = 'Y',
-        axis_up = 'Z',
-        # value.name = '',
-        # value.embed_shaders = False,
-        # settings_KHR_technique_webgl.name = '',
-        # settings_KHR_technique_webgl.embed_shaders = False,
-        draft_prop = False,
-        nodes_export_hidden = False,
-        nodes_selected_only = False,
-        materials_disable = False,
-        meshes_apply_modifiers = True,
-        meshes_vertex_color_alpha = False,
-        meshes_interleave_vertex_data = True,
-        animations_object_export = 'ACTIVE',
-        animations_armature_export = 'ELIGIBLE',
-        animations_shape_key_export = 'ELIGIBLE',
-        images_data_storage = 'COPY',
-        images_allow_srgb = False,
-        buffers_embed_data = False,
-        buffers_combine_data = True,
-        asset_copyright = '',
-        asset_version = '2.0',
-        asset_profile = 'WEB',
-        gltf_export_binary = False,
-        pretty_print = True,
-        blocks_prune_unused = True,
-        enable_actions = True,
-        enable_cameras = False,
-        enable_lamps = False,
-        enable_materials = True,
-        enable_meshes = True,
-        enable_textures = True
+        filepath=filepath,
+        axis_forward='Y',
+        axis_up='Z',
+        draft_prop=False,
+        nodes_export_hidden=False,
+        nodes_selected_only=False,
+        materials_disable=False,
+        meshes_apply_modifiers=True,
+        meshes_vertex_color_alpha=False,
+        meshes_interleave_vertex_data=True,
+        animations_object_export='ACTIVE',
+        animations_armature_export='ELIGIBLE',
+        animations_shape_key_export='ELIGIBLE',
+        images_data_storage='COPY',
+        images_allow_srgb=False,
+        buffers_embed_data=False,
+        buffers_combine_data=True,
+        asset_copyright='',
+        asset_version='2.0',
+        asset_profile='WEB',
+        gltf_export_binary=False,
+        pretty_print=True,
+        blocks_prune_unused=True,
+        enable_actions=True,
+        enable_cameras=False,
+        enable_lamps=False,
+        enable_materials=True,
+        enable_meshes=True,
+        enable_textures=True
     )
+
 
 if __name__ == '__main__':
     prepare_scene()
