@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Filter>
+	<Components>
+		<Result id="result">
+			<Source source="blend6 01"/>
+			<FilterType value="0"/>
+			<Advanced value="false"/>
+			<Lighting>
+				<Height value="0.2000000000000000111"/>
+				<Environment>
+					<Source value=""/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+		</Result>
+		<Blend6 id="blend6 01">
+			<Foreground source="stones2 01" red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Opacity source="stones2 03" value="0.5"/>
+			<Mode value="0"/>
+		</Blend6>
+		<PerlinNoise2 id="perlinnoise2 01">
+			<Noise red="1" green="0.8725756341809187688" blue="0.7248062015503875521" alpha="1"/>
+			<Background red="0.2154918574604891834" green="0.3410852713178295081" blue="0.2399263737751468339" alpha="1"/>
+			<Roughness value="0.2000000000000000111"/>
+			<Scale value="2.5"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.25"/>
+			<Variation value="1"/>
+			<OctaveCurve value="0"/>
+		</PerlinNoise2>
+		<PerlinNoise2 id="perlinnoise2 02">
+			<Noise red="0.1045610239769245026" green="0.1167385322034064643" blue="0.155038759689922534" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.2000000000000000111"/>
+			<Scale value="2.1299999999999998934"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.25"/>
+			<Variation value="1"/>
+			<OctaveCurve value="0"/>
+		</PerlinNoise2>
+		<Stones2 id="stones2 01">
+			<Noise source="perlinnoise2 01" red="1" green="1" blue="1" alpha="1"/>
+			<Background source="perlinnoise2 02" red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.2800000000000000266"/>
+			<Contrast value="0.3200000000000000067"/>
+			<Formula value="0"/>
+			<Scale value="2.4599999999999999645"/>
+			<Stretch value="0"/>
+			<VerticalStretch value="false"/>
+			<Flat value="true"/>
+			<SolidFill value="false"/>
+			<Details value="0.4000000000000000222"/>
+			<Variation value="4919"/>
+			<OctaveCurve value="0"/>
+		</Stones2>
+		<Stones2 id="stones2 03">
+			<Noise red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0.7519379844961240345" green="0.7519379844961240345" blue="0.7519379844961240345" alpha="1"/>
+			<Roughness value="0.2800000000000000266"/>
+			<Contrast value="0.8399999999999999689"/>
+			<Formula value="0"/>
+			<Scale value="2.4599999999999999645"/>
+			<Stretch value="0"/>
+			<VerticalStretch value="false"/>
+			<Flat value="true"/>
+			<SolidFill value="false"/>
+			<Details value="0.4000000000000000222"/>
+			<Variation value="4919"/>
+			<OctaveCurve value="0"/>
+		</Stones2>
+	</Components>
+	<GroupNames/>
+	<SettingsOverride>
+		<Size value="0"/>
+		<Variation value="0"/>
+		<Seamless value="0"/>
+		<ResultBlending value="0"/>
+	</SettingsOverride>
+	<Presets>
+		<DefaultPreset preview_image="LIFESAVER_OPAQUE">
+			<Settings size_factor="1" variation="1" seamless="true" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="false"/>
+			<Lighting>
+				<Height value="0.2000000000000000111"/>
+				<Environment>
+					<Source value=""/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+			<Controls/>
+		</DefaultPreset>
+	</Presets>
+	<Locks>
+		<Settings size="false" variation="false"/>
+		<Lighting elements="false" environment="false" brightness="false" saturation="false" height="false"/>
+		<Controls/>
+	</Locks>
+	<Information author="cj" name-en="cobblestone" url="" description="" keywords="" update_notes="" major_version="8" minor_version="5"/>
+	<ControlsOrder>
+		<Automatic value="true"/>
+	</ControlsOrder>
+	<FilterEditor>
+		<Groups/>
+		<ThumbnailSize value="2"/>
+		<Canvas left="-1136" top="-251" zoom_factor="0"/>
+		<Viewport left="0" top="0" zoom_factor="-4"/>
+		<LockPreview>
+			<Locked value="false"/>
+			<LockedComponent name=""/>
+		</LockPreview>
+		<Item id="blend6 01">
+			<Position left="-624" top="160"/>
+		</Item>
+		<Item id="perlinnoise2 01">
+			<Position left="64" top="96"/>
+		</Item>
+		<Item id="perlinnoise2 02">
+			<Position left="48" top="352"/>
+		</Item>
+		<Item id="result">
+			<Position left="-864" top="48"/>
+		</Item>
+		<Item id="stones2 01">
+			<Position left="-304" top="80"/>
+		</Item>
+		<Item id="stones2 03">
+			<Position left="-320" top="368"/>
+		</Item>
+	</FilterEditor>
+</Filter>

@@ -145,7 +145,9 @@ def export_gltf():
         meshes_apply_modifiers=True,
         meshes_vertex_color_alpha=False,
         meshes_interleave_vertex_data=True,
-        animations_object_export='ACTIVE',
+        # Make sure all of these are ELIGIBLE and not ACTIVE or duplicate, or malformed animations will get exported
+        # and overwrite the proper animations because they end up sharing the same names in mythic.
+        animations_object_export='ELIGIBLE',
         animations_armature_export='ELIGIBLE',
         animations_shape_key_export='ELIGIBLE',
         images_data_storage='COPY',

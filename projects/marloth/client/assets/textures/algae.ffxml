@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Filter>
+	<Components>
+		<Result id="result">
+			<Source source="blend6 01"/>
+			<FilterType value="0"/>
+			<Advanced value="false"/>
+			<Lighting>
+				<Height value="0.2000000000000000111"/>
+				<Environment>
+					<Source value=""/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+		</Result>
+		<Blend6 id="blend6 01">
+			<Foreground source="perlinnoise2 01" red="1" green="1" blue="1" alpha="1"/>
+			<Background source="chaffs2 01" red="0" green="0" blue="0" alpha="1"/>
+			<Opacity source="perlinnoise2 02" value="0.5"/>
+			<Mode value="0"/>
+		</Blend6>
+		<Chaffs2 id="chaffs2 01">
+			<Noise red="0.2211405564569436655" green="0.7131782945736433454" blue="0.48917667838821971" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.75"/>
+			<Contrast value="0"/>
+			<Formula value="0"/>
+			<Scale value="2"/>
+			<Stretch value="0"/>
+			<VerticalStretch value="false"/>
+			<Smooth value="false"/>
+			<Flat value="false"/>
+			<SolidFill value="false"/>
+			<Details value="0.4000000000000000222"/>
+			<Variation value="1"/>
+			<OctaveCurve value="0"/>
+		</Chaffs2>
+		<PerlinNoise2 id="perlinnoise2 01">
+			<Noise red="0.4000751039869881454" green="0.7131782945736433454" blue="0.3206538068625683358" alpha="1"/>
+			<Background red="0.1744186046511627675" green="0.1419844147535843093" blue="0.1135749053542455256" alpha="1"/>
+			<Roughness value="0.7900000000000000355"/>
+			<Scale value="2.3700000000000001066"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.25"/>
+			<Variation value="1"/>
+			<OctaveCurve value="2"/>
+		</PerlinNoise2>
+		<PerlinNoise2 id="perlinnoise2 02">
+			<Noise red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.3300000000000000155"/>
+			<Scale value="2.4599999999999999645"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.2700000000000000178"/>
+			<Variation value="1"/>
+			<OctaveCurve value="3"/>
+		</PerlinNoise2>
+	</Components>
+	<GroupNames/>
+	<SettingsOverride>
+		<Size value="0"/>
+		<Variation value="0"/>
+		<Seamless value="0"/>
+		<ResultBlending value="0"/>
+	</SettingsOverride>
+	<Presets>
+		<DefaultPreset preview_image="LIFESAVER_OPAQUE">
+			<Settings size_factor="1" variation="1" seamless="true" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="false"/>
+			<Lighting>
+				<Height value="0.2000000000000000111"/>
+				<Environment>
+					<Source value=""/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+			<Controls/>
+		</DefaultPreset>
+	</Presets>
+	<Locks>
+		<Settings size="false" variation="false"/>
+		<Lighting elements="false" environment="false" brightness="false" saturation="false" height="false"/>
+		<Controls/>
+	</Locks>
+	<Information author="cj" name-en="algae" url="" description="" keywords="" update_notes="" major_version="8" minor_version="5"/>
+	<ControlsOrder>
+		<Automatic value="true"/>
+	</ControlsOrder>
+	<FilterEditor>
+		<Groups/>
+		<ThumbnailSize value="1"/>
+		<Canvas left="-257" top="-377" zoom_factor="0"/>
+		<Viewport left="0" top="0" zoom_factor="-4"/>
+		<LockPreview>
+			<Locked value="true"/>
+			<LockedComponent name="result"/>
+		</LockPreview>
+		<Item id="blend6 01">
+			<Position left="336" top="160"/>
+		</Item>
+		<Item id="chaffs2 01">
+			<Position left="800" top="224"/>
+		</Item>
+		<Item id="perlinnoise2 01">
+			<Position left="592" top="0"/>
+		</Item>
+		<Item id="perlinnoise2 02">
+			<Position left="864" top="-112"/>
+		</Item>
+		<Item id="result">
+			<Position left="128" top="32"/>
+		</Item>
+	</FilterEditor>
+</Filter>

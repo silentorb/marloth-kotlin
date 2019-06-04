@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Filter>
+	<Components>
+		<Result id="result">
+			<Source source="noisedistortion2 01"/>
+			<FilterType value="0"/>
+			<Advanced value="false"/>
+			<Lighting>
+				<Height value="0.2000000000000000111"/>
+				<Environment>
+					<Source value=""/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+		</Result>
+		<Bricks2 id="bricks2 01">
+			<Color source="perlinnoise2 01" red="0.6999999999999999556" green="0.4660000000000000253" blue="0.3499999999999999778" alpha="1"/>
+			<Mortar source="perlinnoise2 02" red="0" green="0" blue="0" alpha="1"/>
+			<HRange value="0.0200000000000000004"/>
+			<LRange value="0.1499999999999999944"/>
+			<SRange value="0.25"/>
+			<MortarWidth source="perlinnoise2 03" value="0.0500000000000000028"/>
+			<BevelWidth value="0.25"/>
+			<Corners value="0.2999999999999999889"/>
+			<Bond value="0"/>
+			<BrickType value="1"/>
+			<FillMode value="0"/>
+			<Repeat value="1"/>
+			<Chaos value="0.2399999999999999911"/>
+			<Variation value="1"/>
+			<Bevel value="0"/>
+		</Bricks2>
+		<NoiseDistortion2 id="noisedistortion2 01">
+			<Source source="bricks2 01"/>
+			<Distortion value="0.1499999999999999944"/>
+			<Roughness value="0.3200000000000000067"/>
+			<Scale value="2.6699999999999999289"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Variation value="1968"/>
+		</NoiseDistortion2>
+		<PerlinNoise2 id="perlinnoise2 01">
+			<Noise red="0.7248062015503875521" green="0.5225784283672341157" blue="0.4438735652905473894" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.67000000000000004"/>
+			<Scale value="2.5"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.25"/>
+			<Variation value="1"/>
+			<OctaveCurve value="0"/>
+		</PerlinNoise2>
+		<PerlinNoise2 id="perlinnoise2 02">
+			<Noise red="0.1627906976744185608" green="0.1351212384581983728" blue="0.1186226789255453024" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.7800000000000000266"/>
+			<Scale value="1.9199999999999999289"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.25"/>
+			<Variation value="1"/>
+			<OctaveCurve value="0"/>
+		</PerlinNoise2>
+		<PerlinNoise2 id="perlinnoise2 03">
+			<Noise red="0.3372093023255814392" green="0.3372093023255814392" blue="0.3372093023255814392" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.1400000000000000133"/>
+			<Scale value="2.6699999999999999289"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.5999999999999999778"/>
+			<Variation value="1"/>
+			<OctaveCurve value="0"/>
+		</PerlinNoise2>
+	</Components>
+	<GroupNames/>
+	<SettingsOverride>
+		<Size value="0"/>
+		<Variation value="0"/>
+		<Seamless value="0"/>
+		<ResultBlending value="0"/>
+	</SettingsOverride>
+	<Presets>
+		<DefaultPreset preview_image="LIFESAVER_OPAQUE">
+			<Settings size_factor="1" variation="1" seamless="true" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="false"/>
+			<Lighting>
+				<Height value="0.2000000000000000111"/>
+				<Environment>
+					<Source value=""/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+			<Controls/>
+		</DefaultPreset>
+	</Presets>
+	<Locks>
+		<Settings size="false" variation="false"/>
+		<Lighting elements="false" environment="false" brightness="false" saturation="false" height="false"/>
+		<Controls/>
+	</Locks>
+	<Information author="cj" name-en="bricks" url="" description="" keywords="" update_notes="" major_version="8" minor_version="5"/>
+	<ControlsOrder>
+		<Automatic value="true"/>
+	</ControlsOrder>
+	<FilterEditor>
+		<Groups/>
+		<ThumbnailSize value="1"/>
+		<Canvas left="-257" top="-377" zoom_factor="0"/>
+		<Viewport left="17" top="0" zoom_factor="-2"/>
+		<LockPreview>
+			<Locked value="true"/>
+			<LockedComponent name="result"/>
+		</LockPreview>
+		<Item id="bricks2 01">
+			<Position left="672" top="80"/>
+		</Item>
+		<Item id="noisedistortion2 01">
+			<Position left="400" top="160"/>
+		</Item>
+		<Item id="perlinnoise2 01">
+			<Position left="1008" top="-128"/>
+		</Item>
+		<Item id="perlinnoise2 02">
+			<Position left="1008" top="80"/>
+		</Item>
+		<Item id="perlinnoise2 03">
+			<Position left="1008" top="304"/>
+		</Item>
+		<Item id="result">
+			<Position left="208" top="-32"/>
+		</Item>
+	</FilterEditor>
+</Filter>
