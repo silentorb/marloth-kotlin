@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Filter>
+	<CustomClasses>
+		<MapGroup name="MapGroup02" display_name-en="Initial"/>
+	</CustomClasses>
+	<Components>
+		<Result id="result">
+			<Source source="blend6 01"/>
+			<FilterType value="0"/>
+			<Advanced value="false"/>
+			<Lighting>
+				<Height value="0.2000000000000000111"/>
+				<Environment>
+					<Source value=""/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+		</Result>
+		<Blend6 id="blend6 01">
+			<Foreground red="1" green="1" blue="1" alpha="1"/>
+			<Background source="blend6 02" red="0" green="0" blue="0" alpha="1"/>
+			<Opacity source="noisedistortion2 02" value="0.5"/>
+			<Mode value="0"/>
+		</Blend6>
+		<Blend6 id="blend6 02">
+			<Foreground red="0" green="0" blue="0" alpha="1"/>
+			<Background source="mapgroup02 01" red="0" green="0" blue="0" alpha="1"/>
+			<Opacity source="levels3 01" value="0.5"/>
+			<Mode value="0"/>
+		</Blend6>
+		<Blur2 id="blur2 01">
+			<Source source="edgedetector3 02"/>
+			<Radius value="0.0700000000000000067"/>
+			<Gaussian value="true"/>
+		</Blur2>
+		<Blur2 id="blur2 02">
+			<Source source="offset4 01"/>
+			<Radius value="0.0700000000000000067"/>
+			<Gaussian value="true"/>
+		</Blur2>
+		<EdgeDetector3 id="edgedetector3 02">
+			<Source source="mapgroup02 01"/>
+			<Radius value="0.6300000000000000044"/>
+			<Amplitude value="0.1000000000000000056"/>
+			<Formula value="1"/>
+			<Mode value="0"/>
+			<Uniformity value="1"/>
+			<AlphaMode value="0"/>
+		</EdgeDetector3>
+		<Levels3 id="levels3 01">
+			<Source source="blur2 01"/>
+			<BlackPoint value="0"/>
+			<Gamma value="0.1999999999999999556"/>
+			<WhitePoint source="perlinnoise2 02" value="1"/>
+			<PreserveColor value="false"/>
+		</Levels3>
+		<MapGroup02 id="mapgroup02 01"/>
+		<NoiseDistortion2 id="noisedistortion2 02">
+			<Source source="blur2 02"/>
+			<Distortion value="0.0400000000000000008"/>
+			<Roughness value="0.4799999999999999822"/>
+			<Scale value="1.1699999999999999289"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Variation value="1"/>
+		</NoiseDistortion2>
+		<Offset4 id="offset4 01">
+			<Source source="tiles2 01"/>
+			<OffsetX value="-0.0599999999999999978"/>
+			<OffsetY value="-0.0400000000000000008"/>
+			<Percentage value="1"/>
+			<Mode value="0"/>
+		</Offset4>
+		<PerlinNoise2 id="perlinnoise2 02">
+			<Noise red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0.3255813953488372325" green="0.3255813953488372325" blue="0.3255813953488372325" alpha="1"/>
+			<Roughness value="0.4799999999999999822"/>
+			<Scale value="1.4399999999999999467"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.4799999999999999822"/>
+			<Variation value="1"/>
+			<OctaveCurve value="0"/>
+		</PerlinNoise2>
+		<Tiles2 id="tiles2 01">
+			<Color red="0" green="0" blue="0" alpha="1"/>
+			<Mortar red="0" green="0" blue="0" alpha="1"/>
+			<HRange value="0.1499999999999999944"/>
+			<LRange value="0.5200000000000000178"/>
+			<SRange value="0"/>
+			<MortarWidth value="0.8000000000000000444"/>
+			<BevelWidth value="0.46000000000000002"/>
+			<Corners value="0.7700000000000000178"/>
+			<FillMode value="0"/>
+			<RowShift value="false"/>
+			<RepeatH value="2"/>
+			<RepeatV value="2"/>
+			<Chaos value="0.1600000000000000033"/>
+			<Variation value="1"/>
+			<Bevel value="0"/>
+		</Tiles2>
+	</Components>
+	<GroupNames>
+		<Group id="mapgroup02 01">
+			<Components>
+				<Component name="blend6 03" group_id="groupped_blend6_01"/>
+				<Component name="checker5 01" group_id="groupped_checker5_01"/>
+				<Component name="mapgroupresult 02" group_id="groupped_mapgroupresult_01"/>
+				<Component name="noisedistortion2 01" group_id="groupped_noisedistortion2_01"/>
+				<Component name="noisedistortion2 03" group_id="groupped_noisedistortion2_02"/>
+				<Component name="perlinnoise2 01" group_id="groupped_perlinnoise2_01"/>
+				<Component name="perlinnoise2 03" group_id="groupped_perlinnoise2_02"/>
+				<Component name="tiles2 02" group_id="groupped_tiles2_01"/>
+			</Components>
+		</Group>
+	</GroupNames>
+	<Groups>
+		<Group id="MapGroup02">
+			<Components>
+				<MapGroupResult id="groupped_mapgroupresult_01">
+					<Source source="groupped_blend6_01"/>
+				</MapGroupResult>
+				<Blend6 id="groupped_blend6_01">
+					<Foreground source="groupped_noisedistortion2_02" red="1" green="1" blue="1" alpha="1"/>
+					<Background source="groupped_noisedistortion2_01" red="0" green="0" blue="0" alpha="1"/>
+					<Opacity value="0.3900000000000000133"/>
+					<Mode value="1"/>
+				</Blend6>
+				<Checker5 id="groupped_checker5_01">
+					<Color1 source="groupped_perlinnoise2_02" red="0.0926026080163451643" green="0.1372824655806517413" blue="0.1782945736434108364" alpha="1"/>
+					<Color2 source="groupped_perlinnoise2_01" red="1" green="1" blue="1" alpha="1"/>
+					<RepeatH value="2"/>
+					<RepeatV value="2"/>
+					<SolidFill value="false"/>
+					<Inclined value="false"/>
+				</Checker5>
+				<NoiseDistortion2 id="groupped_noisedistortion2_01">
+					<Source source="groupped_checker5_01"/>
+					<Distortion value="0.0500000000000000028"/>
+					<Roughness value="0"/>
+					<Scale value="2.5800000000000000711"/>
+					<Stretch value="0"/>
+					<Angle value="0"/>
+					<Details value="1"/>
+					<Variation value="1"/>
+				</NoiseDistortion2>
+				<NoiseDistortion2 id="groupped_noisedistortion2_02">
+					<Source source="groupped_tiles2_01"/>
+					<Distortion value="0.0500000000000000028"/>
+					<Roughness value="0"/>
+					<Scale value="2.5800000000000000711"/>
+					<Stretch value="0"/>
+					<Angle value="0"/>
+					<Details value="1"/>
+					<Variation value="1"/>
+				</NoiseDistortion2>
+				<PerlinNoise2 id="groupped_perlinnoise2_01">
+					<Noise red="0.9382098431584640075" green="0.9481251126735171786" blue="0.9961240310077519311" alpha="1"/>
+					<Background red="0.7115257496544679094" green="0.7580565510575001387" blue="0.771317829457364379" alpha="1"/>
+					<Roughness value="0.4799999999999999822"/>
+					<Scale value="1.9799999999999999822"/>
+					<Stretch value="0"/>
+					<Angle value="0"/>
+					<Details value="1"/>
+					<Contrast value="0"/>
+					<Variation value="1"/>
+					<OctaveCurve value="4"/>
+				</PerlinNoise2>
+				<PerlinNoise2 id="groupped_perlinnoise2_02">
+					<Noise red="0.1237155219037317233" green="0.1501521487058943005" blue="0.1744186046511627675" alpha="1"/>
+					<Background red="0.0581395348837209225" green="0.0581395348837209225" blue="0.0581395348837209225" alpha="1"/>
+					<Roughness value="0.6099999999999999867"/>
+					<Scale value="1.8000000000000000444"/>
+					<Stretch value="0"/>
+					<Angle value="0"/>
+					<Details value="1"/>
+					<Contrast value="0.3300000000000000155"/>
+					<Variation value="1"/>
+					<OctaveCurve value="3"/>
+				</PerlinNoise2>
+				<Tiles2 id="groupped_tiles2_01">
+					<Color red="0.4732888648518718822" green="0.5985589013306175099" blue="0.693798449612403112" alpha="1"/>
+					<Mortar red="0.2325581395348836899" green="0.2316567513971515835" blue="0.2316567513971515835" alpha="1"/>
+					<HRange value="0.0800000000000000017"/>
+					<LRange value="0.1499999999999999944"/>
+					<SRange value="0.25"/>
+					<MortarWidth value="0.0500000000000000028"/>
+					<BevelWidth value="0.2999999999999999889"/>
+					<Corners value="0.2800000000000000266"/>
+					<FillMode value="0"/>
+					<RowShift value="false"/>
+					<RepeatH value="2"/>
+					<RepeatV value="2"/>
+					<Chaos value="0.1499999999999999944"/>
+					<Variation value="1"/>
+					<Bevel value="0"/>
+				</Tiles2>
+			</Components>
+		</Group>
+	</Groups>
+	<SettingsOverride>
+		<Size value="0"/>
+		<Variation value="0"/>
+		<Seamless value="0"/>
+		<ResultBlending value="0"/>
+	</SettingsOverride>
+	<Presets>
+		<DefaultPreset preview_image="LIFESAVER_OPAQUE">
+			<Settings size_factor="1" variation="1" seamless="true" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="false"/>
+			<Lighting>
+				<Height value="0.2000000000000000111"/>
+				<Environment>
+					<Source value=""/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+			<Controls/>
+		</DefaultPreset>
+	</Presets>
+	<Locks>
+		<Settings size="false" variation="false"/>
+		<Lighting elements="false" environment="false" brightness="false" saturation="false" height="false"/>
+		<Controls/>
+	</Locks>
+	<Information author="cj" name-en="checkers" url="" description="" keywords="" update_notes="" major_version="8" minor_version="5"/>
+	<ControlsOrder>
+		<Automatic value="true"/>
+	</ControlsOrder>
+	<FilterEditor>
+		<Groups>
+			<Group id="MapGroup02">
+				<Canvas left="-5" top="-443" zoom_factor="0"/>
+				<Item id="groupped_blend6_01">
+					<Position left="416" top="-32"/>
+				</Item>
+				<Item id="groupped_checker5_01">
+					<Position left="816" top="-16"/>
+				</Item>
+				<Item id="groupped_mapgroupresult_01">
+					<Position left="224" top="-96"/>
+				</Item>
+				<Item id="groupped_noisedistortion2_01">
+					<Position left="608" top="-112"/>
+				</Item>
+				<Item id="groupped_noisedistortion2_02">
+					<Position left="592" top="112"/>
+				</Item>
+				<Item id="groupped_perlinnoise2_01">
+					<Position left="1024" top="32"/>
+				</Item>
+				<Item id="groupped_perlinnoise2_02">
+					<Position left="1024" top="-192"/>
+				</Item>
+				<Item id="groupped_tiles2_01">
+					<Position left="816" top="144"/>
+				</Item>
+			</Group>
+		</Groups>
+		<ThumbnailSize value="0"/>
+		<Canvas left="-151" top="-184" zoom_factor="0"/>
+		<Viewport left="0" top="0" zoom_factor="-2"/>
+		<LockPreview>
+			<Locked value="false"/>
+			<LockedComponent name=""/>
+		</LockPreview>
+		<Item id="blend6 01">
+			<Position left="32" top="256"/>
+		</Item>
+		<Item id="blend6 02">
+			<Position left="256" top="176"/>
+		</Item>
+		<Item id="blur2 01">
+			<Position left="528" top="224"/>
+		</Item>
+		<Item id="blur2 02">
+			<Position left="560" top="400"/>
+		</Item>
+		<Item id="edgedetector3 02">
+			<Position left="784" top="240"/>
+		</Item>
+		<Item id="levels3 01">
+			<Position left="304" top="16"/>
+		</Item>
+		<Item id="mapgroup02 01">
+			<Position left="1088" top="160"/>
+		</Item>
+		<Item id="noisedistortion2 02">
+			<Position left="288" top="384"/>
+		</Item>
+		<Item id="offset4 01">
+			<Position left="800" top="432"/>
+		</Item>
+		<Item id="perlinnoise2 02">
+			<Position left="592" top="-16"/>
+		</Item>
+		<Item id="result">
+			<Position left="-160" top="208"/>
+		</Item>
+		<Item id="tiles2 01">
+			<Position left="1040" top="352"/>
+		</Item>
+	</FilterEditor>
+</Filter>

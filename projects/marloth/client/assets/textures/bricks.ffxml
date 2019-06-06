@@ -73,7 +73,7 @@
 		<PerlinNoise2 id="perlinnoise2 01">
 			<Noise red="0.7248062015503875521" green="0.5225784283672341157" blue="0.4438735652905473894" alpha="1"/>
 			<Background red="0" green="0" blue="0" alpha="1"/>
-			<Roughness value="0.67000000000000004"/>
+			<Roughness value="0.75"/>
 			<Scale value="2.5"/>
 			<Stretch value="0"/>
 			<Angle value="0"/>
@@ -97,7 +97,7 @@
 		<PerlinNoise2 id="perlinnoise2 03">
 			<Noise red="0.3372093023255814392" green="0.3372093023255814392" blue="0.3372093023255814392" alpha="1"/>
 			<Background red="0" green="0" blue="0" alpha="1"/>
-			<Roughness value="0.1400000000000000133"/>
+			<Roughness value="0.25"/>
 			<Scale value="2.6699999999999999289"/>
 			<Stretch value="0"/>
 			<Angle value="0"/>
@@ -169,8 +169,8 @@
 	<FilterEditor>
 		<Groups/>
 		<ThumbnailSize value="1"/>
-		<Canvas left="-257" top="-377" zoom_factor="0"/>
-		<Viewport left="17" top="0" zoom_factor="-2"/>
+		<Canvas left="-49" top="-355" zoom_factor="0"/>
+		<Viewport left="0" top="0" zoom_factor="-2"/>
 		<LockPreview>
 			<Locked value="true"/>
 			<LockedComponent name="result"/>

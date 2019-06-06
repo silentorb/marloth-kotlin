@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Filter>
+	<CustomClasses>
+		<MapGroup name="MapGroup02" display_name-en="Grass">
+			<Color name="groupped_colormapcontrol_01" display_name="Dirt" required="false" hdr="false"/>
+		</MapGroup>
+	</CustomClasses>
+	<Components>
+		<Result id="result">
+			<Source source="mapgroup02 01"/>
+			<FilterType value="0"/>
+			<Advanced value="false"/>
+			<Lighting>
+				<Height value="0.2000000000000000111"/>
+				<Environment>
+					<Source value=""/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+		</Result>
+		<Chaffs2 id="chaffs2 01">
+			<Noise red="0.5999999999999999778" green="0.5999999999999999778" blue="0.5999999999999999778" alpha="1"/>
+			<Background red="0.4500000000000000111" green="0.4500000000000000111" blue="0.4500000000000000111" alpha="1"/>
+			<Roughness value="0.2000000000000000111"/>
+			<Contrast value="0"/>
+			<Formula value="0"/>
+			<Scale value="2"/>
+			<Stretch value="0"/>
+			<VerticalStretch value="false"/>
+			<Smooth value="false"/>
+			<Flat value="false"/>
+			<SolidFill value="false"/>
+			<Details value="0.4000000000000000222"/>
+			<Variation value="1"/>
+			<OctaveCurve value="0"/>
+		</Chaffs2>
+		<ColorMapControl id="colormapcontrol 02">
+			<Name value-en="Noise"/>
+			<ExternalImagesMode value="0"/>
+			<HDRMode value="0"/>
+			<HorizontalAnchor value="1"/>
+			<VerticalAnchor value="1"/>
+			<PlacementMode value="0"/>
+			<TilingMode value="0"/>
+			<Color red="0.2980392156862745057" green="0.1799343862058441768" blue="0.1568627450980392413" alpha="1"/>
+			<AlphaMode value="0"/>
+		</ColorMapControl>
+		<HueSaturation id="huesaturation 02">
+			<Source source="colormapcontrol 02"/>
+			<Hue source="chaffs2 01" value="0"/>
+			<Saturation source="chaffs2 01" value="0"/>
+			<Lightness value="0"/>
+		</HueSaturation>
+		<MapGroup02 id="mapgroup02 01">
+			<groupped_colormapcontrol_01 source="perlinnoise2 04" red="0.1882352941176470562" green="0.4274509803921568429" blue="0.1803921568627450955" alpha="1"/>
+		</MapGroup02>
+		<PerlinNoise2 id="perlinnoise2 04">
+			<Noise source="huesaturation 02" red="0.2984496124031007502" green="0.1976925983524354669" blue="0.1584790577489333663" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.6300000000000000044"/>
+			<Scale value="1.3500000000000000888"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.2399999999999999911"/>
+			<Variation value="1"/>
+			<OctaveCurve value="0"/>
+		</PerlinNoise2>
+	</Components>
+	<GroupNames>
+		<Group id="mapgroup02 01">
+			<Components>
+				<Component name="blend6 02" group_id="groupped_blend6_01"/>
+				<Component name="bomberplus3 01" group_id="groupped_bomberplus3_01"/>
+				<Component name="bomberplusparticlerandomizer2 01" group_id="groupped_bomberplusparticlerandomizer2_01"/>
+				<Component name="bomberplusparticlerandomizer2 02" group_id="groupped_bomberplusparticlerandomizer2_02"/>
+				<Component name="bomberplusparticlerandomizer2 03" group_id="groupped_bomberplusparticlerandomizer2_03"/>
+				<Component name="bomberplusparticlerandomizer2 04" group_id="groupped_bomberplusparticlerandomizer2_04"/>
+				<Component name="bomberplusparticlerandomizer2 05" group_id="groupped_bomberplusparticlerandomizer2_05"/>
+				<Component name="cells2 02" group_id="groupped_cells2_02"/>
+				<Component name="colormapcontrol 01" group_id="groupped_colormapcontrol_01"/>
+				<Component name="huesaturation 01" group_id="groupped_huesaturation_01"/>
+				<Component name="levels3 02" group_id="groupped_levels3_01"/>
+				<Component name="mapgroupresult 02" group_id="groupped_mapgroupresult_01"/>
+				<Component name="mapswitch2 01" group_id="groupped_mapswitch2_01"/>
+				<Component name="mapswitch2 02" group_id="groupped_mapswitch2_02"/>
+				<Component name="noisedistortion2 01" group_id="groupped_noisedistortion2_01"/>
+				<Component name="noisedistortion2 02" group_id="groupped_noisedistortion2_02"/>
+				<Component name="noisedistortion2 03" group_id="groupped_noisedistortion2_03"/>
+				<Component name="perlinnoise2 03" group_id="groupped_perlinnoise2_01"/>
+				<Component name="polygon4 01" group_id="groupped_polygon4_01"/>
+				<Component name="polygon4 02" group_id="groupped_polygon4_02"/>
+				<Component name="profilegradient4 01" group_id="groupped_profilegradient4_01"/>
+			</Components>
+		</Group>
+	</GroupNames>
+	<Groups>
+		<Group id="MapGroup02">
+			<Components>
+				<MapGroupResult id="groupped_mapgroupresult_01">
+					<Source source="groupped_bomberplus3_01"/>
+				</MapGroupResult>
+				<Blend6 id="groupped_blend6_01">
+					<Foreground red="0.0448215251487290439" green="0.0658914728682170603" blue="0.0377982092422330454" alpha="1"/>
+					<Background source="groupped_colormapcontrol_01" red="0" green="0" blue="0" alpha="1"/>
+					<Opacity source="groupped_levels3_01" value="0.5"/>
+					<Mode value="0"/>
+				</Blend6>
+				<BomberPlus3 id="groupped_bomberplus3_01">
+					<ParticleInput source="groupped_mapswitch2_02" red="0.5999999999999999778" green="0.8000000000000000444" blue="1" alpha="1"/>
+					<Background source="groupped_blend6_01" red="0.0265658725331952769" green="0.0736434108527131981" blue="0.0128447809626825327" alpha="1"/>
+					<Opacity value="1"/>
+					<Size value="1"/>
+					<Rotation value="0"/>
+					<OffsetH value="0"/>
+					<OffsetV value="0"/>
+					<Squash value="0"/>
+					<OpacityChaos value="0"/>
+					<SizeChaos value="0.5"/>
+					<RotationChaos value="1"/>
+					<OffsetChaosH value="0.3800000000000000044"/>
+					<OffsetChaosV value="0.6600000000000000311"/>
+					<SquashChaos value="0"/>
+					<Roughness value="0.2099999999999999922"/>
+					<DepthMap/>
+					<ParticleMode value="0"/>
+					<OctavesScaleMode value="0"/>
+					<LayerOrder value="1"/>
+					<DepthSorting value="0"/>
+					<Details value="0.8699999999999999956"/>
+					<ParticleRepeats value="6"/>
+					<ParticlePerCell value="2"/>
+					<Variation value="1"/>
+					<HDRMode value="false"/>
+				</BomberPlus3>
+				<BomberPlusParticleRandomizer2 id="groupped_bomberplusparticlerandomizer2_01" master="groupped_bomberplus3_01">
+					<Minimum red="0" green="0" blue="0" alpha="1"/>
+					<Maximum red="1" green="1" blue="1" alpha="1"/>
+					<Variation value="1"/>
+					<Preview value="0"/>
+				</BomberPlusParticleRandomizer2>
+				<BomberPlusParticleRandomizer2 id="groupped_bomberplusparticlerandomizer2_02" master="groupped_bomberplus3_01">
+					<Minimum red="0.1627906976744185608" green="0.1627906976744185608" blue="0.1627906976744185608" alpha="1"/>
+					<Maximum red="0.6976744186046511809" green="0.6976744186046511809" blue="0.6976744186046511809" alpha="1"/>
+					<Variation value="1"/>
+					<Preview value="0"/>
+				</BomberPlusParticleRandomizer2>
+				<BomberPlusParticleRandomizer2 id="groupped_bomberplusparticlerandomizer2_03" master="groupped_bomberplus3_01">
+					<Minimum red="0" green="0" blue="0" alpha="1"/>
+					<Maximum red="0.4031007751937984995" green="0.4031007751937984995" blue="0.4031007751937984995" alpha="1"/>
+					<Variation value="1"/>
+					<Preview value="0"/>
+				</BomberPlusParticleRandomizer2>
+				<BomberPlusParticleRandomizer2 id="groupped_bomberplusparticlerandomizer2_04" master="groupped_bomberplus3_01">
+					<Minimum red="0.2829457364341084746" green="0.2829457364341084746" blue="0.2829457364341084746" alpha="1"/>
+					<Maximum red="0.5271317829457364823" green="0.5271317829457364823" blue="0.5271317829457364823" alpha="1"/>
+					<Variation value="1"/>
+					<Preview value="0"/>
+				</BomberPlusParticleRandomizer2>
+				<BomberPlusParticleRandomizer2 id="groupped_bomberplusparticlerandomizer2_05" master="groupped_bomberplus3_01">
+					<Minimum red="0" green="0" blue="0" alpha="1"/>
+					<Maximum red="0.6976744186046511809" green="0.6976744186046511809" blue="0.6976744186046511809" alpha="1"/>
+					<Variation value="1"/>
+					<Preview value="0"/>
+				</BomberPlusParticleRandomizer2>
+				<Cells2 id="groupped_cells2_02">
+					<Noise red="0.2422018348623854178" green="0.5500000000000000444" blue="0.2321100917431193067" alpha="1"/>
+					<Background red="0.0831312516996017825" green="0.1007751937984495694" blue="0.0824169220599723223" alpha="1"/>
+					<Roughness value="0.0599999999999999978"/>
+					<Contrast value="0"/>
+					<Formula value="0"/>
+					<Scale value="1.4399999999999999467"/>
+					<Stretch value="0"/>
+					<VerticalStretch value="false"/>
+					<Smooth value="false"/>
+					<Flat value="false"/>
+					<SolidFill value="false"/>
+					<Details value="0.4000000000000000222"/>
+					<Variation value="1"/>
+					<OctaveCurve value="0"/>
+				</Cells2>
+				<ColorMapControl id="groupped_colormapcontrol_01">
+					<Name value-en="Dirt"/>
+					<ExternalImagesMode value="0"/>
+					<HDRMode value="0"/>
+					<HorizontalAnchor value="1"/>
+					<VerticalAnchor value="1"/>
+					<PlacementMode value="0"/>
+					<TilingMode value="0"/>
+					<Color red="0.1882352941176470562" green="0.4274509803921568429" blue="0.1803921568627450955" alpha="1"/>
+					<AlphaMode value="1"/>
+				</ColorMapControl>
+				<HueSaturation id="groupped_huesaturation_01">
+					<Source source="groupped_cells2_02"/>
+					<Hue source="groupped_bomberplusparticlerandomizer2_02" value="0"/>
+					<Saturation source="groupped_bomberplusparticlerandomizer2_03" value="0"/>
+					<Lightness source="groupped_bomberplusparticlerandomizer2_04" value="0"/>
+				</HueSaturation>
+				<Levels3 id="groupped_levels3_01">
+					<Source source="groupped_perlinnoise2_01"/>
+					<BlackPoint value="0"/>
+					<Gamma value="-0.1400000000000000133"/>
+					<WhitePoint value="0.3300000000000000155"/>
+					<PreserveColor value="false"/>
+				</Levels3>
+				<MapSwitch2 id="groupped_mapswitch2_01">
+					<Source1 source="groupped_polygon4_01" red="1" green="0.0660000000000000031" blue="0" alpha="1"/>
+					<Source2 source="groupped_polygon4_02" red="1" green="0.7530000000000000027" blue="0" alpha="1"/>
+					<Source3 red="1" green="1" blue="0" alpha="1"/>
+					<Source4 red="0.7530000000000000027" green="1" blue="0" alpha="1"/>
+					<Source5 red="0" green="1" blue="0" alpha="1"/>
+					<Source6 red="0" green="1" blue="1" alpha="1"/>
+					<Source7 red="0" green="0.5010000000000000009" blue="1" alpha="1"/>
+					<Source8 red="0" green="0" blue="1" alpha="1"/>
+					<Source9 red="0.5010000000000000009" green="0" blue="1" alpha="1"/>
+					<Source10 red="1" green="0" blue="1" alpha="1"/>
+					<Selector source="groupped_bomberplusparticlerandomizer2_01" value="1"/>
+					<MaxSource value="2"/>
+					<Mode value="1"/>
+				</MapSwitch2>
+				<MapSwitch2 id="groupped_mapswitch2_02">
+					<Source1 source="groupped_noisedistortion2_02" red="1" green="0.0660000000000000031" blue="0" alpha="1"/>
+					<Source2 source="groupped_noisedistortion2_01" red="1" green="0.7530000000000000027" blue="0" alpha="1"/>
+					<Source3 source="groupped_noisedistortion2_03" red="1" green="1" blue="0" alpha="1"/>
+					<Source4 red="0.7530000000000000027" green="1" blue="0" alpha="1"/>
+					<Source5 red="0" green="1" blue="0" alpha="1"/>
+					<Source6 red="0" green="1" blue="1" alpha="1"/>
+					<Source7 red="0" green="0.5010000000000000009" blue="1" alpha="1"/>
+					<Source8 red="0" green="0" blue="1" alpha="1"/>
+					<Source9 red="0.5010000000000000009" green="0" blue="1" alpha="1"/>
+					<Source10 red="1" green="0" blue="1" alpha="1"/>
+					<Selector value="1"/>
+					<MaxSource value="3"/>
+					<Mode value="1"/>
+				</MapSwitch2>
+				<NoiseDistortion2 id="groupped_noisedistortion2_01">
+					<Source source="groupped_mapswitch2_01"/>
+					<Distortion value="0.0400000000000000008"/>
+					<Roughness value="0.2099999999999999922"/>
+					<Scale value="1.9499999999999999556"/>
+					<Stretch value="0"/>
+					<Angle value="0"/>
+					<Details value="1"/>
+					<Variation value="2"/>
+				</NoiseDistortion2>
+				<NoiseDistortion2 id="groupped_noisedistortion2_02">
+					<Source source="groupped_mapswitch2_01"/>
+					<Distortion value="0.0599999999999999978"/>
+					<Roughness value="0.2099999999999999922"/>
+					<Scale value="2.1600000000000001421"/>
+					<Stretch value="0"/>
+					<Angle value="0"/>
+					<Details value="1"/>
+					<Variation value="1"/>
+				</NoiseDistortion2>
+				<NoiseDistortion2 id="groupped_noisedistortion2_03">
+					<Source source="groupped_mapswitch2_01"/>
+					<Distortion value="0.1600000000000000033"/>
+					<Roughness value="0.2099999999999999922"/>
+					<Scale value="2.6699999999999999289"/>
+					<Stretch value="0"/>
+					<Angle value="0"/>
+					<Details value="1"/>
+					<Variation value="3"/>
+				</NoiseDistortion2>
+				<PerlinNoise2 id="groupped_perlinnoise2_01">
+					<Noise red="1" green="1" blue="1" alpha="1"/>
+					<Background red="0" green="0" blue="0" alpha="1"/>
+					<Roughness value="0.2000000000000000111"/>
+					<Scale value="2.5200000000000000178"/>
+					<Stretch value="0"/>
+					<Angle value="0"/>
+					<Details value="1"/>
+					<Contrast value="0.0800000000000000017"/>
+					<Variation value="1"/>
+					<OctaveCurve value="3"/>
+				</PerlinNoise2>
+				<Polygon4 id="groupped_polygon4_01">
+					<Color source="groupped_huesaturation_01" red="0.1897082986398274385" green="0.4263565891472868019" blue="0.1801273961901327936" alpha="1"/>
+					<Background red="1" green="1" blue="1" alpha="0"/>
+					<Radius value="1"/>
+					<StarFactor value="0.25"/>
+					<Rotation source="groupped_profilegradient4_01" value="0"/>
+					<Squash value="0.8600000000000000977"/>
+					<OuterRadius value="0.5999999999999999778"/>
+					<InnerRadius value="0.3699999999999999956"/>
+					<BevelWidth value="0.5999999999999999778"/>
+					<Sides value="3"/>
+					<FitRadius value="true"/>
+					<BevelCurve value="0"/>
+				</Polygon4>
+				<Polygon4 id="groupped_polygon4_02">
+					<Color source="groupped_huesaturation_01" red="0.1897082986398274385" green="0.4263565891472868019" blue="0.1801273961901327936" alpha="1"/>
+					<Background red="1" green="1" blue="1" alpha="0"/>
+					<Radius value="1"/>
+					<StarFactor value="0.25"/>
+					<Rotation value="0"/>
+					<Squash value="0.8600000000000000977"/>
+					<OuterRadius value="0.5999999999999999778"/>
+					<InnerRadius value="0.3699999999999999956"/>
+					<BevelWidth value="0.5999999999999999778"/>
+					<Sides value="3"/>
+					<FitRadius value="true"/>
+					<BevelCurve value="0"/>
+				</Polygon4>
+				<ProfileGradient4 id="groupped_profilegradient4_01">
+					<Color1 red="0" green="0" blue="0" alpha="1"/>
+					<Color2 red="1" green="1" blue="1" alpha="1"/>
+					<Offset value="0"/>
+					<Rotate value="0"/>
+					<Repeat value="1"/>
+					<Profile value="0"/>
+					<Mirror value="false"/>
+				</ProfileGradient4>
+			</Components>
+		</Group>
+	</Groups>
+	<SettingsOverride>
+		<Size value="0"/>
+		<Variation value="0"/>
+		<Seamless value="0"/>
+		<ResultBlending value="0"/>
+	</SettingsOverride>
+	<Presets>
+		<DefaultPreset preview_image="LIFESAVER_OPAQUE">
+			<Settings size_factor="1" variation="1" seamless="true" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="false"/>
+			<Lighting>
+				<Height value="0.2000000000000000111"/>
+				<Environment>
+					<Source value=""/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+			<Controls>
+				<ColorMapControl id="colormapcontrol 02">
+					<HorizontalAnchor value="1"/>
+					<VerticalAnchor value="1"/>
+					<PlacementMode value="0"/>
+					<TilingMode value="0"/>
+					<Color red="0.2980392156862745057" green="0.1799343862058441768" blue="0.1568627450980392413" alpha="1"/>
+				</ColorMapControl>
+			</Controls>
+		</DefaultPreset>
+	</Presets>
+	<Locks>
+		<Settings size="false" variation="false"/>
+		<Lighting elements="false" environment="false" brightness="false" saturation="false" height="false"/>
+		<Controls>
+			<Control id="colormapcontrol 02" lock="false"/>
+		</Controls>
+	</Locks>
+	<Information author="cj" name-en="grass" url="" description="" keywords="" update_notes="" major_version="8" minor_version="5"/>
+	<ControlsOrder>
+		<Automatic value="true"/>
+	</ControlsOrder>
+	<FilterEditor>
+		<Groups>
+			<Group id="MapGroup02">
+				<Canvas left="-166" top="-657" zoom_factor="1"/>
+				<Item id="groupped_blend6_01">
+					<Position left="1040" top="240"/>
+				</Item>
+				<Item id="groupped_bomberplus3_01">
+					<Position left="832" top="-208"/>
+				</Item>
+				<Item id="groupped_bomberplusparticlerandomizer2_01">
+					<Position left="1808" top="-208"/>
+				</Item>
+				<Item id="groupped_bomberplusparticlerandomizer2_02">
+					<Position left="1664" top="-16"/>
+				</Item>
+				<Item id="groupped_bomberplusparticlerandomizer2_03">
+					<Position left="1664" top="128"/>
+				</Item>
+				<Item id="groupped_bomberplusparticlerandomizer2_04">
+					<Position left="1664" top="272"/>
+				</Item>
+				<Item id="groupped_bomberplusparticlerandomizer2_05">
+					<Position left="1200" top="80"/>
+				</Item>
+				<Item id="groupped_cells2_02">
+					<Position left="1536" top="-240"/>
+				</Item>
+				<Item id="groupped_colormapcontrol_01">
+					<Position left="1440" top="224"/>
+				</Item>
+				<Item id="groupped_huesaturation_01">
+					<Position left="1296" top="-64"/>
+				</Item>
+				<Item id="groupped_levels3_01">
+					<Position left="1088" top="464"/>
+				</Item>
+				<Item id="groupped_mapgroupresult_01">
+					<Position left="352" top="-194"/>
+				</Item>
+				<Item id="groupped_mapswitch2_01">
+					<Position left="960" top="-544"/>
+				</Item>
+				<Item id="groupped_mapswitch2_02">
+					<Position left="464" top="-720"/>
+				</Item>
+				<Item id="groupped_noisedistortion2_01">
+					<Position left="736" top="-704"/>
+				</Item>
+				<Item id="groupped_noisedistortion2_02">
+					<Position left="784" top="-768"/>
+				</Item>
+				<Item id="groupped_noisedistortion2_03">
+					<Position left="720" top="-576"/>
+				</Item>
+				<Item id="groupped_perlinnoise2_01">
+					<Position left="1344" top="416"/>
+				</Item>
+				<Item id="groupped_polygon4_01">
+					<Position left="1216" top="-432"/>
+				</Item>
+				<Item id="groupped_polygon4_02">
+					<Position left="1136" top="-176"/>
+				</Item>
+				<Item id="groupped_profilegradient4_01">
+					<Position left="1568" top="-432"/>
+				</Item>
+			</Group>
+		</Groups>
+		<ThumbnailSize value="1"/>
+		<Canvas left="-429" top="-407" zoom_factor="0"/>
+		<Viewport left="0" top="0" zoom_factor="-2"/>
+		<LockPreview>
+			<Locked value="true"/>
+			<LockedComponent name="result"/>
+		</LockPreview>
+		<Item id="chaffs2 01">
+			<Position left="752" top="-64"/>
+		</Item>
+		<Item id="colormapcontrol 02">
+			<Position left="736" top="-192"/>
+		</Item>
+		<Item id="huesaturation 02">
+			<Position left="480" top="-208"/>
+		</Item>
+		<Item id="mapgroup02 01">
+			<Position left="224" top="16"/>
+		</Item>
+		<Item id="perlinnoise2 04">
+			<Position left="432" top="0"/>
+		</Item>
+		<Item id="result">
+			<Position left="0" top="0"/>
+		</Item>
+	</FilterEditor>
+</Filter>

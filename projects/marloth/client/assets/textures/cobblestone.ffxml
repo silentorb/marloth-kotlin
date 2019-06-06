@@ -52,7 +52,7 @@
 		<PerlinNoise2 id="perlinnoise2 01">
 			<Noise red="1" green="0.8725756341809187688" blue="0.7248062015503875521" alpha="1"/>
 			<Background red="0.2154918574604891834" green="0.3410852713178295081" blue="0.2399263737751468339" alpha="1"/>
-			<Roughness value="0.2000000000000000111"/>
+			<Roughness value="0.6600000000000000311"/>
 			<Scale value="2.5"/>
 			<Stretch value="0"/>
 			<Angle value="0"/>
@@ -167,7 +167,7 @@
 		<Groups/>
 		<ThumbnailSize value="2"/>
 		<Canvas left="-1136" top="-251" zoom_factor="0"/>
-		<Viewport left="0" top="0" zoom_factor="-4"/>
+		<Viewport left="0" top="0" zoom_factor="-2"/>
 		<LockPreview>
 			<Locked value="false"/>
 			<LockedComponent name=""/>
