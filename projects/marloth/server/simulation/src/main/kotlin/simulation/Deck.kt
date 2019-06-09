@@ -1,11 +1,8 @@
 package simulation
 
-import colliding.Shape
+import scenery.Shape
 import intellect.Spirit
-import mythic.ent.Entity
-import mythic.ent.Id
-import mythic.ent.IdSource
-import mythic.ent.Table
+import mythic.ent.*
 import physics.Body
 import physics.DynamicBody
 import randomly.Dice
@@ -111,6 +108,17 @@ fun addDeck(world: World, deck: Deck, nextId: IdSource): World {
       deck = newDeck,
       nextId = nextId()
   )
+}
+
+fun addDeck(deckSource: (IdSource) -> List<Hand>): (World) -> World {
+  return { world ->
+    val nextId = newIdSource(world.nextId)
+    val newDeck = world.deck.plus(toDeck(deckSource(nextId)))
+    world.copy(
+        deck = newDeck,
+        nextId = nextId()
+    )
+  }
 }
 
 fun removeEntities(deck: Deck, removeIds: List<Id>): Deck {

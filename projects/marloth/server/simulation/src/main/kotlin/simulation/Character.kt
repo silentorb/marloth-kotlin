@@ -1,7 +1,7 @@
 package simulation
 
-import colliding.Capsule
-import colliding.ShapeOffset
+import scenery.Capsule
+import scenery.ShapeOffset
 import intellect.Spirit
 import mythic.ent.Entity
 import mythic.ent.Id
@@ -194,7 +194,7 @@ fun newCharacter(id: Id,nextId: IdSource, definition: CharacterDefinition, facti
           sanity = Resource(100),
           abilities = abilities
       ),
-      collisionShape = ShapeOffset(Matrix().translate(0f, 0f,0.75f), Capsule(0.4f, 1.5f)),
+      collisionShape = ShapeOffset(Matrix().translate(0f, 0f, 0.75f), Capsule(0.4f, 1.5f)),
       depiction = Depiction(
           type = definition.depictionType,
           animations = listOf(

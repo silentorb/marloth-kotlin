@@ -8,7 +8,9 @@ import org.lwjgl.BufferUtils
 import rendering.*
 import rendering.meshes.*
 import scenery.AnimationId
+import scenery.Cylinder
 import scenery.MeshId
+import scenery.Shape
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
@@ -131,7 +133,7 @@ fun mapSkinIndices(info: GltfInfo, node: Node, boneMap: Map<Int, BoneNode>): Ski
 }
 
 fun loadMaterial(info: GltfInfo, materialIndex: Int): Material {
-  val materialSource = info.materials[materialIndex]
+  val materialSource = info.materials!![materialIndex]
   val details = materialSource.pbrMetallicRoughness
   val color = details.baseColorFactor
   val glow = if (materialSource.emissiveFactor != null && materialSource.emissiveFactor.first() != 0f)
@@ -399,6 +401,24 @@ fun getMeshId(info: GltfInfo, nodeIndex: Int): MeshId? {
   return getMeshId(name)
 }
 
+@Suppress("UNCHECKED_CAST")
+fun loadBoundingShape(node: Node): Shape? {
+  val shapeProperty = node.extras?.get("bounds")
+  return if (shapeProperty == null)
+    null
+  else {
+    val shape = shapeProperty as Map<String, Any>
+    val type = shape["type"] as String?
+    when (type) {
+      "cylinder" -> Cylinder(
+          radius = (shape["radius"] as Double).toFloat(),
+          height = (shape["height"] as Double).toFloat()
+      )
+      else -> null
+    }
+  }
+}
+
 fun loadGltf(vertexSchemas: VertexSchemas, filename: String, resourcePath: String): ModelImport {
   val info = loadJsonResource<GltfInfo>(resourcePath + ".gltf")
   val directoryPath = resourcePath.split("/").dropLast(1).joinToString("/")
@@ -424,11 +444,7 @@ fun loadGltf(vertexSchemas: VertexSchemas, filename: String, resourcePath: Strin
     listOf(loadArmature(buffer, info, filename, boneMap, newSocketMap)).mapNotNull { it }
 
   val meshes = info.meshes
-      .mapIndexed { index, mesh ->
-        mesh.primitives.map { Triple(it, index, mesh) }
-      }
-      .flatten()
-      .mapNotNull { (primitiveSource, meshIndex, mesh) ->
+      .mapIndexedNotNull { meshIndex, mesh ->
         val nodeIndex = info.nodes.indexOfFirst { it.mesh == meshIndex }
         val id = getMeshId(info, nodeIndex)
         if (id == null)
@@ -437,21 +453,27 @@ fun loadGltf(vertexSchemas: VertexSchemas, filename: String, resourcePath: Strin
           val name2 = mesh.name.replace(".001", "")
 
           val parentBone = getParentBone(info, nodeIndex, boneMap)
-          val material = loadMaterial(info, primitiveSource.material)
-          val converter = createVertexConverter(info, buffer, boneMap, meshIndex)
-          val primitive = Primitive(
-              mesh = loadPrimitive(buffer, info, vertexSchemas, primitiveSource, converter),
-              transform = null,
-              material = material,
-              name = name2,
-              parentBone = parentBone
-          )
+          val primitives = mesh.primitives.map { primitiveSource ->
+            val material = loadMaterial(info, primitiveSource.material)
+            val converter = createVertexConverter(info, buffer, boneMap, meshIndex)
+            Primitive(
+                mesh = loadPrimitive(buffer, info, vertexSchemas, primitiveSource, converter),
+                transform = null,
+                material = material,
+                name = name2,
+                parentBone = parentBone
+            )
+          }
 
-          Pair(id, primitive)
+          val node = info.nodes[nodeIndex]
+
+          ModelMesh(
+              id = id,
+              primitives = primitives,
+              bounds = loadBoundingShape(node)
+          )
         }
       }
-      .groupBy { it.first }
-      .map { ModelMesh(it.key, it.value.map { it.second }) }
 
   return ModelImport(meshes = meshes, armatures = armatures)
 }

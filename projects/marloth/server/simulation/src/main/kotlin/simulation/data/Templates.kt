@@ -1,8 +1,8 @@
 package simulation.data
 
-import colliding.Box
-import colliding.ShapeOffset
-import colliding.Sphere
+import scenery.Box
+import scenery.ShapeOffset
+import scenery.Sphere
 import mythic.spatial.Matrix
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4

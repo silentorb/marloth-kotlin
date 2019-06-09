@@ -10,9 +10,8 @@ import rendering.shading.ObjectShaderConfig
 import rendering.shading.populateBoneBuffer
 import scenery.MeshId
 
-fun renderElement(renderer: SceneRenderer, primitive: Primitive, transform: Matrix, isAnimated: Boolean) {
+fun renderElement(renderer: SceneRenderer, primitive: Primitive, material: Material, transform: Matrix, isAnimated: Boolean) {
   val orientationTransform = getRotationMatrix(transform)
-  val material = primitive.material
   val texture = renderer.renderer.textures[material.texture]
 
   if (material.texture != null && texture == null) {
@@ -89,7 +88,8 @@ fun renderElementGroup(gameRenderer: GameSceneRenderer, group: ElementGroup) {
     useMesh(meshes, element.mesh) { mesh ->
       for (primitive in mesh.primitives) {
         val transform = getElementTransform(element, primitive, transforms)
-        renderElement(gameRenderer.renderer, primitive, transform, armature != null)
+        val materal = element.material ?: primitive.material
+        renderElement(gameRenderer.renderer, primitive, materal, transform, armature != null)
       }
     }
   }
@@ -102,12 +102,9 @@ fun renderElementGroup(gameRenderer: GameSceneRenderer, group: ElementGroup) {
       } else {
         useMesh(meshes, element.mesh) { mesh ->
           for (primitive in mesh.primitives) {
-            val a: Vector3m = Vector3m()
-            element.transform.getTranslation(a)
-            val b: Vector3m= Vector3m()
-            transforms!![bone].getTranslation(b)
-            val transform = element.transform * transforms!![bone]// * Matrix().rotateX(-Pi / 2f)
-            renderElement(gameRenderer.renderer, primitive, transform, false)
+            val transform = element.transform * transforms!![bone]
+            val materal = element.material ?: primitive.material
+            renderElement(gameRenderer.renderer, primitive, materal, transform, false)
           }
         }
       }

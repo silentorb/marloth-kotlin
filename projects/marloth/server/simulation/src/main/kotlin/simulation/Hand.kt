@@ -1,6 +1,6 @@
 package simulation
 
-import colliding.Shape
+import scenery.Shape
 import intellect.Spirit
 import mythic.ent.Id
 import physics.Body

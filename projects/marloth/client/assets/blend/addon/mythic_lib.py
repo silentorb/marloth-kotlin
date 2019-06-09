@@ -68,6 +68,9 @@ def initialize_object_texture(obj):
 
 def get_material_texture_node(material):
     tree = material.node_tree
+    if tree is None:
+        return None
+
     for node in tree.nodes:
         if node.bl_idname == 'ShaderNodeTexImage' and node.image.name == material.name:
             return node

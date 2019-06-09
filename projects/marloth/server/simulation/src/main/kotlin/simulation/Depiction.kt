@@ -2,8 +2,7 @@ package simulation
 
 import mythic.ent.Entity
 import mythic.ent.Id
-import scenery.AnimationId
-import scenery.ArmatureId
+import scenery.*
 
 typealias AnimationDurationMap = Map<ArmatureId, Map<AnimationId, Float>>
 
@@ -14,6 +13,7 @@ enum class DepictionType {
   monster,
   person,
   none,
+  staticMesh,
   test,
   wallLamp,
   world
@@ -27,6 +27,8 @@ data class DepictionAnimation(
 
 data class Depiction(
     val type: DepictionType,
+    val mesh: MeshId? = null,
+    val texture: Textures? = null,
     val animations: List<DepictionAnimation> = listOf()
 )
 

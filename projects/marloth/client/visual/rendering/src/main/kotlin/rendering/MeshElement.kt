@@ -14,7 +14,8 @@ data class ElementAnimation(
 data class MeshElement(
     val id: Long,
     val mesh: MeshId,
-    val transform: Matrix
+    val transform: Matrix,
+    val material: Material? = null
 )
 
 data class AttachedMesh(

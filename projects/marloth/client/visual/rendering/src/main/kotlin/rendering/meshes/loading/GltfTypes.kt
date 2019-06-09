@@ -153,7 +153,7 @@ data class GltfInfo(
     val buffers: List<BufferInfo>,
     val images: List<Image>?,
     val meshes: List<MeshInfo2>,
-    val materials: List<MaterialInfo>,
+    val materials: List<MaterialInfo>?,
     val nodes: List<Node>,
     val skins: List<Skin>?,
     val textures: List<Texture>?

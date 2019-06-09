@@ -43,6 +43,150 @@
 				</Ambience>
 			</Lighting>
 		</Result>
+		<Add id="add 01">
+			<SourceA source="bomberplus3 03" red="0.1000000000000000056" green="0.5" blue="0.9000000000000000222" alpha="1"/>
+			<SourceB source="bomberplus3 02" red="0.9000000000000000222" green="0.5" blue="0.1000000000000000056" alpha="1"/>
+		</Add>
+		<Add id="add 02">
+			<SourceA source="bomberplus3 01" red="0.1000000000000000056" green="0.5" blue="0.9000000000000000222" alpha="1"/>
+			<SourceB source="bomberplus3 04" red="0.9000000000000000222" green="0.5" blue="0.1000000000000000056" alpha="1"/>
+		</Add>
+		<Add id="add 03">
+			<SourceA source="add 01" red="0.1000000000000000056" green="0.5" blue="0.9000000000000000222" alpha="1"/>
+			<SourceB source="add 02" red="0.9000000000000000222" green="0.5" blue="0.1000000000000000056" alpha="1"/>
+		</Add>
+		<Blend6 id="blend6 01">
+			<Foreground red="0.5921568627450980449" green="0.3529411764705882026" blue="0.1372549019607843257" alpha="1"/>
+			<Background red="0.3176470588235293935" green="0.023529411764705882" blue="0.0039215686274509803" alpha="1"/>
+			<Opacity source="perlinnoise2 01" value="0.5"/>
+			<Mode value="0"/>
+		</Blend6>
+		<Blend6 id="blend6 02">
+			<Foreground source="blend6 01" red="0.5921568627450980449" green="0.3529411764705882026" blue="0.1372549019607843257" alpha="1"/>
+			<Background red="0.2588235294117646745" green="0" blue="0.0039215686274509803" alpha="1"/>
+			<Opacity source="add 03" value="0.5"/>
+			<Mode value="0"/>
+		</Blend6>
+		<BomberPlus3 id="bomberplus3 01">
+			<ParticleInput red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Opacity value="1"/>
+			<Size value="0.1600000000000000033"/>
+			<Rotation value="0"/>
+			<OffsetH value="1"/>
+			<OffsetV value="0"/>
+			<Squash value="0"/>
+			<OpacityChaos value="0"/>
+			<SizeChaos value="0"/>
+			<RotationChaos value="0"/>
+			<OffsetChaosH value="0"/>
+			<OffsetChaosV value="0"/>
+			<SquashChaos value="0"/>
+			<Roughness value="0.1000000000000000056"/>
+			<DepthMap/>
+			<ParticleMode value="0"/>
+			<OctavesScaleMode value="0"/>
+			<LayerOrder value="0"/>
+			<DepthSorting value="0"/>
+			<Details value="0"/>
+			<ParticleRepeats value="8"/>
+			<ParticlePerCell value="1"/>
+			<Variation value="1"/>
+			<HDRMode value="false"/>
+		</BomberPlus3>
+		<BomberPlus3 id="bomberplus3 02">
+			<ParticleInput red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Opacity value="1"/>
+			<Size value="0.1600000000000000033"/>
+			<Rotation value="0"/>
+			<OffsetH value="0"/>
+			<OffsetV value="1"/>
+			<Squash value="0"/>
+			<OpacityChaos value="0"/>
+			<SizeChaos value="0"/>
+			<RotationChaos value="0"/>
+			<OffsetChaosH value="0"/>
+			<OffsetChaosV value="0"/>
+			<SquashChaos value="0"/>
+			<Roughness value="0.1000000000000000056"/>
+			<DepthMap/>
+			<ParticleMode value="0"/>
+			<OctavesScaleMode value="0"/>
+			<LayerOrder value="0"/>
+			<DepthSorting value="0"/>
+			<Details value="0"/>
+			<ParticleRepeats value="8"/>
+			<ParticlePerCell value="1"/>
+			<Variation value="1"/>
+			<HDRMode value="false"/>
+		</BomberPlus3>
+		<BomberPlus3 id="bomberplus3 03">
+			<ParticleInput red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Opacity value="1"/>
+			<Size value="0.1600000000000000033"/>
+			<Rotation value="0"/>
+			<OffsetH value="0"/>
+			<OffsetV value="0"/>
+			<Squash value="0"/>
+			<OpacityChaos value="0"/>
+			<SizeChaos value="0"/>
+			<RotationChaos value="0"/>
+			<OffsetChaosH value="0"/>
+			<OffsetChaosV value="0"/>
+			<SquashChaos value="0"/>
+			<Roughness value="0.1000000000000000056"/>
+			<DepthMap/>
+			<ParticleMode value="0"/>
+			<OctavesScaleMode value="0"/>
+			<LayerOrder value="0"/>
+			<DepthSorting value="0"/>
+			<Details value="0"/>
+			<ParticleRepeats value="8"/>
+			<ParticlePerCell value="1"/>
+			<Variation value="1"/>
+			<HDRMode value="false"/>
+		</BomberPlus3>
+		<BomberPlus3 id="bomberplus3 04">
+			<ParticleInput red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Opacity value="1"/>
+			<Size value="0.1600000000000000033"/>
+			<Rotation value="0"/>
+			<OffsetH value="1"/>
+			<OffsetV value="1"/>
+			<Squash value="0"/>
+			<OpacityChaos value="0"/>
+			<SizeChaos value="0"/>
+			<RotationChaos value="0"/>
+			<OffsetChaosH value="0"/>
+			<OffsetChaosV value="0"/>
+			<SquashChaos value="0"/>
+			<Roughness value="0.1000000000000000056"/>
+			<DepthMap/>
+			<ParticleMode value="0"/>
+			<OctavesScaleMode value="0"/>
+			<LayerOrder value="0"/>
+			<DepthSorting value="0"/>
+			<Details value="0"/>
+			<ParticleRepeats value="8"/>
+			<ParticlePerCell value="1"/>
+			<Variation value="1"/>
+			<HDRMode value="false"/>
+		</BomberPlus3>
+		<PerlinNoise2 id="perlinnoise2 01">
+			<Noise red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.2000000000000000111"/>
+			<Scale value="2.5"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.25"/>
+			<Variation value="1"/>
+			<OctaveCurve value="0"/>
+		</PerlinNoise2>
 		<Tiles2 id="tiles2 01">
 			<Color red="0.6589147286821706029" green="0.2186047446920397486" blue="0.1174809206177513388" alpha="1"/>
 			<Mortar red="0" green="0" blue="0" alpha="1"/>
@@ -123,17 +267,47 @@
 	<FilterEditor>
 		<Groups/>
 		<ThumbnailSize value="1"/>
-		<Canvas left="-257" top="-392" zoom_factor="0"/>
-		<Viewport left="208" top="97" zoom_factor="2"/>
+		<Canvas left="-716" top="-264" zoom_factor="0"/>
+		<Viewport left="0" top="0" zoom_factor="-2"/>
 		<LockPreview>
-			<Locked value="true"/>
-			<LockedComponent name="result"/>
+			<Locked value="false"/>
+			<LockedComponent name=""/>
 		</LockPreview>
+		<Item id="add 01">
+			<Position left="528" top="-160"/>
+		</Item>
+		<Item id="add 02">
+			<Position left="544" top="240"/>
+		</Item>
+		<Item id="add 03">
+			<Position left="304" top="48"/>
+		</Item>
+		<Item id="blend6 01">
+			<Position left="-240" top="-32"/>
+		</Item>
+		<Item id="blend6 02">
+			<Position left="-432" top="96"/>
+		</Item>
+		<Item id="bomberplus3 01">
+			<Position left="768" top="128"/>
+		</Item>
+		<Item id="bomberplus3 02">
+			<Position left="768" top="-304"/>
+		</Item>
+		<Item id="bomberplus3 03">
+			<Position left="768" top="-752"/>
+		</Item>
+		<Item id="bomberplus3 04">
+			<Position left="768" top="576"/>
+		</Item>
+		<Item id="perlinnoise2 01">
+			<Position left="64" top="-64"/>
+		</Item>
 		<Item id="result">
-			<Position left="32" top="0"/>
+			<Position left="-288" top="240"/>
 		</Item>
 		<Item id="tiles2 01">
-			<Position left="784" top="32"/>
+			<Position left="-32" top="272"/>
 		</Item>
 	</FilterEditor>
 </Filter>

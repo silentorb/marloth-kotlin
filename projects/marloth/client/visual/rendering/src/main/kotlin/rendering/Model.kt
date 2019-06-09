@@ -9,6 +9,7 @@ import rendering.meshes.Primitives
 import rendering.texturing.FaceTextureMap
 import scenery.ArmatureId
 import scenery.MeshId
+import scenery.Shape
 
 data class MeshGroup(
     val material: Material,
@@ -51,7 +52,8 @@ data class AdvancedModel(
 
 data class ModelMesh(
     val id: MeshId,
-    val primitives: Primitives
+    val primitives: Primitives,
+    val bounds: Shape? = null
 )
 
 typealias ModelMeshMap = Map<MeshId, ModelMesh>

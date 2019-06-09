@@ -20,7 +20,10 @@ enum class MeshId {
   shirt,
   sphere,
   spikyBall,
-  wallLamp
+  wallLamp,
+
+  // Architecture
+  circleFloor
 }
 
 enum class ArmatureId {
@@ -36,8 +39,4 @@ enum class AnimationId {
 
 enum class ArmatureSockets{
   rightHand
-}
-
-enum class MaterialId {
-
 }

@@ -1,6 +1,5 @@
 package physics
 
-import colliding.*
 import com.badlogic.gdx.physics.bullet.collision.*
 import com.badlogic.gdx.physics.bullet.dynamics.btHingeConstraint
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
@@ -10,6 +9,7 @@ import mythic.spatial.Matrix
 import mythic.spatial.Pi
 import mythic.spatial.Vector3
 import mythic.spatial.getCenter
+import scenery.*
 import simulation.FaceType
 import simulation.World
 import com.badlogic.gdx.math.Vector3 as GdxVector3

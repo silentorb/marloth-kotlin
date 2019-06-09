@@ -20,21 +20,53 @@ def of_type(list, type):
     return [c for c in list if c.type == type]
 
 
+def get_horizontal_radius(dimensions):
+    return max(dimensions.x, dimensions.y) / 2
+
+
+def preprocess_bounds_shape(obj):
+    bounds_type_key = 'bounds'
+    type = obj.get(bounds_type_key)
+    if type is None:
+        return None
+
+    del obj[bounds_type_key]
+
+    dimensions = obj.dimensions
+    if type == 'cylinder':
+        obj['bounds'] = {
+            'type': 'cylinder',
+            'radius': get_horizontal_radius(dimensions),
+            'height': dimensions.z
+        }
+
+
 def has_dominant_material(obj):
     return any(m.name == obj.name for m in obj.material_slots)
 
 
+def remove_materials(object, material_slot_indices):
+    for i in reversed(material_slot_indices):
+        object.active_material_index = i
+        bpy.ops.object.material_slot_remove()
+
+
 # Used for objects that have a primary material for baking and secondary materials to assist in baking
 def prune_materials(object):
+    not_needed = []
     if has_dominant_material(object):
         not_needed = [i for i, m in enumerate(object.material_slots) if m.name != object.name]
-        for i in reversed(not_needed):
-            object.active_material_index = i
-            bpy.ops.object.material_slot_remove()
+    # Eventually it would be nice to filter out reference materials
+    # but currently blendergltf isn't exporting UV maps without them (even though UV maps are independent of materials)
+    # TODO: Enable exporting UV Maps without materials.
+    # else:
+    #     not_needed = [i for i, m in enumerate(object.material_slots) if m.name == 'reference']
+
+    remove_materials(object, not_needed)
 
 
 # Blender Cycles is duct-taped ontop of the older Blender Renderer.  One side effect of this duct-taping is
-# Blender Cycles does not need Texture objects and can use Texture nodes instead, but the blendergltf exporter mythic
+# Blender Cycles does not need Texture objects and can use Texture nodes instead, but the blendergltf exporter
 # only looks for Texture objects.
 # Blender Texture objects are not the same thing as Blender Image objects.
 # (Mythic's python code does not make such a distinction.)
@@ -116,6 +148,9 @@ def prepare_scene():
     for obj in bpy.context.scene.objects:
         if not obj.hide:
             prune_materials(obj)
+
+    for obj in bpy.context.scene.objects:
+        preprocess_bounds_shape(obj)
 
     create_missing_image_textures()
 

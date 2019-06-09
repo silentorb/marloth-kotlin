@@ -1,8 +1,10 @@
 package generation
 
 import generation.abstracted.*
+import generation.architecture.placeArchitecture
 import generation.structure.*
 import mythic.ent.newIdSource
+import mythic.ent.pipe
 import mythic.spatial.*
 import randomly.Dice
 import simulation.*
@@ -49,7 +51,8 @@ fun generateDefaultWorld(): World {
 
 fun addEnemies(world: World, boundary: WorldBoundary, dice: Dice): World {
   val scale = calculateWorldScale(boundary.dimensions)
-  val nextId = newIdSource(world.nextId)
-  val newCharacters = placeCharacters(world.realm, nextId, dice, scale)
-  return addDeck(world, newCharacters, nextId)
+  return pipe(world, listOf(
+      addDeck(placeArchitecture(world.realm)),
+      addDeck(placeCharacters(world.realm, dice, scale))
+  ))
 }

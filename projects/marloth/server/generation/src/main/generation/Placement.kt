@@ -41,37 +41,39 @@ fun placeCharacter(realm: Realm, template: CharacterTemplate, nextId: IdSource, 
   )
 }
 
-fun placeCharacters(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): Deck {
-//  val enemyCount = (10f * scale).toInt()
-  //  val counts = listOf(2, 2)
+fun placeCharacters(realm: Realm, dice: Dice, scale: Float): (IdSource) -> List<Hand> {
+  return { nextId ->
+    //  val enemyCount = (10f * scale).toInt()
+    //  val counts = listOf(2, 2)
 //  val counts = listOf(8, 0)
-  val counts = listOf(0, 8)
-  val total = counts.sum()
+    val counts = listOf(0, 8)
+    val total = counts.sum()
 
-  val walls = realm.locationNodes
-      .drop(1) // Skip the node where the player starts
-      .flatMap { node -> node.walls.map { Pair(node.id, it) } }
+    val walls = realm.locationNodes
+        .drop(1) // Skip the node where the player starts
+        .flatMap { node -> node.walls.map { Pair(node.id, it) } }
 
-  val positions = dice.take(walls, total)
-      .map { Pair(it.first, getVector3Center(realm.nodeTable[it.first]!!.position, realm.mesh.faces[it.second]!!.edges[0].first)) }
+    val positions = dice.take(walls, total)
+        .map { Pair(it.first, getVector3Center(realm.nodeTable[it.first]!!.position, realm.mesh.faces[it.second]!!.edges[0].first)) }
 
-  val templates = listOf(
-      CharacterTemplate(
-          faction = 1,
-          definition = creatures.ally
-      ),
-      CharacterTemplate(
-          faction = 2,
-          definition = creatures.monster
-      )
-  )
+    val templates = listOf(
+        CharacterTemplate(
+            faction = 1,
+            definition = creatures.ally
+        ),
+        CharacterTemplate(
+            faction = 2,
+            definition = creatures.monster
+        )
+    )
 
-  val seeds = counts.mapIndexed { index, i -> (1..i).map { templates[index] } }
-      .flatten()
+    val seeds = counts.mapIndexed { index, i -> (1..i).map { templates[index] } }
+        .flatten()
 
-  return toDeck(seeds.zip(positions) { seed, (node, position) ->
-    placeCharacter(realm, seed, nextId, node, position)
-  })
+    seeds.zip(positions) { seed, (node, position) ->
+      placeCharacter(realm, seed, nextId, node, position)
+    }
+  }
 }
 
 fun newDoor(realm: Realm, nextId: IdSource): (Id) -> Hand = { nodeId ->

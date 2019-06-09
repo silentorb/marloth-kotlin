@@ -1,6 +1,6 @@
 package simulation
 
-import colliding.Sphere
+import scenery.Sphere
 import mythic.ent.Entity
 import mythic.ent.Id
 import mythic.ent.IdSource
