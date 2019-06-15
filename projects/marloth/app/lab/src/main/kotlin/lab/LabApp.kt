@@ -4,7 +4,9 @@ import configuration.ConfigManager
 import configuration.loadYamlFile
 import configuration.saveYamlFile
 import generation.addEnemies
+import generation.architecture.placeArchitecture
 import generation.generateWorld
+import generation.placeCharacters
 import lab.utility.updateWatching
 import lab.views.game.GameViewConfig
 import lab.views.game.drawBulletDebug
@@ -43,6 +45,7 @@ fun generateDefaultWorld(gameViewConfig: GameViewConfig): World {
   ))
 
   return pipe(initialWorld, listOf(
+      addDeck(placeArchitecture(initialWorld.realm)),
       { world ->
         if (gameViewConfig.haveEnemies)
           addEnemies(world, boundary, dice)

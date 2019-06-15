@@ -91,8 +91,12 @@ fun convertSimpleDepiction(world: World, id: Id, mesh: MeshId): MeshElement? {
   )
 }
 
-fun convertSimpleDepiction(world: World, id: Id, type: DepictionType): MeshElement? {
-  val mesh = simplePainterMap[type]
+fun convertSimpleDepiction(world: World, id: Id, depiction: Depiction): MeshElement? {
+  val mesh = if (depiction.type == DepictionType.staticMesh)
+    depiction.mesh
+  else
+    simplePainterMap[depiction.type]
+
   if (mesh == null)
     return null
 
@@ -181,7 +185,7 @@ fun gatherVisualElements(world: World, screen: Screen, player: Player): ElementG
 //  val characters = world.characters.asIterable().filter { !isPlayer(world, it) }
   val simpleElements =
       simple.mapNotNull {
-        convertSimpleDepiction(world, it.key, it.value.type)
+        convertSimpleDepiction(world, it.key, it.value)
       }
 //          .plusBounded(characters.mapNotNull {
 //            convertSimpleDepiction(world, it.id, it.definition.depictionType)
