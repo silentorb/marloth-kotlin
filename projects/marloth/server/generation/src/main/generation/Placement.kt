@@ -156,7 +156,7 @@ fun newPlayer(nextId: IdSource, playerNode: Node): Deck {
       nextId = nextId,
       faction = 1,
       definition = creatures.player,
-      position = playerNode.position,
+      position = playerNode.position + Vector3(0f, 0f, 10f),
       node = playerNode.id,
       player = Player(
           playerId = 1,
@@ -193,7 +193,7 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
   val nextId = newIdSource(1)
   val deck = Deck()
       .plus(newPlayer(nextId, playerNode))
-      .plus(placeWallLamps(realm, nextId, input.dice, scale))
+//      .plus(placeWallLamps(realm, nextId, input.dice, scale))
 //      .plus(placeDoors(realm, nextId))
 
   return World(

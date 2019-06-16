@@ -65,7 +65,7 @@ fun applyImpulses(world: World, bulletState: BulletState) {
     if (body.velocity != Vector3.zero) {
       val btBody = bulletState.dynamicBodies[body.id]
       if (btBody != null) {
-        btBody.linearVelocity = toGdxVector3(body.velocity)
+        btBody.applyCentralImpulse(toGdxVector3(body.velocity))
       } else {
         val warningVelocitySetOnUnsyncedBody = 1
       }

@@ -85,11 +85,11 @@ fun prepareWorldMesh(realm: Realm, node: Node, textures: TextureLibrary): List<T
 
   return floors.plus(ceilings)
       .map { createTexturedHorizontalSurface(realm.mesh.faces[it.second]!!, it.first.texture!!) }
-      .plus(
-          node.walls.map { Pair(realm.faces[it]!!, it) }
-              .filter { (it, _) -> it.firstNode == node.id && it.texture != null }
-              .map { createTexturedWall(realm.mesh.faces[it.second]!!, it.first.texture!!) }
-      )
+//      .plus(
+//          node.walls.map { Pair(realm.faces[it]!!, it) }
+//              .filter { (it, _) -> it.firstNode == node.id && it.texture != null }
+//              .map { createTexturedWall(realm.mesh.faces[it.second]!!, it.first.texture!!) }
+//      )
 }
 
 fun convertSectorMesh(realm: Realm, faces2: ImmutableFaceTable, renderer: Renderer, node: Node): SectorMesh {

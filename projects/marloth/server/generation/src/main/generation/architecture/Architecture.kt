@@ -5,9 +5,15 @@ import mythic.ent.IdSource
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import physics.Body
+import scenery.Cylinder
 import scenery.MeshId
 import scenery.Textures
-import simulation.*
+import simulation.Depiction
+import simulation.DepictionType
+import simulation.Hand
+import simulation.Realm
+
+private val floorHeight = 0.35f
 
 private val floorOffset = Vector3(0f, 0f, -wallHeight / 2f)
 
@@ -30,6 +36,10 @@ fun placeArchitecture(realm: Realm) = { nextId: IdSource ->
                 orientation = Quaternion(),
                 node = node.id,
                 scale = Vector3(horizontalScale, horizontalScale, 1f)
+            ),
+            collisionShape = Cylinder(
+                radius = 1f,
+                height = floorHeight
             )
         )
       }

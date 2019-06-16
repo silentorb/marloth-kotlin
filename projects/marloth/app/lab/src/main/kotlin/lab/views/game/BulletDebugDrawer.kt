@@ -53,7 +53,7 @@ fun drawBulletDebug(gameApp: GameApp, origin: Vector3): RenderHook = { sceneRend
   val dynamicsWorld = gameApp.bulletState.dynamicsWorld
   val drawer = if (debugDrawer == null) {
     debugDrawer = BulletDebugDrawer()
-    debugDrawer!!.debugMode = //btIDebugDraw.DebugDrawModes.DBG_DrawWireframe +
+    debugDrawer!!.debugMode = btIDebugDraw.DebugDrawModes.DBG_DrawWireframe +
         btIDebugDraw.DebugDrawModes.DBG_DrawConstraints or btIDebugDraw.DebugDrawModes.DBG_DrawConstraintLimits
     debugDrawer!!
   } else

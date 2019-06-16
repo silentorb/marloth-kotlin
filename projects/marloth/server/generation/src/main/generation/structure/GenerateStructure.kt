@@ -418,7 +418,7 @@ fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice): Structu
 
   return StructureRealm(
       nodes = graph.nodes,
-      connections = floorsAndCeilings.first.plus(entityMap(updatedWalls.map { it.info })),
+      connections = floorsAndCeilings.first,//.plus(entityMap(updatedWalls.map { it.info })),
       mesh = mesh
   )
 }
@@ -512,11 +512,11 @@ fun cleanupSolidNormals(realm: StructureRealm): StructureRealm {
 fun generateStructure(biomeGrid: BiomeGrid, idSources: StructureIdSources, graph: Graph, dice: Dice): StructureRealm {
   val initialRealm = createRooms(graph, idSources, dice)
   return pipe(initialRealm, listOf(
-      { realm -> defineNegativeSpace(idSources, realm, dice) },
+//      { realm -> defineNegativeSpace(idSources, realm, dice) },
       { realm -> realm.copy(nodes = fillNodeBiomesAndSolid(dice, realm, biomeGrid)) },
-      { realm -> fillBoundary(idSources, realm, dice) },
-      { realm -> expandVertically(idSources, realm, graph.nodes.values, dice) },
-      { realm -> cleanupSolidNormals(realm) },
+//      { realm -> fillBoundary(idSources, realm, dice) },
+//      { realm -> expandVertically(idSources, realm, graph.nodes.values, dice) },
+//      { realm -> cleanupSolidNormals(realm) },
       { realm ->
         realm.copy(
             mesh = realm.mesh.copy(

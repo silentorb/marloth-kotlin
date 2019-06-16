@@ -58,6 +58,8 @@ fun isInsideNode(faces: ImmutableFaceTable, node: Node, position: Vector3) =
 //        && position.z < node.position.z + node.height
 
 fun updateBodyNode(realm: Realm, body: Body): Id {
+  return voidNodeId
+
   if (body.node == voidNodeId)
     return body.node
 
