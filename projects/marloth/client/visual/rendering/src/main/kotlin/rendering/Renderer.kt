@@ -206,7 +206,7 @@ class Renderer(
   ))
   val drawing = createDrawingEffects()
   val vertexSchemas = createVertexSchemas()
-  var worldMesh: WorldMesh? = null
+//  var worldMesh: WorldMesh? = null
   val meshes: ModelMeshMap
   val armatures: Map<ArmatureId, Armature>
   val animationDurations: AnimationDurationMap

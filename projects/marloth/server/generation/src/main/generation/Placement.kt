@@ -54,7 +54,7 @@ fun placeCharacters(realm: Realm, dice: Dice, scale: Float): (IdSource) -> List<
         .flatMap { node -> node.walls.map { Pair(node.id, it) } }
 
     val positions = dice.take(walls, total)
-        .map { Pair(it.first, getVector3Center(realm.nodeTable[it.first]!!.position, realm.mesh.faces[it.second]!!.edges[0].first)) }
+        .map { Pair(it.first, realm.nodeTable[it.first]!!.position) }
 
     val templates = listOf(
         CharacterTemplate(
@@ -76,34 +76,34 @@ fun placeCharacters(realm: Realm, dice: Dice, scale: Float): (IdSource) -> List<
   }
 }
 
-fun newDoor(realm: Realm, nextId: IdSource): (Id) -> Hand = { nodeId ->
-  val node = realm.nodeTable[nodeId]!!
-  val j = node.walls.map { realm.faces[it]!! }
-  val face = node.walls.first { realm.faces[it]!!.faceType != FaceType.wall }
-  val meshFace = realm.mesh.faces[face]!!
-  val edge = getFloor(meshFace)
-  val margin = 0.9f
-  val length = edge.first.distance(edge.second) * margin
-  val position = getCenter(meshFace.vertices)
-  val id = nextId()
-  val sideEdge = realm.mesh.faces[face]!!.edges.filter(isVerticalEdgeLimited).first()
-  val height = Math.abs(sideEdge.first.z - sideEdge.second.z)
-  EntityTemplates.door.copy(
-      id = id,
-      body = Body(
-          id = id,
-          position = position,
-          orientation = Quaternion().rotateTo(Vector3(0f, 1f, 0f), realm.mesh.faces[face]!!.normal),
-          scale = Vector3(length, 1f, height * margin),
-          node = nodeId
-      )
-  )
-}
+//fun newDoor(realm: Realm, nextId: IdSource): (Id) -> Hand = { nodeId ->
+//  val node = realm.nodeTable[nodeId]!!
+//  val j = node.walls.map { realm.faces[it]!! }
+//  val face = node.walls.first { realm.faces[it]!!.faceType != FaceType.wall }
+//  val meshFace = realm.mesh.faces[face]!!
+//  val edge = getFloor(meshFace)
+//  val margin = 0.9f
+//  val length = edge.first.distance(edge.second) * margin
+//  val position = getCenter(meshFace.vertices)
+//  val id = nextId()
+//  val sideEdge = realm.mesh.faces[face]!!.edges.filter(isVerticalEdgeLimited).first()
+//  val height = Math.abs(sideEdge.first.z - sideEdge.second.z)
+//  EntityTemplates.door.copy(
+//      id = id,
+//      body = Body(
+//          id = id,
+//          position = position,
+//          orientation = Quaternion().rotateTo(Vector3(0f, 1f, 0f), realm.mesh.faces[face]!!.normal),
+//          scale = Vector3(length, 1f, height * margin),
+//          node = nodeId
+//      )
+//  )
+//}
 
-fun placeDoors(realm: Realm, nextId: IdSource): Deck =
-    toDeck(
-        realm.doorFrameNodes.map(newDoor(realm, nextId))
-    )
+//fun placeDoors(realm: Realm, nextId: IdSource): Deck =
+//    toDeck(
+//        realm.doorFrameNodes.map(newDoor(realm, nextId))
+//    )
 
 val isValidLampWall = { info: ConnectionFace ->
   info.faceType == FaceType.wall && info.texture != null
@@ -125,22 +125,23 @@ fun placeWallLamps(realm: Realm, nextId: IdSource, dice: Dice, scale: Float): De
   val hands = nodes.mapNotNull { node ->
     val options2 = node.walls.filter { isValidLampWall(realm.faces[it]!!) }
     if (options2.any()) {
-      val wall = realm.mesh.faces[dice.getItem(options2)]!!
-      val edge = wall.edges[0]
-      val position = getVector3Center(edge.first, edge.second) +
-          Vector3(0f, 0f, 0.9f) + wall.normal * -0.1f
-      val angle = Quaternion().rotateTo(Vector3(1f, 0f, 0f), wall.normal)
-      val id = nextId()
-      EntityTemplates.wallLamp.copy(
-          id = id,
-          body = Body(
-              id = id,
-              position = position,
-              orientation = angle,
-              velocity = Vector3(),
-              node = node.id
-          )
-      )
+      throw Error("Not implemented")
+//      val wall = realm.mesh.faces[dice.getItem(options2)]!!
+//      val edge = wall.edges[0]
+//      val position = getVector3Center(edge.first, edge.second) +
+//          Vector3(0f, 0f, 0.9f) + wall.normal * -0.1f
+//      val angle = Quaternion().rotateTo(Vector3(1f, 0f, 0f), wall.normal)
+//      val id = nextId()
+//      EntityTemplates.wallLamp.copy(
+//          id = id,
+//          body = Body(
+//              id = id,
+//              position = position,
+//              orientation = angle,
+//              velocity = Vector3(),
+//              node = node.id
+//          )
+//      )
     } else
       null
   }

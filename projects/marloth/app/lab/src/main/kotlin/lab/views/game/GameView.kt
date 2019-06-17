@@ -74,15 +74,15 @@ data class GameViewRenderData(
 //}
 
 fun renderWireframeWorldMesh(renderer: SceneRenderer) {
-  val worldMesh = renderer.renderer.worldMesh
-  if (worldMesh != null) {
-    renderer.effects.flat.activate(ObjectShaderConfig(transform = Matrix(), color = Vector4(1f)))
-    var index = 0
-    throw Error("No longer implemented.")
-//    for (texture in worldMesh.textureIndex) {
-//      worldMesh.mesh.drawElement(DrawMethod.lineLoop, index++)
-//    }
-  }
+//  val worldMesh = renderer.renderer.worldMesh
+//  if (worldMesh != null) {
+//    renderer.effects.flat.activate(ObjectShaderConfig(transform = Matrix(), color = Vector4(1f)))
+//    var index = 0
+//    throw Error("No longer implemented.")
+////    for (texture in worldMesh.textureIndex) {
+////      worldMesh.mesh.drawElement(DrawMethod.lineLoop, index++)
+////    }
+//  }
 }
 
 fun renderWireframeScene(renderers: List<GameSceneRenderer>, data: GameViewRenderData) {

@@ -62,5 +62,5 @@ fun drawVertices(faces: ConnectionTable, bounds: Bounds, getPosition: PositionFu
 }
 
 fun drawStructureWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Canvas, world: Realm) {
-  drawVertices(world.faces, bounds, getPosition, canvas, world.mesh)
+//  drawVertices(world.faces, bounds, getPosition, canvas, world.mesh)
 }

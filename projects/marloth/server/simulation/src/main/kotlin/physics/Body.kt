@@ -57,67 +57,67 @@ fun isInsideNode(faces: ImmutableFaceTable, node: Node, position: Vector3) =
 //        && position.z >= node.position.z
 //        && position.z < node.position.z + node.height
 
-fun updateBodyNode(realm: Realm, body: Body): Id {
-  return voidNodeId
-
-  if (body.node == voidNodeId)
-    return body.node
-
-  if (body.velocity == Vector3.zero)
-    return body.node
-
-  val position = body.position
-  val node = realm.nodeTable[body.node]!!
-
-  val horizontalNode = if (!isInsideNodeHorizontally(realm.mesh.faces, node, position)) {
-    val n = horizontalNeighbors(realm.faces, node)
-        .map { realm.nodeTable[it]!! }
-        .firstOrNull { isInsideNodeHorizontally(realm.mesh.faces, it, position) }
-
-    if (n != null)
-      n
-    else {
-      println("Warning: Had to rely on fallback method for determining which node a body is in.")
-      val n3 = realm.nodeList.filter { isInsideNode(realm.mesh.faces, it, position) }
-      val n2 = realm.nodeList.firstOrNull { isInsideNode(realm.mesh.faces, it, position) }
-      if (n2 != null)
-        n2
-      else
-        voidNode
-    }
-  } else
-    node
-
-  if (horizontalNode.id == voidNodeId)
-    return voidNodeId
-
-//  val floors = getFloors(realm.faces.values, horizontalNode)
-  val newNode = horizontalNode
-//  val newNode = if (position.z < floors.flatMap {  }) {
-//    if (floors.any())
-//      realm.nodeTable[getOtherNode(node.id, floors.first())]
-//    else
-//      voidNode
-//  } else
-//    horizontalNode
-
-  return if (newNode == null) {
-//    isInsideNodeHorizontally(node, position)
-//    throw Error("Not supported")
-    assert(false)
-    body.node
-  } else {
-    assert(!newNode.isSolid)
-//    if (newNode.id != node.id && !newNode.isWalkable) {
-//      assert(false)
-//    }
+//fun updateBodyNode(realm: Realm, body: Body): Id {
+//  return voidNodeId
 //
-//    if (newNode.id != node.id && newNode.biome == Biome.void) {
-//      assert(false)
+//  if (body.node == voidNodeId)
+//    return body.node
+//
+//  if (body.velocity == Vector3.zero)
+//    return body.node
+//
+//  val position = body.position
+//  val node = realm.nodeTable[body.node]!!
+//
+//  val horizontalNode = if (!isInsideNodeHorizontally(realm.mesh.faces, node, position)) {
+//    val n = horizontalNeighbors(realm.faces, node)
+//        .map { realm.nodeTable[it]!! }
+//        .firstOrNull { isInsideNodeHorizontally(realm.mesh.faces, it, position) }
+//
+//    if (n != null)
+//      n
+//    else {
+//      println("Warning: Had to rely on fallback method for determining which node a body is in.")
+//      val n3 = realm.nodeList.filter { isInsideNode(realm.mesh.faces, it, position) }
+//      val n2 = realm.nodeList.firstOrNull { isInsideNode(realm.mesh.faces, it, position) }
+//      if (n2 != null)
+//        n2
+//      else
+//        voidNode
 //    }
-    newNode.id
-  }
-}
+//  } else
+//    node
+//
+//  if (horizontalNode.id == voidNodeId)
+//    return voidNodeId
+//
+////  val floors = getFloors(realm.faces.values, horizontalNode)
+//  val newNode = horizontalNode
+////  val newNode = if (position.z < floors.flatMap {  }) {
+////    if (floors.any())
+////      realm.nodeTable[getOtherNode(node.id, floors.first())]
+////    else
+////      voidNode
+////  } else
+////    horizontalNode
+//
+//  return if (newNode == null) {
+////    isInsideNodeHorizontally(node, position)
+////    throw Error("Not supported")
+//    assert(false)
+//    body.node
+//  } else {
+//    assert(!newNode.isSolid)
+////    if (newNode.id != node.id && !newNode.isWalkable) {
+////      assert(false)
+////    }
+////
+////    if (newNode.id != node.id && newNode.biome == Biome.void) {
+////      assert(false)
+////    }
+//    newNode.id
+//  }
+//}
 
 fun updateBodies(world: World, commands: Commands, collisions: Collisions): Table<Body> {
   val delta = simulationDelta

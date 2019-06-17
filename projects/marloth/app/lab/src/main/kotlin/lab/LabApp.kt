@@ -4,9 +4,9 @@ import configuration.ConfigManager
 import configuration.loadYamlFile
 import configuration.saveYamlFile
 import generation.addEnemies
+import generation.architecture.MeshInfoMap
 import generation.architecture.placeArchitecture
 import generation.generateWorld
-import generation.placeCharacters
 import lab.utility.updateWatching
 import lab.views.game.GameViewConfig
 import lab.views.game.drawBulletDebug
@@ -36,7 +36,7 @@ fun createDice(config: GameViewConfig) =
     else
       Dice(config.seed)
 
-fun generateDefaultWorld(gameViewConfig: GameViewConfig): World {
+fun generateWorld(meshInfo: MeshInfoMap, gameViewConfig: GameViewConfig): World {
   val boundary = createWorldBoundary(gameViewConfig.worldLength)
   val dice = createDice(gameViewConfig)
   val initialWorld = generateWorld(WorldInput(
@@ -45,7 +45,7 @@ fun generateDefaultWorld(gameViewConfig: GameViewConfig): World {
   ))
 
   return pipe(initialWorld, listOf(
-      addDeck(placeArchitecture(initialWorld.realm)),
+      addDeck(placeArchitecture(meshInfo, initialWorld.realm)),
       { world ->
         if (gameViewConfig.haveEnemies)
           addEnemies(world, boundary, dice)
@@ -75,7 +75,7 @@ data class LabApp(
     val labConfigManager: ConfigManager<LabConfig>
 ) {
 
-  val newWorld = { generateDefaultWorld(config.gameView) }
+  val newWorld = { lab.generateWorld(getMeshInfo(gameApp.client), config.gameView) }
 }
 
 private var saveIncrement = 0f
@@ -135,13 +135,13 @@ fun shutdownGameApp(gameApp: GameApp) {
 
 fun newLabState(gameApp: GameApp, config: LabConfig): LabState {
   val world = if (config.gameView.autoNewGame)
-    generateDefaultWorld(config.gameView)
+    lab.generateWorld(getMeshInfo(gameApp.client), config.gameView)
   else
     null
 
-  if (world != null) {
-    setWorldMesh(world.realm, gameApp.client)
-  }
+//  if (world != null) {
+//    setWorldMesh(world.realm, gameApp.client)
+//  }
 
   val clientState = newClientState(gameApp.platform, gameApp.config.input, gameApp.config.audio)
   return LabState(

@@ -19,24 +19,25 @@ import simulation.interpolateWorlds
 val getMarchedBuffers = singleCache(::newMarchBuffers)
 
 fun renderRayMarching(gameScene: GameScene, dimensions: Vector2i, world: World, renderer: Renderer, marcher: Marcher) {
-  val buffers = getMarchedBuffers(dimensions.x * dimensions.y)
-  val scene = Scene(
-      camera = Camera(
-          position = gameScene.camera.position,
-          orientation = gameScene.camera.orientation,
-          near = 0.01f,
-          far = 1000f
-      ),
-      sdf = prepareSceneSdf(world.players.first().id, world),
-      lights = listOf()
-  )
-  val cast = perspectiveRay(scene.camera)
-
-  renderToMarchBuffers(buffers, marcher, scene, cast, dimensions)
-//  val mix = postPipeline(dimensions, buffers)
-//  rgbFloatToBytes(mix, renderer.renderColor.buffer!!)
-//  normalizeDepthBuffer(0.01f, 1000f, buffers.depth, renderer.renderDepth.buffer!!)
-//  renderer.applyRenderBuffer(dimensions)
+  throw Error("Not implemented")
+//  val buffers = getMarchedBuffers(dimensions.x * dimensions.y)
+//  val scene = Scene(
+//      camera = Camera(
+//          position = gameScene.camera.position,
+//          orientation = gameScene.camera.orientation,
+//          near = 0.01f,
+//          far = 1000f
+//      ),
+//      sdf = prepareSceneSdf(world.players.first().id, world),
+//      lights = listOf()
+//  )
+//  val cast = perspectiveRay(scene.camera)
+//
+//  renderToMarchBuffers(buffers, marcher, scene, cast, dimensions)
+////  val mix = postPipeline(dimensions, buffers)
+////  rgbFloatToBytes(mix, renderer.renderColor.buffer!!)
+////  normalizeDepthBuffer(0.01f, 1000f, buffers.depth, renderer.renderDepth.buffer!!)
+////  renderer.applyRenderBuffer(dimensions)
 }
 
 fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, box: Box, onRender: RenderHook?) {

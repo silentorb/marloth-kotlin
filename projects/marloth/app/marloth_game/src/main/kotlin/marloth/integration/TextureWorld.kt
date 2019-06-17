@@ -75,42 +75,42 @@ fun createTexturedWall(face: ImmutableFace, texture: Textures): TextureFace {
   )
 }
 
-fun prepareWorldMesh(realm: Realm, node: Node, textures: TextureLibrary): List<TextureFace> {
-//  val floorTexture = if (node.type == NodeType.space) textures[Textures.darkCheckers]!! else textures[Textures.checkers]!!
-  val floors = node.floors.map { Pair(realm.faces[it]!!, it) }
-      .filter { (it, _) -> it.firstNode == node.id && it.texture != null }
+//fun prepareWorldMesh(realm: Realm, node: Node, textures: TextureLibrary): List<TextureFace> {
+////  val floorTexture = if (node.type == NodeType.space) textures[Textures.darkCheckers]!! else textures[Textures.checkers]!!
+//  val floors = node.floors.map { Pair(realm.faces[it]!!, it) }
+//      .filter { (it, _) -> it.firstNode == node.id && it.texture != null }
+//
+//  val ceilings = node.ceilings.map { Pair(realm.faces[it]!!, it) }
+//      .filter { (it, _) -> it.firstNode == node.id && it.texture != null }
+//
+//  return floors.plus(ceilings)
+//      .map { createTexturedHorizontalSurface(realm.mesh.faces[it.second]!!, it.first.texture!!) }
+////      .plus(
+////          node.walls.map { Pair(realm.faces[it]!!, it) }
+////              .filter { (it, _) -> it.firstNode == node.id && it.texture != null }
+////              .map { createTexturedWall(realm.mesh.faces[it.second]!!, it.first.texture!!) }
+////      )
+//}
 
-  val ceilings = node.ceilings.map { Pair(realm.faces[it]!!, it) }
-      .filter { (it, _) -> it.firstNode == node.id && it.texture != null }
+//fun convertSectorMesh(realm: Realm, faces2: ImmutableFaceTable, renderer: Renderer, node: Node): SectorMesh {
+//  val texturedFaces = prepareWorldMesh(realm, node, renderer.mappedTextures)
+//  val vertexInfo = texturedFaces.associate { Pair(it.face, it.vertexMap) }
+//  val serializer = texturedVertexSerializer(vertexInfo)
+//  return SectorMesh(
+//      id = node.id,
+//      mesh = convertMesh(texturedFaces.map { faces2[it.face]!! }, renderer.vertexSchemas.textured, serializer),
+//      textureIndex = texturedFaces.map { it.texture }
+//  )
+//}
+//
+//fun convertWorldMesh(realm: Realm, renderer: Renderer): WorldMesh {
+//  val faces2 = realm.mesh.faces.values.associate { Pair(it.id, it) }
+//  val sectors = realm.nodeList.map {
+//    convertSectorMesh(realm, faces2, renderer, it)
+//  }
+//  return WorldMesh(sectors)
+//}
 
-  return floors.plus(ceilings)
-      .map { createTexturedHorizontalSurface(realm.mesh.faces[it.second]!!, it.first.texture!!) }
-//      .plus(
-//          node.walls.map { Pair(realm.faces[it]!!, it) }
-//              .filter { (it, _) -> it.firstNode == node.id && it.texture != null }
-//              .map { createTexturedWall(realm.mesh.faces[it.second]!!, it.first.texture!!) }
-//      )
-}
-
-fun convertSectorMesh(realm: Realm, faces2: ImmutableFaceTable, renderer: Renderer, node: Node): SectorMesh {
-  val texturedFaces = prepareWorldMesh(realm, node, renderer.mappedTextures)
-  val vertexInfo = texturedFaces.associate { Pair(it.face, it.vertexMap) }
-  val serializer = texturedVertexSerializer(vertexInfo)
-  return SectorMesh(
-      id = node.id,
-      mesh = convertMesh(texturedFaces.map { faces2[it.face]!! }, renderer.vertexSchemas.textured, serializer),
-      textureIndex = texturedFaces.map { it.texture }
-  )
-}
-
-fun convertWorldMesh(realm: Realm, renderer: Renderer): WorldMesh {
-  val faces2 = realm.mesh.faces.values.associate { Pair(it.id, it) }
-  val sectors = realm.nodeList.map {
-    convertSectorMesh(realm, faces2, renderer, it)
-  }
-  return WorldMesh(sectors)
-}
-
-fun setWorldMesh(realm: Realm, client: Client) {
-  client.renderer.worldMesh = convertWorldMesh(realm, client.renderer)
-}
+//fun setWorldMesh(realm: Realm, client: Client) {
+//  client.renderer.worldMesh = convertWorldMesh(realm, client.renderer)
+//}

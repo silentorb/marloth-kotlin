@@ -33,30 +33,32 @@ fun raycastNodes(firstNode: Node, start: Vector3, end: Vector3): List<Node> {
 */
 
 fun rayCanHitPoint(realm: Realm, firstNode: Node, start: Vector3, end: Vector3): Boolean {
-  var node = firstNode
-  var lastWall: Id? = null
-  do {
-    val walls = node.walls
-        .filter { it != lastWall }
-
-    val wall = walls
-        .firstOrNull {
-          val edge = getFloor(realm.mesh.faces[it]!!)
-          lineSegmentIntersectsLineSegment(start, end, edge.first, edge.second).first
-        }
-    if (wall == null)
-      return true
-
-    val info = realm.faces[wall]!!
-
-    if (info.faceType != FaceType.space)
-      return false
-
-    val nextNode = realm.nodeTable[getOtherNode(node.id, info)]
-    if (nextNode == null)
-      return true
-
-    lastWall = wall
-    node = nextNode
-  } while (true)
+  // TODO: Needs updating
+  return false
+//  var node = firstNode
+//  var lastWall: Id? = null
+//  do {
+//    val walls = node.walls
+//        .filter { it != lastWall }
+//
+//    val wall = walls
+//        .firstOrNull {
+//          val edge = getFloor(realm.mesh.faces[it]!!)
+//          lineSegmentIntersectsLineSegment(start, end, edge.first, edge.second).first
+//        }
+//    if (wall == null)
+//      return true
+//
+//    val info = realm.faces[wall]!!
+//
+//    if (info.faceType != FaceType.space)
+//      return false
+//
+//    val nextNode = realm.nodeTable[getOtherNode(node.id, info)]
+//    if (nextNode == null)
+//      return true
+//
+//    lastWall = wall
+//    node = nextNode
+//  } while (true)
 }

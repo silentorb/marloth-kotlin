@@ -96,7 +96,7 @@ data class Realm(
     val boundary: WorldBoundary,
     val nodeList: List<Node>,
     val faces: ConnectionTable,
-    val mesh: ImmutableMesh,
+//    val mesh: ImmutableMesh,
     val doorFrameNodes: List<Id>
 ) {
 
@@ -106,11 +106,11 @@ data class Realm(
   val locationNodes: List<Node>
     get() = nodeList.filter { it.isWalkable }
 
-  val floors: List<ImmutableFace>
-    get() = nodeList.flatMap { it.floors }.distinct().map { mesh.faces[it]!! }
-
-  val walls: List<ImmutableFace>
-    get() = nodeList.flatMap { it.walls }.distinct().map { mesh.faces[it]!! }
+//  val floors: List<ImmutableFace>
+//    get() = nodeList.flatMap { it.floors }.distinct().map { mesh.faces[it]!! }
+//
+//  val walls: List<ImmutableFace>
+//    get() = nodeList.flatMap { it.walls }.distinct().map { mesh.faces[it]!! }
 }
 
 fun getFaces(faces: FaceList, node: Node) =

@@ -29,7 +29,7 @@ fun createCollisionShape(source: Shape, scale: Vector3): btCollisionShape {
 
     source is Capsule -> btCapsuleShapeZ(source.radius * scale.x, source.height * scale.z)
 
-    source is Cylinder -> btCylinderShapeZ(toGdxVector3(Vector3(source.radius * 0.5f * scale.x, source.radius * 0.5f * scale.y, source.height * scale.z)))
+    source is Cylinder -> btCylinderShapeZ(toGdxVector3(Vector3(source.radius * scale.x, source.radius * scale.y, source.height * scale.z)))
 
     else -> throw Error("Not supported")
   }
@@ -70,18 +70,18 @@ fun createStaticBody(body: Body, shape: btCollisionShape): btCollisionObject {
   return btBody
 }
 
-fun syncMapGeometryAndPhysics(world: World, bulletState: BulletState) {
-  val newFaceBodies = world.realm.faces
-      .filterValues { it.faceType != FaceType.space && it.texture != null }
-      .map { entry ->
-        val face = world.realm.mesh.faces[entry.key]!!
-        val collisionObject = createStaticFaceBody(face)
-        bulletState.dynamicsWorld.addCollisionObject(collisionObject)
-        // Not currently tracking static mesh mapping
-        Pair(entry.key, collisionObject)
-      }
-//    bulletState.dynamicBodies = bulletState.dynamicBodies.plus(newFaceBodies)
-}
+//fun syncMapGeometryAndPhysics(world: World, bulletState: BulletState) {
+//  val newFaceBodies = world.realm.faces
+//      .filterValues { it.faceType != FaceType.space && it.texture != null }
+//      .map { entry ->
+//        val face = world.realm.mesh.faces[entry.key]!!
+//        val collisionObject = createStaticFaceBody(face)
+//        bulletState.dynamicsWorld.addCollisionObject(collisionObject)
+//        // Not currently tracking static mesh mapping
+//        Pair(entry.key, collisionObject)
+//      }
+////    bulletState.dynamicBodies = bulletState.dynamicBodies.plus(newFaceBodies)
+//}
 
 fun syncNewBodies(world: World, bulletState: BulletState) {
   val deck = world.deck

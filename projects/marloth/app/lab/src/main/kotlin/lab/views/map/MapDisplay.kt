@@ -44,10 +44,10 @@ fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, realm: Rea
       3f
     else
       1f
-    for (edge in realm.mesh.faces[face]!!.edges) {
-      renderer.drawLine(edge.first, edge.second, c, thickness)
-//                sector.mesh.drawElement(DrawMethod.lineLoop, index++)
-    }
+//    for (edge in realm.mesh.faces[face]!!.edges) {
+//      renderer.drawLine(edge.first, edge.second, c, thickness)
+////                sector.mesh.drawElement(DrawMethod.lineLoop, index++)
+//    }
   }
 }
 
@@ -55,8 +55,8 @@ fun renderFaceIds(renderer: SceneRenderer, realm: Realm, nodes: Collection<Node>
   globalState.depthEnabled = true
   for (faceId in nodes.flatMap { it.faces }) {
 //    for (faceId in node.faces) {
-    val face = realm.mesh.faces[faceId]!!
-    renderer.drawText(face.id.toString(), getCenter(face.vertices), LabTextStyles.lessRed)
+//    val face = realm.mesh.faces[faceId]!!
+//    renderer.drawText(face.id.toString(), getCenter(face.vertices), LabTextStyles.lessRed)
 //    }
   }
 }
@@ -69,7 +69,7 @@ fun renderNodeIds(renderer: SceneRenderer, nodes: Collection<Node>) {
 }
 
 fun renderMapMesh(renderer: SceneRenderer, realm: Realm, config: MapViewConfig, bag: StateBag) {
-  val worldMesh = renderer.renderer.worldMesh!!
+//  val worldMesh = renderer.renderer.worldMesh!!
   val selectedNodes = selectionState(bag[nodeListSelectionKey])
   val nodes: Collection<Node> = if (selectedNodes.selection.none())
     realm.nodeList
@@ -82,51 +82,51 @@ fun renderMapMesh(renderer: SceneRenderer, realm: Realm, config: MapViewConfig, 
         .distinct()
         .map { realm.nodeTable[it]!! }
 
-  val sectors = if (selectedNodes.selection.none())
-    worldMesh.sectors
-  else
-    worldMesh.sectors.filter { selectedNodes.selection.contains(it.id.toString()) }
+//  val sectors = if (selectedNodes.selection.none())
+//    worldMesh.sectors
+//  else
+//    worldMesh.sectors.filter { selectedNodes.selection.contains(it.id.toString()) }
 
-  val faces = (if (config.display.isolateSelection && config.selection.any())
-    config.selection
-  else
-    nodes.flatMap { it.faces })
-      .map { realm.mesh.faces[it]!! }
-
-  if (config.display.wireframe && !config.display.solid) {
-    drawWireframeWorld(renderer, worldMesh, realm, config, nodes, Vector4(1f))
-  } else if (config.display.solid) {
-    globalState.depthEnabled = false
-    globalState.cullFaces = false
-    globalState.blendEnabled = true
-    globalState.blendFunction = Pair(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
-
-    val lineHalfColor = Vector4(1f, 1f, 1f, 1f)
-//      val lineHalfColor = Vector4(1f, 1f, 1f, 0.5f)
-//      drawWireframeWorld(renderer, worldMesh, realm, lineHalfColor)
-    globalState.depthEnabled = true
-    globalState.cullFaces = true
-
-    for (sector in sectors) {
-      var index = 0
-      for (textureId in sector.textureIndex) {
-        val texture = renderer.renderer.mappedTextures[textureId]
-            ?: renderer.renderer.textures[textureId.toString()]
-
-        if (texture != null)
-          renderer.effects.texturedFlat.activate(ObjectShaderConfig(texture = texture))
-        else
-          unbindTexture()
-
-        sector.mesh.drawElement(DrawMethod.triangleFan, index++)
-      }
-    }
-    globalState.depthEnabled = false
-    globalState.cullFaces = false
-
-    if (config.display.wireframe)
-      drawWireframeWorld(renderer, worldMesh, realm, config, nodes, lineHalfColor)
-  }
+//  val faces = (if (config.display.isolateSelection && config.selection.any())
+//    config.selection
+//  else
+//    nodes.flatMap { it.faces })
+//      .map { realm.mesh.faces[it]!! }
+//
+//  if (config.display.wireframe && !config.display.solid) {
+//    drawWireframeWorld(renderer, worldMesh, realm, config, nodes, Vector4(1f))
+//  } else if (config.display.solid) {
+//    globalState.depthEnabled = false
+//    globalState.cullFaces = false
+//    globalState.blendEnabled = true
+//    globalState.blendFunction = Pair(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
+//
+//    val lineHalfColor = Vector4(1f, 1f, 1f, 1f)
+////      val lineHalfColor = Vector4(1f, 1f, 1f, 0.5f)
+////      drawWireframeWorld(renderer, worldMesh, realm, lineHalfColor)
+//    globalState.depthEnabled = true
+//    globalState.cullFaces = true
+//
+//    for (sector in sectors) {
+//      var index = 0
+//      for (textureId in sector.textureIndex) {
+//        val texture = renderer.renderer.mappedTextures[textureId]
+//            ?: renderer.renderer.textures[textureId.toString()]
+//
+//        if (texture != null)
+//          renderer.effects.texturedFlat.activate(ObjectShaderConfig(texture = texture))
+//        else
+//          unbindTexture()
+//
+//        sector.mesh.drawElement(DrawMethod.triangleFan, index++)
+//      }
+//    }
+//    globalState.depthEnabled = false
+//    globalState.cullFaces = false
+//
+//    if (config.display.wireframe)
+//      drawWireframeWorld(renderer, worldMesh, realm, config, nodes, lineHalfColor)
+//  }
 
   if (config.display.abstract) {
     drawAbstractNodes(renderer, nodes)
@@ -134,8 +134,8 @@ fun renderMapMesh(renderer: SceneRenderer, realm: Realm, config: MapViewConfig, 
 
   globalState.depthEnabled = false
 
-  if (config.display.normals)
-    renderFaceNormals(renderer, 0.5f, faces)
+//  if (config.display.normals)
+//    renderFaceNormals(renderer, 0.5f, faces)
 
   if (config.display.faceIds) {
     renderFaceIds(renderer, realm, nodes)
@@ -153,14 +153,14 @@ fun renderMapMesh(renderer: SceneRenderer, realm: Realm, config: MapViewConfig, 
 //  renderer.drawPoint(Vector3(3.3128958f, 39.977787f, 0.0f), Vector4(1f, 0f, 1f, 1f), 3f)
 //  renderer.drawPoint(Vector3(16.027586f, 69.140396f, 0.0f), Vector4(0f, 1f, 1f, 1f), 3f)
 
-  for (id in config.selection) {
-    val face = realm.mesh.faces[id]
-    if (face != null) {
-      face.vertices.forEachIndexed { index, v ->
-        renderer.drawText(index.toString(), v, LabTextStyles.lessRed)
-      }
-    }
-  }
+//  for (id in config.selection) {
+//    val face = realm.mesh.faces[id]
+//    if (face != null) {
+//      face.vertices.forEachIndexed { index, v ->
+//        renderer.drawText(index.toString(), v, LabTextStyles.lessRed)
+//      }
+//    }
+//  }
 
 //  globalState.depthEnabled = true
 //  renderer.drawLine(config.tempStart, config.tempEnd, yellow)

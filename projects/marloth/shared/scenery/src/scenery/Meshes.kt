@@ -23,7 +23,8 @@ enum class MeshId {
   wallLamp,
 
   // Architecture
-  circleFloor
+  circleFloor,
+  squareFloor,
 }
 
 enum class ArmatureId {

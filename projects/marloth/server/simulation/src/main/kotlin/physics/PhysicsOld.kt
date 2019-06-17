@@ -68,21 +68,21 @@ fun applyForces(body: Body, forces: List<MovementForce>, resistance: Float, delt
 
 fun isWalkable(node: Node?) = node?.isWalkable ?: false
 
-fun isGroundedOnNeighborNode(realm: Realm, body: Body): Boolean {
-  val node = realm.nodeTable[body.node]!!
-  if (node.walls.none())
-    return false
-
-  val (nearestWall, distance) = node.walls
-      .map {
-        val edge = getFloor(realm.mesh.faces[it]!!)
-        Pair(it, getPointToLineDistance(body.position, edge.first, edge.second))
-      }
-      .sortedBy { it.second }
-      .first()
-
-  return distance < 0.5f && isWalkable(realm.nodeTable[getOtherNode(node.id, realm.faces[nearestWall]!!)])
-}
+//fun isGroundedOnNeighborNode(realm: Realm, body: Body): Boolean {
+//  val node = realm.nodeTable[body.node]!!
+//  if (node.walls.none())
+//    return false
+//
+//  val (nearestWall, distance) = node.walls
+//      .map {
+//        val edge = getFloor(realm.mesh.faces[it]!!)
+//        Pair(it, getPointToLineDistance(body.position, edge.first, edge.second))
+//      }
+//      .sortedBy { it.second }
+//      .first()
+//
+//  return distance < 0.5f && isWalkable(realm.nodeTable[getOtherNode(node.id, realm.faces[nearestWall]!!)])
+//}
 
 //fun isGrounded(realm: Realm, body: Body): Boolean {
 //  return !body.gravity || realm.nodeTable[body.node]!!.isWalkable || isGroundedOnNeighborNode(realm, body)
@@ -107,8 +107,8 @@ fun updateBody(realm: Realm, body: Body, dynamicBody: DynamicBody, movementForce
   return body.copy(
       velocity = applyForces(body, movementForces, dynamicBody.resistance, delta),
 //      position = moveBody(realm, body, body.velocity, collisions, delta),
-      orientation = orientationForces.firstOrNull()?.orientation ?: body.orientation,
-      node = updateBodyNode(realm, body)
+      orientation = orientationForces.firstOrNull()?.orientation ?: body.orientation
+//      node = updateBodyNode(realm, body)
   )
 }
 

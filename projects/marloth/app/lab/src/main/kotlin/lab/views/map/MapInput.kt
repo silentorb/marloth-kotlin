@@ -29,21 +29,22 @@ private fun getFaceHits(start: Vector3, end: Vector3, world: Realm): List<Hit> {
 //      .take(1)
   val rayDirection = (end - start).normalize()
 
-  return faces.mapNotNull { id ->
-    val face = world.mesh.faces[id]!!
-    if (face.normal.x == 0f && face.normal.y == 0f && face.normal.z == 0f)
-      assert(false)
-//      it.updateNormal()
-
-    if (id == 434L) {
-      val k = 0
-    }
-    val point = rayIntersectsPolygon3D(start, rayDirection, face.vertices, face.normal)
-    if (point != null)
-      Hit(point, id)
-    else
-      null
-  }
+  return listOf()
+//  return faces.mapNotNull { id ->
+////    val face = world.mesh.faces[id]!!
+////    if (face.normal.x == 0f && face.normal.y == 0f && face.normal.z == 0f)
+////      assert(false)
+////      it.updateNormal()
+//
+//    if (id == 434L) {
+//      val k = 0
+//    }
+//    val point = rayIntersectsPolygon3D(start, rayDirection, face.vertices, face.normal)
+//    if (point != null)
+//      Hit(point, id)
+//    else
+//      null
+//  }
 }
 
 private fun castSelectionRay(config: MapViewConfig, world: Realm, mousePosition: Vector2, bounds: Bounds) {

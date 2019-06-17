@@ -7,17 +7,18 @@ import mythic.spatial.Vector3
 import simulation.*
 
 fun getPathTargetPosition(world: World, knowledge: Knowledge, path: Path): Vector3 {
-  val body = world.bodyTable[knowledge.spiritId]!!
-  val face = getNextPathFace(world, knowledge, path)
-  if (face == null) {
-    getNextPathFace(world, knowledge, path)
-    throw Error("Not supported")
-  }
-
-  val edge = getFloor(world.realm.mesh.faces[face]!!)
-  val position = body.position
-  val nearestPoint = edge.vertices.sortedBy { it.distance(position) }.first()
-  return (edge.middle + nearestPoint) / 2f
+  throw Error("No longer implemented")
+//  val body = world.bodyTable[knowledge.spiritId]!!
+//  val face = getNextPathFace(world, knowledge, path)
+//  if (face == null) {
+//    getNextPathFace(world, knowledge, path)
+//    throw Error("Not supported")
+//  }
+//
+//  val edge = getFloor(world.realm.mesh.faces[face]!!)
+//  val position = body.position
+//  val nearestPoint = edge.vertices.sortedBy { it.distance(position) }.first()
+//  return (edge.middle + nearestPoint) / 2f
 }
 
 fun moveStraightTowardPosition(world: World, knowledge: Knowledge, target: Vector3): Commands {

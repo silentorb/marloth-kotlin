@@ -26,7 +26,7 @@ private fun faceInfo(realm: Realm, id: Id): Flower {
   if (connection == null)
     return emptyFlower
 
-  val face = realm.mesh.faces[id]!!
+//  val face = realm.mesh.faces[id]!!
   val firstNode = realm.nodeTable[connection.firstNode]
   val secondNode = realm.nodeTable[connection.secondNode]
   val rows = listOfNotNull(
@@ -37,10 +37,10 @@ private fun faceInfo(realm: Realm, id: Id): Flower {
       if (secondNode != null) "${secondNode.radius} ${secondNode.position}" else null,
       "neighbors: "
   )
-      .plus(face.neighbors.map { "  ${it.id} ${realm.faces[it.id]!!.faceType}" })
-      .plus("points:")
-      .plus(face.vertices.map { "  " + it.toString() })
-      .plus("-")
+//      .plus(face.neighbors.map { "  ${it.id} ${realm.faces[it.id]!!.faceType}" })
+//      .plus("points:")
+//      .plus(face.vertices.map { "  " + it.toString() })
+//      .plus("-")
       .map { label(mapTextStyle, it) }
 
   return margin(all = 10)(

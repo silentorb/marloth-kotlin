@@ -124,19 +124,19 @@ class GameSceneRenderer(
 
   fun renderWorldMesh() {
     globalState.cullFaces = true
-    val worldMesh = renderer.renderer.worldMesh
-    if (worldMesh != null) {
-      val effectConfig = ObjectShaderConfig(
-          transform = Matrix(),
-          texture = renderer.renderer.mappedTextures[Textures.checkers]!!,
-          color = Vector4(1f),
-          normalTransform = Matrix()
-      )
-      renderer.effects.textured.activate(effectConfig)
-      for (sector in worldMesh.sectors) {
-        renderSectorMesh(sector)
-      }
-    }
+//    val worldMesh = renderer.renderer.worldMesh
+//    if (worldMesh != null) {
+//      val effectConfig = ObjectShaderConfig(
+//          transform = Matrix(),
+//          texture = renderer.renderer.mappedTextures[Textures.checkers]!!,
+//          color = Vector4(1f),
+//          normalTransform = Matrix()
+//      )
+//      renderer.effects.textured.activate(effectConfig)
+//      for (sector in worldMesh.sectors) {
+//        renderSectorMesh(sector)
+//      }
+//    }
   }
 
 //  fun render() {

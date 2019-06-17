@@ -1,11 +1,13 @@
 package generation
 
-import generation.abstracted.*
-import generation.architecture.placeArchitecture
-import generation.structure.*
+import generation.abstracted.generateAbstract
+import generation.structure.StructureIdSources
+import generation.structure.assignTextures
+import generation.structure.generateStructure
+import generation.structure.idSourceFromNodes
 import mythic.ent.newIdSource
 import mythic.ent.pipe
-import mythic.spatial.*
+import mythic.spatial.Vector3
 import randomly.Dice
 import simulation.*
 
@@ -21,19 +23,19 @@ fun generateWorld(input: WorldInput): World {
       face = newIdSource(1),
       edge = newIdSource(1)
   )
-  val realm1 = generateStructure(biomeGrid, idSources, graph, input.dice)
-  val realm2 = realm1
+//  val realm1 = generateStructure(biomeGrid, idSources, graph, input.dice)
+//  val realm2 = realm1
 //      .copy(
 //      nodes = fillNodeBiomes(biomeGrid, realm1.nodes)
 //  )
 
-  val texturedFaces = assignTextures(realm2.nodes, realm2.connections)
+//  val texturedFaces = assignTextures(graph.nodes, realm2.connections)
 
   val finalRealm = simulation.Realm(
       boundary = input.boundary,
-      nodeList = realm2.nodes.values.toList(),
-      faces = texturedFaces,
-      mesh = realm2.mesh,
+      nodeList = graph.nodes.values.toList(),
+      faces = mapOf(),
+//      mesh = realm2.mesh,
       doorFrameNodes = graph.doorways
   )
 
@@ -52,7 +54,6 @@ fun generateDefaultWorld(): World {
 fun addEnemies(world: World, boundary: WorldBoundary, dice: Dice): World {
   val scale = calculateWorldScale(boundary.dimensions)
   return pipe(world, listOf(
-      addDeck(placeArchitecture(world.realm)),
       addDeck(placeCharacters(world.realm, dice, scale))
   ))
 }

@@ -5,7 +5,6 @@ import marloth.clienting.Client
 import marloth.clienting.newClientState
 import marloth.integration.AppState
 import marloth.integration.GameConfig
-import marloth.integration.setWorldMesh
 import marloth.integration.updateAppState
 import mythic.platforming.Platform
 import mythic.quartz.newTimestepState
@@ -43,7 +42,6 @@ fun runApp(platform: Platform, config: GameConfig) {
   platform.display.initialize(config.display)
   val app = newGameApp(platform, config)
   val world = generateDefaultWorld()
-  setWorldMesh(world.realm, app.client)
   val state = AppState(
       client = newClientState(platform, config.input, config.audio),
       players = listOf(1),
