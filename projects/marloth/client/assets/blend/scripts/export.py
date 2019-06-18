@@ -39,7 +39,11 @@ def preprocess_bounds_shape(obj):
             'radius': get_horizontal_radius(dimensions),
             'height': dimensions.z
         }
-
+    if type == 'box':
+        obj['bounds'] = {
+            'type': 'box',
+            'dimensions': (dimensions.x, dimensions.y, dimensions.z)
+        }
 
 def has_dominant_material(obj):
     return any(m.name == obj.name for m in obj.material_slots)

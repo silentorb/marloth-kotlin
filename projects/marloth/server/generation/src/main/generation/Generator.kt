@@ -1,5 +1,6 @@
 package generation
 
+import generation.abstracted.Graph
 import generation.abstracted.generateAbstract
 import generation.structure.StructureIdSources
 import generation.structure.assignTextures
@@ -14,7 +15,7 @@ import simulation.*
 fun calculateWorldScale(dimensions: Vector3) =
     (dimensions.x * dimensions.y * dimensions.z) / (100 * 100 * 100)
 
-fun generateWorld(input: WorldInput): World {
+fun generateWorld(input: WorldInput): Pair<World, Graph> {
   val scale = calculateWorldScale(input.boundary.dimensions)
   val biomeGrid = newBiomeGrid(input)
   val graph = generateAbstract(input, scale, biomeGrid)
@@ -39,7 +40,7 @@ fun generateWorld(input: WorldInput): World {
       doorFrameNodes = graph.doorways
   )
 
-  return finalizeRealm(input, finalRealm)
+  return Pair(finalizeRealm(input, finalRealm), graph)
 }
 
 fun generateDefaultWorld(): World {
@@ -47,7 +48,7 @@ fun generateDefaultWorld(): World {
       boundary = createWorldBoundary(50f),
       dice = Dice(2)
   )
-  val world = generateWorld(input)
+  val (world, _) = generateWorld(input)
   return addEnemies(world, input.boundary, input.dice)
 }
 

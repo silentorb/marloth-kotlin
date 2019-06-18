@@ -4,13 +4,11 @@ import mythic.breeze.*
 import mythic.glowing.Drawable
 import mythic.glowing.SimpleTriangleMesh
 import mythic.glowing.VertexAttributeDetail
+import mythic.spatial.Vector3
 import org.lwjgl.BufferUtils
 import rendering.*
 import rendering.meshes.*
-import scenery.AnimationId
-import scenery.Cylinder
-import scenery.MeshId
-import scenery.Shape
+import scenery.*
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
@@ -414,6 +412,12 @@ fun loadBoundingShape(node: Node): Shape? {
           radius = (shape["radius"] as Double).toFloat(),
           height = (shape["height"] as Double).toFloat()
       )
+      "box" -> {
+        val dimensions = shape["dimensions"] as List<Double>
+        Box(
+            halfExtents = Vector3(dimensions[0].toFloat(), dimensions[1].toFloat(), dimensions[2].toFloat()) * 0.5f
+        )
+      }
       else -> null
     }
   }

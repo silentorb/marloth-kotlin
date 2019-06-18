@@ -39,13 +39,13 @@ fun createDice(config: GameViewConfig) =
 fun generateWorld(meshInfo: MeshInfoMap, gameViewConfig: GameViewConfig): World {
   val boundary = createWorldBoundary(gameViewConfig.worldLength)
   val dice = createDice(gameViewConfig)
-  val initialWorld = generateWorld(WorldInput(
+  val (initialWorld, graph) = generateWorld(WorldInput(
       boundary,
       dice
   ))
 
   return pipe(initialWorld, listOf(
-      addDeck(placeArchitecture(meshInfo, initialWorld.realm)),
+      addDeck(placeArchitecture(meshInfo, graph)),
       { world ->
         if (gameViewConfig.haveEnemies)
           addEnemies(world, boundary, dice)
