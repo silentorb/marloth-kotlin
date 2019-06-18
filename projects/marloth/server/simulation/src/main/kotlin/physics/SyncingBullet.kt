@@ -29,7 +29,7 @@ fun createCollisionShape(source: Shape, scale: Vector3): btCollisionShape {
 
     source is Capsule -> btCapsuleShapeZ(source.radius * scale.x, source.height * scale.z)
 
-    source is Cylinder -> btCylinderShapeZ(toGdxVector3(Vector3(source.radius * scale.x, source.radius * scale.y, source.height * scale.z)))
+    source is Cylinder -> btCylinderShapeZ(toGdxVector3(Vector3(source.radius * scale.x, source.radius * scale.y, source.height * scale.z * 0.5f)))
 
     else -> throw Error("Not supported")
   }

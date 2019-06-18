@@ -70,22 +70,23 @@ fun placeArchitecture(graph: Graph): List<ArchitecturePlacement> {
       }
       .plus(tunnels
           .flatMap { node ->
-            val segmentSize = 4f
-            val segmentLength = 4f
+            val segmentLength = 2.5f
             val neighbors = nodeNeighbors(graph.connections, node.id).map { graph.nodes[it]!! }
-            val gapSize = getNodeDistance(neighbors[0], neighbors[1])
-            val stepCount = (gapSize / segmentLength).toInt() + 1
+            val gapSize = getNodeDistance(neighbors[0], neighbors[1]) + segmentLength
+            val stepCount = (gapSize / segmentLength).toInt() + 1 // One extra to overlap the room
             val stepSize = gapSize / (stepCount + 1).toFloat()
-            val scale = Vector3(segmentSize, segmentSize, 1f)
             val vector = (neighbors[0].position - neighbors[1].position).normalize()
-            val start = neighbors[1].position + vector * (neighbors[1].radius + stepSize)
+            val start = neighbors[1].position + vector * (neighbors[1].radius + stepSize - segmentLength / 2f)
+            val minorOffset = 0.001f
 
             val orientation = Quaternion().rotateZ(getLookAtAngle(vector))
             (0 until stepCount).map { step ->
+              val minorMod = if (step % 2 == 0) -minorOffset else minorOffset
+              val minor = Vector3(0f, 0f, minorMod)
               ArchitecturePlacement(
                   mesh = MeshId.longStep,
-                  position = start + vector * stepSize * step.toFloat() + floorOffset,
-                  scale = scale,
+                  position = start + vector * stepSize * step.toFloat() + floorOffset + minor,
+                  scale = Vector3.unit,
                   orientation = orientation
               )
             }
@@ -97,8 +98,11 @@ fun placeArchitecture(meshInfo: MeshInfoMap, graph: Graph) = { nextId: IdSource 
   placeArchitecture(graph)
       .map {
         val id = nextId()
+        val height = meshInfo[it.mesh]!!.shapeHeight
+        println(height)
+        val shapeOffset = Vector3(0f, 0f, -height / 2f)
         newArchitectureMesh(meshInfo, id, it.mesh,
-            position = it.position,
+            position = it.position + shapeOffset,
             scale = it.scale,
             orientation = it.orientation
         )
