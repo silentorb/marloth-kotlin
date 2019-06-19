@@ -22,7 +22,7 @@ data class CharacterTemplate(
     val definition: CharacterDefinition
 )
 
-fun placeCharacter(realm: Realm, template: CharacterTemplate, nextId: IdSource, node: Id, position: Vector3): Hand {
+fun placeCharacter(realm: Realm, template: CharacterTemplate, nextId: IdSource, node: Id, position: Vector3): IdHand {
 //  val node = dice.getItem(realm.locationNodes.drop(1))// Skip the node where the player starts
 //  val wall = dice.getItem(node.walls)
 //  val position = getVector3Center(node.position, realm.mesh.faces[wall]!!.edges[0].first)
@@ -41,7 +41,7 @@ fun placeCharacter(realm: Realm, template: CharacterTemplate, nextId: IdSource, 
   )
 }
 
-fun placeCharacters(realm: Realm, dice: Dice, scale: Float): (IdSource) -> List<Hand> {
+fun placeCharacters(realm: Realm, dice: Dice, scale: Float): (IdSource) -> List<IdHand> {
   return { nextId ->
     //  val enemyCount = (10f * scale).toInt()
     //  val counts = listOf(2, 2)
@@ -171,15 +171,15 @@ fun newPlayer(nextId: IdSource, playerNode: Node): Deck {
 
   val candle = Item(
       id = candleId,
-      owner = characterHand.character!!.id,
+      owner = characterHand.hand.character!!.id,
       slot = 2,
       type = ItemType.candle
   )
 
-  return toDeck(characterHand.copy(character = characterHand.character!! equip candle.id))
-      .plus(toDeck(Hand(
+  return toDeck(characterHand.copy(hand = characterHand.hand.copy(character = characterHand.hand.character!! equip candle.id)))
+      .plus(toDeck(IdHand(
           id = candleId,
-          item = candle
+          hand = Hand(item = candle)
       )))
 }
 

@@ -1,22 +1,16 @@
 package marloth.integration
 
-import marloth.clienting.Client
 import mythic.sculpting.ImmutableFace
-import mythic.sculpting.ImmutableFaceTable
 import mythic.sculpting.VertexNormalTexture
 import mythic.sculpting.getBounds
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
-import rendering.*
-import rendering.meshes.convertMesh
 import rendering.texturing.TextureFace
-import rendering.texturing.TextureLibrary
-import rendering.texturing.texturedVertexSerializer
-import scenery.Textures
+import scenery.TextureId
 import simulation.*
 import kotlin.math.roundToInt
 
-fun createTexturedHorizontalSurface(face: ImmutableFace, texture: Textures): TextureFace {
+fun createTexturedHorizontalSurface(face: ImmutableFace, texture: TextureId): TextureFace {
   val vertices = face.unorderedVertices
   val bounds = getBounds(vertices)
   val scale = 2f
@@ -39,7 +33,7 @@ fun createTexturedHorizontalSurface(face: ImmutableFace, texture: Textures): Tex
   )
 }
 
-fun createTexturedWall(face: ImmutableFace, texture: Textures): TextureFace {
+fun createTexturedWall(face: ImmutableFace, texture: TextureId): TextureFace {
   val vertices = face.unorderedVertices
   val bounds = getBounds(vertices)
   val dimensions = bounds.dimensions

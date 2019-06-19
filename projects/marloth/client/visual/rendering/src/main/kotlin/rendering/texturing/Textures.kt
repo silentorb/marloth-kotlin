@@ -14,7 +14,7 @@ import rendering.meshes.loading.loadJsonResource
 import rendering.toCamelCase
 import scanResources
 import scanTextureResources
-import scenery.Textures
+import scenery.TextureId
 import silentorb.metahub.core.Engine
 import silentorb.metahub.core.Graph
 import silentorb.metahub.core.executeAndFormat
@@ -74,21 +74,21 @@ fun grayNoise(scales: List<Float>): OpaqueTextureAlgorithm {
   return colorize(black, white, simpleNoise(scales))
 }
 
-typealias TextureLibrary = Map<Textures, Texture>
+typealias TextureLibrary = Map<TextureId, Texture>
 typealias DynamicTextureLibrary = MutableMap<String, Texture>
 typealias OpaqueTextureAlgorithmSource = () -> OpaqueTextureAlgorithm
 typealias TextureGenerator = (scale: Float) -> Texture
-typealias TextureGeneratorMap = Map<Textures, TextureGenerator>
+typealias TextureGeneratorMap = Map<TextureId, TextureGenerator>
 
-fun basicTextures(): Map<Textures, OpaqueTextureAlgorithmSource> = mapOf(
+fun basicTextures(): Map<TextureId, OpaqueTextureAlgorithmSource> = mapOf(
 
-    Textures.checkers to createCheckers(),
+    TextureId.checkers to createCheckers(),
 //    Textures.darkCheckers to createDarkCheckers(),
-    Textures.debugCyan to { solidColor(Vector3(0f, 1f, 1f)) },
-    Textures.debugMagenta to { solidColor(Vector3(1f, 0f, 1f)) },
-    Textures.debugYellow to { solidColor(Vector3(1f, 1f, 0f)) },
+    TextureId.debugCyan to { solidColor(Vector3(0f, 1f, 1f)) },
+    TextureId.debugMagenta to { solidColor(Vector3(1f, 0f, 1f)) },
+    TextureId.debugYellow to { solidColor(Vector3(1f, 1f, 0f)) },
 
-    Textures.ground to {
+    TextureId.ground to {
       colorize(
           Vector3(0.0f, 0.0f, 0.0f),
           Vector3(0.55f, 0.35f, 0.0f),
@@ -151,12 +151,12 @@ fun deferProceduralTextureFromFile(engine: Engine, path: String, name: String, a
 }
 
 private fun miscTextureGenerators(): TextureGeneratorMap = mapOf(
-    Textures.background to applyAlgorithm(colorize(
+    TextureId.background to applyAlgorithm(colorize(
         Vector3(0.15f),
         Vector3(0.25f),
         simpleNoise(listOf(12f, 37f))
     ), 512, TextureAttributes(repeating = false, storageUnit = TextureStorageUnit.unsigned_byte)),
-    Textures.grass to applyAlgorithm(colorize(
+    TextureId.grass to applyAlgorithm(colorize(
         Vector3(0.25f, 0.35f, 0.05f),
         Vector3(0.5f, 0.65f, 0.2f),
         simpleNoise(listOf(62f, 37f))

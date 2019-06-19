@@ -52,7 +52,7 @@ fun gatherEffectsData(dimensions: Vector2i, scene: Scene, cameraEffectsData: Cam
 data class SectorMesh(
     val id: Id,
     val mesh: SimpleMesh<AttributeName>,
-    val textureIndex: List<Textures>
+    val textureIndex: List<TextureId>
 )
 
 data class WorldMesh(

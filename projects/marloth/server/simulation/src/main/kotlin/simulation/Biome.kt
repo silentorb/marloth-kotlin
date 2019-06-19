@@ -1,6 +1,6 @@
 package simulation
 
-import scenery.Textures
+import scenery.TextureId
 
 enum class Biome {
   checkers,
@@ -13,9 +13,9 @@ enum class Biome {
 data class BiomeInfo(
     val name: String,
     val enclosureRate: Float,
-    val floorTexture: Textures,
-    val ceilingTexture: Textures? = null,
-    val wallTexture: Textures? = null
+    val floorTexture: TextureId,
+    val ceilingTexture: TextureId? = null,
+    val wallTexture: TextureId? = null
 )
 
 typealias BiomeInfoMap = Map<Biome, BiomeInfo>
@@ -23,29 +23,29 @@ typealias BiomeInfoMap = Map<Biome, BiomeInfo>
 val biomeInfoMap: BiomeInfoMap = mapOf(
     Biome.checkers to BiomeInfo("checkers",
         enclosureRate = 0.5f,
-        floorTexture = Textures.cobblestone,
-        ceilingTexture = Textures.checkers,
-        wallTexture = Textures.darkCheckers
+        floorTexture = TextureId.cobblestone,
+        ceilingTexture = TextureId.checkers,
+        wallTexture = TextureId.darkCheckers
     ),
     Biome.exit to BiomeInfo("exit",
         enclosureRate = 0f,
-        floorTexture = Textures.swirl,
-        ceilingTexture = Textures.swirl,
-        wallTexture = Textures.swirl
+        floorTexture = TextureId.swirl,
+        ceilingTexture = TextureId.swirl,
+        wallTexture = TextureId.swirl
     ),
     Biome.forest to BiomeInfo("forest",
         enclosureRate = 0.25f,
-        floorTexture = Textures.dirt,
-        ceilingTexture = Textures.dirt,
-        wallTexture = Textures.dirt
+        floorTexture = TextureId.dirt,
+        ceilingTexture = TextureId.dirt,
+        wallTexture = TextureId.dirt
     ),
     Biome.home to BiomeInfo("home",
         enclosureRate = 1f,
-        floorTexture = Textures.redTile02,
-        ceilingTexture = Textures.redTile01,
-        wallTexture = Textures.redTile01
+        floorTexture = TextureId.redTile02,
+        ceilingTexture = TextureId.redTile01,
+        wallTexture = TextureId.redTile01
     ),
     Biome.void to BiomeInfo("void",
-        floorTexture = Textures.none,
+        floorTexture = TextureId.none,
         enclosureRate = 0f)
 )

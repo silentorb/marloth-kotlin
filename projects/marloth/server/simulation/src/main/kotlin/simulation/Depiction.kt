@@ -1,6 +1,5 @@
 package simulation
 
-import mythic.ent.Entity
 import mythic.ent.Id
 import scenery.*
 
@@ -28,7 +27,7 @@ data class DepictionAnimation(
 data class Depiction(
     val type: DepictionType,
     val mesh: MeshId? = null,
-    val texture: Textures? = null,
+    val texture: TextureId? = null,
     val animations: List<DepictionAnimation> = listOf()
 )
 

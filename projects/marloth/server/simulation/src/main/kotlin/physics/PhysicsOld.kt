@@ -120,9 +120,9 @@ fun updatePhysicsBodies(world: World, collisions: Collisions, movementForces: Li
         world.realm,
         body = body,
         dynamicBody = dynamicBody,
-        movementForces = movementForces.filter { it.body == body.id },
-        orientationForces = orientationForces.filter { it.body == body.id },
-        collisions = collisions.filter { it.first == body.id && it.wall != null },
+        movementForces = movementForces.filter { it.body == id },
+        orientationForces = orientationForces.filter { it.body == id },
+        collisions = collisions.filter { it.first == id && it.wall != null },
         delta = delta
     )
   }

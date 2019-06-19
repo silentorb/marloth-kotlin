@@ -5,12 +5,11 @@ import mythic.ent.Id
 import mythic.ent.firstSortedBy
 import mythic.sculpting.ImmutableEdgeReference
 import mythic.sculpting.ImmutableFace
-import mythic.sculpting.ImmutableMesh
 import mythic.spatial.Vector3
 import mythic.spatial.getCenter
 import physics.voidNodeId
 import randomly.Dice
-import scenery.Textures
+import scenery.TextureId
 
 data class WorldBoundary(
     val start: Vector3,
@@ -62,7 +61,7 @@ data class ConnectionFace(
     var faceType: FaceType,
     val firstNode: Id,
     val secondNode: Id,
-    var texture: Textures? = null,
+    var texture: TextureId? = null,
     var debugInfo: String? = null
 ) : Entity {
   val nodes: List<Id> = listOf(firstNode, secondNode).minus(voidNodeId)

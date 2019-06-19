@@ -61,9 +61,9 @@ fun newBulletState(): BulletState {
 }
 
 fun applyImpulses(world: World, bulletState: BulletState) {
-  world.deck.bodies.forEach { (_, body) ->
+  world.deck.bodies.forEach { (id, body) ->
     if (body.velocity != Vector3.zero) {
-      val btBody = bulletState.dynamicBodies[body.id]
+      val btBody = bulletState.dynamicBodies[id]
       if (btBody != null) {
         btBody.applyCentralImpulse(toGdxVector3(body.velocity))
       } else {

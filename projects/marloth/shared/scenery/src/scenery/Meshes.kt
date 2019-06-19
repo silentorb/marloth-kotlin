@@ -2,7 +2,7 @@ package scenery
 
 enum class MeshId {
   candle,
-//  childBody,
+  //  childBody,
 //  childBoyClothes,
 //  childBoyHair,
 //  childEyes,
@@ -26,6 +26,7 @@ enum class MeshId {
   circleFloor,
   longStep,
   squareFloor,
+  squareWall
 }
 
 enum class ArmatureId {
@@ -39,6 +40,6 @@ enum class AnimationId {
   walk
 }
 
-enum class ArmatureSockets{
+enum class ArmatureSockets {
   rightHand
 }

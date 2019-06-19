@@ -15,7 +15,6 @@ class EntityTemplates {
   companion object {
 
     val door = Hand(
-        id = 0,
         collisionShape = Box(halfExtents = Vector3(.5f, .165f / 2f, .5f)),
         door = Door(
             isLocked = false
@@ -40,7 +39,6 @@ class EntityTemplates {
     )
 
     val wallLamp = Hand(
-        id = 0,
         collisionShape = ShapeOffset(Matrix().translate(1f, 0f, 0.8f), Sphere(1f)),
         depiction = Depiction(
             type = DepictionType.wallLamp

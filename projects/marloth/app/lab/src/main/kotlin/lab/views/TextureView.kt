@@ -12,10 +12,10 @@ import mythic.spatial.toVector2
 import mythic.spatial.toVector2i
 import org.joml.Vector2i
 import rendering.Renderer
-import scenery.Textures
+import scenery.TextureId
 
 data class TextureViewConfig(
-    var texture: Textures = Textures.checkers
+    var texture: TextureId = TextureId.checkers
 )
 
 fun drawTextureView(renderer: Renderer, config: TextureViewConfig, bounds: Bounds, canvas: Canvas) {
@@ -32,7 +32,7 @@ fun drawTextureView(renderer: Renderer, config: TextureViewConfig, bounds: Bound
 //  texture.dispose()
 }
 
-private fun drawLeftPanel(textures: List<Textures>, config: TextureViewConfig, bounds: Bounds): SelectionResult {
+private fun drawLeftPanel(textures: List<TextureId>, config: TextureViewConfig, bounds: Bounds): SelectionResult {
   return drawSelectableEnumList(textures, config.texture, bounds)
 }
 

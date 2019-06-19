@@ -140,11 +140,11 @@ fun updateCharacter(world: World, collisions: Collisions, commands: Commands, ac
   updateCharacter(world, character, characterCommands, collisions, abilities, delta)
 }
 
-fun characterMovementFp(commands: Commands, character: Character, body: Body): MovementForce? {
+fun characterMovementFp(commands: Commands, character: Character, id: Id, body: Body): MovementForce? {
   var offset = joinInputVector(commands, playerMoveMap)
   if (offset != null) {
     offset = Quaternion().rotateZ(character.facingRotation.z - Pi / 2) * offset * character.definition.maxSpeed
-    return MovementForce(body = body.id, offset = offset)
+    return MovementForce(body = id, offset = offset)
   } else {
     return null
   }
@@ -153,7 +153,7 @@ fun characterMovementFp(commands: Commands, character: Character, body: Body): M
 fun allCharacterMovements(world: World, commands: Commands): List<MovementForce> =
     world.characters
         .filter { world.deck.characters[it.id]!!.isAlive }
-        .mapNotNull { characterMovementFp(filterCommands(it.id, commands), it, world.bodyTable[it.id]!!) }
+        .mapNotNull { characterMovementFp(filterCommands(it.id, commands), it, it.id, world.bodyTable[it.id]!!) }
 
 fun allCharacterOrientations(world: World): List<AbsoluteOrientationForce> =
     world.characters.map {
@@ -161,16 +161,15 @@ fun allCharacterOrientations(world: World): List<AbsoluteOrientationForce> =
           .rotateZ(it.facingRotation.z))
     }
 
-fun newCharacter(id: Id,nextId: IdSource, definition: CharacterDefinition, faction: Id, position: Vector3, node: Id,
-                 player: Player? = null, spirit: Spirit? = null): Hand {
+fun newCharacter(id: Id, nextId: IdSource, definition: CharacterDefinition, faction: Id, position: Vector3, node: Id,
+                 player: Player? = null, spirit: Spirit? = null): IdHand {
   val abilities = definition.abilities.map {
     Ability(
         id = nextId(),
         definition = it
     )
   }
-  return Hand(
-      id = id,
+  return IdHand(id, Hand(
       ambientAudioEmitter = if (definition.ambientSounds.any())
         AmbientAudioEmitter(
             id = id,
@@ -179,7 +178,6 @@ fun newCharacter(id: Id,nextId: IdSource, definition: CharacterDefinition, facti
       else
         null,
       body = Body(
-          id = id,
           position = position,
           orientation = Quaternion(),
           velocity = Vector3(),
@@ -211,5 +209,5 @@ fun newCharacter(id: Id,nextId: IdSource, definition: CharacterDefinition, facti
       ),
       player = player?.copy(id = id),
       spirit = spirit?.copy(id = id)
-  )
+  ))
 }

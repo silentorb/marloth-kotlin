@@ -2,10 +2,10 @@ package generation.structure
 
 import generation.abstracted.faceNodes
 import physics.voidNodeId
-import scenery.Textures
+import scenery.TextureId
 import simulation.*
 
-fun determineFloorTexture(nodes: NodeTable, info: ConnectionFace): Textures? {
+fun determineFloorTexture(nodes: NodeTable, info: ConnectionFace): TextureId? {
   val first = nodes[info.firstNode]
   return if (first != null && first.isWalkable)
     biomeInfoMap[first.biome]!!.floorTexture
@@ -13,7 +13,7 @@ fun determineFloorTexture(nodes: NodeTable, info: ConnectionFace): Textures? {
     null
 }
 
-fun determineWallTexture(nodeTable: NodeTable, info: ConnectionFace): Textures? {
+fun determineWallTexture(nodeTable: NodeTable, info: ConnectionFace): TextureId? {
   val nodes = faceNodes(info)
       .filter { it != voidNodeId }
       .map { nodeTable[it]!! }
@@ -34,7 +34,7 @@ fun determineWallTexture(nodeTable: NodeTable, info: ConnectionFace): Textures? 
   }
 }
 
-fun determineCeilingTexture(nodes: NodeTable, info: ConnectionFace): Textures? {
+fun determineCeilingTexture(nodes: NodeTable, info: ConnectionFace): TextureId? {
   val first = nodes[info.firstNode]
   val second = nodes[info.secondNode]
   return if (first != null && second != null && second.isSolid)
@@ -43,7 +43,7 @@ fun determineCeilingTexture(nodes: NodeTable, info: ConnectionFace): Textures? {
     null
 }
 
-fun determineFaceTexture(nodes: NodeTable, info: ConnectionFace): Textures? {
+fun determineFaceTexture(nodes: NodeTable, info: ConnectionFace): TextureId? {
   if (info.id == 41L) {
     val k = 0
   }

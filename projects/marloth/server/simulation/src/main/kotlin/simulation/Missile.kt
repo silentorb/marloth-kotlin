@@ -16,13 +16,11 @@ data class Missile(
     val remainingDistance: Float
 ) : Entity
 
-fun characterAttack(world: World, nextId: IdSource, character: Character, ability: Ability, direction: Vector3): Hand {
+fun characterAttack(world: World, nextId: IdSource, character: Character, ability: Ability, direction: Vector3): IdHand {
   val body = world.bodyTable[character.id]!!
   val id = nextId()
-  return Hand(
-      id = id,
+  return IdHand(id, Hand(
       body = Body(
-          id = id,
           position = body.position + direction * 0.5f + Vector3(0f, 0f, 1.4f),
           node = body.node,
           velocity = direction * ability.definition.maxSpeed,
@@ -39,7 +37,7 @@ fun characterAttack(world: World, nextId: IdSource, character: Character, abilit
           remainingDistance = ability.definition.range,
           owner = character.id
       )
-  )
+  ))
 }
 
 //fun getBodyCollisions(bodies: Table<Body>, characterTable: Table<Character>, missiles: Collection<Missile>): List<Collision> {

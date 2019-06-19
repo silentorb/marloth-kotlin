@@ -7,7 +7,6 @@ import physics.Body
 import physics.DynamicBody
 
 data class Hand(
-    val id: Id,
     val ambientAudioEmitter: AmbientAudioEmitter? = null,
     val body: Body? = null,
     val dynamicBody: DynamicBody? = null,
@@ -22,4 +21,9 @@ data class Hand(
     val player: Player? = null,
     val spirit: Spirit? = null,
     val interactable: Interactable? = null
+)
+
+data class IdHand(
+    val id: Id,
+    val hand: Hand
 )

@@ -1,7 +1,7 @@
 package generation.abstracted
 
 import mythic.ent.Id
-import scenery.Textures
+import scenery.TextureId
 import simulation.FaceType
 import simulation.Node
 import simulation.NodeTable
@@ -19,7 +19,7 @@ data class InitialConnection(
     val second: Id,
     val type: ConnectionType,
     val faceType: FaceType,
-    var texture: Textures? = null,
+    var texture: TextureId? = null,
     var debugInfo: String? = null
 ) {
   init {

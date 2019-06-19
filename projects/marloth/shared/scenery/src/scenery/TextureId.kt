@@ -1,6 +1,6 @@
 package scenery
 
-enum class Textures {
+enum class TextureId {
   none,
   background,
   dirt,

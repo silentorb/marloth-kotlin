@@ -4,7 +4,7 @@ import mythic.sculpting.VertexNormalTexture
 import mythic.spatial.Vector3
 import mythic.spatial.put
 import rendering.meshes.ImmutableVertexSerializer
-import scenery.Textures
+import scenery.TextureId
 
 typealias VertexMap = Map<Vector3, VertexNormalTexture>
 typealias FaceTextureMap = Map<Long, VertexMap>
@@ -12,7 +12,7 @@ typealias FaceTextureMap = Map<Long, VertexMap>
 data class TextureFace(
     val face: Long,
     val vertexMap: VertexMap,
-    val texture: Textures
+    val texture: TextureId
 )
 
 fun texturedVertexSerializer(vertexInfo: FaceTextureMap): ImmutableVertexSerializer = { vertex, face, vertices ->

@@ -6,6 +6,7 @@ import configuration.saveYamlFile
 import generation.addEnemies
 import generation.architecture.MeshInfoMap
 import generation.architecture.placeArchitecture
+import generation.architecture.placeFloors
 import generation.generateWorld
 import lab.utility.updateWatching
 import lab.views.game.GameViewConfig
@@ -45,24 +46,11 @@ fun generateWorld(meshInfo: MeshInfoMap, gameViewConfig: GameViewConfig): World 
   ))
 
   return pipe(initialWorld, listOf(
-      addDeck(placeArchitecture(meshInfo, graph)),
+      placeArchitecture(meshInfo, graph),
       { world ->
         if (gameViewConfig.haveEnemies)
           addEnemies(world, boundary, dice)
         else
-          world
-      },
-      { world ->
-        if (!gameViewConfig.playerGravity) {
-          val id = world.players.first().id
-          val body = world.deck.bodies.values.first { it.id == id }
-//              .copy(gravity = false)
-          world.copy(
-              deck = world.deck.copy(
-                  bodies = replace(world.deck.bodies, body)
-              )
-          )
-        } else
           world
       }
   ))

@@ -59,26 +59,23 @@ fun <T> nullableList(id: Id, entity: T?): Table<T> =
     else
       mapOf(id to entity)
 
-fun toDeck(hand: Hand): Deck =
+fun toDeck(hand: Hand, id: Id): Deck =
     Deck(
         ambientSounds = nullableList(hand.ambientAudioEmitter),
         animations = nullableList(hand.animation),
-        bodies = nullableList(hand.body),
+        bodies = nullableList(id, hand.body),
         characters = nullableList(hand.character),
-        collisionShapes = nullableList(hand.id, hand.collisionShape),
-        depictions = nullableList(hand.id, hand.depiction),
-        dynamicBodies = nullableList(hand.id, hand.dynamicBody),
-        doors = nullableList(hand.id, hand.door),
+        collisionShapes = nullableList(id, hand.collisionShape),
+        depictions = nullableList(id, hand.depiction),
+        dynamicBodies = nullableList(id, hand.dynamicBody),
+        doors = nullableList(id, hand.door),
         items = nullableList(hand.item),
-        lights = nullableList(hand.id, hand.light),
+        lights = nullableList(id, hand.light),
         missiles = nullableList(hand.missile),
         players = nullableList(hand.player),
         spirits = nullableList(hand.spirit),
-        interactables = nullableList(hand.id, hand.interactable)
+        interactables = nullableList(id, hand.interactable)
     )
-
-fun toDeck(hands: List<Hand>): Deck =
-    hands.fold(Deck(), { d, h -> d.plus(toDeck(h)) })
 
 data class World(
     val realm: Realm,
@@ -100,18 +97,28 @@ data class World(
     get() = deck.bodies.values
 }
 
+typealias WorldTransform = (World) -> World
+
 typealias WorldPair = Pair<World, World>
 
-fun addDeck(world: World, deck: Deck, nextId: IdSource): World {
-  val newDeck = world.deck.plus(deck)
-  return world.copy(
-      deck = newDeck,
-      nextId = nextId()
-  )
-}
+//fun addDeck(world: World, deck: Deck, nextId: IdSource): World {
+//  val newDeck = world.deck.plus(deck)
+//  return world.copy(
+//      deck = newDeck,
+//      nextId = nextId()
+//  )
+//}
 
-fun addDeck(deckSource: (IdSource) -> List<Hand>): (World) -> World {
-  return { world ->
+fun toDeck(hand: IdHand) = toDeck(hand.hand, hand.id)
+
+fun toDeck(hands: List<IdHand>): Deck =
+    hands.fold(Deck(), { d, h -> d.plus(toDeck(h)) })
+
+fun toDeck(hands: List<Hand>, nextId: IdSource): Deck =
+    hands.fold(Deck(), { d, h -> d.plus(toDeck(h, nextId())) })
+
+val addDeck: ((IdSource) -> List<IdHand>) -> WorldTransform = { deckSource ->
+  { world ->
     val nextId = newIdSource(world.nextId)
     val newDeck = world.deck.plus(toDeck(deckSource(nextId)))
     world.copy(
@@ -119,6 +126,13 @@ fun addDeck(deckSource: (IdSource) -> List<Hand>): (World) -> World {
         nextId = nextId()
     )
   }
+}
+
+fun addHands(hands: List<Hand>): WorldTransform =
+  addDeck { nextId -> hands.map { IdHand(nextId(), it) } }
+
+fun addDecks(deckSources: List<(IdSource) -> List<IdHand>>): WorldTransform {
+  return pipe(deckSources.map(addDeck))
 }
 
 fun removeEntities(deck: Deck, removeIds: List<Id>): Deck {
