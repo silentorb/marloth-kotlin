@@ -5,6 +5,8 @@ import org.joml.Math.PI
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import java.text.DecimalFormat
+import kotlin.math.cos
+import kotlin.math.sin
 
 typealias Vector4 = org.joml.Vector4f
 typealias Matrix = org.joml.Matrix4f
@@ -371,4 +373,8 @@ fun withinRangeFast(a: Vector3, b: Vector3, range: Float): Boolean {
 //    mk[4]++
     false
   }
+}
+
+fun projectVector3(angle: Float, radius: Float, z: Float): Vector3 {
+  return Vector3(cos(angle) * radius, sin(angle) * radius, 0f)
 }

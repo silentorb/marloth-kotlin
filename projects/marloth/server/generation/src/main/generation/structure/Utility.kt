@@ -49,6 +49,9 @@ fun getNewWallVertices(sectorCenter: Vector3, edges: Edges): Vertices {
 }
 
 fun sortWallVertices(sectorCenter: Vector3, vertices: Vertices): Vertices {
+  if (vertices.size < 3)
+    return vertices
+
   val sorted = arrangePointsCounterClockwise(vertices)
   val normal = getNormal(sorted)
   val center = getCenter(sorted)
