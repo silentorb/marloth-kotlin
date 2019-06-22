@@ -6,7 +6,6 @@ import configuration.saveYamlFile
 import generation.addEnemies
 import generation.architecture.MeshInfoMap
 import generation.architecture.placeArchitecture
-import generation.architecture.placeFloors
 import generation.generateWorld
 import lab.utility.updateWatching
 import lab.views.game.GameViewConfig

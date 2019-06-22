@@ -4,7 +4,7 @@ import generation.abstracted.Graph
 import generation.abstracted.nodeNeighbors
 import generation.getNodeDistance
 import generation.structure.wallHeight
-import mythic.sculpting.Vertices
+import mythic.ent.Id
 import mythic.spatial.*
 import physics.Body
 import physics.getLookAtAngle
@@ -13,6 +13,7 @@ import scenery.MeshId
 import scenery.Shape
 import scenery.TextureId
 import simulation.*
+import kotlin.math.ceil
 
 private val floorOffset = Vector3(0f, 0f, -wallHeight / 2f)
 
@@ -38,68 +39,116 @@ fun newArchitectureMesh(meshInfo: MeshInfoMap, mesh: MeshId, position: Vector3, 
   )
 }
 
-val placeFloors: (MeshInfoMap, Graph) -> List<Hand> = { meshInfo, graph ->
-  val floorNodes = graph.nodes.values
-      .filter { node -> node.isWalkable }
+fun alignWithCeiling(meshInfo: MeshInfoMap) = { meshId: MeshId ->
+  val height = meshInfo[meshId]!!.shapeHeight
+  Vector3(0f, 0f, -height / 2f)
+}
 
-  val (tunnels, rooms) = floorNodes
-      .partition { graph.tunnels.contains(it.id) }
+fun alignWithFloor(meshInfo: MeshInfoMap) = { meshId: MeshId ->
+  val height = meshInfo[meshId]!!.shapeHeight
+  Vector3(0f, 0f, height / 2f)
+}
 
-  val alignment = { meshId: MeshId ->
-    val height = meshInfo[meshId]!!.shapeHeight
-    Vector3(0f, 0f, -height / 2f)
+fun <T> createSeries(gapSize: Float, segmentLength: Float, margin: Float, action: (Int, Float) -> T): List<T> {
+  val length = gapSize - margin * 2f
+  val stepCount = ceil(length / segmentLength).toInt()
+  val overflow = stepCount * segmentLength - length
+  val stepSize = if (stepCount > 1) segmentLength - overflow / (stepCount - 1) else 0f
+  val start = margin + segmentLength / 2f
+  return (0 until stepCount).map { step ->
+    val stepOffset = start + stepSize * step.toFloat()
+    action(step, stepOffset)
   }
+}
 
-  rooms
+fun tunnelNodes(graph: Graph) = graph.nodes.values
+    .filter { node -> node.isWalkable && graph.tunnels.contains(node.id) }
+
+fun roomNodes(graph: Graph) = graph.nodes.values
+    .filter { node -> node.isWalkable && !graph.tunnels.contains(node.id) }
+
+val placeRoomFloors: (MeshInfoMap, Graph) -> List<Hand> = { meshInfo, graph ->
+  roomNodes(graph)
       .map { node ->
-        val horizontalScale = node.radius * 2f
+        val horizontalScale = (node.radius + 1f) * 2f
         val mesh = MeshId.circleFloor
         newArchitectureMesh(
             meshInfo = meshInfo,
             mesh = MeshId.circleFloor,
-            position = node.position + floorOffset + alignment(mesh),
+            position = node.position + floorOffset + alignWithCeiling(meshInfo)(mesh),
             scale = Vector3(horizontalScale, horizontalScale, 1f),
             orientation = Quaternion()
         )
       }
-      .plus(tunnels
-          .flatMap { node ->
-            val segmentLength = 2.5f
-            val neighbors = nodeNeighbors(graph.connections, node.id).map { graph.nodes[it]!! }
-            val gapSize = getNodeDistance(neighbors[0], neighbors[1]) + segmentLength
-            val stepCount = (gapSize / segmentLength).toInt() + 1 // One extra to overlap the room
-            val stepSize = gapSize / (stepCount + 1).toFloat()
-            val vector = (neighbors[0].position - neighbors[1].position).normalize()
-            val start = neighbors[1].position + vector * (neighbors[1].radius + stepSize - segmentLength / 2f)
-            val minorOffset = 0.001f
-
-            val orientation = Quaternion().rotateZ(getLookAtAngle(vector))
-            (0 until stepCount).map { step ->
-              val minorMod = if (step % 2 == 0) -minorOffset else minorOffset
-              val minor = Vector3(0f, 0f, minorMod)
-              val mesh = MeshId.longStep
-              newArchitectureMesh(
-                  meshInfo = meshInfo,
-                  mesh = mesh,
-                  position = start + vector * stepSize * step.toFloat() + floorOffset + minor + alignment(mesh),
-                  scale = Vector3.unit,
-                  orientation = orientation
-              )
-            }
-
-          })
 }
 
-data class DoorwayInfo(
-    val position: Vector3,
-    val angle: Float
+data class TunnelInfo(
+    val start: Vector3,
+    val vector: Vector3,
+    val length: Float
 )
 
-fun sortWallVertices2(sectorCenter: Vector3, vertices: Vertices): Vertices {
-  if (vertices.size < 3)
-    return vertices
+fun getTunnelInfo(graph: Graph, node: Id, segmentLength: Float): TunnelInfo {
+  val neighbors = nodeNeighbors(graph.connections, node).map { graph.nodes[it]!! }
+  val length = getNodeDistance(neighbors[0], neighbors[1])
+  val vector = (neighbors[0].position - neighbors[1].position).normalize()
+  val start = neighbors[1].position + vector * neighbors[1].radius
 
-  return arrangePointsCounterClockwise(vertices)
+  return TunnelInfo(
+      start = start,
+      vector = vector,
+      length = length
+  )
+}
+
+val placeTunnelFloors: (MeshInfoMap, Graph) -> List<Hand> = { meshInfo, graph ->
+  tunnelNodes(graph)
+      .flatMap { node ->
+        val segmentLength = 2f
+        val info = getTunnelInfo(graph, node.id, segmentLength)
+        val minorOffset = 0.001f
+
+        val orientation = Quaternion().rotateZ(getLookAtAngle(info.vector))
+        createSeries(info.length, segmentLength, -0f) { step, stepOffset ->
+          val minorMod = if (step % 2 == 0) -minorOffset else minorOffset
+          val minor = Vector3(0f, 0f, minorMod)
+          val mesh = MeshId.longStep
+          newArchitectureMesh(
+              meshInfo = meshInfo,
+              mesh = mesh,
+              position = info.start + info.vector * stepOffset + floorOffset + minor + alignWithCeiling(meshInfo)(mesh),
+              scale = Vector3.unit,
+              orientation = orientation
+          )
+        }
+
+      }
+}
+
+val placeTunnelWalls: (MeshInfoMap, Graph) -> List<Hand> = { meshInfo, graph ->
+  tunnelNodes(graph)
+      .flatMap { node ->
+        val segmentLength = 4f
+        val info = getTunnelInfo(graph, node.id, segmentLength)
+        val lookAtAngle = getLookAtAngle(info.vector)
+        val halfWidth = 2f
+
+        createSeries(info.length, segmentLength, -0f) { step, stepOffset ->
+          val mesh = MeshId.squareWall
+          listOf(-1f, 1f).map { sideMod ->
+            val orientation = Quaternion().rotateZ(lookAtAngle + sideMod * Pi / 2f)
+            val sideOffset = Vector3(info.vector.y, -info.vector.x, 0f) * sideMod * halfWidth
+            newArchitectureMesh(
+                meshInfo = meshInfo,
+                mesh = mesh,
+                position = info.start + info.vector * stepOffset + floorOffset + sideOffset + alignWithFloor(meshInfo)(mesh),
+                scale = Vector3.unit,
+                orientation = orientation
+            )
+          }
+        }.flatten()
+
+      }
 }
 
 fun getDoorwayAngles(graph: Graph, node: Node): List<Float> {
@@ -110,66 +159,50 @@ fun getDoorwayAngles(graph: Graph, node: Node): List<Float> {
       }
 
   return points
-      .map {
-//        DoorwayInfo(
-//            position = it,
-//            angle = atan(it.xy() - node.position.xy())
-//        )
-        atan(it.xy() - node.position.xy())
-      }
+      .map { atan(it.xy() - node.position.xy()) }
       .sorted()
 }
 
 val placeRoomWalls: (MeshInfoMap, Graph) -> List<Hand> = { meshInfo, graph ->
-  val floorNodes = graph.nodes.values
-      .filter { node -> node.isWalkable }
-
-  val rooms = floorNodes
-      .filter { !graph.tunnels.contains(it.id) }
-
-  val alignment = { meshId: MeshId ->
-    val height = meshInfo[meshId]!!.shapeHeight
-    Vector3(0f, 0f, height / 2f)
-  }
-
-  rooms
+  roomNodes(graph)
       .flatMap { node ->
         val doorwayAngles = getDoorwayAngles(graph, node)
 
         val stripCount = doorwayAngles.size
-        doorwayAngles.mapIndexed { firstIndex, firstDoorway ->
+        doorwayAngles.mapIndexed { firstIndex, firstAngle ->
           val secondIndex = (firstIndex + 1) % stripCount
           val secondDoorway = doorwayAngles[secondIndex]
-          val firstAngle = firstDoorway
-          val secondAngle = if (secondDoorway <= firstDoorway)
+          val secondAngle = if (secondDoorway <= firstAngle)
             secondDoorway + Pi * 2f
           else
             secondDoorway
 
           val angleLength = secondAngle - firstAngle
-          val middleAngle = firstAngle + angleLength / 2f
-          val wallAngle = middleAngle
-          val wallPosition = node.position + projectVector3(wallAngle, node.radius, node.position.z)
-          val orientation = Quaternion().rotateZ(wallAngle)
-          val horizontalScale = node.radius * 2f
           val mesh = MeshId.squareWall
-          if (node.id == 6L || node.id == 7L) {
-            val k = 0
+          val segmentLength = 4f / node.radius
+          val margin = 1.6f / node.radius
+
+          createSeries(angleLength, segmentLength, margin) { step, stepOffset ->
+            val wallAngle = firstAngle + stepOffset
+            val wallPosition = node.position + projectVector3(wallAngle, node.radius, node.position.z)
+            val orientation = Quaternion().rotateZ(wallAngle)
+            newArchitectureMesh(
+                meshInfo = meshInfo,
+                mesh = mesh,
+                position = wallPosition + floorOffset + alignWithFloor(meshInfo)(mesh),
+                scale = Vector3.unit,
+                orientation = orientation
+            )
           }
-          newArchitectureMesh(
-              meshInfo = meshInfo,
-              mesh = mesh,
-              position = wallPosition + floorOffset + alignment(mesh),
-              scale = Vector3.unit,
-              orientation = orientation
-          )
-        }
+        }.flatten()
       }
 }
 
 private val architectureSteps = listOf(
-    placeFloors,
-    placeRoomWalls
+    placeRoomFloors,
+    placeRoomWalls,
+    placeTunnelFloors,
+    placeTunnelWalls
 )
 
 fun placeArchitecture(meshInfo: MeshInfoMap, graph: Graph): WorldTransform =
