@@ -2,6 +2,20 @@ import groovy.json.JsonSlurper
 
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
+def deleteme211
+
+class Utility {
+  static _blendConfig
+  static getAssetConfig = { projectDir ->
+    if (_blendConfig)
+      return _blendConfig
+
+    def configFile = new File("$projectDir/config/config.json")
+    _blendConfig = new JsonSlurper().parseText(configFile.text)
+    return _blendConfig
+  }
+}
+
 class ModelAssetsTask extends DefaultTask {
 
   @InputFiles
@@ -10,30 +24,17 @@ class ModelAssetsTask extends DefaultTask {
   @Input
   def File _projectDir
 
-  private Object _blendConfig
-
-  def getBlendConfig() {
-    if (_blendConfig)
-      return _blendConfig
-
-    def configFile = new File("$_projectDir/blend/config/config.json")
-    _blendConfig = new JsonSlurper().parseText(configFile.text)
-    return _blendConfig
-  }
-
   @TaskAction
   void execute(IncrementalTaskInputs inputs) {
     println inputs.incremental ? 'CHANGED inputs considered out of date'
         : 'ALL inputs considered out of date'
-//    if (!inputs.incremental)
-//      project.delete(outputDir.listFiles())
 
-    def blendConfig = getBlendConfig()
-    def blenderPath = blendConfig.paths.blender_executable
+    def config = Utility.getAssetConfig(_projectDir)
+    def executablePath = config.paths.blender
     inputs.outOfDate { change ->
       println "out of date: ${change.file.name}"
       def scriptPath = "$_projectDir/blend/scripts/export.py"
-      def proc = [blenderPath, change.file.absolutePath, '--background', '--python', scriptPath].execute()
+      def proc = [executablePath, change.file.absolutePath, '--background', '--python', scriptPath].execute()
       def sout = new StringBuilder(), serr = new StringBuilder()
       proc.consumeProcessOutput(sout, serr)
       proc.waitFor()
@@ -46,11 +47,50 @@ class ModelAssetsTask extends DefaultTask {
   }
 }
 
+class TextureAssetsTask extends DefaultTask {
+
+  @InputFiles
+  def Set<File> inputFiles
+
+  @Input
+  def File _projectDir
+
+  @TaskAction
+  void execute(IncrementalTaskInputs inputs) {
+    println inputs.incremental ? 'CHANGED inputs considered out of date'
+        : 'ALL inputs considered out of date'
+    def config = Utility.getAssetConfig(_projectDir)
+    def executablePath = config.paths.python
+    def args = [executablePath, "$_projectDir/scripts/textures.py"]
+    inputs.outOfDate { change ->
+      def filename = change.file.name
+      args.add filename[0..<filename.lastIndexOf('.')]
+      println "out of date: ${filename}"
+    }
+    println args
+    def proc = args.execute()
+    def sout = new StringBuilder(), serr = new StringBuilder()
+    proc.consumeProcessOutput(sout, serr)
+    proc.waitFor()
+    println "out> $sout err> $serr"
+    
+    inputs.removed { change ->
+      println "removed: ${name}"
+    }
+  }
+}
+
 task modelAssets(type: ModelAssetsTask) {
   inputFiles = fileTree("$projectDir/blend/models").matching { include '**/*.blend'}.getFiles()
   _projectDir = projectDir
 }
 
+task textureAssets(type: TextureAssetsTask) {
+  inputFiles = fileTree("$projectDir/textures").matching { include '**/*.ffxml'}.getFiles()
+  _projectDir = projectDir
+}
+
 processResources {
   dependsOn modelAssets
+  dependsOn textureAssets
 }

@@ -12,7 +12,7 @@ sub_dirs = [ 'architecture', 'objects']
 
 def export_model(dir, filename):
     filepath = os.path.abspath(os.path.join(dir, filename))
-    blender_path = config['paths']['blender_executable']
+    blender_path = config['paths']['blender']
     subprocess.call([blender_path, filepath, '--background', '--python', 'export.py'])
 
 
