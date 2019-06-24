@@ -21,7 +21,7 @@ typealias MeshInfoMap = Map<MeshId, Shape>
 
 fun newArchitectureMesh(meshInfo: MeshInfoMap, mesh: MeshId, position: Vector3, scale: Vector3 = Vector3.unit,
                         orientation: Quaternion = Quaternion(),
-                        texture: TextureId = TextureId.checkers): Hand {
+                        texture: TextureId = TextureId.checkersBlackWhite): Hand {
   val shape = meshInfo[mesh]!!
   return Hand(
       depiction = Depiction(
@@ -106,10 +106,10 @@ val placeTunnelFloors: (MeshInfoMap, Graph) -> List<Hand> = { meshInfo, graph ->
       .flatMap { node ->
         val segmentLength = 2f
         val info = getTunnelInfo(graph, node.id, segmentLength)
-        val minorOffset = 0.001f
 
         val orientation = Quaternion().rotateZ(getLookAtAngle(info.vector))
         createSeries(info.length, segmentLength, -0f) { step, stepOffset ->
+          val minorOffset = 0.001f
           val minorMod = if (step % 2 == 0) -minorOffset else minorOffset
           val minor = Vector3(0f, 0f, minorMod)
           val mesh = MeshId.longStep
@@ -135,9 +135,12 @@ val placeTunnelWalls: (MeshInfoMap, Graph) -> List<Hand> = { meshInfo, graph ->
 
         createSeries(info.length, segmentLength, -0f) { step, stepOffset ->
           val mesh = MeshId.squareWall
+          val minorOffset = 0.001f
+          val minorMod = if (step % 2 == 0) -minorOffset else minorOffset
+          val minor = Vector3(0f, 0f, minorMod)
           listOf(-1f, 1f).map { sideMod ->
             val orientation = Quaternion().rotateZ(lookAtAngle + sideMod * Pi / 2f)
-            val sideOffset = Vector3(info.vector.y, -info.vector.x, 0f) * sideMod * halfWidth
+            val sideOffset = Vector3(info.vector.y, -info.vector.x, 0f) * (sideMod + minorMod) * halfWidth
             newArchitectureMesh(
                 meshInfo = meshInfo,
                 mesh = mesh,

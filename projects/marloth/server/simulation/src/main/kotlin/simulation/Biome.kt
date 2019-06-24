@@ -24,14 +24,14 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
     Biome.checkers to BiomeInfo("checkers",
         enclosureRate = 0.5f,
         floorTexture = TextureId.cobblestone,
-        ceilingTexture = TextureId.checkers,
+        ceilingTexture = TextureId.checkersBlackWhite,
         wallTexture = TextureId.darkCheckers
     ),
     Biome.exit to BiomeInfo("exit",
         enclosureRate = 0f,
-        floorTexture = TextureId.swirl,
-        ceilingTexture = TextureId.swirl,
-        wallTexture = TextureId.swirl
+        floorTexture = TextureId.algae,
+        ceilingTexture = TextureId.algae,
+        wallTexture = TextureId.algae
     ),
     Biome.forest to BiomeInfo("forest",
         enclosureRate = 0.25f,
@@ -41,9 +41,9 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
     ),
     Biome.home to BiomeInfo("home",
         enclosureRate = 1f,
-        floorTexture = TextureId.redTile02,
-        ceilingTexture = TextureId.redTile01,
-        wallTexture = TextureId.redTile01
+        floorTexture = TextureId.redTile,
+        ceilingTexture = TextureId.redTile,
+        wallTexture = TextureId.redTile
     ),
     Biome.void to BiomeInfo("void",
         floorTexture = TextureId.none,

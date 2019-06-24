@@ -75,7 +75,7 @@ fun filterDepictions(depictions: Table<Depiction>, player: Player): Table<Depict
     else
       depictions
 
-fun convertSimpleDepiction(world: World, id: Id, mesh: MeshId): MeshElement? {
+fun convertSimpleDepiction(world: World, id: Id, mesh: MeshId, texture: TextureId? = null): MeshElement? {
   val body = world.bodyTable[id]!!
   val character = world.characterTable[id]
   val translate = Matrix().translate(body.position)
@@ -84,10 +84,16 @@ fun convertSimpleDepiction(world: World, id: Id, mesh: MeshId): MeshElement? {
   else
     translate.rotate(body.orientation)
 
+  val material = if (texture != null)
+    Material(texture = texture.name)
+  else
+    null
+
   return MeshElement(
       id = id,
       mesh = mesh,
-      transform = transform.scale(body.scale)
+      transform = transform.scale(body.scale),
+      material = material
   )
 }
 
@@ -100,7 +106,7 @@ fun convertSimpleDepiction(world: World, id: Id, depiction: Depiction): MeshElem
   if (mesh == null)
     return null
 
-  return convertSimpleDepiction(world, id, mesh)
+  return convertSimpleDepiction(world, id, mesh, depiction.texture)
 }
 
 fun convertComplexDepiction(world: World, id: Id, depiction: Depiction): ElementGroup {

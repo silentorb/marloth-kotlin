@@ -5,7 +5,7 @@ import subprocess
 
 def task_xml(input, output):
     return '''    <Task>
-        <Image value="" width="512" height="512" />
+        <Image value="" width="1024" height="1024" />
         <Selection value="" />
         <Filter value="{input}" />
         <Result path="{output}" />

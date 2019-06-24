@@ -15,7 +15,7 @@ import rendering.Renderer
 import scenery.TextureId
 
 data class TextureViewConfig(
-    var texture: TextureId = TextureId.checkers
+    var texture: TextureId = TextureId.checkersBlackWhite
 )
 
 fun drawTextureView(renderer: Renderer, config: TextureViewConfig, bounds: Bounds, canvas: Canvas) {

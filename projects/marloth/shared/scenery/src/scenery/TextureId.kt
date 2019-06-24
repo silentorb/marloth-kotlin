@@ -2,9 +2,12 @@ package scenery
 
 enum class TextureId {
   none,
+  algae,
   background,
+  bricks,
   dirt,
   checkers,
+  checkersBlackWhite,
   cobblestone,
   darkCheckers,
   debugYellow,
@@ -13,8 +16,6 @@ enum class TextureId {
   grass,
   greenLeaves,
   ground,
-  redTile01,
-  redTile02,
-  swirl,
+  redTile,
   woodDoor
 }

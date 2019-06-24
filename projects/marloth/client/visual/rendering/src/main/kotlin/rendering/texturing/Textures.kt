@@ -82,7 +82,7 @@ typealias TextureGeneratorMap = Map<TextureId, TextureGenerator>
 
 fun basicTextures(): Map<TextureId, OpaqueTextureAlgorithmSource> = mapOf(
 
-    TextureId.checkers to createCheckers(),
+    TextureId.checkersBlackWhite to createCheckers(),
 //    Textures.darkCheckers to createDarkCheckers(),
     TextureId.debugCyan to { solidColor(Vector3(0f, 1f, 1f)) },
     TextureId.debugMagenta to { solidColor(Vector3(1f, 0f, 1f)) },
