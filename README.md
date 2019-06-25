@@ -1,5 +1,12 @@
-# Dev Lab
+# Marloth Kotlin
 
+This project depends on the following external media software:
+* Blender 2.79
+* Filter Forge 8
+
+## IntelliJ Settings
+
+### Java Debugging
 ```
 !(this instanceof java.lang.ClassNotFoundException)
 && !(this instanceof java.lang.NumberFormatException)
