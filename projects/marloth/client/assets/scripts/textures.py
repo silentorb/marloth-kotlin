@@ -137,13 +137,13 @@ def prepare_animation(input_dir, name):
         step_name = get_step_name(name, i)
         time_step = i / step_max
         new_content = content[:value_start] + str(time_step) + content[value_end:]
-
         write_text_file(get_anim_temp_file(step_name), new_content)
 
     return [get_step_name(name, i) for i in step_range]
 
 
 def main():
+    # Down the line we may clean out the build/textures folder if the quantity of temp files becomes significant
     # shutil.rmtree(temp_path)
     ensure_dir_exists(temp_path)
     input_dir = prepare_path('textures')
