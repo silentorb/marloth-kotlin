@@ -45,7 +45,7 @@ fun generateWorld(meshInfo: MeshInfoMap, gameViewConfig: GameViewConfig): World 
   ))
 
   return pipe(initialWorld, listOf(
-      placeArchitecture(meshInfo, graph),
+      placeArchitecture(meshInfo, graph, dice),
       { world ->
         if (gameViewConfig.haveEnemies)
           addEnemies(world, boundary, dice)

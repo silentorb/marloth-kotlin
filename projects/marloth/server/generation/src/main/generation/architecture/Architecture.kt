@@ -9,6 +9,7 @@ import mythic.spatial.*
 import physics.Body
 import physics.getLookAtAngle
 import physics.voidNodeId
+import randomly.Dice
 import scenery.MeshId
 import scenery.Shape
 import scenery.TextureId
@@ -67,14 +68,17 @@ fun tunnelNodes(graph: Graph) = graph.nodes.values
 fun roomNodes(graph: Graph) = graph.nodes.values
     .filter { node -> node.isWalkable && !graph.tunnels.contains(node.id) }
 
-val placeRoomFloors: (MeshInfoMap, Graph) -> List<Hand> = { meshInfo, graph ->
+typealias Architect = (MeshInfoMap, Graph, Dice) -> List<Hand>
+
+val placeRoomFloors: Architect = { meshInfo, graph, dice ->
   roomNodes(graph)
       .map { node ->
-        val horizontalScale = (node.radius + 1f) * 2f
-        val mesh = MeshId.circleFloor
+        val floorMeshAdjustment = 1f / 4f
+        val horizontalScale = (node.radius + 1f) * 2f * floorMeshAdjustment
+        val mesh = if (dice.getBoolean()) MeshId.tallCircleFloor else MeshId.circleFloor
         newArchitectureMesh(
             meshInfo = meshInfo,
-            mesh = MeshId.circleFloor,
+            mesh = mesh,
             position = node.position + floorOffset + alignWithCeiling(meshInfo)(mesh),
             scale = Vector3(horizontalScale, horizontalScale, 1f),
             orientation = Quaternion()
@@ -101,7 +105,9 @@ fun getTunnelInfo(graph: Graph, node: Id, segmentLength: Float): TunnelInfo {
   )
 }
 
-val placeTunnelFloors: (MeshInfoMap, Graph) -> List<Hand> = { meshInfo, graph ->
+val placeTunnelFloors: Architect = { meshInfo, graph, dice ->
+  // Temporary improvement while the tunnel floor is rounded and the room floor isn't
+  val tempHeightBump = 0.05f
   tunnelNodes(graph)
       .flatMap { node ->
         val segmentLength = 2f
@@ -111,8 +117,8 @@ val placeTunnelFloors: (MeshInfoMap, Graph) -> List<Hand> = { meshInfo, graph ->
         createSeries(info.length, segmentLength, -0f) { step, stepOffset ->
           val minorOffset = 0.001f
           val minorMod = if (step % 2 == 0) -minorOffset else minorOffset
-          val minor = Vector3(0f, 0f, minorMod)
-          val mesh = MeshId.longStep
+          val minor = Vector3(0f, 0f, minorMod + tempHeightBump)
+          val mesh = if (dice.getBoolean()) MeshId.longPillowStep else MeshId.longStep
           newArchitectureMesh(
               meshInfo = meshInfo,
               mesh = mesh,
@@ -125,29 +131,33 @@ val placeTunnelFloors: (MeshInfoMap, Graph) -> List<Hand> = { meshInfo, graph ->
       }
 }
 
-val placeTunnelWalls: (MeshInfoMap, Graph) -> List<Hand> = { meshInfo, graph ->
+val placeTunnelWalls: Architect = { meshInfo, graph, dice ->
   tunnelNodes(graph)
       .flatMap { node ->
         val segmentLength = 4f
         val info = getTunnelInfo(graph, node.id, segmentLength)
         val lookAtAngle = getLookAtAngle(info.vector)
         val halfWidth = 2f
-
-        createSeries(info.length, segmentLength, -0f) { step, stepOffset ->
-          val mesh = MeshId.squareWall
-          val minorOffset = 0.001f
-          val minorMod = if (step % 2 == 0) -minorOffset else minorOffset
-          val minor = Vector3(0f, 0f, minorMod)
-          listOf(-1f, 1f).map { sideMod ->
-            val orientation = Quaternion().rotateZ(lookAtAngle + sideMod * Pi / 2f)
-            val sideOffset = Vector3(info.vector.y, -info.vector.x, 0f) * (sideMod + minorMod) * halfWidth
-            newArchitectureMesh(
-                meshInfo = meshInfo,
-                mesh = mesh,
-                position = info.start + info.vector * stepOffset + floorOffset + sideOffset + alignWithFloor(meshInfo)(mesh),
-                scale = Vector3.unit,
-                orientation = orientation
-            )
+        if (dice.getInt(0, 3) == 0) {
+          listOf()
+        } else {
+          createSeries(info.length, segmentLength, -0f) { step, stepOffset ->
+            val minorOffset = 0.001f
+            val minorMod = if (step % 2 == 0) -minorOffset else minorOffset
+            val minor = Vector3(0f, 0f, minorMod)
+            listOf(-1f, 1f).map { sideMod ->
+              val mesh = if (dice.getBoolean()) MeshId.pillowWall else MeshId.squareWall
+              val randomFlip = if (dice.getBoolean()) 1 else -1
+              val orientation = Quaternion().rotateZ(lookAtAngle + sideMod * randomFlip * Pi / 2f)
+              val sideOffset = Vector3(info.vector.y, -info.vector.x, 0f) * (sideMod + minorMod) * halfWidth
+              newArchitectureMesh(
+                  meshInfo = meshInfo,
+                  mesh = mesh,
+                  position = info.start + info.vector * stepOffset + floorOffset + sideOffset + alignWithFloor(meshInfo)(mesh),
+                  scale = Vector3.unit,
+                  orientation = orientation
+              )
+            }
           }
         }.flatten()
 
@@ -166,7 +176,7 @@ fun getDoorwayAngles(graph: Graph, node: Node): List<Float> {
       .sorted()
 }
 
-val placeRoomWalls: (MeshInfoMap, Graph) -> List<Hand> = { meshInfo, graph ->
+val placeRoomWalls: Architect = { meshInfo, graph, dice ->
   roomNodes(graph)
       .flatMap { node ->
         val doorwayAngles = getDoorwayAngles(graph, node)
@@ -181,21 +191,25 @@ val placeRoomWalls: (MeshInfoMap, Graph) -> List<Hand> = { meshInfo, graph ->
             secondDoorway
 
           val angleLength = secondAngle - firstAngle
-          val mesh = MeshId.squareWall
           val segmentLength = 4f / node.radius
           val margin = 1.6f / node.radius
-
-          createSeries(angleLength, segmentLength, margin) { step, stepOffset ->
-            val wallAngle = firstAngle + stepOffset
-            val wallPosition = node.position + projectVector3(wallAngle, node.radius, node.position.z)
-            val orientation = Quaternion().rotateZ(wallAngle)
-            newArchitectureMesh(
-                meshInfo = meshInfo,
-                mesh = mesh,
-                position = wallPosition + floorOffset + alignWithFloor(meshInfo)(mesh),
-                scale = Vector3.unit,
-                orientation = orientation
-            )
+          if (dice.getInt(0, 3) == 0) {
+            listOf()
+          } else {
+            createSeries(angleLength, segmentLength, margin) { step, stepOffset ->
+              val mesh = if (dice.getBoolean()) MeshId.pillowWall else MeshId.squareWall
+              val randomFlip = if (dice.getBoolean()) 0f else Pi
+              val wallAngle = firstAngle + stepOffset
+              val wallPosition = node.position + projectVector3(wallAngle, node.radius, node.position.z)
+              val orientation = Quaternion().rotateZ(wallAngle + randomFlip)
+              newArchitectureMesh(
+                  meshInfo = meshInfo,
+                  mesh = mesh,
+                  position = wallPosition + floorOffset + alignWithFloor(meshInfo)(mesh),
+                  scale = Vector3.unit,
+                  orientation = orientation
+              )
+            }
           }
         }.flatten()
       }
@@ -208,5 +222,5 @@ private val architectureSteps = listOf(
     placeTunnelWalls
 )
 
-fun placeArchitecture(meshInfo: MeshInfoMap, graph: Graph): WorldTransform =
-    addHands(architectureSteps.flatMap { it(meshInfo, graph) })
+fun placeArchitecture(meshInfo: MeshInfoMap, graph: Graph, dice: Dice): WorldTransform =
+    addHands(architectureSteps.flatMap { it(meshInfo, graph, dice) })

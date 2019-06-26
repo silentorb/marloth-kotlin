@@ -24,9 +24,12 @@ enum class MeshId {
 
   // Architecture
   circleFloor,
+  longPillowStep,
   longStep,
+  pillowWall,
   squareFloor,
-  squareWall
+  squareWall,
+  tallCircleFloor
 }
 
 enum class ArmatureId {

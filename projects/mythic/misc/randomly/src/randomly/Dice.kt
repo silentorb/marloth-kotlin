@@ -32,6 +32,8 @@ class Dice(private val seed: Long) {
     return result
   }
 
+  fun getBoolean(): Boolean = getInt(0, 1) == 1
+
   companion object {
     val global = Dice()
   }
