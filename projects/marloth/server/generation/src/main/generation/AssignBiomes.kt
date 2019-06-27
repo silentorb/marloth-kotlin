@@ -3,14 +3,14 @@ package generation
 import mythic.ent.Id
 import simulation.*
 
-typealias BiomeMap = Map<Id, Biome>
+typealias BiomeMap = Map<Id, BiomeId>
 
 val randomBiomes = listOf(
-    Biome.checkers,
-    Biome.forest
+    BiomeId.checkers,
+    BiomeId.forest
 )
 
-fun newBiomeGrid(input: WorldInput, biomes: List<Biome>): Grid<Biome> {
+fun newBiomeGrid(input: WorldInput, biomes: List<BiomeId>): Grid<BiomeId> {
   val gridScale = 0.5f
   val dimensions = input.boundary.dimensions * gridScale
   val width = dimensions.x.toInt()
@@ -20,7 +20,7 @@ fun newBiomeGrid(input: WorldInput, biomes: List<Biome>): Grid<Biome> {
   return voronoi(width, height, anchors)
 }
 
-private fun normalizeGrid(grid: Grid<Biome>, boundary: WorldBoundary): Grid<Biome> {
+private fun normalizeGrid(grid: Grid<BiomeId>, boundary: WorldBoundary): Grid<BiomeId> {
   val offset = (boundary.dimensions / 2f)
   return { x, y ->
     grid(
@@ -30,7 +30,7 @@ private fun normalizeGrid(grid: Grid<Biome>, boundary: WorldBoundary): Grid<Biom
   }
 }
 
-private fun logGrid(grid: Grid<Biome>, boundary: WorldBoundary) {
+private fun logGrid(grid: Grid<BiomeId>, boundary: WorldBoundary) {
   for (y in 0 until (boundary.dimensions.y).toInt()) {
     val line = (0 until (boundary.dimensions.x).toInt()).map { x ->
       grid(
@@ -43,7 +43,7 @@ private fun logGrid(grid: Grid<Biome>, boundary: WorldBoundary) {
   }
 }
 
-typealias BiomeGrid = Grid<Biome>
+typealias BiomeGrid = Grid<BiomeId>
 
 fun newBiomeGrid(input: WorldInput) =
     normalizeGrid(clampGrid(newBiomeGrid(input, randomBiomes)), input.boundary)
@@ -57,7 +57,7 @@ fun newBiomeGrid(input: WorldInput) =
 
 fun fillNodeBiomes(biomeGrid: BiomeGrid, nodes: NodeTable) =
     nodes.mapValues { (_, node) ->
-      if (node.biome == Biome.void)
+      if (node.biome == BiomeId.void)
         node.copy(biome = biomeGrid(node.position.x, node.position.y))
       else
         node

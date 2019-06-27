@@ -19,7 +19,7 @@ fun getNextPathFace(world: World, knowledge: Knowledge, path: Path): Id? {
 fun pathIsAccessible(world: World, knowledge: Knowledge, path: Path): Boolean =
     getNextPathFace(world, knowledge, path) != null
 
-val ignoredBiomes = listOf(Biome.home, Biome.exit)
+val ignoredBiomes = listOf(BiomeId.home, BiomeId.exit)
 
 fun startRoaming(world: World, knowledge: Knowledge): Path? {
   val body = world.bodyTable[knowledge.spiritId]!!

@@ -68,7 +68,7 @@ fun createRoomNode(boundary: WorldBoundary, nodes: List<Node>, id: Id, dice: Dic
       radius = radius,
       isSolid = false,
       isWalkable = true,
-      biome = Biome.void
+      biome = BiomeId.void
   )
 }
 
@@ -119,7 +119,7 @@ fun applyInitialBiomes(biomeGrid: BiomeGrid, graph: Graph): NodeTable {
 //  val exit = getDeadend(graph, 1)
   val remainingNodes = graph.nodes.minus(home/*.plus(exit)*/)
   val biomeMap = remainingNodes.mapValues { (_, node) -> biomeGrid(node.position.x, node.position.y) }
-      .plus(home.associate { Pair(it, Biome.home) })
+      .plus(home.associate { Pair(it, BiomeId.home) })
 //      .plus(exit.associate { Pair(it, Biome.exit) })
 
   return graph.nodes.mapValues {
@@ -138,11 +138,11 @@ fun createAndMixTunnels(graph: Graph): Graph {
 }
 
 fun prepareDoorways(graph: Graph): Graph {
-  val homeNodes = graph.nodes.values.filter { it.biome == Biome.home }
+  val homeNodes = graph.nodes.values.filter { it.biome == BiomeId.home }
   val doorways = homeNodes.flatMap { node ->
     connections(graph, node).mapNotNull { connection ->
       val otherNode = connection.other(graph, node)
-      if (otherNode.biome != Biome.home && connection.type == ConnectionType.tunnel) {
+      if (otherNode.biome != BiomeId.home && connection.type == ConnectionType.tunnel) {
         val origin = getCenter(node, otherNode)
         val position = origin + (otherNode.position - node.position).normalize() * 0.2f
         PreTunnel(connection, position)
@@ -153,7 +153,7 @@ fun prepareDoorways(graph: Graph): Graph {
   val newTunnels = createTunnelNodes(graph, doorways)
   val doorwayNodeIds = newTunnels.nodes.map { it.key }
   return graph.copy(
-      nodes = graph.nodes.plus(newTunnels.nodes.mapValues { it.value.copy(biome = Biome.home) }),
+      nodes = graph.nodes.plus(newTunnels.nodes.mapValues { it.value.copy(biome = BiomeId.home) }),
       connections = graph.connections.plus(newTunnels.connections).minus(doorways.map { it.connection }),
       doorways = graph.doorways.plus(doorwayNodeIds)
   )

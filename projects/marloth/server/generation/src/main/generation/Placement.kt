@@ -4,17 +4,11 @@ import intellect.Pursuit
 import intellect.Spirit
 import mythic.ent.Id
 import mythic.ent.IdSource
-import mythic.ent.entityMap
 import mythic.ent.newIdSource
-import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
-import mythic.spatial.getCenter
-import mythic.spatial.getVector3Center
-import physics.Body
 import physics.voidNode
 import randomly.Dice
 import simulation.*
-import simulation.data.EntityTemplates
 import simulation.data.creatures
 
 data class CharacterTemplate(
@@ -189,7 +183,7 @@ fun addVoidNode(realm: Realm): Realm =
     )
 
 fun finalizeRealm(input: WorldInput, realm: Realm): World {
-  val playerNode = realm.nodeTable.values.first { it.biome == Biome.home }
+  val playerNode = realm.nodeTable.values.first { it.biome == BiomeId.home }
   val scale = calculateWorldScale(input.boundary.dimensions)
   val nextId = newIdSource(1)
   val deck = Deck()

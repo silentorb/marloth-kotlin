@@ -9,7 +9,7 @@ data class Node(
     val position: Vector3,
     val radius: Float,
     val isWalkable: Boolean,
-    val biome: Biome,
+    val biome: BiomeId,
     val isSolid: Boolean,
     val floors: MutableList<Id> = mutableListOf(),
     val ceilings: MutableList<Id> = mutableListOf(),

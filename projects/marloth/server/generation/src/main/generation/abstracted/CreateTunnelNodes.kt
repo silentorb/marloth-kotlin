@@ -2,7 +2,6 @@ package generation.abstracted
 
 import generation.getCenter
 import generation.structure.idSourceFromNodes
-import generation.structure.wallHeight
 import mythic.ent.entityMap
 import mythic.spatial.Vector3
 import simulation.*
@@ -34,7 +33,7 @@ fun createTunnelNodes(graph: Graph, preTunnels: List<PreTunnel>): Graph {
             radius = tunnelRadius,
             isSolid = false,
             isWalkable = true,
-            biome = Biome.void
+            biome = BiomeId.void
         )
       }
 

@@ -1,6 +1,5 @@
 package physics
 
-import mythic.ent.Entity
 import mythic.ent.Id
 import mythic.ent.Table
 import mythic.sculpting.ImmutableFaceTable
@@ -19,7 +18,7 @@ val voidNode: Node = Node(
     radius = 0f,
     isSolid = false,
     isWalkable = false,
-    biome = Biome.void
+    biome = BiomeId.void
 )
 
 interface SimpleBody {

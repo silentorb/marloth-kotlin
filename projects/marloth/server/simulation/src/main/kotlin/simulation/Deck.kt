@@ -1,11 +1,12 @@
 package simulation
 
-import scenery.Shape
 import intellect.Spirit
 import mythic.ent.*
 import physics.Body
 import physics.DynamicBody
 import randomly.Dice
+import scenery.Shape
+import simulation.particles.ParticleEffect
 
 fun <T> mapTable(table: Table<T>, action: (Id, T) -> T): Table<T> =
     table.mapValues { (id, value) -> action(id, value) }
@@ -25,6 +26,7 @@ data class Deck(
     val items: Table<Item> = mapOf(),
     val lights: Table<Light> = mapOf(),
     val missiles: Table<Missile> = mapOf(),
+    val particleEffects: Table<ParticleEffect> = mapOf(),
     val players: Table<Player> = mapOf(),
     val spirits: Table<Spirit> = mapOf(),
     val interactables: Table<Interactable> = mapOf()
@@ -41,6 +43,7 @@ data class Deck(
       items = items.plus(other.items),
       lights = lights.plus(other.lights),
       missiles = missiles.plus(other.missiles),
+      particleEffects = particleEffects.plus(other.particleEffects),
       players = players.plus(other.players),
       spirits = spirits.plus(other.spirits),
       interactables = interactables.plus(other.interactables)
@@ -72,6 +75,7 @@ fun toDeck(hand: Hand, id: Id): Deck =
         items = nullableList(hand.item),
         lights = nullableList(id, hand.light),
         missiles = nullableList(hand.missile),
+        particleEffects = nullableList(id, hand.particleEffect),
         players = nullableList(hand.player),
         spirits = nullableList(hand.spirit),
         interactables = nullableList(id, hand.interactable)
@@ -101,14 +105,6 @@ typealias WorldTransform = (World) -> World
 
 typealias WorldPair = Pair<World, World>
 
-//fun addDeck(world: World, deck: Deck, nextId: IdSource): World {
-//  val newDeck = world.deck.plus(deck)
-//  return world.copy(
-//      deck = newDeck,
-//      nextId = nextId()
-//  )
-//}
-
 fun toDeck(hand: IdHand) = toDeck(hand.hand, hand.id)
 
 fun toDeck(hands: List<IdHand>): Deck =
@@ -129,7 +125,7 @@ val addDeck: ((IdSource) -> List<IdHand>) -> WorldTransform = { deckSource ->
 }
 
 fun addHands(hands: List<Hand>): WorldTransform =
-  addDeck { nextId -> hands.map { IdHand(nextId(), it) } }
+    addDeck { nextId -> hands.map { IdHand(nextId(), it) } }
 
 fun addDecks(deckSources: List<(IdSource) -> List<IdHand>>): WorldTransform {
   return pipe(deckSources.map(addDeck))
@@ -150,6 +146,7 @@ fun removeEntities(deck: Deck, removeIds: List<Id>): Deck {
       items = deck.items.filterKeys(isActive),
       lights = deck.lights.filterKeys(isActive),
       missiles = deck.missiles.filterKeys(isActive),
+      particleEffects = deck.particleEffects.filterKeys(isActive),
       players = deck.players.filterKeys(isActive),
       spirits = deck.spirits.filterKeys(isActive),
       interactables = deck.interactables.filterKeys(isActive)

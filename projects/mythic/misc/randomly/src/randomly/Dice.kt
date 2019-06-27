@@ -18,7 +18,13 @@ class Dice(private val seed: Long) {
 
   fun get(max: Vector2) = Vector2(getFloat(max.x), getFloat(max.y))
 
-  fun <T> getItem(list: List<T>) = list[random.nextInt(list.size)]
+  fun <T> getItem(list: List<T>): T {
+    assert(list.isNotEmpty())
+    return if (list.size == 1)
+      list.first()
+    else
+      list[random.nextInt(list.size)]
+  }
 
   fun <T> take(list: List<T>, count: Int): List<T> {
     assert(count <= list.size)

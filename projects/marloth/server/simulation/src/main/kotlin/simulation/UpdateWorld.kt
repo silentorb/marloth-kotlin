@@ -4,26 +4,12 @@ import intellect.Spirit
 import intellect.execution.pursueGoals
 import intellect.updateAiState
 import mythic.ent.*
-import mythic.spatial.Pi2
 import physics.*
 import randomly.Dice
 import simulation.input.updatePlayer
+import simulation.particles.updateParticleEffect
 
 const val simulationDelta = 1f / 60f
-
-fun <T> updateField(defaultValue: T, newValue: T?): T =
-    if (newValue != null)
-      newValue
-    else
-      defaultValue
-
-fun simplifyRotation(value: Float): Float =
-    if (value > Pi2)
-      value % (Pi2)
-    else if (value < -Pi2)
-      -(Math.abs(value) % Pi2)
-    else
-      value
 
 fun getFinished(deck: Deck): List<Id> {
   return deck.missiles.values
@@ -46,25 +32,12 @@ fun aliveSpirits(deck: Deck): Table<Spirit> =
       character.isAlive
     }
 
-fun generateIntermediateRecords(world: World, commands: Commands, delta: Float): Intermediate {
-//  val collisions: Collisions = world.bodies
-//      .filter { it.velocity != Vector3.zero }
-//      .flatMap { body ->
-//        val offset = body.velocity * delta
-//        val wallsInRange = wallsInCollisionRange(world.realm, body.node)
-//        val faces = wallsInRange.map { world.realm.mesh.faces[it]!! }
-////        val walls = getWallCollisions(MovingBody(body.radius!!, body.position), offset, faces)
-////        walls.map { Collision(body.id, null, it.wall, it.hitPoint, it.directGap, it.travelingGap) }
-//      }
-//      .plus(getBodyCollisions(world.deck.bodies, world.characterTable, world.deck.missiles.values))
-  val activatedAbilities = getActivatedAbilities(world, commands)
-
-  return Intermediate(
-      commands = commands,
-      activatedAbilities = activatedAbilities,
-      collisions = listOf()
-  )
-}
+fun generateIntermediateRecords(world: World, commands: Commands): Intermediate =
+    Intermediate(
+        commands = commands,
+        activatedAbilities = getActivatedAbilities(world, commands),
+        collisions = listOf()
+    )
 
 fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: World, data: Intermediate): (Deck) -> Deck =
     { deck ->
@@ -81,6 +54,7 @@ fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: 
           depictions = mapTable(deck.depictions, updateDepiction(bodyWorld, animationDurations)),
           characters = mapTableValues(deck.characters, updateCharacter(bodyWorld, collisionMap, commands, activatedAbilities)),
           missiles = mapTableValues(deck.missiles, updateMissile(bodyWorld, collisionMap, simulationDelta)),
+          particleEffects = mapTableValues(deck.particleEffects, updateParticleEffect(dice, simulationDelta)),
           players = mapTableValues(deck.players, updatePlayer(data.commands)),
           spirits = mapTableValues(deck.spirits, updateAiState(bodyWorld, simulationDelta))
       )
@@ -98,7 +72,7 @@ fun newEntities(world: World, nextId: IdSource, data: Intermediate): (Deck) -> D
 fun updateWorldDeck(animationDurations: AnimationDurationMap, commands: Commands, delta: Float): (World) -> World =
     { world ->
       val nextId: IdSource = newIdSource(world.nextId)
-      val data = generateIntermediateRecords(world, commands, delta)
+      val data = generateIntermediateRecords(world, commands)
 
       val newDeck = pipe(world.deck, listOf(
           updateEntities(world.dice, animationDurations, world, data),

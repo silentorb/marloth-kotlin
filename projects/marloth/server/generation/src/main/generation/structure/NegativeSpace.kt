@@ -183,7 +183,7 @@ fun getDistinctEdges(edges: Edges) =
     edges.distinctBy { it.vertices.map { it.hashCode() }.sorted() }
 
 fun createSpaceNode(sectorCenter: Vector3, nextId: IdSource): Node {
-  return createSecondaryNode(sectorCenter, nextId, true, Biome.void)
+  return createSecondaryNode(sectorCenter, nextId, true, BiomeId.void)
 }
 
 fun newSpaceNode(idSources: StructureIdSources, realm: StructureRealm, walls: List<ImmutableFace>): Triple<Node, ConnectionTable, ImmutableFaceTable> {

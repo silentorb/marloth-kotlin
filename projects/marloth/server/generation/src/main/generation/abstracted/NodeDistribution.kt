@@ -1,13 +1,12 @@
 package generation.abstracted
 
 import generation.getNodeDistance
-import generation.structure.wallHeight
 import mythic.ent.firstSortedBy
 import mythic.spatial.Vector3
 import mythic.spatial.withinRangeFast
 import org.joml.Vector3i
 import randomly.Dice
-import simulation.Biome
+import simulation.BiomeId
 import simulation.Node
 import simulation.WorldBoundary
 
@@ -200,7 +199,7 @@ fun distributeNodes(boundary: WorldBoundary, count: Int, dice: Dice): List<Node>
           radius = calculateRadius(position, nodes, dice),
           isSolid = false,
           isWalkable = true,
-          biome = Biome.void
+          biome = BiomeId.void
       )
 //      matrix[i] = node.id
       nodes.add(node)

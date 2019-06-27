@@ -5,6 +5,7 @@ import intellect.Spirit
 import mythic.ent.Id
 import physics.Body
 import physics.DynamicBody
+import simulation.particles.ParticleEffect
 
 data class Hand(
     val ambientAudioEmitter: AmbientAudioEmitter? = null,
@@ -18,6 +19,7 @@ data class Hand(
     val item: Item? = null,
     val light: Light? = null,
     val missile: Missile? = null,
+    val particleEffect: ParticleEffect? = null,
     val player: Player? = null,
     val spirit: Spirit? = null,
     val interactable: Interactable? = null

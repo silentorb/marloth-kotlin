@@ -6,7 +6,7 @@ import mythic.ent.Id
 import mythic.ent.Table
 import mythic.spatial.Vector3
 import physics.SimpleBody
-import simulation.Biome
+import simulation.BiomeId
 import simulation.World
 
 data class CharacterMemory(
@@ -39,7 +39,7 @@ fun updateCharacterKnowledge(world: World, character: Character, knowledge: Know
         position = body.position,
         node = body.node,
         faction = c.faction,
-        targetable = c.isAlive && (node == null || node.biome != Biome.home)
+        targetable = c.isAlive && (node == null || node.biome != BiomeId.home)
     ))
   }
 
