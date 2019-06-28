@@ -2,7 +2,7 @@
 <Filter>
 	<Components>
 		<Result id="result">
-			<Source source="tiles2 01"/>
+			<Source source="blend6 02"/>
 			<FilterType value="0"/>
 			<Advanced value="false"/>
 			<Lighting>
@@ -56,9 +56,9 @@
 			<SourceB source="add 02" red="0.9000000000000000222" green="0.5" blue="0.1000000000000000056" alpha="1"/>
 		</Add>
 		<Blend6 id="blend6 01">
-			<Foreground red="0.5921568627450980449" green="0.3529411764705882026" blue="0.1372549019607843257" alpha="1"/>
+			<Foreground red="0.5921568627450980449" green="0.3368147396889790146" blue="0.1065882352941176781" alpha="1"/>
 			<Background red="0.3176470588235293935" green="0.023529411764705882" blue="0.0039215686274509803" alpha="1"/>
-			<Opacity source="perlinnoise2 01" value="0.5"/>
+			<Opacity source="levels3 01" value="0.5"/>
 			<Mode value="0"/>
 		</Blend6>
 		<Blend6 id="blend6 02">
@@ -67,20 +67,32 @@
 			<Opacity source="add 03" value="0.5"/>
 			<Mode value="0"/>
 		</Blend6>
+		<Blend6 id="blend6 03">
+			<Foreground source="rotate2 01" red="1" green="1" blue="1" alpha="1"/>
+			<Background source="loopaccumulated 01" red="0" green="0" blue="0" alpha="1"/>
+			<Opacity value="1"/>
+			<Mode value="0"/>
+		</Blend6>
+		<Blend6 id="blend6 04">
+			<Foreground source="offset4 01" red="1" green="1" blue="1" alpha="1"/>
+			<Background source="offset4 02" red="0" green="0" blue="0" alpha="1"/>
+			<Opacity value="1"/>
+			<Mode value="0"/>
+		</Blend6>
 		<BomberPlus3 id="bomberplus3 01">
 			<ParticleInput red="1" green="1" blue="1" alpha="1"/>
 			<Background red="0" green="0" blue="0" alpha="1"/>
 			<Opacity value="1"/>
-			<Size value="0.1600000000000000033"/>
-			<Rotation value="0"/>
+			<Size value="0.2000000000000000111"/>
+			<Rotation value="0.4320000000000000506"/>
 			<OffsetH value="1"/>
 			<OffsetV value="0"/>
 			<Squash value="0"/>
 			<OpacityChaos value="0"/>
-			<SizeChaos value="0"/>
+			<SizeChaos value="0.0400000000000000008"/>
 			<RotationChaos value="0"/>
-			<OffsetChaosH value="0"/>
-			<OffsetChaosV value="0"/>
+			<OffsetChaosH value="0.0200000000000000004"/>
+			<OffsetChaosV value="0.0200000000000000004"/>
 			<SquashChaos value="0"/>
 			<Roughness value="0.1000000000000000056"/>
 			<DepthMap/>
@@ -89,25 +101,29 @@
 			<LayerOrder value="0"/>
 			<DepthSorting value="0"/>
 			<Details value="0"/>
-			<ParticleRepeats value="8"/>
+			<ParticleRepeats source="intslidercontrol 01" value="8">
+				<Step value="1"/>
+				<Offset value="0"/>
+				<Flip value="false"/>
+			</ParticleRepeats>
 			<ParticlePerCell value="1"/>
 			<Variation value="1"/>
 			<HDRMode value="false"/>
 		</BomberPlus3>
 		<BomberPlus3 id="bomberplus3 02">
-			<ParticleInput red="1" green="1" blue="1" alpha="1"/>
+			<ParticleInput source="subtract 01" red="1" green="1" blue="1" alpha="1"/>
 			<Background red="0" green="0" blue="0" alpha="1"/>
 			<Opacity value="1"/>
-			<Size value="0.1600000000000000033"/>
+			<Size value="0.6300000000000000044"/>
 			<Rotation value="0"/>
 			<OffsetH value="0"/>
 			<OffsetV value="1"/>
 			<Squash value="0"/>
 			<OpacityChaos value="0"/>
-			<SizeChaos value="0"/>
+			<SizeChaos value="0.0400000000000000008"/>
 			<RotationChaos value="0"/>
-			<OffsetChaosH value="0"/>
-			<OffsetChaosV value="0"/>
+			<OffsetChaosH value="0.0100000000000000002"/>
+			<OffsetChaosV value="0.0100000000000000002"/>
 			<SquashChaos value="0"/>
 			<Roughness value="0.1000000000000000056"/>
 			<DepthMap/>
@@ -116,25 +132,29 @@
 			<LayerOrder value="0"/>
 			<DepthSorting value="0"/>
 			<Details value="0"/>
-			<ParticleRepeats value="8"/>
+			<ParticleRepeats source="intslidercontrol 01" value="8">
+				<Step value="1"/>
+				<Offset value="0"/>
+				<Flip value="false"/>
+			</ParticleRepeats>
 			<ParticlePerCell value="1"/>
 			<Variation value="1"/>
 			<HDRMode value="false"/>
 		</BomberPlus3>
 		<BomberPlus3 id="bomberplus3 03">
-			<ParticleInput red="1" green="1" blue="1" alpha="1"/>
+			<ParticleInput source="rotate2 02" red="1" green="1" blue="1" alpha="1"/>
 			<Background red="0" green="0" blue="0" alpha="1"/>
 			<Opacity value="1"/>
-			<Size value="0.1600000000000000033"/>
+			<Size value="1"/>
 			<Rotation value="0"/>
 			<OffsetH value="0"/>
 			<OffsetV value="0"/>
 			<Squash value="0"/>
 			<OpacityChaos value="0"/>
-			<SizeChaos value="0"/>
+			<SizeChaos value="0.0599999999999999978"/>
 			<RotationChaos value="0"/>
-			<OffsetChaosH value="0"/>
-			<OffsetChaosV value="0"/>
+			<OffsetChaosH value="0.0100000000000000002"/>
+			<OffsetChaosV value="0.0100000000000000002"/>
 			<SquashChaos value="0"/>
 			<Roughness value="0.1000000000000000056"/>
 			<DepthMap/>
@@ -143,25 +163,29 @@
 			<LayerOrder value="0"/>
 			<DepthSorting value="0"/>
 			<Details value="0"/>
-			<ParticleRepeats value="8"/>
+			<ParticleRepeats source="intslidercontrol 01" value="8">
+				<Step value="1"/>
+				<Offset value="0"/>
+				<Flip value="false"/>
+			</ParticleRepeats>
 			<ParticlePerCell value="1"/>
 			<Variation value="1"/>
 			<HDRMode value="false"/>
 		</BomberPlus3>
 		<BomberPlus3 id="bomberplus3 04">
-			<ParticleInput red="1" green="1" blue="1" alpha="1"/>
+			<ParticleInput source="loop 01" red="1" green="1" blue="1" alpha="1"/>
 			<Background red="0" green="0" blue="0" alpha="1"/>
 			<Opacity value="1"/>
-			<Size value="0.1600000000000000033"/>
+			<Size value="1"/>
 			<Rotation value="0"/>
 			<OffsetH value="1"/>
 			<OffsetV value="1"/>
 			<Squash value="0"/>
 			<OpacityChaos value="0"/>
-			<SizeChaos value="0"/>
+			<SizeChaos value="0.0700000000000000067"/>
 			<RotationChaos value="0"/>
-			<OffsetChaosH value="0"/>
-			<OffsetChaosV value="0"/>
+			<OffsetChaosH value="0.0200000000000000004"/>
+			<OffsetChaosV value="0.0200000000000000004"/>
 			<SquashChaos value="0"/>
 			<Roughness value="0.1000000000000000056"/>
 			<DepthMap/>
@@ -170,37 +194,159 @@
 			<LayerOrder value="0"/>
 			<DepthSorting value="0"/>
 			<Details value="0"/>
-			<ParticleRepeats value="8"/>
+			<ParticleRepeats source="intslidercontrol 01" value="8">
+				<Step value="1"/>
+				<Offset value="0"/>
+				<Flip value="false"/>
+			</ParticleRepeats>
 			<ParticlePerCell value="1"/>
 			<Variation value="1"/>
 			<HDRMode value="false"/>
 		</BomberPlus3>
+		<Ellipse id="ellipse 01">
+			<Color red="1" green="1" blue="1" alpha="1"/>
+			<Background red="1" green="1" blue="1" alpha="0"/>
+			<Radius value="0.1600000000000000033"/>
+			<Rotation value="0"/>
+			<Squash value="0"/>
+			<BevelWidth value="0.2000000000000000111"/>
+			<BevelCurve value="0"/>
+		</Ellipse>
+		<Ellipse id="ellipse 02">
+			<Color red="1" green="1" blue="1" alpha="1"/>
+			<Background red="1" green="1" blue="1" alpha="0"/>
+			<Radius value="0.2000000000000000111"/>
+			<Rotation value="0"/>
+			<Squash value="-0.4000000000000000222"/>
+			<BevelWidth value="0.2000000000000000111"/>
+			<BevelCurve value="0"/>
+		</Ellipse>
+		<Frame2 id="frame2 01">
+			<Contents source="scale2 01" red="0.4901960784313725283" green="0.627450980392156854" blue="0.7058823529411765163" alpha="1"/>
+			<InnerFrame red="0" green="0" blue="0" alpha="1"/>
+			<OuterFrame red="0" green="0" blue="0" alpha="1"/>
+			<Margins red="0" green="0" blue="0" alpha="1"/>
+			<FrameWidth value="0.1499999999999999944"/>
+			<MarginWidth value="0"/>
+			<Corners value="0"/>
+			<Proportional value="false"/>
+			<FixedSize value="false"/>
+			<Bevel value="0"/>
+		</Frame2>
+		<GetAlpha2 id="getalpha2 02">
+			<Source source="polygon4 01" red="0.3647058823529411575" green="0.0627450980392156854" blue="0.7058823529411765163" alpha="1"/>
+			<Invert value="false"/>
+		</GetAlpha2>
+		<IntSliderControl id="intslidercontrol 01">
+			<Name value-en="repeat"/>
+			<UseRemapping value="false"/>
+			<Value value="10"/>
+			<RangeMax value="20"/>
+			<ClampRange value="false"/>
+		</IntSliderControl>
+		<Levels3 id="levels3 01">
+			<Source source="perlinnoise2 01"/>
+			<BlackPoint value="0.2999999999999999889"/>
+			<Gamma value="0"/>
+			<WhitePoint value="1"/>
+			<PreserveColor value="false"/>
+		</Levels3>
+		<Loop id="loop 01">
+			<Accumulator source="blend6 03"/>
+			<Iterations value="6"/>
+		</Loop>
+		<LoopAccumulated id="loopaccumulated 01" master="loop 01">
+			<Initial red="0" green="0" blue="0" alpha="0"/>
+			<IterationPreview value="1"/>
+		</LoopAccumulated>
+		<LoopPosition id="loopposition 01" master="loop 01">
+			<Start red="0.1700000000000000122" green="0.1700000000000000122" blue="0.1700000000000000122" alpha="1"/>
+			<End red="1" green="1" blue="1" alpha="1"/>
+			<IterationPreview value="1"/>
+		</LoopPosition>
+		<Offset4 id="offset4 01">
+			<Source source="ellipse 01"/>
+			<OffsetX value="1.2099999999999999645"/>
+			<OffsetY value="0"/>
+			<Percentage value="1"/>
+			<Mode value="0"/>
+		</Offset4>
+		<Offset4 id="offset4 02">
+			<Source source="ellipse 02"/>
+			<OffsetX value="1.1399999999999999023"/>
+			<OffsetY value="0"/>
+			<Percentage value="1"/>
+			<Mode value="0"/>
+		</Offset4>
 		<PerlinNoise2 id="perlinnoise2 01">
 			<Noise red="1" green="1" blue="1" alpha="1"/>
 			<Background red="0" green="0" blue="0" alpha="1"/>
-			<Roughness value="0.2000000000000000111"/>
+			<Roughness value="0.7399999999999999911"/>
 			<Scale value="2.5"/>
 			<Stretch value="0"/>
 			<Angle value="0"/>
 			<Details value="1"/>
-			<Contrast value="0.25"/>
-			<Variation value="1"/>
+			<Contrast value="0.3800000000000000044"/>
+			<Variation value="4"/>
 			<OctaveCurve value="0"/>
 		</PerlinNoise2>
-		<Tiles2 id="tiles2 01">
-			<Color red="0.6589147286821706029" green="0.2186047446920397486" blue="0.1174809206177513388" alpha="1"/>
+		<Polygon4 id="polygon4 01">
+			<Color red="1" green="1" blue="1" alpha="1"/>
+			<Background red="1" green="1" blue="1" alpha="0"/>
+			<Radius value="1"/>
+			<StarFactor value="0"/>
+			<Rotation value="0"/>
+			<Squash value="0"/>
+			<OuterRadius value="0"/>
+			<InnerRadius value="0"/>
+			<BevelWidth value="0.2000000000000000111"/>
+			<Sides value="4"/>
+			<FitRadius value="true"/>
+			<BevelCurve value="0"/>
+		</Polygon4>
+		<Rotate2 id="rotate2 01">
+			<Source source="blend6 04"/>
+			<Rotation source="loopposition 01" value="-2.6000000000000000888"/>
+			<OriginX value="0.5"/>
+			<OriginY value="0.5"/>
+			<Percentage value="1"/>
+			<Mode value="0"/>
+		</Rotate2>
+		<Rotate2 id="rotate2 02">
+			<Source source="loop 01"/>
+			<Rotation value="0.0800000000000000017"/>
+			<OriginX value="0.5"/>
+			<OriginY value="0.5"/>
+			<Percentage value="1"/>
+			<Mode value="0"/>
+		</Rotate2>
+		<Scale2 id="scale2 01">
+			<Source source="tiles2 02"/>
+			<Scale2 value="0.4900000000000000466"/>
+			<Squash value="0"/>
+			<OriginX value="0.5"/>
+			<OriginY value="0.5"/>
+			<Percentage value="1"/>
+			<Mode value="0"/>
+		</Scale2>
+		<Subtract id="subtract 01">
+			<SourceA source="getalpha2 02" red="1" green="1" blue="1" alpha="1"/>
+			<SourceB source="frame2 01" red="0.1000000000000000056" green="0.2999999999999999889" blue="0.5" alpha="1"/>
+		</Subtract>
+		<Tiles2 id="tiles2 02">
+			<Color red="1" green="1" blue="1" alpha="1"/>
 			<Mortar red="0" green="0" blue="0" alpha="1"/>
-			<HRange value="0.0500000000000000028"/>
-			<LRange value="0.1100000000000000006"/>
-			<SRange value="0.1799999999999999933"/>
-			<MortarWidth value="0.5"/>
-			<BevelWidth value="0"/>
-			<Corners value="0"/>
+			<HRange value="0"/>
+			<LRange value="0"/>
+			<SRange value="0"/>
+			<MortarWidth value="0.4299999999999999933"/>
+			<BevelWidth value="0.2000000000000000111"/>
+			<Corners value="0.5"/>
 			<FillMode value="0"/>
 			<RowShift value="false"/>
-			<RepeatH value="5"/>
-			<RepeatV value="5"/>
-			<Chaos value="0.1499999999999999944"/>
+			<RepeatH value="1"/>
+			<RepeatV value="1"/>
+			<Chaos value="0"/>
 			<Variation value="1"/>
 			<Bevel value="0"/>
 		</Tiles2>
@@ -214,7 +360,7 @@
 	</SettingsOverride>
 	<Presets>
 		<DefaultPreset preview_image="LIFESAVER_OPAQUE">
-			<Settings size_factor="1" variation="1" seamless="false" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="false"/>
+			<Settings size_factor="1" variation="1" seamless="true" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="false"/>
 			<Lighting>
 				<Height value="0.2000000000000000111"/>
 				<Environment>
@@ -252,13 +398,19 @@
 					</ArtisticSettings>
 				</Ambience>
 			</Lighting>
-			<Controls/>
+			<Controls>
+				<IntSliderControl id="intslidercontrol 01">
+					<Value value="10"/>
+				</IntSliderControl>
+			</Controls>
 		</DefaultPreset>
 	</Presets>
 	<Locks>
 		<Settings size="false" variation="false"/>
 		<Lighting elements="false" environment="false" brightness="false" saturation="false" height="false"/>
-		<Controls/>
+		<Controls>
+			<Control id="intslidercontrol 01" lock="false"/>
+		</Controls>
 	</Locks>
 	<Information author="cj" name-en="red-tile" url="" description="" keywords="" update_notes="" major_version="8" minor_version="5"/>
 	<ControlsOrder>
@@ -267,11 +419,11 @@
 	<FilterEditor>
 		<Groups/>
 		<ThumbnailSize value="1"/>
-		<Canvas left="-716" top="-264" zoom_factor="0"/>
-		<Viewport left="0" top="0" zoom_factor="-2"/>
+		<Canvas left="444" top="207" zoom_factor="0"/>
+		<Viewport left="0" top="0" zoom_factor="1"/>
 		<LockPreview>
-			<Locked value="false"/>
-			<LockedComponent name=""/>
+			<Locked value="true"/>
+			<LockedComponent name="result"/>
 		</LockPreview>
 		<Item id="add 01">
 			<Position left="528" top="-160"/>
@@ -288,6 +440,12 @@
 		<Item id="blend6 02">
 			<Position left="-432" top="96"/>
 		</Item>
+		<Item id="blend6 03">
+			<Position left="1264" top="288"/>
+		</Item>
+		<Item id="blend6 04">
+			<Position left="1264" top="672"/>
+		</Item>
 		<Item id="bomberplus3 01">
 			<Position left="768" top="128"/>
 		</Item>
@@ -300,14 +458,62 @@
 		<Item id="bomberplus3 04">
 			<Position left="768" top="576"/>
 		</Item>
+		<Item id="ellipse 01">
+			<Position left="1712" top="480"/>
+		</Item>
+		<Item id="ellipse 02">
+			<Position left="1744" top="688"/>
+		</Item>
+		<Item id="frame2 01">
+			<Position left="1264" top="-16"/>
+		</Item>
+		<Item id="getalpha2 02">
+			<Position left="1168" top="-368"/>
+		</Item>
+		<Item id="intslidercontrol 01">
+			<Position left="1184" top="-640"/>
+		</Item>
+		<Item id="levels3 01">
+			<Position left="-80" top="160"/>
+		</Item>
+		<Item id="loop 01">
+			<Position left="1056" top="416"/>
+		</Item>
+		<Item id="loopaccumulated 01">
+			<Position left="1968" top="400"/>
+		</Item>
+		<Item id="loopposition 01">
+			<Position left="1568" top="304"/>
+		</Item>
+		<Item id="offset4 01">
+			<Position left="1504" top="512"/>
+		</Item>
+		<Item id="offset4 02">
+			<Position left="1536" top="720"/>
+		</Item>
 		<Item id="perlinnoise2 01">
 			<Position left="64" top="-64"/>
 		</Item>
-		<Item id="result">
-			<Position left="-288" top="240"/>
+		<Item id="polygon4 01">
+			<Position left="1360" top="-368"/>
 		</Item>
-		<Item id="tiles2 01">
-			<Position left="-32" top="272"/>
+		<Item id="result">
+			<Position left="-688" top="128"/>
+		</Item>
+		<Item id="rotate2 01">
+			<Position left="1296" top="432"/>
+		</Item>
+		<Item id="rotate2 02">
+			<Position left="1008" top="96"/>
+		</Item>
+		<Item id="scale2 01">
+			<Position left="1504" top="0"/>
+		</Item>
+		<Item id="subtract 01">
+			<Position left="1040" top="-96"/>
+		</Item>
+		<Item id="tiles2 02">
+			<Position left="1712" top="-48"/>
 		</Item>
 	</FilterEditor>
 </Filter>
