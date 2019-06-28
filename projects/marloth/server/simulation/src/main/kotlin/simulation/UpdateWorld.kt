@@ -4,7 +4,10 @@ import intellect.Spirit
 import intellect.execution.pursueGoals
 import intellect.updateAiState
 import mythic.ent.*
-import physics.*
+import physics.BulletState
+import physics.Collisions
+import physics.updateBodies
+import physics.updateBulletPhysics
 import randomly.Dice
 import simulation.input.updatePlayer
 import simulation.particles.updateParticleEffect
@@ -54,7 +57,7 @@ fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: 
           depictions = mapTable(deck.depictions, updateDepiction(bodyWorld, animationDurations)),
           characters = mapTableValues(deck.characters, updateCharacter(bodyWorld, collisionMap, commands, activatedAbilities)),
           missiles = mapTableValues(deck.missiles, updateMissile(bodyWorld, collisionMap, simulationDelta)),
-          particleEffects = mapTableValues(deck.particleEffects, updateParticleEffect(dice, simulationDelta)),
+          particleEffects = mapTableValues(deck.particleEffects, bodyWorld.deck.bodies, updateParticleEffect(dice, simulationDelta)),
           players = mapTableValues(deck.players, updatePlayer(data.commands)),
           spirits = mapTableValues(deck.spirits, updateAiState(bodyWorld, simulationDelta))
       )

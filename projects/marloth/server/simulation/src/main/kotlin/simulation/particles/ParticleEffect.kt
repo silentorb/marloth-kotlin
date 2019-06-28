@@ -1,14 +1,16 @@
 package simulation.particles
 
-import mythic.ent.Id
-import mythic.ent.Table
 import mythic.ent.pipe
+import mythic.spatial.Vector3
+import mythic.spatial.Vector4
 import physics.Body
 import randomly.Dice
-import simulation.Depiction
+import scenery.Shape
+import scenery.TextureId
 
-typealias ParticleFactory = (Dice) -> ParticleHand
-typealias ParticleUpdater = (Float, ParticleDeck) -> ParticleDeck
+//typealias ParticleFactory = (Dice) -> ParticleHand
+//typealias ParticleUpdater = (Float, ParticleDeck) -> ParticleDeck
+typealias LifeRange = Pair<Float, Float>
 
 // Currently only one particle can be generated per frame and the simulation is capped at 60 frames per second
 //  so the current maximum emission rate is 60 particles per second.  Higher rates can be set but will not act any
@@ -17,43 +19,59 @@ typealias ParticleUpdater = (Float, ParticleDeck) -> ParticleDeck
 // Until then, it's cleaner to have a max of one particle per frame.
 data class Emitter(
     val particlesPerSecond: Float,
-    val emit: ParticleFactory
+    val volume: Shape,
+    val life: LifeRange,
+    val initialVelocity: Vector3
 )
 
-data class ParticleHand(
-    val body: Body,
-    val depiction: Depiction,
-    val life: Float
+data class ParticleAppearance(
+    val texture: TextureId,
+    val color: Vector4,
+    val size: Float
 )
 
-data class ParticleDeck(
-    val bodies: Table<Body> = mapOf(),
-    val depictions: Table<Depiction> = mapOf(),
-    val life: Table<Float> = mapOf()
+data class Particle(
+    val texture: TextureId,
+    val color: Vector4,
+    val size: Float,
+    val position: Vector3,
+    val velocity: Vector3,
+    val life: Float,
+    val animationStep: Float = 0f
 )
+
+typealias ParticleLifecycle = List<ParticleAppearance>
+
+fun newParticle(appearance: ParticleAppearance, position: Vector3, velocity: Vector3, life: Float) =
+    Particle(
+        texture = appearance.texture,
+        color = appearance.color,
+        size = appearance.size,
+        life = life,
+        position = position,
+        velocity = velocity
+    )
 
 data class ParticleEffect(
+    val lifecycle: ParticleLifecycle, // Cannot be empty
     val emitter: Emitter,
-    val updateParticles: ParticleUpdater,
-    val deck: ParticleDeck,
-    val accumulator: Float = 0f,
-    val nextId: Id = 1L
+    val particles: List<Particle>,
+    val accumulator: Float = 0f
 )
 
-fun addHand(deck: ParticleDeck, id: Id, hand: ParticleHand): ParticleDeck =
-    deck.copy(
-        bodies = deck.bodies.plus(Pair(id, hand.body)),
-        depictions = deck.depictions.plus(Pair(id, hand.depiction)),
-        life = deck.life.plus(Pair(id, hand.life))
-    )
+fun updateParticle(delta: Float): (Particle) -> Particle = { particle ->
+  particle.copy()
+}
 
 fun updateParticles(delta: Float): (ParticleEffect) -> ParticleEffect = { effect ->
   effect.copy(
-      deck = effect.updateParticles(delta, effect.deck)
+      particles = effect.particles.map(updateParticle(delta))
   )
 }
 
-fun updateParticleEffect(dice: Dice, delta: Float): (ParticleEffect) -> ParticleEffect = pipe(listOf(
-    updateParticles(delta),
-    updateParticleEmission(dice, delta)
-))
+fun updateParticleEffect(dice: Dice, delta: Float): (Body, ParticleEffect) -> ParticleEffect = { body, effect ->
+  pipe(listOf(
+      updateParticles(delta),
+      updateParticleEmission(dice, body, delta)
+  ))(effect)
+}

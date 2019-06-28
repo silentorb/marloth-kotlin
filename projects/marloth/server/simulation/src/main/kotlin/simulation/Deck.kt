@@ -14,6 +14,9 @@ fun <T> mapTable(table: Table<T>, action: (Id, T) -> T): Table<T> =
 fun <T> mapTableValues(table: Table<T>, action: (T) -> T): Table<T> =
     table.mapValues { (_, value) -> action(value) }
 
+fun <A, B> mapTableValues(table: Table<A>, secondTable: Table<B>, action: (B, A) -> A): Table<A> =
+    table.mapValues { (id, value) -> action(secondTable[id]!!, value) }
+
 data class Deck(
     val ambientSounds: Table<AmbientAudioEmitter> = mapOf(),
     val animations: Table<ArmatureAnimation> = mapOf(),
