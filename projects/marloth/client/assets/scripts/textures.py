@@ -42,8 +42,8 @@ def get_xml(input_dir, output_dir, names, transparency=False):
                 <FullPrecision value="true" />
             </JPG>
             <PNG>
-                <BitDepth value="16" />
-                <IncludeTransparency value="{transparency}" />
+                <BitDepth value="8" />
+                <IncludeTransparency value="true" />
                 <ImageCompression value="BEST" />
             </PNG>
             <BMP>

@@ -13,6 +13,7 @@ typealias TextureInitializer = (width: Int, height: Int, buffer: FloatBuffer?) -
 
 enum class TextureFormat {
   rgb,
+  rgba,
   depth,
   scalar,
 }
@@ -70,6 +71,7 @@ fun initializeTexture(width: Int, height: Int, attributes: TextureAttributes, bu
 
   val internalFormat = when (attributes.format) {
     TextureFormat.rgb -> GL_RGB
+    TextureFormat.rgba -> GL_RGBA
     TextureFormat.scalar -> GL_RED
     TextureFormat.depth -> GL_DEPTH_COMPONENT
   }

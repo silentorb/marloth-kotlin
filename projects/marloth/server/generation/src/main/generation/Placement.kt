@@ -213,7 +213,7 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
                   particlesPerSecond = 30f,
                   volume = Cylinder(radius = particleNode.radius, height = 10f),
                   life = Pair(1f, 2f),
-                  initialVelocity = Vector3(0f, 0f, 5f)
+                  initialVelocity = Vector3(0f, 0f, 1f)
               )
           )
       )), nextId))

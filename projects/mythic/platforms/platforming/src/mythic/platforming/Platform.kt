@@ -41,7 +41,8 @@ interface PlatformDisplayConfig {
 data class RawImage(
     val buffer: ByteBuffer,
     val width: Int,
-    val height: Int
+    val height: Int,
+    val channels: Int
 )
 
 typealias ImageLoader = (String) -> RawImage?

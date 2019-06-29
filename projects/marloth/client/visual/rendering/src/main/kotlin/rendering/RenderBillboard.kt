@@ -1,8 +1,10 @@
 package rendering
 
 import mythic.glowing.DrawMethod
+import mythic.glowing.globalState
 import mythic.spatial.Matrix
 import mythic.spatial.Vector3
+import org.lwjgl.opengl.GL11
 import rendering.shading.ObjectShaderConfig
 import scenery.MeshId
 
@@ -19,6 +21,8 @@ fun renderBillboard(gameRenderer: GameSceneRenderer, billboard: TexturedBillboar
   if (texture == null)
     return
 
+  globalState.blendEnabled = true
+//  globalState.blendFunction = Pair(GL11.GL_SRC_ALPHA, GL11.GL_ONE)
   effects.billboard.activate(ObjectShaderConfig(
       texture = texture,
       transform = transform,
@@ -26,4 +30,5 @@ fun renderBillboard(gameRenderer: GameSceneRenderer, billboard: TexturedBillboar
   ))
 
   mesh.primitives.first().mesh.draw(DrawMethod.triangleFan)
+  globalState.blendEnabled = false
 }

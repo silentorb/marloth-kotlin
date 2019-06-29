@@ -6,7 +6,8 @@ import scenery.Scene
 
 data class GameScene(
     val main: Scene,
-    val elementGroups: ElementGroups,
+    val opaqueElementGroups: ElementGroups,
+    val transparentElementGroups: ElementGroups,
     val player: Int,
     val filters: List<ScreenFilter>
 ) {

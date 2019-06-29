@@ -4,6 +4,7 @@ import getResourceUrl
 import mythic.ent.pipe
 import mythic.glowing.Texture
 import mythic.glowing.TextureAttributes
+import mythic.glowing.TextureFormat
 import mythic.glowing.TextureStorageUnit
 import mythic.imaging.*
 import mythic.platforming.ImageLoader
@@ -103,11 +104,22 @@ fun applyAlgorithm(algorithm: OpaqueTextureAlgorithm, length: Int, attributes: T
   Texture(scaledLength, scaledLength, attributes, buffer)
 }
 
+fun rawImageToTexture(image: RawImage, attributes: TextureAttributes): Texture {
+  val modifiedAttributes = if (image.channels == 4)
+    attributes.copy(
+        format = TextureFormat.rgba
+    )
+  else
+    attributes
+  return Texture(image.width, image.height, modifiedAttributes, image.buffer)
+}
+
 fun loadTextureFromFile(loadImage: ImageLoader, path: String, attributes: TextureAttributes): Texture {
   val fullPath = getResourceUrl(path).path.substring(1)
   println("Image " + path)
   val image = loadImage(fullPath)!!
-  return Texture(image.width, image.height, attributes, image.buffer)
+
+  return rawImageToTexture(image, attributes)
 }
 
 fun deferImageFile(loadImage: ImageLoader, path: String, attributes: TextureAttributes): DeferredTexture {
@@ -139,7 +151,8 @@ fun deferProceduralTextureFromFile(engine: Engine, path: String, name: String, a
     RawImage(
         buffer = rgbFloatToBytes(diffuse),
         width = length,
-        height = length
+        height = length,
+        channels = 3
     )
   }
 
@@ -250,6 +263,7 @@ fun loadDeferredTextures(list: List<DeferredTexture>): List<LoadedTextureData> {
 fun texturesToGpu(list: List<LoadedTextureData>): Map<String, Texture> {
   return list.map {
     Pair(it.name, Texture(it.image.width, it.image.height, it.attributes, it.image.buffer))
+    Pair(it.name, rawImageToTexture(it.image, it.attributes))
   }.associate { it }
 }
 

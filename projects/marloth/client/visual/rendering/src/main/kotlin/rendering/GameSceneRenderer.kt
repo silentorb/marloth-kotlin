@@ -42,7 +42,7 @@ fun drawSkeleton(renderer: SceneRenderer, armature: Armature, transforms: List<M
 
 fun renderArmatures(renderer: GameSceneRenderer) {
   globalState.depthEnabled = false
-  renderer.scene.elementGroups.filter { it.armature != null }
+  renderer.scene.opaqueElementGroups.filter { it.armature != null }
       .forEach { group ->
         val armature = renderer.renderer.renderer.armatures[group.armature]!!
         drawSkeleton(renderer.renderer, armature, armatureTransforms(armature, group), group.meshes.first().transform)
@@ -102,9 +102,15 @@ class GameSceneRenderer(
   }
 
   fun renderElements() {
-    for (group in scene.elementGroups) {
+    for (group in scene.opaqueElementGroups) {
       renderElementGroup(this, group)
     }
+
+    globalState.depthWrite = false
+    for (group in scene.transparentElementGroups) {
+      renderElementGroup(this, group)
+    }
+    globalState.depthWrite = true
   }
 
   fun renderSectorMesh(sector: SectorMesh) {

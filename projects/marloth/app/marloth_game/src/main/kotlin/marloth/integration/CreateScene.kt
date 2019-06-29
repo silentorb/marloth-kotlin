@@ -220,7 +220,6 @@ fun gatherVisualElements(world: World, screen: Screen, player: Player): ElementG
 
   return complexElements
       .plus(ElementGroup(simpleElements))
-      .plus(gatherParticleElements(world.deck))
 }
 
 fun mapLights(world: World, player: Player) =
@@ -246,13 +245,13 @@ fun mapLights(world: World, player: Player) =
         ))
 
 fun createScene(world: World, screen: Screen, player: Player): GameScene {
-  val elementGroups = gatherVisualElements(world, screen, player)
   return GameScene(
       main = Scene(
           camera = createCamera(world, screen),
           lights = mapLights(world, player)
       ),
-      elementGroups = elementGroups,
+      opaqueElementGroups =  gatherVisualElements(world, screen, player),
+      transparentElementGroups = gatherParticleElements(world.deck),
       player = player.playerId,
       filters = if (!world.deck.characters[player.id]!!.isAlive)
         listOf<ScreenFilter>(
