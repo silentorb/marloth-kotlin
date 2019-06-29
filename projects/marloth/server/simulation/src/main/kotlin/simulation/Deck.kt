@@ -113,7 +113,7 @@ fun toDeck(hand: IdHand) = toDeck(hand.hand, hand.id)
 fun toDeck(hands: List<IdHand>): Deck =
     hands.fold(Deck(), { d, h -> d.plus(toDeck(h)) })
 
-fun toDeck(hands: List<Hand>, nextId: IdSource): Deck =
+fun allHandsOnDeck(hands: List<Hand>, nextId: IdSource): Deck =
     hands.fold(Deck(), { d, h -> d.plus(toDeck(h, nextId())) })
 
 val addDeck: ((IdSource) -> List<IdHand>) -> WorldTransform = { deckSource ->

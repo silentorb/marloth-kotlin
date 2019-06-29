@@ -34,9 +34,9 @@ data class HingeConstraint(
 data class Body(
     override val position: Vector3,
     val velocity: Vector3 = Vector3.zero,
-    val orientation: Quaternion,
+    val orientation: Quaternion = Quaternion(),
     val scale: Vector3 = Vector3.unit,
-    override val node: Id
+    override val node: Id = voidNodeId
 ) : SimpleBody
 
 data class DynamicBody(

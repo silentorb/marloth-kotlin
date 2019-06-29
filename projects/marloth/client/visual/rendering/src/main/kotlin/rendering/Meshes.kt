@@ -57,7 +57,8 @@ fun importedMeshes(vertexSchemas: VertexSchemas) =
 fun createMeshes(vertexSchemas: VertexSchemas): Pair<Map<MeshId, ModelMesh>, List<Armature>> {
   val imports = importedMeshes(vertexSchemas)
   val meshes = mapOf(
-      MeshId.line to createLineMesh(vertexSchemas.flat)
+      MeshId.line to createLineMesh(vertexSchemas.flat),
+      MeshId.billboard to createBillboardMesh(vertexSchemas.billboard)
   )
       .mapValues { createModelElements(it.value) }
       .mapValues { ModelMesh(it.key, it.value) }

@@ -20,4 +20,3 @@ fun updateAiState(world: World, delta: Float): (Spirit) -> Spirit = { spirit ->
     )
   }
 }
-

@@ -51,6 +51,14 @@ fun createLineMesh(vertexSchema: VertexSchema) =
         1f, 0f, 0f
     ))
 
+fun createBillboardMesh(vertexSchema: VertexSchema) =
+    SimpleMesh(vertexSchema, listOf(
+        0f, 1f, 0f, 0f, 1f,
+        0f, 0f, 0f, 0f, 0f,
+        1f, 0f, 0f, 1f, 0f,
+        1f, 1f, 0f, 1f, 1f
+    ))
+
 typealias ModelGenerator = () -> Model
 
 typealias ModelGeneratorMap = Map<MeshType, ModelGenerator>

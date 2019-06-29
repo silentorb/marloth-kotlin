@@ -3,6 +3,7 @@ package scenery
 enum class TextureId {
   none,
   algae,
+  animPerlin000,
   background,
   bricks,
   dirt,

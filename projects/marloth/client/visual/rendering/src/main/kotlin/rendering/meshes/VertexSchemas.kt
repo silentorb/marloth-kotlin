@@ -7,6 +7,7 @@ import mythic.glowing.VertexAttribute
 typealias VertexSchema = mythic.glowing.VertexSchema<AttributeName>
 
 data class VertexSchemas(
+    val billboard: VertexSchema,
     val imported: VertexSchema,
     val textured: VertexSchema,
     val flat: VertexSchema,
@@ -16,6 +17,10 @@ data class VertexSchemas(
 )
 
 fun createVertexSchemas() = VertexSchemas(
+    billboard = VertexSchema(listOf(
+        VertexAttribute(AttributeName.position, 3),
+        VertexAttribute(AttributeName.uv, 2)
+    )),
     shaded = VertexSchema(listOf(
         VertexAttribute(AttributeName.position, 3),
         VertexAttribute(AttributeName.normal, 3)

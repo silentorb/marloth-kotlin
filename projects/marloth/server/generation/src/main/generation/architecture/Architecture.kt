@@ -11,7 +11,6 @@ import scenery.MeshId
 import simulation.*
 import kotlin.math.ceil
 
-
 fun alignWithCeiling(meshInfo: MeshInfoMap) = { meshId: MeshId ->
   val height = meshInfo[meshId]!!.shapeHeight
   Vector3(0f, 0f, -height / 2f)

@@ -21,6 +21,25 @@ layout(std140) uniform SceneUniform {
 
 """
 
+private val vertexShaderWithoutNormals = """
+$sceneHeader
+uniform mat4 modelTransform;
+uniform vec4 uniformColor;
+
+out vec4 fragmentColor;
+out vec4 fragmentPosition;
+out vec2 textureCoordinates;
+
+void main() {
+  fragmentColor = uniformColor;
+  vec4 position4 = vec4(position, 1.0);
+  vec4 modelPosition = modelTransform * position4;
+  fragmentPosition = modelPosition;
+  gl_Position = scene.cameraTransform * modelPosition;
+  textureCoordinates = uv;
+}
+"""
+
 private val weightHeader = """
 layout (std140) uniform BoneTransforms {
   mat4[128] boneTransforms;
@@ -127,12 +146,32 @@ void main() {
 }
 """
 
+private val texturedFragmentWithoutNormalBase = """
+$sceneHeader
+in vec4 fragmentPosition;
+in vec4 fragmentColor;
+in vec2 textureCoordinates;
+out vec4 output_color;
+
+uniform sampler2D text;
+uniform float glow;
+uniform mat4 modelTransform;
+
+void main() {
+  vec4 sampled = texture(text, textureCoordinates);
+  output_color = @outColor;
+}
+"""
+
 private val texturedFragment = insertTemplates(texturedFragmentBase, mapOf(
     "lightingHeader" to lighting,
     "lightingApplication1" to lightingApplication1
 )).replace("@outColor", "sampled * " + lightingApplication2)
 
 private val texturedFragmentFlat = texturedFragmentBase
+    .replace("@outColor", "sampled")
+
+private val texturedFragmentFlatWithoutNormal = texturedFragmentWithoutNormalBase
     .replace("@outColor", "sampled")
 
 class PerspectiveFeature(program: ShaderProgram) {
@@ -174,7 +213,8 @@ fun populateBoneBuffer(boneBuffer: UniformBuffer, originalTransforms: List<Matri
 data class ShaderFeatureConfig(
     val shading: Boolean = false,
     val skeleton: Boolean = false,
-    val texture: Boolean = false
+    val texture: Boolean = false,
+    val includeNormal: Boolean = true
 )
 
 data class ObjectShaderConfig(
@@ -187,11 +227,18 @@ data class ObjectShaderConfig(
 )
 
 fun generateVertexInputHeader(config: ShaderFeatureConfig): String {
-  val baseInputs = listOf(
-      "vec3 position",
-      "vec3 normal",
-      "vec2 uv"
-  )
+  val baseInputs = if (config.includeNormal)
+    listOf(
+        "vec3 position",
+        "vec3 normal",
+        "vec2 uv"
+    )
+  else
+    listOf(
+        "vec3 position",
+        "vec2 uv"
+    )
+
   val weightInputs = listOf(
       "vec4 joints",
       "vec4 weights"
@@ -208,7 +255,9 @@ fun generateVertexInputHeader(config: ShaderFeatureConfig): String {
 }
 
 fun generateVertexCodeBody(config: ShaderFeatureConfig): String {
-  val baseCode = if (config.shading || config.texture)
+  val baseCode = if (!config.includeNormal)
+    vertexShaderWithoutNormals
+  else if (config.shading || config.texture)
     mainVertex
   else
     flatVertex
@@ -264,6 +313,7 @@ class GeneralPerspectiveShader(buffers: UniformBuffers, fragmentShader: String, 
 }
 
 data class Shaders(
+    val billboard: GeneralPerspectiveShader,
     val textured: GeneralPerspectiveShader,
     val texturedFlat: GeneralPerspectiveShader,
     val animated: GeneralPerspectiveShader,
@@ -285,6 +335,10 @@ data class UniformBuffers(
 
 fun createShaders(buffers: UniformBuffers): Shaders {
   return Shaders(
+      billboard = GeneralPerspectiveShader(buffers, texturedFragmentFlatWithoutNormal, ShaderFeatureConfig(
+          texture = true,
+          includeNormal = false
+      )),
       textured = GeneralPerspectiveShader(buffers, texturedFragment, ShaderFeatureConfig(
           shading = true,
           texture = true

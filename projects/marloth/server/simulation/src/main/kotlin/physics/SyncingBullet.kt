@@ -15,22 +15,16 @@ import simulation.World
 import com.badlogic.gdx.math.Vector3 as GdxVector3
 
 fun createCollisionShape(source: Shape, scale: Vector3): btCollisionShape {
-  return when {
-
-    source is ShapeOffset -> {
+  return when (source) {
+    is ShapeOffset -> {
       val shape = btCompoundShape()
       shape.addChildShape(toGdxMatrix4(source.transform), createCollisionShape(source.shape, scale))
       shape
     }
-
-    source is Box -> btBoxShape(toGdxVector3(source.halfExtents * scale))
-
-    source is Sphere -> btSphereShape(source.radius * scale.x)
-
-    source is Capsule -> btCapsuleShapeZ(source.radius * scale.x, source.height * scale.z)
-
-    source is Cylinder -> btCylinderShapeZ(toGdxVector3(Vector3(source.radius * scale.x, source.radius * scale.y, source.height * scale.z * 0.5f)))
-
+    is Box -> btBoxShape(toGdxVector3(source.halfExtents * scale))
+    is Sphere -> btSphereShape(source.radius * scale.x)
+    is Capsule -> btCapsuleShapeZ(source.radius * scale.x, source.height * scale.z)
+    is Cylinder -> btCylinderShapeZ(toGdxVector3(Vector3(source.radius * scale.x, source.radius * scale.y, source.height * scale.z * 0.5f)))
     else -> throw Error("Not supported")
   }
 }

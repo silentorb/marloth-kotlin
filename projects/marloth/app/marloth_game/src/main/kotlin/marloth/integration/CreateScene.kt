@@ -174,6 +174,21 @@ val isComplexDepiction = { depiction: Depiction ->
   complexDepictions.contains(depiction.type)
 }
 
+fun gatherParticleElements(deck: Deck): ElementGroups {
+  return deck.particleEffects.flatMap { (_, particleEffect) ->
+    particleEffect.particles.map { particle ->
+      ElementGroup(
+          billboard = TexturedBillboard(
+              texture = particle.texture,
+              position = particle.position,
+              scale = particle.size,
+              color = particle.color
+          )
+      )
+    }
+  }
+}
+
 fun gatherVisualElements(world: World, screen: Screen, player: Player): ElementGroups {
 //  val depictions = filterDepictions(world, player)
 //  val childDepictions = depictions.values.filter {
@@ -203,7 +218,9 @@ fun gatherVisualElements(world: World, screen: Screen, player: Player): ElementG
             convertSimpleDepiction(world, it.key, MeshId.prisonDoor)
           })
 
-  return complexElements.plus(ElementGroup(simpleElements))
+  return complexElements
+      .plus(ElementGroup(simpleElements))
+      .plus(gatherParticleElements(world.deck))
 }
 
 fun mapLights(world: World, player: Player) =

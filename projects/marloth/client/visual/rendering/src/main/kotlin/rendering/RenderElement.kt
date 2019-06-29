@@ -110,4 +110,8 @@ fun renderElementGroup(gameRenderer: GameSceneRenderer, group: ElementGroup) {
       }
     }
   }
+
+  if (group.billboard != null) {
+    renderBillboard(gameRenderer, group.billboard)
+  }
 }
