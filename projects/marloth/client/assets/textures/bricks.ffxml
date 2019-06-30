@@ -50,8 +50,8 @@
 			<LRange value="0.1499999999999999944"/>
 			<SRange value="0.25"/>
 			<MortarWidth source="perlinnoise2 03" value="0.0500000000000000028"/>
-			<BevelWidth value="0.25"/>
-			<Corners value="0.2999999999999999889"/>
+			<BevelWidth value="0.3200000000000000067"/>
+			<Corners source="perlinnoise2 04" value="0.3900000000000000133"/>
 			<Bond value="0"/>
 			<BrickType value="1"/>
 			<FillMode value="0"/>
@@ -62,7 +62,7 @@
 		</Bricks2>
 		<NoiseDistortion2 id="noisedistortion2 01">
 			<Source source="bricks2 01"/>
-			<Distortion value="0.1499999999999999944"/>
+			<Distortion value="0.1000000000000000056"/>
 			<Roughness value="0.3200000000000000067"/>
 			<Scale value="2.6699999999999999289"/>
 			<Stretch value="0"/>
@@ -97,8 +97,20 @@
 		<PerlinNoise2 id="perlinnoise2 03">
 			<Noise red="0.3372093023255814392" green="0.3372093023255814392" blue="0.3372093023255814392" alpha="1"/>
 			<Background red="0" green="0" blue="0" alpha="1"/>
-			<Roughness value="0.25"/>
+			<Roughness value="0.6899999999999999467"/>
 			<Scale value="2.6699999999999999289"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.6099999999999999867"/>
+			<Variation value="1"/>
+			<OctaveCurve value="0"/>
+		</PerlinNoise2>
+		<PerlinNoise2 id="perlinnoise2 04">
+			<Noise red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.25"/>
+			<Scale value="2.3700000000000001066"/>
 			<Stretch value="0"/>
 			<Angle value="0"/>
 			<Details value="1"/>
@@ -169,7 +181,7 @@
 	<FilterEditor>
 		<Groups/>
 		<ThumbnailSize value="1"/>
-		<Canvas left="-49" top="-355" zoom_factor="0"/>
+		<Canvas left="15" top="-306" zoom_factor="0"/>
 		<Viewport left="0" top="0" zoom_factor="-2"/>
 		<LockPreview>
 			<Locked value="true"/>
@@ -189,6 +201,9 @@
 		</Item>
 		<Item id="perlinnoise2 03">
 			<Position left="1008" top="304"/>
+		</Item>
+		<Item id="perlinnoise2 04">
+			<Position left="752" top="-192"/>
 		</Item>
 		<Item id="result">
 			<Position left="208" top="-32"/>

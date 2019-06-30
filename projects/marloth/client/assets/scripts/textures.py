@@ -1,20 +1,54 @@
-import os, sys, shutil
+import os, sys
 import json
 import pathlib
 import subprocess
-import re
+
+# Filter forge source files can optionally embed meta data into the file name.
+# Meta data could be added inside the file but would increase processing
+# Since in most cases the python code never actually parses the file contents.
+
+# The format for the meta data is a period followed by a two digit number representing the number of iterations,
+# and optionally the letter 'a' to rasterize a texture with an alpha channel.
+
+# Filter Forge's CLI has a bug that prevents generating transparent textures.  Only filters support transparency,
+# so when rasterizing a transparent texture, an empty source image with an alpha channel must be referenced.
+# Filter Forge has no resizing so the soruce image dimensions define the output dimensions.
 
 default_length = 512
+module_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
+
+
+def prepare_path(dir):
+    return os.path.join(module_dir, dir).replace('\\', '/')
+
+
+def read_text_file(file_path):
+    return pathlib.Path(file_path).read_text()
+
+
+temp_path = prepare_path('build/textures')
+resource_path = prepare_path('scripts/resources')
+xml_path = temp_path + '/textures.xml'
+config = json.loads(read_text_file(prepare_path('config/config.json')))
+
+
+def get_source_image_clause(width, height, format):
+    if format != 'PNG':
+        return ''
+    else:
+        return '{resource_path}/{width}x{height}.png'.format(width=width, height=height, resource_path=resource_path)
 
 
 def task_xml(input, output, width, height, format):
+    source_path = get_source_image_clause(width, height, format)
     return '''    <Task>
-        <Image value="" width="{width}" height="{height}" />
+        <Image value="{source_path}" width="{width}" height="{height}" />
         <Selection value="" />
         <Filter value="{input}" />
         <Result path="{output}" format="{format}" />
         <Preset value="0" />
-    </Task>'''.format(input=input, output=output, width=width, height=height, format=format)
+    </Task>'''.format(input=input, output=output, width=width, height=height, format=format, source_path=source_path)
+
 
 def name_to_task(input_dir, output_dir, name):
     transparency = False
@@ -89,28 +123,9 @@ def get_xml(input_dir, output_dir, names):
 </Tasks>'''.format(tasks_clause=tasks_clause)
 
 
-module_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
-
-
-def prepare_path(dir):
-    return os.path.join(module_dir, dir).replace('\\', '/')
-
-
-def read_text_file(file_path):
-    return pathlib.Path(file_path).read_text()
-
-
 def write_text_file(file_path, content):
     with open(file_path, 'w') as stream:
         stream.write(content)
-
-
-temp_path = prepare_path('build/textures')
-xml_path = temp_path + '/textures.xml'
-config = json.loads(read_text_file(prepare_path('config/config.json')))
-# There are two SliderControl entries, the main one and the preset override.  The preset entry overrides
-# the main entry so make sure we grab it (using the Controls clause.)
-value_pattern = re.compile(r'Controls.*?SliderControl id.*?Value value="', re.DOTALL)
 
 
 def render(input_dir, output_dir, names):
@@ -132,44 +147,12 @@ def ensure_dir_exists(dir):
         os.mkdir(dir)
 
 
-def prepare_animation(input_dir, name):
-    input_file = input_dir + '/' + name + '.ffxml'
-    content = read_text_file(input_file)
-    first_match = value_pattern.search(content)
-    if (first_match is None):
-        raise Exception('Animated filter is missing time control')
-
-    value_start = first_match.end()
-    second_match = re.search(r'[\d.]+', content[value_start:])
-    if (second_match is None):
-        raise Exception('Invalid time control value')
-
-    value_length = second_match.end()
-    value_end = value_start + value_length
-
-    step_max = 32
-    step_range = range(0, step_max)
-    for i in step_range:
-        step_name = get_step_name(name, i)
-        time_step = i / step_max
-        new_content = content[:value_start] + str(time_step) + content[value_end:]
-        write_text_file(get_anim_temp_file(step_name), new_content)
-
-    return [get_step_name(name, i) for i in step_range]
-
-
 def main():
-    # Down the line we may clean out the build/textures folder if the quantity of temp files becomes significant
-    # shutil.rmtree(temp_path)
     ensure_dir_exists(temp_path)
     input_dir = prepare_path('textures')
     output_dir = prepare_path('src/main/resources/textures')
     names = sys.argv[1:]
     render(input_dir, output_dir, names)
-    # for animation in animated:
-    #     anim_names = prepare_animation(input_dir, animation)
-    #     render(temp_path, output_dir, anim_names, True)
-
     print('Exported', ', '.join(names))
 
 

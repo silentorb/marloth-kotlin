@@ -2,7 +2,7 @@ import groovy.json.JsonSlurper
 
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
-def deleteme211
+def deleteme2113
 
 class Utility {
   static _blendConfig
@@ -88,6 +88,7 @@ task modelAssets(type: ModelAssetsTask) {
 task textureAssets(type: TextureAssetsTask) {
   inputFiles = fileTree("$projectDir/textures").matching { include '**/*.ffxml'}.getFiles()
   _projectDir = projectDir
+  outputs.upToDateWhen { false }
 }
 
 processResources {
