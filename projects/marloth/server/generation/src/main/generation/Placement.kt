@@ -204,7 +204,7 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
           particleEffect = ParticleEffect(
               lifecycle = listOf(
                   ParticleAppearance(
-                      texture = TextureId.animPerlin000,
+                      texture = TextureId.perlinParticle2,
                       color = Vector4(0.5f, 1f, 0.5f, 1f),
                       size = 2f
                   )

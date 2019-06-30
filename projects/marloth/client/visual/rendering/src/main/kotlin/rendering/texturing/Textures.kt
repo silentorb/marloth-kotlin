@@ -125,43 +125,49 @@ fun loadTextureFromFile(loadImage: ImageLoader, path: String, attributes: Textur
 fun deferImageFile(loadImage: ImageLoader, path: String, attributes: TextureAttributes): DeferredTexture {
   val fullPath = getResourceUrl(path).path.substring(1)
   println("Image " + path)
+  val shortName = getFileShortName(path)
+  val (truncated, newAttributes) = if (shortName.contains('.')) {
+    val tokens = shortName.split('.')
+    Pair(tokens[0], attributes.copy(frames = tokens[1].toInt()))
+  } else
+    Pair(shortName, attributes)
+
   return DeferredTexture(
-      name = getFileShortName(path),
-      attributes = attributes,
+      name = truncated,
+      attributes = newAttributes,
       load = { loadImage(fullPath) }
   )
 }
 
+//fun loadTextureGraph(engine: Engine, path: String): Graph =
+//    pipe(loadJsonResource<Graph>(path), listOf(mapValues(engine)))
 
-fun loadTextureGraph(engine: Engine, path: String): Graph =
-    pipe(loadJsonResource<Graph>(path), listOf(mapValues(engine)))
+//fun loadProceduralTextureFromFile(engine: Engine, path: String, attributes: TextureAttributes, length: Int): Texture {
+//  val graph = loadTextureGraph(engine, path)
+//  val values = executeAndFormat(engine, graph)
+//  val diffuse = values["diffuse"]!! as FloatBuffer
+//  return Texture(length, length, attributes, rgbFloatToBytes(diffuse))
+//}
 
-fun loadProceduralTextureFromFile(engine: Engine, path: String, attributes: TextureAttributes, length: Int): Texture {
-  val graph = loadTextureGraph(engine, path)
-  val values = executeAndFormat(engine, graph)
-  val diffuse = values["diffuse"]!! as FloatBuffer
-  return Texture(length, length, attributes, rgbFloatToBytes(diffuse))
-}
-
-fun deferProceduralTextureFromFile(engine: Engine, path: String, name: String, attributes: TextureAttributes, length: Int): DeferredTexture {
-  val load: ImageSource = {
-    val graph = loadTextureGraph(engine, path)
-    val values = executeAndFormat(engine, graph)
-    val diffuse = values["diffuse"]!! as FloatBuffer
-    RawImage(
-        buffer = rgbFloatToBytes(diffuse),
-        width = length,
-        height = length,
-        channels = 3
-    )
-  }
-
-  return DeferredTexture(
-      name = name,
-      attributes = attributes,
-      load = load
-  )
-}
+//fun deferProceduralTextureFromFile(engine: Engine, path: String, name: String, attributes: TextureAttributes, length: Int): DeferredTexture {
+//  val load: ImageSource = {
+//    val graph = loadTextureGraph(engine, path)
+//    val values = executeAndFormat(engine, graph)
+//    val diffuse = values["diffuse"]!! as FloatBuffer
+//    RawImage(
+//        buffer = rgbFloatToBytes(diffuse),
+//        width = length,
+//        height = length,
+//        channels = 3
+//    )
+//  }
+//
+//  return DeferredTexture(
+//      name = name,
+//      attributes = attributes,
+//      load = load
+//  )
+//}
 
 private fun miscTextureGenerators(): TextureGeneratorMap = mapOf(
     TextureId.background to applyAlgorithm(colorize(
@@ -194,28 +200,28 @@ fun listProceduralTextures(): List<Pair<String, String>> =
     scanResources("procedural/textures", listOf(".json"))
         .map { Pair(it, getFileShortName(it)) }
 
-fun loadProceduralTextures(attributes: TextureAttributes): Map<String, Texture> {
-  val length = 256
-  val engine = newTextureEngine(Vector2i(length))
+//fun loadProceduralTextures(attributes: TextureAttributes): Map<String, Texture> {
+//  val length = 256
+//  val engine = newTextureEngine(Vector2i(length))
+//
+//  return listProceduralTextures()
+//      .filter { it.second != "rayMarch" }
+//      .associate { (path, name) ->
+//        val texture = loadProceduralTextureFromFile(engine, path, attributes, length)
+//        Pair(name, texture)
+//      }
+//}
 
-  return listProceduralTextures()
-      .filter { it.second != "rayMarch" }
-      .associate { (path, name) ->
-        val texture = loadProceduralTextureFromFile(engine, path, attributes, length)
-        Pair(name, texture)
-      }
-}
-
-fun deferProceduralTextures(attributes: TextureAttributes): List<DeferredTexture> {
-  val length = 256
-  val engine = newTextureEngine(Vector2i(length))
-
-  return listProceduralTextures()
-      .filter { it.second != "rayMarch" }
-      .map { (path, name) ->
-        deferProceduralTextureFromFile(engine, path, name, attributes, length)
-      }
-}
+//fun deferProceduralTextures(attributes: TextureAttributes): List<DeferredTexture> {
+//  val length = 256
+//  val engine = newTextureEngine(Vector2i(length))
+//
+//  return listProceduralTextures()
+//      .filter { it.second != "rayMarch" }
+//      .map { (path, name) ->
+//        deferProceduralTextureFromFile(engine, path, name, attributes, length)
+//      }
+//}
 
 fun gatherTextures(loadImage: ImageLoader, attributes: TextureAttributes): List<DeferredTexture> =
     scanTextureResources("models")
@@ -223,7 +229,6 @@ fun gatherTextures(loadImage: ImageLoader, attributes: TextureAttributes): List<
         .map {
           deferImageFile(loadImage, it, attributes)
         }
-        .plus(deferProceduralTextures(attributes))
 
 //fun loadTextures(loadImage: ImageLoader, attributes: TextureAttributes): Map<String, Texture> =
 //    scanTextureResources("models")

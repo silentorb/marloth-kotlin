@@ -28,7 +28,8 @@ data class TextureAttributes(
     val smooth: Boolean = true,
     val format: TextureFormat = TextureFormat.rgb,
     val storageUnit: TextureStorageUnit,
-    val mipmap: Boolean = false
+    val mipmap: Boolean = false,
+    val frames: Int = 1
 )
 
 private var _maxAnistropy: Float? = null

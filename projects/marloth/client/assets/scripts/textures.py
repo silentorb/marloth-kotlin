@@ -4,22 +4,38 @@ import pathlib
 import subprocess
 import re
 
+default_length = 512
 
-def task_xml(input, output):
+
+def task_xml(input, output, width, height, format):
     return '''    <Task>
-        <Image value="" width="512" height="512" />
+        <Image value="" width="{width}" height="{height}" />
         <Selection value="" />
         <Filter value="{input}" />
-        <Result path="{output}" />
+        <Result path="{output}" format="{format}" />
         <Preset value="0" />
-    </Task>'''.format(input=input, output=output)
+    </Task>'''.format(input=input, output=output, width=width, height=height, format=format)
 
-
-def get_xml(input_dir, output_dir, names, transparency=False):
+def name_to_task(input_dir, output_dir, name):
+    transparency = False
+    tokens = name.split('.')
+    width = default_length
+    height = default_length
+    output_name = name
+    if len(tokens) > 1:
+        meta = tokens[1]
+        if 'a' in meta[2]:
+            transparency = True
+            output_name = output_name[:-1]
+        width = width * int(meta[:2])
     extension = 'png' if transparency else 'jpg'
-    tasks = [task_xml(input_dir + '/' + name + '.ffxml', output_dir + '/' + name + '.' + extension) for name in names]
+    input_file = input_dir + '/' + name + '.ffxml'
+    output_file = output_dir + '/' + output_name + '.' + extension
+    return task_xml(input_file, output_file, width, height, extension.upper())
+
+def get_xml(input_dir, output_dir, names):
+    tasks = [name_to_task(input_dir, output_dir, name) for name in names]
     tasks_clause = '\n'.join(tasks)
-    transparency_clause = 'true' if transparency else 'false'
     return '''<?xml version="1.0" encoding="utf-8" ?>
 <Tasks>
 {tasks_clause}    
@@ -32,7 +48,7 @@ def get_xml(input_dir, output_dir, names, transparency=False):
             <AntiAliasBitmapComponentSources value="false" />
             <Jitter value="0" />
             <TemporaryFilesLocation value="" />
-            <RAMUsageLimit value="60" />
+            <RAMUsageLimit value="90" />
             <NormalMapFlipY value="false" />
         </RenderingOptions>
         <BitmapFormatOptions>
@@ -70,7 +86,7 @@ def get_xml(input_dir, output_dir, names, transparency=False):
             <PFM />
         </BitmapFormatOptions>
     </GlobalSettings>
-</Tasks>'''.format(tasks_clause=tasks_clause, transparency=transparency_clause)
+</Tasks>'''.format(tasks_clause=tasks_clause)
 
 
 module_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
@@ -97,8 +113,8 @@ config = json.loads(read_text_file(prepare_path('config/config.json')))
 value_pattern = re.compile(r'Controls.*?SliderControl id.*?Value value="', re.DOTALL)
 
 
-def render(input_dir, output_dir, names, transparency=False):
-    xml_content = get_xml(input_dir, output_dir, names, transparency)
+def render(input_dir, output_dir, names):
+    xml_content = get_xml(input_dir, output_dir, names)
     write_text_file(xml_path, xml_content)
     subprocess.run([config['paths']['filter_forge'], xml_path])
 
@@ -149,12 +165,10 @@ def main():
     input_dir = prepare_path('textures')
     output_dir = prepare_path('src/main/resources/textures')
     names = sys.argv[1:]
-    singles = list(filter(lambda n: n[:5] != 'anim-', names))
-    animated = list(filter(lambda n: n[:5] == 'anim-', names))
-    render(input_dir, output_dir, singles)
-    for animation in animated:
-        anim_names = prepare_animation(input_dir, animation)
-        render(temp_path, output_dir, anim_names, True)
+    render(input_dir, output_dir, names)
+    # for animation in animated:
+    #     anim_names = prepare_animation(input_dir, animation)
+    #     render(temp_path, output_dir, anim_names, True)
 
     print('Exported', ', '.join(names))
 
