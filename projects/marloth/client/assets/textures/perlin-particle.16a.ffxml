@@ -313,14 +313,14 @@
 			<Control id="valuecontrol 04" lock="false"/>
 		</Controls>
 	</Locks>
-	<Information author="cj" name-en="perlin-particle.16a" url="" description-en="" keywords-en="" update_notes-en="" major_version="8" minor_version="5"/>
+	<Information author="cj" name-en="perlin-particle.16a" url="" description-en="Notes:[br][br]The iterations are defined twice because one input needs an integer and the other needs a normalized float, and I don&apos;t know of any way to convert between the two in Filter Forge without it raising a warning." keywords-en="" update_notes-en="" major_version="8" minor_version="5"/>
 	<ControlsOrder>
 		<Automatic value="true"/>
 	</ControlsOrder>
 	<FilterEditor>
 		<Groups/>
 		<ThumbnailSize value="1"/>
-		<Canvas left="-1604" top="-278" zoom_factor="0"/>
+		<Canvas left="-1485" top="-292" zoom_factor="0"/>
 		<Viewport left="0" top="0" zoom_factor="-2"/>
 		<LockPreview>
 			<Locked value="false"/>
