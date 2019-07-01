@@ -73,9 +73,9 @@
 				<ColorAt0 red="0" green="0" blue="0" alpha="1"/>
 				<ColorAt1 red="1" green="1" blue="1" alpha="1"/>
 			</Dividend>
-			<Divisor source="intslidercontrol 01" red="4" green="4" blue="4" alpha="1">
-				<Minimum red="0" green="0" blue="0" alpha="1"/>
-				<Maximum red="1" green="1" blue="1" alpha="1"/>
+			<Divisor source="valuecontrol 02" red="4" green="4" blue="4" alpha="1">
+				<ColorAt0 red="0" green="0" blue="0" alpha="1"/>
+				<ColorAt1 red="1" green="1" blue="1" alpha="1"/>
 			</Divisor>
 			<Error red="1" green="0" blue="1" alpha="1"/>
 		</Divide>
@@ -220,6 +220,11 @@
 			<UseRemapping value="false"/>
 			<Value value="1"/>
 		</ValueControl>
+		<ValueControl id="valuecontrol 02">
+			<Name value-en="Divisor"/>
+			<UseRemapping value="false"/>
+			<Value value="16"/>
+		</ValueControl>
 		<ValueControl id="valuecontrol 03">
 			<Name value-en="Source B"/>
 			<UseRemapping value="false"/>
@@ -285,6 +290,9 @@
 				<ValueControl id="valuecontrol 01">
 					<Value value="1"/>
 				</ValueControl>
+				<ValueControl id="valuecontrol 02">
+					<Value value="16"/>
+				</ValueControl>
 				<ValueControl id="valuecontrol 03">
 					<Value value="0"/>
 				</ValueControl>
@@ -300,6 +308,7 @@
 		<Controls>
 			<Control id="intslidercontrol 01" lock="false"/>
 			<Control id="valuecontrol 01" lock="false"/>
+			<Control id="valuecontrol 02" lock="false"/>
 			<Control id="valuecontrol 03" lock="false"/>
 			<Control id="valuecontrol 04" lock="false"/>
 		</Controls>
@@ -311,7 +320,7 @@
 	<FilterEditor>
 		<Groups/>
 		<ThumbnailSize value="1"/>
-		<Canvas left="-1926" top="-356" zoom_factor="0"/>
+		<Canvas left="-1604" top="-278" zoom_factor="0"/>
 		<Viewport left="0" top="0" zoom_factor="-2"/>
 		<LockPreview>
 			<Locked value="false"/>
@@ -391,6 +400,9 @@
 		</Item>
 		<Item id="valuecontrol 01">
 			<Position left="-672" top="128"/>
+		</Item>
+		<Item id="valuecontrol 02">
+			<Position left="-592" top="224"/>
 		</Item>
 		<Item id="valuecontrol 03">
 			<Position left="-1152" top="-208"/>
