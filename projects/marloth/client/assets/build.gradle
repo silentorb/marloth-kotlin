@@ -19,10 +19,13 @@ class Utility {
 class ModelAssetsTask extends DefaultTask {
 
   @InputFiles
-  def Set<File> inputFiles
+  def FileCollection inputFiles
 
   @Input
   def File _projectDir
+
+  @OutputDirectory
+  public File getOutputDir() { return new File("$_projectDir/src/main/resources/models") }
 
   @TaskAction
   void execute(IncrementalTaskInputs inputs) {
@@ -50,10 +53,12 @@ class ModelAssetsTask extends DefaultTask {
 class TextureAssetsTask extends DefaultTask {
 
   @InputFiles
-  def Set<File> inputFiles
+  def FileCollection inputFiles
 
-  @Input
   def File _projectDir
+
+  @OutputDirectory
+  def File getOutputDir() { return new File("$_projectDir/src/main/resources/textures") }
 
   @TaskAction
   void execute(IncrementalTaskInputs inputs) {
@@ -67,12 +72,12 @@ class TextureAssetsTask extends DefaultTask {
       args.add filename[0..<filename.lastIndexOf('.')]
       println "out of date: ${filename}"
     }
-    println args
     def proc = args.execute()
     def sout = new StringBuilder(), serr = new StringBuilder()
     proc.consumeProcessOutput(sout, serr)
     proc.waitFor()
-    println "out> $sout err> $serr"
+    println sout
+    if (serr) println "err> $serr"
     
     inputs.removed { change ->
       println "removed: ${name}"
@@ -81,17 +86,17 @@ class TextureAssetsTask extends DefaultTask {
 }
 
 task modelAssets(type: ModelAssetsTask) {
-  inputFiles = fileTree("$projectDir/blend/models").matching { include '**/*.blend'}.getFiles()
+  inputFiles = fileTree("$projectDir/blend/models").matching { include '**/*.blend'}
   _projectDir = projectDir
 }
 
 task textureAssets(type: TextureAssetsTask) {
-  inputFiles = fileTree("$projectDir/textures").matching { include '**/*.ffxml'}.getFiles()
+  inputFiles = fileTree("$projectDir/textures").matching { include '**/*.ffxml'}
   _projectDir = projectDir
-  outputs.upToDateWhen { false }
+//  outputs.upToDateWhen { false }
 }
 
-processResources {
+classes {
   dependsOn modelAssets
   dependsOn textureAssets
 }

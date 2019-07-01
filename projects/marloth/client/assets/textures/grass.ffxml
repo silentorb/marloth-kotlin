@@ -171,7 +171,7 @@
 				</BomberPlusParticleRandomizer2>
 				<BomberPlusParticleRandomizer2 id="groupped_bomberplusparticlerandomizer2_02" master="groupped_bomberplus3_01">
 					<Minimum red="0.1627906976744185608" green="0.1627906976744185608" blue="0.1627906976744185608" alpha="1"/>
-					<Maximum red="0.6976744186046511809" green="0.6976744186046511809" blue="0.6976744186046511809" alpha="1"/>
+					<Maximum red="0.5736434108527131981" green="0.5736434108527131981" blue="0.5736434108527131981" alpha="1"/>
 					<Variation value="1"/>
 					<Preview value="0"/>
 				</BomberPlusParticleRandomizer2>
@@ -416,7 +416,7 @@
 	<FilterEditor>
 		<Groups>
 			<Group id="MapGroup02">
-				<Canvas left="-166" top="-657" zoom_factor="1"/>
+				<Canvas left="726" top="-430" zoom_factor="0"/>
 				<Item id="groupped_blend6_01">
 					<Position left="1040" top="240"/>
 				</Item>
@@ -483,11 +483,11 @@
 			</Group>
 		</Groups>
 		<ThumbnailSize value="1"/>
-		<Canvas left="-429" top="-407" zoom_factor="0"/>
+		<Canvas left="-460" top="-464" zoom_factor="0"/>
 		<Viewport left="0" top="0" zoom_factor="-2"/>
 		<LockPreview>
 			<Locked value="true"/>
-			<LockedComponent name="result"/>
+			<LockedComponent name="bomberplus3 01"/>
 		</LockPreview>
 		<Item id="chaffs2 01">
 			<Position left="752" top="-64"/>

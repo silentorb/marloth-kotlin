@@ -68,6 +68,17 @@
 			<Opacity value="1"/>
 			<Mode value="0"/>
 		</Blend6>
+		<Divide id="divide 01">
+			<Dividend source="valuecontrol 01" red="4" green="2" blue="1" alpha="1">
+				<ColorAt0 red="0" green="0" blue="0" alpha="1"/>
+				<ColorAt1 red="1" green="1" blue="1" alpha="1"/>
+			</Dividend>
+			<Divisor source="intslidercontrol 01" red="4" green="4" blue="4" alpha="1">
+				<Minimum red="0" green="0" blue="0" alpha="1"/>
+				<Maximum red="1" green="1" blue="1" alpha="1"/>
+			</Divisor>
+			<Error red="1" green="0" blue="1" alpha="1"/>
+		</Divide>
 		<Ellipse id="ellipse 01">
 			<Color source="levels3 01" red="1" green="0.5019607843137254832" blue="0" alpha="1"/>
 			<Background red="1" green="1" blue="1" alpha="0"/>
@@ -82,14 +93,13 @@
 			<Background red="1" green="1" blue="1" alpha="0"/>
 			<StartX value="0"/>
 			<StartY value="0"/>
-			<EndX source="imageheight 01" value="1"/>
-			<EndY source="imageheight 01" value="1"/>
+			<EndX source="divide 01" value="0.0625"/>
+			<EndY value="1"/>
 			<Corners value="0"/>
 			<BevelWidth value="0"/>
 			<Mode value="2"/>
 			<BevelCurve value="0"/>
 		</FreeRectangle3>
-		<ImageHeight id="imageheight 01" master="result"/>
 		<IntSliderControl id="intslidercontrol 01">
 			<Name value-en="Iterations"/>
 			<UseRemapping value="false"/>
@@ -205,6 +215,11 @@
 			<UseRemapping value="false"/>
 			<Value value="0"/>
 		</SliderControl>
+		<ValueControl id="valuecontrol 01">
+			<Name value-en="Dividend"/>
+			<UseRemapping value="false"/>
+			<Value value="1"/>
+		</ValueControl>
 		<ValueControl id="valuecontrol 03">
 			<Name value-en="Source B"/>
 			<UseRemapping value="false"/>
@@ -267,6 +282,9 @@
 				<IntSliderControl id="intslidercontrol 01">
 					<Value value="16"/>
 				</IntSliderControl>
+				<ValueControl id="valuecontrol 01">
+					<Value value="1"/>
+				</ValueControl>
 				<ValueControl id="valuecontrol 03">
 					<Value value="0"/>
 				</ValueControl>
@@ -281,6 +299,7 @@
 		<Lighting elements="false" environment="false" brightness="false" saturation="false" height="false"/>
 		<Controls>
 			<Control id="intslidercontrol 01" lock="false"/>
+			<Control id="valuecontrol 01" lock="false"/>
 			<Control id="valuecontrol 03" lock="false"/>
 			<Control id="valuecontrol 04" lock="false"/>
 		</Controls>
@@ -292,14 +311,14 @@
 	<FilterEditor>
 		<Groups/>
 		<ThumbnailSize value="1"/>
-		<Canvas left="-2187" top="-347" zoom_factor="0"/>
+		<Canvas left="-1926" top="-356" zoom_factor="0"/>
 		<Viewport left="0" top="0" zoom_factor="-2"/>
 		<LockPreview>
 			<Locked value="false"/>
 			<LockedComponent name=""/>
 		</LockPreview>
 		<Item id="add 02">
-			<Position left="-1584" top="-96"/>
+			<Position left="-1328" top="-128"/>
 		</Item>
 		<Item id="blend6 01">
 			<Position left="176" top="-48"/>
@@ -308,37 +327,37 @@
 			<Position left="-80" top="-48"/>
 		</Item>
 		<Item id="blend6 03">
-			<Position left="-1760" top="112"/>
+			<Position left="-1936" top="96"/>
+		</Item>
+		<Item id="divide 01">
+			<Position left="-896" top="128"/>
 		</Item>
 		<Item id="ellipse 01">
 			<Position left="-560" top="-112"/>
 		</Item>
 		<Item id="freerectangle3 01">
-			<Position left="-848" top="64"/>
-		</Item>
-		<Item id="imageheight 01">
-			<Position left="-576" top="192"/>
+			<Position left="-1136" top="112"/>
 		</Item>
 		<Item id="intslidercontrol 01">
-			<Position left="-1616" top="448"/>
+			<Position left="-592" top="320"/>
 		</Item>
 		<Item id="levels3 01">
 			<Position left="-320" top="-32"/>
 		</Item>
 		<Item id="loop 01">
-			<Position left="-2000" top="112"/>
+			<Position left="-2304" top="64"/>
 		</Item>
 		<Item id="loopaccumulated 01">
-			<Position left="-1520" top="176"/>
+			<Position left="-1504" top="256"/>
 		</Item>
 		<Item id="loopiteration 02">
-			<Position left="-1072" top="-256"/>
+			<Position left="-816" top="-288"/>
 		</Item>
 		<Item id="loopposition 01">
 			<Position left="1184" top="-64"/>
 		</Item>
 		<Item id="multiply 01">
-			<Position left="-1360" top="-96"/>
+			<Position left="-1104" top="-128"/>
 		</Item>
 		<Item id="negate 01">
 			<Position left="912" top="-144"/>
@@ -353,7 +372,7 @@
 			<Position left="448" top="-288"/>
 		</Item>
 		<Item id="offset4 04">
-			<Position left="-1152" top="64"/>
+			<Position left="-1600" top="64"/>
 		</Item>
 		<Item id="perlinnoise2 01">
 			<Position left="688" top="-112"/>
@@ -365,16 +384,19 @@
 			<Position left="704" top="-336"/>
 		</Item>
 		<Item id="result">
-			<Position left="-2256" top="96"/>
+			<Position left="-2560" top="48"/>
 		</Item>
 		<Item id="slidercontrol 01">
 			<Position left="1104" top="96"/>
 		</Item>
+		<Item id="valuecontrol 01">
+			<Position left="-672" top="128"/>
+		</Item>
 		<Item id="valuecontrol 03">
-			<Position left="-1408" top="-176"/>
+			<Position left="-1152" top="-208"/>
 		</Item>
 		<Item id="valuecontrol 04">
-			<Position left="-1104" top="-80"/>
+			<Position left="-848" top="-112"/>
 		</Item>
 	</FilterEditor>
 </Filter>

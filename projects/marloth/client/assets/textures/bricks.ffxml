@@ -2,13 +2,17 @@
 <Filter>
 	<Components>
 		<Result id="result">
-			<Source source="noisedistortion2 01"/>
-			<FilterType value="0"/>
+			<SurfaceColor source="noisedistortion2 01" red="1" green="0" blue="1" alpha="1"/>
+			<Height source="noisedistortion2 01"/>
+			<Reflectivity value="0"/>
+			<ReflectionBlur value="0"/>
+			<Metallic value="0"/>
+			<FilterType value="1"/>
 			<Advanced value="false"/>
 			<Lighting>
 				<Height value="0.2000000000000000111"/>
 				<Environment>
-					<Source value=""/>
+					<Source value="Bridge"/>
 					<Brightness value="1"/>
 					<Saturation value="1"/>
 					<Rotation value="0"/>
@@ -55,7 +59,7 @@
 			<Bond value="0"/>
 			<BrickType value="1"/>
 			<FillMode value="0"/>
-			<Repeat value="1"/>
+			<Repeat value="2"/>
 			<Chaos value="0.2399999999999999911"/>
 			<Variation value="1"/>
 			<Bevel value="0"/>
@@ -132,7 +136,7 @@
 			<Lighting>
 				<Height value="0.2000000000000000111"/>
 				<Environment>
-					<Source value=""/>
+					<Source value="Bridge"/>
 					<Brightness value="1"/>
 					<Saturation value="1"/>
 					<Rotation value="0"/>
@@ -181,7 +185,7 @@
 	<FilterEditor>
 		<Groups/>
 		<ThumbnailSize value="1"/>
-		<Canvas left="15" top="-306" zoom_factor="0"/>
+		<Canvas left="-188" top="-286" zoom_factor="0"/>
 		<Viewport left="0" top="0" zoom_factor="-2"/>
 		<LockPreview>
 			<Locked value="true"/>
@@ -191,7 +195,7 @@
 			<Position left="672" top="80"/>
 		</Item>
 		<Item id="noisedistortion2 01">
-			<Position left="400" top="160"/>
+			<Position left="416" top="160"/>
 		</Item>
 		<Item id="perlinnoise2 01">
 			<Position left="1008" top="-128"/>
@@ -206,7 +210,7 @@
 			<Position left="752" top="-192"/>
 		</Item>
 		<Item id="result">
-			<Position left="208" top="-32"/>
+			<Position left="112" top="144"/>
 		</Item>
 	</FilterEditor>
 </Filter>
