@@ -16,7 +16,6 @@ import mythic.spatial.*
 import org.joml.*
 import rendering.*
 import rendering.meshes.Primitive
-import rendering.meshes.modelToMeshes
 import rendering.shading.ObjectShaderConfig
 import rendering.shading.populateBoneBuffer
 import scenery.AnimationId
@@ -74,7 +73,7 @@ fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, trans
 
   effect.activate(shaderConfig)
 
-  mesh.draw(DrawMethod.triangleFan)
+//  mesh.draw(DrawMethod.triangleFan)
   if (config.meshDisplay == MeshDisplay.wireframe) {
     globalState.cullFaces = false
     globalState.depthEnabled = false
@@ -87,11 +86,11 @@ fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, trans
 
   globalState.lineThickness = 1f
   flatEffect.activate(shaderConfig2)
-  mesh.draw(DrawMethod.lineLoop)
+//  mesh.draw(DrawMethod.lineLoop)
 
   globalState.pointSize = 3f
   flatEffect.activate(shaderConfig2)
-  mesh.draw(DrawMethod.points)
+//  mesh.draw(DrawMethod.points)
 
   globalState.depthEnabled = false
   globalState.cullFaces = false
@@ -171,14 +170,14 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
     } else {
       val primitives2 = model.primitives
 
-      val meshes = modelToMeshes(renderer.vertexSchemas, modelSource)
-      meshes
-          .filterIndexed { i, it -> config.visibleGroups[i] }
-          .forEach {
-            drawMeshPreview(config, sceneRenderer, transform, it, transforms != null)
-          }
-
-      meshes.forEach { it.mesh.dispose() }
+//      val meshes = modelToMeshes(renderer.vertexSchemas, modelSource)
+//      meshes
+//          .filterIndexed { i, it -> config.visibleGroups[i] }
+//          .forEach {
+//            drawMeshPreview(config, sceneRenderer, transform, it, transforms != null)
+//          }
+//
+//      meshes.forEach { it.mesh.dispose() }
 
 //      if (config.drawNormals)
 //        renderFaceNormals(sceneRenderer, 0.05f, modelSource.mesh)

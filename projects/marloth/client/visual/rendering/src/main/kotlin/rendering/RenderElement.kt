@@ -3,6 +3,7 @@ package rendering
 import mythic.breeze.MultiAnimationPart
 import mythic.breeze.transformAnimatedSkeleton
 import mythic.glowing.DrawMethod
+import mythic.glowing.drawMesh
 import mythic.spatial.*
 import org.joml.times
 import rendering.meshes.Primitive
@@ -34,7 +35,7 @@ fun renderElement(renderer: SceneRenderer, primitive: Primitive, material: Mater
     renderer.effects.colored
 
   effect.activate(config)
-  primitive.mesh.draw(DrawMethod.triangleFan)
+  drawMesh(primitive.mesh, DrawMethod.triangleFan)
 }
 
 fun armatureTransforms(armature: Armature, group: ElementGroup): List<Matrix> =
@@ -111,7 +112,7 @@ fun renderElementGroup(gameRenderer: GameSceneRenderer, group: ElementGroup) {
     }
   }
 
-  if (group.billboard != null) {
-    renderBillboard(gameRenderer, group.billboard)
+  if (group.billboards.any()) {
+    renderBillboard(gameRenderer, group.billboards)
   }
 }

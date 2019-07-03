@@ -6,6 +6,8 @@ import intellect.Spirit
 import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.ent.newIdSource
+import mythic.spatial.Pi
+import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import physics.Body
@@ -194,7 +196,7 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
   val playerNode = realm.nodeTable.values.first { it.biome == BiomeId.home }
   val scale = calculateWorldScale(input.boundary.dimensions)
   val nextId = newIdSource(1)
-  val particleNode =realm.nodeTable[6L]!!
+  val particleNode = realm.nodeTable[6L]!!
   val deck = Deck()
       .plus(newPlayer(nextId, playerNode))
       .plus(allHandsOnDeck(listOf(Hand(
@@ -204,7 +206,7 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
           particleEffect = ParticleEffect(
               lifecycle = listOf(
                   ParticleAppearance(
-                      texture = TextureId.perlinParticle2,
+                      texture = TextureId.perlinParticle,
                       color = Vector4(0.5f, 1f, 0.5f, 1f),
                       size = 2f
                   )

@@ -1,11 +1,10 @@
 package rendering
 
-import getResourceUrl
+import assets.getResourceUrl
 import rendering.meshes.*
 import rendering.meshes.loading.loadGltf
 import scenery.MeshId
 import java.io.File
-import mythic.glowing.VertexSchema as GenericVertexSchema
 
 enum class MeshType {
   bear,

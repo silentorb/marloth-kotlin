@@ -1,0 +1,97 @@
+package rendering.shading
+
+import rendering.meshes.VertexSchema
+
+private const val weightHeader = """
+layout (std140) uniform BoneTransforms {
+  mat4[128] boneTransforms;
+};
+"""
+
+private const val weightOperations = """
+  vec3 position3 = vec3(0.0);
+
+  for (int i = 0; i < 4; ++i) {
+    int boneIndex = int(joints[i]);
+    float strength = weights[i];
+    position3 += (boneTransforms[boneIndex] * position4).xyz * strength;
+  }
+  position4 = vec4(position3, 1.0);
+"""
+
+private const val shadingHeader = """
+uniform mat4 normalTransform;
+out vec4 fragmentPosition;
+out vec3 fragmentNormal;
+"""
+
+private const val textureHeader = """
+out vec2 textureCoordinates;
+"""
+
+private const val shadingOperations = """
+  fragmentPosition = modelPosition;
+  fragmentNormal = normalize((normalTransform * vec4(normal, 1.0)).xyz);
+"""
+
+private const val textureOperations = """
+  textureCoordinates = uv;
+"""
+
+private fun instanceHeader(instanced: Boolean) =
+    if (instanced) {
+      """
+struct Instance {
+    mat4 position;
+};
+
+struct InstanceSection {
+    Instance instances[$maxInstanceCount];
+};
+
+layout(std140) uniform InstanceUniform {
+    InstanceSection instanceSection;
+};
+"""
+    } else {
+      """
+uniform mat4 modelTransform;
+"""
+    }
+
+private fun instanceOperations(instanced: Boolean) =
+    if (instanced) {
+      """
+  mat4 modelTransform = instanceSection.instances[gl_InstanceID].position;
+"""
+    } else ""
+
+private fun mainVertex(config: ShaderFeatureConfig): String {
+  return """
+${instanceHeader(config.instanced)}
+
+${if (config.shading) shadingHeader else ""}
+${if (config.texture) textureHeader else ""}
+${if (config.skeleton) weightHeader else ""}
+
+void main() {
+  vec4 position4 = vec4(position, 1.0);
+${instanceOperations(config.instanced)}
+ ${if (config.skeleton) weightOperations else ""}
+ vec4 modelPosition = modelTransform * position4;
+  gl_Position = scene.cameraTransform * modelPosition;
+${if (config.shading) shadingOperations else ""}
+${if (config.texture) textureOperations else ""}
+}
+"""
+}
+
+fun generateInputsHeader(vertexSchema: VertexSchema): String =
+    vertexSchema.attributes.mapIndexed { i, it ->
+      "layout(location = ${i}) in vec${it.size} ${it.name.toString()};"
+    }.joinToString("\n")
+
+fun generateVertexCode(config: ShaderFeatureConfig): (VertexSchema) -> String = { vertexSchema ->
+  val inputHeader = generateInputsHeader(vertexSchema)
+  inputHeader + sceneHeader + mainVertex(config)
+}

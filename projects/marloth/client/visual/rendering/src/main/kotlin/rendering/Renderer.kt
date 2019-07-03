@@ -136,6 +136,7 @@ typealias AnimationDurationMap = Map<ArmatureId, Map<AnimationId, Float>>
 // Even though numbers have no case, still include them in the regex
 // so hypens or underscores followed by a number are converted
 private val camelCaseRegex = Regex("[-_][a-z0-9]")
+
 fun toCamelCase(identifier: String) =
     identifier.replace(camelCaseRegex) { it.value[1].toUpperCase().toString() }
 
@@ -198,17 +199,19 @@ class Renderer(
   val glow = Glow()
   var renderColor: ByteTextureBuffer = ByteTextureBuffer()
   var renderDepth: FloatTextureBuffer = FloatTextureBuffer()
+  val instanceBuffer = UniformBuffer(instanceBufferSize)
   val sceneBuffer = UniformBuffer(sceneBufferSize)
   val sectionBuffer = UniformBuffer(sectionBufferSize)
   val boneBuffer = UniformBuffer(boneBufferSize)
-  val shaders: Shaders = createShaders(UniformBuffers(
+  val vertexSchemas = createVertexSchemas()
+  val shaders: Shaders = createShaders(vertexSchemas, UniformBuffers(
+      instance = instanceBuffer,
       scene = sceneBuffer,
       section = sectionBuffer,
       bone = boneBuffer
   ))
   val drawing = createDrawingEffects()
-  val vertexSchemas = createVertexSchemas()
-//  var worldMesh: WorldMesh? = null
+  //  var worldMesh: WorldMesh? = null
   val meshes: ModelMeshMap
   val armatures: Map<ArmatureId, Armature>
   val animationDurations: AnimationDurationMap

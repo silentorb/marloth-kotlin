@@ -1,7 +1,9 @@
 package rendering.meshes
 
 import mythic.glowing.Drawable
+import mythic.glowing.GeneralMesh
 import mythic.glowing.SimpleMesh
+import mythic.glowing.newGeneralMesh
 import mythic.sculpting.ImmutableFace
 import mythic.sculpting.ImmutableMesh
 import mythic.spatial.*
@@ -46,13 +48,13 @@ fun createSimpleMesh(mesh: ImmutableMesh, vertexSchema: VertexSchema) =
     convertMesh(mesh, vertexSchema, simpleVertexSerializer())
 
 fun createLineMesh(vertexSchema: VertexSchema) =
-    SimpleMesh(vertexSchema, listOf(
+    newGeneralMesh(vertexSchema, listOf(
         0f, 0f, 0f,
         1f, 0f, 0f
     ))
 
 fun createBillboardMesh(vertexSchema: VertexSchema) =
-    SimpleMesh(vertexSchema, listOf(
+    newGeneralMesh(vertexSchema, listOf(
         0f, 1f, 0f, 0f, 1f,
         0f, 0f, 0f, 0f, 0f,
         1f, 0f, 0f, 1f, 0f,
@@ -64,7 +66,7 @@ typealias ModelGenerator = () -> Model
 typealias ModelGeneratorMap = Map<MeshType, ModelGenerator>
 
 data class Primitive(
-    val mesh: Drawable,
+    val mesh: GeneralMesh,
     val material: Material,
     val transform: Matrix? = null,
     val parentBone: Int? = null,
@@ -89,19 +91,19 @@ fun partitionModelMeshes(model: Model): List<TransientModelElement> {
   }
 }
 
-fun modelToMeshes(vertexSchemas: VertexSchemas, model: Model): Primitives {
-  val sections = partitionModelMeshes(model)
-  return sections.map {
-    Primitive(createSimpleMesh(it.faces, vertexSchemas.shaded), it.material)
-  }
-}
+//fun modelToMeshes(vertexSchemas: VertexSchemas, model: Model): Primitives {
+//  val sections = partitionModelMeshes(model)
+//  return sections.map {
+//    Primitive(createSimpleMesh(it.faces, vertexSchemas.shaded), it.material)
+//  }
+//}
 
-fun modelToMeshes(vertexSchemas: VertexSchemas, model: Model, weightMap: WeightMap): Primitives {
-  val sections = partitionModelMeshes(model)
-  return sections.map {
-    Primitive(createAnimatedMesh(it.faces, vertexSchemas.animated, weightMap), it.material)
-  }
-}
+//fun modelToMeshes(vertexSchemas: VertexSchemas, model: Model, weightMap: WeightMap): Primitives {
+//  val sections = partitionModelMeshes(model)
+//  return sections.map {
+//    Primitive(createAnimatedMesh(it.faces, vertexSchemas.animated, weightMap), it.material)
+//  }
+//}
 
-fun createModelElements(simpleMesh: SimpleMesh<AttributeName>, color: Vector4 = Vector4(1f)) =
+fun createModelElements(simpleMesh: GeneralMesh, color: Vector4 = Vector4(1f)) =
     listOf(Primitive(simpleMesh, Material(color)))

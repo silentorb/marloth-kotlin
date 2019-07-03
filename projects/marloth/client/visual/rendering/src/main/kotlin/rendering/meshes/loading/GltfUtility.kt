@@ -1,6 +1,6 @@
 package rendering.meshes.loading
 
-import getResourceStream
+import assets.getResourceStream
 import mythic.spatial.Matrix
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3

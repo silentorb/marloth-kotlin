@@ -1,6 +1,6 @@
 package marloth.clienting.audio
 
-import getResourceUrl
+import assets.getResourceUrl
 import marloth.clienting.Client
 import marloth.clienting.ClientState
 import marloth.clienting.getListenerPosition

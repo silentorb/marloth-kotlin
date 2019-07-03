@@ -1,13 +1,12 @@
 package rendering.meshes.loading
 
 import mythic.breeze.*
-import mythic.glowing.Drawable
-import mythic.glowing.SimpleTriangleMesh
-import mythic.glowing.VertexAttributeDetail
+import mythic.glowing.*
 import mythic.spatial.Vector3
 import org.lwjgl.BufferUtils
 import rendering.*
 import rendering.meshes.*
+import rendering.meshes.VertexSchema
 import scenery.*
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
@@ -164,7 +163,7 @@ fun getParentBone(info: GltfInfo, nodeIndex: Int, boneMap: BoneMap): Int? {
 }
 
 fun loadPrimitive(buffer: ByteBuffer, info: GltfInfo, vertexSchemas: VertexSchemas, primitive: Primitive,
-                  converter: VertexConverter): Drawable {
+                  converter: VertexConverter): GeneralMesh {
   val vertexSchema = if (primitive.attributes.containsKey(AttributeType.JOINTS_0))
     vertexSchemas.animated
   else if (primitive.attributes.containsKey(AttributeType.TEXCOORD_0))
@@ -178,7 +177,10 @@ fun loadPrimitive(buffer: ByteBuffer, info: GltfInfo, vertexSchemas: VertexSchem
   vertices.position(0)
   indices.position(0)
 
-  return SimpleTriangleMesh(vertexSchema, vertices, indices)
+  return GeneralMesh(
+      vertexBuffer = newVertexBuffer(vertexSchema).load(vertices),
+      indices = indices
+  )
 }
 
 fun convertChannelType(source: String): ChannelType =

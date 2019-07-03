@@ -175,17 +175,17 @@ val isComplexDepiction = { depiction: Depiction ->
 }
 
 fun gatherParticleElements(deck: Deck): ElementGroups {
-  return deck.particleEffects.flatMap { (_, particleEffect) ->
-    particleEffect.particles.map { particle ->
-      ElementGroup(
-          billboard = TexturedBillboard(
+  return deck.particleEffects.map { (_, particleEffect) ->
+    ElementGroup(
+        billboards = particleEffect.particles.map { particle ->
+          TexturedBillboard(
               texture = particle.texture,
               position = particle.position,
               scale = particle.size,
               color = particle.color
           )
-      )
-    }
+        }
+    )
   }
 }
 
@@ -250,7 +250,7 @@ fun createScene(world: World, screen: Screen, player: Player): GameScene {
           camera = createCamera(world, screen),
           lights = mapLights(world, player)
       ),
-      opaqueElementGroups =  gatherVisualElements(world, screen, player),
+      opaqueElementGroups = gatherVisualElements(world, screen, player),
       transparentElementGroups = gatherParticleElements(world.deck),
       player = player.playerId,
       filters = if (!world.deck.characters[player.id]!!.isAlive)

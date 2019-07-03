@@ -38,7 +38,7 @@ data class ElementGroup(
     val armature: ArmatureId? = null,
     val animations: List<ElementAnimation> = listOf(),
     val attachments: List<AttachedMesh> = listOf(),
-    val billboard: TexturedBillboard? = null
+    val billboards: List<TexturedBillboard> = listOf()
 )
 
 typealias ElementGroups = List<ElementGroup>

@@ -8,6 +8,7 @@ import lab.LabState
 import marloth.clienting.*
 import marloth.clienting.gui.layoutGui
 import mythic.glowing.DrawMethod
+import mythic.glowing.drawMesh
 import mythic.glowing.globalState
 import mythic.sculpting.ImmutableFace
 import mythic.sculpting.getVerticesCenter
@@ -57,7 +58,7 @@ fun renderFaceNormals(renderer: SceneRenderer, length: Float, faces: List<Immuta
         .scale(length)
 
     renderer.effects.flat.activate(ObjectShaderConfig(transform = transform, color = Vector4(0f, 1f, 0f, 1f)))
-    renderer.meshes[MeshId.line]!!.primitives[0].mesh.draw(DrawMethod.lines)
+    drawMesh(renderer.meshes[MeshId.line]!!.primitives[0].mesh, DrawMethod.lines)
   }
 }
 

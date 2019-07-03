@@ -1,88 +1,21 @@
 package rendering.shading
 
-import loadTextResource
 import mythic.glowing.*
 import mythic.spatial.Matrix
 import mythic.spatial.Vector4
 import org.lwjgl.opengl.GL20.glGetUniformLocation
 import org.lwjgl.opengl.GL20.glUniform1i
+import rendering.meshes.AttributeName
+import rendering.meshes.VertexSchemas
 
-private val lighting = loadTextResource("shaders/lighting.glsl")
-
-private val sceneHeader = """
-struct Scene {
-  mat4 cameraTransform;
-  vec3 cameraDirection;
-};
-
-layout(std140) uniform SceneUniform {
-    Scene scene;
-};
-
-"""
-
-private val vertexShaderWithoutNormals = """
-$sceneHeader
-uniform mat4 modelTransform;
-uniform vec4 uniformColor;
-
-out vec4 fragmentColor;
-out vec4 fragmentPosition;
-out vec2 textureCoordinates;
-
-void main() {
-  fragmentColor = uniformColor;
-  vec4 position4 = vec4(position, 1.0);
-  vec4 modelPosition = modelTransform * position4;
-  fragmentPosition = modelPosition;
-  gl_Position = scene.cameraTransform * modelPosition;
-  textureCoordinates = uv;
-}
-"""
-
-private val weightHeader = """
-layout (std140) uniform BoneTransforms {
-  mat4[128] boneTransforms;
-};
-"""
-
-private val weightApplication = """
-  vec3 position3 = vec3(0.0);
-
-  for (int i = 0; i < 4; ++i) {
-    int boneIndex = int(joints[i]);
-    float strength = weights[i];
-    position3 += (boneTransforms[boneIndex] * position4).xyz * strength;
-  }
-  position4 = vec4(position3, 1.0);
-"""
-
-private val flatVertex = """
-$sceneHeader
-uniform mat4 modelTransform;
-uniform vec4 uniformColor;
-
-//#weightHeader
-
-out vec4 fragment_color;
-
-void main() {
-	fragment_color = uniformColor;
-  vec4 position4 = vec4(position, 1.0);
-//#weightApplication
-  vec4 modelPosition = modelTransform * position4;
-  gl_Position = scene.cameraTransform * modelPosition;
-}
-"""
-
-private val flatFragment = """
-in vec4 fragment_color;
-out vec4 output_color;
-
-void main() {
-  output_color = fragment_color;
-}
-"""
+//private val flatFragment = """
+//in vec4 fragmentColor;
+//out vec4 output_color;
+//
+//void main() {
+//  output_color = uniformColor;
+//}
+//"""
 
 fun routeTexture(program: ShaderProgram, name: String, unit: Int) {
   val location = glGetUniformLocation(program.id, name)
@@ -90,89 +23,36 @@ fun routeTexture(program: ShaderProgram, name: String, unit: Int) {
   glUniform1i(location, unit)
 }
 
-fun insertTemplates(source: String, replacements: Map<String, String>): String {
-  var result = source
-  replacements.forEach { name, snippet -> result = result.replace("//#" + name + "", snippet) }
-  return result
-}
+//fun insertTemplates(source: String, replacements: Map<String, String>): String {
+//  var result = source
+//  replacements.forEach { name, snippet -> result = result.replace("//#" + name + "", snippet) }
+//  return result
+//}
 
-private val mainVertex = sceneHeader + loadTextResource("shaders/mainVertex.glsl")
+//private val coloredFragment = """
+//$sceneHeader
+//in vec4 fragmentPosition;
+//in vec3 fragmentNormal;
+//in vec4 fragmentColor;
+//out vec4 output_color;
+//uniform mat4 normalTransform;
+//uniform float glow;
+//uniform mat4 modelTransform;
+//
+//$lightingHeader
+//
+//void main() {
+//  vec3 lightResult = processLights(vec4(1), fragmentNormal, scene.cameraDirection, fragmentPosition.xyz, glow);
+//	output_color = fragmentColor * vec4(lightResult, 1.0);
+//}
+//"""
 
-private fun addWeightShading(source: String) = insertTemplates(source, mapOf(
-    "weightHeader" to weightHeader,
-    "weightApplication" to weightApplication
-))
-
-private val coloredFragment = """
-$sceneHeader
-in vec4 fragmentPosition;
-in vec3 fragmentNormal;
-in vec4 fragmentColor;
-out vec4 output_color;
-uniform mat4 normalTransform;
-uniform float glow;
-uniform mat4 modelTransform;
-
-$lighting
-
-void main() {
-  vec3 lightResult = processLights(vec4(1), fragmentNormal, scene.cameraDirection, fragmentPosition.xyz, glow);
-	output_color = fragmentColor * vec4(lightResult, 1.0);
-}
-"""
-
-private val lightingApplication1 = "vec3 lightResult = processLights(vec4(1), fragmentNormal, scene.cameraDirection, fragmentPosition.xyz, glow);"
-private val lightingApplication2 = "fragmentColor * vec4(lightResult, 1.0)"
-
-private val texturedFragmentBase = """
-$sceneHeader
-in vec4 fragmentPosition;
-in vec3 fragmentNormal;
-in vec4 fragmentColor;
-in vec2 textureCoordinates;
-out vec4 output_color;
-
-//#lightingHeader
-
-uniform sampler2D text;
-uniform mat4 normalTransform;
-uniform float glow;
-uniform mat4 modelTransform;
-
-void main() {
-  vec4 sampled = texture(text, textureCoordinates);
-//#lightingApplication1
-  output_color = @outColor;
-}
-"""
-
-private val texturedFragmentWithoutNormalBase = """
-$sceneHeader
-in vec4 fragmentPosition;
-in vec4 fragmentColor;
-in vec2 textureCoordinates;
-out vec4 output_color;
-
-uniform sampler2D text;
-uniform float glow;
-uniform mat4 modelTransform;
-
-void main() {
-  vec4 sampled = texture(text, textureCoordinates);
-  output_color = @outColor;
-}
-"""
-
-private val texturedFragment = insertTemplates(texturedFragmentBase, mapOf(
-    "lightingHeader" to lighting,
-    "lightingApplication1" to lightingApplication1
-)).replace("@outColor", "sampled * " + lightingApplication2)
-
-private val texturedFragmentFlat = texturedFragmentBase
-    .replace("@outColor", "sampled")
-
-private val texturedFragmentFlatWithoutNormal = texturedFragmentWithoutNormalBase
-    .replace("@outColor", "sampled")
+//private val texturedFragment = generateFragmentShader(FragmentShaderConfig(
+//    lighting = true
+//))
+//
+//private val texturedFragmentFlat = generateFragmentShader(FragmentShaderConfig(
+//))
 
 class PerspectiveFeature(program: ShaderProgram) {
   val modelTransform = MatrixProperty(program, "modelTransform")
@@ -183,6 +63,7 @@ class ColoringFeature(program: ShaderProgram) {
 }
 
 enum class UniformBufferId {
+  InstanceUniform,
   SceneUniform,
   SectionUniform,
   BoneTransforms
@@ -214,7 +95,8 @@ data class ShaderFeatureConfig(
     val shading: Boolean = false,
     val skeleton: Boolean = false,
     val texture: Boolean = false,
-    val includeNormal: Boolean = true
+    val instanced: Boolean = false,
+    val animatedTexture: Boolean = false // Requires `texture` == true
 )
 
 data class ObjectShaderConfig(
@@ -226,64 +108,17 @@ data class ObjectShaderConfig(
     val boneBuffer: UniformBuffer? = null
 )
 
-fun generateVertexInputHeader(config: ShaderFeatureConfig): String {
-  val baseInputs = if (config.includeNormal)
-    listOf(
-        "vec3 position",
-        "vec3 normal",
-        "vec2 uv"
-    )
-  else
-    listOf(
-        "vec3 position",
-        "vec2 uv"
-    )
-
-  val weightInputs = listOf(
-      "vec4 joints",
-      "vec4 weights"
-  )
-
-  val inputs = if (config.skeleton)
-    baseInputs.plus(weightInputs)
-  else
-    baseInputs
-
-  return inputs.mapIndexed { i, input ->
-    "layout(location = ${i}) in ${input};"
-  }.joinToString("\n")
-}
-
-fun generateVertexCodeBody(config: ShaderFeatureConfig): String {
-  val baseCode = if (!config.includeNormal)
-    vertexShaderWithoutNormals
-  else if (config.shading || config.texture)
-    mainVertex
-  else
-    flatVertex
-
-  return if (config.skeleton)
-    addWeightShading(baseCode)
-  else
-    baseCode
-}
-
-fun generateVertexCode(config: ShaderFeatureConfig): String {
-  val inputHeader = generateVertexInputHeader(config)
-  val mainBody = generateVertexCodeBody(config)
-
-  return inputHeader + mainBody
-}
-
-fun generateShaderProgram(fragmentShader: String, featureConfig: ShaderFeatureConfig): ShaderProgram {
-  val vertexShader = generateVertexCode(featureConfig)
+fun generateShaderProgram(vertexSchema: VertexSchema<AttributeName>, featureConfig: ShaderFeatureConfig): ShaderProgram {
+  val vertexShader = generateVertexCode(featureConfig)(vertexSchema)
+  val fragmentShader = generateFragmentShader(featureConfig)
   return ShaderProgram(vertexShader, fragmentShader)
 }
 
-class GeneralPerspectiveShader(buffers: UniformBuffers, fragmentShader: String, featureConfig: ShaderFeatureConfig) {
-  val program = generateShaderProgram(fragmentShader, featureConfig)
+class GeneralPerspectiveShader(buffers: UniformBuffers, vertexSchema: VertexSchema<AttributeName>, featureConfig: ShaderFeatureConfig) {
+  val program = generateShaderProgram(vertexSchema, featureConfig)
   val perspective: PerspectiveFeature = PerspectiveFeature(program)
   val coloring: ColoringFeature = ColoringFeature(program)
+  val instanceProperty = if (featureConfig.instanced) bindUniformBuffer(UniformBufferId.InstanceUniform, program, buffers.instance) else null
   val sceneProperty = bindUniformBuffer(UniformBufferId.SceneUniform, program, buffers.scene)
   val shading: ShadingFeature? = if (featureConfig.shading) ShadingFeature(program, buffers.section) else null
   val skeleton: SkeletonFeature? = if (featureConfig.skeleton) SkeletonFeature(program, buffers.bone) else null
@@ -328,38 +163,39 @@ data class Shaders(
 )
 
 data class UniformBuffers(
+    val instance: UniformBuffer,
     val scene: UniformBuffer,
     val section: UniformBuffer,
     val bone: UniformBuffer
 )
 
-fun createShaders(buffers: UniformBuffers): Shaders {
+fun createShaders(vertexSchemas: VertexSchemas, buffers: UniformBuffers): Shaders {
   return Shaders(
-      billboard = GeneralPerspectiveShader(buffers, texturedFragmentFlatWithoutNormal, ShaderFeatureConfig(
+      billboard = GeneralPerspectiveShader(buffers, vertexSchemas.billboard, ShaderFeatureConfig(
           texture = true,
-          includeNormal = false
+          instanced = true
       )),
-      textured = GeneralPerspectiveShader(buffers, texturedFragment, ShaderFeatureConfig(
+      textured = GeneralPerspectiveShader(buffers, vertexSchemas.textured, ShaderFeatureConfig(
           shading = true,
           texture = true
       )),
-      texturedFlat = GeneralPerspectiveShader(buffers, texturedFragmentFlat, ShaderFeatureConfig(
+      texturedFlat = GeneralPerspectiveShader(buffers, vertexSchemas.textured, ShaderFeatureConfig(
           texture = true
       )),
-      animated = GeneralPerspectiveShader(buffers, texturedFragment, ShaderFeatureConfig(
+      animated = GeneralPerspectiveShader(buffers, vertexSchemas.animated, ShaderFeatureConfig(
           shading = true,
           skeleton = true,
           texture = true
       )),
-      colored = GeneralPerspectiveShader(buffers, coloredFragment, ShaderFeatureConfig(
+      colored = GeneralPerspectiveShader(buffers, vertexSchemas.shaded, ShaderFeatureConfig(
           shading = true
       )),
-      coloredAnimated = GeneralPerspectiveShader(buffers, coloredFragment, ShaderFeatureConfig(
+      coloredAnimated = GeneralPerspectiveShader(buffers, vertexSchemas.animated, ShaderFeatureConfig(
           shading = true,
           skeleton = true
       )),
-      flat = GeneralPerspectiveShader(buffers, flatFragment, ShaderFeatureConfig()),
-      flatAnimated = GeneralPerspectiveShader(buffers, flatFragment, ShaderFeatureConfig(
+      flat = GeneralPerspectiveShader(buffers, vertexSchemas.flat, ShaderFeatureConfig()),
+      flatAnimated = GeneralPerspectiveShader(buffers, vertexSchemas.animated, ShaderFeatureConfig(
           skeleton = true
       )),
       depthOfField = DepthScreenShader(ShaderProgram(screenVertex, depthOfFieldFragment)),

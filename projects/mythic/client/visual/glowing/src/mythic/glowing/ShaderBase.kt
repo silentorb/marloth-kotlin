@@ -2,7 +2,6 @@ package mythic.glowing
 
 import org.lwjgl.opengl.GL20.*
 
-
 abstract class ShaderBase(code: String, type: Int) {
   val id: Int
 
@@ -19,6 +18,4 @@ abstract class ShaderBase(code: String, type: Int) {
     if (compiled == 0)
       throw Error("Could not compile shader.")
   }
-
-
 }

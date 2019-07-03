@@ -96,7 +96,6 @@ val loadImageFromFile: ImageLoader = { path ->
     width = widthBuffer.get()
     height = heightBuffer.get()
     channels = channelBuffer.get()
-    println(path + " " + channels)
   }
 
   if (buffer != null)

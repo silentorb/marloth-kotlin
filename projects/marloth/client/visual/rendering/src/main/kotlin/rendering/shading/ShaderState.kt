@@ -71,14 +71,21 @@ private val sceneMemoryBuffer = BufferUtils.createByteBuffer(sceneBufferSize)
 private val sceneBufferCustodian = BufferCustodian(sceneMemoryBuffer)
 
 fun createSceneBuffer(effectsData: EffectsData): ByteBuffer {
-//  for (bone in bones) {
-//    val newTransform = bone.transform(bones, bone)
-//    val diff = Matrix(newTransform) * Matrix(bone.restingTransform).invert()
-//    diff.get(boneBuffer)
-//    boneBuffer.position(boneBuffer.position() + sizeOfMatrix)
-//  }
   sceneMemoryBuffer.putMatrix(effectsData.camera.transform)
   sceneMemoryBuffer.putVector3(effectsData.camera.direction)
   sceneBufferCustodian.finish()
   return sceneMemoryBuffer
+}
+
+const val maxInstanceCount = 512
+const val instanceBufferSize = sizeOfMatrix * maxInstanceCount
+private val instanceMemoryBuffer = BufferUtils.createByteBuffer(instanceBufferSize)
+private val instanceBufferCustodian = BufferCustodian(instanceMemoryBuffer)
+
+fun createInstanceBuffer(transforms: List<Matrix>): ByteBuffer {
+  for (transform in transforms) {
+    instanceMemoryBuffer.putMatrix(transform)
+  }
+  instanceBufferCustodian.finish()
+  return instanceMemoryBuffer
 }

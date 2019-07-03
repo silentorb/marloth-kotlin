@@ -100,7 +100,6 @@ fun getTwinTunnels(graph: Graph, tunnels: List<PreTunnel>): List<PreTunnel> =
         val second = getDoorFramePoints(node, b.connection.other(graph, node))
         val (c, _) = lineSegmentIntersectsLineSegment(first[0], first[1], second[0], second[1])
 //        val c = a.position.distance(b.position) < doorwayLength * 2f
-//      println(c)
         c
       }
 //      listOf<PreTunnel>()

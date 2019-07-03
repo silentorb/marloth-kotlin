@@ -4,24 +4,13 @@ import org.lwjgl.opengl.GL15.*
 import org.lwjgl.opengl.GL30.glDeleteVertexArrays
 import java.nio.FloatBuffer
 
-class VertexBuffer<T>(vertexSchema: VertexSchema<T>, interleaved: Boolean = true) {
-  private val vbo = glGenBuffers()
-  private val vao: VertexArrayObject
+class VertexBuffer(private val vbo: Int, private val vao: VertexArrayObject) {
   private val disposed = false
 
-  init {
-    globalState.vertexBufferObject = vbo
-    vao = if (interleaved)
-      VertexArrayObject.createInterwoven(vertexSchema)
-    else
-      VertexArrayObject.createNonInterleaved(vertexSchema)
-
-    checkError("binding vbo buffer data")
-  }
-
-  fun load(vertices: FloatBuffer) {
+  fun load(vertices: FloatBuffer): VertexBuffer {
     globalState.vertexBufferObject = vbo
     glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW)
+    return this
   }
 
   fun activate() {
@@ -43,4 +32,16 @@ class VertexBuffer<T>(vertexSchema: VertexSchema<T>, interleaved: Boolean = true
     glDeleteVertexArrays(vao.id)
     glDeleteBuffers(vbo)
   }
+}
+
+fun <T> newVertexBuffer(vertexSchema: VertexSchema<T>, interleaved: Boolean = true): VertexBuffer {
+  val vbo = glGenBuffers()
+  globalState.vertexBufferObject = vbo
+  val vao = if (interleaved)
+    VertexArrayObject.createInterwoven(vertexSchema)
+  else
+    VertexArrayObject.createNonInterleaved(vertexSchema)
+
+  checkError("binding vbo buffer data")
+  return VertexBuffer(vbo, vao)
 }

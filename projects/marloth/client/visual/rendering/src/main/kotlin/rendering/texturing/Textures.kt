@@ -1,7 +1,6 @@
 package rendering.texturing
 
-import getResourceUrl
-import mythic.ent.pipe
+import assets.getResourceUrl
 import mythic.glowing.Texture
 import mythic.glowing.TextureAttributes
 import mythic.glowing.TextureFormat
@@ -10,17 +9,10 @@ import mythic.imaging.*
 import mythic.platforming.ImageLoader
 import mythic.platforming.RawImage
 import mythic.spatial.Vector3
-import org.joml.Vector2i
-import rendering.meshes.loading.loadJsonResource
 import rendering.toCamelCase
-import scanResources
-import scanTextureResources
+import assets.scanResources
+import assets.scanTextureResources
 import scenery.TextureId
-import silentorb.metahub.core.Engine
-import silentorb.metahub.core.Graph
-import silentorb.metahub.core.executeAndFormat
-import silentorb.metahub.core.mapValues
-import java.nio.FloatBuffer
 import java.nio.file.Paths
 import kotlin.concurrent.thread
 
@@ -116,7 +108,6 @@ fun rawImageToTexture(image: RawImage, attributes: TextureAttributes): Texture {
 
 fun loadTextureFromFile(loadImage: ImageLoader, path: String, attributes: TextureAttributes): Texture {
   val fullPath = getResourceUrl(path).path.substring(1)
-  println("Image " + path)
   val image = loadImage(fullPath)!!
 
   return rawImageToTexture(image, attributes)
@@ -124,7 +115,6 @@ fun loadTextureFromFile(loadImage: ImageLoader, path: String, attributes: Textur
 
 fun deferImageFile(loadImage: ImageLoader, path: String, attributes: TextureAttributes): DeferredTexture {
   val fullPath = getResourceUrl(path).path.substring(1)
-  println("Image " + path)
   val shortName = getFileShortName(path)
   val (truncated, newAttributes) = if (shortName.contains('.')) {
     val tokens = shortName.split('.')
@@ -138,36 +128,6 @@ fun deferImageFile(loadImage: ImageLoader, path: String, attributes: TextureAttr
       load = { loadImage(fullPath) }
   )
 }
-
-//fun loadTextureGraph(engine: Engine, path: String): Graph =
-//    pipe(loadJsonResource<Graph>(path), listOf(mapValues(engine)))
-
-//fun loadProceduralTextureFromFile(engine: Engine, path: String, attributes: TextureAttributes, length: Int): Texture {
-//  val graph = loadTextureGraph(engine, path)
-//  val values = executeAndFormat(engine, graph)
-//  val diffuse = values["diffuse"]!! as FloatBuffer
-//  return Texture(length, length, attributes, rgbFloatToBytes(diffuse))
-//}
-
-//fun deferProceduralTextureFromFile(engine: Engine, path: String, name: String, attributes: TextureAttributes, length: Int): DeferredTexture {
-//  val load: ImageSource = {
-//    val graph = loadTextureGraph(engine, path)
-//    val values = executeAndFormat(engine, graph)
-//    val diffuse = values["diffuse"]!! as FloatBuffer
-//    RawImage(
-//        buffer = rgbFloatToBytes(diffuse),
-//        width = length,
-//        height = length,
-//        channels = 3
-//    )
-//  }
-//
-//  return DeferredTexture(
-//      name = name,
-//      attributes = attributes,
-//      load = load
-//  )
-//}
 
 private fun miscTextureGenerators(): TextureGeneratorMap = mapOf(
     TextureId.background to applyAlgorithm(colorize(
@@ -231,8 +191,8 @@ fun gatherTextures(loadImage: ImageLoader, attributes: TextureAttributes): List<
         }
 
 //fun loadTextures(loadImage: ImageLoader, attributes: TextureAttributes): Map<String, Texture> =
-//    scanTextureResources("models")
-//        .plus(scanTextureResources("textures"))
+//    assets.scanTextureResources("models")
+//        .plus(assets.scanTextureResources("textures"))
 //        .associate {
 //          Pair(
 //              getFileShortName(it),

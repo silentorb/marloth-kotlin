@@ -58,9 +58,9 @@ data class ModelMesh(
 
 typealias ModelMeshMap = Map<MeshId, ModelMesh>
 
-fun dispose(model: AdvancedModel) {
-  model.primitives.forEach { it.mesh.dispose() }
-}
+//fun dispose(model: AdvancedModel) {
+//  model.primitives.forEach { it.mesh.dispose() }
+//}
 
 fun getMeshId(name: String): MeshId? {
   val formattedName = toCamelCase(name)

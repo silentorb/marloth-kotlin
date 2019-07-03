@@ -18,7 +18,6 @@ enum class TextureId {
   greenLeaves,
   ground,
   perlinParticle,
-  perlinParticle2,
   redTile,
   woodDoor
 }

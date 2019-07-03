@@ -3,6 +3,7 @@ package mythic.glowing
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL14.glMultiDrawArrays
+import org.lwjgl.opengl.GL31.glDrawArraysInstanced
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
 
@@ -31,7 +32,7 @@ fun createIntBuffer(value: Int): IntBuffer {
   return buffer
 }
 
-private fun convertDrawMethod(method: DrawMethod): Int {
+fun convertDrawMethod(method: DrawMethod): Int {
   when (method) {
     DrawMethod.triangles -> return GL_TRIANGLES
     DrawMethod.triangleFan -> return GL_TRIANGLE_FAN
@@ -51,7 +52,56 @@ interface Drawable {
   fun dispose()
 }
 
-class SimpleMesh<T>(val vertexBuffer: VertexBuffer<T>, val offsets: IntBuffer, val counts: IntBuffer) : Drawable {
+data class GeneralMesh(
+    val vertexBuffer: VertexBuffer,
+    val offsets: IntBuffer? = null,
+    val counts: IntBuffer? = null,
+    val indices: IntBuffer? = null
+)
+
+fun <T> newGeneralMesh(vertexSchema: VertexSchema<T>, values: List<Float>) =
+    GeneralMesh(
+        vertexBuffer = newVertexBuffer(vertexSchema).load(createFloatBuffer(values)),
+        offsets = createIntBuffer(0),
+        counts = createIntBuffer(values.size / vertexSchema.floatSize)
+    )
+
+fun convertDrawMethod(mesh: GeneralMesh, method: DrawMethod): Int {
+  val mappedMethod = if (mesh.indices != null) {
+    when (method) {
+      DrawMethod.triangleFan -> DrawMethod.triangles
+      DrawMethod.lineLoop -> DrawMethod.lineStrip
+      else -> method
+    }
+  } else
+    method
+
+  return convertDrawMethod(mappedMethod)
+}
+
+fun drawMesh(mesh: GeneralMesh, method: DrawMethod) {
+  mesh.vertexBuffer.activate()
+  val mappedMethod = convertDrawMethod(mesh, method)
+  if (mesh.indices != null) {
+    glDrawElements(mappedMethod, mesh.indices)
+  } else {
+    glMultiDrawArrays(mappedMethod, mesh.offsets!!, mesh.counts!!)
+  }
+}
+
+fun drawMeshInstanced(mesh: GeneralMesh, method: DrawMethod, instanceCount: Int) {
+  mesh.vertexBuffer.activate()
+  val drawMode = convertDrawMethod(mesh, method)
+  if (mesh.indices != null) {
+    throw Error("Not implemented")
+//    glDrawElements(mappedMethod, mesh.indices)
+  } else {
+    glDrawArraysInstanced(drawMode, 0, mesh.counts!!.get(0), instanceCount)
+//    glMultiDrawArrays(mappedMethod, mesh.offsets!!, mesh.counts!!)
+  }
+}
+
+class SimpleMesh<T>(val vertexBuffer: VertexBuffer, val offsets: IntBuffer, val counts: IntBuffer) : Drawable {
 
   override fun draw(method: DrawMethod) {
     vertexBuffer.activate()
@@ -64,14 +114,14 @@ class SimpleMesh<T>(val vertexBuffer: VertexBuffer<T>, val offsets: IntBuffer, v
   }
 
   constructor(vertexSchema: VertexSchema<T>, values: List<Float>) :
-      this(VertexBuffer(vertexSchema),
+      this(newVertexBuffer(vertexSchema),
           createIntBuffer(0),
           createIntBuffer(values.size / vertexSchema.floatSize)) {
     vertexBuffer.load(createFloatBuffer(values))
   }
 
   constructor(vertexSchema: VertexSchema<T>, buffer: FloatBuffer, offsets: IntBuffer, counts: IntBuffer) :
-      this(VertexBuffer(vertexSchema), offsets, counts) {
+      this(newVertexBuffer(vertexSchema), offsets, counts) {
     vertexBuffer.load(buffer)
   }
 
@@ -80,7 +130,7 @@ class SimpleMesh<T>(val vertexBuffer: VertexBuffer<T>, val offsets: IntBuffer, v
   }
 }
 
-class SimpleTriangleMesh<T>(val vertexBuffer: VertexBuffer<T>, val indices: IntBuffer) : Drawable {
+class SimpleTriangleMesh<T>(val vertexBuffer: VertexBuffer, val indices: IntBuffer) : Drawable {
 
   override fun draw(method: DrawMethod) {
     vertexBuffer.activate()
@@ -93,7 +143,7 @@ class SimpleTriangleMesh<T>(val vertexBuffer: VertexBuffer<T>, val indices: IntB
   }
 
   constructor(vertexSchema: VertexSchema<T>, buffer: FloatBuffer, indices: IntBuffer) :
-      this(VertexBuffer(vertexSchema), indices) {
+      this(newVertexBuffer(vertexSchema), indices) {
     vertexBuffer.load(buffer)
   }
 
@@ -105,7 +155,7 @@ class SimpleTriangleMesh<T>(val vertexBuffer: VertexBuffer<T>, val indices: IntB
 class MutableSimpleMesh<T>(val vertexSchema: VertexSchema<T>) : Drawable {
   var offsets: IntBuffer = BufferUtils.createIntBuffer(1)
   var counts: IntBuffer = BufferUtils.createIntBuffer(1)
-  private val vertexBuffer = VertexBuffer(vertexSchema)
+  private val vertexBuffer = newVertexBuffer(vertexSchema)
   private var floatBuffer = BufferUtils.createFloatBuffer(64)
   private var custodian = FloatBufferCustodian(floatBuffer)
 

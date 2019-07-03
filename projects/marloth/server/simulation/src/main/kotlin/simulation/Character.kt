@@ -187,6 +187,7 @@ fun newCharacter(id: Id, nextId: IdSource, definition: CharacterDefinition, fact
           id = id,
           definition = definition,
           turnSpeed = Vector2(2f, 1f),
+          facingRotation = Vector3(0f, 0f, Pi / 2f),
           faction = faction,
           health = Resource(definition.health),
           sanity = Resource(100),
