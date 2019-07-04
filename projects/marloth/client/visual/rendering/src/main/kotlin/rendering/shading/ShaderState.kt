@@ -78,14 +78,14 @@ fun createSceneBuffer(effectsData: EffectsData): ByteBuffer {
 }
 
 const val maxInstanceCount = 512
-const val instanceBufferSize = sizeOfMatrix * maxInstanceCount
+const val instanceBufferSize = (sizeOfMatrix + sizeOfFloat * 4) * maxInstanceCount
 private val instanceMemoryBuffer = BufferUtils.createByteBuffer(instanceBufferSize)
 private val instanceBufferCustodian = BufferCustodian(instanceMemoryBuffer)
 
-fun createInstanceBuffer(transforms: List<Matrix>): ByteBuffer {
-  for (transform in transforms) {
-    instanceMemoryBuffer.putMatrix(transform)
-  }
+
+fun createInstanceBuffer(fill: (ByteBuffer) -> Unit): ByteBuffer {
+  val buffer = instanceMemoryBuffer
+  fill(buffer)
   instanceBufferCustodian.finish()
   return instanceMemoryBuffer
 }

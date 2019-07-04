@@ -16,8 +16,8 @@ data class Meshes(
 )
 
 data class DrawingVertexSchemas(
-    val simple: VertexSchema<String>,
-    val image: VertexSchema<String>
+    val simple: VertexSchema,
+    val image: VertexSchema
 )
 
 fun createDrawingVertexSchemas() = DrawingVertexSchemas(
@@ -25,7 +25,7 @@ fun createDrawingVertexSchemas() = DrawingVertexSchemas(
     VertexSchema(listOf(VertexAttribute("vertex", 4)))
 )
 
-fun createSquareMesh(vertexSchema: VertexSchema<String>) =
+fun createSquareMesh(vertexSchema: VertexSchema) =
     SimpleMesh(vertexSchema, listOf(
         0f, 1f,
         0f, 0f,
@@ -33,7 +33,7 @@ fun createSquareMesh(vertexSchema: VertexSchema<String>) =
         1f, 1f
     ))
 
-fun createImageMesh(vertexSchema: VertexSchema<String>) =
+fun createImageMesh(vertexSchema: VertexSchema) =
     SimpleMesh(vertexSchema, listOf(
         0f, 1f, 0f, 1f,
         0f, 0f, 0f, 0f,
@@ -53,10 +53,10 @@ fun createCircleList(radius: Float, count: Int): ArrayList<Float> {
   return vertices
 }
 
-fun createCircleMesh(vertexSchema: VertexSchema<String>, radius: Float, count: Int) =
+fun createCircleMesh(vertexSchema: VertexSchema, radius: Float, count: Int) =
     SimpleMesh(vertexSchema, createCircleList(radius, count))
 
-fun createSolidCircleMesh(vertexSchema: VertexSchema<String>, radius: Float, count: Int) =
+fun createSolidCircleMesh(vertexSchema: VertexSchema, radius: Float, count: Int) =
     SimpleMesh(vertexSchema, listOf(0f, 0f).plus(createCircleList(radius, count)))
 
 private val circleResolution = 32
@@ -76,8 +76,8 @@ enum class FillType {
 data class CanvasDependencies(
     val vertexSchemas: DrawingVertexSchemas,
     val meshes: Meshes,
-    val dynamicMesh: MutableSimpleMesh<String>,
-    val dynamicTexturedMesh: MutableSimpleMesh<String>
+    val dynamicMesh: MutableSimpleMesh,
+    val dynamicTexturedMesh: MutableSimpleMesh
 )
 
 private var staticCanvasDependencies: CanvasDependencies? = null

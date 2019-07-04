@@ -64,14 +64,14 @@ fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, trans
       normalTransform = Matrix()
   )
   val effects = sceneRenderer.effects
-  val (effect, flatEffect) = if (isAnimated)
-    Pair(effects.flatAnimated, effects.flatAnimated)
-  else if (texture != null)
-    Pair(effects.texturedFlat, effects.flat)
-  else
-    Pair(effects.flat, effects.flat)
+//  val (effect, flatEffect) = if (isAnimated)
+//    Pair(effects.flatAnimated, effects.flatAnimated)
+//  else if (texture != null)
+//    Pair(effects.texturedFlat, effects.flat)
+//  else
+//    Pair(effects.flat, effects.flat)
 
-  effect.activate(shaderConfig)
+//  effect.activate(shaderConfig)
 
 //  mesh.draw(DrawMethod.triangleFan)
   if (config.meshDisplay == MeshDisplay.wireframe) {
@@ -85,11 +85,11 @@ fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, trans
   )
 
   globalState.lineThickness = 1f
-  flatEffect.activate(shaderConfig2)
+//  flatEffect.activate(shaderConfig2)
 //  mesh.draw(DrawMethod.lineLoop)
 
   globalState.pointSize = 3f
-  flatEffect.activate(shaderConfig2)
+//  flatEffect.activate(shaderConfig2)
 //  mesh.draw(DrawMethod.points)
 
   globalState.depthEnabled = false
@@ -160,7 +160,7 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
       null
 
     if (transforms != null) {
-      populateBoneBuffer(sceneRenderer.renderer.boneBuffer, armature!!.transforms, transforms)
+      populateBoneBuffer(sceneRenderer.renderer.uniformBuffers.bone, armature!!.transforms, transforms)
     }
 
     if (modelSource == null) {

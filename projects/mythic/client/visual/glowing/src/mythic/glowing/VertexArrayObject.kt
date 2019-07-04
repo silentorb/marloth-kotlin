@@ -12,7 +12,7 @@ class VertexArrayObject() {
 
   companion object {
 
-    fun <T> createInterwoven(schema: VertexSchema<T>): VertexArrayObject {
+    fun createInterwoven(schema: VertexSchema): VertexArrayObject {
       val result = VertexArrayObject()
       var offset = 0L
       var i = 0
@@ -28,7 +28,7 @@ class VertexArrayObject() {
       return result
     }
 
-    fun <T>createNonInterleaved(schema: VertexSchema<T>): VertexArrayObject {
+    fun createNonInterleaved(schema: VertexSchema): VertexArrayObject {
       val result = VertexArrayObject()
       var offset = 0L
       var i = 0

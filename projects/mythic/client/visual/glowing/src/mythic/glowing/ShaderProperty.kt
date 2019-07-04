@@ -2,6 +2,7 @@ package mythic.glowing
 
 import org.lwjgl.BufferUtils
 import mythic.spatial.Matrix
+import mythic.spatial.Vector2
 import mythic.spatial.Vector3m
 import mythic.spatial.Vector4
 import org.lwjgl.opengl.GL20.*
@@ -16,6 +17,15 @@ class MatrixProperty(private val program: ShaderProgram, name: String) {
   fun setValue(value: Matrix) {
     program.activate()
     glUniformMatrix4fv(location, false, value.get(matrixBuffer))
+  }
+}
+
+class Vector2Property(private val program: ShaderProgram, name: String) {
+  private val location = glGetUniformLocation(program.id, name)
+
+  fun setValue(value: Vector2) {
+    program.activate()
+    glUniform2f(location, value.x, value.y)
   }
 }
 

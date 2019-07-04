@@ -139,7 +139,7 @@ private val vertexBuffer = BufferUtils.createFloatBuffer(4 * maxCharacters * ver
 private val offsetBuffer = BufferUtils.createIntBuffer(maxCharacters)
 private val countBuffer = BufferUtils.createIntBuffer(maxCharacters)
 
-fun <T> prepareText(config: TextConfiguration, vertexSchema: VertexSchema<T>): TextPackage? {
+fun prepareText(config: TextConfiguration, vertexSchema: VertexSchema): TextPackage? {
   val arrangement = arrangeType(config)
   if (arrangement == null)
     return null

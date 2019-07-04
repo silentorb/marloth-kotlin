@@ -82,10 +82,6 @@ fun initializeTexture(width: Int, height: Int, attributes: TextureAttributes, bu
     TextureStorageUnit.unsigned_byte -> GL_UNSIGNED_BYTE
   }
 
-  if (width != height) {
-    val k = 0
-  }
-
   glTexImage2D(
       GL_TEXTURE_2D, 0, internalFormat,
       width,

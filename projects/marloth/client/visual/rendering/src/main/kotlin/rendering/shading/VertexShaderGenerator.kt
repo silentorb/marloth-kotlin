@@ -34,15 +34,20 @@ private const val shadingOperations = """
   fragmentNormal = normalize((normalTransform * vec4(normal, 1.0)).xyz);
 """
 
-private const val textureOperations = """
-  textureCoordinates = uv;
-"""
+private fun textureOperations(config: ShaderFeatureConfig) =
+    if (config.animatedTexture && config.instanced)
+      "textureCoordinates = uv * uniformTextureScale + instanceSection.instances[gl_InstanceID].textureOffset;"
+    else if (config.texture)
+      "textureCoordinates = uv;"
+    else
+      ""
 
 private fun instanceHeader(instanced: Boolean) =
     if (instanced) {
       """
 struct Instance {
     mat4 position;
+    vec2 textureOffset;
 };
 
 struct InstanceSection {
@@ -69,9 +74,9 @@ private fun instanceOperations(instanced: Boolean) =
 private fun mainVertex(config: ShaderFeatureConfig): String {
   return """
 ${instanceHeader(config.instanced)}
-
 ${if (config.shading) shadingHeader else ""}
 ${if (config.texture) textureHeader else ""}
+${if (config.animatedTexture) "uniform vec2 uniformTextureScale;" else ""}
 ${if (config.skeleton) weightHeader else ""}
 
 void main() {
@@ -81,7 +86,7 @@ ${instanceOperations(config.instanced)}
  vec4 modelPosition = modelTransform * position4;
   gl_Position = scene.cameraTransform * modelPosition;
 ${if (config.shading) shadingOperations else ""}
-${if (config.texture) textureOperations else ""}
+${textureOperations(config)}
 }
 """
 }

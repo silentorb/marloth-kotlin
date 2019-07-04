@@ -53,14 +53,16 @@ interface Drawable {
 }
 
 data class GeneralMesh(
+    val vertexSchema: VertexSchema,
     val vertexBuffer: VertexBuffer,
     val offsets: IntBuffer? = null,
     val counts: IntBuffer? = null,
     val indices: IntBuffer? = null
 )
 
-fun <T> newGeneralMesh(vertexSchema: VertexSchema<T>, values: List<Float>) =
+fun newGeneralMesh(vertexSchema: VertexSchema, values: List<Float>) =
     GeneralMesh(
+        vertexSchema = vertexSchema,
         vertexBuffer = newVertexBuffer(vertexSchema).load(createFloatBuffer(values)),
         offsets = createIntBuffer(0),
         counts = createIntBuffer(values.size / vertexSchema.floatSize)
@@ -101,7 +103,7 @@ fun drawMeshInstanced(mesh: GeneralMesh, method: DrawMethod, instanceCount: Int)
   }
 }
 
-class SimpleMesh<T>(val vertexBuffer: VertexBuffer, val offsets: IntBuffer, val counts: IntBuffer) : Drawable {
+class SimpleMesh(val vertexBuffer: VertexBuffer, val offsets: IntBuffer, val counts: IntBuffer) : Drawable {
 
   override fun draw(method: DrawMethod) {
     vertexBuffer.activate()
@@ -113,14 +115,14 @@ class SimpleMesh<T>(val vertexBuffer: VertexBuffer, val offsets: IntBuffer, val 
     glDrawArrays(convertDrawMethod(method), offsets[index], counts[index])
   }
 
-  constructor(vertexSchema: VertexSchema<T>, values: List<Float>) :
+  constructor(vertexSchema: VertexSchema, values: List<Float>) :
       this(newVertexBuffer(vertexSchema),
           createIntBuffer(0),
           createIntBuffer(values.size / vertexSchema.floatSize)) {
     vertexBuffer.load(createFloatBuffer(values))
   }
 
-  constructor(vertexSchema: VertexSchema<T>, buffer: FloatBuffer, offsets: IntBuffer, counts: IntBuffer) :
+  constructor(vertexSchema: VertexSchema, buffer: FloatBuffer, offsets: IntBuffer, counts: IntBuffer) :
       this(newVertexBuffer(vertexSchema), offsets, counts) {
     vertexBuffer.load(buffer)
   }
@@ -130,7 +132,7 @@ class SimpleMesh<T>(val vertexBuffer: VertexBuffer, val offsets: IntBuffer, val 
   }
 }
 
-class SimpleTriangleMesh<T>(val vertexBuffer: VertexBuffer, val indices: IntBuffer) : Drawable {
+class SimpleTriangleMesh(val vertexBuffer: VertexBuffer, val indices: IntBuffer) : Drawable {
 
   override fun draw(method: DrawMethod) {
     vertexBuffer.activate()
@@ -142,7 +144,7 @@ class SimpleTriangleMesh<T>(val vertexBuffer: VertexBuffer, val indices: IntBuff
     glDrawElements(convertDrawMethod(convertedMethod), indices)
   }
 
-  constructor(vertexSchema: VertexSchema<T>, buffer: FloatBuffer, indices: IntBuffer) :
+  constructor(vertexSchema: VertexSchema, buffer: FloatBuffer, indices: IntBuffer) :
       this(newVertexBuffer(vertexSchema), indices) {
     vertexBuffer.load(buffer)
   }
@@ -152,7 +154,7 @@ class SimpleTriangleMesh<T>(val vertexBuffer: VertexBuffer, val indices: IntBuff
   }
 }
 
-class MutableSimpleMesh<T>(val vertexSchema: VertexSchema<T>) : Drawable {
+class MutableSimpleMesh(val vertexSchema: VertexSchema) : Drawable {
   var offsets: IntBuffer = BufferUtils.createIntBuffer(1)
   var counts: IntBuffer = BufferUtils.createIntBuffer(1)
   private val vertexBuffer = newVertexBuffer(vertexSchema)

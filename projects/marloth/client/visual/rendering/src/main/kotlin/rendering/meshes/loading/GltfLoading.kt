@@ -25,7 +25,7 @@ fun loadIndices(buffer: ByteBuffer, info: GltfInfo, primitive: Primitive): IntBu
   return indices
 }
 
-typealias VertexConverter = (ByteBuffer, FloatBuffer, VertexAttributeDetail<AttributeName>, Int) -> Unit
+typealias VertexConverter = (ByteBuffer, FloatBuffer, VertexAttributeDetail, Int) -> Unit
 
 fun createVertexConverter(info: GltfInfo, transformBuffer: ByteBuffer, boneMap: BoneMap, meshIndex: Int): VertexConverter {
   val meshNode = info.nodes.first { it.mesh == meshIndex }
@@ -45,13 +45,13 @@ fun createVertexConverter(info: GltfInfo, transformBuffer: ByteBuffer, boneMap: 
     var lastJoints: List<Int> = listOf()
     var lastWeights: List<Float> = listOf()
     return { buffer, vertices, attribute, vertexIndex ->
-      if (attribute.name == AttributeName.weights) {
+      if (attribute.name == AttributeName.weights.name) {
         lastWeights = (0 until attribute.size).map {
           val value = buffer.getFloat()
           vertices.put(value)
           value
         }
-      } else if (attribute.name == AttributeName.joints) {
+      } else if (attribute.name == AttributeName.joints.name) {
         lastJoints = (0 until attribute.size).map {
           val position = buffer.position()
           val byteValue = buffer.get()
@@ -178,6 +178,7 @@ fun loadPrimitive(buffer: ByteBuffer, info: GltfInfo, vertexSchemas: VertexSchem
   indices.position(0)
 
   return GeneralMesh(
+      vertexSchema = vertexSchema,
       vertexBuffer = newVertexBuffer(vertexSchema).load(vertices),
       indices = indices
   )

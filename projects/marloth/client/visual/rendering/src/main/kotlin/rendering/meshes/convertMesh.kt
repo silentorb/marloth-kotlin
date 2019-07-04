@@ -21,8 +21,8 @@ fun temporaryVertexSerializer(color: Vector4): ImmutableVertexSerializer {
   }
 }
 
-fun <T>convertMesh(faces: Collection<ImmutableFace>, vertexSchema: VertexSchema<T>,
-                vertexSerializer: ImmutableVertexSerializer): SimpleMesh<T> {
+fun convertMesh(faces: Collection<ImmutableFace>, vertexSchema: VertexSchema,
+                vertexSerializer: ImmutableVertexSerializer): SimpleMesh {
   val vertex_count = faces.flatMap { it.vertices }.size
   val vertices = BufferUtils.createFloatBuffer(vertex_count * vertexSchema.floatSize)
   val offsets = BufferUtils.createIntBuffer(faces.size)
@@ -47,5 +47,5 @@ fun <T>convertMesh(faces: Collection<ImmutableFace>, vertexSchema: VertexSchema<
   return SimpleMesh(vertexSchema, vertices, offsets, counts)
 }
 
-fun <T>convertMesh(mesh: ImmutableMesh, vertexSchema: VertexSchema<T>, vertexSerializer: ImmutableVertexSerializer) =
+fun convertMesh(mesh: ImmutableMesh, vertexSchema: VertexSchema, vertexSerializer: ImmutableVertexSerializer) =
     convertMesh(mesh.faces.values, vertexSchema, vertexSerializer)

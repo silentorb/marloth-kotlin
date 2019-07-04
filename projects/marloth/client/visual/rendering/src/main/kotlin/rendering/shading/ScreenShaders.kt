@@ -4,8 +4,14 @@ import mythic.glowing.ShaderProgram
 import mythic.glowing.Vector4Property
 import mythic.spatial.Vector2
 import mythic.spatial.Vector4
+import org.lwjgl.opengl.GL20
 import randomly.Dice
 
+fun routeTexture(program: ShaderProgram, name: String, unit: Int) {
+  val location = GL20.glGetUniformLocation(program.id, name)
+  program.activate()
+  GL20.glUniform1i(location, unit)
+}
 
 val screenVertex = """
 in vec4 vertex;

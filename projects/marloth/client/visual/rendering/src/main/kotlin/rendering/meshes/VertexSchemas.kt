@@ -4,7 +4,7 @@ import mythic.drawing.DrawingVertexSchemas
 import mythic.drawing.createDrawingVertexSchemas
 import mythic.glowing.VertexAttribute
 
-typealias VertexSchema = mythic.glowing.VertexSchema<AttributeName>
+typealias VertexSchema = mythic.glowing.VertexSchema
 
 data class VertexSchemas(
     val billboard: VertexSchema,
@@ -18,31 +18,31 @@ data class VertexSchemas(
 
 fun createVertexSchemas() = VertexSchemas(
     billboard = VertexSchema(listOf(
-        VertexAttribute(AttributeName.position, 3),
-        VertexAttribute(AttributeName.uv, 2)
+        VertexAttribute(AttributeName.position.name, 3),
+        VertexAttribute(AttributeName.uv.name, 2)
     )),
     shaded = VertexSchema(listOf(
-        VertexAttribute(AttributeName.position, 3),
-        VertexAttribute(AttributeName.normal, 3)
+        VertexAttribute(AttributeName.position.name, 3),
+        VertexAttribute(AttributeName.normal.name, 3)
     )),
     textured = VertexSchema(listOf(
-        VertexAttribute(AttributeName.position, 3),
-        VertexAttribute(AttributeName.normal, 3),
-        VertexAttribute(AttributeName.uv, 2)
+        VertexAttribute(AttributeName.position.name, 3),
+        VertexAttribute(AttributeName.normal.name, 3),
+        VertexAttribute(AttributeName.uv.name, 2)
     )),
     animated = VertexSchema(listOf(
-        VertexAttribute(AttributeName.position, 3),
-        VertexAttribute(AttributeName.normal, 3),
-        VertexAttribute(AttributeName.uv, 2),
-        VertexAttribute(AttributeName.joints, 4),
-        VertexAttribute(AttributeName.weights, 4)
+        VertexAttribute(AttributeName.position.name, 3),
+        VertexAttribute(AttributeName.normal.name, 3),
+        VertexAttribute(AttributeName.uv.name, 2),
+        VertexAttribute(AttributeName.joints.name, 4),
+        VertexAttribute(AttributeName.weights.name, 4)
     )),
     flat = VertexSchema(listOf(
-        VertexAttribute(AttributeName.position, 3)
+        VertexAttribute(AttributeName.position.name, 3)
     )),
     imported = VertexSchema(listOf(
-        VertexAttribute(AttributeName.position, 3),
-        VertexAttribute(AttributeName.normal, 3)
+        VertexAttribute(AttributeName.position.name, 3),
+        VertexAttribute(AttributeName.normal.name, 3)
     )),
     drawing = createDrawingVertexSchemas()
 )

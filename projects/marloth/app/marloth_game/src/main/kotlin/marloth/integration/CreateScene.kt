@@ -9,6 +9,8 @@ import rendering.*
 import scenery.*
 import scenery.Light
 import simulation.*
+import kotlin.math.floor
+import kotlin.math.roundToInt
 
 val firstPersonCameraOffset = Vector3(0f, 0f, 1.4f)
 val firstPersonDeadCameraOffset = Vector3(0f, 0f, 0.4f)
@@ -182,7 +184,8 @@ fun gatherParticleElements(deck: Deck): ElementGroups {
               texture = particle.texture,
               position = particle.position,
               scale = particle.size,
-              color = particle.color
+              color = particle.color,
+              step = floor(particle.animationStep * 16f).toInt()
           )
         }
     )

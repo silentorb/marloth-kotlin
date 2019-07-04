@@ -207,7 +207,7 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
               lifecycle = listOf(
                   ParticleAppearance(
                       texture = TextureId.perlinParticle,
-                      color = Vector4(0.5f, 1f, 0.5f, 1f),
+                      color = Vector4(0.5f, 1f, 0.5f, 0.5f),
                       size = 2f
                   )
               ),

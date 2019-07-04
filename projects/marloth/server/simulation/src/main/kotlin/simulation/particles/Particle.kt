@@ -33,6 +33,7 @@ fun newParticle(appearance: ParticleAppearance, position: Vector3, velocity: Vec
 fun updateParticle(delta: Float): (Particle) -> Particle = { particle ->
   particle.copy(
       life = particle.life - delta,
-      position = particle.position + particle.velocity * delta
+      position = particle.position + particle.velocity * delta,
+      animationStep = (particle.animationStep + delta * 0.5f) % 1f
   )
 }

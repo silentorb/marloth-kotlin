@@ -30,7 +30,8 @@ data class TexturedBillboard(
     val texture: TextureId,
     val position: Vector3,
     val color: Vector4,
-    val scale: Float
+    val scale: Float,
+    val step: Int = 0
 )
 
 data class ElementGroup(

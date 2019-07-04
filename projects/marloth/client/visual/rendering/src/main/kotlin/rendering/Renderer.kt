@@ -16,7 +16,6 @@ import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30.*
 import org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE
 import org.lwjgl.opengl.GL32.glTexImage2DMultisample
-import rendering.meshes.AttributeName
 import rendering.meshes.createVertexSchemas
 import rendering.shading.*
 import rendering.texturing.*
@@ -51,7 +50,7 @@ fun gatherEffectsData(dimensions: Vector2i, scene: Scene, cameraEffectsData: Cam
 
 data class SectorMesh(
     val id: Id,
-    val mesh: SimpleMesh<AttributeName>,
+    val mesh: SimpleMesh,
     val textureIndex: List<TextureId>
 )
 
@@ -133,13 +132,6 @@ fun createMultiSampler(glow: Glow, config: PlatformDisplayConfig): Multisampler 
 
 typealias AnimationDurationMap = Map<ArmatureId, Map<AnimationId, Float>>
 
-// Even though numbers have no case, still include them in the regex
-// so hypens or underscores followed by a number are converted
-private val camelCaseRegex = Regex("[-_][a-z0-9]")
-
-fun toCamelCase(identifier: String) =
-    identifier.replace(camelCaseRegex) { it.value[1].toUpperCase().toString() }
-
 fun mapAnimationDurations(armatures: Map<ArmatureId, Armature>): AnimationDurationMap =
     armatures
         .mapValues { (_, armature) ->
@@ -199,19 +191,17 @@ class Renderer(
   val glow = Glow()
   var renderColor: ByteTextureBuffer = ByteTextureBuffer()
   var renderDepth: FloatTextureBuffer = FloatTextureBuffer()
-  val instanceBuffer = UniformBuffer(instanceBufferSize)
-  val sceneBuffer = UniformBuffer(sceneBufferSize)
-  val sectionBuffer = UniformBuffer(sectionBufferSize)
-  val boneBuffer = UniformBuffer(boneBufferSize)
+  val uniformBuffers = UniformBuffers(
+      instance = UniformBuffer(instanceBufferSize),
+      scene = UniformBuffer(sceneBufferSize),
+      section = UniformBuffer(sectionBufferSize),
+      bone = UniformBuffer(boneBufferSize)
+  )
   val vertexSchemas = createVertexSchemas()
-  val shaders: Shaders = createShaders(vertexSchemas, UniformBuffers(
-      instance = instanceBuffer,
-      scene = sceneBuffer,
-      section = sectionBuffer,
-      bone = boneBuffer
-  ))
+  val shaders: Shaders = createShaders()
+  val shaderCache: ShaderCache = mutableMapOf()
+  val getShader = getCachedShader(uniformBuffers, shaderCache)
   val drawing = createDrawingEffects()
-  //  var worldMesh: WorldMesh? = null
   val meshes: ModelMeshMap
   val armatures: Map<ArmatureId, Armature>
   val animationDurations: AnimationDurationMap
@@ -240,8 +230,8 @@ class Renderer(
 
   fun updateShaders(scene: Scene, dimensions: Vector2i, cameraEffectsData: CameraEffectsData) {
     val effectsData = gatherEffectsData(dimensions, scene, cameraEffectsData)
-    updateLights(lightingConfig, effectsData.lights, sectionBuffer)
-    sceneBuffer.load(createSceneBuffer(effectsData))
+    updateLights(lightingConfig, effectsData.lights, uniformBuffers.section)
+    uniformBuffers.scene.load(createSceneBuffer(effectsData))
   }
 
   fun createSceneRenderer(scene: Scene, viewport: Vector4i): SceneRenderer {
@@ -322,11 +312,14 @@ class SceneRenderer(
   val effects: Shaders
     get() = renderer.shaders
 
+  val flat: GeneralPerspectiveShader
+  get() = renderer.getShader(renderer.vertexSchemas.flat, ShaderFeatureConfig())
+
   fun drawLine(start: Vector3, end: Vector3, color: Vector4, thickness: Float = 1f) {
     globalState.lineThickness = thickness
     renderer.dynamicMesh.load(listOf(start.x, start.y, start.z, end.x, end.y, end.z))
 
-    effects.flat.activate(ObjectShaderConfig(transform = Matrix(), color = color))
+    flat.activate(ObjectShaderConfig(transform = Matrix(), color = color))
     renderer.dynamicMesh.draw(DrawMethod.lines)
   }
 
@@ -334,21 +327,21 @@ class SceneRenderer(
     globalState.lineThickness = thickness
     renderer.dynamicMesh.load(values)
 
-    effects.flat.activate(ObjectShaderConfig(transform = Matrix(), color = color))
+    flat.activate(ObjectShaderConfig(transform = Matrix(), color = color))
     renderer.dynamicMesh.draw(DrawMethod.lines)
   }
 
   fun drawPoint(position: Vector3, color: Vector4, size: Float = 1f) {
     globalState.pointSize = size
     renderer.dynamicMesh.load(listOf(position.x, position.y, position.z))
-    effects.flat.activate(ObjectShaderConfig(transform = Matrix(), color = color))
+    flat.activate(ObjectShaderConfig(transform = Matrix(), color = color))
     renderer.dynamicMesh.draw(DrawMethod.points)
   }
 
   fun drawSolidFace(vertices: List<Vector3>, color: Vector4) {
     renderer.dynamicMesh.load(vertices.flatMap { listOf(it.x, it.y, it.z) })
 
-    effects.flat.activate(ObjectShaderConfig(transform = Matrix(), color = color))
+    flat.activate(ObjectShaderConfig(transform = Matrix(), color = color))
     renderer.dynamicMesh.draw(DrawMethod.triangleFan)
   }
 
@@ -356,7 +349,7 @@ class SceneRenderer(
     globalState.lineThickness = thickness
     renderer.dynamicMesh.load(vertices.flatMap { listOf(it.x, it.y, it.z) })
 
-    effects.flat.activate(ObjectShaderConfig(transform = Matrix(), color = color))
+    flat.activate(ObjectShaderConfig(transform = Matrix(), color = color))
     renderer.dynamicMesh.draw(DrawMethod.lines)
   }
 
@@ -383,7 +376,7 @@ class SceneRenderer(
     val transform = Matrix()
         .billboardSpherical(position, camera.position, Vector3(0f, 0f, 1f))
         .scale(radius)
-    effects.flat.activate(ObjectShaderConfig(
+    flat.activate(ObjectShaderConfig(
         transform = transform,
         color = Vector4(0.5f, 0.5f, 0f, 0.4f)
     ))

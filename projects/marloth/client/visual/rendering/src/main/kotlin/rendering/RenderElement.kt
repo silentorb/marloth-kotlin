@@ -8,6 +8,7 @@ import mythic.spatial.*
 import org.joml.times
 import rendering.meshes.Primitive
 import rendering.shading.ObjectShaderConfig
+import rendering.shading.ShaderFeatureConfig
 import rendering.shading.populateBoneBuffer
 import scenery.MeshId
 
@@ -25,14 +26,18 @@ fun renderElement(renderer: SceneRenderer, primitive: Primitive, material: Mater
       normalTransform = orientationTransform,
       texture = texture
   )
-  val effect = if (isAnimated && texture != null)
-    renderer.effects.animated
-  else if (isAnimated)
-    renderer.effects.coloredAnimated
-  else if (texture != null)
-    renderer.effects.textured
-  else
-    renderer.effects.colored
+  val effect = renderer.renderer.getShader(primitive.mesh.vertexSchema, ShaderFeatureConfig(
+      skeleton = isAnimated,
+      texture = texture != null
+  ))
+//  val effect = if (isAnimated && texture != null)
+//    renderer.effects.animated
+//  else if (isAnimated)
+//    renderer.effects.coloredAnimated
+//  else if (texture != null)
+//    renderer.effects.textured
+//  else
+//    renderer.effects.colored
 
   effect.activate(config)
   drawMesh(primitive.mesh, DrawMethod.triangleFan)
@@ -80,7 +85,7 @@ fun renderElementGroup(gameRenderer: GameSceneRenderer, group: ElementGroup) {
     null
 
   if (transforms != null) {
-    populateBoneBuffer(sceneRenderer.renderer.boneBuffer, armature!!.transforms, transforms)
+    populateBoneBuffer(sceneRenderer.renderer.uniformBuffers.bone, armature!!.transforms, transforms)
   }
 
   val meshes = sceneRenderer.renderer.meshes

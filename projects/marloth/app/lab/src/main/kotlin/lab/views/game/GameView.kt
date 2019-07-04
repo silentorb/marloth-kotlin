@@ -57,7 +57,7 @@ fun renderFaceNormals(renderer: SceneRenderer, length: Float, faces: List<Immuta
         .rotateY(-Pi * 0.5f)
         .scale(length)
 
-    renderer.effects.flat.activate(ObjectShaderConfig(transform = transform, color = Vector4(0f, 1f, 0f, 1f)))
+    renderer.flat.activate(ObjectShaderConfig(transform = transform, color = Vector4(0f, 1f, 0f, 1f)))
     drawMesh(renderer.meshes[MeshId.line]!!.primitives[0].mesh, DrawMethod.lines)
   }
 }

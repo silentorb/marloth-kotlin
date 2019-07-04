@@ -28,6 +28,12 @@ in vec2 textureCoordinates;"""
   ).joinToString("\n")
 }
 
+private fun textureOperations(config: ShaderFeatureConfig) =
+    if (config.texture)
+      "vec4 sampled = texture(text, textureCoordinates);"
+    else
+      null
+
 fun generateFragmentShader(config: ShaderFeatureConfig): String {
   val outColor = listOfNotNull(
       "uniformColor",
@@ -36,7 +42,7 @@ fun generateFragmentShader(config: ShaderFeatureConfig): String {
   ).joinToString(" * ")
 
   val mainBody = listOfNotNull(
-      if (config.texture) "vec4 sampled = texture(text, textureCoordinates);" else null,
+      textureOperations(config),
       addIf(config.shading, lightingApplication1),
       "output_color = $outColor;"
   ).joinToString("\n")
