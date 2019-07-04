@@ -3,11 +3,11 @@ package generation
 import generation.structure.wallHeight
 import intellect.Pursuit
 import intellect.Spirit
+import mythic.breeze.AnimationChannel
+import mythic.breeze.Keyframe
 import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.ent.newIdSource
-import mythic.spatial.Pi
-import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import physics.Body
@@ -18,6 +18,7 @@ import scenery.TextureId
 import simulation.*
 import simulation.data.creatures
 import simulation.particles.Emitter
+import simulation.particles.ParticleAnimation
 import simulation.particles.ParticleAppearance
 import simulation.particles.ParticleEffect
 
@@ -197,6 +198,7 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
   val scale = calculateWorldScale(input.boundary.dimensions)
   val nextId = newIdSource(1)
   val particleNode = realm.nodeTable[6L]!!
+  val baseColor = Vector3(0.5f, 1f, 0.5f)
   val deck = Deck()
       .plus(newPlayer(nextId, playerNode))
       .plus(allHandsOnDeck(listOf(Hand(
@@ -204,17 +206,38 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
               position = particleNode.position + Vector3(0f, 0f, -wallHeight / 2f)
           ),
           particleEffect = ParticleEffect(
-              lifecycle = listOf(
-                  ParticleAppearance(
-                      texture = TextureId.perlinParticle,
-                      color = Vector4(0.5f, 1f, 0.5f, 0.5f),
-                      size = 2f
+              initialAppearance = ParticleAppearance(
+                  texture = TextureId.perlinParticle,
+                  color = Vector4(baseColor, 0f),
+                  size = 2f
+              ),
+              animation = ParticleAnimation(
+                  color = AnimationChannel(
+                      target = "color",
+                      keys = listOf(
+                          Keyframe(
+                              time = 0f,
+                              value = Vector4(baseColor, 0f)
+                          ),
+                          Keyframe(
+                              time = 0.2f,
+                              value = Vector4(baseColor, 0.33f)
+                          ),
+                          Keyframe(
+                              time = 0.8f,
+                              value = Vector4(baseColor, 0.33f)
+                          ),
+                          Keyframe(
+                              time = 1f,
+                              value = Vector4(baseColor, 0f)
+                          )
+                      )
                   )
               ),
               emitter = Emitter(
                   particlesPerSecond = 30f,
                   volume = Cylinder(radius = particleNode.radius, height = 10f),
-                  life = Pair(1f, 2f),
+                  life = Pair(3f, 4f),
                   initialVelocity = Vector3(0f, 0f, 1f)
               )
           )

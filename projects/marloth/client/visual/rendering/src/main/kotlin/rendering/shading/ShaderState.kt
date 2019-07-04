@@ -10,6 +10,7 @@ import java.nio.ByteBuffer
 
 const val sizeOfFloat = 4
 const val sizeOfMatrix = 16 * sizeOfFloat
+const val sizeOfVec4 = sizeOfFloat * 4
 
 fun padBuffer(buffer: ByteBuffer, count: Int) {
   for (i in 0 until count) {
@@ -78,10 +79,9 @@ fun createSceneBuffer(effectsData: EffectsData): ByteBuffer {
 }
 
 const val maxInstanceCount = 512
-const val instanceBufferSize = (sizeOfMatrix + sizeOfFloat * 4) * maxInstanceCount
+const val instanceBufferSize = (sizeOfMatrix + sizeOfVec4 + sizeOfVec4) * maxInstanceCount
 private val instanceMemoryBuffer = BufferUtils.createByteBuffer(instanceBufferSize)
 private val instanceBufferCustodian = BufferCustodian(instanceMemoryBuffer)
-
 
 fun createInstanceBuffer(fill: (ByteBuffer) -> Unit): ByteBuffer {
   val buffer = instanceMemoryBuffer

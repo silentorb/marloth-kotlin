@@ -1,6 +1,6 @@
 package rendering
 
-import mythic.breeze.Animation
+import mythic.breeze.SkeletonAnimation
 import mythic.breeze.Bones
 import mythic.drawing.*
 import mythic.ent.Id
@@ -138,7 +138,7 @@ fun mapAnimationDurations(armatures: Map<ArmatureId, Armature>): AnimationDurati
           armature.animations.mapValues { it.value.duration }
         }
 
-typealias AnimationMap = Map<AnimationId, Animation>
+typealias AnimationMap = Map<AnimationId, SkeletonAnimation>
 
 typealias SocketMap = Map<String, Int>
 

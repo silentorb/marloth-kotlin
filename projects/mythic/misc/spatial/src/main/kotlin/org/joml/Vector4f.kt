@@ -22,6 +22,7 @@
  */
 package org.joml
 
+import mythic.spatial.Vector3
 import org.joml.internal.MemUtil
 import org.joml.internal.Options
 import org.joml.internal.Runtime
@@ -95,6 +96,7 @@ class Vector4f : Externalizable, Vector4fc {
    * the w component
    */
   constructor(v: Vector3fc, w: Float) : this(v.x, v.y, v.z, w) {}
+  constructor(v: Vector3, w: Float) : this(v.x, v.y, v.z, w) {}
 
   /**
    * Create a new [Vector4f] with the first two components from the

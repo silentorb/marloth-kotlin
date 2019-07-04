@@ -7,10 +7,6 @@ val lightingHeader = loadTextResource("shaders/lighting.glsl")
 const val lightingApplication1 = "vec3 lightResult = processLights(vec4(1), fragmentNormal, scene.cameraDirection, fragmentPosition.xyz, glow);"
 const val lightingApplication2 = "uniformColor * vec4(lightResult, 1.0)"
 
-data class FragmentShaderConfig(
-    val lighting: Boolean = false
-)
-
 fun addIf(condition: Boolean, value: String) = if (condition) value else null
 
 fun fragmentHeader(config: ShaderFeatureConfig): String {
@@ -36,7 +32,7 @@ private fun textureOperations(config: ShaderFeatureConfig) =
 
 fun generateFragmentShader(config: ShaderFeatureConfig): String {
   val outColor = listOfNotNull(
-      "uniformColor",
+      if (config.instanced) "fragmentColor" else "uniformColor",
       if (config.texture) "sampled" else null,
       if (config.shading) lightingApplication2 else null
   ).joinToString(" * ")
@@ -50,8 +46,9 @@ fun generateFragmentShader(config: ShaderFeatureConfig): String {
   val inputs = listOf(
       Pair(4, "fragmentPosition"),
       Pair(3, "fragmentNormal"),
-      Pair(2, "fragmentUv")
-  )
+      Pair(2, "fragmentUv"),
+      Pair(4, "fragmentColor")
+      )
       .filter { mainBody.contains(it.second) }
       .map { (size, name) ->
         "in vec$size $name;"

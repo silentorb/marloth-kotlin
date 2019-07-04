@@ -1,10 +1,7 @@
 package rendering
 
 import mythic.glowing.*
-import mythic.spatial.Matrix
-import mythic.spatial.Vector2
-import mythic.spatial.Vector3
-import mythic.spatial.putMatrix
+import mythic.spatial.*
 import rendering.shading.ObjectShaderConfig
 import rendering.shading.ShaderFeatureConfig
 import rendering.shading.createInstanceBuffer
@@ -47,11 +44,10 @@ fun renderBillboard(gameRenderer: GameSceneRenderer, billboards: List<TexturedBi
       for (billboard in billboards) {
         val transform = Matrix()
             .billboardCylindrical(billboard.position, camera.position, Vector3(0f, 0f, 1f))
-            .scale(billboard.scale / 2f)
+            .scale(billboard.scale)
         buffer.putMatrix(transform)
-        val step = billboard.step
-        val offset =  step.toFloat() / steps
-        buffer.putFloat(offset)
+        buffer.putVector4(billboard.color)
+        buffer.putFloat(billboard.step.toFloat() / steps)
         buffer.putFloat(0f)
         padBuffer(buffer, 2)
       }

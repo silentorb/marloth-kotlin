@@ -43,31 +43,17 @@ private fun textureOperations(config: ShaderFeatureConfig) =
       ""
 
 private fun instanceHeader(instanced: Boolean) =
-    if (instanced) {
-      """
-struct Instance {
-    mat4 position;
-    vec2 textureOffset;
-};
-
-struct InstanceSection {
-    Instance instances[$maxInstanceCount];
-};
-
-layout(std140) uniform InstanceUniform {
-    InstanceSection instanceSection;
-};
-"""
-    } else {
-      """
-uniform mat4 modelTransform;
-"""
-    }
+    if (instanced)
+      instancedParticleHeader
+    else
+      "uniform mat4 modelTransform;"
 
 private fun instanceOperations(instanced: Boolean) =
     if (instanced) {
       """
-  mat4 modelTransform = instanceSection.instances[gl_InstanceID].position;
+  Instance instance = instanceSection.instances[gl_InstanceID];
+  mat4 modelTransform = instance.position;
+  fragmentColor = instance.color;
 """
     } else ""
 

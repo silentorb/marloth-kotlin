@@ -192,7 +192,7 @@ fun convertChannelType(source: String): ChannelType =
       else -> throw Error("Unsupported channel type: " + source)
     }
 
-fun loadChannel(target: ChannelTarget, buffer: ByteBuffer, info: GltfInfo, sampler: AnimationSampler, boneIndex: BoneNode): mythic.breeze.AnimationChannel {
+fun loadChannel(target: ChannelTarget, buffer: ByteBuffer, info: GltfInfo, sampler: AnimationSampler, boneIndex: BoneNode): mythic.breeze.SkeletonAnimationChannel {
   val inputAccessor = info.accessors[sampler.input]
   val inputBufferView = info.bufferViews[inputAccessor.bufferView]
   val outputAccessor = info.accessors[sampler.output]
@@ -205,13 +205,13 @@ fun loadChannel(target: ChannelTarget, buffer: ByteBuffer, info: GltfInfo, sampl
     else -> throw Error("Not implemented.")
   }
 
-  return AnimationChannel(
+  return SkeletonAnimationChannel(
       target = mythic.breeze.ChannelTarget(boneIndex.index, convertChannelType(target.path)),
       keys = times.zip(values) { time, value -> Keyframe(time, value) }
   )
 }
 
-fun loadAnimation(buffer: ByteBuffer, info: GltfInfo, source: IndexedAnimation, boneIndexMap: Map<Int, BoneNode>): Animation {
+fun loadAnimation(buffer: ByteBuffer, info: GltfInfo, source: IndexedAnimation, boneIndexMap: Map<Int, BoneNode>): SkeletonAnimation {
   var duration = 0f
   val n = source.channels.map { info.nodes[it.target.node] }
   val channels = source.channels
@@ -240,7 +240,7 @@ fun loadAnimation(buffer: ByteBuffer, info: GltfInfo, source: IndexedAnimation, 
   if (source.name == "metarig_walk") {
     val k = 0
   }
-  return Animation(
+  return SkeletonAnimation(
       name = source.name,
       channels = channels,
       channelMap = mapChannels(channels),

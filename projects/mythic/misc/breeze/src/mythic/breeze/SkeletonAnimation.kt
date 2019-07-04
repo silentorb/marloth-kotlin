@@ -19,27 +19,15 @@ data class AnimationChannel2(
     val target: ChannelTarget2
 )
 
-data class Keyframe(
-    val time: Float,
-    val value: Any
-)
-
-typealias Keyframes = List<Keyframe>
-
 data class ChannelTarget(
     val boneIndex: Int,
     val type: ChannelType
 )
 
-data class AnimationOld(
-    val channels: List<AnimationChannel2>,
-    val samplers: List<Keyframes>
-)
-
 fun areKeysValid(keys: Keyframes): Boolean =
     keys.map { it.time }.distinct().size == keys.size
 
-data class AnimationChannel(
+data class SkeletonAnimationChannel(
     val target: ChannelTarget,
     val keys: Keyframes
 ) {
@@ -48,10 +36,10 @@ data class AnimationChannel(
   }
 }
 
-data class Animation(
+data class SkeletonAnimation(
     val name: String,
     val duration: Float,
-    val channels: List<AnimationChannel>,
+    val channels: List<SkeletonAnimationChannel>,
     val channelMap: ChannelTypeMap
 )
 
@@ -82,12 +70,12 @@ data class ArrangedBoneNode(
     val parent: Int
 )
 
-typealias ChannelMap = Map<Int, AnimationChannel>
+typealias ChannelMap = Map<Int, SkeletonAnimationChannel>
 typealias ChannelTypeMap = Map<ChannelType, ChannelMap>
 
 typealias MatrixSource = (index: Int) -> Matrix
 
-fun mapChannels(channels: List<AnimationChannel>): ChannelTypeMap =
+fun mapChannels(channels: List<SkeletonAnimationChannel>): ChannelTypeMap =
     channels
         .groupBy { it.target.type }
         .mapValues { c -> c.value.associate { Pair(it.target.boneIndex, it) } }
@@ -129,7 +117,7 @@ fun intermediateTransformAnimatedSkeleton(bones: List<Bone>, animation: MultiAni
   }
 }
 
-fun transformAnimatedSkeleton(bones: List<Bone>, animation: Animation, timeElapsed: Float): List<Matrix> {
+fun transformAnimatedSkeleton(bones: List<Bone>, animation: SkeletonAnimation, timeElapsed: Float): List<Matrix> {
   val translationMap = animatedValueSource<Vector3>(animation.channelMap[ChannelType.translation], timeElapsed)
   val rotationMap = animatedValueSource<Quaternion>(animation.channelMap[ChannelType.rotation], timeElapsed)
   val matrixSource: MatrixSource = { i ->
@@ -142,7 +130,7 @@ fun transformAnimatedSkeleton(bones: List<Bone>, animation: Animation, timeElaps
 }
 
 data class MultiAnimationPart(
-    val animation: Animation,
+    val animation: SkeletonAnimation,
     val timeOffset: Float,
     val strength: Float = 1f
 )
@@ -194,7 +182,7 @@ fun <T> animatedValueSource(channelMap: ChannelMap?, timePassed: Float): ValueSo
       { i ->
         val channel = channelMap[i]
         if (channel != null)
-          getChannelValue(channel, timePassed) as T
+          getStandardChannelValue(channel.keys, timePassed) as T
         else
           null
       }
@@ -203,47 +191,35 @@ fun projectBoneTail(matrix: Matrix, bone: Bone) =
 //    Matrix().translate(Vector3(bone.length, 0f, 0f)).mul(matrix)
     Matrix(matrix).translate(bone.length, 0f, 0f)
 
-
-inline fun getCurrentKeys(keys: Keyframes, timePassed: Float): Pair<Keyframe, Keyframe?> {
-  for (i in 0 until keys.size) {
-    val key = keys[i]
-    if (key.time > timePassed) {
-      return Pair(keys[i - 1], key)
-    }
-  }
-
-  return Pair(keys.last(), null)
-}
-
-fun getChannelValue(channel: AnimationChannel, timePassed: Float): Any {
-  val (firstKey, secondKey) = getCurrentKeys(channel.keys, timePassed)
-  return if (secondKey == null) {
-    when (channel.target.type) {
-      ChannelType.rotation -> firstKey.value as Quaternion
-      ChannelType.translation -> firstKey.value as Vector3
-      else -> throw Error("Not implemented.")
-    }
-  } else {
-    val duration = secondKey.time - firstKey.time
-    val localSecondsPassed = timePassed - firstKey.time
-    val progress = localSecondsPassed / duration
-    when (channel.target.type) {
-      ChannelType.rotation -> {
-        val a = firstKey.value as Quaternion
-        val b = secondKey.value as Quaternion
-        val value = Quaternion(a).slerp(b, progress)
-        value
-      }
-      ChannelType.translation -> {
-        val a = firstKey.value as Vector3
-        val b = secondKey.value as Vector3
-        Vector3(Vector3m(a).lerp(Vector3m(b), progress))
-      }
-
-      else -> throw Error("Not implemented.")
-    }
-  }
-}
+//fun getStandardChannelValue(channel: AnimationChannel, timePassed: Float): Any {
+//  val (firstKey, secondKey) = getCurrentKeys(channel.keys, timePassed)
+//  return if (secondKey == null) {
+//    when (channel.target.type) {
+//      ChannelType.rotation -> firstKey.value as Quaternion
+//      ChannelType.translation -> firstKey.value as Vector3
+//      else -> throw Error("Not implemented.")
+//    }
+//  } else {
+//    val duration = secondKey.time - firstKey.time
+//    val localSecondsPassed = timePassed - firstKey.time
+//    val progress = localSecondsPassed / duration
+//    when (channel.target.type) {
+//      ChannelType.rotation -> {
+//        val a = firstKey.value as Quaternion
+//        val b = secondKey.value as Quaternion
+//        val value = Quaternion(a).slerp(b, progress)
+//        value
+//      }
+//      ChannelType.translation -> {
+//        val a = firstKey.value as Vector3
+//        val b = secondKey.value as Vector3
+//        Vector3(Vector3m(a).lerp(Vector3m(b), progress))
+//      }
+//
+//      else -> throw Error("Not implemented.")
+//    }
+//  }
+//}
 
 fun getBoneIndex(bones: Bones, name: String): Int =
     bones.first { it.name == name }.index

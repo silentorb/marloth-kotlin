@@ -1,5 +1,6 @@
 package simulation.particles
 
+import mythic.breeze.AnimationChannel
 import mythic.ent.pipe
 import mythic.spatial.Vector3
 import physics.Body
@@ -22,10 +23,13 @@ data class Emitter(
     val initialVelocity: Vector3
 )
 
-typealias ParticleLifecycle = List<ParticleAppearance>
+data class ParticleAnimation(
+    val color: AnimationChannel? = null
+)
 
 data class ParticleEffect(
-    val lifecycle: ParticleLifecycle, // Cannot be empty
+    val initialAppearance: ParticleAppearance,
+    val animation: ParticleAnimation,
     val emitter: Emitter,
     val particles: List<Particle> = listOf(),
     val accumulator: Float = 0f
@@ -33,8 +37,8 @@ data class ParticleEffect(
 
 fun updateParticles(delta: Float): (ParticleEffect) -> ParticleEffect = { effect ->
   effect.copy(
-      particles = effect.particles.map(updateParticle(delta))
-          .filter { it.life > 0f }
+      particles = effect.particles.map(updateParticle(effect.animation, delta))
+          .filter { it.life < it.maxLife }
   )
 }
 

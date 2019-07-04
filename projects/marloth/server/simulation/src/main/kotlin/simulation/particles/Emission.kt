@@ -28,7 +28,7 @@ fun emitParticle(dice: Dice, effect: ParticleEffect, emitterPosition: Vector3): 
   val position = emitterPosition + placeParticle(dice, emitter.volume)
   val velocity = emitter.initialVelocity
   val life = dice.getFloat(emitter.life.first, emitter.life.second)
-  return newParticle(effect.lifecycle.first(), position, velocity, life)
+  return newParticle(effect.initialAppearance, position, velocity, life)
 }
 
 fun updateParticleEmission(dice: Dice, body: Body, delta: Float): (ParticleEffect) -> ParticleEffect = { effect ->
