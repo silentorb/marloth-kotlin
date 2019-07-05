@@ -1,5 +1,6 @@
 package generation.structure
 
+import generation.BiomeId
 import mythic.ent.*
 import mythic.sculpting.*
 import mythic.spatial.*

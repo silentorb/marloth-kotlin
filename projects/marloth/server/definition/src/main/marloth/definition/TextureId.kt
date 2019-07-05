@@ -1,4 +1,4 @@
-package scenery
+package marloth.definition
 
 enum class TextureId {
   none,

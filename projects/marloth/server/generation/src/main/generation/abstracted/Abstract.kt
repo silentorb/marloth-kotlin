@@ -1,10 +1,7 @@
 package generation.abstracted
 
 import gatherNodes
-import generation.BiomeGrid
-import generation.crossMap
-import generation.getCenter
-import generation.getNodeDistance
+import generation.*
 import generation.structure.getDoorFramePoints
 import mythic.ent.Id
 import mythic.ent.entityMap
@@ -67,8 +64,7 @@ fun createRoomNode(boundary: WorldBoundary, nodes: List<Node>, id: Id, dice: Dic
       position = position,
       radius = radius,
       isSolid = false,
-      isWalkable = true,
-      biome = BiomeId.void
+      isWalkable = true
   )
 }
 

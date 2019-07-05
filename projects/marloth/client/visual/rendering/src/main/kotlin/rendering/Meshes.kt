@@ -3,7 +3,7 @@ package rendering
 import assets.getResourceUrl
 import rendering.meshes.*
 import rendering.meshes.loading.loadGltf
-import scenery.MeshId
+import scenery.MeshName
 import java.io.File
 
 enum class MeshType {
@@ -53,11 +53,11 @@ fun importedMeshes(vertexSchemas: VertexSchemas) =
         .map { loadGltf(vertexSchemas, it, "models/" + it + "/" + it) }
 //    }
 
-fun createMeshes(vertexSchemas: VertexSchemas): Pair<Map<MeshId, ModelMesh>, List<Armature>> {
+fun createMeshes(vertexSchemas: VertexSchemas): Pair<Map<MeshName, ModelMesh>, List<Armature>> {
   val imports = importedMeshes(vertexSchemas)
   val meshes = mapOf(
-      MeshId.line to createLineMesh(vertexSchemas.flat),
-      MeshId.billboard to createBillboardMesh(vertexSchemas.billboard)
+      "line" to createLineMesh(vertexSchemas.flat),
+      "billboard" to createBillboardMesh(vertexSchemas.billboard)
   )
       .mapValues { createModelElements(it.value) }
       .mapValues { ModelMesh(it.key, it.value) }

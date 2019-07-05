@@ -3,12 +3,11 @@ package simulation.combat
 import mythic.ent.Id
 
 enum class DamageType {
-  pierce,
-  slash,
-  blunt,
-  heat,
+  chaos,
   cold,
-  electricity,
+  lightning,
+  fire,
+  physical,
   poison
 }
 

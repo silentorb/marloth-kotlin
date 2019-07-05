@@ -1,16 +1,17 @@
 package generation.architecture
 
+import generation.biomeInfoMap
 import generation.structure.wallHeight
 import mythic.spatial.Pi
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
-import mythic.spatial.projectVector3
 import physics.Body
 import physics.voidNodeId
 import randomly.Dice
-import scenery.MeshId
+import marloth.definition.MeshId
 import scenery.Shape
-import scenery.TextureId
+import marloth.definition.TextureId
+import scenery.MeshName
 import simulation.*
 
 fun getHorizontalFlip(dice: Dice, wallData: WallData): Float =
@@ -18,17 +19,17 @@ fun getHorizontalFlip(dice: Dice, wallData: WallData): Float =
 
 val floorOffset = Vector3(0f, 0f, -wallHeight / 2f)
 
-typealias MeshInfoMap = Map<MeshId, Shape>
+typealias MeshInfoMap = Map<MeshName, Shape>
 
 fun newArchitectureMesh(meshInfo: MeshInfoMap, mesh: MeshId, position: Vector3, scale: Vector3 = Vector3.unit,
                         orientation: Quaternion = Quaternion(),
                         texture: TextureId? = null): Hand {
-  val shape = meshInfo[mesh]!!
+  val shape = meshInfo[mesh.name]!!
   return Hand(
       depiction = Depiction(
           type = DepictionType.staticMesh,
-          mesh = mesh,
-          texture = texture
+          mesh = mesh.name,
+          texture = texture?.name
       ),
       body = Body(
           position = position,

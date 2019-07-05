@@ -2,7 +2,6 @@ package lab.utility
 
 import lab.LabApp
 import rendering.*
-import rendering.texturing.createTextureLibrary
 import java.io.File
 import java.net.URI
 
@@ -58,11 +57,11 @@ fun checkForChangedPackages(): List<WatchedPackage> =
     }
 
 fun reloadTextures(renderer: Renderer) {
-  for (texture in renderer.mappedTextures) {
-    texture.value.dispose()
-  }
-
-  renderer.mappedTextures = createTextureLibrary(defaultTextureScale)
+//  for (texture in renderer.mappedTextures) {
+//    texture.value.dispose()
+//  }
+//
+//  renderer.mappedTextures = createTextureLibrary(defaultTextureScale)
 }
 
 fun reloadMeshes(renderer: Renderer){

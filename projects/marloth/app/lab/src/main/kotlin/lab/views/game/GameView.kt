@@ -1,12 +1,5 @@
 package lab.views.game
 
-import marloth.integration.renderMain
-import haft.HaftCommand
-import haft.isActive
-import lab.LabCommandType
-import lab.LabState
-import marloth.clienting.*
-import marloth.clienting.gui.layoutGui
 import mythic.glowing.DrawMethod
 import mythic.glowing.drawMesh
 import mythic.glowing.globalState
@@ -17,7 +10,7 @@ import org.joml.zw
 import rendering.*
 import rendering.shading.LightingConfig
 import rendering.shading.ObjectShaderConfig
-import scenery.MeshId
+import marloth.definition.MeshId
 import simulation.World
 
 enum class GameDisplayMode {
@@ -58,7 +51,7 @@ fun renderFaceNormals(renderer: SceneRenderer, length: Float, faces: List<Immuta
         .scale(length)
 
     renderer.flat.activate(ObjectShaderConfig(transform = transform, color = Vector4(0f, 1f, 0f, 1f)))
-    drawMesh(renderer.meshes[MeshId.line]!!.primitives[0].mesh, DrawMethod.lines)
+//    drawMesh(renderer.meshes[MeshId.line]!!.primitives[0].mesh, DrawMethod.lines)
   }
 }
 

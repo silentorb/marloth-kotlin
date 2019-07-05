@@ -1,7 +1,7 @@
 package generation.abstracted
 
 import mythic.ent.Id
-import scenery.TextureId
+import marloth.definition.TextureId
 import simulation.FaceType
 import simulation.Node
 import simulation.NodeTable

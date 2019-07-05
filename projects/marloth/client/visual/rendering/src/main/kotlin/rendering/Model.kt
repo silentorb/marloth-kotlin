@@ -8,7 +8,7 @@ import rendering.meshes.MeshInfo
 import rendering.meshes.Primitives
 import rendering.texturing.FaceTextureMap
 import scenery.ArmatureId
-import scenery.MeshId
+import scenery.MeshName
 import scenery.Shape
 
 data class MeshGroup(
@@ -51,21 +51,21 @@ data class AdvancedModel(
 )
 
 data class ModelMesh(
-    val id: MeshId,
+    val id: MeshName,
     val primitives: Primitives,
     val bounds: Shape? = null
 )
 
-typealias ModelMeshMap = Map<MeshId, ModelMesh>
+typealias ModelMeshMap = Map<MeshName, ModelMesh>
 
 //fun dispose(model: AdvancedModel) {
 //  model.primitives.forEach { it.mesh.dispose() }
 //}
 
-fun getMeshId(name: String): MeshId? {
-  val formattedName = toCamelCase(name)
-  return MeshId.values().firstOrNull { it.name == formattedName }
-}
+//fun getMeshName(name: String): MeshName? {
+//  val formattedName = toCamelCase(name)
+//  return MeshName.values().firstOrNull { it.name == formattedName }
+//}
 
 fun getArmatureId(name: String): ArmatureId {
   val formattedName = toCamelCase(name)

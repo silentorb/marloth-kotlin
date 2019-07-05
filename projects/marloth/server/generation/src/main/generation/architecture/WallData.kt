@@ -1,6 +1,6 @@
 package generation.architecture
 
-import scenery.MeshId
+import marloth.definition.MeshId
 
 data class WallData(
     val canFlipHorizontally: Boolean = false,

@@ -3,24 +3,15 @@ package generation
 import generation.structure.wallHeight
 import intellect.Pursuit
 import intellect.Spirit
-import mythic.breeze.AnimationChannel
-import mythic.breeze.Keyframe
+import marloth.definition.newDamageCloud
 import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.ent.newIdSource
 import mythic.spatial.Vector3
-import mythic.spatial.Vector4
-import physics.Body
 import physics.voidNode
 import randomly.Dice
-import scenery.Cylinder
-import scenery.TextureId
 import simulation.*
 import simulation.data.creatures
-import simulation.particles.Emitter
-import simulation.particles.ParticleAnimation
-import simulation.particles.ParticleAppearance
-import simulation.particles.ParticleEffect
 
 data class CharacterTemplate(
     val faction: Id,
@@ -201,47 +192,12 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
   val baseColor = Vector3(0.5f, 1f, 0.5f)
   val deck = Deck()
       .plus(newPlayer(nextId, playerNode))
-      .plus(allHandsOnDeck(listOf(Hand(
-          body = Body(
-              position = particleNode.position + Vector3(0f, 0f, -wallHeight / 2f)
-          ),
-          particleEffect = ParticleEffect(
-              initialAppearance = ParticleAppearance(
-                  texture = TextureId.perlinParticle,
-                  color = Vector4(baseColor, 0f),
-                  size = 2f
-              ),
-              animation = ParticleAnimation(
-                  color = AnimationChannel(
-                      target = "color",
-                      keys = listOf(
-                          Keyframe(
-                              time = 0f,
-                              value = Vector4(baseColor, 0f)
-                          ),
-                          Keyframe(
-                              time = 0.2f,
-                              value = Vector4(baseColor, 0.33f)
-                          ),
-                          Keyframe(
-                              time = 0.8f,
-                              value = Vector4(baseColor, 0.33f)
-                          ),
-                          Keyframe(
-                              time = 1f,
-                              value = Vector4(baseColor, 0f)
-                          )
-                      )
-                  )
-              ),
-              emitter = Emitter(
-                  particlesPerSecond = 30f,
-                  volume = Cylinder(radius = particleNode.radius, height = 10f),
-                  life = Pair(3f, 4f),
-                  initialVelocity = Vector3(0f, 0f, 1f)
-              )
+      .plus(allHandsOnDeck(listOf(
+          newDamageCloud(
+              position = particleNode.position + Vector3(0f, 0f, -wallHeight / 2f),
+              radius = particleNode.radius
           )
-      )), nextId))
+      ), nextId))
 //      .plus(placeWallLamps(realm, nextId, input.dice, scale))
 //      .plus(placeDoors(realm, nextId))
 

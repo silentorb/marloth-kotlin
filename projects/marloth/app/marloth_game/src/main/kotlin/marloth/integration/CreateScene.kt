@@ -1,5 +1,6 @@
 package marloth.integration
 
+import marloth.definition.MeshId
 import mythic.ent.Id
 import mythic.ent.Table
 import mythic.spatial.*
@@ -10,7 +11,6 @@ import scenery.*
 import scenery.Light
 import simulation.*
 import kotlin.math.floor
-import kotlin.math.roundToInt
 
 val firstPersonCameraOffset = Vector3(0f, 0f, 1.4f)
 val firstPersonDeadCameraOffset = Vector3(0f, 0f, 0.4f)
@@ -77,7 +77,7 @@ fun filterDepictions(depictions: Table<Depiction>, player: Player): Table<Depict
     else
       depictions
 
-fun convertSimpleDepiction(world: World, id: Id, mesh: MeshId, texture: TextureId? = null): MeshElement? {
+fun convertSimpleDepiction(world: World, id: Id, mesh: MeshName, texture: TextureName? = null): MeshElement? {
   val body = world.bodyTable[id]!!
   val character = world.characterTable[id]
   val translate = Matrix().translate(body.position)
@@ -87,7 +87,7 @@ fun convertSimpleDepiction(world: World, id: Id, mesh: MeshId, texture: TextureI
     translate.rotate(body.orientation)
 
   val material = if (texture != null)
-    Material(texture = texture.name)
+    Material(texture = texture)
   else
     null
 
@@ -103,7 +103,7 @@ fun convertSimpleDepiction(world: World, id: Id, depiction: Depiction): MeshElem
   val mesh = if (depiction.type == DepictionType.staticMesh)
     depiction.mesh
   else
-    simplePainterMap[depiction.type]
+    simplePainterMap[depiction.type]?.name
 
   if (mesh == null)
     return null
@@ -148,7 +148,7 @@ fun convertComplexDepiction(world: World, id: Id, depiction: Depiction): Element
           .map {
             MeshElement(
                 id = id,
-                mesh = it,
+                mesh = it.name,
                 transform = transform
             )
           },
@@ -159,7 +159,7 @@ fun convertComplexDepiction(world: World, id: Id, depiction: Depiction): Element
               socket = ArmatureSockets.rightHand.toString(),
               mesh = MeshElement(
                   id = id,
-                  mesh = MeshId.pistol,
+                  mesh = MeshId.pistol.name,
                   transform = transform
               )
           )
@@ -215,10 +215,10 @@ fun gatherVisualElements(world: World, screen: Screen, player: Player): ElementG
 //            convertSimpleDepiction(world, it.id, it.definition.depictionType)
 //          })
           .plus(world.deck.missiles.values.mapNotNull {
-            convertSimpleDepiction(world, it.id, MeshId.spikyBall)
+            convertSimpleDepiction(world, it.id, MeshId.spikyBall.name)
           })
           .plus(world.deck.doors.mapNotNull {
-            convertSimpleDepiction(world, it.key, MeshId.prisonDoor)
+            convertSimpleDepiction(world, it.key, MeshId.prisonDoor.name)
           })
 
   return complexElements

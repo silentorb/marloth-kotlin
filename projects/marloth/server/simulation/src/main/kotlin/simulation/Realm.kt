@@ -9,7 +9,7 @@ import mythic.spatial.Vector3
 import mythic.spatial.getCenter
 import physics.voidNodeId
 import randomly.Dice
-import scenery.TextureId
+import scenery.TextureName
 
 data class WorldBoundary(
     val start: Vector3,
@@ -61,7 +61,7 @@ data class ConnectionFace(
     var faceType: FaceType,
     val firstNode: Id,
     val secondNode: Id,
-    var texture: TextureId? = null,
+    var texture: TextureName? = null,
     var debugInfo: String? = null
 ) : Entity {
   val nodes: List<Id> = listOf(firstNode, secondNode).minus(voidNodeId)

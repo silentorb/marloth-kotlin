@@ -6,12 +6,11 @@ import rendering.shading.ObjectShaderConfig
 import rendering.shading.ShaderFeatureConfig
 import rendering.shading.createInstanceBuffer
 import rendering.shading.padBuffer
-import scenery.MeshId
 import kotlin.math.roundToInt
 
 fun renderBillboard(gameRenderer: GameSceneRenderer, billboards: List<TexturedBillboard>) {
   val renderer = gameRenderer.renderer.renderer
-  val model = gameRenderer.renderer.meshes[MeshId.billboard]!!
+  val model = gameRenderer.renderer.meshes["billboard"]!!
   val camera = gameRenderer.scene.camera
   val textures = renderer.textures
   val texture = textures[billboards.first().texture.toString()]

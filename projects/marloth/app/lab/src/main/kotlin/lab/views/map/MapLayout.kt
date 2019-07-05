@@ -31,7 +31,7 @@ private fun faceInfo(realm: Realm, id: Id): Flower {
   val secondNode = realm.nodeTable[connection.secondNode]
   val rows = listOfNotNull(
       id.toString(),
-      connection.texture?.name ?: "no texture",
+      connection.texture ?: "no texture",
       "nodes: ${connection.firstNode}, ${connection.secondNode}",
       if (firstNode != null) "${firstNode.radius} ${firstNode.position}" else null,
       if (secondNode != null) "${secondNode.radius} ${secondNode.position}" else null,

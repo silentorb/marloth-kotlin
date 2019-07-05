@@ -76,20 +76,20 @@ fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: AdvancedMo
 //      renderer.fonts[0], 12f, bounds.position + Vector2(5f, 45f), black))
 }
 
-fun drawLeftPanel(meshTypes: List<MeshType>, config: ModelViewConfig, model: AdvancedModel,
-                  bounds: Bounds): Pair<List<FlatBox>, List<ClickBox<SelectionEvent>>> {
-  val gap = 2
-  val halfGap = gap / 2
-  val halfDimensions = Vector2i(bounds.dimensions.x, bounds.dimensions.y / 2 - halfGap)
-  val modelList = drawSelectableEnumList(meshTypes, config.model, Bounds(bounds.position, halfDimensions))
-  val meshGroups = if (model.primitives.size > 0)
-    model.primitives.mapIndexed { index, it ->
-      SelectableItem(it.name, config.visibleGroups[index])
-    }
-  else
-    model.primitives.mapIndexed { i, it -> SelectableItem(it.name, config.visibleGroups[i]) }
-
-  val groupListBounds = Bounds(bounds.position + Vector2i(0, bounds.dimensions.y / 2 + halfGap), halfDimensions)
-  val groupList = drawSelectableList(meshGroups, SelectableListType.group, groupListBounds)
-  return Pair(modelList.first.plus(groupList.first), modelList.second.plus(groupList.second))
-}
+//fun drawLeftPanel(meshTypes: List<MeshType>, config: ModelViewConfig, model: AdvancedModel,
+//                  bounds: Bounds): Pair<List<FlatBox>, List<ClickBox<SelectionEvent>>> {
+//  val gap = 2
+//  val halfGap = gap / 2
+//  val halfDimensions = Vector2i(bounds.dimensions.x, bounds.dimensions.y / 2 - halfGap)
+//  val modelList = drawSelectableEnumList(meshTypes, config.model!!, Bounds(bounds.position, halfDimensions))
+//  val meshGroups = if (model.primitives.size > 0)
+//    model.primitives.mapIndexed { index, it ->
+//      SelectableItem(it.name, config.visibleGroups[index])
+//    }
+//  else
+//    model.primitives.mapIndexed { i, it -> SelectableItem(it.name, config.visibleGroups[i]) }
+//
+//  val groupListBounds = Bounds(bounds.position + Vector2i(0, bounds.dimensions.y / 2 + halfGap), halfDimensions)
+//  val groupList = drawSelectableList(meshGroups, SelectableListType.group, groupListBounds)
+//  return Pair(modelList.first.plus(groupList.first), modelList.second.plus(groupList.second))
+//}

@@ -3,8 +3,6 @@ package generation
 import generation.abstracted.Graph
 import generation.abstracted.generateAbstract
 import generation.structure.StructureIdSources
-import generation.structure.assignTextures
-import generation.structure.generateStructure
 import generation.structure.idSourceFromNodes
 import mythic.ent.newIdSource
 import mythic.ent.pipe

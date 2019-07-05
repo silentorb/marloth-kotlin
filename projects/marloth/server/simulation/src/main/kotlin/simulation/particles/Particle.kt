@@ -5,16 +5,16 @@ import mythic.breeze.interpolateKeys
 import mythic.breeze.interpolateVector4
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
-import scenery.TextureId
+import scenery.TextureName
 
 data class ParticleAppearance(
-    val texture: TextureId,
+    val texture: TextureName,
     val color: Vector4,
     val size: Float
 )
 
 data class Particle(
-    val texture: TextureId,
+    val texture: TextureName,
     val color: Vector4,
     val size: Float,
     val position: Vector3,

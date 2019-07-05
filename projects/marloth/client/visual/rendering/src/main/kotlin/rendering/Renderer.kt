@@ -1,16 +1,22 @@
 package rendering
 
-import mythic.breeze.SkeletonAnimation
 import mythic.breeze.Bones
+import mythic.breeze.SkeletonAnimation
 import mythic.drawing.*
 import mythic.ent.Id
 import mythic.glowing.*
 import mythic.platforming.PlatformDisplay
 import mythic.platforming.PlatformDisplayConfig
 import mythic.platforming.WindowInfo
-import mythic.spatial.*
+import mythic.spatial.Matrix
+import mythic.spatial.Vector2
+import mythic.spatial.Vector3
+import mythic.spatial.Vector4
 import mythic.typography.*
-import org.joml.*
+import org.joml.Vector2i
+import org.joml.Vector4i
+import org.joml.div
+import org.joml.times
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30.*
@@ -51,7 +57,7 @@ fun gatherEffectsData(dimensions: Vector2i, scene: Scene, cameraEffectsData: Cam
 data class SectorMesh(
     val id: Id,
     val mesh: SimpleMesh,
-    val textureIndex: List<TextureId>
+    val textureIndex: List<TextureName>
 )
 
 data class WorldMesh(
@@ -205,7 +211,6 @@ class Renderer(
   val meshes: ModelMeshMap
   val armatures: Map<ArmatureId, Armature>
   val animationDurations: AnimationDurationMap
-  var mappedTextures: TextureLibrary = createTextureLibrary(defaultTextureScale)
   val textures: DynamicTextureLibrary = mutableMapOf()
   val textureLoader = AsyncTextureLoader(gatherTextures(display.loadImage, textureAttributesFromConfig(config)))
   val offscreenBuffers: List<OffscreenBuffer> = (0..0).map {

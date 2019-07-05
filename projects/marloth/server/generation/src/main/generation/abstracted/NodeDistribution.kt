@@ -6,7 +6,6 @@ import mythic.spatial.Vector3
 import mythic.spatial.withinRangeFast
 import org.joml.Vector3i
 import randomly.Dice
-import simulation.BiomeId
 import simulation.Node
 import simulation.WorldBoundary
 
@@ -198,8 +197,7 @@ fun distributeNodes(boundary: WorldBoundary, count: Int, dice: Dice): List<Node>
           position = position,
           radius = calculateRadius(position, nodes, dice),
           isSolid = false,
-          isWalkable = true,
-          biome = BiomeId.void
+          isWalkable = true
       )
 //      matrix[i] = node.id
       nodes.add(node)

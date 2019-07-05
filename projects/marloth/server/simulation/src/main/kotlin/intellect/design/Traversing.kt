@@ -19,14 +19,12 @@ fun getNextPathFace(world: World, knowledge: Knowledge, path: Path): Id? {
 fun pathIsAccessible(world: World, knowledge: Knowledge, path: Path): Boolean =
     getNextPathFace(world, knowledge, path) != null
 
-val ignoredBiomes = listOf(BiomeId.home, BiomeId.exit)
-
 fun startRoaming(world: World, knowledge: Knowledge): Path? {
   val body = world.bodyTable[knowledge.spiritId]!!
   val options = knowledge.nodes
       .filter {
         val node = world.realm.nodeTable[it]!!
-        node.id != body.node && node.isWalkable && !ignoredBiomes.contains(node.biome)
+        node.id != body.node && node.isWalkable
       }
 
   val destination = Dice.global.getItem(options)

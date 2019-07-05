@@ -17,8 +17,7 @@ val voidNode: Node = Node(
     position = Vector3(0f, 0f, -voidNodeHeight),
     radius = 0f,
     isSolid = false,
-    isWalkable = false,
-    biome = BiomeId.void
+    isWalkable = false
 )
 
 interface SimpleBody {

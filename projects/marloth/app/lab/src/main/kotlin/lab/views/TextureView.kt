@@ -12,7 +12,7 @@ import mythic.spatial.toVector2
 import mythic.spatial.toVector2i
 import org.joml.Vector2i
 import rendering.Renderer
-import scenery.TextureId
+import marloth.definition.TextureId
 
 data class TextureViewConfig(
     var texture: TextureId = TextureId.checkersBlackWhite
@@ -20,15 +20,15 @@ data class TextureViewConfig(
 
 fun drawTextureView(renderer: Renderer, config: TextureViewConfig, bounds: Bounds, canvas: Canvas) {
 //  val texture = textureGenerators[config.texture]!!(1f)
-  val texture = renderer.mappedTextures[config.texture]!!
-  val length = Math.min(bounds.dimensions.x, bounds.dimensions.y).toFloat()
-  val repeat = 2f
-  canvas.drawDynamicImage(bounds.position.toVector2(), Vector2(length, length), canvas.image(texture), listOf(
-      0f, 1f, 0f, repeat,
-      0f, 0f, 0f, 0f,
-      1f, 0f, repeat, 0f,
-      1f, 1f, repeat, repeat
-  ))
+//  val texture = renderer.mappedTextures[config.texture]!!
+//  val length = Math.min(bounds.dimensions.x, bounds.dimensions.y).toFloat()
+//  val repeat = 2f
+//  canvas.drawDynamicImage(bounds.position.toVector2(), Vector2(length, length), canvas.image(texture), listOf(
+//      0f, 1f, 0f, repeat,
+//      0f, 0f, 0f, 0f,
+//      1f, 0f, repeat, 0f,
+//      1f, 1f, repeat, repeat
+//  ))
 //  texture.dispose()
 }
 
@@ -79,7 +79,7 @@ class TextureView {
 }
 
 fun onListItemSelection(event: SelectionEvent, config: TextureViewConfig, renderer: Renderer) {
-  config.texture = renderer.mappedTextures.keys.toList()[event.itemIndex]
+//  config.texture = renderer.mappedTextures.keys.toList()[event.itemIndex]
 }
 
 fun updateTextureState(layout: TextureViewLayout, input: LabCommandState, config: TextureViewConfig, renderer: Renderer) {

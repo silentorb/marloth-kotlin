@@ -3,10 +3,7 @@ package rendering
 import mythic.spatial.Matrix
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
-import scenery.AnimationId
-import scenery.ArmatureId
-import scenery.MeshId
-import scenery.TextureId
+import scenery.*
 
 data class ElementAnimation(
     val animationId: AnimationId,
@@ -16,7 +13,7 @@ data class ElementAnimation(
 
 data class MeshElement(
     val id: Long,
-    val mesh: MeshId,
+    val mesh: MeshName,
     val transform: Matrix,
     val material: Material? = null
 )
@@ -27,7 +24,7 @@ data class AttachedMesh(
 )
 
 data class TexturedBillboard(
-    val texture: TextureId,
+    val texture: TextureName,
     val position: Vector3,
     val color: Vector4,
     val scale: Float,

@@ -1,12 +1,15 @@
 package rendering.meshes.loading
 
 import mythic.breeze.*
-import mythic.glowing.*
+import mythic.glowing.GeneralMesh
+import mythic.glowing.VertexAttributeDetail
+import mythic.glowing.newVertexBuffer
 import mythic.spatial.Vector3
 import org.lwjgl.BufferUtils
 import rendering.*
-import rendering.meshes.*
+import rendering.meshes.AttributeName
 import rendering.meshes.VertexSchema
+import rendering.meshes.VertexSchemas
 import scenery.*
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
@@ -391,7 +394,7 @@ data class ModelImport(
     val armatures: List<Armature>
 )
 
-fun getMeshId(info: GltfInfo, nodeIndex: Int): MeshId? {
+fun getMeshName(info: GltfInfo, nodeIndex: Int): MeshName? {
   val parent = info.nodes.firstOrNull { it.children != null && it.children.contains(nodeIndex) }
   val node = info.nodes[nodeIndex]
   val name = if (parent != null && parent.name != "rig")
@@ -399,7 +402,7 @@ fun getMeshId(info: GltfInfo, nodeIndex: Int): MeshId? {
   else
     node.name
 
-  return getMeshId(name)
+  return toCamelCase(name)
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -453,7 +456,7 @@ fun loadGltf(vertexSchemas: VertexSchemas, filename: String, resourcePath: Strin
   val meshes = info.meshes
       .mapIndexedNotNull { meshIndex, mesh ->
         val nodeIndex = info.nodes.indexOfFirst { it.mesh == meshIndex }
-        val id = getMeshId(info, nodeIndex)
+        val id = getMeshName(info, nodeIndex)
         if (id == null)
           null
         else {
@@ -463,7 +466,7 @@ fun loadGltf(vertexSchemas: VertexSchemas, filename: String, resourcePath: Strin
           val primitives = mesh.primitives.map { primitiveSource ->
             val material = loadMaterial(info, primitiveSource.material)
             val converter = createVertexConverter(info, buffer, boneMap, meshIndex)
-            Primitive(
+            rendering.meshes.Primitive(
                 mesh = loadPrimitive(buffer, info, vertexSchemas, primitiveSource, converter),
                 transform = null,
                 material = material,

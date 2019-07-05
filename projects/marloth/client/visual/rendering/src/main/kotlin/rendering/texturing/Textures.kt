@@ -12,7 +12,7 @@ import mythic.spatial.Vector3
 import rendering.toCamelCase
 import assets.scanResources
 import assets.scanTextureResources
-import scenery.TextureId
+import scenery.TextureName
 import java.nio.file.Paths
 import kotlin.concurrent.thread
 
@@ -67,28 +67,28 @@ fun grayNoise(scales: List<Float>): OpaqueTextureAlgorithm {
   return colorize(black, white, simpleNoise(scales))
 }
 
-typealias TextureLibrary = Map<TextureId, Texture>
+typealias TextureLibrary = Map<TextureName, Texture>
 typealias DynamicTextureLibrary = MutableMap<String, Texture>
 typealias OpaqueTextureAlgorithmSource = () -> OpaqueTextureAlgorithm
 typealias TextureGenerator = (scale: Float) -> Texture
-typealias TextureGeneratorMap = Map<TextureId, TextureGenerator>
+typealias TextureGeneratorMap = Map<TextureName, TextureGenerator>
 
-fun basicTextures(): Map<TextureId, OpaqueTextureAlgorithmSource> = mapOf(
-
-    TextureId.checkersBlackWhite to createCheckers(),
-//    Textures.darkCheckers to createDarkCheckers(),
-    TextureId.debugCyan to { solidColor(Vector3(0f, 1f, 1f)) },
-    TextureId.debugMagenta to { solidColor(Vector3(1f, 0f, 1f)) },
-    TextureId.debugYellow to { solidColor(Vector3(1f, 1f, 0f)) },
-
-    TextureId.ground to {
-      colorize(
-          Vector3(0.0f, 0.0f, 0.0f),
-          Vector3(0.55f, 0.35f, 0.0f),
-          simpleNoise(listOf(24f, 64f))
-      )
-    }
-)
+//fun basicTextures(): Map<TextureName, OpaqueTextureAlgorithmSource> = mapOf(
+//
+//    TextureName.checkersBlackWhite to createCheckers(),
+////    Textures.darkCheckers to createDarkCheckers(),
+//    TextureName.debugCyan to { solidColor(Vector3(0f, 1f, 1f)) },
+//    TextureName.debugMagenta to { solidColor(Vector3(1f, 0f, 1f)) },
+//    TextureName.debugYellow to { solidColor(Vector3(1f, 1f, 0f)) },
+//
+//    TextureName.ground to {
+//      colorize(
+//          Vector3(0.0f, 0.0f, 0.0f),
+//          Vector3(0.55f, 0.35f, 0.0f),
+//          simpleNoise(listOf(24f, 64f))
+//      )
+//    }
+//)
 
 fun applyAlgorithm(algorithm: OpaqueTextureAlgorithm, length: Int, attributes: TextureAttributes): TextureGenerator = { scale ->
   val scaledLength = (length * scale).toInt()
@@ -129,29 +129,29 @@ fun deferImageFile(loadImage: ImageLoader, path: String, attributes: TextureAttr
   )
 }
 
-private fun miscTextureGenerators(): TextureGeneratorMap = mapOf(
-    TextureId.background to applyAlgorithm(colorize(
-        Vector3(0.15f),
-        Vector3(0.25f),
-        simpleNoise(listOf(12f, 37f))
-    ), 512, TextureAttributes(repeating = false, storageUnit = TextureStorageUnit.unsigned_byte)),
-    TextureId.grass to applyAlgorithm(colorize(
-        Vector3(0.25f, 0.35f, 0.05f),
-        Vector3(0.5f, 0.65f, 0.2f),
-        simpleNoise(listOf(62f, 37f))
-    ), 512, TextureAttributes(repeating = true, mipmap = true, storageUnit = TextureStorageUnit.unsigned_byte))
-)
+//private fun miscTextureGenerators(): TextureGeneratorMap = mapOf(
+//    TextureName.background to applyAlgorithm(colorize(
+//        Vector3(0.15f),
+//        Vector3(0.25f),
+//        simpleNoise(listOf(12f, 37f))
+//    ), 512, TextureAttributes(repeating = false, storageUnit = TextureStorageUnit.unsigned_byte)),
+//    TextureName.grass to applyAlgorithm(colorize(
+//        Vector3(0.25f, 0.35f, 0.05f),
+//        Vector3(0.5f, 0.65f, 0.2f),
+//        simpleNoise(listOf(62f, 37f))
+//    ), 512, TextureAttributes(repeating = true, mipmap = true, storageUnit = TextureStorageUnit.unsigned_byte))
+//)
 
-private fun basicTextureGenerators(): TextureGeneratorMap = basicTextures().mapValues { algorithm ->
-  applyAlgorithm(algorithm.value(), 256, TextureAttributes(repeating = true, mipmap = true, storageUnit = TextureStorageUnit.unsigned_byte))
-}
+//private fun basicTextureGenerators(): TextureGeneratorMap = basicTextures().mapValues { algorithm ->
+//  applyAlgorithm(algorithm.value(), 256, TextureAttributes(repeating = true, mipmap = true, storageUnit = TextureStorageUnit.unsigned_byte))
+//}
+//
+//fun textureGenerators(): TextureGeneratorMap =
+//    basicTextureGenerators()
+//        .plus(miscTextureGenerators())
 
-fun textureGenerators(): TextureGeneratorMap =
-    basicTextureGenerators()
-        .plus(miscTextureGenerators())
-
-fun createTextureLibrary(scale: Float) =
-    textureGenerators().mapValues { it.value(scale) }
+//fun createTextureLibrary(scale: Float) =
+//    textureGenerators().mapValues { it.value(scale) }
 
 fun getFileShortName(path: String): String =
     toCamelCase(Paths.get(path).fileName.toString().substringBeforeLast("."))

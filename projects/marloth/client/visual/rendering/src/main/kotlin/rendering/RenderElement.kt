@@ -10,7 +10,7 @@ import rendering.meshes.Primitive
 import rendering.shading.ObjectShaderConfig
 import rendering.shading.ShaderFeatureConfig
 import rendering.shading.populateBoneBuffer
-import scenery.MeshId
+import scenery.MeshName
 
 fun renderElement(renderer: SceneRenderer, primitive: Primitive, material: Material, transform: Matrix, isAnimated: Boolean) {
   val orientationTransform = getRotationMatrix(transform)
@@ -67,8 +67,8 @@ fun getElementTransform(element: MeshElement, primitive: Primitive, transforms: 
     element.transform
 }
 
-private fun useMesh(meshes: ModelMeshMap, meshId: MeshId, action: (ModelMesh) -> Unit) {
-  val mesh = meshes[meshId]
+private fun useMesh(meshes: ModelMeshMap, MeshName: MeshName, action: (ModelMesh) -> Unit) {
+  val mesh = meshes[MeshName]
   if (mesh == null) {
     val debugMeshNotFound = 0
   } else {

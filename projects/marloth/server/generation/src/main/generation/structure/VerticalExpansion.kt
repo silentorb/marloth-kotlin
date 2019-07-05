@@ -1,5 +1,6 @@
 package generation.structure
 
+import generation.BiomeId
 import mythic.ent.Id
 import mythic.ent.entityMap
 import mythic.sculpting.ImmutableEdgeReference
@@ -50,7 +51,7 @@ fun createVerticalNodes(idSources: StructureIdSources, realm: StructureRealm, mi
 
     createSecondaryNode(node.position + offset, idSources.node,
         isSolid = shouldBeSolid(node),
-        biome = node.biome
+        biome = node.biome as BiomeId
     )
   }
 

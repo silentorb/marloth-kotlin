@@ -113,18 +113,18 @@ class GameSceneRenderer(
     globalState.depthWrite = true
   }
 
-  fun renderSectorMesh(sector: SectorMesh) {
-    var index = 0
-    for (textureId in sector.textureIndex) {
-      val texture = renderer.renderer.mappedTextures[textureId] ?: renderer.renderer.textures[textureId.toString()]
-      if (texture != null)
-        texture.activate()
-      else
-        unbindTexture()
-
-      sector.mesh.drawElement(DrawMethod.triangleFan, index++)
-    }
-  }
+//  fun renderSectorMesh(sector: SectorMesh) {
+//    var index = 0
+//    for (TextureName in sector.textureIndex) {
+//      val texture = renderer.renderer.mappedTextures[TextureName] ?: renderer.renderer.textures[TextureName.toString()]
+//      if (texture != null)
+//        texture.activate()
+//      else
+//        unbindTexture()
+//
+//      sector.mesh.drawElement(DrawMethod.triangleFan, index++)
+//    }
+//  }
 
   fun renderWorldMesh() {
     globalState.cullFaces = true

@@ -1,5 +1,5 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
-requires 'spatial', 'randomly', 'sculpting', 'simulation'
+requires 'spatial', 'randomly', 'sculpting', 'simulation', 'definition'
 
 // Specifications
 

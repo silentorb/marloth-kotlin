@@ -2,22 +2,23 @@ package generation.architecture
 
 import generation.abstracted.Graph
 import generation.abstracted.nodeNeighbors
+import generation.biomeInfoMap
 import generation.getNodeDistance
 import mythic.ent.Id
 import mythic.spatial.*
 import physics.getLookAtAngle
 import randomly.Dice
-import scenery.MeshId
+import marloth.definition.MeshId
 import simulation.*
 import kotlin.math.ceil
 
 fun alignWithCeiling(meshInfo: MeshInfoMap) = { meshId: MeshId ->
-  val height = meshInfo[meshId]!!.shapeHeight
+  val height = meshInfo[meshId.name]!!.shapeHeight
   Vector3(0f, 0f, -height / 2f)
 }
 
 fun alignWithFloor(meshInfo: MeshInfoMap) = { meshId: MeshId ->
-  val height = meshInfo[meshId]!!.shapeHeight
+  val height = meshInfo[meshId.name]!!.shapeHeight
   Vector3(0f, 0f, height / 2f)
 }
 

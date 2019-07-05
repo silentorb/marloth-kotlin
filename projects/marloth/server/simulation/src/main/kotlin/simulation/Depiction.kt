@@ -26,8 +26,8 @@ data class DepictionAnimation(
 
 data class Depiction(
     val type: DepictionType,
-    val mesh: MeshId? = null,
-    val texture: TextureId? = null,
+    val mesh: MeshName? = null,
+    val texture: TextureName? = null,
     val animations: List<DepictionAnimation> = listOf()
 )
 
