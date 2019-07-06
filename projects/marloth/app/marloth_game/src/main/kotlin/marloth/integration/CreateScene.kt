@@ -214,9 +214,9 @@ fun gatherVisualElements(world: World, screen: Screen, player: Player): ElementG
 //          .plusBounded(characters.mapNotNull {
 //            convertSimpleDepiction(world, it.id, it.definition.depictionType)
 //          })
-          .plus(world.deck.missiles.values.mapNotNull {
-            convertSimpleDepiction(world, it.id, MeshId.spikyBall.name)
-          })
+//          .plus(world.deck.missiles.values.mapNotNull {
+//            convertSimpleDepiction(world, it.id, MeshId.spikyBall.name)
+//          })
           .plus(world.deck.doors.mapNotNull {
             convertSimpleDepiction(world, it.key, MeshId.prisonDoor.name)
           })

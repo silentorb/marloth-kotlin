@@ -14,12 +14,13 @@ import simulation.particles.updateParticleEffect
 const val simulationDelta = 1f / 60f
 
 fun getFinished(deck: Deck): List<Id> {
-  return deck.missiles.values
-      .filter { isFinished(it) }
-      .map { it.id }
-//      .plus(deck.characters.values
-//          .filter { !it.isAlive && !isPlayer(deck, it) }
-//          .map { it.id })
+  return listOf()
+//  return deck.missiles.values
+//      .filter { isFinished(it) }
+//      .map { it.id }
+////      .plus(deck.characters.values
+////          .filter { !it.isAlive && !isPlayer(deck, it) }
+////          .map { it.id })
 }
 
 data class Events(
@@ -57,7 +58,6 @@ fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: 
           bodies = bodies,
           depictions = mapTable(deck.depictions, updateDepiction(bodyWorld, animationDurations)),
           characters = mapTableValues(deck.characters, updateCharacter(bodyWorld, commands, activatedAbilities, events.damage)),
-          missiles = mapTableValues(deck.missiles, updateMissile(bodyWorld, collisionMap, simulationDelta)),
           particleEffects = mapTableValues(deck.particleEffects, bodyWorld.deck.bodies, updateParticleEffect(dice, simulationDelta)),
           players = mapTableValues(deck.players, updatePlayer(data.commands)),
           spirits = mapTableValues(deck.spirits, updateAiState(bodyWorld, simulationDelta))
