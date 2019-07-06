@@ -7,30 +7,30 @@ interface Shape {
   val shapeHeight: Float
 }
 
-class ShapeOffset(
+data class ShapeOffset(
     val transform: Matrix,
     val shape: Shape,
     override val shapeHeight: Float = shape.shapeHeight
 ) : Shape
 
-class Cylinder(
+data class Cylinder(
     val radius: Float,
     val height: Float,
     override val shapeHeight: Float = height
 ) : Shape
 
-class Capsule(
+data class Capsule(
     val radius: Float,
     val height: Float,
     override val shapeHeight: Float = height
 ) : Shape
 
-class Sphere(
+data class Sphere(
     val radius: Float,
     override val shapeHeight: Float = radius * 2f
 ) : Shape
 
-class Box(
+data class Box(
     val halfExtents: Vector3,
     override val shapeHeight: Float = halfExtents.z * 2f
 ) : Shape

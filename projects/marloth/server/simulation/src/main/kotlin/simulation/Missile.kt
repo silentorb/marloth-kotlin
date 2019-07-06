@@ -8,6 +8,7 @@ import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import physics.Body
 import physics.Collision
+import physics.CollisionObject
 import physics.DynamicBody
 
 data class Missile(
@@ -26,7 +27,7 @@ fun characterAttack(world: World, nextId: IdSource, character: Character, abilit
           velocity = direction * ability.definition.maxSpeed,
           orientation = Quaternion()
       ),
-      collisionShape = Sphere(0.2f),
+      collisionShape = CollisionObject(shape =Sphere(0.2f)),
       dynamicBody = DynamicBody(
           gravity = false,
           mass = 10f,

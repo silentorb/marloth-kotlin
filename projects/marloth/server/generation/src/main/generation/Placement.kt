@@ -205,6 +205,7 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
       deck = deck,
       nextId = nextId(),
       realm = addVoidNode(realm),
-      dice = Dice()
+      dice = Dice(),
+      availableIds = setOf()
   )
 }

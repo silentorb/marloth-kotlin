@@ -1,12 +1,16 @@
 package marloth.definition
 
+import evention.DamageAction
+import evention.Trigger
 import mythic.breeze.AnimationChannel
 import mythic.breeze.Keyframe
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import physics.Body
+import physics.CollisionObject
 import scenery.Cylinder
 import simulation.Hand
+import simulation.combat.DamageType
 import simulation.particles.Emitter
 import simulation.particles.ParticleAnimation
 import simulation.particles.ParticleAppearance
@@ -40,9 +44,14 @@ private fun newDamagedCloudParticleAnimation(baseColor: Vector3): ParticleAnimat
 
 fun newDamageCloud(position: Vector3, radius: Float): Hand {
   val baseColor = Vector3(0.5f, 1f, 0.5f)
+  val shape = Cylinder(radius = radius, height = 10f)
   return Hand(
       body = Body(
           position = position
+      ),
+      collisionShape = CollisionObject(
+          shape = shape,
+          isSolid = false
       ),
       particleEffect = ParticleEffect(
           initialAppearance = ParticleAppearance(
@@ -53,9 +62,15 @@ fun newDamageCloud(position: Vector3, radius: Float): Hand {
           animation = newDamagedCloudParticleAnimation(baseColor),
           emitter = Emitter(
               particlesPerSecond = 30f,
-              volume = Cylinder(radius = radius, height = 10f),
+              volume = shape,
               life = Pair(3f, 4f),
-              initialVelocity = Vector3(0f, 0f, 1f)
+              initialVelocity = Vector3(0f, 0f, 0.7f)
+          )
+      ),
+      trigger = Trigger(
+          action = DamageAction(
+              type = DamageType.poison,
+              amount = 1
           )
       )
   )

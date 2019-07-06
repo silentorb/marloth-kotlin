@@ -10,21 +10,19 @@ import mythic.spatial.Pi
 import mythic.spatial.Vector3
 import mythic.spatial.getCenter
 import scenery.*
-import simulation.FaceType
 import simulation.World
-import com.badlogic.gdx.math.Vector3 as GdxVector3
 
-fun createCollisionShape(source: Shape, scale: Vector3): btCollisionShape {
-  return when (source) {
+fun createCollisionShape(shape: Shape, scale: Vector3): btCollisionShape {
+  return when (shape) {
     is ShapeOffset -> {
-      val shape = btCompoundShape()
-      shape.addChildShape(toGdxMatrix4(source.transform), createCollisionShape(source.shape, scale))
-      shape
+      val parent = btCompoundShape()
+      parent.addChildShape(toGdxMatrix4(shape.transform), createCollisionShape(shape.shape, scale))
+      parent
     }
-    is Box -> btBoxShape(toGdxVector3(source.halfExtents * scale))
-    is Sphere -> btSphereShape(source.radius * scale.x)
-    is Capsule -> btCapsuleShapeZ(source.radius * scale.x, source.height * scale.z)
-    is Cylinder -> btCylinderShapeZ(toGdxVector3(Vector3(source.radius * scale.x, source.radius * scale.y, source.height * scale.z * 0.5f)))
+    is Box -> btBoxShape(toGdxVector3(shape.halfExtents * scale))
+    is Sphere -> btSphereShape(shape.radius * scale.x)
+    is Capsule -> btCapsuleShapeZ(shape.radius * scale.x, shape.height * scale.z)
+    is Cylinder -> btCylinderShapeZ(toGdxVector3(Vector3(shape.radius * scale.x, shape.radius * scale.y, shape.height * scale.z * 0.5f)))
     else -> throw Error("Not supported")
   }
 }
@@ -64,18 +62,14 @@ fun createStaticBody(body: Body, shape: btCollisionShape): btCollisionObject {
   return btBody
 }
 
-//fun syncMapGeometryAndPhysics(world: World, bulletState: BulletState) {
-//  val newFaceBodies = world.realm.faces
-//      .filterValues { it.faceType != FaceType.space && it.texture != null }
-//      .map { entry ->
-//        val face = world.realm.mesh.faces[entry.key]!!
-//        val collisionObject = createStaticFaceBody(face)
-//        bulletState.dynamicsWorld.addCollisionObject(collisionObject)
-//        // Not currently tracking static mesh mapping
-//        Pair(entry.key, collisionObject)
-//      }
-////    bulletState.dynamicBodies = bulletState.dynamicBodies.plus(newFaceBodies)
-//}
+fun createGhostBody(body: Body, shape: btCollisionShape): btCollisionObject {
+  val btBody = btCollisionObject()
+  btBody.collisionShape = shape
+  btBody.worldTransform = toGdxMatrix4(Matrix().translate(body.position).rotate(body.orientation))
+  val j = btBody.collisionFlags
+  btBody.collisionFlags = btBody.collisionFlags or btCollisionObject.CollisionFlags.CF_NO_CONTACT_RESPONSE
+  return btBody
+}
 
 fun syncNewBodies(world: World, bulletState: BulletState) {
   val deck = world.deck
@@ -86,7 +80,7 @@ fun syncNewBodies(world: World, bulletState: BulletState) {
       }
       .map { (key, dynamicBody) ->
         val body = deck.bodies[key]!!
-        val shape = createCollisionShape(deck.collisionShapes[key]!!, body.scale)
+        val shape = createCollisionShape(deck.collisionShapes[key]!!.shape, body.scale)
         val hingeInfo = dynamicBody.hinge
         val bulletBody = createBulletDynamicObject(body, dynamicBody, shape, hingeInfo != null)
         if (hingeInfo != null) {
@@ -103,6 +97,7 @@ fun syncNewBodies(world: World, bulletState: BulletState) {
 //          bulletBody.setAngularVelocity(GdxVector3(0f, 0f, 1f))
 
         }
+        bulletBody.userData = key
         bulletState.dynamicsWorld.addRigidBody(bulletBody)
         Pair(key, bulletBody)
       }
@@ -113,14 +108,26 @@ fun syncNewBodies(world: World, bulletState: BulletState) {
       }
       .map { (key, shapeDefinition) ->
         val body = deck.bodies[key]!!
-        val shape = createCollisionShape(shapeDefinition, body.scale)
-        val collisionObject = createStaticBody(body, shape)
+        val shape = createCollisionShape(shapeDefinition.shape, body.scale)
+        val collisionObject = if (shapeDefinition.isSolid)
+          createStaticBody(body, shape)
+        else
+          createGhostBody(body, shape)
+
+        collisionObject.userData = key
         bulletState.dynamicsWorld.addCollisionObject(collisionObject)
         Pair(key, collisionObject)
       }
 
   bulletState.dynamicBodies = bulletState.dynamicBodies
       .plus(newDynamicBodies)
+
+//  bulletState.collisionObjectMap = bulletState.collisionObjectMap
+//      .plus(newDynamicBodies.map { Pair(it.second.userData, it.first) })
+//      .plus(newStaticBodies
+//          .filter { deck.triggers.containsKey(it.first) }
+//          .map { Pair(it.second.userData, it.first) }
+//      )
 
   bulletState.staticBodies = bulletState.staticBodies.plus(newStaticBodies)
 

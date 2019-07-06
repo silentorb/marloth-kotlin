@@ -24,11 +24,8 @@ data class AbsoluteOrientationForce(
 
 data class Collision(
     val first: Id,
-    val second: Id? = null,
-    val wall: ImmutableFace? = null,
-    val hitPoint: Vector2,
-    val directGap: Float,
-    val travelingGap: Float
+    val second: Id,
+    val hitPoint: Vector3? = null
 )
 
 typealias Collisions = List<Collision>
@@ -122,7 +119,7 @@ fun updatePhysicsBodies(world: World, collisions: Collisions, movementForces: Li
         dynamicBody = dynamicBody,
         movementForces = movementForces.filter { it.body == id },
         orientationForces = orientationForces.filter { it.body == id },
-        collisions = collisions.filter { it.first == id && it.wall != null },
+        collisions = collisions.filter { it.first == id },
         delta = delta
     )
   }

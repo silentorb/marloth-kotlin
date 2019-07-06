@@ -45,7 +45,7 @@ fun updateParticle(animation: ParticleAnimation, delta: Float): (Particle) -> Pa
   particle.copy(
       life = life,
       position = particle.position + particle.velocity * delta,
-      animationStep = (particle.animationStep + delta * 0.5f) % 1f,
+      animationStep = (particle.animationStep + delta * 0.3f) % 1f,
       color = color
   )
 }

@@ -1,8 +1,10 @@
 package simulation
 
+import evention.Trigger
 import intellect.Spirit
 import mythic.ent.*
 import physics.Body
+import physics.CollisionObject
 import physics.DynamicBody
 import randomly.Dice
 import scenery.Shape
@@ -22,7 +24,7 @@ data class Deck(
     val animations: Table<ArmatureAnimation> = mapOf(),
     val bodies: Table<Body> = mapOf(),
     val characters: Table<Character> = mapOf(),
-    val collisionShapes: Table<Shape> = mapOf(),
+    val collisionShapes: Table<CollisionObject> = mapOf(),
     val depictions: Table<Depiction> = mapOf(),
     val doors: Table<Door> = mapOf(),
     val dynamicBodies: Table<DynamicBody> = mapOf(),
@@ -32,6 +34,7 @@ data class Deck(
     val particleEffects: Table<ParticleEffect> = mapOf(),
     val players: Table<Player> = mapOf(),
     val spirits: Table<Spirit> = mapOf(),
+    val triggers: Table<Trigger> = mapOf(),
     val interactables: Table<Interactable> = mapOf()
 ) {
   fun plus(other: Deck) = this.copy(
@@ -49,6 +52,7 @@ data class Deck(
       particleEffects = particleEffects.plus(other.particleEffects),
       players = players.plus(other.players),
       spirits = spirits.plus(other.spirits),
+      triggers = triggers.plus(other.triggers),
       interactables = interactables.plus(other.interactables)
   )
 }
@@ -81,6 +85,7 @@ fun toDeck(hand: Hand, id: Id): Deck =
         particleEffects = nullableList(id, hand.particleEffect),
         players = nullableList(hand.player),
         spirits = nullableList(hand.spirit),
+        triggers = nullableList(id, hand.trigger),
         interactables = nullableList(id, hand.interactable)
     )
 
@@ -89,6 +94,7 @@ data class World(
     val nextId: Id,
     val deck: Deck,
     val dice: Dice,
+    val availableIds: Set<Id>,
     val gameOver: GameOver? = null
 ) {
   val bodyTable: Table<Body> get() = deck.bodies
@@ -118,12 +124,11 @@ fun allHandsOnDeck(hands: List<Hand>, nextId: IdSource): Deck =
 
 val addDeck: ((IdSource) -> List<IdHand>) -> WorldTransform = { deckSource ->
   { world ->
-    val nextId = newIdSource(world.nextId)
+    val (nextId, finalize) = newIdSource(world)
     val newDeck = world.deck.plus(toDeck(deckSource(nextId)))
-    world.copy(
-        deck = newDeck,
-        nextId = nextId()
-    )
+    finalize(world.copy(
+        deck = newDeck
+    ))
   }
 }
 
@@ -152,6 +157,26 @@ fun removeEntities(deck: Deck, removeIds: List<Id>): Deck {
       particleEffects = deck.particleEffects.filterKeys(isActive),
       players = deck.players.filterKeys(isActive),
       spirits = deck.spirits.filterKeys(isActive),
+      triggers = deck.triggers.filterKeys(isActive),
       interactables = deck.interactables.filterKeys(isActive)
   )
+}
+
+fun newIdSource(world: World): Pair<IdSource, (World) -> World> {
+  var availableIds = world.availableIds
+  var nextId = world.nextId
+  return Pair({
+    if (availableIds.any()) {
+      val result = availableIds.last()
+      availableIds = availableIds.minus(result)
+      result
+    } else {
+      nextId++
+    }
+  }, { newWorld ->
+    newWorld.copy(
+        availableIds = availableIds,
+        nextId = nextId
+    )
+  })
 }

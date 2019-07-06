@@ -6,6 +6,7 @@ import scenery.Sphere
 import mythic.spatial.Matrix
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
+import physics.CollisionObject
 import physics.DynamicBody
 import physics.HingeConstraint
 import scenery.Text
@@ -15,7 +16,7 @@ class EntityTemplates {
   companion object {
 
     val door = Hand(
-        collisionShape = Box(halfExtents = Vector3(.5f, .165f / 2f, .5f)),
+        collisionShape = CollisionObject(Box(halfExtents = Vector3(.5f, .165f / 2f, .5f))),
         door = Door(
             isLocked = false
         ),
@@ -39,7 +40,9 @@ class EntityTemplates {
     )
 
     val wallLamp = Hand(
-        collisionShape = ShapeOffset(Matrix().translate(1f, 0f, 0.8f), Sphere(1f)),
+        collisionShape = CollisionObject(
+            shape = ShapeOffset(Matrix().translate(1f, 0f, 0.8f), Sphere(1f))
+        ),
         depiction = Depiction(
             type = DepictionType.wallLamp
         ),

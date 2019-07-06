@@ -1,5 +1,6 @@
 package simulation
 
+import evention.DamageEvent
 import scenery.Capsule
 import scenery.ShapeOffset
 import intellect.Spirit
@@ -13,6 +14,7 @@ import physics.*
 import scenery.AnimationId
 import scenery.Sounds
 import simulation.changing.*
+import simulation.combat.Damage
 import simulation.combat.DamageMap
 import simulation.input.filterCommands
 
@@ -83,12 +85,17 @@ fun updateEquippedItem(deck: Deck, character: Character, commands: Commands): Id
     character.equippedItem
 }
 
-fun updateCharacter(world: World, character: Character, commands: Commands, collisions: List<Collision>,
+fun aggregateDamage(character: Character, damages: List<Damage>) =
+    damages.map { it.amount }.sum()
+
+fun applyDamage(character: Character, damages: List<Damage>) =
+    modifyResource(character.health, -aggregateDamage(character, damages))
+
+fun updateCharacter(world: World, character: Character, commands: Commands, damages: List<Damage>,
                     activatedAbilities: List<Ability>, delta: Float): Character {
   val lookForce = characterLookForce(character, commands)
 
-  val hits = collisions.filter { it.second == character.id }
-  val health = modifyResource(character.health, hits.map { -50 }.sum())
+  val health = applyDamage(character, damages)
   val abilities = updateAbilities(character, activatedAbilities)
 
   val isAlive = isAlive(health)
@@ -105,14 +112,16 @@ fun updateCharacter(world: World, character: Character, commands: Commands, coll
       },
       { c ->
         if (justDied) {
-          val hit = hits.first()
-          val attacker = world.deck.missiles[hit.first]!!.owner
-          val facingVector = (world.bodyTable[attacker]!!.position - world.bodyTable[character.id]!!.position).normalize()
-          val lookAtAngle = getLookAtAngle(facingVector)
-          c.copy(
-              lookVelocity = Vector2(),
-              facingRotation = Vector3(0f, 0f, lookAtAngle)
-          )
+          if (damages.any()) {
+            val hit = damages.first()
+            val facingVector = (world.bodyTable[hit.source]!!.position - world.bodyTable[character.id]!!.position).normalize()
+            val lookAtAngle = getLookAtAngle(facingVector)
+            c.copy(
+                lookVelocity = Vector2(),
+                facingRotation = Vector3(0f, 0f, lookAtAngle)
+            )
+          } else
+            c
         } else {
           val lookVelocity = transitionVector(maxLookVelocityChange(),
               Vector3(character.lookVelocity, 0f), Vector3(lookForce, 0f)).xy()
@@ -127,7 +136,8 @@ fun updateCharacter(world: World, character: Character, commands: Commands, coll
   ))
 }
 
-fun updateCharacter(world: World, collisions: Collisions, commands: Commands, activatedAbilities: List<ActivatedAbility>): (Character) -> Character = { character ->
+fun updateCharacter(world: World, commands: Commands, activatedAbilities: List<ActivatedAbility>,
+                    damageEvents: List<DamageEvent>): (Character) -> Character = { character ->
   val delta = simulationDelta
   val id = character.id
   val abilities = activatedAbilities.filter { it.character.id == character.id }
@@ -137,7 +147,12 @@ fun updateCharacter(world: World, collisions: Collisions, commands: Commands, ac
       { c -> if (world.deck.characters[id]!!.isAlive) c else listOf() },
       { c -> c.filter { it.target == id } }
   ))
-  updateCharacter(world, character, characterCommands, collisions, abilities, delta)
+
+  val damages = damageEvents
+      .filter { it.target == id }
+      .map { it.damage }
+
+  updateCharacter(world, character, characterCommands, damages, abilities, delta)
 }
 
 fun characterMovementFp(commands: Commands, character: Character, id: Id, body: Body): MovementForce? {
@@ -193,7 +208,9 @@ fun newCharacter(id: Id, nextId: IdSource, definition: CharacterDefinition, fact
           sanity = Resource(100),
           abilities = abilities
       ),
-      collisionShape = ShapeOffset(Matrix().translate(0f, 0f, 0.75f), Capsule(0.4f, 1.5f)),
+      collisionShape = CollisionObject(
+          shape = ShapeOffset(Matrix().translate(0f, 0f, 0.75f), Capsule(0.4f, 1.5f))
+      ),
       depiction = Depiction(
           type = definition.depictionType,
           animations = listOf(

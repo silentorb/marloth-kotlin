@@ -11,6 +11,7 @@ import randomly.Dice
 import marloth.definition.MeshId
 import scenery.Shape
 import marloth.definition.TextureId
+import physics.CollisionObject
 import scenery.MeshName
 import simulation.*
 
@@ -37,7 +38,7 @@ fun newArchitectureMesh(meshInfo: MeshInfoMap, mesh: MeshId, position: Vector3, 
           node = voidNodeId,
           scale = scale
       ),
-      collisionShape = shape
+      collisionShape = CollisionObject(shape = shape)
   )
 }
 

@@ -36,10 +36,10 @@ fun canUse(character: Character, ability: Ability): Boolean {
   return ability.cooldown == 0f
 }
 
-fun getActivatedAbilities(world: World, commands: Commands): List<ActivatedAbility> {
+fun getActivatedAbilities(deck: Deck, commands: Commands): List<ActivatedAbility> {
   return commands.filter { it.type == CommandType.attack }
       .mapNotNull {
-        val character = world.characterTable[it.target]!!
+        val character = deck.characters[it.target]!!
         val ability = character.abilities.firstOrNull()
         if (ability != null && canUse(character, ability))
           ActivatedAbility(character, ability)

@@ -2,21 +2,26 @@ package physics
 
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.physics.bullet.Bullet
-import com.badlogic.gdx.physics.bullet.collision.*
+import com.badlogic.gdx.physics.bullet.collision.btCollisionDispatcher
+import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
+import com.badlogic.gdx.physics.bullet.collision.btDbvtBroadphase
+import com.badlogic.gdx.physics.bullet.collision.btDefaultCollisionConfiguration
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver
 import mythic.ent.Id
 import mythic.spatial.Matrix
-import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
-import simulation.*
+import simulation.World
 import com.badlogic.gdx.math.Vector3 as GdxVector3
+
+// TODO: Migrate to LWJGL Bullet Bindings if it ever seems a little more used and documented.
 
 data class BulletState(
     var dynamicsWorld: btDiscreteDynamicsWorld,
     var dynamicBodies: Map<Id, btRigidBody>,
     var staticBodies: Map<Id, btCollisionObject>,
+//    var collisionObjectMap: Map<Int, Id>,
     var isMapSynced: Boolean = false
 )
 
@@ -71,28 +76,6 @@ fun applyImpulses(world: World, bulletState: BulletState) {
       }
     }
   }
-}
-
-fun syncWorldToBullet(bulletState: BulletState): (World) -> World = { world ->
-  val quat = com.badlogic.gdx.math.Quaternion()
-  world.copy(
-      deck = world.deck.copy(
-          bodies = world.deck.bodies.mapValues { (key, body) ->
-            val btBody = bulletState.dynamicBodies[key]
-            if (btBody == null)
-              body
-            else {
-              val worldTransform = btBody.worldTransform
-              val transform = worldTransform.getValues()
-              worldTransform.getRotation(quat)
-              body.copy(
-                  position = Vector3(transform[Matrix4.M03], transform[Matrix4.M13], transform[Matrix4.M23]),
-                  orientation = Quaternion(quat.x, quat.y, quat.z, quat.w)
-              )
-            }
-          }
-      )
-  )
 }
 
 fun updateBulletPhysics(bulletState: BulletState): (World) -> World = { world ->
