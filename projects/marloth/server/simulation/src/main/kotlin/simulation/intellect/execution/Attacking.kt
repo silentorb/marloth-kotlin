@@ -6,7 +6,12 @@ import mythic.ent.Id
 import mythic.spatial.Vector3
 import simulation.physics.Body
 import simulation.physics.SimpleBody
-import simulation.*
+import simulation.main.Deck
+import simulation.main.World
+import simulation.misc.Ability
+import simulation.misc.Command
+import simulation.misc.CommandType
+import simulation.misc.Commands
 
 fun shouldMoveDirectlyToward(deck: Deck, target: SimpleBody, attacker: Id): Boolean {
   val attackerBody = deck.bodies[attacker]!!

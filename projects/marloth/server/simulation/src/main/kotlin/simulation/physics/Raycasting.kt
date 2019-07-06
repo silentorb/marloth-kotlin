@@ -1,7 +1,8 @@
 package simulation.physics
 
 import mythic.spatial.Vector3
-import simulation.*
+import simulation.misc.Node
+import simulation.misc.Realm
 
 /*
 fun raycastNodes(firstNode: Node, start: Vector3, end: Vector3): List<Node> {

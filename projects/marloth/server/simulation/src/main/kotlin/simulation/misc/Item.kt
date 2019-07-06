@@ -1,7 +1,8 @@
-package simulation
+package simulation.misc
 
 import mythic.ent.Entity
 import mythic.ent.Id
+import simulation.main.Deck
 
 enum class ItemType {
   candle
@@ -14,7 +15,7 @@ data class Item(
     val slot: Int // 0 - 3
 ) : Entity
 
-fun getItemInSlot( deck: Deck, character: Id, slot: Int): Item? =
+fun getItemInSlot(deck: Deck, character: Id, slot: Int): Item? =
     deck.items
         .filterValues { it.owner == character && it.slot == slot }
         .values

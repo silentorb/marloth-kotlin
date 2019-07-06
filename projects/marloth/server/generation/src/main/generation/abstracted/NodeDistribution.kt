@@ -6,8 +6,8 @@ import mythic.spatial.Vector3
 import mythic.spatial.withinRangeFast
 import org.joml.Vector3i
 import randomly.Dice
-import simulation.Node
-import simulation.WorldBoundary
+import simulation.misc.Node
+import simulation.misc.WorldBoundary
 
 val worldCellLength = 20
 val maxTunnelLength = worldCellLength.toFloat() * 1.5f

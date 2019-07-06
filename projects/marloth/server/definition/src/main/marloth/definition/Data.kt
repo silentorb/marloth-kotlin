@@ -1,6 +1,6 @@
 package marloth.definition
 
-import simulation.AbilityDefinition
+import simulation.misc.AbilityDefinition
 
 class AbilityDefinitions {
   //  val shoot = AbilityDefinition(

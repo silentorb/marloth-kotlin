@@ -9,7 +9,7 @@ import mythic.spatial.*
 import org.joml.Vector2i
 import org.joml.plus
 import rendering.Renderer
-import simulation.Realm
+import simulation.misc.Realm
 
 val worldBorderPadding = 20 // In screen units
 

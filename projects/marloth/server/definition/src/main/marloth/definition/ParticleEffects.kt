@@ -9,7 +9,7 @@ import mythic.spatial.Vector4
 import simulation.physics.Body
 import simulation.physics.CollisionObject
 import scenery.Cylinder
-import simulation.Hand
+import simulation.main.Hand
 import simulation.combat.DamageType
 import simulation.particles.Emitter
 import simulation.particles.ParticleAnimation

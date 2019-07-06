@@ -4,9 +4,9 @@ import simulation.physics.rayCanHitPoint
 import mythic.ent.Id
 import mythic.spatial.quadOut
 import simulation.physics.Body
-import simulation.Character
-import simulation.Light
-import simulation.World
+import simulation.misc.Character
+import simulation.misc.Light
+import simulation.main.World
 
 const val viewingRange = 30f
 const val minimumLightRating = 0.2f

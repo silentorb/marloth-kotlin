@@ -9,7 +9,10 @@ import mythic.spatial.*
 import simulation.physics.getLookAtAngle
 import randomly.Dice
 import marloth.definition.MeshId
-import simulation.*
+import simulation.main.Hand
+import simulation.main.WorldTransform
+import simulation.main.addHands
+import simulation.misc.Node
 import kotlin.math.ceil
 
 fun alignWithCeiling(meshInfo: MeshInfoMap) = { meshId: MeshId ->

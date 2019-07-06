@@ -3,8 +3,8 @@ package marloth.integration
 import marloth.clienting.gui.HudData
 import mythic.ent.Id
 import mythic.spatial.Vector3
-import simulation.Interactable
-import simulation.World
+import simulation.misc.Interactable
+import simulation.main.World
 
 fun getVisibleInteractable(world: World, player: Id): Interactable? {
   val playerBody = world.deck.bodies[player]!!

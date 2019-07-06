@@ -1,4 +1,4 @@
-package simulation
+package simulation.misc
 
 data class Resource(
     val value: Int,

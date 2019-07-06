@@ -4,7 +4,12 @@ import mythic.ent.Id
 import mythic.ent.Table
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
-import simulation.*
+import simulation.main.World
+import simulation.main.simulationDelta
+import simulation.misc.Commands
+import simulation.misc.Node
+import simulation.misc.allCharacterMovements
+import simulation.misc.allCharacterOrientations
 
 private const val voidNodeHeight = 10000f
 

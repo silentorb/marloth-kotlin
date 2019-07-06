@@ -20,7 +20,9 @@ import mythic.ent.pipe
 import mythic.quartz.newTimestepState
 import simulation.physics.newBulletState
 import randomly.Dice
-import simulation.*
+import simulation.main.World
+import simulation.misc.WorldInput
+import simulation.misc.createWorldBoundary
 
 const val labConfigPath = "labConfig.yaml"
 

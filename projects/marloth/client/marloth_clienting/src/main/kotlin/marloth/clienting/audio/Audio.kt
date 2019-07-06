@@ -12,7 +12,7 @@ import mythic.ent.pipe
 import mythic.platforming.PlatformAudio
 import mythic.spatial.Vector3
 import scenery.Sounds
-import simulation.World
+import simulation.main.World
 import java.nio.ShortBuffer
 
 data class AudioConfig(

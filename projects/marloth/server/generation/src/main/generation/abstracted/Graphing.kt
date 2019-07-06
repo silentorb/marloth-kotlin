@@ -1,3 +1,5 @@
+package generation.abstracted
+
 import mythic.ent.Entity
 
 typealias Neighbors<T> = (T) -> Collection<T>

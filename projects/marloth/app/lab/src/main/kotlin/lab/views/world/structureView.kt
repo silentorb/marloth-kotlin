@@ -6,7 +6,9 @@ import mythic.drawing.Canvas
 import mythic.sculpting.ImmutableEdge
 import mythic.sculpting.ImmutableMesh
 import mythic.spatial.Vector4
-import simulation.*
+import simulation.misc.ConnectionTable
+import simulation.misc.FaceType
+import simulation.misc.Realm
 
 private fun getLineColor(faces: ConnectionTable, edge: ImmutableEdge): Vector4 {
   val wallFaces = edge.faces//.filter { isSolidWall(faces[it.id]!!) }

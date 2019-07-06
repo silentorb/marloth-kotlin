@@ -1,4 +1,4 @@
-package simulation
+package simulation.misc
 
 import simulation.evention.DamageEvent
 import scenery.Capsule
@@ -17,6 +17,7 @@ import simulation.changing.*
 import simulation.combat.Damage
 import simulation.combat.DamageMap
 import simulation.input.filterCommands
+import simulation.main.*
 
 data class CharacterDefinition(
     val health: Int,

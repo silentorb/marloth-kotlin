@@ -4,7 +4,8 @@ import generation.getCenter
 import generation.structure.idSourceFromNodes
 import mythic.ent.entityMap
 import mythic.spatial.Vector3
-import simulation.*
+import simulation.misc.FaceType
+import simulation.misc.Node
 
 const val tunnelRadius = 1f
 

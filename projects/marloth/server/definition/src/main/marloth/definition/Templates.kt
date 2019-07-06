@@ -10,7 +10,8 @@ import simulation.physics.CollisionObject
 import simulation.physics.DynamicBody
 import simulation.physics.HingeConstraint
 import scenery.Text
-import simulation.*
+import simulation.main.Hand
+import simulation.misc.*
 
 class EntityTemplates {
   companion object {

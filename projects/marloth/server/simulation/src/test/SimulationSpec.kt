@@ -10,7 +10,7 @@ import org.jetbrains.spek.api.dsl.on
 import simulation.physics.MovingBody
 import simulation.physics.checkWallCollision
 import simulation.physics.getWallCollisions
-import simulation.simulationDelta
+import simulation.main.simulationDelta
 import mythic.ent.IdSource
 import mythic.ent.newIdSource
 import org.junit.jupiter.api.Assertions.assertTrue

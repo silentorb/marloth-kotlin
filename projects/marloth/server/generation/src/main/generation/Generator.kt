@@ -8,7 +8,12 @@ import mythic.ent.newIdSource
 import mythic.ent.pipe
 import mythic.spatial.Vector3
 import randomly.Dice
-import simulation.*
+import simulation.main.World
+import simulation.main.addDeck
+import simulation.misc.Realm
+import simulation.misc.WorldBoundary
+import simulation.misc.WorldInput
+import simulation.misc.createWorldBoundary
 
 fun calculateWorldScale(dimensions: Vector3) =
     (dimensions.x * dimensions.y * dimensions.z) / (100 * 100 * 100)
@@ -30,7 +35,7 @@ fun generateWorld(input: WorldInput): Pair<World, Graph> {
 
 //  val texturedFaces = assignTextures(graph.nodes, realm2.connections)
 
-  val finalRealm = simulation.Realm(
+  val finalRealm = Realm(
       boundary = input.boundary,
       nodeList = graph.nodes.values.toList(),
       faces = mapOf(),

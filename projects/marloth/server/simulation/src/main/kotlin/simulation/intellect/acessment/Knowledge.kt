@@ -1,12 +1,12 @@
 package simulation.intellect.acessment
 
 import mythic.ent.Entity
-import simulation.Character
+import simulation.misc.Character
 import mythic.ent.Id
 import mythic.ent.Table
 import mythic.spatial.Vector3
 import simulation.physics.SimpleBody
-import simulation.World
+import simulation.main.World
 
 data class CharacterMemory(
     val lastSeen: Float,

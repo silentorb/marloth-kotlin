@@ -1,9 +1,9 @@
 package generation.abstracted
 
-import simulation.*
-
 import generation.getNodeDistance
 import mythic.spatial.Vector3
+import simulation.misc.FaceType
+import simulation.misc.Node
 
 const val maxTunnelVerticalRange = 10
 const val maxTunnelDot = 0.5

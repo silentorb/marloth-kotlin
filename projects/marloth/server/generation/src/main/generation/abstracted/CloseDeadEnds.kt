@@ -8,7 +8,8 @@ import mythic.spatial.Vector3
 import mythic.spatial.Vector3m
 import mythic.spatial.lineIntersectsCircle
 import org.joml.Intersectionf
-import simulation.*
+import simulation.misc.FaceType
+import simulation.misc.Node
 
 private const val tunnelPadding = 1f + doorwayLength * 0.5f
 

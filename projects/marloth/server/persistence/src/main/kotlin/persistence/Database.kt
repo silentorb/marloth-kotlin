@@ -1,8 +1,8 @@
 package persistence
 
 import org.sqlite.SQLiteDataSource
-import simulation.PlayerStats
-import simulation.Victory
+import simulation.misc.PlayerStats
+import simulation.misc.Victory
 import java.io.File
 import java.sql.ResultSet
 import javax.sql.DataSource

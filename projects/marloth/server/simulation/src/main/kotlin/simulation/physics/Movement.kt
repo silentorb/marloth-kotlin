@@ -1,12 +1,10 @@
 package simulation.physics
 
 import mythic.ent.Id
-import simulation.getPathNeighbors
-import simulation.CommandType
 import mythic.sculpting.ImmutableEdge
 import mythic.sculpting.ImmutableFace
 import mythic.spatial.*
-import simulation.*
+import simulation.misc.*
 
 fun hitsWall(edge: ImmutableEdge, position: Vector3, radius: Float) =
     lineIntersectsCircle(edge.first.xy(), edge.second.xy(), position.xy(), radius)

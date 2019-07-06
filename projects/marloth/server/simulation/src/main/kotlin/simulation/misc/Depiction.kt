@@ -1,7 +1,9 @@
-package simulation
+package simulation.misc
 
 import mythic.ent.Id
 import scenery.*
+import simulation.main.World
+import simulation.main.simulationDelta
 
 typealias AnimationDurationMap = Map<ArmatureId, Map<AnimationId, Float>>
 

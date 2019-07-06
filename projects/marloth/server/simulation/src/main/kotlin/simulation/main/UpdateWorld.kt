@@ -1,4 +1,4 @@
-package simulation
+package simulation.main
 
 import simulation.evention.DamageEvent
 import simulation.evention.gatherEvents
@@ -9,7 +9,8 @@ import mythic.ent.*
 import simulation.physics.*
 import randomly.Dice
 import simulation.input.updatePlayer
-import simulation.old.getNewMissiles
+import simulation.combat.getNewMissiles
+import simulation.misc.*
 import simulation.particles.updateParticleEffect
 
 const val simulationDelta = 1f / 60f

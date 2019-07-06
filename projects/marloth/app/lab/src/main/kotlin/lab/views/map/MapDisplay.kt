@@ -4,25 +4,20 @@ import lab.utility.blue
 import lab.utility.embedCameraView
 import lab.utility.green
 import lab.utility.red
-import lab.views.game.renderFaceNormals
 import lab.views.shared.LabTextStyles
 import marloth.clienting.Client
 import mythic.bloom.StateBag
 import mythic.bloom.StateDepiction
 import mythic.bloom.selectionState
-import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
-import mythic.glowing.unbindTexture
 import mythic.spatial.*
-import org.lwjgl.opengl.GL11
 import rendering.*
-import rendering.shading.ObjectShaderConfig
 import scenery.Camera
 import scenery.ProjectionType
 import scenery.Scene
-import simulation.Node
-import simulation.Realm
-import simulation.nodeNeighbors
+import simulation.misc.Node
+import simulation.misc.Realm
+import simulation.misc.nodeNeighbors
 
 fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, realm: Realm, config: MapViewConfig, nodes: Collection<Node>, color: Vector4) {
   val faces = if (config.display.isolateSelection && config.selection.any())

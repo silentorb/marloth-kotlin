@@ -1,8 +1,8 @@
 package simulation.evention
 
 import simulation.physics.Collision
-import simulation.Deck
-import simulation.Events
+import simulation.main.Deck
+import simulation.main.Events
 import simulation.combat.Damage
 
 fun gatherDamageEvents(deck: Deck, collisions: List<Collision>): List<DamageEvent> {

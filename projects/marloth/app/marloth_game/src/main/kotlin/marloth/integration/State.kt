@@ -2,11 +2,10 @@ package marloth.integration
 
 import marloth.clienting.ClientState
 import marloth.clienting.gui.gameIsActiveByClient
-import marloth.clienting.isGuiActive
 import mythic.quartz.TimestepState
 import mythic.quartz.updateTimestep
-import simulation.World
-import simulation.simulationDelta
+import simulation.main.World
+import simulation.main.simulationDelta
 
 data class AppState(
     val client: ClientState,

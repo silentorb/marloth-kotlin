@@ -1,7 +1,5 @@
 package lab.views.game
 
-import mythic.glowing.DrawMethod
-import mythic.glowing.drawMesh
 import mythic.glowing.globalState
 import mythic.sculpting.ImmutableFace
 import mythic.sculpting.getVerticesCenter
@@ -10,8 +8,7 @@ import org.joml.zw
 import rendering.*
 import rendering.shading.LightingConfig
 import rendering.shading.ObjectShaderConfig
-import marloth.definition.MeshId
-import simulation.World
+import simulation.main.World
 
 enum class GameDisplayMode {
   normal,

@@ -5,8 +5,8 @@ import mythic.ent.IdSource
 import mythic.spatial.Vector3
 import scenery.Sounds
 import scenery.soundId
-import simulation.World
-import simulation.WorldPair
+import simulation.main.World
+import simulation.main.WorldPair
 
 //fun isPlayerAlive(world: World): Boolean {
 //  val player = world.players[0]

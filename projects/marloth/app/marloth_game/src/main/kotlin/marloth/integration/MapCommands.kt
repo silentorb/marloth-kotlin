@@ -2,12 +2,11 @@ package marloth.integration
 
 import haft.HaftCommands
 import marloth.clienting.input.GuiCommandType
-import marloth.clienting.input.UserCommands
-import simulation.Command
-import simulation.CommandType
+import simulation.misc.Command
+import simulation.misc.CommandType
 
 private typealias UserCommandType = GuiCommandType
-private typealias CharacterCommandType = simulation.CommandType
+private typealias CharacterCommandType = CommandType
 
 // Associate user commands and child commands that share the same name.
 private val commandTypeMap: Map<UserCommandType, CharacterCommandType> =

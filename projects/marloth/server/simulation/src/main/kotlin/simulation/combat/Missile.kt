@@ -1,4 +1,4 @@
-package simulation.old
+package simulation.combat
 
 import scenery.Sphere
 import mythic.ent.Entity
@@ -10,7 +10,10 @@ import simulation.physics.Body
 import simulation.physics.Collision
 import simulation.physics.CollisionObject
 import simulation.physics.DynamicBody
-import simulation.*
+import simulation.main.*
+import simulation.misc.Ability
+import simulation.misc.ActivatedAbility
+import simulation.misc.Character
 
 data class Missile(
     override val id: Id,

@@ -1,4 +1,4 @@
-package simulation
+package simulation.misc
 
 import mythic.spatial.Pi2
 

@@ -4,8 +4,8 @@ import simulation.intellect.Pursuit
 import simulation.intellect.Spirit
 import simulation.intellect.acessment.Knowledge
 import simulation.physics.isInVoid
-import simulation.Commands
-import simulation.World
+import simulation.misc.Commands
+import simulation.main.World
 
 fun pursueGoal(world: World, knowledge: Knowledge, pursuit: Pursuit): Commands {
   return when {

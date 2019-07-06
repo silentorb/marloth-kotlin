@@ -1,10 +1,12 @@
-package simulation
+package simulation.misc
 
 import mythic.ent.Entity
 import mythic.ent.Id
 import mythic.ent.Table
 import randomly.Dice
 import scenery.Sounds
+import simulation.main.Deck
+import simulation.main.simulationDelta
 
 data class AmbientAudioEmitter(
     override val id: Id,

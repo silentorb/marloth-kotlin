@@ -13,7 +13,10 @@ import scenery.Shape
 import marloth.definition.TextureId
 import simulation.physics.CollisionObject
 import scenery.MeshName
-import simulation.*
+import simulation.main.Hand
+import simulation.misc.Depiction
+import simulation.misc.DepictionType
+import simulation.misc.Node
 
 fun getHorizontalFlip(dice: Dice, wallData: WallData): Float =
     if (wallData.canFlipHorizontally && dice.getBoolean()) Pi else 0f

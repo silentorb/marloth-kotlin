@@ -12,7 +12,7 @@ import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSol
 import mythic.ent.Id
 import mythic.spatial.Matrix
 import mythic.spatial.Vector3
-import simulation.World
+import simulation.main.World
 import com.badlogic.gdx.math.Vector3 as GdxVector3
 
 // TODO: Migrate to LWJGL Bullet Bindings if it ever seems a little more used and documented.

@@ -3,7 +3,7 @@ package simulation.intellect
 import simulation.intellect.acessment.newKnowledge
 import simulation.intellect.acessment.updateKnowledge
 import simulation.intellect.design.updatePursuit
-import simulation.*
+import simulation.main.World
 
 fun updateAiState(world: World, delta: Float): (Spirit) -> Spirit = { spirit ->
   val character = world.characterTable[spirit.id]!!

@@ -1,6 +1,7 @@
-package simulation
+package simulation.misc
 
 import mythic.ent.Id
+import simulation.main.World
 
 data class GameOver(
     val winningFaction: Id

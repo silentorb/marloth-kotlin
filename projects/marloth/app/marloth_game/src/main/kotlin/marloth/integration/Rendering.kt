@@ -2,7 +2,6 @@ package marloth.integration
 
 import marloth.clienting.*
 import marloth.front.RenderHook
-import mythic.bloom.FlatBoxes
 import mythic.bloom.next.Box
 import mythic.bloom.renderLayout
 import mythic.ent.singleCache
@@ -13,8 +12,8 @@ import rendering.GameSceneRenderer
 import rendering.Renderer
 import rendering.getPlayerViewports
 import silentorb.raymarching.*
-import simulation.World
-import simulation.interpolateWorlds
+import simulation.main.World
+import simulation.misc.interpolateWorlds
 
 val getMarchedBuffers = singleCache(::newMarchBuffers)
 

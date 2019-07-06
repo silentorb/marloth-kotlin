@@ -1,7 +1,9 @@
-package simulation
+package simulation.misc
 
 import mythic.ent.Table
 import mythic.spatial.interpolate
+import simulation.main.World
+import simulation.main.simulationDelta
 
 fun <T> interpolateTables(scalar: Float, first: Table<T>, second: Table<T>, action: (Float, T, T) -> T): Table<T> =
     first.mapValues { (key, a) ->

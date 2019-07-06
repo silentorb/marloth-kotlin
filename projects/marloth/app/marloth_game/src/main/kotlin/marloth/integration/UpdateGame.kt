@@ -19,7 +19,10 @@ import persistence.createVictory
 import simulation.physics.newBulletState
 import simulation.physics.releaseBulletState
 import simulation.physics.syncNewBodies
-import simulation.*
+import simulation.main.World
+import simulation.main.simulationDelta
+import simulation.misc.Victory
+import simulation.misc.gameStrokes
 
 fun updateSimulationDatabase(db: Database, next: World, previous: World) {
   val nextGameOver = next.gameOver
@@ -45,7 +48,7 @@ fun updateWorld(app: GameApp, state: AppState): List<World> {
   val commands = mapGameCommands(mapEventsToCommands(state.client.input.deviceStates, gameStrokes, getBinding))
   val worlds = state.worlds
   val world = worlds.last()
-  val nextWorld = simulation.updateWorld(app.bulletState, app.client.renderer.animationDurations, world, commands, simulationDelta)
+  val nextWorld = simulation.main.updateWorld(app.bulletState, app.client.renderer.animationDurations, world, commands, simulationDelta)
   updateSimulationDatabase(app.db, nextWorld, world)
   return worlds
       .plus(nextWorld)

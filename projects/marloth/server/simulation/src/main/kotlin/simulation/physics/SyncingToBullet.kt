@@ -10,7 +10,7 @@ import mythic.spatial.Pi
 import mythic.spatial.Vector3
 import mythic.spatial.getCenter
 import scenery.*
-import simulation.World
+import simulation.main.World
 
 fun createCollisionShape(shape: Shape, scale: Vector3): btCollisionShape {
   return when (shape) {

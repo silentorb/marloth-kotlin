@@ -2,9 +2,9 @@ package generation.abstracted
 
 import mythic.ent.Id
 import marloth.definition.TextureId
-import simulation.FaceType
-import simulation.Node
-import simulation.NodeTable
+import simulation.misc.FaceType
+import simulation.misc.Node
+import simulation.misc.NodeTable
 
 enum class ConnectionType {
   tunnel,

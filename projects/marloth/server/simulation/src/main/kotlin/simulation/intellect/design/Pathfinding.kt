@@ -2,8 +2,8 @@ package simulation.intellect.design
 
 import simulation.intellect.Path
 import mythic.ent.Id
-import simulation.Realm
-import simulation.getPathNeighbors
+import simulation.misc.Realm
+import simulation.misc.getPathNeighbors
 
 data class PathNode(
     val node: Id,

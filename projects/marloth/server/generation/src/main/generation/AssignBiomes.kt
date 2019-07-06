@@ -1,7 +1,9 @@
 package generation
 
 import mythic.ent.Id
-import simulation.*
+import simulation.misc.NodeTable
+import simulation.misc.WorldBoundary
+import simulation.misc.WorldInput
 
 typealias BiomeMap = Map<Id, BiomeId>
 

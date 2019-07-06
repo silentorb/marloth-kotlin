@@ -3,7 +3,9 @@ package generation.abstracted
 import generation.divide
 import generation.getNodeDistance
 import generation.overlaps2D
-import simulation.*
+import simulation.misc.FaceType
+import simulation.misc.Node
+import simulation.misc.NodeTable
 
 fun getOverlapping(nodes: Collection<Node>): List<Pair<Node, Node>> {
   val result = mutableListOf<Pair<Node, Node>>()

@@ -3,7 +3,7 @@ package simulation.changing
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
 import simulation.physics.joinInputVector
-import simulation.*
+import simulation.misc.*
 
 data class MomentumConfig(
     val attack: Float,

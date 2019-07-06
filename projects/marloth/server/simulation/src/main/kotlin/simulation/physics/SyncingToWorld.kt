@@ -4,8 +4,8 @@ import com.badlogic.gdx.math.Matrix4
 import mythic.ent.Id
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
-import simulation.Deck
-import simulation.World
+import simulation.main.Deck
+import simulation.main.World
 
 fun syncWorldToBullet(bulletState: BulletState): (World) -> World = { world ->
   val quat = com.badlogic.gdx.math.Quaternion()

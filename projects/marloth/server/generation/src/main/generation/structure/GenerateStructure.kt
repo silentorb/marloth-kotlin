@@ -10,7 +10,7 @@ import mythic.sculpting.*
 import mythic.spatial.*
 import simulation.physics.voidNodeId
 import randomly.Dice
-import simulation.*
+import simulation.misc.*
 
 const val doorwayLength = 2.5f
 const val doorLength = 1.75f

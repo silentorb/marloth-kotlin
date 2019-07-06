@@ -10,8 +10,9 @@ import mythic.ent.newIdSource
 import mythic.spatial.Vector3
 import simulation.physics.voidNode
 import randomly.Dice
-import simulation.*
 import marloth.definition.creatures
+import simulation.main.*
+import simulation.misc.*
 
 data class CharacterTemplate(
     val faction: Id,

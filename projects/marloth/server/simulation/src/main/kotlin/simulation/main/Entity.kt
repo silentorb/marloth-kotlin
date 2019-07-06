@@ -1,4 +1,4 @@
-package simulation
+package simulation.main
 
 import mythic.ent.Entity
 import mythic.ent.Table

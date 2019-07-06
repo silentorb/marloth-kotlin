@@ -5,7 +5,8 @@ import simulation.intellect.Pursuit
 import simulation.intellect.acessment.Knowledge
 import mythic.ent.Id
 import randomly.Dice
-import simulation.*
+import simulation.main.World
+import simulation.misc.getOtherNode
 
 fun getNextPathFace(world: World, knowledge: Knowledge, path: Path): Id? {
   val body = world.bodyTable[knowledge.spiritId]!!

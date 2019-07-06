@@ -1,7 +1,7 @@
 package lab.views.world
 
 import marloth.clienting.gui.TextStyles
-import simulation.WorldBoundary
+import simulation.misc.WorldBoundary
 import mythic.bloom.Bounds
 import mythic.drawing.Canvas
 import mythic.spatial.Vector2
@@ -10,7 +10,8 @@ import mythic.spatial.Vector4
 import mythic.spatial.toVector2
 import org.joml.plus
 import rendering.Renderer
-import simulation.*
+import simulation.misc.Node
+import simulation.misc.Realm
 
 private val gridSpacing = 10f // In world units
 

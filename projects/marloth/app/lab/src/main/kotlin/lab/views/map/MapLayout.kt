@@ -6,8 +6,8 @@ import mythic.bloom.*
 import mythic.bloom.next.*
 
 import mythic.ent.Id
-import simulation.Node
-import simulation.Realm
+import simulation.misc.Node
+import simulation.misc.Realm
 
 val mapTextStyle = TextStyles.smallGray
 

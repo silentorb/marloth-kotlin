@@ -1,11 +1,9 @@
 package marloth.integration
 
-import generation.isInsideNode
 import mythic.ent.Id
 import mythic.spatial.Vector3
-import mythic.spatial.getCenter
 import silentorb.raymarching.*
-import simulation.World
+import simulation.main.World
 
 
 //fun prepareSceneSdf(player: Id, world: World): RaySdf {

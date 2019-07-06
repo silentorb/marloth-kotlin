@@ -9,6 +9,7 @@ import mythic.platforming.PlatformInput
 import mythic.platforming.mouseDeviceIndex
 import mythic.spatial.Vector2
 import mythic.spatial.toVector2i
+import simulation.misc.CommandType
 
 typealias UserCommand = HaftCommand<GuiCommandType>
 
@@ -46,7 +47,7 @@ data class InputState(
     val deviceStates: List<InputDeviceState>,
     val config: GameInputConfig,
     val guiInputProfiles: Map<BloomId, InputProfile<GuiCommandType>>,
-    val gameInputProfiles: Map<BloomId, InputProfile<simulation.CommandType>>,
+    val gameInputProfiles: Map<BloomId, InputProfile<CommandType>>,
     val playerProfiles: Map<BloomId, BloomId>,
     val deviceMap: DeviceMap
 )

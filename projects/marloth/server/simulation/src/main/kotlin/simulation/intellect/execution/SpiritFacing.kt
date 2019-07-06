@@ -3,9 +3,10 @@ package simulation.intellect.execution
 import simulation.intellect.acessment.Knowledge
 import simulation.intellect.acessment.character
 import mythic.spatial.*
-import simulation.*
+import simulation.main.World
 import simulation.physics.getLookAtAngle
-import simulation.simulationDelta
+import simulation.main.simulationDelta
+import simulation.misc.*
 
 fun getAngleCourse(source: Float, destination: Float): Float {
   val full = Pi * 2

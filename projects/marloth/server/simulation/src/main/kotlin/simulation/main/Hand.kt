@@ -1,4 +1,4 @@
-package simulation
+package simulation.main
 
 import simulation.evention.Trigger
 import simulation.intellect.Spirit
@@ -6,7 +6,8 @@ import mythic.ent.Id
 import simulation.physics.Body
 import simulation.physics.CollisionObject
 import simulation.physics.DynamicBody
-import simulation.old.Missile
+import simulation.combat.Missile
+import simulation.misc.*
 import simulation.particles.ParticleEffect
 
 data class Hand(

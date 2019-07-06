@@ -8,8 +8,7 @@ import mythic.sculpting.ImmutableFace
 import mythic.spatial.Vector3
 import simulation.physics.voidNodeId
 import randomly.Dice
-import simulation.FaceType
-import simulation.*
+import simulation.misc.*
 
 enum class VerticalDirection {
   down,

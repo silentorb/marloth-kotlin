@@ -1,6 +1,8 @@
-package simulation
+package simulation.misc
 
 import mythic.ent.Id
+import simulation.main.Deck
+import simulation.main.simulationDelta
 
 data class AbilityDefinition(
     val cooldown: Float,

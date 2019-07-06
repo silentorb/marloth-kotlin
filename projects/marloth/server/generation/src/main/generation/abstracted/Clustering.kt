@@ -1,6 +1,6 @@
 package generation.abstracted
 
-import simulation.Node
+import simulation.misc.Node
 
 val isInCluster = { graph: Graph, node: Node ->
   connections(graph, node).any { it.type == ConnectionType.union }

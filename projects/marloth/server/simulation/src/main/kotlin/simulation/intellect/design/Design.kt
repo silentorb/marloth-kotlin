@@ -7,7 +7,7 @@ import simulation.intellect.acessment.getVisibleEnemies
 import simulation.intellect.execution.spiritAttackRangeBuffer
 import mythic.ent.Id
 import simulation.physics.isInVoid
-import simulation.World
+import simulation.main.World
 
 fun updateTargetEnemy(world: World, knowledge: Knowledge, pursuit: Pursuit): Id? {
   val visibleEnemies = getVisibleEnemies(character(world, knowledge), knowledge)

@@ -22,8 +22,8 @@ import mythic.spatial.Vector2
 import org.joml.Vector2i
 import rendering.createCanvas
 import scenery.Screen
-import simulation.Realm
-import simulation.World
+import simulation.misc.Realm
+import simulation.main.World
 
 data class LabState(
 //    val labInput: InputTriggerState<LabCommandType>,

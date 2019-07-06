@@ -1,6 +1,5 @@
 package generation.abstracted
 
-import gatherNodes
 import generation.*
 import generation.structure.getDoorFramePoints
 import mythic.ent.Id
@@ -9,7 +8,7 @@ import mythic.ent.pipe
 import mythic.spatial.Vector3
 import mythic.spatial.lineSegmentIntersectsLineSegment
 import randomly.Dice
-import simulation.*
+import simulation.misc.*
 
 const val minInitialNodeDistance = 1.5f
 const val minInitialNodeSize = 5f

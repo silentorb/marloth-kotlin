@@ -1,8 +1,8 @@
 package marloth.definition
 
 import scenery.Sounds
-import simulation.CharacterDefinition
-import simulation.DepictionType
+import simulation.misc.CharacterDefinition
+import simulation.misc.DepictionType
 
 class Creatures {
   val player = CharacterDefinition(

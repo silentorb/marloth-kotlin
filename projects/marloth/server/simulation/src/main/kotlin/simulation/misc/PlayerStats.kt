@@ -1,4 +1,4 @@
-package simulation
+package simulation.misc
 
 data class PlayerStats(
     val player: String,

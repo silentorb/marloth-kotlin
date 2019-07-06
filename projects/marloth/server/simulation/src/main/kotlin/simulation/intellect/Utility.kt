@@ -1,7 +1,7 @@
 package simulation.intellect
 
 import mythic.ent.Table
-import simulation.Deck
+import simulation.main.Deck
 
 fun aliveSpirits(deck: Deck): Table<Spirit> =
     deck.spirits.filterKeys {

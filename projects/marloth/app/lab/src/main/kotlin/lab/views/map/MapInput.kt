@@ -15,9 +15,9 @@ import org.joml.times
 import simulation.physics.joinInputVector
 import simulation.physics.playerMoveMap
 import rendering.createCameraEffectsData
-import simulation.Command
-import simulation.CommandType
-import simulation.Realm
+import simulation.misc.Command
+import simulation.misc.CommandType
+import simulation.misc.Realm
 
 data class Hit(
     val position: Vector3,

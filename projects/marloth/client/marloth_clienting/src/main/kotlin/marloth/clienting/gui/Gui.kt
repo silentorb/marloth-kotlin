@@ -17,9 +17,8 @@ import mythic.glowing.globalState
 import mythic.platforming.WindowInfo
 import mythic.spatial.Vector4
 import org.joml.Vector2i
-import org.joml.Vector4i
 import scenery.Text
-import simulation.World
+import simulation.main.World
 
 typealias TextResources = Map<Text, String>
 

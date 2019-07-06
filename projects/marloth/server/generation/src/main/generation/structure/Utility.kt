@@ -5,11 +5,13 @@ import mythic.ent.Id
 import mythic.sculpting.*
 import mythic.spatial.*
 import simulation.physics.voidNodeId
-import simulation.FaceType
+import simulation.misc.FaceType
 import mythic.ent.IdSource
 import mythic.ent.entityMap
 import mythic.ent.newIdSource
-import simulation.*
+import simulation.misc.ConnectionFace
+import simulation.misc.ConnectionTable
+import simulation.misc.Node
 
 //data class WallVertices(
 //    val lower: Vertices,

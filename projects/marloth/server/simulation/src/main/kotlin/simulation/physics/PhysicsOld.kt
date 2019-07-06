@@ -3,7 +3,10 @@ package simulation.physics
 import mythic.ent.Id
 import mythic.ent.Table
 import mythic.spatial.*
-import simulation.*
+import simulation.main.World
+import simulation.misc.Node
+import simulation.misc.Realm
+import simulation.misc.maxMoveVelocityChange
 
 data class Rotation(
     val pitch: Float = 0f,

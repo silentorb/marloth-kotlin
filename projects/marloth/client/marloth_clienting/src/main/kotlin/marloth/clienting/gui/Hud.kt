@@ -4,8 +4,8 @@ import mythic.bloom.*
 import mythic.bloom.next.*
 
 import org.joml.Vector2i
-import simulation.Interactable
-import simulation.Resource
+import simulation.misc.Interactable
+import simulation.misc.Resource
 
 private val textStyle = TextStyles.gray
 
