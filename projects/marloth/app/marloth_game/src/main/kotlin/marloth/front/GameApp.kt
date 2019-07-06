@@ -10,8 +10,8 @@ import mythic.platforming.Platform
 import mythic.quartz.newTimestepState
 import persistence.Database
 import persistence.newDatabase
-import physics.BulletState
-import physics.newBulletState
+import simulation.physics.BulletState
+import simulation.physics.newBulletState
 import rendering.SceneRenderer
 
 typealias RenderHook = (SceneRenderer) -> Unit

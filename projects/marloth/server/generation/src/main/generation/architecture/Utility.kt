@@ -5,13 +5,13 @@ import generation.structure.wallHeight
 import mythic.spatial.Pi
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
-import physics.Body
-import physics.voidNodeId
+import simulation.physics.Body
+import simulation.physics.voidNodeId
 import randomly.Dice
 import marloth.definition.MeshId
 import scenery.Shape
 import marloth.definition.TextureId
-import physics.CollisionObject
+import simulation.physics.CollisionObject
 import scenery.MeshName
 import simulation.*
 

@@ -16,9 +16,9 @@ import mythic.quartz.updateTimestep
 import org.joml.Vector2i
 import persistence.Database
 import persistence.createVictory
-import physics.newBulletState
-import physics.releaseBulletState
-import physics.syncNewBodies
+import simulation.physics.newBulletState
+import simulation.physics.releaseBulletState
+import simulation.physics.syncNewBodies
 import simulation.*
 
 fun updateSimulationDatabase(db: Database, next: World, previous: World) {

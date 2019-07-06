@@ -1,14 +1,15 @@
 package simulation
 
-import evention.DamageEvent
-import evention.gatherEvents
-import intellect.aliveSpirits
-import intellect.execution.pursueGoals
-import intellect.updateAiState
+import simulation.evention.DamageEvent
+import simulation.evention.gatherEvents
+import simulation.intellect.aliveSpirits
+import simulation.intellect.execution.pursueGoals
+import simulation.intellect.updateAiState
 import mythic.ent.*
-import physics.*
+import simulation.physics.*
 import randomly.Dice
 import simulation.input.updatePlayer
+import simulation.old.getNewMissiles
 import simulation.particles.updateParticleEffect
 
 const val simulationDelta = 1f / 60f

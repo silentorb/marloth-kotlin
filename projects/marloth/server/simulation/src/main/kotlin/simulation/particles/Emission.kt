@@ -3,7 +3,7 @@ package simulation.particles
 import mythic.spatial.Pi
 import mythic.spatial.Vector3
 import mythic.spatial.projectVector3
-import physics.Body
+import simulation.physics.Body
 import randomly.Dice
 import scenery.Cylinder
 import scenery.Shape

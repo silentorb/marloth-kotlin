@@ -8,7 +8,7 @@ import mythic.glowing.globalState
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import mythic.spatial.manhattanDistance
-import physics.toVector3
+import simulation.physics.toVector3
 import rendering.SceneRenderer
 import com.badlogic.gdx.math.Vector3 as GdxVector3
 

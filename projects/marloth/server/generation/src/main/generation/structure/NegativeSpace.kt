@@ -4,7 +4,7 @@ import generation.BiomeId
 import mythic.ent.*
 import mythic.sculpting.*
 import mythic.spatial.*
-import physics.voidNodeId
+import simulation.physics.voidNodeId
 import randomly.Dice
 import simulation.FaceType
 import simulation.getFloor

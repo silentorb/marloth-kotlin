@@ -4,7 +4,7 @@ import generation.BiomeId
 import mythic.ent.Id
 import mythic.sculpting.*
 import mythic.spatial.*
-import physics.voidNodeId
+import simulation.physics.voidNodeId
 import simulation.FaceType
 import mythic.ent.IdSource
 import mythic.ent.entityMap

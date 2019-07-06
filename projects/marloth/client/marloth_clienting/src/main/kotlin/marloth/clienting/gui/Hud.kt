@@ -24,7 +24,7 @@ fun resourceString(resource: Resource): String {
 val df = java.text.DecimalFormat("#0.00")
 
 //fun characterVisibility(data: HudData, id: Id): String {
-//  val rating = intellect.acessment.lightRating(world, id)
+//  val rating = simulation.intellect.acessment.lightRating(world, id)
 //  return "vis: " + df.format(rating)
 //}
 

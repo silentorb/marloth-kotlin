@@ -3,7 +3,7 @@ package simulation.particles
 import mythic.breeze.AnimationChannel
 import mythic.ent.pipe
 import mythic.spatial.Vector3
-import physics.Body
+import simulation.physics.Body
 import randomly.Dice
 import scenery.Shape
 

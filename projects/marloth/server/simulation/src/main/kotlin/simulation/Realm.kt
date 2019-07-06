@@ -7,7 +7,7 @@ import mythic.sculpting.ImmutableEdgeReference
 import mythic.sculpting.ImmutableFace
 import mythic.spatial.Vector3
 import mythic.spatial.getCenter
-import physics.voidNodeId
+import simulation.physics.voidNodeId
 import randomly.Dice
 import scenery.TextureName
 

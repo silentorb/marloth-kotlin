@@ -1,13 +1,13 @@
 package marloth.definition
 
-import evention.DamageAction
-import evention.Trigger
+import simulation.evention.DamageAction
+import simulation.evention.Trigger
 import mythic.breeze.AnimationChannel
 import mythic.breeze.Keyframe
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
-import physics.Body
-import physics.CollisionObject
+import simulation.physics.Body
+import simulation.physics.CollisionObject
 import scenery.Cylinder
 import simulation.Hand
 import simulation.combat.DamageType

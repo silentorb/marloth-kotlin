@@ -12,8 +12,8 @@ import mythic.platforming.WindowInfo
 import mythic.spatial.*
 import org.joml.minus
 import org.joml.times
-import physics.joinInputVector
-import physics.playerMoveMap
+import simulation.physics.joinInputVector
+import simulation.physics.playerMoveMap
 import rendering.createCameraEffectsData
 import simulation.Command
 import simulation.CommandType

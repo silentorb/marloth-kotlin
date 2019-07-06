@@ -1,17 +1,17 @@
 package generation
 
 import generation.structure.wallHeight
-import intellect.Pursuit
-import intellect.Spirit
+import simulation.intellect.Pursuit
+import simulation.intellect.Spirit
 import marloth.definition.newDamageCloud
 import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.ent.newIdSource
 import mythic.spatial.Vector3
-import physics.voidNode
+import simulation.physics.voidNode
 import randomly.Dice
 import simulation.*
-import simulation.data.creatures
+import marloth.definition.creatures
 
 data class CharacterTemplate(
     val faction: Id,

@@ -6,7 +6,7 @@ import generation.biomeInfoMap
 import generation.getNodeDistance
 import mythic.ent.Id
 import mythic.spatial.*
-import physics.getLookAtAngle
+import simulation.physics.getLookAtAngle
 import randomly.Dice
 import marloth.definition.MeshId
 import simulation.*

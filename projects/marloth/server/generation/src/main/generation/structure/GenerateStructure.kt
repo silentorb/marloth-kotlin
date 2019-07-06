@@ -8,7 +8,7 @@ import mythic.ent.entityMap
 import mythic.ent.pipe
 import mythic.sculpting.*
 import mythic.spatial.*
-import physics.voidNodeId
+import simulation.physics.voidNodeId
 import randomly.Dice
 import simulation.*
 

@@ -5,7 +5,7 @@ import mythic.ent.Id
 import mythic.ent.Table
 import mythic.spatial.*
 import org.joml.times
-import physics.Body
+import simulation.physics.Body
 import rendering.*
 import scenery.*
 import scenery.Light

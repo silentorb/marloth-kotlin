@@ -1,13 +1,13 @@
 package simulation
 
-import evention.Trigger
-import intellect.Spirit
+import simulation.evention.Trigger
+import simulation.intellect.Spirit
 import mythic.ent.*
-import physics.Body
-import physics.CollisionObject
-import physics.DynamicBody
+import simulation.physics.Body
+import simulation.physics.CollisionObject
+import simulation.physics.DynamicBody
 import randomly.Dice
-import scenery.Shape
+import simulation.old.Missile
 import simulation.particles.ParticleEffect
 
 fun <T> mapTable(table: Table<T>, action: (Id, T) -> T): Table<T> =

@@ -1,16 +1,16 @@
 package simulation
 
-import evention.DamageEvent
+import simulation.evention.DamageEvent
 import scenery.Capsule
 import scenery.ShapeOffset
-import intellect.Spirit
+import simulation.intellect.Spirit
 import mythic.ent.Entity
 import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.ent.pipe
 import mythic.spatial.*
 import org.joml.times
-import physics.*
+import simulation.physics.*
 import scenery.AnimationId
 import scenery.Sounds
 import simulation.changing.*
