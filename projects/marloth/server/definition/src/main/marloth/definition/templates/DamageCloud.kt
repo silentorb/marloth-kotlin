@@ -1,5 +1,7 @@
-package marloth.definition
+package marloth.definition.templates
 
+import marloth.definition.BuffId
+import marloth.definition.TextureId
 import simulation.evention.DamageAction
 import simulation.evention.Trigger
 import mythic.breeze.AnimationChannel
@@ -11,6 +13,7 @@ import simulation.physics.CollisionObject
 import scenery.Cylinder
 import simulation.main.Hand
 import simulation.combat.DamageType
+import simulation.evention.ApplyBuff
 import simulation.particles.Emitter
 import simulation.particles.ParticleAnimation
 import simulation.particles.ParticleAppearance
@@ -68,9 +71,10 @@ fun newDamageCloud(position: Vector3, radius: Float): Hand {
           )
       ),
       trigger = Trigger(
-          action = DamageAction(
-              type = DamageType.poison,
-              amount = 1
+          action = ApplyBuff(
+              buffType = BuffId.poisoned.name,
+              value = 1,
+              duration = 3
           )
       )
   )

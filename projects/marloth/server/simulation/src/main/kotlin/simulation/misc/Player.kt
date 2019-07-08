@@ -1,6 +1,6 @@
 package simulation.misc
 
-import mythic.ent.Entity
+import mythic.ent.WithId
 import mythic.ent.Id
 import simulation.main.Deck
 
@@ -17,12 +17,11 @@ data class HoverCamera(
 )
 
 data class Player(
-    override val id: Id,
     val playerId: Int,
     val name: String,
     val viewMode: ViewMode,
     val hoverCamera: HoverCamera = HoverCamera()
-) : Entity
+)
 
 data class PlayerCharacter(
     val player: Player,
@@ -31,5 +30,5 @@ data class PlayerCharacter(
 
 typealias PlayerCharacters = List<PlayerCharacter>
 
-fun isPlayer(deck: Deck, character: Character) =
-    deck.players.any { it.key == character.id }
+//fun isPlayer(deck: Deck, character: Character) =
+//    deck.players.any { it.key == character.id }

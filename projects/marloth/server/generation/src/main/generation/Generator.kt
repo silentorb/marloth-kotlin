@@ -2,7 +2,6 @@ package generation
 
 import generation.abstracted.Graph
 import generation.abstracted.generateAbstract
-import generation.structure.StructureIdSources
 import generation.structure.idSourceFromNodes
 import mythic.ent.newIdSource
 import mythic.ent.pipe
@@ -22,11 +21,7 @@ fun generateWorld(input: WorldInput): Pair<World, Graph> {
   val scale = calculateWorldScale(input.boundary.dimensions)
   val biomeGrid = newBiomeGrid(input)
   val graph = generateAbstract(input, scale, biomeGrid)
-  val idSources = StructureIdSources(
-      node = idSourceFromNodes(graph.nodes.values),
-      face = newIdSource(1),
-      edge = newIdSource(1)
-  )
+
 //  val realm1 = generateStructure(biomeGrid, idSources, graph, input.dice)
 //  val realm2 = realm1
 //      .copy(

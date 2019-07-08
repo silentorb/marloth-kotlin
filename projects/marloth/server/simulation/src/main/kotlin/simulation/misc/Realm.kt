@@ -1,6 +1,6 @@
 package simulation.misc
 
-import mythic.ent.Entity
+import mythic.ent.WithId
 import mythic.ent.Id
 import mythic.ent.firstSortedBy
 import mythic.sculpting.ImmutableEdgeReference
@@ -63,7 +63,7 @@ data class ConnectionFace(
     val secondNode: Id,
     var texture: TextureName? = null,
     var debugInfo: String? = null
-) : Entity {
+) : WithId {
   val nodes: List<Id> = listOf(firstNode, secondNode).minus(voidNodeId)
   val _deleteme = if (id == 41L)
     1

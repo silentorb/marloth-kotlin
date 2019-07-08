@@ -25,13 +25,13 @@ fun updatePlayerView(viewMode: ViewMode, commands: Commands): ViewMode {
     viewMode
 }
 
-fun updatePlayer(commands: Commands): (Player) -> Player = { player ->
+fun updatePlayer(commands: Commands): (Id, Player) -> Player = { id, player ->
   val delta = simulationDelta
 //  val lookForce = updateField(Vector2(), updatePlayerLookForce(player, commands))
 //  val lookVelocity = transitionVector(lookForce, player.lookVelocity)
 //  applyPlayerLookCommands(player, commands, delta)
 
-  val playerCommands = filterCommands(player.id, commands)
+  val playerCommands = filterCommands(id, commands)
   player.copy(
       viewMode = updatePlayerView(player.viewMode, playerCommands)
   )

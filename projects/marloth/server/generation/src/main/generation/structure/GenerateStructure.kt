@@ -275,21 +275,21 @@ interface GeometryIdSources {
   val edge: IdSource
 }
 
-fun sinewFloorsAndCeilings(idSources: GeometryIdSources, nodeSectors: Collection<TempSector>, mesh: ImmutableMesh): List<FacePair> {
-  var currentMesh = mesh
-  return nodeSectors.flatMap { sector ->
-    val sectorCenter = getCenter(sector.corners).xy()
-    val heightOffset = Vector3(0f, 0f, wallHeight / 2f)
-    val ceilingVertices = sector.corners.map { it + heightOffset }
-    val floorVertices = sector.corners.map { it - heightOffset }
-    val result = listOf(
-        createCeiling(idSources, currentMesh, sector.node, ceilingVertices, sectorCenter),
-        createFloor(idSources, currentMesh, sector.node, floorVertices, sectorCenter)
-    )
-    currentMesh = currentMesh.copy(edges = currentMesh.edges.plus(entityMap(result.flatMap { er -> er.geometry.edges.map { it.edge } })))
-    result
-  }
-}
+//fun sinewFloorsAndCeilings(idSources: GeometryIdSources, nodeSectors: Collection<TempSector>, mesh: ImmutableMesh): List<FacePair> {
+//  var currentMesh = mesh
+//  return nodeSectors.flatMap { sector ->
+//    val sectorCenter = getCenter(sector.corners).xy()
+//    val heightOffset = Vector3(0f, 0f, wallHeight / 2f)
+//    val ceilingVertices = sector.corners.map { it + heightOffset }
+//    val floorVertices = sector.corners.map { it - heightOffset }
+//    val result = listOf(
+//        createCeiling(idSources, currentMesh, sector.node, ceilingVertices, sectorCenter),
+//        createFloor(idSources, currentMesh, sector.node, floorVertices, sectorCenter)
+//    )
+//    currentMesh = currentMesh.copy(edges = currentMesh.edges.plus(entityMap(result.flatMap { er -> er.geometry.edges.map { it.edge } })))
+//    result
+//  }
+//}
 
 fun createWall(idSources: GeometryIdSources, edge: ImmutableEdge, mesh: ImmutableMesh): ImmutableFace {
   return mesh.createStitchedFace(idSources.edge, idSources.face(), listOf(
@@ -300,8 +300,8 @@ fun createWall(idSources: GeometryIdSources, edge: ImmutableEdge, mesh: Immutabl
   ))
 }
 
-fun toEdgeTable(faces: Collection<ImmutableFace>) =
-    entityMap(faces.flatMap { er -> er.edges.map { it.edge } }.distinct())
+//fun toEdgeTable(faces: Collection<ImmutableFace>) =
+//    entityMap(faces.flatMap { er -> er.edges.map { it.edge } }.distinct())
 
 data class Disjoint(
     val sector: Id,
@@ -370,58 +370,58 @@ fun compileSectors(graph: Graph, idSources: GeometryIdSources): Map<Id, TempSect
     return allSectors
 }
 
-fun createWalls(graph: Graph, initialMesh: ImmutableMesh, idSources: GeometryIdSources, allSectors: Map<Id, TempSector>): Pair<List<FacePair>, ImmutableMesh> {
-  var mesh = initialMesh
+//fun createWalls(graph: Graph, initialMesh: ImmutableMesh, idSources: GeometryIdSources, allSectors: Map<Id, TempSector>): Pair<List<FacePair>, ImmutableMesh> {
+//  var mesh = initialMesh
+//
+//  val pairs = allSectors.values.flatMap { sector ->
+//    val wallBases = mesh.faces[sector.node.floors.first()]!!.edges
+//    wallBases.map { immutableEdgeReference ->
+//      Pair(immutableEdgeReference, sector.node.id)
+//    }
+//  }
+//  val groups = pairs.groupBy { it.first.edge.id }
+//  val (singles, shared) = groups.entries.partition { it.value.size == 1 }
+//  val updatedWalls = singles.map { it.value.first() }.map {
+//    val face = createWall(idSources, it.first.edge, mesh)
+//    mesh = mesh.copy(
+//        faces = mesh.faces.plus(Pair(face.id, face)),
+//        edges = mesh.edges.plus(entityMap(face.edges.map { it.edge }))
+//    )
+//    graph.nodes[it.second]!!.walls.add(face.id)
+//    FacePair(ConnectionFace(face.id, FaceType.wall, it.second, voidNodeId, null), face)
+//  }
+//      .plus(
+//          shared.map { it.value }.map {
+//            val face = createWall(idSources, it.first().first.edge, mesh)
+//            mesh = mesh.copy(
+//                faces = mesh.faces.plus(Pair(face.id, face)),
+//                edges = mesh.edges.plus(entityMap(face.edges.map { it.edge }))
+//            )
+//            graph.nodes[it[0].second]!!.walls.add(face.id)
+//            graph.nodes[it[1].second]!!.walls.add(face.id)
+//            FacePair(ConnectionFace(face.id, FaceType.space, it[0].second, it[1].second, null), face)
+//          }
+//      )
+//  return Pair(updatedWalls, mesh)
+//}
 
-  val pairs = allSectors.values.flatMap { sector ->
-    val wallBases = mesh.faces[sector.node.floors.first()]!!.edges
-    wallBases.map { immutableEdgeReference ->
-      Pair(immutableEdgeReference, sector.node.id)
-    }
-  }
-  val groups = pairs.groupBy { it.first.edge.id }
-  val (singles, shared) = groups.entries.partition { it.value.size == 1 }
-  val updatedWalls = singles.map { it.value.first() }.map {
-    val face = createWall(idSources, it.first.edge, mesh)
-    mesh = mesh.copy(
-        faces = mesh.faces.plus(Pair(face.id, face)),
-        edges = mesh.edges.plus(entityMap(face.edges.map { it.edge }))
-    )
-    graph.nodes[it.second]!!.walls.add(face.id)
-    FacePair(ConnectionFace(face.id, FaceType.wall, it.second, voidNodeId, null), face)
-  }
-      .plus(
-          shared.map { it.value }.map {
-            val face = createWall(idSources, it.first().first.edge, mesh)
-            mesh = mesh.copy(
-                faces = mesh.faces.plus(Pair(face.id, face)),
-                edges = mesh.edges.plus(entityMap(face.edges.map { it.edge }))
-            )
-            graph.nodes[it[0].second]!!.walls.add(face.id)
-            graph.nodes[it[1].second]!!.walls.add(face.id)
-            FacePair(ConnectionFace(face.id, FaceType.space, it[0].second, it[1].second, null), face)
-          }
-      )
-  return Pair(updatedWalls, mesh)
-}
-
-fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice): StructureRealm {
-  val allSectors = compileSectors(graph, idSources)
-
-  val floorsAndCeilings = splitFacePairTables(sinewFloorsAndCeilings(idSources, allSectors.values, ImmutableMesh()))
-
-  val initialMesh = ImmutableMesh(
-      faces = floorsAndCeilings.second,
-      edges = toEdgeTable(floorsAndCeilings.second.values)
-  )
-  val (updatedWalls, mesh) = createWalls(graph, initialMesh, idSources, allSectors)
-
-  return StructureRealm(
-      nodes = graph.nodes,
-      connections = floorsAndCeilings.first,//.plus(entityMap(updatedWalls.map { it.info })),
-      mesh = mesh
-  )
-}
+//fun createRooms(graph: Graph, idSources: GeometryIdSources, dice: Dice): StructureRealm {
+//  val allSectors = compileSectors(graph, idSources)
+//
+//  val floorsAndCeilings = splitFacePairTables(sinewFloorsAndCeilings(idSources, allSectors.values, ImmutableMesh()))
+//
+//  val initialMesh = ImmutableMesh(
+//      faces = floorsAndCeilings.second,
+//      edges = toEdgeTable(floorsAndCeilings.second.values)
+//  )
+//  val (updatedWalls, mesh) = createWalls(graph, initialMesh, idSources, allSectors)
+//
+//  return StructureRealm(
+//      nodes = graph.nodes,
+//      connections = floorsAndCeilings.first,//.plus(entityMap(updatedWalls.map { it.info })),
+//      mesh = mesh
+//  )
+//}
 
 data class StructureRealm(
     val nodes: NodeTable,
@@ -509,21 +509,21 @@ fun cleanupSolidNormals(realm: StructureRealm): StructureRealm {
   )
 }
 
-fun generateStructure(biomeGrid: BiomeGrid, idSources: StructureIdSources, graph: Graph, dice: Dice): StructureRealm {
-  val initialRealm = createRooms(graph, idSources, dice)
-  return pipe(initialRealm, listOf(
-//      { realm -> defineNegativeSpace(idSources, realm, dice) },
-      { realm -> realm.copy(nodes = fillNodeBiomesAndSolid(dice, realm, biomeGrid)) },
-//      { realm -> fillBoundary(idSources, realm, dice) },
-//      { realm -> expandVertically(idSources, realm, graph.nodes.values, dice) },
-//      { realm -> cleanupSolidNormals(realm) },
-      { realm ->
-        realm.copy(
-            mesh = realm.mesh.copy(
-                edges = entityMap(realm.mesh.faces.flatMap { er -> er.value.edges.map { it.edge } }.distinct())
-            )
-        )
-      },
-      { realm -> realm }
-  ))
-}
+//fun generateStructure(biomeGrid: BiomeGrid, idSources: StructureIdSources, graph: Graph, dice: Dice): StructureRealm {
+//  val initialRealm = createRooms(graph, idSources, dice)
+//  return pipe(initialRealm, listOf(
+////      { realm -> defineNegativeSpace(idSources, realm, dice) },
+//      { realm -> realm.copy(nodes = fillNodeBiomesAndSolid(dice, realm, biomeGrid)) },
+////      { realm -> fillBoundary(idSources, realm, dice) },
+////      { realm -> expandVertically(idSources, realm, graph.nodes.values, dice) },
+////      { realm -> cleanupSolidNormals(realm) },
+//      { realm ->
+//        realm.copy(
+//            mesh = realm.mesh.copy(
+//                edges = entityMap(realm.mesh.faces.flatMap { er -> er.value.edges.map { it.edge } }.distinct())
+//            )
+//        )
+//      },
+//      { realm -> realm }
+//  ))
+//}

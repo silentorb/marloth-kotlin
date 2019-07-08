@@ -17,7 +17,7 @@ data class Ability(
 )
 
 data class ActivatedAbility(
-    val character: Character,
+    val character: Id,
     val ability: Ability
 )
 
@@ -44,7 +44,7 @@ fun getActivatedAbilities(deck: Deck, commands: Commands): List<ActivatedAbility
         val character = deck.characters[it.target]!!
         val ability = character.abilities.firstOrNull()
         if (ability != null && canUse(character, ability))
-          ActivatedAbility(character, ability)
+          ActivatedAbility(it.target, ability)
         else
           null
       }

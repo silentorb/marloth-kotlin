@@ -38,11 +38,11 @@ val deathSounds: (worlds: WorldPair) -> List<NewSound> = { worlds ->
 }
 
 val ambientSounds: (worlds: WorldPair) -> List<NewSound> = { worlds ->
-  worlds.second.deck.ambientSounds.filter { (_, emitter) ->
-    emitter.sound != null && worlds.first.deck.ambientSounds[emitter.id]?.sound == null
+  worlds.second.deck.ambientSounds.filter { (id, emitter) ->
+    emitter.sound != null && worlds.first.deck.ambientSounds[id]?.sound == null
   }
-      .map { (_, emitter) ->
-        val body = worlds.second.deck.bodies[emitter.id]!!
+      .map { (id, emitter) ->
+        val body = worlds.second.deck.bodies[id]!!
         NewSound(emitter.sound!!, body.position)
       }
 }

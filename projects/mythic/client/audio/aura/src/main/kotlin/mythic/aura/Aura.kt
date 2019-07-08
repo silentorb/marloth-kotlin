@@ -1,6 +1,6 @@
 package mythic.aura
 
-import mythic.ent.Entity
+import mythic.ent.WithId
 import mythic.ent.Id
 import mythic.ent.Table
 import mythic.ent.pipe
@@ -10,17 +10,17 @@ import java.nio.ByteBuffer
 import java.nio.ShortBuffer
 
 data class SoundData(
-    override val id: Id,
+   override val id: Id,
     val buffer: ShortBuffer,
     val duration: Long
-) : Entity
+) : WithId
 
 data class Sound(
     override val id: Id,
     val type: Id,
     val progress: Long = 0L,
     val position: Vector3? = null
-) : Entity
+) : WithId
 
 data class BufferState(
     val maxSize: Int,

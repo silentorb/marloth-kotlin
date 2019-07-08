@@ -1,6 +1,5 @@
 package simulation.misc
 
-import mythic.ent.Entity
 import mythic.ent.Id
 import mythic.ent.Table
 import randomly.Dice
@@ -9,16 +8,15 @@ import simulation.main.Deck
 import simulation.main.simulationDelta
 
 data class AmbientAudioEmitter(
-    override val id: Id,
     val delay: Double,
     val sound: Sounds? = null
-) : Entity
+)
 
-fun updateAmbientAudioEmitter(dice: Dice, deck: Deck): (AmbientAudioEmitter) -> AmbientAudioEmitter = { emitter ->
+fun updateAmbientAudioEmitter(dice: Dice, deck: Deck): (Id, AmbientAudioEmitter) -> AmbientAudioEmitter = { id, emitter ->
   val delay = emitter.delay - simulationDelta
   val newSound = delay <= 0.0
   val sound = if (newSound) {
-    val character = deck.characters[emitter.id]!!
+    val character = deck.characters[id]!!
     dice.getItem(character.definition.ambientSounds)
   } else
     null
@@ -40,4 +38,4 @@ fun updateAmbientAudio(dice: Dice, deck: Deck): Table<AmbientAudioEmitter> =
           val character = deck.characters[it.key]
           character != null && character.isAlive
         }
-        .mapValues { (_, value) -> updateAmbientAudioEmitter(dice, deck)(value) }
+        .mapValues { (id, value) -> updateAmbientAudioEmitter(dice, deck)(id, value) }

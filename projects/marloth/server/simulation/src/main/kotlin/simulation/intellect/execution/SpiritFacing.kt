@@ -41,7 +41,7 @@ fun spiritFacingChange(world: World, knowledge: Knowledge, offset: Vector3): Com
     return if (absCourse <= drift)
       listOf() // Don't need to rotate anymore.  The remaining momentum will get us there.
     else
-      listOf(Command(dir, character(world, knowledge).id, 1f))
+      listOf(Command(dir, knowledge.spiritId, 1f))
   }
 }
 

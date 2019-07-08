@@ -48,7 +48,7 @@ fun updateWorld(app: GameApp, state: AppState): List<World> {
   val commands = mapGameCommands(mapEventsToCommands(state.client.input.deviceStates, gameStrokes, getBinding))
   val worlds = state.worlds
   val world = worlds.last()
-  val nextWorld = simulation.main.updateWorld(app.bulletState, app.client.renderer.animationDurations, world, commands, simulationDelta)
+  val nextWorld = simulation.main.updateWorld(app.bulletState, app.client.renderer.animationDurations, commands, simulationDelta)(world)
   updateSimulationDatabase(app.db, nextWorld, world)
   return worlds
       .plus(nextWorld)

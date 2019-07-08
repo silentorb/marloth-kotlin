@@ -9,24 +9,16 @@ import mythic.ent.*
 import simulation.physics.*
 import randomly.Dice
 import simulation.input.updatePlayer
-import simulation.combat.getNewMissiles
 import simulation.misc.*
 import simulation.particles.updateParticleEffect
 
 const val simulationDelta = 1f / 60f
 
-fun getFinished(deck: Deck): List<Id> {
-  return listOf()
-//  return deck.missiles.values
-//      .filter { isFinished(it) }
-//      .map { it.id }
-////      .plus(deck.characters.values
-////          .filter { !it.isAlive && !isPlayer(deck, it) }
-////          .map { it.id })
-}
+typealias DeckSource = (IdSource) -> Deck?
 
 data class Events(
-    val damage: List<DamageEvent>
+    val damage: List<DamageEvent> = listOf(),
+    val deckSource: DeckSource = { null }
 )
 
 data class Intermediate(
@@ -36,13 +28,16 @@ data class Intermediate(
     val events: Events
 )
 
-fun generateIntermediateRecords(bulletState: BulletState, deck: Deck, commands: Commands): Intermediate {
+fun generateIntermediateRecords(bulletState: BulletState, world: World, playerCommands: Commands): Intermediate {
+  val deck = world.deck
+  val spiritCommands = pursueGoals(world, aliveSpirits(world.deck).values)
+  val commands = playerCommands.plus(spiritCommands)
   val collisions = getBulletCollisions(bulletState, deck)
   return Intermediate(
       commands = commands,
       activatedAbilities = getActivatedAbilities(deck, commands),
       collisions = collisions,
-      events = gatherEvents(deck, collisions)
+      events = if (shouldUpdateLogic(world)) gatherEvents(deck, collisions) else Events()
   )
 }
 
@@ -59,10 +54,11 @@ fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: 
           ambientSounds = updateAmbientAudio(dice, deck),
           bodies = bodies,
           depictions = mapTable(deck.depictions, updateDepiction(bodyWorld, animationDurations)),
-          characters = mapTableValues(deck.characters, updateCharacter(bodyWorld, commands, activatedAbilities, events.damage)),
+          characters = mapTable(deck.characters, updateCharacter(bodyWorld, commands, activatedAbilities, events.damage)),
           particleEffects = mapTableValues(deck.particleEffects, bodyWorld.deck.bodies, updateParticleEffect(dice, simulationDelta)),
-          players = mapTableValues(deck.players, updatePlayer(data.commands)),
-          spirits = mapTableValues(deck.spirits, updateAiState(bodyWorld, simulationDelta))
+          players = mapTable(deck.players, updatePlayer(data.commands)),
+          spirits = mapTable(deck.spirits, updateAiState(bodyWorld, simulationDelta)),
+          timers = if (shouldUpdateLogic(world)) updateTimers(deck.timers) else deck.timers
       )
     }
 
@@ -71,43 +67,36 @@ val removeEntities: (Deck) -> Deck = { deck ->
   removeEntities(deck, finished)
 }
 
-fun newEntities(world: World, nextId: IdSource, data: Intermediate): (Deck) -> Deck = { deck ->
-  deck.plus(getNewMissiles(world.copy(deck = deck), nextId, data.activatedAbilities))
+fun newEntities(events: Events, nextId: IdSource): (Deck) -> Deck = { deck ->
+  val deckSource = events.deckSource
+  val addition = deckSource(nextId)
+  if (addition != null)
+    deck.plus(addition)
+  else
+    deck
 }
 
-fun updateWorldDeck(animationDurations: AnimationDurationMap, commands: Commands, bulletState: BulletState, delta: Float): (World) -> World =
+fun updateWorldDeck(animationDurations: AnimationDurationMap, intermediate: Intermediate, delta: Float): (World) -> World =
     { world ->
       val (nextId, finalize) = newIdSource(world)
-      val data = generateIntermediateRecords(bulletState, world.deck, commands)
 
       val newDeck = pipe(world.deck, listOf(
-          updateEntities(world.dice, animationDurations, world, data),
+          updateEntities(world.dice, animationDurations, world, intermediate),
           removeEntities,
-          newEntities(world, nextId, data)
+          newEntities(intermediate.events, nextId)
       ))
       finalize(world.copy(
           deck = newDeck
       ))
     }
 
-val updateGlobalDetails: (World) -> World = { world ->
-  if (world.gameOver == null && isVictory(world))
-    world.copy(
-        gameOver = GameOver(
-            winningFaction = misfitsFaction
-        )
-    )
-  else
-    world
-}
-
-fun updateWorld(bulletState: BulletState, animationDurations: AnimationDurationMap, world: World, playerCommands: Commands, delta: Float): World {
-  val spiritCommands = pursueGoals(world, aliveSpirits(world.deck).values)
-  val commands = playerCommands.plus(spiritCommands)
-//  println(world.nextId)
-  return pipe(world, listOf(
-      updateBulletPhysics(bulletState),
-      updateWorldDeck(animationDurations, commands, bulletState, delta),
-      updateGlobalDetails
-  ))
-}
+fun updateWorld(bulletState: BulletState, animationDurations: AnimationDurationMap, playerCommands: Commands, delta: Float): (World) -> World =
+    pipe(listOf(
+        updateBulletPhysics(bulletState),
+        { world ->
+          val intermediate = generateIntermediateRecords(bulletState, world, playerCommands)
+          updateWorldDeck(animationDurations, intermediate, delta)(world)
+        },
+        updateGlobalDetails,
+        updateBuffUpdateCounter
+    ))

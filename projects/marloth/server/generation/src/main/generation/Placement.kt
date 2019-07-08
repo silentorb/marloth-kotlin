@@ -1,9 +1,10 @@
 package generation
 
 import generation.structure.wallHeight
+import marloth.definition.ItemId
 import simulation.intellect.Pursuit
 import simulation.intellect.Spirit
-import marloth.definition.newDamageCloud
+import marloth.definition.templates.newDamageCloud
 import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.ent.newIdSource
@@ -32,7 +33,6 @@ fun placeCharacter(realm: Realm, template: CharacterTemplate, nextId: IdSource, 
       position = position,
       node = node,
       spirit = Spirit(
-          id = 0,
           pursuit = Pursuit()
       )
   )
@@ -158,7 +158,6 @@ fun newPlayer(nextId: IdSource, playerNode: Node): Deck {
       node = playerNode.id,
       player = Player(
           playerId = 1,
-          id = 0,
           name = "Unknown Hero",
           viewMode = ViewMode.firstPerson
       )
@@ -166,18 +165,24 @@ fun newPlayer(nextId: IdSource, playerNode: Node): Deck {
 
   val candleId = nextId()
 
-  val candle = Item(
-      id = candleId,
-      owner = characterHand.hand.character!!.id,
-      slot = 2,
-      type = ItemType.candle
+  val candle = Hand(
+      attachment = Attachment(
+          target = characterId,
+          category = AttachmentTypeId.item.name,
+          index = 2
+      ),
+      entity = Entity(
+          type = ItemId.candle.name
+      )
   )
 
-  return toDeck(characterHand.copy(hand = characterHand.hand.copy(character = characterHand.hand.character!! equip candle.id)))
+  val result = toDeck(characterHand.copy(hand = characterHand.hand.copy(character = characterHand.hand.character!! equip candleId)))
       .plus(toDeck(IdHand(
           id = candleId,
-          hand = Hand(item = candle)
+          hand = candle
       )))
+
+  return result
 }
 
 fun addVoidNode(realm: Realm): Realm =
@@ -205,8 +210,9 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
   return World(
       deck = deck,
       nextId = nextId(),
-      realm = addVoidNode(realm),
+      realm = realm,
       dice = Dice(),
-      availableIds = setOf()
+      availableIds = setOf(),
+      logicUpdateCounter = 0
   )
 }

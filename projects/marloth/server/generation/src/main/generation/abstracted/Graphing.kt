@@ -1,11 +1,11 @@
 package generation.abstracted
 
-import mythic.ent.Entity
+import mythic.ent.WithId
 
 typealias Neighbors<T> = (T) -> Collection<T>
 typealias GraphFinished<T> = (List<T>) -> List<T>?
 
-tailrec fun <T : Entity> gatherNodes(scanned: List<T>, next: List<T> = scanned, gatherNeighbors: Neighbors<T>): List<T> {
+tailrec fun <T : WithId> gatherNodes(scanned: List<T>, next: List<T> = scanned, gatherNeighbors: Neighbors<T>): List<T> {
   if (next.none())
     return scanned
 

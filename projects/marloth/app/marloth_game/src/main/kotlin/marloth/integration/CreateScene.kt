@@ -1,5 +1,6 @@
 package marloth.integration
 
+import marloth.definition.ItemId
 import marloth.definition.MeshId
 import mythic.ent.Id
 import mythic.ent.Table
@@ -62,20 +63,21 @@ fun createTopDownCamera(player: Body): Camera {
   )
 }
 
-fun createCamera(world: World, screen: Screen): Camera {
-  val player = world.players[screen.playerId - 1]
-  val character = world.characterTable[player.id]!!
-  val body = world.bodyTable[player.id]!!
-  return when (player.viewMode) {
+fun createCamera(deck: Deck, screen: Screen): Camera {
+  val player = deck.players.keys.first()
+  val character = deck.characters[player]!!
+  val body = deck.bodies[player]!!
+  val playerRecord = deck.players[player]!!
+  return when (playerRecord.viewMode) {
     ViewMode.firstPerson -> firstPersonCamera(body, character, character.isAlive)
-    ViewMode.thirdPerson -> thirdPersonCamera(body, player.hoverCamera)
+    ViewMode.thirdPerson -> thirdPersonCamera(body, playerRecord.hoverCamera)
 //    ViewMode.topDown -> createTopDownCamera(body)
   }
 }
 
-fun filterDepictions(depictions: Table<Depiction>, player: Player): Table<Depiction> =
-    if (player.viewMode == ViewMode.firstPerson)
-      depictions.filter { it.key != player.id }
+fun filterDepictions(depictions: Table<Depiction>, player: Id, playerRecord: Player): Table<Depiction> =
+    if (playerRecord.viewMode == ViewMode.firstPerson)
+      depictions.filter { it.key != player }
     else
       depictions
 
@@ -194,14 +196,14 @@ fun gatherParticleElements(deck: Deck): ElementGroups {
   }
 }
 
-fun gatherVisualElements(world: World, screen: Screen, player: Player): ElementGroups {
+fun gatherVisualElements(world: World, screen: Screen, player: Id, playerRecord: Player): ElementGroups {
 //  val depictions = filterDepictions(world, player)
 //  val childDepictions = depictions.values.filter {
 //    it.type == DepictionType.child || it.type == DepictionType.monster
 //  }
 
   val (complex, simple) =
-      filterDepictions(world.deck.depictions, player)
+      filterDepictions(world.deck.depictions, player, playerRecord)
           .entries.partition { isComplexDepiction(it.value) }
 
   val complexElements = complex.map {
@@ -227,7 +229,7 @@ fun gatherVisualElements(world: World, screen: Screen, player: Player): ElementG
       .plus(ElementGroup(simpleElements))
 }
 
-fun mapLights(world: World, player: Player) =
+fun mapLights(world: World, player: Id) =
     world.deck.lights
         .map { (id, light) ->
           Light(
@@ -238,27 +240,26 @@ fun mapLights(world: World, player: Player) =
           )
         }
         .plus(listOfNotNull(
-            if (isHolding(world.deck, player.id)(ItemType.candle))
+            if (isHolding(world.deck, player)(ItemId.candle.name))
               Light(
                   type = LightType.point,
                   color = Vector4(1f, 1f, 1f, 0.6f),
-                  position = world.bodyTable[player.id]!!.position + Vector3(0f, 0f, 2f),
+                  position = world.bodyTable[player]!!.position + Vector3(0f, 0f, 2f),
                   direction = Vector4(0f, 0f, 0f, 36f)
               )
             else
               null
         ))
 
-fun createScene(world: World, screen: Screen, player: Player): GameScene {
+fun createScene(world: World, screen: Screen, player: Id): GameScene {
   return GameScene(
       main = Scene(
-          camera = createCamera(world, screen),
+          camera = createCamera(world.deck, screen),
           lights = mapLights(world, player)
       ),
-      opaqueElementGroups = gatherVisualElements(world, screen, player),
+      opaqueElementGroups = gatherVisualElements(world, screen, player, world.deck.players[player]!!),
       transparentElementGroups = gatherParticleElements(world.deck),
-      player = player.playerId,
-      filters = if (!world.deck.characters[player.id]!!.isAlive)
+      filters = if (!world.deck.characters[player]!!.isAlive)
         listOf<ScreenFilter>(
             { it.screenDesaturation.activate() },
             { it.screenColor.activate(Vector4(1f, 0f, 0f, 0.4f)) }
@@ -269,6 +270,6 @@ fun createScene(world: World, screen: Screen, player: Player): GameScene {
 }
 
 fun createScenes(world: World, screens: List<Screen>): List<GameScene> =
-    world.players.map {
-      createScene(world, screens[it.playerId - 1], it)
+    world.deck.players.keys.mapIndexed() { i, key ->
+      createScene(world, screens[i], key)
     }

@@ -1,6 +1,5 @@
 package simulation.intellect.acessment
 
-import mythic.ent.Entity
 import simulation.misc.Character
 import mythic.ent.Id
 import mythic.ent.Table
@@ -10,12 +9,12 @@ import simulation.main.World
 
 data class CharacterMemory(
     val lastSeen: Float,
-    override val id: Id,
+    val id: Id,
     override val position: Vector3,
     override val node: Id,
     val faction: Id,
     val targetable: Boolean
-) : Entity, SimpleBody
+) : SimpleBody
 
 data class Knowledge(
     val spiritId: Id,
@@ -28,13 +27,13 @@ const val memoryLifetime: Float = 5f // In seconds
 fun character(world: World, knowledge: Knowledge): Character =
     world.deck.characters[knowledge.spiritId]!!
 
-fun updateCharacterKnowledge(world: World, character: Character, knowledge: Knowledge, delta: Float): Table<CharacterMemory> {
-  val fresh = getVisibleCharacters(world, character).associate { c ->
-    val body = world.deck.bodies[c.id]!!
+fun updateCharacterKnowledge(world: World, character: Id, knowledge: Knowledge, delta: Float): Table<CharacterMemory> {
+  val fresh = getVisibleCharacters(world, character).map { (id, c) ->
+    val body = world.deck.bodies[id]!!
     val node = world.realm.nodeTable[body.node]
-    Pair(c.id, CharacterMemory(
+    Pair(id, CharacterMemory(
         lastSeen = 0f,
-        id = c.id,
+        id = id,
         position = body.position,
         node = body.node,
         faction = c.faction,
@@ -48,14 +47,14 @@ fun updateCharacterKnowledge(world: World, character: Character, knowledge: Know
       .plus(fresh)
 }
 
-fun newKnowledge(world: World, character: Character): Knowledge =
+fun newKnowledge(world: World, character: Id): Knowledge =
     Knowledge(
-        spiritId = character.id,
+        spiritId = character,
         nodes = world.realm.nodeList.map { it.id },
         characters = mapOf()
     )
 
-fun updateKnowledge(world: World, character: Character, knowledge: Knowledge, delta: Float): Knowledge {
+fun updateKnowledge(world: World, character: Id, knowledge: Knowledge, delta: Float): Knowledge {
   return knowledge.copy(
       characters = updateCharacterKnowledge(world, character, knowledge, delta)
   )

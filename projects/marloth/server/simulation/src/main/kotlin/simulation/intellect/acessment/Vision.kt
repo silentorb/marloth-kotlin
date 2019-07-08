@@ -42,17 +42,17 @@ fun lightRating(world: World, id: Id): Float {
 fun nearMod(distance: Float): Float =
     (1 - unitRange(3f, distance)) * 1.2f
 
-fun canSee(world: World, viewer: Character, target: Id): Boolean {
-  val viewerBody = world.bodyTable[viewer.id]!!
+fun canSee(world: World, viewer: Id, target: Id): Boolean {
+  val viewerBody = world.bodyTable[viewer]!!
   val targetBody = world.bodyTable[target]!!
   val nodes = world.realm.nodeTable
   val distance = viewerBody.position.distance(targetBody.position)
   return distance <= viewingRange
-      && isInAngleOfView(viewer, viewerBody, targetBody)
+      && isInAngleOfView(world.deck.characters[viewer]!!, viewerBody, targetBody)
       && rayCanHitPoint(world.realm, nodes[viewerBody.node]!!, viewerBody.position, targetBody.position)
       && lightRating(world, target) + nearMod(distance) >= minimumLightRating
 }
 
-fun getVisibleCharacters(world: World, character: Character): List<Character> {
-  return world.characters.filter { it.id != character.id && canSee(world, character, it.id) }
+fun getVisibleCharacters(world: World, character: Id): Map<Id, Character> {
+  return world.deck.characters.filter { it.key != character && canSee(world, character, it.key) }
 }

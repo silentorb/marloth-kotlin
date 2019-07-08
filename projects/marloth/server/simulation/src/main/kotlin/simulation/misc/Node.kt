@@ -1,6 +1,6 @@
 package simulation.misc
 
-import mythic.ent.Entity
+import mythic.ent.WithId
 import mythic.ent.Id
 import mythic.spatial.Vector3
 
@@ -14,7 +14,7 @@ data class Node(
     val floors: MutableList<Id> = mutableListOf(),
     val ceilings: MutableList<Id> = mutableListOf(),
     val walls: MutableList<Id> = mutableListOf()
-) : Entity {
+) : WithId {
 
   val faces: List<Id>
     get() = floors.plus(walls).plus(ceilings)

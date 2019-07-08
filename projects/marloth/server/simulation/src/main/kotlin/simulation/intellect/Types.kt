@@ -1,7 +1,6 @@
 package simulation.intellect
 
 import simulation.intellect.acessment.Knowledge
-import mythic.ent.Entity
 import mythic.ent.Id
 import mythic.spatial.Vector3
 
@@ -14,7 +13,6 @@ data class Pursuit(
 )
 
 data class Spirit(
-    override val id: Id,
     val knowledge: Knowledge? = null,
     val pursuit: Pursuit
-) : Entity
+)

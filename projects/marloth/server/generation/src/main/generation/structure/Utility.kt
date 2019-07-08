@@ -89,11 +89,11 @@ fun splitFacePairs(pairs: List<FacePair>): Pair<List<ConnectionFace>, List<Immut
         pairs.map { it.geometry }
     )
 
-fun splitFacePairTables(pairs: List<FacePair>): Pair<ConnectionTable, ImmutableFaceTable> =
-    Pair(
-        entityMap(pairs.map { it.info }),
-        entityMap(pairs.map { it.geometry })
-    )
+//fun splitFacePairTables(pairs: List<FacePair>): Pair<ConnectionTable, ImmutableFaceTable> =
+//    Pair(
+//        entityMap(pairs.map { it.info }),
+//        entityMap(pairs.map { it.geometry })
+//    )
 
 
 fun createSurface(nextEdgeId: IdSource, mesh: ImmutableMesh, id: Id, node: Id, vertices: Vertices, faceType: FaceType): FacePair {

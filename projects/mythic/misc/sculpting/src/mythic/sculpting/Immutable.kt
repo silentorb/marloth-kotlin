@@ -1,6 +1,5 @@
 package mythic.sculpting
 
-import mythic.ent.Entity
 import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.spatial.Vector3
@@ -9,11 +8,11 @@ typealias Vertices = List<Vector3>
 typealias Edges = List<ImmutableEdge>
 
 class ImmutableEdge(
-    override val id: Id,
+    val id: Id,
     val first: Vector3,
     val second: Vector3,
     val faces: MutableList<ImmutableFace>
-) : Entity {
+) {
   val vertices = listOf(first, second)
 
   val middle: Vector3
@@ -74,11 +73,11 @@ fun getNormal(vertices: Vertices): Vector3 {
 private var flexibleFaceDebugCounter = 0L
 
 data class ImmutableFace(
-    override val id: Id,
+    val id: Id,
     val edges: MutableList<ImmutableEdgeReference> = mutableListOf(),
 //    var data: Any? = null,
     val normal: Vector3 = Vector3()
-) : Entity {
+) {
   val unorderedVertices: List<Vector3>
     get() = edges.map { it.first }
 

@@ -12,7 +12,8 @@ private val textStyle = TextStyles.gray
 data class HudData(
     val health: Resource,
     val sanity: Resource,
-    val interactable: Interactable?
+    val interactable: Interactable?,
+    val buffs: List<Pair<String, Int>>
 )
 
 fun resourceString(resource: Resource): String {
@@ -35,6 +36,9 @@ private fun playerStats(data: HudData): Flower {
 //      mythic.bloom.label(textStyle, characterVisibility(data, player)),
 //      mythic.bloom.label(textStyle, "vel: " + df.format(world.deck.bodies[player]!!.velocity.length()))
   )
+      .plus(data.buffs.map {
+        label(textStyle, "${it.first} ${it.second}")
+      })
   return div(forward = fixedOffset(Vector2i(10)))(
       div(reverse = shrink, depiction = solidBackground(black))(
           margin(20)(
