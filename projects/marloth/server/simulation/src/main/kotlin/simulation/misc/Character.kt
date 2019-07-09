@@ -12,7 +12,8 @@ import scenery.Sounds
 import simulation.changing.characterLookForce
 import simulation.changing.fpCameraRotation
 import simulation.combat.Damage
-import simulation.combat.DamageMap
+import simulation.combat.DamageMultipliers
+import simulation.combat.applyDamageMods
 import simulation.evention.DamageEvent
 import simulation.input.filterCommands
 import simulation.intellect.Spirit
@@ -26,7 +27,7 @@ data class CharacterDefinition(
     val depictionType: DepictionType,
     val deathSound: Sounds,
     val ambientSounds: List<Sounds> = listOf(),
-    val damageMap: DamageMap = mapOf()
+    val damageMultipliers: DamageMultipliers = mapOf()
 )
 
 data class Character(
@@ -39,7 +40,8 @@ data class Character(
     val isAlive: Boolean = true,
     val facingRotation: Vector3 = Vector3(),
     val lookVelocity: Vector2 = Vector2(),
-    val equippedItem: Id? = null
+    val equippedItem: Id? = null,
+    val damageMultipliers: DamageMultipliers = mapOf()
 ) {
   val facingQuaternion: Quaternion
     get() = Quaternion()
@@ -83,11 +85,13 @@ fun updateEquippedItem(deck: Deck, id: Id, character: Character, commands: Comma
     character.equippedItem
 }
 
-fun aggregateDamage(character: Character, damages: List<Damage>) =
-    damages.map { it.amount }.sum()
+fun aggregateDamage(multipliers: DamageMultipliers, damages: List<Damage>) =
+    damages
+        .map(applyDamageMods(multipliers))
+        .sum()
 
 fun aggregateHealthModifiers(character: Character, damages: List<Damage>): Int {
-  val damage = aggregateDamage(character, damages)
+  val damage = aggregateDamage(character.damageMultipliers, damages)
   return -damage
 }
 
@@ -117,7 +121,7 @@ fun updateCharacter(world: World, id: Id, character: Character, commands: Comman
             val hit = damages.first()
             val killerBody = world.bodyTable[hit.source]
             if (killerBody != null) {
-              val facingVector = (killerBody. position -world.bodyTable[id]!!.position).normalize()
+              val facingVector = (killerBody.position - world.bodyTable[id]!!.position).normalize()
               val lookAtAngle = getLookAtAngle(facingVector)
               c.copy(
                   lookVelocity = Vector2(),
@@ -208,7 +212,8 @@ fun newCharacter(id: Id, nextId: IdSource, definition: CharacterDefinition, fact
           faction = faction,
           health = Resource(definition.health),
           sanity = Resource(100),
-          abilities = abilities
+          abilities = abilities,
+          damageMultipliers = definition.damageMultipliers
       ),
       collisionShape = CollisionObject(
           shape = ShapeOffset(Matrix().translate(0f, 0f, 0.75f), Capsule(0.4f, 1.5f))

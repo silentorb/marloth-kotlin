@@ -24,8 +24,14 @@ val updateBuffUpdateCounter: (World) -> World = { world ->
   )
 }
 
-fun divideUp(dividend: Int, divisor: Int): Int =
-    (dividend + divisor + 1) / divisor
+fun divideUp(dividend: Int, divisor: Int): Int {
+  val result = dividend / divisor
+  return if (divisor * result != dividend)
+    result + 1
+  else
+    result
+}
+
 
 val overTime: (Int) -> Int = { value ->
   divideUp(value, updateFrequency)

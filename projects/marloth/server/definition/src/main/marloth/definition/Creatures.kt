@@ -1,6 +1,7 @@
 package marloth.definition
 
 import scenery.Sounds
+import simulation.combat.DamageType
 import simulation.misc.CharacterDefinition
 import simulation.misc.DepictionType
 
@@ -10,7 +11,10 @@ class Creatures {
       abilities = listOf(),
       depictionType = DepictionType.child,
       maxSpeed = 5f,
-      deathSound = Sounds.girlScream
+      deathSound = Sounds.girlScream,
+      damageMultipliers = mapOf(
+          DamageType.cold to 50
+      )
   )
 
   val ally = CharacterDefinition(

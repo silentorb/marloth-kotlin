@@ -1,6 +1,8 @@
 package simulation.combat
 
 import mythic.ent.Id
+import simulation.main.Percentage
+import simulation.main.applyMultiplier
 
 enum class DamageType {
   chaos,
@@ -17,16 +19,12 @@ data class Damage(
     val source: Id
 )
 
-typealias DamageMap = Map<DamageType, Int> // In percentages
+typealias DamageMultipliers = Map<DamageType, Percentage>
 
-typealias DamageModifier = (Damage) -> Damage
-
-fun applyDamageMap(map: DamageMap): DamageModifier = { damage ->
-  val mod = map[damage.type]
+fun applyDamageMods(multipliers: DamageMultipliers): (Damage) -> Int = { damage ->
+  val mod = multipliers[damage.type]
   if (mod == null)
-    damage
+    damage.amount
   else
-    damage.copy(
-        amount = damage.amount * mod / 100
-    )
+    applyMultiplier(damage.amount, mod)
 }

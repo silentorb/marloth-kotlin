@@ -78,7 +78,7 @@ fun newBuffCloud(position: Vector3, radius: Float, buff: BuffId): Hand {
       trigger = Trigger(
           action = ApplyBuff(
               buffType = buff.name,
-              strength = 4,
+              strength = 10,
               duration = 4
           )
       )
