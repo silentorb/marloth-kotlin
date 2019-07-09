@@ -12,6 +12,7 @@ import simulation.physics.DynamicBody
 data class Hand(
     val ambientAudioEmitter: AmbientAudioEmitter? = null,
     val body: Body? = null,
+    val buff: Buff? = null,
     val attachment: Attachment? = null,
     val dynamicBody: DynamicBody? = null,
     val character: Character? = null,
@@ -20,13 +21,13 @@ data class Hand(
     val depiction: Depiction? = null,
     val door: Door? = null,
     val entity: Entity? = null,
+    val interactable: Interactable? = null,
     val light: Light? = null,
     val particleEffect: ParticleEffect? = null,
     val player: Player? = null,
     val spirit: Spirit? = null,
     val timer: Timer? = null,
-    val trigger: Trigger? = null,
-    val interactable: Interactable? = null
+    val trigger: Trigger? = null
 )
 
 data class IdHand(

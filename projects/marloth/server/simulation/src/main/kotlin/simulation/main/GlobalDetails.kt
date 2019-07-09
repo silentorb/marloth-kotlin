@@ -15,9 +15,18 @@ val updateGlobalDetails: (World) -> World = { world ->
     world
 }
 
-// Set to update once per second with a fixed 60 frames per second
+const val updateFrequency = 2
+private const val logicUpdateCounterMax = simulationFps / updateFrequency
+
 val updateBuffUpdateCounter: (World) -> World = { world ->
   world.copy(
-      logicUpdateCounter = (world.logicUpdateCounter + 1) % 60
+      logicUpdateCounter = (world.logicUpdateCounter + 1) % logicUpdateCounterMax
   )
+}
+
+fun divideUp(dividend: Int, divisor: Int): Int =
+    (dividend + divisor + 1) / divisor
+
+val overTime: (Int) -> Int = { value ->
+  divideUp(value, updateFrequency)
 }

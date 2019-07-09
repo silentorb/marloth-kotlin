@@ -1,18 +1,20 @@
 package simulation.main
 
+import mythic.ent.IdSource
+import mythic.ent.pipe
+import randomly.Dice
 import simulation.evention.DamageEvent
 import simulation.evention.gatherEvents
+import simulation.input.updatePlayer
 import simulation.intellect.aliveSpirits
 import simulation.intellect.execution.pursueGoals
 import simulation.intellect.updateAiState
-import mythic.ent.*
-import simulation.physics.*
-import randomly.Dice
-import simulation.input.updatePlayer
 import simulation.misc.*
 import simulation.particles.updateParticleEffect
+import simulation.physics.*
 
-const val simulationDelta = 1f / 60f
+const val simulationFps = 60
+const val simulationDelta = 1f / simulationFps.toFloat()
 
 typealias DeckSource = (IdSource) -> Deck?
 
@@ -28,7 +30,7 @@ data class Intermediate(
     val events: Events
 )
 
-fun generateIntermediateRecords(bulletState: BulletState, world: World, playerCommands: Commands): Intermediate {
+fun generateIntermediateRecords(bulletState: BulletState, templates: HandTemplates, world: World, playerCommands: Commands): Intermediate {
   val deck = world.deck
   val spiritCommands = pursueGoals(world, aliveSpirits(world.deck).values)
   val commands = playerCommands.plus(spiritCommands)
@@ -37,7 +39,7 @@ fun generateIntermediateRecords(bulletState: BulletState, world: World, playerCo
       commands = commands,
       activatedAbilities = getActivatedAbilities(deck, commands),
       collisions = collisions,
-      events = if (shouldUpdateLogic(world)) gatherEvents(deck, collisions) else Events()
+      events = if (shouldUpdateLogic(world)) gatherEvents(templates, deck, collisions) else Events()
   )
 }
 
@@ -58,14 +60,9 @@ fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: 
           particleEffects = mapTableValues(deck.particleEffects, bodyWorld.deck.bodies, updateParticleEffect(dice, simulationDelta)),
           players = mapTable(deck.players, updatePlayer(data.commands)),
           spirits = mapTable(deck.spirits, updateAiState(bodyWorld, simulationDelta)),
-          timers = if (shouldUpdateLogic(world)) updateTimers(deck.timers) else deck.timers
+          timers = if (shouldUpdateLogic(world)) mapTableValues(deck.timers, updateTimer) else deck.timers
       )
     }
-
-val removeEntities: (Deck) -> Deck = { deck ->
-  val finished = getFinished(deck)
-  removeEntities(deck, finished)
-}
 
 fun newEntities(events: Events, nextId: IdSource): (Deck) -> Deck = { deck ->
   val deckSource = events.deckSource
@@ -90,11 +87,11 @@ fun updateWorldDeck(animationDurations: AnimationDurationMap, intermediate: Inte
       ))
     }
 
-fun updateWorld(bulletState: BulletState, animationDurations: AnimationDurationMap, playerCommands: Commands, delta: Float): (World) -> World =
+fun updateWorld(bulletState: BulletState, animationDurations: AnimationDurationMap, playerCommands: Commands, templates: HandTemplates, delta: Float): (World) -> World =
     pipe(listOf(
         updateBulletPhysics(bulletState),
         { world ->
-          val intermediate = generateIntermediateRecords(bulletState, world, playerCommands)
+          val intermediate = generateIntermediateRecords(bulletState, templates, world, playerCommands)
           updateWorldDeck(animationDurations, intermediate, delta)(world)
         },
         updateGlobalDetails,

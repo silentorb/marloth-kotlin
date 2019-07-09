@@ -21,7 +21,7 @@ private val _handProperties = _deckConstructor.parameters
 private fun _newDeck(args: List<Table<Any>>): Deck =
     _deckConstructor.call(*args.toTypedArray())
 
-fun removeEntities(deck: Deck, removeIds: List<Id>): Deck {
+fun removeEntities(deck: Deck, removeIds: Set<Id>): Deck {
   val isActive = { id: Id -> !removeIds.contains(id) }
   val deletions = _deckProperties.map { property ->
     val value = property.get(deck) as Table<Any>

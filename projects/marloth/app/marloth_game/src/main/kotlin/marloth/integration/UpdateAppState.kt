@@ -6,6 +6,7 @@ import marloth.clienting.audio.updateAppStateAudio
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.layoutGui
 import marloth.clienting.input.GuiCommandType
+import marloth.definition.templates.templates
 import marloth.front.GameApp
 import marloth.front.RenderHook
 import mythic.bloom.next.Box
@@ -48,7 +49,8 @@ fun updateWorld(app: GameApp, state: AppState): List<World> {
   val commands = mapGameCommands(mapEventsToCommands(state.client.input.deviceStates, gameStrokes, getBinding))
   val worlds = state.worlds
   val world = worlds.last()
-  val nextWorld = simulation.main.updateWorld(app.bulletState, app.client.renderer.animationDurations, commands, simulationDelta)(world)
+  val nextWorld = simulation.main.updateWorld(app.bulletState, app.client.renderer.animationDurations, commands,
+      templates, simulationDelta)(world)
   updateSimulationDatabase(app.db, nextWorld, world)
   return worlds
       .plus(nextWorld)

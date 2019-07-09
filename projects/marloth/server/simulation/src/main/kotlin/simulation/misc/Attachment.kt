@@ -11,6 +11,10 @@ data class Attachment(
     val index: Int = 0
 )
 
+data class Buff(
+    val strength: Int
+)
+
 enum class AttachmentTypeId {
   ability,
   buff,

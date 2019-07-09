@@ -1,13 +1,35 @@
 package simulation.main
 
+import mythic.ent.*
+import simulation.evention.Action
 import simulation.evention.Trigger
 import simulation.intellect.Spirit
-import mythic.ent.*
+import simulation.misc.*
+import simulation.particles.ParticleEffect
 import simulation.physics.Body
 import simulation.physics.CollisionObject
 import simulation.physics.DynamicBody
-import simulation.misc.*
-import simulation.particles.ParticleEffect
+
+data class Deck(
+    val ambientSounds: Table<AmbientAudioEmitter> = mapOf(),
+    val animations: Table<ArmatureAnimation> = mapOf(),
+    val attachments: Table<Attachment> = mapOf(),
+    val bodies: Table<Body> = mapOf(),
+    val buffs: Table<Buff> = mapOf(),
+    val characters: Table<Character> = mapOf(),
+    val collisionShapes: Table<CollisionObject> = mapOf(),
+    val depictions: Table<Depiction> = mapOf(),
+    val doors: Table<Door> = mapOf(),
+    val dynamicBodies: Table<DynamicBody> = mapOf(),
+    val entities: Table<Entity> = mapOf(),
+    val interactables: Table<Interactable> = mapOf(),
+    val lights: Table<Light> = mapOf(),
+    val particleEffects: Table<ParticleEffect> = mapOf(),
+    val players: Table<Player> = mapOf(),
+    val spirits: Table<Spirit> = mapOf(),
+    val timers: Table<Timer> = mapOf(),
+    val triggers: Table<Trigger> = mapOf()
+)
 
 fun <T> mapTable(table: Table<T>, action: (Id, T) -> T): Table<T> =
     table.mapValues { (id, value) -> action(id, value) }
@@ -29,26 +51,6 @@ fun <T> nullableList(id: Id, entity: T?): Table<T> =
       mapOf()
     else
       mapOf(id to entity)
-
-data class Deck(
-    val ambientSounds: Table<AmbientAudioEmitter> = mapOf(),
-    val animations: Table<ArmatureAnimation> = mapOf(),
-    val attachments: Table<Attachment> = mapOf(),
-    val bodies: Table<Body> = mapOf(),
-    val characters: Table<Character> = mapOf(),
-    val collisionShapes: Table<CollisionObject> = mapOf(),
-    val depictions: Table<Depiction> = mapOf(),
-    val doors: Table<Door> = mapOf(),
-    val dynamicBodies: Table<DynamicBody> = mapOf(),
-    val entities: Table<Entity> = mapOf(),
-    val interactables: Table<Interactable> = mapOf(),
-    val lights: Table<Light> = mapOf(),
-    val particleEffects: Table<ParticleEffect> = mapOf(),
-    val players: Table<Player> = mapOf(),
-    val spirits: Table<Spirit> = mapOf(),
-    val timers: Table<Timer> = mapOf(),
-    val triggers: Table<Trigger> = mapOf()
-)
 
 fun toDeck(hand: IdHand) = toDeck(hand.id, hand.hand)
 
@@ -77,3 +79,5 @@ fun addHands(hands: List<Hand>): WorldTransform =
 fun addDecks(deckSources: List<(IdSource) -> List<IdHand>>): WorldTransform {
   return pipe(deckSources.map(addDeck))
 }
+
+typealias HandTemplates = Map<EntityTypeName, (Action) -> Hand>

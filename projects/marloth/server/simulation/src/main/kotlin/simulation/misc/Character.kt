@@ -1,6 +1,5 @@
 package simulation.misc
 
-import mythic.ent.WithId
 import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.ent.pipe
@@ -87,14 +86,17 @@ fun updateEquippedItem(deck: Deck, id: Id, character: Character, commands: Comma
 fun aggregateDamage(character: Character, damages: List<Damage>) =
     damages.map { it.amount }.sum()
 
-fun applyDamage(character: Character, damages: List<Damage>) =
-    modifyResource(character.health, -aggregateDamage(character, damages))
+fun aggregateHealthModifiers(character: Character, damages: List<Damage>): Int {
+  val damage = aggregateDamage(character, damages)
+  return -damage
+}
 
 fun updateCharacter(world: World, id: Id, character: Character, commands: Commands, damages: List<Damage>,
                     activatedAbilities: List<Ability>, delta: Float): Character {
   val lookForce = characterLookForce(character, commands)
 
-  val health = applyDamage(character, damages)
+  val healthMod = aggregateHealthModifiers(character, damages)
+  val health = modifyResource(character.health, healthMod)
   val abilities = updateAbilities(character, activatedAbilities)
 
   val isAlive = isAlive(health)

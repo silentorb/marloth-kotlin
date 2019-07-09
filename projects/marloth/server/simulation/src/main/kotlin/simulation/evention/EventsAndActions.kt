@@ -20,6 +20,6 @@ data class DamageAction(
 
 data class ApplyBuff(
     val buffType: EntityTypeName,
-    val value: Int,
+    val strength: Int,
     val duration: Int
 ) : Action
