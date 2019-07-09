@@ -115,12 +115,16 @@ fun updateCharacter(world: World, id: Id, character: Character, commands: Comman
         if (justDied) {
           if (damages.any()) {
             val hit = damages.first()
-            val facingVector = (world.bodyTable[hit.source]!!.position - world.bodyTable[id]!!.position).normalize()
-            val lookAtAngle = getLookAtAngle(facingVector)
-            c.copy(
-                lookVelocity = Vector2(),
-                facingRotation = Vector3(0f, 0f, lookAtAngle)
-            )
+            val killerBody = world.bodyTable[hit.source]
+            if (killerBody != null) {
+              val facingVector = (killerBody. position -world.bodyTable[id]!!.position).normalize()
+              val lookAtAngle = getLookAtAngle(facingVector)
+              c.copy(
+                  lookVelocity = Vector2(),
+                  facingRotation = Vector3(0f, 0f, lookAtAngle)
+              )
+            } else
+              c
           } else
             c
         } else {

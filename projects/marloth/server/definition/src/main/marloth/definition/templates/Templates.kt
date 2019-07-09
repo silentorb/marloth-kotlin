@@ -9,14 +9,7 @@ import simulation.main.Hand
 import simulation.main.HandTemplates
 
 val templates: HandTemplates = mapOf(
-    BuffId.poisoned.name to { action ->
-      Hand(
-          trigger = Trigger(
-              action = DamageAction(
-                  damageType = DamageType.poison,
-                  amount = (action as ApplyBuff).strength
-              )
-          )
-      )
-    }
+    BuffId.burning.name to damageBuff(DamageType.fire),
+    BuffId.chilled.name to damageBuff(DamageType.cold),
+    BuffId.poisoned.name to damageBuff(DamageType.poison)
 )

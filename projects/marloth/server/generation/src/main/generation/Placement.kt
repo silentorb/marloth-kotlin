@@ -1,10 +1,11 @@
 package generation
 
 import generation.structure.wallHeight
+import marloth.definition.BuffId
 import marloth.definition.ItemId
 import simulation.intellect.Pursuit
 import simulation.intellect.Spirit
-import marloth.definition.templates.newDamageCloud
+import marloth.definition.templates.newBuffCloud
 import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.ent.newIdSource
@@ -190,6 +191,13 @@ fun addVoidNode(realm: Realm): Realm =
         nodeList = realm.nodeList.plus(voidNode)
     )
 
+fun placeBuffCloud(node: Node, buff: BuffId) =
+    newBuffCloud(
+        position = node.position + Vector3(0f, 0f, -wallHeight / 2f),
+        radius = node.radius,
+        buff = buff
+    )
+
 fun finalizeRealm(input: WorldInput, realm: Realm): World {
   val playerNode = realm.nodeTable.values.first { it.biome == BiomeId.home }
   val scale = calculateWorldScale(input.boundary.dimensions)
@@ -199,10 +207,9 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
   val deck = Deck()
       .plus(newPlayer(nextId, playerNode))
       .plus(allHandsOnDeck(listOf(
-          newDamageCloud(
-              position = particleNode.position + Vector3(0f, 0f, -wallHeight / 2f),
-              radius = particleNode.radius
-          )
+          placeBuffCloud(realm.nodeTable[6L]!!, BuffId.burning),
+          placeBuffCloud(realm.nodeTable[7L]!!, BuffId.chilled),
+          placeBuffCloud(realm.nodeTable[11L]!!, BuffId.poisoned)
       ), nextId))
 //      .plus(placeWallLamps(realm, nextId, input.dice, scale))
 //      .plus(placeDoors(realm, nextId))
