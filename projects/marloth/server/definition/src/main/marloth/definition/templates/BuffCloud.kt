@@ -25,6 +25,7 @@ private val cloudColors: Map<BuffId, Pair<Vector3, Vector3>> = mapOf(
 )
 
 private fun newDamagedCloudParticleAnimation(firstColor: Vector3, secondColor: Vector3): ParticleAnimation {
+  val maxOpacity = 0.33f
   return ParticleAnimation(
       color = AnimationChannel(
           target = "color",
@@ -35,11 +36,11 @@ private fun newDamagedCloudParticleAnimation(firstColor: Vector3, secondColor: V
               ),
               Keyframe(
                   time = 0.2f,
-                  value = Vector4(interpolateVector3(firstColor, secondColor, 0.2f), 0.33f)
+                  value = Vector4(interpolateVector3(firstColor, secondColor, 0.2f), maxOpacity)
               ),
               Keyframe(
                   time = 0.8f,
-                  value = Vector4(interpolateVector3(firstColor, secondColor, 0.8f), 0.33f)
+                  value = Vector4(interpolateVector3(firstColor, secondColor, 0.8f), maxOpacity)
               ),
               Keyframe(
                   time = 1f,
@@ -71,7 +72,7 @@ fun newBuffCloud(position: Vector3, radius: Float, buff: BuffId): Hand {
           emitter = Emitter(
               particlesPerSecond = 30f,
               volume = shape,
-              life = Pair(3f, 4f),
+              life = Pair(3f, 5f),
               initialVelocity = Vector3(0f, 0f, 0.7f)
           )
       ),

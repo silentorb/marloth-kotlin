@@ -180,20 +180,22 @@ val isComplexDepiction = { depiction: Depiction ->
   complexDepictions.contains(depiction.type)
 }
 
-fun gatherParticleElements(deck: Deck): ElementGroups {
-  return deck.particleEffects.map { (_, particleEffect) ->
-    ElementGroup(
-        billboards = particleEffect.particles.map { particle ->
-          TexturedBillboard(
-              texture = particle.texture,
-              position = particle.position,
-              scale = particle.size,
-              color = particle.color,
-              step = floor(particle.animationStep * 16f).toInt()
-          )
-        }
-    )
-  }
+fun gatherParticleElements(deck: Deck, cameraPosition: Vector3): ElementGroups {
+  return deck.particleEffects
+      .entries.sortedByDescending { cameraPosition.distance(deck.bodies[it.key]!!.position) }
+      .map { (_, particleEffect) ->
+        ElementGroup(
+            billboards = particleEffect.particles.map { particle ->
+              TexturedBillboard(
+                  texture = particle.texture,
+                  position = particle.position,
+                  scale = particle.size,
+                  color = particle.color,
+                  step = floor(particle.animationStep * 16f).toInt()
+              )
+            }
+        )
+      }
 }
 
 fun gatherVisualElements(world: World, screen: Screen, player: Id, playerRecord: Player): ElementGroups {
@@ -252,13 +254,14 @@ fun mapLights(world: World, player: Id) =
         ))
 
 fun createScene(world: World, screen: Screen, player: Id): GameScene {
+  val camera = createCamera(world.deck, screen)
   return GameScene(
       main = Scene(
-          camera = createCamera(world.deck, screen),
+          camera = camera,
           lights = mapLights(world, player)
       ),
       opaqueElementGroups = gatherVisualElements(world, screen, player, world.deck.players[player]!!),
-      transparentElementGroups = gatherParticleElements(world.deck),
+      transparentElementGroups = gatherParticleElements(world.deck, camera.position),
       filters = if (!world.deck.characters[player]!!.isAlive)
         listOf<ScreenFilter>(
             { it.screenDesaturation.activate() },

@@ -193,7 +193,7 @@ fun addVoidNode(realm: Realm): Realm =
 
 fun placeBuffCloud(node: Node, buff: BuffId) =
     newBuffCloud(
-        position = node.position + Vector3(0f, 0f, -wallHeight / 2f),
+        position = node.position + Vector3(0f, 0f, -wallHeight / 2f - 0.5f),
         radius = node.radius,
         buff = buff
     )
