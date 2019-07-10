@@ -1,4 +1,4 @@
-package simulation.misc
+package simulation.entities
 
 data class Door(
     val isLocked: Boolean

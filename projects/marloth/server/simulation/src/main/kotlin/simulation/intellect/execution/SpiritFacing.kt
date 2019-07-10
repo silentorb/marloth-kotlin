@@ -3,6 +3,10 @@ package simulation.intellect.execution
 import simulation.intellect.acessment.Knowledge
 import simulation.intellect.acessment.character
 import mythic.spatial.*
+import simulation.entities.Character
+import simulation.input.Command
+import simulation.input.CommandType
+import simulation.input.Commands
 import simulation.main.World
 import simulation.physics.getLookAtAngle
 import simulation.main.simulationDelta

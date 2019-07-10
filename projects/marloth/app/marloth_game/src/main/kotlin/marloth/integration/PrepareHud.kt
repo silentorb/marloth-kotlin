@@ -2,14 +2,10 @@ package marloth.integration
 
 import marloth.clienting.gui.HudData
 import marloth.clienting.gui.ViewId
-import mythic.ent.Id
-import mythic.spatial.Vector3
 import simulation.main.Deck
-import simulation.misc.Interactable
-import simulation.main.World
-import simulation.misc.AttachmentTypeId
-import simulation.misc.getTargetAttachmentsOfCategory
-import simulation.misc.getVisibleInteractable
+import simulation.entities.AttachmentTypeId
+import simulation.entities.getTargetAttachmentsOfCategory
+import simulation.entities.getVisibleInteractable
 
 fun gatherHudData(deck: Deck, view: ViewId): HudData {
   val player = deck.players.keys.first()

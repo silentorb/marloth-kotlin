@@ -1,4 +1,4 @@
-package simulation.misc
+package simulation.entities
 
 import mythic.spatial.Vector4
 

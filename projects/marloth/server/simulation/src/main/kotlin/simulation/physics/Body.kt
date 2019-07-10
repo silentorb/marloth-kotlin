@@ -6,10 +6,10 @@ import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import simulation.main.World
 import simulation.main.simulationDelta
-import simulation.misc.Commands
+import simulation.input.Commands
 import simulation.misc.Node
-import simulation.misc.allCharacterMovements
-import simulation.misc.allCharacterOrientations
+import simulation.entities.allCharacterMovements
+import simulation.entities.allCharacterOrientations
 
 private const val voidNodeHeight = 10000f
 

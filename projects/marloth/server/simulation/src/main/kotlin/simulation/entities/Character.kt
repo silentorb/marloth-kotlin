@@ -1,4 +1,4 @@
-package simulation.misc
+package simulation.entities
 
 import mythic.ent.Id
 import mythic.ent.IdSource
@@ -9,15 +9,14 @@ import scenery.AnimationId
 import scenery.Capsule
 import scenery.ShapeOffset
 import scenery.Sounds
-import simulation.changing.characterLookForce
-import simulation.changing.fpCameraRotation
 import simulation.combat.Damage
 import simulation.combat.DamageMultipliers
 import simulation.combat.applyDamageMods
 import simulation.evention.DamageEvent
-import simulation.input.filterCommands
+import simulation.input.*
 import simulation.intellect.Spirit
 import simulation.main.*
+import simulation.misc.*
 import simulation.physics.*
 
 data class CharacterDefinition(

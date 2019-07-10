@@ -1,6 +1,7 @@
 package simulation.main
 
 import mythic.ent.Id
+import simulation.entities.*
 import simulation.evention.Trigger
 import simulation.intellect.Spirit
 import simulation.misc.*

@@ -4,7 +4,7 @@ import mythic.bloom.next.Flower
 import mythic.bloom.next.plus
 import mythic.bloom.verticalPlane
 import simulation.main.Deck
-import simulation.misc.AttachmentTypeId
+import simulation.entities.AttachmentTypeId
 
 fun merchantView(textResources: TextResources, deck: Deck): Flower {
   val merchant = getPlayerInteractingWith(deck)!!

@@ -27,7 +27,6 @@ import rendering.Renderer
 import rendering.shading.LightingConfig
 import scenery.Screen
 import simulation.main.Deck
-import simulation.misc.Interactable
 
 val maxPlayerCount = 4
 

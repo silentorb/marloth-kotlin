@@ -3,6 +3,7 @@ package simulation.evention
 import mythic.ent.Id
 import simulation.physics.Collision
 import simulation.combat.Damage
+import simulation.entities.*
 import simulation.main.*
 import simulation.misc.*
 

@@ -5,6 +5,7 @@ import marloth.definition.creatures
 import mythic.ent.IdSource
 import mythic.spatial.Vector3
 import scenery.Text
+import simulation.entities.*
 import simulation.main.Hand
 import simulation.main.HandAttachment
 import simulation.misc.*

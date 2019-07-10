@@ -1,8 +1,4 @@
-package simulation.misc
-
-import mythic.ent.WithId
-import mythic.ent.Id
-import simulation.main.Deck
+package simulation.entities
 
 enum class ViewMode {
   firstPerson,

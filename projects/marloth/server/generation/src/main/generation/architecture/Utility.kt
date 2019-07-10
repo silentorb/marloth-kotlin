@@ -14,8 +14,8 @@ import marloth.definition.TextureId
 import simulation.physics.CollisionObject
 import scenery.MeshName
 import simulation.main.Hand
-import simulation.misc.Depiction
-import simulation.misc.DepictionType
+import simulation.entities.Depiction
+import simulation.entities.DepictionType
 import simulation.misc.Node
 
 fun getHorizontalFlip(dice: Dice, wallData: WallData): Float =

@@ -3,7 +3,7 @@ package simulation.main
 import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.ent.Table
-import simulation.misc.Attachment
+import simulation.entities.Attachment
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.jvm.jvmName

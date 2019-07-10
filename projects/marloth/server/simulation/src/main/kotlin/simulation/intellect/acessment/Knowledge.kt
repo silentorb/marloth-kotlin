@@ -1,6 +1,6 @@
 package simulation.intellect.acessment
 
-import simulation.misc.Character
+import simulation.entities.Character
 import mythic.ent.Id
 import mythic.ent.Table
 import mythic.spatial.Vector3

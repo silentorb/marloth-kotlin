@@ -2,10 +2,8 @@ package simulation.input
 
 import mythic.ent.Id
 import simulation.main.simulationDelta
-import simulation.misc.CommandType
-import simulation.misc.Commands
-import simulation.misc.Player
-import simulation.misc.ViewMode
+import simulation.entities.Player
+import simulation.entities.ViewMode
 
 fun filterCommands(id: Id, commands: Commands) =
     commands.filter({ it.target == id })

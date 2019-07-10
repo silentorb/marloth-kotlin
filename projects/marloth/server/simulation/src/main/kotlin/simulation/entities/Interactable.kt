@@ -1,10 +1,9 @@
-package simulation.misc
+package simulation.entities
 
 import mythic.ent.Id
 import mythic.spatial.Vector3
 import scenery.Text
 import simulation.main.Deck
-import simulation.main.World
 
 data class WidgetCommand(
     val text: Text

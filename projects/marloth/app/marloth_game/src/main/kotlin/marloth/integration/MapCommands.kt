@@ -2,8 +2,8 @@ package marloth.integration
 
 import haft.HaftCommands
 import marloth.clienting.input.GuiCommandType
-import simulation.misc.Command
-import simulation.misc.CommandType
+import simulation.input.Command
+import simulation.input.CommandType
 
 private typealias UserCommandType = GuiCommandType
 private typealias CharacterCommandType = CommandType

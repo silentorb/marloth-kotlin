@@ -1,7 +1,9 @@
-package simulation.misc
+package simulation.entities
 
 import mythic.ent.Id
 import simulation.main.Deck
+import simulation.misc.Entity
+import simulation.misc.EntityTypeName
 
 fun getItemInSlot(deck: Deck, character: Id, slot: Int): Id? =
     deck.attachments

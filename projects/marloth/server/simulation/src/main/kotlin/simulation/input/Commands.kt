@@ -1,4 +1,4 @@
-package simulation.misc
+package simulation.input
 
 import mythic.ent.Id
 

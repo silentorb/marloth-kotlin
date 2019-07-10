@@ -5,7 +5,7 @@ import configuration.saveYamlFile
 import marloth.clienting.audio.AudioConfig
 import marloth.clienting.input.GameInputConfig
 import rendering.DisplayConfig
-import simulation.misc.ViewMode
+import simulation.entities.ViewMode
 
 data class GameplayConfig(
     var defaultPlayerView: ViewMode = ViewMode.thirdPerson

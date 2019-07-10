@@ -4,6 +4,8 @@ import mythic.ent.Id
 import mythic.sculpting.ImmutableEdge
 import mythic.sculpting.ImmutableFace
 import mythic.spatial.*
+import simulation.input.CommandType
+import simulation.input.Commands
 import simulation.misc.*
 
 fun hitsWall(edge: ImmutableEdge, position: Vector3, radius: Float) =

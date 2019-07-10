@@ -2,7 +2,7 @@ package marloth.clienting.input
 
 import haft.*
 import org.lwjgl.glfw.GLFW
-import simulation.misc.CommandType as CommandType
+import simulation.input.CommandType as CommandType
 
 val gameGamepadStrokeBindings = mapOf(
     GAMEPAD_AXIS_TRIGGER_RIGHT to CommandType.attack,

@@ -4,8 +4,8 @@ import simulation.physics.rayCanHitPoint
 import mythic.ent.Id
 import mythic.spatial.quadOut
 import simulation.physics.Body
-import simulation.misc.Character
-import simulation.misc.Light
+import simulation.entities.Character
+import simulation.entities.Light
 import simulation.main.World
 
 const val viewingRange = 30f

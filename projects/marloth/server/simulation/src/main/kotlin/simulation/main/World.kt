@@ -4,9 +4,9 @@ import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.ent.Table
 import randomly.Dice
-import simulation.misc.Character
+import simulation.entities.Character
 import simulation.misc.GameOver
-import simulation.misc.Player
+import simulation.entities.Player
 import simulation.misc.Realm
 import simulation.physics.Body
 

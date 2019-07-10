@@ -1,7 +1,8 @@
-package simulation.misc
+package simulation.entities
 
 import mythic.ent.Id
 import simulation.main.Deck
+import simulation.misc.EntityTypeName
 
 enum class AttachmentTypeId {
   buff,

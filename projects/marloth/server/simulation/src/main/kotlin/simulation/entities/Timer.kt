@@ -1,6 +1,4 @@
-package simulation.misc
-
-import mythic.ent.Table
+package simulation.entities
 
 data class Timer(
     val duration: Int

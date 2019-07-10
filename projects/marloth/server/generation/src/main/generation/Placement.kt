@@ -12,6 +12,7 @@ import mythic.ent.IdSource
 import mythic.ent.newIdSource
 import mythic.spatial.Vector3
 import randomly.Dice
+import simulation.entities.*
 import simulation.intellect.Pursuit
 import simulation.intellect.Spirit
 import simulation.main.*

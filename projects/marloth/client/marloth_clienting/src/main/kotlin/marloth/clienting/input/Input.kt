@@ -9,7 +9,7 @@ import mythic.platforming.PlatformInput
 import mythic.platforming.mouseDeviceIndex
 import mythic.spatial.Vector2
 import mythic.spatial.toVector2i
-import simulation.misc.CommandType
+import simulation.input.CommandType
 
 typealias UserCommand = HaftCommand<GuiCommandType>
 

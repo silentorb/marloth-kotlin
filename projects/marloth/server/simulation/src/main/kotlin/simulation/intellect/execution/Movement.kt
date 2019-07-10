@@ -4,9 +4,9 @@ import simulation.intellect.Path
 import simulation.intellect.acessment.Knowledge
 import mythic.spatial.Vector3
 import simulation.main.World
-import simulation.misc.Command
-import simulation.misc.CommandType
-import simulation.misc.Commands
+import simulation.input.Command
+import simulation.input.CommandType
+import simulation.input.Commands
 
 fun getPathTargetPosition(world: World, knowledge: Knowledge, path: Path): Vector3 {
   throw Error("No longer implemented")

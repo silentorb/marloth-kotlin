@@ -10,9 +10,9 @@ import simulation.physics.Body
 import rendering.*
 import scenery.*
 import scenery.Light
+import simulation.entities.*
 import simulation.main.Deck
 import simulation.main.World
-import simulation.misc.*
 import kotlin.math.floor
 
 val firstPersonCameraOffset = Vector3(0f, 0f, 1.4f)
