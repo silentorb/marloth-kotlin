@@ -10,6 +10,8 @@ import simulation.entities.getVisibleInteractable
 fun gatherHudData(deck: Deck, view: ViewId): HudData {
   val player = deck.players.keys.first()
   val character = deck.characters[player]!!
+  val destructible = deck.destructibles[player]!!
+
   val buffs = getTargetAttachmentsOfCategory(deck, player, AttachmentTypeId.buff)
       .map { Pair(deck.entities[it]!!.type, deck.timers[it]!!.duration) }
 
@@ -18,7 +20,7 @@ fun gatherHudData(deck: Deck, view: ViewId): HudData {
   else null
 
   return HudData(
-      health = character.health,
+      health = destructible.health,
       sanity = character.sanity,
       interactable = interactable,
       buffs = buffs

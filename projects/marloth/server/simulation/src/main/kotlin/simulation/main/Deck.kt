@@ -20,6 +20,7 @@ data class Deck(
     val characters: Table<Character> = mapOf(),
     val collisionShapes: Table<CollisionObject> = mapOf(),
     val depictions: Table<Depiction> = mapOf(),
+    val destructibles: Table<Destructible> = mapOf(),
     val doors: Table<Door> = mapOf(),
     val dynamicBodies: Table<DynamicBody> = mapOf(),
     val entities: Table<Entity> = mapOf(),

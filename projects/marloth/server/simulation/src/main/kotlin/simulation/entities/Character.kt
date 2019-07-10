@@ -9,14 +9,16 @@ import scenery.AnimationId
 import scenery.Capsule
 import scenery.ShapeOffset
 import scenery.Sounds
-import simulation.combat.Damage
 import simulation.combat.DamageMultipliers
-import simulation.combat.applyDamageMods
 import simulation.evention.DamageEvent
 import simulation.input.*
 import simulation.intellect.Spirit
-import simulation.main.*
-import simulation.misc.*
+import simulation.main.Deck
+import simulation.main.Hand
+import simulation.main.World
+import simulation.main.simulationDelta
+import simulation.misc.Resource
+import simulation.misc.maxLookVelocityChange
 import simulation.physics.*
 
 data class CharacterDefinition(
@@ -34,13 +36,11 @@ data class Character(
     val turnSpeed: Vector2,
     val abilities: List<Ability> = listOf(),
     val faction: Id,
-    val health: Resource,
     val sanity: Resource,
     val isAlive: Boolean = true,
     val facingRotation: Vector3 = Vector3(),
     val lookVelocity: Vector2 = Vector2(),
     val equippedItem: Id? = null,
-    val damageMultipliers: DamageMultipliers = mapOf(),
     val interactingWith: Id? = null
 ) {
   val facingQuaternion: Quaternion
@@ -85,16 +85,6 @@ fun updateEquippedItem(deck: Deck, id: Id, character: Character, commands: Comma
     character.equippedItem
 }
 
-fun aggregateDamage(multipliers: DamageMultipliers, damages: List<Damage>) =
-    damages
-        .map(applyDamageMods(multipliers))
-        .sum()
-
-fun aggregateHealthModifiers(character: Character, damages: List<Damage>): Int {
-  val damage = aggregateDamage(character.damageMultipliers, damages)
-  return -damage
-}
-
 fun updateInteractingWith(deck: Deck, character: Id, commands: Commands, interactingWith: Id?): Id? =
     if (commands.any { it.type == CommandType.interactPrimary })
       getVisibleInteractable(deck, character)?.key
@@ -103,22 +93,20 @@ fun updateInteractingWith(deck: Deck, character: Id, commands: Commands, interac
     else
       interactingWith
 
-fun updateCharacter(deck: Deck, id: Id, character: Character, commands: Commands, damages: List<Damage>,
-                    activatedAbilities: List<Ability>, delta: Float): Character {
+fun updateCharacter(deck: Deck, id: Id, character: Character, commands: Commands, activatedAbilities: List<Ability>,
+                    delta: Float): Character {
   val lookForce = characterLookForce(character, commands)
 
-  val healthMod = aggregateHealthModifiers(character, damages)
-  val health = modifyResource(character.health, healthMod)
   val abilities = updateAbilities(character, activatedAbilities)
 
-  val isAlive = isAlive(health)
+  val destructible = deck.destructibles[id]!!
+  val isAlive = isAlive(destructible.health.value)
   val justDied = !isAlive && character.isAlive
 
   return pipe(character, listOf(
       { c ->
         c.copy(
             isAlive = isAlive,
-            health = character.health.copy(value = health),
             abilities = abilities,
             equippedItem = updateEquippedItem(deck, id, character, commands),
             interactingWith = updateInteractingWith(deck, id, commands, c.interactingWith)
@@ -126,9 +114,9 @@ fun updateCharacter(deck: Deck, id: Id, character: Character, commands: Commands
       },
       { c ->
         if (justDied) {
-          if (damages.any()) {
-            val hit = damages.first()
-            val killerBody = deck.bodies[hit.source]
+          if (destructible.lastDamageSource != 0L) {
+            val source = destructible.lastDamageSource
+            val killerBody = deck.bodies[source]
             if (killerBody != null) {
               val facingVector = (killerBody.position - deck.bodies[id]!!.position).normalize()
               val lookAtAngle = getLookAtAngle(facingVector)
@@ -165,11 +153,7 @@ fun updateCharacter(deck: Deck, commands: Commands, activatedAbilities: List<Act
       { c -> c.filter { it.target == id } }
   ))
 
-  val damages = damageEvents
-      .filter { it.target == id }
-      .map { it.damage }
-
-  updateCharacter(deck, id, character, characterCommands, damages, abilities, delta)
+  updateCharacter(deck, id, character, characterCommands, abilities, delta)
 }
 
 fun characterMovementFp(commands: Commands, character: Character, id: Id, body: Body): MovementForce? {
@@ -218,9 +202,15 @@ fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id,
           turnSpeed = Vector2(2f, 1f),
           facingRotation = Vector3(0f, 0f, Pi / 2f),
           faction = faction,
-          health = Resource(definition.health),
           sanity = Resource(100),
-          abilities = abilities,
+          abilities = abilities
+      ),
+      destructible = Destructible(
+          base = DestructibleBaseStats(
+              health = definition.health,
+              damageMultipliers = definition.damageMultipliers
+          ),
+          health = Resource(definition.health),
           damageMultipliers = definition.damageMultipliers
       ),
       collisionShape = CollisionObject(

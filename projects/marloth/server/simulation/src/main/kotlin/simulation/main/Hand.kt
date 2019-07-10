@@ -20,6 +20,7 @@ data class Hand(
     val collisionShape: CollisionObject? = null,
     val animation: ArmatureAnimation? = null,
     val depiction: Depiction? = null,
+    val destructible: Destructible? = null,
     val door: Door? = null,
     val entity: Entity? = null,
     val interactable: Interactable? = null,
