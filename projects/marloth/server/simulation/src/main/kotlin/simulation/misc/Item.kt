@@ -5,7 +5,7 @@ import simulation.main.Deck
 
 fun getItemInSlot(deck: Deck, character: Id, slot: Int): Id? =
     deck.attachments
-        .filterValues { it.target == character && it.category == AttachmentTypeId.item.name && it.index == slot }
+        .filterValues { it.target == character && it.category == AttachmentTypeId.equipped && it.index == slot }
         .keys
         .firstOrNull()
 

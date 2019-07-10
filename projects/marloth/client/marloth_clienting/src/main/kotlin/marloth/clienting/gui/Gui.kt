@@ -88,7 +88,7 @@ fun victoryMenu(): Menu = listOfNotNull(
 fun viewSelect(textResources: TextResources, world: World?, view: ViewId): Flower? {
   return when (view) {
     ViewId.mainMenu -> menuFlower(textResources, mainMenu(gameIsActive(world)))
-    ViewId.merchant -> merchantView(textResources)
+    ViewId.merchant -> merchantView(textResources, world!!.deck)
     ViewId.victory -> menuFlower(textResources, victoryMenu())
     ViewId.none -> null
   }

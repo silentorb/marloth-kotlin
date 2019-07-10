@@ -4,6 +4,7 @@ import haft.mapEventsToCommands
 import marloth.clienting.*
 import marloth.clienting.audio.updateAppStateAudio
 import marloth.clienting.gui.ViewId
+import marloth.clienting.gui.getPlayerInteractingWith
 import marloth.clienting.gui.layoutGui
 import marloth.clienting.input.GuiCommandType
 import marloth.definition.templates.templates
@@ -39,9 +40,6 @@ fun updateSimulationDatabase(db: Database, next: World, previous: World) {
       ))
   }
 }
-
-fun getPlayerInteractingWith(deck: Deck): Id? =
-    deck.characters[deck.players.keys.first()]!!.interactingWith
 
 fun updateClientFromWorld(worlds: List<World>, commands: List<Command>): (ClientState) -> ClientState =
     { client ->

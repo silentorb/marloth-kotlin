@@ -1,7 +1,9 @@
 package simulation.main
 
 import mythic.ent.Id
+import mythic.ent.IdSource
 import mythic.ent.Table
+import simulation.misc.Attachment
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.jvm.jvmName
@@ -14,8 +16,10 @@ private val _deckProperties = _deckConstructor.parameters
 
 private val _handType = Hand::class
 private val _handProperties = _deckConstructor.parameters
-    .map { p -> _handType.memberProperties.first {
-      it.returnType.jvmErasure.jvmName == p.type.arguments[1].type!!.jvmErasure.jvmName }
+    .map { p ->
+      _handType.memberProperties.first {
+        it.returnType.jvmErasure.jvmName == p.type.arguments[1].type!!.jvmErasure.jvmName
+      }
     }
 
 private fun _newDeck(args: List<Table<Any>>): Deck =
@@ -40,9 +44,33 @@ fun Deck.plus(other: Deck): Deck {
 }
 
 fun toDeck(id: Id, hand: Hand): Deck {
+  assert(hand.attachments.isEmpty())
+
   val additions = _handProperties.map { property ->
     val value = property.get(hand) as Any?
     nullableList(id, value)
   }
   return _newDeck(additions)
+}
+
+fun toDeck(nextId: IdSource, hand: Hand): Deck {
+  val id = nextId()
+  val additions = _handProperties.map { property ->
+    val value = property.get(hand) as Any?
+    nullableList(id, value)
+  }
+  val deck = _newDeck(additions)
+  return if (hand.attachments.any()) {
+    val hands = hand.attachments.map {
+      it.hand.copy(
+          attachment = Attachment(
+              target = id,
+              category = it.category,
+              index = it.index
+          )
+      )
+    }
+    deck.plus(allHandsOnDeck(hands, nextId))
+  } else
+    deck
 }

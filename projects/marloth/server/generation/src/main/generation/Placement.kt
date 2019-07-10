@@ -4,6 +4,7 @@ import generation.structure.wallHeight
 import marloth.definition.BuffId
 import marloth.definition.ItemId
 import marloth.definition.creatures
+import marloth.definition.templates.defaultWares
 import marloth.definition.templates.newBuffCloud
 import marloth.definition.templates.newMerchant
 import mythic.ent.Id
@@ -166,7 +167,7 @@ fun newPlayer(nextId: IdSource, playerNode: Node): Deck {
   val candle = Hand(
       attachment = Attachment(
           target = characterId,
-          category = AttachmentTypeId.item.name,
+          category = AttachmentTypeId.equipped,
           index = 2
       ),
       entity = Entity(
@@ -205,7 +206,7 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
           placeBuffCloud(realm.nodeTable[12L]!!, BuffId.burning),
           placeBuffCloud(realm.nodeTable[7L]!!, BuffId.chilled),
           placeBuffCloud(realm.nodeTable[11L]!!, BuffId.poisoned),
-          newMerchant(nextId, realm.nodeTable[6L]!!.position)
+          newMerchant(nextId, realm.nodeTable[6L]!!.position, defaultWares)
       ), nextId))
 //      .plus(placeWallLamps(realm, nextId, input.dice, scale))
 //      .plus(placeDoors(realm, nextId))

@@ -14,7 +14,7 @@ import simulation.misc.getVisibleInteractable
 fun gatherHudData(deck: Deck, view: ViewId): HudData {
   val player = deck.players.keys.first()
   val character = deck.characters[player]!!
-  val buffs = getTargetAttachmentsOfCategory(deck, player, AttachmentTypeId.buff.name)
+  val buffs = getTargetAttachmentsOfCategory(deck, player, AttachmentTypeId.buff)
       .map { Pair(deck.entities[it]!!.type, deck.timers[it]!!.duration) }
 
   val interactable = if (view == ViewId.none)

@@ -27,7 +27,17 @@ data class Hand(
     val player: Player? = null,
     val spirit: Spirit? = null,
     val timer: Timer? = null,
-    val trigger: Trigger? = null
+    val trigger: Trigger? = null,
+    val ware: Ware? = null,
+
+    // Utility child list that does not directly map to a deck
+    val attachments: List<HandAttachment> = listOf()
+)
+
+data class HandAttachment(
+    val category: AttachmentTypeId,
+    val index: Int = 0,
+    val hand: Hand
 )
 
 data class IdHand(

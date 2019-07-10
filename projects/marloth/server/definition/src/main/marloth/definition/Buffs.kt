@@ -5,5 +5,8 @@ import mythic.ent.Id
 enum class BuffId {
   burning,
   chilled,
-  poisoned
+  poisoned,
+  receivedBurningMultiplier,
+  receivedChilledMultiplier,
+  receivedPoisonMultiplier,
 }

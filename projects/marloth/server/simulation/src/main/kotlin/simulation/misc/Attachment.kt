@@ -3,23 +3,21 @@ package simulation.misc
 import mythic.ent.Id
 import simulation.main.Deck
 
-typealias AttachmentTypeName = String
+enum class AttachmentTypeId {
+  buff,
+  equipped,
+  inventory
+}
 
 data class Attachment(
     val target: Id,
-    val category: AttachmentTypeName,
+    val category: AttachmentTypeId,
     val index: Int = 0
 )
 
 data class Buff(
     val strength: Int
 )
-
-enum class AttachmentTypeId {
-  ability,
-  buff,
-  item
-}
 
 fun getTargetAttachments(deck: Deck, target: Id) =
     deck.attachments.filter { attachment ->
@@ -33,7 +31,7 @@ fun getAttachmentOfEntityType(deck: Deck, target: Id, type: EntityTypeName): Id?
       entity?.type == type
     }
 
-fun getTargetAttachmentsOfCategory(deck: Deck, target: Id, category: AttachmentTypeName): List<Id> =
+fun getTargetAttachmentsOfCategory(deck: Deck, target: Id, category: AttachmentTypeId): List<Id> =
     getTargetAttachments(deck, target)
         .filter { it.value.category == category }
         .mapNotNull { it.key }

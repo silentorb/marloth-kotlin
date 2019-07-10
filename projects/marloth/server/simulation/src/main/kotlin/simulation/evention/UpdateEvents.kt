@@ -49,7 +49,7 @@ fun gatherNewRecords(templates: HandTemplates, deck: Deck, triggers: List<Trigge
             val hand = Hand(
                 attachment = Attachment(
                     target = target,
-                    category = AttachmentTypeId.buff.name
+                    category = AttachmentTypeId.buff
                 ),
                 buff = Buff(
                     strength = action.strength

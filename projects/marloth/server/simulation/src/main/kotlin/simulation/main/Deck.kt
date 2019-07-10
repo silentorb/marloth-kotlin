@@ -28,7 +28,8 @@ data class Deck(
     val players: Table<Player> = mapOf(),
     val spirits: Table<Spirit> = mapOf(),
     val timers: Table<Timer> = mapOf(),
-    val triggers: Table<Trigger> = mapOf()
+    val triggers: Table<Trigger> = mapOf(),
+    val wares: Table<Ware> = mapOf()
 )
 
 fun <T> mapTable(table: Table<T>, action: (Id, T) -> T): Table<T> =
@@ -61,7 +62,7 @@ fun mergeDecks(decks: List<Deck>): Deck =
     decks.reduce { a, deck -> a.plus(deck) }
 
 fun allHandsOnDeck(hands: List<Hand>, nextId: IdSource): Deck =
-    hands.fold(Deck(), { d, h -> d.plus(toDeck(nextId(), h)) })
+    hands.fold(Deck(), { d, h -> d.plus(toDeck(nextId, h)) })
 
 val addDeck: ((IdSource) -> List<IdHand>) -> WorldTransform = { deckSource ->
   { world ->
