@@ -25,8 +25,14 @@ typealias TextResources = Map<Text, String>
 enum class ViewId {
   mainMenu,
   none,
+  merchant,
   victory
 }
+
+val pauseViews = listOf(
+    ViewId.mainMenu,
+    ViewId.victory
+)
 
 fun gameIsActive(world: World?): Boolean =
     world != null && world.gameOver == null
@@ -82,9 +88,8 @@ fun victoryMenu(): Menu = listOfNotNull(
 fun viewSelect(textResources: TextResources, world: World?, view: ViewId): Flower? {
   return when (view) {
     ViewId.mainMenu -> menuFlower(textResources, mainMenu(gameIsActive(world)))
-
+    ViewId.merchant -> merchantView(textResources)
     ViewId.victory -> menuFlower(textResources, victoryMenu())
-
     ViewId.none -> null
   }
 }

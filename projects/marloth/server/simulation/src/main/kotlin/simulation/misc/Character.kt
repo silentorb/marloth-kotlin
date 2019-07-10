@@ -41,7 +41,8 @@ data class Character(
     val facingRotation: Vector3 = Vector3(),
     val lookVelocity: Vector2 = Vector2(),
     val equippedItem: Id? = null,
-    val damageMultipliers: DamageMultipliers = mapOf()
+    val damageMultipliers: DamageMultipliers = mapOf(),
+    val interactingWith: Id? = null
 ) {
   val facingQuaternion: Quaternion
     get() = Quaternion()
@@ -95,7 +96,15 @@ fun aggregateHealthModifiers(character: Character, damages: List<Damage>): Int {
   return -damage
 }
 
-fun updateCharacter(world: World, id: Id, character: Character, commands: Commands, damages: List<Damage>,
+fun updateInteractingWith(deck: Deck, character: Id, commands: Commands, interactingWith: Id?): Id? =
+    if (commands.any { it.type == CommandType.interactPrimary })
+      getVisibleInteractable(deck, character)?.key
+    else if (commands.any { it.type == CommandType.stopInteracting })
+      null
+    else
+      interactingWith
+
+fun updateCharacter(deck: Deck, id: Id, character: Character, commands: Commands, damages: List<Damage>,
                     activatedAbilities: List<Ability>, delta: Float): Character {
   val lookForce = characterLookForce(character, commands)
 
@@ -112,16 +121,17 @@ fun updateCharacter(world: World, id: Id, character: Character, commands: Comman
             isAlive = isAlive,
             health = character.health.copy(value = health),
             abilities = abilities,
-            equippedItem = updateEquippedItem(world.deck, id, character, commands)
+            equippedItem = updateEquippedItem(deck, id, character, commands),
+            interactingWith = updateInteractingWith(deck, id, commands, c.interactingWith)
         )
       },
       { c ->
         if (justDied) {
           if (damages.any()) {
             val hit = damages.first()
-            val killerBody = world.bodyTable[hit.source]
+            val killerBody = deck.bodies[hit.source]
             if (killerBody != null) {
-              val facingVector = (killerBody.position - world.bodyTable[id]!!.position).normalize()
+              val facingVector = (killerBody.position - deck.bodies[id]!!.position).normalize()
               val lookAtAngle = getLookAtAngle(facingVector)
               c.copy(
                   lookVelocity = Vector2(),
@@ -145,14 +155,14 @@ fun updateCharacter(world: World, id: Id, character: Character, commands: Comman
   ))
 }
 
-fun updateCharacter(world: World, commands: Commands, activatedAbilities: List<ActivatedAbility>,
+fun updateCharacter(deck: Deck, commands: Commands, activatedAbilities: List<ActivatedAbility>,
                     damageEvents: List<DamageEvent>): (Id, Character) -> Character = { id, character ->
   val delta = simulationDelta
   val abilities = activatedAbilities.filter { it.character == id }
       .map { it.ability }
 
   val characterCommands = pipe(commands, listOf(
-      { c -> if (world.deck.characters[id]!!.isAlive) c else listOf() },
+      { c -> if (deck.characters[id]!!.isAlive) c else listOf() },
       { c -> c.filter { it.target == id } }
   ))
 
@@ -160,7 +170,7 @@ fun updateCharacter(world: World, commands: Commands, activatedAbilities: List<A
       .filter { it.target == id }
       .map { it.damage }
 
-  updateCharacter(world, id, character, characterCommands, damages, abilities, delta)
+  updateCharacter(deck, id, character, characterCommands, damages, abilities, delta)
 }
 
 fun characterMovementFp(commands: Commands, character: Character, id: Id, body: Body): MovementForce? {
@@ -184,15 +194,15 @@ fun allCharacterOrientations(world: World): List<AbsoluteOrientationForce> =
           .rotateZ(it.value.facingRotation.z))
     }
 
-fun newCharacter(id: Id, nextId: IdSource, definition: CharacterDefinition, faction: Id, position: Vector3, node: Id,
-                 player: Player? = null, spirit: Spirit? = null): IdHand {
+fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id, position: Vector3,
+                 player: Player? = null, spirit: Spirit? = null): Hand {
   val abilities = definition.abilities.map {
     Ability(
         id = nextId(),
         definition = it
     )
   }
-  return IdHand(id, Hand(
+  return Hand(
       ambientAudioEmitter = if (definition.ambientSounds.any())
         AmbientAudioEmitter(
             delay = position.length() % 2.0
@@ -202,8 +212,7 @@ fun newCharacter(id: Id, nextId: IdSource, definition: CharacterDefinition, fact
       body = Body(
           position = position,
           orientation = Quaternion(),
-          velocity = Vector3(),
-          node = node
+          velocity = Vector3()
       ),
       character = Character(
           definition = definition,
@@ -234,5 +243,5 @@ fun newCharacter(id: Id, nextId: IdSource, definition: CharacterDefinition, fact
       ),
       player = player,
       spirit = spirit
-  ))
+  )
 }

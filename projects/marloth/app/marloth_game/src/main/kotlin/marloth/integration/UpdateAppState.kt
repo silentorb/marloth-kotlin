@@ -11,19 +11,24 @@ import marloth.front.GameApp
 import marloth.front.RenderHook
 import mythic.bloom.next.Box
 import mythic.bloom.toAbsoluteBounds
+import mythic.ent.Id
 import mythic.ent.pipe
 import mythic.platforming.WindowInfo
 import mythic.quartz.updateTimestep
 import org.joml.Vector2i
 import persistence.Database
 import persistence.createVictory
+import simulation.main.Deck
+import simulation.main.World
+import simulation.main.simulationDelta
+import simulation.main.updateWorld
+import simulation.misc.Command
+import simulation.misc.CommandType
+import simulation.misc.Victory
+import simulation.misc.gameStrokes
 import simulation.physics.newBulletState
 import simulation.physics.releaseBulletState
 import simulation.physics.syncNewBodies
-import simulation.main.World
-import simulation.main.simulationDelta
-import simulation.misc.Victory
-import simulation.misc.gameStrokes
 
 fun updateSimulationDatabase(db: Database, next: World, previous: World) {
   val nextGameOver = next.gameOver
@@ -35,22 +40,53 @@ fun updateSimulationDatabase(db: Database, next: World, previous: World) {
   }
 }
 
-fun updateClientFromWorld(worlds: List<World>, client: ClientState): ClientState {
-  return if (client.view == ViewId.none && worlds.last().gameOver != null)
-    client.copy(
-        view = ViewId.victory
-    )
-  else
-    client
+fun getPlayerInteractingWith(deck: Deck): Id? =
+    deck.characters[deck.players.keys.first()]!!.interactingWith
+
+fun updateClientFromWorld(worlds: List<World>, commands: List<Command>): (ClientState) -> ClientState =
+    { client ->
+      if (client.view != ViewId.none)
+        client
+      else {
+        val world = worlds.last()
+        val deck = world.deck
+        val view = when {
+
+          world.gameOver != null -> ViewId.victory
+
+          getPlayerInteractingWith(deck) != null -> ViewId.merchant
+
+          else -> null
+        }
+
+        if (view != null)
+          syncBagWithCurrentView(client.copy(
+              view = view
+          ))
+        else
+          client
+      }
+    }
+
+fun getGameCommands(state: AppState): List<Command> {
+  val getBinding = getBinding(state.client.input, state.client.input.gameInputProfiles)
+  return mapGameCommands(mapEventsToCommands(state.client.input.deviceStates, gameStrokes, getBinding))
 }
 
-fun updateWorld(app: GameApp, state: AppState): List<World> {
-  val getBinding = getBinding(state.client.input, state.client.input.gameInputProfiles)
-  val commands = mapGameCommands(mapEventsToCommands(state.client.input.deviceStates, gameStrokes, getBinding))
-  val worlds = state.worlds
+fun updateAppWorld(app: GameApp, appState: AppState, commands: List<Command>): List<World> {
+  val worlds = appState.worlds
   val world = worlds.last()
-  val nextWorld = simulation.main.updateWorld(app.bulletState, app.client.renderer.animationDurations, commands,
-      templates, simulationDelta)(world)
+  val gameCommands = if (appState.client.view == ViewId.none)
+    if (getPlayerInteractingWith(world.deck) != null)
+      listOf(Command(type = CommandType.stopInteracting, target = 1))
+    else
+      commands
+  else
+    listOf()
+
+  val animationDurations = app.client.renderer.animationDurations
+  val nextWorld =
+      updateWorld(app.bulletState, animationDurations, gameCommands, templates, simulationDelta)(world)
   updateSimulationDatabase(app.db, nextWorld, world)
   return worlds
       .plus(nextWorld)
@@ -67,24 +103,25 @@ fun restartWorld(app: GameApp, newWorld: () -> World): List<World> {
   return listOf(world)
 }
 
-fun updateFixedInterval(app: GameApp, box: Box, newWorld: () -> World): (AppState) -> AppState = { state ->
+fun updateFixedInterval(app: GameApp, box: Box, newWorld: () -> World): (AppState) -> AppState = { appState ->
   app.platform.process.pollEvents()
-  val nextClientState = pipe(state.client, listOf(
+  val nextClientState = pipe(appState.client, listOf(
       updateClientInput(app.client),
-      updateClient(app.client, state.players, box),
-      updateAppStateAudio(app.client, state.worlds)
+      updateClient(app.client, appState.players, box),
+      updateAppStateAudio(app.client, appState.worlds)
   ))
-  val newAppState = state.copy(
+  val newAppState = appState.copy(
       client = nextClientState
   )
+  val commands = getGameCommands(newAppState)
   val worlds = when {
     nextClientState.commands.any { it.type == GuiCommandType.newGame } -> restartWorld(app, newWorld)
-    gameIsActive(state) -> updateWorld(app, newAppState)
-    else -> state.worlds.takeLast(1)
+    gameIsActive(appState) -> updateAppWorld(app, newAppState, commands)
+    else -> appState.worlds.takeLast(1)
   }
 
-  state.copy(
-      client = updateClientFromWorld(worlds, nextClientState),
+  appState.copy(
+      client = updateClientFromWorld(worlds, commands)(nextClientState),
       worlds = worlds
   )
 }
@@ -99,7 +136,7 @@ data class GameHooks(
 fun layoutGui(app: GameApp, appState: AppState, windowInfo: WindowInfo): Box {
   val world = appState.worlds.lastOrNull()
   val hudData = if (world != null)
-    gatherHudData(world)
+    gatherHudData(world.deck, appState.client.view)
   else
     null
 

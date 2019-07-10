@@ -36,6 +36,14 @@ class Creatures {
           Sounds.hogAmbient03
       )
   )
+
+  val merchant = CharacterDefinition(
+      health = 100,
+      abilities = listOf(),
+      depictionType = DepictionType.child,
+      maxSpeed = 2f,
+      deathSound = Sounds.girlScream
+  )
 }
 
 val creatures = Creatures()

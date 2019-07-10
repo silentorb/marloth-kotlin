@@ -95,7 +95,8 @@ fun renderElementGroup(gameRenderer: GameSceneRenderer, group: ElementGroup) {
       for (primitive in mesh.primitives) {
         val transform = getElementTransform(element, primitive, transforms)
         val materal = element.material ?: primitive.material
-        renderElement(gameRenderer.renderer, primitive, materal, transform, armature != null)
+        val isAnimated = armature != null && primitive.isAnimated
+        renderElement(gameRenderer.renderer, primitive, materal, transform, isAnimated)
       }
     }
   }

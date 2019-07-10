@@ -27,6 +27,7 @@ enum class CommandType {
 
   interactPrimary,
   interactSecondary,
+  stopInteracting, // Normally triggered by GUI events and does not need to be bound to device buttons
 
   jump,
   attack,
@@ -51,5 +52,6 @@ val gameStrokes = setOf(
     CommandType.equipSlot2,
     CommandType.equipSlot3,
     CommandType.switchView,
-    CommandType.joinGame
+    CommandType.joinGame,
+    CommandType.interactPrimary
 )

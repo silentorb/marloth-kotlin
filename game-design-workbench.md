@@ -4,9 +4,9 @@
 
 ### Genre
 
-If I had to pick a single genre for Marloth, I'd have to say it would be RPG, and I'm kind of surprised by that.  Half of my inspirations have been non-RPGs, but those inspirations have primarily influenced setting, visual-style, and basic 3d mechanics.  In terms of gameplay, my primary influences have all been RPGs.  Part of the reason I have tried to avoid RPGs is because how they sometimes tend to be introverted when the focus on single character growth, but I love single character growth.  It's one of my favorite parts about games.  Part of why I love it so much is because it's personal.  I am far more interested in the intrinsic abilities of a character than their equipment.
+If I had to pick a single genre for Marloth, I'd have to say it would be RPG, and I'm kind of surprised by that.  Half of my inspirations have been non-RPGs, but those inspirations have primarily influenced setting, visual-style, and basic 3d mechanics.  In terms of gameplay, my primary influences have all been RPGs.  Part of the reason I have tried to avoid RPGs is because how they tend to be introverted in the way they focus on single character growth, but I am introverted, and I love single character growth.  It's one of my favorite parts about games.  Part of why I love it so much is because it's personal.  I am far more interested in the intrinsic abilities of a character than their equipment.
 
-I'd also love to have as much strategy and simulation in this game as possible, but at the end of the day, RPGs have been far more staples than those other genres.  I need to think more in terms of staples.  I don't want to create a novelty game that is more creative than practical.
+I'd also love to have as much strategy and simulation in this game as possible, but at the end of the day, RPGs have been far more staples than those other genres.  I need to think more in terms of staples.  I don't want to create a novelty game that is more original than practical.
 
 ### Favorite RPG Games
 
@@ -14,24 +14,23 @@ I'd also love to have as much strategy and simulation in this game as possible, 
 * Tales of Maj'Eyal
 * The Binding of Isaac
 * Neverwinter Nights
-* Diablo II
 * Grim Dawn
 
 ### Character Growth
 
-My single favorite part of games is the screen where you select new abilities when you level up.  It's the part of the game I've always felt like every RPG I've ever played has downplayed.  I've always wanted to play an RPG that was designed to make you regularly visiting that screen without increasing grind.
+My single favorite part of games is the screen where you select new abilities when you level up.  It's the part of the game I've always felt I don't see enough of in an RPG.  I've always wanted to play an RPG that was designed to make you regularly visiting that screen without increasing grind.
 
 ### UI
 
 For at least the past decade somewhere somehow I got this idea that games need to be as single view as possible and maximize that single view.  I think my main concerns have been:
 
 * Immersion - The most immersive games only use one view for gameplay
-  * Half life is famous for not even having loading screens.
+  * Half-Life is famous for not having loading screens.
 * Focus - I'm impressed by games that can stretch a single UI very far and do everything with it.
-  * Example: Quake removing the need for a button to interact with buttons, opting instead for buttons that are pushed or shot.
+  * Example: Quake removing the need for a key press to interact with the environment, opting instead for doors that automatically open when you are nearby and wall buttons that can be pushed or shot.
 * Minigames - I don't like minigames and they tend to be the extreme use of different UIs
 
-I'm done with that now.  I want this game to be immersive where its reasonable but am no longer interested in forcing the issue.  A one-size-fits all UI is a very limiting.  Use the right tool for each job.
+I'm done with those concerns.  I want this game to be immersive where its reasonable but am no longer interested in forcing the issue.  A one-size-fits all UI is a very limiting.  Use the right tool for each job.
 
 The main reason I don't like minigames is because they minimize relationship across components, and I love it when things are deeply relational.  Each minigame has little influence on its siblings. At one point I was throwing around ideas for a game that had deeply relational minigames but that is challenging and not a natural, obvious minigame structure.
 
@@ -70,3 +69,6 @@ Both Tales of Maj'Eyal and Dark Souls have tactics and strategy but the differen
 
 The one exception to TOME is on the harder difficulties players sometimes use completely different equipment for different encounters.  This isn't needed for the normal or nightmare difficulties.  It's also noted that at that point while different loadouts are important, the game wasn't really designed for that and doing so is a little bit of a tedious hack.
 
+### Information Gathering
+
+To have strategy, the player must have some idea of what lies ahead.

@@ -5,6 +5,7 @@ enum class Text {
   continueGame,
   newGame,
   open,
+  talk,
   quit,
   victory
 }

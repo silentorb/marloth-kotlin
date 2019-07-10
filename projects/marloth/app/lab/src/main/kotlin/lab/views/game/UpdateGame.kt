@@ -44,7 +44,7 @@ private var spiritMovementTallies = mapOf<Id, Pair<Float, Vector3>>()
 //  val world = app.world
 //  return if (world != null) {
 //    val characterCommands = mapGameCommands(world.players, commands)
-//    updateWorld(app.client.renderer.animationDurations, world.deck, world, characterCommands, delta)
+//    updateAppWorld(app.client.renderer.animationDurations, world.deck, world, characterCommands, delta)
 //  } else
 //    null
 ////  trackSpiritMovement(app.world, delta)

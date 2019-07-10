@@ -3,18 +3,19 @@ package generation
 import generation.structure.wallHeight
 import marloth.definition.BuffId
 import marloth.definition.ItemId
-import simulation.intellect.Pursuit
-import simulation.intellect.Spirit
+import marloth.definition.creatures
 import marloth.definition.templates.newBuffCloud
+import marloth.definition.templates.newMerchant
 import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.ent.newIdSource
 import mythic.spatial.Vector3
-import simulation.physics.voidNode
 import randomly.Dice
-import marloth.definition.creatures
+import simulation.intellect.Pursuit
+import simulation.intellect.Spirit
 import simulation.main.*
 import simulation.misc.*
+import simulation.physics.voidNode
 
 data class CharacterTemplate(
     val faction: Id,
@@ -26,17 +27,15 @@ fun placeCharacter(realm: Realm, template: CharacterTemplate, nextId: IdSource, 
 //  val wall = dice.getItem(node.walls)
 //  val position = getVector3Center(node.position, realm.mesh.faces[wall]!!.edges[0].first)
   val id = nextId()
-  return newCharacter(
-      id = id,
+  return IdHand(id, newCharacter(
       nextId = nextId,
       faction = template.faction,
       definition = template.definition,
       position = position,
-      node = node,
       spirit = Spirit(
           pursuit = Pursuit()
       )
-  )
+  ))
 }
 
 fun placeCharacters(realm: Realm, dice: Dice, scale: Float): (IdSource) -> List<IdHand> {
@@ -150,19 +149,17 @@ val isValidLampWall = { info: ConnectionFace ->
 fun newPlayer(nextId: IdSource, playerNode: Node): Deck {
   val characterId = nextId()
 
-  val characterHand = newCharacter(
-      id = characterId,
+  val characterHand = IdHand(characterId, newCharacter(
       nextId = nextId,
       faction = 1,
       definition = creatures.player,
       position = playerNode.position + Vector3(0f, 0f, 10f),
-      node = playerNode.id,
       player = Player(
           playerId = 1,
           name = "Unknown Hero",
           viewMode = ViewMode.firstPerson
       )
-  )
+  ))
 
   val candleId = nextId()
 
@@ -202,14 +199,13 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
   val playerNode = realm.nodeTable.values.first { it.biome == BiomeId.home }
   val scale = calculateWorldScale(input.boundary.dimensions)
   val nextId = newIdSource(1)
-  val particleNode = realm.nodeTable[6L]!!
-  val baseColor = Vector3(0.5f, 1f, 0.5f)
   val deck = Deck()
       .plus(newPlayer(nextId, playerNode))
       .plus(allHandsOnDeck(listOf(
-          placeBuffCloud(realm.nodeTable[6L]!!, BuffId.burning),
+          placeBuffCloud(realm.nodeTable[12L]!!, BuffId.burning),
           placeBuffCloud(realm.nodeTable[7L]!!, BuffId.chilled),
-          placeBuffCloud(realm.nodeTable[11L]!!, BuffId.poisoned)
+          placeBuffCloud(realm.nodeTable[11L]!!, BuffId.poisoned),
+          newMerchant(nextId, realm.nodeTable[6L]!!.position)
       ), nextId))
 //      .plus(placeWallLamps(realm, nextId, input.dice, scale))
 //      .plus(placeDoors(realm, nextId))

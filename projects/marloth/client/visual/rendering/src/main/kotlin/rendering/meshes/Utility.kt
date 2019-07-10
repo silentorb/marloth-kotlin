@@ -70,7 +70,8 @@ data class Primitive(
     val material: Material,
     val transform: Matrix? = null,
     val parentBone: Int? = null,
-    val name: String = ""
+    val name: String = "",
+    val isAnimated: Boolean = mesh.vertexSchema.attributes.any { it.name == "weights" }
 )
 
 typealias Primitives = List<Primitive>

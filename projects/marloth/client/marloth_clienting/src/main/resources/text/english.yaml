@@ -2,5 +2,6 @@ close: Close
 continueGame: Continue
 newGame: New Game
 open: Open
+talk: Talk
 quit: Quit
 victory: You Won!

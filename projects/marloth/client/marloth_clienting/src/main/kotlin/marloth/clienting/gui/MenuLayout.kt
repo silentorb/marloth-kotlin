@@ -35,7 +35,7 @@ fun menuFocusIndexLogic(menu: Menu): LogicModule = { bundle ->
   mapOf(menuFocusIndexKey to newIndex)
 }
 
-fun menuNavigationLogic(menu: Menu): LogicModule = { bundle ->
+val menuNavigationLogic: LogicModule = { bundle ->
   val events = bundle.state.input.current.events
   val bag = bundle.state.bag
   val view = currentView(bag)
@@ -86,7 +86,7 @@ fun menuFocusIndex(bag: StateBag): Int =
     (bag[menuFocusIndexKey] ?: 0) as Int
 
 fun menuLogic(menu: Menu): LogicModule =
-    menuFocusIndexLogic(menu) combineLogic menuNavigationLogic(menu) combineLogic menuCommandLogic(menu)
+    menuFocusIndexLogic(menu) combineLogic menuNavigationLogic combineLogic menuCommandLogic(menu)
 
 //fun menuFlowerOld(textResources: TextResources, menu: Menu): FlowerOld = { seed ->
 //  val buttonHeight = 50

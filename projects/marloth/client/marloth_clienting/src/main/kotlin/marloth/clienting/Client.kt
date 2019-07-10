@@ -27,6 +27,7 @@ import rendering.Renderer
 import rendering.shading.LightingConfig
 import scenery.Screen
 import simulation.main.Deck
+import simulation.misc.Interactable
 
 val maxPlayerCount = 4
 
@@ -38,7 +39,7 @@ data class ClientState(
     val commands: List<HaftCommand<GuiCommandType>>
 )
 
-fun isGuiActive(state: ClientState): Boolean = state.view != ViewId.none
+fun isGuiActive(state: ClientState): Boolean = pauseViews.contains(state.view)
 
 fun newClientState(platform: Platform, inputConfig: GameInputConfig, audioConfig: AudioConfig) =
     ClientState(
@@ -78,24 +79,35 @@ fun updateMousePointerVisibility(platform: Platform) {
   platform.input.isMouseVisible(!windowHasFocus)
 }
 
+fun menuChangeView(commands: UserCommands): (ClientState) -> ClientState = { state ->
+  val c = commands.map { it.type }
+  val view = currentView(state.bloomState.bag)
+  val newView = when {
+    c.contains(GuiCommandType.menu) -> {
+      if (view == ViewId.mainMenu)
+        ViewId.none
+      else if (view == ViewId.none)
+        ViewId.mainMenu
+      else
+        view
+    }
+    else -> null
+  }
+  if (newView != null) {
+    state.copy(
+        view = newView
+    )
+  } else
+    state
+}
+
 fun applyClientCommands(client: Client, commands: UserCommands): (ClientState) -> ClientState = { state ->
   val c = commands.map { it.type }
   if (c.contains(GuiCommandType.quit)) {
     client.platform.process.close()
   }
 
-  if (c.contains(GuiCommandType.menu)) {
-    val view = currentView(state.bloomState.bag)
-    val newView = if (view == ViewId.mainMenu)
-      ViewId.none
-    else
-      ViewId.mainMenu
-
-    state.copy(
-        view = newView
-    )
-  } else
-    state
+  menuChangeView(commands)(state)
 }
 
 fun <T> getBinding(inputState: InputState, inputProfiles: Map<BloomId, InputProfile<T>>): BindingSource<T> = { event ->
@@ -127,6 +139,14 @@ fun updateClientInput(client: Client): (ClientState) -> ClientState = { state ->
   )
 }
 
+val syncBagWithCurrentView: (ClientState) -> ClientState = { state ->
+  state.copy(
+      bloomState = state.bloomState.copy(
+          bag = state.bloomState.bag.plus(currentViewKey to state.view)
+      )
+  )
+}
+
 fun updateClient(client: Client, players: List<Int>, box: Box): (ClientState) -> ClientState = { clientState ->
   //  updateMousePointerVisibility(client.platform)
   val bindingContext = bindingContext(clientState)
@@ -153,13 +173,7 @@ fun updateClient(client: Client, players: List<Int>, box: Box): (ClientState) ->
       },
       // This needs to happen after applying updateBloomState to override flower state settings
       applyClientCommands(client, allCommands),
-      { state ->
-        state.copy(
-            bloomState = state.bloomState.copy(
-                bag = state.bloomState.bag.plus(currentViewKey to state.view)
-            )
-        )
-      }
+      syncBagWithCurrentView
   ))
 
   newClientState
