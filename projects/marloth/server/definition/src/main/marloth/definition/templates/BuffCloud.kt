@@ -1,7 +1,7 @@
 package marloth.definition.templates
 
-import marloth.definition.BuffId
-import marloth.definition.TextureId
+import scenery.enums.BuffId
+import scenery.enums.TextureId
 import simulation.evention.Trigger
 import mythic.breeze.AnimationChannel
 import mythic.breeze.Keyframe

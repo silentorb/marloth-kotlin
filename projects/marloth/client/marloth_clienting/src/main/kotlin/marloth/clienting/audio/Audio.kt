@@ -11,7 +11,7 @@ import mythic.ent.newIdSource
 import mythic.ent.pipe
 import mythic.platforming.PlatformAudio
 import mythic.spatial.Vector3
-import scenery.Sounds
+import scenery.enums.Sounds
 import simulation.main.World
 import java.nio.ShortBuffer
 

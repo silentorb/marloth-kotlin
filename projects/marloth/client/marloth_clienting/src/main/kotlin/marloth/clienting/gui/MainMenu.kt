@@ -1,10 +1,10 @@
 package marloth.clienting.gui
 
 import marloth.clienting.input.GuiCommandType
-import scenery.Text
+import scenery.enums.Text
 
 fun mainMenu(isGameActive: Boolean): Menu = listOfNotNull(
-    if (isGameActive) MenuOption(GuiCommandType.menuBack, Text.continueGame) else null,
-    MenuOption(GuiCommandType.newGame, Text.newGame),
-    MenuOption(GuiCommandType.quit, Text.quit)
+    if (isGameActive) MenuOption(GuiCommandType.menuBack, Text.menu_continueGame) else null,
+    MenuOption(GuiCommandType.newGame, Text.menu_newGame),
+    MenuOption(GuiCommandType.quit, Text.menu_quit)
 )

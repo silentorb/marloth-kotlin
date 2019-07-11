@@ -3,7 +3,7 @@ package simulation.entities
 import mythic.ent.Id
 import mythic.ent.Table
 import randomly.Dice
-import scenery.Sounds
+import scenery.enums.Sounds
 import simulation.main.Deck
 import simulation.main.simulationDelta
 

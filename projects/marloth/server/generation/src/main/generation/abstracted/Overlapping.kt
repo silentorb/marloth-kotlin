@@ -1,8 +1,8 @@
 package generation.abstracted
 
-import generation.divide
-import generation.getNodeDistance
-import generation.overlaps2D
+import generation.misc.divide
+import generation.misc.getNodeDistance
+import generation.misc.overlaps2D
 import simulation.misc.FaceType
 import simulation.misc.Node
 import simulation.misc.NodeTable

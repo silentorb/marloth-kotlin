@@ -1,14 +1,5 @@
 package generation.structure
 
-import generation.BiomeId
-import mythic.ent.Id
-import mythic.ent.entityMap
-import mythic.sculpting.ImmutableEdgeReference
-import mythic.sculpting.ImmutableFace
-import mythic.spatial.Vector3
-import simulation.physics.voidNodeId
-import randomly.Dice
-import simulation.misc.*
 //
 //enum class VerticalDirection {
 //  down,

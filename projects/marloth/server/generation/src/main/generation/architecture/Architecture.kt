@@ -2,13 +2,13 @@ package generation.architecture
 
 import generation.abstracted.Graph
 import generation.abstracted.nodeNeighbors
-import generation.biomeInfoMap
-import generation.getNodeDistance
+import generation.misc.biomeInfoMap
+import generation.misc.getNodeDistance
 import mythic.ent.Id
 import mythic.spatial.*
 import simulation.physics.getLookAtAngle
 import randomly.Dice
-import marloth.definition.MeshId
+import scenery.enums.MeshId
 import simulation.main.Hand
 import simulation.main.WorldTransform
 import simulation.main.addHands

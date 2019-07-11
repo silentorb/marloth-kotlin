@@ -69,11 +69,11 @@ fun getGameCommands(state: AppState): List<Command> {
   return mapGameCommands(mapEventsToCommands(state.client.input.deviceStates, gameStrokes, getBinding))
 }
 
-fun updateAppWorld(app: GameApp, appState: AppState, commands: List<Command>): List<World> {
+fun updateAppWorld(app: GameApp, previousAppState: AppState, appState: AppState, commands: List<Command>): List<World> {
   val worlds = appState.worlds
   val world = worlds.last()
   val gameCommands = if (appState.client.view == ViewId.none)
-    if (getPlayerInteractingWith(world.deck) != null)
+    if (previousAppState.client.view == ViewId.merchant)
       listOf(Command(type = CommandType.stopInteracting, target = 1))
     else
       commands
@@ -112,7 +112,7 @@ fun updateFixedInterval(app: GameApp, box: Box, newWorld: () -> World): (AppStat
   val commands = getGameCommands(newAppState)
   val worlds = when {
     nextClientState.commands.any { it.type == GuiCommandType.newGame } -> restartWorld(app, newWorld)
-    gameIsActive(appState) -> updateAppWorld(app, newAppState, commands)
+    gameIsActive(appState) -> updateAppWorld(app, appState, newAppState, commands)
     else -> appState.worlds.takeLast(1)
   }
 

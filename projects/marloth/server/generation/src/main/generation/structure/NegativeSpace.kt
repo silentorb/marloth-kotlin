@@ -1,12 +1,5 @@
 package generation.structure
 
-import generation.BiomeId
-import mythic.ent.*
-import mythic.sculpting.*
-import mythic.spatial.*
-import simulation.physics.voidNodeId
-import randomly.Dice
-import simulation.misc.*
 //
 //fun isIncompleteWall(faces: ConnectionTable): (Id) -> Boolean = { id ->
 //  val info = faces[id]!!

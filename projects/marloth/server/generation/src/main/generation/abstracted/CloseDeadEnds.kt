@@ -1,7 +1,7 @@
 package generation.abstracted
 
-import generation.connectionOverlapsNeighborNodes
-import generation.getNodeDistance
+import generation.misc.connectionOverlapsNeighborNodes
+import generation.misc.getNodeDistance
 import generation.structure.doorwayLength
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3

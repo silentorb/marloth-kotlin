@@ -1,4 +1,4 @@
-package scenery
+package scenery.enums
 
 enum class Sounds {
   girlScream,

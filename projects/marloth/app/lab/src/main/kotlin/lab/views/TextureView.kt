@@ -7,12 +7,10 @@ import lab.views.shared.SelectionResult
 import lab.views.shared.drawSelectableEnumList
 import mythic.bloom.*
 import mythic.drawing.Canvas
-import mythic.spatial.Vector2
-import mythic.spatial.toVector2
 import mythic.spatial.toVector2i
 import org.joml.Vector2i
 import rendering.Renderer
-import marloth.definition.TextureId
+import scenery.enums.TextureId
 
 data class TextureViewConfig(
     var texture: TextureId = TextureId.checkersBlackWhite

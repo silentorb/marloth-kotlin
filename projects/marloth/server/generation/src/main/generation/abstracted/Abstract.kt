@@ -1,7 +1,7 @@
 package generation.abstracted
 
-import generation.*
 import generation.structure.getDoorFramePoints
+import generation.misc.*
 import mythic.ent.Id
 import mythic.ent.entityMap
 import mythic.ent.pipe

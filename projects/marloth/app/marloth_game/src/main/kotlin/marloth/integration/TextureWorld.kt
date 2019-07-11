@@ -1,15 +1,5 @@
 package marloth.integration
 
-import mythic.sculpting.ImmutableFace
-import mythic.sculpting.VertexNormalTexture
-import mythic.sculpting.getBounds
-import mythic.spatial.Vector2
-import mythic.spatial.Vector3
-import rendering.texturing.TextureFace
-import marloth.definition.TextureId
-import simulation.*
-import kotlin.math.roundToInt
-
 //fun createTexturedHorizontalSurface(face: ImmutableFace, texture: TextureId): TextureFace {
 //  val vertices = face.unorderedVertices
 //  val bounds = getBounds(vertices)

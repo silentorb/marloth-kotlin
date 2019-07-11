@@ -1,4 +1,4 @@
-package generation
+package generation.misc
 
 import generation.abstracted.tunnelRadius
 import mythic.spatial.*

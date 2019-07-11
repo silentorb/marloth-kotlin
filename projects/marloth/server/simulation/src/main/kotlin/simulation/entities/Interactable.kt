@@ -2,7 +2,7 @@ package simulation.entities
 
 import mythic.ent.Id
 import mythic.spatial.Vector3
-import scenery.Text
+import scenery.enums.Text
 import simulation.main.Deck
 
 data class WidgetCommand(

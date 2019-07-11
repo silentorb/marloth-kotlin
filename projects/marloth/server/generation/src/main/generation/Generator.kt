@@ -2,8 +2,7 @@ package generation
 
 import generation.abstracted.Graph
 import generation.abstracted.generateAbstract
-import generation.structure.idSourceFromNodes
-import mythic.ent.newIdSource
+import generation.misc.newBiomeGrid
 import mythic.ent.pipe
 import mythic.spatial.Vector3
 import randomly.Dice

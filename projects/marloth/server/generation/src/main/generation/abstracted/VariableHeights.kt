@@ -1,6 +1,6 @@
 package generation.abstracted
 
-import generation.getNodeDistance
+import generation.misc.getNodeDistance
 import mythic.ent.firstSortedBy
 import randomly.Dice
 

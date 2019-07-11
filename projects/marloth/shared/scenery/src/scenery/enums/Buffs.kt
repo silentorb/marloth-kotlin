@@ -1,6 +1,4 @@
-package marloth.definition
-
-import mythic.ent.Id
+package scenery.enums
 
 enum class BuffId {
   burning,

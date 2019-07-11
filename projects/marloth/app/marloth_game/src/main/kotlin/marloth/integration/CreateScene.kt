@@ -1,7 +1,7 @@
 package marloth.integration
 
-import marloth.definition.ItemId
-import marloth.definition.MeshId
+import scenery.enums.ItemId
+import scenery.enums.MeshId
 import mythic.ent.Id
 import mythic.ent.Table
 import mythic.spatial.*

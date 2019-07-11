@@ -4,7 +4,7 @@ import marloth.clienting.ClientState
 import mythic.aura.Sound
 import mythic.ent.IdSource
 import mythic.ent.Table
-import scenery.Sounds
+import scenery.enums.Sounds
 
 fun newClientSounds(nextId: IdSource, previous: ClientState, next: ClientState): Table<Sound> =
     listOf<Sounds>()

@@ -1,6 +1,6 @@
 package generation.abstracted
 
-import generation.getCenter
+import generation.misc.getCenter
 import generation.structure.idSourceFromNodes
 import mythic.ent.entityMap
 import mythic.spatial.Vector3

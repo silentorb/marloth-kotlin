@@ -1,11 +1,9 @@
 package generation.structure
 
-import generation.*
 import generation.abstracted.*
+import generation.misc.*
 import mythic.ent.Id
 import mythic.ent.IdSource
-import mythic.ent.entityMap
-import mythic.ent.pipe
 import mythic.sculpting.*
 import mythic.spatial.*
 import simulation.physics.voidNodeId

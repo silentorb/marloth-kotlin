@@ -1,7 +1,7 @@
-package generation
+package generation.misc
 
-import marloth.definition.MeshId
-import marloth.definition.TextureId
+import scenery.enums.MeshId
+import scenery.enums.TextureId
 
 enum class BiomeId {
   checkers,

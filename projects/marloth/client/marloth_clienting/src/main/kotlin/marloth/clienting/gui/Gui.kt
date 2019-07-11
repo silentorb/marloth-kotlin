@@ -17,7 +17,7 @@ import mythic.glowing.globalState
 import mythic.platforming.WindowInfo
 import mythic.spatial.Vector4
 import org.joml.Vector2i
-import scenery.Text
+import scenery.enums.Text
 import simulation.main.World
 
 typealias TextResources = Map<Text, String>
@@ -82,7 +82,7 @@ fun haftToBloom(commands: HaftCommands<GuiCommandType>): List<BloomEvent> =
     }
 
 fun victoryMenu(): Menu = listOfNotNull(
-    MenuOption(GuiCommandType.menu, Text.victory)
+    MenuOption(GuiCommandType.menu, Text.message_victory)
 )
 
 fun viewSelect(textResources: TextResources, world: World?, view: ViewId): Flower? {

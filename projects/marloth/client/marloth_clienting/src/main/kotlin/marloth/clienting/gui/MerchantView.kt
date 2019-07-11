@@ -1,10 +1,45 @@
 package marloth.clienting.gui
 
-import mythic.bloom.next.Flower
-import mythic.bloom.next.plus
-import mythic.bloom.verticalPlane
-import simulation.main.Deck
+import mythic.bloom.*
+import mythic.bloom.next.*
+import mythic.drawing.Canvas
+import mythic.drawing.grayTone
+import mythic.spatial.Vector4
+import mythic.spatial.toVector2
+import mythic.spatial.toVector2i
+import mythic.typography.TextConfiguration
+import mythic.typography.calculateTextDimensions
+import mythic.typography.resolveTextStyle
+import org.joml.Vector2i
 import simulation.entities.AttachmentTypeId
+import simulation.main.Deck
+
+fun drawWareButton(state: ButtonState): Depiction = { bounds: Bounds, canvas: Canvas ->
+  drawFill(bounds, canvas, grayTone(0.5f))
+  val style = if (state.hasFocus)
+    Pair(TextStyles.smallBlack, LineStyle(Vector4(1f), 2f))
+  else
+    Pair(TextStyles.smallBlack, LineStyle(Vector4(0f, 0f, 0f, 1f), 1f))
+
+  drawBorder(bounds, canvas, style.second)
+
+  val textConfig = TextConfiguration(state.text, bounds.position.toVector2(), resolveTextStyle(canvas.fonts, style.first))
+  val textDimensions = calculateTextDimensions(textConfig)
+  val position = centeredPosition(bounds, textDimensions.toVector2i())
+  canvas.drawText(position, style.first, state.text)
+}
+
+fun wareFlower(content: String, index: Int): Flower = { seed: Seed ->
+  Box(
+      bounds = Bounds(
+          dimensions = Vector2i(300, 50)
+      ),
+      depiction = drawWareButton(
+          ButtonState(content, menuFocusIndex(seed.bag) == index)
+      ),
+      name = "menu button"
+  )
+}
 
 fun merchantView(textResources: TextResources, deck: Deck): Flower {
   val merchant = getPlayerInteractingWith(deck)!!
@@ -13,11 +48,11 @@ fun merchantView(textResources: TextResources, deck: Deck): Flower {
       .map { (id, _) ->
         val entity = deck.entities[id]!!
         val ware = deck.wares[id]!!
-        menuButton("${entity.type} $${ware.price}", 0)
+        wareFlower("${entity.type} $${ware.price}", 0)
       }
 
-  val menuBox = mythic.bloom.next.div(
-      reverse = mythic.bloom.next.reverseOffset(left = mythic.bloom.centered, top = mythic.bloom.centered) + mythic.bloom.next.shrink,
+  val menuBox = div(
+      reverse = reverseOffset(left = centered, top = centered) + shrink,
       depiction = menuBackground,
       logic = menuNavigationLogic
   )
@@ -25,8 +60,8 @@ fun merchantView(textResources: TextResources, deck: Deck): Flower {
   val gap = 20
 
   return menuBox(
-      (mythic.bloom.next.margin(all = gap))(
-          (mythic.bloom.list(verticalPlane, gap))(buttons)
+      (margin(all = gap))(
+          (list(verticalPlane, gap))(buttons)
       )
   )
 }

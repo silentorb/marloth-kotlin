@@ -1,7 +1,10 @@
-close: Close
-continueGame: Continue
-newGame: New Game
-open: Open
-talk: Talk
-quit: Quit
-victory: You Won!
+id_coldResistance: Cold Resistance
+id_fireResistance: Fire Resistance
+id_poisonResistance: Poison Resistance
+menu_close: Close
+menu_continueGame: Continue
+menu_newGame: New Game
+menu_open: Open
+menu_talk: Talk
+menu_quit: Quit
+mmessage_victory: You Won!

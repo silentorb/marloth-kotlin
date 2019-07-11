@@ -1,13 +1,12 @@
 package generation.structure
 
-import generation.BiomeId
+import generation.misc.BiomeId
 import mythic.ent.Id
 import mythic.sculpting.*
 import mythic.spatial.*
 import simulation.physics.voidNodeId
 import simulation.misc.FaceType
 import mythic.ent.IdSource
-import mythic.ent.entityMap
 import mythic.ent.newIdSource
 import simulation.misc.ConnectionFace
 import simulation.misc.ConnectionTable

@@ -1,4 +1,4 @@
-package generation
+package generation.misc
 
 import mythic.ent.firstSortedBy
 import mythic.spatial.Vector2

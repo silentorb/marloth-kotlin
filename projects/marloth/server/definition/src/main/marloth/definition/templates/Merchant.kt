@@ -1,10 +1,10 @@
 package marloth.definition.templates
 
-import marloth.definition.BuffId
+import scenery.enums.BuffId
 import marloth.definition.creatures
 import mythic.ent.IdSource
 import mythic.spatial.Vector3
-import scenery.Text
+import scenery.enums.Text
 import simulation.entities.*
 import simulation.main.Hand
 import simulation.main.HandAttachment
@@ -26,7 +26,7 @@ fun newMerchant(nextId: IdSource, position: Vector3, wares: List<NewWare>): Hand
   return character.copy(
       interactable = Interactable(
           primaryCommand = WidgetCommand(
-              text = Text.talk
+              text = Text.menu_talk
           )
       ),
       attachments = character.attachments.plus(wares.map { ware ->

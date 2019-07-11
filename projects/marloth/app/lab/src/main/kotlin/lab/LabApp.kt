@@ -69,6 +69,21 @@ data class LabApp(
 
 private var saveIncrement = 0f
 
+val setupDebugState: (AppState) -> AppState = { appState ->
+  val world = appState.worlds.last()
+  val deck = world.deck
+  val character = deck.characters[1L]!!
+  appState.copy(
+      worlds = appState.worlds.dropLast(1).plus(world.copy(
+          deck = deck.copy(
+              characters = deck.characters.plus(Pair(1L, character.copy(
+                  interactingWith = deck.interactables.keys.first()
+              )))
+          )
+      ))
+  )
+}
+
 tailrec fun labLoop(app: LabApp, state: LabState) {
   val gameApp = app.gameApp
   val newAppState = if (app.config.view == Views.game) {
@@ -83,7 +98,8 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
         }
     )
 
-    updateAppState(gameApp, app.newWorld, hooks)(state.app)
+//    updateAppState(gameApp, app.newWorld, hooks)(state.app)
+    pipe(updateAppState(gameApp, app.newWorld, hooks), setupDebugState)(state.app)
   } else {
     gameApp.platform.display.swapBuffers()
     val (timestep, steps) = updateAppTimestep(state.app.timestep)

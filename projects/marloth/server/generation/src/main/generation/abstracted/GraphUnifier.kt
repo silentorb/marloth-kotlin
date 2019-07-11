@@ -1,6 +1,6 @@
 package generation.abstracted
 
-import generation.getNodeDistance
+import generation.misc.getNodeDistance
 import mythic.spatial.Vector3
 import simulation.misc.FaceType
 import simulation.misc.Node

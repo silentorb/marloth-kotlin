@@ -1,8 +1,9 @@
 package generation
 
 import generation.structure.wallHeight
-import marloth.definition.BuffId
-import marloth.definition.ItemId
+import generation.misc.BiomeId
+import scenery.enums.BuffId
+import scenery.enums.ItemId
 import marloth.definition.creatures
 import marloth.definition.templates.defaultWares
 import marloth.definition.templates.newBuffCloud

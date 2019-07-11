@@ -3,8 +3,8 @@ package marloth.clienting.audio
 import mythic.aura.Sound
 import mythic.ent.IdSource
 import mythic.spatial.Vector3
-import scenery.Sounds
-import scenery.soundId
+import scenery.enums.Sounds
+import scenery.enums.soundId
 import simulation.main.World
 import simulation.main.WorldPair
 

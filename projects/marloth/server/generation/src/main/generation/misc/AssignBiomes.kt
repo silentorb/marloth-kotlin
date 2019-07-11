@@ -1,4 +1,4 @@
-package generation
+package generation.misc
 
 import mythic.ent.Id
 import simulation.misc.NodeTable

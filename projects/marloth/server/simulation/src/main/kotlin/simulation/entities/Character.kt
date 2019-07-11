@@ -8,7 +8,7 @@ import org.joml.times
 import scenery.AnimationId
 import scenery.Capsule
 import scenery.ShapeOffset
-import scenery.Sounds
+import scenery.enums.Sounds
 import simulation.combat.DamageMultipliers
 import simulation.evention.DamageEvent
 import simulation.input.*

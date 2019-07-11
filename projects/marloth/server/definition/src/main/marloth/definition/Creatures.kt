@@ -1,6 +1,6 @@
 package marloth.definition
 
-import scenery.Sounds
+import scenery.enums.Sounds
 import simulation.combat.DamageType
 import simulation.entities.CharacterDefinition
 import simulation.entities.DepictionType

@@ -9,7 +9,7 @@ import mythic.spatial.Vector4
 import simulation.physics.CollisionObject
 import simulation.physics.DynamicBody
 import simulation.physics.HingeConstraint
-import scenery.Text
+import scenery.enums.Text
 import simulation.entities.*
 import simulation.main.Hand
 
@@ -32,10 +32,10 @@ class EntityTemplates {
         ),
         interactable = Interactable(
             primaryCommand = WidgetCommand(
-                text = Text.open
+                text = Text.menu_open
             ),
             secondaryCommand = WidgetCommand(
-                text = Text.close
+                text = Text.menu_close
             )
         )
     )
