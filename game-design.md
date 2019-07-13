@@ -58,3 +58,138 @@ One classic case of this is platform games with role playing elements.  The game
 
 ### Fake growth / micro growth
 
+## Items and Abilities
+
+#### Intrinsic differences between Items and Abilities
+
+* Abilities are generally more permanent than items
+* Items are usually stored within a finite collection of inventory and equipment slots
+* Ability acquisition is usually not limited by quantity
+* Abilities are more personal than items
+
+#### Extraneous differences between Items and Abilities
+
+* Items are often acquired through loot and merchants.  Abilities normally aren't
+* Abilities are usually gained through leveling and class-centric ability trees
+* Items are rarely gained through leveling
+* Items are more often tied to cosmetics
+  * This is primarily due to items occupying singular equipment slots, removing most concerns for conflicting cosmetic elements
+
+#### Ability Pros
+
+* When not constrained by leveling, having room for unlimited abilities can be a lot of fun
+
+#### Ability Cons
+
+* When not constrained by leveling, having room for unlimited abilities can cause balance problems
+  * This is sometimes the case with The Binding of Isaac
+    * Occasionally offset by some abilities overriding previous abilities
+      * This mechanic is unpredictable and makes for bad UX
+
+## Leveling
+
+#### Pros
+
+* Provides a high-level metric for comparing characters
+  * An algorithm for rating characters could be used instead
+    * While such an algorithm may be involved to create and maintain, a leveling system can be involved as well
+* Gives an added sense of growth and accomplishment
+* Simplifies balancing character growth
+  * Reduces character growth balance to balancing the rate of leveling, and ensuring that the advantages gained each level are balanced.  This results in two normalized dimensions.
+* Grinding is heavily dependent on leveling
+  * There are other forms of grinding, such as for item drops, though that is usually secondary.
+* Leveling can be used to gate character growth
+  * For example, D&D campaigns sometimes Character levels
+  * Can be used to prevent dilution across dimensions
+    * Most RPGs with a shared stash does this by placing minimum character levels on items
+
+#### Cons
+
+* Most of the sense of accomplishment is a a cheap illusion
+  * Arguably all of this is an illusion, leveling is just a little cheaper
+    * You could easily make a game with many different dimensions of leveling, but this is not generally done because it doesn't increase the fun
+* Makes character growth more rigid and less organic
+* Experience gaining can be too general and result in a disconnect between your actions and your character growth
+  * Experience is a universal currency.  Performing different tasks does not result in different types of experience rewards, just different amounts of experience rewarded.  Quantity is the only distinguishing attribute for experience acquisition.
+    * In other words, experience is not distinct
+    * Separate types of experience can be used, but that generally requires having separate tracks of leveling, which is essentially diluting leveling
+
+Note that normally the pros and cons of leveling are diminished by the accompaniment of additional dimensions.  Rarely is leveling the only dimension of character growth in an RPG.  The most common second dimension is item acquisition.  This is probably the strongest argument against leveling: Leveling is often so diluted by additional dimensions that its impact on the game is minimal, resulting in a feature that adds little value.
+
+## Character Classes
+
+### Major Character Classes
+
+Character classes that have significant aspects of the game directly tied to them
+
+#### Pros
+
+* Helps create distinct personalities and themes
+* Its partitioning of abilities can help with game balance
+  * This can prevent imbalanced ability combinations
+* Allows the player to shape the style of a playthrough up front
+
+#### Cons
+
+* Restricts character design
+  * Character design becomes much more a matter of following templates
+* Frontloads much of character designing
+  * Choosing your character class is the single most defining character design decision 
+  * Choosing an initial class is not reactive
+* Class design options are rarely affected by environment
+  * This does not have to be the case but is the standard
+
+### Minor Character Classes
+
+Character classes that start the game with a few unique abilities that color the rest of the playthrough
+
+#### Pros
+
+* Has none of the weaknesses of major character classes
+
+#### Cons
+
+* Becomes irrelevant later in the game
+* Does not provide much personality or theme
+* Does not prevent imbalanced ability combinations
+
+### Trivial Character Classes
+
+Character classes that are simply starting configurations
+
+#### Pros
+
+* Has none of the weaknesses of major character classes
+* Least amount of development effort
+* Best compromise between class and classless.
+  * In other words, if you're leaning toward classless, this is probably you're best choice
+
+#### Cons
+
+* Becomes irrelevant later in the game
+* Does not provide much personality or theme
+* Does not prevent imbalanced ability combinations
+
+### Multi-Major Character Classes
+
+Allowing the option to select two or three classes.  Usually the availability of adding a class is stair stepped.
+
+#### Pros
+
+* Feels more creative than being required to use a single class
+  * With this method, even when a player chooses to only use one class it still feels more creative because the player is *choosing* to specify.
+* Allows for a wider variety of ability combinations
+* Character class selection becomes both a means to define the style of playthrough up front, but also a way to react to circumstances later in the game
+
+#### Cons
+
+* Allows for more imbalanced ability combinations
+  * This tends to result in slightly more generic abilities to ensure balanced cross-pollination
+  * Grim Dawn minimizes this slightly by providing Ultimate abilities, only one of which can be active at a time
+* Can dilute themes
+  * However, a player can still choose to only use a single class, thus maintaining a purer theme
+
+## Races
+
+Races are a more specialized form of character class.  Usually if an RPG has races, it also has classes, forming a matrix of character creation combinations.
+
