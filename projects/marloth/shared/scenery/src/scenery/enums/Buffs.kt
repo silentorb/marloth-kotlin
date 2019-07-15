@@ -1,10 +1,10 @@
 package scenery.enums
 
-enum class BuffId {
-  burning,
-  chilled,
-  poisoned,
-  receivedBurningMultiplier,
-  receivedChilledMultiplier,
-  receivedPoisonMultiplier,
+enum class ModifierId {
+  damageBurning,
+  damageChilled,
+  damagePoisoned,
+  resistanceCold,
+  resistanceFire,
+  resistancePoison
 }

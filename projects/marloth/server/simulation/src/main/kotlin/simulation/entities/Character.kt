@@ -10,7 +10,7 @@ import scenery.Capsule
 import scenery.ShapeOffset
 import scenery.enums.Sounds
 import simulation.combat.DamageMultipliers
-import simulation.evention.DamageEvent
+import simulation.happenings.DamageEvent
 import simulation.input.*
 import simulation.intellect.Spirit
 import simulation.main.Deck
@@ -40,7 +40,7 @@ data class Character(
     val isAlive: Boolean = true,
     val facingRotation: Vector3 = Vector3(),
     val lookVelocity: Vector2 = Vector2(),
-    val equippedItem: Id? = null,
+    val activeItem: Id? = null,
     val interactingWith: Id? = null
 ) {
   val facingQuaternion: Quaternion
@@ -77,12 +77,12 @@ fun updateEquippedItem(deck: Deck, id: Id, character: Character, commands: Comma
 
   return if (slot != null) {
     val itemId = getItemInSlot(deck, id, slot)
-    if (itemId == character.equippedItem)
+    if (itemId == character.activeItem)
       null
     else
       itemId
   } else
-    character.equippedItem
+    character.activeItem
 }
 
 fun updateInteractingWith(deck: Deck, character: Id, commands: Commands, interactingWith: Id?): Id? =
@@ -108,7 +108,7 @@ fun updateCharacter(deck: Deck, id: Id, character: Character, commands: Commands
         c.copy(
             isAlive = isAlive,
             abilities = abilities,
-            equippedItem = updateEquippedItem(deck, id, character, commands),
+            activeItem = updateEquippedItem(deck, id, character, commands),
             interactingWith = updateInteractingWith(deck, id, commands, c.interactingWith)
         )
       },

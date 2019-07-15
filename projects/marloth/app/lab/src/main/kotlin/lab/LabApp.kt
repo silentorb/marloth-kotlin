@@ -13,16 +13,17 @@ import lab.views.game.drawBulletDebug
 import lab.views.model.newModelViewState
 import marloth.clienting.Client
 import marloth.clienting.newClientState
+import marloth.definition.staticDefinitions
 import marloth.front.GameApp
 import marloth.integration.*
 import mythic.desktop.createDesktopPlatform
 import mythic.ent.pipe
 import mythic.quartz.newTimestepState
-import simulation.physics.newBulletState
 import randomly.Dice
 import simulation.main.World
 import simulation.misc.WorldInput
 import simulation.misc.createWorldBoundary
+import simulation.physics.newBulletState
 
 const val labConfigPath = "labConfig.yaml"
 
@@ -69,21 +70,6 @@ data class LabApp(
 
 private var saveIncrement = 0f
 
-val setupDebugState: (AppState) -> AppState = { appState ->
-  val world = appState.worlds.last()
-  val deck = world.deck
-  val character = deck.characters[1L]!!
-  appState.copy(
-      worlds = appState.worlds.dropLast(1).plus(world.copy(
-          deck = deck.copy(
-              characters = deck.characters.plus(Pair(1L, character.copy(
-                  interactingWith = deck.interactables.keys.first()
-              )))
-          )
-      ))
-  )
-}
-
 tailrec fun labLoop(app: LabApp, state: LabState) {
   val gameApp = app.gameApp
   val newAppState = if (app.config.view == Views.game) {
@@ -98,8 +84,12 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
         }
     )
 
-//    updateAppState(gameApp, app.newWorld, hooks)(state.app)
-    pipe(updateAppState(gameApp, app.newWorld, hooks), setupDebugState)(state.app)
+    val update = updateAppState(gameApp, app.newWorld, hooks)
+    val fixture = app.config.gameView.fixture
+    if (fixture == null)
+      update(state.app)
+    else
+      pipe(update, applyFixture(fixture))(state.app)
   } else {
     gameApp.platform.display.swapBuffers()
     val (timestep, steps) = updateAppTimestep(state.app.timestep)
@@ -169,7 +159,8 @@ fun newLabGameApp(labConfig: LabConfig): GameApp {
   platform.display.initialize(gameConfig.display)
   return GameApp(platform, gameConfig,
       bulletState = newBulletState(),
-      client = Client(platform, gameConfig.display, labConfig.gameView.lighting)
+      client = Client(platform, gameConfig.display, labConfig.gameView.lighting),
+      definitions = staticDefinitions
   )
 }
 

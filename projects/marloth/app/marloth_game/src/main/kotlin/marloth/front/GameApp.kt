@@ -3,6 +3,7 @@ package marloth.front
 import generation.generateDefaultWorld
 import marloth.clienting.Client
 import marloth.clienting.newClientState
+import marloth.definition.staticDefinitions
 import marloth.integration.AppState
 import marloth.integration.GameConfig
 import marloth.integration.updateAppState
@@ -13,6 +14,7 @@ import persistence.newDatabase
 import simulation.physics.BulletState
 import simulation.physics.newBulletState
 import rendering.SceneRenderer
+import simulation.misc.Definitions
 
 typealias RenderHook = (SceneRenderer) -> Unit
 
@@ -21,7 +23,8 @@ data class GameApp(
     val config: GameConfig,
     val client: Client,
     val db: Database = newDatabase("game.db"),
-    var bulletState: BulletState
+    var bulletState: BulletState,
+    val definitions: Definitions
 )
 
 tailrec fun gameLoop(app: GameApp, state: AppState) {
@@ -35,7 +38,8 @@ fun newGameApp(platform: Platform, config: GameConfig) = GameApp(
     platform = platform,
     config = config,
     bulletState = newBulletState(),
-    client = Client(platform, config.display)
+    client = Client(platform, config.display),
+    definitions = staticDefinitions
 )
 
 fun runApp(platform: Platform, config: GameConfig) {

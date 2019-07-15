@@ -2,28 +2,27 @@ package simulation.main
 
 import mythic.ent.*
 import simulation.entities.*
-import simulation.evention.Action
-import simulation.evention.Trigger
+import simulation.happenings.Trigger
 import simulation.intellect.Spirit
-import simulation.misc.*
 import simulation.particles.ParticleEffect
 import simulation.physics.Body
 import simulation.physics.CollisionObject
 import simulation.physics.DynamicBody
 
 data class Deck(
+    val accessories: Table<Accessory> = mapOf(),
     val ambientSounds: Table<AmbientAudioEmitter> = mapOf(),
     val animations: Table<ArmatureAnimation> = mapOf(),
     val attachments: Table<Attachment> = mapOf(),
     val bodies: Table<Body> = mapOf(),
-    val buffs: Table<Buff> = mapOf(),
+    val buffs: Table<Modifier> = mapOf(),
     val characters: Table<Character> = mapOf(),
     val collisionShapes: Table<CollisionObject> = mapOf(),
     val depictions: Table<Depiction> = mapOf(),
     val destructibles: Table<Destructible> = mapOf(),
     val doors: Table<Door> = mapOf(),
     val dynamicBodies: Table<DynamicBody> = mapOf(),
-    val entities: Table<Entity> = mapOf(),
+//    val entities: Table<Entity> = mapOf(),
     val interactables: Table<Interactable> = mapOf(),
     val lights: Table<Light> = mapOf(),
     val particleEffects: Table<ParticleEffect> = mapOf(),
@@ -83,4 +82,7 @@ fun addDecks(deckSources: List<(IdSource) -> List<IdHand>>): WorldTransform {
   return pipe(deckSources.map(addDeck))
 }
 
-typealias HandTemplates = Map<EntityTypeName, (Action) -> Hand>
+typealias DeckSource = (IdSource) -> Deck
+
+fun resolveDecks(nextId: IdSource, deckSources: List<DeckSource>): List<Deck> =
+    deckSources.map { it(nextId) }

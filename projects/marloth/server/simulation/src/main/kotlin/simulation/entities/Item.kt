@@ -1,9 +1,8 @@
 package simulation.entities
 
 import mythic.ent.Id
+import scenery.enums.AccessoryId
 import simulation.main.Deck
-import simulation.misc.Entity
-import simulation.misc.EntityTypeName
 
 fun getItemInSlot(deck: Deck, character: Id, slot: Int): Id? =
     deck.attachments
@@ -11,16 +10,16 @@ fun getItemInSlot(deck: Deck, character: Id, slot: Int): Id? =
         .keys
         .firstOrNull()
 
-fun equippedItem(deck: Deck): (Id) -> Entity? = { characterId ->
+fun equippedItem(deck: Deck): (Id) -> Accessory? = { characterId ->
   val character = deck.characters[characterId]!!
-  deck.entities[character.equippedItem]
+  deck.accessories[character.activeItem]
 }
 
-fun isHolding(deck: Deck, player: Id): (EntityTypeName) -> Boolean = { type ->
+fun isHolding(deck: Deck, player: Id): (AccessoryId) -> Boolean = { type ->
   equippedItem(deck)(player)?.type == type
 }
 
 infix fun Character.equip(item: Id): Character =
     this.copy(
-        equippedItem = item
+        activeItem = item
     )

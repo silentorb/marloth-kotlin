@@ -13,7 +13,7 @@ fun gatherHudData(deck: Deck, view: ViewId): HudData {
   val destructible = deck.destructibles[player]!!
 
   val buffs = getTargetAttachmentsOfCategory(deck, player, AttachmentTypeId.buff)
-      .map { Pair(deck.entities[it]!!.type, deck.timers[it]!!.duration) }
+      .map { Pair(deck.buffs[it]!!, deck.timers[it]!!.duration) }
 
   val interactable = if (view == ViewId.none)
     getVisibleInteractable(deck, player)?.value

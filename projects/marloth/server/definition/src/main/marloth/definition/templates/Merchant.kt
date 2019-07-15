@@ -1,21 +1,17 @@
 package marloth.definition.templates
 
-import scenery.enums.BuffId
 import marloth.definition.creatures
 import mythic.ent.IdSource
 import mythic.spatial.Vector3
+import scenery.enums.AccessoryId
+import scenery.enums.ModifierId
 import scenery.enums.Text
 import simulation.entities.*
 import simulation.main.Hand
 import simulation.main.HandAttachment
-import simulation.misc.*
 
-data class NewWare(
-    val type: EntityTypeName,
-    val price: Int
-)
 
-fun newMerchant(nextId: IdSource, position: Vector3, wares: List<NewWare>): Hand {
+fun newMerchant(nextId: IdSource, position: Vector3, wares: List<Ware>): Hand {
   val character = newCharacter(
       nextId = nextId,
       position = position,
@@ -33,25 +29,24 @@ fun newMerchant(nextId: IdSource, position: Vector3, wares: List<NewWare>): Hand
         HandAttachment(
             category = AttachmentTypeId.inventory,
             hand = Hand(
-                entity = Entity(
-                    type = ware.type
-                ),
-                ware = Ware(
-                    price = ware.price
-                )
+                ware = ware
             )
         )
       })
   )
 }
 
-val defaultWares: List<NewWare> = listOf(
-    NewWare(
-        type = BuffId.receivedBurningMultiplier.name,
+val defaultWares: List<Ware> = listOf(
+    Ware(
+        type = AccessoryId.coldResistance,
         price = 10
     ),
-    NewWare(
-        type = BuffId.receivedChilledMultiplier.name,
+    Ware(
+        type = AccessoryId.fireResistance,
         price = 12
+    ),
+    Ware(
+        type = AccessoryId.poisonResistance,
+        price = 10
     )
 )

@@ -28,7 +28,7 @@ import rendering.shading.LightingConfig
 import scenery.Screen
 import simulation.main.Deck
 
-val maxPlayerCount = 4
+const val maxPlayerCount = 4
 
 data class ClientState(
     val input: InputState,
@@ -78,20 +78,28 @@ fun updateMousePointerVisibility(platform: Platform) {
   platform.input.isMouseVisible(!windowHasFocus)
 }
 
-fun menuChangeView(commands: UserCommands): (ClientState) -> ClientState = { state ->
+fun nextView(commands: UserCommands, state: ClientState): ViewId? {
   val c = commands.map { it.type }
-  val view = currentView(state.bloomState.bag)
-  val newView = when {
+  val view = state.view
+  return when {
     c.contains(GuiCommandType.menu) -> {
-      if (view == ViewId.mainMenu)
+      if (view != ViewId.none)
         ViewId.none
-      else if (view == ViewId.none)
-        ViewId.mainMenu
       else
-        view
+        ViewId.mainMenu
+    }
+    c.contains(GuiCommandType.menuBack) -> {
+      if (view != ViewId.none)
+        ViewId.none
+      else
+        null
     }
     else -> null
   }
+}
+
+fun menuChangeView(commands: UserCommands): (ClientState) -> ClientState = { state ->
+  val newView = nextView(commands, state)
   if (newView != null) {
     state.copy(
         view = newView
@@ -138,11 +146,10 @@ fun updateClientInput(client: Client): (ClientState) -> ClientState = { state ->
   )
 }
 
-val syncBagWithCurrentView: (ClientState) -> ClientState = { state ->
-  state.copy(
-      bloomState = state.bloomState.copy(
-          bag = state.bloomState.bag.plus(currentViewKey to state.view)
-      )
+// So guiEvents are not persisted
+fun pruneBag(bloomState: BloomState): BloomState {
+  return bloomState.copy(
+      bag = bloomState.bag.minus(guiEventsKey)
   )
 }
 
@@ -156,23 +163,26 @@ fun updateClient(client: Client, players: List<Int>, box: Box): (ClientState) ->
 
   val bloomInputState = newBloomInputState(deviceStates.last())
       .copy(events = haftToBloom(commands))
-  val bloomState = updateBloomState(box, clientState.bloomState, bloomInputState)
+  val bloomState = updateBloomState(box, pruneBag(clientState.bloomState), bloomInputState)
+
+  val guiCommands = guiEvents(bloomState.bag)
+      .filter { it.type == GuiEventType.command }
+      .map { simpleCommand(it.data as GuiCommandType, players.first()) }
 
   val allCommands = commands
-      .plus(menuCommands(bloomState.bag).map { simpleCommand(it, players.first()) })
+      .plus(guiCommands)
 
   val newClientState = pipe(clientState, listOf(
       { state ->
         state.copy(
             input = updateInputState(deviceStates, state.input),
             bloomState = bloomState,
-            view = existingOrNewState(currentViewKey) { state.view }(bloomState.bag),
             commands = allCommands
         )
       },
       // This needs to happen after applying updateBloomState to override flower state settings
-      applyClientCommands(client, allCommands),
-      syncBagWithCurrentView
+      applyClientCommands(client, allCommands)
+//      syncBagWithCurrentView
   ))
 
   newClientState

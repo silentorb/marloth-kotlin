@@ -1,6 +1,8 @@
 package marloth.definition
 
+import marloth.definition.data.accessories
 import simulation.entities.AbilityDefinition
+import simulation.misc.Definitions
 
 class AbilityDefinitions {
   //  val shoot = AbilityDefinition(
@@ -29,3 +31,7 @@ val abilityDefinitions = AbilityDefinitions()
 //    resistance = 4f
 ////        resistance = 8f
 //)
+
+val staticDefinitions = Definitions(
+    accessories = accessories
+)

@@ -2,8 +2,7 @@ package generation
 
 import generation.structure.wallHeight
 import generation.misc.BiomeId
-import scenery.enums.BuffId
-import scenery.enums.ItemId
+import scenery.enums.ModifierId
 import marloth.definition.creatures
 import marloth.definition.templates.defaultWares
 import marloth.definition.templates.newBuffCloud
@@ -13,6 +12,7 @@ import mythic.ent.IdSource
 import mythic.ent.newIdSource
 import mythic.spatial.Vector3
 import randomly.Dice
+import scenery.enums.AccessoryId
 import simulation.entities.*
 import simulation.intellect.Pursuit
 import simulation.intellect.Spirit
@@ -172,8 +172,8 @@ fun newPlayer(nextId: IdSource, playerNode: Node): Deck {
           category = AttachmentTypeId.equipped,
           index = 2
       ),
-      entity = Entity(
-          type = ItemId.candle.name
+      accessory = Accessory(
+          type = AccessoryId.candle
       )
   )
 
@@ -191,7 +191,7 @@ fun addVoidNode(realm: Realm): Realm =
         nodeList = realm.nodeList.plus(voidNode)
     )
 
-fun placeBuffCloud(node: Node, buff: BuffId) =
+fun placeBuffCloud(node: Node, buff: ModifierId) =
     newBuffCloud(
         position = node.position + Vector3(0f, 0f, -wallHeight / 2f - 0.5f),
         radius = node.radius,
@@ -205,9 +205,9 @@ fun finalizeRealm(input: WorldInput, realm: Realm): World {
   val deck = Deck()
       .plus(newPlayer(nextId, playerNode))
       .plus(allHandsOnDeck(listOf(
-          placeBuffCloud(realm.nodeTable[12L]!!, BuffId.burning),
-          placeBuffCloud(realm.nodeTable[7L]!!, BuffId.chilled),
-          placeBuffCloud(realm.nodeTable[11L]!!, BuffId.poisoned),
+          placeBuffCloud(realm.nodeTable[12L]!!, ModifierId.damageBurning),
+          placeBuffCloud(realm.nodeTable[7L]!!, ModifierId.damageChilled),
+          placeBuffCloud(realm.nodeTable[11L]!!, ModifierId.damagePoisoned),
           newMerchant(nextId, realm.nodeTable[6L]!!.position, defaultWares)
       ), nextId))
 //      .plus(placeWallLamps(realm, nextId, input.dice, scale))

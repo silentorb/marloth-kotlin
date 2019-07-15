@@ -1,10 +1,10 @@
 package marloth.definition.templates
 
 import simulation.combat.DamageType
-import simulation.evention.Action
-import simulation.evention.ApplyBuff
-import simulation.evention.DamageAction
-import simulation.evention.Trigger
+import simulation.happenings.Action
+import simulation.happenings.ApplyBuff
+import simulation.happenings.DamageAction
+import simulation.happenings.Trigger
 import simulation.main.Hand
 
 fun damageBuff(damageType: DamageType) = { action: Action ->

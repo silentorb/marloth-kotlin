@@ -1,11 +1,10 @@
 package marloth.definition.templates
 
-import scenery.enums.BuffId
+import scenery.enums.ModifierId
 import simulation.combat.DamageType
-import simulation.main.HandTemplates
 
-val templates: HandTemplates = mapOf(
-    BuffId.burning.name to damageBuff(DamageType.fire),
-    BuffId.chilled.name to damageBuff(DamageType.cold),
-    BuffId.poisoned.name to damageBuff(DamageType.poison)
-)
+//val templates: HandTemplates = mapOf(
+//    ModifierId.burning.name to damageBuff(DamageType.fire),
+//    ModifierId.chilled.name to damageBuff(DamageType.cold),
+//    ModifierId.poisoned.name to damageBuff(DamageType.poison)
+//)

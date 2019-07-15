@@ -1,5 +1,6 @@
 package lab.views.game
 
+import lab.FixtureId
 import mythic.glowing.globalState
 import mythic.sculpting.ImmutableFace
 import mythic.sculpting.getVerticesCenter
@@ -33,7 +34,8 @@ data class GameViewConfig(
     var logDroppedFrames: Boolean = false,
     var autoNewGame: Boolean = true,
     var drawPhysics: Boolean = false,
-    val lighting: LightingConfig = LightingConfig()
+    val lighting: LightingConfig = LightingConfig(),
+    val fixture: FixtureId? = null
 )
 
 fun renderFaceNormals(renderer: SceneRenderer, length: Float, faces: List<ImmutableFace>) {

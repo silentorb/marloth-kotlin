@@ -1,4 +1,4 @@
-package simulation.evention
+package simulation.happenings
 
 data class Trigger(
     val action: Action

@@ -82,26 +82,6 @@ fun compose(vararg flowers: Flower): Flower = { seed ->
 infix fun Flower.plusFlower(second: Flower): Flower =
     compose(this, second)
 
-//fun flattenBoxes(includeEmpty: Boolean, box: Box, parentOffset: Vector2i): List<FlatBox> {
-//  val offset = parentOffset + box.bounds.position
-//  val children = box.boxes.flatMap { child ->
-//    flattenBoxes(includeEmpty, child, offset)
-//  }
-//  return if (includeEmpty || box.depiction != null || box.handler != null || box.logic != null)
-//    listOf(FlatBox(
-//        bounds = box.bounds.copy(
-//            position = offset
-//        ),
-//        depiction = box.depiction,
-//        clipBounds = box.clipBounds,
-//        handler = box.handler,
-//        logic = box.logic
-//    ))
-//        .plus(children)
-//  else
-//    children
-//}
-
 fun dependentBoundsTransform(transform: (Vector2i, Bounds, Bounds) -> Vector2i): ReverseLayout = { parent, bounds, child ->
   val offset = transform(parent, bounds, child)
   moveBounds(offset, bounds.dimensions)(child)

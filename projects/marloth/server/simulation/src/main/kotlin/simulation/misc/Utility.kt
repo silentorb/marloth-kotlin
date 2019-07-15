@@ -1,6 +1,16 @@
 package simulation.misc
 
+import mythic.ent.Table
+import mythic.ent.WithId
 import mythic.spatial.Pi2
+
+fun <Key, Value> replace(table: Map<Key, Value>, key: Key, value: Value): Map<Key, Value> =
+    table.mapValues { if (it.key == key) value else it.value }
+
+fun <T : WithId> replace(list: Table<T>, value: T): Table<T> =
+    list
+        .filterKeys { it != value.id }
+        .plus(Pair(value.id, value))
 
 fun <T> updateField(defaultValue: T, newValue: T?): T =
     if (newValue != null)

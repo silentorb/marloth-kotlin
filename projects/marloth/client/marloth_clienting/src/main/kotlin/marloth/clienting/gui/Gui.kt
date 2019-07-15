@@ -18,7 +18,9 @@ import mythic.platforming.WindowInfo
 import mythic.spatial.Vector4
 import org.joml.Vector2i
 import scenery.enums.Text
+import simulation.happenings.GameEvent
 import simulation.main.World
+import simulation.misc.Definitions
 
 typealias TextResources = Map<Text, String>
 
@@ -39,11 +41,24 @@ fun gameIsActive(world: World?): Boolean =
 
 fun gameIsActiveByClient(state: ClientState): Boolean = !isGuiActive(state)
 
-const val currentViewKey = "currentViewKey"
-val currentView = existingOrNewState(currentViewKey) { ViewId.none }
+enum class GuiEventType {
+  command,
+  gameEvent
+}
 
-const val menuCommandsKey = "menuCommands"
-val menuCommands = existingOrNewState(menuCommandsKey) { listOf<GuiCommandType>() }
+data class GuiEvent(
+    val type: GuiEventType,
+    val data: Any
+)
+
+//const val currentViewKey = "currentViewKey"
+//val currentView = existingOrNewState(currentViewKey) { ViewId.none }
+
+//const val menuCommandsKey = "menuCommands"
+//val menuCommands = existingOrNewState(menuCommandsKey) { listOf<GuiCommandType>() }
+
+const val guiEventsKey = "guiEvents"
+val guiEvents = existingOrNewState(guiEventsKey) { listOf<GuiEvent>() }
 
 fun newBloomState() =
     BloomState(
@@ -81,29 +96,29 @@ fun haftToBloom(commands: HaftCommands<GuiCommandType>): List<BloomEvent> =
       }
     }
 
-fun victoryMenu(): Menu = listOfNotNull(
-    MenuOption(GuiCommandType.menu, Text.message_victory)
+fun victoryMenu() = listOfNotNull(
+    SimpleMenuItem(Text.message_victory, GuiCommandType.menu)
 )
 
-fun viewSelect(textResources: TextResources, world: World?, view: ViewId): Flower? {
+fun viewSelect(textResources: TextResources, definitions: Definitions, world: World?, view: ViewId): Flower? {
   return when (view) {
     ViewId.mainMenu -> menuFlower(textResources, mainMenu(gameIsActive(world)))
-    ViewId.merchant -> merchantView(textResources, world!!.deck)
+    ViewId.merchant -> merchantView(textResources, definitions.accessories, world!!.deck, 1L)
     ViewId.victory -> menuFlower(textResources, victoryMenu())
     ViewId.none -> null
   }
 }
 
-fun guiLayout(client: Client, clientState: ClientState, world: World?, hudData: HudData?): Flower {
+fun guiLayout(client: Client, definitions: Definitions, clientState: ClientState, world: World?, hudData: HudData?): Flower {
   val bloomState = clientState.bloomState
   return compose(listOfNotNull(
       if (hudData != null) hudLayout(client.textResources, hudData) else null,
-      viewSelect(client.textResources, world, clientState.view)
+      viewSelect(client.textResources, definitions, world, clientState.view)
   ))
 }
 
-fun layoutGui(client: Client, clientState: ClientState, world: World?, hudData: HudData?, windowInfo: WindowInfo): Box {
-  val layout = guiLayout(client, clientState, world, hudData)
+fun layoutGui(client: Client, definitions: Definitions, clientState: ClientState, world: World?, hudData: HudData?, windowInfo: WindowInfo): Box {
+  val layout = guiLayout(client, definitions, clientState, world, hudData)
   val seed = Seed(
       bag = clientState.bloomState.bag,
       dimensions = windowInfo.dimensions

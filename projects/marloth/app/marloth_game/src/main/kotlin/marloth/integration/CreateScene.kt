@@ -1,6 +1,5 @@
 package marloth.integration
 
-import scenery.enums.ItemId
 import scenery.enums.MeshId
 import mythic.ent.Id
 import mythic.ent.Table
@@ -10,6 +9,7 @@ import simulation.physics.Body
 import rendering.*
 import scenery.*
 import scenery.Light
+import scenery.enums.AccessoryId
 import simulation.entities.*
 import simulation.main.Deck
 import simulation.main.World
@@ -242,7 +242,7 @@ fun mapLights(world: World, player: Id) =
           )
         }
         .plus(listOfNotNull(
-            if (isHolding(world.deck, player)(ItemId.candle.name))
+            if (isHolding(world.deck, player)(AccessoryId.candle))
               Light(
                   type = LightType.point,
                   color = Vector4(1f, 1f, 1f, 0.6f),

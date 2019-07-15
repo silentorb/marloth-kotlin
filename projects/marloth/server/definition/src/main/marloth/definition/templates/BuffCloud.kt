@@ -1,8 +1,8 @@
 package marloth.definition.templates
 
-import scenery.enums.BuffId
+import scenery.enums.ModifierId
 import scenery.enums.TextureId
-import simulation.evention.Trigger
+import simulation.happenings.Trigger
 import mythic.breeze.AnimationChannel
 import mythic.breeze.Keyframe
 import mythic.breeze.interpolateVector3
@@ -12,16 +12,16 @@ import simulation.physics.Body
 import simulation.physics.CollisionObject
 import scenery.Cylinder
 import simulation.main.Hand
-import simulation.evention.ApplyBuff
+import simulation.happenings.ApplyBuff
 import simulation.particles.Emitter
 import simulation.particles.ParticleAnimation
 import simulation.particles.ParticleAppearance
 import simulation.particles.ParticleEffect
 
-private val cloudColors: Map<BuffId, Pair<Vector3, Vector3>> = mapOf(
-    BuffId.burning to Pair(Vector3(1f, 0.7f, 0f), Vector3(1f, 0.3f, 0.1f)),
-    BuffId.chilled to Pair(Vector3(0.2f, 0.3f, 1f), Vector3(0.9f, 0.9f, 1f)),
-    BuffId.poisoned to Pair(Vector3(0.4f, 1f, 0.5f), Vector3(0.8f, 0.9f, 0.5f))
+private val cloudColors: Map<ModifierId, Pair<Vector3, Vector3>> = mapOf(
+    ModifierId.damageBurning to Pair(Vector3(1f, 0.7f, 0f), Vector3(1f, 0.3f, 0.1f)),
+    ModifierId.damageChilled to Pair(Vector3(0.2f, 0.3f, 1f), Vector3(0.9f, 0.9f, 1f)),
+    ModifierId.damagePoisoned to Pair(Vector3(0.4f, 1f, 0.5f), Vector3(0.8f, 0.9f, 0.5f))
 )
 
 private fun newDamagedCloudParticleAnimation(firstColor: Vector3, secondColor: Vector3): ParticleAnimation {
@@ -51,7 +51,7 @@ private fun newDamagedCloudParticleAnimation(firstColor: Vector3, secondColor: V
   )
 }
 
-fun newBuffCloud(position: Vector3, radius: Float, buff: BuffId): Hand {
+fun newBuffCloud(position: Vector3, radius: Float, buff: ModifierId): Hand {
   val colors = cloudColors[buff]!!
   val shape = Cylinder(radius = radius, height = 10f)
   return Hand(
@@ -78,7 +78,7 @@ fun newBuffCloud(position: Vector3, radius: Float, buff: BuffId): Hand {
       ),
       trigger = Trigger(
           action = ApplyBuff(
-              buffType = buff.name,
+              buffType = buff,
               strength = 10,
               duration = 4
           )

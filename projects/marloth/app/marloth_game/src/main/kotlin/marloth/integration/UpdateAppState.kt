@@ -1,13 +1,11 @@
 package marloth.integration
 
 import haft.mapEventsToCommands
+import haft.simpleCommand
 import marloth.clienting.*
 import marloth.clienting.audio.updateAppStateAudio
-import marloth.clienting.gui.ViewId
-import marloth.clienting.gui.getPlayerInteractingWith
-import marloth.clienting.gui.layoutGui
+import marloth.clienting.gui.*
 import marloth.clienting.input.GuiCommandType
-import marloth.definition.templates.templates
 import marloth.front.GameApp
 import marloth.front.RenderHook
 import mythic.bloom.next.Box
@@ -18,6 +16,8 @@ import mythic.quartz.updateTimestep
 import org.joml.Vector2i
 import persistence.Database
 import persistence.createVictory
+import simulation.happenings.Events
+import simulation.happenings.GameEvent
 import simulation.main.World
 import simulation.main.simulationDelta
 import simulation.main.updateWorld
@@ -56,9 +56,9 @@ fun updateClientFromWorld(worlds: List<World>, commands: List<Command>): (Client
         }
 
         if (view != null)
-          syncBagWithCurrentView(client.copy(
+          client.copy(
               view = view
-          ))
+          )
         else
           client
       }
@@ -69,7 +69,7 @@ fun getGameCommands(state: AppState): List<Command> {
   return mapGameCommands(mapEventsToCommands(state.client.input.deviceStates, gameStrokes, getBinding))
 }
 
-fun updateAppWorld(app: GameApp, previousAppState: AppState, appState: AppState, commands: List<Command>): List<World> {
+fun updateAppWorld(app: GameApp, previousAppState: AppState, appState: AppState, commands: List<Command>, events: Events): List<World> {
   val worlds = appState.worlds
   val world = worlds.last()
   val gameCommands = if (appState.client.view == ViewId.none)
@@ -82,7 +82,7 @@ fun updateAppWorld(app: GameApp, previousAppState: AppState, appState: AppState,
 
   val animationDurations = app.client.renderer.animationDurations
   val nextWorld =
-      updateWorld(app.bulletState, animationDurations, gameCommands, templates, simulationDelta)(world)
+      updateWorld(app.bulletState, animationDurations, gameCommands, app.definitions, events, simulationDelta)(world)
   updateSimulationDatabase(app.db, nextWorld, world)
   return worlds
       .plus(nextWorld)
@@ -110,9 +110,12 @@ fun updateFixedInterval(app: GameApp, box: Box, newWorld: () -> World): (AppStat
       client = nextClientState
   )
   val commands = getGameCommands(newAppState)
+  val events = guiEvents(newAppState.client.bloomState.bag)
+      .filter { it.type == GuiEventType.gameEvent }
+      .map { it.data as GameEvent }
   val worlds = when {
     nextClientState.commands.any { it.type == GuiCommandType.newGame } -> restartWorld(app, newWorld)
-    gameIsActive(appState) -> updateAppWorld(app, appState, newAppState, commands)
+    gameIsActive(appState) -> updateAppWorld(app, appState, newAppState, commands, events)
     else -> appState.worlds.takeLast(1)
   }
 
@@ -136,7 +139,7 @@ fun layoutGui(app: GameApp, appState: AppState, windowInfo: WindowInfo): Box {
   else
     null
 
-  return layoutGui(app.client, appState.client, world, hudData, windowInfo)
+  return layoutGui(app.client, app.definitions, appState.client, world, hudData, windowInfo)
 }
 
 fun updateAppState(app: GameApp, newWorld: () -> World, hooks: GameHooks? = null): (AppState) -> AppState = { appState ->

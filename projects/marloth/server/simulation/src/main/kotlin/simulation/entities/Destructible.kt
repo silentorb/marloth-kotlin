@@ -4,7 +4,7 @@ import mythic.ent.Id
 import simulation.combat.Damage
 import simulation.combat.DamageMultipliers
 import simulation.combat.applyDamageMods
-import simulation.evention.DamageEvent
+import simulation.happenings.DamageEvent
 import simulation.misc.Resource
 import simulation.misc.modifyResource
 

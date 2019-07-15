@@ -5,6 +5,7 @@ import mythic.bloom.next.*
 
 import org.joml.Vector2i
 import simulation.entities.Interactable
+import simulation.entities.Modifier
 import simulation.misc.Resource
 
 private val textStyle = TextStyles.gray
@@ -13,7 +14,7 @@ data class HudData(
     val health: Resource,
     val sanity: Resource,
     val interactable: Interactable?,
-    val buffs: List<Pair<String, Int>>
+    val buffs: List<Pair<Modifier, Int>>
 )
 
 fun resourceString(resource: Resource): String {
@@ -37,7 +38,7 @@ private fun playerStats(data: HudData): Flower {
 //      mythic.bloom.label(textStyle, "vel: " + df.format(world.deck.bodies[player]!!.velocity.length()))
   )
       .plus(data.buffs.map {
-        label(textStyle, "${it.first} ${it.second}")
+        label(textStyle, "${it.first.type.name} ${it.second}")
       })
   return div(forward = fixedOffset(Vector2i(10)))(
       div(reverse = shrink, depiction = solidBackground(black))(

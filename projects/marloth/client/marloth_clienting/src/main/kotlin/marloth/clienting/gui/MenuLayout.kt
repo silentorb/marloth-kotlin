@@ -14,19 +14,29 @@ import mythic.typography.calculateTextDimensions
 import mythic.typography.resolveTextStyle
 import org.joml.Vector2i
 import scenery.enums.Text
+import kotlin.math.min
 
-data class MenuOption(
-    val command: GuiCommandType,
-    val text: Text
+typealias MenuItemFlower = (Boolean) -> Flower
+
+data class MenuItem(
+    val flower: MenuItemFlower,
+    val event: GuiEvent
 )
 
-typealias Menu = List<MenuOption>
+data class SimpleMenuItem(
+    val text: Text,
+//    val event: GuiEvent
+    val command: GuiCommandType
+//    val event: GameEvent? = null
+)
+
+typealias Menu = List<MenuItem>
 
 fun cycle(value: Int, max: Int) = (value + max) % max
 
 fun menuFocusIndexLogic(menu: Menu): LogicModule = { bundle ->
   val events = bundle.state.input.current.events
-  val index = menuFocusIndex(bundle.state.bag)
+  val index = menuFocusIndex(menu.size, bundle.state.bag)
   val newIndex = when {
     events.contains(BloomEvent.down) -> cycle(index + 1, menu.size)
     events.contains(BloomEvent.up) -> cycle(index - 1, menu.size)
@@ -35,33 +45,50 @@ fun menuFocusIndexLogic(menu: Menu): LogicModule = { bundle ->
   mapOf(menuFocusIndexKey to newIndex)
 }
 
-val menuNavigationLogic: LogicModule = { bundle ->
-  val events = bundle.state.input.current.events
-  val bag = bundle.state.bag
-  val view = currentView(bag)
-  val activated = events.contains(BloomEvent.activate)
-  val newView = if (activated || events.contains(BloomEvent.back))
-    ViewId.none
-  else
-    view
+fun addEvent(bag: StateBag, event: GuiEvent?): StateBagMods {
+  return if (event == null)
+    mapOf()
+  else {
+    val events = guiEvents(bag)
 
-  mapOf(
-      currentViewKey to newView
-  )
+    mapOf(
+        guiEventsKey to events.plus(event)
+    )
+  }
 }
 
-fun menuCommandLogic(menu: Menu): LogicModule = { bundle ->
-  val events = bundle.state.input.current.events
+fun eventLogic(handler: (LogicBundle) -> GuiEvent?): LogicModule = { bundle ->
   val bag = bundle.state.bag
-  val activated = events.contains(BloomEvent.activate)
-  val commands = if (activated)
-    listOf(menu[menuFocusIndex(bag)].command)
-  else
-    listOf()
+  addEvent(bag, handler(bundle))
+}
 
-  mapOf(
-      menuCommandsKey to commands
-  )
+val menuNavigationLogic: LogicModule = { bundle ->
+  mapOf()
+//  val events = bundle.state.input.current.events
+//  val bag = bundle.state.bag
+//  val activated = events.contains(BloomEvent.activate)
+//  val newEvent = if (activated || events.contains(BloomEvent.back))
+//    GuiEvent(GuiEventType.command, GuiCommandType.menuBack)
+//  else
+//    null
+//
+//  addEvent(bag, newEvent)
+}
+
+fun menuCommandLogic(menu: Menu): LogicModule = eventLogic { bundle ->
+  if (menu.none()) {
+    null
+  } else {
+    val inputEvents = bundle.state.input.current.events
+    val bag = bundle.state.bag
+    val activated = inputEvents.contains(BloomEvent.activate)
+    val index = menuFocusIndex(menu.size, bag)
+    val menuItem = menu[index]
+    if (activated)
+      menuItem.event
+    else
+      null
+  }
 }
 
 fun drawMenuButton(state: ButtonState): Depiction = { bounds: Bounds, canvas: Canvas ->
@@ -82,58 +109,38 @@ fun drawMenuButton(state: ButtonState): Depiction = { bounds: Bounds, canvas: Ca
 
 const val menuFocusIndexKey = "menuFocusIndex"
 
-fun menuFocusIndex(bag: StateBag): Int =
-    (bag[menuFocusIndexKey] ?: 0) as Int
+fun menuFocusIndex(menuSize: Int, bag: StateBag): Int =
+    min((bag[menuFocusIndexKey] ?: 0) as Int, menuSize - 1)
 
 fun menuLogic(menu: Menu): LogicModule =
     menuFocusIndexLogic(menu) combineLogic menuNavigationLogic combineLogic menuCommandLogic(menu)
 
-//fun menuFlowerOld(textResources: TextResources, menu: Menu): FlowerOld = { seed ->
-//  val buttonHeight = 50
-//  val items = menu
-//      .mapIndexed { index, it ->
-//        val content = textResources[it.text]!!
-//        PartialBox(buttonHeight, drawMenuButton(
-//            ButtonState(content, menuFocusIndex(seed.bag) == index)
-//        ))
-//      }
-//
-//  val itemLengths = items.map { it.length }
-//  val menuHeight = listContentLength(10, itemLengths)
-//  val menuBounds = centeredBounds(seed.bounds, Vector2i(200, menuHeight))
-//  val menuPadding = 10
-//
-//  Blossom(
-//      boxes = listOf(FlatBox(
-//          bounds = menuBounds,
-//          depiction = menuBackground,
-//          logic = menuLogic(menu)
-//      ))
-//          .plus(arrangeListComplex(lengthArranger(verticalPlane, menuPadding), items, menuBounds)),
-//      bounds = emptyBounds
-//  )
-//
-//}
-
 private val buttonDimensions = Vector2i(200, 50)
 
-fun menuButton(content: String, index: Int): Flower = { seed: Seed ->
-  Box(
-      bounds = Bounds(
-          dimensions = buttonDimensions
-      ),
-      depiction = drawMenuButton(
-          ButtonState(content, menuFocusIndex(seed.bag) == index)
-      ),
-      name = "menu button"
-  )
+fun menuButton(flower: MenuItemFlower, menuSize: Int, index: Int): Flower = { seed: Seed ->
+  val hasFocus = menuFocusIndex(menuSize, seed.bag) == index
+  flower(hasFocus)(seed)
 }
 
-fun menuFlower(textResources: TextResources, menu: Menu): Flower {
+fun simpleMenuButton(content: String): MenuItemFlower = { hasFocus ->
+  { seed: Seed ->
+    Box(
+        bounds = Bounds(
+            dimensions = buttonDimensions
+        ),
+        depiction = drawMenuButton(
+            ButtonState(content, hasFocus)
+        ),
+        name = "simple menu button"
+    )
+  }
+}
+
+fun menuFlower(menu: Menu): Flower {
   val rows = menu
       .mapIndexed { index, it ->
-        val content = textResources[it.text]!!
-        menuButton(content, index)
+        //        val content = textResources[it.text]!!
+        menuButton(it.flower, menu.size, index)
       }
 
   val gap = 20
@@ -151,3 +158,12 @@ fun menuFlower(textResources: TextResources, menu: Menu): Flower {
   )
 }
 
+fun menuFlower(textResources: TextResources, menu: List<SimpleMenuItem>): Flower {
+  val items = menu.map {
+    MenuItem(
+        flower = simpleMenuButton(textResources[it.text]!!),
+        event = GuiEvent(GuiEventType.command, it.command)
+    )
+  }
+  return menuFlower(items)
+}
