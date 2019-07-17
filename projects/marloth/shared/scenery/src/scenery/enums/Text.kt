@@ -2,6 +2,9 @@ package scenery.enums
 
 enum class Text {
   id_candle,
+  id_damageChilled,
+  id_damageBurning,
+  id_damagePoisoned,
   id_coldResistance,
   id_fireResistance,
   id_poisonResistance,

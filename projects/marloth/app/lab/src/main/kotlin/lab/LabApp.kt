@@ -86,7 +86,7 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
 
     val update = updateAppState(gameApp, app.newWorld, hooks)
     val fixture = app.config.gameView.fixture
-    if (fixture == null)
+    if (fixture == FixtureId.none)
       update(state.app)
     else
       pipe(update, applyFixture(fixture))(state.app)

@@ -35,7 +35,7 @@ data class GameViewConfig(
     var autoNewGame: Boolean = true,
     var drawPhysics: Boolean = false,
     val lighting: LightingConfig = LightingConfig(),
-    val fixture: FixtureId? = null
+    val fixture: FixtureId = FixtureId.none
 )
 
 fun renderFaceNormals(renderer: SceneRenderer, length: Float, faces: List<ImmutableFace>) {

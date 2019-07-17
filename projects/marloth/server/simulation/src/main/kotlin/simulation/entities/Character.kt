@@ -11,6 +11,7 @@ import scenery.ShapeOffset
 import scenery.enums.Sounds
 import simulation.combat.DamageMultipliers
 import simulation.happenings.DamageEvent
+import simulation.happenings.OrganizedEvents
 import simulation.input.*
 import simulation.intellect.Spirit
 import simulation.main.Deck
@@ -41,7 +42,8 @@ data class Character(
     val facingRotation: Vector3 = Vector3(),
     val lookVelocity: Vector2 = Vector2(),
     val activeItem: Id? = null,
-    val interactingWith: Id? = null
+    val interactingWith: Id? = null,
+    val money: Int = 0
 ) {
   val facingQuaternion: Quaternion
     get() = Quaternion()
@@ -85,6 +87,17 @@ fun updateEquippedItem(deck: Deck, id: Id, character: Character, commands: Comma
     character.activeItem
 }
 
+fun updateMoney(deck: Deck, events: OrganizedEvents, character: Id, money: Int): Int {
+  val purchases = events.purchases.filter { it.customer == character }
+  val cost = purchases.map { purchase ->
+    val ware = deck.wares[purchase.ware]!!
+    ware.price
+  }
+      .sum()
+
+  return money - cost
+}
+
 fun updateInteractingWith(deck: Deck, character: Id, commands: Commands, interactingWith: Id?): Id? =
     if (commands.any { it.type == CommandType.interactPrimary })
       getVisibleInteractable(deck, character)?.key
@@ -94,7 +107,7 @@ fun updateInteractingWith(deck: Deck, character: Id, commands: Commands, interac
       interactingWith
 
 fun updateCharacter(deck: Deck, id: Id, character: Character, commands: Commands, activatedAbilities: List<Ability>,
-                    delta: Float): Character {
+                    events: OrganizedEvents, delta: Float): Character {
   val lookForce = characterLookForce(character, commands)
 
   val abilities = updateAbilities(character, activatedAbilities)
@@ -109,7 +122,8 @@ fun updateCharacter(deck: Deck, id: Id, character: Character, commands: Commands
             isAlive = isAlive,
             abilities = abilities,
             activeItem = updateEquippedItem(deck, id, character, commands),
-            interactingWith = updateInteractingWith(deck, id, commands, c.interactingWith)
+            interactingWith = updateInteractingWith(deck, id, commands, c.interactingWith),
+            money = updateMoney(deck, events, id, character.money)
         )
       },
       { c ->
@@ -143,7 +157,7 @@ fun updateCharacter(deck: Deck, id: Id, character: Character, commands: Commands
 }
 
 fun updateCharacter(deck: Deck, commands: Commands, activatedAbilities: List<ActivatedAbility>,
-                    damageEvents: List<DamageEvent>): (Id, Character) -> Character = { id, character ->
+                    events: OrganizedEvents): (Id, Character) -> Character = { id, character ->
   val delta = simulationDelta
   val abilities = activatedAbilities.filter { it.character == id }
       .map { it.ability }
@@ -153,7 +167,7 @@ fun updateCharacter(deck: Deck, commands: Commands, activatedAbilities: List<Act
       { c -> c.filter { it.target == id } }
   ))
 
-  updateCharacter(deck, id, character, characterCommands, abilities, delta)
+  updateCharacter(deck, id, character, characterCommands, abilities, events, delta)
 }
 
 fun characterMovementFp(commands: Commands, character: Character, id: Id, body: Body): MovementForce? {
@@ -203,7 +217,8 @@ fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id,
           facingRotation = Vector3(0f, 0f, Pi / 2f),
           faction = faction,
           sanity = Resource(100),
-          abilities = abilities
+          abilities = abilities,
+          money = 30
       ),
       destructible = Destructible(
           base = DestructibleBaseStats(

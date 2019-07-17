@@ -7,13 +7,13 @@ import simulation.happenings.DamageAction
 import simulation.happenings.Trigger
 import simulation.main.Hand
 
-fun damageBuff(damageType: DamageType) = { action: Action ->
-  Hand(
-      trigger = Trigger(
-          action = DamageAction(
-              damageType = damageType,
-              amount = (action as ApplyBuff).strength
-          )
-      )
-  )
-}
+//fun damageBuff(damageType: DamageType) = { action: Action ->
+//  Hand(
+//      trigger = Trigger(
+//          action = DamageAction(
+//              damageType = damageType,
+//              amount = (action as ApplyBuff).strength
+//          )
+//      )
+//  )
+//}

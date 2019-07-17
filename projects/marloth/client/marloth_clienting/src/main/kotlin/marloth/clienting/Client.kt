@@ -78,36 +78,6 @@ fun updateMousePointerVisibility(platform: Platform) {
   platform.input.isMouseVisible(!windowHasFocus)
 }
 
-fun nextView(commands: UserCommands, state: ClientState): ViewId? {
-  val c = commands.map { it.type }
-  val view = state.view
-  return when {
-    c.contains(GuiCommandType.menu) -> {
-      if (view != ViewId.none)
-        ViewId.none
-      else
-        ViewId.mainMenu
-    }
-    c.contains(GuiCommandType.menuBack) -> {
-      if (view != ViewId.none)
-        ViewId.none
-      else
-        null
-    }
-    else -> null
-  }
-}
-
-fun menuChangeView(commands: UserCommands): (ClientState) -> ClientState = { state ->
-  val newView = nextView(commands, state)
-  if (newView != null) {
-    state.copy(
-        view = newView
-    )
-  } else
-    state
-}
-
 fun applyClientCommands(client: Client, commands: UserCommands): (ClientState) -> ClientState = { state ->
   val c = commands.map { it.type }
   if (c.contains(GuiCommandType.quit)) {

@@ -6,7 +6,7 @@ import scenery.enums.Text
 import simulation.entities.AccessoryDefinition
 import simulation.entities.Modifier
 
-val accessories: Map<AccessoryId, AccessoryDefinition> = mapOf(
+val staticAccessories: Map<AccessoryId, AccessoryDefinition> = mapOf(
     AccessoryId.coldResistance to AccessoryDefinition(
         name = Text.id_coldResistance,
         modifiers = listOf(

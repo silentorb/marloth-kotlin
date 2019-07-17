@@ -1,9 +1,7 @@
 package marloth.clienting.gui
 
 import mythic.bloom.*
-import mythic.bloom.next.Box
-import mythic.bloom.next.Flower
-import mythic.bloom.next.Seed
+import mythic.bloom.next.*
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
 import mythic.ent.Id
@@ -20,7 +18,12 @@ import simulation.main.Deck
 import simulation.misc.AccessoryDefinitions
 
 fun drawWareButton(state: ButtonState): Depiction = { bounds: Bounds, canvas: Canvas ->
-  drawFill(bounds, canvas, grayTone(0.5f))
+  val background = if (state.isEnabled)
+    grayTone(0.5f)
+  else
+    grayTone(0.25f)
+
+  drawFill(bounds, canvas, background)
   val style = if (state.hasFocus)
     Pair(TextStyles.smallBlack, LineStyle(Vector4(1f), 2f))
   else
@@ -34,46 +37,74 @@ fun drawWareButton(state: ButtonState): Depiction = { bounds: Bounds, canvas: Ca
   canvas.drawText(position, style.first, state.text)
 }
 
-fun wareFlower(content: String): MenuItemFlower = { hasFocus ->
+fun wareFlower(content: String, isEnabled: Boolean): MenuItemFlower = { hasFocus ->
   { seed: Seed ->
     Box(
         bounds = Bounds(
             dimensions = Vector2i(300, 50)
         ),
         depiction = drawWareButton(
-            ButtonState(content, hasFocus)
+            ButtonState(
+                text = content,
+                hasFocus = hasFocus,
+                isEnabled = isEnabled)
         ),
         name = "menu button"
     )
   }
 }
 
-fun wareMenuItem(textResources: TextResources, definitions: AccessoryDefinitions, deck: Deck, merchant: Id, player: Id,
-                 id: Id): MenuItem {
+fun wareMenuItem(textResources: TextResources, definitions: AccessoryDefinitions, deck: Deck, merchant: Id,
+                 player: Id, customerMoney: Int, id: Id): MenuItem {
   val ware = deck.wares[id]!!
   val definition = definitions[ware.type]!!
   val name = textResources[definition.name]!!
   val price = ware.price
+  val canPurchase = ware.price <= customerMoney
+  val event = if (canPurchase)
+    GuiEvent(
+        type = GuiEventType.gameEvent,
+        data = PurchaseEvent(
+            customer = player,
+            merchant = merchant,
+            ware = id
+        )
+    )
+  else
+    null
+
   return MenuItem(
-      flower = wareFlower("$name $$price"),
-      event = GuiEvent(
-          type = GuiEventType.gameEvent,
-          data = PurchaseEvent(
-              customer = player,
-              merchant = merchant,
-              ware = id
-          )
-      )
+      flower = wareFlower("$name $$price", canPurchase),
+      event = event
   )
 }
 
+fun merchantInfoFlower(customerMoney: Int) =
+    div(
+        name = "merchant",
+        forward = forwardDimensions(width = fixed(200)),
+        reverse = shrink
+    )(
+        margin(20)(
+            list(verticalPlane, 10)(listOf(
+                label(TextStyles.smallBlack, "Money: $$customerMoney")
+            ))
+        )
+    )
+
 fun merchantView(textResources: TextResources, definitions: AccessoryDefinitions, deck: Deck, player: Id): Flower {
   val merchant = getPlayerInteractingWith(deck)!!
+  val customerMoney = deck.characters[player]!!.money
   val buttons = deck.attachments
       .filter { it.value.target == merchant && it.value.category == AttachmentTypeId.inventory }
       .map { (id, _) ->
-        wareMenuItem(textResources, definitions, deck, merchant, player, id)
+        wareMenuItem(textResources, definitions, deck, merchant, player, customerMoney, id)
       }
 
-  return menuFlower(buttons)
+  return div(reverse = centerDialog, depiction = menuBackground)(
+      list(horizontalPlane, 10)(listOf(
+          embeddedMenuFlower(buttons),
+          merchantInfoFlower(customerMoney)
+      ))
+  )
 }

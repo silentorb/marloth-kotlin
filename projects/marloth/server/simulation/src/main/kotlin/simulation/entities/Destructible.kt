@@ -1,9 +1,7 @@
 package simulation.entities
 
 import mythic.ent.Id
-import simulation.combat.Damage
-import simulation.combat.DamageMultipliers
-import simulation.combat.applyDamageMods
+import simulation.combat.*
 import simulation.happenings.DamageEvent
 import simulation.misc.Resource
 import simulation.misc.modifyResource
@@ -20,14 +18,11 @@ data class Destructible(
     val lastDamageSource: Id = 0L
 )
 
-fun aggregateDamage(multipliers: DamageMultipliers, damages: List<Damage>) =
-    damages
-        .map(applyDamageMods(multipliers))
-        .sum()
-
-fun aggregateHealthModifiers(destructible: Destructible, damages: List<Damage>): Int {
-  val damage = aggregateDamage(destructible.damageMultipliers, damages)
-  return -damage
+fun updateDestructibleCache(modifierQuery: DamageModifierQuery): (Id, Destructible) -> Destructible = { id, destructible ->
+  val multiplers = calculateDamageMultipliers(modifierQuery, id, destructible.base.damageMultipliers)
+  destructible.copy(
+      damageMultipliers = multiplers
+  )
 }
 
 fun updateDestructibleHealth(damages: List<Damage>): (Destructible) -> Destructible = { destructible ->

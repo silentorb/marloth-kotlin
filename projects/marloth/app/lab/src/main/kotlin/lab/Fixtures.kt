@@ -3,7 +3,8 @@ package lab
 import marloth.integration.AppState
 
 enum class FixtureId {
-  merchant
+  merchant,
+  none
 }
 
 val merchantFixture: (AppState) -> AppState = { appState ->
@@ -24,4 +25,5 @@ val merchantFixture: (AppState) -> AppState = { appState ->
 fun applyFixture(fixture: FixtureId): (AppState) -> AppState =
     when (fixture) {
       FixtureId.merchant -> merchantFixture
+      else -> { it -> it }
     }

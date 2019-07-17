@@ -144,7 +144,8 @@ fun layoutGui(app: GameApp, appState: AppState, windowInfo: WindowInfo): Box {
 
 fun updateAppState(app: GameApp, newWorld: () -> World, hooks: GameHooks? = null): (AppState) -> AppState = { appState ->
   val windowInfo = app.client.getWindowInfo()
-  val box = toAbsoluteBounds(Vector2i.zero, layoutGui(app, appState, windowInfo))
+  val relativeBox = layoutGui(app, appState, windowInfo)
+  val box = toAbsoluteBounds(Vector2i.zero, relativeBox)
   val (timestep, steps) = updateTimestep(appState.timestep, simulationDelta.toDouble())
 
   if (steps <= 1) {

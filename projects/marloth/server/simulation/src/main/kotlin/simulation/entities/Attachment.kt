@@ -1,11 +1,11 @@
 package simulation.entities
 
 import mythic.ent.Id
-import scenery.enums.AccessoryId
-import scenery.enums.ModifierId
-import scenery.enums.Text
+import scenery.enums.*
+import simulation.happenings.Action
 import simulation.happenings.OrganizedEvents
 import simulation.main.Deck
+import simulation.misc.ValueModifier
 
 enum class AttachmentTypeId {
   ability,
@@ -17,7 +17,8 @@ enum class AttachmentTypeId {
 data class Attachment(
     val target: Id,
     val category: AttachmentTypeId,
-    val index: Int = 0
+    val index: Int = 0,
+    val source: Id = 0L
 )
 
 data class Modifier(
@@ -32,6 +33,14 @@ data class Accessory(
 data class AccessoryDefinition(
     val name: Text,
     val modifiers: List<Modifier>
+)
+
+data class ModifierDefinition(
+    val name: Text,
+    val type: ModifierType = ModifierType._notSpecified,
+    val direction: ModifierDirection = ModifierDirection.none,
+    val overTime: Action? = null,
+    val valueModifier: ValueModifier? = null
 )
 
 fun getTargetAttachments(deck: Deck, target: Id) =

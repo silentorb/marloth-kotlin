@@ -1,11 +1,15 @@
 package simulation.main
 
 import mythic.ent.IdSource
+import mythic.ent.pass
 import mythic.ent.pipe
 import randomly.Dice
+import simulation.combat.getDamageMultiplierModifiers
+import simulation.combat.toModifierDeck
 import simulation.entities.*
 import simulation.happenings.Events
 import simulation.happenings.OrganizedEvents
+import simulation.happenings.gatherActivatedTriggers
 import simulation.happenings.gatherEvents
 import simulation.input.Commands
 import simulation.input.updatePlayer
@@ -32,11 +36,30 @@ fun generateIntermediateRecords(bulletState: BulletState, definitions: Definitio
   val spiritCommands = pursueGoals(world, aliveSpirits(world.deck).values)
   val commands = playerCommands.plus(spiritCommands)
   val collisions = getBulletCollisions(bulletState, deck)
+  val triggers = if (shouldUpdateLogic(world))
+    gatherActivatedTriggers(deck, definitions, collisions)
+  else
+    listOf()
+
   return Intermediate(
       commands = commands,
       activatedAbilities = getActivatedAbilities(deck, commands),
       collisions = collisions,
-      events = if (shouldUpdateLogic(world)) gatherEvents(definitions, deck, collisions, events) else OrganizedEvents()
+      events = gatherEvents(definitions, deck, triggers, events)
+  )
+}
+
+val cleanupOutdatedReferences: (Deck) -> Deck = { deck ->
+  deck.copy(
+      attachments = deck.attachments.mapValues {
+        val source = if (it.value.source > 0 && deck.bodies.containsKey(it.value.source))
+          it.value.source
+        else
+          0L
+        it.value.copy(
+            source = source
+        )
+      }
   )
 }
 
@@ -55,7 +78,7 @@ fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: 
           bodies = bodies,
           depictions = mapTable(deck.depictions, updateDepiction(bodyWorld, animationDurations)),
           destructibles = mapTable(deck.destructibles, updateDestructibleHealth(events.damage)),
-          characters = mapTable(deck.characters, updateCharacter(bodyWorld.deck, commands, activatedAbilities, events.damage)),
+          characters = mapTable(deck.characters, updateCharacter(bodyWorld.deck, commands, activatedAbilities, events)),
           particleEffects = mapTableValues(deck.particleEffects, bodyWorld.deck.bodies, updateParticleEffect(dice, simulationDelta)),
           players = mapTable(deck.players, updatePlayer(intermediate.commands)),
           spirits = mapTable(deck.spirits, updateAiState(bodyWorld, simulationDelta)),
@@ -63,17 +86,28 @@ fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: 
       )
     }
 
+fun updateDeckCache(definitions: Definitions): (Deck) -> Deck =
+    { deck ->
+      val damageModifierQuery = getDamageMultiplierModifiers(definitions, toModifierDeck(deck))
+      deck.copy(
+          destructibles = mapTable(deck.destructibles, updateDestructibleCache(damageModifierQuery))
+      )
+    }
+
 fun newEntities(events: OrganizedEvents, nextId: IdSource): (Deck) -> Deck = { deck ->
   mergeDecks(listOf(deck).plus(resolveDecks(nextId, events.decks)))
 }
 
-fun updateWorldDeck(animationDurations: AnimationDurationMap, intermediate: Intermediate, delta: Float): (World) -> World =
+fun updateWorldDeck(animationDurations: AnimationDurationMap, definitions: Definitions, intermediate: Intermediate,
+                    delta: Float): (World) -> World =
     { world ->
       val (nextId, finalize) = newIdSource(world)
 
       val newDeck = pipe(world.deck, listOf(
           updateEntities(world.dice, animationDurations, world, intermediate),
+          ifUpdatingLogic(world, updateDeckCache(definitions)),
           removeEntities,
+          cleanupOutdatedReferences,
           newEntities(intermediate.events, nextId)
       ))
       finalize(world.copy(
@@ -87,7 +121,7 @@ fun updateWorld(bulletState: BulletState, animationDurations: AnimationDurationM
         updateBulletPhysics(bulletState),
         { world ->
           val intermediate = generateIntermediateRecords(bulletState, definitions, world, playerCommands, events)
-          updateWorldDeck(animationDurations, intermediate, delta)(world)
+          updateWorldDeck(animationDurations, definitions, intermediate, delta)(world)
         },
         updateGlobalDetails,
         updateBuffUpdateCounter

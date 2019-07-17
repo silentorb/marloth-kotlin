@@ -72,7 +72,8 @@ fun newBloomState() =
 
 data class ButtonState(
     val text: String,
-    val hasFocus: Boolean
+    val hasFocus: Boolean,
+    val isEnabled: Boolean = true
 )
 
 fun depictBackground(backgroundColor: Vector4): Depiction = { b: Bounds, canvas: Canvas ->

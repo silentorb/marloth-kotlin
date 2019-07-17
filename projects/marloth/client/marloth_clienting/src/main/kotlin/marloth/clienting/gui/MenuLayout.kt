@@ -20,7 +20,7 @@ typealias MenuItemFlower = (Boolean) -> Flower
 
 data class MenuItem(
     val flower: MenuItemFlower,
-    val event: GuiEvent
+    val event: GuiEvent?
 )
 
 data class SimpleMenuItem(
@@ -136,7 +136,24 @@ fun simpleMenuButton(content: String): MenuItemFlower = { hasFocus ->
   }
 }
 
-fun menuFlower(menu: Menu): Flower {
+val centerDialog = reverseOffset(left = centered, top = centered) + shrink
+
+val standaloneMenuBox: (Menu) -> FlowerWrapper = { menu ->
+  div(
+      reverse = centerDialog,
+      depiction = menuBackground,
+      logic = menuLogic(menu)
+  )
+}
+
+val embeddedMenuBox: (Menu) -> FlowerWrapper = { menu ->
+  div(
+      reverse = shrink,
+      logic = menuLogic(menu)
+  )
+}
+
+fun menuFlowerBase(menuBox: (Menu) -> FlowerWrapper): (Menu) -> Flower = { menu ->
   val rows = menu
       .mapIndexed { index, it ->
         //        val content = textResources[it.text]!!
@@ -145,18 +162,16 @@ fun menuFlower(menu: Menu): Flower {
 
   val gap = 20
 
-  val menuBox = div(
-      reverse = reverseOffset(left = centered, top = centered) + shrink,
-      depiction = menuBackground,
-      logic = menuLogic(menu)
-  )
-
-  return menuBox(
+  menuBox(menu)(
       margin(all = gap)(
           list(verticalPlane, gap)(rows)
       )
   )
 }
+
+val menuFlower = menuFlowerBase(standaloneMenuBox)
+
+val embeddedMenuFlower = menuFlowerBase(embeddedMenuBox)
 
 fun menuFlower(textResources: TextResources, menu: List<SimpleMenuItem>): Flower {
   val items = menu.map {

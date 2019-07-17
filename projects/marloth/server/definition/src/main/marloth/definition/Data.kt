@@ -1,6 +1,7 @@
 package marloth.definition
 
-import marloth.definition.data.accessories
+import marloth.definition.data.staticAccessories
+import marloth.definition.data.staticModifiers
 import simulation.entities.AbilityDefinition
 import simulation.misc.Definitions
 
@@ -19,19 +20,7 @@ class AbilityDefinitions {
 
 val abilityDefinitions = AbilityDefinitions()
 
-//val propBodyAttributes = BodyAttributes(
-//    resistance = 4f
-//)
-//
-//val missileBodyAttributes = BodyAttributes(
-//    resistance = 0f
-//)
-//
-//val characterBodyAttributes = BodyAttributes(
-//    resistance = 4f
-////        resistance = 8f
-//)
-
 val staticDefinitions = Definitions(
-    accessories = accessories
+    accessories = staticAccessories,
+    modifiers = staticModifiers
 )

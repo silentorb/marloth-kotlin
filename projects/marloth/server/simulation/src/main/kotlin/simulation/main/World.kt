@@ -3,6 +3,7 @@ package simulation.main
 import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.ent.Table
+import mythic.ent.pass
 import randomly.Dice
 import simulation.entities.Character
 import simulation.misc.GameOver
@@ -34,6 +35,12 @@ typealias WorldTransform = (World) -> World
 typealias WorldPair = Pair<World, World>
 
 val shouldUpdateLogic = { world: World -> world.logicUpdateCounter == 0 }
+
+fun <T> ifUpdatingLogic(world: World, transform: (T) -> T): (T) -> T =
+    if (shouldUpdateLogic(world))
+      transform
+    else
+      ::pass
 
 fun newIdSource(world: World): Pair<IdSource, (World) -> World> {
   var availableIds = world.availableIds
