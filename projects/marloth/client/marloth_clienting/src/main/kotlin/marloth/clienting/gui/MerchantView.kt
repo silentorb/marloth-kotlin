@@ -67,7 +67,8 @@ fun wareMenuItem(textResources: TextResources, definitions: AccessoryDefinitions
         data = PurchaseEvent(
             customer = player,
             merchant = merchant,
-            ware = id
+            ware = id,
+            wareType = ware.type
         )
     )
   else

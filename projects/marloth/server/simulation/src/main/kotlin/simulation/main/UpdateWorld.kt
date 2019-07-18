@@ -1,7 +1,6 @@
 package simulation.main
 
 import mythic.ent.IdSource
-import mythic.ent.pass
 import mythic.ent.pipe
 import randomly.Dice
 import simulation.combat.getDamageMultiplierModifiers
@@ -95,7 +94,10 @@ fun updateDeckCache(definitions: Definitions): (Deck) -> Deck =
     }
 
 fun newEntities(events: OrganizedEvents, nextId: IdSource): (Deck) -> Deck = { deck ->
-  mergeDecks(listOf(deck).plus(resolveDecks(nextId, events.decks)))
+  val additional = Deck(
+      accessories = newAccessories(events, deck)
+  )
+  mergeDecks(listOf(deck, additional).plus(resolveDecks(nextId, events.decks)))
 }
 
 fun updateWorldDeck(animationDurations: AnimationDurationMap, definitions: Definitions, intermediate: Intermediate,
@@ -106,7 +108,8 @@ fun updateWorldDeck(animationDurations: AnimationDurationMap, definitions: Defin
       val newDeck = pipe(world.deck, listOf(
           updateEntities(world.dice, animationDurations, world, intermediate),
           ifUpdatingLogic(world, updateDeckCache(definitions)),
-          removeEntities,
+          removeWhole,
+          removePartial(intermediate.events),
           cleanupOutdatedReferences,
           newEntities(intermediate.events, nextId)
       ))

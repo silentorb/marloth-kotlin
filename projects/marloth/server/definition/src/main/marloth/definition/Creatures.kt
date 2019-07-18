@@ -12,9 +12,7 @@ class Creatures {
       depictionType = DepictionType.child,
       maxSpeed = 5f,
       deathSound = Sounds.girlScream,
-      damageMultipliers = mapOf(
-          DamageType.cold to 50
-      )
+      damageMultipliers = mapOf()
   )
 
   val ally = CharacterDefinition(

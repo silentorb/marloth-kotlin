@@ -26,10 +26,6 @@ data class Modifier(
     val strength: Int
 )
 
-data class Accessory(
-    val type: AccessoryId
-)
-
 data class AccessoryDefinition(
     val name: Text,
     val modifiers: List<Modifier>

@@ -1,6 +1,7 @@
 package simulation.happenings
 
 import mythic.ent.Id
+import scenery.enums.AccessoryId
 import simulation.combat.Damage
 import simulation.main.DeckSource
 
@@ -14,7 +15,8 @@ data class DamageEvent(
 data class PurchaseEvent(
     val customer: Id,
     val merchant: Id,
-    val ware: Id
+    val ware: Id,
+    val wareType: AccessoryId
 ) : GameEvent
 
 data class DeckEvent(

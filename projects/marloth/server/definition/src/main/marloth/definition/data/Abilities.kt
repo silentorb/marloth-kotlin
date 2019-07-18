@@ -30,7 +30,7 @@ val staticAccessories: Map<AccessoryId, AccessoryDefinition> = mapOf(
         modifiers = listOf(
             Modifier(
                 type = ModifierId.resistancePoison,
-                strength = 10
+                strength = 50
             )
         )
     )

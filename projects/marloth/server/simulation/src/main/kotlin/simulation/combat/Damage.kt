@@ -7,6 +7,7 @@ import simulation.main.Deck
 import simulation.main.Percentage
 import simulation.main.applyMultiplier
 import simulation.misc.Definitions
+import simulation.misc.resolveValueModifier
 
 enum class DamageType {
   chaos,
@@ -66,37 +67,47 @@ enum class ModifierOperation {
 fun getValueModifiers(definitions: Definitions, modifierDeck: ModifierDeck, id: Id): List<Modifier> {
   val indirectModifiers = modifierDeck.attachments
       .filterValues { it.target == id && it.category == AttachmentTypeId.ability || it.category == AttachmentTypeId.equipped }
-      .flatMap {
-        val type = modifierDeck.accessories[id]!!.type
-        definitions.accessories[type]!!.modifiers
+      .mapNotNull {
+        val accessory = modifierDeck.accessories[it.key]
+        if (accessory != null)
+          definitions.accessories[accessory.type]?.modifiers
+        else
+          null
       }
+      .flatten()
   val directModifiers = modifierDeck.attachments
       .filterValues { it.target == id && it.category == AttachmentTypeId.buff }
-      .map { modifierDeck.buffs[id]!! }
+      .map { modifierDeck.buffs[it.key]!! }
 
   return indirectModifiers.plus(directModifiers)
 }
 
-typealias DamageModifierQuery = (Id, DamageType) -> List<Int>
+typealias DamageModifierQuery = (Id) -> (DamageType) -> List<Int>
 
 fun getDamageMultiplierModifiers(definitions: Definitions, modifierDeck: ModifierDeck): DamageModifierQuery =
-    { id, damageType ->
-      getValueModifiers(definitions, modifierDeck, id)
-          .mapNotNull {
-            val definition = definitions.modifiers[it.type]!!
-            val valueModifier = definition.valueModifier!!
-            if (valueModifier.operation == ModifierOperation.multiply && valueModifier.subtype == damageType)
-              valueModifier.value
+    { id ->
+      val modifiers = getValueModifiers(definitions, modifierDeck, id)
+      val expressionSeparator = 0
+      { damageType ->
+        modifiers.mapNotNull {
+          val definition = definitions.modifiers[it.type]
+          if (definition != null) {
+            val valueModifier = definition.valueModifier
+            if (valueModifier != null && valueModifier.operation == ModifierOperation.multiply
+                && valueModifier.subtype == damageType)
+              resolveValueModifier(valueModifier, it.strength)
             else
               null
-          }
+          } else null
+        }
+      }
     }
 
-
 fun calculateDamageMultipliers(modifierQuery: DamageModifierQuery, id: Id, base: DamageMultipliers): DamageMultipliers {
+  val query = modifierQuery(id)
   return staticDamageTypes.map { damageType ->
     val baseMultipler = base[damageType] ?: 100
-    val modifiers = modifierQuery(id, damageType)
+    val modifiers = query(damageType)
     val aggregate = modifiers.sum()
     val value = baseMultipler + aggregate
     Pair(damageType, value)
