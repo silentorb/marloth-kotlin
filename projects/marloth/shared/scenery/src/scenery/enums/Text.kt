@@ -1,6 +1,9 @@
 package scenery.enums
 
 enum class Text {
+  gui_merchant,
+  gui_mainMenu,
+  gui_victory,
   id_candle,
   id_damageChilled,
   id_damageBurning,

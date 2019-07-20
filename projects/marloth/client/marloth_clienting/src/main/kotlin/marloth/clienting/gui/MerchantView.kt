@@ -12,6 +12,7 @@ import mythic.typography.TextConfiguration
 import mythic.typography.calculateTextDimensions
 import mythic.typography.resolveTextStyle
 import org.joml.Vector2i
+import scenery.enums.Text
 import simulation.entities.AttachmentTypeId
 import simulation.happenings.PurchaseEvent
 import simulation.main.Deck
@@ -102,7 +103,7 @@ fun merchantView(textResources: TextResources, definitions: AccessoryDefinitions
         wareMenuItem(textResources, definitions, deck, merchant, player, customerMoney, id)
       }
 
-  return div(reverse = centerDialog, depiction = menuBackground)(
+  return dialog(Text.gui_merchant)(
       list(horizontalPlane, 10)(listOf(
           embeddedMenuFlower(buttons),
           merchantInfoFlower(customerMoney)

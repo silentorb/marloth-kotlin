@@ -103,9 +103,9 @@ fun victoryMenu() = listOfNotNull(
 
 fun viewSelect(textResources: TextResources, definitions: Definitions, world: World?, view: ViewId): Flower? {
   return when (view) {
-    ViewId.mainMenu -> menuFlower(textResources, mainMenu(gameIsActive(world)))
+    ViewId.mainMenu -> menuFlower(textResources, Text.gui_mainMenu, mainMenu(gameIsActive(world)))
     ViewId.merchant -> merchantView(textResources, definitions.accessories, world!!.deck, 1L)
-    ViewId.victory -> menuFlower(textResources, victoryMenu())
+    ViewId.victory -> menuFlower(textResources,Text.gui_victory, victoryMenu())
     ViewId.none -> null
   }
 }
@@ -121,7 +121,7 @@ fun guiLayout(client: Client, definitions: Definitions, clientState: ClientState
 fun layoutGui(client: Client, definitions: Definitions, clientState: ClientState, world: World?, hudData: HudData?, windowInfo: WindowInfo): Box {
   val layout = guiLayout(client, definitions, clientState, world, hudData)
   val seed = Seed(
-      bag = clientState.bloomState.bag,
+      bag = clientState.bloomState.bag.plus(textResourcesKey to client.textResources),
       dimensions = windowInfo.dimensions
   )
   return layout(seed)

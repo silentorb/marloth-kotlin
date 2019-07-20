@@ -1,3 +1,6 @@
+gui_mainMenu: Menu
+gui_merchant: Merchant
+gui_victory: Victory
 id_candle: Candle
 id_coldResistance: Cold Resistance
 id_fireResistance: Fire Resistance

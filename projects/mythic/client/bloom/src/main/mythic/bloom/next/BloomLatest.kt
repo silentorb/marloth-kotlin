@@ -7,6 +7,8 @@ import org.joml.plus
 
 private val emptyBoxList: List<Box> = listOf()
 
+val emptyBounds = Bounds(0, 0, 0, 0)
+
 data class Box(
     val name: String = "",
     val bounds: Bounds,
@@ -48,6 +50,9 @@ fun div(name: String = "",
         depiction: Depiction? = null,
         logic: LogicModule? = null): FlowerWrapper = { flower ->
   { seed ->
+    if (name == "dialog") {
+      val k = 0
+    }
     val bounds = forward(seed.dimensions)
     val childSeed = seed.copy(
         dimensions = bounds.dimensions
@@ -177,6 +182,12 @@ val shrink: ReverseLayout = { parent, bounds, child ->
   )
 }
 
+val shrinkVertical: ReverseLayout = { parent, bounds, child ->
+  bounds.copy(
+      dimensions = Vector2i(bounds.dimensions.x, child.dimensions.y)
+  )
+}
+
 val shrinkWrap: ReversePlanePositioner = { plane ->
   { parent, bounds, child ->
     plane.x(child.dimensions)
@@ -184,12 +195,18 @@ val shrinkWrap: ReversePlanePositioner = { plane ->
 }
 
 fun margin(all: Int = 0, left: Int = all, top: Int = all, bottom: Int = all, right: Int = all): FlowerWrapper = div(
+    forward = { container ->
+      Bounds(
+          dimensions = container - Vector2i(left + right, top + bottom)
+      )
+    },
     reverse = { _, bounds, child ->
       bounds.copy(
           position = Vector2i(left, top),
           dimensions = child.dimensions + Vector2i(left + right, top + bottom)
       )
-    }
+    },
+    name = "margin"
 )
 
 fun padding2(all: Int = 0, left: Int = all, top: Int = all, bottom: Int = all, right: Int = all): FlowerWrapper = div(

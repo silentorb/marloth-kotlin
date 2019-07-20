@@ -136,8 +136,6 @@ fun simpleMenuButton(content: String): MenuItemFlower = { hasFocus ->
   }
 }
 
-val centerDialog = reverseOffset(left = centered, top = centered) + shrink
-
 val standaloneMenuBox: (Menu) -> FlowerWrapper = { menu ->
   div(
       reverse = centerDialog,
@@ -173,12 +171,14 @@ val menuFlower = menuFlowerBase(standaloneMenuBox)
 
 val embeddedMenuFlower = menuFlowerBase(embeddedMenuBox)
 
-fun menuFlower(textResources: TextResources, menu: List<SimpleMenuItem>): Flower {
+fun menuFlower(textResources: TextResources, title: Text, menu: List<SimpleMenuItem>): Flower {
   val items = menu.map {
     MenuItem(
         flower = simpleMenuButton(textResources[it.text]!!),
         event = GuiEvent(GuiEventType.command, it.command)
     )
   }
-  return menuFlower(items)
+  return dialog(title)(
+      embeddedMenuFlower(items)
+  )
 }

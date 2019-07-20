@@ -25,33 +25,11 @@ fun applyBounds(arranger: FixedChildArranger): (List<Flower>) -> Flower = { flow
   }
 }
 
-//fun listOld(plane: Plane, padding: Int): (List<FlowerOld>) -> FlowerOld = { children ->
-//  { seed ->
-//    val normalize = normalizeBounds(plane)
-//    var lastBounds = seed.bounds
-//    Blossom(
-//        boxes = children.flatMap { flower ->
-//          val blossom = flower(seed.copy(bounds = lastBounds))
-//          val farthest = blossom.boxes.map { normalize(it.bounds).right }.sortedDescending().first()
-//          val normalizedLastBounds = normalize(lastBounds)
-//
-//          val offset = Vector2i(farthest - lastBounds.top + padding, 0)
-//          lastBounds = normalize(Bounds(
-//              position = normalizedLastBounds.position + offset,
-//              dimensions = normalizedLastBounds.dimensions - offset
-//          ))
-//          blossom.boxes
-//        },
-//        bounds = emptyBounds
-//    )
-//  }
-//}
-
 fun list(plane: Plane, spacing: Int = 0, drawReversed: Boolean = false, name: String = "list"): (List<Flower>) -> Flower = { children ->
   { seed ->
     var lastOffset = 0
     var otherLength = 0
-    if (name == "map-layout-root") {
+    if (name == "dialog-list") {
       val k = 0
     }
     val boxes = children.mapIndexed { i, flower ->
@@ -73,7 +51,9 @@ fun list(plane: Plane, spacing: Int = 0, drawReversed: Boolean = false, name: St
 
       box
     }
-
+    if (name == "dialog-list") {
+      val k = 0
+    }
     Box(
         name = name,
         boxes = if (drawReversed) boxes.reversed() else boxes,
@@ -84,12 +64,64 @@ fun list(plane: Plane, spacing: Int = 0, drawReversed: Boolean = false, name: St
   }
 }
 
-//fun fixedListOld(plane: Plane, padding: Int, lengths: List<Int?>): ParentFlower =
-//    applyBounds(fixedLengthArranger(plane, padding, lengths))
+enum class FlexType {
+  stretch,
+  fixed,
+}
 
-fun fixedList(plane: Plane, padding: Int, lengths: List<Int?>): ParentFlower = { flowers ->
+data class FlexItem(
+    val flower: Flower,
+    val type: FlexType = FlexType.fixed
+)
+
+fun flexList(plane: Plane, spacing: Int = 0, name: String = "flexList"): (List<FlexItem>) -> Flower = { items ->
   { seed ->
-    val boundsList = fixedLengthArranger(plane, padding, lengths)(seed.dimensions)
+    val totalSpacing = (items.size - 1) * spacing
+    val firstPass = items.map { item ->
+      if (item.type == FlexType.fixed) {
+        item.flower(seed)
+      } else
+        null
+    }
+    val lengths = firstPass.map { if (it != null) plane(it.bounds.end).x else null }
+    val boundsList = fixedLengthArranger(plane, spacing, lengths)(seed.dimensions)
+    val boxes = firstPass.zip(boundsList.zip(items)) { box, (bounds, item) ->
+      if (box != null) {
+        box.copy(
+            bounds = bounds
+        )
+      }
+      else {
+        val newBox = item.flower(seed.copy(dimensions = bounds.dimensions))
+        newBox.copy(
+            bounds = bounds
+        )
+      }
+    }
+//    val childSeed = seed.copy(
+//        dimensions = plane(Vector2i(plane(seed.dimensions).x, length))
+//    )
+//    val top = pair.first(childSeed)
+//    val topDimensions = plane(top.bounds.end)
+//    val newSecond = bottom.copy(
+//        bounds = bottom.bounds.copy(
+//            position = bottom.bounds.position + plane(Vector2i(topDimensions.x + spacing, 0))
+//        )
+//    )
+//    val boxes = listOf(top, newSecond).reversed()
+    Box(
+        name = name,
+        boxes = boxes,
+        bounds = Bounds(
+            dimensions = seed.dimensions
+        )
+    )
+  }
+}
+
+fun fixedList(plane: Plane, spacing: Int, lengths: List<Int?>): ParentFlower = { flowers ->
+  { seed ->
+    val boundsList = fixedLengthArranger(plane, spacing, lengths)(seed.dimensions)
     Box(
         name = "fixedList",
         bounds = Bounds(dimensions = seed.dimensions),

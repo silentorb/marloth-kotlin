@@ -9,11 +9,11 @@ import simulation.misc.ValueModifier
 import simulation.misc.ValueModifierDirection
 
 fun newResistanceModifier(name: Text, damageType: DamageType) = ModifierDefinition(
-    name = Text.id_poisonResistance,
+    name = name,
     direction = ModifierDirection.incoming,
     valueModifier = ValueModifier(
         operation = ModifierOperation.multiply,
         direction = ValueModifierDirection.minus,
-        subtype = DamageType.poison
+        subtype = damageType
     )
 )

@@ -69,10 +69,10 @@ fun lengthArranger(plane: Plane, padding: Int): LengthArrangement = { dimensions
   listBounds(plane, padding, dimensions, lengths)
 }
 
-fun fixedLengthArranger(plane: Plane, padding: Int, lengths: List<Int?>): FixedChildArranger = { dimensions ->
-  val totalPadding = padding * (lengths.size - 1)
+fun fixedLengthArranger(plane: Plane, spacing: Int, lengths: List<Int?>): FixedChildArranger = { dimensions ->
+  val totalPadding = spacing * (lengths.size - 1)
   val boundLength = plane(dimensions).x - totalPadding
-  lengthArranger(plane, padding)(dimensions, resolveLengths(boundLength, lengths))
+  lengthArranger(plane, spacing)(dimensions, resolveLengths(boundLength, lengths))
 }
 
 fun centeredPosition(boundsLength: Int, length: Int): Int =
