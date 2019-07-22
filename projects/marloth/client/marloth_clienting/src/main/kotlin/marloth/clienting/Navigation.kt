@@ -13,6 +13,15 @@ fun nextView(command: GuiCommandType, view: ViewId): ViewId? =
           ViewId.mainMenu
       }
 
+      GuiCommandType.characterInfo -> {
+        if (view == ViewId.characterInfo)
+          ViewId.none
+        else if (view == ViewId.none)
+          ViewId.characterInfo
+        else
+          null
+      }
+
       GuiCommandType.menuBack -> {
         if (view != ViewId.none)
           ViewId.none

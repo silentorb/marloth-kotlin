@@ -95,9 +95,9 @@ fun drawMenuButton(state: ButtonState): Depiction = { bounds: Bounds, canvas: Ca
   globalState.depthEnabled = false
   drawFill(bounds, canvas, grayTone(0.5f))
   val style = if (state.hasFocus)
-    Pair(TextStyles.mediumBlack, LineStyle(Vector4(1f), 2f))
+    Pair(textStyles.mediumBlack, LineStyle(Vector4(1f), 2f))
   else
-    Pair(TextStyles.mediumBlack, LineStyle(Vector4(0f, 0f, 0f, 1f), 1f))
+    Pair(textStyles.mediumBlack, LineStyle(Vector4(0f, 0f, 0f, 1f), 1f))
 
   drawBorder(bounds, canvas, style.second)
 

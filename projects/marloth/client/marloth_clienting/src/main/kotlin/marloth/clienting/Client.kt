@@ -54,7 +54,7 @@ fun loadTextResource(): TextResources {
   return loadYamlResource("text/english.yaml", typeref)
 }
 
-private fun gatherFontSets() = extractFontSets(baseFonts, enumerateTextStyles(TextStyles))
+private fun gatherFontSets() = extractFontSets(baseFonts, enumerateTextStyles(textStyles))
 
 class Client(val platform: Platform, displayConfig: DisplayConfig, lightingConfig: LightingConfig = LightingConfig()) {
   val renderer: Renderer = Renderer(displayConfig, platform.display, gatherFontSets(), lightingConfig)

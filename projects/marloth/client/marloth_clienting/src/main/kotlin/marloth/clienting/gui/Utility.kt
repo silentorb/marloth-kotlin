@@ -20,7 +20,7 @@ fun getPlayerInteractingWith(deck: Deck): Id? =
 
 const val textResourcesKey = "textResources"
 
-fun label(style: IndexedTextStyle, text: Text): Flower = { seed ->
+fun localizedLabel(style: IndexedTextStyle, text: Text): Flower = { seed ->
   val textResources = seed.bag[textResourcesKey]!! as TextResources
   val content = textResources[text]!!
   val config = TextConfiguration(content, Vector2(), resolveTextStyle(globalFonts(), style))

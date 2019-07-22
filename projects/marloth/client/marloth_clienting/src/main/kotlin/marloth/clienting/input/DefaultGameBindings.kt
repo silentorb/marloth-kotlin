@@ -33,7 +33,7 @@ fun defaultKeyboardGameBindings() = mapOf(
     GLFW.GLFW_KEY_A to CommandType.moveLeft,
     GLFW.GLFW_KEY_D to CommandType.moveRight,
     GLFW.GLFW_KEY_S to CommandType.moveDown,
-    GLFW.GLFW_KEY_TAB to CommandType.switchView,
+//    GLFW.GLFW_KEY_TAB to CommandType.switchView,
     GLFW.GLFW_KEY_ENTER to CommandType.interactPrimary
 )
 

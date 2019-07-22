@@ -25,6 +25,7 @@ import simulation.misc.Definitions
 typealias TextResources = Map<Text, String>
 
 enum class ViewId {
+  characterInfo,
   mainMenu,
   none,
   merchant,
@@ -102,10 +103,12 @@ fun victoryMenu() = listOfNotNull(
 )
 
 fun viewSelect(textResources: TextResources, definitions: Definitions, world: World?, view: ViewId): Flower? {
+  val player = 1L
   return when (view) {
+    ViewId.characterInfo -> characterInfoView(definitions, world!!.deck, player)
     ViewId.mainMenu -> menuFlower(textResources, Text.gui_mainMenu, mainMenu(gameIsActive(world)))
-    ViewId.merchant -> merchantView(textResources, definitions.accessories, world!!.deck, 1L)
-    ViewId.victory -> menuFlower(textResources,Text.gui_victory, victoryMenu())
+    ViewId.merchant -> merchantView(textResources, definitions.accessories, world!!.deck, player)
+    ViewId.victory -> menuFlower(textResources, Text.gui_victory, victoryMenu())
     ViewId.none -> null
   }
 }

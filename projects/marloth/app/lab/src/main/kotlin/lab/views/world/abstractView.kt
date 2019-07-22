@@ -1,6 +1,6 @@
 package lab.views.world
 
-import marloth.clienting.gui.TextStyles
+import marloth.clienting.gui.textStyles
 import simulation.misc.WorldBoundary
 import mythic.bloom.Bounds
 import mythic.drawing.Canvas
@@ -93,7 +93,7 @@ fun drawAbstractWorld(bounds: Bounds, getPosition: PositionFunction, canvas: Can
       val position = getNodePosition(node)
       // + " " + node.floors.first().unorderedVertices.size.toString()
       canvas.drawText(position,
-          TextStyles.mediumWhite,
+          textStyles.mediumWhite,
           node.id.toString())
 //    }
   }

@@ -2,13 +2,8 @@ package lab.views.model
 
 import lab.utility.panelColor
 import lab.utility.sceneBackgroundColor
-import lab.views.shared.SelectableItem
-import lab.views.shared.drawSelectableEnumList
-import lab.views.shared.drawSelectableList
-import marloth.clienting.gui.TextStyles
+import marloth.clienting.gui.textStyles
 import mythic.bloom.Bounds
-import mythic.bloom.FlatBox
-import mythic.bloom.ClickBox
 import mythic.bloom.Depiction
 import mythic.drawing.Canvas
 import mythic.spatial.Vector2
@@ -16,7 +11,6 @@ import mythic.spatial.toString
 import org.joml.Vector2i
 import org.joml.plus
 import rendering.AdvancedModel
-import rendering.MeshType
 import rendering.Renderer
 import scenery.Camera
 
@@ -32,7 +26,7 @@ fun drawInfoPanel(config: ModelViewConfig, renderer: Renderer, model: AdvancedMo
   var row = 1
 
   fun drawText(content: String) {
-    canvas.drawText(bounds.position + Vector2i(5, 5 + row++ * 20), TextStyles.mediumBlack, content)
+    canvas.drawText(bounds.position + Vector2i(5, 5 + row++ * 20), textStyles.mediumBlack, content)
   }
   drawText("Mouse: " + mousePosition.x.toString() + ", " + mousePosition.y.toString())
 //  canvas.drawText(TextConfiguration("Mouse: " + mousePosition.x.toString() + ", " + mousePosition.y.toString(),

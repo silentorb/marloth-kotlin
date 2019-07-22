@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Filter>
+	<Components>
+		<Result id="result">
+			<Source source="assemblehsb3 01"/>
+			<FilterType value="0"/>
+			<Advanced value="false"/>
+			<Lighting>
+				<Height value="0.2000000000000000111"/>
+				<Environment>
+					<Source value=""/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+		</Result>
+		<AssembleHSB3 id="assemblehsb3 01">
+			<H source="perlinnoise2 03" value="0.2999999999999999889"/>
+			<S source="stones2 01" value="0.6999999999999999556"/>
+			<B source="blend6 03" value="1"/>
+		</AssembleHSB3>
+		<Blend6 id="blend6 01">
+			<Foreground source="perlinnoise2 02" red="1" green="1" blue="1" alpha="1"/>
+			<Background source="blend6 02" red="0" green="0" blue="0" alpha="1"/>
+			<Opacity source="blur2 02" value="0.5"/>
+			<Mode value="0"/>
+		</Blend6>
+		<Blend6 id="blend6 02">
+			<Foreground red="0" green="0" blue="0" alpha="1"/>
+			<Background source="perlinnoise2 01" red="0" green="0" blue="0" alpha="1"/>
+			<Opacity source="noisedistortion2 02" value="0.5"/>
+			<Mode value="0"/>
+		</Blend6>
+		<Blend6 id="blend6 03">
+			<Foreground red="0" green="0" blue="0" alpha="1"/>
+			<Background source="blend6 01" red="0" green="0" blue="0" alpha="1"/>
+			<Opacity source="noisedistortion2 01" value="0.5"/>
+			<Mode value="0"/>
+		</Blend6>
+		<Blur2 id="blur2 01">
+			<Source source="bomberplus3 02"/>
+			<Radius value="0.0299999999999999989"/>
+			<Gaussian value="true"/>
+		</Blur2>
+		<Blur2 id="blur2 02">
+			<Source source="bomberplus3 01"/>
+			<Radius value="0.0299999999999999989"/>
+			<Gaussian value="true"/>
+		</Blur2>
+		<BomberPlus3 id="bomberplus3 01">
+			<ParticleInput red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Opacity value="1"/>
+			<Size value="0.4099999999999999756"/>
+			<Rotation value="0.4500000000000000111"/>
+			<OffsetH value="-1"/>
+			<OffsetV value="-1"/>
+			<Squash value="0"/>
+			<OpacityChaos value="0"/>
+			<SizeChaos value="0.0100000000000000002"/>
+			<RotationChaos value="0.0100000000000000002"/>
+			<OffsetChaosH value="0.0100000000000000002"/>
+			<OffsetChaosV value="0.0100000000000000002"/>
+			<SquashChaos value="0.0100000000000000002"/>
+			<Roughness value="0.1000000000000000056"/>
+			<DepthMap/>
+			<ParticleMode value="0"/>
+			<OctavesScaleMode value="0"/>
+			<LayerOrder value="0"/>
+			<DepthSorting value="0"/>
+			<Details value="0"/>
+			<ParticleRepeats value="2"/>
+			<ParticlePerCell value="1"/>
+			<Variation value="1"/>
+			<HDRMode value="false"/>
+		</BomberPlus3>
+		<BomberPlus3 id="bomberplus3 02">
+			<ParticleInput red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Opacity value="1"/>
+			<Size value="0.5200000000000000178"/>
+			<Rotation value="0.4500000000000000111"/>
+			<OffsetH value="-1"/>
+			<OffsetV value="-1"/>
+			<Squash value="0"/>
+			<OpacityChaos value="0"/>
+			<SizeChaos value="0.0100000000000000002"/>
+			<RotationChaos value="0.0100000000000000002"/>
+			<OffsetChaosH value="0.0100000000000000002"/>
+			<OffsetChaosV value="0.0100000000000000002"/>
+			<SquashChaos value="0.0100000000000000002"/>
+			<Roughness value="0"/>
+			<DepthMap/>
+			<ParticleMode value="0"/>
+			<OctavesScaleMode value="0"/>
+			<LayerOrder value="0"/>
+			<DepthSorting value="0"/>
+			<Details value="0"/>
+			<ParticleRepeats value="2"/>
+			<ParticlePerCell value="1"/>
+			<Variation value="1"/>
+			<HDRMode value="false"/>
+		</BomberPlus3>
+		<NoiseDistortion2 id="noisedistortion2 01">
+			<Source source="tiles2 01"/>
+			<Distortion value="0.0200000000000000004"/>
+			<Roughness value="0.0700000000000000067"/>
+			<Scale value="2.5"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Variation value="1"/>
+		</NoiseDistortion2>
+		<NoiseDistortion2 id="noisedistortion2 02">
+			<Source source="blur2 01"/>
+			<Distortion value="0.0400000000000000008"/>
+			<Roughness value="0.4099999999999999756"/>
+			<Scale value="2.5"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Variation value="1"/>
+		</NoiseDistortion2>
+		<PerlinNoise2 id="perlinnoise2 01">
+			<Noise red="0.6976744186046511809" green="0.6976744186046511809" blue="0.6976744186046511809" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.3400000000000000244"/>
+			<Scale value="2.5"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.25"/>
+			<Variation value="1"/>
+			<OctaveCurve value="0"/>
+		</PerlinNoise2>
+		<PerlinNoise2 id="perlinnoise2 02">
+			<Noise red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.4799999999999999822"/>
+			<Scale value="2.5"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.5100000000000000089"/>
+			<Variation value="1"/>
+			<OctaveCurve value="0"/>
+		</PerlinNoise2>
+		<PerlinNoise2 id="perlinnoise2 03">
+			<Noise red="0.3875968992248062239" green="0.3845922720990325172" blue="0.3845922720990325172" alpha="1"/>
+			<Background red="0.4651162790697674909" green="0.4615107265188390651" blue="0.4615107265188390651" alpha="1"/>
+			<Roughness value="0.1900000000000000022"/>
+			<Scale value="2.2799999999999998046"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.25"/>
+			<Variation value="1230"/>
+			<OctaveCurve value="0"/>
+		</PerlinNoise2>
+		<Stones2 id="stones2 01">
+			<Noise red="0.6085271317829457072" green="0.6085271317829457072" blue="0.6085271317829457072" alpha="1"/>
+			<Background red="0.1860465116279069742" green="0.1860465116279069742" blue="0.1860465116279069742" alpha="1"/>
+			<Roughness value="0.8000000000000000444"/>
+			<Contrast value="0"/>
+			<Formula value="0"/>
+			<Scale value="2.3999999999999999112"/>
+			<Stretch value="0"/>
+			<VerticalStretch value="false"/>
+			<Flat value="false"/>
+			<SolidFill value="true"/>
+			<Details value="0.4000000000000000222"/>
+			<Variation value="1"/>
+			<OctaveCurve value="1"/>
+		</Stones2>
+		<Tiles2 id="tiles2 01">
+			<Color red="0" green="0" blue="0" alpha="1"/>
+			<Mortar red="0.8139534883720930258" green="0.8139534883720930258" blue="0.8139534883720930258" alpha="1"/>
+			<HRange value="0"/>
+			<LRange value="0"/>
+			<SRange value="0"/>
+			<MortarWidth value="0.0100000000000000002"/>
+			<BevelWidth value="0.1000000000000000056"/>
+			<Corners value="0"/>
+			<FillMode value="0"/>
+			<RowShift value="false"/>
+			<RepeatH value="1"/>
+			<RepeatV value="1"/>
+			<Chaos value="0.0500000000000000028"/>
+			<Variation value="1"/>
+			<Bevel value="0"/>
+		</Tiles2>
+	</Components>
+	<GroupNames/>
+	<SettingsOverride>
+		<Size value="0"/>
+		<Variation value="0"/>
+		<Seamless value="0"/>
+		<ResultBlending value="0"/>
+	</SettingsOverride>
+	<Presets>
+		<DefaultPreset preview_image="LIFESAVER_OPAQUE">
+			<Settings size_factor="1" variation="1" seamless="true" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="false"/>
+			<Lighting>
+				<Height value="0.2000000000000000111"/>
+				<Environment>
+					<Source value=""/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+			<Controls/>
+		</DefaultPreset>
+	</Presets>
+	<Locks>
+		<Settings size="false" variation="false"/>
+		<Lighting elements="false" environment="false" brightness="false" saturation="false" height="false"/>
+		<Controls/>
+	</Locks>
+	<Information author="cj" name-en="diamond-tiles" url="" description="" keywords="" update_notes="" major_version="8" minor_version="5"/>
+	<ControlsOrder>
+		<Automatic value="true"/>
+	</ControlsOrder>
+	<FilterEditor>
+		<Groups/>
+		<ThumbnailSize value="1"/>
+		<Canvas left="-524" top="-326" zoom_factor="0"/>
+		<Viewport left="0" top="0" zoom_factor="-2"/>
+		<LockPreview>
+			<Locked value="true"/>
+			<LockedComponent name="result"/>
+		</LockPreview>
+		<Item id="assemblehsb3 01">
+			<Position left="-64" top="128"/>
+		</Item>
+		<Item id="blend6 01">
+			<Position left="224" top="48"/>
+		</Item>
+		<Item id="blend6 02">
+			<Position left="256" top="-160"/>
+		</Item>
+		<Item id="blend6 03">
+			<Position left="0" top="-272"/>
+		</Item>
+		<Item id="blur2 01">
+			<Position left="736" top="-176"/>
+		</Item>
+		<Item id="blur2 02">
+			<Position left="688" top="16"/>
+		</Item>
+		<Item id="bomberplus3 01">
+			<Position left="1024" top="112"/>
+		</Item>
+		<Item id="bomberplus3 02">
+			<Position left="912" top="-640"/>
+		</Item>
+		<Item id="noisedistortion2 01">
+			<Position left="176" top="-464"/>
+		</Item>
+		<Item id="noisedistortion2 02">
+			<Position left="480" top="-272"/>
+		</Item>
+		<Item id="perlinnoise2 01">
+			<Position left="464" top="336"/>
+		</Item>
+		<Item id="perlinnoise2 02">
+			<Position left="496" top="128"/>
+		</Item>
+		<Item id="perlinnoise2 03">
+			<Position left="208" top="208"/>
+		</Item>
+		<Item id="result">
+			<Position left="-288" top="-48"/>
+		</Item>
+		<Item id="stones2 01">
+			<Position left="-32" top="352"/>
+		</Item>
+		<Item id="tiles2 01">
+			<Position left="496" top="-720"/>
+		</Item>
+	</FilterEditor>
+</Filter>

@@ -2,7 +2,6 @@ package marloth.clienting.gui
 
 import mythic.bloom.*
 import mythic.bloom.next.*
-import mythic.drawing.grayTone
 import mythic.spatial.Vector4
 import org.joml.Vector2i
 import org.joml.plus
@@ -13,23 +12,33 @@ val centerDialog = centeredDiv + shrink
 
 const val titleContentHeight = 40
 
+val horizontalLine: Depiction = { bounds, canvas ->
+  val middleY = bounds.top.toFloat() + bounds.dimensions.y * 0.45f
+  canvas.drawLine(bounds.left.toFloat(), middleY, bounds.right.toFloat(), middleY, black, 2f)
+}
+
 val titleBookendDepiction: Depiction = { bounds, canvas ->
   val middleY = bounds.top.toFloat() + titleContentHeight.toFloat() * 0.45f
   canvas.drawLine(bounds.left.toFloat(), middleY, bounds.right.toFloat(), middleY, black, 2f)
 }
 
-val titleBookend = FlexItem(div(depiction = titleBookendDepiction)(emptyFlower), FlexType.stretch)
+val titleBookendFlower = div(depiction = titleBookendDepiction)(emptyFlower)
+
+val titleBookend = FlexItem(titleBookendFlower, FlexType.stretch)
+val debugDepiction = solidBackground(Vector4(1f, 0f, 0f, 1f))
 
 fun titleBar(text: Text): Flower {
-  return div(forward = forwardDimensions(height = fixed(titleContentHeight)), reverse = shrinkVertical)(
+  return div(layout = layoutDimensions(height = fixed(titleContentHeight)))(
       margin(20)(
-//          div(reverse = reverseOffset(left = centered) + shrink)(
-//              label(TextStyles.mediumBlack, text)
-//          )
-          flexList(horizontalPlane, 10)(listOf(
-              titleBookend,
-              FlexItem(label(TextStyles.mediumBlack, text)),
-              titleBookend
+          list(verticalPlane)(listOf(
+              flexList(horizontalPlane, 10)(listOf(
+                  titleBookend,
+                  FlexItem(localizedLabel(textStyles.mediumBlack, text)),
+                  titleBookend
+              )),
+              div(forward = forwardDimensions(width = fixed(250), height = fixed(20)), reverse = reverseOffset(left = centered))(
+                  div(depiction = horizontalLine)(emptyFlower)
+              )
           ))
       )
   )
@@ -62,7 +71,7 @@ fun reversePair(plane: Plane, spacing: Int = 0, name: String = "reversePair"): (
 
 fun dialog(title: Text): FlowerWrapper = { flower ->
   div(reverse = centerDialog, depiction = menuBackground)(
-      reversePair(verticalPlane, 10)(Pair(
+      reversePair(verticalPlane, 20)(Pair(
           titleBar(title),
           flower
       ))

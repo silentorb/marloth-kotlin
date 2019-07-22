@@ -8,6 +8,7 @@ enum class GuiCommandType {
   moveLeft,
   moveRight,
 
+  characterInfo,
   menu,
   menuSelect,
   menuBack,
@@ -18,6 +19,7 @@ enum class GuiCommandType {
 }
 
 private fun standardClientStrokes() = setOf(
+    GuiCommandType.characterInfo,
     GuiCommandType.menu,
     GuiCommandType.menuSelect,
     GuiCommandType.menuBack,

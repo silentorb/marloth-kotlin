@@ -26,9 +26,9 @@ fun drawWareButton(state: ButtonState): Depiction = { bounds: Bounds, canvas: Ca
 
   drawFill(bounds, canvas, background)
   val style = if (state.hasFocus)
-    Pair(TextStyles.smallBlack, LineStyle(Vector4(1f), 2f))
+    Pair(textStyles.smallBlack, LineStyle(Vector4(1f), 2f))
   else
-    Pair(TextStyles.smallBlack, LineStyle(Vector4(0f, 0f, 0f, 1f), 1f))
+    Pair(textStyles.smallBlack, LineStyle(Vector4(0f, 0f, 0f, 1f), 1f))
 
   drawBorder(bounds, canvas, style.second)
 
@@ -49,8 +49,7 @@ fun wareFlower(content: String, isEnabled: Boolean): MenuItemFlower = { hasFocus
                 text = content,
                 hasFocus = hasFocus,
                 isEnabled = isEnabled)
-        ),
-        name = "menu button"
+        )
     )
   }
 }
@@ -89,7 +88,7 @@ fun merchantInfoFlower(customerMoney: Int) =
     )(
         margin(20)(
             list(verticalPlane, 10)(listOf(
-                label(TextStyles.smallBlack, "Money: $$customerMoney")
+                label(textStyles.smallBlack, "Money: $$customerMoney")
             ))
         )
     )

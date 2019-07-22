@@ -2,7 +2,7 @@ package lab.views.shared
 
 import lab.views.model.SelectableListType
 import lab.views.model.SelectionEvent
-import marloth.clienting.gui.TextStyles
+import marloth.clienting.gui.textStyles
 import mythic.bloom.*
 
 import mythic.drawing.Canvas
@@ -21,9 +21,9 @@ fun drawListItem(text: String, isSelected: Boolean): Depiction = { bounds: Bound
   globalState.depthEnabled = false
   drawFill(bounds, canvas, grayTone(0.5f))
   val style = if (isSelected)
-    Pair(TextStyles.mediumBlack, LineStyle(Vector4(1f), 2f))
+    Pair(textStyles.mediumBlack, LineStyle(Vector4(1f), 2f))
   else
-    Pair(TextStyles.mediumBlack, LineStyle(Vector4(0f, 0f, 0f, 1f), 1f))
+    Pair(textStyles.mediumBlack, LineStyle(Vector4(0f, 0f, 0f, 1f), 1f))
 
   drawBorder(bounds, canvas, style.second)
 

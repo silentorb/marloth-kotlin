@@ -1,7 +1,7 @@
 package lab.views.map
 
 import marloth.clienting.Client
-import marloth.clienting.gui.TextStyles
+import marloth.clienting.gui.textStyles
 import mythic.bloom.*
 import mythic.bloom.next.*
 
@@ -9,9 +9,9 @@ import mythic.ent.Id
 import simulation.misc.Node
 import simulation.misc.Realm
 
-val mapTextStyle = TextStyles.smallGray
+val mapTextStyle = textStyles.smallGray
 
-private val selectedTextStyle = TextStyles.smallWhite
+private val selectedTextStyle = textStyles.smallWhite
 
 private val horizontalPanel: ParentFlower =
     fixedList(horizontalPlane, 0, listOf(null, 250))

@@ -2,6 +2,7 @@ package simulation.combat
 
 import mythic.ent.Id
 import mythic.ent.Table
+import scenery.enums.Text
 import simulation.entities.*
 import simulation.main.Deck
 import simulation.main.Percentage
@@ -9,16 +10,24 @@ import simulation.main.applyMultiplier
 import simulation.misc.Definitions
 import simulation.misc.resolveValueModifier
 
+const val defaultDamageMultiplier = 100
+
 enum class DamageType {
-  chaos,
+//  chaos,
   cold,
-  lightning,
+//  lightning,
   fire,
-  physical,
+//  physical,
   poison
 }
 
 val staticDamageTypes = DamageType.values()
+
+val damageTypeNames: Map<DamageType, Text> = mapOf(
+    DamageType.cold to Text.damageType_cold,
+    DamageType.fire to Text.damageType_fire,
+    DamageType.poison to Text.damageType_poison
+)
 
 data class Damage(
     val type: DamageType,
@@ -106,7 +115,7 @@ fun getDamageMultiplierModifiers(definitions: Definitions, modifierDeck: Modifie
 fun calculateDamageMultipliers(modifierQuery: DamageModifierQuery, id: Id, base: DamageMultipliers): DamageMultipliers {
   val query = modifierQuery(id)
   return staticDamageTypes.map { damageType ->
-    val baseMultipler = base[damageType] ?: 100
+    val baseMultipler = base[damageType] ?: defaultDamageMultiplier
     val modifiers = query(damageType)
     val aggregate = modifiers.sum()
     val value = baseMultipler + aggregate

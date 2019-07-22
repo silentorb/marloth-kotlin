@@ -21,7 +21,7 @@ val mainFontSize = 36
 
 val smallFontSize = 22
 
-class TextStyles {
+class textStyles {
   companion object {
 
     val smallBlack = IndexedTextStyle(

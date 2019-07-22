@@ -8,7 +8,7 @@ import simulation.entities.Interactable
 import simulation.entities.Modifier
 import simulation.misc.Resource
 
-private val textStyle = TextStyles.gray
+private val textStyle = textStyles.gray
 
 data class HudData(
     val health: Resource,
@@ -34,8 +34,8 @@ private fun playerStats(data: HudData): Flower {
   val rows = listOf(
       label(textStyle, "Health: ${resourceString(data.health)}"),
       label(textStyle, "Sanity: ${resourceString(data.sanity)}")
-//      mythic.bloom.label(textStyle, characterVisibility(data, player)),
-//      mythic.bloom.label(textStyle, "vel: " + df.format(world.deck.bodies[player]!!.velocity.length()))
+//      mythic.bloom.localizedLabel(textStyle, characterVisibility(data, player)),
+//      mythic.bloom.localizedLabel(textStyle, "vel: " + df.format(world.deck.bodies[player]!!.velocity.length()))
   )
       .plus(data.buffs.map {
         label(textStyle, "${it.first.type.name} ${it.second}")

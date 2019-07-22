@@ -33,9 +33,6 @@ typealias ForwardLayout = (Vector2i) -> Bounds
 
 typealias ReverseLayout = (Vector2i, Bounds, Bounds) -> Bounds
 
-private val forwardPass: ForwardLayout = { Bounds(dimensions = it) }
-private val reversePass: ReverseLayout = { _, bounds, _ -> bounds }
-
 val emptyBox = Box(
     bounds = Bounds(
         dimensions = Vector2i()
@@ -70,6 +67,22 @@ fun div(name: String = "",
   }
 }
 
+fun div(name: String = "",
+        layout: DualLayout,
+        depiction: Depiction? = null,
+        logic: LogicModule? = null): FlowerWrapper = { flower ->
+  { seed ->
+    val (childBox, bounds) = layout(seed, flower)
+    Box(
+        name = name,
+        bounds = bounds,
+        boxes = listOf(childBox),
+        depiction = depiction,
+        logic = logic
+    )
+  }
+}
+
 fun compose(flowers: List<Flower>): Flower = { seed ->
   Box(
       bounds = Bounds(dimensions = seed.dimensions),
@@ -92,43 +105,7 @@ fun dependentBoundsTransform(transform: (Vector2i, Bounds, Bounds) -> Vector2i):
   moveBounds(offset, bounds.dimensions)(child)
 }
 
-fun fixedOffset(offset: Vector2i): ForwardLayout = { container ->
-  val newDimensions = clippedDimensions(container, offset, container)
-  Bounds(
-      position = offset,
-      dimensions = newDimensions
-  )
-}
-
-fun fixedOffset(left: Int = 0, top: Int = 0): ForwardLayout = fixedOffset(Vector2i(left, top))
-
 fun fixed(value: Int): PlanePositioner = { plane -> { value } }
-
-fun forwardOffset(left: PlanePositioner? = null,
-                  top: PlanePositioner? = null): ForwardLayout = { container ->
-  val position = Vector2i(
-      if (left != null) left(horizontalPlaneMap)(container) else 0,
-      if (top != null) top(verticalPlaneMap)(container) else 0
-  )
-
-  Bounds(
-      position = position,
-      dimensions = container
-  )
-}
-
-fun forwardDimensions(
-    width: PlanePositioner? = null,
-    height: PlanePositioner? = null): ForwardLayout = { container ->
-  val dimensions = Vector2i(
-      x = if (width != null) width(horizontalPlaneMap)(container) else container.x,
-      y = if (height != null) height(verticalPlaneMap)(container) else container.y
-  )
-
-  Bounds(
-      dimensions = dimensions
-  )
-}
 
 infix fun Flower.plusLogic(logic: LogicModule): Flower = { seed ->
   val box = this(seed)
@@ -148,43 +125,6 @@ fun ForwardLayout.plus2(other: ForwardLayout): ForwardLayout = { container ->
   Bounds(
       position = a.position + b.position,
       dimensions = b.dimensions
-  )
-}
-
-operator fun ReverseLayout.plus(other: ReverseLayout): ReverseLayout = { parent, bounds, child ->
-  val a = this(parent, bounds, child)
-  other(parent, a, child)
-}
-
-fun reverseOffset(left: ReversePlanePositioner? = null,
-                  top: ReversePlanePositioner? = null): ReverseLayout = { parent, bounds, child ->
-  bounds.copy(
-      position = Vector2i(
-          if (left != null) left(horizontalPlaneMap)(parent, bounds, child) else bounds.position.x,
-          if (top != null) top(verticalPlaneMap)(parent, bounds, child) else bounds.position.y
-      )
-  )
-}
-
-fun reverseDimensions(width: ReversePlanePositioner? = null,
-                      height: ReversePlanePositioner? = null): ReverseLayout = { parent, bounds, child ->
-  bounds.copy(
-      dimensions = Vector2i(
-          if (width != null) width(horizontalPlaneMap)(parent, bounds, child) else bounds.dimensions.x,
-          if (height != null) height(verticalPlaneMap)(parent, bounds, child) else bounds.dimensions.y
-      )
-  )
-}
-
-val shrink: ReverseLayout = { parent, bounds, child ->
-  bounds.copy(
-      dimensions = child.dimensions
-  )
-}
-
-val shrinkVertical: ReverseLayout = { parent, bounds, child ->
-  bounds.copy(
-      dimensions = Vector2i(bounds.dimensions.x, child.dimensions.y)
   )
 }
 

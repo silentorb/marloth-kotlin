@@ -84,36 +84,26 @@ fun flexList(plane: Plane, spacing: Int = 0, name: String = "flexList"): (List<F
         null
     }
     val lengths = firstPass.map { if (it != null) plane(it.bounds.end).x else null }
-    val boundsList = fixedLengthArranger(plane, spacing, lengths)(seed.dimensions)
+    val otherLength = firstPass.filterNotNull().map { plane(it.bounds.end).y }.max()!!
+    val resolvedDimensions = plane(Vector2i(0, otherLength)) + plane(Vector2i(plane(seed.dimensions).x, 0))
+    val boundsList = fixedLengthArranger(plane, spacing, lengths)(resolvedDimensions)
     val boxes = firstPass.zip(boundsList.zip(items)) { box, (bounds, item) ->
       if (box != null) {
         box.copy(
             bounds = bounds
         )
-      }
-      else {
+      } else {
         val newBox = item.flower(seed.copy(dimensions = bounds.dimensions))
         newBox.copy(
             bounds = bounds
         )
       }
     }
-//    val childSeed = seed.copy(
-//        dimensions = plane(Vector2i(plane(seed.dimensions).x, length))
-//    )
-//    val top = pair.first(childSeed)
-//    val topDimensions = plane(top.bounds.end)
-//    val newSecond = bottom.copy(
-//        bounds = bottom.bounds.copy(
-//            position = bottom.bounds.position + plane(Vector2i(topDimensions.x + spacing, 0))
-//        )
-//    )
-//    val boxes = listOf(top, newSecond).reversed()
     Box(
         name = name,
         boxes = boxes,
         bounds = Bounds(
-            dimensions = seed.dimensions
+            dimensions = resolvedDimensions
         )
     )
   }
