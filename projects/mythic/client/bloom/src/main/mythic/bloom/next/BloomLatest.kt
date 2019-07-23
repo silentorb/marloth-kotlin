@@ -135,16 +135,21 @@ val shrinkWrap: ReversePlanePositioner = { plane ->
 }
 
 fun margin(all: Int = 0, left: Int = all, top: Int = all, bottom: Int = all, right: Int = all): FlowerWrapper = div(
-    forward = { container ->
-      Bounds(
-          dimensions = container - Vector2i(left + right, top + bottom)
+    layout = { seed, flower ->
+      val sizeOffset = Vector2i(left + right, top + bottom)
+      val childSeed = seed.copy(
+          dimensions = seed.dimensions - sizeOffset
       )
-    },
-    reverse = { _, bounds, child ->
-      bounds.copy(
-          position = Vector2i(left, top),
-          dimensions = child.dimensions + Vector2i(left + right, top + bottom)
+      val childBox = flower(childSeed)
+      val finalBounds = Bounds(
+          dimensions = childBox.bounds.dimensions + sizeOffset
       )
+      val finalChildBox = childBox.copy(
+          bounds = childBox.bounds.copy(
+              position = childBox.bounds.position + Vector2i(left, top)
+          )
+      )
+      Pair(finalChildBox, finalBounds)
     },
     name = "margin"
 )

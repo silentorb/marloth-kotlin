@@ -13,7 +13,7 @@ val centerDialog = centeredDiv + shrink
 const val titleContentHeight = 40
 
 val horizontalLine: Depiction = { bounds, canvas ->
-  val middleY = bounds.top.toFloat() + bounds.dimensions.y * 0.45f
+  val middleY = bounds.top.toFloat() + bounds.dimensions.y
   canvas.drawLine(bounds.left.toFloat(), middleY, bounds.right.toFloat(), middleY, black, 2f)
 }
 
@@ -28,19 +28,18 @@ val titleBookend = FlexItem(titleBookendFlower, FlexType.stretch)
 val debugDepiction = solidBackground(Vector4(1f, 0f, 0f, 1f))
 
 fun titleBar(text: Text): Flower {
-  return div(layout = layoutDimensions(height = fixed(titleContentHeight)))(
-      margin(20)(
-          list(verticalPlane)(listOf(
-              flexList(horizontalPlane, 10)(listOf(
-                  titleBookend,
-                  FlexItem(localizedLabel(textStyles.mediumBlack, text)),
-                  titleBookend
-              )),
-              div(forward = forwardDimensions(width = fixed(250), height = fixed(20)), reverse = reverseOffset(left = centered))(
-                  div(depiction = horizontalLine)(emptyFlower)
-              )
-          ))
-      )
+//  return div(layout = layoutDimensions(height = fixed(titleContentHeight)))(
+  return margin(20)(
+      list(verticalPlane)(listOf(
+          flexList(horizontalPlane, 10)(listOf(
+              titleBookend,
+              FlexItem(localizedLabel(textStyles.mediumBlack, text)),
+              titleBookend
+          )),
+          div(forward = forwardDimensions(width = fixed(250), height = fixed(10)), reverse = reverseOffset(left = centered))(
+              div(depiction = horizontalLine)(emptyFlower)
+          )
+      ))
   )
 }
 
@@ -71,7 +70,7 @@ fun reversePair(plane: Plane, spacing: Int = 0, name: String = "reversePair"): (
 
 fun dialog(title: Text): FlowerWrapper = { flower ->
   div(reverse = centerDialog, depiction = menuBackground)(
-      reversePair(verticalPlane, 20)(Pair(
+      reversePair(verticalPlane, 0)(Pair(
           titleBar(title),
           flower
       ))
