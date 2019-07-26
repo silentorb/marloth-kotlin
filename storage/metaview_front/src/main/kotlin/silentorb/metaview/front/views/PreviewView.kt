@@ -7,8 +7,6 @@ import javafx.scene.layout.GridPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import silentorb.metahub.core.Engine
-import silentorb.metahub.core.OutputValues
-import silentorb.metahub.core.getGraphOutput
 import silentorb.metaview.common.Emitter
 import silentorb.metaview.common.Event
 import silentorb.metaview.common.CommonEvent
@@ -16,9 +14,6 @@ import silentorb.metaview.common.NodeDefinitionMap
 import silentorb.metaview.common.views.ValueDisplayMap
 import silentorb.metaview.common.views.getNodePreviewBuffer
 import silentorb.metaview.common.views.ifSelectedNode
-import silentorb.metaview.common.views.newImage
-
-import mythic.imaging.textureOutputTypes
 
 fun previewView(engine: Engine, nodeDefinitions: NodeDefinitionMap, valueDisplays: ValueDisplayMap, emit: Emitter) =
     ifSelectedNode(engine) { state, id ->
