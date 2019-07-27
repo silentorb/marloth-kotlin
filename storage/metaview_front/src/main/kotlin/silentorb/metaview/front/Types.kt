@@ -1,6 +1,5 @@
 package silentorb.metaview.front
 
-import silentorb.metahub.core.Engine
 import silentorb.metaview.common.CommonState
 import silentorb.metaview.common.GuiState
 import silentorb.metaview.texturing.TexturingState
