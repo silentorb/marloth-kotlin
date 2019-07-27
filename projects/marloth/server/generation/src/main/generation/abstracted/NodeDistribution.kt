@@ -169,14 +169,7 @@ fun distributeNodes(boundary: WorldBoundary, count: Int, dice: Dice): List<Node>
   val cellDimensions = clipDimensions(worldCellLength, boundary.dimensions)
   cellDimensions.z = 1
 
-  val dimensionsUnit = Vector3(
-      cellDimensions.x.toFloat(),
-      cellDimensions.y.toFloat(),
-      cellDimensions.z.toFloat()
-  ) * worldCellLength.toFloat() * 0.5f
-
   val cellCount = cellDimensions.x * cellDimensions.y * cellDimensions.z
-//  val matrix: MutableList<Long?> = MutableList(cellCount) { null }
   val cellChance = (count.toFloat() / cellCount.toFloat())
   var id = 1L
 
@@ -184,12 +177,6 @@ fun distributeNodes(boundary: WorldBoundary, count: Int, dice: Dice): List<Node>
 
   for (i in 0 until cellCount) {
     val position = getPosition(cellDimensions, i) * worldCellLength.toFloat()
-//    val distanceUnit = (position / dimensionsUnit).length()
-//    if (distanceUnit > 1f)
-//      continue
-//
-//    val falloffModifier = (1f - distanceUnit)
-//    val chance = cellChance * falloffModifier * 6f
     val chance = cellChance * 6f
     if (dice.getFloat() < chance) {
       val node = Node(
@@ -199,7 +186,6 @@ fun distributeNodes(boundary: WorldBoundary, count: Int, dice: Dice): List<Node>
           isSolid = false,
           isWalkable = true
       )
-//      matrix[i] = node.id
       nodes.add(node)
     }
   }
