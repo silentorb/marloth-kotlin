@@ -15,13 +15,14 @@ private const val voidNodeHeight = 10000f
 
 const val voidNodeId = -1L
 
-val voidNode: Node = Node(
-    id = voidNodeId,
-    position = Vector3(0f, 0f, -voidNodeHeight),
-    radius = 0f,
-    isSolid = false,
-    isWalkable = false
-)
+//val voidNode: Node = Node(
+//    id = voidNodeId,
+//    position = Vector3(0f, 0f, -voidNodeHeight),
+//    radius = 0f,
+//    isSolid = false,
+//    isWalkable = false,
+//    isRoom = false
+//)
 
 interface SimpleBody {
   val position: Vector3

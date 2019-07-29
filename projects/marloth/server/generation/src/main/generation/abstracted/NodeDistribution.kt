@@ -184,7 +184,8 @@ fun distributeNodes(boundary: WorldBoundary, count: Int, dice: Dice): List<Node>
           position = position,
           radius = calculateRadius(position, nodes, dice),
           isSolid = false,
-          isWalkable = true
+          isWalkable = true,
+          isRoom = true
       )
       nodes.add(node)
     }

@@ -63,19 +63,20 @@ fun sortWallVertices(sectorCenter: Vector3, vertices: Vertices): Vertices {
     sorted
 }
 
-fun createSecondaryNode(sectorCenter: Vector3, nextId: IdSource, isSolid: Boolean, biome: BiomeId): Node {
-  val radius = 1f
-
-  val node = Node(
-      id = nextId(),
-      position = sectorCenter,
-      radius = radius,
-      isSolid = isSolid,
-      isWalkable = false,
-      biome = biome
-  )
-  return node
-}
+//fun createSecondaryNode(sectorCenter: Vector3, nextId: IdSource, isSolid: Boolean, biome: BiomeId): Node {
+//  val radius = 1f
+//
+//  val node = Node(
+//      id = nextId(),
+//      position = sectorCenter,
+//      radius = radius,
+//      isSolid = isSolid,
+//      isWalkable = false,
+//      biome = biome,
+//      isRoom = true
+//  )
+//  return node
+//}
 
 data class FacePair(
     val info: ConnectionFace,

@@ -1,0 +1,1323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Filter>
+	<CustomClasses>
+		<MapGroup name="MapGroup01" display_name-en="wood">
+			<Angle name="groupped_anglecontrol_01" display_name="Angle"/>
+			<Color name="groupped_colormapcontrol_01" display_name="Base Color" required="false" hdr="true"/>
+			<Grayscale name="groupped_slidercontrol_01" display_name="Contrast" samplable="false" required="false" hdr="false"/>
+			<Grayscale name="groupped_slidercontrol_02" display_name="Annual Rings Scale" samplable="false" required="false" hdr="false"/>
+			<Grayscale name="groupped_slidercontrol_03" display_name="Fibers Density" samplable="false" required="false" hdr="false"/>
+			<Grayscale name="groupped_slidercontrol_04" display_name="Annual Rings Stretch" samplable="false" required="false" hdr="false"/>
+		</MapGroup>
+		<MapGroup name="MapGroup02" display_name-en="coins"/>
+		<MapGroup name="MapGroup03" display_name-en="Arranger">
+			<Color name="groupped_colormapcontrol_01" display_name="bottom left" required="false" hdr="true"/>
+			<Color name="groupped_colormapcontrol_02" display_name="upper left" required="false" hdr="true"/>
+			<Color name="groupped_colormapcontrol_03" display_name="far right" required="false" hdr="false"/>
+			<Color name="groupped_colormapcontrol_04" display_name="middle upper right" required="false" hdr="false"/>
+		</MapGroup>
+		<MapGroup name="MapGroup04" display_name-en="border"/>
+		<MapGroup name="MapGroup06" display_name-en="corners 01"/>
+	</CustomClasses>
+	<Components>
+		<Result id="result">
+			<Source source="mapgroup03 01"/>
+			<FilterType value="0"/>
+			<Advanced value="false"/>
+			<Lighting>
+				<Height value="0"/>
+				<Environment>
+					<Source value="Church"/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+		</Result>
+		<Blend6 id="blend6 02">
+			<Foreground source="offset4 01" red="1" green="1" blue="1" alpha="1"/>
+			<Background source="mapgroup05 01" red="0" green="0" blue="0" alpha="1"/>
+			<Opacity value="1"/>
+			<Mode value="0"/>
+		</Blend6>
+		<Ellipse id="ellipse 01">
+			<Color red="0" green="0" blue="0" alpha="1"/>
+			<Background red="1" green="1" blue="1" alpha="0"/>
+			<Radius value="0.1600000000000000033"/>
+			<Rotation value="0"/>
+			<Squash value="0"/>
+			<BevelWidth value="0.0500000000000000028"/>
+			<BevelCurve value="0"/>
+		</Ellipse>
+		<FreePolygon3 id="freepolygon3 01">
+			<Color red="0" green="0" blue="0" alpha="1"/>
+			<Background source="ellipse 01" red="1" green="1" blue="1" alpha="0"/>
+			<Radius value="0.4100000000000000311"/>
+			<OriginX value="0.5"/>
+			<OriginY value="0.6499999999999999112"/>
+			<StarFactor value="0.1300000000000000044"/>
+			<Rotation value="0"/>
+			<Squash value="0.5"/>
+			<OuterRadius value="0"/>
+			<InnerRadius value="0"/>
+			<BevelWidth value="0.0700000000000000067"/>
+			<Sides value="3"/>
+			<FitRadius value="true"/>
+			<Mode value="0"/>
+			<BevelCurve value="0"/>
+		</FreePolygon3>
+		<FreeRectangle3 id="freerectangle3 05">
+			<Color source="freepolygon3 01" red="0.2000000000000000111" green="0.8000000000000000444" blue="0" alpha="1"/>
+			<Background red="1" green="1" blue="1" alpha="0"/>
+			<StartX value="0"/>
+			<StartY value="0"/>
+			<EndX value="1"/>
+			<EndY value="1"/>
+			<Corners value="0"/>
+			<BevelWidth value="0"/>
+			<Mode value="0"/>
+			<BevelCurve value="0"/>
+		</FreeRectangle3>
+		<MapGroup01 id="mapgroup01 01">
+			<groupped_anglecontrol_01 value="90"/>
+			<groupped_colormapcontrol_01 red="0.4069767441860464574" green="0.2496757457846951744" blue="0.1356589147286821617" alpha="1"/>
+			<groupped_slidercontrol_01 value="0.2999999999999999889"/>
+			<groupped_slidercontrol_02 value="0.5380479999999999707"/>
+			<groupped_slidercontrol_03 value="0.2399999999999999911"/>
+			<groupped_slidercontrol_04 value="0.6913550000000000528"/>
+		</MapGroup01>
+		<MapGroup02 id="mapgroup02 01"/>
+		<MapGroup03 id="mapgroup03 01">
+			<groupped_colormapcontrol_01 source="mapgroup02 01" red="0.686274509803921573" green="1" blue="0.6666666666666666297" alpha="1"/>
+			<groupped_colormapcontrol_02 source="mapgroup01 01" red="0.686274509803921573" green="1" blue="0.6666666666666666297" alpha="1"/>
+			<groupped_colormapcontrol_03 source="mapgroup04 01" red="0.6666666666666666297" green="0.7548638132295719672" blue="1" alpha="1"/>
+			<groupped_colormapcontrol_04 source="blend6 02" red="0.686274509803921573" green="1" blue="0.6666666666666666297" alpha="1"/>
+		</MapGroup03>
+		<MapGroup04 id="mapgroup04 01"/>
+		<MapGroup06 id="mapgroup05 01"/>
+		<Offset4 id="offset4 01">
+			<Source source="scale2 04"/>
+			<OffsetX value="0.1199999999999999956"/>
+			<OffsetY value="-0.3200000000000000067"/>
+			<Percentage value="1"/>
+			<Mode value="0"/>
+		</Offset4>
+		<Scale2 id="scale2 04">
+			<Source source="freerectangle3 05"/>
+			<Scale2 value="0.3300000000000000155"/>
+			<Squash value="0"/>
+			<OriginX value="0.5"/>
+			<OriginY value="0.5"/>
+			<Percentage value="1"/>
+			<Mode value="0"/>
+		</Scale2>
+	</Components>
+	<GroupNames>
+		<Group id="mapgroup01 01">
+			<Components>
+				<Component name="anglecontrol 01" group_id="groupped_anglecontrol_01"/>
+				<Component name="blend5 02" group_id="groupped_blend5_01"/>
+				<Component name="blend6 01" group_id="groupped_blend6_01"/>
+				<Component name="bricks2 01" group_id="groupped_bricks2_01"/>
+				<Component name="colormapcontrol 01" group_id="groupped_colormapcontrol_01"/>
+				<Component name="elevationgradient4 01" group_id="groupped_elevationgradient4_01"/>
+				<Component name="mapgroupresult 01" group_id="groupped_mapgroupresult_01"/>
+				<Component name="noisegradient2 01" group_id="groupped_noisegradient2_01"/>
+				<Component name="perlinnoise2 01" group_id="groupped_perlinnoise2_01"/>
+				<Component name="perlinnoise2 02" group_id="groupped_perlinnoise2_02"/>
+				<Component name="rotate2 01" group_id="groupped_rotate2_01"/>
+				<Component name="scale2 01" group_id="groupped_scale2_01"/>
+				<Component name="slidercontrol 02" group_id="groupped_slidercontrol_01"/>
+				<Component name="slidercontrol 03" group_id="groupped_slidercontrol_02"/>
+				<Component name="slidercontrol 06" group_id="groupped_slidercontrol_03"/>
+				<Component name="slidercontrol 07" group_id="groupped_slidercontrol_04"/>
+				<Component name="threshold2 01" group_id="groupped_threshold2_01"/>
+				<Component name="wavecurve 01" group_id="groupped_wavecurve_01"/>
+			</Components>
+		</Group>
+		<Group id="mapgroup02 01">
+			<Components>
+				<Component name="blend6 03" group_id="groupped_blend6_01"/>
+				<Component name="cells2 01" group_id="groupped_cells2_01"/>
+				<Component name="cells2 02" group_id="groupped_cells2_02"/>
+				<Component name="mapgroupresult 02" group_id="groupped_mapgroupresult_01"/>
+			</Components>
+		</Group>
+		<Group id="mapgroup03 01">
+			<Components>
+				<Component name="colormapcontrol 02" group_id="groupped_colormapcontrol_01"/>
+				<Component name="colormapcontrol 03" group_id="groupped_colormapcontrol_02"/>
+				<Component name="colormapcontrol 04" group_id="groupped_colormapcontrol_03"/>
+				<Component name="colormapcontrol 05" group_id="groupped_colormapcontrol_04"/>
+				<Component name="freerectangle3 01" group_id="groupped_freerectangle3_01"/>
+				<Component name="freerectangle3 02" group_id="groupped_freerectangle3_02"/>
+				<Component name="freerectangle3 03" group_id="groupped_freerectangle3_03"/>
+				<Component name="freerectangle3 04" group_id="groupped_freerectangle3_04"/>
+				<Component name="mapgroupresult 03" group_id="groupped_mapgroupresult_01"/>
+				<Component name="scale2 02" group_id="groupped_scale2_01"/>
+				<Component name="scale2 03" group_id="groupped_scale2_02"/>
+			</Components>
+		</Group>
+		<Group id="mapgroup04 01">
+			<Components>
+				<Component name="cells2 03" group_id="groupped_cells2_01"/>
+				<Component name="mapgroupresult 04" group_id="groupped_mapgroupresult_01"/>
+			</Components>
+		</Group>
+		<Group id="mapgroup05 01">
+			<Components>
+				<Component name="cells2 05" group_id="groupped_cells2_01"/>
+				<Component name="mapgroupresult 06" group_id="groupped_mapgroupresult_01"/>
+			</Components>
+		</Group>
+	</GroupNames>
+	<Groups>
+		<Group id="MapGroup01">
+			<Components>
+				<MapGroupResult id="groupped_mapgroupresult_01">
+					<Source source="groupped_blend6_01"/>
+				</MapGroupResult>
+				<AngleControl id="groupped_anglecontrol_01">
+					<Name value-en="Angle"/>
+					<UseRemapping value="false"/>
+					<Value value="90"/>
+				</AngleControl>
+				<Blend5 id="groupped_blend5_01">
+					<Mode value="2"/>
+					<Foreground source="groupped_elevationgradient4_01" red="1" green="1" blue="1" alpha="1"/>
+					<Background source="groupped_elevationgradient4_01" red="0" green="0" blue="0" alpha="1"/>
+					<Opacity source="groupped_slidercontrol_03" value="0.75">
+						<Minimum value="0"/>
+						<Maximum value="1"/>
+					</Opacity>
+				</Blend5>
+				<Blend6 id="groupped_blend6_01">
+					<Foreground red="0" green="0" blue="0" alpha="1"/>
+					<Background source="groupped_rotate2_01" red="0" green="0" blue="0" alpha="1"/>
+					<Opacity source="groupped_scale2_01" value="0.5"/>
+					<Mode value="0"/>
+				</Blend6>
+				<Bricks2 id="groupped_bricks2_01">
+					<Color red="0" green="0" blue="0" alpha="1"/>
+					<Mortar red="1" green="1" blue="1" alpha="1"/>
+					<HRange value="0"/>
+					<LRange value="0.2000000000000000111"/>
+					<SRange value="0"/>
+					<MortarWidth value="0.0599999999999999978"/>
+					<BevelWidth value="0.2800000000000000266"/>
+					<Corners value="0"/>
+					<Bond value="5"/>
+					<BrickType value="2"/>
+					<FillMode value="0"/>
+					<Repeat value="1"/>
+					<Chaos value="0"/>
+					<Variation value="1"/>
+					<Bevel value="0"/>
+				</Bricks2>
+				<ColorMapControl id="groupped_colormapcontrol_01">
+					<Name value-en="Base Color"/>
+					<ExternalImagesMode value="0"/>
+					<HDRMode value="1"/>
+					<HorizontalAnchor value="1"/>
+					<VerticalAnchor value="1"/>
+					<PlacementMode value="0"/>
+					<TilingMode value="0"/>
+					<Color red="0.4069767441860464574" green="0.2496757457846951744" blue="0.1356589147286821617" alpha="1"/>
+					<AlphaMode value="1"/>
+				</ColorMapControl>
+				<ElevationGradient4 id="groupped_elevationgradient4_01">
+					<Elevation source="groupped_perlinnoise2_02"/>
+					<Gradient source="groupped_noisegradient2_01"/>
+					<Flip value="false"/>
+					<Repeat value="3"/>
+				</ElevationGradient4>
+				<NoiseGradient2 id="groupped_noisegradient2_01">
+					<BaseColor source="groupped_colormapcontrol_01" red="0" green="0.7501960784313725927" blue="0.3749019607843137036" alpha="1"/>
+					<HRange value="0.0100000000000000002"/>
+					<LRange source="groupped_slidercontrol_01" value="0.8000000000000000444">
+						<Minimum value="0"/>
+						<Maximum value="0.4000000000000000222"/>
+					</LRange>
+					<SRange value="0.0500000000000000028"/>
+					<Roughness value="0.6999999999999999556"/>
+					<Scale value="1.7700000000000000178"/>
+					<Vertical value="true"/>
+					<Details value="1"/>
+					<Contrast value="0.25"/>
+					<Variation value="1"/>
+					<Randomizable value="true"/>
+				</NoiseGradient2>
+				<PerlinNoise2 id="groupped_perlinnoise2_01">
+					<Noise red="1" green="1" blue="1" alpha="1"/>
+					<Background red="0" green="0" blue="0" alpha="1"/>
+					<Roughness value="0.2000000000000000111"/>
+					<Scale value="0.0299999999999999989"/>
+					<Stretch value="0.6199999999999999956"/>
+					<Angle source="groupped_anglecontrol_01" value="90">
+						<Offset value="0"/>
+					</Angle>
+					<Details value="1"/>
+					<Contrast value="0.25"/>
+					<Variation value="1"/>
+					<OctaveCurve value="4"/>
+				</PerlinNoise2>
+				<PerlinNoise2 id="groupped_perlinnoise2_02">
+					<Noise red="1" green="1" blue="1" alpha="1"/>
+					<Background red="0" green="0" blue="0" alpha="1"/>
+					<Roughness value="0.3699999999999999956"/>
+					<Scale source="groupped_slidercontrol_02" value="2.5">
+						<Minimum value="2.3700000000000001066"/>
+						<Maximum value="3"/>
+					</Scale>
+					<Stretch source="groupped_slidercontrol_04" value="0">
+						<Minimum value="0"/>
+						<Maximum value="1"/>
+					</Stretch>
+					<Angle source="groupped_anglecontrol_01" value="90">
+						<Offset value="0"/>
+					</Angle>
+					<Details value="1"/>
+					<Contrast value="0.2000000000000000111"/>
+					<Variation value="7806"/>
+					<OctaveCurve source="groupped_wavecurve_01" value="0"/>
+				</PerlinNoise2>
+				<Rotate2 id="groupped_rotate2_01">
+					<Source source="groupped_threshold2_01"/>
+					<Rotation value="0.25"/>
+					<OriginX value="0.5"/>
+					<OriginY value="0.5"/>
+					<Percentage value="1"/>
+					<Mode value="0"/>
+				</Rotate2>
+				<Scale2 id="groupped_scale2_01">
+					<Source source="groupped_bricks2_01"/>
+					<Scale2 value="2"/>
+					<Squash value="0.5"/>
+					<OriginX value="0.5"/>
+					<OriginY value="0.32999999999999996"/>
+					<Percentage value="1"/>
+					<Mode value="0"/>
+				</Scale2>
+				<SliderControl id="groupped_slidercontrol_01">
+					<Name value-en="Contrast"/>
+					<UseRemapping value="true"/>
+					<Value value="0.2999999999999999889"/>
+				</SliderControl>
+				<SliderControl id="groupped_slidercontrol_02">
+					<Name value-en="Annual Rings Scale"/>
+					<UseRemapping value="true"/>
+					<Value value="0.5380479999999999707"/>
+				</SliderControl>
+				<SliderControl id="groupped_slidercontrol_03">
+					<Name value-en="Fibers Density"/>
+					<UseRemapping value="false"/>
+					<Value value="0.2399999999999999911"/>
+				</SliderControl>
+				<SliderControl id="groupped_slidercontrol_04">
+					<Name value-en="Annual Rings Stretch"/>
+					<UseRemapping value="false"/>
+					<Value value="0.6913550000000000528"/>
+				</SliderControl>
+				<Threshold2 id="groupped_threshold2_01">
+					<Source source="groupped_perlinnoise2_01"/>
+					<Threshold value="0.6800000000000000488"/>
+					<Smooth value="0"/>
+					<Low source="groupped_elevationgradient4_01" red="0" green="0" blue="0" alpha="0"/>
+					<High source="groupped_blend5_01" red="1" green="1" blue="1" alpha="1"/>
+				</Threshold2>
+				<WaveCurve id="groupped_wavecurve_01">
+					<Shape value="0"/>
+					<AVariance value="0"/>
+					<FVariance value="0"/>
+					<Phase value="0"/>
+					<Minimum value="0"/>
+					<Maximum value="1"/>
+					<Wave value="0"/>
+					<Frequency value="0.0100000000000000002"/>
+					<Variation value="1"/>
+					<Invert value="false"/>
+					<Randomizable value="true"/>
+				</WaveCurve>
+			</Components>
+		</Group>
+		<Group id="MapGroup02">
+			<Components>
+				<MapGroupResult id="groupped_mapgroupresult_01">
+					<Source source="groupped_blend6_01"/>
+				</MapGroupResult>
+				<Blend6 id="groupped_blend6_01">
+					<Foreground red="0" green="0" blue="0" alpha="1"/>
+					<Background source="groupped_cells2_01" red="0" green="0" blue="0" alpha="1"/>
+					<Opacity source="groupped_cells2_02" value="0.5"/>
+					<Mode value="0"/>
+				</Blend6>
+				<Cells2 id="groupped_cells2_01">
+					<Noise red="1" green="0.6100503725153076928" blue="0.0077519379844961378" alpha="1"/>
+					<Background red="0.2131782945736434565" green="0.0675035663871779157" blue="0.0231356288684574467" alpha="1"/>
+					<Roughness value="0.28999999999999998"/>
+					<Contrast value="0"/>
+					<Formula value="0"/>
+					<Scale value="2.2000000000000001776"/>
+					<Stretch value="0"/>
+					<VerticalStretch value="false"/>
+					<Smooth value="false"/>
+					<Flat value="false"/>
+					<SolidFill value="false"/>
+					<Details value="0.2399999999999999911"/>
+					<Variation value="6145"/>
+					<OctaveCurve value="1"/>
+				</Cells2>
+				<Cells2 id="groupped_cells2_02">
+					<Noise red="0.4457364341085271464" green="0.4457364341085271464" blue="0.4457364341085271464" alpha="1"/>
+					<Background red="0" green="0" blue="0" alpha="1"/>
+					<Roughness value="0.28999999999999998"/>
+					<Contrast value="0"/>
+					<Formula value="0"/>
+					<Scale value="2.2000000000000001776"/>
+					<Stretch value="0"/>
+					<VerticalStretch value="false"/>
+					<Smooth value="false"/>
+					<Flat value="false"/>
+					<SolidFill value="true"/>
+					<Details value="0.2399999999999999911"/>
+					<Variation value="1"/>
+					<OctaveCurve value="2"/>
+				</Cells2>
+			</Components>
+		</Group>
+		<Group id="MapGroup03">
+			<Components>
+				<MapGroupResult id="groupped_mapgroupresult_01">
+					<Source source="groupped_freerectangle3_04"/>
+				</MapGroupResult>
+				<ColorMapControl id="groupped_colormapcontrol_01">
+					<Name value-en="bottom left"/>
+					<ExternalImagesMode value="0"/>
+					<HDRMode value="1"/>
+					<HorizontalAnchor value="1"/>
+					<VerticalAnchor value="1"/>
+					<PlacementMode value="0"/>
+					<TilingMode value="0"/>
+					<Color red="0.686274509803921573" green="1" blue="0.6666666666666666297" alpha="1"/>
+					<AlphaMode value="1"/>
+				</ColorMapControl>
+				<ColorMapControl id="groupped_colormapcontrol_02">
+					<Name value-en="upper left"/>
+					<ExternalImagesMode value="0"/>
+					<HDRMode value="1"/>
+					<HorizontalAnchor value="1"/>
+					<VerticalAnchor value="1"/>
+					<PlacementMode value="0"/>
+					<TilingMode value="0"/>
+					<Color red="0.686274509803921573" green="1" blue="0.6666666666666666297" alpha="1"/>
+					<AlphaMode value="1"/>
+				</ColorMapControl>
+				<ColorMapControl id="groupped_colormapcontrol_03">
+					<Name value-en="far right"/>
+					<ExternalImagesMode value="0"/>
+					<HDRMode value="0"/>
+					<HorizontalAnchor value="1"/>
+					<VerticalAnchor value="1"/>
+					<PlacementMode value="0"/>
+					<TilingMode value="0"/>
+					<Color red="0.6666666666666666297" green="0.7548638132295719672" blue="1" alpha="1"/>
+					<AlphaMode value="1"/>
+				</ColorMapControl>
+				<ColorMapControl id="groupped_colormapcontrol_04">
+					<Name value-en="middle upper right"/>
+					<ExternalImagesMode value="0"/>
+					<HDRMode value="0"/>
+					<HorizontalAnchor value="1"/>
+					<VerticalAnchor value="1"/>
+					<PlacementMode value="0"/>
+					<TilingMode value="0"/>
+					<Color red="0.686274509803921573" green="1" blue="0.6666666666666666297" alpha="1"/>
+					<AlphaMode value="1"/>
+				</ColorMapControl>
+				<FreeRectangle3 id="groupped_freerectangle3_01">
+					<Color source="groupped_scale2_01" red="0.2000000000000000111" green="0.8000000000000000444" blue="0" alpha="1"/>
+					<Background red="1" green="1" blue="1" alpha="0"/>
+					<StartX value="0"/>
+					<StartY value="0"/>
+					<EndX value="0.5"/>
+					<EndY value="0.5"/>
+					<Corners value="0"/>
+					<BevelWidth value="0"/>
+					<Mode value="0"/>
+					<BevelCurve value="0"/>
+				</FreeRectangle3>
+				<FreeRectangle3 id="groupped_freerectangle3_02">
+					<Color source="groupped_scale2_02" red="0.2000000000000000111" green="0.8000000000000000444" blue="0" alpha="1"/>
+					<Background source="groupped_freerectangle3_01" red="1" green="1" blue="1" alpha="0"/>
+					<StartX value="0"/>
+					<StartY value="0.5"/>
+					<EndX value="0.5"/>
+					<EndY value="1"/>
+					<Corners value="0"/>
+					<BevelWidth value="0"/>
+					<Mode value="0"/>
+					<BevelCurve value="0"/>
+				</FreeRectangle3>
+				<FreeRectangle3 id="groupped_freerectangle3_03">
+					<Color source="groupped_colormapcontrol_03" red="0.2000000000000000111" green="0.8000000000000000444" blue="0" alpha="1"/>
+					<Background source="groupped_freerectangle3_02" red="1" green="1" blue="1" alpha="0"/>
+					<StartX value="0.75"/>
+					<StartY value="0"/>
+					<EndX value="1"/>
+					<EndY value="1"/>
+					<Corners value="0"/>
+					<BevelWidth value="0"/>
+					<Mode value="0"/>
+					<BevelCurve value="0"/>
+				</FreeRectangle3>
+				<FreeRectangle3 id="groupped_freerectangle3_04">
+					<Color source="groupped_colormapcontrol_04" red="0.2000000000000000111" green="0.8000000000000000444" blue="0" alpha="1"/>
+					<Background source="groupped_freerectangle3_03" red="1" green="1" blue="1" alpha="0"/>
+					<StartX value="0.5"/>
+					<StartY value="0"/>
+					<EndX value="0.75"/>
+					<EndY value="1"/>
+					<Corners value="0"/>
+					<BevelWidth value="0"/>
+					<Mode value="0"/>
+					<BevelCurve value="0"/>
+				</FreeRectangle3>
+				<Scale2 id="groupped_scale2_01">
+					<Source source="groupped_colormapcontrol_02"/>
+					<Scale2 value="0.5"/>
+					<Squash value="0"/>
+					<OriginX value="0"/>
+					<OriginY value="0"/>
+					<Percentage value="1"/>
+					<Mode value="0"/>
+				</Scale2>
+				<Scale2 id="groupped_scale2_02">
+					<Source source="groupped_colormapcontrol_01"/>
+					<Scale2 value="0.5"/>
+					<Squash value="0"/>
+					<OriginX value="0"/>
+					<OriginY value="1"/>
+					<Percentage value="1"/>
+					<Mode value="0"/>
+				</Scale2>
+			</Components>
+		</Group>
+		<Group id="MapGroup04">
+			<Components>
+				<MapGroupResult id="groupped_mapgroupresult_01">
+					<Source source="groupped_cells2_01"/>
+				</MapGroupResult>
+				<Cells2 id="groupped_cells2_01">
+					<Noise red="0.6434108527131783273" green="0.4217016384220025893" blue="0.1645934739498828292" alpha="1"/>
+					<Background red="0.2015503875968992498" green="0.1136848022218808485" blue="0.0499969953728742339" alpha="1"/>
+					<Roughness value="0.6999999999999999556"/>
+					<Contrast value="0"/>
+					<Formula value="0"/>
+					<Scale value="2.2000000000000001776"/>
+					<Stretch value="0"/>
+					<VerticalStretch value="false"/>
+					<Smooth value="false"/>
+					<Flat value="false"/>
+					<SolidFill value="true"/>
+					<Details value="0.6199999999999999956"/>
+					<Variation value="9099"/>
+					<OctaveCurve value="0"/>
+				</Cells2>
+			</Components>
+		</Group>
+		<Group id="MapGroup06">
+			<Components>
+				<MapGroupResult id="groupped_mapgroupresult_01">
+					<Source source="groupped_cells2_01"/>
+				</MapGroupResult>
+				<Cells2 id="groupped_cells2_01">
+					<Noise red="0.8759689922480620172" green="0.6502193143978691747" blue="0.2240850910402019114" alpha="1"/>
+					<Background red="0.461240310077519422" green="0.2726080069922466875" blue="0.0911754101316026855" alpha="1"/>
+					<Roughness value="0.5"/>
+					<Contrast value="0"/>
+					<Formula value="0"/>
+					<Scale value="2.2000000000000001776"/>
+					<Stretch value="0"/>
+					<VerticalStretch value="false"/>
+					<Smooth value="false"/>
+					<Flat value="false"/>
+					<SolidFill value="true"/>
+					<Details value="0.6199999999999999956"/>
+					<Variation value="5902"/>
+					<OctaveCurve value="0"/>
+				</Cells2>
+			</Components>
+		</Group>
+	</Groups>
+	<SettingsOverride>
+		<Size value="0"/>
+		<Variation value="0"/>
+		<Seamless value="0"/>
+		<ResultBlending value="0"/>
+	</SettingsOverride>
+	<Presets>
+		<DefaultPreset preview_image="LIFESAVER_OPAQUE">
+			<Settings size_factor="1" variation="5217" seamless="false" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="true"/>
+			<Lighting>
+				<Height value="0"/>
+				<Environment>
+					<Source value="Church"/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+			<Controls/>
+		</DefaultPreset>
+		<Preset preview_image="LIFESAVER_OPAQUE">
+			<Settings size_factor="1" variation="6040" seamless="true" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="true"/>
+			<Lighting>
+				<Height value="0"/>
+				<Environment>
+					<Source value="Church"/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+			<Controls>
+				<AngleControl id="anglecontrol 01">
+					<Value value="90"/>
+				</AngleControl>
+				<ColorMapControl id="colormapcontrol 01">
+					<HorizontalAnchor value="1"/>
+					<VerticalAnchor value="1"/>
+					<PlacementMode value="0"/>
+					<TilingMode value="0"/>
+					<Color red="0.4806199999999999917" green="0.230031715953307403" blue="0.1434409999999999852" alpha="1"/>
+				</ColorMapControl>
+				<SliderControl id="slidercontrol 02">
+					<Value value="0.4924780000000000268"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 03">
+					<Value value="0.6926799999999999624"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 06">
+					<Value value="0.3400000000000000244"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 07">
+					<Value value="0.3476609999999999978"/>
+				</SliderControl>
+			</Controls>
+		</Preset>
+		<Preset preview_image="LIFESAVER_OPAQUE">
+			<Settings size_factor="1" variation="1" seamless="true" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="true"/>
+			<Lighting>
+				<Height value="0"/>
+				<Environment>
+					<Source value="Church"/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+			<Controls>
+				<AngleControl id="anglecontrol 01">
+					<Value value="0"/>
+				</AngleControl>
+				<ColorMapControl id="colormapcontrol 01">
+					<HorizontalAnchor value="1"/>
+					<VerticalAnchor value="1"/>
+					<PlacementMode value="0"/>
+					<TilingMode value="0"/>
+					<Color red="0.8333329999999999904" green="0.5238469999999999516" blue="0.1970280000000000087" alpha="1"/>
+				</ColorMapControl>
+				<SliderControl id="slidercontrol 02">
+					<Value value="0.2999999999999999889"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 03">
+					<Value value="0.7299999999999999822"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 06">
+					<Value value="0.2200000000000000011"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 07">
+					<Value value="0.3699999999999999956"/>
+				</SliderControl>
+			</Controls>
+		</Preset>
+		<Preset preview_image="LIFESAVER_OPAQUE">
+			<Settings size_factor="1" variation="5367" seamless="true" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="true"/>
+			<Lighting>
+				<Height value="0"/>
+				<Environment>
+					<Source value="Church"/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+			<Controls>
+				<AngleControl id="anglecontrol 01">
+					<Value value="90"/>
+				</AngleControl>
+				<ColorMapControl id="colormapcontrol 01">
+					<HorizontalAnchor value="1"/>
+					<VerticalAnchor value="1"/>
+					<PlacementMode value="0"/>
+					<TilingMode value="0"/>
+					<Color red="0.5749589999999999979" green="0.5775190000000000046" blue="0.4835050000000000181" alpha="1"/>
+				</ColorMapControl>
+				<SliderControl id="slidercontrol 02">
+					<Value value="0.4644110000000000182"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 03">
+					<Value value="0.5999999999999999778"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 06">
+					<Value value="0.1499999999999999944"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 07">
+					<Value value="0.3099999999999999978"/>
+				</SliderControl>
+			</Controls>
+		</Preset>
+		<Preset preview_image="LIFESAVER_OPAQUE">
+			<Settings size_factor="1" variation="319" seamless="true" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="true"/>
+			<Lighting>
+				<Height value="0"/>
+				<Environment>
+					<Source value="Church"/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+			<Controls>
+				<AngleControl id="anglecontrol 01">
+					<Value value="90"/>
+				</AngleControl>
+				<ColorMapControl id="colormapcontrol 01">
+					<HorizontalAnchor value="1"/>
+					<VerticalAnchor value="1"/>
+					<PlacementMode value="0"/>
+					<TilingMode value="0"/>
+					<Color red="0.6782949999999999813" green="0.651735999999999982" blue="0.6178259999999999863" alpha="1"/>
+				</ColorMapControl>
+				<SliderControl id="slidercontrol 02">
+					<Value value="0.5090050000000000407"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 03">
+					<Value value="0.4578940000000000232"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 06">
+					<Value value="0.4106670000000000043"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 07">
+					<Value value="0.7718990000000000018"/>
+				</SliderControl>
+			</Controls>
+		</Preset>
+		<Preset preview_image="LIFESAVER_OPAQUE">
+			<Settings size_factor="1" variation="6814" seamless="true" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="true"/>
+			<Lighting>
+				<Height value="0"/>
+				<Environment>
+					<Source value="Church"/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+			<Controls>
+				<AngleControl id="anglecontrol 01">
+					<Value value="307"/>
+				</AngleControl>
+				<ColorMapControl id="colormapcontrol 01">
+					<HorizontalAnchor value="1"/>
+					<VerticalAnchor value="1"/>
+					<PlacementMode value="0"/>
+					<TilingMode value="0"/>
+					<Color red="0.3488372093023255349" green="0.1977196633788796953" blue="0.1162790697674418589" alpha="1"/>
+				</ColorMapControl>
+				<SliderControl id="slidercontrol 02">
+					<Value value="0.4100000000000000311"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 03">
+					<Value value="0.6033709999999999907"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 06">
+					<Value value="0.3938180000000000014"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 07">
+					<Value value="0.5068460000000000187"/>
+				</SliderControl>
+			</Controls>
+		</Preset>
+		<Preset preview_image="LIFESAVER_OPAQUE">
+			<Settings size_factor="1" variation="8293" seamless="true" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="true"/>
+			<Lighting>
+				<Height value="0"/>
+				<Environment>
+					<Source value="Church"/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+			<Controls>
+				<AngleControl id="anglecontrol 01">
+					<Value value="90"/>
+				</AngleControl>
+				<ColorMapControl id="colormapcontrol 01">
+					<HorizontalAnchor value="1"/>
+					<VerticalAnchor value="1"/>
+					<PlacementMode value="0"/>
+					<TilingMode value="0"/>
+					<Color red="0.7984496124031007502" green="0.7404799500179692906" blue="0.6189531879093804756" alpha="1"/>
+				</ColorMapControl>
+				<SliderControl id="slidercontrol 02">
+					<Value value="0.6500000000000000222"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 03">
+					<Value value="0.8300000000000000711"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 06">
+					<Value value="0.3300000000000000155"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 07">
+					<Value value="1"/>
+				</SliderControl>
+			</Controls>
+		</Preset>
+		<Preset preview_image="LIFESAVER_OPAQUE">
+			<Settings size_factor="1" variation="153" seamless="true" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="true"/>
+			<Lighting>
+				<Height value="0"/>
+				<Environment>
+					<Source value="Church"/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+			<Controls>
+				<AngleControl id="anglecontrol 01">
+					<Value value="101.3375027577101690213"/>
+				</AngleControl>
+				<ColorMapControl id="colormapcontrol 01">
+					<HorizontalAnchor value="1"/>
+					<VerticalAnchor value="1"/>
+					<PlacementMode value="0"/>
+					<TilingMode value="0"/>
+					<Color red="0.3682170542635658794" green="0.2717284813164803081" blue="0.1698365482843579299" alpha="1"/>
+				</ColorMapControl>
+				<SliderControl id="slidercontrol 02">
+					<Value value="0.7270379442381849078"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 03">
+					<Value value="0.7833654032011355683"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 06">
+					<Value value="0.3900000000000000133"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 07">
+					<Value value="0.4136091514553917325"/>
+				</SliderControl>
+			</Controls>
+		</Preset>
+		<Preset preview_image="LIFESAVER_OPAQUE">
+			<Settings size_factor="1" variation="22577" seamless="true" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="true"/>
+			<Lighting>
+				<Height value="0"/>
+				<Environment>
+					<Source value="Church"/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+			<Controls>
+				<AngleControl id="anglecontrol 01">
+					<Value value="222"/>
+				</AngleControl>
+				<ColorMapControl id="colormapcontrol 01">
+					<HorizontalAnchor value="1"/>
+					<VerticalAnchor value="1"/>
+					<PlacementMode value="0"/>
+					<TilingMode value="0"/>
+					<Color red="0.8294573643410853014" green="0.7060007430898838088" blue="0.3825791719247642053" alpha="1"/>
+				</ColorMapControl>
+				<SliderControl id="slidercontrol 02">
+					<Value value="0.7000000000000000666"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 03">
+					<Value value="0.5243459425514311878"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 06">
+					<Value value="0.57999999999999996"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 07">
+					<Value value="0.3591203151080386569"/>
+				</SliderControl>
+			</Controls>
+		</Preset>
+	</Presets>
+	<Locks>
+		<Settings size="false" variation="false"/>
+		<Lighting elements="false" environment="false" brightness="false" saturation="false" height="false"/>
+		<Controls/>
+	</Locks>
+	<Information author="cj" name-en="treasure-chest" url="" description-en="A realistic wood texture." keywords-en="wood" update_notes-en="Now uses updated components from Filter Forge 3.0." major_version="8" minor_version="5"/>
+	<ControlsOrder>
+		<Automatic value="true"/>
+	</ControlsOrder>
+	<FilterEditor>
+		<Groups>
+			<Group id="MapGroup01">
+				<Canvas left="-558" top="-60" zoom_factor="0"/>
+				<Item id="groupped_anglecontrol_01">
+					<Position left="976" top="-16"/>
+				</Item>
+				<Item id="groupped_blend5_01">
+					<Position left="144" top="400"/>
+				</Item>
+				<Item id="groupped_blend6_01">
+					<Position left="-256" top="128"/>
+				</Item>
+				<Item id="groupped_bricks2_01">
+					<Position left="96" top="-64"/>
+				</Item>
+				<Item id="groupped_colormapcontrol_01">
+					<Position left="1296" top="496"/>
+				</Item>
+				<Item id="groupped_elevationgradient4_01">
+					<Position left="384" top="240"/>
+				</Item>
+				<Item id="groupped_mapgroupresult_01">
+					<Position left="-496" top="237"/>
+				</Item>
+				<Item id="groupped_noisegradient2_01">
+					<Position left="976" top="512"/>
+				</Item>
+				<Item id="groupped_perlinnoise2_01">
+					<Position left="384" top="-112"/>
+				</Item>
+				<Item id="groupped_perlinnoise2_02">
+					<Position left="672" top="64"/>
+				</Item>
+				<Item id="groupped_rotate2_01">
+					<Position left="-80" top="256"/>
+				</Item>
+				<Item id="groupped_scale2_01">
+					<Position left="-144" top="-64"/>
+				</Item>
+				<Item id="groupped_slidercontrol_01">
+					<Position left="1296" top="576"/>
+				</Item>
+				<Item id="groupped_slidercontrol_02">
+					<Position left="976" top="128"/>
+				</Item>
+				<Item id="groupped_slidercontrol_03">
+					<Position left="400" top="448"/>
+				</Item>
+				<Item id="groupped_slidercontrol_04">
+					<Position left="976" top="192"/>
+				</Item>
+				<Item id="groupped_threshold2_01">
+					<Position left="192" top="224"/>
+				</Item>
+				<Item id="groupped_wavecurve_01">
+					<Position left="976" top="272"/>
+				</Item>
+			</Group>
+			<Group id="MapGroup02">
+				<Canvas left="-539" top="-23" zoom_factor="0"/>
+				<Item id="groupped_blend6_01">
+					<Position left="-208" top="256"/>
+				</Item>
+				<Item id="groupped_cells2_01">
+					<Position left="208" top="160"/>
+				</Item>
+				<Item id="groupped_cells2_02">
+					<Position left="96" top="464"/>
+				</Item>
+				<Item id="groupped_mapgroupresult_01">
+					<Position left="-416" top="368"/>
+				</Item>
+			</Group>
+			<Group id="MapGroup03">
+				<Canvas left="-2880" top="-232" zoom_factor="1"/>
+				<Item id="groupped_colormapcontrol_01">
+					<Position left="-192" top="192"/>
+				</Item>
+				<Item id="groupped_colormapcontrol_02">
+					<Position left="-192" top="-48"/>
+				</Item>
+				<Item id="groupped_colormapcontrol_03">
+					<Position left="-192" top="400"/>
+				</Item>
+				<Item id="groupped_colormapcontrol_04">
+					<Position left="-288" top="608"/>
+				</Item>
+				<Item id="groupped_freerectangle3_01">
+					<Position left="-768" top="-96"/>
+				</Item>
+				<Item id="groupped_freerectangle3_02">
+					<Position left="-1040" top="128"/>
+				</Item>
+				<Item id="groupped_freerectangle3_03">
+					<Position left="-1296" top="368"/>
+				</Item>
+				<Item id="groupped_freerectangle3_04">
+					<Position left="-1552" top="624"/>
+				</Item>
+				<Item id="groupped_mapgroupresult_01">
+					<Position left="-2112" top="672"/>
+				</Item>
+				<Item id="groupped_scale2_01">
+					<Position left="-496" top="-80"/>
+				</Item>
+				<Item id="groupped_scale2_02">
+					<Position left="-784" top="144"/>
+				</Item>
+			</Group>
+			<Group id="MapGroup04">
+				<Canvas left="-761" top="96" zoom_factor="0"/>
+				<Item id="groupped_cells2_01">
+					<Position left="-80" top="448"/>
+				</Item>
+				<Item id="groupped_mapgroupresult_01">
+					<Position left="-336" top="493"/>
+				</Item>
+			</Group>
+			<Group id="MapGroup06">
+				<Canvas left="-806" top="132" zoom_factor="0"/>
+				<Item id="groupped_cells2_01">
+					<Position left="-80" top="448"/>
+				</Item>
+				<Item id="groupped_mapgroupresult_01">
+					<Position left="-336" top="496"/>
+				</Item>
+			</Group>
+		</Groups>
+		<ThumbnailSize value="1"/>
+		<Canvas left="-704" top="-375" zoom_factor="0"/>
+		<Viewport left="0" top="0" zoom_factor="-2"/>
+		<LockPreview>
+			<Locked value="false"/>
+			<LockedComponent name=""/>
+		</LockPreview>
+		<Item id="blend6 02">
+			<Position left="-496" top="-144"/>
+		</Item>
+		<Item id="ellipse 01">
+			<Position left="544" top="-336"/>
+		</Item>
+		<Item id="freepolygon3 01">
+			<Position left="288" top="-320"/>
+		</Item>
+		<Item id="freerectangle3 05">
+			<Position left="32" top="-288"/>
+		</Item>
+		<Item id="mapgroup01 01">
+			<Position left="-192" top="176"/>
+		</Item>
+		<Item id="mapgroup02 01">
+			<Position left="-304" top="0"/>
+		</Item>
+		<Item id="mapgroup03 01">
+			<Position left="-656" top="80"/>
+		</Item>
+		<Item id="mapgroup04 01">
+			<Position left="-48" top="416"/>
+		</Item>
+		<Item id="mapgroup05 01">
+			<Position left="192" top="144"/>
+		</Item>
+		<Item id="offset4 01">
+			<Position left="-448" top="-304"/>
+		</Item>
+		<Item id="result">
+			<Position left="-1024" top="96"/>
+		</Item>
+		<Item id="scale2 04">
+			<Position left="-208" top="-288"/>
+		</Item>
+	</FilterEditor>
+</Filter>

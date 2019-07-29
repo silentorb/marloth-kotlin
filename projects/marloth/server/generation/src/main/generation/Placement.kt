@@ -1,8 +1,9 @@
 package generation
 
-import generation.structure.wallHeight
+import generation.abstracted.distributeToSlots
+import generation.abstracted.normalizeRanges
 import generation.misc.BiomeId
-import scenery.enums.ModifierId
+import generation.structure.wallHeight
 import marloth.definition.creatures
 import marloth.definition.templates.defaultWares
 import marloth.definition.templates.newBuffCloud
@@ -13,12 +14,12 @@ import mythic.ent.newIdSource
 import mythic.spatial.Vector3
 import randomly.Dice
 import scenery.enums.AccessoryId
+import scenery.enums.ModifierId
 import simulation.entities.*
 import simulation.intellect.Pursuit
 import simulation.intellect.Spirit
 import simulation.main.*
 import simulation.misc.*
-import simulation.physics.voidNode
 
 data class CharacterTemplate(
     val faction: Id,
@@ -186,11 +187,6 @@ fun newPlayer(nextId: IdSource, playerNode: Node): Deck {
   return result
 }
 
-fun addVoidNode(realm: Realm): Realm =
-    realm.copy(
-        nodeList = realm.nodeList.plus(voidNode)
-    )
-
 fun placeBuffCloud(node: Node, buff: ModifierId) =
     newBuffCloud(
         position = node.position + Vector3(0f, 0f, -wallHeight / 2f - 0.5f),
@@ -198,18 +194,63 @@ fun placeBuffCloud(node: Node, buff: ModifierId) =
         buff = buff
     )
 
+enum class Occupant {
+  coldCloud,
+  fireCloud,
+  merchant,
+  none,
+  poisonCloud
+}
+
+typealias DistributionMap = Map<Occupant, Int>
+
+fun occupantPopulators(node: Node, nextId: IdSource, occupant: Occupant): Hand =
+    when (occupant) {
+      Occupant.coldCloud -> placeBuffCloud(node, ModifierId.damageChilled)
+      Occupant.fireCloud -> placeBuffCloud(node, ModifierId.damageBurning)
+      Occupant.merchant -> newMerchant(nextId, node.position, defaultWares)
+      Occupant.none -> Hand()
+      Occupant.poisonCloud -> placeBuffCloud(node, ModifierId.damagePoisoned)
+    }
+
+fun damageCloudsDistributions(dice: Dice, totalWeight: Int): DistributionMap {
+  val cloudTypes = listOf(
+      Occupant.coldCloud,
+      Occupant.fireCloud,
+      Occupant.poisonCloud
+  )
+
+  val initialWeights = cloudTypes
+      .map { Pair(it, dice.getInt(0, 100)) }
+      .associate { it }
+
+  return normalizeRanges(totalWeight, initialWeights)
+}
+
+fun getDistributions(dice: Dice): DistributionMap = mapOf(
+    Occupant.merchant to 200,
+    Occupant.none to 300
+).plus(damageCloudsDistributions(dice, 500))
+
+fun populateRooms(dice: Dice, nextId: IdSource, realm: Realm, playerNode: Id): Deck {
+  val rooms = getRooms(realm).filter { it.id != playerNode }
+  val ranges = getDistributions(dice)
+  val hands = distributeToSlots(dice, rooms.size, ranges)
+      .zip(rooms) { occupant, node ->
+        occupantPopulators(node, nextId, occupant)
+      }
+
+  return Deck()
+      .plus(allHandsOnDeck(hands, nextId))
+}
+
 fun finalizeRealm(input: WorldInput, realm: Realm): World {
   val playerNode = realm.nodeTable.values.first { it.biome == BiomeId.home }
   val scale = calculateWorldScale(input.boundary.dimensions)
   val nextId = newIdSource(1)
   val deck = Deck()
       .plus(newPlayer(nextId, playerNode))
-      .plus(allHandsOnDeck(listOf(
-          placeBuffCloud(realm.nodeTable[12L]!!, ModifierId.damageBurning),
-          placeBuffCloud(realm.nodeTable[7L]!!, ModifierId.damageChilled),
-          placeBuffCloud(realm.nodeTable[11L]!!, ModifierId.damagePoisoned),
-          newMerchant(nextId, realm.nodeTable[6L]!!.position, defaultWares)
-      ), nextId))
+      .plus(populateRooms(input.dice, nextId, realm, playerNode.id))
 //      .plus(placeWallLamps(realm, nextId, input.dice, scale))
 //      .plus(placeDoors(realm, nextId))
 

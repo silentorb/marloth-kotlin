@@ -1,7 +1,7 @@
 package randomly
 
 import mythic.spatial.Vector2
-import java.util.Random
+import java.util.*
 
 class Dice(private val seed: Long) {
   private val random = Random(seed)
@@ -39,6 +39,18 @@ class Dice(private val seed: Long) {
   }
 
   fun getBoolean(): Boolean = getInt(0, 1) == 1
+
+  fun <T> scramble(list: List<T>): List<T> {
+    val result = mutableListOf<T>()
+    val pool = list.toMutableList()
+    val count = list.size
+    for (i in 0 until count) {
+      val index = random.nextInt(pool.size)
+      result.add(pool[index])
+      pool.removeAt(index)
+    }
+    return result
+  }
 
   companion object {
     val global = Dice()

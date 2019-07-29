@@ -33,7 +33,8 @@ fun createTunnelNodes(graph: Graph, preTunnels: List<PreTunnel>): Graph {
             position = preTunnel.position,
             radius = tunnelRadius,
             isSolid = false,
-            isWalkable = true
+            isWalkable = true,
+            isRoom = false
         )
       }
 

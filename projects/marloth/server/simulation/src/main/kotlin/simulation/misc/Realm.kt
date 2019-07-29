@@ -131,6 +131,9 @@ fun initializeFaceInfo(faces: ConnectionTable, type: FaceType, node: Node, id: I
   }
 }
 
+fun getRooms(realm: Realm): List<Node> =
+    realm.nodeList.filter { it.isRoom }
+
 fun initializeNodeFaceInfo(faces: ConnectionTable, node: Node): List<ConnectionFace> {
   return node.walls.map { initializeFaceInfo(faces, FaceType.wall, node, it) }
       .plus(node.floors.map { initializeFaceInfo(faces, FaceType.floor, node, it) })

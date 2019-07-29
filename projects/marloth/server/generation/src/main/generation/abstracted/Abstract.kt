@@ -63,7 +63,8 @@ fun createRoomNode(boundary: WorldBoundary, nodes: List<Node>, id: Id, dice: Dic
       position = position,
       radius = radius,
       isSolid = false,
-      isWalkable = true
+      isWalkable = true,
+      isRoom = true
   )
 }
 
