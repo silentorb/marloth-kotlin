@@ -5,6 +5,8 @@ import mythic.ent.IdSource
 import simulation.physics.old.Collision
 import simulation.combat.Damage
 import simulation.entities.*
+import simulation.input.CommandType
+import simulation.input.Commands
 import simulation.main.*
 import simulation.misc.Definitions
 
@@ -136,6 +138,30 @@ fun gatherActivatedTriggers(deck: Deck, definitions: Definitions, collisions: Li
       }
 
   return attachmentTriggers.plus(sensorTriggers).plus(buffTriggers)
+}
+
+fun gatherCommandTriggers(deck: Deck,commands: Commands): List<Triggering> {
+  return commands.mapNotNull {command ->
+    when (command.type) {
+      CommandType.interactPrimary -> {
+        val player = deck.players.keys.first()
+        val character = deck.characters[player]!!
+        val interactable = deck.interactables[character.canInteractWith]!!
+        val action = interactable.primaryCommand.action
+        if (action != null) {
+          Triggering(
+              actor = player,
+              action = action,
+              target = character.canInteractWith!!
+          )
+        }
+        else {
+          null
+        }
+      }
+      else -> null
+    }
+  }
 }
 
 fun gatherEvents(definitions: Definitions, deck: Deck, triggers: List<Triggering>, events: Events): OrganizedEvents {

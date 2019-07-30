@@ -18,6 +18,9 @@ fun getFinished(events: OrganizedEvents, deck: Deck): Set<Id> {
 // and for each entity, all records of all types are deleted that have the same key as that entity
 fun removeWhole(events: OrganizedEvents): (Deck) -> Deck = { deck ->
   val finished = getFinished(events, deck)
+  if (finished.size > 0) {
+    val k =0
+  }
   removeEntities(deck, finished)
 }
 

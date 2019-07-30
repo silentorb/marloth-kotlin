@@ -74,6 +74,7 @@ fun applyImpulses(world: World, bulletState: BulletState, linearForces: List<Lin
 
 fun updateBulletPhysics(bulletState: BulletState, linearForces: List<LinearForce>): (World) -> World = { world ->
   syncNewBodies(world, bulletState)
+  syncRemovedBodies(world, bulletState)
   applyImpulses(world, bulletState, linearForces)
   bulletState.dynamicsWorld.stepSimulation(1f / 60f, 10)
   syncWorldToBullet(bulletState)(world)

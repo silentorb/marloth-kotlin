@@ -6,10 +6,7 @@ import randomly.Dice
 import simulation.combat.getDamageMultiplierModifiers
 import simulation.combat.toModifierDeck
 import simulation.entities.*
-import simulation.happenings.Events
-import simulation.happenings.OrganizedEvents
-import simulation.happenings.gatherActivatedTriggers
-import simulation.happenings.gatherEvents
+import simulation.happenings.*
 import simulation.input.Commands
 import simulation.input.updatePlayer
 import simulation.intellect.aliveSpirits
@@ -36,10 +33,11 @@ fun generateIntermediateRecords(bulletState: BulletState, definitions: Definitio
   val spiritCommands = pursueGoals(world, aliveSpirits(world.deck).values)
   val commands = playerCommands.plus(spiritCommands)
   val collisions = getBulletCollisions(bulletState, deck)
-  val triggers = if (shouldUpdateLogic(world))
+  val triggers = (if (shouldUpdateLogic(world))
     gatherActivatedTriggers(deck, definitions, collisions)
   else
-    listOf()
+    listOf())
+      .plus(gatherCommandTriggers(deck, commands))
 
   return Intermediate(
       commands = commands,

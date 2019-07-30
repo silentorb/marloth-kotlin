@@ -4,6 +4,7 @@ import com.badlogic.gdx.physics.bullet.collision.*
 import com.badlogic.gdx.physics.bullet.dynamics.btHingeConstraint
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState
+import mythic.ent.Id
 import mythic.sculpting.ImmutableFace
 import mythic.spatial.Matrix
 import mythic.spatial.Pi
@@ -122,17 +123,24 @@ fun syncNewBodies(world: World, bulletState: BulletState) {
   bulletState.dynamicBodies = bulletState.dynamicBodies
       .plus(newDynamicBodies)
 
-//  bulletState.collisionObjectMap = bulletState.collisionObjectMap
-//      .plus(newDynamicBodies.map { Pair(it.second.userData, it.first) })
-//      .plus(newStaticBodies
-//          .filter { deck.triggers.containsKey(it.first) }
-//          .map { Pair(it.second.userData, it.first) }
-//      )
-
   bulletState.staticBodies = bulletState.staticBodies.plus(newStaticBodies)
 
   if (!bulletState.isMapSynced) {
     bulletState.isMapSynced = true
 //    syncMapGeometryAndPhysics(world, bulletState)
   }
+}
+
+fun syncRemovedBodies(world: World, bulletState: BulletState) {
+  val removedDynamic = bulletState.dynamicBodies.filterValues { !world.deck.bodies.containsKey(it.userData as Id) }
+  for (body in removedDynamic.values) {
+    bulletState.dynamicsWorld.removeRigidBody(body)
+  }
+  bulletState.dynamicBodies = bulletState.dynamicBodies.minus(removedDynamic.keys)
+
+  val removedStatic = bulletState.staticBodies.filterValues { !world.deck.bodies.containsKey(it.userData as Id) }
+  for (body in removedStatic.values) {
+    bulletState.dynamicsWorld.removeCollisionObject(body)
+  }
+  bulletState.staticBodies = bulletState.staticBodies.minus(removedStatic.keys)
 }
