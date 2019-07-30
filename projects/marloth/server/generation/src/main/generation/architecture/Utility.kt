@@ -16,14 +16,13 @@ import scenery.MeshName
 import simulation.main.Hand
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
+import simulation.misc.MeshInfoMap
 import simulation.misc.Node
 
 fun getHorizontalFlip(dice: Dice, wallData: WallData): Float =
     if (wallData.canFlipHorizontally && dice.getBoolean()) Pi else 0f
 
 val floorOffset = Vector3(0f, 0f, -wallHeight / 2f)
-
-typealias MeshInfoMap = Map<MeshName, Shape>
 
 fun newArchitectureMesh(meshInfo: MeshInfoMap, mesh: MeshId, position: Vector3, scale: Vector3 = Vector3.unit,
                         orientation: Quaternion = Quaternion(),
@@ -44,6 +43,21 @@ fun newArchitectureMesh(meshInfo: MeshInfoMap, mesh: MeshId, position: Vector3, 
       collisionShape = CollisionObject(shape = shape)
   )
 }
+
+fun alignWithCeiling(meshInfo: MeshInfoMap) = { meshId: MeshId ->
+  val height = meshInfo[meshId.name]!!.shapeHeight
+  Vector3(0f, 0f, -height / 2f)
+}
+
+fun alignWithFloor(meshInfo: MeshInfoMap) = { meshId: MeshId ->
+  val height = meshInfo[meshId.name]!!.shapeHeight
+  Vector3(0f, 0f, height / 2f)
+}
+
+fun nodeFloorCenter(node: Node) = node.position + Vector3(0f, 0f, -wallHeight / 2f)
+
+fun alignWithNodeFloor(meshInfo: MeshInfoMap, node: Node, meshId: MeshId) =
+    nodeFloorCenter(node) + alignWithFloor(meshInfo)(meshId)
 
 fun newWall(meshInfo: MeshInfoMap, dice: Dice, node: Node, position: Vector3, angleZ: Float): Hand {
   val biome = biomeInfoMap[node.biome]!!

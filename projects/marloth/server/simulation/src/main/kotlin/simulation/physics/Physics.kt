@@ -2,17 +2,17 @@ package simulation.physics
 
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.physics.bullet.Bullet
-import com.badlogic.gdx.physics.bullet.collision.btCollisionDispatcher
-import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
-import com.badlogic.gdx.physics.bullet.collision.btDbvtBroadphase
-import com.badlogic.gdx.physics.bullet.collision.btDefaultCollisionConfiguration
+import com.badlogic.gdx.physics.bullet.collision.*
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver
 import mythic.ent.Id
 import mythic.spatial.Matrix
 import mythic.spatial.Vector3
+import simulation.main.Deck
 import simulation.main.World
+import simulation.physics.old.LinearForce
+import java.util.*
 import com.badlogic.gdx.math.Vector3 as GdxVector3
 
 // TODO: Migrate to LWJGL Bullet Bindings if it ever seems a little more used and documented.
@@ -65,22 +65,16 @@ fun newBulletState(): BulletState {
   )
 }
 
-fun applyImpulses(world: World, bulletState: BulletState) {
-  world.deck.bodies.forEach { (id, body) ->
-    if (body.velocity != Vector3.zero) {
-      val btBody = bulletState.dynamicBodies[id]
-      if (btBody != null) {
-        btBody.applyCentralImpulse(toGdxVector3(body.velocity))
-      } else {
-        val warningVelocitySetOnUnsyncedBody = 1
-      }
-    }
+fun applyImpulses(world: World, bulletState: BulletState, linearForces: List<LinearForce>) {
+  for (force in linearForces) {
+    val btBody = bulletState.dynamicBodies[force.body]!!
+    btBody.applyCentralImpulse(toGdxVector3(force.offset))
   }
 }
 
-fun updateBulletPhysics(bulletState: BulletState): (World) -> World = { world ->
+fun updateBulletPhysics(bulletState: BulletState, linearForces: List<LinearForce>): (World) -> World = { world ->
   syncNewBodies(world, bulletState)
-  applyImpulses(world, bulletState)
+  applyImpulses(world, bulletState, linearForces)
   bulletState.dynamicsWorld.stepSimulation(1f / 60f, 10)
   syncWorldToBullet(bulletState)(world)
 }

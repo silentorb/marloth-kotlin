@@ -8,6 +8,7 @@ enum class Text {
   gui_merchant,
   gui_mainMenu,
   gui_resistances,
+  gui_take,
   gui_victory,
   id_candle,
   id_damageChilled,

@@ -5,7 +5,6 @@ import marloth.clienting.gui.ViewId
 import simulation.main.Deck
 import simulation.entities.AttachmentTypeId
 import simulation.entities.getTargetAttachmentsOfCategory
-import simulation.entities.getVisibleInteractable
 
 fun gatherHudData(deck: Deck, view: ViewId): HudData {
   val player = deck.players.keys.first()
@@ -16,7 +15,7 @@ fun gatherHudData(deck: Deck, view: ViewId): HudData {
       .map { Pair(deck.buffs[it]!!, deck.timers[it]!!.duration) }
 
   val interactable = if (view == ViewId.none)
-    getVisibleInteractable(deck, player)?.value
+    deck.interactables[character.canInteractWith]
   else null
 
   return HudData(

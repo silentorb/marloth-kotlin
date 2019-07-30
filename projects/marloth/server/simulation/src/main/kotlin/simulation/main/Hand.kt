@@ -4,6 +4,7 @@ import mythic.ent.Id
 import simulation.entities.*
 import simulation.happenings.Trigger
 import simulation.intellect.Spirit
+import simulation.misc.ResourceBundle
 import simulation.particles.ParticleEffect
 import simulation.physics.Body
 import simulation.physics.CollisionObject
@@ -22,11 +23,11 @@ data class Hand(
     val depiction: Depiction? = null,
     val destructible: Destructible? = null,
     val door: Door? = null,
-//    val entity: Entity? = null,
     val interactable: Interactable? = null,
     val light: Light? = null,
     val particleEffect: ParticleEffect? = null,
     val player: Player? = null,
+    val resources: ResourceBundle? = null,
     val spirit: Spirit? = null,
     val timer: Timer? = null,
     val trigger: Trigger? = null,

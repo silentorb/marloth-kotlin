@@ -6,48 +6,13 @@ import rendering.meshes.loading.loadGltf
 import scenery.MeshName
 import java.io.File
 
-enum class MeshType {
-  bear,
-  cylinder,
-  child,
-  eyeball,
-  human,
-  humanOld,
-  line,
-  monster,
-  person,
-  prisonDoor,
-  skeleton,
-  skybox,
-  sphere,
-  cube,
-  wallLamp,
-}
-
-typealias AdvancedModelGenerator = () -> AdvancedModel
-
-typealias AdvancedModelGeneratorMap = Map<MeshType, AdvancedModelGenerator>
-
-//fun advancedMeshes(vertexSchemas: VertexSchemas): AdvancedModelGeneratorMap {
-//  return mapOf(
-////      MeshType.skybox to skyboxModel(vertexSchemas)
-//  )
-//}
-
 fun getMeshFilenames(): Array<File> {
   val modelRoot = getResourceUrl("models")
-  return File(modelRoot.toURI()).listFiles()
+  val files = File(modelRoot.toURI()).listFiles()
+  return files
 }
 
 fun importedMeshes(vertexSchemas: VertexSchemas) =
-//    mapOf(
-//    MeshType.wallLamp to "lamp",
-//    MeshType.prisonDoor to "prison_door",
-//    MeshType.cube to "cube",
-//    MeshType.child to "child",
-//    MeshType.person to "person"
-//)
-//    globalProfiler().wrap("meshes") {
     getMeshFilenames()
         .map { it.name }
         .map { loadGltf(vertexSchemas, it, "models/" + it + "/" + it) }

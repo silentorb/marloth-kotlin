@@ -4,9 +4,9 @@ import configuration.ConfigManager
 import configuration.loadYamlFile
 import configuration.saveYamlFile
 import generation.addEnemies
-import generation.architecture.MeshInfoMap
 import generation.architecture.placeArchitecture
 import generation.generateWorld
+import generation.populateWorld
 import lab.utility.updateWatching
 import lab.views.game.GameViewConfig
 import lab.views.game.drawBulletDebug
@@ -21,6 +21,7 @@ import mythic.ent.pipe
 import mythic.quartz.newTimestepState
 import randomly.Dice
 import simulation.main.World
+import simulation.misc.MeshInfoMap
 import simulation.misc.WorldInput
 import simulation.misc.createWorldBoundary
 import simulation.physics.newBulletState
@@ -42,12 +43,14 @@ fun createDice(config: GameViewConfig) =
 fun generateWorld(meshInfo: MeshInfoMap, gameViewConfig: GameViewConfig): World {
   val boundary = createWorldBoundary(gameViewConfig.worldLength)
   val dice = createDice(gameViewConfig)
-  val (initialWorld, graph) = generateWorld(WorldInput(
+  val input = WorldInput(
       boundary,
       dice
-  ))
+  )
+  val (initialWorld, graph) = generateWorld(input)
 
   return pipe(initialWorld, listOf(
+      populateWorld(meshInfo, input),
       placeArchitecture(meshInfo, graph, dice),
       { world ->
         if (gameViewConfig.haveEnemies)

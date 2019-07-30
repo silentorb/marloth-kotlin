@@ -11,11 +11,10 @@ import mythic.spatial.Vector4
 import org.joml.Vector2i
 import org.joml.Vector4i
 import org.joml.times
-import rendering.meshes.ModelMap
 import rendering.shading.Shaders
 import rendering.texturing.TextureLibrary
 
-fun renderSkyBox(textures: TextureLibrary, meshes: ModelMap, shaders: Shaders) {
+//fun renderSkyBox(textures: TextureLibrary, meshes: ModelMap, shaders: Shaders) {
   /*
   val texture = textures[Textures.background]!!
   val mesh = meshes[MeshType.skybox]!!
@@ -25,7 +24,7 @@ fun renderSkyBox(textures: TextureLibrary, meshes: ModelMap, shaders: Shaders) {
   ))
   mesh.primitives[0].mesh.draw(DrawMethod.triangleFan)
   */
-}
+//}
 
 typealias ScreenFilter = (Shaders) -> Unit
 

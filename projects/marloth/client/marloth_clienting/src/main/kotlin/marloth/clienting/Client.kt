@@ -11,6 +11,7 @@ import marloth.clienting.audio.loadSounds
 import marloth.clienting.gui.*
 import marloth.clienting.input.*
 import marloth.clienting.input.InputState
+import marloth.clienting.textResources.englishTextResources
 import mythic.aura.AudioState
 import mythic.aura.SoundLibrary
 import mythic.aura.newAudioState
@@ -26,6 +27,7 @@ import rendering.DisplayConfig
 import rendering.Renderer
 import rendering.shading.LightingConfig
 import scenery.Screen
+import scenery.enums.Text
 import simulation.main.Deck
 
 const val maxPlayerCount = 4
@@ -49,9 +51,13 @@ fun newClientState(platform: Platform, inputConfig: GameInputConfig, audioConfig
         commands = listOf()
     )
 
-fun loadTextResource(): TextResources {
-  val typeref = object : TypeReference<TextResources>() {}
-  return loadYamlResource("text/english.yaml", typeref)
+//fun loadTextResource(): TextResources {
+//  val typeref = object : TypeReference<TextResources>() {}
+//  return loadYamlResource("text/english.yaml", typeref)
+//}
+
+fun loadTextResource(mapper: TextResourceMapper): TextResources {
+  return Text.values().map { Pair(it, mapper(it)) }.associate { it }
 }
 
 private fun gatherFontSets() = extractFontSets(baseFonts, enumerateTextStyles(textStyles))
@@ -59,7 +65,7 @@ private fun gatherFontSets() = extractFontSets(baseFonts, enumerateTextStyles(te
 class Client(val platform: Platform, displayConfig: DisplayConfig, lightingConfig: LightingConfig = LightingConfig()) {
   val renderer: Renderer = Renderer(displayConfig, platform.display, gatherFontSets(), lightingConfig)
   val screens: List<Screen> = (1..maxPlayerCount).map { Screen(it) }
-  val textResources: TextResources = loadTextResource()
+  val textResources: TextResources = loadTextResource(englishTextResources)
   val soundLibrary: SoundLibrary = loadSounds(platform.audio)
   fun getWindowInfo() = platform.display.getInfo()
 

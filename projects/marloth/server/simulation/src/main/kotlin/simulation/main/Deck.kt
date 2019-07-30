@@ -4,6 +4,7 @@ import mythic.ent.*
 import simulation.entities.*
 import simulation.happenings.Trigger
 import simulation.intellect.Spirit
+import simulation.misc.ResourceBundle
 import simulation.particles.ParticleEffect
 import simulation.physics.Body
 import simulation.physics.CollisionObject
@@ -22,11 +23,11 @@ data class Deck(
     val destructibles: Table<Destructible> = mapOf(),
     val doors: Table<Door> = mapOf(),
     val dynamicBodies: Table<DynamicBody> = mapOf(),
-//    val entities: Table<Entity> = mapOf(),
     val interactables: Table<Interactable> = mapOf(),
     val lights: Table<Light> = mapOf(),
     val particleEffects: Table<ParticleEffect> = mapOf(),
     val players: Table<Player> = mapOf(),
+    val resources: Table<ResourceBundle> = mapOf(),
     val spirits: Table<Spirit> = mapOf(),
     val timers: Table<Timer> = mapOf(),
     val triggers: Table<Trigger> = mapOf(),

@@ -8,9 +8,9 @@ import org.joml.times
 import scenery.AnimationId
 import scenery.Capsule
 import scenery.ShapeOffset
+import scenery.enums.ResourceId
 import scenery.enums.Sounds
 import simulation.combat.DamageMultipliers
-import simulation.happenings.DamageEvent
 import simulation.happenings.OrganizedEvents
 import simulation.input.*
 import simulation.intellect.Spirit
@@ -18,9 +18,10 @@ import simulation.main.Deck
 import simulation.main.Hand
 import simulation.main.World
 import simulation.main.simulationDelta
-import simulation.misc.Resource
+import simulation.misc.ResourceContainer
 import simulation.misc.maxLookVelocityChange
 import simulation.physics.*
+import simulation.physics.old.*
 
 data class CharacterDefinition(
     val health: Int,
@@ -37,11 +38,12 @@ data class Character(
     val turnSpeed: Vector2,
     val abilities: List<Ability> = listOf(),
     val faction: Id,
-    val sanity: Resource,
+    val sanity: ResourceContainer,
     val isAlive: Boolean = true,
     val facingRotation: Vector3 = Vector3(),
     val lookVelocity: Vector2 = Vector2(),
     val activeItem: Id? = null,
+    val canInteractWith: Id? = null,
     val interactingWith: Id? = null,
     val money: Int = 0
 ) {
@@ -87,21 +89,34 @@ fun updateEquippedItem(deck: Deck, id: Id, character: Character, commands: Comma
     character.activeItem
 }
 
-fun updateMoney(deck: Deck, events: OrganizedEvents, character: Id, money: Int): Int {
+fun getPurchaseCost(deck: Deck, events: OrganizedEvents, character: Id): Int {
   val purchases = events.purchases.filter { it.customer == character }
-  val cost = purchases.map { purchase ->
+  return purchases.map { purchase ->
     val ware = deck.wares[purchase.ware]!!
     ware.price
   }
       .sum()
+}
 
-  return money - cost
+fun getMoneyFromTakenItems(deck: Deck, events: OrganizedEvents, character: Id): Int {
+  val takes = events.takeItems.filter { it.actor == character }.map { it.item }
+  val moneyTakes = deck.resources.filterKeys { takes.contains(it) }
+  return moneyTakes
+      .mapNotNull { it.value.values[ResourceId.money] }
+      .sum()
+}
+
+fun updateMoney(deck: Deck, events: OrganizedEvents, character: Id, money: Int): Int {
+  val moneyFromItems = getMoneyFromTakenItems(deck, events, character)
+  val cost = getPurchaseCost(deck, events, character)
+  return money - cost + moneyFromItems
 }
 
 fun updateInteractingWith(deck: Deck, character: Id, commands: Commands, interactingWith: Id?): Id? =
     if (commands.any { it.type == CommandType.interactPrimary })
-      getVisibleInteractable(deck, character)?.key
-    else if (commands.any { it.type == CommandType.stopInteracting })
+      deck.characters[character]!!.canInteractWith
+    else if (commands.any { it.type == CommandType.stopInteracting } ||
+        (interactingWith != null && !deck.interactables.containsKey(interactingWith)))
       null
     else
       interactingWith
@@ -170,17 +185,17 @@ fun updateCharacter(deck: Deck, commands: Commands, activatedAbilities: List<Act
   updateCharacter(deck, id, character, characterCommands, abilities, events, delta)
 }
 
-fun characterMovementFp(commands: Commands, character: Character, id: Id, body: Body): MovementForce? {
+fun characterMovementFp(commands: Commands, character: Character, id: Id, body: Body): LinearForce? {
   var offset = joinInputVector(commands, playerMoveMap)
   if (offset != null) {
     offset = Quaternion().rotateZ(character.facingRotation.z - Pi / 2) * offset * character.definition.maxSpeed
-    return MovementForce(body = id, offset = offset)
+    return LinearForce(body = id, offset = offset)
   } else {
     return null
   }
 }
 
-fun allCharacterMovements(world: World, commands: Commands): List<MovementForce> =
+fun allCharacterMovements(world: World, commands: Commands): List<LinearForce> =
     world.deck.characters
         .filter { world.deck.characters[it.key]!!.isAlive }
         .mapNotNull { characterMovementFp(filterCommands(it.key, commands), it.value, it.key, world.bodyTable[it.key]!!) }
@@ -216,7 +231,7 @@ fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id,
           turnSpeed = Vector2(2f, 1f),
           facingRotation = Vector3(0f, 0f, Pi / 2f),
           faction = faction,
-          sanity = Resource(100),
+          sanity = ResourceContainer(100),
           abilities = abilities,
           money = 30
       ),
@@ -225,7 +240,7 @@ fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id,
               health = definition.health,
               damageMultipliers = definition.damageMultipliers
           ),
-          health = Resource(definition.health),
+          health = ResourceContainer(definition.health),
           damageMultipliers = definition.damageMultipliers
       ),
       collisionShape = CollisionObject(

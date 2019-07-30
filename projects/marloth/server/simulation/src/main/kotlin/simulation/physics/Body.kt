@@ -7,9 +7,10 @@ import mythic.spatial.Vector3
 import simulation.main.World
 import simulation.main.simulationDelta
 import simulation.input.Commands
-import simulation.misc.Node
 import simulation.entities.allCharacterMovements
 import simulation.entities.allCharacterOrientations
+import simulation.physics.old.Collisions
+import simulation.physics.old.updatePhysicsBodies
 
 private const val voidNodeHeight = 10000f
 

@@ -3,6 +3,11 @@ package simulation.misc
 import mythic.ent.Table
 import mythic.ent.WithId
 import mythic.spatial.Pi2
+import scenery.MeshName
+import scenery.Shape
+import scenery.enums.ResourceId
+
+typealias MeshInfoMap = Map<MeshName, Shape>
 
 fun <Key, Value> replace(table: Map<Key, Value>, key: Key, value: Value): Map<Key, Value> =
     table.mapValues { if (it.key == key) value else it.value }

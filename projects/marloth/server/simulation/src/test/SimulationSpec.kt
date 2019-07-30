@@ -7,14 +7,14 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.xit
 import org.jetbrains.spek.api.dsl.on
-import simulation.physics.MovingBody
-import simulation.physics.checkWallCollision
-import simulation.physics.getWallCollisions
+import simulation.physics.old.MovingBody
+import simulation.physics.old.checkWallCollision
+import simulation.physics.old.getWallCollisions
 import simulation.main.simulationDelta
 import mythic.ent.IdSource
 import mythic.ent.newIdSource
 import org.junit.jupiter.api.Assertions.assertTrue
-import simulation.physics.WallCollision3
+import simulation.physics.old.WallCollision3
 
 class SimulationSpec : Spek({
   describe("simulation logic") {

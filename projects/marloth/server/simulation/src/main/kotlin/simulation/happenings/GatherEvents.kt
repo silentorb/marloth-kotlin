@@ -2,36 +2,49 @@ package simulation.happenings
 
 import mythic.ent.Id
 import mythic.ent.IdSource
-import simulation.physics.Collision
+import simulation.physics.old.Collision
 import simulation.combat.Damage
 import simulation.entities.*
 import simulation.main.*
 import simulation.misc.Definitions
 
-fun gatherDamageEvents(deck: Deck, triggers: List<Triggering>): List<DamageEvent> {
-  return triggers.mapNotNull { trigger ->
-    val action = trigger.action
-    val target = trigger.target
-    val triggerId = trigger.source
-    val strength = trigger.strength
-    when (action) {
-      is DamageAction ->
-        DamageEvent(
-            damage = Damage(
-                type = action.damageType,
-                amount = overTime(strength ?: action.amount),
-                source = triggerId
-            ),
-            target = target
-        )
-      else -> null
+typealias EventMapper<ActionType, EventType> = (ActionType, Id, Id, Int?) -> EventType
+
+inline fun <reified ActionType, EventType: Any> gatherMappedEvents(crossinline mapper: EventMapper<ActionType, EventType>): (List<Triggering>) -> List<EventType> =
+    { triggers ->
+      triggers.mapNotNull { trigger ->
+        val action = trigger.action
+        val target = trigger.target
+        val actor = trigger.actor
+        val strength = trigger.strength
+        when (action) {
+          is ActionType -> mapper(action, target, actor, strength)
+          else -> null
+        }
+      }
     }
-  }
+
+val gatherDamageEvents = gatherMappedEvents<DamageAction, DamageEvent> { action, target, actor, strength ->
+  DamageEvent(
+      damage = Damage(
+          type = action.damageType,
+          amount = overTime(strength ?: action.amount),
+          source = actor
+      ),
+      target = target
+  )
 }
 
-typealias ActionHandler = (Definitions, Deck, ApplyBuff, Id, Id) -> DeckSource
+val gatherTakeItemEvents = gatherMappedEvents<TakeItem, TakeItemEvent> { action, target, actor, strength ->
+  TakeItemEvent(
+      actor = actor,
+      item = target
+  )
+}
 
-val applyBuff: ActionHandler = { definitions, deck, action, target, source ->
+typealias ActionHandler<T> = (Definitions, Deck, T, Id, Id) -> DeckSource
+
+val applyBuff: ActionHandler<ApplyBuff> = { definitions, deck, action, target, source ->
   { nextId: IdSource ->
     val modifierType = action.buffType
     val duration = action.duration
@@ -59,12 +72,7 @@ val applyBuff: ActionHandler = { definitions, deck, action, target, source ->
               duration = duration
           )
       )
-//            val template = templates[modifierType]
       toDeck(nextId(), hand)
-//            if (template != null)
-//              handDeck.plus(toDeck(id, template(action)))
-//            else
-//              handDeck
     }
   }
 }
@@ -73,18 +81,16 @@ fun gatherNewRecords(definitions: Definitions, deck: Deck, triggers: List<Trigge
   return triggers.mapNotNull { trigger ->
     val action = trigger.action
     val target = trigger.target
-    val source = trigger.source
+    val source = trigger.actor
     when (action) {
-      is ApplyBuff -> {
-        applyBuff(definitions, deck, action, target, source)
-      }
+      is ApplyBuff -> applyBuff(definitions, deck, action, target, source)
       else -> null
     }
   }
 }
 
 data class Triggering(
-    val source: Id,
+    val actor: Id,
     val action: Action,
     val target: Id,
     val strength: Int? = null
@@ -95,7 +101,7 @@ fun gatherActivatedTriggers(deck: Deck, definitions: Definitions, collisions: Li
     val attachment = deck.attachments[trigger.key]
     if (attachment != null) {
       Triggering(
-          source = trigger.key,
+          actor = trigger.key,
           action = trigger.value.action,
           target = attachment.target
       )
@@ -107,7 +113,7 @@ fun gatherActivatedTriggers(deck: Deck, definitions: Definitions, collisions: Li
       val collision = collisions.firstOrNull { it.first == trigger.key }
       if (collision != null) {
         Triggering(
-            source = trigger.key,
+            actor = trigger.key,
             action = trigger.value.action,
             target = collision.second
         )
@@ -121,7 +127,7 @@ fun gatherActivatedTriggers(deck: Deck, definitions: Definitions, collisions: Li
         val overTime = definition.overTime
         if (overTime != null)
           Triggering(
-              source = attachment.source,
+              actor = attachment.source,
               action = overTime,
               target = attachment.target,
               strength = buff.strength
@@ -134,8 +140,9 @@ fun gatherActivatedTriggers(deck: Deck, definitions: Definitions, collisions: Li
 
 fun gatherEvents(definitions: Definitions, deck: Deck, triggers: List<Triggering>, events: Events): OrganizedEvents {
   return OrganizedEvents(
-      damage = events.filterIsInstance<DamageEvent>().plus(gatherDamageEvents(deck, triggers)),
+      damage = events.filterIsInstance<DamageEvent>().plus(gatherDamageEvents(triggers)),
       purchases = events.filterIsInstance<PurchaseEvent>(),
+      takeItems = events.filterIsInstance<TakeItemEvent>().plus(gatherTakeItemEvents(triggers)),
       decks = events.filterIsInstance<DeckEvent>().map { it.deck }.plus(gatherNewRecords(definitions, deck, triggers))
   )
 }

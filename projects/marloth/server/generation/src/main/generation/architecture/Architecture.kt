@@ -6,24 +6,14 @@ import generation.misc.biomeInfoMap
 import generation.misc.getNodeDistance
 import mythic.ent.Id
 import mythic.spatial.*
-import simulation.physics.getLookAtAngle
+import simulation.physics.old.getLookAtAngle
 import randomly.Dice
-import scenery.enums.MeshId
 import simulation.main.Hand
 import simulation.main.WorldTransform
 import simulation.main.addHands
+import simulation.misc.MeshInfoMap
 import simulation.misc.Node
 import kotlin.math.ceil
-
-fun alignWithCeiling(meshInfo: MeshInfoMap) = { meshId: MeshId ->
-  val height = meshInfo[meshId.name]!!.shapeHeight
-  Vector3(0f, 0f, -height / 2f)
-}
-
-fun alignWithFloor(meshInfo: MeshInfoMap) = { meshId: MeshId ->
-  val height = meshInfo[meshId.name]!!.shapeHeight
-  Vector3(0f, 0f, height / 2f)
-}
 
 fun <T> createSeries(gapSize: Float, segmentLength: Float, margin: Float, action: (Int, Float) -> T): List<T> {
   val length = gapSize - margin * 2f

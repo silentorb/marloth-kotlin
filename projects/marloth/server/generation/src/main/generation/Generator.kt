@@ -37,7 +37,7 @@ fun generateWorld(input: WorldInput): Pair<World, Graph> {
       doorFrameNodes = graph.doorways
   )
 
-  return Pair(finalizeRealm(input, finalRealm), graph)
+  return Pair(finalizeRealm(finalRealm), graph)
 }
 
 fun generateDefaultWorld(): World {

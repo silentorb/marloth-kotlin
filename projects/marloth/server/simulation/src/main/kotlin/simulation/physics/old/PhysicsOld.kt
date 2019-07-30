@@ -1,4 +1,4 @@
-package simulation.physics
+package simulation.physics.old
 
 import mythic.ent.Id
 import mythic.ent.Table
@@ -6,7 +6,8 @@ import mythic.spatial.*
 import simulation.main.World
 import simulation.misc.Node
 import simulation.misc.Realm
-import simulation.misc.maxMoveVelocityChange
+import simulation.physics.Body
+import simulation.physics.DynamicBody
 
 data class Rotation(
     val pitch: Float = 0f,
@@ -14,7 +15,7 @@ data class Rotation(
     val roll: Float = 0f
 )
 
-data class MovementForce(
+data class LinearForce(
     val body: Id,
     val offset: Vector3
 )
@@ -48,21 +49,6 @@ fun transitionVector(maxChange: Float, current: Vector3, target: Vector3): Vecto
     }
   } else
     current
-}
-
-fun applyForces(body: Body, forces: List<MovementForce>, resistance: Float, delta: Float): Vector3 {
-//  if (body.perpetual)
-//    return body.velocity
-
-  if (forces.size > 2)
-    throw Error("Not yet supported")
-
-  val target = if (forces.any())
-    forces.first().offset
-  else
-    Vector3()
-
-  return transitionVector(maxMoveVelocityChange(), body.velocity, target)
 }
 
 fun isWalkable(node: Node?) = node?.isWalkable ?: false
@@ -101,17 +87,17 @@ fun isWalkable(node: Node?) = node?.isWalkable ?: false
 //    position
 //}
 
-fun updateBody(realm: Realm, body: Body, dynamicBody: DynamicBody, movementForces: List<MovementForce>, collisions: List<Collision>,
+fun updateBody(realm: Realm, body: Body, dynamicBody: DynamicBody, movementForces: List<LinearForce>, collisions: List<Collision>,
                orientationForces: List<AbsoluteOrientationForce>, delta: Float): Body {
   return body.copy(
-      velocity = applyForces(body, movementForces, dynamicBody.resistance, delta),
+//      velocity = applyForces(body, movementForces, dynamicBody.resistance, delta),
 //      position = moveBody(realm, body, body.velocity, collisions, delta),
       orientation = orientationForces.firstOrNull()?.orientation ?: body.orientation
 //      node = updateBodyNode(realm, body)
   )
 }
 
-fun updatePhysicsBodies(world: World, collisions: Collisions, movementForces: List<MovementForce>,
+fun updatePhysicsBodies(world: World, collisions: Collisions, movementForces: List<LinearForce>,
                         orientationForces: List<AbsoluteOrientationForce>, delta: Float): Table<Body> {
   val updated = world.deck.dynamicBodies.mapValues { (id, dynamicBody) ->
     val body = world.deck.bodies[id]!!

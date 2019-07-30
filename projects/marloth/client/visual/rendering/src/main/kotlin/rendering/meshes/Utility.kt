@@ -63,7 +63,7 @@ fun createBillboardMesh(vertexSchema: VertexSchema) =
 
 typealias ModelGenerator = () -> Model
 
-typealias ModelGeneratorMap = Map<MeshType, ModelGenerator>
+//typealias ModelGeneratorMap = Map<MeshType, ModelGenerator>
 
 data class Primitive(
     val mesh: GeneralMesh,
@@ -76,7 +76,7 @@ data class Primitive(
 
 typealias Primitives = List<Primitive>
 
-typealias ModelMap = Map<MeshType, AdvancedModel>
+//typealias ModelMap = Map<MeshType, AdvancedModel>
 
 data class TransientModelElement(
     val faces: List<ImmutableFace>,

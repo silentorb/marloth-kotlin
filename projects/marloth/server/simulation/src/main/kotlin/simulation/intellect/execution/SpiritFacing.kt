@@ -8,7 +8,7 @@ import simulation.input.Command
 import simulation.input.CommandType
 import simulation.input.Commands
 import simulation.main.World
-import simulation.physics.getLookAtAngle
+import simulation.physics.old.getLookAtAngle
 import simulation.main.simulationDelta
 import simulation.misc.*
 

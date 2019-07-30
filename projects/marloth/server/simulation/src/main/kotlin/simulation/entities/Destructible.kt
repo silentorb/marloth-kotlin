@@ -3,7 +3,7 @@ package simulation.entities
 import mythic.ent.Id
 import simulation.combat.*
 import simulation.happenings.DamageEvent
-import simulation.misc.Resource
+import simulation.misc.ResourceContainer
 import simulation.misc.modifyResource
 
 data class DestructibleBaseStats(
@@ -13,7 +13,7 @@ data class DestructibleBaseStats(
 
 data class Destructible(
     val base: DestructibleBaseStats,
-    val health: Resource,
+    val health: ResourceContainer,
     val damageMultipliers: DamageMultipliers = mapOf(),
     val lastDamageSource: Id = 0L
 )

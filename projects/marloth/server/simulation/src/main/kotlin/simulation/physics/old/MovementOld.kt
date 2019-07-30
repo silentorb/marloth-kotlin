@@ -1,4 +1,4 @@
-package simulation.physics
+package simulation.physics.old
 
 import mythic.ent.Id
 import mythic.sculpting.ImmutableEdge

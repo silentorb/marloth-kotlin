@@ -1,17 +1,43 @@
 package simulation.physics
 
 import com.badlogic.gdx.math.Matrix4
+import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback
+import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld
 import mythic.ent.Id
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import simulation.main.Deck
 import simulation.main.World
+import simulation.physics.old.Collision
+import java.util.*
+
+fun castInteractableRay(dynamicsWorld: btDiscreteDynamicsWorld, deck: Deck, player: Id): Id? {
+  val body = deck.bodies[player]!!
+  val character = deck.characters[player]!!
+  val shape = deck.collisionShapes[player]!!
+  val direction = character.facingVector
+  val start = body.position + Vector3(0f, 0f, 0.5f) + direction * shape.shape.radius
+  val end = start + direction * 5f
+  val callback = ClosestRayResultCallback(com.badlogic.gdx.math.Vector3.Zero, com.badlogic.gdx.math.Vector3.Z)
+  dynamicsWorld.collisionWorld.rayTest(toGdxVector3(start), toGdxVector3(end), callback)
+  if (callback.hasHit()) {
+    val collisionObject = callback.collisionObject
+    val id = collisionObject.userData as Id
+    if (deck.interactables.containsKey(id)) {
+      return id
+    }
+  }
+
+  return null
+}
 
 fun syncWorldToBullet(bulletState: BulletState): (World) -> World = { world ->
   val quat = com.badlogic.gdx.math.Quaternion()
+  val deck = world.deck
+  val player = deck.players.keys.first()
   world.copy(
-      deck = world.deck.copy(
-          bodies = world.deck.bodies.mapValues { (key, body) ->
+      deck = deck.copy(
+          bodies = deck.bodies.mapValues { (key, body) ->
             val btBody = bulletState.dynamicBodies[key]
             if (btBody == null)
               body
@@ -21,10 +47,16 @@ fun syncWorldToBullet(bulletState: BulletState): (World) -> World = { world ->
               worldTransform.getRotation(quat)
               body.copy(
                   position = Vector3(transform[Matrix4.M03], transform[Matrix4.M13], transform[Matrix4.M23]),
-                  orientation = Quaternion(quat.x, quat.y, quat.z, quat.w)
+                  orientation = Quaternion(quat.x, quat.y, quat.z, quat.w),
+                  velocity = toVector3(btBody.linearVelocity)
               )
             }
-          }
+          },
+          characters = deck.characters.plus(
+              Pair(player, deck.characters[player]!!.copy(
+                  canInteractWith = castInteractableRay(bulletState.dynamicsWorld, deck, player)
+              ))
+          )
       )
   )
 }

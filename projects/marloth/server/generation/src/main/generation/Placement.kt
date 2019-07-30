@@ -2,24 +2,29 @@ package generation
 
 import generation.abstracted.distributeToSlots
 import generation.abstracted.normalizeRanges
+import generation.architecture.alignWithNodeFloor
+import generation.architecture.nodeFloorCenter
 import generation.misc.BiomeId
-import generation.structure.wallHeight
 import marloth.definition.creatures
 import marloth.definition.templates.defaultWares
 import marloth.definition.templates.newBuffCloud
 import marloth.definition.templates.newMerchant
+import marloth.definition.templates.newTreasureChest
 import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.ent.newIdSource
 import mythic.spatial.Vector3
 import randomly.Dice
 import scenery.enums.AccessoryId
+import scenery.enums.MeshId
 import scenery.enums.ModifierId
 import simulation.entities.*
 import simulation.intellect.Pursuit
 import simulation.intellect.Spirit
 import simulation.main.*
 import simulation.misc.*
+import simulation.physics.Body
+import simulation.physics.CollisionObject
 
 data class CharacterTemplate(
     val faction: Id,
@@ -189,28 +194,33 @@ fun newPlayer(nextId: IdSource, playerNode: Node): Deck {
 
 fun placeBuffCloud(node: Node, buff: ModifierId) =
     newBuffCloud(
-        position = node.position + Vector3(0f, 0f, -wallHeight / 2f - 0.5f),
+        position = nodeFloorCenter(node),
         radius = node.radius,
         buff = buff
     )
+
+fun placeTreasureChest(meshInfo: MeshInfoMap, node: Node, amount: Int) =
+    newTreasureChest(meshInfo, alignWithNodeFloor(meshInfo, node, MeshId.treasureChest), amount)
 
 enum class Occupant {
   coldCloud,
   fireCloud,
   merchant,
   none,
-  poisonCloud
+  poisonCloud,
+  treasureChest
 }
 
 typealias DistributionMap = Map<Occupant, Int>
 
-fun occupantPopulators(node: Node, nextId: IdSource, occupant: Occupant): Hand =
+fun occupantPopulators(meshInfo: MeshInfoMap, node: Node, nextId: IdSource, occupant: Occupant): Hand =
     when (occupant) {
       Occupant.coldCloud -> placeBuffCloud(node, ModifierId.damageChilled)
       Occupant.fireCloud -> placeBuffCloud(node, ModifierId.damageBurning)
       Occupant.merchant -> newMerchant(nextId, node.position, defaultWares)
       Occupant.none -> Hand()
       Occupant.poisonCloud -> placeBuffCloud(node, ModifierId.damagePoisoned)
+      Occupant.treasureChest -> placeTreasureChest(meshInfo, node, 10)
     }
 
 fun damageCloudsDistributions(dice: Dice, totalWeight: Int): DistributionMap {
@@ -229,33 +239,42 @@ fun damageCloudsDistributions(dice: Dice, totalWeight: Int): DistributionMap {
 
 fun getDistributions(dice: Dice): DistributionMap = mapOf(
     Occupant.merchant to 200,
-    Occupant.none to 300
+    Occupant.none to 300,
+    Occupant.treasureChest to 600
 ).plus(damageCloudsDistributions(dice, 500))
 
-fun populateRooms(dice: Dice, nextId: IdSource, realm: Realm, playerNode: Id): Deck {
+fun populateRooms(meshInfo: MeshInfoMap, dice: Dice, nextId: IdSource, realm: Realm, playerNode: Id): Deck {
   val rooms = getRooms(realm).filter { it.id != playerNode }
   val ranges = getDistributions(dice)
   val hands = distributeToSlots(dice, rooms.size, ranges)
       .zip(rooms) { occupant, node ->
-        occupantPopulators(node, nextId, occupant)
+        occupantPopulators(meshInfo, node, nextId, occupant)
       }
 
   return Deck()
       .plus(allHandsOnDeck(hands, nextId))
 }
 
-fun finalizeRealm(input: WorldInput, realm: Realm): World {
-  val playerNode = realm.nodeTable.values.first { it.biome == BiomeId.home }
+fun populateWorld(meshInfo: MeshInfoMap, input: WorldInput): WorldTransform = { world ->
+  val playerNode = world.realm.nodeTable.values.first { it.biome == BiomeId.home }
   val scale = calculateWorldScale(input.boundary.dimensions)
   val nextId = newIdSource(1)
   val deck = Deck()
       .plus(newPlayer(nextId, playerNode))
-      .plus(populateRooms(input.dice, nextId, realm, playerNode.id))
+      .plus(populateRooms(meshInfo, input.dice, nextId, world.realm, playerNode.id))
 //      .plus(placeWallLamps(realm, nextId, input.dice, scale))
 //      .plus(placeDoors(realm, nextId))
 
-  return World(
+  world.copy(
       deck = deck,
+      nextId = nextId()
+  )
+}
+
+fun finalizeRealm(realm: Realm): World {
+  val nextId = newIdSource(1)
+  return World(
+      deck = Deck(),
       nextId = nextId(),
       realm = realm,
       dice = Dice(),

@@ -170,6 +170,13 @@ def get_export_filepath():
     return os.path.abspath(os.path.join(os.path.dirname(script_path), '../../', models_path, name, name + '.gltf'))
 
 
+def get_file_storage_method():
+    for image in bpy.data.images:
+        if 'resources' in image.filepath:
+            return 'REFERENCE'
+    return 'COPY'
+
+
 def export_gltf():
     filepath = get_export_filepath()
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
@@ -189,7 +196,7 @@ def export_gltf():
         animations_object_export='ELIGIBLE',
         animations_armature_export='ELIGIBLE',
         animations_shape_key_export='ELIGIBLE',
-        images_data_storage='COPY',
+        images_data_storage=get_file_storage_method(),
         images_allow_srgb=False,
         buffers_embed_data=False,
         buffers_combine_data=True,

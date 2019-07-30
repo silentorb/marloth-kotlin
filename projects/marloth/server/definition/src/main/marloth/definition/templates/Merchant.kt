@@ -4,6 +4,7 @@ import marloth.definition.creatures
 import mythic.ent.IdSource
 import mythic.spatial.Vector3
 import scenery.enums.AccessoryId
+import scenery.enums.ClientCommand
 import scenery.enums.ModifierId
 import scenery.enums.Text
 import simulation.entities.*
@@ -22,7 +23,8 @@ fun newMerchant(nextId: IdSource, position: Vector3, wares: List<Ware>): Hand {
   return character.copy(
       interactable = Interactable(
           primaryCommand = WidgetCommand(
-              text = Text.menu_talk
+              text = Text.menu_talk,
+              clientCommand = ClientCommand.showMerchantView
           )
       ),
       attachments = character.attachments.plus(wares.map { ware ->

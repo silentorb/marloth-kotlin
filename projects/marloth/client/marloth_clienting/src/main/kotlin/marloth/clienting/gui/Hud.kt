@@ -6,18 +6,18 @@ import mythic.bloom.next.*
 import org.joml.Vector2i
 import simulation.entities.Interactable
 import simulation.entities.Modifier
-import simulation.misc.Resource
+import simulation.misc.ResourceContainer
 
 private val textStyle = textStyles.gray
 
 data class HudData(
-    val health: Resource,
-    val sanity: Resource,
+    val health: ResourceContainer,
+    val sanity: ResourceContainer,
     val interactable: Interactable?,
     val buffs: List<Pair<Modifier, Int>>
 )
 
-fun resourceString(resource: Resource): String {
+fun resourceString(resource: ResourceContainer): String {
   val value = resource.value
   val max = resource.max
   return "$value / $max"

@@ -2,6 +2,7 @@ package simulation.happenings
 
 import scenery.enums.ModifierId
 import simulation.combat.DamageType
+import simulation.misc.ResourceMap
 
 interface Action {}
 
@@ -15,3 +16,7 @@ data class ApplyBuff(
     val strength: Int,
     val duration: Int
 ) : Action
+
+data class TakeItem(
+    val placeholder: Int = 0
+): Action

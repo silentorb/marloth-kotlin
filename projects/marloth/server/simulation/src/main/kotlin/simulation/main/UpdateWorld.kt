@@ -18,6 +18,7 @@ import simulation.intellect.updateAiState
 import simulation.misc.Definitions
 import simulation.particles.updateParticleEffect
 import simulation.physics.*
+import simulation.physics.old.Collisions
 
 const val simulationFps = 60
 const val simulationDelta = 1f / simulationFps.toFloat()
@@ -103,15 +104,16 @@ fun newEntities(events: OrganizedEvents, nextId: IdSource): (Deck) -> Deck = { d
 fun updateWorldDeck(animationDurations: AnimationDurationMap, definitions: Definitions, intermediate: Intermediate,
                     delta: Float): (World) -> World =
     { world ->
+      val events = intermediate.events
       val (nextId, finalize) = newIdSource(world)
 
       val newDeck = pipe(world.deck, listOf(
           updateEntities(world.dice, animationDurations, world, intermediate),
           ifUpdatingLogic(world, updateDeckCache(definitions)),
-          removeWhole,
-          removePartial(intermediate.events),
+          removeWhole(events),
+          removePartial(events),
           cleanupOutdatedReferences,
-          newEntities(intermediate.events, nextId)
+          newEntities(events, nextId)
       ))
       finalize(world.copy(
           deck = newDeck
@@ -121,10 +123,13 @@ fun updateWorldDeck(animationDurations: AnimationDurationMap, definitions: Defin
 fun updateWorld(bulletState: BulletState, animationDurations: AnimationDurationMap, playerCommands: Commands,
                 definitions: Definitions, events: Events, delta: Float): (World) -> World =
     pipe(listOf(
-        updateBulletPhysics(bulletState),
         { world ->
           val intermediate = generateIntermediateRecords(bulletState, definitions, world, playerCommands, events)
-          updateWorldDeck(animationDurations, definitions, intermediate, delta)(world)
+          val linearForces = allCharacterMovements(world, intermediate.commands)
+          pipe(listOf(
+              updateBulletPhysics(bulletState, linearForces),
+              updateWorldDeck(animationDurations, definitions, intermediate, delta)
+          ))(world)
         },
         updateGlobalDetails,
         updateBuffUpdateCounter

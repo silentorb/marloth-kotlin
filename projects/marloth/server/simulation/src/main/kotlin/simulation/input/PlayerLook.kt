@@ -5,7 +5,7 @@ import mythic.spatial.Vector3
 import simulation.entities.Character
 import simulation.entities.Player
 import simulation.entities.ViewMode
-import simulation.physics.joinInputVector
+import simulation.physics.old.joinInputVector
 import simulation.misc.*
 
 data class MomentumConfig(

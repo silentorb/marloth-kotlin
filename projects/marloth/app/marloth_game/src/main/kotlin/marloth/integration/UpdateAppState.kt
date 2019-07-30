@@ -46,11 +46,12 @@ fun updateClientFromWorld(worlds: List<World>, commands: List<Command>): (Client
       else {
         val world = worlds.last()
         val deck = world.deck
+        val interactingWith = getPlayerInteractingWith(deck)
         val view = when {
 
           world.gameOver != null -> ViewId.victory
 
-          getPlayerInteractingWith(deck) != null -> ViewId.merchant
+          interactingWith != null -> selectInteractionView(deck, interactingWith) ?: null
 
           else -> null
         }
@@ -99,6 +100,10 @@ fun restartWorld(app: GameApp, newWorld: () -> World): List<World> {
   return listOf(world)
 }
 
+fun gatherGuiEvents(appState: AppState) = guiEvents(appState.client.bloomState.bag)
+    .filter { it.type == GuiEventType.gameEvent }
+    .map { it.data as GameEvent }
+
 fun updateFixedInterval(app: GameApp, box: Box, newWorld: () -> World): (AppState) -> AppState = { appState ->
   app.platform.process.pollEvents()
   val nextClientState = pipe(appState.client, listOf(
@@ -110,12 +115,9 @@ fun updateFixedInterval(app: GameApp, box: Box, newWorld: () -> World): (AppStat
       client = nextClientState
   )
   val commands = getGameCommands(newAppState)
-  val events = guiEvents(newAppState.client.bloomState.bag)
-      .filter { it.type == GuiEventType.gameEvent }
-      .map { it.data as GameEvent }
   val worlds = when {
     nextClientState.commands.any { it.type == GuiCommandType.newGame } -> restartWorld(app, newWorld)
-    gameIsActive(appState) -> updateAppWorld(app, appState, newAppState, commands, events)
+    gameIsActive(appState) -> updateAppWorld(app, appState, newAppState, commands, gatherGuiEvents(newAppState))
     else -> appState.worlds.takeLast(1)
   }
 
