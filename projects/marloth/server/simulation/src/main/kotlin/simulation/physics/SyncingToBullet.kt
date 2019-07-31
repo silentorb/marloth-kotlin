@@ -84,6 +84,9 @@ fun syncNewBodies(world: World, bulletState: BulletState) {
         val shape = createCollisionShape(deck.collisionShapes[key]!!.shape, body.scale)
         val hingeInfo = dynamicBody.hinge
         val bulletBody = createBulletDynamicObject(body, dynamicBody, shape, hingeInfo != null)
+        val linear = bulletBody.linearDamping
+        val angular = bulletBody.angularDamping
+        bulletBody.setDamping(0.9f, 0f)
         if (hingeInfo != null) {
           val hinge = btHingeConstraint(bulletBody, toGdxVector3(hingeInfo.pivot * body.scale), toGdxVector3(hingeInfo.axis), true)
 //          hinge.enableAngularMotor(true, 1f, 1f)

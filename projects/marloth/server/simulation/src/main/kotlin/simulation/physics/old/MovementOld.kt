@@ -246,12 +246,13 @@ fun joinInputVector(commands: Commands, commandMap: Map<CommandType, Vector3>): 
     return null
 
   val offset = forces.reduce { a, b -> a + b }
-  return if (offset == Vector3())
-    Vector3()
+  return if (offset == Vector3.zero)
+    Vector3.zero
   else {
-    offset.normalize()
-    assert(!offset.x.isNaN() && !offset.y.isNaN())
-    return offset
+    if (offset.length() > 1f)
+      offset.normalize()
+    else
+      offset
   }
 }
 

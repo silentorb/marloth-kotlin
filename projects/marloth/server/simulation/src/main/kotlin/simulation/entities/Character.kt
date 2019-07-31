@@ -19,7 +19,8 @@ import simulation.main.Hand
 import simulation.main.World
 import simulation.main.simulationDelta
 import simulation.misc.ResourceContainer
-import simulation.misc.maxLookVelocityChange
+import simulation.misc.maxNegativeLookVelocityChange
+import simulation.misc.maxPostiveLookVelocityChange
 import simulation.physics.*
 import simulation.physics.old.*
 
@@ -158,8 +159,8 @@ fun updateCharacter(deck: Deck, id: Id, character: Character, commands: Commands
           } else
             c
         } else {
-          val lookVelocity = transitionVector(maxLookVelocityChange(),
-              Vector3(character.lookVelocity, 0f), Vector3(lookForce, 0f)).xy()
+          val lookVelocity = transitionVector(maxNegativeLookVelocityChange(), maxPostiveLookVelocityChange(),
+              character.lookVelocity, lookForce)
           val facingRotation = character.facingRotation + fpCameraRotation(lookVelocity, delta)
 
           c.copy(
@@ -185,17 +186,33 @@ fun updateCharacter(deck: Deck, commands: Commands, activatedAbilities: List<Act
   updateCharacter(deck, id, character, characterCommands, abilities, events, delta)
 }
 
-fun characterMovementFp(commands: Commands, character: Character, id: Id, body: Body): LinearForce? {
-  var offset = joinInputVector(commands, playerMoveMap)
-  if (offset != null) {
-    offset = Quaternion().rotateZ(character.facingRotation.z - Pi / 2) * offset * character.definition.maxSpeed
-    return LinearForce(body = id, offset = offset)
+fun getMovementImpulseVector(baseSpeed: Float, velocity: Vector3, commandVector: Vector3): Vector3 {
+  val rawImpulseVector = commandVector * 1.5f - velocity
+  val finalImpulseVector = if (rawImpulseVector.length() > baseSpeed)
+    rawImpulseVector.normalize() * baseSpeed
+  else
+    rawImpulseVector
+
+  return finalImpulseVector
+}
+
+fun characterMovementFp(commands: Commands, character: Character, id: Id, body: Body): LinearImpulse? {
+  val offsetVector = joinInputVector(commands, playerMoveMap)
+  return if (offsetVector != null) {
+    val direction = Quaternion().rotateZ(character.facingRotation.z - Pi / 2) * offsetVector
+    val baseSpeed = character.definition.maxSpeed
+    val maxImpulseLength = baseSpeed
+    val commandVector = direction * maxImpulseLength
+    val impulseVector = getMovementImpulseVector(baseSpeed, body.velocity, commandVector)
+    val finalImpulse = impulseVector * 5f
+    println(offsetVector.length())
+    LinearImpulse(body = id, offset = finalImpulse)
   } else {
-    return null
+    null
   }
 }
 
-fun allCharacterMovements(world: World, commands: Commands): List<LinearForce> =
+fun allCharacterMovements(world: World, commands: Commands): List<LinearImpulse> =
     world.deck.characters
         .filter { world.deck.characters[it.key]!!.isAlive }
         .mapNotNull { characterMovementFp(filterCommands(it.key, commands), it.value, it.key, world.bodyTable[it.key]!!) }
@@ -228,7 +245,7 @@ fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id,
       ),
       character = Character(
           definition = definition,
-          turnSpeed = Vector2(2f, 1f),
+          turnSpeed = Vector2(3f, 1f),
           facingRotation = Vector3(0f, 0f, Pi / 2f),
           faction = faction,
           sanity = ResourceContainer(100),

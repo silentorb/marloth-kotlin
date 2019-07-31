@@ -9,10 +9,8 @@ import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSol
 import mythic.ent.Id
 import mythic.spatial.Matrix
 import mythic.spatial.Vector3
-import simulation.main.Deck
 import simulation.main.World
-import simulation.physics.old.LinearForce
-import java.util.*
+import simulation.physics.old.LinearImpulse
 import com.badlogic.gdx.math.Vector3 as GdxVector3
 
 // TODO: Migrate to LWJGL Bullet Bindings if it ever seems a little more used and documented.
@@ -56,7 +54,8 @@ fun newBulletState(): BulletState {
   val solver = btSequentialImpulseConstraintSolver()
 
   val dynamicsWorld = btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfig)
-  dynamicsWorld.gravity = GdxVector3(0f, 0f, -10f)
+  val dampingCounter = 2f
+  dynamicsWorld.gravity = GdxVector3(0f, 0f, -10f * 2f)
 
   return BulletState(
       dynamicsWorld = dynamicsWorld,
@@ -65,14 +64,14 @@ fun newBulletState(): BulletState {
   )
 }
 
-fun applyImpulses(world: World, bulletState: BulletState, linearForces: List<LinearForce>) {
+fun applyImpulses(world: World, bulletState: BulletState, linearForces: List<LinearImpulse>) {
   for (force in linearForces) {
     val btBody = bulletState.dynamicBodies[force.body]!!
     btBody.applyCentralImpulse(toGdxVector3(force.offset))
   }
 }
 
-fun updateBulletPhysics(bulletState: BulletState, linearForces: List<LinearForce>): (World) -> World = { world ->
+fun updateBulletPhysics(bulletState: BulletState, linearForces: List<LinearImpulse>): (World) -> World = { world ->
   syncNewBodies(world, bulletState)
   syncRemovedBodies(world, bulletState)
   applyImpulses(world, bulletState, linearForces)

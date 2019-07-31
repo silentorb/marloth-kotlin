@@ -5,11 +5,13 @@ import marloth.clienting.gui.ViewId
 import simulation.main.Deck
 import simulation.entities.AttachmentTypeId
 import simulation.entities.getTargetAttachmentsOfCategory
+import kotlin.math.roundToInt
 
 fun gatherHudData(deck: Deck, view: ViewId): HudData {
   val player = deck.players.keys.first()
   val character = deck.characters[player]!!
   val destructible = deck.destructibles[player]!!
+  val body = deck.bodies[player]!!
 
   val buffs = getTargetAttachmentsOfCategory(deck, player, AttachmentTypeId.buff)
       .map { Pair(deck.buffs[it]!!, deck.timers[it]!!.duration) }
@@ -22,6 +24,9 @@ fun gatherHudData(deck: Deck, view: ViewId): HudData {
       health = destructible.health,
       sanity = character.sanity,
       interactable = interactable,
-      buffs = buffs
+      buffs = buffs,
+      debugInfo =  listOf(
+          ((body.velocity.length() * 100).roundToInt().toFloat() / 100).toString()
+      )
   )
 }

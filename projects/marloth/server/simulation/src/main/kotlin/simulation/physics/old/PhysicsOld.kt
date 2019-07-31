@@ -15,7 +15,7 @@ data class Rotation(
     val roll: Float = 0f
 )
 
-data class LinearForce(
+data class LinearImpulse(
     val body: Id,
     val offset: Vector3
 )
@@ -36,6 +36,29 @@ typealias Collisions = List<Collision>
 fun transitionVector(maxChange: Float, current: Vector3, target: Vector3): Vector3 {
   val diff = target - current
   val diffLength = diff.length()
+  return if (diffLength != 0f) {
+    if (diffLength < maxChange)
+      target
+    else {
+      val adjustment = if (diffLength > maxChange)
+        diff.normalize() * maxChange
+      else
+        diff
+
+      current + adjustment
+    }
+  } else
+    current
+}
+
+fun transitionVector(negativeMaxChange: Float, positiveMaxChange: Float, current: Vector2, target: Vector2): Vector2 {
+  val diff = target - current
+  val diffLength = diff.length()
+  val maxChange = if (current.length() < target.length())
+    positiveMaxChange
+  else
+    negativeMaxChange
+
   return if (diffLength != 0f) {
     if (diffLength < maxChange)
       target
@@ -87,7 +110,7 @@ fun isWalkable(node: Node?) = node?.isWalkable ?: false
 //    position
 //}
 
-fun updateBody(realm: Realm, body: Body, dynamicBody: DynamicBody, movementForces: List<LinearForce>, collisions: List<Collision>,
+fun updateBody(realm: Realm, body: Body, dynamicBody: DynamicBody, movementForces: List<LinearImpulse>, collisions: List<Collision>,
                orientationForces: List<AbsoluteOrientationForce>, delta: Float): Body {
   return body.copy(
 //      velocity = applyForces(body, movementForces, dynamicBody.resistance, delta),
@@ -97,7 +120,7 @@ fun updateBody(realm: Realm, body: Body, dynamicBody: DynamicBody, movementForce
   )
 }
 
-fun updatePhysicsBodies(world: World, collisions: Collisions, movementForces: List<LinearForce>,
+fun updatePhysicsBodies(world: World, collisions: Collisions, movementForces: List<LinearImpulse>,
                         orientationForces: List<AbsoluteOrientationForce>, delta: Float): Table<Body> {
   val updated = world.deck.dynamicBodies.mapValues { (id, dynamicBody) ->
     val body = world.deck.bodies[id]!!

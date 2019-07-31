@@ -14,7 +14,8 @@ data class HudData(
     val health: ResourceContainer,
     val sanity: ResourceContainer,
     val interactable: Interactable?,
-    val buffs: List<Pair<Modifier, Int>>
+    val buffs: List<Pair<Modifier, Int>>,
+    val debugInfo: List<String> = listOf()
 )
 
 fun resourceString(resource: ResourceContainer): String {
@@ -39,6 +40,9 @@ private fun playerStats(data: HudData): Flower {
   )
       .plus(data.buffs.map {
         label(textStyle, "${it.first.type.name} ${it.second}")
+      })
+      .plus(data.debugInfo.map {
+        label(textStyle, it)
       })
   return div(forward = fixedOffset(Vector2i(10)))(
       div(reverse = shrink, depiction = solidBackground(black))(

@@ -41,7 +41,7 @@ fun spiritFacingChange(world: World, knowledge: Knowledge, offset: Vector3): Com
     val velocity = character.lookVelocity.x
     val increment = character.turnSpeed.x * simulationDelta
 //    println("" + dir + " " + absCourse + " " + increment)
-    val drift = increment * velocity / maxLookVelocityChange()
+    val drift = increment * velocity / maxPostiveLookVelocityChange()
     return if (absCourse <= drift)
       listOf() // Don't need to rotate anymore.  The remaining momentum will get us there.
     else
