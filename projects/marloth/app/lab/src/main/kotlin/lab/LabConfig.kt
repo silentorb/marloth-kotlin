@@ -45,6 +45,7 @@ enum class LabCommandType {
   cameraViewRight,
   cameraViewLeft,
 
+  rebuildWorld,
   selectModeEdges,
   selectModeFaces,
   selectModeVertices,
@@ -163,14 +164,7 @@ fun createLabInputBindings() = mutableMapOf(
         )))
         .plus(createBindings(DeviceIndex.mouse, mapOf(
             GLFW.GLFW_MOUSE_BUTTON_1 to LabCommandType.select
-        ))),
-    Views.world to createBindings(DeviceIndex.keyboard, mapOf(
-        GLFW.GLFW_KEY_1 to LabCommandType.toggleAbstractView,
-        GLFW.GLFW_KEY_2 to LabCommandType.toggleStructureView
-    )),
-    Views.texture to createBindings<LabCommandType>(DeviceIndex.keyboard, mapOf(
-
-    ))
+        )))
         .plus(createBindings(DeviceIndex.mouse, mapOf(
             GLFW.GLFW_MOUSE_BUTTON_1 to LabCommandType.select
         ))),
@@ -186,18 +180,14 @@ enum class Views {
   game,
   global,
   map,
-  model,
-  texture,
-  world
+  model
 }
 
 data class LabConfig(
-    var view: Views = Views.world,
-    var worldView: WorldViewConfig = WorldViewConfig(),
+    var view: Views = Views.game,
     var modelView: ModelViewConfig = ModelViewConfig(),
     var gameView: GameViewConfig = GameViewConfig(),
-    var mapView: MapViewConfig = MapViewConfig(),
-    var textureView: TextureViewConfig = TextureViewConfig()
+    var mapView: MapViewConfig = MapViewConfig()
 )
 
 val labInputConfig: LabInputConfig = createLabInputBindings()

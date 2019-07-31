@@ -81,9 +81,9 @@ fun filterDepictions(depictions: Table<Depiction>, player: Id, playerRecord: Pla
     else
       depictions
 
-fun convertSimpleDepiction(world: World, id: Id, mesh: MeshName, texture: TextureName? = null): MeshElement? {
-  val body = world.bodyTable[id]!!
-  val character = world.characterTable[id]
+fun convertSimpleDepiction(deck: Deck, id: Id, mesh: MeshName, texture: TextureName? = null): MeshElement? {
+  val body = deck.bodies[id]!!
+  val character = deck.characters[id]
   val translate = Matrix().translate(body.position)
   val transform = if (character != null)
     translate.rotate(character.facingQuaternion)
@@ -103,7 +103,7 @@ fun convertSimpleDepiction(world: World, id: Id, mesh: MeshName, texture: Textur
   )
 }
 
-fun convertSimpleDepiction(world: World, id: Id, depiction: Depiction): MeshElement? {
+fun convertSimpleDepiction(deck: Deck, id: Id, depiction: Depiction): MeshElement? {
   val mesh = if (depiction.type == DepictionType.staticMesh)
     depiction.mesh
   else
@@ -112,12 +112,12 @@ fun convertSimpleDepiction(world: World, id: Id, depiction: Depiction): MeshElem
   if (mesh == null)
     return null
 
-  return convertSimpleDepiction(world, id, mesh, depiction.texture)
+  return convertSimpleDepiction(deck, id, mesh, depiction.texture)
 }
 
-fun convertComplexDepiction(world: World, id: Id, depiction: Depiction): ElementGroup {
-  val body = world.bodyTable[id]!!
-  val character = world.characterTable[id]!!
+fun convertComplexDepiction(deck: Deck, id: Id, depiction: Depiction): ElementGroup {
+  val body = deck.bodies[id]!!
+  val character = deck.characters[id]!!
   val transform = Matrix()
       .translate(body.position)
       .rotate(character.facingQuaternion)
@@ -126,7 +126,7 @@ fun convertComplexDepiction(world: World, id: Id, depiction: Depiction): Element
 
   val animations = depiction.animations.map {
     ElementAnimation(
-        animationId = mapAnimation(world, it.animationId),
+        animationId = mapAnimation(deck, it.animationId),
         timeOffset = it.animationOffset,
         strength = it.strength
 //        strength = 1f / depiction.animations.size
@@ -198,71 +198,59 @@ fun gatherParticleElements(deck: Deck, cameraPosition: Vector3): ElementGroups {
       }
 }
 
-fun gatherVisualElements(world: World, screen: Screen, player: Id, playerRecord: Player): ElementGroups {
-//  val depictions = filterDepictions(world, player)
-//  val childDepictions = depictions.values.filter {
-//    it.type == DepictionType.child || it.type == DepictionType.monster
-//  }
-
+fun gatherVisualElements(deck: Deck, screen: Screen, player: Id, playerRecord: Player): ElementGroups {
   val (complex, simple) =
-      filterDepictions(world.deck.depictions, player, playerRecord)
+      filterDepictions(deck.depictions, player, playerRecord)
           .entries.partition { isComplexDepiction(it.value) }
 
   val complexElements = complex.map {
-    convertComplexDepiction(world, it.key, it.value)
+    convertComplexDepiction(deck, it.key, it.value)
   }
 
-//  val characters = world.characters.asIterable().filter { !isPlayer(world, it) }
   val simpleElements =
       simple.mapNotNull {
-        convertSimpleDepiction(world, it.key, it.value)
+        convertSimpleDepiction(deck, it.key, it.value)
       }
-//          .plusBounded(characters.mapNotNull {
-//            convertSimpleDepiction(world, it.id, it.definition.depictionType)
-//          })
-//          .plus(world.deck.missiles.values.mapNotNull {
-//            convertSimpleDepiction(world, it.id, MeshId.spikyBall.name)
-//          })
-          .plus(world.deck.doors.mapNotNull {
-            convertSimpleDepiction(world, it.key, MeshId.prisonDoor.name)
+          .plus(deck.doors.mapNotNull {
+            convertSimpleDepiction(deck, it.key, MeshId.prisonDoor.name)
           })
 
   return complexElements
       .plus(ElementGroup(simpleElements))
 }
 
-fun mapLights(world: World, player: Id) =
-    world.deck.lights
+fun mapLights(deck: Deck, player: Id) =
+    deck.lights
         .map { (id, light) ->
           Light(
               type = LightType.point,
               color = light.color,
-              position = world.bodyTable[id]!!.position + Vector3(0f, 0f, 2.2f),
+              position = deck.bodies[id]!!.position + Vector3(0f, 0f, 2.2f),
               direction = Vector4(0f, 0f, 0f, light.range)
           )
         }
         .plus(listOfNotNull(
-            if (isHolding(world.deck, player)(AccessoryId.candle))
+            if (isHolding(deck, player)(AccessoryId.candle))
               Light(
                   type = LightType.point,
                   color = Vector4(1f, 1f, 1f, 0.6f),
-                  position = world.bodyTable[player]!!.position + Vector3(0f, 0f, 2f),
+                  position = deck.bodies[player]!!.position + Vector3(0f, 0f, 2f),
                   direction = Vector4(0f, 0f, 0f, 36f)
               )
             else
               null
         ))
 
-fun createScene(world: World, screen: Screen, player: Id): GameScene {
-  val camera = createCamera(world.deck, screen)
+fun createScene(deck: Deck, screen: Screen, player: Id): GameScene {
+  val camera = createCamera(deck, screen)
   return GameScene(
       main = Scene(
           camera = camera,
-          lights = mapLights(world, player)
+          lights = mapLights(deck, player)
       ),
-      opaqueElementGroups = gatherVisualElements(world, screen, player, world.deck.players[player]!!),
-      transparentElementGroups = gatherParticleElements(world.deck, camera.position),
-      filters = if (!world.deck.characters[player]!!.isAlive)
+      opaqueElementGroups = gatherVisualElements(deck, screen, player, deck.players[player]!!),
+      transparentElementGroups = gatherParticleElements(deck, camera.position),
+      filters = if (!deck.characters[player]!!.isAlive)
         listOf<ScreenFilter>(
             { it.screenDesaturation.activate() },
             { it.screenColor.activate(Vector4(1f, 0f, 0f, 0.4f)) }
@@ -272,7 +260,7 @@ fun createScene(world: World, screen: Screen, player: Id): GameScene {
   )
 }
 
-fun createScenes(world: World, screens: List<Screen>): List<GameScene> =
-    world.deck.players.keys.mapIndexed() { i, key ->
-      createScene(world, screens[i], key)
+fun createScenes(deck: Deck, screens: List<Screen>): List<GameScene> =
+    deck.players.keys.mapIndexed() { i, key ->
+      createScene(deck, screens[i], key)
     }

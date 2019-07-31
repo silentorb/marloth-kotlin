@@ -12,6 +12,7 @@ import lab.views.game.GameViewConfig
 import lab.views.game.drawBulletDebug
 import lab.views.model.newModelViewState
 import marloth.clienting.Client
+import marloth.clienting.input.GuiCommandType
 import marloth.clienting.newClientState
 import marloth.definition.staticDefinitions
 import marloth.front.GameApp
@@ -103,12 +104,19 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
 
     val (commands, newState) = app.labClient.update(world, gameApp.client.screens, state, timestep.delta.toFloat())
 
+    if (commands.any()) {
+      val k = 0
+    }
     if (world != null && gameApp.config.gameplay.defaultPlayerView != world.players[0].viewMode) {
       gameApp.config.gameplay.defaultPlayerView = world.players[0].viewMode
     }
 
     newState.app.copy(
-        timestep = timestep
+        timestep = timestep,
+        worlds = if (commands.any { it.type == GuiCommandType.newGame })
+          restartWorld(gameApp, app.newWorld)
+        else
+          state.app.worlds
     )
   }
 

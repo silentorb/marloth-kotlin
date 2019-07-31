@@ -68,7 +68,7 @@ fun newWall(meshInfo: MeshInfoMap, dice: Dice, node: Node, position: Vector3, an
   return newArchitectureMesh(
       meshInfo = meshInfo,
       mesh = mesh,
-      position = position + floorOffset + alignWithFloor(meshInfo)(mesh),
+      position = position + floorOffset + alignWithFloor(meshInfo)(mesh) + Vector3(0f, 0f, dice.getFloat(-0.01f, 0.01f)),
       scale = Vector3.unit,
       orientation = orientation,
       texture = biome.wallTexture

@@ -2,6 +2,7 @@ package simulation.entities
 
 import mythic.ent.Id
 import scenery.*
+import simulation.main.Deck
 import simulation.main.World
 import simulation.main.simulationDelta
 
@@ -33,15 +34,15 @@ data class Depiction(
     val animations: List<DepictionAnimation> = listOf()
 )
 
-fun mapAnimation(world: World, id: AnimationId): AnimationId {
+fun mapAnimation(deck: Deck, id: AnimationId): AnimationId {
 //  if (id == AnimationId.stand)
 //    return AnimationId.stand
 
   return id
 }
 
-fun updateAnimation(world: World, animationDurations: AnimationDurationMap, animation: DepictionAnimation, strength: Float, delta: Float): DepictionAnimation {
-  val animationId = mapAnimation(world, animation.animationId)
+fun updateAnimation(deck: Deck, animationDurations: AnimationDurationMap, animation: DepictionAnimation, strength: Float, delta: Float): DepictionAnimation {
+  val animationId = mapAnimation(deck, animation.animationId)
   val duration = animationDurations[ArmatureId.person]!![animationId]
   val nextValue = animation.animationOffset + 1f * delta
   val finalValue = if (duration != null)
@@ -79,8 +80,8 @@ fun getUpdatedAnimationDistributions(primary: AnimationId, animations: List<Depi
   return initial.map { it / sum }
 }
 
-fun updateAnimations(world: World, animationDurations: AnimationDurationMap, id: Id, animations: List<DepictionAnimation>, delta: Float): List<DepictionAnimation> {
-  val body = world.bodyTable[id]!!
+fun updateAnimations(deck: Deck, animationDurations: AnimationDurationMap, id: Id, animations: List<DepictionAnimation>, delta: Float): List<DepictionAnimation> {
+  val body = deck.bodies[id]!!
   val speed = body.velocity.length()
   val primaryAnimation = if (speed == 0f)
     AnimationId.stand
@@ -96,16 +97,16 @@ fun updateAnimations(world: World, animationDurations: AnimationDurationMap, id:
     animations
 
   val distributions = getUpdatedAnimationDistributions(primaryAnimation, animationsPlus, delta)
-  val distributedAnimations = animationsPlus.zip(distributions) { animation, strength -> updateAnimation(world, animationDurations, animation, strength, delta) }
+  val distributedAnimations = animationsPlus.zip(distributions) { animation, strength -> updateAnimation(deck, animationDurations, animation, strength, delta) }
   val result = distributedAnimations.filter { it.strength > 0f }
   return result
 }
 
-fun updateDepiction(world: World, animationDurations: AnimationDurationMap): (Id, Depiction) -> Depiction = { id, depiction ->
+fun updateDepiction(deck: Deck, animationDurations: AnimationDurationMap): (Id, Depiction) -> Depiction = { id, depiction ->
   if (depiction.animations.none())
     depiction
   else
     depiction.copy(
-        animations = updateAnimations(world, animationDurations, id, depiction.animations, simulationDelta)
+        animations = updateAnimations(deck, animationDurations, id, depiction.animations, simulationDelta)
     )
 }

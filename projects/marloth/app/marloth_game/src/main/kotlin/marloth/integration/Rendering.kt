@@ -50,7 +50,7 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, box: 
   renderContainer(client, windowInfo) { canvas ->
     val world = interpolateWorlds(appState.timestep.accumulator, appState.worlds)
     if (world != null) {
-      val scenes = createScenes(world, client.screens)
+      val scenes = createScenes(world.deck, client.screens)
       val dimensions = windowInfo.dimensions
       val viewports = getPlayerViewports(scenes.size, dimensions).iterator()
       val scene = scenes.first()

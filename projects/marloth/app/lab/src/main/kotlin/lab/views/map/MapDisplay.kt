@@ -6,44 +6,53 @@ import lab.utility.green
 import lab.utility.red
 import lab.views.shared.LabTextStyles
 import marloth.clienting.Client
+import marloth.integration.convertSimpleDepiction
 import mythic.bloom.StateBag
 import mythic.bloom.StateDepiction
 import mythic.bloom.selectionState
 import mythic.glowing.globalState
-import mythic.spatial.*
-import rendering.*
+import mythic.spatial.Matrix
+import mythic.spatial.Quaternion
+import mythic.spatial.Vector3
+import mythic.spatial.Vector4
+import org.lwjgl.opengl.GL11
+import rendering.SceneRenderer
+import rendering.renderMeshElement
 import scenery.Camera
 import scenery.ProjectionType
 import scenery.Scene
+import simulation.entities.DepictionType
+import simulation.main.Deck
 import simulation.misc.Node
 import simulation.misc.Realm
 import simulation.misc.nodeNeighbors
 
-fun drawWireframeWorld(renderer: SceneRenderer, worldMesh: WorldMesh, realm: Realm, config: MapViewConfig, nodes: Collection<Node>, color: Vector4) {
-  val faces = if (config.display.isolateSelection && config.selection.any())
-    config.selection
-  else
-    nodes.flatMap { it.faces }.distinct()
-//      .take(1)
+fun drawWireframeWorld(renderer: SceneRenderer, deck: Deck, realm: Realm, config: MapViewConfig, nodes: Collection<Node>, color: Vector4) {
 
-  for (face in faces) {
-//      renderer.effects.flat.activate(ObjectShaderConfig(color = color))
-//      renderer.drawOutlinedFace(face.vertices, color)
-    val debugInfo = realm.faces[face]!!.debugInfo
-    val c = when (debugInfo) {
-      "incomplete" -> Vector4(1f, 1f, 0f, 1f)
-      "lower" -> Vector4(1f, 0f, 1f, 1f)
-      else -> color
-    }
-    val thickness = if (config.selection.contains(face))
-      3f
-    else
-      1f
-//    for (edge in realm.mesh.faces[face]!!.edges) {
-//      renderer.drawLine(edge.first, edge.second, c, thickness)
-////                sector.mesh.drawElement(DrawMethod.lineLoop, index++)
+//  val faces = if (config.display.isolateSelection && config.selection.any())
+//    config.selection
+//  else
+//    nodes.flatMap { it.faces }.distinct()
+////      .take(1)
+//
+//  for (face in faces) {
+////      renderer.effects.flat.activate(ObjectShaderConfig(color = color))
+////      renderer.drawOutlinedFace(face.vertices, color)
+//    val debugInfo = realm.faces[face]!!.debugInfo
+//    val c = when (debugInfo) {
+//      "incomplete" -> Vector4(1f, 1f, 0f, 1f)
+//      "lower" -> Vector4(1f, 0f, 1f, 1f)
+//      else -> color
 //    }
-  }
+//    val thickness = if (config.selection.contains(face))
+//      3f
+//    else
+//      1f
+////    for (edge in realm.mesh.faces[face]!!.edges) {
+////      renderer.drawLine(edge.first, edge.second, c, thickness)
+//////                sector.mesh.drawElement(DrawMethod.lineLoop, index++)
+////    }
+//  }
 }
 
 fun renderFaceIds(renderer: SceneRenderer, realm: Realm, nodes: Collection<Node>) {
@@ -63,8 +72,8 @@ fun renderNodeIds(renderer: SceneRenderer, nodes: Collection<Node>) {
   }
 }
 
-fun renderMapMesh(renderer: SceneRenderer, realm: Realm, config: MapViewConfig, bag: StateBag) {
-//  val worldMesh = renderer.renderer.worldMesh!!
+fun renderMapMesh(sceneRenderer: SceneRenderer, realm: Realm, deck: Deck, config: MapViewConfig, bag: StateBag) {
+//  val worldMesh = sceneRenderer.sceneRenderer.worldMesh!!
   val selectedNodes = selectionState(bag[nodeListSelectionKey])
   val nodes: Collection<Node> = if (selectedNodes.selection.none())
     realm.nodeList
@@ -82,34 +91,36 @@ fun renderMapMesh(renderer: SceneRenderer, realm: Realm, config: MapViewConfig, 
 //  else
 //    worldMesh.sectors.filter { selectedNodes.selection.contains(it.id.toString()) }
 
-//  val faces = (if (config.display.isolateSelection && config.selection.any())
-//    config.selection
-//  else
-//    nodes.flatMap { it.faces })
-//      .map { realm.mesh.faces[it]!! }
-//
-//  if (config.display.wireframe && !config.display.solid) {
-//    drawWireframeWorld(renderer, worldMesh, realm, config, nodes, Vector4(1f))
-//  } else if (config.display.solid) {
+  if (config.display.wireframe && !config.display.solid) {
+    drawWireframeWorld(sceneRenderer, deck, realm, config, nodes, Vector4(1f))
+  } else if (config.display.solid) {
 //    globalState.depthEnabled = false
 //    globalState.cullFaces = false
 //    globalState.blendEnabled = true
 //    globalState.blendFunction = Pair(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
 //
-//    val lineHalfColor = Vector4(1f, 1f, 1f, 1f)
+    val lineHalfColor = Vector4(1f, 1f, 1f, 1f)
 ////      val lineHalfColor = Vector4(1f, 1f, 1f, 0.5f)
-////      drawWireframeWorld(renderer, worldMesh, realm, lineHalfColor)
+////      drawWireframeWorld(sceneRenderer, worldMesh, realm, lineHalfColor)
 //    globalState.depthEnabled = true
 //    globalState.cullFaces = true
-//
+
+    val elements = deck.depictions
+        .filterValues { it.type == DepictionType.staticMesh }
+        .mapNotNull { convertSimpleDepiction(deck, it.key, it.value) }
+//    renderElements(sceneRenderer, elements)
+    for (element in elements) {
+      renderMeshElement(sceneRenderer, element)
+    }
+//    renderElements(sceneRenderer, )
 //    for (sector in sectors) {
 //      var index = 0
 //      for (textureId in sector.textureIndex) {
-//        val texture = renderer.renderer.mappedTextures[textureId]
-//            ?: renderer.renderer.textures[textureId.toString()]
+//        val texture = sceneRenderer.sceneRenderer.mappedTextures[textureId]
+//            ?: sceneRenderer.sceneRenderer.textures[textureId.toString()]
 //
 //        if (texture != null)
-//          renderer.effects.texturedFlat.activate(ObjectShaderConfig(texture = texture))
+//          sceneRenderer.effects.texturedFlat.activate(ObjectShaderConfig(texture = texture))
 //        else
 //          unbindTexture()
 //
@@ -118,47 +129,47 @@ fun renderMapMesh(renderer: SceneRenderer, realm: Realm, config: MapViewConfig, 
 //    }
 //    globalState.depthEnabled = false
 //    globalState.cullFaces = false
-//
-//    if (config.display.wireframe)
-//      drawWireframeWorld(renderer, worldMesh, realm, config, nodes, lineHalfColor)
-//  }
+
+    if (config.display.wireframe)
+      drawWireframeWorld(sceneRenderer, deck, realm, config, nodes, lineHalfColor)
+  }
 
   if (config.display.abstract) {
-    drawAbstractNodes(renderer, nodes)
+    drawAbstractNodes(sceneRenderer, nodes)
   }
 
   globalState.depthEnabled = false
 
 //  if (config.display.normals)
-//    renderFaceNormals(renderer, 0.5f, faces)
+//    renderFaceNormals(sceneRenderer, 0.5f, faces)
 
   if (config.display.faceIds) {
-    renderFaceIds(renderer, realm, nodes)
+    renderFaceIds(sceneRenderer, realm, nodes)
   }
 
   if (config.display.nodeIds) {
-    renderNodeIds(renderer, nodes)
+    renderNodeIds(sceneRenderer, nodes)
   }
 
-//  renderer.drawPoint(Vector3(), Vector4(1f, 0f, 0f, 1f), 3f)
-  renderer.drawLine(Vector3(), Vector3(1f, 0f, 0f), red)
-  renderer.drawLine(Vector3(), Vector3(0f, 1f, 0f), green)
-  renderer.drawLine(Vector3(), Vector3(0f, 0f, 1f), blue)
-//  renderer.drawPoint(Vector3(4.253298f, 64.679794f, 0.0f), Vector4(1f, 1f, 0f, 1f), 3f)
-//  renderer.drawPoint(Vector3(3.3128958f, 39.977787f, 0.0f), Vector4(1f, 0f, 1f, 1f), 3f)
-//  renderer.drawPoint(Vector3(16.027586f, 69.140396f, 0.0f), Vector4(0f, 1f, 1f, 1f), 3f)
+//  sceneRenderer.drawPoint(Vector3(), Vector4(1f, 0f, 0f, 1f), 3f)
+  sceneRenderer.drawLine(Vector3(), Vector3(1f, 0f, 0f), red)
+  sceneRenderer.drawLine(Vector3(), Vector3(0f, 1f, 0f), green)
+  sceneRenderer.drawLine(Vector3(), Vector3(0f, 0f, 1f), blue)
+//  sceneRenderer.drawPoint(Vector3(4.253298f, 64.679794f, 0.0f), Vector4(1f, 1f, 0f, 1f), 3f)
+//  sceneRenderer.drawPoint(Vector3(3.3128958f, 39.977787f, 0.0f), Vector4(1f, 0f, 1f, 1f), 3f)
+//  sceneRenderer.drawPoint(Vector3(16.027586f, 69.140396f, 0.0f), Vector4(0f, 1f, 1f, 1f), 3f)
 
 //  for (id in config.selection) {
 //    val face = realm.mesh.faces[id]
 //    if (face != null) {
 //      face.vertices.forEachIndexed { index, v ->
-//        renderer.drawText(index.toString(), v, LabTextStyles.lessRed)
+//        sceneRenderer.drawText(index.toString(), v, LabTextStyles.lessRed)
 //      }
 //    }
 //  }
 
 //  globalState.depthEnabled = true
-//  renderer.drawLine(config.tempStart, config.tempEnd, yellow)
+//  sceneRenderer.drawLine(config.tempStart, config.tempEnd, yellow)
 }
 
 fun createOrbitalCamera(camera: MapViewOrbitalCamera): Camera {
@@ -196,7 +207,7 @@ fun createMapViewCamera(config: MapViewConfig) =
     else
       createFirstPersonCamera(config.firstPersonCamera)
 
-fun renderMapView(client: Client, realm: Realm, config: MapViewConfig): StateDepiction = { seed ->
+fun renderMapView(client: Client, realm: Realm, deck: Deck, config: MapViewConfig): StateDepiction = { seed ->
   embedCameraView { b, c ->
     val camera = createMapViewCamera(config)
     val windowInfo = client.getWindowInfo()
@@ -208,7 +219,7 @@ fun renderMapView(client: Client, realm: Realm, config: MapViewConfig): StateDep
         lights = listOf()
     )
     val sceneRenderer = renderer.createSceneRenderer(scene, b.toVector4i())
-    renderMapMesh(sceneRenderer, realm, config, seed.bag)
+    renderMapMesh(sceneRenderer, realm, deck, config, seed.bag)
     renderer.finishRender(windowInfo)
   }
 }

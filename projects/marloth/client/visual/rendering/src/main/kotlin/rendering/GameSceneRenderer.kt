@@ -101,15 +101,7 @@ class GameSceneRenderer(
   }
 
   fun renderElements() {
-    for (group in scene.opaqueElementGroups) {
-      renderElementGroup(this, group)
-    }
-
-    globalState.depthWrite = false
-    for (group in scene.transparentElementGroups) {
-      renderElementGroup(this, group)
-    }
-    globalState.depthWrite = true
+    renderElements(renderer, scene.opaqueElementGroups, scene.transparentElementGroups)
   }
 
 //  fun renderSectorMesh(sector: SectorMesh) {

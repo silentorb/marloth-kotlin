@@ -6,12 +6,13 @@ import rendering.shading.ObjectShaderConfig
 import rendering.shading.ShaderFeatureConfig
 import rendering.shading.createInstanceBuffer
 import rendering.shading.padBuffer
+import scenery.Camera
 import kotlin.math.roundToInt
 
-fun renderBillboard(gameRenderer: GameSceneRenderer, billboards: List<TexturedBillboard>) {
-  val renderer = gameRenderer.renderer.renderer
-  val model = gameRenderer.renderer.meshes["billboard"]!!
-  val camera = gameRenderer.scene.camera
+fun renderBillboard(sceneRenderer: SceneRenderer, billboards: List<TexturedBillboard>) {
+  val renderer = sceneRenderer.renderer
+  val model = sceneRenderer.meshes["billboard"]!!
+  val camera = sceneRenderer.camera
   val textures = renderer.textures
   val texture = textures[billboards.first().texture.toString()]
   if (texture == null)

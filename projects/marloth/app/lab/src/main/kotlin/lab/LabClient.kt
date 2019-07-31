@@ -7,7 +7,6 @@ import lab.views.map.mapLayout
 import lab.views.map.updateMapState
 import lab.views.model.ModelView
 import lab.views.model.ModelViewState
-import lab.views.world.WorldView
 import marloth.clienting.*
 import marloth.clienting.input.newBloomInputState
 import marloth.clienting.input.updateInputState
@@ -49,9 +48,7 @@ class LabClient(val config: LabConfig, val client: Client) {
   val globalKeyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
       LabCommandType.viewGame to { _ -> config.view = Views.game },
       LabCommandType.viewMap to { _ -> config.view = Views.map },
-      LabCommandType.viewModel to { _ -> config.view = Views.model },
-      LabCommandType.viewWorld to { _ -> config.view = Views.world },
-      LabCommandType.viewTexture to { _ -> config.view = Views.texture }
+      LabCommandType.viewModel to { _ -> config.view = Views.model }
   )
 
   val gameKeyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
@@ -110,25 +107,6 @@ class LabClient(val config: LabConfig, val client: Client) {
     )
   }
 
-  fun updateWorld(windowInfo: WindowInfo, metaWorld: Realm?, state: LabState): LabClientResult {
-    prepareClient(windowInfo)
-    val view = WorldView(config.worldView, metaWorld, client.renderer)
-
-    val layout = view.createLayout(windowInfo.dimensions)
-//    val boxes = layout(SeedOld(
-//        bag = state.app.client.bloomState.bag,
-//        bounds = Bounds(dimensions = windowInfo.dimensions)
-//    )).boxes
-    val newDeviceStates = updateInputState(client.platform.input, state.app.client.input)
-    val commands = updateInput(view.getCommands(), newDeviceStates)
-
-//    renderLab(windowInfo, boxes)
-    return LabClientResult(
-        listOf(),
-        state//.copy(labInput = nextLabInputState)
-    )
-  }
-
   fun updateMap(windowInfo: WindowInfo, world: World?, state: LabState, delta: Float): LabClientResult {
     prepareClient(windowInfo)
     val newDeviceStates = updateInputState(client.platform.input, state.app.client.input)
@@ -136,7 +114,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     val layout = if (world != null) {
       val input = getInputState(client.platform.input, commands)
       updateMapState(config.mapView, world.realm, input, windowInfo, state.app.client.bloomState, delta)
-      mapLayout(client, world.realm, config.mapView)
+      mapLayout(client, world.realm, world.deck, config.mapView)
     } else
       emptyFlower
 
@@ -177,8 +155,6 @@ class LabClient(val config: LabConfig, val client: Client) {
     return when (config.view) {
 //      Views.game -> updateGame(world, screens, previousState)
       Views.model -> updateModel(windowInfo, previousState, delta)
-      Views.texture -> updateTexture(windowInfo, previousState)
-      Views.world -> updateWorld(windowInfo, world?.realm, previousState)
       Views.map -> updateMap(windowInfo, world, previousState, delta)
       else -> throw Error("Not supported")
     }

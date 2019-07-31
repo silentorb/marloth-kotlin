@@ -6,6 +6,7 @@ import mythic.bloom.*
 import mythic.bloom.next.*
 
 import mythic.ent.Id
+import simulation.main.Deck
 import simulation.misc.Node
 import simulation.misc.Realm
 
@@ -18,8 +19,8 @@ private val horizontalPanel: ParentFlower =
 
 const val bagClickMap = "clickMap"
 
-private fun mapDisplay(client: Client, realm: Realm, config: MapViewConfig): Flower =
-    depict("map display", renderMapView(client, realm, config)) plusLogic onClick(bagClickMap)
+private fun mapDisplay(client: Client, realm: Realm, deck: Deck, config: MapViewConfig): Flower =
+    depict("map display", renderMapView(client, realm, deck, config)) plusLogic onClick(bagClickMap)
 
 private fun faceInfo(realm: Realm, id: Id): Flower {
   val connection = realm.faces[id]
@@ -85,11 +86,11 @@ private fun rightPanel(realm: Realm, config: MapViewConfig): Flower =
         scrolling("nodeList-scrolling")(nodeList(realm.nodeList))
     ))
 
-fun mapLayout(client: Client, realm: Realm, config: MapViewConfig): Flower {
+fun mapLayout(client: Client, realm: Realm, deck: Deck, config: MapViewConfig): Flower {
   return list(verticalPlane, drawReversed = true, name = "map-layout-root")(listOf(
       mapMenu,
       horizontalPanel(listOf(
-          mapDisplay(client, realm, config),
+          mapDisplay(client, realm, deck, config),
           rightPanel(realm, config)
       ))
   ))

@@ -30,14 +30,6 @@ fun renderElement(renderer: SceneRenderer, primitive: Primitive, material: Mater
       skeleton = isAnimated,
       texture = texture != null
   ))
-//  val effect = if (isAnimated && texture != null)
-//    renderer.effects.animated
-//  else if (isAnimated)
-//    renderer.effects.coloredAnimated
-//  else if (texture != null)
-//    renderer.effects.textured
-//  else
-//    renderer.effects.colored
 
   effect.activate(config)
   drawMesh(primitive.mesh, DrawMethod.triangleFan)
@@ -76,8 +68,19 @@ private fun useMesh(meshes: ModelMeshMap, MeshName: MeshName, action: (ModelMesh
   }
 }
 
-fun renderElementGroup(gameRenderer: GameSceneRenderer, group: ElementGroup) {
-  val sceneRenderer = gameRenderer.renderer
+fun renderMeshElement(sceneRenderer: SceneRenderer, element: MeshElement, armature: Armature? = null, transforms: List<Matrix>? = null) {
+  val meshes = sceneRenderer.renderer.meshes
+  useMesh(meshes, element.mesh) { mesh ->
+    for (primitive in mesh.primitives) {
+      val transform = getElementTransform(element, primitive, transforms)
+      val materal = element.material ?: primitive.material
+      val isAnimated = armature != null && primitive.isAnimated
+      renderElement(sceneRenderer, primitive, materal, transform, isAnimated)
+    }
+  }
+}
+
+fun renderElementGroup(sceneRenderer: SceneRenderer, group: ElementGroup) {
   val armature = sceneRenderer.renderer.armatures[group.armature]
   val transforms = if (armature != null)
     armatureTransforms(armature, group)
@@ -88,17 +91,8 @@ fun renderElementGroup(gameRenderer: GameSceneRenderer, group: ElementGroup) {
     populateBoneBuffer(sceneRenderer.renderer.uniformBuffers.bone, armature!!.transforms, transforms)
   }
 
-  val meshes = sceneRenderer.renderer.meshes
-
   for (element in group.meshes) {
-    useMesh(meshes, element.mesh) { mesh ->
-      for (primitive in mesh.primitives) {
-        val transform = getElementTransform(element, primitive, transforms)
-        val materal = element.material ?: primitive.material
-        val isAnimated = armature != null && primitive.isAnimated
-        renderElement(gameRenderer.renderer, primitive, materal, transform, isAnimated)
-      }
-    }
+    renderMeshElement(sceneRenderer, element, armature, transforms)
   }
 
   if (armature != null) {
@@ -107,11 +101,12 @@ fun renderElementGroup(gameRenderer: GameSceneRenderer, group: ElementGroup) {
       if (bone == null) {
         val debugMissingBone = 0
       } else {
+        val meshes = sceneRenderer.renderer.meshes
         useMesh(meshes, element.mesh) { mesh ->
           for (primitive in mesh.primitives) {
             val transform = element.transform * transforms!![bone]
             val materal = element.material ?: primitive.material
-            renderElement(gameRenderer.renderer, primitive, materal, transform, false)
+            renderElement(sceneRenderer, primitive, materal, transform, false)
           }
         }
       }
@@ -119,6 +114,6 @@ fun renderElementGroup(gameRenderer: GameSceneRenderer, group: ElementGroup) {
   }
 
   if (group.billboards.any()) {
-    renderBillboard(gameRenderer, group.billboards)
+    renderBillboard(sceneRenderer, group.billboards)
   }
 }

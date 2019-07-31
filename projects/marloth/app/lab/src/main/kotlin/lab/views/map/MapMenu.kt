@@ -44,5 +44,15 @@ val mapMenu: Flower = menuBar(mapTextStyle, listOf(
                 value = LabCommandType.switchCamera
             )
         )
+    ),
+    Menu(
+        name = "World",
+        character = "w",
+        items = listOf(
+            MenuItem(
+                name = "Rebuild",
+                value = LabCommandType.rebuildWorld
+            )
+        )
     )
 ))
