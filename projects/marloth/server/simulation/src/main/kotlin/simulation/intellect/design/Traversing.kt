@@ -25,10 +25,10 @@ fun startRoaming(world: World, knowledge: Knowledge): Path? {
   val options = knowledge.nodes
       .filter {
         val node = world.realm.nodeTable[it]!!
-        node.id != body.node && node.isWalkable
+        node.id != body.node
       }
 
-  val destination = Dice.global.getItem(options)
+  val destination = Dice.global.takeOne(options)
   val path = findPath(world.realm, body.node, destination)
 //  assert(path != null)
 //  assert(path!!.any())

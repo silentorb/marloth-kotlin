@@ -3,9 +3,7 @@ package generation.abstracted
 import generation.misc.divide
 import generation.misc.getNodeDistance
 import generation.misc.overlaps2D
-import simulation.misc.FaceType
-import simulation.misc.Node
-import simulation.misc.NodeTable
+import simulation.misc.*
 
 fun getOverlapping(nodes: Collection<Node>): List<Pair<Node, Node>> {
   val result = mutableListOf<Pair<Node, Node>>()
@@ -59,7 +57,7 @@ fun handleOverlapping(nodes: NodeTable): Graph {
 //  for (node in removedNodes1) graph.removeNode(node)
 //  for (pair in unions) graph.connect(pair.first, pair.second, ConnectionType.union)
   val unionConnections = unions.map {
-    InitialConnection(it.first.id, it.second.id, ConnectionType.union, FaceType.space)
+    InitialConnection(it.first.id, it.second.id, ConnectionType.union)
   }.toList()
   val triUnions = gatherTriUnions(Graph(nodes, unionConnections))
   val removedNodes2 = removedNodes1.plus(triUnions.map { it.first() })

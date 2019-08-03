@@ -2,8 +2,7 @@ package generation.abstracted
 
 import generation.misc.getNodeDistance
 import mythic.spatial.Vector3
-import simulation.misc.FaceType
-import simulation.misc.Node
+import simulation.misc.*
 
 const val maxTunnelVerticalRange = 10
 const val maxTunnelDot = 0.5
@@ -77,7 +76,7 @@ private val tunnelAngleFilter: NodeSequenceTransform = { node, nodes ->
 }
 
 private fun gapToInitialConnection(connections: InitialConnections, gap: NodeGap, connectionType: ConnectionType) =
-    Pair(listOf(gap.second), connections.plus(InitialConnection(gap.first.id, gap.second.id, connectionType, FaceType.space)))
+    Pair(listOf(gap.second), connections.plus(InitialConnection(gap.first.id, gap.second.id, connectionType)))
 
 tailrec fun scanNodes(graph: Graph, previousChanged: List<Node>, mainGroup: List<Node>, ungrouped: List<Node>,
                       connections: InitialConnections): InitialConnections {

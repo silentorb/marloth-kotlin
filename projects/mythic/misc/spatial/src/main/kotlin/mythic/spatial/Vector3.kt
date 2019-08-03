@@ -29,7 +29,6 @@ data class Vector3(
   }
 
   companion object {
-
     val zero: Vector3 = _zero
     val unit: Vector3 = _unit
   }

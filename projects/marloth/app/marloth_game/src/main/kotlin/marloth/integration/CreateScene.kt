@@ -15,8 +15,8 @@ import simulation.main.Deck
 import simulation.main.World
 import kotlin.math.floor
 
-val firstPersonCameraOffset = Vector3(0f, 0f, 1.4f)
-val firstPersonDeadCameraOffset = Vector3(0f, 0f, 0.4f)
+val firstPersonCameraOffset = Vector3(0f, 0f, 0.6f)
+val firstPersonDeadCameraOffset = Vector3(0f, 0f, -0.75f)
 
 val simplePainterMap = MeshId.values().mapNotNull { meshId ->
   val depictionType = DepictionType.values().firstOrNull { it.name == meshId.name }
@@ -33,6 +33,7 @@ val simplePainterMap = MeshId.values().mapNotNull { meshId ->
 
 fun firstPersonCamera(body: Body, character: Character, isAlive: Boolean): Camera = Camera(
     ProjectionType.perspective,
+//    body.position + Vector3(0f, 3f, -0.75f), //if (isAlive) firstPersonCameraOffset else firstPersonDeadCameraOffset,
     body.position + if (isAlive) firstPersonCameraOffset else firstPersonDeadCameraOffset,
 //    world.player.orientation,
     if (isAlive) character.facingQuaternion else character.facingQuaternion * Quaternion().rotateX(Pi / -6f),

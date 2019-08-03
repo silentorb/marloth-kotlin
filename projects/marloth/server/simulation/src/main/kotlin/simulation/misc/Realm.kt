@@ -6,6 +6,7 @@ import mythic.ent.firstSortedBy
 import mythic.sculpting.ImmutableEdgeReference
 import mythic.sculpting.ImmutableFace
 import mythic.spatial.Vector3
+import mythic.spatial.Vector3i
 import mythic.spatial.getCenter
 import simulation.physics.voidNodeId
 import randomly.Dice
@@ -79,37 +80,28 @@ data class ConnectionFace(
         firstNode
       else
         null
-
 }
 
 typealias ConnectionTable = Map<Id, ConnectionFace>
 typealias FaceList = Collection<ConnectionFace>
 
 typealias NodeTable = Map<Id, Node>
-
-data class RealmMesh(
-    val faces: ConnectionTable
-)
+typealias CellPositionMap = Map<Id, Vector3i>
 
 data class Realm(
-    val boundary: WorldBoundary,
+    val graph: Graph,
+    val cellMap: CellPositionMap,
     val nodeList: List<Node>,
     val faces: ConnectionTable,
-//    val mesh: ImmutableMesh,
-    val doorFrameNodes: List<Id>
+    val doorFrameNodes: List<Id>,
+    val grid: MapGrid
 ) {
 
   val nodeTable: NodeTable = nodeList.associate { Pair(it.id, it) }
   val nodeFaces: OneToManyMap = mapNodeFaces(nodeTable, faces)
 
   val locationNodes: List<Node>
-    get() = nodeList.filter { it.isWalkable }
-
-//  val floors: List<ImmutableFace>
-//    get() = nodeList.flatMap { it.floors }.distinct().map { mesh.faces[it]!! }
-//
-//  val walls: List<ImmutableFace>
-//    get() = nodeList.flatMap { it.walls }.distinct().map { mesh.faces[it]!! }
+    get() = nodeList
 }
 
 fun getFaces(faces: FaceList, node: Node) =

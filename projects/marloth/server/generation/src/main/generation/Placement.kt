@@ -32,8 +32,8 @@ data class CharacterTemplate(
 )
 
 fun placeCharacter(realm: Realm, template: CharacterTemplate, nextId: IdSource, node: Id, position: Vector3): IdHand {
-//  val node = dice.getItem(realm.locationNodes.drop(1))// Skip the node where the player starts
-//  val wall = dice.getItem(node.walls)
+//  val node = dice.takeOne(realm.locationNodes.drop(1))// Skip the node where the player starts
+//  val wall = dice.takeOne(node.walls)
 //  val position = getVector3Center(node.position, realm.mesh.faces[wall]!!.edges[0].first)
   val id = nextId()
   return IdHand(id, newCharacter(
@@ -132,7 +132,7 @@ val isValidLampWall = { info: ConnectionFace ->
 //    val options2 = node.walls.filter { isValidLampWall(realm.faces[it]!!) }
 //    if (options2.any()) {
 //      throw Error("Not implemented")
-////      val wall = realm.mesh.faces[dice.getItem(options2)]!!
+////      val wall = realm.mesh.faces[dice.takeOne(options2)]!!
 ////      val edge = wall.edges[0]
 ////      val position = getVector3Center(edge.first, edge.second) +
 ////          Vector3(0f, 0f, 0.9f) + wall.normal * -0.1f
@@ -238,7 +238,7 @@ fun damageCloudsDistributions(dice: Dice, totalWeight: Int): DistributionMap {
 }
 
 fun getDistributions(dice: Dice): DistributionMap = mapOf(
-    Occupant.merchant to 200,
+//    Occupant.merchant to 200,
     Occupant.none to 300,
     Occupant.treasureChest to 600
 ).plus(damageCloudsDistributions(dice, 500))

@@ -1,5 +1,7 @@
 package generation.abstracted
 
+import simulation.misc.ConnectionType
+import simulation.misc.Graph
 import simulation.misc.Node
 
 val isInCluster = { graph: Graph, node: Node ->

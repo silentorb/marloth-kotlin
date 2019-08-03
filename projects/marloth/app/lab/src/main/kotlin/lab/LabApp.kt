@@ -7,6 +7,7 @@ import generation.addEnemies
 import generation.architecture.placeArchitecture
 import generation.generateWorld
 import generation.populateWorld
+import lab.utility.shouldReloadWorld
 import lab.utility.updateWatching
 import lab.views.game.GameViewConfig
 import lab.views.game.drawBulletDebug
@@ -48,11 +49,11 @@ fun generateWorld(meshInfo: MeshInfoMap, gameViewConfig: GameViewConfig): World 
       boundary,
       dice
   )
-  val (initialWorld, graph) = generateWorld(input)
+  val initialWorld = generateWorld(input)
 
   return pipe(initialWorld, listOf(
       populateWorld(meshInfo, input),
-      placeArchitecture(meshInfo, graph, dice),
+      placeArchitecture(meshInfo, initialWorld.realm, dice),
       { world ->
         if (gameViewConfig.haveEnemies)
           addEnemies(world, boundary, dice)
@@ -104,18 +105,16 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
 
     val (commands, newState) = app.labClient.update(world, gameApp.client.screens, state, timestep.delta.toFloat())
 
-    if (commands.any()) {
-      val k = 0
-    }
     if (world != null && gameApp.config.gameplay.defaultPlayerView != world.players[0].viewMode) {
       gameApp.config.gameplay.defaultPlayerView = world.players[0].viewMode
     }
 
     newState.app.copy(
         timestep = timestep,
-        worlds = if (commands.any { it.type == GuiCommandType.newGame })
+        worlds = if (shouldReloadWorld) {
+          shouldReloadWorld = false
           restartWorld(gameApp, app.newWorld)
-        else
+        } else
           state.app.worlds
     )
   }

@@ -4,8 +4,7 @@ import generation.misc.getCenter
 import generation.structure.idSourceFromNodes
 import mythic.ent.entityMap
 import mythic.spatial.Vector3
-import simulation.misc.FaceType
-import simulation.misc.Node
+import simulation.misc.*
 
 const val tunnelRadius = 1f
 
@@ -32,8 +31,6 @@ fun createTunnelNodes(graph: Graph, preTunnels: List<PreTunnel>): Graph {
 //            position = getCenter(graph.node(oldConnection.first)!!, graph.node(oldConnection.second)!!),
             position = preTunnel.position,
             radius = tunnelRadius,
-            isSolid = false,
-            isWalkable = true,
             isRoom = false
         )
       }
@@ -42,8 +39,8 @@ fun createTunnelNodes(graph: Graph, preTunnels: List<PreTunnel>): Graph {
       .zip(preTunnels) { node, preTunnel ->
         val oldConnection = preTunnel.connection
         listOf(
-            InitialConnection(oldConnection.first, node.id, ConnectionType.tunnel, FaceType.space),
-            InitialConnection(oldConnection.second, node.id, ConnectionType.tunnel, FaceType.space)
+            InitialConnection(oldConnection.first, node.id, ConnectionType.tunnel),
+            InitialConnection(oldConnection.second, node.id, ConnectionType.tunnel)
         )
       }.flatten()
 

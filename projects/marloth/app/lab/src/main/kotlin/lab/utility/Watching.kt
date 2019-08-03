@@ -1,16 +1,17 @@
 package lab.utility
 
+import simulation.misc.Graph
 import lab.LabApp
 import rendering.*
 import java.io.File
 import java.net.URI
 
 enum class WatchedPackage {
-  rendering
+  generation
 }
 
 private val watchedPackageFiles = mapOf(
-    WatchedPackage.rendering to Renderer::class
+    WatchedPackage.generation to Graph::class
 )
     .mapValues { it.value.java.getProtectionDomain().getCodeSource().getLocation().toURI() }
 
@@ -72,11 +73,14 @@ fun reloadMeshes(renderer: Renderer){
 //  renderer.meshes = createMeshes(renderer.vertexSchemas)
 }
 
+var shouldReloadWorld = false
+
 fun onPackageChanged(app: LabApp, watchedPackage: WatchedPackage) {
   when (watchedPackage) {
-    WatchedPackage.rendering -> {
-      reloadTextures(app.gameApp.client.renderer)
-      reloadMeshes(app.gameApp.client.renderer)
+    WatchedPackage.generation -> {
+//      reloadTextures(app.gameApp.client.renderer)
+//      reloadMeshes(app.gameApp.client.renderer)
+      shouldReloadWorld = true
     }
   }
 }

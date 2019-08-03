@@ -9,10 +9,8 @@ import simulation.physics.Body
 import simulation.physics.voidNodeId
 import randomly.Dice
 import scenery.enums.MeshId
-import scenery.Shape
 import scenery.enums.TextureId
 import simulation.physics.CollisionObject
-import scenery.MeshName
 import simulation.main.Hand
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
@@ -59,16 +57,18 @@ fun nodeFloorCenter(node: Node) = node.position + Vector3(0f, 0f, -wallHeight / 
 fun alignWithNodeFloor(meshInfo: MeshInfoMap, node: Node, meshId: MeshId) =
     nodeFloorCenter(node) + alignWithFloor(meshInfo)(meshId)
 
+fun randomShift(dice: Dice) = dice.getFloat(-0.04f, 0.04f)
+
 fun newWall(meshInfo: MeshInfoMap, dice: Dice, node: Node, position: Vector3, angleZ: Float): Hand {
   val biome = biomeInfoMap[node.biome]!!
-  val mesh = dice.getItem(biome.wallMeshes)
+  val mesh = dice.takeOne(biome.wallMeshes)
   val wallData = wallDataMap[mesh]!!
   val randomHorizontalFlip = getHorizontalFlip(dice, wallData)
   val orientation = Quaternion().rotateZ(angleZ + randomHorizontalFlip)
   return newArchitectureMesh(
       meshInfo = meshInfo,
       mesh = mesh,
-      position = position + floorOffset + alignWithFloor(meshInfo)(mesh) + Vector3(0f, 0f, dice.getFloat(-0.01f, 0.01f)),
+      position = position + floorOffset + alignWithFloor(meshInfo)(mesh) + Vector3(randomShift(dice), randomShift(dice), randomShift(dice)),
       scale = Vector3.unit,
       orientation = orientation,
       texture = biome.wallTexture

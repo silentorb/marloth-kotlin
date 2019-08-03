@@ -20,7 +20,7 @@ fun <T> voronoiAnchors(values: List<T>, count: Int, dice: Dice): List<VoronoiAnc
                   dice.getFloat(0f, 1f),
                   dice.getFloat(0f, 1f)
               ),
-              value = dice.getItem(values)
+              value = dice.takeOne(values)
           )
         }
 

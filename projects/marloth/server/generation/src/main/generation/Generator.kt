@@ -1,6 +1,6 @@
 package generation
 
-import generation.abstracted.Graph
+import simulation.misc.Graph
 import generation.abstracted.generateAbstract
 import generation.misc.newBiomeGrid
 import mythic.ent.pipe
@@ -16,28 +16,22 @@ import simulation.misc.createWorldBoundary
 fun calculateWorldScale(dimensions: Vector3) =
     (dimensions.x * dimensions.y * dimensions.z) / (100 * 100 * 100)
 
-fun generateWorld(input: WorldInput): Pair<World, Graph> {
+fun generateWorld(input: WorldInput): World {
   val scale = calculateWorldScale(input.boundary.dimensions)
   val biomeGrid = newBiomeGrid(input)
-  val graph = generateAbstract(input, scale, biomeGrid)
-
-//  val realm1 = generateStructure(biomeGrid, idSources, graph, input.dice)
-//  val realm2 = realm1
-//      .copy(
-//      nodes = fillNodeBiomes(biomeGrid, realm1.nodes)
-//  )
-
-//  val texturedFaces = assignTextures(graph.nodes, realm2.connections)
+  val (grid, graph, cellMap) = generateAbstract(input, scale, biomeGrid)
 
   val finalRealm = Realm(
-      boundary = input.boundary,
+      graph = graph,
+      cellMap = cellMap,
       nodeList = graph.nodes.values.toList(),
       faces = mapOf(),
 //      mesh = realm2.mesh,
-      doorFrameNodes = graph.doorways
+      doorFrameNodes = graph.doorways,
+      grid = grid
   )
 
-  return Pair(finalizeRealm(finalRealm), graph)
+  return finalizeRealm(finalRealm)
 }
 
 fun generateDefaultWorld(): World {
@@ -45,7 +39,7 @@ fun generateDefaultWorld(): World {
       boundary = createWorldBoundary(50f),
       dice = Dice(2)
   )
-  val (world, _) = generateWorld(input)
+  val world = generateWorld(input)
   return addEnemies(world, input.boundary, input.dice)
 }
 

@@ -4,6 +4,7 @@ import mythic.ent.Id
 import mythic.sculpting.ImmutableEdge
 import mythic.sculpting.ImmutableFace
 import mythic.spatial.*
+import org.joml.Vector2fMinimal
 import simulation.input.CommandType
 import simulation.input.Commands
 import simulation.misc.*
@@ -25,12 +26,12 @@ fun getCollisionWallsIncludingNeighbors(world: Realm, node: Node): Sequence<Immu
 }
 */
 
-fun wallsInCollisionRange(realm: Realm, node: Id): List<Id> {
-  return getPathNeighbors(realm.nodeTable, realm.faces, node).toList()
-      .plus(realm.nodeTable[node]!!)
-      .flatMap { n -> n.walls.filter { isSolidWall(realm.faces[it]!!) } }
-      .distinct()
-}
+//fun wallsInCollisionRange(realm: Realm, node: Id): List<Id> {
+//  return getPathNeighbors(realm.nodeTable, realm.faces, node).toList()
+//      .plus(realm.nodeTable[node]!!)
+//      .flatMap { n -> n.walls.filter { isSolidWall(realm.faces[it]!!) } }
+//      .distinct()
+//}
 
 data class WallCollision3(
     val wall: ImmutableFace,
@@ -256,10 +257,5 @@ fun joinInputVector(commands: Commands, commandMap: Map<CommandType, Vector3>): 
   }
 }
 
-fun getLookAtAngle(lookAt: Vector3) =
+fun getLookAtAngle(lookAt: Vector2fMinimal) =
     getAngle(Vector2(1f, 0f), lookAt.xy())
-
-//fun setCharacterFacing(child: Character, lookAt: Vector3) {
-//  val angle = getLookAtAngle(lookAt)
-//  child.facingRotation.z = angle
-//}

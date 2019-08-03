@@ -4,17 +4,21 @@ import mythic.ent.WithId
 import mythic.ent.Id
 import mythic.spatial.Vector3
 
+enum class NodeAttribute {
+  exit,
+  home
+}
+
 data class Node(
     override val id: Id,
     val position: Vector3,
     val radius: Float,
-    val isWalkable: Boolean,
     val isRoom: Boolean,
     val biome: Any? = null,
-    val isSolid: Boolean,
     val floors: MutableList<Id> = mutableListOf(),
     val ceilings: MutableList<Id> = mutableListOf(),
-    val walls: MutableList<Id> = mutableListOf()
+    val walls: MutableList<Id> = mutableListOf(),
+    val attributes: Set<NodeAttribute> = setOf()
 ) : WithId {
 
   val faces: List<Id>
@@ -37,7 +41,6 @@ fun nodeNeighbors(realm: Realm, id: Id): Collection<Id> {
 fun getPathNeighbors(nodes: NodeTable, faces: ConnectionTable, node: Id) =
     nodeNeighbors(nodes, faces, node)
         .map { nodes[it]!! }
-        .filter { it.isWalkable }
 
 typealias OneToManyMap = Map<Id, List<Id>>
 

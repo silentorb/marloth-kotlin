@@ -16,6 +16,9 @@ fun <T, N> firstSortedBy(comparison: (N, N) -> Boolean): (Sequence<T>, (T) -> N)
 fun <T> Collection<T>.firstSortedBy(accessor: (T) -> Float): T =
     firstSortedBy<T, Float> { a, b -> a < b }(this.asSequence(), accessor)
 
+fun <T> Collection<T>.firstSortedByDescending(accessor: (T) -> Float): T =
+    firstSortedBy<T, Float> { a, b -> a > b }(this.asSequence(), accessor)
+
 fun <T> Sequence<T>.firstSortedBy(accessor: (T) -> Float): T =
     firstSortedBy<T, Float> { a, b -> a < b }(this, accessor)
 

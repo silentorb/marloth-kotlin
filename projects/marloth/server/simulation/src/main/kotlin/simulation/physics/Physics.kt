@@ -54,8 +54,7 @@ fun newBulletState(): BulletState {
   val solver = btSequentialImpulseConstraintSolver()
 
   val dynamicsWorld = btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfig)
-  val dampingCounter = 2f
-  dynamicsWorld.gravity = GdxVector3(0f, 0f, -10f * 2f)
+  dynamicsWorld.gravity = GdxVector3(0f, 0f, -10f)
 
   return BulletState(
       dynamicsWorld = dynamicsWorld,
@@ -64,22 +63,40 @@ fun newBulletState(): BulletState {
   )
 }
 
-fun applyImpulses(world: World, bulletState: BulletState, linearForces: List<LinearImpulse>) {
-  for (force in linearForces) {
-    val btBody = bulletState.dynamicBodies[force.body]!!
-    btBody.applyCentralImpulse(toGdxVector3(force.offset))
-  }
+fun releaseBulletState(bulletState: BulletState) {
+  bulletState.dynamicsWorld.release()
+  bulletState.dynamicBodies = mapOf()
+}
+
+fun firstRayHit(dynamicsWorld: btDiscreteDynamicsWorld, start: Vector3, end: Vector3): ClosestRayResultCallback {
+  val start2 = toGdxVector3(start)
+  val end2 = toGdxVector3(end)
+  val callback = ClosestRayResultCallback(start2, end2)
+  dynamicsWorld.collisionWorld.rayTest(start2, end2, callback)
+  return callback
+}
+
+// ClosestNotMeRayResultCallback is REAAAALLY slow.  Must be horribly unoptimized.
+fun firstRayHitNotMe(dynamicsWorld: btDiscreteDynamicsWorld, start: Vector3, end: Vector3, collisionObject: btCollisionObject): ClosestNotMeRayResultCallback {
+  val start2 = toGdxVector3(start)
+  val end2 = toGdxVector3(end)
+  val callback = ClosestNotMeRayResultCallback(collisionObject)
+  dynamicsWorld.collisionWorld.rayTest(start2, end2, callback)
+  return callback
+}
+
+
+fun allRayHits(dynamicsWorld: btDiscreteDynamicsWorld, start: Vector3, end: Vector3): AllHitsRayResultCallback {
+  val callback = AllHitsRayResultCallback(com.badlogic.gdx.math.Vector3.Zero, com.badlogic.gdx.math.Vector3.Z)
+  dynamicsWorld.collisionWorld.rayTest(toGdxVector3(start), toGdxVector3(end), callback)
+  return callback
 }
 
 fun updateBulletPhysics(bulletState: BulletState, linearForces: List<LinearImpulse>): (World) -> World = { world ->
   syncNewBodies(world, bulletState)
   syncRemovedBodies(world, bulletState)
   applyImpulses(world, bulletState, linearForces)
+  updateCharacterRigs(bulletState, world.deck)
   bulletState.dynamicsWorld.stepSimulation(1f / 60f, 10)
   syncWorldToBullet(bulletState)(world)
-}
-
-fun releaseBulletState(bulletState: BulletState) {
-  bulletState.dynamicsWorld.release()
-  bulletState.dynamicBodies = mapOf()
 }

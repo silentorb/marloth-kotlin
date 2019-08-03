@@ -68,10 +68,7 @@ private val nodeRow: (Node) -> Flower = { node ->
     else
       mapTextStyle
 
-    val solid = if (node.isSolid) "S" else " "
-    val walkable = if (node.isWalkable) "W" else " "
-
-    label(style, " ${node.id} $solid $walkable")
+    label(style, " ${node.id}")
   } plusLogic onClick(nodeListSelectable(node))
 }
 

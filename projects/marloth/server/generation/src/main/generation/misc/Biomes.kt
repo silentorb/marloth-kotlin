@@ -18,6 +18,7 @@ data class BiomeInfo(
     val ceilingTexture: TextureId? = null,
     val wallTexture: TextureId? = null,
     val roomFloorMeshes: List<MeshId>,
+    val roomFloorMeshesTall: List<MeshId>,
     val tunnelFloorMeshes: List<MeshId>,
     val wallMeshes: List<MeshId>,
     val ceilingMeshes: List<MeshId> = listOf()
@@ -31,7 +32,8 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
         floorTexture = TextureId.checkersBlackWhite,
         ceilingTexture = TextureId.checkersBlackWhite,
         wallTexture = TextureId.checkersBlackWhite,
-        roomFloorMeshes = listOf(MeshId.circleFloor, MeshId.tallCircleFloor),
+        roomFloorMeshes = listOf(MeshId.circleFloor),
+        roomFloorMeshesTall = listOf( MeshId.tallCircleFloor),
         tunnelFloorMeshes = listOf(MeshId.longStep),
         wallMeshes = listOf(MeshId.squareWall)
     ),
@@ -40,7 +42,8 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
         floorTexture = TextureId.algae,
         ceilingTexture = TextureId.algae,
         wallTexture = TextureId.algae,
-        roomFloorMeshes = listOf(MeshId.circleFloor, MeshId.tallCircleFloor),
+        roomFloorMeshes = listOf(MeshId.circleFloor),
+        roomFloorMeshesTall = listOf( MeshId.tallCircleFloor),
         tunnelFloorMeshes = listOf(MeshId.longStep),
         wallMeshes = listOf(MeshId.squareWall)
     ),
@@ -49,7 +52,8 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
         floorTexture = TextureId.grass,
         ceilingTexture = TextureId.bricks,
         wallTexture = TextureId.bricks,
-        roomFloorMeshes = listOf(MeshId.circleFloor, MeshId.tallCircleFloor),
+        roomFloorMeshes = listOf(MeshId.circleFloor),
+        roomFloorMeshesTall = listOf( MeshId.tallCircleFloor),
         tunnelFloorMeshes = listOf(MeshId.longStep),
         wallMeshes = listOf(MeshId.squareWall)
     ),
@@ -59,14 +63,8 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
         ceilingTexture = TextureId.redTile,
         wallTexture = TextureId.redTile,
         roomFloorMeshes = listOf(MeshId.circleFloor, MeshId.tallCircleFloor),
+        roomFloorMeshesTall = listOf( MeshId.tallCircleFloor),
         tunnelFloorMeshes = listOf(MeshId.longStep),
         wallMeshes = listOf(MeshId.squareWall)
-    ),
-    BiomeId.void to BiomeInfo("void",
-        floorTexture = TextureId.none,
-        wallEnclosureRate = 0f,
-        roomFloorMeshes = listOf(),
-        tunnelFloorMeshes = listOf(MeshId.longStep),
-        wallMeshes = listOf()
     )
 )

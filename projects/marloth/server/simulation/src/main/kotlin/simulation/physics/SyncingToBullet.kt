@@ -12,6 +12,7 @@ import mythic.spatial.Vector3
 import mythic.spatial.getCenter
 import scenery.*
 import simulation.main.World
+import simulation.physics.old.LinearImpulse
 
 fun createCollisionShape(shape: Shape, scale: Vector3): btCollisionShape {
   return when (shape) {
@@ -22,7 +23,7 @@ fun createCollisionShape(shape: Shape, scale: Vector3): btCollisionShape {
     }
     is Box -> btBoxShape(toGdxVector3(shape.halfExtents * scale))
     is Sphere -> btSphereShape(shape.radius * scale.x)
-    is Capsule -> btCapsuleShapeZ(shape.radius * scale.x, shape.height * scale.z)
+    is Capsule -> btCapsuleShapeZ(shape.radius * scale.x, (shape.height - shape.radius * 2f) * scale.z)
     is Cylinder -> btCylinderShapeZ(toGdxVector3(Vector3(shape.radius * scale.x, shape.radius * scale.y, shape.height * scale.z * 0.5f)))
     else -> throw Error("Not supported")
   }
@@ -84,9 +85,6 @@ fun syncNewBodies(world: World, bulletState: BulletState) {
         val shape = createCollisionShape(deck.collisionShapes[key]!!.shape, body.scale)
         val hingeInfo = dynamicBody.hinge
         val bulletBody = createBulletDynamicObject(body, dynamicBody, shape, hingeInfo != null)
-        val linear = bulletBody.linearDamping
-        val angular = bulletBody.angularDamping
-        bulletBody.setDamping(0.9f, 0f)
         if (hingeInfo != null) {
           val hinge = btHingeConstraint(bulletBody, toGdxVector3(hingeInfo.pivot * body.scale), toGdxVector3(hingeInfo.axis), true)
 //          hinge.enableAngularMotor(true, 1f, 1f)
@@ -146,4 +144,11 @@ fun syncRemovedBodies(world: World, bulletState: BulletState) {
     bulletState.dynamicsWorld.removeCollisionObject(body)
   }
   bulletState.staticBodies = bulletState.staticBodies.minus(removedStatic.keys)
+}
+
+fun applyImpulses(world: World, bulletState: BulletState, linearForces: List<LinearImpulse>) {
+  for (force in linearForces) {
+    val btBody = bulletState.dynamicBodies[force.body]!!
+    btBody.applyCentralImpulse(toGdxVector3(force.offset))
+  }
 }

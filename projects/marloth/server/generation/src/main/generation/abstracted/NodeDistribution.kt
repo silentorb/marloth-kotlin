@@ -167,7 +167,7 @@ private fun moveNodes(nodes: MutableList<Node>, moveRange: Float, dice: Dice) {
 
 fun distributeNodes(boundary: WorldBoundary, count: Int, dice: Dice): List<Node> {
   val cellDimensions = clipDimensions(worldCellLength, boundary.dimensions)
-  cellDimensions.z = 1
+//  cellDimensions.z = 1
 
   val cellCount = cellDimensions.x * cellDimensions.y * cellDimensions.z
   val cellChance = (count.toFloat() / cellCount.toFloat())
@@ -183,8 +183,6 @@ fun distributeNodes(boundary: WorldBoundary, count: Int, dice: Dice): List<Node>
           id = id++,
           position = position,
           radius = calculateRadius(position, nodes, dice),
-          isSolid = false,
-          isWalkable = true,
           isRoom = true
       )
       nodes.add(node)

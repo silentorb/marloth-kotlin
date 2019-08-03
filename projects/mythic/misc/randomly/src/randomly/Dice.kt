@@ -18,7 +18,7 @@ class Dice(private val seed: Long) {
 
   fun get(max: Vector2) = Vector2(getFloat(max.x), getFloat(max.y))
 
-  fun <T> getItem(list: List<T>): T {
+  fun <T> takeOne(list: List<T>): T {
     assert(list.isNotEmpty())
     return if (list.size == 1)
       list.first()
@@ -31,7 +31,7 @@ class Dice(private val seed: Long) {
     val result = mutableListOf<T>()
     val options = list.toMutableList()
     for (i in 1..count) {
-      val item = getItem(options)
+      val item = takeOne(options)
       options.remove(item)
       result.add(item)
     }

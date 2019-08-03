@@ -1,16 +1,10 @@
-package generation.abstracted
+package simulation.misc
 
 import mythic.ent.Id
-import scenery.enums.TextureId
-import simulation.misc.FaceType
-import simulation.misc.Node
-import simulation.misc.NodeTable
 
 enum class ConnectionType {
   tunnel,
-  obstacle,
   union,
-  ceilingFloor,
   vertical
 }
 
@@ -18,8 +12,6 @@ data class InitialConnection(
     val first: Id,
     val second: Id,
     val type: ConnectionType,
-    val faceType: FaceType,
-    var texture: TextureId? = null,
     var debugInfo: String? = null
 ) {
   init {
@@ -66,11 +58,9 @@ data class Graph(
       copy(
           connections = connections.minus(oldConnections)
       )
-
 }
 
-fun nodeNeighbors(faces: InitialConnections, id: Id) = faces.mapNotNull { it.otherOrNull(id) }
-
+fun nodeNeighbors2(faces: InitialConnections, id: Id) = faces.mapNotNull { it.otherOrNull(id) }
 
 fun tunnelLength(graph: Graph, connection: InitialConnection): Float {
   val first = graph.nodes[connection.first]!!

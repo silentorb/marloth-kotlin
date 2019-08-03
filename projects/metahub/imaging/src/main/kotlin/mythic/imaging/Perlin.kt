@@ -113,23 +113,23 @@ private fun grad3d(seed: Int, x: Int, y: Int, z: Int, xd: Float, yd: Float, zd: 
   return xd * x1 + yd * y1 + zd * z1
 }
 
-fun perlin3d(seed: Int, x: Float, y: Float, z: Float = 0f): Float {
-  val input = Vector3(x, y, z)
-  val a = Vector3i(fastFloor(x), fastFloor(y), fastFloor(z))
-  val b = a + 1
-  val s = input - a.toVector3()
-  val d = s - 1f
-
-  val xf00 = lerp(grad3d(seed, a.x, a.y, a.z, s.x, s.y, s.z), grad3d(seed, b.x, a.y, a.z, d.x, s.y, s.z), s.x)
-  val xf10 = lerp(grad3d(seed, a.x, b.y, a.z, s.x, d.y, s.z), grad3d(seed, b.x, b.y, a.z, d.x, d.y, s.z), s.x)
-  val xf01 = lerp(grad3d(seed, a.x, a.y, b.z, s.x, s.y, d.z), grad3d(seed, b.x, a.y, b.z, d.x, s.y, d.z), s.x)
-  val xf11 = lerp(grad3d(seed, a.x, b.y, b.z, s.x, d.y, d.z), grad3d(seed, b.x, b.y, b.z, d.x, d.y, d.z), s.x)
-
-  val yf0 = lerp(xf00, xf10, s.y)
-  val yf1 = lerp(xf01, xf11, s.y)
-
-  return lerp(yf0, yf1, s.z)
-}
+//fun perlin3d(seed: Int, x: Float, y: Float, z: Float = 0f): Float {
+//  val input = Vector3(x, y, z)
+//  val a = Vector3i(fastFloor(x), fastFloor(y), fastFloor(z))
+//  val b = a + 1
+//  val s = input - a.toVector3()
+//  val d = s - 1f
+//
+//  val xf00 = lerp(grad3d(seed, a.x, a.y, a.z, s.x, s.y, s.z), grad3d(seed, b.x, a.y, a.z, d.x, s.y, s.z), s.x)
+//  val xf10 = lerp(grad3d(seed, a.x, b.y, a.z, s.x, d.y, s.z), grad3d(seed, b.x, b.y, a.z, d.x, d.y, s.z), s.x)
+//  val xf01 = lerp(grad3d(seed, a.x, a.y, b.z, s.x, s.y, d.z), grad3d(seed, b.x, a.y, b.z, d.x, s.y, d.z), s.x)
+//  val xf11 = lerp(grad3d(seed, a.x, b.y, b.z, s.x, d.y, d.z), grad3d(seed, b.x, b.y, b.z, d.x, d.y, d.z), s.x)
+//
+//  val yf0 = lerp(xf00, xf10, s.y)
+//  val yf1 = lerp(xf01, xf11, s.y)
+//
+//  return lerp(yf0, yf1, s.z)
+//}
 
 fun random2dGrid(length: Int): List<Vector2> {
   val dice = Random(1)

@@ -2,9 +2,7 @@ package generation.abstracted
 
 import generation.structure.getDoorFramePoints
 import generation.misc.*
-import mythic.ent.Id
-import mythic.ent.entityMap
-import mythic.ent.pipe
+import mythic.ent.*
 import mythic.spatial.Vector3
 import mythic.spatial.lineSegmentIntersectsLineSegment
 import randomly.Dice
@@ -52,38 +50,27 @@ fun newNodePosition(boundary: WorldBoundary, nodes: List<Node>, dice: Dice, radi
   }
 }
 
-fun createRoomNode(boundary: WorldBoundary, nodes: List<Node>, id: Id, dice: Dice): Node? {
-  val radius = dice.getFloat(5f, 10f)
-  val position = newNodePosition(boundary, nodes, dice, radius)
-  if (position == null)
-    return null
+//fun createRoomNode(boundary: WorldBoundary, nodes: List<Node>, id: Id, dice: Dice): Node? {
+//  val radius = dice.getFloat(5f, 10f)
+//  val position = newNodePosition(boundary, nodes, dice, radius)
+//  if (position == null)
+//    return null
+//
+//  return Node(
+//      id = id,
+//      position = position,
+//      radius = radius,
+//      isRoom = true
+//  )
+//}
 
-  return Node(
-      id = id,
-      position = position,
-      radius = radius,
-      isSolid = false,
-      isWalkable = true,
-      isRoom = true
-  )
-}
-
-fun createRoomNodes(boundary: WorldBoundary, count: Int, dice: Dice) =
-    (1L..count).fold(listOf<Node>()) { nodes, id ->
-      val node = createRoomNode(boundary, nodes, id, dice)
-      if (node != null)
-        nodes.plus(node)
-      else
-        nodes
-    }
-
-fun getDeadend(graph: Graph, offset: Int): List<Id> {
-  val start = getDeadEnds(graph)[offset]
-  return gatherNodes(listOf(start)) { node ->
-    neighbors(graph, node).filter { it.isWalkable && getConnection(graph, it, node)!!.type == ConnectionType.union }.toList()
-  }
-      .map { it.id }
-}
+//fun getDeadend(graph: Graph, offset: Int): List<Id> {
+//  val start = getDeadEnds(graph)[offset]
+//  return gatherNodes(listOf(start)) { node ->
+//    neighbors(graph, node).filter { it.isWalkable && getConnection(graph, it, node)!!.type == ConnectionType.union }.toList()
+//  }
+//      .map { it.id }
+//}
 
 fun getTwinTunnels(graph: Graph, tunnels: List<PreTunnel>): List<PreTunnel> =
     graph.nodes.values.flatMap { node ->
@@ -110,12 +97,23 @@ fun cleanupWorld(graph: Graph): Graph {
 }
 
 fun applyInitialBiomes(biomeGrid: BiomeGrid, graph: Graph): NodeTable {
-  val home = getDeadend(graph, 0)
-//  val exit = getDeadend(graph, 1)
-  val remainingNodes = graph.nodes.minus(home/*.plus(exit)*/)
-  val biomeMap = remainingNodes.mapValues { (_, node) -> biomeGrid(node.position.x, node.position.y) }
-      .plus(home.associate { Pair(it, BiomeId.home) })
-//      .plus(exit.associate { Pair(it, Biome.exit) })
+//  val deadEnds = getDeadEnds(graph)
+//  val home = deadEnds[0]
+//  val exit = deadEnds
+//      .drop(1)
+//      .filter { abs(it.position.z - home.position.z) > 5f}
+//      .firstSortedByDescending { it.position.distance(home.position) }
+
+  val home = graph.nodes.values.first { it.attributes.contains(NodeAttribute.home) }
+  val exit = graph.nodes.values.first { it.attributes.contains(NodeAttribute.exit) }
+  val remainingNodes = graph.nodes
+      .minus(home)
+      .minus(exit)
+
+  val biomeMap = remainingNodes
+      .mapValues { (_, node) -> biomeGrid(node.position.x, node.position.y) }
+      .plus(Pair(home.id, BiomeId.home))
+      .plus(Pair(exit.id, BiomeId.exit))
 
   return graph.nodes.mapValues {
     it.value.copy(
@@ -126,9 +124,12 @@ fun applyInitialBiomes(biomeGrid: BiomeGrid, graph: Graph): NodeTable {
 
 fun createAndMixTunnels(graph: Graph): Graph {
   val preTunnels = prepareTunnels(graph)
-  val twinTunnels = getTwinTunnels(graph, preTunnels)
-  val tunnelGraph = createTunnelNodes(graph, preTunnels.minus(twinTunnels))
-  return graph.plus(tunnelGraph).minusConnections(preTunnels.plus(twinTunnels).map { it.connection })
+//  val twinTunnels = getTwinTunnels(graph, preTunnels)
+//  val tunnelGraph = createTunnelNodes(graph, preTunnels.minus(twinTunnels))
+//  return graph.plus(tunnelGraph).minusConnections(preTunnels.plus(twinTunnels).map { it.connection })
+//      .copy(tunnels = tunnelGraph.nodes.map { it.key })
+  val tunnelGraph = createTunnelNodes(graph, preTunnels)
+  return graph.plus(tunnelGraph).minusConnections(preTunnels.map { it.connection })
       .copy(tunnels = tunnelGraph.nodes.map { it.key })
 }
 
@@ -158,19 +159,19 @@ fun <A, B> pass(action: (A) -> A): (Pair<A, B>) -> Pair<A, B> = { (a, b) ->
   Pair(action(a), b)
 }
 
-fun generateAbstract(input: WorldInput, scale: Float, biomeGrid: BiomeGrid): Graph {
-  val nodeCount = (30 * scale).toInt()
-  val initialNodes = distributeNodes(input.boundary, nodeCount, input.dice)
-//  val initialGraph = handleOverlapping(entityMap(initialNodes))
-  val initialGraph = Graph(
-      nodes = entityMap(initialNodes),
-      connections = listOf()
-  )
-  return pipe(initialGraph, listOf(
-      { graph -> cleanupWorld(graph) },
+fun generateAbstract(input: WorldInput, scale: Float, biomeGrid: BiomeGrid): Triple<MapGrid, Graph, CellPositionMap> {
+//  val nodeCount = (30 * scale).toInt()
+//  val initialNodes = distributeNodes(input.boundary, nodeCount, input.dice)
+////  val initialGraph = handleOverlapping(entityMap(initialNodes))
+  val grid = newWindingPath(input.dice)
+  val nextId = newIdSource(1L)
+  val (initialGraph, cellMap) = gridToGraph(nextId, grid)
+  val finalGraph = pipe(initialGraph, listOf(
+//      { graph -> cleanupWorld(graph) },
       { graph -> createAndMixTunnels(graph) },
 //      variableHeights(input.dice),
       { graph -> graph.copy(nodes = applyInitialBiomes(biomeGrid, graph)) }
 //      { graph -> prepareDoorways(graph) }
   ))
+  return Triple(grid, finalGraph, cellMap)
 }

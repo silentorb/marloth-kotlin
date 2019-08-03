@@ -3,6 +3,8 @@ package generation.abstracted
 import generation.misc.getNodeDistance
 import mythic.ent.firstSortedBy
 import randomly.Dice
+import simulation.misc.Graph
+import simulation.misc.nodeNeighbors2
 
 fun variableHeights(dice: Dice): (Graph) -> Graph = { graph ->
   var currentGraph = graph
@@ -10,7 +12,7 @@ fun variableHeights(dice: Dice): (Graph) -> Graph = { graph ->
   for (i in 0 until graph.nodes.size) {
     val id = keys[i]
     val node = currentGraph.nodes[id]!!
-    val neighbors = nodeNeighbors(graph.connections, id)
+    val neighbors = nodeNeighbors2(graph.connections, id)
     val gaps = neighbors.map { otherId ->
       val other = graph.nodes[otherId]!!
       getNodeDistance(node, other)

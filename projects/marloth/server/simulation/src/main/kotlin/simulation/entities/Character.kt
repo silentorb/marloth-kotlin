@@ -7,7 +7,6 @@ import mythic.spatial.*
 import org.joml.times
 import scenery.AnimationId
 import scenery.Capsule
-import scenery.ShapeOffset
 import scenery.enums.ResourceId
 import scenery.enums.Sounds
 import simulation.combat.DamageMultipliers
@@ -23,6 +22,11 @@ import simulation.misc.maxNegativeLookVelocityChange
 import simulation.misc.maxPostiveLookVelocityChange
 import simulation.physics.*
 import simulation.physics.old.*
+
+const val characterGroundBuffer = 0.01f
+const val groundedLinearDamping = 0.9f
+const val airLinearDamping = 0f
+const val airControlReduction = 0.4f
 
 data class CharacterDefinition(
     val health: Int,
@@ -46,8 +50,10 @@ data class Character(
     val activeItem: Id? = null,
     val canInteractWith: Id? = null,
     val interactingWith: Id? = null,
-    val money: Int = 0
+    val money: Int = 0,
+    val groundDistance: Float = 0f
 ) {
+  val isGrounded: Boolean get() = groundDistance <= characterGroundBuffer
   val facingQuaternion: Quaternion
     get() = Quaternion()
         .rotateZ(facingRotation.z)
@@ -196,16 +202,20 @@ fun getMovementImpulseVector(baseSpeed: Float, velocity: Vector3, commandVector:
   return finalImpulseVector
 }
 
+fun characterOrientationZ(character: Character) =
+    Quaternion().rotateZ(character.facingRotation.z - Pi / 2)
+
 fun characterMovementFp(commands: Commands, character: Character, id: Id, body: Body): LinearImpulse? {
   val offsetVector = joinInputVector(commands, playerMoveMap)
   return if (offsetVector != null) {
-    val direction = Quaternion().rotateZ(character.facingRotation.z - Pi / 2) * offsetVector
+    val airControlMod = if (character.isGrounded) 1f else airControlReduction
+    val direction = characterOrientationZ(character) * offsetVector * airControlMod
     val baseSpeed = character.definition.maxSpeed
     val maxImpulseLength = baseSpeed
     val commandVector = direction * maxImpulseLength
-    val impulseVector = getMovementImpulseVector(baseSpeed, body.velocity, commandVector)
+    val horizontalVelocity = body.velocity.copy(z = 0f)
+    val impulseVector = getMovementImpulseVector(baseSpeed, horizontalVelocity, commandVector)
     val finalImpulse = impulseVector * 5f
-    println(offsetVector.length())
     LinearImpulse(body = id, offset = finalImpulse)
   } else {
     null
@@ -261,7 +271,7 @@ fun newCharacter(nextId: IdSource, definition: CharacterDefinition, faction: Id,
           damageMultipliers = definition.damageMultipliers
       ),
       collisionShape = CollisionObject(
-          shape = ShapeOffset(Matrix().translate(0f, 0f, 0.75f), Capsule(0.4f, 1.5f))
+          shape = Capsule(0.4f, 2.3f)
       ),
       depiction = Depiction(
           type = definition.depictionType,

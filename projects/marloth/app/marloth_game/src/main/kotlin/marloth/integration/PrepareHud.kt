@@ -26,7 +26,8 @@ fun gatherHudData(deck: Deck, view: ViewId): HudData {
       interactable = interactable,
       buffs = buffs,
       debugInfo =  listOf(
-          ((body.velocity.length() * 100).roundToInt().toFloat() / 100).toString()
+          ((body.velocity.length() * 100).roundToInt().toFloat() / 100).toString(),
+          if (character.isGrounded) "Grounded" else "Air"
       )
   )
 }

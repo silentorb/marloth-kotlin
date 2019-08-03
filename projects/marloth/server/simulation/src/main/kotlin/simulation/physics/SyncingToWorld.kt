@@ -1,7 +1,6 @@
 package simulation.physics
 
 import com.badlogic.gdx.math.Matrix4
-import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld
 import mythic.ent.Id
 import mythic.spatial.Quaternion
@@ -9,7 +8,6 @@ import mythic.spatial.Vector3
 import simulation.main.Deck
 import simulation.main.World
 import simulation.physics.old.Collision
-import java.util.*
 
 fun castInteractableRay(dynamicsWorld: btDiscreteDynamicsWorld, deck: Deck, player: Id): Id? {
   val body = deck.bodies[player]!!
@@ -18,8 +16,7 @@ fun castInteractableRay(dynamicsWorld: btDiscreteDynamicsWorld, deck: Deck, play
   val direction = character.facingVector
   val start = body.position + Vector3(0f, 0f, 0.5f) + direction * shape.shape.radius
   val end = start + direction * 5f
-  val callback = ClosestRayResultCallback(com.badlogic.gdx.math.Vector3.Zero, com.badlogic.gdx.math.Vector3.Z)
-  dynamicsWorld.collisionWorld.rayTest(toGdxVector3(start), toGdxVector3(end), callback)
+  val callback = firstRayHit(dynamicsWorld, start, end)
   if (callback.hasHit()) {
     val collisionObject = callback.collisionObject
     val id = collisionObject.userData as Id
@@ -57,6 +54,11 @@ fun syncWorldToBullet(bulletState: BulletState): (World) -> World = { world ->
                   canInteractWith = castInteractableRay(bulletState.dynamicsWorld, deck, player)
               ))
           )
+              .mapValues { (id, character) ->
+                character.copy(
+                    groundDistance = updateCharacterStepHeight(bulletState, deck, id)
+                )
+              }
       )
   )
 }
