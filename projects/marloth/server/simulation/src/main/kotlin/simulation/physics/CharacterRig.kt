@@ -4,10 +4,11 @@ import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld
 import mythic.ent.Id
 import mythic.ent.firstSortedBy
 import mythic.spatial.Vector3
+import mythic.spatial.createArcZ
 import simulation.entities.airLinearDamping
-import simulation.entities.characterGroundBuffer
 import simulation.entities.groundedLinearDamping
 import simulation.main.Deck
+import kotlin.math.abs
 import kotlin.math.min
 
 private fun rayCollisionDistance(dynamicsWorld: btDiscreteDynamicsWorld, start: Vector3, end: Vector3): Float? {
@@ -43,87 +44,70 @@ private fun rayCollisionDistance(dynamicsWorld: btDiscreteDynamicsWorld, start: 
 //  return null
 //}
 
+fun footOffsets(radius: Float): List<Vector3> =
+    createArcZ(radius + 0.9f, 8)
+
 fun updateCharacterStepHeight(bulletState: BulletState, deck: Deck, character: Id): Float {
   val body = deck.bodies[character]!!
   val collisionObject = deck.collisionShapes[character]!!
   val shape = collisionObject.shape
   val radius = shape.radius
-  val footRadius = radius * 1.2f
-  val footOffsets = listOf(
-      Vector3(footRadius, 0f, 0f),
-      Vector3(0f, footRadius, 0f),
-      Vector3(-footRadius, 0f, 0f),
-      Vector3(0f, -footRadius, 0f),
-
-      Vector3(footRadius, footRadius, 0f),
-      Vector3(footRadius, -footRadius, 0f),
-      Vector3(-footRadius, footRadius, 0f),
-      Vector3(-footRadius, -footRadius, 0f)
-  )
-  val footHeight = radius + 0.2f
-  val basePosition = body.position + Vector3(0f, 0f, -shape.shapeHeight / 2f + footHeight)
+  val footHeight = 0.8f
+  val basePosition = body.position + Vector3(0f, 0f, -shape.height / 2f + footHeight)
 //  val basePosition = body.position
-  val rayLength = footHeight
+  val rayLength = footHeight + 0.3f
 //  val rayLength = 0.02f
 //  val rayLength = radius
   val endOffset = Vector3(0f, 0f, -rayLength)
   val dynamicsWorld = bulletState.dynamicsWorld
-  val distances = footOffsets.mapNotNull {
-    val start = basePosition + it
-    val end = start + endOffset
-    rayCollisionDistance(dynamicsWorld, start, end)
-  }
+  val offsets = footOffsets(radius).plus(Vector3.zero)
+  val distances = offsets
+      .mapNotNull {
+        val start = basePosition + it
+        val end = start + endOffset
+        rayCollisionDistance(dynamicsWorld, start, end)
+      }
 
   return if (distances.any()) {
     val distance = distances.firstSortedBy { it }
     distance - footHeight
   } else
     1f
-}
-
-fun updateCharacterStepHeightWithVelocity(bulletState: BulletState, deck: Deck, character: Id): Float {
-  val body = deck.bodies[character]!!
-  val collisionObject = deck.collisionShapes[character]!!
-  val shape = collisionObject.shape
-  val radius = shape.radius
-  val footRadius = radius * 1.2f
-//  val footOffsets = listOf(
-//      Vector3(footRadius, 0f, 0f),
-//      Vector3(0f, footRadius, 0f),
-//      Vector3(-footRadius, 0f, 0f),
-//      Vector3(0f, -footRadius, 0f)
-//  )
-  val footHeight = radius + 0.2f
-  val basePosition = body.position + Vector3(0f, 0f, -shape.shapeHeight / 2f + footHeight)
-//  val basePosition = body.position
-  val rayLength = footHeight
-//  val rayLength = 0.02f
-//  val rayLength = radius
-  val endOffset = Vector3(0f, 0f, -rayLength)
-  val dynamicsWorld = bulletState.dynamicsWorld
-//  val distances = footOffsets.mapNotNull {
-  val footOffset = body.velocity.normalize() * footRadius
-  val start = basePosition + footOffset
-  val end = start + endOffset
-  val distance = rayCollisionDistance(dynamicsWorld, start, end)
+//  } else {
+//    val endOffset2 = Vector3(0f, 0f, -rayLength * 2f)
+//    val distances = offsets
+//        .mapNotNull {
+//          val start = basePosition + it
+//          val end = start + endOffset2
+//          rayCollisionDistance(dynamicsWorld, start, end)
+//        }
+//    1f
 //  }
-
-  return if (distance != null) {
-    distance - footHeight
-  } else
-    1f
 }
 
 fun updateCharacterRig(bulletState: BulletState, deck: Deck, id: Id) {
   val character = deck.characters[id]!!
   val groundDistance = character.groundDistance
   val btBody = bulletState.dynamicBodies[id]!!
-  if (groundDistance < -characterGroundBuffer) {
-    val stepHeight = min(0.02f, -groundDistance)
-    val impulseVector = Vector3(0f, 0f, stepHeight * 1000f)
+//  if (character.isGrounded && abs(groundDistance) > 0.01f) {
+  if (character.isGrounded && (groundDistance < -0.01f || groundDistance > 0.1f)) {
+//    if (groundDistance < -characterGroundBuffer) {
+//    val stepHeight = min(10.04f, -groundDistance -characterGroundBuffer)
+    val stepHeight = -groundDistance
+//    val impulseVector = Vector3(0f, 0f, stepHeight * 1000f)
 //    btBody.applyCentralImpulse(toGdxVector3(impulseVector))
-    println(stepHeight)
-    btBody.translate(toGdxVector3(Vector3(0f, 0f, stepHeight)))
+
+    val body = deck.bodies[id]!!
+    println("$stepHeight ${body.position.z}")
+    if (stepHeight < 0f) {
+      val k = 0
+    }
+    val transitionStepHeight = min(0.03f, stepHeight)
+    btBody.translate(toGdxVector3(Vector3(0f, 0f, transitionStepHeight)))
+//    else
+//      println("nothing $stepHeight")
+//    } else
+//      println("nothing $groundDistance ${character.isGrounded}")
   }
 
   val linearDamping = if (character.isGrounded)
@@ -131,7 +115,13 @@ fun updateCharacterRig(bulletState: BulletState, deck: Deck, id: Id) {
   else
     airLinearDamping
 
+  val gravity = if (character.isGrounded)
+    com.badlogic.gdx.math.Vector3.Zero
+  else
+    staticGravity()
+
   btBody.setDamping(linearDamping, 0f)
+  btBody.gravity = gravity
 }
 
 fun updateCharacterRigs(bulletState: BulletState, deck: Deck) {

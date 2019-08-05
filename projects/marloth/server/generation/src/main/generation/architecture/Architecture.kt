@@ -4,12 +4,12 @@ import generation.misc.biomeInfoMap
 import generation.misc.getNodeDistance
 import mythic.ent.Id
 import mythic.spatial.*
-import simulation.physics.old.getLookAtAngle
 import randomly.Dice
 import simulation.main.Hand
 import simulation.main.WorldTransform
 import simulation.main.addHands
 import simulation.misc.*
+import simulation.physics.old.getLookAtAngle
 import kotlin.math.ceil
 
 fun <T> createSeries(gapSize: Float, segmentLength: Float, margin: Float, action: (Int, Float) -> T): List<T> {
@@ -39,19 +39,20 @@ val placeRoomFloors: Architect = { meshInfo, realm, dice ->
         val horizontalScale = (node.radius + 1f) * 2f * floorMeshAdjustment
         val biome = biomeInfoMap[node.biome]!!
         val position = realm.cellMap[node.id]!!
-        val lowerConnection = realm.grid.connections[position.copy(z = position.z - 1)]
-        val lowerNode = realm.grid.cells[position.copy(z = position.z - 2)]
-        val meshOptions = if (lowerConnection != null || lowerNode != null)
-          biome.roomFloorMeshes
-        else
+        val isEmptyBelow = (1..4).none {
+          realm.grid.connections.containsKey(position.copy(z = position.z - it))
+              || realm.grid.cells.containsKey(position.copy(z = position.z - it))
+        }
+        val meshOptions = if (isEmptyBelow)
           biome.roomFloorMeshesTall
+        else
+          biome.roomFloorMeshes
 
         val mesh = dice.takeOne(meshOptions)
         newArchitectureMesh(
             meshInfo = meshInfo,
             mesh = mesh,
             position = node.position + floorOffset + alignWithCeiling(meshInfo)(mesh),
-            scale = Vector3(horizontalScale, horizontalScale, 1f),
             orientation = Quaternion(),
             texture = biome.floorTexture
         )
@@ -86,25 +87,23 @@ val placeTunnelFloors: Architect = { meshInfo, realm, dice ->
 
   tunnelNodes(realm.graph)
       .flatMap { node ->
-        val segmentLength = 2f
-        val info = getTunnelInfo(realm.graph, node.id, segmentLength)
         val biome = biomeInfoMap[node.biome]!!
+        val mesh = dice.takeOne(biome.tunnelFloorMeshes)
+        val segmentLength = meshInfo[mesh.name]!!.x
+        val info = getTunnelInfo(realm.graph, node.id, segmentLength)
         val randomRotation1 = dice.getFloat(-0.1f, 0.1f)
         val randomRotation2 = dice.getFloat(-0.1f, 0.1f)
         val orientation = Quaternion()
             .rotateZ(getLookAtAngle(info.vector) + randomRotation1)
-            .rotateY(-getLookAtAngle(Vector2(info.vector.xy().length(), info.vector.z) + randomRotation2))
-
+//            .rotateY(-getLookAtAngle(Vector2(info.vector.xy().length(), info.vector.z) + randomRotation2))
         createSeries(info.length, segmentLength, -0f) { step, stepOffset ->
           val minorOffset = 0.001f
           val minorMod = if (step % 2 == 0) -minorOffset else minorOffset
           val minor = Vector3(0f, 0f, minorMod + tempHeightBump)
-          val mesh = dice.takeOne(biome.tunnelFloorMeshes)
           newArchitectureMesh(
               meshInfo = meshInfo,
               mesh = mesh,
               position = info.start + info.vector * stepOffset + floorOffset + minor + alignWithCeiling(meshInfo)(mesh),
-              scale = Vector3.unit,
               orientation = orientation,
               texture = biome.floorTexture
           )

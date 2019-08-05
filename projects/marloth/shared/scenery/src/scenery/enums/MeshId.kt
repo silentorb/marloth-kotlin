@@ -26,10 +26,11 @@ enum class MeshId {
   // Architecture
   circleFloor,
   longPillowStep,
+  longStairStep,
   longStep,
   pillowWall,
   squareFloor,
   squareWall,
-  tallCircleFloor,
+  threeStoryCircleFloor,
   treasureChest
 }

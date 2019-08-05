@@ -42,7 +42,7 @@ fun createCircle2(mesh: FlexibleMesh, radius: Float, count: Int): FlexibleFace {
 }
 
 //fun createIncompleteCircle(mesh: FlexibleMesh, radius: Float, count: Int, take: Int): FlexibleFace {
-//  return mesh.createFace(convertPath(createArc(radius, count)).take(take))
+//  return mesh.createFace(convertPath(createArcZ(radius, count)).take(take))
 //}
 
 fun createCylinder(mesh: FlexibleMesh, radius: Float, count: Int, length: Float): List<FlexibleFace> {
@@ -54,7 +54,7 @@ fun createCylinder(mesh: FlexibleMesh, radius: Float, count: Int, length: Float)
 
 fun createSphere(mesh: FlexibleMesh, radius: Float, horizontalCount: Int, verticalCount: Int) =
     lathe(mesh, createArc(radius, verticalCount, Pi, Pi / 2), horizontalCount)
-//    mesh.createFace(createArc(radius, verticalCount, Pi, -Pi / 2))
+//    mesh.createFace(createArcZ(radius, verticalCount, Pi, -Pi / 2))
 
 fun createIncompleteSphere(mesh: FlexibleMesh, radius: Float, horizontalCount: Int, verticalCount: Int, take: Int) =
     lathe(mesh, createArc(radius, verticalCount, Pi).take(take), horizontalCount)

@@ -36,6 +36,8 @@ fun toGdxMatrix4(matrix: Matrix): Matrix4 {
 
 private var isBulletInitialized = false
 
+fun staticGravity() = GdxVector3(0f, 0f, -10f)
+
 fun newBulletState(): BulletState {
   if (!isBulletInitialized) {
     Bullet.init()
@@ -54,7 +56,7 @@ fun newBulletState(): BulletState {
   val solver = btSequentialImpulseConstraintSolver()
 
   val dynamicsWorld = btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfig)
-  dynamicsWorld.gravity = GdxVector3(0f, 0f, -10f)
+  dynamicsWorld.gravity = staticGravity()
 
   return BulletState(
       dynamicsWorld = dynamicsWorld,
@@ -95,8 +97,8 @@ fun allRayHits(dynamicsWorld: btDiscreteDynamicsWorld, start: Vector3, end: Vect
 fun updateBulletPhysics(bulletState: BulletState, linearForces: List<LinearImpulse>): (World) -> World = { world ->
   syncNewBodies(world, bulletState)
   syncRemovedBodies(world, bulletState)
-  applyImpulses(world, bulletState, linearForces)
   updateCharacterRigs(bulletState, world.deck)
+  applyImpulses(world, bulletState, linearForces)
   bulletState.dynamicsWorld.stepSimulation(1f / 60f, 10)
   syncWorldToBullet(bulletState)(world)
 }

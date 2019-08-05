@@ -24,18 +24,40 @@ private val allOffsets = horizontalOffsets.flatMap { (x, y) ->
 }
 
 fun isCellOpen(grid: MapGrid, from: Vector3i, connectionOffset: Vector3i): Boolean {
-  val connectionPosition = from + connectionOffset
-  if (grid.connections.containsKey(connectionPosition))
-    return false
-
-  return true
+  return !grid.connections.containsKey(from + connectionOffset) &&
+      !grid.cells.containsKey(from + connectionOffset * 2)
 }
 
-private fun nextConnectionOffset(dice: Dice, grid: MapGrid, position: Vector3i): Vector3i {
+private fun nextConnectionOffset(dice: Dice, grid: MapGrid, position: Vector3i): Vector3i? {
   val z = dice.getInt(-1, 1)
-  val options = allOffsets
-      .filter { isCellOpen(grid, position, it) }
-  return dice.takeOne(options)
+  // Filter out any horizontal directions that already have a connection to this cell.
+  val availableOffsets = horizontalOffsets
+      .mapNotNull { (x, y) ->
+        if (verticalOffsets.all { z ->
+              val offset = Vector3i(x, y, z)
+              val cell = grid.connections[offset]
+              cell == null || cell.first != position && cell.second != position
+            })
+          verticalOffsets.map { z -> Vector3i(x, y, z) }
+        else null
+      }
+      .flatten()
+
+  // Further filter out any potential conflicts with straight tunnels and vertical tunnels
+  // that connect other cells than this one.
+  val options = availableOffsets
+      .filter {
+        isCellOpen(grid, position, it) &&
+            if (it.z != position.z)
+              isCellOpen(grid, position, it.copy(z = position.z))
+            else
+              isCellOpen(grid, position, it.copy(z = position.z + 1))
+                  && isCellOpen(grid, position, it.copy(z = position.z - 1))
+      }
+  return if (options.any())
+    dice.takeOne(options)
+  else
+    null
 }
 
 private tailrec fun addPathStep(maxSteps: Int, dice: Dice, grid: MapGrid, position: Vector3i, stepCount: Int = 0): MapGrid {
@@ -43,12 +65,17 @@ private tailrec fun addPathStep(maxSteps: Int, dice: Dice, grid: MapGrid, positi
     return grid
 
   val connectionOffset = nextConnectionOffset(dice, grid, position)
+  if (connectionOffset == null)
+    return grid
+
   val connectionPosition = position + connectionOffset
   val nextPosition = position + connectionOffset * 2
   val attributes = if (stepCount == maxSteps - 1)
     setOf(NodeAttribute.exit)
   else
     setOf()
+
+  assert(!grid.cells.containsKey(nextPosition))
 
   val newGrid = grid.copy(
       cells = grid.cells.plus(
@@ -62,7 +89,7 @@ private tailrec fun addPathStep(maxSteps: Int, dice: Dice, grid: MapGrid, positi
 }
 
 fun newWindingPath(dice: Dice): MapGrid {
-  val startPosition = Vector3i.zero
+  val startPosition = Vector3i(0, 0, 1)
   val grid = MapGrid(
       cells = mapOf(
           startPosition to Cell(attributes = setOf(NodeAttribute.home))

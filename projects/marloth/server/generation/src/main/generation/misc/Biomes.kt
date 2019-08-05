@@ -26,45 +26,37 @@ data class BiomeInfo(
 
 typealias BiomeInfoMap = Map<BiomeId, BiomeInfo>
 
+val commonBiomeTemplate = BiomeInfo("commonBiomeTemplate",
+    wallEnclosureRate = 0.5f,
+    roomFloorMeshes = listOf(MeshId.circleFloor),
+    roomFloorMeshesTall = listOf( MeshId.threeStoryCircleFloor),
+    tunnelFloorMeshes = listOf(MeshId.longStairStep),
+    wallMeshes = listOf(MeshId.squareWall)
+)
+
 val biomeInfoMap: BiomeInfoMap = mapOf(
-    BiomeId.checkers to BiomeInfo("checkers",
-        wallEnclosureRate = 0.5f,
+    BiomeId.checkers to commonBiomeTemplate.copy(
+        name = "checkers",
         floorTexture = TextureId.checkersBlackWhite,
         ceilingTexture = TextureId.checkersBlackWhite,
-        wallTexture = TextureId.checkersBlackWhite,
-        roomFloorMeshes = listOf(MeshId.circleFloor),
-        roomFloorMeshesTall = listOf( MeshId.tallCircleFloor),
-        tunnelFloorMeshes = listOf(MeshId.longStep),
-        wallMeshes = listOf(MeshId.squareWall)
+        wallTexture = TextureId.checkersBlackWhite
     ),
-    BiomeId.exit to BiomeInfo("exit",
-        wallEnclosureRate = 0f,
+    BiomeId.exit to commonBiomeTemplate.copy(
+        name = "checkers",
         floorTexture = TextureId.algae,
         ceilingTexture = TextureId.algae,
-        wallTexture = TextureId.algae,
-        roomFloorMeshes = listOf(MeshId.circleFloor),
-        roomFloorMeshesTall = listOf( MeshId.tallCircleFloor),
-        tunnelFloorMeshes = listOf(MeshId.longStep),
-        wallMeshes = listOf(MeshId.squareWall)
+        wallTexture = TextureId.algae
     ),
-    BiomeId.forest to BiomeInfo("forest",
-        wallEnclosureRate = 0.25f,
+    BiomeId.forest to commonBiomeTemplate.copy(
+        name = "forest",
         floorTexture = TextureId.grass,
         ceilingTexture = TextureId.bricks,
-        wallTexture = TextureId.bricks,
-        roomFloorMeshes = listOf(MeshId.circleFloor),
-        roomFloorMeshesTall = listOf( MeshId.tallCircleFloor),
-        tunnelFloorMeshes = listOf(MeshId.longStep),
-        wallMeshes = listOf(MeshId.squareWall)
+        wallTexture = TextureId.bricks
     ),
-    BiomeId.home to BiomeInfo("home",
-        wallEnclosureRate = 1f,
+    BiomeId.home to commonBiomeTemplate.copy(
+        name = "home",
         floorTexture = TextureId.redTile,
         ceilingTexture = TextureId.redTile,
-        wallTexture = TextureId.redTile,
-        roomFloorMeshes = listOf(MeshId.circleFloor, MeshId.tallCircleFloor),
-        roomFloorMeshesTall = listOf( MeshId.tallCircleFloor),
-        tunnelFloorMeshes = listOf(MeshId.longStep),
-        wallMeshes = listOf(MeshId.squareWall)
+        wallTexture = TextureId.redTile
     )
 )

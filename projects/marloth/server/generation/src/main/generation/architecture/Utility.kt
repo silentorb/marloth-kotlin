@@ -22,9 +22,9 @@ fun getHorizontalFlip(dice: Dice, wallData: WallData): Float =
 
 val floorOffset = Vector3(0f, 0f, -wallHeight / 2f)
 
-fun newArchitectureMesh(meshInfo: MeshInfoMap, mesh: MeshId, position: Vector3, scale: Vector3 = Vector3.unit,
+fun newArchitectureMesh(meshInfo: MeshInfoMap, mesh: MeshId, position: Vector3,
                         orientation: Quaternion = Quaternion(),
-                        texture: TextureId? = null): Hand {
+                        texture: TextureId? = null, scale: Vector3 = Vector3.unit): Hand {
   val shape = meshInfo[mesh.name]!!
   return Hand(
       depiction = Depiction(
@@ -43,12 +43,12 @@ fun newArchitectureMesh(meshInfo: MeshInfoMap, mesh: MeshId, position: Vector3, 
 }
 
 fun alignWithCeiling(meshInfo: MeshInfoMap) = { meshId: MeshId ->
-  val height = meshInfo[meshId.name]!!.shapeHeight
+  val height = meshInfo[meshId.name]!!.height
   Vector3(0f, 0f, -height / 2f)
 }
 
 fun alignWithFloor(meshInfo: MeshInfoMap) = { meshId: MeshId ->
-  val height = meshInfo[meshId.name]!!.shapeHeight
+  val height = meshInfo[meshId.name]!!.height
   Vector3(0f, 0f, height / 2f)
 }
 

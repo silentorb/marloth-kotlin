@@ -23,7 +23,8 @@ import simulation.misc.maxPostiveLookVelocityChange
 import simulation.physics.*
 import simulation.physics.old.*
 
-const val characterGroundBuffer = 0.01f
+//const val characterGroundBuffer = 0.01f
+const val characterGroundBuffer = 0.02f
 const val groundedLinearDamping = 0.9f
 const val airLinearDamping = 0f
 const val airControlReduction = 0.4f

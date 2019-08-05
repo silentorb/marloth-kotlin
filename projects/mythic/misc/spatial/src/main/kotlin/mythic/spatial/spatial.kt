@@ -378,3 +378,17 @@ fun withinRangeFast(a: Vector3, b: Vector3, range: Float): Boolean {
 fun projectVector3(angle: Float, radius: Float, z: Float): Vector3 {
   return Vector3(cos(angle) * radius, sin(angle) * radius, 0f)
 }
+
+fun createArcZ(radius: Float, count: Int, sweep: Float = Pi * 2, offset: Float = 0f): List<Vector3> {
+  val increment = sweep / (count - 1)
+  return (0 until count)
+      .map { i ->
+        val theta = increment * i + offset
+        val x = if (sweep == Pi && i == count - 1)
+          0f
+        else
+          cos(theta) * radius
+
+        Vector3(x, sin(theta) * radius, 0f)
+      }
+}
