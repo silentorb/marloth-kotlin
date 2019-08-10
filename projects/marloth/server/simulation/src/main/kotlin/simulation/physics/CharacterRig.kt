@@ -8,7 +8,6 @@ import mythic.spatial.createArcZ
 import simulation.entities.airLinearDamping
 import simulation.entities.groundedLinearDamping
 import simulation.main.Deck
-import kotlin.math.abs
 import kotlin.math.min
 
 private fun rayCollisionDistance(dynamicsWorld: btDiscreteDynamicsWorld, start: Vector3, end: Vector3): Float? {
@@ -47,42 +46,42 @@ private fun rayCollisionDistance(dynamicsWorld: btDiscreteDynamicsWorld, start: 
 fun footOffsets(radius: Float): List<Vector3> =
     createArcZ(radius + 0.9f, 8)
 
+private const val noHitValue = 1f
+
+private fun castStepRay(dynamicsWorld: btDiscreteDynamicsWorld, bodyPosition: Vector3, footHeight: Float,
+                        shapeHeight: Float): (Vector3) -> Float? {
+  val basePosition = bodyPosition + Vector3(0f, 0f, -shapeHeight / 2f + footHeight)
+  val rayLength = footHeight * 2f
+  val endOffset = Vector3(0f, 0f, -rayLength)
+  return { it: Vector3 ->
+    val start = basePosition + it
+    val end = start + endOffset
+    rayCollisionDistance(dynamicsWorld, start, end)
+  }
+}
+
 fun updateCharacterStepHeight(bulletState: BulletState, deck: Deck, character: Id): Float {
   val body = deck.bodies[character]!!
   val collisionObject = deck.collisionShapes[character]!!
   val shape = collisionObject.shape
   val radius = shape.radius
   val footHeight = 0.8f
-  val basePosition = body.position + Vector3(0f, 0f, -shape.height / 2f + footHeight)
-//  val basePosition = body.position
-  val rayLength = footHeight + 0.3f
-//  val rayLength = 0.02f
-//  val rayLength = radius
-  val endOffset = Vector3(0f, 0f, -rayLength)
-  val dynamicsWorld = bulletState.dynamicsWorld
   val offsets = footOffsets(radius).plus(Vector3.zero)
-  val distances = offsets
-      .mapNotNull {
-        val start = basePosition + it
-        val end = start + endOffset
-        rayCollisionDistance(dynamicsWorld, start, end)
-      }
+  val cast = castStepRay(bulletState.dynamicsWorld, body.position, footHeight, shape.height)
+  val centerDistance = cast(Vector3.zero)
+  if (centerDistance == null) {
+    return noHitValue
+  } else {
+    val distances = offsets
+        .mapNotNull(cast)
+        .plus(centerDistance)
 
-  return if (distances.any()) {
-    val distance = distances.firstSortedBy { it }
-    distance - footHeight
-  } else
-    1f
-//  } else {
-//    val endOffset2 = Vector3(0f, 0f, -rayLength * 2f)
-//    val distances = offsets
-//        .mapNotNull {
-//          val start = basePosition + it
-//          val end = start + endOffset2
-//          rayCollisionDistance(dynamicsWorld, start, end)
-//        }
-//    1f
-//  }
+    return if (distances.any()) {
+      val distance = distances.firstSortedBy { it }
+      distance - footHeight
+    } else
+      noHitValue
+  }
 }
 
 fun updateCharacterRig(bulletState: BulletState, deck: Deck, id: Id) {

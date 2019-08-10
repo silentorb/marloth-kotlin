@@ -29,13 +29,12 @@ fun isCellOpen(grid: MapGrid, from: Vector3i, connectionOffset: Vector3i): Boole
 }
 
 private fun nextConnectionOffset(dice: Dice, grid: MapGrid, position: Vector3i): Vector3i? {
-  val z = dice.getInt(-1, 1)
   // Filter out any horizontal directions that already have a connection to this cell.
   val availableOffsets = horizontalOffsets
       .mapNotNull { (x, y) ->
         if (verticalOffsets.all { z ->
               val offset = Vector3i(x, y, z)
-              val cell = grid.connections[offset]
+              val cell = grid.connections[position + offset]
               cell == null || cell.first != position && cell.second != position
             })
           verticalOffsets.map { z -> Vector3i(x, y, z) }
@@ -88,12 +87,12 @@ private tailrec fun addPathStep(maxSteps: Int, dice: Dice, grid: MapGrid, positi
   return addPathStep(maxSteps, dice, newGrid, nextPosition, stepCount + 1)
 }
 
-fun newWindingPath(dice: Dice): MapGrid {
+fun newWindingPath(dice: Dice, length: Int): MapGrid {
   val startPosition = Vector3i(0, 0, 1)
   val grid = MapGrid(
       cells = mapOf(
           startPosition to Cell(attributes = setOf(NodeAttribute.home))
       )
   )
-  return addPathStep(20, dice, grid, startPosition)
+  return addPathStep(length - 1, dice, grid, startPosition)
 }

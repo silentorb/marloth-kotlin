@@ -19,16 +19,7 @@ data class World(
     val availableIds: Set<Id>,
     val gameOver: GameOver? = null,
     val logicUpdateCounter: Int
-) {
-  val bodyTable: Table<Body> get() = deck.bodies
-  val characterTable: Table<Character> get() = deck.characters
-
-  val players: List<Player>
-    get() = deck.players.values.toList()
-
-  val bodies: Collection<Body>
-    get() = deck.bodies.values
-}
+)
 
 typealias WorldTransform = (World) -> World
 

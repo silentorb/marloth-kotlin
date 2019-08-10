@@ -24,7 +24,7 @@ fun getPathTargetPosition(world: World, knowledge: Knowledge, path: Path): Vecto
 }
 
 fun moveStraightTowardPosition(world: World, knowledge: Knowledge, target: Vector3): Commands {
-  val body = world.bodyTable[knowledge.spiritId]!!
+  val body = world.deck.bodies[knowledge.spiritId]!!
   val position = body.position
   val offset = (target - position).normalize()
   return spiritNeedsFacing(world,knowledge, offset, 0.1f) {

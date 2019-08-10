@@ -1,33 +1,17 @@
 package simulation.physics
 
 import mythic.ent.Id
-import mythic.ent.Table
+import mythic.ent.firstSortedBy
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import simulation.main.World
-import simulation.main.simulationDelta
-import simulation.input.Commands
-import simulation.entities.allCharacterMovements
-import simulation.entities.allCharacterOrientations
-import simulation.physics.old.Collisions
-import simulation.physics.old.updatePhysicsBodies
-
-private const val voidNodeHeight = 10000f
+import simulation.misc.Realm
 
 const val voidNodeId = -1L
 
-//val voidNode: Node = Node(
-//    id = voidNodeId,
-//    position = Vector3(0f, 0f, -voidNodeHeight),
-//    radius = 0f,
-//    isSolid = false,
-//    isWalkable = false,
-//    isRoom = false
-//)
-
 interface SimpleBody {
   val position: Vector3
-  val node: Id
+  val nearestNode: Id
 }
 
 data class HingeConstraint(
@@ -40,7 +24,7 @@ data class Body(
     val velocity: Vector3 = Vector3.zero,
     val orientation: Quaternion = Quaternion(),
     val scale: Vector3 = Vector3.unit,
-    override val node: Id = voidNodeId
+    override val nearestNode: Id = voidNodeId
 ) : SimpleBody
 
 data class DynamicBody(
@@ -51,12 +35,21 @@ data class DynamicBody(
     val hinge: HingeConstraint? = null
 )
 
-fun updateBodies(world: World, commands: Commands, collisions: Collisions): Table<Body> {
-  val delta = simulationDelta
-  val movementForces = allCharacterMovements(world, commands)
-  val orientationForces = allCharacterOrientations(world)
-  return updatePhysicsBodies(world, collisions, movementForces, orientationForces, delta)
+fun updateNearestBodyNode(realm: Realm, body: Body): Id {
+  val currentNode = realm.nodeTable[body.nearestNode]
+  return if (currentNode != null && body.position.distance(currentNode.position) <= currentNode.radius)
+    currentNode.id
+  else {
+    val nearest = realm.nodeTable.values.firstSortedBy { it.position.distance(body.position) - it.radius }
+    nearest.id
+  }
+}
+
+fun updateBody(realm: Realm): (Body) -> Body = { body ->
+  body.copy(
+      nearestNode = updateNearestBodyNode(realm, body)
+  )
 }
 
 fun isInVoid(world: World, id: Id): Boolean =
-    world.bodyTable[id]!!.node == voidNodeId
+    world.deck.bodies[id]!!.nearestNode == voidNodeId

@@ -15,7 +15,7 @@ fun isInAngleOfView(viewer: Character, viewerBody: Body, targetBody: Body): Bool
     viewer.facingVector.dot((targetBody.position - viewerBody.position).normalize()) > 0.5f
 
 fun lightDistanceMod(world: World, body: Body, id: Id, light: Light): Float {
-  val lightBody = world.bodyTable[id]!!
+  val lightBody = world.deck.bodies[id]!!
   val distance = body.position.distance(lightBody.position)
   val distanceMod = 1f - Math.min(1f, distance / light.range)
   return quadOut(distanceMod)
@@ -34,7 +34,7 @@ private fun motionMod(world: World, body: Body): Float =
     unitRange(maxVelocityMod, body.velocity.length()) * velocityModStrength
 
 fun lightRating(world: World, id: Id): Float {
-  val body = world.bodyTable[id]!!
+  val body = world.deck.bodies[id]!!
   return lightsMod(world, body) + motionMod(world, body)
 }
 
@@ -43,13 +43,13 @@ fun nearMod(distance: Float): Float =
     (1 - unitRange(3f, distance)) * 1.2f
 
 fun canSee(world: World, viewer: Id, target: Id): Boolean {
-  val viewerBody = world.bodyTable[viewer]!!
-  val targetBody = world.bodyTable[target]!!
+  val viewerBody = world.deck.bodies[viewer]!!
+  val targetBody = world.deck.bodies[target]!!
   val nodes = world.realm.nodeTable
   val distance = viewerBody.position.distance(targetBody.position)
   return distance <= viewingRange
       && isInAngleOfView(world.deck.characters[viewer]!!, viewerBody, targetBody)
-      && rayCanHitPoint(world.realm, nodes[viewerBody.node]!!, viewerBody.position, targetBody.position)
+      && rayCanHitPoint(world.realm, nodes[viewerBody.nearestNode]!!, viewerBody.position, targetBody.position)
       && lightRating(world, target) + nearMod(distance) >= minimumLightRating
 }
 

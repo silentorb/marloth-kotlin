@@ -1,10 +1,13 @@
 package generation.architecture
 
+import generation.misc.BiomeInfo
+import generation.misc.WallPlacement
 import generation.misc.biomeInfoMap
 import generation.misc.getNodeDistance
 import mythic.ent.Id
 import mythic.spatial.*
 import randomly.Dice
+import scenery.enums.MeshId
 import simulation.main.Hand
 import simulation.main.WorldTransform
 import simulation.main.addHands
@@ -65,9 +68,9 @@ data class TunnelInfo(
     val length: Float
 )
 
-fun getTunnelInfo(graph: Graph, node: Id, segmentLength: Float): TunnelInfo {
+fun getTunnelInfo(graph: Graph, node: Id): TunnelInfo {
   val neighbors = nodeNeighbors2(graph.connections, node).map { graph.nodes[it]!! }
-  val overlap = 0.5f
+  val overlap = 1f
   val length = getNodeDistance(neighbors[0], neighbors[1]) + overlap
   val horizontalVector = (neighbors[0].position.copy(z = 0f) - neighbors[1].position.copy(z = 0f)).normalize()
   val start = neighbors[1].position + horizontalVector * neighbors[1].radius
@@ -81,6 +84,15 @@ fun getTunnelInfo(graph: Graph, node: Id, segmentLength: Float): TunnelInfo {
   )
 }
 
+fun getTunnelFloorMesh(dice: Dice, biome: BiomeInfo, info: TunnelInfo): MeshId {
+  val options = if (Math.abs(info.vector.z) > 0.3f)
+    biome.stairStepMeshes
+  else
+    biome.tunnelFloorMeshes
+
+  return dice.takeOne(options)
+}
+
 val placeTunnelFloors: Architect = { meshInfo, realm, dice ->
   // Temporary improvement while the tunnel floor is rounded and the room floor isn't
   val tempHeightBump = 0.05f
@@ -88,9 +100,9 @@ val placeTunnelFloors: Architect = { meshInfo, realm, dice ->
   tunnelNodes(realm.graph)
       .flatMap { node ->
         val biome = biomeInfoMap[node.biome]!!
-        val mesh = dice.takeOne(biome.tunnelFloorMeshes)
+        val info = getTunnelInfo(realm.graph, node.id)
+        val mesh = getTunnelFloorMesh(dice, biome, info)
         val segmentLength = meshInfo[mesh.name]!!.x
-        val info = getTunnelInfo(realm.graph, node.id, segmentLength)
         val randomRotation1 = dice.getFloat(-0.1f, 0.1f)
         val randomRotation2 = dice.getFloat(-0.1f, 0.1f)
         val orientation = Quaternion()
@@ -112,11 +124,17 @@ val placeTunnelFloors: Architect = { meshInfo, realm, dice ->
       }
 }
 
+fun wallPlacementFilter(dice: Dice, wallPlacement: WallPlacement) =
+    if (wallPlacement == WallPlacement.all)
+      true
+    else
+      dice.getFloat() < 0.75f
+
 val placeTunnelWalls: Architect = { meshInfo, realm, dice ->
   tunnelNodes(realm.graph)
       .flatMap { node ->
         val segmentLength = 4f
-        val info = getTunnelInfo(realm.graph, node.id, segmentLength)
+        val info = getTunnelInfo(realm.graph, node.id)
         val lookAtAngle = getLookAtAngle(info.vector)
         val halfWidth = 2f
         val biome = biomeInfoMap[node.biome]!!
@@ -125,7 +143,7 @@ val placeTunnelWalls: Architect = { meshInfo, realm, dice ->
           val minorMod = if (step % 2 == 0) -minorOffset else minorOffset
           val minor = Vector3(0f, 0f, minorMod)
           listOf(-1f, 1f)
-              .filter { dice.getFloat() > biome.wallEnclosureRate }
+              .filter { wallPlacementFilter(dice, biome.wallPlacement) }
               .map { sideMod ->
                 val randomFlip = if (dice.getBoolean()) 1 else -1
                 val sideOffset = Vector3(info.vector.y, -info.vector.x, 0f) * (sideMod + minorMod) * halfWidth
@@ -171,7 +189,7 @@ val placeRoomWalls: Architect = { meshInfo, realm, dice ->
           val angleLength = getRoomSeriesAngleLength(firstIndex, stripCount, doorwayAngles, firstAngle)
           val segmentLength = 4f / node.radius
           val margin = 1.6f / node.radius
-          if (angleLength < segmentLength || dice.getFloat() > biome.wallEnclosureRate) {
+          if (angleLength < segmentLength || !wallPlacementFilter(dice, biome.wallPlacement)) {
             listOf()
           } else {
             createSeries(angleLength, segmentLength, margin) { step, stepOffset ->

@@ -163,7 +163,7 @@ fun generateAbstract(input: WorldInput, scale: Float, biomeGrid: BiomeGrid): Tri
 //  val nodeCount = (30 * scale).toInt()
 //  val initialNodes = distributeNodes(input.boundary, nodeCount, input.dice)
 ////  val initialGraph = handleOverlapping(entityMap(initialNodes))
-  val grid = newWindingPath(input.dice)
+  val grid = newWindingPath(input.dice, 5)
   val nextId = newIdSource(1L)
   val (initialGraph, cellMap) = gridToGraph(nextId, grid)
   val finalGraph = pipe(initialGraph, listOf(

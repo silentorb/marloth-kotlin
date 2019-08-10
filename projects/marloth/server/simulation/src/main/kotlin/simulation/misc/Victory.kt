@@ -8,8 +8,9 @@ data class GameOver(
 )
 
 fun isVictory(world: World): Boolean {
-//  val body = world.deck.bodies[world.players.first().id]!!
-//  val node = world.realm.nodeTable[body.node]!!
-//  return node.biome == BiomeId.exit
-  return false
+  val body = world.deck.bodies[world.deck.players.keys.first()]!!
+  val node = world.realm.nodeTable[body.nearestNode]
+  return node != null &&
+      node.attributes.contains(NodeAttribute.exit) &&
+      node.position.distance(body.position) < node.radius
 }

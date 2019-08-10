@@ -11,7 +11,7 @@ data class CharacterMemory(
     val lastSeen: Float,
     val id: Id,
     override val position: Vector3,
-    override val node: Id,
+    override val nearestNode: Id,
     val faction: Id,
     val targetable: Boolean
 ) : SimpleBody
@@ -30,12 +30,12 @@ fun character(world: World, knowledge: Knowledge): Character =
 fun updateCharacterKnowledge(world: World, character: Id, knowledge: Knowledge, delta: Float): Table<CharacterMemory> {
   val fresh = getVisibleCharacters(world, character).map { (id, c) ->
     val body = world.deck.bodies[id]!!
-    val node = world.realm.nodeTable[body.node]
+    val node = world.realm.nodeTable[body.nearestNode]
     Pair(id, CharacterMemory(
         lastSeen = 0f,
         id = id,
         position = body.position,
-        node = body.node,
+        nearestNode = body.nearestNode,
         faction = c.faction,
         targetable = c.isAlive && (node == null)
     ))

@@ -71,20 +71,19 @@ fun transitionVector(negativeMaxChange: Float, positiveMaxChange: Float, current
     current
 }
 
-fun updateBody(body: Body, orientationForces: List<AbsoluteOrientationForce>): Body {
-  return body.copy(
-      orientation = orientationForces.firstOrNull()?.orientation ?: body.orientation
-  )
-}
-
-fun updatePhysicsBodies(world: World, collisions: Collisions, movementForces: List<LinearImpulse>,
-                        orientationForces: List<AbsoluteOrientationForce>, delta: Float): Table<Body> {
-  val updated = world.deck.dynamicBodies.mapValues { (id, dynamicBody) ->
-    val body = world.deck.bodies[id]!!
-    updateBody(
-        body = body,
-        orientationForces = orientationForces.filter { it.body == id }
-    )
-  }
-  return world.deck.bodies.plus(updated)
-}
+//fun updateBody(body: Body, orientationForces: List<AbsoluteOrientationForce>): Body {
+//  return body.copy(
+//      orientation = orientationForces.firstOrNull()?.orientation ?: body.orientation
+//  )
+//}
+//
+//fun updatePhysicsBodies(world: World, orientationForces: List<AbsoluteOrientationForce>): Table<Body> {
+//  val updated = world.deck.dynamicBodies.mapValues { (id, _) ->
+//    val body = world.deck.bodies[id]!!
+//    updateBody(
+//        body = body,
+//        orientationForces = orientationForces.filter { it.body == id }
+//    )
+//  }
+//  return world.deck.bodies.plus(updated)
+//}

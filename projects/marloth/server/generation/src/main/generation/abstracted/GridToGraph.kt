@@ -7,7 +7,7 @@ import simulation.misc.*
 
 fun gridToGraph(nextId: IdSource, grid: MapGrid): Pair<Graph, CellPositionMap> {
   val horizontalScale = 20f
-  val verticalScale = 8f
+  val verticalScale = 7.5f
   val positionScale = Vector3(horizontalScale, horizontalScale, verticalScale) / 2f
   val nodes = grid.cells
       .map { (position, cell) ->

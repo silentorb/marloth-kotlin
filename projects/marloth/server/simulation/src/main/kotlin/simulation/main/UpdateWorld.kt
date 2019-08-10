@@ -65,21 +65,21 @@ fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: 
     { deck ->
       val (commands, activatedAbilities, collisionMap, events) = intermediate
 
-      val bodies = updateBodies(world.copy(deck = deck), commands, collisionMap)
-      val bodyWorld = world.copy(
-          deck = deck.copy(bodies = bodies)
-      )
+//      val bodies = updateBodies(world.copy(deck = deck), commands, collisionMap)
+//      val bodyWorld = world.copy(
+//          deck = deck.copy(bodies = bodies)
+//      )
 
       deck.copy(
           ambientSounds = updateAmbientAudio(dice, deck),
           attachments = mapTable(deck.attachments, updateAttachment(intermediate.events)),
-          bodies = bodies,
-          depictions = mapTable(deck.depictions, updateDepiction(bodyWorld.deck, animationDurations)),
+          bodies = mapTableValues(deck.bodies, updateBody(world.realm)),
+          depictions = mapTable(deck.depictions, updateDepiction(deck, animationDurations)),
           destructibles = mapTable(deck.destructibles, updateDestructibleHealth(events.damage)),
-          characters = mapTable(deck.characters, updateCharacter(bodyWorld.deck, commands, activatedAbilities, events)),
-          particleEffects = mapTableValues(deck.particleEffects, bodyWorld.deck.bodies, updateParticleEffect(dice, simulationDelta)),
+          characters = mapTable(deck.characters, updateCharacter(deck, commands, activatedAbilities, events)),
+          particleEffects = mapTableValues(deck.particleEffects, deck.bodies, updateParticleEffect(dice, simulationDelta)),
           players = mapTable(deck.players, updatePlayer(intermediate.commands)),
-          spirits = mapTable(deck.spirits, updateAiState(bodyWorld, simulationDelta)),
+          spirits = mapTable(deck.spirits, updateAiState(world, simulationDelta)),
           timers = if (shouldUpdateLogic(world)) mapTableValues(deck.timers, updateTimer) else deck.timers
       )
     }

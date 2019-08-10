@@ -16,7 +16,7 @@ import simulation.input.Commands
 fun shouldMoveDirectlyToward(deck: Deck, target: SimpleBody, attacker: Id): Boolean {
   val attackerBody = deck.bodies[attacker]!!
   return !isInAttackRange(attackerBody, target.position, deck.characters[attacker]!!.abilities[0])
-      && attackerBody.node == target.node
+      && attackerBody.nearestNode == target.nearestNode
 }
 
 fun spiritAttack(world: World, knowledge: Knowledge, pursuit: Pursuit): Commands {

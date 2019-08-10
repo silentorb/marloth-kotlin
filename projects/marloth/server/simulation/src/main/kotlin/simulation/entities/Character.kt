@@ -226,7 +226,7 @@ fun characterMovementFp(commands: Commands, character: Character, id: Id, body: 
 fun allCharacterMovements(world: World, commands: Commands): List<LinearImpulse> =
     world.deck.characters
         .filter { world.deck.characters[it.key]!!.isAlive }
-        .mapNotNull { characterMovementFp(filterCommands(it.key, commands), it.value, it.key, world.bodyTable[it.key]!!) }
+        .mapNotNull { characterMovementFp(filterCommands(it.key, commands), it.value, it.key, world.deck.bodies[it.key]!!) }
 
 fun allCharacterOrientations(world: World): List<AbsoluteOrientationForce> =
     world.deck.characters.map {

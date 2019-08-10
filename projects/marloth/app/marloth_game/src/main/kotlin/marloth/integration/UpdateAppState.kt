@@ -34,7 +34,7 @@ fun updateSimulationDatabase(db: Database, next: World, previous: World) {
   if (previous.gameOver == null && nextGameOver != null) {
     if (nextGameOver.winningFaction == 1L)
       createVictory(db, Victory(
-          next.players.first().name
+          next.deck.players.values.first().name
       ))
   }
 }

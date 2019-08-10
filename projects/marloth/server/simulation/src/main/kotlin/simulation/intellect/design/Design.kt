@@ -26,13 +26,13 @@ fun updatePursuit(world: World, knowledge: Knowledge, pursuit: Pursuit): Pursuit
   val targetEnemy = updateTargetEnemy(world, knowledge, pursuit)
   val target = knowledge.characters[pursuit.targetEnemy]
   val (path, targetPosition) = if (target != null) {
-    val bodies = world.bodyTable
+    val bodies = world.deck.bodies
     val attackerBody = bodies[knowledge.spiritId]!!
     val ability = character(world, knowledge).abilities[0]
     val range = ability.definition.range - spiritAttackRangeBuffer
     val distance = attackerBody.position.distance(target.position)
     val gap = distance - range
-    if (gap > 0f && attackerBody.node == target.node)
+    if (gap > 0f && attackerBody.nearestNode == target.nearestNode)
       Pair(null, (target.position - attackerBody.position).normalize() * gap)
     else
       Pair(updateAttackMovementPath(world, knowledge, target.id, pursuit.path), null)

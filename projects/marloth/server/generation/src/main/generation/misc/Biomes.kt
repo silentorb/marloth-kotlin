@@ -11,15 +11,21 @@ enum class BiomeId {
   void
 }
 
+enum class WallPlacement {
+  all,
+  some
+}
+
 data class BiomeInfo(
     val name: String,
-    val wallEnclosureRate: Float = 0.75f,
+    val wallPlacement: WallPlacement,
     val floorTexture: TextureId? = null,
     val ceilingTexture: TextureId? = null,
     val wallTexture: TextureId? = null,
     val roomFloorMeshes: List<MeshId>,
     val roomFloorMeshesTall: List<MeshId>,
     val tunnelFloorMeshes: List<MeshId>,
+    val stairStepMeshes: List<MeshId>,
     val wallMeshes: List<MeshId>,
     val ceilingMeshes: List<MeshId> = listOf()
 )
@@ -27,10 +33,11 @@ data class BiomeInfo(
 typealias BiomeInfoMap = Map<BiomeId, BiomeInfo>
 
 val commonBiomeTemplate = BiomeInfo("commonBiomeTemplate",
-    wallEnclosureRate = 0.5f,
+    wallPlacement = WallPlacement.some,
     roomFloorMeshes = listOf(MeshId.circleFloor),
     roomFloorMeshesTall = listOf( MeshId.threeStoryCircleFloor),
-    tunnelFloorMeshes = listOf(MeshId.longStairStep),
+    tunnelFloorMeshes = listOf(MeshId.longStep),
+    stairStepMeshes = listOf(MeshId.longStairStep),
     wallMeshes = listOf(MeshId.squareWall)
 )
 
@@ -57,6 +64,7 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
         name = "home",
         floorTexture = TextureId.redTile,
         ceilingTexture = TextureId.redTile,
-        wallTexture = TextureId.redTile
+        wallTexture = TextureId.redTile,
+        wallPlacement = WallPlacement.all
     )
 )

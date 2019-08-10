@@ -35,7 +35,7 @@ fun newArchitectureMesh(meshInfo: MeshInfoMap, mesh: MeshId, position: Vector3,
       body = Body(
           position = position,
           orientation = orientation,
-          node = voidNodeId,
+          nearestNode = voidNodeId,
           scale = scale
       ),
       collisionShape = CollisionObject(shape = shape)

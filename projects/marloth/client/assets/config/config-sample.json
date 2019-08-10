@@ -1,6 +1,7 @@
 {
   "paths": {
     "blender": "C:\\Program Files\\Blender Foundation\\Blender\\blender.exe",
+    "blender28": "E:\\Programs\\blender-2.80-windows64\\blender.exe",
     "filter_forge": "E:\\Programs\\Filter Forge 8\\Bin\\FFXCmdRenderer-x64.exe",
     "python": "C:\\Users\\cj\\AppData\\Local\\Programs\\Python\\Python36-32\\python.exe"
   }

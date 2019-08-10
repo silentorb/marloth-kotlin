@@ -162,7 +162,7 @@ fun newPlayer(nextId: IdSource, playerNode: Node): Deck {
       nextId = nextId,
       faction = 1,
       definition = creatures.player,
-      position = playerNode.position + Vector3(0f, 0f, 10f),
+      position = playerNode.position + Vector3(0f, 0f, 1f),
       player = Player(
           playerId = 1,
           name = "Unknown Hero",
