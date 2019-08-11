@@ -13,6 +13,7 @@ enum class BiomeId {
 
 enum class WallPlacement {
   all,
+  none,
   some
 }
 
@@ -65,6 +66,6 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
         floorTexture = TextureId.redTile,
         ceilingTexture = TextureId.redTile,
         wallTexture = TextureId.redTile,
-        wallPlacement = WallPlacement.all
+        wallPlacement = WallPlacement.none
     )
 )

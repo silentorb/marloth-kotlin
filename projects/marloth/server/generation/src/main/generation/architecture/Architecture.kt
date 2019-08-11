@@ -125,10 +125,11 @@ val placeTunnelFloors: Architect = { meshInfo, realm, dice ->
 }
 
 fun wallPlacementFilter(dice: Dice, wallPlacement: WallPlacement) =
-    if (wallPlacement == WallPlacement.all)
-      true
-    else
-      dice.getFloat() < 0.75f
+    when(wallPlacement) {
+      WallPlacement.all -> true
+      WallPlacement.none -> false
+      else -> dice.getFloat() < 0.75f
+    }
 
 val placeTunnelWalls: Architect = { meshInfo, realm, dice ->
   tunnelNodes(realm.graph)

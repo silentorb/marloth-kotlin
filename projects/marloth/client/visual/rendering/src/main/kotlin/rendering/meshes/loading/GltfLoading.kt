@@ -87,8 +87,13 @@ fun createVertexConverter(info: GltfInfo, transformBuffer: ByteBuffer, boneMap: 
   }
 }
 
+enum class VertexPacking {
+  interleaved,
+  noninterleaved
+}
+
 fun loadVertices(buffer: ByteBuffer, info: GltfInfo, vertexSchema: VertexSchema, primitive: Primitive,
-                 converter: VertexConverter): FloatBuffer {
+                 converter: VertexConverter): Pair<FloatBuffer, VertexPacking> {
   val vertexAccessor = info.accessors[primitive.attributes[AttributeType.POSITION]!!]
   val vertexCount = vertexAccessor.count
   val vertices = BufferUtils.createFloatBuffer(vertexSchema.floatSize * vertexCount)
@@ -110,7 +115,12 @@ fun loadVertices(buffer: ByteBuffer, info: GltfInfo, vertexSchema: VertexSchema,
   for (i in 0 until vertexCount) {
     for ((attributeAccessor, bufferView, attribute) in attributes) {
       if (attributeAccessor != null && bufferView != null) {
-        buffer.position(bufferView.byteOffset + attributeAccessor.byteOffset + i * bufferView.byteStride)
+        val stride = if (bufferView.byteStride != 0)
+          bufferView.byteStride
+        else
+          attribute.size * 4
+
+        buffer.position(bufferView.byteOffset + attributeAccessor.byteOffset + i * stride)
         converter(buffer, vertices, attribute, i)
       } else {
         for (x in 0 until attribute.size) {
@@ -119,7 +129,12 @@ fun loadVertices(buffer: ByteBuffer, info: GltfInfo, vertexSchema: VertexSchema,
       }
     }
   }
-  return vertices
+  val packing = if (attributes.first().second?.byteStride == 0)
+    VertexPacking.noninterleaved
+  else
+    VertexPacking.interleaved
+
+  return Pair(vertices, packing)
 }
 
 typealias SkinMap = Map<Int, Int>
@@ -174,15 +189,26 @@ fun loadPrimitive(buffer: ByteBuffer, info: GltfInfo, vertexSchemas: VertexSchem
   else
     vertexSchemas.imported
 
-  val vertices = loadVertices(buffer, info, vertexSchema, primitive, converter)
+  val (vertices, packing) = loadVertices(buffer, info, vertexSchema, primitive, converter)
   val indices = loadIndices(buffer, info, primitive)
+
+//  println("")
+//  print("vertices:")
+//  for (v in 0 until vertices.limit()) {
+//    print(" " + vertices.get(v))
+//  }
+//  println("")
+//  print("indicies:")
+//  for (v in 0 until indices.limit()) {
+//    print(" " + indices.get(v))
+//  }
 
   vertices.position(0)
   indices.position(0)
 
   return GeneralMesh(
       vertexSchema = vertexSchema,
-      vertexBuffer = newVertexBuffer(vertexSchema).load(vertices),
+      vertexBuffer = newVertexBuffer(vertexSchema, packing == VertexPacking.interleaved).load(vertices),
       indices = indices
   )
 }
@@ -474,7 +500,9 @@ fun loadGltf(vertexSchemas: VertexSchemas, filename: String, resourcePath: Strin
                 parentBone = parentBone
             )
           }
-
+          if (id == "skySphere") {
+            val k = 0
+          }
           val node = info.nodes[nodeIndex]
 
           ModelMesh(
