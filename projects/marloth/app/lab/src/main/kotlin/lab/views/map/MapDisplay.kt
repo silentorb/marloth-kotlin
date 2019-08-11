@@ -15,9 +15,8 @@ import mythic.spatial.Matrix
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
-import org.lwjgl.opengl.GL11
 import rendering.SceneRenderer
-import rendering.renderMeshElement
+import rendering.drawing.renderMeshElement
 import scenery.Camera
 import scenery.ProjectionType
 import scenery.Scene

@@ -111,7 +111,7 @@ class TextureAssetsTask extends DefaultTask {
     proc.consumeProcessOutput(sout, serr)
     proc.waitFor()
     println sout
-    if (serr) println "err> $serr"
+    if (serr) println "err>($serr)"
     
     inputs.removed { change ->
       println "removed: ${name}"
@@ -119,7 +119,7 @@ class TextureAssetsTask extends DefaultTask {
   }
 }
 
-task modelAssets27(type: ModelAssetsTask27) {
+task modelAssets(type: ModelAssetsTask27) {
   inputFiles = fileTree("$projectDir/blend/models").matching { include '**/*.blend'}
   _projectDir = projectDir
 }
@@ -135,7 +135,7 @@ task textureAssets(type: TextureAssetsTask) {
 }
 
 classes {
-  dependsOn modelAssets27
+  dependsOn modelAssets
   dependsOn modelAssets28
   dependsOn textureAssets
 }

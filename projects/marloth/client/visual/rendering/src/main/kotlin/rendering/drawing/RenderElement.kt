@@ -1,4 +1,4 @@
-package rendering
+package rendering.drawing
 
 import mythic.breeze.MultiAnimationPart
 import mythic.breeze.transformAnimatedSkeleton
@@ -6,6 +6,7 @@ import mythic.glowing.DrawMethod
 import mythic.glowing.drawMesh
 import mythic.spatial.*
 import org.joml.times
+import rendering.*
 import rendering.meshes.Primitive
 import rendering.shading.ObjectShaderConfig
 import rendering.shading.ShaderFeatureConfig

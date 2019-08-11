@@ -53,7 +53,7 @@ data class ShaderFeatureConfig(
 data class ObjectShaderConfig(
     val transform: Matrix = Matrix(),
     val texture: Texture? = null,
-    val color: Vector4 = Vector4(1f),
+    val color: Vector4? = null,
     val glow: Float = 0f,
     val normalTransform: Matrix? = null,
     val boneBuffer: UniformBuffer? = null,
@@ -83,7 +83,7 @@ class GeneralPerspectiveShader(buffers: UniformBuffers, vertexSchema: VertexSche
     program.activate()
 
     perspective.modelTransform.setValue(config.transform)
-    coloring.colorProperty.setValue(config.color)
+    coloring.colorProperty.setValue(config.color ?: Vector4(1f))
 
     if (shading != null) {
       shading.glowProperty.setValue(config.glow)

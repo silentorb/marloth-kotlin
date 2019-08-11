@@ -100,8 +100,8 @@ data class TextureReference(
 )
 
 data class Metallic(
-    val baseColorFactor: Vector4,
-    val metallicFactor: Float,
+    val baseColorFactor: Vector4?,
+    val metallicFactor: Float?,
     val baseColorTexture: TextureReference?
 )
 

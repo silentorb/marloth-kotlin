@@ -4,15 +4,14 @@ import mythic.drawing.getStaticCanvasDependencies
 import mythic.glowing.DrawMethod
 import mythic.glowing.activateTextures
 import mythic.glowing.globalState
-import mythic.glowing.unbindTexture
 import mythic.spatial.Matrix
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import org.joml.Vector2i
 import org.joml.Vector4i
 import org.joml.times
+import rendering.drawing.armatureTransforms
 import rendering.shading.Shaders
-import rendering.texturing.TextureLibrary
 
 //fun renderSkyBox(textures: TextureLibrary, meshes: ModelMap, shaders: Shaders) {
   /*

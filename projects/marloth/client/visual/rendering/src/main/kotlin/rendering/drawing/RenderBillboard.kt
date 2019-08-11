@@ -1,12 +1,13 @@
-package rendering
+package rendering.drawing
 
 import mythic.glowing.*
 import mythic.spatial.*
+import rendering.SceneRenderer
+import rendering.TexturedBillboard
 import rendering.shading.ObjectShaderConfig
 import rendering.shading.ShaderFeatureConfig
 import rendering.shading.createInstanceBuffer
 import rendering.shading.padBuffer
-import scenery.Camera
 import kotlin.math.roundToInt
 
 fun renderBillboard(sceneRenderer: SceneRenderer, billboards: List<TexturedBillboard>) {

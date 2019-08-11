@@ -1,5 +1,6 @@
 import bpy
 
+
 def bake_texture(original):
     print('Baking texture for ' + original.name)
     bpy.context.scene.objects.active = original

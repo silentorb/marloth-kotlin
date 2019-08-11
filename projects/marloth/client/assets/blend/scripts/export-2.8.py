@@ -2,9 +2,10 @@ import bpy
 import os
 import os.path
 import sys
-
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'addon'))
 from mythic_lib import get_material_texture_node
+sys.path.append(os.path.dirname(__file__))
+from baking import bake_all
 
 models_path = 'src/main/resources/models'
 
@@ -141,7 +142,9 @@ def select_render_visible():
             obj.select = True
 
 
-def prepare_scene():
+def prepare_scene(export_dir):
+    os.makedirs(export_dir, exist_ok=True)
+
     for armature in of_type(bpy.data.objects, 'ARMATURE'):
         prepare_armature(armature)
 
@@ -156,6 +159,7 @@ def prepare_scene():
         preprocess_bounds_shape(obj)
 
     # create_missing_image_textures()
+    bake_all(export_dir)
 
 
 def get_blend_filename():
@@ -163,10 +167,9 @@ def get_blend_filename():
     return os.path.splitext(os.path.basename(filepath))[0]
 
 
-def get_export_filepath():
-    name = get_blend_filename()
+def get_export_dir(name):
     script_path = os.path.realpath(__file__)
-    return os.path.abspath(os.path.join(os.path.dirname(script_path), '../../', models_path, name, name + '.gltf'))
+    return os.path.abspath(os.path.join(os.path.dirname(script_path), '../../', models_path, name))
 
 
 def get_file_storage_method():
@@ -176,9 +179,7 @@ def get_file_storage_method():
     return 'COPY'
 
 
-def export_gltf():
-    filepath = get_export_filepath()
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+def export_gltf(filepath):
     bpy.ops.export_scene.gltf(
         export_format='GLTF_SEPARATE',
         ui_tab='GENERAL',
@@ -215,7 +216,16 @@ def export_gltf():
         filepath=filepath
     )
 
+
+def main():
+    name = get_blend_filename()
+    export_dir = get_export_dir(name)
+    export_file = os.path.join(export_dir, name + '.gltf')
+    prepare_scene(export_dir)
+    export_gltf(export_file)
+    # bpy.ops.wm.save_as_mainfile(filepath='e:/deleteme.blend')
+    print('Exported ', export_file)
+
+
 if __name__ == '__main__':
-    prepare_scene()
-    export_gltf()
-    print('Exported ', get_export_filepath())
+    main()

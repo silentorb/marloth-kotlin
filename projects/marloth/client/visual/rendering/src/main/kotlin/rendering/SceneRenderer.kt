@@ -12,6 +12,7 @@ import mythic.spatial.Vector4
 import mythic.typography.*
 import org.joml.Vector2i
 import org.joml.Vector4i
+import rendering.drawing.renderElementGroup
 import rendering.shading.GeneralPerspectiveShader
 import rendering.shading.ObjectShaderConfig
 import rendering.shading.ShaderFeatureConfig

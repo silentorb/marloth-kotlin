@@ -1,10 +1,10 @@
 package marloth.clienting
 
 import mythic.drawing.Canvas
-import mythic.glowing.globalState
 import mythic.platforming.WindowInfo
 import org.joml.zw
 import rendering.*
+import rendering.drawing.renderSkySphere
 
 
 fun prepareRender(renderer: GameSceneRenderer): List<ScreenFilter> {
@@ -15,6 +15,7 @@ fun prepareRender(renderer: GameSceneRenderer): List<ScreenFilter> {
 }
 
 fun renderScene(renderer: GameSceneRenderer) {
+  renderSkySphere(renderer.renderer.renderer)
   renderer.renderWorldMesh()
   renderer.renderElements()
   if (false) {
