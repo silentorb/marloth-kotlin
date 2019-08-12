@@ -242,6 +242,22 @@ fun mapLights(deck: Deck, player: Id) =
               null
         ))
 
+fun gatherBackground(): ElementGroups {
+  return listOf(ElementGroup(
+      meshes = listOf(
+          MeshElement(
+              id = 1,
+              mesh = MeshId.skySphere.toString(),
+              transform = Matrix().scale(100f),
+              material = Material(
+                  color = Vector4(1f, 1f, 1f, 0.5f),
+                  texture = "skySphere"
+              )
+          )
+      )
+  ))
+}
+
 fun createScene(deck: Deck, screen: Screen, player: Id): GameScene {
   val camera = createCamera(deck, screen)
   return GameScene(
@@ -257,7 +273,8 @@ fun createScene(deck: Deck, screen: Screen, player: Id): GameScene {
             { it.screenColor.activate(Vector4(1f, 0f, 0f, 0.4f)) }
         )
       else
-        listOf()
+        listOf(),
+      background = gatherBackground()
   )
 }
 

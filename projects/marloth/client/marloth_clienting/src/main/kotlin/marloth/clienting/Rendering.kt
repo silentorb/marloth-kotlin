@@ -4,7 +4,7 @@ import mythic.drawing.Canvas
 import mythic.platforming.WindowInfo
 import org.joml.zw
 import rendering.*
-import rendering.drawing.renderSkySphere
+import rendering.drawing.renderBackground
 
 
 fun prepareRender(renderer: GameSceneRenderer): List<ScreenFilter> {
@@ -15,9 +15,9 @@ fun prepareRender(renderer: GameSceneRenderer): List<ScreenFilter> {
 }
 
 fun renderScene(renderer: GameSceneRenderer) {
-  renderSkySphere(renderer.renderer.renderer)
-  renderer.renderWorldMesh()
-  renderer.renderElements()
+  val scene = renderer.scene
+  renderBackground(renderer.renderer.renderer, renderer.renderer.camera, scene.background)
+  renderElements(renderer.renderer, scene.opaqueElementGroups, scene.transparentElementGroups)
   if (false) {
     renderArmatures(renderer)
   }

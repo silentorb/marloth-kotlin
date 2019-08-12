@@ -2,18 +2,18 @@ package rendering.drawing
 
 import mythic.glowing.*
 import mythic.spatial.*
+import rendering.Renderer
 import rendering.SceneRenderer
 import rendering.TexturedBillboard
 import rendering.shading.ObjectShaderConfig
 import rendering.shading.ShaderFeatureConfig
 import rendering.shading.createInstanceBuffer
 import rendering.shading.padBuffer
+import scenery.Camera
 import kotlin.math.roundToInt
 
-fun renderBillboard(sceneRenderer: SceneRenderer, billboards: List<TexturedBillboard>) {
-  val renderer = sceneRenderer.renderer
-  val model = sceneRenderer.meshes["billboard"]!!
-  val camera = sceneRenderer.camera
+fun renderBillboard(renderer: Renderer, camera: Camera, billboards: List<TexturedBillboard>) {
+  val model = renderer.meshes["billboard"]!!
   val textures = renderer.textures
   val texture = textures[billboards.first().texture.toString()]
   if (texture == null)

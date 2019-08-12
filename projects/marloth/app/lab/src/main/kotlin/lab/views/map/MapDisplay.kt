@@ -109,7 +109,7 @@ fun renderMapMesh(sceneRenderer: SceneRenderer, realm: Realm, deck: Deck, config
         .mapNotNull { convertSimpleDepiction(deck, it.key, it.value) }
 //    renderElements(sceneRenderer, elements)
     for (element in elements) {
-      renderMeshElement(sceneRenderer, element)
+      renderMeshElement(sceneRenderer.renderer, element)
     }
 //    renderElements(sceneRenderer, )
 //    for (sector in sectors) {

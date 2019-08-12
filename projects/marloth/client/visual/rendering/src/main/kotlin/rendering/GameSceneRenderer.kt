@@ -13,18 +13,6 @@ import org.joml.times
 import rendering.drawing.armatureTransforms
 import rendering.shading.Shaders
 
-//fun renderSkyBox(textures: TextureLibrary, meshes: ModelMap, shaders: Shaders) {
-  /*
-  val texture = textures[Textures.background]!!
-  val mesh = meshes[MeshType.skybox]!!
-  shaders.texturedFlat.activate(ObjectShaderConfig(
-      texture = texture,
-      transform = Matrix().scale(900f)
-  ))
-  mesh.primitives[0].mesh.draw(DrawMethod.triangleFan)
-  */
-//}
-
 typealias ScreenFilter = (Shaders) -> Unit
 
 fun drawSkeleton(renderer: SceneRenderer, armature: Armature, transforms: List<Matrix>, modelTransform: Matrix) {
@@ -87,8 +75,6 @@ class GameSceneRenderer(
     if (filters.any()) {
       applyFrameBufferTexture(filters.last())
     }
-
-//    globalState.cullFaces = true
   }
 
   fun applyFrameBufferTexture(filter: ScreenFilter) {
@@ -98,45 +84,4 @@ class GameSceneRenderer(
     activateTextures(listOf(offscreenBuffer.colorTexture, offscreenBuffer.depthTexture!!))
     canvasDependencies.meshes.image.draw(DrawMethod.triangleFan)
   }
-
-  fun renderElements() {
-    renderElements(renderer, scene.opaqueElementGroups, scene.transparentElementGroups)
-  }
-
-//  fun renderSectorMesh(sector: SectorMesh) {
-//    var index = 0
-//    for (TextureName in sector.textureIndex) {
-//      val texture = renderer.renderer.mappedTextures[TextureName] ?: renderer.renderer.textures[TextureName.toString()]
-//      if (texture != null)
-//        texture.activate()
-//      else
-//        unbindTexture()
-//
-//      sector.mesh.drawElement(DrawMethod.triangleFan, index++)
-//    }
-//  }
-
-  fun renderWorldMesh() {
-    globalState.cullFaces = true
-//    val worldMesh = renderer.renderer.worldMesh
-//    if (worldMesh != null) {
-//      val effectConfig = ObjectShaderConfig(
-//          transform = Matrix(),
-//          texture = renderer.renderer.mappedTextures[Textures.checkers]!!,
-//          color = Vector4(1f),
-//          normalTransform = Matrix()
-//      )
-//      renderer.effects.textured.activate(effectConfig)
-//      for (sector in worldMesh.sectors) {
-//        renderSectorMesh(sector)
-//      }
-//    }
-  }
-
-//  fun render() {
-//    prepareRender()
-//    renderWorldMesh()
-//    renderElements()
-//  }
-
 }

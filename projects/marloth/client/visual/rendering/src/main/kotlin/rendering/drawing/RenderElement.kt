@@ -11,11 +11,12 @@ import rendering.meshes.Primitive
 import rendering.shading.ObjectShaderConfig
 import rendering.shading.ShaderFeatureConfig
 import rendering.shading.populateBoneBuffer
+import scenery.Camera
 import scenery.MeshName
 
-fun renderElement(renderer: SceneRenderer, primitive: Primitive, material: Material, transform: Matrix, isAnimated: Boolean) {
+fun renderElement(renderer: Renderer, primitive: Primitive, material: Material, transform: Matrix, isAnimated: Boolean) {
   val orientationTransform = getRotationMatrix(transform)
-  val texture = renderer.renderer.textures[material.texture]
+  val texture = renderer.textures[material.texture]
 
   if (material.texture != null && texture == null) {
     val debugMissingTexture = 0
@@ -27,7 +28,7 @@ fun renderElement(renderer: SceneRenderer, primitive: Primitive, material: Mater
       normalTransform = orientationTransform,
       texture = texture
   )
-  val effect = renderer.renderer.getShader(primitive.mesh.vertexSchema, ShaderFeatureConfig(
+  val effect = renderer.getShader(primitive.mesh.vertexSchema, ShaderFeatureConfig(
       skeleton = isAnimated,
       texture = texture != null
   ))
@@ -69,31 +70,31 @@ private fun useMesh(meshes: ModelMeshMap, MeshName: MeshName, action: (ModelMesh
   }
 }
 
-fun renderMeshElement(sceneRenderer: SceneRenderer, element: MeshElement, armature: Armature? = null, transforms: List<Matrix>? = null) {
-  val meshes = sceneRenderer.renderer.meshes
+fun renderMeshElement(renderer: Renderer, element: MeshElement, armature: Armature? = null, transforms: List<Matrix>? = null) {
+  val meshes = renderer.meshes
   useMesh(meshes, element.mesh) { mesh ->
     for (primitive in mesh.primitives) {
       val transform = getElementTransform(element, primitive, transforms)
       val materal = element.material ?: primitive.material
       val isAnimated = armature != null && primitive.isAnimated
-      renderElement(sceneRenderer, primitive, materal, transform, isAnimated)
+      renderElement(renderer, primitive, materal, transform, isAnimated)
     }
   }
 }
 
-fun renderElementGroup(sceneRenderer: SceneRenderer, group: ElementGroup) {
-  val armature = sceneRenderer.renderer.armatures[group.armature]
+fun renderElementGroup(renderer: Renderer, camera: Camera, group: ElementGroup) {
+  val armature = renderer.armatures[group.armature]
   val transforms = if (armature != null)
     armatureTransforms(armature, group)
   else
     null
 
   if (transforms != null) {
-    populateBoneBuffer(sceneRenderer.renderer.uniformBuffers.bone, armature!!.transforms, transforms)
+    populateBoneBuffer(renderer.uniformBuffers.bone, armature!!.transforms, transforms)
   }
 
   for (element in group.meshes) {
-    renderMeshElement(sceneRenderer, element, armature, transforms)
+    renderMeshElement(renderer, element, armature, transforms)
   }
 
   if (armature != null) {
@@ -102,12 +103,12 @@ fun renderElementGroup(sceneRenderer: SceneRenderer, group: ElementGroup) {
       if (bone == null) {
         val debugMissingBone = 0
       } else {
-        val meshes = sceneRenderer.renderer.meshes
+        val meshes = renderer.meshes
         useMesh(meshes, element.mesh) { mesh ->
           for (primitive in mesh.primitives) {
             val transform = element.transform * transforms!![bone]
             val materal = element.material ?: primitive.material
-            renderElement(sceneRenderer, primitive, materal, transform, false)
+            renderElement(renderer, primitive, materal, transform, false)
           }
         }
       }
@@ -115,6 +116,6 @@ fun renderElementGroup(sceneRenderer: SceneRenderer, group: ElementGroup) {
   }
 
   if (group.billboards.any()) {
-    renderBillboard(sceneRenderer, group.billboards)
+    renderBillboard(renderer, camera, group.billboards)
   }
 }

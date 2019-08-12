@@ -78,20 +78,20 @@ fun renderWireframeWorldMesh(renderer: SceneRenderer) {
 //  }
 }
 
-fun renderWireframeScene(renderers: List<GameSceneRenderer>, data: GameViewRenderData) {
-  renderers.forEach {
-    it.prepareRender(listOf())
-    renderWireframeWorldMesh(it.renderer)
-    it.renderElements()
-  }
-}
-
-fun renderWireframeScene(renderer: GameSceneRenderer) {
-  renderer.prepareRender(listOf())
-  renderWireframeWorldMesh(renderer.renderer)
-  renderer.renderElements()
-  renderer.finishRender(renderer.renderer.viewport.zw, listOf())
-}
+//fun renderWireframeScene(renderers: List<GameSceneRenderer>, data: GameViewRenderData) {
+//  renderers.forEach {
+//    it.prepareRender(listOf())
+//    renderWireframeWorldMesh(it.renderer)
+//    it.renderElements()
+//  }
+//}
+//
+//fun renderWireframeScene(renderer: GameSceneRenderer) {
+//  renderer.prepareRender(listOf())
+//  renderWireframeWorldMesh(renderer.renderer)
+//  renderer.renderElements()
+//  renderer.finishRender(renderer.renderer.viewport.zw, listOf())
+//}
 
 //fun renderNormalScene(renderer: GameSceneRenderer, config: GameViewConfig) {
 //  val r = renderer.renderer.renderer

@@ -8,6 +8,7 @@ data class GameScene(
     val main: Scene,
     val opaqueElementGroups: ElementGroups,
     val transparentElementGroups: ElementGroups,
+    val background: ElementGroups,
     val filters: List<ScreenFilter>
 ) {
 

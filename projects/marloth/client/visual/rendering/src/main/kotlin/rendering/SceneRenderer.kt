@@ -111,12 +111,12 @@ class SceneRenderer(
 
 fun renderElements(sceneRenderer: SceneRenderer, opaqueElementGroups: ElementGroups, transparentElementGroups: ElementGroups) {
   for (group in opaqueElementGroups) {
-    renderElementGroup(sceneRenderer, group)
+    renderElementGroup(sceneRenderer.renderer, sceneRenderer.camera, group)
   }
 
   globalState.depthWrite = false
   for (group in transparentElementGroups) {
-    renderElementGroup(sceneRenderer, group)
+    renderElementGroup(sceneRenderer.renderer, sceneRenderer.camera, group)
   }
   globalState.depthWrite = true
 }

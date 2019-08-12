@@ -2,8 +2,8 @@ import bpy
 import os.path
 
 
-def create_image(image_name, image_path):
-    image = bpy.data.images.new(image_name, 512, 512)
+def create_image(image_name, image_path, length):
+    image = bpy.data.images.new(image_name, length, length)
     image.filepath_raw = image_path
     image.file_format = 'JPEG'
     return image
@@ -71,7 +71,9 @@ def bake_all(image_directory):
     bake_pairs = get_bake_object_material_pairs()
     for obj, material in bake_pairs:
         image_path = os.path.join(image_directory, material.name + '.jpg')
-        image = create_image(material.name, image_path)
+        scale = int(round(float(material['scale']))) if 'scale' in material else 1.0
+        length = 512 * scale
+        image = create_image(material.name, image_path, length)
         bake_texture(obj, material, image)
         image.save()
         prune_graph_for_texture(material, image)

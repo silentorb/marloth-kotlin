@@ -16,7 +16,6 @@ data class Scene(
     val lights: List<Light> = listOf()
 )
 
-
 data class BillboardDetails(
     val text: String,
     val cooldown: Float? = null
