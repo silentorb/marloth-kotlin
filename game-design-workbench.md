@@ -26,6 +26,12 @@ If an author is looking for awe, they should spend more time looking for it outs
 
 Authors long to be wowed by their own creations.
 
+The other issue with the current direction is while it's good to try to simplify the tech and not rely so much on animated, AI driven characters, the world feels so lonely and empty without that.  And not having lighting is a big issue too.
+
+In some ways I'm reconsidering going back to the original Marloth RPG gameplay, or at least something close to it.
+
+Also re-examining the original text-based Marloth game, which was one of the most fun games I made and was completely a simulation.
+
 ### UI
 
 For at least the past decade somewhere somehow I got this idea that games need to be as single view as possible and maximize that single view.  I think my main concerns have been:
