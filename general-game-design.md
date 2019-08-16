@@ -1,4 +1,4 @@
-# Game Design
+# General Game Design
 
 ## Core Gameplay
 

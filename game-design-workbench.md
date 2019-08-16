@@ -8,17 +8,17 @@ If I had to pick a single genre for Marloth, I'd have to say it would be RPG, an
 
 I'd also love to have as much strategy and simulation in this game as possible, but at the end of the day, RPGs have been far more staples than those other genres.  I need to think more in terms of staples.  I don't want to create a novelty game that is more original than practical.
 
-### Favorite RPG Games
+-- 8/15/2019 -- I'm realizing I can't just throw out simulation like that.  One of the fundamental tenants of this game is to create a world that does not revolve around the character.  That implies simulation.  Also, one of my primary inspirations are dreams that feel very much like simulation.  Secondly, I love simulation and always gravitate toward it.  Thirdly, while the gameplay part of this game keeps staggering, the more general world building is having an easier time keeping my interest and moving forward.
 
-* Dark Souls
-* Tales of Maj'Eyal
-* The Binding of Isaac
-* Grim Dawn
-* Neverwinter Nights
+With that said, I need to better address the reasons why I felt like I needed to move away from simulation.
 
-### Character Growth
+The first concern is none of my favorite games are simulations.  The simulation games I've liked the most end up feeling like novelties to me. (Though technically I suppose all games should be categorized as novelties.)  The closest exception to this would be classic AOS maps, which would simulate a battle between two forces without any player interaction, and I loved those games, (though I also reached the conclusion that there's only so far you can take that genre and have never seriously pursued making my own version.)
 
-My single favorite part of games is the screen where you select new abilities when you level up.  It's the part of the game I've always felt I don't see enough of in an RPG.  I've always wanted to play an RPG that was designed to make you regularly visiting that screen without increasing grind.
+The second concern, which probably ties into the first concern, is simulations do not naturally lend themselves to gameplay.  They put the focus on making an interesting world, and then designers make a game on top of that.  It's not a straight line to fun gameplay.  Simulations allow for rich emergent gameplay, but I'm increasingly finding emergent anything to be overrated.  (By the time emergence is tamed and contained enough so that it does more good than harm, most of the initial cost saving and wow-factor that initially attract people to emergence is spent.)
+
+I probably need a dedicated section discussing emergence.  The main point could probably be summed up as, "emergence is impractical until all of its possible outputs are at least generally accounted for."  It can be fun when an author is surprised by his own creation, but most of the time such surprises are flaws, not features.  This point is a little depressing, and a little disenchanting, but I think it is also healthy.  Authors tend to look at their creation as an idol—look to it for life it cannot have and fulfillment it cannot give.
+
+
 
 ### UI
 
@@ -68,32 +68,3 @@ Both Tales of Maj'Eyal and Dark Souls have tactics and strategy but the differen
 * In Dark Souls most of the decisions of execution are made prior to the encounter
 
 The one exception to TOME is on the harder difficulties players sometimes use completely different equipment for different encounters.  This isn't needed for the normal or nightmare difficulties.  It's also noted that at that point while different loadouts are important, the game wasn't really designed for that and doing so is a little bit of a tedious hack.
-
-### Information Gathering
-
-To have strategy, the player must have some idea of what lies ahead.
-
-### Rules for Items, Abilities, and Modifiers
-
-* Order of ability acquisition should not matter (should be commutative)
-* When applying modifiers, all operations should be aggregated and batched
-  * Example: All addition should be applied first and then all multiplication second, and each multiplier should be added together, leading to a single multiplication operation
-
-### Character Growth
-
-Right now I'm leaning toward a character system with:
-
-* Single and dual character classes
-* No leveling
-* Item system with no inventory and four general equipment slots
-* Unlimited ability system
-* Some items and abilities are constrained to certain classes
-* Your class influences the types of items you find
-  * Players should come across some items for other classes so that:
-    * They feel some tension to add another class (if they don't already have a second)
-    * It feels a little more realistic to find a mix
-  * Players should not come across too many items from other classes:
-    * To minimize junk items
-    * To prevent imbalanced streaks where the player can't use anything they come across
-* Possibly added weight is given to a player's first class
-  * Such as some abilities that are only available if a certain class is your primary class
