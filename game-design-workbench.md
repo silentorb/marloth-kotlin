@@ -18,7 +18,13 @@ The second concern, which probably ties into the first concern, is simulations d
 
 I probably need a dedicated section discussing emergence.  The main point could probably be summed up as, "emergence is impractical until all of its possible outputs are at least generally accounted for."  It can be fun when an author is surprised by his own creation, but most of the time such surprises are flaws, not features.  This point is a little depressing, and a little disenchanting, but I think it is also healthy.  Authors tend to look at their creation as an idol—look to it for life it cannot have and fulfillment it cannot give.
 
+If any part of your system is not bolted down, it will cause more harm than good.
 
+During the creative process, less than 1% of all accidents are happy.  The problem is that any artist worth anything fixes the bad accidents as they come, and only leaves the happy accidents.  So the bad accidents live short lives, while the happy accidents become immortalized.  Thus, accidents tend to take on a better reputation than they deserve.
+
+If an author is looking for awe, they should spend more time looking for it outside of their own creations.
+
+Authors long to be wowed by their own creations.
 
 ### UI
 
