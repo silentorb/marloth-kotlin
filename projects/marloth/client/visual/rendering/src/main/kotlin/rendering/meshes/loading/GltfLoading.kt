@@ -167,7 +167,8 @@ fun loadMaterial(info: GltfInfo, materialIndex: Int): Material {
   return Material(
       color = color,
       glow = glow,
-      texture = texture
+      texture = texture,
+      shading = true
   )
 }
 

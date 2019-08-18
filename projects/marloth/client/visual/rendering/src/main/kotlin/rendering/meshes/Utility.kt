@@ -107,4 +107,4 @@ fun partitionModelMeshes(model: Model): List<TransientModelElement> {
 //}
 
 fun createModelElements(simpleMesh: GeneralMesh, color: Vector4 = Vector4(1f)) =
-    listOf(Primitive(simpleMesh, Material(color)))
+    listOf(Primitive(simpleMesh, Material(color, shading = false)))

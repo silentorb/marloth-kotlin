@@ -22,7 +22,7 @@ import mythic.desktop.createDesktopPlatform
 import mythic.ent.pipe
 import mythic.quartz.newTimestepState
 import randomly.Dice
-import simulation.main.World
+import simulation.main.*
 import simulation.misc.MeshInfoMap
 import simulation.misc.WorldInput
 import simulation.misc.createWorldBoundary
@@ -50,16 +50,20 @@ fun generateWorld(meshInfo: MeshInfoMap, gameViewConfig: GameViewConfig): World 
       dice
   )
   val initialWorld = generateWorld(input)
+  val (nextId, finalize) = newIdSource(initialWorld)
+  val deck = pipeHandsToDeck(nextId, listOf(
+      { _ -> placeArchitecture(meshInfo, initialWorld.realm, dice) },
+      populateWorld(meshInfo, input, initialWorld.realm)
+//      { deck ->
+//        if (gameViewConfig.haveEnemies)
+//          addEnemies(deck, boundary, dice)
+//        else
+//          world
+//      }
+  ))(initialWorld.deck)
 
-  return pipe(initialWorld, listOf(
-      populateWorld(meshInfo, input),
-      placeArchitecture(meshInfo, initialWorld.realm, dice),
-      { world ->
-        if (gameViewConfig.haveEnemies)
-          addEnemies(world, boundary, dice)
-        else
-          world
-      }
+  return finalize(initialWorld.copy(
+      deck = deck
   ))
 }
 

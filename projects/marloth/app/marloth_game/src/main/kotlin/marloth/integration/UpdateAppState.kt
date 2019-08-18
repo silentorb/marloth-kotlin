@@ -1,7 +1,6 @@
 package marloth.integration
 
 import haft.mapEventsToCommands
-import haft.simpleCommand
 import marloth.clienting.*
 import marloth.clienting.audio.updateAppStateAudio
 import marloth.clienting.gui.*
@@ -67,7 +66,8 @@ fun updateClientFromWorld(worlds: List<World>, commands: List<Command>): (Client
 
 fun getGameCommands(state: AppState): List<Command> {
   val getBinding = getBinding(state.client.input, state.client.input.gameInputProfiles)
-  return mapGameCommands(mapEventsToCommands(state.client.input.deviceStates, gameStrokes, getBinding))
+  val rawCommands = mapEventsToCommands(state.client.input.deviceStates, gameStrokes, getBinding)
+  return mapGameCommands(state.worlds.first().deck.players, rawCommands)
 }
 
 fun updateAppWorld(app: GameApp, previousAppState: AppState, appState: AppState, commands: List<Command>, events: Events): List<World> {

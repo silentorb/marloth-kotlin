@@ -92,7 +92,7 @@ fun convertSimpleDepiction(deck: Deck, id: Id, mesh: MeshName, texture: TextureN
     translate.rotate(body.orientation)
 
   val material = if (texture != null)
-    Material(texture = texture)
+    Material(texture = texture, shading = true)
   else
     null
 
@@ -248,10 +248,11 @@ fun gatherBackground(): ElementGroups {
           MeshElement(
               id = 1,
               mesh = MeshId.skySphere.toString(),
-              transform = Matrix().scale(100f),
+              transform = Matrix().scale(200f),
               material = Material(
                   color = Vector4(1f, 1f, 1f, 0.5f),
-                  texture = "skySphere"
+                  texture = "skySphere",
+                  shading = false
               )
           )
       )

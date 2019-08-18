@@ -8,6 +8,8 @@ import mythic.ent.Id
 import mythic.spatial.*
 import randomly.Dice
 import scenery.enums.MeshId
+import simulation.entities.ArchitectureElement
+import simulation.main.Deck
 import simulation.main.Hand
 import simulation.main.WorldTransform
 import simulation.main.addHands
@@ -53,10 +55,12 @@ val placeRoomFloors: Architect = { meshInfo, realm, dice ->
 
         val mesh = dice.takeOne(meshOptions)
         newArchitectureMesh(
+            architecture = ArchitectureElement(isWall = false),
             meshInfo = meshInfo,
             mesh = mesh,
             position = node.position + floorOffset + alignWithCeiling(meshInfo)(mesh),
             orientation = Quaternion(),
+            node = node.id,
             texture = biome.floorTexture
         )
       }
@@ -113,10 +117,12 @@ val placeTunnelFloors: Architect = { meshInfo, realm, dice ->
           val minorMod = if (step % 2 == 0) -minorOffset else minorOffset
           val minor = Vector3(0f, 0f, minorMod + tempHeightBump)
           newArchitectureMesh(
+              architecture = ArchitectureElement(isWall = false),
               meshInfo = meshInfo,
               mesh = mesh,
               position = info.start + info.vector * stepOffset + floorOffset + minor + alignWithCeiling(meshInfo)(mesh),
               orientation = orientation,
+              node = node.id,
               texture = biome.floorTexture
           )
         }
@@ -210,5 +216,5 @@ private val architectureSteps = listOf(
     placeTunnelWalls
 )
 
-fun placeArchitecture(meshInfo: MeshInfoMap, realm: Realm, dice: Dice): WorldTransform =
-    addHands(architectureSteps.flatMap { it(meshInfo, realm, dice) })
+fun placeArchitecture(meshInfo: MeshInfoMap, realm: Realm, dice: Dice): List<Hand> =
+    architectureSteps.flatMap { it(meshInfo, realm, dice) }

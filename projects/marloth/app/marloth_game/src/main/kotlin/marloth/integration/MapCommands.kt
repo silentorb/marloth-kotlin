@@ -2,6 +2,8 @@ package marloth.integration
 
 import haft.HaftCommands
 import marloth.clienting.input.GuiCommandType
+import mythic.ent.Table
+import simulation.entities.Player
 import simulation.input.Command
 import simulation.input.CommandType
 
@@ -26,11 +28,11 @@ private val commandTypeMap: Map<UserCommandType, CharacterCommandType> =
 //    UserCommandType.lookDown to GuiCommandType.lookDown
 //)
 
-fun mapGameCommands(commands: HaftCommands<CommandType>): List<Command> =
-    commands.map {
+fun mapGameCommands(players: Table<Player>, commands: HaftCommands<CommandType>): List<Command> =
+    commands.map { command ->
       Command(
-          type = it.type,
-          target = it.target.toLong(),
-          value = it.value
+          type = command.type,
+          target = players.entries.first { it.value.playerId == command.target }.key,
+          value = command.value
       )
     }

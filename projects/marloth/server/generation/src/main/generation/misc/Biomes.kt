@@ -66,6 +66,6 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
         floorTexture = TextureId.redTile,
         ceilingTexture = TextureId.redTile,
         wallTexture = TextureId.redTile,
-        wallPlacement = WallPlacement.none
+        wallPlacement = WallPlacement.all
     )
 )

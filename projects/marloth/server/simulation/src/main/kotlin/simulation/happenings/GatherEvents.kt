@@ -146,8 +146,8 @@ fun gatherCommandTriggers(deck: Deck,commands: Commands): List<Triggering> {
       CommandType.interactPrimary -> {
         val player = deck.players.keys.first()
         val character = deck.characters[player]!!
-        val interactable = deck.interactables[character.canInteractWith]!!
-        val action = interactable.primaryCommand.action
+        val interactable = deck.interactables[character.canInteractWith]
+        val action = interactable?.primaryCommand?.action
         if (action != null) {
           Triggering(
               actor = player,

@@ -2,14 +2,15 @@ package generation.architecture
 
 import generation.misc.biomeInfoMap
 import generation.structure.wallHeight
+import mythic.ent.Id
 import mythic.spatial.Pi
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import simulation.physics.Body
-import simulation.physics.voidNodeId
 import randomly.Dice
 import scenery.enums.MeshId
 import scenery.enums.TextureId
+import simulation.entities.ArchitectureElement
 import simulation.physics.CollisionObject
 import simulation.main.Hand
 import simulation.entities.Depiction
@@ -24,9 +25,12 @@ val floorOffset = Vector3(0f, 0f, -wallHeight / 2f)
 
 fun newArchitectureMesh(meshInfo: MeshInfoMap, mesh: MeshId, position: Vector3,
                         orientation: Quaternion = Quaternion(),
+                        node: Id,
+                        architecture: ArchitectureElement,
                         texture: TextureId? = null, scale: Vector3 = Vector3.unit): Hand {
   val shape = meshInfo[mesh.name]!!
   return Hand(
+      architecture = architecture,
       depiction = Depiction(
           type = DepictionType.staticMesh,
           mesh = mesh.name,
@@ -35,7 +39,7 @@ fun newArchitectureMesh(meshInfo: MeshInfoMap, mesh: MeshId, position: Vector3,
       body = Body(
           position = position,
           orientation = orientation,
-          nearestNode = voidNodeId,
+          nearestNode = node,
           scale = scale
       ),
       collisionShape = CollisionObject(shape = shape)
@@ -66,11 +70,13 @@ fun newWall(meshInfo: MeshInfoMap, dice: Dice, node: Node, position: Vector3, an
   val randomHorizontalFlip = getHorizontalFlip(dice, wallData)
   val orientation = Quaternion().rotateZ(angleZ + randomHorizontalFlip)
   return newArchitectureMesh(
+      architecture = ArchitectureElement(isWall = true),
       meshInfo = meshInfo,
       mesh = mesh,
       position = position + floorOffset + alignWithFloor(meshInfo)(mesh) + Vector3(randomShift(dice), randomShift(dice), randomShift(dice)),
       scale = Vector3.unit,
       orientation = orientation,
+      node = node.id,
       texture = biome.wallTexture
   )
 }

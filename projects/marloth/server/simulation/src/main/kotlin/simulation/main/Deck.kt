@@ -14,6 +14,7 @@ data class Deck(
     val accessories: Table<Accessory> = mapOf(),
     val ambientSounds: Table<AmbientAudioEmitter> = mapOf(),
     val animations: Table<ArmatureAnimation> = mapOf(),
+    val architecture: Table<ArchitectureElement> = mapOf(),
     val attachments: Table<Attachment> = mapOf(),
     val bodies: Table<Body> = mapOf(),
     val buffs: Table<Modifier> = mapOf(),
@@ -63,8 +64,8 @@ fun toDeck(hands: List<IdHand>): Deck =
 fun mergeDecks(decks: List<Deck>): Deck =
     decks.reduce { a, deck -> a.plus(deck) }
 
-fun allHandsOnDeck(hands: List<Hand>, nextId: IdSource): Deck =
-    hands.fold(Deck(), { d, h -> d.plus(toDeck(nextId, h)) })
+fun allHandsOnDeck(hands: List<Hand>, nextId: IdSource, deck: Deck = Deck()): Deck =
+    hands.fold(deck, { d, h -> d.plus(toDeck(nextId, h)) })
 
 val addDeck: ((IdSource) -> List<IdHand>) -> WorldTransform = { deckSource ->
   { world ->
@@ -74,6 +75,12 @@ val addDeck: ((IdSource) -> List<IdHand>) -> WorldTransform = { deckSource ->
         deck = newDeck
     ))
   }
+}
+
+fun pipeHandsToDeck(nextId: IdSource, sources: List<(Deck) -> List<Hand>>): (Deck) -> Deck = { deck ->
+  pipe(sources.map { handSource ->
+    { accumulator: Deck -> allHandsOnDeck(handSource(accumulator), nextId, accumulator) }
+  })(deck)
 }
 
 fun addHands(hands: List<Hand>): WorldTransform =

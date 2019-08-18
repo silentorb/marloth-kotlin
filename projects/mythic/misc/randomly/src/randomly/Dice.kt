@@ -26,9 +26,29 @@ class Dice(private val seed: Long) {
       list[random.nextInt(list.size)]
   }
 
+  fun <T> takeOne(set: Set<T>): T {
+    assert(set.isNotEmpty())
+    return if (set.size == 1)
+      set.first()
+    else
+      set.toList()[random.nextInt(set.size)] // TODO: Optimize away the toList call
+  }
+
   fun <T> take(list: List<T>, count: Int): List<T> {
     assert(count <= list.size)
     val result = mutableListOf<T>()
+    val options = list.toMutableList()
+    for (i in 1..count) {
+      val item = takeOne(options)
+      options.remove(item)
+      result.add(item)
+    }
+    return result
+  }
+
+  fun <T> take(list: Set<T>, count: Int): Set<T> {
+    assert(count <= list.size)
+    val result = mutableSetOf<T>()
     val options = list.toMutableList()
     for (i in 1..count) {
       val item = takeOne(options)

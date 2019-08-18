@@ -1,23 +1,20 @@
 package marloth.definition.templates
 
 import marloth.definition.creatures
-import mythic.ent.IdSource
 import mythic.spatial.Vector3
 import scenery.enums.AccessoryId
 import scenery.enums.ClientCommand
-import scenery.enums.ModifierId
 import scenery.enums.Text
 import simulation.entities.*
 import simulation.main.Hand
 import simulation.main.HandAttachment
 
 
-fun newMerchant(nextId: IdSource, position: Vector3, wares: List<Ware>): Hand {
+fun newMerchant(position: Vector3, wares: List<Ware>): Hand {
   val character = newCharacter(
-      nextId = nextId,
-      position = position,
       definition = creatures.merchant,
-      faction = 1
+      faction = 1,
+      position = position
   )
 
   return character.copy(

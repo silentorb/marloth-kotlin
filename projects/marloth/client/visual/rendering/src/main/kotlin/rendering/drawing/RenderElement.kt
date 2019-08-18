@@ -30,7 +30,8 @@ fun renderElement(renderer: Renderer, primitive: Primitive, material: Material, 
   )
   val effect = renderer.getShader(primitive.mesh.vertexSchema, ShaderFeatureConfig(
       skeleton = isAnimated,
-      texture = texture != null
+      texture = texture != null,
+      shading = material.shading
   ))
 
   effect.activate(config)
