@@ -46,11 +46,11 @@ data class DisplayConfig(
     var textureAntialiasing: TextureAntialiasing = TextureAntialiasing.trilinear
 ) : PlatformDisplayConfig
 
-fun gatherEffectsData(dimensions: Vector2i, scene: Scene, cameraEffectsData: CameraEffectsData): EffectsData {
+fun gatherEffectsData(dimensions: Vector2i, lights: List<Light>, cameraEffectsData: CameraEffectsData): EffectsData {
   return EffectsData(
       cameraEffectsData,
       Matrix().ortho(0.0f, dimensions.x.toFloat(), 0.0f, dimensions.y.toFloat(), 0f, 100f),
-      scene.lights
+      lights
   )
 }
 
@@ -92,13 +92,13 @@ data class EffectsData(
     val lights: List<Light>
 )
 
-fun mapGameSceneRenderers(renderer: Renderer, scenes: List<GameScene>, windowInfo: WindowInfo): List<GameSceneRenderer> {
-  val viewports = getPlayerViewports(scenes.size, windowInfo.dimensions).iterator()
-  return scenes.map {
-    val viewport = viewports.next()
-    GameSceneRenderer(it, renderer.createSceneRenderer(it.main, viewport))
-  }
-}
+//fun mapGameSceneRenderers(renderer: Renderer, scenes: List<GameScene>, windowInfo: WindowInfo): List<GameSceneRenderer> {
+//  val viewports = getPlayerViewports(scenes.size, windowInfo.dimensions).iterator()
+//  return scenes.map {
+//    val viewport = viewports.next()
+//    GameSceneRenderer(it, renderer.createSceneRenderer(it.main, viewport))
+//  }
+//}
 
 const val defaultTextureScale = 1f
 
@@ -188,6 +188,24 @@ fun textureAttributesFromConfig(config: DisplayConfig) =
         storageUnit = TextureStorageUnit.unsigned_byte
     )
 
+fun gatherChildLights(meshes: ModelMeshMap, groups: ElementGroups): List<Light> {
+  return groups.flatMap { group ->
+    group.meshes.flatMap { meshElement ->
+      val mesh = meshes[meshElement.mesh]!!
+      mesh.lights.map { light ->
+        light.copy(
+            position = light.position.transform(meshElement.transform)
+        )
+      }
+    }
+  }
+}
+
+fun gatherSceneLights(meshes: ModelMeshMap, scene: GameScene): List<Light> {
+  return scene.lights
+      .plus(gatherChildLights(meshes, scene.opaqueElementGroups))
+}
+
 class Renderer(
     val config: DisplayConfig,
     display: PlatformDisplay,
@@ -233,8 +251,8 @@ class Renderer(
     animationDurations = mapAnimationDurations(armatures)
   }
 
-  fun updateShaders(scene: Scene, dimensions: Vector2i, cameraEffectsData: CameraEffectsData) {
-    val effectsData = gatherEffectsData(dimensions, scene, cameraEffectsData)
+  fun updateShaders(lights: List<Light>, dimensions: Vector2i, cameraEffectsData: CameraEffectsData) {
+    val effectsData = gatherEffectsData(dimensions, lights, cameraEffectsData)
     updateLights(lightingConfig, effectsData.lights, uniformBuffers.section)
     uniformBuffers.scene.load(createSceneBuffer(effectsData))
   }
@@ -242,7 +260,7 @@ class Renderer(
   fun createSceneRenderer(scene: Scene, viewport: Vector4i): SceneRenderer {
     val dimensions = Vector2i(viewport.z, viewport.w)
     val cameraEffectsData = createCameraEffectsData(dimensions, scene.camera)
-    updateShaders(scene, dimensions, cameraEffectsData)
+    updateShaders(scene.lights, dimensions, cameraEffectsData)
     return SceneRenderer(viewport, this, scene.camera, cameraEffectsData)
   }
 
@@ -296,6 +314,13 @@ class Renderer(
     }
   }
 
+}
+
+fun createSceneRenderer(renderer: Renderer, scene: GameScene, viewport: Vector4i): SceneRenderer {
+  val minimalScene = scene.main.copy(
+      lights = gatherSceneLights(renderer.meshes, scene)
+  )
+  return renderer.createSceneRenderer(minimalScene, viewport)
 }
 
 fun rasterizeCoordinates(position: Vector3, cameraEffectsData: CameraEffectsData, dimensions: Vector2i): Vector2 {

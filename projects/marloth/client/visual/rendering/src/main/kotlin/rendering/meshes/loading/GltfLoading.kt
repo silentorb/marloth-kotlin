@@ -5,6 +5,7 @@ import mythic.glowing.GeneralMesh
 import mythic.glowing.VertexAttributeDetail
 import mythic.glowing.newVertexBuffer
 import mythic.spatial.Vector3
+import org.joml.Vector4f
 import org.lwjgl.BufferUtils
 import rendering.*
 import rendering.meshes.AttributeName
@@ -456,6 +457,31 @@ fun loadBoundingShape(node: Node): Shape? {
   }
 }
 
+fun gatherChildLights(info: GltfInfo, node: Node): List<Light> {
+  if (info.extensions != null) {
+    val k = 0
+  }
+  val lights = info.extensions?.KHR_lights_punctual?.lights
+  return if (node.children == null || lights == null)
+    listOf()
+  else
+    info.nodes.mapNotNull { childNode ->
+      val lightIndex = childNode.extensions?.KHR_lights_punctual?.light
+      if (lightIndex == null)
+        null
+      else {
+        val light = lights[lightIndex]
+        Light(
+            type = LightType.values().first { it.name == light.type.name },
+            color = Vector4f(light.color, light.intensity / 100f),
+            position = childNode.translation ?: Vector3.zero,
+            direction = null,
+            range = 15f
+        )
+      }
+    }
+}
+
 fun loadGltf(vertexSchemas: VertexSchemas, filename: String, resourcePath: String): ModelImport {
   val info = loadJsonResource<GltfInfo>(resourcePath + ".gltf")
   val directoryPath = resourcePath.split("/").dropLast(1).joinToString("/")
@@ -501,14 +527,12 @@ fun loadGltf(vertexSchemas: VertexSchemas, filename: String, resourcePath: Strin
                 parentBone = parentBone
             )
           }
-          if (id == "skySphere") {
-            val k = 0
-          }
           val node = info.nodes[nodeIndex]
 
           ModelMesh(
               id = id,
               primitives = primitives,
+              lights = gatherChildLights(info, node),
               bounds = loadBoundingShape(node)
           )
         }

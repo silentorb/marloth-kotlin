@@ -40,18 +40,19 @@ class EntityTemplates {
         )
     )
 
-    val wallLamp = Hand(
-        collisionShape = CollisionObject(
-            shape = ShapeOffset(Matrix().translate(1f, 0f, 0.8f), Sphere(1f))
-        ),
-        depiction = Depiction(
-            type = DepictionType.wallLamp
-        ),
-        light = Light(
-            color = Vector4(1f),
-            range = 15f
-        )
-    )
+//    val wallLamp = Hand(
+//        collisionShape = CollisionObject(
+//            shape = ShapeOffset(Matrix().translate(1f, 0f, 0.8f), Sphere(1f))
+//        ),
+//        depiction = Depiction(
+//            type = DepictionType.wallLamp
+//        )
+////        ,
+////        light = Light(
+////            color = Vector4(1f),
+////            range = 15f
+////        )
+//    )
 
   }
 }

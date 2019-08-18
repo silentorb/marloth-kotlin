@@ -138,11 +138,15 @@ def deselect_all():
 
 def select_render_visible():
     for obj in bpy.context.scene.objects:
-        if obj.hide_render:
-            obj.select = True
+        if not obj.hide_render:
+            obj.select_set(True)
 
 
 def prepare_scene(export_dir):
+    # Some of the export operations will fail if the blender file was saved in edit mode.
+    # Ensure blender is in object mode and not edit mode
+    bpy.ops.object.mode_set(mode='OBJECT')
+
     os.makedirs(export_dir, exist_ok=True)
 
     for armature in of_type(bpy.data.objects, 'ARMATURE'):
@@ -210,7 +214,7 @@ def export_gltf(filepath):
         export_morph=True,
         export_morph_normal=True,
         export_morph_tangent=False,
-        export_lights=False,
+        export_lights=True,
         export_displacement=False,
         will_save_settings=False,
         filepath=filepath

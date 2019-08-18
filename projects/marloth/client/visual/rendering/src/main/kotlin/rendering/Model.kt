@@ -8,6 +8,7 @@ import rendering.meshes.MeshInfo
 import rendering.meshes.Primitives
 import rendering.texturing.FaceTextureMap
 import scenery.ArmatureId
+import scenery.Light
 import scenery.MeshName
 import scenery.Shape
 
@@ -53,19 +54,11 @@ data class AdvancedModel(
 data class ModelMesh(
     val id: MeshName,
     val primitives: Primitives,
+    val lights: List<Light> = listOf(),
     val bounds: Shape? = null
 )
 
 typealias ModelMeshMap = Map<MeshName, ModelMesh>
-
-//fun dispose(model: AdvancedModel) {
-//  model.primitives.forEach { it.mesh.dispose() }
-//}
-
-//fun getMeshName(name: String): MeshName? {
-//  val formattedName = toCamelCase(name)
-//  return MeshName.values().firstOrNull { it.name == formattedName }
-//}
 
 fun getArmatureId(name: String): ArmatureId {
   val formattedName = toCamelCase(name)

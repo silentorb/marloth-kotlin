@@ -4,21 +4,15 @@ import marloth.clienting.*
 import marloth.front.RenderHook
 import mythic.bloom.next.Box
 import mythic.bloom.renderLayout
-import mythic.ent.singleCache
 import mythic.platforming.WindowInfo
-import org.joml.Vector2i
-import rendering.GameScene
-import rendering.GameSceneRenderer
-import rendering.Renderer
-import rendering.getPlayerViewports
-import silentorb.raymarching.*
-import simulation.main.World
+import rendering.*
+import scenery.Light
 import simulation.misc.interpolateWorlds
 
-val getMarchedBuffers = singleCache(::newMarchBuffers)
+//val getMarchedBuffers = singleCache(::newMarchBuffers)
 
-fun renderRayMarching(gameScene: GameScene, dimensions: Vector2i, world: World, renderer: Renderer, marcher: Marcher) {
-  throw Error("Not implemented")
+//fun renderRayMarching(gameScene: GameScene, dimensions: Vector2i, world: World, renderer: Renderer, marcher: Marcher) {
+//  throw Error("Not implemented")
 //  val buffers = getMarchedBuffers(dimensions.x * dimensions.y)
 //  val scene = Scene(
 //      camera = Camera(
@@ -37,15 +31,15 @@ fun renderRayMarching(gameScene: GameScene, dimensions: Vector2i, world: World, 
 ////  rgbFloatToBytes(mix, renderer.renderColor.buffer!!)
 ////  normalizeDepthBuffer(0.01f, 1000f, buffers.depth, renderer.renderDepth.buffer!!)
 ////  renderer.applyRenderBuffer(dimensions)
-}
+//}
 
 fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, box: Box, onRender: RenderHook?) {
   client.platform.display.swapBuffers()
 
-  val marcher = Marcher(
-      end = 100f,
-      maxSteps = 100
-  )
+//  val marcher = Marcher(
+//      end = 100f,
+//      maxSteps = 100
+//  )
 
   renderContainer(client, windowInfo) { canvas ->
     val world = interpolateWorlds(appState.timestep.accumulator, appState.worlds)
@@ -55,7 +49,7 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, box: 
       val viewports = getPlayerViewports(scenes.size, dimensions).iterator()
       val scene = scenes.first()
 //      for (s in scenes) {
-      val sceneRenderer = client.renderer.createSceneRenderer(scene.main, viewports.next())
+      val sceneRenderer = createSceneRenderer(client.renderer, scene, viewports.next())
       val gameRenderer = GameSceneRenderer(scene, sceneRenderer)
       val filters = prepareRender(gameRenderer)
 
@@ -63,9 +57,9 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, box: 
         renderScene(gameRenderer)
       }
 
-      if (false) {
-        renderRayMarching(scene, dimensions, world, client.renderer, marcher)
-      }
+//      if (false) {
+//        renderRayMarching(scene, dimensions, world, client.renderer, marcher)
+//      }
 
       if (onRender != null) {
         onRender(sceneRenderer)

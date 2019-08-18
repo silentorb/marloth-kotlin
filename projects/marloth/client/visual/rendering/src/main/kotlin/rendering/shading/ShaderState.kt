@@ -41,7 +41,8 @@ fun createLightBuffer(config: LightingConfig, lights: List<Light>): ByteBuffer {
     buffer.putVector4(light.color)
     buffer.putVector3(light.position)
     padBuffer(buffer, 1)
-    buffer.putVector4(light.direction)
+    buffer.putVector3(light.direction ?: Vector3.zero)
+    buffer.putFloat(light.range)
   }
   sectionBufferCustodian.finish()
   return buffer

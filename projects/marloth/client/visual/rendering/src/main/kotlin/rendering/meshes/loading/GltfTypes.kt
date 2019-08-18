@@ -69,6 +69,14 @@ data class BufferView(
     val name: String?
 )
 
+data class NodeLightExtension(
+    val light: Int
+)
+
+data class NodeExtensions(
+    val KHR_lights_punctual: NodeLightExtension?
+)
+
 data class Node(
     val name: String,
     val children: List<Int>?,
@@ -76,7 +84,8 @@ data class Node(
     val translation: Vector3?,
     val mesh: Int?,
     val skin: Int?,
-    val extras: Map<String, Any>?
+    val extras: Map<String, Any>?,
+    val extensions: NodeExtensions?
 )
 
 data class BufferInfo(
@@ -146,11 +155,31 @@ data class IndexedAnimation(
     val samplers: List<AnimationSampler>
 )
 
+enum class GltfLightType {
+  point
+}
+
+data class GltfLight(
+    val color: Vector3,
+    val intensity: Float,
+    val type: GltfLightType
+)
+
+data class LightExtension(
+    val lights: List<GltfLight> = listOf()
+)
+
+data class Extensions(
+    val KHR_lights_punctual: LightExtension?,
+    val existsToWorkAroundABugWithTheJsonSerializer: Int = 1
+)
+
 data class GltfInfo(
     val accessors: List<Accessor>,
     val animations: List<IndexedAnimation>?,
     val bufferViews: List<BufferView>,
     val buffers: List<BufferInfo>,
+    val extensions: Extensions?,
     val images: List<Image>?,
     val meshes: List<MeshInfo2>,
     val materials: List<MaterialInfo>?,

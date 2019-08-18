@@ -9,8 +9,9 @@ enum class LightType(val value: Int) {
 }
 
 data class Light(
-    var type: LightType,
-    var color: Vector4, // w is brightness
-    var position: Vector3,
-    var direction: Vector4 = Vector4(0f) // w is range
+    val type: LightType,
+    val color: Vector4, // w is brightness
+    val position: Vector3,
+    val direction: Vector3? = null,
+    val range: Float
 )

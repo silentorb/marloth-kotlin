@@ -227,7 +227,8 @@ fun mapLights(deck: Deck, player: Id) =
               type = LightType.point,
               color = light.color,
               position = deck.bodies[id]!!.position + Vector3(0f, 0f, 2.2f),
-              direction = Vector4(0f, 0f, 0f, light.range)
+              direction = Vector3(0f, 0f, 0f),
+              range = light.range
           )
         }
         .plus(listOfNotNull(
@@ -236,7 +237,8 @@ fun mapLights(deck: Deck, player: Id) =
                   type = LightType.point,
                   color = Vector4(1f, 1f, 1f, 0.6f),
                   position = deck.bodies[player]!!.position + Vector3(0f, 0f, 2f),
-                  direction = Vector4(0f, 0f, 0f, 36f)
+                  direction = Vector3(0f, 0f, 0f),
+                  range = 36f
               )
             else
               null

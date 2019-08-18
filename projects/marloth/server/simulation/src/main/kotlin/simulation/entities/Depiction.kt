@@ -17,7 +17,7 @@ enum class DepictionType {
   none,
   staticMesh,
   test,
-  wallLamp,
+//  wallLamp,
   world
 }
 

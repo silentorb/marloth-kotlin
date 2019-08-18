@@ -143,7 +143,11 @@ fun placeWallLamps(deck: Deck, realm: Realm, dice: Dice, scale: Float): List<Han
       val position = wallBody.position +
           Vector3(0f, 0f, 0.1f) + wallBody.orientation * Vector3(-0.5f, 0f, 0f)
       val orientation = Quaternion(wallBody.orientation).rotateZ(Pi)
-      EntityTemplates.wallLamp.copy(
+      Hand(
+          depiction = Depiction(
+              type = DepictionType.staticMesh,
+              mesh = MeshId.wallLamp.toString()
+          ),
           body = Body(
               position = position,
               orientation = orientation,
