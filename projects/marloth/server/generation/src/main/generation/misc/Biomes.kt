@@ -17,6 +17,11 @@ enum class WallPlacement {
   some
 }
 
+enum class BiomeAttribute {
+  alwaysWindow,
+  alwaysLit
+}
+
 data class BiomeInfo(
     val name: String,
     val wallPlacement: WallPlacement,
@@ -28,7 +33,9 @@ data class BiomeInfo(
     val tunnelFloorMeshes: List<MeshId>,
     val stairStepMeshes: List<MeshId>,
     val wallMeshes: List<MeshId>,
-    val ceilingMeshes: List<MeshId> = listOf()
+    val windowMeshes: List<MeshId>,
+    val ceilingMeshes: List<MeshId> = listOf(),
+    val attributes: Set<BiomeAttribute> = setOf()
 )
 
 typealias BiomeInfoMap = Map<BiomeId, BiomeInfo>
@@ -39,7 +46,8 @@ val commonBiomeTemplate = BiomeInfo("commonBiomeTemplate",
     roomFloorMeshesTall = listOf( MeshId.threeStoryCircleFloor),
     tunnelFloorMeshes = listOf(MeshId.longStep),
     stairStepMeshes = listOf(MeshId.longStairStep),
-    wallMeshes = listOf(MeshId.squareWall)
+    wallMeshes = listOf(MeshId.squareWall),
+    windowMeshes = listOf(MeshId.windowWall)
 )
 
 val biomeInfoMap: BiomeInfoMap = mapOf(
@@ -66,6 +74,13 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
         floorTexture = TextureId.redTile,
         ceilingTexture = TextureId.redTile,
         wallTexture = TextureId.redTile,
-        wallPlacement = WallPlacement.all
+        wallPlacement = WallPlacement.all,
+        attributes = setOf(BiomeAttribute.alwaysWindow, BiomeAttribute.alwaysLit)
     )
 )
+
+val meshesThatCanHaveAttachments = setOf(
+    MeshId.squareWall,
+    MeshId.pillowWall
+)
+

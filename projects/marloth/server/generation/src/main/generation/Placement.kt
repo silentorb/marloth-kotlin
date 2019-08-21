@@ -5,8 +5,10 @@ import generation.abstracted.neighbors
 import generation.abstracted.normalizeRanges
 import generation.architecture.alignWithNodeFloor
 import generation.architecture.nodeFloorCenter
+import generation.misc.BiomeAttribute
 import generation.misc.BiomeId
-import marloth.definition.EntityTemplates
+import generation.misc.biomeInfoMap
+import generation.misc.meshesThatCanHaveAttachments
 import marloth.definition.creatures
 import marloth.definition.templates.defaultWares
 import marloth.definition.templates.newBuffCloud
@@ -119,9 +121,10 @@ fun placeCharacters(realm: Realm, dice: Dice, scale: Float): (IdSource) -> List<
 //  info.faceType == FaceType.wall && info.texture != null
 //}
 
-fun gatherNodeWallMap(deck: Deck): Map<Id, Set<Id>> =
+fun gatherNodeWallMap(deck: Deck, filter: (Map.Entry<Id, ArchitectureElement>) -> Boolean): Map<Id, Set<Id>> =
     deck.architecture.entries
         .filter { it.value.isWall }
+        .filter(filter)
         .groupBy { (id, _) ->
           val body = deck.bodies[id]!!
           body.nearestNode
@@ -129,12 +132,21 @@ fun gatherNodeWallMap(deck: Deck): Map<Id, Set<Id>> =
         .mapValues { it.value.map { i -> i.key }.toSet() }
 
 fun placeWallLamps(deck: Deck, realm: Realm, dice: Dice, scale: Float): List<Hand> {
-  val nodeWalls = gatherNodeWallMap(deck)
+  val nodeWalls = gatherNodeWallMap(deck) {
+    val depiction = deck.depictions[it.key]!!
+    meshesThatCanHaveAttachments.contains(MeshId.valueOf(depiction.mesh!!))
+  }
   if (nodeWalls.none())
     return listOf()
 
-  val count = Math.min((10f * scale).toInt(), nodeWalls.size)
-  val nodes = dice.take(nodeWalls.entries, count)
+  val (certain, options) = nodeWalls.entries.partition {
+    val biome = biomeInfoMap[realm.nodeTable[it.key]!!.biome]!!
+    biome.attributes.contains(BiomeAttribute.alwaysLit)
+  }
+
+  val count = Math.min((10f * scale).toInt(), options.size)
+  val nodes = dice.take(options, count)
+      .plus(certain)
   val hands = nodes.mapNotNull { (node, options) ->
     if (options.any()) {
       val wallId = dice.takeOne(options)

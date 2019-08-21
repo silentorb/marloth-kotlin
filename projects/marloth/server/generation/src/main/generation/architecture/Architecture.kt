@@ -1,9 +1,6 @@
 package generation.architecture
 
-import generation.misc.BiomeInfo
-import generation.misc.WallPlacement
-import generation.misc.biomeInfoMap
-import generation.misc.getNodeDistance
+import generation.misc.*
 import mythic.ent.Id
 import mythic.spatial.*
 import randomly.Dice
@@ -131,7 +128,7 @@ val placeTunnelFloors: Architect = { meshInfo, realm, dice ->
 }
 
 fun wallPlacementFilter(dice: Dice, wallPlacement: WallPlacement) =
-    when(wallPlacement) {
+    when (wallPlacement) {
       WallPlacement.all -> true
       WallPlacement.none -> false
       else -> dice.getFloat() < 0.75f
@@ -156,7 +153,8 @@ val placeTunnelWalls: Architect = { meshInfo, realm, dice ->
                 val sideOffset = Vector3(info.vector.y, -info.vector.x, 0f) * (sideMod + minorMod) * halfWidth
                 val wallPosition = info.start + info.vector * stepOffset + sideOffset
                 val wallAngle = lookAtAngle + sideMod * randomFlip * Pi / 2f
-                newWall(meshInfo, dice, node, wallPosition, wallAngle)
+                val mesh = dice.takeOne(biome.wallMeshes)
+                newWall(meshInfo, mesh, dice, node, wallPosition, wallAngle)
               }
         }.flatten()
       }
@@ -192,20 +190,41 @@ val placeRoomWalls: Architect = { meshInfo, realm, dice ->
         val biome = biomeInfoMap[node.biome]!!
 
         val stripCount = doorwayAngles.size
-        doorwayAngles.mapIndexed { firstIndex, firstAngle ->
-          val angleLength = getRoomSeriesAngleLength(firstIndex, stripCount, doorwayAngles, firstAngle)
+
+        val slots = doorwayAngles.mapIndexed { index, firstAngle ->
+          val angleLength = getRoomSeriesAngleLength(index, stripCount, doorwayAngles, firstAngle)
           val segmentLength = 4f / node.radius
-          val margin = 1.6f / node.radius
-          if (angleLength < segmentLength || !wallPlacementFilter(dice, biome.wallPlacement)) {
+          if (angleLength < segmentLength) {
             listOf()
           } else {
+            val margin = 1.6f / node.radius
             createSeries(angleLength, segmentLength, margin) { step, stepOffset ->
-              val wallAngle = firstAngle + stepOffset
-              val wallPosition = node.position + projectVector3(wallAngle, node.radius, node.position.z)
-              newWall(meshInfo, dice, node, wallPosition, wallAngle)
+              firstAngle + stepOffset
             }
           }
         }.flatten()
+
+        val filteredSlots = slots.filter { wallPlacementFilter(dice, biome.wallPlacement) }
+
+        val windowIndex = if (filteredSlots.size > 2 &&
+            (biome.attributes.contains(BiomeAttribute.alwaysWindow) || dice.getInt(0, 3) == 1))
+          dice.getInt(0, filteredSlots.size - 1)
+        else
+          -1
+
+        if (biome.attributes.contains(BiomeAttribute.alwaysWindow)) {
+          val ka = 0
+        }
+
+        filteredSlots.mapIndexed { index, wallAngle ->
+          val wallPosition = node.position + projectVector3(wallAngle, node.radius, node.position.z)
+          val meshOptions = if (windowIndex == index)
+            biome.windowMeshes
+          else
+            biome.wallMeshes
+          val mesh = dice.takeOne(meshOptions)
+          newWall(meshInfo, mesh, dice, node, wallPosition, wallAngle)
+        }
       }
 }
 

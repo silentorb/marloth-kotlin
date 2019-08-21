@@ -68,6 +68,5 @@ vec3 processLights(vec4 input_color, vec3 normal, vec3 cameraDirection, vec3 pos
 	for(int i = 0; i < section.lightCount; ++i) {
 		result += processLight(section.lights[i], input_color, normal, cameraDirection, position);
 	}
-
 	return min(result, vec3(1.0));
 }

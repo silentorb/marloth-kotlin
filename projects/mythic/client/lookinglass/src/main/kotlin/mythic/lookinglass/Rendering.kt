@@ -1,4 +1,4 @@
-package silentorb.lookinglass
+package mythic.lookinglass
 
 import mythic.spatial.Vector3
 

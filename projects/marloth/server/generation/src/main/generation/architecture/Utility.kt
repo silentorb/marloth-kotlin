@@ -63,9 +63,8 @@ fun alignWithNodeFloor(meshInfo: MeshInfoMap, node: Node, meshId: MeshId) =
 
 fun randomShift(dice: Dice) = dice.getFloat(-0.04f, 0.04f)
 
-fun newWall(meshInfo: MeshInfoMap, dice: Dice, node: Node, position: Vector3, angleZ: Float): Hand {
+fun newWall(meshInfo: MeshInfoMap, mesh: MeshId, dice: Dice, node: Node, position: Vector3, angleZ: Float): Hand {
   val biome = biomeInfoMap[node.biome]!!
-  val mesh = dice.takeOne(biome.wallMeshes)
   val wallData = wallDataMap[mesh]!!
   val randomHorizontalFlip = getHorizontalFlip(dice, wallData)
   val orientation = Quaternion().rotateZ(angleZ + randomHorizontalFlip)

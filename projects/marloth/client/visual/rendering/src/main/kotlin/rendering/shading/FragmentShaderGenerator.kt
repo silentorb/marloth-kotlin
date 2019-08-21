@@ -4,8 +4,8 @@ import assets.loadTextResource
 
 val lightingHeader = loadTextResource("shaders/lighting.glsl")
 
-const val lightingApplication1 = "vec3 lightResult = processLights(vec4(1), fragmentNormal, scene.cameraDirection, fragmentPosition.xyz, glow);"
-const val lightingApplication2 = "uniformColor * vec4(lightResult, 1.0)"
+const val lightingApplication1 = "vec3 lightResult = processLights(uniformColor, fragmentNormal, scene.cameraDirection, fragmentPosition.xyz, glow);"
+const val lightingApplication2 = "vec4(lightResult, uniformColor.w)"
 
 fun addIf(condition: Boolean, value: String) = if (condition) value else null
 
@@ -32,7 +32,7 @@ private fun textureOperations(config: ShaderFeatureConfig) =
 
 fun generateFragmentShader(config: ShaderFeatureConfig): String {
   val outColor = listOfNotNull(
-      if (config.instanced) "fragmentColor" else "uniformColor",
+      if (config.shading) null else if (config.instanced) "fragmentColor" else "uniformColor",
       if (config.texture) "sampled" else null,
       if (config.shading) lightingApplication2 else null
   ).joinToString(" * ")

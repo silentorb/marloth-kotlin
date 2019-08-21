@@ -33,5 +33,6 @@ enum class MeshId {
   squareFloor,
   squareWall,
   threeStoryCircleFloor,
-  treasureChest
+  treasureChest,
+  windowWall
 }

@@ -156,9 +156,9 @@ fun deferImageFile(loadImage: ImageLoader, path: String, attributes: TextureAttr
 fun getFileShortName(path: String): String =
     toCamelCase(Paths.get(path).fileName.toString().substringBeforeLast("."))
 
-fun listProceduralTextures(): List<Pair<String, String>> =
-    scanResources("procedural/textures", listOf(".json"))
-        .map { Pair(it, getFileShortName(it)) }
+//fun listProceduralTextures(): List<Pair<String, String>> =
+//    scanResources("procedural/textures", listOf(".json"))
+//        .map { Pair(it, getFileShortName(it)) }
 
 //fun loadProceduralTextures(attributes: TextureAttributes): Map<String, Texture> {
 //  val length = 256

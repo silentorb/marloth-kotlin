@@ -152,8 +152,8 @@ fun loadMaterial(info: GltfInfo, materialIndex: Int): Material {
   val materialSource = info.materials!![materialIndex]
   val details = materialSource.pbrMetallicRoughness
   val color = details.baseColorFactor
-  val glow = if (materialSource.emissiveFactor != null && materialSource.emissiveFactor.first() != 0f && color != null)
-    color.x / materialSource.emissiveFactor.first()
+  val glow = if (materialSource.emissiveFactor != null && materialSource.emissiveFactor.first() != 0f)
+    materialSource.emissiveFactor.first()
   else
     0f
 

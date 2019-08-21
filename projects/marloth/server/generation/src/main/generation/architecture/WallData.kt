@@ -17,5 +17,6 @@ private val fullRotate = WallData(
 
 val wallDataMap: Map<MeshId, WallData> = mapOf(
     MeshId.squareWall to noRotate,
-    MeshId.pillowWall to fullRotate
+    MeshId.pillowWall to fullRotate,
+    MeshId.windowWall to noRotate
 )
