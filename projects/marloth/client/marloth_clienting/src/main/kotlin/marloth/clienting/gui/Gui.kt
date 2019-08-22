@@ -99,7 +99,7 @@ fun haftToBloom(commands: HaftCommands<GuiCommandType>): List<BloomEvent> =
     }
 
 fun victoryMenu() = listOfNotNull(
-    SimpleMenuItem(Text.message_victory, GuiCommandType.menu)
+    SimpleMenuItem(Text.message_victory, GuiCommandType.newGame)
 )
 
 fun viewSelect(textResources: TextResources, definitions: Definitions, world: World?, view: ViewId): Flower? {

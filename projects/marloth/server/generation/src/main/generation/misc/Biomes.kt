@@ -2,14 +2,7 @@ package generation.misc
 
 import scenery.enums.MeshId
 import scenery.enums.TextureId
-
-enum class BiomeId {
-  checkers,
-  exit,
-  forest,
-  home,
-  void
-}
+import simulation.misc.BiomeName
 
 enum class WallPlacement {
   all,
@@ -19,7 +12,9 @@ enum class WallPlacement {
 
 enum class BiomeAttribute {
   alwaysWindow,
-  alwaysLit
+  alwaysLit,
+  placeOnlyAtStart,
+  placeOnlyAtEnd
 }
 
 data class BiomeInfo(
@@ -38,7 +33,7 @@ data class BiomeInfo(
     val attributes: Set<BiomeAttribute> = setOf()
 )
 
-typealias BiomeInfoMap = Map<BiomeId, BiomeInfo>
+typealias BiomeInfoMap = Map<BiomeName, BiomeInfo>
 
 val commonBiomeTemplate = BiomeInfo("commonBiomeTemplate",
     wallPlacement = WallPlacement.some,
@@ -48,35 +43,6 @@ val commonBiomeTemplate = BiomeInfo("commonBiomeTemplate",
     stairStepMeshes = listOf(MeshId.longStairStep),
     wallMeshes = listOf(MeshId.squareWall),
     windowMeshes = listOf(MeshId.windowWall)
-)
-
-val biomeInfoMap: BiomeInfoMap = mapOf(
-    BiomeId.checkers to commonBiomeTemplate.copy(
-        name = "checkers",
-        floorTexture = TextureId.checkersBlackWhite,
-        ceilingTexture = TextureId.checkersBlackWhite,
-        wallTexture = TextureId.checkersBlackWhite
-    ),
-    BiomeId.exit to commonBiomeTemplate.copy(
-        name = "checkers",
-        floorTexture = TextureId.algae,
-        ceilingTexture = TextureId.algae,
-        wallTexture = TextureId.algae
-    ),
-    BiomeId.forest to commonBiomeTemplate.copy(
-        name = "forest",
-        floorTexture = TextureId.grass,
-        ceilingTexture = TextureId.bricks,
-        wallTexture = TextureId.bricks
-    ),
-    BiomeId.home to commonBiomeTemplate.copy(
-        name = "home",
-        floorTexture = TextureId.redTile,
-        ceilingTexture = TextureId.redTile,
-        wallTexture = TextureId.redTile,
-        wallPlacement = WallPlacement.all,
-        attributes = setOf(BiomeAttribute.alwaysWindow, BiomeAttribute.alwaysLit)
-    )
 )
 
 val meshesThatCanHaveAttachments = setOf(

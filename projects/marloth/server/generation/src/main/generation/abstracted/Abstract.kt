@@ -96,7 +96,7 @@ fun cleanupWorld(graph: Graph): Graph {
   return graph.copy(connections = secondConnections)
 }
 
-fun applyInitialBiomes(biomeGrid: BiomeGrid, graph: Graph): NodeTable {
+fun applyInitialBiomes(biomes: BiomeInfoMap, biomeGrid: BiomeGrid, graph: Graph): NodeTable {
 //  val deadEnds = getDeadEnds(graph)
 //  val home = deadEnds[0]
 //  val exit = deadEnds
@@ -104,16 +104,27 @@ fun applyInitialBiomes(biomeGrid: BiomeGrid, graph: Graph): NodeTable {
 //      .filter { abs(it.position.z - home.position.z) > 5f}
 //      .firstSortedByDescending { it.position.distance(home.position) }
 
-  val home = graph.nodes.values.first { it.attributes.contains(NodeAttribute.home) }
-  val exit = graph.nodes.values.first { it.attributes.contains(NodeAttribute.exit) }
+  val homeNode = graph.nodes.values.firstOrNull { it.attributes.contains(NodeAttribute.home) }?.id
+  val exitNode = graph.nodes.values.firstOrNull { it.attributes.contains(NodeAttribute.exit) }?.id
   val remainingNodes = graph.nodes
-      .minus(home)
-      .minus(exit)
+      .minus(listOfNotNull(homeNode, exitNode))
 
-  val biomeMap = remainingNodes
+  val homeBiome = biomes.entries.firstOrNull {
+    it.value.attributes.contains(BiomeAttribute.placeOnlyAtStart)
+  }?.key
+
+  val exitBiome = biomes.entries.firstOrNull {
+    it.value.attributes.contains(BiomeAttribute.placeOnlyAtEnd)
+  }?.key
+
+  val fixedBiomeMap: Map<Id, BiomeName> = listOfNotNull(
+      if (homeNode != null && homeBiome != null) Pair(homeNode, homeBiome) else null,
+      if (exitNode != null && exitBiome != null) Pair(exitNode, exitBiome) else null
+  ).associate { it }
+
+  val biomeMap: Map<Id, BiomeName> = remainingNodes
       .mapValues { (_, node) -> biomeGrid(node.position.x, node.position.y) }
-      .plus(Pair(home.id, BiomeId.home))
-      .plus(Pair(exit.id, BiomeId.exit))
+      .plus(fixedBiomeMap)
 
   return graph.nodes.mapValues {
     it.value.copy(
@@ -133,33 +144,33 @@ fun createAndMixTunnels(graph: Graph): Graph {
       .copy(tunnels = tunnelGraph.nodes.map { it.key })
 }
 
-fun prepareDoorways(graph: Graph): Graph {
-  val homeNodes = graph.nodes.values.filter { it.biome == BiomeId.home }
-  val doorways = homeNodes.flatMap { node ->
-    connections(graph, node).mapNotNull { connection ->
-      val otherNode = connection.other(graph, node)
-      if (otherNode.biome != BiomeId.home && connection.type == ConnectionType.tunnel) {
-        val origin = getCenter(node, otherNode)
-        val position = origin + (otherNode.position - node.position).normalize() * 0.2f
-        PreTunnel(connection, position)
-      } else
-        null
-    }
-  }
-  val newTunnels = createTunnelNodes(graph, doorways)
-  val doorwayNodeIds = newTunnels.nodes.map { it.key }
-  return graph.copy(
-      nodes = graph.nodes.plus(newTunnels.nodes.mapValues { it.value.copy(biome = BiomeId.home) }),
-      connections = graph.connections.plus(newTunnels.connections).minus(doorways.map { it.connection }),
-      doorways = graph.doorways.plus(doorwayNodeIds)
-  )
-}
+//fun prepareDoorways(graph: Graph): Graph {
+//  val homeNodes = graph.nodes.values.filter { it.biome == BiomeId.home }
+//  val doorways = homeNodes.flatMap { node ->
+//    connections(graph, node).mapNotNull { connection ->
+//      val otherNode = connection.other(graph, node)
+//      if (otherNode.biome != BiomeId.home && connection.type == ConnectionType.tunnel) {
+//        val origin = getCenter(node, otherNode)
+//        val position = origin + (otherNode.position - node.position).normalize() * 0.2f
+//        PreTunnel(connection, position)
+//      } else
+//        null
+//    }
+//  }
+//  val newTunnels = createTunnelNodes(graph, doorways)
+//  val doorwayNodeIds = newTunnels.nodes.map { it.key }
+//  return graph.copy(
+//      nodes = graph.nodes.plus(newTunnels.nodes.mapValues { it.value.copy(biome = BiomeId.home) }),
+//      connections = graph.connections.plus(newTunnels.connections).minus(doorways.map { it.connection }),
+//      doorways = graph.doorways.plus(doorwayNodeIds)
+//  )
+//}
 
 fun <A, B> pass(action: (A) -> A): (Pair<A, B>) -> Pair<A, B> = { (a, b) ->
   Pair(action(a), b)
 }
 
-fun generateAbstract(input: WorldInput, scale: Float, biomeGrid: BiomeGrid): Triple<MapGrid, Graph, CellPositionMap> {
+fun generateAbstract(config: GenerationConfig, input: WorldInput, scale: Float, biomeGrid: BiomeGrid): Triple<MapGrid, Graph, CellPositionMap> {
 //  val nodeCount = (30 * scale).toInt()
 //  val initialNodes = distributeNodes(input.boundary, nodeCount, input.dice)
 ////  val initialGraph = handleOverlapping(entityMap(initialNodes))
@@ -170,7 +181,7 @@ fun generateAbstract(input: WorldInput, scale: Float, biomeGrid: BiomeGrid): Tri
 //      { graph -> cleanupWorld(graph) },
       { graph -> createAndMixTunnels(graph) },
 //      variableHeights(input.dice),
-      { graph -> graph.copy(nodes = applyInitialBiomes(biomeGrid, graph)) }
+      { graph -> graph.copy(nodes = applyInitialBiomes(config.biomes, biomeGrid, graph)) }
 //      { graph -> prepareDoorways(graph) }
   ))
   return Triple(grid, finalGraph, cellMap)

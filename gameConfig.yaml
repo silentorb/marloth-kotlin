@@ -1,0 +1,15 @@
+audio:
+  soundVolume: 0.75
+display:
+  width: 800
+  height: 600
+  fullscreen: false
+  windowedFullscreen: false
+  vsync: true
+  multisamples: 0
+  depthOfField: false
+  textureAntialiasing: trilinear
+gameplay:
+  defaultPlayerView: thirdPerson
+input:
+  mouseInput: true

@@ -3,18 +3,21 @@ package lab
 import configuration.ConfigManager
 import configuration.loadYamlFile
 import configuration.saveYamlFile
-import generation.addEnemies
 import generation.architecture.placeArchitecture
 import generation.generateWorld
-import generation.populateWorld
+import generation.misc.GenerationConfig
+import generation.misc.MeshShapeMap
+import generation.misc.compileArchitectureMeshInfo
+import marloth.generation.populateWorld
 import lab.utility.shouldReloadWorld
 import lab.utility.updateWatching
 import lab.views.game.GameViewConfig
 import lab.views.game.drawBulletDebug
 import lab.views.model.newModelViewState
 import marloth.clienting.Client
-import marloth.clienting.input.GuiCommandType
 import marloth.clienting.newClientState
+import marloth.definition.generation.biomeInfoMap
+import marloth.definition.generation.meshAttributes
 import marloth.definition.staticDefinitions
 import marloth.front.GameApp
 import marloth.integration.*
@@ -23,7 +26,6 @@ import mythic.ent.pipe
 import mythic.quartz.newTimestepState
 import randomly.Dice
 import simulation.main.*
-import simulation.misc.MeshInfoMap
 import simulation.misc.WorldInput
 import simulation.misc.createWorldBoundary
 import simulation.physics.newBulletState
@@ -42,18 +44,22 @@ fun createDice(config: GameViewConfig) =
     else
       Dice(config.seed)
 
-fun generateWorld(meshInfo: MeshInfoMap, gameViewConfig: GameViewConfig): World {
+fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig): World {
   val boundary = createWorldBoundary(gameViewConfig.worldLength)
   val dice = createDice(gameViewConfig)
+  val generationConfig = GenerationConfig(
+      biomes = biomeInfoMap,
+      meshes = compileArchitectureMeshInfo(meshInfo, meshAttributes)
+  )
   val input = WorldInput(
       boundary,
       dice
   )
-  val initialWorld = generateWorld(input)
+  val initialWorld = generateWorld(generationConfig, input)
   val (nextId, finalize) = newIdSource(initialWorld)
   val deck = pipeHandsToDeck(nextId, listOf(
-      { _ -> placeArchitecture(meshInfo, initialWorld.realm, dice) },
-      populateWorld(meshInfo, input, initialWorld.realm)
+      { _ -> placeArchitecture(generationConfig, initialWorld.realm, dice) },
+      populateWorld(generationConfig, input, initialWorld.realm)
 //      { deck ->
 //        if (gameViewConfig.haveEnemies)
 //          addEnemies(deck, boundary, dice)

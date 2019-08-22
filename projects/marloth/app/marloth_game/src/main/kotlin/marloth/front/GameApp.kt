@@ -1,9 +1,9 @@
 package marloth.front
 
-import generation.generateDefaultWorld
 import marloth.clienting.Client
 import marloth.clienting.newClientState
 import marloth.definition.staticDefinitions
+import marloth.generation.generateDefaultWorld
 import marloth.integration.AppState
 import marloth.integration.GameConfig
 import marloth.integration.updateAppState

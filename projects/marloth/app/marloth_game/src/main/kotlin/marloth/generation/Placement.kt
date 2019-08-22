@@ -1,14 +1,12 @@
-package generation
+package marloth.generation
 
 import generation.abstracted.distributeToSlots
 import generation.abstracted.neighbors
 import generation.abstracted.normalizeRanges
 import generation.architecture.alignWithNodeFloor
 import generation.architecture.nodeFloorCenter
-import generation.misc.BiomeAttribute
-import generation.misc.BiomeId
-import generation.misc.biomeInfoMap
-import generation.misc.meshesThatCanHaveAttachments
+import generation.calculateWorldScale
+import generation.misc.*
 import marloth.definition.creatures
 import marloth.definition.templates.defaultWares
 import marloth.definition.templates.newBuffCloud
@@ -131,7 +129,7 @@ fun gatherNodeWallMap(deck: Deck, filter: (Map.Entry<Id, ArchitectureElement>) -
         }
         .mapValues { it.value.map { i -> i.key }.toSet() }
 
-fun placeWallLamps(deck: Deck, realm: Realm, dice: Dice, scale: Float): List<Hand> {
+fun placeWallLamps(deck: Deck, biomeInfoMap: BiomeInfoMap, realm: Realm, dice: Dice, scale: Float): List<Hand> {
   val nodeWalls = gatherNodeWallMap(deck) {
     val depiction = deck.depictions[it.key]!!
     meshesThatCanHaveAttachments.contains(MeshId.valueOf(depiction.mesh!!))
@@ -269,34 +267,28 @@ fun getDistributions(dice: Dice): DistributionMap = mapOf(
     Occupant.treasureChest to 600
 ).plus(damageCloudsDistributions(dice, 500))
 
-fun populateRooms(meshInfo: MeshInfoMap, dice: Dice, realm: Realm, playerNode: Id): List<Hand> {
+fun populateRooms(config: GenerationConfig, dice: Dice, realm: Realm, playerNode: Id): List<Hand> {
   val rooms = getRooms(realm).filter { it.id != playerNode }
   val ranges = getDistributions(dice)
   val hands = distributeToSlots(dice, rooms.size, ranges)
       .zip(rooms) { occupant, node ->
-        occupantPopulators(meshInfo, node, occupant)
+        occupantPopulators(config.meshes, node, occupant)
       }
 
   return hands
 }
 
-fun populateWorld(meshInfo: MeshInfoMap, input: WorldInput, realm: Realm): (Deck) -> List<Hand> = { deck ->
-  val playerNode = realm.nodeTable.values.first { it.biome == BiomeId.home }
+fun populateWorld(config: GenerationConfig, input: WorldInput, realm: Realm): (Deck) -> List<Hand> = { deck ->
+  val playerNode = realm.nodeTable.values.firstOrNull {
+    config.biomes[it.biome]!!.attributes.contains(BiomeAttribute.placeOnlyAtStart)
+  }
+
+  if (playerNode == null)
+    throw Error("Biome configuration is missing placeOnlyAtStart")
+
   val scale = calculateWorldScale(input.boundary.dimensions)
   listOf(newPlayer(realm, playerNode))
-      .plus(populateRooms(meshInfo, input.dice, realm, playerNode.id))
-      .plus(placeWallLamps(deck, realm, input.dice, scale))
+      .plus(populateRooms(config, input.dice, realm, playerNode.id))
+      .plus(placeWallLamps(deck, config.biomes, realm, input.dice, scale))
 //      .plus(placeDoors(realm, nextId))
-}
-
-fun finalizeRealm(realm: Realm): World {
-  val nextId = newIdSource(1)
-  return World(
-      deck = Deck(),
-      nextId = nextId(),
-      realm = realm,
-      dice = Dice(),
-      availableIds = setOf(),
-      logicUpdateCounter = 0
-  )
 }

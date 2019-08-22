@@ -1,8 +1,8 @@
 package marloth.integration
 
+import generation.misc.MeshShapeMap
 import marloth.clienting.Client
-import simulation.misc.MeshInfoMap
 
-fun getMeshInfo(client: Client): MeshInfoMap =
+fun getMeshInfo(client: Client): MeshShapeMap =
     client.renderer.meshes.filterValues { it.bounds != null }
         .mapValues { it.value.bounds!! }
