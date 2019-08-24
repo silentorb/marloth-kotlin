@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import configuration.getAfterburnerModule
 import assets.getResourceStream
+import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import java.io.IOException
@@ -69,7 +70,7 @@ inline fun <reified T> loadJsonResource(path: String): T {
     val content = getResourceStream(path)
     val result = getObjectMapper().readValue(content, T::class.java)
     return result
-  } catch (e: Error) {
+  } catch (e: Throwable) {
     throw Error("Could not load JSON resource $path")
   }
 }

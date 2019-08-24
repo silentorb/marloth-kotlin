@@ -22,6 +22,7 @@ enum class MeshId {
   skySphere,
   sphere,
   spikyBall,
+  treasureChest,
   wallLamp,
 
   // Architecture
@@ -33,6 +34,5 @@ enum class MeshId {
   squareFloor,
   squareWall,
   threeStoryCircleFloor,
-  treasureChest,
   windowWall
 }

@@ -5,9 +5,19 @@ import scenery.Shape
 
 enum class MeshAttribute {
   canHaveAttachment,
+
+  // Rotation
   canFlipHorizontally,
   canFlipUpsideDown,
-  canRotateOnSide
+  canRotateOnSide,
+
+  // Placement categories (Most if not all of these are mutually exlusive
+  placementShortFloor,
+  placementStairStep,
+  placementTallFloor,
+  placementTunnelFloor,
+  placementWall,
+  placementWindow
 }
 
 typealias MeshAttributes = Set<MeshAttribute>

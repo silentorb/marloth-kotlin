@@ -1,52 +1,58 @@
 package generation.misc
 
-import scenery.enums.MeshId
+import scenery.MeshName
 import scenery.enums.TextureId
 import simulation.misc.BiomeName
 
-enum class WallPlacement {
-  all,
-  none,
-  some
-}
+//enum class WallPlacement {
+//  all,
+//  none,
+//  some
+//}
 
 enum class BiomeAttribute {
   alwaysWindow,
   alwaysLit,
   placeOnlyAtStart,
-  placeOnlyAtEnd
+  placeOnlyAtEnd,
+  wallsAll,
+  wallsSome
 }
 
 data class BiomeInfo(
     val name: String,
-    val wallPlacement: WallPlacement,
     val floorTexture: TextureId? = null,
     val ceilingTexture: TextureId? = null,
     val wallTexture: TextureId? = null,
-    val roomFloorMeshes: List<MeshId>,
-    val roomFloorMeshesTall: List<MeshId>,
-    val tunnelFloorMeshes: List<MeshId>,
-    val stairStepMeshes: List<MeshId>,
-    val wallMeshes: List<MeshId>,
-    val windowMeshes: List<MeshId>,
-    val ceilingMeshes: List<MeshId> = listOf(),
+    val meshes: Set<MeshName>,
     val attributes: Set<BiomeAttribute> = setOf()
+//    val roomFloorMeshes: List<MeshId>,
+//    val roomFloorMeshesTall: List<MeshId>,
+//    val tunnelFloorMeshes: List<MeshId>,
+//    val stairStepMeshes: List<MeshId>,
+//    val wallMeshes: List<MeshId>,
+//    val windowMeshes: List<MeshId>,
+//    val ceilingMeshes: List<MeshId> = listOf(),
 )
 
 typealias BiomeInfoMap = Map<BiomeName, BiomeInfo>
 
-val commonBiomeTemplate = BiomeInfo("commonBiomeTemplate",
-    wallPlacement = WallPlacement.some,
-    roomFloorMeshes = listOf(MeshId.circleFloor),
-    roomFloorMeshesTall = listOf( MeshId.threeStoryCircleFloor),
-    tunnelFloorMeshes = listOf(MeshId.longStep),
-    stairStepMeshes = listOf(MeshId.longStairStep),
-    wallMeshes = listOf(MeshId.squareWall),
-    windowMeshes = listOf(MeshId.windowWall)
-)
+enum class QueryMode {
+  all,
+  any,
+  none
+}
 
-val meshesThatCanHaveAttachments = setOf(
-    MeshId.squareWall,
-    MeshId.pillowWall
-)
+fun queryMeshes(meshInfo: MeshInfoMap, options: Set<MeshName>, attributes: MeshAttributes, mode: QueryMode = QueryMode.all): Set<MeshName> =
+    options.filter { key ->
+      val info = meshInfo[key]!!
+      when (mode) {
+        QueryMode.all -> info.attributes.containsAll(attributes)
+        QueryMode.none -> info.attributes.none { attributes.contains(it) }
+        QueryMode.any -> info.attributes.any { attributes.contains(it) }
+      }
+      info.attributes.containsAll(attributes)
+    }.toSet()
 
+fun queryMeshes(meshInfo: MeshInfoMap, biome: BiomeInfo, attributes: MeshAttributes, mode: QueryMode = QueryMode.all): Set<MeshName> =
+    queryMeshes(meshInfo, biome.meshes, attributes, mode)

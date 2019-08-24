@@ -6,8 +6,8 @@ import mythic.spatial.toVector3
 import simulation.misc.*
 
 fun gridToGraph(nextId: IdSource, grid: MapGrid): Pair<Graph, CellPositionMap> {
-  val horizontalScale = 20f
-  val verticalScale = 7.5f
+  val horizontalScale = 30f
+  val verticalScale = 10f
   val positionScale = Vector3(horizontalScale, horizontalScale, verticalScale) / 2f
   val nodes = grid.cells
       .map { (position, cell) ->
@@ -16,7 +16,7 @@ fun gridToGraph(nextId: IdSource, grid: MapGrid): Pair<Graph, CellPositionMap> {
             id = id,
             position = position.toVector3() * positionScale,
             isRoom = true,
-            radius = 5f,
+            radius = 7f,
             attributes = cell.attributes
         )
         Pair(position, node)

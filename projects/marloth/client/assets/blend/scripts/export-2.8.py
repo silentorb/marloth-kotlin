@@ -139,6 +139,9 @@ def deselect_all():
 def select_render_visible():
     for obj in bpy.context.scene.objects:
         if not obj.hide_render:
+            print('obj ' + obj.name)
+            if obj.hide_get():
+                obj.hide_set(False)
             obj.select_set(True)
 
 
@@ -152,9 +155,6 @@ def prepare_scene(export_dir):
     for armature in of_type(bpy.data.objects, 'ARMATURE'):
         prepare_armature(armature)
 
-    deselect_all()
-    select_render_visible()
-
     # for obj in bpy.context.scene.objects:
     #     if not obj.hide:
     #         prune_materials(obj)
@@ -165,6 +165,8 @@ def prepare_scene(export_dir):
     # create_missing_image_textures()
     bake_all(export_dir)
 
+    deselect_all()
+    select_render_visible()
 
 def get_blend_filename():
     filepath = bpy.data.filepath
@@ -227,7 +229,7 @@ def main():
     export_file = os.path.join(export_dir, name + '.gltf')
     prepare_scene(export_dir)
     export_gltf(export_file)
-    # bpy.ops.wm.save_as_mainfile(filepath='e:/deleteme.blend')
+    bpy.ops.wm.save_as_mainfile(filepath='e:/deleteme.blend')
     print('Exported ', export_file)
 
 

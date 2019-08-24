@@ -129,16 +129,16 @@ fun gatherNodeWallMap(deck: Deck, filter: (Map.Entry<Id, ArchitectureElement>) -
         }
         .mapValues { it.value.map { i -> i.key }.toSet() }
 
-fun placeWallLamps(deck: Deck, biomeInfoMap: BiomeInfoMap, realm: Realm, dice: Dice, scale: Float): List<Hand> {
+fun placeWallLamps(deck: Deck, config: GenerationConfig, realm: Realm, dice: Dice, scale: Float): List<Hand> {
   val nodeWalls = gatherNodeWallMap(deck) {
     val depiction = deck.depictions[it.key]!!
-    meshesThatCanHaveAttachments.contains(MeshId.valueOf(depiction.mesh!!))
+    config.meshes[depiction.mesh!!]!!.attributes.contains(MeshAttribute.canHaveAttachment)
   }
   if (nodeWalls.none())
     return listOf()
 
   val (certain, options) = nodeWalls.entries.partition {
-    val biome = biomeInfoMap[realm.nodeTable[it.key]!!.biome]!!
+    val biome = config.biomes[realm.nodeTable[it.key]!!.biome]!!
     biome.attributes.contains(BiomeAttribute.alwaysLit)
   }
 
@@ -224,7 +224,7 @@ fun placeBuffCloud(node: Node, buff: ModifierId) =
     )
 
 fun placeTreasureChest(meshInfo: MeshInfoMap, node: Node, amount: Int) =
-    newTreasureChest(meshInfo, alignWithNodeFloor(meshInfo, node, MeshId.treasureChest), amount)
+    newTreasureChest(meshInfo, alignWithNodeFloor(meshInfo, node, MeshId.treasureChest.name), amount)
 
 enum class Occupant {
   coldCloud,
@@ -289,6 +289,6 @@ fun populateWorld(config: GenerationConfig, input: WorldInput, realm: Realm): (D
   val scale = calculateWorldScale(input.boundary.dimensions)
   listOf(newPlayer(realm, playerNode))
       .plus(populateRooms(config, input.dice, realm, playerNode.id))
-      .plus(placeWallLamps(deck, config.biomes, realm, input.dice, scale))
+      .plus(placeWallLamps(deck, config, realm, input.dice, scale))
 //      .plus(placeDoors(realm, nextId))
 }
