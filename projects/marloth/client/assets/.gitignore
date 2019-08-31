@@ -1,5 +1,5 @@
 config.json
 src/main/resources/models
-blend/models/objects/images
+blend/models/images
 __pycache__
 src/main/resources/textures

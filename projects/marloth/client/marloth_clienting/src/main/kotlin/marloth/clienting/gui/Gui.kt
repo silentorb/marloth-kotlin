@@ -20,6 +20,7 @@ import org.joml.Vector2i
 import scenery.enums.Text
 import simulation.happenings.GameEvent
 import simulation.main.World
+import simulation.main.defaultPlayer
 import simulation.misc.Definitions
 
 typealias TextResources = Map<Text, String>
@@ -103,7 +104,7 @@ fun victoryMenu() = listOfNotNull(
 )
 
 fun viewSelect(textResources: TextResources, definitions: Definitions, world: World?, view: ViewId): Flower? {
-  val player = 1L
+  val player = if (world != null) defaultPlayer(world.deck) else 0L
   return when (view) {
     ViewId.characterInfo -> characterInfoView(definitions, world!!.deck, player)
     ViewId.mainMenu -> menuFlower(textResources, Text.gui_mainMenu, mainMenu(gameIsActive(world)))

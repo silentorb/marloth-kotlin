@@ -47,9 +47,10 @@ fun canSee(world: World, viewer: Id, target: Id): Boolean {
   val targetBody = world.deck.bodies[target]!!
   val nodes = world.realm.nodeTable
   val distance = viewerBody.position.distance(targetBody.position)
-  return distance <= viewingRange
+  val node = nodes[viewerBody.nearestNode]
+  return node != null && distance <= viewingRange
       && isInAngleOfView(world.deck.characters[viewer]!!, viewerBody, targetBody)
-      && rayCanHitPoint(world.realm, nodes[viewerBody.nearestNode]!!, viewerBody.position, targetBody.position)
+      && rayCanHitPoint(world.realm, node, viewerBody.position, targetBody.position)
       && lightRating(world, target) + nearMod(distance) >= minimumLightRating
 }
 

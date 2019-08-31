@@ -54,6 +54,9 @@ fun armatureTransforms(armature: Armature, group: ElementGroup): List<Matrix> =
     }
 
 fun getElementTransform(element: MeshElement, primitive: Primitive, transforms: List<Matrix>?): Matrix {
+  if (primitive.name == "pumpkin-head") {
+    val k = 0
+  }
   return if (primitive.transform != null)
     element.transform * primitive.transform
   else if (primitive.parentBone != null && transforms != null)

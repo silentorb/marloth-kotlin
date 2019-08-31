@@ -8,5 +8,5 @@ data class Faction(
     val name: String
 ) : WithId
 
-const val misfitsFaction = 1L
-const val monstersFaction = 2L
+const val misfitFaction = 1L
+const val monsterFaction = 2L

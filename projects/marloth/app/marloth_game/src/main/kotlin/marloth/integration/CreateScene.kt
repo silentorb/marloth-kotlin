@@ -13,6 +13,7 @@ import scenery.enums.AccessoryId
 import simulation.entities.*
 import simulation.main.Deck
 import simulation.main.World
+import simulation.main.defaultPlayer
 import kotlin.math.floor
 
 val firstPersonCameraOffset = Vector3(0f, 0f, 0.6f)
@@ -65,7 +66,7 @@ fun createTopDownCamera(player: Body): Camera {
 }
 
 fun createCamera(deck: Deck, screen: Screen): Camera {
-  val player = deck.players.keys.first()
+  val player = defaultPlayer(deck)
   val character = deck.characters[player]!!
   val body = deck.bodies[player]!!
   val playerRecord = deck.players[player]!!
@@ -119,8 +120,12 @@ fun convertSimpleDepiction(deck: Deck, id: Id, depiction: Depiction): MeshElemen
 fun convertComplexDepiction(deck: Deck, id: Id, depiction: Depiction): ElementGroup {
   val body = deck.bodies[id]!!
   val character = deck.characters[id]!!
+  val collisionObject = deck.collisionShapes[id]!!
+  val shape = collisionObject.shape
+  val verticalOffset = -shape.height / 2f
+
   val transform = Matrix()
-      .translate(body.position)
+      .translate(body.position + Vector3(0f, 0f, verticalOffset))
       .rotate(character.facingQuaternion)
       .rotateZ(Pi / 2f)
       .scale(1.5f)
@@ -232,7 +237,7 @@ fun mapLights(deck: Deck, player: Id) =
           )
         }
         .plus(listOfNotNull(
-            if (isHolding(deck, player)(AccessoryId.candle))
+            if (hasEquipped(deck, player)(AccessoryId.candle))
               Light(
                   type = LightType.point,
                   color = Vector4(1f, 1f, 1f, 0.6f),

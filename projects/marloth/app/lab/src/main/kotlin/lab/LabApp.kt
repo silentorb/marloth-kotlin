@@ -49,7 +49,8 @@ fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig): World
   val dice = createDice(gameViewConfig)
   val generationConfig = GenerationConfig(
       biomes = biomeInfoMap,
-      meshes = compileArchitectureMeshInfo(meshInfo, meshAttributes)
+      meshes = compileArchitectureMeshInfo(meshInfo, meshAttributes),
+      includeEnemies = gameViewConfig.haveEnemies
   )
   val input = WorldInput(
       boundary,

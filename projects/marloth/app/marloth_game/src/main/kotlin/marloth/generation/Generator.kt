@@ -20,9 +20,9 @@ fun generateDefaultWorld(): World {
 //  return addEnemies(world, input.boundary, input.dice)
 }
 
-fun addEnemies(world: World, boundary: WorldBoundary, dice: Dice): World {
-  val scale = calculateWorldScale(boundary.dimensions)
-  return pipe(world, listOf(
-      addDeck(placeCharacters(world.realm, dice, scale))
-  ))
-}
+//fun addEnemies(world: World, boundary: WorldBoundary, dice: Dice): World {
+//  val scale = calculateWorldScale(boundary.dimensions)
+//  return pipe(world, listOf(
+//      addDeck(placeCharacters(world.realm, dice, scale))
+//  ))
+//}

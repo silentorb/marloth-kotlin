@@ -24,6 +24,7 @@ import simulation.input.Command
 import simulation.input.CommandType
 import simulation.misc.Victory
 import simulation.input.gameStrokes
+import simulation.main.defaultPlayer
 import simulation.physics.newBulletState
 import simulation.physics.releaseBulletState
 import simulation.physics.syncNewBodies
@@ -75,7 +76,7 @@ fun updateAppWorld(app: GameApp, previousAppState: AppState, appState: AppState,
   val world = worlds.last()
   val gameCommands = if (appState.client.view == ViewId.none)
     if (previousAppState.client.view == ViewId.merchant)
-      listOf(Command(type = CommandType.stopInteracting, target = 1))
+      listOf(Command(type = CommandType.stopInteracting, target = defaultPlayer(world.deck)))
     else
       commands
   else

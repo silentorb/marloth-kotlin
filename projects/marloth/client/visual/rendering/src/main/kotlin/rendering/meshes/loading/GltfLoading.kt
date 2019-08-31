@@ -173,17 +173,21 @@ fun loadMaterial(info: GltfInfo, materialIndex: Int): Material {
   )
 }
 
+fun formatArmatureName(name: String): String =
+    toCamelCase(name.replace("rig_", ""))
+
 fun getParentBone(info: GltfInfo, nodeIndex: Int, boneMap: BoneMap): Int? {
   val node = info.nodes[nodeIndex]
   return if (node.extras != null && node.extras.containsKey("parent")) {
-    val parentName = node.extras["parent"] as String
+    val rawName = node.extras["parent"] as String
+    val parentName = rawName.replace("rig_", "")
     boneMap.values.firstOrNull { it.name == parentName }?.index
   } else
     null
 }
 
-fun loadPrimitive(buffer: ByteBuffer, info: GltfInfo, vertexSchemas: VertexSchemas, primitive: Primitive,
-                  converter: VertexConverter): GeneralMesh {
+fun loadPrimitiveMesh(buffer: ByteBuffer, info: GltfInfo, vertexSchemas: VertexSchemas, primitive: Primitive,
+                      converter: VertexConverter): GeneralMesh {
   val vertexSchema = if (primitive.attributes.containsKey(AttributeType.JOINTS_0))
     vertexSchemas.animated
   else if (primitive.attributes.containsKey(AttributeType.TEXCOORD_0))
@@ -193,17 +197,6 @@ fun loadPrimitive(buffer: ByteBuffer, info: GltfInfo, vertexSchemas: VertexSchem
 
   val (vertices, packing) = loadVertices(buffer, info, vertexSchema, primitive, converter)
   val indices = loadIndices(buffer, info, primitive)
-
-//  println("")
-//  print("vertices:")
-//  for (v in 0 until vertices.limit()) {
-//    print(" " + vertices.get(v))
-//  }
-//  println("")
-//  print("indicies:")
-//  for (v in 0 until indices.limit()) {
-//    print(" " + indices.get(v))
-//  }
 
   vertices.position(0)
   indices.position(0)
@@ -262,15 +255,6 @@ fun loadAnimation(buffer: ByteBuffer, info: GltfInfo, source: IndexedAnimation, 
         }
       }
 
-  val d = source.channels.map {
-    it.target.node
-  }
-      .distinct()
-      .map { Pair(it, info.nodes[it]) }
-
-  if (source.name == "metarig_walk") {
-    val k = 0
-  }
   return SkeletonAnimation(
       name = source.name,
       channels = channels,
@@ -281,7 +265,7 @@ fun loadAnimation(buffer: ByteBuffer, info: GltfInfo, source: IndexedAnimation, 
 
 fun loadAnimations(buffer: ByteBuffer, info: GltfInfo, animations: List<IndexedAnimation>, bones: List<Bone>, boneIndexMap: Map<Int, BoneNode>): AnimationMap {
   return animations.mapNotNull { source ->
-    val name = toCamelCase(source.name.replace("rig_", ""))
+    val name = formatArmatureName(source.name)
     val key = AnimationId.values().firstOrNull { it.name == name }
     if (key != null)
       Pair(key, loadAnimation(buffer, info, source, boneIndexMap))
@@ -482,6 +466,40 @@ fun gatherChildLights(info: GltfInfo, node: Node): List<Light> {
     }
 }
 
+fun loadMeshes(info: GltfInfo, buffer: ByteBuffer, vertexSchemas: VertexSchemas, boneMap: BoneMap): List<ModelMesh> {
+  return info.meshes
+      .mapIndexedNotNull { meshIndex, mesh ->
+        val nodeIndex = info.nodes.indexOfFirst { it.mesh == meshIndex }
+        val id = getMeshName(info, nodeIndex)
+        if (id == null)
+          null
+        else {
+          val name2 = mesh.name.replace(".001", "")
+
+          val parentBone = getParentBone(info, nodeIndex, boneMap)
+          val primitives = mesh.primitives.map { primitiveSource ->
+            val material = loadMaterial(info, primitiveSource.material)
+            val converter = createVertexConverter(info, buffer, boneMap, meshIndex)
+            rendering.meshes.Primitive(
+                mesh = loadPrimitiveMesh(buffer, info, vertexSchemas, primitiveSource, converter),
+                transform = null,
+                material = material,
+                name = name2,
+                parentBone = parentBone
+            )
+          }
+          val node = info.nodes[nodeIndex]
+
+          ModelMesh(
+              id = id,
+              primitives = primitives,
+              lights = gatherChildLights(info, node),
+              bounds = loadBoundingShape(node)
+          )
+        }
+      }
+}
+
 fun loadGltf(vertexSchemas: VertexSchemas, filename: String, resourcePath: String): ModelImport {
   val info = loadJsonResource<GltfInfo>(resourcePath + ".gltf")
   val directoryPath = resourcePath.split("/").dropLast(1).joinToString("/")
@@ -506,37 +524,7 @@ fun loadGltf(vertexSchemas: VertexSchemas, filename: String, resourcePath: Strin
   else
     listOf(loadArmature(buffer, info, filename, boneMap, newSocketMap)).mapNotNull { it }
 
-  val meshes = info.meshes
-      .mapIndexedNotNull { meshIndex, mesh ->
-        val nodeIndex = info.nodes.indexOfFirst { it.mesh == meshIndex }
-        val id = getMeshName(info, nodeIndex)
-        if (id == null)
-          null
-        else {
-          val name2 = mesh.name.replace(".001", "")
-
-          val parentBone = getParentBone(info, nodeIndex, boneMap)
-          val primitives = mesh.primitives.map { primitiveSource ->
-            val material = loadMaterial(info, primitiveSource.material)
-            val converter = createVertexConverter(info, buffer, boneMap, meshIndex)
-            rendering.meshes.Primitive(
-                mesh = loadPrimitive(buffer, info, vertexSchemas, primitiveSource, converter),
-                transform = null,
-                material = material,
-                name = name2,
-                parentBone = parentBone
-            )
-          }
-          val node = info.nodes[nodeIndex]
-
-          ModelMesh(
-              id = id,
-              primitives = primitives,
-              lights = gatherChildLights(info, node),
-              bounds = loadBoundingShape(node)
-          )
-        }
-      }
+  val meshes = loadMeshes(info, buffer, vertexSchemas, boneMap)
 
   return ModelImport(meshes = meshes, armatures = armatures)
 }

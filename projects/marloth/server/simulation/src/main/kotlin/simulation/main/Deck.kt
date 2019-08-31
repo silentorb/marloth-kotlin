@@ -94,3 +94,6 @@ typealias DeckSource = (IdSource) -> Deck
 
 fun resolveDecks(nextId: IdSource, deckSources: List<DeckSource>): List<Deck> =
     deckSources.map { it(nextId) }
+
+fun defaultPlayer(deck: Deck): Id =
+    deck.players.keys.first()

@@ -19,6 +19,12 @@ fun isHolding(deck: Deck, player: Id): (AccessoryId) -> Boolean = { type ->
   equippedItem(deck)(player)?.type == type
 }
 
+fun hasEquipped(deck: Deck, character: Id): (AccessoryId) -> Boolean = { type ->
+  deck.attachments
+      .filterValues { it.target == character && it.category == AttachmentTypeId.equipped }
+      .any { deck.accessories[it.key]?.type == type }
+}
+
 infix fun Character.equip(item: Id): Character =
     this.copy(
         activeItem = item

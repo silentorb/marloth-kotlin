@@ -152,8 +152,9 @@ def prepare_scene(export_dir):
 
     os.makedirs(export_dir, exist_ok=True)
 
-    for armature in of_type(bpy.data.objects, 'ARMATURE'):
-        prepare_armature(armature)
+    # Going to see if this is no longer needed with the switch in gltf plugins
+    # for armature in of_type(bpy.data.objects, 'ARMATURE'):
+    #     prepare_armature(armature)
 
     # for obj in bpy.context.scene.objects:
     #     if not obj.hide:
@@ -162,7 +163,6 @@ def prepare_scene(export_dir):
     for obj in bpy.context.scene.objects:
         preprocess_bounds_shape(obj)
 
-    # create_missing_image_textures()
     bake_all(export_dir)
 
     deselect_all()

@@ -13,8 +13,6 @@ import marloth.definition.templates.newBuffCloud
 import marloth.definition.templates.newMerchant
 import marloth.definition.templates.newTreasureChest
 import mythic.ent.Id
-import mythic.ent.IdSource
-import mythic.ent.newIdSource
 import mythic.spatial.Pi
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
@@ -31,60 +29,59 @@ import simulation.misc.*
 import simulation.physics.Body
 import simulation.physics.old.getLookAtAngle
 
-data class CharacterTemplate(
-    val faction: Id,
-    val definition: CharacterDefinition
-)
 
-fun placeCharacter(realm: Realm, template: CharacterTemplate, nextId: IdSource, node: Id, position: Vector3): IdHand {
-//  val node = dice.takeOne(realm.locationNodes.drop(1))// Skip the node where the player starts
-//  val wall = dice.takeOne(node.walls)
-//  val position = getVector3Center(node.position, realm.mesh.faces[wall]!!.edges[0].first)
-  val id = nextId()
-  return IdHand(id, newCharacter(
-      definition = template.definition,
-      faction = template.faction,
+fun placeAiCharacter(faction: Id, definition: CharacterDefinition, position: Vector3): Hand {
+  return newCharacter(
+      definition = definition,
+      faction = faction,
       position = position,
       spirit = Spirit(
           pursuit = Pursuit()
       )
-  ))
+  )
 }
 
-fun placeCharacters(realm: Realm, dice: Dice, scale: Float): (IdSource) -> List<IdHand> {
-  return { nextId ->
-    //  val enemyCount = (10f * scale).toInt()
-    //  val counts = listOf(2, 2)
-//  val counts = listOf(8, 0)
-    val counts = listOf(0, 8)
-    val total = counts.sum()
-
-    val walls = realm.locationNodes
-        .drop(1) // Skip the node where the player starts
-        .flatMap { node -> node.walls.map { Pair(node.id, it) } }
-
-    val positions = dice.take(walls, total)
-        .map { Pair(it.first, realm.nodeTable[it.first]!!.position) }
-
-    val templates = listOf(
-        CharacterTemplate(
-            faction = 1,
-            definition = creatures.ally
-        ),
-        CharacterTemplate(
-            faction = 2,
-            definition = creatures.monster
-        )
+fun placeEnemy(node: Node): Hand =
+    placeAiCharacter(
+        faction = monsterFaction,
+        definition = creatures.monster,
+        position = node.position
     )
 
-    val seeds = counts.mapIndexed { index, i -> (1..i).map { templates[index] } }
-        .flatten()
-
-    seeds.zip(positions) { seed, (node, position) ->
-      placeCharacter(realm, seed, nextId, node, position)
-    }
-  }
-}
+//fun placeCharacters(realm: Realm, dice: Dice, scale: Float): (IdSource) -> List<IdHand> {
+//  return { nextId ->
+//    //  val enemyCount = (10f * scale).toInt()
+//    //  val counts = listOf(2, 2)
+////  val counts = listOf(8, 0)
+//    val counts = listOf(0, 8)
+//    val total = counts.sum()
+//
+//    val walls = realm.locationNodes
+//        .drop(1) // Skip the node where the player starts
+//        .flatMap { node -> node.walls.map { Pair(node.id, it) } }
+//
+//    val positions = dice.take(walls, total)
+//        .map { Pair(it.first, realm.nodeTable[it.first]!!.position) }
+//
+//    val templates = listOf(
+//        CharacterTemplate(
+//            faction = 1,
+//            definition = creatures.ally
+//        ),
+//        CharacterTemplate(
+//            faction = 2,
+//            definition = creatures.monster
+//        )
+//    )
+//
+//    val seeds = counts.mapIndexed { index, i -> (1..i).map { templates[index] } }
+//        .flatten()
+//
+//    seeds.zip(positions) { seed, (node, position) ->
+//      placeAiCharacter(realm, seed, nextId, node, position)
+//    }
+//  }
+//}
 
 //fun newDoor(realm: Realm, nextId: IdSource): (Id) -> Hand = { nodeId ->
 //  val node = realm.nodeTable[nodeId]!!
@@ -198,22 +195,6 @@ fun newPlayer(realm: Realm, playerNode: Node): Hand {
               viewMode = ViewMode.firstPerson
           )
       )
-
-//  val candle = Hand(
-//      attachment = Attachment(
-//          category = AttachmentTypeId.equipped,
-//          index = 2
-//      ),
-//      accessory = Accessory(
-//          type = AccessoryId.candle
-//      )
-//  )
-
-//  val result = toDeck(characterHand.copy(hand = characterHand.hand.copy(character = characterHand.hand.character!! equip candleId)))
-//      .plus(toDeck(IdHand(
-//          id = candleId,
-//          hand = candle
-//      )))
 }
 
 fun placeBuffCloud(node: Node, buff: ModifierId) =
@@ -229,6 +210,7 @@ fun placeTreasureChest(meshInfo: MeshInfoMap, node: Node, amount: Int) =
 enum class Occupant {
   coldCloud,
   fireCloud,
+  enemy,
   merchant,
   none,
   poisonCloud,
@@ -237,15 +219,19 @@ enum class Occupant {
 
 typealias DistributionMap = Map<Occupant, Int>
 
-fun occupantPopulators(meshInfo: MeshInfoMap, node: Node, occupant: Occupant): Hand =
-    when (occupant) {
-      Occupant.coldCloud -> placeBuffCloud(node, ModifierId.damageChilled)
-      Occupant.fireCloud -> placeBuffCloud(node, ModifierId.damageBurning)
-      Occupant.merchant -> newMerchant(node.position, defaultWares)
-      Occupant.none -> Hand()
-      Occupant.poisonCloud -> placeBuffCloud(node, ModifierId.damagePoisoned)
-      Occupant.treasureChest -> placeTreasureChest(meshInfo, node, 10)
-    }
+typealias OccupantToHand = (Node, Occupant) -> Hand?
+
+fun occupantPopulator(config: GenerationConfig): OccupantToHand = { node, occupant ->
+  when (occupant) {
+    Occupant.coldCloud -> placeBuffCloud(node, ModifierId.damageChilled)
+    Occupant.fireCloud -> placeBuffCloud(node, ModifierId.damageBurning)
+    Occupant.enemy -> if (config.includeEnemies) placeEnemy(node) else null
+    Occupant.merchant -> newMerchant(node.position, defaultWares)
+    Occupant.none -> null
+    Occupant.poisonCloud -> placeBuffCloud(node, ModifierId.damagePoisoned)
+    Occupant.treasureChest -> placeTreasureChest(config.meshes, node, 10)
+  }
+}
 
 fun damageCloudsDistributions(dice: Dice, totalWeight: Int): DistributionMap {
   val cloudTypes = listOf(
@@ -262,18 +248,19 @@ fun damageCloudsDistributions(dice: Dice, totalWeight: Int): DistributionMap {
 }
 
 fun getDistributions(dice: Dice): DistributionMap = mapOf(
-//    Occupant.merchant to 200,
-    Occupant.none to 300,
-    Occupant.treasureChest to 600
-).plus(damageCloudsDistributions(dice, 500))
+    Occupant.enemy to 50,
+    Occupant.merchant to 0,
+    Occupant.none to 30,
+    Occupant.treasureChest to 20
+).plus(damageCloudsDistributions(dice, 10))
 
-fun populateRooms(config: GenerationConfig, dice: Dice, realm: Realm, playerNode: Id): List<Hand> {
+fun populateRooms(occupantToHand: OccupantToHand, dice: Dice, realm: Realm, playerNode: Id): List<Hand> {
   val rooms = getRooms(realm).filter { it.id != playerNode }
   val ranges = getDistributions(dice)
-  val hands = distributeToSlots(dice, rooms.size, ranges)
-      .zip(rooms) { occupant, node ->
-        occupantPopulators(config.meshes, node, occupant)
-      }
+  val occupants = distributeToSlots(dice, rooms.size, ranges)
+  val hands = rooms
+      .zip(occupants, occupantToHand)
+      .filterNotNull()
 
   return hands
 }
@@ -287,8 +274,9 @@ fun populateWorld(config: GenerationConfig, input: WorldInput, realm: Realm): (D
     throw Error("Biome configuration is missing placeOnlyAtStart")
 
   val scale = calculateWorldScale(input.boundary.dimensions)
+  val occupantToHand = occupantPopulator(config)
   listOf(newPlayer(realm, playerNode))
-      .plus(populateRooms(config, input.dice, realm, playerNode.id))
+      .plus(populateRooms(occupantToHand, input.dice, realm, playerNode.id))
       .plus(placeWallLamps(deck, config, realm, input.dice, scale))
 //      .plus(placeDoors(realm, nextId))
 }

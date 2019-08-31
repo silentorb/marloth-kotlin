@@ -2,13 +2,13 @@ package simulation.main
 
 import simulation.misc.GameOver
 import simulation.misc.isVictory
-import simulation.misc.misfitsFaction
+import simulation.misc.misfitFaction
 
 val updateGlobalDetails: (World) -> World = { world ->
   if (world.gameOver == null && isVictory(world))
     world.copy(
         gameOver = GameOver(
-            winningFaction = misfitsFaction
+            winningFaction = misfitFaction
         )
     )
   else
