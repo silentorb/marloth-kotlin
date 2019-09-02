@@ -18,8 +18,15 @@ fun doorwayPosition(graph: Graph, firstNode: Id, secondNode: Id): Vector3 {
 }
 
 fun getPathTargetPosition(world: World, knowledge: Knowledge, path: Path): Vector3 {
+  val graph = world.realm.graph
   val body = world.deck.bodies[knowledge.spiritId]!!
-  return doorwayPosition(world.realm.graph, body.nearestNode, path.first())
+  val doorway = doorwayPosition(graph, body.nearestNode, path.first())
+  val horizontalDistance = body.position.copy(z = 0f).distance(doorway.copy(z = 0f))
+//  println("dist " + horizontalDistance + " " + body.nearestNode)
+  return if (horizontalDistance > 0.5f)
+    doorway
+  else
+    graph.nodes[path.first()]!!.position
 }
 
 fun moveStraightTowardPosition(world: World, knowledge: Knowledge, target: Vector3): Commands {

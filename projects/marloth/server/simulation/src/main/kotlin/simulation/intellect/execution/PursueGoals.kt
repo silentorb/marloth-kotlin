@@ -3,7 +3,6 @@ package simulation.intellect.execution
 import simulation.intellect.Pursuit
 import simulation.intellect.Spirit
 import simulation.intellect.acessment.Knowledge
-import simulation.physics.isInVoid
 import simulation.input.Commands
 import simulation.main.World
 

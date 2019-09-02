@@ -128,8 +128,6 @@ fun createMultiSampler(glow: Glow, config: PlatformDisplayConfig): Multisampler 
   if (status != GL_FRAMEBUFFER_COMPLETE)
     throw Error("Error creating multisample framebuffer.")
 
-  println(status)
-
   return Multisampler(
       framebuffer = framebuffer,
       renderbuffer = renderbuffer

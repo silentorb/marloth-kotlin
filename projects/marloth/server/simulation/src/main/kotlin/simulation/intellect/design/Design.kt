@@ -6,7 +6,6 @@ import simulation.intellect.acessment.character
 import simulation.intellect.acessment.getVisibleEnemies
 import simulation.intellect.execution.spiritAttackRangeBuffer
 import mythic.ent.Id
-import simulation.physics.isInVoid
 import simulation.main.World
 
 fun updateTargetEnemy(world: World, knowledge: Knowledge, pursuit: Pursuit): Id? {

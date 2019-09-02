@@ -1,6 +1,6 @@
-package marloth.clienting
+package marloth.clienting.gui
 
-import marloth.clienting.gui.ViewId
+import marloth.clienting.ClientState
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.input.UserCommands
 

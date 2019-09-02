@@ -7,7 +7,7 @@ import simulation.intellect.design.updatePursuit
 import simulation.main.World
 
 fun updateAiState(world: World, delta: Float): (Id, Spirit) -> Spirit = { id, spirit ->
-  val character = world.deck. characters[id]!!
+  val character = world.deck.characters[id]!!
   if (!character.isAlive)
     spirit
   else {

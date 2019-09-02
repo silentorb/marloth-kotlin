@@ -3,6 +3,7 @@ package lab
 import configuration.ConfigManager
 import configuration.loadYamlFile
 import configuration.saveYamlFile
+import generation.abstracted.initializeNodeRadii
 import generation.architecture.placeArchitecture
 import generation.generateWorld
 import generation.misc.GenerationConfig
@@ -71,7 +72,10 @@ fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig): World
   ))(initialWorld.deck)
 
   return finalize(initialWorld.copy(
-      deck = deck
+      deck = deck,
+      realm = initialWorld.realm.copy(
+          graph = initializeNodeRadii(deck)(initialWorld.realm.graph)
+      )
   ))
 }
 

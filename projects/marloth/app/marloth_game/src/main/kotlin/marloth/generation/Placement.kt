@@ -24,6 +24,7 @@ import scenery.enums.ModifierId
 import simulation.entities.*
 import simulation.intellect.Pursuit
 import simulation.intellect.Spirit
+import marloth.definition.newCharacter
 import simulation.main.*
 import simulation.misc.*
 import simulation.physics.Body

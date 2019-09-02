@@ -77,8 +77,8 @@ private tailrec fun addPathStep(maxSteps: Int, dice: Dice, grid: MapGrid, positi
 
   val newGrid = grid.copy(
       cells = grid.cells.plus(listOf(
-          nextPosition to Cell(attributes = attributes.plus(setOf(NodeAttribute.room))),
-          tunnelPosition to Cell(attributes = setOf(NodeAttribute.tunnel))
+          tunnelPosition to Cell(attributes = setOf(NodeAttribute.tunnel)),
+          nextPosition to Cell(attributes = attributes.plus(setOf(NodeAttribute.room)))
       )),
       connections = grid.connections.plus(listOf(
           Pair(position, tunnelPosition),

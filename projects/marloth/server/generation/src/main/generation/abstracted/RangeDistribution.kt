@@ -2,13 +2,42 @@ package generation.abstracted
 
 import randomly.Dice
 
+// This assumes that there is no entry with a weight of zero
+fun <T> normalizeRangesFallback(slotCount: Int, ranges: Map<T, Int>): Map<T, Int> {
+  val sorted = ranges.entries
+      .sortedByDescending { it.value }
+
+  val result = mutableMapOf<T, Int>()
+  var remainingCount = slotCount
+  for (i in sorted.indices) {
+    if (remainingCount == 0)
+      break
+
+    val entry = sorted[i]
+    val weight = entry.value
+    val nextWeight = if (i < sorted.size - 1) sorted[i + 1].value else 0
+    val count = Math.min(remainingCount, weight / nextWeight)
+    result[entry.key] = count
+    remainingCount -= count
+  }
+  return result
+//  return sorted
+//      .take(slotCount)
+//      .associate { Pair(it.key, 1) }
+}
+
+// This supports entries with a weight of zero (they are filtered out)
 fun <T> normalizeRanges(slotCount: Int, ranges: Map<T, Int>): Map<T, Int> {
-  val rangeTotal = ranges.values.sum()
-  val initialNormalized = ranges.mapValues { it.value * slotCount / rangeTotal }
+  val filtered = ranges.filter { it.value > 0 }
+  if (slotCount < filtered.size)
+    return normalizeRangesFallback(slotCount, filtered)
+
+  val rangeTotal = filtered.values.sum()
+  val initialNormalized = filtered.mapValues { it.value * slotCount / rangeTotal }
   val initialNormalizedTotal = initialNormalized.values.sum()
   val gap = slotCount - initialNormalizedTotal
   assert(gap >= 0)
-  assert(gap <= ranges.size)
+  assert(gap <= filtered.size)
   val finalNormalized = if (gap > 0)
     initialNormalized.plus(
         initialNormalized.entries
@@ -30,10 +59,10 @@ fun <T> distributeToSlots(dice: Dice, slotCount: Int, scaling: Map<T, Int>, fixe
   val scalingSlotCount = slotCount - fixedSlotCount
   val normalized = normalizeRanges(scalingSlotCount, scaling)
   val pool = normalized.flatMap { range ->
-    (0 until range.value).map { range.key }
+    (1..range.value).map { range.key }
   }
       .plus(fixed.flatMap { (key, count) ->
-        (0 until count).map { key }
+        (1..count).map { key }
       })
   return dice.scramble(pool)
 }

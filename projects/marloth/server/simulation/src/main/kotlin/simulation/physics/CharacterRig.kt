@@ -97,7 +97,7 @@ fun updateCharacterRig(bulletState: BulletState, deck: Deck, id: Id) {
 //    btBody.applyCentralImpulse(toGdxVector3(impulseVector))
 
     val body = deck.bodies[id]!!
-    println("$stepHeight ${body.position.z}")
+//    println("$stepHeight ${body.position.z}")
     if (stepHeight < 0f) {
       val k = 0
     }

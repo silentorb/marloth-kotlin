@@ -16,7 +16,7 @@ const val standardTunnelWidth = 4.5f
 fun <T> createSeries(gapSize: Float, segmentLength: Float, margin: Float = 0f, action: (Int, Float) -> T): List<T> {
   val length = gapSize - margin * 2f
   val stepCount = ceil(length / segmentLength).toInt()
-  println(stepCount)
+//  println(stepCount)
   val overflow = stepCount * segmentLength - length
   val stepSize = if (stepCount > 1) segmentLength - overflow / (stepCount - 1) else 0f
   val start = margin + segmentLength / 2f

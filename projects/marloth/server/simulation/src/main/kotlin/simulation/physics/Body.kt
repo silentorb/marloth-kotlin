@@ -5,6 +5,7 @@ import mythic.ent.firstSortedBy
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import simulation.main.World
+import simulation.misc.Node
 import simulation.misc.Realm
 
 const val voidNodeId = -1L
@@ -35,14 +36,25 @@ data class DynamicBody(
     val hinge: HingeConstraint? = null
 )
 
+fun isMoving(body: Body) =
+    body.velocity != Vector3.zero
+
+fun isOutsideOfNodeRange(position: Vector3, node: Node) =
+    position.distance(node.position) > node.radius - 0.5f
+
 fun updateNearestBodyNode(realm: Realm, body: Body): Id {
   val currentNode = realm.nodeTable[body.nearestNode]
-  return if (currentNode != null && body.position.distance(currentNode.position) <= currentNode.radius)
-    currentNode.id
-  else {
-    val nearest = realm.nodeTable.values.firstSortedBy { it.position.distance(body.position) - it.radius }
-    nearest.id
-  }
+
+  val needsUpdating = currentNode == null
+      || (isMoving(body) && isOutsideOfNodeRange(body.position, currentNode))
+
+  return if (needsUpdating) {
+    val nearest = realm.nodeTable.entries.firstSortedBy {
+      it.value.position.distance(body.position) - it.value.radius
+    }
+    nearest.key
+  } else
+    currentNode!!.id
 }
 
 fun updateBody(realm: Realm): (Body) -> Body = { body ->

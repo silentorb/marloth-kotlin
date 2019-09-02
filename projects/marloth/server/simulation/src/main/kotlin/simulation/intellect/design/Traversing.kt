@@ -6,7 +6,6 @@ import simulation.intellect.acessment.Knowledge
 import mythic.ent.Id
 import randomly.Dice
 import simulation.main.World
-import simulation.misc.getOtherNode
 
 //fun getNextPathNode(world: World, knowledge: Knowledge, path: Path): Id? {
 //  val body = world.deck.bodies[knowledge.spiritId]!!

@@ -1,20 +1,15 @@
 package simulation.entities
 
 import mythic.ent.Id
-import mythic.ent.newIdSource
 import mythic.ent.pipe
 import mythic.spatial.*
 import org.joml.times
-import scenery.AnimationId
-import scenery.Capsule
 import scenery.enums.ResourceId
 import scenery.enums.Sounds
 import simulation.combat.DamageMultipliers
 import simulation.happenings.OrganizedEvents
 import simulation.input.*
-import simulation.intellect.Spirit
 import simulation.main.Deck
-import simulation.main.Hand
 import simulation.main.World
 import simulation.main.simulationDelta
 import simulation.misc.ResourceContainer
@@ -237,61 +232,3 @@ fun allCharacterOrientations(world: World): List<AbsoluteOrientationForce> =
           .rotateZ(it.value.facingRotation.z))
     }
 
-fun newCharacter(definition: CharacterDefinition, faction: Id, position: Vector3, angle: Float = Pi / 2f,
-                 spirit: Spirit? = null): Hand {
-  val nextId = newIdSource(1)
-  val abilities = definition.abilities.map {
-    Ability(
-        id = nextId(),
-        definition = it
-    )
-  }
-  return Hand(
-      ambientAudioEmitter = if (definition.ambientSounds.any())
-        AmbientAudioEmitter(
-            delay = position.length() % 2.0
-        )
-      else
-        null,
-      body = Body(
-          position = position,
-          orientation = Quaternion(),
-          velocity = Vector3()
-      ),
-      character = Character(
-          definition = definition,
-          turnSpeed = Vector2(3f, 1f),
-          facingRotation = Vector3(0f, 0f, angle),
-          faction = faction,
-          sanity = ResourceContainer(100),
-          abilities = abilities,
-          money = 30
-      ),
-      destructible = Destructible(
-          base = DestructibleBaseStats(
-              health = definition.health,
-              damageMultipliers = definition.damageMultipliers
-          ),
-          health = ResourceContainer(definition.health),
-          damageMultipliers = definition.damageMultipliers
-      ),
-      collisionShape = CollisionObject(
-          shape = Capsule(0.4f, 2.3f)
-      ),
-      depiction = Depiction(
-          type = definition.depictionType,
-          animations = listOf(
-              DepictionAnimation(
-                  animationId = AnimationId.stand,
-                  animationOffset = 0f
-              )
-          )
-      ),
-      dynamicBody = DynamicBody(
-          gravity = true,
-          mass = 45f,
-          resistance = 4f
-      ),
-      spirit = spirit
-  )
-}
