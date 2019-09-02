@@ -1,4 +1,4 @@
-package generation.abstracted
+package generation.abstracted.old
 
 import generation.misc.getNodeDistance
 import mythic.ent.firstSortedBy

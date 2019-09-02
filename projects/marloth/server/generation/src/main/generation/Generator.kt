@@ -35,8 +35,6 @@ fun generateWorld(config: GenerationConfig, input: WorldInput): World {
       graph = graph,
       cellMap = cellMap,
       nodeList = graph.nodes.values.toList(),
-      faces = mapOf(),
-//      mesh = realm2.mesh,
       doorFrameNodes = graph.doorways,
       grid = grid
   )

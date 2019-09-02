@@ -92,13 +92,11 @@ data class Realm(
     val graph: Graph,
     val cellMap: CellPositionMap,
     val nodeList: List<Node>,
-    val faces: ConnectionTable,
     val doorFrameNodes: List<Id>,
     val grid: MapGrid
 ) {
 
   val nodeTable: NodeTable = nodeList.associate { Pair(it.id, it) }
-  val nodeFaces: OneToManyMap = mapNodeFaces(nodeTable, faces)
 
   val locationNodes: List<Node>
     get() = nodeList

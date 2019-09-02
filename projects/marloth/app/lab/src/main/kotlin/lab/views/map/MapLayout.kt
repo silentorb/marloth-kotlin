@@ -23,30 +23,31 @@ private fun mapDisplay(client: Client, realm: Realm, deck: Deck, config: MapView
     depict("map display", renderMapView(client, realm, deck, config)) plusLogic onClick(bagClickMap)
 
 private fun faceInfo(realm: Realm, id: Id): Flower {
-  val connection = realm.faces[id]
-  if (connection == null)
-    return emptyFlower
-
-//  val face = realm.mesh.faces[id]!!
-  val firstNode = realm.nodeTable[connection.firstNode]
-  val secondNode = realm.nodeTable[connection.secondNode]
-  val rows = listOfNotNull(
-      id.toString(),
-      connection.texture ?: "no texture",
-      "nodes: ${connection.firstNode}, ${connection.secondNode}",
-      if (firstNode != null) "${firstNode.radius} ${firstNode.position}" else null,
-      if (secondNode != null) "${secondNode.radius} ${secondNode.position}" else null,
-      "neighbors: "
-  )
-//      .plus(face.neighbors.map { "  ${it.id} ${realm.faces[it.id]!!.faceType}" })
-//      .plus("points:")
-//      .plus(face.vertices.map { "  " + it.toString() })
-//      .plus("-")
-      .map { label(mapTextStyle, it) }
-
-  return margin(all = 10)(
-      list(verticalPlane, 10)(rows)
-  )
+  throw Error("No longer supported")
+//  val connection = realm.faces[id]
+//  if (connection == null)
+//    return emptyFlower
+//
+////  val face = realm.mesh.faces[id]!!
+//  val firstNode = realm.nodeTable[connection.firstNode]
+//  val secondNode = realm.nodeTable[connection.secondNode]
+//  val rows = listOfNotNull(
+//      id.toString(),
+//      connection.texture ?: "no texture",
+//      "nodes: ${connection.firstNode}, ${connection.secondNode}",
+//      if (firstNode != null) "${firstNode.radius} ${firstNode.position}" else null,
+//      if (secondNode != null) "${secondNode.radius} ${secondNode.position}" else null,
+//      "neighbors: "
+//  )
+////      .plus(face.neighbors.map { "  ${it.id} ${realm.faces[it.id]!!.faceType}" })
+////      .plus("points:")
+////      .plus(face.vertices.map { "  " + it.toString() })
+////      .plus("-")
+//      .map { label(mapTextStyle, it) }
+//
+//  return margin(all = 10)(
+//      list(verticalPlane, 10)(rows)
+//  )
 }
 
 private fun infoPanel(realm: Realm, config: MapViewConfig): Flower =

@@ -3,7 +3,7 @@ package simulation.intellect.design
 import simulation.intellect.Path
 import mythic.ent.Id
 import simulation.misc.Realm
-import simulation.misc.getPathNeighbors
+import simulation.misc.nodeNeighbors
 
 data class PathNode(
     val node: Id,
@@ -22,9 +22,9 @@ tailrec fun findPath(realm: Realm, destination: Id, scanned: List<PathNode>, nex
 
   val neighbors = next
       .flatMap { node ->
-        getPathNeighbors(realm.nodeTable, realm.faces, node.node)
-            .filter { n -> scanned.none { it.node == n.id } && next.none { it.node == n.id } }
-            .map { PathNode(it.id, node) }
+        nodeNeighbors(realm.graph, node.node)
+            .filter { n -> scanned.none { it.node == n } && next.none { it.node == n } }
+            .map { PathNode(it, node) }
             .toList()
       }
       .distinctBy { it.node }

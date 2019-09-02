@@ -15,7 +15,6 @@ fun gridToGraph(nextId: IdSource, grid: MapGrid): Pair<Graph, CellPositionMap> {
         val node = Node(
             id = id,
             position = position.toVector3() * positionScale,
-            isRoom = true,
             radius = 7f,
             attributes = cell.attributes
         )
@@ -26,11 +25,11 @@ fun gridToGraph(nextId: IdSource, grid: MapGrid): Pair<Graph, CellPositionMap> {
       .associate { it }
 
   val connections = grid.connections
-      .map { (_, pair) ->
+      .map { pair ->
         InitialConnection(
             first = nodes[pair.first]!!.id,
             second = nodes[pair.second]!!.id,
-            type = ConnectionType.tunnel
+            type = ConnectionType.doorway
         )
       }
   val graph = Graph(

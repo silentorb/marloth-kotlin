@@ -1,5 +1,8 @@
-package generation.abstracted
+package generation.abstracted.old
 
+import generation.abstracted.connections
+import generation.abstracted.isConnected
+import generation.abstracted.neighbors
 import generation.misc.connectionOverlapsNeighborNodes
 import generation.misc.getNodeDistance
 import generation.structure.doorwayLength
@@ -54,7 +57,7 @@ fun closeDeadEnd(node: Node, graph: Graph): InitialConnection? {
 
   return if (nextAvailableNode != null &&
       !connectionOverlapsNeighborNodes(neighbors(graph, node).filter { it != nextAvailableNode }.toList(), node, nextAvailableNode))
-    InitialConnection(node.id, nextAvailableNode.id, ConnectionType.tunnel)
+    InitialConnection(node.id, nextAvailableNode.id, ConnectionType.doorway)
   else
     null
 }

@@ -1,5 +1,6 @@
-package generation.abstracted
+package generation.abstracted.old
 
+import generation.abstracted.neighbors
 import generation.misc.divide
 import generation.misc.getNodeDistance
 import generation.misc.overlaps2D

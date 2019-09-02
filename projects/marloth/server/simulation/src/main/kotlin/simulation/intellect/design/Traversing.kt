@@ -8,17 +8,14 @@ import randomly.Dice
 import simulation.main.World
 import simulation.misc.getOtherNode
 
-fun getNextPathFace(world: World, knowledge: Knowledge, path: Path): Id? {
-  val body = world.deck.bodies[knowledge.spiritId]!!
-  val faces = world.realm.faces
-  val node = world.realm.nodeTable[body.nearestNode]!!
-  val nextNode = path.first()
-  val nodeFaces = node.walls.map { faces[it]!! }
-  return node.walls.firstOrNull { getOtherNode(node.id, faces[it]!!) == nextNode }
-}
-
-fun pathIsAccessible(world: World, knowledge: Knowledge, path: Path): Boolean =
-    getNextPathFace(world, knowledge, path) != null
+//fun getNextPathNode(world: World, knowledge: Knowledge, path: Path): Id? {
+//  val body = world.deck.bodies[knowledge.spiritId]!!
+//  val nextNode = path.first()
+//  return nextNode
+//}
+//
+//fun pathIsAccessible(world: World, knowledge: Knowledge, path: Path): Boolean =
+//    getNextPathFace(world, knowledge, path) != null
 
 fun startRoaming(world: World, knowledge: Knowledge): Path? {
   val body = world.deck.bodies[knowledge.spiritId]!!
@@ -45,7 +42,7 @@ fun getRemainingPath(node: Id, path: Path): Path {
 }
 
 fun updateRoamingPath(world: World, knowledge: Knowledge, pursuit: Pursuit): Path? {
-  return if (pursuit.path == null || !pathIsAccessible(world, knowledge, pursuit.path))
+  return if (pursuit.path == null) // || !pathIsAccessible(world, knowledge, pursuit.path))
     startRoaming(world, knowledge)
   else {
     val body = world.deck.bodies[knowledge.spiritId]!!
@@ -58,7 +55,7 @@ fun updateRoamingPath(world: World, knowledge: Knowledge, pursuit: Pursuit): Pat
 }
 
 fun updateAttackMovementPath(world: World, knowledge: Knowledge, targetEnemy: Id, path: Path?): Path? {
-  return if (path == null || !pathIsAccessible(world, knowledge, path)) {
+  return if (path == null) { // || !pathIsAccessible(world, knowledge, path)) {
     val bodies = world.deck.bodies
     val body = bodies[knowledge.spiritId]!!
     val target = knowledge.characters[targetEnemy]!!

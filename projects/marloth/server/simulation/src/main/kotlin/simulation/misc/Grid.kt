@@ -9,9 +9,9 @@ data class Cell(
 typealias ConnectionPair = Pair<Vector3i, Vector3i>
 
 typealias CellMap = Map<Vector3i, Cell>
-typealias ConnectionMap = Map<Vector3i, ConnectionPair>
+typealias ConnectionMap = Set<ConnectionPair>
 
 data class MapGrid(
     val cells: CellMap = mapOf(),
-    val connections: ConnectionMap = mapOf()
+    val connections: ConnectionMap = setOf()
 )

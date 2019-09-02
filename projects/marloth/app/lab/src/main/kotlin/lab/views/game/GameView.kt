@@ -28,6 +28,7 @@ data class GameViewConfig(
     var UseRandomSeed: Boolean = false,
     var worldLength: Float = 100f,
     var haveEnemies: Boolean = true,
+    var roomCount: Int = 15,
     var playerGravity: Boolean = true,
     var displayMode: GameDisplayMode = GameDisplayMode.normal,
     var draw: GameViewDrawConfig = GameViewDrawConfig(),

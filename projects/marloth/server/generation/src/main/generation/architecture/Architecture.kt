@@ -6,6 +6,7 @@ import randomly.Dice
 import simulation.entities.ArchitectureElement
 import simulation.main.Hand
 import simulation.misc.Graph
+import simulation.misc.NodeAttribute
 import simulation.misc.Realm
 import simulation.physics.old.getLookAtAngle
 import kotlin.math.ceil
@@ -26,10 +27,10 @@ fun <T> createSeries(gapSize: Float, segmentLength: Float, margin: Float = 0f, a
 }
 
 fun tunnelNodes(graph: Graph) = graph.nodes.values
-    .filter { node -> graph.tunnels.contains(node.id) }
+    .filter { node -> node.attributes.contains(NodeAttribute.tunnel) }
 
 fun roomNodes(graph: Graph) = graph.nodes.values
-    .filter { node -> !graph.tunnels.contains(node.id) }
+    .filter { node -> node.attributes.contains(NodeAttribute.room) }
 
 typealias Architect = (config: GenerationConfig, Realm, Dice) -> List<Hand>
 
@@ -40,9 +41,8 @@ val placeRoomFloors: Architect = { config, realm, dice ->
         val horizontalScale = (node.radius + 1f) * 2f * floorMeshAdjustment
         val biome = config.biomes[node.biome!!]!!
         val position = realm.cellMap[node.id]!!
-        val isEmptyBelow = (1..4).none {
-          realm.grid.connections.containsKey(position.copy(z = position.z - it))
-              || realm.grid.cells.containsKey(position.copy(z = position.z - it))
+        val isEmptyBelow = (1..6).none {
+          realm.grid.cells.containsKey(position.copy(z = position.z - it))
         }
         val meshOptions = if (isEmptyBelow)
           queryMeshes(config.meshes, biome.meshes, setOf(MeshAttribute.placementTallFloor))

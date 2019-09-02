@@ -247,17 +247,25 @@ fun damageCloudsDistributions(dice: Dice, totalWeight: Int): DistributionMap {
   return normalizeRanges(totalWeight, initialWeights)
 }
 
-fun getDistributions(dice: Dice): DistributionMap = mapOf(
-    Occupant.enemy to 50,
+fun scalingDistributions(dice: Dice): DistributionMap = mapOf(
+    Occupant.enemy to 0,
     Occupant.merchant to 0,
     Occupant.none to 30,
     Occupant.treasureChest to 20
 ).plus(damageCloudsDistributions(dice, 10))
 
+fun fixedDistributions(): DistributionMap = mapOf(
+    Occupant.enemy to 1,
+    Occupant.merchant to 0,
+    Occupant.none to 0,
+    Occupant.treasureChest to 0
+)
+
 fun populateRooms(occupantToHand: OccupantToHand, dice: Dice, realm: Realm, playerNode: Id): List<Hand> {
   val rooms = getRooms(realm).filter { it.id != playerNode }
-  val ranges = getDistributions(dice)
-  val occupants = distributeToSlots(dice, rooms.size, ranges)
+  val scaling = scalingDistributions(dice)
+  val fixed = fixedDistributions()
+  val occupants = distributeToSlots(dice, rooms.size, scaling, fixed)
   val hands = rooms
       .zip(occupants, occupantToHand)
       .filterNotNull()

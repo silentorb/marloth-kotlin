@@ -79,7 +79,7 @@ fun renderMapMesh(sceneRenderer: SceneRenderer, realm: Realm, deck: Deck, config
   else
     selectedNodes.selection.map { it.toLong() }
         .flatMap { id ->
-          nodeNeighbors(realm, id)
+          nodeNeighbors(realm.graph, id)
               .plus(id)
         }
         .distinct()

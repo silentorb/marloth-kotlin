@@ -6,14 +6,15 @@ import mythic.spatial.Vector3
 
 enum class NodeAttribute {
   exit,
-  home
+  home,
+  room,
+  tunnel
 }
 
 data class Node(
     override val id: Id,
     val position: Vector3,
     val radius: Float,
-    val isRoom: Boolean,
     val biome: BiomeName? = null,
     val floors: MutableList<Id> = mutableListOf(),
     val ceilings: MutableList<Id> = mutableListOf(),
@@ -23,26 +24,34 @@ data class Node(
 
   val faces: List<Id>
     get() = floors.plus(walls).plus(ceilings)
+
+  val isRoom: Boolean
+    get() = attributes.contains(NodeAttribute.room)
 }
 
 fun horizontalNeighbors(faces: ConnectionTable, node: Node) = node.walls.asSequence().mapNotNull { getOtherNode(node.id, faces[it]!!) }
 
-fun nodeNeighbors(faces: ConnectionTable, node: Node) = node.walls.asSequence().mapNotNull { getOtherNode(node.id, faces[it]!!) }
+//fun nodeNeighbors(faces: ConnectionTable, node: Node) = node.walls.asSequence().mapNotNull { getOtherNode(node.id, faces[it]!!) }
 
-fun nodeNeighbors(nodes: NodeTable, faces: ConnectionTable, node: Id) = nodeNeighbors(faces, nodes[node]!!)
+//fun nodeNeighbors(nodes: NodeTable, faces: ConnectionTable, node: Id) = nodeNeighbors(faces, nodes[node]!!)
 
-fun nodeNeighbors(faces: ConnectionTable, id: Id) = faces.mapNotNull { it.value.other(id) }
+//fun nodeNeighbors(faces: ConnectionTable, id: Id) = faces.mapNotNull { it.value.other(id) }
 
-fun nodeNeighbors(realm: Realm, id: Id): Collection<Id> {
-  return realm.nodeFaces[id]!!
-      .mapNotNull { getOtherNode(id, realm.faces[it]!!) }
-}
+//fun nodeNeighbors(realm: Realm, id: Id): Collection<Id> {
+//  return realm.nodeFaces[id]!!
+//      .mapNotNull { getOtherNode(id, realm.faces[it]!!) }
+//}
 
-fun getPathNeighbors(nodes: NodeTable, faces: ConnectionTable, node: Id) =
-    nodeNeighbors(nodes, faces, node)
-        .map { nodes[it]!! }
+fun nodeNeighbors(graph: Graph, node: Id) =
+    graph.connections
+        .filter { it.contains(node) }
+        .flatMap { it.nodes.minus(node) }
+        .distinct()
 
-typealias OneToManyMap = Map<Id, List<Id>>
+//    nodeNeighbors(nodes, faces, node)
+//        .map { nodes[it]!! }
 
-fun mapNodeFaces(nodes: NodeTable, connections: ConnectionTable): OneToManyMap =
-    nodes.mapValues { (_, node) -> connections.filter { it.value.nodes.contains(node.id) }.map { it.key } }
+//typealias OneToManyMap = Map<Id, List<Id>>
+
+//fun mapNodeFaces(nodes: NodeTable, connections: ConnectionTable): OneToManyMap =
+//    nodes.mapValues { (_, node) -> connections.filter { it.value.nodes.contains(node.id) }.map { it.key } }

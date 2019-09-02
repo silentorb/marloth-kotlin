@@ -1,5 +1,6 @@
 package generation.abstracted
 
+import generation.abstracted.old.unifyWorld
 import generation.structure.getDoorFramePoints
 import generation.misc.*
 import mythic.ent.*
@@ -141,7 +142,7 @@ fun createAndMixTunnels(graph: Graph): Graph {
 //      .copy(tunnels = tunnelGraph.nodes.map { it.key })
   val tunnelGraph = createTunnelNodes(graph, preTunnels)
   return graph.plus(tunnelGraph).minusConnections(preTunnels.map { it.connection })
-      .copy(tunnels = tunnelGraph.nodes.map { it.key })
+//      .copy(tunnels = tunnelGraph.nodes.map { it.key })
 }
 
 //fun prepareDoorways(graph: Graph): Graph {
@@ -174,12 +175,12 @@ fun generateAbstract(config: GenerationConfig, input: WorldInput, scale: Float, 
 //  val nodeCount = (30 * scale).toInt()
 //  val initialNodes = distributeNodes(input.boundary, nodeCount, input.dice)
 ////  val initialGraph = handleOverlapping(entityMap(initialNodes))
-  val grid = newWindingPath(input.dice, 15)
+  val grid = newWindingPath(input.dice, config.roomCount)
   val nextId = newIdSource(1L)
   val (initialGraph, cellMap) = gridToGraph(nextId, grid)
   val finalGraph = pipe(initialGraph, listOf(
 //      { graph -> cleanupWorld(graph) },
-      { graph -> createAndMixTunnels(graph) },
+//      { graph -> createAndMixTunnels(graph) },
 //      variableHeights(input.dice),
       { graph -> graph.copy(nodes = applyInitialBiomes(config.biomes, biomeGrid, graph)) }
 //      { graph -> prepareDoorways(graph) }

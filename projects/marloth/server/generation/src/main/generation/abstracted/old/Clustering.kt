@@ -1,5 +1,6 @@
-package generation.abstracted
+package generation.abstracted.old
 
+import generation.abstracted.connections
 import simulation.misc.ConnectionType
 import simulation.misc.Graph
 import simulation.misc.Node

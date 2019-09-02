@@ -1,5 +1,6 @@
 package simulation.intellect.execution
 
+import mythic.ent.Id
 import simulation.intellect.Path
 import simulation.intellect.acessment.Knowledge
 import mythic.spatial.Vector3
@@ -7,27 +8,25 @@ import simulation.main.World
 import simulation.input.Command
 import simulation.input.CommandType
 import simulation.input.Commands
+import simulation.misc.Graph
+
+fun doorwayPosition(graph: Graph, firstNode: Id, secondNode: Id): Vector3 {
+  val a = graph.nodes[firstNode]!!
+  val b = graph.nodes[secondNode]!!
+  val vector = (b.position - a.position).normalize()
+  return a.position + vector * a.radius
+}
 
 fun getPathTargetPosition(world: World, knowledge: Knowledge, path: Path): Vector3 {
-  throw Error("No longer implemented")
-//  val body = world.bodyTable[knowledge.spiritId]!!
-//  val face = getNextPathFace(world, knowledge, path)
-//  if (face == null) {
-//    getNextPathFace(world, knowledge, path)
-//    throw Error("Not supported")
-//  }
-//
-//  val edge = getFloor(world.realm.mesh.faces[face]!!)
-//  val position = body.position
-//  val nearestPoint = edge.vertices.sortedBy { it.distance(position) }.first()
-//  return (edge.middle + nearestPoint) / 2f
+  val body = world.deck.bodies[knowledge.spiritId]!!
+  return doorwayPosition(world.realm.graph, body.nearestNode, path.first())
 }
 
 fun moveStraightTowardPosition(world: World, knowledge: Knowledge, target: Vector3): Commands {
   val body = world.deck.bodies[knowledge.spiritId]!!
   val position = body.position
   val offset = (target - position).normalize()
-  return spiritNeedsFacing(world,knowledge, offset, 0.1f) {
+  return spiritNeedsFacing(world, knowledge, offset, 0.1f) {
     listOf(Command(CommandType.moveUp, knowledge.spiritId))
   }
 }

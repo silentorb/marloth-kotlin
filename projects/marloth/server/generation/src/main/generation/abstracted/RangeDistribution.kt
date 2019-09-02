@@ -25,10 +25,15 @@ fun <T> normalizeRanges(slotCount: Int, ranges: Map<T, Int>): Map<T, Int> {
   return finalNormalized
 }
 
-fun <T> distributeToSlots(dice: Dice, slotCount: Int, ranges: Map<T, Int>): List<T> {
-  val normalized = normalizeRanges(slotCount, ranges)
+fun <T> distributeToSlots(dice: Dice, slotCount: Int, scaling: Map<T, Int>, fixed: Map<T, Int>): List<T> {
+  val fixedSlotCount = fixed.entries.sumBy { it.value }
+  val scalingSlotCount = slotCount - fixedSlotCount
+  val normalized = normalizeRanges(scalingSlotCount, scaling)
   val pool = normalized.flatMap { range ->
     (0 until range.value).map { range.key }
   }
+      .plus(fixed.flatMap { (key, count) ->
+        (0 until count).map { key }
+      })
   return dice.scramble(pool)
 }

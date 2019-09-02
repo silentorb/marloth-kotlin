@@ -1,5 +1,7 @@
-package generation.abstracted
+package generation.abstracted.old
 
+import generation.abstracted.isConnected
+import generation.abstracted.neighbors
 import generation.misc.getNodeDistance
 import mythic.spatial.Vector3
 import simulation.misc.*
@@ -92,7 +94,7 @@ tailrec fun scanNodes(graph: Graph, previousChanged: List<Node>, mainGroup: List
 
       gapToInitialConnection(connections, verticalGap, ConnectionType.vertical)
     } else
-      gapToInitialConnection(connections, gap, ConnectionType.tunnel)
+      gapToInitialConnection(connections, gap, ConnectionType.doorway)
   } else {
     Pair(possibleChanged, connections)
   }

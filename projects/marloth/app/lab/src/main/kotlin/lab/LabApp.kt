@@ -50,7 +50,8 @@ fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig): World
   val generationConfig = GenerationConfig(
       biomes = biomeInfoMap,
       meshes = compileArchitectureMeshInfo(meshInfo, meshAttributes),
-      includeEnemies = gameViewConfig.haveEnemies
+      includeEnemies = gameViewConfig.haveEnemies,
+      roomCount = gameViewConfig.roomCount
   )
   val input = WorldInput(
       boundary,

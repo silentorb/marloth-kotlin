@@ -1,5 +1,8 @@
-package generation.abstracted
+package generation.abstracted.old
 
+import generation.abstracted.maxInitialNodeSize
+import generation.abstracted.minInitialNodeDistance
+import generation.abstracted.minInitialNodeSize
 import generation.misc.getNodeDistance
 import mythic.ent.firstSortedBy
 import mythic.spatial.Vector3
@@ -7,7 +10,6 @@ import mythic.spatial.withinRangeFast
 import org.joml.Vector3i
 import randomly.Dice
 import simulation.misc.Node
-import simulation.misc.WorldBoundary
 
 val worldCellLength = 20
 val maxTunnelLength = worldCellLength.toFloat() * 1.5f
@@ -165,30 +167,30 @@ private fun moveNodes(nodes: MutableList<Node>, moveRange: Float, dice: Dice) {
   }
 }
 
-fun distributeNodes(boundary: WorldBoundary, count: Int, dice: Dice): List<Node> {
-  val cellDimensions = clipDimensions(worldCellLength, boundary.dimensions)
-//  cellDimensions.z = 1
-
-  val cellCount = cellDimensions.x * cellDimensions.y * cellDimensions.z
-  val cellChance = (count.toFloat() / cellCount.toFloat())
-  var id = 1L
-
-  val nodes = mutableListOf<Node>()
-
-  for (i in 0 until cellCount) {
-    val position = getPosition(cellDimensions, i) * worldCellLength.toFloat()
-    val chance = cellChance * 6f
-    if (dice.getFloat() < chance) {
-      val node = Node(
-          id = id++,
-          position = position,
-          radius = calculateRadius(position, nodes, dice),
-          isRoom = true
-      )
-      nodes.add(node)
-    }
-  }
-
-  moveNodes(nodes, worldCellLength * 0.5f, dice)
-  return nodes
-}
+//fun distributeNodes(boundary: WorldBoundary, count: Int, dice: Dice): List<Node> {
+//  val cellDimensions = clipDimensions(worldCellLength, boundary.dimensions)
+////  cellDimensions.z = 1
+//
+//  val cellCount = cellDimensions.x * cellDimensions.y * cellDimensions.z
+//  val cellChance = (count.toFloat() / cellCount.toFloat())
+//  var id = 1L
+//
+//  val nodes = mutableListOf<Node>()
+//
+//  for (i in 0 until cellCount) {
+//    val position = getPosition(cellDimensions, i) * worldCellLength.toFloat()
+//    val chance = cellChance * 6f
+//    if (dice.getFloat() < chance) {
+//      val node = Node(
+//          id = id++,
+//          position = position,
+//          radius = calculateRadius(position, nodes, dice),
+//          isRoom = true
+//      )
+//      nodes.add(node)
+//    }
+//  }
+//
+//  moveNodes(nodes, worldCellLength * 0.5f, dice)
+//  return nodes
+//}

@@ -14,7 +14,7 @@ data class PreTunnel(
 )
 
 fun prepareTunnels(graph: Graph): List<PreTunnel> =
-    graph.connections.filter { it.type == ConnectionType.tunnel }
+    graph.connections.filter { it.type == ConnectionType.doorway }
         .map { oldConnection ->
           PreTunnel(
               connection = oldConnection,
@@ -30,8 +30,7 @@ fun createTunnelNodes(graph: Graph, preTunnels: List<PreTunnel>): Graph {
             id = nextId(),
 //            position = getCenter(graph.node(oldConnection.first)!!, graph.node(oldConnection.second)!!),
             position = preTunnel.position,
-            radius = tunnelRadius,
-            isRoom = false
+            radius = tunnelRadius
         )
       }
 
@@ -39,8 +38,8 @@ fun createTunnelNodes(graph: Graph, preTunnels: List<PreTunnel>): Graph {
       .zip(preTunnels) { node, preTunnel ->
         val oldConnection = preTunnel.connection
         listOf(
-            InitialConnection(oldConnection.first, node.id, ConnectionType.tunnel),
-            InitialConnection(oldConnection.second, node.id, ConnectionType.tunnel)
+            InitialConnection(oldConnection.first, node.id, ConnectionType.doorway),
+            InitialConnection(oldConnection.second, node.id, ConnectionType.doorway)
         )
       }.flatten()
 

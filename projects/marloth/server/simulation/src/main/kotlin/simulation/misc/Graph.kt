@@ -3,7 +3,7 @@ package simulation.misc
 import mythic.ent.Id
 
 enum class ConnectionType {
-  tunnel,
+  doorway,
   union,
   vertical
 }
@@ -42,7 +42,6 @@ data class InitialConnection(
 data class Graph(
     val nodes: NodeTable,
     val connections: InitialConnections,
-    val tunnels: List<Id> = listOf(),
     val doorways: List<Id> = listOf()
 ) {
   fun node(id: Id): Node? = nodes[id]!!
@@ -50,8 +49,7 @@ data class Graph(
   fun plus(graph: Graph) =
       Graph(
           nodes = nodes.plus(graph.nodes),
-          connections = connections.plus(graph.connections),
-          tunnels = tunnels.plus(graph.tunnels)
+          connections = connections.plus(graph.connections)
       )
 
   fun minusConnections(oldConnections: InitialConnections) =

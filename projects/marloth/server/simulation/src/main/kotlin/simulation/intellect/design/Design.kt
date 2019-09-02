@@ -20,9 +20,6 @@ fun updateTargetEnemy(world: World, knowledge: Knowledge, pursuit: Pursuit): Id?
 }
 
 fun updatePursuit(world: World, knowledge: Knowledge, pursuit: Pursuit): Pursuit {
-  if (isInVoid(world, knowledge.spiritId))
-    return Pursuit()
-
   val targetEnemy = updateTargetEnemy(world, knowledge, pursuit)
   val target = knowledge.characters[pursuit.targetEnemy]
   val (path, targetPosition) = if (target != null) {
@@ -36,7 +33,7 @@ fun updatePursuit(world: World, knowledge: Knowledge, pursuit: Pursuit): Pursuit
       Pair(null, (target.position - attackerBody.position).normalize() * gap)
     else
       Pair(updateAttackMovementPath(world, knowledge, target.id, pursuit.path), null)
-  } else if (true) {
+  } else if (false) {
     // Guard room
     Pair(null, null)
   } else

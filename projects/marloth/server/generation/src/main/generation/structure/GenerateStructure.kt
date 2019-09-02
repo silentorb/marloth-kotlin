@@ -1,6 +1,7 @@
 package generation.structure
 
 import generation.abstracted.*
+import generation.abstracted.old.Cluster
 import generation.misc.*
 import mythic.ent.Id
 import mythic.ent.IdSource
