@@ -22,7 +22,7 @@ fun getPathTargetPosition(world: World, knowledge: Knowledge, path: Path): Vecto
   val body = world.deck.bodies[knowledge.spiritId]!!
   val doorway = doorwayPosition(graph, body.nearestNode, path.first())
   val horizontalDistance = body.position.copy(z = 0f).distance(doorway.copy(z = 0f))
-//  println("dist " + horizontalDistance + " " + body.nearestNode)
+  println("dist " + horizontalDistance + " " + body.nearestNode)
   return if (horizontalDistance > 0.5f)
     doorway
   else

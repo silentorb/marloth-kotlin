@@ -13,21 +13,26 @@ import kotlin.math.max
 // and Body.nearestNode is temporarily used as the source-of-truth for node radius calculation.
 fun calculateInitialNodeRadius(deck: Deck, node: Id, nodeRecord: Node): Float {
   val nodePosition = nodeRecord.position
-  val bodies = deck.bodies.filter { it.value.nearestNode == node }
+  val bodies = deck.bodies
+      .filter { it.value.nearestNode == node }
+      .filter {
+        val architecture = deck.architecture[it.key]
+        architecture != null && architecture.isWall
+      }
   return bodies
       .entries.map { (key, body) ->
     val shape = deck.collisionShapes[key]
     if (shape == null)
       0f
     else {
-      val radiusScale = max(max(body.scale.x, body.scale.y), body.scale.z)
-      body.position.distance(nodePosition) + shape.shape.radius * radiusScale
+//      val radiusScale = max(max(body.scale.x, body.scale.y), body.scale.z)
+      body.position.distance(nodePosition) // + shape.shape.radius * radiusScale
     }
   }
       .firstSortedByDescending { it }
 }
 
-fun  initializeNodeRadii(deck: Deck): (Graph) -> Graph = { graph ->
+fun initializeNodeRadii(deck: Deck): (Graph) -> Graph = { graph ->
   graph.copy(
       nodes = graph.nodes.mapValues { (id, node) ->
         node.copy(
