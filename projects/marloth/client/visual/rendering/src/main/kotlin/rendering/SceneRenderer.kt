@@ -5,10 +5,7 @@ import mythic.drawing.getStaticCanvasDependencies
 import mythic.drawing.prepareTextMatrix
 import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
-import mythic.spatial.Matrix
-import mythic.spatial.Vector2
-import mythic.spatial.Vector3
-import mythic.spatial.Vector4
+import mythic.spatial.*
 import mythic.typography.*
 import org.joml.Vector2i
 import org.joml.Vector4i
@@ -45,21 +42,21 @@ class SceneRenderer(
     globalState.lineThickness = thickness
     renderer.dynamicMesh.load(values)
 
-    flat.activate(ObjectShaderConfig(transform = Matrix(), color = color))
+    flat.activate(ObjectShaderConfig(color = color))
     renderer.dynamicMesh.draw(DrawMethod.lines)
   }
 
   fun drawPoint(position: Vector3, color: Vector4, size: Float = 1f) {
     globalState.pointSize = size
     renderer.dynamicMesh.load(listOf(position.x, position.y, position.z))
-    flat.activate(ObjectShaderConfig(transform = Matrix(), color = color))
+    flat.activate(ObjectShaderConfig(color = color))
     renderer.dynamicMesh.draw(DrawMethod.points)
   }
 
   fun drawSolidFace(vertices: List<Vector3>, color: Vector4) {
     renderer.dynamicMesh.load(vertices.flatMap { listOf(it.x, it.y, it.z) })
 
-    flat.activate(ObjectShaderConfig(transform = Matrix(), color = color))
+    flat.activate(ObjectShaderConfig(color = color))
     renderer.dynamicMesh.draw(DrawMethod.triangleFan)
   }
 
@@ -67,7 +64,7 @@ class SceneRenderer(
     globalState.lineThickness = thickness
     renderer.dynamicMesh.load(vertices.flatMap { listOf(it.x, it.y, it.z) })
 
-    flat.activate(ObjectShaderConfig(transform = Matrix(), color = color))
+    flat.activate(ObjectShaderConfig(color = color))
     renderer.dynamicMesh.draw(DrawMethod.lines)
   }
 
@@ -119,4 +116,15 @@ fun renderElements(sceneRenderer: SceneRenderer, opaqueElementGroups: ElementGro
     renderElementGroup(sceneRenderer.renderer, sceneRenderer.camera, group)
   }
   globalState.depthWrite = true
+}
+
+fun drawSolidFace(renderer: Renderer, vertices: List<Float>, color: Vector4) {
+  renderer.dynamicMesh.load(vertices)
+  val flat = renderer.getShader(renderer.vertexSchemas.flat, ShaderFeatureConfig())
+  flat.activate(ObjectShaderConfig(color = color))
+  renderer.dynamicMesh.draw(DrawMethod.triangleFan)
+}
+
+fun drawSolidFaceVertex(renderer: Renderer, vertices: List<Vector3>, color: Vector4) {
+  return drawSolidFace(renderer, vertices.flatMap { listOf(it.x, it.y, it.z) }, color)
 }

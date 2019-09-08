@@ -1,5 +1,6 @@
 package lab.views.map
 
+import lab.renderNavMesh
 import lab.utility.blue
 import lab.utility.embedCameraView
 import lab.utility.green
@@ -22,6 +23,7 @@ import scenery.ProjectionType
 import scenery.Scene
 import simulation.entities.DepictionType
 import simulation.main.Deck
+import simulation.main.World
 import simulation.misc.Node
 import simulation.misc.Realm
 import simulation.misc.nodeNeighbors
@@ -206,7 +208,7 @@ fun createMapViewCamera(config: MapViewConfig) =
     else
       createFirstPersonCamera(config.firstPersonCamera)
 
-fun renderMapView(client: Client, realm: Realm, deck: Deck, config: MapViewConfig): StateDepiction = { seed ->
+fun renderMapView(client: Client, world: World, deck: Deck, config: MapViewConfig): StateDepiction = { seed ->
   embedCameraView { b, c ->
     val camera = createMapViewCamera(config)
     val windowInfo = client.getWindowInfo()
@@ -218,7 +220,8 @@ fun renderMapView(client: Client, realm: Realm, deck: Deck, config: MapViewConfi
         lights = listOf()
     )
     val sceneRenderer = renderer.createSceneRenderer(scene, b.toVector4i())
-    renderMapMesh(sceneRenderer, realm, deck, config, seed.bag)
+    renderMapMesh(sceneRenderer, world.realm, deck, config, seed.bag)
+    renderNavMesh(sceneRenderer.renderer, world.navMesh)
     renderer.finishRender(windowInfo)
   }
 }

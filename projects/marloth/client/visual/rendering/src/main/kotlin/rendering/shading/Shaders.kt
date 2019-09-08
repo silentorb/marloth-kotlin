@@ -4,6 +4,7 @@ import mythic.glowing.*
 import mythic.spatial.Matrix
 import mythic.spatial.Vector2
 import mythic.spatial.Vector4
+import mythic.spatial.zeroMatrix
 
 class PerspectiveFeature(program: ShaderProgram) {
   val modelTransform = MatrixProperty(program, "modelTransform")
@@ -51,7 +52,7 @@ data class ShaderFeatureConfig(
 )
 
 data class ObjectShaderConfig(
-    val transform: Matrix = Matrix(),
+    val transform: Matrix = zeroMatrix,
     val texture: Texture? = null,
     val color: Vector4? = null,
     val glow: Float = 0f,

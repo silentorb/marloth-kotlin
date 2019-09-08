@@ -1,5 +1,8 @@
 package simulation.intellect.navigation
 
+import mythic.ent.Id
+import mythic.ent.firstSortedBy
+import mythic.ent.firstSortedByDescending
 import mythic.spatial.Vector3
 import org.recast4j.detour.NavMesh
 import org.recast4j.detour.NavMeshBuilder
@@ -123,33 +126,64 @@ fun newNavMeshDataCreateParams(geometry: InputGeomProvider, builderResult: Recas
   return params
 }
 
-private const val cellSize = 10f
-private const val cellHeight = 10f
-private const val agentHeight = 4f
+private const val cellSize = 0.3f
+private const val cellHeight = 0.2f
+private const val agentHeight = 2f
 private const val agentRadius = 0.5f
 private const val agentMaxClimb = 0.3f
 
 fun newNavMesh(deck: Deck): NavMesh {
-  val meshes = deck.architecture.map { (id, _) ->
+  val elements = deck.architecture
+  val meshes = elements.map { (id, _) ->
     val shape = deck.collisionShapes[id]!!.shape
     val body = deck.bodies[id]!!
     val mesh = getShapeVertices(shape)
     val transform = getBodyTransform(body)
     val vertices = mesh.vertices.flatMap {
       val temp = it.transform(transform)
-      listOf(temp.x, temp.z, temp.y)
+      listOf(temp.x, temp.y, temp.z)
     }
         .toFloatArray()
     val faces = mesh.triangles.toIntArray()
     TriMesh(vertices, faces)
   }
+  val vertices = meshes.flatMap { it.verts.toList() }
 
+  val padding = 1f
+  val minBounds = floatArrayOf(
+      elements
+          .map { deck.bodies[it.key]!!.position.x - deck.collisionShapes[it.key]!!.shape.radius }
+          .firstSortedBy { it } - padding,
+      elements
+          .map { deck.bodies[it.key]!!.position.y - deck.collisionShapes[it.key]!!.shape.radius }
+          .firstSortedBy { it } - padding,
+      elements
+          .map { deck.bodies[it.key]!!.position.z - deck.collisionShapes[it.key]!!.shape.radius }
+          .firstSortedBy { it } - padding
+//          (0 until vertices.size step 3).map { vertices[it] }.firstSortedBy { it },
+//          (1 until vertices.size step 3).map { vertices[it] }.firstSortedBy { it },
+//          (2 until vertices.size step 3).map { vertices[it] }.firstSortedBy { it }
+  )
 
+  val maxBounds = floatArrayOf(
+      elements
+          .map { deck.bodies[it.key]!!.position.x + deck.collisionShapes[it.key]!!.shape.radius }
+          .firstSortedByDescending { it } + padding,
+      elements
+          .map { deck.bodies[it.key]!!.position.y + deck.collisionShapes[it.key]!!.shape.radius }
+          .firstSortedByDescending { it } + padding,
+      elements
+          .map { deck.bodies[it.key]!!.position.z + deck.collisionShapes[it.key]!!.shape.radius }
+          .firstSortedByDescending { it } + padding
+//          (0 until vertices.size step 3).map { vertices[it] }.firstSortedByDescending { it },
+//          (1 until vertices.size step 3).map { vertices[it] }.firstSortedByDescending { it },
+//          (2 until vertices.size step 3).map { vertices[it] }.firstSortedByDescending { it }
+  )
   val geometry = GeometryProvider(
       meshes.toMutableList(),
       mutableListOf(),
-      floatArrayOf(-100f, -100f, -100f),
-      floatArrayOf(100f, 100f, 100f)
+      minBounds,
+      maxBounds
   )
 
   val recastConfig = RecastConfig(
@@ -174,7 +208,7 @@ fun newNavMesh(deck: Deck): NavMesh {
       true
   )
 
-  val builderConfig = RecastBuilderConfig(recastConfig, floatArrayOf(-10f, -10f, -10f), floatArrayOf(10f, 10f, 10f))
+  val builderConfig = RecastBuilderConfig(recastConfig, minBounds, maxBounds)
   val builder = RecastBuilder()
   val buildResult = builder.build(geometry, builderConfig)
   val params = newNavMeshDataCreateParams(geometry, buildResult)

@@ -114,7 +114,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     val layout = if (world != null) {
       val input = getInputState(client.platform.input, commands)
       updateMapState(config.mapView, world.realm, input, windowInfo, state.app.client.bloomState, delta)
-      mapLayout(client, world.realm, world.deck, config.mapView)
+      mapLayout(client, world, world.deck, config.mapView)
     } else
       emptyFlower
 
