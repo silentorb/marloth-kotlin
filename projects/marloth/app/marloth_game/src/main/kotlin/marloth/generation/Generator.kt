@@ -1,12 +1,7 @@
 package marloth.generation
 
-import generation.calculateWorldScale
-import generation.generateWorld
-import mythic.ent.pipe
 import randomly.Dice
 import simulation.main.World
-import simulation.main.addDeck
-import simulation.misc.WorldBoundary
 import simulation.misc.WorldInput
 import simulation.misc.createWorldBoundary
 
@@ -16,7 +11,7 @@ fun generateDefaultWorld(): World {
       dice = Dice(2)
   )
   throw Error("Not implemented")
-//  val world = generateWorld(input)
+//  val world = generateRealm(input)
 //  return addEnemies(world, input.boundary, input.dice)
 }
 

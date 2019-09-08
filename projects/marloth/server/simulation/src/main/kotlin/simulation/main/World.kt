@@ -2,14 +2,11 @@ package simulation.main
 
 import mythic.ent.Id
 import mythic.ent.IdSource
-import mythic.ent.Table
 import mythic.ent.pass
+import org.recast4j.detour.NavMesh
 import randomly.Dice
-import simulation.entities.Character
 import simulation.misc.GameOver
-import simulation.entities.Player
 import simulation.misc.Realm
-import simulation.physics.Body
 
 data class World(
     val realm: Realm,
@@ -18,7 +15,8 @@ data class World(
     val dice: Dice,
     val availableIds: Set<Id>,
     val gameOver: GameOver? = null,
-    val logicUpdateCounter: Int
+    val logicUpdateCounter: Int,
+    val navMesh: NavMesh
 )
 
 typealias WorldTransform = (World) -> World

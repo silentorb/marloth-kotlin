@@ -17,7 +17,7 @@ object WorldGenProfiler {
       platform.display.swapBuffers()
       platform.process.pollEvents()
       throw Error("Needs to instantiate a client now to load static mesh collision shapes")
-//      val world = generateWorld(config.gameView)
+//      val world = generateRealm(config.gameView)
       Thread.sleep(50)
     }
   }

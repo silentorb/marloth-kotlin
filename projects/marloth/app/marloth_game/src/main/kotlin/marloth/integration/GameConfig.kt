@@ -19,7 +19,7 @@ data class GameConfig(
     var input: GameInputConfig = GameInputConfig()
 )
 
-val gameConfigFile = "gameConfig.yaml"
+val gameConfigFile = "../gameConfig.yaml"
 
 fun saveGameConfig(config: GameConfig) {
   saveYamlFile(gameConfigFile, config)

@@ -5,7 +5,7 @@ import configuration.loadYamlFile
 import configuration.saveYamlFile
 import generation.abstracted.initializeNodeRadii
 import generation.architecture.placeArchitecture
-import generation.generateWorld
+import generation.generateRealm
 import generation.misc.GenerationConfig
 import generation.misc.MeshShapeMap
 import generation.misc.compileArchitectureMeshInfo
@@ -21,6 +21,7 @@ import marloth.definition.generation.biomeInfoMap
 import marloth.definition.generation.meshAttributes
 import marloth.definition.staticDefinitions
 import marloth.front.GameApp
+import marloth.front.RenderHook
 import marloth.integration.*
 import mythic.desktop.createDesktopPlatform
 import mythic.ent.pipe
@@ -30,12 +31,14 @@ import simulation.main.*
 import simulation.misc.WorldInput
 import simulation.misc.createWorldBoundary
 import simulation.physics.newBulletState
+import mythic.ent.newIdSource
+import simulation.intellect.navigation.newNavMesh
 
-const val labConfigPath = "labConfig.yaml"
+const val labConfigPath = "../labConfig.yaml"
 
 fun saveLabConfig(config: LabConfig) {
   Thread {
-    saveYamlFile("labConfig.yaml", config)
+    saveYamlFile(labConfigPath, config)
   }
 }
 
@@ -58,25 +61,24 @@ fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig): World
       boundary,
       dice
   )
-  val initialWorld = generateWorld(generationConfig, input)
-  val (nextId, finalize) = newIdSource(initialWorld)
+  val realm = generateRealm(generationConfig, input)
+  val nextId = newIdSource(1)
   val deck = pipeHandsToDeck(nextId, listOf(
-      { _ -> placeArchitecture(generationConfig, initialWorld.realm, dice) },
-      populateWorld(generationConfig, input, initialWorld.realm)
-//      { deck ->
-//        if (gameViewConfig.haveEnemies)
-//          addEnemies(deck, boundary, dice)
-//        else
-//          world
-//      }
-  ))(initialWorld.deck)
+      { _ -> placeArchitecture(generationConfig, realm, dice) },
+      populateWorld(generationConfig, input, realm)
+  ))(Deck())
 
-  return finalize(initialWorld.copy(
+  return World(
       deck = deck,
-      realm = initialWorld.realm.copy(
-          graph = initializeNodeRadii(deck)(initialWorld.realm.graph)
-      )
-  ))
+      realm = realm.copy(
+          graph = initializeNodeRadii(deck)(realm.graph)
+      ),
+      nextId = nextId(),
+      dice = Dice(),
+      availableIds = setOf(),
+      logicUpdateCounter = 0,
+      navMesh = newNavMesh(deck)
+  )
 }
 
 data class LabApp(
@@ -91,15 +93,21 @@ data class LabApp(
 
 private var saveIncrement = 0f
 
+fun labRender(app: LabApp, state: LabState): RenderHook = { sceneRenderer ->
+  if (app.config.gameView.drawPhysics) {
+    val deck = state.app.worlds.last().deck
+    drawBulletDebug(app.gameApp, deck.bodies[deck.players.keys.first()]!!.position)(sceneRenderer)
+  }
+  if (app.config.gameView.drawNavMesh) {
+    renderNavMesh(state.app.worlds.last().navMesh)
+  }
+}
+
 tailrec fun labLoop(app: LabApp, state: LabState) {
   val gameApp = app.gameApp
   val newAppState = if (app.config.view == Views.game) {
     val hooks = GameHooks(
-        onRender = if (app.config.gameView.drawPhysics) {
-          val deck = state.app.worlds.last().deck
-          drawBulletDebug(gameApp, deck.bodies[deck.players.keys.first()]!!.position)
-        } else
-          { _ -> },
+        onRender = labRender(app, state),
         onUpdate = { appState ->
           app.labClient.updateInput(mapOf(), appState.client.input.deviceStates)
         }

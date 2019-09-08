@@ -14,24 +14,24 @@ import simulation.misc.WorldInput
 fun calculateWorldScale(dimensions: Vector3) =
     (dimensions.x * dimensions.y * dimensions.z) / (100 * 100 * 100)
 
-fun finalizeRealm(realm: Realm): World {
-  val nextId = newIdSource(1)
-  return World(
-      deck = Deck(),
-      nextId = nextId(),
-      realm = realm,
-      dice = Dice(),
-      availableIds = setOf(),
-      logicUpdateCounter = 0
-  )
-}
+//fun finalizeRealm(realm: Realm): World {
+//  val nextId = newIdSource(1)
+//  return World(
+//      deck = Deck(),
+//      nextId = nextId(),
+//      realm = realm,
+//      dice = Dice(),
+//      availableIds = setOf(),
+//      logicUpdateCounter = 0
+//  )
+//}
 
-fun generateWorld(config: GenerationConfig, input: WorldInput): World {
+fun generateRealm(config: GenerationConfig, input: WorldInput): Realm {
   val scale = calculateWorldScale(input.boundary.dimensions)
   val biomeGrid = newNormalizedBiomeGrid(config.biomes, input)
   val (grid, graph, cellMap) = generateAbstract(config, input, scale, biomeGrid)
 
-  val finalRealm = Realm(
+  return Realm(
       graph = graph,
       cellMap = cellMap,
       nodeList = graph.nodes.values.toList(),
@@ -39,5 +39,4 @@ fun generateWorld(config: GenerationConfig, input: WorldInput): World {
       grid = grid
   )
 
-  return finalizeRealm(finalRealm)
 }

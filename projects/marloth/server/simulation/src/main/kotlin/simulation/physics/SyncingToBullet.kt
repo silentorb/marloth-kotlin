@@ -30,7 +30,7 @@ fun createCollisionShape(shape: Shape, scale: Vector3): btCollisionShape {
 }
 
 fun createBulletDynamicObject(body: Body, dynamicBody: DynamicBody, shape: btCollisionShape, rotationalInertia: Boolean): btRigidBody {
-  val transform = Matrix().translate(body.position).rotate(body.orientation)
+  val transform = getBodyTransform(body)
   val localInertia = com.badlogic.gdx.math.Vector3(0f, 0f, 0f)
   if (rotationalInertia)
     shape.calculateLocalInertia(dynamicBody.mass, localInertia)
@@ -60,14 +60,14 @@ fun createStaticFaceBody(face: ImmutableFace): btCollisionObject {
 fun createStaticBody(body: Body, shape: btCollisionShape): btCollisionObject {
   val btBody = btCollisionObject()
   btBody.collisionShape = shape
-  btBody.worldTransform = toGdxMatrix4(Matrix().translate(body.position).rotate(body.orientation))
+  btBody.worldTransform = toGdxMatrix4(getBodyTransform(body))
   return btBody
 }
 
 fun createGhostBody(body: Body, shape: btCollisionShape): btCollisionObject {
   val btBody = btCollisionObject()
   btBody.collisionShape = shape
-  btBody.worldTransform = toGdxMatrix4(Matrix().translate(body.position).rotate(body.orientation))
+  btBody.worldTransform = toGdxMatrix4(getBodyTransform(body))
   val j = btBody.collisionFlags
   btBody.collisionFlags = btBody.collisionFlags or btCollisionObject.CollisionFlags.CF_NO_CONTACT_RESPONSE
   return btBody

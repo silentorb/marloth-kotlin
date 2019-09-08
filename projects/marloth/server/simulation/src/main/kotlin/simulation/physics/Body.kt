@@ -2,6 +2,7 @@ package simulation.physics
 
 import mythic.ent.Id
 import mythic.ent.firstSortedBy
+import mythic.spatial.Matrix
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import simulation.main.World
@@ -38,6 +39,9 @@ data class DynamicBody(
 
 fun isMoving(body: Body) =
     body.velocity != Vector3.zero
+
+fun getBodyTransform(body: Body) =
+    Matrix().translate(body.position).rotate(body.orientation)
 
 fun isOutsideOfNodeRange(position: Vector3, node: Node) =
     position.distance(node.position) > node.radius - 0.5f
