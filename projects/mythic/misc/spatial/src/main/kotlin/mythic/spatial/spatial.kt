@@ -12,7 +12,7 @@ typealias Vector4 = org.joml.Vector4f
 typealias Matrix = org.joml.Matrix4f
 typealias Quaternion = org.joml.Quaternionf
 
-val zeroMatrix = Matrix()
+val identityMatrix = Matrix()
 
 private val initialQuaternion = Quaternion()
 

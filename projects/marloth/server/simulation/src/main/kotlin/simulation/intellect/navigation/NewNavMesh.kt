@@ -17,137 +17,19 @@ import scenery.Shape
 import simulation.main.Deck
 import simulation.physics.getBodyTransform
 
-private data class IntermediateMesh(
-    val vertices: List<Vector3>,
-    val triangles: List<Int>
-)
+const val cellSize = 0.3f
+const val cellHeight = 0.2f
+const val agentHeight = 2f
+const val agentRadius = 0.5f
+const val agentMaxClimb = 0.3f
 
-private val boxLength = 0.5f
-
-private val boxVertices = listOf(
-    Vector3(boxLength, boxLength, boxLength),
-    Vector3(-boxLength, -boxLength, boxLength),
-    Vector3(-boxLength, -boxLength, boxLength),
-    Vector3(-boxLength, -boxLength, boxLength),
-
-    Vector3(boxLength, boxLength, -boxLength),
-    Vector3(-boxLength, boxLength, -boxLength),
-    Vector3(-boxLength, -boxLength, -boxLength),
-    Vector3(boxLength, -boxLength, -boxLength)
-)
-
-private fun square(a: Int, b: Int, c: Int, d: Int): List<Int> =
-    listOf(a, b, c, a, c, d)
-
-private fun box(halfExtents: Vector3) =
-    IntermediateMesh(
-        vertices = boxVertices.map { it * halfExtents },
-        triangles = listOf(
-            square(0, 1, 2, 3), //  top
-            square(3, 2, 6, 7),
-            square(2, 1, 5, 6),
-            square(1, 0, 4, 5),
-            square(0, 3, 7, 4),
-            square(7, 6, 5, 4) // bottom
-        ).flatten()
-    )
-
-private fun getShapeVertices(shape: Shape): IntermediateMesh =
-    when (shape) {
-
-      is Box -> box(shape.halfExtents)
-
-//      is Cylinder -> IntermediateMesh(
-//          vertices = listOf(
-//              Vector3(),
-//              Vector3(),
-//              Vector3(),
-//              Vector3(),
-//              Vector3(),
-//              Vector3(),
-//              Vector3(),
-//              Vector3()
-//          ),
-//          triangles = listOf()
-//      )
-      is Cylinder -> box(Vector3(shape.radius, shape.radius, shape.height))
-
-      else -> throw Error("Not implemented")
-    }
-
-private val SAMPLE_POLYAREA_TYPE_WALKABLE = 0x3f
-private val walkable = AreaModification(SAMPLE_POLYAREA_TYPE_WALKABLE)
-
-private val vertsPerPoly = 6
-
-private data class GeometryProvider(
-    val _meshes: MutableIterable<TriMesh>,
-    val _convexVolumes: MutableIterable<ConvexVolume>,
-    val _meshBoundsMin: FloatArray,
-    val _meshBoundsMax: FloatArray
-) : InputGeomProvider {
-  override fun meshes(): MutableIterable<TriMesh> = _meshes
-
-  override fun convexVolumes(): MutableIterable<ConvexVolume> = _convexVolumes
-  override fun getMeshBoundsMin(): FloatArray = _meshBoundsMin
-
-  override fun getMeshBoundsMax(): FloatArray {
-    return floatArrayOf(100f, 100f, 100f)
-  }
-
-}
-
-fun newNavMeshDataCreateParams(geometry: InputGeomProvider, builderResult: RecastBuilder.RecastBuilderResult): NavMeshDataCreateParams {
-  val mesh = builderResult.mesh
-  val params = NavMeshDataCreateParams()
-  params.verts = mesh.verts
-  params.vertCount = mesh.nverts
-  params.polys = mesh.polys
-  params.polyAreas = mesh.areas
-  params.polyFlags = mesh.flags
-  params.polyCount = mesh.npolys
-  params.nvp = mesh.nvp
-  val detailedMesh = builderResult.getMeshDetail()
-  if (detailedMesh != null) {
-    params.detailMeshes = detailedMesh.meshes
-    params.detailVerts = detailedMesh.verts
-    params.detailVertsCount = detailedMesh.nverts
-    params.detailTris = detailedMesh.tris
-    params.detailTriCount = detailedMesh.ntris
-  }
-  params.cs = cellSize
-  params.ch = cellHeight
-  params.walkableHeight = agentHeight
-  params.walkableRadius = agentRadius
-  params.walkableClimb = agentMaxClimb
-  params.bmin = mesh.bmin
-  params.bmax = mesh.bmax
-  params.buildBvTree = true
-  return params
-}
-
-private const val cellSize = 0.3f
-private const val cellHeight = 0.2f
-private const val agentHeight = 2f
-private const val agentRadius = 0.5f
-private const val agentMaxClimb = 0.3f
+var originalNavMeshData: List<TriMesh> = listOf()
 
 fun newNavMesh(deck: Deck): NavMesh {
   val elements = deck.architecture
-  val meshes = elements.map { (id, _) ->
-    val shape = deck.collisionShapes[id]!!.shape
-    val body = deck.bodies[id]!!
-    val mesh = getShapeVertices(shape)
-    val transform = getBodyTransform(body)
-    val vertices = mesh.vertices.flatMap {
-      val temp = it.transform(transform)
-      listOf(temp.x, temp.y, temp.z)
-    }
-        .toFloatArray()
-    val faces = mesh.triangles.toIntArray()
-    TriMesh(vertices, faces)
-  }
-  val vertices = meshes.flatMap { it.verts.toList() }
+  val meshes = newNavMeshTriMeshes(deck)
+//  val vertices = meshes.flatMap { it.verts.toList() }
+  originalNavMeshData = meshes
 
   val padding = 1f
   val minBounds = floatArrayOf(
