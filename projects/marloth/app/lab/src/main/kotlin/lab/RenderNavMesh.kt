@@ -1,17 +1,73 @@
 package lab
 
 import mythic.glowing.DrawMethod
+import mythic.glowing.drawMesh
 import mythic.glowing.globalState
+import mythic.spatial.Matrix
+import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import mythic.spatial.identityMatrix
 import org.recast4j.detour.NavMesh
+import org.recast4j.recast.Heightfield
+import org.recast4j.recast.Span
+import randomly.Dice
 import rendering.Renderer
 import rendering.drawSolidFace
 import rendering.shading.ObjectShaderConfig
 import rendering.shading.ShaderFeatureConfig
+import scenery.enums.MeshId
+import simulation.intellect.navigation.globalHeightMap
 import simulation.intellect.navigation.originalNavMeshData
+import kotlin.math.abs
+
+fun renderNavMeshVoxels(renderer: Renderer, hf: Heightfield) {
+  val orig = hf.bmin
+  val cs = hf.cs
+  val ch = hf.ch
+
+  val w = hf.width
+  val h = hf.height
+
+  val cube = renderer.meshes[MeshId.cube.name]!!
+  val effect = renderer.getShader(renderer.vertexSchemas.flat, ShaderFeatureConfig())
+  globalState.depthEnabled = true
+  for (y in 0 until h) {
+    for (x in 0 until w) {
+      val fx = orig[0] + x * cs
+      val fz = orig[2] + y * cs
+      var s: Span? = hf.spans[x + y * w]
+      while (s != null) {
+//        appendBox(fx, orig[1] + s.smin * ch, fz, fx + cs, orig[1] + s.smax * ch, fz + cs, fcol)
+        val height = s.smax - s.smin
+        effect.activate(ObjectShaderConfig(
+            color = Vector4(0.2f, abs(fx + fz + orig[1]) % 1f, 0.3f, 0.6f),
+            transform = Matrix()
+                .translate(
+                    fx + cs / 2f,
+                    fz + cs / 2f,
+                    orig[1] + s.smin * ch + height * ch / 2f
+                )
+                .scale(
+                    cs,
+                    cs,
+                    ch
+                )
+
+        ))
+        drawMesh(cube.primitives.first().mesh, DrawMethod.triangleFan)
+        s = s.next
+      }
+    }
+  }
+  globalState.depthEnabled = false
+}
 
 fun renderNavMesh(renderer: Renderer, navMesh: NavMesh) {
+  if (false) {
+    if (globalHeightMap != null)
+      renderNavMeshVoxels(renderer, globalHeightMap!!)
+    return
+  }
   val effect = renderer.getShader(renderer.vertexSchemas.flat, ShaderFeatureConfig())
   val solidBrush = ObjectShaderConfig(
       color = Vector4(0.2f, 0.6f, 0.8f, 0.3f)
@@ -19,7 +75,7 @@ fun renderNavMesh(renderer: Renderer, navMesh: NavMesh) {
   val lineBrush = ObjectShaderConfig(
       color = Vector4(0f, 1f, 1f, 1f)
   )
-  val polygons: List<List<Float>> = if (true) {
+  val polygons: List<List<Float>> = if (false) {
     (0 until navMesh.tileCount).flatMap { i ->
       val tile = navMesh.getTile(i)
       val data = tile.data

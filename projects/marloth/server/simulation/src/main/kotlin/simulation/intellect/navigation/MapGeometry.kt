@@ -1,6 +1,7 @@
 package simulation.intellect.navigation
 
 import mythic.spatial.Vector3
+import mythic.spatial.createArcZ
 import org.recast4j.detour.NavMesh
 import org.recast4j.recast.AreaModification
 import org.recast4j.recast.ConvexVolume
@@ -48,25 +49,38 @@ private fun box(halfExtents: Vector3) =
         ).flatten()
     )
 
+private fun cylinder(shape: Cylinder): IntermediateMesh {
+  val count = 8
+  val arc = createArcZ(shape.radius, 8, offset = 1f)
+  val wrap = { i: Int -> i % count }
+  val pieSlice = { middleIndex: Int, offset: Int ->
+    (0 until count).flatMap { i ->
+      listOf(middleIndex, i + offset, offset + wrap(i + 1))
+    }
+  }
+  return IntermediateMesh(
+      vertices = listOf(
+          Vector3(0f, 0f, 1f),
+          Vector3(0f, 0f, -1f)
+      )
+          .plus(arc)
+          .plus(arc.map { it.copy(z = -1f) }),
+      triangles = pieSlice(0, 2)
+          .plus(pieSlice(1, 2 + count))
+          .plus((0 until count).flatMap {
+            val i = it + 2
+            val nextColumn = wrap(i + 1)
+            square(i, i + count, nextColumn + count, nextColumn)
+          })
+  )
+}
+
 private fun getShapeVertices(shape: Shape): IntermediateMesh =
     when (shape) {
 
       is Box -> box(shape.halfExtents)
 
-//      is Cylinder -> IntermediateMesh(
-//          vertices = listOf(
-//              Vector3(),
-//              Vector3(),
-//              Vector3(),
-//              Vector3(),
-//              Vector3(),
-//              Vector3(),
-//              Vector3(),
-//              Vector3()
-//          ),
-//          triangles = listOf()
-//      )
-      is Cylinder -> box(Vector3(shape.radius, shape.radius, shape.height))
+      is Cylinder -> cylinder(shape)
 
       else -> throw Error("Not implemented")
     }
@@ -97,7 +111,7 @@ fun newNavMeshTriMeshes(deck: Deck): List<TriMesh> {
         val mesh = getShapeVertices(shape)
         val transform = getBodyTransform(body).scale(body.scale)
         val vertices = mesh.vertices.flatMap {
-                    val temp = it.transform(transform)
+          val temp = it.transform(transform)
           // Convert to an array and Recast's Y-up coordinate system
           listOf(temp.x, temp.z, temp.y)
         }

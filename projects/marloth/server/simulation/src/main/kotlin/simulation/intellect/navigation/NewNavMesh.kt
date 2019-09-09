@@ -18,6 +18,7 @@ import simulation.main.Deck
 import simulation.physics.getBodyTransform
 
 var originalNavMeshData: List<TriMesh> = listOf()
+var globalHeightMap: Heightfield? = null
 
 fun newNavMesh(deck: Deck): NavMesh {
   val elements = deck.architecture
@@ -73,5 +74,6 @@ fun newNavMesh(deck: Deck): NavMesh {
   if (meshData == null)
     throw Error("Error generating NavMesh")
 
+  globalHeightMap = buildResult.solidHeightfield
   return NavMesh(meshData, vertsPerPoly, 0)
 }
