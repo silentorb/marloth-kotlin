@@ -1,18 +1,15 @@
 package lab
 
+import lab.views.map.MapViewDisplayConfig
 import mythic.glowing.DrawMethod
 import mythic.glowing.drawMesh
 import mythic.glowing.globalState
 import mythic.spatial.Matrix
-import mythic.spatial.Vector3
 import mythic.spatial.Vector4
-import mythic.spatial.identityMatrix
 import org.recast4j.detour.NavMesh
 import org.recast4j.recast.Heightfield
 import org.recast4j.recast.Span
-import randomly.Dice
 import rendering.Renderer
-import rendering.drawSolidFace
 import rendering.shading.ObjectShaderConfig
 import rendering.shading.ShaderFeatureConfig
 import scenery.enums.MeshId
@@ -62,12 +59,7 @@ fun renderNavMeshVoxels(renderer: Renderer, hf: Heightfield) {
   globalState.depthEnabled = false
 }
 
-fun renderNavMesh(renderer: Renderer, navMesh: NavMesh) {
-  if (true) {
-    if (globalHeightMap != null)
-      renderNavMeshVoxels(renderer, globalHeightMap!!)
-//    return
-  }
+fun foo(renderer: Renderer, polygons: List<List<Float>>) {
   val effect = renderer.getShader(renderer.vertexSchemas.flat, ShaderFeatureConfig())
   val solidBrush = ObjectShaderConfig(
       color = Vector4(0.2f, 0.6f, 0.8f, 0.3f)
@@ -75,31 +67,6 @@ fun renderNavMesh(renderer: Renderer, navMesh: NavMesh) {
   val lineBrush = ObjectShaderConfig(
       color = Vector4(0f, 1f, 1f, 1f)
   )
-  val polygons: List<List<Float>> = if (true) {
-    (0 until navMesh.tileCount).flatMap { i ->
-      val tile = navMesh.getTile(i)
-      val data = tile.data
-      data.polys.map { poly ->
-        poly.verts.take(poly.vertCount).flatMap {
-          val temp = data.verts.drop(it * 3).take(3)
-          listOf(temp[0], temp[2], temp[1])
-        }
-      }
-    }
-  } else {
-    originalNavMeshData.flatMap { mesh ->
-      (mesh.tris.indices step 3).map { i ->
-        mesh.tris.drop(i).take(3).flatMap {
-          val temp = mesh.verts.drop(it * 3).take(3)
-          listOf(temp[0], temp[2], temp[1])
-        }
-      }
-//      mesh.tris.flatMap {
-//        val temp = mesh.verts.drop(it * 3).take(3)
-//        listOf(temp[0], temp[2], temp[1])
-//      }
-    }
-  }
 
   globalState.depthEnabled = false
   effect.activate(solidBrush)
@@ -114,14 +81,36 @@ fun renderNavMesh(renderer: Renderer, navMesh: NavMesh) {
     renderer.dynamicMesh.draw(DrawMethod.lineStrip)
   }
 
-//  globalState.depthEnabled = true
-//  renderer.dynamicMesh.load(vertices)
-//  renderer.getShader(renderer.vertexSchemas.shaded, ShaderFeatureConfig()).activate(ObjectShaderConfig(
-//      color = Vector4(0.2f, 0.6f, 0.8f, 0.3f)
-//  ))
-//  renderer.dynamicMesh.draw(DrawMethod.triangles)
-//  renderer.getShader(renderer.vertexSchemas.shaded, ShaderFeatureConfig()).activate(ObjectShaderConfig(
-//      color = Vector4(0f, 1f, 1f, 1f)
-//  ))
-//  renderer.dynamicMesh.draw(DrawMethod.lineStrip)
+}
+
+fun renderNavMesh(renderer: Renderer, viewConfig: MapViewDisplayConfig, navMesh: NavMesh) {
+  if (viewConfig.navMeshVoxels) {
+    if (globalHeightMap != null)
+      renderNavMeshVoxels(renderer, globalHeightMap!!)
+  }
+
+  if (viewConfig.navMesh) {
+    val polygons = (0 until navMesh.tileCount).flatMap { i ->
+      val tile = navMesh.getTile(i)
+      val data = tile.data
+      data.polys.map { poly ->
+        poly.verts.take(poly.vertCount).flatMap {
+          val temp = data.verts.drop(it * 3).take(3)
+          listOf(temp[0], temp[2], temp[1])
+        }
+      }
+    }
+    foo(renderer, polygons)
+  }
+
+  if (viewConfig.navMeshInput) {
+    originalNavMeshData.flatMap { mesh ->
+      (mesh.tris.indices step 3).map { i ->
+        mesh.tris.drop(i).take(3).flatMap {
+          val temp = mesh.verts.drop(it * 3).take(3)
+          listOf(temp[0], temp[2], temp[1])
+        }
+      }
+    }
+  }
 }

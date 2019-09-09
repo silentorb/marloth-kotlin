@@ -29,7 +29,10 @@ data class MapViewDisplayConfig(
     var faceIds: Boolean = false,
     var nodeIds: Boolean = false,
     var isolateSelection: Boolean = false,
-    var abstract: Boolean = false
+    var abstract: Boolean = false,
+    var navMesh: Boolean = false,
+    var navMeshInput: Boolean = false,
+    var navMeshVoxels: Boolean = false
 )
 
 data class MapViewConfig(

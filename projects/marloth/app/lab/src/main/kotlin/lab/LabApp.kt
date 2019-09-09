@@ -98,9 +98,7 @@ fun labRender(app: LabApp, state: LabState): RenderHook = { sceneRenderer ->
     val deck = state.app.worlds.last().deck
     drawBulletDebug(app.gameApp, deck.bodies[deck.players.keys.first()]!!.position)(sceneRenderer)
   }
-  if (app.config.gameView.drawNavMesh) {
-    renderNavMesh(sceneRenderer.renderer, state.app.worlds.last().navMesh)
-  }
+  renderNavMesh(sceneRenderer.renderer,app.config.mapView.display, state.app.worlds.last().navMesh)
 }
 
 tailrec fun labLoop(app: LabApp, state: LabState) {

@@ -35,7 +35,6 @@ data class GameViewConfig(
     var logDroppedFrames: Boolean = false,
     var autoNewGame: Boolean = true,
     var drawPhysics: Boolean = false,
-    var drawNavMesh: Boolean = false,
     val lighting: LightingConfig = LightingConfig(),
     val fixture: FixtureId = FixtureId.none
 )
