@@ -16,40 +16,6 @@ class Utility {
   }
 }
 
-//class ModelAssetsTask27 extends DefaultTask {
-//
-//  @InputFiles
-//  def FileCollection inputFiles
-//
-//  @Input
-//  def File _projectDir
-//
-//  @OutputDirectory
-//  public File getOutputDir() { return new File("$_projectDir/src/main/resources/models") }
-//
-//  @TaskAction
-//  void execute(IncrementalTaskInputs inputs) {
-//    println inputs.incremental ? 'CHANGED inputs considered out of date'
-//        : 'ALL inputs considered out of date'
-//
-//    def config = Utility.getAssetConfig(_projectDir)
-//    def executablePath = config.paths.blender
-//    inputs.outOfDate { change ->
-//      println "out of date: ${change.file.name}"
-//      def scriptPath = "$_projectDir/blend/scripts/export.py"
-//      def proc = [executablePath, change.file.absolutePath, '--background', '--python', scriptPath].execute()
-//      def sout = new StringBuilder(), serr = new StringBuilder()
-//      proc.consumeProcessOutput(sout, serr)
-//      proc.waitFor()
-//      println "out> $sout err> $serr"
-//    }
-//
-//    inputs.removed { change ->
-//      println "removed: ${change.file.name}"
-//    }
-//  }
-//}
-
 class ModelAssetsTask28 extends DefaultTask {
 
   @InputFiles
@@ -67,7 +33,7 @@ class ModelAssetsTask28 extends DefaultTask {
         : 'ALL inputs considered out of date'
 
     def config = Utility.getAssetConfig(_projectDir)
-    def executablePath = config.paths.blender28
+    def executablePath = config.paths.blender28 ?: config.paths.blender 
     inputs.outOfDate { change ->
       println "out of date: ${change.file.name}"
       def scriptPath = "$_projectDir/blend/scripts/export-2.8.py"
@@ -111,18 +77,13 @@ class TextureAssetsTask extends DefaultTask {
     proc.consumeProcessOutput(sout, serr)
     proc.waitFor()
     println sout
-    if (serr) println "err>($serr)"
+    if (serr) println "err>($serr)."
     
     inputs.removed { change ->
       println "removed: ${name}"
     }
   }
 }
-
-//task modelAssets(type: ModelAssetsTask27) {
-//  inputFiles = fileTree("$projectDir/blend/models").matching { include '**/*.blend'}
-//  _projectDir = projectDir
-//}
 
 task modelAssets28(type: ModelAssetsTask28) {
   inputFiles = fileTree("$projectDir/blend/models").matching { include '**/*.blend'}
