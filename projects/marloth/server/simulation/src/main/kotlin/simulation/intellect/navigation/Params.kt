@@ -10,7 +10,7 @@ const val cellSize = 0.3f
 const val cellHeight = 0.2f
 const val agentHeight = 2f
 const val agentRadius = 0.3f
-const val agentMaxClimb = 0.5f
+const val agentMaxClimb = 0.9f
 
 val vertsPerPoly = 6
 
@@ -23,7 +23,7 @@ fun newRecastConfig() =
         agentRadius,
         agentMaxClimb,
         45f,
-        1,
+        3,
         20,
         12f,
         1.3f,

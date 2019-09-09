@@ -63,10 +63,10 @@ fun renderNavMeshVoxels(renderer: Renderer, hf: Heightfield) {
 }
 
 fun renderNavMesh(renderer: Renderer, navMesh: NavMesh) {
-  if (false) {
+  if (true) {
     if (globalHeightMap != null)
       renderNavMeshVoxels(renderer, globalHeightMap!!)
-    return
+//    return
   }
   val effect = renderer.getShader(renderer.vertexSchemas.flat, ShaderFeatureConfig())
   val solidBrush = ObjectShaderConfig(
@@ -75,7 +75,7 @@ fun renderNavMesh(renderer: Renderer, navMesh: NavMesh) {
   val lineBrush = ObjectShaderConfig(
       color = Vector4(0f, 1f, 1f, 1f)
   )
-  val polygons: List<List<Float>> = if (false) {
+  val polygons: List<List<Float>> = if (true) {
     (0 until navMesh.tileCount).flatMap { i ->
       val tile = navMesh.getTile(i)
       val data = tile.data

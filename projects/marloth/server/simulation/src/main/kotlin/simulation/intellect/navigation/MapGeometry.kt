@@ -55,7 +55,7 @@ private fun cylinder(shape: Cylinder): IntermediateMesh {
   val wrap = { i: Int -> i % count }
   val pieSlice = { middleIndex: Int, offset: Int ->
     (0 until count).flatMap { i ->
-      listOf(middleIndex, i + offset, offset + wrap(i + 1))
+      listOf(middleIndex, i + offset, offset + wrap(i + 1)).reversed()
     }
   }
   return IntermediateMesh(
