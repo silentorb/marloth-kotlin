@@ -44,7 +44,7 @@ private fun box(halfExtents: Vector3) =
             square(2, 1, 5, 6),
             square(1, 0, 4, 5),
             square(0, 3, 7, 4),
-            square(7, 6, 5, 4) // bottom
+            square(4, 7, 6, 5) // bottom
         ).flatten()
     )
 
@@ -74,8 +74,6 @@ private fun getShapeVertices(shape: Shape): IntermediateMesh =
 val SAMPLE_POLYAREA_TYPE_WALKABLE = 0x3f
 val walkable = AreaModification(SAMPLE_POLYAREA_TYPE_WALKABLE)
 
-val vertsPerPoly = 6
-
 data class GeometryProvider(
     val _meshes: MutableIterable<TriMesh>,
     val _convexVolumes: MutableIterable<ConvexVolume>,
@@ -100,8 +98,8 @@ fun newNavMeshTriMeshes(deck: Deck): List<TriMesh> {
         val transform = getBodyTransform(body).scale(body.scale)
         val vertices = mesh.vertices.flatMap {
                     val temp = it.transform(transform)
-//          val temp = it
-          listOf(temp.x, temp.y, temp.z)
+          // Convert to an array and Recast's Y-up coordinate system
+          listOf(temp.x, temp.z, temp.y)
         }
             .toFloatArray()
         val faces = mesh.triangles.toIntArray()

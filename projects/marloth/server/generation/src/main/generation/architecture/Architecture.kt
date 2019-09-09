@@ -45,7 +45,7 @@ val placeRoomFloors: Architect = { config, realm, dice ->
           realm.grid.cells.containsKey(position.copy(z = position.z - it))
         }
         val meshOptions = if (isEmptyBelow)
-          queryMeshes(config.meshes, biome.meshes, setOf(MeshAttribute.placementTallFloor))
+          queryMeshes(config.meshes, biome.meshes, setOf(MeshAttribute.placementShortFloor), QueryFilter.any)
         else
           queryMeshes(config.meshes, biome.meshes, setOf(MeshAttribute.placementShortFloor))
 

@@ -1,6 +1,7 @@
 package lab
 
 import mythic.glowing.DrawMethod
+import mythic.glowing.globalState
 import mythic.spatial.Vector4
 import mythic.spatial.identityMatrix
 import org.recast4j.detour.NavMesh
@@ -11,28 +12,60 @@ import rendering.shading.ShaderFeatureConfig
 import simulation.intellect.navigation.originalNavMeshData
 
 fun renderNavMesh(renderer: Renderer, navMesh: NavMesh) {
-  val vertices = if (true) {
+  val effect = renderer.getShader(renderer.vertexSchemas.flat, ShaderFeatureConfig())
+  val solidBrush = ObjectShaderConfig(
+      color = Vector4(0.2f, 0.6f, 0.8f, 0.3f)
+  )
+  val lineBrush = ObjectShaderConfig(
+      color = Vector4(0f, 1f, 1f, 1f)
+  )
+  val polygons: List<List<Float>> = if (true) {
     (0 until navMesh.tileCount).flatMap { i ->
       val tile = navMesh.getTile(i)
       val data = tile.data
-      data.polys.flatMap { poly -> poly.verts.map { data.verts[it] } }
+      data.polys.map { poly ->
+        poly.verts.take(poly.vertCount).flatMap {
+          val temp = data.verts.drop(it * 3).take(3)
+          listOf(temp[0], temp[2], temp[1])
+        }
+      }
     }
-//    for (i in 0 until navMesh.tileCount) {
-//      val tile = navMesh.getTile(i)
-//      val data = tile.data
-//      drawSolidFace(renderer, data.detailTris.map { data.verts[it] }, Vector4(0f, 1f, 1f, 1f))
-//    }
   } else {
-    originalNavMeshData.flatMap { mesh -> mesh.tris.flatMap { mesh.verts.drop(it * 3).take(3) } }
-//    }
+    originalNavMeshData.flatMap { mesh ->
+      (mesh.tris.indices step 3).map { i ->
+        mesh.tris.drop(i).take(3).flatMap {
+          val temp = mesh.verts.drop(it * 3).take(3)
+          listOf(temp[0], temp[2], temp[1])
+        }
+      }
+//      mesh.tris.flatMap {
+//        val temp = mesh.verts.drop(it * 3).take(3)
+//        listOf(temp[0], temp[2], temp[1])
+//      }
+    }
   }
-  val effect = renderer.getShader(renderer.vertexSchemas.shaded, ShaderFeatureConfig(
-//        shading = true
-  ))
-  effect.activate(ObjectShaderConfig(
-      color = Vector4(0f, 1f, 1f, 1f),
-      normalTransform = identityMatrix
-  ))
-  renderer.dynamicMesh.load(vertices)
-  renderer.dynamicMesh.draw(DrawMethod.triangles)
+
+  globalState.depthEnabled = false
+  effect.activate(solidBrush)
+  for (polygon in polygons) {
+    renderer.dynamicMesh.load(polygon)
+    renderer.dynamicMesh.draw(DrawMethod.triangleFan)
+  }
+
+  effect.activate(lineBrush)
+  for (polygon in polygons) {
+    renderer.dynamicMesh.load(polygon.plus(polygon.take(3)))
+    renderer.dynamicMesh.draw(DrawMethod.lineStrip)
+  }
+
+//  globalState.depthEnabled = true
+//  renderer.dynamicMesh.load(vertices)
+//  renderer.getShader(renderer.vertexSchemas.shaded, ShaderFeatureConfig()).activate(ObjectShaderConfig(
+//      color = Vector4(0.2f, 0.6f, 0.8f, 0.3f)
+//  ))
+//  renderer.dynamicMesh.draw(DrawMethod.triangles)
+//  renderer.getShader(renderer.vertexSchemas.shaded, ShaderFeatureConfig()).activate(ObjectShaderConfig(
+//      color = Vector4(0f, 1f, 1f, 1f)
+//  ))
+//  renderer.dynamicMesh.draw(DrawMethod.lineStrip)
 }

@@ -1,7 +1,6 @@
 package generation.architecture
 
 import generation.misc.MeshAttribute
-import generation.misc.QueryMode
 import generation.misc.queryMeshes
 import mythic.spatial.Pi
 import mythic.spatial.Vector3

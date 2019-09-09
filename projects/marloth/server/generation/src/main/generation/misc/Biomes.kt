@@ -37,22 +37,21 @@ data class BiomeInfo(
 
 typealias BiomeInfoMap = Map<BiomeName, BiomeInfo>
 
-enum class QueryMode {
+enum class QueryFilter {
   all,
   any,
   none
 }
 
-fun queryMeshes(meshInfo: MeshInfoMap, options: Set<MeshName>, attributes: MeshAttributes, mode: QueryMode = QueryMode.all): Set<MeshName> =
+fun queryMeshes(meshInfo: MeshInfoMap, options: Set<MeshName>, attributes: MeshAttributes, mode: QueryFilter = QueryFilter.all): Set<MeshName> =
     options.filter { key ->
       val info = meshInfo[key]!!
       when (mode) {
-        QueryMode.all -> info.attributes.containsAll(attributes)
-        QueryMode.none -> info.attributes.none { attributes.contains(it) }
-        QueryMode.any -> info.attributes.any { attributes.contains(it) }
+        QueryFilter.all -> info.attributes.containsAll(attributes)
+        QueryFilter.none -> info.attributes.none { attributes.contains(it) }
+        QueryFilter.any -> info.attributes.any { attributes.contains(it) }
       }
-      info.attributes.containsAll(attributes)
     }.toSet()
 
-fun queryMeshes(meshInfo: MeshInfoMap, biome: BiomeInfo, attributes: MeshAttributes, mode: QueryMode = QueryMode.all): Set<MeshName> =
+fun queryMeshes(meshInfo: MeshInfoMap, biome: BiomeInfo, attributes: MeshAttributes, mode: QueryFilter = QueryFilter.all): Set<MeshName> =
     queryMeshes(meshInfo, biome.meshes, attributes, mode)
