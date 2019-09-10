@@ -13,7 +13,7 @@ data class LabClientResult(
 
 typealias LabCommandMap = Map<LabCommandType, CommandHandler<LabCommandType>>
 
-typealias LabCommandState = GeneralCommandState<LabCommandType>
+typealias LabCommandState = GeneralCommandState
 //data class LabCommandState(
 //    val commands: List<HaftCommand<LabCommandType>>,
 //    val mousePosition: Vector2i,

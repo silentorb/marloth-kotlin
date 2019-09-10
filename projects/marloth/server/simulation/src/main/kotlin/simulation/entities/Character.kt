@@ -1,7 +1,7 @@
 package simulation.entities
 
 import mythic.ent.Id
-import mythic.ent.pipe
+import mythic.ent.pipe2
 import mythic.spatial.*
 import org.joml.times
 import scenery.enums.ResourceId
@@ -134,7 +134,7 @@ fun updateCharacter(deck: Deck, id: Id, character: Character, commands: Commands
   val isAlive = isAlive(destructible.health.value)
   val justDied = !isAlive && character.isAlive
 
-  return pipe(character, listOf(
+  return pipe2(character, listOf(
       { c ->
         c.copy(
             isAlive = isAlive,
@@ -183,7 +183,7 @@ fun updateCharacter(deck: Deck, commands: Commands, activatedAbilities: List<Act
     val k = 0
   }
 
-  val characterCommands = pipe(commands, listOf(
+  val characterCommands = pipe2(commands, listOf(
       { c -> if (deck.characters[id]!!.isAlive) c else listOf() },
       { c -> c.filter { it.target == id } }
   ))

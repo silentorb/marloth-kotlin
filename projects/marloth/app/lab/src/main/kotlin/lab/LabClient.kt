@@ -43,6 +43,11 @@ fun getInputState(platformInput: PlatformInput, commands: List<HaftCommand<LabCo
   return input
 }
 
+val labLogicModules = clientBloomModules
+    .plus(
+        globalMenuModule
+    )
+
 class LabClient(val config: LabConfig, val client: Client) {
 
   val globalKeyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
@@ -112,8 +117,6 @@ class LabClient(val config: LabConfig, val client: Client) {
     val newDeviceStates = updateInputState(client.platform.input, state.app.client.input)
     val commands = updateInput(mapOf(), newDeviceStates)
     val layout = if (world != null) {
-      val input = getInputState(client.platform.input, commands)
-      updateMapState(config.mapView, world.realm, input, windowInfo, state.app.client.bloomState, delta)
       mapLayout(client, world, world.deck, config.mapView)
     } else
       emptyFlower
@@ -131,8 +134,18 @@ class LabClient(val config: LabConfig, val client: Client) {
     )
 
     val bloomInputState = newBloomInputState(newDeviceStates.last())
-    val newBloomState = updateBloomState(box, state.app.client.bloomState, bloomInputState)
+    val (newBloomState, events) = updateBloomState(labLogicModules, box, state.app.client.bloomState, bloomInputState)
 
+    for (e in events) {
+      println(e.javaClass.name)
+    }
+
+    if (world != null) {
+      val allCommands = commands
+          .plus(events.filterIsInstance<LabCommandType>().map { HaftCommand(it) })
+      val input = getInputState(client.platform.input, allCommands)
+      updateMapState(config.mapView, world.realm, input, windowInfo, state.app.client.bloomState, delta)
+    }
     return LabClientResult(
         listOf(),
         state.copy(

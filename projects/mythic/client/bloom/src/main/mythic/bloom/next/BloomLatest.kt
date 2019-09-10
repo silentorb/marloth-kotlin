@@ -9,14 +9,19 @@ private val emptyBoxList: List<Box> = listOf()
 
 val emptyBounds = Bounds(0, 0, 0, 0)
 
+typealias AnyEvent = Any
+
 data class Box(
     val name: String = "",
     val bounds: Bounds,
     val boxes: List<Box> = emptyBoxList,
     val depiction: Depiction? = null,
     val clipBounds: Boolean = false,
-    val handler: Any? = null,
-    val logic: LogicModule? = null
+//    val handler: Any? = null,
+    val logic: LogicModuleOld? = null,
+    val onClick: List<AnyEvent> = listOf()
+//    val attributes: Set<String> = setOf(),
+//    val data: Map<String, Any?> = mapOf()
 )
 
 data class Seed(
@@ -45,7 +50,7 @@ fun div(name: String = "",
         forward: ForwardLayout = forwardPass,
         reverse: ReverseLayout = reversePass,
         depiction: Depiction? = null,
-        logic: LogicModule? = null): FlowerWrapper = { flower ->
+        logic: LogicModuleOld? = null): FlowerWrapper = { flower ->
   { seed ->
     if (name == "dialog") {
       val k = 0
@@ -70,7 +75,7 @@ fun div(name: String = "",
 fun div(name: String = "",
         layout: DualLayout,
         depiction: Depiction? = null,
-        logic: LogicModule? = null): FlowerWrapper = { flower ->
+        logic: LogicModuleOld? = null): FlowerWrapper = { flower ->
   { seed ->
     val (childBox, bounds) = layout(seed, flower)
     Box(
@@ -107,7 +112,7 @@ fun dependentBoundsTransform(transform: (Vector2i, Bounds, Bounds) -> Vector2i):
 
 fun fixed(value: Int): PlanePositioner = { plane -> { value } }
 
-infix fun Flower.plusLogic(logic: LogicModule): Flower = { seed ->
+infix fun Flower.plusLogic(logic: LogicModuleOld): Flower = { seed ->
   val box = this(seed)
   val newLogic = if (box.logic == null)
     logic

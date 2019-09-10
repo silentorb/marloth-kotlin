@@ -47,7 +47,7 @@ fun renderNavMeshVoxels(renderer: Renderer, hf: Heightfield) {
                 .scale(
                     cs,
                     cs,
-                    ch
+                    ch// * height
                 )
 
         ))
@@ -59,7 +59,7 @@ fun renderNavMeshVoxels(renderer: Renderer, hf: Heightfield) {
   globalState.depthEnabled = false
 }
 
-fun foo(renderer: Renderer, polygons: List<List<Float>>) {
+private fun renderOutlinedFaces(renderer: Renderer, polygons: List<List<Float>>) {
   val effect = renderer.getShader(renderer.vertexSchemas.flat, ShaderFeatureConfig())
   val solidBrush = ObjectShaderConfig(
       color = Vector4(0.2f, 0.6f, 0.8f, 0.3f)
@@ -80,7 +80,6 @@ fun foo(renderer: Renderer, polygons: List<List<Float>>) {
     renderer.dynamicMesh.load(polygon.plus(polygon.take(3)))
     renderer.dynamicMesh.draw(DrawMethod.lineStrip)
   }
-
 }
 
 fun renderNavMesh(renderer: Renderer, viewConfig: MapViewDisplayConfig, navMesh: NavMesh) {
@@ -100,11 +99,11 @@ fun renderNavMesh(renderer: Renderer, viewConfig: MapViewDisplayConfig, navMesh:
         }
       }
     }
-    foo(renderer, polygons)
+    renderOutlinedFaces(renderer, polygons)
   }
 
   if (viewConfig.navMeshInput) {
-    originalNavMeshData.flatMap { mesh ->
+    val polygons = originalNavMeshData.flatMap { mesh ->
       (mesh.tris.indices step 3).map { i ->
         mesh.tris.drop(i).take(3).flatMap {
           val temp = mesh.verts.drop(it * 3).take(3)
@@ -112,5 +111,6 @@ fun renderNavMesh(renderer: Renderer, viewConfig: MapViewDisplayConfig, navMesh:
         }
       }
     }
+    renderOutlinedFaces(renderer, polygons)
   }
 }

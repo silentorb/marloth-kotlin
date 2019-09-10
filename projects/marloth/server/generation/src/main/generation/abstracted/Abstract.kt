@@ -178,7 +178,7 @@ fun generateAbstract(config: GenerationConfig, input: WorldInput, scale: Float, 
   val grid = newWindingPath(input.dice, config.roomCount)
   val nextId = newIdSource(1L)
   val (initialGraph, cellMap) = gridToGraph(nextId, grid)
-  val finalGraph = pipe(initialGraph, listOf(
+  val finalGraph = pipe2(initialGraph, listOf(
 //      { graph -> cleanupWorld(graph) },
 //      { graph -> createAndMixTunnels(graph) },
 //      variableHeights(input.dice),

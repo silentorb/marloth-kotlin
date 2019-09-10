@@ -18,6 +18,7 @@ class FlexProperty {
 }
 
 typealias BloomId = Int
+typealias BloomKey = String
 
 typealias FlexPair = Pair<FlexBounds, List<FlexBounds>>
 typealias FlexTriple = Triple<FlexBounds, FlexBounds, List<FlexBounds>>
@@ -26,15 +27,24 @@ typealias Arranger = (FlexTriple) -> FlexPair
 typealias ArrangerMap = Map<BloomId, Arranger>
 typealias IdMap = Map<BloomId, BloomId>
 typealias FlexBoundsMap = Map<BloomId, FlexBounds>
-typealias FlowerTransformOld = (FlowerOld) -> FlowerOld
 
 val emptyFlexBounds = listOf(null, null, null, null, null, null)
 
-fun mapBlossomBoxes(transform: (FlatBoxes) -> FlatBoxes): (Blossom) -> Blossom = { blossom ->
-  blossom.copy(
-      boxes = transform(blossom.boxes)
-  )
-}
+data class FlatBox(
+    val bounds: Bounds,
+    val depiction: Depiction? = null,
+    val clipBounds: Bounds? = null,
+    val handler: Any? = null,
+    val logic: LogicModuleOld? = null
+)
+
+//typealias FlatBoxes = List<FlatBox>
+
+//fun mapBlossomBoxes(transform: (FlatBoxes) -> FlatBoxes): (Blossom) -> Blossom = { blossom ->
+//  blossom.copy(
+//      boxes = transform(blossom.boxes)
+//  )
+//}
 
 fun newInitialFlexBounds(ids: Collection<BloomId>) =
     ids.map { Pair(it, emptyFlexBounds) }
@@ -123,10 +133,6 @@ fun applyLengths(start: Int, lengths: List<Int>, planeOffset: Int, bounds: Colle
 
 val isResolved = { b: FlexBounds -> b.all { it != null } }
 
-fun independentBoundsTransform(transform: (Bounds) -> Bounds): FlowerTransformOld = { flower ->
-  { flower(SeedOld(it.bag, transform(it.bounds))) }
-}
-
 //fun clippedDimensions(parent: Bounds, childPosition: Vector2i, childDimensions: Vector2i): Vector2i {
 //  return if (childPosition.x + childDimensions.x > parent.right ||
 //      childPosition.y + childDimensions.y > parent.bottom)
@@ -192,14 +198,6 @@ fun moveBounds(offset: Vector2i, container: Vector2i): (Bounds) -> Bounds = { ch
 //  }
 //}
 
-fun withOffset(flower: FlowerOld): (Vector2i) -> FlowerOld = { value ->
-  { flower(SeedOld(it.bag, Bounds(it.bounds.position + value, it.bounds.dimensions))) }
-}
-
-fun withOffset(value: Vector2i): FlowerTransformOld = independentBoundsTransform {
-  Bounds(it.position + value, it.dimensions)
-}
-
 typealias Positioner = (Vector2i) -> Int
 
 typealias PlanePositioner = (PlaneMap) -> Positioner
@@ -223,21 +221,5 @@ fun fixedReverse(value: Int): ReversePlanePositioner = { plane ->
 fun percentage(value: Float): PlanePositioner = { plane ->
   { parent ->
     (plane.x(parent).toFloat() * value).toInt()
-  }
-}
-
-fun FlowerTransformOld.plus(other: FlowerTransformOld): FlowerTransformOld = { flower ->
-  val transition = this(flower)
-  other(transition)
-}
-
-infix fun FlowerTransformOld.fork(a: FlowerOld): FlowerTransformOld = { b ->
-  //  val transition = this(b)
-  this { seed ->
-    val blossom = b(seed)
-    val newSeed = seed.copy(
-        bounds = blossom.bounds
-    )
-    blossom.append(a(newSeed))
   }
 }

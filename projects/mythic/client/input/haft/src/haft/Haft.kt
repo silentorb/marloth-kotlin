@@ -32,8 +32,8 @@ data class Binding<T>(
 
 data class HaftCommand<T>(
     val type: T,
-    val target: Int,
-    val value: Float
+    val target: Int = 0,
+    val value: Float = 0f
 )
 
 fun <T> simpleCommand(type: T, target: Int = 0): HaftCommand<T> =

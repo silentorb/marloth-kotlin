@@ -1,7 +1,7 @@
 package simulation.particles
 
 import mythic.breeze.AnimationChannel
-import mythic.ent.pipe
+import mythic.ent.pipe2
 import mythic.spatial.Vector3
 import simulation.physics.Body
 import randomly.Dice
@@ -43,7 +43,7 @@ fun updateParticles(delta: Float): (ParticleEffect) -> ParticleEffect = { effect
 }
 
 fun updateParticleEffect(dice: Dice, delta: Float): (Body, ParticleEffect) -> ParticleEffect = { body, effect ->
-  pipe(listOf(
+  pipe2(listOf(
       updateParticles(delta),
       updateParticleEmission(dice, body, delta)
   ))(effect)

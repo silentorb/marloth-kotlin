@@ -15,9 +15,11 @@ import mythic.aura.SoundLibrary
 import mythic.aura.newAudioState
 import mythic.bloom.*
 import mythic.bloom.next.Box
+import mythic.bloom.next.LogicModule
 
 import mythic.drawing.setGlobalFonts
 import mythic.ent.pipe
+import mythic.ent.pipe2
 import mythic.platforming.Platform
 import mythic.spatial.Vector3
 import mythic.typography.extractFontSets
@@ -127,6 +129,8 @@ fun pruneBag(bloomState: BloomState): BloomState {
   )
 }
 
+val clientBloomModules: List<LogicModule> = listOf()
+
 fun updateClient(client: Client, players: List<Int>, box: Box): (ClientState) -> ClientState = { clientState ->
   //  updateMousePointerVisibility(client.platform)
   val bindingContext = bindingContext(clientState)
@@ -137,7 +141,7 @@ fun updateClient(client: Client, players: List<Int>, box: Box): (ClientState) ->
 
   val bloomInputState = newBloomInputState(deviceStates.last())
       .copy(events = haftToBloom(commands))
-  val bloomState = updateBloomState(box, pruneBag(clientState.bloomState), bloomInputState)
+  val (bloomState, bloomEvents) = updateBloomState(clientBloomModules, box, pruneBag(clientState.bloomState), bloomInputState)
 
   val guiCommands = guiEvents(bloomState.bag)
       .filter { it.type == GuiEventType.command }
@@ -146,7 +150,7 @@ fun updateClient(client: Client, players: List<Int>, box: Box): (ClientState) ->
   val allCommands = commands
       .plus(guiCommands)
 
-  val newClientState = pipe(clientState, listOf(
+  val newClientState = pipe(
       { state ->
         state.copy(
             input = updateInputState(deviceStates, state.input),
@@ -156,8 +160,7 @@ fun updateClient(client: Client, players: List<Int>, box: Box): (ClientState) ->
       },
       // This needs to happen after applying updateBloomState to override flower state settings
       applyClientCommands(client, allCommands)
-//      syncBagWithCurrentView
-  ))
+  )(clientState)
 
   newClientState
 }

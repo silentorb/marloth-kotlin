@@ -3,25 +3,23 @@ package mythic.bloom
 import mythic.bloom.next.Flower
 import mythic.bloom.next.Seed
 
-typealias IdSelector<T> = (T) -> String
+typealias GenericIdSelector<T> = (T) -> BloomKey
 
-data class SelectionState(
-    val selection: Set<String>
+data class SelectionStateOld(
+    val selection: Set<BloomKey>
 )
 
-val selectionState = existingOrNewState {
-  SelectionState(
-      selection = setOf()
-  )
+val selectionStateOld = existingOrNewState {
+  setOf<String>()
 }
 
 val singleSelectionState = existingOrNewState {
-  SelectionState(
+  SelectionStateOld(
       selection = setOf()
   )
 }
 
-typealias SelectionLogic = (Set<String>, String) -> Set<String>
+typealias SelectionLogic = (Set<BloomKey>, BloomKey) -> Set<BloomKey>
 
 //val singleSelection: SelectionLogic = { _, item ->
 //  setOf(item)
@@ -34,16 +32,16 @@ val optionalSingleSelection: SelectionLogic = { selection, item ->
     setOf(item)
 }
 
-fun <T> selectable(key: String, selectionLogic: SelectionLogic, idSelector: IdSelector<T>): (T) -> LogicModule =
+fun <T> selectable(key: String, selectionLogic: SelectionLogic, idSelector: GenericIdSelector<T>): (T) -> LogicModuleOld =
     { seed ->
       { (bloomState) ->
-        val state = selectionState(bloomState.bag[key])
+        val state = selectionStateOld(bloomState.bag[key])
         val id = idSelector(seed)
-        val selection = selectionLogic(state.selection, id)
+        val selection = selectionLogic(state, id)
         if (selection.none())
           mapOf(key to setOf<String>())
         else {
-          val newState = SelectionState(
+          val newState = SelectionStateOld(
               selection = selection
           )
 
@@ -69,7 +67,7 @@ private fun childSelected2(key: String): LogicModuleTransform = logicWrapper { b
 //    }
 
 fun selectableFlower(key: String, id: String, flower: (Seed, Boolean) -> Flower): Flower = { seed ->
-  val state = selectionState(seed.bag[key])
-  val selected = state.selection.contains(id)
+  val state = selectionStateOld(seed.bag[key])
+  val selected = state.contains(id)
   flower(seed, selected)(seed)
 }

@@ -39,7 +39,7 @@ fun isClick() = isClick(0)
 fun isClickInside(bounds: Bounds, inputState: HistoricalInputState) =
     isClick()(inputState) && isInBounds(inputState.current.mousePosition, bounds)
 
-fun onClick(logicModule: LogicModule): LogicModule = { bundle ->
+fun onClick(logicModule: LogicModuleOld): LogicModuleOld = { bundle ->
   val visibleBounds = bundle.visibleBounds
   if (visibleBounds != null && isClickInside(visibleBounds, bundle.state.input))
     logicModule(bundle)
@@ -47,7 +47,7 @@ fun onClick(logicModule: LogicModule): LogicModule = { bundle ->
     null
 }
 
-fun onClickPersisted(key: String, logicModule: LogicModule): LogicModule = { bundle ->
+fun onClickPersisted(key: String, logicModule: LogicModuleOld): LogicModuleOld = { bundle ->
   val visibleBounds = bundle.visibleBounds
   if (visibleBounds != null && isClickInside(visibleBounds, bundle.state.input))
     logicModule(bundle)
@@ -60,14 +60,14 @@ fun onClickPersisted(key: String, logicModule: LogicModule): LogicModule = { bun
   }
 }
 
-fun onClick(key: String): LogicModule = onClick { bundle ->
+fun onClick(key: String): LogicModuleOld = onClick { bundle ->
   if (bundle.visibleBounds != null)
     mapOf(key to bundle)
   else
     null
 }
 
-fun onClick(key: String, value: Any): LogicModule = onClick { bundle ->
+fun onClick(key: String, value: Any): LogicModuleOld = onClick { bundle ->
   if (bundle.visibleBounds != null)
     mapOf(key to value)
   else

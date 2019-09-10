@@ -9,7 +9,7 @@ import marloth.front.GameApp
 import marloth.front.RenderHook
 import mythic.bloom.next.Box
 import mythic.bloom.toAbsoluteBounds
-import mythic.ent.pipe
+import mythic.ent.pipe2
 import mythic.platforming.WindowInfo
 import mythic.quartz.updateTimestep
 import org.joml.Vector2i
@@ -107,7 +107,7 @@ fun gatherGuiEvents(appState: AppState) = guiEvents(appState.client.bloomState.b
 
 fun updateFixedInterval(app: GameApp, box: Box, newWorld: () -> World): (AppState) -> AppState = { appState ->
   app.platform.process.pollEvents()
-  val nextClientState = pipe(appState.client, listOf(
+  val nextClientState = pipe2(appState.client, listOf(
       updateClientInput(app.client),
       updateClient(app.client, appState.players, box),
       updateAppStateAudio(app.client, appState.worlds)

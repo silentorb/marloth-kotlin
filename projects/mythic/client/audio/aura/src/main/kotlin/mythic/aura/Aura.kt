@@ -3,7 +3,7 @@ package mythic.aura
 import mythic.ent.WithId
 import mythic.ent.Id
 import mythic.ent.Table
-import mythic.ent.pipe
+import mythic.ent.pipe2
 import mythic.platforming.PlatformAudio
 import mythic.spatial.Vector3
 import java.nio.ByteBuffer
@@ -86,7 +86,7 @@ fun renderAudio(library: SoundLibrary, samples: Int, listenerPosition: Vector3?,
         .map { (it.instrument(it.progress + i) * it.gain).toInt() }
         .sum()
 
-    val finalValue = pipe(value, listOf(
+    val finalValue = pipe2(value, listOf(
         compress,
         clip
     ))
@@ -107,7 +107,7 @@ fun renderSilence(samples: Int, buffer: ByteBuffer) {
 }
 
 fun updateSounds(library: SoundLibrary, samples: Int): (SoundTable) -> SoundTable = { sounds ->
-  pipe(sounds, listOf(
+  pipe2(sounds, listOf(
       { s ->
         s.mapValues { (_, sound) ->
           sound.copy(

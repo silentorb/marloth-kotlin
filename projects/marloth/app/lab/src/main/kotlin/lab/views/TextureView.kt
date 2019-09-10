@@ -1,13 +1,10 @@
 package lab.views
 
-import haft.isActive
-import lab.LabCommandType
 import lab.views.model.SelectionEvent
-import lab.views.shared.SelectionResult
-import lab.views.shared.drawSelectableEnumList
-import mythic.bloom.*
+import mythic.bloom.Bounds
+import mythic.bloom.FlatBox
+import mythic.bloom.resolveLengths
 import mythic.drawing.Canvas
-import mythic.spatial.toVector2i
 import org.joml.Vector2i
 import rendering.Renderer
 import scenery.enums.TextureId
@@ -30,13 +27,12 @@ fun drawTextureView(renderer: Renderer, config: TextureViewConfig, bounds: Bound
 //  texture.dispose()
 }
 
-private fun drawLeftPanel(textures: List<TextureId>, config: TextureViewConfig, bounds: Bounds): SelectionResult {
-  return drawSelectableEnumList(textures, config.texture, bounds)
-}
+//private fun drawLeftPanel(textures: List<TextureId>, config: TextureViewConfig, bounds: Bounds): SelectionResult {
+//  return drawSelectableEnumList(textures, config.texture, bounds)
+//}
 
 data class TextureViewLayout(
-    val boxes: List<FlatBox>,
-    val clickBoxes: List<ClickBox<SelectionEvent>>
+    val boxes: List<FlatBox>
 )
 
 class TextureView {
@@ -80,14 +76,14 @@ fun onListItemSelection(event: SelectionEvent, config: TextureViewConfig, render
 //  config.texture = renderer.mappedTextures.keys.toList()[event.itemIndex]
 }
 
-fun updateTextureState(layout: TextureViewLayout, input: LabCommandState, config: TextureViewConfig, renderer: Renderer) {
-  val commands = input.commands
-
-  if (isActive(commands, LabCommandType.select)) {
-    val clickBox = filterMouseOverBoxes(layout.clickBoxes, input.mousePosition.toVector2i())
-    if (clickBox != null) {
-      onListItemSelection(clickBox.value, config, renderer)
-    } else {
-    }
-  }
-}
+//fun updateTextureState(layout: TextureViewLayout, input: LabCommandState, config: TextureViewConfig, renderer: Renderer) {
+//  val commands = input.commands
+//
+//  if (isActive(commands, LabCommandType.select)) {
+//    val clickBox = filterMouseOverBoxes(layout.clickBoxes, input.mousePosition.toVector2i())
+//    if (clickBox != null) {
+//      onListItemSelection(clickBox.value, config, renderer)
+//    } else {
+//    }
+//  }
+//}

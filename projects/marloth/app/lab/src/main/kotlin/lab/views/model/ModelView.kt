@@ -15,8 +15,7 @@ import scenery.AnimationId
 
 data class ModelLayout(
     val boxes: List<FlatBox>,
-    val modelPanelBounds: Bounds,
-    val clickBoxes: List<ClickBox<SelectionEvent>>
+    val modelPanelBounds: Bounds
 )
 
 data class ViewCameraConfig(
@@ -270,57 +269,57 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
     return 0f
   }
 
-  fun updateState(layout: ModelLayout, input: LabCommandState, state: ModelViewState, delta: Float): ModelViewState {
-    val commands = input.commands
-
-    val mouseRotateSpeedZ = 2.5f
-    val mouseRotateSpeedY = 1.5f
-
-    val keyboardRotateSpeedZ = 1.5f
-    val keyboardRotateSpeedY = 0.1f
-
-    if (isActive(commands, LabCommandType.select)) {
-      val clickBox = filterMouseOverBoxes(layout.clickBoxes, mousePosition.toVector2i())
-      if (clickBox != null) {
-        onListItemSelection(clickBox.value)
-      } else {
-        val m = model.model
-        if (m != null)
-          trySelect(config, camera, m, mousePosition, layout.modelPanelBounds)
-      }
-    }
-
-    if (isActive(commands, LabCommandType.rotate)) {
-      config.camera.rotationZ -= mouseRotateSpeedZ * delta * Math.min(input.mouseOffset.x, 3f)
-//      config.camera.rotationY -= mouseRotateSpeedY * delta * Math.min(input.mouseOffset.y, 3f)
-    }
-
-    if (isActive(commands, LabCommandType.rotateLeft)) {
-      config.camera.rotationZ -= keyboardRotateSpeedZ * delta
-    }
-
-    if (isActive(commands, LabCommandType.rotateRight)) {
-      config.camera.rotationZ += keyboardRotateSpeedZ * delta
-    }
-
-    if (isActive(commands, LabCommandType.pan) && (input.mouseOffset.x != 0f || input.mouseOffset.y != 0f)) {
-      val offset = Vector3(0f, input.mouseOffset.x.toFloat(), input.mouseOffset.y.toFloat())
-      config.camera.pivot += camera.orientation * offset * delta * config.camera.zoom * 0.14f
-    }
-
-    if (isActive(commands, LabCommandType.zoomIn)) {
-      config.camera.zoom -= 20 * delta * getCommand(commands, LabCommandType.zoomIn).value
-    } else if (isActive(commands, LabCommandType.zoomOut)) {
-      config.camera.zoom += 20 * delta * getCommand(commands, LabCommandType.zoomOut).value
-    }
-
-//    config.camera.rotationY = Math.min(1.55f, Math.max(-(Pi / 2 - 0.01f), config.camera.rotationY))
-    val maxY = Pi / 2f - 0.01f
-    config.camera.rotationY = minMax(config.camera.rotationY, -maxY, maxY)
-    config.camera.rotationZ = tightenRotation(config.camera.rotationZ)
-
-    return state.copy(animationElapsedTime = updateAnimationOffset(state, delta))
-  }
+//  fun updateState(layout: ModelLayout, input: LabCommandState, state: ModelViewState, delta: Float): ModelViewState {
+//    val commands = input.commands
+//
+//    val mouseRotateSpeedZ = 2.5f
+//    val mouseRotateSpeedY = 1.5f
+//
+//    val keyboardRotateSpeedZ = 1.5f
+//    val keyboardRotateSpeedY = 0.1f
+//
+//    if (isActive(commands, LabCommandType.select)) {
+//      val clickBox = filterMouseOverBoxes(layout.clickBoxes, mousePosition.toVector2i())
+//      if (clickBox != null) {
+//        onListItemSelection(clickBox.value)
+//      } else {
+//        val m = model.model
+//        if (m != null)
+//          trySelect(config, camera, m, mousePosition, layout.modelPanelBounds)
+//      }
+//    }
+//
+//    if (isActive(commands, LabCommandType.rotate)) {
+//      config.camera.rotationZ -= mouseRotateSpeedZ * delta * Math.min(input.mouseOffset.x, 3f)
+////      config.camera.rotationY -= mouseRotateSpeedY * delta * Math.min(input.mouseOffset.y, 3f)
+//    }
+//
+//    if (isActive(commands, LabCommandType.rotateLeft)) {
+//      config.camera.rotationZ -= keyboardRotateSpeedZ * delta
+//    }
+//
+//    if (isActive(commands, LabCommandType.rotateRight)) {
+//      config.camera.rotationZ += keyboardRotateSpeedZ * delta
+//    }
+//
+//    if (isActive(commands, LabCommandType.pan) && (input.mouseOffset.x != 0f || input.mouseOffset.y != 0f)) {
+//      val offset = Vector3(0f, input.mouseOffset.x.toFloat(), input.mouseOffset.y.toFloat())
+//      config.camera.pivot += camera.orientation * offset * delta * config.camera.zoom * 0.14f
+//    }
+//
+//    if (isActive(commands, LabCommandType.zoomIn)) {
+//      config.camera.zoom -= 20 * delta * getCommand(commands, LabCommandType.zoomIn).value
+//    } else if (isActive(commands, LabCommandType.zoomOut)) {
+//      config.camera.zoom += 20 * delta * getCommand(commands, LabCommandType.zoomOut).value
+//    }
+//
+////    config.camera.rotationY = Math.min(1.55f, Math.max(-(Pi / 2 - 0.01f), config.camera.rotationY))
+//    val maxY = Pi / 2f - 0.01f
+//    config.camera.rotationY = minMax(config.camera.rotationY, -maxY, maxY)
+//    config.camera.rotationZ = tightenRotation(config.camera.rotationZ)
+//
+//    return state.copy(animationElapsedTime = updateAnimationOffset(state, delta))
+//  }
 
   fun getCommands(): LabCommandMap = mapOf(
 //      LabCommandType.rotateLeft to { c -> config.camera.rotationZ -= rotateSpeedZ * c.value },

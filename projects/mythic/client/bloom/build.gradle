@@ -2,4 +2,4 @@ apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
 //apply plugin: 'org.junit.platform.gradle.plugin'
 
-requires 'spatial', 'drawing'
+requires 'spatial', 'drawing', 'ent'

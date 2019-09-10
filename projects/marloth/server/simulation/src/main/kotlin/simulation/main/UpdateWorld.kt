@@ -1,7 +1,7 @@
 package simulation.main
 
 import mythic.ent.IdSource
-import mythic.ent.pipe
+import mythic.ent.pipe2
 import randomly.Dice
 import simulation.combat.getDamageMultiplierModifiers
 import simulation.combat.toModifierDeck
@@ -105,7 +105,7 @@ fun updateWorldDeck(animationDurations: AnimationDurationMap, definitions: Defin
       val events = intermediate.events
       val (nextId, finalize) = newIdSource(world)
 
-      val newDeck = pipe(world.deck, listOf(
+      val newDeck = pipe2(world.deck, listOf(
           updateEntities(world.dice, animationDurations, world, intermediate),
           ifUpdatingLogic(world, updateDeckCache(definitions)),
           removeWhole(events),
@@ -120,11 +120,11 @@ fun updateWorldDeck(animationDurations: AnimationDurationMap, definitions: Defin
 
 fun updateWorld(bulletState: BulletState, animationDurations: AnimationDurationMap, playerCommands: Commands,
                 definitions: Definitions, events: Events, delta: Float): (World) -> World =
-    pipe(listOf(
+    pipe2(listOf(
         { world ->
           val intermediate = generateIntermediateRecords(bulletState, definitions, world, playerCommands, events)
           val linearForces = allCharacterMovements(world, intermediate.commands)
-          pipe(listOf(
+          pipe2(listOf(
               updateBulletPhysics(bulletState, linearForces),
               updateWorldDeck(animationDurations, definitions, intermediate, delta)
           ))(world)

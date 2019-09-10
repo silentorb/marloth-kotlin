@@ -78,7 +78,7 @@ val addDeck: ((IdSource) -> List<IdHand>) -> WorldTransform = { deckSource ->
 }
 
 fun pipeHandsToDeck(nextId: IdSource, sources: List<(Deck) -> List<Hand>>): (Deck) -> Deck = { deck ->
-  pipe(sources.map { handSource ->
+  pipe2(sources.map { handSource ->
     { accumulator: Deck -> allHandsOnDeck(handSource(accumulator), nextId, accumulator) }
   })(deck)
 }
@@ -87,7 +87,7 @@ fun addHands(hands: List<Hand>): WorldTransform =
     addDeck { nextId -> hands.map { IdHand(nextId(), it) } }
 
 fun addDecks(deckSources: List<(IdSource) -> List<IdHand>>): WorldTransform {
-  return pipe(deckSources.map(addDeck))
+  return pipe2(deckSources.map(addDeck))
 }
 
 typealias DeckSource = (IdSource) -> Deck

@@ -59,7 +59,7 @@ fun extractOffset(key: String, bag: StateBag): Vector2i {
   return Vector2i(0, -state.offset)
 }
 
-fun scrollingInteraction(key: String, contentBounds: Bounds): LogicModule = { (bloomState, bounds) ->
+fun scrollingInteraction(key: String, contentBounds: Bounds): LogicModuleOld = { (bloomState, bounds) ->
   if (contentBounds.dimensions.y <= bounds.dimensions.y) {
     null
   } else {

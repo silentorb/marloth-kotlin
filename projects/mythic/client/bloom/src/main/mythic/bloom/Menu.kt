@@ -15,8 +15,10 @@ data class Menu(
     val items: List<MenuItem>
 )
 
-
 private const val globalMenuSelectionKey = "menuSelection"
+
+val closeMenuEvent = ClearSelectionEvent(globalMenuSelectionKey)
+
 private val basicSelectableMenu = selectable<Menu>(globalMenuSelectionKey, optionalSingleSelection) {
   it.hashCode().toString()
 }
@@ -28,7 +30,7 @@ private val childSelected: LogicModuleTransform = logicWrapper { bundle, result 
     result
 }
 
-private val selectableMenu: (Menu) -> LogicModule = { seed ->
+private val selectableMenu: (Menu) -> LogicModuleOld = { seed ->
   childSelected(onClickPersisted(globalMenuSelectionKey, basicSelectableMenu(seed)))
 }
 
@@ -37,7 +39,10 @@ private val invertColor = { color: Vector4 ->
 }
 
 private val menuFlower = { menu: Menu, style: IndexedTextStyle ->
-  padding(all = 10)(label(style, menu.name)) plusLogic selectableMenu(menu)
+  padding(all = 10)(label(style, menu.name))
+      .plusOnClick(SelectionEvent(globalMenuSelectionKey, menu.hashCode().toString()))
+//      .plusAttributes(globalMenuSelectable)
+//      .plusData("id" to menu.hashCode().toString())
 }
 
 const val bagMenuItemSelection = "selectedMenuValue"
@@ -55,9 +60,7 @@ private fun selectedMenu(menu: Menu, style: IndexedTextStyle): Flower {
       color = invertColor(style.color)
   )
   val items = menu.items.map { item ->
-    //    padding(all = 10)(label(newStyle, item.name)) plusLogic
-//        onClick(bagMenuItemSelection, item.value) plusLogic selectableMenu(menu)
-    padding(all = 10)(label(newStyle, item.name)) plusLogic onClick(bagMenuItemSelection, item.value)
+    padding(all = 10)(label(newStyle, item.name)).plusOnClick(closeMenuEvent, item.value)
   }
   return list(verticalPlane)(listOf(
       menuFlower(menu, newStyle) depictBehind solidBackground(style.color),
@@ -79,3 +82,9 @@ fun menuBar(style: IndexedTextStyle, menus: List<Menu>): Flower {
 
   return bar(items)
 }
+
+val globalMenuModule: LogicModule =
+    logicModule(newSelectionState, globalMenuSelectionKey, updateSelection(SelectionConfig(
+        group = globalMenuSelectionKey,
+        logic = optionalSingleSelection
+    )))

@@ -8,7 +8,7 @@ import mythic.aura.*
 import mythic.ent.Id
 import mythic.ent.entityMap
 import mythic.ent.newIdSource
-import mythic.ent.pipe
+import mythic.ent.pipe2
 import mythic.platforming.PlatformAudio
 import mythic.spatial.Vector3
 import scenery.enums.Sounds
@@ -67,7 +67,7 @@ fun loadSounds(audio: PlatformAudio): Map<Id, SoundData> =
         .associate { it }
 
 fun updateAppStateAudio(client: Client, worlds: List<World>): (ClientState) -> ClientState = { state ->
-  pipe(state, listOf(
+  pipe2(state, listOf(
       updateClientStateAudio(client, getListenerPosition(worlds.last().deck)),
       newClientStateSounds(state, worlds)
   ))

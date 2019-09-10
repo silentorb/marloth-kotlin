@@ -10,7 +10,7 @@ import marloth.clienting.Client
 import marloth.integration.convertSimpleDepiction
 import mythic.bloom.StateBag
 import mythic.bloom.StateDepiction
-import mythic.bloom.selectionState
+import mythic.bloom.selectionStateOld
 import mythic.glowing.globalState
 import mythic.spatial.Matrix
 import mythic.spatial.Quaternion
@@ -75,11 +75,11 @@ fun renderNodeIds(renderer: SceneRenderer, nodes: Collection<Node>) {
 
 fun renderMapMesh(sceneRenderer: SceneRenderer, realm: Realm, deck: Deck, config: MapViewConfig, bag: StateBag) {
 //  val worldMesh = sceneRenderer.sceneRenderer.worldMesh!!
-  val selectedNodes = selectionState(bag[nodeListSelectionKey])
-  val nodes: Collection<Node> = if (selectedNodes.selection.none())
+  val selectedNodes = selectionStateOld(bag[nodeListSelectionKey])
+  val nodes: Collection<Node> = if (selectedNodes.none())
     realm.nodeList
   else
-    selectedNodes.selection.map { it.toLong() }
+    selectedNodes.map { it.toLong() }
         .flatMap { id ->
           nodeNeighbors(realm.graph, id)
               .plus(id)

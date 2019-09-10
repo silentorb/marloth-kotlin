@@ -34,7 +34,7 @@ typealias Menu = List<MenuItem>
 
 fun cycle(value: Int, max: Int) = (value + max) % max
 
-fun menuFocusIndexLogic(menu: Menu): LogicModule = { bundle ->
+fun menuFocusIndexLogic(menu: Menu): LogicModuleOld = { bundle ->
   val events = bundle.state.input.current.events
   val index = menuFocusIndex(menu.size, bundle.state.bag)
   val newIndex = when {
@@ -57,12 +57,12 @@ fun addEvent(bag: StateBag, event: GuiEvent?): StateBagMods {
   }
 }
 
-fun eventLogic(handler: (LogicBundle) -> GuiEvent?): LogicModule = { bundle ->
+fun eventLogic(handler: (LogicBundle) -> GuiEvent?): LogicModuleOld = { bundle ->
   val bag = bundle.state.bag
   addEvent(bag, handler(bundle))
 }
 
-val menuNavigationLogic: LogicModule = { bundle ->
+val menuNavigationLogic: LogicModuleOld = { bundle ->
   mapOf()
 //  val events = bundle.state.input.current.events
 //  val bag = bundle.state.bag
@@ -75,7 +75,7 @@ val menuNavigationLogic: LogicModule = { bundle ->
 //  addEvent(bag, newEvent)
 }
 
-fun menuCommandLogic(menu: Menu): LogicModule = eventLogic { bundle ->
+fun menuCommandLogic(menu: Menu): LogicModuleOld = eventLogic { bundle ->
   if (menu.none()) {
     null
   } else {
@@ -112,7 +112,7 @@ const val menuFocusIndexKey = "menuFocusIndex"
 fun menuFocusIndex(menuSize: Int, bag: StateBag): Int =
     min((bag[menuFocusIndexKey] ?: 0) as Int, menuSize - 1)
 
-fun menuLogic(menu: Menu): LogicModule =
+fun menuLogic(menu: Menu): LogicModuleOld =
     menuFocusIndexLogic(menu) combineLogic menuNavigationLogic combineLogic menuCommandLogic(menu)
 
 private val buttonDimensions = Vector2i(200, 50)

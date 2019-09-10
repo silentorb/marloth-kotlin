@@ -15,8 +15,8 @@ typealias UserCommand = HaftCommand<GuiCommandType>
 
 typealias UserCommands = List<UserCommand>
 
-data class GeneralCommandState<CT>(
-    val commands: List<HaftCommand<CT>>,
+data class GeneralCommandState(
+    val commands: List<Any>,
     val mousePosition: Vector2,
     val mouseOffset: Vector2
 )

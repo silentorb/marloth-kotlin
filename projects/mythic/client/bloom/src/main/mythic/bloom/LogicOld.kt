@@ -1,7 +1,6 @@
 package mythic.bloom
 
-import mythic.bloom.next.Box
-import mythic.bloom.next.Flower
+import mythic.bloom.next.*
 import org.joml.Vector2i
 
 data class BloomState(
@@ -20,9 +19,9 @@ data class LogicBundle(
     val visibleBounds: Bounds? // Null means the box is completely clipped and not visible
 )
 
-typealias LogicModule = (LogicBundle) -> StateBagMods
+typealias LogicModuleOld = (LogicBundle) -> StateBagMods
 
-typealias LogicModuleTransform = (LogicModule) -> LogicModule
+typealias LogicModuleTransform = (LogicModuleOld) -> LogicModuleOld
 
 fun logicWrapper(wrapper: (LogicBundle, StateBagMods) -> StateBagMods): LogicModuleTransform = { logicModule ->
   { bundle ->
@@ -74,24 +73,35 @@ fun updateStateBag(rootBox: Box, state: HistoricalBloomState): StateBag {
   return result
 }
 
-fun updateBloomState(box: Box, previousState: BloomState, currentInput: InputState): BloomState {
+fun updateBloomState(modules: List<LogicModule>, box: Box, previousState: BloomState,
+                     currentInput: InputState): Pair<BloomState, List<AnyEvent>> {
+  val inputState = HistoricalInputState(
+      previous = previousState.input,
+      current = currentInput
+  )
   val historicalState = HistoricalBloomState(
-      input = HistoricalInputState(
-          previous = previousState.input,
-          current = currentInput
-      ),
+      input = inputState,
       bag = previousState.bag
   )
 
   val newBag = updateStateBag(box, historicalState)
+  val events = gatherBoxEvents(inputState, box)
 
-  return BloomState(
-      input = currentInput,
-      bag = newBag
+  val args = LogicArgs(
+      inputState = inputState,
+      events = events,
+      bag = previousState.bag
   )
+
+  val secondBag = combineModules(modules)(args)
+
+  return Pair(BloomState(
+      input = currentInput,
+      bag = newBag.plus(secondBag)
+  ), events)
 }
 
-fun persist(key: String): LogicModule = { bundle ->
+fun persist(key: String): LogicModuleOld = { bundle ->
   val flowerState = bundle.state.bag[key]
   if (flowerState != null)
     mapOf(key to flowerState)
@@ -99,7 +109,7 @@ fun persist(key: String): LogicModule = { bundle ->
     null
 }
 
-fun persist(key: String, logicModule: LogicModule): LogicModule = { bundle ->
+fun persist(key: String, logicModule: LogicModuleOld): LogicModuleOld = { bundle ->
   val visibleBounds = bundle.visibleBounds
   if (visibleBounds != null)
     logicModule(bundle)
@@ -118,14 +128,14 @@ fun isInBounds(position: Vector2i, bounds: Bounds): Boolean =
         position.y >= bounds.position.y &&
         position.y < bounds.position.y + bounds.dimensions.y
 
-fun logic(logicModule: LogicModule): Flower = { seed ->
+fun logic(logicModule: LogicModuleOld): Flower = { seed ->
   Box(
       bounds = Bounds(dimensions = seed.dimensions),
       logic = logicModule
   )
 }
 
-infix fun LogicModule.combineLogic(b: LogicModule): LogicModule = { bundle ->
+infix fun LogicModuleOld.combineLogic(b: LogicModuleOld): LogicModuleOld = { bundle ->
   val first = this(bundle)
   val second = b(bundle)
   if (first != null) {

@@ -42,6 +42,18 @@ val mapMenu: Flower = menuBar(mapTextStyle, listOf(
             MenuItem(
                 name = "Camera mode",
                 value = LabCommandType.switchCamera
+            ),
+            MenuItem(
+                name = "Nav Mesh",
+                value = LabCommandType.toggleNavMesh
+            ),
+            MenuItem(
+                name = "Nav Mesh Input",
+                value = LabCommandType.toggleNavMeshInput
+            ),
+            MenuItem(
+                name = "Nav Mesh Voxels",
+                value = LabCommandType.toggleNavMeshVoxels
             )
         )
     ),

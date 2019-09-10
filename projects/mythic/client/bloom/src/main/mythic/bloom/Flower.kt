@@ -12,50 +12,35 @@ fun maxBounds(a: Bounds, b: Bounds): Bounds {
   return Bounds(x1, y1, x2 - x1, y2 - y1)
 }
 
-data class Blossom(
-    val boxes: FlatBoxes,
-    val bounds: Bounds
-) {
-  operator fun plus(other: Blossom) = this.copy(
-      boxes = boxes.plus(other.boxes),
-      bounds = maxBounds(bounds, other.bounds)
-  )
-
-  fun append(other: Blossom) = this.copy(
-      boxes = boxes.plus(other.boxes)
-  )
-
-  operator fun plus(other: FlatBoxes) = this.copy(
-      boxes = boxes.plus(other)
-  )
-}
-
-fun newBlossom(box: FlatBox): Blossom =
-    Blossom(
-        boxes = listOf(box),
-        bounds = box.bounds
-    )
-
-val emptyBlossom =
-    Blossom(
-        boxes = listOf(),
-        bounds = emptyBounds
-    )
-
-//fun FlowerOld.plus(b: FlowerOld): FlowerOld = { seed ->
-//  this(seed) + b(seed)
+//data class Blossom(
+//    val boxes: FlatBoxes,
+//    val bounds: Bounds
+//) {
+//  operator fun plus(other: Blossom) = this.copy(
+//      boxes = boxes.plus(other.boxes),
+//      bounds = maxBounds(bounds, other.bounds)
+//  )
+//
+//  fun append(other: Blossom) = this.copy(
+//      boxes = boxes.plus(other.boxes)
+//  )
+//
+//  operator fun plus(other: FlatBoxes) = this.copy(
+//      boxes = boxes.plus(other)
+//  )
 //}
 
-
-fun depictOld(depiction: StateDepictionOld): FlowerOld = { s ->
-  newBlossom(FlatBox(
-      bounds = s.bounds,
-      depiction = depiction(s)
-  ))
-}
-
-fun depictOld(depiction: Depiction): FlowerOld =
-    depictOld { s: SeedOld -> depiction }
+//fun newBlossom(box: FlatBox): Blossom =
+//    Blossom(
+//        boxes = listOf(box),
+//        bounds = box.bounds
+//    )
+//
+//val emptyBlossom =
+//    Blossom(
+//        boxes = listOf(),
+//        bounds = emptyBounds
+//    )
 
 fun depict(depiction: StateDepiction): Flower = { seed ->
   Box(
@@ -79,8 +64,6 @@ fun depict(depiction: Depiction): Flower =
 fun depict(name: String, depiction: Depiction): Flower =
     depict(name) { s: Seed -> depiction }
 
-typealias StateDepictionOld = (SeedOld) -> Depiction
-
 typealias StateDepiction = (Seed) -> Depiction
 
 inline fun <reified T> existingOrNewState(crossinline initializer: () -> T): (Any?) -> T = { state ->
@@ -100,4 +83,3 @@ inline fun <reified T> existingOrNewState(key: String, crossinline initializer: 
     initializer()
 }
 
-val emptyFlowerOld: FlowerOld = { emptyBlossom }

@@ -121,6 +121,12 @@ fun applyMapStateCommand(config: MapViewConfig, world: Realm, command: LabComman
 
     LabCommandType.toggleAbstract -> config.display.abstract = !config.display.abstract
 
+    LabCommandType.toggleNavMesh -> config.display.navMesh = !config.display.navMesh
+
+    LabCommandType.toggleNavMeshInput -> config.display.navMeshInput = !config.display.navMeshInput
+
+    LabCommandType.toggleNavMeshVoxels -> config.display.navMeshVoxels = !config.display.navMeshVoxels
+
     LabCommandType.switchCamera -> switchCameraMode(config)
 
     else -> {
@@ -214,11 +220,11 @@ fun updateMapState(config: MapViewConfig, world: Realm, input: LabCommandState, 
                    bloomState: BloomState, delta: Float) {
   val menuCommandType = selectedMenuValue<LabCommandType>(bloomState.bag)
 
-  val commands = input.commands
+  val commands = input.commands.filterIsInstance<HaftCommand<LabCommandType>>()
 
-  val command = commands.firstOrNull()?.type ?: menuCommandType
-  if (command != null) {
-    applyMapStateCommand(config, world, command)
+  val actions = commands.map { it.type}.plus(listOfNotNull(menuCommandType))
+  for (action in actions) {
+    applyMapStateCommand(config, world, action)
   }
 
   if (bloomState.bag[bagClickMap] != null) {

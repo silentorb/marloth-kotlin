@@ -59,6 +59,9 @@ enum class LabCommandType {
   toggleDrawPhysics,
   toggleIsolateSelection,
   toggleWireframe,
+  toggleNavMesh,
+  toggleNavMeshInput,
+  toggleNavMeshVoxels,
 
   switchCamera,
 
@@ -99,6 +102,12 @@ val labCommandStrokes = setOf(
     LabCommandType.toggleDrawPhysics,
     LabCommandType.toggleAbstract,
     LabCommandType.toggleWireframe,
+    LabCommandType.toggleDrawPhysics,
+    LabCommandType.toggleAbstract,
+    LabCommandType.toggleWireframe,
+    LabCommandType.toggleNavMesh,
+    LabCommandType.toggleNavMeshInput,
+    LabCommandType.toggleNavMeshVoxels,
 
     LabCommandType.selectEdgeLoop
 )
