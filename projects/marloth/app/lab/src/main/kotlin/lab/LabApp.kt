@@ -32,6 +32,7 @@ import simulation.misc.WorldInput
 import simulation.misc.createWorldBoundary
 import simulation.physics.newBulletState
 import mythic.ent.newIdSource
+import org.recast4j.detour.NavMeshQuery
 import simulation.intellect.navigation.newNavMesh
 
 const val labConfigPath = "../labConfig.yaml"
@@ -68,6 +69,8 @@ fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig): World
       populateWorld(generationConfig, input, realm)
   ))(Deck())
 
+  val navMesh = newNavMesh(deck)
+
   return World(
       deck = deck,
       realm = realm.copy(
@@ -77,7 +80,8 @@ fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig): World
       dice = Dice(),
       availableIds = setOf(),
       logicUpdateCounter = 0,
-      navMesh = newNavMesh(deck)
+      navMesh = navMesh,
+      navMeshQuery = NavMeshQuery(navMesh)
   )
 }
 
@@ -98,7 +102,7 @@ fun labRender(app: LabApp, state: LabState): RenderHook = { sceneRenderer ->
     val deck = state.app.worlds.last().deck
     drawBulletDebug(app.gameApp, deck.bodies[deck.players.keys.first()]!!.position)(sceneRenderer)
   }
-  renderNavMesh(sceneRenderer.renderer,app.config.mapView.display, state.app.worlds.last().navMesh)
+  renderNavMesh(sceneRenderer.renderer, app.config.mapView.display, state.app.worlds.last().navMesh)
 }
 
 tailrec fun labLoop(app: LabApp, state: LabState) {

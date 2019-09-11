@@ -36,7 +36,8 @@ fun updatePursuit(world: World, knowledge: Knowledge, pursuit: Pursuit): Pursuit
     // Guard room
     Pair(null, null)
   } else
-    Pair(updateRoamingPath(world, knowledge, pursuit), null)
+//    Pair(updateRoamingPath(world, knowledge, pursuit), null)
+    Pair(null, updateRoamingTargetPosition(world, knowledge, pursuit))
 
   return Pursuit(
       targetEnemy = targetEnemy,

@@ -5,11 +5,13 @@ import org.recast4j.recast.RecastBuilder
 import org.recast4j.recast.RecastConfig
 import org.recast4j.recast.RecastConstants
 import org.recast4j.recast.geom.InputGeomProvider
+import simulation.physics.defaultCharacterHeight
+import simulation.physics.defaultCharacterRadius
 
 const val cellSize = 0.3f
 const val cellHeight = 0.2f
-const val agentHeight = 2f
-const val agentRadius = 0.3f
+const val agentHeight = defaultCharacterHeight
+const val agentRadius = defaultCharacterRadius + 0.1f
 const val agentMaxClimb = 0.9f
 
 val vertsPerPoly = 6
@@ -44,7 +46,8 @@ fun newNavMeshDataCreateParams(geometry: InputGeomProvider, builderResult: Recas
   params.vertCount = mesh.nverts
   params.polys = mesh.polys
   params.polyAreas = mesh.areas
-  params.polyFlags = mesh.flags
+//  params.polyFlags = mesh.flags
+  params.polyFlags = mesh.polys.map { 1 }.toIntArray()
   params.polyCount = mesh.npolys
   params.nvp = mesh.nvp
   val detailedMesh = builderResult.getMeshDetail()

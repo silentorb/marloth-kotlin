@@ -12,9 +12,7 @@ import scenery.Capsule
 import simulation.entities.*
 import simulation.main.Hand
 import simulation.misc.ResourceContainer
-import simulation.physics.Body
-import simulation.physics.CollisionObject
-import simulation.physics.DynamicBody
+import simulation.physics.*
 
 fun newCharacter(definition: CharacterDefinition, faction: Id, position: Vector3, angle: Float = Pi / 2f,
                  spirit: Spirit? = null): Hand {
@@ -55,7 +53,7 @@ fun newCharacter(definition: CharacterDefinition, faction: Id, position: Vector3
           damageMultipliers = definition.damageMultipliers
       ),
       collisionShape = CollisionObject(
-          shape = Capsule(0.4f, 2.3f)
+          shape = Capsule(defaultCharacterRadius, defaultCharacterHeight)
       ),
       depiction = Depiction(
           type = definition.depictionType,

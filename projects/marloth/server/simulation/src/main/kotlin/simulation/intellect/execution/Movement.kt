@@ -4,10 +4,14 @@ import mythic.ent.Id
 import simulation.intellect.Path
 import simulation.intellect.acessment.Knowledge
 import mythic.spatial.Vector3
+import org.recast4j.detour.DefaultQueryFilter
 import simulation.main.World
 import simulation.input.Command
 import simulation.input.CommandType
 import simulation.input.Commands
+import simulation.intellect.Pursuit
+import simulation.intellect.navigation.asRecastVector3
+import simulation.intellect.navigation.fromRecastVector3
 import simulation.misc.Graph
 
 fun doorwayPosition(graph: Graph, firstNode: Id, secondNode: Id): Vector3 {
@@ -17,7 +21,32 @@ fun doorwayPosition(graph: Graph, firstNode: Id, secondNode: Id): Vector3 {
   return a.position + vector * a.radius
 }
 
-fun getPathTargetPosition(world: World, knowledge: Knowledge, path: Path): Vector3 {
+fun getPathTargetPosition(world: World, knowledge: Knowledge, pursuit: Pursuit): Vector3 {
+  val graph = world.realm.graph
+  val body = world.deck.bodies[knowledge.spiritId]!!
+  val query = world.navMeshQuery
+  val start = asRecastVector3(body.position)
+  val end = asRecastVector3(pursuit.targetPosition!!)
+  val polygonRange = floatArrayOf(10f, 10f, 10f)
+  val queryFilter = DefaultQueryFilter()
+  val startPolygon = query.findNearestPoly(start, polygonRange, queryFilter)
+  val endPolygon = query.findNearestPoly(end, polygonRange, queryFilter)
+  val path = query.findPath(
+      startPolygon.result.nearestRef,
+      endPolygon.result.nearestRef,
+      start,
+      end,
+      queryFilter
+  )
+
+  val pathResult = query.findStraightPath(start, end, path.result, 2, 0)
+  val nextPoint = pathResult.result[1].pos
+  val result = fromRecastVector3(nextPoint)
+  println(result.distance(body.position))
+  return result
+}
+
+fun getPathTargetPositionOld(world: World, knowledge: Knowledge, path: Path): Vector3 {
   val graph = world.realm.graph
   val body = world.deck.bodies[knowledge.spiritId]!!
   val doorway = doorwayPosition(graph, body.nearestNode, path.first())
@@ -29,6 +58,7 @@ fun getPathTargetPosition(world: World, knowledge: Knowledge, path: Path): Vecto
     graph.nodes[path.first()]!!.position
 }
 
+
 fun moveStraightTowardPosition(world: World, knowledge: Knowledge, target: Vector3): Commands {
   val body = world.deck.bodies[knowledge.spiritId]!!
   val position = body.position
@@ -38,5 +68,5 @@ fun moveStraightTowardPosition(world: World, knowledge: Knowledge, target: Vecto
   }
 }
 
-fun moveSpirit(world: World, knowledge: Knowledge, path: Path): Commands =
-    moveStraightTowardPosition(world, knowledge, getPathTargetPosition(world, knowledge, path))
+fun moveSpirit(world: World, knowledge: Knowledge, pursuit: Pursuit): Commands =
+    moveStraightTowardPosition(world, knowledge, getPathTargetPosition(world, knowledge, pursuit))

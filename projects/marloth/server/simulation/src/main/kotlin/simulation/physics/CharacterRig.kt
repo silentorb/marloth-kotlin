@@ -10,6 +10,9 @@ import simulation.entities.groundedLinearDamping
 import simulation.main.Deck
 import kotlin.math.min
 
+const val defaultCharacterRadius = 0.4f
+const val defaultCharacterHeight = 2.3f
+
 private fun rayCollisionDistance(dynamicsWorld: btDiscreteDynamicsWorld, start: Vector3, end: Vector3): Float? {
 //  val callback = firstRayHitNotMe(dynamicsWorld, start, end, me)
   val callback = firstRayHit(dynamicsWorld, start, end)

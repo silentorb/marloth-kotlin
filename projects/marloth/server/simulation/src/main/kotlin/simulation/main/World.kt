@@ -4,6 +4,7 @@ import mythic.ent.Id
 import mythic.ent.IdSource
 import mythic.ent.pass
 import org.recast4j.detour.NavMesh
+import org.recast4j.detour.NavMeshQuery
 import randomly.Dice
 import simulation.misc.GameOver
 import simulation.misc.Realm
@@ -16,7 +17,8 @@ data class World(
     val availableIds: Set<Id>,
     val gameOver: GameOver? = null,
     val logicUpdateCounter: Int,
-    val navMesh: NavMesh
+    val navMesh: NavMesh,
+    val navMeshQuery: NavMeshQuery
 )
 
 typealias WorldTransform = (World) -> World
