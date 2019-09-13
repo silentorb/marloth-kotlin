@@ -47,12 +47,12 @@ def get_bake_materials():
 # Returns all materials that have a custom property named 'bake'.  It doesn't matter what
 # the property value is.
 def get_bake_object_material_pairs():
-    result = []
+    result = set()
     for obj in bpy.data.objects:
         if obj.type == 'MESH':
             for material in obj.data.materials:
                 if should_bake(material):
-                    result.append((obj, material))
+                    result.add((obj, material))
     return result
 
 
@@ -70,6 +70,7 @@ def prune_graph_for_texture(material, image):
 def bake_all(image_directory):
     bake_pairs = get_bake_object_material_pairs()
     for obj, material in bake_pairs:
+        obj.material_slots[0].material = material
         image_path = os.path.join(image_directory, material.name + '.jpg')
         scale = int(round(float(material['scale']))) if 'scale' in material else 1.0
         length = 512 * scale

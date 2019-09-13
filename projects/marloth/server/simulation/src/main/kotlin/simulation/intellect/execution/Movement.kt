@@ -40,10 +40,11 @@ fun getPathTargetPosition(world: World, knowledge: Knowledge, pursuit: Pursuit):
   )
 
   val pathResult = query.findStraightPath(start, end, path.result, 2, 0)
-  val nextPoint = pathResult.result[1].pos
-  val result = fromRecastVector3(nextPoint)
-  println(result.distance(body.position))
-  return result
+  val firstPoint = fromRecastVector3(pathResult.result[0].pos)
+  return if (firstPoint.distance(body.position) < 0.1f)
+    fromRecastVector3(pathResult.result[1].pos)
+  else
+    firstPoint
 }
 
 fun getPathTargetPositionOld(world: World, knowledge: Knowledge, path: Path): Vector3 {

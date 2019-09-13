@@ -70,29 +70,6 @@ def prune_materials(object):
     remove_materials(object, not_needed)
 
 
-# Blender Cycles is duct-taped ontop of the older Blender Renderer.  One side effect of this duct-taping is
-# Blender Cycles does not need Texture objects and can use Texture nodes instead, but the blendergltf exporter
-# only looks for Texture objects.
-# Blender Texture objects are not the same thing as Blender Image objects.
-# (Mythic's python code does not make such a distinction.)
-# Depending on silly hidden nuances in Blender's GUI, using Cycles may or may not result in texture objects getting
-# created and assigned to a materials.  (Cycles works the same whether that happens or not.)
-# This function ensures all materials using texture nodes also have texture objects.
-def create_missing_image_textures():
-    for material in bpy.data.materials:
-        texture_node = get_material_texture_node(material)
-        if texture_node:
-            texture_name = material.name
-            current_texture = bpy.data.textures.get(texture_name)
-            if not current_texture:
-                image = bpy.data.images[texture_name]
-                if image:
-                    print('creating texture record for ' + texture_name)
-                    texture = bpy.data.textures.new(texture_name, 'IMAGE')
-                    texture.image = image
-                    material.active_texture = texture
-
-
 def gather_ik_bones(pose):
     constraints = {}
     for bone in pose.bones:
@@ -136,13 +113,20 @@ def deselect_all():
     bpy.ops.object.select_all(action='DESELECT')
 
 
-def select_render_visible():
+def get_export_objects():
+    result = []
     for obj in bpy.context.scene.objects:
-        if not obj.hide_render:
+        if not obj.hide_render and 'no-render' not in obj:
             print('obj ' + obj.name)
-            if obj.hide_get():
-                obj.hide_set(False)
-            obj.select_set(True)
+            result.append(obj)
+    return result
+
+
+def set_export_object_visibility(objs):
+    for obj in objs:
+        if obj.hide_get():
+            obj.hide_set(False)
+        obj.select_set(True)
 
 
 def prepare_scene(export_dir):
@@ -152,10 +136,6 @@ def prepare_scene(export_dir):
 
     os.makedirs(export_dir, exist_ok=True)
 
-    # Going to see if this is no longer needed with the switch in gltf plugins
-    # for armature in of_type(bpy.data.objects, 'ARMATURE'):
-    #     prepare_armature(armature)
-
     # for obj in bpy.context.scene.objects:
     #     if not obj.hide:
     #         prune_materials(obj)
@@ -164,9 +144,11 @@ def prepare_scene(export_dir):
         preprocess_bounds_shape(obj)
 
     bake_all(export_dir)
-
     deselect_all()
-    select_render_visible()
+    export_objects = get_export_objects()
+    set_export_object_visibility(export_objects)
+    return len(export_objects) > 0
+
 
 def get_blend_filename():
     filepath = bpy.data.filepath
@@ -227,10 +209,10 @@ def main():
     name = get_blend_filename()
     export_dir = get_export_dir(name)
     export_file = os.path.join(export_dir, name + '.gltf')
-    prepare_scene(export_dir)
-    export_gltf(export_file)
-    bpy.ops.wm.save_as_mainfile(filepath='e:/deleteme.blend')
-    print('Exported ', export_file)
+    if prepare_scene(export_dir):
+        # export_gltf(export_file)
+        # bpy.ops.wm.save_as_mainfile(filepath='e:/deleteme.blend')
+        print('Exported ', export_file)
 
 
 if __name__ == '__main__':
