@@ -31,7 +31,9 @@ def bake_texture(original, material, image):
     bpy.ops.uv.smart_project()
     node = create_texture_node(material, image)
     select_material_node(material, node)
+    bpy.ops.wm.save_as_mainfile(filepath='e:/deleteme.blend')
     bpy.ops.object.bake()
+    print('bake finished')
 
 
 # Returns true if the material has a custom property named 'bake', regardless of the property value.
@@ -73,7 +75,7 @@ def bake_all(image_directory):
         obj.material_slots[0].material = material
         image_path = os.path.join(image_directory, material.name + '.jpg')
         scale = int(round(float(material['scale']))) if 'scale' in material else 1.0
-        length = 512 * scale
+        length = 512# * scale
         image = create_image(material.name, image_path, length)
         bake_texture(obj, material, image)
         image.save()

@@ -50,12 +50,12 @@ allprojects {
     maven { url "https://oss.sonatype.org/content/repositories/releases/" }
   }
 
-  idea {
-    module {
-      outputDir file('build/classes/main')
-      testOutputDir file('build/classes/test')
-    }
-  }
+//  idea {
+//    module {
+//      outputDir file('build/classes/main')
+//      testOutputDir file('build/classes/test')
+//    }
+//  }
   if (project.convention.findPlugin(JavaPluginConvention)) {
     sourceSets.main.kotlin.outDir = new File(buildDir, "classes/main/kotlin")
     sourceCompatibility = 1.8

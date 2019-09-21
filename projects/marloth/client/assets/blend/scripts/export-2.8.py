@@ -8,6 +8,16 @@ sys.path.append(os.path.dirname(__file__))
 from baking import bake_all
 
 models_path = 'src/main/resources/models'
+textures_path = 'src/main/resources/textures'
+script_path = os.path.realpath(__file__)
+
+
+def get_export_dir(name):
+    return os.path.abspath(os.path.join(os.path.dirname(script_path), '../../', models_path, name))
+
+
+def get_textures_dir():
+    return os.path.abspath(os.path.join(os.path.dirname(script_path), '../../', textures_path))
 
 
 def add_to_map_list(map, key, item):
@@ -56,20 +66,6 @@ def remove_materials(object, material_slot_indices):
         bpy.ops.object.material_slot_remove()
 
 
-# Used for objects that have a primary material for baking and secondary materials to assist in baking
-def prune_materials(object):
-    not_needed = []
-    if has_dominant_material(object):
-        not_needed = [i for i, m in enumerate(object.material_slots) if m.name != object.name]
-    # Eventually it would be nice to filter out reference materials
-    # but currently blendergltf isn't exporting UV maps without them (even though UV maps are independent of materials)
-    # TODO: Enable exporting UV Maps without materials.
-    # else:
-    #     not_needed = [i for i, m in enumerate(object.material_slots) if m.name == 'reference']
-
-    remove_materials(object, not_needed)
-
-
 def gather_ik_bones(pose):
     constraints = {}
     for bone in pose.bones:
@@ -94,19 +90,19 @@ def add_keyframe_if_missing(curves, obj_name, property_name, values):
         curve.keyframe_points.insert(0, value)
 
 
-def prepare_armature(armature):
-    bones = []
-    if 'rig' in bpy.data.objects.keys():
-        rig = bpy.data.objects['rig']
-        bones = [bone.name for bone in rig.data.bones if bone.use_deform]
+def render_camera_texture(camera, image_name):
+    scene = bpy.context.scene
+    scene.camera = camera
+    scene.render.filepath = get_textures_dir() + '/' + image_name + scene.render.file_extension
+    bpy.ops.render.render(write_still=True)
+    print('Exported texture: ' + scene.render.filepath)
 
-    for action in bpy.data.actions:
-        for bone_name in bones:
-            if next((g for g in action.groups if g.name == bone_name), None) is None:
-                action.groups.new(bone_name)
 
-            add_keyframe_if_missing(action.fcurves, bone_name, 'location', [0, 0, 0])
-            add_keyframe_if_missing(action.fcurves, bone_name, 'rotation_quaternion', [1, 0, 0, 0])
+def render_camera_textures():
+    for camera in bpy.data.cameras:
+        obj = bpy.data.objects[camera.name]
+        if 'render-texture' in obj:
+            render_camera_texture(obj, obj['render-texture'])
 
 
 def deselect_all():
@@ -116,7 +112,7 @@ def deselect_all():
 def get_export_objects():
     result = []
     for obj in bpy.context.scene.objects:
-        if not obj.hide_render and 'no-render' not in obj:
+        if not obj.hide_render and 'no-render' not in obj and 'no-export' not in obj and obj.type in ['MESH', 'LIGHT']:
             print('obj ' + obj.name)
             result.append(obj)
     return result
@@ -134,18 +130,19 @@ def prepare_scene(export_dir):
     # Ensure blender is in object mode and not edit mode
     bpy.ops.object.mode_set(mode='OBJECT')
 
-    os.makedirs(export_dir, exist_ok=True)
+    deselect_all()
+    export_objects = get_export_objects()
 
-    # for obj in bpy.context.scene.objects:
-    #     if not obj.hide:
-    #         prune_materials(obj)
+    if len(export_objects) > 0:
+        os.makedirs(export_dir, exist_ok=True)
 
     for obj in bpy.context.scene.objects:
         preprocess_bounds_shape(obj)
 
+    render_camera_textures()
     bake_all(export_dir)
+
     deselect_all()
-    export_objects = get_export_objects()
     set_export_object_visibility(export_objects)
     return len(export_objects) > 0
 
@@ -153,11 +150,6 @@ def prepare_scene(export_dir):
 def get_blend_filename():
     filepath = bpy.data.filepath
     return os.path.splitext(os.path.basename(filepath))[0]
-
-
-def get_export_dir(name):
-    script_path = os.path.realpath(__file__)
-    return os.path.abspath(os.path.join(os.path.dirname(script_path), '../../', models_path, name))
 
 
 def get_file_storage_method():
@@ -210,9 +202,11 @@ def main():
     export_dir = get_export_dir(name)
     export_file = os.path.join(export_dir, name + '.gltf')
     if prepare_scene(export_dir):
-        # export_gltf(export_file)
+        export_gltf(export_file)
         # bpy.ops.wm.save_as_mainfile(filepath='e:/deleteme.blend')
         print('Exported ', export_file)
+    else:
+        print('No objects to export')
 
 
 if __name__ == '__main__':

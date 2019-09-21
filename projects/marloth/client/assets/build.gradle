@@ -66,18 +66,18 @@ class TextureAssetsTask extends DefaultTask {
         : 'ALL inputs considered out of date'
     def config = Utility.getAssetConfig(_projectDir)
     def executablePath = config.paths.python
-    def args = [executablePath, "$_projectDir/scripts/textures.py"]
+    
     inputs.outOfDate { change ->
       def filename = change.file.name
-      args.add filename[0..<filename.lastIndexOf('.')]
+      def args = [executablePath, "$_projectDir/scripts/textures.py", filename[0..<filename.lastIndexOf('.')]]
       println "out of date: ${filename}"
+      def proc = args.execute()
+      def sout = new StringBuilder(), serr = new StringBuilder()
+      proc.consumeProcessOutput(sout, serr)
+      proc.waitFor()
+      println sout
+      if (serr) println "err2>($serr)."
     }
-    def proc = args.execute()
-    def sout = new StringBuilder(), serr = new StringBuilder()
-    proc.consumeProcessOutput(sout, serr)
-    proc.waitFor()
-    println sout
-    if (serr) println "err>($serr)."
     
     inputs.removed { change ->
       println "removed: ${name}"

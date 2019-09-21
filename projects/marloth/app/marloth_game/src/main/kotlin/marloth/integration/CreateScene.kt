@@ -10,6 +10,7 @@ import rendering.*
 import scenery.*
 import scenery.Light
 import scenery.enums.AccessoryId
+import scenery.enums.TextureId
 import simulation.entities.*
 import simulation.main.Deck
 import simulation.main.World
@@ -257,8 +258,8 @@ fun gatherBackground(): ElementGroups {
               mesh = MeshId.skySphere.toString(),
               transform = Matrix().scale(200f),
               material = Material(
-                  color = Vector4(1f, 1f, 1f, 0.5f),
-                  texture = "skySphere",
+                  color = Vector4(1f, 1f, 1f, 1f),
+                  texture = TextureId.panoramaTest.name,
                   shading = false
               )
           )
