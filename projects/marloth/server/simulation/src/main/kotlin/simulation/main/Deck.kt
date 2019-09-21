@@ -20,6 +20,7 @@ data class Deck(
     val buffs: Table<Modifier> = mapOf(),
     val characters: Table<Character> = mapOf(),
     val collisionShapes: Table<CollisionObject> = mapOf(),
+    val cycles: Table<Cycle> = mapOf(),
     val depictions: Table<Depiction> = mapOf(),
     val destructibles: Table<Destructible> = mapOf(),
     val doors: Table<Door> = mapOf(),

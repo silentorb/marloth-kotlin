@@ -31,6 +31,18 @@ def of_type(list, type):
     return [c for c in list if c.type == type]
 
 
+def delete_texture_nodes():
+    for material in bpy.data.materials:
+        tree = material.node_tree
+        if tree is None:
+            return None
+
+        nodes = tree.nodes
+        for node in list(nodes):
+            if node.bl_idname == 'ShaderNodeTexImage':
+                nodes.remove(node)
+
+
 def get_horizontal_radius(dimensions):
     return max(dimensions.x, dimensions.y) / 2
 
@@ -110,6 +122,9 @@ def deselect_all():
 
 
 def get_export_objects():
+    if 'no-export' in bpy.context.scene:
+        return []
+
     result = []
     for obj in bpy.context.scene.objects:
         if not obj.hide_render and 'no-render' not in obj and 'no-export' not in obj and obj.type in ['MESH', 'LIGHT']:
@@ -142,9 +157,15 @@ def prepare_scene(export_dir):
     render_camera_textures()
     bake_all(export_dir)
 
-    deselect_all()
-    set_export_object_visibility(export_objects)
-    return len(export_objects) > 0
+    has_objects = len(export_objects) > 0
+    if has_objects:
+        if 'copy-images' not in bpy.context.scene:
+            delete_texture_nodes()
+
+        deselect_all()
+        set_export_object_visibility(export_objects)
+
+    return has_objects
 
 
 def get_blend_filename():

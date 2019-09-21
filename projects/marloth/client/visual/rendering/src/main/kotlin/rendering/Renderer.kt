@@ -208,7 +208,8 @@ class Renderer(
     val config: DisplayConfig,
     display: PlatformDisplay,
     fontList: List<RangedFontLoadInfo>,
-    val lightingConfig: LightingConfig
+    val lightingConfig: LightingConfig,
+    textures: List<DeferredTexture>
 ) {
   val glow = Glow()
   var renderColor: ByteTextureBuffer = ByteTextureBuffer()
@@ -228,7 +229,7 @@ class Renderer(
   val armatures: Map<ArmatureId, Armature>
   val animationDurations: AnimationDurationMap
   val textures: DynamicTextureLibrary = mutableMapOf()
-  val textureLoader = AsyncTextureLoader(gatherTextures(display.loadImage, textureAttributesFromConfig(config)))
+  val textureLoader = AsyncTextureLoader(textures)
   val offscreenBuffers: List<OffscreenBuffer> = (0..0).map {
     prepareScreenFrameBuffer(config.width, config.height, true)
   }

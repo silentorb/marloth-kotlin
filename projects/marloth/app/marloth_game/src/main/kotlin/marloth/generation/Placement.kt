@@ -287,5 +287,13 @@ fun populateWorld(config: GenerationConfig, input: WorldInput, realm: Realm): (D
   listOf(newPlayer(realm, playerNode))
       .plus(populateRooms(occupantToHand, input.dice, realm, playerNode.id))
       .plus(placeWallLamps(deck, config, realm, input.dice, scale))
+      .plus(listOf(
+          Hand(
+              cycle = Cycle(0.006f, 0f)
+          ),
+          Hand(
+              cycle = Cycle(0.002f, 0.2f)
+          )
+      ))
 //      .plus(placeDoors(realm, nextId))
 }

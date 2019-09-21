@@ -60,10 +60,9 @@ fun loadTextResource(mapper: TextResourceMapper): TextResources {
   return Text.values().map { Pair(it, mapper(it)) }.associate { it }
 }
 
-private fun gatherFontSets() = extractFontSets(baseFonts, enumerateTextStyles(textStyles))
+fun gatherFontSets() = extractFontSets(baseFonts, enumerateTextStyles(textStyles))
 
-class Client(val platform: Platform, displayConfig: DisplayConfig, lightingConfig: LightingConfig = LightingConfig()) {
-  val renderer: Renderer = Renderer(displayConfig, platform.display, gatherFontSets(), lightingConfig)
+class Client(val platform: Platform, val renderer: Renderer) {
   val screens: List<Screen> = (1..maxPlayerCount).map { Screen(it) }
   val textResources: TextResources = loadTextResource(englishTextResources)
   val soundLibrary: SoundLibrary = loadSounds(platform.audio)

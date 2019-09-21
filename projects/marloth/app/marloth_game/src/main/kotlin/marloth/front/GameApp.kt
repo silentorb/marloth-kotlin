@@ -6,6 +6,7 @@ import marloth.definition.staticDefinitions
 import marloth.generation.generateDefaultWorld
 import marloth.integration.AppState
 import marloth.integration.GameConfig
+import marloth.integration.newClient
 import marloth.integration.updateAppState
 import mythic.platforming.Platform
 import mythic.quartz.newTimestepState
@@ -38,7 +39,7 @@ fun newGameApp(platform: Platform, config: GameConfig) = GameApp(
     platform = platform,
     config = config,
     bulletState = newBulletState(),
-    client = Client(platform, config.display),
+    client = newClient(platform, config.display),
     definitions = staticDefinitions
 )
 

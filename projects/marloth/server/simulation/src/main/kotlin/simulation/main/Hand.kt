@@ -21,6 +21,7 @@ data class Hand(
     val dynamicBody: DynamicBody? = null,
     val character: Character? = null,
     val collisionShape: CollisionObject? = null,
+    val cycle: Cycle? = null,
     val depiction: Depiction? = null,
     val destructible: Destructible? = null,
     val door: Door? = null,

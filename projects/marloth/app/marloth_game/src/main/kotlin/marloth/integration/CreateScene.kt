@@ -10,10 +10,8 @@ import rendering.*
 import scenery.*
 import scenery.Light
 import scenery.enums.AccessoryId
-import scenery.enums.TextureId
 import simulation.entities.*
 import simulation.main.Deck
-import simulation.main.World
 import simulation.main.defaultPlayer
 import kotlin.math.floor
 
@@ -250,19 +248,27 @@ fun mapLights(deck: Deck, player: Id) =
               null
         ))
 
-fun gatherBackground(): ElementGroups {
+fun createBackgroundSphere(texture: BackgroundTextureId, orientation: Quaternion = Quaternion()) =
+    MeshElement(
+        id = 1,
+        mesh = MeshId.skySphere.toString(),
+        transform = Matrix().rotate(orientation).scale(200f),
+        material = Material(
+            color = Vector4(1f, 1f, 1f, 1f),
+            texture = texture.name,
+            shading = false
+        )
+    )
+
+fun gatherBackground(cycles: Table<Cycle>): ElementGroups {
   return listOf(ElementGroup(
       meshes = listOf(
-          MeshElement(
-              id = 1,
-              mesh = MeshId.skySphere.toString(),
-              transform = Matrix().scale(200f),
-              material = Material(
-                  color = Vector4(1f, 1f, 1f, 1f),
-                  texture = TextureId.panoramaTest.name,
-                  shading = false
-              )
-          )
+          createBackgroundSphere(BackgroundTextureId.backgroundNightSky),
+          createBackgroundSphere(BackgroundTextureId.backgroundClouds, Quaternion().rotateZ(cycles.values.first().value * Pi * 2f)),
+          createBackgroundSphere(BackgroundTextureId.backgroundClouds, Quaternion()
+              .rotateX(Pi)
+              .rotateZ(cycles.values.drop(1).first().value * Pi * 2f))
+
       )
   ))
 }
@@ -283,7 +289,7 @@ fun createScene(deck: Deck, screen: Screen, player: Id): GameScene {
         )
       else
         listOf(),
-      background = gatherBackground()
+      background = gatherBackground(deck.cycles)
   )
 }
 

@@ -60,7 +60,7 @@ fun initializeTexture(width: Int, height: Int, attributes: TextureAttributes, bu
   else
     Pair(GL_NEAREST, GL_NEAREST)
 
-  if (attributes.smooth || attributes.smooth) {
+  if (attributes.smooth) {
     val maxAnistropy = getMaxAnistropy()
     if (maxAnistropy != 0f) {
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnistropy)

@@ -33,6 +33,8 @@ import simulation.misc.createWorldBoundary
 import simulation.physics.newBulletState
 import mythic.ent.newIdSource
 import org.recast4j.detour.NavMeshQuery
+import rendering.Renderer
+import rendering.texturing.gatherTextures
 import simulation.intellect.navigation.newNavMesh
 
 const val labConfigPath = "../labConfig.yaml"
@@ -195,7 +197,7 @@ fun newLabGameApp(labConfig: LabConfig): GameApp {
   platform.display.initialize(gameConfig.display)
   return GameApp(platform, gameConfig,
       bulletState = newBulletState(),
-      client = Client(platform, gameConfig.display, labConfig.gameView.lighting),
+      client = newClient(platform, gameConfig.display, labConfig.gameView.lighting),
       definitions = staticDefinitions
   )
 }

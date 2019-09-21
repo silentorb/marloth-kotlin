@@ -74,6 +74,7 @@ fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: 
           ambientSounds = updateAmbientAudio(dice, deck),
           attachments = mapTable(deck.attachments, updateAttachment(intermediate.events)),
           bodies = mapTableValues(deck.bodies, updateBody(world.realm)),
+          cycles = mapTableValues(deck.cycles, updateCycle(simulationDelta)),
           depictions = mapTable(deck.depictions, updateDepiction(deck, animationDurations)),
           destructibles = mapTable(deck.destructibles, updateDestructibleHealth(events.damage)),
           characters = mapTable(deck.characters, updateCharacter(deck, commands, activatedAbilities, events)),
