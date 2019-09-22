@@ -248,11 +248,14 @@ fun mapLights(deck: Deck, player: Id) =
               null
         ))
 
-fun createBackgroundSphere(texture: BackgroundTextureId, orientation: Quaternion = Quaternion()) =
+fun createBackgroundSphere(texture: BackgroundTextureId, cameraPosition: Vector3, orientation: Quaternion = Quaternion()) =
     MeshElement(
         id = 1,
         mesh = MeshId.skySphere.toString(),
-        transform = Matrix().rotate(orientation).scale(200f),
+        transform = Matrix()
+            .translate(cameraPosition)
+            .rotate(orientation)
+            .scale(100f),
         material = Material(
             color = Vector4(1f, 1f, 1f, 1f),
             texture = texture.name,
@@ -260,16 +263,16 @@ fun createBackgroundSphere(texture: BackgroundTextureId, orientation: Quaternion
         )
     )
 
-fun gatherBackground(cycles: Table<Cycle>): ElementGroups {
+fun gatherBackground(cycles: Table<Cycle>, cameraPosition: Vector3): ElementGroups {
   return listOf(ElementGroup(
       meshes = listOf(
-          createBackgroundSphere(BackgroundTextureId.backgroundNightSky),
-          createBackgroundSphere(BackgroundTextureId.backgroundClouds, Quaternion().rotateZ(cycles.values.first().value * Pi * 2f)),
-          createBackgroundSphere(BackgroundTextureId.backgroundClouds, Quaternion()
+          Pair(BackgroundTextureId.backgroundNightSky, Quaternion()),
+          Pair(BackgroundTextureId.backgroundClouds, Quaternion().rotateZ(cycles.values.first().value * Pi * 2f)),
+          Pair(BackgroundTextureId.backgroundClouds, Quaternion()
               .rotateX(Pi)
               .rotateZ(cycles.values.drop(1).first().value * Pi * 2f))
 
-      )
+      ).map { createBackgroundSphere(it.first, cameraPosition, it.second) }
   ))
 }
 
@@ -289,7 +292,7 @@ fun createScene(deck: Deck, screen: Screen, player: Id): GameScene {
         )
       else
         listOf(),
-      background = gatherBackground(deck.cycles)
+      background = gatherBackground(deck.cycles, camera.position)
   )
 }
 
