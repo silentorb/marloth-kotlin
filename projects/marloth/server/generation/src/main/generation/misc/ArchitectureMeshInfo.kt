@@ -12,9 +12,10 @@ enum class MeshAttribute {
   canRotateOnSide,
 
   // Placement categories (Most if not all of these are mutually exlusive
-  placementShortFloor,
+  placementRoomCeiling,
+  placementShortRoomFloor,
   placementStairStep,
-  placementTallFloor,
+  placementTallRoomFloor,
   placementTunnelFloor,
   placementWall,
   placementWindow

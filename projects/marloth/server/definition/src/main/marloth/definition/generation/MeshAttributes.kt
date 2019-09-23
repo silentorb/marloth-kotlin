@@ -6,7 +6,8 @@ import scenery.enums.MeshId
 
 val meshAttributes: MeshAttributeMap = mapOf(
     MeshId.circleFloor to setOf(
-        MeshAttribute.placementShortFloor
+        MeshAttribute.placementShortRoomFloor,
+        MeshAttribute.placementRoomCeiling
     ),
     MeshId.longPillowStep to setOf(
         MeshAttribute.placementStairStep
@@ -21,14 +22,14 @@ val meshAttributes: MeshAttributeMap = mapOf(
         MeshAttribute.placementWall
     ),
     MeshId.squareFloor to setOf(
-        MeshAttribute.placementShortFloor
+        MeshAttribute.placementShortRoomFloor
     ),
     MeshId.squareWall to setOf(
         MeshAttribute.placementWall,
         MeshAttribute.canHaveAttachment
     ),
     MeshId.threeStoryCircleFloor to setOf(
-        MeshAttribute.placementTallFloor
+        MeshAttribute.placementTallRoomFloor
     ),
     MeshId.windowWall to setOf(
         MeshAttribute.placementWindow

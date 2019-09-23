@@ -12,16 +12,6 @@ enum class BiomeId {
   home
 }
 
-//val commonBiomeTemplate = BiomeInfo("commonBiomeTemplate",
-//    wallPlacement = WallPlacement.some,
-//    roomFloorMeshes = listOf(MeshId.circleFloor),
-//    roomFloorMeshesTall = listOf( MeshId.threeStoryCircleFloor),
-//    tunnelFloorMeshes = listOf(MeshId.longStep),
-//    stairStepMeshes = listOf(MeshId.longStairStep),
-//    wallMeshes = listOf(MeshId.squareWall),
-//    windowMeshes = listOf(MeshId.windowWall)
-//)
-
 val commonMeshes = setOf(
     MeshId.circleFloor,
     MeshId.threeStoryCircleFloor,
@@ -36,9 +26,9 @@ fun mapMeshes(meshes: Set<MeshId>): Set<MeshName> = meshes.map { it.name }.toSet
 val biomeInfoMap: BiomeInfoMap = mapOf(
     BiomeId.checkers to BiomeInfo(
         name = "checkers",
-        floorTexture = TextureId.checkersBlackWhite,
-        ceilingTexture = TextureId.checkersBlackWhite,
-        wallTexture = TextureId.checkersBlackWhite,
+        textures = mapOf(
+            TextureGroup.default to TextureId.checkersBlackWhite
+        ),
         meshes = mapMeshes(commonMeshes),
         attributes = setOf(
             BiomeAttribute.wallsAll
@@ -46,9 +36,9 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
     ),
     BiomeId.exit to BiomeInfo(
         name = "exit",
-        floorTexture = TextureId.algae,
-        ceilingTexture = TextureId.algae,
-        wallTexture = TextureId.algae,
+        textures = mapOf(
+            TextureGroup.default to TextureId.algae
+        ),
         meshes = mapMeshes(commonMeshes),
         attributes = setOf(
             BiomeAttribute.placeOnlyAtEnd,
@@ -57,9 +47,10 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
     ),
     BiomeId.forest to BiomeInfo(
         name = "forest",
-        floorTexture = TextureId.grass,
-        ceilingTexture = TextureId.bricks,
-        wallTexture = TextureId.bricks,
+        textures = mapOf(
+            TextureGroup.default to TextureId.bricks,
+            TextureGroup.floor to TextureId.grass
+        ),
         meshes = mapMeshes(commonMeshes),
         attributes = setOf(
             BiomeAttribute.wallsAll
@@ -67,9 +58,9 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
     ),
     BiomeId.home to BiomeInfo(
         name = "home",
-        floorTexture = TextureId.redTile,
-        ceilingTexture = TextureId.redTile,
-        wallTexture = TextureId.redTile,
+        textures = mapOf(
+            TextureGroup.default to TextureId.redTile
+        ),
         meshes = mapMeshes(commonMeshes),
         attributes = setOf(
             BiomeAttribute.alwaysWindow,

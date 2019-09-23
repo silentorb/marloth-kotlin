@@ -21,6 +21,7 @@ import kotlin.math.atan
 fun getHorizontalFlip(dice: Dice, info: ArchitectureMeshInfo): Float =
     if (info.attributes.contains(MeshAttribute.canFlipHorizontally) && dice.getBoolean()) Pi else 0f
 
+val ceilingOffset = Vector3(0f, 0f, wallHeight / 2f)
 val floorOffset = Vector3(0f, 0f, -wallHeight / 2f)
 
 fun newArchitectureMesh(meshes: MeshInfoMap, mesh: MeshName, position: Vector3,
@@ -46,20 +47,32 @@ fun newArchitectureMesh(meshes: MeshInfoMap, mesh: MeshName, position: Vector3,
   )
 }
 
-fun alignWithCeiling(meshInfo: MeshInfoMap) = { mesh: MeshName ->
+data class CommonArchitectConfig(
+    val meshAttributes: MeshAttributes,
+    val textureGroup: TextureGroup,
+    val offset: Vector3,
+    val aligner: VerticalAligner
+)
+
+typealias VerticalAligner = (Float) -> (Float)
+
+val alignWithCeiling: VerticalAligner = { height -> -height / 2f }
+val alignWithFloor: VerticalAligner = { height -> height / 2f }
+
+fun align(meshInfo: MeshInfoMap, aligner: VerticalAligner) = { mesh: MeshName ->
   val height = meshInfo[mesh]!!.shape.height
-  Vector3(0f, 0f, -height / 2f)
+  Vector3(0f, 0f, aligner(height))
 }
 
-fun alignWithFloor(meshInfo: MeshInfoMap) = { mesh: MeshName ->
-  val height = meshInfo[mesh]!!.shape.height
-  Vector3(0f, 0f, height / 2f)
-}
+//fun align(meshInfo: MeshInfoMap) = { mesh: MeshName ->
+//  val height = meshInfo[mesh]!!.shape.height
+//  Vector3(0f, 0f, height / 2f)
+//}
 
 fun nodeFloorCenter(node: Node) = node.position + Vector3(0f, 0f, -wallHeight / 2f)
 
 fun alignWithNodeFloor(meshInfo: MeshInfoMap, node: Node, mesh: MeshName) =
-    nodeFloorCenter(node) + alignWithFloor(meshInfo)(mesh)
+    nodeFloorCenter(node) + align(meshInfo, alignWithFloor)(mesh)
 
 fun randomShift(dice: Dice) = dice.getFloat(-0.04f, 0.04f)
 
@@ -71,11 +84,11 @@ fun newWall(config: GenerationConfig, mesh: MeshName, dice: Dice, node: Node, po
       architecture = ArchitectureElement(isWall = true),
       meshes = config.meshes,
       mesh = mesh,
-      position = position + floorOffset + alignWithFloor(config.meshes)(mesh) + Vector3(randomShift(dice), randomShift(dice), randomShift(dice)),
+      position = position + floorOffset + align(config.meshes, alignWithFloor)(mesh) + Vector3(randomShift(dice), randomShift(dice), randomShift(dice)),
       scale = Vector3.unit,
       orientation = orientation,
       node = node.id,
-      texture = biome.wallTexture
+      texture = biomeTexture(biome, TextureGroup.wall)
   )
 }
 

@@ -19,20 +19,18 @@ enum class BiomeAttribute {
   wallsSome
 }
 
+enum class TextureGroup {
+  ceiling,
+  default,
+  floor,
+  wall
+}
+
 data class BiomeInfo(
     val name: String,
-    val floorTexture: TextureId? = null,
-    val ceilingTexture: TextureId? = null,
-    val wallTexture: TextureId? = null,
+    val textures: Map<TextureGroup, TextureId>,
     val meshes: Set<MeshName>,
     val attributes: Set<BiomeAttribute> = setOf()
-//    val roomFloorMeshes: List<MeshId>,
-//    val roomFloorMeshesTall: List<MeshId>,
-//    val tunnelFloorMeshes: List<MeshId>,
-//    val stairStepMeshes: List<MeshId>,
-//    val wallMeshes: List<MeshId>,
-//    val windowMeshes: List<MeshId>,
-//    val ceilingMeshes: List<MeshId> = listOf(),
 )
 
 typealias BiomeInfoMap = Map<BiomeName, BiomeInfo>
@@ -42,6 +40,9 @@ enum class QueryFilter {
   any,
   none
 }
+
+fun biomeTexture(info: BiomeInfo, group: TextureGroup): TextureId? =
+    info.textures[group] ?: info.textures[TextureGroup.default]
 
 fun queryMeshes(meshInfo: MeshInfoMap, options: Set<MeshName>, attributes: MeshAttributes, mode: QueryFilter = QueryFilter.all): Set<MeshName> =
     options.filter { key ->
