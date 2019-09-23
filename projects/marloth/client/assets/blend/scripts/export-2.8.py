@@ -40,7 +40,9 @@ def delete_texture_nodes():
         nodes = tree.nodes
         for node in list(nodes):
             if node.bl_idname == 'ShaderNodeTexImage':
-                nodes.remove(node)
+                # print("image name " + os.path.basename(node.image.filepath))
+                node.image.source = 'GENERATED'
+                # nodes.remove(node)
 
 
 def get_horizontal_radius(dimensions):
