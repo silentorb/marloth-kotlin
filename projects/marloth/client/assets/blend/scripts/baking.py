@@ -4,7 +4,9 @@ import os.path
 
 def create_image(image_name, image_path, length):
     image = bpy.data.images.new(image_name, length, length)
+    # image.source = 'FILE'
     image.filepath_raw = image_path
+    print(image_path)
     image.file_format = 'JPEG'
     return image
 

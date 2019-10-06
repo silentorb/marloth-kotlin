@@ -5,7 +5,7 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'addon'))
 from mythic_lib import get_material_texture_node
 sys.path.append(os.path.dirname(__file__))
-from baking import bake_all
+from baking import bake_all, prune_graph_for_texture
 
 models_path = 'src/main/resources/models'
 textures_path = 'src/main/resources/textures'
@@ -31,18 +31,22 @@ def of_type(list, type):
     return [c for c in list if c.type == type]
 
 
-def delete_texture_nodes():
+def prepare_texture_nodes():
     for material in bpy.data.materials:
         tree = material.node_tree
         if tree is None:
             return None
 
         nodes = tree.nodes
-        for node in list(nodes):
-            if node.bl_idname == 'ShaderNodeTexImage':
-                # print("image name " + os.path.basename(node.image.filepath))
-                node.image.source = 'GENERATED'
-                # nodes.remove(node)
+        texture_nodes = [node for node in list(nodes) if node.bl_idname == 'ShaderNodeTexImage']
+        if len(texture_nodes) == 1:
+            node = texture_nodes[0]
+            image = node.image
+            image.source = 'GENERATED'
+            prune_graph_for_texture(material, image)
+            # for node in texture_nodes:
+            #     if node.bl_idname == 'ShaderNodeTexImage':
+            #         node.image.source = 'GENERATED'
 
 
 def get_horizontal_radius(dimensions):
@@ -78,6 +82,13 @@ def remove_materials(object, material_slot_indices):
     for i in reversed(material_slot_indices):
         object.active_material_index = i
         bpy.ops.object.material_slot_remove()
+
+
+def prune_materials():
+    for obj in bpy.data.objects:
+        if obj.type == 'MESH':
+            slots = list(range(1, len(obj.material_slots)))
+            remove_materials(obj, slots)
 
 
 def gather_ik_bones(pose):
@@ -145,7 +156,7 @@ def set_export_object_visibility(objs):
 def prepare_scene(export_dir):
     # Some of the export operations will fail if the blender file was saved in edit mode.
     # Ensure blender is in object mode and not edit mode
-    bpy.ops.object.mode_set(mode='OBJECT')
+    # bpy.ops.object.mode_set(mode='OBJECT')
 
     deselect_all()
     export_objects = get_export_objects()
@@ -161,8 +172,9 @@ def prepare_scene(export_dir):
 
     has_objects = len(export_objects) > 0
     if has_objects:
+        prune_materials()
         if 'copy-images' not in bpy.context.scene:
-            delete_texture_nodes()
+            prepare_texture_nodes()
 
         deselect_all()
         set_export_object_visibility(export_objects)
