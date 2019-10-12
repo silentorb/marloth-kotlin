@@ -1,6 +1,6 @@
-import generation.abstracted.old.intersects
-import generation.abstracted.old.isBetween
+import generation.misc.intersects
 import mythic.spatial.Vector2
+import mythic.spatial.isBetween
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it

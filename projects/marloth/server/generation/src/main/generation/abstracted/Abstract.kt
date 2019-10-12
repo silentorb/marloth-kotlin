@@ -1,7 +1,5 @@
 package generation.abstracted
 
-import generation.abstracted.old.unifyWorld
-import generation.structure.getDoorFramePoints
 import generation.misc.*
 import mythic.ent.*
 import mythic.spatial.Vector3
@@ -49,52 +47,6 @@ fun newNodePosition(boundary: WorldBoundary, nodes: List<Node>, dice: Dice, radi
       return null
     }
   }
-}
-
-//fun createRoomNode(boundary: WorldBoundary, nodes: List<Node>, id: Id, dice: Dice): Node? {
-//  val radius = dice.getFloat(5f, 10f)
-//  val position = newNodePosition(boundary, nodes, dice, radius)
-//  if (position == null)
-//    return null
-//
-//  return Node(
-//      id = id,
-//      position = position,
-//      radius = radius,
-//      isRoom = true
-//  )
-//}
-
-//fun getDeadend(graph: Graph, offset: Int): List<Id> {
-//  val start = getDeadEnds(graph)[offset]
-//  return gatherNodes(listOf(start)) { node ->
-//    neighbors(graph, node).filter { it.isWalkable && getConnection(graph, it, node)!!.type == ConnectionType.union }.toList()
-//  }
-//      .map { it.id }
-//}
-
-fun getTwinTunnels(graph: Graph, tunnels: List<PreTunnel>): List<PreTunnel> =
-    graph.nodes.values.flatMap { node ->
-      val nodeTunnels = tunnels.filter { tunnel -> tunnel.connection.contains(node.id) }
-      if (node.id == 15L) {
-        val k = 0
-      }
-      crossMap(nodeTunnels) { a, b ->
-        val first = getDoorFramePoints(node, a.connection.other(graph, node))
-        val second = getDoorFramePoints(node, b.connection.other(graph, node))
-        val (c, _) = lineSegmentIntersectsLineSegment(first[0], first[1], second[0], second[1])
-//        val c = a.position.distance(b.position) < doorwayLength * 2f
-        c
-      }
-//      listOf<PreTunnel>()
-    }
-
-fun cleanupWorld(graph: Graph): Graph {
-  val unifyingConnections = unifyWorld(graph)
-  val secondConnections = graph.connections.plus(unifyingConnections)
-//  val deadEndClosingConnections = closeDeadEnds(graph.copy(connections = secondConnections))
-//  return graph.copy(connections = secondConnections.plus(deadEndClosingConnections))
-  return graph.copy(connections = secondConnections)
 }
 
 fun applyInitialBiomes(biomes: BiomeInfoMap, biomeGrid: BiomeGrid, graph: Graph): NodeTable {

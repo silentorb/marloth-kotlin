@@ -1,8 +1,23 @@
 package generation.misc
 
 import generation.abstracted.tunnelRadius
+import mythic.ent.IdSource
+import mythic.ent.newIdSource
 import mythic.spatial.*
+import org.joml.Intersectionf
 import simulation.misc.Node
+
+const val doorwayLength = 2.5f
+const val doorLength = 1.75f
+const val wallHeight = 4f
+const val doorwayDepth = 0.5f
+
+fun idSourceFromNodes(nodes: Collection<Node>): IdSource =
+    newIdSource(if (nodes.any())
+      nodes.sortedByDescending { it.id }.first().id + 1L
+    else
+      1L
+    )
 
 fun <T> divide(sequence: Sequence<T>, filter: (T) -> Boolean) =
     Pair(sequence.filter(filter), sequence.filter { !filter(it) })
@@ -105,3 +120,34 @@ fun connectionOverlapsNeighborNodes(neighbors: List<Node>, first: Node, second: 
   }
   return false
 }
+
+fun isBetween(first: Float, second: Float, middle: Float) =
+    if (first < second)
+      middle >= first && middle <= second
+    else
+      middle >= second && middle <= first
+
+fun intersects(lineStart: Vector2, lineEnd: Vector2, circleCenter: Vector2, radius: Float): Boolean {
+  val hitPoint = Vector3()
+  val hit = Intersectionf.intersectLineCircle(
+      lineStart.x, lineStart.y,
+      lineEnd.x, lineEnd.y,
+      circleCenter.x, circleCenter.y, radius,
+      Vector3m(hitPoint))
+
+  if (!hit)
+    return false
+
+  return isBetween(lineStart.x, lineEnd.x, hitPoint.x) && isBetween(lineStart.y, lineEnd.y, hitPoint.y)
+}
+
+private const val tunnelPadding = 1f + doorwayLength * 0.5f
+
+fun nodesIntersectOther(first: Node, second: Node, nodes: Sequence<Node>) =
+    nodes
+        .filter { it.id != first.id && it.id != second.id }
+        .any {
+          if (it.id == 67L && listOf(first.id, second.id).containsAll(listOf(52L, 62L))) {
+            val k = 0
+          }
+          lineIntersectsCircle(first.position.xy(), second.position.xy(), it.position.xy(), it.radius + tunnelPadding) }

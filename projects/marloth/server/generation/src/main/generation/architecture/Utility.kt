@@ -1,7 +1,6 @@
 package generation.architecture
 
 import generation.misc.*
-import generation.structure.wallHeight
 import mythic.ent.Id
 import mythic.spatial.Pi
 import mythic.spatial.Quaternion

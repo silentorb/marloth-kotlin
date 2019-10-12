@@ -80,3 +80,80 @@ Both Tales of Maj'Eyal and Dark Souls have tactics and strategy but the differen
 * In Dark Souls most of the decisions of execution are made prior to the encounter
 
 The one exception to TOME is on the harder difficulties players sometimes use completely different equipment for different encounters.  This isn't needed for the normal or nightmare difficulties.  It's also noted that at that point while different loadouts are important, the game wasn't really designed for that and doing so is a little bit of a tedious hack.
+
+### Randomly Generated Maps
+
+I keep waffling on whether to use handcrafted vs. randomly generated maps.  Other than the brief period of dabbling with Unreal Engine, any time I've faced this question I've always stuck with random generation.  I've invested so much into it, and yet at this point I've already discarded most of my investment because it was impractical.
+
+Part of the problem is random generation and ambition do not go well together.  If you keep things simple, random generation is fine.  I think a general algorithm is:
+
+* Handcrafted content: Difficulty scales linearly with product complexity
+* Randomly generated content: Difficulty scales exponentially with product complexity
+
+Note that this only applies to most products.  It is possible to randomly generate complex products if the product design ensures that the process can remain simple.  For example, Minecraft is designed where the player can nearly completely rebuild the geography to suit their needs.  This allows Minecraft's generation algorithms to not worry about pathing.  Often geography is generated that is untraversable, and the player has the tools to remedy that.
+
+The problem is I have particular design goals for Marloth.  At the end of the day, I've been wanting to make a particular game and somehow leverage random generation for that, instead of starting with random generation and exploring what kinds of games I could make with it.  I've been trying to fit a square peg into a round hole.
+
+Because of this I've already thrown out all other forms of code generating non-trivial content.
+
+#### Pros of Handcrafted Content
+
+* Is more artistically impressive
+* Can represent configurations that are impractical to randomly generate
+* Is more contained and predictable
+* Can create familiarity
+* Has more personality
+* Can reward players for knowing the geography
+
+#### Pros of Procedurally Generated Content
+
+* Can surprise the player (and author)
+* Can support "infinite" different maps
+  * With the caveat that they can suffer from the cornflakes problem of having insignificant variation
+
+#### Inspirational Games Survey
+
+| Game               | Handcrafted | Selective | Random |
+| ------------------ | :---------: | :-------: | :----: |
+| Alice 1 & 2        |      *      |           |        |
+| Dark Souls         |      *      |           |        |
+| Minecraft          |             |           |   *    |
+| Tales of Maj'Eyal  |             |     *     |        |
+| Grim Dawn          |             |     *     |        |
+| Binding of Isaac   |             |     *     |        |
+| Diablo II          |             |     *     |        |
+| Neverwinter Nights |      *      |           |        |
+| Dungeon Defenders  |      *      |           |        |
+| Lego Batman 2      |      *      |           |        |
+| Darkest Dungeons   |             |     *     |        |
+| Team Fortress 2    |      *      |           |        |
+
+Note that while the handcrafted column has many entries, from the start of the project part of my goal was to "rectify" particular limitations I felt like those games had due to their reliance on handcrafted content.  The really interesting part of this table is how many entries there are in "Selective", and how few there are in "Random".  For how much I love Roguelikes, there aren't actually many roguelikes that impress me with their map generation.  I thought I could revolutionize the process.  I didn't realize how hard and expensive that would be.
+
+#### Review
+
+More and more, I've found randomness works when it is carefully rationed out to tiny yet pivotal areas of the game.  Haphazardly relying on randomness results in chaos.  Randomness *is* chaos.
+
+It's fully sinking in now how I've been trying to make an impossible game.
+
+#### Course Change
+
+Now what I'm leaning toward is a hybrid that I was trying to make with Unreal except Unreal did not practically support it.  Using prefab areas that are stitched together using messy passage generation.  This is in many ways a best of all because:
+
+* I don't like when prefabs are used in square, cookie cutter zones
+* This way prefabs could vary in shape and size
+* The prefabs would form a node graph with dynamically generated connection geometry, allowing me to keep at least a sliver of my previous map generation code and methodology
+* While a slice of messy procedural generation code would still exist, it would be relegated to singular role in the game.  Not every part of the geometry needs the complexity and elegance of the prefab nodes.  In other words, this approach would be using the best tool for each job.
+* The prefabs could still have some hardcoded random toggles to mix things up, like switching whether a particular section of it is a wall or a doorway
+* Population of prefabs with enemies and items can still be randomized to some degree (I'm no longer eager to say flat out that population be purely random.)
+* In many ways, this would help mimic the map design I love so much of Dark Souls.  Dark Souls is very much a collection of regions organically stitched together
+
+#### Pinball
+
+This also possibly lends itself to a game direction I loved back in my teens but never did much with; to abstract the essence of a pinball table into some other kind of game.  In general I'm not a big fan of pinball games.  But there were a few I really got into, and what I loved most about them were the toggling state.  Pinball tables where if you pulled off a sequence of hitting the right table elements, it would change some mode and some other part of the table would change.  I've always thought it would be fun to make a game that had layers upon layers of state changes like that.
+
+The closest attempt I made was the space game.  It didn't quite play out how I wanted to because the nature of the toggles was not obvious.  It was hard to reason about them.  They were all arbitrary, specialized toggles with no over-arching rules and system.  It may be that I could review the problems I face with the space game and come up with a better course of action that would allow me to successfully leverage those mechanics in Marloth.
+
+This may work best if it is still abstracted into general systems.  You can still effectively toggle modes that alter the world, but where all of these triggers and effects are still handled by a general system with a consistent UI instead of a collection of custom if-statements and boolean variables.
+
+A good example of this would be Super Mario World's toggling block types.
