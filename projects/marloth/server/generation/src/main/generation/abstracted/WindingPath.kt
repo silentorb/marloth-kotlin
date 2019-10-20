@@ -6,40 +6,33 @@ import simulation.misc.Cell
 import simulation.misc.MapGrid
 import simulation.misc.NodeAttribute
 
-private val horizontalOffsets = listOf(
+private val horizontalDiagonalOffsets = setOf(
     Pair(-1, -1),
-    Pair(0, -1),
     Pair(1, -1),
-    Pair(-1, 0),
-    Pair(1, 0),
     Pair(-1, 1),
-    Pair(0, 1),
     Pair(1, 1)
 )
 
-private val verticalOffsets = listOf(-1, 0, 1)
+private val horizontalOrthogonalOffsets = setOf(
+    Pair(0, -1),
+    Pair(-1, 0),
+    Pair(1, 0),
+    Pair(0, 1)
+)
 
-private val allOffsets = horizontalOffsets.flatMap { (x, y) ->
-  verticalOffsets.map { z -> Vector3i(x, y, z) }
-}
+//private val horizontalOffsets = horizontalOffsetsDiagonal.plus(horizontalOffsetsOrthogonal)
+
+private val verticalOffsets = setOf(-1, 0, 1)
+
+//private val allOffsets = horizontalOffsets.flatMap { (x, y) ->
+//  verticalOffsets.map { z -> Vector3i(x, y, z) }
+//}
 
 private fun nextConnectionOffset(dice: Dice, grid: MapGrid, position: Vector3i): Vector3i? {
-  // Filter out any horizontal directions that already have a connection to this cell.
-  val availableOffsets = horizontalOffsets
-//      .mapNotNull { (x, y) ->
-      .map { (x, y) ->
-        //        if (verticalOffsets.all { z ->
-//              val offset = Vector3i(x, y, z)
-//              val cell = grid.connections[position + offset]
-//              cell == null || cell.first != position && cell.second != position
-//            })
-        verticalOffsets.map { z -> Vector3i(x, y, z) }
-//        else null
-      }
-      .flatten()
+  val availableOffsets = horizontalDiagonalOffsets
+      .flatMap { (x, y) -> verticalOffsets.map { z -> Vector3i(x, y, z) } }
+      .plus(horizontalOrthogonalOffsets.map { (x, y) -> Vector3i(x, y, 0) })
 
-  // Further filter out any potential conflicts with straight tunnels and vertical tunnels
-  // that connect other cells than this one.
   val options = availableOffsets
       .filter {
         isCellOpen(grid, position, it) &&

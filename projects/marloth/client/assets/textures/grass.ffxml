@@ -140,18 +140,18 @@
 					<ParticleInput source="groupped_mapswitch2_02" red="0.5999999999999999778" green="0.8000000000000000444" blue="1" alpha="1"/>
 					<Background source="groupped_blend6_01" red="0.0265658725331952769" green="0.0736434108527131981" blue="0.0128447809626825327" alpha="1"/>
 					<Opacity value="1"/>
-					<Size value="1"/>
+					<Size value="0.4400000000000000022"/>
 					<Rotation value="0"/>
 					<OffsetH value="0"/>
 					<OffsetV value="0"/>
 					<Squash value="0"/>
 					<OpacityChaos value="0"/>
-					<SizeChaos value="0.5"/>
+					<SizeChaos value="0.0400000000000000008"/>
 					<RotationChaos value="1"/>
 					<OffsetChaosH value="0.3800000000000000044"/>
 					<OffsetChaosV value="0.6600000000000000311"/>
 					<SquashChaos value="0"/>
-					<Roughness value="0.2099999999999999922"/>
+					<Roughness value="0.67000000000000004"/>
 					<DepthMap/>
 					<ParticleMode value="0"/>
 					<OctavesScaleMode value="0"/>
@@ -170,8 +170,8 @@
 					<Preview value="0"/>
 				</BomberPlusParticleRandomizer2>
 				<BomberPlusParticleRandomizer2 id="groupped_bomberplusparticlerandomizer2_02" master="groupped_bomberplus3_01">
-					<Minimum red="0.1627906976744185608" green="0.1627906976744185608" blue="0.1627906976744185608" alpha="1"/>
-					<Maximum red="0.5736434108527131981" green="0.5736434108527131981" blue="0.5736434108527131981" alpha="1"/>
+					<Minimum red="0.3643410852713178105" green="0.3629289105222041623" blue="0.3629289105222041623" alpha="1"/>
+					<Maximum red="0.5503875968992247847" green="0.5503875968992247847" blue="0.5503875968992247847" alpha="1"/>
 					<Variation value="1"/>
 					<Preview value="0"/>
 				</BomberPlusParticleRandomizer2>
@@ -416,7 +416,7 @@
 	<FilterEditor>
 		<Groups>
 			<Group id="MapGroup02">
-				<Canvas left="726" top="-430" zoom_factor="0"/>
+				<Canvas left="702" top="-383" zoom_factor="0"/>
 				<Item id="groupped_blend6_01">
 					<Position left="1040" top="240"/>
 				</Item>
@@ -475,7 +475,7 @@
 					<Position left="1216" top="-432"/>
 				</Item>
 				<Item id="groupped_polygon4_02">
-					<Position left="1136" top="-176"/>
+					<Position left="1072" top="-160"/>
 				</Item>
 				<Item id="groupped_profilegradient4_01">
 					<Position left="1568" top="-432"/>
@@ -483,7 +483,7 @@
 			</Group>
 		</Groups>
 		<ThumbnailSize value="1"/>
-		<Canvas left="-460" top="-464" zoom_factor="0"/>
+		<Canvas left="-291" top="-452" zoom_factor="0"/>
 		<Viewport left="0" top="0" zoom_factor="-2"/>
 		<LockPreview>
 			<Locked value="true"/>

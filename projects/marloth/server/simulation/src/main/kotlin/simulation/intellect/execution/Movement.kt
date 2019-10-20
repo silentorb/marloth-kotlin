@@ -45,8 +45,10 @@ fun getPathTargetPosition(world: World, knowledge: Knowledge, pursuit: Pursuit):
   assert(pathResult.result.size > 0)
   assert(pathResult.result[0] != null)
   val firstPoint = fromRecastVector3(pathResult.result[0].pos)
-  return if (firstPoint.distance(body.position) < 0.1f)
+  return if (firstPoint.distance(body.position) < 0.1f) {
+    assert(pathResult.result.size > 1)
     fromRecastVector3(pathResult.result[1].pos)
+  }
   else
     firstPoint
 }

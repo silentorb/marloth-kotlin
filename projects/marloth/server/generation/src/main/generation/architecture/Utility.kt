@@ -22,7 +22,8 @@ const val roundedMeshPadding = 0.08f
 fun getHorizontalFlip(dice: Dice, info: ArchitectureMeshInfo): Float =
     if (info.attributes.contains(MeshAttribute.canFlipHorizontally) && dice.getBoolean()) Pi else 0f
 
-val ceilingOffset = Vector3(0f, 0f, wallHeight / 2f)
+//val ceilingOffset = Vector3(0f, 0f, wallHeight / 2f)
+val ceilingOffset = Vector3(0f, 0f, wallHeight)
 val floorOffset = Vector3(0f, 0f, -wallHeight / 2f)
 
 fun newArchitectureMesh(meshes: MeshInfoMap, mesh: MeshName, position: Vector3,

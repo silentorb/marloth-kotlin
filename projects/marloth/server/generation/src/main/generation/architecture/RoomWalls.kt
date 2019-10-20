@@ -74,7 +74,7 @@ val placeRoomWalls: Architect = { config, realm, dice ->
           else
             queryMeshes(config.meshes, biome.meshes, setOf(MeshAttribute.placementWall))
           val mesh = dice.takeOne(meshOptions)
-          newWall(config, mesh, dice, node, wallPosition, wallAngle)
-        }
+          newWall(config, mesh, node, wallPosition, wallAngle)
+        }.flatten()
       }
 }
