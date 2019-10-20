@@ -5,9 +5,10 @@ import mythic.spatial.Vector3
 import mythic.spatial.toVector3
 import simulation.misc.*
 
+private const val horizontalScale = 20f
+private const val verticalScale = 3f
+
 fun gridToGraph(nextId: IdSource, grid: MapGrid): Pair<Graph, CellPositionMap> {
-  val horizontalScale = 30f
-  val verticalScale = 10f
   val positionScale = Vector3(horizontalScale, horizontalScale, verticalScale) / 2f
   val nodes = grid.cells
       .map { (position, cell) ->

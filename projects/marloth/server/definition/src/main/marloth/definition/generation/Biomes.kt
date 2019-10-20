@@ -14,6 +14,7 @@ enum class BiomeId {
 
 val commonMeshes = setOf(
     MeshId.circleFloor,
+    MeshId.fillerColumn,
     MeshId.threeStoryCircleFloor,
     MeshId.longStep,
     MeshId.longStairStep,

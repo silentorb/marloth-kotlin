@@ -14,22 +14,30 @@ val placeTunnelWalls: Architect = { config, realm, dice ->
         val lookAtAngle = getLookAtAngle(info.vector)
         val halfWidth = standardTunnelWidth / 2f
         val biome = config.biomes[node.biome]!!
-        createSeries(info.length, segmentLength, -0f) { step, stepOffset ->
-          val minorOffset = 0.001f
-          val minorMod = if (step % 2 == 0) -minorOffset else minorOffset
-          val minor = Vector3(0f, 0f, minorMod)
-          listOf(-1f, 1f)
-              .filter { wallPlacementFilter(dice, biome) }
-              .map { sideMod ->
+        val series = newFlushSeries(info.length, segmentLength, 0f)
+        //        createFlushSeries(info.length, segmentLength, -0f) { step, stepOffset ->
+//          val minorOffset = 0.001f
+//          val minorMod = if (step % 2 == 0) -minorOffset else minorOffset
+//          val minor = Vector3(0f, 0f, minorMod)
+        listOf(-1f, 1f)
+            .filter { wallPlacementFilter(dice, biome) }
+            .map { sideMod ->
+              val items = series.flushItems.map { offset ->
+                Pair(offset, setOf(MeshAttribute.placementWall))
+              }
+                  .plus(series.fillerItems.map { offset ->
+                    Pair(offset, setOf(MeshAttribute.placementWallFiller))
+                  })
+              items.map { (offset, meshFilter) ->
                 val randomFlip = if (dice.getBoolean()) 1 else -1
-                val sideOffset = Vector3(info.vector.y, -info.vector.x, 0f) * (sideMod + minorMod) * halfWidth
-                val wallPosition = info.start + info.vector * stepOffset + sideOffset
+                val sideOffset = Vector3(info.vector.y, -info.vector.x, 0f) * sideMod * halfWidth
+                val wallPosition = info.start + info.vector * offset + sideOffset
                 val wallAngle = lookAtAngle + sideMod * randomFlip * Pi / 2f
                 val mesh = dice.takeOne(
-                    queryMeshes(config.meshes, biome, setOf(MeshAttribute.placementWall))
+                    queryMeshes(config.meshes, biome, meshFilter)
                 )
                 newWall(config, mesh, dice, node, wallPosition, wallAngle)
               }
-        }.flatten()
+            }.flatten()
       }
 }

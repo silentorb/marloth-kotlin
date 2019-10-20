@@ -18,6 +18,7 @@ enum class MeshAttribute {
   placementTallRoomFloor,
   placementTunnelFloor,
   placementWall,
+  placementWallFiller,
   placementWindow
 }
 

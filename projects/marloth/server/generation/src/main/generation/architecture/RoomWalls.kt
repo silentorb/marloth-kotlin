@@ -54,7 +54,7 @@ val placeRoomWalls: Architect = { config, realm, dice ->
           if (node.id == 1L) {
             val k = 0
           }
-          createSeries(angleLength, segmentAngleLength) { step, stepOffset ->
+          createOverlappingSeries(angleLength, segmentAngleLength) { step, stepOffset ->
             firstAngle + (tunnelAngleLength / 2f) + stepOffset
           }
         }

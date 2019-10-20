@@ -77,6 +77,7 @@ fun ByteBuffer.putMatrix(value: Matrix) {
 
 const val Pi = PI.toFloat()
 const val Pi2 = Pi * 2f
+const val quarterAngle = Pi * 0.5f
 
 fun Vector2.toVector3m() = Vector3m(x, y, 0f)
 fun Vector2.toVector3() = Vector3(x, y, 0f)

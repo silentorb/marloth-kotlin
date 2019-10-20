@@ -17,6 +17,8 @@ import simulation.entities.DepictionType
 import simulation.misc.Node
 import kotlin.math.atan
 
+const val roundedMeshPadding = 0.08f
+
 fun getHorizontalFlip(dice: Dice, info: ArchitectureMeshInfo): Float =
     if (info.attributes.contains(MeshAttribute.canFlipHorizontally) && dice.getBoolean()) Pi else 0f
 
@@ -74,22 +76,6 @@ fun alignWithNodeFloor(meshInfo: MeshInfoMap, node: Node, mesh: MeshName) =
     nodeFloorCenter(node) + align(meshInfo, alignWithFloor)(mesh)
 
 fun randomShift(dice: Dice) = dice.getFloat(-0.04f, 0.04f)
-
-fun newWall(config: GenerationConfig, mesh: MeshName, dice: Dice, node: Node, position: Vector3, angleZ: Float): Hand {
-  val biome = config.biomes[node.biome!!]!!
-  val randomHorizontalFlip = getHorizontalFlip(dice, config.meshes[mesh.toString()]!!)
-  val orientation = Quaternion().rotateZ(angleZ + randomHorizontalFlip)
-  return newArchitectureMesh(
-      architecture = ArchitectureElement(isWall = true),
-      meshes = config.meshes,
-      mesh = mesh,
-      position = position + floorOffset + align(config.meshes, alignWithFloor)(mesh) + Vector3(randomShift(dice), randomShift(dice), randomShift(dice)),
-      scale = Vector3.unit,
-      orientation = orientation,
-      node = node.id,
-      texture = biomeTexture(biome, TextureGroup.wall)
-  )
-}
 
 fun segmentArcLength(segmentLength: Float, radius: Float): Float {
   val mod = radius * 2f

@@ -2,7 +2,7 @@ package generation.architecture
 
 import generation.misc.*
 import mythic.spatial.Quaternion
-import mythic.spatial.Vector3
+import mythic.spatial.quarterAngle
 import simulation.entities.ArchitectureElement
 import simulation.misc.Node
 import simulation.physics.old.getLookAtAngle
@@ -22,20 +22,18 @@ fun placeTunnelFloorOrCeiling(common: CommonArchitectConfig): (Node) -> Architec
     val info = getTunnelInfo(realm.graph, node.id)
     val meshPool = queryMeshes(config.meshes, biome, common.meshAttributes, QueryFilter.any)
     val mesh = dice.takeOne(meshPool)
-    val segmentLength = config.meshes[mesh]!!.shape.x
-    val randomRotation1 = dice.getFloat(-0.1f, 0.1f)
+    val segmentLength = config.meshes[mesh]!!.shape.y - roundedMeshPadding * 2f
     val orientation = Quaternion()
-        .rotateZ(getLookAtAngle(info.vector) + randomRotation1)
-//            .rotateY(-getLookAtAngle(Vector2(info.vector.xy().length(), info.vector.z) + randomRotation2))
-    createSeries(info.length, segmentLength, -0f) { step, stepOffset ->
-      val minorOffset = 0.001f
-      val minorMod = if (step % 2 == 0) -minorOffset else minorOffset
-      val minor = Vector3(0f, 0f, minorMod + tempHeightBump)
+        .rotateZ(getLookAtAngle(info.vector) + quarterAngle)
+    createOverlappingSeries(info.length, segmentLength, -0f) { step, stepOffset ->
+//      val minorOffset = 0.001f
+//      val minorMod = if (step % 2 == 0) -minorOffset else minorOffset
+//      val minor = Vector3(0f, 0f, minorMod + tempHeightBump)
       newArchitectureMesh(
           architecture = ArchitectureElement(isWall = false),
           meshes = config.meshes,
           mesh = mesh,
-          position = info.start + info.vector * stepOffset + common.offset + minor + align(config.meshes, common.aligner)(mesh),
+          position = info.start + info.vector * stepOffset + common.offset + align(config.meshes, common.aligner)(mesh),
           orientation = orientation,
           node = node.id,
           texture = biomeTexture(biome, common.textureGroup)

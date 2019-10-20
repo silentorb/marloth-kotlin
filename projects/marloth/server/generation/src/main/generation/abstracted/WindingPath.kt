@@ -23,9 +23,6 @@ private val allOffsets = horizontalOffsets.flatMap { (x, y) ->
   verticalOffsets.map { z -> Vector3i(x, y, z) }
 }
 
-fun isCellOpen(grid: MapGrid, from: Vector3i, connectionOffset: Vector3i): Boolean =
-    !grid.cells.containsKey(from + connectionOffset * 2)
-
 private fun nextConnectionOffset(dice: Dice, grid: MapGrid, position: Vector3i): Vector3i? {
   // Filter out any horizontal directions that already have a connection to this cell.
   val availableOffsets = horizontalOffsets
