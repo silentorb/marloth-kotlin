@@ -13,6 +13,8 @@ import kotlin.math.min
 const val defaultCharacterRadius = 0.4f
 const val defaultCharacterHeight = 2.3f
 
+const val maxFootStepHeight = 0.8f
+
 private fun rayCollisionDistance(dynamicsWorld: btDiscreteDynamicsWorld, start: Vector3, end: Vector3): Float? {
 //  val callback = firstRayHitNotMe(dynamicsWorld, start, end, me)
   val callback = firstRayHit(dynamicsWorld, start, end)
@@ -68,7 +70,7 @@ fun updateCharacterStepHeight(bulletState: BulletState, deck: Deck, character: I
   val collisionObject = deck.collisionShapes[character]!!
   val shape = collisionObject.shape
   val radius = shape.radius
-  val footHeight = 0.8f
+  val footHeight = maxFootStepHeight
   val offsets = footOffsets(radius).plus(Vector3.zero)
   val cast = castStepRay(bulletState.dynamicsWorld, body.position, footHeight, shape.height)
   val centerDistance = cast(Vector3.zero)

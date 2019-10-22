@@ -124,18 +124,6 @@ fun initializeFaceInfo(faces: ConnectionTable, type: FaceType, node: Node, id: I
 fun getRooms(realm: Realm): List<Node> =
     realm.nodeList.filter { it.isRoom }
 
-fun initializeNodeFaceInfo(faces: ConnectionTable, node: Node): List<ConnectionFace> {
-  return node.walls.map { initializeFaceInfo(faces, FaceType.wall, node, it) }
-      .plus(node.floors.map { initializeFaceInfo(faces, FaceType.floor, node, it) })
-      .plus(node.ceilings.map { initializeFaceInfo(faces, FaceType.ceiling, node, it) })
-}
-
-fun initializeFaceInfo(nodes: List<Node>, faces: ConnectionTable) {
-  for (node in nodes) {
-    initializeNodeFaceInfo(faces, node)
-  }
-}
-
 fun getOtherNode(id: Id, info: ConnectionFace): Id? {
   return if (info.firstNode == id)
     info.secondNode

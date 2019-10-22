@@ -4,6 +4,8 @@ import configuration.ConfigManager
 import configuration.loadYamlFile
 import configuration.saveYamlFile
 import generation.abstracted.initializeNodeRadii
+import generation.abstracted.newWindingPath
+import generation.abstracted.newWindingPathTestStartingWithStair
 import generation.architecture.placeArchitecture
 import generation.generateRealm
 import generation.misc.GenerationConfig
@@ -64,14 +66,22 @@ fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig): World
       boundary,
       dice
   )
-  val realm = generateRealm(generationConfig, input)
+  val grid = if (System.getenv("START_WITH_STAIRS") != null)
+    newWindingPathTestStartingWithStair(input.dice, generationConfig.roomCount)
+  else
+    newWindingPath(input.dice, generationConfig.roomCount)
+
+  val realm = generateRealm(generationConfig, input, grid)
   val nextId = newIdSource(1)
   val deck = pipeHandsToDeck(nextId, listOf(
       { _ -> placeArchitecture(generationConfig, realm, dice) },
       populateWorld(generationConfig, input, realm)
   ))(Deck())
 
-  val navMesh = newNavMesh(deck)
+  val navMesh = if (gameViewConfig.haveEnemies)
+    newNavMesh(deck)
+  else
+    null
 
   return World(
       deck = deck,
@@ -83,7 +93,7 @@ fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig): World
       availableIds = setOf(),
       logicUpdateCounter = 0,
       navMesh = navMesh,
-      navMeshQuery = NavMeshQuery(navMesh)
+      navMeshQuery = if (navMesh != null) NavMeshQuery(navMesh) else null
   )
 }
 
@@ -104,7 +114,9 @@ fun labRender(app: LabApp, state: LabState): RenderHook = { sceneRenderer ->
     val deck = state.app.worlds.last().deck
     drawBulletDebug(app.gameApp, deck.bodies[deck.players.keys.first()]!!.position)(sceneRenderer)
   }
-  renderNavMesh(sceneRenderer.renderer, app.config.mapView.display, state.app.worlds.last().navMesh)
+  val navMesh = state.app.worlds.last().navMesh
+  if (navMesh != null)
+    renderNavMesh(sceneRenderer.renderer, app.config.mapView.display, navMesh)
 }
 
 tailrec fun labLoop(app: LabApp, state: LabState) {

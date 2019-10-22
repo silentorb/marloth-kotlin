@@ -27,11 +27,11 @@ private fun newWallInternal(config: GenerationConfig, mesh: MeshName, node: Node
   )
 }
 
-fun newWall(config: GenerationConfig, mesh: MeshName, node: Node, position: Vector3, angleZ: Float): List<Hand> {
-  val meshInfo = config.meshes[mesh.toString()]!!
+fun newWall(config: GenerationConfig, meshes: List<MeshName>, node: Node, position: Vector3, angleZ: Float): List<Hand> {
+  val meshInfo = config.meshes[meshes[0].toString()]!!
   val upperOffset = Vector3(0f, 0f, meshInfo.shape.height)
   return listOf(
-      newWallInternal(config, mesh, node, position, angleZ),
-      newWallInternal(config, mesh, node, position + upperOffset, angleZ)
+      newWallInternal(config, meshes.first(), node, position, angleZ),
+      newWallInternal(config, meshes.last(), node, position + upperOffset, angleZ)
   )
 }

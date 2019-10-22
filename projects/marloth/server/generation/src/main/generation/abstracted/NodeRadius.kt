@@ -19,6 +19,9 @@ fun calculateInitialNodeRadius(deck: Deck, node: Id, nodeRecord: Node): Float {
         val architecture = deck.architecture[it.key]
         architecture != null && architecture.isWall
       }
+  if (bodies.none())
+    return 1f
+
   return bodies
       .entries.map { (key, body) ->
     val shape = deck.collisionShapes[key]

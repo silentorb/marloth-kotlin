@@ -25,10 +25,6 @@ data class Hit(
 )
 
 private fun getFaceHits(start: Vector3, end: Vector3, world: Realm): List<Hit> {
-  val faces = world.nodeList.flatMap { it.faces }.distinct()
-//      .take(1)
-  val rayDirection = (end - start).normalize()
-
   return listOf()
 //  return faces.mapNotNull { id ->
 ////    val face = world.mesh.faces[id]!!

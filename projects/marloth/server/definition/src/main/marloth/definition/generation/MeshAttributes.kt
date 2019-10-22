@@ -9,8 +9,14 @@ val meshAttributes: MeshAttributeMap = mapOf(
         MeshAttribute.placementShortRoomFloor,
         MeshAttribute.placementRoomCeiling
     ),
+    MeshId.curvingStairStep to setOf(
+        MeshAttribute.placementStairStepCurved
+    ),
     MeshId.fillerColumn to setOf(
         MeshAttribute.placementWallFiller
+    ),
+    MeshId.halfCircleFloor to setOf(
+        MeshAttribute.placementStairTopFloor
     ),
     MeshId.longPillowStep to setOf(
         MeshAttribute.placementStairStep

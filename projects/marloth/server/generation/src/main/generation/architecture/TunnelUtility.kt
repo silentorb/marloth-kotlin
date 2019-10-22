@@ -13,7 +13,7 @@ data class TunnelInfo(
 )
 
 fun getTunnelInfo(graph: Graph, node: Id): TunnelInfo {
-  val neighbors = nodeNeighbors2(graph.connections, node).map { graph.nodes[it]!! }
+  val neighbors = nodeNeighbors2(graph.connections.asSequence(), node).map { graph.nodes[it]!! }
   val overlap = 1f
   val length = getNodeDistance(neighbors[0], neighbors[1]) + overlap
   val horizontalVector = (neighbors[0].position.copy(z = 0f) - neighbors[1].position.copy(z = 0f)).normalize()

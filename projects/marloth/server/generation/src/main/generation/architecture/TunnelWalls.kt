@@ -1,7 +1,7 @@
 package generation.architecture
 
 import generation.misc.MeshAttribute
-import generation.misc.queryMeshes
+import generation.misc.filterMeshes
 import mythic.spatial.Pi
 import mythic.spatial.Vector3
 import simulation.physics.old.getLookAtAngle
@@ -29,8 +29,8 @@ val placeTunnelWalls: Architect = { config, realm, dice ->
                 val sideOffset = Vector3(info.vector.y, -info.vector.x, 0f) * sideMod * halfWidth
                 val wallPosition = info.start + info.vector * offset + sideOffset
                 val wallAngle = lookAtAngle + sideMod * Pi / 2f
-                val mesh = dice.takeOne(queryMeshes(config.meshes, biome, meshFilter))
-                newWall(config, mesh, node, wallPosition, wallAngle)
+                val mesh = dice.takeOne(filterMeshes(config.meshes, biome, meshFilter))
+                newWall(config, listOf(mesh), node, wallPosition, wallAngle)
               }
             }.flatten()
       }

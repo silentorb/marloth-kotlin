@@ -17,8 +17,8 @@ data class World(
     val availableIds: Set<Id>,
     val gameOver: GameOver? = null,
     val logicUpdateCounter: Int,
-    val navMesh: NavMesh,
-    val navMeshQuery: NavMeshQuery
+    val navMesh: NavMesh?,
+    val navMeshQuery: NavMeshQuery?
 )
 
 typealias WorldTransform = (World) -> World

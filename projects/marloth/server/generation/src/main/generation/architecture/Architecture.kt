@@ -47,12 +47,17 @@ fun tunnelNodes(graph: Graph) = graph.nodes.values
 fun roomNodes(graph: Graph) = graph.nodes.values
     .filter { node -> node.attributes.contains(NodeAttribute.room) }
 
+fun nodesWithAllAttributes(graph: Graph, attributes: Set<NodeAttribute>) =
+    graph.nodes.values
+        .filter { node -> node.attributes.containsAll(attributes) }
+
 typealias Architect = (GenerationConfig, Realm, Dice) -> List<Hand>
 typealias HandArchitect = (GenerationConfig, Realm, Dice) -> Hand
 
 const val standardWallLength = 4f
 
 private val architectureSteps = listOf(
+    placeCurvedStaircases,
     placeRoomCeilings,
     placeRoomFloors,
     placeRoomWalls,

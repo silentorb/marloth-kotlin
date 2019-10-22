@@ -14,7 +14,10 @@ import simulation.physics.CollisionObject
 import simulation.main.Hand
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
+import simulation.misc.Graph
 import simulation.misc.Node
+import simulation.misc.nodeNeighbors2
+import simulation.physics.old.getLookAtAngle
 import kotlin.math.atan
 
 const val roundedMeshPadding = 0.08f
@@ -53,7 +56,8 @@ data class CommonArchitectConfig(
     val meshAttributes: MeshAttributes,
     val textureGroup: TextureGroup,
     val offset: Vector3,
-    val aligner: VerticalAligner
+    val aligner: VerticalAligner,
+    val orientation: Quaternion? = null
 )
 
 typealias VerticalAligner = (Float) -> (Float)
@@ -93,3 +97,14 @@ fun wallPlacementFilter(dice: Dice, biome: BiomeInfo) =
       biome.attributes.contains(BiomeAttribute.wallsSome) -> dice.getFloat() < 0.75f
       else -> false
     }
+
+fun randomlySelectMesh(dice: Dice, meshes: MeshInfoMap, biome: BiomeInfo, attributes: MeshAttributes): MeshName {
+  val meshPool = filterMeshes(meshes, biome, attributes, QueryFilter.any)
+  return dice.takeOne(meshPool)
+}
+
+fun getStairTopFloorFacingAngle(graph: Graph, node: Node): Float {
+  val otherNode = nodeNeighbors2(graph.connections.asSequence(), node.id).first()
+  val otherNodePosition = graph.nodes[otherNode]!!.position
+  return getLookAtAngle((otherNodePosition - node.position).normalize())
+}

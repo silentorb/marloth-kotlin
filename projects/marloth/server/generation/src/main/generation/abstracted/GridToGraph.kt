@@ -1,6 +1,7 @@
 package generation.abstracted
 
 import mythic.ent.IdSource
+import mythic.ent.newIdSource
 import mythic.spatial.Vector3
 import mythic.spatial.toVector3
 import simulation.misc.*
@@ -8,7 +9,7 @@ import simulation.misc.*
 private const val horizontalScale = 20f
 private const val verticalScale = 4f
 
-fun gridToGraph(nextId: IdSource, grid: MapGrid): Pair<Graph, CellPositionMap> {
+fun gridToGraph(nextId: IdSource = newIdSource(1L)): (MapGrid) -> Pair<Graph, CellPositionMap> = { grid ->
   val positionScale = Vector3(horizontalScale, horizontalScale, verticalScale) / 2f
   val nodes = grid.cells
       .map { (position, cell) ->
@@ -27,15 +28,16 @@ fun gridToGraph(nextId: IdSource, grid: MapGrid): Pair<Graph, CellPositionMap> {
 
   val connections = grid.connections
       .map { pair ->
+        val direction = pair.second - pair.first
         InitialConnection(
             first = nodes[pair.first]!!.id,
             second = nodes[pair.second]!!.id,
-            type = ConnectionType.doorway
+            type = if (isVertical(direction)) ConnectionType.vertical else ConnectionType.doorway
         )
       }
   val graph = Graph(
       nodes = nodes.mapKeys { it.value.id },
       connections = connections
   )
-  return Pair(graph, cellMap)
+  Pair(graph, cellMap)
 }

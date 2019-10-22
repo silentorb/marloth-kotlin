@@ -1,10 +1,12 @@
 package generation.abstracted
 
-import generation.misc.*
-import mythic.ent.*
-import mythic.spatial.Vector3
-import mythic.spatial.lineSegmentIntersectsLineSegment
-import randomly.Dice
+import generation.misc.BiomeAttribute
+import generation.misc.BiomeGrid
+import generation.misc.BiomeInfoMap
+import generation.misc.GenerationConfig
+import mythic.ent.Id
+import mythic.ent.newIdSource
+import mythic.ent.pipe2
 import simulation.misc.*
 
 const val minInitialNodeDistance = 1.5f
@@ -29,24 +31,6 @@ fun getOtherNode(graph: Graph, first: Id, pivot: Id): Node {
   val options = neighbors(graph, pivot).filter { it.id != first }.toList()
   assert(options.size == 1)
   return options.first()
-}
-
-fun faceNodes(info: ConnectionFace) =
-    listOf(info.firstNode, info.secondNode)
-
-fun newNodePosition(boundary: WorldBoundary, nodes: List<Node>, dice: Dice, radius: Float): Vector3? {
-  val start = boundary.start + radius
-  val end = boundary.end - radius
-  var step = 0
-  while (true) {
-    val position = Vector3(dice.getFloat(start.x, end.x), dice.getFloat(start.y, end.y), 0f)
-    if (nodes.all { getNodeDistance(it, position, radius) > minInitialNodeDistance }) {
-      return position
-    }
-    if (step++ > 30) {
-      return null
-    }
-  }
 }
 
 fun applyInitialBiomes(biomes: BiomeInfoMap, biomeGrid: BiomeGrid, graph: Graph): NodeTable {
@@ -86,17 +70,6 @@ fun applyInitialBiomes(biomes: BiomeInfoMap, biomeGrid: BiomeGrid, graph: Graph)
   }
 }
 
-fun createAndMixTunnels(graph: Graph): Graph {
-  val preTunnels = prepareTunnels(graph)
-//  val twinTunnels = getTwinTunnels(graph, preTunnels)
-//  val tunnelGraph = createTunnelNodes(graph, preTunnels.minus(twinTunnels))
-//  return graph.plus(tunnelGraph).minusConnections(preTunnels.plus(twinTunnels).map { it.connection })
-//      .copy(tunnels = tunnelGraph.nodes.map { it.key })
-  val tunnelGraph = createTunnelNodes(graph, preTunnels)
-  return graph.plus(tunnelGraph).minusConnections(preTunnels.map { it.connection })
-//      .copy(tunnels = tunnelGraph.nodes.map { it.key })
-}
-
 //fun prepareDoorways(graph: Graph): Graph {
 //  val homeNodes = graph.nodes.values.filter { it.biome == BiomeId.home }
 //  val doorways = homeNodes.flatMap { node ->
@@ -123,19 +96,7 @@ fun <A, B> pass(action: (A) -> A): (Pair<A, B>) -> Pair<A, B> = { (a, b) ->
   Pair(action(a), b)
 }
 
-fun generateAbstract(config: GenerationConfig, input: WorldInput, scale: Float, biomeGrid: BiomeGrid): Triple<MapGrid, Graph, CellPositionMap> {
-//  val nodeCount = (30 * scale).toInt()
-//  val initialNodes = distributeNodes(input.boundary, nodeCount, input.dice)
-////  val initialGraph = handleOverlapping(entityMap(initialNodes))
-  val grid = newWindingPath(input.dice, config.roomCount)
-  val nextId = newIdSource(1L)
-  val (initialGraph, cellMap) = gridToGraph(nextId, grid)
-  val finalGraph = pipe2(initialGraph, listOf(
-//      { graph -> cleanupWorld(graph) },
-//      { graph -> createAndMixTunnels(graph) },
-//      variableHeights(input.dice),
-      { graph -> graph.copy(nodes = applyInitialBiomes(config.biomes, biomeGrid, graph)) }
-//      { graph -> prepareDoorways(graph) }
-  ))
-  return Triple(grid, finalGraph, cellMap)
-}
+fun generateAbstract(config: GenerationConfig, input: WorldInput, biomeGrid: BiomeGrid): (Graph) -> Graph =
+    pipe2(listOf(
+        { graph -> graph.copy(nodes = applyInitialBiomes(config.biomes, biomeGrid, graph)) }
+    ))

@@ -9,7 +9,7 @@ import simulation.misc.Node
 import simulation.physics.old.getLookAtAngle
 
 fun getTunnelFloorMesh(biome: BiomeInfo, info: TunnelInfo): Set<MeshAttribute> {
-  return if (Math.abs(info.vector.z) > 0.3f)
+  return if (Math.abs(info.vector.z) > 0.2f)
     setOf(MeshAttribute.placementStairStep)
   else
     setOf(MeshAttribute.placementTunnelFloor)
@@ -21,8 +21,7 @@ fun placeTunnelFloorOrCeiling(common: CommonArchitectConfig): (Node) -> Architec
     val tempHeightBump = 0.05f
     val biome = config.biomes[node.biome]!!
     val info = getTunnelInfo(realm.graph, node.id)
-    val meshPool = queryMeshes(config.meshes, biome, common.meshAttributes, QueryFilter.any)
-    val mesh = dice.takeOne(meshPool)
+    val mesh = randomlySelectMesh(dice, config.meshes, biome, common.meshAttributes)
     val segmentLength = config.meshes[mesh]!!.shape.y
     val orientation = Quaternion()
         .rotateZ(getLookAtAngle(info.vector) + quarterAngle)

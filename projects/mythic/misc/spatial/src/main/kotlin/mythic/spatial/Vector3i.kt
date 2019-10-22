@@ -13,6 +13,7 @@ data class Vector3i(
     val unit: Vector3i = _unit
   }
   operator fun plus(value: Vector3i): Vector3i = Vector3i(x + value.x, y + value.y, z + value.z)
+  operator fun minus(value: Vector3i): Vector3i = Vector3i(x - value.x, y - value.y, z - value.z)
   operator fun times(value: Vector3i): Vector3i = Vector3i(x * value.x, y * value.y, z * value.z)
   operator fun times(value: Int): Vector3i = Vector3i(x * value, y * value, z * value)
 }

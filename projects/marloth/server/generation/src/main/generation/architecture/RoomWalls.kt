@@ -2,20 +2,21 @@ package generation.architecture
 
 import generation.misc.BiomeAttribute
 import generation.misc.MeshAttribute
-import generation.misc.queryMeshes
+import generation.misc.MeshAttributes
+import generation.misc.filterMeshes
 import mythic.spatial.Pi
 import mythic.spatial.atan
 import mythic.spatial.projectVector3
-import simulation.misc.Graph
-import simulation.misc.Node
-import simulation.misc.nodeNeighbors2
+import simulation.misc.*
 
 fun getDoorwayAngles(graph: Graph, node: Node): List<Float> {
-  val points = nodeNeighbors2(graph.connections, node.id)
-      .map {
-        val neighbor = graph.nodes[it]!!
-        neighbor.position
-      }
+  val connectionPool = graph.connections
+      .asSequence()
+      .filter { it.type != ConnectionType.vertical }
+
+  val points = nodeNeighbors2(connectionPool, node.id)
+      .map { graph.nodes[it]!! }
+      .map { it.position }
 
   return points
       .map { atan(it.xy() - node.position.xy()) }
@@ -36,26 +37,27 @@ fun getRoomSeriesAngleLength(firstIndex: Int, stripCount: Int, doorwayAngles: Li
 val placeRoomWalls: Architect = { config, realm, dice ->
   roomNodes(realm.graph)
       .flatMap { node ->
-        val doorwayAngles = getDoorwayAngles(realm.graph, node)
         val biome = config.biomes[node.biome]!!
-
-        val stripCount = doorwayAngles.size
         val tunnelAngleLength = getSegmentAngleLength(standardTunnelWidth, node.radius)
         val segmentAngleLength = getSegmentAngleLength(standardWallLength, node.radius)
 
-        val wallSections = doorwayAngles.mapIndexed { index, firstAngle ->
-          val angleLength = getRoomSeriesAngleLength(index, stripCount, doorwayAngles, firstAngle) - tunnelAngleLength
-          Pair(firstAngle, angleLength)
-        }
-            .filter { it.second > segmentAngleLength }
+        val doorwayAngles = getDoorwayAngles(realm.graph, node)
+        val stripCount = doorwayAngles.size
 
-        val slots = wallSections.flatMap { (firstAngle, angleLength) ->
-          println("node " + node.id + " angleLength " + angleLength)
-          if (node.id == 1L) {
-            val k = 0
+        val slots = if (stripCount > 0) {
+          val wallSections = doorwayAngles.mapIndexed { index, firstAngle ->
+            val angleLength = getRoomSeriesAngleLength(index, stripCount, doorwayAngles, firstAngle) - tunnelAngleLength
+            Pair(firstAngle, angleLength)
           }
-          createOverlappingSeries(angleLength, segmentAngleLength) { step, stepOffset ->
-            firstAngle + (tunnelAngleLength / 2f) + stepOffset
+              .filter { it.second > segmentAngleLength }
+          wallSections.flatMap { (firstAngle, angleLength) ->
+            createOverlappingSeries(angleLength, segmentAngleLength) { step, stepOffset ->
+              firstAngle + (tunnelAngleLength / 2f) + stepOffset
+            }
+          }
+        } else {
+          createOverlappingSeries(Pi * 2f, segmentAngleLength) { step, stepOffset ->
+            (tunnelAngleLength / 2f) + stepOffset
           }
         }
 
@@ -69,12 +71,15 @@ val placeRoomWalls: Architect = { config, realm, dice ->
 
         filteredSlots.mapIndexed { index, wallAngle ->
           val wallPosition = node.position + projectVector3(wallAngle, node.radius, node.position.z)
-          val meshOptions = if (windowIndex == index)
-            queryMeshes(config.meshes, biome.meshes, setOf(MeshAttribute.placementWindow))
-          else
-            queryMeshes(config.meshes, biome.meshes, setOf(MeshAttribute.placementWall))
-          val mesh = dice.takeOne(meshOptions)
-          newWall(config, mesh, node, wallPosition, wallAngle)
+          val getMesh = filterMeshes(config.meshes, biome.meshes)
+          val windowAttributes = setOf(MeshAttribute.placementWindow)
+          val wallAttributes = setOf(MeshAttribute.placementWall)
+          val attributes = listOf(
+              if (windowIndex == index) windowAttributes else wallAttributes,
+              wallAttributes
+          )
+          val meshes = attributes.map(getMesh).map { dice.takeOne(it) }
+          newWall(config, meshes, node, wallPosition, wallAngle)
         }.flatten()
       }
 }

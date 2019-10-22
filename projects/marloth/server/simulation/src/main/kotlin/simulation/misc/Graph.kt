@@ -58,7 +58,7 @@ data class Graph(
       )
 }
 
-fun nodeNeighbors2(faces: InitialConnections, id: Id) = faces.mapNotNull { it.otherOrNull(id) }
+fun nodeNeighbors2(connections: Sequence<InitialConnection>, id: Id) = connections.mapNotNull { it.otherOrNull(id) }.toList()
 
 fun tunnelLength(graph: Graph, connection: InitialConnection): Float {
   val first = graph.nodes[connection.first]!!

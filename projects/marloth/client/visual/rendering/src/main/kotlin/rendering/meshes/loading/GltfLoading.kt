@@ -4,6 +4,7 @@ import mythic.breeze.*
 import mythic.glowing.GeneralMesh
 import mythic.glowing.VertexAttributeDetail
 import mythic.glowing.newVertexBuffer
+import mythic.spatial.Matrix
 import mythic.spatial.Vector3
 import org.joml.Vector4f
 import org.lwjgl.BufferUtils
@@ -418,26 +419,40 @@ fun getMeshName(info: GltfInfo, nodeIndex: Int): MeshName? {
 }
 
 @Suppress("UNCHECKED_CAST")
+private fun parseVector3(source: Any?): Vector3 {
+  val dimensions = source as List<Double>
+  return Vector3(dimensions[0].toFloat(), dimensions[1].toFloat(), dimensions[2].toFloat())
+}
+
+@Suppress("UNCHECKED_CAST")
 fun loadBoundingShape(node: Node): Shape? {
   val shapeProperty = node.extras?.get("bounds")
   return if (shapeProperty == null)
     null
   else {
-    val shape = shapeProperty as Map<String, Any>
-    val type = shape["type"] as String?
-    when (type) {
+    val source = shapeProperty as Map<String, Any>
+    val type = source["type"] as String?
+    val shape = when (type) {
       "cylinder" -> Cylinder(
-          radius = (shape["radius"] as Double).toFloat(),
-          height = (shape["height"] as Double).toFloat()
+          radius = (source["radius"] as Double).toFloat(),
+          height = (source["height"] as Double).toFloat()
       )
       "box" -> {
-        val dimensions = shape["dimensions"] as List<Double>
         Box(
-            halfExtents = Vector3(dimensions[0].toFloat(), dimensions[1].toFloat(), dimensions[2].toFloat()) * 0.5f
+            halfExtents = parseVector3(source["dimensions"]) * 0.5f
         )
       }
       else -> null
     }
+    val offset = if (source.containsKey("offset"))
+      parseVector3(source["offset"])
+    else
+      null
+
+    if (shape != null && offset != null)
+      ShapeOffset(transform = Matrix().translate(offset), shape = shape)
+    else
+      shape
   }
 }
 

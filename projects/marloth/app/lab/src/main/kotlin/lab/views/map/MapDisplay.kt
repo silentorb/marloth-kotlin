@@ -56,16 +56,6 @@ fun drawWireframeWorld(renderer: SceneRenderer, deck: Deck, realm: Realm, config
 //  }
 }
 
-fun renderFaceIds(renderer: SceneRenderer, realm: Realm, nodes: Collection<Node>) {
-  globalState.depthEnabled = true
-  for (faceId in nodes.flatMap { it.faces }) {
-//    for (faceId in node.faces) {
-//    val face = realm.mesh.faces[faceId]!!
-//    renderer.drawText(face.id.toString(), getCenter(face.vertices), LabTextStyles.lessRed)
-//    }
-  }
-}
-
 fun renderNodeIds(renderer: SceneRenderer, nodes: Collection<Node>) {
   globalState.depthEnabled = false
   for (node in nodes) {
@@ -144,10 +134,6 @@ fun renderMapMesh(sceneRenderer: SceneRenderer, realm: Realm, deck: Deck, config
 //  if (config.display.normals)
 //    renderFaceNormals(sceneRenderer, 0.5f, faces)
 
-  if (config.display.faceIds) {
-    renderFaceIds(sceneRenderer, realm, nodes)
-  }
-
   if (config.display.nodeIds) {
     renderNodeIds(sceneRenderer, nodes)
   }
@@ -221,7 +207,10 @@ fun renderMapView(client: Client, world: World, deck: Deck, config: MapViewConfi
     )
     val sceneRenderer = renderer.createSceneRenderer(scene, b.toVector4i())
     renderMapMesh(sceneRenderer, world.realm, deck, config, seed.bag)
-    renderNavMesh(sceneRenderer.renderer, config.display, world.navMesh)
+    val navMesh = world.navMesh
+    if (navMesh != null)
+      renderNavMesh(sceneRenderer.renderer, config.display, navMesh)
+
     renderer.finishRender(windowInfo)
   }
 }

@@ -44,15 +44,16 @@ enum class QueryFilter {
 fun biomeTexture(info: BiomeInfo, group: TextureGroup): TextureId? =
     info.textures[group] ?: info.textures[TextureGroup.default]
 
-fun queryMeshes(meshInfo: MeshInfoMap, options: Set<MeshName>, attributes: MeshAttributes, mode: QueryFilter = QueryFilter.all): Set<MeshName> =
-    options.filter { key ->
-      val info = meshInfo[key]!!
-      when (mode) {
-        QueryFilter.all -> info.attributes.containsAll(attributes)
-        QueryFilter.none -> info.attributes.none { attributes.contains(it) }
-        QueryFilter.any -> info.attributes.any { attributes.contains(it) }
-      }
-    }.toSet()
+fun filterMeshes(meshInfo: MeshInfoMap, options: Set<MeshName>, mode: QueryFilter = QueryFilter.all):(MeshAttributes) -> Set<MeshName> = { attributes ->
+  options.filter { key ->
+    val info = meshInfo[key]!!
+    when (mode) {
+      QueryFilter.all -> info.attributes.containsAll(attributes)
+      QueryFilter.none -> info.attributes.none { attributes.contains(it) }
+      QueryFilter.any -> info.attributes.any { attributes.contains(it) }
+    }
+  }.toSet()
+}
 
-fun queryMeshes(meshInfo: MeshInfoMap, biome: BiomeInfo, attributes: MeshAttributes, mode: QueryFilter = QueryFilter.all): Set<MeshName> =
-    queryMeshes(meshInfo, biome.meshes, attributes, mode)
+fun filterMeshes(meshInfo: MeshInfoMap, biome: BiomeInfo, attributes: MeshAttributes, mode: QueryFilter = QueryFilter.all): Set<MeshName> =
+    filterMeshes(meshInfo, biome.meshes, mode)(attributes)

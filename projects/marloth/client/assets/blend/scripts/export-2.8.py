@@ -2,6 +2,7 @@ import bpy
 import os
 import os.path
 import sys
+import mathutils
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'addon'))
 from mythic_lib import get_material_texture_node
 sys.path.append(os.path.dirname(__file__))
@@ -52,6 +53,13 @@ def prepare_texture_nodes():
 def get_horizontal_radius(dimensions):
     return max(dimensions.x, dimensions.y) / 2
 
+def getShapeOffset(bound_box):
+    center = sum((mathutils.Vector(b) for b in bound_box), mathutils.Vector()) / 8
+    min = 0.03
+    if abs(center[0]) > min or abs(center[1]) > min or abs(center[2]) > min:
+        return center
+
+    return None
 
 def preprocess_bounds_shape(obj):
     bounds_type_key = 'bounds'
@@ -62,17 +70,25 @@ def preprocess_bounds_shape(obj):
     del obj[bounds_type_key]
 
     dimensions = obj.dimensions
+
+    bounds = None
     if type == 'cylinder':
-        obj['bounds'] = {
+        bounds = {
             'type': 'cylinder',
             'radius': get_horizontal_radius(dimensions),
             'height': dimensions.z
         }
     if type == 'box':
-        obj['bounds'] = {
+        bounds = {
             'type': 'box',
             'dimensions': (dimensions.x, dimensions.y, dimensions.z)
         }
+
+    if bounds:
+        offset = getShapeOffset(obj.bound_box)
+        if offset:
+            bounds['offset'] = offset
+        obj['bounds'] = bounds
 
 def has_dominant_material(obj):
     return any(m.name == obj.name for m in obj.material_slots)

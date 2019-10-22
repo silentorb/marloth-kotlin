@@ -263,7 +263,7 @@ fun fixedDistributions(): DistributionMap = mapOf(
 )
 
 fun populateRooms(occupantToHand: OccupantToHand, dice: Dice, realm: Realm, playerNode: Id): List<Hand> {
-  val rooms = getRooms(realm).filter { it.id != playerNode }
+  val rooms = getRooms(realm).filter { it.id != playerNode && !it.attributes.contains(NodeAttribute.stairTop) }
   val scaling = scalingDistributions(dice)
   val fixed = fixedDistributions()
   val occupants = distributeToSlots(dice, rooms.size, scaling, fixed)

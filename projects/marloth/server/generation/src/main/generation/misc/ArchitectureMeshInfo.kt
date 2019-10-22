@@ -13,8 +13,10 @@ enum class MeshAttribute {
 
   // Placement categories (Most if not all of these are mutually exlusive
   placementRoomCeiling,
+  placementStairTopFloor,
   placementShortRoomFloor,
   placementStairStep,
+  placementStairStepCurved,
   placementTallRoomFloor,
   placementTunnelFloor,
   placementWall,

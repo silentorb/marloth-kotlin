@@ -27,7 +27,9 @@ enum class MeshId {
 
   // Architecture
   circleFloor,
+  curvingStairStep,
   fillerColumn,
+  halfCircleFloor,
   longPillowStep,
   longStairStep,
   longStep,

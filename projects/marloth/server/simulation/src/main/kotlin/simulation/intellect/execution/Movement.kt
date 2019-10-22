@@ -25,6 +25,9 @@ fun getPathTargetPosition(world: World, knowledge: Knowledge, pursuit: Pursuit):
   val graph = world.realm.graph
   val body = world.deck.bodies[knowledge.spiritId]!!
   val query = world.navMeshQuery
+  if (query == null)
+    throw Error("Missing navMeshQuery")
+
   val start = asRecastVector3(body.position)
   val end = asRecastVector3(pursuit.targetPosition!!)
   val polygonRange = floatArrayOf(10f, 10f, 10f)
