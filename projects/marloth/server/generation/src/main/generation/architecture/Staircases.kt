@@ -23,7 +23,7 @@ val placeCurvedStaircases: Architect = { config, realm, dice ->
 
         val topNodeRecord = realm.graph.nodes[topNode]!!
         val topFloorOrientation = getStairTopFloorFacingAngle(realm.graph, topNodeRecord)
-        val baseAngle = topFloorOrientation + Pi
+        val baseAngle = topFloorOrientation + Pi * 0.5f
 
         val stairHeight = topNodeRecord.position.z - node.position.z
         val heightStep = 0.3f

@@ -16,6 +16,7 @@ import mythic.aura.newAudioState
 import mythic.bloom.*
 import mythic.bloom.next.Box
 import mythic.bloom.next.LogicModule
+import mythic.bloom.next.newBloomState
 
 import mythic.drawing.setGlobalFonts
 import mythic.ent.pipe
@@ -23,12 +24,14 @@ import mythic.ent.pipe2
 import mythic.platforming.Platform
 import mythic.spatial.Vector3
 import mythic.typography.extractFontSets
+import newBloomInputState
 import rendering.DisplayConfig
 import rendering.Renderer
 import rendering.shading.LightingConfig
 import scenery.Screen
 import scenery.enums.Text
 import simulation.main.Deck
+import updateInputDeviceStates
 
 const val maxPlayerCount = 4
 
@@ -113,7 +116,7 @@ fun getListenerPosition(deck: Deck): Vector3? {
 }
 
 fun updateClientInput(client: Client): (ClientState) -> ClientState = { state ->
-  val newDeviceStates = updateInputState(client.platform.input, state.input)
+  val newDeviceStates = updateInputDeviceStates(client.platform.input, state.input.deviceStates)
   state.copy(
       input = state.input.copy(
           deviceStates = newDeviceStates

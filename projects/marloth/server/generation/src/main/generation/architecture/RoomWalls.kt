@@ -4,17 +4,22 @@ import generation.misc.BiomeAttribute
 import generation.misc.MeshAttribute
 import generation.misc.MeshAttributes
 import generation.misc.filterMeshes
+import mythic.ent.Id
 import mythic.spatial.Pi
 import mythic.spatial.atan
 import mythic.spatial.projectVector3
 import simulation.misc.*
 
-fun getDoorwayAngles(graph: Graph, node: Node): List<Float> {
+fun getNonVerticalNeighbors(graph: Graph, node: Id): List<Id> {
   val connectionPool = graph.connections
       .asSequence()
       .filter { it.type != ConnectionType.vertical }
 
-  val points = nodeNeighbors2(connectionPool, node.id)
+  return nodeNeighbors2(connectionPool, node)
+}
+
+fun getDoorwayAngles(graph: Graph, node: Node): List<Float> {
+  val points = getNonVerticalNeighbors(graph, node.id)
       .map { graph.nodes[it]!! }
       .map { it.position }
 

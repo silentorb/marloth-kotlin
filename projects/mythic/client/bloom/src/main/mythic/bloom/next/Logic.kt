@@ -1,38 +1,15 @@
 package mythic.bloom.next
 
 import mythic.bloom.*
+import org.joml.Vector2i
 
-//typealias FlowerAttribute = String
-//typealias FlowerAttributes = Set<FlowerAttribute>
 typealias LogicModule = (LogicArgs) -> StateBag
 
 data class LogicArgs(
     val inputState: HistoricalInputState,
     val events: List<AnyEvent>,
-//    val boxes: List<Box>,
     val bag: StateBag
 )
-
-//infix fun Flower.plusAttributes(attributes: FlowerAttributes): Flower = { seed ->
-//  val box = this(seed)
-//  box.copy(
-//      attributes = box.attributes.plus(attributes)
-//  )
-//}
-//
-//fun Flower.plusAttributes(vararg attributes: FlowerAttribute): Flower = { seed ->
-//  val box = this(seed)
-//  box.copy(
-//      attributes = box.attributes.plus(attributes)
-//  )
-//}
-//
-//fun Flower.plusData(vararg data: Pair<String, Any>): Flower = { seed ->
-//  val box = this(seed)
-//  box.copy(
-//      data = box.data.plus(data)
-//  )
-//}
 
 fun Flower.plusOnClick(vararg events: AnyEvent): Flower = { seed ->
   val box = this(seed)
@@ -85,3 +62,13 @@ fun <T> logicModule(initialState: Any, key: String, transform: (LogicArgs) -> (T
       val result = transform(args)(state as T) as Any
       mapOf(key to result)
     }
+
+fun newBloomState() =
+    BloomState(
+        bag = mapOf(),
+        input = InputState(
+            mousePosition = Vector2i(),
+            mouseButtons = listOf(ButtonState.up),
+            events = listOf()
+        )
+    )

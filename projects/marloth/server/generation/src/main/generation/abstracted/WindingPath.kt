@@ -54,20 +54,30 @@ private fun nextConnectionOffset(dice: Dice, grid: MapGrid, position: Vector3i):
 
 private val upperCell = Cell(attributes = setOf(NodeAttribute.upperLayer))
 
+private val stairAttributes = listOf(
+    NodeAttribute.stairBottom,
+    NodeAttribute.stairTop
+)
+
 private fun newVerticalPathStep(position: Vector3i, direction: Vector3i, attributes: Set<NodeAttribute> = setOf()): (MapGrid) -> MapGrid = { grid ->
   val distance = distanceByAngle(direction)
   val nextPosition = position + direction * distance
 
   assert(!grid.cells.containsKey(nextPosition))
 
+  val relativeStairAttributes = if (direction.z > 0)
+    stairAttributes
+  else
+    stairAttributes.reversed()
+
   val startCell = grid.cells[position]!!
   grid.copy(
       cells = grid.cells
           .plus((0 until distance - 1).map { Pair(position + direction, upperCell) })
-          .plus(listOf(
-              position to startCell.copy(attributes = startCell.attributes.plus(NodeAttribute.stairBottom)),
-              nextPosition to Cell(attributes = attributes.plus(setOf(NodeAttribute.room, NodeAttribute.stairTop)))
-          )),
+          .plus(position to startCell.copy(attributes = startCell.attributes.plus(relativeStairAttributes[0])))
+          .plus(nextPosition to Cell(attributes = attributes.plus(setOf(NodeAttribute.room, relativeStairAttributes[1]))))
+          .plus(nextPosition + upVector to upperCell)
+      ,
       connections = grid.connections.plus(listOf(
           Pair(position, nextPosition)
       ))
@@ -78,8 +88,19 @@ private fun newPathStep(position: Vector3i, direction: Vector3i, attributes: Set
   if (isVertical(direction)) {
     newVerticalPathStep(position, direction, attributes)(grid)
   } else {
-    val tunnelPosition = position + direction
-    val nextPosition = position + direction * distanceByAngle(direction)
+    val isSlope = direction.z != 0
+    val (tunnelPosition, nextPosition) = if (isSlope) {
+      // SLopes are not straight diagonal but a flatter stair-step.
+      // (One horizontal step and one diagonal step.)
+      val horizontalDirection = direction.copy(z = 0)
+      Pair(
+          position + horizontalDirection,
+          position + horizontalDirection * distanceByAngle(direction) + Vector3i(0,0, direction.z)
+      )
+    }
+    else
+      Pair(position + direction, position + direction * distanceByAngle(direction))
+
     assert(!grid.cells.containsKey(nextPosition))
     grid.copy(
         cells = grid.cells.plus(listOf(

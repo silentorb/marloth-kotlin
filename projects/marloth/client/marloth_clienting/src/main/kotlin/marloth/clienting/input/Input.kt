@@ -1,5 +1,7 @@
 package marloth.clienting.input
 
+import DeviceMap
+import PlayerDevice
 import haft.*
 import marloth.clienting.ClientState
 import marloth.clienting.gui.ViewId
@@ -15,12 +17,6 @@ typealias UserCommand = HaftCommand<GuiCommandType>
 
 typealias UserCommands = List<UserCommand>
 
-data class GeneralCommandState(
-    val commands: List<Any>,
-    val mousePosition: Vector2,
-    val mouseOffset: Vector2
-)
-
 data class GameInputConfig(
     var mouseInput: Boolean = true
 )
@@ -30,18 +26,9 @@ enum class BindingContext {
   menu
 }
 
-//typealias GroupedBindings<T> = Map<BindingContext, Bindings<T>>
-
 data class InputProfile<T>(
     val bindings: Bindings<T>
 )
-
-data class PlayerDevice(
-    val player: BloomId,
-    val device: DeviceIndex
-)
-
-typealias DeviceMap = Map<Int, PlayerDevice>
 
 data class InputState(
     val deviceStates: List<InputDeviceState>,
@@ -51,12 +38,6 @@ data class InputState(
     val playerProfiles: Map<BloomId, BloomId>,
     val deviceMap: DeviceMap
 )
-
-fun newInputDeviceState() =
-    InputDeviceState(
-        events = listOf(),
-        mousePosition = Vector2()
-    )
 
 fun newInputState(config: GameInputConfig) =
     InputState(
@@ -81,31 +62,6 @@ fun bindingContext(clientState: ClientState): BindingContext =
       BindingContext.menu
     else
       BindingContext.game
-
-fun updateInputDeviceState(input: PlatformInput): InputDeviceState {
-  input.update()
-  return InputDeviceState(
-      events = input.getEvents(),
-      mousePosition = input.getMousePosition()
-  )
-}
-
-fun updateInputState(input: PlatformInput, inputState: InputState): List<InputDeviceState> {
-  val newDeviceState = updateInputDeviceState(input)
-  return listOf(inputState.deviceStates.last(), newDeviceState)
-}
-
-fun newBloomInputState(deviceState: InputDeviceState) =
-    mythic.bloom.InputState(
-        mousePosition = deviceState.mousePosition.toVector2i(),
-        mouseButtons = listOf(
-            if (deviceState.events.any { it.device == mouseDeviceIndex && it.index == 0 })
-              ButtonState.down
-            else
-              ButtonState.up
-        ),
-        events = listOf()
-    )
 
 fun updateDeviceMap(deviceStates: List<InputDeviceState>, input: InputState): DeviceMap {
   val currentDevices = input.deviceMap.keys

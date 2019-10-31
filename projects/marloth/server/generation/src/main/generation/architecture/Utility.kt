@@ -104,7 +104,9 @@ fun randomlySelectMesh(dice: Dice, meshes: MeshInfoMap, biome: BiomeInfo, attrib
 }
 
 fun getStairTopFloorFacingAngle(graph: Graph, node: Node): Float {
-  val otherNode = nodeNeighbors2(graph.connections.asSequence(), node.id).first()
+  val otherNode = getNonVerticalNeighbors(graph, node.id).first()
   val otherNodePosition = graph.nodes[otherNode]!!.position
-  return getLookAtAngle((otherNodePosition - node.position).normalize())
+  val vector = (otherNodePosition - node.position).normalize()
+  println("stair ${node.id} $otherNode $vector")
+  return getLookAtAngle(vector)
 }

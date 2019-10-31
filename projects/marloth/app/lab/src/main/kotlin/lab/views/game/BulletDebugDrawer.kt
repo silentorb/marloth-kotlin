@@ -27,7 +27,7 @@ class BulletDebugDrawer : btIDebugDraw(), Disposable {
   }
 
   override fun drawLine(from: GdxVector3, to: GdxVector3, color: GdxVector3) {
-    if (manhattanDistance(origin, toVector3(from)) > 40f)
+    if (manhattanDistance(origin, toVector3(from)) > 30f)
       return
 
     val c = toVector3(color)

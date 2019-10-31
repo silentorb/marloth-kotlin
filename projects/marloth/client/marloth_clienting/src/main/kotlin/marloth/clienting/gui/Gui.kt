@@ -62,16 +62,6 @@ data class GuiEvent(
 const val guiEventsKey = "guiEvents"
 val guiEvents = existingOrNewState(guiEventsKey) { listOf<GuiEvent>() }
 
-fun newBloomState() =
-    BloomState(
-        bag = mapOf(),
-        input = InputState(
-            mousePosition = Vector2i(),
-            mouseButtons = listOf(ButtonState.up),
-            events = listOf()
-        )
-    )
-
 data class ButtonState(
     val text: String,
     val hasFocus: Boolean,

@@ -60,7 +60,7 @@ private val architectureSteps = listOf(
     placeCurvedStaircases,
     placeRoomCeilings,
     placeRoomFloors,
-    placeRoomWalls,
+//    placeRoomWalls,
     placeTunnelCeilings,
     placeTunnelFloors,
     placeTunnelWalls

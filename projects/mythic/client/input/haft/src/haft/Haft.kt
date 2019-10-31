@@ -66,6 +66,12 @@ const val MouseMovementRight = 6
 const val MouseMovementUp = 7
 const val MouseMovementDown = 8
 
+fun newInputDeviceState() =
+    InputDeviceState(
+        events = listOf(),
+        mousePosition = Vector2()
+    )
+
 fun applyMouseAxis(device: Int, value: Float, firstIndex: Int, secondIndex: Int, scale: Float) =
     if (value > 0)
       InputEvent(device, firstIndex, value * scale)

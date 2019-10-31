@@ -1,3 +1,0 @@
-apply from: "$rootProject.projectDir/build_kotlin.gradle"
-
-requires 'mythic_desktop', 'spatial', 'platforming', 'bloom', 'drawing', 'rendering', 'haft', 'glowing', 'junk_simulation'

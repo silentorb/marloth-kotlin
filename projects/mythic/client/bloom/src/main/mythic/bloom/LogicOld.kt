@@ -32,23 +32,6 @@ fun logicWrapper(wrapper: (LogicBundle, StateBagMods) -> StateBagMods): LogicMod
 
 fun visibleBounds(box: Box): Bounds? =
     box.bounds
-//    if (box.clipBounds)
-//      box.bounds
-//    else {
-//      val b = box.bounds
-//      val c = box.clipBounds
-//      val clippedBounds = Bounds.fromEnds(
-//          Math.max(b.left, c.left),
-//          Math.max(b.top, c.top),
-//          Math.min(b.right, c.right),
-//          Math.min(b.bottom, c.bottom)
-//      )
-//
-//      if (clippedBounds.dimensions.x <= 0f || clippedBounds.dimensions.y <= 0f) {
-//        null
-//      } else
-//        clippedBounds
-//    }
 
 fun gatherLogicBoxes(box: Box): List<Box> {
   val localList = if (box.logic != null)

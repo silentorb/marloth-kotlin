@@ -3,7 +3,7 @@ package lab.views
 import lab.LabState
 import haft.*
 import lab.LabCommandType
-import marloth.clienting.input.GeneralCommandState
+import GeneralCommandState
 import marloth.clienting.input.GuiCommandType
 
 data class LabClientResult(

@@ -8,7 +8,6 @@ import lab.views.map.updateMapState
 import lab.views.model.ModelView
 import lab.views.model.ModelViewState
 import marloth.clienting.*
-import marloth.clienting.input.newBloomInputState
 import marloth.clienting.input.updateInputState
 import mythic.bloom.*
 import mythic.bloom.next.Box
@@ -18,11 +17,13 @@ import mythic.bloom.next.emptyFlower
 import mythic.platforming.PlatformInput
 import mythic.platforming.WindowInfo
 import mythic.spatial.Vector2
+import newBloomInputState
 import org.joml.Vector2i
 import rendering.createCanvas
 import scenery.Screen
 import simulation.misc.Realm
 import simulation.main.World
+import updateInputDeviceStates
 
 data class LabState(
 //    val labInput: InputTriggerState<LabCommandType>,
@@ -114,7 +115,7 @@ class LabClient(val config: LabConfig, val client: Client) {
 
   fun updateMap(windowInfo: WindowInfo, world: World?, state: LabState, delta: Float): LabClientResult {
     prepareClient(windowInfo)
-    val newDeviceStates = updateInputState(client.platform.input, state.app.client.input)
+    val newDeviceStates = updateInputDeviceStates(client.platform.input, state.app.client.input.deviceStates)
     val commands = updateInput(mapOf(), newDeviceStates)
     val layout = if (world != null) {
       mapLayout(client, world, world.deck, config.mapView)
