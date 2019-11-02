@@ -36,15 +36,15 @@ fun distanceByAngle(direction: Vector3i) =
     if (!isVertical(direction)) 2 else 4
 
 private fun nextConnectionOffset(dice: Dice, grid: MapGrid, position: Vector3i): Vector3i? {
-  val availableOffsets = horizontalDiagonalOffsets
-      .flatMap { (x, y) -> verticalOffsets.map { z -> Vector3i(x, y, z) } }
-      .plus(horizontalOrthogonalOffsets.map { (x, y) -> Vector3i(x, y, 0) })
-      .plus(upAndDown)
+  val availableOffsets = horizontalOrthogonalOffsets.map { (x, y) -> Vector3i(x, y, 0) }
+//      horizontalDiagonalOffsets
+//      .flatMap { (x, y) -> verticalOffsets.map { z -> Vector3i(x, y, z) } }
+//      .plus(horizontalOrthogonalOffsets.map { (x, y) -> Vector3i(x, y, 0) })
+//      .plus(upAndDown)
 
   val options = availableOffsets
       .filter { direction ->
-        val distance = distanceByAngle(direction)
-        isCellPathOpen(grid, position, direction, distance)
+        grid.cells.containsKey(position + direction)
       }
   return if (options.any())
     dice.takeOne(options)
@@ -59,60 +59,56 @@ private val stairAttributes = listOf(
     NodeAttribute.stairTop
 )
 
-private fun newVerticalPathStep(position: Vector3i, direction: Vector3i, attributes: Set<NodeAttribute> = setOf()): (MapGrid) -> MapGrid = { grid ->
-  val distance = distanceByAngle(direction)
-  val nextPosition = position + direction * distance
+//private fun newVerticalPathStep(position: Vector3i, direction: Vector3i, attributes: Set<NodeAttribute> = setOf()): (MapGrid) -> MapGrid = { grid ->
+//  val distance = distanceByAngle(direction)
+//  val nextPosition = position + direction * distance
+//
+//  assert(!grid.cells.containsKey(nextPosition))
+//
+//  val relativeStairAttributes = if (direction.z > 0)
+//    stairAttributes
+//  else
+//    stairAttributes.reversed()
+//
+//  val startCell = grid.cells[position]!!
+//  grid.copy(
+//      cells = grid.cells
+//          .plus((0 until distance - 1).map { Pair(position + direction, upperCell) })
+//          .plus(position to startCell.copy(attributes = startCell.attributes.plus(relativeStairAttributes[0])))
+//          .plus(nextPosition to Cell(attributes = attributes.plus(setOf(NodeAttribute.room, relativeStairAttributes[1]))))
+//          .plus(nextPosition + upVector to upperCell),
+//      connections = grid.connections.plus(listOf(
+//          Pair(position, nextPosition)
+//      ))
+//  )
+//}
 
+private fun newPathStep(position: Vector3i, direction: Vector3i, attributes: Set<NodeAttribute> = setOf()): (MapGrid) -> MapGrid = { grid ->
+  //  if (isVertical(direction)) {
+//    newVerticalPathStep(position, direction, attributes)(grid)
+//  } else {
+//    val isSlope = direction.z != 0
+//    val (tunnelPosition, nextPosition) = if (isSlope) {
+//      // SLopes are not straight diagonal but a flatter stair-step.
+//      // (One horizontal step and one diagonal step.)
+//      val horizontalDirection = direction.copy(z = 0)
+//      Pair(
+//          position + horizontalDirection,
+//          position + horizontalDirection * distanceByAngle(direction) + Vector3i(0, 0, direction.z)
+//      )
+//    } else
+//      Pair(position + direction, position + direction * distanceByAngle(direction))
+  val nextPosition = position + direction
   assert(!grid.cells.containsKey(nextPosition))
-
-  val relativeStairAttributes = if (direction.z > 0)
-    stairAttributes
-  else
-    stairAttributes.reversed()
-
-  val startCell = grid.cells[position]!!
   grid.copy(
-      cells = grid.cells
-          .plus((0 until distance - 1).map { Pair(position + direction, upperCell) })
-          .plus(position to startCell.copy(attributes = startCell.attributes.plus(relativeStairAttributes[0])))
-          .plus(nextPosition to Cell(attributes = attributes.plus(setOf(NodeAttribute.room, relativeStairAttributes[1]))))
-          .plus(nextPosition + upVector to upperCell)
-      ,
+      cells = grid.cells.plus(listOf(
+//          tunnelPosition to Cell(attributes = setOf(NodeAttribute.tunnel)),
+          nextPosition to Cell(attributes = attributes.plus(setOf(NodeAttribute.room)))
+      )),
       connections = grid.connections.plus(listOf(
           Pair(position, nextPosition)
       ))
   )
-}
-
-private fun newPathStep(position: Vector3i, direction: Vector3i, attributes: Set<NodeAttribute> = setOf()): (MapGrid) -> MapGrid = { grid ->
-  if (isVertical(direction)) {
-    newVerticalPathStep(position, direction, attributes)(grid)
-  } else {
-    val isSlope = direction.z != 0
-    val (tunnelPosition, nextPosition) = if (isSlope) {
-      // SLopes are not straight diagonal but a flatter stair-step.
-      // (One horizontal step and one diagonal step.)
-      val horizontalDirection = direction.copy(z = 0)
-      Pair(
-          position + horizontalDirection,
-          position + horizontalDirection * distanceByAngle(direction) + Vector3i(0,0, direction.z)
-      )
-    }
-    else
-      Pair(position + direction, position + direction * distanceByAngle(direction))
-
-    assert(!grid.cells.containsKey(nextPosition))
-    grid.copy(
-        cells = grid.cells.plus(listOf(
-            tunnelPosition to Cell(attributes = setOf(NodeAttribute.tunnel)),
-            nextPosition to Cell(attributes = attributes.plus(setOf(NodeAttribute.room)))
-        )),
-        connections = grid.connections.plus(listOf(
-            Pair(position, tunnelPosition),
-            Pair(tunnelPosition, nextPosition)
-        ))
-    )
-  }
 }
 
 private fun addPathStep(maxSteps: Int, dice: Dice, grid: MapGrid, position: Vector3i, stepCount: Int = 0): MapGrid {
@@ -129,7 +125,7 @@ private fun addPathStep(maxSteps: Int, dice: Dice, grid: MapGrid, position: Vect
     setOf()
 
   val newGrid = newPathStep(position, direction, attributes)(grid)
-  val nextPosition = position + direction * distanceByAngle(direction)
+  val nextPosition = position + direction
   return addPathStep(maxSteps, dice, newGrid, nextPosition, stepCount + 1)
 }
 

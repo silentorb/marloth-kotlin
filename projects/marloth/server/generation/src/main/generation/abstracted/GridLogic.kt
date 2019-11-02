@@ -32,9 +32,7 @@ fun gatherCellsAlongPath(from: Vector3i, direction: Vector3i, distance: Int): Li
     twoLayers
 }
 
-fun isCellPathOpen(grid: MapGrid, from: Vector3i, direction: Vector3i, distance: Int): Boolean {
-  val cells = gatherCellsAlongPath(from, direction, distance)
-  return cells.all { cell ->
-    !grid.cells.containsKey(cell)
-  }
+fun isCellPathOpen(grid: MapGrid, from: Vector3i, direction: Vector3i): Boolean {
+//  val cells = gatherCellsAlongPath(from, direction, distance)
+  return grid.cells.containsKey(from + direction)
 }

@@ -15,3 +15,6 @@ data class MapGrid(
     val cells: CellMap = mapOf(),
     val connections: ConnectionMap = setOf()
 )
+
+fun containsConnection(connections: ConnectionMap, first: Vector3i, second: Vector3i): Boolean =
+    connections.contains(Pair(first, second)) || connections.contains(Pair(second, first))
