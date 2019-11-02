@@ -44,7 +44,7 @@ private fun nextConnectionOffset(dice: Dice, grid: MapGrid, position: Vector3i):
 
   val options = availableOffsets
       .filter { direction ->
-        grid.cells.containsKey(position + direction)
+        !grid.cells.containsKey(position + direction)
       }
   return if (options.any())
     dice.takeOne(options)

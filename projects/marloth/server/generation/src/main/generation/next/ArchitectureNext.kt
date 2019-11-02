@@ -1,11 +1,15 @@
 package generation.next
 
+import generation.architecture.align
+import generation.architecture.alignWithCeiling
+import generation.architecture.newArchitectureMesh
 import generation.elements.Polyomino
 import generation.elements.Side
 import generation.elements.enumeratePolyominoes
 import generation.elements.newBlock
+import generation.misc.*
 import mythic.spatial.Vector3i
-import org.recast4j.detour.Poly
+import simulation.entities.ArchitectureElement
 
 private val wall: Side = setOf()
 private val doorway: Side = setOf()
@@ -25,7 +29,7 @@ class Blocks {
   }
 }
 
-class Polyominoes {
+class PolyominoeDefinitions {
   companion object {
 
     val singleCellRoom: Polyomino = mapOf(
@@ -35,19 +39,32 @@ class Polyominoes {
   }
 }
 
-class Builders {
+class BuilderDefinitions {
   companion object {
 
     val singleCellRoom: Builder = { input ->
-      listOf()
+      val config = input.config
+      val dice = input.dice
+      val biome = config.biomes.values.first()
+      val meshOptions = filterMeshes(config.meshes, biome.meshes, QueryFilter.any)(setOf(MeshAttribute.placementShortRoomFloor))
+      val mesh = dice.takeOne(meshOptions)
+      listOf(
+          newArchitectureMesh(
+              architecture = ArchitectureElement(isWall = false),
+              meshes = config.meshes,
+              mesh = mesh,
+              position = input.position + align(config.meshes, alignWithCeiling)(mesh),
+              texture = biomeTexture(biome, TextureGroup.floor)
+          )
+      )
     }
 
   }
 }
 
-fun allPolyominoes() = enumeratePolyominoes(Polyominoes)
+fun allPolyominoes() = enumeratePolyominoes(PolyominoeDefinitions).toSet()
 
 fun newBuilders(): Map<Polyomino, Builder> =
     mapOf(
-        Polyominoes.singleCellRoom to Builders.singleCellRoom
+        PolyominoeDefinitions.singleCellRoom to BuilderDefinitions.singleCellRoom
     )

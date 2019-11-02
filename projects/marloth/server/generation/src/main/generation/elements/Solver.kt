@@ -22,7 +22,7 @@ private fun checkPolyominoMatch(originalBlocks: Map<Vector3i, IntermediateBlock>
 }
 
 private tailrec fun fillCellsIteration(remainingCells: Set<Vector3i>,
-                                       polyominoes: List<Polyomino>,
+                                       polyominoes: Set<Polyomino>,
                                        originalBlocks: Map<Vector3i, IntermediateBlock>,
                                        newBlocks: Map<Vector3i, Block>,
                                        accumulator: List<AppliedPolyomino>): List<AppliedPolyomino> {
@@ -57,7 +57,7 @@ private fun mapGridToBlocks(grid: MapGrid): Map<Vector3i, IntermediateBlock> {
   }
 }
 
-fun convertGridToElements(grid: MapGrid, polyominoes: List<Polyomino>): List<AppliedPolyomino> {
+fun convertGridToElements(grid: MapGrid, polyominoes: Set<Polyomino>): List<AppliedPolyomino> {
   assert(polyominoes.any())
   val blocks = mapGridToBlocks(grid)
   val remainingCells = grid.cells.keys

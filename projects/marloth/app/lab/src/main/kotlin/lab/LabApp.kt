@@ -11,6 +11,9 @@ import generation.generateRealm
 import generation.misc.GenerationConfig
 import generation.misc.MeshShapeMap
 import generation.misc.compileArchitectureMeshInfo
+import generation.next.allPolyominoes
+import generation.next.buildArchitecture
+import generation.next.newBuilders
 import marloth.generation.populateWorld
 import lab.utility.shouldReloadWorld
 import lab.utility.updateWatching
@@ -74,7 +77,8 @@ fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig): World
   val realm = generateRealm(generationConfig, input, grid)
   val nextId = newIdSource(1)
   val deck = pipeHandsToDeck(nextId, listOf(
-      { _ -> placeArchitecture(generationConfig, realm, dice) },
+//      { _ -> placeArchitecture(generationConfig, realm, dice) },
+      { _ -> buildArchitecture(generationConfig, dice, grid, allPolyominoes(), newBuilders()) },
       populateWorld(generationConfig, input, realm)
   ))(Deck())
 

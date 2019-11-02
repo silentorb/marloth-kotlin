@@ -31,8 +31,8 @@ val floorOffset = Vector3(0f, 0f, -wallHeight / 2f)
 
 fun newArchitectureMesh(meshes: MeshInfoMap, mesh: MeshName, position: Vector3,
                         orientation: Quaternion = Quaternion(),
-                        node: Id,
                         architecture: ArchitectureElement,
+                        node: Id = 0L,
                         texture: TextureId? = null, scale: Vector3 = Vector3.unit): Hand {
   val meshInfo = meshes[mesh]!!
   return Hand(
