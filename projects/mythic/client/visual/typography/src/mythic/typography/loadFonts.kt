@@ -2,6 +2,7 @@ package mythic.typography
 
 import org.lwjgl.BufferUtils
 import org.lwjgl.system.jni.JNINativeInterface.GetDirectBufferAddress
+import kotlin.reflect.full.memberProperties
 
 fun loadCharacters(face: Long, dimensions: IntegerVector2, fontInfo: FontLoadInfo): CharacterMap {
   val characters: MutableMap<Char, Glyph> = mutableMapOf()
@@ -137,3 +138,12 @@ fun extractFontSets(fonts: List<FontLoadInfo>, styles: List<IndexedTextStyle>): 
               pixelHeights = it.value
           )
         }
+
+fun enumerateTextStyles(styles: Any): List<IndexedTextStyle> {
+  return styles.javaClass.kotlin.memberProperties.map { member ->
+    member.get(styles) as IndexedTextStyle
+  }
+}
+
+fun loadFontSets(fonts: List<FontLoadInfo>, styles: Any): List<Map<Int, Font>> =
+    loadFontSets(extractFontSets(fonts, enumerateTextStyles(styles)))

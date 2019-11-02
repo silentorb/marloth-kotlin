@@ -33,7 +33,7 @@ fun newClient(platform: Platform, displayConfig: DisplayConfig, lightingConfig: 
       textures = textures,
       display = platform.display,
       config = displayConfig,
-      fontList = gatherFontSets(),
+      fontSource = ::gatherFontSets,
       lightingConfig = lightingConfig
   )
   return Client(platform, renderer)

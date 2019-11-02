@@ -1,7 +1,7 @@
 package compuquest_app
 
-import configuration.loadConfig
-import configuration.saveConfig
+import configuration.loadYamlFile
+import configuration.saveYamlFile
 import rendering.DisplayConfig
 
 data class GameConfig(
@@ -11,11 +11,11 @@ data class GameConfig(
 val gameConfigFile = "compuquestGameConfig.yaml"
 
 fun saveGameConfig(config: GameConfig) {
-  saveConfig(gameConfigFile, config)
+  saveYamlFile(gameConfigFile, config)
 }
 
 fun loadGameConfig(): GameConfig {
-  val config = loadConfig<GameConfig>(gameConfigFile)
+  val config = loadYamlFile<GameConfig>(gameConfigFile)
   if (config != null)
     return config
 

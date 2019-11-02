@@ -1,5 +1,6 @@
 package compuquest_client
 
+import compuquest_client.views.textStyles
 import mythic.bloom.next.Box
 import mythic.bloom.renderLayout
 import mythic.drawing.*
@@ -10,25 +11,18 @@ import mythic.spatial.Vector4
 import mythic.typography.*
 import org.joml.Vector4i
 
+val baseFonts = listOf(
+    FontLoadInfo(
+        filename = "fonts/dos.ttf",
+        pixelHeight = 0
+    )
+)
+
 fun createCanvas(windowInfo: WindowInfo): Canvas {
   val unitScaling = getUnitScaling(windowInfo.dimensions)
   val vertexSchemas = createDrawingVertexSchemas()
-  val dosFont = FontLoadInfo(
-      "dos.ttf",
-      pixelWidth = 0,
-      pixelHeight = 8,
-      monospace = 6,
-//      loadFlags = FT_LOAD_RENDER or FT_LOAD_TARGET_MONO,
-      renderMode = RenderMode.FT_RENDER_MODE_MONO
-  )
-
-  val fonts = loadFontSets(listOf(
-      RangedFontLoadInfo(
-          info = dosFont,
-          pixelHeights = listOf(8)
-      )
-  ))
-
+  val fonts = loadFontSets(baseFonts, textStyles)
+  setGlobalFonts(fonts)
   return Canvas(
       createDrawingEffects(),
       unitScaling,
@@ -37,24 +31,20 @@ fun createCanvas(windowInfo: WindowInfo): Canvas {
   )
 }
 
-//val screenTextureInitializer: SimpleTextureInitializer = { width: Int, height: Int ->
-//  GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, width, height, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, 0);
-//  GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-//  GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-//}
-
 data class RenderState(
     val glow: Glow = Glow(),
-    val offscreenBuffer: OffscreenBuffer
+    val offscreenBuffer: OffscreenBuffer,
+    val windowLowSize: Vector2i
 )
 
-fun newRenderState(): RenderState {
+fun newRenderState(windowLowSize: Vector2i): RenderState {
   val glow = Glow()
   glow.state.clearColor = Vector4(0f, 0f, 0f, 1f)
 
   return RenderState(
       glow = glow,
-      offscreenBuffer = prepareScreenFrameBuffer(320, 200, false)
+      offscreenBuffer = prepareScreenFrameBuffer(windowLowSize.x, windowLowSize.y, false),
+      windowLowSize = windowLowSize
   )
 }
 
@@ -66,18 +56,18 @@ fun prepareRender(renderState: RenderState, windowInfo: WindowInfo) {
   glow.state.setFrameBuffer(0)
 //    glow.operations.clearScreen()
   glow.state.setFrameBuffer(offscreenBuffer.framebuffer.id)
-  glow.state.viewport = Vector4i(0, 0, 320, 200)
+  glow.state.viewport = Vector4i(0, 0, renderState.windowLowSize.x, renderState.windowLowSize.y)
   glow.state.depthWrite = false
   glow.operations.clearScreen()
 }
 
-fun finishRender(state: RenderState, windowInfo: WindowInfo, canvas: Canvas) {
-  val glow = state.glow
-  val offscreenBuffer= state.offscreenBuffer
-//    glow.state.framebuffer = 0
+fun finishRender(renderState: RenderState, windowInfo: WindowInfo, canvas: Canvas) {
+  val glow = renderState.glow
+  val offscreenBuffer= renderState.offscreenBuffer
+//    glow.renderState.framebuffer = 0
   glow.state.viewport = Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y)
 //    canvas.drawImage(Vector2(), windowInfo.dimensions.toVector2(), canvas.image(offscreenBuffer.texture))
-  offscreenBuffer.framebuffer.blitToScreen(Vector2i(320, 200), windowInfo.dimensions, false)
+  offscreenBuffer.framebuffer.blitToScreen(renderState.windowLowSize, windowInfo.dimensions, false)
 }
 
 

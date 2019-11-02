@@ -57,15 +57,6 @@ private fun childSelected2(key: String): LogicModuleTransform = logicWrapper { b
     result
 }
 
-//fun selectableList(key: String): LogicModule = { seed ->
-//  childSelected2(key)(onClickPersisted(key, basicSelectableMenu(seed)))
-//}
-
-//fun <T> persistedSelectable(key: String, selectionLogic: SelectionLogic, idSelector: IdSelector<T>): (T) -> LogicModule =
-//    { seed ->
-//      onClickPersisted(key, selectable(key, selectionLogic, idSelector)(seed))
-//    }
-
 fun selectableFlower(key: String, id: String, flower: (Seed, Boolean) -> Flower): Flower = { seed ->
   val state = selectionStateOld(seed.bag[key])
   val selected = state.contains(id)

@@ -5,6 +5,7 @@ dependencies {
     compile "org.lwjgl:lwjgl:$lwjglVersion:$lwjglNatives"
     compile "org.lwjgl:lwjgl-opengl:$lwjglVersion"
     compile "org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }
 
 requires('spatial', 'glowing')

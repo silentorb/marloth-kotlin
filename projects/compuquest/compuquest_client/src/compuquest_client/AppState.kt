@@ -5,6 +5,7 @@ import compuquest_simulation.World
 import compuquest_simulation.data.abilityLibrary
 import compuquest_simulation.newWorld
 import mythic.bloom.next.newBloomState
+import org.joml.Vector2i
 
 enum class GameMode {
   abilitySelection,
@@ -30,7 +31,7 @@ fun newClientBattleState() =
         flicker = 0f
     )
 
-fun newAppState(): AppState {
+fun newAppState(windowLowSize: Vector2i): AppState {
   return AppState(
       world = null,
       client = ClientState(
@@ -38,7 +39,7 @@ fun newAppState(): AppState {
           shopState = newAbilitySelectionState(listOf(), 1),
           input = newInputState(),
           battle = newClientBattleState(),
-          render = newRenderState(),
+          render = newRenderState(windowLowSize),
           bloomState = newBloomState()
       )
   )
@@ -48,7 +49,7 @@ data class LabConfig(
     val playerAbilities: List<String>
 )
 
-fun newLabAppState(config: LabConfig): AppState {
+fun newLabAppState(config: LabConfig, windowLowSize: Vector2i): AppState {
   val abilities = config.playerAbilities.map { name -> abilityLibrary.first { it.name == name } }
   return AppState(
       world = newWorld(abilities),
@@ -57,7 +58,7 @@ fun newLabAppState(config: LabConfig): AppState {
           shopState = null,
           input = newInputState(),
           battle = newClientBattleState(),
-          render = newRenderState(),
+          render = newRenderState(windowLowSize),
           bloomState = newBloomState()
       )
   )

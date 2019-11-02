@@ -40,14 +40,3 @@ fun normalizeBounds(plane: Plane): (Bounds) -> Bounds = { bounds ->
 
 val horizontalPlane: Plane = { Vector2i(it.x, it.y) }
 val verticalPlane: Plane = { Vector2i(it.y, it.x) }
-
-//enum class Plane {
-//  horizontal,
-//  vertical
-//}
-//
-//fun planeMap(plane: Plane): Plane =
-//    if (plane == Plane.horizontal)
-//      horizontalPlane
-//    else
-//      verticalPlane

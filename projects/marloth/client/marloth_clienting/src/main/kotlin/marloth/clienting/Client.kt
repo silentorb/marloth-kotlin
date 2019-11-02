@@ -23,7 +23,9 @@ import mythic.ent.pipe
 import mythic.ent.pipe2
 import mythic.platforming.Platform
 import mythic.spatial.Vector3
+import mythic.typography.enumerateTextStyles
 import mythic.typography.extractFontSets
+import mythic.typography.loadFontSets
 import newBloomInputState
 import rendering.DisplayConfig
 import rendering.Renderer
@@ -63,7 +65,7 @@ fun loadTextResource(mapper: TextResourceMapper): TextResources {
   return Text.values().map { Pair(it, mapper(it)) }.associate { it }
 }
 
-fun gatherFontSets() = extractFontSets(baseFonts, enumerateTextStyles(textStyles))
+fun gatherFontSets() = loadFontSets(baseFonts, textStyles)
 
 class Client(val platform: Platform, val renderer: Renderer) {
   val screens: List<Screen> = (1..maxPlayerCount).map { Screen(it) }

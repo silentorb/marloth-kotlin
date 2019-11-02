@@ -112,9 +112,9 @@ fun applyLayout(layout: Flower, bloomState: BloomState, windowInfo: WindowInfo):
   return layout(seed)
 }
 
-fun update(platform: Platform, state: AppState, delta: Float): Pair<ClientState, GameCommand?> {
+fun updateClient(platform: Platform, state: AppState, delta: Float): Pair<ClientState, GameCommand?> {
   val actualWindowInfo = platform.display.getInfo()
-  val windowInfo = actualWindowInfo.copy(dimensions = Vector2i(320, 200))
+  val windowInfo = actualWindowInfo.copy(dimensions = state.client.render.windowLowSize)
   val canvas = createCanvas(windowInfo)
 //    val (userInput, triggerState) = updateInputState(state.client.previousInput, actualWindowInfo)
   val layout = prepareLayout(state)

@@ -7,10 +7,7 @@ import compuquest_simulation.*
 import compuquest_simulation.Id
 import compuquest_simulation.logic.isReady
 import mythic.bloom.*
-import mythic.bloom.next.Box
-import mythic.bloom.next.Flower
-import mythic.bloom.next.compose
-import mythic.bloom.next.emptyFlower
+import mythic.bloom.next.*
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
 import mythic.spatial.Vector2
@@ -38,8 +35,8 @@ val elementColors = mapOf(
 
 fun resourceView(resource: Resource) =
     label(
-        elementColors[resource.element]!!,
-        "" + resource.value + "/" + resource.max
+//        elementColors[resource.element]!!,
+        textStyles.smallWhite,     "" + resource.value + "/" + resource.max
     )
 
 fun abilityEvent(creature: Creature, ability: Ability): Any? =
@@ -67,8 +64,8 @@ fun creatureView(info: BattleInfo): (Creature) -> Flower = { creature ->
   //  val columns = arrangeHorizontal(standardPadding, bounds, listOf(80f, null))
   val columns = if (isAlive(creature) || info.state.flicker > 0.4f)
     listOf<Flower>()
-        .plus(label(white, creature.type.name.take(8)))
-        .plus(label(white, creature.life.toString()))
+        .plus(label(textStyles.smallWhite, creature.type.name.take(8)))
+        .plus(label(textStyles.smallWhite, creature.life.toString()))
 //        .plus(if (info.state.selectedEntity != null)
 //          listOf(Box(
 //              bounds = bounds,
@@ -88,8 +85,8 @@ fun creaturesView(world: World, info: BattleInfo): Flower {
 
 fun abilityView(info: BattleInfo, creature: Creature): (Ability) -> Flower = { ability ->
   val rows = listOf(
-      label(white, ability.type.name),
-      label(white, (0 until ability.cooldown).map { "* " }.joinToString())
+      label(textStyles.smallWhite, ability.type.name),
+      label(textStyles.smallWhite, (0 until ability.cooldown).map { "* " }.joinToString())
 //      Box(
 //          bounds = bounds,
 //          depiction = selectedDepiction(info, ability.id),
@@ -151,13 +148,13 @@ fun renderMissileAnimation(world: World, animation: Animation): Flower {
   val actorPosition = getPosition(world, actor) + positionOffset
   val targetPosition = getPosition(world, target) + positionOffset
   val missilePosition = tweenPosition(actorPosition, targetPosition, animation.progress)
-  return label(
-      white,
-      ability.type.name,
-      Bounds(
-          position = missilePosition,
-          dimensions = Vector2(50f, 10f)
+  return margin(left = missilePosition.x.toInt(), top = missilePosition.y.toInt())(
+//      div(layout = layoutDimensions(fixed(50), fixed(10)))(
+      label(
+          textStyles.smallWhite,
+          ability.type.name
       )
+//      )
   )
 }
 

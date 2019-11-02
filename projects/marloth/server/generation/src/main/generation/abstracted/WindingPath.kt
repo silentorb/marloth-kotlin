@@ -115,7 +115,7 @@ private fun newPathStep(position: Vector3i, direction: Vector3i, attributes: Set
   }
 }
 
-private tailrec fun addPathStep(maxSteps: Int, dice: Dice, grid: MapGrid, position: Vector3i, stepCount: Int = 0): MapGrid {
+private fun addPathStep(maxSteps: Int, dice: Dice, grid: MapGrid, position: Vector3i, stepCount: Int = 0): MapGrid {
   if (stepCount == maxSteps)
     return grid
 

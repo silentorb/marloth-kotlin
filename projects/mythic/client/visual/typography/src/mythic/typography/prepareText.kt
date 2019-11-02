@@ -129,8 +129,11 @@ fun arrangeType(config: TextConfiguration): TypeArrangement? {
 }
 
 fun calculateTextDimensions(config: TextConfiguration): Vector2 {
-  val arrangement = arrangeType(config)!!
-  return Vector2(arrangement.width, arrangement.height)
+  val arrangement = arrangeType(config)
+  return if (arrangement != null)
+    Vector2(arrangement.width, arrangement.height)
+  else
+    Vector2()
 }
 
 private val maxCharacters = 128

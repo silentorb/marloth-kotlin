@@ -207,7 +207,7 @@ fun gatherSceneLights(meshes: ModelMeshMap, scene: GameScene): List<Light> {
 class Renderer(
     val config: DisplayConfig,
     display: PlatformDisplay,
-    fontList: List<RangedFontLoadInfo>,
+    fontSource: () -> List<FontSet>,
     val lightingConfig: LightingConfig,
     textures: List<DeferredTexture>
 ) {
@@ -234,8 +234,8 @@ class Renderer(
     prepareScreenFrameBuffer(config.width, config.height, true)
   }
   val multisampler: Multisampler?
-  val fonts = loadFontSets(fontList)
   val dynamicMesh = MutableSimpleMesh(vertexSchemas.flat)
+  val fonts = fontSource()
 
   init {
     glow.state.clearColor = Vector4(0f, 0f, 0f, 1f)

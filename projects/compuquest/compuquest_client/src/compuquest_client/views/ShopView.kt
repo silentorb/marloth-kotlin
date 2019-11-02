@@ -5,6 +5,9 @@ import compuquest_simulation.AbilityType
 import compuquest_simulation.CommandType
 import mythic.bloom.*
 import mythic.bloom.next.Flower
+import mythic.bloom.next.div
+import mythic.bloom.next.emptyFlower
+import mythic.bloom.next.plusLogic
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
 
@@ -12,31 +15,28 @@ fun listItemDepiction(content: String): Depiction = { bounds: Bounds, canvas: Ca
   drawFill(bounds, canvas, grayTone(0.5f))
   val style = Pair(12f, LineStyle(black, 1f))
   drawBorder(bounds, canvas, style.second)
-  drawCenteredText(canvas, black, content, bounds)
+//  drawCenteredText(canvas, black, content, bounds)
 }
 
-fun abilitySelectionList(column: ShopColumn, abilities: List<AbilityType>, bounds: Bounds): LayoutOld {
-  val rows = listBounds(verticalPlane, standardPadding, bounds, abilities.map { itemHeight })
-  return abilities.zip(rows, { a, b ->
-    Box(
-        bounds = b,
-        depiction = listItemDepiction(a.name),
-        handler = ShopSelectionEvent(column, a)
-    )
+fun abilitySelectionList(column: ShopColumn, abilities: List<AbilityType>): Flower {
+//  val rows = listBounds(verticalPlane, standardPadding, bounds, abilities.map { itemHeight })
+  return list(verticalPlane)(abilities.map { a ->
+    depict(listItemDepiction(a.name)) //plusLogic ShopSelectionEvent(column, a)
   })
 }
 
 fun shopView(state: ShopState): Flower {
-  val rowLengths = resolveLengths(bounds.dimensions.y, listOf(itemHeight, null, itemHeight))
-  val rows = listBounds(verticalPlane, 0f, bounds, rowLengths)
+//  val rowLengths = resolveLengths(bounds.dimensions.y, listOf(itemHeight, null, itemHeight))
+//  val rows = listBounds(verticalPlane, 0f, bounds, rowLengths)
 
-  val columnBounds = arrangeHorizontal(standardPadding, rows[1], listOf(150f, null, 150f))
-  return listOf(label(white, remainingPoints(state).toString(), rows[0]))
-      .plus(abilitySelectionList(ShopColumn.available, state.available, columnBounds[0]))
-      .plus(abilitySelectionList(ShopColumn.selected, state.selected, columnBounds[2]))
-      .plus(if (state.existing.plus(state.selected).any())
-        listOf(button("OK", CommandType.submit, rows[2]))
+//  val columnBounds = arrangeHorizontal(standardPadding, rows[1], listOf(150f, null, 150f))
+  return list(horizontalPlane, 10)(listOf(
+      label(textStyles.smallWhite, remainingPoints(state).toString()),
+      abilitySelectionList(ShopColumn.available, state.available),
+      abilitySelectionList(ShopColumn.selected, state.selected),
+      if (state.existing.plus(state.selected).any())
+        button("OK", CommandType.submit)
       else
-        listOf()
-      )
+        emptyFlower
+  ))
 }

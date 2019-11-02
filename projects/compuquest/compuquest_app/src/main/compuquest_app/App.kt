@@ -7,14 +7,13 @@ import mythic.desktop.createDesktopPlatform
 import mythic.platforming.Platform
 import mythic.platforming.PlatformDisplay
 import mythic.quartz.DeltaTimer
-import mythic.quartz.TimestepState
+import org.joml.Vector2i
 
 data class CompuQuestApp(
     val platform: Platform,
     val gameConfig: GameConfig,
     val display: PlatformDisplay = platform.display,
-    val timer: DeltaTimer = DeltaTimer(),
-    val client: Client = Client(platform)
+    val timer: DeltaTimer = DeltaTimer()
 )
 
 fun updateWorldAnimation(world: World, animation: Animation, delta: Float): World {
@@ -40,7 +39,7 @@ fun updateWorld(world: World?, command: GameCommand?, delta: Float): World? {
 tailrec fun appLoop(app: CompuQuestApp, state: AppState) {
   app.display.swapBuffers()
   val delta = app.timer.update().toFloat()
-  val (clientState, command) = app.client.update(state, delta)
+  val (clientState, command) = updateClient(app.platform, state, delta)
   val newState = state.copy(client = clientState)
   val state2 = if (command != null && newState.world == null)
     updateOutsideOfWorld(newState, command)
@@ -60,14 +59,16 @@ const val labConfigPath = "../labConfig.yaml"
 fun loadLabConfig(): LabConfig? =
     loadYamlFile<LabConfig>(labConfigPath)
 
+private val renderLowSize = Vector2i(800, 600)
+
 fun runApp(platform: Platform, gameConfig: GameConfig) {
   platform.display.initialize(gameConfig.display)
   val app = CompuQuestApp(platform, gameConfig)
   val labConfig = loadLabConfig()
   val state = if (labConfig != null)
-    newLabAppState(labConfig)
+    newLabAppState(labConfig, renderLowSize)
   else
-    newAppState()
+    newAppState(renderLowSize)
 
   appLoop(app, state)
 }
