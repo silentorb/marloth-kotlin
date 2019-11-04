@@ -87,10 +87,12 @@ typealias FaceList = Collection<ConnectionFace>
 
 typealias NodeTable = Map<Id, Node>
 typealias CellPositionMap = Map<Id, Vector3i>
+typealias CellBiomeMap = Map<Vector3i, BiomeName>
 
 data class Realm(
     val graph: Graph,
     val cellMap: CellPositionMap,
+    val cellBiomes: CellBiomeMap,
     val nodeList: List<Node>,
     val doorFrameNodes: List<Id>,
     val grid: MapGrid

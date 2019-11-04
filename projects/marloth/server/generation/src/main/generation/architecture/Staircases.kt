@@ -29,7 +29,7 @@ val placeCurvedStaircases: Architect = { config, realm, dice ->
         val heightStep = 0.3f
         val stepCount = (stairHeight / heightStep).toInt()
         val angleStep = sweepLength / stepCount.toFloat()
-        val baseOffset = node.position + floorOffset + align(config.meshes, alignWithCeiling)(mesh)
+        val baseOffset = node.position + floorOffsetOld + align(config.meshes, alignWithCeiling)(mesh)
         (0 until stepCount).map { step ->
           val angle = baseAngle + step * angleStep
           val heightPosition = Vector3(0f, 0f, heightStep + step * heightStep)

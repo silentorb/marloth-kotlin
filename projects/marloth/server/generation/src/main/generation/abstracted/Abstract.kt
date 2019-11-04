@@ -60,7 +60,7 @@ fun applyInitialBiomes(biomes: BiomeInfoMap, biomeGrid: BiomeGrid, graph: Graph)
   ).associate { it }
 
   val biomeMap: Map<Id, BiomeName> = remainingNodes
-      .mapValues { (_, node) -> biomeGrid(node.position.x, node.position.y) }
+      .mapValues { (_, node) -> biomeGrid(node.position) }
       .plus(fixedBiomeMap)
 
   return graph.nodes.mapValues {

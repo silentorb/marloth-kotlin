@@ -13,9 +13,10 @@ import scenery.enums.AccessoryId
 import simulation.entities.*
 import simulation.main.Deck
 import simulation.main.defaultPlayer
+import simulation.physics.defaultCharacterHeight
 import kotlin.math.floor
 
-val firstPersonCameraOffset = Vector3(0f, 0f, 0.6f)
+val firstPersonCameraOffset = Vector3(0f, 0f, defaultCharacterHeight / 2f)
 val firstPersonDeadCameraOffset = Vector3(0f, 0f, -0.75f)
 
 val simplePainterMap = MeshId.values().mapNotNull { meshId ->
@@ -127,7 +128,7 @@ fun convertComplexDepiction(deck: Deck, id: Id, depiction: Depiction): ElementGr
       .translate(body.position + Vector3(0f, 0f, verticalOffset))
       .rotate(character.facingQuaternion)
       .rotateZ(Pi / 2f)
-      .scale(1.5f)
+//      .scale(1.5f)
 
   val animations = depiction.animations.map {
     ElementAnimation(

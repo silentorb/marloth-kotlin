@@ -56,15 +56,15 @@ typealias HandArchitect = (GenerationConfig, Realm, Dice) -> Hand
 
 const val standardWallLength = 4f
 
-private val architectureSteps = listOf(
-    placeCurvedStaircases,
-    placeRoomCeilings,
-    placeRoomFloors,
-//    placeRoomWalls,
-    placeTunnelCeilings,
-    placeTunnelFloors,
-    placeTunnelWalls
-)
-
-fun placeArchitecture(config: GenerationConfig, realm: Realm, dice: Dice): List<Hand> =
-    architectureSteps.flatMap { it(config, realm, dice) }
+//private val architectureSteps = listOf(
+//    placeCurvedStaircases,
+//    placeRoomCeilings,
+//    placeRoomFloors,
+////    placeRoomWalls,
+//    placeTunnelCeilings,
+//    placeTunnelFloors
+////    placeTunnelWalls
+//)
+//
+//fun placeArchitecture(config: GenerationConfig, realm: Realm, dice: Dice): List<Hand> =
+//    architectureSteps.flatMap { it(config, realm, dice) }

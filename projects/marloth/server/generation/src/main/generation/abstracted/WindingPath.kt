@@ -130,7 +130,7 @@ private fun addPathStep(maxSteps: Int, dice: Dice, grid: MapGrid, position: Vect
 }
 
 fun newWindingPath(dice: Dice, length: Int): MapGrid {
-  val startPosition = Vector3i(0, 0, 1)
+  val startPosition = Vector3i(0, 0, 0)
   val grid = MapGrid(
       cells = mapOf(
           startPosition to Cell(attributes = setOf(NodeAttribute.room, NodeAttribute.home))

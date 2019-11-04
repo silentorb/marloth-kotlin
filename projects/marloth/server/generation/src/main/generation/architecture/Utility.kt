@@ -22,12 +22,15 @@ import kotlin.math.atan
 
 const val roundedMeshPadding = 0.08f
 
+const val cellLength = 10f
+val cellHalfLength = cellLength / 2f
+
 fun getHorizontalFlip(dice: Dice, info: ArchitectureMeshInfo): Float =
     if (info.attributes.contains(MeshAttribute.canFlipHorizontally) && dice.getBoolean()) Pi else 0f
 
 //val ceilingOffset = Vector3(0f, 0f, wallHeight / 2f)
 val ceilingOffset = Vector3(0f, 0f, wallHeight)
-val floorOffset = Vector3(0f, 0f, -wallHeight / 2f)
+val floorOffsetOld = Vector3(0f, 0f, -wallHeight / 2f)
 
 fun newArchitectureMesh(meshes: MeshInfoMap, mesh: MeshName, position: Vector3,
                         orientation: Quaternion = Quaternion(),

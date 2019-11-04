@@ -5,6 +5,7 @@ import org.joml.Math.PI
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import java.text.DecimalFormat
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -352,30 +353,37 @@ fun manhattanDistance(a: Vector3, b: Vector3): Float =
 
 // Faster than a regular distance check
 fun withinRangeFast(a: Vector3, b: Vector3, range: Float): Boolean {
-  val c = java.lang.Math.abs(a.x - b.x)
+  val c = abs(a.x - b.x)
   if (c > range) {
-//    mk[0]++
     return false
   }
 
-  val d = java.lang.Math.abs(a.y - b.y)
+  val d = abs(a.y - b.y)
   if (d > range) {
-//    mk[1]++
     return false
   }
 
   val m = c + d
 
   return if (m <= range) {
-//    mk[2]++
     true
   } else if (m * 0.70710677 <= range) {
-//    mk[3]++
     a.distance(b) <= range
   } else {
-//    mk[4]++
     false
   }
+}
+
+fun <T> nearestFast(items: List<Pair<Vector3, T>>): (Vector3) -> T = { anchor ->
+  var result = items.first()
+  var distance = result.first.distance(anchor)
+  for (item in items.asSequence().drop(1)) {
+    if (withinRangeFast(anchor, item.first, distance)) {
+      result = item
+      distance = item.first.distance(anchor)
+    }
+  }
+  result.second
 }
 
 fun projectVector3(angle: Float, radius: Float, z: Float): Vector3 {

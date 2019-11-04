@@ -141,3 +141,11 @@ fun getOffset(info: GltfInfo, accessorIndex: Int): Int {
   val bufferView = info.bufferViews[accessor.bufferView]
   return bufferView.byteOffset
 }
+
+fun parseFloat(value: Any?): Float =
+    if (value is Int)
+      value.toFloat()
+    else if (value is Double)
+      value.toFloat()
+    else
+      throw Error("Not supported")

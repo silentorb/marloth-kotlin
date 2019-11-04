@@ -6,41 +6,40 @@ import configuration.saveYamlFile
 import generation.abstracted.initializeNodeRadii
 import generation.abstracted.newWindingPath
 import generation.abstracted.newWindingPathTestStartingWithStair
-import generation.architecture.placeArchitecture
+import generation.architecture.allPolyominoes
+import generation.architecture.newBuilders
 import generation.generateRealm
 import generation.misc.GenerationConfig
 import generation.misc.MeshShapeMap
 import generation.misc.compileArchitectureMeshInfo
-import generation.next.allPolyominoes
+import generation.misc.newRandomizedBiomeGrid
 import generation.next.buildArchitecture
-import generation.next.newBuilders
-import marloth.generation.populateWorld
 import lab.utility.shouldReloadWorld
 import lab.utility.updateWatching
 import lab.views.game.GameViewConfig
 import lab.views.game.drawBulletDebug
 import lab.views.model.newModelViewState
-import marloth.clienting.Client
 import marloth.clienting.newClientState
 import marloth.definition.generation.biomeInfoMap
 import marloth.definition.generation.meshAttributes
 import marloth.definition.staticDefinitions
 import marloth.front.GameApp
 import marloth.front.RenderHook
+import marloth.generation.populateWorld
 import marloth.integration.*
 import mythic.desktop.createDesktopPlatform
+import mythic.ent.newIdSource
 import mythic.ent.pipe
 import mythic.quartz.newTimestepState
+import org.recast4j.detour.NavMeshQuery
 import randomly.Dice
-import simulation.main.*
+import simulation.intellect.navigation.newNavMesh
+import simulation.main.Deck
+import simulation.main.World
+import simulation.main.pipeHandsToDeck
 import simulation.misc.WorldInput
 import simulation.misc.createWorldBoundary
 import simulation.physics.newBulletState
-import mythic.ent.newIdSource
-import org.recast4j.detour.NavMeshQuery
-import rendering.Renderer
-import rendering.texturing.gatherTextures
-import simulation.intellect.navigation.newNavMesh
 
 const val labConfigPath = "../labConfig.yaml"
 
@@ -74,11 +73,12 @@ fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig): World
   else
     newWindingPath(input.dice, generationConfig.roomCount)
 
-  val realm = generateRealm(generationConfig, input, grid)
+  val biomeGrid = newRandomizedBiomeGrid(biomeInfoMap, input)
+  val realm = generateRealm(generationConfig, input, grid, biomeGrid)
   val nextId = newIdSource(1)
   val deck = pipeHandsToDeck(nextId, listOf(
 //      { _ -> placeArchitecture(generationConfig, realm, dice) },
-      { _ -> buildArchitecture(generationConfig, dice, grid, allPolyominoes(), newBuilders()) },
+      { _ -> buildArchitecture(generationConfig, dice, grid, realm.cellBiomes, allPolyominoes(), newBuilders()) },
       populateWorld(generationConfig, input, realm)
   ))(Deck())
 

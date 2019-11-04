@@ -434,8 +434,8 @@ fun loadBoundingShape(node: Node): Shape? {
     val type = source["type"] as String?
     val shape = when (type) {
       "cylinder" -> Cylinder(
-          radius = (source["radius"] as Double).toFloat(),
-          height = (source["height"] as Double).toFloat()
+          radius = parseFloat(source["radius"]),
+          height = parseFloat(source["height"])
       )
       "box" -> {
         Box(

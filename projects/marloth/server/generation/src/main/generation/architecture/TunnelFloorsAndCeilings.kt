@@ -61,7 +61,7 @@ val placeTunnelFloors: Architect = { config, realm, dice ->
         val biome = config.biomes[node.biome]!!
         val info = getTunnelInfo(realm.graph, node.id)
         val meshFilter = getTunnelFloorMesh(biome, info)
-        val common = CommonArchitectConfig(meshFilter, TextureGroup.floor, floorOffset, alignWithCeiling)
+        val common = CommonArchitectConfig(meshFilter, TextureGroup.floor, floorOffsetOld, alignWithCeiling)
         placeTunnelFloorOrCeiling(common)(node)(config, realm, dice)
       }
 }

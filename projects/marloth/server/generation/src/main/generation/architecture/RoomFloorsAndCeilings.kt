@@ -51,7 +51,7 @@ val placeRoomFloors: Architect = { config, realm, dice ->
         else
           null
 
-        val common = CommonArchitectConfig(meshFilter, TextureGroup.floor, floorOffset, alignWithCeiling, orientation)
+        val common = CommonArchitectConfig(meshFilter, TextureGroup.floor, floorOffsetOld, alignWithCeiling, orientation)
         placeRoomFloorOrCeiling(common)(node)(config, realm, dice)
       }
 }

@@ -5,6 +5,7 @@ import mythic.ent.IdSource
 import mythic.ent.newIdSource
 import mythic.spatial.*
 import org.joml.Intersectionf
+import simulation.misc.BiomeName
 import simulation.misc.Node
 
 const val doorwayLength = 2.5f

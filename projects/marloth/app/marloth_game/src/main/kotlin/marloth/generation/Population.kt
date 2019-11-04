@@ -4,10 +4,16 @@ import generation.abstracted.distributeToSlots
 import generation.abstracted.neighbors
 import generation.abstracted.normalizeRanges
 import generation.architecture.alignWithNodeFloor
+import generation.architecture.floorOffset
 import generation.architecture.nodeFloorCenter
 import generation.calculateWorldScale
-import generation.misc.*
+import generation.elements.applyCellPosition
+import generation.misc.BiomeAttribute
+import generation.misc.GenerationConfig
+import generation.misc.MeshAttribute
+import generation.misc.MeshInfoMap
 import marloth.definition.creatures
+import marloth.definition.newCharacter
 import marloth.definition.templates.defaultWares
 import marloth.definition.templates.newBuffCloud
 import marloth.definition.templates.newMerchant
@@ -16,6 +22,7 @@ import mythic.ent.Id
 import mythic.spatial.Pi
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
+import mythic.spatial.Vector3i
 import org.joml.times
 import randomly.Dice
 import scenery.enums.AccessoryId
@@ -24,8 +31,9 @@ import scenery.enums.ModifierId
 import simulation.entities.*
 import simulation.intellect.Pursuit
 import simulation.intellect.Spirit
-import marloth.definition.newCharacter
-import simulation.main.*
+import simulation.main.Deck
+import simulation.main.Hand
+import simulation.main.HandAttachment
 import simulation.misc.*
 import simulation.physics.Body
 import simulation.physics.old.getLookAtAngle
@@ -136,8 +144,8 @@ fun placeWallLamps(deck: Deck, config: GenerationConfig, realm: Realm, dice: Dic
     return listOf()
 
   val (certain, options) = nodeWalls.entries.partition {
-    val biome = config.biomes[realm.nodeTable[it.key]!!.biome]!!
-    biome.attributes.contains(BiomeAttribute.alwaysLit)
+    val biome = config.biomes[realm.nodeTable[it.key]?.biome]
+    biome != null && biome.attributes.contains(BiomeAttribute.alwaysLit)
   }
 
   val count = Math.min((10f * scale).toInt(), options.size)
@@ -170,12 +178,12 @@ fun placeWallLamps(deck: Deck, config: GenerationConfig, realm: Realm, dice: Dic
   return hands
 }
 
-fun newPlayer(realm: Realm, playerNode: Node): Hand {
+fun newPlayer(realm: Realm, cellPosition: Vector3i, playerNode: Node): Hand {
   val neighbor = neighbors(realm.graph, playerNode).first()
   return newCharacter(
       definition = creatures.player,
       faction = 1,
-      position = playerNode.position + Vector3(0f, 0f, 1f),
+      position = applyCellPosition(cellPosition) + floorOffset + Vector3(0f, 0f, 1f),
       angle = getLookAtAngle(neighbor.position - playerNode.position)
   )
       .copy(
@@ -275,17 +283,18 @@ fun populateRooms(occupantToHand: OccupantToHand, dice: Dice, realm: Realm, play
 }
 
 fun populateWorld(config: GenerationConfig, input: WorldInput, realm: Realm): (Deck) -> List<Hand> = { deck ->
-  val playerNode = realm.nodeTable.values.firstOrNull {
+  val playerNodeOld = realm.nodeTable.values.firstOrNull {
     config.biomes[it.biome]!!.attributes.contains(BiomeAttribute.placeOnlyAtStart)
   }
 
-  if (playerNode == null)
+  if (playerNodeOld == null)
     throw Error("Biome configuration is missing placeOnlyAtStart")
 
+  val playerCell = realm.grid.cells.entries.first { it.value.attributes.contains(NodeAttribute.home) }
   val scale = calculateWorldScale(input.boundary.dimensions)
   val occupantToHand = occupantPopulator(config)
-  listOf(newPlayer(realm, playerNode))
-      .plus(populateRooms(occupantToHand, input.dice, realm, playerNode.id))
+  listOf(newPlayer(realm,playerCell.key, playerNodeOld))
+      .plus(populateRooms(occupantToHand, input.dice, realm, playerNodeOld.id))
       .plus(placeWallLamps(deck, config, realm, input.dice, scale))
       .plus(listOf(
           Hand(
