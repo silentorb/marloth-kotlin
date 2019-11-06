@@ -38,8 +38,8 @@ private fun newWallInternal(config: GenerationConfig, mesh: MeshName, position: 
 //  )
 //}
 
-fun directionRotation(index: Int): Float =
-    when (index) {
+fun directionRotation(direction: Direction): Float =
+    when (direction) {
       Direction.east -> 0f
       Direction.north -> Pi * 0.5f
       Direction.west -> Pi
@@ -54,9 +54,9 @@ fun cubeWalls(input: BuilderInput, mesh: MeshName): List<Hand> {
   val biome = input.biome
   return horizontalDirections
       .filter { direction -> !containsConnection(connections, cell, cell + direction.value) }
-      .map { direction ->
-        val position = input.position + cellHalfLength + direction.value.toVector3() * cellHalfLength
-        val angleZ = directionRotation(direction.key)
+      .map { (direction, offset) ->
+        val position = input.position + cellHalfLength + offset.toVector3() * cellHalfLength
+        val angleZ = directionRotation(direction)
         newWallInternal(config, mesh, position, angleZ, biome)
       }
 }

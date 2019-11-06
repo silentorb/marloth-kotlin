@@ -10,7 +10,7 @@ import mythic.spatial.Vector3
 import simulation.entities.ArchitectureElement
 import simulation.misc.ConnectionType
 import simulation.misc.NodeAttribute
-
+/*
 val placeCurvedStaircases: Architect = { config, realm, dice ->
   nodesWithAllAttributes(realm.graph, setOf(NodeAttribute.stairBottom))
       .flatMap { node ->
@@ -47,3 +47,4 @@ val placeCurvedStaircases: Architect = { config, realm, dice ->
         }
       }
 }
+*/

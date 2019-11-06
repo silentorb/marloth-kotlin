@@ -30,6 +30,7 @@ enum class MeshId {
   curvingStairStep,
   fillerColumn,
   halfCircleFloor,
+  halfSquareFloor,
   longPillowStep,
   longStairStep,
   longStep,

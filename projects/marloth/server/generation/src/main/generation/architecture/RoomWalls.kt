@@ -10,23 +10,23 @@ import mythic.spatial.atan
 import mythic.spatial.projectVector3
 import simulation.misc.*
 
-fun getNonVerticalNeighbors(graph: Graph, node: Id): List<Id> {
-  val connectionPool = graph.connections
-      .asSequence()
-      .filter { it.type != ConnectionType.vertical }
+//fun getNonVerticalNeighbors(graph: Graph, node: Id): List<Id> {
+//  val connectionPool = graph.connections
+//      .asSequence()
+//      .filter { it.type != ConnectionType.vertical }
+//
+//  return nodeNeighbors2(connectionPool, node)
+//}
 
-  return nodeNeighbors2(connectionPool, node)
-}
-
-fun getDoorwayAngles(graph: Graph, node: Node): List<Float> {
-  val points = getNonVerticalNeighbors(graph, node.id)
-      .map { graph.nodes[it]!! }
-      .map { it.position }
-
-  return points
-      .map { atan(it.xy() - node.position.xy()) }
-      .sorted()
-}
+//fun getDoorwayAngles(graph: Graph, node: Node): List<Float> {
+//  val points = getNonVerticalNeighbors(graph, node.id)
+//      .map { graph.nodes[it]!! }
+//      .map { it.position }
+//
+//  return points
+//      .map { atan(it.xy() - node.position.xy()) }
+//      .sorted()
+//}
 
 fun getRoomSeriesAngleLength(firstIndex: Int, stripCount: Int, doorwayAngles: List<Float>, firstAngle: Float): Float {
   val secondIndex = (firstIndex + 1) % stripCount

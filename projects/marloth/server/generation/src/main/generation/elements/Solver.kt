@@ -9,57 +9,76 @@ data class AppliedPolyomino(
     val position: Vector3i
 )
 
-enum class InitialConnectionType {
-  wall,
-  connection
+enum class ConnectionCategory {
+  closed,
+  open
 }
 
-typealias IntermediateBlock = List<InitialConnectionType>
+private typealias BlockMap = Map<Vector3i, Block>
+private typealias GetSide = (Vector3i, Direction) -> Side?
+private typealias CheckBlockSide = (Map.Entry<Direction, Side>) -> Boolean
 
-private fun checkPolyominoMatch(originalBlocks: Map<Vector3i, IntermediateBlock>,
-                                newBlocks: Map<Vector3i, Block>): (Polyomino) -> Boolean = { polyomino ->
-  true
+private fun getOtherSide(blocks: BlockMap): GetSide = { origin, side ->
+  val oppositeSide = oppositeSides[side]!!
+  val offset = sideDirections[side]!!
+  val position = origin + offset
+  blocks[position]?.get(oppositeSide)
 }
+
+private fun sidesMatch(getSide: GetSide, origin: Vector3i): CheckBlockSide = { (direction, side) ->
+  val otherSide = getSide(origin, direction)
+  otherSide == null || otherSide.any { side.contains(it) }
+}
+
+private fun checkPolyominoMatch(getSide: GetSide, origin: Vector3i): (Polyomino) -> Boolean = { polyomino ->
+  polyomino.all { (blockPosition, block) ->
+    val position = origin + blockPosition
+    block.all(sidesMatch(getSide, position))
+  }
+}
+
+fun translatePolyominoBlocks(polyomino: Polyomino, offset: Vector3i): Polyomino =
+    polyomino.entries.associate { (position, block) -> Pair(offset + position, block) }
 
 private tailrec fun fillCellsIteration(remainingCells: Set<Vector3i>,
                                        polyominoes: Set<Polyomino>,
-                                       originalBlocks: Map<Vector3i, IntermediateBlock>,
-                                       newBlocks: Map<Vector3i, Block>,
+                                       blocks: BlockMap,
                                        accumulator: List<AppliedPolyomino>): List<AppliedPolyomino> {
-  return if (remainingCells.any()) {
+  return if (remainingCells.none())
+    accumulator
+  else {
     val anchorCell = remainingCells.first()
-    val match = polyominoes.firstOrNull(checkPolyominoMatch(originalBlocks, newBlocks))
-    if (match == null)
+    val getSide = getOtherSide(blocks)
+    val polyomino = polyominoes.firstOrNull(checkPolyominoMatch(getSide, anchorCell))
+    if (polyomino == null)
       throw Error("Could not find a matching polyomino for the current grid configuration." +
           "  This is usually caused by not providing enough atomic, general polyominoes.")
 
     val applied = AppliedPolyomino(
-        polyomino = match,
+        polyomino = polyomino,
         position = anchorCell
     )
-    fillCellsIteration(
-        remainingCells.minus(anchorCell),
-        polyominoes, originalBlocks, newBlocks,
-        accumulator.plus(applied))
-  } else
-    accumulator
+    val newBlocks = blocks.plus(translatePolyominoBlocks(polyomino, anchorCell))
+    fillCellsIteration(remainingCells.minus(anchorCell), polyominoes, newBlocks, accumulator.plus(applied))
+  }
 }
 
-private fun mapGridToBlocks(grid: MapGrid): Map<Vector3i, IntermediateBlock> {
+private fun mapGridToBlocks(initialConnectionTypes: Map<ConnectionCategory, Side>, grid: MapGrid): BlockMap {
   return grid.cells.keys.associateWith { position ->
-    val sides = sideDirections.values.map { offset ->
+    val sides = sideDirections.mapValues { (_, offset) ->
       if (containsConnection(grid.connections, position, position + offset))
-        InitialConnectionType.connection
+        initialConnectionTypes[ConnectionCategory.open]!!
       else
-        InitialConnectionType.wall
+        initialConnectionTypes[ConnectionCategory.closed]!!
     }
     sides
   }
 }
 
-fun convertGridToElements(grid: MapGrid, polyominoes: Set<Polyomino>): List<AppliedPolyomino> {
+fun convertGridToElements(initialConnectionTypes: Map<ConnectionCategory, Side>,
+                          grid: MapGrid, polyominoes: Set<Polyomino>): List<AppliedPolyomino> {
   assert(polyominoes.any())
-  val blocks = mapGridToBlocks(grid)
+  val blocks = mapGridToBlocks(initialConnectionTypes, grid)
   val remainingCells = grid.cells.keys
-  return fillCellsIteration(remainingCells, polyominoes, blocks, mapOf(), listOf())
+  return fillCellsIteration(remainingCells, polyominoes, blocks, listOf())
 }

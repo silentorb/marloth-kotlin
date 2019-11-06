@@ -140,9 +140,9 @@ fun newWindingPath(dice: Dice, length: Int): MapGrid {
 }
 
 fun newWindingPathTestStartingWithStair(dice: Dice, length: Int): MapGrid {
-  val startPosition = Vector3i(0, 0, 1)
-  val nextPosition = Vector3i(0, 0, 5)
-  val grid = newPathStep(startPosition, Vector3i(0, 0, 1))(MapGrid(
+  val startPosition = Vector3i(0, 0, 0)
+  val nextPosition = Vector3i(0, 0, 1)
+  val grid = newPathStep(startPosition, nextPosition)(MapGrid(
       cells = mapOf(
           startPosition to Cell(attributes = setOf(NodeAttribute.room, NodeAttribute.home))
       )

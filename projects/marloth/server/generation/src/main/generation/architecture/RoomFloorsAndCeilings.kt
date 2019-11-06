@@ -30,7 +30,7 @@ fun isEmptyBelow(grid: MapGrid, position: Vector3i): Boolean =
     (1..6).none {
       grid.cells.containsKey(position.copy(z = position.z - it))
     }
-
+/*
 val placeRoomFloors: Architect = { config, realm, dice ->
   roomNodes(realm.graph)
       .map { node ->
@@ -55,7 +55,7 @@ val placeRoomFloors: Architect = { config, realm, dice ->
         placeRoomFloorOrCeiling(common)(node)(config, realm, dice)
       }
 }
-
+*/
 private val ceilingMeshAttributes = setOf(MeshAttribute.placementRoomCeiling)
 
 val placeRoomCeilings: Architect = { config, realm, dice ->

@@ -1,9 +1,17 @@
 package generation.architecture
 
+import generation.architecture.definition.allPolyominoes
+import generation.architecture.definition.openConnectionTypes
+import generation.architecture.definition.closedConnectionTypes
+import generation.elements.AppliedPolyomino
+import generation.elements.ConnectionCategory
+import generation.elements.Side
+import generation.elements.convertGridToElements
 import generation.misc.*
 import randomly.Dice
 import simulation.main.Hand
 import simulation.misc.Graph
+import simulation.misc.MapGrid
 import simulation.misc.NodeAttribute
 import simulation.misc.Realm
 import kotlin.math.ceil
@@ -56,15 +64,10 @@ typealias HandArchitect = (GenerationConfig, Realm, Dice) -> Hand
 
 const val standardWallLength = 4f
 
-//private val architectureSteps = listOf(
-//    placeCurvedStaircases,
-//    placeRoomCeilings,
-//    placeRoomFloors,
-////    placeRoomWalls,
-//    placeTunnelCeilings,
-//    placeTunnelFloors
-////    placeTunnelWalls
-//)
-//
-//fun placeArchitecture(config: GenerationConfig, realm: Realm, dice: Dice): List<Hand> =
-//    architectureSteps.flatMap { it(config, realm, dice) }
+fun applyPolyominoes(grid: MapGrid): List<AppliedPolyomino>{
+  val initialConnectionTypes: Map<ConnectionCategory, Side> = mapOf(
+      ConnectionCategory.open to closedConnectionTypes(),
+      ConnectionCategory.closed to openConnectionTypes()
+  )
+  return convertGridToElements(initialConnectionTypes, grid, allPolyominoes())
+}

@@ -1,5 +1,6 @@
 package generation.architecture
 
+import generation.architecture.definition.PolyominoeDefinitions
 import generation.elements.Polyomino
 import generation.next.Builder
 import mythic.spatial.Vector3
