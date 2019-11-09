@@ -1,6 +1,7 @@
 package generation.elements
 
 import mythic.spatial.Vector3i
+import randomly.Dice
 import simulation.misc.MapGrid
 import simulation.misc.containsConnection
 
@@ -40,7 +41,8 @@ private fun checkPolyominoMatch(getSide: GetSide, origin: Vector3i): (Polyomino)
 fun translatePolyominoBlocks(polyomino: Polyomino, offset: Vector3i): Polyomino =
     polyomino.entries.associate { (position, block) -> Pair(offset + position, block) }
 
-private tailrec fun fillCellsIteration(remainingCells: Set<Vector3i>,
+private tailrec fun fillCellsIteration(dice: Dice,
+                                       remainingCells: Set<Vector3i>,
                                        polyominoes: Set<Polyomino>,
                                        blocks: BlockMap,
                                        accumulator: List<AppliedPolyomino>): List<AppliedPolyomino> {
@@ -49,7 +51,8 @@ private tailrec fun fillCellsIteration(remainingCells: Set<Vector3i>,
   else {
     val anchorCell = remainingCells.first()
     val getSide = getOtherSide(blocks)
-    val polyomino = polyominoes.firstOrNull(checkPolyominoMatch(getSide, anchorCell))
+    val shuffledPolyominoes = dice.scramble(polyominoes.toList())
+    val polyomino = shuffledPolyominoes.firstOrNull(checkPolyominoMatch(getSide, anchorCell))
     if (polyomino == null)
       throw Error("Could not find a matching polyomino for the current grid configuration." +
           "  This is usually caused by not providing enough atomic, general polyominoes.")
@@ -59,7 +62,7 @@ private tailrec fun fillCellsIteration(remainingCells: Set<Vector3i>,
         position = anchorCell
     )
     val newBlocks = blocks.plus(translatePolyominoBlocks(polyomino, anchorCell))
-    fillCellsIteration(remainingCells.minus(anchorCell), polyominoes, newBlocks, accumulator.plus(applied))
+    fillCellsIteration(dice, remainingCells.minus(anchorCell), polyominoes, newBlocks, accumulator.plus(applied))
   }
 }
 
@@ -75,10 +78,10 @@ private fun mapGridToBlocks(initialConnectionTypes: Map<ConnectionCategory, Side
   }
 }
 
-fun convertGridToElements(initialConnectionTypes: Map<ConnectionCategory, Side>,
+fun convertGridToElements(dice: Dice, initialConnectionTypes: Map<ConnectionCategory, Side>,
                           grid: MapGrid, polyominoes: Set<Polyomino>): List<AppliedPolyomino> {
   assert(polyominoes.any())
   val blocks = mapGridToBlocks(initialConnectionTypes, grid)
   val remainingCells = grid.cells.keys
-  return fillCellsIteration(remainingCells, polyominoes, blocks, listOf())
+  return fillCellsIteration(dice, remainingCells, polyominoes, blocks, listOf())
 }

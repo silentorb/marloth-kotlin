@@ -7,7 +7,9 @@ import generation.abstracted.initializeNodeRadii
 import generation.abstracted.newWindingPath
 import generation.abstracted.newWindingPathTestStartingWithStair
 import generation.architecture.applyPolyominoes
+import generation.architecture.definition.allPolyominoes
 import generation.architecture.newBuilders
+import generation.elements.explodePolyominoes
 import generation.generateRealm
 import generation.misc.GenerationConfig
 import generation.misc.MeshShapeMap
@@ -76,8 +78,12 @@ fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig): World
   val biomeGrid = newRandomizedBiomeGrid(biomeInfoMap, input)
   val realm = generateRealm(generationConfig, input, grid, biomeGrid)
   val nextId = newIdSource(1)
+  val polyominoMap = explodePolyominoes(allPolyominoes())
   val deck = pipeHandsToDeck(nextId, listOf(
-      { _ -> buildArchitecture(generationConfig, dice, grid, realm.cellBiomes, applyPolyominoes(grid), newBuilders()) },
+      { _ ->
+        val appliedPolyominoes = applyPolyominoes(dice, grid, polyominoMap)
+        buildArchitecture(generationConfig, dice, grid, appliedPolyominoes, polyominoMap, realm.cellBiomes, newBuilders())
+      },
       populateWorld(generationConfig, input, realm)
   ))(Deck())
 

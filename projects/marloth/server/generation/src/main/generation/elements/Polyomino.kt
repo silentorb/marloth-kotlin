@@ -6,12 +6,16 @@ import kotlin.reflect.full.memberProperties
 typealias Polyomino = Map<Vector3i, Block>
 
 fun rotatePosition(position: Vector3i, turns: Int): Vector3i =
-    when(turns) {
+    when (turns) {
       1 -> position.copy(x = -position.y, y = position.x)
       2 -> position.copy(x = -position.x, y = -position.y)
       3 -> position.copy(x = position.y, y = -position.x)
       else -> throw Error("Not supported")
     }
+
+fun translatePolyomino(offset: Vector3i): (Polyomino) -> Polyomino = { polyomino ->
+  polyomino.mapKeys { it.key + offset }
+}
 
 fun rotatePolyomino(polyomino: Polyomino, turns: Int): Polyomino {
   assert(turns in 0..3)
@@ -28,10 +32,6 @@ fun rotatePolyomino(polyomino: Polyomino, turns: Int): Polyomino {
         Pair(rotatePosition(position, turns), rotateBlock(block, turns))
       })
 }
-
-// Try larger polyominoes first
-fun preparePolyominoes(polyominoes: Set<Polyomino>): List<Polyomino> =
-    polyominoes.toList().sortedByDescending { it.size }
 
 fun enumeratePolyominoes(polyominoes: Any): List<Polyomino> {
   return polyominoes.javaClass.kotlin.memberProperties.map { member ->

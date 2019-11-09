@@ -3,10 +3,7 @@ package generation.architecture
 import generation.architecture.definition.allPolyominoes
 import generation.architecture.definition.openConnectionTypes
 import generation.architecture.definition.closedConnectionTypes
-import generation.elements.AppliedPolyomino
-import generation.elements.ConnectionCategory
-import generation.elements.Side
-import generation.elements.convertGridToElements
+import generation.elements.*
 import generation.misc.*
 import randomly.Dice
 import simulation.main.Hand
@@ -62,12 +59,10 @@ fun nodesWithAllAttributes(graph: Graph, attributes: Set<NodeAttribute>) =
 typealias Architect = (GenerationConfig, Realm, Dice) -> List<Hand>
 typealias HandArchitect = (GenerationConfig, Realm, Dice) -> Hand
 
-const val standardWallLength = 4f
-
-fun applyPolyominoes(grid: MapGrid): List<AppliedPolyomino>{
+fun applyPolyominoes(dice: Dice, grid: MapGrid, polyominoMap: PolyominoMap): List<AppliedPolyomino>{
   val initialConnectionTypes: Map<ConnectionCategory, Side> = mapOf(
       ConnectionCategory.open to closedConnectionTypes(),
       ConnectionCategory.closed to openConnectionTypes()
   )
-  return convertGridToElements(initialConnectionTypes, grid, allPolyominoes())
+  return convertGridToElements(dice, initialConnectionTypes, grid, polyominoMap.keys)
 }

@@ -24,8 +24,9 @@ data class BuilderInput(
 typealias Builder = (BuilderInput) -> List<Hand>
 
 fun buildArchitecture(generationConfig: GenerationConfig, dice: Dice, grid: MapGrid,
-                      cellBiomes: CellBiomeMap,
                       appliedPolyominoes: List<AppliedPolyomino>,
+                      polyominoMap: PolyominoMap,
+                      cellBiomes: CellBiomeMap,
                       builders: Map<Polyomino, Builder>): List<Hand> {
 
   return appliedPolyominoes.flatMap { applied ->
@@ -36,12 +37,14 @@ fun buildArchitecture(generationConfig: GenerationConfig, dice: Dice, grid: MapG
     if (builder == null)
       throw Error("Could not find builder for polyomino")
 
+    val polyominoInfo = polyominoMap[polyomino]!!
+
     val input = BuilderInput(
         config = generationConfig,
         cellBiomes = cellBiomes,
         dice = dice,
-        turns = 0,
-        position = applyCellPosition(position),
+        position = applyCellPosition(position + polyominoInfo.offset),
+        turns = polyominoInfo.turns,
         grid = grid,
         cell = position,
         biome = generationConfig.biomes[biomeName]!!
