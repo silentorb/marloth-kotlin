@@ -15,23 +15,24 @@ enum class ConnectionCategory {
   open
 }
 
-private typealias BlockMap = Map<Vector3i, Block>
-private typealias GetSide = (Vector3i, Direction) -> Side?
-private typealias CheckBlockSide = (Map.Entry<Direction, Side>) -> Boolean
+typealias BlockMap = Map<Vector3i, Block>
+typealias GetSide = (Vector3i, Direction) -> Side?
+typealias CheckBlockSide = (Map.Entry<Direction, Side>) -> Boolean
 
-private fun getOtherSide(blocks: BlockMap): GetSide = { origin, side ->
+fun getOtherSide(blocks: BlockMap): GetSide = { origin, side ->
   val oppositeSide = oppositeSides[side]!!
   val offset = sideDirections[side]!!
   val position = origin + offset
   blocks[position]?.get(oppositeSide)
 }
 
-private fun sidesMatch(getSide: GetSide, origin: Vector3i): CheckBlockSide = { (direction, side) ->
+fun sidesMatch(getSide: GetSide, origin: Vector3i): CheckBlockSide = { (direction, side) ->
   val otherSide = getSide(origin, direction)
-  otherSide == null || otherSide.any { side.contains(it) }
+  val result = otherSide == null || side.none() || otherSide.none() || otherSide.any { side.contains(it) }
+  result
 }
 
-private fun checkPolyominoMatch(getSide: GetSide, origin: Vector3i): (Polyomino) -> Boolean = { polyomino ->
+fun checkPolyominoMatch(getSide: GetSide, origin: Vector3i): (Polyomino) -> Boolean = { polyomino ->
   polyomino.all { (blockPosition, block) ->
     val position = origin + blockPosition
     block.all(sidesMatch(getSide, position))
@@ -66,7 +67,7 @@ private tailrec fun fillCellsIteration(dice: Dice,
   }
 }
 
-private fun mapGridToBlocks(initialConnectionTypes: Map<ConnectionCategory, Side>, grid: MapGrid): BlockMap {
+fun mapGridToBlocks(initialConnectionTypes: Map<ConnectionCategory, Side>, grid: MapGrid): BlockMap {
   return grid.cells.keys.associateWith { position ->
     val sides = sideDirections.mapValues { (_, offset) ->
       if (containsConnection(grid.connections, position, position + offset))

@@ -59,10 +59,10 @@ fun nodesWithAllAttributes(graph: Graph, attributes: Set<NodeAttribute>) =
 typealias Architect = (GenerationConfig, Realm, Dice) -> List<Hand>
 typealias HandArchitect = (GenerationConfig, Realm, Dice) -> Hand
 
-fun applyPolyominoes(dice: Dice, grid: MapGrid, polyominoMap: PolyominoMap): List<AppliedPolyomino>{
-  val initialConnectionTypes: Map<ConnectionCategory, Side> = mapOf(
-      ConnectionCategory.open to closedConnectionTypes(),
-      ConnectionCategory.closed to openConnectionTypes()
-  )
-  return convertGridToElements(dice, initialConnectionTypes, grid, polyominoMap.keys)
-}
+fun initialConnectionTypesMap(): Map<ConnectionCategory, Side> = mapOf(
+    ConnectionCategory.open to closedConnectionTypes(),
+    ConnectionCategory.closed to openConnectionTypes()
+)
+
+fun applyPolyominoes(dice: Dice, grid: MapGrid, polyominoMap: PolyominoMap): List<AppliedPolyomino> =
+    convertGridToElements(dice, initialConnectionTypesMap(), grid, polyominoMap.keys)

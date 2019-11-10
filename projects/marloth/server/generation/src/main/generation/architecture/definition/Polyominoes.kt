@@ -13,7 +13,7 @@ class PolyominoeDefinitions {
     )
 
     val spiralStairs: Polyomino = mapOf(
-        Vector3i.zero to BlockDefinitions.singleCellRoom,
+        Vector3i.zero to BlockDefinitions.stairBottom,
         secondFloor to BlockDefinitions.stairTop
     )
   }
