@@ -9,6 +9,7 @@ data class GameOver(
 )
 
 fun isVictory(world: World): Boolean {
+  if (System.getenv("DISABLE_VICTORY") != null) return false
   val body = world.deck.bodies[defaultPlayer(world.deck)]!!
   val node = world.realm.nodeTable[body.nearestNode]
   return node != null &&

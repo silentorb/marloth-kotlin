@@ -26,9 +26,13 @@ fun getOtherSide(blocks: BlockMap): GetSide = { origin, side ->
   blocks[position]?.get(oppositeSide)
 }
 
+fun getSelfSide(blocks: BlockMap): GetSide = { origin, side ->
+  blocks[origin]?.get(side)
+}
+
 fun sidesMatch(getSide: GetSide, origin: Vector3i): CheckBlockSide = { (direction, side) ->
-  val otherSide = getSide(origin, direction)
-  val result = otherSide == null || side.none() || otherSide.none() || otherSide.any { side.contains(it) }
+  val otherSide = getSide(origin, direction) ?: setOf()
+  val result = (side.none() && otherSide.none()) || otherSide.any { side.contains(it) }
   result
 }
 
@@ -42,7 +46,7 @@ fun checkPolyominoMatch(getSide: GetSide, origin: Vector3i): (Polyomino) -> Bool
 fun translatePolyominoBlocks(polyomino: Polyomino, offset: Vector3i): Polyomino =
     polyomino.entries.associate { (position, block) -> Pair(offset + position, block) }
 
-private tailrec fun fillCellsIteration(dice: Dice,
+private fun fillCellsIteration(dice: Dice,
                                        remainingCells: Set<Vector3i>,
                                        polyominoes: Set<Polyomino>,
                                        blocks: BlockMap,
@@ -51,12 +55,16 @@ private tailrec fun fillCellsIteration(dice: Dice,
     accumulator
   else {
     val anchorCell = remainingCells.first()
-    val getSide = getOtherSide(blocks)
+    val getSide = getSelfSide(blocks)
     val shuffledPolyominoes = dice.scramble(polyominoes.toList())
     val polyomino = shuffledPolyominoes.firstOrNull(checkPolyominoMatch(getSide, anchorCell))
-    if (polyomino == null)
+    if (polyomino == null) {
+      if (System.getenv("LOG_POLYOMINOES_ON_ERROR") != null) {
+        polyominoes.forEach(::logPolyomino)
+      }
       throw Error("Could not find a matching polyomino for the current grid configuration." +
           "  This is usually caused by not providing enough atomic, general polyominoes.")
+    }
 
     val applied = AppliedPolyomino(
         polyomino = polyomino,

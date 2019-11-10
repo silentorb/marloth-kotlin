@@ -29,13 +29,23 @@ fun rotatePolyomino(polyomino: Polyomino, turns: Int): Polyomino {
   return polyomino
 //      .associate { it.toPair() }
       .entries.associate { (position, block) ->
-        Pair(rotatePosition(position, turns), rotateBlock(block, turns))
-      }
+    Pair(rotatePosition(position, turns), rotateBlock(block, turns))
+  }
 }
 
 fun enumeratePolyominoes(polyominoes: Any): List<Polyomino> {
   return polyominoes.javaClass.kotlin.memberProperties.map { member ->
     @Suppress("UNCHECKED_CAST")
     member.get(polyominoes) as Polyomino
+  }
+}
+
+fun logPolyomino(polyomino: Polyomino) {
+  println(polyomino.hashCode())
+  for (block in polyomino) {
+    println("  ${block.key}")
+    for (side in block.value) {
+      println("    ${side.key} ${side.value}")
+    }
   }
 }

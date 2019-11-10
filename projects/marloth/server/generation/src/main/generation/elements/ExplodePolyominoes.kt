@@ -41,7 +41,7 @@ fun getTranslatedPolyominoes2(polyominoes: PolyominoMap): PolyominoMap {
         .filter { it.key != Vector3i.zero }
         .map { (blockPosition, _) ->
           val offset = -blockPosition
-          Pair(translatePolyomino(-offset)(polyomino), info.copy(offset = offset))
+          Pair(translatePolyomino(offset)(polyomino), info.copy(offset = offset))
         }
   }
       .associate { it }

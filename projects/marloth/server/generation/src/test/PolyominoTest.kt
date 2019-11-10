@@ -1,8 +1,6 @@
 import generation.architecture.definition.PolyominoeDefinitions
 import generation.architecture.initialConnectionTypesMap
-import generation.elements.checkPolyominoMatch
-import generation.elements.getOtherSide
-import generation.elements.mapGridToBlocks
+import generation.elements.*
 import mythic.spatial.Vector3i
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -22,19 +20,71 @@ fun newCellStrip(cellPositions: List<Vector3i>) =
 
 class PolyominoTest {
 
+//  @Test
+//  fun matchesVerticalUp() {
+//    val grid = newCellStrip(listOf(
+//        Vector3i(0, 0, 0),
+//        Vector3i(0, 0, 1),
+//        Vector3i(1, 0, 1)
+//    ))
+//    val blocks = mapGridToBlocks(initialConnectionTypesMap(), grid)
+//    val anchorCell = Vector3i()
+//    val getSide = getOtherSide(blocks)
+//    val polyomino = PolyominoeDefinitions.spiralStairsSingle
+//    val result = checkPolyominoMatch(getSide, anchorCell)(polyomino)
+//
+//    Assertions.assertTrue(result)
+//  }
+//
+//  @Test
+//  fun matchesStraightThenVerticalUp() {
+//    val grid = newCellStrip(listOf(
+//        Vector3i(0, 1, 0),
+//        Vector3i(0, 0, 0),
+//        Vector3i(0, 0, 1),
+//        Vector3i(1, 0, 1)
+//    ))
+//    val blocks = mapGridToBlocks(initialConnectionTypesMap(), grid)
+//    val anchorCell = Vector3i()
+//    val getSide = getOtherSide(blocks)
+//    val polyomino = PolyominoeDefinitions.spiralStairsSingle
+//    val result = checkPolyominoMatch(getSide, anchorCell)(polyomino)
+//
+//    Assertions.assertTrue(result)
+//  }
+//
+//  @Test
+//  fun matchesVerticalDown() {
+//    val grid = newCellStrip(listOf(
+//        Vector3i(0, 0, 0),
+//        Vector3i(0, 0, -1),
+//        Vector3i(1, 0, -1)
+//    ))
+//    val blocks = mapGridToBlocks(initialConnectionTypesMap(), grid)
+//    val anchorCell = Vector3i()
+//    val getSide = getOtherSide(blocks)
+//    val polyomino = translatePolyomino(Vector3i(0, 0, -1))(PolyominoeDefinitions.spiralStairsSingle)
+//    val result = checkPolyominoMatch(getSide, anchorCell)(polyomino)
+//
+//    Assertions.assertTrue(result)
+//  }
+
   @Test
-  fun matchingVertical() {
+  fun matchesTwiceVerticalUp() {
     val grid = newCellStrip(listOf(
         Vector3i(0, 0, 0),
         Vector3i(0, 0, 1),
-        Vector3i(1, 0, 1)
+        Vector3i(0, 0, 2),
+        Vector3i(1, 0, 2)
     ))
     val blocks = mapGridToBlocks(initialConnectionTypesMap(), grid)
     val anchorCell = Vector3i()
-    val getSide = getOtherSide(blocks)
-    val polyomino = PolyominoeDefinitions.spiralStairs
-    val result = checkPolyominoMatch(getSide, anchorCell)(polyomino)
-
-    Assertions.assertTrue(result)
+    val getSide = getSelfSide(blocks)
+    val check = { position: Vector3i ->
+      checkPolyominoMatch(getSide, position)
+    }
+    Assertions.assertTrue(check(Vector3i.zero)(PolyominoeDefinitions.spiralStairsBottom))
+    Assertions.assertTrue(check(Vector3i(0, 0, 1))(PolyominoeDefinitions.spiralStairsMiddle))
+    Assertions.assertTrue(check(Vector3i(0, 0, 2))(PolyominoeDefinitions.spiralStairsTop))
   }
 }
