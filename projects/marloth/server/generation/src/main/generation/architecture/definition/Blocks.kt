@@ -5,9 +5,10 @@ import generation.elements.Side
 import generation.elements.newBlock
 
 val doorway: Side = setOf(ConnectionType.doorway)
-val open: Side = setOf(ConnectionType.doorway)
+val requiredOpen: Side = setOf(ConnectionType.doorway, ConnectionType.open)
+val optionalOpen: Side = requiredOpen.plus(ConnectionType.impassable)
 val impassable: Side = setOf(ConnectionType.impassable)
-val self: Side = setOf()
+val greedySelf: Side = setOf()
 
 class BlockDefinitions {
   companion object {
@@ -15,16 +16,28 @@ class BlockDefinitions {
     val singleCellRoom = newBlock(
         top = impassable,
         bottom = impassable,
-        east = open,
-        north = open,
-        west = open,
-        south = open
+        east = optionalOpen,
+        north = optionalOpen,
+        west = optionalOpen,
+        south = optionalOpen
     )
 
-    val stairBottom = singleCellRoom
-        .plus(Direction.up to self)
+    val stairBottom = newBlock(
+        top = requiredOpen,
+        bottom = impassable,
+        east = optionalOpen,
+        north = optionalOpen,
+        south = optionalOpen,
+        west = impassable
+    )
 
-    val stairTop = singleCellRoom
-        .plus(Direction.down to self)
+    val stairTop = newBlock(
+        top = impassable,
+        bottom = requiredOpen,
+        east = optionalOpen,
+        north = optionalOpen,
+        south = optionalOpen,
+        west = impassable
+    )
   }
 }

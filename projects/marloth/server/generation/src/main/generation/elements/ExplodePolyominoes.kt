@@ -11,7 +11,9 @@ data class MappedPolyomino(
 typealias PolyominoMap = Map<Polyomino, MappedPolyomino>
 
 fun getRotatedPolyominoes(polyominoes: Set<Polyomino>): PolyominoMap {
-  val nonFree = polyominoes.filter { it != rotatePolyomino(it, 1) }
+  val nonFree = polyominoes.filter {
+    val k = rotatePolyomino(it, 1)
+    it != rotatePolyomino(it, 1) }
   return nonFree.flatMap { polyomino ->
     (1..3)
         .map { turns ->

@@ -4,7 +4,6 @@ package generation.architecture.definition
 enum class ConnectionType {
   impassable,
   doorway,
-  self,
   open
 }
 

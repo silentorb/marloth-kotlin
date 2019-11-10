@@ -2,6 +2,7 @@ package generation.architecture
 
 import generation.misc.*
 import generation.next.BuilderInput
+import mythic.spatial.Vector3i
 import scenery.MeshName
 import simulation.entities.ArchitectureElement
 import simulation.main.Hand

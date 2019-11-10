@@ -40,7 +40,7 @@ private fun nextConnectionOffset(dice: Dice, grid: MapGrid, position: Vector3i):
 //      horizontalDiagonalOffsets
 //      .flatMap { (x, y) -> verticalOffsets.map { z -> Vector3i(x, y, z) } }
 //      .plus(horizontalOrthogonalOffsets.map { (x, y) -> Vector3i(x, y, 0) })
-//      .plus(upAndDown)
+      .plus(upAndDown)
 
   val options = availableOffsets
       .filter { direction ->
@@ -58,30 +58,6 @@ private val stairAttributes = listOf(
     NodeAttribute.stairBottom,
     NodeAttribute.stairTop
 )
-
-//private fun newVerticalPathStep(position: Vector3i, direction: Vector3i, attributes: Set<NodeAttribute> = setOf()): (MapGrid) -> MapGrid = { grid ->
-//  val distance = distanceByAngle(direction)
-//  val nextPosition = position + direction * distance
-//
-//  assert(!grid.cells.containsKey(nextPosition))
-//
-//  val relativeStairAttributes = if (direction.z > 0)
-//    stairAttributes
-//  else
-//    stairAttributes.reversed()
-//
-//  val startCell = grid.cells[position]!!
-//  grid.copy(
-//      cells = grid.cells
-//          .plus((0 until distance - 1).map { Pair(position + direction, upperCell) })
-//          .plus(position to startCell.copy(attributes = startCell.attributes.plus(relativeStairAttributes[0])))
-//          .plus(nextPosition to Cell(attributes = attributes.plus(setOf(NodeAttribute.room, relativeStairAttributes[1]))))
-//          .plus(nextPosition + upVector to upperCell),
-//      connections = grid.connections.plus(listOf(
-//          Pair(position, nextPosition)
-//      ))
-//  )
-//}
 
 private fun newPathStep(position: Vector3i, direction: Vector3i, attributes: Set<NodeAttribute> = setOf()): (MapGrid) -> MapGrid = { grid ->
   val nextPosition = position + direction

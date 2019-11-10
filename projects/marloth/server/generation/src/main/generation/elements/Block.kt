@@ -16,12 +16,14 @@ fun newBlock(top: Side, bottom: Side, east: Side, north: Side, west: Side, south
     )
 
 fun rotateBlock(sides: Block, turns: Int): Block {
-  val horizontal = horizontalSideList.map { Pair(it, sides[it] ?: setOf()) }
+  val horizontal = horizontalSideList.map { sides[it] ?: setOf() }
   val normalizedTurns = turns % 4
 
-  val rotatedSides = horizontal
+  val spunSides = horizontal
       .takeLast(normalizedTurns)
       .plus(horizontal.take(4 - normalizedTurns))
+
+  val rotatedSides = horizontalSideList.zip(spunSides) {a, b -> Pair(a, b)}.associate { it }
 
   return sides
       .filterKeys { verticalSides.contains(it) }

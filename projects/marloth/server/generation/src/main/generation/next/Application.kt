@@ -31,19 +31,18 @@ fun buildArchitecture(generationConfig: GenerationConfig, dice: Dice, grid: MapG
 
   return appliedPolyominoes.flatMap { applied ->
     val polyomino = applied.polyomino
-    val position = applied.position
-    val biomeName = cellBiomes[position]!!
-    val builder = builders[polyomino]
+    val polyominoInfo = polyominoMap[polyomino]!!
+    val biomeName = cellBiomes[applied.position]!!
+    val position = applied.position + polyominoInfo.offset
+    val builder = builders[polyominoInfo.original]
     if (builder == null)
       throw Error("Could not find builder for polyomino")
-
-    val polyominoInfo = polyominoMap[polyomino]!!
 
     val input = BuilderInput(
         config = generationConfig,
         cellBiomes = cellBiomes,
         dice = dice,
-        position = applyCellPosition(position + polyominoInfo.offset),
+        position = applyCellPosition(position),
         turns = polyominoInfo.turns,
         grid = grid,
         cell = position,

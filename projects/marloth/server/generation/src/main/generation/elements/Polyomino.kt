@@ -23,14 +23,14 @@ fun rotatePolyomino(polyomino: Polyomino, turns: Int): Polyomino {
   if (turns == 0)
     return polyomino
 
-  val (centered, notCentered) = polyomino.entries
-      .partition { it.key.x == 0 && it.key.y == 0 }
+//  val (centered, notCentered) = polyomino.entries
+//      .partition { it.key.x == 0 && it.key.y == 0 }
 
-  return centered
-      .associate { it.toPair() }
-      .plus(notCentered.map { (position, block) ->
+  return polyomino
+//      .associate { it.toPair() }
+      .entries.associate { (position, block) ->
         Pair(rotatePosition(position, turns), rotateBlock(block, turns))
-      })
+      }
 }
 
 fun enumeratePolyominoes(polyominoes: Any): List<Polyomino> {
