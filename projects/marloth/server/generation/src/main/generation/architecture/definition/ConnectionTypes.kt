@@ -5,12 +5,14 @@ enum class ConnectionType {
   impassable,
   doorway,
   spiralStaircase,
-  open
+  open,
+  halfStepOpen
 }
 
 fun closedConnectionTypes(): Set<ConnectionType> =
     setOf(
         ConnectionType.doorway,
+        ConnectionType.halfStepOpen,
         ConnectionType.open,
         ConnectionType.spiralStaircase
     )

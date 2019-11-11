@@ -16,7 +16,7 @@ import simulation.main.defaultPlayer
 import simulation.physics.defaultCharacterHeight
 import kotlin.math.floor
 
-val firstPersonCameraOffset = Vector3(0f, 0f, defaultCharacterHeight / 2f)
+val firstPersonCameraOffset = Vector3(0f, 0f, defaultCharacterHeight * 0.25f)
 val firstPersonDeadCameraOffset = Vector3(0f, 0f, -0.75f)
 
 val simplePainterMap = MeshId.values().mapNotNull { meshId ->

@@ -19,15 +19,15 @@ typealias BlockMap = Map<Vector3i, Block>
 typealias GetSide = (Vector3i, Direction) -> Side?
 typealias CheckBlockSide = (Map.Entry<Direction, Side>) -> Boolean
 
-fun getOtherSide(blocks: BlockMap): GetSide = { origin, side ->
-  val oppositeSide = oppositeSides[side]!!
-  val offset = sideDirections[side]!!
-  val position = origin + offset
-  blocks[position]?.get(oppositeSide)
-}
+//fun getOtherSide(blocks: BlockMap): GetSide = { origin, side ->
+//  val oppositeSide = oppositeSides[side]!!
+//  val offset = allDirections[side]!!
+//  val position = origin + offset
+//  blocks[position]?.get(oppositeSide)
+//}
 
 fun getSelfSide(blocks: BlockMap): GetSide = { origin, side ->
-  blocks[origin]?.get(side)
+  blocks[origin]?.sides?.get(side)
 }
 
 fun sidesMatch(getSide: GetSide, origin: Vector3i): CheckBlockSide = { (direction, side) ->
@@ -39,7 +39,7 @@ fun sidesMatch(getSide: GetSide, origin: Vector3i): CheckBlockSide = { (directio
 fun checkPolyominoMatch(getSide: GetSide, origin: Vector3i): (Polyomino) -> Boolean = { polyomino ->
   polyomino.all { (blockPosition, block) ->
     val position = origin + blockPosition
-    block.all(sidesMatch(getSide, position))
+    block.sides.all(sidesMatch(getSide, position))
   }
 }
 
@@ -47,10 +47,10 @@ fun translatePolyominoBlocks(polyomino: Polyomino, offset: Vector3i): Polyomino 
     polyomino.entries.associate { (position, block) -> Pair(offset + position, block) }
 
 private fun fillCellsIteration(dice: Dice,
-                                       remainingCells: Set<Vector3i>,
-                                       polyominoes: Set<Polyomino>,
-                                       blocks: BlockMap,
-                                       accumulator: List<AppliedPolyomino>): List<AppliedPolyomino> {
+                               remainingCells: Set<Vector3i>,
+                               polyominoes: Set<Polyomino>,
+                               blocks: BlockMap,
+                               accumulator: List<AppliedPolyomino>): List<AppliedPolyomino> {
   return if (remainingCells.none())
     accumulator
   else {
@@ -77,13 +77,13 @@ private fun fillCellsIteration(dice: Dice,
 
 fun mapGridToBlocks(initialConnectionTypes: Map<ConnectionCategory, Side>, grid: MapGrid): BlockMap {
   return grid.cells.keys.associateWith { position ->
-    val sides = sideDirections.mapValues { (_, offset) ->
+    val sides = allDirections.mapValues { (_, offset) ->
       if (containsConnection(grid.connections, position, position + offset))
         initialConnectionTypes[ConnectionCategory.open]!!
       else
         initialConnectionTypes[ConnectionCategory.closed]!!
     }
-    sides
+    Block(sides = sides, attributes = setOf())
   }
 }
 

@@ -49,11 +49,18 @@ fun directionRotation(direction: Direction): Float =
 
 fun cubeWalls(input: BuilderInput, mesh: MeshName): List<Hand> {
   val cell = input.cell
+  val grid = input.grid
   val connections = input.grid.connections
   val config = input.config
   val biome = input.biome
   return horizontalDirections
-      .filter { direction -> !containsConnection(connections, cell, cell + direction.value) }
+      .filter { direction ->
+        val otherCell = cell + direction.value
+        !containsConnection(connections, cell, otherCell) &&
+            (setOf(Direction.north, Direction.east).contains(direction.key) ||
+                !grid.cells.containsKey(otherCell)
+                )
+      }
       .map { (direction, offset) ->
         val position = input.position + cellHalfLength + offset.toVector3() * cellHalfLength
         val angleZ = directionRotation(direction)

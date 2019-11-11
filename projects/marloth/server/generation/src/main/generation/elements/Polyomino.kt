@@ -29,7 +29,7 @@ fun rotatePolyomino(polyomino: Polyomino, turns: Int): Polyomino {
   return polyomino
 //      .associate { it.toPair() }
       .entries.associate { (position, block) ->
-    Pair(rotatePosition(position, turns), rotateBlock(block, turns))
+    Pair(rotatePosition(position, turns), block.copy(sides = rotateBlock(block.sides, turns)))
   }
 }
 
@@ -44,7 +44,7 @@ fun logPolyomino(polyomino: Polyomino) {
   println(polyomino.hashCode())
   for (block in polyomino) {
     println("  ${block.key}")
-    for (side in block.value) {
+    for (side in block.value.sides) {
       println("    ${side.key} ${side.value}")
     }
   }

@@ -1,51 +1,17 @@
 package generation.abstracted
 
+import generation.elements.allDirections
 import mythic.spatial.Vector3i
 import randomly.Dice
 import simulation.misc.Cell
 import simulation.misc.MapGrid
 import simulation.misc.NodeAttribute
 
-private val horizontalDiagonalOffsets = setOf(
-    Pair(-1, -1),
-    Pair(1, -1),
-    Pair(-1, 1),
-    Pair(1, 1)
-)
-
-private val horizontalOrthogonalOffsets = setOf(
-    Pair(0, -1),
-    Pair(-1, 0),
-    Pair(1, 0),
-    Pair(0, 1)
-)
-
-//private val horizontalOffsets = horizontalOffsetsDiagonal.plus(horizontalOffsetsOrthogonal)
-
-private val verticalOffsets = setOf(-1, 0, 1)
-
-private val upAndDown = setOf(
-    upVector,
-    downVector
-)
-//private val allOffsets = horizontalOffsets.flatMap { (x, y) ->
-//  verticalOffsets.map { z -> Vector3i(x, y, z) }
-//}
-
-fun distanceByAngle(direction: Vector3i) =
-    if (!isVertical(direction)) 2 else 4
-
 private fun nextConnectionOffset(dice: Dice, grid: MapGrid, position: Vector3i): Vector3i? {
-  val availableOffsets = horizontalOrthogonalOffsets.map { (x, y) -> Vector3i(x, y, 0) }
-//      horizontalDiagonalOffsets
-//      .flatMap { (x, y) -> verticalOffsets.map { z -> Vector3i(x, y, z) } }
-//      .plus(horizontalOrthogonalOffsets.map { (x, y) -> Vector3i(x, y, 0) })
-      .plus(upAndDown)
-
+  val availableOffsets = allDirections.values
   val options = availableOffsets
-      .filter { direction ->
-        !grid.cells.containsKey(position + direction)
-      }
+      .filter { direction -> !grid.cells.containsKey(position + direction) }
+
   return if (options.any())
     dice.takeOne(options)
   else
