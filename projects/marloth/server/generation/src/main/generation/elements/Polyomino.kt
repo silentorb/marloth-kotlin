@@ -17,22 +17,6 @@ fun translatePolyomino(offset: Vector3i): (Polyomino) -> Polyomino = { polyomino
   polyomino.mapKeys { it.key + offset }
 }
 
-fun rotatePolyomino(polyomino: Polyomino, turns: Int): Polyomino {
-  assert(turns in 0..3)
-
-  if (turns == 0)
-    return polyomino
-
-//  val (centered, notCentered) = polyomino.entries
-//      .partition { it.key.x == 0 && it.key.y == 0 }
-
-  return polyomino
-//      .associate { it.toPair() }
-      .entries.associate { (position, block) ->
-    Pair(rotatePosition(position, turns), block.copy(sides = rotateBlock(block.sides, turns)))
-  }
-}
-
 fun enumeratePolyominoes(polyominoes: Any): List<Polyomino> {
   return polyominoes.javaClass.kotlin.memberProperties.map { member ->
     @Suppress("UNCHECKED_CAST")

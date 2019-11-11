@@ -1,6 +1,8 @@
 package generation.architecture.definition
 
+import generation.elements.Block
 import generation.elements.Side
+import generation.elements.enumerateMembers
 import generation.elements.newBlock
 
 val doorway: Side = setOf(ConnectionType.doorway)
@@ -16,8 +18,8 @@ class BlockDefinitions {
   companion object {
 
     val singleCellRoom = newBlock(
-        top = impassable,
-        bottom = impassable,
+        up = impassable,
+        down = impassable,
         east = optionalOpen,
         north = optionalOpen,
         west = optionalOpen,
@@ -25,8 +27,8 @@ class BlockDefinitions {
     )
 
     val stairBottom = newBlock(
-        top = spiralStaircase,
-        bottom = impassable,
+        up = spiralStaircase,
+        down = impassable,
         east = optionalOpen,
         north = optionalOpen,
         south = optionalOpen,
@@ -34,8 +36,8 @@ class BlockDefinitions {
     )
 
     val stairTop = newBlock(
-        top = impassable,
-        bottom = spiralStaircase,
+        up = impassable,
+        down = spiralStaircase,
         east = optionalOpen,
         north = optionalOpen,
         south = optionalOpen,
@@ -43,8 +45,8 @@ class BlockDefinitions {
     )
 
     val stairMiddle = newBlock(
-        top = spiralStaircase,
-        bottom = spiralStaircase,
+        up = spiralStaircase,
+        down = spiralStaircase,
         east = impassable,
         north = impassable,
         south = impassable,
@@ -52,8 +54,8 @@ class BlockDefinitions {
     )
 
     val halfStepRoom = newBlock(
-        top = impassable,
-        bottom = impassable,
+        up = impassable,
+        down = impassable,
         east = halfStepOptionalOpen,
         north = halfStepOptionalOpen,
         west = halfStepOptionalOpen,
@@ -61,8 +63,8 @@ class BlockDefinitions {
     )
 
     val lowerHalfStepSlope = newBlock(
-        top = impassable,
-        bottom = impassable,
+        up = impassable,
+        down = impassable,
         east = halfStepRequiredOpen,
         north = impassable,
         west = requiredOpen,
@@ -70,3 +72,5 @@ class BlockDefinitions {
     )
   }
 }
+
+fun allBlocks() = enumerateMembers<Block>(BlockDefinitions).toSet()

@@ -15,8 +15,8 @@ enum class ConnectionCategory {
   open
 }
 
-typealias BlockMap = Map<Vector3i, Block>
 typealias GetSide = (Vector3i, Direction) -> Side?
+typealias GetBlock = (Vector3i) -> Block?
 typealias CheckBlockSide = (Map.Entry<Direction, Side>) -> Boolean
 
 //fun getOtherSide(blocks: BlockMap): GetSide = { origin, side ->
@@ -26,20 +26,30 @@ typealias CheckBlockSide = (Map.Entry<Direction, Side>) -> Boolean
 //  blocks[position]?.get(oppositeSide)
 //}
 
-fun getSelfSide(blocks: BlockMap): GetSide = { origin, side ->
+fun getSelfSide(blocks: BlockGrid): GetSide = { origin, side ->
   blocks[origin]?.sides?.get(side)
 }
 
-fun sidesMatch(getSide: GetSide, origin: Vector3i): CheckBlockSide = { (direction, side) ->
-  val otherSide = getSide(origin, direction) ?: setOf()
+fun sidesMatch(getBlock: GetBlock, origin: Vector3i): CheckBlockSide = { (direction, side) ->
+  val otherSide = getBlock(origin)?.sides?.get(direction) ?: setOf()
   val result = (side.none() && otherSide.none()) || otherSide.any { side.contains(it) }
   result
 }
 
-fun checkPolyominoMatch(getSide: GetSide, origin: Vector3i): (Polyomino) -> Boolean = { polyomino ->
+fun checkBlockMatch(getBlock: GetBlock, position: Vector3i): (Block) -> Boolean = { block ->
+  block.sides.all(sidesMatch(getBlock, position))
+}
+
+fun matchBlock(dice: Dice, blocks: Set<Block>, workbench: Workbench, position: Vector3i): Block? {
+  val getBlock: GetBlock = { workbench.blockGrid[it] }
+  val shuffledBlocks = dice.shuffle(blocks.toList())
+  return shuffledBlocks.firstOrNull(checkBlockMatch(getBlock, position))
+}
+
+fun checkPolyominoMatch(getBlock: GetBlock, origin: Vector3i): (Polyomino) -> Boolean = { polyomino ->
   polyomino.all { (blockPosition, block) ->
     val position = origin + blockPosition
-    block.sides.all(sidesMatch(getSide, position))
+    block.sides.all(sidesMatch(getBlock, position))
   }
 }
 
@@ -49,15 +59,15 @@ fun translatePolyominoBlocks(polyomino: Polyomino, offset: Vector3i): Polyomino 
 private fun fillCellsIteration(dice: Dice,
                                remainingCells: Set<Vector3i>,
                                polyominoes: Set<Polyomino>,
-                               blocks: BlockMap,
+                               blocks: BlockGrid,
                                accumulator: List<AppliedPolyomino>): List<AppliedPolyomino> {
   return if (remainingCells.none())
     accumulator
   else {
     val anchorCell = remainingCells.first()
-    val getSide = getSelfSide(blocks)
-    val shuffledPolyominoes = dice.scramble(polyominoes.toList())
-    val polyomino = shuffledPolyominoes.firstOrNull(checkPolyominoMatch(getSide, anchorCell))
+    val getBlock: GetBlock = { blocks[it] }
+    val shuffledPolyominoes = dice.shuffle(polyominoes.toList())
+    val polyomino = shuffledPolyominoes.firstOrNull(checkPolyominoMatch(getBlock, anchorCell))
     if (polyomino == null) {
       if (System.getenv("LOG_POLYOMINOES_ON_ERROR") != null) {
         polyominoes.forEach(::logPolyomino)
@@ -75,7 +85,7 @@ private fun fillCellsIteration(dice: Dice,
   }
 }
 
-fun mapGridToBlocks(initialConnectionTypes: Map<ConnectionCategory, Side>, grid: MapGrid): BlockMap {
+fun mapGridToBlocks(initialConnectionTypes: Map<ConnectionCategory, Side>, grid: MapGrid): BlockGrid {
   return grid.cells.keys.associateWith { position ->
     val sides = allDirections.mapValues { (_, offset) ->
       if (containsConnection(grid.connections, position, position + offset))

@@ -34,57 +34,6 @@ data class WorldInput(
     val dice: Dice
 )
 
-enum class FaceType {
-  ceiling,
-  floor,
-  space,
-  wall
-}
-
-// May be faster to cast straight to non-nullable but at least for debugging
-// it may be better to explicitly non-null cast.
-fun getFaceInfo(faces: ConnectionTable, face: ImmutableFace): ConnectionFace = faces[face.id]!!
-
-val isSolidWall = { face: ConnectionFace ->
-  face.faceType == FaceType.wall && face.texture != null
-}
-val isSpace = { face: ConnectionFace -> face.faceType == FaceType.space }
-
-private fun debugId(id: Id): Id {
-  if (id == 41L) {
-    val k = 0
-  }
-  return id
-}
-
-data class ConnectionFace(
-    override val id: Id,
-    var faceType: FaceType,
-    val firstNode: Id,
-    val secondNode: Id,
-    var texture: TextureName? = null,
-    var debugInfo: String? = null
-) : WithId {
-  val nodes: List<Id> = listOf(firstNode, secondNode).minus(voidNodeId)
-  val _deleteme = if (id == 41L)
-    1
-  else
-    0
-
-  fun contains(node: Id) = nodes.contains(node)
-
-  fun other(id: Id): Id? =
-      if (firstNode == id)
-        secondNode
-      else if (id == secondNode)
-        firstNode
-      else
-        null
-}
-
-typealias ConnectionTable = Map<Id, ConnectionFace>
-typealias FaceList = Collection<ConnectionFace>
-
 typealias NodeTable = Map<Id, Node>
 typealias CellPositionMap = Map<Id, Vector3i>
 typealias CellBiomeMap = Map<Vector3i, BiomeName>
@@ -99,42 +48,10 @@ data class Realm(
 ) {
 
   val nodeTable: NodeTable = nodeList.associate { Pair(it.id, it) }
-
-  val locationNodes: List<Node>
-    get() = nodeList
-}
-
-fun getFaces(faces: FaceList, node: Node) =
-    faces.filter { it.firstNode == node.id || it.secondNode == node.id }
-
-fun getFloors(faces: FaceList, node: Node) =
-    getFaces(faces, node).filter { it.faceType == FaceType.floor }
-
-fun initializeFaceInfo(faces: ConnectionTable, type: FaceType, node: Node, id: Id): ConnectionFace {
-  val info = faces[id]
-  return if (info == null) {
-    ConnectionFace(id, type, node.id, voidNodeId, null)
-  } else {
-    if (info.firstNode == node.id || info.secondNode == node.id)
-      info
-    else {
-      ConnectionFace(id, type, info.firstNode, node.id)
-    }
-  }
 }
 
 fun getRooms(realm: Realm): List<Node> =
     realm.nodeList.filter { it.isRoom }
-
-fun getOtherNode(id: Id, info: ConnectionFace): Id? {
-  return if (info.firstNode == id)
-    info.secondNode
-  else
-    info.firstNode
-}
-
-fun getNode(realm: Realm, id: Id) =
-    realm.nodeList.firstOrNull { it.id == id }
 
 // This function does not work with walls containing extreme floor slopes
 val isVerticalEdgeLimited = { edge: ImmutableEdgeReference ->
@@ -157,19 +74,5 @@ fun getFloor(face: ImmutableFace): ImmutableEdgeReference {
     val center = getCenter(face.vertices)
     face.edges
         .firstSortedBy { (it.middle - center).normalize().z }
-  }
-}
-
-fun getCeiling(face: ImmutableFace): ImmutableEdgeReference {
-  val horizontalEdges = face.edges
-      .filter(isHorizontalEdgeLimited)
-
-  return if (horizontalEdges.any()) {
-    horizontalEdges
-        .firstSortedBy { -(it.first.z + it.second.z) }
-  } else {
-    val center = getCenter(face.vertices)
-    face.edges
-        .firstSortedBy { -(it.middle - center).normalize().z }
   }
 }

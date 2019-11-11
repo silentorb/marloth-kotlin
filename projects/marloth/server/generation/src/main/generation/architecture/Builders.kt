@@ -1,6 +1,8 @@
 package generation.architecture
 
+import generation.architecture.definition.BlockDefinitions
 import generation.architecture.definition.PolyominoeDefinitions
+import generation.elements.Block
 import generation.elements.Polyomino
 import generation.next.Builder
 import mythic.spatial.Vector3
@@ -9,10 +11,10 @@ import scenery.enums.MeshId
 
 val floorOffset = Vector3(cellHalfLength, cellHalfLength, 0f)
 
-fun newBuilders(): Map<Polyomino, Builder> =
+fun newBuilders(): Map<Block, Builder> =
     mapOf(
 
-        PolyominoeDefinitions.singleCellRoom to { input ->
+        BlockDefinitions.singleCellRoom to { input ->
           listOf(newFloorMesh(input, MeshId.squareFloor.name))
               .plus(cubeWalls(input, MeshId.squareWall.name))
         },
@@ -29,18 +31,18 @@ fun newBuilders(): Map<Polyomino, Builder> =
 //              .plus(cubeWalls(upper, MeshId.squareWall.name))
 //        },
 
-        PolyominoeDefinitions.spiralStairsBottom to { input ->
+        BlockDefinitions.stairBottom to { input ->
           listOf(newFloorMesh(input, MeshId.squareFloor.name))
               .plus(cubeWalls(input, MeshId.squareWall.name))
               .plus(newCurvedStaircases(input))
         },
 
-        PolyominoeDefinitions.spiralStairsMiddle to { input ->
+        BlockDefinitions.stairMiddle to { input ->
           cubeWalls(input, MeshId.squareWall.name)
               .plus(newCurvedStaircases(input))
         },
 
-        PolyominoeDefinitions.spiralStairsTop to { input ->
+        BlockDefinitions.stairTop to { input ->
           cubeWalls(input, MeshId.squareWall.name)
               .plus(newFloorMesh(input, MeshId.halfSquareFloor.name))
         }

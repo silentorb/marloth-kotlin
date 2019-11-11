@@ -1,6 +1,10 @@
 package generation.abstracted
 
+import generation.architecture.definition.BlockDefinitions
+import generation.elements.Block
+import generation.elements.Workbench
 import generation.elements.allDirections
+import generation.elements.matchBlock
 import mythic.spatial.Vector3i
 import randomly.Dice
 import simulation.misc.Cell
@@ -18,61 +22,78 @@ private fun nextConnectionOffset(dice: Dice, grid: MapGrid, position: Vector3i):
     null
 }
 
-private val upperCell = Cell(attributes = setOf(NodeAttribute.upperLayer))
-
-private val stairAttributes = listOf(
-    NodeAttribute.stairBottom,
-    NodeAttribute.stairTop
-)
-
-private fun newPathStep(position: Vector3i, direction: Vector3i, attributes: Set<NodeAttribute> = setOf()): (MapGrid) -> MapGrid = { grid ->
+private fun newPathStep(position: Vector3i, direction: Vector3i, block: Block,
+                        attributes: Set<NodeAttribute> = setOf()): (Workbench) -> Workbench = { workbench ->
   val nextPosition = position + direction
+  val grid = workbench.mapGrid
+  val blockGrid = workbench.blockGrid
+
   assert(!grid.cells.containsKey(nextPosition))
-  grid.copy(
-      cells = grid.cells.plus(listOf(
-          nextPosition to Cell(attributes = attributes.plus(setOf(NodeAttribute.room)))
-      )),
-      connections = grid.connections.plus(listOf(
-          Pair(position, nextPosition)
-      ))
+
+  workbench.copy(
+      blockGrid = blockGrid.plus(
+          nextPosition to block
+      ),
+      mapGrid = grid.copy(
+          cells = grid.cells.plus(listOf(
+              nextPosition to Cell(attributes = attributes.plus(setOf(NodeAttribute.room)))
+          )),
+          connections = grid.connections.plus(listOf(
+              Pair(position, nextPosition)
+          ))
+      )
   )
 }
 
-private fun addPathStep(maxSteps: Int, dice: Dice, grid: MapGrid, position: Vector3i, stepCount: Int = 0): MapGrid {
+private fun addPathStep(maxSteps: Int, dice: Dice, blocks: Set<Block>, workbench: Workbench, position: Vector3i, stepCount: Int = 0): Workbench {
+  val grid = workbench.mapGrid
   if (stepCount == maxSteps)
-    return grid
+    return workbench
 
   val direction = nextConnectionOffset(dice, grid, position)
   if (direction == null)
-    return grid
+    return workbench
 
   val attributes = if (stepCount == maxSteps - 1)
     setOf(NodeAttribute.exit)
   else
     setOf()
 
-  val newGrid = newPathStep(position, direction, attributes)(grid)
   val nextPosition = position + direction
-  return addPathStep(maxSteps, dice, newGrid, nextPosition, stepCount + 1)
+  val block = matchBlock(dice, blocks, workbench, nextPosition)
+  if (block == null) {
+    throw Error("Could not find a matching block")
+  }
+  val newWorkbench = newPathStep(position, direction, block, attributes)(workbench)
+  return addPathStep(maxSteps, dice, blocks, newWorkbench, nextPosition, stepCount + 1)
 }
 
-fun newWindingPath(dice: Dice, length: Int): MapGrid {
+fun newWindingPath(dice: Dice, blocks: Set<Block>, length: Int, firstBlock: Block): Workbench {
   val startPosition = Vector3i(0, 0, 0)
-  val grid = MapGrid(
-      cells = mapOf(
-          startPosition to Cell(attributes = setOf(NodeAttribute.room, NodeAttribute.home))
+  val workbench = Workbench(
+      blockGrid = mapOf(
+          startPosition to firstBlock
+      ),
+      mapGrid = MapGrid(
+          cells = mapOf(
+              startPosition to Cell(attributes = setOf(NodeAttribute.room, NodeAttribute.home))
+          )
       )
   )
-  return addPathStep(length - 1, dice, grid, startPosition)
+  return addPathStep(length - 1, dice, blocks, workbench, startPosition)
 }
 
-fun newWindingPathTestStartingWithStair(dice: Dice, length: Int): MapGrid {
+fun newWindingPathTestStartingWithStair(dice: Dice, blocks: Set<Block>, length: Int): Workbench {
   val startPosition = Vector3i(0, 0, 0)
   val nextPosition = Vector3i(0, 0, 1)
-  val grid = newPathStep(startPosition, nextPosition)(MapGrid(
-      cells = mapOf(
-          startPosition to Cell(attributes = setOf(NodeAttribute.room, NodeAttribute.home))
-      )
-  ))
-  return addPathStep(length - 1, dice, grid, nextPosition)
+  val workbench = newPathStep(startPosition, nextPosition, BlockDefinitions.stairBottom)(Workbench(
+      blockGrid = mapOf(
+          startPosition to BlockDefinitions.stairTop
+      ),
+      mapGrid = MapGrid(
+          cells = mapOf(
+              startPosition to Cell(attributes = setOf(NodeAttribute.room, NodeAttribute.home))
+          )
+      )))
+  return addPathStep(length - 1, dice, blocks, workbench, nextPosition)
 }

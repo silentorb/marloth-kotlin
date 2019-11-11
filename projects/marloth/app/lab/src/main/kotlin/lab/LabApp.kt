@@ -7,8 +7,11 @@ import generation.abstracted.initializeNodeRadii
 import generation.abstracted.newWindingPath
 import generation.abstracted.newWindingPathTestStartingWithStair
 import generation.architecture.applyPolyominoes
+import generation.architecture.definition.BlockDefinitions
+import generation.architecture.definition.allBlocks
 import generation.architecture.definition.allPolyominoes
 import generation.architecture.newBuilders
+import generation.elements.explodeBlockMap
 import generation.elements.explodePolyominoes
 import generation.generateRealm
 import generation.misc.GenerationConfig
@@ -70,19 +73,21 @@ fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig): World
       boundary,
       dice
   )
-  val grid = if (System.getenv("START_WITH_STAIRS") != null)
-    newWindingPathTestStartingWithStair(input.dice, generationConfig.roomCount)
+  val blocks = allBlocks()
+  val workbench = if (System.getenv("START_WITH_STAIRS") != null)
+    newWindingPathTestStartingWithStair(input.dice, blocks, generationConfig.roomCount)
   else
-    newWindingPath(input.dice, generationConfig.roomCount)
+    newWindingPath(input.dice, blocks, generationConfig.roomCount, BlockDefinitions.singleCellRoom)
+
+  val grid = workbench.mapGrid
 
   val biomeGrid = newRandomizedBiomeGrid(biomeInfoMap, input)
   val realm = generateRealm(generationConfig, input, grid, biomeGrid)
   val nextId = newIdSource(1)
-  val polyominoMap = explodePolyominoes(allPolyominoes())
   val deck = pipeHandsToDeck(nextId, listOf(
       { _ ->
-        val appliedPolyominoes = applyPolyominoes(dice, grid, polyominoMap)
-        buildArchitecture(generationConfig, dice, grid, appliedPolyominoes, polyominoMap, realm.cellBiomes, newBuilders())
+        val blockMap = explodeBlockMap(blocks)
+        buildArchitecture(generationConfig, dice, workbench, blockMap, realm.cellBiomes, newBuilders())
       },
       populateWorld(generationConfig, input, realm)
   ))(Deck())

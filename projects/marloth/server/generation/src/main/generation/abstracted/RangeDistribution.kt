@@ -64,5 +64,5 @@ fun <T> distributeToSlots(dice: Dice, slotCount: Int, scaling: Map<T, Int>, fixe
       .plus(fixed.flatMap { (key, count) ->
         (1..count).map { key }
       })
-  return dice.scramble(pool)
+  return dice.shuffle(pool)
 }

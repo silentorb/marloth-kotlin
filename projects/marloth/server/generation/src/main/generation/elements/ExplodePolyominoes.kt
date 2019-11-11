@@ -10,6 +10,37 @@ data class MappedPolyomino(
 
 typealias PolyominoMap = Map<Polyomino, MappedPolyomino>
 
+fun rotateSides(turns: Int): (Sides) -> Sides = { sides ->
+  val horizontal = horizontalSideList.map { sides[it] ?: setOf() }
+  val normalizedTurns = turns % 4
+
+  val spunSides = horizontal
+      .takeLast(normalizedTurns)
+      .plus(horizontal.take(4 - normalizedTurns))
+
+  val rotatedSides = horizontalSideList.zip(spunSides) { a, b -> Pair(a, b) }.associate { it }
+
+  sides
+      .filterKeys { verticalSides.contains(it) }
+      .plus(rotatedSides)
+}
+
+fun rotatePolyomino(polyomino: Polyomino, turns: Int): Polyomino {
+  assert(turns in 0..3)
+
+  if (turns == 0)
+    return polyomino
+
+//  val (centered, notCentered) = polyomino.entries
+//      .partition { it.key.x == 0 && it.key.y == 0 }
+
+  return polyomino
+//      .associate { it.toPair() }
+      .entries.associate { (position, block) ->
+    Pair(rotatePosition(position, turns), block.copy(sides = rotateSides(turns)(block.sides)))
+  }
+}
+
 fun getRotatedPolyominoes(polyominoes: Set<Polyomino>): PolyominoMap {
   val nonFree = polyominoes.filter {
     val k = rotatePolyomino(it, 1)

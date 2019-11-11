@@ -80,11 +80,11 @@ class PolyominoTest {
     val blocks = mapGridToBlocks(initialConnectionTypesMap(), grid)
     val anchorCell = Vector3i()
     val getSide = getSelfSide(blocks)
-    val check = { position: Vector3i ->
-      checkPolyominoMatch(getSide, position)
-    }
-    Assertions.assertTrue(check(Vector3i.zero)(PolyominoeDefinitions.spiralStairsBottom))
-    Assertions.assertTrue(check(Vector3i(0, 0, 1))(PolyominoeDefinitions.spiralStairsMiddle))
-    Assertions.assertTrue(check(Vector3i(0, 0, 2))(PolyominoeDefinitions.spiralStairsTop))
+//    val check = { position: Vector3i ->
+//      checkPolyominoMatch(getSide, position)
+//    }
+//    Assertions.assertTrue(check(Vector3i.zero)(PolyominoeDefinitions.spiralStairsBottom))
+//    Assertions.assertTrue(check(Vector3i(0, 0, 1))(PolyominoeDefinitions.spiralStairsMiddle))
+//    Assertions.assertTrue(check(Vector3i(0, 0, 2))(PolyominoeDefinitions.spiralStairsTop))
   }
 }

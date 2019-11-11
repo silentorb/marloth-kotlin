@@ -57,12 +57,3 @@ val placeRoomFloors: Architect = { config, realm, dice ->
 }
 */
 private val ceilingMeshAttributes = setOf(MeshAttribute.placementRoomCeiling)
-
-val placeRoomCeilings: Architect = { config, realm, dice ->
-  val common = CommonArchitectConfig(ceilingMeshAttributes, TextureGroup.ceiling, ceilingOffset, alignWithFloor)
-  roomNodes(realm.graph)
-      .filter { !it.attributes.contains(NodeAttribute.stairBottom) }
-      .map { node ->
-        placeRoomFloorOrCeiling(common)(node)(config, realm, dice)
-      }
-}
