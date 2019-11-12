@@ -6,11 +6,9 @@ import mythic.spatial.Vector3
 
 enum class NodeAttribute {
   exit,
-  fullFloor, // The majority of the floor is contiguous and available for placing objects
   home,
-  room,
-  tunnel,
-  upperLayer
+  fullFloor, // The majority of the floor is contiguous and available for placing objects
+  tunnel
 }
 
 data class Node(
@@ -22,7 +20,7 @@ data class Node(
 ) : WithId {
 
   val isRoom: Boolean
-    get() = attributes.contains(NodeAttribute.room)
+    get() = attributes.contains(NodeAttribute.fullFloor)
 }
 
 fun nodeNeighbors(graph: Graph, node: Id) =

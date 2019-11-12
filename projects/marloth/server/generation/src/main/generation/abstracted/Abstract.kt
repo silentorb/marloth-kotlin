@@ -9,10 +9,6 @@ import mythic.ent.newIdSource
 import mythic.ent.pipe2
 import simulation.misc.*
 
-const val minInitialNodeDistance = 1.5f
-const val minInitialNodeSize = 5f
-const val maxInitialNodeSize = 10f
-
 fun connections(graph: Graph, node: Node): List<InitialConnection> =
     graph.connections.filter { it.contains(node) }
 
@@ -69,28 +65,6 @@ fun applyInitialBiomes(biomes: BiomeInfoMap, biomeGrid: BiomeGrid, graph: Graph)
     )
   }
 }
-
-//fun prepareDoorways(graph: Graph): Graph {
-//  val homeNodes = graph.nodes.values.filter { it.biome == BiomeId.home }
-//  val doorways = homeNodes.flatMap { node ->
-//    connections(graph, node).mapNotNull { connection ->
-//      val otherNode = connection.other(graph, node)
-//      if (otherNode.biome != BiomeId.home && connection.type == ConnectionType.tunnel) {
-//        val origin = getCenter(node, otherNode)
-//        val position = origin + (otherNode.position - node.position).normalize() * 0.2f
-//        PreTunnel(connection, position)
-//      } else
-//        null
-//    }
-//  }
-//  val newTunnels = createTunnelNodes(graph, doorways)
-//  val doorwayNodeIds = newTunnels.nodes.map { it.key }
-//  return graph.copy(
-//      nodes = graph.nodes.plus(newTunnels.nodes.mapValues { it.value.copy(biome = BiomeId.home) }),
-//      connections = graph.connections.plus(newTunnels.connections).minus(doorways.map { it.connection }),
-//      doorways = graph.doorways.plus(doorwayNodeIds)
-//  )
-//}
 
 fun <A, B> pass(action: (A) -> A): (Pair<A, B>) -> Pair<A, B> = { (a, b) ->
   Pair(action(a), b)

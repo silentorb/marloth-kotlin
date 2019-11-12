@@ -1,6 +1,5 @@
 package generation.architecture
 
-import generation.architecture.definition.allPolyominoes
 import generation.architecture.definition.openConnectionTypes
 import generation.architecture.definition.closedConnectionTypes
 import generation.elements.*
@@ -50,7 +49,7 @@ fun tunnelNodes(graph: Graph) = graph.nodes.values
     .filter { node -> node.attributes.contains(NodeAttribute.tunnel) }
 
 fun roomNodes(graph: Graph) = graph.nodes.values
-    .filter { node -> node.attributes.contains(NodeAttribute.room) }
+    .filter { node -> node.attributes.contains(NodeAttribute.fullFloor) }
 
 fun nodesWithAllAttributes(graph: Graph, attributes: Set<NodeAttribute>) =
     graph.nodes.values
@@ -58,11 +57,3 @@ fun nodesWithAllAttributes(graph: Graph, attributes: Set<NodeAttribute>) =
 
 typealias Architect = (GenerationConfig, Realm, Dice) -> List<Hand>
 typealias HandArchitect = (GenerationConfig, Realm, Dice) -> Hand
-
-fun initialConnectionTypesMap(): Map<ConnectionCategory, Side> = mapOf(
-    ConnectionCategory.open to closedConnectionTypes(),
-    ConnectionCategory.closed to openConnectionTypes()
-)
-
-fun applyPolyominoes(dice: Dice, grid: MapGrid, polyominoMap: PolyominoMap): List<AppliedPolyomino> =
-    convertGridToElements(dice, initialConnectionTypesMap(), grid, polyominoMap.keys)

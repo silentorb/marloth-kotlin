@@ -4,13 +4,14 @@ import generation.elements.Block
 import generation.elements.Side
 import generation.elements.enumerateMembers
 import generation.elements.newBlock
+import generation.next.Builder
 
 val doorway: Side = setOf(ConnectionType.doorway)
 val requiredOpen: Side = setOf(ConnectionType.doorway, ConnectionType.open)
-val optionalOpen: Side = requiredOpen.plus(ConnectionType.impassable)
+val optionalOpen: Side = requiredOpen.plus(ConnectionType.wall)
 val halfStepRequiredOpen: Side = setOf(ConnectionType.halfStepOpen)
-val halfStepOptionalOpen: Side = halfStepRequiredOpen.plus(ConnectionType.impassable)
-val impassable: Side = setOf(ConnectionType.impassable)
+val halfStepOptionalOpen: Side = halfStepRequiredOpen.plus(ConnectionType.wall)
+val impassable: Side = setOf(ConnectionType.wall)
 val any: Side = setOf()
 val spiralStaircase: Side = setOf(ConnectionType.spiralStaircase)
 
@@ -74,3 +75,8 @@ class BlockDefinitions {
 }
 
 fun allBlocks() = enumerateMembers<Block>(BlockDefinitions).toSet()
+
+fun allBlocks(builders: Map<Block, Builder>) =
+    allBlocks()
+        .filter { builders.containsKey(it) }
+        .toSet()

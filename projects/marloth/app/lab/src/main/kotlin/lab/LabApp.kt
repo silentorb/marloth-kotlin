@@ -6,13 +6,12 @@ import configuration.saveYamlFile
 import generation.abstracted.initializeNodeRadii
 import generation.abstracted.newWindingPath
 import generation.abstracted.newWindingPathTestStartingWithStair
-import generation.architecture.applyPolyominoes
 import generation.architecture.definition.BlockDefinitions
 import generation.architecture.definition.allBlocks
-import generation.architecture.definition.allPolyominoes
+import generation.architecture.definition.independentConnections
 import generation.architecture.newBuilders
+import generation.elements.BlockConfig
 import generation.elements.explodeBlockMap
-import generation.elements.explodePolyominoes
 import generation.generateRealm
 import generation.misc.GenerationConfig
 import generation.misc.MeshShapeMap
@@ -73,11 +72,16 @@ fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig): World
       boundary,
       dice
   )
-  val blocks = allBlocks()
+  val builders = newBuilders()
+  val blocks = allBlocks(builders)
+  val blockConfig = BlockConfig(
+      blocks = blocks,
+      independentConnections = independentConnections()
+  )
   val workbench = if (System.getenv("START_WITH_STAIRS") != null)
-    newWindingPathTestStartingWithStair(input.dice, blocks, generationConfig.roomCount)
+    newWindingPathTestStartingWithStair(input.dice, blockConfig, generationConfig.roomCount)
   else
-    newWindingPath(input.dice, blocks, generationConfig.roomCount, BlockDefinitions.singleCellRoom)
+    newWindingPath(input.dice, blockConfig, generationConfig.roomCount, BlockDefinitions.singleCellRoom)
 
   val grid = workbench.mapGrid
 
@@ -87,7 +91,7 @@ fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig): World
   val deck = pipeHandsToDeck(nextId, listOf(
       { _ ->
         val blockMap = explodeBlockMap(blocks)
-        buildArchitecture(generationConfig, dice, workbench, blockMap, realm.cellBiomes, newBuilders())
+        buildArchitecture(generationConfig, dice, workbench, blockMap, realm.cellBiomes, builders)
       },
       populateWorld(generationConfig, input, realm)
   ))(Deck())

@@ -18,3 +18,10 @@ data class MapGrid(
 
 fun containsConnection(connections: ConnectionMap, first: Vector3i, second: Vector3i): Boolean =
     connections.contains(Pair(first, second)) || connections.contains(Pair(second, first))
+
+fun containsConnection(position: Vector3i): (ConnectionPair) -> Boolean = { connection ->
+  connection.first == position || connection.second == position
+}
+
+fun cellConnections(connections: ConnectionMap, position: Vector3i): List<ConnectionPair> =
+    connections.filter(containsConnection(position))

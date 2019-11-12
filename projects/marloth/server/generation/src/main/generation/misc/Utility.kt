@@ -1,6 +1,5 @@
 package generation.misc
 
-import generation.abstracted.tunnelRadius
 import mythic.ent.IdSource
 import mythic.ent.newIdSource
 import mythic.spatial.*
@@ -109,17 +108,6 @@ tailrec fun <T> crossMap(items: Collection<T>, accumulator: List<T> = listOf(), 
   val additions = sequence.filter { filter(items.first(), it) }
   val accumulation = accumulator.plus(additions)
   return crossMap(sequence, accumulation, filter)
-}
-
-fun connectionOverlapsNeighborNodes(neighbors: List<Node>, first: Node, second: Node): Boolean {
-  if (neighbors.any()) {
-    val connectionCenter = getCenter(first, second)
-    return neighbors.any { neighbor ->
-      lineIntersectsCircle(first.position.xy(), second.position.xy(), neighbor.position.xy(), neighbor.radius + tunnelRadius)
-//      neighbor.position.distance(connectionCenter) - neighbor.radius - tunnelRadius < 0f
-    }
-  }
-  return false
 }
 
 fun isBetween(first: Float, second: Float, middle: Float) =
