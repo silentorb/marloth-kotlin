@@ -26,12 +26,15 @@ data class BuilderInput(
     val dice: Dice,
     val turns: Int,
     val cell: Vector3i,
-    val position: Vector3
+    val position: Vector3,
+    val sides: Sides
 )
 
 typealias Builder = (BuilderInput) -> List<Hand>
 
-fun buildArchitecture(generationConfig: GenerationConfig, dice: Dice, workbench: Workbench,
+fun buildArchitecture(generationConfig: GenerationConfig, dice: Dice,
+                      independentConnections: Set<Any>,
+                      workbench: Workbench,
                       blockMap: BlockMap,
                       cellBiomes: CellBiomeMap,
                       builders: Map<Block, Builder>): List<Hand> {
@@ -50,25 +53,17 @@ fun buildArchitecture(generationConfig: GenerationConfig, dice: Dice, workbench:
         turns = info.turns,
         grid = workbench.mapGrid,
         cell = position,
-        biome = generationConfig.biomes[biomeName]!!
+        biome = generationConfig.biomes[biomeName]!!,
+        sides = getUsableCellSides(independentConnections, workbench.blockGrid, position)
     )
     builder(input)
   }
 }
 
-//fun mapBlocksOpenConnections(openConnections: Set<Any>, blocks: Set<Block>): Map<Block, Block> =
-//    blocks.associateWith { block ->
-//      block.copy(
-//          sides = block.sides.mapValues { side -> side.value.intersect(openConnections) }
-//      )
-//    }
-
-fun newWorkbench(dice: Dice, blocks: Set<Block>, roomCount: Int): Workbench {
-//  val openConnections = openConnectionTypes()
+fun newWorkbench(dice: Dice, blocks: Set<Block>, independentConnections: Set<Any>, roomCount: Int): Workbench {
   val blockConfig = BlockConfig(
       blocks = blocks,
-//      openConnectionBlocks = mapBlocksOpenConnections(openConnections, blocks),
-      independentConnections = independentConnectionTypes(),
+      independentConnections = independentConnections,
       openConnections = openConnectionTypes()
   )
   val firstBlockVariable = System.getenv("FIRST_BLOCK")
@@ -80,5 +75,5 @@ fun newWorkbench(dice: Dice, blocks: Set<Block>, roomCount: Int): Workbench {
   return pipe(
       windingPath(dice, blockConfig, roomCount),
       horrorVacui(dice, blockConfig, HorrorVacuiConfig(branchRate = 0.7f, branchLengthRange = 1..2))
-  )(newWindingWorkbench(firstBlock))
+  )(newWindingWorkbench(firstBlock.block))
 }

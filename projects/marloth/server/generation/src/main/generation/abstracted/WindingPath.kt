@@ -60,7 +60,7 @@ tailrec fun addPathStep(maxSteps: Int, dice: Dice, config: BlockConfig, workbenc
   val nextPosition = position + offset
   val openConnections = config.openConnections
   val blocks = if (stepCount == maxSteps - 1) {
-    val directions = allDirections.keys.minus(oppositeDirections[direction]!!)
+    val directions = allDirections.minus(oppositeDirections[direction]!!)
     config.blocks.filter(isBlockIndependent(config.isSideIndependent, directions)).toSet()
   } else
     config.blocks
@@ -91,5 +91,7 @@ fun newWindingWorkbench(firstBlock: Block): Workbench {
 
 fun windingPath(dice: Dice, config: BlockConfig, length: Int,
                 startPosition: Vector3i = Vector3i.zero): (Workbench) -> Workbench = { workbench ->
-  addPathStep(length - 1, dice, config, workbench, startPosition)
+  val result = addPathStep(length - 1, dice, config, workbench, startPosition)
+  assert(result.blockGrid.size == length)
+  result
 }

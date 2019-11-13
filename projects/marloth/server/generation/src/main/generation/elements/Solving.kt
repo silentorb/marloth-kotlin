@@ -18,7 +18,7 @@ fun isBlockIndependent(isSideIndependent: SideCheck, directions: Set<Direction>)
 
 fun getOtherSide(getBlock: GetBlock, origin: Vector3i): (Direction) -> Side = { direction ->
   val oppositeSide = oppositeDirections[direction]!!
-  val offset = allDirections[direction]!!
+  val offset = allDirectionVectors[direction]!!
   val position = origin + offset
   val block = getBlock(position)
   val sides = block?.sides
@@ -38,9 +38,9 @@ fun checkBlockMatch(surroundingSides: Map<Direction, Side>): (Block) -> Boolean 
   block.sides.all(sidesMatch(surroundingSides))
 }
 
-fun getSurroundingSides(blocks: Set<Block>, workbench: Workbench, position: Vector3i): Sides {
-  val getBlock: GetBlock = { workbench.blockGrid[it] }
-  return allDirections.keys.associateWith(getOtherSide(getBlock, position))
+fun getSurroundingSides(blockGrid: BlockGrid, position: Vector3i): Sides {
+  val getBlock: GetBlock = { blockGrid[it] }
+  return allDirections.associateWith(getOtherSide(getBlock, position))
 }
 
 fun filterOpenDirection(openConnections: Set<Any>, sides: Sides, direction: Direction): Sides {
@@ -54,7 +54,7 @@ fun matchBlock(dice: Dice, blocks: Set<Block>, surroundingSides: Sides): Block? 
 
 fun matchConnectingBlock(dice: Dice, blocks: Set<Block>, openConnections: Set<Any>, workbench: Workbench,
                          direction: Direction, position: Vector3i): Block? {
-  val surroundingSides = getSurroundingSides(blocks, workbench, position)
+  val surroundingSides = getSurroundingSides(workbench.blockGrid, position)
   val modifiedSides = filterOpenDirection(openConnections, surroundingSides, oppositeDirections[direction]!!)
   return matchBlock(dice, blocks, modifiedSides)
 }
@@ -62,7 +62,7 @@ fun matchConnectingBlock(dice: Dice, blocks: Set<Block>, openConnections: Set<An
 fun possibleNextDirections(config: BlockConfig, blockGrid: BlockGrid,
                            position: Vector3i): Map<Direction, Vector3i> {
   val block = blockGrid[position]!!
-  val options = allDirections
+  val options = allDirectionVectors
       .filter { direction -> !blockGrid.containsKey(position + direction.value) }
       .filter { direction -> isSideOpen(config.openConnections, block.sides.getValue(direction.key)) }
 
@@ -79,4 +79,18 @@ fun possibleNextDirections(config: BlockConfig, blockGrid: BlockGrid,
 
 fun blockCanHaveMoreConnections(config: BlockConfig, blockGrid: BlockGrid): (Vector3i) -> Boolean = { position ->
   possibleNextDirections(config, blockGrid, position).any()
+}
+
+// Returns the intersection of af a block's sides with its neighbors' sides
+fun getUsableCellSides(independentConnections: Set<Any>, blockGrid: BlockGrid, position: Vector3i): Sides {
+  val surroundingSides = getSurroundingSides(blockGrid, position)
+  val block = blockGrid.getValue(position)
+  return allDirections.associateWith { direction ->
+    val side = block.sides.getValue(direction)
+    val otherSide = surroundingSides.getValue(direction)
+    if (otherSide.any())
+      side.intersect(otherSide)
+    else
+      side.intersect(independentConnections)
+  }
 }

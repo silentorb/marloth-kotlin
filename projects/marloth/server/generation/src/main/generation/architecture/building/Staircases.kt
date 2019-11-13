@@ -14,7 +14,7 @@ import scenery.enums.MeshId
 import simulation.entities.ArchitectureElement
 import simulation.main.Hand
 
-val curvedStaircases: Builder = { input ->
+val curvedStaircases = blockBuilder() { input ->
   //val placeCurvedStaircases: Architect = { config, realm, dice ->
   val biome = input.biome
 //  val mesh = randomlySelectMesh(dice, config.meshes, biome, setOf(MeshAttribute.placementStairStepCurved))

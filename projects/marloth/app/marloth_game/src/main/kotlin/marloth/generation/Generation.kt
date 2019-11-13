@@ -1,8 +1,8 @@
 package marloth.generation
 
 import generation.abstracted.initializeNodeRadii
-import generation.architecture.definition.allBlocks
-import generation.architecture.definition.newBuilders
+import generation.architecture.definition.blockBuilders
+import generation.architecture.definition.independentConnectionTypes
 import generation.elements.explodeBlockMap
 import generation.generateRealm
 import generation.misc.GenerationConfig
@@ -21,9 +21,11 @@ import simulation.misc.WorldInput
 
 fun generateWorld(generationConfig: GenerationConfig, input: WorldInput): World {
   val dice = input.dice
-  val builders = newBuilders()
-  val blocks = allBlocks(builders)
-  val workbench = newWorkbench(dice, blocks, generationConfig.roomCount)
+  val (blocks, builders) = blockBuilders()
+//  val builders = newBuilders()
+//  val blocks = allBlocks(builders)
+  val independentConnections = independentConnectionTypes()
+  val workbench = newWorkbench(dice, blocks, independentConnections, generationConfig.roomCount)
   val grid = workbench.mapGrid
 
   val biomeGrid = newRandomizedBiomeGrid(biomeInfoMap, input)
@@ -32,7 +34,7 @@ fun generateWorld(generationConfig: GenerationConfig, input: WorldInput): World 
   val deck = pipeHandsToDeck(nextId, listOf(
       { _ ->
         val blockMap = explodeBlockMap(blocks)
-        buildArchitecture(generationConfig, dice, workbench, blockMap, realm.cellBiomes, builders)
+        buildArchitecture(generationConfig, dice, independentConnections, workbench, blockMap, realm.cellBiomes, builders)
       },
       populateWorld(generationConfig, input, realm)
   ))(Deck())

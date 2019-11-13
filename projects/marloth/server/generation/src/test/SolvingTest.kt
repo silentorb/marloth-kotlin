@@ -26,7 +26,7 @@ class SolvingTest {
 
   @Test
   fun matchesHorizontal() {
-    val workbench = newWindingWorkbench(BlockDefinitions.singleCellRoom)
+    val workbench = newWindingWorkbench(BlockDefinitions.singleCellRoom.block)
     val dice = Dice(1)
     val blocks = setOf(BlockDefinitions.singleCellRoom)
 //    val block = matchBlock(dice, blocks, workbench, Vector3i(0, 1, 0))
@@ -34,16 +34,16 @@ class SolvingTest {
 //    Assertions.assertNotNull(block)
   }
 
-  @Test
-  fun matchesHorizontalHalfStep() {
-    val workbench = newWindingWorkbench(BlockDefinitions.halfStepRoom)
-    val dice = Dice(1)
-    val blocks = setOf(BlockDefinitions.halfStepRoom)
-    val block = matchConnectingBlock(dice, blocks, openConnectionTypes(), workbench,
-        Direction.west,
-        Vector3i(-1, 0, 0)
-    )
-    Assertions.assertNotNull(block)
-  }
+//  @Test
+//  fun matchesHorizontalHalfStep() {
+//    val workbench = newWindingWorkbench(BlockDefinitions.halfStepRoom)
+//    val dice = Dice(1)
+//    val blocks = setOf(BlockDefinitions.halfStepRoom)
+//    val block = matchConnectingBlock(dice, blocks, openConnectionTypes(), workbench,
+//        Direction.west,
+//        Vector3i(-1, 0, 0)
+//    )
+//    Assertions.assertNotNull(block)
+//  }
 
 }

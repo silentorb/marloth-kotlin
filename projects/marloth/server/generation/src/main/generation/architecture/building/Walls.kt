@@ -1,6 +1,8 @@
 package generation.architecture.building
 
 import generation.architecture.cellHalfLength
+import generation.architecture.definition.impassable
+import generation.architecture.definition.optionalOpen
 import generation.architecture.newArchitectureMesh
 import generation.elements.Direction
 import generation.elements.horizontalDirections
@@ -9,9 +11,9 @@ import generation.misc.GenerationConfig
 import generation.misc.TextureGroup
 import generation.misc.biomeTexture
 import generation.next.Builder
-import generation.next.BuilderInput
 import mythic.spatial.*
 import scenery.MeshName
+import scenery.enums.MeshId
 import simulation.entities.ArchitectureElement
 import simulation.main.Hand
 import simulation.misc.Node
@@ -50,7 +52,7 @@ fun directionRotation(direction: Direction): Float =
       else -> throw Error("Not supported")
     }
 
-fun cubeWalls(mesh: MeshName): Builder = { input ->
+fun cubeWalls() = blockBuilder { input ->
   val cell = input.cell
   val grid = input.grid
   val connections = input.grid.connections
@@ -67,6 +69,6 @@ fun cubeWalls(mesh: MeshName): Builder = { input ->
       .map { (direction, offset) ->
         val position = input.position + cellHalfLength + offset.toVector3() * cellHalfLength
         val angleZ = directionRotation(direction)
-        newWallInternal(config, mesh, position, angleZ, biome)
+        newWallInternal(config, MeshId.squareWall.name, position, angleZ, biome)
       }
 }

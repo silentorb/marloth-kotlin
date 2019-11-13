@@ -1,10 +1,12 @@
 package generation.architecture.definition
 
+import generation.architecture.building.*
 import generation.elements.Block
 import generation.elements.Side
 import generation.elements.enumerateMembers
 import generation.elements.newBlock
 import generation.next.Builder
+import scenery.enums.MeshId
 import simulation.misc.NodeAttribute
 
 val doorway: Side = setOf(ConnectionType.doorway)
@@ -21,6 +23,87 @@ val spiralStaircaseTopOrBottom: Side = setOf(ConnectionType.spiralStaircaseBotto
 class BlockDefinitions {
   companion object {
 
+    val singleCellRoom = compose(
+        blockBuilder(
+            up = impassable,
+            east = optionalOpen,
+            north = optionalOpen,
+            west = optionalOpen,
+            south = optionalOpen
+        ),
+        floorMesh(MeshId.squareFloor.name),
+        cubeWalls()
+    )
+
+    val stairBottom = compose(
+        blockBuilder(
+            up = spiralStaircaseTopOrBottom,
+            east = optionalOpen,
+            north = optionalOpen,
+            south = optionalOpen,
+            west = impassable,
+            attributes = setOf(NodeAttribute.lockedRotation)
+        ),
+        floorMesh(MeshId.squareFloor.name),
+        cubeWalls(),
+        curvedStaircases
+    )
+
+
+    val stairMiddle = compose(
+        blockBuilder(
+            up = spiralStaircaseTop,
+            down = spiralStaircaseBottom,
+            east = impassable,
+            north = impassable,
+            south = impassable,
+            west = impassable,
+            attributes = setOf(NodeAttribute.lockedRotation)
+        ),
+        cubeWalls(),
+        curvedStaircases
+    )
+
+
+    val stairTop = compose(
+        blockBuilder(
+            up = impassable,
+            down = spiralStaircaseTopOrBottom,
+            east = optionalOpen,
+            north = optionalOpen,
+            south = optionalOpen,
+            west = impassable,
+            attributes = setOf(NodeAttribute.lockedRotation)
+        ),
+        cubeWalls(),
+        halfFloorMesh(MeshId.halfSquareFloor.name)
+    )
+
+    val halfStepRoom = compose(
+        blockBuilder(
+            up = impassable,
+            east = halfStepOptionalOpen,
+            north = halfStepOptionalOpen,
+            west = halfStepOptionalOpen,
+            south = halfStepOptionalOpen
+        ),
+        floorMesh(MeshId.squareFloor.name),
+        cubeWalls()
+    )
+
+    val lowerHalfStepSlope = compose(
+        blockBuilder(
+            up = impassable,
+            east = halfStepRequiredOpen,
+            north = impassable,
+            west = requiredOpen,
+            south = impassable
+        ),
+        floorMesh(MeshId.squareFloor.name),
+        newSlopedFloorMesh(MeshId.squareFloor.name),
+        cubeWalls()
+    )
+    /*
     val singleCellRoom = newBlock(
         up = impassable,
         down = impassable,
@@ -79,12 +162,23 @@ class BlockDefinitions {
         west = requiredOpen,
         south = impassable
     )
+
+     */
   }
 }
 
-fun allBlocks() = enumerateMembers<Block>(BlockDefinitions).toSet()
+fun enumerateBlockBuilders() = enumerateMembers<BlockBuilder>(BlockDefinitions)
 
-fun allBlocks(builders: Map<Block, Builder>) =
-    allBlocks()
-        .filter { builders.containsKey(it) }
-        .toSet()
+fun splitBlockBuilders(blockBuilders: List<BlockBuilder>): Pair<Set<Block>, Map<Block, Builder>> =
+    Pair(
+        blockBuilders.map { it.block }.toSet(),
+        blockBuilders.associate { Pair(it.block, it.builder) }
+    )
+
+fun blockBuilders() =
+    splitBlockBuilders(enumerateBlockBuilders())
+
+//fun allBlocks(builders: Map<Block, Builder>) =
+//    allBlocks()
+//        .filter { builders.containsKey(it) }
+//        .toSet()
