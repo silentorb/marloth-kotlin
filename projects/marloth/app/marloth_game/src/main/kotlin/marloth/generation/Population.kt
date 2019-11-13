@@ -183,7 +183,7 @@ fun newPlayer(realm: Realm, cellPosition: Vector3i, playerNode: Node): Hand {
   return newCharacter(
       definition = creatures.player,
       faction = 1,
-      position = applyCellPosition(cellPosition) + floorOffset + Vector3(0f, 0f, 1f),
+      position = applyCellPosition(cellPosition) + floorOffset + Vector3(0f, 0f, 6f),
       angle = getLookAtAngle(neighbor.position - playerNode.position)
   )
       .copy(

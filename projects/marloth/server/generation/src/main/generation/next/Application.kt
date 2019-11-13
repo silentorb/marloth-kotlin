@@ -1,5 +1,9 @@
 package generation.next
 
+import generation.abstracted.newWindingPath
+import generation.architecture.definition.BlockDefinitions
+import generation.architecture.definition.independentConnectionTypes
+import generation.architecture.definition.openConnectionTypes
 import generation.elements.*
 import generation.misc.BiomeInfo
 import generation.misc.GenerationConfig
@@ -46,4 +50,28 @@ fun buildArchitecture(generationConfig: GenerationConfig, dice: Dice, workbench:
     )
     builder(input)
   }
+}
+
+//fun mapBlocksOpenConnections(openConnections: Set<Any>, blocks: Set<Block>): Map<Block, Block> =
+//    blocks.associateWith { block ->
+//      block.copy(
+//          sides = block.sides.mapValues { side -> side.value.intersect(openConnections) }
+//      )
+//    }
+
+fun newWorkbench(dice: Dice, blocks: Set<Block>, roomCount: Int): Workbench {
+//  val openConnections = openConnectionTypes()
+  val blockConfig = BlockConfig(
+      blocks = blocks,
+//      openConnectionBlocks = mapBlocksOpenConnections(openConnections, blocks),
+      independentConnections = independentConnectionTypes(),
+      openConnections = openConnectionTypes()
+  )
+  val firstBlockVariable = System.getenv("FIRST_BLOCK")
+  val firstBlock = if (firstBlockVariable != null)
+    getMember(BlockDefinitions, firstBlockVariable as String)
+  else
+    BlockDefinitions.singleCellRoom
+
+  return newWindingPath(dice, blockConfig, roomCount, firstBlock)
 }

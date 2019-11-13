@@ -5,6 +5,7 @@ import generation.elements.Side
 import generation.elements.enumerateMembers
 import generation.elements.newBlock
 import generation.next.Builder
+import simulation.misc.NodeAttribute
 
 val doorway: Side = setOf(ConnectionType.doorway)
 val requiredOpen: Side = setOf(ConnectionType.doorway, ConnectionType.open)
@@ -13,7 +14,9 @@ val halfStepRequiredOpen: Side = setOf(ConnectionType.halfStepOpen)
 val halfStepOptionalOpen: Side = halfStepRequiredOpen.plus(ConnectionType.wall)
 val impassable: Side = setOf(ConnectionType.wall)
 val any: Side = setOf()
-val spiralStaircase: Side = setOf(ConnectionType.spiralStaircase)
+val spiralStaircaseBottom: Side = setOf(ConnectionType.spiralStaircaseBottom)
+val spiralStaircaseTop: Side = setOf(ConnectionType.spiralStaircaseTop)
+val spiralStaircaseTopOrBottom: Side = setOf(ConnectionType.spiralStaircaseBottom, ConnectionType.spiralStaircaseTop)
 
 class BlockDefinitions {
   companion object {
@@ -28,30 +31,33 @@ class BlockDefinitions {
     )
 
     val stairBottom = newBlock(
-        up = spiralStaircase,
+        up = spiralStaircaseTopOrBottom,
         down = impassable,
         east = optionalOpen,
         north = optionalOpen,
         south = optionalOpen,
-        west = optionalOpen
+        west = impassable,
+        attributes = setOf(NodeAttribute.lockedRotation)
     )
 
     val stairTop = newBlock(
         up = impassable,
-        down = spiralStaircase,
+        down = spiralStaircaseTopOrBottom,
         east = optionalOpen,
         north = optionalOpen,
         south = optionalOpen,
-        west = optionalOpen
+        west = impassable,
+        attributes = setOf(NodeAttribute.lockedRotation)
     )
 
     val stairMiddle = newBlock(
-        up = spiralStaircase,
-        down = spiralStaircase,
+        up = spiralStaircaseTop,
+        down = spiralStaircaseBottom,
         east = impassable,
         north = impassable,
         south = impassable,
-        west = impassable
+        west = impassable,
+        attributes = setOf(NodeAttribute.lockedRotation)
     )
 
     val halfStepRoom = newBlock(

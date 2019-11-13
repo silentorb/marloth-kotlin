@@ -19,7 +19,7 @@ fun newCurvedStaircases(input: BuilderInput): List<Hand> {
   val mesh = MeshId.curvingStairStep.name
   val sweepLength = Pi * 2f
 
-  val baseAngle = (input.turns.toFloat() - 1) * Pi * 0.5f
+  val baseAngle = applyTurns(input.turns)
 
   val stairHeight = cellLength
   val heightStep = 0.3f

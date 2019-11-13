@@ -113,3 +113,6 @@ fun randomlySelectMesh(dice: Dice, meshes: MeshInfoMap, biome: BiomeInfo, attrib
 //  println("stair ${node.id} $otherNode $vector")
 //  return getLookAtAngle(vector)
 //}
+
+fun applyTurns(turns: Int): Float =
+    (turns.toFloat() - 1) * Pi * 0.5f

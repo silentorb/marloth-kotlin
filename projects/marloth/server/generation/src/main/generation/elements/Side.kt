@@ -14,3 +14,6 @@ val oppositeSides: Map<Direction, Direction> = mapOf(
     Direction.north to Direction.south,
     Direction.south to Direction.north
 )
+
+fun isSideOpen(openConnections: Set<Any>, side: Side): Boolean =
+    side.any { openConnections.contains(it) }

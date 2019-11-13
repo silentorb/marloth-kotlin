@@ -5,6 +5,7 @@ import mythic.ent.Id
 import mythic.spatial.Vector3
 
 enum class NodeAttribute {
+  lockedRotation,
   exit,
   home,
   fullFloor, // The majority of the floor is contiguous and available for placing objects

@@ -2,29 +2,25 @@ package generation.architecture.definition
 
 
 enum class ConnectionType {
-  wall,
   doorway,
-  spiralStaircase,
+  halfStepOpen,
   open,
-  halfStepOpen
+  spiralStaircaseBottom,
+  spiralStaircaseTop,
+  wall
 }
 
 // Connections that don't need to be completed and can be left dangling
-fun independentConnections(): Set<ConnectionType> =
+fun independentConnectionTypes(): Set<ConnectionType> =
     setOf(
         ConnectionType.wall
     )
 
-fun closedConnectionTypes(): Set<ConnectionType> =
+fun openConnectionTypes(): Set<ConnectionType> =
     setOf(
         ConnectionType.doorway,
         ConnectionType.halfStepOpen,
         ConnectionType.open,
-        ConnectionType.spiralStaircase
+        ConnectionType.spiralStaircaseBottom,
+        ConnectionType.spiralStaircaseTop
     )
-
-fun openConnectionTypes(): Set<ConnectionType> =
-    ConnectionType
-        .values()
-        .toSet()
-        .minus(closedConnectionTypes())

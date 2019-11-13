@@ -6,27 +6,45 @@ import randomly.Dice
 typealias GetBlock = (Vector3i) -> Block?
 typealias CheckBlockSide = (Map.Entry<Direction, Side>) -> Boolean
 
-fun getOtherSide(getBlock: GetBlock, origin: Vector3i, direction: Direction): Side? {
+fun getOtherSide(getBlock: GetBlock, origin: Vector3i): (Direction) -> Side = { direction ->
   val oppositeSide = oppositeSides[direction]!!
   val offset = allDirections[direction]!!
   val position = origin + offset
   val block = getBlock(position)
   val sides = block?.sides
-  return if (sides == null) null else sides[oppositeSide]
+  sides?.getValue(oppositeSide) ?: setOf()
 }
 
-fun sidesMatch(getBlock: GetBlock, origin: Vector3i): CheckBlockSide = { (direction, side) ->
-  val otherSide = getOtherSide(getBlock, origin, direction) ?: setOf()
-  val result = side.none() || otherSide.none() || otherSide.any { side.contains(it) }
+fun sidesMatch(surroundingSides: Map<Direction, Side>): CheckBlockSide = { (direction, blockSide) ->
+  val otherSide = surroundingSides[direction]!!
+  val result = otherSide.none() || otherSide.any { blockSide.contains(it) }
+  if (!result) {
+    val k = 0
+  }
   result
 }
 
-fun checkBlockMatch(getBlock: GetBlock, position: Vector3i): (Block) -> Boolean = { block ->
-  block.sides.all(sidesMatch(getBlock, position))
+fun checkBlockMatch(surroundingSides: Map<Direction, Side>): (Block) -> Boolean = { block ->
+  block.sides.all(sidesMatch(surroundingSides))
 }
 
-fun matchBlock(dice: Dice, blocks: Set<Block>, workbench: Workbench, position: Vector3i): Block? {
+fun getSurroundingSides(blocks: Set<Block>, workbench: Workbench, position: Vector3i): Sides {
   val getBlock: GetBlock = { workbench.blockGrid[it] }
+  return allDirections.keys.associateWith(getOtherSide(getBlock, position))
+}
+
+fun filterOpenDirection(openConnections: Set<Any>, sides: Sides, direction: Direction): Sides {
+  return sides.plus(Pair(direction, sides[direction]!!.intersect(openConnections)))
+}
+
+fun matchBlock(dice: Dice, blocks: Set<Block>, surroundingSides: Sides): Block? {
   val shuffledBlocks = dice.shuffle(blocks.toList())
-  return shuffledBlocks.firstOrNull(checkBlockMatch(getBlock, position))
+  return shuffledBlocks.firstOrNull(checkBlockMatch(surroundingSides))
+}
+
+fun matchConnectingBlock(dice: Dice, blocks: Set<Block>, openConnections: Set<Any>, workbench: Workbench,
+                         direction: Direction, position: Vector3i): Block? {
+  val surroundingSides = getSurroundingSides(blocks, workbench, position)
+  val modifiedSides = filterOpenDirection(openConnections, surroundingSides, oppositeSides[direction]!!)
+  return matchBlock(dice, blocks, modifiedSides)
 }

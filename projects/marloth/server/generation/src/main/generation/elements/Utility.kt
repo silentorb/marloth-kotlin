@@ -17,9 +17,15 @@ fun applyBiomesToGrid(grid: MapGrid, biomeGrid: BiomeGrid): CellBiomeMap =
       biomeGrid(applyCellPosition(cell))
     }
 
-fun <T>enumerateMembers(polyominoes: Any): List<T> {
-  return polyominoes.javaClass.kotlin.memberProperties.map { member ->
+fun <T> enumerateMembers(container: Any): List<T> {
+  return container.javaClass.kotlin.memberProperties.map { member ->
     @Suppress("UNCHECKED_CAST")
-    member.get(polyominoes) as T
+    member.get(container) as T
   }
+}
+
+fun <T> getMember(container: Any, name: String): T {
+  val property = container.javaClass.kotlin.memberProperties.first { it.name == name }
+  @Suppress("UNCHECKED_CAST")
+  return property.get(container) as T
 }

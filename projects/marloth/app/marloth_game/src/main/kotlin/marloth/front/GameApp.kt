@@ -3,7 +3,6 @@ package marloth.front
 import marloth.clienting.Client
 import marloth.clienting.newClientState
 import marloth.definition.staticDefinitions
-import marloth.generation.generateDefaultWorld
 import marloth.integration.AppState
 import marloth.integration.GameConfig
 import marloth.integration.newClient
@@ -46,13 +45,13 @@ fun newGameApp(platform: Platform, config: GameConfig) = GameApp(
 fun runApp(platform: Platform, config: GameConfig) {
   platform.display.initialize(config.display)
   val app = newGameApp(platform, config)
-  val world = generateDefaultWorld()
-  val state = AppState(
-      client = newClientState(platform, config.input, config.audio),
-      players = listOf(1),
-      worlds = listOf(world),
-      timestep = newTimestepState()
-  )
-  gameLoop(app, state)
+  throw Error("Not implemented")
+//  val state = AppState(
+//      client = newClientState(platform, config.input, config.audio),
+//      players = listOf(1),
+//      worlds = listOf(world),
+//      timestep = newTimestepState()
+//  )
+//  gameLoop(app, state)
   app.client.shutdown()
 }

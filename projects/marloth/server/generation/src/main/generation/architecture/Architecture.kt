@@ -1,13 +1,9 @@
 package generation.architecture
 
-import generation.architecture.definition.openConnectionTypes
-import generation.architecture.definition.closedConnectionTypes
-import generation.elements.*
-import generation.misc.*
+import generation.misc.GenerationConfig
 import randomly.Dice
 import simulation.main.Hand
 import simulation.misc.Graph
-import simulation.misc.MapGrid
 import simulation.misc.NodeAttribute
 import simulation.misc.Realm
 import kotlin.math.ceil

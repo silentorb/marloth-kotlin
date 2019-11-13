@@ -1,5 +1,7 @@
 package generation.elements
 
+import simulation.misc.NodeAttribute
+
 data class MappedBlock(
     val original: Block,
     val turns: Int = 0
@@ -8,8 +10,10 @@ data class MappedBlock(
 typealias BlockMap = Map<Block, MappedBlock>
 
 fun explodeBlockMap(blocks: Set<Block>): BlockMap {
-  val nonFree = blocks.filter { it.sides != rotateSides(1)(it.sides) }
-  val rotated = nonFree.flatMap { originalBlock ->
+  val needsRotatedVariations = blocks.filter {
+    !it.attributes.contains(NodeAttribute.lockedRotation) && it.sides != rotateSides(1)(it.sides)
+  }
+  val rotated = needsRotatedVariations.flatMap { originalBlock ->
     (1..3)
         .map { turns ->
           val block = originalBlock.copy(

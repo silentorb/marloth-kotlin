@@ -3,21 +3,9 @@ package lab
 import configuration.ConfigManager
 import configuration.loadYamlFile
 import configuration.saveYamlFile
-import generation.abstracted.initializeNodeRadii
-import generation.abstracted.newWindingPath
-import generation.abstracted.newWindingPathTestStartingWithStair
-import generation.architecture.definition.BlockDefinitions
-import generation.architecture.definition.allBlocks
-import generation.architecture.definition.independentConnections
-import generation.architecture.newBuilders
-import generation.elements.BlockConfig
-import generation.elements.explodeBlockMap
-import generation.generateRealm
 import generation.misc.GenerationConfig
 import generation.misc.MeshShapeMap
 import generation.misc.compileArchitectureMeshInfo
-import generation.misc.newRandomizedBiomeGrid
-import generation.next.buildArchitecture
 import lab.utility.shouldReloadWorld
 import lab.utility.updateWatching
 import lab.views.game.GameViewConfig
@@ -29,18 +17,13 @@ import marloth.definition.generation.meshAttributes
 import marloth.definition.staticDefinitions
 import marloth.front.GameApp
 import marloth.front.RenderHook
-import marloth.generation.populateWorld
+import marloth.generation.generateWorld
 import marloth.integration.*
 import mythic.desktop.createDesktopPlatform
-import mythic.ent.newIdSource
 import mythic.ent.pipe
 import mythic.quartz.newTimestepState
-import org.recast4j.detour.NavMeshQuery
 import randomly.Dice
-import simulation.intellect.navigation.newNavMesh
-import simulation.main.Deck
 import simulation.main.World
-import simulation.main.pipeHandsToDeck
 import simulation.misc.WorldInput
 import simulation.misc.createWorldBoundary
 import simulation.physics.newBulletState
@@ -72,47 +55,7 @@ fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig): World
       boundary,
       dice
   )
-  val builders = newBuilders()
-  val blocks = allBlocks(builders)
-  val blockConfig = BlockConfig(
-      blocks = blocks,
-      independentConnections = independentConnections()
-  )
-  val workbench = if (System.getenv("START_WITH_STAIRS") != null)
-    newWindingPathTestStartingWithStair(input.dice, blockConfig, generationConfig.roomCount)
-  else
-    newWindingPath(input.dice, blockConfig, generationConfig.roomCount, BlockDefinitions.singleCellRoom)
-
-  val grid = workbench.mapGrid
-
-  val biomeGrid = newRandomizedBiomeGrid(biomeInfoMap, input)
-  val realm = generateRealm(generationConfig, input, grid, biomeGrid)
-  val nextId = newIdSource(1)
-  val deck = pipeHandsToDeck(nextId, listOf(
-      { _ ->
-        val blockMap = explodeBlockMap(blocks)
-        buildArchitecture(generationConfig, dice, workbench, blockMap, realm.cellBiomes, builders)
-      },
-      populateWorld(generationConfig, input, realm)
-  ))(Deck())
-
-  val navMesh = if (gameViewConfig.haveEnemies)
-    newNavMesh(deck)
-  else
-    null
-
-  return World(
-      deck = deck,
-      realm = realm.copy(
-          graph = initializeNodeRadii(deck)(realm.graph)
-      ),
-      nextId = nextId(),
-      dice = Dice(),
-      availableIds = setOf(),
-      logicUpdateCounter = 0,
-      navMesh = navMesh,
-      navMeshQuery = if (navMesh != null) NavMeshQuery(navMesh) else null
-  )
+  return generateWorld(generationConfig, input)
 }
 
 data class LabApp(
