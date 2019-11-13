@@ -6,8 +6,18 @@ import randomly.Dice
 typealias GetBlock = (Vector3i) -> Block?
 typealias CheckBlockSide = (Map.Entry<Direction, Side>) -> Boolean
 
+typealias SideCheck = (Side) -> Boolean
+
+fun isSideIndependent(independentConnections: Set<Any>): SideCheck = { side ->
+  side.any { independentConnections.contains(it) }
+}
+
+fun isBlockIndependent(isSideIndependent: SideCheck, directions: Set<Direction>): (Block) -> Boolean = { block ->
+  directions.all { isSideIndependent(block.sides.getValue(it)) }
+}
+
 fun getOtherSide(getBlock: GetBlock, origin: Vector3i): (Direction) -> Side = { direction ->
-  val oppositeSide = oppositeSides[direction]!!
+  val oppositeSide = oppositeDirections[direction]!!
   val offset = allDirections[direction]!!
   val position = origin + offset
   val block = getBlock(position)
@@ -38,13 +48,35 @@ fun filterOpenDirection(openConnections: Set<Any>, sides: Sides, direction: Dire
 }
 
 fun matchBlock(dice: Dice, blocks: Set<Block>, surroundingSides: Sides): Block? {
-  val shuffledBlocks = dice.shuffle(blocks.toList())
+  val shuffledBlocks = dice.shuffle(blocks)
   return shuffledBlocks.firstOrNull(checkBlockMatch(surroundingSides))
 }
 
 fun matchConnectingBlock(dice: Dice, blocks: Set<Block>, openConnections: Set<Any>, workbench: Workbench,
                          direction: Direction, position: Vector3i): Block? {
   val surroundingSides = getSurroundingSides(blocks, workbench, position)
-  val modifiedSides = filterOpenDirection(openConnections, surroundingSides, oppositeSides[direction]!!)
+  val modifiedSides = filterOpenDirection(openConnections, surroundingSides, oppositeDirections[direction]!!)
   return matchBlock(dice, blocks, modifiedSides)
+}
+
+fun possibleNextDirections(config: BlockConfig, blockGrid: BlockGrid,
+                           position: Vector3i): Map<Direction, Vector3i> {
+  val block = blockGrid[position]!!
+  val options = allDirections
+      .filter { direction -> !blockGrid.containsKey(position + direction.value) }
+      .filter { direction -> isSideOpen(config.openConnections, block.sides.getValue(direction.key)) }
+
+  val essential = options.filter { direction ->
+    val side = block.sides[direction.key]!!
+    !config.isSideIndependent(side)
+  }
+
+  return if (essential.any())
+    essential
+  else
+    options
+}
+
+fun blockCanHaveMoreConnections(config: BlockConfig, blockGrid: BlockGrid): (Vector3i) -> Boolean = { position ->
+  possibleNextDirections(config, blockGrid, position).any()
 }

@@ -27,7 +27,8 @@ class BlockDefinitions {
         east = optionalOpen,
         north = optionalOpen,
         west = optionalOpen,
-        south = optionalOpen
+        south = optionalOpen,
+        attributes = setOf(NodeAttribute.fullFloor)
     )
 
     val stairBottom = newBlock(
@@ -66,7 +67,8 @@ class BlockDefinitions {
         east = halfStepOptionalOpen,
         north = halfStepOptionalOpen,
         west = halfStepOptionalOpen,
-        south = halfStepOptionalOpen
+        south = halfStepOptionalOpen,
+        attributes = setOf(NodeAttribute.fullFloor)
     )
 
     val lowerHalfStepSlope = newBlock(

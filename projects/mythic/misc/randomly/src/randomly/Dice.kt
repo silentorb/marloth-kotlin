@@ -10,6 +10,8 @@ class Dice(private val seed: Long) {
 
   fun getInt(min: Int, max: Int) = min + random.nextInt(1 + max - min)
 
+  fun getInt(value: IntRange) = getInt(value.first, value.last)
+
   fun getFloat() = random.nextFloat()
 
   fun getFloat(min: Float, max: Float) = min + getFloat() * (max - min)
@@ -71,6 +73,8 @@ class Dice(private val seed: Long) {
     }
     return result
   }
+
+  fun <T> shuffle(set: Set<T>): List<T> = shuffle(set.toList())
 
   companion object {
     val global = Dice()

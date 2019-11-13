@@ -6,7 +6,7 @@ val horizontalSides = horizontalSideList.toSet()
 
 typealias Side = Set<Any>
 
-val oppositeSides: Map<Direction, Direction> = mapOf(
+val oppositeDirections: Map<Direction, Direction> = mapOf(
     Direction.up to Direction.down,
     Direction.down to Direction.up,
     Direction.west to Direction.east,

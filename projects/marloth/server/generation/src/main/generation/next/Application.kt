@@ -1,12 +1,16 @@
 package generation.next
 
-import generation.abstracted.newWindingPath
+import generation.abstracted.HorrorVacuiConfig
+import generation.abstracted.horrorVacui
+import generation.abstracted.newWindingWorkbench
+import generation.abstracted.windingPath
 import generation.architecture.definition.BlockDefinitions
 import generation.architecture.definition.independentConnectionTypes
 import generation.architecture.definition.openConnectionTypes
 import generation.elements.*
 import generation.misc.BiomeInfo
 import generation.misc.GenerationConfig
+import mythic.ent.pipe
 import mythic.spatial.Vector3
 import mythic.spatial.Vector3i
 import randomly.Dice
@@ -73,5 +77,8 @@ fun newWorkbench(dice: Dice, blocks: Set<Block>, roomCount: Int): Workbench {
   else
     BlockDefinitions.singleCellRoom
 
-  return newWindingPath(dice, blockConfig, roomCount, firstBlock)
+  return pipe(
+      windingPath(dice, blockConfig, roomCount),
+      horrorVacui(dice, blockConfig, HorrorVacuiConfig(branchRate = 0.7f, branchLengthRange = 1..2))
+  )(newWindingWorkbench(firstBlock))
 }
