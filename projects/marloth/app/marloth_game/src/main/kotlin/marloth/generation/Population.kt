@@ -4,7 +4,7 @@ import generation.abstracted.distributeToSlots
 import generation.abstracted.neighbors
 import generation.abstracted.normalizeRanges
 import generation.architecture.alignWithNodeFloor
-import generation.architecture.floorOffset
+import generation.architecture.definition.floorOffset
 import generation.architecture.nodeFloorCenter
 import generation.calculateWorldScale
 import generation.elements.applyCellPosition

@@ -1,11 +1,14 @@
-package generation.architecture
+package generation.architecture.building
 
+import generation.architecture.cellHalfLength
+import generation.architecture.newArchitectureMesh
 import generation.elements.Direction
 import generation.elements.horizontalDirections
 import generation.misc.BiomeInfo
 import generation.misc.GenerationConfig
 import generation.misc.TextureGroup
 import generation.misc.biomeTexture
+import generation.next.Builder
 import generation.next.BuilderInput
 import mythic.spatial.*
 import scenery.MeshName
@@ -47,13 +50,13 @@ fun directionRotation(direction: Direction): Float =
       else -> throw Error("Not supported")
     }
 
-fun cubeWalls(input: BuilderInput, mesh: MeshName): List<Hand> {
+fun cubeWalls(mesh: MeshName): Builder = { input ->
   val cell = input.cell
   val grid = input.grid
   val connections = input.grid.connections
   val config = input.config
   val biome = input.biome
-  return horizontalDirections
+  horizontalDirections
       .filter { direction ->
         val otherCell = cell + direction.value
         !containsConnection(connections, cell, otherCell) &&

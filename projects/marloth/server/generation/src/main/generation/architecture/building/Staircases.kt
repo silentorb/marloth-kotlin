@@ -1,7 +1,10 @@
-package generation.architecture
+package generation.architecture.building
 
+import generation.architecture.*
+import generation.architecture.definition.floorOffset
 import generation.misc.TextureGroup
 import generation.misc.biomeTexture
+import generation.next.Builder
 import generation.next.BuilderInput
 import mythic.spatial.Matrix
 import mythic.spatial.Pi
@@ -11,8 +14,8 @@ import scenery.enums.MeshId
 import simulation.entities.ArchitectureElement
 import simulation.main.Hand
 
-fun newCurvedStaircases(input: BuilderInput): List<Hand> {
-//val placeCurvedStaircases: Architect = { config, realm, dice ->
+val curvedStaircases: Builder = { input ->
+  //val placeCurvedStaircases: Architect = { config, realm, dice ->
   val biome = input.biome
 //  val mesh = randomlySelectMesh(dice, config.meshes, biome, setOf(MeshAttribute.placementStairStepCurved))
   val config = input.config
@@ -26,7 +29,7 @@ fun newCurvedStaircases(input: BuilderInput): List<Hand> {
   val stepCount = (stairHeight / heightStep).toInt()
   val angleStep = sweepLength / stepCount.toFloat()
   val baseOffset = input.position + floorOffset + align(config.meshes, alignWithCeiling)(mesh)
-  return (0 until stepCount).map { step ->
+  (0 until stepCount).map { step ->
     val angle = baseAngle + step * angleStep
     val heightPosition = Vector3(0f, 0f, heightStep + step * heightStep)
     val rotationPosition = Vector3(3.5f, 0f, 0f).transform(Matrix().rotateZ(angle))

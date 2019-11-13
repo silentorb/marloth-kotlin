@@ -2,7 +2,7 @@ package marloth.generation
 
 import generation.abstracted.initializeNodeRadii
 import generation.architecture.definition.allBlocks
-import generation.architecture.newBuilders
+import generation.architecture.definition.newBuilders
 import generation.elements.explodeBlockMap
 import generation.generateRealm
 import generation.misc.GenerationConfig
@@ -18,7 +18,6 @@ import simulation.main.Deck
 import simulation.main.World
 import simulation.main.pipeHandsToDeck
 import simulation.misc.WorldInput
-import simulation.misc.createWorldBoundary
 
 fun generateWorld(generationConfig: GenerationConfig, input: WorldInput): World {
   val dice = input.dice
