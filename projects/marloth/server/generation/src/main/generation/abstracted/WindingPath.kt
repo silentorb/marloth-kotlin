@@ -92,6 +92,6 @@ fun newWindingWorkbench(firstBlock: Block): Workbench {
 fun windingPath(dice: Dice, config: BlockConfig, length: Int,
                 startPosition: Vector3i = Vector3i.zero): (Workbench) -> Workbench = { workbench ->
   val result = addPathStep(length - 1, dice, config, workbench, startPosition)
-  assert(result.blockGrid.size == length)
+  assert(result.blockGrid.size > 0)
   result
 }

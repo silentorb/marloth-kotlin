@@ -25,7 +25,8 @@ fun generateWorld(generationConfig: GenerationConfig, input: WorldInput): World 
 //  val builders = newBuilders()
 //  val blocks = allBlocks(builders)
   val independentConnections = independentConnectionTypes()
-  val workbench = newWorkbench(dice, blocks, independentConnections, generationConfig.roomCount)
+  val blockMap = explodeBlockMap(blocks)
+  val workbench = newWorkbench(dice, blockMap.keys, independentConnections, generationConfig.roomCount)
   val grid = workbench.mapGrid
 
   val biomeGrid = newRandomizedBiomeGrid(biomeInfoMap, input)
@@ -33,7 +34,6 @@ fun generateWorld(generationConfig: GenerationConfig, input: WorldInput): World 
   val nextId = newIdSource(1)
   val deck = pipeHandsToDeck(nextId, listOf(
       { _ ->
-        val blockMap = explodeBlockMap(blocks)
         buildArchitecture(generationConfig, dice, independentConnections, workbench, blockMap, realm.cellBiomes, builders)
       },
       populateWorld(generationConfig, input, realm)
