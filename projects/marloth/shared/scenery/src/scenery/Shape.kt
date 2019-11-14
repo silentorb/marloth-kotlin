@@ -11,6 +11,14 @@ interface Shape {
   val height: Float
 }
 
+data class CompositeShape(
+    val shapes: List<Shape>,
+    override val height: Float = shapes.map { it.height }.max() ?: 0f,
+    override val radius: Float = shapes.map { it.radius }.max() ?: 0f,
+    override val x: Float = shapes.map { it.x }.max() ?: 0f,
+    override val y: Float = shapes.map { it.y }.max() ?: 0f
+) : Shape
+
 data class ShapeOffset(
     val transform: Matrix,
     val shape: Shape,

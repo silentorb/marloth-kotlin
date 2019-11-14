@@ -10,6 +10,8 @@ class Dice(private val seed: Long) {
 
   fun getInt(min: Int, max: Int) = min + random.nextInt(1 + max - min)
 
+  fun getInt(max: Int) = getInt(0, max)
+
   fun getInt(value: IntRange) = getInt(value.first, value.last)
 
   fun getFloat() = random.nextFloat()

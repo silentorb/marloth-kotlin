@@ -1,6 +1,7 @@
 package generation.architecture.building
 
 import generation.architecture.cellHalfLength
+import generation.architecture.definition.ConnectionType
 import generation.architecture.definition.impassable
 import generation.architecture.definition.optionalOpen
 import generation.architecture.newArchitectureMesh
@@ -58,17 +59,43 @@ fun cubeWalls() = blockBuilder { input ->
   val connections = input.grid.connections
   val config = input.config
   val biome = input.biome
-  horizontalDirections
-      .filter { direction ->
-        val otherCell = cell + direction.value
-        !containsConnection(connections, cell, otherCell) &&
-            (setOf(Direction.north, Direction.east).contains(direction.key) ||
+  val dice = input.dice
+
+  val placeWall: (Map<ConnectionType, MeshId>) -> (Map.Entry<Direction, Vector3i>) -> Hand = { meshMap ->
+    { (direction, offset) ->
+      val position = input.position + cellHalfLength + offset.toVector3() * cellHalfLength
+      val angleZ = directionRotation(direction)
+      val mesh = getSideMesh(dice, input.sides, direction, mapOf(
+          ConnectionType.wall to MeshId.squareWall
+      ))!!
+      newWallInternal(config, mesh.name, position, angleZ, biome)
+    }
+  }
+
+  val (open, closed) =
+      horizontalDirections.entries
+          .filter { (direction, offset) ->
+            val otherCell = cell + offset
+            setOf(Direction.north, Direction.east).contains(direction) ||
                 !grid.cells.containsKey(otherCell)
-                )
-      }
-      .map { (direction, offset) ->
-        val position = input.position + cellHalfLength + offset.toVector3() * cellHalfLength
-        val angleZ = directionRotation(direction)
-        newWallInternal(config, MeshId.squareWall.name, position, angleZ, biome)
-      }
+          }
+          .partition { (_, offset) ->
+            val otherCell = cell + offset
+            containsConnection(connections, cell, otherCell)
+          }
+
+  listOf<Hand>()
+      .plus(
+          open
+//              .filter { dice.getInt(3) == 2 }
+              .map(placeWall(mapOf(
+                  ConnectionType.doorway to MeshId.squareWallDoorway
+              ))))
+
+      .plus(
+          closed
+              .map(placeWall(mapOf(
+                  ConnectionType.wall to MeshId.squareWall
+              )))
+      )
 }

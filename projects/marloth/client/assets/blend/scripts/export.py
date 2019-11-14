@@ -1,3 +1,5 @@
+# This file is deprecated
+
 import bpy
 import os
 import os.path

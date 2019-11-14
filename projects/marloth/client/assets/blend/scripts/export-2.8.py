@@ -53,42 +53,73 @@ def prepare_texture_nodes():
 def get_horizontal_radius(dimensions):
     return max(dimensions.x, dimensions.y) / 2
 
-def getShapeOffset(bound_box):
+
+def is_vector_approximately_non_zero(position, min):
+    return abs(position[0]) > min or abs(position[1]) > min or abs(position[2]) > min
+
+
+def get_shape_offset(bound_box):
     center = sum((mathutils.Vector(b) for b in bound_box), mathutils.Vector()) / 8
     min = 0.03
-    if abs(center[0]) > min or abs(center[1]) > min or abs(center[2]) > min:
+    if is_vector_approximately_non_zero(center, 0.03):
         return center
 
     return None
 
+
+bounds_type_key = 'bounds'
+
+
+def get_bounds_children(parent):
+    return [obj for obj in bpy.data.objects if obj.parent == parent and bounds_type_key in obj]
+
+
+def aggregate_child_bounds(obj):
+    children = [preprocess_bounds_shape(child) for child in get_bounds_children(obj) ]
+    print(children)
+    return [c for c in children if c != None]
+
+
 def preprocess_bounds_shape(obj):
-    bounds_type_key = 'bounds'
-    type = obj.get(bounds_type_key)
+    type = str(obj.get(bounds_type_key))
     if type is None:
         return None
 
-    del obj[bounds_type_key]
-
     dimensions = obj.dimensions
-
+    # print('shape ' + type)
     bounds = None
-    if type == 'cylinder':
+    if type == 'composite':
+        bounds = {
+            'type': 'composite',
+            'children': aggregate_child_bounds(obj)
+        }
+    elif type == 'cylinder':
         bounds = {
             'type': 'cylinder',
             'radius': get_horizontal_radius(dimensions),
             'height': dimensions.z
         }
-    if type == 'box':
+    elif type == 'box':
         bounds = {
             'type': 'box',
             'dimensions': (dimensions.x, dimensions.y, dimensions.z)
         }
 
     if bounds:
-        offset = getShapeOffset(obj.bound_box)
+        offset = get_shape_offset(obj.bound_box)
+        if is_vector_approximately_non_zero(obj.location, 0.01):
+            if offset:
+                offset += obj.location
+            else:
+                offset = obj.location
         if offset:
             bounds['offset'] = offset
         obj['bounds'] = bounds
+
+    # print('shape end ' + type)
+
+    return bounds
+
 
 def has_dominant_material(obj):
     return any(m.name == obj.name for m in obj.material_slots)
@@ -157,7 +188,6 @@ def get_export_objects():
     result = []
     for obj in bpy.context.scene.objects:
         if not obj.hide_render and 'no-render' not in obj and 'no-export' not in obj and obj.type in ['MESH', 'LIGHT']:
-            print('obj ' + obj.name)
             result.append(obj)
     return result
 

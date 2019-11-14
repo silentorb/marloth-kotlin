@@ -1,8 +1,11 @@
 package generation.architecture.building
 
+import generation.architecture.definition.ConnectionType
 import generation.architecture.definition.any
 import generation.elements.*
 import generation.next.Builder
+import randomly.Dice
+import scenery.enums.MeshId
 import simulation.misc.NodeAttribute
 
 fun mergeSides(blocks: List<Block>): Sides {
@@ -66,3 +69,15 @@ fun blockBuilder(up: Side = any,
         ),
         builder = builder
     )
+
+fun getSideMesh(dice: Dice, sides: Sides, direction: Direction, meshMap: Map<ConnectionType, MeshId>): MeshId? {
+  val meshMap = mapOf(
+      ConnectionType.wall to MeshId.squareWall,
+      ConnectionType.doorway to MeshId.squareWallDoorway
+  )
+  val possibleMeshes = sides.getValue(direction).intersect(meshMap.keys)
+  if (possibleMeshes.none())
+    throw Error("No valid side found for wall mesh")
+
+  return meshMap[dice.takeOne(possibleMeshes)]!!
+}

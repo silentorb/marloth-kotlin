@@ -424,35 +424,52 @@ private fun parseVector3(source: Any?): Vector3 {
   return Vector3(dimensions[0].toFloat(), dimensions[1].toFloat(), dimensions[2].toFloat())
 }
 
-@Suppress("UNCHECKED_CAST")
-fun loadBoundingShape(node: Node): Shape? {
+fun loadBoundingShape(shapeProperty: Map<String, Any>): Shape? {
+  val source = shapeProperty as Map<String, Any>
+  val type = source["type"] as String?
+  val shape = when (type) {
+
+    "composite" -> {
+      @Suppress("UNCHECKED_CAST")
+      val shapes = source.getValue("children") as List<Map<String, Any>>
+      val shapes2 = shapes.mapNotNull(::loadBoundingShape)
+      CompositeShape(
+          shapes = shapes2
+      )
+    }
+
+    "cylinder" -> Cylinder(
+        radius = parseFloat(source["radius"]),
+        height = parseFloat(source["height"])
+    )
+
+    "box" -> {
+      Box(
+          halfExtents = parseVector3(source["dimensions"]) * 0.5f
+      )
+    }
+
+    else -> null
+  }
+  val offset = if (source.containsKey("offset"))
+    parseVector3(source["offset"])
+  else
+    null
+
+  return if (shape != null && offset != null)
+    ShapeOffset(transform = Matrix().translate(offset), shape = shape)
+  else
+    shape
+}
+
+fun loadBoundingShapeFromNode(node: Node): Shape? {
   val shapeProperty = node.extras?.get("bounds")
   return if (shapeProperty == null)
     null
   else {
+    @Suppress("UNCHECKED_CAST")
     val source = shapeProperty as Map<String, Any>
-    val type = source["type"] as String?
-    val shape = when (type) {
-      "cylinder" -> Cylinder(
-          radius = parseFloat(source["radius"]),
-          height = parseFloat(source["height"])
-      )
-      "box" -> {
-        Box(
-            halfExtents = parseVector3(source["dimensions"]) * 0.5f
-        )
-      }
-      else -> null
-    }
-    val offset = if (source.containsKey("offset"))
-      parseVector3(source["offset"])
-    else
-      null
-
-    if (shape != null && offset != null)
-      ShapeOffset(transform = Matrix().translate(offset), shape = shape)
-    else
-      shape
+    return loadBoundingShape(source)
   }
 }
 
@@ -509,7 +526,7 @@ fun loadMeshes(info: GltfInfo, buffer: ByteBuffer, vertexSchemas: VertexSchemas,
               id = id,
               primitives = primitives,
               lights = gatherChildLights(info, node),
-              bounds = loadBoundingShape(node)
+              bounds = loadBoundingShapeFromNode(node)
           )
         }
       }

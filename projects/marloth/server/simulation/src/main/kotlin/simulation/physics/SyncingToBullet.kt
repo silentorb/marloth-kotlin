@@ -1,5 +1,6 @@
 package simulation.physics
 
+import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.physics.bullet.collision.*
 import com.badlogic.gdx.physics.bullet.dynamics.btHingeConstraint
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
@@ -24,6 +25,13 @@ fun createCollisionShape(shape: Shape, scale: Vector3): btCollisionShape {
     is Box -> btBoxShape(toGdxVector3(shape.halfExtents * scale))
     is Sphere -> btSphereShape(shape.radius * scale.x)
     is Capsule -> btCapsuleShapeZ(shape.radius * scale.x, (shape.height - shape.radius * 2f) * scale.z)
+    is CompositeShape -> {
+      val parent = btCompoundShape()
+      for (child in shape.shapes) {
+        parent.addChildShape(Matrix4(), createCollisionShape(child, scale))
+      }
+      parent
+    }
     is Cylinder -> btCylinderShapeZ(toGdxVector3(Vector3(shape.radius * scale.x, shape.radius * scale.y, shape.height * scale.z * 0.5f)))
     else -> throw Error("Not supported")
   }
