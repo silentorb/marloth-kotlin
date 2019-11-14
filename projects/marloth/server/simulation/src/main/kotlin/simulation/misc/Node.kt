@@ -5,6 +5,8 @@ import mythic.ent.Id
 import mythic.spatial.Vector3
 
 enum class NodeAttribute {
+  categoryCommon,
+  categoryDiagonal,
   lockedRotation,
   exit,
   home,

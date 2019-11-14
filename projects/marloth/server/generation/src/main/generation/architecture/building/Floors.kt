@@ -4,6 +4,8 @@ import generation.architecture.*
 import generation.architecture.definition.impassableHorizontal
 import generation.misc.*
 import generation.next.Builder
+import mythic.spatial.Matrix
+import mythic.spatial.Pi
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import scenery.MeshName
@@ -30,6 +32,15 @@ fun floorMesh(mesh: MeshName, offset: Vector3 = Vector3.zero, orientation: Quate
 
 fun halfFloorMesh(mesh: MeshName, offset: Vector3 = Vector3.zero, orientation: Quaternion = Quaternion()) =
     blockBuilder(builder = floorMeshBuilder(mesh, offset, orientation))
+
+fun diagonalHalfFloorMesh(mesh: MeshName) =
+    blockBuilder { input ->
+      val angle = applyTurns(input.turns)
+      val position = Vector3(-5f, 5f, -0.01f).transform(Matrix().rotateZ(angle))
+      val orientation = Quaternion()
+          .rotateZ(angle - Pi * 0.25f)
+      floorMeshBuilder(mesh, offset = position, orientation = orientation)(input)
+    }
 
 fun newSlopedFloorMesh(mesh: MeshName) = blockBuilder(down = impassableHorizontal) { input ->
   val meshInfo = input.config.meshes[mesh]!!

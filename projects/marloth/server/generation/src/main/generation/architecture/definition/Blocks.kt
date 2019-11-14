@@ -31,7 +31,8 @@ class BlockDefinitions {
             east = optionalOpen,
             north = optionalOpen,
             west = optionalOpen,
-            south = optionalOpen
+            south = optionalOpen,
+            attributes = setOf(NodeAttribute.categoryCommon)
         ),
         floorMesh(MeshId.squareFloor.name),
         cubeWalls()
@@ -104,6 +105,18 @@ class BlockDefinitions {
         cubeWalls()
     )
 
+    val diagonalCorner = compose(
+        blockBuilder(
+            up = impassableVertical,
+            down = impassableVertical,
+            east = requiredOpen,
+            north = requiredOpen,
+            west = impassableHorizontal,
+            south = impassableHorizontal,
+            attributes = setOf(NodeAttribute.categoryDiagonal)
+        ),
+        diagonalHalfFloorMesh(MeshId.halfSquareFloor.name)
+    )
   }
 }
 
@@ -115,10 +128,17 @@ fun splitBlockBuilders(blockBuilders: List<BlockBuilder>): Pair<Set<Block>, Map<
         blockBuilders.associate { Pair(it.block, it.builder) }
     )
 
-fun blockBuilders() =
-    splitBlockBuilders(enumerateBlockBuilders())
+fun devFilterBlockBuilders(blockBuilders: List<BlockBuilder>): List<BlockBuilder> {
+  val filter = when (System.getenv("BLOCK_FILTER")) {
+    "diagonal" -> setOf(NodeAttribute.categoryCommon, NodeAttribute.categoryDiagonal)
+    else -> null
+  }
 
-//fun allBlocks(builders: Map<Block, Builder>) =
-//    allBlocks()
-//        .filter { builders.containsKey(it) }
-//        .toSet()
+  return if (filter != null)
+    blockBuilders.filter { it.block.attributes.intersect(filter).any() }
+  else
+    blockBuilders
+}
+
+fun blockBuilders(): Pair<Set<Block>, Map<Block, Builder>> =
+    splitBlockBuilders(devFilterBlockBuilders(enumerateBlockBuilders()))
