@@ -1,12 +1,16 @@
 package generation.architecture.building
 
+import generation.architecture.cellHalfLength
 import generation.architecture.definition.ConnectionType
 import generation.architecture.definition.any
 import generation.elements.*
 import generation.next.Builder
+import mythic.spatial.Vector3
 import randomly.Dice
 import scenery.enums.MeshId
 import simulation.misc.NodeAttribute
+
+val floorOffset = Vector3(cellHalfLength, cellHalfLength, 0f)
 
 fun mergeSides(blocks: List<Block>): Sides {
   val sides = allDirections.associateWith { direction ->
@@ -70,14 +74,10 @@ fun blockBuilder(up: Side = any,
         builder = builder
     )
 
-fun getSideMesh(dice: Dice, sides: Sides, direction: Direction, meshMap: Map<ConnectionType, MeshId>): MeshId? {
-  val meshMap = mapOf(
-      ConnectionType.wall to MeshId.squareWall,
-      ConnectionType.doorway to MeshId.squareWallDoorway
-  )
+fun getSideMesh(dice: Dice, sides: Sides, direction: Direction, meshMap: Map<ConnectionType, Set<MeshId>>): MeshId? {
   val possibleMeshes = sides.getValue(direction).intersect(meshMap.keys)
   if (possibleMeshes.none())
-    throw Error("No valid side found for wall mesh")
+    return null
 
-  return meshMap[dice.takeOne(possibleMeshes)]!!
+  return dice.takeOne(meshMap[dice.takeOne(possibleMeshes)]!!)
 }

@@ -4,28 +4,30 @@ import generation.architecture.building.*
 import generation.elements.Block
 import generation.elements.Side
 import generation.elements.enumerateMembers
-import generation.elements.newBlock
 import generation.next.Builder
 import scenery.enums.MeshId
 import simulation.misc.NodeAttribute
 
+val any: Side = setOf()
 val doorway: Side = setOf(ConnectionType.doorway)
 val requiredOpen: Side = setOf(ConnectionType.doorway, ConnectionType.open)
-val optionalOpen: Side = requiredOpen.plus(ConnectionType.wall)
-val halfStepRequiredOpen: Side = setOf(ConnectionType.halfStepOpen)
-val halfStepOptionalOpen: Side = halfStepRequiredOpen.plus(ConnectionType.wall)
-val impassable: Side = setOf(ConnectionType.wall)
-val any: Side = setOf()
+val impassableHorizontalSolid: Side = setOf(ConnectionType.wall)
+val impassableHorizontal: Side = impassableHorizontalSolid.plus(setOf(ConnectionType.window))
+val optionalOpen: Side = requiredOpen.plus(impassableHorizontal)
+val optionalOpenSolid: Side = setOf(ConnectionType.open, ConnectionType.wall)
+val impassableVertical: Side = setOf(ConnectionType.wall)
 val spiralStaircaseBottom: Side = setOf(ConnectionType.spiralStaircaseBottom)
 val spiralStaircaseTop: Side = setOf(ConnectionType.spiralStaircaseTop)
 val spiralStaircaseTopOrBottom: Side = setOf(ConnectionType.spiralStaircaseBottom, ConnectionType.spiralStaircaseTop)
+val halfStepRequiredOpen: Side = setOf(ConnectionType.halfStepOpen)
+val halfStepOptionalOpen: Side = halfStepRequiredOpen.plus(ConnectionType.wall)
 
 class BlockDefinitions {
   companion object {
 
     val singleCellRoom = compose(
         blockBuilder(
-            up = impassable,
+            up = impassableVertical,
             east = optionalOpen,
             north = optionalOpen,
             west = optionalOpen,
@@ -38,10 +40,10 @@ class BlockDefinitions {
     val stairBottom = compose(
         blockBuilder(
             up = spiralStaircaseTopOrBottom,
-            east = optionalOpen,
+            east = optionalOpenSolid,
             north = optionalOpen,
             south = optionalOpen,
-            west = impassable,
+            west = optionalOpen,
             attributes = setOf(NodeAttribute.lockedRotation)
         ),
         floorMesh(MeshId.squareFloor.name),
@@ -49,30 +51,28 @@ class BlockDefinitions {
         curvedStaircases
     )
 
-
     val stairMiddle = compose(
         blockBuilder(
             up = spiralStaircaseTop,
             down = spiralStaircaseBottom,
-            east = impassable,
-            north = impassable,
-            south = impassable,
-            west = impassable,
+            east = impassableHorizontal,
+            north = impassableHorizontal,
+            south = impassableHorizontal,
+            west = impassableHorizontal,
             attributes = setOf(NodeAttribute.lockedRotation)
         ),
         cubeWalls(),
         curvedStaircases
     )
 
-
     val stairTop = compose(
         blockBuilder(
-            up = impassable,
+            up = impassableVertical,
             down = spiralStaircaseTopOrBottom,
             east = optionalOpen,
             north = optionalOpen,
             south = optionalOpen,
-            west = impassable,
+            west = impassableHorizontal,
             attributes = setOf(NodeAttribute.lockedRotation)
         ),
         cubeWalls(),
@@ -81,7 +81,7 @@ class BlockDefinitions {
 
     val halfStepRoom = compose(
         blockBuilder(
-            up = impassable,
+            up = impassableVertical,
             east = halfStepOptionalOpen,
             north = halfStepOptionalOpen,
             west = halfStepOptionalOpen,
@@ -93,77 +93,17 @@ class BlockDefinitions {
 
     val lowerHalfStepSlope = compose(
         blockBuilder(
-            up = impassable,
+            up = impassableVertical,
             east = halfStepRequiredOpen,
-            north = impassable,
+            north = impassableHorizontalSolid,
             west = requiredOpen,
-            south = impassable
+            south = impassableHorizontalSolid
         ),
         floorMesh(MeshId.squareFloor.name),
         newSlopedFloorMesh(MeshId.squareFloor.name),
         cubeWalls()
     )
-    /*
-    val singleCellRoom = newBlock(
-        up = impassable,
-        down = impassable,
-        east = optionalOpen,
-        north = optionalOpen,
-        west = optionalOpen,
-        south = optionalOpen,
-        attributes = setOf(NodeAttribute.fullFloor)
-    )
 
-    val stairBottom = newBlock(
-        up = spiralStaircaseTopOrBottom,
-        down = impassable,
-        east = optionalOpen,
-        north = optionalOpen,
-        south = optionalOpen,
-        west = impassable,
-        attributes = setOf(NodeAttribute.lockedRotation)
-    )
-
-    val stairTop = newBlock(
-        up = impassable,
-        down = spiralStaircaseTopOrBottom,
-        east = optionalOpen,
-        north = optionalOpen,
-        south = optionalOpen,
-        west = impassable,
-        attributes = setOf(NodeAttribute.lockedRotation)
-    )
-
-    val stairMiddle = newBlock(
-        up = spiralStaircaseTop,
-        down = spiralStaircaseBottom,
-        east = impassable,
-        north = impassable,
-        south = impassable,
-        west = impassable,
-        attributes = setOf(NodeAttribute.lockedRotation)
-    )
-
-    val halfStepRoom = newBlock(
-        up = impassable,
-        down = impassable,
-        east = halfStepOptionalOpen,
-        north = halfStepOptionalOpen,
-        west = halfStepOptionalOpen,
-        south = halfStepOptionalOpen,
-        attributes = setOf(NodeAttribute.fullFloor)
-    )
-
-    val lowerHalfStepSlope = newBlock(
-        up = impassable,
-        down = impassable,
-        east = halfStepRequiredOpen,
-        north = impassable,
-        west = requiredOpen,
-        south = impassable
-    )
-
-     */
   }
 }
 

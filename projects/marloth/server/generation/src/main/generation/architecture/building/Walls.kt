@@ -2,8 +2,6 @@ package generation.architecture.building
 
 import generation.architecture.cellHalfLength
 import generation.architecture.definition.ConnectionType
-import generation.architecture.definition.impassable
-import generation.architecture.definition.optionalOpen
 import generation.architecture.newArchitectureMesh
 import generation.elements.Direction
 import generation.elements.horizontalDirections
@@ -11,7 +9,6 @@ import generation.misc.BiomeInfo
 import generation.misc.GenerationConfig
 import generation.misc.TextureGroup
 import generation.misc.biomeTexture
-import generation.next.Builder
 import mythic.spatial.*
 import scenery.MeshName
 import scenery.enums.MeshId
@@ -61,14 +58,15 @@ fun cubeWalls() = blockBuilder { input ->
   val biome = input.biome
   val dice = input.dice
 
-  val placeWall: (Map<ConnectionType, MeshId>) -> (Map.Entry<Direction, Vector3i>) -> Hand = { meshMap ->
+  val placeWall: (Map<ConnectionType, Set<MeshId>>) -> (Map.Entry<Direction, Vector3i>) -> Hand? = { meshMap ->
     { (direction, offset) ->
       val position = input.position + cellHalfLength + offset.toVector3() * cellHalfLength
       val angleZ = directionRotation(direction)
-      val mesh = getSideMesh(dice, input.sides, direction, mapOf(
-          ConnectionType.wall to MeshId.squareWall
-      ))!!
-      newWallInternal(config, mesh.name, position, angleZ, biome)
+      val mesh = getSideMesh(dice, input.sides, direction, meshMap)
+      if (mesh != null)
+        newWallInternal(config, mesh.name, position, angleZ, biome)
+      else
+        null
     }
   }
 
@@ -87,15 +85,17 @@ fun cubeWalls() = blockBuilder { input ->
   listOf<Hand>()
       .plus(
           open
-//              .filter { dice.getInt(3) == 2 }
-              .map(placeWall(mapOf(
-                  ConnectionType.doorway to MeshId.squareWallDoorway
+              .filter { dice.getInt(3) == 2 }
+              .mapNotNull(placeWall(mapOf(
+                  ConnectionType.doorway to setOf(MeshId.squareWallDoorway)
               ))))
 
       .plus(
           closed
-              .map(placeWall(mapOf(
-                  ConnectionType.wall to MeshId.squareWall
+              .mapNotNull(placeWall(mapOf(
+                  ConnectionType.wall to setOf(MeshId.squareWall),
+                  ConnectionType.window to setOf(MeshId.squareWallWindow)
+
               )))
       )
 }

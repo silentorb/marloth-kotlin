@@ -7,13 +7,15 @@ enum class ConnectionType {
   open,
   spiralStaircaseBottom,
   spiralStaircaseTop,
-  wall
+  wall,
+  window
 }
 
 // Connections that don't need to be completed and can be left dangling
 fun independentConnectionTypes(): Set<ConnectionType> =
     setOf(
-        ConnectionType.wall
+        ConnectionType.wall,
+        ConnectionType.window
     )
 
 fun openConnectionTypes(): Set<ConnectionType> =

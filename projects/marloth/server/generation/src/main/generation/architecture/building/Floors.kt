@@ -1,8 +1,7 @@
 package generation.architecture.building
 
 import generation.architecture.*
-import generation.architecture.definition.floorOffset
-import generation.architecture.definition.impassable
+import generation.architecture.definition.impassableHorizontal
 import generation.misc.*
 import generation.next.Builder
 import mythic.spatial.Quaternion
@@ -27,12 +26,12 @@ fun floorMeshBuilder(mesh: MeshName, offset: Vector3 = Vector3.zero,
 
 
 fun floorMesh(mesh: MeshName, offset: Vector3 = Vector3.zero, orientation: Quaternion = Quaternion()) =
-    blockBuilder(down = impassable, builder = floorMeshBuilder(mesh, offset, orientation))
+    blockBuilder(down = impassableHorizontal, builder = floorMeshBuilder(mesh, offset, orientation))
 
 fun halfFloorMesh(mesh: MeshName, offset: Vector3 = Vector3.zero, orientation: Quaternion = Quaternion()) =
     blockBuilder(builder = floorMeshBuilder(mesh, offset, orientation))
 
-fun newSlopedFloorMesh(mesh: MeshName) = blockBuilder(down = impassable) { input ->
+fun newSlopedFloorMesh(mesh: MeshName) = blockBuilder(down = impassableHorizontal) { input ->
   val meshInfo = input.config.meshes[mesh]!!
   val slopeAngle = asin(cellLength / 3f / meshInfo.shape.x)
   val orientation = Quaternion()

@@ -1,23 +1,17 @@
 package generation.architecture.building
 
 import generation.architecture.*
-import generation.architecture.definition.floorOffset
 import generation.misc.TextureGroup
 import generation.misc.biomeTexture
-import generation.next.Builder
-import generation.next.BuilderInput
 import mythic.spatial.Matrix
 import mythic.spatial.Pi
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import scenery.enums.MeshId
 import simulation.entities.ArchitectureElement
-import simulation.main.Hand
 
 val curvedStaircases = blockBuilder() { input ->
-  //val placeCurvedStaircases: Architect = { config, realm, dice ->
   val biome = input.biome
-//  val mesh = randomlySelectMesh(dice, config.meshes, biome, setOf(MeshAttribute.placementStairStepCurved))
   val config = input.config
   val mesh = MeshId.curvingStairStep.name
   val sweepLength = Pi * 2f
