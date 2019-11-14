@@ -1,10 +1,12 @@
 package generation.architecture.definition
 
 import generation.architecture.building.*
+import generation.architecture.cellLength
 import generation.elements.Block
 import generation.elements.Side
 import generation.elements.enumerateMembers
 import generation.next.Builder
+import mythic.spatial.Vector3
 import scenery.enums.MeshId
 import simulation.misc.NodeAttribute
 
@@ -88,7 +90,7 @@ class BlockDefinitions {
             west = halfStepOptionalOpen,
             south = halfStepOptionalOpen
         ),
-        floorMesh(MeshId.squareFloor.name),
+        floorMesh(MeshId.squareFloor.name, Vector3(0f, 0f, cellLength / 4f)),
         cubeWalls()
     )
 
