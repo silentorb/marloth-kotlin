@@ -17,8 +17,7 @@ import simulation.main.Hand
 import simulation.misc.Node
 import simulation.misc.containsConnection
 
-private fun newWallInternal(config: GenerationConfig, mesh: MeshName, position: Vector3, angleZ: Float, biome: BiomeInfo, node: Node? = null): Hand {
-//  val biome = config.biomes[node.biome!!]!!
+fun newWallInternal(config: GenerationConfig, mesh: MeshName, position: Vector3, angleZ: Float, biome: BiomeInfo, node: Node? = null): Hand {
   val orientation = Quaternion().rotateZ(angleZ + quarterAngle)
   return newArchitectureMesh(
       architecture = ArchitectureElement(isWall = true),
@@ -31,15 +30,6 @@ private fun newWallInternal(config: GenerationConfig, mesh: MeshName, position: 
       texture = biomeTexture(biome, TextureGroup.wall)
   )
 }
-
-//fun newWall(config: GenerationConfig, meshes: List<MeshName>, node: Node, position: Vector3, angleZ: Float): List<Hand> {
-//  val meshInfo = config.meshes[meshes[0].toString()]!!
-//  val upperOffset = Vector3(0f, 0f, meshInfo.shape.height)
-//  return listOf(
-//      newWallInternal(config, meshes.first(), position, angleZ, node),
-//      newWallInternal(config, meshes.last(), position + upperOffset, angleZ, node)
-//  )
-//}
 
 fun directionRotation(direction: Direction): Float =
     when (direction) {

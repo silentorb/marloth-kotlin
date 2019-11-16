@@ -1,12 +1,10 @@
 package generation.architecture.definition
 
 import generation.architecture.building.*
-import generation.architecture.cellLength
 import generation.elements.Block
 import generation.elements.Side
 import generation.elements.enumerateMembers
 import generation.next.Builder
-import mythic.spatial.Vector3
 import scenery.enums.MeshId
 import simulation.misc.NodeAttribute
 
@@ -21,8 +19,8 @@ val impassableVertical: Side = setOf(ConnectionType.wall)
 val spiralStaircaseBottom: Side = setOf(ConnectionType.spiralStaircaseBottom)
 val spiralStaircaseTop: Side = setOf(ConnectionType.spiralStaircaseTop)
 val spiralStaircaseTopOrBottom: Side = setOf(ConnectionType.spiralStaircaseBottom, ConnectionType.spiralStaircaseTop)
-val halfStepRequiredOpen: Side = setOf(ConnectionType.halfStepOpen)
-val halfStepOptionalOpen: Side = halfStepRequiredOpen.plus(ConnectionType.wall)
+val extraHeadroom: Side = setOf(ConnectionType.extraHeadroom)
+val verticalDiagonalAdapter = setOf(ConnectionType.verticalDiagonalAdapter1)
 
 class BlockDefinitions {
   companion object {
@@ -44,8 +42,8 @@ class BlockDefinitions {
         blockBuilder(
             up = spiralStaircaseTopOrBottom,
             east = optionalOpenSolid,
-            north = optionalOpen,
-            south = optionalOpen,
+            north = optionalOpenSolid,
+            south = optionalOpenSolid,
             west = optionalOpen,
             attributes = setOf(NodeAttribute.lockedRotation)
         ),
@@ -82,47 +80,24 @@ class BlockDefinitions {
         halfFloorMesh(MeshId.halfSquareFloor.name)
     )
 
-    val halfStepRoom = compose(
-        blockBuilder(
-            up = impassableVertical,
-            east = halfStepOptionalOpen,
-            north = halfStepOptionalOpen,
-            west = halfStepOptionalOpen,
-            south = halfStepOptionalOpen
-        ),
-        floorMesh(MeshId.squareFloor.name, Vector3(0f, 0f, cellLength / 4f)),
-        cubeWalls()
-    )
+    val diagonalCorner = diagonalCornerFloor(requiredOpen, 0f)
 
-    val lowerHalfStepSlope = compose(
+    val verticalDiagonal = compose(
         blockBuilder(
             up = impassableVertical,
-            east = halfStepRequiredOpen,
-            north = impassableHorizontalSolid,
-            west = requiredOpen,
-            south = impassableHorizontalSolid
-        ),
-        floorMesh(MeshId.squareFloor.name),
-        newSlopedFloorMesh(MeshId.squareFloor.name),
-        cubeWalls()
-    )
-
-    val diagonalCorner = compose(
-        blockBuilder(
-            up = impassableVertical,
-            down = impassableVertical,
+            down = verticalDiagonalAdapter,
             east = requiredOpen,
-            north = requiredOpen,
+            north = impassableHorizontal,
             west = impassableHorizontal,
-            south = impassableHorizontal,
-            attributes = setOf(NodeAttribute.categoryDiagonal)
-        ),
-        diagonalHalfFloorMesh(MeshId.squareFloorHalfDiagonal.name)
+            south = impassableHorizontal
+        )
     )
   }
 }
 
-fun enumerateBlockBuilders() = enumerateMembers<BlockBuilder>(BlockDefinitions)
+fun enumerateBlockBuilders() =
+    enumerateMembers<BlockBuilder>(BlockDefinitions)
+        .plus(heights())
 
 fun splitBlockBuilders(blockBuilders: List<BlockBuilder>): Pair<Set<Block>, Map<Block, Builder>> =
     Pair(

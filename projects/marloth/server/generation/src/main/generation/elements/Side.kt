@@ -1,5 +1,7 @@
 package generation.elements
 
+import generation.architecture.definition.ConnectionType
+
 val verticalSides = setOf(Direction.up, Direction.down)
 val horizontalSideList = listOf(Direction.east, Direction.north, Direction.west, Direction.south)
 val horizontalSides = horizontalSideList.toSet()
@@ -17,3 +19,5 @@ val oppositeDirections: Map<Direction, Direction> = mapOf(
 
 fun isSideOpen(openConnections: Set<Any>, side: Side): Boolean =
     side.any { openConnections.contains(it) }
+
+typealias RotatingConnections = Map<ConnectionType, List<ConnectionType>>

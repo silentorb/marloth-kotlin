@@ -15,6 +15,7 @@ import scenery.*
 import simulation.main.World
 import simulation.physics.old.LinearImpulse
 
+// TODO: Cache the usage of this function
 fun createBulletStaticMesh(vertices: List<Vector3>): btBvhTriangleMeshShape {
   val triangleMesh = btTriangleMesh()
   for (i in vertices.indices step 3) {

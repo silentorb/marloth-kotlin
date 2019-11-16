@@ -3,6 +3,7 @@ package marloth.generation
 import generation.abstracted.initializeNodeRadii
 import generation.architecture.definition.blockBuilders
 import generation.architecture.definition.independentConnectionTypes
+import generation.architecture.definition.rotatingConnectionTypes
 import generation.elements.explodeBlockMap
 import generation.generateRealm
 import generation.misc.GenerationConfig
@@ -22,10 +23,8 @@ import simulation.misc.WorldInput
 fun generateWorld(generationConfig: GenerationConfig, input: WorldInput): World {
   val dice = input.dice
   val (blocks, builders) = blockBuilders()
-//  val builders = newBuilders()
-//  val blocks = allBlocks(builders)
   val independentConnections = independentConnectionTypes()
-  val blockMap = explodeBlockMap(blocks)
+  val blockMap = explodeBlockMap(rotatingConnectionTypes(), blocks)
   val workbench = newWorkbench(dice, blockMap.keys, independentConnections, generationConfig.roomCount)
   val grid = workbench.mapGrid
 

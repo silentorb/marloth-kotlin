@@ -22,7 +22,6 @@ typealias GetTriangles = () -> List<Vector3>
 fun getIndexIterator(buffer: ByteBuffer, info: GltfInfo, primitive: Primitive): BufferIterator {
   val indexAccessor = info.accessors[primitive.indices]
   val bufferView = info.bufferViews[indexAccessor.bufferView]
-
   buffer.position(bufferView.byteOffset)
   return selectBufferIterator(indexAccessor.componentType)
 }
@@ -534,8 +533,6 @@ fun getTrianglesFromPrimitive(buffer: ByteBuffer, info: GltfInfo, primitive: Pri
   val vertices = loadPositionVertices(buffer, info, primitive)
   val iterator = getIndexIterator(buffer, info, primitive)
   val result = mutableListOf<Vector3>()
-//  val t = mutableListOf<Int>()
-//  iterator(buffer, indexAccessor.count, { t.add(it) })
   iterator(buffer, indexAccessor.count) { result.add(vertices[it]) }
   result.toList()
 }

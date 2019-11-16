@@ -20,7 +20,7 @@ fun floorMeshBuilder(mesh: MeshName, offset: Vector3 = Vector3.zero,
       architecture = ArchitectureElement(isWall = false),
       meshes = config.meshes,
       mesh = mesh,
-      position = input.position + floorOffset + align(config.meshes, alignWithCeiling)(mesh) + offset,
+      position = input.position + floorOffset + align(config.meshes, alignWithCeiling)(mesh) + offset + Vector3(0f, 0f, 0.01f),
       orientation = orientation,
       texture = biomeTexture(biome, TextureGroup.floor)
   ))
@@ -32,21 +32,22 @@ fun floorMesh(mesh: MeshName, offset: Vector3 = Vector3.zero, orientation: Quate
 fun halfFloorMesh(mesh: MeshName, offset: Vector3 = Vector3.zero, orientation: Quaternion = Quaternion()) =
     blockBuilder(builder = floorMeshBuilder(mesh, offset, orientation))
 
-fun diagonalHalfFloorMesh(mesh: MeshName) =
+fun diagonalHalfFloorMesh(mesh: MeshName, height: Float) =
     blockBuilder { input ->
       val angle = applyTurns(input.turns)
-//      val position = Vector3(-5f, 5f, -0.01f).transform(Matrix().rotateZ(angle))
-            val position = Vector3(-5f, -5f, -0.01f)
+//      val position = Vector3(-5f, 5f, 0f).transform(Matrix().rotateZ(angle))
+//      val position = Vector3(-5f, -5f, -0.01f)
+      val position = Vector3(0f, 0f, height)
       val orientation = Quaternion()
-//          .rotateZ(angle - Pi * 0.25f)
+          .rotateZ(angle)
       floorMeshBuilder(mesh, offset = position, orientation = orientation)(input)
     }
 
-fun newSlopedFloorMesh(mesh: MeshName) = blockBuilder(down = impassableHorizontal) { input ->
+fun newSlopedFloorMesh(mesh: MeshName, height: Float) = blockBuilder(down = impassableHorizontal) { input ->
   val meshInfo = input.config.meshes[mesh]!!
   val slopeAngle = asin(cellLength / 4f / meshInfo.shape.x)
   val orientation = Quaternion()
       .rotateZ(applyTurns(input.turns))
       .rotateX(slopeAngle)
-  floorMeshBuilder(mesh, offset = Vector3(0f, 0f, cellLength / 8f), orientation = orientation)(input)
+  floorMeshBuilder(mesh, offset = Vector3(0f, 0f, height + cellLength / 8f), orientation = orientation)(input)
 }

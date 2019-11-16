@@ -214,7 +214,7 @@ fun placeBuffCloud(node: Node, buff: ModifierId) =
     )
 
 fun placeTreasureChest(meshInfo: MeshInfoMap, node: Node, amount: Int) =
-    newTreasureChest(meshInfo, alignWithNodeFloor(meshInfo, node, MeshId.treasureChest.name), amount)
+    newTreasureChest(meshInfo, alignWithNodeFloor(meshInfo, node, MeshId.treasureChest.name) + floorOffset, amount)
 
 enum class Occupant {
   coldCloud,
@@ -261,7 +261,8 @@ fun scalingDistributions(dice: Dice): DistributionMap = mapOf(
     Occupant.merchant to 0,
     Occupant.none to 30,
     Occupant.treasureChest to 20
-).plus(damageCloudsDistributions(dice, 10))
+).plus(damageCloudsDistributions(dice, 0))
+//).plus(damageCloudsDistributions(dice, 10))
 
 fun fixedDistributions(): DistributionMap = mapOf(
     Occupant.enemy to 1,

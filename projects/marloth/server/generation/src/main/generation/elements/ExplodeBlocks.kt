@@ -9,15 +9,44 @@ data class MappedBlock(
 
 typealias BlockMap = Map<Block, MappedBlock>
 
-fun explodeBlockMap(blocks: Set<Block>): BlockMap {
+fun <T> rotateVerticalSides(rotatingConnections: RotatingConnections, turns: Int): (Map.Entry<T, Side>) -> Side = { side ->
+  side.value.map { connectionType ->
+    val rotating = rotatingConnections[connectionType]
+    if (rotating != null)
+      rotating[turns]
+    else
+      connectionType
+  }.toSet()
+}
+
+fun rotateSides(rotatingConnections: RotatingConnections, turns: Int): (Sides) -> Sides = { sides ->
+  val horizontal = horizontalSideList.map { sides[it] ?: setOf() }
+  val normalizedTurns = turns % 4
+
+  val spunSides = horizontal
+      .takeLast(normalizedTurns)
+      .plus(horizontal.take(4 - normalizedTurns))
+
+  val horizontalRotatedSides = horizontalSideList.zip(spunSides) { a, b -> Pair(a, b) }.associate { it }
+
+  val verticalRotatedSides = sides
+      .filterKeys { verticalSides.contains(it) }
+      .mapValues(rotateVerticalSides(rotatingConnections, turns))
+
+  verticalRotatedSides
+      .plus(horizontalRotatedSides)
+}
+
+fun explodeBlockMap(rotatingConnections: RotatingConnections, blocks: Set<Block>): BlockMap {
   val needsRotatedVariations = blocks.filter {
-    !it.attributes.contains(NodeAttribute.lockedRotation) && it.sides != rotateSides(1)(it.sides)
+    !it.attributes.contains(NodeAttribute.lockedRotation) &&
+        it.sides != rotateSides(rotatingConnections, 1)(it.sides)
   }
   val rotated = needsRotatedVariations.flatMap { originalBlock ->
     (1..3)
         .map { turns ->
           val block = originalBlock.copy(
-              sides = rotateSides(turns)(originalBlock.sides)
+              sides = rotateSides(rotatingConnections, turns)(originalBlock.sides)
           )
           Pair(block, MappedBlock(original = originalBlock, turns = turns))
         }
