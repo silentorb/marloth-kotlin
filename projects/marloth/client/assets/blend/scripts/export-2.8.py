@@ -112,14 +112,15 @@ def preprocess_bounds_shape(obj):
         }
 
     if bounds:
-        offset = get_shape_offset(obj.bound_box)
-        if is_vector_approximately_non_zero(obj.location, 0.01):
+        if type != 'mesh':
+            offset = get_shape_offset(obj.bound_box)
+            if is_vector_approximately_non_zero(obj.location, 0.01):
+                if offset:
+                    offset += obj.location
+                else:
+                    offset = obj.location
             if offset:
-                offset += obj.location
-            else:
-                offset = obj.location
-        if offset:
-            bounds['offset'] = offset
+                bounds['offset'] = offset
         obj['bounds'] = bounds
 
     # print('shape end ' + type)

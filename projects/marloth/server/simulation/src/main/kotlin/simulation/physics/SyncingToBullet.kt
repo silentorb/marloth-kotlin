@@ -17,8 +17,8 @@ import simulation.physics.old.LinearImpulse
 
 fun createBulletStaticMesh(vertices: List<Vector3>): btBvhTriangleMeshShape {
   val triangleMesh = btTriangleMesh()
-  for (i in 0 until vertices.size step 3) {
-    triangleMesh.addTriangle(toGdxVector3(vertices[0]), toGdxVector3(vertices[i]), toGdxVector3(vertices[i + 1]))
+  for (i in vertices.indices step 3) {
+    triangleMesh.addTriangle(toGdxVector3(vertices[i]), toGdxVector3(vertices[i + 1]), toGdxVector3(vertices[i + 2]))
   }
   return btBvhTriangleMeshShape(triangleMesh, true)
 }

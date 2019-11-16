@@ -19,15 +19,20 @@ import java.nio.IntBuffer
 
 typealias GetTriangles = () -> List<Vector3>
 
-fun loadIndices(buffer: ByteBuffer, info: GltfInfo, primitive: Primitive): IntBuffer {
+fun getIndexIterator(buffer: ByteBuffer, info: GltfInfo, primitive: Primitive): BufferIterator {
   val indexAccessor = info.accessors[primitive.indices]
   val bufferView = info.bufferViews[indexAccessor.bufferView]
 
+  buffer.position(bufferView.byteOffset)
+  return selectBufferIterator(indexAccessor.componentType)
+}
+
+fun loadIndices(buffer: ByteBuffer, info: GltfInfo, primitive: Primitive): IntBuffer {
+  val indexAccessor = info.accessors[primitive.indices]
+  val iterator = getIndexIterator(buffer, info, primitive)
   val triangleCount = indexAccessor.count / 3
   val indexCount = triangleCount * 3
   val indices = BufferUtils.createIntBuffer(indexCount)
-  buffer.position(bufferView.byteOffset)
-  val iterator = selectBufferIterator(indexAccessor.componentType)
   iterator(buffer, indexAccessor.count, { indices.put(it) })
   return indices
 }
@@ -148,13 +153,12 @@ fun loadPositionVertices(buffer: ByteBuffer, info: GltfInfo, primitive: Primitiv
   val attributeAccessorIndex = primitive.attributes.getValue(mappedAttribute)
   val attributeAccessor = info.accessors[attributeAccessorIndex]
   val bufferView = info.bufferViews[attributeAccessor.bufferView]
+  val stride = if (bufferView.byteStride != 0)
+    bufferView.byteStride
+  else
+    3 * 4
 
   return (0 until vertexCount).map { i ->
-    val stride = if (bufferView.byteStride != 0)
-      bufferView.byteStride
-    else
-      3 * 4
-
     buffer.position(bufferView.byteOffset + attributeAccessor.byteOffset + i * stride)
     getVector3(buffer)
   }
@@ -525,6 +529,17 @@ fun gatherChildLights(info: GltfInfo, node: Node): List<Light> {
     }
 }
 
+fun getTrianglesFromPrimitive(buffer: ByteBuffer, info: GltfInfo, primitive: Primitive): GetTriangles = {
+  val indexAccessor = info.accessors[primitive.indices]
+  val vertices = loadPositionVertices(buffer, info, primitive)
+  val iterator = getIndexIterator(buffer, info, primitive)
+  val result = mutableListOf<Vector3>()
+//  val t = mutableListOf<Int>()
+//  iterator(buffer, indexAccessor.count, { t.add(it) })
+  iterator(buffer, indexAccessor.count) { result.add(vertices[it]) }
+  result.toList()
+}
+
 fun loadMeshes(info: GltfInfo, buffer: ByteBuffer, vertexSchemas: VertexSchemas, boneMap: BoneMap): List<ModelMesh> {
   return info.meshes
       .mapIndexedNotNull { meshIndex, mesh ->
@@ -549,10 +564,8 @@ fun loadMeshes(info: GltfInfo, buffer: ByteBuffer, vertexSchemas: VertexSchemas,
             )
           }
           val node = info.nodes[nodeIndex]
+          val getTriangles = getTrianglesFromPrimitive(buffer, info, mesh.primitives.first())
 
-          val getTriangles: GetTriangles = {
-            loadPositionVertices(buffer, info, mesh.primitives.first())
-          }
           ModelMesh(
               id = id,
               primitives = primitives,
