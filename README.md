@@ -3,7 +3,7 @@
 ## Setup
 
 This project depends on the following external media software:
-* Blender 2.79
+* Blender 2.8
 * Filter Forge 8
 
 ## IntelliJ Settings

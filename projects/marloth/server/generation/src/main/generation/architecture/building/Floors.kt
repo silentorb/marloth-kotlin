@@ -26,7 +26,6 @@ fun floorMeshBuilder(mesh: MeshName, offset: Vector3 = Vector3.zero,
   ))
 }
 
-
 fun floorMesh(mesh: MeshName, offset: Vector3 = Vector3.zero, orientation: Quaternion = Quaternion()) =
     blockBuilder(down = impassableHorizontal, builder = floorMeshBuilder(mesh, offset, orientation))
 

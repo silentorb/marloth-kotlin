@@ -56,3 +56,11 @@ data class Box(
     override val height: Float = halfExtents.z * 2f,
     override val radius: Float = max(max(halfExtents.x, halfExtents.y), halfExtents.z)
 ) : Shape
+
+data class MeshSphere(
+    val mesh: Any,
+    override val radius: Float,
+    override val height: Float = radius * 2f,
+    override val x: Float = radius * 2f,
+    override val y: Float = radius * 2f
+) : Shape

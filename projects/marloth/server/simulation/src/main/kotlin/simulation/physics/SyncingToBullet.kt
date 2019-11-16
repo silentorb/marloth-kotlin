@@ -33,6 +33,8 @@ fun createCollisionShape(shape: Shape, scale: Vector3): btCollisionShape {
       parent
     }
     is Cylinder -> btCylinderShapeZ(toGdxVector3(Vector3(shape.radius * scale.x, shape.radius * scale.y, shape.height * scale.z * 0.5f)))
+
+    is MeshSphere -> btConvexTriangleMeshShape()
     else -> throw Error("Not supported")
   }
 }
