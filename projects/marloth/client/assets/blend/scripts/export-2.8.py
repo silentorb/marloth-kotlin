@@ -99,6 +99,12 @@ def preprocess_bounds_shape(obj):
             'radius': get_horizontal_radius(dimensions),
             'height': dimensions.z
         }
+    elif type == 'mesh':
+        bounds = {
+            'type': 'mesh',
+            'radius': get_horizontal_radius(dimensions),
+            'height': dimensions.z
+        }
     elif type == 'box':
         bounds = {
             'type': 'box',

@@ -35,10 +35,10 @@ fun halfFloorMesh(mesh: MeshName, offset: Vector3 = Vector3.zero, orientation: Q
 fun diagonalHalfFloorMesh(mesh: MeshName) =
     blockBuilder { input ->
       val angle = applyTurns(input.turns)
-      val position = Vector3(-5f, 5f, -0.01f).transform(Matrix().rotateZ(angle))
+//      val position = Vector3(-5f, 5f, -0.01f).transform(Matrix().rotateZ(angle))
       val orientation = Quaternion()
-          .rotateZ(angle - Pi * 0.25f)
-      floorMeshBuilder(mesh, offset = position, orientation = orientation)(input)
+//          .rotateZ(angle - Pi * 0.25f)
+      floorMeshBuilder(mesh, offset = Vector3(), orientation = orientation)(input)
     }
 
 fun newSlopedFloorMesh(mesh: MeshName) = blockBuilder(down = impassableHorizontal) { input ->

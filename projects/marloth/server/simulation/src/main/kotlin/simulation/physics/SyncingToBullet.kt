@@ -15,6 +15,14 @@ import scenery.*
 import simulation.main.World
 import simulation.physics.old.LinearImpulse
 
+fun createBulletStaticMesh(vertices: List<Vector3>): btBvhTriangleMeshShape {
+  val triangleMesh = btTriangleMesh()
+  for (i in 0 until vertices.size step 3) {
+    triangleMesh.addTriangle(toGdxVector3(vertices[0]), toGdxVector3(vertices[i]), toGdxVector3(vertices[i + 1]))
+  }
+  return btBvhTriangleMeshShape(triangleMesh, true)
+}
+
 fun createCollisionShape(shape: Shape, scale: Vector3): btCollisionShape {
   return when (shape) {
     is ShapeOffset -> {
@@ -34,7 +42,7 @@ fun createCollisionShape(shape: Shape, scale: Vector3): btCollisionShape {
     }
     is Cylinder -> btCylinderShapeZ(toGdxVector3(Vector3(shape.radius * scale.x, shape.radius * scale.y, shape.height * scale.z * 0.5f)))
 
-    is MeshSphere -> btConvexTriangleMeshShape()
+    is MeshSphere -> createBulletStaticMesh(shape.triangles)
     else -> throw Error("Not supported")
   }
 }

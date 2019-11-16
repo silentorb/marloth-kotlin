@@ -17,6 +17,8 @@ import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
 
+typealias GetTriangles = () -> List<Vector3>
+
 fun loadIndices(buffer: ByteBuffer, info: GltfInfo, primitive: Primitive): IntBuffer {
   val indexAccessor = info.accessors[primitive.indices]
   val bufferView = info.bufferViews[indexAccessor.bufferView]
@@ -139,6 +141,25 @@ fun loadVertices(buffer: ByteBuffer, info: GltfInfo, vertexSchema: VertexSchema,
   return Pair(vertices, packing)
 }
 
+fun loadPositionVertices(buffer: ByteBuffer, info: GltfInfo, primitive: Primitive): List<Vector3> {
+  val vertexAccessor = info.accessors[primitive.attributes.getValue(AttributeType.POSITION)]
+  val vertexCount = vertexAccessor.count
+  val mappedAttribute = attributeMap2.getValue(AttributeName.position.name)
+  val attributeAccessorIndex = primitive.attributes.getValue(mappedAttribute)
+  val attributeAccessor = info.accessors[attributeAccessorIndex]
+  val bufferView = info.bufferViews[attributeAccessor.bufferView]
+
+  return (0 until vertexCount).map { i ->
+    val stride = if (bufferView.byteStride != 0)
+      bufferView.byteStride
+    else
+      3 * 4
+
+    buffer.position(bufferView.byteOffset + attributeAccessor.byteOffset + i * stride)
+    getVector3(buffer)
+  }
+}
+
 typealias SkinMap = Map<Int, Int>
 
 fun mapSkinIndices(info: GltfInfo, node: Node, boneMap: Map<Int, BoneNode>): SkinMap {
@@ -187,15 +208,16 @@ fun getParentBone(info: GltfInfo, nodeIndex: Int, boneMap: BoneMap): Int? {
     null
 }
 
-fun loadPrimitiveMesh(buffer: ByteBuffer, info: GltfInfo, vertexSchemas: VertexSchemas, primitive: Primitive,
-                      converter: VertexConverter): GeneralMesh {
-  val vertexSchema = if (primitive.attributes.containsKey(AttributeType.JOINTS_0))
-    vertexSchemas.animated
-  else if (primitive.attributes.containsKey(AttributeType.TEXCOORD_0))
-    vertexSchemas.textured
-  else
-    vertexSchemas.imported
+fun getVertexSchema(vertexSchemas: VertexSchemas, attributes: Map<AttributeType, Int>): VertexSchema =
+    if (attributes.containsKey(AttributeType.JOINTS_0))
+      vertexSchemas.animated
+    else if (attributes.containsKey(AttributeType.TEXCOORD_0))
+      vertexSchemas.textured
+    else
+      vertexSchemas.imported
 
+fun loadPrimitiveMesh(buffer: ByteBuffer, info: GltfInfo, vertexSchema: VertexSchema, primitive: Primitive,
+                      converter: VertexConverter): GeneralMesh {
   val (vertices, packing) = loadVertices(buffer, info, vertexSchema, primitive, converter)
   val indices = loadIndices(buffer, info, primitive)
 
@@ -424,21 +446,26 @@ private fun parseVector3(source: Any?): Vector3 {
   return Vector3(dimensions[0].toFloat(), dimensions[1].toFloat(), dimensions[2].toFloat())
 }
 
-fun loadBoundingShape(shapeProperty: Map<String, Any>): Shape? {
-  val source = shapeProperty as Map<String, Any>
+fun loadBoundingShape(getTriangles: GetTriangles): (Map<String, Any>) -> Shape? = { source ->
   val type = source["type"] as String?
   val shape = when (type) {
 
     "composite" -> {
       @Suppress("UNCHECKED_CAST")
       val shapes = source.getValue("children") as List<Map<String, Any>>
-      val shapes2 = shapes.mapNotNull(::loadBoundingShape)
+      val shapes2 = shapes.mapNotNull(loadBoundingShape(getTriangles))
       CompositeShape(
           shapes = shapes2
       )
     }
 
     "cylinder" -> Cylinder(
+        radius = parseFloat(source["radius"]),
+        height = parseFloat(source["height"])
+    )
+
+    "mesh" -> MeshSphere(
+        triangles = getTriangles(),
         radius = parseFloat(source["radius"]),
         height = parseFloat(source["height"])
     )
@@ -456,20 +483,20 @@ fun loadBoundingShape(shapeProperty: Map<String, Any>): Shape? {
   else
     null
 
-  return if (shape != null && offset != null)
+  if (shape != null && offset != null)
     ShapeOffset(transform = Matrix().translate(offset), shape = shape)
   else
     shape
 }
 
-fun loadBoundingShapeFromNode(node: Node): Shape? {
+fun loadBoundingShapeFromNode(node: Node, getTriangles: GetTriangles): Shape? {
   val shapeProperty = node.extras?.get("bounds")
   return if (shapeProperty == null)
     null
   else {
     @Suppress("UNCHECKED_CAST")
     val source = shapeProperty as Map<String, Any>
-    return loadBoundingShape(source)
+    return loadBoundingShape(getTriangles)(source)
   }
 }
 
@@ -512,8 +539,9 @@ fun loadMeshes(info: GltfInfo, buffer: ByteBuffer, vertexSchemas: VertexSchemas,
           val primitives = mesh.primitives.map { primitiveSource ->
             val material = loadMaterial(info, primitiveSource.material)
             val converter = createVertexConverter(info, buffer, boneMap, meshIndex)
+            val vertexSchema = getVertexSchema(vertexSchemas, primitiveSource.attributes)
             rendering.meshes.Primitive(
-                mesh = loadPrimitiveMesh(buffer, info, vertexSchemas, primitiveSource, converter),
+                mesh = loadPrimitiveMesh(buffer, info, vertexSchema, primitiveSource, converter),
                 transform = null,
                 material = material,
                 name = name2,
@@ -522,11 +550,14 @@ fun loadMeshes(info: GltfInfo, buffer: ByteBuffer, vertexSchemas: VertexSchemas,
           }
           val node = info.nodes[nodeIndex]
 
+          val getTriangles: GetTriangles = {
+            loadPositionVertices(buffer, info, mesh.primitives.first())
+          }
           ModelMesh(
               id = id,
               primitives = primitives,
               lights = gatherChildLights(info, node),
-              bounds = loadBoundingShapeFromNode(node)
+              bounds = loadBoundingShapeFromNode(node, getTriangles)
           )
         }
       }

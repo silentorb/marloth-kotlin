@@ -117,7 +117,7 @@ class BlockDefinitions {
             south = impassableHorizontal,
             attributes = setOf(NodeAttribute.categoryDiagonal)
         ),
-        diagonalHalfFloorMesh(MeshId.halfSquareFloor.name)
+        diagonalHalfFloorMesh(MeshId.squareFloorHalfDiagonal.name)
     )
   }
 }

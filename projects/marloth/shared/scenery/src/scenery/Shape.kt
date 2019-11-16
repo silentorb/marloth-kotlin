@@ -58,7 +58,7 @@ data class Box(
 ) : Shape
 
 data class MeshSphere(
-    val mesh: Any,
+    val triangles: List<Vector3>,
     override val radius: Float,
     override val height: Float = radius * 2f,
     override val x: Float = radius * 2f,

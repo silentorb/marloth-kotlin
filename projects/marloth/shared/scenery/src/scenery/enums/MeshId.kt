@@ -36,6 +36,7 @@ enum class MeshId {
   longStep,
   pillowWall,
   squareFloor,
+  squareFloorHalfDiagonal,
   squareWall,
   squareWallDoorway,
   squareWallWindow,
