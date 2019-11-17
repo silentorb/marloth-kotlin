@@ -32,16 +32,17 @@ enum class MeshId {
   fillerColumn,
   halfCircleFloor,
   halfSquareFloor,
+  largeBrick,
   longPillowStep,
   longStairStep,
   longStep,
-  pillowWall,
   quarterSlope,
   squareFloor,
   squareFloorHalfDiagonal,
+  squareWallHalfHeight,
   squareWall,
   squareWallDoorway,
-  squareWallWindow,
-  threeStoryCircleFloor,
-  windowWall
+  squareWallQuarterHeight,
+  squareWallQuarterSlope,
+  squareWallWindow
 }

@@ -1,6 +1,6 @@
 package marloth.definition.templates
 
-import generation.misc.MeshInfoMap
+import generation.architecture.misc.MeshInfoMap
 import mythic.spatial.Vector3
 import scenery.enums.MeshId
 import scenery.enums.ResourceId

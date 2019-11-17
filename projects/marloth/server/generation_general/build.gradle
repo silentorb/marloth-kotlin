@@ -1,3 +1,2 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
-
-requires 'simulation', 'generation_architecture'
+requires 'spatial', 'randomly', 'sculpting', 'simulation'

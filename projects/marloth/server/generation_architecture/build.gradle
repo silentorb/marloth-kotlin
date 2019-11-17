@@ -1,7 +1,7 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
+requires 'spatial', 'randomly', 'sculpting', 'simulation', 'generation_general'
 
-requires 'marloth_clienting', 'configuration', 'definition',
-    'quartz', 'platforming', 'generation_architecture', 'randomly', 'simulation', 'haft', 'persistence'
+// Specifications
 
 buildscript {
   repositories {
