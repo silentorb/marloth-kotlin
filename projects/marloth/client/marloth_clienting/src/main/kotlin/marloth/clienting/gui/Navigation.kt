@@ -34,8 +34,8 @@ fun nextView(command: GuiCommandType, view: ViewId): ViewId? =
       else -> null
     }
 
-fun menuChangeView(commands: UserCommands): (ClientState) -> ClientState = { state ->
-  val newView = commands
+val menuChangeView: (ClientState) -> ClientState = { state ->
+  val newView = state.commands
       .mapNotNull { command -> nextView(command.type, state.view) }
       .firstOrNull()
 

@@ -45,7 +45,7 @@ fun placeWall(input: BuilderInput, height: Float,
     input.selectMesh(meshQuery.query)
   else
     null
-  println(mesh)
+
   if (mesh != null)
     newWallInternal(input.config, mesh, position, angleZ, input.biome)
   else

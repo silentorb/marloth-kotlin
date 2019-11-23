@@ -9,7 +9,7 @@ import marloth.front.GameApp
 import marloth.front.RenderHook
 import mythic.bloom.next.Box
 import mythic.bloom.toAbsoluteBounds
-import mythic.ent.pipe2
+import mythic.ent.pipe
 import mythic.platforming.WindowInfo
 import mythic.quartz.updateTimestep
 import org.joml.Vector2i
@@ -107,23 +107,19 @@ fun gatherGuiEvents(appState: AppState) = guiEvents(appState.client.bloomState.b
 
 fun updateFixedInterval(app: GameApp, box: Box, newWorld: () -> World): (AppState) -> AppState = { appState ->
   app.platform.process.pollEvents()
-  val nextClientState = pipe2(appState.client, listOf(
-      updateClientInput(app.client),
-      updateClient(app.client, appState.players, box),
-      updateAppStateAudio(app.client, appState.worlds)
-  ))
+  val clientState = updateClient(app.client, appState.players, appState.worlds, box)(appState.client)
   val newAppState = appState.copy(
-      client = nextClientState
+      client = clientState
   )
   val commands = getGameCommands(newAppState)
   val worlds = when {
-    nextClientState.commands.any { it.type == GuiCommandType.newGame } -> restartWorld(app, newWorld)
+    clientState.commands.any { it.type == GuiCommandType.newGame } -> restartWorld(app, newWorld)
     gameIsActive(appState) -> updateAppWorld(app, appState, newAppState, commands, gatherGuiEvents(newAppState))
     else -> appState.worlds.takeLast(1)
   }
 
   appState.copy(
-      client = updateClientFromWorld(worlds, commands)(nextClientState),
+      client = updateClientFromWorld(worlds, commands)(clientState),
       worlds = worlds
   )
 }

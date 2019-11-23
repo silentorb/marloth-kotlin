@@ -21,13 +21,6 @@ private val commandTypeMap: Map<UserCommandType, CharacterCommandType> =
     }
         .associate { it }
 
-//    mapOf(
-//    UserCommandType.lookLeft to GuiCommandType.lookLeft,
-//    UserCommandType.lookRight to GuiCommandType.lookRight,
-//    UserCommandType.lookUp to GuiCommandType.lookUp,
-//    UserCommandType.lookDown to GuiCommandType.lookDown
-//)
-
 fun mapGameCommands(players: Table<Player>, commands: HaftCommands<CommandType>): List<Command> =
     commands.map { command ->
       Command(

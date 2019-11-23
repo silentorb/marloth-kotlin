@@ -1,38 +1,32 @@
 package marloth.clienting
 
-import haft.BindingSource
-import haft.HaftCommand
-import haft.mapEventsToCommands
-import haft.simpleCommand
+import haft.*
 import marloth.clienting.audio.AudioConfig
 import marloth.clienting.audio.loadSounds
+import marloth.clienting.audio.updateAppStateAudio
 import marloth.clienting.gui.*
 import marloth.clienting.input.*
-import marloth.clienting.input.InputState
 import marloth.clienting.textResources.englishTextResources
 import mythic.aura.AudioState
 import mythic.aura.SoundLibrary
 import mythic.aura.newAudioState
-import mythic.bloom.*
+import mythic.bloom.BloomId
+import mythic.bloom.BloomState
 import mythic.bloom.next.Box
 import mythic.bloom.next.LogicModule
 import mythic.bloom.next.newBloomState
-
+import mythic.bloom.updateBloomState
 import mythic.drawing.setGlobalFonts
 import mythic.ent.pipe
-import mythic.ent.pipe2
 import mythic.platforming.Platform
 import mythic.spatial.Vector3
-import mythic.typography.enumerateTextStyles
-import mythic.typography.extractFontSets
 import mythic.typography.loadFontSets
 import newBloomInputState
-import rendering.DisplayConfig
 import rendering.Renderer
-import rendering.shading.LightingConfig
 import scenery.Screen
 import scenery.enums.Text
 import simulation.main.Deck
+import simulation.main.World
 import updateInputDeviceStates
 
 const val maxPlayerCount = 4
@@ -88,13 +82,13 @@ fun updateMousePointerVisibility(platform: Platform) {
   platform.input.isMouseVisible(!windowHasFocus)
 }
 
-fun applyClientCommands(client: Client, commands: UserCommands): (ClientState) -> ClientState = { state ->
-  val c = commands.map { it.type }
+fun applyCommandsToExternalSystem(client: Client): (ClientState) -> ClientState = { state ->
+  val c = state.commands.map { it.type }
   if (c.contains(GuiCommandType.quit)) {
     client.platform.process.close()
   }
 
-  menuChangeView(commands)(state)
+  state
 }
 
 fun <T> getBinding(inputState: InputState, inputProfiles: Map<BloomId, InputProfile<T>>): BindingSource<T> = { event ->
@@ -118,10 +112,11 @@ fun getListenerPosition(deck: Deck): Vector3? {
 }
 
 fun updateClientInput(client: Client): (ClientState) -> ClientState = { state ->
-  val newDeviceStates = updateInputDeviceStates(client.platform.input, state.input.deviceStates)
+  val deviceStates = updateInputDeviceStates(client.platform.input, state.input.deviceStates)
   state.copy(
       input = state.input.copy(
-          deviceStates = newDeviceStates
+          deviceStates = deviceStates,
+          deviceMap = updateDeviceMapWithNewPlayers(deviceStates)(state.input.deviceMap)
       )
   )
 }
@@ -135,36 +130,36 @@ fun pruneBag(bloomState: BloomState): BloomState {
 
 val clientBloomModules: List<LogicModule> = listOf()
 
-fun updateClient(client: Client, players: List<Int>, box: Box): (ClientState) -> ClientState = { clientState ->
-  //  updateMousePointerVisibility(client.platform)
-  val bindingContext = bindingContext(clientState)
-  val getBinding = getBinding(clientState.input, clientState.input.guiInputProfiles)
-  val strokes = clientCommandStrokes[bindingContext]!!
+val updateClientInputCommands: (ClientState) -> ClientState = { clientState ->
+  clientState.copy(
+      commands = gatherInputCommands(clientState.input, bindingContext(clientState))
+  )
+}
+
+fun updateClientBloomState(client: Client, players: List<Int>, box: Box): (ClientState) -> ClientState = { clientState ->
   val deviceStates = clientState.input.deviceStates
-  val commands = mapEventsToCommands(deviceStates, strokes, getBinding)
+  val commands = clientState.commands
 
   val bloomInputState = newBloomInputState(deviceStates.last())
       .copy(events = haftToBloom(commands))
   val (bloomState, bloomEvents) = updateBloomState(clientBloomModules, box, pruneBag(clientState.bloomState), bloomInputState)
 
-  val guiCommands = guiEvents(bloomState.bag)
+  val commandsFromGui = guiEvents(bloomState.bag)
       .filter { it.type == GuiEventType.command }
       .map { simpleCommand(it.data as GuiCommandType, players.first()) }
 
-  val allCommands = commands
-      .plus(guiCommands)
-
-  val newClientState = pipe(
-      { state ->
-        state.copy(
-            input = updateInputState(deviceStates, state.input),
-            bloomState = bloomState,
-            commands = allCommands
-        )
-      },
-      // This needs to happen after applying updateBloomState to override flower state settings
-      applyClientCommands(client, allCommands)
-  )(clientState)
-
-  newClientState
+  clientState.copy(
+      bloomState = bloomState,
+      commands = commands.plus(commandsFromGui)
+  )
 }
+
+fun updateClient(client: Client, players: List<Int>, worlds: List<World>, box: Box): (ClientState) -> ClientState =
+    pipe(
+        updateClientInput(client),
+        updateClientInputCommands,
+        updateClientBloomState(client, players, box),
+        applyCommandsToExternalSystem(client),
+        menuChangeView,
+        updateAppStateAudio(client, worlds)
+    )
