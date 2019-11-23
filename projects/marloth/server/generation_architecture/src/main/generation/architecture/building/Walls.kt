@@ -1,5 +1,6 @@
 package generation.architecture.building
 
+import generation.architecture.definition.RandomMeshQuery
 import generation.architecture.misc.BuilderInput
 import generation.architecture.misc.GenerationConfig
 import generation.architecture.misc.MeshQuery
@@ -35,12 +36,15 @@ fun directionRotation(direction: Direction): Float =
     }
 
 fun placeWall(input: BuilderInput, height: Float,
-              meshQuery: MeshQuery
+              meshQuery: RandomMeshQuery
 ): (Map.Entry<Direction, Vector3i>) -> Hand? = { (direction, offset) ->
   val position = input.position + cellHalfLength + offset.toVector3() * cellHalfLength + Vector3(0f, 0f, height)
   val angleZ = directionRotation(direction)
-//  val mesh = getSideMesh(input.dice, input.sides, direction, meshMap)
-  val mesh = input.selectMesh(meshQuery)
+  val nothingChance = meshQuery.nothingChance
+  val mesh = if (nothingChance == 0f || input.dice.getFloat() > nothingChance)
+    input.selectMesh(meshQuery.query)
+  else
+    null
   println(mesh)
   if (mesh != null)
     newWallInternal(input.config, mesh, position, angleZ, input.biome)
@@ -48,7 +52,7 @@ fun placeWall(input: BuilderInput, height: Float,
     null
 }
 
-fun selectMeshQuery(input: BuilderInput, direction: Direction): MeshQuery? {
+fun selectMeshQuery(input: BuilderInput, direction: Direction): RandomMeshQuery? {
   val side = input.sides[direction]!!
   val connectionType = input.dice.takeOne(side)
   return input.connectionTypesToMeshQueries[connectionType]
@@ -57,10 +61,17 @@ fun selectMeshQuery(input: BuilderInput, direction: Direction): MeshQuery? {
 fun cubeWalls(directions: Set<Direction> = horizontalDirections, height: Float = 0f) = blockBuilder { input ->
   val dice = input.dice
   val rotatedDirections = directions.map(rotateDirection(input.turns))
+  val cell = input.cell
+  val grid = input.grid
 
   horizontalDirectionVectors
       .filterKeys { rotatedDirections.contains(it) }
       .entries
+      .filter { (direction, offset) ->
+        val otherCell = cell + offset
+        setOf(Direction.north, Direction.east).contains(direction) ||
+            !grid.cells.containsKey(otherCell)
+      }
       .mapNotNull { entry ->
         val query = selectMeshQuery(input, entry.key)
         if (query != null)

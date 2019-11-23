@@ -2,11 +2,24 @@ package generation.architecture.definition
 
 import generation.architecture.misc.MeshQuery
 
-typealias ConnectTypeMeshQueryMap = Map<ConnectionType, MeshQuery>
+data class RandomMeshQuery(
+    val query: MeshQuery,
+    val nothingChance: Float = 0f
+)
+typealias ConnectTypeMeshQueryMap = Map<ConnectionType, RandomMeshQuery>
 
 fun connectionTypesToMeshQueries(): ConnectTypeMeshQueryMap = mapOf(
-    ConnectionType.decoratedWall to MeshQuery(all = setOf(MeshAttribute.wall, MeshAttribute.decorated)),
-    ConnectionType.doorway to MeshQuery(all = setOf(MeshAttribute.doorway)),
-    ConnectionType.plainWall to MeshQuery(all = setOf(MeshAttribute.wall, MeshAttribute.plain)),
-    ConnectionType.solidWall to MeshQuery(all = setOf(MeshAttribute.wall, MeshAttribute.solid))
+    ConnectionType.decoratedWall to RandomMeshQuery(
+        query = MeshQuery(all = setOf(MeshAttribute.wall, MeshAttribute.decorated))
+    ),
+    ConnectionType.doorway to RandomMeshQuery(
+        query = MeshQuery(all = setOf(MeshAttribute.doorway)),
+        nothingChance = 0.7f
+    ),
+    ConnectionType.plainWall to RandomMeshQuery(
+        query = MeshQuery(all = setOf(MeshAttribute.wall, MeshAttribute.plain))
+    ),
+    ConnectionType.solidWall to RandomMeshQuery(
+        query = MeshQuery(all = setOf(MeshAttribute.wall, MeshAttribute.solid))
+    )
 )
