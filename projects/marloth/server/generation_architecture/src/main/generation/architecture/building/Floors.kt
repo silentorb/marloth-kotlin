@@ -2,8 +2,9 @@ package generation.architecture.building
 
 import generation.architecture.definition.impassableHorizontal
 import generation.architecture.old.*
-import generation.architecture.misc.*
 import generation.architecture.misc.Builder
+import generation.general.TextureGroup
+import generation.general.biomeTexture
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import scenery.MeshName
@@ -43,7 +44,7 @@ fun diagonalHalfFloorMesh(mesh: MeshName, height: Float) =
 
 fun newSlopedFloorMesh(mesh: MeshName, height: Float) = blockBuilder(down = impassableHorizontal) { input ->
   val meshInfo = input.config.meshes[mesh]!!
-  val slopeAngle = asin(cellLength / 4f / meshInfo.shape.x)
+  val slopeAngle = asin(cellLength / 4f / meshInfo.shape!!.x)
   val orientation = Quaternion()
       .rotateZ(applyTurns(input.turns))
       .rotateX(slopeAngle)

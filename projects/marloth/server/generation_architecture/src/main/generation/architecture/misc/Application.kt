@@ -5,7 +5,8 @@ import generation.abstracted.horrorVacui
 import generation.abstracted.newWindingWorkbench
 import generation.abstracted.windingPath
 import generation.architecture.definition.BlockDefinitions
-import generation.architecture.definition.openConnectionTypes
+import generation.architecture.definition.ConnectTypeMeshQueryMap
+import generation.architecture.definition.connectionTypesToMeshQueries
 import generation.general.*
 import mythic.ent.pipe
 import mythic.spatial.Vector3
@@ -25,23 +26,31 @@ data class BuilderInput(
     val turns: Int,
     val cell: Vector3i,
     val position: Vector3,
-    val sides: Sides
+    val sides: Sides,
+    val selectMesh: MeshSelector,
+    val getUsableCellSide: UsableConnectionTypes,
+    val connectionTypesToMeshQueries: ConnectTypeMeshQueryMap
 )
 
 typealias Builder = (BuilderInput) -> List<Hand>
 
 fun buildArchitecture(generationConfig: GenerationConfig, dice: Dice,
-                      independentConnections: Set<Any>,
+                      gridSideMap: GridSideMap,
                       workbench: Workbench,
                       blockMap: BlockMap,
                       cellBiomes: CellBiomeMap,
                       builders: Map<Block, Builder>): List<Hand> {
+
+  val getUsableCellSide = getUsableCellSide(gridSideMap)
+  val meshSource = newMeshSource(generationConfig.meshes)
+  val selectMesh = randomlySelectMesh(dice, meshSource)
+
   return workbench.blockGrid.flatMap { (position, block) ->
     val info = blockMap[block]!!
     val biomeName = cellBiomes[position]!!
     val builder = builders[info.original]
     if (builder == null)
-      throw Error("Could not find builder for polyomino")
+      throw Error("Could not find builder for block")
 
     val input = BuilderInput(
         config = generationConfig,
@@ -53,17 +62,21 @@ fun buildArchitecture(generationConfig: GenerationConfig, dice: Dice,
         blockGrid = workbench.blockGrid,
         cell = position,
         biome = generationConfig.biomes[biomeName]!!,
-        sides = getUsableCellSides(independentConnections, workbench.blockGrid, position)
+        sides = allDirections.associateWith(getUsableCellSide(position)),
+        selectMesh = selectMesh,
+        getUsableCellSide = getUsableCellSide,
+        connectionTypesToMeshQueries = connectionTypesToMeshQueries()
     )
     builder(input)
   }
 }
 
-fun newWorkbench(dice: Dice, blocks: Set<Block>, independentConnections: Set<Any>, roomCount: Int): Workbench {
+fun newWorkbench(dice: Dice, blocks: Set<Block>, independentConnections: Set<Any>, openConnectionTypes: Set<Any>,
+                 roomCount: Int): Workbench {
   val blockConfig = BlockConfig(
       blocks = blocks,
       independentConnections = independentConnections,
-      openConnections = openConnectionTypes()
+      openConnections = openConnectionTypes
   )
   val firstBlockVariable = System.getenv("FIRST_BLOCK")
   val firstBlock = if (firstBlockVariable != null)

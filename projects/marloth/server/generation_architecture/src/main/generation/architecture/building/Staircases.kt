@@ -1,8 +1,8 @@
 package generation.architecture.building
 
 import generation.architecture.old.*
-import generation.architecture.misc.TextureGroup
-import generation.architecture.misc.biomeTexture
+import generation.general.TextureGroup
+import generation.general.biomeTexture
 import mythic.spatial.Matrix
 import mythic.spatial.Pi
 import mythic.spatial.Quaternion

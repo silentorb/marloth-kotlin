@@ -6,18 +6,19 @@ enum class ConnectionType {
   doorway,
   extraHeadroom,
   impassableEmpty,
+  open,
   quarterLevelOpen1,
   quarterLevelOpen2,
   quarterLevelOpen3,
-  open,
   spiralStaircaseBottom,
   spiralStaircaseTop,
   verticalDiagonalAdapter1,
   verticalDiagonalAdapter2,
   verticalDiagonalAdapter3,
   verticalDiagonalAdapter4,
-  wall,
-  window
+  plainWall,
+  solidWall,
+  decoratedWall
 }
 
 // Connections that don't need to be completed and can be left dangling
@@ -25,8 +26,9 @@ fun independentConnectionTypes(): Set<ConnectionType> =
     setOf(
         ConnectionType.extraHeadroom,
         ConnectionType.impassableEmpty,
-        ConnectionType.wall,
-        ConnectionType.window
+        ConnectionType.plainWall,
+        ConnectionType.solidWall,
+        ConnectionType.decoratedWall
     )
 
 fun openConnectionTypes(): Set<ConnectionType> =

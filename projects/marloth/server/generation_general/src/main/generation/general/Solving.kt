@@ -2,6 +2,8 @@ package generation.general
 
 import mythic.spatial.Vector3i
 import randomly.Dice
+import simulation.misc.ConnectionMap
+import simulation.misc.containsConnection
 
 typealias GetBlock = (Vector3i) -> Block?
 typealias CheckBlockSide = (Map.Entry<Direction, Side>) -> Boolean
@@ -81,16 +83,25 @@ fun blockCanHaveMoreConnections(config: BlockConfig, blockGrid: BlockGrid): (Vec
   possibleNextDirections(config, blockGrid, position).any()
 }
 
+typealias UsableConnectionTypes = (Vector3i) -> (Direction) -> Side
+
 // Returns the intersection of af a block's sides with its neighbors' sides
-fun getUsableCellSides(independentConnections: Set<Any>, blockGrid: BlockGrid, position: Vector3i): Sides {
+fun getUsableCellSide(independentConnectionTypes: Set<Any>, openConnectionTypes: Set<Any>,
+                      connections: ConnectionMap,
+                      blockGrid: BlockGrid): UsableConnectionTypes = { position ->
   val surroundingSides = getSurroundingSides(blockGrid, position)
   val block = blockGrid.getValue(position)
-  return allDirections.associateWith { direction ->
+  val notUsed = 0
+  { direction ->
     val side = block.sides.getValue(direction)
     val otherSide = surroundingSides.getValue(direction)
-    if (otherSide.any())
-      side.intersect(otherSide)
-    else
-      side.intersect(independentConnections)
+    if (otherSide.any()) {
+      val intersection = side.intersect(otherSide)
+      if (containsConnection(connections, position, position + allDirectionVectors[direction]!!))
+        intersection.intersect(openConnectionTypes)
+      else
+        intersection
+    } else
+      side.intersect(independentConnectionTypes)
   }
 }

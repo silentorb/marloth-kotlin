@@ -1,4 +1,4 @@
-package generation.architecture.misc
+package generation.general
 
 import scenery.MeshName
 import scenery.enums.TextureId

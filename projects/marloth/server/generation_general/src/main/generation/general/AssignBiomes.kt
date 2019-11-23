@@ -1,4 +1,4 @@
-package generation.architecture.misc
+package generation.general
 
 import simulation.misc.BiomeName
 import simulation.misc.WorldInput

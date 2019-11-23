@@ -2,6 +2,9 @@ package generation.architecture.old
 
 import generation.architecture.definition.MeshAttribute
 import generation.architecture.misc.*
+import generation.general.BiomeAttribute
+import generation.general.BiomeInfo
+import generation.general.TextureGroup
 import mythic.ent.Id
 import mythic.spatial.Pi
 import mythic.spatial.Quaternion
@@ -49,7 +52,7 @@ fun newArchitectureMesh(meshes: MeshInfoMap, mesh: MeshName, position: Vector3,
           nearestNode = node,
           scale = scale
       ),
-      collisionShape = CollisionObject(shape = meshInfo.shape)
+      collisionShape = if (meshInfo.shape != null) CollisionObject(shape = meshInfo.shape) else null
   )
 }
 
@@ -67,7 +70,7 @@ val alignWithCeiling: VerticalAligner = { height -> -height / 2f }
 val alignWithFloor: VerticalAligner = { height -> height / 2f }
 
 fun align(meshInfo: MeshInfoMap, aligner: VerticalAligner) = { mesh: MeshName ->
-  val height = meshInfo[mesh]!!.shape.height
+  val height = meshInfo[mesh]!!.shape!!.height
   Vector3(0f, 0f, aligner(height))
 }
 
@@ -99,10 +102,10 @@ fun wallPlacementFilter(dice: Dice, biome: BiomeInfo) =
       else -> false
     }
 
-fun randomlySelectMesh(dice: Dice, meshes: MeshInfoMap, biome: BiomeInfo, attributes: MeshAttributes): MeshName {
-  val meshPool = filterMeshes(meshes, biome, attributes, QueryFilter.any)
-  return dice.takeOne(meshPool)
-}
+//fun randomlySelectMesh(dice: Dice, meshes: MeshInfoMap, biome: BiomeInfo, attributes: MeshAttributes): MeshName {
+//  val meshPool = filterMeshes(meshes, biome, attributes, QueryFilter.any)
+//  return dice.takeOne(meshPool)
+//}
 
 //fun getStairTopFloorFacingAngle(graph: Graph, node: Node): Float {
 //  val otherNode = getNonVerticalNeighbors(graph, node.id).first()

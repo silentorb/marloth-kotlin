@@ -4,23 +4,32 @@ import generation.architecture.misc.MeshAttributeMap
 import scenery.enums.MeshId
 
 enum class MeshAttribute {
-    canHaveAttachment,
+  canHaveAttachment,
 
-    // Rotation
-    canFlipHorizontally,
-    canFlipUpsideDown,
-    canRotateOnSide,
+  // Rotation
+  canFlipHorizontally,
+  canFlipUpsideDown,
+  canRotateOnSide,
 
-    doorway,
-    hasDecoration,
+  decorated,
+  doorway,
+  nonSolid,
+  plain,
+  solid,
 
-    heightFull,
-    heightHalf,
-    heightThreeQuarters,
-    heightQuarter,
+  heightFull,
+  heightHalf,
+  heightThreeQuarters,
+  heightQuarter,
 
-    wall,
+  wall,
 }
+
+val meshAttributesThatRequireAShape = setOf(
+    MeshAttribute.doorway,
+    MeshAttribute.solid,
+    MeshAttribute.wall
+)
 
 val meshAttributes: MeshAttributeMap = mapOf(
     MeshId.circleFloor to setOf(
@@ -31,16 +40,36 @@ val meshAttributes: MeshAttributeMap = mapOf(
     ),
     MeshId.halfCircleFloor to setOf(
     ),
+    MeshId.halfSquareFloor to setOf(
+
+    ),
     MeshId.longStairStep to setOf(
     ),
     MeshId.longStep to setOf(
     ),
+    MeshId.quarterSlope to setOf(
+    ),
     MeshId.squareFloor to setOf(
+    ),
+    MeshId.squareFloorHalfDiagonal to setOf(
     ),
     MeshId.squareWall to setOf(
         MeshAttribute.wall,
         MeshAttribute.canHaveAttachment,
-        MeshAttribute.heightFull
+        MeshAttribute.heightFull,
+        MeshAttribute.plain
+    ),
+    MeshId.squareWallDoorway to setOf(
+        MeshAttribute.doorway
+    ),
+    MeshId.squareWallQuarterHeight to setOf(
+    ),
+    MeshId.squareWallQuarterSlope to setOf(
+    ),
+    MeshId.squareWallWindow to setOf(
+        MeshAttribute.decorated,
+        MeshAttribute.nonSolid,
+        MeshAttribute.wall
     )
 )
     .mapKeys { it.key.name }

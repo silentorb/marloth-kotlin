@@ -1,6 +1,7 @@
 package generation.architecture.misc
 
 import generation.architecture.old.cellLength
+import generation.general.BiomeGrid
 import mythic.spatial.Vector3
 import mythic.spatial.Vector3i
 import mythic.spatial.toVector3

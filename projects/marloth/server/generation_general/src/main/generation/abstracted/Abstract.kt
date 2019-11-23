@@ -1,8 +1,8 @@
 package generation.abstracted
 
-import generation.architecture.misc.BiomeAttribute
-import generation.architecture.misc.BiomeGrid
-import generation.architecture.misc.BiomeInfoMap
+import generation.general.BiomeAttribute
+import generation.general.BiomeGrid
+import generation.general.BiomeInfoMap
 import mythic.ent.Id
 import simulation.misc.*
 

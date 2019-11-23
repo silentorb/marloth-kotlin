@@ -1,6 +1,9 @@
 package generation.architecture.definition
 
-import generation.architecture.misc.*
+import generation.general.BiomeAttribute
+import generation.general.BiomeInfo
+import generation.general.BiomeInfoMap
+import generation.general.TextureGroup
 import scenery.MeshName
 import scenery.enums.MeshId
 import scenery.enums.TextureId

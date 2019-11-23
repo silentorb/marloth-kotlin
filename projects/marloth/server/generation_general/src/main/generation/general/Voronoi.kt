@@ -1,4 +1,4 @@
-package generation.architecture.misc
+package generation.general
 
 import mythic.spatial.Vector3
 import mythic.spatial.nearestFast

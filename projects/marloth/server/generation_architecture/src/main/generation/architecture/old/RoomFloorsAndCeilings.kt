@@ -7,23 +7,23 @@ import simulation.entities.ArchitectureElement
 import simulation.misc.MapGrid
 import simulation.misc.Node
 
-fun placeRoomFloorOrCeiling(common: CommonArchitectConfig): (Node) -> HandArchitect = { node ->
-  { config, realm, dice ->
-    val biome = config.biomes[node.biome!!]!!
-
-    val meshOptions = filterMeshes(config.meshes, biome.meshes, QueryFilter.any)(common.meshAttributes)
-    val mesh = dice.takeOne(meshOptions)
-    newArchitectureMesh(
-        architecture = ArchitectureElement(isWall = false),
-        meshes = config.meshes,
-        mesh = mesh,
-        position = node.position + common.offset + align(config.meshes, common.aligner)(mesh),
-        orientation = common.orientation ?: Quaternion(),
-        node = node.id,
-        texture = biomeTexture(biome, common.textureGroup)
-    )
-  }
-}
+//fun placeRoomFloorOrCeiling(common: CommonArchitectConfig): (Node) -> HandArchitect = { node ->
+//  { config, realm, dice ->
+//    val biome = config.biomes[node.biome!!]!!
+//
+//    val meshOptions = filterMeshes(config.meshes, biome.meshes, QueryFilter.any)(common.meshAttributes)
+//    val mesh = dice.takeOne(meshOptions)
+//    newArchitectureMesh(
+//        architecture = ArchitectureElement(isWall = false),
+//        meshes = config.meshes,
+//        mesh = mesh,
+//        position = node.position + common.offset + align(config.meshes, common.aligner)(mesh),
+//        orientation = common.orientation ?: Quaternion(),
+//        node = node.id,
+//        texture = biomeTexture(biome, common.textureGroup)
+//    )
+//  }
+//}
 
 fun isEmptyBelow(grid: MapGrid, position: Vector3i): Boolean =
     (1..6).none {

@@ -8,7 +8,7 @@ import generation.architecture.building.floorOffset
 import generation.architecture.old.nodeFloorCenter
 import generation.architecture.misc.calculateWorldScale
 import generation.architecture.misc.applyCellPosition
-import generation.architecture.misc.BiomeAttribute
+import generation.general.BiomeAttribute
 import generation.architecture.misc.GenerationConfig
 import generation.architecture.definition.MeshAttribute
 import generation.architecture.misc.MeshInfoMap

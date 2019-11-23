@@ -11,11 +11,12 @@ import simulation.misc.NodeAttribute
 val any: Side = setOf()
 val doorway: Side = setOf(ConnectionType.doorway)
 val requiredOpen: Side = setOf(ConnectionType.doorway, ConnectionType.open)
-val impassableHorizontalSolid: Side = setOf(ConnectionType.wall)
-val impassableHorizontal: Side = impassableHorizontalSolid.plus(setOf(ConnectionType.window))
+val impassableEmpty = setOf(ConnectionType.impassableEmpty)
+val impassableHorizontalSolid: Side = setOf(ConnectionType.plainWall)
+val impassableHorizontal: Side = impassableHorizontalSolid.plus(setOf(ConnectionType.decoratedWall))
 val optionalOpen: Side = requiredOpen.plus(impassableHorizontal)
-val optionalOpenSolid: Side = setOf(ConnectionType.open, ConnectionType.wall)
-val impassableVertical: Side = setOf(ConnectionType.wall)
+val optionalOpenSolid: Side = setOf(ConnectionType.open, ConnectionType.plainWall)
+val impassableVertical: Side = setOf(ConnectionType.plainWall)
 val spiralStaircaseBottom: Side = setOf(ConnectionType.spiralStaircaseBottom)
 val spiralStaircaseTop: Side = setOf(ConnectionType.spiralStaircaseTop)
 val spiralStaircaseTopOrBottom: Side = setOf(ConnectionType.spiralStaircaseBottom, ConnectionType.spiralStaircaseTop)
@@ -87,9 +88,9 @@ class BlockDefinitions {
             up = impassableVertical,
             down = verticalDiagonalAdapter,
             east = requiredOpen,
-            north = impassableHorizontal,
-            west = impassableHorizontal,
-            south = impassableHorizontal
+            north = impassableEmpty,
+            west = impassableEmpty,
+            south = impassableEmpty
         )
     )
   }

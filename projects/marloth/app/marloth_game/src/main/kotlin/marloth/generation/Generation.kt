@@ -1,16 +1,14 @@
 package marloth.generation
 
 import generation.abstracted.initializeNodeRadii
-import generation.architecture.definition.blockBuilders
-import generation.architecture.definition.independentConnectionTypes
-import generation.architecture.definition.rotatingConnectionTypes
+import generation.architecture.definition.*
 import generation.general.explodeBlockMap
 import generation.architecture.misc.generateRealm
 import generation.architecture.misc.GenerationConfig
-import generation.architecture.misc.newRandomizedBiomeGrid
+import generation.general.newRandomizedBiomeGrid
 import generation.architecture.misc.buildArchitecture
 import generation.architecture.misc.newWorkbench
-import generation.architecture.definition.biomeInfoMap
+import generation.general.bakeSides
 import mythic.ent.newIdSource
 import org.recast4j.detour.NavMeshQuery
 import randomly.Dice
@@ -24,16 +22,17 @@ fun generateWorld(generationConfig: GenerationConfig, input: WorldInput): World 
   val dice = input.dice
   val (blocks, builders) = blockBuilders()
   val independentConnections = independentConnectionTypes()
+  val openConnectionTypes = openConnectionTypes()
   val blockMap = explodeBlockMap(rotatingConnectionTypes(), blocks)
-  val workbench = newWorkbench(dice, blockMap.keys, independentConnections, generationConfig.roomCount)
+  val workbench = newWorkbench(dice, blockMap.keys, independentConnections, openConnectionTypes, generationConfig.roomCount)
   val grid = workbench.mapGrid
-
+  val gridSideMap = bakeSides(independentConnections, openConnectionTypes, grid.connections, workbench.blockGrid)
   val biomeGrid = newRandomizedBiomeGrid(biomeInfoMap, input)
   val realm = generateRealm(generationConfig, input, grid, biomeGrid)
   val nextId = newIdSource(1)
   val deck = pipeHandsToDeck(nextId, listOf(
       { _ ->
-        buildArchitecture(generationConfig, dice, independentConnections, workbench, blockMap, realm.cellBiomes, builders)
+        buildArchitecture(generationConfig, dice, gridSideMap, workbench, blockMap, realm.cellBiomes, builders)
       },
       populateWorld(generationConfig, input, realm)
   ))(Deck())

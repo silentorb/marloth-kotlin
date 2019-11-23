@@ -40,7 +40,7 @@ fun explodeHeightBlocks(levelIndex: Int): Collection<BlockBuilder> {
   val lower = levels[levelIndex - 1]
   val upper = levels[(levelIndex + 1) % 4]
   val halfStepRequiredOpen: Side = level.side
-  val halfStepOptionalOpen: Side = halfStepRequiredOpen.plus(ConnectionType.wall)
+  val halfStepOptionalOpen: Side = halfStepRequiredOpen.plus(ConnectionType.plainWall)
   return mapOf(
       "halfStepRoom" to compose(
           blockBuilder(

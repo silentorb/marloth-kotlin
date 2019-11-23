@@ -1,5 +1,7 @@
 package generation.architecture.misc
 
+import generation.general.BiomeInfoMap
+
 data class GenerationConfig(
     val biomes: BiomeInfoMap,
     val meshes: MeshInfoMap,
