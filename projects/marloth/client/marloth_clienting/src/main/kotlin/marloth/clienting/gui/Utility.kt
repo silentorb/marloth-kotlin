@@ -14,10 +14,9 @@ import mythic.typography.calculateTextDimensions
 import mythic.typography.resolveTextStyle
 import scenery.enums.Text
 import simulation.main.Deck
-import simulation.main.defaultPlayer
 
-fun getPlayerInteractingWith(deck: Deck): Id? =
-    deck.characters[defaultPlayer(deck)]!!.interactingWith
+fun getPlayerInteractingWith(deck: Deck, player: Id): Id? =
+    deck.characters[player]!!.interactingWith
 
 const val textResourcesKey = "textResources"
 

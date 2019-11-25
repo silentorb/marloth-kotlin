@@ -29,7 +29,6 @@ fun generateRealm(config: GenerationConfig, input: WorldInput, grid: MapGrid, bi
       cellMap = cellMap,
       cellBiomes = applyBiomesToGrid(grid, biomeGrid),
       nodeList = graph.nodes.values.toList(),
-      doorFrameNodes = graph.doorways,
       grid = grid
   )
 }

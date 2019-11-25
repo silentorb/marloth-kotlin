@@ -12,7 +12,6 @@ import scenery.Light
 import scenery.enums.AccessoryId
 import simulation.entities.*
 import simulation.main.Deck
-import simulation.main.defaultPlayer
 import simulation.physics.defaultCharacterHeight
 import kotlin.math.floor
 
@@ -65,8 +64,7 @@ fun createTopDownCamera(player: Body): Camera {
   )
 }
 
-fun createCamera(deck: Deck, screen: Screen): Camera {
-  val player = defaultPlayer(deck)
+fun createCamera(deck: Deck, player: Id): Camera {
   val character = deck.characters[player]!!
   val body = deck.bodies[player]!!
   val playerRecord = deck.players[player]!!
@@ -277,9 +275,9 @@ fun gatherBackground(cycles: Table<Cycle>, cameraPosition: Vector3): ElementGrou
   ))
 }
 
-fun createScene(deck: Deck, screen: Screen, player: Id): GameScene {
-  val camera = createCamera(deck, screen)
-  return GameScene(
+fun createScene(deck: Deck): (Id, Screen) -> GameScene = { player, screen ->
+  val camera = createCamera(deck, player)
+  GameScene(
       main = Scene(
           camera = camera,
           lights = mapLights(deck, player)
@@ -298,6 +296,4 @@ fun createScene(deck: Deck, screen: Screen, player: Id): GameScene {
 }
 
 fun createScenes(deck: Deck, screens: List<Screen>): List<GameScene> =
-    deck.players.keys.mapIndexed() { i, key ->
-      createScene(deck, screens[i], key)
-    }
+    deck.players.keys.zip(screens, createScene(deck))

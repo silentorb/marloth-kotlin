@@ -68,12 +68,12 @@ fun mergeDecks(decks: List<Deck>): Deck =
 fun allHandsOnDeck(hands: List<Hand>, nextId: IdSource, deck: Deck = Deck()): Deck =
     hands.fold(deck, { d, h -> d.plus(toDeck(nextId, h)) })
 
-val addDeck: ((IdSource) -> List<IdHand>) -> WorldTransform = { deckSource ->
+val addHandsToWorld: (List<Hand>) -> WorldTransform = { hands ->
   { world ->
     val (nextId, finalize) = newIdSource(world)
-    val newDeck = world.deck.plus(toDeck(deckSource(nextId)))
+    val deck = allHandsOnDeck(hands, nextId, world.deck)
     finalize(world.copy(
-        deck = newDeck
+        deck = deck
     ))
   }
 }
@@ -84,17 +84,17 @@ fun pipeHandsToDeck(nextId: IdSource, sources: List<(Deck) -> List<Hand>>): (Dec
   })(deck)
 }
 
-fun addHands(hands: List<Hand>): WorldTransform =
-    addDeck { nextId -> hands.map { IdHand(nextId(), it) } }
-
-fun addDecks(deckSources: List<(IdSource) -> List<IdHand>>): WorldTransform {
-  return pipe2(deckSources.map(addDeck))
-}
+//fun addHands(hands: List<Hand>): WorldTransform =
+//    addDeck { nextId -> hands.map { IdHand(nextId(), it) } }
+//
+//fun addDecks(deckSources: List<(IdSource) -> List<IdHand>>): WorldTransform {
+//  return pipe2(deckSources.map(addDeck))
+//}
 
 typealias DeckSource = (IdSource) -> Deck
 
 fun resolveDecks(nextId: IdSource, deckSources: List<DeckSource>): List<Deck> =
     deckSources.map { it(nextId) }
 
-fun defaultPlayer(deck: Deck): Id =
-    deck.players.keys.first()
+//fun defaultPlayer(deck: Deck): Id =
+//    deck.players.keys.first()

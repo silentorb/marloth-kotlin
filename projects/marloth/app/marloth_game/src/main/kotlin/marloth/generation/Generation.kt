@@ -2,12 +2,9 @@ package marloth.generation
 
 import generation.abstracted.initializeNodeRadii
 import generation.architecture.definition.*
+import generation.architecture.misc.*
 import generation.general.explodeBlockMap
-import generation.architecture.misc.generateRealm
-import generation.architecture.misc.GenerationConfig
 import generation.general.newRandomizedBiomeGrid
-import generation.architecture.misc.buildArchitecture
-import generation.architecture.misc.newWorkbench
 import generation.general.bakeSides
 import mythic.ent.newIdSource
 import org.recast4j.detour.NavMeshQuery
@@ -17,6 +14,7 @@ import simulation.main.Deck
 import simulation.main.World
 import simulation.main.pipeHandsToDeck
 import simulation.misc.WorldInput
+import simulation.misc.createWorldBoundary
 
 fun generateWorld(generationConfig: GenerationConfig, input: WorldInput): World {
   val dice = input.dice
@@ -54,4 +52,19 @@ fun generateWorld(generationConfig: GenerationConfig, input: WorldInput): World 
       navMesh = navMesh,
       navMeshQuery = if (navMesh != null) NavMeshQuery(navMesh) else null
   )
+}
+
+fun generateWorld(meshInfo: MeshShapeMap, dice: Dice): World {
+  val boundary = createWorldBoundary(100f)
+  val generationConfig = GenerationConfig(
+      biomes = biomeInfoMap,
+      meshes = compileArchitectureMeshInfo(meshInfo, meshAttributes),
+      includeEnemies = true,
+      roomCount = 20
+  )
+  val input = WorldInput(
+      boundary,
+      dice
+  )
+  return generateWorld(generationConfig, input)
 }

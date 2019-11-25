@@ -43,7 +43,6 @@ data class Realm(
     val cellMap: CellPositionMap,
     val cellBiomes: CellBiomeMap,
     val nodeList: List<Node>,
-    val doorFrameNodes: List<Id>,
     val grid: MapGrid
 ) {
 

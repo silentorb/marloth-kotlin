@@ -17,11 +17,8 @@ data class Box(
     val boxes: List<Box> = emptyBoxList,
     val depiction: Depiction? = null,
     val clipBounds: Boolean = false,
-//    val handler: Any? = null,
     val logic: LogicModuleOld? = null,
     val onClick: List<AnyEvent> = listOf()
-//    val attributes: Set<String> = setOf(),
-//    val data: Map<String, Any?> = mapOf()
 )
 
 data class Seed(

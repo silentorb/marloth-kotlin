@@ -7,7 +7,6 @@ import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import simulation.main.Deck
 import simulation.main.World
-import simulation.main.defaultPlayer
 import simulation.physics.old.Collision
 
 fun castInteractableRay(dynamicsWorld: btDiscreteDynamicsWorld, deck: Deck, player: Id): Id? {
@@ -32,7 +31,6 @@ fun castInteractableRay(dynamicsWorld: btDiscreteDynamicsWorld, deck: Deck, play
 fun syncWorldToBullet(bulletState: BulletState): (World) -> World = { world ->
   val quat = com.badlogic.gdx.math.Quaternion()
   val deck = world.deck
-  val player = defaultPlayer(deck)
   world.copy(
       deck = deck.copy(
           bodies = deck.bodies.mapValues { (key, body) ->
@@ -51,9 +49,11 @@ fun syncWorldToBullet(bulletState: BulletState): (World) -> World = { world ->
             }
           },
           characters = deck.characters.plus(
-              Pair(player, deck.characters[player]!!.copy(
-                  canInteractWith = castInteractableRay(bulletState.dynamicsWorld, deck, player)
-              ))
+              deck.players.keys.map { player ->
+                Pair(player, deck.characters[player]!!.copy(
+                    canInteractWith = castInteractableRay(bulletState.dynamicsWorld, deck, player)
+                ))
+              }
           )
               .mapValues { (id, character) ->
                 character.copy(

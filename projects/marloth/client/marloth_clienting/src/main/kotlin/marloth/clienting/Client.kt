@@ -1,9 +1,11 @@
 package marloth.clienting
 
-import haft.*
+import haft.BindingSource
+import haft.HaftCommand
+import haft.simpleCommand
 import marloth.clienting.audio.AudioConfig
 import marloth.clienting.audio.loadSounds
-import marloth.clienting.audio.updateAppStateAudio
+import marloth.clienting.audio.updateClientAudio
 import marloth.clienting.gui.*
 import marloth.clienting.input.*
 import marloth.clienting.textResources.englishTextResources
@@ -17,6 +19,7 @@ import mythic.bloom.next.LogicModule
 import mythic.bloom.next.newBloomState
 import mythic.bloom.updateBloomState
 import mythic.drawing.setGlobalFonts
+import mythic.ent.Id
 import mythic.ent.pipe
 import mythic.platforming.Platform
 import mythic.spatial.Vector3
@@ -34,20 +37,26 @@ const val maxPlayerCount = 4
 data class ClientState(
     val input: InputState,
     val bloomState: BloomState,
-    val view: ViewId,
+    val playerViews: Map<Id, ViewId?>,
     val audio: AudioState,
-    val commands: List<HaftCommand<GuiCommandType>>
+    val commands: List<HaftCommand<GuiCommandType>>,
+
+    // Players could be extracted from the world deck except the world does not care about player order.
+    // Player order is only a client concern, and only for local multiplayer.
+    // The only reason for this players list is to keep track of the client player order.
+    val players: List<Id>
 )
 
-fun isGuiActive(state: ClientState): Boolean = pauseViews.contains(state.view)
+fun isGuiActive(state: ClientState): Boolean = pauseViews.any { state.playerViews.values.contains(it) }
 
 fun newClientState(platform: Platform, inputConfig: GameInputConfig, audioConfig: AudioConfig) =
     ClientState(
         input = newInputState(inputConfig),
         bloomState = newBloomState(),
         audio = newAudioState(platform.audio, audioConfig.soundVolume),
-        view = ViewId.none,
-        commands = listOf()
+        playerViews = mapOf(),
+        commands = listOf(),
+        players = listOf()
     )
 
 //fun loadTextResource(): TextResources {
@@ -111,12 +120,11 @@ fun getListenerPosition(deck: Deck): Vector3? {
   return body?.position
 }
 
-fun updateClientInput(client: Client): (ClientState) -> ClientState = { state ->
-  val deviceStates = updateInputDeviceStates(client.platform.input, state.input.deviceStates)
-  state.copy(
-      input = state.input.copy(
-          deviceStates = deviceStates,
-          deviceMap = updateDeviceMapWithNewPlayers(deviceStates)(state.input.deviceMap)
+fun updateClientInput(client: Client): (ClientState) -> ClientState = { clientState ->
+  val deviceStates = updateInputDeviceStates(client.platform.input, clientState.input.deviceStates)
+  clientState.copy(
+      input = clientState.input.copy(
+          deviceStates = deviceStates
       )
   )
 }
@@ -130,23 +138,25 @@ fun pruneBag(bloomState: BloomState): BloomState {
 
 val clientBloomModules: List<LogicModule> = listOf()
 
-val updateClientInputCommands: (ClientState) -> ClientState = { clientState ->
+fun updateClientInputCommands(): (ClientState) -> ClientState = { clientState ->
   clientState.copy(
-      commands = gatherInputCommands(clientState.input, bindingContext(clientState))
+      commands = clientState.players.flatMap { player ->
+        gatherInputCommands(clientState.input, bindingContext(clientState, player))
+      }
   )
 }
 
-fun updateClientBloomState(client: Client, players: List<Int>, box: Box): (ClientState) -> ClientState = { clientState ->
+fun updateClientBloomState(box: Box): (ClientState) -> ClientState = { clientState ->
   val deviceStates = clientState.input.deviceStates
   val commands = clientState.commands
 
   val bloomInputState = newBloomInputState(deviceStates.last())
       .copy(events = haftToBloom(commands))
-  val (bloomState, bloomEvents) = updateBloomState(clientBloomModules, box, pruneBag(clientState.bloomState), bloomInputState)
+  val (bloomState, _) = updateBloomState(clientBloomModules, box, pruneBag(clientState.bloomState), bloomInputState)
 
   val commandsFromGui = guiEvents(bloomState.bag)
       .filter { it.type == GuiEventType.command }
-      .map { simpleCommand(it.data as GuiCommandType, players.first()) }
+      .map { simpleCommand(it.data as GuiCommandType, clientState.players.first()) } // TODO: This needs to be changed for multiplayer
 
   clientState.copy(
       bloomState = bloomState,
@@ -154,12 +164,13 @@ fun updateClientBloomState(client: Client, players: List<Int>, box: Box): (Clien
   )
 }
 
-fun updateClient(client: Client, players: List<Int>, worlds: List<World>, box: Box): (ClientState) -> ClientState =
-    pipe(
-        updateClientInput(client),
-        updateClientInputCommands,
-        updateClientBloomState(client, players, box),
-        applyCommandsToExternalSystem(client),
-        menuChangeView,
-        updateAppStateAudio(client, worlds)
-    )
+fun updateClient(client: Client, worlds: List<World>, box: Box): (ClientState) -> ClientState = { clientState ->
+  pipe(
+      updateClientInput(client),
+      updateClientInputCommands(),
+      updateClientBloomState(box),
+      applyCommandsToExternalSystem(client),
+      updateClientCurrentMenus,
+      updateClientAudio(clientState, client, worlds)
+  )(clientState)
+}

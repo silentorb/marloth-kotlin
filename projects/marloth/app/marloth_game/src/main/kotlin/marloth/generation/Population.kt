@@ -19,10 +19,7 @@ import marloth.definition.templates.newBuffCloud
 import marloth.definition.templates.newMerchant
 import marloth.definition.templates.newTreasureChest
 import mythic.ent.Id
-import mythic.spatial.Pi
-import mythic.spatial.Quaternion
-import mythic.spatial.Vector3
-import mythic.spatial.Vector3i
+import mythic.spatial.*
 import org.joml.times
 import randomly.Dice
 import scenery.enums.AccessoryId
@@ -56,41 +53,6 @@ fun placeEnemy(node: Node): Hand =
         definition = creatures.monster,
         position = node.position
     )
-
-//fun placeCharacters(realm: Realm, dice: Dice, scale: Float): (IdSource) -> List<IdHand> {
-//  return { nextId ->
-//    //  val enemyCount = (10f * scale).toInt()
-//    //  val counts = listOf(2, 2)
-////  val counts = listOf(8, 0)
-//    val counts = listOf(0, 8)
-//    val total = counts.sum()
-//
-//    val walls = realm.locationNodes
-//        .drop(1) // Skip the node where the player starts
-//        .flatMap { node -> node.walls.map { Pair(node.id, it) } }
-//
-//    val positions = dice.take(walls, total)
-//        .map { Pair(it.first, realm.nodeTable[it.first]!!.position) }
-//
-//    val templates = listOf(
-//        CharacterTemplate(
-//            faction = 1,
-//            definition = creatures.ally
-//        ),
-//        CharacterTemplate(
-//            faction = 2,
-//            definition = creatures.monster
-//        )
-//    )
-//
-//    val seeds = counts.mapIndexed { index, i -> (1..i).map { templates[index] } }
-//        .flatten()
-//
-//    seeds.zip(positions) { seed, (node, position) ->
-//      placeAiCharacter(realm, seed, nextId, node, position)
-//    }
-//  }
-//}
 
 //fun newDoor(realm: Realm, nextId: IdSource): (Id) -> Hand = { nodeId ->
 //  val node = realm.nodeTable[nodeId]!!
@@ -178,13 +140,13 @@ fun placeWallLamps(deck: Deck, config: GenerationConfig, realm: Realm, dice: Dic
   return hands
 }
 
-fun newPlayer(realm: Realm, cellPosition: Vector3i, playerNode: Node): Hand {
-  val neighbor = neighbors(realm.graph, playerNode).first()
+fun newPlayer(grid: MapGrid, cellPosition: Vector3i): Hand {
+  val neighbor = cellNeighbors(grid.connections, cellPosition).first()
   return newCharacter(
       definition = creatures.player,
       faction = 1,
       position = applyCellPosition(cellPosition) + floorOffset + Vector3(0f, 0f, 6f),
-      angle = getLookAtAngle(neighbor.position - playerNode.position)
+      angle = getLookAtAngle((neighbor - cellPosition).toVector3())
   )
       .copy(
           attachments = listOf(
@@ -199,7 +161,6 @@ fun newPlayer(realm: Realm, cellPosition: Vector3i, playerNode: Node): Hand {
               )
           ),
           player = Player(
-              playerId = 1,
               name = "Unknown Hero",
               viewMode = ViewMode.firstPerson
           )
@@ -286,6 +247,9 @@ fun populateRooms(occupantToHand: OccupantToHand, dice: Dice, realm: Realm, play
   return hands
 }
 
+fun getPlayerCell(grid: MapGrid) =
+    grid.cells.entries.first { it.value.attributes.contains(NodeAttribute.home) }.key
+
 fun populateWorld(config: GenerationConfig, input: WorldInput, realm: Realm): (Deck) -> List<Hand> = { deck ->
   val playerNodeOld = realm.nodeTable.values.firstOrNull {
     config.biomes[it.biome]!!.attributes.contains(BiomeAttribute.placeOnlyAtStart)
@@ -294,10 +258,11 @@ fun populateWorld(config: GenerationConfig, input: WorldInput, realm: Realm): (D
   if (playerNodeOld == null)
     throw Error("Biome configuration is missing placeOnlyAtStart")
 
-  val playerCell = realm.grid.cells.entries.first { it.value.attributes.contains(NodeAttribute.home) }
+  val grid = realm.grid
+  val playerCell = getPlayerCell(grid)
   val scale = calculateWorldScale(input.boundary.dimensions)
   val occupantToHand = occupantPopulator(config)
-  listOf(newPlayer(realm,playerCell.key, playerNodeOld))
+  listOf(newPlayer(grid, playerCell))
       .plus(populateRooms(occupantToHand, input.dice, realm, playerNodeOld.id))
       .plus(placeWallLamps(deck, config, realm, input.dice, scale))
       .plus(listOf(
@@ -308,5 +273,4 @@ fun populateWorld(config: GenerationConfig, input: WorldInput, realm: Realm): (D
               cycle = Cycle(0.002f, 0.2f)
           )
       ))
-//      .plus(placeDoors(realm, nextId))
 }

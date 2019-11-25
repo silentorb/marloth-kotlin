@@ -3,7 +3,7 @@ package mythic.bloom
 import org.joml.Vector2i
 import org.joml.plus
 
-typealias BloomId = Int
+typealias BloomId = Long
 typealias BloomKey = String
 
 data class FlatBox(

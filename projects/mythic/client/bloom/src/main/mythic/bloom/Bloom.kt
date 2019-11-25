@@ -38,6 +38,19 @@ data class Bounds(
   }
 }
 
+fun mergeBounds(list: List<Bounds>): Bounds {
+  val left = list.minBy { it.left }!!.left
+  val right = list.maxBy { it.right }!!.right
+  val top = list.minBy { it.top }!!.top
+  val bottom = list.maxBy { it.bottom }!!.bottom
+  return Bounds(
+      x = left,
+      y = top,
+      width = right - left,
+      height = bottom - top
+  )
+}
+
 val emptyBounds = Bounds(0, 0, 0, 0)
 
 typealias Depiction = (Bounds, Canvas) -> Unit

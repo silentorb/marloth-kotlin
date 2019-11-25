@@ -6,21 +6,18 @@ import marloth.clienting.ClientState
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.isGuiActive
 import mythic.bloom.*
-import mythic.bloom.ButtonState
 import mythic.bloom.next.Box
 import mythic.bloom.next.Flower
 import mythic.bloom.next.Seed
 import mythic.bloom.next.compose
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
+import mythic.ent.Id
 import mythic.glowing.globalState
 import mythic.platforming.WindowInfo
 import mythic.spatial.Vector4
-import org.joml.Vector2i
 import scenery.enums.Text
-import simulation.happenings.GameEvent
 import simulation.main.World
-import simulation.main.defaultPlayer
 import simulation.misc.Definitions
 
 typealias TextResources = Map<Text, String>
@@ -93,8 +90,7 @@ fun victoryMenu() = listOfNotNull(
     SimpleMenuItem(Text.message_victory, GuiCommandType.newGame)
 )
 
-fun viewSelect(textResources: TextResources, definitions: Definitions, world: World?, view: ViewId): Flower? {
-  val player = if (world != null) defaultPlayer(world.deck) else 0L
+fun viewSelect(textResources: TextResources, definitions: Definitions, world: World?, view: ViewId, player: Id): Flower? {
   return when (view) {
     ViewId.characterInfo -> characterInfoView(definitions, world!!.deck, player)
     ViewId.mainMenu -> menuFlower(textResources, Text.gui_mainMenu, mainMenu(gameIsActive(world)))
@@ -104,16 +100,15 @@ fun viewSelect(textResources: TextResources, definitions: Definitions, world: Wo
   }
 }
 
-fun guiLayout(client: Client, definitions: Definitions, clientState: ClientState, world: World?, hudData: HudData?): Flower {
-  val bloomState = clientState.bloomState
+fun guiLayout(client: Client, definitions: Definitions, clientState: ClientState, world: World?, hudData: HudData?, player: Id): Flower {
   return compose(listOfNotNull(
       if (hudData != null) hudLayout(client.textResources, hudData) else null,
-      viewSelect(client.textResources, definitions, world, clientState.view)
+      viewSelect(client.textResources, definitions, world, clientState.playerViews[player] ?:ViewId.none, player)
   ))
 }
 
-fun layoutGui(client: Client, definitions: Definitions, clientState: ClientState, world: World?, hudData: HudData?, windowInfo: WindowInfo): Box {
-  val layout = guiLayout(client, definitions, clientState, world, hudData)
+fun layoutPlayerGui(client: Client, definitions: Definitions, clientState: ClientState, world: World?, hudData: HudData?, windowInfo: WindowInfo, player: Id): Box {
+  val layout = guiLayout(client, definitions, clientState, world, hudData, player)
   val seed = Seed(
       bag = clientState.bloomState.bag.plus(textResourcesKey to client.textResources),
       dimensions = windowInfo.dimensions

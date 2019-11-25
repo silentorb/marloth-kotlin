@@ -25,3 +25,7 @@ fun containsConnection(position: Vector3i): (ConnectionPair) -> Boolean = { conn
 
 fun cellConnections(connections: ConnectionMap, position: Vector3i): List<ConnectionPair> =
     connections.filter(containsConnection(position))
+
+fun cellNeighbors(connections: ConnectionMap, position: Vector3i): List<Vector3i> =
+    connections.filter(containsConnection(position))
+        .map { connection -> connection.toList().first { it != position } }

@@ -94,7 +94,7 @@ fun merchantInfoFlower(customerMoney: Int) =
     )
 
 fun merchantView(textResources: TextResources, definitions: AccessoryDefinitions, deck: Deck, player: Id): Flower {
-  val merchant = getPlayerInteractingWith(deck)!!
+  val merchant = getPlayerInteractingWith(deck, player)!!
   val customerMoney = deck.characters[player]!!.money
   val buttons = deck.attachments
       .filter { it.value.target == merchant && it.value.category == AttachmentTypeId.inventory }

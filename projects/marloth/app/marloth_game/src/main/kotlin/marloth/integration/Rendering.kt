@@ -47,26 +47,25 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, box: 
       val scenes = createScenes(world.deck, client.screens)
       val dimensions = windowInfo.dimensions
       val viewports = getPlayerViewports(scenes.size, dimensions).iterator()
-      val scene = scenes.first()
-//      for (s in scenes) {
-      val sceneRenderer = createSceneRenderer(client.renderer, scene, viewports.next())
-      val gameRenderer = GameSceneRenderer(scene, sceneRenderer)
-      val filters = prepareRender(gameRenderer)
+      for (scene in scenes) {
+        val sceneRenderer = createSceneRenderer(client.renderer, scene, viewports.next())
+        val gameRenderer = GameSceneRenderer(scene, sceneRenderer)
+        val filters = prepareRender(gameRenderer)
 
-      if (true) {
-        renderScene(gameRenderer)
-      }
+        if (true) {
+          renderScene(gameRenderer)
+        }
 
 //      if (false) {
 //        renderRayMarching(scene, dimensions, world, client.renderer, marcher)
 //      }
 
-      if (onRender != null) {
-        onRender(sceneRenderer)
-      }
+        if (onRender != null) {
+          onRender(sceneRenderer)
+        }
 
-      finishRender(gameRenderer, filters)
-//      }
+        finishRender(gameRenderer, filters)
+      }
     }
 
 //      val bounds = Bounds(Vector4i(0, 0, windowInfo.dimensions.x, windowInfo.dimensions.y))

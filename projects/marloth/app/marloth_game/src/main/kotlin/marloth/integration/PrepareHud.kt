@@ -2,14 +2,13 @@ package marloth.integration
 
 import marloth.clienting.gui.HudData
 import marloth.clienting.gui.ViewId
+import mythic.ent.Id
 import simulation.main.Deck
 import simulation.entities.AttachmentTypeId
 import simulation.entities.getTargetAttachmentsOfCategory
-import simulation.main.defaultPlayer
 import kotlin.math.roundToInt
 
-fun gatherHudData(deck: Deck, view: ViewId): HudData {
-  val player = defaultPlayer(deck)
+fun gatherHudData(deck: Deck, player: Id, view: ViewId): HudData {
   val character = deck.characters[player]!!
   val destructible = deck.destructibles[player]!!
   val body = deck.bodies[player]!!

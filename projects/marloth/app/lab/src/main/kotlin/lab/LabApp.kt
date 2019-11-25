@@ -42,9 +42,8 @@ fun createDice(config: GameViewConfig) =
     else
       Dice(config.seed)
 
-fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig): World {
+fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig, dice: Dice): World {
   val boundary = createWorldBoundary(gameViewConfig.worldLength)
-  val dice = createDice(gameViewConfig)
   val generationConfig = GenerationConfig(
       biomes = biomeInfoMap,
       meshes = compileArchitectureMeshInfo(meshInfo, meshAttributes),
@@ -65,7 +64,7 @@ data class LabApp(
     val labConfigManager: ConfigManager<LabConfig>
 ) {
 
-  val newWorld = { lab.generateWorld(getMeshInfo(gameApp.client), config.gameView) }
+//  val newWorld = { lab.generateWorld(getMeshInfo(gameApp.client), config.gameView) }
 }
 
 private var saveIncrement = 0f
@@ -90,7 +89,7 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
         }
     )
 
-    val update = updateAppState(gameApp, app.newWorld, hooks)
+    val update = updateAppState(gameApp, hooks)
     val fixture = app.config.gameView.fixture
     if (fixture == FixtureId.none)
       update(state.app)
@@ -114,7 +113,7 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
         timestep = timestep,
         worlds = if (shouldReloadWorld) {
           shouldReloadWorld = false
-          restartWorld(gameApp, app.newWorld)
+          restartWorld(gameApp)
         } else
           state.app.worlds
     )
@@ -140,8 +139,10 @@ fun shutdownGameApp(gameApp: GameApp) {
 }
 
 fun newLabState(gameApp: GameApp, config: LabConfig): LabState {
-  val world = if (config.gameView.autoNewGame)
-    lab.generateWorld(getMeshInfo(gameApp.client), config.gameView)
+  val world = if (config.gameView.autoNewGame) {
+    val dice = createDice(config.gameView)
+    lab.generateWorld(getMeshInfo(gameApp.client), config.gameView, dice)
+  }
   else
     null
 
@@ -155,8 +156,7 @@ fun newLabState(gameApp: GameApp, config: LabConfig): LabState {
       app = AppState(
           worlds = listOfNotNull(world),
           client = clientState,
-          timestep = newTimestepState(),
-          players = listOf(1)
+          timestep = newTimestepState()
       )
   )
 }
@@ -171,7 +171,8 @@ fun newLabGameApp(labConfig: LabConfig): GameApp {
   return GameApp(platform, gameConfig,
       bulletState = newBulletState(),
       client = newClient(platform, gameConfig.display, labConfig.gameView.lighting),
-      definitions = staticDefinitions
+      definitions = staticDefinitions,
+      newWorld = { gameApp -> lab.generateWorld(getMeshInfo(gameApp.client), labConfig.gameView, createDice(labConfig.gameView)) }
   )
 }
 

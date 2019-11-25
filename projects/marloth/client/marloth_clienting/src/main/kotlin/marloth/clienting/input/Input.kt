@@ -7,6 +7,7 @@ import marloth.clienting.ClientState
 import marloth.clienting.getBinding
 import marloth.clienting.gui.ViewId
 import mythic.bloom.BloomId
+import mythic.ent.Id
 import mythic.platforming.InputEvent
 import simulation.input.CommandType
 
@@ -40,13 +41,13 @@ fun newInputState(config: GameInputConfig) =
     InputState(
         deviceStates = listOf(newInputDeviceState()),
         config = config,
-        guiInputProfiles = mapOf(1 to defaultInputProfile()),
-        gameInputProfiles = mapOf(1 to defaultGameInputProfile()),
+        guiInputProfiles = mapOf(1L to defaultInputProfile()),
+        gameInputProfiles = mapOf(1L to defaultGameInputProfile()),
         playerProfiles = mapOf(
-            1 to 1,
-            2 to 1,
-            3 to 1,
-            4 to 1
+            1L to 1L,
+            2L to 1L,
+            3L to 1L,
+            4L to 1L
         ),
         deviceMap = mapOf(
             0 to PlayerDevice(1, DeviceIndex.keyboard),
@@ -54,13 +55,13 @@ fun newInputState(config: GameInputConfig) =
         )
     )
 
-fun bindingContext(clientState: ClientState): BindingContext =
-    if (clientState.view != ViewId.none)
+fun bindingContext(clientState: ClientState, player: Id): BindingContext =
+    if ((clientState.playerViews[player] ?: ViewId.none) != ViewId.none)
       BindingContext.menu
     else
       BindingContext.game
 
-fun gamePadJoinCommands(events: List<InputEvent>, deviceMap: DeviceMap): List<Int> {
+fun joiningGamepads(events: List<InputEvent>, deviceMap: DeviceMap): List<Int> {
   val currentDevices = deviceMap.keys
   return events
       .filter { !currentDevices.contains(it.device) }
@@ -74,23 +75,12 @@ fun currentGamepadPlayers(deviceMap: DeviceMap) =
         .map { it.value.player }
         .distinct()
 
-fun newGamepadDeviceEntry(device:Int, player: Int): Pair<Int, PlayerDevice> {
+fun newGamepadDeviceEntry(device:Int, player: Id): Pair<Int, PlayerDevice> {
   println("gamepad $device $player")
   return Pair(device, PlayerDevice(
       player = player,
       device = DeviceIndex.gamepad
   ))
-}
-
-fun updateDeviceMapWithNewPlayers(deviceStates: List<InputDeviceState>): (DeviceMap) -> DeviceMap = { deviceMap ->
-  val gamepadJoinCommands = gamePadJoinCommands(deviceStates.last().events, deviceMap)
-  if (gamepadJoinCommands.none()) {
-    deviceMap
-  } else {
-    val playersWithoutGamepads = (1..4).minus(currentGamepadPlayers(deviceMap))
-    val newEntries = gamepadJoinCommands.zip(playersWithoutGamepads, ::newGamepadDeviceEntry)
-    deviceMap.plus(newEntries)
-  }
 }
 
 fun gatherInputCommands(inputState: InputState, bindingContext: BindingContext): HaftCommands<GuiCommandType> {

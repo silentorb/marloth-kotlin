@@ -2,7 +2,6 @@ package marloth.clienting.gui
 
 import marloth.clienting.ClientState
 import marloth.clienting.input.GuiCommandType
-import marloth.clienting.input.UserCommands
 
 fun nextView(command: GuiCommandType, view: ViewId): ViewId? =
     when (command) {
@@ -34,14 +33,20 @@ fun nextView(command: GuiCommandType, view: ViewId): ViewId? =
       else -> null
     }
 
-val menuChangeView: (ClientState) -> ClientState = { state ->
-  val newView = state.commands
-      .mapNotNull { command -> nextView(command.type, state.view) }
-      .firstOrNull()
+val updateClientCurrentMenus: (ClientState) -> ClientState = { state ->
+  val newViews = state.commands
+      .mapNotNull { command ->
+        val view = nextView(command.type, state.playerViews[command.target] ?: ViewId.none)
+        if (view != null)
+          Pair(command.target, view)
+        else
+          null
+      }
+      .associate { it }
 
-  if (newView != null) {
+  if (newViews.none()) {
     state.copy(
-        view = newView
+        playerViews = newViews
     )
   } else
     state

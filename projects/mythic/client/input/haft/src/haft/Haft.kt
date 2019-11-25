@@ -32,11 +32,11 @@ data class Binding<T>(
 
 data class HaftCommand<T>(
     val type: T,
-    val target: Int = 0,
+    val target: Long = 0,
     val value: Float = 0f
 )
 
-fun <T> simpleCommand(type: T, target: Int = 0): HaftCommand<T> =
+fun <T> simpleCommand(type: T, target: Long = 0): HaftCommand<T> =
     HaftCommand(
         type = type,
         target = target,
@@ -86,7 +86,7 @@ fun applyMouseMovement(device: Int, mouseOffset: Vector2): List<InputEvent> =
         applyMouseAxis(device, mouseOffset.y, MouseMovementDown, MouseMovementUp, 1f)
     )
 
-typealias BindingSourceTarget = Int
+typealias BindingSourceTarget = Long
 typealias BindingSource<T> = (InputEvent) -> Pair<Binding<T>, BindingSourceTarget>?
 
 fun matches(event: InputEvent): (InputEvent) -> Boolean = { other ->

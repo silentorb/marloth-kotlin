@@ -1,22 +1,22 @@
 package marloth.front
 
 import marloth.clienting.Client
-import marloth.clienting.newClientState
 import marloth.definition.staticDefinitions
-import marloth.integration.AppState
-import marloth.integration.GameConfig
-import marloth.integration.newClient
-import marloth.integration.updateAppState
+import marloth.generation.generateWorld
+import marloth.integration.*
 import mythic.platforming.Platform
-import mythic.quartz.newTimestepState
 import persistence.Database
 import persistence.newDatabase
+import randomly.Dice
 import simulation.physics.BulletState
 import simulation.physics.newBulletState
 import rendering.SceneRenderer
+import simulation.main.World
 import simulation.misc.Definitions
 
 typealias RenderHook = (SceneRenderer) -> Unit
+
+typealias NewWorld = (GameApp) -> World
 
 data class GameApp(
     val platform: Platform,
@@ -24,11 +24,12 @@ data class GameApp(
     val client: Client,
     val db: Database = newDatabase("game.db"),
     var bulletState: BulletState,
-    val definitions: Definitions
+    val definitions: Definitions,
+    val newWorld: NewWorld
 )
 
 tailrec fun gameLoop(app: GameApp, state: AppState) {
-  val nextState = updateAppState(app, { throw Error("Not yet implemented.") })(state)
+  val nextState = updateAppState(app)(state)
 
   if (!app.platform.process.isClosing())
     gameLoop(app, nextState)
@@ -39,7 +40,8 @@ fun newGameApp(platform: Platform, config: GameConfig) = GameApp(
     config = config,
     bulletState = newBulletState(),
     client = newClient(platform, config.display),
-    definitions = staticDefinitions
+    definitions = staticDefinitions,
+    newWorld = { gameApp -> generateWorld(getMeshInfo(gameApp.client), Dice()) }
 )
 
 fun runApp(platform: Platform, config: GameConfig) {
