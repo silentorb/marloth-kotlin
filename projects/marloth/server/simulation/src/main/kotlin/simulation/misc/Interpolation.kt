@@ -6,13 +6,21 @@ import simulation.main.World
 import simulation.main.simulationDelta
 
 fun <T> interpolateTables(scalar: Float, first: Table<T>, second: Table<T>, action: (Float, T, T) -> T): Table<T> =
-    first.mapValues { (key, a) ->
+    first.keys.plus(second.keys).associateWith { key ->
+      val a = first[key]
       val b = second[key]
-      if (b == null)
-        a
-      else
+      if (a != null && b != null)
         action(scalar, a, b)
+      else
+        a ?: b!!
     }
+//    first.mapValues { (key, a) ->
+//      val b = second[key]
+//      if (b == null)
+//        a
+//      else
+//        action(scalar, a, b)
+//    }
 
 fun interpolateWorlds(accumulator: Double, first: World, second: World): World? {
   val scalar = (accumulator / simulationDelta).toFloat()
@@ -28,8 +36,8 @@ fun interpolateWorlds(accumulator: Double, first: World, second: World): World? 
     )
   }
 
-  return first.copy(
-      deck = first.deck.copy(
+  return second.copy(
+      deck = second.deck.copy(
           bodies = bodies,
           characters = characters
       )

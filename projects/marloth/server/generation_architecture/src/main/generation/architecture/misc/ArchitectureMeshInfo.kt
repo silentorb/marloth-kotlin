@@ -19,17 +19,25 @@ typealias MeshShapeMap = Map<MeshName, Shape>
 typealias MeshAttributeMap = Map<MeshName, MeshAttributes>
 
 fun compileArchitectureMeshInfo(shapes: MeshShapeMap, attributes: MeshAttributeMap): MeshInfoMap {
-  val result = attributes.mapValues { (key, attributes) ->
-    val shape = shapes[key]
+  return shapes.mapValues { (key, shape) ->
     val info = ArchitectureMeshInfo(
         shape = shape,
-        attributes = attributes
+        attributes = attributes[key] ?: setOf()
     )
     info
   }
-  val missingShapes = result.filterValues { info ->
-    info.shape == null && info.attributes.intersect(meshAttributesThatRequireAShape).any()
-  }
-  assert(missingShapes.none())
-  return result
 }
+//  val result = attributes.mapValues { (key, attributes) ->
+//    val shape = shapes[key]
+//    val info = ArchitectureMeshInfo(
+//        shape = shape,
+//        attributes = attributes
+//    )
+//    info
+//  }
+//  val missingShapes = result.filterValues { info ->
+//    info.shape == null && info.attributes.intersect(meshAttributesThatRequireAShape).any()
+//  }
+//  assert(missingShapes.none())
+//  return result
+//}

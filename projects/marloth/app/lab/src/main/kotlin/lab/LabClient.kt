@@ -25,7 +25,6 @@ import mythic.spatial.Vector2
 import newBloomInputState
 import org.joml.Vector2i
 import rendering.createCanvas
-import scenery.Screen
 import simulation.main.World
 import updateInputDeviceStates
 
@@ -164,7 +163,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     )
   }
 
-  fun update(world: World?, screens: List<Screen>, previousState: LabState, delta: Float): LabClientResult {
+  fun update(world: World?, previousState: LabState, delta: Float): LabClientResult {
 //    if (config.view != Views.game) {
     client.platform.input.isMouseVisible(true)
 //    }

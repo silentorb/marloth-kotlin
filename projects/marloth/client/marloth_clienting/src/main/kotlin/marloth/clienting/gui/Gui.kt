@@ -16,6 +16,7 @@ import mythic.ent.Id
 import mythic.glowing.globalState
 import mythic.platforming.WindowInfo
 import mythic.spatial.Vector4
+import org.joml.Vector2i
 import scenery.enums.Text
 import simulation.main.World
 import simulation.misc.Definitions
@@ -107,11 +108,11 @@ fun guiLayout(client: Client, definitions: Definitions, clientState: ClientState
   ))
 }
 
-fun layoutPlayerGui(client: Client, definitions: Definitions, clientState: ClientState, world: World?, hudData: HudData?, windowInfo: WindowInfo, player: Id): Box {
+fun layoutPlayerGui(client: Client, definitions: Definitions, clientState: ClientState, world: World?, hudData: HudData?, dimensions: Vector2i, player: Id): Box {
   val layout = guiLayout(client, definitions, clientState, world, hudData, player)
   val seed = Seed(
       bag = clientState.bloomState.bag.plus(textResourcesKey to client.textResources),
-      dimensions = windowInfo.dimensions
+      dimensions = dimensions
   )
   return layout(seed)
 }

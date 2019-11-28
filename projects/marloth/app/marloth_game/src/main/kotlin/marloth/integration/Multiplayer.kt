@@ -28,10 +28,9 @@ val updateAppStateForNewPlayers: (AppState) -> AppState = { appState ->
           newPlayer(grid, getPlayerCell(grid))
         }
     val nextWorld = addHandsToWorld(newPlayerHands)(world)
-    val newPlayers = nextWorld.deck.players.keys.minus(deck.players.keys).plus(availablePlayers)
-    val deviceEntries = newPlayers.zip(gamepadJoinCommands) { player, device ->
-      newGamepadDeviceEntry(device, player)
-    }
+    val newPlayers = nextWorld.deck.players.keys.minus(deck.players.keys)
+    val playersWithNewGamepads = newPlayers.plus(availablePlayers)
+    val deviceEntries = gamepadJoinCommands.zip(playersWithNewGamepads, ::newGamepadDeviceEntry)
     appState.copy(
         client = client.copy(
             input = inputState.copy(

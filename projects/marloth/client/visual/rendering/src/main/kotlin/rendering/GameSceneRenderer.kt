@@ -58,7 +58,8 @@ class GameSceneRenderer(
       glow.state.setFrameBuffer(offscreenBuffer.framebuffer.id)
       glow.state.viewport = Vector4i(0, 0, dimensions.x, dimensions.y)
     }
-    glow.operations.clearScreen()
+    glow.state.viewport = renderer.viewport
+//    glow.operations.clearScreen()
   }
 
   fun finishRender(dimensions: Vector2i, filters: List<ScreenFilter>) {

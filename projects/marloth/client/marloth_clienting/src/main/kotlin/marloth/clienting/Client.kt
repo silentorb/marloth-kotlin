@@ -71,7 +71,6 @@ fun loadTextResource(mapper: TextResourceMapper): TextResources {
 fun gatherFontSets() = loadFontSets(baseFonts, textStyles)
 
 class Client(val platform: Platform, val renderer: Renderer) {
-  val screens: List<Screen> = (1..maxPlayerCount).map { Screen(it) }
   val textResources: TextResources = loadTextResource(englishTextResources)
   val soundLibrary: SoundLibrary = loadSounds(platform.audio)
   fun getWindowInfo() = platform.display.getInfo()
@@ -103,7 +102,8 @@ fun applyCommandsToExternalSystem(client: Client): (ClientState) -> ClientState 
 fun <T> getBinding(inputState: InputState, inputProfiles: Map<BloomId, InputProfile<T>>): BindingSource<T> = { event ->
   val playerDevice = inputState.deviceMap[event.device]
   if (playerDevice != null) {
-    val playerProfile = inputState.playerProfiles[playerDevice.player]!!
+//    val playerProfile = inputState.playerProfiles[playerDevice.player]!!
+    val playerProfile = 1L
     val profile = inputProfiles[playerProfile]!!
     val binding = profile.bindings.firstOrNull { it.device == playerDevice.device && it.trigger == event.index }
     if (binding != null)

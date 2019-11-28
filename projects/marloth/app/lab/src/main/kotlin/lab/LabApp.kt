@@ -103,7 +103,7 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
 
     val world = state.app.worlds.lastOrNull()
 
-    val (commands, newState) = app.labClient.update(world, gameApp.client.screens, state, timestep.delta.toFloat())
+    val (commands, newState) = app.labClient.update(world, state, timestep.delta.toFloat())
 
     if (world != null && gameApp.config.gameplay.defaultPlayerView != world.deck.players.values.first().viewMode) {
       gameApp.config.gameplay.defaultPlayerView = world.deck.players.values.first().viewMode

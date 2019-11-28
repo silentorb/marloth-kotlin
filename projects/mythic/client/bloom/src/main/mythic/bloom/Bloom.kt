@@ -39,6 +39,9 @@ data class Bounds(
 }
 
 fun mergeBounds(list: List<Bounds>): Bounds {
+  if (list.none())
+    return Bounds(0, 0, 0, 0)
+
   val left = list.minBy { it.left }!!.left
   val right = list.maxBy { it.right }!!.right
   val top = list.minBy { it.top }!!.top
