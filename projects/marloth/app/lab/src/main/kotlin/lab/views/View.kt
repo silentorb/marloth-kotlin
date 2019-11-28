@@ -7,11 +7,11 @@ import GeneralCommandState
 import marloth.clienting.input.GuiCommandType
 
 data class LabClientResult(
-    val commands: HaftCommands<GuiCommandType>,
+    val commands: HaftCommands,
     val state: LabState
 )
 
-typealias LabCommandMap = Map<LabCommandType, CommandHandler<LabCommandType>>
+typealias LabCommandMap = Map<Any, CommandHandler>
 
 typealias LabCommandState = GeneralCommandState
 //data class LabCommandState(

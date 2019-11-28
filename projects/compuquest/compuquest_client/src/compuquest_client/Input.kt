@@ -78,19 +78,7 @@ fun applyInput(event: Any, state: ClientState, actor: Id?): InputResult =
       else -> throw Error("Unsupported event type.")
     }
 
-//fun createDeviceHandlers(input: PlatformInput): List<ScalarInputSource> {
-//  val gamepad = input.getGamepads().firstOrNull()
-//  return listOf(
-//      input.KeyboardInputSource,
-//      input.MouseInputSource,
-//      if (gamepad != null)
-//        { trigger: Int -> input.GamepadInputSource(gamepad.id, trigger) }
-//      else
-//        disconnectedScalarInputSource
-//  )
-//}
-
 data class UserInput(
-    val commands: HaftCommands<CommandType>,
+    val commands: HaftCommands,
     val mousePosition: Vector2
 )

@@ -37,12 +37,12 @@ fun defaultKeyboardGameBindings() = mapOf(
     GLFW.GLFW_KEY_ENTER to CommandType.interactPrimary
 )
 
-fun defaultGameInputBindings(): Bindings<CommandType> =
+fun defaultGameInputBindings(): Bindings =
     createBindings(DeviceIndex.keyboard, defaultKeyboardGameBindings())
         .plus(createBindings(DeviceIndex.mouse, defaultMouseGameStrokeBindings()))
         .plus(createBindings(DeviceIndex.gamepad, gameGamepadStrokeBindings))
 
-fun defaultGameInputProfile() = InputProfile<CommandType>(
+fun defaultGameInputProfile() = InputProfile(
     bindings = defaultGameInputBindings()
 )
 

@@ -1,21 +1,14 @@
 package marloth.clienting.input
 
+import simulation.input.CommandType
+
 enum class GuiCommandType {
-  none,
-
-  moveUp,
-  moveDown,
-  moveLeft,
-  moveRight,
-
   characterInfo,
   menu,
   menuSelect,
   menuBack,
-
   newGame,
-  quit,
-
+  quit
 }
 
 private fun standardClientStrokes() = setOf(
@@ -31,9 +24,9 @@ val clientCommandStrokes = mapOf(
     BindingContext.game to standardClientStrokes(),
     BindingContext.menu to standardClientStrokes()
         .plus(setOf(
-            GuiCommandType.moveUp,
-            GuiCommandType.moveDown,
-            GuiCommandType.moveLeft,
-            GuiCommandType.moveRight
+            CommandType.moveUp,
+            CommandType.moveDown,
+            CommandType.moveLeft,
+            CommandType.moveRight
         ))
 )

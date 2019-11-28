@@ -94,7 +94,7 @@ private fun switchCameraMode(config: MapViewConfig) {
     MapViewCameraMode.orbital
 }
 
-fun applyMapStateCommand(config: MapViewConfig, world: Realm, command: LabCommandType) {
+fun applyMapStateCommand(config: MapViewConfig, world: Realm, command: Any) {
   when (command) {
     LabCommandType.incrementRaySkip -> trySelect(config, world)
 
@@ -130,7 +130,7 @@ fun applyMapStateCommand(config: MapViewConfig, world: Realm, command: LabComman
   }
 }
 
-fun updateOrbitalCamera(camera: MapViewOrbitalCamera, commands: List<HaftCommand<LabCommandType>>, delta: Float) {
+fun updateOrbitalCamera(camera: MapViewOrbitalCamera, commands: List<HaftCommand>, delta: Float) {
   val zoomSpeed = 200
   val moveSpeed = 50
   val rotateSpeed = 2
@@ -175,7 +175,7 @@ fun updateOrbitalCamera(camera: MapViewOrbitalCamera, commands: List<HaftCommand
     camera.yaw = (camera.yaw + (rotateSpeed * delta)) % (Pi * 2)
 }
 
-fun updateFirstPersonCamera(camera: MapViewFirstPersonCamera, commands: List<HaftCommand<LabCommandType>>, delta: Float) {
+fun updateFirstPersonCamera(camera: MapViewFirstPersonCamera, commands: List<HaftCommand>, delta: Float) {
   val moveSpeed = 50f
   val rotateSpeed = 2
 
@@ -216,7 +216,7 @@ fun updateMapState(config: MapViewConfig, world: Realm, input: LabCommandState, 
                    bloomState: BloomState, delta: Float) {
   val menuCommandType = selectedMenuValue<LabCommandType>(bloomState.bag)
 
-  val commands = input.commands.filterIsInstance<HaftCommand<LabCommandType>>()
+  val commands = input.commands.filterIsInstance<HaftCommand>()
 
   val actions = commands.map { it.type}.plus(listOfNotNull(menuCommandType))
   for (action in actions) {

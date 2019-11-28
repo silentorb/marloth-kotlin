@@ -112,7 +112,7 @@ val labCommandStrokes = setOf(
     LabCommandType.selectEdgeLoop
 )
 
-typealias LabInputConfig = MutableMap<Views, Bindings<LabCommandType>>
+typealias LabInputConfig = MutableMap<Views, Bindings>
 
 fun createLabInputBindings() = mutableMapOf(
     Views.global to createBindings(DeviceIndex.keyboard, mapOf(
@@ -129,7 +129,7 @@ fun createLabInputBindings() = mutableMapOf(
                 GAMEPAD_BUTTON_START to LabCommandType.menu
             ))
         ),
-    Views.game to createBindings<LabCommandType>(DeviceIndex.keyboard, mapOf(
+    Views.game to createBindings(DeviceIndex.keyboard, mapOf(
 
     ))
         .plus(createBindings(DeviceIndex.keyboard, mapOf(

@@ -4,14 +4,14 @@ import haft.*
 import marloth.clienting.input.GuiCommandType
 
 data class InputConfiguration(
-    val profiles: InputProfiles<GuiCommandType>
+    val profiles: InputProfiles
 )
 
 data class Configuration(
     val input: InputConfiguration
 )
 
-//fun flattenInputProfileBindings(profiles: InputProfiles<GuiCommandType>) =
+//fun flattenInputProfileBindings(profiles: InputProfiles) =
 //    profiles.flatMap { it }
 
 //fun createNewConfiguration(gamepads: List<Gamepad>): Configuration = Configuration(

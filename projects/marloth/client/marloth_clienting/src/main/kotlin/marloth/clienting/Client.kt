@@ -26,7 +26,6 @@ import mythic.spatial.Vector3
 import mythic.typography.loadFontSets
 import newBloomInputState
 import rendering.Renderer
-import scenery.Screen
 import scenery.enums.Text
 import simulation.main.Deck
 import simulation.main.World
@@ -39,7 +38,7 @@ data class ClientState(
     val bloomState: BloomState,
     val playerViews: Map<Id, ViewId?>,
     val audio: AudioState,
-    val commands: List<HaftCommand<GuiCommandType>>,
+    val commands: List<HaftCommand>,
 
     // Players could be extracted from the world deck except the world does not care about player order.
     // Player order is only a client concern, and only for local multiplayer.
@@ -47,7 +46,11 @@ data class ClientState(
     val players: List<Id>
 )
 
-fun isGuiActive(state: ClientState): Boolean = pauseViews.any { state.playerViews.values.contains(it) }
+fun isMenuActive(state: ClientState): (Id) -> Boolean = { player ->
+  state.playerViews[player] ?: ViewId.none != ViewId.none
+}
+
+fun isAnyGuiActive(state: ClientState): Boolean = pauseViews.any { state.playerViews.values.contains(it) }
 
 fun newClientState(platform: Platform, inputConfig: GameInputConfig, audioConfig: AudioConfig) =
     ClientState(
@@ -99,7 +102,7 @@ fun applyCommandsToExternalSystem(client: Client): (ClientState) -> ClientState 
   state
 }
 
-fun <T> getBinding(inputState: InputState, inputProfiles: Map<BloomId, InputProfile<T>>): BindingSource<T> = { event ->
+fun getBinding(inputState: InputState, inputProfiles: Map<BloomId, InputProfile>): BindingSource = { event ->
   val playerDevice = inputState.deviceMap[event.device]
   if (playerDevice != null) {
 //    val playerProfile = inputState.playerProfiles[playerDevice.player]!!
@@ -140,9 +143,11 @@ val clientBloomModules: List<LogicModule> = listOf()
 
 fun updateClientInputCommands(): (ClientState) -> ClientState = { clientState ->
   clientState.copy(
-      commands = clientState.players.flatMap { player ->
-        gatherInputCommands(clientState.input, bindingContext(clientState, player))
-      }
+      commands = clientState.players
+          .filter(isMenuActive(clientState))
+          .flatMap { player ->
+            gatherInputCommands(clientState.input, bindingContext(clientState, player))
+          }
   )
 }
 

@@ -36,7 +36,7 @@ data class LabState(
 
 private var previousMousePosition = Vector2()
 
-fun getInputState(platformInput: PlatformInput, commands: List<HaftCommand<LabCommandType>>): LabCommandState {
+fun getInputState(platformInput: PlatformInput, commands: List<HaftCommand>): LabCommandState {
   val mousePosition = platformInput.getMousePosition()
   val input = LabCommandState(
       commands,
@@ -54,19 +54,19 @@ val labLogicModules = clientBloomModules
 
 class LabClient(val config: LabConfig, val client: Client) {
 
-  val globalKeyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
+  val globalKeyPressCommands: Map<LabCommandType, CommandHandler> = mapOf(
       LabCommandType.viewGame to { _ -> config.view = Views.game },
       LabCommandType.viewMap to { _ -> config.view = Views.map },
       LabCommandType.viewModel to { _ -> config.view = Views.model }
   )
 
-  val gameKeyPressCommands: Map<LabCommandType, CommandHandler<LabCommandType>> = mapOf(
+  val gameKeyPressCommands: Map<LabCommandType, CommandHandler> = mapOf(
       LabCommandType.toggleDrawPhysics to { _ -> config.gameView.drawPhysics = !config.gameView.drawPhysics }
   )
 
   fun getBindings() = labInputConfig[Views.global]!!.plus(labInputConfig[config.view]!!)
 
-  fun updateInput(viewCommands: LabCommandMap, deviceStates: List<InputDeviceState>): HaftCommands<LabCommandType> {
+  fun updateInput(viewCommands: LabCommandMap, deviceStates: List<InputDeviceState>): HaftCommands {
     val bindings = getBindings()
     val commands = mapEventsToCommands(deviceStates, labCommandStrokes, haft.getBindingSimple(bindings))
     val moreCommands = viewCommands.plus(globalKeyPressCommands)

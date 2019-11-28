@@ -3,7 +3,7 @@ package marloth.clienting.gui
 import marloth.clienting.ClientState
 import marloth.clienting.input.GuiCommandType
 
-fun nextView(command: GuiCommandType, view: ViewId): ViewId? =
+fun nextView(command: Any, view: ViewId): ViewId? =
     when (command) {
       GuiCommandType.menu -> {
         if (view != ViewId.none)

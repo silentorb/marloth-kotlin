@@ -4,7 +4,7 @@ import haft.HaftCommands
 import marloth.clienting.Client
 import marloth.clienting.ClientState
 import marloth.clienting.input.GuiCommandType
-import marloth.clienting.isGuiActive
+import marloth.clienting.isAnyGuiActive
 import mythic.bloom.*
 import mythic.bloom.next.Box
 import mythic.bloom.next.Flower
@@ -14,10 +14,10 @@ import mythic.drawing.Canvas
 import mythic.drawing.grayTone
 import mythic.ent.Id
 import mythic.glowing.globalState
-import mythic.platforming.WindowInfo
 import mythic.spatial.Vector4
 import org.joml.Vector2i
 import scenery.enums.Text
+import simulation.input.CommandType
 import simulation.main.World
 import simulation.misc.Definitions
 
@@ -39,7 +39,7 @@ val pauseViews = listOf(
 fun gameIsActive(world: World?): Boolean =
     world != null && world.gameOver == null
 
-fun gameIsActiveByClient(state: ClientState): Boolean = !isGuiActive(state)
+fun gameIsActiveByClient(state: ClientState): Boolean = !isAnyGuiActive(state)
 
 enum class GuiEventType {
   command,
@@ -55,7 +55,7 @@ data class GuiEvent(
 //val currentView = existingOrNewState(currentViewKey) { ViewId.none }
 
 //const val menuCommandsKey = "menuCommands"
-//val menuCommands = existingOrNewState(menuCommandsKey) { listOf<GuiCommandType>() }
+//val menuCommands = existingOrNewState(menuCommandsKey) { listOf() }
 
 const val guiEventsKey = "guiEvents"
 val guiEvents = existingOrNewState(guiEventsKey) { listOf<GuiEvent>() }
@@ -74,13 +74,13 @@ fun depictBackground(backgroundColor: Vector4): Depiction = { b: Bounds, canvas:
 
 val menuBackground: Depiction = depictBackground(grayTone(0.5f))
 
-fun haftToBloom(commands: HaftCommands<GuiCommandType>): List<BloomEvent> =
+fun haftToBloom(commands: HaftCommands): List<BloomEvent> =
     commands.mapNotNull {
       when (it.type) {
-        GuiCommandType.moveUp -> BloomEvent.up
-        GuiCommandType.moveDown -> BloomEvent.down
-        GuiCommandType.moveLeft -> BloomEvent.left
-        GuiCommandType.moveRight -> BloomEvent.right
+        CommandType.moveUp -> BloomEvent.up
+        CommandType.moveDown -> BloomEvent.down
+        CommandType.moveLeft -> BloomEvent.left
+        CommandType.moveRight -> BloomEvent.right
         GuiCommandType.menuBack -> BloomEvent.back
         GuiCommandType.menuSelect -> BloomEvent.activate
         else -> null

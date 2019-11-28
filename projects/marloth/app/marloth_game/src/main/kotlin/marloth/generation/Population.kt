@@ -19,6 +19,7 @@ import marloth.definition.templates.newBuffCloud
 import marloth.definition.templates.newMerchant
 import marloth.definition.templates.newTreasureChest
 import mythic.ent.Id
+import mythic.ent.getDebugSetting
 import mythic.spatial.*
 import org.joml.times
 import randomly.Dice
@@ -262,7 +263,8 @@ fun populateWorld(config: GenerationConfig, input: WorldInput, realm: Realm): (D
   val playerCell = getPlayerCell(grid)
   val scale = calculateWorldScale(input.boundary.dimensions)
   val occupantToHand = occupantPopulator(config)
-  listOf(newPlayer(grid, playerCell))
+  val playerCount = getDebugSetting("INITIAL_PLAYER_COUNT")?.toInt() ?: 1
+  (1..playerCount).map { newPlayer(grid, playerCell) }
       .plus(populateRooms(occupantToHand, input.dice, realm, playerNodeOld.id))
       .plus(placeWallLamps(deck, config, realm, input.dice, scale))
       .plus(listOf(

@@ -11,7 +11,7 @@ import mythic.ent.Id
 import mythic.platforming.InputEvent
 import simulation.input.CommandType
 
-typealias UserCommand = HaftCommand<GuiCommandType>
+typealias UserCommand = HaftCommand
 
 typealias UserCommands = List<UserCommand>
 
@@ -24,15 +24,15 @@ enum class BindingContext {
   menu
 }
 
-data class InputProfile<T>(
-    val bindings: Bindings<T>
+data class InputProfile(
+    val bindings: Bindings
 )
 
 data class InputState(
     val deviceStates: List<InputDeviceState>,
     val config: GameInputConfig,
-    val guiInputProfiles: Map<BloomId, InputProfile<GuiCommandType>>,
-    val gameInputProfiles: Map<BloomId, InputProfile<CommandType>>,
+    val guiInputProfiles: Map<BloomId, InputProfile>,
+    val gameInputProfiles: Map<BloomId, InputProfile>,
     val playerProfiles: Map<BloomId, BloomId>,
     val deviceMap: DeviceMap
 )
@@ -83,7 +83,7 @@ fun newGamepadDeviceEntry(device:Int, player: Id): Pair<Int, PlayerDevice> {
   ))
 }
 
-fun gatherInputCommands(inputState: InputState, bindingContext: BindingContext): HaftCommands<GuiCommandType> {
+fun gatherInputCommands(inputState: InputState, bindingContext: BindingContext): HaftCommands {
   val getBinding = getBinding(inputState, inputState.guiInputProfiles)
   val strokes = clientCommandStrokes[bindingContext]!!
   val deviceStates = inputState.deviceStates

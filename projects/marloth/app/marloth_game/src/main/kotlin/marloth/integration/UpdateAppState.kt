@@ -15,8 +15,8 @@ import mythic.bloom.next.Box
 import mythic.bloom.toAbsoluteBounds
 import mythic.ent.Id
 import mythic.ent.Table
+import mythic.ent.incrementGlobalDebugLoopNumber
 import mythic.ent.pipe
-import mythic.platforming.WindowInfo
 import mythic.quartz.updateTimestep
 import org.joml.Vector2i
 import persistence.Database
@@ -184,6 +184,7 @@ fun layoutGui(app: GameApp, appState: AppState, dimensions: List<Vector2i>): Lis
 }
 
 fun updateAppState(app: GameApp, hooks: GameHooks? = null): (AppState) -> AppState = { appState ->
+  incrementGlobalDebugLoopNumber(60)
   val windowInfo = app.client.getWindowInfo()
   val viewports = getPlayerViewports(appState.client.players.size, windowInfo.dimensions)
   val viewportDimensions = viewports.map { Vector2i(it.z, it.w) }
