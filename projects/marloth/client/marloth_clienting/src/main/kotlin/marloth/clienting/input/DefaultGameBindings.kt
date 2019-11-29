@@ -5,6 +5,8 @@ import org.lwjgl.glfw.GLFW
 import simulation.input.CommandType as CommandType
 
 val gameGamepadStrokeBindings = mapOf(
+    GAMEPAD_BUTTON_START to GuiCommandType.menu,
+
     GAMEPAD_AXIS_TRIGGER_RIGHT to CommandType.attack,
     GAMEPAD_BUTTON_DPAD_UP to CommandType.equipSlot0,
     GAMEPAD_BUTTON_DPAD_LEFT to CommandType.equipSlot1,
@@ -42,7 +44,4 @@ fun defaultGameInputBindings(): Bindings =
         .plus(createBindings(DeviceIndex.mouse, defaultMouseGameStrokeBindings()))
         .plus(createBindings(DeviceIndex.gamepad, gameGamepadStrokeBindings))
 
-fun defaultGameInputProfile() = InputProfile(
-    bindings = defaultGameInputBindings()
-)
 

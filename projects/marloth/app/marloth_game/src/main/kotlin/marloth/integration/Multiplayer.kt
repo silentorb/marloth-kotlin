@@ -34,7 +34,8 @@ val updateAppStateForNewPlayers: (AppState) -> AppState = { appState ->
     appState.copy(
         client = client.copy(
             input = inputState.copy(
-                deviceMap = deviceMap.plus(deviceEntries)
+                deviceMap = deviceMap.plus(deviceEntries),
+                playerProfiles = inputState.playerProfiles.plus(playersWithNewGamepads.associateWith { 1L })
             ),
             players = client.players.plus(newPlayers)
         ),

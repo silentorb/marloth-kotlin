@@ -4,12 +4,10 @@ import DeviceMap
 import PlayerDevice
 import haft.*
 import marloth.clienting.ClientState
-import marloth.clienting.getBinding
 import marloth.clienting.gui.ViewId
 import mythic.bloom.BloomId
 import mythic.ent.Id
 import mythic.platforming.InputEvent
-import simulation.input.CommandType
 
 typealias UserCommand = HaftCommand
 
@@ -19,20 +17,19 @@ data class GameInputConfig(
     var mouseInput: Boolean = true
 )
 
-enum class BindingContext {
+enum class InputContext {
   game,
   menu
 }
 
 data class InputProfile(
-    val bindings: Bindings
+    val bindings: Map<InputContext, Bindings>
 )
 
 data class InputState(
     val deviceStates: List<InputDeviceState>,
     val config: GameInputConfig,
-    val guiInputProfiles: Map<BloomId, InputProfile>,
-    val gameInputProfiles: Map<BloomId, InputProfile>,
+    val inputProfiles: Map<Id, InputProfile>,
     val playerProfiles: Map<BloomId, BloomId>,
     val deviceMap: DeviceMap
 )
@@ -41,25 +38,26 @@ fun newInputState(config: GameInputConfig) =
     InputState(
         deviceStates = listOf(newInputDeviceState()),
         config = config,
-        guiInputProfiles = mapOf(1L to defaultInputProfile()),
-        gameInputProfiles = mapOf(1L to defaultGameInputProfile()),
-        playerProfiles = mapOf(
-            1L to 1L,
-            2L to 1L,
-            3L to 1L,
-            4L to 1L
+        inputProfiles = mapOf(
+            1L to InputProfile(
+                bindings = mapOf(
+                    InputContext.game to defaultGameInputBindings(),
+                    InputContext.menu to defaultMenuInputProfile()
+                )
+            )
         ),
+        playerProfiles = mapOf(),
         deviceMap = mapOf(
             0 to PlayerDevice(1, DeviceIndex.keyboard),
             1 to PlayerDevice(1, DeviceIndex.mouse)
         )
     )
 
-fun bindingContext(clientState: ClientState, player: Id): BindingContext =
+fun bindingContext(clientState: ClientState, player: Id): InputContext =
     if ((clientState.playerViews[player] ?: ViewId.none) != ViewId.none)
-      BindingContext.menu
+      InputContext.menu
     else
-      BindingContext.game
+      InputContext.game
 
 fun joiningGamepads(events: List<InputEvent>, deviceMap: DeviceMap): List<Int> {
   val currentDevices = deviceMap.keys
@@ -75,7 +73,7 @@ fun currentGamepadPlayers(deviceMap: DeviceMap) =
         .map { it.value.player }
         .distinct()
 
-fun newGamepadDeviceEntry(device:Int, player: Id): Pair<Int, PlayerDevice> {
+fun newGamepadDeviceEntry(device: Int, player: Id): Pair<Int, PlayerDevice> {
   println("gamepad $device $player")
   return Pair(device, PlayerDevice(
       player = player,
@@ -83,9 +81,32 @@ fun newGamepadDeviceEntry(device:Int, player: Id): Pair<Int, PlayerDevice> {
   ))
 }
 
-fun gatherInputCommands(inputState: InputState, bindingContext: BindingContext): HaftCommands {
-  val getBinding = getBinding(inputState, inputState.guiInputProfiles)
-  val strokes = clientCommandStrokes[bindingContext]!!
+fun getInputProfile(inputState: InputState, player: Id): InputProfile? {
+  val playerProfile = inputState.playerProfiles[player]
+  return inputState.inputProfiles[playerProfile]
+}
+
+fun getBinding(inputState: InputState, inputContext: InputContext): BindingSource = { event ->
+  val playerDevice = inputState.deviceMap[event.device]
+  if (playerDevice != null) {
+    val profile = getInputProfile(inputState, playerDevice.player)
+    if (profile != null) {
+      val binding = profile.bindings
+          .getValue(inputContext)
+          .firstOrNull { it.device == playerDevice.device && it.trigger == event.index }
+      if (binding != null)
+        Pair(binding, playerDevice.player)
+      else
+        null
+    } else
+      null
+  } else
+    null
+}
+
+fun gatherInputCommands(inputState: InputState, inputContext: InputContext): HaftCommands {
+  val getBinding = getBinding(inputState, inputContext)
+  val strokes = clientCommandStrokes[inputContext]!!
   val deviceStates = inputState.deviceStates
   return mapEventsToCommands(deviceStates, strokes, getBinding)
 }

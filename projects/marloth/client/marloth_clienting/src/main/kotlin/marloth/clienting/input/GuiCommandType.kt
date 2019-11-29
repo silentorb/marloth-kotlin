@@ -21,8 +21,8 @@ private fun standardClientStrokes() = setOf(
 )
 
 val clientCommandStrokes = mapOf(
-    BindingContext.game to standardClientStrokes(),
-    BindingContext.menu to standardClientStrokes()
+    InputContext.game to standardClientStrokes(),
+    InputContext.menu to standardClientStrokes()
         .plus(setOf(
             CommandType.moveUp,
             CommandType.moveDown,

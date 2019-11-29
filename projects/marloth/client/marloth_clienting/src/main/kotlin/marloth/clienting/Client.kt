@@ -102,21 +102,6 @@ fun applyCommandsToExternalSystem(client: Client): (ClientState) -> ClientState 
   state
 }
 
-fun getBinding(inputState: InputState, inputProfiles: Map<BloomId, InputProfile>): BindingSource = { event ->
-  val playerDevice = inputState.deviceMap[event.device]
-  if (playerDevice != null) {
-//    val playerProfile = inputState.playerProfiles[playerDevice.player]!!
-    val playerProfile = 1L
-    val profile = inputProfiles[playerProfile]!!
-    val binding = profile.bindings.firstOrNull { it.device == playerDevice.device && it.trigger == event.index }
-    if (binding != null)
-      Pair(binding, playerDevice.player)
-    else
-      null
-  } else
-    null
-}
-
 fun getListenerPosition(deck: Deck): Vector3? {
   val player = deck.players.keys.firstOrNull()
   val body = deck.bodies[player]
@@ -144,7 +129,6 @@ val clientBloomModules: List<LogicModule> = listOf()
 fun updateClientInputCommands(): (ClientState) -> ClientState = { clientState ->
   clientState.copy(
       commands = clientState.players
-          .filter(isMenuActive(clientState))
           .flatMap { player ->
             gatherInputCommands(clientState.input, bindingContext(clientState, player))
           }

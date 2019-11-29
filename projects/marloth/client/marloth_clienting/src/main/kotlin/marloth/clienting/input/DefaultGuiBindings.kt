@@ -71,7 +71,3 @@ fun createDefaultGamepadBindings() =
 fun defaultMenuInputProfile() =
     createBindings(DeviceIndex.keyboard, defaultKeyboardMenuBindings())
         .plus(createBindings(DeviceIndex.gamepad, defaultGamepadMenuBindings()))
-
-fun defaultInputProfile(): InputProfile = InputProfile(
-    bindings = defaultMenuInputProfile()
-)

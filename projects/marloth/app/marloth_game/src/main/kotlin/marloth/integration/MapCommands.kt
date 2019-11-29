@@ -23,15 +23,12 @@ private val commandTypeMap: Map<UserCommandType, CharacterCommandType> =
         .associate { it }
 
 fun mapGameCommands(players: List<Id>, commands: HaftCommands): List<Command> =
-    commands.mapNotNull { command ->
-      val target = players.firstOrNull { it == command.target }
-      if (target != null) {
-        assert(command.type is CommandType)
-        Command(
-            type = command.type as CommandType,
-            target = target,
-            value = command.value
-        )
-      } else
-        null
-    }
+    commands
+        .filter { command -> command.type is CommandType && players.contains(command.target) }
+        .map { command ->
+          Command(
+              type = command.type as CommandType,
+              target = command.target,
+              value = command.value
+          )
+        }

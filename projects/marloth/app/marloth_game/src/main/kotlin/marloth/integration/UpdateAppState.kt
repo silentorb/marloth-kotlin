@@ -2,10 +2,10 @@ package marloth.integration
 
 import haft.mapEventsToCommands
 import marloth.clienting.ClientState
-import marloth.clienting.getBinding
 import marloth.clienting.gui.*
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.input.InputState
+import marloth.clienting.input.getBinding
 import marloth.clienting.updateClient
 import marloth.front.GameApp
 import marloth.front.RenderHook
@@ -76,12 +76,6 @@ fun updateClientFromWorld(worlds: List<World>): (ClientState) -> ClientState = {
   )
 }
 
-fun getGameCommands(inputState: InputState, players: List<Id>): List<Command> {
-  val getBinding = getBinding(inputState, inputState.gameInputProfiles)
-  val rawCommands = mapEventsToCommands(inputState.deviceStates, gameStrokes, getBinding)
-  return mapGameCommands(players, rawCommands)
-}
-
 fun gatherAdditionalGameCommands(previousClient: ClientState, clientState: ClientState): List<Command> {
   return clientState.players.flatMap { player ->
     val view = clientState.playerViews[player] ?: ViewId.none
@@ -134,7 +128,7 @@ fun updateWorlds(app: GameApp, previousClient: ClientState, clientState: ClientS
   when {
     clientState.commands.any { it.type == GuiCommandType.newGame } -> restartWorld(app)
     gameIsActiveByClient(clientState) -> {
-      val commands = getGameCommands(clientState.input, clientState.players)
+      val commands = mapGameCommands(clientState.players, clientState.commands)
       val events = gatherGuiEvents(clientState.bloomState)
       updateSimulation(app, previousClient, clientState, worlds, commands, events)
     }

@@ -85,7 +85,7 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
     val hooks = GameHooks(
         onRender = labRender(app, state),
         onUpdate = { appState ->
-          app.labClient.updateInput(mapOf(), appState.client.input.deviceStates)
+//          app.labClient.updateInput(mapOf(), appState.client.input.deviceStates)
         }
     )
 

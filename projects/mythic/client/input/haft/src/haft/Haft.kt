@@ -88,7 +88,7 @@ fun matches(event: InputEvent): (InputEvent) -> Boolean = { other ->
   event.device == other.device && event.index == other.index
 }
 
-fun  mapEventsToCommands(deviceStates: List<InputDeviceState>, strokes: Set<Any>, getBinding: BindingSource): HaftCommands {
+fun mapEventsToCommands(deviceStates: List<InputDeviceState>, strokes: Set<Any>, getBinding: BindingSource): HaftCommands {
   if (DEBUG_INPUT_COUNTS) {
     val counts = deviceStates.map { it.events.size }
     if (counts.any { it > 0 })
