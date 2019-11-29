@@ -19,7 +19,7 @@ data class CompositeShape(
     override val y: Float = shapes.map { it.y }.max() ?: 0f
 ) : Shape
 
-data class ShapeOffset(
+data class ShapeTransform(
     val transform: Matrix,
     val shape: Shape,
     override val height: Float = shape.height,
@@ -57,7 +57,7 @@ data class Box(
     override val radius: Float = max(max(halfExtents.x, halfExtents.y), halfExtents.z)
 ) : Shape
 
-data class MeshSphere(
+data class MeshShape(
     val triangles: List<Vector3>,
     override val radius: Float,
     override val height: Float = radius * 2f,

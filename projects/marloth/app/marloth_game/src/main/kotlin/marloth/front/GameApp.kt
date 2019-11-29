@@ -1,10 +1,13 @@
 package marloth.front
 
 import marloth.clienting.Client
+import marloth.clienting.newClientState
 import marloth.definition.staticDefinitions
 import marloth.generation.generateWorld
 import marloth.integration.*
+import mythic.ent.getDebugSetting
 import mythic.platforming.Platform
+import mythic.quartz.newTimestepState
 import persistence.Database
 import persistence.newDatabase
 import randomly.Dice
@@ -47,13 +50,12 @@ fun newGameApp(platform: Platform, config: GameConfig) = GameApp(
 fun runApp(platform: Platform, config: GameConfig) {
   platform.display.initialize(config.display)
   val app = newGameApp(platform, config)
-  throw Error("Not implemented")
-//  val state = AppState(
-//      client = newClientState(platform, config.input, config.audio),
-//      players = listOf(1),
-//      worlds = listOf(world),
-//      timestep = newTimestepState()
-//  )
-//  gameLoop(app, state)
+  val world = generateWorld(getMeshInfo(app.client))
+  val state = AppState(
+      client = newClientState(platform, config.input, config.audio),
+      worlds = listOf(world),
+      timestep = newTimestepState()
+  )
+  gameLoop(app, state)
   app.client.shutdown()
 }

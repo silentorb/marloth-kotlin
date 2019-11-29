@@ -3,10 +3,8 @@ package randomly
 import mythic.spatial.Vector2
 import java.util.*
 
-class Dice(private val seed: Long) {
-  private val random = Random(seed)
-
-  constructor() : this(System.currentTimeMillis())
+class Dice(private val seed: Long? = null) {
+  private val random = Random(seed ?: System.currentTimeMillis())
 
   fun getInt(min: Int, max: Int) = min + random.nextInt(1 + max - min)
 

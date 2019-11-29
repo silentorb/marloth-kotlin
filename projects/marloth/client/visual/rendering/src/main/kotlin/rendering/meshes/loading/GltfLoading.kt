@@ -467,7 +467,7 @@ fun loadBoundingShape(getTriangles: GetTriangles): (Map<String, Any>) -> Shape? 
         height = parseFloat(source["height"])
     )
 
-    "mesh" -> MeshSphere(
+    "mesh" -> MeshShape(
         triangles = getTriangles(),
         radius = parseFloat(source["radius"]),
         height = parseFloat(source["height"])
@@ -487,7 +487,7 @@ fun loadBoundingShape(getTriangles: GetTriangles): (Map<String, Any>) -> Shape? 
     null
 
   if (shape != null && offset != null)
-    ShapeOffset(transform = Matrix().translate(offset), shape = shape)
+    ShapeTransform(transform = Matrix().translate(offset), shape = shape)
   else
     shape
 }

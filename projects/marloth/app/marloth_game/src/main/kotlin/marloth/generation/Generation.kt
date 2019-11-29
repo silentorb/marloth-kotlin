@@ -6,6 +6,7 @@ import generation.architecture.misc.*
 import generation.general.explodeBlockMap
 import generation.general.newRandomizedBiomeGrid
 import generation.general.bakeSides
+import mythic.ent.getDebugSetting
 import mythic.ent.newIdSource
 import org.recast4j.detour.NavMeshQuery
 import randomly.Dice
@@ -54,7 +55,10 @@ fun generateWorld(generationConfig: GenerationConfig, input: WorldInput): World 
   )
 }
 
-fun generateWorld(meshInfo: MeshShapeMap, dice: Dice): World {
+fun newGenerationDice() =
+    Dice(getDebugSetting("GENERATION_SEED")?.toLong())
+
+fun generateWorld(meshInfo: MeshShapeMap, dice: Dice = newGenerationDice()): World {
   val boundary = createWorldBoundary(100f)
   val generationConfig = GenerationConfig(
       biomes = biomeInfoMap,

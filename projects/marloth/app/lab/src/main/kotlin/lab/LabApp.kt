@@ -18,6 +18,7 @@ import marloth.definition.staticDefinitions
 import marloth.front.GameApp
 import marloth.front.RenderHook
 import marloth.generation.generateWorld
+import marloth.generation.newGenerationDice
 import marloth.integration.*
 import mythic.desktop.createDesktopPlatform
 import mythic.ent.pipe
@@ -36,13 +37,7 @@ fun saveLabConfig(config: LabConfig) {
   }
 }
 
-fun createDice(config: GameViewConfig) =
-    if (config.UseRandomSeed)
-      Dice()
-    else
-      Dice(config.seed)
-
-fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig, dice: Dice): World {
+fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig): World {
   val boundary = createWorldBoundary(gameViewConfig.worldLength)
   val generationConfig = GenerationConfig(
       biomes = biomeInfoMap,
@@ -52,7 +47,7 @@ fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig, dice: 
   )
   val input = WorldInput(
       boundary,
-      dice
+      newGenerationDice()
   )
   return generateWorld(generationConfig, input)
 }
@@ -85,7 +80,7 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
     val hooks = GameHooks(
         onRender = labRender(app, state),
         onUpdate = { appState ->
-//          app.labClient.updateInput(mapOf(), appState.client.input.deviceStates)
+          app.labClient.updateInput(mapOf(), appState.client.input.deviceStates)
         }
     )
 
@@ -140,8 +135,7 @@ fun shutdownGameApp(gameApp: GameApp) {
 
 fun newLabState(gameApp: GameApp, config: LabConfig): LabState {
   val world = if (config.gameView.autoNewGame) {
-    val dice = createDice(config.gameView)
-    lab.generateWorld(getMeshInfo(gameApp.client), config.gameView, dice)
+    lab.generateWorld(getMeshInfo(gameApp.client), config.gameView)
   }
   else
     null
@@ -172,7 +166,7 @@ fun newLabGameApp(labConfig: LabConfig): GameApp {
       bulletState = newBulletState(),
       client = newClient(platform, gameConfig.display, labConfig.gameView.lighting),
       definitions = staticDefinitions,
-      newWorld = { gameApp -> lab.generateWorld(getMeshInfo(gameApp.client), labConfig.gameView, createDice(labConfig.gameView)) }
+      newWorld = { gameApp -> lab.generateWorld(getMeshInfo(gameApp.client), labConfig.gameView) }
   )
 }
 

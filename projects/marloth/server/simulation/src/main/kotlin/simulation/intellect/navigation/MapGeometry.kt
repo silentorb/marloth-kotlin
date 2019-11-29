@@ -2,14 +2,11 @@ package simulation.intellect.navigation
 
 import mythic.spatial.Vector3
 import mythic.spatial.createArcZ
-import org.recast4j.detour.NavMesh
 import org.recast4j.recast.AreaModification
 import org.recast4j.recast.ConvexVolume
 import org.recast4j.recast.geom.InputGeomProvider
 import org.recast4j.recast.geom.TriMesh
-import scenery.Box
-import scenery.Cylinder
-import scenery.Shape
+import scenery.*
 import simulation.main.Deck
 import simulation.physics.getBodyTransform
 
@@ -75,12 +72,47 @@ private fun cylinder(shape: Cylinder): IntermediateMesh {
   )
 }
 
+private fun offsetShapeVertices(shape: ShapeTransform): IntermediateMesh {
+  val mesh = getShapeVertices(shape.shape)
+  return mesh.copy(
+      vertices = mesh.vertices.map { it.transform(shape.transform) }
+  )
+}
+
+private fun compositeShapeVertices(shape: CompositeShape): IntermediateMesh {
+  val meshes = shape.shapes.map(::getShapeVertices)
+  val vertices = meshes.flatMap { it.vertices }
+  val triangles = meshes
+      .fold(Pair(0, listOf<Int>())) { (vertexCount, indices), mesh ->
+        Pair(vertexCount + mesh.vertices.size, indices.plus(mesh.triangles.map { it + vertexCount }))
+      }
+      .second
+
+  return IntermediateMesh(
+      vertices = vertices,
+      triangles = triangles
+  )
+}
+
+private fun meshShapeVertices(shape: MeshShape): IntermediateMesh {
+  return IntermediateMesh(
+      vertices = shape.triangles,
+      triangles = shape.triangles.mapIndexed { index, _ -> index }
+  )
+}
+
 private fun getShapeVertices(shape: Shape): IntermediateMesh =
     when (shape) {
 
       is Box -> box(shape.halfExtents)
 
       is Cylinder -> cylinder(shape)
+
+      is ShapeTransform -> offsetShapeVertices(shape)
+
+      is CompositeShape -> compositeShapeVertices(shape)
+
+      is MeshShape -> meshShapeVertices(shape)
 
       else -> throw Error("Not implemented")
     }
@@ -107,8 +139,11 @@ fun newNavMeshTriMeshes(deck: Deck): List<TriMesh> {
 //      .take(1)
       .map { (id, _) ->
         val shape = deck.collisionShapes[id]!!.shape
-        val body = deck.bodies[id]!!
         val mesh = getShapeVertices(shape)
+          Pair(id, mesh)
+      }
+      .map { (id, mesh) ->
+        val body = deck.bodies[id]!!
         val transform = getBodyTransform(body).scale(body.scale)
         val vertices = mesh.vertices.flatMap {
           val temp = it.transform(transform)

@@ -26,7 +26,7 @@ fun createBulletStaticMesh(vertices: List<Vector3>): btBvhTriangleMeshShape {
 
 fun createCollisionShape(shape: Shape, scale: Vector3): btCollisionShape {
   return when (shape) {
-    is ShapeOffset -> {
+    is ShapeTransform -> {
       val parent = btCompoundShape()
       parent.addChildShape(toGdxMatrix4(shape.transform), createCollisionShape(shape.shape, scale))
       parent
@@ -43,7 +43,7 @@ fun createCollisionShape(shape: Shape, scale: Vector3): btCollisionShape {
     }
     is Cylinder -> btCylinderShapeZ(toGdxVector3(Vector3(shape.radius * scale.x, shape.radius * scale.y, shape.height * scale.z * 0.5f)))
 
-    is MeshSphere -> createBulletStaticMesh(shape.triangles)
+    is MeshShape -> createBulletStaticMesh(shape.triangles)
     else -> throw Error("Not supported")
   }
 }

@@ -1,11 +1,7 @@
 package marloth.definition
 
 import scenery.Box
-import scenery.ShapeOffset
-import scenery.Sphere
-import mythic.spatial.Matrix
 import mythic.spatial.Vector3
-import mythic.spatial.Vector4
 import simulation.physics.CollisionObject
 import simulation.physics.DynamicBody
 import simulation.physics.HingeConstraint

@@ -21,7 +21,7 @@ fun doorwayPosition(graph: Graph, firstNode: Id, secondNode: Id): Vector3 {
   return a.position + vector * a.radius
 }
 
-fun getPathTargetPosition(world: World, knowledge: Knowledge, pursuit: Pursuit): Vector3 {
+fun getPathTargetPosition(world: World, knowledge: Knowledge, pursuit: Pursuit): Vector3? {
   val graph = world.realm.graph
   val body = world.deck.bodies[knowledge.spiritId]!!
   val query = world.navMeshQuery
@@ -42,6 +42,9 @@ fun getPathTargetPosition(world: World, knowledge: Knowledge, pursuit: Pursuit):
       queryFilter
   )
 
+  if (path.result == null)
+    return null
+
   val pathResult = query.findStraightPath(start, end, path.result, 2, 0)
   assert(pathResult != null)
   assert(pathResult.result != null)
@@ -51,8 +54,7 @@ fun getPathTargetPosition(world: World, knowledge: Knowledge, pursuit: Pursuit):
   return if (firstPoint.distance(body.position) < 0.1f) {
     assert(pathResult.result.size > 1)
     fromRecastVector3(pathResult.result[1].pos)
-  }
-  else
+  } else
     firstPoint
 }
 
@@ -78,5 +80,10 @@ fun moveStraightTowardPosition(world: World, knowledge: Knowledge, target: Vecto
   }
 }
 
-fun moveSpirit(world: World, knowledge: Knowledge, pursuit: Pursuit): Commands =
-    moveStraightTowardPosition(world, knowledge, getPathTargetPosition(world, knowledge, pursuit))
+fun moveSpirit(world: World, knowledge: Knowledge, pursuit: Pursuit): Commands {
+  val target = getPathTargetPosition(world, knowledge, pursuit)
+  return if (target != null)
+    moveStraightTowardPosition(world, knowledge, target)
+  else
+    listOf()
+}
