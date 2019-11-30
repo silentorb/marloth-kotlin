@@ -1,34 +1,43 @@
 package simulation.intellect.navigation
 
-import mythic.ent.Id
-import mythic.ent.firstSortedBy
-import mythic.ent.firstSortedByDescending
-import mythic.spatial.Vector3
+import mythic.ent.firstFloatSortedBy
+import mythic.ent.firstFloatSortedByDescending
+import mythic.ent.firstIntSortedBy
+import mythic.ent.firstIntSortedByDescending
 import org.recast4j.detour.NavMesh
 import org.recast4j.detour.NavMeshBuilder
-import org.recast4j.detour.NavMeshDataCreateParams
-import org.recast4j.recast.*
-import org.recast4j.recast.geom.ChunkyTriMesh
-import org.recast4j.recast.geom.InputGeomProvider
+import org.recast4j.recast.Heightfield
+import org.recast4j.recast.RecastBuilder
+import org.recast4j.recast.RecastBuilderConfig
 import org.recast4j.recast.geom.TriMesh
-import scenery.Box
-import scenery.Cylinder
-import scenery.Shape
 import simulation.main.Deck
-import simulation.physics.getBodyTransform
+import simulation.misc.MapGrid
+import simulation.misc.cellLength
 
 var originalNavMeshData: List<TriMesh> = listOf()
 var globalHeightMap: Heightfield? = null
 
-fun newNavMesh(deck: Deck): NavMesh {
+fun newNavMesh(grid: MapGrid, deck: Deck): NavMesh {
   val elements = deck.architecture
   val meshes = newNavMeshTriMeshes(deck)
   val vertices = meshes.flatMap { it.verts.toList() }
   originalNavMeshData = meshes
 
-  val padding = 0f
+  val padding = cellLength * 2f
 //  val minBounds = floatArrayOf(-100f, -100f, -100f)
 //  val maxBounds = floatArrayOf(100f, 100f, 100f)
+
+//  val minBounds = floatArrayOf(
+//      grid.cells.keys.map { it.x }.firstIntSortedBy { it }.toFloat() * cellLength - padding,
+//      grid.cells.keys.map { it.y }.firstIntSortedBy { it }.toFloat() * cellLength - padding,
+//      grid.cells.keys.map { it.z }.firstIntSortedBy { it }.toFloat() * cellLength - padding
+//  )
+//
+//  val maxBounds = floatArrayOf(
+//      grid.cells.keys.map { it.x }.firstIntSortedByDescending { it }.toFloat() * cellLength + padding,
+//      grid.cells.keys.map { it.y }.firstIntSortedByDescending { it }.toFloat() * cellLength + padding,
+//      grid.cells.keys.map { it.z }.firstIntSortedByDescending { it }.toFloat() * cellLength + padding
+//  )
   val minBounds = floatArrayOf(
 //      elements
 //          .map { deck.bodies[it.key]!!.position.x - deck.collisionShapes[it.key]!!.shape.radius }
@@ -39,9 +48,9 @@ fun newNavMesh(deck: Deck): NavMesh {
 //      elements
 //          .map { deck.bodies[it.key]!!.position.y - deck.collisionShapes[it.key]!!.shape.radius }
 //          .firstSortedBy { it } - padding
-          (0 until vertices.size step 3).map { vertices[it] }.firstSortedBy { it } - padding,
-          (1 until vertices.size step 3).map { vertices[it] }.firstSortedBy { it } - padding,
-          (2 until vertices.size step 3).map { vertices[it] }.firstSortedBy { it } - padding
+      (0 until vertices.size step 3).map { vertices[it] }.firstFloatSortedBy { it } - padding,
+      (1 until vertices.size step 3).map { vertices[it] }.firstFloatSortedBy { it } - padding,
+      (2 until vertices.size step 3).map { vertices[it] }.firstFloatSortedBy { it } - padding
   )
 
   val maxBounds = floatArrayOf(
@@ -54,9 +63,9 @@ fun newNavMesh(deck: Deck): NavMesh {
 //      elements
 //          .map { deck.bodies[it.key]!!.position.y + deck.collisionShapes[it.key]!!.shape.radius }
 //          .firstSortedByDescending { it } + padding
-          (0 until vertices.size step 3).map { vertices[it] }.firstSortedByDescending { it } + padding,
-          (1 until vertices.size step 3).map { vertices[it] }.firstSortedByDescending { it } + padding,
-          (2 until vertices.size step 3).map { vertices[it] }.firstSortedByDescending { it } + padding
+      (0 until vertices.size step 3).map { vertices[it] }.firstFloatSortedByDescending { it } + padding,
+      (1 until vertices.size step 3).map { vertices[it] }.firstFloatSortedByDescending { it } + padding,
+      (2 until vertices.size step 3).map { vertices[it] }.firstFloatSortedByDescending { it } + padding
   )
   val geometry = GeometryProvider(
       meshes.toMutableList(),

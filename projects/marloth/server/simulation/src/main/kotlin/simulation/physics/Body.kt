@@ -1,7 +1,7 @@
 package simulation.physics
 
 import mythic.ent.Id
-import mythic.ent.firstSortedBy
+import mythic.ent.firstFloatSortedBy
 import mythic.spatial.Matrix
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
@@ -53,7 +53,7 @@ fun updateNearestBodyNode(realm: Realm, body: Body): Id {
       || (isMoving(body) && isOutsideOfNodeRange(body.position, currentNode))
 
   return if (needsUpdating) {
-    val nearest = realm.nodeTable.entries.firstSortedBy {
+    val nearest = realm.nodeTable.entries.firstFloatSortedBy {
       it.value.position.distance(body.position) - it.value.radius
     }
     nearest.key

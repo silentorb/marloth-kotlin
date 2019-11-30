@@ -9,6 +9,7 @@ import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import scenery.enums.MeshId
 import simulation.entities.ArchitectureElement
+import simulation.misc.cellLength
 
 val curvedStaircases = blockBuilder() { input ->
   val biome = input.biome

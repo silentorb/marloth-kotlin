@@ -6,6 +6,7 @@ import mythic.ent.Table
 import mythic.spatial.Vector3
 import simulation.physics.SimpleBody
 import simulation.main.World
+import simulation.misc.MapGrid
 
 data class CharacterMemory(
     val lastSeen: Float,
@@ -18,7 +19,7 @@ data class CharacterMemory(
 
 data class Knowledge(
     val spiritId: Id,
-    val nodes: List<Id>,
+    val grid: MapGrid,
     val characters: Table<CharacterMemory>
 )
 
@@ -50,7 +51,7 @@ fun updateCharacterKnowledge(world: World, character: Id, knowledge: Knowledge, 
 fun newKnowledge(world: World, character: Id): Knowledge =
     Knowledge(
         spiritId = character,
-        nodes = world.realm.nodeList.map { it.id },
+        grid = world.realm.grid,
         characters = mapOf()
     )
 

@@ -1,6 +1,6 @@
 package generation.architecture.building
 
-import generation.architecture.old.cellLength
+import simulation.misc.cellLength
 import generation.architecture.definition.*
 import generation.general.Direction
 import generation.general.Side

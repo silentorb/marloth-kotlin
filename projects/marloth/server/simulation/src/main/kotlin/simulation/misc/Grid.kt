@@ -1,6 +1,9 @@
 package simulation.misc
 
+import mythic.spatial.Vector3
 import mythic.spatial.Vector3i
+
+const val cellLength = 10f
 
 data class Cell(
     val attributes: Set<NodeAttribute> = setOf()
@@ -29,3 +32,10 @@ fun cellConnections(connections: ConnectionMap, position: Vector3i): List<Connec
 fun cellNeighbors(connections: ConnectionMap, position: Vector3i): List<Vector3i> =
     connections.filter(containsConnection(position))
         .map { connection -> connection.toList().first { it != position } }
+
+fun getPointCell(point: Vector3): Vector3i =
+    Vector3i(
+        (point.x / cellLength).toInt(),
+        (point.y / cellLength).toInt(),
+        (point.z / cellLength).toInt()
+    )

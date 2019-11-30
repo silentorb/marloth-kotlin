@@ -135,8 +135,6 @@ data class GeometryProvider(
 fun newNavMeshTriMeshes(deck: Deck): List<TriMesh> {
   val elements = deck.architecture
   return elements.entries
-//      .filter { !it.value.isWall }
-//      .take(1)
       .map { (id, _) ->
         val shape = deck.collisionShapes[id]!!.shape
         val mesh = getShapeVertices(shape)

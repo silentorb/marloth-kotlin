@@ -1,16 +1,13 @@
 package simulation.misc
 
-import mythic.ent.WithId
 import mythic.ent.Id
-import mythic.ent.firstSortedBy
+import mythic.ent.firstFloatSortedBy
 import mythic.sculpting.ImmutableEdgeReference
 import mythic.sculpting.ImmutableFace
 import mythic.spatial.Vector3
 import mythic.spatial.Vector3i
 import mythic.spatial.getCenter
-import simulation.physics.voidNodeId
 import randomly.Dice
-import scenery.TextureName
 
 data class WorldBoundary(
     val start: Vector3,
@@ -68,10 +65,10 @@ fun getFloor(face: ImmutableFace): ImmutableEdgeReference {
 
   return if (horizontalEdges.any()) {
     horizontalEdges
-        .firstSortedBy { it.first.z + it.second.z }
+        .firstFloatSortedBy { it.first.z + it.second.z }
   } else {
     val center = getCenter(face.vertices)
     face.edges
-        .firstSortedBy { (it.middle - center).normalize().z }
+        .firstFloatSortedBy { (it.middle - center).normalize().z }
   }
 }

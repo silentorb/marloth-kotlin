@@ -22,7 +22,6 @@ fun doorwayPosition(graph: Graph, firstNode: Id, secondNode: Id): Vector3 {
 }
 
 fun getPathTargetPosition(world: World, knowledge: Knowledge, pursuit: Pursuit): Vector3? {
-  val graph = world.realm.graph
   val body = world.deck.bodies[knowledge.spiritId]!!
   val query = world.navMeshQuery
   if (query == null)
@@ -33,7 +32,13 @@ fun getPathTargetPosition(world: World, knowledge: Knowledge, pursuit: Pursuit):
   val polygonRange = floatArrayOf(10f, 10f, 10f)
   val queryFilter = DefaultQueryFilter()
   val startPolygon = query.findNearestPoly(start, polygonRange, queryFilter)
+  if (startPolygon.failed() || startPolygon.result.nearestRef == 0L)
+    return null
+
   val endPolygon = query.findNearestPoly(end, polygonRange, queryFilter)
+  if (endPolygon.failed() || endPolygon.result.nearestRef == 0L)
+    return null
+
   val path = query.findPath(
       startPolygon.result.nearestRef,
       endPolygon.result.nearestRef,
@@ -42,14 +47,17 @@ fun getPathTargetPosition(world: World, knowledge: Knowledge, pursuit: Pursuit):
       queryFilter
   )
 
-  if (path.result == null)
+  if (path.failed())
     return null
 
   val pathResult = query.findStraightPath(start, end, path.result, 2, 0)
-  assert(pathResult != null)
-  assert(pathResult.result != null)
-  assert(pathResult.result.size > 0)
-  assert(pathResult.result[0] != null)
+  if (pathResult.failed())
+    return null
+
+//  assert(pathResult != null)
+//  assert(pathResult.result != null)
+//  assert(pathResult.result.size > 0)
+//  assert(pathResult.result[0] != null)
   val firstPoint = fromRecastVector3(pathResult.result[0].pos)
   return if (firstPoint.distance(body.position) < 0.1f) {
     assert(pathResult.result.size > 1)

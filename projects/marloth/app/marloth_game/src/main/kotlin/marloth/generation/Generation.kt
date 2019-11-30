@@ -1,6 +1,5 @@
 package marloth.generation
 
-import generation.abstracted.initializeNodeRadii
 import generation.architecture.definition.*
 import generation.architecture.misc.*
 import generation.general.explodeBlockMap
@@ -37,15 +36,13 @@ fun generateWorld(generationConfig: GenerationConfig, input: WorldInput): World 
   ))(Deck())
 
   val navMesh = if (generationConfig.includeEnemies)
-    newNavMesh(deck)
+    newNavMesh(grid, deck)
   else
     null
 
   return World(
       deck = deck,
-      realm = realm.copy(
-          graph = initializeNodeRadii(deck)(realm.graph)
-      ),
+      realm = realm,
       nextId = nextId(),
       dice = Dice(),
       availableIds = setOf(),

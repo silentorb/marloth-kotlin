@@ -1,7 +1,6 @@
 package haft
 
 import mythic.ent.debugLog
-import mythic.ent.globalDebugLoopNumber
 import mythic.platforming.InputEvent
 import mythic.spatial.Vector2
 
@@ -82,13 +81,13 @@ fun applyMouseMovement(device: Int, mouseOffset: Vector2): List<InputEvent> =
     )
 
 typealias BindingSourceTarget = Long
-typealias BindingSource = (InputEvent) -> Pair<Binding, BindingSourceTarget>?
+typealias BindingSource = (InputEvent) -> Triple<Binding, BindingSourceTarget, Boolean>?
 
 fun matches(event: InputEvent): (InputEvent) -> Boolean = { other ->
   event.device == other.device && event.index == other.index
 }
 
-fun mapEventsToCommands(deviceStates: List<InputDeviceState>, strokes: Set<Any>, getBinding: BindingSource): HaftCommands {
+fun mapEventsToCommands(deviceStates: List<InputDeviceState>, getBinding: BindingSource): HaftCommands {
   if (DEBUG_INPUT_COUNTS) {
     val counts = deviceStates.map { it.events.size }
     if (counts.any { it > 0 })
@@ -98,8 +97,7 @@ fun mapEventsToCommands(deviceStates: List<InputDeviceState>, strokes: Set<Any>,
       .mapNotNull { event ->
         val bindingPair = getBinding(event)
         if (bindingPair != null) {
-          val (binding, target) = bindingPair
-          val isStroke = strokes.contains(binding.command)
+          val (binding, target, isStroke) = bindingPair
           if (!isStroke || deviceStates.dropLast(1).last().events.none(matches(event))) {
             if (DEBUG_INPUT)
               debugLog("Haft Command: isStroke $isStroke ${binding.command} $target ${event.value}")
@@ -121,7 +119,7 @@ fun getBindingSimple(bindings: List<Binding>): BindingSource = { event ->
     it.device == values[Math.min(2, event.device)] && it.trigger == event.index
   }
   if (binding != null)
-    Pair(binding, 0)
+    Triple(binding, 0, true)
   else
     null
 }

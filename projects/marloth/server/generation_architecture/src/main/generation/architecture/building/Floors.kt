@@ -9,6 +9,7 @@ import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import scenery.MeshName
 import simulation.entities.ArchitectureElement
+import simulation.misc.cellLength
 import kotlin.math.asin
 
 fun floorMeshBuilder(mesh: MeshName, offset: Vector3 = Vector3.zero,

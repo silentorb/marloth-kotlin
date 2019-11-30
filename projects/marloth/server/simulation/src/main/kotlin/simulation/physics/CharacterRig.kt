@@ -2,7 +2,7 @@ package simulation.physics
 
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld
 import mythic.ent.Id
-import mythic.ent.firstSortedBy
+import mythic.ent.firstFloatSortedBy
 import mythic.spatial.Vector3
 import mythic.spatial.createArcZ
 import simulation.entities.airLinearDamping
@@ -82,7 +82,7 @@ fun updateCharacterStepHeight(bulletState: BulletState, deck: Deck, character: I
         .plus(centerDistance)
 
     return if (distances.any()) {
-      val distance = distances.firstSortedBy { it }
+      val distance = distances.firstFloatSortedBy { it }
       distance - footHeight
     } else
       noHitValue

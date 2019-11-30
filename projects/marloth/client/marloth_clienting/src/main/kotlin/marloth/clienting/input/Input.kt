@@ -3,7 +3,6 @@ package marloth.clienting.input
 import DeviceMap
 import PlayerDevice
 import haft.*
-import marloth.clienting.ClientState
 import marloth.clienting.PlayerViews
 import marloth.clienting.gui.ViewId
 import mythic.bloom.BloomId
@@ -87,6 +86,9 @@ fun getInputProfile(inputState: InputState, player: Id): InputProfile? {
   return inputState.inputProfiles[playerProfile]
 }
 
+fun isStroke(context: InputContext, type: Any): Boolean =
+    clientCommandStrokes[context]!!.contains(type)
+
 fun getBinding(inputState: InputState, playerViews: PlayerViews): BindingSource = { event ->
   val playerDevice = inputState.deviceMap[event.device]
   if (playerDevice != null) {
@@ -98,7 +100,7 @@ fun getBinding(inputState: InputState, playerViews: PlayerViews): BindingSource 
           .getValue(inputContext)
           .firstOrNull { it.device == playerDevice.device && it.trigger == event.index }
       if (binding != null)
-        Pair(binding, player)
+        Triple(binding, player, isStroke(inputContext, binding.command))
       else
         null
     } else
@@ -110,5 +112,5 @@ fun getBinding(inputState: InputState, playerViews: PlayerViews): BindingSource 
 fun gatherInputCommands(inputState: InputState, playerViews: PlayerViews): HaftCommands {
   val getBinding = getBinding(inputState, playerViews)
   val deviceStates = inputState.deviceStates
-  return mapEventsToCommands(deviceStates, clientCommandStrokes, getBinding)
+  return mapEventsToCommands(deviceStates, getBinding)
 }

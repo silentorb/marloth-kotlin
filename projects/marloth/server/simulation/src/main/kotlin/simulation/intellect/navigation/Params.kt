@@ -9,10 +9,10 @@ import simulation.physics.defaultCharacterHeight
 import simulation.physics.defaultCharacterRadius
 
 const val cellSize = 0.3f
-const val cellHeight = 0.2f
+const val cellHeight = cellSize
 const val agentHeight = defaultCharacterHeight
 const val agentRadius = defaultCharacterRadius + 0.1f
-const val agentMaxClimb = 0.9f
+const val agentMaxClimb = 0.8f * 2f
 
 val vertsPerPoly = 6
 
@@ -65,6 +65,6 @@ fun newNavMeshDataCreateParams(geometry: InputGeomProvider, builderResult: Recas
   params.walkableClimb = agentMaxClimb
   params.bmin = mesh.bmin
   params.bmax = mesh.bmax
-  params.buildBvTree = true
+  params.buildBvTree = false
   return params
 }

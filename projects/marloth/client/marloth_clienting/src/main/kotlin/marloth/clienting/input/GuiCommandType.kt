@@ -21,10 +21,13 @@ private fun standardClientStrokes() = setOf(
 )
 
 val clientCommandStrokes =
-    standardClientStrokes()
-        .plus(setOf(
-            CommandType.moveUp,
-            CommandType.moveDown,
-            CommandType.moveLeft,
-            CommandType.moveRight
-        ))
+    mapOf(
+        InputContext.game to standardClientStrokes(),
+        InputContext.menu to standardClientStrokes()
+            .plus(setOf(
+                CommandType.moveUp,
+                CommandType.moveDown,
+                CommandType.moveLeft,
+                CommandType.moveRight
+            ))
+    )
