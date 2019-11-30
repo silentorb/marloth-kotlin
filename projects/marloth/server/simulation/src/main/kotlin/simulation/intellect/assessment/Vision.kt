@@ -1,0 +1,59 @@
+package simulation.intellect.assessment
+
+import mythic.ent.Id
+import mythic.spatial.quadOut
+import simulation.entities.Character
+import simulation.entities.Light
+import simulation.main.Deck
+import simulation.physics.Body
+import simulation.physics.WorldQuerySource
+
+const val viewingRange = 30f
+const val minimumLightRating = 0.0f
+
+fun isInAngleOfView(viewer: Character, viewerBody: Body, targetBody: Body): Boolean =
+    viewer.facingVector.dot((targetBody.position - viewerBody.position).normalize()) > 0.5f
+
+fun lightDistanceMod(deck: Deck, body: Body, id: Id, light: Light): Float {
+  val lightBody = deck.bodies[id]!!
+  val distance = body.position.distance(lightBody.position)
+  val distanceMod = 1f - Math.min(1f, distance / light.range)
+  return quadOut(distanceMod)
+}
+
+private fun lightsMod(deck: Deck, body: Body): Float =
+    Math.min(1f, deck.lights.map { (id, light) -> lightDistanceMod(deck, body, id, light) }.sum())
+
+private const val maxVelocityMod = 10f
+private const val velocityModStrength = 0.4f
+
+fun unitRange(max: Float, value: Float): Float =
+    Math.min(max, value) / max
+
+private fun motionMod(deck: Deck, body: Body): Float =
+    unitRange(maxVelocityMod, body.velocity.length()) * velocityModStrength
+
+fun lightRating(deck: Deck, id: Id): Float {
+  val body = deck.bodies[id]!!
+  return lightsMod(deck, body) + motionMod(deck, body)
+}
+
+// Even in darkness AI will spot others if close enough
+fun nearMod(distance: Float): Float =
+    (1 - unitRange(3f, distance)) * 1.2f
+
+fun canSee(deck: Deck, worldQuerySource: WorldQuerySource, viewer: Id): (Id) -> Boolean = { target ->
+  val viewerBody = deck.bodies[viewer]!!
+  val targetBody = deck.bodies[target]!!
+  val distance = viewerBody.position.distance(targetBody.position)
+  distance <= viewingRange
+      && isInAngleOfView(deck.characters[viewer]!!, viewerBody, targetBody)
+      && worldQuerySource.rayCollisionDistance(viewerBody.position, targetBody.position) != null
+      && lightRating(deck, target) + nearMod(distance) >= minimumLightRating
+}
+
+fun getVisibleCharacters(deck: Deck, worldQuerySource: WorldQuerySource, character: Id): List<Id> {
+  return deck.characters.keys
+      .minus(character)
+      .filter(canSee(deck, worldQuerySource, character))
+}

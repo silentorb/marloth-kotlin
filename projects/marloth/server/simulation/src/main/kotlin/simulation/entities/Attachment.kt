@@ -66,3 +66,13 @@ fun updateAttachment(events: OrganizedEvents): (Id, Attachment) -> Attachment = 
   else
     attachment
 }
+
+fun cleanupAttachmentSource(deck: Deck): (Attachment) -> Attachment = { attachment ->
+  val source = if (attachment.source > 0 && deck.bodies.containsKey(attachment.source))
+    attachment.source
+  else
+    0L
+  attachment.copy(
+      source = source
+  )
+}

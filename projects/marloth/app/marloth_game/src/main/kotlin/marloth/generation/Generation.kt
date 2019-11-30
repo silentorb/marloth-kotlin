@@ -5,6 +5,7 @@ import generation.architecture.misc.*
 import generation.general.explodeBlockMap
 import generation.general.newRandomizedBiomeGrid
 import generation.general.bakeSides
+import marloth.generation.population.populateWorld
 import silentorb.mythic.debugging.getDebugSetting
 import mythic.ent.newIdSource
 import org.recast4j.detour.NavMeshQuery

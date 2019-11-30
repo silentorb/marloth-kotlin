@@ -2,8 +2,8 @@ package marloth.integration
 
 import marloth.clienting.input.joiningGamepads
 import marloth.clienting.input.newGamepadDeviceEntry
-import marloth.generation.getPlayerCell
-import marloth.generation.newPlayer
+import marloth.generation.population.getPlayerCell
+import marloth.generation.population.newPlayer
 import simulation.main.addHandsToWorld
 
 val updateAppStateForNewPlayers: (AppState) -> AppState = { appState ->

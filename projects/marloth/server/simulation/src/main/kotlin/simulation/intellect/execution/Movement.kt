@@ -2,7 +2,7 @@ package simulation.intellect.execution
 
 import mythic.ent.Id
 import simulation.intellect.Path
-import simulation.intellect.acessment.Knowledge
+import simulation.intellect.assessment.Knowledge
 import mythic.spatial.Vector3
 import org.recast4j.detour.DefaultQueryFilter
 import simulation.main.World
@@ -21,8 +21,8 @@ fun doorwayPosition(graph: Graph, firstNode: Id, secondNode: Id): Vector3 {
   return a.position + vector * a.radius
 }
 
-fun getPathTargetPosition(world: World, knowledge: Knowledge, pursuit: Pursuit): Vector3? {
-  val body = world.deck.bodies[knowledge.spiritId]!!
+fun getPathTargetPosition(world: World, character: Id, pursuit: Pursuit): Vector3? {
+  val body = world.deck.bodies[character]!!
   val query = world.navMeshQuery
   if (query == null)
     throw Error("Missing navMeshQuery")
@@ -66,9 +66,9 @@ fun getPathTargetPosition(world: World, knowledge: Knowledge, pursuit: Pursuit):
     firstPoint
 }
 
-fun getPathTargetPositionOld(world: World, knowledge: Knowledge, path: Path): Vector3 {
+fun getPathTargetPositionOld(world: World, character: Id, path: Path): Vector3 {
   val graph = world.realm.graph
-  val body = world.deck.bodies[knowledge.spiritId]!!
+  val body = world.deck.bodies[character]!!
   val doorway = doorwayPosition(graph, body.nearestNode, path.first())
   val horizontalDistance = body.position.copy(z = 0f).distance(doorway.copy(z = 0f))
 //  println("dist " + horizontalDistance + " " + body.nearestNode)
@@ -79,19 +79,19 @@ fun getPathTargetPositionOld(world: World, knowledge: Knowledge, path: Path): Ve
 }
 
 
-fun moveStraightTowardPosition(world: World, knowledge: Knowledge, target: Vector3): Commands {
-  val body = world.deck.bodies[knowledge.spiritId]!!
+fun moveStraightTowardPosition(world: World, character: Id, target: Vector3): Commands {
+  val body = world.deck.bodies[character]!!
   val position = body.position
   val offset = (target - position).normalize()
-  return spiritNeedsFacing(world, knowledge, offset, 0.1f) {
-    listOf(Command(CommandType.moveUp, knowledge.spiritId))
+  return spiritNeedsFacing(world, character, offset, 0.1f) {
+    listOf(Command(CommandType.moveUp, character))
   }
 }
 
-fun moveSpirit(world: World, knowledge: Knowledge, pursuit: Pursuit): Commands {
-  val target = getPathTargetPosition(world, knowledge, pursuit)
+fun moveSpirit(world: World,character: Id, knowledge: Knowledge, pursuit: Pursuit): Commands {
+  val target = getPathTargetPosition(world, character, pursuit)
   return if (target != null)
-    moveStraightTowardPosition(world, knowledge, target)
+    moveStraightTowardPosition(world, character, target)
   else
     listOf()
 }

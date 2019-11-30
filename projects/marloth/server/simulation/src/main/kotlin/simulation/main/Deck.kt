@@ -10,6 +10,8 @@ import simulation.physics.Body
 import simulation.physics.CollisionObject
 import simulation.physics.DynamicBody
 
+// Deck is basically a database full of tables
+
 data class Deck(
     val accessories: Table<Accessory> = mapOf(),
     val ambientSounds: Table<AmbientAudioEmitter> = mapOf(),

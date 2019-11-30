@@ -1,63 +1,29 @@
 package simulation.physics
 
+import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld
+import mythic.ent.Id
 import mythic.spatial.Vector3
-import simulation.misc.Node
-import simulation.misc.Realm
 
-/*
-fun raycastNodes(firstNode: Node, start: Vector3, end: Vector3): List<Node> {
-  val result = mutableListOf(firstNode)
-  var node = firstNode
-  var lastWall: ImmutableFace? = null
-  do {
-    val wall = node.walls
-        .filter { it != lastWall && getFaceInfo(it).faceType != FaceType.space }
-        .firstOrNull {
-          val edge = getFloor(it)
-          lineSegmentIntersectsLineSegment(start, end, edge.first, edge.second).first
-        }
-    if (wall == null)
-      break
-
-    val nextNode = getOtherNode(node, wall)
-    if (nextNode == null)
-      break
-
-    lastWall = wall
-    node = nextNode
-    result.add(node)
-  } while (true)
-  return result
+interface WorldQuerySource {
+  fun rayCollisionDistance(start: Vector3, end: Vector3): Float?
 }
-*/
 
-fun rayCanHitPoint(realm: Realm, firstNode: Node, start: Vector3, end: Vector3): Boolean {
-  // TODO: Needs updating
-  return false
-//  var node = firstNode
-//  var lastWall: Id? = null
-//  do {
-//    val walls = node.walls
-//        .filter { it != lastWall }
-//
-//    val wall = walls
-//        .firstOrNull {
-//          val edge = getFloor(realm.mesh.faces[it]!!)
-//          lineSegmentIntersectsLineSegment(start, end, edge.first, edge.second).first
-//        }
-//    if (wall == null)
-//      return true
-//
-//    val info = realm.faces[wall]!!
-//
-//    if (info.faceType != FaceType.space)
-//      return false
-//
-//    val nextNode = realm.nodeTable[getOtherNode(node.id, info)]
-//    if (nextNode == null)
-//      return true
-//
-//    lastWall = wall
-//    node = nextNode
-//  } while (true)
+fun rayCollisionDistance(dynamicsWorld: btDiscreteDynamicsWorld, start: Vector3, end: Vector3): Float? {
+  val callback = firstRayHit(dynamicsWorld, start, end)
+  return if (callback.hasHit()) {
+    val collisionObject = callback.collisionObject
+    val collisionObjectId = collisionObject.userData as Id
+    val hitPoint = com.badlogic.gdx.math.Vector3()
+    callback.getHitPointWorld(hitPoint)
+    val distance = start.z - hitPoint.z
+//    println(" $collisionObjectId $distance")
+    return distance
+  } else
+    null
+}
+
+class BulletQuerySource(val bulletState: BulletState) : WorldQuerySource {
+  override fun rayCollisionDistance(start: Vector3, end: Vector3): Float? =
+    rayCollisionDistance(bulletState.dynamicsWorld, start, end)
+
 }

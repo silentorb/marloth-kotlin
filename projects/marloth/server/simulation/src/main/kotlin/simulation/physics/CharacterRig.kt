@@ -15,21 +15,6 @@ const val defaultCharacterHeight = 1.2f
 
 const val maxFootStepHeight = 0.6f
 
-private fun rayCollisionDistance(dynamicsWorld: btDiscreteDynamicsWorld, start: Vector3, end: Vector3): Float? {
-//  val callback = firstRayHitNotMe(dynamicsWorld, start, end, me)
-  val callback = firstRayHit(dynamicsWorld, start, end)
-  return if (callback.hasHit()) {
-    val collisionObject = callback.collisionObject
-    val collisionObjectId = collisionObject.userData as Id
-    val hitPoint = com.badlogic.gdx.math.Vector3()
-    callback.getHitPointWorld(hitPoint)
-    val distance = start.z - hitPoint.z
-//    println(" $collisionObjectId $distance")
-    return distance
-  } else
-    null
-}
-
 //private fun rayCollisionDistance2(dynamicsWorld: btDiscreteDynamicsWorld, character: Id, start: Vector3, end: Vector3): Float? {
 //  val callback = allRayHits(dynamicsWorld, start, end)
 //  if (callback.hasHit()) {
@@ -53,8 +38,8 @@ fun footOffsets(radius: Float): List<Vector3> =
 
 private const val noHitValue = 1f
 
-private fun castStepRay(dynamicsWorld: btDiscreteDynamicsWorld, bodyPosition: Vector3, footHeight: Float,
-                        shapeHeight: Float): (Vector3) -> Float? {
+private fun castFootStepRay(dynamicsWorld: btDiscreteDynamicsWorld, bodyPosition: Vector3, footHeight: Float,
+                            shapeHeight: Float): (Vector3) -> Float? {
   val basePosition = bodyPosition + Vector3(0f, 0f, -shapeHeight / 2f + footHeight)
   val rayLength = footHeight * 2f
   val endOffset = Vector3(0f, 0f, -rayLength)
@@ -72,7 +57,7 @@ fun updateCharacterStepHeight(bulletState: BulletState, deck: Deck, character: I
   val radius = shape.radius
   val footHeight = maxFootStepHeight
   val offsets = footOffsets(radius).plus(Vector3.zero)
-  val cast = castStepRay(bulletState.dynamicsWorld, body.position, footHeight, shape.height)
+  val cast = castFootStepRay(bulletState.dynamicsWorld, body.position, footHeight, shape.height)
   val centerDistance = cast(Vector3.zero)
   if (centerDistance == null) {
     return noHitValue

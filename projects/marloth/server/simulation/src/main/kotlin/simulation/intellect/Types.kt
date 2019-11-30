@@ -1,6 +1,6 @@
 package simulation.intellect
 
-import simulation.intellect.acessment.Knowledge
+import simulation.intellect.assessment.Knowledge
 import mythic.ent.Id
 import mythic.spatial.Vector3
 

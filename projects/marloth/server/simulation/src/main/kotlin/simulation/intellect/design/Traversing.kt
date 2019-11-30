@@ -1,12 +1,12 @@
 package simulation.intellect.design
 
-import simulation.intellect.Path
-import simulation.intellect.Pursuit
-import simulation.intellect.acessment.Knowledge
 import mythic.ent.Id
 import mythic.spatial.Vector3
 import mythic.spatial.toVector3
 import randomly.Dice
+import simulation.intellect.Path
+import simulation.intellect.Pursuit
+import simulation.intellect.assessment.Knowledge
 import simulation.main.World
 import simulation.misc.cellLength
 import simulation.misc.getPointCell
@@ -36,8 +36,8 @@ import simulation.misc.getPointCell
 //  return path
 //}
 
-fun startRoaming(world: World, knowledge: Knowledge): Vector3? {
-  val body = world.deck.bodies[knowledge.spiritId]!!
+fun startRoaming(world: World, character: Id, knowledge: Knowledge): Vector3? {
+  val body = world.deck.bodies[character]!!
   val currentCell = getPointCell(body.position)
   val options = knowledge.grid.cells.keys.minus(currentCell)
   val destination = Dice.global.takeOne(options)
@@ -65,29 +65,29 @@ fun getRemainingPath(node: Id, path: Path): Path {
 //  }
 //}
 
-fun updateRoamingTargetPosition(world: World, knowledge: Knowledge, pursuit: Pursuit): Vector3? {
+fun updateRoamingTargetPosition(world: World, character: Id, knowledge: Knowledge, pursuit: Pursuit): Vector3? {
   return if (pursuit.targetPosition == null) // || !pathIsAccessible(world, knowledge, pursuit.path))
-    startRoaming(world, knowledge)
+    startRoaming(world, character, knowledge)
   else {
-    val body = world.deck.bodies[knowledge.spiritId]!!
+    val body = world.deck.bodies[character]!!
     if (body.position.distance(pursuit.targetPosition) < 1f)
-      startRoaming(world, knowledge)
+      startRoaming(world, character, knowledge)
     else
       pursuit.targetPosition
   }
 }
 
-fun updateAttackMovementPath(world: World, knowledge: Knowledge, targetEnemy: Id, path: Path?): Path? {
+fun updateAttackMovementPath(world: World, character: Id, knowledge: Knowledge, targetEnemy: Id, path: Path?): Path? {
   return if (path == null) { // || !pathIsAccessible(world, knowledge, path)) {
     val bodies = world.deck.bodies
-    val body = bodies[knowledge.spiritId]!!
+    val body = bodies[character]!!
     val target = knowledge.characters[targetEnemy]!!
     if (body.nearestNode == target.nearestNode)
       null
     else
       findPath(world.realm, body.nearestNode, target.nearestNode)
   } else {
-    val body = world.deck.bodies[knowledge.spiritId]!!
+    val body = world.deck.bodies[character]!!
     val remainingPath = getRemainingPath(body.nearestNode, path)
     if (remainingPath.any())
       remainingPath

@@ -19,7 +19,7 @@ fun getFinished(events: OrganizedEvents, deck: Deck): Set<Id> {
 fun removeWhole(events: OrganizedEvents): (Deck) -> Deck = { deck ->
   val finished = getFinished(events, deck)
   if (finished.size > 0) {
-    val k =0
+    val k = 0
   }
   removeEntities(deck, finished)
 }

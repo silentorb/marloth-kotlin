@@ -10,6 +10,8 @@ import simulation.physics.Body
 import simulation.physics.CollisionObject
 import simulation.physics.DynamicBody
 
+// Hand is a slice of a deck, mostly used for instantiating new entities.
+
 data class Hand(
     val accessory: Accessory? = null,
     val ambientAudioEmitter: AmbientAudioEmitter? = null,

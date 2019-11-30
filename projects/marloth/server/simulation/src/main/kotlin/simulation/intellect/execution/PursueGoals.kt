@@ -1,16 +1,18 @@
 package simulation.intellect.execution
 
+import mythic.ent.Id
+import mythic.ent.Table
 import simulation.intellect.Pursuit
 import simulation.intellect.Spirit
-import simulation.intellect.acessment.Knowledge
+import simulation.intellect.assessment.Knowledge
 import simulation.input.Commands
 import simulation.main.World
 
-fun pursueGoal(world: World, knowledge: Knowledge, pursuit: Pursuit): Commands {
+fun pursueGoal(world: World, character: Id, knowledge: Knowledge, pursuit: Pursuit): Commands {
   return when {
-    pursuit.targetPosition != null -> moveSpirit(world, knowledge, pursuit)
+    pursuit.targetPosition != null -> moveSpirit(world, character, knowledge, pursuit)
 //    pursuit.targetPosition != null -> moveStraightTowardPosition(world, knowledge, pursuit.targetPosition)
-    pursuit.targetEnemy != null -> spiritAttack(world, knowledge, pursuit)
+    pursuit.targetEnemy != null -> spiritAttack(world, character, knowledge, pursuit)
     else -> {
 //      println("AI Error")
       listOf()
@@ -18,10 +20,11 @@ fun pursueGoal(world: World, knowledge: Knowledge, pursuit: Pursuit): Commands {
   }
 }
 
-fun pursueGoals(world: World, spirits: Collection<Spirit>): Commands {
+fun pursueGoals(world: World, spirits: Table<Spirit>): Commands {
   return spirits.flatMap {
-    if (it.knowledge != null)
-      pursueGoal(world, it.knowledge, it.pursuit)
+    val knowledge = it.value.knowledge
+    if (knowledge != null)
+      pursueGoal(world, it.key, knowledge, it.value.pursuit)
     else
       listOf()
   }

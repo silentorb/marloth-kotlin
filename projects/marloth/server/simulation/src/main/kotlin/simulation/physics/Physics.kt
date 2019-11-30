@@ -14,6 +14,7 @@ import simulation.physics.old.LinearImpulse
 import com.badlogic.gdx.math.Vector3 as GdxVector3
 
 // TODO: Migrate to LWJGL Bullet Bindings if it ever seems a little more used and documented.
+// libGDX is incredibly inefficient.  Bad Logic Games is aptly named.
 
 data class BulletState(
     var dynamicsWorld: btDiscreteDynamicsWorld,

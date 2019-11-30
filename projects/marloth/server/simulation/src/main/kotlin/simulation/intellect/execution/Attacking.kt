@@ -1,17 +1,17 @@
 package simulation.intellect.execution
 
-import simulation.intellect.Pursuit
-import simulation.intellect.acessment.Knowledge
 import mythic.ent.Id
 import mythic.spatial.Vector3
-import simulation.physics.Body
-import simulation.physics.SimpleBody
-import simulation.main.Deck
-import simulation.main.World
 import simulation.entities.Ability
 import simulation.input.Command
 import simulation.input.CommandType
 import simulation.input.Commands
+import simulation.intellect.Pursuit
+import simulation.intellect.assessment.Knowledge
+import simulation.main.Deck
+import simulation.main.World
+import simulation.physics.Body
+import simulation.physics.SimpleBody
 
 fun shouldMoveDirectlyToward(deck: Deck, target: SimpleBody, attacker: Id): Boolean {
   val attackerBody = deck.bodies[attacker]!!
@@ -19,12 +19,12 @@ fun shouldMoveDirectlyToward(deck: Deck, target: SimpleBody, attacker: Id): Bool
       && attackerBody.nearestNode == target.nearestNode
 }
 
-fun spiritAttack(world: World, knowledge: Knowledge, pursuit: Pursuit): Commands {
-  val attacker = knowledge.spiritId
+fun spiritAttack(world: World, character: Id, knowledge: Knowledge, pursuit: Pursuit): Commands {
+  val attacker = character
   val target = knowledge.characters[pursuit.targetEnemy]!!
   val body = world.deck.bodies[attacker]!!
   val offset = target.position - body.position
-  return spiritNeedsFacing(world, knowledge, offset, 0.05f) {
+  return spiritNeedsFacing(world, character, offset, 0.05f) {
     listOf(Command(CommandType.attack, attacker))
   }
 }
