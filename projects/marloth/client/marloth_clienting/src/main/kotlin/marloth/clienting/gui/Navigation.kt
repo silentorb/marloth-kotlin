@@ -44,9 +44,9 @@ val updateClientCurrentMenus: (ClientState) -> ClientState = { state ->
       }
       .associate { it }
 
-  if (newViews.none()) {
+  if (newViews.any()) {
     state.copy(
-        playerViews = newViews
+        playerViews = state.playerViews.plus(newViews)
     )
   } else
     state

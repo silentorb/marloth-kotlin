@@ -4,6 +4,7 @@ import DeviceMap
 import PlayerDevice
 import haft.*
 import marloth.clienting.ClientState
+import marloth.clienting.PlayerViews
 import marloth.clienting.gui.ViewId
 import mythic.bloom.BloomId
 import mythic.ent.Id
@@ -53,8 +54,8 @@ fun newInputState(config: GameInputConfig) =
         )
     )
 
-fun bindingContext(clientState: ClientState, player: Id): InputContext =
-    if ((clientState.playerViews[player] ?: ViewId.none) != ViewId.none)
+fun bindingContext(playerViews: PlayerViews, player: Id): InputContext =
+    if ((playerViews[player] ?: ViewId.none) != ViewId.none)
       InputContext.menu
     else
       InputContext.game
@@ -86,16 +87,18 @@ fun getInputProfile(inputState: InputState, player: Id): InputProfile? {
   return inputState.inputProfiles[playerProfile]
 }
 
-fun getBinding(inputState: InputState, inputContext: InputContext): BindingSource = { event ->
+fun getBinding(inputState: InputState, playerViews: PlayerViews): BindingSource = { event ->
   val playerDevice = inputState.deviceMap[event.device]
   if (playerDevice != null) {
-    val profile = getInputProfile(inputState, playerDevice.player)
+    val player = playerDevice.player
+    val profile = getInputProfile(inputState, player)
     if (profile != null) {
+      val inputContext = bindingContext(playerViews, player)
       val binding = profile.bindings
           .getValue(inputContext)
           .firstOrNull { it.device == playerDevice.device && it.trigger == event.index }
       if (binding != null)
-        Pair(binding, playerDevice.player)
+        Pair(binding, player)
       else
         null
     } else
@@ -104,9 +107,8 @@ fun getBinding(inputState: InputState, inputContext: InputContext): BindingSourc
     null
 }
 
-fun gatherInputCommands(inputState: InputState, inputContext: InputContext): HaftCommands {
-  val getBinding = getBinding(inputState, inputContext)
-  val strokes = clientCommandStrokes[inputContext]!!
+fun gatherInputCommands(inputState: InputState, playerViews: PlayerViews): HaftCommands {
+  val getBinding = getBinding(inputState, playerViews)
   val deviceStates = inputState.deviceStates
-  return mapEventsToCommands(deviceStates, strokes, getBinding)
+  return mapEventsToCommands(deviceStates, clientCommandStrokes, getBinding)
 }

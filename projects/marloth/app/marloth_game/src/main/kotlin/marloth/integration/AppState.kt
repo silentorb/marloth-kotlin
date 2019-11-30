@@ -1,8 +1,6 @@
 package marloth.integration
 
 import marloth.clienting.ClientState
-import marloth.clienting.gui.gameIsActiveByClient
-import mythic.ent.Id
 import mythic.quartz.TimestepState
 import mythic.quartz.updateTimestep
 import simulation.main.World

@@ -331,12 +331,12 @@ fun rasterizeCoordinates(position: Vector3, cameraEffectsData: CameraEffectsData
   return Vector2(((i.x + 1) / 2) * dimensions.x, (1 - ((i.y + 1) / 2)) * dimensions.y)
 }
 
-fun createCanvas(renderer: Renderer, windowInfo: WindowInfo): Canvas {
-  val unitScaling = getUnitScaling(windowInfo.dimensions)
+fun createCanvas(renderer: Renderer, dimensions: Vector2i): Canvas {
+  val unitScaling = getUnitScaling(dimensions)
   return Canvas(
       renderer.drawing,
       unitScaling,
       renderer.fonts,
-      windowInfo.dimensions
+      dimensions
   )
 }

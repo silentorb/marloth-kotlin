@@ -2,6 +2,7 @@ package marloth.integration
 
 import haft.mapEventsToCommands
 import marloth.clienting.ClientState
+import marloth.clienting.PlayerViews
 import marloth.clienting.gui.*
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.input.InputState
@@ -45,9 +46,9 @@ fun updateSimulationDatabase(db: Database, next: World, previous: World) {
   }
 }
 
-fun updateCurrentViews(world: World, clientState: ClientState): Map<Id, ViewId?> {
+fun updateCurrentViews(world: World, playerViews: PlayerViews): Map<Id, ViewId?> {
   val deck = world.deck
-  return deck.players.keys.mapNotNull { player ->
+  val newEntries = deck.players.keys.mapNotNull { player ->
     val interactingWith = getPlayerInteractingWith(deck, player)
     val view = when {
 
@@ -62,6 +63,8 @@ fun updateCurrentViews(world: World, clientState: ClientState): Map<Id, ViewId?>
     else null
   }
       .associate { it }
+
+  return playerViews.plus(newEntries)
 }
 
 fun updateClientPlayers(deckPlayers: Table<Player>): (List<Id>) -> List<Id> = { clientPlayers ->
@@ -72,7 +75,7 @@ fun updateClientFromWorld(worlds: List<World>): (ClientState) -> ClientState = {
   val world = worlds.last()
   clientState.copy(
       players = updateClientPlayers(world.deck.players)(clientState.players),
-      playerViews = updateCurrentViews(world, clientState)
+      playerViews = updateCurrentViews(world, clientState.playerViews)
   )
 }
 
@@ -127,7 +130,7 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
 fun updateWorlds(app: GameApp, previousClient: ClientState, clientState: ClientState): (List<World>) -> List<World> = { worlds ->
   when {
     clientState.commands.any { it.type == GuiCommandType.newGame } -> restartWorld(app)
-    gameIsActiveByClient(clientState) -> {
+    true -> {
       val commands = mapGameCommands(clientState.players, clientState.commands)
       val events = gatherGuiEvents(clientState.bloomState)
       updateSimulation(app, previousClient, clientState, worlds, commands, events)
@@ -165,7 +168,7 @@ fun layoutPlayerGui(app: GameApp, appState: AppState): (Id, Vector2i) -> Box = {
   else
     null
 
-  layoutPlayerGui(app.client, app.definitions, appState.client, world, hudData, dimensions, player)
+  layoutPlayerGui(app.client.textResources, app.definitions, appState.client, world, hudData, dimensions, player)
 }
 
 fun layoutGui(app: GameApp, appState: AppState, dimensions: List<Vector2i>): List<Box> {
@@ -182,7 +185,8 @@ fun updateAppState(app: GameApp, hooks: GameHooks? = null): (AppState) -> AppSta
   val windowInfo = app.client.getWindowInfo()
   val viewports = getPlayerViewports(appState.client.players.size, windowInfo.dimensions)
   val viewportDimensions = viewports.map { Vector2i(it.z, it.w) }
-  val boxes = layoutGui(app, appState, viewportDimensions)
+  val nestedBoxes = layoutGui(app, appState, viewportDimensions)
+  val boxes = nestedBoxes.map { toAbsoluteBounds(Vector2i.zero, it) }
   val (timestep, steps) = updateTimestep(appState.timestep, simulationDelta.toDouble())
 
   if (steps <= 1) {
@@ -195,10 +199,10 @@ fun updateAppState(app: GameApp, hooks: GameHooks? = null): (AppState) -> AppSta
     else
       layoutGui(app, state, viewportDimensions)
 
-    val box = toAbsoluteBounds(Vector2i.zero, Box(
+    val box = Box(
         boxes = boxes,
         bounds = mergeBounds(newBoxes.map { it.bounds })
-    ))
+    )
     val result = updateFixedInterval(app, box)(state)
     if (hooks != null) {
       hooks.onUpdate(result)

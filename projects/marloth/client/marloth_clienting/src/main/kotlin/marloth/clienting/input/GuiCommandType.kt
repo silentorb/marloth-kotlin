@@ -20,13 +20,11 @@ private fun standardClientStrokes() = setOf(
     GuiCommandType.quit
 )
 
-val clientCommandStrokes = mapOf(
-    InputContext.game to standardClientStrokes(),
-    InputContext.menu to standardClientStrokes()
+val clientCommandStrokes =
+    standardClientStrokes()
         .plus(setOf(
             CommandType.moveUp,
             CommandType.moveDown,
             CommandType.moveLeft,
             CommandType.moveRight
         ))
-)

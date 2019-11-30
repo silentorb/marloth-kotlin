@@ -178,7 +178,7 @@ class LabClient(val config: LabConfig, val client: Client) {
   }
 
   fun renderLab(windowInfo: WindowInfo, box: Box) {
-    val canvas = createCanvas(client.renderer, windowInfo)
+    val canvas = createCanvas(client.renderer, windowInfo.dimensions)
     renderLayout(box, canvas, true)
   }
 

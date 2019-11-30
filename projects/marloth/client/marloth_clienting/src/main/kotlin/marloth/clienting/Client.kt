@@ -1,6 +1,5 @@
 package marloth.clienting
 
-import haft.BindingSource
 import haft.HaftCommand
 import haft.simpleCommand
 import marloth.clienting.audio.AudioConfig
@@ -12,7 +11,6 @@ import marloth.clienting.textResources.englishTextResources
 import mythic.aura.AudioState
 import mythic.aura.SoundLibrary
 import mythic.aura.newAudioState
-import mythic.bloom.BloomId
 import mythic.bloom.BloomState
 import mythic.bloom.next.Box
 import mythic.bloom.next.LogicModule
@@ -33,10 +31,12 @@ import updateInputDeviceStates
 
 const val maxPlayerCount = 4
 
+typealias PlayerViews = Map<Id, ViewId?>
+
 data class ClientState(
     val input: InputState,
     val bloomState: BloomState,
-    val playerViews: Map<Id, ViewId?>,
+    val playerViews: PlayerViews,
     val audio: AudioState,
     val commands: List<HaftCommand>,
 
@@ -50,7 +50,7 @@ fun isMenuActive(state: ClientState): (Id) -> Boolean = { player ->
   state.playerViews[player] ?: ViewId.none != ViewId.none
 }
 
-fun isAnyGuiActive(state: ClientState): Boolean = pauseViews.any { state.playerViews.values.contains(it) }
+//fun isAnyGuiActive(state: ClientState): Boolean = pauseViews.any { state.playerViews.values.contains(it) }
 
 fun newClientState(platform: Platform, inputConfig: GameInputConfig, audioConfig: AudioConfig) =
     ClientState(
@@ -128,10 +128,7 @@ val clientBloomModules: List<LogicModule> = listOf()
 
 fun updateClientInputCommands(): (ClientState) -> ClientState = { clientState ->
   clientState.copy(
-      commands = clientState.players
-          .flatMap { player ->
-            gatherInputCommands(clientState.input, bindingContext(clientState, player))
-          }
+      commands = gatherInputCommands(clientState.input, clientState.playerViews)
   )
 }
 

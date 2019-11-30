@@ -47,13 +47,10 @@ fun finishRender(renderer: GameSceneRenderer, filters: List<ScreenFilter>) {
 //  renderer.finishRender(windowInfo)
 //}
 
-fun <T> renderContainer(client: Client, windowInfo: WindowInfo, action: (Canvas) -> T): T {
+fun <T> renderContainer(client: Client, windowInfo: WindowInfo, action: () -> T): T {
   val renderer = client.renderer
   renderer.prepareRender(windowInfo)
-  val canvas = createCanvas(client.renderer, windowInfo)
-
-  val result = action(canvas)
-
+  val result = action()
   renderer.finishRender(windowInfo)
   return result
 }

@@ -115,7 +115,7 @@ fun mapEventsToCommands(deviceStates: List<InputDeviceState>, strokes: Set<Any>,
       }
 }
 
-fun  getBindingSimple(bindings: List<Binding>): BindingSource = { event ->
+fun getBindingSimple(bindings: List<Binding>): BindingSource = { event ->
   val binding = bindings.firstOrNull {
     val values = DeviceIndex.values()
     it.device == values[Math.min(2, event.device)] && it.trigger == event.index
@@ -142,11 +142,3 @@ fun  isActive(commands: List<HaftCommand>): (Any) -> Boolean =
 
 fun  getCommand(commands: List<HaftCommand>, commandType: Any) =
     commands.first { it.type == commandType }
-
-//data class InputResult(
-//    val commands: HaftCommands,
-//    val inputState: ProfileStates) {
-//
-//  operator fun plus(second: InputResult) =
-//      InputResult(commands.plus(second.commands), inputState.plus(second.inputState))
-//}
