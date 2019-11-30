@@ -1,12 +1,9 @@
 package marloth.integration
 
-import haft.mapEventsToCommands
 import marloth.clienting.ClientState
 import marloth.clienting.PlayerViews
 import marloth.clienting.gui.*
 import marloth.clienting.input.GuiCommandType
-import marloth.clienting.input.InputState
-import marloth.clienting.input.getBinding
 import marloth.clienting.updateClient
 import marloth.front.GameApp
 import marloth.front.RenderHook
@@ -16,7 +13,7 @@ import mythic.bloom.next.Box
 import mythic.bloom.toAbsoluteBounds
 import mythic.ent.Id
 import mythic.ent.Table
-import mythic.ent.incrementGlobalDebugLoopNumber
+import silentorb.mythic.debugging.incrementGlobalDebugLoopNumber
 import mythic.ent.pipe
 import mythic.quartz.updateTimestep
 import org.joml.Vector2i
@@ -28,7 +25,6 @@ import simulation.happenings.Events
 import simulation.happenings.GameEvent
 import simulation.input.Command
 import simulation.input.CommandType
-import simulation.input.gameStrokes
 import simulation.main.World
 import simulation.main.simulationDelta
 import simulation.misc.Victory

@@ -5,7 +5,6 @@ import marloth.clienting.newClientState
 import marloth.definition.staticDefinitions
 import marloth.generation.generateWorld
 import marloth.integration.*
-import mythic.ent.getDebugSetting
 import mythic.platforming.Platform
 import mythic.quartz.newTimestepState
 import persistence.Database

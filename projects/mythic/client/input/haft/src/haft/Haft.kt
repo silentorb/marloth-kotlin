@@ -1,6 +1,6 @@
 package haft
 
-import mythic.ent.debugLog
+import silentorb.mythic.debugging.debugLog
 import mythic.platforming.InputEvent
 import mythic.spatial.Vector2
 

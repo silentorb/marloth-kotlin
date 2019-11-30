@@ -1,7 +1,6 @@
 package marloth.generation
 
 import generation.abstracted.distributeToSlots
-import generation.abstracted.neighbors
 import generation.abstracted.normalizeRanges
 import generation.architecture.old.alignWithNodeFloor
 import generation.architecture.building.floorOffset
@@ -19,7 +18,7 @@ import marloth.definition.templates.newBuffCloud
 import marloth.definition.templates.newMerchant
 import marloth.definition.templates.newTreasureChest
 import mythic.ent.Id
-import mythic.ent.getDebugSetting
+import silentorb.mythic.debugging.getDebugSetting
 import mythic.spatial.*
 import org.joml.times
 import randomly.Dice

@@ -5,7 +5,7 @@ import generation.architecture.misc.*
 import generation.general.explodeBlockMap
 import generation.general.newRandomizedBiomeGrid
 import generation.general.bakeSides
-import mythic.ent.getDebugSetting
+import silentorb.mythic.debugging.getDebugSetting
 import mythic.ent.newIdSource
 import org.recast4j.detour.NavMeshQuery
 import randomly.Dice
