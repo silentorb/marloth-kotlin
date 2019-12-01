@@ -7,11 +7,13 @@ import org.joml.times
 import scenery.enums.ResourceId
 import scenery.enums.Sounds
 import simulation.combat.DamageMultipliers
-import simulation.happenings.OrganizedEvents
+import simulation.happenings.Events
+import simulation.happenings.PurchaseEvent
+import simulation.happenings.TakeItemEvent
 import simulation.input.*
 import simulation.main.Deck
 import simulation.main.World
-import simulation.main.simulationDelta
+import simulation.updating.simulationDelta
 import simulation.misc.ResourceContainer
 import simulation.misc.maxNegativeLookVelocityChange
 import simulation.misc.maxPostiveLookVelocityChange
@@ -92,8 +94,10 @@ fun updateEquippedItem(deck: Deck, id: Id, character: Character, commands: Comma
     character.activeItem
 }
 
-fun getPurchaseCost(deck: Deck, events: OrganizedEvents, character: Id): Int {
-  val purchases = events.purchases.filter { it.customer == character }
+fun getPurchaseCost(deck: Deck, events: Events, character: Id): Int {
+  val purchases = events.filterIsInstance<PurchaseEvent>()
+      .filter { it.customer == character }
+
   return purchases.map { purchase ->
     val ware = deck.wares[purchase.ware]!!
     ware.price
@@ -101,15 +105,15 @@ fun getPurchaseCost(deck: Deck, events: OrganizedEvents, character: Id): Int {
       .sum()
 }
 
-fun getMoneyFromTakenItems(deck: Deck, events: OrganizedEvents, character: Id): Int {
-  val takes = events.takeItems.filter { it.actor == character }.map { it.item }
+fun getMoneyFromTakenItems(deck: Deck, events: Events, character: Id): Int {
+  val takes = events.filterIsInstance<TakeItemEvent>().filter { it.actor == character }.map { it.item }
   val moneyTakes = deck.resources.filterKeys { takes.contains(it) }
   return moneyTakes
       .mapNotNull { it.value.values[ResourceId.money] }
       .sum()
 }
 
-fun updateMoney(deck: Deck, events: OrganizedEvents, character: Id, money: Int): Int {
+fun updateMoney(deck: Deck, events: Events, character: Id, money: Int): Int {
   val moneyFromItems = getMoneyFromTakenItems(deck, events, character)
   val cost = getPurchaseCost(deck, events, character)
   return money - cost + moneyFromItems
@@ -125,7 +129,7 @@ fun updateInteractingWith(deck: Deck, character: Id, commands: Commands, interac
       interactingWith
 
 fun updateCharacter(deck: Deck, id: Id, character: Character, commands: Commands, activatedAbilities: List<Ability>,
-                    events: OrganizedEvents, delta: Float): Character {
+                    events: Events, delta: Float): Character {
   val lookForce = characterLookForce(character, commands)
 
   val abilities = updateAbilities(character, activatedAbilities)
@@ -175,7 +179,7 @@ fun updateCharacter(deck: Deck, id: Id, character: Character, commands: Commands
 }
 
 fun updateCharacter(deck: Deck, commands: Commands, activatedAbilities: List<ActivatedAbility>,
-                    events: OrganizedEvents): (Id, Character) -> Character = { id, character ->
+                    events: Events): (Id, Character) -> Character = { id, character ->
   val delta = simulationDelta
   val abilities = activatedAbilities.filter { it.character == id }
       .map { it.ability }

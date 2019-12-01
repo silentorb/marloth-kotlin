@@ -2,7 +2,7 @@ package simulation.entities
 
 import mythic.ent.Id
 import simulation.main.Deck
-import simulation.main.simulationDelta
+import simulation.updating.simulationDelta
 import simulation.input.CommandType
 import simulation.input.Commands
 

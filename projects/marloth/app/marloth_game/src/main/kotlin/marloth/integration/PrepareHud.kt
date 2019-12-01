@@ -8,8 +8,11 @@ import simulation.entities.AttachmentTypeId
 import simulation.entities.getTargetAttachmentsOfCategory
 import kotlin.math.roundToInt
 
-fun gatherHudData(deck: Deck, player: Id, view: ViewId): HudData {
-  val character = deck.characters[player]!!
+fun gatherHudData(deck: Deck, player: Id, view: ViewId): HudData? {
+  val character = deck.characters[player]
+  if (character == null)
+    return null
+
   val destructible = deck.destructibles[player]!!
   val body = deck.bodies[player]!!
 

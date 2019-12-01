@@ -1,7 +1,7 @@
 package simulation.input
 
 import mythic.ent.Id
-import simulation.main.simulationDelta
+import simulation.updating.simulationDelta
 import simulation.entities.Player
 import simulation.entities.ViewMode
 

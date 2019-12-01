@@ -1,7 +1,6 @@
 package simulation.intellect.execution
 
 import mythic.ent.Id
-import simulation.intellect.assessment.Knowledge
 import mythic.spatial.*
 import simulation.entities.Character
 import simulation.input.Command
@@ -9,7 +8,7 @@ import simulation.input.CommandType
 import simulation.input.Commands
 import simulation.main.World
 import simulation.physics.old.getLookAtAngle
-import simulation.main.simulationDelta
+import simulation.updating.simulationDelta
 import simulation.misc.*
 
 fun getAngleCourse(source: Float, destination: Float): Float {

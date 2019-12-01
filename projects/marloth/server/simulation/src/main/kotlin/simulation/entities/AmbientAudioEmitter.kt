@@ -5,7 +5,7 @@ import mythic.ent.Table
 import randomly.Dice
 import scenery.enums.Sounds
 import simulation.main.Deck
-import simulation.main.simulationDelta
+import simulation.updating.simulationDelta
 
 data class AmbientAudioEmitter(
     val delay: Double,

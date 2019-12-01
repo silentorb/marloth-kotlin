@@ -24,7 +24,7 @@ private val cloudColors: Map<ModifierId, Pair<Vector3, Vector3>> = mapOf(
     ModifierId.damagePoisoned to Pair(Vector3(0.4f, 1f, 0.5f), Vector3(0.8f, 0.9f, 0.5f))
 )
 
-private fun newDamagedCloudParticleAnimation(firstColor: Vector3, secondColor: Vector3): ParticleAnimation {
+private fun newDamageCloudParticleAnimation(firstColor: Vector3, secondColor: Vector3): ParticleAnimation {
   val maxOpacity = 0.33f
   return ParticleAnimation(
       color = AnimationChannel(
@@ -68,7 +68,7 @@ fun newBuffCloud(position: Vector3, radius: Float, buff: ModifierId): Hand {
               color = Vector4(colors.first, 0f),
               size = 2f
           ),
-          animation = newDamagedCloudParticleAnimation(colors.first, colors.second),
+          animation = newDamageCloudParticleAnimation(colors.first, colors.second),
           emitter = Emitter(
               particlesPerSecond = 30f,
               volume = shape,

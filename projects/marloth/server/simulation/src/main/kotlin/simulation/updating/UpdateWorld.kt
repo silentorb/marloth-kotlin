@@ -1,4 +1,4 @@
-package simulation.main
+package simulation.updating
 
 import mythic.ent.IdSource
 import mythic.ent.mapEntryValue
@@ -14,6 +14,7 @@ import simulation.input.updatePlayer
 import simulation.intellect.aliveSpirits
 import simulation.intellect.execution.pursueGoals
 import simulation.intellect.updateAiState
+import simulation.main.*
 import simulation.misc.Definitions
 import simulation.particles.updateParticleEffect
 import simulation.physics.*
@@ -26,7 +27,7 @@ data class Intermediate(
     val commands: Commands,
     val activatedAbilities: List<ActivatedAbility>,
     val collisions: Collisions,
-    val events: OrganizedEvents
+    val events: Events
 )
 
 fun generateIntermediateRecords(bulletState: BulletState, definitions: Definitions, world: World,
@@ -35,17 +36,18 @@ fun generateIntermediateRecords(bulletState: BulletState, definitions: Definitio
   val spiritCommands = pursueGoals(world, aliveSpirits(world.deck))
   val commands = playerCommands.plus(spiritCommands)
   val collisions = getBulletCollisions(bulletState, deck)
-  val triggers = (if (shouldUpdateLogic(world))
-    gatherActivatedTriggers(deck, definitions, collisions)
+  val triggerEvents = (if (shouldUpdateLogic(world)) {
+    val triggerings = gatherActivatedTriggers(deck, definitions, collisions, commands)
+    triggersToEvents(triggerings)
+  }
   else
     listOf())
-      .plus(gatherCommandTriggers(deck, commands))
 
   return Intermediate(
       commands = commands,
       activatedAbilities = getActivatedAbilities(deck, commands),
       collisions = collisions,
-      events = gatherEvents(definitions, deck, triggers, events)
+      events = events.plus(triggerEvents).plus(commandsToEvents(commands))
   )
 }
 
@@ -66,7 +68,7 @@ fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: 
           bodies = mapTableValues(deck.bodies, updateBody(world.realm)),
           cycles = mapTableValues(deck.cycles, updateCycle(simulationDelta)),
           depictions = mapTable(deck.depictions, updateDepiction(deck, animationDurations)),
-          destructibles = mapTable(deck.destructibles, updateDestructibleHealth(events.damage)),
+          destructibles = mapTable(deck.destructibles, updateDestructibleHealth(events)),
           characters = mapTable(deck.characters, updateCharacter(deck, commands, activatedAbilities, events)),
           particleEffects = mapTableValues(deck.particleEffects, deck.bodies, updateParticleEffect(dice, simulationDelta)),
           players = mapTable(deck.players, updatePlayer(intermediate.commands)),
@@ -82,13 +84,6 @@ fun updateDeckCache(definitions: Definitions): (Deck) -> Deck =
           destructibles = mapTable(deck.destructibles, updateDestructibleCache(damageModifierQuery))
       )
     }
-
-fun newEntities(events: OrganizedEvents, nextId: IdSource): (Deck) -> Deck = { deck ->
-  val additional = Deck(
-      accessories = newAccessories(events, deck)
-  )
-  mergeDecks(listOf(deck, additional).plus(resolveDecks(nextId, events.decks)))
-}
 
 fun updateDeck(animationDurations: AnimationDurationMap, definitions: Definitions, intermediate: Intermediate,
                world: World,

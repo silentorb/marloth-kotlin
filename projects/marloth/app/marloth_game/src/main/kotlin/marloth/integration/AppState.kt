@@ -4,7 +4,7 @@ import marloth.clienting.ClientState
 import mythic.quartz.TimestepState
 import mythic.quartz.updateTimestep
 import simulation.main.World
-import simulation.main.simulationDelta
+import simulation.updating.simulationDelta
 
 data class AppState(
     val client: ClientState,

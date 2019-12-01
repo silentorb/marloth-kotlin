@@ -3,6 +3,7 @@ package simulation.entities
 import mythic.ent.Id
 import simulation.combat.*
 import simulation.happenings.DamageEvent
+import simulation.happenings.Events
 import simulation.misc.ResourceContainer
 import simulation.misc.modifyResource
 
@@ -38,10 +39,13 @@ fun updateDestructibleHealth(damages: List<Damage>): (Destructible) -> Destructi
   }
 }
 
-fun updateDestructibleHealth(damageEvents: List<DamageEvent>): (Id, Destructible) -> Destructible = { id, destructible ->
-  val damages = damageEvents
-      .filter { it.target == id }
-      .map { it.damage }
+fun updateDestructibleHealth(events: Events): (Id, Destructible) -> Destructible {
+  val damageEvents = events.filterIsInstance<DamageEvent>()
+  return { id, destructible ->
+    val damages = damageEvents
+        .filter { it.target == id }
+        .map { it.damage }
 
-  updateDestructibleHealth(damages)(destructible)
+    updateDestructibleHealth(damages)(destructible)
+  }
 }

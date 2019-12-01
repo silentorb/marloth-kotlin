@@ -3,6 +3,7 @@ package simulation.main
 import simulation.misc.GameOver
 import simulation.misc.isVictory
 import simulation.misc.misfitFaction
+import simulation.updating.simulationFps
 
 val updateGlobalDetails: (World) -> World = { world ->
   if (world.gameOver == null && isVictory(world))

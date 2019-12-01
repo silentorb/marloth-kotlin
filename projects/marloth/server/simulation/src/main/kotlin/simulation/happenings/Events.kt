@@ -2,6 +2,7 @@ package simulation.happenings
 
 import mythic.ent.Id
 import scenery.enums.AccessoryId
+import scenery.enums.ModifierId
 import simulation.combat.Damage
 import simulation.main.DeckSource
 import simulation.misc.ResourceMap
@@ -20,20 +21,21 @@ data class PurchaseEvent(
     val wareType: AccessoryId
 ) : GameEvent
 
-data class DeckEvent(
-    val deck: DeckSource
-) : GameEvent
-
 data class TakeItemEvent(
     val actor: Id,
     val item: Id
-)
+) : GameEvent
 
-data class OrganizedEvents(
-    val damage: List<DamageEvent> = listOf(),
-    val decks: List<DeckSource> = listOf(),
-    val takeItems: List<TakeItemEvent> = listOf(),
-    val purchases: List<PurchaseEvent> = listOf()
-)
+data class ApplyBuffEvent(
+    val buffType: ModifierId,
+    val strength: Int,
+    val duration: Int,
+    val target: Id,
+    val source: Id
+) : GameEvent
+
+data class AttackEvent(
+    val actor: Id
+) : GameEvent
 
 typealias Events = List<GameEvent>

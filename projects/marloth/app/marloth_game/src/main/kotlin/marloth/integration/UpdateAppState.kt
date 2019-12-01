@@ -26,7 +26,7 @@ import simulation.happenings.GameEvent
 import simulation.input.Command
 import simulation.input.CommandType
 import simulation.main.World
-import simulation.main.simulationDelta
+import simulation.updating.simulationDelta
 import simulation.misc.Victory
 import simulation.physics.newBulletState
 import simulation.physics.releaseBulletState
