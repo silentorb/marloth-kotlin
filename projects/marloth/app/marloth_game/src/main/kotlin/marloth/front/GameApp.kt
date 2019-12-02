@@ -25,7 +25,6 @@ data class GameApp(
     val config: GameConfig,
     val client: Client,
     val db: Database = newDatabase("game.db"),
-    var bulletState: BulletState,
     val definitions: Definitions,
     val newWorld: NewWorld
 )
@@ -40,7 +39,6 @@ tailrec fun gameLoop(app: GameApp, state: AppState) {
 fun newGameApp(platform: Platform, config: GameConfig) = GameApp(
     platform = platform,
     config = config,
-    bulletState = newBulletState(),
     client = newClient(platform, config.display),
     definitions = staticDefinitions,
     newWorld = { gameApp -> generateWorld(getMeshInfo(gameApp.client), Dice()) }

@@ -16,6 +16,7 @@ import simulation.main.World
 import simulation.main.pipeHandsToDeck
 import simulation.misc.WorldInput
 import simulation.misc.createWorldBoundary
+import simulation.physics.newBulletState
 
 fun generateWorld(generationConfig: GenerationConfig, input: WorldInput): World {
   val dice = input.dice
@@ -49,7 +50,8 @@ fun generateWorld(generationConfig: GenerationConfig, input: WorldInput): World 
       availableIds = setOf(),
       logicUpdateCounter = 0,
       navMesh = navMesh,
-      navMeshQuery = if (navMesh != null) NavMeshQuery(navMesh) else null
+      navMeshQuery = if (navMesh != null) NavMeshQuery(navMesh) else null,
+      bulletState = newBulletState()
   )
 }
 

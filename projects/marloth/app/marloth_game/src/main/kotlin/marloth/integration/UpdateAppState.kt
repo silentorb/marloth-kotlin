@@ -88,11 +88,13 @@ fun gatherAdditionalGameCommands(previousClient: ClientState, clientState: Clien
   }
 }
 
-fun restartWorld(app: GameApp): List<World> {
-  releaseBulletState(app.bulletState)
+fun restartWorld(app: GameApp, oldWorld: World?): List<World> {
+  if (oldWorld != null)
+    releaseBulletState(oldWorld.bulletState)
+
   val world = app.newWorld(app)
-  app.bulletState = newBulletState()
-  syncNewBodies(world, app.bulletState)
+//  app.bulletState = newBulletState()
+//  syncNewBodies(world, app.bulletState)
   return listOf(world)
 }
 
@@ -125,7 +127,7 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
 
 fun updateWorlds(app: GameApp, previousClient: ClientState, clientState: ClientState): (List<World>) -> List<World> = { worlds ->
   when {
-    clientState.commands.any { it.type == GuiCommandType.newGame } -> restartWorld(app)
+    clientState.commands.any { it.type == GuiCommandType.newGame } -> restartWorld(app, worlds.lastOrNull())
     true -> {
       val commands = mapGameCommands(clientState.players, clientState.commands)
       val events = gatherGuiEvents(clientState.bloomState)

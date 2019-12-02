@@ -95,7 +95,8 @@ fun allRayHits(dynamicsWorld: btDiscreteDynamicsWorld, start: Vector3, end: Vect
   return callback
 }
 
-fun updateBulletPhysics(bulletState: BulletState, linearForces: List<LinearImpulse>): (World) -> World = { world ->
+fun updateBulletPhysics(linearForces: List<LinearImpulse>): (World) -> World = { world ->
+  val bulletState = world.bulletState
   syncNewBodies(world, bulletState)
   syncRemovedBodies(world, bulletState)
   updateCharacterRigs(bulletState, world.deck)

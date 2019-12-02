@@ -65,8 +65,9 @@ private var saveIncrement = 0f
 
 fun labRender(app: LabApp, state: LabState): RenderHook = { sceneRenderer ->
   if (app.config.gameView.drawPhysics) {
-    val deck = state.app.worlds.last().deck
-    drawBulletDebug(app.gameApp, deck.bodies[deck.players.keys.first()]!!.position)(sceneRenderer)
+    val world = state.app.worlds.last()
+    val deck = world.deck
+    drawBulletDebug(world.bulletState, deck.bodies[deck.players.keys.first()]!!.position)(sceneRenderer)
   }
   val navMesh = state.app.worlds.last().navMesh
   if (navMesh != null)
@@ -107,7 +108,7 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
         timestep = timestep,
         worlds = if (shouldReloadWorld) {
           shouldReloadWorld = false
-          restartWorld(gameApp)
+          restartWorld(gameApp, world)
         } else
           state.app.worlds
     )
@@ -135,8 +136,7 @@ fun shutdownGameApp(gameApp: GameApp) {
 fun newLabState(gameApp: GameApp, config: LabConfig): LabState {
   val world = if (config.gameView.autoNewGame) {
     lab.generateWorld(getMeshInfo(gameApp.client), config.gameView)
-  }
-  else
+  } else
     null
 
 //  if (world != null) {
@@ -162,7 +162,6 @@ fun newLabGameApp(labConfig: LabConfig): GameApp {
   val platform = createDesktopPlatform("Dev Lab", gameConfig.display)
   platform.display.initialize(gameConfig.display)
   return GameApp(platform, gameConfig,
-      bulletState = newBulletState(),
       client = newClient(platform, gameConfig.display, labConfig.gameView.lighting),
       definitions = staticDefinitions,
       newWorld = { gameApp -> lab.generateWorld(getMeshInfo(gameApp.client), labConfig.gameView) }

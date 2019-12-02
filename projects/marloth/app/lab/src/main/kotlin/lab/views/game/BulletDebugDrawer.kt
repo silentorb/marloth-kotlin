@@ -10,6 +10,7 @@ import mythic.spatial.Vector4
 import mythic.spatial.manhattanDistance
 import simulation.physics.toVector3
 import rendering.SceneRenderer
+import simulation.physics.BulletState
 import com.badlogic.gdx.math.Vector3 as GdxVector3
 
 class BulletDebugDrawer : btIDebugDraw(), Disposable {
@@ -49,8 +50,8 @@ class BulletDebugDrawer : btIDebugDraw(), Disposable {
 
 private var debugDrawer: BulletDebugDrawer? = null
 
-fun drawBulletDebug(gameApp: GameApp, origin: Vector3): RenderHook = { sceneRenderer: SceneRenderer ->
-  val dynamicsWorld = gameApp.bulletState.dynamicsWorld
+fun drawBulletDebug(bulletState: BulletState, origin: Vector3): RenderHook = { sceneRenderer: SceneRenderer ->
+  val dynamicsWorld = bulletState.dynamicsWorld
   val drawer = if (debugDrawer == null) {
     debugDrawer = BulletDebugDrawer()
     debugDrawer!!.debugMode = btIDebugDraw.DebugDrawModes.DBG_DrawWireframe +

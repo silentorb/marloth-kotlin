@@ -8,6 +8,7 @@ import org.recast4j.detour.NavMeshQuery
 import randomly.Dice
 import simulation.misc.GameOver
 import simulation.misc.Realm
+import simulation.physics.BulletState
 
 data class World(
     val realm: Realm,
@@ -18,7 +19,8 @@ data class World(
     val gameOver: GameOver? = null,
     val logicUpdateCounter: Int,
     val navMesh: NavMesh?,
-    val navMeshQuery: NavMeshQuery?
+    val navMeshQuery: NavMeshQuery?,
+    val bulletState: BulletState
 )
 
 typealias WorldTransform = (World) -> World

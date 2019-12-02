@@ -30,12 +30,12 @@ data class Intermediate(
     val events: Events
 )
 
-fun generateIntermediateRecords(bulletState: BulletState, definitions: Definitions, world: World,
-                                playerCommands: Commands, events: Events): Intermediate {
+fun generateIntermediateRecords(definitions: Definitions, world: World, playerCommands: Commands,
+                                events: Events): Intermediate {
   val deck = world.deck
   val spiritCommands = pursueGoals(world, aliveSpirits(world.deck))
   val commands = playerCommands.plus(spiritCommands)
-  val collisions = getBulletCollisions(bulletState, deck)
+  val collisions = getBulletCollisions(world.bulletState, deck)
   val triggerEvents = (if (shouldUpdateLogic(world)) {
     val triggerings = gatherActivatedTriggers(deck, definitions, collisions, commands)
     triggersToEvents(triggerings)
@@ -109,15 +109,15 @@ fun updateWorldDeck(animationDurations: AnimationDurationMap, definitions: Defin
       ))
     }
 
-fun updateWorld(bulletState: BulletState, animationDurations: AnimationDurationMap, playerCommands: Commands,
-                definitions: Definitions, events: Events, delta: Float): (World) -> World =
+fun updateWorld(animationDurations: AnimationDurationMap, playerCommands: Commands, definitions: Definitions,
+                events: Events, delta: Float): (World) -> World =
     pipe2(listOf(
         { world ->
-          val intermediate = generateIntermediateRecords(bulletState, definitions, world, playerCommands, events)
+          val intermediate = generateIntermediateRecords(definitions, world, playerCommands, events)
           val linearForces = allCharacterMovements(world, intermediate.commands)
           pipe2(listOf(
-              updateBulletPhysics(bulletState, linearForces),
-              updateWorldDeck(animationDurations, definitions, intermediate, BulletQuerySource(bulletState), delta)
+              updateBulletPhysics(linearForces),
+              updateWorldDeck(animationDurations, definitions, intermediate, BulletQuerySource(world.bulletState), delta)
           ))(world)
         },
         updateGlobalDetails,

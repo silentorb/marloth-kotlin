@@ -32,6 +32,7 @@ fun syncWorldToBullet(bulletState: BulletState): (World) -> World = { world ->
   val quat = com.badlogic.gdx.math.Quaternion()
   val deck = world.deck
   world.copy(
+      bulletState = bulletState,
       deck = deck.copy(
           bodies = deck.bodies.mapValues { (key, body) ->
             val btBody = bulletState.dynamicBodies[key]

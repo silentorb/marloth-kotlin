@@ -11,6 +11,6 @@ import simulation.updating.updateWorld
 fun updateWorldFromClient(app: GameApp, commands: List<Command>, events: Events): WorldTransform {
   val animationDurations = app.client.renderer.animationDurations
   return pipe(
-      updateWorld(app.bulletState, animationDurations, commands, app.definitions, events, simulationDelta)
+      updateWorld(animationDurations, commands, app.definitions, events, simulationDelta)
   )
 }
