@@ -31,7 +31,7 @@ data class Intermediate(
 )
 
 fun generateIntermediateRecords(definitions: Definitions, world: World, playerCommands: Commands,
-                                events: Events): Intermediate {
+                                externalEvents: Events): Intermediate {
   val deck = world.deck
   val spiritCommands = pursueGoals(world, aliveSpirits(world.deck))
   val commands = playerCommands.plus(spiritCommands)
@@ -39,15 +39,16 @@ fun generateIntermediateRecords(definitions: Definitions, world: World, playerCo
   val triggerEvents = (if (shouldUpdateLogic(world)) {
     val triggerings = gatherActivatedTriggers(deck, definitions, collisions, commands)
     triggersToEvents(triggerings)
-  }
-  else
+  } else
     listOf())
+
+  val events = externalEvents.plus(triggerEvents).plus(commandsToEvents(commands))
 
   return Intermediate(
       commands = commands,
       activatedAbilities = getActivatedAbilities(deck, commands),
       collisions = collisions,
-      events = events.plus(triggerEvents).plus(commandsToEvents(commands))
+      events = events.plus(eventsFromEvents(world, events))
   )
 }
 
@@ -59,7 +60,7 @@ val cleanupOutdatedReferences: (Deck) -> Deck = { deck ->
 }
 
 fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: World,
-                   worldQuerySource: WorldQuerySource, intermediate: Intermediate): (Deck) -> Deck =
+                   intermediate: Intermediate): (Deck) -> Deck =
     { deck ->
       val (commands, activatedAbilities, collisionMap, events) = intermediate
       deck.copy(
@@ -72,7 +73,7 @@ fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: 
           characters = mapTable(deck.characters, updateCharacter(deck, commands, activatedAbilities, events)),
           particleEffects = mapTableValues(deck.particleEffects, deck.bodies, updateParticleEffect(dice, simulationDelta)),
           players = mapTable(deck.players, updatePlayer(intermediate.commands)),
-          spirits = mapTable(deck.spirits, updateAiState(world, worldQuerySource, simulationDelta)),
+          spirits = mapTable(deck.spirits, updateAiState(world, simulationDelta)),
           timers = if (shouldUpdateLogic(world)) mapTableValues(deck.timers, updateTimer) else deck.timers
       )
     }
@@ -87,10 +88,9 @@ fun updateDeckCache(definitions: Definitions): (Deck) -> Deck =
 
 fun updateDeck(animationDurations: AnimationDurationMap, definitions: Definitions, intermediate: Intermediate,
                world: World,
-               worldQuerySource: WorldQuerySource,
                nextId: IdSource): (Deck) -> Deck =
     pipe(
-        updateEntities(world.dice, animationDurations, world, worldQuerySource, intermediate),
+        updateEntities(world.dice, animationDurations, world, intermediate),
         ifUpdatingLogic(world, updateDeckCache(definitions)),
         removeWhole(intermediate.events),
         removePartial(intermediate.events),
@@ -99,11 +99,10 @@ fun updateDeck(animationDurations: AnimationDurationMap, definitions: Definition
     )
 
 fun updateWorldDeck(animationDurations: AnimationDurationMap, definitions: Definitions, intermediate: Intermediate,
-                    worldQuerySource: WorldQuerySource,
                     delta: Float): (World) -> World =
     { world ->
       val (nextId, finalize) = newIdSource(world)
-      val newDeck = updateDeck(animationDurations, definitions, intermediate, world, worldQuerySource, nextId)(world.deck)
+      val newDeck = updateDeck(animationDurations, definitions, intermediate, world, nextId)(world.deck)
       finalize(world.copy(
           deck = newDeck
       ))
@@ -117,7 +116,7 @@ fun updateWorld(animationDurations: AnimationDurationMap, playerCommands: Comman
           val linearForces = allCharacterMovements(world, intermediate.commands)
           pipe2(listOf(
               updateBulletPhysics(linearForces),
-              updateWorldDeck(animationDurations, definitions, intermediate, BulletQuerySource(world.bulletState), delta)
+              updateWorldDeck(animationDurations, definitions, intermediate, delta)
           ))(world)
         },
         updateGlobalDetails,

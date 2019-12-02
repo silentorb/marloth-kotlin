@@ -50,8 +50,11 @@ fun createTopDownCamera(player: Body): Camera {
   )
 }
 
-fun createCamera(deck: Deck, player: Id): Camera {
-  val character = deck.characters[player]!!
+fun createCamera(deck: Deck, player: Id): Camera? {
+  val character = deck.characters[player]
+  if (character == null)
+    return null
+
   val body = deck.bodies[player]!!
   val playerRecord = deck.players[player]!!
   return when (playerRecord.viewMode) {

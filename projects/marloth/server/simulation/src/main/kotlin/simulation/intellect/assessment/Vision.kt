@@ -6,7 +6,8 @@ import simulation.entities.Character
 import simulation.entities.Light
 import simulation.main.Deck
 import simulation.physics.Body
-import simulation.physics.WorldQuerySource
+import simulation.physics.BulletState
+import simulation.physics.castCollisionRay
 
 const val viewingRange = 30f
 const val minimumLightRating = 0.0f
@@ -42,18 +43,18 @@ fun lightRating(deck: Deck, id: Id): Float {
 fun nearMod(distance: Float): Float =
     (1 - unitRange(3f, distance)) * 1.2f
 
-fun canSee(deck: Deck, worldQuerySource: WorldQuerySource, viewer: Id): (Id) -> Boolean = { target ->
+fun canSee(bulletState: BulletState, deck: Deck, viewer: Id): (Id) -> Boolean = { target ->
   val viewerBody = deck.bodies[viewer]!!
   val targetBody = deck.bodies[target]!!
   val distance = viewerBody.position.distance(targetBody.position)
   distance <= viewingRange
       && isInAngleOfView(deck.characters[viewer]!!, viewerBody, targetBody)
-      && worldQuerySource.rayCollisionDistance(viewerBody.position, targetBody.position) != null
+      && castCollisionRay(bulletState.dynamicsWorld, viewerBody.position, targetBody.position) != null
       && lightRating(deck, target) + nearMod(distance) >= minimumLightRating
 }
 
-fun getVisibleCharacters(deck: Deck, worldQuerySource: WorldQuerySource, character: Id): List<Id> {
+fun getVisibleCharacters(bulletState: BulletState, deck: Deck, character: Id): List<Id> {
   return deck.characters.keys
       .minus(character)
-      .filter(canSee(deck, worldQuerySource, character))
+      .filter(canSee(bulletState, deck, character))
 }

@@ -4,11 +4,12 @@ import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld
 import mythic.ent.Id
 import mythic.spatial.Vector3
 
-interface WorldQuerySource {
-  fun rayCollisionDistance(start: Vector3, end: Vector3): Float?
-}
+data class RaycastResult(
+    val distance: Float,
+    val collisionObject: Id
+)
 
-fun rayCollisionDistance(dynamicsWorld: btDiscreteDynamicsWorld, start: Vector3, end: Vector3): Float? {
+fun castCollisionRay(dynamicsWorld: btDiscreteDynamicsWorld, start: Vector3, end: Vector3): RaycastResult? {
   val callback = firstRayHit(dynamicsWorld, start, end)
   return if (callback.hasHit()) {
     val collisionObject = callback.collisionObject
@@ -17,13 +18,10 @@ fun rayCollisionDistance(dynamicsWorld: btDiscreteDynamicsWorld, start: Vector3,
     callback.getHitPointWorld(hitPoint)
     val distance = start.z - hitPoint.z
 //    println(" $collisionObjectId $distance")
-    return distance
+    return RaycastResult(
+        distance = distance,
+        collisionObject = collisionObjectId
+    )
   } else
     null
-}
-
-class BulletQuerySource(val bulletState: BulletState) : WorldQuerySource {
-  override fun rayCollisionDistance(start: Vector3, end: Vector3): Float? =
-    rayCollisionDistance(bulletState.dynamicsWorld, start, end)
-
 }

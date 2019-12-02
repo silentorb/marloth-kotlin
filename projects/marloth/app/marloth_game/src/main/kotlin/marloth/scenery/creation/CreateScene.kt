@@ -37,22 +37,25 @@ fun mapLights(deck: Deck, player: Id) =
               null
         ))
 
-fun createScene(deck: Deck): (Id) -> GameScene = { player ->
+fun createScene(deck: Deck): (Id) -> GameScene? = { player ->
   val camera = createCamera(deck, player)
-  GameScene(
-      main = Scene(
-          camera = camera,
-          lights = mapLights(deck, player)
-      ),
-      opaqueElementGroups = gatherVisualElements(deck, player, deck.players[player]!!),
-      transparentElementGroups = gatherParticleElements(deck, camera.position),
-      filters = if (!deck.characters[player]!!.isAlive)
-        listOf<ScreenFilter>(
-            { it.screenDesaturation.activate() },
-            { it.screenColor.activate(Vector4(1f, 0f, 0f, 0.4f)) }
-        )
-      else
-        listOf(),
-      background = gatherBackground(deck.cycles, camera.position)
-  )
+  if (camera == null)
+    null
+  else
+    GameScene(
+        main = Scene(
+            camera = camera,
+            lights = mapLights(deck, player)
+        ),
+        opaqueElementGroups = gatherVisualElements(deck, player, deck.players[player]!!),
+        transparentElementGroups = gatherParticleElements(deck, camera.position),
+        filters = if (!deck.characters[player]!!.isAlive)
+          listOf<ScreenFilter>(
+              { it.screenDesaturation.activate() },
+              { it.screenColor.activate(Vector4(1f, 0f, 0f, 0.4f)) }
+          )
+        else
+          listOf(),
+        background = gatherBackground(deck.cycles, camera.position)
+    )
 }

@@ -7,7 +7,6 @@ import mythic.spatial.Vector3
 import simulation.physics.SimpleBody
 import simulation.main.World
 import simulation.misc.MapGrid
-import simulation.physics.WorldQuerySource
 
 data class CharacterMemory(
     val lastSeen: Float,
@@ -28,8 +27,8 @@ const val memoryLifetime: Float = 5f // In seconds
 //fun character(world: World, knowledge: Knowledge): Character =
 //    world.deck.characters[knowledge.spiritId]!!
 
-fun updateCharacterKnowledge(world: World, worldQuerySource: WorldQuerySource, character: Id, knowledge: Knowledge, delta: Float): Table<CharacterMemory> {
-  val fresh = getVisibleCharacters(world.deck, worldQuerySource, character)
+fun updateCharacterKnowledge(world: World, character: Id, knowledge: Knowledge, delta: Float): Table<CharacterMemory> {
+  val fresh = getVisibleCharacters(world.bulletState, world.deck, character)
       .map { id ->
         val body = world.deck.bodies[id]!!
         val targetCharacter = world.deck.characters.getValue(id)
@@ -55,9 +54,9 @@ fun newKnowledge(world: World): Knowledge =
         characters = mapOf()
     )
 
-fun updateKnowledge(world: World, worldQuerySource: WorldQuerySource, character: Id, knowledge: Knowledge, delta: Float): Knowledge {
+fun updateKnowledge(world: World, character: Id, knowledge: Knowledge, delta: Float): Knowledge {
   return knowledge.copy(
-      characters = updateCharacterKnowledge(world, worldQuerySource, character, knowledge, delta)
+      characters = updateCharacterKnowledge(world, character, knowledge, delta)
   )
 }
 

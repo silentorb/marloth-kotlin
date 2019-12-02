@@ -46,7 +46,7 @@ private fun castFootStepRay(dynamicsWorld: btDiscreteDynamicsWorld, bodyPosition
   return { it: Vector3 ->
     val start = basePosition + it
     val end = start + endOffset
-    rayCollisionDistance(dynamicsWorld, start, end)
+    castCollisionRay(dynamicsWorld, start, end)?.distance
   }
 }
 
