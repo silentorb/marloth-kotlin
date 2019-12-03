@@ -36,18 +36,21 @@ tailrec fun gameLoop(app: GameApp, state: AppState) {
     gameLoop(app, nextState)
 }
 
-fun newGameApp(platform: Platform, config: GameConfig) = GameApp(
-    platform = platform,
-    config = config,
-    client = newClient(platform, config.display),
-    definitions = staticDefinitions,
-    newWorld = { gameApp -> generateWorld(getMeshInfo(gameApp.client), Dice()) }
-)
+fun newGameApp(platform: Platform, config: GameConfig): GameApp {
+  val definitions = staticDefinitions()
+  return GameApp(
+      platform = platform,
+      config = config,
+      client = newClient(platform, config.display),
+      definitions = definitions,
+      newWorld = { gameApp -> generateWorld(definitions, getMeshInfo(gameApp.client), Dice()) }
+  )
+}
 
 fun runApp(platform: Platform, config: GameConfig) {
   platform.display.initialize(config.display)
   val app = newGameApp(platform, config)
-  val world = generateWorld(getMeshInfo(app.client))
+  val world = generateWorld(app.definitions, getMeshInfo(app.client))
   val state = AppState(
       client = newClientState(platform, config.input, config.audio),
       worlds = listOf(world),

@@ -33,8 +33,8 @@ fun occupantPopulator(config: GenerationConfig): OccupantToHand = { node, occupa
   when (occupant) {
     Occupant.coldCloud -> placeBuffCloud(node, ModifierId.damageChilled)
     Occupant.fireCloud -> placeBuffCloud(node, ModifierId.damageBurning)
-    Occupant.enemy -> if (config.includeEnemies) placeEnemy(node) else null
-    Occupant.merchant -> newMerchant(node.position, defaultWares)
+    Occupant.enemy -> if (config.includeEnemies) placeEnemy(config.definitions, node) else null
+    Occupant.merchant -> newMerchant(config.definitions, node.position, defaultWares)
     Occupant.none -> null
     Occupant.poisonCloud -> placeBuffCloud(node, ModifierId.damagePoisoned)
     Occupant.treasureChest -> placeTreasureChest(config.meshes, node, 10)

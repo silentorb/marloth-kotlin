@@ -9,9 +9,10 @@ import scenery.enums.Text
 import simulation.entities.*
 import simulation.main.Hand
 import simulation.main.HandAttachment
+import simulation.misc.Definitions
 
-fun newMerchant(position: Vector3, wares: List<Ware>): Hand {
-  val character = newCharacter(
+fun newMerchant(definitions: Definitions, position: Vector3, wares: List<Ware>): Hand {
+  val character = newCharacter(definitions,
       definition = creatures.merchant,
       faction = 1,
       position = position

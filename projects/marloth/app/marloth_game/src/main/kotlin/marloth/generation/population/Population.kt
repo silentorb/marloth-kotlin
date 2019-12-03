@@ -23,7 +23,7 @@ fun populateWorld(config: GenerationConfig, input: WorldInput, realm: Realm): (D
   val scale = calculateWorldScale(input.boundary.dimensions)
   val occupantToHand = occupantPopulator(config)
   val playerCount = getDebugSetting("INITIAL_PLAYER_COUNT")?.toInt() ?: 1
-  (1..playerCount).map { newPlayer(grid, playerCell) }
+  (1..playerCount).map { newPlayer(config.definitions, grid, playerCell) }
       .plus(populateRooms(occupantToHand, input.dice, realm, playerNodeOld.id))
       .plus(placeWallLamps(deck, config, realm, input.dice, scale))
       .plus(listOf(

@@ -25,7 +25,7 @@ val updateAppStateForNewPlayers: (AppState) -> AppState = { appState ->
     }
     val newPlayerHands = gamepadJoinCommands.drop(availablePlayers.size)
         .map {
-          newPlayer(grid, getPlayerCell(grid))
+          newPlayer(world.definitions, grid, getPlayerCell(grid))
         }
     val nextWorld = addHandsToWorld(newPlayerHands)(world)
     val newPlayers = nextWorld.deck.players.keys.minus(deck.players.keys)

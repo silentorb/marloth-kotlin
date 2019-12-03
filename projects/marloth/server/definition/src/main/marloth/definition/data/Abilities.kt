@@ -9,7 +9,7 @@ import simulation.entities.Modifier
 
 fun staticAccessories(): Map<AccessoryName, AccessoryDefinition> = mapOf(
     AccessoryId.resistanceCold.name to AccessoryDefinition(
-        name = Text.id_coldResistance,
+        name = Text.id_resistanceCold,
         modifiers = listOf(
             Modifier(
                 type = ModifierId.resistanceCold,
@@ -18,7 +18,7 @@ fun staticAccessories(): Map<AccessoryName, AccessoryDefinition> = mapOf(
         )
     ),
     AccessoryId.resistanceFire.name to AccessoryDefinition(
-        name = Text.id_fireResistance,
+        name = Text.id_resistanceFire,
         modifiers = listOf(
             Modifier(
                 type = ModifierId.resistanceFire,
@@ -27,7 +27,7 @@ fun staticAccessories(): Map<AccessoryName, AccessoryDefinition> = mapOf(
         )
     ),
     AccessoryId.resistancePoison.name to AccessoryDefinition(
-        name = Text.id_poisonResistance,
+        name = Text.id_resistancePoison,
         modifiers = listOf(
             Modifier(
                 type = ModifierId.resistancePoison,

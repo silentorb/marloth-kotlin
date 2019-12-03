@@ -24,6 +24,7 @@ import mythic.desktop.createDesktopPlatform
 import mythic.ent.pipe
 import mythic.quartz.newTimestepState
 import simulation.main.World
+import simulation.misc.Definitions
 import simulation.misc.WorldInput
 import simulation.misc.createWorldBoundary
 import simulation.physics.newBulletState
@@ -36,9 +37,10 @@ fun saveLabConfig(config: LabConfig) {
   }
 }
 
-fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig): World {
+fun generateWorld(definitions: Definitions, meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig): World {
   val boundary = createWorldBoundary(gameViewConfig.worldLength)
   val generationConfig = GenerationConfig(
+      definitions = definitions,
       biomes = biomeInfoMap,
       meshes = compileArchitectureMeshInfo(meshInfo, meshAttributes),
       includeEnemies = gameViewConfig.haveEnemies,
@@ -48,7 +50,7 @@ fun generateWorld(meshInfo: MeshShapeMap, gameViewConfig: GameViewConfig): World
       boundary,
       newGenerationDice()
   )
-  return generateWorld(generationConfig, input)
+  return generateWorld(definitions, generationConfig, input)
 }
 
 data class LabApp(
@@ -135,7 +137,7 @@ fun shutdownGameApp(gameApp: GameApp) {
 
 fun newLabState(gameApp: GameApp, config: LabConfig): LabState {
   val world = if (config.gameView.autoNewGame) {
-    lab.generateWorld(getMeshInfo(gameApp.client), config.gameView)
+    lab.generateWorld(gameApp.definitions, getMeshInfo(gameApp.client), config.gameView)
   } else
     null
 
@@ -161,10 +163,11 @@ fun newLabGameApp(labConfig: LabConfig): GameApp {
   val gameConfig = loadGameConfig()
   val platform = createDesktopPlatform("Dev Lab", gameConfig.display)
   platform.display.initialize(gameConfig.display)
+  val definitions = staticDefinitions()
   return GameApp(platform, gameConfig,
       client = newClient(platform, gameConfig.display, labConfig.gameView.lighting),
-      definitions = staticDefinitions,
-      newWorld = { gameApp -> lab.generateWorld(getMeshInfo(gameApp.client), labConfig.gameView) }
+      definitions = definitions,
+      newWorld = { gameApp -> lab.generateWorld(definitions, getMeshInfo(gameApp.client), labConfig.gameView) }
   )
 }
 

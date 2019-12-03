@@ -1,16 +1,11 @@
 package marloth.definition.data
 
 import marloth.definition.newResistanceModifier
-import scenery.enums.ModifierDirection
 import scenery.enums.ModifierId
-import scenery.enums.ModifierType
 import scenery.enums.Text
 import simulation.combat.DamageType
-import simulation.combat.ModifierOperation
 import simulation.entities.ModifierDefinition
 import simulation.happenings.DamageAction
-import simulation.misc.ValueModifier
-import simulation.misc.ValueModifierDirection
 
 fun staticModifiers(): Map<ModifierId, ModifierDefinition> = mapOf(
     ModifierId.damageBurning to ModifierDefinition(
@@ -34,7 +29,7 @@ fun staticModifiers(): Map<ModifierId, ModifierDefinition> = mapOf(
             amount = 0
         )
     ),
-    ModifierId.resistanceCold to newResistanceModifier(Text.id_coldResistance, DamageType.cold),
-    ModifierId.resistanceFire to newResistanceModifier(Text.id_fireResistance, DamageType.fire),
-    ModifierId.resistancePoison to newResistanceModifier(Text.id_poisonResistance, DamageType.poison)
+    ModifierId.resistanceCold to newResistanceModifier(Text.id_resistanceCold, DamageType.cold),
+    ModifierId.resistanceFire to newResistanceModifier(Text.id_resistanceFire, DamageType.fire),
+    ModifierId.resistancePoison to newResistanceModifier(Text.id_resistancePoison, DamageType.poison)
 )

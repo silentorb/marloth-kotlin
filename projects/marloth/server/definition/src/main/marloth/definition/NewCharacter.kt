@@ -2,7 +2,6 @@ package marloth.definition
 
 import simulation.intellect.Spirit
 import mythic.ent.Id
-import mythic.ent.newIdSource
 import mythic.spatial.Pi
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector2
@@ -11,18 +10,14 @@ import scenery.AnimationId
 import scenery.Capsule
 import simulation.entities.*
 import simulation.main.Hand
+import simulation.main.HandAttachment
+import simulation.misc.Definitions
 import simulation.misc.ResourceContainer
 import simulation.physics.*
 
-fun newCharacter(definition: CharacterDefinition, faction: Id, position: Vector3, angle: Float = Pi / 2f,
+fun newCharacter(definitions: Definitions, definition: CharacterDefinition, faction: Id, position: Vector3,
+                 angle: Float = Pi / 2f,
                  spirit: Spirit? = null): Hand {
-  val nextId = newIdSource(1)
-//  val abilities = definition.accessories.map {
-//    Action(
-//        id = nextId(),
-//        definition = it
-//    )
-//  }
   return Hand(
       ambientAudioEmitter = if (definition.ambientSounds.any())
         AmbientAudioEmitter(
@@ -69,6 +64,18 @@ fun newCharacter(definition: CharacterDefinition, faction: Id, position: Vector3
           mass = 45f,
           resistance = 4f
       ),
-      spirit = spirit
+      spirit = spirit,
+      attachments = definition.accessories.mapIndexed { index, type ->
+        HandAttachment(
+            category = AttachmentCategory.ability,
+            index = index,
+            hand = Hand(
+                accessory = Accessory(
+                    type = type
+                ),
+                action = newPossibleAction(definitions, type)
+            )
+        )
+      }
   )
 }

@@ -17,8 +17,8 @@ import simulation.main.HandAttachment
 import simulation.misc.*
 import simulation.physics.old.getLookAtAngle
 
-fun placeAiCharacter(faction: Id, definition: CharacterDefinition, position: Vector3): Hand {
-  return newCharacter(
+fun placeAiCharacter(definitions: Definitions, faction: Id, definition: CharacterDefinition, position: Vector3): Hand {
+  return newCharacter(definitions,
       definition = definition,
       faction = faction,
       position = position,
@@ -28,16 +28,16 @@ fun placeAiCharacter(faction: Id, definition: CharacterDefinition, position: Vec
   )
 }
 
-fun placeEnemy(node: Node): Hand =
-    placeAiCharacter(
+fun placeEnemy(definitions: Definitions, node: Node): Hand =
+    placeAiCharacter(definitions,
         faction = monsterFaction,
         definition = creatures.monster,
         position = node.position
     )
 
-fun newPlayer(grid: MapGrid, cellPosition: Vector3i): Hand {
+fun newPlayer(definitions: Definitions, grid: MapGrid, cellPosition: Vector3i): Hand {
   val neighbor = cellNeighbors(grid.connections, cellPosition).first()
-  return newCharacter(
+  return newCharacter(definitions,
       definition = creatures.player,
       faction = misfitFaction,
       position = applyCellPosition(cellPosition) + floorOffset + Vector3(0f, 0f, 6f),

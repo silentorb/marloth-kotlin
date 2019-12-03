@@ -47,13 +47,13 @@ fun getActiveAction(deck: Deck, character: Id): Id? {
 fun updateActions(definitions: Definitions, deck: Deck, events: Events): Table<Action> {
   val actionEvents = events.filterIsInstance<UseAction>()
   val activated = actionEvents.map { it.action }
-  return deck.actions.mapValues { (id, ability) ->
+  return deck.actions.mapValues { (id, action) ->
     val isActivated = activated.contains(id)
     val accessory = deck.accessories[id]!!
-    val definition = definitions.accessories[accessory.type]!!
-    val cooldown = definition.activation!!.cooldown
-    ability.copy(
-        cooldown = updateCooldown(ability, isActivated, cooldown, simulationDelta)
+    val definition = definitions.actions[accessory.type]!!
+    val cooldown = definition.cooldown
+    action.copy(
+        cooldown = updateCooldown(action, isActivated, cooldown, simulationDelta)
     )
   }
 }
@@ -69,4 +69,15 @@ fun eventsFromTryUseAbility(world: World): (TryUseAbilityEvent) -> Events = { ev
     }
   } else
     listOf()
+}
+
+fun newPossibleAction(definitions: Definitions, type: AccessoryName): Action? {
+  val isActivable = definitions.actions.containsKey(type)
+
+  return if (isActivable)
+    Action(
+        cooldown = 0f
+    )
+  else
+    null
 }

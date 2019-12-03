@@ -27,13 +27,13 @@ fun getActionRange(deck: Deck, definitions: Definitions, action: Id): Float {
 }
 
 fun updatePursuit(world: World, character: Id, knowledge: Knowledge, pursuit: Pursuit): Pursuit {
+  val deck = world.deck
   val targetEnemy = updateTargetEnemy(world, character, knowledge, pursuit)
   val target = knowledge.characters[pursuit.targetEnemy]
-  val (path, targetPosition) = if (target != null) {
-    val deck = world.deck
+  val action = getActiveAction(deck, character)
+  val (path, targetPosition) = if (target != null && action != null) {
     val bodies = deck.bodies
     val attackerBody = bodies[character]!!
-    val action = getActiveAction(deck, character)!!
     val range = getActionRange(deck, world.definitions, action) - spiritAttackRangeBuffer
     val distance = attackerBody.position.distance(target.position)
     val gap = distance - range
