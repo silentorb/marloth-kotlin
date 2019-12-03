@@ -75,7 +75,7 @@ enum class ModifierOperation {
 
 fun getValueModifiers(definitions: Definitions, modifierDeck: ModifierDeck, id: Id): List<Modifier> {
   val indirectModifiers = modifierDeck.attachments
-      .filterValues { it.target == id && it.category == AttachmentTypeId.ability || it.category == AttachmentTypeId.equipped }
+      .filterValues { it.target == id && it.category == AttachmentCategory.ability || it.category == AttachmentCategory.equipped }
       .mapNotNull {
         val accessory = modifierDeck.accessories[it.key]
         if (accessory != null)
@@ -85,7 +85,7 @@ fun getValueModifiers(definitions: Definitions, modifierDeck: ModifierDeck, id: 
       }
       .flatten()
   val directModifiers = modifierDeck.attachments
-      .filterValues { it.target == id && it.category == AttachmentTypeId.buff }
+      .filterValues { it.target == id && it.category == AttachmentCategory.buff }
       .map { modifierDeck.buffs[it.key]!! }
 
   return indirectModifiers.plus(directModifiers)

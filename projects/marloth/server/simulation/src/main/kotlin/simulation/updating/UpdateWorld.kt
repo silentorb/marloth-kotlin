@@ -25,7 +25,6 @@ const val simulationDelta = 1f / simulationFps.toFloat()
 
 data class Intermediate(
     val commands: Commands,
-    val activatedAbilities: List<ActivatedAbility>,
     val collisions: Collisions,
     val events: Events
 )
@@ -46,7 +45,6 @@ fun generateIntermediateRecords(definitions: Definitions, world: World, playerCo
 
   return Intermediate(
       commands = commands,
-      activatedAbilities = getActivatedAbilities(deck, commands),
       collisions = collisions,
       events = events.plus(eventsFromEvents(world, events))
   )
@@ -62,15 +60,16 @@ val cleanupOutdatedReferences: (Deck) -> Deck = { deck ->
 fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: World,
                    intermediate: Intermediate): (Deck) -> Deck =
     { deck ->
-      val (commands, activatedAbilities, collisionMap, events) = intermediate
+      val (commands, collisionMap, events) = intermediate
       deck.copy(
+          actions = updateActions(world.definitions, deck, events),
           ambientSounds = updateAmbientAudio(dice, deck),
           attachments = mapTable(deck.attachments, updateAttachment(intermediate.events)),
           bodies = mapTableValues(deck.bodies, updateBody(world.realm)),
           cycles = mapTableValues(deck.cycles, updateCycle(simulationDelta)),
           depictions = mapTable(deck.depictions, updateDepiction(deck, animationDurations)),
           destructibles = mapTable(deck.destructibles, updateDestructibleHealth(events)),
-          characters = mapTable(deck.characters, updateCharacter(deck, commands, activatedAbilities, events)),
+          characters = mapTable(deck.characters, updateCharacter(deck, commands, events)),
           particleEffects = mapTableValues(deck.particleEffects, deck.bodies, updateParticleEffect(dice, simulationDelta)),
           players = mapTable(deck.players, updatePlayer(intermediate.commands)),
           spirits = mapTable(deck.spirits, updateAiState(world, simulationDelta)),

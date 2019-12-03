@@ -7,7 +7,7 @@ import simulation.happenings.PurchaseEvent
 import simulation.main.Deck
 
 data class Accessory(
-    val type: AccessoryId
+    val type: AccessoryName
 )
 
 fun newAccessories(events: Events, deck: Deck): Map<Id, Accessory> =

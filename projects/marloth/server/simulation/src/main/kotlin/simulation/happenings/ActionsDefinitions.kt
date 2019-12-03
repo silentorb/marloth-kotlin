@@ -2,21 +2,20 @@ package simulation.happenings
 
 import scenery.enums.ModifierId
 import simulation.combat.DamageType
-import simulation.misc.ResourceMap
 
-interface Action {}
+interface EventTrigger {}
 
 data class DamageAction(
     val damageType: DamageType,
     val amount: Int
-) : Action
+) : EventTrigger
 
 data class ApplyBuff(
     val buffType: ModifierId,
     val strength: Int,
     val duration: Int
-) : Action
+) : EventTrigger
 
 data class TakeItem(
     val placeholder: Int = 0
-): Action
+): EventTrigger

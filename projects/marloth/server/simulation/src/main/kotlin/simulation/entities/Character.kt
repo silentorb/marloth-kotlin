@@ -29,7 +29,7 @@ const val airControlReduction = 0.4f
 data class CharacterDefinition(
     val health: Int,
     val maxSpeed: Float,
-    val abilities: List<AbilityDefinition>,
+    val accessories: List<AccessoryName>,
     val depictionType: DepictionType,
     val deathSound: Sounds,
     val ambientSounds: List<Sounds> = listOf(),
@@ -39,13 +39,12 @@ data class CharacterDefinition(
 data class Character(
     val definition: CharacterDefinition,
     val turnSpeed: Vector2,
-    val abilities: List<Ability> = listOf(),
     val faction: Id,
     val sanity: ResourceContainer,
     val isAlive: Boolean = true,
     val facingRotation: Vector3 = Vector3(),
     val lookVelocity: Vector2 = Vector2(),
-    val activeItem: Id? = null,
+    val activeAccessory: Id? = null,
     val canInteractWith: Id? = null,
     val interactingWith: Id? = null,
     val money: Int = 0,
@@ -86,12 +85,12 @@ fun updateEquippedItem(deck: Deck, id: Id, character: Character, commands: Comma
 
   return if (slot != null) {
     val itemId = getItemInSlot(deck, id, slot)
-    if (itemId == character.activeItem)
+    if (itemId == character.activeAccessory)
       null
     else
       itemId
   } else
-    character.activeItem
+    character.activeAccessory
 }
 
 fun getPurchaseCost(deck: Deck, events: Events, character: Id): Int {
@@ -128,11 +127,9 @@ fun updateInteractingWith(deck: Deck, character: Id, commands: Commands, interac
     else
       interactingWith
 
-fun updateCharacter(deck: Deck, id: Id, character: Character, commands: Commands, activatedAbilities: List<Ability>,
-                    events: Events, delta: Float): Character {
+fun updateCharacter(deck: Deck, id: Id, character: Character, commands: Commands, events: Events,
+                    delta: Float): Character {
   val lookForce = characterLookForce(character, commands)
-
-  val abilities = updateAbilities(character, activatedAbilities)
 
   val destructible = deck.destructibles[id]!!
   val isAlive = isAlive(destructible.health.value)
@@ -142,8 +139,7 @@ fun updateCharacter(deck: Deck, id: Id, character: Character, commands: Commands
       { c ->
         c.copy(
             isAlive = isAlive,
-            abilities = abilities,
-            activeItem = updateEquippedItem(deck, id, character, commands),
+            activeAccessory = updateEquippedItem(deck, id, character, commands),
             interactingWith = updateInteractingWith(deck, id, commands, c.interactingWith),
             money = updateMoney(deck, events, id, character.money)
         )
@@ -178,11 +174,8 @@ fun updateCharacter(deck: Deck, id: Id, character: Character, commands: Commands
   ))
 }
 
-fun updateCharacter(deck: Deck, commands: Commands, activatedAbilities: List<ActivatedAbility>,
-                    events: Events): (Id, Character) -> Character = { id, character ->
+fun updateCharacter(deck: Deck, commands: Commands, events: Events): (Id, Character) -> Character = { id, character ->
   val delta = simulationDelta
-  val abilities = activatedAbilities.filter { it.character == id }
-      .map { it.ability }
   if (commands.any()) {
     val k = 0
   }
@@ -192,7 +185,7 @@ fun updateCharacter(deck: Deck, commands: Commands, activatedAbilities: List<Act
       { c -> c.filter { it.target == id } }
   ))
 
-  updateCharacter(deck, id, character, characterCommands, abilities, events, delta)
+  updateCharacter(deck, id, character, characterCommands, events, delta)
 }
 
 fun getMovementImpulseVector(baseSpeed: Float, velocity: Vector3, commandVector: Vector3): Vector3 {

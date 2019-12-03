@@ -1,14 +1,14 @@
 package marloth.definition
 
+import scenery.enums.AccessoryId
 import scenery.enums.Sounds
-import simulation.combat.DamageType
 import simulation.entities.CharacterDefinition
 import simulation.entities.DepictionType
 
 class Creatures {
   val player = CharacterDefinition(
       health = 200,
-      abilities = listOf(),
+      accessories = listOf(),
       depictionType = DepictionType.child,
       maxSpeed = 4f,
       deathSound = Sounds.girlScream,
@@ -17,7 +17,7 @@ class Creatures {
 
   val ally = CharacterDefinition(
       health = 100,
-      abilities = listOf(abilityDefinitions.slowShoot),
+      accessories = listOf(AccessoryId.pistol.name),
       depictionType = DepictionType.child,
       maxSpeed = 2f,
       deathSound = Sounds.girlScream
@@ -25,7 +25,7 @@ class Creatures {
 
   val monster = CharacterDefinition(
       health = 100,
-      abilities = listOf(abilityDefinitions.slowShoot),
+      accessories = listOf(AccessoryId.pistol.name),
       depictionType = DepictionType.person,
       maxSpeed = 2f,
       deathSound = Sounds.hogDeath,
@@ -37,7 +37,7 @@ class Creatures {
 
   val merchant = CharacterDefinition(
       health = 100,
-      abilities = listOf(),
+      accessories = listOf(),
       depictionType = DepictionType.child,
       maxSpeed = 2f,
       deathSound = Sounds.girlScream

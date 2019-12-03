@@ -12,7 +12,7 @@ import simulation.happenings.DamageAction
 import simulation.misc.ValueModifier
 import simulation.misc.ValueModifierDirection
 
-val staticModifiers: Map<ModifierId, ModifierDefinition> = mapOf(
+fun staticModifiers(): Map<ModifierId, ModifierDefinition> = mapOf(
     ModifierId.damageBurning to ModifierDefinition(
         name = Text.id_damageBurning,
         overTime = DamageAction(

@@ -4,7 +4,7 @@ import marloth.clienting.gui.HudData
 import marloth.clienting.gui.ViewId
 import mythic.ent.Id
 import simulation.main.Deck
-import simulation.entities.AttachmentTypeId
+import simulation.entities.AttachmentCategory
 import simulation.entities.getTargetAttachmentsOfCategory
 import kotlin.math.roundToInt
 
@@ -16,7 +16,7 @@ fun gatherHudData(deck: Deck, player: Id, view: ViewId): HudData? {
   val destructible = deck.destructibles[player]!!
   val body = deck.bodies[player]!!
 
-  val buffs = getTargetAttachmentsOfCategory(deck, player, AttachmentTypeId.buff)
+  val buffs = getTargetAttachmentsOfCategory(deck, player, AttachmentCategory.buff)
       .map { Pair(deck.buffs[it]!!, deck.timers[it]!!.duration) }
 
   val interactable = if (view == ViewId.none)

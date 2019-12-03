@@ -4,10 +4,11 @@ import scenery.enums.AccessoryId
 import scenery.enums.ModifierId
 import scenery.enums.Text
 import simulation.entities.AccessoryDefinition
+import simulation.entities.AccessoryName
 import simulation.entities.Modifier
 
-val staticAccessories: Map<AccessoryId, AccessoryDefinition> = mapOf(
-    AccessoryId.coldResistance to AccessoryDefinition(
+fun staticAccessories(): Map<AccessoryName, AccessoryDefinition> = mapOf(
+    AccessoryId.resistanceCold.name to AccessoryDefinition(
         name = Text.id_coldResistance,
         modifiers = listOf(
             Modifier(
@@ -16,7 +17,7 @@ val staticAccessories: Map<AccessoryId, AccessoryDefinition> = mapOf(
             )
         )
     ),
-    AccessoryId.fireResistance to AccessoryDefinition(
+    AccessoryId.resistanceFire.name to AccessoryDefinition(
         name = Text.id_fireResistance,
         modifiers = listOf(
             Modifier(
@@ -25,7 +26,7 @@ val staticAccessories: Map<AccessoryId, AccessoryDefinition> = mapOf(
             )
         )
     ),
-    AccessoryId.poisonResistance to AccessoryDefinition(
+    AccessoryId.resistancePoison.name to AccessoryDefinition(
         name = Text.id_poisonResistance,
         modifiers = listOf(
             Modifier(

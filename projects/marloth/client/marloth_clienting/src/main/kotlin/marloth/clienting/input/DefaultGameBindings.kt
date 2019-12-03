@@ -7,7 +7,7 @@ import simulation.input.CommandType as CommandType
 val gameGamepadStrokeBindings = mapOf(
     GAMEPAD_BUTTON_START to GuiCommandType.menu,
 
-    GAMEPAD_AXIS_TRIGGER_RIGHT to CommandType.attack,
+    GAMEPAD_BUTTON_A to CommandType.ability,
     GAMEPAD_BUTTON_DPAD_UP to CommandType.equipSlot0,
     GAMEPAD_BUTTON_DPAD_LEFT to CommandType.equipSlot1,
     GAMEPAD_BUTTON_DPAD_RIGHT to CommandType.equipSlot2,
@@ -27,7 +27,7 @@ val gameGamepadStrokeBindings = mapOf(
 )
 
 fun defaultMouseGameStrokeBindings() = mapOf(
-    GLFW.GLFW_MOUSE_BUTTON_LEFT to CommandType.attack
+    GLFW.GLFW_MOUSE_BUTTON_LEFT to CommandType.ability
 )
 
 fun defaultKeyboardGameBindings() = mapOf(

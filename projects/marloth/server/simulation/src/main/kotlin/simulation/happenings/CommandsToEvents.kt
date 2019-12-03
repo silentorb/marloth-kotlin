@@ -8,7 +8,7 @@ fun commandsToEvents(commands: Commands): Events =
       val player = command.target
       when (command.type) {
 
-        CommandType.attack -> AttackEvent(actor = player)
+        CommandType.ability -> TryUseAbilityEvent(actor = player)
 
         else -> null
       }

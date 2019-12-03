@@ -12,7 +12,7 @@ import simulation.physics.old.Collision
 
 data class Triggering(
     val actor: Id,
-    val action: Action,
+    val action: EventTrigger,
     val target: Id,
     val strength: Int? = null
 )

@@ -1,5 +1,5 @@
 package simulation.happenings
 
 data class Trigger(
-    val action: Action
+    val action: EventTrigger
 )

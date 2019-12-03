@@ -1,8 +1,6 @@
 package simulation.entities
 
-import scenery.enums.AccessoryId
-
 data class Ware(
-    val type: AccessoryId,
+    val type: AccessoryName,
     val price: Int
 )

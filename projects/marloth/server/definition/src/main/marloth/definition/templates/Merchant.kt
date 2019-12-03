@@ -10,7 +10,6 @@ import simulation.entities.*
 import simulation.main.Hand
 import simulation.main.HandAttachment
 
-
 fun newMerchant(position: Vector3, wares: List<Ware>): Hand {
   val character = newCharacter(
       definition = creatures.merchant,
@@ -27,7 +26,7 @@ fun newMerchant(position: Vector3, wares: List<Ware>): Hand {
       ),
       attachments = character.attachments.plus(wares.map { ware ->
         HandAttachment(
-            category = AttachmentTypeId.inventory,
+            category = AttachmentCategory.inventory,
             hand = Hand(
                 ware = ware
             )
@@ -38,15 +37,15 @@ fun newMerchant(position: Vector3, wares: List<Ware>): Hand {
 
 val defaultWares: List<Ware> = listOf(
     Ware(
-        type = AccessoryId.coldResistance,
+        type = AccessoryId.resistanceCold.name,
         price = 10
     ),
     Ware(
-        type = AccessoryId.fireResistance,
+        type = AccessoryId.resistanceFire.name,
         price = 12
     ),
     Ware(
-        type = AccessoryId.poisonResistance,
+        type = AccessoryId.resistancePoison.name,
         price = 10
     )
 )

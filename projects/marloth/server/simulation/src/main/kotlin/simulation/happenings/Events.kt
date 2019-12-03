@@ -1,11 +1,9 @@
 package simulation.happenings
 
 import mythic.ent.Id
-import scenery.enums.AccessoryId
 import scenery.enums.ModifierId
 import simulation.combat.Damage
-import simulation.main.DeckSource
-import simulation.misc.ResourceMap
+import simulation.entities.AccessoryName
 
 interface GameEvent {}
 
@@ -18,7 +16,7 @@ data class PurchaseEvent(
     val customer: Id,
     val merchant: Id,
     val ware: Id,
-    val wareType: AccessoryId
+    val wareType: AccessoryName
 ) : GameEvent
 
 data class TakeItemEvent(
@@ -34,8 +32,13 @@ data class ApplyBuffEvent(
     val source: Id
 ) : GameEvent
 
-data class AttackEvent(
+data class TryUseAbilityEvent(
     val actor: Id
+) : GameEvent
+
+data class UseAction(
+    val actor: Id,
+    val action: Id
 ) : GameEvent
 
 typealias Events = List<GameEvent>

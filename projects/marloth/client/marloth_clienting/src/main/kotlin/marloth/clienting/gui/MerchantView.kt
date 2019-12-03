@@ -13,7 +13,7 @@ import mythic.typography.calculateTextDimensions
 import mythic.typography.resolveTextStyle
 import org.joml.Vector2i
 import scenery.enums.Text
-import simulation.entities.AttachmentTypeId
+import simulation.entities.AttachmentCategory
 import simulation.happenings.PurchaseEvent
 import simulation.main.Deck
 import simulation.misc.AccessoryDefinitions
@@ -97,7 +97,7 @@ fun merchantView(textResources: TextResources, definitions: AccessoryDefinitions
   val merchant = getPlayerInteractingWith(deck, player)!!
   val customerMoney = deck.characters[player]!!.money
   val buttons = deck.attachments
-      .filter { it.value.target == merchant && it.value.category == AttachmentTypeId.inventory }
+      .filter { it.value.target == merchant && it.value.category == AttachmentCategory.inventory }
       .map { (id, _) ->
         wareMenuItem(textResources, definitions, deck, merchant, player, customerMoney, id)
       }

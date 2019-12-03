@@ -14,6 +14,7 @@ import simulation.physics.DynamicBody
 
 data class Hand(
     val accessory: Accessory? = null,
+    val action: Action? = null,
     val ambientAudioEmitter: AmbientAudioEmitter? = null,
     val body: Body? = null,
     val buff: Modifier? = null,
@@ -42,7 +43,7 @@ data class Hand(
 )
 
 data class HandAttachment(
-    val category: AttachmentTypeId,
+    val category: AttachmentCategory,
     val index: Int = 0,
     val hand: Hand
 )

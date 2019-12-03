@@ -46,11 +46,11 @@ fun newPlayer(grid: MapGrid, cellPosition: Vector3i): Hand {
       .copy(
           attachments = listOf(
               HandAttachment(
-                  category = AttachmentTypeId.equipped,
+                  category = AttachmentCategory.equipped,
                   index = 2,
                   hand = Hand(
                       accessory = Accessory(
-                          type = AccessoryId.candle
+                          type = AccessoryId.candle.name
                       )
                   )
               )

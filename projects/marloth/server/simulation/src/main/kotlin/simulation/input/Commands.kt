@@ -30,7 +30,7 @@ enum class CommandType {
   stopInteracting, // Normally triggered by GUI events and does not need to be bound to device buttons
 
   jump,
-  attack,
+  ability,
   duck,
   run,
 

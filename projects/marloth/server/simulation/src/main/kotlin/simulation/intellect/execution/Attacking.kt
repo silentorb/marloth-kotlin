@@ -2,7 +2,7 @@ package simulation.intellect.execution
 
 import mythic.ent.Id
 import mythic.spatial.Vector3
-import simulation.entities.Ability
+import simulation.entities.Action
 import simulation.input.Command
 import simulation.input.CommandType
 import simulation.input.Commands
@@ -15,8 +15,9 @@ import simulation.physics.SimpleBody
 
 fun shouldMoveDirectlyToward(deck: Deck, target: SimpleBody, attacker: Id): Boolean {
   val attackerBody = deck.bodies[attacker]!!
-  return !isInAttackRange(attackerBody, target.position, deck.characters[attacker]!!.abilities[0])
-      && attackerBody.nearestNode == target.nearestNode
+  throw Error("Not implemented")
+//  return !isInAttackRange(attackerBody, target.position, deck.characters[attacker]!!.abilities[0])
+//      && attackerBody.nearestNode == target.nearestNode
 }
 
 fun spiritAttack(world: World, character: Id, knowledge: Knowledge, pursuit: Pursuit): Commands {
@@ -25,7 +26,7 @@ fun spiritAttack(world: World, character: Id, knowledge: Knowledge, pursuit: Pur
   val body = world.deck.bodies[attacker]!!
   val offset = target.position - body.position
   return spiritNeedsFacing(world, character, offset, 0.05f) {
-    listOf(Command(CommandType.attack, attacker))
+    listOf(Command(CommandType.ability, attacker))
   }
 }
 
@@ -33,6 +34,6 @@ fun spiritAttack(world: World, character: Id, knowledge: Knowledge, pursuit: Pur
 // instead of along the knife's-edge-fringe of its weapon range.
 const val spiritAttackRangeBuffer = 0.1f
 
-fun isInAttackRange(attackerBody: Body, target: Vector3, ability: Ability): Boolean =
-    attackerBody.position.distance(target) <= ability.definition.range - spiritAttackRangeBuffer
+//fun isInAttackRange(attackerBody: Body, target: Vector3, ability: Action): Boolean =
+//    attackerBody.position.distance(target) <= ability.definition.range - spiritAttackRangeBuffer
 

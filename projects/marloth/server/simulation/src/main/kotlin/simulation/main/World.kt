@@ -6,6 +6,7 @@ import mythic.ent.pass
 import org.recast4j.detour.NavMesh
 import org.recast4j.detour.NavMeshQuery
 import randomly.Dice
+import simulation.misc.Definitions
 import simulation.misc.GameOver
 import simulation.misc.Realm
 import simulation.physics.BulletState
@@ -20,7 +21,8 @@ data class World(
     val logicUpdateCounter: Int,
     val navMesh: NavMesh?,
     val navMeshQuery: NavMeshQuery?,
-    val bulletState: BulletState
+    val bulletState: BulletState,
+    val definitions: Definitions
 )
 
 typealias WorldTransform = (World) -> World

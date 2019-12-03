@@ -1,7 +1,6 @@
 package simulation.happenings
 
-import simulation.combat.eventsFromAttack
-import simulation.main.Deck
+import simulation.entities.eventsFromTryUseAbility
 import simulation.main.World
 
 inline fun <reified T : GameEvent> mapEvents(crossinline transform: (World) -> (T) -> Events): (World, Events) -> Events {
@@ -14,6 +13,6 @@ inline fun <reified T : GameEvent> mapEvents(crossinline transform: (World) -> (
 
 fun eventsFromEvents(world: World, events: Events): Events =
     listOf(
-        mapEvents(::eventsFromAttack)
+        mapEvents(::eventsFromTryUseAbility)
     )
         .flatMap { it(world, events) }

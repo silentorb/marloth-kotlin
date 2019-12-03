@@ -14,6 +14,7 @@ import simulation.physics.DynamicBody
 
 data class Deck(
     val accessories: Table<Accessory> = mapOf(),
+    val actions: Table<Action> = mapOf(),
     val ambientSounds: Table<AmbientAudioEmitter> = mapOf(),
     val animations: Table<ArmatureAnimation> = mapOf(),
     val architecture: Table<ArchitectureElement> = mapOf(),

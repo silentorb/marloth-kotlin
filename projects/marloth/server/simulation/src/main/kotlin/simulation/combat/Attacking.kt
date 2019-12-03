@@ -2,13 +2,14 @@ package simulation.combat
 
 import mythic.ent.Id
 import mythic.spatial.Vector3
-import simulation.happenings.AttackEvent
+import simulation.happenings.TryUseAbilityEvent
 import simulation.happenings.DamageEvent
 import simulation.happenings.Events
+import simulation.happenings.UseAction
 import simulation.main.World
 import simulation.physics.castCollisionRay
 
-fun raycastAttack(world: World, attacker: Id): Events {
+fun raycastAttack(world: World, attacker: Id, action: Id): Events {
   val deck = world.deck
   val body = deck.bodies[attacker]!!
   val character = deck.characters[attacker]!!
@@ -25,12 +26,12 @@ fun raycastAttack(world: World, attacker: Id): Events {
                 amount = 10,
                 source = attacker
             )
+        ),
+        UseAction(
+            actor = attacker,
+            action = action
         )
     )
   } else
     listOf()
-}
-
-fun eventsFromAttack(world: World): (AttackEvent) -> Events = { event ->
-  raycastAttack(world, event.actor)
 }

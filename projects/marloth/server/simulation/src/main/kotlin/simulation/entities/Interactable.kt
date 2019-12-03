@@ -1,15 +1,13 @@
 package simulation.entities
 
 import mythic.ent.Id
-import mythic.spatial.Vector3
 import scenery.enums.ClientCommand
 import scenery.enums.Text
-import simulation.happenings.Action
-import simulation.main.Deck
+import simulation.happenings.EventTrigger
 
 data class WidgetCommand(
     val text: Text,
-    val action: Action? = null,
+    val action: EventTrigger? = null,
     val clientCommand: ClientCommand? = null
 )
 

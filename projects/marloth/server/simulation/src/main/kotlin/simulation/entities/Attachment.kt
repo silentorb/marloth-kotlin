@@ -9,7 +9,9 @@ import simulation.main.Hand
 import simulation.main.toDeck
 import simulation.misc.ValueModifier
 
-enum class AttachmentTypeId {
+typealias AccessoryName = String
+
+enum class AttachmentCategory {
   ability,
   buff,
   equipped,
@@ -18,7 +20,7 @@ enum class AttachmentTypeId {
 
 data class Attachment(
     val target: Id,
-    val category: AttachmentTypeId,
+    val category: AttachmentCategory,
     val index: Int = 0,
     val source: Id = 0L
 )
@@ -30,14 +32,14 @@ data class Modifier(
 
 data class AccessoryDefinition(
     val name: Text,
-    val modifiers: List<Modifier>
+    val modifiers: List<Modifier> = listOf()
 )
 
 data class ModifierDefinition(
     val name: Text,
     val type: ModifierType = ModifierType._notSpecified,
     val direction: ModifierDirection = ModifierDirection.none,
-    val overTime: Action? = null,
+    val overTime: EventTrigger? = null,
     val valueModifier: ValueModifier? = null
 )
 
@@ -53,7 +55,7 @@ fun getAttachmentOfEntityType(deck: Deck, target: Id, type: ModifierId): Id? =
       buff?.type == type
     }
 
-fun getTargetAttachmentsOfCategory(deck: Deck, target: Id, category: AttachmentTypeId): List<Id> =
+fun getTargetAttachmentsOfCategory(deck: Deck, target: Id, category: AttachmentCategory): List<Id> =
     getTargetAttachments(deck, target)
         .filter { it.value.category == category }
         .mapNotNull { it.key }
@@ -65,7 +67,7 @@ fun updateAttachment(events: Events): (Id, Attachment) -> Attachment {
     val purchase = purchaseEvents.firstOrNull { it.ware == id }
     if (purchase != null)
       Attachment(
-          category = AttachmentTypeId.ability,
+          category = AttachmentCategory.ability,
           target = purchase.customer
       )
     else
@@ -99,7 +101,7 @@ fun applyBuff(deck: Deck, nextId: IdSource): (ApplyBuffEvent) -> Deck = { event 
     val hand = Hand(
         attachment = Attachment(
             target = event.target,
-            category = AttachmentTypeId.buff,
+            category = AttachmentCategory.buff,
             source = event.source
         ),
         buff = Modifier(
