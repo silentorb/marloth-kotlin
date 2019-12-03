@@ -292,7 +292,7 @@ fun loadAnimation(buffer: ByteBuffer, info: GltfInfo, source: IndexedAnimation, 
 fun loadAnimations(buffer: ByteBuffer, info: GltfInfo, animations: List<IndexedAnimation>, bones: List<Bone>, boneIndexMap: Map<Int, BoneNode>): AnimationMap {
   return animations.mapNotNull { source ->
     val name = formatArmatureName(source.name)
-    val key = AnimationId.values().firstOrNull { it.name == name }
+    val key = AnimationId.values().firstOrNull { it.name == name }?.name
     if (key != null)
       Pair(key, loadAnimation(buffer, info, source, boneIndexMap))
     else

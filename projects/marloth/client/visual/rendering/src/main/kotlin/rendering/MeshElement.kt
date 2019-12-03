@@ -5,8 +5,10 @@ import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import scenery.*
 
+typealias AnimationName = String
+
 data class ElementAnimation(
-    val animationId: AnimationId,
+    val animationId: AnimationName,
     val timeOffset: Float,
     val strength: Float
 )

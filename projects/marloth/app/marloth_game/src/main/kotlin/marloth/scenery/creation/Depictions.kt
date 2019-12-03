@@ -77,14 +77,12 @@ fun convertComplexDepiction(deck: Deck, id: Id, depiction: Depiction): ElementGr
       .translate(body.position + Vector3(0f, 0f, verticalOffset))
       .rotate(character.facingQuaternion)
       .rotateZ(Pi / 2f)
-//      .scale(1.5f)
 
-  val animations = depiction.animations.map {
+  val animations = deck.animations[id]!!.animations.map {
     ElementAnimation(
-        animationId = mapAnimation(deck, it.animationId),
+        animationId = it.animationId,
         timeOffset = it.animationOffset,
         strength = it.strength
-//        strength = 1f / depiction.animations.size
     )
   }
   val meshes = when {

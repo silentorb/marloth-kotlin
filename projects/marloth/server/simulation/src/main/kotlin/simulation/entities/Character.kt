@@ -60,11 +60,6 @@ data class Character(
     get() = facingQuaternion * Vector3(1f, 0f, 0f)
 }
 
-data class ArmatureAnimation(
-    val animationIndex: Int,
-    var timeOffset: Float
-)
-
 // Currently this is such a simple function because it will likely get more complicated and I want to ensure
 // everything is already routing through a single point before things get more complicated.
 fun isAlive(health: Int): Boolean =
@@ -78,19 +73,22 @@ val equipCommandSlots: Map<CommandType, Int> = listOf(
 ).mapIndexed { index, commandType -> Pair(commandType, index) }
     .associate { it }
 
-fun updateEquippedItem(deck: Deck, id: Id, character: Character, commands: Commands): Id? {
+fun updateEquippedItem(deck: Deck, id: Id, activeAccessory: Id?, commands: Commands): Id? {
   val slot = commands
       .mapNotNull { equipCommandSlots[it.type] }
       .firstOrNull()
 
   return if (slot != null) {
     val itemId = getItemInSlot(deck, id, slot)
-    if (itemId == character.activeAccessory)
+    if (itemId == activeAccessory)
       null
     else
       itemId
+  } else if (activeAccessory == null) {
+    val result = getTargetAttachments(deck, id).entries.firstOrNull { deck.actions.keys.contains(it.key) }?.key
+    result
   } else
-    character.activeAccessory
+    activeAccessory
 }
 
 fun getPurchaseCost(deck: Deck, events: Events, character: Id): Int {
@@ -139,7 +137,7 @@ fun updateCharacter(deck: Deck, id: Id, character: Character, commands: Commands
       { c ->
         c.copy(
             isAlive = isAlive,
-            activeAccessory = updateEquippedItem(deck, id, character, commands),
+            activeAccessory = updateEquippedItem(deck, id, character.activeAccessory, commands),
             interactingWith = updateInteractingWith(deck, id, commands, c.interactingWith),
             money = updateMoney(deck, events, id, character.money)
         )

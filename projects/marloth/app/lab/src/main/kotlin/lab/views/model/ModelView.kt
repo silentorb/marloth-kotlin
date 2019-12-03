@@ -52,14 +52,14 @@ data class ModelViewConfig(
 
 data class ModelViewState(
     val scrollOffsets: Map<String, Float>,
-    val animation: AnimationId,
+    val animation: AnimationName,
     val animationElapsedTime: Float
 )
 
 fun newModelViewState() =
     ModelViewState(
         scrollOffsets = mapOf(),
-        animation = AnimationId.walk,
+        animation = AnimationId.walk.name,
         animationElapsedTime = 0f
     )
 
@@ -264,7 +264,7 @@ class ModelView(val config: ModelViewConfig, val renderer: Renderer, val mousePo
   fun updateAnimationOffset(state: ModelViewState, delta: Float): Float {
     val armature = model.armature
     if (armature != null && armature.animations.any())
-      return (state.animationElapsedTime + delta * 0.5f) % armature.animations[AnimationId.stand]!!.duration
+      return (state.animationElapsedTime + delta * 0.5f) % armature.animations[AnimationId.stand.name]!!.duration
 
     return 0f
   }

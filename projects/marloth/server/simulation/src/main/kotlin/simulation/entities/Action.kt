@@ -14,7 +14,8 @@ import simulation.updating.simulationDelta
 
 data class ActionDefinition(
     val cooldown: Float,
-    val range: Float
+    val range: Float,
+    val animation: AnimationName? = null
 )
 
 data class Action(

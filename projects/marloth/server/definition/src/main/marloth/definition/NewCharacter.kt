@@ -25,6 +25,14 @@ fun newCharacter(definitions: Definitions, definition: CharacterDefinition, fact
         )
       else
         null,
+      animation = CharacterAnimation(
+          animations = listOf(
+              SingleAnimation(
+                  animationId = AnimationId.stand.name,
+                  animationOffset = 0f
+              )
+          )
+      ),
       body = Body(
           position = position,
           orientation = Quaternion(),
@@ -51,13 +59,7 @@ fun newCharacter(definitions: Definitions, definition: CharacterDefinition, fact
           shape = Capsule(defaultCharacterRadius, defaultCharacterHeight)
       ),
       depiction = Depiction(
-          type = definition.depictionType,
-          animations = listOf(
-              DepictionAnimation(
-                  animationId = AnimationId.stand,
-                  animationOffset = 0f
-              )
-          )
+          type = definition.depictionType
       ),
       dynamicBody = DynamicBody(
           gravity = true,
@@ -65,17 +67,18 @@ fun newCharacter(definitions: Definitions, definition: CharacterDefinition, fact
           resistance = 4f
       ),
       spirit = spirit,
-      attachments = definition.accessories.mapIndexed { index, type ->
-        HandAttachment(
-            category = AttachmentCategory.ability,
-            index = index,
-            hand = Hand(
-                accessory = Accessory(
-                    type = type
-                ),
-                action = newPossibleAction(definitions, type)
+      attachments = definition.accessories
+          .mapIndexed { index, type ->
+            HandAttachment(
+                category = AttachmentCategory.ability,
+                index = index,
+                hand = Hand(
+                    accessory = Accessory(
+                        type = type
+                    ),
+                    action = newPossibleAction(definitions, type)
+                )
             )
-        )
-      }
+          }
   )
 }

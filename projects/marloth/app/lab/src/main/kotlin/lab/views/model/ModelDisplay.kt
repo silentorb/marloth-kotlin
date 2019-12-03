@@ -145,12 +145,12 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
 //      transformAnimatedSkeleton(armature.bones, armature.animations[state.animation]!!, state.animationElapsedTime)
       val a = listOf(
           MultiAnimationPart(
-              animation = armature.animations[AnimationId.stand]!!,
+              animation = armature.animations[AnimationId.stand.name]!!,
               timeOffset = state.animationElapsedTime,
               strength = 0f
           ),
           MultiAnimationPart(
-              animation = armature.animations[AnimationId.walk]!!,
+              animation = armature.animations[AnimationId.walk.name]!!,
               timeOffset = state.animationElapsedTime,
               strength = 1f
           )

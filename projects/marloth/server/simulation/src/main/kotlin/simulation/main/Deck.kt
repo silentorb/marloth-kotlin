@@ -16,7 +16,7 @@ data class Deck(
     val accessories: Table<Accessory> = mapOf(),
     val actions: Table<Action> = mapOf(),
     val ambientSounds: Table<AmbientAudioEmitter> = mapOf(),
-    val animations: Table<ArmatureAnimation> = mapOf(),
+    val animations: Table<CharacterAnimation> = mapOf(),
     val architecture: Table<ArchitectureElement> = mapOf(),
     val attachments: Table<Attachment> = mapOf(),
     val bodies: Table<Body> = mapOf(),
@@ -31,10 +31,12 @@ data class Deck(
     val interactables: Table<Interactable> = mapOf(),
     val lights: Table<Light> = mapOf(),
     val particleEffects: Table<ParticleEffect> = mapOf(),
+    val performances: Table<Performance> = mapOf(),
     val players: Table<Player> = mapOf(),
     val resources: Table<ResourceBundle> = mapOf(),
     val spirits: Table<Spirit> = mapOf(),
     val timers: Table<Timer> = mapOf(),
+    val timersFloat: Table<FloatTimer> = mapOf(),
     val triggers: Table<Trigger> = mapOf(),
     val wares: Table<Ware> = mapOf()
 )

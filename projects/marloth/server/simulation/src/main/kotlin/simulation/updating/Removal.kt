@@ -9,9 +9,17 @@ import simulation.main.Deck
 import simulation.main.removeEntities
 
 fun expiredTimers(deck: Deck): Set<Id> =
-    deck.timers
-        .filter { it.value.duration < 1 }
-        .keys
+    setOf<Id>()
+        .plus(
+            deck.timers
+                .filter { it.value.duration < 1 }
+                .keys
+        )
+        .plus(
+            deck.timersFloat
+                .filter { it.value.duration <= 0f }
+                .keys
+        )
 
 fun getFinished(events: Events, deck: Deck): Set<Id> {
   return expiredTimers(deck)

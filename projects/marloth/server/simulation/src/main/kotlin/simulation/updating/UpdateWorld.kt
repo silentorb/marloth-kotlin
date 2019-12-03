@@ -61,19 +61,22 @@ fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: 
                    intermediate: Intermediate): (Deck) -> Deck =
     { deck ->
       val (commands, collisionMap, events) = intermediate
+      val delta = simulationDelta
       deck.copy(
           actions = updateActions(world.definitions, deck, events),
           ambientSounds = updateAmbientAudio(dice, deck),
+          animations = mapTable(deck.animations, updateCharacterAnimation(deck, animationDurations, delta)),
           attachments = mapTable(deck.attachments, updateAttachment(intermediate.events)),
           bodies = mapTableValues(deck.bodies, updateBody(world.realm)),
-          cycles = mapTableValues(deck.cycles, updateCycle(simulationDelta)),
-          depictions = mapTable(deck.depictions, updateDepiction(deck, animationDurations)),
+          cycles = mapTableValues(deck.cycles, updateCycle(delta)),
+//          depictions = mapTable(deck.depictions, updateDepiction(deck, animationDurations)),
           destructibles = mapTable(deck.destructibles, updateDestructibleHealth(events)),
           characters = mapTable(deck.characters, updateCharacter(deck, commands, events)),
-          particleEffects = mapTableValues(deck.particleEffects, deck.bodies, updateParticleEffect(dice, simulationDelta)),
+          particleEffects = mapTableValues(deck.particleEffects, deck.bodies, updateParticleEffect(dice, delta)),
           players = mapTable(deck.players, updatePlayer(intermediate.commands)),
-          spirits = mapTable(deck.spirits, updateAiState(world, simulationDelta)),
-          timers = if (shouldUpdateLogic(world)) mapTableValues(deck.timers, updateTimer) else deck.timers
+          spirits = mapTable(deck.spirits, updateAiState(world, delta)),
+          timers = if (shouldUpdateLogic(world)) mapTableValues(deck.timers, updateTimer) else deck.timers,
+          timersFloat = mapTableValues(deck.timersFloat, updateFloatTimer(delta))
       )
     }
 
@@ -94,7 +97,7 @@ fun updateDeck(animationDurations: AnimationDurationMap, definitions: Definition
         removeWhole(intermediate.events),
         removePartial(intermediate.events),
         cleanupOutdatedReferences,
-        newEntities(intermediate.events, nextId)
+        newEntities(definitions, animationDurations, intermediate.events, nextId)
     )
 
 fun updateWorldDeck(animationDurations: AnimationDurationMap, definitions: Definitions, intermediate: Intermediate,

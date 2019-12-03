@@ -10,8 +10,12 @@ val updateTimer: (Timer) -> Timer = { timer ->
   )
 }
 
-//val updateTimers: (Table<Timer>) -> Table<Timer> = { timers ->
-//  timers
-//      .mapValues { updateTimer()(it.value) }
-//      .filterValues { it.duration > 0 }
-//}
+data class FloatTimer(
+    val duration: Float
+)
+
+fun updateFloatTimer(delta: Float): (FloatTimer) -> FloatTimer = { timer ->
+  timer.copy(
+      duration = timer.duration - delta
+  )
+}

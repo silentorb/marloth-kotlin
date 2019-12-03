@@ -13,6 +13,7 @@ typealias AccessoryName = String
 
 enum class AttachmentCategory {
   ability,
+  animation,
   buff,
   equipped,
   inventory
@@ -44,7 +45,8 @@ data class ModifierDefinition(
 )
 
 fun getTargetAttachments(deck: Deck, target: Id) =
-    deck.attachments.filter { attachment ->
+    deck.attachments
+        .filter { attachment ->
       attachment.value.target == target
     }
 

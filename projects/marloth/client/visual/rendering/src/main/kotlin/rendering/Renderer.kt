@@ -134,7 +134,7 @@ fun createMultiSampler(glow: Glow, config: PlatformDisplayConfig): Multisampler 
   )
 }
 
-typealias AnimationDurationMap = Map<ArmatureId, Map<AnimationId, Float>>
+typealias AnimationDurationMap = Map<ArmatureId, Map<AnimationName, Float>>
 
 fun mapAnimationDurations(armatures: Map<ArmatureId, Armature>): AnimationDurationMap =
     armatures
@@ -142,7 +142,7 @@ fun mapAnimationDurations(armatures: Map<ArmatureId, Armature>): AnimationDurati
           armature.animations.mapValues { it.value.duration }
         }
 
-typealias AnimationMap = Map<AnimationId, SkeletonAnimation>
+typealias AnimationMap = Map<AnimationName, SkeletonAnimation>
 
 typealias SocketMap = Map<String, Int>
 
