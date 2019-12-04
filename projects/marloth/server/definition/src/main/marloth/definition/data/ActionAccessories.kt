@@ -1,5 +1,6 @@
 package marloth.definition.data
 
+import scenery.AnimationId
 import scenery.enums.AccessoryId
 import scenery.enums.Text
 import simulation.entities.AccessoryDefinition
@@ -18,7 +19,8 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         ),
         action = ActionDefinition(
             cooldown = 1f,
-            range = 10f
+            range = 10f,
+            animation = AnimationId.shootPistol.name
         )
     )
 )
