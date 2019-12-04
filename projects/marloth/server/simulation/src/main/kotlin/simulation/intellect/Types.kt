@@ -8,7 +8,6 @@ typealias Path = List<Id>
 
 data class Pursuit(
     val targetEnemy: Id? = null,
-    val path: Path? = null,
     val targetPosition: Vector3? = null
 )
 

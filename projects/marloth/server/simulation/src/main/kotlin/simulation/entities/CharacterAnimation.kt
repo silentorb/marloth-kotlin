@@ -17,10 +17,13 @@ data class CharacterAnimation(
     val animations: List<SingleAnimation>
 )
 
-fun updateAnimationOffset(animationId: AnimationName, animationDurations: AnimationDurationMap,
-                          offset: Float, delta: Float): Float {
-  val duration = animationDurations[ArmatureId.person]!![animationId]
-  val nextValue = offset + 1f * delta
+private val transitionBeforeStart = setOf(AnimationId.shootPistol.name)
+
+fun updateAnimationOffset(animationDurations: AnimationDurationMap,
+                          animation: SingleAnimation, delta: Float): Float {
+  val duration = animationDurations[ArmatureId.person]!![animation.animationId]
+  val nextValue = animation.animationOffset + 1f * delta
+
   return if (duration != null)
     if (duration == 0f)
       0f
@@ -34,7 +37,11 @@ fun updateAnimationOffset(animationId: AnimationName, animationDurations: Animat
 
 fun updateSingleAnimation(animationDurations: AnimationDurationMap,
                           delta: Float): (Float, SingleAnimation) -> SingleAnimation = { strength, animation ->
-  val finalValue = updateAnimationOffset(animation.animationId, animationDurations, animation.animationOffset, delta)
+
+  val finalValue = if (transitionBeforeStart.contains(animation.animationId) && strength > animation.strength)
+    0f
+  else
+    updateAnimationOffset(animationDurations, animation, delta)
 
   assert(!finalValue.isNaN())
   animation.copy(
@@ -49,8 +56,8 @@ fun getUpdatedAnimationDistributions(primary: AnimationName,
   if (animations.size == 1)
     return listOf(1f)
 
-  val transitionSpeed = 1f
-  val offset = transitionSpeed * delta
+  val transitionDuration = 0.3f
+  val offset = delta / transitionDuration
   val initial = animations.map {
     if (it.animationId == primary)
       it.strength + offset
@@ -80,7 +87,10 @@ fun updateTargetAnimations(deck: Deck, animationDurations: AnimationDurationMap,
                            delta: Float, character: Id): (List<SingleAnimation>) -> List<SingleAnimation> = { animations ->
   val primaryAnimation = updatePrimaryAnimation(deck, character)
   val animationsPlus = if (animations.none { it.animationId == primaryAnimation })
-    animations.plus(SingleAnimation(primaryAnimation, 0f, 0f))
+    animations
+        .sortedByDescending { it.strength }
+        .take(1)
+        .plus(SingleAnimation(primaryAnimation, 0f, 0f))
   else
     animations
   val distributions = getUpdatedAnimationDistributions(primaryAnimation, animationsPlus, delta)

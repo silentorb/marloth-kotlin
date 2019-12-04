@@ -5,13 +5,16 @@ import simulation.intellect.Path
 import simulation.intellect.assessment.Knowledge
 import mythic.spatial.Vector3
 import org.recast4j.detour.DefaultQueryFilter
+import simulation.entities.getActiveAction
 import simulation.main.World
 import simulation.input.Command
 import simulation.input.CommandType
 import simulation.input.Commands
 import simulation.intellect.Pursuit
+import simulation.intellect.design.getActionRange
 import simulation.intellect.navigation.asRecastVector3
 import simulation.intellect.navigation.fromRecastVector3
+import simulation.main.Deck
 import simulation.misc.Graph
 
 fun doorwayPosition(graph: Graph, firstNode: Id, secondNode: Id): Vector3 {
@@ -88,10 +91,20 @@ fun moveStraightTowardPosition(world: World, character: Id, target: Vector3): Co
   }
 }
 
-fun moveSpirit(world: World,character: Id, knowledge: Knowledge, pursuit: Pursuit): Commands {
+fun moveSpirit(world: World, character: Id, knowledge: Knowledge, pursuit: Pursuit): Commands {
   val target = getPathTargetPosition(world, character, pursuit)
   return if (target != null)
     moveStraightTowardPosition(world, character, target)
   else
     listOf()
+}
+
+fun isTargetInRange(world: World, character: Id, target: Id): Boolean {
+  val deck = world.deck
+  val characterPosition = deck.bodies[character]?.position!!
+  val targetPosition = deck.bodies[target]?.position!!
+  val action = getActiveAction(deck, character)
+  val range = getActionRange(deck, world.definitions, action!!) - spiritAttackRangeBuffer
+  val distance = characterPosition.distance(targetPosition)
+  return distance <= range
 }

@@ -4,6 +4,7 @@ import mythic.bloom.*
 import mythic.bloom.next.*
 
 import org.joml.Vector2i
+import silentorb.mythic.debugging.getDebugRangeValue
 import simulation.entities.Interactable
 import simulation.entities.Modifier
 import simulation.misc.ResourceContainer
@@ -34,7 +35,8 @@ val df = java.text.DecimalFormat("#0.00")
 private fun playerStats(data: HudData): Flower {
   val rows = listOf(
       label(textStyle, "Health: ${resourceString(data.health)}"),
-      label(textStyle, "Sanity: ${resourceString(data.sanity)}")
+      label(textStyle, "Sanity: ${resourceString(data.sanity)}"),
+      label(textStyle, "Debug Range: ${getDebugRangeValue()}")
 //      mythic.bloom.localizedLabel(textStyle, characterVisibility(data, player)),
 //      mythic.bloom.localizedLabel(textStyle, "vel: " + df.format(world.deck.bodies[player]!!.velocity.length()))
   )

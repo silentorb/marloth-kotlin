@@ -23,6 +23,9 @@ import marloth.integration.*
 import mythic.desktop.createDesktopPlatform
 import mythic.ent.pipe
 import mythic.quartz.newTimestepState
+import org.lwjgl.glfw.GLFW
+import silentorb.mythic.debugging.getDebugRangeValue
+import silentorb.mythic.debugging.setDebugRangeValue
 import simulation.main.World
 import simulation.misc.Definitions
 import simulation.misc.WorldInput
@@ -76,6 +79,19 @@ fun labRender(app: LabApp, state: LabState): RenderHook = { sceneRenderer ->
     renderNavMesh(sceneRenderer.renderer, app.config.mapView.display, navMesh)
 }
 
+fun updateDebugRangeValue(appState: AppState) {
+  val events = appState.client.input.deviceStates[0].events
+  val increment = 0.01f
+  if (events.any { it.index == GLFW.GLFW_KEY_MINUS }) {
+    val value = getDebugRangeValue()
+    setDebugRangeValue(Math.max(value - increment, 0f))
+  }
+  else if (events.any { it.index == GLFW.GLFW_KEY_EQUAL }) {
+    val value = getDebugRangeValue()
+    setDebugRangeValue(Math.min(value + increment, 1f))
+  }
+}
+
 tailrec fun labLoop(app: LabApp, state: LabState) {
   val gameApp = app.gameApp
   val newAppState = if (app.config.view == Views.game) {
@@ -106,6 +122,7 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
       gameApp.config.gameplay.defaultPlayerView = world.deck.players.values.first().viewMode
     }
 
+
     newState.app.copy(
         timestep = timestep,
         worlds = if (shouldReloadWorld) {
@@ -115,6 +132,7 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
           state.app.worlds
     )
   }
+  updateDebugRangeValue(newAppState)
 
   saveIncrement += 1f * newAppState.timestep.delta.toFloat()
   if (saveIncrement > 5f) {

@@ -15,6 +15,14 @@ fun incrementGlobalDebugLoopNumber(max: Int) {
   privateLoopNumber = ++privateLoopNumber % max
 }
 
+private var debugRangeValue = 0f
+
+fun getDebugRangeValue(): Float = debugRangeValue
+
+fun setDebugRangeValue(value: Float) {
+  debugRangeValue = value
+}
+
 fun newDotEnv() = dotenv {
   directory = System.getenv("DOTENV_DIRECTORY")
   ignoreIfMissing = true

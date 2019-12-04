@@ -18,7 +18,7 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
             name = Text.id_pistol
         ),
         action = ActionDefinition(
-            cooldown = 1f,
+            cooldown = 2f,
             range = 10f,
             animation = AnimationId.shootPistol.name
         )

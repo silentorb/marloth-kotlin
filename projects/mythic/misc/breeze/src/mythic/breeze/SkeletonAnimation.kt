@@ -191,36 +191,6 @@ fun projectBoneTail(matrix: Matrix, bone: Bone) =
 //    Matrix().translate(Vector3(bone.length, 0f, 0f)).mul(matrix)
     Matrix(matrix).translate(bone.length, 0f, 0f)
 
-//fun getStandardChannelValue(channel: AnimationChannel, timePassed: Float): Any {
-//  val (firstKey, secondKey) = getCurrentKeys(channel.keys, timePassed)
-//  return if (secondKey == null) {
-//    when (channel.target.type) {
-//      ChannelType.rotation -> firstKey.value as Quaternion
-//      ChannelType.translation -> firstKey.value as Vector3
-//      else -> throw Error("Not implemented.")
-//    }
-//  } else {
-//    val duration = secondKey.time - firstKey.time
-//    val localSecondsPassed = timePassed - firstKey.time
-//    val progress = localSecondsPassed / duration
-//    when (channel.target.type) {
-//      ChannelType.rotation -> {
-//        val a = firstKey.value as Quaternion
-//        val b = secondKey.value as Quaternion
-//        val value = Quaternion(a).slerp(b, progress)
-//        value
-//      }
-//      ChannelType.translation -> {
-//        val a = firstKey.value as Vector3
-//        val b = secondKey.value as Vector3
-//        Vector3(Vector3m(a).lerp(Vector3m(b), progress))
-//      }
-//
-//      else -> throw Error("Not implemented.")
-//    }
-//  }
-//}
-
 fun getBoneIndex(bones: Bones, name: String): Int =
     bones.first { it.name == name }.index
 
