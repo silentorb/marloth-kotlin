@@ -35,13 +35,16 @@ class ModelAssetsTask28 extends DefaultTask {
     def config = Utility.getAssetConfig(_projectDir)
     def executablePath = config.paths.blender28 ?: config.paths.blender 
     inputs.outOfDate { change ->
-      println "out of date: ${change.file.name}"
-      def scriptPath = "$_projectDir/blend/scripts/export-2.8.py"
-      def proc = [executablePath, change.file.absolutePath, '--background', '--python', scriptPath].execute()
-      def sout = new StringBuilder(), serr = new StringBuilder()
-      proc.consumeProcessOutput(sout, serr)
-      proc.waitFor()
-      println "out> $sout err> $serr"
+      if (change.file.isFile()) {
+        println "out of date: ${change.file.name}"
+        def scriptPath = "$_projectDir/blend/scripts/export-2.8.py"
+        println([executablePath, change.file.absolutePath, '--background', '--python', scriptPath])
+        def proc = [executablePath, change.file.absolutePath, '--background', '--python', scriptPath].execute()
+        def sout = new StringBuilder(), serr = new StringBuilder()
+        proc.consumeProcessOutput(sout, serr)
+        proc.waitFor()
+        println "out> $sout err> $serr"
+      }
     }
 
     inputs.removed { change ->

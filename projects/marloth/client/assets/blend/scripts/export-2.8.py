@@ -184,17 +184,21 @@ def render_camera_textures():
             render_camera_texture(obj, obj['render-texture'])
 
 
+# The Blender operator to select/deselect has a bug with needing to get the proper context based on mouse hovering :(
 def deselect_all():
-    bpy.ops.object.select_all(action='DESELECT')
+    for obj in bpy.data.objects:
+        obj.select_set(False)
 
 
+'INVOKE_DEFAULT'
 def get_export_objects():
     if 'no-export' in bpy.context.scene:
         return []
 
     result = []
     for obj in bpy.context.scene.objects:
-        if not obj.hide_render and 'no-render' not in obj and 'no-export' not in obj and obj.type in ['MESH', 'LIGHT']:
+        if not obj.hide_render and 'no-render' not in obj and 'no-export' not in obj and obj.type in ['MESH', 'LIGHT', 'ARMATURE']:
+            print(obj.name)
             result.append(obj)
     return result
 
@@ -206,6 +210,21 @@ def set_export_object_visibility(objs):
         obj.select_set(True)
 
 
+# The GLTF exporter will skip meshes with ngon topology but won't provide any information about the
+# mesh that was skipped, such as its name.  Running this function first provides
+# a better workflow for handling topology problems
+def check_topology(objs):
+    errored = False
+    for obj in objs:
+        if obj.type == 'MESH':
+            try:
+                obj.data.calc_tangents()
+            except:
+                errored = True
+                print('ERROR: Object ' + obj.name + ' has faces with more than 4 sides')
+    # if errored:
+    #     raise Exception('Aborted export due to topology issues')
+
 def prepare_scene(export_dir):
     # Some of the export operations will fail if the blender file was saved in edit mode.
     # Ensure blender is in object mode and not edit mode
@@ -213,6 +232,7 @@ def prepare_scene(export_dir):
 
     deselect_all()
     export_objects = get_export_objects()
+    check_topology(export_objects)
 
     if len(export_objects) > 0:
         os.makedirs(export_dir, exist_ok=True)

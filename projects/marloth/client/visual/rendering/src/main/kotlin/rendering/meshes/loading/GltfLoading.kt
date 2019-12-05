@@ -304,7 +304,7 @@ fun loadAnimations(buffer: ByteBuffer, info: GltfInfo, animations: List<IndexedA
 fun nodeToBone(node: Node, index: Int, parent: Int) =
     Bone(
         name = node.name,
-        translation = node.translation!!,
+        translation = node.translation ?: Vector3.zero,
         rotation = loadQuaternion(node.rotation),
         length = 0.1f,
         index = index,
@@ -369,6 +369,21 @@ fun getAncestors(nodes: List<Node>, bone: Int): List<Int> {
     listOf(parent).plus(getAncestors(nodes, parent))
 }
 
+fun getSkeletonRoot(info: GltfInfo): Int {
+  val nodes = info.nodes
+  val root = nodes.indexOfFirst { it.name == "root" }
+  if (root == -1) {
+    // For debug purposes
+    val secondRoot = nodes.filterIndexed { index, node ->
+      nodes.none {
+        it.children?.contains(index) ?: false
+      }
+    }
+    throw Error("Could not find skeleton root for model")
+  }
+  return root
+}
+
 fun getBoneMap(info: GltfInfo, additionalBones: Collection<Int>): BoneMap {
   val skins = info.skins
   if (skins == null)
@@ -387,7 +402,7 @@ fun getBoneMap(info: GltfInfo, additionalBones: Collection<Int>): BoneMap {
       .plus(additionalBones)
       .distinct()
 
-  val root = info.nodes.indexOfFirst { it.name == "rig" }
+  val root = getSkeletonRoot(info)
   val levelMap = gatherBoneHierarchy(info.nodes, root)
   val orderMap = orderBoneHierarchy(levelMap)
       .filter {

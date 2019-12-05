@@ -53,7 +53,7 @@ def get_bake_materials():
 def get_bake_object_material_pairs():
     result = set()
     for obj in bpy.data.objects:
-        if obj.type == 'MESH':
+        if obj.type == 'MESH' and 'no-export' not in obj:
             for material in obj.data.materials:
                 if should_bake(material):
                     result.add((obj, material))
