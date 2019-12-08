@@ -24,7 +24,7 @@ fun setDebugRangeValue(value: Float) {
 }
 
 fun newDotEnv() = dotenv {
-  directory = System.getenv("DOTENV_DIRECTORY")
+  directory = System.getenv("DOTENV_DIRECTORY") ?: ""
   ignoreIfMissing = true
 }
 

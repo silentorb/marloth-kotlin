@@ -4,12 +4,12 @@ import java.io.File
 import java.io.PrintWriter
 import java.nio.ByteBuffer
 
-private fun getValue(buffer: ByteBuffer, componentType: Int): Any {
+fun getComponentValue(buffer: ByteBuffer, componentType: Int): Any {
   return when (componentType) {
     ComponentType.UnsignedByte.value -> buffer.get().toInt() and 0xFF
-    ComponentType.UnsignedShort.value -> buffer.getShort().toInt() and 0xFF
-    ComponentType.UnsignedInt.value -> buffer.getInt() and 0xFF
-    ComponentType.Float.value -> buffer.getFloat()
+    ComponentType.UnsignedShort.value -> buffer.short.toInt() and 0xFF
+    ComponentType.UnsignedInt.value -> buffer.int and 0xFF
+    ComponentType.Float.value -> buffer.float
     else -> throw Error("Not implemented.")
   }
 }
@@ -40,7 +40,7 @@ fun logBuffer(buffer: ByteBuffer, info: GltfInfo) {
         val componentCount = componentCountMap[accessor.type]!!
         val position = buffer.position()
         val values = (0 until componentCount).map {
-          getValue(buffer, accessor.componentType).toString()
+          getComponentValue(buffer, accessor.componentType).toString()
         }
         val valueString = values.joinToString(", ")
         log(out, valueString, position)

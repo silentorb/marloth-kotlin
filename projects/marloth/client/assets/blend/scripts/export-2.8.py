@@ -34,9 +34,13 @@ def of_type(list, type):
 
 def prepare_texture_nodes():
     for material in bpy.data.materials:
+        # If it's baked then the material is already prepared for image export
+        if 'bake' in material:
+            continue
+
         tree = material.node_tree
         if tree is None:
-            return None
+            continue
 
         nodes = tree.nodes
         texture_nodes = [node for node in list(nodes) if node.bl_idname == 'ShaderNodeTexImage']
@@ -210,6 +214,16 @@ def set_export_object_visibility(objs):
         obj.select_set(True)
 
 
+def prepare_animations():
+    for action in bpy.data.actions:
+        markers = []
+        for marker in action.pose_markers:
+            markers.append({ 'name': marker.name, 'frame': marker.frame })
+
+        if len(markers) > 0:
+            action['markers'] = markers
+
+
 # The GLTF exporter will skip meshes with ngon topology but won't provide any information about the
 # mesh that was skipped, such as its name.  Running this function first provides
 # a better workflow for handling topology problems
@@ -243,6 +257,8 @@ def prepare_scene(export_dir):
     render_camera_textures()
     bake_all(export_dir)
 
+    prepare_animations()
+
     has_objects = len(export_objects) > 0
     if has_objects:
         prune_materials()
@@ -275,6 +291,7 @@ def export_gltf(filepath):
         export_image_format='NAME',
         export_texcoords=True,
         export_normals=True,
+        export_def_bones=True,
         export_draco_mesh_compression_enable=False,
         export_draco_mesh_compression_level=6,
         export_draco_position_quantization=14,

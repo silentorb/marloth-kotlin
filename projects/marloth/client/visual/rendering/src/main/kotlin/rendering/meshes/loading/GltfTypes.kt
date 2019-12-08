@@ -1,10 +1,12 @@
 package rendering.meshes.loading
 
 import com.fasterxml.jackson.annotation.JsonCreator
+import mythic.breeze.TimelineMarker
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import rendering.meshes.AttributeName
 
+typealias ExtraMap = Map<String, Any>
 
 enum class AccessorType {
   SCALAR,
@@ -149,10 +151,15 @@ data class AnimationSampler(
     val output: Int
 )
 
+data class AnimationExtras(
+    val markers: List<TimelineMarker>
+)
+
 data class IndexedAnimation(
     val name: String,
     val channels: List<AnimationChannel>,
-    val samplers: List<AnimationSampler>
+    val samplers: List<AnimationSampler>,
+    val extras: AnimationExtras?
 )
 
 enum class GltfLightType {

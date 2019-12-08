@@ -3,7 +3,8 @@
 ## Setup
 
 This project depends on the following external media software:
-* Blender 2.8
+* Blender 2.81
+    * Currently depends on version 1.0.10 of the gltf exporter (for animation extras to serialize markers), which isn't yet shipped with Blender and needs to be manually copied over the bundled version
 * Filter Forge 8
 
 ## IntelliJ Settings

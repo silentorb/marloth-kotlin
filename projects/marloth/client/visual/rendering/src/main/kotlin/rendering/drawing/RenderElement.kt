@@ -21,6 +21,7 @@ fun renderElement(renderer: Renderer, primitive: Primitive, material: Material, 
   if (material.texture != null && texture == null) {
     val debugMissingTexture = 0
   }
+
   val config = ObjectShaderConfig(
       transform,
       color = material.color,

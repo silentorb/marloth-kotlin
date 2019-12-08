@@ -149,3 +149,28 @@ fun parseFloat(value: Any?): Float =
       value.toFloat()
     else
       throw Error("Not supported")
+
+fun getComponentIntValue(buffer: ByteBuffer, componentType: Int): Int {
+  return when (componentType) {
+    ComponentType.UnsignedByte.value -> buffer.get().toInt() and 0xFF
+    ComponentType.UnsignedShort.value -> buffer.short.toInt() and 0xFF
+    ComponentType.UnsignedInt.value -> buffer.int and 0xFF
+    else -> throw Error("Not implemented.")
+  }
+}
+
+fun getComponentByteSize(componentType: Int): Int {
+  return when (componentType) {
+    ComponentType.UnsignedByte.value -> 1
+    ComponentType.UnsignedShort.value -> 2
+    ComponentType.UnsignedInt.value -> 4
+    ComponentType.Float.value -> 4
+    else -> throw Error("Not implemented.")
+  }
+}
+
+@Suppress("UNCHECKED_CAST")
+fun parseVector3(source: Any?): Vector3 {
+  val dimensions = source as List<Double>
+  return Vector3(dimensions[0].toFloat(), dimensions[1].toFloat(), dimensions[2].toFloat())
+}

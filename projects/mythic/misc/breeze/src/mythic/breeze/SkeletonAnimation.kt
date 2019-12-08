@@ -40,7 +40,8 @@ data class SkeletonAnimation(
     val name: String,
     val duration: Float,
     val channels: List<SkeletonAnimationChannel>,
-    val channelMap: ChannelTypeMap
+    val channelMap: ChannelTypeMap,
+    val markers: List<TimelineMarker>
 )
 
 typealias Bones = List<Bone>
