@@ -39,7 +39,6 @@ typealias VertexConverter = (ByteBuffer, FloatBuffer, VertexAttributeDetail, Int
 fun createVertexConverter(info: GltfInfo, transformBuffer: ByteBuffer, boneMap: BoneMap, meshIndex: Int): VertexConverter {
   val meshNode = info.nodes.first { it.mesh == meshIndex }
   val skin = if (meshNode.skin != null) info.skins?.get(meshNode.skin) else null
-//  println("Skinned: ${meshNode.name} ${skin != null}")
 
   return if (skin != null) {
     if (skin.joints.none())
