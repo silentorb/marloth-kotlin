@@ -1,8 +1,6 @@
 package rendering.meshes
 
-import mythic.glowing.Drawable
 import mythic.glowing.GeneralMesh
-import mythic.glowing.SimpleMesh
 import mythic.glowing.newGeneralMesh
 import mythic.sculpting.ImmutableFace
 import mythic.sculpting.ImmutableMesh

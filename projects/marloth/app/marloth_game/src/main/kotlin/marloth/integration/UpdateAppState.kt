@@ -28,9 +28,7 @@ import simulation.input.CommandType
 import simulation.main.World
 import simulation.updating.simulationDelta
 import simulation.misc.Victory
-import simulation.physics.newBulletState
 import simulation.physics.releaseBulletState
-import simulation.physics.syncNewBodies
 
 fun updateSimulationDatabase(db: Database, next: World, previous: World) {
   val nextGameOver = next.gameOver

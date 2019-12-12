@@ -4,23 +4,15 @@ import DeviceMap
 import PlayerDevice
 import mythic.bloom.*
 import mythic.platforming.Platform
-import org.joml.Vector2i
 import haft.*
 import compuquest_client.views.ClientBattleState
 import compuquest_client.views.shopView
 import compuquest_client.views.battleView
-import compuquest_simulation.CommandType
 import compuquest_simulation.GameCommand
 import mythic.bloom.next.Box
 import mythic.bloom.next.Flower
 import mythic.bloom.next.Seed
-import mythic.platforming.PlatformInput
 import mythic.platforming.WindowInfo
-import mythic.spatial.Vector2
-import mythic.spatial.minMax
-import mythic.spatial.toVector2i
-import org.lwjgl.glfw.GLFW
-import updateInputDeviceStates
 
 data class InputState(
     val deviceStates: List<InputDeviceState>,
@@ -80,7 +72,7 @@ fun newInputState() =
 //  }
 
 //  fun getInputEvent(layout: LayoutOld, userInput: UserInput): Any? {
-//    val isActive = haft.isActive(userInput.commands)
+//    val isActive = isActive(userInput.commands)
 //    if (isActive(CommandType.select)) {
 //      val event = getEvent(layout, userInput.mousePosition.toVector2i())
 //      if (event != null)

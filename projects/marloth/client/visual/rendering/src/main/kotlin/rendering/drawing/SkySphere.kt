@@ -1,12 +1,9 @@
 package rendering.drawing
 
 import mythic.glowing.globalState
-import mythic.spatial.Matrix
-import mythic.spatial.Vector4
 import rendering.ElementGroups
 import rendering.Renderer
 import scenery.Camera
-import scenery.enums.MeshId
 
 fun renderBackground(renderer: Renderer, camera: Camera, background: ElementGroups) {
   globalState.depthEnabled = false

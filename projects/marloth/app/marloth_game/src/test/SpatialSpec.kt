@@ -1,8 +1,3 @@
-import mythic.spatial.*
-import org.joml.times
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-
 //class SpatialSpec : Spek({
 //  beforeGroup {
 //    System.setProperty("joml.format", "false")

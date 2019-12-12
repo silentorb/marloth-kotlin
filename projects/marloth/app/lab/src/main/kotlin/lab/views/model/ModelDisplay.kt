@@ -1,8 +1,6 @@
 package lab.views.model
 
 import lab.utility.*
-import lab.views.game.renderFaceNormals
-import mythic.bloom.*
 import mythic.bloom.Bounds
 import mythic.bloom.Depiction
 import mythic.bloom.drawBorder
@@ -10,7 +8,6 @@ import mythic.bloom.drawFill
 import mythic.breeze.MultiAnimationPart
 import mythic.breeze.transformAnimatedSkeleton
 import mythic.drawing.Canvas
-import mythic.glowing.DrawMethod
 import mythic.glowing.globalState
 import mythic.spatial.*
 import org.joml.*

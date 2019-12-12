@@ -1,6 +1,5 @@
 package simulation.particles
 
-import mythic.breeze.getStandardChannelValue
 import mythic.breeze.interpolateKeys
 import mythic.breeze.interpolateVector4
 import mythic.spatial.Vector3

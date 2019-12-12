@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import configuration.getAfterburnerModule
 import assets.getResourceStream
-import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import java.io.IOException

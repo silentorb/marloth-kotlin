@@ -1,7 +1,6 @@
 package silentorb.raymarching
 
 import mythic.spatial.*
-import org.joml.Vector3f
 import java.nio.FloatBuffer
 
 data class Camera(

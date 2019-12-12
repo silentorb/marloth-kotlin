@@ -5,9 +5,7 @@ import compuquest_simulation.AbilityType
 import compuquest_simulation.CommandType
 import mythic.bloom.*
 import mythic.bloom.next.Flower
-import mythic.bloom.next.div
 import mythic.bloom.next.emptyFlower
-import mythic.bloom.next.plusLogic
 import mythic.drawing.Canvas
 import mythic.drawing.grayTone
 

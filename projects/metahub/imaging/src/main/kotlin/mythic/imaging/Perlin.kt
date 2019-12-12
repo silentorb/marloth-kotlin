@@ -2,7 +2,6 @@ package mythic.imaging
 
 import mythic.spatial.*
 import org.joml.Vector2i
-import org.joml.Vector3i
 import org.joml.plus
 import kotlin.random.Random
 

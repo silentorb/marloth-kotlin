@@ -1,7 +1,6 @@
 package lab
 
 import haft.*
-import lab.views.TextureViewConfig
 import lab.views.game.GameViewConfig
 import lab.views.map.MapViewConfig
 import lab.views.map.mapViewBindings

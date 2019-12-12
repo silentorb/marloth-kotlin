@@ -3,7 +3,6 @@ package generation.architecture.building
 import generation.architecture.definition.RandomMeshQuery
 import generation.architecture.misc.BuilderInput
 import generation.architecture.misc.GenerationConfig
-import generation.architecture.misc.MeshQuery
 import generation.architecture.old.cellHalfLength
 import generation.architecture.old.newArchitectureMesh
 import generation.general.*

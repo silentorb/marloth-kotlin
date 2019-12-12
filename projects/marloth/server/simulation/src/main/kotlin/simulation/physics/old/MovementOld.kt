@@ -1,6 +1,5 @@
 package simulation.physics.old
 
-import mythic.ent.Id
 import mythic.sculpting.ImmutableEdge
 import mythic.sculpting.ImmutableFace
 import mythic.spatial.*

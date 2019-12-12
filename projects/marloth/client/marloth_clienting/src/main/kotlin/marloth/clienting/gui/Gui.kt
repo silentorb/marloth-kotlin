@@ -1,7 +1,6 @@
 package marloth.clienting.gui
 
 import haft.HaftCommands
-import marloth.clienting.Client
 import marloth.clienting.ClientState
 import marloth.clienting.input.GuiCommandType
 import mythic.bloom.*

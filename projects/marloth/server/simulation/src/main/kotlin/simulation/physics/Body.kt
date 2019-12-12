@@ -5,7 +5,6 @@ import mythic.ent.firstFloatSortedBy
 import mythic.spatial.Matrix
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
-import simulation.main.Deck
 import simulation.main.World
 import simulation.misc.Node
 import simulation.misc.Realm

@@ -8,7 +8,6 @@ import rendering.ScreenFilter
 import scenery.Light
 import scenery.LightType
 import scenery.Scene
-import scenery.Screen
 import scenery.enums.AccessoryId
 import simulation.entities.hasEquipped
 import simulation.main.Deck

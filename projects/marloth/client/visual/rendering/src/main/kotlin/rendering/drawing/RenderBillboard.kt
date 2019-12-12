@@ -3,7 +3,6 @@ package rendering.drawing
 import mythic.glowing.*
 import mythic.spatial.*
 import rendering.Renderer
-import rendering.SceneRenderer
 import rendering.TexturedBillboard
 import rendering.shading.ObjectShaderConfig
 import rendering.shading.ShaderFeatureConfig

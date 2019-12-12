@@ -2,7 +2,6 @@ package mythic.imaging
 
 import mythic.spatial.MutableVector3
 import mythic.spatial.Vector3
-import mythic.spatial.Vector3int
 import org.joml.Vector3i
 import org.lwjgl.BufferUtils
 import java.nio.ByteBuffer

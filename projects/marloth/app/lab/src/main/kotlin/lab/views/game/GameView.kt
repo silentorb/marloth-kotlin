@@ -5,7 +5,6 @@ import mythic.glowing.globalState
 import mythic.sculpting.ImmutableFace
 import mythic.sculpting.getVerticesCenter
 import mythic.spatial.*
-import org.joml.zw
 import rendering.*
 import rendering.shading.LightingConfig
 import rendering.shading.ObjectShaderConfig

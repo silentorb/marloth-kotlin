@@ -2,7 +2,6 @@ package simulation.combat
 
 import mythic.ent.Id
 import mythic.spatial.Vector3
-import simulation.happenings.TryUseAbilityEvent
 import simulation.happenings.DamageEvent
 import simulation.happenings.Events
 import simulation.happenings.UseAction

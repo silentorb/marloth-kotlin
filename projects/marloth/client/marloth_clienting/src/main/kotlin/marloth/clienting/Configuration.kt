@@ -1,7 +1,6 @@
 package marloth.clienting
 
 import haft.*
-import marloth.clienting.input.GuiCommandType
 
 data class InputConfiguration(
     val profiles: InputProfiles

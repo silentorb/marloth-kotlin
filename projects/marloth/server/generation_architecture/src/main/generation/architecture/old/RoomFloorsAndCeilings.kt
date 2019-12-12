@@ -1,11 +1,7 @@
 package generation.architecture.old
 
-import generation.architecture.misc.*
-import mythic.spatial.Quaternion
 import mythic.spatial.Vector3i
-import simulation.entities.ArchitectureElement
 import simulation.misc.MapGrid
-import simulation.misc.Node
 
 //fun placeRoomFloorOrCeiling(common: CommonArchitectConfig): (Node) -> HandArchitect = { node ->
 //  { config, realm, dice ->

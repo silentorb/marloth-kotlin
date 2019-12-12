@@ -1,10 +1,7 @@
 package simulation.physics.old
 
 import mythic.ent.Id
-import mythic.ent.Table
 import mythic.spatial.*
-import simulation.main.World
-import simulation.physics.Body
 
 data class Rotation(
     val pitch: Float = 0f,

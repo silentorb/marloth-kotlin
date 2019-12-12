@@ -14,7 +14,6 @@ import simulation.intellect.Pursuit
 import simulation.intellect.design.getActionRange
 import simulation.intellect.navigation.asRecastVector3
 import simulation.intellect.navigation.fromRecastVector3
-import simulation.main.Deck
 import simulation.misc.Graph
 
 fun doorwayPosition(graph: Graph, firstNode: Id, secondNode: Id): Vector3 {

@@ -1,13 +1,5 @@
 package generation.architecture.old
 
-import generation.architecture.misc.*
-import mythic.spatial.Quaternion
-import mythic.spatial.Vector3
-import mythic.spatial.quarterAngle
-import simulation.entities.ArchitectureElement
-import simulation.misc.Node
-import simulation.physics.old.getLookAtAngle
-
 //fun getTunnelFloorMesh(biome: BiomeInfo, info: TunnelInfo): Set<MeshAttribute> {
 //  return if (Math.abs(info.vector.z) > 0.2f)
 //    setOf(MeshAttribute.placementStairStep)

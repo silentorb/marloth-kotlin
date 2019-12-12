@@ -30,7 +30,6 @@ import simulation.main.World
 import simulation.misc.Definitions
 import simulation.misc.WorldInput
 import simulation.misc.createWorldBoundary
-import simulation.physics.newBulletState
 
 const val labConfigPath = "../labConfig.yaml"
 

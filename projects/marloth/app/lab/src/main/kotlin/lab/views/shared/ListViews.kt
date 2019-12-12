@@ -1,7 +1,5 @@
 package lab.views.shared
 
-import lab.views.model.SelectableListType
-import lab.views.model.SelectionEvent
 import marloth.clienting.gui.textStyles
 import mythic.bloom.*
 

@@ -2,13 +2,6 @@ package compuquest_client.views
 
 import mythic.bloom.*
 import mythic.bloom.next.Flower
-import mythic.drawing.Canvas
-import mythic.spatial.Vector2
-import mythic.spatial.Vector4
-import mythic.typography.TextConfiguration
-import mythic.typography.TextStyle
-import mythic.typography.calculateTextDimensions
-import org.joml.plus
 
 val itemHeight = 15f
 val standardPadding = 5f

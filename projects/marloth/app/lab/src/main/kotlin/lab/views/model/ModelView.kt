@@ -1,7 +1,5 @@
 package lab.views.model
 
-import haft.getCommand
-import haft.isActive
 import lab.LabCommandType
 import mythic.bloom.*
 import mythic.spatial.*

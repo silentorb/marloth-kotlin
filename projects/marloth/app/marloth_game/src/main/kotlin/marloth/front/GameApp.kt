@@ -10,8 +10,6 @@ import mythic.quartz.newTimestepState
 import persistence.Database
 import persistence.newDatabase
 import randomly.Dice
-import simulation.physics.BulletState
-import simulation.physics.newBulletState
 import rendering.SceneRenderer
 import simulation.main.World
 import simulation.misc.Definitions

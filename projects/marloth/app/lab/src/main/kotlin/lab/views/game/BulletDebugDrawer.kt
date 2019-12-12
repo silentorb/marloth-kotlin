@@ -2,7 +2,6 @@ package lab.views.game
 
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw
 import com.badlogic.gdx.utils.Disposable
-import marloth.front.GameApp
 import marloth.front.RenderHook
 import mythic.glowing.globalState
 import mythic.spatial.Vector3

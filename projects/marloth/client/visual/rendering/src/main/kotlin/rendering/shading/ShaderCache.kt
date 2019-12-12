@@ -1,7 +1,6 @@
 package rendering.shading
 
 import mythic.glowing.VertexSchema
-import rendering.meshes.AttributeName
 
 data class ShaderKey(
     val vertexSchema: VertexSchema,

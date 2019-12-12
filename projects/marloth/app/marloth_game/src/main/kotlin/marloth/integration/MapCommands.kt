@@ -3,8 +3,6 @@ package marloth.integration
 import haft.HaftCommands
 import marloth.clienting.input.GuiCommandType
 import mythic.ent.Id
-import mythic.ent.Table
-import simulation.entities.Player
 import simulation.input.Command
 import simulation.input.CommandType
 

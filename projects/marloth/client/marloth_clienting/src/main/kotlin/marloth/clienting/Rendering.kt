@@ -1,6 +1,5 @@
 package marloth.clienting
 
-import mythic.drawing.Canvas
 import mythic.platforming.WindowInfo
 import org.joml.zw
 import rendering.*

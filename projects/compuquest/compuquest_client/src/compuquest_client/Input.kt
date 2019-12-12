@@ -1,10 +1,7 @@
 package compuquest_client
 
 import haft.HaftCommands
-import haft.ScalarInputSource
-import haft.disconnectedScalarInputSource
 import compuquest_simulation.*
-import mythic.platforming.PlatformInput
 import mythic.spatial.Vector2
 
 typealias InputResult = Pair<ClientState, GameCommand?>
