@@ -1,10 +1,5 @@
 package generation.abstracted
 
-import mythic.ent.Id
-import simulation.main.Deck
-import simulation.misc.Graph
-import simulation.misc.Node
-
 // Normally Body.nearestNode is used as a cached variable that can be reconstructed.
 // But for the initial architecture pass the source of truth is reversed
 // and Body.nearestNode is temporarily used as the source-of-truth for node radius calculation.

@@ -1,6 +1,5 @@
 package simulation.happenings
 
-import mythic.ent.Id
 import simulation.input.CommandType
 import simulation.input.Commands
 import simulation.main.Deck

@@ -5,7 +5,6 @@ import simulation.entities.getActiveAction
 import simulation.intellect.Pursuit
 import simulation.intellect.assessment.Knowledge
 import simulation.intellect.assessment.getVisibleEnemies
-import simulation.intellect.execution.spiritAttackRangeBuffer
 import simulation.main.Deck
 import simulation.main.World
 import simulation.misc.Definitions

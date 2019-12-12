@@ -1,7 +1,6 @@
 package simulation.entities
 
 import mythic.ent.Id
-import scenery.enums.AccessoryId
 import simulation.happenings.Events
 import simulation.happenings.PurchaseEvent
 import simulation.main.Deck
