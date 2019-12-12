@@ -5,11 +5,11 @@ import mythic.bloom.*
 import mythic.spatial.*
 import org.joml.*
 import rendering.*
-import scenery.Camera
+import silentorb.mythic.scenery.Camera
 import lab.views.*
 
 import mythic.sculpting.*
-import scenery.AnimationId
+import marloth.scenery.AnimationId
 
 data class ModelLayout(
     val boxes: List<FlatBox>,

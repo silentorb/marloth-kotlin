@@ -1,6 +1,6 @@
 package simulation.misc
 
-import scenery.enums.ModifierId
+import marloth.scenery.enums.ModifierId
 import simulation.entities.AccessoryDefinition
 import simulation.entities.AccessoryName
 import simulation.entities.ActionDefinition

@@ -11,8 +11,8 @@ import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import simulation.physics.Body
 import randomly.Dice
-import scenery.MeshName
-import scenery.enums.TextureId
+import silentorb.mythic.scenery.MeshName
+import marloth.scenery.enums.TextureId
 import simulation.entities.ArchitectureElement
 import simulation.physics.CollisionObject
 import simulation.main.Hand

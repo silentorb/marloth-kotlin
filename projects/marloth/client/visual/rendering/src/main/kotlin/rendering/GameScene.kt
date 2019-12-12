@@ -1,8 +1,8 @@
 package rendering
 
-import scenery.Camera
-import scenery.Light
-import scenery.Scene
+import silentorb.mythic.scenery.Camera
+import silentorb.mythic.scenery.Light
+import silentorb.mythic.scenery.Scene
 
 data class GameScene(
     val main: Scene,

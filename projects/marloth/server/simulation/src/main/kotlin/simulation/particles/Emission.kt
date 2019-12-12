@@ -5,8 +5,8 @@ import mythic.spatial.Vector3
 import mythic.spatial.projectVector3
 import simulation.physics.Body
 import randomly.Dice
-import scenery.Cylinder
-import scenery.Shape
+import silentorb.mythic.scenery.Cylinder
+import silentorb.mythic.scenery.Shape
 
 fun getShouldEmit(dice: Dice, elapsedTime: Float, rate: Float): Boolean {
   val emissionChance = elapsedTime * rate

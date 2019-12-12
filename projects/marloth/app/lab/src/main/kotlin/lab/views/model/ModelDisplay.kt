@@ -15,10 +15,10 @@ import rendering.*
 import rendering.meshes.Primitive
 import rendering.shading.ObjectShaderConfig
 import rendering.shading.populateBoneBuffer
-import scenery.AnimationId
-import scenery.Camera
-import scenery.ProjectionType
-import scenery.Scene
+import marloth.scenery.AnimationId
+import silentorb.mythic.scenery.Camera
+import silentorb.mythic.scenery.ProjectionType
+import silentorb.mythic.scenery.Scene
 
 fun createOrthographicCamera(camera: ViewCameraConfig): Camera {
   val orientation = Quaternion()

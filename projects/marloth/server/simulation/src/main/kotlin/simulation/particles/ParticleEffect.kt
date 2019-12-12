@@ -5,7 +5,7 @@ import mythic.ent.pipe2
 import mythic.spatial.Vector3
 import simulation.physics.Body
 import randomly.Dice
-import scenery.Shape
+import silentorb.mythic.scenery.Shape
 
 //typealias ParticleFactory = (Dice) -> ParticleHand
 //typealias ParticleUpdater = (Float, ParticleDeck) -> ParticleDeck

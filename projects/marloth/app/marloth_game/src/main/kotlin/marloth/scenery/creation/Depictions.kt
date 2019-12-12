@@ -1,13 +1,16 @@
 package marloth.scenery.creation
 
+import marloth.scenery.ArmatureId
+import marloth.scenery.ArmatureSockets
+import silentorb.mythic.scenery.MeshName
+import silentorb.mythic.scenery.TextureName
 import mythic.ent.Id
 import mythic.ent.Table
 import mythic.spatial.Matrix
 import mythic.spatial.Pi
 import mythic.spatial.Vector3
 import rendering.*
-import scenery.*
-import scenery.enums.MeshId
+import marloth.scenery.enums.MeshId
 import simulation.entities.*
 import simulation.main.Deck
 import kotlin.math.floor
@@ -109,7 +112,7 @@ fun convertComplexDepiction(deck: Deck, id: Id, depiction: Depiction): ElementGr
                 transform = transform
             )
           },
-      armature = ArmatureId.person,
+      armature = ArmatureId.person.name,
       animations = animations,
       attachments = listOf(
           AttachedMesh(

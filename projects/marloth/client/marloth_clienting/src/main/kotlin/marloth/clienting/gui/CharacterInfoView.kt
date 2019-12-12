@@ -3,7 +3,7 @@ package marloth.clienting.gui
 import mythic.bloom.*
 import mythic.bloom.next.*
 import mythic.ent.Id
-import scenery.enums.Text
+import marloth.scenery.enums.Text
 import simulation.combat.damageTypeNames
 import simulation.combat.defaultDamageMultiplier
 import simulation.combat.staticDamageTypes

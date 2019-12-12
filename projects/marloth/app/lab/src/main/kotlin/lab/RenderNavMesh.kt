@@ -12,7 +12,7 @@ import org.recast4j.recast.Span
 import rendering.Renderer
 import rendering.shading.ObjectShaderConfig
 import rendering.shading.ShaderFeatureConfig
-import scenery.enums.MeshId
+import marloth.scenery.enums.MeshId
 import simulation.intellect.navigation.globalHeightMap
 import simulation.intellect.navigation.originalNavMeshData
 import kotlin.math.abs

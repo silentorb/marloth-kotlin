@@ -24,7 +24,7 @@ import mythic.spatial.Vector3
 import mythic.typography.loadFontSets
 import newBloomInputState
 import rendering.Renderer
-import scenery.enums.Text
+import marloth.scenery.enums.Text
 import simulation.main.Deck
 import simulation.main.World
 import updateInputDeviceStates

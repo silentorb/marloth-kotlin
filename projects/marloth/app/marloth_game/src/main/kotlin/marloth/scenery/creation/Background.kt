@@ -7,7 +7,7 @@ import rendering.ElementGroup
 import rendering.ElementGroups
 import rendering.Material
 import rendering.MeshElement
-import scenery.enums.MeshId
+import marloth.scenery.enums.MeshId
 import simulation.entities.Cycle
 
 fun createBackgroundSphere(texture: BackgroundTextureId, cameraPosition: Vector3, orientation: Quaternion = Quaternion()) =

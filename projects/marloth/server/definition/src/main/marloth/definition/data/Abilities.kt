@@ -1,8 +1,8 @@
 package marloth.definition.data
 
-import scenery.enums.AccessoryId
-import scenery.enums.ModifierId
-import scenery.enums.Text
+import marloth.scenery.enums.AccessoryId
+import marloth.scenery.enums.ModifierId
+import marloth.scenery.enums.Text
 import simulation.entities.AccessoryDefinition
 import simulation.entities.AccessoryName
 import simulation.entities.Modifier

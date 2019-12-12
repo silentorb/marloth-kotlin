@@ -1,6 +1,6 @@
 package marloth.clienting.audio
 
-import scenery.enums.Sounds
+import marloth.scenery.enums.Sounds
 
 fun <T> ifTrue(result: T, assertion: () -> Boolean): T? =
     if (assertion())

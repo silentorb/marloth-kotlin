@@ -2,9 +2,9 @@ package marloth.definition.templates
 
 import generation.architecture.misc.MeshInfoMap
 import mythic.spatial.Vector3
-import scenery.enums.MeshId
-import scenery.enums.ResourceId
-import scenery.enums.Text
+import marloth.scenery.enums.MeshId
+import marloth.scenery.enums.ResourceId
+import marloth.scenery.enums.Text
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
 import simulation.entities.Interactable

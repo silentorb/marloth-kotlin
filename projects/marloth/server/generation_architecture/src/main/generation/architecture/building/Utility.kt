@@ -7,7 +7,7 @@ import generation.general.*
 import generation.architecture.misc.Builder
 import mythic.spatial.Vector3
 import randomly.Dice
-import scenery.enums.MeshId
+import marloth.scenery.enums.MeshId
 import simulation.misc.NodeAttribute
 
 val floorOffset = Vector3(cellHalfLength, cellHalfLength, 0f)

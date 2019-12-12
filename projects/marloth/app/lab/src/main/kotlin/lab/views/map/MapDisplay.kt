@@ -18,9 +18,9 @@ import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import rendering.SceneRenderer
 import rendering.drawing.renderMeshElement
-import scenery.Camera
-import scenery.ProjectionType
-import scenery.Scene
+import silentorb.mythic.scenery.Camera
+import silentorb.mythic.scenery.ProjectionType
+import silentorb.mythic.scenery.Scene
 import simulation.entities.DepictionType
 import simulation.main.Deck
 import simulation.main.World

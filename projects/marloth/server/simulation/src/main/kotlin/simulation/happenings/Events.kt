@@ -1,7 +1,7 @@
 package simulation.happenings
 
 import mythic.ent.Id
-import scenery.enums.ModifierId
+import marloth.scenery.enums.ModifierId
 import simulation.combat.Damage
 import simulation.entities.AccessoryName
 

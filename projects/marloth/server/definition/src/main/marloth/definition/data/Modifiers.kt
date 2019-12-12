@@ -1,8 +1,8 @@
 package marloth.definition.data
 
 import marloth.definition.newResistanceModifier
-import scenery.enums.ModifierId
-import scenery.enums.Text
+import marloth.scenery.enums.ModifierId
+import marloth.scenery.enums.Text
 import simulation.combat.DamageType
 import simulation.entities.ModifierDefinition
 import simulation.happenings.DamageAction

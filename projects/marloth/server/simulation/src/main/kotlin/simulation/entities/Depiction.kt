@@ -1,8 +1,10 @@
 package simulation.entities
 
-import scenery.*
+import silentorb.mythic.scenery.MeshName
+import silentorb.mythic.scenery.TextureName
+import silentorb.mythic.scenery.ArmatureName
 
-typealias AnimationDurationMap = Map<ArmatureId, Map<AnimationName, Float>>
+typealias AnimationDurationMap = Map<ArmatureName, Map<AnimationName, Float>>
 
 enum class DepictionType {
   billboard,

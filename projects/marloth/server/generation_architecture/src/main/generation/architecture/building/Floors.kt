@@ -7,7 +7,7 @@ import generation.general.TextureGroup
 import generation.general.biomeTexture
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
-import scenery.MeshName
+import silentorb.mythic.scenery.MeshName
 import simulation.entities.ArchitectureElement
 import simulation.misc.cellLength
 import kotlin.math.asin

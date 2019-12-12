@@ -3,7 +3,6 @@ package rendering.meshes.loading
 import mythic.breeze.*
 import mythic.spatial.Vector3
 import rendering.*
-import scenery.AnimationId
 import java.nio.ByteBuffer
 
 typealias SkinMap = Map<Int, Int>
@@ -87,13 +86,9 @@ fun loadAnimation(buffer: ByteBuffer, info: GltfInfo, source: IndexedAnimation, 
 
 fun loadAnimations(buffer: ByteBuffer, info: GltfInfo, animations: List<IndexedAnimation>,
                    bones: List<Bone>, boneIndexMap: Map<Int, BoneNode>): AnimationMap {
-  return animations.mapNotNull { source ->
+  return animations.map { source ->
     val name = formatArmatureName(source.name)
-    val key = AnimationId.values().firstOrNull { it.name == name }?.name
-    if (key != null)
-      Pair(key, loadAnimation(buffer, info, source, boneIndexMap))
-    else
-      null
+    Pair(name, loadAnimation(buffer, info, source, boneIndexMap))
   }
       .associate { it }
 }
@@ -231,7 +226,7 @@ fun loadArmature(buffer: ByteBuffer, info: GltfInfo, filename: String, boneMap: 
   }
 
   return Armature(
-      id = getArmatureId(filename),
+      id = toCamelCase(filename),
       bones = bones,
       animations = loadAnimations(buffer, info, info.animations, bones, boneMap),
       transforms = transformSkeleton(bones),

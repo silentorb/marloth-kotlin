@@ -7,8 +7,8 @@ import rendering.Material
 import rendering.ModelMesh
 import rendering.meshes.VertexSchemas
 import rendering.toCamelCase
-import scenery.Light
-import scenery.LightType
+import silentorb.mythic.scenery.Light
+import silentorb.mythic.scenery.LightType
 
 fun loadMaterial(info: GltfInfo, materialIndex: Int): Material {
   val materialSource = info.materials!![materialIndex]

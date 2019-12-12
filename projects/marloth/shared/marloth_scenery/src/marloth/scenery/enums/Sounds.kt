@@ -1,4 +1,4 @@
-package scenery.enums
+package marloth.scenery.enums
 
 enum class Sounds {
   girlScream,

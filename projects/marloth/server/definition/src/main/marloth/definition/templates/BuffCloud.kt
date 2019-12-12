@@ -1,7 +1,7 @@
 package marloth.definition.templates
 
-import scenery.enums.ModifierId
-import scenery.enums.TextureId
+import marloth.scenery.enums.ModifierId
+import marloth.scenery.enums.TextureId
 import simulation.happenings.Trigger
 import mythic.breeze.AnimationChannel
 import mythic.breeze.Keyframe
@@ -10,7 +10,7 @@ import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import simulation.physics.Body
 import simulation.physics.CollisionObject
-import scenery.Cylinder
+import silentorb.mythic.scenery.Cylinder
 import simulation.main.Hand
 import simulation.happenings.ApplyBuff
 import simulation.particles.Emitter

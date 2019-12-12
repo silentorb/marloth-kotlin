@@ -1,9 +1,11 @@
 package rendering
 
+import silentorb.mythic.scenery.MeshName
+import silentorb.mythic.scenery.TextureName
 import mythic.spatial.Matrix
 import mythic.spatial.Vector3
 import mythic.spatial.Vector4
-import scenery.*
+import silentorb.mythic.scenery.ArmatureName
 
 typealias AnimationName = String
 
@@ -35,7 +37,7 @@ data class TexturedBillboard(
 
 data class ElementGroup(
     val meshes: List<MeshElement> = listOf(),
-    val armature: ArmatureId? = null,
+    val armature: ArmatureName? = null,
     val animations: List<ElementAnimation> = listOf(),
     val attachments: List<AttachedMesh> = listOf(),
     val billboards: List<TexturedBillboard> = listOf()

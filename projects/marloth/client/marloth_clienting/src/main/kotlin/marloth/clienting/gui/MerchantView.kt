@@ -12,7 +12,7 @@ import mythic.typography.TextConfiguration
 import mythic.typography.calculateTextDimensions
 import mythic.typography.resolveTextStyle
 import org.joml.Vector2i
-import scenery.enums.Text
+import marloth.scenery.enums.Text
 import simulation.entities.AttachmentCategory
 import simulation.happenings.PurchaseEvent
 import simulation.main.Deck

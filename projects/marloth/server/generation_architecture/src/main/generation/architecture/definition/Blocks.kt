@@ -5,7 +5,7 @@ import generation.general.Block
 import generation.general.Side
 import generation.architecture.misc.enumerateMembers
 import generation.architecture.misc.Builder
-import scenery.enums.MeshId
+import marloth.scenery.enums.MeshId
 import simulation.misc.NodeAttribute
 
 val any: Side = setOf()

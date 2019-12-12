@@ -3,7 +3,7 @@ package rendering.drawing
 import mythic.glowing.globalState
 import rendering.ElementGroups
 import rendering.Renderer
-import scenery.Camera
+import silentorb.mythic.scenery.Camera
 
 fun renderBackground(renderer: Renderer, camera: Camera, background: ElementGroups) {
   globalState.depthEnabled = false

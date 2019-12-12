@@ -1,9 +1,8 @@
 package generation.architecture.misc
 
 import generation.architecture.definition.MeshAttribute
-import generation.architecture.definition.meshAttributesThatRequireAShape
-import scenery.MeshName
-import scenery.Shape
+import silentorb.mythic.scenery.MeshName
+import silentorb.mythic.scenery.Shape
 
 typealias MeshAttributes = Set<MeshAttribute>
 

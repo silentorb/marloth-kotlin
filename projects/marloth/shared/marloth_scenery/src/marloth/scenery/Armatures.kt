@@ -1,4 +1,4 @@
-package scenery
+package marloth.scenery
 
 enum class ArmatureId {
   person

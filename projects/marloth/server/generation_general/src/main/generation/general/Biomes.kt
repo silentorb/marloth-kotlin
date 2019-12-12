@@ -1,7 +1,7 @@
 package generation.general
 
-import scenery.MeshName
-import scenery.enums.TextureId
+import silentorb.mythic.scenery.MeshName
+import marloth.scenery.enums.TextureId
 import simulation.misc.BiomeName
 
 //enum class WallPlacement {

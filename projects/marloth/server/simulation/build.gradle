@@ -1,6 +1,6 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
-requires 'spatial', 'sculpting', 'randomly', 'scenery', 'ent', 'breeze', 'debugging'
+requires 'spatial', 'sculpting', 'randomly', 'marloth_scenery', 'ent', 'breeze', 'debugging'
 
 buildscript {
   repositories {

@@ -1,8 +1,8 @@
 package simulation.entities
 
 import mythic.ent.Id
-import scenery.enums.ClientCommand
-import scenery.enums.Text
+import marloth.scenery.enums.ClientCommand
+import marloth.scenery.enums.Text
 import simulation.happenings.EventTrigger
 
 data class WidgetCommand(

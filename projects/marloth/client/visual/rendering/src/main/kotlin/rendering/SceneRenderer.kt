@@ -14,7 +14,7 @@ import rendering.shading.GeneralPerspectiveShader
 import rendering.shading.ObjectShaderConfig
 import rendering.shading.ShaderFeatureConfig
 import rendering.shading.Shaders
-import scenery.Camera
+import silentorb.mythic.scenery.Camera
 
 
 class SceneRenderer(

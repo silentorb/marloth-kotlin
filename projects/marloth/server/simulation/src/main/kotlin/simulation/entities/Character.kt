@@ -4,8 +4,8 @@ import mythic.ent.Id
 import mythic.ent.pipe2
 import mythic.spatial.*
 import org.joml.times
-import scenery.enums.ResourceId
-import scenery.enums.Sounds
+import marloth.scenery.enums.ResourceId
+import marloth.scenery.enums.Sounds
 import simulation.combat.DamageMultipliers
 import simulation.happenings.Events
 import simulation.happenings.PurchaseEvent

@@ -1,7 +1,7 @@
 package marloth.clienting.gui
 
 import marloth.clienting.input.GuiCommandType
-import scenery.enums.Text
+import marloth.scenery.enums.Text
 
 fun mainMenu(isGameActive: Boolean): List<SimpleMenuItem> = listOfNotNull(
     if (isGameActive) SimpleMenuItem(command = GuiCommandType.menuBack, text = Text.menu_continueGame) else null,

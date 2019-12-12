@@ -1,7 +1,7 @@
 package marloth.definition
 
-import scenery.enums.ModifierDirection
-import scenery.enums.Text
+import marloth.scenery.enums.ModifierDirection
+import marloth.scenery.enums.Text
 import simulation.combat.DamageType
 import simulation.combat.ModifierOperation
 import simulation.entities.ModifierDefinition

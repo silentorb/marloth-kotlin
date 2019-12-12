@@ -1,7 +1,7 @@
 package simulation.entities
 
 import mythic.ent.Id
-import scenery.ArmatureId
+import marloth.scenery.ArmatureId
 import simulation.happenings.Events
 import simulation.happenings.UseAction
 import simulation.main.Deck
@@ -17,7 +17,7 @@ fun newPerformanceHand(animationDurations: AnimationDurationMap): (Performance) 
   Hand(
       performance = performance,
       timerFloat = FloatTimer(
-          duration = animationDurations[ArmatureId.person]!![performance.animation]!!
+          duration = animationDurations[ArmatureId.person.name]!![performance.animation]!!
       )
   )
 }

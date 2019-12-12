@@ -7,7 +7,7 @@ import marloth.definition.templates.defaultWares
 import marloth.definition.templates.newMerchant
 import mythic.ent.Id
 import randomly.Dice
-import scenery.enums.ModifierId
+import marloth.scenery.enums.ModifierId
 import simulation.main.Hand
 import simulation.misc.Node
 import simulation.misc.NodeAttribute

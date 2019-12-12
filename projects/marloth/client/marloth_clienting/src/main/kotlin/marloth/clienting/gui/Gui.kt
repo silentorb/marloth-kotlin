@@ -14,7 +14,7 @@ import mythic.ent.Id
 import mythic.glowing.globalState
 import mythic.spatial.Vector4
 import org.joml.Vector2i
-import scenery.enums.Text
+import marloth.scenery.enums.Text
 import simulation.input.CommandType
 import simulation.main.World
 import simulation.misc.Definitions

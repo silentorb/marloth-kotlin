@@ -1,8 +1,8 @@
 package simulation.entities
 
 import mythic.ent.Id
-import scenery.AnimationId
-import scenery.ArmatureId
+import marloth.scenery.AnimationId
+import marloth.scenery.ArmatureId
 import simulation.main.Deck
 
 typealias AnimationName = String
@@ -21,7 +21,7 @@ private val transitionBeforeStart = setOf(AnimationId.shootPistol.name)
 
 fun updateAnimationOffset(animationDurations: AnimationDurationMap,
                           animation: SingleAnimation, delta: Float): Float {
-  val duration = animationDurations[ArmatureId.person]!![animation.animationId]
+  val duration = animationDurations[ArmatureId.person.name]!![animation.animationId]
   val nextValue = animation.animationOffset + 1f * delta
 
   return if (duration != null)

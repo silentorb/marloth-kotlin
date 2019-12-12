@@ -3,9 +3,9 @@ package marloth.definition.templates
 import marloth.definition.creatures
 import marloth.definition.newCharacter
 import mythic.spatial.Vector3
-import scenery.enums.AccessoryId
-import scenery.enums.ClientCommand
-import scenery.enums.Text
+import marloth.scenery.enums.AccessoryId
+import marloth.scenery.enums.ClientCommand
+import marloth.scenery.enums.Text
 import simulation.entities.*
 import simulation.main.Hand
 import simulation.main.HandAttachment

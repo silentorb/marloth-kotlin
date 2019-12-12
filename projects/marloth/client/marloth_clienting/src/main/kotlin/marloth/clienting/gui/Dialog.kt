@@ -5,7 +5,7 @@ import mythic.bloom.next.*
 import mythic.spatial.Vector4
 import org.joml.Vector2i
 import org.joml.plus
-import scenery.enums.Text
+import marloth.scenery.enums.Text
 
 val centeredDiv = reverseOffset(left = centered, top = centered)
 val centerDialog = centeredDiv + shrink

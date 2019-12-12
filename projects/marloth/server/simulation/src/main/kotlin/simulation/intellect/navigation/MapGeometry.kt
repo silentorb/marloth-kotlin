@@ -6,7 +6,7 @@ import org.recast4j.recast.AreaModification
 import org.recast4j.recast.ConvexVolume
 import org.recast4j.recast.geom.InputGeomProvider
 import org.recast4j.recast.geom.TriMesh
-import scenery.*
+import silentorb.mythic.scenery.*
 import simulation.main.Deck
 import simulation.physics.getBodyTransform
 

@@ -10,7 +10,7 @@ import rendering.ModelMesh
 import rendering.meshes.AttributeName
 import rendering.meshes.VertexSchemas
 import rendering.toCamelCase
-import scenery.MeshName
+import silentorb.mythic.scenery.MeshName
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import java.nio.IntBuffer

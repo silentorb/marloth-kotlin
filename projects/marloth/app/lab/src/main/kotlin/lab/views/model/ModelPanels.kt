@@ -12,7 +12,7 @@ import org.joml.Vector2i
 import org.joml.plus
 import rendering.AdvancedModel
 import rendering.Renderer
-import scenery.Camera
+import silentorb.mythic.scenery.Camera
 
 fun drawScenePanel(config: ModelViewConfig, state: ModelViewState, renderer: Renderer, model: AdvancedModel, camera: Camera): Depiction = { b: Bounds, canvas: Canvas ->
   drawBackground(sceneBackgroundColor)(b, canvas)

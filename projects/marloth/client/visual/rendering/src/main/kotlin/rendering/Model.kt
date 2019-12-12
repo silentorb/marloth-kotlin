@@ -7,10 +7,9 @@ import mythic.spatial.Vector3
 import rendering.meshes.MeshInfo
 import rendering.meshes.Primitives
 import rendering.texturing.FaceTextureMap
-import scenery.ArmatureId
-import scenery.Light
-import scenery.MeshName
-import scenery.Shape
+import silentorb.mythic.scenery.Light
+import silentorb.mythic.scenery.MeshName
+import silentorb.mythic.scenery.Shape
 
 data class MeshGroup(
     val material: Material,
@@ -59,12 +58,3 @@ data class ModelMesh(
 )
 
 typealias ModelMeshMap = Map<MeshName, ModelMesh>
-
-fun getArmatureId(name: String): ArmatureId {
-  val formattedName = toCamelCase(name)
-  val id = ArmatureId.values().firstOrNull { it.name == formattedName }
-  if (id == null)
-    throw Error("Could not find ArmatureId " + formattedName)
-
-  return id
-}

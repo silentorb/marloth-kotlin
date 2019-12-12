@@ -12,7 +12,7 @@ import mythic.typography.IndexedTextStyle
 import mythic.typography.TextConfiguration
 import mythic.typography.calculateTextDimensions
 import mythic.typography.resolveTextStyle
-import scenery.enums.Text
+import marloth.scenery.enums.Text
 import simulation.main.Deck
 
 fun getPlayerInteractingWith(deck: Deck, player: Id): Id? =

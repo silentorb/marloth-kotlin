@@ -5,7 +5,7 @@ import mythic.spatial.*
 import org.joml.times
 import org.lwjgl.BufferUtils
 import rendering.EffectsData
-import scenery.Light
+import silentorb.mythic.scenery.Light
 import java.nio.ByteBuffer
 
 const val sizeOfFloat = 4

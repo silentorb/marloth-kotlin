@@ -5,7 +5,7 @@ import generation.architecture.definition.*
 import generation.general.Direction
 import generation.general.Side
 import mythic.spatial.Vector3
-import scenery.enums.MeshId
+import marloth.scenery.enums.MeshId
 
 const val quarterStep = cellLength / 4f
 

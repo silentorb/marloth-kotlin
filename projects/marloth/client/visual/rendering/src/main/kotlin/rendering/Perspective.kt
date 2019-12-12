@@ -2,8 +2,8 @@ package rendering
 
 import mythic.spatial.*
 import org.joml.*
-import scenery.Camera
-import scenery.ProjectionType
+import silentorb.mythic.scenery.Camera
+import silentorb.mythic.scenery.ProjectionType
 
 fun createViewMatrix(position: Vector3, lookAt: Vector3): Matrix {
   return Matrix()

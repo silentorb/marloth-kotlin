@@ -8,7 +8,7 @@ import mythic.ent.Id
 import mythic.spatial.Vector3
 import mythic.spatial.Vector3i
 import mythic.spatial.toVector3
-import scenery.enums.AccessoryId
+import marloth.scenery.enums.AccessoryId
 import simulation.entities.*
 import simulation.intellect.Pursuit
 import simulation.intellect.Spirit

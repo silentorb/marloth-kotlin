@@ -1,7 +1,7 @@
 package marloth.definition
 
-import scenery.enums.AccessoryId
-import scenery.enums.Sounds
+import marloth.scenery.enums.AccessoryId
+import marloth.scenery.enums.Sounds
 import simulation.entities.CharacterDefinition
 import simulation.entities.DepictionType
 

@@ -11,8 +11,8 @@ import rendering.meshes.Primitive
 import rendering.shading.ObjectShaderConfig
 import rendering.shading.ShaderFeatureConfig
 import rendering.shading.populateBoneBuffer
-import scenery.Camera
-import scenery.MeshName
+import silentorb.mythic.scenery.Camera
+import silentorb.mythic.scenery.MeshName
 
 fun renderElement(renderer: Renderer, primitive: Primitive, material: Material, transform: Matrix, isAnimated: Boolean) {
   val orientationTransform = getRotationMatrix(transform)

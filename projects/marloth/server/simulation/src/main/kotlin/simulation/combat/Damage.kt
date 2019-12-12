@@ -2,7 +2,7 @@ package simulation.combat
 
 import mythic.ent.Id
 import mythic.ent.Table
-import scenery.enums.Text
+import marloth.scenery.enums.Text
 import simulation.entities.*
 import simulation.main.Deck
 import simulation.main.Percentage

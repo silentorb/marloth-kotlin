@@ -11,7 +11,7 @@ import mythic.spatial.Matrix
 import mythic.spatial.Pi
 import mythic.spatial.Vector3
 import mythic.spatial.getCenter
-import scenery.*
+import silentorb.mythic.scenery.*
 import simulation.main.World
 import simulation.physics.old.LinearImpulse
 

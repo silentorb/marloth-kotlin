@@ -5,10 +5,10 @@ import mythic.spatial.Vector3
 import mythic.spatial.Vector4
 import rendering.GameScene
 import rendering.ScreenFilter
-import scenery.Light
-import scenery.LightType
-import scenery.Scene
-import scenery.enums.AccessoryId
+import silentorb.mythic.scenery.Light
+import silentorb.mythic.scenery.LightType
+import silentorb.mythic.scenery.Scene
+import marloth.scenery.enums.AccessoryId
 import simulation.entities.hasEquipped
 import simulation.main.Deck
 

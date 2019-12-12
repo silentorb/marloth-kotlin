@@ -1,7 +1,7 @@
 package rendering.meshes.loading
 
 import mythic.spatial.Matrix
-import scenery.*
+import silentorb.mythic.scenery.*
 
 fun loadBoundingShape(getTriangles: GetTriangles): (Map<String, Any>) -> Shape? = { source ->
   val type = source["type"] as String?

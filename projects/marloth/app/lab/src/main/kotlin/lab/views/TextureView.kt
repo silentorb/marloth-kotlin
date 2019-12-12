@@ -7,7 +7,7 @@ import mythic.bloom.resolveLengths
 import mythic.drawing.Canvas
 import org.joml.Vector2i
 import rendering.Renderer
-import scenery.enums.TextureId
+import marloth.scenery.enums.TextureId
 
 data class TextureViewConfig(
     var texture: TextureId = TextureId.checkersBlackWhite

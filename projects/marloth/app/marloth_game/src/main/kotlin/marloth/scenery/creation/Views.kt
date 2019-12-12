@@ -5,8 +5,8 @@ import mythic.spatial.Pi
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import org.joml.times
-import scenery.Camera
-import scenery.ProjectionType
+import silentorb.mythic.scenery.Camera
+import silentorb.mythic.scenery.ProjectionType
 import simulation.entities.Character
 import simulation.entities.HoverCamera
 import simulation.entities.ViewMode

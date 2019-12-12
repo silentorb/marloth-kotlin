@@ -8,7 +8,7 @@ import rendering.shading.ObjectShaderConfig
 import rendering.shading.ShaderFeatureConfig
 import rendering.shading.createInstanceBuffer
 import rendering.shading.padBuffer
-import scenery.Camera
+import silentorb.mythic.scenery.Camera
 import kotlin.math.roundToInt
 
 fun renderBillboard(renderer: Renderer, camera: Camera, billboards: List<TexturedBillboard>) {

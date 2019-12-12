@@ -1,6 +1,6 @@
 package simulation.misc
 
-import scenery.enums.ResourceId
+import marloth.scenery.enums.ResourceId
 
 typealias ResourceMap = Map<ResourceId, Int>
 

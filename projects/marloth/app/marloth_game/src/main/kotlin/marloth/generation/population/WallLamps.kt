@@ -8,7 +8,7 @@ import mythic.spatial.Quaternion
 import mythic.spatial.Vector3
 import org.joml.times
 import randomly.Dice
-import scenery.enums.MeshId
+import marloth.scenery.enums.MeshId
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
 import simulation.main.Deck

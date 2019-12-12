@@ -1,5 +1,8 @@
 package rendering
 
+import silentorb.mythic.scenery.Light
+import silentorb.mythic.scenery.Scene
+import silentorb.mythic.scenery.TextureName
 import mythic.breeze.Bones
 import mythic.breeze.SkeletonAnimation
 import mythic.drawing.*
@@ -25,7 +28,7 @@ import org.lwjgl.opengl.GL32.glTexImage2DMultisample
 import rendering.meshes.createVertexSchemas
 import rendering.shading.*
 import rendering.texturing.*
-import scenery.*
+import silentorb.mythic.scenery.ArmatureName
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 
@@ -134,9 +137,9 @@ fun createMultiSampler(glow: Glow, config: PlatformDisplayConfig): Multisampler 
   )
 }
 
-typealias AnimationDurationMap = Map<ArmatureId, Map<AnimationName, Float>>
+typealias AnimationDurationMap = Map<ArmatureName, Map<AnimationName, Float>>
 
-fun mapAnimationDurations(armatures: Map<ArmatureId, Armature>): AnimationDurationMap =
+fun mapAnimationDurations(armatures: Map<ArmatureName, Armature>): AnimationDurationMap =
     armatures
         .mapValues { (_, armature) ->
           armature.animations.mapValues { it.value.duration }
@@ -147,7 +150,7 @@ typealias AnimationMap = Map<AnimationName, SkeletonAnimation>
 typealias SocketMap = Map<String, Int>
 
 data class Armature(
-    val id: ArmatureId,
+    val id: ArmatureName,
     val bones: Bones,
     val animations: AnimationMap,
     val transforms: List<Matrix>,
@@ -226,7 +229,7 @@ class Renderer(
   val getShader = getCachedShader(uniformBuffers, shaderCache)
   val drawing = createDrawingEffects()
   val meshes: ModelMeshMap
-  val armatures: Map<ArmatureId, Armature>
+  val armatures: Map<ArmatureName, Armature>
   val animationDurations: AnimationDurationMap
   val textures: DynamicTextureLibrary = mutableMapOf()
   val textureLoader = AsyncTextureLoader(textures)

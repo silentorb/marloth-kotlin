@@ -7,8 +7,8 @@ import generation.architecture.old.nodeFloorCenter
 import marloth.definition.templates.newBuffCloud
 import marloth.definition.templates.newTreasureChest
 import mythic.ent.Id
-import scenery.enums.MeshId
-import scenery.enums.ModifierId
+import marloth.scenery.enums.MeshId
+import marloth.scenery.enums.ModifierId
 import simulation.entities.ArchitectureElement
 import simulation.main.Deck
 import simulation.misc.MapGrid

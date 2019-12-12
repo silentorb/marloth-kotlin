@@ -1,7 +1,7 @@
 package marloth.clienting.textResources
 
 import marloth.clienting.TextResourceMapper
-import scenery.enums.Text
+import marloth.scenery.enums.Text
 
 val englishTextResources: TextResourceMapper = { text ->
   when (text) {

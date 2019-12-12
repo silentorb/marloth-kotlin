@@ -6,8 +6,8 @@ import mythic.spatial.Pi
 import mythic.spatial.Quaternion
 import mythic.spatial.Vector2
 import mythic.spatial.Vector3
-import scenery.AnimationId
-import scenery.Capsule
+import marloth.scenery.AnimationId
+import silentorb.mythic.scenery.Capsule
 import simulation.entities.*
 import simulation.main.Hand
 import simulation.main.HandAttachment

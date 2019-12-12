@@ -1,6 +1,6 @@
 package simulation.happenings
 
-import scenery.enums.ModifierId
+import marloth.scenery.enums.ModifierId
 import simulation.combat.DamageType
 
 interface EventTrigger {}

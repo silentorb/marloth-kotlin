@@ -1,6 +1,6 @@
 package simulation.physics
 
-import scenery.Shape
+import silentorb.mythic.scenery.Shape
 
 data class CollisionObject(
     val shape: Shape,

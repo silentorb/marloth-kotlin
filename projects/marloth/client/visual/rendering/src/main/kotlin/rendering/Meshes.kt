@@ -3,7 +3,7 @@ package rendering
 import assets.getResourceUrl
 import rendering.meshes.*
 import rendering.meshes.loading.loadGltf
-import scenery.MeshName
+import silentorb.mythic.scenery.MeshName
 import java.io.File
 
 fun getMeshFilenames(): Array<File> {
