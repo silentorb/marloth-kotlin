@@ -1,4 +1,4 @@
-package simulation.physics
+package silentorb.mythic.physics
 
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.physics.bullet.collision.*
@@ -6,7 +6,6 @@ import com.badlogic.gdx.physics.bullet.dynamics.btHingeConstraint
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState
 import silentorb.mythic.ent.Id
-import silentorb.mythic.physics.*
 import silentorb.mythic.sculpting.ImmutableFace
 import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Pi

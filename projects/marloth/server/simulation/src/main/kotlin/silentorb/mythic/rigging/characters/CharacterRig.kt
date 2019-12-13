@@ -1,19 +1,20 @@
-package simulation.physics
+package silentorb.mythic.rigging.characters
 
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld
 import org.joml.times
 import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.Table
 import silentorb.mythic.ent.firstFloatSortedBy
 import silentorb.mythic.physics.*
-import silentorb.mythic.spatial.Pi
-import silentorb.mythic.spatial.Quaternion
-import silentorb.mythic.spatial.Vector3
-import silentorb.mythic.spatial.createArcZ
+import silentorb.mythic.spatial.*
 import simulation.entities.*
 import simulation.input.Commands
+import simulation.input.characterLookForce
+import simulation.input.filterCommands
+import simulation.input.fpCameraRotation
 import simulation.main.Deck
-import simulation.misc.joinInputVector
-import simulation.misc.playerMoveMap
+import simulation.main.World
+import simulation.misc.*
 import kotlin.math.min
 
 const val defaultCharacterRadius = 0.3f
@@ -25,7 +26,9 @@ const val maxFootStepHeight = 0.6f
 data class CharacterRig(
     val facingRotation: Vector3 = Vector3(),
     val groundDistance: Float = 0f,
-    val maxSpeed: Float
+    val lookVelocity: Vector2 = Vector2(),
+    val maxSpeed: Float,
+    val turnSpeed: Vector2
 ) {
   val facingQuaternion: Quaternion
     get() = Quaternion()
@@ -134,3 +137,39 @@ fun characterMovementFp(commands: Commands, characterRig: CharacterRig, id: Id, 
     null
   }
 }
+
+fun updateCharacterRigFacing(commands: Commands, delta: Float): (CharacterRig) -> CharacterRig = { characterRig ->
+  val lookForce = characterLookForce(characterRig, commands)
+  val lookVelocity = transitionVector(maxNegativeLookVelocityChange(), maxPostiveLookVelocityChange(),
+      characterRig.lookVelocity, lookForce)
+  val facingRotation = characterRig.facingRotation + fpCameraRotation(lookVelocity, delta)
+
+  characterRig.copy(
+      lookVelocity = lookVelocity,
+      facingRotation = Vector3(0f, facingRotation.y, facingRotation.z)
+  )
+}
+
+fun updateCharacterRigGroundedDistance(bulletState: BulletState, deck: Deck, id: Id): (CharacterRig) -> CharacterRig = { characterRig ->
+  characterRig.copy(
+      groundDistance = updateCharacterStepHeight(bulletState, deck, id)
+  )
+}
+
+fun allCharacterMovements(world: World, commands: Commands): List<LinearImpulse> =
+    world.deck.characterRigs
+        .filter { world.deck.characters[it.key]!!.isAlive }
+        .mapNotNull { characterMovementFp(filterCommands(it.key, commands), it.value, it.key, world.deck.bodies[it.key]!!) }
+
+fun allCharacterOrientations(world: World): List<AbsoluteOrientationForce> =
+    world.deck.characterRigs.map {
+      AbsoluteOrientationForce(it.key, Quaternion()
+          .rotateZ(it.value.facingRotation.z))
+    }
+
+fun interpolateCharacterRigs(scalar: Float, first: Table<CharacterRig>, second: Table<CharacterRig>) =
+    interpolateTables(scalar, first, second) { s, a, b ->
+      a.copy(
+          facingRotation = interpolate(s, a.facingRotation, b.facingRotation)
+      )
+    }

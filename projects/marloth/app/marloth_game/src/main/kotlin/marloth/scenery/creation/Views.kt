@@ -12,12 +12,13 @@ import simulation.entities.HoverCamera
 import simulation.entities.ViewMode
 import simulation.main.Deck
 import silentorb.mythic.physics.Body
-import simulation.physics.defaultCharacterHeight
+import silentorb.mythic.rigging.characters.CharacterRig
+import silentorb.mythic.rigging.characters.defaultCharacterHeight
 
 val firstPersonCameraOffset = Vector3(0f, 0f, defaultCharacterHeight * 0.25f)
 val firstPersonDeadCameraOffset = Vector3(0f, 0f, -0.75f)
 
-fun firstPersonCamera(body: Body, character: Character, isAlive: Boolean): Camera = Camera(
+fun firstPersonCamera(body: Body, character: CharacterRig, isAlive: Boolean): Camera = Camera(
     ProjectionType.perspective,
 //    body.position + Vector3(0f, 3f, -0.75f), //if (isAlive) firstPersonCameraOffset else firstPersonDeadCameraOffset,
     body.position + if (isAlive) firstPersonCameraOffset else firstPersonDeadCameraOffset,
@@ -52,10 +53,11 @@ fun createTopDownCamera(player: Body): Camera {
 
 fun createCamera(deck: Deck, player: Id): Camera {
   val character = deck.characters[player]!!
+  val characterRig = deck.characterRigs[player]!!
   val body = deck.bodies[player]!!
   val playerRecord = deck.players[player]!!
   return when (playerRecord.viewMode) {
-    ViewMode.firstPerson -> firstPersonCamera(body, character, character.isAlive)
+    ViewMode.firstPerson -> firstPersonCamera(body, characterRig, character.isAlive)
     ViewMode.thirdPerson -> thirdPersonCamera(body, playerRecord.hoverCamera)
 //    ViewMode.topDown -> createTopDownCamera(body)
   }

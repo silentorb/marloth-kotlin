@@ -2,7 +2,7 @@ package marloth.definition
 
 import silentorb.mythic.scenery.Box
 import silentorb.mythic.spatial.Vector3
-import simulation.physics.CollisionObject
+import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.physics.HingeConstraint
 import marloth.scenery.enums.Text

@@ -6,6 +6,7 @@ import silentorb.mythic.ent.pipe
 import silentorb.mythic.ent.pipe2
 import simulation.physics.updatePhysics
 import silentorb.mythic.randomly.Dice
+import silentorb.mythic.rigging.characters.allCharacterMovements
 import simulation.combat.getDamageMultiplierModifiers
 import simulation.combat.toModifierDeck
 import simulation.entities.*
@@ -19,7 +20,7 @@ import simulation.main.*
 import simulation.misc.Definitions
 import simulation.particles.updateParticleEffect
 import simulation.physics.*
-import simulation.misc.Collisions
+import silentorb.mythic.physics.Collisions
 
 const val simulationFps = 60
 const val simulationDelta = 1f / simulationFps.toFloat()
@@ -67,11 +68,11 @@ fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: 
           actions = updateActions(world.definitions, deck, events),
           ambientSounds = updateAmbientAudio(dice, deck),
           animations = mapTable(deck.animations, updateCharacterAnimation(deck, animationDurations, delta)),
+          characterRigs = mapTable(deck.characterRigs, updateMarlothCharacterRig(world.bulletState, deck, commands)),
           attachments = mapTable(deck.attachments, updateAttachment(intermediate.events)),
           cycles = mapTableValues(deck.cycles, updateCycle(delta)),
-//          depictions = mapTable(deck.depictions, updateDepiction(deck, animationDurations)),
           destructibles = mapTable(deck.destructibles, updateDestructibleHealth(events)),
-          characters = mapTable(deck.characters, updateCharacter(deck, commands, events)),
+          characters = mapTable(deck.characters, updateCharacter(deck, world.bulletState, commands, events)),
           particleEffects = mapTableValues(deck.particleEffects, deck.bodies, updateParticleEffect(dice, delta)),
           players = mapTable(deck.players, updatePlayer(intermediate.commands)),
           spirits = mapTable(deck.spirits, updateAiState(world, delta)),

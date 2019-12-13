@@ -2,11 +2,9 @@ package simulation.input
 
 import silentorb.mythic.spatial.Vector2
 import silentorb.mythic.spatial.Vector3
-import simulation.entities.Character
-import simulation.entities.Player
-import simulation.entities.ViewMode
 import simulation.misc.joinInputVector
 import simulation.misc.*
+import silentorb.mythic.rigging.characters.CharacterRig
 
 data class MomentumConfig(
     val attack: Float,
@@ -59,7 +57,7 @@ val cameraLookMap = mapOf(
     CommandType.cameraLookDown to Vector3(0f, -1f, 0f)
 )
 
-fun applyLookForce(lookMap: Map<CommandType, Vector3>, character: Character, commands: Commands): Vector2 {
+fun applyLookForce(lookMap: Map<CommandType, Vector3>, character: CharacterRig, commands: Commands): Vector2 {
   val offset3 = joinInputVector(commands, lookMap)
   return if (offset3 != null) {
     val offset2 = Vector2(offset3.z, offset3.y)
@@ -68,7 +66,7 @@ fun applyLookForce(lookMap: Map<CommandType, Vector3>, character: Character, com
     Vector2()
 }
 
-fun characterLookForce(character: Character, commands: Commands): Vector2 =
+fun characterLookForce(character: CharacterRig, commands: Commands): Vector2 =
     applyLookForce(firstPersonLookMap, character, commands)
 
 fun fpCameraRotation(velocity: Vector2, delta: Float): Vector3 {
@@ -79,28 +77,28 @@ fun fpCameraRotation(velocity: Vector2, delta: Float): Vector3 {
     Vector3()
 }
 
-fun updateTpCameraRotation(player: Player, character: Character, delta: Float): Vector3? {
-  val velocity = character.lookVelocity
-  val deltaVelocity = velocity * delta
-  return if (velocity.y != 0f || velocity.x != 0f) {
-    if (player.viewMode == ViewMode.firstPerson)
-      Vector3(0f, deltaVelocity.y, deltaVelocity.x)
-    else {
-      val hoverCamera = player.hoverCamera
-      hoverCamera.pitch += deltaVelocity.y
-      hoverCamera.yaw += deltaVelocity.y
-      val hoverPitchMin = -1.0f // Up
-      val hoverPitchMax = 0.0f // Down
-
-      if (hoverCamera.pitch > hoverPitchMax)
-        hoverCamera.pitch = hoverPitchMax
-
-      if (hoverCamera.pitch < hoverPitchMin)
-        hoverCamera.pitch = hoverPitchMin
-
-      null
-//      println("p " + hoverCamera.pitch + ", y" + hoverCamera.yaw + " |  vp " + player.lookVelocity.y + ",vy " + player.lookVelocity.z)
-    }
-  } else
-    null
-}
+//fun updateTpCameraRotation(player: Player, character: CharacterRig, delta: Float): Vector3? {
+//  val velocity = character.lookVelocity
+//  val deltaVelocity = velocity * delta
+//  return if (velocity.y != 0f || velocity.x != 0f) {
+//    if (player.viewMode == ViewMode.firstPerson)
+//      Vector3(0f, deltaVelocity.y, deltaVelocity.x)
+//    else {
+//      val hoverCamera = player.hoverCamera
+//      hoverCamera.pitch += deltaVelocity.y
+//      hoverCamera.yaw += deltaVelocity.y
+//      val hoverPitchMin = -1.0f // Up
+//      val hoverPitchMax = 0.0f // Down
+//
+//      if (hoverCamera.pitch > hoverPitchMax)
+//        hoverCamera.pitch = hoverPitchMax
+//
+//      if (hoverCamera.pitch < hoverPitchMin)
+//        hoverCamera.pitch = hoverPitchMin
+//
+//      null
+////      println("p " + hoverCamera.pitch + ", y" + hoverCamera.yaw + " |  vp " + player.lookVelocity.y + ",vy " + player.lookVelocity.z)
+//    }
+//  } else
+//    null
+//}

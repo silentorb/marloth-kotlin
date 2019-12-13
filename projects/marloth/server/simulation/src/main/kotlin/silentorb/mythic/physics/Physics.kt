@@ -10,7 +10,8 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Vector3
-import simulation.physics.*
+import silentorb.mythic.rigging.characters.CharacterRig
+import silentorb.mythic.rigging.characters.updateCharacterRigs
 import com.badlogic.gdx.math.Vector3 as GdxVector3
 
 // TODO: Migrate to LWJGL Bullet Bindings if it ever seems a little more used and documented.

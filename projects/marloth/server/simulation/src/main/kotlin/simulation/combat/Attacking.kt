@@ -11,8 +11,8 @@ import silentorb.mythic.physics.castCollisionRay
 fun raycastAttack(world: World, attacker: Id, action: Id): Events {
   val deck = world.deck
   val body = deck.bodies[attacker]!!
-  val character = deck.characters[attacker]!!
-  val vector = character.facingVector
+  val characterRig = deck.characterRigs[attacker]!!
+  val vector = characterRig.facingVector
   val origin = body.position + Vector3(0f, 0f, 0.2f) + vector * 0.3f
   val end = origin + vector * 30f
   val collision = castCollisionRay(world.bulletState.dynamicsWorld, origin, end)

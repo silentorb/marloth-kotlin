@@ -1,8 +1,8 @@
 package simulation.intellect.execution
 
 import silentorb.mythic.ent.Id
+import silentorb.mythic.rigging.characters.CharacterRig
 import silentorb.mythic.spatial.*
-import simulation.entities.Character
 import simulation.input.Command
 import simulation.input.CommandType
 import simulation.input.Commands
@@ -24,21 +24,21 @@ fun getAngleCourse(source: Float, destination: Float): Float {
     -minus
 }
 
-fun facingDistance(character: Character, lookAt: Vector3): Float {
+fun facingDistance(character: CharacterRig, lookAt: Vector3): Float {
   val angle = getLookAtAngle(lookAt)
   return getAngleCourse(character.facingRotation.z, angle)
 }
 
 fun spiritFacingChange(world: World, character: Id, offset: Vector3): Commands {
-  val characterRecord = world.deck.characters[character]!!
-  val course = facingDistance(characterRecord, offset)
+  val characterRig = world.deck.characterRigs[character]!!
+  val course = facingDistance(characterRig, offset)
   val absCourse = Math.abs(course)
   return if (absCourse == 0f) {
     listOf()
   } else {
     val dir = if (course > 0f) CommandType.lookLeft else CommandType.lookRight
-    val velocity = characterRecord.lookVelocity.x
-    val increment = characterRecord.turnSpeed.x * simulationDelta
+    val velocity = characterRig.lookVelocity.x
+    val increment = characterRig.turnSpeed.x * simulationDelta
 //    println("" + dir + " " + absCourse + " " + increment)
     val drift = increment * velocity / maxPostiveLookVelocityChange()
     return if (absCourse <= drift)
@@ -49,9 +49,9 @@ fun spiritFacingChange(world: World, character: Id, offset: Vector3): Commands {
 }
 
 fun spiritNeedsFacing(world: World, character: Id, offset: Vector3, acceptableRange: Float, action: () -> Commands): Commands {
-  val characterRecord = world.deck.characters.getValue(character)
+  val characterRig = world.deck.characterRigs.getValue(character)
   val facingCommands = spiritFacingChange(world, character, offset)
-  val course = facingDistance(characterRecord, offset)
+  val course = facingDistance(characterRig, offset)
   val absCourse = Math.abs(course)
   return if (absCourse <= acceptableRange)
     facingCommands.plus(action())

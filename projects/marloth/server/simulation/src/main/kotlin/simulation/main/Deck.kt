@@ -7,9 +7,9 @@ import simulation.intellect.Spirit
 import simulation.misc.ResourceBundle
 import simulation.particles.ParticleEffect
 import silentorb.mythic.physics.Body
-import simulation.physics.CollisionObject
+import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
-import simulation.physics.CharacterRig
+import silentorb.mythic.rigging.characters.CharacterRig
 
 // Deck is basically a database full of tables
 

@@ -5,8 +5,8 @@ import org.recast4j.recast.RecastBuilder
 import org.recast4j.recast.RecastConfig
 import org.recast4j.recast.RecastConstants
 import org.recast4j.recast.geom.InputGeomProvider
-import simulation.physics.defaultCharacterHeight
-import simulation.physics.defaultCharacterRadius
+import silentorb.mythic.rigging.characters.defaultCharacterHeight
+import silentorb.mythic.rigging.characters.defaultCharacterRadius
 
 const val cellSize = 0.3f
 const val cellHeight = cellSize

@@ -8,7 +8,7 @@ import simulation.main.Deck
 import simulation.main.DeckSource
 import simulation.main.overTime
 import simulation.misc.Definitions
-import simulation.misc.Collision
+import silentorb.mythic.physics.Collision
 
 data class Triggering(
     val actor: Id,

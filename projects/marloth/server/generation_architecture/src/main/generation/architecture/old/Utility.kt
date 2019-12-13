@@ -14,7 +14,7 @@ import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.MeshName
 import marloth.scenery.enums.TextureId
 import simulation.entities.ArchitectureElement
-import simulation.physics.CollisionObject
+import silentorb.mythic.physics.CollisionObject
 import simulation.main.Hand
 import simulation.entities.Depiction
 import simulation.entities.DepictionType

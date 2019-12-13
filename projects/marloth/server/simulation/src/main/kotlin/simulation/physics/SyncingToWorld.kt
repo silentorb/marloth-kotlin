@@ -1,23 +1,18 @@
 package simulation.physics
 
-import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld
 import silentorb.mythic.ent.Id
 import silentorb.mythic.physics.BulletState
-import silentorb.mythic.physics.PhysicsWorld
 import silentorb.mythic.physics.firstRayHit
-import silentorb.mythic.physics.toVector3
-import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
 import simulation.main.Deck
-import simulation.main.World
-import simulation.misc.Collision
+import silentorb.mythic.physics.Collision
 
 fun castInteractableRay(dynamicsWorld: btDiscreteDynamicsWorld, deck: Deck, player: Id): Id? {
   val body = deck.bodies[player]!!
-  val character = deck.characters[player]!!
+  val characterRig = deck.characterRigs[player]!!
   val shape = deck.collisionShapes[player]!!
-  val direction = character.facingVector
+  val direction = characterRig.facingVector
   val start = body.position + Vector3(0f, 0f, 0.5f) + direction * shape.shape.radius
   val end = start + direction * 5f
   val callback = firstRayHit(dynamicsWorld, start, end)
@@ -30,43 +25,6 @@ fun castInteractableRay(dynamicsWorld: btDiscreteDynamicsWorld, deck: Deck, play
   }
 
   return null
-}
-
-fun syncWorldToBullet(bulletState: BulletState): (PhysicsWorld) -> PhysicsWorld = { world ->
-  val quat = com.badlogic.gdx.math.Quaternion()
-  val deck = world.deck
-  world.copy(
-      bulletState = bulletState,
-      deck = deck.copy(
-          bodies = deck.bodies.mapValues { (key, body) ->
-            val btBody = bulletState.dynamicBodies[key]
-            if (btBody == null)
-              body
-            else {
-              val worldTransform = btBody.worldTransform
-              val transform = worldTransform.getValues()
-              worldTransform.getRotation(quat)
-              body.copy(
-                  position = Vector3(transform[Matrix4.M03], transform[Matrix4.M13], transform[Matrix4.M23]),
-                  orientation = Quaternion(quat.x, quat.y, quat.z, quat.w),
-                  velocity = toVector3(btBody.linearVelocity)
-              )
-            }
-          },
-          characters = deck.characters.plus(
-              deck.players.keys.map { player ->
-                Pair(player, deck.characters[player]!!.copy(
-                    canInteractWith = castInteractableRay(bulletState.dynamicsWorld, deck, player)
-                ))
-              }
-          )
-              .mapValues { (id, character) ->
-                character.copy(
-                    groundDistance = updateCharacterStepHeight(bulletState, deck, id)
-                )
-              }
-      )
-  )
 }
 
 fun getBulletCollisions(bulletState: BulletState, deck: Deck): List<Collision> {

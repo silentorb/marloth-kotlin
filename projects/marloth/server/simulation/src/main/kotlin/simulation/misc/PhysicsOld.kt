@@ -14,14 +14,6 @@ data class AbsoluteOrientationForce(
     val orientation: Quaternion
 )
 
-data class Collision(
-    val first: Id,
-    val second: Id,
-    val hitPoint: Vector3? = null
-)
-
-typealias Collisions = List<Collision>
-
 fun transitionVector(maxChange: Float, current: Vector3, target: Vector3): Vector3 {
   val diff = target - current
   val diffLength = diff.length()

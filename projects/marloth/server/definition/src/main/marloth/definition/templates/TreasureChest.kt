@@ -13,7 +13,7 @@ import simulation.happenings.TakeItem
 import simulation.main.Hand
 import simulation.misc.ResourceBundle
 import silentorb.mythic.physics.Body
-import simulation.physics.CollisionObject
+import silentorb.mythic.physics.CollisionObject
 
 fun newTreasureChest(meshInfo: MeshInfoMap, position: Vector3, amount: Int): Hand {
   val shape = meshInfo[MeshId.treasureChest.toString()]!!.shape

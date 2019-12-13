@@ -9,7 +9,7 @@ import silentorb.mythic.breeze.interpolateVector3
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.physics.Body
-import simulation.physics.CollisionObject
+import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.scenery.Cylinder
 import simulation.main.Hand
 import simulation.happenings.ApplyBuff

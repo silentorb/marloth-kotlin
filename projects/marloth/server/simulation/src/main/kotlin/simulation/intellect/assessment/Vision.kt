@@ -8,11 +8,12 @@ import simulation.main.Deck
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.BulletState
 import silentorb.mythic.physics.castCollisionRay
+import silentorb.mythic.rigging.characters.CharacterRig
 
 const val viewingRange = 30f
 const val minimumLightRating = 0.0f
 
-fun isInAngleOfView(viewer: Character, viewerBody: Body, targetBody: Body): Boolean =
+fun isInAngleOfView(viewer: CharacterRig, viewerBody: Body, targetBody: Body): Boolean =
     viewer.facingVector.dot((targetBody.position - viewerBody.position).normalize()) > 0.5f
 
 fun lightDistanceMod(deck: Deck, body: Body, id: Id, light: Light): Float {
@@ -48,7 +49,7 @@ fun canSee(bulletState: BulletState, deck: Deck, viewer: Id): (Id) -> Boolean = 
   val targetBody = deck.bodies[target]!!
   val distance = viewerBody.position.distance(targetBody.position)
   distance <= viewingRange
-      && isInAngleOfView(deck.characters[viewer]!!, viewerBody, targetBody)
+      && isInAngleOfView(deck.characterRigs[viewer]!!, viewerBody, targetBody)
       && castCollisionRay(bulletState.dynamicsWorld, viewerBody.position, targetBody.position) != null
       && lightRating(deck, target) + nearMod(distance) >= minimumLightRating
 }
