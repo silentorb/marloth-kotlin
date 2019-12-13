@@ -1,7 +1,7 @@
 package simulation.intellect.design
 
 import simulation.intellect.Path
-import mythic.ent.Id
+import silentorb.mythic.ent.Id
 import simulation.misc.Realm
 import simulation.misc.nodeNeighbors
 

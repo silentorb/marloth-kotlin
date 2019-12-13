@@ -3,13 +3,13 @@ package lab.views.game
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw
 import com.badlogic.gdx.utils.Disposable
 import marloth.front.RenderHook
-import mythic.glowing.globalState
-import mythic.spatial.Vector3
-import mythic.spatial.Vector4
-import mythic.spatial.manhattanDistance
-import simulation.physics.toVector3
-import rendering.SceneRenderer
-import simulation.physics.BulletState
+import silentorb.mythic.glowing.globalState
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector4
+import silentorb.mythic.spatial.manhattanDistance
+import silentorb.mythic.physics.toVector3
+import silentorb.mythic.lookinglass.SceneRenderer
+import silentorb.mythic.physics.BulletState
 import com.badlogic.gdx.math.Vector3 as GdxVector3
 
 class BulletDebugDrawer : btIDebugDraw(), Disposable {

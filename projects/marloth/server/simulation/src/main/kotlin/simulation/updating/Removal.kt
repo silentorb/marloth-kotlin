@@ -1,7 +1,7 @@
 package simulation.updating
 
-import mythic.ent.Id
-import mythic.ent.pipe
+import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.pipe
 import simulation.happenings.Events
 import simulation.happenings.PurchaseEvent
 import simulation.happenings.TakeItemEvent

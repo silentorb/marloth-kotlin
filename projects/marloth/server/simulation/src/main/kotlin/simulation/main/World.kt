@@ -1,15 +1,15 @@
 package simulation.main
 
-import mythic.ent.Id
-import mythic.ent.IdSource
-import mythic.ent.pass
+import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.IdSource
+import silentorb.mythic.ent.pass
 import org.recast4j.detour.NavMesh
 import org.recast4j.detour.NavMeshQuery
-import randomly.Dice
+import silentorb.mythic.randomly.Dice
 import simulation.misc.Definitions
 import simulation.misc.GameOver
 import simulation.misc.Realm
-import simulation.physics.BulletState
+import silentorb.mythic.physics.BulletState
 
 data class World(
     val realm: Realm,

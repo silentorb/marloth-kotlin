@@ -5,8 +5,8 @@ import generation.architecture.old.*
 import generation.architecture.misc.Builder
 import generation.general.TextureGroup
 import generation.general.biomeTexture
-import mythic.spatial.Quaternion
-import mythic.spatial.Vector3
+import silentorb.mythic.spatial.Quaternion
+import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.scenery.MeshName
 import simulation.entities.ArchitectureElement
 import simulation.misc.cellLength

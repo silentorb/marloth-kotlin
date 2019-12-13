@@ -1,8 +1,8 @@
 package marloth.clienting.audio
 
-import mythic.aura.Sound
-import mythic.ent.IdSource
-import mythic.spatial.Vector3
+import silentorb.mythic.aura.Sound
+import silentorb.mythic.ent.IdSource
+import silentorb.mythic.spatial.Vector3
 import marloth.scenery.enums.Sounds
 import marloth.scenery.enums.soundId
 import simulation.main.World

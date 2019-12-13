@@ -1,7 +1,7 @@
 package silentorb.metahub.core
 
-import configuration.loadJsonFile
-import mythic.ent.pipe2
+import silentorb.mythic.configuration.loadJsonFile
+import silentorb.mythic.ent.pipe2
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream

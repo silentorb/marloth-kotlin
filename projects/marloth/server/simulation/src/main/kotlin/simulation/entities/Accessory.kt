@@ -1,6 +1,6 @@
 package simulation.entities
 
-import mythic.ent.Id
+import silentorb.mythic.ent.Id
 import simulation.happenings.Events
 import simulation.happenings.PurchaseEvent
 import simulation.main.Deck

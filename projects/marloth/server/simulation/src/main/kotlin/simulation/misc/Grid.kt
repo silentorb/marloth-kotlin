@@ -1,7 +1,7 @@
 package simulation.misc
 
-import mythic.spatial.Vector3
-import mythic.spatial.Vector3i
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector3i
 
 const val cellLength = 10f
 

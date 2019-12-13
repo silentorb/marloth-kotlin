@@ -1,6 +1,6 @@
 package simulation.entities
 
-import mythic.ent.Id
+import silentorb.mythic.ent.Id
 import marloth.scenery.ArmatureId
 import simulation.happenings.Events
 import simulation.happenings.UseAction

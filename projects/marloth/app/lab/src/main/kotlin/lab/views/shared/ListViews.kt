@@ -1,18 +1,19 @@
 package lab.views.shared
 
 import marloth.clienting.gui.textStyles
-import mythic.bloom.*
+import silentorb.mythic.bloom.*
 
-import mythic.drawing.Canvas
-import mythic.drawing.grayTone
-import mythic.glowing.globalState
-import mythic.spatial.Vector4
-import mythic.spatial.toVector2
-import mythic.spatial.toVector2i
-import mythic.typography.TextConfiguration
-import mythic.typography.calculateTextDimensions
-import mythic.typography.resolveTextStyle
+import silentorb.mythic.drawing.Canvas
+import silentorb.mythic.drawing.grayTone
+import silentorb.mythic.glowing.globalState
+import silentorb.mythic.spatial.Vector4
+import silentorb.mythic.spatial.toVector2
+import silentorb.mythic.spatial.toVector2i
+import silentorb.mythic.typography.TextConfiguration
+import silentorb.mythic.typography.calculateTextDimensions
+import silentorb.mythic.typography.resolveTextStyle
 import org.joml.Vector2i
+import silentorb.mythic.bloom.*
 
 
 fun drawListItem(text: String, isSelected: Boolean): Depiction = { bounds: Bounds, canvas: Canvas ->

@@ -1,7 +1,7 @@
 package marloth.definition.templates
 
 import generation.architecture.misc.MeshInfoMap
-import mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector3
 import marloth.scenery.enums.MeshId
 import marloth.scenery.enums.ResourceId
 import marloth.scenery.enums.Text
@@ -12,7 +12,7 @@ import simulation.entities.WidgetCommand
 import simulation.happenings.TakeItem
 import simulation.main.Hand
 import simulation.misc.ResourceBundle
-import simulation.physics.Body
+import silentorb.mythic.physics.Body
 import simulation.physics.CollisionObject
 
 fun newTreasureChest(meshInfo: MeshInfoMap, position: Vector3, amount: Int): Hand {

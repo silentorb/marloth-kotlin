@@ -2,7 +2,7 @@ package lab.utility
 
 import simulation.misc.Graph
 import lab.LabApp
-import rendering.*
+import silentorb.mythic.lookinglass.Renderer
 import java.io.File
 import java.net.URI
 

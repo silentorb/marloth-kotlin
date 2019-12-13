@@ -1,7 +1,7 @@
 package simulation.misc
 
-import mythic.ent.WithId
-import mythic.ent.Id
+import silentorb.mythic.ent.WithId
+import silentorb.mythic.ent.Id
 
 data class Faction(
    override val id: Id,

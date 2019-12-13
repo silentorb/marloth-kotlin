@@ -1,11 +1,13 @@
 package marloth.clienting.gui
 
-import mythic.bloom.*
-import mythic.bloom.next.*
-import mythic.spatial.Vector4
+import silentorb.mythic.bloom.*
+import silentorb.mythic.bloom.next.*
+import silentorb.mythic.spatial.Vector4
 import org.joml.Vector2i
 import org.joml.plus
 import marloth.scenery.enums.Text
+import silentorb.mythic.bloom.*
+import silentorb.mythic.bloom.next.*
 
 val centeredDiv = reverseOffset(left = centered, top = centered)
 val centerDialog = centeredDiv + shrink

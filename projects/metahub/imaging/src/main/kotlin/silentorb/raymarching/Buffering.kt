@@ -1,9 +1,9 @@
 package silentorb.raymarching
 
 import kotlinx.coroutines.*
-import mythic.imaging.*
-import mythic.spatial.Vector2
-import mythic.spatial.toVector2
+import silentorb.mythic.imaging.*
+import silentorb.mythic.spatial.Vector2
+import silentorb.mythic.spatial.toVector2
 import org.joml.Vector2i
 import org.lwjgl.BufferUtils
 import java.nio.FloatBuffer

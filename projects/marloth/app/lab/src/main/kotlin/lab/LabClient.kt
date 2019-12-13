@@ -1,6 +1,6 @@
 package lab
 
-import haft.*
+import silentorb.mythic.haft.*
 import lab.views.LabClientResult
 import lab.views.LabCommandMap
 import lab.views.LabCommandState
@@ -12,21 +12,22 @@ import lab.views.model.ModelViewState
 import marloth.clienting.Client
 import marloth.clienting.clientBloomModules
 import marloth.integration.AppState
-import mythic.bloom.globalMenuModule
-import mythic.bloom.next.Box
-import mythic.bloom.next.Seed
-import mythic.bloom.next.emptyFlower
-import mythic.bloom.renderLayout
-import mythic.bloom.toAbsoluteBounds
-import mythic.bloom.updateBloomState
-import mythic.platforming.PlatformInput
-import mythic.platforming.WindowInfo
-import mythic.spatial.Vector2
-import newBloomInputState
+import silentorb.mythic.bloom.globalMenuModule
+import silentorb.mythic.bloom.next.Box
+import silentorb.mythic.bloom.next.Seed
+import silentorb.mythic.bloom.next.emptyFlower
+import silentorb.mythic.bloom.renderLayout
+import silentorb.mythic.bloom.toAbsoluteBounds
+import silentorb.mythic.bloom.updateBloomState
+import silentorb.mythic.platforming.PlatformInput
+import silentorb.mythic.platforming.WindowInfo
+import silentorb.mythic.spatial.Vector2
+import silentorb.mythic.bloom.input.newBloomInputState
 import org.joml.Vector2i
-import rendering.createCanvas
+import silentorb.mythic.lookinglass.createCanvas
 import simulation.main.World
-import updateInputDeviceStates
+import silentorb.mythic.bloom.input.updateInputDeviceStates
+import silentorb.mythic.haft.*
 
 data class LabState(
 //    val labInput: InputTriggerState<LabCommandType>,
@@ -68,7 +69,7 @@ class LabClient(val config: LabConfig, val client: Client) {
 
   fun updateInput(viewCommands: LabCommandMap, deviceStates: List<InputDeviceState>): HaftCommands {
     val bindings = getBindings()
-    val commands = mapEventsToCommands(deviceStates, haft.getBindingSimple(bindings))
+    val commands = mapEventsToCommands(deviceStates, getBindingSimple(bindings))
     val moreCommands = viewCommands.plus(globalKeyPressCommands)
     val allCommands = if (config.view == Views.game)
       moreCommands.plus(gameKeyPressCommands)

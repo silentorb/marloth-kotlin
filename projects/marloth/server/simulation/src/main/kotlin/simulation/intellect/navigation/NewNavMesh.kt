@@ -1,7 +1,7 @@
 package simulation.intellect.navigation
 
-import mythic.ent.firstFloatSortedBy
-import mythic.ent.firstFloatSortedByDescending
+import silentorb.mythic.ent.firstFloatSortedBy
+import silentorb.mythic.ent.firstFloatSortedByDescending
 import org.recast4j.detour.NavMesh
 import org.recast4j.detour.NavMeshBuilder
 import org.recast4j.recast.Heightfield

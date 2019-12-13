@@ -1,6 +1,6 @@
 package silentorb.raymarching
 
-import mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector3
 
 //fun sampleScene(): Sdf =
 //    blend(0.4f,

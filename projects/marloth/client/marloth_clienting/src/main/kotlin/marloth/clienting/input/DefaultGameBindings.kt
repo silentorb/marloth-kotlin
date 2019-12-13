@@ -1,7 +1,8 @@
 package marloth.clienting.input
 
-import haft.*
+import silentorb.mythic.haft.*
 import org.lwjgl.glfw.GLFW
+import silentorb.mythic.haft.*
 import simulation.input.CommandType as CommandType
 
 val gameGamepadStrokeBindings = mapOf(

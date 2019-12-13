@@ -1,6 +1,6 @@
 package simulation.input
 
-import mythic.ent.Id
+import silentorb.mythic.ent.Id
 import simulation.updating.simulationDelta
 import simulation.entities.Player
 import simulation.entities.ViewMode

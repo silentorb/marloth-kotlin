@@ -1,7 +1,7 @@
 package marloth.integration
 
 import marloth.clienting.gui.ViewId
-import mythic.ent.Id
+import silentorb.mythic.ent.Id
 import marloth.scenery.enums.ClientCommand
 import simulation.main.Deck
 

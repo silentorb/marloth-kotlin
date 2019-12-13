@@ -1,7 +1,7 @@
 package simulation.combat
 
-import mythic.ent.Id
-import mythic.ent.Table
+import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.Table
 import marloth.scenery.enums.Text
 import simulation.entities.*
 import simulation.main.Deck

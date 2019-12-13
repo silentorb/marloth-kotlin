@@ -1,6 +1,6 @@
 package simulation.intellect
 
-import mythic.ent.Table
+import silentorb.mythic.ent.Table
 import simulation.main.Deck
 
 fun aliveSpirits(deck: Deck): Table<Spirit> =

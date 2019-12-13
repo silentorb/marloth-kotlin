@@ -1,10 +1,10 @@
 package lab.profiling
 
-import configuration.loadYamlFile
+import silentorb.mythic.configuration.loadYamlFile
 import lab.LabConfig
 import lab.labConfigPath
 import marloth.integration.loadGameConfig
-import mythic.desktop.createDesktopPlatform
+import silentorb.mythic.desktop.createDesktopPlatform
 
 object WorldGenProfiler {
   @JvmStatic

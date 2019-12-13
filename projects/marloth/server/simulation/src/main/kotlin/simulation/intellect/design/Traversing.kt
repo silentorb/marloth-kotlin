@@ -1,9 +1,9 @@
 package simulation.intellect.design
 
-import mythic.ent.Id
-import mythic.spatial.Vector3
-import mythic.spatial.toVector3
-import randomly.Dice
+import silentorb.mythic.ent.Id
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.toVector3
+import silentorb.mythic.randomly.Dice
 import simulation.intellect.Path
 import simulation.intellect.Pursuit
 import simulation.intellect.assessment.Knowledge

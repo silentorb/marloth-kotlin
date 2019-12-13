@@ -1,3 +1,3 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
-requires 'mythic_desktop', 'spatial', 'platforming', 'bloom', 'bloom_input', 'drawing', 'rendering', 'glowing', 'compuquest_simulation'
+requires 'mythic_desktop', 'spatial', 'platforming', 'bloom', 'bloom_input', 'drawing', 'lookinglass', 'glowing', 'compuquest_simulation'

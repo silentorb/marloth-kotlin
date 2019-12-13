@@ -1,6 +1,6 @@
 package generation.abstracted
 
-import randomly.Dice
+import silentorb.mythic.randomly.Dice
 
 // This assumes that there is no entry with a weight of zero
 fun <T> normalizeRangesFallback(slotCount: Int, ranges: Map<T, Int>): Map<T, Int> {

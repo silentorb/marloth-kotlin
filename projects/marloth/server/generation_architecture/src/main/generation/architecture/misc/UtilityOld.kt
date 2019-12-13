@@ -1,9 +1,9 @@
 package generation.architecture.misc
 
-import mythic.spatial.Vector2
-import mythic.spatial.Vector3
-import mythic.spatial.Vector3m
-import mythic.spatial.lineIntersectsCircle
+import silentorb.mythic.spatial.Vector2
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector3m
+import silentorb.mythic.spatial.lineIntersectsCircle
 import org.joml.Intersectionf
 import simulation.misc.Node
 

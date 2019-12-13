@@ -1,9 +1,9 @@
 package simulation.particles
 
-import mythic.breeze.interpolateKeys
-import mythic.breeze.interpolateVector4
-import mythic.spatial.Vector3
-import mythic.spatial.Vector4
+import silentorb.mythic.breeze.interpolateKeys
+import silentorb.mythic.breeze.interpolateVector4
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.scenery.TextureName
 
 data class ParticleAppearance(

@@ -1,4 +1,4 @@
-import mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector3
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import simulation.entities.getMovementImpulseVector

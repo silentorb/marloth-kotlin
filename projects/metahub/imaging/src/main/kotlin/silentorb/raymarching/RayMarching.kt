@@ -1,8 +1,8 @@
 package silentorb.raymarching
 
-import mythic.spatial.MutableVector3
-import mythic.spatial.Vector2
-import mythic.spatial.Vector3
+import silentorb.mythic.spatial.MutableVector3
+import silentorb.mythic.spatial.Vector2
+import silentorb.mythic.spatial.Vector3
 import org.joml.Math
 import org.joml.times
 

@@ -1,10 +1,10 @@
 package simulation.intellect.assessment
 
 import simulation.entities.Character
-import mythic.ent.Id
-import mythic.ent.Table
-import mythic.spatial.Vector3
-import simulation.physics.SimpleBody
+import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.Table
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.physics.SimpleBody
 import simulation.main.World
 import simulation.misc.MapGrid
 

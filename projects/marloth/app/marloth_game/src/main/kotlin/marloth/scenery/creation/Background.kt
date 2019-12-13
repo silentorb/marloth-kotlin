@@ -1,12 +1,12 @@
 package marloth.scenery.creation
 
 import marloth.integration.BackgroundTextureId
-import mythic.ent.Table
-import mythic.spatial.*
-import rendering.ElementGroup
-import rendering.ElementGroups
-import rendering.Material
-import rendering.MeshElement
+import silentorb.mythic.ent.Table
+import silentorb.mythic.spatial.*
+import silentorb.mythic.lookinglass.ElementGroup
+import silentorb.mythic.lookinglass.ElementGroups
+import silentorb.mythic.lookinglass.Material
+import silentorb.mythic.lookinglass.MeshElement
 import marloth.scenery.enums.MeshId
 import simulation.entities.Cycle
 

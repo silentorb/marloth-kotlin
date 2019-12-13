@@ -1,10 +1,10 @@
 package simulation.particles
 
-import mythic.breeze.AnimationChannel
-import mythic.ent.pipe2
-import mythic.spatial.Vector3
-import simulation.physics.Body
-import randomly.Dice
+import silentorb.mythic.breeze.AnimationChannel
+import silentorb.mythic.ent.pipe2
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.physics.Body
+import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.Shape
 
 //typealias ParticleFactory = (Dice) -> ParticleHand

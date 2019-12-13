@@ -1,10 +1,11 @@
 package simulation.updating
 
-import mythic.ent.IdSource
-import mythic.ent.mapEntryValue
-import mythic.ent.pipe
-import mythic.ent.pipe2
-import randomly.Dice
+import silentorb.mythic.ent.IdSource
+import silentorb.mythic.ent.mapEntryValue
+import silentorb.mythic.ent.pipe
+import silentorb.mythic.ent.pipe2
+import simulation.physics.updatePhysics
+import silentorb.mythic.randomly.Dice
 import simulation.combat.getDamageMultiplierModifiers
 import simulation.combat.toModifierDeck
 import simulation.entities.*
@@ -18,7 +19,7 @@ import simulation.main.*
 import simulation.misc.Definitions
 import simulation.particles.updateParticleEffect
 import simulation.physics.*
-import simulation.physics.old.Collisions
+import simulation.misc.Collisions
 
 const val simulationFps = 60
 const val simulationDelta = 1f / simulationFps.toFloat()
@@ -67,7 +68,6 @@ fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: 
           ambientSounds = updateAmbientAudio(dice, deck),
           animations = mapTable(deck.animations, updateCharacterAnimation(deck, animationDurations, delta)),
           attachments = mapTable(deck.attachments, updateAttachment(intermediate.events)),
-          bodies = mapTableValues(deck.bodies, updateBody(world.realm)),
           cycles = mapTableValues(deck.cycles, updateCycle(delta)),
 //          depictions = mapTable(deck.depictions, updateDepiction(deck, animationDurations)),
           destructibles = mapTable(deck.destructibles, updateDestructibleHealth(events)),
@@ -117,7 +117,7 @@ fun updateWorld(animationDurations: AnimationDurationMap, playerCommands: Comman
           val intermediate = generateIntermediateRecords(definitions, world, playerCommands, events)
           val linearForces = allCharacterMovements(world, intermediate.commands)
           pipe2(listOf(
-              updateBulletPhysics(linearForces),
+              updatePhysics(linearForces),
               updateWorldDeck(animationDurations, definitions, intermediate, delta)
           ))(world)
         },

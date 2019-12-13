@@ -1,17 +1,17 @@
 package lab
 
 import lab.views.map.MapViewDisplayConfig
-import mythic.glowing.DrawMethod
-import mythic.glowing.drawMesh
-import mythic.glowing.globalState
-import mythic.spatial.Matrix
-import mythic.spatial.Vector4
+import silentorb.mythic.glowing.DrawMethod
+import silentorb.mythic.glowing.drawMesh
+import silentorb.mythic.glowing.globalState
+import silentorb.mythic.spatial.Matrix
+import silentorb.mythic.spatial.Vector4
 import org.recast4j.detour.NavMesh
 import org.recast4j.recast.Heightfield
 import org.recast4j.recast.Span
-import rendering.Renderer
-import rendering.shading.ObjectShaderConfig
-import rendering.shading.ShaderFeatureConfig
+import silentorb.mythic.lookinglass.Renderer
+import silentorb.mythic.lookinglass.shading.ObjectShaderConfig
+import silentorb.mythic.lookinglass.shading.ShaderFeatureConfig
 import marloth.scenery.enums.MeshId
 import simulation.intellect.navigation.globalHeightMap
 import simulation.intellect.navigation.originalNavMeshData

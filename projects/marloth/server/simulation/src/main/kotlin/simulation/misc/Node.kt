@@ -1,8 +1,8 @@
 package simulation.misc
 
-import mythic.ent.WithId
-import mythic.ent.Id
-import mythic.spatial.Vector3
+import silentorb.mythic.ent.WithId
+import silentorb.mythic.ent.Id
+import silentorb.mythic.spatial.Vector3
 
 enum class NodeAttribute {
   categoryCommon,

@@ -1,9 +1,9 @@
 package marloth.scenery.creation
 
-import mythic.ent.Id
-import mythic.spatial.Pi
-import mythic.spatial.Quaternion
-import mythic.spatial.Vector3
+import silentorb.mythic.ent.Id
+import silentorb.mythic.spatial.Pi
+import silentorb.mythic.spatial.Quaternion
+import silentorb.mythic.spatial.Vector3
 import org.joml.times
 import silentorb.mythic.scenery.Camera
 import silentorb.mythic.scenery.ProjectionType
@@ -11,7 +11,7 @@ import simulation.entities.Character
 import simulation.entities.HoverCamera
 import simulation.entities.ViewMode
 import simulation.main.Deck
-import simulation.physics.Body
+import silentorb.mythic.physics.Body
 import simulation.physics.defaultCharacterHeight
 
 val firstPersonCameraOffset = Vector3(0f, 0f, defaultCharacterHeight * 0.25f)

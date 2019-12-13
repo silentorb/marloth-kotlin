@@ -5,8 +5,8 @@ import generation.architecture.definition.ConnectionType
 import generation.architecture.definition.any
 import generation.general.*
 import generation.architecture.misc.Builder
-import mythic.spatial.Vector3
-import randomly.Dice
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.randomly.Dice
 import marloth.scenery.enums.MeshId
 import simulation.misc.NodeAttribute
 

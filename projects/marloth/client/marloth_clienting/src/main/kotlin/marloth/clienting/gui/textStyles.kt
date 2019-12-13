@@ -1,9 +1,9 @@
 package marloth.clienting.gui
 
-import mythic.drawing.grayTone
-import mythic.spatial.Vector4
-import mythic.typography.FontLoadInfo
-import mythic.typography.IndexedTextStyle
+import silentorb.mythic.drawing.grayTone
+import silentorb.mythic.spatial.Vector4
+import silentorb.mythic.typography.FontLoadInfo
+import silentorb.mythic.typography.IndexedTextStyle
 
 val black = Vector4(0f, 0f, 0f, 1f)
 private val white = Vector4(1f, 1f, 1f, 1f)

@@ -5,8 +5,8 @@ import generation.abstracted.normalizeRanges
 import generation.architecture.misc.GenerationConfig
 import marloth.definition.templates.defaultWares
 import marloth.definition.templates.newMerchant
-import mythic.ent.Id
-import randomly.Dice
+import silentorb.mythic.ent.Id
+import silentorb.mythic.randomly.Dice
 import marloth.scenery.enums.ModifierId
 import simulation.main.Hand
 import simulation.misc.Node

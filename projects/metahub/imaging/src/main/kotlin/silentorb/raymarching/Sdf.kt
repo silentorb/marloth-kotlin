@@ -1,6 +1,6 @@
 package silentorb.raymarching
 
-import mythic.spatial.*
+import silentorb.mythic.spatial.*
 
 typealias SdfHook = () -> Unit
 

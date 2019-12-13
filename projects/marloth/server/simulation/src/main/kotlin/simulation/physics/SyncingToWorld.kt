@@ -2,12 +2,16 @@ package simulation.physics
 
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld
-import mythic.ent.Id
-import mythic.spatial.Quaternion
-import mythic.spatial.Vector3
+import silentorb.mythic.ent.Id
+import silentorb.mythic.physics.BulletState
+import silentorb.mythic.physics.PhysicsWorld
+import silentorb.mythic.physics.firstRayHit
+import silentorb.mythic.physics.toVector3
+import silentorb.mythic.spatial.Quaternion
+import silentorb.mythic.spatial.Vector3
 import simulation.main.Deck
 import simulation.main.World
-import simulation.physics.old.Collision
+import simulation.misc.Collision
 
 fun castInteractableRay(dynamicsWorld: btDiscreteDynamicsWorld, deck: Deck, player: Id): Id? {
   val body = deck.bodies[player]!!
@@ -28,7 +32,7 @@ fun castInteractableRay(dynamicsWorld: btDiscreteDynamicsWorld, deck: Deck, play
   return null
 }
 
-fun syncWorldToBullet(bulletState: BulletState): (World) -> World = { world ->
+fun syncWorldToBullet(bulletState: BulletState): (PhysicsWorld) -> PhysicsWorld = { world ->
   val quat = com.badlogic.gdx.math.Quaternion()
   val deck = world.deck
   world.copy(

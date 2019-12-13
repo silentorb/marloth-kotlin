@@ -1,6 +1,6 @@
 package generation.general
 
-import mythic.spatial.Vector3i
+import silentorb.mythic.spatial.Vector3i
 
 enum class Direction {
   up,

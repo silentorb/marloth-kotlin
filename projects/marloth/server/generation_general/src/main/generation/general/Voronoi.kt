@@ -1,8 +1,8 @@
 package generation.general
 
-import mythic.spatial.Vector3
-import mythic.spatial.nearestFast
-import randomly.Dice
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.nearestFast
+import silentorb.mythic.randomly.Dice
 
 // Within 0..1
 typealias FloatUnit = Float

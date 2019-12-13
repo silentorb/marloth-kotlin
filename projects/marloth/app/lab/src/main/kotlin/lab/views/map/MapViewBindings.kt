@@ -1,9 +1,9 @@
 package lab.views.map
 
-import haft.DeviceIndex
-import haft.MOUSE_SCROLL_DOWN
-import haft.MOUSE_SCROLL_UP
-import haft.createBindings
+import silentorb.mythic.haft.DeviceIndex
+import silentorb.mythic.haft.MOUSE_SCROLL_DOWN
+import silentorb.mythic.haft.MOUSE_SCROLL_UP
+import silentorb.mythic.haft.createBindings
 import lab.LabCommandType
 import org.lwjgl.glfw.GLFW
 

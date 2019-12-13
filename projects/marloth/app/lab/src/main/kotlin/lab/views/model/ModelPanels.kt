@@ -3,15 +3,15 @@ package lab.views.model
 import lab.utility.panelColor
 import lab.utility.sceneBackgroundColor
 import marloth.clienting.gui.textStyles
-import mythic.bloom.Bounds
-import mythic.bloom.Depiction
-import mythic.drawing.Canvas
-import mythic.spatial.Vector2
-import mythic.spatial.toString
+import silentorb.mythic.bloom.Bounds
+import silentorb.mythic.bloom.Depiction
+import silentorb.mythic.drawing.Canvas
+import silentorb.mythic.spatial.Vector2
+import silentorb.mythic.spatial.toString
 import org.joml.Vector2i
 import org.joml.plus
-import rendering.AdvancedModel
-import rendering.Renderer
+import silentorb.mythic.lookinglass.AdvancedModel
+import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.scenery.Camera
 
 fun drawScenePanel(config: ModelViewConfig, state: ModelViewState, renderer: Renderer, model: AdvancedModel, camera: Camera): Depiction = { b: Bounds, canvas: Canvas ->

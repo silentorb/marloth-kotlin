@@ -1,6 +1,6 @@
 package simulation.happenings
 
-import mythic.ent.Id
+import silentorb.mythic.ent.Id
 import simulation.combat.Damage
 import simulation.input.CommandType
 import simulation.input.Commands
@@ -8,7 +8,7 @@ import simulation.main.Deck
 import simulation.main.DeckSource
 import simulation.main.overTime
 import simulation.misc.Definitions
-import simulation.physics.old.Collision
+import simulation.misc.Collision
 
 data class Triggering(
     val actor: Id,

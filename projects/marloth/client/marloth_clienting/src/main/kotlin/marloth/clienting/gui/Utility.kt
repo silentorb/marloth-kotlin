@@ -1,17 +1,17 @@
 package marloth.clienting.gui
 
-import mythic.bloom.Bounds
-import mythic.bloom.next.Box
-import mythic.bloom.next.Flower
-import mythic.bloom.textDepiction
-import mythic.drawing.globalFonts
-import mythic.ent.Id
-import mythic.spatial.Vector2
-import mythic.spatial.toVector2i
-import mythic.typography.IndexedTextStyle
-import mythic.typography.TextConfiguration
-import mythic.typography.calculateTextDimensions
-import mythic.typography.resolveTextStyle
+import silentorb.mythic.bloom.Bounds
+import silentorb.mythic.bloom.next.Box
+import silentorb.mythic.bloom.next.Flower
+import silentorb.mythic.bloom.textDepiction
+import silentorb.mythic.drawing.globalFonts
+import silentorb.mythic.ent.Id
+import silentorb.mythic.spatial.Vector2
+import silentorb.mythic.spatial.toVector2i
+import silentorb.mythic.typography.IndexedTextStyle
+import silentorb.mythic.typography.TextConfiguration
+import silentorb.mythic.typography.calculateTextDimensions
+import silentorb.mythic.typography.resolveTextStyle
 import marloth.scenery.enums.Text
 import simulation.main.Deck
 

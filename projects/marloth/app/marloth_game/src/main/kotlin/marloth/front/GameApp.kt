@@ -5,12 +5,12 @@ import marloth.clienting.newClientState
 import marloth.definition.staticDefinitions
 import marloth.generation.generateWorld
 import marloth.integration.*
-import mythic.platforming.Platform
-import mythic.quartz.newTimestepState
+import silentorb.mythic.platforming.Platform
+import silentorb.mythic.quartz.newTimestepState
 import persistence.Database
 import persistence.newDatabase
-import randomly.Dice
-import rendering.SceneRenderer
+import silentorb.mythic.randomly.Dice
+import silentorb.mythic.lookinglass.SceneRenderer
 import simulation.main.World
 import simulation.misc.Definitions
 

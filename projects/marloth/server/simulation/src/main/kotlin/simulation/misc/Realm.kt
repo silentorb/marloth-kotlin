@@ -1,13 +1,13 @@
 package simulation.misc
 
-import mythic.ent.Id
-import mythic.ent.firstFloatSortedBy
-import mythic.sculpting.ImmutableEdgeReference
-import mythic.sculpting.ImmutableFace
-import mythic.spatial.Vector3
-import mythic.spatial.Vector3i
-import mythic.spatial.getCenter
-import randomly.Dice
+import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.firstFloatSortedBy
+import silentorb.mythic.sculpting.ImmutableEdgeReference
+import silentorb.mythic.sculpting.ImmutableFace
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector3i
+import silentorb.mythic.spatial.getCenter
+import silentorb.mythic.randomly.Dice
 
 data class WorldBoundary(
     val start: Vector3,

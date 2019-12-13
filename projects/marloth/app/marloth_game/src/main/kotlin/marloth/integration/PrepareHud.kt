@@ -2,7 +2,7 @@ package marloth.integration
 
 import marloth.clienting.gui.HudData
 import marloth.clienting.gui.ViewId
-import mythic.ent.Id
+import silentorb.mythic.ent.Id
 import simulation.main.Deck
 import simulation.entities.AttachmentCategory
 import simulation.entities.getTargetAttachmentsOfCategory

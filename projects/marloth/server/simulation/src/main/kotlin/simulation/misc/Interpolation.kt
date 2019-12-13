@@ -1,7 +1,7 @@
 package simulation.misc
 
-import mythic.ent.Table
-import mythic.spatial.interpolate
+import silentorb.mythic.ent.Table
+import silentorb.mythic.spatial.interpolate
 import simulation.main.World
 import simulation.updating.simulationDelta
 

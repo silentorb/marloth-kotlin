@@ -1,8 +1,8 @@
 package lab.views.map
 
-import mythic.ent.Id
-import mythic.spatial.Pi
-import mythic.spatial.Vector3
+import silentorb.mythic.ent.Id
+import silentorb.mythic.spatial.Pi
+import silentorb.mythic.spatial.Vector3
 
 enum class MapViewCameraMode {
   firstPerson,

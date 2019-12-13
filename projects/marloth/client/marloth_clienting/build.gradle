@@ -8,4 +8,4 @@ dependencies {
     compile "org.lwjgl:lwjgl-glfw:$lwjglVersion:$lwjglNatives"
 }
 
-requires 'rendering', 'haft', 'marloth_scenery', 'spatial', 'platforming', 'bloom', 'bloom_input', 'drawing', 'simulation', 'aura'
+requires 'assets', 'lookinglass', 'haft', 'marloth_scenery', 'spatial', 'platforming', 'bloom', 'bloom_input', 'drawing', 'simulation', 'aura'

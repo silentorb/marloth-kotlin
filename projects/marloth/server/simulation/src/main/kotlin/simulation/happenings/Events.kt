@@ -1,6 +1,6 @@
 package simulation.happenings
 
-import mythic.ent.Id
+import silentorb.mythic.ent.Id
 import marloth.scenery.enums.ModifierId
 import simulation.combat.Damage
 import simulation.entities.AccessoryName

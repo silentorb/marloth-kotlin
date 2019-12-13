@@ -1,13 +1,14 @@
 package lab.views.game
 
 import lab.FixtureId
-import mythic.glowing.globalState
-import mythic.sculpting.ImmutableFace
-import mythic.sculpting.getVerticesCenter
-import mythic.spatial.*
-import rendering.*
-import rendering.shading.LightingConfig
-import rendering.shading.ObjectShaderConfig
+import silentorb.mythic.glowing.globalState
+import silentorb.mythic.sculpting.ImmutableFace
+import silentorb.mythic.sculpting.getVerticesCenter
+import silentorb.mythic.spatial.*
+import silentorb.mythic.lookinglass.GameScene
+import silentorb.mythic.lookinglass.SceneRenderer
+import silentorb.mythic.lookinglass.shading.LightingConfig
+import silentorb.mythic.lookinglass.shading.ObjectShaderConfig
 import simulation.main.World
 
 enum class GameDisplayMode {

@@ -6,7 +6,7 @@ import generation.architecture.misc.GenerationConfig
 import generation.architecture.old.cellHalfLength
 import generation.architecture.old.newArchitectureMesh
 import generation.general.*
-import mythic.spatial.*
+import silentorb.mythic.spatial.*
 import silentorb.mythic.scenery.MeshName
 import simulation.entities.ArchitectureElement
 import simulation.main.Hand

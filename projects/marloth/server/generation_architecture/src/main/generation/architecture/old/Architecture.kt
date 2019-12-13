@@ -1,7 +1,7 @@
 package generation.architecture.old
 
 import generation.architecture.misc.GenerationConfig
-import randomly.Dice
+import silentorb.mythic.randomly.Dice
 import simulation.main.Hand
 import simulation.misc.Graph
 import simulation.misc.NodeAttribute

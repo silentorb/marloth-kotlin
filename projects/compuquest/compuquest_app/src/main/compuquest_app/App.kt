@@ -2,11 +2,11 @@ package compuquest_app
 
 import compuquest_client.*
 import compuquest_simulation.*
-import configuration.loadYamlFile
-import mythic.desktop.createDesktopPlatform
-import mythic.platforming.Platform
-import mythic.platforming.PlatformDisplay
-import mythic.quartz.DeltaTimer
+import silentorb.mythic.configuration.loadYamlFile
+import silentorb.mythic.desktop.createDesktopPlatform
+import silentorb.mythic.platforming.Platform
+import silentorb.mythic.platforming.PlatformDisplay
+import silentorb.mythic.quartz.DeltaTimer
 import org.joml.Vector2i
 
 data class CompuQuestApp(

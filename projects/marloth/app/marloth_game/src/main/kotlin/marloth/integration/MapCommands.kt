@@ -1,8 +1,8 @@
 package marloth.integration
 
-import haft.HaftCommands
+import silentorb.mythic.haft.HaftCommands
 import marloth.clienting.input.GuiCommandType
-import mythic.ent.Id
+import silentorb.mythic.ent.Id
 import simulation.input.Command
 import simulation.input.CommandType
 

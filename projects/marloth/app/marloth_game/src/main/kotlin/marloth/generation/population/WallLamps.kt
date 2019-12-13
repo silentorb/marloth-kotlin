@@ -3,18 +3,18 @@ package marloth.generation.population
 import generation.architecture.definition.MeshAttribute
 import generation.architecture.misc.GenerationConfig
 import generation.general.BiomeAttribute
-import mythic.spatial.Pi
-import mythic.spatial.Quaternion
-import mythic.spatial.Vector3
+import silentorb.mythic.spatial.Pi
+import silentorb.mythic.spatial.Quaternion
+import silentorb.mythic.spatial.Vector3
 import org.joml.times
-import randomly.Dice
+import silentorb.mythic.randomly.Dice
 import marloth.scenery.enums.MeshId
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
 import simulation.main.Deck
 import simulation.main.Hand
 import simulation.misc.Realm
-import simulation.physics.Body
+import silentorb.mythic.physics.Body
 
 fun placeWallLamps(deck: Deck, config: GenerationConfig, realm: Realm, dice: Dice, scale: Float): List<Hand> {
   val nodeWalls = gatherNodeWallMap(deck) {

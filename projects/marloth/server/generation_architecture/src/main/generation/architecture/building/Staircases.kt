@@ -3,10 +3,10 @@ package generation.architecture.building
 import generation.architecture.old.*
 import generation.general.TextureGroup
 import generation.general.biomeTexture
-import mythic.spatial.Matrix
-import mythic.spatial.Pi
-import mythic.spatial.Quaternion
-import mythic.spatial.Vector3
+import silentorb.mythic.spatial.Matrix
+import silentorb.mythic.spatial.Pi
+import silentorb.mythic.spatial.Quaternion
+import silentorb.mythic.spatial.Vector3
 import marloth.scenery.enums.MeshId
 import simulation.entities.ArchitectureElement
 import simulation.misc.cellLength

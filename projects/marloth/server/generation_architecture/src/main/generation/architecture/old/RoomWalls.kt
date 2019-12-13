@@ -1,6 +1,6 @@
 package generation.architecture.old
 
-import mythic.spatial.Pi
+import silentorb.mythic.spatial.Pi
 
 //fun getNonVerticalNeighbors(graph: Graph, node: Id): List<Id> {
 //  val connectionPool = graph.connections

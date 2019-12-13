@@ -2,7 +2,7 @@ package marloth.definition.templates
 
 import marloth.definition.creatures
 import marloth.definition.newCharacter
-import mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector3
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.ClientCommand
 import marloth.scenery.enums.Text

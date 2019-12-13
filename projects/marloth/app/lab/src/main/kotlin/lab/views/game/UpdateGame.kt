@@ -1,7 +1,7 @@
 package lab.views.game
 
-import mythic.ent.Id
-import mythic.spatial.Vector3
+import silentorb.mythic.ent.Id
+import silentorb.mythic.spatial.Vector3
 
 const val nSecond: Long = 1000000000L
 const val maxInterval = 1f / 60f

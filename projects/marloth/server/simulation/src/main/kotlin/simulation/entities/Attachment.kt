@@ -4,8 +4,8 @@ import marloth.scenery.enums.ModifierDirection
 import marloth.scenery.enums.ModifierId
 import marloth.scenery.enums.ModifierType
 import marloth.scenery.enums.Text
-import mythic.ent.Id
-import mythic.ent.IdSource
+import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.IdSource
 import scenery.enums.*
 import simulation.happenings.*
 import simulation.main.Deck

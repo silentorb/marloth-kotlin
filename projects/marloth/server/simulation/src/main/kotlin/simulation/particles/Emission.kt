@@ -1,10 +1,10 @@
 package simulation.particles
 
-import mythic.spatial.Pi
-import mythic.spatial.Vector3
-import mythic.spatial.projectVector3
-import simulation.physics.Body
-import randomly.Dice
+import silentorb.mythic.spatial.Pi
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.projectVector3
+import silentorb.mythic.physics.Body
+import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.Cylinder
 import silentorb.mythic.scenery.Shape
 

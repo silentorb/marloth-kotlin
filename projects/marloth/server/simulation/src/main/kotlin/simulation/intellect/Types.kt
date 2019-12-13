@@ -1,8 +1,8 @@
 package simulation.intellect
 
 import simulation.intellect.assessment.Knowledge
-import mythic.ent.Id
-import mythic.spatial.Vector3
+import silentorb.mythic.ent.Id
+import silentorb.mythic.spatial.Vector3
 
 typealias Path = List<Id>
 

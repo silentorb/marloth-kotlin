@@ -1,9 +1,9 @@
 package generation.abstracted
 
-import mythic.ent.IdSource
-import mythic.ent.newIdSource
-import mythic.spatial.Vector3
-import mythic.spatial.toVector3
+import silentorb.mythic.ent.IdSource
+import silentorb.mythic.ent.newIdSource
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.toVector3
 import simulation.misc.*
 
 private const val horizontalScale = 20f

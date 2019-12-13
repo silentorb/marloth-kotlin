@@ -1,8 +1,7 @@
 package marloth.integration
 
-import mythic.ent.Id
-import mythic.spatial.Vector3
-import silentorb.raymarching.*
+import silentorb.mythic.ent.Id
+import silentorb.mythic.spatial.Vector3
 import simulation.main.World
 
 
@@ -39,9 +38,3 @@ import simulation.main.World
 //val j = sphereSdf(Vector3(-40.23136f, 20.66085f, 1.4f), 1f)
 //  return { j }
 //}
-
-fun prepareSceneSdf2(player: Id, world: World): Sdf {
-  return plusSdf(listOf(
-      sphereSdf(Vector3(10f, 0f, 0f), 5f)
-  ))
-}

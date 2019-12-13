@@ -1,8 +1,8 @@
 package simulation.misc
 
-import mythic.ent.Table
-import mythic.ent.WithId
-import mythic.spatial.Pi2
+import silentorb.mythic.ent.Table
+import silentorb.mythic.ent.WithId
+import silentorb.mythic.spatial.Pi2
 
 fun <Key, Value> replace(table: Map<Key, Value>, key: Key, value: Value): Map<Key, Value> =
     table.mapValues { if (it.key == key) value else it.value }

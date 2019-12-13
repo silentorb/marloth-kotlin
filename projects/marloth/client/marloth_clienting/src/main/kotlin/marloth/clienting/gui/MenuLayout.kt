@@ -1,19 +1,21 @@
 package marloth.clienting.gui
 
 import marloth.clienting.input.GuiCommandType
-import mythic.bloom.*
-import mythic.bloom.next.*
-import mythic.drawing.Canvas
-import mythic.drawing.grayTone
-import mythic.glowing.globalState
-import mythic.spatial.Vector4
-import mythic.spatial.toVector2
-import mythic.spatial.toVector2i
-import mythic.typography.TextConfiguration
-import mythic.typography.calculateTextDimensions
-import mythic.typography.resolveTextStyle
+import silentorb.mythic.bloom.*
+import silentorb.mythic.bloom.next.*
+import silentorb.mythic.drawing.Canvas
+import silentorb.mythic.drawing.grayTone
+import silentorb.mythic.glowing.globalState
+import silentorb.mythic.spatial.Vector4
+import silentorb.mythic.spatial.toVector2
+import silentorb.mythic.spatial.toVector2i
+import silentorb.mythic.typography.TextConfiguration
+import silentorb.mythic.typography.calculateTextDimensions
+import silentorb.mythic.typography.resolveTextStyle
 import org.joml.Vector2i
 import marloth.scenery.enums.Text
+import silentorb.mythic.bloom.*
+import silentorb.mythic.bloom.next.*
 import kotlin.math.min
 
 typealias MenuItemFlower = (Boolean) -> Flower

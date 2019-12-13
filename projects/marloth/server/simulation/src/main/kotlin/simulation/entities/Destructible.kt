@@ -1,6 +1,6 @@
 package simulation.entities
 
-import mythic.ent.Id
+import silentorb.mythic.ent.Id
 import simulation.combat.*
 import simulation.happenings.DamageEvent
 import simulation.happenings.Events

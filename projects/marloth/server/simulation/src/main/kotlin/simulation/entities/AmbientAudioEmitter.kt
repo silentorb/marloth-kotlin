@@ -1,8 +1,8 @@
 package simulation.entities
 
-import mythic.ent.Id
-import mythic.ent.Table
-import randomly.Dice
+import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.Table
+import silentorb.mythic.randomly.Dice
 import marloth.scenery.enums.Sounds
 import simulation.main.Deck
 import simulation.updating.simulationDelta

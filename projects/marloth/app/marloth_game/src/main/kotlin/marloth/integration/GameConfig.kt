@@ -1,10 +1,10 @@
 package marloth.integration
 
-import configuration.loadYamlFile
-import configuration.saveYamlFile
+import silentorb.mythic.configuration.loadYamlFile
+import silentorb.mythic.configuration.saveYamlFile
 import marloth.clienting.audio.AudioConfig
 import marloth.clienting.input.GameInputConfig
-import rendering.DisplayConfig
+import silentorb.mythic.lookinglass.DisplayConfig
 import simulation.entities.ViewMode
 
 data class GameplayConfig(

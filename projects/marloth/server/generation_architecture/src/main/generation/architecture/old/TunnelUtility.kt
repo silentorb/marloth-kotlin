@@ -1,8 +1,8 @@
 package generation.architecture.old
 
 import generation.architecture.misc.getNodeDistance
-import mythic.ent.Id
-import mythic.spatial.Vector3
+import silentorb.mythic.ent.Id
+import silentorb.mythic.spatial.Vector3
 import simulation.misc.Graph
 import simulation.misc.nodeNeighbors2
 

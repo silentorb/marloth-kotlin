@@ -7,19 +7,19 @@ import marloth.clienting.input.GuiCommandType
 import marloth.clienting.updateClient
 import marloth.front.GameApp
 import marloth.front.RenderHook
-import mythic.bloom.BloomState
-import mythic.bloom.mergeBounds
-import mythic.bloom.next.Box
-import mythic.bloom.toAbsoluteBounds
-import mythic.ent.Id
-import mythic.ent.Table
+import silentorb.mythic.bloom.BloomState
+import silentorb.mythic.bloom.mergeBounds
+import silentorb.mythic.bloom.next.Box
+import silentorb.mythic.bloom.toAbsoluteBounds
+import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.Table
 import silentorb.mythic.debugging.incrementGlobalDebugLoopNumber
-import mythic.ent.pipe
-import mythic.quartz.updateTimestep
+import silentorb.mythic.ent.pipe
+import silentorb.mythic.quartz.updateTimestep
 import org.joml.Vector2i
 import persistence.Database
 import persistence.createVictory
-import rendering.getPlayerViewports
+import silentorb.mythic.lookinglass.getPlayerViewports
 import simulation.entities.Player
 import simulation.happenings.Events
 import simulation.happenings.GameEvent
@@ -28,7 +28,7 @@ import simulation.input.CommandType
 import simulation.main.World
 import simulation.updating.simulationDelta
 import simulation.misc.Victory
-import simulation.physics.releaseBulletState
+import silentorb.mythic.physics.releaseBulletState
 
 fun updateSimulationDatabase(db: Database, next: World, previous: World) {
   val nextGameOver = next.gameOver

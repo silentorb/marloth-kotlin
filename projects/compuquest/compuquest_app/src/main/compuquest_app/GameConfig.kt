@@ -1,8 +1,8 @@
 package compuquest_app
 
-import configuration.loadYamlFile
-import configuration.saveYamlFile
-import rendering.DisplayConfig
+import silentorb.mythic.configuration.loadYamlFile
+import silentorb.mythic.configuration.saveYamlFile
+import silentorb.mythic.lookinglass.DisplayConfig
 
 data class GameConfig(
     var display: DisplayConfig = DisplayConfig()

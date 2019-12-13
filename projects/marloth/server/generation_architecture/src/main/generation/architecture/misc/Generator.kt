@@ -3,8 +3,8 @@ package generation.architecture.misc
 import generation.abstracted.applyInitialBiomes
 import generation.abstracted.gridToGraph
 import generation.general.BiomeGrid
-import mythic.ent.pipe2
-import mythic.spatial.Vector3
+import silentorb.mythic.ent.pipe2
+import silentorb.mythic.spatial.Vector3
 import simulation.misc.Graph
 import simulation.misc.MapGrid
 import simulation.misc.Realm

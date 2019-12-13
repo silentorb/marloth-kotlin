@@ -1,12 +1,12 @@
 package simulation.combat
 
-import mythic.ent.Id
-import mythic.spatial.Vector3
+import silentorb.mythic.ent.Id
+import silentorb.mythic.spatial.Vector3
 import simulation.happenings.DamageEvent
 import simulation.happenings.Events
 import simulation.happenings.UseAction
 import simulation.main.World
-import simulation.physics.castCollisionRay
+import silentorb.mythic.physics.castCollisionRay
 
 fun raycastAttack(world: World, attacker: Id, action: Id): Events {
   val deck = world.deck

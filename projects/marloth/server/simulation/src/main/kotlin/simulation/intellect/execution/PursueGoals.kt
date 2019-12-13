@@ -1,7 +1,7 @@
 package simulation.intellect.execution
 
-import mythic.ent.Id
-import mythic.ent.Table
+import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.Table
 import simulation.intellect.Pursuit
 import simulation.intellect.Spirit
 import simulation.intellect.assessment.Knowledge

@@ -1,10 +1,9 @@
 package marloth.clienting
 
-import mythic.platforming.WindowInfo
+import silentorb.mythic.platforming.WindowInfo
 import org.joml.zw
-import rendering.*
-import rendering.drawing.renderBackground
-
+import silentorb.mythic.lookinglass.*
+import silentorb.mythic.lookinglass.drawing.renderBackground
 
 fun prepareRender(renderer: GameSceneRenderer): List<ScreenFilter> {
   val r = renderer.renderer.renderer

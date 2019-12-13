@@ -1,13 +1,14 @@
 package marloth.clienting.input
 
-import DeviceMap
-import PlayerDevice
-import haft.*
+import silentorb.mythic.bloom.input.DeviceMap
+import silentorb.mythic.bloom.input.PlayerDevice
+import silentorb.mythic.haft.*
 import marloth.clienting.PlayerViews
 import marloth.clienting.gui.ViewId
-import mythic.bloom.BloomId
-import mythic.ent.Id
-import mythic.platforming.InputEvent
+import silentorb.mythic.bloom.BloomId
+import silentorb.mythic.ent.Id
+import silentorb.mythic.platforming.InputEvent
+import silentorb.mythic.haft.*
 
 typealias UserCommand = HaftCommand
 

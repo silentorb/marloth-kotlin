@@ -7,9 +7,9 @@ import generation.general.newRandomizedBiomeGrid
 import generation.general.bakeSides
 import marloth.generation.population.populateWorld
 import silentorb.mythic.debugging.getDebugSetting
-import mythic.ent.newIdSource
+import silentorb.mythic.ent.newIdSource
 import org.recast4j.detour.NavMeshQuery
-import randomly.Dice
+import silentorb.mythic.randomly.Dice
 import simulation.intellect.navigation.newNavMesh
 import simulation.main.Deck
 import simulation.main.World
@@ -17,7 +17,7 @@ import simulation.main.pipeHandsToDeck
 import simulation.misc.Definitions
 import simulation.misc.WorldInput
 import simulation.misc.createWorldBoundary
-import simulation.physics.newBulletState
+import silentorb.mythic.physics.newBulletState
 
 fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, input: WorldInput): World {
   val dice = input.dice

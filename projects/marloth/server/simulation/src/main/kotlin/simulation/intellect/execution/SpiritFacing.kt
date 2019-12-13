@@ -1,13 +1,13 @@
 package simulation.intellect.execution
 
-import mythic.ent.Id
-import mythic.spatial.*
+import silentorb.mythic.ent.Id
+import silentorb.mythic.spatial.*
 import simulation.entities.Character
 import simulation.input.Command
 import simulation.input.CommandType
 import simulation.input.Commands
 import simulation.main.World
-import simulation.physics.old.getLookAtAngle
+import simulation.misc.getLookAtAngle
 import simulation.updating.simulationDelta
 import simulation.misc.*
 

@@ -5,15 +5,14 @@ import com.badlogic.gdx.physics.bullet.collision.*
 import com.badlogic.gdx.physics.bullet.dynamics.btHingeConstraint
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState
-import mythic.ent.Id
-import mythic.sculpting.ImmutableFace
-import mythic.spatial.Matrix
-import mythic.spatial.Pi
-import mythic.spatial.Vector3
-import mythic.spatial.getCenter
+import silentorb.mythic.ent.Id
+import silentorb.mythic.physics.*
+import silentorb.mythic.sculpting.ImmutableFace
+import silentorb.mythic.spatial.Matrix
+import silentorb.mythic.spatial.Pi
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.getCenter
 import silentorb.mythic.scenery.*
-import simulation.main.World
-import simulation.physics.old.LinearImpulse
 
 // TODO: Cache the usage of this function
 fun createBulletStaticMesh(vertices: List<Vector3>): btBvhTriangleMeshShape {
@@ -92,7 +91,7 @@ fun createGhostBody(body: Body, shape: btCollisionShape): btCollisionObject {
   return btBody
 }
 
-fun syncNewBodies(world: World, bulletState: BulletState) {
+fun syncNewBodies(world: PhysicsWorld, bulletState: BulletState) {
   val deck = world.deck
 
   val newDynamicBodies = deck.dynamicBodies
@@ -151,7 +150,7 @@ fun syncNewBodies(world: World, bulletState: BulletState) {
   }
 }
 
-fun syncRemovedBodies(world: World, bulletState: BulletState) {
+fun syncRemovedBodies(world: PhysicsWorld, bulletState: BulletState) {
   val removedDynamic = bulletState.dynamicBodies.filterValues { !world.deck.bodies.containsKey(it.userData as Id) }
   for (body in removedDynamic.values) {
     bulletState.dynamicsWorld.removeRigidBody(body)
@@ -165,7 +164,7 @@ fun syncRemovedBodies(world: World, bulletState: BulletState) {
   bulletState.staticBodies = bulletState.staticBodies.minus(removedStatic.keys)
 }
 
-fun applyImpulses(world: World, bulletState: BulletState, linearForces: List<LinearImpulse>) {
+fun applyImpulses(bulletState: BulletState, linearForces: List<LinearImpulse>) {
   for (force in linearForces) {
     val btBody = bulletState.dynamicBodies[force.body]!!
     btBody.applyCentralImpulse(toGdxVector3(force.offset))

@@ -1,6 +1,6 @@
 package simulation.entities
 
-import mythic.ent.Id
+import silentorb.mythic.ent.Id
 import simulation.main.Deck
 
 fun getItemInSlot(deck: Deck, character: Id, slot: Int): Id? =

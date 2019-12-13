@@ -1,8 +1,8 @@
 package silentorb.metahub.core
 
-import mythic.ent.Id
-import mythic.ent.pipe
-import mythic.ent.replace
+import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.pipe
+import silentorb.mythic.ent.replace
 
 data class Connection(
     val input: Id,

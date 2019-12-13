@@ -1,11 +1,12 @@
 package simulation.entities
 
-import mythic.ent.Id
-import mythic.ent.pipe2
-import mythic.spatial.*
+import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.pipe2
+import silentorb.mythic.spatial.*
 import org.joml.times
 import marloth.scenery.enums.ResourceId
 import marloth.scenery.enums.Sounds
+import silentorb.mythic.physics.Body
 import simulation.combat.DamageMultipliers
 import simulation.happenings.Events
 import simulation.happenings.PurchaseEvent
@@ -13,15 +14,11 @@ import simulation.happenings.TakeItemEvent
 import simulation.input.*
 import simulation.main.Deck
 import simulation.main.World
+import simulation.misc.*
+import silentorb.mythic.physics.LinearImpulse
+import simulation.physics.characterMovementFp
 import simulation.updating.simulationDelta
-import simulation.misc.ResourceContainer
-import simulation.misc.maxNegativeLookVelocityChange
-import simulation.misc.maxPostiveLookVelocityChange
-import simulation.physics.*
-import simulation.physics.old.*
 
-//const val characterGroundBuffer = 0.01f
-const val characterGroundBuffer = 0.02f
 const val groundedLinearDamping = 0.9f
 const val airLinearDamping = 0f
 const val airControlReduction = 0.4f
@@ -42,23 +39,12 @@ data class Character(
     val faction: Id,
     val sanity: ResourceContainer,
     val isAlive: Boolean = true,
-    val facingRotation: Vector3 = Vector3(),
     val lookVelocity: Vector2 = Vector2(),
     val activeAccessory: Id? = null,
     val canInteractWith: Id? = null,
     val interactingWith: Id? = null,
-    val money: Int = 0,
-    val groundDistance: Float = 0f
-) {
-  val isGrounded: Boolean get() = groundDistance <= characterGroundBuffer
-  val facingQuaternion: Quaternion
-    get() = Quaternion()
-        .rotateZ(facingRotation.z)
-        .rotateY(facingRotation.y)
-
-  val facingVector: Vector3
-    get() = facingQuaternion * Vector3(1f, 0f, 0f)
-}
+    val money: Int = 0
+)
 
 // Currently this is such a simple function because it will likely get more complicated and I want to ensure
 // everything is already routing through a single point before things get more complicated.
@@ -194,26 +180,6 @@ fun getMovementImpulseVector(baseSpeed: Float, velocity: Vector3, commandVector:
     rawImpulseVector
 
   return finalImpulseVector
-}
-
-fun characterOrientationZ(character: Character) =
-    Quaternion().rotateZ(character.facingRotation.z - Pi / 2)
-
-fun characterMovementFp(commands: Commands, character: Character, id: Id, body: Body): LinearImpulse? {
-  val offsetVector = joinInputVector(commands, playerMoveMap)
-  return if (offsetVector != null) {
-    val airControlMod = if (character.isGrounded) 1f else airControlReduction
-    val direction = characterOrientationZ(character) * offsetVector * airControlMod
-    val baseSpeed = character.definition.maxSpeed
-    val maxImpulseLength = baseSpeed
-    val commandVector = direction * maxImpulseLength
-    val horizontalVelocity = body.velocity.copy(z = 0f)
-    val impulseVector = getMovementImpulseVector(baseSpeed, horizontalVelocity, commandVector)
-    val finalImpulse = impulseVector * 5f
-    LinearImpulse(body = id, offset = finalImpulse)
-  } else {
-    null
-  }
 }
 
 fun allCharacterMovements(world: World, commands: Commands): List<LinearImpulse> =

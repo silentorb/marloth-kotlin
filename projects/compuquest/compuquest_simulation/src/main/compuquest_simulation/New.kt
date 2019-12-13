@@ -3,7 +3,7 @@ package compuquest_simulation
 import compuquest_simulation.data.Abilities
 import compuquest_simulation.data.Creatures
 import compuquest_simulation.logic.newEnemies
-import randomly.Dice
+import silentorb.mythic.randomly.Dice
 
 fun initializeAbility(type: AbilityType): Ability {
   return Ability(

@@ -2,15 +2,15 @@ package marloth.integration
 
 import marloth.clienting.Client
 import marloth.clienting.gatherFontSets
-import mythic.platforming.Platform
-import mythic.platforming.PlatformDisplay
-import rendering.DisplayConfig
-import rendering.Renderer
-import rendering.shading.LightingConfig
-import rendering.textureAttributesFromConfig
-import rendering.texturing.DeferredTexture
-import rendering.texturing.gatherTextures
-import rendering.texturing.getFileShortName
+import silentorb.mythic.platforming.Platform
+import silentorb.mythic.platforming.PlatformDisplay
+import silentorb.mythic.lookinglass.DisplayConfig
+import silentorb.mythic.lookinglass.Renderer
+import silentorb.mythic.lookinglass.shading.LightingConfig
+import silentorb.mythic.lookinglass.textureAttributesFromConfig
+import silentorb.mythic.lookinglass.texturing.DeferredTexture
+import silentorb.mythic.lookinglass.texturing.gatherTextures
+import silentorb.mythic.lookinglass.texturing.getFileShortName
 
 fun gatherTextures(display: PlatformDisplay, displayConfig: DisplayConfig): List<DeferredTexture> {
   val defaultAttributes = textureAttributesFromConfig(displayConfig)
@@ -30,11 +30,10 @@ fun gatherTextures(display: PlatformDisplay, displayConfig: DisplayConfig): List
 fun newClient(platform: Platform, displayConfig: DisplayConfig, lightingConfig: LightingConfig = LightingConfig()): Client {
   val textures = gatherTextures(platform.display, displayConfig)
   val renderer = Renderer(
-      textures = textures,
-      display = platform.display,
       config = displayConfig,
       fontSource = ::gatherFontSets,
-      lightingConfig = lightingConfig
+      lightingConfig = lightingConfig,
+      textures = textures
   )
   return Client(platform, renderer)
 }

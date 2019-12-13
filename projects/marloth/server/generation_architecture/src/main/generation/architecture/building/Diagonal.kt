@@ -5,8 +5,8 @@ import generation.architecture.old.cellHalfLength
 import generation.architecture.definition.impassableHorizontal
 import generation.architecture.definition.impassableVertical
 import generation.general.Side
-import mythic.spatial.Pi
-import mythic.spatial.Vector3
+import silentorb.mythic.spatial.Pi
+import silentorb.mythic.spatial.Vector3
 import marloth.scenery.enums.MeshId
 import simulation.misc.NodeAttribute
 

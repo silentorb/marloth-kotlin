@@ -1,14 +1,15 @@
 package simulation.main
 
-import mythic.ent.Id
+import silentorb.mythic.ent.Id
 import simulation.entities.*
 import simulation.happenings.Trigger
 import simulation.intellect.Spirit
 import simulation.misc.ResourceBundle
 import simulation.particles.ParticleEffect
-import simulation.physics.Body
+import silentorb.mythic.physics.Body
 import simulation.physics.CollisionObject
-import simulation.physics.DynamicBody
+import silentorb.mythic.physics.DynamicBody
+import simulation.physics.CharacterRig
 
 // Hand is a slice of a deck, mostly used for instantiating new entities.
 
@@ -23,6 +24,7 @@ data class Hand(
     val attachment: Attachment? = null,
     val dynamicBody: DynamicBody? = null,
     val character: Character? = null,
+    val characterRig: CharacterRig? = null,
     val collisionShape: CollisionObject? = null,
     val cycle: Cycle? = null,
     val depiction: Depiction? = null,

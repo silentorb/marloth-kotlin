@@ -1,8 +1,10 @@
 package lab.views
 
 import lab.LabState
-import haft.*
-import GeneralCommandState
+import silentorb.mythic.haft.*
+import silentorb.mythic.bloom.input.GeneralCommandState
+import silentorb.mythic.haft.CommandHandler
+import silentorb.mythic.haft.HaftCommands
 
 data class LabClientResult(
     val commands: HaftCommands,

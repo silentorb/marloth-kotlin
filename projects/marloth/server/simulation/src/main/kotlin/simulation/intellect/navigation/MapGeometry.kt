@@ -1,14 +1,14 @@
 package simulation.intellect.navigation
 
-import mythic.spatial.Vector3
-import mythic.spatial.createArcZ
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.createArcZ
 import org.recast4j.recast.AreaModification
 import org.recast4j.recast.ConvexVolume
 import org.recast4j.recast.geom.InputGeomProvider
 import org.recast4j.recast.geom.TriMesh
 import silentorb.mythic.scenery.*
 import simulation.main.Deck
-import simulation.physics.getBodyTransform
+import silentorb.mythic.physics.getBodyTransform
 
 
 private data class IntermediateMesh(

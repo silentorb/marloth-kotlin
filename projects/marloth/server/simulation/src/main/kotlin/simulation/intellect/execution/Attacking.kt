@@ -1,6 +1,6 @@
 package simulation.intellect.execution
 
-import mythic.ent.Id
+import silentorb.mythic.ent.Id
 import simulation.input.Command
 import simulation.input.CommandType
 import simulation.input.Commands
@@ -8,7 +8,7 @@ import simulation.intellect.Pursuit
 import simulation.intellect.assessment.Knowledge
 import simulation.main.Deck
 import simulation.main.World
-import simulation.physics.SimpleBody
+import silentorb.mythic.physics.SimpleBody
 
 fun shouldMoveDirectlyToward(deck: Deck, target: SimpleBody, attacker: Id): Boolean {
   val attackerBody = deck.bodies[attacker]!!

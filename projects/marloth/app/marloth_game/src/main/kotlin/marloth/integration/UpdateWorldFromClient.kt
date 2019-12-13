@@ -1,7 +1,7 @@
 package marloth.integration
 
 import marloth.front.GameApp
-import mythic.ent.pipe
+import silentorb.mythic.ent.pipe
 import simulation.happenings.Events
 import simulation.input.Command
 import simulation.main.WorldTransform

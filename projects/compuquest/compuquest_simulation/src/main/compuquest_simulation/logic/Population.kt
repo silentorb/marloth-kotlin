@@ -4,7 +4,7 @@ import compuquest_simulation.CreatureType
 import compuquest_simulation.Creature
 import compuquest_simulation.data.creatureLibrary
 import compuquest_simulation.newCreature
-import randomly.Dice
+import silentorb.mythic.randomly.Dice
 
 typealias WavePopulation = List<CreatureType>
 

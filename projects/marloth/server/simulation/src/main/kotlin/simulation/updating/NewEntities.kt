@@ -1,6 +1,6 @@
 package simulation.updating
 
-import mythic.ent.IdSource
+import silentorb.mythic.ent.IdSource
 import simulation.entities.AnimationDurationMap
 import simulation.entities.applyBuffsFromEvents
 import simulation.entities.newAccessories

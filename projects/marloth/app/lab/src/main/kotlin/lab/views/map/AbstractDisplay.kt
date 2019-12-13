@@ -1,7 +1,7 @@
 package lab.views.map
 
-import mythic.glowing.DrawMethod
-import rendering.SceneRenderer
+import silentorb.mythic.glowing.DrawMethod
+import silentorb.mythic.lookinglass.SceneRenderer
 import simulation.misc.Node
 
 fun drawAbstractNodes(renderer: SceneRenderer, nodes: Collection<Node>) {

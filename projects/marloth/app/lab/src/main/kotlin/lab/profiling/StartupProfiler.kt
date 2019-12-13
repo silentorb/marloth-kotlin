@@ -1,10 +1,10 @@
 package lab.profiling
 
-import configuration.ConfigManager
+import silentorb.mythic.configuration.ConfigManager
 import lab.*
 import marloth.front.newGameApp
 import marloth.integration.loadGameConfig
-import mythic.desktop.createDesktopPlatform
+import silentorb.mythic.desktop.createDesktopPlatform
 
 object StartupProfiler {
   @JvmStatic

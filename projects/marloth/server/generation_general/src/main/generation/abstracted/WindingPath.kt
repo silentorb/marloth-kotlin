@@ -1,8 +1,8 @@
 package generation.abstracted
 
 import generation.general.*
-import mythic.spatial.Vector3i
-import randomly.Dice
+import silentorb.mythic.spatial.Vector3i
+import silentorb.mythic.randomly.Dice
 import simulation.misc.Cell
 import simulation.misc.MapGrid
 import simulation.misc.NodeAttribute

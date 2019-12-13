@@ -1,6 +1,6 @@
 package generation.abstracted
 
-import mythic.spatial.Vector3i
+import silentorb.mythic.spatial.Vector3i
 import simulation.misc.MapGrid
 
 val upVector = Vector3i(0, 0, 1)

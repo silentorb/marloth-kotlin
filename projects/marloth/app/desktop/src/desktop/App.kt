@@ -2,7 +2,7 @@ package desktop
 
 import marloth.integration.loadGameConfig
 import marloth.front.runApp
-import mythic.desktop.createDesktopPlatform
+import silentorb.mythic.desktop.createDesktopPlatform
 
 object App {
   @JvmStatic

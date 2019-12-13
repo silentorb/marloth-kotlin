@@ -1,9 +1,9 @@
 package marloth.clienting.audio
 
 import marloth.clienting.ClientState
-import mythic.aura.Sound
-import mythic.ent.IdSource
-import mythic.ent.Table
+import silentorb.mythic.aura.Sound
+import silentorb.mythic.ent.IdSource
+import silentorb.mythic.ent.Table
 import marloth.scenery.enums.Sounds
 
 fun newClientSounds(nextId: IdSource, previous: ClientState, next: ClientState): Table<Sound> =

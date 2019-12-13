@@ -4,10 +4,10 @@ import generation.architecture.building.floorOffset
 import generation.architecture.misc.applyCellPosition
 import marloth.definition.creatures
 import marloth.definition.newCharacter
-import mythic.ent.Id
-import mythic.spatial.Vector3
-import mythic.spatial.Vector3i
-import mythic.spatial.toVector3
+import silentorb.mythic.ent.Id
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector3i
+import silentorb.mythic.spatial.toVector3
 import marloth.scenery.enums.AccessoryId
 import simulation.entities.*
 import simulation.intellect.Pursuit
@@ -15,7 +15,7 @@ import simulation.intellect.Spirit
 import simulation.main.Hand
 import simulation.main.HandAttachment
 import simulation.misc.*
-import simulation.physics.old.getLookAtAngle
+import simulation.misc.getLookAtAngle
 
 fun placeAiCharacter(definitions: Definitions, faction: Id, definition: CharacterDefinition, position: Vector3): Hand {
   return newCharacter(definitions,

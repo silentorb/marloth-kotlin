@@ -1,11 +1,11 @@
 package simulation.input
 
-import mythic.spatial.Vector2
-import mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector2
+import silentorb.mythic.spatial.Vector3
 import simulation.entities.Character
 import simulation.entities.Player
 import simulation.entities.ViewMode
-import simulation.physics.old.joinInputVector
+import simulation.misc.joinInputVector
 import simulation.misc.*
 
 data class MomentumConfig(

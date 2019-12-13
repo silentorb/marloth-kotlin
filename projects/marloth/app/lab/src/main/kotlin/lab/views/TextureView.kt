@@ -1,12 +1,12 @@
 package lab.views
 
 import lab.views.model.SelectionEvent
-import mythic.bloom.Bounds
-import mythic.bloom.FlatBox
-import mythic.bloom.resolveLengths
-import mythic.drawing.Canvas
+import silentorb.mythic.bloom.Bounds
+import silentorb.mythic.bloom.FlatBox
+import silentorb.mythic.bloom.resolveLengths
+import silentorb.mythic.drawing.Canvas
 import org.joml.Vector2i
-import rendering.Renderer
+import silentorb.mythic.lookinglass.Renderer
 import marloth.scenery.enums.TextureId
 
 data class TextureViewConfig(

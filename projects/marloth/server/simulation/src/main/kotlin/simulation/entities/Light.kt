@@ -1,6 +1,6 @@
 package simulation.entities
 
-import mythic.spatial.Vector4
+import silentorb.mythic.spatial.Vector4
 
 data class Light(
     val color: Vector4, // w is brightness

@@ -1,8 +1,8 @@
 package simulation.main
 
-import mythic.ent.Id
-import mythic.ent.IdSource
-import mythic.ent.Table
+import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.IdSource
+import silentorb.mythic.ent.Table
 import simulation.entities.Attachment
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.jvmErasure

@@ -1,8 +1,8 @@
 package lab
 
-import configuration.ConfigManager
-import configuration.loadYamlFile
-import configuration.saveYamlFile
+import silentorb.mythic.configuration.ConfigManager
+import silentorb.mythic.configuration.loadYamlFile
+import silentorb.mythic.configuration.saveYamlFile
 import generation.architecture.misc.GenerationConfig
 import generation.architecture.misc.MeshShapeMap
 import generation.architecture.misc.compileArchitectureMeshInfo
@@ -20,9 +20,9 @@ import marloth.front.RenderHook
 import marloth.generation.generateWorld
 import marloth.generation.newGenerationDice
 import marloth.integration.*
-import mythic.desktop.createDesktopPlatform
-import mythic.ent.pipe
-import mythic.quartz.newTimestepState
+import silentorb.mythic.desktop.createDesktopPlatform
+import silentorb.mythic.ent.pipe
+import silentorb.mythic.quartz.newTimestepState
 import org.lwjgl.glfw.GLFW
 import silentorb.mythic.debugging.getDebugRangeValue
 import silentorb.mythic.debugging.setDebugRangeValue

@@ -1,10 +1,10 @@
 package marloth.scenery.creation
 
-import mythic.ent.Id
-import mythic.spatial.Vector3
-import mythic.spatial.Vector4
-import rendering.GameScene
-import rendering.ScreenFilter
+import silentorb.mythic.ent.Id
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector4
+import silentorb.mythic.lookinglass.GameScene
+import silentorb.mythic.lookinglass.ScreenFilter
 import silentorb.mythic.scenery.Light
 import silentorb.mythic.scenery.LightType
 import silentorb.mythic.scenery.Scene

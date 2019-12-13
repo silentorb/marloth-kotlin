@@ -1,8 +1,8 @@
 import generation.abstracted.newWindingWorkbench
 import generation.architecture.definition.BlockDefinitions
-import mythic.spatial.Vector3i
+import silentorb.mythic.spatial.Vector3i
 import org.junit.jupiter.api.Test
-import randomly.Dice
+import silentorb.mythic.randomly.Dice
 import simulation.misc.Cell
 import simulation.misc.MapGrid
 import simulation.misc.NodeAttribute

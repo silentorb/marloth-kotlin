@@ -1,6 +1,6 @@
 package simulation.misc
 
-import mythic.ent.Id
+import silentorb.mythic.ent.Id
 
 enum class ConnectionType {
   doorway,

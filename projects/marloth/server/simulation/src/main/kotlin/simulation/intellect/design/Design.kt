@@ -1,6 +1,6 @@
 package simulation.intellect.design
 
-import mythic.ent.Id
+import silentorb.mythic.ent.Id
 import simulation.entities.getActiveAction
 import simulation.intellect.Pursuit
 import simulation.intellect.assessment.Knowledge

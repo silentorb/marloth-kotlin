@@ -1,10 +1,10 @@
 package lab.views.map
 
 import lab.LabCommandType
-import mythic.bloom.Menu
-import mythic.bloom.MenuItem
-import mythic.bloom.menuBar
-import mythic.bloom.next.Flower
+import silentorb.mythic.bloom.Menu
+import silentorb.mythic.bloom.MenuItem
+import silentorb.mythic.bloom.menuBar
+import silentorb.mythic.bloom.next.Flower
 
 val mapMenu: Flower = menuBar(mapTextStyle, listOf(
     Menu(

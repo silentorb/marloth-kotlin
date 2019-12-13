@@ -3,8 +3,8 @@ package generation.abstracted
 import generation.general.BlockConfig
 import generation.general.Workbench
 import generation.general.blockCanHaveMoreConnections
-import mythic.spatial.Vector3i
-import randomly.Dice
+import silentorb.mythic.spatial.Vector3i
+import silentorb.mythic.randomly.Dice
 
 data class HorrorVacuiConfig(
     val branchRate: Float,

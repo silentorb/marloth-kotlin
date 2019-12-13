@@ -1,33 +1,33 @@
 package marloth.clienting
 
-import haft.HaftCommand
-import haft.simpleCommand
+import silentorb.mythic.haft.HaftCommand
+import silentorb.mythic.haft.simpleCommand
 import marloth.clienting.audio.AudioConfig
 import marloth.clienting.audio.loadSounds
 import marloth.clienting.audio.updateClientAudio
 import marloth.clienting.gui.*
 import marloth.clienting.input.*
 import marloth.clienting.textResources.englishTextResources
-import mythic.aura.AudioState
-import mythic.aura.SoundLibrary
-import mythic.aura.newAudioState
-import mythic.bloom.BloomState
-import mythic.bloom.next.Box
-import mythic.bloom.next.LogicModule
-import mythic.bloom.next.newBloomState
-import mythic.bloom.updateBloomState
-import mythic.drawing.setGlobalFonts
-import mythic.ent.Id
-import mythic.ent.pipe
-import mythic.platforming.Platform
-import mythic.spatial.Vector3
-import mythic.typography.loadFontSets
-import newBloomInputState
-import rendering.Renderer
+import silentorb.mythic.aura.AudioState
+import silentorb.mythic.aura.SoundLibrary
+import silentorb.mythic.aura.newAudioState
+import silentorb.mythic.bloom.BloomState
+import silentorb.mythic.bloom.next.Box
+import silentorb.mythic.bloom.next.LogicModule
+import silentorb.mythic.bloom.next.newBloomState
+import silentorb.mythic.bloom.updateBloomState
+import silentorb.mythic.drawing.setGlobalFonts
+import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.pipe
+import silentorb.mythic.platforming.Platform
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.typography.loadFontSets
+import silentorb.mythic.bloom.input.newBloomInputState
+import silentorb.mythic.lookinglass.Renderer
 import marloth.scenery.enums.Text
 import simulation.main.Deck
 import simulation.main.World
-import updateInputDeviceStates
+import silentorb.mythic.bloom.input.updateInputDeviceStates
 
 const val maxPlayerCount = 4
 

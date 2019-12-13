@@ -1,6 +1,6 @@
 package simulation.misc
 
-import mythic.spatial.Vector2
+import silentorb.mythic.spatial.Vector2
 
 fun maxPostiveLookVelocityChange() = 0.1f
 fun maxNegativeLookVelocityChange() = 0.2f

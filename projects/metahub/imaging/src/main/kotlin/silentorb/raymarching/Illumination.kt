@@ -1,7 +1,7 @@
 package silentorb.raymarching
 
-import mythic.spatial.Vector3
-import mythic.spatial.cubicIn
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.cubicIn
 
 data class Light(
     val position: Vector3,

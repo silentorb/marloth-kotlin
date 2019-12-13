@@ -8,10 +8,10 @@ import generation.architecture.definition.BlockDefinitions
 import generation.architecture.definition.ConnectTypeMeshQueryMap
 import generation.architecture.definition.connectionTypesToMeshQueries
 import generation.general.*
-import mythic.ent.pipe
-import mythic.spatial.Vector3
-import mythic.spatial.Vector3i
-import randomly.Dice
+import silentorb.mythic.ent.pipe
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector3i
+import silentorb.mythic.randomly.Dice
 import simulation.main.Hand
 import simulation.misc.CellBiomeMap
 import simulation.misc.MapGrid

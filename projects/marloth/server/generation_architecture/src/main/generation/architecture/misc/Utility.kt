@@ -2,9 +2,9 @@ package generation.architecture.misc
 
 import simulation.misc.cellLength
 import generation.general.BiomeGrid
-import mythic.spatial.Vector3
-import mythic.spatial.Vector3i
-import mythic.spatial.toVector3
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector3i
+import silentorb.mythic.spatial.toVector3
 import simulation.misc.CellBiomeMap
 import simulation.misc.MapGrid
 import kotlin.reflect.full.memberProperties

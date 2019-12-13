@@ -3,7 +3,7 @@ package generation.abstracted
 import generation.general.BiomeAttribute
 import generation.general.BiomeGrid
 import generation.general.BiomeInfoMap
-import mythic.ent.Id
+import silentorb.mythic.ent.Id
 import simulation.misc.*
 
 fun connections(graph: Graph, node: Node): List<InitialConnection> =

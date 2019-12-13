@@ -1,6 +1,6 @@
 package silentorb.metahub.core
 
-import mythic.ent.Id
+import silentorb.mythic.ent.Id
 
 typealias OutputValues = Map<Id, Any>
 

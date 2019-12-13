@@ -1,11 +1,12 @@
 package lab
 
-import haft.*
+import silentorb.mythic.haft.*
 import lab.views.game.GameViewConfig
 import lab.views.map.MapViewConfig
 import lab.views.map.mapViewBindings
 import lab.views.model.ModelViewConfig
 import org.lwjgl.glfw.GLFW
+import silentorb.mythic.haft.*
 
 enum class LabCommandType {
   viewGame,

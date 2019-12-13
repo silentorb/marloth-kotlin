@@ -1,8 +1,8 @@
 package marloth.integration
 
 import marloth.clienting.ClientState
-import mythic.quartz.TimestepState
-import mythic.quartz.updateTimestep
+import silentorb.mythic.quartz.TimestepState
+import silentorb.mythic.quartz.updateTimestep
 import simulation.main.World
 import simulation.updating.simulationDelta
 

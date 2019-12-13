@@ -1,12 +1,14 @@
 package marloth.definition
 
 import simulation.intellect.Spirit
-import mythic.ent.Id
-import mythic.spatial.Pi
-import mythic.spatial.Quaternion
-import mythic.spatial.Vector2
-import mythic.spatial.Vector3
+import silentorb.mythic.ent.Id
+import silentorb.mythic.spatial.Pi
+import silentorb.mythic.spatial.Quaternion
+import silentorb.mythic.spatial.Vector2
+import silentorb.mythic.spatial.Vector3
 import marloth.scenery.AnimationId
+import silentorb.mythic.physics.Body
+import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.scenery.Capsule
 import simulation.entities.*
 import simulation.main.Hand

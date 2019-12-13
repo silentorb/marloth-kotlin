@@ -1,6 +1,6 @@
 package generation.general
 
-import mythic.spatial.Vector3i
+import silentorb.mythic.spatial.Vector3i
 import simulation.misc.MapGrid
 
 typealias BlockGrid = Map<Vector3i, Block>

@@ -1,14 +1,15 @@
 package simulation.main
 
-import mythic.ent.*
+import silentorb.mythic.ent.*
 import simulation.entities.*
 import simulation.happenings.Trigger
 import simulation.intellect.Spirit
 import simulation.misc.ResourceBundle
 import simulation.particles.ParticleEffect
-import simulation.physics.Body
+import silentorb.mythic.physics.Body
 import simulation.physics.CollisionObject
-import simulation.physics.DynamicBody
+import silentorb.mythic.physics.DynamicBody
+import simulation.physics.CharacterRig
 
 // Deck is basically a database full of tables
 
@@ -21,6 +22,7 @@ data class Deck(
     val attachments: Table<Attachment> = mapOf(),
     val bodies: Table<Body> = mapOf(),
     val buffs: Table<Modifier> = mapOf(),
+    val characterRigs: Table<CharacterRig> = mapOf(),
     val characters: Table<Character> = mapOf(),
     val collisionShapes: Table<CollisionObject> = mapOf(),
     val cycles: Table<Cycle> = mapOf(),

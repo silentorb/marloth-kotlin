@@ -1,7 +1,7 @@
 package simulation.entities
 
-import mythic.ent.Id
-import mythic.ent.Table
+import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.Table
 import marloth.scenery.enums.AccessoryId
 import simulation.combat.raycastAttack
 import simulation.happenings.Events

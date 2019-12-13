@@ -1,9 +1,11 @@
 package marloth.clienting.gui
 
-import mythic.bloom.*
-import mythic.bloom.next.*
+import silentorb.mythic.bloom.*
+import silentorb.mythic.bloom.next.*
 
 import org.joml.Vector2i
+import silentorb.mythic.bloom.*
+import silentorb.mythic.bloom.next.*
 import silentorb.mythic.debugging.getDebugRangeValue
 import simulation.entities.Interactable
 import simulation.entities.Modifier

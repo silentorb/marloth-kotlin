@@ -1,37 +1,40 @@
 package simulation.physics
 
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld
-import mythic.ent.Id
-import mythic.ent.firstFloatSortedBy
-import mythic.spatial.Vector3
-import mythic.spatial.createArcZ
-import simulation.entities.airLinearDamping
-import simulation.entities.groundedLinearDamping
+import org.joml.times
+import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.firstFloatSortedBy
+import silentorb.mythic.physics.*
+import silentorb.mythic.spatial.Pi
+import silentorb.mythic.spatial.Quaternion
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.createArcZ
+import simulation.entities.*
+import simulation.input.Commands
 import simulation.main.Deck
+import simulation.misc.joinInputVector
+import simulation.misc.playerMoveMap
 import kotlin.math.min
 
 const val defaultCharacterRadius = 0.3f
 const val defaultCharacterHeight = 1.2f
+const val characterGroundBuffer = 0.02f
 
 const val maxFootStepHeight = 0.6f
 
-//private fun rayCollisionDistance2(dynamicsWorld: btDiscreteDynamicsWorld, character: Id, start: Vector3, end: Vector3): Float? {
-//  val callback = allRayHits(dynamicsWorld, start, end)
-//  if (callback.hasHit()) {
-//    val collisionCount = callback.collisionObjects.size()
-//    for (i in 0 until collisionCount) {
-//      val collisionObject = callback.collisionObjects.atConst(i)!!
-//      val id = collisionObject.userData as Id
-//      if (id != character) {
-//        val hitPoint = callback.getHitPointWorld().atConst(i)
-//        val distance = hitPoint.z
-//        println(distance)
-//        return distance
-//      }
-//    }
-//  }
-//  return null
-//}
+data class CharacterRig(
+    val facingRotation: Vector3 = Vector3(),
+    val groundDistance: Float = 0f,
+    val maxSpeed: Float
+) {
+  val facingQuaternion: Quaternion
+    get() = Quaternion()
+        .rotateZ(facingRotation.z)
+        .rotateY(facingRotation.y)
+
+  val facingVector: Vector3
+    get() = facingQuaternion * Vector3(1f, 0f, 0f)
+}
 
 fun footOffsets(radius: Float): List<Vector3> =
     createArcZ(radius + 0.9f, 8)
@@ -74,37 +77,30 @@ fun updateCharacterStepHeight(bulletState: BulletState, deck: Deck, character: I
   }
 }
 
-fun updateCharacterRig(bulletState: BulletState, deck: Deck, id: Id) {
-  val character = deck.characters[id]!!
-  val groundDistance = character.groundDistance
+fun isGrounded(characterRig: CharacterRig) = characterRig.groundDistance <= characterGroundBuffer
+
+fun updateCharacterRig(bulletState: BulletState, deck: PhysicsDeck, id: Id) {
+  val characterRig = deck.characterRigs[id]!!
+  val groundDistance = characterRig.groundDistance
   val btBody = bulletState.dynamicBodies[id]!!
-//  if (character.isGrounded && abs(groundDistance) > 0.01f) {
-  if (character.isGrounded && (groundDistance < -0.01f || groundDistance > 0.1f)) {
-//    if (groundDistance < -characterGroundBuffer) {
-//    val stepHeight = min(10.04f, -groundDistance -characterGroundBuffer)
+  val isGrounded = isGrounded(characterRig)
+  if (isGrounded && (groundDistance < -0.01f || groundDistance > 0.1f)) {
     val stepHeight = -groundDistance
-//    val impulseVector = Vector3(0f, 0f, stepHeight * 1000f)
-//    btBody.applyCentralImpulse(toGdxVector3(impulseVector))
 
     val body = deck.bodies[id]!!
-//    println("$stepHeight ${body.position.z}")
     if (stepHeight < 0f) {
       val k = 0
     }
     val transitionStepHeight = min(0.03f, stepHeight)
     btBody.translate(toGdxVector3(Vector3(0f, 0f, transitionStepHeight)))
-//    else
-//      println("nothing $stepHeight")
-//    } else
-//      println("nothing $groundDistance ${character.isGrounded}")
   }
 
-  val linearDamping = if (character.isGrounded)
+  val linearDamping = if (isGrounded)
     groundedLinearDamping
   else
     airLinearDamping
 
-  val gravity = if (character.isGrounded)
+  val gravity = if (isGrounded)
     com.badlogic.gdx.math.Vector3.Zero
   else
     staticGravity()
@@ -113,8 +109,28 @@ fun updateCharacterRig(bulletState: BulletState, deck: Deck, id: Id) {
   btBody.gravity = gravity
 }
 
-fun updateCharacterRigs(bulletState: BulletState, deck: Deck) {
-  for ((id, _) in deck.characters) {
+fun updateCharacterRigs(bulletState: BulletState, deck: PhysicsDeck) {
+  for ((id, _) in deck.characterRigs) {
     updateCharacterRig(bulletState, deck, id)
+  }
+}
+
+fun characterOrientationZ(characterRig: CharacterRig) =
+    Quaternion().rotateZ(characterRig.facingRotation.z - Pi / 2)
+
+fun characterMovementFp(commands: Commands, characterRig: CharacterRig, id: Id, body: Body): LinearImpulse? {
+  val offsetVector = joinInputVector(commands, playerMoveMap)
+  return if (offsetVector != null) {
+    val airControlMod = if (isGrounded(characterRig)) 1f else airControlReduction
+    val direction = characterOrientationZ(characterRig) * offsetVector * airControlMod
+    val baseSpeed = characterRig.maxSpeed
+    val maxImpulseLength = baseSpeed
+    val commandVector = direction * maxImpulseLength
+    val horizontalVelocity = body.velocity.copy(z = 0f)
+    val impulseVector = getMovementImpulseVector(baseSpeed, horizontalVelocity, commandVector)
+    val finalImpulse = impulseVector * 5f
+    LinearImpulse(body = id, offset = finalImpulse)
+  } else {
+    null
   }
 }

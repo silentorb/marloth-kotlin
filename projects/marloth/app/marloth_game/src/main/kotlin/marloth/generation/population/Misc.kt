@@ -6,7 +6,7 @@ import generation.architecture.old.alignWithNodeFloor
 import generation.architecture.old.nodeFloorCenter
 import marloth.definition.templates.newBuffCloud
 import marloth.definition.templates.newTreasureChest
-import mythic.ent.Id
+import silentorb.mythic.ent.Id
 import marloth.scenery.enums.MeshId
 import marloth.scenery.enums.ModifierId
 import simulation.entities.ArchitectureElement

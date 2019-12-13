@@ -1,10 +1,10 @@
 package marloth.definition
 
 import silentorb.mythic.scenery.Box
-import mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector3
 import simulation.physics.CollisionObject
-import simulation.physics.DynamicBody
-import simulation.physics.HingeConstraint
+import silentorb.mythic.physics.DynamicBody
+import silentorb.mythic.physics.HingeConstraint
 import marloth.scenery.enums.Text
 import simulation.entities.*
 import simulation.main.Hand

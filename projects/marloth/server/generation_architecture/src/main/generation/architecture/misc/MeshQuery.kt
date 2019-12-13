@@ -1,7 +1,7 @@
 package generation.architecture.misc
 
-import mythic.ent.pipe
-import randomly.Dice
+import silentorb.mythic.ent.pipe
+import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.MeshName
 
 val emptySet: MeshAttributes = setOf()
