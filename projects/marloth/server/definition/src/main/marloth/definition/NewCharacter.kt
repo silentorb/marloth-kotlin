@@ -5,9 +5,9 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
-import silentorb.mythic.rigging.characters.CharacterRig
-import silentorb.mythic.rigging.characters.defaultCharacterHeight
-import silentorb.mythic.rigging.characters.defaultCharacterRadius
+import silentorb.mythic.characters.CharacterRig
+import silentorb.mythic.characters.defaultCharacterHeight
+import silentorb.mythic.characters.defaultCharacterRadius
 import silentorb.mythic.scenery.Capsule
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Quaternion

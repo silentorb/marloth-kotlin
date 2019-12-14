@@ -1,7 +1,7 @@
 package simulation.misc
 
 import silentorb.mythic.physics.interpolateTables
-import silentorb.mythic.rigging.characters.interpolateCharacterRigs
+import silentorb.mythic.characters.interpolateCharacterRigs
 import silentorb.mythic.spatial.interpolate
 import simulation.main.World
 import simulation.updating.simulationDelta

@@ -4,7 +4,7 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.pipe
 import silentorb.mythic.physics.*
 import silentorb.mythic.commanding.Commands
-import silentorb.mythic.rigging.characters.*
+import silentorb.mythic.characters.*
 import simulation.main.Deck
 import simulation.main.World
 import silentorb.mythic.spatial.Vector2
@@ -16,7 +16,6 @@ fun updatePhysics(commands: Commands): (World) -> World = { world ->
   val deck = world.deck
   val physicsDeck = PhysicsDeck(
       bodies = deck.bodies,
-      characterRigs = deck.characterRigs,
       collisionShapes = deck.collisionShapes,
       dynamicBodies = deck.dynamicBodies
   )
@@ -24,14 +23,14 @@ fun updatePhysics(commands: Commands): (World) -> World = { world ->
       bulletState = world.bulletState,
       deck = physicsDeck
   )
-  val linearForces = allCharacterMovements(physicsDeck, commands)
+  val linearForces = allCharacterMovements(physicsDeck, deck.characterRigs, commands)
   val nextPhysicsWorld = updateBulletPhysics(linearForces)(physicsWorld)
+  updateCharacterRigBulletBodies(nextPhysicsWorld.bulletState, deck.characterRigs)
   val nextDeck = nextPhysicsWorld.deck
   world.copy(
       bulletState = nextPhysicsWorld.bulletState,
       deck = world.deck.copy(
           bodies = nextDeck.bodies,
-          characterRigs = nextDeck.characterRigs,
           collisionShapes = nextDeck.collisionShapes,
           dynamicBodies = nextDeck.dynamicBodies
       )

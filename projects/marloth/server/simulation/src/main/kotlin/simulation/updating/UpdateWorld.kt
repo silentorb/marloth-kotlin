@@ -6,7 +6,6 @@ import silentorb.mythic.ent.pipe
 import silentorb.mythic.ent.pipe2
 import simulation.physics.updatePhysics
 import silentorb.mythic.randomly.Dice
-import silentorb.mythic.rigging.characters.allCharacterMovements
 import simulation.combat.getDamageMultiplierModifiers
 import simulation.combat.toModifierDeck
 import simulation.entities.*

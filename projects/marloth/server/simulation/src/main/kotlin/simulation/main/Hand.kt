@@ -9,7 +9,7 @@ import simulation.particles.ParticleEffect
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
-import silentorb.mythic.rigging.characters.CharacterRig
+import silentorb.mythic.characters.CharacterRig
 
 // Hand is a slice of a deck, mostly used for instantiating new entities.
 

@@ -12,8 +12,8 @@ import silentorb.mythic.platforming.WindowInfo
 import silentorb.mythic.spatial.*
 import org.joml.minus
 import org.joml.times
-import silentorb.mythic.rigging.characters.joinInputVector
-import silentorb.mythic.rigging.characters.playerMoveMap
+import silentorb.mythic.characters.joinInputVector
+import silentorb.mythic.characters.playerMoveMap
 import silentorb.mythic.lookinglass.createCameraEffectsData
 import silentorb.mythic.commanding.CharacterCommand
 import silentorb.mythic.commanding.CommonCharacterCommands

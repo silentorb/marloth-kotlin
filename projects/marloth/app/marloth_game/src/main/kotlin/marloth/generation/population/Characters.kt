@@ -15,7 +15,7 @@ import simulation.intellect.Spirit
 import simulation.main.Hand
 import simulation.main.HandAttachment
 import simulation.misc.*
-import silentorb.mythic.rigging.characters.getLookAtAngle
+import silentorb.mythic.characters.getLookAtAngle
 
 fun placeAiCharacter(definitions: Definitions, faction: Id, definition: CharacterDefinition, position: Vector3): Hand {
   return newCharacter(definitions,

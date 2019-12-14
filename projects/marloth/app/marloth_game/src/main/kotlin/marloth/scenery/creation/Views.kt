@@ -7,13 +7,11 @@ import silentorb.mythic.spatial.Vector3
 import org.joml.times
 import silentorb.mythic.scenery.Camera
 import silentorb.mythic.scenery.ProjectionType
-import simulation.entities.Character
 import simulation.entities.HoverCamera
-import simulation.entities.ViewMode
 import simulation.main.Deck
 import silentorb.mythic.physics.Body
-import silentorb.mythic.rigging.characters.CharacterRig
-import silentorb.mythic.rigging.characters.defaultCharacterHeight
+import silentorb.mythic.characters.CharacterRig
+import silentorb.mythic.characters.defaultCharacterHeight
 
 val firstPersonCameraOffset = Vector3(0f, 0f, defaultCharacterHeight * 0.25f)
 val firstPersonDeadCameraOffset = Vector3(0f, 0f, -0.75f)

@@ -1,14 +1,14 @@
 package simulation.intellect.execution
 
 import silentorb.mythic.ent.Id
-import silentorb.mythic.rigging.characters.CharacterRig
+import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.spatial.*
 import silentorb.mythic.commanding.CharacterCommand
 import silentorb.mythic.commanding.CommonCharacterCommands
 import silentorb.mythic.commanding.Commands
 import simulation.main.World
-import silentorb.mythic.rigging.characters.getLookAtAngle
-import silentorb.mythic.rigging.characters.maxPositiveLookVelocityChange
+import silentorb.mythic.characters.getLookAtAngle
+import silentorb.mythic.characters.maxPositiveLookVelocityChange
 import simulation.updating.simulationDelta
 
 fun getAngleCourse(source: Float, destination: Float): Float {
