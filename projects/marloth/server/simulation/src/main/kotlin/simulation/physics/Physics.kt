@@ -67,7 +67,8 @@ fun updateMarlothCharacterRigFacing(deck: Deck, commands: Commands, id: Id): (Ch
 }
 
 fun updateMarlothCharacterRig(bulletState: BulletState, deck: Deck,
-                              commands: Commands): (Id, CharacterRig) -> CharacterRig = { id, characterRig ->
+                              allCommands: Commands): (Id, CharacterRig) -> CharacterRig = { id, characterRig ->
+  val commands = allCommands.filter { it.target == id }
   pipe(
       updateMarlothCharacterRigFacing(deck, commands, id),
       updateCharacterRigGroundedDistance(bulletState, deck, id)

@@ -66,7 +66,7 @@ fun generateWorld(definitions: Definitions, meshInfo: MeshShapeMap, dice: Dice =
       definitions = definitions,
       biomes = biomeInfoMap,
       meshes = compileArchitectureMeshInfo(meshInfo, meshAttributes),
-      includeEnemies = true,
+      includeEnemies = getDebugSetting("NO_ENEMIES") != "1",
       roomCount = 20
   )
   val input = WorldInput(
