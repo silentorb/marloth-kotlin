@@ -1,20 +1,21 @@
-package simulation.misc
+package silentorb.mythic.rigging.characters
 
 import org.joml.Vector2fMinimal
+import silentorb.mythic.commanding.CommandName
 import silentorb.mythic.spatial.Vector2
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.getAngle
-import simulation.input.CommandType
-import simulation.input.Commands
+import silentorb.mythic.commanding.CommonCharacterCommands
+import silentorb.mythic.commanding.Commands
 
 val playerMoveMap = mapOf(
-    CommandType.moveLeft to Vector3(-1f, 0f, 0f),
-    CommandType.moveRight to Vector3(1f, 0f, 0f),
-    CommandType.moveUp to Vector3(0f, 1f, 0f),
-    CommandType.moveDown to Vector3(0f, -1f, 0f)
+    CommonCharacterCommands.moveLeft to Vector3(-1f, 0f, 0f),
+    CommonCharacterCommands.moveRight to Vector3(1f, 0f, 0f),
+    CommonCharacterCommands.moveUp to Vector3(0f, 1f, 0f),
+    CommonCharacterCommands.moveDown to Vector3(0f, -1f, 0f)
 )
 
-fun joinInputVector(commands: Commands, commandMap: Map<CommandType, Vector3>): Vector3? {
+fun joinInputVector(commands: Commands, commandMap: Map<CommandName, Vector3>): Vector3? {
   val forces = commands.mapNotNull {
     val vector = commandMap[it.type]
     if (vector != null && it.value > 0)

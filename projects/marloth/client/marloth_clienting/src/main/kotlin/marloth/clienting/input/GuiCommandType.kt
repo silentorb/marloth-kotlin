@@ -1,6 +1,6 @@
 package marloth.clienting.input
 
-import simulation.input.CommandType
+import silentorb.mythic.commanding.CommonCharacterCommands
 
 enum class GuiCommandType {
   characterInfo,
@@ -25,9 +25,9 @@ val clientCommandStrokes =
         InputContext.game to standardClientStrokes(),
         InputContext.menu to standardClientStrokes()
             .plus(setOf(
-                CommandType.moveUp,
-                CommandType.moveDown,
-                CommandType.moveLeft,
-                CommandType.moveRight
+                CommonCharacterCommands.moveUp,
+                CommonCharacterCommands.moveDown,
+                CommonCharacterCommands.moveLeft,
+                CommonCharacterCommands.moveRight
             ))
     )

@@ -7,24 +7,29 @@ import silentorb.mythic.ent.Table
 import silentorb.mythic.ent.firstFloatSortedBy
 import silentorb.mythic.physics.*
 import silentorb.mythic.spatial.*
-import simulation.entities.*
-import simulation.input.Commands
-import simulation.input.characterLookForce
-import simulation.input.filterCommands
-import simulation.input.fpCameraRotation
-import simulation.main.Deck
-import simulation.main.World
-import simulation.misc.*
+import silentorb.mythic.commanding.Commands
+import silentorb.mythic.commanding.filterCommands
 import kotlin.math.min
 
 const val defaultCharacterRadius = 0.3f
 const val defaultCharacterHeight = 1.2f
 const val characterGroundBuffer = 0.02f
 
+const val groundedLinearDamping = 0.9f
+const val airLinearDamping = 0f
+const val airControlReduction = 0.4f
+
 const val maxFootStepHeight = 0.6f
+
+fun maxPositiveLookVelocityChange() = 0.1f
+fun maxNegativeLookVelocityChange() = 0.2f
+fun maxMoveVelocityChange() = 1f
+
+fun lookSensitivity() = Vector2(.7f, .7f)
 
 data class CharacterRig(
     val facingRotation: Vector3 = Vector3(),
+    val isActive: Boolean,
     val groundDistance: Float = 0f,
     val lookVelocity: Vector2 = Vector2(),
     val maxSpeed: Float,
@@ -38,6 +43,11 @@ data class CharacterRig(
   val facingVector: Vector3
     get() = facingQuaternion * Vector3(1f, 0f, 0f)
 }
+
+data class AbsoluteOrientationForce(
+    val body: Id,
+    val orientation: Quaternion
+)
 
 fun footOffsets(radius: Float): List<Vector3> =
     createArcZ(radius + 0.9f, 8)
@@ -56,9 +66,15 @@ private fun castFootStepRay(dynamicsWorld: btDiscreteDynamicsWorld, bodyPosition
   }
 }
 
-fun updateCharacterStepHeight(bulletState: BulletState, deck: Deck, character: Id): Float {
-  val body = deck.bodies[character]!!
-  val collisionObject = deck.collisionShapes[character]!!
+data class CharacterRigHand(
+    val characterRig: CharacterRig,
+    val body: Body,
+    val collisionObject: CollisionObject
+)
+
+fun updateCharacterStepHeight(bulletState: BulletState, hand: CharacterRigHand): Float {
+  val body = hand.body
+  val collisionObject = hand.collisionObject
   val shape = collisionObject.shape
   val radius = shape.radius
   val footHeight = maxFootStepHeight
@@ -121,6 +137,16 @@ fun updateCharacterRigs(bulletState: BulletState, deck: PhysicsDeck) {
 fun characterOrientationZ(characterRig: CharacterRig) =
     Quaternion().rotateZ(characterRig.facingRotation.z - Pi / 2)
 
+fun getMovementImpulseVector(baseSpeed: Float, velocity: Vector3, commandVector: Vector3): Vector3 {
+  val rawImpulseVector = commandVector * 1.5f - velocity
+  val finalImpulseVector = if (rawImpulseVector.length() > baseSpeed)
+    rawImpulseVector.normalize() * baseSpeed
+  else
+    rawImpulseVector
+
+  return finalImpulseVector
+}
+
 fun characterMovementFp(commands: Commands, characterRig: CharacterRig, id: Id, body: Body): LinearImpulse? {
   val offsetVector = joinInputVector(commands, playerMoveMap)
   return if (offsetVector != null) {
@@ -138,9 +164,50 @@ fun characterMovementFp(commands: Commands, characterRig: CharacterRig, id: Id, 
   }
 }
 
+fun transitionVector(maxChange: Float, current: Vector3, target: Vector3): Vector3 {
+  val diff = target - current
+  val diffLength = diff.length()
+  return if (diffLength != 0f) {
+    if (diffLength < maxChange)
+      target
+    else {
+      val adjustment = if (diffLength > maxChange)
+        diff.normalize() * maxChange
+      else
+        diff
+
+      current + adjustment
+    }
+  } else
+    current
+}
+
+fun transitionVector(negativeMaxChange: Float, positiveMaxChange: Float, current: Vector2, target: Vector2): Vector2 {
+  val diff = target - current
+  val diffLength = diff.length()
+  val maxChange = if (current.length() < target.length())
+    positiveMaxChange
+  else
+    negativeMaxChange
+
+  return if (diffLength != 0f) {
+    if (diffLength < maxChange)
+      target
+    else {
+      val adjustment = if (diffLength > maxChange)
+        diff.normalize() * maxChange
+      else
+        diff
+
+      current + adjustment
+    }
+  } else
+    current
+}
+
 fun updateCharacterRigFacing(commands: Commands, delta: Float): (CharacterRig) -> CharacterRig = { characterRig ->
   val lookForce = characterLookForce(characterRig, commands)
-  val lookVelocity = transitionVector(maxNegativeLookVelocityChange(), maxPostiveLookVelocityChange(),
+  val lookVelocity = transitionVector(maxNegativeLookVelocityChange(), maxPositiveLookVelocityChange(),
       characterRig.lookVelocity, lookForce)
   val facingRotation = characterRig.facingRotation + fpCameraRotation(lookVelocity, delta)
 
@@ -150,19 +217,19 @@ fun updateCharacterRigFacing(commands: Commands, delta: Float): (CharacterRig) -
   )
 }
 
-fun updateCharacterRigGroundedDistance(bulletState: BulletState, deck: Deck, id: Id): (CharacterRig) -> CharacterRig = { characterRig ->
+fun updateCharacterRigGroundedDistance(bulletState: BulletState, hand: CharacterRigHand): (CharacterRig) -> CharacterRig = { characterRig ->
   characterRig.copy(
-      groundDistance = updateCharacterStepHeight(bulletState, deck, id)
+      groundDistance = updateCharacterStepHeight(bulletState, hand)
   )
 }
 
-fun allCharacterMovements(world: World, commands: Commands): List<LinearImpulse> =
-    world.deck.characterRigs
-        .filter { world.deck.characters[it.key]!!.isAlive }
-        .mapNotNull { characterMovementFp(filterCommands(it.key, commands), it.value, it.key, world.deck.bodies[it.key]!!) }
+fun allCharacterMovements(deck: PhysicsDeck, commands: Commands): List<LinearImpulse> =
+    deck.characterRigs
+        .filter { deck.characterRigs[it.key]!!.isActive }
+        .mapNotNull { characterMovementFp(filterCommands(it.key, commands), it.value, it.key, deck.bodies[it.key]!!) }
 
-fun allCharacterOrientations(world: World): List<AbsoluteOrientationForce> =
-    world.deck.characterRigs.map {
+fun allCharacterOrientations(deck: PhysicsDeck): List<AbsoluteOrientationForce> =
+    deck.characterRigs.map {
       AbsoluteOrientationForce(it.key, Quaternion()
           .rotateZ(it.value.facingRotation.z))
     }

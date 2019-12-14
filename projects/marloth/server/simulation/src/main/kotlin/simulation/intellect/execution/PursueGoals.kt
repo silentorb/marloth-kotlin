@@ -5,7 +5,7 @@ import silentorb.mythic.ent.Table
 import simulation.intellect.Pursuit
 import simulation.intellect.Spirit
 import simulation.intellect.assessment.Knowledge
-import simulation.input.Commands
+import silentorb.mythic.commanding.Commands
 import simulation.main.World
 
 fun pursueGoal(world: World, character: Id, knowledge: Knowledge, pursuit: Pursuit): Commands {

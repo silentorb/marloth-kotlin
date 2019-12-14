@@ -12,11 +12,11 @@ import silentorb.mythic.platforming.WindowInfo
 import silentorb.mythic.spatial.*
 import org.joml.minus
 import org.joml.times
-import simulation.misc.joinInputVector
-import simulation.misc.playerMoveMap
+import silentorb.mythic.rigging.characters.joinInputVector
+import silentorb.mythic.rigging.characters.playerMoveMap
 import silentorb.mythic.lookinglass.createCameraEffectsData
-import simulation.input.Command
-import simulation.input.CommandType
+import silentorb.mythic.commanding.CharacterCommand
+import silentorb.mythic.commanding.CommonCharacterCommands
 import simulation.misc.Realm
 
 data class Hit(
@@ -181,13 +181,13 @@ fun updateFirstPersonCamera(camera: MapViewFirstPersonCamera, commands: List<Haf
 
   val playerCommands = commands.mapNotNull {
     when (it.type) {
-      LabCommandType.moveLeft -> CommandType.moveLeft
-      LabCommandType.moveRight -> CommandType.moveRight
-      LabCommandType.moveDown -> CommandType.moveDown
-      LabCommandType.moveUp -> CommandType.moveUp
+      LabCommandType.moveLeft -> CommonCharacterCommands.moveLeft
+      LabCommandType.moveRight -> CommonCharacterCommands.moveRight
+      LabCommandType.moveDown -> CommonCharacterCommands.moveDown
+      LabCommandType.moveUp -> CommonCharacterCommands.moveUp
       else -> null
     }
-  }.map { Command(type = it, target = 0, value = 1f) }
+  }.map { CharacterCommand(type = it, target = 0, value = 1f) }
 
   val moveOffset = joinInputVector(playerCommands, playerMoveMap)
 

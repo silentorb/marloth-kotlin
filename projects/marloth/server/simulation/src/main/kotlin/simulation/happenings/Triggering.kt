@@ -1,7 +1,7 @@
 package simulation.happenings
 
-import simulation.input.CommandType
-import simulation.input.Commands
+import silentorb.mythic.commanding.CommonCharacterCommands
+import silentorb.mythic.commanding.Commands
 import simulation.main.Deck
 
 //data class Triggering<T: Action>(
@@ -14,7 +14,7 @@ import simulation.main.Deck
 fun commandsToTriggers(deck: Deck, commands: Commands): List<Triggering> {
   return commands.mapNotNull { command ->
     when (command.type) {
-      CommandType.interactPrimary -> {
+      CommonCharacterCommands.interactPrimary -> {
         val player = deck.players.keys.first()
         val character = deck.characters[player]!!
         val interactable = deck.interactables[character.canInteractWith]

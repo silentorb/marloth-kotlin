@@ -3,7 +3,7 @@ package compuquest_simulation.data
 import compuquest_simulation.CreatureCategory
 import compuquest_simulation.CreatureType
 import compuquest_simulation.Element
-import compuquest_simulation.reflectProperties
+import silentorb.mythic.ent.reflectProperties
 
 class Creatures {
   companion object {

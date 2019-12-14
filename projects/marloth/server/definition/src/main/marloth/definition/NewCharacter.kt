@@ -1,24 +1,24 @@
 package marloth.definition
 
-import simulation.intellect.Spirit
-import silentorb.mythic.ent.Id
-import silentorb.mythic.spatial.Pi
-import silentorb.mythic.spatial.Quaternion
-import silentorb.mythic.spatial.Vector2
-import silentorb.mythic.spatial.Vector3
 import marloth.scenery.AnimationId
+import silentorb.mythic.ent.Id
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.rigging.characters.CharacterRig
+import silentorb.mythic.rigging.characters.defaultCharacterHeight
+import silentorb.mythic.rigging.characters.defaultCharacterRadius
 import silentorb.mythic.scenery.Capsule
+import silentorb.mythic.spatial.Pi
+import silentorb.mythic.spatial.Quaternion
+import silentorb.mythic.spatial.Vector2
+import silentorb.mythic.spatial.Vector3
 import simulation.entities.*
+import simulation.intellect.Spirit
 import simulation.main.Hand
 import simulation.main.HandAttachment
 import simulation.misc.Definitions
 import simulation.misc.ResourceContainer
-import silentorb.mythic.rigging.characters.defaultCharacterHeight
-import silentorb.mythic.rigging.characters.defaultCharacterRadius
 
 fun newCharacter(definitions: Definitions, definition: CharacterDefinition, faction: Id, position: Vector3,
                  angle: Float = Pi / 2f,
@@ -51,9 +51,10 @@ fun newCharacter(definitions: Definitions, definition: CharacterDefinition, fact
       ),
       characterRig = CharacterRig(
           facingRotation = Vector3(0f, 0f, angle),
+          isActive = true,
           maxSpeed = definition.maxSpeed,
           turnSpeed = Vector2(3f, 1f)
-          ),
+      ),
       destructible = Destructible(
           base = DestructibleBaseStats(
               health = definition.health,

@@ -5,23 +5,18 @@ import silentorb.mythic.ent.pipe2
 import silentorb.mythic.spatial.*
 import marloth.scenery.enums.ResourceId
 import marloth.scenery.enums.Sounds
+import silentorb.mythic.commanding.CommandName
+import silentorb.mythic.commanding.CommonCharacterCommands
+import silentorb.mythic.commanding.Commands
 import silentorb.mythic.physics.BulletState
 import simulation.combat.DamageMultipliers
 import simulation.happenings.Events
 import simulation.happenings.PurchaseEvent
 import simulation.happenings.TakeItemEvent
-import simulation.input.*
 import simulation.main.Deck
-import simulation.main.World
 import simulation.misc.*
-import silentorb.mythic.physics.LinearImpulse
-import silentorb.mythic.rigging.characters.characterMovementFp
 import simulation.physics.castInteractableRay
 import simulation.updating.simulationDelta
-
-const val groundedLinearDamping = 0.9f
-const val airLinearDamping = 0f
-const val airControlReduction = 0.4f
 
 data class CharacterDefinition(
     val health: Int,
@@ -49,11 +44,11 @@ data class Character(
 fun isAlive(health: Int): Boolean =
     health > 0
 
-val equipCommandSlots: Map<CommandType, Int> = listOf(
-    CommandType.equipSlot0,
-    CommandType.equipSlot1,
-    CommandType.equipSlot2,
-    CommandType.equipSlot3
+val equipCommandSlots: Map<CommandName, Int> = listOf(
+    CommonCharacterCommands.equipSlot0,
+    CommonCharacterCommands.equipSlot1,
+    CommonCharacterCommands.equipSlot2,
+    CommonCharacterCommands.equipSlot3
 ).mapIndexed { index, commandType -> Pair(commandType, index) }
     .associate { it }
 
@@ -101,9 +96,9 @@ fun updateMoney(deck: Deck, events: Events, character: Id, money: Int): Int {
 }
 
 fun updateInteractingWith(deck: Deck, character: Id, commands: Commands, interactingWith: Id?): Id? =
-    if (commands.any { it.type == CommandType.interactPrimary })
+    if (commands.any { it.type == CommonCharacterCommands.interactPrimary })
       deck.characters[character]!!.canInteractWith
-    else if (commands.any { it.type == CommandType.stopInteracting } ||
+    else if (commands.any { it.type == CommonCharacterCommands.stopInteracting } ||
         (interactingWith != null && !deck.interactables.containsKey(interactingWith)))
       null
     else
@@ -139,14 +134,4 @@ fun updateCharacter(deck: Deck, bulletState: BulletState, commands: Commands, ev
   ))
 
   updateCharacter(deck, bulletState, id, character, characterCommands, events)
-}
-
-fun getMovementImpulseVector(baseSpeed: Float, velocity: Vector3, commandVector: Vector3): Vector3 {
-  val rawImpulseVector = commandVector * 1.5f - velocity
-  val finalImpulseVector = if (rawImpulseVector.length() > baseSpeed)
-    rawImpulseVector.normalize() * baseSpeed
-  else
-    rawImpulseVector
-
-  return finalImpulseVector
 }

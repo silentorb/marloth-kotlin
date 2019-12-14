@@ -1,9 +1,9 @@
 package simulation.intellect.execution
 
 import silentorb.mythic.ent.Id
-import simulation.input.Command
-import simulation.input.CommandType
-import simulation.input.Commands
+import silentorb.mythic.commanding.CharacterCommand
+import silentorb.mythic.commanding.CommonCharacterCommands
+import silentorb.mythic.commanding.Commands
 import simulation.intellect.Pursuit
 import simulation.intellect.assessment.Knowledge
 import simulation.main.Deck
@@ -23,7 +23,7 @@ fun spiritAttack(world: World, character: Id, knowledge: Knowledge, pursuit: Pur
   val body = world.deck.bodies[attacker]!!
   val offset = target.position - body.position
   return spiritNeedsFacing(world, character, offset, 0.05f) {
-    listOf(Command(CommandType.ability, attacker))
+    listOf(CharacterCommand(CommonCharacterCommands.ability, attacker))
   }
 }
 

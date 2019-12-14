@@ -15,7 +15,7 @@ import simulation.intellect.Spirit
 import simulation.main.Hand
 import simulation.main.HandAttachment
 import simulation.misc.*
-import simulation.misc.getLookAtAngle
+import silentorb.mythic.rigging.characters.getLookAtAngle
 
 fun placeAiCharacter(definitions: Definitions, faction: Id, definition: CharacterDefinition, position: Vector3): Hand {
   return newCharacter(definitions,
@@ -56,8 +56,7 @@ fun newPlayer(definitions: Definitions, grid: MapGrid, cellPosition: Vector3i): 
               )
           ),
           player = Player(
-              name = "Unknown Hero",
-              viewMode = ViewMode.firstPerson
+              name = "Unknown Hero"
           )
       )
 }

@@ -1,6 +1,7 @@
 package compuquest_simulation.data
 
 import compuquest_simulation.*
+import silentorb.mythic.ent.reflectProperties
 
 class Abilities {
   companion object {

@@ -1,31 +1,17 @@
 package marloth.integration
 
-import silentorb.mythic.haft.HaftCommands
-import marloth.clienting.input.GuiCommandType
+import silentorb.mythic.commanding.CharacterCommand
+import silentorb.mythic.commanding.CommandName
+import silentorb.mythic.commanding.commonCharacterCommands
 import silentorb.mythic.ent.Id
-import simulation.input.Command
-import simulation.input.CommandType
+import silentorb.mythic.haft.HaftCommands
 
-private typealias UserCommandType = GuiCommandType
-private typealias CharacterCommandType = CommandType
-
-// Associate user commands and child commands that share the same name.
-private val commandTypeMap: Map<UserCommandType, CharacterCommandType> =
-    CharacterCommandType.values().mapNotNull { type ->
-      val other = UserCommandType.values().firstOrNull { it.name == type.name }
-      if (other == null)
-        null
-      else
-        Pair(other, type)
-    }
-        .associate { it }
-
-fun mapGameCommands(players: List<Id>, commands: HaftCommands): List<Command> =
+fun mapGameCommands(players: List<Id>, commands: HaftCommands): List<CharacterCommand> =
     commands
-        .filter { command -> command.type is CommandType && players.contains(command.target) }
+        .filter { command -> commonCharacterCommands.contains(command.type) && players.contains(command.target) }
         .map { command ->
-          Command(
-              type = command.type as CommandType,
+          CharacterCommand(
+              type = command.type as CommandName,
               target = command.target,
               value = command.value
           )

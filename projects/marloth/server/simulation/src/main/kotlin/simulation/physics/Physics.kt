@@ -3,19 +3,16 @@ package simulation.physics
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.pipe
 import silentorb.mythic.physics.*
-import simulation.input.Commands
+import silentorb.mythic.commanding.Commands
+import silentorb.mythic.rigging.characters.*
 import simulation.main.Deck
 import simulation.main.World
-import silentorb.mythic.rigging.characters.CharacterRig
-import silentorb.mythic.rigging.characters.updateCharacterRigFacing
-import silentorb.mythic.rigging.characters.updateCharacterRigGroundedDistance
 import silentorb.mythic.spatial.Vector2
 import silentorb.mythic.spatial.Vector3
 import simulation.entities.isAlive
-import simulation.misc.getLookAtAngle
 import simulation.updating.simulationDelta
 
-fun updatePhysics(linearForces: List<LinearImpulse>): (World) -> World = { world ->
+fun updatePhysics(commands: Commands): (World) -> World = { world ->
   val deck = world.deck
   val physicsDeck = PhysicsDeck(
       bodies = deck.bodies,
@@ -27,6 +24,7 @@ fun updatePhysics(linearForces: List<LinearImpulse>): (World) -> World = { world
       bulletState = world.bulletState,
       deck = physicsDeck
   )
+  val linearForces = allCharacterMovements(physicsDeck, commands)
   val nextPhysicsWorld = updateBulletPhysics(linearForces)(physicsWorld)
   val nextDeck = nextPhysicsWorld.deck
   world.copy(
@@ -37,6 +35,14 @@ fun updatePhysics(linearForces: List<LinearImpulse>): (World) -> World = { world
           collisionShapes = nextDeck.collisionShapes,
           dynamicBodies = nextDeck.dynamicBodies
       )
+  )
+}
+
+fun newCharacterRigHand(deck: Deck): (Id) -> CharacterRigHand = { character ->
+  CharacterRigHand(
+      body = deck.bodies[character]!!,
+      characterRig = deck.characterRigs[character]!!,
+      collisionObject = deck.collisionShapes[character]!!
   )
 }
 
@@ -71,6 +77,6 @@ fun updateMarlothCharacterRig(bulletState: BulletState, deck: Deck,
   val commands = allCommands.filter { it.target == id }
   pipe(
       updateMarlothCharacterRigFacing(deck, commands, id),
-      updateCharacterRigGroundedDistance(bulletState, deck, id)
+      updateCharacterRigGroundedDistance(bulletState, newCharacterRigHand(deck)(id))
   )(characterRig)
 }

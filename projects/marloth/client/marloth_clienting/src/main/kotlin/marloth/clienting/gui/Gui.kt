@@ -15,8 +15,7 @@ import silentorb.mythic.glowing.globalState
 import silentorb.mythic.spatial.Vector4
 import org.joml.Vector2i
 import marloth.scenery.enums.Text
-import silentorb.mythic.bloom.*
-import simulation.input.CommandType
+import silentorb.mythic.commanding.CommonCharacterCommands
 import simulation.main.World
 import simulation.misc.Definitions
 
@@ -68,10 +67,10 @@ val menuBackground: Depiction = depictBackground(grayTone(0.5f))
 fun haftToBloom(commands: HaftCommands): List<BloomEvent> =
     commands.mapNotNull {
       when (it.type) {
-        CommandType.moveUp -> BloomEvent.up
-        CommandType.moveDown -> BloomEvent.down
-        CommandType.moveLeft -> BloomEvent.left
-        CommandType.moveRight -> BloomEvent.right
+        CommonCharacterCommands.moveUp -> BloomEvent.up
+        CommonCharacterCommands.moveDown -> BloomEvent.down
+        CommonCharacterCommands.moveLeft -> BloomEvent.left
+        CommonCharacterCommands.moveRight -> BloomEvent.right
         GuiCommandType.menuBack -> BloomEvent.back
         GuiCommandType.menuSelect -> BloomEvent.activate
         else -> null

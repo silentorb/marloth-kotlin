@@ -14,7 +14,6 @@ data class HoverCamera(
 
 data class Player(
     val name: String,
-    val viewMode: ViewMode,
     val hoverCamera: HoverCamera = HoverCamera()
 )
 

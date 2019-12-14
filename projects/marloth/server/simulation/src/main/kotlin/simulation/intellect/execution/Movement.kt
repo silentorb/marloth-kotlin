@@ -7,9 +7,9 @@ import silentorb.mythic.spatial.Vector3
 import org.recast4j.detour.DefaultQueryFilter
 import simulation.entities.getActiveAction
 import simulation.main.World
-import simulation.input.Command
-import simulation.input.CommandType
-import simulation.input.Commands
+import silentorb.mythic.commanding.CharacterCommand
+import silentorb.mythic.commanding.CommonCharacterCommands
+import silentorb.mythic.commanding.Commands
 import simulation.intellect.Pursuit
 import simulation.intellect.design.getActionRange
 import simulation.intellect.navigation.asRecastVector3
@@ -86,7 +86,7 @@ fun moveStraightTowardPosition(world: World, character: Id, target: Vector3): Co
   val position = body.position
   val offset = (target - position).normalize()
   return spiritNeedsFacing(world, character, offset, 0.1f) {
-    listOf(Command(CommandType.moveUp, character))
+    listOf(CharacterCommand(CommonCharacterCommands.moveUp, character))
   }
 }
 

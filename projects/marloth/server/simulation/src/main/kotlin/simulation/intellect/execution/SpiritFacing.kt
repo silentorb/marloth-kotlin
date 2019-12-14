@@ -3,13 +3,13 @@ package simulation.intellect.execution
 import silentorb.mythic.ent.Id
 import silentorb.mythic.rigging.characters.CharacterRig
 import silentorb.mythic.spatial.*
-import simulation.input.Command
-import simulation.input.CommandType
-import simulation.input.Commands
+import silentorb.mythic.commanding.CharacterCommand
+import silentorb.mythic.commanding.CommonCharacterCommands
+import silentorb.mythic.commanding.Commands
 import simulation.main.World
-import simulation.misc.getLookAtAngle
+import silentorb.mythic.rigging.characters.getLookAtAngle
+import silentorb.mythic.rigging.characters.maxPositiveLookVelocityChange
 import simulation.updating.simulationDelta
-import simulation.misc.*
 
 fun getAngleCourse(source: Float, destination: Float): Float {
   val full = Pi * 2
@@ -36,15 +36,15 @@ fun spiritFacingChange(world: World, character: Id, offset: Vector3): Commands {
   return if (absCourse == 0f) {
     listOf()
   } else {
-    val dir = if (course > 0f) CommandType.lookLeft else CommandType.lookRight
+    val dir = if (course > 0f) CommonCharacterCommands.lookLeft else CommonCharacterCommands.lookRight
     val velocity = characterRig.lookVelocity.x
     val increment = characterRig.turnSpeed.x * simulationDelta
 //    println("" + dir + " " + absCourse + " " + increment)
-    val drift = increment * velocity / maxPostiveLookVelocityChange()
+    val drift = increment * velocity / maxPositiveLookVelocityChange()
     return if (absCourse <= drift)
       listOf() // Don't need to rotate anymore.  The remaining momentum will get us there.
     else
-      listOf(Command(dir, character, 1f))
+      listOf(CharacterCommand(dir, character, 1f))
   }
 }
 

@@ -11,8 +11,7 @@ import simulation.combat.getDamageMultiplierModifiers
 import simulation.combat.toModifierDeck
 import simulation.entities.*
 import simulation.happenings.*
-import simulation.input.Commands
-import simulation.input.updatePlayer
+import silentorb.mythic.commanding.Commands
 import simulation.intellect.aliveSpirits
 import simulation.intellect.execution.pursueGoals
 import simulation.intellect.updateAiState
@@ -74,7 +73,6 @@ fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: 
           destructibles = mapTable(deck.destructibles, updateDestructibleHealth(events)),
           characters = mapTable(deck.characters, updateCharacter(deck, world.bulletState, commands, events)),
           particleEffects = mapTableValues(deck.particleEffects, deck.bodies, updateParticleEffect(dice, delta)),
-          players = mapTable(deck.players, updatePlayer(intermediate.commands)),
           spirits = mapTable(deck.spirits, updateAiState(world, delta)),
           timers = if (shouldUpdateLogic(world)) mapTableValues(deck.timers, updateTimer) else deck.timers,
           timersFloat = mapTableValues(deck.timersFloat, updateFloatTimer(delta))
@@ -116,9 +114,8 @@ fun updateWorld(animationDurations: AnimationDurationMap, playerCommands: Comman
     pipe2(listOf(
         { world ->
           val intermediate = generateIntermediateRecords(definitions, world, playerCommands, events)
-          val linearForces = allCharacterMovements(world, intermediate.commands)
           pipe2(listOf(
-              updatePhysics(linearForces),
+              updatePhysics(intermediate.commands),
               updateWorldDeck(animationDurations, definitions, intermediate, delta)
           ))(world)
         },

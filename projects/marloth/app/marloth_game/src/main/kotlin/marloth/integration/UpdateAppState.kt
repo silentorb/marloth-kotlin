@@ -23,8 +23,8 @@ import silentorb.mythic.lookinglass.getPlayerViewports
 import simulation.entities.Player
 import simulation.happenings.Events
 import simulation.happenings.GameEvent
-import simulation.input.Command
-import simulation.input.CommandType
+import silentorb.mythic.commanding.CharacterCommand
+import silentorb.mythic.commanding.CommonCharacterCommands
 import simulation.main.World
 import simulation.updating.simulationDelta
 import simulation.misc.Victory
@@ -73,13 +73,13 @@ fun updateClientFromWorld(worlds: List<World>): (ClientState) -> ClientState = {
   )
 }
 
-fun gatherAdditionalGameCommands(previousClient: ClientState, clientState: ClientState): List<Command> {
+fun gatherAdditionalGameCommands(previousClient: ClientState, clientState: ClientState): List<CharacterCommand> {
   return clientState.players.flatMap { player ->
     val view = clientState.playerViews[player] ?: ViewId.none
     val previousView = previousClient.playerViews[player] ?: ViewId.none
     listOfNotNull(
         if (view == ViewId.none && previousView == ViewId.merchant)
-          Command(type = CommandType.stopInteracting, target = player)
+          CharacterCommand(type = CommonCharacterCommands.stopInteracting, target = player)
         else
           null
     )
@@ -100,7 +100,7 @@ fun gatherGuiEvents(bloomState: BloomState) = guiEvents(bloomState.bag)
     .filter { it.type == GuiEventType.gameEvent }
     .map { it.data as GameEvent }
 
-fun filterCommands(clientState: ClientState): (List<Command>) -> List<Command> = { commands ->
+fun filterCommands(clientState: ClientState): (List<CharacterCommand>) -> List<CharacterCommand> = { commands ->
   commands
       .groupBy { it.target }
       .flatMap { (_, commands) ->
@@ -111,7 +111,7 @@ fun filterCommands(clientState: ClientState): (List<Command>) -> List<Command> =
       }
 }
 
-fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: ClientState, worlds: List<World>, commands: List<Command>, events: Events): List<World> {
+fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: ClientState, worlds: List<World>, commands: List<CharacterCommand>, events: Events): List<World> {
   val world = worlds.last()
   val gameCommands = filterCommands(clientState)(commands)
       .plus(gatherAdditionalGameCommands(previousClient, clientState))

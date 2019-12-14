@@ -4,4 +4,4 @@ dependencies {
   compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.3'
 }
 
-requires 'randomly'
+requires 'randomly', 'ent'

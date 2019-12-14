@@ -55,10 +55,10 @@ fun createCamera(deck: Deck, player: Id): Camera {
   val character = deck.characters[player]!!
   val characterRig = deck.characterRigs[player]!!
   val body = deck.bodies[player]!!
-  val playerRecord = deck.players[player]!!
-  return when (playerRecord.viewMode) {
-    ViewMode.firstPerson -> firstPersonCamera(body, characterRig, character.isAlive)
-    ViewMode.thirdPerson -> thirdPersonCamera(body, playerRecord.hoverCamera)
-//    ViewMode.topDown -> createTopDownCamera(body)
-  }
+  return firstPersonCamera(body, characterRig, character.isAlive)
+//  return when (playerRecord.viewMode) {
+//    ViewMode.firstPerson -> firstPersonCamera(body, characterRig, character.isAlive)
+//    ViewMode.thirdPerson -> thirdPersonCamera(body, playerRecord.hoverCamera)
+////    ViewMode.topDown -> createTopDownCamera(body)
+//  }
 }

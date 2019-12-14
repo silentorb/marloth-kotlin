@@ -2,8 +2,8 @@ package simulation.happenings
 
 import silentorb.mythic.ent.Id
 import simulation.combat.Damage
-import simulation.input.CommandType
-import simulation.input.Commands
+import silentorb.mythic.commanding.CommonCharacterCommands
+import silentorb.mythic.commanding.Commands
 import simulation.main.Deck
 import simulation.main.DeckSource
 import simulation.main.overTime
@@ -68,7 +68,7 @@ typealias TriggerToEventMap = (List<Triggering>) -> Events
 fun gatherCommandTriggers(deck: Deck, commands: Commands): List<Triggering> {
   return commands.mapNotNull { command ->
     when (command.type) {
-      CommandType.interactPrimary -> {
+      CommonCharacterCommands.interactPrimary -> {
         val player = deck.players.keys.first()
         val character = deck.characters[player]!!
         val interactable = deck.interactables[character.canInteractWith]

@@ -14,7 +14,6 @@ import simulation.misc.NodeAttribute
 import simulation.misc.Realm
 import simulation.misc.getRooms
 
-
 enum class Occupant {
   coldCloud,
   fireCloud,

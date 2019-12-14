@@ -1,10 +1,10 @@
-package simulation.input
+package silentorb.mythic.rigging.characters
 
+import silentorb.mythic.commanding.CommandName
+import silentorb.mythic.commanding.CommonCharacterCommands
+import silentorb.mythic.commanding.Commands
 import silentorb.mythic.spatial.Vector2
 import silentorb.mythic.spatial.Vector3
-import simulation.misc.joinInputVector
-import simulation.misc.*
-import silentorb.mythic.rigging.characters.CharacterRig
 
 data class MomentumConfig(
     val attack: Float,
@@ -44,20 +44,20 @@ private val thirdPersonLookMomentum = MomentumConfig2(
 //)
 
 val firstPersonLookMap = mapOf(
-    CommandType.lookLeft to Vector3(0f, 0f, 1f),
-    CommandType.lookRight to Vector3(0f, 0f, -1f),
-    CommandType.lookUp to Vector3(0f, -1f, 0f),
-    CommandType.lookDown to Vector3(0f, 1f, 0f)
+    CommonCharacterCommands.lookLeft to Vector3(0f, 0f, 1f),
+    CommonCharacterCommands.lookRight to Vector3(0f, 0f, -1f),
+    CommonCharacterCommands.lookUp to Vector3(0f, -1f, 0f),
+    CommonCharacterCommands.lookDown to Vector3(0f, 1f, 0f)
 )
 
 val cameraLookMap = mapOf(
-    CommandType.cameraLookLeft to Vector3(0f, 0f, 1f),
-    CommandType.cameraLookRight to Vector3(0f, 0f, -1f),
-    CommandType.cameraLookUp to Vector3(0f, 1f, 0f),
-    CommandType.cameraLookDown to Vector3(0f, -1f, 0f)
+    CommonCharacterCommands.cameraLookLeft to Vector3(0f, 0f, 1f),
+    CommonCharacterCommands.cameraLookRight to Vector3(0f, 0f, -1f),
+    CommonCharacterCommands.cameraLookUp to Vector3(0f, 1f, 0f),
+    CommonCharacterCommands.cameraLookDown to Vector3(0f, -1f, 0f)
 )
 
-fun applyLookForce(lookMap: Map<CommandType, Vector3>, character: CharacterRig, commands: Commands): Vector2 {
+fun applyLookForce(lookMap: Map<CommandName, Vector3>, character: CharacterRig, commands: Commands): Vector2 {
   val offset3 = joinInputVector(commands, lookMap)
   return if (offset3 != null) {
     val offset2 = Vector2(offset3.z, offset3.y)

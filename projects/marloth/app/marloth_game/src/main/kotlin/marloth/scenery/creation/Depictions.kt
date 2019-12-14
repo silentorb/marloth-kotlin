@@ -30,10 +30,10 @@ val simplePainterMap = MeshId.values().mapNotNull { meshId ->
 
 
 fun filterDepictions(depictions: Table<Depiction>, player: Id, playerRecord: Player): Table<Depiction> =
-    if (playerRecord.viewMode == ViewMode.firstPerson)
+//    if (playerRecord.viewMode == ViewMode.firstPerson)
       depictions.filter { it.key != player }
-    else
-      depictions
+//    else
+//      depictions
 
 fun convertSimpleDepiction(deck: Deck, id: Id, mesh: MeshName, texture: TextureName? = null): MeshElement? {
   val body = deck.bodies[id]!!

@@ -1,7 +1,7 @@
 import silentorb.mythic.spatial.Vector3
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import simulation.entities.getMovementImpulseVector
+import silentorb.mythic.rigging.characters.getMovementImpulseVector
 
 fun assertRoughEquals(first: Float, second: Float, buffer: Float): Boolean {
   return second > first - buffer && second < first + buffer
