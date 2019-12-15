@@ -113,7 +113,7 @@
 	</SettingsOverride>
 	<Presets>
 		<DefaultPreset preview_image="LIFESAVER_OPAQUE">
-			<Settings size_factor="1" variation="1" seamless="true" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="false"/>
+			<Settings size_factor="2" variation="1" seamless="true" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="false"/>
 			<Lighting>
 				<Height value="0.2000000000000000111"/>
 				<Environment>

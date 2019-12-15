@@ -139,12 +139,13 @@ def has_dominant_material(obj):
 def remove_materials(object, material_slot_indices):
     for i in reversed(material_slot_indices):
         object.active_material_index = i
+        print('removing material for' + object.name)
         bpy.ops.object.material_slot_remove()
 
 
 def prune_materials():
     for obj in bpy.data.objects:
-        if obj.type == 'MESH':
+        if obj.type == 'MESH' and 'no-export' not in obj:
             slots = list(range(1, len(obj.material_slots)))
             remove_materials(obj, slots)
 
@@ -190,6 +191,7 @@ def render_camera_textures():
 
 # The Blender operator to select/deselect has a bug with needing to get the proper context based on mouse hovering :(
 def deselect_all():
+    bpy.context.view_layer.objects.active = None
     for obj in bpy.data.objects:
         obj.select_set(False)
 
@@ -255,13 +257,13 @@ def prepare_scene(export_dir):
         preprocess_bounds_shape(obj)
 
     render_camera_textures()
-    bake_all(export_dir)
+    # bake_all(export_dir)
 
     prepare_animations()
 
     has_objects = len(export_objects) > 0
     if has_objects:
-        prune_materials()
+        # prune_materials()
         if 'copy-images' not in bpy.context.scene:
             prepare_texture_nodes()
 

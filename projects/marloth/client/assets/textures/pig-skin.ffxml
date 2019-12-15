@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Filter>
+	<Components>
+		<Result id="result">
+			<Source source="blend6 01"/>
+			<FilterType value="0"/>
+			<Advanced value="false"/>
+			<Lighting>
+				<Height value="0.2000000000000000111"/>
+				<Environment>
+					<Source value=""/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+		</Result>
+		<Blend6 id="blend6 01">
+			<Foreground source="colormapcontrol 02" red="1" green="1" blue="1" alpha="1"/>
+			<Background source="cells2 01" red="0" green="0" blue="0" alpha="1"/>
+			<Opacity source="threshold2 01" value="0.5"/>
+			<Mode value="0"/>
+		</Blend6>
+		<Cells2 id="cells2 01">
+			<Noise source="colormapcontrol 01" red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0.3527131782945736038" green="0.209885246626107691" blue="0.147647376960519161" alpha="1"/>
+			<Roughness value="0.4299999999999999933"/>
+			<Contrast value="0"/>
+			<Formula value="2"/>
+			<Scale value="1.9499999999999999556"/>
+			<Stretch value="0"/>
+			<VerticalStretch value="false"/>
+			<Smooth value="false"/>
+			<Flat value="false"/>
+			<SolidFill value="false"/>
+			<Details value="0.5699999999999999512"/>
+			<Variation value="1"/>
+			<OctaveCurve value="0"/>
+		</Cells2>
+		<ColorMapControl id="colormapcontrol 01">
+			<Name value-en="Foreground"/>
+			<ExternalImagesMode value="0"/>
+			<HDRMode value="0"/>
+			<HorizontalAnchor value="1"/>
+			<VerticalAnchor value="1"/>
+			<PlacementMode value="0"/>
+			<TilingMode value="0"/>
+			<Color red="0.890196078431372495" green="0.627450980392156854" blue="0.4509803921568627527" alpha="1"/>
+			<AlphaMode value="0"/>
+		</ColorMapControl>
+		<ColorMapControl id="colormapcontrol 02">
+			<Name value-en="Foreground"/>
+			<ExternalImagesMode value="0"/>
+			<HDRMode value="0"/>
+			<HorizontalAnchor value="1"/>
+			<VerticalAnchor value="1"/>
+			<PlacementMode value="0"/>
+			<TilingMode value="0"/>
+			<Color red="0.1782945736434108364" green="0.0626983736772811773" blue="0.0193497986899825655" alpha="1"/>
+			<AlphaMode value="0"/>
+		</ColorMapControl>
+		<PerlinNoise2 id="perlinnoise2 01">
+			<Noise red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.46000000000000002"/>
+			<Scale value="2.3100000000000000533"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.2700000000000000178"/>
+			<Variation value="1722"/>
+			<OctaveCurve value="0"/>
+		</PerlinNoise2>
+		<Threshold2 id="threshold2 01">
+			<Source source="perlinnoise2 01"/>
+			<Threshold value="0.6099999999999999867"/>
+			<Smooth value="0.2000000000000000111"/>
+			<Low red="0" green="0" blue="0" alpha="1"/>
+			<High red="0.5968992248062015005" green="0.5968992248062015005" blue="0.5968992248062015005" alpha="1"/>
+		</Threshold2>
+	</Components>
+	<GroupNames/>
+	<SettingsOverride>
+		<Size value="0"/>
+		<Variation value="0"/>
+		<Seamless value="0"/>
+		<ResultBlending value="0"/>
+	</SettingsOverride>
+	<Presets>
+		<DefaultPreset preview_image="LIFESAVER_OPAQUE">
+			<Settings size_factor="1" variation="1" seamless="false" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="false"/>
+			<Lighting>
+				<Height value="0.2000000000000000111"/>
+				<Environment>
+					<Source value=""/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+			<Controls>
+				<ColorMapControl id="colormapcontrol 01">
+					<HorizontalAnchor value="1"/>
+					<VerticalAnchor value="1"/>
+					<PlacementMode value="0"/>
+					<TilingMode value="0"/>
+					<Color red="0.890196078431372495" green="0.627450980392156854" blue="0.4509803921568627527" alpha="1"/>
+				</ColorMapControl>
+				<ColorMapControl id="colormapcontrol 02">
+					<HorizontalAnchor value="1"/>
+					<VerticalAnchor value="1"/>
+					<PlacementMode value="0"/>
+					<TilingMode value="0"/>
+					<Color red="0.1782945736434108364" green="0.0626983736772811773" blue="0.0193497986899825655" alpha="1"/>
+				</ColorMapControl>
+			</Controls>
+		</DefaultPreset>
+	</Presets>
+	<Locks>
+		<Settings size="false" variation="false"/>
+		<Lighting elements="false" environment="false" brightness="false" saturation="false" height="false"/>
+		<Controls>
+			<Control id="colormapcontrol 01" lock="false"/>
+			<Control id="colormapcontrol 02" lock="false"/>
+		</Controls>
+	</Locks>
+	<Information author="cj" name-en="pig-skin" url="" description="" keywords="" update_notes="" major_version="8" minor_version="5"/>
+	<ControlsOrder>
+		<Automatic value="true"/>
+	</ControlsOrder>
+	<FilterEditor>
+		<Groups/>
+		<ThumbnailSize value="1"/>
+		<Canvas left="-373" top="-331" zoom_factor="0"/>
+		<Viewport left="0" top="0" zoom_factor="-2"/>
+		<LockPreview>
+			<Locked value="true"/>
+			<LockedComponent name="result"/>
+		</LockPreview>
+		<Item id="blend6 01">
+			<Position left="448" top="160"/>
+		</Item>
+		<Item id="cells2 01">
+			<Position left="736" top="224"/>
+		</Item>
+		<Item id="colormapcontrol 01">
+			<Position left="960" top="176"/>
+		</Item>
+		<Item id="colormapcontrol 02">
+			<Position left="752" top="112"/>
+		</Item>
+		<Item id="perlinnoise2 01">
+			<Position left="864" top="-80"/>
+		</Item>
+		<Item id="result">
+			<Position left="240" top="48"/>
+		</Item>
+		<Item id="threshold2 01">
+			<Position left="656" top="-64"/>
+		</Item>
+	</FilterEditor>
+</Filter>

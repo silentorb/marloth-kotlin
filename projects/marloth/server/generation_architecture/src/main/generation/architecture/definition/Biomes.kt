@@ -12,7 +12,9 @@ enum class BiomeId {
   checkers,
   exit,
   forest,
-  home
+  home,
+  tealPalace,
+  village,
 }
 
 val commonMeshes = setOf(
@@ -70,6 +72,26 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
             BiomeAttribute.alwaysWindow,
             BiomeAttribute.alwaysLit,
             BiomeAttribute.placeOnlyAtStart,
+            BiomeAttribute.wallsAll
+        )
+    ),
+    BiomeId.tealPalace to BiomeInfo(
+        name = "tealPalace",
+        textures = mapOf(
+            TextureGroup.default to TextureId.diamondTiles
+        ),
+        meshes = mapMeshes(commonMeshes),
+        attributes = setOf(
+            BiomeAttribute.wallsAll
+        )
+    ),
+    BiomeId.village to BiomeInfo(
+        name = "village",
+        textures = mapOf(
+            TextureGroup.default to TextureId.cobblestone
+        ),
+        meshes = mapMeshes(commonMeshes),
+        attributes = setOf(
             BiomeAttribute.wallsAll
         )
     )

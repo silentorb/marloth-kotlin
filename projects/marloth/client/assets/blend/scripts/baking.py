@@ -29,6 +29,10 @@ def select_material_node(material, node):
 
 def bake_texture(original, material, image):
     print('Baking texture for ' + original.name)
+    for obj in bpy.data.objects:
+        if obj.hide_get():
+            obj.hide_set(True)
+    original.hide_set(False)
     setActiveObject(original)
     bpy.ops.uv.smart_project()
     node = create_texture_node(material, image)

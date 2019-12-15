@@ -14,7 +14,7 @@ import subprocess
 # so when rasterizing a transparent texture, an empty source image with an alpha channel must be referenced.
 # Filter Forge has no resizing so the soruce image dimensions define the output dimensions.
 
-default_length = 512
+default_length = 1024
 module_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
 
 
