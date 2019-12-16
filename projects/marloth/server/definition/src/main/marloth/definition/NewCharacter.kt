@@ -16,73 +16,84 @@ import silentorb.mythic.spatial.Vector3
 import simulation.entities.*
 import simulation.intellect.Spirit
 import simulation.main.Hand
-import simulation.main.HandAttachment
+import silentorb.mythic.ent.IdSource
+import simulation.main.IdHand
 import simulation.misc.Definitions
 import simulation.misc.ResourceContainer
 
-fun newCharacter(definitions: Definitions, definition: CharacterDefinition, faction: Id, position: Vector3,
+fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, definition: CharacterDefinition, faction: Id, position: Vector3,
                  angle: Float = Pi / 2f,
-                 spirit: Spirit? = null): Hand {
-  return Hand(
-      ambientAudioEmitter = if (definition.ambientSounds.any())
-        AmbientAudioEmitter(
-            delay = position.length() % 2.0
-        )
-      else
-        null,
-      animation = CharacterAnimation(
-          animations = listOf(
-              SingleAnimation(
-                  animationId = AnimationId.stand.name,
-                  animationOffset = 0f
-              )
+                 spirit: Spirit? = null): List<IdHand> {
+  return listOf(
+      IdHand(
+          id = character,
+          hand = Hand(
+              ambientAudioEmitter = if (definition.ambientSounds.any())
+                AmbientAudioEmitter(
+                    delay = position.length() % 2.0
+                )
+              else
+                null,
+              animation = CharacterAnimation(
+                  animations = listOf(
+                      SingleAnimation(
+                          animationId = AnimationId.stand.name,
+                          animationOffset = 0f
+                      )
+                  )
+              ),
+              body = Body(
+                  position = position,
+                  orientation = Quaternion(),
+                  velocity = Vector3()
+              ),
+              character = Character(
+                  definition = definition,
+                  faction = faction,
+                  sanity = ResourceContainer(100),
+                  money = 30
+              ),
+              characterRig = CharacterRig(
+                  facingRotation = Vector3(0f, 0f, angle),
+                  isActive = true,
+                  maxSpeed = definition.maxSpeed,
+                  turnSpeed = Vector2(3f, 1f)
+              ),
+              destructible = Destructible(
+                  base = DestructibleBaseStats(
+                      health = definition.health,
+                      damageMultipliers = definition.damageMultipliers
+                  ),
+                  health = ResourceContainer(definition.health),
+                  damageMultipliers = definition.damageMultipliers
+              ),
+              collisionShape = CollisionObject(
+                  shape = Capsule(defaultCharacterRadius, defaultCharacterHeight)
+              ),
+              depiction = Depiction(
+                  type = definition.depictionType
+              ),
+              dynamicBody = DynamicBody(
+                  gravity = true,
+                  mass = 45f,
+                  resistance = 4f
+              ),
+              spirit = spirit
           )
-      ),
-      body = Body(
-          position = position,
-          orientation = Quaternion(),
-          velocity = Vector3()
-      ),
-      character = Character(
-          definition = definition,
-          faction = faction,
-          sanity = ResourceContainer(100),
-          money = 30
-      ),
-      characterRig = CharacterRig(
-          facingRotation = Vector3(0f, 0f, angle),
-          isActive = true,
-          maxSpeed = definition.maxSpeed,
-          turnSpeed = Vector2(3f, 1f)
-      ),
-      destructible = Destructible(
-          base = DestructibleBaseStats(
-              health = definition.health,
-              damageMultipliers = definition.damageMultipliers
-          ),
-          health = ResourceContainer(definition.health),
-          damageMultipliers = definition.damageMultipliers
-      ),
-      collisionShape = CollisionObject(
-          shape = Capsule(defaultCharacterRadius, defaultCharacterHeight)
-      ),
-      depiction = Depiction(
-          type = definition.depictionType
-      ),
-      dynamicBody = DynamicBody(
-          gravity = true,
-          mass = 45f,
-          resistance = 4f
-      ),
-      spirit = spirit,
-      attachments = definition.accessories
+      )
+  ).plus(
+      definition.accessories
           .mapIndexed { index, type ->
-            HandAttachment(
-                category = AttachmentCategory.ability,
-                index = index,
+            IdHand(
+                id = nextId(),
                 hand = Hand(
                     accessory = Accessory(
                         type = type
+                    ),
+                    attachment = Attachment(
+                        target = character,
+                        index = index,
+                        category = AttachmentCategory.ability
                     ),
                     action = newPossibleAction(definitions, type)
                 )

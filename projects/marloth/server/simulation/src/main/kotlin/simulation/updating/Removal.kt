@@ -33,7 +33,7 @@ fun removeWhole(events: Events): (Deck) -> Deck = { deck ->
   if (finished.size > 0) {
     val k = 0
   }
-  removeEntities(deck, finished)
+  removeEntities(finished)(deck)
 }
 
 fun removeSoldWares(events: Events): (Deck) -> Deck = { deck ->

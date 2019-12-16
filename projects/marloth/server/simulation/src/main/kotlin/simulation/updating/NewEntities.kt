@@ -25,8 +25,8 @@ fun newEntities(definitions: Definitions, animationDurations: AnimationDurationM
   val additions = listOf(
       newAccessoriesDeck(events, deck)
   )
-      .plus(allHandsOnDeck(hands, nextId))
+      .plus(allHandsOnDeck(hands, nextId, Deck()))
       .plus(applyBuffsFromEvents(deck, nextId, events))
 
-  mergeDecks(listOf(deck).plus(additions))
+  listOf(deck).plus(additions).reduce(mergeDecks)
 }

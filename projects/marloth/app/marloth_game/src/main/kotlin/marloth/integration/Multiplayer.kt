@@ -4,6 +4,7 @@ import marloth.clienting.input.joiningGamepads
 import marloth.clienting.input.newGamepadDeviceEntry
 import marloth.generation.population.getPlayerCell
 import marloth.generation.population.newPlayer
+import simulation.main.addEntitiesToWorldDeck
 import simulation.main.addHandsToWorld
 
 val updateAppStateForNewPlayers: (AppState) -> AppState = { appState ->
@@ -23,11 +24,14 @@ val updateAppStateForNewPlayers: (AppState) -> AppState = { appState ->
     val availablePlayers = world.deck.players.keys.filter { player ->
       deviceMap.none { it.value.player == player }
     }
-    val newPlayerHands = gamepadJoinCommands.drop(availablePlayers.size)
-        .map {
-          newPlayer(world.definitions, grid, getPlayerCell(grid))
-        }
-    val nextWorld = addHandsToWorld(newPlayerHands)(world)
+
+    val nextWorld = addEntitiesToWorldDeck(world) { nextId ->
+      gamepadJoinCommands.drop(availablePlayers.size)
+          .flatMap {
+            newPlayer(nextId, world.definitions, grid, getPlayerCell(grid))
+          }
+    }
+    //addHandsToWorld(newPlayerHands)(world)
     val newPlayers = nextWorld.deck.players.keys.minus(deck.players.keys)
     val playersWithNewGamepads = newPlayers.plus(availablePlayers)
     val deviceEntries = gamepadJoinCommands.zip(playersWithNewGamepads, ::newGamepadDeviceEntry)

@@ -9,7 +9,7 @@ import silentorb.mythic.ent.IdSource
 import simulation.happenings.*
 import simulation.main.Deck
 import simulation.main.Hand
-import simulation.main.toDeck
+import simulation.main.handToDeck
 import simulation.misc.ValueModifier
 
 typealias AccessoryName = String
@@ -117,7 +117,7 @@ fun applyBuff(deck: Deck, nextId: IdSource): (ApplyBuffEvent) -> Deck = { event 
             duration = duration
         )
     )
-    toDeck(nextId(), hand)
+    handToDeck(nextId(), hand)
   }
 }
 

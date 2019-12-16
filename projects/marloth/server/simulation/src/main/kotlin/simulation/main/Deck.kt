@@ -44,6 +44,15 @@ data class Deck(
     val wares: Table<Ware> = mapOf()
 )
 
+val deckReflection = newDeckReflection(Deck::class, Hand::class)
+
+//val handsToDeck = genericHandsToDeck(deckReflection)
+val handToDeck = genericHandToDeck(deckReflection)
+val mergeDecks = genericMergeDecks(deckReflection)
+val allHandsOnDeck = genericAllHandsOnDeck(deckReflection)
+val idHandsToDeck = genericIdHandsToDeck(deckReflection)
+val removeEntities = genericRemoveEntities(deckReflection)
+
 fun <T> mapTable(table: Table<T>, action: (Id, T) -> T): Table<T> =
     table.mapValues { (id, value) -> action(id, value) }
 
@@ -53,28 +62,16 @@ fun <T> mapTableValues(table: Table<T>, action: (T) -> T): Table<T> =
 fun <A, B> mapTableValues(table: Table<A>, secondTable: Table<B>, action: (B, A) -> A): Table<A> =
     table.mapValues { (id, value) -> action(secondTable[id]!!, value) }
 
-fun <T : WithId> nullableList(entity: T?): Table<T> =
-    if (entity == null)
-      mapOf()
-    else
-      mapOf(entity.id to entity)
+//fun toDeck(hand: IdHand) = toDeck(hand.id, hand.hand)
 
-fun <T> nullableList(id: Id, entity: T?): Table<T> =
-    if (entity == null)
-      mapOf()
-    else
-      mapOf(id to entity)
+//fun toDeck(hands: List<IdHand>): Deck =
+//    hands.fold(Deck(), { d, h -> d.plus(toDeck(h)) })
 
-fun toDeck(hand: IdHand) = toDeck(hand.id, hand.hand)
+//fun mergeDecks(decks: List<Deck>): Deck =
+//    decks.reduce { a, deck -> a.plus(deck) }
 
-fun toDeck(hands: List<IdHand>): Deck =
-    hands.fold(Deck(), { d, h -> d.plus(toDeck(h)) })
-
-fun mergeDecks(decks: List<Deck>): Deck =
-    decks.reduce { a, deck -> a.plus(deck) }
-
-fun allHandsOnDeck(hands: List<Hand>, nextId: IdSource, deck: Deck = Deck()): Deck =
-    hands.fold(deck, { d, h -> d.plus(toDeck(nextId, h)) })
+//fun allHandsOnDeck(hands: List<Hand>, nextId: IdSource, deck: Deck = Deck()): Deck =
+//    hands.fold(deck, { d, h -> d.plus(toDeck(nextId, h)) })
 
 val addHandsToWorld: (List<Hand>) -> WorldTransform = { hands ->
   { world ->
@@ -86,9 +83,23 @@ val addHandsToWorld: (List<Hand>) -> WorldTransform = { hands ->
   }
 }
 
+fun addEntitiesToWorldDeck(world: World, transform: (IdSource) -> List<IdHand>): World {
+  val (nextId, finalize) = newIdSource(world)
+  val hands = transform(nextId)
+  return finalize(world.copy(
+      deck = mergeDecks(world.deck, idHandsToDeck(hands))
+  ))
+}
+
 fun pipeHandsToDeck(nextId: IdSource, sources: List<(Deck) -> List<Hand>>): (Deck) -> Deck = { deck ->
   pipe2(sources.map { handSource ->
     { accumulator: Deck -> allHandsOnDeck(handSource(accumulator), nextId, accumulator) }
+  })(deck)
+}
+
+fun pipeIdHandsToDeck(sources: List<(Deck) -> List<IdHand>>): (Deck) -> Deck = { deck ->
+  pipe2(sources.map { handSource ->
+    { accumulator: Deck -> mergeDecks(idHandsToDeck(handSource(accumulator)), accumulator) }
   })(deck)
 }
 

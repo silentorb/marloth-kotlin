@@ -10,15 +10,16 @@ import marloth.integration.newGameModeConfig
 import silentorb.mythic.debugging.getDebugSetting
 import silentorb.mythic.ent.newIdSource
 import org.recast4j.detour.NavMeshQuery
+import silentorb.mythic.ent.toIdHands
 import silentorb.mythic.randomly.Dice
 import simulation.intellect.navigation.newNavMesh
 import simulation.main.Deck
 import simulation.main.World
-import simulation.main.pipeHandsToDeck
 import simulation.misc.Definitions
 import simulation.misc.WorldInput
 import simulation.misc.createWorldBoundary
 import silentorb.mythic.physics.newBulletState
+import simulation.main.pipeIdHandsToDeck
 
 fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, input: WorldInput): World {
   val dice = input.dice
@@ -32,11 +33,11 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
   val biomeGrid = newRandomizedBiomeGrid(biomeInfoMap, input)
   val realm = generateRealm(generationConfig, input, grid, biomeGrid)
   val nextId = newIdSource(1)
-  val deck = pipeHandsToDeck(nextId, listOf(
+  val deck = pipeIdHandsToDeck(listOf(
       { _ ->
-        buildArchitecture(generationConfig, dice, gridSideMap, workbench, blockMap, realm.cellBiomes, builders)
+        toIdHands(nextId, buildArchitecture(generationConfig, dice, gridSideMap, workbench, blockMap, realm.cellBiomes, builders))
       },
-      populateWorld(generationConfig, input, realm)
+      populateWorld(nextId, generationConfig, input, realm)
   ))(Deck())
 
   val navMesh = if (generationConfig.includeEnemies)

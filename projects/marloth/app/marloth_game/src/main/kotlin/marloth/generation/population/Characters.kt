@@ -13,12 +13,13 @@ import simulation.entities.*
 import simulation.intellect.Pursuit
 import simulation.intellect.Spirit
 import simulation.main.Hand
-import simulation.main.HandAttachment
 import simulation.misc.*
 import silentorb.mythic.characters.getLookAtAngle
+import silentorb.mythic.ent.IdSource
+import simulation.main.IdHand
 
-fun placeAiCharacter(definitions: Definitions, faction: Id, definition: CharacterDefinition, position: Vector3): Hand {
-  return newCharacter(definitions,
+fun placeAiCharacter(nextId: IdSource, definitions: Definitions, faction: Id, definition: CharacterDefinition, position: Vector3): List<IdHand> {
+  return newCharacter(nextId, nextId(), definitions,
       definition = definition,
       faction = faction,
       position = position,
@@ -28,35 +29,45 @@ fun placeAiCharacter(definitions: Definitions, faction: Id, definition: Characte
   )
 }
 
-fun placeEnemy(definitions: Definitions, node: Node): Hand =
-    placeAiCharacter(definitions,
+fun placeEnemy(nextId: IdSource, definitions: Definitions, node: Node): List<IdHand> =
+    placeAiCharacter(nextId, definitions,
         faction = monsterFaction,
         definition = creatures.monster,
         position = node.position
     )
 
-fun newPlayer(definitions: Definitions, grid: MapGrid, cellPosition: Vector3i): Hand {
+fun newPlayer(nextId: IdSource, definitions: Definitions, grid: MapGrid, cellPosition: Vector3i): List<IdHand> {
   val neighbor = cellNeighbors(grid.connections, cellPosition).first()
-  return newCharacter(definitions,
+  val character = nextId()
+  return newCharacter(nextId, character, definitions,
       definition = creatures.player,
       faction = misfitFaction,
       position = applyCellPosition(cellPosition) + floorOffset + Vector3(0f, 0f, 6f),
       angle = getLookAtAngle((neighbor - cellPosition).toVector3())
   )
-      .copy(
-          attachments = listOf(
-              HandAttachment(
-                  category = AttachmentCategory.equipped,
-                  index = 2,
-                  hand = Hand(
-                      accessory = Accessory(
-                          type = AccessoryId.candle.name
-                      )
+      .plus(
+          IdHand(
+              id = character,
+              hand = Hand(
+                  player = Player(
+                      name = "Unknown Hero"
                   )
               )
-          ),
-          player = Player(
-              name = "Unknown Hero"
+          )
+      )
+      .plus(
+          IdHand(
+              id = nextId(),
+              hand = Hand(
+                  accessory = Accessory(
+                      type = AccessoryId.candle.name
+                  ),
+                  attachment = Attachment(
+                      target = character,
+                      index = 2,
+                      category = AttachmentCategory.equipped
+                  )
+              )
           )
       )
 }

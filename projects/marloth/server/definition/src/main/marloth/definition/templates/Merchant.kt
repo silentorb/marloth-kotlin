@@ -6,34 +6,46 @@ import silentorb.mythic.spatial.Vector3
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.ClientCommand
 import marloth.scenery.enums.Text
+import silentorb.mythic.ent.IdSource
 import simulation.entities.*
 import simulation.main.Hand
-import simulation.main.HandAttachment
+import simulation.main.IdHand
 import simulation.misc.Definitions
 
-fun newMerchant(definitions: Definitions, position: Vector3, wares: List<Ware>): Hand {
-  val character = newCharacter(definitions,
+fun newMerchant(nextId: IdSource, definitions: Definitions, position: Vector3, wares: List<Ware>): List<IdHand> {
+  val character = nextId()
+  return newCharacter(nextId, character, definitions,
       definition = creatures.merchant,
       faction = 1,
       position = position
   )
-
-  return character.copy(
-      interactable = Interactable(
-          primaryCommand = WidgetCommand(
-              text = Text.menu_talk,
-              clientCommand = ClientCommand.showMerchantView
+      .plus(
+          IdHand(
+              id = character,
+              hand = Hand(
+                  interactable = Interactable(
+                      primaryCommand = WidgetCommand(
+                          text = Text.menu_talk,
+                          clientCommand = ClientCommand.showMerchantView
+                      )
+                  )
+              )
           )
-      ),
-      attachments = character.attachments.plus(wares.map { ware ->
-        HandAttachment(
-            category = AttachmentCategory.inventory,
-            hand = Hand(
-                ware = ware
+      )
+      .plus(
+          wares.map { ware ->
+            IdHand(
+                id = nextId(),
+                hand = Hand(
+                    attachment = Attachment(
+                        target = character,
+                        category = AttachmentCategory.inventory
+                    ),
+                    ware = ware
+                )
             )
-        )
-      })
-  )
+          }
+      )
 }
 
 val defaultWares: List<Ware> = listOf(

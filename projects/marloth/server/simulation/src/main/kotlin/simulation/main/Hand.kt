@@ -1,6 +1,5 @@
 package simulation.main
 
-import silentorb.mythic.ent.Id
 import simulation.entities.*
 import simulation.happenings.Trigger
 import simulation.intellect.Spirit
@@ -10,6 +9,7 @@ import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.characters.CharacterRig
+import silentorb.mythic.ent.GenericIdHand
 
 // Hand is a slice of a deck, mostly used for instantiating new entities.
 
@@ -41,19 +41,7 @@ data class Hand(
     val timer: Timer? = null,
     val timerFloat: FloatTimer? = null,
     val trigger: Trigger? = null,
-    val ware: Ware? = null,
-
-    // Utility child list that does not directly map to a deck
-    val attachments: List<HandAttachment> = listOf()
+    val ware: Ware? = null
 )
 
-data class HandAttachment(
-    val category: AttachmentCategory,
-    val index: Int = 0,
-    val hand: Hand
-)
-
-data class IdHand(
-    val id: Id,
-    val hand: Hand
-)
+typealias IdHand = GenericIdHand<Hand>

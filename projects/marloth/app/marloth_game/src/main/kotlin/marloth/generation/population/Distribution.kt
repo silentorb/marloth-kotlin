@@ -8,7 +8,9 @@ import marloth.definition.templates.newMerchant
 import silentorb.mythic.ent.Id
 import silentorb.mythic.randomly.Dice
 import marloth.scenery.enums.ModifierId
+import silentorb.mythic.ent.IdSource
 import simulation.main.Hand
+import simulation.main.IdHand
 import simulation.misc.Node
 import simulation.misc.NodeAttribute
 import simulation.misc.Realm
@@ -26,17 +28,21 @@ enum class Occupant {
 
 typealias DistributionMap = Map<Occupant, Int>
 
-typealias OccupantToHand = (Node, Occupant) -> Hand?
+typealias OccupantToHand = (Node, Occupant) -> List<IdHand>?
 
-fun occupantPopulator(config: GenerationConfig): OccupantToHand = { node, occupant ->
+fun occupantPopulator(config: GenerationConfig, nextId: IdSource): OccupantToHand = { node, occupant ->
   when (occupant) {
-    Occupant.coldCloud -> placeBuffCloud(node, ModifierId.damageChilled)
-    Occupant.fireCloud -> placeBuffCloud(node, ModifierId.damageBurning)
-    Occupant.enemy -> if (config.includeEnemies) placeEnemy(config.definitions, node) else null
-    Occupant.merchant -> newMerchant(config.definitions, node.position, defaultWares)
+//    Occupant.coldCloud -> placeBuffCloud(node, ModifierId.damageChilled)
+//    Occupant.fireCloud -> placeBuffCloud(node, ModifierId.damageBurning)
+    Occupant.enemy -> if (config.includeEnemies) placeEnemy(nextId, config.definitions, node) else null
+    Occupant.merchant -> newMerchant(nextId, config.definitions, node.position, defaultWares)
     Occupant.none -> null
-    Occupant.poisonCloud -> placeBuffCloud(node, ModifierId.damagePoisoned)
-    Occupant.treasureChest -> placeTreasureChest(config.meshes, node, 10)
+//    Occupant.poisonCloud -> placeBuffCloud(node, ModifierId.damagePoisoned)
+//    Occupant.treasureChest -> placeTreasureChest(config.meshes, node, 10)
+    else -> {
+      println("Need to eventually update occupantPopulator")
+      null
+    }
   }
 }
 
@@ -69,7 +75,7 @@ fun fixedDistributions(): DistributionMap = mapOf(
     Occupant.treasureChest to 0
 )
 
-fun populateRooms(occupantToHand: OccupantToHand, dice: Dice, realm: Realm, playerNode: Id): List<Hand> {
+fun populateRooms(occupantToHand: OccupantToHand, dice: Dice, realm: Realm, playerNode: Id): List<IdHand> {
   if (System.getenv("NO_OBJECTS") != null)
     return listOf()
 
@@ -80,6 +86,7 @@ fun populateRooms(occupantToHand: OccupantToHand, dice: Dice, realm: Realm, play
   val hands = rooms
       .zip(occupants, occupantToHand)
       .filterNotNull()
+      .flatten()
 
   return hands
 }
