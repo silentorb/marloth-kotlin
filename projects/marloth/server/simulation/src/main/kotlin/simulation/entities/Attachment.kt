@@ -6,7 +6,6 @@ import marloth.scenery.enums.ModifierType
 import marloth.scenery.enums.Text
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
-import scenery.enums.*
 import simulation.happenings.*
 import simulation.main.Deck
 import simulation.main.Hand

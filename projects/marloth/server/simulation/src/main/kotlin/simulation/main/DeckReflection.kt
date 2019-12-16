@@ -9,7 +9,6 @@ import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.jvm.jvmName
 
 private val _deckType = Deck::class
-//private val _deckCopyFunction = _deckType.memberFunctions.first { it.name == "copy" }
 private val _deckConstructor = _deckType.constructors.first()
 private val _deckProperties = _deckConstructor.parameters
     .map { p -> _deckType.memberProperties.first { it.name == p.name } }

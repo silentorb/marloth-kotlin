@@ -5,7 +5,6 @@ import silentorb.mythic.ent.mapEntryValue
 import silentorb.mythic.ent.pipe
 import silentorb.mythic.ent.pipe2
 import simulation.physics.updatePhysics
-import silentorb.mythic.randomly.Dice
 import simulation.combat.getDamageMultiplierModifiers
 import simulation.combat.toModifierDeck
 import simulation.entities.*
@@ -18,14 +17,12 @@ import simulation.main.*
 import simulation.misc.Definitions
 import simulation.particles.updateParticleEffect
 import simulation.physics.*
-import silentorb.mythic.physics.Collisions
 
 const val simulationFps = 60
 const val simulationDelta = 1f / simulationFps.toFloat()
 
 data class Intermediate(
     val commands: Commands,
-    val collisions: Collisions,
     val events: Events
 )
 
@@ -45,7 +42,6 @@ fun generateIntermediateRecords(definitions: Definitions, world: World, playerCo
 
   return Intermediate(
       commands = commands,
-      collisions = collisions,
       events = events.plus(eventsFromEvents(world, events))
   )
 }
@@ -57,11 +53,11 @@ val cleanupOutdatedReferences: (Deck) -> Deck = { deck ->
   )
 }
 
-fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: World,
-                   intermediate: Intermediate): (Deck) -> Deck =
+fun updateEntities(animationDurations: AnimationDurationMap, world: World, intermediate: Intermediate): (Deck) -> Deck =
     { deck ->
-      val (commands, collisionMap, events) = intermediate
+      val (commands, events) = intermediate
       val delta = simulationDelta
+      val dice = world.dice
       deck.copy(
           actions = updateActions(world.definitions, deck, events),
           ambientSounds = updateAmbientAudio(dice, deck),
@@ -73,7 +69,7 @@ fun updateEntities(dice: Dice, animationDurations: AnimationDurationMap, world: 
           characters = mapTable(deck.characters, updateCharacter(deck, world.bulletState, commands, events)),
           particleEffects = mapTableValues(deck.particleEffects, deck.bodies, updateParticleEffect(dice, delta)),
           spirits = mapTable(deck.spirits, updateAiState(world, delta)),
-          timers = if (shouldUpdateLogic(world)) mapTableValues(deck.timers, updateTimer) else deck.timers,
+          timers = mapTableValues(deck.timers, updateTimer),
           timersFloat = mapTableValues(deck.timersFloat, updateFloatTimer(delta))
       )
     }
@@ -90,8 +86,10 @@ fun updateDeck(animationDurations: AnimationDurationMap, definitions: Definition
                world: World,
                nextId: IdSource): (Deck) -> Deck =
     pipe(
-        updateEntities(world.dice, animationDurations, world, intermediate),
+        updateEntities(animationDurations, world, intermediate),
         ifUpdatingLogic(world, updateDeckCache(definitions)),
+        createRespawnCountdowns(nextId),
+        applyFinishedRespawnCountdowns,
         removeWhole(intermediate.events),
         removePartial(intermediate.events),
         cleanupOutdatedReferences,

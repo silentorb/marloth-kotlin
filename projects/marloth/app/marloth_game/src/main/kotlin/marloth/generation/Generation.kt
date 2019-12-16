@@ -6,6 +6,7 @@ import generation.general.explodeBlockMap
 import generation.general.newRandomizedBiomeGrid
 import generation.general.bakeSides
 import marloth.generation.population.populateWorld
+import marloth.integration.newGameModeConfig
 import silentorb.mythic.debugging.getDebugSetting
 import silentorb.mythic.ent.newIdSource
 import org.recast4j.detour.NavMeshQuery
@@ -53,7 +54,8 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
       navMesh = navMesh,
       navMeshQuery = if (navMesh != null) NavMeshQuery(navMesh) else null,
       bulletState = newBulletState(),
-      definitions = definitions
+      definitions = definitions,
+      gameModeConfig = newGameModeConfig()
   )
 }
 

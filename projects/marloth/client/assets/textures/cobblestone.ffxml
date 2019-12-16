@@ -90,16 +90,16 @@
 		</Stones2>
 		<Stones2 id="stones2 03">
 			<Noise red="1" green="1" blue="1" alpha="1"/>
-			<Background red="0.7519379844961240345" green="0.7519379844961240345" blue="0.7519379844961240345" alpha="1"/>
-			<Roughness value="0.2800000000000000266"/>
-			<Contrast value="0.8399999999999999689"/>
+			<Background red="0.5542635658914728536" green="0.5542635658914728536" blue="0.5542635658914728536" alpha="1"/>
+			<Roughness value="0.1000000000000000056"/>
+			<Contrast value="0.7399999999999999911"/>
 			<Formula value="0"/>
 			<Scale value="2.4599999999999999645"/>
 			<Stretch value="0"/>
 			<VerticalStretch value="false"/>
 			<Flat value="true"/>
 			<SolidFill value="false"/>
-			<Details value="0.4000000000000000222"/>
+			<Details value="0.3099999999999999978"/>
 			<Variation value="4919"/>
 			<OctaveCurve value="0"/>
 		</Stones2>
@@ -166,7 +166,7 @@
 	<FilterEditor>
 		<Groups/>
 		<ThumbnailSize value="2"/>
-		<Canvas left="-1136" top="-251" zoom_factor="0"/>
+		<Canvas left="-1072" top="-146" zoom_factor="0"/>
 		<Viewport left="0" top="0" zoom_factor="-2"/>
 		<LockPreview>
 			<Locked value="false"/>

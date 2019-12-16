@@ -10,6 +10,7 @@ import simulation.misc.Definitions
 import simulation.misc.GameOver
 import simulation.misc.Realm
 import silentorb.mythic.physics.BulletState
+import simulation.misc.GameModeConfig
 
 data class World(
     val realm: Realm,
@@ -22,7 +23,8 @@ data class World(
     val navMesh: NavMesh?,
     val navMeshQuery: NavMeshQuery?,
     val bulletState: BulletState,
-    val definitions: Definitions
+    val definitions: Definitions,
+    val gameModeConfig: GameModeConfig
 )
 
 typealias WorldTransform = (World) -> World

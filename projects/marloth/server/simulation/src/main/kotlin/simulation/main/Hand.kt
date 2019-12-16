@@ -36,6 +36,7 @@ data class Hand(
     val performance: Performance? = null,
     val player: Player? = null,
     val resources: ResourceBundle? = null,
+    val respawnCountdown: RespawnCountdown? = null,
     val spirit: Spirit? = null,
     val timer: Timer? = null,
     val timerFloat: FloatTimer? = null,
