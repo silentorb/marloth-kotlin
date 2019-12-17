@@ -19,7 +19,7 @@ import simulation.physics.*
 const val simulationFps = 60
 const val simulationDelta = 1f / simulationFps.toFloat()
 
-fun generateIntermediateRecords(definitions: Definitions, world: World, externalEvents: Events): Events {
+fun generateIntermediateRecords(definitions: Definitions, previous: Deck, world: World, externalEvents: Events): Events {
   val deck = world.deck
   val spiritCommands = pursueGoals(world, aliveSpirits(world.deck))
   val commands = filterCharacterCommandsFromEvents(externalEvents).plus(spiritCommands)
@@ -36,7 +36,7 @@ fun generateIntermediateRecords(definitions: Definitions, world: World, external
       .plus(commandsToEvents(commands))
       .plus(commands)
 
-  return events.plus(eventsFromEvents(world, events))
+  return events.plus(eventsFromEvents(previous, world, events))
 }
 
 val cleanupOutdatedReferences: (Deck) -> Deck = { deck ->
@@ -96,11 +96,11 @@ fun updateWorldDeck(animationDurations: AnimationDurationMap, definitions: Defin
       ))
     }
 
-fun updateWorld(animationDurations: AnimationDurationMap, definitions: Definitions,
+fun updateWorld(animationDurations: AnimationDurationMap, definitions: Definitions, previous: Deck,
                 externalEvents: Events, delta: Float): (World) -> World =
     pipe2(listOf(
         { world ->
-          val events = generateIntermediateRecords(definitions, world, externalEvents)
+          val events = generateIntermediateRecords(definitions,previous, world, externalEvents)
           pipe2(listOf(
               updatePhysics(events),
               updateWorldDeck(animationDurations, definitions, events, delta)

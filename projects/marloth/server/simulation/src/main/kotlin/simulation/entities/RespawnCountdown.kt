@@ -33,17 +33,13 @@ fun newRespawnCountdowns(nextId: IdSource, previous: Deck, next: Deck): List<IdH
   }
 }
 
-fun eventsFromRespawnCountdowns(deck: Deck, events: Events): Events {
-  return if (!isIntTimerUpdateFrame(events))
-    listOf()
-  else {
-    val expiredCountdowns = deck.respawnCountdowns
-        .filter { (id, _) -> deck.timers[id]!!.duration == 0 }
+fun eventsFromRespawnCountdowns(previous: Deck, next: Deck, events: Events): Events {
+  val expiredCountdowns = previous.respawnCountdowns.keys.minus(next.respawnCountdowns.keys)
 
-    expiredCountdowns.flatMap { (_, respawner) ->
-      listOf(
-          RestoreHealth(target = respawner.target)
-      )
-    }
+  return expiredCountdowns.flatMap { id ->
+    val respawner = previous.respawnCountdowns[id]!!
+    listOf(
+        RestoreHealth(target = respawner.target)
+    )
   }
 }

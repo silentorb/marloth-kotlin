@@ -4,6 +4,7 @@ import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
 import simulation.entities.eventsFromRespawnCountdowns
 import simulation.entities.eventsFromTryUseAbility
+import simulation.main.Deck
 import simulation.main.World
 
 inline fun <reified T : GameEvent> mapEvents(crossinline transform: (World) -> (T) -> Events): (World, Events) -> Events {
@@ -14,7 +15,7 @@ inline fun <reified T : GameEvent> mapEvents(crossinline transform: (World) -> (
   }
 }
 
-fun eventsFromEvents(world: World, events: Events): Events =
+fun eventsFromEvents(previous: Deck, world: World, events: Events): Events =
     listOf(
         mapEvents(::eventsFromTryUseAbility)
     )
@@ -23,5 +24,5 @@ fun eventsFromEvents(world: World, events: Events): Events =
             listOf(
                 ::eventsFromRespawnCountdowns
             )
-                .flatMap { it(world.deck, events) }
+                .flatMap { it(previous, world.deck, events) }
         )

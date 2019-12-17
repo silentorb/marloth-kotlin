@@ -113,11 +113,12 @@ fun filterCommands(clientState: ClientState): (List<CharacterCommand>) -> List<C
 
 fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: ClientState, worlds: List<World>, commands: List<CharacterCommand>, events: Events): List<World> {
   val world = worlds.last()
+  val previous = worlds.takeLast(2).first()
   val gameCommands = filterCommands(clientState)(commands)
       .plus(gatherAdditionalGameCommands(previousClient, clientState))
 
   val allEvents = events.plus(gameCommands)
-  val nextWorld = updateWorldFromClient(app, allEvents)(world)
+  val nextWorld = updateWorldFromClient(app, allEvents, previous.deck)(world)
   updateSimulationDatabase(app.db, nextWorld, world)
   return worlds
       .plus(nextWorld)
