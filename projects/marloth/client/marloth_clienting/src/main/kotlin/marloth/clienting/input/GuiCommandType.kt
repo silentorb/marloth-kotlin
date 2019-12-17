@@ -1,6 +1,6 @@
 package marloth.clienting.input
 
-import silentorb.mythic.commanding.CommonCharacterCommands
+import silentorb.mythic.happenings.CommonCharacterCommands
 
 enum class GuiCommandType {
   characterInfo,

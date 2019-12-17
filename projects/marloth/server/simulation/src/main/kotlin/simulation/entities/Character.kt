@@ -2,15 +2,11 @@ package simulation.entities
 
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.pipe2
-import silentorb.mythic.spatial.*
 import marloth.scenery.enums.ResourceId
 import marloth.scenery.enums.Sounds
-import silentorb.mythic.commanding.CommandName
-import silentorb.mythic.commanding.CommonCharacterCommands
-import silentorb.mythic.commanding.Commands
+import silentorb.mythic.happenings.*
 import silentorb.mythic.physics.BulletState
 import simulation.combat.DamageMultipliers
-import simulation.happenings.Events
 import simulation.happenings.PurchaseEvent
 import simulation.happenings.TakeItemEvent
 import simulation.main.Deck
@@ -122,8 +118,9 @@ fun updateCharacter(deck: Deck, bulletState: BulletState, id: Id, character: Cha
   )
 }
 
-fun updateCharacter(deck: Deck, bulletState: BulletState, commands: Commands, events: Events): (Id, Character) -> Character = { id, character ->
+fun updateCharacter(deck: Deck, bulletState: BulletState, events: Events): (Id, Character) -> Character = { id, character ->
   val delta = simulationDelta
+  val commands = events.filterIsInstance<CharacterCommand>()
   if (commands.any()) {
     val k = 0
   }

@@ -2,7 +2,7 @@ package marloth.clienting.input
 
 import silentorb.mythic.haft.*
 import org.lwjgl.glfw.GLFW
-import silentorb.mythic.commanding.CommonCharacterCommands
+import silentorb.mythic.happenings.CommonCharacterCommands
 
 fun defaultKeyboardStrokeBindings() = mapOf(
     GLFW.GLFW_KEY_ESCAPE to GuiCommandType.menu

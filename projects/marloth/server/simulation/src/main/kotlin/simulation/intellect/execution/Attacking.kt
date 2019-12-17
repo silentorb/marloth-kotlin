@@ -1,9 +1,9 @@
 package simulation.intellect.execution
 
 import silentorb.mythic.ent.Id
-import silentorb.mythic.commanding.CharacterCommand
-import silentorb.mythic.commanding.CommonCharacterCommands
-import silentorb.mythic.commanding.Commands
+import silentorb.mythic.happenings.CharacterCommand
+import silentorb.mythic.happenings.CommonCharacterCommands
+import silentorb.mythic.happenings.Commands
 import simulation.intellect.Pursuit
 import simulation.intellect.assessment.Knowledge
 import simulation.main.Deck

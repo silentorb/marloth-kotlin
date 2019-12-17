@@ -3,9 +3,9 @@ package simulation.intellect.execution
 import silentorb.mythic.ent.Id
 import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.spatial.*
-import silentorb.mythic.commanding.CharacterCommand
-import silentorb.mythic.commanding.CommonCharacterCommands
-import silentorb.mythic.commanding.Commands
+import silentorb.mythic.happenings.CharacterCommand
+import silentorb.mythic.happenings.CommonCharacterCommands
+import silentorb.mythic.happenings.Commands
 import simulation.main.World
 import silentorb.mythic.characters.getLookAtAngle
 import silentorb.mythic.characters.maxPositiveLookVelocityChange

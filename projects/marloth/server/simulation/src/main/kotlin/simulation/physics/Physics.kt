@@ -3,8 +3,10 @@ package simulation.physics
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.pipe
 import silentorb.mythic.physics.*
-import silentorb.mythic.commanding.Commands
+import silentorb.mythic.happenings.Commands
 import silentorb.mythic.characters.*
+import silentorb.mythic.happenings.CharacterCommand
+import silentorb.mythic.happenings.Events
 import simulation.main.Deck
 import simulation.main.World
 import silentorb.mythic.spatial.Vector2
@@ -12,7 +14,7 @@ import silentorb.mythic.spatial.Vector3
 import simulation.entities.isAlive
 import simulation.updating.simulationDelta
 
-fun updatePhysics(commands: Commands): (World) -> World = { world ->
+fun updatePhysics(events: Events): (World) -> World = { world ->
   val deck = world.deck
   val physicsDeck = PhysicsDeck(
       bodies = deck.bodies,
@@ -23,6 +25,7 @@ fun updatePhysics(commands: Commands): (World) -> World = { world ->
       bulletState = world.bulletState,
       deck = physicsDeck
   )
+  val commands = events.filterIsInstance<CharacterCommand>()
   val linearForces = allCharacterMovements(physicsDeck, deck.characterRigs, commands)
   val nextPhysicsWorld = updateBulletPhysics(linearForces)(physicsWorld)
   updateCharacterRigBulletBodies(nextPhysicsWorld.bulletState, deck.characterRigs)
@@ -72,8 +75,11 @@ fun updateMarlothCharacterRigFacing(deck: Deck, commands: Commands, id: Id): (Ch
 }
 
 fun updateMarlothCharacterRig(bulletState: BulletState, deck: Deck,
-                              allCommands: Commands): (Id, CharacterRig) -> CharacterRig = { id, characterRig ->
-  val commands = allCommands.filter { it.target == id }
+                              events: Events): (Id, CharacterRig) -> CharacterRig = { id, characterRig ->
+  val commands = events
+      .filterIsInstance<CharacterCommand>()
+      .filter { it.target == id }
+
   pipe(
       updateMarlothCharacterRigFacing(deck, commands, id),
       updateCharacterRigGroundedDistance(bulletState, newCharacterRigHand(deck)(id))

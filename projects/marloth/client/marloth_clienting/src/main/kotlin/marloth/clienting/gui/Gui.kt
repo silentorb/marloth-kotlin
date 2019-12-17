@@ -15,7 +15,7 @@ import silentorb.mythic.glowing.globalState
 import silentorb.mythic.spatial.Vector4
 import org.joml.Vector2i
 import marloth.scenery.enums.Text
-import silentorb.mythic.commanding.CommonCharacterCommands
+import silentorb.mythic.happenings.CommonCharacterCommands
 import simulation.main.World
 import simulation.misc.Definitions
 

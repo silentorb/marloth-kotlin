@@ -7,9 +7,9 @@ import silentorb.mythic.spatial.Vector3
 import org.recast4j.detour.DefaultQueryFilter
 import simulation.entities.getActiveAction
 import simulation.main.World
-import silentorb.mythic.commanding.CharacterCommand
-import silentorb.mythic.commanding.CommonCharacterCommands
-import silentorb.mythic.commanding.Commands
+import silentorb.mythic.happenings.CharacterCommand
+import silentorb.mythic.happenings.CommonCharacterCommands
+import silentorb.mythic.happenings.Commands
 import simulation.intellect.Pursuit
 import simulation.intellect.design.getActionRange
 import simulation.intellect.navigation.asRecastVector3

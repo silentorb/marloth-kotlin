@@ -46,42 +46,11 @@ data class Deck(
 
 val deckReflection = newDeckReflection(Deck::class, Hand::class)
 
-//val handsToDeck = genericHandsToDeck(deckReflection)
 val handToDeck = genericHandToDeck(deckReflection)
 val mergeDecks = genericMergeDecks(deckReflection)
 val allHandsOnDeck = genericAllHandsOnDeck(deckReflection)
 val idHandsToDeck = genericIdHandsToDeck(deckReflection)
 val removeEntities = genericRemoveEntities(deckReflection)
-
-fun <T> mapTable(table: Table<T>, action: (Id, T) -> T): Table<T> =
-    table.mapValues { (id, value) -> action(id, value) }
-
-fun <T> mapTableValues(table: Table<T>, action: (T) -> T): Table<T> =
-    table.mapValues { (_, value) -> action(value) }
-
-fun <A, B> mapTableValues(table: Table<A>, secondTable: Table<B>, action: (B, A) -> A): Table<A> =
-    table.mapValues { (id, value) -> action(secondTable[id]!!, value) }
-
-//fun toDeck(hand: IdHand) = toDeck(hand.id, hand.hand)
-
-//fun toDeck(hands: List<IdHand>): Deck =
-//    hands.fold(Deck(), { d, h -> d.plus(toDeck(h)) })
-
-//fun mergeDecks(decks: List<Deck>): Deck =
-//    decks.reduce { a, deck -> a.plus(deck) }
-
-//fun allHandsOnDeck(hands: List<Hand>, nextId: IdSource, deck: Deck = Deck()): Deck =
-//    hands.fold(deck, { d, h -> d.plus(toDeck(nextId, h)) })
-
-val addHandsToWorld: (List<Hand>) -> WorldTransform = { hands ->
-  { world ->
-    val (nextId, finalize) = newIdSource(world)
-    val deck = allHandsOnDeck(hands, nextId, world.deck)
-    finalize(world.copy(
-        deck = deck
-    ))
-  }
-}
 
 fun addEntitiesToWorldDeck(world: World, transform: (IdSource) -> List<IdHand>): World {
   val (nextId, finalize) = newIdSource(world)
@@ -103,17 +72,7 @@ fun pipeIdHandsToDeck(sources: List<(Deck) -> List<IdHand>>): (Deck) -> Deck = {
   })(deck)
 }
 
-//fun addHands(hands: List<Hand>): WorldTransform =
-//    addDeck { nextId -> hands.map { IdHand(nextId(), it) } }
-//
-//fun addDecks(deckSources: List<(IdSource) -> List<IdHand>>): WorldTransform {
-//  return pipe2(deckSources.map(addDeck))
-//}
-
 typealias DeckSource = (IdSource) -> Deck
 
 fun resolveDecks(nextId: IdSource, deckSources: List<DeckSource>): List<Deck> =
     deckSources.map { it(nextId) }
-
-//fun defaultPlayer(deck: Deck): Id =
-//    deck.players.keys.first()

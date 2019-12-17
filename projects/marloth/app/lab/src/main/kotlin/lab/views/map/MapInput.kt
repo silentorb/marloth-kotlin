@@ -15,8 +15,8 @@ import org.joml.times
 import silentorb.mythic.characters.joinInputVector
 import silentorb.mythic.characters.playerMoveMap
 import silentorb.mythic.lookinglass.createCameraEffectsData
-import silentorb.mythic.commanding.CharacterCommand
-import silentorb.mythic.commanding.CommonCharacterCommands
+import silentorb.mythic.happenings.CharacterCommand
+import silentorb.mythic.happenings.CommonCharacterCommands
 import simulation.misc.Realm
 
 data class Hit(

@@ -3,7 +3,7 @@ package simulation.combat
 import silentorb.mythic.ent.Id
 import silentorb.mythic.spatial.Vector3
 import simulation.happenings.DamageEvent
-import simulation.happenings.Events
+import silentorb.mythic.happenings.Events
 import simulation.happenings.UseAction
 import simulation.main.World
 import silentorb.mythic.physics.castCollisionRay

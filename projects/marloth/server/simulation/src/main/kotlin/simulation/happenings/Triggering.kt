@@ -1,7 +1,7 @@
 package simulation.happenings
 
-import silentorb.mythic.commanding.CommonCharacterCommands
-import silentorb.mythic.commanding.Commands
+import silentorb.mythic.happenings.CommonCharacterCommands
+import silentorb.mythic.happenings.Commands
 import simulation.main.Deck
 
 //data class Triggering<T: Action>(

@@ -5,7 +5,6 @@ import marloth.clienting.input.newGamepadDeviceEntry
 import marloth.generation.population.getPlayerCell
 import marloth.generation.population.newPlayer
 import simulation.main.addEntitiesToWorldDeck
-import simulation.main.addHandsToWorld
 
 val updateAppStateForNewPlayers: (AppState) -> AppState = { appState ->
   val client = appState.client

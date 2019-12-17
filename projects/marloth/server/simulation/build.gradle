@@ -1,7 +1,7 @@
 apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
 requires('spatial', 'sculpting', 'randomly', 'marloth_scenery', 'ent', 'breeze', 'debugging',
-    'commanding', 'physics', 'characters'
+    'happenings', 'physics', 'characters'
 )
 
 buildscript {

@@ -3,8 +3,10 @@ package simulation.entities
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.replacebyKey
+import silentorb.mythic.happenings.Events
 import simulation.main.Deck
 import simulation.main.Hand
+import simulation.main.IdHand
 import simulation.main.allHandsOnDeck
 
 data class RespawnCountdown(
@@ -12,44 +14,36 @@ data class RespawnCountdown(
 )
 
 // Should be performed after destructibles are updated and before entities are removed
-fun createRespawnCountdowns(nextId: IdSource): (Deck) -> Deck = { deck ->
-  val newlyDeceased = deck.destructibles.filter { (key, destructible) ->
-    destructible.health.value == 0 && deck.players.containsKey(key)
-  }.keys
-  if (newlyDeceased.none())
-    deck
-  else {
-    val hands = newlyDeceased.map { character ->
-      Hand(
-          timer = Timer(
-              duration = 3
-          ),
-          respawnCountdown = RespawnCountdown(
-              target = character
-          )
-      )
-    }
-    allHandsOnDeck(hands, nextId, deck)
+fun newRespawnCountdowns(nextId: IdSource, previous: Deck, next: Deck): List<IdHand> {
+  val newlyDeceased = previous.players.keys.filter { id ->
+    previous.characters[id]!!.isAlive && !next.characters[id]!!.isAlive
+  }
+  return newlyDeceased.map { character ->
+    IdHand(
+        id = nextId(),
+        hand = Hand(
+            timer = Timer(
+                duration = 3
+            ),
+            respawnCountdown = RespawnCountdown(
+                target = character
+            )
+        )
+    )
   }
 }
 
-val applyFinishedRespawnCountdowns: (Deck) -> Deck = { deck ->
-  val expiredCountdowns = deck.respawnCountdowns.keys
-      .filter { id -> deck.timers[id]!!.duration == 0 }
-      .toSet()
-  if (expiredCountdowns.none())
-    deck
+fun eventsFromRespawnCountdowns(deck: Deck, events: Events): Events {
+  return if (!isIntTimerUpdateFrame(events))
+    listOf()
   else {
-    val destructibles = replacebyKey<Id, Destructible>(expiredCountdowns)(deck.destructibles) { key, value ->
-      value.copy(
-          health = value.health.copy(
-              value = value.base.health
-          )
+    val expiredCountdowns = deck.respawnCountdowns
+        .filter { (id, _) -> deck.timers[id]!!.duration == 0 }
+
+    expiredCountdowns.flatMap { (_, respawner) ->
+      listOf(
+          RestoreHealth(target = respawner.target)
       )
     }
-    deck.copy(
-        //        respawnCountdowns = deck.respawnCountdowns.minus(expiredCountdowns),
-        destructibles = destructibles
-    )
   }
 }

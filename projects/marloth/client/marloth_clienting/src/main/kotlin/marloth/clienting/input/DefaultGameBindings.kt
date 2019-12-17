@@ -2,7 +2,7 @@ package marloth.clienting.input
 
 import silentorb.mythic.haft.*
 import org.lwjgl.glfw.GLFW
-import silentorb.mythic.commanding.CommonCharacterCommands
+import silentorb.mythic.happenings.CommonCharacterCommands
 
 val gameGamepadStrokeBindings = mapOf(
     GAMEPAD_BUTTON_START to GuiCommandType.menu,

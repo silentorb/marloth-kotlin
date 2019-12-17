@@ -2,10 +2,9 @@ package simulation.happenings
 
 import silentorb.mythic.ent.Id
 import marloth.scenery.enums.ModifierId
+import silentorb.mythic.happenings.GameEvent
 import simulation.combat.Damage
 import simulation.entities.AccessoryName
-
-interface GameEvent {}
 
 data class DamageEvent(
     val damage: Damage,
@@ -40,5 +39,3 @@ data class UseAction(
     val actor: Id,
     val action: Id
 ) : GameEvent
-
-typealias Events = List<GameEvent>

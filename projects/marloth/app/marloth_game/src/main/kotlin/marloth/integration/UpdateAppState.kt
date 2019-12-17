@@ -21,10 +21,10 @@ import persistence.Database
 import persistence.createVictory
 import silentorb.mythic.lookinglass.getPlayerViewports
 import simulation.entities.Player
-import simulation.happenings.Events
-import simulation.happenings.GameEvent
-import silentorb.mythic.commanding.CharacterCommand
-import silentorb.mythic.commanding.CommonCharacterCommands
+import silentorb.mythic.happenings.Events
+import silentorb.mythic.happenings.GameEvent
+import silentorb.mythic.happenings.CharacterCommand
+import silentorb.mythic.happenings.CommonCharacterCommands
 import simulation.main.World
 import simulation.updating.simulationDelta
 import simulation.misc.Victory
@@ -116,7 +116,8 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
   val gameCommands = filterCommands(clientState)(commands)
       .plus(gatherAdditionalGameCommands(previousClient, clientState))
 
-  val nextWorld = updateWorldFromClient(app, gameCommands, events)(world)
+  val allEvents = events.plus(gameCommands)
+  val nextWorld = updateWorldFromClient(app, allEvents)(world)
   updateSimulationDatabase(app.db, nextWorld, world)
   return worlds
       .plus(nextWorld)

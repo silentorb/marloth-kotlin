@@ -1,8 +1,8 @@
 package marloth.integration
 
-import silentorb.mythic.commanding.CharacterCommand
-import silentorb.mythic.commanding.CommandName
-import silentorb.mythic.commanding.commonCharacterCommands
+import silentorb.mythic.happenings.CharacterCommand
+import silentorb.mythic.happenings.CommandName
+import silentorb.mythic.happenings.commonCharacterCommands
 import silentorb.mythic.ent.Id
 import silentorb.mythic.haft.HaftCommands
 

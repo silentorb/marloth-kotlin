@@ -2,10 +2,12 @@ package simulation.entities
 
 import silentorb.mythic.ent.Id
 import marloth.scenery.ArmatureId
-import simulation.happenings.Events
+import silentorb.mythic.ent.IdSource
+import silentorb.mythic.happenings.Events
 import simulation.happenings.UseAction
 import simulation.main.Deck
 import simulation.main.Hand
+import simulation.main.IdHand
 import simulation.misc.Definitions
 
 data class Performance(
@@ -13,16 +15,19 @@ data class Performance(
     val animation: AnimationName
 )
 
-fun newPerformanceHand(animationDurations: AnimationDurationMap): (Performance) -> Hand = { performance ->
-  Hand(
-      performance = performance,
-      timerFloat = FloatTimer(
-          duration = animationDurations[ArmatureId.person.name]!![performance.animation]!!
+fun newPerformanceHand(animationDurations: AnimationDurationMap, nextId: IdSource): (Performance) -> IdHand = { performance ->
+  IdHand(
+      id = nextId(),
+      hand = Hand(
+          performance = performance,
+          timerFloat = FloatTimer(
+              duration = animationDurations[ArmatureId.person.name]!![performance.animation]!!
+          )
       )
   )
 }
 
-fun performancesFromEvents(definitions: Definitions, animationDurations: AnimationDurationMap, deck: Deck, events: Events): List<Hand> {
+fun performancesFromEvents(definitions: Definitions, animationDurations: AnimationDurationMap, nextId: IdSource, deck: Deck, events: Events): List<IdHand> {
   val actionEvents = events.filterIsInstance<UseAction>()
   return actionEvents.mapNotNull { event ->
     val accessory = deck.accessories[event.action]
@@ -33,7 +38,7 @@ fun performancesFromEvents(definitions: Definitions, animationDurations: Animati
           target = event.actor,
           animation = animation
       )
-      newPerformanceHand(animationDurations)(performance)
+      newPerformanceHand(animationDurations, nextId)(performance)
     } else
       null
   }

@@ -17,6 +17,4 @@ data class ApplyBuff(
     val duration: Int
 ) : EventTrigger
 
-data class TakeItem(
-    val placeholder: Int = 0
-): EventTrigger
+class TakeItem: EventTrigger

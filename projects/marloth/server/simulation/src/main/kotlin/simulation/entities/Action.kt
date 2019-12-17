@@ -4,7 +4,7 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import marloth.scenery.enums.AccessoryId
 import simulation.combat.raycastAttack
-import simulation.happenings.Events
+import silentorb.mythic.happenings.Events
 import simulation.happenings.TryUseAbilityEvent
 import simulation.happenings.UseAction
 import simulation.main.Deck

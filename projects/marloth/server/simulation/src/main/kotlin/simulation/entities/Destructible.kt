@@ -3,7 +3,8 @@ package simulation.entities
 import silentorb.mythic.ent.Id
 import simulation.combat.*
 import simulation.happenings.DamageEvent
-import simulation.happenings.Events
+import silentorb.mythic.happenings.Events
+import silentorb.mythic.happenings.GameEvent
 import simulation.misc.ResourceContainer
 import simulation.misc.modifyResource
 
@@ -19,6 +20,12 @@ data class Destructible(
     val lastDamageSource: Id = 0L
 )
 
+// This is intended to be used outside of combat.
+// It overrides any other health modifying events.
+data class RestoreHealth(
+    val target: Id
+) : GameEvent
+
 fun updateDestructibleCache(modifierQuery: DamageModifierQuery): (Id, Destructible) -> Destructible = { id, destructible ->
   val multiplers = calculateDamageMultipliers(modifierQuery, id, destructible.base.damageMultipliers)
   destructible.copy(
@@ -26,7 +33,7 @@ fun updateDestructibleCache(modifierQuery: DamageModifierQuery): (Id, Destructib
   )
 }
 
-fun updateDestructibleHealth(damages: List<Damage>): (Destructible) -> Destructible = { destructible ->
+fun damageDestructible(damages: List<Damage>): (Destructible) -> Destructible = { destructible ->
   if (damages.none()) {
     destructible
   } else {
@@ -39,13 +46,26 @@ fun updateDestructibleHealth(damages: List<Damage>): (Destructible) -> Destructi
   }
 }
 
+val restoreDestructibleHealth: (Destructible) -> Destructible = { destructible ->
+  destructible.copy(
+      health = destructible.health.copy(value = destructible.health.max)
+  )
+}
+
 fun updateDestructibleHealth(events: Events): (Id, Destructible) -> Destructible {
   val damageEvents = events.filterIsInstance<DamageEvent>()
-  return { id, destructible ->
-    val damages = damageEvents
-        .filter { it.target == id }
-        .map { it.damage }
+  val restoreEvents = events.filterIsInstance<RestoreHealth>()
 
-    updateDestructibleHealth(damages)(destructible)
+  return { id, destructible ->
+    if (restoreEvents.any { it.target == id }) {
+      restoreDestructibleHealth(destructible)
+    } else {
+      val damages =
+          damageEvents
+              .filter { it.target == id }
+              .map { it.damage }
+
+      damageDestructible(damages)(destructible)
+    }
   }
 }
