@@ -2,11 +2,11 @@ package simulation.entities
 
 import silentorb.mythic.ent.*
 import silentorb.mythic.happenings.Events
-import silentorb.mythic.happenings.GameEvent
 import simulation.main.Deck
 
 data class Timer(
-    val duration: Int
+    val duration: Int,
+    val interval: Int
 )
 
 val updateTimer: (Timer) -> Timer = { timer ->
@@ -25,16 +25,21 @@ fun updateFloatTimer(delta: Float): (FloatTimer) -> FloatTimer = { timer ->
   )
 }
 
-val isIntTimerUpdateFrame: (Events) -> Boolean = singleValueCache { events ->
-  events.any { it is UpdateIntTimersEvent }
+fun updateIntTimers(events: Events): (Table<Timer>) -> Table<Timer> = { timers ->
+  val frequencies = events
+      .filterIsInstance<IntCycleEvent>()
+      .map { it.interval }
+      .distinct()
+
+  timers.mapValues { (_, timer) ->
+    if (frequencies.contains(timer.interval))
+      updateTimer(timer)
+    else
+      timer
+  }
 }
 
-fun updateIntTimers(events: Events): (Table<Timer>) -> Table<Timer> =
-    if (isIntTimerUpdateFrame(events)) mapTableValues(updateTimer) else ::pass
-
-class UpdateIntTimersEvent : GameEvent
-
-val updateIntTimersEvent = UpdateIntTimersEvent()
+//    if (isIntTimerUpdateFrame(events)) mapTableValues(updateTimer) else ::pass
 
 fun expiredTimers(deck: Deck): Set<Id> =
     setOf<Id>()

@@ -2,12 +2,10 @@ package simulation.entities
 
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
-import silentorb.mythic.ent.replacebyKey
 import silentorb.mythic.happenings.Events
 import simulation.main.Deck
 import simulation.main.Hand
 import simulation.main.IdHand
-import simulation.main.allHandsOnDeck
 
 data class RespawnCountdown(
     val target: Id
@@ -23,7 +21,8 @@ fun newRespawnCountdowns(nextId: IdSource, previous: Deck, next: Deck): List<IdH
         id = nextId(),
         hand = Hand(
             timer = Timer(
-                duration = 3
+                duration = 3,
+                interval = 60
             ),
             respawnCountdown = RespawnCountdown(
                 target = character

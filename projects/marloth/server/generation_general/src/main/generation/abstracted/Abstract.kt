@@ -26,42 +26,35 @@ fun getOtherNode(graph: Graph, first: Id, pivot: Id): Node {
   return options.first()
 }
 
-fun applyInitialBiomes(biomes: BiomeInfoMap, biomeGrid: BiomeGrid, graph: Graph): NodeTable {
-//  val deadEnds = getDeadEnds(graph)
-//  val home = deadEnds[0]
-//  val exit = deadEnds
-//      .drop(1)
-//      .filter { abs(it.position.z - home.position.z) > 5f}
-//      .firstSortedByDescending { it.position.distance(home.position) }
-
-  val homeNode = graph.nodes.values.firstOrNull { it.attributes.contains(NodeAttribute.home) }?.id
-  val exitNode = graph.nodes.values.firstOrNull { it.attributes.contains(NodeAttribute.exit) }?.id
-  val remainingNodes = graph.nodes
-      .minus(listOfNotNull(homeNode, exitNode))
-
-  val homeBiome = biomes.entries.firstOrNull {
-    it.value.attributes.contains(BiomeAttribute.placeOnlyAtStart)
-  }?.key
-
-  val exitBiome = biomes.entries.firstOrNull {
-    it.value.attributes.contains(BiomeAttribute.placeOnlyAtEnd)
-  }?.key
-
-  val fixedBiomeMap: Map<Id, BiomeName> = listOfNotNull(
-      if (homeNode != null && homeBiome != null) Pair(homeNode, homeBiome) else null,
-      if (exitNode != null && exitBiome != null) Pair(exitNode, exitBiome) else null
-  ).associate { it }
-
-  val biomeMap: Map<Id, BiomeName> = remainingNodes
-      .mapValues { (_, node) -> biomeGrid(node.position) }
-      .plus(fixedBiomeMap)
-
-  return graph.nodes.mapValues {
-    it.value.copy(
-        biome = biomeMap[it.value.id]!!
-    )
-  }
-}
+//fun applyInitialBiomes(biomes: BiomeInfoMap, biomeGrid: BiomeGrid, grid: MapGrid): CellTable {
+//  val homeNode = grid.cells.entries.firstOrNull { it.value.attributes.contains(NodeAttribute.home) }?.key
+//  val exitNode = grid.cells.entries.firstOrNull { it.value.attributes.contains(NodeAttribute.exit) }?.key
+//  val remainingNodes = grid.cells.keys
+//      .minus(listOfNotNull(homeNode, exitNode))
+//
+//  val homeBiome = biomes.entries.firstOrNull {
+//    it.value.attributes.contains(BiomeAttribute.placeOnlyAtStart)
+//  }?.key
+//
+//  val exitBiome = biomes.entries.firstOrNull {
+//    it.value.attributes.contains(BiomeAttribute.placeOnlyAtEnd)
+//  }?.key
+//
+//  val fixedBiomeMap: Map<Id, BiomeName> = listOfNotNull(
+//      if (homeNode != null && homeBiome != null) Pair(homeNode, homeBiome) else null,
+//      if (exitNode != null && exitBiome != null) Pair(exitNode, exitBiome) else null
+//  ).associate { it }
+//
+//  val biomeMap: Map<Id, BiomeName> = remainingNodes
+//      .mapValues { (_, node) -> biomeGrid(node.position) }
+//      .plus(fixedBiomeMap)
+//
+//  return grid.cells.keys.associateWith {
+//    it.value.copy(
+//        biome = biomeMap[it.value.id]!!
+//    )
+//  }
+//}
 
 fun <A, B> pass(action: (A) -> A): (Pair<A, B>) -> Pair<A, B> = { (a, b) ->
   Pair(action(a), b)

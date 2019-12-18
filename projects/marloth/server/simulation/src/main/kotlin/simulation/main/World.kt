@@ -19,7 +19,6 @@ data class World(
     val dice: Dice,
     val availableIds: Set<Id>,
     val gameOver: GameOver? = null,
-    val logicUpdateCounter: Int,
     val navMesh: NavMesh?,
     val navMeshQuery: NavMeshQuery?,
     val bulletState: BulletState,
@@ -31,10 +30,10 @@ typealias WorldTransform = (World) -> World
 
 typealias WorldPair = Pair<World, World>
 
-val shouldUpdateLogic = { world: World -> world.logicUpdateCounter == 0 }
+val shouldUpdateLogic = { deck: Deck -> deck.cyclesInt.values.firstOrNull { it.interval == 30 }?.value == 0 }
 
-fun <T> ifUpdatingLogic(world: World, transform: (T) -> T): (T) -> T =
-    if (shouldUpdateLogic(world))
+fun <T> ifUpdatingLogic(deck: Deck, transform: (T) -> T): (T) -> T =
+    if (shouldUpdateLogic(deck))
       transform
     else
       ::pass

@@ -8,6 +8,10 @@ import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.BulletState
 import silentorb.mythic.physics.castCollisionRay
 import silentorb.mythic.characters.CharacterRig
+import simulation.misc.MapGrid
+import simulation.misc.NodeAttribute
+import simulation.misc.Realm
+import simulation.misc.getPointCell
 
 const val viewingRange = 30f
 const val minimumLightRating = 0.0f
@@ -43,7 +47,14 @@ fun lightRating(deck: Deck, id: Id): Float {
 fun nearMod(distance: Float): Float =
     (1 - unitRange(3f, distance)) * 1.2f
 
-fun canSee(bulletState: BulletState, deck: Deck, viewer: Id): (Id) -> Boolean = { target ->
+fun areEnemies(deck: Deck, first: Id, second: Id): Boolean =
+    deck.characters[first]!!.faction != deck.characters[second]!!.faction
+
+fun isHiddenByHome(grid: MapGrid, deck: Deck, viewer: Id, target: Id): Boolean =
+    areEnemies(deck, viewer, target)
+        && grid.cells[getPointCell(deck.bodies[target]!!.position)]?.attributes?.contains(NodeAttribute.home) ?: false
+
+fun canSee(realm: Realm, bulletState: BulletState, deck: Deck, viewer: Id): (Id) -> Boolean = { target ->
   val viewerBody = deck.bodies[viewer]!!
   val targetBody = deck.bodies[target]!!
   val distance = viewerBody.position.distance(targetBody.position)
@@ -51,10 +62,11 @@ fun canSee(bulletState: BulletState, deck: Deck, viewer: Id): (Id) -> Boolean = 
       && isInAngleOfView(deck.characterRigs[viewer]!!, viewerBody, targetBody)
       && castCollisionRay(bulletState.dynamicsWorld, viewerBody.position, targetBody.position) != null
       && lightRating(deck, target) + nearMod(distance) >= minimumLightRating
+      && !isHiddenByHome(realm.grid, deck, viewer, target)
 }
 
-fun getVisibleCharacters(bulletState: BulletState, deck: Deck, character: Id): List<Id> {
+fun getVisibleCharacters(realm: Realm, bulletState: BulletState, deck: Deck, character: Id): List<Id> {
   return deck.characters.keys
       .minus(character)
-      .filter(canSee(bulletState, deck, character))
+      .filter(canSee(realm, bulletState, deck, character))
 }

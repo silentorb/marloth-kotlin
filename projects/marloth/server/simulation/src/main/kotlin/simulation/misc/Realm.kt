@@ -1,13 +1,9 @@
 package simulation.misc
 
 import silentorb.mythic.ent.Id
-import silentorb.mythic.ent.firstFloatSortedBy
-import silentorb.mythic.sculpting.ImmutableEdgeReference
-import silentorb.mythic.sculpting.ImmutableFace
+import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
-import silentorb.mythic.spatial.getCenter
-import silentorb.mythic.randomly.Dice
 
 data class WorldBoundary(
     val start: Vector3,
@@ -48,27 +44,3 @@ data class Realm(
 
 fun getRooms(realm: Realm): List<Node> =
     realm.nodeList.filter { it.isRoom }
-
-// This function does not work with walls containing extreme floor slopes
-val isVerticalEdgeLimited = { edge: ImmutableEdgeReference ->
-  val horizontal = Vector3(edge.first.x - edge.second.x, edge.first.y - edge.second.y, 0f).length()
-  val vertical = Math.abs(edge.first.z - edge.second.z)
-  vertical > horizontal
-}
-
-// This function does not work with walls containing extreme floor slopes
-val isHorizontalEdgeLimited = { edge: ImmutableEdgeReference -> !isVerticalEdgeLimited(edge) }
-
-fun getFloor(face: ImmutableFace): ImmutableEdgeReference {
-  val horizontalEdges = face.edges
-      .filter(isHorizontalEdgeLimited)
-
-  return if (horizontalEdges.any()) {
-    horizontalEdges
-        .firstFloatSortedBy { it.first.z + it.second.z }
-  } else {
-    val center = getCenter(face.vertices)
-    face.edges
-        .firstFloatSortedBy { (it.middle - center).normalize().z }
-  }
-}

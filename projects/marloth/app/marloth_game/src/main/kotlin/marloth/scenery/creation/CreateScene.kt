@@ -52,6 +52,6 @@ fun createScene(deck: Deck): (Id) -> GameScene = { player ->
         )
       else
         listOf(),
-      background = gatherBackground(deck.cycles, camera.position)
+      background = gatherBackground(deck.cyclesFloat, camera.position)
   )
 }

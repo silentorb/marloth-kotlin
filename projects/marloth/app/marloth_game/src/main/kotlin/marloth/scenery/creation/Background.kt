@@ -8,7 +8,7 @@ import silentorb.mythic.lookinglass.ElementGroups
 import silentorb.mythic.lookinglass.Material
 import silentorb.mythic.lookinglass.MeshElement
 import marloth.scenery.enums.MeshId
-import simulation.entities.Cycle
+import simulation.entities.FloatCycle
 
 fun createBackgroundSphere(texture: BackgroundTextureId, cameraPosition: Vector3, orientation: Quaternion = Quaternion()) =
     MeshElement(
@@ -25,7 +25,7 @@ fun createBackgroundSphere(texture: BackgroundTextureId, cameraPosition: Vector3
         )
     )
 
-fun gatherBackground(cycles: Table<Cycle>, cameraPosition: Vector3): ElementGroups {
+fun gatherBackground(cycles: Table<FloatCycle>, cameraPosition: Vector3): ElementGroups {
   return listOf(ElementGroup(
       meshes = listOf(
           Pair(BackgroundTextureId.backgroundNightSky, Quaternion()),

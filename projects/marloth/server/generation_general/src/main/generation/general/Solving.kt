@@ -3,6 +3,7 @@ package generation.general
 import silentorb.mythic.spatial.Vector3i
 import silentorb.mythic.randomly.Dice
 import simulation.misc.ConnectionMap
+import simulation.misc.NodeAttribute
 import simulation.misc.containsConnection
 
 typealias GetBlock = (Vector3i) -> Block?
@@ -81,6 +82,7 @@ fun possibleNextDirections(config: BlockConfig, blockGrid: BlockGrid,
 
 fun blockCanHaveMoreConnections(config: BlockConfig, blockGrid: BlockGrid): (Vector3i) -> Boolean = { position ->
   possibleNextDirections(config, blockGrid, position).any()
+      && !(blockGrid[position]?.attributes?.contains(NodeAttribute.home) ?: false)
 }
 
 typealias UsableConnectionTypes = (Vector3i) -> (Direction) -> Side

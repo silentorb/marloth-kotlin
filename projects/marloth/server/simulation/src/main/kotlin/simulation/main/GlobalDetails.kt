@@ -17,13 +17,6 @@ val updateGlobalDetails: (World) -> World = { world ->
 }
 
 const val updateFrequency = 2
-private const val logicUpdateCounterMax = simulationFps / updateFrequency
-
-val updateBuffUpdateCounter: (World) -> World = { world ->
-  world.copy(
-      logicUpdateCounter = (world.logicUpdateCounter + 1) % logicUpdateCounterMax
-  )
-}
 
 fun divideUp(dividend: Int, divisor: Int): Int {
   val result = dividend / divisor

@@ -5,11 +5,8 @@ import generation.abstracted.normalizeRanges
 import generation.architecture.misc.GenerationConfig
 import marloth.definition.templates.defaultWares
 import marloth.definition.templates.newMerchant
-import silentorb.mythic.ent.Id
 import silentorb.mythic.randomly.Dice
-import marloth.scenery.enums.ModifierId
 import silentorb.mythic.ent.IdSource
-import simulation.main.Hand
 import simulation.main.IdHand
 import simulation.misc.Node
 import simulation.misc.NodeAttribute
@@ -75,11 +72,11 @@ fun fixedDistributions(): DistributionMap = mapOf(
     Occupant.treasureChest to 0
 )
 
-fun populateRooms(occupantToHand: OccupantToHand, dice: Dice, realm: Realm, playerNode: Id): List<IdHand> {
+fun populateRooms(occupantToHand: OccupantToHand, dice: Dice, realm: Realm): List<IdHand> {
   if (System.getenv("NO_OBJECTS") != null)
     return listOf()
 
-  val rooms = getRooms(realm).filter { it.id != playerNode && it.attributes.contains(NodeAttribute.fullFloor) }
+  val rooms = getRooms(realm).filter { it.attributes.contains(NodeAttribute.fullFloor) && !it.attributes.contains(NodeAttribute.home) }
   val scaling = scalingDistributions(dice)
   val fixed = fixedDistributions()
   val occupants = distributeToSlots(dice, rooms.size, scaling, fixed)

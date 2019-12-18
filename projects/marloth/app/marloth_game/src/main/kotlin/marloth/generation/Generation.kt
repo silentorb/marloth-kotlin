@@ -2,24 +2,32 @@ package marloth.generation
 
 import generation.architecture.definition.*
 import generation.architecture.misc.*
+import generation.general.bakeSides
 import generation.general.explodeBlockMap
 import generation.general.newRandomizedBiomeGrid
-import generation.general.bakeSides
 import marloth.generation.population.populateWorld
 import marloth.integration.newGameModeConfig
+import org.recast4j.detour.NavMeshQuery
 import silentorb.mythic.debugging.getDebugSetting
 import silentorb.mythic.ent.newIdSource
-import org.recast4j.detour.NavMeshQuery
 import silentorb.mythic.ent.toIdHands
+import silentorb.mythic.physics.newBulletState
 import silentorb.mythic.randomly.Dice
 import simulation.intellect.navigation.newNavMesh
 import simulation.main.Deck
 import simulation.main.World
-import simulation.misc.Definitions
-import simulation.misc.WorldInput
-import simulation.misc.createWorldBoundary
-import silentorb.mythic.physics.newBulletState
 import simulation.main.pipeIdHandsToDeck
+import simulation.misc.*
+
+fun fixedCellBiomes(grid: MapGrid): CellBiomeMap {
+  val homeNode = grid.cells.entries.firstOrNull { it.value.attributes.contains(NodeAttribute.home) }?.key
+  val exitNode = grid.cells.entries.firstOrNull { it.value.attributes.contains(NodeAttribute.exit) }?.key
+  return listOfNotNull(
+      if (homeNode != null) Pair(homeNode, BiomeId.home.name) else null,
+      if (exitNode != null) Pair(exitNode, BiomeId.exit.name) else null
+  )
+      .associate { it }
+}
 
 fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, input: WorldInput): World {
   val dice = input.dice
@@ -31,7 +39,10 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
   val grid = workbench.mapGrid
   val gridSideMap = bakeSides(independentConnections, openConnectionTypes, grid.connections, workbench.blockGrid)
   val biomeGrid = newRandomizedBiomeGrid(biomeInfoMap, input)
-  val realm = generateRealm(generationConfig, input, grid, biomeGrid)
+  val cellBiomes = applyBiomesToGrid(grid, biomeGrid)
+      .plus(fixedCellBiomes(grid))
+
+  val realm = generateRealm(grid, cellBiomes)
   val nextId = newIdSource(1)
   val deck = pipeIdHandsToDeck(listOf(
       { _ ->
@@ -51,7 +62,6 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
       nextId = nextId(),
       dice = Dice(),
       availableIds = setOf(),
-      logicUpdateCounter = 0,
       navMesh = navMesh,
       navMeshQuery = if (navMesh != null) NavMeshQuery(navMesh) else null,
       bulletState = newBulletState(),

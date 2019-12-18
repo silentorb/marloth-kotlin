@@ -28,7 +28,7 @@ const val memoryLifetime: Float = 5f // In seconds
 //    world.deck.characters[knowledge.spiritId]!!
 
 fun updateCharacterKnowledge(world: World, character: Id, knowledge: Knowledge, delta: Float): Table<CharacterMemory> {
-  val fresh = getVisibleCharacters(world.bulletState, world.deck, character)
+  val fresh = getVisibleCharacters(world.realm, world.bulletState, world.deck, character)
       .map { id ->
         val body = world.deck.bodies[id]!!
         val targetCharacter = world.deck.characters.getValue(id)

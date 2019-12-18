@@ -99,7 +99,8 @@ fun applyBuff(deck: Deck, nextId: IdSource): (ApplyBuffEvent) -> Deck = { event 
     Deck(
         timers = mapOf(
             existing to Timer(
-                duration = duration
+                duration = duration,
+                interval = 2
             )
         )
     )
@@ -115,7 +116,8 @@ fun applyBuff(deck: Deck, nextId: IdSource): (ApplyBuffEvent) -> Deck = { event 
             strength = event.strength
         ),
         timer = Timer(
-            duration = duration
+            duration = duration,
+            interval = 2
         )
     )
     handToDeck(nextId(), hand)

@@ -24,10 +24,9 @@ fun generateIntermediateRecords(definitions: Definitions, previous: Deck, world:
   val spiritCommands = pursueGoals(world, aliveSpirits(world.deck))
   val commands = filterCharacterCommandsFromEvents(externalEvents).plus(spiritCommands)
   val collisions = getBulletCollisions(world.bulletState, deck)
-  val triggerEvents = (if (shouldUpdateLogic(world)) {
+  val triggerEvents = (if (shouldUpdateLogic(deck)) {
     val triggerings = gatherActivatedTriggers(deck, definitions, collisions, commands)
     triggersToEvents(triggerings)
-        .plus(updateIntTimersEvent)
   } else
     listOf())
 
@@ -35,6 +34,7 @@ fun generateIntermediateRecords(definitions: Definitions, previous: Deck, world:
       .plus(triggerEvents)
       .plus(commandsToEvents(commands))
       .plus(commands)
+      .plus(emitCycleEvents(deck.cyclesInt))
 
   return events.plus(eventsFromEvents(previous, world, events))
 }
@@ -56,7 +56,8 @@ fun updateEntities(animationDurations: AnimationDurationMap, world: World, event
           animations = mapTable(deck.animations, updateCharacterAnimation(deck, animationDurations, delta)),
           characterRigs = mapTable(deck.characterRigs, updateMarlothCharacterRig(world.bulletState, deck, events)),
           attachments = mapTable(deck.attachments, updateAttachment(events)),
-          cycles = mapTableValues(deck.cycles, updateCycle(delta)),
+          cyclesFloat = mapTableValues(deck.cyclesFloat, updateFloatCycle(delta)),
+          cyclesInt = mapTableValues(deck.cyclesInt, updateIntCycle),
           destructibles = mapTable(deck.destructibles, updateDestructibleHealth(events)),
           characters = mapTable(deck.characters, updateCharacter(deck, world.bulletState, events)),
           particleEffects = mapTableValues(deck.particleEffects, deck.bodies, updateParticleEffect(dice, delta)),
@@ -79,7 +80,7 @@ fun updateDeck(animationDurations: AnimationDurationMap, definitions: Definition
                nextId: IdSource): (Deck) -> Deck =
     pipe(
         updateEntities(animationDurations, world, events),
-        ifUpdatingLogic(world, updateDeckCache(definitions)),
+        ifUpdatingLogic(world.deck, updateDeckCache(definitions)),
         removeWhole(events, world.deck),
         removePartial(events, world.deck),
         cleanupOutdatedReferences,
@@ -106,6 +107,5 @@ fun updateWorld(animationDurations: AnimationDurationMap, definitions: Definitio
               updateWorldDeck(animationDurations, definitions, events, delta)
           ))(world)
         },
-        updateGlobalDetails,
-        updateBuffUpdateCounter
+        updateGlobalDetails
     ))
