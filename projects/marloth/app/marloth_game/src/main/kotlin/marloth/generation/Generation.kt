@@ -44,11 +44,14 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
 
   val realm = generateRealm(grid, cellBiomes)
   val nextId = newIdSource(1)
+  val architectureSource = buildArchitecture(generationConfig, dice, gridSideMap, workbench, blockMap, realm.cellBiomes, builders)
+  val architectureHands = architectureSource.mapValues { (key, value) -> toIdHands(nextId, value)  }
+  val architectureCells = mapArchitectureCells(architectureHands)
   val deck = pipeIdHandsToDeck(listOf(
       { _ ->
-        toIdHands(nextId, buildArchitecture(generationConfig, dice, gridSideMap, workbench, blockMap, realm.cellBiomes, builders))
+        architectureHands.flatMap { it.value }
       },
-      populateWorld(nextId, generationConfig, input, realm)
+      populateWorld(nextId, generationConfig, input, realm, architectureCells)
   ))(Deck())
 
   val navMesh = if (generationConfig.includeEnemies)

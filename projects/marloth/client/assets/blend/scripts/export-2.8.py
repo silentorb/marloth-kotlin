@@ -241,6 +241,7 @@ def check_topology(objs):
     # if errored:
     #     raise Exception('Aborted export due to topology issues')
 
+
 def prepare_scene(export_dir):
     # Some of the export operations will fail if the blender file was saved in edit mode.
     # Ensure blender is in object mode and not edit mode
@@ -248,7 +249,8 @@ def prepare_scene(export_dir):
 
     deselect_all()
     export_objects = get_export_objects()
-    check_topology(export_objects)
+    if os.environ.get('CHECK_TOPOLOGY', None):
+        check_topology(export_objects)
 
     if len(export_objects) > 0:
         os.makedirs(export_dir, exist_ok=True)
@@ -330,7 +332,9 @@ def main():
     export_file = os.path.join(export_dir, name + '.gltf')
     if prepare_scene(export_dir):
         export_gltf(export_file)
-        # bpy.ops.wm.save_as_mainfile(filepath='e:/deleteme.blend')
+        if os.environ.get('SAVE_DELETEME', None):
+            bpy.ops.wm.save_as_mainfile(filepath='e:/deleteme.blend')
+
         print('Exported ', export_file)
     else:
         print('No objects to export')
