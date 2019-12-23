@@ -14,6 +14,7 @@ val requiredOpen: Side = setOf(ConnectionType.doorway, ConnectionType.open)
 val impassableEmpty = setOf(ConnectionType.impassableEmpty)
 val impassableHorizontalSolid: Side = setOf(ConnectionType.plainWall)
 val impassableHorizontal: Side = impassableHorizontalSolid.plus(setOf(ConnectionType.decoratedWall))
+val optionalDoorway: Side = doorway.plus(impassableHorizontal)
 val optionalOpen: Side = requiredOpen.plus(impassableHorizontal)
 val optionalOpenSolid: Side = setOf(ConnectionType.open, ConnectionType.plainWall)
 val impassableVertical: Side = setOf(ConnectionType.plainWall)
@@ -34,6 +35,19 @@ class BlockDefinitions {
             north = optionalOpen,
             west = optionalOpen,
             south = optionalOpen
+        ),
+        floorMesh(MeshId.squareFloor.name),
+        cubeWalls()
+    )
+
+    val singleCellDoorwayRoom = compose(
+        setOf(CellAttribute.categoryCommon, CellAttribute.fullFloor, CellAttribute.traversable),
+        blockBuilder(
+            up = impassableVertical,
+            east = optionalDoorway,
+            north = optionalDoorway,
+            west = optionalDoorway,
+            south = optionalDoorway
         ),
         floorMesh(MeshId.squareFloor.name),
         cubeWalls()

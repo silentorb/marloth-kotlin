@@ -15,15 +15,14 @@ import simulation.misc.MapGrid
 import simulation.misc.Node
 import simulation.misc.CellAttribute
 
-fun gatherNodeWallMap(deck: Deck, filter: (Map.Entry<Id, ArchitectureElement>) -> Boolean): Map<Id, Set<Id>> =
-    deck.architecture.entries
-        .filter { it.value.isWall }
-        .filter(filter)
-        .groupBy { (id, _) ->
-          val body = deck.bodies[id]!!
-          body.nearestNode
-        }
-        .mapValues { it.value.map { i -> i.key }.toSet() }
+fun groupElementsByCell(deck: Deck, elements: Collection<Id>): Map<Id, Set<Id>> {
+  return elements
+      .groupBy { id ->
+        val body = deck.bodies[id]!!
+        body.nearestNode
+      }
+      .mapValues { it.value.toSet() }
+}
 
 fun placeBuffCloud(node: Node, buff: ModifierId) =
     newBuffCloud(

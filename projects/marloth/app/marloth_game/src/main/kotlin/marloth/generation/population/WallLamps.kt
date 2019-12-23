@@ -17,10 +17,17 @@ import simulation.misc.Realm
 import silentorb.mythic.physics.Body
 
 fun placeWallLamps(deck: Deck, config: GenerationConfig, realm: Realm, dice: Dice, scale: Float): List<Hand> {
-  val nodeWalls = gatherNodeWallMap(deck) {
-    val depiction = deck.depictions[it.key]!!
+  val allWalls = deck.architecture.entries
+      .filter { it.value.isWall }
+      .map { it.key }
+
+  val attachmentWalls = allWalls.filter {
+    val depiction = deck.depictions[it]!!
     config.meshes[depiction.mesh!!]!!.attributes.contains(MeshAttribute.canHaveAttachment)
   }
+
+  val nodeWalls = groupElementsByCell(deck, attachmentWalls)
+
   if (nodeWalls.none())
     return listOf()
 
