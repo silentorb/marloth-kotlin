@@ -14,7 +14,7 @@ import simulation.intellect.Pursuit
 import simulation.intellect.Spirit
 import simulation.main.Hand
 import simulation.misc.*
-import silentorb.mythic.characters.getLookAtAngle
+import silentorb.mythic.characters.getHorizontalLookAtAngle
 import silentorb.mythic.ent.IdSource
 import simulation.main.IdHand
 
@@ -43,7 +43,7 @@ fun newPlayer(nextId: IdSource, definitions: Definitions, grid: MapGrid, cellPos
       definition = creatures.player,
       faction = misfitFaction,
       position = applyCellPosition(cellPosition) + floorOffset + Vector3(0f, 0f, 6f),
-      angle = getLookAtAngle((neighbor - cellPosition).toVector3())
+      angle = getHorizontalLookAtAngle((neighbor - cellPosition).toVector3())
   )
       .plus(
           IdHand(

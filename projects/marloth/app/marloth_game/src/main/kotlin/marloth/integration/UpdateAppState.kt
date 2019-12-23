@@ -67,8 +67,12 @@ fun updateClientPlayers(deckPlayers: Table<Player>): (List<Id>) -> List<Id> = { 
 
 fun updateClientFromWorld(worlds: List<World>): (ClientState) -> ClientState = { clientState ->
   val world = worlds.last()
+
   clientState.copy(
-      players = updateClientPlayers(world.deck.players)(clientState.players),
+      players = if (clientState.commands.any { it.type == GuiCommandType.newGame })
+        listOf()
+      else
+        updateClientPlayers(world.deck.players)(clientState.players),
       playerViews = updateCurrentViews(world, clientState.playerViews)
   )
 }

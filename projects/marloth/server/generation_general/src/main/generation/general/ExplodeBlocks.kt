@@ -1,6 +1,6 @@
 package generation.general
 
-import simulation.misc.NodeAttribute
+import simulation.misc.CellAttribute
 
 data class MappedBlock(
     val original: Block,
@@ -40,7 +40,7 @@ fun rotateSides(rotatingConnections: RotatingConnections, turns: Int): (Sides) -
 
 fun explodeBlockMap(rotatingConnections: RotatingConnections, blocks: Set<Block>): BlockMap {
   val needsRotatedVariations = blocks.filter {
-    !it.attributes.contains(NodeAttribute.lockedRotation) &&
+    !it.attributes.contains(CellAttribute.lockedRotation) &&
         it.sides != rotateSides(rotatingConnections, 1)(it.sides)
   }
   val rotated = needsRotatedVariations.flatMap { originalBlock ->

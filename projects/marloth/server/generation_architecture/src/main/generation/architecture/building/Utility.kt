@@ -8,7 +8,7 @@ import generation.architecture.misc.Builder
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.randomly.Dice
 import marloth.scenery.enums.MeshId
-import simulation.misc.NodeAttribute
+import simulation.misc.CellAttribute
 
 val floorOffset = Vector3(cellHalfLength, cellHalfLength, 0f)
 
@@ -24,16 +24,16 @@ fun mergeSides(blocks: List<Block>): Sides {
   return sides
 }
 
-fun mergeAttributes(blocks: List<Block>): Set<NodeAttribute> =
+fun mergeAttributes(blocks: List<Block>): Set<CellAttribute> =
     blocks.flatMap { it.attributes }.toSet()
 
-fun compose(vararg blockBuilders: BlockBuilderElement): BlockBuilder {
+fun compose(attributes: Set<CellAttribute>, vararg blockBuilders: BlockBuilderElement): BlockBuilder {
   val blocks = blockBuilders.map { it.block }
   val builders = blockBuilders.mapNotNull { it.builder }
   return BlockBuilder(
       block = Block(
           sides = mergeSides(blocks),
-          attributes = mergeAttributes(blocks)
+          attributes = attributes.plus(mergeAttributes(blocks))
       ),
       builder = { input ->
         builders.flatMap { it(input) }
@@ -57,7 +57,7 @@ fun blockBuilder(up: Side = any,
                  north: Side = any,
                  west: Side = any,
                  south: Side = any,
-                 attributes: Set<NodeAttribute> = setOf(),
+                 attributes: Set<CellAttribute> = setOf(),
                  builder: Builder? = null): BlockBuilderElement =
     BlockBuilderElement(
         block = Block(

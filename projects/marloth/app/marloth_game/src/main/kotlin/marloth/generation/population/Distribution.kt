@@ -9,7 +9,7 @@ import silentorb.mythic.randomly.Dice
 import silentorb.mythic.ent.IdSource
 import simulation.main.IdHand
 import simulation.misc.Node
-import simulation.misc.NodeAttribute
+import simulation.misc.CellAttribute
 import simulation.misc.Realm
 import simulation.misc.getRooms
 
@@ -72,11 +72,17 @@ fun fixedDistributions(): DistributionMap = mapOf(
     Occupant.treasureChest to 0
 )
 
+fun supportsPopulation(attributes: Set<CellAttribute>): Boolean =
+    attributes.contains(CellAttribute.fullFloor)
+        && !attributes.contains(CellAttribute.home)
+        && !attributes.contains(CellAttribute.exit)
+
 fun populateRooms(occupantToHand: OccupantToHand, dice: Dice, realm: Realm): List<IdHand> {
   if (System.getenv("NO_OBJECTS") != null)
     return listOf()
 
-  val rooms = getRooms(realm).filter { it.attributes.contains(NodeAttribute.fullFloor) && !it.attributes.contains(NodeAttribute.home) }
+  val rooms = getRooms(realm)
+      .filter { supportsPopulation(it.attributes) }
   val scaling = scalingDistributions(dice)
   val fixed = fixedDistributions()
   val occupants = distributeToSlots(dice, rooms.size, scaling, fixed)

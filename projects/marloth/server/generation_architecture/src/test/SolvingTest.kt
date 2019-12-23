@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test
 import silentorb.mythic.randomly.Dice
 import simulation.misc.Cell
 import simulation.misc.MapGrid
-import simulation.misc.NodeAttribute
+import simulation.misc.CellAttribute
 
-val roomCell = Cell(attributes = setOf(NodeAttribute.fullFloor))
+val roomCell = Cell(attributes = setOf(CellAttribute.fullFloor))
 
 fun newCellStrip(cellPositions: List<Vector3i>) =
     MapGrid(

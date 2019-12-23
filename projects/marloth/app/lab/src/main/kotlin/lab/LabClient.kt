@@ -6,6 +6,7 @@ import lab.views.LabCommandMap
 import lab.views.LabCommandState
 import lab.views.TextureView
 import lab.views.map.mapLayout
+import lab.views.map.mapViewKeyStrokes
 import lab.views.map.updateMapState
 import lab.views.model.ModelView
 import lab.views.model.ModelViewState
@@ -69,7 +70,7 @@ class LabClient(val config: LabConfig, val client: Client) {
 
   fun updateInput(viewCommands: LabCommandMap, deviceStates: List<InputDeviceState>): HaftCommands {
     val bindings = getBindings()
-    val commands = mapEventsToCommands(deviceStates, getBindingSimple(bindings))
+    val commands = mapEventsToCommands(deviceStates, getBindingSimple(bindings, mapViewKeyStrokes))
     val moreCommands = viewCommands.plus(globalKeyPressCommands)
     val allCommands = if (config.view == Views.game)
       moreCommands.plus(gameKeyPressCommands)

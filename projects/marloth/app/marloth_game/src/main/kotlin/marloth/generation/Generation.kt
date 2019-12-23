@@ -20,8 +20,8 @@ import simulation.main.pipeIdHandsToDeck
 import simulation.misc.*
 
 fun fixedCellBiomes(grid: MapGrid): CellBiomeMap {
-  val homeNode = grid.cells.entries.firstOrNull { it.value.attributes.contains(NodeAttribute.home) }?.key
-  val exitNode = grid.cells.entries.firstOrNull { it.value.attributes.contains(NodeAttribute.exit) }?.key
+  val homeNode = grid.cells.entries.firstOrNull { it.value.attributes.contains(CellAttribute.home) }?.key
+  val exitNode = grid.cells.entries.firstOrNull { it.value.attributes.contains(CellAttribute.exit) }?.key
   return listOfNotNull(
       if (homeNode != null) Pair(homeNode, BiomeId.home.name) else null,
       if (exitNode != null) Pair(exitNode, BiomeId.exit.name) else null

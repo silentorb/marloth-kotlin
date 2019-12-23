@@ -4,7 +4,7 @@ import generation.architecture.misc.GenerationConfig
 import silentorb.mythic.randomly.Dice
 import simulation.main.Hand
 import simulation.misc.Graph
-import simulation.misc.NodeAttribute
+import simulation.misc.CellAttribute
 import simulation.misc.Realm
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -41,13 +41,7 @@ fun newFlushSeries(gapSize: Float, segmentLength: Float, margin: Float = 0f): Fl
   )
 }
 
-fun tunnelNodes(graph: Graph) = graph.nodes.values
-    .filter { node -> node.attributes.contains(NodeAttribute.tunnel) }
-
-fun roomNodes(graph: Graph) = graph.nodes.values
-    .filter { node -> node.attributes.contains(NodeAttribute.fullFloor) }
-
-fun nodesWithAllAttributes(graph: Graph, attributes: Set<NodeAttribute>) =
+fun nodesWithAllAttributes(graph: Graph, attributes: Set<CellAttribute>) =
     graph.nodes.values
         .filter { node -> node.attributes.containsAll(attributes) }
 

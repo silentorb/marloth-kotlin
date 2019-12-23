@@ -6,7 +6,7 @@ import silentorb.mythic.spatial.Vector3i
 const val cellLength = 10f
 
 data class Cell(
-    val attributes: Set<NodeAttribute> = setOf()
+    val attributes: Set<CellAttribute> = setOf()
 )
 
 typealias ConnectionPair = Pair<Vector3i, Vector3i>

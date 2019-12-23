@@ -31,3 +31,7 @@ fun mapViewBindings() =
             MOUSE_SCROLL_UP to LabCommandType.zoomIn,
             MOUSE_SCROLL_DOWN to LabCommandType.zoomOut
         )))
+
+val mapViewKeyStrokes = setOf<Any>(
+
+)

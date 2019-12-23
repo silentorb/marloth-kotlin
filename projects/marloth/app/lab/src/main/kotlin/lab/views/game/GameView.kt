@@ -20,6 +20,7 @@ data class GameViewDrawConfig(
     var normals: Boolean = false,
     var skeletons: Boolean = false,
     var world: Boolean = true,
+    var aiTargets: Boolean = false,
     var gui: Boolean = true
 )
 

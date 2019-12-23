@@ -83,8 +83,10 @@ fun getPathTargetPositionOld(world: World, character: Id, path: Path): Vector3 {
 
 fun moveStraightTowardPosition(world: World, character: Id, target: Vector3): Commands {
   val body = world.deck.bodies[character]!!
+  val shape = world.deck.collisionShapes[character]!!
+  val middle = shape.shape.height / 2f
   val position = body.position
-  val offset = (target - position).normalize()
+  val offset = (target - position).copy(z = 0f).normalize()
   return spiritNeedsFacing(world, character, offset, 0.1f) {
     listOf(CharacterCommand(CommonCharacterCommands.moveUp, character))
   }

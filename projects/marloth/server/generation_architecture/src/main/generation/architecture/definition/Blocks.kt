@@ -6,7 +6,7 @@ import generation.general.Side
 import generation.architecture.misc.enumerateMembers
 import generation.architecture.misc.Builder
 import marloth.scenery.enums.MeshId
-import simulation.misc.NodeAttribute
+import simulation.misc.CellAttribute
 
 val any: Side = setOf()
 val doorway: Side = setOf(ConnectionType.doorway)
@@ -27,26 +27,26 @@ class BlockDefinitions {
   companion object {
 
     val singleCellRoom = compose(
+        setOf(CellAttribute.categoryCommon, CellAttribute.fullFloor, CellAttribute.traversable),
         blockBuilder(
             up = impassableVertical,
             east = optionalOpen,
             north = optionalOpen,
             west = optionalOpen,
-            south = optionalOpen,
-            attributes = setOf(NodeAttribute.categoryCommon)
+            south = optionalOpen
         ),
         floorMesh(MeshId.squareFloor.name),
         cubeWalls()
     )
 
     val stairBottom = compose(
+        setOf(CellAttribute.lockedRotation, CellAttribute.traversable),
         blockBuilder(
             up = spiralStaircaseTopOrBottom,
             east = optionalOpenSolid,
             north = optionalOpenSolid,
             south = optionalOpenSolid,
-            west = optionalOpen,
-            attributes = setOf(NodeAttribute.lockedRotation)
+            west = optionalOpen
         ),
         floorMesh(MeshId.squareFloor.name),
         cubeWalls(),
@@ -54,28 +54,28 @@ class BlockDefinitions {
     )
 
     val stairMiddle = compose(
+        setOf(CellAttribute.lockedRotation, CellAttribute.traversable),
         blockBuilder(
             up = spiralStaircaseTop,
             down = spiralStaircaseBottom,
             east = impassableHorizontal,
             north = impassableHorizontal,
             south = impassableHorizontal,
-            west = impassableHorizontal,
-            attributes = setOf(NodeAttribute.lockedRotation)
+            west = impassableHorizontal
         ),
         cubeWalls(),
         curvedStaircases
     )
 
     val stairTop = compose(
+        setOf(CellAttribute.lockedRotation, CellAttribute.traversable),
         blockBuilder(
             up = impassableVertical,
             down = spiralStaircaseTopOrBottom,
             east = optionalOpen,
             north = optionalOpen,
             south = optionalOpen,
-            west = impassableHorizontal,
-            attributes = setOf(NodeAttribute.lockedRotation)
+            west = impassableHorizontal
         ),
         cubeWalls(),
         halfFloorMesh(MeshId.halfSquareFloor.name)
@@ -84,6 +84,7 @@ class BlockDefinitions {
     val diagonalCorner = diagonalCornerFloor(requiredOpen, 0f)
 
     val verticalDiagonal = compose(
+        setOf(CellAttribute.traversable),
         blockBuilder(
             up = impassableVertical,
             down = verticalDiagonalAdapter,
@@ -108,7 +109,7 @@ fun splitBlockBuilders(blockBuilders: List<BlockBuilder>): Pair<Set<Block>, Map<
 
 fun devFilterBlockBuilders(blockBuilders: List<BlockBuilder>): List<BlockBuilder> {
   val filter = when (System.getenv("BLOCK_FILTER")) {
-    "diagonal" -> setOf(NodeAttribute.categoryCommon, NodeAttribute.categoryDiagonal)
+    "diagonal" -> setOf(CellAttribute.categoryCommon, CellAttribute.categoryDiagonal)
     else -> null
   }
 

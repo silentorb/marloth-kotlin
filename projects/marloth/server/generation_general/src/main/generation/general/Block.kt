@@ -1,16 +1,16 @@
 package generation.general
 
-import simulation.misc.NodeAttribute
+import simulation.misc.CellAttribute
 
 typealias Sides = Map<Direction, Side>
 
 data class Block(
     val sides: Sides,
-    val attributes: Set<NodeAttribute>
+    val attributes: Set<CellAttribute>
 )
 
 fun newBlock(up: Side, down: Side, east: Side, north: Side, west: Side, south: Side,
-             attributes: Set<NodeAttribute> = setOf()) =
+             attributes: Set<CellAttribute> = setOf()) =
     Block(
         sides = mapOf(
             Direction.up to up,

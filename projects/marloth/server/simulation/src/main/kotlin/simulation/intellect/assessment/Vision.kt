@@ -9,7 +9,7 @@ import silentorb.mythic.physics.BulletState
 import silentorb.mythic.physics.castCollisionRay
 import silentorb.mythic.characters.CharacterRig
 import simulation.misc.MapGrid
-import simulation.misc.NodeAttribute
+import simulation.misc.CellAttribute
 import simulation.misc.Realm
 import simulation.misc.getPointCell
 
@@ -52,7 +52,7 @@ fun areEnemies(deck: Deck, first: Id, second: Id): Boolean =
 
 fun isHiddenByHome(grid: MapGrid, deck: Deck, viewer: Id, target: Id): Boolean =
     areEnemies(deck, viewer, target)
-        && grid.cells[getPointCell(deck.bodies[target]!!.position)]?.attributes?.contains(NodeAttribute.home) ?: false
+        && grid.cells[getPointCell(deck.bodies[target]!!.position)]?.attributes?.contains(CellAttribute.home) ?: false
 
 fun canSee(realm: Realm, bulletState: BulletState, deck: Deck, viewer: Id): (Id) -> Boolean = { target ->
   val viewerBody = deck.bodies[viewer]!!

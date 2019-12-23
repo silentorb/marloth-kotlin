@@ -60,7 +60,7 @@ fun updateMarlothCharacterRigFacing(deck: Deck, commands: Commands, id: Id): (Ch
       val killerBody = deck.bodies[source]
       if (killerBody != null) {
         val facingVector = (killerBody.position - deck.bodies[id]!!.position).normalize()
-        val lookAtAngle = getLookAtAngle(facingVector)
+        val lookAtAngle = getHorizontalLookAtAngle(facingVector)
         characterRig.copy(
             lookVelocity = Vector2(),
             facingRotation = Vector3(0f, 0f, lookAtAngle)

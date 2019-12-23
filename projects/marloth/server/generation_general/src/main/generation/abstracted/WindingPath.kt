@@ -5,7 +5,7 @@ import silentorb.mythic.spatial.Vector3i
 import silentorb.mythic.randomly.Dice
 import simulation.misc.Cell
 import simulation.misc.MapGrid
-import simulation.misc.NodeAttribute
+import simulation.misc.CellAttribute
 import simulation.misc.cellConnections
 
 private fun nextDirection(dice: Dice, config: BlockConfig, blockGrid: BlockGrid,
@@ -19,7 +19,7 @@ private fun nextDirection(dice: Dice, config: BlockConfig, blockGrid: BlockGrid,
 }
 
 private fun newPathStep(position: Vector3i, direction: Vector3i, block: Block,
-                        attributes: Set<NodeAttribute> = setOf()): (Workbench) -> Workbench = { workbench ->
+                        attributes: Set<CellAttribute> = setOf()): (Workbench) -> Workbench = { workbench ->
   val nextPosition = position + direction
   val grid = workbench.mapGrid
   val blockGrid = workbench.blockGrid
@@ -32,7 +32,7 @@ private fun newPathStep(position: Vector3i, direction: Vector3i, block: Block,
       ),
       mapGrid = grid.copy(
           cells = grid.cells.plus(listOf(
-              nextPosition to Cell(attributes = attributes.plus(setOf(NodeAttribute.fullFloor)))
+              nextPosition to Cell(attributes = attributes)
           )),
           connections = grid.connections.plus(listOf(
               Pair(position, nextPosition)
@@ -53,7 +53,7 @@ tailrec fun addPathStep(maxSteps: Int, dice: Dice, config: BlockConfig, workbenc
 
   val (direction, offset) = directionPair
   val attributes = if (stepCount == maxSteps - 1)
-    setOf(NodeAttribute.exit)
+    setOf(CellAttribute.exit)
   else
     setOf()
 
@@ -83,7 +83,7 @@ fun newWindingWorkbench(firstBlock: Block): Workbench {
       ),
       mapGrid = MapGrid(
           cells = mapOf(
-              startPosition to Cell(attributes = setOf(NodeAttribute.fullFloor, NodeAttribute.home))
+              startPosition to Cell(attributes = setOf(CellAttribute.fullFloor, CellAttribute.home))
           )
       )
   )

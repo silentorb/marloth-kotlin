@@ -6,6 +6,7 @@ import generation.general.Direction
 import generation.general.Side
 import silentorb.mythic.spatial.Vector3
 import marloth.scenery.enums.MeshId
+import simulation.misc.CellAttribute
 
 const val quarterStep = cellLength / 4f
 
@@ -22,7 +23,7 @@ private val levels = listOf(
 )
 
 private fun newSlope(lower: Level, higherSide: Side, upSide: Side = extraHeadroom) =
-    compose(
+    compose(setOf(CellAttribute.traversable),
         blockBuilder(
             up = upSide,
             east = higherSide,
@@ -42,7 +43,7 @@ fun explodeHeightBlocks(levelIndex: Int): Collection<BlockBuilder> {
   val halfStepRequiredOpen: Side = level.side
   val halfStepOptionalOpen: Side = halfStepRequiredOpen.plus(ConnectionType.plainWall)
   return mapOf(
-      "halfStepRoom" to compose(
+      "halfStepRoom" to compose(setOf(CellAttribute.traversable, CellAttribute.fullFloor),
           blockBuilder(
               up = extraHeadroom,
               east = halfStepOptionalOpen,

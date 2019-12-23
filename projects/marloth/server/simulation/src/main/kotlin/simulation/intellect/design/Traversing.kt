@@ -8,6 +8,7 @@ import simulation.intellect.Path
 import simulation.intellect.Pursuit
 import simulation.intellect.assessment.Knowledge
 import simulation.main.World
+import simulation.misc.CellAttribute
 import simulation.misc.cellLength
 import simulation.misc.getPointCell
 
@@ -39,7 +40,9 @@ import simulation.misc.getPointCell
 fun startRoaming(world: World, character: Id, knowledge: Knowledge): Vector3? {
   val body = world.deck.bodies[character]!!
   val currentCell = getPointCell(body.position)
-  val options = knowledge.grid.cells.keys.minus(currentCell)
+  val options = knowledge.grid.cells
+      .filter {it.value.attributes.contains(CellAttribute.traversable)}
+      .keys.minus(currentCell)
   val destination = Dice.global.takeOne(options)
   return destination.toVector3() + cellLength / 2f
 }

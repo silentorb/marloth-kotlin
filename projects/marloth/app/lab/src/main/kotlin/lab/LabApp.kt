@@ -20,16 +20,25 @@ import marloth.front.RenderHook
 import marloth.generation.generateWorld
 import marloth.generation.newGenerationDice
 import marloth.integration.*
+import marloth.scenery.enums.MeshId
 import silentorb.mythic.desktop.createDesktopPlatform
 import silentorb.mythic.ent.pipe
 import silentorb.mythic.quartz.newTimestepState
 import org.lwjgl.glfw.GLFW
 import silentorb.mythic.debugging.getDebugRangeValue
 import silentorb.mythic.debugging.setDebugRangeValue
+import silentorb.mythic.glowing.DrawMethod
+import silentorb.mythic.glowing.drawMesh
+import silentorb.mythic.glowing.globalState
+import silentorb.mythic.lookinglass.shading.ObjectShaderConfig
+import silentorb.mythic.lookinglass.shading.ShaderFeatureConfig
+import silentorb.mythic.spatial.Matrix
+import silentorb.mythic.spatial.Vector4
 import simulation.main.World
 import simulation.misc.Definitions
 import simulation.misc.WorldInput
 import simulation.misc.createWorldBoundary
+import kotlin.math.abs
 
 const val labConfigPath = "../labConfig.yaml"
 
@@ -68,14 +77,33 @@ data class LabApp(
 private var saveIncrement = 0f
 
 fun labRender(app: LabApp, state: LabState): RenderHook = { sceneRenderer ->
+  val world = state.app.worlds.last()
+  val deck = world.deck
+  val renderer = sceneRenderer.renderer
   if (app.config.gameView.drawPhysics) {
-    val world = state.app.worlds.last()
-    val deck = world.deck
     drawBulletDebug(world.bulletState, deck.bodies[deck.players.keys.first()]!!.position)(sceneRenderer)
   }
   val navMesh = state.app.worlds.last().navMesh
   if (navMesh != null)
-    renderNavMesh(sceneRenderer.renderer, app.config.mapView.display, navMesh)
+    renderNavMesh(renderer, app.config.mapView.display, navMesh)
+
+  if (app.config.gameView.draw.aiTargets) {
+    val targets = deck.spirits.mapNotNull { it.value.pursuit.targetPosition }
+    val effect = renderer.getShader(renderer.vertexSchemas.flat, ShaderFeatureConfig())
+    val cube = renderer.meshes[MeshId.cube.name]!!.primitives.first()
+    for (target in targets) {
+      effect.activate(ObjectShaderConfig(
+          color = Vector4(1f, 0f, 1f, 0.7f),
+          transform = Matrix()
+              .translate(target)
+              .scale(0.6f)
+
+      ))
+      globalState.depthEnabled = false
+      drawMesh(cube.mesh, DrawMethod.triangleFan)
+      globalState.depthEnabled = true
+    }
+  }
 }
 
 fun updateDebugRangeValue(appState: AppState) {
@@ -84,8 +112,7 @@ fun updateDebugRangeValue(appState: AppState) {
   if (events.any { it.index == GLFW.GLFW_KEY_MINUS }) {
     val value = getDebugRangeValue()
     setDebugRangeValue(Math.max(value - increment, 0f))
-  }
-  else if (events.any { it.index == GLFW.GLFW_KEY_EQUAL }) {
+  } else if (events.any { it.index == GLFW.GLFW_KEY_EQUAL }) {
     val value = getDebugRangeValue()
     setDebugRangeValue(Math.min(value + increment, 1f))
   }

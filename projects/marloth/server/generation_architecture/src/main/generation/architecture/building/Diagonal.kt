@@ -8,7 +8,7 @@ import generation.general.Side
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Vector3
 import marloth.scenery.enums.MeshId
-import simulation.misc.NodeAttribute
+import simulation.misc.CellAttribute
 
 fun randomDiagonalWall(height: Float = 0f) = blockBuilder { input ->
   val cell = input.cell
@@ -24,15 +24,14 @@ fun randomDiagonalWall(height: Float = 0f) = blockBuilder { input ->
 }
 
 fun diagonalCornerFloor(openSide: Side, height: Float) =
-    compose(
+    compose(setOf(CellAttribute.categoryDiagonal, CellAttribute.traversable),
         blockBuilder(
             up = impassableVertical,
             down = impassableVertical,
             east = openSide,
             north = openSide,
             west = impassableHorizontal,
-            south = impassableHorizontal,
-            attributes = setOf(NodeAttribute.categoryDiagonal)
+            south = impassableHorizontal
         ),
         diagonalHalfFloorMesh(MeshId.squareFloorHalfDiagonal.name, height),
         randomDiagonalWall(height)

@@ -13,7 +13,7 @@ import simulation.entities.ArchitectureElement
 import simulation.main.Deck
 import simulation.misc.MapGrid
 import simulation.misc.Node
-import simulation.misc.NodeAttribute
+import simulation.misc.CellAttribute
 
 fun gatherNodeWallMap(deck: Deck, filter: (Map.Entry<Id, ArchitectureElement>) -> Boolean): Map<Id, Set<Id>> =
     deck.architecture.entries
@@ -36,4 +36,4 @@ fun placeTreasureChest(meshInfo: MeshInfoMap, node: Node, amount: Int) =
     newTreasureChest(meshInfo, alignWithNodeFloor(meshInfo, node, MeshId.treasureChest.name) + floorOffset, amount)
 
 fun getPlayerCell(grid: MapGrid) =
-    grid.cells.entries.first { it.value.attributes.contains(NodeAttribute.home) }.key
+    grid.cells.entries.first { it.value.attributes.contains(CellAttribute.home) }.key
