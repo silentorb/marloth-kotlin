@@ -8,9 +8,7 @@ import simulation.intellect.Path
 import simulation.intellect.Pursuit
 import simulation.intellect.assessment.Knowledge
 import simulation.main.World
-import simulation.misc.CellAttribute
-import simulation.misc.cellLength
-import simulation.misc.getPointCell
+import simulation.misc.*
 
 //fun getNextPathNode(world: World, knowledge: Knowledge, path: Path): Id? {
 //  val body = world.deck.bodies[knowledge.spiritId]!!
@@ -37,14 +35,18 @@ import simulation.misc.getPointCell
 //  return path
 //}
 
+fun isMonsterExplorable(attributes: Set<CellAttribute>): Boolean =
+    attributes.contains(CellAttribute.traversable)
+        && !attributes.contains(CellAttribute.home)
+
 fun startRoaming(world: World, character: Id, knowledge: Knowledge): Vector3? {
   val body = world.deck.bodies[character]!!
   val currentCell = getPointCell(body.position)
   val options = knowledge.grid.cells
-      .filter {it.value.attributes.contains(CellAttribute.traversable)}
+      .filter { isMonsterExplorable(it.value.attributes) }
       .keys.minus(currentCell)
   val destination = Dice.global.takeOne(options)
-  return destination.toVector3() + cellLength / 2f
+  return absoluteCellPosition(destination) + floorOffset
 }
 
 fun getRemainingPath(node: Id, path: Path): Path {
@@ -73,7 +75,7 @@ fun updateRoamingTargetPosition(world: World, character: Id, knowledge: Knowledg
     startRoaming(world, character, knowledge)
   else {
     val body = world.deck.bodies[character]!!
-    if (body.position.distance(pursuit.targetPosition) < 1f)
+    if (body.position.distance(pursuit.targetPosition) < cellHalfLength)
       startRoaming(world, character, knowledge)
     else
       pursuit.targetPosition

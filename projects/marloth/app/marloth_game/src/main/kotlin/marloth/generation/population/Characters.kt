@@ -1,7 +1,6 @@
 package marloth.generation.population
 
-import generation.architecture.building.floorOffset
-import generation.architecture.misc.applyCellPosition
+import simulation.misc.floorOffset
 import marloth.definition.creatures
 import marloth.definition.newCharacter
 import silentorb.mythic.ent.Id
@@ -29,11 +28,11 @@ fun placeAiCharacter(nextId: IdSource, definitions: Definitions, faction: Id, de
   )
 }
 
-fun placeEnemy(nextId: IdSource, definitions: Definitions, node: Node): List<IdHand> =
+fun placeEnemy(nextId: IdSource, definitions: Definitions, cell: Vector3): List<IdHand> =
     placeAiCharacter(nextId, definitions,
         faction = monsterFaction,
         definition = creatures.monster,
-        position = node.position
+        position = cell
     )
 
 fun newPlayer(nextId: IdSource, definitions: Definitions, grid: MapGrid, cellPosition: Vector3i): List<IdHand> {
@@ -42,7 +41,7 @@ fun newPlayer(nextId: IdSource, definitions: Definitions, grid: MapGrid, cellPos
   return newCharacter(nextId, character, definitions,
       definition = creatures.player,
       faction = misfitFaction,
-      position = applyCellPosition(cellPosition) + floorOffset + Vector3(0f, 0f, 6f),
+      position = absoluteCellPosition(cellPosition) + floorOffset + Vector3(0f, 0f, 6f),
       angle = getHorizontalLookAtAngle((neighbor - cellPosition).toVector3())
   )
       .plus(

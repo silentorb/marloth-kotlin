@@ -3,7 +3,7 @@ package generation.architecture.building
 import generation.architecture.definition.RandomMeshQuery
 import generation.architecture.misc.BuilderInput
 import generation.architecture.misc.GenerationConfig
-import generation.architecture.old.cellHalfLength
+import simulation.misc.cellHalfLength
 import generation.architecture.old.newArchitectureMesh
 import generation.general.*
 import silentorb.mythic.spatial.*

@@ -1,6 +1,6 @@
 package marloth.generation.population
 
-import generation.architecture.building.floorOffset
+import simulation.misc.floorOffset
 import generation.architecture.misc.MeshInfoMap
 import generation.architecture.old.alignWithNodeFloor
 import generation.architecture.old.nodeFloorCenter
@@ -9,7 +9,6 @@ import marloth.definition.templates.newTreasureChest
 import silentorb.mythic.ent.Id
 import marloth.scenery.enums.MeshId
 import marloth.scenery.enums.ModifierId
-import simulation.entities.ArchitectureElement
 import simulation.main.Deck
 import simulation.misc.MapGrid
 import simulation.misc.Node

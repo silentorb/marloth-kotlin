@@ -1,7 +1,7 @@
 package generation.architecture.building
 
 import generation.architecture.old.applyTurns
-import generation.architecture.old.cellHalfLength
+import simulation.misc.cellHalfLength
 import generation.architecture.definition.impassableHorizontal
 import generation.architecture.definition.impassableVertical
 import generation.general.Side

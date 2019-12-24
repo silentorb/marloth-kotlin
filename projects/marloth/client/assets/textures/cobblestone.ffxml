@@ -2,7 +2,7 @@
 <Filter>
 	<Components>
 		<Result id="result">
-			<Source source="blend6 01"/>
+			<Source source="multiblend2 01"/>
 			<FilterType value="0"/>
 			<Advanced value="false"/>
 			<Lighting>
@@ -44,32 +44,52 @@
 			</Lighting>
 		</Result>
 		<Blend6 id="blend6 01">
-			<Foreground source="stones2 01" red="1" green="1" blue="1" alpha="1"/>
+			<Foreground red="1" green="1" blue="1" alpha="1"/>
 			<Background red="0" green="0" blue="0" alpha="1"/>
-			<Opacity source="stones2 03" value="0.5"/>
+			<Opacity value="0.5"/>
 			<Mode value="0"/>
 		</Blend6>
+		<Invert2 id="invert2 01">
+			<Source source="stones2 02"/>
+			<Invert value="true"/>
+		</Invert2>
+		<Multiblend2 id="multiblend2 01">
+			<Layer7 source="stones2 05" red="1" green="0.0660000000000000031" blue="0" alpha="1"/>
+			<Opacity7 value="0.4500000000000000111"/>
+			<Layer6 source="stones2 01" red="1" green="0.7720000000000000195" blue="0.1130000000000000032" alpha="1"/>
+			<Opacity6 value="1"/>
+			<Layer5 red="1" green="1" blue="0.1680000000000000104" alpha="1"/>
+			<Opacity5 value="0"/>
+			<Layer4 red="0.125" green="1" blue="0.1839999999999999969" alpha="1"/>
+			<Opacity4 value="0"/>
+			<Layer3 red="0" green="1" blue="1" alpha="1"/>
+			<Opacity3 value="0"/>
+			<Layer2 red="0" green="0.7600000000000000089" blue="1" alpha="1"/>
+			<Opacity2 value="0"/>
+			<Layer1 red="0" green="0" blue="0" alpha="1"/>
+			<Opacity1 value="1"/>
+		</Multiblend2>
 		<PerlinNoise2 id="perlinnoise2 01">
 			<Noise red="1" green="0.8725756341809187688" blue="0.7248062015503875521" alpha="1"/>
-			<Background red="0.2154918574604891834" green="0.3410852713178295081" blue="0.2399263737751468339" alpha="1"/>
+			<Background red="0.595954930125467075" green="0.6007751937984495694" blue="0.5355747851691604611" alpha="1"/>
 			<Roughness value="0.6600000000000000311"/>
-			<Scale value="2.5"/>
+			<Scale value="0.9899999999999999911"/>
 			<Stretch value="0"/>
 			<Angle value="0"/>
 			<Details value="1"/>
-			<Contrast value="0.25"/>
+			<Contrast value="0"/>
 			<Variation value="1"/>
 			<OctaveCurve value="0"/>
 		</PerlinNoise2>
 		<PerlinNoise2 id="perlinnoise2 02">
-			<Noise red="0.1045610239769245026" green="0.1167385322034064643" blue="0.155038759689922534" alpha="1"/>
+			<Noise red="0.1555345231656751759" green="0.1657005679797471653" blue="0.1976744186046511809" alpha="1"/>
 			<Background red="0" green="0" blue="0" alpha="1"/>
 			<Roughness value="0.2000000000000000111"/>
-			<Scale value="2.1299999999999998934"/>
+			<Scale value="0.2099999999999999922"/>
 			<Stretch value="0"/>
 			<Angle value="0"/>
 			<Details value="1"/>
-			<Contrast value="0.25"/>
+			<Contrast value="0.0700000000000000067"/>
 			<Variation value="1"/>
 			<OctaveCurve value="0"/>
 		</PerlinNoise2>
@@ -84,9 +104,24 @@
 			<VerticalStretch value="false"/>
 			<Flat value="true"/>
 			<SolidFill value="false"/>
-			<Details value="0.4000000000000000222"/>
+			<Details value="0"/>
 			<Variation value="4919"/>
-			<OctaveCurve value="0"/>
+			<OctaveCurve value="1"/>
+		</Stones2>
+		<Stones2 id="stones2 02">
+			<Noise red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.1000000000000000056"/>
+			<Contrast value="0"/>
+			<Formula value="0"/>
+			<Scale value="2.4599999999999999645"/>
+			<Stretch value="0"/>
+			<VerticalStretch value="false"/>
+			<Flat value="true"/>
+			<SolidFill value="false"/>
+			<Details value="0"/>
+			<Variation value="4919"/>
+			<OctaveCurve value="1"/>
 		</Stones2>
 		<Stones2 id="stones2 03">
 			<Noise red="1" green="1" blue="1" alpha="1"/>
@@ -99,7 +134,37 @@
 			<VerticalStretch value="false"/>
 			<Flat value="true"/>
 			<SolidFill value="false"/>
-			<Details value="0.3099999999999999978"/>
+			<Details value="0"/>
+			<Variation value="4919"/>
+			<OctaveCurve value="0"/>
+		</Stones2>
+		<Stones2 id="stones2 04">
+			<Noise source="perlinnoise2 01" red="1" green="1" blue="1" alpha="1"/>
+			<Background source="perlinnoise2 02" red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.2800000000000000266"/>
+			<Contrast value="0.3200000000000000067"/>
+			<Formula value="0"/>
+			<Scale value="1.9199999999999999289"/>
+			<Stretch value="0"/>
+			<VerticalStretch value="false"/>
+			<Flat value="true"/>
+			<SolidFill value="false"/>
+			<Details value="0.4000000000000000222"/>
+			<Variation value="4919"/>
+			<OctaveCurve value="1"/>
+		</Stones2>
+		<Stones2 id="stones2 05">
+			<Noise source="perlinnoise2 01" red="1" green="1" blue="1" alpha="1"/>
+			<Background source="perlinnoise2 02" red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.2800000000000000266"/>
+			<Contrast value="0.3200000000000000067"/>
+			<Formula value="0"/>
+			<Scale value="2.4599999999999999645"/>
+			<Stretch value="0"/>
+			<VerticalStretch value="false"/>
+			<Flat value="true"/>
+			<SolidFill value="false"/>
+			<Details value="0"/>
 			<Variation value="4919"/>
 			<OctaveCurve value="0"/>
 		</Stones2>
@@ -166,14 +231,20 @@
 	<FilterEditor>
 		<Groups/>
 		<ThumbnailSize value="2"/>
-		<Canvas left="-1072" top="-146" zoom_factor="0"/>
-		<Viewport left="0" top="0" zoom_factor="-2"/>
+		<Canvas left="-1200" top="-233" zoom_factor="0"/>
+		<Viewport left="0" top="22" zoom_factor="1"/>
 		<LockPreview>
 			<Locked value="false"/>
 			<LockedComponent name=""/>
 		</LockPreview>
 		<Item id="blend6 01">
 			<Position left="-624" top="160"/>
+		</Item>
+		<Item id="invert2 01">
+			<Position left="-736" top="656"/>
+		</Item>
+		<Item id="multiblend2 01">
+			<Position left="-1040" top="400"/>
 		</Item>
 		<Item id="perlinnoise2 01">
 			<Position left="64" top="96"/>
@@ -182,13 +253,22 @@
 			<Position left="48" top="352"/>
 		</Item>
 		<Item id="result">
-			<Position left="-864" top="48"/>
+			<Position left="-1376" top="288"/>
 		</Item>
 		<Item id="stones2 01">
 			<Position left="-304" top="80"/>
 		</Item>
+		<Item id="stones2 02">
+			<Position left="-304" top="624"/>
+		</Item>
 		<Item id="stones2 03">
-			<Position left="-320" top="368"/>
+			<Position left="-304" top="352"/>
+		</Item>
+		<Item id="stones2 04">
+			<Position left="-720" top="-192"/>
+		</Item>
+		<Item id="stones2 05">
+			<Position left="-304" top="-272"/>
 		</Item>
 	</FilterEditor>
 </Filter>

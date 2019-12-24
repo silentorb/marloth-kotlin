@@ -14,6 +14,8 @@ import lab.views.model.newModelViewState
 import marloth.clienting.newClientState
 import generation.architecture.definition.biomeInfoMap
 import generation.architecture.definition.meshAttributes
+import lab.views.game.conditionalDrawAiTargets
+import lab.views.game.drawAiTargets
 import marloth.definition.staticDefinitions
 import marloth.front.GameApp
 import marloth.front.RenderHook
@@ -87,23 +89,7 @@ fun labRender(app: LabApp, state: LabState): RenderHook = { sceneRenderer ->
   if (navMesh != null)
     renderNavMesh(renderer, app.config.mapView.display, navMesh)
 
-  if (app.config.gameView.draw.aiTargets) {
-    val targets = deck.spirits.mapNotNull { it.value.pursuit.targetPosition }
-    val effect = renderer.getShader(renderer.vertexSchemas.flat, ShaderFeatureConfig())
-    val cube = renderer.meshes[MeshId.cube.name]!!.primitives.first()
-    for (target in targets) {
-      effect.activate(ObjectShaderConfig(
-          color = Vector4(1f, 0f, 1f, 0.7f),
-          transform = Matrix()
-              .translate(target)
-              .scale(0.6f)
-
-      ))
-      globalState.depthEnabled = false
-      drawMesh(cube.mesh, DrawMethod.triangleFan)
-      globalState.depthEnabled = true
-    }
-  }
+  conditionalDrawAiTargets(deck, renderer)
 }
 
 fun updateDebugRangeValue(appState: AppState) {

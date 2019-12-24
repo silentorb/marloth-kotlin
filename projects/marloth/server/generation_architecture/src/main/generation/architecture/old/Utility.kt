@@ -19,12 +19,9 @@ import simulation.main.Hand
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
 import simulation.misc.Node
-import simulation.misc.cellLength
 import kotlin.math.atan
 
 const val roundedMeshPadding = 0.08f
-
-val cellHalfLength = cellLength / 2f
 
 fun getHorizontalFlip(dice: Dice, info: ArchitectureMeshInfo): Float =
     if (info.attributes.contains(MeshAttribute.canFlipHorizontally) && dice.getBoolean()) Pi else 0f

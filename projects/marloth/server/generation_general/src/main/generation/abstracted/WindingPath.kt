@@ -32,7 +32,7 @@ private fun newPathStep(position: Vector3i, direction: Vector3i, block: Block,
       ),
       mapGrid = grid.copy(
           cells = grid.cells.plus(listOf(
-              nextPosition to Cell(attributes = attributes)
+              nextPosition to Cell(attributes = attributes.plus(block.attributes))
           )),
           connections = grid.connections.plus(listOf(
               Pair(position, nextPosition)

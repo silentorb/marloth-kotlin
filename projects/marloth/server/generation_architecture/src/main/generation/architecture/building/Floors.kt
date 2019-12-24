@@ -10,6 +10,7 @@ import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.scenery.MeshName
 import simulation.entities.ArchitectureElement
 import simulation.misc.cellLength
+import simulation.misc.floorOffset
 import kotlin.math.asin
 
 fun floorMeshBuilder(mesh: MeshName, offset: Vector3 = Vector3.zero,

@@ -11,6 +11,7 @@ import simulation.main.Hand
 import simulation.main.IdHand
 import simulation.misc.CellBiomeMap
 import simulation.misc.MapGrid
+import simulation.misc.absoluteCellPosition
 
 data class BuilderInput(
     val config: GenerationConfig,
@@ -52,7 +53,7 @@ fun buildArchitecture(generationConfig: GenerationConfig, dice: Dice,
         config = generationConfig,
         cellBiomes = cellBiomes,
         dice = dice,
-        position = applyCellPosition(position),
+        position = absoluteCellPosition(position),
         turns = info.turns,
         grid = workbench.mapGrid,
         blockGrid = workbench.blockGrid,

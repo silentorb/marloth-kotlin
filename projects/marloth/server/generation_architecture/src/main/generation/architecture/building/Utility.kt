@@ -1,16 +1,12 @@
 package generation.architecture.building
 
-import generation.architecture.old.cellHalfLength
 import generation.architecture.definition.ConnectionType
 import generation.architecture.definition.any
 import generation.general.*
 import generation.architecture.misc.Builder
-import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.randomly.Dice
 import marloth.scenery.enums.MeshId
 import simulation.misc.CellAttribute
-
-val floorOffset = Vector3(cellHalfLength, cellHalfLength, 0f)
 
 fun mergeSides(blocks: List<Block>): Sides {
   val sides = allDirections.associateWith { direction ->

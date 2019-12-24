@@ -2,12 +2,20 @@ package simulation.misc
 
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
+import silentorb.mythic.spatial.toVector3
 
 const val cellLength = 10f
+
+val cellHalfLength = cellLength / 2f
+
+val floorOffset = Vector3(cellHalfLength, cellHalfLength, 0f)
 
 data class Cell(
     val attributes: Set<CellAttribute> = setOf()
 )
+
+fun absoluteCellPosition(position: Vector3i): Vector3 =
+    position.toVector3() * cellLength
 
 typealias ConnectionPair = Pair<Vector3i, Vector3i>
 

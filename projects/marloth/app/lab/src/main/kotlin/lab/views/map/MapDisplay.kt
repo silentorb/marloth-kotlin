@@ -5,6 +5,7 @@ import lab.utility.blue
 import lab.utility.embedCameraView
 import lab.utility.green
 import lab.utility.red
+import lab.views.game.conditionalDrawAiTargets
 import lab.views.shared.LabTextStyles
 import marloth.clienting.Client
 import marloth.scenery.creation.convertSimpleDepiction
@@ -12,15 +13,15 @@ import silentorb.mythic.bloom.StateBag
 import silentorb.mythic.bloom.StateDepiction
 import silentorb.mythic.bloom.selectionStateOld
 import silentorb.mythic.glowing.globalState
-import silentorb.mythic.spatial.Matrix
-import silentorb.mythic.spatial.Quaternion
-import silentorb.mythic.spatial.Vector3
-import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.lookinglass.SceneRenderer
 import silentorb.mythic.lookinglass.drawing.renderMeshElement
 import silentorb.mythic.scenery.Camera
 import silentorb.mythic.scenery.ProjectionType
 import silentorb.mythic.scenery.Scene
+import silentorb.mythic.spatial.Matrix
+import silentorb.mythic.spatial.Quaternion
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector4
 import simulation.entities.DepictionType
 import simulation.main.Deck
 import simulation.main.World
@@ -30,30 +31,6 @@ import simulation.misc.nodeNeighbors
 
 fun drawWireframeWorld(renderer: SceneRenderer, deck: Deck, realm: Realm, config: MapViewConfig, nodes: Collection<Node>, color: Vector4) {
 
-//  val faces = if (config.display.isolateSelection && config.selection.any())
-//    config.selection
-//  else
-//    nodes.flatMap { it.faces }.distinct()
-////      .take(1)
-//
-//  for (face in faces) {
-////      renderer.effects.flat.activate(ObjectShaderConfig(color = color))
-////      renderer.drawOutlinedFace(face.vertices, color)
-//    val debugInfo = realm.faces[face]!!.debugInfo
-//    val c = when (debugInfo) {
-//      "incomplete" -> Vector4(1f, 1f, 0f, 1f)
-//      "lower" -> Vector4(1f, 0f, 1f, 1f)
-//      else -> color
-//    }
-//    val thickness = if (config.selection.contains(face))
-//      3f
-//    else
-//      1f
-////    for (edge in realm.mesh.faces[face]!!.edges) {
-////      renderer.drawLine(edge.first, edge.second, c, thickness)
-//////                sector.mesh.drawElement(DrawMethod.lineLoop, index++)
-////    }
-//  }
 }
 
 fun renderNodeIds(renderer: SceneRenderer, nodes: Collection<Node>) {
@@ -210,6 +187,8 @@ fun renderMapView(client: Client, world: World, deck: Deck, config: MapViewConfi
     val navMesh = world.navMesh
     if (navMesh != null)
       renderNavMesh(sceneRenderer.renderer, config.display, navMesh)
+
+    conditionalDrawAiTargets(deck, renderer)
 
     renderer.finishRender(windowInfo)
   }

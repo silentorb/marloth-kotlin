@@ -7,14 +7,12 @@ import silentorb.mythic.spatial.Vector3i
 import silentorb.mythic.spatial.toVector3
 import simulation.misc.CellBiomeMap
 import simulation.misc.MapGrid
+import simulation.misc.absoluteCellPosition
 import kotlin.reflect.full.memberProperties
-
-fun applyCellPosition(position: Vector3i): Vector3 =
-    position.toVector3() * cellLength
 
 fun applyBiomesToGrid(grid: MapGrid, biomeGrid: BiomeGrid): CellBiomeMap =
     grid.cells.mapValues { (cell, _) ->
-      biomeGrid(applyCellPosition(cell))
+      biomeGrid(absoluteCellPosition(cell))
     }
 
 fun <T> enumerateMembers(container: Any): List<T> {
