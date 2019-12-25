@@ -8,7 +8,7 @@
 //    on("getRotationMatrix") {
 //
 //      it("should return proper rotation") {
-//        val transform = Matrix()
+//        val transform = Matrix.identity
 //            .rotateZ(Pi / 4)
 //            .translate(1f, 1f, 0f)
 //            .rotateZ(Pi / 4)

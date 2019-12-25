@@ -137,7 +137,7 @@ fun renderMapMesh(sceneRenderer: SceneRenderer, realm: Realm, deck: Deck, config
 }
 
 fun createOrbitalCamera(camera: MapViewOrbitalCamera): Camera {
-  val position = Vector3().transform(Matrix()
+  val position = Vector3().transform(Matrix.identity
       .translate(camera.target)
       .rotateZ(camera.yaw)
       .rotateX(-camera.pitch)

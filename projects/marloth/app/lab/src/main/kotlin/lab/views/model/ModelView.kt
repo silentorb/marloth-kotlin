@@ -117,29 +117,29 @@ private fun getHits(componentMode: ComponentMode, start: Vector3, end: Vector3, 
       else -> listOf()
     }
 
-private fun trySelect(config: ModelViewConfig, camera: Camera, model: Model, mousePosition: Vector2, bounds: Bounds) {
-  val dimensions = bounds.dimensions
-  val cursor = mousePosition.toVector2i() - bounds.position
-  val cameraData = createCameraEffectsData(dimensions, camera)
-  val viewportBounds = listOf(
-      0, 0,
-      bounds.dimensions.x.toInt(), bounds.dimensions.y.toInt()
-  ).toIntArray()
-  val start = Vector3(cameraData.transform.unproject(cursor.x.toFloat(),
-      bounds.dimensions.y - cursor.y.toFloat(), 0.01f, viewportBounds, Vector3m()))
-  val end = start + cameraData.direction * camera.farClip
-  config.tempStart = start
-  config.tempEnd = end
-  val hits = getHits(config.componentMode, start, end, model)
-  if (hits.size > 0) {
-    val sorted = hits.sortedBy { it.position.distance(start) }
-    config.selection = sorted.take(1).map { it.index }.toMutableList()
-//    val edge = mesh.edges.filter { it.middle == sorted[0].position }.first()
-//    rayIntersectsLine3D(start, end, edge.first, edge.second, 0.02f)
-  } else {
-    config.selection = mutableListOf()
-  }
-}
+//private fun trySelect(config: ModelViewConfig, camera: Camera, model: Model, mousePosition: Vector2, bounds: Bounds) {
+//  val dimensions = bounds.dimensions
+//  val cursor = mousePosition.toVector2i() - bounds.position
+//  val cameraData = createCameraEffectsData(dimensions, camera)
+//  val viewportBounds = listOf(
+//      0, 0,
+//      bounds.dimensions.x.toInt(), bounds.dimensions.y.toInt()
+//  ).toIntArray()
+//  val start = Vector3(cameraData.transform.unproject(cursor.x.toFloat(),
+//      bounds.dimensions.y - cursor.y.toFloat(), 0.01f, viewportBounds, Vector3m()))
+//  val end = start + cameraData.direction * camera.farClip
+//  config.tempStart = start
+//  config.tempEnd = end
+//  val hits = getHits(config.componentMode, start, end, model)
+//  if (hits.size > 0) {
+//    val sorted = hits.sortedBy { it.position.distance(start) }
+//    config.selection = sorted.take(1).map { it.index }.toMutableList()
+////    val edge = mesh.edges.filter { it.middle == sorted[0].position }.first()
+////    rayIntersectsLine3D(start, end, edge.first, edge.second, 0.02f)
+//  } else {
+//    config.selection = mutableListOf()
+//  }
+//}
 
 fun toSelection(model: Model, edges: List<ImmutableEdge>) =
     edges.map { model.edges.indexOf(it) }

@@ -38,7 +38,7 @@ fun renderNavMeshVoxels(renderer: Renderer, hf: Heightfield) {
         val height = s.smax - s.smin
         effect.activate(ObjectShaderConfig(
             color = Vector4(0.2f, abs(fx + fz + orig[1]) % 1f, 0.3f, 0.6f),
-            transform = Matrix()
+            transform = Matrix.identity
                 .translate(
                     fx + cs / 2f,
                     fz + cs / 2f,

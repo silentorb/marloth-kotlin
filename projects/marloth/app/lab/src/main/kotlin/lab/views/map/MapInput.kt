@@ -53,8 +53,9 @@ private fun castSelectionRay(config: MapViewConfig, world: Realm, mousePosition:
       0, 0,
       bounds.dimensions.x.toInt(), bounds.dimensions.y.toInt()
   ).toIntArray()
-  val start = Vector3(cameraData.transform.unproject(cursor.x.toFloat(),
-      bounds.dimensions.y - cursor.y.toFloat(), 0.01f, viewportBounds, Vector3m()))
+  val unprojection = toMutableMatrix(cameraData.transform).unproject(cursor.x.toFloat(),
+      bounds.dimensions.y - cursor.y.toFloat(), 0.01f, viewportBounds, Vector3m())
+  val start = Vector3(unprojection)
   val end = start + cameraData.direction * camera.farClip
   config.tempStart = start
   config.tempEnd = end
@@ -153,7 +154,7 @@ fun updateOrbitalCamera(camera: MapViewOrbitalCamera, commands: List<HaftCommand
   val distanceOffset = camera.distance / 50f
 
   if (moveOffset != Vector3())
-    camera.target += moveOffset.transform(Matrix().rotateZ(camera.yaw)) * (moveSpeed * delta * distanceOffset)
+    camera.target += moveOffset.transform(Matrix.identity.rotateZ(camera.yaw)) * (moveSpeed * delta * distanceOffset)
 
   if (isActive(commands, LabCommandType.zoomIn))
     camera.distance = Math.max(1f, camera.distance - zoomSpeed * delta * distanceOffset)
@@ -194,7 +195,7 @@ fun updateFirstPersonCamera(camera: MapViewFirstPersonCamera, commands: List<Haf
   if (moveOffset != null) {
     val rotation = Quaternion().rotateZ(camera.yaw - Pi / 2).rotateX(-camera.pitch)
     val offset = rotation * moveOffset * delta * moveSpeed
-//    val rotationMatrix = Matrix().rotateZ(camera.yaw).rotateY(camera.pitch)
+//    val rotationMatrix = Matrix.identity.rotateZ(camera.yaw).rotateY(camera.pitch)
     camera.position += offset
   }
 
@@ -218,7 +219,7 @@ fun updateMapState(config: MapViewConfig, world: Realm, input: LabCommandState, 
 
   val commands = input.commands.filterIsInstance<HaftCommand>()
 
-  val actions = commands.map { it.type}.plus(listOfNotNull(menuCommandType))
+  val actions = commands.map { it.type }.plus(listOfNotNull(menuCommandType))
   for (action in actions) {
     applyMapStateCommand(config, world, action)
   }

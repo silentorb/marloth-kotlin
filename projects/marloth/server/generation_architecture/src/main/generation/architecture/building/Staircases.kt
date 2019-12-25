@@ -28,7 +28,7 @@ val curvedStaircases = blockBuilder() { input ->
   (0 until stepCount).map { step ->
     val angle = baseAngle + step * angleStep
     val heightPosition = Vector3(0f, 0f, heightStep + step * heightStep)
-    val rotationPosition = Vector3(3.5f, 0f, 0f).transform(Matrix().rotateZ(angle))
+    val rotationPosition = Vector3(3.5f, 0f, 0f).transform(Matrix.identity.rotateZ(angle))
     val position = baseOffset + heightPosition + rotationPosition
     newArchitectureMesh(
         architecture = ArchitectureElement(isWall = false),

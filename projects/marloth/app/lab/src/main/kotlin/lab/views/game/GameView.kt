@@ -45,7 +45,7 @@ fun renderFaceNormals(renderer: SceneRenderer, length: Float, faces: List<Immuta
   for (face in faces) {
     val faceCenter = getVerticesCenter(face.unorderedVertices)
     val straightVerticalHack = Vector3(0.00001f, 0f, 0f)
-    val transform = Matrix()
+    val transform = Matrix.identity
         .translate(faceCenter)
         .rotateTowards(Vector3m(face.normal + straightVerticalHack), Vector3m(0f, 0f, 1f))
         .rotateY(-Pi * 0.5f)
@@ -71,7 +71,7 @@ data class GameViewRenderData(
 fun renderWireframeWorldMesh(renderer: SceneRenderer) {
 //  val worldMesh = renderer.renderer.worldMesh
 //  if (worldMesh != null) {
-//    renderer.effects.flat.activate(ObjectShaderConfig(transform = Matrix(), color = Vector4(1f)))
+//    renderer.effects.flat.activate(ObjectShaderConfig(transform = Matrix.identity, color = Vector4(1f)))
 //    var index = 0
 //    throw Error("No longer implemented.")
 ////    for (texture in worldMesh.textureIndex) {

@@ -58,7 +58,7 @@ fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, trans
       transform = transform,
       color = color,
       texture = texture,
-      normalTransform = Matrix()
+      normalTransform = Matrix.identity
   )
   val effects = sceneRenderer.effects
 //  val (effect, flatEffect) = if (isAnimated)
@@ -132,7 +132,7 @@ fun drawSelection(config: ModelViewConfig, model: Model, sceneRenderer: SceneRen
 fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: Renderer, camera: Camera, model: AdvancedModel): Depiction {
   return embedCameraView { b, c ->
     val sceneRenderer = renderer.createSceneRenderer(Scene(camera), b.toVector4i())
-    val transform = Matrix()
+    val transform = Matrix.identity
 
     val armature = model.armature
     val modelSource = model.model
@@ -205,7 +205,7 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
 
     if (armature != null) {
       globalState.depthEnabled = false
-      drawSkeleton(sceneRenderer, armature, transforms!!, Matrix())
+      drawSkeleton(sceneRenderer, armature, transforms!!, Matrix.identity)
       globalState.depthEnabled = true
     }
   }

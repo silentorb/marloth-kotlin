@@ -38,7 +38,7 @@ class EntityTemplates {
 
 //    val wallLamp = Hand(
 //        collisionShape = CollisionObject(
-//            shape = ShapeOffset(Matrix().translate(1f, 0f, 0.8f), Sphere(1f))
+//            shape = ShapeOffset(Matrix.identity.translate(1f, 0f, 0.8f), Sphere(1f))
 //        ),
 //        depiction = Depiction(
 //            type = DepictionType.wallLamp

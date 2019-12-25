@@ -19,7 +19,7 @@ fun drawAiTargets(deck: Deck, renderer: Renderer) {
   for (target in targets) {
     effect.activate(ObjectShaderConfig(
         color = Vector4(1f, 0f, 1f, 0.3f),
-        transform = Matrix()
+        transform = Matrix.identity
             .translate(target)
             .scale(0.6f)
 

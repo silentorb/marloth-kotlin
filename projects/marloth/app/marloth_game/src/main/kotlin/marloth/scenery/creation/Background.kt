@@ -14,7 +14,7 @@ fun createBackgroundSphere(texture: BackgroundTextureId, cameraPosition: Vector3
     MeshElement(
         id = 1,
         mesh = MeshId.skySphere.toString(),
-        transform = Matrix()
+        transform = Matrix.identity
             .translate(cameraPosition)
             .rotate(orientation)
             .scale(100f),

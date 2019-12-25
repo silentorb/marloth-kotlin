@@ -36,7 +36,7 @@ fun halfFloorMesh(mesh: MeshName, offset: Vector3 = Vector3.zero, orientation: Q
 fun diagonalHalfFloorMesh(mesh: MeshName, height: Float) =
     blockBuilder { input ->
       val angle = applyTurns(input.turns)
-//      val position = Vector3(-5f, 5f, 0f).transform(Matrix().rotateZ(angle))
+//      val position = Vector3(-5f, 5f, 0f).transform(Matrix.identity.rotateZ(angle))
 //      val position = Vector3(-5f, -5f, -0.01f)
       val position = Vector3(0f, 0f, height)
       val orientation = Quaternion()

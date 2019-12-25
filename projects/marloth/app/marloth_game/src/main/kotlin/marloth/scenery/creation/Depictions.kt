@@ -37,10 +37,10 @@ fun filterDepictions(depictions: Table<Depiction>, player: Id, playerRecord: Pla
 
 fun convertSimpleDepiction(deck: Deck, id: Id, mesh: MeshName, texture: TextureName? = null): MeshElement? {
   val body = deck.bodies[id]!!
-  val ccharacterRig = deck.characterRigs[id]
-  val translate = Matrix().translate(body.position)
-  val transform = if (ccharacterRig != null)
-    translate.rotate(ccharacterRig.facingQuaternion)
+  val characterRig = deck.characterRigs[id]
+  val translate = Matrix.identity.translate(body.position)
+  val transform = if (characterRig != null)
+    translate.rotate(characterRig.facingQuaternion)
   else
     translate.rotate(body.orientation)
 
@@ -76,7 +76,7 @@ fun convertComplexDepiction(deck: Deck, id: Id, depiction: Depiction): ElementGr
   val shape = collisionObject.shape
   val verticalOffset = -shape.height / 2f
 
-  val transform = Matrix()
+  val transform = Matrix.identity
       .translate(body.position + Vector3(0f, 0f, verticalOffset))
       .rotate(characterRig.facingQuaternion)
       .rotateZ(Pi / 2f)
