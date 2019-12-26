@@ -3,7 +3,7 @@ package simulation.entities
 import silentorb.mythic.ent.Id
 import marloth.scenery.enums.ClientCommand
 import marloth.scenery.enums.Text
-import simulation.happenings.EventTrigger
+import silentorb.mythic.happenings.EventTrigger
 
 data class WidgetCommand(
     val text: Text,

@@ -3,10 +3,11 @@ package simulation.entities
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import marloth.scenery.enums.AccessoryId
+import silentorb.mythic.accessorize.AccessoryName
 import simulation.combat.raycastAttack
 import silentorb.mythic.happenings.Events
 import simulation.happenings.TryUseAbilityEvent
-import simulation.happenings.UseAction
+import silentorb.mythic.happenings.UseAction
 import simulation.main.Deck
 import simulation.main.World
 import simulation.misc.Definitions
@@ -65,7 +66,7 @@ fun eventsFromTryUseAbility(world: World): (TryUseAbilityEvent) -> Events = { ev
   if (action != null && canUse(deck, action)) {
     val accessory = deck.accessories[action]!!
     when (accessory.type) {
-      AccessoryId.pistol.name -> raycastAttack(world, event.actor, action)
+      AccessoryId.pistol.name -> raycastAttack(world, event.actor, action, accessory.type)
       else -> listOf()
     }
   } else

@@ -1,12 +1,8 @@
-package simulation.entities
+package silentorb.mythic.combat
 
 import silentorb.mythic.ent.Id
-import simulation.combat.*
-import simulation.happenings.DamageEvent
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
-import simulation.misc.ResourceContainer
-import simulation.misc.modifyResource
 
 data class DestructibleBaseStats(
     val health: Int,
@@ -26,8 +22,8 @@ data class RestoreHealth(
     val target: Id
 ) : GameEvent
 
-fun updateDestructibleCache(modifierQuery: DamageModifierQuery): (Id, Destructible) -> Destructible = { id, destructible ->
-  val multiplers = calculateDamageMultipliers(modifierQuery, id, destructible.base.damageMultipliers)
+fun updateDestructibleCache(damageTypes: Set<DamageType>, modifierQuery: DamageModifierQuery): (Id, Destructible) -> Destructible = { id, destructible ->
+  val multiplers = calculateDamageMultipliers(damageTypes, modifierQuery, id, destructible.base.damageMultipliers)
   destructible.copy(
       damageMultipliers = multiplers
   )

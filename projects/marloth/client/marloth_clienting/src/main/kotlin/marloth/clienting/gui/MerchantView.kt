@@ -13,8 +13,6 @@ import silentorb.mythic.typography.calculateTextDimensions
 import silentorb.mythic.typography.resolveTextStyle
 import org.joml.Vector2i
 import marloth.scenery.enums.Text
-import silentorb.mythic.bloom.*
-import silentorb.mythic.bloom.next.*
 import simulation.entities.AttachmentCategory
 import simulation.happenings.PurchaseEvent
 import simulation.main.Deck

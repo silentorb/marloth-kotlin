@@ -1,6 +1,4 @@
-package simulation.misc
-
-import simulation.combat.ModifierOperation
+package silentorb.mythic.combat
 
 enum class ValueModifierDirection(val value: Int) {
   minus(-1),

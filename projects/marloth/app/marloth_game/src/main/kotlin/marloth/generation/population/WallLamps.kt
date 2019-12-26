@@ -40,7 +40,8 @@ fun placeWallLamps(deck: Deck, config: GenerationConfig, realm: Realm,
     biome != null && biome.attributes.contains(BiomeAttribute.alwaysLit)
   }
 
-  val count = Math.min((10f * scale).toInt(), options.size)
+//  val count = Math.min((10f * scale).toInt(), options.size)
+  val count = (options.size.toFloat() * 0.8f).toInt()
   val nodes = dice.take(options, count)
       .plus(certain)
   val hands = nodes.mapNotNull { (_, options) ->

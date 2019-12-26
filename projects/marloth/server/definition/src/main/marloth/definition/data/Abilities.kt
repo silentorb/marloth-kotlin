@@ -3,15 +3,15 @@ package marloth.definition.data
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.ModifierId
 import marloth.scenery.enums.Text
-import simulation.entities.AccessoryDefinition
-import simulation.entities.AccessoryName
-import simulation.entities.Modifier
+import silentorb.mythic.accessorize.AccessoryDefinition
+import silentorb.mythic.accessorize.AccessoryName
+import silentorb.mythic.accessorize.RelativeModifier
 
 fun staticAccessories(): Map<AccessoryName, AccessoryDefinition> = mapOf(
     AccessoryId.resistanceCold.name to AccessoryDefinition(
         name = Text.id_resistanceCold,
         modifiers = listOf(
-            Modifier(
+            RelativeModifier(
                 type = ModifierId.resistanceCold,
                 strength = 10
             )
@@ -20,7 +20,7 @@ fun staticAccessories(): Map<AccessoryName, AccessoryDefinition> = mapOf(
     AccessoryId.resistanceFire.name to AccessoryDefinition(
         name = Text.id_resistanceFire,
         modifiers = listOf(
-            Modifier(
+            RelativeModifier(
                 type = ModifierId.resistanceFire,
                 strength = 10
             )
@@ -29,7 +29,7 @@ fun staticAccessories(): Map<AccessoryName, AccessoryDefinition> = mapOf(
     AccessoryId.resistancePoison.name to AccessoryDefinition(
         name = Text.id_resistancePoison,
         modifiers = listOf(
-            Modifier(
+            RelativeModifier(
                 type = ModifierId.resistancePoison,
                 strength = 50
             )

@@ -1,5 +1,6 @@
 package simulation.entities
 
+import silentorb.mythic.combat.RestoreHealth
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.happenings.Events

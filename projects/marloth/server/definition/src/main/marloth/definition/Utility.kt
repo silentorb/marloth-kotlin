@@ -2,11 +2,11 @@ package marloth.definition
 
 import marloth.scenery.enums.ModifierDirection
 import marloth.scenery.enums.Text
-import simulation.combat.DamageType
-import simulation.combat.ModifierOperation
-import simulation.entities.ModifierDefinition
-import simulation.misc.ValueModifier
-import simulation.misc.ValueModifierDirection
+import silentorb.mythic.combat.DamageType
+import silentorb.mythic.combat.ModifierOperation
+import silentorb.mythic.accessorize.ModifierDefinition
+import silentorb.mythic.combat.ValueModifier
+import silentorb.mythic.combat.ValueModifierDirection
 
 fun newResistanceModifier(name: Text, damageType: DamageType) = ModifierDefinition(
     name = name,

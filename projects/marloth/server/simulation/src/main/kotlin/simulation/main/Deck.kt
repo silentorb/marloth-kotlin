@@ -1,15 +1,19 @@
 package simulation.main
 
+import silentorb.mythic.accessorize.Accessory
+import simulation.entities.Attachment
+import silentorb.mythic.accessorize.Modifier
 import silentorb.mythic.ent.*
 import simulation.entities.*
 import simulation.happenings.Trigger
 import simulation.intellect.Spirit
-import simulation.misc.ResourceBundle
+import silentorb.mythic.combat.ResourceBundle
 import simulation.particles.ParticleEffect
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.characters.CharacterRig
+import silentorb.mythic.combat.Destructible
 import silentorb.mythic.scenery.Light
 
 // Deck is basically a database full of tables

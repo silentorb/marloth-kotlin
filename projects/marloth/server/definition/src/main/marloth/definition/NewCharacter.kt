@@ -1,6 +1,7 @@
 package marloth.definition
 
 import marloth.scenery.AnimationId
+import silentorb.mythic.accessorize.Accessory
 import silentorb.mythic.ent.Id
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
@@ -8,6 +9,8 @@ import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.characters.defaultCharacterHeight
 import silentorb.mythic.characters.defaultCharacterRadius
+import silentorb.mythic.combat.Destructible
+import silentorb.mythic.combat.DestructibleBaseStats
 import silentorb.mythic.scenery.Capsule
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Quaternion
@@ -19,7 +22,7 @@ import simulation.main.Hand
 import silentorb.mythic.ent.IdSource
 import simulation.main.IdHand
 import simulation.misc.Definitions
-import simulation.misc.ResourceContainer
+import silentorb.mythic.combat.ResourceContainer
 
 fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, definition: CharacterDefinition, faction: Id, position: Vector3,
                  angle: Float = Pi / 2f,
@@ -88,12 +91,8 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, defi
                 id = nextId(),
                 hand = Hand(
                     accessory = Accessory(
-                        type = type
-                    ),
-                    attachment = Attachment(
-                        target = character,
-                        index = index,
-                        category = AttachmentCategory.ability
+                        type = type,
+                        target = character
                     ),
                     action = newPossibleAction(definitions, type)
                 )

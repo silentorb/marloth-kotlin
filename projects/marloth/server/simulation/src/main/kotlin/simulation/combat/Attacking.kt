@@ -1,15 +1,19 @@
 package simulation.combat
 
 import silentorb.mythic.ent.Id
-import silentorb.mythic.spatial.Vector3
-import simulation.happenings.DamageEvent
 import silentorb.mythic.happenings.Events
-import simulation.happenings.UseAction
-import simulation.main.World
 import silentorb.mythic.physics.castCollisionRay
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.accessorize.AccessoryName
+import silentorb.mythic.combat.Damage
+import silentorb.mythic.combat.DamageEvent
+import silentorb.mythic.happenings.UseAction
+import simulation.main.World
 
-fun raycastAttack(world: World, attacker: Id, action: Id): Events {
+fun raycastAttack(world: World, attacker: Id, action: Id, accessory: AccessoryName): Events {
   val deck = world.deck
+  val definitions = world.definitions
+  val weapon = definitions.weapons[accessory]!!
   val body = deck.bodies[attacker]!!
   val characterRig = deck.characterRigs[attacker]!!
   val vector = characterRig.facingVector
@@ -18,19 +22,23 @@ fun raycastAttack(world: World, attacker: Id, action: Id): Events {
   val collision = castCollisionRay(world.bulletState.dynamicsWorld, origin, end)
   return if (collision != null && deck.destructibles.containsKey(collision.collisionObject)) {
     listOf(
-        DamageEvent(
-            target = collision.collisionObject,
-            damage = Damage(
-                type = DamageType.fire,
-                amount = 10,
-                source = attacker
-            )
-        ),
         UseAction(
             actor = attacker,
             action = action
         )
     )
+        .plus(
+            weapon.damages.map { damage ->
+              DamageEvent(
+                  target = collision.collisionObject,
+                  damage = Damage(
+                      type = damage.type,
+                      amount = damage.amount,
+                      source = attacker
+                  )
+              )
+            }
+        )
   } else
     listOf()
 }

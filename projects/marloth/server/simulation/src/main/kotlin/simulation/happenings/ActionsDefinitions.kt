@@ -1,10 +1,8 @@
 package simulation.happenings
 
 import marloth.scenery.enums.ModifierId
-import silentorb.mythic.ent.Id
-import simulation.combat.DamageType
-
-interface EventTrigger {}
+import silentorb.mythic.combat.DamageType
+import silentorb.mythic.happenings.EventTrigger
 
 data class DamageAction(
     val damageType: DamageType,

@@ -6,6 +6,8 @@ import silentorb.mythic.spatial.Vector3
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.ClientCommand
 import marloth.scenery.enums.Text
+import simulation.entities.Attachment
+import simulation.entities.AttachmentCategory
 import silentorb.mythic.ent.IdSource
 import simulation.entities.*
 import simulation.main.Hand

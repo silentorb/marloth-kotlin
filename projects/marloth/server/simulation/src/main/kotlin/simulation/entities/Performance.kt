@@ -4,7 +4,7 @@ import silentorb.mythic.ent.Id
 import marloth.scenery.ArmatureId
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.happenings.Events
-import simulation.happenings.UseAction
+import silentorb.mythic.happenings.UseAction
 import simulation.main.Deck
 import simulation.main.Hand
 import simulation.main.IdHand

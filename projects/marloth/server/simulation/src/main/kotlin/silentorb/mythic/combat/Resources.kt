@@ -1,8 +1,8 @@
-package simulation.misc
+package silentorb.mythic.combat
 
-import marloth.scenery.enums.ResourceId
+typealias ResourceType = String
 
-typealias ResourceMap = Map<ResourceId, Int>
+typealias ResourceMap = Map<ResourceType, Int>
 
 val emptyResourceMap: ResourceMap = mapOf()
 

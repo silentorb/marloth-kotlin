@@ -28,10 +28,10 @@ fun mapLights(deck: Deck, player: Id) =
             if (hasEquipped(deck, player)(AccessoryId.candle.name))
               Light(
                   type = LightType.point,
-                  color = Vector4(1f, 1f, 1f, 0.6f),
+                  color = Vector4(1f, 1f, 1f, 0.2f),
                   offset = deck.bodies[player]!!.position + Vector3(0f, 0f, 2f),
                   direction = Vector3(0f, 0f, 0f),
-                  range = 36f
+                  range = 10f
               )
             else
               null

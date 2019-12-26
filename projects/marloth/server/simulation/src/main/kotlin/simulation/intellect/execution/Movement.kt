@@ -105,7 +105,10 @@ fun isTargetInRange(world: World, character: Id, target: Id): Boolean {
   val characterPosition = deck.bodies[character]?.position!!
   val targetPosition = deck.bodies[target]?.position!!
   val action = getActiveAction(deck, character)
-  val range = getActionRange(deck, world.definitions, action!!) - spiritAttackRangeBuffer
+  if (action == null)
+    return false
+    
+  val range = getActionRange(deck, world.definitions, action) - spiritAttackRangeBuffer
   val distance = characterPosition.distance(targetPosition)
   return distance <= range
 }

@@ -8,6 +8,7 @@ import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
 import silentorb.mythic.spatial.toVector3
 import marloth.scenery.enums.AccessoryId
+import silentorb.mythic.accessorize.Accessory
 import simulation.entities.*
 import simulation.intellect.Pursuit
 import simulation.intellect.Spirit
@@ -59,12 +60,8 @@ fun newPlayer(nextId: IdSource, definitions: Definitions, grid: MapGrid, cellPos
               id = nextId(),
               hand = Hand(
                   accessory = Accessory(
-                      type = AccessoryId.candle.name
-                  ),
-                  attachment = Attachment(
-                      target = character,
-                      index = 2,
-                      category = AttachmentCategory.equipped
+                      type = AccessoryId.candle.name,
+                      target = character
                   )
               )
           )

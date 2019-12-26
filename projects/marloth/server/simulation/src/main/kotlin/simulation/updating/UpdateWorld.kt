@@ -1,7 +1,11 @@
 package simulation.updating
 
+import simulation.entities.cleanupAttachmentSource
+import simulation.entities.updateAttachment
 import simulation.physics.updatePhysics
-import simulation.combat.getDamageMultiplierModifiers
+import silentorb.mythic.combat.getDamageMultiplierModifiers
+import silentorb.mythic.combat.updateDestructibleCache
+import silentorb.mythic.combat.updateDestructibleHealth
 import simulation.combat.toModifierDeck
 import simulation.entities.*
 import simulation.happenings.*
@@ -13,6 +17,7 @@ import simulation.intellect.execution.pursueGoals
 import simulation.intellect.updateAiState
 import simulation.main.*
 import simulation.misc.Definitions
+import simulation.combat.toCombatDefinitions
 import simulation.particles.updateParticleEffect
 import simulation.physics.*
 
@@ -69,9 +74,10 @@ fun updateEntities(animationDurations: AnimationDurationMap, world: World, event
 
 fun updateDeckCache(definitions: Definitions): (Deck) -> Deck =
     { deck ->
-      val damageModifierQuery = getDamageMultiplierModifiers(definitions, toModifierDeck(deck))
+      val combatDefinitions = toCombatDefinitions(definitions)
+      val damageModifierQuery = getDamageMultiplierModifiers(combatDefinitions, toModifierDeck(deck))
       deck.copy(
-          destructibles = mapTable(deck.destructibles, updateDestructibleCache(damageModifierQuery))
+          destructibles = mapTable(deck.destructibles, updateDestructibleCache(definitions.damageTypes, damageModifierQuery))
       )
     }
 

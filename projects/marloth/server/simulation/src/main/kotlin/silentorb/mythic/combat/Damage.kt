@@ -1,33 +1,11 @@
-package simulation.combat
+package silentorb.mythic.combat
 
+import silentorb.mythic.accessorize.RelativeModifier
+import silentorb.mythic.accessorize.modifierToRelative
 import silentorb.mythic.ent.Id
-import silentorb.mythic.ent.Table
-import marloth.scenery.enums.Text
-import simulation.entities.*
-import simulation.main.Deck
-import simulation.main.Percentage
-import simulation.main.applyMultiplier
-import simulation.misc.Definitions
-import simulation.misc.resolveValueModifier
 
 const val defaultDamageMultiplier = 100
-
-enum class DamageType {
-//  chaos,
-  cold,
-//  lightning,
-  fire,
-//  physical,
-  poison
-}
-
-val staticDamageTypes = DamageType.values()
-
-val damageTypeNames: Map<DamageType, Text> = mapOf(
-    DamageType.cold to Text.damageType_cold,
-    DamageType.fire to Text.damageType_fire,
-    DamageType.poison to Text.damageType_poison
-)
+typealias DamageType = String
 
 data class Damage(
     val type: DamageType,
@@ -55,47 +33,35 @@ fun aggregateHealthModifiers(destructible: Destructible, damages: List<Damage>):
   return -damage
 }
 
-data class ModifierDeck(
-    val accessories: Table<Accessory>,
-    val attachments: Table<Attachment>,
-    val buffs: Table<Modifier>
-)
-
-fun toModifierDeck(deck: Deck) =
-    ModifierDeck(
-        accessories = deck.accessories,
-        attachments = deck.attachments,
-        buffs = deck.buffs
-    )
-
 enum class ModifierOperation {
   add,
   multiply
 }
 
-fun getValueModifiers(definitions: Definitions, modifierDeck: ModifierDeck, id: Id): List<Modifier> {
-  val indirectModifiers = modifierDeck.attachments
-      .filterValues { it.target == id && it.category == AttachmentCategory.ability || it.category == AttachmentCategory.equipped }
+fun getValueModifiers(definitions: CombatDefinitions, combatDeck: CombatDeck, id: Id): List<RelativeModifier> {
+  val indirectModifiers = combatDeck.accessories
+      .filterValues { it.target == id }
       .mapNotNull {
-        val accessory = modifierDeck.accessories[it.key]
+        val accessory = combatDeck.accessories[it.key]
         if (accessory != null)
           definitions.accessories[accessory.type]?.modifiers
         else
           null
       }
       .flatten()
-  val directModifiers = modifierDeck.attachments
-      .filterValues { it.target == id && it.category == AttachmentCategory.buff }
-      .map { modifierDeck.buffs[it.key]!! }
+  val directModifiers = combatDeck.modifiers
+      .filterValues { it.target == id }
+      .map { combatDeck.modifiers[it.key]!! }
+      .map(::modifierToRelative)
 
   return indirectModifiers.plus(directModifiers)
 }
 
 typealias DamageModifierQuery = (Id) -> (DamageType) -> List<Int>
 
-fun getDamageMultiplierModifiers(definitions: Definitions, modifierDeck: ModifierDeck): DamageModifierQuery =
+fun getDamageMultiplierModifiers(definitions: CombatDefinitions, combatDeck: CombatDeck): DamageModifierQuery =
     { id ->
-      val modifiers = getValueModifiers(definitions, modifierDeck, id)
+      val modifiers = getValueModifiers(definitions, combatDeck, id)
       val expressionSeparator = 0
       { damageType ->
         modifiers.mapNotNull {
@@ -112,9 +78,9 @@ fun getDamageMultiplierModifiers(definitions: Definitions, modifierDeck: Modifie
       }
     }
 
-fun calculateDamageMultipliers(modifierQuery: DamageModifierQuery, id: Id, base: DamageMultipliers): DamageMultipliers {
+fun calculateDamageMultipliers(damageTypes: Set<DamageType>, modifierQuery: DamageModifierQuery, id: Id, base: DamageMultipliers): DamageMultipliers {
   val query = modifierQuery(id)
-  return staticDamageTypes.map { damageType ->
+  return damageTypes.map { damageType ->
     val baseMultipler = base[damageType] ?: defaultDamageMultiplier
     val modifiers = query(damageType)
     val aggregate = modifiers.sum()

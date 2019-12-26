@@ -4,13 +4,14 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.pipe2
 import marloth.scenery.enums.ResourceId
 import marloth.scenery.enums.Sounds
+import silentorb.mythic.accessorize.AccessoryName
 import silentorb.mythic.happenings.*
 import silentorb.mythic.physics.BulletState
-import simulation.combat.DamageMultipliers
+import silentorb.mythic.combat.DamageMultipliers
+import silentorb.mythic.combat.ResourceContainer
 import simulation.happenings.PurchaseEvent
 import simulation.happenings.TakeItemEvent
 import simulation.main.Deck
-import simulation.misc.*
 import simulation.physics.castInteractableRay
 import simulation.updating.simulationDelta
 
@@ -81,7 +82,7 @@ fun getMoneyFromTakenItems(deck: Deck, events: Events, character: Id): Int {
   val takes = events.filterIsInstance<TakeItemEvent>().filter { it.actor == character }.map { it.item }
   val moneyTakes = deck.resources.filterKeys { takes.contains(it) }
   return moneyTakes
-      .mapNotNull { it.value.values[ResourceId.money] }
+      .mapNotNull { it.value.values[ResourceId.money.name] }
       .sum()
 }
 

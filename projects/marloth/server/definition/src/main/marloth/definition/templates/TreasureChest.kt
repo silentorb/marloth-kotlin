@@ -11,7 +11,7 @@ import simulation.entities.Interactable
 import simulation.entities.WidgetCommand
 import simulation.happenings.TakeItem
 import simulation.main.Hand
-import simulation.misc.ResourceBundle
+import silentorb.mythic.combat.ResourceBundle
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 
@@ -34,7 +34,7 @@ fun newTreasureChest(meshInfo: MeshInfoMap, position: Vector3, amount: Int): Han
       ),
       resources = ResourceBundle(
           values = mapOf(
-              ResourceId.money to amount
+              ResourceId.money.name to amount
           )
       )
   )

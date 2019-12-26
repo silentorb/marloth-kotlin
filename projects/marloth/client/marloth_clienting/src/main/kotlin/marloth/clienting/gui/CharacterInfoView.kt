@@ -1,5 +1,6 @@
 package marloth.clienting.gui
 
+import marloth.definition.staticDamageTypes
 import silentorb.mythic.bloom.*
 import silentorb.mythic.bloom.next.*
 import silentorb.mythic.ent.Id
@@ -11,9 +12,7 @@ import silentorb.mythic.bloom.next.Flower
 import silentorb.mythic.bloom.next.div
 import silentorb.mythic.bloom.next.emptyFlower
 import silentorb.mythic.bloom.next.margin
-import simulation.combat.damageTypeNames
-import simulation.combat.defaultDamageMultiplier
-import simulation.combat.staticDamageTypes
+import silentorb.mythic.combat.defaultDamageMultiplier
 import simulation.main.Deck
 import simulation.misc.Definitions
 
@@ -25,7 +24,6 @@ fun resistancesView(deck: Deck, player: Id): Flower {
 
     list(horizontalPlane, 20)(listOf(
         div(layout = layoutDimensions(width = fixed(70)))(
-//                div(forward = forwardDimensions(width = fixed(50)), reverse = shrinkVertical)(
             localizedLabel(textStyles.smallBlack, damageTypeNames[damageType]!!)
         ),
         label(textStyles.smallBlack, value.toString() + " %")

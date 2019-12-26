@@ -3,33 +3,33 @@ package marloth.definition.data
 import marloth.definition.newResistanceModifier
 import marloth.scenery.enums.ModifierId
 import marloth.scenery.enums.Text
-import simulation.combat.DamageType
-import simulation.entities.ModifierDefinition
+import marloth.scenery.enums.DamageTypes
+import silentorb.mythic.accessorize.ModifierDefinition
 import simulation.happenings.DamageAction
 
 fun staticModifiers(): Map<ModifierId, ModifierDefinition> = mapOf(
     ModifierId.damageBurning to ModifierDefinition(
         name = Text.id_damageBurning,
         overTime = DamageAction(
-            damageType = DamageType.fire,
+            damageType = DamageTypes.fire.name,
             amount = 0
         )
     ),
     ModifierId.damageChilled to ModifierDefinition(
         name = Text.id_damageChilled,
         overTime = DamageAction(
-            damageType = DamageType.cold,
+            damageType = DamageTypes.cold.name,
             amount = 0
         )
     ),
     ModifierId.damagePoisoned to ModifierDefinition(
         name = Text.id_damagePoisoned,
         overTime = DamageAction(
-            damageType = DamageType.poison,
+            damageType = DamageTypes.poison.name,
             amount = 0
         )
     ),
-    ModifierId.resistanceCold to newResistanceModifier(Text.id_resistanceCold, DamageType.cold),
-    ModifierId.resistanceFire to newResistanceModifier(Text.id_resistanceFire, DamageType.fire),
-    ModifierId.resistancePoison to newResistanceModifier(Text.id_resistancePoison, DamageType.poison)
+    ModifierId.resistanceCold to newResistanceModifier(Text.id_resistanceCold, DamageTypes.cold.name),
+    ModifierId.resistanceFire to newResistanceModifier(Text.id_resistanceFire, DamageTypes.fire.name),
+    ModifierId.resistancePoison to newResistanceModifier(Text.id_resistancePoison, DamageTypes.poison.name)
 )

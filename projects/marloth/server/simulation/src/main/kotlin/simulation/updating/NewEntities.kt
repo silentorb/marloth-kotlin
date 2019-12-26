@@ -1,5 +1,7 @@
 package simulation.updating
 
+import simulation.entities.applyBuffsFromEvents
+import simulation.misc.newAccessories
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.happenings.Events
 import simulation.entities.*

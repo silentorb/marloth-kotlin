@@ -3,10 +3,8 @@ package marloth.integration
 import marloth.clienting.gui.HudData
 import marloth.clienting.gui.ViewId
 import silentorb.mythic.ent.Id
-import simulation.main.Deck
-import simulation.entities.AttachmentCategory
-import simulation.entities.getTargetAttachmentsOfCategory
 import simulation.intellect.assessment.lightRating
+import simulation.main.Deck
 import kotlin.math.roundToInt
 
 fun floatToRoundedString(value: Float): String =
@@ -20,8 +18,9 @@ fun gatherHudData(deck: Deck, player: Id, view: ViewId): HudData? {
   val destructible = deck.destructibles[player]!!
   val body = deck.bodies[player]!!
 
-  val buffs = getTargetAttachmentsOfCategory(deck, player, AttachmentCategory.buff)
-      .map { Pair(deck.buffs[it]!!, deck.timers[it]!!.duration) }
+  val buffs = deck.buffs
+      .filter { it.value.target == player }
+      .map { Pair(deck.buffs[it.key]!!, deck.timers[it.key]!!.duration) }
 
   val interactable = if (view == ViewId.none)
     deck.interactables[character.canInteractWith]

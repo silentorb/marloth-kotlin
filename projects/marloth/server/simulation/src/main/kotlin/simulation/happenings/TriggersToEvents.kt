@@ -1,11 +1,9 @@
 package simulation.happenings
 
 import silentorb.mythic.ent.Id
-import simulation.combat.Damage
-import silentorb.mythic.happenings.CommonCharacterCommands
-import silentorb.mythic.happenings.Commands
-import silentorb.mythic.happenings.Events
-import silentorb.mythic.happenings.GameEvent
+import silentorb.mythic.combat.Damage
+import silentorb.mythic.combat.DamageEvent
+import silentorb.mythic.happenings.*
 import simulation.main.Deck
 import simulation.main.DeckSource
 import simulation.main.overTime
