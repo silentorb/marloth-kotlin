@@ -10,6 +10,7 @@ import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.ent.GenericIdHand
+import silentorb.mythic.scenery.Light
 
 // Hand is a slice of a deck, mostly used for instantiating new entities.
 

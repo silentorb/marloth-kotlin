@@ -4,6 +4,7 @@ import marloth.definition.data.staticAccessories
 import marloth.definition.data.staticActionAccessories
 import marloth.definition.data.staticModifiers
 import simulation.misc.Definitions
+import simulation.misc.LightAttachmentMap
 
 class AbilityDefinitions {
   //  val shoot = AbilityDefinition(
@@ -20,11 +21,12 @@ class AbilityDefinitions {
 
 val abilityDefinitions = AbilityDefinitions()
 
-fun staticDefinitions(): Definitions {
+fun staticDefinitions(lightAttachments: LightAttachmentMap): Definitions {
   val actionAccessories = staticActionAccessories()
   return Definitions(
       actions = actionAccessories.mapValues { it.value.action },
       accessories = staticAccessories().plus(actionAccessories.mapValues { it.value.accessory }),
-      modifiers = staticModifiers()
+      modifiers = staticModifiers(),
+      lightAttachments =  lightAttachments
   )
 }

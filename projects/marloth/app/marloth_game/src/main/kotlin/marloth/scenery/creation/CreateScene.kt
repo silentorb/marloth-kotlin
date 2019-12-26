@@ -15,10 +15,11 @@ import simulation.main.Deck
 fun mapLights(deck: Deck, player: Id) =
     deck.lights
         .map { (id, light) ->
+          val transform = depictionTransform(deck.bodies, deck.characterRigs, id)
           Light(
               type = LightType.point,
               color = light.color,
-              position = deck.bodies[id]!!.position + Vector3(0f, 0f, 2.2f),
+              offset = light.offset.transform(transform),
               direction = Vector3(0f, 0f, 0f),
               range = light.range
           )
@@ -28,7 +29,7 @@ fun mapLights(deck: Deck, player: Id) =
               Light(
                   type = LightType.point,
                   color = Vector4(1f, 1f, 1f, 0.6f),
-                  position = deck.bodies[player]!!.position + Vector3(0f, 0f, 2f),
+                  offset = deck.bodies[player]!!.position + Vector3(0f, 0f, 2f),
                   direction = Vector3(0f, 0f, 0f),
                   range = 36f
               )

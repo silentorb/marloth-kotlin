@@ -31,7 +31,7 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
         renderScene(gameRenderer)
 
         if (onRender != null) {
-          onRender(sceneRenderer)
+          onRender(sceneRenderer, scene.main)
         }
         val canvas = createCanvas(client.renderer, Vector2i(screenViewport.z, screenViewport.w))
         renderLayout(box, canvas)

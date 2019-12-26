@@ -10,6 +10,7 @@ import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.characters.CharacterRig
+import silentorb.mythic.scenery.Light
 
 // Deck is basically a database full of tables
 

@@ -6,7 +6,11 @@ import silentorb.mythic.ent.Id
 import simulation.main.Deck
 import simulation.entities.AttachmentCategory
 import simulation.entities.getTargetAttachmentsOfCategory
+import simulation.intellect.assessment.lightRating
 import kotlin.math.roundToInt
+
+fun floatToRoundedString(value: Float): String =
+    ((value * 100).roundToInt().toFloat() / 100).toString()
 
 fun gatherHudData(deck: Deck, player: Id, view: ViewId): HudData? {
   val character = deck.characters[player]
@@ -28,8 +32,9 @@ fun gatherHudData(deck: Deck, player: Id, view: ViewId): HudData? {
       sanity = character.sanity,
       interactable = interactable,
       buffs = buffs,
-      debugInfo =  listOf(
-          ((body.velocity.length() * 100).roundToInt().toFloat() / 100).toString()
+      debugInfo = listOf(
+          "LR: ${floatToRoundedString(lightRating(deck, player))}",
+          floatToRoundedString(body.velocity.length())
 //          if (character.isGrounded) "Grounded" else "Air",
 //          character.groundDistance.toString()
       )

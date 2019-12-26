@@ -10,6 +10,7 @@ import silentorb.mythic.spatial.manhattanDistance
 import silentorb.mythic.physics.toVector3
 import silentorb.mythic.lookinglass.SceneRenderer
 import silentorb.mythic.physics.BulletState
+import silentorb.mythic.scenery.Scene
 import com.badlogic.gdx.math.Vector3 as GdxVector3
 
 class BulletDebugDrawer : btIDebugDraw(), Disposable {
@@ -49,7 +50,7 @@ class BulletDebugDrawer : btIDebugDraw(), Disposable {
 
 private var debugDrawer: BulletDebugDrawer? = null
 
-fun drawBulletDebug(bulletState: BulletState, origin: Vector3): RenderHook = { sceneRenderer: SceneRenderer ->
+fun drawBulletDebug(bulletState: BulletState, origin: Vector3): RenderHook = { sceneRenderer: SceneRenderer, _: Scene ->
   val dynamicsWorld = bulletState.dynamicsWorld
   val drawer = if (debugDrawer == null) {
     debugDrawer = BulletDebugDrawer()

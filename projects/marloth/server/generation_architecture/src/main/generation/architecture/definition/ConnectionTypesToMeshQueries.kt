@@ -13,8 +13,7 @@ fun connectionTypesToMeshQueries(): ConnectTypeMeshQueryMap = mapOf(
         query = MeshQuery(all = setOf(MeshAttribute.wall, MeshAttribute.decorated))
     ),
     ConnectionType.doorway to RandomMeshQuery(
-        query = MeshQuery(all = setOf(MeshAttribute.doorway)),
-        nothingChance = 0.7f
+        query = MeshQuery(all = setOf(MeshAttribute.doorway))
     ),
     ConnectionType.plainWall to RandomMeshQuery(
         query = MeshQuery(all = setOf(MeshAttribute.wall, MeshAttribute.plain))

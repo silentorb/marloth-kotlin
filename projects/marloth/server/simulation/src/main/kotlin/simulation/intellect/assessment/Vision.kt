@@ -2,19 +2,19 @@ package simulation.intellect.assessment
 
 import silentorb.mythic.ent.Id
 import silentorb.mythic.spatial.quadOut
-import simulation.entities.Light
 import simulation.main.Deck
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.BulletState
 import silentorb.mythic.physics.castCollisionRay
 import silentorb.mythic.characters.CharacterRig
+import silentorb.mythic.scenery.Light
 import simulation.misc.MapGrid
 import simulation.misc.CellAttribute
 import simulation.misc.Realm
 import simulation.misc.getPointCell
 
 const val viewingRange = 30f
-const val minimumLightRating = 0.0f
+const val minimumLightRating = 0.2f
 
 fun isInAngleOfView(viewer: CharacterRig, viewerBody: Body, targetBody: Body): Boolean =
     viewer.facingVector.dot((targetBody.position - viewerBody.position).normalize()) > 0.5f

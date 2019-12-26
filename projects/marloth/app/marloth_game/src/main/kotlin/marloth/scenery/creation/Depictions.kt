@@ -2,16 +2,20 @@ package marloth.scenery.creation
 
 import marloth.scenery.ArmatureId
 import marloth.scenery.ArmatureSockets
-import silentorb.mythic.scenery.MeshName
-import silentorb.mythic.scenery.TextureName
+import marloth.scenery.enums.MeshId
+import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
+import silentorb.mythic.lookinglass.*
+import silentorb.mythic.physics.Body
+import silentorb.mythic.scenery.MeshName
+import silentorb.mythic.scenery.TextureName
 import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Vector3
-import marloth.scenery.enums.MeshId
-import silentorb.mythic.lookinglass.*
-import simulation.entities.*
+import simulation.entities.Depiction
+import simulation.entities.DepictionType
+import simulation.entities.Player
 import simulation.main.Deck
 import kotlin.math.floor
 
@@ -35,14 +39,20 @@ fun filterDepictions(depictions: Table<Depiction>, player: Id, playerRecord: Pla
 //    else
 //      depictions
 
-fun convertSimpleDepiction(deck: Deck, id: Id, mesh: MeshName, texture: TextureName? = null): MeshElement? {
-  val body = deck.bodies[id]!!
-  val characterRig = deck.characterRigs[id]
+fun depictionTransform(bodies: Table<Body>, characterRigs: Table<CharacterRig>, id: Id): Matrix {
+  val body = bodies[id]!!
+  val characterRig = characterRigs[id]
   val translate = Matrix.identity.translate(body.position)
-  val transform = if (characterRig != null)
+  return if (characterRig != null)
     translate.rotate(characterRig.facingQuaternion)
   else
     translate.rotate(body.orientation)
+
+}
+
+fun convertSimpleDepiction(deck: Deck, id: Id, mesh: MeshName, texture: TextureName? = null): MeshElement? {
+  val body = deck.bodies[id]!!
+  val transform = depictionTransform(deck.bodies, deck.characterRigs, id)
 
   val material = if (texture != null)
     Material(texture = texture, shading = true)

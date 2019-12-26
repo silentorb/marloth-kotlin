@@ -9,19 +9,20 @@ import silentorb.mythic.glowing.globalState
 import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.lookinglass.shading.ObjectShaderConfig
 import silentorb.mythic.lookinglass.shading.ShaderFeatureConfig
+import silentorb.mythic.scenery.Light
+import silentorb.mythic.scenery.Scene
 import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Vector4
 import simulation.main.Deck
 
-fun drawAiTargets(deck: Deck, renderer: Renderer) {
-  val targets = deck.spirits.mapNotNull { it.value.pursuit.targetPosition }
+fun drawLights(lights: List<Light>, renderer: Renderer) {
   val effect = renderer.getShader(renderer.vertexSchemas.flat, ShaderFeatureConfig())
   val cube = renderer.meshes[MeshId.cube.name]!!.primitives.first()
-  for (target in targets) {
+  for (light in lights) {
     effect.activate(ObjectShaderConfig(
-        color = Vector4(1f, 0f, 1f, 0.3f),
+        color = Vector4(1f, 1f, 0f, 0.3f),
         transform = Matrix.identity
-            .translate(target)
+            .translate(light.offset)
             .scale(0.6f)
 
     ))
@@ -31,8 +32,8 @@ fun drawAiTargets(deck: Deck, renderer: Renderer) {
   }
 }
 
-fun conditionalDrawAiTargets(deck: Deck, renderer: Renderer) {
-  if (isDebugSet("DRAW_AI_TARGETS")) {
-    drawAiTargets(deck, renderer)
+fun conditionalDrawLights(lights: List<Light>, renderer: Renderer) {
+  if (isDebugSet("DRAW_LIGHTS")) {
+    drawLights(lights, renderer)
   }
 }

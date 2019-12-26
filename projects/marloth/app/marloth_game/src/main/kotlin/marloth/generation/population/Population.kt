@@ -13,15 +13,17 @@ import simulation.main.Hand
 import simulation.main.IdHand
 import simulation.misc.Realm
 import simulation.misc.WorldInput
+import simulation.misc.lightHandsFromDepictions
 
 fun populateWorld(nextId: IdSource, config: GenerationConfig, input: WorldInput,
                   realm: Realm, architectureCells: Map<Id, Vector3i>): (Deck) -> List<IdHand> = { deck ->
   val grid = realm.grid
+  val definitions = config.definitions
   val playerCell = getPlayerCell(grid)
   val scale = calculateWorldScale(input.boundary.dimensions)
   val occupantToHand = occupantPopulator(config, nextId)
   val playerCount = getDebugSetting("INITIAL_PLAYER_COUNT")?.toInt() ?: 1
-  (1..playerCount).flatMap { newPlayer(nextId, config.definitions, grid, playerCell) }
+  val hands = (1..playerCount).flatMap { newPlayer(nextId, definitions, grid, playerCell) }
       .plus(populateRooms(occupantToHand, input.dice, realm))
       .plus(toIdHands(nextId, placeWallLamps(deck, config, realm, input.dice, scale, architectureCells)))
       .plus(listOf(
@@ -38,4 +40,6 @@ fun populateWorld(nextId: IdSource, config: GenerationConfig, input: WorldInput,
               )
           )
       ))
+  hands
+      .plus(lightHandsFromDepictions(definitions.lightAttachments, hands))
 }

@@ -11,10 +11,12 @@ import persistence.Database
 import persistence.newDatabase
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.lookinglass.SceneRenderer
+import silentorb.mythic.scenery.Light
+import silentorb.mythic.scenery.Scene
 import simulation.main.World
 import simulation.misc.Definitions
 
-typealias RenderHook = (SceneRenderer) -> Unit
+typealias RenderHook = (SceneRenderer, Scene) -> Unit
 
 typealias NewWorld = (GameApp) -> World
 
@@ -34,12 +36,15 @@ tailrec fun gameLoop(app: GameApp, state: AppState) {
     gameLoop(app, nextState)
 }
 
+
 fun newGameApp(platform: Platform, config: GameConfig): GameApp {
-  val definitions = staticDefinitions()
+  val client = newClient(platform, config.display)
+  val lightAttachments = gatherMeshLights(client.renderer.meshes)
+  val definitions = staticDefinitions(lightAttachments)
   return GameApp(
       platform = platform,
       config = config,
-      client = newClient(platform, config.display),
+      client = client,
       definitions = definitions,
       newWorld = { gameApp -> generateWorld(definitions, getMeshInfo(gameApp.client), Dice()) }
   )

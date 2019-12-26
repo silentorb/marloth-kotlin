@@ -8,14 +8,11 @@ import generation.architecture.misc.MeshShapeMap
 import generation.architecture.misc.compileArchitectureMeshInfo
 import lab.utility.shouldReloadWorld
 import lab.utility.updateWatching
-import lab.views.game.GameViewConfig
-import lab.views.game.drawBulletDebug
 import lab.views.model.newModelViewState
 import marloth.clienting.newClientState
 import generation.architecture.definition.biomeInfoMap
 import generation.architecture.definition.meshAttributes
-import lab.views.game.conditionalDrawAiTargets
-import lab.views.game.drawAiTargets
+import lab.views.game.*
 import marloth.definition.staticDefinitions
 import marloth.front.GameApp
 import marloth.front.RenderHook
@@ -78,18 +75,19 @@ data class LabApp(
 
 private var saveIncrement = 0f
 
-fun labRender(app: LabApp, state: LabState): RenderHook = { sceneRenderer ->
+fun labRender(app: LabApp, state: LabState): RenderHook = { sceneRenderer, scene ->
   val world = state.app.worlds.last()
   val deck = world.deck
   val renderer = sceneRenderer.renderer
   if (app.config.gameView.drawPhysics) {
-    drawBulletDebug(world.bulletState, deck.bodies[deck.players.keys.first()]!!.position)(sceneRenderer)
+    drawBulletDebug(world.bulletState, deck.bodies[deck.players.keys.first()]!!.position)(sceneRenderer, scene)
   }
   val navMesh = state.app.worlds.last().navMesh
   if (navMesh != null)
     renderNavMesh(renderer, app.config.mapView.display, navMesh)
 
   conditionalDrawAiTargets(deck, renderer)
+  conditionalDrawLights(scene.lights, renderer)
 }
 
 fun updateDebugRangeValue(appState: AppState) {
@@ -192,9 +190,11 @@ fun newLabGameApp(labConfig: LabConfig): GameApp {
   val gameConfig = loadGameConfig()
   val platform = createDesktopPlatform("Dev Lab", gameConfig.display)
   platform.display.initialize(gameConfig.display)
-  val definitions = staticDefinitions()
+  val client = newClient (platform, gameConfig.display, labConfig.gameView.lighting)
+  val lightAttachments = gatherMeshLights(client.renderer.meshes)
+  val definitions = staticDefinitions(lightAttachments)
   return GameApp(platform, gameConfig,
-      client = newClient(platform, gameConfig.display, labConfig.gameView.lighting),
+      client = client,
       definitions = definitions,
       newWorld = { gameApp -> lab.generateWorld(definitions, getMeshInfo(gameApp.client), labConfig.gameView) }
   )

@@ -10,6 +10,7 @@ import silentorb.mythic.spatial.*
 import silentorb.mythic.scenery.MeshName
 import simulation.entities.ArchitectureElement
 import simulation.main.Hand
+import simulation.misc.CellMap
 
 fun newWallInternal(config: GenerationConfig, mesh: MeshName, position: Vector3, angleZ: Float, biome: BiomeInfo,
                     scale: Vector3 = Vector3.unit): Hand {
@@ -57,20 +58,25 @@ fun selectMeshQuery(input: BuilderInput, direction: Direction): RandomMeshQuery?
   return input.connectionTypesToMeshQueries[connectionType]
 }
 
-fun cubeWalls(directions: Set<Direction> = horizontalDirections, height: Float = 0f) = blockBuilder { input ->
-  val dice = input.dice
-  val rotatedDirections = directions.map(rotateDirection(input.turns))
-  val cell = input.cell
-  val grid = input.grid
-
-  horizontalDirectionVectors
+fun getCubeWallDirections(directions: Set<Direction>,cells: CellMap,
+                          cell: Vector3i, turns: Int): List<Map.Entry<Direction, Vector3i>> {
+  val rotatedDirections = directions.map(rotateDirection(turns))
+  return horizontalDirectionVectors
       .filterKeys { rotatedDirections.contains(it) }
       .entries
       .filter { (direction, offset) ->
         val otherCell = cell + offset
         setOf(Direction.north, Direction.east).contains(direction) ||
-            !grid.cells.containsKey(otherCell)
+            !cells.containsKey(otherCell)
       }
+}
+
+fun cubeWalls(directions: Set<Direction> = horizontalDirections, height: Float = 0f) = blockBuilder { input ->
+  val cell = input.cell
+  val grid = input.grid
+  val processedDirections= getCubeWallDirections(directions, grid.cells, cell, input.turns)
+
+  processedDirections
       .mapNotNull { entry ->
         val query = selectMeshQuery(input, entry.key)
         if (query != null)
