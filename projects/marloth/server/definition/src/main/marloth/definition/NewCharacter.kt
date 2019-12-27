@@ -33,7 +33,8 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, defi
           hand = Hand(
               ambientAudioEmitter = if (definition.ambientSounds.any())
                 AmbientAudioEmitter(
-                    delay = position.length() % 2.0
+                    delay = position.length() % 2.0,
+                    sound = definition.ambientSounds.first()
                 )
               else
                 null,
