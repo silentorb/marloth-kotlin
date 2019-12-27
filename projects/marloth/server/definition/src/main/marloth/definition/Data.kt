@@ -4,6 +4,7 @@ import marloth.definition.data.staticAccessories
 import marloth.definition.data.staticActionAccessories
 import marloth.definition.data.staticModifiers
 import marloth.scenery.enums.DamageTypes
+import silentorb.mythic.aura.SoundDurations
 import simulation.misc.Definitions
 import simulation.misc.LightAttachmentMap
 
@@ -24,9 +25,9 @@ val abilityDefinitions = AbilityDefinitions()
 
 val staticDamageTypes = DamageTypes.values().map { it.name }
 
-fun staticDefinitions(lightAttachments: LightAttachmentMap): Definitions {
+fun staticDefinitions(lightAttachments: LightAttachmentMap, soundDurations: SoundDurations): Definitions {
   val actionAccessories = staticActionAccessories()
-  val weapons =actionAccessories
+  val weapons = actionAccessories
       .filterValues { it.weapon != null }
       .mapValues { it.value.weapon!! }
 
@@ -36,6 +37,7 @@ fun staticDefinitions(lightAttachments: LightAttachmentMap): Definitions {
       damageTypes = staticDamageTypes.toSet(),
       modifiers = staticModifiers(),
       lightAttachments = lightAttachments,
+      soundDurations = soundDurations,
       weapons = weapons
   )
 }

@@ -5,6 +5,7 @@ import silentorb.mythic.ent.pipe2
 import marloth.scenery.enums.ResourceId
 import marloth.scenery.enums.Sounds
 import silentorb.mythic.accessorize.AccessoryName
+import silentorb.mythic.aura.SoundType
 import silentorb.mythic.happenings.*
 import silentorb.mythic.physics.BulletState
 import silentorb.mythic.combat.DamageMultipliers
@@ -21,7 +22,7 @@ data class CharacterDefinition(
     val accessories: List<AccessoryName>,
     val depictionType: DepictionType,
     val deathSound: Sounds,
-    val ambientSounds: List<Sounds> = listOf(),
+    val ambientSounds: List<SoundType> = listOf(),
     val damageMultipliers: DamageMultipliers = mapOf()
 )
 

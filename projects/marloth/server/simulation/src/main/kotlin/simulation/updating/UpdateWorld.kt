@@ -1,25 +1,28 @@
 package simulation.updating
 
-import simulation.entities.cleanupAttachmentSource
-import simulation.entities.updateAttachment
-import simulation.physics.updatePhysics
+import silentorb.mythic.aura.updateSound
 import silentorb.mythic.combat.getDamageMultiplierModifiers
 import silentorb.mythic.combat.updateDestructibleCache
 import silentorb.mythic.combat.updateDestructibleHealth
-import simulation.combat.toModifierDeck
-import simulation.entities.*
-import simulation.happenings.*
 import silentorb.mythic.ent.*
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.filterCharacterCommandsFromEvents
+import simulation.combat.toCombatDefinitions
+import simulation.combat.toModifierDeck
+import simulation.entities.*
+import simulation.happenings.commandsToEvents
+import simulation.happenings.eventsFromEvents
+import simulation.happenings.gatherActivatedTriggers
+import simulation.happenings.triggersToEvents
 import simulation.intellect.aliveSpirits
 import simulation.intellect.execution.pursueGoals
 import simulation.intellect.updateAiState
 import simulation.main.*
 import simulation.misc.Definitions
-import simulation.combat.toCombatDefinitions
 import simulation.particles.updateParticleEffect
-import simulation.physics.*
+import simulation.physics.getBulletCollisions
+import simulation.physics.updateMarlothCharacterRig
+import simulation.physics.updatePhysics
 
 const val simulationFps = 60
 const val simulationDelta = 1f / simulationFps.toFloat()
@@ -66,6 +69,7 @@ fun updateEntities(animationDurations: AnimationDurationMap, world: World, event
           destructibles = mapTable(deck.destructibles, updateDestructibleHealth(events)),
           characters = mapTable(deck.characters, updateCharacter(deck, world.bulletState, events)),
           particleEffects = mapTableValues(deck.particleEffects, deck.bodies, updateParticleEffect(dice, delta)),
+          sounds = mapTableValues(deck.sounds, updateSound(delta)),
           spirits = mapTable(deck.spirits, updateAiState(world, delta)),
           timers = updateIntTimers(events)(deck.timers),
           timersFloat = mapTableValues(deck.timersFloat, updateFloatTimer(delta))
@@ -87,7 +91,7 @@ fun updateDeck(animationDurations: AnimationDurationMap, definitions: Definition
     pipe(
         updateEntities(animationDurations, world, events),
         ifUpdatingLogic(world.deck, updateDeckCache(definitions)),
-        removeWhole(events, world.deck),
+        removeWhole(world.definitions.soundDurations, events, world.deck),
         removePartial(events, world.deck),
         cleanupOutdatedReferences,
         newEntities(definitions, animationDurations, world.deck, events, nextId)
@@ -107,7 +111,7 @@ fun updateWorld(animationDurations: AnimationDurationMap, definitions: Definitio
                 externalEvents: Events, delta: Float): (World) -> World =
     pipe2(listOf(
         { world ->
-          val events = generateIntermediateRecords(definitions,previous, world, externalEvents)
+          val events = generateIntermediateRecords(definitions, previous, world, externalEvents)
           pipe2(listOf(
               updatePhysics(events),
               updateWorldDeck(animationDurations, definitions, events, delta)

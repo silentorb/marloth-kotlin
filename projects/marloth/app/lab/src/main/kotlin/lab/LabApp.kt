@@ -192,7 +192,8 @@ fun newLabGameApp(labConfig: LabConfig): GameApp {
   platform.display.initialize(gameConfig.display)
   val client = newClient (platform, gameConfig.display, labConfig.gameView.lighting)
   val lightAttachments = gatherMeshLights(client.renderer.meshes)
-  val definitions = staticDefinitions(lightAttachments)
+  val soundDurations = client.soundLibrary.mapValues { it.value.duration }
+  val definitions = staticDefinitions(lightAttachments, soundDurations)
   return GameApp(platform, gameConfig,
       client = client,
       definitions = definitions,

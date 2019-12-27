@@ -4,12 +4,13 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.randomly.Dice
 import marloth.scenery.enums.Sounds
+import silentorb.mythic.aura.SoundType
 import simulation.main.Deck
 import simulation.updating.simulationDelta
 
 data class AmbientAudioEmitter(
     val delay: Double,
-    val sound: Sounds? = null
+    val sound: SoundType? = null
 )
 
 fun updateAmbientAudioEmitter(dice: Dice, deck: Deck): (Id, AmbientAudioEmitter) -> AmbientAudioEmitter = { id, emitter ->

@@ -8,6 +8,7 @@ import silentorb.mythic.accessorize.AccessoryDefinition
 import silentorb.mythic.accessorize.AccessoryName
 import simulation.entities.ActionDefinition
 import silentorb.mythic.accessorize.ModifierDefinition
+import silentorb.mythic.aura.SoundType
 import silentorb.mythic.combat.DamageType
 
 typealias AccessoryDefinitions = Map<AccessoryName, AccessoryDefinition>
@@ -19,5 +20,6 @@ data class Definitions(
     val damageTypes: Set<DamageType>,
     val modifiers: Map<ModifierId, ModifierDefinition>,
     val lightAttachments: LightAttachmentMap,
+    val soundDurations: Map<SoundType, Float>,
     val weapons: Map<AccessoryName, WeaponDefinition>
 )

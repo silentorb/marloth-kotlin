@@ -3,6 +3,7 @@ package simulation.main
 import silentorb.mythic.accessorize.Accessory
 import simulation.entities.Attachment
 import silentorb.mythic.accessorize.Modifier
+import silentorb.mythic.aura.Sound
 import silentorb.mythic.ent.*
 import simulation.entities.*
 import simulation.happenings.Trigger
@@ -43,6 +44,7 @@ data class Deck(
     val players: Table<Player> = mapOf(),
     val resources: Table<ResourceBundle> = mapOf(),
     val respawnCountdowns: Table<RespawnCountdown> = mapOf(),
+    val sounds: Table<Sound> = mapOf(),
     val spirits: Table<Spirit> = mapOf(),
     val timers: Table<Timer> = mapOf(),
     val timersFloat: Table<FloatTimer> = mapOf(),

@@ -30,8 +30,8 @@ class Creatures {
       maxSpeed = 2f,
       deathSound = Sounds.hogDeath,
       ambientSounds = listOf(
-          Sounds.hogAmbient01,
-          Sounds.hogAmbient03
+          Sounds.hogAmbient01.name,
+          Sounds.hogAmbient03.name
       )
   )
 

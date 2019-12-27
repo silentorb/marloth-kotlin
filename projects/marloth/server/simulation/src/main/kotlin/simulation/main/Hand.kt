@@ -3,6 +3,7 @@ package simulation.main
 import silentorb.mythic.accessorize.Accessory
 import simulation.entities.Attachment
 import silentorb.mythic.accessorize.Modifier
+import silentorb.mythic.aura.Sound
 import simulation.entities.*
 import simulation.happenings.Trigger
 import simulation.intellect.Spirit
@@ -43,6 +44,7 @@ data class Hand(
     val player: Player? = null,
     val resources: ResourceBundle? = null,
     val respawnCountdown: RespawnCountdown? = null,
+    val sound: Sound? = null,
     val spirit: Spirit? = null,
     val timer: Timer? = null,
     val timerFloat: FloatTimer? = null,

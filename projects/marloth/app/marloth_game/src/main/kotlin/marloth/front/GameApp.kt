@@ -40,7 +40,8 @@ tailrec fun gameLoop(app: GameApp, state: AppState) {
 fun newGameApp(platform: Platform, config: GameConfig): GameApp {
   val client = newClient(platform, config.display)
   val lightAttachments = gatherMeshLights(client.renderer.meshes)
-  val definitions = staticDefinitions(lightAttachments)
+  val soundDurations = client.soundLibrary.mapValues { it.value.duration }
+  val definitions = staticDefinitions(lightAttachments, soundDurations)
   return GameApp(
       platform = platform,
       config = config,

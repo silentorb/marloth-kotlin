@@ -56,7 +56,7 @@ fun newClientState(platform: Platform, inputConfig: GameInputConfig, audioConfig
     ClientState(
         input = newInputState(inputConfig),
         bloomState = newBloomState(),
-        audio = newAudioState(platform.audio, audioConfig.soundVolume),
+        audio = newAudioState(audioConfig.soundVolume),
         playerViews = mapOf(),
         commands = listOf(),
         players = listOf()
@@ -75,12 +75,13 @@ fun gatherFontSets() = loadFontSets(baseFonts, textStyles)
 
 class Client(val platform: Platform, val renderer: Renderer) {
   val textResources: TextResources = loadTextResource(englishTextResources)
-  val soundLibrary: SoundLibrary = loadSounds(platform.audio)
+  val soundLibrary: SoundLibrary
   fun getWindowInfo() = platform.display.getInfo()
 
   init {
     setGlobalFonts(renderer.fonts)
     platform.audio.start(50)
+    soundLibrary = loadSounds(platform.audio)
   }
 
   fun shutdown() {
