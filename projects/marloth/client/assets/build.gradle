@@ -88,18 +88,58 @@ class TextureAssetsTask extends DefaultTask {
   }
 }
 
+class AudioAssetsTask extends DefaultTask {
+
+  @InputFiles
+  def FileCollection inputFiles
+
+  def File _projectDir
+
+  @OutputDirectory
+  def File getOutputDir() { return new File("$_projectDir/src/main/resources/audio") }
+
+  @TaskAction
+  void execute(IncrementalTaskInputs inputs) {
+    println inputs.incremental ? 'CHANGED inputs considered out of date'
+        : 'ALL inputs considered out of date'
+    def config = Utility.getAssetConfig(_projectDir)
+    def executablePath = config.paths.python
+    inputs.outOfDate { change ->
+      def filename = change.file.name
+      println "out of date: ${filename}"
+      def args = [executablePath, "$_projectDir/scripts/faustc.py", filename[0..<filename.lastIndexOf('.')]]
+      def proc = args.execute()
+      def sout = new StringBuilder(), serr = new StringBuilder()
+      proc.consumeProcessOutput(sout, serr)
+      proc.waitFor()
+      println sout
+      if (serr) println "err2>($serr)."
+    }
+
+    inputs.removed { change ->
+      println "removed: ${name}"
+    }
+  }
+}
+
 task modelAssets28(type: ModelAssetsTask28) {
-  inputFiles = fileTree("$projectDir/blend/models").matching { include '**/*.blend'}
+  inputFiles = files(fileTree("$projectDir/blend/models") { include '**/*.blend'})
   _projectDir = projectDir
 }
 
 task textureAssets(type: TextureAssetsTask) {
-  inputFiles = fileTree("$projectDir/textures").matching { include '**/*.ffxml'}
+  inputFiles = files(fileTree("$projectDir/textures") { include '**/*.ffxml'})
   _projectDir = projectDir
 }
 
+task audioAssets(type: AudioAssetsTask) {
+  inputFiles = files(fileTree("$projectDir/audio/faust/sounds") { include '**/*.dsp'}.files)
+  _projectDir = projectDir
+}
+
+
 classes {
-//  dependsOn modelAssets
   dependsOn modelAssets28
   dependsOn textureAssets
+  dependsOn audioAssets
 }

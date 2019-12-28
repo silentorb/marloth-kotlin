@@ -5,11 +5,11 @@ from shutil import copy
 
 from utility import prepare_path, ensure_dir_exists, write_text_file, load_config
 
-
-input_dir = prepare_path('audio/faust')
-output_dir = prepare_path('src/main/java/marloth/assets/audio/sounds')
+input_dir = prepare_path('audio/faust/sounds')
+output_dir = prepare_path('src/main/resources/audio')
 temp_path = prepare_path('build/audio')
 resource_path = prepare_path('scripts/resources/wav')
+temp_wav_path = temp_path + '/temp.wav'
 
 config = load_config()
 
@@ -28,8 +28,19 @@ def render_code(name):
 
 
 def render_wav():
-    proc = subprocess.run([config['paths']['gcc'], '-static', '-o', 'temp.exe', temp_path + '/main.c'], cwd=temp_path)
-    subprocess.run([temp_path + '/temp.exe', temp_path + '/temp.wav' ])
+    subprocess.run([config['paths']['gcc'], '-static', '-o', 'temp.exe', temp_path + '/main.c'], cwd=temp_path)
+    subprocess.run([temp_path + '/temp.exe', temp_wav_path ])
+
+
+def encode_ogg_vorbis(name):
+    audio_file_path = output_dir + '/' + name + '.ogg'
+    subprocess.run([config['paths']['oggenc'], '-o', audio_file_path, temp_wav_path])
+
+
+def render(name):
+    render_code(name)
+    render_wav()
+    encode_ogg_vorbis(name)
 
 
 def main():
@@ -39,8 +50,7 @@ def main():
     copy(resource_path + '/write_wav.c', temp_path)
     names = sys.argv[1:]
     for name in names:
-        render_code(name)
-        render_wav()
+        render(name)
     print('Exported', ', '.join(names))
 
 
