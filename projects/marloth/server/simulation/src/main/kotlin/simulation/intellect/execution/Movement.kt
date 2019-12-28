@@ -12,8 +12,8 @@ import silentorb.mythic.happenings.CommonCharacterCommands
 import silentorb.mythic.happenings.Commands
 import simulation.intellect.Pursuit
 import simulation.intellect.design.getActionRange
-import simulation.intellect.navigation.asRecastVector3
-import simulation.intellect.navigation.fromRecastVector3
+import silentorb.mythic.intellect.navigation.asRecastVector3
+import silentorb.mythic.intellect.navigation.fromRecastVector3
 import simulation.misc.Graph
 
 fun doorwayPosition(graph: Graph, firstNode: Id, secondNode: Id): Vector3 {

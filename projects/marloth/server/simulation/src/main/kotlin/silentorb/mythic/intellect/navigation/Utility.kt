@@ -1,4 +1,4 @@
-package simulation.intellect.navigation
+package silentorb.mythic.intellect.navigation
 
 import silentorb.mythic.spatial.Vector3
 

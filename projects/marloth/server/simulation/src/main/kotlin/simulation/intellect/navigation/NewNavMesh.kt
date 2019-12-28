@@ -8,16 +8,18 @@ import org.recast4j.recast.Heightfield
 import org.recast4j.recast.RecastBuilder
 import org.recast4j.recast.RecastBuilderConfig
 import org.recast4j.recast.geom.TriMesh
+import silentorb.mythic.intellect.navigation.GeometryProvider
+import silentorb.mythic.intellect.navigation.newNavMeshTriMeshes
 import simulation.main.Deck
 import simulation.misc.MapGrid
 import simulation.misc.cellLength
+import simulation.physics.toPhysicsDeck
 
 var originalNavMeshData: List<TriMesh> = listOf()
 var globalHeightMap: Heightfield? = null
 
 fun newNavMesh(grid: MapGrid, deck: Deck): NavMesh {
-  val elements = deck.architecture
-  val meshes = newNavMeshTriMeshes(deck)
+  val meshes = newNavMeshTriMeshes(toPhysicsDeck(deck), deck.architecture.keys)
   val vertices = meshes.flatMap { it.verts.toList() }
   originalNavMeshData = meshes
 

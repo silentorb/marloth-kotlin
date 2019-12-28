@@ -2,6 +2,7 @@ import os, sys
 import json
 import pathlib
 import subprocess
+from .utility import prepare_path, write_text_file, ensure_dir_exists, load_config
 
 # Filter forge source files can optionally embed meta data into the file name.
 # Meta data could be added inside the file but would increase processing
@@ -12,24 +13,14 @@ import subprocess
 
 # Filter Forge's CLI has a bug that prevents generating transparent textures.  Only filters support transparency,
 # so when rasterizing a transparent texture, an empty source image with an alpha channel must be referenced.
-# Filter Forge has no resizing so the soruce image dimensions define the output dimensions.
+# Filter Forge has no resizing so the source image dimensions define the output dimensions.
 
 default_length = 1024
-module_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
-
-
-def prepare_path(dir):
-    return os.path.join(module_dir, dir).replace('\\', '/')
-
-
-def read_text_file(file_path):
-    return pathlib.Path(file_path).read_text()
-
 
 temp_path = prepare_path('build/textures')
 resource_path = prepare_path('scripts/resources')
 xml_path = temp_path + '/textures.xml'
-config = json.loads(read_text_file(prepare_path('config/config.json')))
+config = load_config()
 
 
 def get_source_image_clause(width, height, format):
@@ -123,11 +114,6 @@ def get_xml(input_dir, output_dir, names):
 </Tasks>'''.format(tasks_clause=tasks_clause)
 
 
-def write_text_file(file_path, content):
-    with open(file_path, 'w') as stream:
-        stream.write(content)
-
-
 def render(input_dir, output_dir, names):
     xml_content = get_xml(input_dir, output_dir, names)
     write_text_file(xml_path, xml_content)
@@ -140,11 +126,6 @@ def get_step_name(name, i):
 
 def get_anim_temp_file(step_name):
     return temp_path + '/' + step_name + '.ffxml'
-
-
-def ensure_dir_exists(dir):
-    if not os.path.exists(dir):
-        os.mkdir(dir)
 
 
 def main():

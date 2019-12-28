@@ -14,13 +14,16 @@ import silentorb.mythic.spatial.Vector3
 import simulation.entities.isAlive
 import simulation.updating.simulationDelta
 
+fun toPhysicsDeck(deck: Deck) =
+    PhysicsDeck(
+        bodies = deck.bodies,
+        collisionShapes = deck.collisionShapes,
+        dynamicBodies = deck.dynamicBodies
+    )
+
 fun updatePhysics(events: Events): (World) -> World = { world ->
   val deck = world.deck
-  val physicsDeck = PhysicsDeck(
-      bodies = deck.bodies,
-      collisionShapes = deck.collisionShapes,
-      dynamicBodies = deck.dynamicBodies
-  )
+  val physicsDeck = toPhysicsDeck(deck)
   val physicsWorld = PhysicsWorld(
       bulletState = world.bulletState,
       deck = physicsDeck

@@ -7,12 +7,13 @@ import org.recast4j.recast.RecastConstants
 import org.recast4j.recast.geom.InputGeomProvider
 import silentorb.mythic.characters.defaultCharacterHeight
 import silentorb.mythic.characters.defaultCharacterRadius
+import silentorb.mythic.intellect.navigation.walkable
 
 const val cellSize = 0.3f
 const val cellHeight = cellSize
 const val agentHeight = defaultCharacterHeight
 const val agentRadius = defaultCharacterRadius + 0.1f
-const val agentMaxClimb = 0.8f * 2f
+const val agentMaxClimb = 1.2f
 
 val vertsPerPoly = 6
 

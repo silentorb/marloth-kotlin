@@ -1,4 +1,4 @@
-package simulation.intellect.navigation
+package silentorb.mythic.intellect.navigation
 
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.createArcZ
@@ -6,10 +6,10 @@ import org.recast4j.recast.AreaModification
 import org.recast4j.recast.ConvexVolume
 import org.recast4j.recast.geom.InputGeomProvider
 import org.recast4j.recast.geom.TriMesh
+import silentorb.mythic.ent.Id
+import silentorb.mythic.physics.PhysicsDeck
 import silentorb.mythic.scenery.*
-import simulation.main.Deck
 import silentorb.mythic.physics.getBodyTransform
-
 
 private data class IntermediateMesh(
     val vertices: List<Vector3>,
@@ -132,10 +132,9 @@ data class GeometryProvider(
   override fun getMeshBoundsMax(): FloatArray = _meshBoundsMax
 }
 
-fun newNavMeshTriMeshes(deck: Deck): List<TriMesh> {
-  val elements = deck.architecture
-  return elements.entries
-      .map { (id, _) ->
+fun newNavMeshTriMeshes(deck: PhysicsDeck, architectureElements: Set<Id>): List<TriMesh> {
+  return architectureElements
+      .map { id ->
         val shape = deck.collisionShapes[id]!!.shape
         val mesh = getShapeVertices(shape)
           Pair(id, mesh)
