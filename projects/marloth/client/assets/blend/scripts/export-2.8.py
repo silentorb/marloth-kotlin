@@ -177,9 +177,9 @@ def add_keyframe_if_missing(curves, obj_name, property_name, values):
 def render_camera_texture(camera, image_name):
     scene = bpy.context.scene
     scene.camera = camera
-    scene.render.filepath = get_textures_dir() + '/' + image_name + scene.render.file_extension
-    bpy.ops.render.render(write_still=True)
-    print('Exported texture: ' + scene.render.filepath)
+    scene.render_code.filepath = get_textures_dir() + '/' + image_name + scene.render_code.file_extension
+    bpy.ops.render_code.render_code(write_still=True)
+    print('Exported texture: ' + scene.render_code.filepath)
 
 
 def render_camera_textures():

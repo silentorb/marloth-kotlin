@@ -16,6 +16,7 @@ def write_text_file(file_path, content):
 
 def ensure_dir_exists(dir):
     if not os.path.exists(dir):
+        ensure_dir_exists(pathlib.Path(dir).parent)
         os.mkdir(dir)
 
 
