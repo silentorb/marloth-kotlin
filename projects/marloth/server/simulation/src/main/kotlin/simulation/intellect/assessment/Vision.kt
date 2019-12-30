@@ -14,7 +14,7 @@ import simulation.misc.Realm
 import simulation.misc.getPointCell
 
 const val viewingRange = 30f
-const val minimumLightRating = 0.2f
+const val minimumLightRating = 0.1f
 
 fun isInAngleOfView(viewer: CharacterRig, viewerBody: Body, targetBody: Body): Boolean =
     viewer.facingVector.dot((targetBody.position - viewerBody.position).normalize()) > 0.5f

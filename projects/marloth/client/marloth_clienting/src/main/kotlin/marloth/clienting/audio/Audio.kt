@@ -11,6 +11,8 @@ import marloth.scenery.enums.Sounds
 import silentorb.mythic.aura.*
 import simulation.main.World
 
+const val maxSoundDistance: Float = 30f
+
 data class AudioConfig(
     var soundVolume: Float = 0.75f
 )
@@ -18,7 +20,7 @@ data class AudioConfig(
 fun updateAudioStateSounds(client: Client, previousSounds: Table<Sound>, nextSounds: Table<Sound>, listenerPosition: Vector3?, volume: Float): (AudioState) -> AudioState = { state ->
   //  val samples = client.platform.audio.availableBuffer / 4
   val newSounds = nextSounds.filterKeys { !previousSounds.keys.contains(it) }
-      .filterValues { (it.position == null && listenerPosition == null) || it.position!!.distance(listenerPosition!!) < 20f }
+      .filterValues { (it.position == null && listenerPosition == null) || it.position!!.distance(listenerPosition!!) < maxSoundDistance }
   val sounds = updateSoundPlaying(client.platform.audio, newSounds, client.soundLibrary, listenerPosition, volume)(state.sounds)
 
   state.copy(

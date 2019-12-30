@@ -107,7 +107,7 @@ class AudioAssetsTask extends DefaultTask {
     inputs.outOfDate { change ->
       def filename = change.file.name
       println "out of date: ${filename}"
-      def args = [executablePath, "$_projectDir/scripts/faustc.py", filename[0..<filename.lastIndexOf('.')]]
+      def args = [executablePath, "$_projectDir/scripts/audio.py", filename[0..<filename.lastIndexOf('.')]]
       def proc = args.execute()
       def sout = new StringBuilder(), serr = new StringBuilder()
       proc.consumeProcessOutput(sout, serr)
@@ -133,7 +133,7 @@ task textureAssets(type: TextureAssetsTask) {
 }
 
 task audioAssets(type: AudioAssetsTask) {
-  inputFiles = files(fileTree("$projectDir/audio/faust/sounds") { include '**/*.dsp'}.files)
+  inputFiles = files(fileTree("$projectDir/audio/supercollider/sounds") { include '**/*.scd'}.files)
   _projectDir = projectDir
 }
 

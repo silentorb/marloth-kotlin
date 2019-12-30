@@ -22,6 +22,7 @@ int main(int argc, char *argv[]) {
     waveSetDuration( &mySound, duration );
     mydsp *dsp = newmydsp();
     initmydsp(dsp, sampleRate);
+    instanceClearmydsp(dsp);
 
     // Add all of the data
     int i;
