@@ -1,40 +1,18 @@
-package simulation.entities
+package simulation.misc
 
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import marloth.scenery.enums.AccessoryId
 import silentorb.mythic.accessorize.AccessoryName
-import simulation.combat.raycastAttack
+import silentorb.mythic.combat.spatial.startRaycastAttack
 import silentorb.mythic.happenings.Events
 import simulation.happenings.TryUseAbilityEvent
 import silentorb.mythic.happenings.UseAction
+import silentorb.mythic.performing.Action
+import silentorb.mythic.performing.updateCooldown
 import simulation.main.Deck
 import simulation.main.World
-import simulation.misc.Definitions
 import simulation.updating.simulationDelta
-
-data class ActionDefinition(
-    val cooldown: Float,
-    val range: Float,
-    val animation: AnimationName? = null
-)
-
-data class Action(
-    val cooldown: Float = 0f
-)
-
-data class NewAbility(
-    val id: Id
-)
-
-fun updateCooldown(action: Action, isActivated: Boolean, cooldown: Float, delta: Float): Float {
-  return if (isActivated)
-    cooldown
-  else if (action.cooldown > 0f)
-    Math.max(0f, action.cooldown - delta)
-  else
-    0f
-}
 
 fun canUse(deck: Deck, action: Id): Boolean {
   val actionRecord = deck.actions[action]
@@ -66,7 +44,7 @@ fun eventsFromTryUseAbility(world: World): (TryUseAbilityEvent) -> Events = { ev
   if (action != null && canUse(deck, action)) {
     val accessory = deck.accessories[action]!!
     when (accessory.type) {
-      AccessoryId.pistol.name -> raycastAttack(world, event.actor, action, accessory.type)
+      AccessoryId.pistol.name -> startRaycastAttack(event.actor, action, accessory.type)
       else -> listOf()
     }
   } else

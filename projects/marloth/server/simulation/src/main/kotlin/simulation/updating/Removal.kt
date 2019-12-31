@@ -1,19 +1,27 @@
 package simulation.updating
 
 import silentorb.mythic.aura.SoundDurations
-import silentorb.mythic.aura.SoundType
 import silentorb.mythic.aura.finishedSounds
 import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.mapEntryValue
 import silentorb.mythic.ent.pipe
 import silentorb.mythic.happenings.Events
-import simulation.entities.expiredTimers
+import simulation.entities.cleanupAttachmentSource
+import silentorb.mythic.timing.expiredTimers
 import simulation.happenings.PurchaseEvent
 import simulation.happenings.TakeItemEvent
 import simulation.main.Deck
 import simulation.main.removeEntities
 
+val cleanupOutdatedReferences: (Deck) -> Deck = { deck ->
+  deck.copy(
+      attachments = deck.attachments
+          .mapValues(mapEntryValue(cleanupAttachmentSource(deck)))
+  )
+}
+
 fun getFinished(soundDurations: SoundDurations, events: Events, deck: Deck): Set<Id> {
-  return expiredTimers(deck)
+  return expiredTimers(deck.timersFloat, deck.timersInt)
       .plus(events.filterIsInstance<TakeItemEvent>().map { it.item })
       .plus(finishedSounds(soundDurations)(deck.sounds))
 }

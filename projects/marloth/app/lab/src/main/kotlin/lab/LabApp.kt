@@ -13,6 +13,7 @@ import marloth.clienting.newClientState
 import generation.architecture.definition.biomeInfoMap
 import generation.architecture.definition.meshAttributes
 import lab.views.game.*
+import marloth.clienting.definitionsFromClient
 import marloth.definition.staticDefinitions
 import marloth.front.GameApp
 import marloth.front.RenderHook
@@ -191,9 +192,8 @@ fun newLabGameApp(labConfig: LabConfig): GameApp {
   val platform = createDesktopPlatform("Dev Lab", gameConfig.display)
   platform.display.initialize(gameConfig.display)
   val client = newClient (platform, gameConfig.display, labConfig.gameView.lighting)
-  val lightAttachments = gatherMeshLights(client.renderer.meshes)
-  val soundDurations = client.soundLibrary.mapValues { it.value.duration }
-  val definitions = staticDefinitions(lightAttachments, soundDurations)
+  val clientDefinitions = definitionsFromClient(client)
+  val definitions = staticDefinitions(clientDefinitions)
   return GameApp(platform, gameConfig,
       client = client,
       definitions = definitions,

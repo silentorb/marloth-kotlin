@@ -8,6 +8,7 @@ import marloth.clienting.audio.updateClientAudio
 import marloth.clienting.gui.*
 import marloth.clienting.input.*
 import marloth.clienting.textResources.englishTextResources
+import marloth.definition.ClientDefinitions
 import silentorb.mythic.aura.AudioState
 import silentorb.mythic.aura.SoundLibrary
 import silentorb.mythic.aura.newAudioState
@@ -28,6 +29,7 @@ import marloth.scenery.enums.Text
 import simulation.main.Deck
 import simulation.main.World
 import silentorb.mythic.bloom.input.updateInputDeviceStates
+import silentorb.mythic.lookinglass.mapAnimationInfo
 
 const val maxPlayerCount = 4
 
@@ -161,3 +163,10 @@ fun updateClient(client: Client, worlds: List<World>, box: Box): (ClientState) -
       updateClientAudio(clientState, client, worlds)
   )(clientState)
 }
+
+fun definitionsFromClient(client: Client): ClientDefinitions =
+    ClientDefinitions(
+        animations = mapAnimationInfo(client.renderer.armatures),
+        lightAttachments = gatherMeshLights(client.renderer.meshes),
+        soundDurations = client.soundLibrary.mapValues { it.value.duration }
+    )

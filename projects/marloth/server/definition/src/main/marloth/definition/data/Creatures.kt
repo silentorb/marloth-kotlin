@@ -1,4 +1,4 @@
-package marloth.definition
+package marloth.definition.data
 
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.Sounds
@@ -10,7 +10,7 @@ class Creatures {
       health = 200,
       accessories = listOf(),
       depictionType = DepictionType.child,
-      maxSpeed = 4f,
+      maxSpeed = 3f,
       deathSound = Sounds.girlScream,
       damageMultipliers = mapOf()
   )
@@ -27,7 +27,7 @@ class Creatures {
       health = 100,
       accessories = listOf(AccessoryId.pistol.name),
       depictionType = DepictionType.person,
-      maxSpeed = 2f,
+      maxSpeed = 2.5f,
       deathSound = Sounds.hogDeath,
       ambientSounds = listOf(
           Sounds.hogAmbient01.name,

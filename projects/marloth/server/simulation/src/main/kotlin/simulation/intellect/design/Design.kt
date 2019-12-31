@@ -1,7 +1,7 @@
 package simulation.intellect.design
 
 import silentorb.mythic.ent.Id
-import simulation.entities.getActiveAction
+import simulation.misc.getActiveAction
 import simulation.intellect.Pursuit
 import simulation.intellect.assessment.Knowledge
 import simulation.intellect.assessment.getVisibleEnemies

@@ -1,10 +1,7 @@
 package lab.views.model
 
 import lab.LabCommandType
-import silentorb.mythic.bloom.*
 import silentorb.mythic.spatial.*
-import org.joml.*
-import silentorb.mythic.scenery.Camera
 import lab.views.*
 
 import silentorb.mythic.sculpting.*
@@ -12,6 +9,7 @@ import marloth.scenery.AnimationId
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.bloom.Bounds
 import silentorb.mythic.bloom.FlatBox
+import silentorb.mythic.breeze.AnimationName
 
 data class ModelLayout(
     val boxes: List<FlatBox>,

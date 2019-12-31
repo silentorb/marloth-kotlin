@@ -1,15 +1,14 @@
-package simulation.entities
+package silentorb.mythic.timing
 
 import silentorb.mythic.ent.*
 import silentorb.mythic.happenings.Events
-import simulation.main.Deck
 
-data class Timer(
+data class IntTimer(
     val duration: Int,
     val interval: Int
 )
 
-val updateTimer: (Timer) -> Timer = { timer ->
+val updateTimer: (IntTimer) -> IntTimer = { timer ->
   timer.copy(
       duration = timer.duration - 1
   )
@@ -25,7 +24,7 @@ fun updateFloatTimer(delta: Float): (FloatTimer) -> FloatTimer = { timer ->
   )
 }
 
-fun updateIntTimers(events: Events): (Table<Timer>) -> Table<Timer> = { timers ->
+fun updateIntTimers(events: Events): (Table<IntTimer>) -> Table<IntTimer> = { timers ->
   val frequencies = events
       .filterIsInstance<IntCycleEvent>()
       .map { it.interval }
@@ -39,17 +38,15 @@ fun updateIntTimers(events: Events): (Table<Timer>) -> Table<Timer> = { timers -
   }
 }
 
-//    if (isIntTimerUpdateFrame(events)) mapTableValues(updateTimer) else ::pass
-
-fun expiredTimers(deck: Deck): Set<Id> =
+fun expiredTimers(timersFloat: Table<FloatTimer>, timersInt: Table<IntTimer>): Set<Id> =
     setOf<Id>()
         .plus(
-            deck.timers
-                .filter { it.value.duration < 0 }
+            timersFloat
+                .filter { it.value.duration < 0f }
                 .keys
         )
         .plus(
-            deck.timersFloat
-                .filter { it.value.duration < 0f }
+            timersInt
+                .filter { it.value.duration < 0 }
                 .keys
         )

@@ -6,6 +6,13 @@ import simulation.main.Hand
 import simulation.main.World
 import simulation.main.WorldPair
 
+fun handsFromSounds(sounds: List<Sound>) =
+    sounds.map { sound ->
+      Hand(
+          sound = sound
+      )
+    }
+
 val deathSounds: (worlds: WorldPair) -> List<Sound> = { worlds ->
   worlds.second.deck.characters.filter { (key, value) ->
     val previous = worlds.first.deck.characters[key]

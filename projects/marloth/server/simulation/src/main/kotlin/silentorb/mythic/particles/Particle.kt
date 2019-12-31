@@ -1,4 +1,4 @@
-package simulation.particles
+package silentorb.mythic.particles
 
 import silentorb.mythic.breeze.interpolateKeys
 import silentorb.mythic.breeze.interpolateVector4

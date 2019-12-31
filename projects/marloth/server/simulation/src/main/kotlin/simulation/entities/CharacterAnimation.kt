@@ -3,9 +3,9 @@ package simulation.entities
 import silentorb.mythic.ent.Id
 import marloth.scenery.AnimationId
 import marloth.scenery.ArmatureId
+import silentorb.mythic.breeze.AnimationInfoMap
+import silentorb.mythic.breeze.AnimationName
 import simulation.main.Deck
-
-typealias AnimationName = String
 
 data class SingleAnimation(
     val animationId: AnimationName,
@@ -19,9 +19,9 @@ data class CharacterAnimation(
 
 private val transitionBeforeStart = setOf(AnimationId.shootPistol.name)
 
-fun updateAnimationOffset(animationDurations: AnimationDurationMap,
+fun updateAnimationOffset(animationInfo: AnimationInfoMap,
                           animation: SingleAnimation, delta: Float): Float {
-  val duration = animationDurations[ArmatureId.person.name]!![animation.animationId]
+  val duration = animationInfo[animation.animationId]?.duration
   val nextValue = animation.animationOffset + 1f * delta
 
   return if (duration != null)
@@ -35,13 +35,13 @@ fun updateAnimationOffset(animationDurations: AnimationDurationMap,
     nextValue
 }
 
-fun updateSingleAnimation(animationDurations: AnimationDurationMap,
+fun updateSingleAnimation(animationInfo: AnimationInfoMap,
                           delta: Float): (Float, SingleAnimation) -> SingleAnimation = { strength, animation ->
 
   val finalValue = if (transitionBeforeStart.contains(animation.animationId) && strength > animation.strength)
     0f
   else
-    updateAnimationOffset(animationDurations, animation, delta)
+    updateAnimationOffset(animationInfo, animation, delta)
 
   assert(!finalValue.isNaN())
   animation.copy(
@@ -83,7 +83,7 @@ fun updatePrimaryAnimation(deck: Deck, character: Id): AnimationName {
   }
 }
 
-fun updateTargetAnimations(deck: Deck, animationDurations: AnimationDurationMap,
+fun updateTargetAnimations(deck: Deck, animationInfo: AnimationInfoMap,
                            delta: Float, character: Id): (List<SingleAnimation>) -> List<SingleAnimation> = { animations ->
   val primaryAnimation = updatePrimaryAnimation(deck, character)
   val animationsPlus = if (animations.none { it.animationId == primaryAnimation })
@@ -94,14 +94,14 @@ fun updateTargetAnimations(deck: Deck, animationDurations: AnimationDurationMap,
   else
     animations
   val distributions = getUpdatedAnimationDistributions(primaryAnimation, animationsPlus, delta)
-  val distributedAnimations = distributions.zip(animationsPlus, updateSingleAnimation(animationDurations, delta))
+  val distributedAnimations = distributions.zip(animationsPlus, updateSingleAnimation(animationInfo, delta))
   val result = distributedAnimations.filter { it.strength > 0f }
   result
 }
 
-fun updateCharacterAnimation(deck: Deck, animationDurations: AnimationDurationMap,
+fun updateCharacterAnimation(deck: Deck, animations: AnimationInfoMap,
                              delta: Float): (Id, CharacterAnimation) -> CharacterAnimation = { id, animation ->
   animation.copy(
-      animations = updateTargetAnimations(deck, animationDurations, delta, id)(animation.animations)
+      animations = updateTargetAnimations(deck, animations, delta, id)(animation.animations)
   )
 }

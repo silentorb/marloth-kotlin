@@ -8,14 +8,20 @@ import silentorb.mythic.ent.*
 import simulation.entities.*
 import simulation.happenings.Trigger
 import simulation.intellect.Spirit
-import silentorb.mythic.combat.ResourceBundle
-import simulation.particles.ParticleEffect
+import silentorb.mythic.combat.general.ResourceBundle
+import silentorb.mythic.particles.ParticleEffect
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.characters.CharacterRig
-import silentorb.mythic.combat.Destructible
+import silentorb.mythic.combat.general.Destructible
+import silentorb.mythic.performing.Action
+import silentorb.mythic.performing.Performance
 import silentorb.mythic.scenery.Light
+import silentorb.mythic.timing.FloatCycle
+import silentorb.mythic.timing.FloatTimer
+import silentorb.mythic.timing.IntCycle
+import silentorb.mythic.timing.IntTimer
 
 // Deck is basically a database full of tables
 
@@ -27,7 +33,7 @@ data class Deck(
     val architecture: Table<ArchitectureElement> = mapOf(),
     val attachments: Table<Attachment> = mapOf(),
     val bodies: Table<Body> = mapOf(),
-    val buffs: Table<Modifier> = mapOf(),
+    val modifiers: Table<Modifier> = mapOf(),
     val characterRigs: Table<CharacterRig> = mapOf(),
     val characters: Table<Character> = mapOf(),
     val collisionShapes: Table<CollisionObject> = mapOf(),
@@ -46,8 +52,8 @@ data class Deck(
     val respawnCountdowns: Table<RespawnCountdown> = mapOf(),
     val sounds: Table<Sound> = mapOf(),
     val spirits: Table<Spirit> = mapOf(),
-    val timers: Table<Timer> = mapOf(),
     val timersFloat: Table<FloatTimer> = mapOf(),
+    val timersInt: Table<IntTimer> = mapOf(),
     val triggers: Table<Trigger> = mapOf(),
     val wares: Table<Ware> = mapOf()
 )

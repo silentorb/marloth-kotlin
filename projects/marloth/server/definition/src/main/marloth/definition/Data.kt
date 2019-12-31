@@ -5,6 +5,7 @@ import marloth.definition.data.staticActionAccessories
 import marloth.definition.data.staticModifiers
 import marloth.scenery.enums.DamageTypes
 import silentorb.mythic.aura.SoundDurations
+import silentorb.mythic.breeze.AnimationInfoMap
 import simulation.misc.Definitions
 import simulation.misc.LightAttachmentMap
 
@@ -25,7 +26,13 @@ val abilityDefinitions = AbilityDefinitions()
 
 val staticDamageTypes = DamageTypes.values().map { it.name }
 
-fun staticDefinitions(lightAttachments: LightAttachmentMap, soundDurations: SoundDurations): Definitions {
+data class ClientDefinitions(
+    val animations: AnimationInfoMap,
+    val lightAttachments: LightAttachmentMap,
+    val soundDurations: SoundDurations
+)
+
+fun staticDefinitions(clientDefinitions: ClientDefinitions): Definitions {
   val actionAccessories = staticActionAccessories()
   val weapons = actionAccessories
       .filterValues { it.weapon != null }
@@ -34,10 +41,11 @@ fun staticDefinitions(lightAttachments: LightAttachmentMap, soundDurations: Soun
   return Definitions(
       actions = actionAccessories.mapValues { it.value.action },
       accessories = staticAccessories().plus(actionAccessories.mapValues { it.value.accessory }),
+      animations = clientDefinitions.animations,
       damageTypes = staticDamageTypes.toSet(),
       modifiers = staticModifiers(),
-      lightAttachments = lightAttachments,
-      soundDurations = soundDurations,
+      lightAttachments = clientDefinitions.lightAttachments,
+      soundDurations = clientDefinitions.soundDurations,
       weapons = weapons
   )
 }

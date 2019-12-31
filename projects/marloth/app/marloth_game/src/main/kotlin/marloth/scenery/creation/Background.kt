@@ -8,7 +8,7 @@ import silentorb.mythic.lookinglass.ElementGroups
 import silentorb.mythic.lookinglass.Material
 import silentorb.mythic.lookinglass.MeshElement
 import marloth.scenery.enums.MeshId
-import simulation.entities.FloatCycle
+import silentorb.mythic.timing.FloatCycle
 
 fun createBackgroundSphere(texture: BackgroundTextureId, cameraPosition: Vector3, orientation: Quaternion = Quaternion()) =
     MeshElement(

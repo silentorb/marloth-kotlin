@@ -1,6 +1,7 @@
 package marloth.front
 
 import marloth.clienting.Client
+import marloth.clienting.definitionsFromClient
 import marloth.clienting.newClientState
 import marloth.definition.staticDefinitions
 import marloth.generation.generateWorld
@@ -39,9 +40,8 @@ tailrec fun gameLoop(app: GameApp, state: AppState) {
 
 fun newGameApp(platform: Platform, config: GameConfig): GameApp {
   val client = newClient(platform, config.display)
-  val lightAttachments = gatherMeshLights(client.renderer.meshes)
-  val soundDurations = client.soundLibrary.mapValues { it.value.duration }
-  val definitions = staticDefinitions(lightAttachments, soundDurations)
+  val clientDefinitions = definitionsFromClient(client)
+  val definitions = staticDefinitions(clientDefinitions)
   return GameApp(
       platform = platform,
       config = config,

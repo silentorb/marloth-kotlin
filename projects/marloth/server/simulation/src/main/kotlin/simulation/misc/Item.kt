@@ -1,8 +1,9 @@
-package simulation.entities
+package simulation.misc
 
 import silentorb.mythic.accessorize.Accessory
 import silentorb.mythic.accessorize.AccessoryName
 import silentorb.mythic.ent.Id
+import simulation.entities.AttachmentCategory
 import simulation.main.Deck
 
 fun getItemInSlot(deck: Deck, character: Id, slot: Int): Id? =
@@ -25,8 +26,3 @@ fun hasEquipped(deck: Deck, character: Id): (AccessoryName) -> Boolean = { type 
       .filterValues { it.target == character }
       .any { deck.accessories[it.key]?.type == type }
 }
-
-infix fun Character.equip(item: Id): Character =
-    this.copy(
-        activeAccessory = item
-    )

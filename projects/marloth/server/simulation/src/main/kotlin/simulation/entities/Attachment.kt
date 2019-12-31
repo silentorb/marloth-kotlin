@@ -5,6 +5,7 @@ import silentorb.mythic.accessorize.Modifier
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.happenings.Events
+import silentorb.mythic.timing.IntTimer
 import simulation.happenings.*
 import simulation.main.Deck
 import simulation.main.Hand
@@ -33,7 +34,7 @@ fun getTargetAttachments(deck: Deck, target: Id) =
 fun getAttachmentOfEntityType(deck: Deck, target: Id, type: ModifierId): Id? =
     getTargetAttachments(deck, target)
         .keys.firstOrNull {
-      val buff = deck.buffs[it]
+      val buff = deck.modifiers[it]
       buff?.type == type
     }
 
@@ -73,8 +74,8 @@ fun applyBuff(deck: Deck, nextId: IdSource): (ApplyBuffEvent) -> Deck = { event 
   val existing = getAttachmentOfEntityType(deck, event.target, modifierType)
   if (existing != null)
     Deck(
-        timers = mapOf(
-            existing to Timer(
+        timersInt = mapOf(
+            existing to IntTimer(
                 duration = duration,
                 interval = 2
             )
@@ -88,7 +89,7 @@ fun applyBuff(deck: Deck, nextId: IdSource): (ApplyBuffEvent) -> Deck = { event 
             target = event.target,
             source = event.source
         ),
-        timer = Timer(
+        timer = IntTimer(
             duration = duration,
             interval = 2
         )

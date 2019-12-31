@@ -2,7 +2,7 @@ package marloth.clienting.gui
 
 import marloth.scenery.enums.DamageTypes
 import marloth.scenery.enums.Text
-import silentorb.mythic.combat.DamageType
+import silentorb.mythic.combat.general.DamageType
 
 val damageTypeNames: Map<DamageType, Text> = mapOf(
     DamageTypes.cold.name to Text.damageType_cold,

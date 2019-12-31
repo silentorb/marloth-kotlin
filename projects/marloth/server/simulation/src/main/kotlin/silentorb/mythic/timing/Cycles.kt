@@ -1,4 +1,4 @@
-package simulation.entities
+package silentorb.mythic.timing
 
 import silentorb.mythic.ent.Table
 import silentorb.mythic.happenings.Events

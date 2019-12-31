@@ -1,8 +1,8 @@
 package simulation.happenings
 
 import silentorb.mythic.ent.Id
-import silentorb.mythic.combat.Damage
-import silentorb.mythic.combat.DamageEvent
+import silentorb.mythic.combat.general.Damage
+import silentorb.mythic.combat.general.DamageEvent
 import silentorb.mythic.happenings.*
 import simulation.main.Deck
 import simulation.main.DeckSource
@@ -112,7 +112,7 @@ fun gatherActivatedTriggers(deck: Deck, definitions: Definitions, collisions: Li
       } else null
     } else null
   }
-  val buffTriggers = deck.buffs
+  val buffTriggers = deck.modifiers
       .mapNotNull { (id, buff) ->
         val definition = definitions.modifiers[buff.type]!!
         val attachment = deck.attachments[id]!!

@@ -1,4 +1,4 @@
-package silentorb.mythic.combat
+package silentorb.mythic.combat.general
 
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events

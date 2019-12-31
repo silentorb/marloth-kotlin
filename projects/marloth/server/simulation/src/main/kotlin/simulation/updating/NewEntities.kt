@@ -1,27 +1,49 @@
 package simulation.updating
 
+import silentorb.mythic.audio.soundsFromEvents
+import silentorb.mythic.aura.Sound
+import silentorb.mythic.breeze.AnimationInfoMap
 import simulation.entities.applyBuffsFromEvents
-import simulation.misc.newAccessories
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.toIdHands
 import silentorb.mythic.happenings.Events
+import silentorb.mythic.performing.Performance
+import silentorb.mythic.performing.performancesFromEvents
+import silentorb.mythic.timing.FloatTimer
 import simulation.entities.*
-import simulation.main.Deck
-import simulation.main.idHandsToDeck
-import simulation.main.mergeDecks
-import simulation.misc.Definitions
-import simulation.misc.newAmbientSounds
+import simulation.main.*
+import simulation.misc.*
 
 fun newAccessoriesDeck(events: Events, deck: Deck): Deck =
     Deck(
         accessories = newAccessories(events, deck)
     )
 
-fun newEntities(definitions: Definitions, animationDurations: AnimationDurationMap, previous: Deck, events: Events, nextId: IdSource): (Deck) -> Deck = { next ->
+fun newPerformanceHand(animations: AnimationInfoMap, nextId: IdSource): (Performance) -> IdHand = { performance ->
+  IdHand(
+      id = nextId(),
+      hand = Hand(
+          performance = performance,
+          timerFloat = FloatTimer(
+              duration = animations[performance.animation]!!.duration
+          )
+      )
+  )
+}
+
+fun newPerformances(definitions: Definitions, previous: Deck, events: Events, nextId: IdSource): List<IdHand> {
+  val performanceDefinitions = toPerformanceDefinitions(definitions)
+  val performanceDeck = toPerformanceDeck(previous)
+  return performancesFromEvents(performanceDefinitions, performanceDeck, events)
+      .map(newPerformanceHand(definitions.animations, nextId))
+}
+
+fun newEntities(definitions: Definitions, previous: Deck, events: Events, nextId: IdSource): (Deck) -> Deck = { next ->
   val idHands = listOf(
       newRespawnCountdowns(nextId, previous, next),
-      performancesFromEvents(definitions, animationDurations, nextId, previous, events),
-      toIdHands(nextId, newAmbientSounds(previous, next))
+      newPerformances(definitions, previous, events, nextId),
+      toIdHands(nextId, newAmbientSounds(previous, next)),
+      toIdHands(nextId, handsFromSounds(soundsFromEvents(events)))
   )
       .flatten()
 

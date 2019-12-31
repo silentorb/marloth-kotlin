@@ -13,10 +13,10 @@ import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.scenery.Cylinder
 import simulation.main.Hand
 import simulation.happenings.ApplyBuff
-import simulation.particles.Emitter
-import simulation.particles.ParticleAnimation
-import simulation.particles.ParticleAppearance
-import simulation.particles.ParticleEffect
+import silentorb.mythic.particles.Emitter
+import silentorb.mythic.particles.ParticleAnimation
+import silentorb.mythic.particles.ParticleAppearance
+import silentorb.mythic.particles.ParticleEffect
 
 private val cloudColors: Map<ModifierId, Pair<Vector3, Vector3>> = mapOf(
     ModifierId.damageBurning to Pair(Vector3(1f, 0.7f, 0f), Vector3(1f, 0.3f, 0.1f)),

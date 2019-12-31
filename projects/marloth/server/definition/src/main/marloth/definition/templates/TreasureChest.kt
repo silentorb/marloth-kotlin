@@ -11,7 +11,7 @@ import simulation.entities.Interactable
 import simulation.entities.WidgetCommand
 import simulation.happenings.TakeItem
 import simulation.main.Hand
-import silentorb.mythic.combat.ResourceBundle
+import silentorb.mythic.combat.general.ResourceBundle
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 

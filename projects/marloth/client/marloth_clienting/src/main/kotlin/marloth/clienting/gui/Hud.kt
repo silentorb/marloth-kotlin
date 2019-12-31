@@ -7,7 +7,7 @@ import org.joml.Vector2i
 import silentorb.mythic.debugging.getDebugRangeValue
 import simulation.entities.Interactable
 import silentorb.mythic.accessorize.Modifier
-import silentorb.mythic.combat.ResourceContainer
+import silentorb.mythic.combat.general.ResourceContainer
 
 private val textStyle = textStyles.gray
 

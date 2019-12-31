@@ -1,7 +1,7 @@
 package marloth.generation.population
 
 import simulation.misc.floorOffset
-import marloth.definition.creatures
+import marloth.definition.data.creatures
 import marloth.definition.newCharacter
 import silentorb.mythic.ent.Id
 import silentorb.mythic.spatial.Vector3

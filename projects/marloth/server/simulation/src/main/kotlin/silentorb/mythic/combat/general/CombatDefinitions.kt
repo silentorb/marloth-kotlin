@@ -1,4 +1,4 @@
-package silentorb.mythic.combat
+package silentorb.mythic.combat.general
 
 import marloth.scenery.enums.ModifierId
 import silentorb.mythic.accessorize.AccessoryDefinition

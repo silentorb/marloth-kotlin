@@ -9,7 +9,7 @@ import silentorb.mythic.scenery.Light
 import silentorb.mythic.scenery.LightType
 import silentorb.mythic.scenery.Scene
 import marloth.scenery.enums.AccessoryId
-import simulation.entities.hasEquipped
+import simulation.misc.hasEquipped
 import simulation.main.Deck
 
 fun mapLights(deck: Deck, player: Id) =

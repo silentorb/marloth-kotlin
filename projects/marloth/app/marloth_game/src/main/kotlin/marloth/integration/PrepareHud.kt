@@ -18,9 +18,9 @@ fun gatherHudData(deck: Deck, player: Id, view: ViewId): HudData? {
   val destructible = deck.destructibles[player]!!
   val body = deck.bodies[player]!!
 
-  val buffs = deck.buffs
+  val buffs = deck.modifiers
       .filter { it.value.target == player }
-      .map { Pair(deck.buffs[it.key]!!, deck.timers[it.key]!!.duration) }
+      .map { Pair(deck.modifiers[it.key]!!, deck.timersInt[it.key]!!.duration) }
 
   val interactable = if (view == ViewId.none)
     deck.interactables[character.canInteractWith]

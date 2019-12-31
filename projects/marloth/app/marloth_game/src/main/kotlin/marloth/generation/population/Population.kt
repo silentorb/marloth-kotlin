@@ -7,7 +7,7 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.toIdHands
 import silentorb.mythic.spatial.Vector3i
-import simulation.entities.FloatCycle
+import silentorb.mythic.timing.FloatCycle
 import simulation.main.Deck
 import simulation.main.Hand
 import simulation.main.IdHand

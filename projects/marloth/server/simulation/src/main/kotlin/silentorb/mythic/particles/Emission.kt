@@ -1,4 +1,4 @@
-package simulation.particles
+package silentorb.mythic.particles
 
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Vector3

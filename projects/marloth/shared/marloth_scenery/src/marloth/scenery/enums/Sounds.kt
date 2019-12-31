@@ -6,6 +6,7 @@ enum class Sounds {
   hogAmbient02,
   hogAmbient03,
   hogDeath,
+  pistolFire,
   throwWeapon
 }
 

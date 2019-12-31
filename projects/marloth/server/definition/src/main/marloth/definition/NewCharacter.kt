@@ -9,8 +9,8 @@ import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.characters.defaultCharacterHeight
 import silentorb.mythic.characters.defaultCharacterRadius
-import silentorb.mythic.combat.Destructible
-import silentorb.mythic.combat.DestructibleBaseStats
+import silentorb.mythic.combat.general.Destructible
+import silentorb.mythic.combat.general.DestructibleBaseStats
 import silentorb.mythic.scenery.Capsule
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Quaternion
@@ -22,7 +22,8 @@ import simulation.main.Hand
 import silentorb.mythic.ent.IdSource
 import simulation.main.IdHand
 import simulation.misc.Definitions
-import silentorb.mythic.combat.ResourceContainer
+import silentorb.mythic.combat.general.ResourceContainer
+import simulation.misc.newPossibleAction
 
 fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, definition: CharacterDefinition, faction: Id, position: Vector3,
                  angle: Float = Pi / 2f,

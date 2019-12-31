@@ -4,7 +4,7 @@ import marloth.scenery.enums.ModifierDirection
 import marloth.scenery.enums.ModifierId
 import marloth.scenery.enums.ModifierType
 import marloth.scenery.enums.Text
-import silentorb.mythic.combat.ValueModifier
+import silentorb.mythic.combat.general.ValueModifier
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.EventTrigger
 

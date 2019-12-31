@@ -7,15 +7,21 @@ import silentorb.mythic.aura.Sound
 import simulation.entities.*
 import simulation.happenings.Trigger
 import simulation.intellect.Spirit
-import silentorb.mythic.combat.ResourceBundle
-import simulation.particles.ParticleEffect
+import silentorb.mythic.combat.general.ResourceBundle
+import silentorb.mythic.particles.ParticleEffect
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.characters.CharacterRig
-import silentorb.mythic.combat.Destructible
+import silentorb.mythic.combat.general.Destructible
 import silentorb.mythic.ent.GenericIdHand
+import silentorb.mythic.performing.Action
+import silentorb.mythic.performing.Performance
 import silentorb.mythic.scenery.Light
+import silentorb.mythic.timing.FloatCycle
+import silentorb.mythic.timing.FloatTimer
+import silentorb.mythic.timing.IntCycle
+import silentorb.mythic.timing.IntTimer
 
 // Hand is a slice of a deck, mostly used for instantiating new entities.
 
@@ -46,7 +52,7 @@ data class Hand(
     val respawnCountdown: RespawnCountdown? = null,
     val sound: Sound? = null,
     val spirit: Spirit? = null,
-    val timer: Timer? = null,
+    val timer: IntTimer? = null,
     val timerFloat: FloatTimer? = null,
     val trigger: Trigger? = null,
     val ware: Ware? = null

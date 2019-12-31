@@ -1,4 +1,4 @@
-package silentorb.mythic.combat
+package silentorb.mythic.combat.general
 
 typealias Percentage = Int
 

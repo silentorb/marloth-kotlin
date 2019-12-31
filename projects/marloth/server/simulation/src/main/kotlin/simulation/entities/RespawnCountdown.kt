@@ -1,9 +1,10 @@
 package simulation.entities
 
-import silentorb.mythic.combat.RestoreHealth
+import silentorb.mythic.combat.general.RestoreHealth
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.happenings.Events
+import silentorb.mythic.timing.IntTimer
 import simulation.main.Deck
 import simulation.main.Hand
 import simulation.main.IdHand
@@ -21,7 +22,7 @@ fun newRespawnCountdowns(nextId: IdSource, previous: Deck, next: Deck): List<IdH
     IdHand(
         id = nextId(),
         hand = Hand(
-            timer = Timer(
+            timer = IntTimer(
                 duration = 3,
                 interval = 60
             ),

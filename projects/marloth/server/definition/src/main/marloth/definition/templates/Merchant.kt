@@ -1,6 +1,6 @@
 package marloth.definition.templates
 
-import marloth.definition.creatures
+import marloth.definition.data.creatures
 import marloth.definition.newCharacter
 import silentorb.mythic.spatial.Vector3
 import marloth.scenery.enums.AccessoryId

@@ -12,7 +12,7 @@ import silentorb.mythic.bloom.next.Flower
 import silentorb.mythic.bloom.next.div
 import silentorb.mythic.bloom.next.emptyFlower
 import silentorb.mythic.bloom.next.margin
-import silentorb.mythic.combat.defaultDamageMultiplier
+import silentorb.mythic.combat.general.defaultDamageMultiplier
 import simulation.main.Deck
 import simulation.misc.Definitions
 

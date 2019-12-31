@@ -16,13 +16,3 @@ data class Player(
     val name: String,
     val hoverCamera: HoverCamera = HoverCamera()
 )
-
-data class PlayerCharacter(
-    val player: Player,
-    val character: Character
-)
-
-typealias PlayerCharacters = List<PlayerCharacter>
-
-//fun isPlayer(deck: Deck, character: Character) =
-//    deck.players.any { it.key == character.id }

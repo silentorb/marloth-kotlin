@@ -3,12 +3,13 @@ package marloth.definition.data
 import marloth.scenery.AnimationId
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.Text
-import silentorb.mythic.combat.DamageDefinition
+import silentorb.mythic.combat.general.DamageDefinition
 import marloth.scenery.enums.DamageTypes
-import silentorb.mythic.combat.WeaponDefinition
+import marloth.scenery.enums.Sounds
+import silentorb.mythic.combat.general.WeaponDefinition
 import silentorb.mythic.accessorize.AccessoryDefinition
 import silentorb.mythic.accessorize.AccessoryName
-import simulation.entities.ActionDefinition
+import silentorb.mythic.performing.ActionDefinition
 
 data class ActionAccessory(
     val accessory: AccessoryDefinition,
@@ -32,7 +33,8 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
                     type = DamageTypes.physical.name,
                     amount = 70
                 )
-            )
+            ),
+            sound = Sounds.pistolFire.name
         )
     )
 )
