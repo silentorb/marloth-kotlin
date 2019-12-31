@@ -54,7 +54,8 @@ fun eventsFromPerformances(definitions: PerformanceDefinitions, deck: Performanc
         performance.deferredEvents
             .mapNotNull { (markerName, event) ->
               val isTriggered = animation.markers.any {
-                it.name == markerName && it.frame > elapsed && it.frame < elapsed + delta
+                val frame = it.frame.toFloat() / 60f
+                it.name == markerName && frame > elapsed && frame < elapsed + delta
               }
               if (isTriggered)
                 event

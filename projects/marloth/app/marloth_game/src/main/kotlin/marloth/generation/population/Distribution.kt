@@ -60,10 +60,10 @@ fun damageCloudsDistributions(dice: Dice, totalWeight: Int): DistributionMap {
 }
 
 fun scalingDistributions(dice: Dice): DistributionMap = mapOf(
-    Occupant.enemy to 200,
+    Occupant.enemy to 20,
     Occupant.merchant to 0,
     Occupant.none to 10,
-    Occupant.treasureChest to 20
+    Occupant.treasureChest to 0
 ).plus(damageCloudsDistributions(dice, 0))
 //).plus(damageCloudsDistributions(dice, 10))
 

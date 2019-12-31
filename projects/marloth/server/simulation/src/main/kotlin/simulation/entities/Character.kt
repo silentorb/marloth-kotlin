@@ -31,8 +31,8 @@ data class Character(
     val definition: CharacterDefinition,
     val faction: Id,
     val sanity: ResourceContainer,
-    val isAlive: Boolean = true,
-    val activeAccessory: Id? = null,
+    val isAlive: Boolean,
+    val activeAccessory: Id?,
     val canInteractWith: Id? = null,
     val interactingWith: Id? = null,
     val money: Int = 0
@@ -114,7 +114,7 @@ fun updateCharacter(deck: Deck, bulletState: BulletState, id: Id, character: Cha
 
   return character.copy(
       isAlive = isAlive,
-      activeAccessory = updateEquippedItem(deck, id, character.activeAccessory, commands),
+//      activeAccessory = updateEquippedItem(deck, id, character.activeAccessory, commands),
       canInteractWith = canInteractWith,
       interactingWith = updateInteractingWith(deck, id, commands, character.interactingWith),
       money = updateMoney(deck, events, id, character.money)

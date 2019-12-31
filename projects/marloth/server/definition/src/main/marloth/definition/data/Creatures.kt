@@ -10,7 +10,7 @@ class Creatures {
       health = 200,
       accessories = listOf(),
       depictionType = DepictionType.child,
-      maxSpeed = 3f,
+      maxSpeed = 4f,
       deathSound = Sounds.girlScream,
       damageMultipliers = mapOf()
   )

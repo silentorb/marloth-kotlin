@@ -28,6 +28,20 @@ import simulation.misc.newPossibleAction
 fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, definition: CharacterDefinition, faction: Id, position: Vector3,
                  angle: Float = Pi / 2f,
                  spirit: Spirit? = null): List<IdHand> {
+  val accessories = definition.accessories
+      .mapIndexed { index, type ->
+        IdHand(
+            id = nextId(),
+            hand = Hand(
+                accessory = Accessory(
+                    type = type,
+                    target = character
+                ),
+                action = newPossibleAction(definitions, type)
+            )
+        )
+      }
+
   return listOf(
       IdHand(
           id = character,
@@ -55,7 +69,9 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, defi
                   definition = definition,
                   faction = faction,
                   sanity = ResourceContainer(100),
-                  money = 30
+                  money = 30,
+                  isAlive = true,
+                  activeAccessory = accessories.firstOrNull()?.id
               ),
               characterRig = CharacterRig(
                   facingRotation = Vector3(0f, 0f, angle),
@@ -85,19 +101,5 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, defi
               spirit = spirit
           )
       )
-  ).plus(
-      definition.accessories
-          .mapIndexed { index, type ->
-            IdHand(
-                id = nextId(),
-                hand = Hand(
-                    accessory = Accessory(
-                        type = type,
-                        target = character
-                    ),
-                    action = newPossibleAction(definitions, type)
-                )
-            )
-          }
-  )
+  ).plus(accessories)
 }

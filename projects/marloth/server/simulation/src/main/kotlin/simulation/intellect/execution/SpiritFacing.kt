@@ -62,7 +62,6 @@ fun spiritFacingChange2(character: Id, course: Float, velocity: Float, turnSpeed
   } else {
     val dir = if (course > 0f) positiveCommand else negativeCommand
     val increment = turnSpeed * simulationDelta
-    print(dir)
     val drift = increment * velocity / maxPositiveLookVelocityChange()
     if (absCourse <= drift)
       listOf() // Don't need to rotate anymore.  The remaining momentum will get us there.
