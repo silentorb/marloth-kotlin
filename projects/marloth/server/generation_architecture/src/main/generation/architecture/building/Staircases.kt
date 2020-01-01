@@ -8,7 +8,6 @@ import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
 import marloth.scenery.enums.MeshId
-import simulation.entities.ArchitectureElement
 import simulation.misc.cellLength
 import simulation.misc.floorOffset
 
@@ -31,7 +30,6 @@ val curvedStaircases = blockBuilder() { input ->
     val rotationPosition = Vector3(3.5f, 0f, 0f).transform(Matrix.identity.rotateZ(angle))
     val position = baseOffset + heightPosition + rotationPosition
     newArchitectureMesh(
-        architecture = ArchitectureElement(isWall = false),
         meshes = config.meshes,
         mesh = mesh,
         position = position,

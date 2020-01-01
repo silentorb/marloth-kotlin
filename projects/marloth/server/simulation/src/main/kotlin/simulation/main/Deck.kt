@@ -30,7 +30,6 @@ data class Deck(
     val actions: Table<Action> = mapOf(),
     val ambientSounds: Table<AmbientAudioEmitter> = mapOf(),
     val animations: Table<CharacterAnimation> = mapOf(),
-    val architecture: Table<ArchitectureElement> = mapOf(),
     val attachments: Table<Attachment> = mapOf(),
     val bodies: Table<Body> = mapOf(),
     val modifiers: Table<Modifier> = mapOf(),

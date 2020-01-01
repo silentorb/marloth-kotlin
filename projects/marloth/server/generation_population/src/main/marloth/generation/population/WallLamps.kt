@@ -20,13 +20,11 @@ import silentorb.mythic.spatial.Vector3i
 
 fun placeWallLamps(deck: Deck, config: GenerationConfig, realm: Realm,
                    dice: Dice, scale: Float, architectureCells: Map<Id, Vector3i>): List<Hand> {
-  val allWalls = deck.architecture.entries
-      .filter { it.value.isWall }
-      .map { it.key }
 
-  val attachmentWalls = allWalls.filter {
+  val attachmentWalls = deck.depictions.keys.filter {
     val depiction = deck.depictions[it]!!
-    config.meshes[depiction.mesh!!]!!.attributes.contains(MeshAttribute.canHaveAttachment)
+    val attributes = config.meshes[depiction.mesh!!]!!.attributes
+    attributes.contains(MeshAttribute.wall) && attributes.contains(MeshAttribute.canHaveAttachment)
   }
 
   val nodeWalls = attachmentWalls

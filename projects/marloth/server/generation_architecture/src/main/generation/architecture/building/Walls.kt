@@ -8,7 +8,6 @@ import generation.architecture.old.newArchitectureMesh
 import generation.general.*
 import silentorb.mythic.spatial.*
 import silentorb.mythic.scenery.MeshName
-import simulation.entities.ArchitectureElement
 import simulation.main.Hand
 import simulation.misc.CellMap
 
@@ -16,13 +15,12 @@ fun newWallInternal(config: GenerationConfig, mesh: MeshName, position: Vector3,
                     scale: Vector3 = Vector3.unit): Hand {
   val orientation = Quaternion().rotateZ(angleZ + quarterAngle)
   return newArchitectureMesh(
-      architecture = ArchitectureElement(isWall = true),
       meshes = config.meshes,
       mesh = mesh,
       position = position,
-      scale = scale,
       orientation = orientation,
-      texture = biomeTexture(biome, TextureGroup.wall)
+      texture = biomeTexture(biome, TextureGroup.wall),
+      scale = scale
   )
 }
 

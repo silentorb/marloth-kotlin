@@ -20,24 +20,24 @@ fun absoluteCellPosition(position: Vector3i): Vector3 =
 typealias ConnectionPair = Pair<Vector3i, Vector3i>
 
 typealias CellMap = Map<Vector3i, Cell>
-typealias ConnectionMap = Set<ConnectionPair>
+typealias ConnectionSet = Set<ConnectionPair>
 
 data class MapGrid(
     val cells: CellMap = mapOf(),
-    val connections: ConnectionMap = setOf()
+    val connections: ConnectionSet = setOf()
 )
 
-fun containsConnection(connections: ConnectionMap, first: Vector3i, second: Vector3i): Boolean =
+fun containsConnection(connections: ConnectionSet, first: Vector3i, second: Vector3i): Boolean =
     connections.contains(Pair(first, second)) || connections.contains(Pair(second, first))
 
 fun containsConnection(position: Vector3i): (ConnectionPair) -> Boolean = { connection ->
   connection.first == position || connection.second == position
 }
 
-fun cellConnections(connections: ConnectionMap, position: Vector3i): List<ConnectionPair> =
+fun cellConnections(connections: ConnectionSet, position: Vector3i): List<ConnectionPair> =
     connections.filter(containsConnection(position))
 
-fun cellNeighbors(connections: ConnectionMap, position: Vector3i): List<Vector3i> =
+fun cellNeighbors(connections: ConnectionSet, position: Vector3i): List<Vector3i> =
     connections.filter(containsConnection(position))
         .map { connection -> connection.toList().first { it != position } }
 

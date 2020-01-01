@@ -32,7 +32,6 @@ data class Hand(
     val body: Body? = null,
     val buff: Modifier? = null,
     val animation: CharacterAnimation? = null,
-    val architecture: ArchitectureElement? = null,
     val attachment: Attachment? = null,
     val dynamicBody: DynamicBody? = null,
     val character: Character? = null,

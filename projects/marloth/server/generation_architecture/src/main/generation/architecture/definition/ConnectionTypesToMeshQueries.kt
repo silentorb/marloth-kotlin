@@ -6,6 +6,7 @@ data class RandomMeshQuery(
     val query: MeshQuery,
     val nothingChance: Float = 0f
 )
+
 typealias ConnectTypeMeshQueryMap = Map<ConnectionType, RandomMeshQuery>
 
 fun connectionTypesToMeshQueries(): ConnectTypeMeshQueryMap = mapOf(

@@ -2,8 +2,7 @@ package generation.general
 
 import silentorb.mythic.spatial.Vector3i
 import silentorb.mythic.randomly.Dice
-import simulation.misc.ConnectionMap
-import simulation.misc.CellAttribute
+import simulation.misc.ConnectionSet
 import simulation.misc.containsConnection
 
 typealias GetBlock = (Vector3i) -> Block?
@@ -88,11 +87,10 @@ typealias UsableConnectionTypes = (Vector3i) -> (Direction) -> Side
 
 // Returns the intersection of af a block's sides with its neighbors' sides
 fun getUsableCellSide(independentConnectionTypes: Set<Any>, openConnectionTypes: Set<Any>,
-                      connections: ConnectionMap,
+                      connections: ConnectionSet,
                       blockGrid: BlockGrid): UsableConnectionTypes = { position ->
   val surroundingSides = getSurroundingSides(blockGrid, position)
-  val block = blockGrid.getValue(position)
-  val notUsed = 0
+  val block = blockGrid.getValue(position);
   { direction ->
     val side = block.sides.getValue(direction)
     val otherSide = surroundingSides.getValue(direction)

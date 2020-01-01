@@ -86,9 +86,13 @@ fun moveStraightTowardPosition(world: World, character: Id, target: Vector3): Co
   val shape = world.deck.collisionShapes[character]!!
   val middle = shape.shape.height / 2f
   val position = body.position
+  val commands = listOf(CharacterCommand(CommonCharacterCommands.moveUp, character))
+  if (target.x == position.x && target.y == position.y)
+    return commands
+
   val offset = (target - position).copy(z = 0f).normalize()
   return spiritNeedsFacing(world, character, offset, 0.1f) {
-    listOf(CharacterCommand(CommonCharacterCommands.moveUp, character))
+    commands
   }
 }
 
@@ -107,7 +111,7 @@ fun isTargetInRange(world: World, character: Id, target: Id): Boolean {
   val action = getActiveAction(deck, character)
   if (action == null)
     return false
-    
+
   val range = getActionRange(deck, world.definitions, action) - spiritAttackRangeBuffer
   val distance = characterPosition.distance(targetPosition)
   return distance <= range

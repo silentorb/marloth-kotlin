@@ -1,4 +1,4 @@
-package marloth.generation
+package marloth.integration
 
 import generation.architecture.definition.*
 import generation.architecture.misc.*
@@ -6,7 +6,6 @@ import generation.general.bakeSides
 import generation.general.explodeBlockMap
 import generation.general.newRandomizedBiomeGrid
 import marloth.generation.population.populateWorld
-import marloth.integration.newGameModeConfig
 import org.recast4j.detour.NavMeshQuery
 import silentorb.mythic.debugging.getDebugSetting
 import silentorb.mythic.ent.newIdSource
@@ -45,7 +44,7 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
   val realm = generateRealm(grid, cellBiomes)
   val nextId = newIdSource(1)
   val architectureSource = buildArchitecture(generationConfig, dice, gridSideMap, workbench, blockMap, realm.cellBiomes, builders)
-  val architectureHands = architectureSource.mapValues { (key, value) -> toIdHands(nextId, value)  }
+  val architectureHands = architectureSource.mapValues { (key, value) -> toIdHands(nextId, value) }
   val architectureCells = mapArchitectureCells(architectureHands)
   val deck = pipeIdHandsToDeck(listOf(
       { _ ->
@@ -54,9 +53,12 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
       populateWorld(nextId, generationConfig, input, realm, architectureCells)
   ))(Deck())
 
-  val navMesh = if (generationConfig.includeEnemies)
-    newNavMesh(grid, deck)
-  else
+  val navMesh = if (generationConfig.includeEnemies) {
+    val meshIds = deck.depictions
+        .filterValues { generationConfig.meshes.containsKey(it.mesh) }
+        .keys
+    newNavMesh(meshIds, deck)
+  } else
     null
 
   return World(

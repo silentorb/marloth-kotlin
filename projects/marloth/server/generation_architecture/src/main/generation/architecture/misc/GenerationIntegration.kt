@@ -1,9 +1,6 @@
 package generation.architecture.misc
 
-import generation.abstracted.HorrorVacuiConfig
-import generation.abstracted.horrorVacui
-import generation.abstracted.newWindingWorkbench
-import generation.abstracted.windingPath
+import generation.abstracted.*
 import generation.architecture.definition.BlockDefinitions
 import generation.general.Block
 import generation.general.BlockConfig
@@ -26,6 +23,8 @@ fun newWorkbench(dice: Dice, blocks: Set<Block>, independentConnections: Set<Any
 
   return pipe(
       windingPath(dice, blockConfig, roomCount),
-      horrorVacui(dice, blockConfig, HorrorVacuiConfig(branchRate = 0.7f, branchLengthRange = 1..2))
+      horrorVacui(dice, blockConfig, HorrorVacuiConfig(branchRate = 0.7f, branchLengthRange = 1..3)),
+      horrorVacui(dice, blockConfig, HorrorVacuiConfig(branchRate = 0.7f, branchLengthRange = 1..3)),
+      additionalConnecting(dice, blockConfig, rate = 0.7f)
   )(newWindingWorkbench(firstBlock.block))
 }

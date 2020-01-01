@@ -8,7 +8,6 @@ import generation.general.biomeTexture
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.scenery.MeshName
-import simulation.entities.ArchitectureElement
 import simulation.misc.cellLength
 import simulation.misc.floorOffset
 import kotlin.math.asin
@@ -18,7 +17,6 @@ fun floorMeshBuilder(mesh: MeshName, offset: Vector3 = Vector3.zero,
   val config = input.config
   val biome = input.biome
   listOf(newArchitectureMesh(
-      architecture = ArchitectureElement(isWall = false),
       meshes = config.meshes,
       mesh = mesh,
       position = input.position + floorOffset + align(config.meshes, alignWithCeiling)(mesh) + offset + Vector3(0f, 0f, 0.01f),

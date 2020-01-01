@@ -2,12 +2,6 @@ package marloth.scenery.enums
 
 enum class MeshId {
   candle,
-  //  childBody,
-//  childBoyClothes,
-//  childBoyHair,
-//  childEyes,
-//  childGown,
-//  childLongHair,
   billboard,
   cube,
   eyeball,
@@ -41,6 +35,7 @@ enum class MeshId {
   squareFloorHalfDiagonal,
   squareWallHalfHeight,
   squareWall,
+  _squareWallPlain, // squareWall with different metadata
   squareWallDoorway,
   squareWallQuarterHeight,
   squareWallQuarterSlope,

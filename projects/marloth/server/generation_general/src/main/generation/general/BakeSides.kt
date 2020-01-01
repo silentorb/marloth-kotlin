@@ -1,7 +1,7 @@
 package generation.general
 
 import silentorb.mythic.spatial.Vector3i
-import simulation.misc.ConnectionMap
+import simulation.misc.ConnectionSet
 
 data class CellDirection(
     val cell: Vector3i,
@@ -12,7 +12,7 @@ typealias GridSideMap = Map<CellDirection, Side>
 
 fun bakeSides(independentConnectionTypes: Set<Any>,
               openConnectionTypes: Set<Any>,
-              connections: ConnectionMap,
+              connections: ConnectionSet,
               blockGrid: BlockGrid): GridSideMap {
   val getUsable = getUsableCellSide(independentConnectionTypes, openConnectionTypes, connections, blockGrid)
 

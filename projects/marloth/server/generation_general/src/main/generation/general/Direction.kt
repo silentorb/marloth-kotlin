@@ -36,3 +36,12 @@ fun rotateDirection(turns: Int): (Direction) -> Direction = { direction ->
   val newIndex = (index + turns) % 4
   horizontalDirectionList[newIndex]
 }
+
+val oppositeDirections: Map<Direction, Direction> = mapOf(
+    Direction.up to Direction.down,
+    Direction.down to Direction.up,
+    Direction.west to Direction.east,
+    Direction.east to Direction.west,
+    Direction.north to Direction.south,
+    Direction.south to Direction.north
+)
