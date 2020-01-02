@@ -44,7 +44,10 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
   val realm = generateRealm(grid, cellBiomes)
   val nextId = newIdSource(1)
   val architectureSource = buildArchitecture(generationConfig, dice, gridSideMap, workbench, blockMap, realm.cellBiomes, builders)
-  val architectureHands = architectureSource.mapValues { (key, value) -> toIdHands(nextId, value) }
+  val architectureHands = architectureSource.mapValues { (_, value) ->
+    val hands = toIdHands(nextId, value)
+    hands.plus(lightHandsFromDepictions(definitions.lightAttachments, hands))
+  }
   val architectureCells = mapArchitectureCells(architectureHands)
   val deck = pipeIdHandsToDeck(listOf(
       { _ ->

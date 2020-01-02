@@ -25,7 +25,7 @@ fun populateWorld(nextId: IdSource, config: GenerationConfig, input: WorldInput,
   val playerCount = getDebugSetting("INITIAL_PLAYER_COUNT")?.toInt() ?: 1
   val hands = (1..playerCount).flatMap { newPlayer(nextId, definitions, grid, playerCell) }
       .plus(populateRooms(occupantToHand, input.dice, realm))
-      .plus(toIdHands(nextId, placeWallLamps(deck, config, realm, input.dice, scale, architectureCells)))
+//      .plus(toIdHands(nextId, placeWallLamps(deck, config, realm, input.dice, architectureCells)))
       .plus(listOf(
           IdHand(
               id = nextId(),

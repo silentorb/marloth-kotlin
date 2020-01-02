@@ -16,27 +16,73 @@ import simulation.main.Deck
 import simulation.main.Hand
 import simulation.misc.Realm
 import silentorb.mythic.physics.Body
+import silentorb.mythic.scenery.Shape
 import silentorb.mythic.spatial.Vector3i
+import java.lang.Float.max
+
+data class BoundingObject(
+    val body: Body,
+    val shape: Shape
+)
+
+fun toBoundingObjects(deck: Deck, ids: Collection<Id>): Map<Id, BoundingObject> =
+    ids.associateWith { id ->
+      BoundingObject(
+          body = deck.bodies[id]!!,
+          shape = deck.collisionShapes[id]!!.shape
+      )
+    }
+
+fun approximatelyCollides(boundingCenter: Vector3, boundingRadius: Float): (BoundingObject) -> Boolean {
+  val boundingCenterHorizontal = boundingCenter.xy()
+  return { (body, shape) ->
+    val horizontalMax = max(shape.x, shape.y) / 2f
+    val height = body.position.z
+    val halfHeight = shape.height / 2f
+    val result = boundingCenterHorizontal.distance(body.position.xy()) <= boundingRadius + horizontalMax
+        && height < boundingCenter.z + halfHeight
+        && height > boundingCenter.z - halfHeight
+    if (result) {
+      val k = 0
+    }
+    result
+  }
+}
+
+// Currently doesn't differentiate which side the of the wall is being blocked by other objects
+fun wallHasRoomForLamp(boundingObjects: Map<Id, BoundingObject>, deck: Deck, wall: Id): Boolean {
+  val wallBody = deck.bodies[wall]!!
+  val result = boundingObjects
+      .minus(wall)
+      .values
+      .none(approximatelyCollides(wallBody.position, 2f))
+  return result
+}
 
 fun placeWallLamps(deck: Deck, config: GenerationConfig, realm: Realm,
-                   dice: Dice, scale: Float, architectureCells: Map<Id, Vector3i>): List<Hand> {
+                   dice: Dice, architectureCells: Map<Id, Vector3i>): List<Hand> {
 
-  val attachmentWalls = deck.depictions.keys.filter {
-    val depiction = deck.depictions[it]!!
-    val attributes = config.meshes[depiction.mesh!!]!!.attributes
-    attributes.contains(MeshAttribute.wall) && attributes.contains(MeshAttribute.canHaveAttachment)
-  }
+  val boundingObjects = toBoundingObjects(deck, deck.bodies.keys)
+  val attachmentWalls = deck.depictions.keys
+      .filter { id ->
+        val depiction = deck.depictions[id]!!
+        val attributes = config.meshes[depiction.mesh!!]!!.attributes
+        attributes.contains(MeshAttribute.wall)
+            && attributes.contains(MeshAttribute.canHaveAttachment)
+            && wallHasRoomForLamp(boundingObjects, deck, id)
+      }
 
   val nodeWalls = attachmentWalls
-      .groupBy { architectureCells[it] }
+      .groupBy { architectureCells[it]!! }
 
   if (nodeWalls.none())
     return listOf()
 
-  val (certain, options) = nodeWalls.entries.partition { (position, _) ->
-    val biome = config.biomes[realm.cellBiomes[position]!!]
-    biome != null && biome.attributes.contains(BiomeAttribute.alwaysLit)
-  }
+  val (certain, options) = nodeWalls.entries
+      .partition { (position, _) ->
+        val biome = config.biomes[realm.cellBiomes[position]!!]
+        biome != null && biome.attributes.contains(BiomeAttribute.alwaysLit)
+      }
 
 //  val count = Math.min((10f * scale).toInt(), options.size)
   val count = (options.size.toFloat() * 0.8f).toInt()

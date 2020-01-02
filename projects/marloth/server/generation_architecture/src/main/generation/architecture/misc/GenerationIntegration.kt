@@ -19,7 +19,7 @@ fun newWorkbench(dice: Dice, blocks: Set<Block>, independentConnections: Set<Any
   val firstBlock = if (firstBlockVariable != null)
     getMember(BlockDefinitions, firstBlockVariable as String)
   else
-    BlockDefinitions.singleCellDoorwayRoom
+    BlockDefinitions.home
 
   return pipe(
       windingPath(dice, blockConfig, roomCount),

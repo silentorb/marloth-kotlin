@@ -11,6 +11,14 @@ import silentorb.mythic.scenery.MeshName
 import simulation.main.Hand
 import simulation.misc.CellMap
 
+data class WallPlacement(
+    val config: GenerationConfig,
+    val mesh: MeshName,
+    val position: Vector3,
+    val angleZ: Float,
+    val biome: BiomeInfo
+)
+
 fun newWallInternal(config: GenerationConfig, mesh: MeshName, position: Vector3, angleZ: Float, biome: BiomeInfo,
                     scale: Vector3 = Vector3.unit): Hand {
   val orientation = Quaternion().rotateZ(angleZ + quarterAngle)
@@ -24,6 +32,9 @@ fun newWallInternal(config: GenerationConfig, mesh: MeshName, position: Vector3,
   )
 }
 
+fun newWallInternal(placement: WallPlacement) =
+    newWallInternal(placement.config, placement.mesh, placement.position, placement.angleZ, placement.biome)
+
 fun directionRotation(direction: Direction): Float =
     when (direction) {
       Direction.east -> 0f
@@ -35,7 +46,7 @@ fun directionRotation(direction: Direction): Float =
 
 fun placeWall(input: BuilderInput, height: Float,
               meshQuery: RandomMeshQuery
-): (Map.Entry<Direction, Vector3i>) -> Hand? = { (direction, offset) ->
+): (Direction, Vector3i) -> WallPlacement? = { direction, offset ->
   val position = input.position + cellHalfLength + offset.toVector3() * cellHalfLength + Vector3(0f, 0f, height)
   val angleZ = directionRotation(direction)
   val nothingChance = meshQuery.nothingChance
@@ -45,7 +56,8 @@ fun placeWall(input: BuilderInput, height: Float,
     null
 
   if (mesh != null)
-    newWallInternal(input.config, mesh, position, angleZ, input.biome)
+    WallPlacement(input.config, mesh, position, angleZ, input.biome)
+//    newWallInternal(input.config, mesh, position, angleZ, input.biome)
   else
     null
 }
@@ -56,7 +68,7 @@ fun selectMeshQuery(input: BuilderInput, direction: Direction): RandomMeshQuery?
   return input.connectionTypesToMeshQueries[connectionType]
 }
 
-fun getCubeWallDirections(directions: Set<Direction>,cells: CellMap,
+fun getCubeWallDirections(directions: Set<Direction>, cells: CellMap,
                           cell: Vector3i, turns: Int): List<Map.Entry<Direction, Vector3i>> {
   val rotatedDirections = directions.map(rotateDirection(turns))
   return horizontalDirectionVectors
@@ -69,17 +81,35 @@ fun getCubeWallDirections(directions: Set<Direction>,cells: CellMap,
       }
 }
 
-fun cubeWalls(directions: Set<Direction> = horizontalDirections, height: Float = 0f) = blockBuilder { input ->
+fun cubeWallsPlacement(directions: Set<Direction> = horizontalDirections, height: Float = 0f) = { input: BuilderInput ->
   val cell = input.cell
   val grid = input.grid
-  val processedDirections= getCubeWallDirections(directions, grid.cells, cell, input.turns)
+  val processedDirections = getCubeWallDirections(directions, grid.cells, cell, input.turns)
 
   processedDirections
-      .mapNotNull { entry ->
-        val query = selectMeshQuery(input, entry.key)
+      .mapNotNull { (direction, offset) ->
+        val query = selectMeshQuery(input, direction)
         if (query != null)
-          placeWall(input, height, query)(entry)
+          placeWall(input, height, query)(direction, offset)
         else
           null
       }
+}
+
+fun cubeWallsWithLamps(directions: Set<Direction> = horizontalDirections,
+                       height: Float = 0f, lampRate: Float) = blockBuilder { input ->
+  val wallPlacements = cubeWallsPlacement(directions, height)(input)
+  val hasLamp = lampRate == 1f || input.dice.getFloat() <= lampRate
+  val walls = wallPlacements.map(::newWallInternal)
+  if (hasLamp)
+    walls.plus(
+        input.dice.take(wallPlacements, 1).map(addWallLamp(input))
+    )
+  else
+    walls
+}
+
+fun cubeWalls(directions: Set<Direction> = horizontalDirections, height: Float = 0f) = blockBuilder { input ->
+  cubeWallsPlacement(directions, height)(input)
+      .map(::newWallInternal)
 }

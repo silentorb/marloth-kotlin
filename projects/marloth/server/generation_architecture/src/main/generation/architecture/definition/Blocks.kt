@@ -37,10 +37,10 @@ class BlockDefinitions {
             south = optionalOpen
         ),
         floorMesh(MeshId.squareFloor.name),
-        cubeWalls()
+        cubeWallsWithLamps(lampRate = 0.7f)
     )
 
-    val singleCellDoorwayRoom = compose(
+    val home = compose(
         setOf(CellAttribute.categoryCommon, CellAttribute.fullFloor, CellAttribute.traversable),
         blockBuilder(
             up = impassableVertical,
@@ -50,7 +50,7 @@ class BlockDefinitions {
             south = optionalDoorway
         ),
         floorMesh(MeshId.squareFloor.name),
-        cubeWalls()
+        cubeWallsWithLamps(lampRate = 0.7f)
     )
 
     val stairBottom = compose(
