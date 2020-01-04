@@ -1,4 +1,4 @@
-package generation.architecture.misc
+package generation.architecture.old
 
 import silentorb.mythic.spatial.Vector2
 import silentorb.mythic.spatial.Vector3

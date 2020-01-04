@@ -1,9 +1,9 @@
 package generation.architecture.building
 
+import generation.architecture.misc.Builder
 import generation.architecture.definition.ConnectionType
 import generation.architecture.definition.any
 import generation.general.*
-import generation.architecture.misc.Builder
 import silentorb.mythic.randomly.Dice
 import marloth.scenery.enums.MeshId
 import simulation.misc.CellAttribute

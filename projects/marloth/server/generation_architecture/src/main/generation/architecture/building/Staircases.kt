@@ -13,7 +13,7 @@ import simulation.misc.floorOffset
 
 val curvedStaircases = blockBuilder() { input ->
   val biome = input.biome
-  val config = input.config
+  val config = input.general.config
   val mesh = MeshId.curvingStairStep.name
   val sweepLength = Pi * 2f
 

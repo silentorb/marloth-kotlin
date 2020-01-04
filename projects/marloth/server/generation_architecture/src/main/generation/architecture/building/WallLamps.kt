@@ -12,8 +12,8 @@ import simulation.entities.DepictionType
 import simulation.main.Hand
 
 fun addWallLamp(input: BuilderInput): (WallPlacement) -> Hand = { placement ->
-  val dice = input.dice
-  val shape = input.config.meshes[placement.mesh]!!.shape!!
+  val dice = input.general.dice
+  val shape = input.general.config.meshes[placement.mesh]!!.shape!!
   val heightOffset = dice.getFloat(2f, 3f) - shape.height / 2f
   val orientation = Quaternion().rotateZ(placement.angleZ + Pi * 0f)
   val position = placement.position +

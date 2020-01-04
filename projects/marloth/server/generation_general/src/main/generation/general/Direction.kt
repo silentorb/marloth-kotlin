@@ -23,11 +23,11 @@ val horizontalDirectionVectors: Map<Direction, Vector3i> = mapOf(
     Direction.south to Vector3i(0, -1, 0)
 )
 
-val allDirectionVectors: Map<Direction, Vector3i> = verticalDirectionVectors.plus(horizontalDirectionVectors)
+val directionVectors: Map<Direction, Vector3i> = verticalDirectionVectors.plus(horizontalDirectionVectors)
 
 val horizontalDirections = horizontalDirectionVectors.keys
 val verticalDirections = verticalDirectionVectors.keys
-val allDirections = allDirectionVectors.keys
+val allDirections = directionVectors.keys
 
 val horizontalDirectionList = listOf(Direction.east, Direction.north, Direction.west, Direction.south)
 

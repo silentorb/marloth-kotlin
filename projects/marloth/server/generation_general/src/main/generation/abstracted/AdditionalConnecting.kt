@@ -5,14 +5,13 @@ import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Vector3i
 import simulation.misc.CellAttribute
 import simulation.misc.ConnectionPair
-import simulation.misc.ConnectionSet
 import simulation.misc.containsConnection
 
 // Connects neighboring cells that are not currently connected and have sides that support being connected
 
 fun canConnect(blockGrid: BlockGrid, openConnectionTypes: Set<Any>, first: Vector3i, direction: Direction): Boolean {
   val firstSide = blockGrid[first]!!.sides[direction]!!
-  val second = first + allDirectionVectors[direction]!!
+  val second = first + directionVectors[direction]!!
   val secondDirection = oppositeDirections[direction]!!
   val secondSide = blockGrid[second]!!.sides[secondDirection]!!
   return firstSide.any { openConnectionTypes.contains(it) && secondSide.contains(it) }
@@ -26,7 +25,7 @@ fun availableNeighoringCellPairs(blockConfig: BlockConfig, workbench: Workbench)
   val directions = setOf(Direction.down, Direction.east, Direction.south)
   return cells.keys.flatMap { cell ->
     directions.mapNotNull { direction ->
-      val neighbor = cell + allDirectionVectors[direction]!!
+      val neighbor = cell + directionVectors[direction]!!
       if (blockGrid.containsKey(neighbor)
           && !containsConnection(connections, cell, neighbor)
           && canConnect(blockGrid, openConnections, cell, direction)) {

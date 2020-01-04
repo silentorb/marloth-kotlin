@@ -20,7 +20,7 @@ fun isBlockIndependent(isSideIndependent: SideCheck, directions: Set<Direction>)
 
 fun getOtherSide(getBlock: GetBlock, origin: Vector3i): (Direction) -> Side = { direction ->
   val oppositeSide = oppositeDirections[direction]!!
-  val offset = allDirectionVectors[direction]!!
+  val offset = directionVectors[direction]!!
   val position = origin + offset
   val block = getBlock(position)
   val sides = block?.sides
@@ -64,7 +64,7 @@ fun matchConnectingBlock(dice: Dice, blocks: Set<Block>, openConnections: Set<An
 fun possibleNextDirections(config: BlockConfig, blockGrid: BlockGrid,
                            position: Vector3i): Map<Direction, Vector3i> {
   val block = blockGrid[position]!!
-  val options = allDirectionVectors
+  val options = directionVectors
       .filter { direction -> !blockGrid.containsKey(position + direction.value) }
       .filter { direction -> isSideOpen(config.openConnections, block.sides.getValue(direction.key)) }
 
@@ -96,7 +96,7 @@ fun getUsableCellSide(independentConnectionTypes: Set<Any>, openConnectionTypes:
     val otherSide = surroundingSides.getValue(direction)
     if (otherSide.any()) {
       val intersection = side.intersect(otherSide)
-      if (containsConnection(connections, position, position + allDirectionVectors[direction]!!))
+      if (containsConnection(connections, position, position + directionVectors[direction]!!))
         intersection.intersect(openConnectionTypes)
       else
         intersection

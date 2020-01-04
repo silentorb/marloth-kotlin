@@ -50,13 +50,13 @@ fun placeWall(input: BuilderInput, height: Float,
   val position = input.position + cellHalfLength + offset.toVector3() * cellHalfLength + Vector3(0f, 0f, height)
   val angleZ = directionRotation(direction)
   val nothingChance = meshQuery.nothingChance
-  val mesh = if (nothingChance == 0f || input.dice.getFloat() > nothingChance)
-    input.selectMesh(meshQuery.query)
+  val mesh = if (nothingChance == 0f || input.general.dice.getFloat() > nothingChance)
+    input.general.selectMesh(meshQuery.query)
   else
     null
 
   if (mesh != null)
-    WallPlacement(input.config, mesh, position, angleZ, input.biome)
+    WallPlacement(input.general.config, mesh, position, angleZ, input.biome)
 //    newWallInternal(input.config, mesh, position, angleZ, input.biome)
   else
     null
@@ -64,8 +64,8 @@ fun placeWall(input: BuilderInput, height: Float,
 
 fun selectMeshQuery(input: BuilderInput, direction: Direction): RandomMeshQuery? {
   val side = input.sides[direction]!!
-  val connectionType = input.dice.takeOne(side)
-  return input.connectionTypesToMeshQueries[connectionType]
+  val connectionType = input.general.dice.takeOne(side)
+  return input.general.connectionTypesToMeshQueries[connectionType]
 }
 
 fun getCubeWallDirections(directions: Set<Direction>, cells: CellMap,
@@ -83,7 +83,7 @@ fun getCubeWallDirections(directions: Set<Direction>, cells: CellMap,
 
 fun cubeWallsPlacement(directions: Set<Direction> = horizontalDirections, height: Float = 0f) = { input: BuilderInput ->
   val cell = input.cell
-  val grid = input.grid
+  val grid = input.general.grid
   val processedDirections = getCubeWallDirections(directions, grid.cells, cell, input.turns)
 
   processedDirections
@@ -99,11 +99,11 @@ fun cubeWallsPlacement(directions: Set<Direction> = horizontalDirections, height
 fun cubeWallsWithLamps(directions: Set<Direction> = horizontalDirections,
                        height: Float = 0f, lampRate: Float) = blockBuilder { input ->
   val wallPlacements = cubeWallsPlacement(directions, height)(input)
-  val hasLamp = lampRate == 1f || input.dice.getFloat() <= lampRate
+  val hasLamp = lampRate == 1f || input.general.dice.getFloat() <= lampRate
   val walls = wallPlacements.map(::newWallInternal)
   if (hasLamp)
     walls.plus(
-        input.dice.take(wallPlacements, 1).map(addWallLamp(input))
+        input.general.dice.take(wallPlacements, 1).map(addWallLamp(input))
     )
   else
     walls

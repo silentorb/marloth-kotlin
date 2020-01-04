@@ -14,7 +14,7 @@ import kotlin.math.asin
 
 fun floorMeshBuilder(mesh: MeshName, offset: Vector3 = Vector3.zero,
                      orientation: Quaternion = Quaternion()): Builder = { input ->
-  val config = input.config
+  val config = input.general.config
   val biome = input.biome
   listOf(newArchitectureMesh(
       meshes = config.meshes,
@@ -43,7 +43,7 @@ fun diagonalHalfFloorMesh(mesh: MeshName, height: Float) =
     }
 
 fun newSlopedFloorMesh(mesh: MeshName, height: Float) = blockBuilder(down = impassableHorizontal) { input ->
-  val meshInfo = input.config.meshes[mesh]!!
+  val meshInfo = input.general.config.meshes[mesh]!!
   val slopeAngle = asin(cellLength / 4f / meshInfo.shape!!.x)
   val orientation = Quaternion()
       .rotateZ(applyTurns(input.turns))
