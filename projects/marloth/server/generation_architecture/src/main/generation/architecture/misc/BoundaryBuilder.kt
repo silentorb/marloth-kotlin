@@ -45,21 +45,23 @@ fun getBoundaries(cells: Set<Vector3i>): List<Pair<Direction, ConnectionPair>> {
 fun buildBoundaries(general: ArchitectureInput,
                     builders: Map<ConnectionType, BoundaryBuilder>): Map<ConnectionPair, List<Hand>> {
   val boundaries = getBoundaries(general.blockGrid.keys)
-  return boundaries.map { (direction, boundary) ->
+  return boundaries.mapNotNull { (direction, boundary) ->
     val connectionTypes = general.getUsableCellSide(boundary.first)(direction)
     val connectionType = general.dice.takeOne(connectionTypes)
     val builder = builders[connectionType]
-    if (builder == null)
-      throw Error("Could not find builder for block")
-
-    val input = BoundaryBuilderInput(
-        general = general,
-        position = absoluteCellPosition(boundary.first) + directionVectors[direction]!!.toVector3() * cellLength / 2f,
-        boundary = boundary,
-        direction = direction,
-        connectionType = connectionType as ConnectionType
-    )
-    Pair(boundary, builder(input))
+    if (builder == null) {
+//      throw Error("Could not find builder for boundary $connectionType")
+      null
+    } else {
+      val input = BoundaryBuilderInput(
+          general = general,
+          position = absoluteCellPosition(boundary.first) + directionVectors[direction]!!.toVector3() * cellLength / 2f,
+          boundary = boundary,
+          direction = direction,
+          connectionType = connectionType as ConnectionType
+      )
+      Pair(boundary, builder(input))
+    }
   }
       .associate { it }
 }
