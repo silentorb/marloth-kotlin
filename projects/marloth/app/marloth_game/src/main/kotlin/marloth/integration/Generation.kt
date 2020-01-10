@@ -8,12 +8,14 @@ import generation.general.newRandomizedBiomeGrid
 import marloth.generation.population.populateWorld
 import org.recast4j.detour.NavMeshQuery
 import silentorb.mythic.debugging.getDebugSetting
+import silentorb.mythic.ent.newGenericIdHand
 import silentorb.mythic.ent.newIdSource
 import silentorb.mythic.ent.toIdHands
 import silentorb.mythic.physics.newBulletState
 import silentorb.mythic.randomly.Dice
 import simulation.intellect.navigation.newNavMesh
 import simulation.main.Deck
+import simulation.main.Hand
 import simulation.main.World
 import simulation.main.pipeIdHandsToDeck
 import simulation.misc.*
@@ -45,16 +47,13 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
   val nextId = newIdSource(1)
   val architectureInput = newArchitectureInput(generationConfig, dice, gridSideMap, workbench, cellBiomes)
   val architectureSource = buildArchitecture(architectureInput, blockMap, builders)
-  val architectureHands = architectureSource.mapValues { (_, value) ->
-    val hands = toIdHands(nextId, value)
-    hands.plus(lightHandsFromDepictions(definitions.lightAttachments, hands))
-  }
-  val architectureCells = mapArchitectureCells(architectureHands)
+
+  // The <Hand> specifier shouldn't be needed here but without it Kotlin is throwing an internal error referencing this line
+  val architectureHands = architectureSource.map(newGenericIdHand<Hand>(nextId))
+  val idHands = architectureHands.plus(lightHandsFromDepictions(definitions.lightAttachments, architectureHands))
   val deck = pipeIdHandsToDeck(listOf(
-      { _ ->
-        architectureHands.flatMap { it.value }
-      },
-      populateWorld(nextId, generationConfig, input, realm, architectureCells)
+      { _ -> idHands },
+      populateWorld(nextId, generationConfig, input, realm)
   ))(Deck())
 
   val navMesh = if (generationConfig.includeEnemies) {

@@ -2,6 +2,7 @@ package generation.architecture.boundaries
 
 import generation.architecture.building.WallPlacement
 import generation.architecture.building.directionRotation
+import generation.architecture.building.newWallInternal
 import generation.architecture.definition.BiomeId
 import generation.architecture.definition.MeshAttribute
 import generation.architecture.definition.RandomMeshQuery
@@ -25,12 +26,14 @@ fun placeWall(meshQuery: MeshQuery, height: Float = 0f): BoundaryBuilder = { inp
   val angleZ = directionRotation(direction)
   val mesh = input.general.selectMesh(meshQuery)
 
-  if (mesh != null) {
+  val wall = if (mesh != null) {
     val biome = selectWallBiome(dice, input.boundary.toList().mapNotNull { input.general.cellBiomes[it] })
     val biomeInfo = input.general.config.biomes[biome]!!
-    WallPlacement(input.general.config, mesh, position, angleZ, biomeInfo)
+    newWallInternal(WallPlacement(input.general.config, mesh, position, angleZ, biomeInfo))
   } else
     null
+
+  listOfNotNull(wall)
 }
 
 val wallBoundaryBuilder: BoundaryBuilder = placeWall(MeshQuery(all = setOf(MeshAttribute.wall, MeshAttribute.plain)))

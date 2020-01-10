@@ -1,8 +1,8 @@
 package generation.architecture.misc
 
-import generation.general.Block
-import generation.general.BlockMap
-import generation.general.allDirections
+import generation.architecture.definition.newHorizontalBoundaryBuilders
+import generation.architecture.definition.newVerticalBoundaryBuilders
+import generation.general.*
 import silentorb.mythic.ent.Id
 import silentorb.mythic.spatial.Vector3i
 import simulation.main.Hand
@@ -11,13 +11,30 @@ import simulation.misc.absoluteCellPosition
 
 fun buildArchitecture(general: ArchitectureInput,
                       blockMap: BlockMap,
-                      builders: Map<Block, Builder>): Map<Vector3i, List<Hand>> {
-  return general.blockGrid.mapValues { (position, block) ->
+                      builders: Map<Block, Builder>): List<Hand> {
+
+  val groupedBoundaryHands = buildBoundaries(general,
+      horizontalBuilders = newHorizontalBoundaryBuilders(),
+      verticalBuilders = newVerticalBoundaryBuilders()
+  )
+
+  val groupedCellHands = general.blockGrid.mapValues { (position, block) ->
     val info = blockMap[block]!!
     val biomeName = general.cellBiomes[position]!!
     val builder = builders[info.original]
     if (builder == null)
       throw Error("Could not find builder for block")
+
+    val boundaryHands = groupedBoundaryHands
+        .filterKeys { (first, second) ->
+          position == first || position == second
+        }
+        .flatMap { (key, value) ->
+          val neighor = if (position == key.first) key.second else key.first
+          val direction = directionVectorsReverseLookup[neighor - position]!!
+          value.map { Pair(direction, it) }
+        }
+        .groupBy({ it.first }) { it.second }
 
     val input = BuilderInput(
         general = general,
@@ -25,10 +42,14 @@ fun buildArchitecture(general: ArchitectureInput,
         turns = info.turns,
         cell = position,
         biome = general.config.biomes[biomeName]!!,
-        sides = allDirections.associateWith(general.getUsableCellSide(position))
+        sides = allDirections.associateWith(general.getUsableCellSide(position)),
+        boundaryHands = boundaryHands
     )
     builder(input)
   }
+
+  return groupedBoundaryHands.flatMap { it.value }
+      .plus(groupedCellHands.flatMap { it.value })
 }
 
 fun mapArchitectureCells(elementMap: Map<Vector3i, List<IdHand>>): Map<Id, Vector3i> =

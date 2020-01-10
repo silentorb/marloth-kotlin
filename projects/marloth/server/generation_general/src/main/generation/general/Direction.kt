@@ -25,6 +25,8 @@ val horizontalDirectionVectors: Map<Direction, Vector3i> = mapOf(
 
 val directionVectors: Map<Direction, Vector3i> = verticalDirectionVectors.plus(horizontalDirectionVectors)
 
+val directionVectorsReverseLookup = directionVectors.map { Pair(it.value, it.key) }.associate { it }
+
 val horizontalDirections = horizontalDirectionVectors.keys
 val verticalDirections = verticalDirectionVectors.keys
 val allDirections = directionVectors.keys
@@ -45,3 +47,9 @@ val oppositeDirections: Map<Direction, Direction> = mapOf(
     Direction.north to Direction.south,
     Direction.south to Direction.north
 )
+
+fun isVertical(direction: Direction) =
+    direction == Direction.up || direction == Direction.down
+
+fun isHorizontal(direction: Direction) =
+    !isVertical(direction)

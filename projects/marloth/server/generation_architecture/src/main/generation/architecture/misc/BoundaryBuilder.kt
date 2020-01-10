@@ -1,5 +1,6 @@
 package generation.architecture.misc
 
+import generation.abstracted.isVertical
 import generation.architecture.definition.ConnectionType
 import generation.general.*
 import silentorb.mythic.spatial.Vector3
@@ -43,12 +44,22 @@ fun getBoundaries(cells: Set<Vector3i>): List<Pair<Direction, ConnectionPair>> {
 }
 
 fun buildBoundaries(general: ArchitectureInput,
-                    builders: Map<ConnectionType, BoundaryBuilder>): Map<ConnectionPair, List<Hand>> {
+                    horizontalBuilders: Map<ConnectionType, BoundaryBuilder>,
+                    verticalBuilders: Map<ConnectionType, BoundaryBuilder>): Map<ConnectionPair, List<Hand>> {
   val boundaries = getBoundaries(general.blockGrid.keys)
   return boundaries.mapNotNull { (direction, boundary) ->
-    val connectionTypes = general.getUsableCellSide(boundary.first)(direction)
+    val blockGrid = general.blockGrid
+    val connectionTypes = if (blockGrid.containsKey(boundary.second))
+      general.getUsableCellSide(boundary.first)(direction)
+    else
+      blockGrid[boundary.first]!!.sides[direction]!!
+
     val connectionType = general.dice.takeOne(connectionTypes)
-    val builder = builders[connectionType]
+    val builder = if (isHorizontal(direction))
+      horizontalBuilders[connectionType]
+    else
+      verticalBuilders[connectionType]
+
     if (builder == null) {
 //      throw Error("Could not find builder for boundary $connectionType")
       null

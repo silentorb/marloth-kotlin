@@ -16,7 +16,7 @@ import simulation.misc.WorldInput
 import simulation.misc.lightHandsFromDepictions
 
 fun populateWorld(nextId: IdSource, config: GenerationConfig, input: WorldInput,
-                  realm: Realm, architectureCells: Map<Id, Vector3i>): (Deck) -> List<IdHand> = { deck ->
+                  realm: Realm): (Deck) -> List<IdHand> = { deck ->
   val grid = realm.grid
   val definitions = config.definitions
   val playerCell = getPlayerCell(grid)

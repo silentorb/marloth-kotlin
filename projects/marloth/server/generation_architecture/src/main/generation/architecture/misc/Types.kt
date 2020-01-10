@@ -42,7 +42,8 @@ data class BuilderInput(
     val turns: Int,
     val cell: Vector3i,
     val position: Vector3,
-    val sides: Sides
+    val sides: Sides,
+    val boundaryHands: Map<Direction, List<Hand>>
 )
 
 typealias Builder = (BuilderInput) -> List<Hand>
