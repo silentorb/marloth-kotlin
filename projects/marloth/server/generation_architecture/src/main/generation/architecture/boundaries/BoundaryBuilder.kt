@@ -1,15 +1,13 @@
-package generation.architecture.misc
+package generation.architecture.boundaries
 
-import generation.abstracted.isVertical
 import generation.architecture.definition.ConnectionType
+import generation.architecture.misc.ArchitectureInput
 import generation.general.*
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
 import silentorb.mythic.spatial.toVector3
 import simulation.main.Hand
-import simulation.misc.ConnectionPair
-import simulation.misc.absoluteCellPosition
-import simulation.misc.cellLength
+import simulation.misc.*
 
 data class BoundaryBuilderInput(
     val general: ArchitectureInput,
@@ -47,6 +45,7 @@ fun buildBoundaries(general: ArchitectureInput,
                     horizontalBuilders: Map<ConnectionType, BoundaryBuilder>,
                     verticalBuilders: Map<ConnectionType, BoundaryBuilder>): Map<ConnectionPair, List<Hand>> {
   val boundaries = getBoundaries(general.blockGrid.keys)
+//      .filter { it.second.first == Vector3i.zero || it.second.second == Vector3i.zero }
   return boundaries.mapNotNull { (direction, boundary) ->
     val blockGrid = general.blockGrid
     val connectionTypes = if (blockGrid.containsKey(boundary.second))
@@ -64,9 +63,11 @@ fun buildBoundaries(general: ArchitectureInput,
 //      throw Error("Could not find builder for boundary $connectionType")
       null
     } else {
+      val directionOffset = directionVectors[direction]!!.toVector3() * cellHalfLength
+      val position = absoluteCellPosition(boundary.first) + floorOffset + directionOffset + Vector3(0f, 0f, cellHalfLength)
       val input = BoundaryBuilderInput(
           general = general,
-          position = absoluteCellPosition(boundary.first) + directionVectors[direction]!!.toVector3() * cellLength / 2f,
+          position = position,
           boundary = boundary,
           direction = direction,
           connectionType = connectionType as ConnectionType

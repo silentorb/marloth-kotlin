@@ -1,5 +1,6 @@
 package generation.architecture.misc
 
+import generation.architecture.boundaries.buildBoundaries
 import generation.architecture.definition.newHorizontalBoundaryBuilders
 import generation.architecture.definition.newVerticalBoundaryBuilders
 import generation.general.*

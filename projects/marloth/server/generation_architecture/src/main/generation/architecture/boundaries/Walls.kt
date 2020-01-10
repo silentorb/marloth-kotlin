@@ -5,9 +5,6 @@ import generation.architecture.building.directionRotation
 import generation.architecture.building.newWallInternal
 import generation.architecture.definition.BiomeId
 import generation.architecture.definition.MeshAttribute
-import generation.architecture.definition.RandomMeshQuery
-import generation.architecture.misc.BoundaryBuilder
-import generation.architecture.misc.BoundaryBuilderInput
 import generation.architecture.misc.MeshQuery
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Vector3
@@ -36,4 +33,7 @@ fun placeWall(meshQuery: MeshQuery, height: Float = 0f): BoundaryBuilder = { inp
   listOfNotNull(wall)
 }
 
-val wallBoundaryBuilder: BoundaryBuilder = placeWall(MeshQuery(all = setOf(MeshAttribute.wall, MeshAttribute.plain)))
+val plainWallBoundaryBuilder: BoundaryBuilder = placeWall(MeshQuery(all = setOf(MeshAttribute.wall, MeshAttribute.plain)))
+val doorwayBoundaryBuilder: BoundaryBuilder = placeWall(MeshQuery(all = setOf(MeshAttribute.doorway)))
+val decoratedWallBoundaryBuilder: BoundaryBuilder = placeWall(MeshQuery(all = setOf(MeshAttribute.wall, MeshAttribute.decorated)))
+val solidWallBoundaryBuilder: BoundaryBuilder = placeWall(MeshQuery(all = setOf(MeshAttribute.wall, MeshAttribute.solid)))
