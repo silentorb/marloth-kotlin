@@ -61,12 +61,16 @@ fun matchConnectingBlock(dice: Dice, blocks: Set<Block>, openConnections: Set<An
   return matchBlock(dice, blocks, modifiedSides)
 }
 
-fun possibleNextDirections(config: BlockConfig, blockGrid: BlockGrid,
-                           position: Vector3i): Map<Direction, Vector3i> {
+fun openSides(config: BlockConfig, blockGrid: BlockGrid, position: Vector3i): Map<Direction, Vector3i> {
   val block = blockGrid[position]!!
-  val options = directionVectors
+  return directionVectors
       .filter { direction -> !blockGrid.containsKey(position + direction.value) }
       .filter { direction -> isSideOpen(config.openConnections, block.sides.getValue(direction.key)) }
+}
+
+fun possibleNextDirections(config: BlockConfig, blockGrid: BlockGrid, position: Vector3i): Map<Direction, Vector3i> {
+  val block = blockGrid[position]!!
+  val options = openSides(config, blockGrid, position)
 
   val essential = options.filter { direction ->
     val side = block.sides[direction.key]!!

@@ -23,21 +23,54 @@ fun getBoundaries(cells: Set<Vector3i>): List<Pair<Direction, ConnectionPair>> {
   val pairDirections = setOf(Direction.east, Direction.south, Direction.down)
       .associateWith { directionVectors[it]!! }
 
-  val halfDirections = setOf(Direction.east, Direction.south, Direction.down)
+  val halfDirections = setOf(Direction.west, Direction.north, Direction.up)
       .associateWith { directionVectors[it]!! }
 
-  val filter = { toggle: Boolean, cell: Vector3i ->
+  val filter = { cell: Vector3i, filter: (Vector3i) -> Boolean ->
     { (direction, offset): Map.Entry<Direction, Vector3i> ->
       val other = cell + offset
-      if (toggle == cells.contains(other))
+      if (filter(other))
         Pair(direction, Pair(cell, other))
       else
         null
     }
   }
   return cells.flatMap { cell ->
-    pairDirections.mapNotNull(filter(true, cell))
-        .plus(halfDirections.mapNotNull(filter(false, cell)))
+    pairDirections.mapNotNull(filter(cell) { true })
+        .plus(halfDirections.mapNotNull(filter(cell) { !cells.contains(it) }))
+  }
+}
+
+data class BoundaryPlot(
+    val direction: Direction,
+    val boundary: ConnectionPair,
+    val builder: BoundaryBuilder,
+    val connectionType: ConnectionType
+)
+
+fun getBuilder(general: ArchitectureInput,
+               horizontalBuilders: Map<ConnectionType, BoundaryBuilder>,
+               verticalBuilders: Map<ConnectionType, BoundaryBuilder>
+): (Pair<Direction, ConnectionPair>) -> BoundaryPlot? = { (direction, boundary) ->
+  val connectionTypes = getUsableCellSide(general.gridSideMap)(boundary.first)(direction)
+  println(connectionTypes)
+  if (connectionTypes.none())
+    null
+  else {
+    val connectionType = general.dice.takeOne(connectionTypes)
+    val builder = if (isHorizontal(direction))
+      horizontalBuilders[connectionType]
+    else
+      verticalBuilders[connectionType]
+
+    if (builder == null)
+      null
+    else BoundaryPlot(
+        direction = direction,
+        boundary = boundary,
+        builder = builder,
+        connectionType = connectionType as ConnectionType
+    )
   }
 }
 
@@ -46,34 +79,19 @@ fun buildBoundaries(general: ArchitectureInput,
                     verticalBuilders: Map<ConnectionType, BoundaryBuilder>): Map<ConnectionPair, List<Hand>> {
   val boundaries = getBoundaries(general.blockGrid.keys)
 //      .filter { it.second.first == Vector3i.zero || it.second.second == Vector3i.zero }
-  return boundaries.mapNotNull { (direction, boundary) ->
-    val blockGrid = general.blockGrid
-    val connectionTypes = if (blockGrid.containsKey(boundary.second))
-      general.getUsableCellSide(boundary.first)(direction)
-    else
-      blockGrid[boundary.first]!!.sides[direction]!!
-
-    val connectionType = general.dice.takeOne(connectionTypes)
-    val builder = if (isHorizontal(direction))
-      horizontalBuilders[connectionType]
-    else
-      verticalBuilders[connectionType]
-
-    if (builder == null) {
-//      throw Error("Could not find builder for boundary $connectionType")
-      null
-    } else {
-      val directionOffset = directionVectors[direction]!!.toVector3() * cellHalfLength
-      val position = absoluteCellPosition(boundary.first) + floorOffset + directionOffset + Vector3(0f, 0f, cellHalfLength)
-      val input = BoundaryBuilderInput(
-          general = general,
-          position = position,
-          boundary = boundary,
-          direction = direction,
-          connectionType = connectionType as ConnectionType
-      )
-      Pair(boundary, builder(input))
-    }
-  }
+  return boundaries
+      .mapNotNull(getBuilder(general, horizontalBuilders, verticalBuilders))
+      .map { (direction, boundary, builder, connectionType) ->
+        val directionOffset = directionVectors[direction]!!.toVector3() * cellHalfLength
+        val position = absoluteCellPosition(boundary.first) + floorOffset + directionOffset + Vector3(0f, 0f, cellHalfLength)
+        val input = BoundaryBuilderInput(
+            general = general,
+            position = position,
+            boundary = boundary,
+            direction = direction,
+            connectionType = connectionType as ConnectionType
+        )
+        Pair(boundary, builder(input))
+      }
       .associate { it }
 }

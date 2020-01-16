@@ -36,14 +36,14 @@ private fun newSlope(lower: Level, higherSide: Side, upSide: Side = extraHeadroo
         cubeWalls(directions = setOf(Direction.east))
     )
 
-fun explodeHeightBlocks(levelIndex: Int): Collection<BlockBuilder> {
+fun explodeHeightBlocks(levelIndex: Int): Map<String, BlockBuilder> {
   val level = levels[levelIndex]
   val lower = levels[levelIndex - 1]
   val upper = levels[(levelIndex + 1) % 4]
   val halfStepRequiredOpen: Side = level.side
   val halfStepOptionalOpen: Side = halfStepRequiredOpen.plus(ConnectionType.plainWall)
   return mapOf(
-      "halfStepRoom" to compose(setOf(CellAttribute.traversable, CellAttribute.fullFloor),
+      "halfStepRoom$levelIndex" to compose(setOf(CellAttribute.traversable, CellAttribute.fullFloor),
           blockBuilder(
               up = extraHeadroom,
               east = halfStepOptionalOpen,
@@ -55,14 +55,14 @@ fun explodeHeightBlocks(levelIndex: Int): Collection<BlockBuilder> {
           cubeWalls(height = level.height)
       ),
 
-      "lowerHalfStepSlope" to newSlope(lower, level.side),
+      "lowerHalfStepSlope$levelIndex" to newSlope(lower, level.side),
 
-      "diagonalCorner" to diagonalCornerFloor(level.side, level.height)
+      "diagonalCorner$levelIndex" to diagonalCornerFloor(level.side, level.height)
   )
-      .values
 }
 
-fun heights(): Collection<BlockBuilder> =
+fun heights(): Map<String, BlockBuilder> =
     (1..3)
-        .flatMap(::explodeHeightBlocks)
-        .plus(newSlope(levels.last(), impassableHorizontal, verticalDiagonalAdapter))
+        .map(::explodeHeightBlocks)
+        .reduce { a, b -> a.plus(b) }
+        .plus("lowerHalfStepSlope4" to newSlope(levels.last(), impassableHorizontal, verticalDiagonalAdapter))

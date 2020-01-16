@@ -1,6 +1,7 @@
 package generation.architecture.building
 
 import generation.architecture.misc.BuilderInput
+import generation.general.Direction
 import marloth.scenery.enums.MeshId
 import org.joml.times
 import silentorb.mythic.physics.Body
@@ -11,7 +12,7 @@ import simulation.entities.Depiction
 import simulation.entities.DepictionType
 import simulation.main.Hand
 
-fun addWallLamp(input: BuilderInput): (WallPlacement) -> Hand = { placement ->
+fun addWallLamp(input: BuilderInput): (Direction, Hand) -> Hand = { direction, hand ->
   val dice = input.general.dice
   val shape = input.general.config.meshes[placement.mesh]!!.shape!!
   val heightOffset = dice.getFloat(2f, 3f) - shape.height / 2f

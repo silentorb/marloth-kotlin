@@ -52,8 +52,13 @@ class BlockDefinitions {
         floorMesh(MeshId.squareFloor.name),
         cubeWallsWithLamps(lampRate = 0.7f)
     )
+  }
+}
 
-    val stairBottom = compose(
+fun mainBlocks(): Map<String, BlockBuilder> = mapOf(
+    "singleCellRoom" to BlockDefinitions.singleCellRoom,
+    "home" to BlockDefinitions.home,
+    "stairBottom" to compose(
         setOf(CellAttribute.lockedRotation, CellAttribute.traversable),
         blockBuilder(
             up = spiralStaircaseTopOrBottom,
@@ -65,9 +70,9 @@ class BlockDefinitions {
         floorMesh(MeshId.squareFloor.name),
         cubeWalls(),
         curvedStaircases
-    )
+    ),
 
-    val stairMiddle = compose(
+    "stairMiddle" to compose(
         setOf(CellAttribute.lockedRotation, CellAttribute.traversable),
         blockBuilder(
             up = spiralStaircaseTop,
@@ -79,9 +84,9 @@ class BlockDefinitions {
         ),
         cubeWalls(),
         curvedStaircases
-    )
+    ),
 
-    val stairTop = compose(
+    "stairTop" to compose(
         setOf(CellAttribute.lockedRotation, CellAttribute.traversable),
         blockBuilder(
             up = impassableVertical,
@@ -93,11 +98,11 @@ class BlockDefinitions {
         ),
         cubeWalls(),
         halfFloorMesh(MeshId.halfSquareFloor.name)
-    )
+    ),
 
-    val diagonalCorner = diagonalCornerFloor(requiredOpen, 0f)
+    "diagonalCorner" to diagonalCornerFloor(requiredOpen, 0f),
 
-    val verticalDiagonal = compose(
+    "verticalDiagonal" to compose(
         setOf(CellAttribute.traversable),
         blockBuilder(
             up = impassableVertical,
@@ -108,20 +113,19 @@ class BlockDefinitions {
             south = impassableEmpty
         )
     )
-  }
-}
+)
 
 fun enumerateBlockBuilders() =
-    enumerateMembers<BlockBuilder>(BlockDefinitions)
+    mainBlocks()
         .plus(heights())
 
-fun splitBlockBuilders(blockBuilders: List<BlockBuilder>): Pair<Set<Block>, Map<Block, Builder>> =
+fun splitBlockBuilders(blockBuilders: Collection<BlockBuilder>): Pair<Set<Block>, Map<Block, Builder>> =
     Pair(
         blockBuilders.map { it.block }.toSet(),
         blockBuilders.associate { Pair(it.block, it.builder) }
     )
 
-fun devFilterBlockBuilders(blockBuilders: List<BlockBuilder>): List<BlockBuilder> {
+fun devFilterBlockBuilders(blockBuilders: Collection<BlockBuilder>): Collection<BlockBuilder> {
   val filter = when (System.getenv("BLOCK_FILTER")) {
     "diagonal" -> setOf(CellAttribute.categoryCommon, CellAttribute.categoryDiagonal)
     else -> null
@@ -132,6 +136,3 @@ fun devFilterBlockBuilders(blockBuilders: List<BlockBuilder>): List<BlockBuilder
   else
     blockBuilders
 }
-
-fun blockBuilders(): Pair<Set<Block>, Map<Block, Builder>> =
-    splitBlockBuilders(devFilterBlockBuilders(enumerateBlockBuilders()))

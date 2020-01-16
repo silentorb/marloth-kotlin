@@ -17,29 +17,30 @@ fun canConnect(blockGrid: BlockGrid, openConnectionTypes: Set<Any>, first: Vecto
   return firstSide.any { openConnectionTypes.contains(it) && secondSide.contains(it) }
 }
 
-fun availableNeighoringCellPairs(blockConfig: BlockConfig, workbench: Workbench): List<ConnectionPair> {
+fun availableNeighoringCellPairs(blockConfig: BlockConfig, workbench: Workbench, cells: Set<Vector3i>): List<ConnectionPair> {
   val blockGrid = workbench.blockGrid
   val connections = workbench.mapGrid.connections
   val openConnections = blockConfig.openConnections
-  val cells = workbench.mapGrid.cells.filter { !it.value.attributes.contains(CellAttribute.home) }
   val directions = setOf(Direction.down, Direction.east, Direction.south)
-  return cells.keys.flatMap { cell ->
-    directions.mapNotNull { direction ->
-      val neighbor = cell + directionVectors[direction]!!
-      if (blockGrid.containsKey(neighbor)
-          && !containsConnection(connections, cell, neighbor)
-          && canConnect(blockGrid, openConnections, cell, direction)) {
-        Pair(cell, neighbor)
-      } else
-        null
-    }
-  }
+  return cells
+      .flatMap { cell ->
+        directions.mapNotNull { direction ->
+          val neighbor = cell + directionVectors[direction]!!
+          if (cells.contains(neighbor) && blockGrid.containsKey(neighbor)
+              && !containsConnection(connections, cell, neighbor)
+              && canConnect(blockGrid, openConnections, cell, direction)) {
+            Pair(cell, neighbor)
+          } else
+            null
+        }
+      }
 }
 
 fun additionalConnecting(dice: Dice, blockConfig: BlockConfig, rate: Float): (Workbench) -> Workbench = { workbench ->
   val mapGrid = workbench.mapGrid
   val connections = workbench.mapGrid.connections
-  val possibleConnections = availableNeighoringCellPairs(blockConfig, workbench)
+  val cells = workbench.mapGrid.cells.filter { !it.value.attributes.contains(CellAttribute.home) }.keys
+  val possibleConnections = availableNeighoringCellPairs(blockConfig, workbench, cells)
   val amount = (possibleConnections.size.toFloat() * rate).toInt()
   val newConnections = dice.take(possibleConnections, amount)
   workbench.copy(

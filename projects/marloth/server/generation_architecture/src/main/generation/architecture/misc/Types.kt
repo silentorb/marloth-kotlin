@@ -17,7 +17,7 @@ data class ArchitectureInput(
     val cellBiomes: CellBiomeMap,
     val dice: Dice,
     val selectMesh: MeshSelector,
-    val getUsableCellSide: UsableConnectionTypes,
+    val gridSideMap: GridSideMap,
     val connectionTypesToMeshQueries: ConnectTypeMeshQueryMap
 )
 
@@ -32,7 +32,7 @@ fun newArchitectureInput(generationConfig: GenerationConfig, dice: Dice,
         grid = workbench.mapGrid,
         blockGrid = workbench.blockGrid,
         selectMesh = randomlySelectMesh(dice, newMeshSource(generationConfig.meshes)),
-        getUsableCellSide = getUsableCellSide(gridSideMap),
+        gridSideMap = gridSideMap,
         connectionTypesToMeshQueries = connectionTypesToMeshQueries()
     )
 

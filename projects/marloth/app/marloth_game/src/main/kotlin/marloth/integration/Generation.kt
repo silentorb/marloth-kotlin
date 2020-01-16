@@ -10,7 +10,6 @@ import org.recast4j.detour.NavMeshQuery
 import silentorb.mythic.debugging.getDebugSetting
 import silentorb.mythic.ent.newGenericIdHand
 import silentorb.mythic.ent.newIdSource
-import silentorb.mythic.ent.toIdHands
 import silentorb.mythic.physics.newBulletState
 import silentorb.mythic.randomly.Dice
 import simulation.intellect.navigation.newNavMesh
@@ -32,11 +31,13 @@ fun fixedCellBiomes(grid: MapGrid): CellBiomeMap {
 
 fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, input: WorldInput): World {
   val dice = input.dice
-  val (blocks, builders) = blockBuilders()
+  val blockBuilders = enumerateBlockBuilders()
+  val (blocks, builders) = splitBlockBuilders(devFilterBlockBuilders(blockBuilders.values))
   val independentConnections = independentConnectionTypes()
   val openConnectionTypes = openConnectionTypes()
   val blockMap = explodeBlockMap(rotatingConnectionTypes(), blocks)
-  val workbench = newWorkbench(dice, blockMap.keys, independentConnections, openConnectionTypes, generationConfig.roomCount)
+  val blockOptions = blockMap.keys.minus(blockBuilders["home"]!!.block)
+  val workbench = newWorkbench(dice, blockOptions, independentConnections, openConnectionTypes, generationConfig.roomCount)
   val grid = workbench.mapGrid
   val gridSideMap = bakeSides(independentConnections, openConnectionTypes, grid.connections, workbench.blockGrid)
   val biomeGrid = newRandomizedBiomeGrid(biomeInfoMap, input)

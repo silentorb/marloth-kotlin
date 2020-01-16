@@ -43,7 +43,7 @@ fun buildArchitecture(general: ArchitectureInput,
         turns = info.turns,
         cell = position,
         biome = general.config.biomes[biomeName]!!,
-        sides = allDirections.associateWith(general.getUsableCellSide(position)),
+        sides = allDirections.associateWith(getUsableCellSide(general.gridSideMap)(position)),
         boundaryHands = boundaryHands
     )
     builder(input)

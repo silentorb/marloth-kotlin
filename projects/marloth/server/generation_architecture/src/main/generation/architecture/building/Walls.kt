@@ -98,16 +98,19 @@ fun cubeWallsPlacement(directions: Set<Direction> = horizontalDirections, height
 
 fun cubeWallsWithLamps(directions: Set<Direction> = horizontalDirections,
                        height: Float = 0f, lampRate: Float) = blockBuilder { input ->
-  listOf()
+
+  //  listOf()
 //  val wallPlacements = cubeWallsPlacement(directions, height)(input)
-//  val hasLamp = lampRate == 1f || input.general.dice.getFloat() <= lampRate
+  val hasLamp = lampRate == 1f || input.general.dice.getFloat() <= lampRate
 //  val walls = wallPlacements.map(::newWallInternal)
-//  if (hasLamp)
-//    walls.plus(
-//        input.general.dice.take(wallPlacements, 1).map(addWallLamp(input))
-//    )
-//  else
-//    walls
+  if (hasLamp) {
+    assert(input.boundaryHands.any())
+    val (direction, hands) = input.general.dice.takeOne(input.boundaryHands.entries)
+    listOf(
+        addWallLamp(input)(direction, hands.first())
+    )
+  } else
+    listOf()
 }
 
 fun cubeWalls(directions: Set<Direction> = horizontalDirections, height: Float = 0f) = blockBuilder { input ->

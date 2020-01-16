@@ -18,7 +18,8 @@ fun bakeSides(independentConnectionTypes: Set<Any>,
 
   return blockGrid.flatMap { (cell, block) ->
     block.sides.map { (direction, _) ->
-      Pair(CellDirection(cell, direction), getUsable(cell)(direction))
+      val side = getUsable(cell)(direction)
+      Pair(CellDirection(cell, direction), side)
     }
   }
       .associate { it }
