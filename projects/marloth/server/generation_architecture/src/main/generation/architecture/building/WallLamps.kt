@@ -14,10 +14,13 @@ import simulation.main.Hand
 
 fun addWallLamp(input: BuilderInput): (Direction, Hand) -> Hand = { direction, hand ->
   val dice = input.general.dice
-  val shape = input.general.config.meshes[placement.mesh]!!.shape!!
+  val shape = hand.collisionShape!!.shape
+  val body = hand.body!!
+  val angleZ = directionRotation(direction)
   val heightOffset = dice.getFloat(2f, 3f) - shape.height / 2f
-  val orientation = Quaternion().rotateZ(placement.angleZ + Pi * 0f)
-  val position = placement.position +
+  val orientation = Quaternion().rotateZ(angleZ + Pi * 0f)
+//  val orientation = Quaternion(body.orientation).rotateZ(angleZ - Pi * 0.5f)
+  val position = body.position +
       Vector3(0f, 0f, heightOffset) + orientation * Vector3(shape.y / 2f, dice.getFloat(-1f, 1f), 0f)
   Hand(
       depiction = Depiction(
