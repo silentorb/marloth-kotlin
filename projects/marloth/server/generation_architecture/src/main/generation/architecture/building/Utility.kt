@@ -3,9 +3,11 @@ package generation.architecture.building
 import generation.architecture.misc.Builder
 import generation.architecture.definition.ConnectionType
 import generation.architecture.definition.any
+import generation.architecture.misc.BuilderInput
 import generation.general.*
 import silentorb.mythic.randomly.Dice
 import marloth.scenery.enums.MeshId
+import simulation.main.Hand
 import simulation.misc.CellAttribute
 
 fun mergeSides(blocks: List<Block>): Sides {
@@ -76,4 +78,20 @@ fun getSideMesh(dice: Dice, sides: Sides, direction: Direction, meshMap: Map<Con
     return null
 
   return dice.takeOne(meshMap[dice.takeOne(possibleMeshes)]!!)
+}
+
+typealias BlockBuilderTransform = (BlockBuilderElement) -> BlockBuilderElement
+
+fun wrapBlockBuilder(addition: (BuilderInput, List<Hand>) -> List<Hand>): BlockBuilderTransform = { blockBuilder ->
+  blockBuilder.copy(
+      builder = { input ->
+        val subBuilder = blockBuilder.builder
+        val hands = if (subBuilder != null)
+          subBuilder(input)
+        else
+          listOf()
+
+        hands.plus(addition(input, hands))
+      }
+  )
 }

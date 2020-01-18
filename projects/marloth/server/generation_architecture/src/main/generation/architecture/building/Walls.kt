@@ -1,8 +1,11 @@
 package generation.architecture.building
 
+import generation.architecture.definition.MeshAttribute
 import generation.architecture.definition.RandomMeshQuery
 import generation.architecture.misc.BuilderInput
 import generation.architecture.misc.GenerationConfig
+import generation.architecture.misc.MeshQuery
+import generation.architecture.misc.meshMatches
 import simulation.misc.cellHalfLength
 import generation.architecture.old.newArchitectureMesh
 import generation.general.*
@@ -62,11 +65,11 @@ fun placeWall(input: BuilderInput, height: Float,
     null
 }
 
-fun selectMeshQuery(input: BuilderInput, direction: Direction): RandomMeshQuery? {
-  val side = input.sides[direction]!!
-  val connectionType = input.general.dice.takeOne(side)
-  return input.general.connectionTypesToMeshQueries[connectionType]
-}
+//fun selectMeshQuery(input: BuilderInput, direction: Direction): RandomMeshQuery? {
+//  val side = input.sides[direction]!!
+//  val connectionType = input.general.dice.takeOne(side)
+//  return input.general.connectionTypesToMeshQueries[connectionType]
+//}
 
 fun getCubeWallDirections(directions: Set<Direction>, cells: CellMap,
                           cell: Vector3i, turns: Int): List<Map.Entry<Direction, Vector3i>> {
@@ -81,33 +84,20 @@ fun getCubeWallDirections(directions: Set<Direction>, cells: CellMap,
       }
 }
 
-fun cubeWallsPlacement(directions: Set<Direction> = horizontalDirections, height: Float = 0f) = { input: BuilderInput ->
-  val cell = input.cell
-  val grid = input.general.grid
-  val processedDirections = getCubeWallDirections(directions, grid.cells, cell, input.turns)
-
-  processedDirections
-      .mapNotNull { (direction, offset) ->
-        val query = selectMeshQuery(input, direction)
-        if (query != null)
-          placeWall(input, height, query)(direction, offset)
-        else
-          null
-      }
-}
-
-fun cubeWallsWithLamps(directions: Set<Direction> = horizontalDirections,
-                       height: Float = 0f, lampRate: Float) = blockBuilder { input ->
-  val hasLamp = lampRate == 1f || input.general.dice.getFloat() <= lampRate
-  if (hasLamp) {
-    assert(input.boundaryHands.any())
-    val (direction, hands) = input.general.dice.takeOne(input.boundaryHands.entries)
-    listOf(
-        addWallLamp(input)(direction, hands.first())
-    )
-  } else
-    listOf()
-}
+//fun cubeWallsPlacement(directions: Set<Direction> = horizontalDirections, height: Float = 0f) = { input: BuilderInput ->
+//  val cell = input.cell
+//  val grid = input.general.grid
+//  val processedDirections = getCubeWallDirections(directions, grid.cells, cell, input.turns)
+//
+//  processedDirections
+//      .mapNotNull { (direction, offset) ->
+//        val query = selectMeshQuery(input, direction)
+//        if (query != null)
+//          placeWall(input, height, query)(direction, offset)
+//        else
+//          null
+//      }
+//}
 
 fun cubeWalls(directions: Set<Direction> = horizontalDirections, height: Float = 0f) = blockBuilder { input ->
   listOf()

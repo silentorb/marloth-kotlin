@@ -11,14 +11,10 @@ import marloth.scenery.enums.MeshId
 import simulation.misc.CellAttribute
 
 fun randomDiagonalWall(height: Float = 0f) = blockBuilder { input ->
-  val cell = input.cell
-  val grid = input.general.grid
-  val connections = input.general.grid.connections
   val config = input.general.config
   val biome = input.biome
-  val dice = input.general.dice
   val position = input.position + Vector3(cellHalfLength) + Vector3(0f, 0f, height)
-  val angle = applyTurns(input.turns)
+  val angle = applyTurns(input.turns) + Pi
   val scale = Vector3(1.42f, 1f, 1f)
   listOf(newWallInternal(config, MeshId.squareWall.name, position, angle - Pi * 0.25f, biome, scale = scale))
 }
@@ -34,5 +30,5 @@ fun diagonalCornerFloor(openSide: Side, height: Float) =
             south = impassableHorizontal
         ),
         diagonalHalfFloorMesh(MeshId.squareFloorHalfDiagonal.name, height),
-        randomDiagonalWall(height)
+        withWallLamp(0.7f)(randomDiagonalWall(height))
     )

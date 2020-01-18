@@ -1,7 +1,5 @@
 package generation.architecture.misc
 
-import generation.architecture.definition.ConnectTypeMeshQueryMap
-import generation.architecture.definition.connectionTypesToMeshQueries
 import generation.general.*
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Vector3
@@ -17,8 +15,7 @@ data class ArchitectureInput(
     val cellBiomes: CellBiomeMap,
     val dice: Dice,
     val selectMesh: MeshSelector,
-    val gridSideMap: GridSideMap,
-    val connectionTypesToMeshQueries: ConnectTypeMeshQueryMap
+    val gridSideMap: GridSideMap
 )
 
 fun newArchitectureInput(generationConfig: GenerationConfig, dice: Dice,
@@ -32,8 +29,7 @@ fun newArchitectureInput(generationConfig: GenerationConfig, dice: Dice,
         grid = workbench.mapGrid,
         blockGrid = workbench.blockGrid,
         selectMesh = randomlySelectMesh(dice, newMeshSource(generationConfig.meshes)),
-        gridSideMap = gridSideMap,
-        connectionTypesToMeshQueries = connectionTypesToMeshQueries()
+        gridSideMap = gridSideMap
     )
 
 data class BuilderInput(

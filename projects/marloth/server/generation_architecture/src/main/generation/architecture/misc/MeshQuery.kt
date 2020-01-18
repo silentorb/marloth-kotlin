@@ -23,6 +23,25 @@ typealias MeshSource = (MeshQuery) -> Set<MeshName>
 
 typealias MeshSelector = (MeshQuery) -> MeshName?
 
+fun meshMatches(query: MeshQuery): (MeshAttributes) -> Boolean = { attributes ->
+  val hasAny = if (query.any.any())
+    query.any.any { attributes.contains(it) }
+  else
+    true
+
+  val hasAll = if (query.all.any())
+    query.all.all { attributes.contains(it) }
+  else
+    true
+
+  val hasNone = if (query.none.any())
+    query.none.none { attributes.contains(it) }
+  else
+    true
+
+  hasAll && hasAny && hasNone
+}
+
 fun newMeshSource(meshInfo: MeshInfoMap): MeshSource {
   return { query ->
     assert(query.all.size + query.any.size + query.none.size > 0)

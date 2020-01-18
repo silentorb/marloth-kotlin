@@ -3,7 +3,6 @@ package generation.architecture.definition
 import generation.architecture.building.*
 import generation.general.Block
 import generation.general.Side
-import generation.architecture.misc.enumerateMembers
 import generation.architecture.misc.Builder
 import marloth.scenery.enums.MeshId
 import simulation.misc.CellAttribute
@@ -37,7 +36,7 @@ class BlockDefinitions {
             south = optionalOpen
         ),
         floorMesh(MeshId.squareFloor.name),
-        cubeWallsWithLamps(lampRate = 0.7f)
+        cubeWallLamps(lampRate = 0.7f)
     )
 
     val home = compose(
@@ -50,7 +49,7 @@ class BlockDefinitions {
             south = optionalDoorway
         ),
         floorMesh(MeshId.squareFloor.name),
-        cubeWallsWithLamps(lampRate = 0.7f)
+        cubeWallLamps(lampRate = 0.7f)
     )
   }
 }

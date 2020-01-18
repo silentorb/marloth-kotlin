@@ -53,7 +53,6 @@ fun getBuilder(general: ArchitectureInput,
                verticalBuilders: Map<ConnectionType, BoundaryBuilder>
 ): (Pair<Direction, ConnectionPair>) -> BoundaryPlot? = { (direction, boundary) ->
   val connectionTypes = getUsableCellSide(general.gridSideMap)(boundary.first)(direction)
-  println(connectionTypes)
   if (connectionTypes.none())
     null
   else {
