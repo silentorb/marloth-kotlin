@@ -49,7 +49,7 @@ class BlockDefinitions {
             south = optionalDoorway
         ),
         floorMesh(MeshId.squareFloor.name),
-        cubeWallLamps(lampRate = 0.7f)
+        cubeWallLamps(lampRate = 1f)
     )
   }
 }

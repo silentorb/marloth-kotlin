@@ -70,7 +70,7 @@ fun placeWallLamps(dice: Dice, meshes: MeshInfoMap, hands: List<Hand>): List<Wal
     listOf()
 }
 
-fun cubeWallLamps(lampRate: Float) = blockBuilder { input ->
+fun cubeWallLamps(lampRate: Float, heightOffset: Float = 0f) = blockBuilder { input ->
   val dice = input.general.dice
   val boundaryHands = input.boundaryHands
   val meshes = input.general.config.meshes
@@ -84,7 +84,8 @@ fun cubeWallLamps(lampRate: Float) = blockBuilder { input ->
                 val body = hand.body!!
                 hand.copy(
                     body = body.copy(
-                        orientation = Quaternion().rotateZ(angleZ)
+                        orientation = Quaternion().rotateZ(angleZ),
+                        position = body.position + Vector3(0f, 0f, heightOffset)
                     )
                 )
               }

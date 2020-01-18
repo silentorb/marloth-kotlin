@@ -52,7 +52,8 @@ fun explodeHeightBlocks(levelIndex: Int): Map<String, BlockBuilder> {
               south = halfStepOptionalOpen
           ),
           floorMesh(MeshId.squareFloor.name, Vector3(0f, 0f, level.height)),
-          cubeWalls(height = level.height)
+          cubeWalls(height = level.height),
+          cubeWallLamps(lampRate = 0.5f, heightOffset = level.height - 0.1f)
       ),
 
       "lowerHalfStepSlope$levelIndex" to newSlope(lower, level.side),
