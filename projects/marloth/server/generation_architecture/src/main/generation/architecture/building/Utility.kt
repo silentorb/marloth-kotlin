@@ -95,3 +95,12 @@ fun wrapBlockBuilder(addition: (BuilderInput, List<Hand>) -> List<Hand>): BlockB
       }
   )
 }
+
+fun withCellAttributes(attributes: Set<CellAttribute>): (BlockBuilder) -> BlockBuilder = { blockBuilder ->
+  val block = blockBuilder.block
+  blockBuilder.copy(
+      block = block.copy(
+          attributes = block.attributes.plus(attributes)
+      )
+  )
+}

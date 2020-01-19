@@ -6,3 +6,4 @@ out
 *.iml
 *.psd
 projects/mythic
+.env

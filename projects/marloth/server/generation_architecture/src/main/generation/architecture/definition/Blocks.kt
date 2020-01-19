@@ -1,10 +1,9 @@
 package generation.architecture.definition
 
 import generation.architecture.building.*
-import generation.general.Block
 import generation.general.Side
-import generation.architecture.misc.Builder
 import marloth.scenery.enums.MeshId
+import silentorb.mythic.ent.mapEntryValue
 import simulation.misc.CellAttribute
 
 val any: Side = setOf()
@@ -15,13 +14,14 @@ val impassableHorizontalSolid: Side = setOf(ConnectionType.plainWall)
 val impassableHorizontal: Side = impassableHorizontalSolid.plus(setOf(ConnectionType.decoratedWall))
 val optionalDoorway: Side = doorway.plus(impassableHorizontal)
 val optionalOpen: Side = requiredOpen.plus(impassableHorizontal)
-val optionalOpenSolid: Side = setOf(ConnectionType.open, ConnectionType.plainWall)
 val impassableVertical: Side = setOf(ConnectionType.plainWall)
 val spiralStaircaseBottom: Side = setOf(ConnectionType.spiralStaircaseBottom)
 val spiralStaircaseTop: Side = setOf(ConnectionType.spiralStaircaseTop)
 val spiralStaircaseTopOrBottom: Side = setOf(ConnectionType.spiralStaircaseBottom, ConnectionType.spiralStaircaseTop)
 val extraHeadroom: Side = setOf(ConnectionType.extraHeadroom)
 val verticalDiagonalAdapter = setOf(ConnectionType.verticalDiagonalAdapter1)
+val impassableCylinder: Side = setOf(ConnectionType.cylinderWall)
+val openOrSolidCylinder: Side = impassableCylinder.plus(setOf(ConnectionType.doorway))
 
 class BlockDefinitions {
   companion object {
@@ -40,7 +40,7 @@ class BlockDefinitions {
     )
 
     val home = compose(
-        setOf(CellAttribute.categoryCommon, CellAttribute.fullFloor, CellAttribute.traversable),
+        setOf(CellAttribute.categoryCommon, CellAttribute.fullFloor, CellAttribute.traversable, CellAttribute.home),
         blockBuilder(
             up = impassableVertical,
             east = optionalDoorway,
@@ -54,20 +54,18 @@ class BlockDefinitions {
   }
 }
 
-fun mainBlocks(): Map<String, BlockBuilder> = mapOf(
-    "singleCellRoom" to BlockDefinitions.singleCellRoom,
-    "home" to BlockDefinitions.home,
+fun spiralStairBlocks(): Map<String, BlockBuilder> = mapOf(
     "stairBottom" to compose(
         setOf(CellAttribute.lockedRotation, CellAttribute.traversable),
         blockBuilder(
             up = spiralStaircaseTopOrBottom,
-            east = optionalOpenSolid,
-            north = optionalOpenSolid,
-            south = optionalOpenSolid,
-            west = optionalOpen
+            east = openOrSolidCylinder,
+            north = openOrSolidCylinder,
+            south = impassableCylinder,
+            west = openOrSolidCylinder
         ),
         floorMesh(MeshId.squareFloor.name),
-        cubeWalls(),
+        cylinderWalls(),
         curvedStaircases
     ),
 
@@ -76,12 +74,12 @@ fun mainBlocks(): Map<String, BlockBuilder> = mapOf(
         blockBuilder(
             up = spiralStaircaseTop,
             down = spiralStaircaseBottom,
-            east = impassableHorizontal,
-            north = impassableHorizontal,
-            south = impassableHorizontal,
-            west = impassableHorizontal
+            east = impassableCylinder,
+            north = impassableCylinder,
+            south = impassableCylinder,
+            west = impassableCylinder
         ),
-        cubeWalls(),
+        cylinderWalls(),
         curvedStaircases
     ),
 
@@ -90,14 +88,26 @@ fun mainBlocks(): Map<String, BlockBuilder> = mapOf(
         blockBuilder(
             up = impassableVertical,
             down = spiralStaircaseTopOrBottom,
-            east = optionalOpen,
-            north = optionalOpen,
-            south = optionalOpen,
-            west = impassableHorizontal
+            east = openOrSolidCylinder,
+            north = openOrSolidCylinder,
+            south = openOrSolidCylinder,
+            west = impassableCylinder
         ),
-        cubeWalls(),
+        cylinderWalls(),
         halfFloorMesh(MeshId.halfSquareFloor.name)
-    ),
+    )
+)
+    .mapValues(mapEntryValue(withCellAttributes(
+        setOf(
+            CellAttribute.lockedRotation,
+            CellAttribute.spiralStaircase,
+            CellAttribute.traversable
+        )
+    )))
+
+fun mainBlocks(): Map<String, BlockBuilder> = mapOf(
+    "singleCellRoom" to BlockDefinitions.singleCellRoom,
+    "home" to BlockDefinitions.home,
 
     "diagonalCorner" to diagonalCornerFloor(requiredOpen, 0f),
 
@@ -113,25 +123,8 @@ fun mainBlocks(): Map<String, BlockBuilder> = mapOf(
         )
     )
 )
+    .plus(spiralStairBlocks())
 
-fun enumerateBlockBuilders() =
+fun allBlockBuilders() =
     mainBlocks()
         .plus(heights())
-
-fun splitBlockBuilders(blockBuilders: Collection<BlockBuilder>): Pair<Set<Block>, Map<Block, Builder>> =
-    Pair(
-        blockBuilders.map { it.block }.toSet(),
-        blockBuilders.associate { Pair(it.block, it.builder) }
-    )
-
-fun devFilterBlockBuilders(blockBuilders: Collection<BlockBuilder>): Collection<BlockBuilder> {
-  val filter = when (System.getenv("BLOCK_FILTER")) {
-    "diagonal" -> setOf(CellAttribute.categoryCommon, CellAttribute.categoryDiagonal)
-    else -> null
-  }
-
-  return if (filter != null)
-    blockBuilders.filter { it.block.attributes.intersect(filter).any() }
-  else
-    blockBuilders
-}

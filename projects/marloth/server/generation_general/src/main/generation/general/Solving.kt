@@ -72,15 +72,15 @@ fun possibleNextDirections(config: BlockConfig, blockGrid: BlockGrid, position: 
   val block = blockGrid[position]!!
   val options = openSides(config, blockGrid, position)
 
-  val essential = options.filter { direction ->
-    val side = block.sides[direction.key]!!
-    !config.isSideIndependent(side)
-  }
+//  val essential = options.filter { direction ->
+//    val side = block.sides[direction.key]!!
+//    !config.isSideIndependent(side)
+//  }
 
-  return if (essential.any())
-    essential
-  else
-    options
+//  return if (essential.any())
+//    essential
+//  else
+   return options
 }
 
 fun blockCanHaveMoreConnections(config: BlockConfig, blockGrid: BlockGrid): (Vector3i) -> Boolean = { position ->
@@ -100,10 +100,11 @@ fun getUsableCellSide(independentConnectionTypes: Set<Any>, openConnectionTypes:
     val otherSide = surroundingSides.getValue(direction)
     if (otherSide.any()) {
       val intersection = side.intersect(otherSide)
-      if (containsConnection(connections, position, position + directionVectors[direction]!!))
+      val isConnected = containsConnection(connections, position, position + directionVectors[direction]!!)
+      if (isConnected)
         intersection.intersect(openConnectionTypes)
       else
-        intersection
+        intersection.minus(openConnectionTypes)
     } else
       side.intersect(independentConnectionTypes)
   }

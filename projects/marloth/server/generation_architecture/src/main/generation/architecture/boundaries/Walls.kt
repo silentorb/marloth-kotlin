@@ -22,7 +22,6 @@ fun placeWall(meshQuery: MeshQuery, height: Float = 0f): BoundaryBuilder = { inp
   val position = input.position + Vector3(0f, 0f, height)
   val angleZ = directionRotation(direction)
   val mesh = input.general.selectMesh(meshQuery)
-
   val wall = if (mesh != null) {
     val biome = selectWallBiome(dice, input.boundary.toList().mapNotNull { input.general.cellBiomes[it] })
     val biomeInfo = input.general.config.biomes[biome]!!

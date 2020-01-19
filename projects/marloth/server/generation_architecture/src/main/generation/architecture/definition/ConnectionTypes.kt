@@ -3,6 +3,8 @@ package generation.architecture.definition
 import generation.general.RotatingConnections
 
 enum class ConnectionType {
+  cylinderWall,
+  decoratedWall,
   doorway,
   extraHeadroom,
   impassableEmpty,
@@ -18,12 +20,12 @@ enum class ConnectionType {
   verticalDiagonalAdapter4,
   plainWall,
   solidWall,
-  decoratedWall
 }
 
 // Connections that don't need to be completed and can be left dangling
 fun independentConnectionTypes(): Set<ConnectionType> =
     setOf(
+        ConnectionType.cylinderWall,
         ConnectionType.extraHeadroom,
         ConnectionType.impassableEmpty,
         ConnectionType.plainWall,

@@ -2,11 +2,8 @@ package marloth.generation.population
 
 import generation.architecture.misc.GenerationConfig
 import generation.architecture.misc.calculateWorldScale
-import silentorb.mythic.debugging.getDebugSetting
-import silentorb.mythic.ent.Id
+import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.IdSource
-import silentorb.mythic.ent.toIdHands
-import silentorb.mythic.spatial.Vector3i
 import silentorb.mythic.timing.FloatCycle
 import simulation.main.Deck
 import simulation.main.Hand
@@ -22,7 +19,7 @@ fun populateWorld(nextId: IdSource, config: GenerationConfig, input: WorldInput,
   val playerCell = getPlayerCell(grid)
   val scale = calculateWorldScale(input.boundary.dimensions)
   val occupantToHand = occupantPopulator(config, nextId)
-  val playerCount = getDebugSetting("INITIAL_PLAYER_COUNT")?.toInt() ?: 1
+  val playerCount = getDebugString("INITIAL_PLAYER_COUNT")?.toInt() ?: 1
   val hands = (1..playerCount).flatMap { newPlayer(nextId, definitions, grid, playerCell) }
       .plus(populateRooms(occupantToHand, input.dice, realm))
 //      .plus(toIdHands(nextId, placeWallLamps(deck, config, realm, input.dice, architectureCells)))

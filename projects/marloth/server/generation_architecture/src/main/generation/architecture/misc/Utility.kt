@@ -1,7 +1,9 @@
 package generation.architecture.misc
 
+import generation.architecture.building.BlockBuilder
 import simulation.misc.cellLength
 import generation.general.BiomeGrid
+import generation.general.Block
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
 import silentorb.mythic.spatial.toVector3
@@ -27,3 +29,9 @@ fun <T> getMember(container: Any, name: String): T {
   @Suppress("UNCHECKED_CAST")
   return property.get(container) as T
 }
+
+fun splitBlockBuilders(blockBuilders: Collection<BlockBuilder>): Pair<Set<Block>, Map<Block, Builder>> =
+    Pair(
+        blockBuilders.map { it.block }.toSet(),
+        blockBuilders.associate { Pair(it.block, it.builder) }
+    )

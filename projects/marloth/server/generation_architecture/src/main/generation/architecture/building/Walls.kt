@@ -1,18 +1,20 @@
 package generation.architecture.building
 
-import generation.architecture.definition.MeshAttribute
-import generation.architecture.definition.RandomMeshQuery
-import generation.architecture.misc.BuilderInput
 import generation.architecture.misc.GenerationConfig
-import generation.architecture.misc.MeshQuery
-import generation.architecture.misc.meshMatches
-import simulation.misc.cellHalfLength
 import generation.architecture.old.newArchitectureMesh
 import generation.general.*
-import silentorb.mythic.spatial.*
+import marloth.scenery.enums.MeshId
+import org.joml.times
 import silentorb.mythic.scenery.MeshName
+import silentorb.mythic.spatial.Pi
+import silentorb.mythic.spatial.Quaternion
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.quarterAngle
 import simulation.main.Hand
-import simulation.misc.CellMap
+import simulation.misc.cellCenterOffset
+import simulation.misc.cellHalfLength
+import simulation.misc.containsConnection
+import simulation.misc.floorOffset
 
 data class WallPlacement(
     val config: GenerationConfig,
@@ -47,60 +49,30 @@ fun directionRotation(direction: Direction): Float =
       else -> throw Error("Not supported")
     }
 
-fun placeWall(input: BuilderInput, height: Float,
-              meshQuery: RandomMeshQuery
-): (Direction, Vector3i) -> WallPlacement? = { direction, offset ->
-  val position = input.position + cellHalfLength + offset.toVector3() * cellHalfLength + Vector3(0f, 0f, height)
-  val angleZ = directionRotation(direction)
-  val nothingChance = meshQuery.nothingChance
-  val mesh = if (nothingChance == 0f || input.general.dice.getFloat() > nothingChance)
-    input.general.selectMesh(meshQuery.query)
-  else
-    null
+fun cylinderWalls() = blockBuilder { input ->
+  val diagonals = (0 until 4)
+      .map { Pair(MeshId.arcWall8thA.name, (0.25f + it * 0.5f) * Pi) }
 
-  if (mesh != null)
-    WallPlacement(input.general.config, mesh, position, angleZ, input.biome)
-//    newWallInternal(input.config, mesh, position, angleZ, input.biome)
-  else
-    null
-}
-
-//fun selectMeshQuery(input: BuilderInput, direction: Direction): RandomMeshQuery? {
-//  val side = input.sides[direction]!!
-//  val connectionType = input.general.dice.takeOne(side)
-//  return input.general.connectionTypesToMeshQueries[connectionType]
-//}
-
-fun getCubeWallDirections(directions: Set<Direction>, cells: CellMap,
-                          cell: Vector3i, turns: Int): List<Map.Entry<Direction, Vector3i>> {
-  val rotatedDirections = directions.map(rotateDirection(turns))
-  return horizontalDirectionVectors
-      .filterKeys { rotatedDirections.contains(it) }
-      .entries
-      .filter { (direction, offset) ->
-        val otherCell = cell + offset
-        setOf(Direction.north, Direction.east).contains(direction) ||
-            !cells.containsKey(otherCell)
+  val optionalWalls = horizontalDirectionVectors
+//      .filterKeys { it == Direction.south }
+      .filterValues { offset ->
+        !containsConnection(input.general.grid.connections, input.cell, input.cell + offset)
       }
-}
+      .map { (direction, _) ->
+        Pair(MeshId.arcWall8thB.name, directionRotation(direction))
+      }
 
-//fun cubeWallsPlacement(directions: Set<Direction> = horizontalDirections, height: Float = 0f) = { input: BuilderInput ->
-//  val cell = input.cell
-//  val grid = input.general.grid
-//  val processedDirections = getCubeWallDirections(directions, grid.cells, cell, input.turns)
-//
-//  processedDirections
-//      .mapNotNull { (direction, offset) ->
-//        val query = selectMeshQuery(input, direction)
-//        if (query != null)
-//          placeWall(input, height, query)(direction, offset)
-//        else
-//          null
-//      }
-//}
-
-fun cubeWalls(directions: Set<Direction> = horizontalDirections, height: Float = 0f) = blockBuilder { input ->
-  listOf()
-//  cubeWallsPlacement(directions, height)(input)
-//      .map(::newWallInternal)
+  diagonals.plus(optionalWalls)
+//      optionalWalls
+      .map { (mesh, angleZ) ->
+        val facingOffset = Quaternion().rotateZ(angleZ) * Vector3(cellHalfLength - 0.25f, 0f, 0f)
+        WallPlacement(
+            config = input.general.config,
+            mesh = mesh,
+            position = input.position + cellCenterOffset + facingOffset,
+            angleZ = angleZ + Pi,
+            biome = input.biome
+        )
+      }
+      .map(::newWallInternal)
 }

@@ -5,6 +5,7 @@ import generation.abstracted.normalizeRanges
 import generation.architecture.misc.GenerationConfig
 import marloth.definition.templates.defaultWares
 import marloth.definition.templates.newMerchant
+import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Vector3
@@ -99,7 +100,7 @@ fun partitionCell(offsets: List<Vector3>): (Vector3i) -> List<Vector3> = { cell 
 }
 
 fun populateRooms(occupantToHand: OccupantToHand, dice: Dice, realm: Realm): List<IdHand> {
-  if (System.getenv("NO_OBJECTS") != null)
+  if (getDebugString("NO_OBJECTS") != null)
     return listOf()
 
   val locations = realm.grid.cells

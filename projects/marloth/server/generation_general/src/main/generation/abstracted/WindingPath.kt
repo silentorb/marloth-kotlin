@@ -59,13 +59,13 @@ tailrec fun addPathStep(maxSteps: Int, dice: Dice, config: BlockConfig, workbenc
 
   val nextPosition = position + offset
   val openConnections = config.openConnections
-  val blocks = if (stepCount == maxSteps - 1) {
-    val directions = allDirections.minus(oppositeDirections[direction]!!)
-    config.blocks.filter(isBlockIndependent(config.isSideIndependent, directions)).toSet()
-  } else
-    config.blocks
+//  val blocks = if (stepCount == maxSteps - 1) {
+//    val directions = allDirections.minus(oppositeDirections[direction]!!)
+//    config.blocks.filter(isBlockIndependent(config.isSideIndependent, directions)).toSet()
+//  } else
+//    config.blocks
 
-  val block = matchConnectingBlock(dice, blocks, openConnections, workbench, direction, nextPosition)
+  val block = matchConnectingBlock(dice, config.blocks, openConnections, workbench, direction, nextPosition)
   if (block == null) {
     val relevantConnections = cellConnections(grid.connections, position)
     return workbench

@@ -1,7 +1,6 @@
 package lab.views.game
 
 import marloth.scenery.enums.MeshId
-import silentorb.mythic.debugging.getDebugSetting
 import silentorb.mythic.debugging.isDebugSet
 import silentorb.mythic.glowing.DrawMethod
 import silentorb.mythic.glowing.drawMesh
@@ -10,10 +9,8 @@ import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.lookinglass.shading.ObjectShaderConfig
 import silentorb.mythic.lookinglass.shading.ShaderFeatureConfig
 import silentorb.mythic.scenery.Light
-import silentorb.mythic.scenery.Scene
 import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Vector4
-import simulation.main.Deck
 
 fun drawLights(lights: List<Light>, renderer: Renderer) {
   val effect = renderer.getShader(renderer.vertexSchemas.flat, ShaderFeatureConfig())

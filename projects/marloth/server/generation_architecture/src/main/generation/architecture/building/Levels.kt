@@ -31,9 +31,9 @@ private fun newSlope(lower: Level, higherSide: Side, upSide: Side = extraHeadroo
             west = lower.side,
             south = impassableHorizontalSolid
         ),
-        newSlopedFloorMesh(MeshId.quarterSlope.name, lower.height),
-        cubeWalls(directions = setOf(Direction.west, Direction.north, Direction.south), height = lower.height),
-        cubeWalls(directions = setOf(Direction.east))
+        newSlopedFloorMesh(MeshId.quarterSlope.name, lower.height)
+//        cubeWalls(directions = setOf(Direction.west, Direction.north, Direction.south), height = lower.height),
+//        cubeWalls(directions = setOf(Direction.east))
     )
 
 fun explodeHeightBlocks(levelIndex: Int): Map<String, BlockBuilder> {
@@ -52,7 +52,7 @@ fun explodeHeightBlocks(levelIndex: Int): Map<String, BlockBuilder> {
               south = halfStepOptionalOpen
           ),
           floorMesh(MeshId.squareFloor.name, Vector3(0f, 0f, level.height)),
-          cubeWalls(height = level.height),
+//          cubeWalls(height = level.height),
           cubeWallLamps(lampRate = 0.5f, heightOffset = level.height - 0.1f)
       ),
 

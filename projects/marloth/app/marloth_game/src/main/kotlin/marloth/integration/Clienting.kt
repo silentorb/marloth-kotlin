@@ -27,7 +27,7 @@ fun gatherTextures(display: PlatformDisplay, displayConfig: DisplayConfig): List
   }
 }
 
-fun newClient(platform: Platform, displayConfig: DisplayConfig, lightingConfig: LightingConfig = LightingConfig()): Client {
+fun newClient(platform: Platform, displayConfig: DisplayConfig, lightingConfig: LightingConfig): Client {
   val textures = gatherTextures(platform.display, displayConfig)
   val renderer = Renderer(
       config = displayConfig,

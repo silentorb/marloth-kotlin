@@ -9,9 +9,11 @@ import silentorb.mythic.platforming.Platform
 import silentorb.mythic.quartz.newTimestepState
 import persistence.Database
 import persistence.newDatabase
+import silentorb.mythic.debugging.getDebugFloat
+import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.lookinglass.SceneRenderer
-import silentorb.mythic.scenery.Light
+import silentorb.mythic.lookinglass.shading.LightingConfig
 import silentorb.mythic.scenery.Scene
 import simulation.main.World
 import simulation.misc.Definitions
@@ -38,7 +40,10 @@ tailrec fun gameLoop(app: GameApp, state: AppState) {
 
 
 fun newGameApp(platform: Platform, config: GameConfig): GameApp {
-  val client = newClient(platform, config.display)
+  val lighting = LightingConfig(
+      ambient = getDebugFloat("AMBIENT_LIGHT_LEVEL") ?: 0f
+  )
+  val client = newClient(platform, config.display, lighting)
   val clientDefinitions = definitionsFromClient(client)
   val definitions = staticDefinitions(clientDefinitions)
   return GameApp(

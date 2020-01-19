@@ -2,7 +2,10 @@ package generation.architecture.boundaries
 
 import generation.architecture.definition.ConnectionType
 import generation.architecture.misc.ArchitectureInput
-import generation.general.*
+import generation.general.Direction
+import generation.general.directionVectors
+import generation.general.getUsableCellSide
+import generation.general.isHorizontal
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
 import silentorb.mythic.spatial.toVector3
@@ -14,7 +17,8 @@ data class BoundaryBuilderInput(
     val direction: Direction,
     val boundary: ConnectionPair,
     val position: Vector3,
-    val connectionType: ConnectionType
+    val connectionType: ConnectionType,
+    val isConnected: Boolean
 )
 
 typealias BoundaryBuilder = (BoundaryBuilderInput) -> List<Hand>
@@ -88,7 +92,8 @@ fun buildBoundaries(general: ArchitectureInput,
             position = position,
             boundary = boundary,
             direction = direction,
-            connectionType = connectionType as ConnectionType
+            connectionType = connectionType,
+            isConnected = containsConnection(general.grid.connections, boundary.first, boundary.second)
         )
         Pair(boundary, builder(input))
       }

@@ -7,7 +7,7 @@ import generation.general.explodeBlockMap
 import generation.general.newRandomizedBiomeGrid
 import marloth.generation.population.populateWorld
 import org.recast4j.detour.NavMeshQuery
-import silentorb.mythic.debugging.getDebugSetting
+import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.newGenericIdHand
 import silentorb.mythic.ent.newIdSource
 import silentorb.mythic.physics.newBulletState
@@ -31,7 +31,7 @@ fun fixedCellBiomes(grid: MapGrid): CellBiomeMap {
 
 fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, input: WorldInput): World {
   val dice = input.dice
-  val blockBuilders = enumerateBlockBuilders()
+  val blockBuilders = allBlockBuilders()
   val (blocks, builders) = splitBlockBuilders(devFilterBlockBuilders(blockBuilders.values))
   val independentConnections = independentConnectionTypes()
   val openConnectionTypes = openConnectionTypes()
@@ -80,7 +80,7 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
 }
 
 fun newGenerationDice() =
-    Dice(getDebugSetting("GENERATION_SEED")?.toLong())
+    Dice(getDebugString("GENERATION_SEED")?.toLong())
 
 fun generateWorld(definitions: Definitions, meshInfo: MeshShapeMap, dice: Dice = newGenerationDice()): World {
   val boundary = createWorldBoundary(100f)
@@ -88,7 +88,7 @@ fun generateWorld(definitions: Definitions, meshInfo: MeshShapeMap, dice: Dice =
       definitions = definitions,
       biomes = biomeInfoMap,
       meshes = compileArchitectureMeshInfo(meshInfo, meshAttributes),
-      includeEnemies = getDebugSetting("NO_ENEMIES") != "1",
+      includeEnemies = getDebugString("NO_ENEMIES") != "1",
       roomCount = 20
   )
   val input = WorldInput(
