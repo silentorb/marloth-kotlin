@@ -25,7 +25,7 @@ class ModelAssetsTask28 extends DefaultTask {
   def File _projectDir
 
   @OutputDirectory
-  public File getOutputDir() { return new File("$_projectDir/src/main/resources/models") }
+  File outDir
 
   @TaskAction
   void execute(IncrementalTaskInputs inputs) {
@@ -33,7 +33,7 @@ class ModelAssetsTask28 extends DefaultTask {
         : 'ALL inputs considered out of date'
 
     def config = Utility.getAssetConfig(_projectDir)
-    def executablePath = config.paths.blender28 ?: config.paths.blender 
+    def executablePath = config.paths.blender28 ?: config.paths.blender
     inputs.outOfDate { change ->
       if (change.file.isFile()) {
         println "out of date: ${change.file.name}"
@@ -61,7 +61,7 @@ class TextureAssetsTask extends DefaultTask {
   def File _projectDir
 
   @OutputDirectory
-  def File getOutputDir() { return new File("$_projectDir/src/main/resources/textures") }
+  File outDir
 
   @TaskAction
   void execute(IncrementalTaskInputs inputs) {
@@ -69,7 +69,7 @@ class TextureAssetsTask extends DefaultTask {
         : 'ALL inputs considered out of date'
     def config = Utility.getAssetConfig(_projectDir)
     def executablePath = config.paths.python
-    
+
     inputs.outOfDate { change ->
       def filename = change.file.name
       def args = [executablePath, "$_projectDir/scripts/textures.py", filename[0..<filename.lastIndexOf('.')]]
@@ -81,7 +81,7 @@ class TextureAssetsTask extends DefaultTask {
       println sout
       if (serr) println "err2>($serr)."
     }
-    
+
     inputs.removed { change ->
       println "removed: ${name}"
     }
@@ -91,12 +91,12 @@ class TextureAssetsTask extends DefaultTask {
 class AudioAssetsTask extends DefaultTask {
 
   @InputFiles
-  def FileCollection inputFiles
+  FileCollection inputFiles
 
-  def File _projectDir
+  File _projectDir
 
   @OutputDirectory
-  def File getOutputDir() { return new File("$_projectDir/src/main/resources/audio") }
+  File outDir
 
   @TaskAction
   void execute(IncrementalTaskInputs inputs) {
@@ -122,24 +122,73 @@ class AudioAssetsTask extends DefaultTask {
   }
 }
 
+configurations {
+  svgRasterizer
+}
+
+dependencies {
+  svgRasterizer 'org.apache.xmlgraphics:batik-rasterizer:1.7'
+  svgRasterizer 'org.apache.xmlgraphics:batik-codec:1.7'
+}
+
+abstract class SvgTask extends JavaExec {
+  @Incremental
+  @InputDirectory
+  abstract DirectoryProperty getInputDir()
+
+  @OutputDirectory
+  abstract DirectoryProperty getOutputDir()
+
+  void exec() {}
+
+  @TaskAction
+  void execute2(InputChanges inputs) {
+    inputs.getFileChanges(inputDir).each { change ->
+      if (change.fileType == FileType.DIRECTORY) return
+
+      println "${change.changeType}: ${change.normalizedPath}"
+      if (change.changeType == ChangeType.REMOVED) {
+      } else {
+        args "-scriptSecurityOff", "-d", outputDir.file(".").get().asFile.absolutePath, change.file.name, "-m", "image/png", "-w", "1024", "-h", "1024"
+        println args.join(' ')
+        super.exec()
+      }
+    }
+
+  }
+}
+
 task modelAssets28(type: ModelAssetsTask28) {
-  inputFiles = files(fileTree("$projectDir/blend/models") { include '**/*.blend'})
+  inputFiles = files(fileTree("$projectDir/blend/models") { include '**/*.blend' })
   _projectDir = projectDir
+  outDir = new File("$projectDir/src/main/resources/models")
 }
 
 task textureAssets(type: TextureAssetsTask) {
-  inputFiles = files(fileTree("$projectDir/textures") { include '**/*.ffxml'})
+  inputFiles = files(fileTree("$projectDir/textures") { include '**/*.ffxml' })
   _projectDir = projectDir
+  outDir = new File("$projectDir/src/main/resources/textures")
 }
 
 task audioAssets(type: AudioAssetsTask) {
-  inputFiles = files(fileTree("$projectDir/audio/supercollider/sounds") { include '**/*.scd'}.files)
+  inputFiles = files(fileTree("$projectDir/audio/supercollider/sounds") { include '**/*.scd' }.files)
   _projectDir = projectDir
+  outDir = new File("$projectDir/src/main/resources/audio")
 }
 
+task imageAssets(type: SvgTask) {
+//  dependsOn textureAssets
+  classpath configurations.svgRasterizer
+  main "org.apache.batik.apps.rasterizer.Main"
+//  inputFiles = files(fileTree("$projectDir/svg") { include '**/*.scd'}.files)
+  inputDir = file("$projectDir/svg")
+  outputDir = file("$projectDir/src/main/resources/textures")
+  workingDir "$projectDir/svg"
+}
 
 classes {
   dependsOn modelAssets28
   dependsOn textureAssets
   dependsOn audioAssets
+  dependsOn imageAssets
 }
