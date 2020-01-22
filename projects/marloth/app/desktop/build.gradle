@@ -1,3 +1,0 @@
-apply from: "$rootProject.projectDir/build_kotlin.gradle"
-
-requires 'marloth_game', 'mythic_desktop'

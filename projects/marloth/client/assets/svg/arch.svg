@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1000mm"
+   height="1000mm"
+   viewBox="0 0 1000 1000"
+   version="1.1"
+   id="svg8"
+   sodipodi:docname="arch.svg"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.175"
+     inkscape:cx="1899.5993"
+     inkscape:cy="1777.1429"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     units="mm"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid1366"
+       empspacing="5"
+       units="mm"
+       spacingx="99.999999"
+       spacingy="99.999999" />
+    <inkscape:grid
+       type="xygrid"
+       id="grid5123"
+       units="mm"
+       spacingx="9.9999999"
+       spacingy="9.9999999"
+       empspacing="0"
+       color="#3f3fff"
+       opacity="0.04705882" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,703)">
+    <image
+       xlink:href="../src/main/resources/textures/diamond-tiles.jpg"
+       sodipodi:insensitive="true"
+       inkscape:label="background"
+       width="1000"
+       height="1000"
+       preserveAspectRatio="none"
+       id="image5085"
+       x="0"
+       y="-703" />
+    <path
+       style="fill:#110d10;fill-opacity:1;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 50,297 v -403.2381 c 0,-100.00001 65.11174,-248.11635 199.99999,-248.16667 134.87941,-0.0503 200,148.16666 200,248.16667 V 297 H 500 V -103.42858 C 500,-252.99999 400,-403.00001 249.99999,-403 99.999999,-402.99999 0,-252.99999 0,-103.42858 V 297 Z"
+       id="path5125"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="csssccssscc" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path5125"
+       id="use5129"
+       width="100%"
+       height="100%"
+       transform="translate(499.99999)" />
+  </g>
+</svg>

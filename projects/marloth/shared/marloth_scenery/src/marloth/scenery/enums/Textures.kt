@@ -1,7 +1,7 @@
 package marloth.scenery.enums
 
 enum class TextureId {
-  none,
+  arch,
   algae,
   animPerlin000,
   background,

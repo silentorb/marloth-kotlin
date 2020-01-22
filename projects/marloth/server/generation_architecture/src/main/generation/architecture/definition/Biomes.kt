@@ -78,7 +78,8 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
     BiomeId.tealPalace to BiomeInfo(
         name = "tealPalace",
         textures = mapOf(
-            TextureGroup.default to TextureId.diamondTiles
+            TextureGroup.default to TextureId.diamondTiles,
+            TextureGroup.wall to TextureId.arch
         ),
         meshes = mapMeshes(commonMeshes),
         attributes = setOf(

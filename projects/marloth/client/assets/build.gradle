@@ -1,8 +1,15 @@
 import groovy.json.JsonSlurper
 
-apply from: "$rootProject.projectDir/build_kotlin.gradle"
+//apply from: getHelper("mythic.assets.svg")
 
-def deleteme2113
+//println(fun)
+//buildscript {
+//  dependencies {
+//    classpath project(':assets_svg')
+//  }
+//}
+
+apply from: "$rootProject.projectDir/build_kotlin.gradle"
 
 class Utility {
   static _blendConfig
@@ -122,42 +129,6 @@ class AudioAssetsTask extends DefaultTask {
   }
 }
 
-configurations {
-  svgRasterizer
-}
-
-dependencies {
-  svgRasterizer 'org.apache.xmlgraphics:batik-rasterizer:1.7'
-  svgRasterizer 'org.apache.xmlgraphics:batik-codec:1.7'
-}
-
-abstract class SvgTask extends JavaExec {
-  @Incremental
-  @InputDirectory
-  abstract DirectoryProperty getInputDir()
-
-  @OutputDirectory
-  abstract DirectoryProperty getOutputDir()
-
-  void exec() {}
-
-  @TaskAction
-  void execute2(InputChanges inputs) {
-    inputs.getFileChanges(inputDir).each { change ->
-      if (change.fileType == FileType.DIRECTORY) return
-
-      println "${change.changeType}: ${change.normalizedPath}"
-      if (change.changeType == ChangeType.REMOVED) {
-      } else {
-        args "-scriptSecurityOff", "-d", outputDir.file(".").get().asFile.absolutePath, change.file.name, "-m", "image/png", "-w", "1024", "-h", "1024"
-        println args.join(' ')
-        super.exec()
-      }
-    }
-
-  }
-}
-
 task modelAssets28(type: ModelAssetsTask28) {
   inputFiles = files(fileTree("$projectDir/blend/models") { include '**/*.blend' })
   _projectDir = projectDir
@@ -176,19 +147,16 @@ task audioAssets(type: AudioAssetsTask) {
   outDir = new File("$projectDir/src/main/resources/audio")
 }
 
-task imageAssets(type: SvgTask) {
-//  dependsOn textureAssets
-  classpath configurations.svgRasterizer
-  main "org.apache.batik.apps.rasterizer.Main"
-//  inputFiles = files(fileTree("$projectDir/svg") { include '**/*.scd'}.files)
-  inputDir = file("$projectDir/svg")
-  outputDir = file("$projectDir/src/main/resources/textures")
-  workingDir "$projectDir/svg"
-}
+//task imageAssets(type: SvgTask) {
+////  dependsOn textureAssets
+//  inputDir = file("$projectDir/svg")
+//  outputDir = file("$projectDir/src/main/resources/textures")
+//  executablePath = project.dotEnv("INKSCAPE_PATH")
+//}
 
 classes {
   dependsOn modelAssets28
   dependsOn textureAssets
   dependsOn audioAssets
-  dependsOn imageAssets
+//  dependsOn imageAssets
 }
