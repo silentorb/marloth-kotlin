@@ -1,5 +1,8 @@
 apply plugin: 'kotlin'
 
+group = "dev-lab"
+version = "1.0"
+
 sourceSets {
   main.kotlin.srcDirs += file('src/main').exists() ? (file('src/main/kotlin').exists() ? 'src/main/kotlin' : 'src/main'): 'src'
   test.kotlin.srcDirs += 'src/test'

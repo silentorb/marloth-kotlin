@@ -1,8 +1,3 @@
-import io.github.cdimascio.dotenv.Dotenv
-import org.gradle.internal.os.OperatingSystem
-
-//group "dev-lab"
-//version "1.0-SNAPSHOT"
 
 buildscript {
   val kotlinVersion = "1.3.61"
@@ -21,24 +16,11 @@ buildscript {
 
 }
 
-val dotEnv = Dotenv.configure().ignoreIfMissing().load()
-
-val _lwjglNatives = when (OperatingSystem.current()) {
-  OperatingSystem.WINDOWS -> "natives-windows"
-  OperatingSystem.LINUX -> "natives-linux"
-  OperatingSystem.MAC_OS -> "natives-macos"
-  else -> throw Error("Unsupported Operating System")
-}
-
 allprojects {
   apply(plugin = "idea")
 
   version = "1.0"
   extra["appName"] = "marloth"
-  extra["gdxVersion"] = "1.9.9"
-  extra["lwjglVersion"] = "3.1.5"
-  extra["lwjglNatives"] = _lwjglNatives
-  extra["jomlVersion"] = "1.9.8"
 
   repositories {
     mavenLocal()
@@ -58,14 +40,4 @@ allprojects {
   }
   extra["requires"] = ::projectRequires
 
-//  extra["requires"] = {    String... names ->
-//    names.each() { project.dependencies.add("compile", project(":" + it)) }
-//  }
-
-//  registerHelper("foo", "foo")
-
-//  ext.helpers = [:]
-//  ext.registerHelper = { String name, String helperPath ->
-//    ext.helpers[name] = helperPath
-//  }
 }

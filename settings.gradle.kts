@@ -1,25 +1,23 @@
-import java.nio.file.Files
 import java.nio.file.Path
 
 rootProject.name = "dev_lab"
 
-fun addProjects(path: Path) {
-  val name = path.toFile().name
-  val currentPath = path.toFile().path.replace("\\", "/")
-  val buildFilePath = "$currentPath/build.gradle"
-  if (File(buildFilePath).exists() || File("$buildFilePath.kts").exists()) {
-    include(name)
-    project(":$name").projectDir = path.toFile()
-    if (File("$currentPath/helper.kts").exists()) {
-//      registerHelper(name, "$currentPath/helper.kts")
-    }
-  } else {
-    Files.list(path)
-        .filter { Files.isDirectory(it) }
-        .forEach { file ->
-          addProjects(file)
-        }
-  }
+apply(from = "projects/mythic/gradle/utility.gradle.kts")
+
+val scanProjects = extra["scanProjects"] as ((String, String) -> Unit) -> (Path) -> Unit
+
+val addProjects = scanProjects { currentPath, name ->
+  include(name)
+  project(":$name").projectDir = File(currentPath)
 }
 
-addProjects(file("projects").toPath())
+addProjects(file("projects/compuquest").toPath())
+addProjects(file("projects/marloth").toPath())
+addProjects(file("projects/mythic/projects").toPath())
+
+includeBuild("projects/mythic/gradle") {
+  dependencySubstitution {
+    substitute(module("mythic.gradle.assets.general:1.0")).with(project(":assets_general"))
+    substitute(module("mythic.gradle.assets.svg:1.0")).with(project(":assets_svg"))
+  }
+}
