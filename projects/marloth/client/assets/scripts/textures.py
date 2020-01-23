@@ -2,7 +2,7 @@ import os, sys
 import json
 import pathlib
 import subprocess
-from .utility import prepare_path, write_text_file, ensure_dir_exists, load_config
+from utility import prepare_path, write_text_file, ensure_dir_exists, load_config
 
 # Filter forge source files can optionally embed meta data into the file name.
 # Meta data could be added inside the file but would increase processing
