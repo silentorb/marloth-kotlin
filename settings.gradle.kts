@@ -11,9 +11,10 @@ val addProjects = scanProjects { currentPath, name ->
   project(":$name").projectDir = File(currentPath)
 }
 
-addProjects(file("projects/compuquest").toPath())
 addProjects(file("projects/marloth").toPath())
 addProjects(file("projects/mythic/projects").toPath())
+
+includeBuild("projects/imp")
 
 includeBuild("projects/mythic/gradle") {
   dependencySubstitution {
