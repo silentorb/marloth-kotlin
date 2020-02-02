@@ -4,10 +4,8 @@ import silentorb.mythic.bloom.*
 import silentorb.mythic.bloom.next.*
 import silentorb.mythic.spatial.Vector4
 import org.joml.Vector2i
-import org.joml.plus
+import silentorb.mythic.spatial.plus
 import marloth.scenery.enums.Text
-import silentorb.mythic.bloom.*
-import silentorb.mythic.bloom.next.*
 
 val centeredDiv = reverseOffset(left = centered, top = centered)
 val centerDialog = centeredDiv + shrink

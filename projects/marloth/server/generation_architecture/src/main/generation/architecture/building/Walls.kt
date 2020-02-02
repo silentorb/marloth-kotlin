@@ -4,7 +4,7 @@ import generation.architecture.misc.GenerationConfig
 import generation.architecture.old.newArchitectureMesh
 import generation.general.*
 import marloth.scenery.enums.MeshId
-import org.joml.times
+import silentorb.mythic.spatial.times
 import silentorb.mythic.scenery.MeshName
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Quaternion
@@ -14,7 +14,6 @@ import simulation.main.Hand
 import simulation.misc.cellCenterOffset
 import simulation.misc.cellHalfLength
 import simulation.misc.containsConnection
-import simulation.misc.floorOffset
 
 data class WallPlacement(
     val config: GenerationConfig,

@@ -17,7 +17,6 @@ repositories {
 
 dependencies {
   compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-  testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.1'
 }
 
 compileKotlin {
@@ -28,4 +27,4 @@ compileTestKotlin {
   kotlinOptions.jvmTarget = sourceCompatibility
 }
 
-buildDir = new File(rootProject.projectDir, "build/" + project.name)
+//buildDir = new File(rootProject.projectDir, "build/" + project.name)

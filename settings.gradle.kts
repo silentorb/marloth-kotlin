@@ -14,7 +14,12 @@ val addProjects = scanProjects { currentPath, name ->
 addProjects(file("projects/marloth").toPath())
 addProjects(file("projects/mythic/projects").toPath())
 
-includeBuild("projects/imp")
+includeBuild("projects/imp") {
+  dependencySubstitution {
+    substitute(module("silentorb.imp.core:1.0")).with(project(":imp_core"))
+    substitute(module("silentorb.imp.execution:1.0")).with(project(":imp_execution"))
+  }
+}
 
 includeBuild("projects/mythic/gradle") {
   dependencySubstitution {

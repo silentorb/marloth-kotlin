@@ -1,14 +1,12 @@
 package generation.architecture.building
 
 import generation.architecture.definition.MeshAttribute
-import generation.architecture.misc.BuilderInput
 import generation.architecture.misc.MeshInfoMap
 import generation.architecture.misc.MeshQuery
 import generation.architecture.misc.meshMatches
-import generation.general.Direction
 import generation.general.oppositeDirections
 import marloth.scenery.enums.MeshId
-import org.joml.times
+import silentorb.mythic.spatial.times
 import silentorb.mythic.physics.Body
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.Shape

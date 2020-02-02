@@ -10,11 +10,11 @@ import silentorb.mythic.breeze.transformAnimatedSkeleton
 import silentorb.mythic.drawing.Canvas
 import silentorb.mythic.glowing.globalState
 import silentorb.mythic.spatial.*
-import org.joml.*
 import silentorb.mythic.lookinglass.meshes.Primitive
 import silentorb.mythic.lookinglass.shading.ObjectShaderConfig
 import silentorb.mythic.lookinglass.shading.populateBoneBuffer
 import marloth.scenery.AnimationId
+import silentorb.mythic.spatial.times
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.scenery.Camera
 import silentorb.mythic.scenery.ProjectionType

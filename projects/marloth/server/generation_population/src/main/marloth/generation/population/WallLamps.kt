@@ -6,7 +6,7 @@ import generation.general.BiomeAttribute
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
-import org.joml.times
+import silentorb.mythic.spatial.times
 import silentorb.mythic.randomly.Dice
 import marloth.scenery.enums.MeshId
 import silentorb.mythic.ent.Id

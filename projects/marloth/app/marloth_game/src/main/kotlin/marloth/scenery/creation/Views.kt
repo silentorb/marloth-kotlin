@@ -4,7 +4,7 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
-import org.joml.times
+import silentorb.mythic.spatial.times
 import silentorb.mythic.scenery.Camera
 import silentorb.mythic.scenery.ProjectionType
 import simulation.entities.HoverCamera

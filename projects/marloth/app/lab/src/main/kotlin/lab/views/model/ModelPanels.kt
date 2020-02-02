@@ -9,7 +9,7 @@ import silentorb.mythic.drawing.Canvas
 import silentorb.mythic.spatial.Vector2
 import silentorb.mythic.spatial.toString
 import org.joml.Vector2i
-import org.joml.plus
+import silentorb.mythic.spatial.plus
 import silentorb.mythic.lookinglass.AdvancedModel
 import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.scenery.Camera

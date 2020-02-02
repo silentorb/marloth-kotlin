@@ -28,16 +28,4 @@ allprojects {
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
     maven("https://oss.sonatype.org/content/repositories/releases/")
   }
-
-//  if (project.convention.findPlugin(JavaPluginConvention)) {
-//    sourceSets.main.kotlin.outDir = new File (buildDir, "classes/main/kotlin")
-//    sourceCompatibility = 1.8
-//    targetCompatibility = 1.8
-//  }
-
-  fun projectRequires(vararg names: String) {
-    names.forEach { project.dependencies.add("compile", project.project(":" + it)) }
-  }
-  extra["requires"] = ::projectRequires
-
 }

@@ -10,8 +10,8 @@ import silentorb.mythic.bloom.selectedMenuValue
 import silentorb.mythic.ent.Id
 import silentorb.mythic.platforming.WindowInfo
 import silentorb.mythic.spatial.*
-import org.joml.minus
-import org.joml.times
+import silentorb.mythic.spatial.minus
+import silentorb.mythic.spatial.times
 import silentorb.mythic.characters.joinInputVector
 import silentorb.mythic.characters.playerMoveMap
 import silentorb.mythic.lookinglass.createCameraEffectsData
@@ -53,12 +53,13 @@ private fun castSelectionRay(config: MapViewConfig, world: Realm, mousePosition:
       0, 0,
       bounds.dimensions.x.toInt(), bounds.dimensions.y.toInt()
   ).toIntArray()
-  val unprojection = toMutableMatrix(cameraData.transform).unproject(cursor.x.toFloat(),
-      bounds.dimensions.y - cursor.y.toFloat(), 0.01f, viewportBounds, Vector3m())
-  val start = Vector3(unprojection)
-  val end = start + cameraData.direction * camera.farClip
-  config.tempStart = start
-  config.tempEnd = end
+  throw Error("No longer implemented")
+//  val unprojection = toMutableMatrix(cameraData.transform).unproject(cursor.x.toFloat(),
+//      bounds.dimensions.y - cursor.y.toFloat(), 0.01f, viewportBounds, Vector3m())
+//  val start = Vector3(unprojection)
+//  val end = start + cameraData.direction * camera.farClip
+//  config.tempStart = start
+//  config.tempEnd = end
 }
 
 private var lastHits: List<Id> = listOf()
