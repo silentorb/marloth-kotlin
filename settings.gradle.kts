@@ -18,6 +18,9 @@ includeBuild("projects/imp") {
   dependencySubstitution {
     substitute(module("silentorb.imp.core:1.0")).with(project(":imp_core"))
     substitute(module("silentorb.imp.execution:1.0")).with(project(":imp_execution"))
+    substitute(module("silentorb.imp.parsing:1.0")).with(project(":imp_parsing"))
+    substitute(module("silentorb.imp.libraries.standard:1.0")).with(project(":imp_libraries_standard"))
+    substitute(module("silentorb.imp.libraries.standard.implementation:1.0")).with(project(":imp_libraries_standard_implementation"))
   }
 }
 
