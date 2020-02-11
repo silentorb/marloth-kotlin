@@ -1,19 +1,13 @@
+plugins { kotlin("jvm") }
 
-apply(from = "${rootProject.projectDir}/build_kotlin.gradle")
-
-requires(project, "marloth_clienting", "configuration", "definition",
-    "quartz", "platforming", "generation_architecture", "generation_population",
-    "randomly", "simulation", "haft", "persistence"
-)
-
-buildscript {
-  repositories {
-    mavenCentral()
-  }
-
-  dependencies {
-    classpath("org.junit.platform:junit-platform-gradle-plugin:1.0.0")
-  }
+dependencies {
+  implementation("silentorb.mythic:configuration")
+  implementation("silentorb.mythic:quartz")
+  implementation("silentorb.mythic:platforming")
+  implementation("silentorb.mythic:randomly")
+  implementation("silentorb.mythic:haft")
 }
 
-apply(plugin = "org.junit.platform.gradle.plugin")
+requires(project, "marloth_clienting", "definition", "generation_architecture", "generation_population",
+    "simulation", "persistence"
+)

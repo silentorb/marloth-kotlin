@@ -1,3 +1,7 @@
-apply(from = "${rootProject.projectDir}/build_kotlin.gradle")
+plugins {  kotlin("jvm")}
 
-requires(project, "marloth_game", "mythic_desktop")
+dependencies {
+  implementation("silentorb.mythic:desktop")
+}
+
+requires(project, "marloth_game")

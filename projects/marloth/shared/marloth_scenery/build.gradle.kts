@@ -1,3 +1,6 @@
-apply(from = "${rootProject.projectDir}/build_kotlin.gradle")
+plugins { kotlin("jvm") }
 
-requires(project, "spatial", "scenery")
+dependencies {
+  implementation("silentorb.mythic:spatial")
+  implementation("silentorb.mythic:scenery")
+}

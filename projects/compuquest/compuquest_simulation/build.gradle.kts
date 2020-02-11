@@ -1,7 +1,7 @@
 plugins {
   kotlin("jvm")
 }
-apply(from = "${rootProject.projectDir}/build_kotlin.gradle")
+plugins {  kotlin("jvm")}
 
 dependencies {
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.3")

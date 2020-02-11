@@ -1,15 +1,22 @@
 plugins {
-    kotlin("jvm")
+  kotlin("jvm")
 }
-
-apply(from = "${rootProject.projectDir}/build_kotlin.gradle")
 
 dependencies {
-    api("org.lwjgl:lwjgl-glfw:${Versions.lwjgl}")
-    implementation("org.lwjgl:lwjgl:${Versions.lwjgl}")
-    implementation("org.lwjgl:lwjgl:${Versions.lwjgl}:${Natives.lwjgl}")
-    implementation("org.lwjgl:lwjgl-opengl:${Versions.lwjgl}")
-    implementation("org.lwjgl:lwjgl-opengl:${Versions.lwjgl}:${Natives.lwjgl}")
+  implementation("silentorb.mythic:haft")
+  implementation("silentorb.mythic:lookinglass")
+  implementation("silentorb.mythic:spatial")
+  implementation("silentorb.mythic:platforming")
+  implementation("silentorb.mythic:bloom")
+  implementation("silentorb.mythic:bloom_input")
+  implementation("silentorb.mythic:drawing")
+  implementation("silentorb.mythic:aura")
+
+  api("org.lwjgl:lwjgl-glfw:${Versions.lwjgl}")
+  implementation("org.lwjgl:lwjgl:${Versions.lwjgl}")
+  implementation("org.lwjgl:lwjgl:${Versions.lwjgl}:${Natives.lwjgl}")
+  implementation("org.lwjgl:lwjgl-opengl:${Versions.lwjgl}")
+  implementation("org.lwjgl:lwjgl-opengl:${Versions.lwjgl}:${Natives.lwjgl}")
 }
 
-requires(project, "assets", "definition", "lookinglass", "haft", "marloth_scenery", "spatial", "platforming", "bloom", "bloom_input", "drawing", "simulation", "aura")
+requires(project, "assets", "definition", "marloth_scenery", "simulation")

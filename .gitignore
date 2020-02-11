@@ -6,5 +6,6 @@ out
 *.iml
 *.psd
 projects/imp
+projects/imp_intellij
 projects/mythic
 .env

@@ -1,10 +1,18 @@
 import io.github.cdimascio.dotenv.Dotenv
 import org.gradle.api.Project
+import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 
 fun requires(project: Project, vararg names: String) {
-  names.forEach { project.dependencies.add("compile", project.project(":" + it)) }
+  names.forEach {
+    if (File(project.rootProject.projectDir.toString() + "/projects/mythic/modules/$it").exists()) {
+      project.dependencies.add("api", "silentorb.mythic.$it:1.0")
+    }
+    else {
+      project.dependencies.add("api", project.project(":" + it))
+    }
+  }
 }
 
 private fun findDotEnvFile(path: Path = Paths.get(System.getProperty("user.dir"))): String? {

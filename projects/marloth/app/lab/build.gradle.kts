@@ -1,7 +1,13 @@
-apply(from = "${rootProject.projectDir}/build_kotlin.gradle")
+plugins { kotlin("jvm") }
 
-requires(project,
-    "spatial", "drawing", "bloom", "generation_architecture", "mythic_desktop",
-    "marloth_clienting", "quartz", "platforming", "marloth_game",
-    "simulation", "configuration"
-)
+dependencies {
+  implementation("silentorb.mythic:spatial")
+  implementation("silentorb.mythic:drawing")
+  implementation("silentorb.mythic:bloom")
+  implementation("silentorb.mythic:quartz")
+  implementation("silentorb.mythic:platforming")
+  implementation("silentorb.mythic:configuration")
+  implementation("silentorb.mythic:desktop")
+}
+
+requires(project, "generation_architecture", "marloth_clienting", "marloth_game", "simulation")

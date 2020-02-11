@@ -1,16 +1,9 @@
-apply(from = "${rootProject.projectDir}/build_kotlin.gradle")
-requires(project, "spatial", "randomly", "sculpting", "simulation", "generation_general")
+plugins { kotlin("jvm") }
 
-// Specifications
-
-buildscript {
-  repositories {
-    mavenCentral()
-  }
-
-  dependencies {
-    classpath("org.junit.platform:junit-platform-gradle-plugin:1.0.0")
-  }
+dependencies {
+  implementation("silentorb.mythic:spatial")
+  implementation("silentorb.mythic:randomly")
+  implementation("silentorb.mythic:sculpting")
 }
 
-apply(plugin = "org.junit.platform.gradle.plugin")
+requires(project, "simulation", "generation_general")
