@@ -1,6 +1,8 @@
 plugins { kotlin("jvm") }
 
 dependencies {
+  implementation("silentorb.mythic:bloom")
+  implementation("silentorb.mythic:bloom_input")
   implementation("silentorb.mythic:configuration")
   implementation("silentorb.mythic:quartz")
   implementation("silentorb.mythic:platforming")

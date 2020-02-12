@@ -1,8 +1,6 @@
 import java.nio.file.Files
 import java.nio.file.Path
 
-rootProject.name = "dev_lab"
-
 fun scanProjects(action: (String, String) -> Unit): (Path) -> Unit = { path ->
   val name = path.toFile().name
   val currentPath = path.toFile().path.replace("\\", "/")

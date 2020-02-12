@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
   implementation("silentorb.mythic:haft")
-  implementation("silentorb.mythic:lookinglass")
+  api("silentorb.mythic:lookinglass")
   implementation("silentorb.mythic:spatial")
   implementation("silentorb.mythic:platforming")
   implementation("silentorb.mythic:bloom")
