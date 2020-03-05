@@ -13,7 +13,7 @@ import silentorb.mythic.drawing.grayTone
 import silentorb.mythic.ent.Id
 import silentorb.mythic.glowing.globalState
 import silentorb.mythic.spatial.Vector4
-import org.joml.Vector2i
+import silentorb.mythic.spatial.Vector2i
 import marloth.scenery.enums.Text
 import silentorb.mythic.happenings.CommonCharacterCommands
 import simulation.main.World

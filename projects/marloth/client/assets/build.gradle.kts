@@ -1,15 +1,15 @@
-import mythic.gradle.assets.svg.SvgTask
 import mythic.gradle.assets.general.ModelAssetsTask
 import mythic.gradle.assets.general.TextureAssetsTask
 import mythic.gradle.assets.general.AudioAssetsTask
+import mythic.gradle.assets.texturing.TexturingTask
 
 buildscript {
   repositories {
     jcenter()
   }
   dependencies {
-    classpath("mythic.gradle.assets.general:1.0")
-    classpath("mythic.gradle.assets.svg:1.0")
+    classpath("silentorb.mythic.gradle.assets:general")
+    classpath("silentorb.mythic.gradle.assets:texturing")
   }
 }
 
@@ -22,12 +22,12 @@ tasks.create<ModelAssetsTask>("modelAssets") {
   projectDir.set(assetsDir)
 }
 
-tasks.create<TextureAssetsTask>("textureAssets") {
-  inputDir.set(file("$assetsDir/textures"))
-  outputDir.set(file("$assetsDir/src/main/resources/textures"))
-  executablePath.set(getRequiredConfigValue("PYTHON_PATH"))
-  projectDir.set(assetsDir)
-}
+//tasks.create<TextureAssetsTask>("textureAssets") {
+//  inputDir.set(file("$assetsDir/textures"))
+//  outputDir.set(file("$assetsDir/src/main/resources/textures"))
+//  executablePath.set(getRequiredConfigValue("PYTHON_PATH"))
+//  projectDir.set(assetsDir)
+//}
 
 tasks.create<AudioAssetsTask>("audioAssets") {
   inputDir.set(file("$assetsDir/audio/supercollider/sounds"))
@@ -39,16 +39,7 @@ tasks.create<AudioAssetsTask>("audioAssets") {
   projectDir.set(assetsDir)
 }
 
-tasks.create<SvgTask>("imageAssets") {
-  //  dependsOn textureAssets
-  inputDir.set(file("$projectDir/svg"))
+tasks.create<TexturingTask>("textureAssets") {
+  inputDir.set(file("$projectDir/textures"))
   outputDir.set(file("$projectDir/src/main/resources/textures"))
-  executablePath.set(getRequiredConfigValue("INKSCAPE_PATH"))
 }
-
-//project.classes {
-//  dependsOn modelAssets28
-//  dependsOn textureAssets
-//  dependsOn audioAssets
-//  dependsOn imageAssets
-//}

@@ -5,11 +5,11 @@ import silentorb.mythic.bloom.next.Box
 import silentorb.mythic.bloom.renderLayout
 import silentorb.mythic.drawing.*
 import silentorb.mythic.platforming.WindowInfo
-import org.joml.Vector2i
+import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.glowing.*
 import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.typography.*
-import org.joml.Vector4i
+import silentorb.mythic.spatial.Vector4i
 import silentorb.mythic.glowing.Glow
 import silentorb.mythic.glowing.OffscreenBuffer
 import silentorb.mythic.glowing.prepareScreenFrameBuffer

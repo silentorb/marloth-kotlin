@@ -6,8 +6,8 @@ import marloth.scenery.creation.createScene
 import silentorb.mythic.bloom.next.Box
 import silentorb.mythic.bloom.renderLayout
 import silentorb.mythic.platforming.WindowInfo
-import org.joml.Vector2i
-import org.joml.Vector4i
+import silentorb.mythic.spatial.Vector2i
+import silentorb.mythic.spatial.Vector4i
 import silentorb.mythic.lookinglass.GameSceneRenderer
 import silentorb.mythic.lookinglass.createCanvas
 import silentorb.mythic.lookinglass.createSceneRenderer

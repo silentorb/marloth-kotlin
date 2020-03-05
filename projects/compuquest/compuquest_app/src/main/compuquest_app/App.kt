@@ -7,7 +7,7 @@ import silentorb.mythic.desktop.createDesktopPlatform
 import silentorb.mythic.platforming.Platform
 import silentorb.mythic.platforming.PlatformDisplay
 import silentorb.mythic.quartz.DeltaTimer
-import org.joml.Vector2i
+import silentorb.mythic.spatial.Vector2i
 
 data class CompuQuestApp(
     val platform: Platform,

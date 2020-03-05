@@ -24,7 +24,7 @@ import silentorb.mythic.platforming.PlatformInput
 import silentorb.mythic.platforming.WindowInfo
 import silentorb.mythic.spatial.Vector2
 import silentorb.mythic.bloom.input.newBloomInputState
-import org.joml.Vector2i
+import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.lookinglass.createCanvas
 import simulation.main.World
 import silentorb.mythic.bloom.input.updateInputDeviceStates

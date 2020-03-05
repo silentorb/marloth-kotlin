@@ -3,7 +3,7 @@ package marloth.clienting.gui
 import silentorb.mythic.bloom.*
 import silentorb.mythic.bloom.next.*
 import silentorb.mythic.spatial.Vector4
-import org.joml.Vector2i
+import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.plus
 import marloth.scenery.enums.Text
 

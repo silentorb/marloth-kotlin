@@ -16,7 +16,7 @@ import silentorb.mythic.ent.Table
 import silentorb.mythic.debugging.incrementGlobalDebugLoopNumber
 import silentorb.mythic.ent.pipe
 import silentorb.mythic.quartz.updateTimestep
-import org.joml.Vector2i
+import silentorb.mythic.spatial.Vector2i
 import persistence.Database
 import persistence.createVictory
 import silentorb.mythic.lookinglass.getPlayerViewports

@@ -23,11 +23,18 @@ val addProjects = scanProjects { currentPath, name ->
 
 addProjects(file("projects/marloth").toPath())
 
-includeBuild("../../mythic/gradle") {
-  dependencySubstitution {
-    substitute(module("mythic.gradle.assets.general:1.0")).with(project(":assets_general"))
-    substitute(module("mythic.gradle.assets.svg:1.0")).with(project(":assets_svg"))
-  }
-}
+includeBuild("../../mythic/gradle")
+//{
+//  dependencySubstitution {
+//    substitute(module("mythic.gradle.assets.general:1.0")).with(project(":assets_general"))
+//    substitute(module("mythic.gradle.assets.svg:1.0")).with(project(":assets_svg"))
+//  }
+//}
 
 includeBuild("../../mythic")
+includeBuild("../../imp")
+
+Files.list(file("../../mythic/modules").toPath())
+    .forEach { path ->
+      includeBuild(path)
+    }

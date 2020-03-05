@@ -5,7 +5,7 @@ import silentorb.mythic.bloom.Bounds
 import silentorb.mythic.bloom.FlatBox
 import silentorb.mythic.bloom.resolveLengths
 import silentorb.mythic.drawing.Canvas
-import org.joml.Vector2i
+import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.lookinglass.Renderer
 import marloth.scenery.enums.TextureId
 

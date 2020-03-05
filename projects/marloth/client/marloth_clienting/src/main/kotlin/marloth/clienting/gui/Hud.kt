@@ -3,7 +3,7 @@ package marloth.clienting.gui
 import silentorb.mythic.bloom.*
 import silentorb.mythic.bloom.next.*
 
-import org.joml.Vector2i
+import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.debugging.getDebugRangeValue
 import simulation.entities.Interactable
 import silentorb.mythic.accessorize.Modifier

@@ -12,7 +12,7 @@ import silentorb.mythic.spatial.toVector2i
 import silentorb.mythic.typography.TextConfiguration
 import silentorb.mythic.typography.calculateTextDimensions
 import silentorb.mythic.typography.resolveTextStyle
-import org.joml.Vector2i
+import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.bloom.*
 
 

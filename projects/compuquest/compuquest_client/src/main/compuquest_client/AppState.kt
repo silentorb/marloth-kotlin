@@ -5,7 +5,7 @@ import compuquest_simulation.World
 import compuquest_simulation.data.abilityLibrary
 import compuquest_simulation.newWorld
 import silentorb.mythic.bloom.next.newBloomState
-import org.joml.Vector2i
+import silentorb.mythic.spatial.Vector2i
 
 enum class GameMode {
   abilitySelection,
