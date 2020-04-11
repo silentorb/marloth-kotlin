@@ -17,6 +17,7 @@ import silentorb.mythic.particles.Emitter
 import silentorb.mythic.particles.ParticleAnimation
 import silentorb.mythic.particles.ParticleAppearance
 import silentorb.mythic.particles.ParticleEffect
+import silentorb.mythic.spatial.newVector4
 
 private val cloudColors: Map<ModifierId, Pair<Vector3, Vector3>> = mapOf(
     ModifierId.damageBurning to Pair(Vector3(1f, 0.7f, 0f), Vector3(1f, 0.3f, 0.1f)),
@@ -32,19 +33,19 @@ private fun newDamageCloudParticleAnimation(firstColor: Vector3, secondColor: Ve
           keys = listOf(
               Keyframe(
                   time = 0f,
-                  value = Vector4(firstColor, 0f)
+                  value = newVector4(firstColor, 0f)
               ),
               Keyframe(
                   time = 0.2f,
-                  value = Vector4(interpolateVector3(firstColor, secondColor, 0.2f), maxOpacity)
+                  value = newVector4(interpolateVector3(firstColor, secondColor, 0.2f), maxOpacity)
               ),
               Keyframe(
                   time = 0.8f,
-                  value = Vector4(interpolateVector3(firstColor, secondColor, 0.8f), maxOpacity)
+                  value = newVector4(interpolateVector3(firstColor, secondColor, 0.8f), maxOpacity)
               ),
               Keyframe(
                   time = 1f,
-                  value = Vector4(secondColor, 0f)
+                  value = newVector4(secondColor, 0f)
               )
           )
       )
@@ -65,7 +66,7 @@ fun newBuffCloud(position: Vector3, radius: Float, buff: ModifierId): Hand {
       particleEffect = ParticleEffect(
           initialAppearance = ParticleAppearance(
               texture = TextureId.perlinParticle.name,
-              color = Vector4(colors.first, 0f),
+              color = newVector4(colors.first, 0f),
               size = 2f
           ),
           animation = newDamageCloudParticleAnimation(colors.first, colors.second),

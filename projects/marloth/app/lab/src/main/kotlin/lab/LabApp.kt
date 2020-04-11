@@ -189,7 +189,7 @@ fun newLabGameApp(labConfig: LabConfig): GameApp {
   val gameConfig = loadGameConfig()
   val platform = createDesktopPlatform("Dev Lab", gameConfig.display)
   platform.display.initialize(gameConfig.display)
-  val client = newClient (platform, gameConfig.display, labConfig.gameView.lighting)
+  val client = newClient (platform, gameConfig.display)
   val clientDefinitions = definitionsFromClient(client)
   val definitions = staticDefinitions(clientDefinitions)
   return GameApp(platform, gameConfig,

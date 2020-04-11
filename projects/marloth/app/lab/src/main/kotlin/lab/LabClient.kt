@@ -29,6 +29,7 @@ import silentorb.mythic.lookinglass.createCanvas
 import simulation.main.World
 import silentorb.mythic.bloom.input.updateInputDeviceStates
 import silentorb.mythic.haft.*
+import silentorb.mythic.lookinglass.prepareRender
 
 data class LabState(
 //    val labInput: InputTriggerState<LabCommandType>,
@@ -82,7 +83,7 @@ class LabClient(val config: LabConfig, val client: Client) {
   }
 
   fun prepareClient(windowInfo: WindowInfo) {
-    client.renderer.prepareRender(windowInfo)
+    prepareRender(client.renderer, windowInfo)
   }
 
   fun updateModel(windowInfo: WindowInfo, previousState: LabState, delta: Float): LabClientResult {

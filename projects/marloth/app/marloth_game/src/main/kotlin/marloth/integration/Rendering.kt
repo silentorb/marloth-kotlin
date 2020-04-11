@@ -11,13 +11,17 @@ import silentorb.mythic.spatial.Vector4i
 import silentorb.mythic.lookinglass.GameSceneRenderer
 import silentorb.mythic.lookinglass.createCanvas
 import silentorb.mythic.lookinglass.createSceneRenderer
+import silentorb.mythic.lookinglass.renderContainer
+import silentorb.mythic.lookinglass.texturing.updateAsyncTextureLoading
 import simulation.misc.interpolateWorlds
 
 fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: List<Box>, viewports: List<Vector4i>,
                onRender: RenderHook?) {
   client.platform.display.swapBuffers()
 
-  renderContainer(client, windowInfo) {
+  updateAsyncTextureLoading(client.textureLoader, client.renderer.textures)
+
+  renderContainer(client.renderer, windowInfo) {
     val world = interpolateWorlds(appState.timestep.accumulator, appState.worlds)
     if (world != null) {
       val scenes = appState.client.players.mapNotNull(createScene(world.deck))

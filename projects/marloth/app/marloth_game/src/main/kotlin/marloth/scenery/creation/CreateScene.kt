@@ -9,6 +9,8 @@ import silentorb.mythic.scenery.Light
 import silentorb.mythic.scenery.LightType
 import silentorb.mythic.scenery.Scene
 import marloth.scenery.enums.AccessoryId
+import silentorb.mythic.debugging.getDebugFloat
+import silentorb.mythic.scenery.LightingConfig
 import simulation.misc.hasEquipped
 import simulation.main.Deck
 
@@ -37,12 +39,18 @@ fun mapLights(deck: Deck, player: Id) =
               null
         ))
 
+fun defaultLightingConfig() =
+    LightingConfig(
+        ambient = getDebugFloat("AMBIENT_LIGHT_LEVEL") ?: 0f
+    )
+
 fun createScene(deck: Deck): (Id) -> GameScene = { player ->
   val camera = createCamera(deck, player)
   GameScene(
       main = Scene(
           camera = camera,
-          lights = mapLights(deck, player)
+          lights = mapLights(deck, player),
+          lightingConfig = defaultLightingConfig()
       ),
       opaqueElementGroups = gatherVisualElements(deck, player, deck.players[player]!!),
       transparentElementGroups = gatherParticleElements(deck, camera.position),

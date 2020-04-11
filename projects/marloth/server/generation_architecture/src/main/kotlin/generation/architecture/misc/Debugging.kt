@@ -10,15 +10,20 @@ fun getBlockBuilderFilter(source: String?): Set<CellAttribute>? =
           .split(Regex("""\s*,\s"""))
           .map { token -> CellAttribute.values().first { it.name == token } }
           .toSet()
-          .plus(setOf(CellAttribute.home))
     else
       null
 
 fun devFilterBlockBuilders(blockBuilders: Collection<BlockBuilder>): Collection<BlockBuilder> {
-  val filter = getBlockBuilderFilter(getDebugString("BLOCK_FILTER"))
+  val filter = getBlockBuilderFilter(getDebugString("BLOCK_ONLY"))
+      ?.plus(setOf(CellAttribute.home))
 
-  return if (filter != null)
+  val exclude = getBlockBuilderFilter(getDebugString("BLOCK_EXCLUDE"))
+      ?: setOf()
+
+  val filtered = if (filter != null)
     blockBuilders.filter { it.block.attributes.intersect(filter).any() }
   else
     blockBuilders
+
+  return filtered.filter { it.block.attributes.intersect(exclude).none() }
 }

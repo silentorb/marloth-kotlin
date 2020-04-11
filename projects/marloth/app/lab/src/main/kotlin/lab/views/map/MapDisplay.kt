@@ -9,12 +9,16 @@ import lab.views.game.conditionalDrawAiTargets
 import lab.views.shared.LabTextStyles
 import marloth.clienting.Client
 import marloth.scenery.creation.convertSimpleDepiction
+import marloth.scenery.creation.defaultLightingConfig
 import silentorb.mythic.bloom.StateBag
 import silentorb.mythic.bloom.StateDepiction
 import silentorb.mythic.bloom.selectionStateOld
 import silentorb.mythic.glowing.globalState
 import silentorb.mythic.lookinglass.SceneRenderer
+import silentorb.mythic.lookinglass.createSceneRenderer
 import silentorb.mythic.lookinglass.drawing.renderMeshElement
+import silentorb.mythic.lookinglass.finishRender
+import silentorb.mythic.lookinglass.prepareRender
 import silentorb.mythic.scenery.Camera
 import silentorb.mythic.scenery.ProjectionType
 import silentorb.mythic.scenery.Scene
@@ -176,13 +180,14 @@ fun renderMapView(client: Client, world: World, deck: Deck, config: MapViewConfi
     val camera = createMapViewCamera(config)
     val windowInfo = client.getWindowInfo()
     val renderer = client.renderer
-    renderer.prepareRender(windowInfo)
+    prepareRender(renderer, windowInfo)
 
     val scene = Scene(
         camera = camera,
-        lights = listOf()
+        lights = listOf(),
+        lightingConfig = defaultLightingConfig()
     )
-    val sceneRenderer = renderer.createSceneRenderer(scene, b.toVector4i())
+    val sceneRenderer = createSceneRenderer(renderer, scene, b.toVector4i())
     renderMapMesh(sceneRenderer, world.realm, deck, config, seed.bag)
     val navMesh = world.navMesh
     if (navMesh != null)
@@ -190,6 +195,6 @@ fun renderMapView(client: Client, world: World, deck: Deck, config: MapViewConfi
 
     conditionalDrawAiTargets(deck, renderer)
 
-    renderer.finishRender(windowInfo)
+    finishRender(renderer, windowInfo)
   }
 }

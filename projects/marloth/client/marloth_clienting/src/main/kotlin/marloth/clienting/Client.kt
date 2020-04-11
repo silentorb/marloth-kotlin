@@ -3,7 +3,6 @@ package marloth.clienting
 import silentorb.mythic.haft.HaftCommand
 import silentorb.mythic.haft.simpleCommand
 import marloth.clienting.audio.AudioConfig
-import marloth.clienting.audio.loadSounds
 import marloth.clienting.audio.updateClientAudio
 import marloth.clienting.gui.*
 import marloth.clienting.input.*
@@ -17,7 +16,6 @@ import silentorb.mythic.bloom.next.Box
 import silentorb.mythic.bloom.next.LogicModule
 import silentorb.mythic.bloom.next.newBloomState
 import silentorb.mythic.bloom.updateBloomState
-import silentorb.mythic.drawing.setGlobalFonts
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.pipe
 import silentorb.mythic.platforming.Platform
@@ -30,6 +28,7 @@ import simulation.main.Deck
 import simulation.main.World
 import silentorb.mythic.bloom.input.updateInputDeviceStates
 import silentorb.mythic.lookinglass.mapAnimationInfo
+import silentorb.mythic.lookinglass.texturing.AsyncTextureLoader
 
 const val maxPlayerCount = 4
 
@@ -75,16 +74,14 @@ fun loadTextResource(mapper: TextResourceMapper): TextResources {
 
 fun gatherFontSets() = loadFontSets(baseFonts, textStyles)
 
-class Client(val platform: Platform, val renderer: Renderer) {
-  val textResources: TextResources = loadTextResource(englishTextResources)
-  val soundLibrary: SoundLibrary
+data class Client(
+    val platform: Platform,
+    val renderer: Renderer,
+    val soundLibrary: SoundLibrary,
+    val textureLoader: AsyncTextureLoader,
+    val textResources: TextResources = loadTextResource(englishTextResources)
+) {
   fun getWindowInfo() = platform.display.getInfo()
-
-  init {
-    setGlobalFonts(renderer.fonts)
-    platform.audio.start(50)
-    soundLibrary = loadSounds(platform.audio)
-  }
 
   fun shutdown() {
     platform.audio.stop()

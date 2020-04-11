@@ -37,7 +37,7 @@ fun updateClientStateAudio(client: Client, previousSounds: Table<Sound>, nextSou
 }
 
 fun loadAudioResource(audio: PlatformAudio, name: String) =
-    audio.loadSound(getResourceUrl("audio/$name.ogg").file.drop(1))
+    audio.loadSound(getResourceUrl("audio/$name.ogg")!!.file.drop(1))
 
 fun loadSounds(audio: PlatformAudio): SoundLibrary =
     Sounds.values().mapIndexed { i, entry ->

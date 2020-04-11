@@ -10,10 +10,9 @@ import silentorb.mythic.breeze.transformAnimatedSkeleton
 import silentorb.mythic.drawing.Canvas
 import silentorb.mythic.glowing.globalState
 import silentorb.mythic.spatial.*
-import silentorb.mythic.lookinglass.meshes.Primitive
-import silentorb.mythic.lookinglass.shading.ObjectShaderConfig
 import silentorb.mythic.lookinglass.shading.populateBoneBuffer
 import marloth.scenery.AnimationId
+import marloth.scenery.creation.defaultLightingConfig
 import silentorb.mythic.spatial.times
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.scenery.Camera
@@ -30,68 +29,68 @@ fun createOrthographicCamera(camera: ViewCameraConfig): Camera {
   return Camera(ProjectionType.orthographic, position + camera.pivot, orientationSecond, camera.zoom)
 }
 
-fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, transform: Matrix, section: Primitive, isAnimated: Boolean) {
-  val mesh = section.mesh
-
-  globalState.depthEnabled = true
-  globalState.blendEnabled = true
-  globalState.cullFaces = true
-
-//  if (bones != null && originalBones != null) {
-//    val shaderConfig = ObjectShaderConfig(
-//        transform = transform,
-//        color = section.material.color,
-//        boneBuffer = populateBoneBuffer(sceneRenderer.renderer.boneBuffer, bones)
-//    )
-//    when (config.meshDisplay) {
-//      MeshDisplay.solid -> sceneRenderer.effects.flatAnimated.activate(shaderConfig)
-//      MeshDisplay.wireframe -> sceneRenderer.effects.flatAnimated.activate(shaderConfig)
-//    }
-//  } else {
-  val color = if (config.meshDisplay == MeshDisplay.solid)
-    section.material.color
-  else
-    faceColor
-
-  val texture = sceneRenderer.renderer.textures[section.material.texture]
-  val shaderConfig = ObjectShaderConfig(
-      transform = transform,
-      color = color,
-      texture = texture,
-      normalTransform = Matrix.identity
-  )
-  val effects = sceneRenderer.effects
-//  val (effect, flatEffect) = if (isAnimated)
-//    Pair(effects.flatAnimated, effects.flatAnimated)
-//  else if (texture != null)
-//    Pair(effects.texturedFlat, effects.flat)
+//fun drawMeshPreview(config: ModelViewConfig, sceneRenderer: SceneRenderer, transform: Matrix, section: Primitive, isAnimated: Boolean) {
+//  val mesh = section.mesh
+//
+//  globalState.depthEnabled = true
+//  globalState.blendEnabled = true
+//  globalState.cullFaces = true
+//
+////  if (bones != null && originalBones != null) {
+////    val shaderConfig = ObjectShaderConfig(
+////        transform = transform,
+////        color = section.material.color,
+////        boneBuffer = populateBoneBuffer(sceneRenderer.renderer.boneBuffer, bones)
+////    )
+////    when (config.meshDisplay) {
+////      MeshDisplay.solid -> sceneRenderer.effects.flatAnimated.activate(shaderConfig)
+////      MeshDisplay.wireframe -> sceneRenderer.effects.flatAnimated.activate(shaderConfig)
+////    }
+////  } else {
+//  val color = if (config.meshDisplay == MeshDisplay.solid)
+//    section.material.color
 //  else
-//    Pair(effects.flat, effects.flat)
-
-//  effect.activate(shaderConfig)
-
-//  mesh.draw(DrawMethod.triangleFan)
-  if (config.meshDisplay == MeshDisplay.wireframe) {
-    globalState.cullFaces = false
-    globalState.depthEnabled = false
-  }
-
-  val shaderConfig2 = ObjectShaderConfig(
-      transform = transform,
-      color = lineColor
-  )
-
-  globalState.lineThickness = 1f
-//  flatEffect.activate(shaderConfig2)
-//  mesh.draw(DrawMethod.lineLoop)
-
-  globalState.pointSize = 3f
-//  flatEffect.activate(shaderConfig2)
-//  mesh.draw(DrawMethod.points)
-
-  globalState.depthEnabled = false
-  globalState.cullFaces = false
-}
+//    faceColor
+//
+//  val texture = sceneRenderer.renderer.textures[section.material.texture]
+//  val shaderConfig = ObjectShaderConfig(
+//      transform = transform,
+//      color = color,
+//      texture = texture,
+//      normalTransform = Matrix.identity
+//  )
+//  val effects = sceneRenderer.effects
+////  val (effect, flatEffect) = if (isAnimated)
+////    Pair(effects.flatAnimated, effects.flatAnimated)
+////  else if (texture != null)
+////    Pair(effects.texturedFlat, effects.flat)
+////  else
+////    Pair(effects.flat, effects.flat)
+//
+////  effect.activate(shaderConfig)
+//
+////  mesh.draw(DrawMethod.triangleFan)
+//  if (config.meshDisplay == MeshDisplay.wireframe) {
+//    globalState.cullFaces = false
+//    globalState.depthEnabled = false
+//  }
+//
+//  val shaderConfig2 = ObjectShaderConfig(
+//      transform = transform,
+//      color = lineColor
+//  )
+//
+//  globalState.lineThickness = 1f
+////  flatEffect.activate(shaderConfig2)
+////  mesh.draw(DrawMethod.lineLoop)
+//
+//  globalState.pointSize = 3f
+////  flatEffect.activate(shaderConfig2)
+////  mesh.draw(DrawMethod.points)
+//
+//  globalState.depthEnabled = false
+//  globalState.cullFaces = false
+//}
 
 fun drawSelection(config: ModelViewConfig, model: Model, sceneRenderer: SceneRenderer) {
   if (config.selection.size > 0) {
@@ -131,7 +130,8 @@ fun drawSelection(config: ModelViewConfig, model: Model, sceneRenderer: SceneRen
 
 fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: Renderer, camera: Camera, model: AdvancedModel): Depiction {
   return embedCameraView { b, c ->
-    val sceneRenderer = renderer.createSceneRenderer(Scene(camera), b.toVector4i())
+    val scene = Scene(camera, lightingConfig = defaultLightingConfig())
+    val sceneRenderer = createSceneRenderer(renderer, scene, b.toVector4i())
     val transform = Matrix.identity
 
     val armature = model.armature
@@ -161,9 +161,9 @@ fun drawModelPreview(config: ModelViewConfig, state: ModelViewState, renderer: R
     }
 
     if (modelSource == null) {
-      model.primitives
-          .filterIndexed { i, it -> config.visibleGroups[i] }
-          .forEach { drawMeshPreview(config, sceneRenderer, transform, it, transforms != null) }
+//      model.primitives
+//          .filterIndexed { i, it -> config.visibleGroups[i] }
+//          .forEach { drawMeshPreview(config, sceneRenderer, transform, it, transforms != null) }
     } else {
       val primitives2 = model.primitives
 

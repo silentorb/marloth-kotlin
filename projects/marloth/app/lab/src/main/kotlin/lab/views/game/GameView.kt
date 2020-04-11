@@ -7,7 +7,7 @@ import silentorb.mythic.sculpting.getVerticesCenter
 import silentorb.mythic.spatial.*
 import silentorb.mythic.lookinglass.GameScene
 import silentorb.mythic.lookinglass.SceneRenderer
-import silentorb.mythic.lookinglass.shading.LightingConfig
+import silentorb.mythic.scenery.LightingConfig
 import silentorb.mythic.lookinglass.shading.ObjectShaderConfig
 import simulation.main.World
 
@@ -47,7 +47,7 @@ fun renderFaceNormals(renderer: SceneRenderer, length: Float, faces: List<Immuta
     val straightVerticalHack = Vector3(0.00001f, 0f, 0f)
     val transform = Matrix.identity
         .translate(faceCenter)
-        .rotateTowards(Vector3m(face.normal + straightVerticalHack), Vector3m(0f, 0f, 1f))
+        .rotateTowards(Vector3(face.normal + straightVerticalHack), Vector3(0f, 0f, 1f))
         .rotateY(-Pi * 0.5f)
         .scale(length)
 
