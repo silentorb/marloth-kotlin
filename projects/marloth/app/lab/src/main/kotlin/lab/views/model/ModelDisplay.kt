@@ -11,7 +11,7 @@ import silentorb.mythic.drawing.Canvas
 import silentorb.mythic.glowing.globalState
 import silentorb.mythic.spatial.*
 import silentorb.mythic.lookinglass.shading.populateBoneBuffer
-import marloth.scenery.AnimationId
+import marloth.scenery.enums.AnimationId
 import marloth.scenery.creation.defaultLightingConfig
 import silentorb.mythic.spatial.times
 import silentorb.mythic.lookinglass.*

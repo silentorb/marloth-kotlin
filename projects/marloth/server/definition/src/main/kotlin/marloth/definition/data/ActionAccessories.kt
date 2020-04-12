@@ -1,11 +1,7 @@
 package marloth.definition.data
 
-import marloth.scenery.AnimationId
-import marloth.scenery.enums.AccessoryId
-import marloth.scenery.enums.Text
+import marloth.scenery.enums.*
 import silentorb.mythic.combat.general.DamageDefinition
-import marloth.scenery.enums.DamageTypes
-import marloth.scenery.enums.Sounds
 import silentorb.mythic.combat.general.WeaponDefinition
 import silentorb.mythic.accessorize.AccessoryDefinition
 import silentorb.mythic.accessorize.AccessoryName
@@ -20,7 +16,8 @@ data class ActionAccessory(
 fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
     AccessoryId.pistol.name to ActionAccessory(
         accessory = AccessoryDefinition(
-            name = Text.id_pistol
+            name = Text.id_pistol,
+            mesh = MeshId.pistol.name
         ),
         action = ActionDefinition(
             cooldown = 2f,

@@ -1,6 +1,8 @@
 package simulation.entities
 
 import silentorb.mythic.combat.general.RestoreHealth
+import silentorb.mythic.debugging.getDebugBoolean
+import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.happenings.Events
@@ -13,25 +15,32 @@ data class RespawnCountdown(
     val target: Id
 )
 
+fun newRespawnCountdown(nextId: IdSource): (Id) -> IdHand = { character ->
+  IdHand(
+      id = nextId(),
+      hand = Hand(
+          timer = IntTimer(
+              duration = 3,
+              interval = 60
+          ),
+          respawnCountdown = RespawnCountdown(
+              target = character
+          )
+      )
+  )
+}
+
 // Should be performed after destructibles are updated and before entities are removed
 fun newRespawnCountdowns(nextId: IdSource, previous: Deck, next: Deck): List<IdHand> {
-  val newlyDeceased = previous.players.keys.filter { id ->
-    previous.characters[id]!!.isAlive && !next.characters[id]!!.isAlive
-  }
-  return newlyDeceased.map { character ->
-    IdHand(
-        id = nextId(),
-        hand = Hand(
-            timer = IntTimer(
-                duration = 3,
-                interval = 60
-            ),
-            respawnCountdown = RespawnCountdown(
-                target = character
-            )
-        )
-    )
-  }
+  val newlyDeceasedCharacters = previous.characters.keys
+      .filter { id ->
+        previous.characters[id]!!.isAlive && !next.characters[id]!!.isAlive
+      }
+      .filter { id ->
+        !previous.players.containsKey(id) || getDebugBoolean("PLAYER_RESPAWN")
+      }
+
+  return newlyDeceasedCharacters.map(newRespawnCountdown(nextId))
 }
 
 fun eventsFromRespawnCountdowns(previous: Deck, next: Deck, events: Events): Events {

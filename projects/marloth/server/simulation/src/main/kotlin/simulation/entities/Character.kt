@@ -22,7 +22,7 @@ data class CharacterDefinition(
     val maxSpeed: Float,
     val accessories: List<AccessoryName>,
     val depictionType: DepictionType,
-    val deathSound: Sounds,
+    val deathSound: Sounds?,
     val ambientSounds: List<SoundType> = listOf(),
     val damageMultipliers: DamageMultipliers = mapOf()
 )

@@ -11,6 +11,7 @@ enum class DepictionType {
   monster,
   person,
   none,
+  sentinel,
   staticMesh,
   test,
 //  wallLamp,

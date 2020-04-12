@@ -1,8 +1,9 @@
 package marloth.scenery.creation
 
-import marloth.scenery.ArmatureId
-import marloth.scenery.ArmatureSockets
+import marloth.scenery.enums.ArmatureId
+import marloth.scenery.enums.ArmatureSockets
 import marloth.scenery.enums.MeshId
+import silentorb.mythic.accessorize.getAccessories
 import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
@@ -17,6 +18,7 @@ import simulation.entities.Depiction
 import simulation.entities.DepictionType
 import simulation.entities.Player
 import simulation.main.Deck
+import simulation.misc.Definitions
 import kotlin.math.floor
 
 val simplePainterMap = MeshId.values().mapNotNull { meshId ->
@@ -35,7 +37,7 @@ val simplePainterMap = MeshId.values().mapNotNull { meshId ->
 
 fun filterDepictions(depictions: Table<Depiction>, player: Id, playerRecord: Player): Table<Depiction> =
 //    if (playerRecord.viewMode == ViewMode.firstPerson)
-      depictions.filter { it.key != player }
+    depictions.filter { it.key != player }
 //    else
 //      depictions
 
@@ -79,7 +81,7 @@ fun convertSimpleDepiction(deck: Deck, id: Id, depiction: Depiction): MeshElemen
   return convertSimpleDepiction(deck, id, mesh, depiction.texture)
 }
 
-fun convertComplexDepiction(deck: Deck, id: Id, depiction: Depiction): ElementGroup {
+fun convertComplexDepiction(definitions: Definitions, deck: Deck, id: Id, depiction: Depiction): ElementGroup {
   val body = deck.bodies[id]!!
   val characterRig = deck.characterRigs[id]!!
   val collisionObject = deck.collisionShapes[id]!!
@@ -105,6 +107,12 @@ fun convertComplexDepiction(deck: Deck, id: Id, depiction: Depiction): ElementGr
         MeshId.shirt,
         MeshId.pumpkinHead
     )
+    depiction.type == DepictionType.sentinel -> listOf(
+        MeshId.personBody,
+        MeshId.pants,
+        MeshId.shirt,
+        MeshId.sentinelHead
+    )
     else -> listOf(
         MeshId.personBody,
         MeshId.hogHead,
@@ -112,6 +120,8 @@ fun convertComplexDepiction(deck: Deck, id: Id, depiction: Depiction): ElementGr
         MeshId.shirt
     )
   }
+
+  val accessories = getAccessories(deck.accessories, id)
 
   return ElementGroup(
       meshes = meshes
@@ -124,16 +134,22 @@ fun convertComplexDepiction(deck: Deck, id: Id, depiction: Depiction): ElementGr
           },
       armature = ArmatureId.person.name,
       animations = animations,
-      attachments = listOf(
-          AttachedMesh(
-              socket = ArmatureSockets.rightHand.toString(),
-              mesh = MeshElement(
-                  id = id,
-                  mesh = MeshId.pistol.name,
-                  transform = transform
+      attachments = accessories
+          .mapNotNull { (_, accessoryRecord) ->
+            val accessoryType = definitions.accessories[accessoryRecord.type]!!
+            val mesh = accessoryType.mesh
+            if (mesh != null)
+              AttachedMesh(
+                  socket = ArmatureSockets.rightHand.toString(),
+                  mesh = MeshElement(
+                      id = id,
+                      mesh = mesh,
+                      transform = transform
+                  )
               )
-          )
-      )
+            else
+              null
+          }
   )
 }
 
@@ -164,13 +180,25 @@ fun gatherParticleElements(deck: Deck, cameraPosition: Vector3): ElementGroups {
       }
 }
 
-fun gatherVisualElements(deck: Deck, player: Id, playerRecord: Player): ElementGroups {
+fun depictionSwitch(definitions: Definitions, deck: Deck, player: Id, depiction: Id, depictionRecord: Depiction): ElementGroup? {
+  return when (depictionRecord.type) {
+    DepictionType.sentinel -> convertComplexDepiction(definitions, deck, depiction, depictionRecord)
+    else -> null
+  }
+}
+
+fun gatherVisualElements(definitions: Definitions, deck: Deck, player: Id, playerRecord: Player): ElementGroups {
+  val initialPass = deck.depictions.map { (id, depiction) ->
+    Pair(id, depictionSwitch(definitions, deck, player, id, depiction))
+  }
+  val initial = initialPass.mapNotNull { it.second }
+  val remaining = deck.depictions.minus(initialPass.filter { it.second != null }.map { it.first })
   val (complex, simple) =
-      filterDepictions(deck.depictions, player, playerRecord)
+      filterDepictions(remaining, player, playerRecord)
           .entries.partition { isComplexDepiction(it.value) }
 
   val complexElements = complex.map {
-    convertComplexDepiction(deck, it.key, it.value)
+    convertComplexDepiction(definitions, deck, it.key, it.value)
   }
 
   val simpleElements =
@@ -181,6 +209,5 @@ fun gatherVisualElements(deck: Deck, player: Id, playerRecord: Player): ElementG
             convertSimpleDepiction(deck, it.key, MeshId.prisonDoor.name)
           })
 
-  return complexElements
-      .plus(ElementGroup(simpleElements))
+  return initial + complexElements + ElementGroup(simpleElements)
 }

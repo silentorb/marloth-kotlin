@@ -1,6 +1,6 @@
 package marloth.definition
 
-import marloth.scenery.AnimationId
+import marloth.scenery.enums.AnimationId
 import silentorb.mythic.accessorize.Accessory
 import silentorb.mythic.ent.Id
 import silentorb.mythic.physics.Body

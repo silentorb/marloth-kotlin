@@ -1,8 +1,7 @@
 package simulation.entities
 
 import silentorb.mythic.ent.Id
-import marloth.scenery.AnimationId
-import marloth.scenery.ArmatureId
+import marloth.scenery.enums.AnimationId
 import silentorb.mythic.breeze.AnimationInfoMap
 import silentorb.mythic.breeze.AnimationName
 import simulation.main.Deck

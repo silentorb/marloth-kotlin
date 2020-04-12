@@ -1,18 +1,19 @@
 package marloth.scenery.creation
 
+import marloth.scenery.enums.AccessoryId
+import silentorb.mythic.debugging.getDebugFloat
 import silentorb.mythic.ent.Id
-import silentorb.mythic.spatial.Vector3
-import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.lookinglass.GameScene
 import silentorb.mythic.lookinglass.ScreenFilter
 import silentorb.mythic.scenery.Light
 import silentorb.mythic.scenery.LightType
-import silentorb.mythic.scenery.Scene
-import marloth.scenery.enums.AccessoryId
-import silentorb.mythic.debugging.getDebugFloat
 import silentorb.mythic.scenery.LightingConfig
-import simulation.misc.hasEquipped
+import silentorb.mythic.scenery.Scene
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector4
 import simulation.main.Deck
+import simulation.misc.Definitions
+import simulation.misc.hasEquipped
 
 fun mapLights(deck: Deck, player: Id) =
     deck.lights
@@ -44,7 +45,7 @@ fun defaultLightingConfig() =
         ambient = getDebugFloat("AMBIENT_LIGHT_LEVEL") ?: 0f
     )
 
-fun createScene(deck: Deck): (Id) -> GameScene = { player ->
+fun createScene(definitions: Definitions, deck: Deck): (Id) -> GameScene = { player ->
   val camera = createCamera(deck, player)
   GameScene(
       main = Scene(
@@ -52,7 +53,7 @@ fun createScene(deck: Deck): (Id) -> GameScene = { player ->
           lights = mapLights(deck, player),
           lightingConfig = defaultLightingConfig()
       ),
-      opaqueElementGroups = gatherVisualElements(deck, player, deck.players[player]!!),
+      opaqueElementGroups = gatherVisualElements(definitions, deck, player, deck.players[player]!!),
       transparentElementGroups = gatherParticleElements(deck, camera.position),
       filters = if (!deck.characters[player]!!.isAlive)
         listOf<ScreenFilter>(

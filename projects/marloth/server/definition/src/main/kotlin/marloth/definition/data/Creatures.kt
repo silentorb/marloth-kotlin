@@ -23,7 +23,7 @@ class Creatures {
       deathSound = Sounds.girlScream
   )
 
-  val monster = CharacterDefinition(
+  val hogMan = CharacterDefinition(
       health = 100,
       accessories = listOf(AccessoryId.pistol.name),
       depictionType = DepictionType.person,
@@ -33,6 +33,15 @@ class Creatures {
           Sounds.hogAmbient01.name,
           Sounds.hogAmbient03.name
       )
+  )
+
+  val sentinel = CharacterDefinition(
+      health = 100,
+      accessories = listOf(),
+      depictionType = DepictionType.sentinel,
+      maxSpeed = 0f,
+      deathSound = null,
+      ambientSounds = listOf()
   )
 
   val merchant = CharacterDefinition(

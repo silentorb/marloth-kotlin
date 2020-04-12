@@ -3,77 +3,76 @@ package marloth.generation.population
 import generation.abstracted.distributeToSlots
 import generation.abstracted.normalizeRanges
 import generation.architecture.misc.GenerationConfig
+import marloth.definition.data.creatures
 import marloth.definition.templates.defaultWares
 import marloth.definition.templates.newMerchant
+import marloth.scenery.enums.ModifierId
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
+import simulation.entities.CharacterDefinition
 import simulation.main.IdHand
 import simulation.misc.CellAttribute
 import simulation.misc.Realm
 import simulation.misc.absoluteCellPosition
 import simulation.misc.cellLength
 
-enum class Occupant {
-  coldCloud,
-  fireCloud,
-  enemy,
+enum class DistributionGroup {
+  cloud,
   merchant,
+  monster,
   none,
-  poisonCloud,
   treasureChest
 }
 
-typealias DistributionMap = Map<Occupant, Int>
+typealias DistributionMap = Map<DistributionGroup, Int>
 
-typealias OccupantToHand = (Vector3, Occupant) -> List<IdHand>?
+//typealias OccupantToHand = (Vector3, Occupant) -> List<IdHand>?
 
-fun occupantPopulator(config: GenerationConfig, nextId: IdSource): OccupantToHand = { cell, occupant ->
-  when (occupant) {
-//    Occupant.coldCloud -> placeBuffCloud(node, ModifierId.damageChilled)
-//    Occupant.fireCloud -> placeBuffCloud(node, ModifierId.damageBurning)
-    Occupant.enemy -> if (config.includeEnemies) placeEnemy(nextId, config.definitions, cell) else null
-    Occupant.merchant -> newMerchant(nextId, config.definitions, cell, defaultWares)
-    Occupant.none -> null
-//    Occupant.poisonCloud -> placeBuffCloud(node, ModifierId.damagePoisoned)
-//    Occupant.treasureChest -> placeTreasureChest(config.meshes, node, 10)
-    else -> {
-      println("Need to eventually update occupantPopulator")
-      null
-    }
-  }
-}
+//fun occupantPopulator(config: GenerationConfig, nextId: IdSource): OccupantToHand = { cell, occupant ->
+//  when (occupant.type) {
+////    Occupant.coldCloud -> placeBuffCloud(node, ModifierId.damageChilled)
+////    Occupant.fireCloud -> placeBuffCloud(node, ModifierId.damageBurning)
+//    DistributionGroup.monster -> if (config.includeEnemies) placeEnemy(nextId, config.definitions, cell, occupant.details as CharacterDefinition) else null
+//    DistributionGroup.merchant -> newMerchant(nextId, config.definitions, cell, defaultWares)
+//    DistributionGroup.none -> null
+////    Occupant.poisonCloud -> placeBuffCloud(node, ModifierId.damagePoisoned)
+////    Occupant.treasureChest -> placeTreasureChest(config.meshes, node, 10)
+//    else -> {
+//      println("Need to eventually update occupantPopulator")
+//      null
+//    }
+//  }
+//}
 
-fun damageCloudsDistributions(dice: Dice, totalWeight: Int): DistributionMap {
-  val cloudTypes = listOf(
-      Occupant.coldCloud,
-      Occupant.fireCloud,
-      Occupant.poisonCloud
-  )
+//fun damageCloudsDistributions(dice: Dice, totalWeight: Int): DistributionMap {
+//  val cloudTypes = listOf(
+//      ModifierId.damageChilled,
+//      ModifierId.damageBurning,
+//      ModifierId.damagePoisoned
+//  )
+//
+//  val initialWeights = cloudTypes
+//      .map { Pair(it, dice.getInt(0, 100)) }
+//      .associate { it }
+//
+//  return normalizeRanges(totalWeight, initialWeights)
+//}
 
-  val initialWeights = cloudTypes
-      .map { Pair(it, dice.getInt(0, 100)) }
-      .associate { it }
-
-  return normalizeRanges(totalWeight, initialWeights)
-}
+fun enemyDistributions() = mapOf(
+    creatures.hogMan to 5,
+    creatures.sentinel to 20
+)
 
 fun scalingDistributions(dice: Dice): DistributionMap = mapOf(
-    Occupant.enemy to 20,
-    Occupant.merchant to 0,
-    Occupant.none to 10,
-    Occupant.treasureChest to 0
-).plus(damageCloudsDistributions(dice, 0))
-//).plus(damageCloudsDistributions(dice, 10))
-
-fun fixedDistributions(): DistributionMap = mapOf(
-    Occupant.enemy to 1,
-    Occupant.merchant to 0,
-    Occupant.none to 0,
-    Occupant.treasureChest to 0
+    DistributionGroup.none to 10,
+    DistributionGroup.monster to 20
 )
+//) + damageCloudsDistributions(dice, 10)
+
+fun fixedDistributions(): DistributionMap = mapOf()
 
 fun supportsPopulation(attributes: Set<CellAttribute>): Boolean =
     attributes.contains(CellAttribute.fullFloor)
@@ -99,9 +98,9 @@ fun partitionCell(offsets: List<Vector3>): (Vector3i) -> List<Vector3> = { cell 
       }
 }
 
-fun populateRooms(occupantToHand: OccupantToHand, dice: Dice, realm: Realm): List<IdHand> {
+fun getGroupDistributions(dice: Dice, realm: Realm): Map<DistributionGroup, List<Vector3>> {
   if (getDebugString("NO_OBJECTS") != null)
-    return listOf()
+    return mapOf()
 
   val locations = realm.grid.cells
       .filter { supportsPopulation(it.value.attributes) }
@@ -111,10 +110,30 @@ fun populateRooms(occupantToHand: OccupantToHand, dice: Dice, realm: Realm): Lis
   val scaling = scalingDistributions(dice)
   val fixed = fixedDistributions()
   val occupants = distributeToSlots(dice, locations.size, scaling, fixed)
-  val hands = locations
-      .zip(occupants, occupantToHand)
-      .filterNotNull()
-      .flatten()
+  val pairs = locations
+      .zip(occupants) { location, occupant -> Pair(location, occupant) }
 
-  return hands
+  return DistributionGroup.values()
+      .associate { group ->
+        Pair(group, pairs.filter { it.second == group }.map { it.first })
+      }
+}
+
+fun populateMonsters(config: GenerationConfig, locations: List<Vector3>, nextId: IdSource, dice: Dice): List<IdHand> {
+  val distributions = distributeToSlots(dice, locations.size, enemyDistributions(), mapOf())
+  return locations
+      .zip(distributions) { location, definition ->
+        placeEnemy(nextId, config.definitions, location, definition)
+      }
+      .flatten()
+}
+
+fun populateRooms(config: GenerationConfig, nextId: IdSource, dice: Dice, realm: Realm): List<IdHand> {
+  val groupDistributions = getGroupDistributions(dice, realm)
+  val monsters = if (config.includeEnemies)
+    populateMonsters(config, groupDistributions[DistributionGroup.monster] ?: listOf(), nextId, dice)
+  else
+    listOf()
+
+  return monsters
 }

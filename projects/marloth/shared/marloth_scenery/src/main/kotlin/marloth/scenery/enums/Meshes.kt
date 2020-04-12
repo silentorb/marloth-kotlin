@@ -12,6 +12,7 @@ enum class MeshId {
   pistol,
   prisonDoor,
   pumpkinHead,
+  sentinelHead,
   shirt,
   skySphere,
   sphere,

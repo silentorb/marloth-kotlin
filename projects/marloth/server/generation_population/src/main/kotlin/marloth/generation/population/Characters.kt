@@ -29,10 +29,10 @@ fun placeAiCharacter(nextId: IdSource, definitions: Definitions, faction: Id, de
   )
 }
 
-fun placeEnemy(nextId: IdSource, definitions: Definitions, cell: Vector3): List<IdHand> =
+fun placeEnemy(nextId: IdSource, definitions: Definitions, cell: Vector3, definition: CharacterDefinition): List<IdHand> =
     placeAiCharacter(nextId, definitions,
         faction = monsterFaction,
-        definition = creatures.monster,
+        definition = definition,
         position = cell
     )
 

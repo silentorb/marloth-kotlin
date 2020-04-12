@@ -5,7 +5,7 @@ import silentorb.mythic.spatial.*
 import lab.views.*
 
 import silentorb.mythic.sculpting.*
-import marloth.scenery.AnimationId
+import marloth.scenery.enums.AnimationId
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.bloom.Bounds
 import silentorb.mythic.bloom.FlatBox
