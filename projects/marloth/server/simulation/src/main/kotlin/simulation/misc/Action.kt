@@ -4,12 +4,14 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import marloth.scenery.enums.AccessoryId
 import silentorb.mythic.accessorize.AccessoryName
+import silentorb.mythic.combat.spatial.onAttack
 import silentorb.mythic.combat.spatial.startAttack
 import silentorb.mythic.happenings.Events
 import simulation.happenings.TryUseAbilityEvent
 import silentorb.mythic.happenings.UseAction
 import silentorb.mythic.performing.Action
 import silentorb.mythic.performing.updateCooldown
+import simulation.combat.toSpatialCombatWorld
 import simulation.main.Deck
 import simulation.main.World
 import simulation.updating.simulationDelta
@@ -44,8 +46,8 @@ fun eventsFromTryUseAbility(world: World): (TryUseAbilityEvent) -> Events = { ev
   if (action != null && canUse(deck, action)) {
     val accessory = deck.accessories[action]!!
     when (accessory.type) {
-      AccessoryId.pistol.name -> startAttack(event.actor, action, accessory.type)
-      AccessoryId.grenadeLauncher.name -> startAttack(event.actor, action, accessory.type)
+      AccessoryId.pistol.name -> onAttack(toSpatialCombatWorld(world), event, accessory.type)
+      AccessoryId.grenadeLauncher.name -> onAttack(toSpatialCombatWorld(world), event, accessory.type)
       else -> listOf()
     }
   } else

@@ -7,7 +7,11 @@ import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.BulletState
 import silentorb.mythic.physics.castCollisionRay
 import silentorb.mythic.characters.CharacterRig
+import silentorb.mythic.debugging.getDebugFloat
 import silentorb.mythic.scenery.Light
+import silentorb.mythic.spatial.Vector3
+import simulation.entities.CharacterDefinition
+import simulation.entities.fieldOfView360
 import simulation.misc.MapGrid
 import simulation.misc.CellAttribute
 import simulation.misc.Realm
@@ -16,8 +20,11 @@ import simulation.misc.getPointCell
 const val viewingRange = 30f
 const val minimumLightRating = 0.1f
 
-fun isInAngleOfView(viewer: CharacterRig, viewerBody: Body, targetBody: Body): Boolean =
-    viewer.facingVector.dot((targetBody.position - viewerBody.position).normalize()) > 0.5f
+fun isInAngleOfView(facingVector: Vector3, viewerBody: Body, targetBody: Body, fieldOfView: Float): Boolean =
+    if (fieldOfView == fieldOfView360)
+      true
+    else
+      facingVector.dot((targetBody.position - viewerBody.position).normalize()) >= fieldOfView
 
 fun lightDistanceMod(deck: Deck, body: Body, id: Id, light: Light): Float {
   val lightBody = deck.bodies[id]!!
@@ -40,7 +47,7 @@ private fun motionMod(deck: Deck, body: Body): Float =
 
 fun lightRating(deck: Deck, id: Id): Float {
   val body = deck.bodies[id]!!
-  return lightsMod(deck, body) + motionMod(deck, body)
+  return lightsMod(deck, body) + motionMod(deck, body) + (getDebugFloat("LIGHT_RATING_MOD") ?: 0f)
 }
 
 // Even in darkness AI will spot others if close enough
@@ -58,11 +65,15 @@ fun canSee(realm: Realm, bulletState: BulletState, deck: Deck, viewer: Id): (Id)
   val viewerBody = deck.bodies[viewer]!!
   val targetBody = deck.bodies[target]!!
   val distance = viewerBody.position.distance(targetBody.position)
-  distance <= viewingRange
-      && isInAngleOfView(deck.characterRigs[viewer]!!, viewerBody, targetBody)
+  val viewerCharacterDefinition = deck.characters[viewer]!!.definition
+  val fieldOfView = viewerCharacterDefinition.fieldOfView
+  val result = distance <= viewingRange
+      && isInAngleOfView(deck.characterRigs[viewer]!!.facingVector, viewerBody, targetBody, fieldOfView)
       && castCollisionRay(bulletState.dynamicsWorld, viewerBody.position, targetBody.position) != null
       && lightRating(deck, target) + nearMod(distance) >= minimumLightRating
       && !isHiddenByHome(realm.grid, deck, viewer, target)
+
+  result
 }
 
 fun getVisibleCharacters(realm: Realm, bulletState: BulletState, deck: Deck, character: Id): List<Id> {

@@ -1,5 +1,6 @@
 package silentorb.mythic.combat.spatial
 
+import silentorb.mythic.accessorize.Accessory
 import silentorb.mythic.accessorize.AccessoryName
 import silentorb.mythic.audio.NewSound
 import silentorb.mythic.combat.general.AttackMethod
@@ -8,6 +9,7 @@ import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.happenings.UseAction
 import silentorb.mythic.spatial.Vector3
+import simulation.happenings.TryUseAbilityEvent
 
 const val attackMarker = "attack"
 
@@ -16,10 +18,9 @@ data class AttackEvent(
     val accessory: AccessoryName
 ) : GameEvent
 
-fun onAttack(world: SpatialCombatWorld): (AttackEvent) -> Events = { event ->
+fun onAttack(world: SpatialCombatWorld, event: TryUseAbilityEvent, accessory: AccessoryName): Events {
   val (definitions, deck, bulletState) = world
-  val attacker = event.attacker
-  val accessory = event.accessory
+  val attacker = event.actor
   val weapon = definitions.weapons[accessory]!!
   val body = deck.bodies[attacker]!!
   val characterRig = deck.characterRigs[attacker]!!
@@ -27,10 +28,10 @@ fun onAttack(world: SpatialCombatWorld): (AttackEvent) -> Events = { event ->
   val origin = body.position + Vector3(0f, 0f, 0.2f) + vector * 0.3f
   val end = origin + vector * 30f
   val attackEvents = when (weapon.attackMethod) {
-    AttackMethod.raycast -> raycastAttack(world, event)
-    AttackMethod.missile -> missileAttack(world, event)
+    AttackMethod.raycast -> raycastAttack(world, attacker, weapon)
+    AttackMethod.missile -> missileAttack(world, attacker, weapon)
   }
-  if (weapon.sound != null)
+  return if (weapon.sound != null)
     attackEvents
         .plus(listOf(
             NewSound(

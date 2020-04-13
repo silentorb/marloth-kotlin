@@ -7,6 +7,7 @@ import generation.general.explodeBlockMap
 import generation.general.newRandomizedBiomeGrid
 import marloth.generation.population.populateWorld
 import org.recast4j.detour.NavMeshQuery
+import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.newGenericIdHand
 import silentorb.mythic.ent.newIdSource
@@ -89,7 +90,7 @@ fun generateWorld(definitions: Definitions, meshInfo: MeshShapeMap, dice: Dice =
       biomes = biomeInfoMap,
       meshes = compileArchitectureMeshInfo(meshInfo, meshAttributes),
       includeEnemies = getDebugString("NO_ENEMIES") != "1",
-      roomCount = 20
+      roomCount = getDebugInt("BASE_ROOM_COUNT") ?: 20
   )
   val input = WorldInput(
       boundary,

@@ -129,7 +129,6 @@ fun gatherActivatedTriggers(deck: Deck, definitions: Definitions, collisions: Li
   val commandTriggers = gatherCommandTriggers(deck, commands)
 
   return attachmentTriggers
-      .plus(sensorTriggers)
       .plus(buffTriggers)
       .plus(commandTriggers)
 }

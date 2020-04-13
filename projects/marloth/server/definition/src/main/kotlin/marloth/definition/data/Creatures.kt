@@ -4,6 +4,7 @@ import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.Sounds
 import simulation.entities.CharacterDefinition
 import simulation.entities.DepictionType
+import simulation.entities.fieldOfView360
 
 class Creatures {
   val player = CharacterDefinition(
@@ -37,11 +38,12 @@ class Creatures {
 
   val sentinel = CharacterDefinition(
       health = 100,
-      accessories = listOf(),
+      accessories = listOf(AccessoryId.grenadeLauncher.name),
       depictionType = DepictionType.sentinel,
       maxSpeed = 0f,
       deathSound = null,
-      ambientSounds = listOf()
+      ambientSounds = listOf(),
+      fieldOfView = fieldOfView360
   )
 
   val merchant = CharacterDefinition(

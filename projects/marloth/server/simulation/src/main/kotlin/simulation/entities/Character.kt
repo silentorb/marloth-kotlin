@@ -17,6 +17,8 @@ import simulation.misc.getItemInSlot
 import simulation.physics.castInteractableRay
 import simulation.updating.simulationDelta
 
+const val fieldOfView360 = -1f
+
 data class CharacterDefinition(
     val health: Int,
     val maxSpeed: Float,
@@ -24,7 +26,8 @@ data class CharacterDefinition(
     val depictionType: DepictionType,
     val deathSound: Sounds?,
     val ambientSounds: List<SoundType> = listOf(),
-    val damageMultipliers: DamageMultipliers = mapOf()
+    val damageMultipliers: DamageMultipliers = mapOf(),
+    val fieldOfView: Float = 0.5f // Only used for AI. Dot product: 1 is no vision, -1 is 360 degree vision
 )
 
 data class Character(

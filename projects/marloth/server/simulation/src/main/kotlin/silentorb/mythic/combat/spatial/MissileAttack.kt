@@ -1,6 +1,9 @@
 package silentorb.mythic.combat.spatial
 
 import marloth.scenery.enums.MeshId
+import silentorb.mythic.accessorize.AccessoryName
+import silentorb.mythic.combat.general.WeaponDefinition
+import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.DynamicBody
@@ -10,19 +13,9 @@ import simulation.entities.DepictionType
 import simulation.happenings.NewHandEvent
 import simulation.main.Hand
 
-fun missileAttack(world: SpatialCombatWorld, event: AttackEvent): Events {
-  val attacker = event.attacker
-  val accessory = event.accessory
-  val weapon = world.definitions.weapons[accessory]!!
+fun missileAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinition): Events {
   val (origin, vector) = getAttackerOriginAndFacing(world.deck, attacker)
   return listOf(
-      NewMissileEvent(
-          position = origin,
-          orientation = Quaternion(),
-          force = vector * 10f,
-          damages = weapon.damages,
-          attacker = attacker
-      ),
       NewHandEvent(
           hand = Hand(
               body = Body(

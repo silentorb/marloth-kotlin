@@ -11,6 +11,7 @@ import silentorb.mythic.performing.Performance
 import silentorb.mythic.performing.performancesFromEvents
 import silentorb.mythic.timing.FloatTimer
 import simulation.entities.*
+import simulation.happenings.NewHandEvent
 import simulation.main.*
 import simulation.misc.*
 
@@ -43,7 +44,8 @@ fun newEntities(definitions: Definitions, previous: Deck, events: Events, nextId
       newRespawnCountdowns(nextId, previous, next),
       newPerformances(definitions, previous, events, nextId),
       toIdHands(nextId, newAmbientSounds(previous, next)),
-      toIdHands(nextId, handsFromSounds(soundsFromEvents(events)))
+      toIdHands(nextId, handsFromSounds(soundsFromEvents(events))),
+      toIdHands(nextId, events.filterIsInstance<NewHandEvent>().map { it.hand })
   )
       .flatten()
 

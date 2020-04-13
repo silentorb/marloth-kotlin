@@ -7,6 +7,7 @@ import marloth.definition.data.creatures
 import marloth.definition.templates.defaultWares
 import marloth.definition.templates.newMerchant
 import marloth.scenery.enums.ModifierId
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.randomly.Dice
@@ -68,11 +69,18 @@ fun enemyDistributions() = mapOf(
 
 fun scalingDistributions(dice: Dice): DistributionMap = mapOf(
     DistributionGroup.none to 10,
-    DistributionGroup.monster to 20
+    DistributionGroup.monster to if (getDebugBoolean("SINGLE_MONSTER")) 0 else 20
+
 )
 //) + damageCloudsDistributions(dice, 10)
 
-fun fixedDistributions(): DistributionMap = mapOf()
+fun fixedDistributions(): DistributionMap =
+    if (getDebugBoolean("SINGLE_MONSTER"))
+      mapOf(
+          DistributionGroup.monster to 1
+      )
+    else
+      mapOf()
 
 fun supportsPopulation(attributes: Set<CellAttribute>): Boolean =
     attributes.contains(CellAttribute.fullFloor)
