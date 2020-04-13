@@ -100,18 +100,18 @@ fun gatherActivatedTriggers(deck: Deck, definitions: Definitions, collisions: Li
     } else
       null
   }
-  val sensorTriggers = deck.triggers.mapNotNull { trigger ->
-    if (deck.collisionShapes.containsKey(trigger.key)) {
-      val collision = collisions.firstOrNull { it.first == trigger.key }
-      if (collision != null) {
-        Triggering(
-            actor = trigger.key,
-            action = trigger.value.action,
-            target = collision.second
-        )
-      } else null
-    } else null
-  }
+//  val sensorTriggers = deck.triggers.mapNotNull { trigger ->
+//    if (deck.collisionShapes.containsKey(trigger.key)) {
+//      val collision = collisions.firstOrNull { it.first == trigger.key }
+//      if (collision != null) {
+//        Triggering(
+//            actor = trigger.key,
+//            action = trigger.value.action,
+//            target = collision.second
+//        )
+//      } else null
+//    } else null
+//  }
   val buffTriggers = deck.modifiers
       .mapNotNull { (id, buff) ->
         val definition = definitions.modifiers[buff.type]!!

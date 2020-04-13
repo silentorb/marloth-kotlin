@@ -5,6 +5,7 @@ import silentorb.mythic.aura.finishedSounds
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.mapEntryValue
 import silentorb.mythic.ent.pipe
+import silentorb.mythic.happenings.DeleteEntityEvent
 import silentorb.mythic.happenings.Events
 import simulation.entities.cleanupAttachmentSource
 import silentorb.mythic.timing.expiredTimers
@@ -30,7 +31,8 @@ fun getFinished(soundDurations: SoundDurations, events: Events, deck: Deck): Set
 // and for each entity, all records of all types are deleted that have the same key as that entity
 fun removeWhole(soundDurations: SoundDurations, events: Events, deck: Deck): (Deck) -> Deck = { aggregator ->
   val finished = getFinished(soundDurations, events, deck)
-  if (finished.size > 0) {
+      .plus(events.filterIsInstance<DeleteEntityEvent>().map { it.id })
+  if (finished.any()) {
     val k = 0
   }
   removeEntities(finished)(aggregator)

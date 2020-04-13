@@ -12,5 +12,6 @@ data class SpatialCombatDeck(
     val bodies: Table<Body>,
     val characterRigs: Table<CharacterRig>,
     val destructibles: Table<Destructible>,
-    val modifiers: Table<Modifier>
+    val modifiers: Table<Modifier>,
+    val missiles: Table<Missile>
 )

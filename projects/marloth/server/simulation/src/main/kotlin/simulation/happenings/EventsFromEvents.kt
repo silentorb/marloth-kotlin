@@ -1,5 +1,6 @@
 package simulation.happenings
 
+import silentorb.mythic.combat.spatial.onAttack
 import silentorb.mythic.combat.spatial.raycastAttack
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
@@ -20,7 +21,7 @@ inline fun <reified T : GameEvent> mapEvents(crossinline transform: (World) -> (
 fun eventsFromEvents(previous: Deck, world: World, events: Events): Events =
     listOf(
         mapEvents(::eventsFromTryUseAbility),
-        mapEvents(usingSpatialCombatWorld(::raycastAttack))
+        mapEvents(usingSpatialCombatWorld(::onAttack))
     )
         .flatMap { it(world, events) }
         .plus(

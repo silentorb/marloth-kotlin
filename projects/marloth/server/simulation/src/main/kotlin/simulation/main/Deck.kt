@@ -15,6 +15,7 @@ import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.combat.general.Destructible
+import silentorb.mythic.combat.spatial.Missile
 import silentorb.mythic.performing.Action
 import silentorb.mythic.performing.Performance
 import silentorb.mythic.scenery.Light
@@ -44,6 +45,7 @@ data class Deck(
     val dynamicBodies: Table<DynamicBody> = mapOf(),
     val interactables: Table<Interactable> = mapOf(),
     val lights: Table<Light> = mapOf(),
+    val missiles: Table<Missile> = mapOf(),
     val particleEffects: Table<ParticleEffect> = mapOf(),
     val performances: Table<Performance> = mapOf(),
     val players: Table<Player> = mapOf(),

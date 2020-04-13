@@ -14,6 +14,7 @@ import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.combat.general.Destructible
+import silentorb.mythic.combat.spatial.Missile
 import silentorb.mythic.ent.GenericIdHand
 import silentorb.mythic.performing.Action
 import silentorb.mythic.performing.Performance
@@ -44,6 +45,7 @@ data class Hand(
     val door: Door? = null,
     val interactable: Interactable? = null,
     val light: Light? = null,
+    val missile: Missile? = null,
     val particleEffect: ParticleEffect? = null,
     val performance: Performance? = null,
     val player: Player? = null,

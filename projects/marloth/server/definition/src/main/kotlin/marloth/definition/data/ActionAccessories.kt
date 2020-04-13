@@ -5,6 +5,7 @@ import silentorb.mythic.combat.general.DamageDefinition
 import silentorb.mythic.combat.general.WeaponDefinition
 import silentorb.mythic.accessorize.AccessoryDefinition
 import silentorb.mythic.accessorize.AccessoryName
+import silentorb.mythic.combat.general.AttackMethod
 import silentorb.mythic.performing.ActionDefinition
 
 data class ActionAccessory(
@@ -25,6 +26,7 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
             animation = AnimationId.shootPistol.name
         ),
         weapon = WeaponDefinition(
+            attackMethod = AttackMethod.raycast,
             damages = listOf(
                 DamageDefinition(
                     type = DamageTypes.physical.name,

@@ -1,8 +1,10 @@
 package simulation.updating
 
+import silentorb.mythic.combat.spatial.eventsFromMissiles
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.filterCharacterCommandsFromEvents
 import silentorb.mythic.timing.emitCycleEvents
+import simulation.combat.toSpatialCombatWorld
 import simulation.happenings.commandsToEvents
 import simulation.happenings.eventsFromEvents
 import simulation.happenings.gatherActivatedTriggers
@@ -37,6 +39,7 @@ fun generateIntermediateRecords(definitions: Definitions, previous: Deck, world:
       .plus(commandsToEvents(commands))
       .plus(commands)
       .plus(emitCycleEvents(deck.cyclesInt))
+      .plus(eventsFromMissiles(toSpatialCombatWorld(world), collisions))
 
   return events.plus(eventsFromEvents(previous, world, events))
 }

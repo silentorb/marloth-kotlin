@@ -46,7 +46,7 @@ fun getBulletCollisions(bulletState: BulletState, deck: Deck): List<Collision> {
               first = a,
               second = b
           ))
-        else if (deck.triggers.containsKey(b))
+        if (deck.triggers.containsKey(b))
           result.add(Collision(
               first = b,
               second = a
