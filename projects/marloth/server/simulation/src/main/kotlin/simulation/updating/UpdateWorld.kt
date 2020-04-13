@@ -45,11 +45,9 @@ fun updateWorldDeck(definitions: Definitions, events: Events, delta: Float): (Wo
       ))
     }
 
-fun updateWorld(definitions: Definitions, previous: Deck, externalEvents: Events,
-                delta: Float): (World) -> World =
+fun updateWorld(definitions: Definitions, events: Events, delta: Float): (World) -> World =
     pipe2(listOf(
         { world ->
-          val events = generateIntermediateRecords(definitions, previous, world, externalEvents)
           pipe2(listOf(
               updatePhysics(events),
               updateWorldDeck(definitions, events, delta)

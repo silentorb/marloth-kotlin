@@ -5,12 +5,14 @@ import silentorb.mythic.debugging.getDebugFloat
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.GameScene
 import silentorb.mythic.lookinglass.ScreenFilter
+import silentorb.mythic.lookinglass.shading.Shaders
 import silentorb.mythic.scenery.Light
 import silentorb.mythic.scenery.LightType
 import silentorb.mythic.scenery.LightingConfig
 import silentorb.mythic.scenery.Scene
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector4
+import simulation.entities.PlayerOverlayType
 import simulation.main.Deck
 import simulation.misc.Definitions
 import simulation.misc.hasEquipped
@@ -45,6 +47,25 @@ fun defaultLightingConfig() =
         ambient = getDebugFloat("AMBIENT_LIGHT_LEVEL") ?: 0f
     )
 
+fun bloodOverlay(strength: Float): ScreenFilter =
+    { it.screenColor.activate(Vector4(1f, 0f, 0f, strength)) }
+
+fun getPlayerOverlays(deck: Deck, player: Id) =
+    if (!deck.characters[player]!!.isAlive)
+      listOf<ScreenFilter>(
+          { it.screenDesaturation.activate() },
+          bloodOverlay(0.4f)
+      )
+    else
+      deck.playerOverlays
+          .filterValues { it.player == player }
+          .mapNotNull { overlay ->
+            when (overlay.value.type) {
+              PlayerOverlayType.bleeding -> bloodOverlay(0.2f)
+              else -> null
+            }
+          }
+
 fun createScene(definitions: Definitions, deck: Deck): (Id) -> GameScene = { player ->
   val camera = createCamera(deck, player)
   GameScene(
@@ -55,13 +76,7 @@ fun createScene(definitions: Definitions, deck: Deck): (Id) -> GameScene = { pla
       ),
       opaqueElementGroups = gatherVisualElements(definitions, deck, player, deck.players[player]!!),
       transparentElementGroups = gatherParticleElements(deck, camera.position),
-      filters = if (!deck.characters[player]!!.isAlive)
-        listOf<ScreenFilter>(
-            { it.screenDesaturation.activate() },
-            { it.screenColor.activate(Vector4(1f, 0f, 0f, 0.4f)) }
-        )
-      else
-        listOf(),
+      filters = getPlayerOverlays(deck, player),
       background = gatherBackground(deck.cyclesFloat, camera.position)
   )
 }

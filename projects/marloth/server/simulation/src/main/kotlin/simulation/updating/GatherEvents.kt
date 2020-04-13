@@ -22,7 +22,7 @@ import simulation.physics.getBulletCollisions
 fun eventsFromPerformances(definitions: Definitions, deck: Deck): Events =
     silentorb.mythic.performing.eventsFromPerformances(toPerformanceDefinitions(definitions), toPerformanceDeck(deck), simulationDelta)
 
-fun generateIntermediateRecords(definitions: Definitions, previous: Deck, world: World, externalEvents: Events): Events {
+fun getSimulationEvents(definitions: Definitions, previous: Deck, world: World, externalEvents: Events): Events {
   val deck = world.deck
   val spiritCommands = pursueGoals(world, aliveSpirits(world.deck))
   val commands = filterCharacterCommandsFromEvents(externalEvents).plus(spiritCommands)

@@ -16,6 +16,7 @@ import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.combat.general.Destructible
 import silentorb.mythic.combat.spatial.Missile
+import silentorb.mythic.entities.Attributes
 import silentorb.mythic.performing.Action
 import silentorb.mythic.performing.Performance
 import silentorb.mythic.scenery.Light
@@ -32,6 +33,7 @@ data class Deck(
     val ambientSounds: Table<AmbientAudioEmitter> = mapOf(),
     val animations: Table<CharacterAnimation> = mapOf(),
     val attachments: Table<Attachment> = mapOf(),
+    val attributes: Table<Attributes> = mapOf(),
     val bodies: Table<Body> = mapOf(),
     val modifiers: Table<Modifier> = mapOf(),
     val characterRigs: Table<CharacterRig> = mapOf(),
@@ -49,6 +51,7 @@ data class Deck(
     val particleEffects: Table<ParticleEffect> = mapOf(),
     val performances: Table<Performance> = mapOf(),
     val players: Table<Player> = mapOf(),
+    val playerOverlays: Table<PlayerOverlay> = mapOf(),
     val resources: Table<ResourceBundle> = mapOf(),
     val respawnCountdowns: Table<RespawnCountdown> = mapOf(),
     val sounds: Table<Sound> = mapOf(),

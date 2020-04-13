@@ -24,7 +24,7 @@ fun eventsFromMissileCollision(world: SpatialCombatWorld, id: Id, missile: Missi
       .mapNotNull { (target, targetBody) ->
         val destructible = deck.destructibles[target]
         if (destructible != null)
-          newDamageEvents(id, target, missile.damages)
+          newDamageEvents(target, id, missile.damages)
         else
           null
       }

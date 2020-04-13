@@ -29,6 +29,8 @@ import simulation.main.World
 import simulation.updating.simulationDelta
 import simulation.misc.Victory
 import silentorb.mythic.physics.releaseBulletState
+import simulation.updating.getSimulationEvents
+import simulation.updating.updateWorld
 
 fun updateSimulationDatabase(db: Database, next: World, previous: World) {
   val nextGameOver = next.gameOver
@@ -121,8 +123,11 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
   val gameCommands = filterCommands(clientState)(commands)
       .plus(gatherAdditionalGameCommands(previousClient, clientState))
 
-  val allEvents = events.plus(gameCommands)
-  val nextWorld = updateWorldFromClient(app, allEvents, previous.deck)(world)
+  val definitions = app.definitions
+  val clientEvents = events.plus(gameCommands)
+  val simulationEvents = getSimulationEvents(definitions, previous.deck, world, clientEvents)
+  val allEvents = clientEvents + simulationEvents
+  val nextWorld = updateWorld(definitions, allEvents, simulationDelta)(world)
   updateSimulationDatabase(app.db, nextWorld, world)
   return worlds
       .plus(nextWorld)
