@@ -43,9 +43,9 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
             mesh = null
         ),
         action = ActionDefinition(
-            cooldown = 2f,
+            cooldown = 4f,
             range = 10f,
-            animation = null
+            animation = AnimationId.shootPistol.name
         ),
         weapon = WeaponDefinition(
             attackMethod = AttackMethod.missile,

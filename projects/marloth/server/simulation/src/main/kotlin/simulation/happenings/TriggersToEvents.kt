@@ -91,10 +91,11 @@ fun gatherCommandTriggers(deck: Deck, commands: Commands): List<Triggering> {
 fun gatherActivatedTriggers(deck: Deck, definitions: Definitions, collisions: List<Collision>, commands: Commands): List<Triggering> {
   val attachmentTriggers = deck.triggers.mapNotNull { trigger ->
     val attachment = deck.attachments[trigger.key]
-    if (attachment != null) {
+    val action = trigger.value.action
+    if (attachment != null && action != null) {
       Triggering(
           actor = trigger.key,
-          action = trigger.value.action,
+          action = action,
           target = attachment.target
       )
     } else

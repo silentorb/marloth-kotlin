@@ -90,7 +90,7 @@ fun convertComplexDepiction(definitions: Definitions, deck: Deck, id: Id, depict
 
   val transform = Matrix.identity
       .translate(body.position + Vector3(0f, 0f, verticalOffset))
-      .rotate(characterRig.facingQuaternion)
+      .rotateZ(characterRig.facingRotation.z)
       .rotateZ(Pi / 2f)
 
   val animations = deck.animations[id]!!.animations.map {

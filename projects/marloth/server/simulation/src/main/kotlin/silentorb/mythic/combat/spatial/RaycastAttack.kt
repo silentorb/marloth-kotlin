@@ -13,7 +13,7 @@ import silentorb.mythic.physics.castCollisionRay
 
 fun raycastAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinition): Events {
   val (definitions, deck, bulletState) = world
-  val (origin, vector) = getAttackerOriginAndFacing(deck, attacker)
+  val (origin, vector) = getAttackerOriginAndFacing(deck, attacker, 0.3f)
   val end = origin + vector * 30f
   val collision = castCollisionRay(bulletState.dynamicsWorld, origin, end)
   return if (collision != null && deck.destructibles.containsKey(collision.collisionObject)) {

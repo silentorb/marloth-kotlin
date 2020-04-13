@@ -13,7 +13,7 @@ import silentorb.mythic.physics.Body
 import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.characters.defaultCharacterHeight
 
-val firstPersonCameraOffset = Vector3(0f, 0f, defaultCharacterHeight * 0.25f)
+val firstPersonCameraOffset = Vector3(0f, 0f, defaultCharacterHeight * 0.75f)
 val firstPersonDeadCameraOffset = Vector3(0f, 0f, -0.75f)
 
 fun firstPersonCamera(body: Body, character: CharacterRig, isAlive: Boolean): Camera = Camera(

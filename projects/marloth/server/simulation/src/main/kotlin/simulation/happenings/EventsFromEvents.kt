@@ -20,10 +20,9 @@ inline fun <reified T : GameEvent> mapEvents(crossinline transform: (World) -> (
 
 fun eventsFromEvents(previous: Deck, world: World, events: Events): Events =
     listOf(
-        mapEvents(::eventsFromTryUseAbility)
-//        mapEvents(usingSpatialCombatWorld(::onAttack))
+        mapEvents(::eventsFromTryUseAbility),
+        mapEvents(usingSpatialCombatWorld(::onAttack))
     )
-//        .fold(events) { e, b -> e + b(world, e) }
         .flatMap { it(world, events) }
         .plus(
             listOf(

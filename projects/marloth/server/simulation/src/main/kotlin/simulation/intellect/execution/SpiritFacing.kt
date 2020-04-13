@@ -91,7 +91,7 @@ fun spiritNeedsFacing(world: World, character: Id, offset: Vector3, acceptableRa
   val facingCommands = spiritHorizontalFacingChange(world, character, offset)
       .plus(spiritVerticalFacingChange(world, character, offset))
   val horizontalCourse = horizontalFacingDistance(characterRig, offset)
-  val verticalCourse = horizontalFacingDistance(characterRig, offset)
+  val verticalCourse = verticalFacingDistance(characterRig, offset)
   return if (abs(horizontalCourse) <= acceptableRange && abs(verticalCourse) <= acceptableRange)
     facingCommands.plus(action())
   else
