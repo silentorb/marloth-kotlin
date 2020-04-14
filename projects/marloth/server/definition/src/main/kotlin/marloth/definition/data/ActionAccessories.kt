@@ -40,7 +40,7 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
     AccessoryId.grenadeLauncher.name to ActionAccessory(
         accessory = AccessoryDefinition(
             name = Text.id_grenadeLauncher,
-            mesh = null
+            mesh = MeshId.grenadeLauncher.name
         ),
         action = ActionDefinition(
             cooldown = 4f,

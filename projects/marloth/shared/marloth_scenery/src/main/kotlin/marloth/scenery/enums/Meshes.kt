@@ -5,6 +5,7 @@ enum class MeshId {
   billboard,
   cube,
   eyeball,
+  grenadeLauncher,
   hogHead,
   line,
   pants,
