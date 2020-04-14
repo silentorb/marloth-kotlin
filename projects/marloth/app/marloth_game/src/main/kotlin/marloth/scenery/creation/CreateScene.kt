@@ -1,11 +1,11 @@
 package marloth.scenery.creation
 
+import marloth.clienting.rendering.GameScene
 import marloth.scenery.enums.AccessoryId
 import silentorb.mythic.debugging.getDebugFloat
 import silentorb.mythic.ent.Id
-import silentorb.mythic.lookinglass.GameScene
+import silentorb.mythic.lookinglass.SceneLayer
 import silentorb.mythic.lookinglass.ScreenFilter
-import silentorb.mythic.lookinglass.shading.Shaders
 import silentorb.mythic.scenery.Light
 import silentorb.mythic.scenery.LightType
 import silentorb.mythic.scenery.LightingConfig
@@ -74,9 +74,20 @@ fun createScene(definitions: Definitions, deck: Deck): (Id) -> GameScene = { pla
           lights = mapLights(deck, player),
           lightingConfig = defaultLightingConfig()
       ),
-      opaqueElementGroups = gatherVisualElements(definitions, deck, player, deck.players[player]!!),
-      transparentElementGroups = gatherParticleElements(deck, camera.position),
-      filters = getPlayerOverlays(deck, player),
-      background = gatherBackground(deck.cyclesFloat, camera.position)
+      layers = listOf(
+          SceneLayer(
+              elements = gatherBackground(deck.cyclesFloat, camera.position),
+              useDepth = false
+          ),
+          SceneLayer(
+              elements = gatherVisualElements(definitions, deck, player, deck.players[player]!!),
+              useDepth = true
+          ),
+          SceneLayer(
+              elements = gatherParticleElements(deck, camera.position),
+              useDepth = false
+          )
+      ),
+      filters = getPlayerOverlays(deck, player)
   )
 }

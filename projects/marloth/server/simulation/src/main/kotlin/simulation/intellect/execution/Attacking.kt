@@ -35,7 +35,7 @@ fun aimWeapon(world: World, character: Id, baseOffset: Vector3): Vector3 {
   val attackMethod = getWeaponAttackMethod(world, character)
   return if (attackMethod == AttackMethod.missile) {
     val distance = baseOffset.length()
-    baseOffset + Vector3(0f, 0f, 0.3f) * distance
+    baseOffset + Vector3(0f, 0f, 0.1f) * distance
   } else
     baseOffset
 }

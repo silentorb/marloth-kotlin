@@ -72,7 +72,6 @@ fun canSee(realm: Realm, bulletState: BulletState, deck: Deck, viewer: Id): (Id)
       && castCollisionRay(bulletState.dynamicsWorld, viewerBody.position, targetBody.position) != null
       && lightRating(deck, target) + nearMod(distance) >= minimumLightRating
       && !isHiddenByHome(realm.grid, deck, viewer, target)
-
   result
 }
 

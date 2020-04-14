@@ -1,11 +1,11 @@
 package lab.views.game
 
 import lab.FixtureId
+import marloth.clienting.rendering.GameScene
 import silentorb.mythic.glowing.globalState
 import silentorb.mythic.sculpting.ImmutableFace
 import silentorb.mythic.sculpting.getVerticesCenter
 import silentorb.mythic.spatial.*
-import silentorb.mythic.lookinglass.GameScene
 import silentorb.mythic.lookinglass.SceneRenderer
 import silentorb.mythic.scenery.LightingConfig
 import silentorb.mythic.lookinglass.shading.ObjectShaderConfig

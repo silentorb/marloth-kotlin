@@ -18,16 +18,16 @@ import simulation.happenings.Trigger
 import simulation.main.Hand
 
 fun missileAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinition): Events {
-  val (origin, vector) = getAttackerOriginAndFacing(world.deck, attacker, 0.6f)
+  val (origin, vector) = getAttackerOriginAndFacing(world.deck, attacker, 0.8f)
   return listOf(
       NewHandEvent(
           hand = Hand(
               body = Body(
                   position = origin,
-                  velocity = vector * 10f
+                  velocity = vector * weapon.velocity
               ),
               collisionShape = CollisionObject(
-                shape = Sphere(0.3f)
+                shape = Sphere(0.4f)
               ),
               dynamicBody = DynamicBody(
                   gravity = true,

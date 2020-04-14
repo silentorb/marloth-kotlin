@@ -43,13 +43,14 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
             mesh = MeshId.grenadeLauncher.name
         ),
         action = ActionDefinition(
-            cooldown = 4f,
-            range = 10f,
+            cooldown = 3f,
+            range = 20f,
             animation = AnimationId.shootPistol.name
         ),
         weapon = WeaponDefinition(
             attackMethod = AttackMethod.missile,
             damageRadius = 2f,
+            velocity = 20f,
             damageFalloff = 1f,
             damages = listOf(
                 DamageDefinition(
