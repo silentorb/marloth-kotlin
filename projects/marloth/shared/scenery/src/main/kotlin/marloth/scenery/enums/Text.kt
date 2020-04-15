@@ -18,6 +18,7 @@ enum class Text {
   id_resistanceCold,
   id_resistanceFire,
   id_resistancePoison,
+  id_rocketLauncher,
   id_pistol,
   menu_close,
   menu_continueGame,

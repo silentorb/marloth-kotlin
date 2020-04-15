@@ -60,5 +60,30 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
             ),
             sound = Sounds.pistolFire.name
         )
+    ),
+
+    AccessoryId.rocketLauncher.name to ActionAccessory(
+        accessory = AccessoryDefinition(
+            name = Text.id_rocketLauncher,
+            mesh = MeshId.grenadeLauncher.name
+        ),
+        action = ActionDefinition(
+            cooldown = 3f,
+            range = 20f,
+            animation = AnimationId.shootPistol.name
+        ),
+        weapon = WeaponDefinition(
+            attackMethod = AttackMethod.missile,
+            damageRadius = 2f,
+            velocity = 20f,
+            damageFalloff = 1f,
+            damages = listOf(
+                DamageDefinition(
+                    type = DamageTypes.physical.name,
+                    amount = 70
+                )
+            ),
+            sound = Sounds.pistolFire.name
+        )
     )
 )

@@ -11,6 +11,7 @@ import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.scenery.Sphere
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.timing.FloatTimer
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
 import simulation.happenings.NewHandEvent
@@ -30,7 +31,7 @@ fun missileAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinit
                 shape = Sphere(0.4f)
               ),
               dynamicBody = DynamicBody(
-                  gravity = true,
+                  gravity = false,
                   mass = 1f,
                   resistance = 1f
               ),
@@ -43,7 +44,8 @@ fun missileAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinit
                   damageFalloff = weapon.damageFalloff,
                   damages = weapon.damages
               ),
-              trigger = Trigger()
+              trigger = Trigger(),
+              timerFloat = FloatTimer(1.5f)
           )
       )
   )

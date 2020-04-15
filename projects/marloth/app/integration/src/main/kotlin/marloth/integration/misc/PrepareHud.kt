@@ -7,6 +7,7 @@ import simulation.intellect.assessment.lightRating
 import simulation.main.Deck
 import simulation.misc.Definitions
 import simulation.misc.getActiveAction
+import simulation.misc.getPointCell
 import kotlin.math.roundToInt
 
 fun floatToRoundedString(value: Float): String =
@@ -41,6 +42,7 @@ fun gatherHudData(definitions: Definitions, deck: Deck, player: Id, view: ViewId
     } else
       null
 
+//    val cell = getPointCell(body.position)
     HudData(
         health = destructible.health,
         sanity = character.sanity,
@@ -50,6 +52,8 @@ fun gatherHudData(definitions: Definitions, deck: Deck, player: Id, view: ViewId
         debugInfo = listOf(
             "LR: ${floatToRoundedString(lightRating(deck, player))}",
             floatToRoundedString(body.velocity.length())
+//            "${body.position.x} ${body.position.y} ${body.position.z}",
+//            "${cell.x} ${cell.y} ${cell.z}"
 //          if (character.isGrounded) "Grounded" else "Air",
 //          character.groundDistance.toString()
         )

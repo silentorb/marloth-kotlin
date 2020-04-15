@@ -46,7 +46,12 @@ fun eventsFromTryUseAbility(world: World): (TryUseAbilityEvent) -> Events = { ev
   if (action != null && canUse(deck, action)) {
     val accessory = deck.accessories[action]!!
     when (accessory.type) {
-      AccessoryId.pistol.name, AccessoryId.grenadeLauncher.name -> startAttack(event.actor, action, accessory.type)
+
+      AccessoryId.pistol.name,
+      AccessoryId.grenadeLauncher.name,
+      AccessoryId.rocketLauncher.name
+      -> startAttack(event.actor, action, accessory.type)
+
       else -> listOf()
     } + UseAction(
         actor = event.actor,

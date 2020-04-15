@@ -3,6 +3,7 @@ package simulation.misc
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
 import silentorb.mythic.spatial.toVector3
+import java.lang.Math.floor
 
 const val cellLength = 10f
 
@@ -44,7 +45,7 @@ fun cellNeighbors(connections: ConnectionSet, position: Vector3i): List<Vector3i
 
 fun getPointCell(point: Vector3): Vector3i =
     Vector3i(
-        (point.x / cellLength).toInt(),
-        (point.y / cellLength).toInt(),
-        (point.z / cellLength).toInt()
+        floor((point.x / cellLength).toDouble()).toInt(),
+        floor((point.y / cellLength).toDouble()).toInt(),
+        floor((point.z / cellLength).toDouble()).toInt()
     )

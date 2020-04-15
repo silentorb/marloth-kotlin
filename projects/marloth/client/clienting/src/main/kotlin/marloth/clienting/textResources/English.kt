@@ -23,6 +23,7 @@ val englishTextResources: TextResourceMapper = { text ->
     Text.id_resistanceCold -> "Cold Resistance"
     Text.id_resistanceFire -> "Fire Resistance"
     Text.id_resistancePoison -> "Poison Resistance"
+    Text.id_rocketLauncher -> "Rocket Launcher"
     Text.menu_close -> "Close"
     Text.menu_continueGame -> "Continue"
     Text.menu_newGame -> "New Game"

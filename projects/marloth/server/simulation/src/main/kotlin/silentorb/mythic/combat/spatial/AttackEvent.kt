@@ -28,6 +28,7 @@ fun onAttack(world: SpatialCombatWorld): (AttackEvent) -> Events = { event ->
   val attackEvents = when (weapon.attackMethod) {
     AttackMethod.raycast -> raycastAttack(world, attacker, weapon)
     AttackMethod.missile -> missileAttack(world, attacker, weapon)
+    else -> throw Error("Not implemented")
   }
   if (weapon.sound != null)
     attackEvents
@@ -60,11 +61,12 @@ fun startAttack(attacker: Id, action: Id, accessory: AccessoryName): Events {
 fun getAttackerOriginAndFacing(deck: SpatialCombatDeck, attacker: Id, forwardOffset: Float): Pair<Vector3, Vector3> {
   val body = deck.bodies[attacker]!!
   val characterRig = deck.characterRigs[attacker]!!
-  val facingRotation = characterRig.facingRotation
-  val vector = getFacingVector(Quaternion()
-      .rotateZ(facingRotation.z)
-      .rotateY(-facingRotation.y - 0.15f)
-  )
+//  val facingRotation = characterRig.facingRotation
+//  val vector = getFacingVector(Quaternion()
+//      .rotateZ(facingRotation.z)
+//      .rotateY(-facingRotation.y - 0.15f)
+//  )
+  val vector = characterRig.facingVector
   val origin = body.position + Vector3(0f, 0f, defaultCharacterHeight * 0.5f) + characterRig.facingVector * forwardOffset
   return Pair(origin, vector)
 }
