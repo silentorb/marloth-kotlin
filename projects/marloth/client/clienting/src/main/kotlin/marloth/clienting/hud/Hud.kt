@@ -90,6 +90,7 @@ fun hudLayout(textResources: TextResources, data: HudData): Flower {
   return compose(listOfNotNull(
       playerStats(data),
       if (data.interactable != null) interactionDialog(textResources, data.interactable) else null,
-      if (data.cooldown != null) cooldownIndicatorPlacement(data.cooldown) else null
+      if (data.cooldown != null) cooldownIndicatorPlacement(data.cooldown) else null,
+      reticlePlacement()
   ))
 }
