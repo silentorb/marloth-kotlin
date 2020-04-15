@@ -16,7 +16,8 @@ const val attackMarker = "attack"
 
 data class AttackEvent(
     val attacker: Id,
-    val accessory: AccessoryName
+    val accessory: AccessoryName,
+    val target: Vector3? = null
 ) : GameEvent
 
 fun onAttack(world: SpatialCombatWorld): (AttackEvent) -> Events = { event ->
@@ -24,10 +25,10 @@ fun onAttack(world: SpatialCombatWorld): (AttackEvent) -> Events = { event ->
   val attacker = event.attacker
   val accessory = event.accessory
   val weapon = definitions.weapons[accessory]!!
-  val (origin, _) = getAttackerOriginAndFacing(world.deck, attacker, 0.5f)
+  val (origin, _) = getAttackerOriginAndFacing(world.deck, attacker, event.target, 0.5f)
   val attackEvents = when (weapon.attackMethod) {
-    AttackMethod.raycast -> raycastAttack(world, attacker, weapon)
-    AttackMethod.missile -> missileAttack(world, attacker, weapon)
+    AttackMethod.raycast -> raycastAttack(world, attacker, weapon, event.target)
+    AttackMethod.missile -> missileAttack(world, attacker, weapon, event.target)
     else -> throw Error("Not implemented")
   }
   if (weapon.sound != null)
@@ -43,7 +44,7 @@ fun onAttack(world: SpatialCombatWorld): (AttackEvent) -> Events = { event ->
     attackEvents
 }
 
-fun startAttack(attacker: Id, action: Id, accessory: AccessoryName): Events {
+fun startAttack(attacker: Id, action: Id, accessory: AccessoryName, target: Vector3?): Events {
   return listOf(
       UseAction(
           actor = attacker,
@@ -51,14 +52,15 @@ fun startAttack(attacker: Id, action: Id, accessory: AccessoryName): Events {
           deferredEvents = mapOf(
               attackMarker to AttackEvent(
                   attacker = attacker,
-                  accessory = accessory
+                  accessory = accessory,
+                  target = target
               )
           )
       )
   )
 }
 
-fun getAttackerOriginAndFacing(deck: SpatialCombatDeck, attacker: Id, forwardOffset: Float): Pair<Vector3, Vector3> {
+fun getAttackerOriginAndFacing(deck: SpatialCombatDeck, attacker: Id, target: Vector3?, forwardOffset: Float): Pair<Vector3, Vector3> {
   val body = deck.bodies[attacker]!!
   val characterRig = deck.characterRigs[attacker]!!
 //  val facingRotation = characterRig.facingRotation
@@ -66,7 +68,12 @@ fun getAttackerOriginAndFacing(deck: SpatialCombatDeck, attacker: Id, forwardOff
 //      .rotateZ(facingRotation.z)
 //      .rotateY(-facingRotation.y - 0.15f)
 //  )
-  val vector = characterRig.facingVector
-  val origin = body.position + Vector3(0f, 0f, defaultCharacterHeight * 0.5f) + characterRig.facingVector * forwardOffset
+  val baseOrigin = body.position + Vector3(0f, 0f, defaultCharacterHeight * 0.5f)
+  val vector = if (target == null)
+    characterRig.facingVector
+  else
+    (target - baseOrigin).normalize()
+
+  val origin = baseOrigin + vector * forwardOffset
   return Pair(origin, vector)
 }

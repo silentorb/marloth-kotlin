@@ -1,17 +1,16 @@
 package simulation.misc
 
-import silentorb.mythic.ent.Id
-import silentorb.mythic.ent.Table
 import marloth.scenery.enums.AccessoryId
 import silentorb.mythic.accessorize.AccessoryName
-import silentorb.mythic.combat.spatial.onAttack
 import silentorb.mythic.combat.spatial.startAttack
+import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.Table
 import silentorb.mythic.happenings.Events
-import simulation.happenings.TryUseAbilityEvent
 import silentorb.mythic.happenings.UseAction
 import silentorb.mythic.performing.Action
 import silentorb.mythic.performing.updateCooldown
-import simulation.combat.toSpatialCombatWorld
+import silentorb.mythic.spatial.Vector3
+import simulation.happenings.TryUseAbilityEvent
 import simulation.main.Deck
 import simulation.main.World
 import simulation.updating.simulationDelta
@@ -40,6 +39,11 @@ fun updateActions(definitions: Definitions, deck: Deck, events: Events): Table<A
   }
 }
 
+fun getActionTarget(deck: Deck, character: Id): Vector3? {
+  val spirit = deck.spirits[character]
+  return spirit?.pursuit?.targetPosition
+}
+
 fun eventsFromTryUseAbility(world: World): (TryUseAbilityEvent) -> Events = { event ->
   val deck = world.deck
   val action = getActiveAction(deck, event.actor)
@@ -50,7 +54,7 @@ fun eventsFromTryUseAbility(world: World): (TryUseAbilityEvent) -> Events = { ev
       AccessoryId.pistol.name,
       AccessoryId.grenadeLauncher.name,
       AccessoryId.rocketLauncher.name
-      -> startAttack(event.actor, action, accessory.type)
+      -> startAttack(event.actor, action, accessory.type, getActionTarget(deck, event.actor))
 
       else -> listOf()
     } + UseAction(
