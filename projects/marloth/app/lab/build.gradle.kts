@@ -11,4 +11,4 @@ dependencies {
   implementation("silentorb.mythic:desktop")
 }
 
-requires(project, "generation_architecture", "marloth_clienting", "marloth_game", "simulation")
+requires(project, "generation_architecture", "clienting", "integration", "simulation")

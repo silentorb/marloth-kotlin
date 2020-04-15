@@ -1,6 +1,6 @@
 package lab
 
-import marloth.game.integration.AppState
+import marloth.integration.misc.AppState
 
 enum class FixtureId {
   merchant,

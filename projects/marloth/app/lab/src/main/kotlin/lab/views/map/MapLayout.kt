@@ -1,12 +1,10 @@
 package lab.views.map
 
 import marloth.clienting.Client
-import marloth.clienting.gui.textStyles
+import marloth.clienting.menus.textStyles
 import silentorb.mythic.bloom.*
-import silentorb.mythic.bloom.next.*
 
 import silentorb.mythic.ent.Id
-import silentorb.mythic.bloom.*
 import silentorb.mythic.bloom.next.Flower
 import silentorb.mythic.bloom.next.emptyFlower
 import silentorb.mythic.bloom.next.plusLogic

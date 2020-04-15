@@ -6,7 +6,6 @@ import silentorb.mythic.configuration.saveYamlFile
 import generation.architecture.misc.GenerationConfig
 import generation.architecture.misc.MeshShapeMap
 import generation.architecture.misc.compileArchitectureMeshInfo
-import lab.utility.shouldReloadWorld
 import lab.utility.updateWatching
 import lab.views.model.newModelViewState
 import marloth.clienting.newClientState
@@ -15,9 +14,9 @@ import generation.architecture.definition.meshAttributes
 import lab.views.game.*
 import marloth.clienting.definitionsFromClient
 import marloth.definition.staticDefinitions
-import marloth.game.front.GameApp
-import marloth.game.front.RenderHook
-import marloth.game.integration.*
+import marloth.integration.front.GameApp
+import marloth.integration.front.RenderHook
+import marloth.integration.misc.*
 import silentorb.mythic.desktop.createDesktopPlatform
 import silentorb.mythic.ent.pipe
 import silentorb.mythic.quartz.newTimestepState
@@ -124,10 +123,11 @@ tailrec fun labLoop(app: LabApp, state: LabState) {
 
     newState.app.copy(
         timestep = timestep,
-        worlds = if (shouldReloadWorld) {
-          shouldReloadWorld = false
-          restartWorld(gameApp, world)
-        } else
+        worlds =
+//        if (shouldReloadWorld) {
+//          shouldReloadWorld = false
+//          restartWorld(gameApp, world)
+//        } else
           state.app.worlds
     )
   }

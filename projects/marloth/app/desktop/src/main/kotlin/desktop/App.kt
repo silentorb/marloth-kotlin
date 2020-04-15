@@ -1,7 +1,7 @@
 package desktop
 
-import marloth.game.integration.loadGameConfig
-import marloth.game.front.runApp
+import marloth.integration.misc.loadGameConfig
+import marloth.integration.front.runApp
 import silentorb.mythic.desktop.createDesktopPlatform
 
 object App {

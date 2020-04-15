@@ -3,7 +3,7 @@ package lab.profiling
 import silentorb.mythic.configuration.loadYamlFile
 import lab.LabConfig
 import lab.labConfigPath
-import marloth.game.integration.loadGameConfig
+import marloth.integration.misc.loadGameConfig
 import silentorb.mythic.desktop.createDesktopPlatform
 
 object WorldGenProfiler {

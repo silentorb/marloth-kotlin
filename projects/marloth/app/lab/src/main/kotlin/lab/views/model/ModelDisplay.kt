@@ -12,7 +12,7 @@ import silentorb.mythic.glowing.globalState
 import silentorb.mythic.spatial.*
 import silentorb.mythic.lookinglass.shading.populateBoneBuffer
 import marloth.scenery.enums.AnimationId
-import marloth.game.scenery.creation.defaultLightingConfig
+import marloth.integration.scenery.defaultLightingConfig
 import silentorb.mythic.spatial.times
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.scenery.Camera

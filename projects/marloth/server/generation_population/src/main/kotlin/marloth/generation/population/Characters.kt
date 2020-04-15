@@ -55,15 +55,15 @@ fun newPlayer(nextId: IdSource, definitions: Definitions, grid: MapGrid, cellPos
               )
           )
       )
-      .plus(
-          IdHand(
-              id = nextId(),
-              hand = Hand(
-                  accessory = Accessory(
-                      type = AccessoryId.candle.name,
-                      target = character
-                  )
-              )
-          )
-      )
+//      .plus(
+//          IdHand(
+//              id = nextId(),
+//              hand = Hand(
+//                  accessory = Accessory(
+//                      type = AccessoryId.candle.name,
+//                      target = character
+//                  )
+//              )
+//          )
+//      )
 }

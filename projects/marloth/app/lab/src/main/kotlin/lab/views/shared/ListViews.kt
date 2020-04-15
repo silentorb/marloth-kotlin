@@ -1,6 +1,6 @@
 package lab.views.shared
 
-import marloth.clienting.gui.textStyles
+import marloth.clienting.menus.textStyles
 import silentorb.mythic.bloom.*
 
 import silentorb.mythic.drawing.Canvas
@@ -13,7 +13,6 @@ import silentorb.mythic.typography.TextConfiguration
 import silentorb.mythic.typography.calculateTextDimensions
 import silentorb.mythic.typography.resolveTextStyle
 import silentorb.mythic.spatial.Vector2i
-import silentorb.mythic.bloom.*
 
 
 fun drawListItem(text: String, isSelected: Boolean): Depiction = { bounds: Bounds, canvas: Canvas ->

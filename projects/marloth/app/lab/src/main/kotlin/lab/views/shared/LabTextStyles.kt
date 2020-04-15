@@ -1,6 +1,6 @@
 package lab.views.shared
 
-import marloth.clienting.gui.smallFontSize
+import marloth.clienting.menus.smallFontSize
 import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.typography.IndexedTextStyle
 

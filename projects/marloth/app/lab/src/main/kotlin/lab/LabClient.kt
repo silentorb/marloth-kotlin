@@ -12,7 +12,7 @@ import lab.views.model.ModelView
 import lab.views.model.ModelViewState
 import marloth.clienting.Client
 import marloth.clienting.clientBloomModules
-import marloth.game.integration.AppState
+import marloth.integration.misc.AppState
 import silentorb.mythic.bloom.globalMenuModule
 import silentorb.mythic.bloom.next.Box
 import silentorb.mythic.bloom.next.Seed
@@ -180,7 +180,7 @@ class LabClient(val config: LabConfig, val client: Client) {
   }
 
   fun renderLab(windowInfo: WindowInfo, box: Box) {
-    val canvas = createCanvas(client.renderer, windowInfo.dimensions)
+    val canvas = createCanvas(client.renderer, mapOf(), windowInfo.dimensions)
     renderLayout(box, canvas, true)
   }
 

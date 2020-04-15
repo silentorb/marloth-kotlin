@@ -2,7 +2,7 @@ package lab.views.model
 
 import lab.utility.panelColor
 import lab.utility.sceneBackgroundColor
-import marloth.clienting.gui.textStyles
+import marloth.clienting.menus.textStyles
 import silentorb.mythic.bloom.Bounds
 import silentorb.mythic.bloom.Depiction
 import silentorb.mythic.drawing.Canvas

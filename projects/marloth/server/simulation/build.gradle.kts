@@ -2,7 +2,7 @@ plugins {
   kotlin("jvm")
 }
 
-requires(project, "marloth_scenery")
+requires(project, "scenery")
 
 dependencies {
   implementation("org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin}")

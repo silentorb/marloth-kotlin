@@ -2,7 +2,7 @@ package lab.views.game
 
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw
 import com.badlogic.gdx.utils.Disposable
-import marloth.game.front.RenderHook
+import marloth.integration.front.RenderHook
 import silentorb.mythic.glowing.globalState
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector4

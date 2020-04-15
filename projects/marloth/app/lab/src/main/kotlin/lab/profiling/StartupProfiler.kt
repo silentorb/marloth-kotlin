@@ -2,8 +2,8 @@ package lab.profiling
 
 import silentorb.mythic.configuration.ConfigManager
 import lab.*
-import marloth.game.front.newGameApp
-import marloth.game.integration.loadGameConfig
+import marloth.integration.front.newGameApp
+import marloth.integration.misc.loadGameConfig
 import silentorb.mythic.desktop.createDesktopPlatform
 
 object StartupProfiler {
