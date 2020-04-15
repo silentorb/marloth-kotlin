@@ -1,8 +1,11 @@
-package simulation.entities
+package simulation.combat
 
+import marloth.scenery.enums.ParticleEffectType
 import silentorb.mythic.combat.general.DamageEvent
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
+import silentorb.mythic.particles.ParticleEffect
+import silentorb.mythic.physics.Body
 import silentorb.mythic.timing.FloatTimer
 import simulation.main.Deck
 import simulation.main.Hand
@@ -17,13 +20,15 @@ data class PlayerOverlay(
     val type: PlayerOverlayType
 )
 
-fun newPlayerOverlays(deck: Deck, events: Events): List<Hand> {
-  return events
+fun newDamageVisualEffects(deck: Deck, events: Events): List<Hand> {
+  val damageGroups = events
       .asSequence()
       .filterIsInstance<DamageEvent>()
-      .filter { deck.players.containsKey(it.target) }
-      .filter { deck.playerOverlays[it.target]?.type != PlayerOverlayType.bleeding }
       .groupBy { it.target }
+
+  val bloodOverlays = damageGroups
+      .filter { deck.players.containsKey(it.key) }
+      .filter { deck.playerOverlays[it.key]?.type != PlayerOverlayType.bleeding }
       .mapNotNull { (target, damageEvents) ->
         val maxHealth = deck.destructibles[target]!!.base.health
         val degree = damageEvents.sumBy { it.damage.amount }.toFloat() / maxHealth.toFloat()
@@ -40,4 +45,18 @@ fun newPlayerOverlays(deck: Deck, events: Events): List<Hand> {
               )
           )
       }
+
+  val bloodParticleEffects = damageGroups
+      .mapNotNull { (target, damageEvents) ->
+        Hand(
+            body = Body(
+                position = damageEvents.firstOrNull { it.position != null }?.position ?: deck.bodies[target]!!.position
+            ),
+            particleEffect = ParticleEffect(
+                type = ParticleEffectType.blood.name
+            ),
+            timerFloat = FloatTimer(0.4f)
+        )
+      }
+  return bloodOverlays + bloodParticleEffects
 }

@@ -6,6 +6,8 @@ import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.scenery.TextureName
 
+typealias VelocityMod = (Vector3) -> Vector3
+
 data class ParticleAppearance(
     val texture: TextureName,
     val color: Vector4,
@@ -33,7 +35,7 @@ fun newParticle(appearance: ParticleAppearance, position: Vector3, velocity: Vec
         velocity = velocity
     )
 
-fun updateParticle(animation: ParticleAnimation, delta: Float): (Particle) -> Particle = { particle ->
+fun updateParticle(animation: ParticleAnimation, velocityMod: VelocityMod, delta: Float): (Particle) -> Particle = { particle ->
   val life = particle.life + delta
   val progress = life / particle.maxLife
   val color = if (animation.color == null)
@@ -43,6 +45,7 @@ fun updateParticle(animation: ParticleAnimation, delta: Float): (Particle) -> Pa
 
   particle.copy(
       life = life,
+//      velocity = velocityMod(particle.velocity),
       position = particle.position + particle.velocity * delta,
       animationStep = (particle.animationStep + delta * 0.3f) % 1f,
       color = color

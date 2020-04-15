@@ -3,11 +3,13 @@ package silentorb.mythic.combat.spatial
 import silentorb.mythic.accessorize.AccessoryName
 import silentorb.mythic.audio.NewSound
 import silentorb.mythic.characters.defaultCharacterHeight
+import silentorb.mythic.characters.getFacingVector
 import silentorb.mythic.combat.general.AttackMethod
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.happenings.UseAction
+import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
 
 const val attackMarker = "attack"
@@ -58,7 +60,11 @@ fun startAttack(attacker: Id, action: Id, accessory: AccessoryName): Events {
 fun getAttackerOriginAndFacing(deck: SpatialCombatDeck, attacker: Id, forwardOffset: Float): Pair<Vector3, Vector3> {
   val body = deck.bodies[attacker]!!
   val characterRig = deck.characterRigs[attacker]!!
-  val vector = characterRig.facingVector
-  val origin = body.position + Vector3(0f, 0f, defaultCharacterHeight * 0.75f) + vector * forwardOffset
+  val facingRotation = characterRig.facingRotation
+  val vector = getFacingVector(Quaternion()
+      .rotateZ(facingRotation.z)
+      .rotateY(-facingRotation.y - 0.15f)
+  )
+  val origin = body.position + Vector3(0f, 0f, defaultCharacterHeight * 0.5f) + characterRig.facingVector * forwardOffset
   return Pair(origin, vector)
 }

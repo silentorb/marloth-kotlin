@@ -7,7 +7,6 @@ import silentorb.mythic.happenings.CommonCharacterCommands
 val gameGamepadStrokeBindings = mapOf(
     GAMEPAD_BUTTON_START to GuiCommandType.menu,
 
-    GAMEPAD_BUTTON_A to CommonCharacterCommands.ability,
     GAMEPAD_BUTTON_DPAD_UP to CommonCharacterCommands.equipSlot0,
     GAMEPAD_BUTTON_DPAD_LEFT to CommonCharacterCommands.equipSlot1,
     GAMEPAD_BUTTON_DPAD_RIGHT to CommonCharacterCommands.equipSlot2,
@@ -23,6 +22,7 @@ val gameGamepadStrokeBindings = mapOf(
     GAMEPAD_AXIS_RIGHT_LEFT to CommonCharacterCommands.lookLeft,
     GAMEPAD_AXIS_RIGHT_RIGHT to CommonCharacterCommands.lookRight,
 
+    GAMEPAD_BUTTON_X to CommonCharacterCommands.ability,
     GAMEPAD_BUTTON_A to CommonCharacterCommands.interactPrimary
 )
 

@@ -3,6 +3,7 @@ package marloth.integration
 import marloth.clienting.Client
 import marloth.clienting.rendering.createSceneRenderer
 import marloth.clienting.rendering.prepareRender
+import marloth.debug.labRender
 import marloth.front.RenderHook
 import marloth.scenery.creation.createScene
 import silentorb.mythic.bloom.next.Box
@@ -36,9 +37,10 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
 //        renderElements(sceneRenderer.renderer, sceneRenderer.camera, scene.opaqueElementGroups, scene.transparentElementGroups)
         renderSceneLayers(renderer, sceneRenderer.camera, scene.layers)
 
-        if (onRender != null) {
-          onRender(sceneRenderer, scene.main)
-        }
+//        if (onRender != null) {
+          labRender(appState)(sceneRenderer, scene.main)
+//          onRender(sceneRenderer, scene.main)
+//        }
         val canvas = createCanvas(client.renderer, Vector2i(screenViewport.z, screenViewport.w))
         renderLayout(box, canvas)
         finishRender(sceneRenderer, filters)

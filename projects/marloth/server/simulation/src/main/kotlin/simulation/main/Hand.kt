@@ -20,6 +20,7 @@ import silentorb.mythic.timing.FloatCycle
 import silentorb.mythic.timing.FloatTimer
 import silentorb.mythic.timing.IntCycle
 import silentorb.mythic.timing.IntTimer
+import simulation.combat.PlayerOverlay
 import simulation.entities.*
 import simulation.happenings.Trigger
 import simulation.intellect.Spirit

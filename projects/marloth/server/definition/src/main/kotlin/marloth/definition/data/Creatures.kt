@@ -9,7 +9,7 @@ import simulation.entities.fieldOfView360
 class Creatures {
   val player = CharacterDefinition(
       health = 200,
-      accessories = listOf(),
+      accessories = listOf(AccessoryId.grenadeLauncher.name),
       depictionType = DepictionType.child,
       maxSpeed = 4f,
       deathSound = Sounds.girlScream,

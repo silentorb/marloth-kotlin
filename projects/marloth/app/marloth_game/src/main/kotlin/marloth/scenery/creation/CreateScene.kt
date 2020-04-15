@@ -4,17 +4,19 @@ import marloth.clienting.rendering.GameScene
 import marloth.scenery.enums.AccessoryId
 import silentorb.mythic.debugging.getDebugFloat
 import silentorb.mythic.ent.Id
+import silentorb.mythic.lookinglass.ElementGroup
+import silentorb.mythic.lookinglass.MeshElement
 import silentorb.mythic.lookinglass.SceneLayer
 import silentorb.mythic.lookinglass.ScreenFilter
-import silentorb.mythic.scenery.Light
-import silentorb.mythic.scenery.LightType
-import silentorb.mythic.scenery.LightingConfig
-import silentorb.mythic.scenery.Scene
+import silentorb.mythic.scenery.*
+import silentorb.mythic.spatial.Matrix
+import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector4
-import simulation.entities.PlayerOverlayType
+import simulation.combat.PlayerOverlayType
 import simulation.main.Deck
 import simulation.misc.Definitions
+import simulation.misc.getActiveAction
 import simulation.misc.hasEquipped
 
 fun mapLights(deck: Deck, player: Id) =
@@ -66,6 +68,41 @@ fun getPlayerOverlays(deck: Deck, player: Id) =
             }
           }
 
+fun getPlayerItemLayer(definitions: Definitions, deck: Deck, player: Id, camera: Camera): SceneLayer? {
+  val equipped = getActiveAction(deck, player)
+  return if (equipped == null)
+    null
+  else {
+    val accessory = deck.accessories[equipped]!!
+    val accessoryDefinition = definitions.accessories[accessory.type]!!
+    val mesh = accessoryDefinition.mesh
+    if (mesh == null)
+      null
+    else {
+      val transform = Matrix.identity
+          .translate(camera.position + camera.orientation.transform(Vector3(0.8f, -0.25f, -0.5f)))
+          .rotate(camera.orientation)
+          .rotateZ(Pi / 2f)
+
+      SceneLayer(
+          elements = listOf(
+              ElementGroup(
+                  meshes = listOf(
+                      MeshElement(
+                          id = 1L,
+                          mesh = mesh,
+                          transform = transform
+                      )
+                  )
+              )
+          ),
+          useDepth = true,
+          resetDepth = true
+      )
+    }
+  }
+}
+
 fun createScene(definitions: Definitions, deck: Deck): (Id) -> GameScene = { player ->
   val camera = createCamera(deck, player)
   GameScene(
@@ -87,7 +124,7 @@ fun createScene(definitions: Definitions, deck: Deck): (Id) -> GameScene = { pla
               elements = gatherParticleElements(deck, camera.position),
               useDepth = false
           )
-      ),
+      ) + listOfNotNull(getPlayerItemLayer(definitions, deck, player, camera)),
       filters = getPlayerOverlays(deck, player)
   )
 }

@@ -8,6 +8,7 @@ import silentorb.mythic.happenings.DeleteEntityEvent
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.physics.Collision
+import silentorb.mythic.spatial.getCenter
 
 data class Missile(
     val damageRadius: Float, // 0f for no AOE
@@ -24,7 +25,7 @@ fun eventsFromMissileCollision(world: SpatialCombatWorld, id: Id, missile: Missi
       .mapNotNull { (target, targetBody) ->
         val destructible = deck.destructibles[target]
         if (destructible != null)
-          newDamageEvents(target, id, missile.damages)
+          newDamageEvents(target, id, missile.damages, position = getCenter(origin, targetBody.position))
         else
           null
       }

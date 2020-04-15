@@ -8,6 +8,7 @@ import silentorb.mythic.aura.SoundType
 import silentorb.mythic.breeze.AnimationInfoMap
 import silentorb.mythic.combat.general.DamageType
 import silentorb.mythic.combat.general.WeaponDefinition
+import silentorb.mythic.particles.ParticleEffectDefinitions
 import silentorb.mythic.scenery.Light
 import silentorb.mythic.scenery.MeshName
 import silentorb.mythic.performing.ActionDefinition
@@ -20,8 +21,9 @@ data class Definitions(
     val actions: Map<AccessoryName, ActionDefinition>,
     val animations: AnimationInfoMap,
     val damageTypes: Set<DamageType>,
-    val modifiers: Map<ModifierId, ModifierDefinition>,
     val lightAttachments: LightAttachmentMap,
+    val modifiers: Map<ModifierId, ModifierDefinition>,
+    val particleEffects: ParticleEffectDefinitions,
     val soundDurations: Map<SoundType, Float>,
     val weapons: Map<AccessoryName, WeaponDefinition>
 )

@@ -1,7 +1,6 @@
 package simulation.updating
 
 import silentorb.mythic.audio.soundsFromEvents
-import silentorb.mythic.aura.Sound
 import silentorb.mythic.breeze.AnimationInfoMap
 import simulation.entities.applyBuffsFromEvents
 import silentorb.mythic.ent.IdSource
@@ -10,6 +9,7 @@ import silentorb.mythic.happenings.Events
 import silentorb.mythic.performing.Performance
 import silentorb.mythic.performing.performancesFromEvents
 import silentorb.mythic.timing.FloatTimer
+import simulation.combat.newDamageVisualEffects
 import simulation.entities.*
 import simulation.happenings.NewHandEvent
 import simulation.main.*
@@ -47,7 +47,7 @@ fun newEntities(definitions: Definitions, previous: Deck, events: Events, nextId
           newAmbientSounds(previous, next),
           handsFromSounds(soundsFromEvents(events)),
           events.filterIsInstance<NewHandEvent>().map { it.hand },
-          newPlayerOverlays(next, events)
+          newDamageVisualEffects(next, events)
       )
           .flatMap { toIdHands(nextId, it) }
   )

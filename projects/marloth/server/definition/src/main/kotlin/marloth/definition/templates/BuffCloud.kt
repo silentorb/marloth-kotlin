@@ -3,18 +3,13 @@ package marloth.definition.templates
 import marloth.scenery.enums.ModifierId
 import marloth.scenery.enums.TextureId
 import simulation.happenings.Trigger
-import silentorb.mythic.breeze.AnimationChannel
-import silentorb.mythic.breeze.Keyframe
-import silentorb.mythic.breeze.interpolateVector3
 import silentorb.mythic.spatial.Vector3
-import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.scenery.Cylinder
 import simulation.main.Hand
 import simulation.happenings.ApplyBuff
 import silentorb.mythic.particles.Emitter
-import silentorb.mythic.particles.ParticleAnimation
 import silentorb.mythic.particles.ParticleAppearance
 import silentorb.mythic.particles.ParticleEffect
 import silentorb.mythic.spatial.newVector4
@@ -25,64 +20,38 @@ private val cloudColors: Map<ModifierId, Pair<Vector3, Vector3>> = mapOf(
     ModifierId.damagePoisoned to Pair(Vector3(0.4f, 1f, 0.5f), Vector3(0.8f, 0.9f, 0.5f))
 )
 
-private fun newDamageCloudParticleAnimation(firstColor: Vector3, secondColor: Vector3): ParticleAnimation {
-  val maxOpacity = 0.33f
-  return ParticleAnimation(
-      color = AnimationChannel(
-          target = "color",
-          keys = listOf(
-              Keyframe(
-                  time = 0f,
-                  value = newVector4(firstColor, 0f)
-              ),
-              Keyframe(
-                  time = 0.2f,
-                  value = newVector4(interpolateVector3(firstColor, secondColor, 0.2f), maxOpacity)
-              ),
-              Keyframe(
-                  time = 0.8f,
-                  value = newVector4(interpolateVector3(firstColor, secondColor, 0.8f), maxOpacity)
-              ),
-              Keyframe(
-                  time = 1f,
-                  value = newVector4(secondColor, 0f)
-              )
-          )
-      )
-  )
-}
-
 fun newBuffCloud(position: Vector3, radius: Float, buff: ModifierId): Hand {
-  val colors = cloudColors[buff]!!
-  val shape = Cylinder(radius = radius, height = 10f)
-  return Hand(
-      body = Body(
-          position = position
-      ),
-      collisionShape = CollisionObject(
-          shape = shape,
-          isSolid = false
-      ),
-      particleEffect = ParticleEffect(
-          initialAppearance = ParticleAppearance(
-              texture = TextureId.perlinParticle.name,
-              color = newVector4(colors.first, 0f),
-              size = 2f
-          ),
-          animation = newDamageCloudParticleAnimation(colors.first, colors.second),
-          emitter = Emitter(
-              particlesPerSecond = 30f,
-              volume = shape,
-              life = Pair(3f, 5f),
-              initialVelocity = Vector3(0f, 0f, 0.7f)
-          )
-      ),
-      trigger = Trigger(
-          action = ApplyBuff(
-              buffType = buff,
-              strength = 10,
-              duration = 4
-          )
-      )
-  )
+  throw Error("No longer implemented")
+//  val colors = cloudColors[buff]!!
+//  val shape = Cylinder(radius = radius, height = 10f)
+//  return Hand(
+//      body = Body(
+//          position = position
+//      ),
+//      collisionShape = CollisionObject(
+//          shape = shape,
+//          isSolid = false
+//      ),
+//      particleEffect = ParticleEffect(
+//          initialAppearance = ParticleAppearance(
+//              texture = TextureId.perlinParticle.name,
+//              color = newVector4(colors.first, 0f),
+//              size = 2f
+//          ),
+//          animation = newColorTransitionParticleAnimation(colors.first, colors.second, 0.33f),
+//          emitter = Emitter(
+//              particlesPerSecond = 30f,
+//              volume = shape,
+//              life = Pair(3f, 5f),
+//              initialVelocity = Vector3(0f, 0f, 0.7f)
+//          )
+//      ),
+//      trigger = Trigger(
+//          action = ApplyBuff(
+//              buffType = buff,
+//              strength = 10,
+//              duration = 4
+//          )
+//      )
+//  )
 }

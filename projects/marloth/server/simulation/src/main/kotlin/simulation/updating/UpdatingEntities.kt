@@ -10,12 +10,12 @@ import simulation.intellect.updateAiState
 import simulation.main.Deck
 import simulation.main.World
 import simulation.misc.Definitions
-import silentorb.mythic.particles.updateParticleEffect
 import silentorb.mythic.timing.updateFloatCycle
 import silentorb.mythic.timing.updateFloatTimer
 import silentorb.mythic.timing.updateIntCycle
 import silentorb.mythic.timing.updateIntTimers
 import simulation.misc.updateActions
+import simulation.particles.updateParticleEffect
 import simulation.physics.updateMarlothCharacterRig
 
 fun updateEntities(definitions: Definitions, world: World, events: Events): (Deck) -> Deck =
@@ -32,7 +32,7 @@ fun updateEntities(definitions: Definitions, world: World, events: Events): (Dec
           cyclesInt = mapTableValues(deck.cyclesInt, updateIntCycle),
           destructibles = mapTable(deck.destructibles, updateDestructibleHealth(events)),
           characters = mapTable(deck.characters, updateCharacter(deck, world.bulletState, events)),
-          particleEffects = mapTableValues(deck.particleEffects, deck.bodies, updateParticleEffect(dice, delta)),
+          particleEffects = mapTableValues(deck.particleEffects, deck.bodies, updateParticleEffect(definitions.particleEffects, dice, delta)),
           sounds = mapTableValues(deck.sounds, updateSound(delta)),
           spirits = mapTable(deck.spirits, updateAiState(world, delta)),
           timersInt = updateIntTimers(events)(deck.timersInt),

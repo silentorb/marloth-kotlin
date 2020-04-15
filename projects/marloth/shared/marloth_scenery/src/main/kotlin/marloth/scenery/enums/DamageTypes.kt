@@ -8,3 +8,5 @@ enum class DamageTypes {
   physical,
   poison
 }
+
+val staticDamageTypes = DamageTypes.values().map { it.name }
