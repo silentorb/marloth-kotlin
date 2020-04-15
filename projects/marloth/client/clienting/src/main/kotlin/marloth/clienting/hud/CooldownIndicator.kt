@@ -53,7 +53,7 @@ fun cooldownIndicatorPlacement(completion: Float): Flower {
   return div("b",
       reverse = reverseOffset(left = centered, top = centered))(
       div(forward = forwardDimensions(fixed(30), fixed(30)))(
-          depict(cooldownIndicator(40f, Vector4(1f, 1f, 1f, 0.6f), completion))
+          depict(cooldownIndicator(50f, Vector4(1f, 1f, 1f, 0.6f), completion))
       )
   )
 }

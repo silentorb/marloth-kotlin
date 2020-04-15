@@ -3,7 +3,7 @@ package marloth.clienting.input
 import silentorb.mythic.haft.*
 import marloth.clienting.PlayerViews
 import marloth.clienting.menus.ViewId
-import silentorb.mythic.bloom.input.DeviceMap
+import silentorb.mythic.bloom.input.DeviceTypeMap
 import silentorb.mythic.ent.Id
 import silentorb.mythic.platforming.InputEvent
 
@@ -32,7 +32,7 @@ data class InputState(
     val config: GameInputConfig,
     val inputProfiles: Map<InputProfileId, InputProfile>,
     val playerProfiles: Map<Id, InputProfileId>,
-    val deviceMap: DeviceMap,
+    val deviceTypeMap: DeviceTypeMap,
     val devicePlayers: Map<Int, Id>
 )
 
@@ -49,7 +49,7 @@ fun newInputState(config: GameInputConfig) =
             )
         ),
         playerProfiles = mapOf(),
-        deviceMap = mapOf(),
+        deviceTypeMap = mapOf(),
         devicePlayers = mapOf()
     )
 
@@ -59,8 +59,8 @@ fun bindingContext(playerViews: PlayerViews, player: Id): InputContext =
     else
       InputContext.game
 
-fun joiningGamepads(events: List<InputEvent>, deviceMap: DeviceMap): List<Int> {
-  val currentDevices = deviceMap.keys
+fun joiningGamepads(events: List<InputEvent>, deviceTypeMap: DeviceTypeMap): List<Int> {
+  val currentDevices = deviceTypeMap.keys
   return events
       .filter { !currentDevices.contains(it.device) }
       .map { it.device }
@@ -91,7 +91,7 @@ fun isStroke(context: InputContext, type: Any): Boolean =
 
 fun getBinding(inputState: InputState, playerViews: PlayerViews): BindingSource = { event ->
   val player = inputState.devicePlayers[event.device]
-  val device = inputState.deviceMap[event.device]
+  val device = inputState.deviceTypeMap[event.device]
   if (player != null && device != null) {
        val profile = getInputProfile(inputState, player)
     if (profile != null) {
