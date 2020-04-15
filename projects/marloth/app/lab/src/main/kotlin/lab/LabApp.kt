@@ -15,28 +15,19 @@ import generation.architecture.definition.meshAttributes
 import lab.views.game.*
 import marloth.clienting.definitionsFromClient
 import marloth.definition.staticDefinitions
-import marloth.front.GameApp
-import marloth.front.RenderHook
-import marloth.integration.*
-import marloth.scenery.enums.MeshId
+import marloth.game.front.GameApp
+import marloth.game.front.RenderHook
+import marloth.game.integration.*
 import silentorb.mythic.desktop.createDesktopPlatform
 import silentorb.mythic.ent.pipe
 import silentorb.mythic.quartz.newTimestepState
 import org.lwjgl.glfw.GLFW
 import silentorb.mythic.debugging.getDebugRangeValue
 import silentorb.mythic.debugging.setDebugRangeValue
-import silentorb.mythic.glowing.DrawMethod
-import silentorb.mythic.glowing.drawMesh
-import silentorb.mythic.glowing.globalState
-import silentorb.mythic.lookinglass.shading.ObjectShaderConfig
-import silentorb.mythic.lookinglass.shading.ShaderFeatureConfig
-import silentorb.mythic.spatial.Matrix
-import silentorb.mythic.spatial.Vector4
 import simulation.main.World
 import simulation.misc.Definitions
 import simulation.misc.WorldInput
 import simulation.misc.createWorldBoundary
-import kotlin.math.abs
 
 const val labConfigPath = "../labConfig.yaml"
 

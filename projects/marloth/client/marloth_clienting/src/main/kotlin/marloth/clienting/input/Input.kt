@@ -1,14 +1,11 @@
 package marloth.clienting.input
 
-import silentorb.mythic.bloom.input.DeviceMap
-import silentorb.mythic.bloom.input.PlayerDevice
 import silentorb.mythic.haft.*
 import marloth.clienting.PlayerViews
 import marloth.clienting.gui.ViewId
-import silentorb.mythic.bloom.BloomId
+import silentorb.mythic.bloom.input.DeviceMap
 import silentorb.mythic.ent.Id
 import silentorb.mythic.platforming.InputEvent
-import silentorb.mythic.haft.*
 
 typealias UserCommand = HaftCommand
 
@@ -27,12 +24,16 @@ data class InputProfile(
     val bindings: Map<InputContext, Bindings>
 )
 
+const val defaultInputProfile: Long = 1L
+typealias InputProfileId = Long
+
 data class InputState(
     val deviceStates: List<InputDeviceState>,
     val config: GameInputConfig,
-    val inputProfiles: Map<Id, InputProfile>,
-    val playerProfiles: Map<BloomId, BloomId>,
-    val deviceMap: DeviceMap
+    val inputProfiles: Map<InputProfileId, InputProfile>,
+    val playerProfiles: Map<Id, InputProfileId>,
+    val deviceMap: DeviceMap,
+    val devicePlayers: Map<Int, Id>
 )
 
 fun newInputState(config: GameInputConfig) =
@@ -40,7 +41,7 @@ fun newInputState(config: GameInputConfig) =
         deviceStates = listOf(newInputDeviceState()),
         config = config,
         inputProfiles = mapOf(
-            1L to InputProfile(
+            defaultInputProfile to InputProfile(
                 bindings = mapOf(
                     InputContext.game to defaultGameInputBindings(),
                     InputContext.menu to defaultMenuInputProfile()
@@ -48,10 +49,8 @@ fun newInputState(config: GameInputConfig) =
             )
         ),
         playerProfiles = mapOf(),
-        deviceMap = mapOf(
-            0 to PlayerDevice(1, DeviceIndex.keyboard),
-            1 to PlayerDevice(1, DeviceIndex.mouse)
-        )
+        deviceMap = mapOf(),
+        devicePlayers = mapOf()
     )
 
 fun bindingContext(playerViews: PlayerViews, player: Id): InputContext =
@@ -68,19 +67,19 @@ fun joiningGamepads(events: List<InputEvent>, deviceMap: DeviceMap): List<Int> {
       .distinct()
 }
 
-fun currentGamepadPlayers(deviceMap: DeviceMap) =
-    deviceMap
-        .filter { it.value.device == DeviceIndex.gamepad }
-        .map { it.value.player }
-        .distinct()
+//fun currentGamepadPlayers(devicePlayerMap: DevicePlayerMap) =
+//    devicePlayerMap
+//        .filter { it.value.device == DeviceIndex.gamepad }
+//        .map { it.value.player }
+//        .distinct()
 
-fun newGamepadDeviceEntry(device: Int, player: Id): Pair<Int, PlayerDevice> {
-  println("gamepad $device $player")
-  return Pair(device, PlayerDevice(
-      player = player,
-      device = DeviceIndex.gamepad
-  ))
-}
+//fun newGamepadDeviceEntry(device: Int, player: Id): Pair<Int, PlayerDevice> {
+//  println("gamepad $device $player")
+//  return Pair(device, PlayerDevice(
+//      player = player,
+//      device = DeviceIndex.gamepad
+//  ))
+//}
 
 fun getInputProfile(inputState: InputState, player: Id): InputProfile? {
   val playerProfile = inputState.playerProfiles[player]
@@ -91,15 +90,15 @@ fun isStroke(context: InputContext, type: Any): Boolean =
     clientCommandStrokes[context]!!.contains(type)
 
 fun getBinding(inputState: InputState, playerViews: PlayerViews): BindingSource = { event ->
-  val playerDevice = inputState.deviceMap[event.device]
-  if (playerDevice != null) {
-    val player = playerDevice.player
-    val profile = getInputProfile(inputState, player)
+  val player = inputState.devicePlayers[event.device]
+  val device = inputState.deviceMap[event.device]
+  if (player != null && device != null) {
+       val profile = getInputProfile(inputState, player)
     if (profile != null) {
       val inputContext = bindingContext(playerViews, player)
       val binding = profile.bindings
           .getValue(inputContext)
-          .firstOrNull { it.device == playerDevice.device && it.trigger == event.index }
+          .firstOrNull { it.device == device && it.trigger == event.index }
       if (binding != null)
         Triple(binding, player, isStroke(inputContext, binding.command))
       else

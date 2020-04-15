@@ -1,4 +1,4 @@
-package lab.views.game
+package marloth.game.debug
 
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw
 import com.badlogic.gdx.utils.Disposable

@@ -12,7 +12,7 @@ import lab.views.model.ModelView
 import lab.views.model.ModelViewState
 import marloth.clienting.Client
 import marloth.clienting.clientBloomModules
-import marloth.integration.AppState
+import marloth.game.integration.AppState
 import silentorb.mythic.bloom.globalMenuModule
 import silentorb.mythic.bloom.next.Box
 import silentorb.mythic.bloom.next.Seed
@@ -28,7 +28,6 @@ import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.lookinglass.createCanvas
 import simulation.main.World
 import silentorb.mythic.bloom.input.updateInputDeviceStates
-import silentorb.mythic.haft.*
 import silentorb.mythic.lookinglass.prepareRender
 
 data class LabState(

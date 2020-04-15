@@ -8,8 +8,8 @@ import lab.utility.red
 import lab.views.game.conditionalDrawAiTargets
 import lab.views.shared.LabTextStyles
 import marloth.clienting.Client
-import marloth.scenery.creation.convertSimpleDepiction
-import marloth.scenery.creation.defaultLightingConfig
+import marloth.game.scenery.creation.convertSimpleDepiction
+import marloth.game.scenery.creation.defaultLightingConfig
 import silentorb.mythic.bloom.StateBag
 import silentorb.mythic.bloom.StateDepiction
 import silentorb.mythic.bloom.selectionStateOld
