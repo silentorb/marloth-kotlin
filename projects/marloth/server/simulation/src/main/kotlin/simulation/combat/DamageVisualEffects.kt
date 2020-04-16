@@ -27,8 +27,10 @@ fun newDamageVisualEffects(deck: Deck, events: Events): List<Hand> {
       .groupBy { it.target }
 
   val bloodOverlays = damageGroups
-      .filter { deck.players.containsKey(it.key) }
-      .filter { deck.playerOverlays[it.key]?.type != PlayerOverlayType.bleeding }
+      .filterKeys { character ->
+        deck.players.containsKey(character) &&
+            deck.playerOverlays.none { it.value.player == character && it.value.type == PlayerOverlayType.bleeding }
+      }
       .mapNotNull { (target, damageEvents) ->
         val maxHealth = deck.destructibles[target]!!.base.health
         val degree = damageEvents.sumBy { it.damage.amount }.toFloat() / maxHealth.toFloat()

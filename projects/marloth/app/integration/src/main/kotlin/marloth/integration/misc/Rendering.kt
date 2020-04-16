@@ -16,10 +16,7 @@ import silentorb.mythic.spatial.Vector4i
 import simulation.misc.interpolateWorlds
 
 fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: List<Box>, viewports: List<Vector4i>) {
-  client.platform.display.swapBuffers()
-
   updateAsyncTextureLoading(client.textureLoader, client.renderer.textures)
-
   renderContainer(client.renderer, windowInfo) {
     val world =
         if (getDebugBoolean("DISABLE_INTERPOLATION"))
@@ -43,4 +40,6 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
       }
     }
   }
+
+  client.platform.display.swapBuffers()
 }
