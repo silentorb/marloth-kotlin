@@ -2,11 +2,10 @@ package simulation.entities
 
 import silentorb.mythic.combat.general.RestoreHealth
 import silentorb.mythic.debugging.getDebugBoolean
-import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.happenings.Events
-import silentorb.mythic.timing.IntTimer
+import silentorb.mythic.timing.FloatTimer
 import simulation.main.Deck
 import simulation.main.Hand
 import simulation.main.IdHand
@@ -16,12 +15,14 @@ data class RespawnCountdown(
 )
 
 fun newRespawnCountdown(nextId: IdSource): (Id) -> IdHand = { character ->
+  val id = nextId()
+  // Use the id as a cheap source of random entropy
+  val durationVariance = (id % 30).toFloat() / 10f
   IdHand(
-      id = nextId(),
+      id = id,
       hand = Hand(
-          timer = IntTimer(
-              duration = 3,
-              interval = 60
+          timerFloat = FloatTimer(
+              duration = 3f + durationVariance
           ),
           respawnCountdown = RespawnCountdown(
               target = character

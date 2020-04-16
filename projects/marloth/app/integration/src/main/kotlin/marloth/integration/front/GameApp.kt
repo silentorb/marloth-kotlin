@@ -45,7 +45,7 @@ fun newGameApp(platform: Platform, config: GameConfig): GameApp {
       config = config,
       client = client,
       definitions = definitions,
-      newWorld = { gameApp -> generateWorld(definitions, getMeshInfo(gameApp.client), Dice()) }
+      newWorld = { gameApp -> generateWorld(definitions, getMeshInfo(gameApp.client)) }
   )
 }
 
