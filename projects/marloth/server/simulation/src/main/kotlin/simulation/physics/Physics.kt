@@ -77,6 +77,16 @@ fun updateMarlothCharacterRigFacing(deck: Deck, commands: Commands, id: Id): (Ch
   }
 }
 
+fun updateMarlothCharacterRigActive(deck: Deck, id: Id): (CharacterRig) -> CharacterRig = { characterRig ->
+  val character = deck.characters[id]
+  if (character != null && character.isAlive != characterRig.isActive)
+    characterRig.copy(
+        isActive = character.isAlive
+    )
+  else
+    characterRig
+}
+
 fun updateMarlothCharacterRig(bulletState: BulletState, deck: Deck,
                               events: Events): (Id, CharacterRig) -> CharacterRig = { id, characterRig ->
   val commands = events
@@ -85,6 +95,7 @@ fun updateMarlothCharacterRig(bulletState: BulletState, deck: Deck,
 
   pipe(
       updateMarlothCharacterRigFacing(deck, commands, id),
-      updateCharacterRigGroundedDistance(bulletState, newCharacterRigHand(deck)(id))
+      updateCharacterRigGroundedDistance(bulletState, newCharacterRigHand(deck)(id)),
+      updateMarlothCharacterRigActive(deck, id)
   )(characterRig)
 }
