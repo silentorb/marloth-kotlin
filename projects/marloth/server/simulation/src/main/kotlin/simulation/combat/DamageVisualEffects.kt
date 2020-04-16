@@ -43,7 +43,7 @@ fun newDamageVisualEffects(deck: Deck, events: Events): List<Hand> {
                   type = PlayerOverlayType.bleeding
               ),
               timerFloat = FloatTimer(
-                  duration = 0.2f
+                  duration = 20.2f
               )
           )
       }
