@@ -21,6 +21,8 @@ import silentorb.mythic.quartz.updateTimestep
 import silentorb.mythic.spatial.Vector2i
 import persistence.Database
 import persistence.createVictory
+import silentorb.mythic.debugging.getDebugBoolean
+import silentorb.mythic.debugging.getDebugFloat
 import silentorb.mythic.lookinglass.getPlayerViewports
 import simulation.entities.Player
 import silentorb.mythic.happenings.Events
@@ -189,7 +191,10 @@ fun updateAppState(app: GameApp, hooks: GameHooks? = null): (AppState) -> AppSta
   val nestedBoxes = layoutGui(app, appState, viewportDimensions)
   val boxes = nestedBoxes.map { toAbsoluteBounds(Vector2i.zero, it) }
   val (timestep, steps) = updateTimestep(appState.timestep, simulationDelta.toDouble())
-
+  val minDroppedFrame = getDebugFloat("DROPPED_FRAME_MINIMUM")
+  if (minDroppedFrame != null && timestep.rawDelta > minDroppedFrame) {
+    println("Dropped frame: ${timestep.rawDelta}")
+  }
   if (steps <= 1) {
     renderMain(app.client, windowInfo, appState, boxes, viewports)
   }

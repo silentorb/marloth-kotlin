@@ -7,6 +7,7 @@ import marloth.integration.debug.labRender
 import marloth.integration.scenery.createScene
 import silentorb.mythic.bloom.next.Box
 import silentorb.mythic.bloom.renderLayout
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.lookinglass.texturing.updateAsyncTextureLoading
 import silentorb.mythic.platforming.WindowInfo
@@ -20,7 +21,11 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
   updateAsyncTextureLoading(client.textureLoader, client.renderer.textures)
 
   renderContainer(client.renderer, windowInfo) {
-    val world = interpolateWorlds(appState.timestep.accumulator, appState.worlds)
+    val world =
+        if (getDebugBoolean("DISABLE_INTERPOLATION"))
+          appState.worlds.lastOrNull()
+        else
+          interpolateWorlds(appState.timestep.accumulator, appState.worlds)
     if (world != null) {
       val scenes = appState.client.players.map(createScene(world.definitions, world.deck))
       val viewportIterator = viewports.iterator()

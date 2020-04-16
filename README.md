@@ -50,5 +50,9 @@ This project depends on the following external media software:
 -XX:MaxGCPauseMillis=8
 ```
 
+### Experimental Shenandoah GC
+```
+-XX:+UnlockExperimentalVMOptions -XX:+UseShenandoahGC
+```
 ### Working directory
 ```out\bin```
