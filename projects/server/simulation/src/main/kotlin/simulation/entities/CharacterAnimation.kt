@@ -69,16 +69,21 @@ fun getUpdatedAnimationDistributions(primary: AnimationName,
 }
 
 fun updatePrimaryAnimation(deck: Deck, character: Id): AnimationName {
-  val performance = deck.performances.values.firstOrNull { it.target == character }
-  return if (performance != null) {
-    performance.animation
-  } else {
-    val body = deck.bodies[character]!!
-    val speed = body.velocity.length()
-    return if (speed < 0.1f)
-      AnimationId.stand.name
-    else
-      AnimationId.walk.name
+  val characterRecord = deck.characters[character]
+  return if (characterRecord != null && !characterRecord.isAlive)
+    AnimationId.death.name
+  else {
+    val performance = deck.performances.values.firstOrNull { it.target == character }
+    if (performance != null) {
+      performance.animation
+    } else {
+      val body = deck.bodies[character]!!
+      val speed = body.velocity.length()
+      return if (speed < 0.1f)
+        AnimationId.stand.name
+      else
+        AnimationId.walk.name
+    }
   }
 }
 

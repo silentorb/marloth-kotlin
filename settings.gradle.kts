@@ -21,7 +21,7 @@ val addProjects = scanProjects { currentPath, name ->
   project(":$name").projectDir = File(currentPath)
 }
 
-addProjects(file("projects/marloth").toPath())
+addProjects(file("projects").toPath())
 
 includeBuild("../../mythic/gradle")
 //{

@@ -5,6 +5,7 @@ enum class ArmatureId {
 }
 
 enum class AnimationId {
+  death,
   none,
   run,
   shootPistol,

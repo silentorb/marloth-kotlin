@@ -14,15 +14,13 @@ data class RespawnCountdown(
     val target: Id
 )
 
-fun newRespawnCountdown(nextId: IdSource): (Id) -> IdHand = { character ->
-  val id = nextId()
-  // Use the id as a cheap source of random entropy
-  val durationVariance = (id % 30).toFloat() / 10f
-  IdHand(
+fun newRespawnCountdown(id: Id, duration: Float, character: Id): IdHand {
+
+  return IdHand(
       id = id,
       hand = Hand(
           timerFloat = FloatTimer(
-              duration = 3f + durationVariance
+              duration = duration
           ),
           respawnCountdown = RespawnCountdown(
               target = character
@@ -41,7 +39,17 @@ fun newRespawnCountdowns(nextId: IdSource, previous: Deck, next: Deck): List<IdH
         !previous.players.containsKey(id) || getDebugBoolean("PLAYER_RESPAWN")
       }
 
-  return newlyDeceasedCharacters.map(newRespawnCountdown(nextId))
+  return newlyDeceasedCharacters.map { character ->
+    val id = nextId()
+    val duration = if (previous.players.containsKey(id))
+      4f
+    else {
+      // Use the id as a cheap source of random entropy
+      val durationVariance = (id % 30).toFloat() / 10f
+      7f + durationVariance
+    }
+    newRespawnCountdown(id, duration, character)
+  }
 }
 
 fun eventsFromRespawnCountdowns(previous: Deck, next: Deck, events: Events): Events {
