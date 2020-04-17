@@ -46,7 +46,8 @@ typealias DistributionMap = Map<DistributionGroup, Int>
 
 fun enemyDistributions() = mapOf(
     creatures.hogMan to 5,
-    creatures.sentinel to 20
+    creatures.sentinel to 20,
+    creatures.hound to 40
 )
 
 fun scalingDistributions(dice: Dice): DistributionMap = mapOf(

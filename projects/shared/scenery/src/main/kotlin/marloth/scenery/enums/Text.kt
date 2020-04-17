@@ -26,6 +26,7 @@ enum class Text {
   menu_open,
   menu_talk,
   menu_quit,
-  message_victory
+  message_victory,
+  unnamed
 }
 

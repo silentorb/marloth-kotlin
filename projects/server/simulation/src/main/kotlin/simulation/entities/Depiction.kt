@@ -7,6 +7,7 @@ import silentorb.mythic.scenery.ArmatureName
 enum class DepictionType {
   billboard,
   child,
+  hound,
   spikyBall,
   monster,
   person,

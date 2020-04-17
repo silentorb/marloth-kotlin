@@ -31,5 +31,6 @@ val englishTextResources: TextResourceMapper = { text ->
     Text.menu_talk -> "Talk"
     Text.menu_quit -> "Quit"
     Text.message_victory -> "You Won!"
+    Text.unnamed -> "Unnamed"
   }
 }

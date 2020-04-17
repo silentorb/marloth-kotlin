@@ -9,7 +9,7 @@ import simulation.entities.fieldOfView360
 class Creatures {
   val player = CharacterDefinition(
       health = 200,
-      accessories = listOf(AccessoryId.rocketLauncher.name),
+      accessories = listOf(AccessoryId.shotgun.name),
       depictionType = DepictionType.child,
       maxSpeed = 4f,
       deathSound = Sounds.girlScream,
@@ -44,6 +44,15 @@ class Creatures {
       deathSound = null,
       ambientSounds = listOf(),
       fieldOfView = fieldOfView360
+  )
+
+  val hound = CharacterDefinition(
+      health = 100,
+      accessories = listOf(AccessoryId.claws.name),
+      depictionType = DepictionType.hound,
+      maxSpeed = 2.5f,
+      deathSound = null,
+      ambientSounds = listOf()
   )
 
   val merchant = CharacterDefinition(

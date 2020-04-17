@@ -25,8 +25,10 @@ fun toCombatDefinitions(definitions: Definitions) =
 fun toSpatialCombatDeck(deck: Deck) =
     SpatialCombatDeck(
         accessories = deck.accessories,
+        actions = deck.actions,
         bodies = deck.bodies,
         characterRigs = deck.characterRigs,
+        collisionShapes = deck.collisionShapes,
         destructibles = deck.destructibles,
         modifiers = deck.modifiers,
         missiles = deck.missiles
@@ -34,6 +36,7 @@ fun toSpatialCombatDeck(deck: Deck) =
 
 fun toSpatialCombatDefinitions(definitions: Definitions) =
     SpatialCombatDefinitions(
+        actions = definitions.actions,
         weapons = definitions.weapons
     )
 

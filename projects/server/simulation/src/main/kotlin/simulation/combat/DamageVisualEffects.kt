@@ -57,7 +57,7 @@ fun newDamageVisualEffects(deck: Deck, events: Events): List<Hand> {
             particleEffect = ParticleEffect(
                 type = ParticleEffectType.blood.name
             ),
-            timerFloat = FloatTimer(0.4f)
+            timerFloat = FloatTimer(0.8f)
         )
       }
   return bloodOverlays + bloodParticleEffects

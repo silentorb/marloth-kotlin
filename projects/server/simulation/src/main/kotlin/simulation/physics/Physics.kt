@@ -30,6 +30,11 @@ fun updatePhysics(events: Events): (World) -> World = { world ->
   )
   val commands = events.filterIsInstance<CharacterCommand>()
   val linearForces = allCharacterMovements(physicsDeck, deck.characterRigs, commands)
+      .plus(events.filterIsInstance<LinearImpulse>())
+  val k = events.filterIsInstance<LinearImpulse>()
+  if (k.any()) {
+    val j = 0
+  }
   val nextPhysicsWorld = updateBulletPhysics(linearForces)(physicsWorld)
   updateCharacterRigBulletBodies(nextPhysicsWorld.bulletState, deck.characterRigs)
   val nextDeck = nextPhysicsWorld.deck
@@ -58,7 +63,7 @@ fun updateMarlothCharacterRigFacing(deck: Deck, commands: Commands, id: Id): (Ch
   val justDied = !isAlive && character.isAlive
 
   if (justDied) {
-    if (destructible.lastDamageSource != 0L) {
+    if (destructible.lastDamageSource != 0L && destructible.lastDamageSource != id && deck.players.containsKey(id)) {
       val source = destructible.lastDamageSource
       val killerBody = deck.bodies[source]
       if (killerBody != null) {

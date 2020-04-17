@@ -16,6 +16,7 @@ enum class MeshId {
   pumpkinHead,
   sentinelHead,
   shirt,
+  shotgun,
   skySphere,
   sphere,
   spikyBall,

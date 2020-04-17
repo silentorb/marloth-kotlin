@@ -49,12 +49,10 @@ fun eventsFromTryUseAbility(world: World): (TryUseAbilityEvent) -> Events = { ev
   val action = getActiveAction(deck, event.actor)
   if (action != null && canUse(deck, action)) {
     val accessory = deck.accessories[action]!!
-    when (accessory.type) {
-
-      AccessoryId.pistol.name,
-      AccessoryId.grenadeLauncher.name,
-      AccessoryId.rocketLauncher.name
-      -> startAttack(event.actor, action, accessory.type, getActionTarget(deck, event.actor))
+    when {
+      
+      world.definitions.weapons.containsKey(accessory.type) ->
+        startAttack(event.actor, action, accessory.type, getActionTarget(deck, event.actor))
 
       else -> listOf()
     } + UseAction(

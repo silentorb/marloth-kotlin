@@ -113,6 +113,12 @@ fun convertComplexDepiction(definitions: Definitions, deck: Deck, id: Id, depict
         MeshId.shirt,
         MeshId.sentinelHead
     )
+    depiction.type == DepictionType.hound -> listOf(
+        MeshId.personBody,
+        MeshId.pants,
+        MeshId.shirt,
+        MeshId.hogHead
+    )
     else -> listOf(
         MeshId.personBody,
         MeshId.hogHead,
@@ -182,6 +188,7 @@ fun gatherParticleElements(deck: Deck, cameraPosition: Vector3): ElementGroups {
 
 fun depictionSwitch(definitions: Definitions, deck: Deck, player: Id, depiction: Id, depictionRecord: Depiction): ElementGroup? {
   return when (depictionRecord.type) {
+    DepictionType.hound,
     DepictionType.sentinel -> convertComplexDepiction(definitions, deck, depiction, depictionRecord)
     else -> null
   }

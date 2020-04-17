@@ -42,12 +42,15 @@ fun aimWeapon(world: World, character: Id, baseOffset: Vector3): Vector3 {
 
 fun spiritAttack(world: World, character: Id, knowledge: Knowledge, pursuit: Pursuit): Commands {
   val attacker = character
-  val target = knowledge.characters[pursuit.targetEnemy]!!
-  val body = world.deck.bodies[attacker]!!
-  val offset = aimWeapon(world, character, target.position - body.position)
-  return spiritNeedsFacing(world, character, offset, 0.05f) {
-    listOf(CharacterCommand(CommonCharacterCommands.ability, attacker))
-  }
+  val target = knowledge.characters[pursuit.targetEnemy]
+  return if (target != null) {
+    val body = world.deck.bodies[attacker]!!
+    val offset = aimWeapon(world, character, target.position - body.position)
+    spiritNeedsFacing(world, character, offset, 0.05f) {
+      listOf(CharacterCommand(CommonCharacterCommands.ability, attacker))
+    }
+  } else
+    listOf()
 }
 
 // This is to ensure that a spirit attack when a target is cleanly within range

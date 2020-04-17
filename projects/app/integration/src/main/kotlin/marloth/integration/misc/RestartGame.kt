@@ -35,7 +35,7 @@ fun restartClientState(client: ClientState, playerMap: Map<Id, Id>): ClientState
         input = newInputState(client.input.config),
         bloomState = newBloomState(),
         audio = client.audio,
-        playerViews = client.playerViews,
+        playerViews = mapOf(),
         commands = listOf(),
         players = playerMap.values.toList()
     )

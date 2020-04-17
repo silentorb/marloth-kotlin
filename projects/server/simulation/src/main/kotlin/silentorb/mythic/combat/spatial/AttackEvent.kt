@@ -29,6 +29,7 @@ fun onAttack(world: SpatialCombatWorld): (AttackEvent) -> Events = { event ->
   val attackEvents = when (weapon.attackMethod) {
     AttackMethod.raycast -> raycastAttack(world, attacker, weapon, event.target)
     AttackMethod.missile -> missileAttack(world, attacker, weapon, event.target)
+    AttackMethod.melee -> meleeAttack(world, attacker, weapon, event.target, event.accessory)
     else -> throw Error("Not implemented")
   }
   if (weapon.sound != null)

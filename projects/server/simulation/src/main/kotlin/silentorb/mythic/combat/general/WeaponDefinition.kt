@@ -13,5 +13,6 @@ data class WeaponDefinition(
     val damageRadius: Float = 0f,
     val velocity: Float = 1f,
     val damageFalloff: Float = 0f,
-    val sound: SoundType? = null
+    val sound: SoundType? = null,
+    val impulse: Float = 0f
 )
