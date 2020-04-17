@@ -16,6 +16,7 @@ import simulation.main.Hand
 import simulation.misc.*
 import silentorb.mythic.characters.getHorizontalLookAtAngle
 import silentorb.mythic.ent.IdSource
+import simulation.intellect.assessment.Knowledge
 import simulation.main.IdHand
 
 fun placeAiCharacter(nextId: IdSource, definitions: Definitions, faction: Id, definition: CharacterDefinition, position: Vector3): List<IdHand> {

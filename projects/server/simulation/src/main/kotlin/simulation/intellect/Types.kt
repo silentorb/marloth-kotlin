@@ -12,6 +12,5 @@ data class Pursuit(
 )
 
 data class Spirit(
-    val knowledge: Knowledge? = null,
     val pursuit: Pursuit
 )

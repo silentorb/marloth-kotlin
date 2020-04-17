@@ -30,24 +30,6 @@ enum class DistributionGroup {
 
 typealias DistributionMap = Map<DistributionGroup, Int>
 
-//typealias OccupantToHand = (Vector3, Occupant) -> List<IdHand>?
-
-//fun occupantPopulator(config: GenerationConfig, nextId: IdSource): OccupantToHand = { cell, occupant ->
-//  when (occupant.type) {
-////    Occupant.coldCloud -> placeBuffCloud(node, ModifierId.damageChilled)
-////    Occupant.fireCloud -> placeBuffCloud(node, ModifierId.damageBurning)
-//    DistributionGroup.monster -> if (config.includeEnemies) placeEnemy(nextId, config.definitions, cell, occupant.details as CharacterDefinition) else null
-//    DistributionGroup.merchant -> newMerchant(nextId, config.definitions, cell, defaultWares)
-//    DistributionGroup.none -> null
-////    Occupant.poisonCloud -> placeBuffCloud(node, ModifierId.damagePoisoned)
-////    Occupant.treasureChest -> placeTreasureChest(config.meshes, node, 10)
-//    else -> {
-//      println("Need to eventually update occupantPopulator")
-//      null
-//    }
-//  }
-//}
-
 //fun damageCloudsDistributions(dice: Dice, totalWeight: Int): DistributionMap {
 //  val cloudTypes = listOf(
 //      ModifierId.damageChilled,
@@ -69,7 +51,7 @@ fun enemyDistributions() = mapOf(
 
 fun scalingDistributions(dice: Dice): DistributionMap = mapOf(
     DistributionGroup.none to 10,
-    DistributionGroup.monster to if (getDebugBoolean("SINGLE_MONSTER")) 0 else 20
+    DistributionGroup.monster to if (getDebugBoolean("SINGLE_MONSTER")) 0 else 2
 
 )
 //) + damageCloudsDistributions(dice, 10)
@@ -80,7 +62,9 @@ fun fixedDistributions(): DistributionMap =
           DistributionGroup.monster to 1
       )
     else
-      mapOf()
+      mapOf(
+          DistributionGroup.monster to 2
+      )
 
 fun supportsPopulation(attributes: Set<CellAttribute>): Boolean =
     attributes.contains(CellAttribute.fullFloor)

@@ -2,15 +2,17 @@ package marloth.definition
 
 import marloth.scenery.enums.AnimationId
 import silentorb.mythic.accessorize.Accessory
-import silentorb.mythic.ent.Id
-import silentorb.mythic.physics.Body
-import silentorb.mythic.physics.CollisionObject
-import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.characters.defaultCharacterHeight
 import silentorb.mythic.characters.defaultCharacterRadius
 import silentorb.mythic.combat.general.Destructible
 import silentorb.mythic.combat.general.DestructibleBaseStats
+import silentorb.mythic.combat.general.ResourceContainer
+import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.IdSource
+import silentorb.mythic.physics.Body
+import silentorb.mythic.physics.CollisionObject
+import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.scenery.Capsule
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Quaternion
@@ -18,11 +20,10 @@ import silentorb.mythic.spatial.Vector2
 import silentorb.mythic.spatial.Vector3
 import simulation.entities.*
 import simulation.intellect.Spirit
+import simulation.intellect.assessment.newKnowledge
 import simulation.main.Hand
-import silentorb.mythic.ent.IdSource
 import simulation.main.IdHand
 import simulation.misc.Definitions
-import silentorb.mythic.combat.general.ResourceContainer
 import simulation.misc.newPossibleAction
 
 fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, definition: CharacterDefinition, faction: Id, position: Vector3,
@@ -98,7 +99,11 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, defi
                   mass = 45f,
                   resistance = 4f
               ),
-              spirit = spirit
+              spirit = spirit,
+              knowledge = if (spirit != null)
+                newKnowledge()
+              else
+                null
           )
       )
   ).plus(accessories)

@@ -25,6 +25,7 @@ import silentorb.mythic.timing.FloatTimer
 import silentorb.mythic.timing.IntCycle
 import silentorb.mythic.timing.IntTimer
 import simulation.combat.PlayerOverlay
+import simulation.intellect.assessment.Knowledge
 
 // Deck is basically a database full of tables
 
@@ -47,6 +48,7 @@ data class Deck(
     val doors: Table<Door> = mapOf(),
     val dynamicBodies: Table<DynamicBody> = mapOf(),
     val interactables: Table<Interactable> = mapOf(),
+    val knowledge: Table<Knowledge> = mapOf(),
     val lights: Table<Light> = mapOf(),
     val missiles: Table<Missile> = mapOf(),
     val particleEffects: Table<ParticleEffect> = mapOf(),

@@ -16,7 +16,8 @@ fun isCellExplorableByMonsters(attributes: Set<CellAttribute>): Boolean =
 fun startRoaming(world: World, character: Id, knowledge: Knowledge): Vector3? {
   val body = world.deck.bodies[character]!!
   val currentCell = getPointCell(body.position)
-  val options = knowledge.grid.cells
+//  val options = knowledge.grid.cells
+  val options = world.realm.grid.cells
       .filter { isCellExplorableByMonsters(it.value.attributes) }
       .keys.minus(currentCell)
   val destination = Dice.global.takeOne(options)

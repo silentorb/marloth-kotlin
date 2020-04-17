@@ -24,6 +24,7 @@ import simulation.combat.PlayerOverlay
 import simulation.entities.*
 import simulation.happenings.Trigger
 import simulation.intellect.Spirit
+import simulation.intellect.assessment.Knowledge
 
 // Hand is a slice of a deck, mostly used for instantiating new entities.
 
@@ -46,6 +47,7 @@ data class Hand(
     val destructible: Destructible? = null,
     val door: Door? = null,
     val interactable: Interactable? = null,
+    val knowledge: Knowledge? = null,
     val light: Light? = null,
     val missile: Missile? = null,
     val particleEffect: ParticleEffect? = null,

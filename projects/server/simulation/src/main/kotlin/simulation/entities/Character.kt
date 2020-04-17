@@ -10,6 +10,7 @@ import silentorb.mythic.happenings.*
 import silentorb.mythic.physics.BulletState
 import silentorb.mythic.combat.general.DamageMultipliers
 import silentorb.mythic.combat.general.ResourceContainer
+import silentorb.mythic.ent.Table
 import simulation.happenings.PurchaseEvent
 import simulation.happenings.TakeItemEvent
 import simulation.main.Deck
@@ -137,4 +138,12 @@ fun updateCharacter(deck: Deck, bulletState: BulletState, events: Events): (Id, 
   ))
 
   updateCharacter(deck, bulletState, id, character, characterCommands, events)
+}
+
+fun isEnemy(characters: Table<Character>, faction: Id): (Id) -> Boolean = { id ->
+  characters[id]!!.faction != faction
+}
+
+fun isAlly(characters: Table<Character>, faction: Id): (Id) -> Boolean = { id ->
+  characters[id]!!.faction == faction
 }
