@@ -8,6 +8,7 @@ enum class MeshId {
   grenadeLauncher,
   hogHead,
   line,
+  missile,
   pants,
   personBody,
   pistol,

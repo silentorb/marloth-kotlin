@@ -8,9 +8,12 @@ import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
+import silentorb.mythic.scenery.Light
+import silentorb.mythic.scenery.LightType
 import silentorb.mythic.scenery.Sphere
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.timing.FloatTimer
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
@@ -37,7 +40,13 @@ fun missileAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinit
               ),
               depiction = Depiction(
                   type = DepictionType.staticMesh,
-                  mesh = MeshId.spikyBall.name
+                  mesh = MeshId.missile.name
+              ),
+              light = Light(
+                  type = LightType.point,
+                  color = Vector4(1f, 0.9f, 0.6f, 1f),
+                  offset = Vector3.zero,
+                  range = 7f
               ),
               missile = Missile(
                   damageRadius = weapon.damageRadius,
