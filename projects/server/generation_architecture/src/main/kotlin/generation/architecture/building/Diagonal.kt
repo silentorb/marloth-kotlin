@@ -7,7 +7,7 @@ import generation.architecture.definition.impassableVertical
 import generation.general.Side
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Vector3
-import marloth.scenery.enums.MeshId
+import marloth.definition.enums.MeshId
 import simulation.misc.CellAttribute
 
 fun randomDiagonalWall(height: Float = 0f) = blockBuilder { input ->

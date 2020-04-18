@@ -1,5 +1,6 @@
 package marloth.definition.data
 
+import marloth.definition.enums.MeshId
 import marloth.scenery.enums.*
 import silentorb.mythic.accessorize.AccessoryDefinition
 import silentorb.mythic.accessorize.AccessoryName
@@ -77,6 +78,7 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
             damageRadius = 2f,
             velocity = 20f,
             damageFalloff = 1f,
+            missileMesh = MeshId.missile.name,
             damages = listOf(
                 DamageDefinition(
                     type = DamageTypes.physical.name,

@@ -3,7 +3,7 @@ package generation.architecture.building
 import generation.architecture.misc.GenerationConfig
 import generation.architecture.old.newArchitectureMesh
 import generation.general.*
-import marloth.scenery.enums.MeshId
+import marloth.definition.enums.MeshId
 import silentorb.mythic.spatial.times
 import silentorb.mythic.scenery.MeshName
 import silentorb.mythic.spatial.Pi

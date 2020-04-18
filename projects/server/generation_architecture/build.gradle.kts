@@ -11,4 +11,4 @@ dependencies {
   implementation("silentorb.mythic:characters")
 }
 
-requires(project, "simulation", "generation_general")
+requires(project, "simulation", "generation_general", "definition")

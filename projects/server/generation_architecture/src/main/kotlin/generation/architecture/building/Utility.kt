@@ -6,7 +6,7 @@ import generation.architecture.definition.any
 import generation.architecture.misc.BuilderInput
 import generation.general.*
 import silentorb.mythic.randomly.Dice
-import marloth.scenery.enums.MeshId
+import marloth.definition.enums.MeshId
 import simulation.main.Hand
 import simulation.misc.CellAttribute
 

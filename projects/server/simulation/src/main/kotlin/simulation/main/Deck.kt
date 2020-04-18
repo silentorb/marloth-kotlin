@@ -58,6 +58,7 @@ data class Deck(
     val resources: Table<ResourceBundle> = mapOf(),
     val respawnCountdowns: Table<RespawnCountdown> = mapOf(),
     val sounds: Table<Sound> = mapOf(),
+    val spinners: Table<Spinner> = mapOf(),
     val spirits: Table<Spirit> = mapOf(),
     val timersFloat: Table<FloatTimer> = mapOf(),
     val timersInt: Table<IntTimer> = mapOf(),

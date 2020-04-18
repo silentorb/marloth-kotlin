@@ -1,6 +1,7 @@
 package silentorb.mythic.combat.general
 
 import silentorb.mythic.aura.SoundType
+import silentorb.mythic.scenery.MeshName
 
 data class DamageDefinition(
     val type: DamageType,
@@ -14,5 +15,6 @@ data class WeaponDefinition(
     val velocity: Float = 1f,
     val damageFalloff: Float = 0f,
     val sound: SoundType? = null,
-    val impulse: Float = 0f
+    val impulse: Float = 0f,
+    val missileMesh: MeshName? = null
 )

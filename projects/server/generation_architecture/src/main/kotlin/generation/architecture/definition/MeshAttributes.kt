@@ -1,7 +1,7 @@
 package generation.architecture.definition
 
 import generation.architecture.misc.MeshAttributeMap
-import marloth.scenery.enums.MeshId
+import marloth.definition.enums.MeshId
 
 enum class MeshAttribute {
   canHaveAttachment,

@@ -5,18 +5,18 @@ import silentorb.mythic.combat.general.updateDestructibleHealth
 import silentorb.mythic.ent.mapTable
 import silentorb.mythic.ent.mapTableValues
 import silentorb.mythic.happenings.Events
-import simulation.entities.*
-import simulation.intellect.updateSpirit
-import simulation.main.Deck
-import simulation.main.World
-import simulation.misc.Definitions
 import silentorb.mythic.timing.updateFloatCycle
 import silentorb.mythic.timing.updateFloatTimer
 import silentorb.mythic.timing.updateIntCycle
 import silentorb.mythic.timing.updateIntTimers
+import simulation.entities.*
+import simulation.happenings.updateActions
 import simulation.intellect.assessment.lightRatings
 import simulation.intellect.assessment.updateKnowledge
-import simulation.happenings.updateActions
+import simulation.intellect.updateSpirit
+import simulation.main.Deck
+import simulation.main.World
+import simulation.misc.Definitions
 import simulation.particles.updateParticleEffect
 import simulation.physics.updateMarlothCharacterRig
 
@@ -28,6 +28,7 @@ fun updateEntities(definitions: Definitions, world: World, events: Events): (Dec
           actions = updateActions(world.definitions, deck, events),
           ambientSounds = updateAmbientAudio(dice, deck),
           animations = mapTable(deck.animations, updateCharacterAnimation(deck, definitions.animations, delta)),
+          bodies = mapTable(deck.bodies, updateSpinnerRotation(deck.spinners, delta)),
           characterRigs = mapTable(deck.characterRigs, updateMarlothCharacterRig(world.bulletState, deck, events)),
           attachments = mapTable(deck.attachments, updateAttachment(events)),
           cyclesFloat = mapTableValues(deck.cyclesFloat, updateFloatCycle(delta)),

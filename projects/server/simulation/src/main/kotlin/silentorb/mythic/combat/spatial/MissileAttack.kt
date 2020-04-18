@@ -1,7 +1,5 @@
 package silentorb.mythic.combat.spatial
 
-import marloth.scenery.enums.MeshId
-import silentorb.mythic.accessorize.AccessoryName
 import silentorb.mythic.combat.general.WeaponDefinition
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
@@ -11,7 +9,6 @@ import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.scenery.Light
 import silentorb.mythic.scenery.LightType
 import silentorb.mythic.scenery.Sphere
-import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.timing.FloatTimer
@@ -40,7 +37,7 @@ fun missileAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinit
               ),
               depiction = Depiction(
                   type = DepictionType.staticMesh,
-                  mesh = MeshId.missile.name
+                  mesh = weapon.missileMesh
               ),
               light = Light(
                   type = LightType.point,

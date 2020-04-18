@@ -2,18 +2,24 @@ package marloth.generation.population
 
 import generation.abstracted.distributeToSlots
 import generation.architecture.misc.GenerationConfig
-import marloth.definition.data.*
-import marloth.definition.templates.defaultWares
-import marloth.definition.templates.newMerchant
-import marloth.scenery.enums.ModifierId
-import silentorb.mythic.debugging.getDebugBoolean
+import generation.architecture.misc.MeshInfoMap
+import marloth.definition.DistributionGroup
+import marloth.definition.enemyDistributions
+import marloth.definition.enums.MeshId
+import marloth.definition.fixedDistributions
+import marloth.definition.scalingDistributions
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.IdSource
+import silentorb.mythic.physics.Body
+import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
-import simulation.entities.CharacterDefinition
+import simulation.entities.Depiction
+import simulation.entities.DepictionType
+import simulation.happenings.Trigger
+import simulation.main.Hand
 import simulation.main.IdHand
 import simulation.misc.CellAttribute
 import simulation.misc.Realm
@@ -69,20 +75,26 @@ fun getGroupDistributions(dice: Dice, realm: Realm): Map<DistributionGroup, List
 
 fun populateMonsters(config: GenerationConfig, locations: List<Vector3>, nextId: IdSource, dice: Dice): List<IdHand> {
   println("Monster count: ${locations.size}")
-  val distributions = distributeToSlots(dice, locations.size, enemyDistributions(), mapOf())
-  return locations
-      .zip(distributions) { location, definition ->
-        placeEnemy(nextId, config.definitions, location, definition)
-      }
-      .flatten()
+  return if (locations.none())
+    listOf()
+  else {
+    val distributions = distributeToSlots(dice, locations.size, enemyDistributions(), mapOf())
+    locations
+        .zip(distributions) { location, definition ->
+          placeEnemy(nextId, config.definitions, location, definition)
+        }
+        .flatten()
+  }
 }
 
 fun populateRooms(config: GenerationConfig, nextId: IdSource, dice: Dice, realm: Realm): List<IdHand> {
   val groupDistributions = getGroupDistributions(dice, realm)
   val monsters = if (config.includeEnemies)
-    populateMonsters(config, (groupDistributions[DistributionGroup.monster] ?: listOf()).take(monsterLimit()), nextId, dice)
+    populateMonsters(config, (groupDistributions[DistributionGroup.monster]
+        ?: listOf()).take(monsterLimit()), nextId, dice)
   else
     listOf()
 
-  return monsters
+  val keys = groupDistributions[DistributionGroup.key]!!.map(newKey(config.meshes, nextId))
+  return monsters + keys
 }

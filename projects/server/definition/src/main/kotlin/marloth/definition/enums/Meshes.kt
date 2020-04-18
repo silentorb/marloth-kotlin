@@ -1,4 +1,4 @@
-package marloth.scenery.enums
+package marloth.definition.enums
 
 enum class MeshId {
   candle,
@@ -7,6 +7,7 @@ enum class MeshId {
   eyeball,
   grenadeLauncher,
   hogHead,
+  key,
   line,
   missile,
   pants,

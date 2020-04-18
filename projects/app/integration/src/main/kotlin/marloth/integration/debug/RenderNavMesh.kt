@@ -11,7 +11,7 @@ import org.recast4j.recast.Span
 import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.lookinglass.shading.ObjectShaderConfig
 import silentorb.mythic.lookinglass.shading.ShaderFeatureConfig
-import marloth.scenery.enums.MeshId
+import marloth.definition.enums.MeshId
 import silentorb.mythic.debugging.getDebugBoolean
 import simulation.intellect.navigation.globalHeightMap
 import simulation.intellect.navigation.originalNavMeshData

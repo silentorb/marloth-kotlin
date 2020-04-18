@@ -5,7 +5,7 @@ import generation.general.BiomeInfo
 import generation.general.BiomeInfoMap
 import generation.general.TextureGroup
 import silentorb.mythic.scenery.MeshName
-import marloth.scenery.enums.MeshId
+import marloth.definition.enums.MeshId
 import marloth.scenery.enums.TextureId
 
 enum class BiomeId {

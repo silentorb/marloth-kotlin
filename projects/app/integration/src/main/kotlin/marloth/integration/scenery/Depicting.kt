@@ -2,7 +2,7 @@ package marloth.integration.scenery
 
 import marloth.scenery.enums.ArmatureId
 import marloth.scenery.enums.ArmatureSockets
-import marloth.scenery.enums.MeshId
+import marloth.definition.enums.MeshId
 import silentorb.mythic.accessorize.getAccessories
 import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.ent.Id

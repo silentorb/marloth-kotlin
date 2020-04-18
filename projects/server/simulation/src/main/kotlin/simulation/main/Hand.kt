@@ -57,6 +57,7 @@ data class Hand(
     val resources: ResourceBundle? = null,
     val respawnCountdown: RespawnCountdown? = null,
     val sound: Sound? = null,
+    val spinner: Spinner? = null,
     val spirit: Spirit? = null,
     val timer: IntTimer? = null,
     val timerFloat: FloatTimer? = null,

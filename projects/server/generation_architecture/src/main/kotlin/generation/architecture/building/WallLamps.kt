@@ -5,7 +5,7 @@ import generation.architecture.misc.MeshInfoMap
 import generation.architecture.misc.MeshQuery
 import generation.architecture.misc.meshMatches
 import generation.general.oppositeDirections
-import marloth.scenery.enums.MeshId
+import marloth.definition.enums.MeshId
 import silentorb.mythic.spatial.times
 import silentorb.mythic.physics.Body
 import silentorb.mythic.randomly.Dice

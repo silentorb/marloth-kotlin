@@ -8,7 +8,7 @@ import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.times
 import silentorb.mythic.randomly.Dice
-import marloth.scenery.enums.MeshId
+import marloth.definition.enums.MeshId
 import silentorb.mythic.ent.Id
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
