@@ -1,7 +1,8 @@
-package simulation.misc
+package simulation.happenings
 
-import marloth.scenery.enums.AccessoryId
 import silentorb.mythic.accessorize.AccessoryName
+import silentorb.mythic.combat.spatial.AttackEvent
+import silentorb.mythic.combat.spatial.onAttack
 import silentorb.mythic.combat.spatial.startAttack
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
@@ -10,9 +11,10 @@ import silentorb.mythic.happenings.UseAction
 import silentorb.mythic.performing.Action
 import silentorb.mythic.performing.updateCooldown
 import silentorb.mythic.spatial.Vector3
-import simulation.happenings.TryUseAbilityEvent
+import simulation.combat.toSpatialCombatWorld
 import simulation.main.Deck
 import simulation.main.World
+import simulation.misc.Definitions
 import simulation.updating.simulationDelta
 
 fun canUse(deck: Deck, action: Id): Boolean {
@@ -47,12 +49,18 @@ fun getActionTarget(deck: Deck, character: Id): Vector3? {
 fun eventsFromTryUseAbility(world: World): (TryUseAbilityEvent) -> Events = { event ->
   val deck = world.deck
   val action = getActiveAction(deck, event.actor)
+  val isPlayer = world.deck.players.containsKey(event.actor)
   if (action != null && canUse(deck, action)) {
     val accessory = deck.accessories[action]!!
     when {
-      
-      world.definitions.weapons.containsKey(accessory.type) ->
-        startAttack(event.actor, action, accessory.type, getActionTarget(deck, event.actor))
+
+      world.definitions.weapons.containsKey(accessory.type) -> {
+        val target = getActionTarget(deck, event.actor)
+        if (isPlayer)
+          onAttack(toSpatialCombatWorld(world))(AttackEvent(event.actor, accessory.type, target))
+        else
+          listOf(startAttack(event.actor, action, accessory.type, target))
+      }
 
       else -> listOf()
     } + UseAction(

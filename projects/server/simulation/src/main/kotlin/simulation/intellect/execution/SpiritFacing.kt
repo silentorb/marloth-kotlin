@@ -3,7 +3,7 @@ package simulation.intellect.execution
 import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.characters.getHorizontalLookAtAngle
 import silentorb.mythic.characters.getVerticalLookAtAngle
-import silentorb.mythic.characters.maxPositiveLookVelocityChange
+import silentorb.mythic.characters.maxPositiveLookVelocityXChange
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.CommandName
@@ -46,7 +46,7 @@ fun spiritFacingChange(character: Id, course: Float, velocity: Float, turnSpeed:
   } else {
     val dir = if (course > 0f) positiveCommand else negativeCommand
     val increment = turnSpeed * simulationDelta
-    val drift = increment * velocity / maxPositiveLookVelocityChange()
+    val drift = increment * velocity / maxPositiveLookVelocityXChange()
     if (absCourse <= drift)
       listOf() // Don't need to rotate anymore.  The remaining momentum will get us there.
     else
@@ -62,7 +62,7 @@ fun spiritFacingChange2(character: Id, course: Float, velocity: Float, turnSpeed
   } else {
     val dir = if (course > 0f) positiveCommand else negativeCommand
     val increment = turnSpeed * simulationDelta
-    val drift = increment * velocity / maxPositiveLookVelocityChange()
+    val drift = increment * velocity / maxPositiveLookVelocityXChange()
     if (absCourse <= drift)
       listOf() // Don't need to rotate anymore.  The remaining momentum will get us there.
     else

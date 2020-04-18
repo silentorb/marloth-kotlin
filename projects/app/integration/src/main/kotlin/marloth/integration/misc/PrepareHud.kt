@@ -6,8 +6,7 @@ import silentorb.mythic.ent.Id
 import simulation.intellect.assessment.lightRating
 import simulation.main.Deck
 import simulation.misc.Definitions
-import simulation.misc.getActiveAction
-import simulation.misc.getPointCell
+import simulation.happenings.getActiveAction
 import kotlin.math.roundToInt
 
 fun floatToRoundedString(value: Float): String =

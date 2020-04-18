@@ -5,7 +5,7 @@ import simulation.intellect.Path
 import simulation.intellect.assessment.Knowledge
 import silentorb.mythic.spatial.Vector3
 import org.recast4j.detour.DefaultQueryFilter
-import simulation.misc.getActiveAction
+import simulation.happenings.getActiveAction
 import simulation.main.World
 import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.CommonCharacterCommands

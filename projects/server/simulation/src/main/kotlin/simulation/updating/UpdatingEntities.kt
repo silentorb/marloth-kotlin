@@ -16,7 +16,7 @@ import silentorb.mythic.timing.updateIntCycle
 import silentorb.mythic.timing.updateIntTimers
 import simulation.intellect.assessment.lightRatings
 import simulation.intellect.assessment.updateKnowledge
-import simulation.misc.updateActions
+import simulation.happenings.updateActions
 import simulation.particles.updateParticleEffect
 import simulation.physics.updateMarlothCharacterRig
 

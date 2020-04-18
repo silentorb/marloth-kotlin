@@ -11,7 +11,7 @@ import simulation.intellect.Pursuit
 import simulation.intellect.assessment.Knowledge
 import simulation.main.Deck
 import simulation.main.World
-import simulation.misc.getActiveAction
+import simulation.happenings.getActiveAction
 
 fun shouldMoveDirectlyToward(deck: Deck, target: SimpleBody, attacker: Id): Boolean {
   val attackerBody = deck.bodies[attacker]!!

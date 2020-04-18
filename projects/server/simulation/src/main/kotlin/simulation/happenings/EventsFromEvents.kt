@@ -1,12 +1,10 @@
 package simulation.happenings
 
 import silentorb.mythic.combat.spatial.onAttack
-import silentorb.mythic.combat.spatial.raycastAttack
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
 import simulation.combat.usingSpatialCombatWorld
 import simulation.entities.eventsFromRespawnCountdowns
-import simulation.misc.eventsFromTryUseAbility
 import simulation.main.Deck
 import simulation.main.World
 

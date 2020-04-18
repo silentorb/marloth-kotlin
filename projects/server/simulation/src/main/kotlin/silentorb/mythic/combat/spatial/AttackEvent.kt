@@ -45,17 +45,15 @@ fun onAttack(world: SpatialCombatWorld): (AttackEvent) -> Events = { event ->
     attackEvents
 }
 
-fun startAttack(attacker: Id, action: Id, accessory: AccessoryName, target: Vector3?): Events {
-  return listOf(
-      UseAction(
-          actor = attacker,
-          action = action,
-          deferredEvents = mapOf(
-              attackMarker to AttackEvent(
-                  attacker = attacker,
-                  accessory = accessory,
-                  target = target
-              )
+fun startAttack(attacker: Id, action: Id, accessory: AccessoryName, target: Vector3?): UseAction {
+  return UseAction(
+      actor = attacker,
+      action = action,
+      deferredEvents = mapOf(
+          attackMarker to AttackEvent(
+              attacker = attacker,
+              accessory = accessory,
+              target = target
           )
       )
   )

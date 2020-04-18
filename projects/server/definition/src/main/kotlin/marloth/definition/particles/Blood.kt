@@ -22,8 +22,9 @@ fun velocityGravityMod(gravity: Float, rate: Float): VelocityMod =
     }
 
 fun bloodParticleEffect(): ParticleEffectDefinition {
-  val firstColor = Vector3(1f, 0f, 0f)
-  val secondColor = Vector3(0.5f, 0f, 0f)
+  val firstColor = Vector3(0f, 0f, 0f)
+//  val firstColor = Vector3(1f, 0f, 0f)
+  val secondColor = firstColor * 0.5f
   val gravity = -1.1f
   return ParticleEffectDefinition(
       initialAppearance = ParticleAppearance(
@@ -35,7 +36,7 @@ fun bloodParticleEffect(): ParticleEffectDefinition {
       velocityMod = velocityGravityMod(gravity, 0.1f),
       emitter = immediateEmmiter(16, CommonEmission(
           volume = Sphere(radius = 0.5f),
-          life = Pair(0.2f, 0.5f),
+          life = Pair(0.5f, 0.9f),
           initialVelocity = descendingVelocity(0.5f, gravity)
       ))
   )

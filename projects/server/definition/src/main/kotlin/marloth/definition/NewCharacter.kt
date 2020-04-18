@@ -24,7 +24,7 @@ import simulation.intellect.assessment.newKnowledge
 import simulation.main.Hand
 import simulation.main.IdHand
 import simulation.misc.Definitions
-import simulation.misc.newPossibleAction
+import simulation.happenings.newPossibleAction
 
 fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, definition: CharacterDefinition, faction: Id, position: Vector3,
                  angle: Float = Pi / 2f,
