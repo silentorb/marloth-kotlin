@@ -1,13 +1,13 @@
 package marloth.generation.population
 
 import generation.abstracted.distributeToSlots
-import generation.abstracted.normalizeRanges
 import generation.architecture.misc.GenerationConfig
-import marloth.definition.data.creatures
+import marloth.definition.data.*
 import marloth.definition.templates.defaultWares
 import marloth.definition.templates.newMerchant
 import marloth.scenery.enums.ModifierId
 import silentorb.mythic.debugging.getDebugBoolean
+import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.randomly.Dice
@@ -20,52 +20,7 @@ import simulation.misc.Realm
 import simulation.misc.absoluteCellPosition
 import simulation.misc.cellLength
 
-enum class DistributionGroup {
-  cloud,
-  merchant,
-  monster,
-  none,
-  treasureChest
-}
-
-typealias DistributionMap = Map<DistributionGroup, Int>
-
-//fun damageCloudsDistributions(dice: Dice, totalWeight: Int): DistributionMap {
-//  val cloudTypes = listOf(
-//      ModifierId.damageChilled,
-//      ModifierId.damageBurning,
-//      ModifierId.damagePoisoned
-//  )
-//
-//  val initialWeights = cloudTypes
-//      .map { Pair(it, dice.getInt(0, 100)) }
-//      .associate { it }
-//
-//  return normalizeRanges(totalWeight, initialWeights)
-//}
-
-fun enemyDistributions() = mapOf(
-    creatures.hogMan to 5,
-    creatures.sentinel to 20,
-    creatures.hound to 40
-)
-
-fun scalingDistributions(dice: Dice): DistributionMap = mapOf(
-    DistributionGroup.none to 10,
-    DistributionGroup.monster to if (getDebugBoolean("SINGLE_MONSTER")) 0 else 2
-
-)
-//) + damageCloudsDistributions(dice, 10)
-
-fun fixedDistributions(): DistributionMap =
-    if (getDebugBoolean("SINGLE_MONSTER"))
-      mapOf(
-          DistributionGroup.monster to 1
-      )
-    else
-      mapOf(
-          DistributionGroup.monster to 2
-      )
+fun monsterLimit() = getDebugInt("MONSTER_LIMIT") ?: 1000
 
 fun supportsPopulation(attributes: Set<CellAttribute>): Boolean =
     attributes.contains(CellAttribute.fullFloor)
@@ -100,7 +55,7 @@ fun getGroupDistributions(dice: Dice, realm: Realm): Map<DistributionGroup, List
       .keys
       .flatMap(partitionCell(partitionOffsets(2)))
 
-  val scaling = scalingDistributions(dice)
+  val scaling = scalingDistributions()
   val fixed = fixedDistributions()
   val occupants = distributeToSlots(dice, locations.size, scaling, fixed)
   val pairs = locations
@@ -113,6 +68,7 @@ fun getGroupDistributions(dice: Dice, realm: Realm): Map<DistributionGroup, List
 }
 
 fun populateMonsters(config: GenerationConfig, locations: List<Vector3>, nextId: IdSource, dice: Dice): List<IdHand> {
+  println("Monster count: ${locations.size}")
   val distributions = distributeToSlots(dice, locations.size, enemyDistributions(), mapOf())
   return locations
       .zip(distributions) { location, definition ->
@@ -124,7 +80,7 @@ fun populateMonsters(config: GenerationConfig, locations: List<Vector3>, nextId:
 fun populateRooms(config: GenerationConfig, nextId: IdSource, dice: Dice, realm: Realm): List<IdHand> {
   val groupDistributions = getGroupDistributions(dice, realm)
   val monsters = if (config.includeEnemies)
-    populateMonsters(config, groupDistributions[DistributionGroup.monster] ?: listOf(), nextId, dice)
+    populateMonsters(config, (groupDistributions[DistributionGroup.monster] ?: listOf()).take(monsterLimit()), nextId, dice)
   else
     listOf()
 

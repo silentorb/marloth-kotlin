@@ -1,6 +1,5 @@
 package simulation.intellect
 
-import simulation.intellect.assessment.Knowledge
 import silentorb.mythic.ent.Id
 import silentorb.mythic.spatial.Vector3
 
@@ -12,5 +11,10 @@ data class Pursuit(
 )
 
 data class Spirit(
-    val pursuit: Pursuit
+    val pursuit: Pursuit?
 )
+
+fun freshSpirit(): Spirit =
+    Spirit(
+        pursuit = null
+    )

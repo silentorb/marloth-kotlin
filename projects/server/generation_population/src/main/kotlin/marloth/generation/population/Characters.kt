@@ -17,6 +17,7 @@ import simulation.misc.*
 import silentorb.mythic.characters.getHorizontalLookAtAngle
 import silentorb.mythic.ent.IdSource
 import simulation.intellect.assessment.Knowledge
+import simulation.intellect.freshSpirit
 import simulation.main.IdHand
 
 fun placeAiCharacter(nextId: IdSource, definitions: Definitions, faction: Id, definition: CharacterDefinition, position: Vector3): List<IdHand> {
@@ -24,9 +25,7 @@ fun placeAiCharacter(nextId: IdSource, definitions: Definitions, faction: Id, de
       definition = definition,
       faction = faction,
       position = position,
-      spirit = Spirit(
-          pursuit = Pursuit()
-      )
+      spirit = freshSpirit()
   )
 }
 

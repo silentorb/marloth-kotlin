@@ -13,7 +13,7 @@ import silentorb.mythic.spatial.Vector4
 import simulation.main.Deck
 
 fun drawAiTargets(deck: Deck, renderer: Renderer) {
-  val targets = deck.spirits.mapNotNull { it.value.pursuit.targetPosition }
+  val targets = deck.spirits.mapNotNull { it.value.pursuit?.targetPosition }
   val effect = renderer.getShader(renderer.vertexSchemas.flat, ShaderFeatureConfig())
   val cube = renderer.meshes[MeshId.cube.name]!!.primitives.first()
   for (target in targets) {

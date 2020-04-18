@@ -28,8 +28,9 @@ fun pursueGoal(world: World, character: Id, knowledge: Knowledge, pursuit: Pursu
 fun pursueGoals(world: World, spirits: Table<Spirit>): Commands {
   return spirits.flatMap { (id, spirit) ->
     val knowledge = world.deck.knowledge[id]
-    if (knowledge != null)
-      pursueGoal(world, id, knowledge, spirit.pursuit)
+    val pursuit = spirit.pursuit
+    if (knowledge != null && pursuit != null)
+      pursueGoal(world, id, knowledge, pursuit)
     else
       listOf()
   }
