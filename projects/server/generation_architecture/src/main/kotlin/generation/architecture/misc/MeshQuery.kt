@@ -1,5 +1,7 @@
 package generation.architecture.misc
 
+import marloth.scenery.enums.MeshAttributes
+import marloth.scenery.enums.MeshInfoMap
 import silentorb.mythic.ent.pipe
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.MeshName

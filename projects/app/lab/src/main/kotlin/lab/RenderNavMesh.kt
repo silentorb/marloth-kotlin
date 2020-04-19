@@ -12,7 +12,7 @@ import org.recast4j.recast.Span
 import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.lookinglass.shading.ObjectShaderConfig
 import silentorb.mythic.lookinglass.shading.ShaderFeatureConfig
-import marloth.definition.enums.MeshId
+import marloth.scenery.enums.MeshId
 import simulation.intellect.navigation.globalHeightMap
 import simulation.intellect.navigation.originalNavMeshData
 import kotlin.math.abs

@@ -4,7 +4,7 @@ import generation.architecture.building.WallPlacement
 import generation.architecture.building.directionRotation
 import generation.architecture.building.newWallInternal
 import generation.architecture.definition.BiomeId
-import generation.architecture.definition.MeshAttribute
+import marloth.scenery.enums.MeshAttribute
 import generation.architecture.misc.MeshQuery
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Vector3

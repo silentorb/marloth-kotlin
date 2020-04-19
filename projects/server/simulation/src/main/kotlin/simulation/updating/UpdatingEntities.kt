@@ -1,5 +1,6 @@
 package simulation.updating
 
+import silentorb.mythic.accessorize.updateAccessory
 import silentorb.mythic.aura.updateSound
 import silentorb.mythic.combat.general.updateDestructibleHealth
 import silentorb.mythic.ent.mapTable
@@ -30,6 +31,7 @@ fun updateEntities(definitions: Definitions, world: World, events: Events): (Dec
           animations = mapTable(deck.animations, updateCharacterAnimation(deck, definitions.animations, delta)),
           bodies = mapTable(deck.bodies, updateSpinnerRotation(deck.spinners, delta)),
           characterRigs = mapTable(deck.characterRigs, updateMarlothCharacterRig(world.bulletState, deck, events)),
+          accessories = mapTable(deck.accessories, updateAccessory(events)),
           attachments = mapTable(deck.attachments, updateAttachment(events)),
           cyclesFloat = mapTableValues(deck.cyclesFloat, updateFloatCycle(delta)),
           cyclesInt = mapTableValues(deck.cyclesInt, updateIntCycle),

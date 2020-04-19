@@ -8,7 +8,7 @@ import simulation.main.Deck
 import simulation.main.DeckSource
 import simulation.main.overTime
 import simulation.misc.Definitions
-import silentorb.mythic.physics.Collision
+import simulation.entities.CollisionMap
 
 data class Triggering(
     val actor: Id,
@@ -88,7 +88,7 @@ fun gatherCommandTriggers(deck: Deck, commands: Commands): List<Triggering> {
   }
 }
 
-fun gatherActivatedTriggers(deck: Deck, definitions: Definitions, collisions: List<Collision>, commands: Commands): List<Triggering> {
+fun gatherActivatedTriggers(deck: Deck, definitions: Definitions, collisions: CollisionMap, commands: Commands): List<Triggering> {
   val attachmentTriggers = deck.triggers.mapNotNull { trigger ->
     val attachment = deck.attachments[trigger.key]
     val action = trigger.value.action

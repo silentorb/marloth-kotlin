@@ -1,4 +1,4 @@
-package marloth.definition.enums
+package marloth.scenery.enums
 
 enum class MeshId {
   candle,

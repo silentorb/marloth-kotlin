@@ -2,7 +2,7 @@ package generation.architecture.definition
 
 import generation.architecture.building.*
 import generation.general.Side
-import marloth.definition.enums.MeshId
+import marloth.scenery.enums.MeshId
 import silentorb.mythic.ent.mapEntryValue
 import simulation.misc.CellAttribute
 

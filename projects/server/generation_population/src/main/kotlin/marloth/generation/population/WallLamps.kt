@@ -1,6 +1,6 @@
 package marloth.generation.population
 
-import generation.architecture.definition.MeshAttribute
+import marloth.scenery.enums.MeshAttribute
 import generation.architecture.misc.GenerationConfig
 import generation.general.BiomeAttribute
 import silentorb.mythic.spatial.Pi
@@ -8,7 +8,7 @@ import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.times
 import silentorb.mythic.randomly.Dice
-import marloth.definition.enums.MeshId
+import marloth.scenery.enums.MeshId
 import silentorb.mythic.ent.Id
 import simulation.entities.Depiction
 import simulation.entities.DepictionType

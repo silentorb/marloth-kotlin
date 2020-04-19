@@ -1,13 +1,13 @@
 package marloth.generation.population
 
 import simulation.misc.floorOffset
-import generation.architecture.misc.MeshInfoMap
+import marloth.scenery.enums.MeshInfoMap
 import generation.architecture.old.alignWithNodeFloor
 import generation.architecture.old.nodeFloorCenter
 import marloth.definition.templates.newBuffCloud
 import marloth.definition.templates.newTreasureChest
 import silentorb.mythic.ent.Id
-import marloth.definition.enums.MeshId
+import marloth.scenery.enums.MeshId
 import marloth.scenery.enums.ModifierId
 import simulation.main.Deck
 import simulation.misc.MapGrid

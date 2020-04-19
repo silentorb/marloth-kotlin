@@ -20,6 +20,7 @@ import silentorb.mythic.timing.FloatCycle
 import silentorb.mythic.timing.FloatTimer
 import silentorb.mythic.timing.IntCycle
 import silentorb.mythic.timing.IntTimer
+import simulation.accessorize.ItemPickup
 import simulation.combat.PlayerOverlay
 import simulation.entities.*
 import simulation.happenings.Trigger
@@ -47,6 +48,7 @@ data class Hand(
     val destructible: Destructible? = null,
     val door: Door? = null,
     val interactable: Interactable? = null,
+    val itemPickup: ItemPickup? = null,
     val knowledge: Knowledge? = null,
     val light: Light? = null,
     val missile: Missile? = null,

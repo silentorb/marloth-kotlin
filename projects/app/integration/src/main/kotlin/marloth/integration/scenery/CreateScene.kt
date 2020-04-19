@@ -14,7 +14,7 @@ import simulation.main.Deck
 import simulation.misc.Definitions
 import simulation.misc.hasEquipped
 
-fun mapLights(deck: Deck, player: Id) =
+fun mapLights(deck: Deck, player: Id): List<Light> =
     deck.lights
         .map { (id, light) ->
           val transform = depictionTransform(deck.bodies, deck.characterRigs, id)
@@ -65,26 +65,34 @@ fun getPlayerOverlays(deck: Deck, player: Id) =
 
 fun createScene(definitions: Definitions, deck: Deck): (Id) -> GameScene = { player ->
   val camera = createCamera(deck, player)
+  val equipmentLayer = getPlayerEquipmentLayer(definitions, deck, player, camera)
+
+  val layers = listOf(
+      SceneLayer(
+          elements = gatherBackground(deck.cyclesFloat, camera.position),
+          useDepth = false
+      ),
+      SceneLayer(
+          elements = gatherVisualElements(definitions, deck, player, deck.players[player]!!),
+          useDepth = true
+      ),
+      SceneLayer(
+          elements = gatherParticleElements(deck, camera.position),
+          useDepth = false
+      )
+  ) + listOfNotNull(equipmentLayer)
+
+  val elementLights = layers.flatMap { layer ->
+    layer.elements.flatMap { it.lights }
+  }
+
   GameScene(
       main = Scene(
           camera = camera,
-          lights = mapLights(deck, player),
+          lights = mapLights(deck, player).plus(elementLights),
           lightingConfig = defaultLightingConfig()
       ),
-      layers = listOf(
-          SceneLayer(
-              elements = gatherBackground(deck.cyclesFloat, camera.position),
-              useDepth = false
-          ),
-          SceneLayer(
-              elements = gatherVisualElements(definitions, deck, player, deck.players[player]!!),
-              useDepth = true
-          ),
-          SceneLayer(
-              elements = gatherParticleElements(deck, camera.position),
-              useDepth = false
-          )
-      ) + listOfNotNull(getPlayerItemLayer(definitions, deck, player, camera)),
+      layers = layers,
       filters = getPlayerOverlays(deck, player)
   )
 }

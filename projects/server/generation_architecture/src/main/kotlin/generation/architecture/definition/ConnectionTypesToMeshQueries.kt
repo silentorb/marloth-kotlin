@@ -1,5 +1,6 @@
 package generation.architecture.definition
 
+import marloth.scenery.enums.MeshAttribute
 import generation.architecture.misc.MeshQuery
 
 data class RandomMeshQuery(

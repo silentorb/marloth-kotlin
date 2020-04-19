@@ -5,6 +5,7 @@ import marloth.clienting.PlayerViews
 import marloth.clienting.menus.*
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.updateClient
+import marloth.integration.clienting.gatherHudData
 import marloth.integration.clienting.updateAppStateForFirstNewPlayer
 import marloth.integration.clienting.updateAppStateForNewPlayers
 import marloth.integration.front.GameApp
@@ -21,7 +22,6 @@ import silentorb.mythic.quartz.updateTimestep
 import silentorb.mythic.spatial.Vector2i
 import persistence.Database
 import persistence.createVictory
-import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugFloat
 import silentorb.mythic.lookinglass.getPlayerViewports
 import simulation.entities.Player
@@ -32,7 +32,7 @@ import silentorb.mythic.happenings.CommonCharacterCommands
 import simulation.main.World
 import simulation.updating.simulationDelta
 import simulation.misc.Victory
-import simulation.updating.getSimulationEvents
+import simulation.happenings.getSimulationEvents
 import simulation.updating.updateWorld
 
 fun updateSimulationDatabase(db: Database, next: World, previous: World) {
@@ -167,7 +167,8 @@ data class GameHooks(
 fun layoutPlayerGui(app: GameApp, appState: AppState): (Id, Vector2i) -> Box = { player, dimensions ->
   val world = appState.worlds.lastOrNull()
   val hudData = if (world != null)
-    gatherHudData(world.definitions, world.deck, player, appState.client.playerViews[player] ?: ViewId.none)
+    gatherHudData(world, player, appState.client.playerViews[player]
+        ?: ViewId.none)
   else
     null
 

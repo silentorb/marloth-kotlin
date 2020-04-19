@@ -1,18 +1,22 @@
-package marloth.integration.misc
+package marloth.integration.clienting
 
 import marloth.clienting.hud.HudData
 import marloth.clienting.menus.ViewId
 import silentorb.mythic.ent.Id
-import simulation.intellect.assessment.lightRating
-import simulation.main.Deck
-import simulation.misc.Definitions
 import simulation.happenings.getActiveAction
+import simulation.intellect.assessment.lightRating
+import simulation.main.World
+import simulation.misc.getVictoryKeyStats
 import kotlin.math.roundToInt
 
 fun floatToRoundedString(value: Float): String =
     ((value * 100).roundToInt().toFloat() / 100).toString()
 
-fun gatherHudData(definitions: Definitions, deck: Deck, player: Id, view: ViewId): HudData? {
+fun gatherHudData(world: World, player: Id, view: ViewId): HudData? {
+  val deck = world.deck
+  val definitions = world.definitions
+  val grid = world.realm.grid
+
   val character = deck.characters[player]
   return if (character == null)
     null
@@ -41,6 +45,8 @@ fun gatherHudData(definitions: Definitions, deck: Deck, player: Id, view: ViewId
     } else
       null
 
+    val victoryKeyStats = getVictoryKeyStats(grid, deck)
+
 //    val cell = getPointCell(body.position)
     HudData(
         health = destructible.health,
@@ -50,7 +56,8 @@ fun gatherHudData(definitions: Definitions, deck: Deck, player: Id, view: ViewId
         buffs = buffs,
         debugInfo = listOf(
             "LR: ${floatToRoundedString(lightRating(deck, player))}",
-            floatToRoundedString(body.velocity.length())
+            floatToRoundedString(body.velocity.length()),
+            "Keys: ${victoryKeyStats.collected}/${victoryKeyStats.total}"
 //            "${body.position.x} ${body.position.y} ${body.position.z}",
 //            "${cell.x} ${cell.y} ${cell.z}"
 //          if (character.isGrounded) "Grounded" else "Air",

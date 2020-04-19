@@ -1,6 +1,6 @@
 package marloth.integration.misc
 
-import generation.architecture.misc.MeshShapeMap
+import marloth.scenery.enums.MeshShapeMap
 import marloth.clienting.Client
 
 fun getMeshInfo(client: Client): MeshShapeMap =

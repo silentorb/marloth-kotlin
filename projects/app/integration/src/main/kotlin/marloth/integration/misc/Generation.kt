@@ -6,6 +6,8 @@ import generation.general.bakeSides
 import generation.general.explodeBlockMap
 import generation.general.newRandomizedBiomeGrid
 import marloth.generation.population.populateWorld
+import marloth.scenery.enums.MeshShapeMap
+import marloth.scenery.enums.meshAttributes
 import org.recast4j.detour.NavMeshQuery
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.debugging.getDebugString
@@ -14,10 +16,7 @@ import silentorb.mythic.ent.newIdSource
 import silentorb.mythic.physics.newBulletState
 import silentorb.mythic.randomly.Dice
 import simulation.intellect.navigation.newNavMesh
-import simulation.main.Deck
-import simulation.main.Hand
-import simulation.main.World
-import simulation.main.pipeIdHandsToDeck
+import simulation.main.*
 import simulation.misc.*
 
 fun fixedCellBiomes(grid: MapGrid): CellBiomeMap {
@@ -52,19 +51,22 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
 
   // The <Hand> specifier shouldn't be needed here but without it Kotlin is throwing an internal error referencing this line
   val architectureHands = architectureSource.map(newGenericIdHand<Hand>(nextId))
-  val idHands = architectureHands.plus(lightHandsFromDepictions(definitions.lightAttachments, architectureHands))
-  val deck = pipeIdHandsToDeck(listOf(
-      { _ -> idHands },
-      populateWorld(nextId, generationConfig, input, realm)
-  ))(Deck())
+  val architectureDeck = idHandsToDeck(architectureHands)
 
   val navMesh = if (generationConfig.includeEnemies) {
-    val meshIds = deck.depictions
+    val meshIds = architectureDeck.depictions
         .filterValues { generationConfig.meshes.containsKey(it.mesh) }
         .keys
-    newNavMesh(meshIds, deck)
+    newNavMesh(meshIds, architectureDeck)
   } else
     null
+
+  val lightHands = lightHandsFromDepictions(definitions.lightAttachments, architectureHands)
+
+  val deck = pipeIdHandsToDeck(listOf(
+      { _ -> lightHands },
+      populateWorld(nextId, generationConfig, input, realm)
+  ))(architectureDeck)
 
   return World(
       deck = deck,

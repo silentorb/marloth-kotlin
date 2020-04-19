@@ -9,12 +9,13 @@ import silentorb.mythic.happenings.DeleteEntityEvent
 import silentorb.mythic.happenings.Events
 import simulation.entities.cleanupAttachmentSource
 import silentorb.mythic.timing.expiredTimers
+import simulation.entities.PruneEntityEvent
 import simulation.happenings.PurchaseEvent
 import simulation.happenings.TakeItemEvent
 import simulation.main.Deck
 import simulation.main.removeEntities
 
-val cleanupOutdatedReferences: (Deck) -> Deck = { deck ->
+val cleanOutdatedReferences: (Deck) -> Deck = { deck ->
   deck.copy(
       attachments = deck.attachments
           .mapValues(mapEntryValue(cleanupAttachmentSource(deck)))
@@ -32,6 +33,7 @@ fun getFinished(soundDurations: SoundDurations, events: Events, deck: Deck): Set
 fun removeWhole(soundDurations: SoundDurations, events: Events, deck: Deck): (Deck) -> Deck = { aggregator ->
   val finished = getFinished(soundDurations, events, deck)
       .plus(events.filterIsInstance<DeleteEntityEvent>().map { it.id })
+      .plus(events.filterIsInstance<PruneEntityEvent>().map { it.id })
   if (finished.any()) {
     val k = 0
   }

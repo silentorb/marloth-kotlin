@@ -4,13 +4,13 @@ import silentorb.mythic.configuration.ConfigManager
 import silentorb.mythic.configuration.loadYamlFile
 import silentorb.mythic.configuration.saveYamlFile
 import generation.architecture.misc.GenerationConfig
-import generation.architecture.misc.MeshShapeMap
+import marloth.scenery.enums.MeshShapeMap
 import generation.architecture.misc.compileArchitectureMeshInfo
 import lab.utility.updateWatching
 import lab.views.model.newModelViewState
 import marloth.clienting.newClientState
 import generation.architecture.definition.biomeInfoMap
-import generation.architecture.definition.meshAttributes
+import marloth.scenery.enums.meshAttributes
 import lab.views.game.*
 import marloth.clienting.definitionsFromClient
 import marloth.definition.staticDefinitions

@@ -12,6 +12,7 @@ import silentorb.mythic.timing.FloatTimer
 import simulation.combat.newDamageVisualEffects
 import simulation.entities.*
 import simulation.happenings.NewHandEvent
+import simulation.entities.pruningEventsToIdHands
 import simulation.main.*
 import simulation.misc.*
 
@@ -39,7 +40,7 @@ fun newPerformances(definitions: Definitions, previous: Deck, events: Events, ne
       .map(newPerformanceHand(definitions.animations, nextId))
 }
 
-fun newEntities(definitions: Definitions, previous: Deck, events: Events, nextId: IdSource): (Deck) -> Deck = { next ->
+fun newEntities(definitions: Definitions, grid: MapGrid, previous: Deck, events: Events, nextId: IdSource): (Deck) -> Deck = { next ->
   val idHands = listOf(
       newRespawnCountdowns(nextId, previous, next),
       newPerformances(definitions, previous, events, nextId),
@@ -52,6 +53,8 @@ fun newEntities(definitions: Definitions, previous: Deck, events: Events, nextId
           .flatMap { toIdHands(nextId, it) }
   )
       .flatten()
+      .plus(pruningEventsToIdHands(events))
+      .plus(placeVictoryKeys(grid, next, events))
 
   val additions = listOf(
       newAccessoriesDeck(events, previous)

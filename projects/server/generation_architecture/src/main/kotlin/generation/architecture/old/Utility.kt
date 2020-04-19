@@ -1,10 +1,9 @@
 package generation.architecture.old
 
-import generation.architecture.definition.MeshAttribute
-import generation.architecture.misc.*
 import generation.general.BiomeAttribute
 import generation.general.BiomeInfo
 import generation.general.TextureGroup
+import marloth.scenery.enums.*
 import silentorb.mythic.ent.Id
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Quaternion
@@ -12,7 +11,6 @@ import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.physics.Body
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.MeshName
-import marloth.scenery.enums.TextureId
 import silentorb.mythic.physics.CollisionObject
 import simulation.main.Hand
 import simulation.entities.Depiction
@@ -35,6 +33,7 @@ fun newArchitectureMesh(meshes: MeshInfoMap, mesh: MeshName, position: Vector3,
                         texture: TextureId? = null,
                         scale: Vector3 = Vector3.unit): Hand {
   val meshInfo = meshes[mesh]!!
+  val shape = meshInfo.shape
   return Hand(
       depiction = Depiction(
           type = DepictionType.staticMesh,
@@ -47,7 +46,7 @@ fun newArchitectureMesh(meshes: MeshInfoMap, mesh: MeshName, position: Vector3,
           nearestNode = node,
           scale = scale
       ),
-      collisionShape = if (meshInfo.shape != null) CollisionObject(shape = meshInfo.shape) else null
+      collisionShape = if (shape != null) CollisionObject(shape = shape) else null
   )
 }
 

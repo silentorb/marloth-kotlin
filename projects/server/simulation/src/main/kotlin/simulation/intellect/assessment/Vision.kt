@@ -11,10 +11,7 @@ import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.quadOut
 import simulation.entities.fieldOfView360
 import simulation.main.Deck
-import simulation.misc.CellAttribute
-import simulation.misc.MapGrid
-import simulation.misc.Realm
-import simulation.misc.getPointCell
+import simulation.misc.*
 
 const val viewingRange = 30f
 const val minimumLightRating = 0.1f
@@ -61,7 +58,7 @@ fun areEnemies(deck: Deck, first: Id, second: Id): Boolean =
 
 fun isHiddenByHome(grid: MapGrid, deck: Deck, viewer: Id, target: Id): Boolean =
     areEnemies(deck, viewer, target)
-        && grid.cells[getPointCell(deck.bodies[target]!!.position)]?.attributes?.contains(CellAttribute.home) ?: false
+        && isAtHome(grid, deck)(target)
 
 fun canSee(realm: Realm, bulletState: BulletState, deck: Deck, lightRatings: Table<Float>, viewer: Id): (Id) -> Boolean = { target ->
   val viewerBody = deck.bodies[viewer]!!

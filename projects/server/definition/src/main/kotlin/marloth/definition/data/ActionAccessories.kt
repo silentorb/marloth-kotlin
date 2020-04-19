@@ -1,6 +1,6 @@
 package marloth.definition.data
 
-import marloth.definition.enums.MeshId
+import marloth.scenery.enums.MeshId
 import marloth.scenery.enums.*
 import silentorb.mythic.accessorize.AccessoryDefinition
 import silentorb.mythic.accessorize.AccessoryName
@@ -19,7 +19,7 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
     AccessoryId.pistol.name to ActionAccessory(
         accessory = AccessoryDefinition(
             name = Text.id_pistol,
-            mesh = MeshId.pistol.name
+            equippedMesh = MeshId.pistol.name
         ),
         action = ActionDefinition(
             cooldown = 2f,
@@ -41,7 +41,7 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
     AccessoryId.grenadeLauncher.name to ActionAccessory(
         accessory = AccessoryDefinition(
             name = Text.id_grenadeLauncher,
-            mesh = MeshId.grenadeLauncher.name
+            equippedMesh = MeshId.grenadeLauncher.name
         ),
         action = ActionDefinition(
             cooldown = 3f,
@@ -66,7 +66,7 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
     AccessoryId.rocketLauncher.name to ActionAccessory(
         accessory = AccessoryDefinition(
             name = Text.id_rocketLauncher,
-            mesh = MeshId.grenadeLauncher.name
+            equippedMesh = MeshId.grenadeLauncher.name
         ),
         action = ActionDefinition(
             cooldown = 3f,
@@ -92,7 +92,7 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
     AccessoryId.claws.name to ActionAccessory(
         accessory = AccessoryDefinition(
             name = Text.unnamed,
-            mesh = null
+            equippedMesh = null
         ),
         action = ActionDefinition(
             cooldown = 3f,
@@ -114,7 +114,7 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
     AccessoryId.shotgun.name to ActionAccessory(
         accessory = AccessoryDefinition(
             name = Text.unnamed,
-            mesh = MeshId.shotgun.name
+            equippedMesh = MeshId.shotgun.name
         ),
         action = ActionDefinition(
             cooldown = 0.2f,

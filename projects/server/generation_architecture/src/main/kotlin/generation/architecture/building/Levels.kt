@@ -4,7 +4,7 @@ import simulation.misc.cellLength
 import generation.architecture.definition.*
 import generation.general.Side
 import silentorb.mythic.spatial.Vector3
-import marloth.definition.enums.MeshId
+import marloth.scenery.enums.MeshId
 import simulation.misc.CellAttribute
 
 const val quarterStep = cellLength / 4f

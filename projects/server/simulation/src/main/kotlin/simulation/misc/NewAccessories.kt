@@ -9,6 +9,6 @@ import simulation.main.Deck
 fun newAccessories(events: Events, deck: Deck): Map<Id, Accessory> =
     events.filterIsInstance<PurchaseEvent>()
         .map { purchase ->
-          Pair(purchase.ware, Accessory(type = purchase.wareType, target = purchase.customer))
+          Pair(purchase.ware, Accessory(type = purchase.wareType, owner = purchase.customer))
         }
         .associate { it }

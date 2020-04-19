@@ -49,3 +49,6 @@ fun getPointCell(point: Vector3): Vector3i =
         floor((point.y / cellLength).toDouble()).toInt(),
         floor((point.z / cellLength).toDouble()).toInt()
     )
+
+fun getCellPoint(cell: Vector3i): Vector3 =
+    absoluteCellPosition(cell)

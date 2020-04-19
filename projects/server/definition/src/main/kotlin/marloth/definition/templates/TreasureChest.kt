@@ -1,8 +1,8 @@
 package marloth.definition.templates
 
-import generation.architecture.misc.MeshInfoMap
+import marloth.scenery.enums.MeshInfoMap
 import silentorb.mythic.spatial.Vector3
-import marloth.definition.enums.MeshId
+import marloth.scenery.enums.MeshId
 import marloth.scenery.enums.ResourceId
 import marloth.scenery.enums.Text
 import simulation.entities.Depiction

@@ -3,6 +3,7 @@ package marloth.scenery.enums
 enum class AccessoryId {
   candle,
   claws,
+  victoryKey,
   grenadeLauncher,
   rocketLauncher,
   pistol,

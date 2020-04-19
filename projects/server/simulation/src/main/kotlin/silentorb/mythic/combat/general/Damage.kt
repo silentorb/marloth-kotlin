@@ -40,7 +40,7 @@ enum class ModifierOperation {
 
 fun getValueModifiers(definitions: CombatDefinitions, combatDeck: CombatDeck, id: Id): List<RelativeModifier> {
   val indirectModifiers = combatDeck.accessories
-      .filterValues { it.target == id }
+      .filterValues { it.owner == id }
       .mapNotNull {
         val accessory = combatDeck.accessories[it.key]
         if (accessory != null)

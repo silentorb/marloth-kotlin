@@ -36,7 +36,7 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, defi
             hand = Hand(
                 accessory = Accessory(
                     type = type,
-                    target = character
+                    owner = character
                 ),
                 action = newPossibleAction(definitions, type)
             )

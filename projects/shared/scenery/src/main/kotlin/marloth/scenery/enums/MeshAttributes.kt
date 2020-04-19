@@ -1,7 +1,20 @@
-package generation.architecture.definition
+package marloth.scenery.enums
 
-import generation.architecture.misc.MeshAttributeMap
-import marloth.definition.enums.MeshId
+import silentorb.mythic.scenery.MeshName
+import silentorb.mythic.scenery.Shape
+
+typealias MeshAttributes = Set<MeshAttribute>
+
+data class ArchitectureMeshInfo(
+    val shape: Shape?,
+    val attributes: MeshAttributes
+)
+
+typealias MeshInfoMap = Map<MeshName, ArchitectureMeshInfo>
+
+typealias MeshShapeMap = Map<MeshName, Shape>
+
+typealias MeshAttributeMap = Map<MeshName, MeshAttributes>
 
 enum class MeshAttribute {
   canHaveAttachment,

@@ -1,6 +1,7 @@
 package simulation.main
 
 import silentorb.mythic.accessorize.Accessory
+import simulation.accessorize.ItemPickup
 import simulation.entities.Attachment
 import silentorb.mythic.accessorize.Modifier
 import silentorb.mythic.aura.Sound
@@ -48,6 +49,7 @@ data class Deck(
     val doors: Table<Door> = mapOf(),
     val dynamicBodies: Table<DynamicBody> = mapOf(),
     val interactables: Table<Interactable> = mapOf(),
+    val itemPickups: Table<ItemPickup> = mapOf(),
     val knowledge: Table<Knowledge> = mapOf(),
     val lights: Table<Light> = mapOf(),
     val missiles: Table<Missile> = mapOf(),

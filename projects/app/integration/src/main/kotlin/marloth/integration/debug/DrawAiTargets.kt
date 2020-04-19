@@ -1,6 +1,6 @@
 package marloth.integration.debug
 
-import marloth.definition.enums.MeshId
+import marloth.scenery.enums.MeshId
 import silentorb.mythic.debugging.isDebugSet
 import silentorb.mythic.glowing.DrawMethod
 import silentorb.mythic.glowing.drawMesh

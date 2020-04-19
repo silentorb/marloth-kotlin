@@ -2,7 +2,7 @@ package marloth.integration.scenery
 
 import marloth.scenery.enums.ArmatureId
 import marloth.scenery.enums.ArmatureSockets
-import marloth.definition.enums.MeshId
+import marloth.scenery.enums.MeshId
 import silentorb.mythic.accessorize.getAccessories
 import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.ent.Id
@@ -143,7 +143,7 @@ fun convertComplexDepiction(definitions: Definitions, deck: Deck, id: Id, depict
       attachments = accessories
           .mapNotNull { (_, accessoryRecord) ->
             val accessoryType = definitions.accessories[accessoryRecord.type]!!
-            val mesh = accessoryType.mesh
+            val mesh = accessoryType.equippedMesh
             if (mesh != null)
               AttachedMesh(
                   socket = ArmatureSockets.rightHand.toString(),

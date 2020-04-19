@@ -23,6 +23,6 @@ fun isHolding(deck: Deck, player: Id): (AccessoryName) -> Boolean = { type ->
 
 fun hasEquipped(deck: Deck, character: Id): (AccessoryName) -> Boolean = { type ->
   deck.accessories
-      .filterValues { it.target == character }
+      .filterValues { it.owner == character }
       .any { deck.accessories[it.key]?.type == type }
 }

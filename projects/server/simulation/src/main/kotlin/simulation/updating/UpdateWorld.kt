@@ -32,8 +32,8 @@ fun updateDeck(definitions: Definitions, events: Events, world: World,
         ifUpdatingLogic(world.deck, updateDeckCache(definitions)),
         removeWhole(world.definitions.soundDurations, events, world.deck),
         removePartial(events, world.deck),
-        cleanupOutdatedReferences,
-        newEntities(definitions, world.deck, events, nextId)
+        cleanOutdatedReferences,
+        newEntities(definitions, world.realm.grid, world.deck, events, nextId)
     )
 
 fun updateWorldDeck(definitions: Definitions, events: Events, delta: Float): (World) -> World =

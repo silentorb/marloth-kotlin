@@ -1,14 +1,13 @@
 package silentorb.mythic.combat.spatial
 
 import silentorb.mythic.combat.general.DamageDefinition
-import silentorb.mythic.combat.general.DamageEvent
 import silentorb.mythic.combat.general.newDamageEvents
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.DeleteEntityEvent
 import silentorb.mythic.happenings.Events
-import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.physics.Collision
 import silentorb.mythic.spatial.getCenter
+import simulation.entities.CollisionMap
 
 data class Missile(
     val damageRadius: Float, // 0f for no AOE
@@ -34,14 +33,13 @@ fun eventsFromMissileCollision(world: SpatialCombatWorld, id: Id, missile: Missi
   return listOf(DeleteEntityEvent(id)) + damageEvents
 }
 
-fun eventsFromMissiles(world: SpatialCombatWorld, collisions: List<Collision>): Events =
+fun eventsFromMissiles(world: SpatialCombatWorld, collisions: CollisionMap): Events =
     world.deck.missiles
         .mapNotNull { (id, missile) ->
-          val collision = collisions.firstOrNull { it.first == id }
-          if (collision != null)
+          val collision = collisions[id]
+          if (collision != null && world.deck.collisionShapes[collision.second]!!.isSolid)
             eventsFromMissileCollision(world, id, missile, collision)
           else
             null
         }
         .flatten()
-
