@@ -1,6 +1,7 @@
 package generation.architecture.misc
 
 import generation.architecture.boundaries.buildBoundaries
+import generation.architecture.definition.homeBlock
 import generation.architecture.definition.newHorizontalBoundaryBuilders
 import generation.architecture.definition.newVerticalBoundaryBuilders
 import generation.general.*
@@ -20,7 +21,7 @@ fun buildArchitecture(general: ArchitectureInput,
   )
 
   val groupedCellHands = general.blockGrid.mapValues { (position, block) ->
-    val info = blockMap[block]!!
+    val info = blockMap[block] ?: MappedBlock(homeBlock.block)
     val biomeName = general.cellBiomes[position]!!
     val builder = builders[info.original]
     if (builder == null)

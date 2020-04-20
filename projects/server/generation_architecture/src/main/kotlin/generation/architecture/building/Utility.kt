@@ -7,6 +7,7 @@ import generation.architecture.misc.BuilderInput
 import generation.general.*
 import silentorb.mythic.randomly.Dice
 import marloth.scenery.enums.MeshId
+import silentorb.mythic.spatial.Vector3
 import simulation.main.Hand
 import simulation.misc.CellAttribute
 
@@ -22,31 +23,48 @@ fun mergeSides(blocks: List<Block>): Sides {
   return sides
 }
 
-fun mergeAttributes(blocks: List<Block>): Set<CellAttribute> =
-    blocks.flatMap { it.attributes }.toSet()
+fun mergeBlocks(blocks: List<Block>): Block =
+    Block(
+        sides = mergeSides(blocks),
+        attributes = blocks.flatMap { it.attributes }.toSet(),
+        slots = blocks.flatMap { it.slots }
+    )
 
-fun compose(attributes: Set<CellAttribute>, vararg blockBuilders: BlockBuilderElement): BlockBuilder {
+fun compose(vararg blockBuilders: BlockBuilder): BlockBuilder {
   val blocks = blockBuilders.map { it.block }
   val builders = blockBuilders.mapNotNull { it.builder }
   return BlockBuilder(
-      block = Block(
-          sides = mergeSides(blocks),
-          attributes = attributes.plus(mergeAttributes(blocks))
-      ),
+      block = mergeBlocks(blocks),
       builder = { input ->
         builders.flatMap { it(input) }
       }
   )
 }
 
-data class BlockBuilderElement(
-    val block: Block,
-    val builder: Builder?
-)
+fun compose(attributes: Set<CellAttribute>, vararg blockBuilders: BlockBuilder): BlockBuilder =
+    compose(*(blockBuilders.toList().plus(BlockBuilder(block = Block(attributes = attributes))).toTypedArray()))
 
 data class BlockBuilder(
     val block: Block,
-    val builder: Builder
+    val builder: Builder? = null
+) {
+  operator fun plus(other: BlockBuilder) = compose(this, other)
+}
+
+fun sides(
+    up: Side = any,
+    down: Side = any,
+    east: Side = any,
+    north: Side = any,
+    west: Side = any,
+    south: Side = any
+) = mapOf(
+    Direction.up to up,
+    Direction.down to down,
+    Direction.east to east,
+    Direction.north to north,
+    Direction.west to west,
+    Direction.south to south
 )
 
 fun blockBuilder(up: Side = any,
@@ -56,8 +74,8 @@ fun blockBuilder(up: Side = any,
                  west: Side = any,
                  south: Side = any,
                  attributes: Set<CellAttribute> = setOf(),
-                 builder: Builder? = null): BlockBuilderElement =
-    BlockBuilderElement(
+                 builder: Builder? = null): BlockBuilder =
+    BlockBuilder(
         block = Block(
             sides = mapOf(
                 Direction.up to up,
@@ -80,7 +98,7 @@ fun getSideMesh(dice: Dice, sides: Sides, direction: Direction, meshMap: Map<Con
   return dice.takeOne(meshMap[dice.takeOne(possibleMeshes)]!!)
 }
 
-typealias BlockBuilderTransform = (BlockBuilderElement) -> BlockBuilderElement
+typealias BlockBuilderTransform = (BlockBuilder) -> BlockBuilder
 
 fun wrapBlockBuilder(addition: (BuilderInput, List<Hand>) -> List<Hand>): BlockBuilderTransform = { blockBuilder ->
   blockBuilder.copy(

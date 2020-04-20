@@ -1,7 +1,7 @@
 package generation.architecture.misc
 
 import generation.abstracted.*
-import generation.architecture.definition.BlockDefinitions
+import generation.architecture.definition.homeBlock
 import generation.general.Block
 import generation.general.BlockConfig
 import generation.general.Workbench
@@ -15,7 +15,7 @@ fun newWorkbench(dice: Dice, blocks: Set<Block>, independentConnections: Set<Any
       independentConnections = independentConnections,
       openConnections = openConnectionTypes
   )
-  val firstBlock = BlockDefinitions.home
+  val firstBlock = homeBlock
 
   return pipe(
       windingPath(dice, blockConfig, roomCount),

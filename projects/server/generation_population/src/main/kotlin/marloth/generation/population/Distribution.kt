@@ -19,30 +19,6 @@ import kotlin.math.min
 
 fun monsterLimit() = getDebugInt("MONSTER_LIMIT") ?: 1000
 
-fun supportsPopulation(attributes: Set<CellAttribute>): Boolean =
-    attributes.contains(CellAttribute.fullFloor)
-        && !attributes.contains(CellAttribute.home)
-        && !attributes.contains(CellAttribute.exit)
-
-fun partitionOffsets(resolution: Int): List<Vector3> {
-  val step = cellLength / resolution
-  val start = step / 2f
-
-  return (0 until resolution).flatMap { y ->
-    (0 until resolution).map { x ->
-      Vector3(start + step * x, start + step * y, 1f)
-    }
-  }
-}
-
-fun partitionCell(offsets: List<Vector3>): (Vector3i) -> List<Vector3> = { cell ->
-  val absolute = absoluteCellPosition(cell)
-  offsets
-      .map { offset ->
-        absolute + offset
-      }
-}
-
 fun allocateVictoryKeyCells(cells: Set<Vector3i>, connections: ConnectionSet, home: Vector3i, victoryKeyCount: Int): List<Vector3i> {
   val homeVector3 = home.toVector3()
   // This is less an optimization and more to allow later logic that assumes victoryKeyCount is not zero
@@ -88,7 +64,7 @@ fun getGroupDistributions(dice: Dice, grid: MapGrid): Map<DistributionGroup, Lis
     return mapOf()
 
   val availableCells = grid.cells
-      .filter { supportsPopulation(it.value.attributes) }
+      .filter { it.value.slots.any() }
       .keys
 
   val home = grid.cells.filter { it.value.attributes.contains(CellAttribute.home) }.keys.firstOrNull()
@@ -104,7 +80,10 @@ fun getGroupDistributions(dice: Dice, grid: MapGrid): Map<DistributionGroup, Lis
 
   val locations = availableCells
       .minus(victoryKeyCells)
-      .flatMap(partitionCell(partitionOffsets(2)))
+      .flatMap { location ->
+        val point = getCellPoint(location)
+        grid.cells[location]!!.slots.map { point + it }
+      }
 
   val occupants = distributeToSlots(dice, locations.size, scaling, fixed)
   val pairs = locations
@@ -125,6 +104,7 @@ fun populateMonsters(config: GenerationConfig, locations: List<Vector3>, nextId:
     val distributions = distributeToSlots(dice, locations.size, enemyDistributions(), mapOf())
     locations
         .zip(distributions) { location, definition ->
+          println("Monster location: $location")
           placeEnemy(nextId, config.definitions, location, definition)
         }
         .flatten()
@@ -139,6 +119,9 @@ fun populateRooms(config: GenerationConfig, nextId: IdSource, dice: Dice, grid: 
   else
     listOf()
 
-  val keys = groupDistributions[DistributionGroup.victoryKey]!!.flatMap(newVictoryKeyPickup(nextId))
+  val keys = groupDistributions
+      .getOrElse(DistributionGroup.victoryKey) { listOf() }
+      .flatMap(newVictoryKeyPickup(nextId))
+
   return monsters + keys
 }

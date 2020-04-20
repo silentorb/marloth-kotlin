@@ -3,8 +3,7 @@ package generation.architecture.building
 import generation.architecture.definition.impassableHorizontal
 import generation.architecture.old.*
 import generation.architecture.misc.Builder
-import generation.general.TextureGroup
-import generation.general.biomeTexture
+import generation.general.*
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.scenery.MeshName
@@ -44,9 +43,27 @@ fun diagonalHalfFloorMesh(mesh: MeshName, height: Float) =
 
 fun newSlopedFloorMesh(mesh: MeshName, height: Float) = blockBuilder(down = impassableHorizontal) { input ->
   val meshInfo = input.general.config.meshes[mesh]!!
-  val slopeAngle = asin(cellLength / 4f / meshInfo.shape!!.x)
+  val slopeAngle = asin(cellLength / 4f / meshInfo.shape!!.x) - 0.007f
   val orientation = Quaternion()
       .rotateZ(applyTurns(input.turns))
       .rotateX(slopeAngle)
   floorMeshBuilder(mesh, offset = Vector3(0f, 0f, height + cellLength / 8f), orientation = orientation)(input)
+}
+
+fun newSlopeEdgeBlock(mesh: MeshName, height: Float, openPattern: Side, turns: Int) = BlockBuilder(
+    block = Block(
+        sides = mapOf(
+            getTurnDirection(turns) to openPattern
+        )
+    )
+) { input ->
+  val side = getTurnedSide(input.sides, input.turns + turns)!!
+  if (side.any { openPattern.contains(it) }) {
+    val orientation = Quaternion().rotateZ(applyTurns(input.turns + 1))
+    val offset = Quaternion().rotateZ(applyTurns(input.turns + turns))
+        .transform(Vector3(0f, cellLength / 4f, 0f))
+    val position = offset + Vector3(0f, 0f, height)
+    floorMeshBuilder(mesh, offset = position, orientation = orientation)(input)
+  } else
+    listOf()
 }

@@ -32,7 +32,10 @@ private fun newPathStep(position: Vector3i, direction: Vector3i, block: Block,
       ),
       mapGrid = grid.copy(
           cells = grid.cells.plus(listOf(
-              nextPosition to Cell(attributes = attributes.plus(block.attributes))
+              nextPosition to Cell(
+                  attributes = attributes.plus(block.attributes),
+                  slots = block.slots
+              )
           )),
           connections = grid.connections.plus(listOf(
               Pair(position, nextPosition)
@@ -80,7 +83,10 @@ fun newWindingWorkbench(firstBlock: Block): Workbench {
       ),
       mapGrid = MapGrid(
           cells = mapOf(
-              startPosition to Cell(attributes = setOf(CellAttribute.fullFloor, CellAttribute.home))
+              startPosition to Cell(
+                  attributes = setOf(CellAttribute.home),
+                  slots = listOf()
+              )
           )
       )
   )

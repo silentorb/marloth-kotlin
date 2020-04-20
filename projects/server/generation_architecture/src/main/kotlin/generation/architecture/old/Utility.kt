@@ -1,8 +1,6 @@
 package generation.architecture.old
 
-import generation.general.BiomeAttribute
-import generation.general.BiomeInfo
-import generation.general.TextureGroup
+import generation.general.*
 import marloth.scenery.enums.*
 import silentorb.mythic.ent.Id
 import silentorb.mythic.spatial.Pi
@@ -101,13 +99,17 @@ fun wallPlacementFilter(dice: Dice, biome: BiomeInfo) =
 //  return dice.takeOne(meshPool)
 //}
 
-//fun getStairTopFloorFacingAngle(graph: Graph, node: Node): Float {
-//  val otherNode = getNonVerticalNeighbors(graph, node.id).first()
-//  val otherNodePosition = graph.nodes[otherNode]!!.position
-//  val vector = (otherNodePosition - node.position).normalize()
-//  println("stair ${node.id} $otherNode $vector")
-//  return getLookAtAngle(vector)
-//}
-
 fun applyTurns(turns: Int): Float =
     (turns.toFloat() - 1) * Pi * 0.5f
+
+fun getTurnDirection(turns: Int): Direction =
+    when ((turns + 4) % 4) {
+      0 -> Direction.east
+      1 -> Direction.north
+      2 -> Direction.west
+      3 -> Direction.south
+      else -> throw Error("Shouldn't be here")
+    }
+
+fun getTurnedSide(sides: Sides, turns: Int): Side? =
+    sides[getTurnDirection(turns)]

@@ -36,7 +36,7 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
   val independentConnections = independentConnectionTypes()
   val openConnectionTypes = openConnectionTypes()
   val blockMap = explodeBlockMap(rotatingConnectionTypes(), blocks)
-  val blockOptions = blockMap.keys.minus(blockBuilders["home"]!!.block)
+  val blockOptions = blockMap.keys//.minus(blockBuilders["home"]!!.block)
   val workbench = newWorkbench(dice, blockOptions, independentConnections, openConnectionTypes, generationConfig.roomCount)
   val grid = workbench.mapGrid
   val gridSideMap = bakeSides(independentConnections, openConnectionTypes, grid.connections, workbench.blockGrid)

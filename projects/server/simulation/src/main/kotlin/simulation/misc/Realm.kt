@@ -39,6 +39,3 @@ data class Realm(
 
   val nodeTable: NodeTable = nodeList.associate { Pair(it.id, it) }
 }
-
-fun getRooms(realm: Realm): List<Node> =
-    realm.nodeList.filter { it.isRoom }

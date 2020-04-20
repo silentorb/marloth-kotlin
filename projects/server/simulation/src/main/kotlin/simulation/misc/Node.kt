@@ -10,8 +10,4 @@ data class Node(
     val radius: Float,
     val biome: BiomeName? = null,
     val attributes: Set<CellAttribute> = setOf()
-) : WithId {
-
-  val isRoom: Boolean
-    get() = attributes.contains(CellAttribute.fullFloor)
-}
+) : WithId

@@ -37,9 +37,13 @@ fun eventsFromMissiles(world: SpatialCombatWorld, collisions: CollisionMap): Eve
     world.deck.missiles
         .mapNotNull { (id, missile) ->
           val collision = collisions[id]
-          if (collision != null && world.deck.collisionShapes[collision.second]!!.isSolid)
-            eventsFromMissileCollision(world, id, missile, collision)
-          else
+          if (collision != null) {
+            val collisionShape = world.deck.collisionShapes[collision.second]
+            if (collisionShape != null && collisionShape.isSolid)
+              eventsFromMissileCollision(world, id, missile, collision)
+            else
+              null
+          } else
             null
         }
         .flatten()
