@@ -1,7 +1,7 @@
 package simulation.updating
 
-import silentorb.mythic.combat.general.getDamageMultiplierModifiers
-import silentorb.mythic.combat.general.updateDestructibleCache
+import simulation.combat.general.getDamageMultiplierModifiers
+import simulation.combat.general.updateDestructibleCache
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.mapTable
 import silentorb.mythic.ent.pipe

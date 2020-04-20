@@ -15,9 +15,3 @@ data class Node(
   val isRoom: Boolean
     get() = attributes.contains(CellAttribute.fullFloor)
 }
-
-fun nodeNeighbors(graph: Graph, node: Id) =
-    graph.connections
-        .filter { it.contains(node) }
-        .flatMap { it.nodes.minus(node) }
-        .distinct()

@@ -50,7 +50,7 @@ fun newSpatialVictoryKey(location: Vector3): Hand {
           mesh = mesh
       ),
       body = Body(
-          position = location + Vector3(0f, 0f, 0.5f)
+          position = location + Vector3(0f, 0f, 1.2f)
       )
   )
 }

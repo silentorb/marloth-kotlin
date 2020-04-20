@@ -1,6 +1,6 @@
 package simulation.intellect.execution
 
-import silentorb.mythic.combat.general.AttackMethod
+import simulation.combat.general.AttackMethod
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.Commands

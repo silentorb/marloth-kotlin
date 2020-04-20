@@ -1,7 +1,7 @@
 package simulation.combat
 
 import marloth.scenery.enums.ParticleEffectType
-import silentorb.mythic.combat.general.DamageEvent
+import simulation.combat.general.DamageEvent
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.particles.ParticleEffect

@@ -1,7 +1,6 @@
 package marloth.generation.population
 
 import generation.architecture.misc.GenerationConfig
-import generation.architecture.misc.calculateWorldScale
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.timing.FloatCycle
@@ -20,7 +19,7 @@ fun populateWorld(nextId: IdSource, config: GenerationConfig, input: WorldInput,
   val playerCount = getDebugString("INITIAL_PLAYER_COUNT")?.toInt() ?: 1
   val hands = (1..playerCount)
       .flatMap { newPlayer(nextId, definitions, grid, playerCell) }
-      .plus(populateRooms(config, nextId, input.dice, realm))
+      .plus(populateRooms(config, nextId, input.dice, grid))
       .plus(listOf(
           IdHand(
               id = nextId(),

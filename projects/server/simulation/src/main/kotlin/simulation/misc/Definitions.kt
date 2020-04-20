@@ -6,8 +6,8 @@ import silentorb.mythic.accessorize.AccessoryName
 import silentorb.mythic.accessorize.ModifierDefinition
 import silentorb.mythic.aura.SoundType
 import silentorb.mythic.breeze.AnimationInfoMap
-import silentorb.mythic.combat.general.DamageType
-import silentorb.mythic.combat.general.WeaponDefinition
+import simulation.combat.general.DamageType
+import simulation.combat.general.WeaponDefinition
 import silentorb.mythic.particles.ParticleEffectDefinitions
 import silentorb.mythic.scenery.Light
 import silentorb.mythic.scenery.MeshName

@@ -1,6 +1,5 @@
 package lab.utility
 
-import simulation.misc.Graph
 import lab.LabApp
 import silentorb.mythic.lookinglass.Renderer
 import java.io.File
@@ -10,19 +9,19 @@ enum class WatchedPackage {
   generation
 }
 
-private val watchedPackageFiles = mapOf(
-    WatchedPackage.generation to Graph::class
-)
-    .mapValues { it.value.java.getProtectionDomain().getCodeSource().getLocation().toURI() }
-
-val watchList = watchedPackageFiles.map {
-  WatchInfo(
-      target = it.key,
-      uri = it.value,
-      lastModified = getLastModified(it.value),
-      awaitingRebuildFinish = false
-  )
-}
+//private val watchedPackageFiles = mapOf(
+//    WatchedPackage.generation to Graph::class
+//)
+//    .mapValues { it.value.java.getProtectionDomain().getCodeSource().getLocation().toURI() }
+//
+//val watchList = watchedPackageFiles.map {
+//  WatchInfo(
+//      target = it.key,
+//      uri = it.value,
+//      lastModified = getLastModified(it.value),
+//      awaitingRebuildFinish = false
+//  )
+//}
 
 data class WatchInfo(
     val target: WatchedPackage,
@@ -34,28 +33,28 @@ data class WatchInfo(
 fun getLastModified(uri: URI) =
     File(uri).lastModified()
 
-fun checkForChangedPackages(): List<WatchedPackage> =
-    watchList.mapNotNull { info ->
-      val lastModified = getLastModified(info.uri)
-      val oldValue = info.lastModified
-
-      val now = System.currentTimeMillis()
-      if (lastModified > oldValue) {
-        println("Package " + info.target + " was modified at " + lastModified + " (gap = " + (lastModified - oldValue) + ")")
-        println()
-        info.lastModified = lastModified
-        info.awaitingRebuildFinish = true
-        null
-      } else {
-        if (info.awaitingRebuildFinish && now > info.lastModified + 1200) {
-          println("Package " + info.target + " finished rebuild at " + now  + " (gap = " + (lastModified - oldValue) + ")")
-          info.awaitingRebuildFinish = false
-          info.target
-        }
-        else
-          null
-      }
-    }
+//fun checkForChangedPackages(): List<WatchedPackage> =
+//    watchList.mapNotNull { info ->
+//      val lastModified = getLastModified(info.uri)
+//      val oldValue = info.lastModified
+//
+//      val now = System.currentTimeMillis()
+//      if (lastModified > oldValue) {
+//        println("Package " + info.target + " was modified at " + lastModified + " (gap = " + (lastModified - oldValue) + ")")
+//        println()
+//        info.lastModified = lastModified
+//        info.awaitingRebuildFinish = true
+//        null
+//      } else {
+//        if (info.awaitingRebuildFinish && now > info.lastModified + 1200) {
+//          println("Package " + info.target + " finished rebuild at " + now  + " (gap = " + (lastModified - oldValue) + ")")
+//          info.awaitingRebuildFinish = false
+//          info.target
+//        }
+//        else
+//          null
+//      }
+//    }
 
 fun reloadTextures(renderer: Renderer) {
 //  for (texture in renderer.mappedTextures) {
@@ -86,9 +85,9 @@ fun onPackageChanged(app: LabApp, watchedPackage: WatchedPackage) {
 }
 
 fun updateWatching(app: LabApp) {
-  val changes = checkForChangedPackages()
-  for (change in changes) {
-    println("Updating " + change)
-    onPackageChanged(app, change)
-  }
+//  val changes = checkForChangedPackages()
+//  for (change in changes) {
+//    println("Updating " + change)
+//    onPackageChanged(app, change)
+//  }
 }

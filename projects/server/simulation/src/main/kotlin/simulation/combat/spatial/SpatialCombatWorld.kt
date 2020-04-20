@@ -1,4 +1,4 @@
-package silentorb.mythic.combat.spatial
+package simulation.combat.spatial
 
 import silentorb.mythic.physics.BulletState
 

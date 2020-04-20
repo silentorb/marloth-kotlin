@@ -1,9 +1,9 @@
 package simulation.happenings
 
 import silentorb.mythic.accessorize.AccessoryName
-import silentorb.mythic.combat.spatial.AttackEvent
-import silentorb.mythic.combat.spatial.onAttack
-import silentorb.mythic.combat.spatial.startAttack
+import simulation.combat.spatial.AttackEvent
+import simulation.combat.spatial.onAttack
+import simulation.combat.spatial.startAttack
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.happenings.Events

@@ -8,8 +8,8 @@ import silentorb.mythic.accessorize.AccessoryName
 import silentorb.mythic.aura.SoundType
 import silentorb.mythic.happenings.*
 import silentorb.mythic.physics.BulletState
-import silentorb.mythic.combat.general.DamageMultipliers
-import silentorb.mythic.combat.general.ResourceContainer
+import simulation.combat.general.DamageMultipliers
+import simulation.combat.general.ResourceContainer
 import silentorb.mythic.ent.Table
 import simulation.happenings.PurchaseEvent
 import simulation.happenings.TakeItemEvent

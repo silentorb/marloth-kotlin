@@ -1,7 +1,7 @@
 package simulation.happenings
 
 import simulation.accessorize.eventsFromItemPickups
-import silentorb.mythic.combat.spatial.eventsFromMissiles
+import simulation.combat.spatial.eventsFromMissiles
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.filterCharacterCommandsFromEvents
 import silentorb.mythic.timing.emitCycleEvents
@@ -10,7 +10,6 @@ import simulation.intellect.aliveSpirits
 import simulation.intellect.execution.pursueGoals
 import simulation.main.Deck
 import simulation.main.World
-import simulation.main.shouldUpdateLogic
 import simulation.misc.Definitions
 import simulation.misc.eventsFromVictoryKeys
 import simulation.misc.toPerformanceDeck

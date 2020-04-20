@@ -52,10 +52,7 @@ tailrec fun addPathStep(maxSteps: Int, dice: Dice, config: BlockConfig, workbenc
   }
 
   val (direction, offset) = directionPair
-  val attributes = if (stepCount == maxSteps - 1)
-    setOf(CellAttribute.exit)
-  else
-    setOf()
+  val attributes = setOf<CellAttribute>()
 
   val nextPosition = position + offset
   val openConnections = config.openConnections

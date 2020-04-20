@@ -1,8 +1,8 @@
 package simulation.happenings
 
 import silentorb.mythic.ent.Id
-import silentorb.mythic.combat.general.Damage
-import silentorb.mythic.combat.general.DamageEvent
+import simulation.combat.general.Damage
+import simulation.combat.general.DamageEvent
 import silentorb.mythic.happenings.*
 import simulation.main.Deck
 import simulation.main.DeckSource

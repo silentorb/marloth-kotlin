@@ -1,6 +1,6 @@
 package simulation.entities
 
-import silentorb.mythic.combat.general.RestoreHealth
+import simulation.combat.general.RestoreHealth
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource

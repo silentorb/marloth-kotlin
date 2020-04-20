@@ -34,5 +34,7 @@ fun isVictory(world: World): Boolean {
   val grid = world.realm.grid
 
   val victoryKeyStats = getVictoryKeyStats(grid, deck)
-  return victoryKeyStats.remaining == 0
+
+  // Prevent victory when there are no victory keys.
+  return victoryKeyStats.total > 0 && victoryKeyStats.remaining == 0
 }

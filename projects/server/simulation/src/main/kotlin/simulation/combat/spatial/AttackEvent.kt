@@ -1,15 +1,13 @@
-package silentorb.mythic.combat.spatial
+package simulation.combat.spatial
 
 import silentorb.mythic.accessorize.AccessoryName
 import silentorb.mythic.audio.NewSound
 import silentorb.mythic.characters.defaultCharacterHeight
-import silentorb.mythic.characters.getFacingVector
-import silentorb.mythic.combat.general.AttackMethod
+import simulation.combat.general.AttackMethod
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.happenings.UseAction
-import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
 
 const val attackMarker = "attack"

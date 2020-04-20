@@ -92,7 +92,7 @@ fun generateWorld(definitions: Definitions, meshInfo: MeshShapeMap, dice: Dice =
       biomes = biomeInfoMap,
       meshes = compileArchitectureMeshInfo(meshInfo, meshAttributes),
       includeEnemies = getDebugString("NO_ENEMIES") != "1",
-      roomCount = getDebugInt("BASE_ROOM_COUNT") ?: 20
+      roomCount = getDebugInt("BASE_ROOM_COUNT") ?: 10
   )
   val input = WorldInput(
       boundary,

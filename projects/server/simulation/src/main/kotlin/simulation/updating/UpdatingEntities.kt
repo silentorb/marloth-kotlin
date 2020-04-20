@@ -2,7 +2,7 @@ package simulation.updating
 
 import silentorb.mythic.accessorize.updateAccessory
 import silentorb.mythic.aura.updateSound
-import silentorb.mythic.combat.general.updateDestructibleHealth
+import simulation.combat.general.updateDestructibleHealth
 import silentorb.mythic.ent.mapTable
 import silentorb.mythic.ent.mapTableValues
 import silentorb.mythic.happenings.Events

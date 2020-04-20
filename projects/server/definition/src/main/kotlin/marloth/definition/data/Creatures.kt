@@ -7,9 +7,18 @@ import simulation.entities.DepictionType
 import simulation.entities.fieldOfView360
 
 class Creatures {
-  val player = CharacterDefinition(
+  val soldier = CharacterDefinition(
       health = 200,
       accessories = listOf(AccessoryId.shotgun.name),
+      depictionType = DepictionType.child,
+      maxSpeed = 5f,
+      deathSound = Sounds.girlScream,
+      damageMultipliers = mapOf()
+  )
+
+  val magician = CharacterDefinition(
+      health = 200,
+      accessories = listOf(AccessoryId.rocketLauncher.name),
       depictionType = DepictionType.child,
       maxSpeed = 4f,
       deathSound = Sounds.girlScream,
@@ -50,7 +59,7 @@ class Creatures {
       health = 100,
       accessories = listOf(AccessoryId.claws.name),
       depictionType = DepictionType.hound,
-      maxSpeed = 2.5f,
+      maxSpeed = 4f,
       deathSound = null,
       ambientSounds = listOf()
   )
@@ -65,3 +74,8 @@ class Creatures {
 }
 
 val creatures = Creatures()
+
+val characterClasses = mapOf(
+    "soldier" to creatures.soldier,
+    "magician" to creatures.magician
+)

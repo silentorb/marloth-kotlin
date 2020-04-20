@@ -1,10 +1,10 @@
 package simulation.combat
 
-import silentorb.mythic.combat.general.CombatDeck
-import silentorb.mythic.combat.general.CombatDefinitions
-import silentorb.mythic.combat.spatial.SpatialCombatDeck
-import silentorb.mythic.combat.spatial.SpatialCombatDefinitions
-import silentorb.mythic.combat.spatial.SpatialCombatWorld
+import simulation.combat.general.CombatDeck
+import simulation.combat.general.CombatDefinitions
+import simulation.combat.spatial.SpatialCombatDeck
+import simulation.combat.spatial.SpatialCombatDefinitions
+import simulation.combat.spatial.SpatialCombatWorld
 import simulation.main.Deck
 import simulation.main.World
 import simulation.misc.Definitions

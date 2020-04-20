@@ -1,4 +1,4 @@
-package silentorb.mythic.combat.general
+package simulation.combat.general
 
 import silentorb.mythic.ent.Table
 import silentorb.mythic.accessorize.Accessory

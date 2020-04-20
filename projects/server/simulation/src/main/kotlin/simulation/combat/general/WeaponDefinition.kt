@@ -1,4 +1,4 @@
-package silentorb.mythic.combat.general
+package simulation.combat.general
 
 import silentorb.mythic.aura.SoundType
 import silentorb.mythic.scenery.MeshName

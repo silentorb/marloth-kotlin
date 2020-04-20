@@ -1,7 +1,7 @@
-package silentorb.mythic.combat.spatial
+package simulation.combat.spatial
 
 import silentorb.mythic.accessorize.AccessoryName
-import silentorb.mythic.combat.general.WeaponDefinition
+import simulation.combat.general.WeaponDefinition
 import silentorb.mythic.performing.ActionDefinition
 
 data class SpatialCombatDefinitions (

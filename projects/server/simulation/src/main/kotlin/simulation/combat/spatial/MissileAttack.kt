@@ -1,6 +1,6 @@
-package silentorb.mythic.combat.spatial
+package simulation.combat.spatial
 
-import silentorb.mythic.combat.general.WeaponDefinition
+import simulation.combat.general.WeaponDefinition
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.Body
@@ -28,7 +28,7 @@ fun missileAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinit
                   velocity = vector * weapon.velocity
               ),
               collisionShape = CollisionObject(
-                  shape = Sphere(0.4f)
+                  shape = Sphere(0.3f)
               ),
               dynamicBody = DynamicBody(
                   gravity = false,

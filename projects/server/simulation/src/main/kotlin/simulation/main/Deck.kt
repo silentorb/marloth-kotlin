@@ -9,14 +9,14 @@ import silentorb.mythic.ent.*
 import simulation.entities.*
 import simulation.happenings.Trigger
 import simulation.intellect.Spirit
-import silentorb.mythic.combat.general.ResourceBundle
+import simulation.combat.general.ResourceBundle
 import silentorb.mythic.particles.ParticleEffect
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.characters.CharacterRig
-import silentorb.mythic.combat.general.Destructible
-import silentorb.mythic.combat.spatial.Missile
+import simulation.combat.general.Destructible
+import simulation.combat.spatial.Missile
 import silentorb.mythic.entities.Attributes
 import silentorb.mythic.performing.Action
 import silentorb.mythic.performing.Performance

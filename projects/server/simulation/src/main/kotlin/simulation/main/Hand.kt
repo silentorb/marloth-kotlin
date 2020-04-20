@@ -4,9 +4,9 @@ import silentorb.mythic.accessorize.Accessory
 import silentorb.mythic.accessorize.Modifier
 import silentorb.mythic.aura.Sound
 import silentorb.mythic.characters.CharacterRig
-import silentorb.mythic.combat.general.Destructible
-import silentorb.mythic.combat.general.ResourceBundle
-import silentorb.mythic.combat.spatial.Missile
+import simulation.combat.general.Destructible
+import simulation.combat.general.ResourceBundle
+import simulation.combat.spatial.Missile
 import silentorb.mythic.ent.GenericIdHand
 import silentorb.mythic.entities.Attributes
 import silentorb.mythic.particles.ParticleEffect

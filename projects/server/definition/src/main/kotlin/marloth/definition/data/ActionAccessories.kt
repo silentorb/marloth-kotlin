@@ -4,9 +4,9 @@ import marloth.scenery.enums.MeshId
 import marloth.scenery.enums.*
 import silentorb.mythic.accessorize.AccessoryDefinition
 import silentorb.mythic.accessorize.AccessoryName
-import silentorb.mythic.combat.general.AttackMethod
-import silentorb.mythic.combat.general.DamageDefinition
-import silentorb.mythic.combat.general.WeaponDefinition
+import simulation.combat.general.AttackMethod
+import simulation.combat.general.DamageDefinition
+import simulation.combat.general.WeaponDefinition
 import silentorb.mythic.performing.ActionDefinition
 
 data class ActionAccessory(

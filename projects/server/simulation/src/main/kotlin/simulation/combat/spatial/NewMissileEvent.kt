@@ -1,6 +1,6 @@
-package silentorb.mythic.combat.spatial
+package simulation.combat.spatial
 
-import silentorb.mythic.combat.general.DamageDefinition
+import simulation.combat.general.DamageDefinition
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.spatial.Quaternion

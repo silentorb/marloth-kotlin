@@ -31,7 +31,6 @@ import simulation.main.Deck
 import simulation.main.World
 import simulation.misc.Node
 import simulation.misc.Realm
-import simulation.misc.nodeNeighbors
 
 fun drawWireframeWorld(renderer: SceneRenderer, deck: Deck, realm: Realm, config: MapViewConfig, nodes: Collection<Node>, color: Vector4) {
 
@@ -47,16 +46,15 @@ fun renderNodeIds(renderer: SceneRenderer, nodes: Collection<Node>) {
 fun renderMapMesh(sceneRenderer: SceneRenderer, realm: Realm, deck: Deck, config: MapViewConfig, bag: StateBag) {
 //  val worldMesh = sceneRenderer.sceneRenderer.worldMesh!!
   val selectedNodes = selectionStateOld(bag[nodeListSelectionKey])
-  val nodes: Collection<Node> = if (selectedNodes.none())
-    realm.nodeList
-  else
-    selectedNodes.map { it.toLong() }
-        .flatMap { id ->
-          nodeNeighbors(realm.graph, id)
-              .plus(id)
-        }
-        .distinct()
-        .map { realm.nodeTable[it]!! }
+  val nodes: Collection<Node> = realm.nodeList
+//  else
+//    selectedNodes.map { it.toLong() }
+//        .flatMap { id ->
+//          nodeNeighbors(realm.graph, id)
+//              .plus(id)
+//        }
+//        .distinct()
+//        .map { realm.nodeTable[it]!! }
 
 //  val sectors = if (selectedNodes.selection.none())
 //    worldMesh.sectors

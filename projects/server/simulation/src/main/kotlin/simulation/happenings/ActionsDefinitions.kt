@@ -1,7 +1,7 @@
 package simulation.happenings
 
 import marloth.scenery.enums.ModifierId
-import silentorb.mythic.combat.general.DamageType
+import simulation.combat.general.DamageType
 import silentorb.mythic.happenings.EventTrigger
 
 data class DamageAction(

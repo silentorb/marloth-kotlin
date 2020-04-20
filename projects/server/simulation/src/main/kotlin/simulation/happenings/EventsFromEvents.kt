@@ -1,6 +1,6 @@
 package simulation.happenings
 
-import silentorb.mythic.combat.spatial.onAttack
+import simulation.combat.spatial.onAttack
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
 import simulation.combat.usingSpatialCombatWorld

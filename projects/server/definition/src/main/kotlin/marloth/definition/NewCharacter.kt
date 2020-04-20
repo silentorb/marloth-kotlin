@@ -5,9 +5,9 @@ import silentorb.mythic.accessorize.Accessory
 import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.characters.defaultCharacterHeight
 import silentorb.mythic.characters.defaultCharacterRadius
-import silentorb.mythic.combat.general.Destructible
-import silentorb.mythic.combat.general.DestructibleBaseStats
-import silentorb.mythic.combat.general.ResourceContainer
+import simulation.combat.general.Destructible
+import simulation.combat.general.DestructibleBaseStats
+import simulation.combat.general.ResourceContainer
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.physics.Body

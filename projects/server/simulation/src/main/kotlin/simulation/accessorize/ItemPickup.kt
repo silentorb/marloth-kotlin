@@ -20,7 +20,9 @@ fun eventsFromItemPickups(world: World, collisions: CollisionMap): Events {
   val deck = world.deck
   return deck.itemPickups.mapNotNull { (itemPickup, itemPickupRecord) ->
     val collision = collisions[itemPickup]
-    if (collision != null && (!itemPickupRecord.playerOnly || deck.players.containsKey(collision.second))) {
+    if (collision != null && deck.characters.containsKey(collision.second) &&
+        (!itemPickupRecord.playerOnly || deck.players.containsKey(collision.second))
+    ) {
       val character = collision.second
       val itemAccessory = deck.accessories[itemPickup]!!
       val characterAccessories = deck.accessories.filter { it.value.owner == character }

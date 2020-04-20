@@ -4,7 +4,7 @@ import marloth.definition.data.creatures
 
 enum class DistributionGroup {
   cloud,
-  key,
+  victoryKey,
   merchant,
   monster,
   none,
@@ -27,5 +27,5 @@ fun scalingDistributions(): DistributionMap = mapOf(
 fun fixedDistributions(): DistributionMap =
     mapOf(
         DistributionGroup.monster to 3,
-        DistributionGroup.key to 3
+        DistributionGroup.victoryKey to 3
     )

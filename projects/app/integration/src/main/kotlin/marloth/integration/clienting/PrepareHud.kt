@@ -6,6 +6,7 @@ import silentorb.mythic.ent.Id
 import simulation.happenings.getActiveAction
 import simulation.intellect.assessment.lightRating
 import simulation.main.World
+import simulation.misc.getPointCell
 import simulation.misc.getVictoryKeyStats
 import kotlin.math.roundToInt
 
@@ -47,7 +48,7 @@ fun gatherHudData(world: World, player: Id, view: ViewId): HudData? {
 
     val victoryKeyStats = getVictoryKeyStats(grid, deck)
 
-//    val cell = getPointCell(body.position)
+    val cell = getPointCell(body.position)
     HudData(
         health = destructible.health,
         sanity = character.sanity,
@@ -55,11 +56,11 @@ fun gatherHudData(world: World, player: Id, view: ViewId): HudData? {
         cooldown = cooldown,
         buffs = buffs,
         debugInfo = listOf(
-            "LR: ${floatToRoundedString(lightRating(deck, player))}",
-            floatToRoundedString(body.velocity.length()),
-            "Keys: ${victoryKeyStats.collected}/${victoryKeyStats.total}"
+//            "LR: ${floatToRoundedString(lightRating(deck, player))}",
+//            floatToRoundedString(body.velocity.length()),
+            "Keys: ${victoryKeyStats.collected}/${victoryKeyStats.total}",
 //            "${body.position.x} ${body.position.y} ${body.position.z}",
-//            "${cell.x} ${cell.y} ${cell.z}"
+            "${cell.x} ${cell.y} ${cell.z}"
 //          if (character.isGrounded) "Grounded" else "Air",
 //          character.groundDistance.toString()
         )

@@ -1,7 +1,7 @@
-package silentorb.mythic.combat.spatial
+package simulation.combat.spatial
 
-import silentorb.mythic.combat.general.DamageDefinition
-import silentorb.mythic.combat.general.newDamageEvents
+import simulation.combat.general.DamageDefinition
+import simulation.combat.general.newDamageEvents
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.DeleteEntityEvent
 import silentorb.mythic.happenings.Events

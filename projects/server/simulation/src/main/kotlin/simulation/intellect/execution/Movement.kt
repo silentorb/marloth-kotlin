@@ -14,14 +14,6 @@ import simulation.intellect.Pursuit
 import simulation.intellect.design.getActionRange
 import silentorb.mythic.intellect.navigation.asRecastVector3
 import silentorb.mythic.intellect.navigation.fromRecastVector3
-import simulation.misc.Graph
-
-fun doorwayPosition(graph: Graph, firstNode: Id, secondNode: Id): Vector3 {
-  val a = graph.nodes[firstNode]!!
-  val b = graph.nodes[secondNode]!!
-  val vector = (b.position - a.position).normalize()
-  return a.position + vector * a.radius
-}
 
 fun getPathTargetPosition(world: World, character: Id, pursuit: Pursuit): Vector3? {
   val body = world.deck.bodies[character]!!
@@ -67,19 +59,6 @@ fun getPathTargetPosition(world: World, character: Id, pursuit: Pursuit): Vector
   } else
     firstPoint
 }
-
-fun getPathTargetPositionOld(world: World, character: Id, path: Path): Vector3 {
-  val graph = world.realm.graph
-  val body = world.deck.bodies[character]!!
-  val doorway = doorwayPosition(graph, body.nearestNode, path.first())
-  val horizontalDistance = body.position.copy(z = 0f).distance(doorway.copy(z = 0f))
-//  println("dist " + horizontalDistance + " " + body.nearestNode)
-  return if (horizontalDistance > 0.5f)
-    doorway
-  else
-    graph.nodes[path.first()]!!.position
-}
-
 
 fun moveStraightTowardPosition(world: World, character: Id, target: Vector3): Commands {
   val body = world.deck.bodies[character]!!

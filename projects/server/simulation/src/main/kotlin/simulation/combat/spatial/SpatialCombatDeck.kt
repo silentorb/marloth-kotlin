@@ -1,9 +1,9 @@
-package silentorb.mythic.combat.spatial
+package simulation.combat.spatial
 
 import silentorb.mythic.accessorize.Accessory
 import silentorb.mythic.accessorize.Modifier
 import silentorb.mythic.characters.CharacterRig
-import silentorb.mythic.combat.general.Destructible
+import simulation.combat.general.Destructible
 import silentorb.mythic.ent.Table
 import silentorb.mythic.performing.Action
 import silentorb.mythic.physics.Body

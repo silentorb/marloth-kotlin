@@ -1,8 +1,8 @@
-package silentorb.mythic.combat.spatial
+package simulation.combat.spatial
 
 import silentorb.mythic.accessorize.AccessoryName
-import silentorb.mythic.combat.general.WeaponDefinition
-import silentorb.mythic.combat.general.newDamageEvents
+import simulation.combat.general.WeaponDefinition
+import simulation.combat.general.newDamageEvents
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.spatial.Vector3

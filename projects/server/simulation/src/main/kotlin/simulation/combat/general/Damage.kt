@@ -1,4 +1,4 @@
-package silentorb.mythic.combat.general
+package simulation.combat.general
 
 import silentorb.mythic.accessorize.RelativeModifier
 import silentorb.mythic.accessorize.modifierToRelative

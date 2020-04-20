@@ -45,22 +45,3 @@ fun updateRoamingTargetPosition(world: World, character: Id, knowledge: Knowledg
       pursuit.targetPosition
   }
 }
-
-fun updateAttackMovementPath(world: World, character: Id, knowledge: Knowledge, targetEnemy: Id, path: Path?): Path? {
-  return if (path == null) { // || !pathIsAccessible(world, knowledge, path)) {
-    val bodies = world.deck.bodies
-    val body = bodies[character]!!
-    val target = knowledge.characters[targetEnemy]!!
-    if (body.nearestNode == target.nearestNode)
-      null
-    else
-      findPath(world.realm, body.nearestNode, target.nearestNode)
-  } else {
-    val body = world.deck.bodies[character]!!
-    val remainingPath = getRemainingPath(body.nearestNode, path)
-    if (remainingPath.any())
-      remainingPath
-    else
-      null
-  }
-}
