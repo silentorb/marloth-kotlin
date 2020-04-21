@@ -9,6 +9,8 @@ import silentorb.mythic.platforming.Platform
 import silentorb.mythic.quartz.newTimestepState
 import persistence.Database
 import persistence.newDatabase
+import silentorb.mythic.debugging.checkDotEnvChanged
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.lookinglass.SceneRenderer
 import silentorb.mythic.scenery.Scene
@@ -29,6 +31,9 @@ data class GameApp(
 )
 
 tailrec fun gameLoop(app: GameApp, state: AppState) {
+  if (getDebugBoolean("WATCH_DOT_ENV"))
+    checkDotEnvChanged()
+
   val nextState = updateAppState(app)(state)
 
   if (!app.platform.process.isClosing())

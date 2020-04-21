@@ -1,14 +1,12 @@
 package marloth.definition.templates
 
-import marloth.definition.data.creatures
+import marloth.definition.data.Creatures
 import marloth.definition.newCharacter
-import silentorb.mythic.spatial.Vector3
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.ClientCommand
 import marloth.scenery.enums.Text
-import simulation.entities.Attachment
-import simulation.entities.AttachmentCategory
 import silentorb.mythic.ent.IdSource
+import silentorb.mythic.spatial.Vector3
 import simulation.entities.*
 import simulation.main.Hand
 import simulation.main.IdHand
@@ -17,7 +15,7 @@ import simulation.misc.Definitions
 fun newMerchant(nextId: IdSource, definitions: Definitions, position: Vector3, wares: List<Ware>): List<IdHand> {
   val character = nextId()
   return newCharacter(nextId, character, definitions,
-      definition = creatures.merchant,
+      definition = Creatures.merchant,
       faction = 1,
       position = position
   )

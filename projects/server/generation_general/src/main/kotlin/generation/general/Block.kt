@@ -8,7 +8,8 @@ typealias Sides = Map<Direction, Side>
 data class Block(
     val sides: Sides = mapOf(),
     val attributes: Set<CellAttribute> = setOf(),
-    val slots: List<Vector3> = listOf()
+    val slots: List<Vector3> = listOf(),
+    val turns: Int = 0
 )
 
 fun newBlock(up: Side, down: Side, east: Side, north: Side, west: Side, south: Side,

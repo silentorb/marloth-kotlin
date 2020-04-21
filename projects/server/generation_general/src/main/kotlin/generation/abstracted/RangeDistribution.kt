@@ -57,7 +57,7 @@ fun <T> normalizeRanges(slotCount: Int, ranges: Map<T, Int>): Map<T, Int> {
 fun <T> distributeToSlots(dice: Dice, slotCount: Int, scaling: Map<T, Int>, fixed: Map<T, Int>): List<T> {
   val fixedSlotCount = fixed.entries.sumBy { it.value }
   val scalingSlotCount = slotCount - fixedSlotCount
-  assert(scalingSlotCount > 0)
+  assert(scalingSlotCount > -1)
   val normalized = normalizeRanges(scalingSlotCount, scaling)
   val pool = normalized.flatMap { range ->
     (1..range.value).map { range.key }

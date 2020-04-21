@@ -7,7 +7,7 @@ data class MappedBlock(
     val turns: Int = 0
 )
 
-typealias BlockMap = Map<Block, MappedBlock>
+//typealias BlockMap = Map<Block, MappedBlock>
 typealias RotatingConnections = Map<Any, List<Any>>
 
 fun <T> rotateVerticalSides(rotatingConnections: RotatingConnections, turns: Int): (Map.Entry<T, Side>) -> Side = { side ->
@@ -38,7 +38,7 @@ fun rotateSides(rotatingConnections: RotatingConnections, turns: Int): (Sides) -
       .plus(horizontalRotatedSides)
 }
 
-fun explodeBlockMap(rotatingConnections: RotatingConnections, blocks: Set<Block>): BlockMap {
+fun explodeBlockMap(rotatingConnections: RotatingConnections, blocks: Set<Block>): Set<Block> {
   val needsRotatedVariations = blocks.filter {
     !it.attributes.contains(CellAttribute.lockedRotation) &&
         it.sides != rotateSides(rotatingConnections, 1)(it.sides)
@@ -49,11 +49,11 @@ fun explodeBlockMap(rotatingConnections: RotatingConnections, blocks: Set<Block>
           val block = originalBlock.copy(
               sides = rotateSides(rotatingConnections, turns)(originalBlock.sides)
           )
-          Pair(block, MappedBlock(original = originalBlock, turns = turns))
+          block.copy(
+              turns = turns
+          )
         }
   }
 
-  return blocks
-      .associateWith { MappedBlock(original = it) }
-      .plus(rotated)
+  return blocks + rotated
 }

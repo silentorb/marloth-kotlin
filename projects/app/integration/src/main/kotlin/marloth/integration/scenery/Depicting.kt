@@ -116,8 +116,7 @@ fun convertComplexDepiction(definitions: Definitions, deck: Deck, id: Id, depict
     depiction.type == DepictionType.hound -> listOf(
         MeshId.personBody,
         MeshId.pants,
-        MeshId.shirt,
-        MeshId.hogHead
+        MeshId.shirt
     )
     else -> listOf(
         MeshId.personBody,
@@ -142,8 +141,8 @@ fun convertComplexDepiction(definitions: Definitions, deck: Deck, id: Id, depict
       animations = animations,
       attachments = accessories
           .mapNotNull { (_, accessoryRecord) ->
-            val accessoryType = definitions.accessories[accessoryRecord.type]!!
-            val mesh = accessoryType.equippedMesh
+            val accessoryType = definitions.accessories[accessoryRecord.type]
+            val mesh = accessoryType?.equippedMesh
             if (mesh != null)
               AttachedMesh(
                   socket = ArmatureSockets.rightHand.toString(),

@@ -1,5 +1,6 @@
 package simulation.intellect.navigation
 
+import marloth.scenery.enums.MeshId
 import silentorb.mythic.ent.firstFloatSortedBy
 import silentorb.mythic.ent.firstFloatSortedByDescending
 import org.recast4j.detour.NavMesh
@@ -8,11 +9,11 @@ import org.recast4j.recast.Heightfield
 import org.recast4j.recast.RecastBuilder
 import org.recast4j.recast.RecastBuilderConfig
 import org.recast4j.recast.geom.TriMesh
+import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.Id
 import silentorb.mythic.intellect.navigation.GeometryProvider
 import silentorb.mythic.intellect.navigation.newNavMeshTriMeshes
 import simulation.main.Deck
-import simulation.misc.MapGrid
 import simulation.misc.cellLength
 import simulation.physics.toPhysicsDeck
 
@@ -20,7 +21,12 @@ var originalNavMeshData: List<TriMesh> = listOf()
 var globalHeightMap: Heightfield? = null
 
 fun newNavMesh(meshIds: Set<Id>, deck: Deck): NavMesh {
-  val meshes = newNavMeshTriMeshes(toPhysicsDeck(deck), meshIds)
+  val filteredMeshIds = if (getDebugString("NAV_MESH_FILTER") != null)
+    meshIds.filter { deck.depictions[it]!!.mesh == getDebugString("NAV_MESH_FILTER")!! }.toSet()
+  else
+    meshIds
+
+  val meshes = newNavMeshTriMeshes(toPhysicsDeck(deck), filteredMeshIds)
   val vertices = meshes.flatMap { it.verts.toList() }
   originalNavMeshData = meshes
 

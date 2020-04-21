@@ -59,6 +59,11 @@ fun allocateVictoryKeyCells(cells: Set<Vector3i>, connections: ConnectionSet, ho
   return result
 }
 
+fun absoluteSlots(cells: CellMap): (Vector3i) -> List<Vector3> = { location ->
+  val point = getCellPoint(location)
+  cells[location]!!.slots.map { point + it }
+}
+
 fun getGroupDistributions(dice: Dice, grid: MapGrid): Map<DistributionGroup, List<Vector3>> {
   if (getDebugString("NO_OBJECTS") != null)
     return mapOf()
@@ -76,14 +81,11 @@ fun getGroupDistributions(dice: Dice, grid: MapGrid): Map<DistributionGroup, Lis
 
   val victoryKeyCount = fixed[DistributionGroup.victoryKey] ?: 0
   val victoryKeyCells = allocateVictoryKeyCells(availableCells, grid.connections, home!!, victoryKeyCount)
-  val victoryKeyLocations = victoryKeyCells.map { getCellPoint(it) + floorOffset }
+  val victoryKeyLocations = victoryKeyCells.map { dice.takeOne(absoluteSlots(grid.cells)(it)) }
 
   val locations = availableCells
       .minus(victoryKeyCells)
-      .flatMap { location ->
-        val point = getCellPoint(location)
-        grid.cells[location]!!.slots.map { point + it }
-      }
+      .flatMap(absoluteSlots(grid.cells))
 
   val occupants = distributeToSlots(dice, locations.size, scaling, fixed)
   val pairs = locations

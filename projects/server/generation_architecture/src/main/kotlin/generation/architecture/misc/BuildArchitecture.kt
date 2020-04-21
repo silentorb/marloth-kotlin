@@ -12,7 +12,6 @@ import simulation.main.IdHand
 import simulation.misc.absoluteCellPosition
 
 fun buildArchitecture(general: ArchitectureInput,
-                      blockMap: BlockMap,
                       builders: Map<Block, Builder>): List<Hand> {
 
   val groupedBoundaryHands = buildBoundaries(general,
@@ -21,9 +20,9 @@ fun buildArchitecture(general: ArchitectureInput,
   )
 
   val groupedCellHands = general.blockGrid.mapValues { (position, block) ->
-    val info = blockMap[block] ?: MappedBlock(homeBlock.block)
     val biomeName = general.cellBiomes[position]!!
-    val builder = builders[info.original]
+    val original = if (block.turns != 0) block.copy(turns = 0) else block
+    val builder = builders[original]
     if (builder == null)
       throw Error("Could not find builder for block")
 
@@ -41,7 +40,7 @@ fun buildArchitecture(general: ArchitectureInput,
     val input = BuilderInput(
         general = general,
         position = absoluteCellPosition(position),
-        turns = info.turns,
+        turns = block.turns,
         cell = position,
         biome = general.config.biomes[biomeName]!!,
         sides = allDirections.associateWith(getUsableCellSide(general.gridSideMap)(position)),

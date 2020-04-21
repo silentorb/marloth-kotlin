@@ -59,13 +59,13 @@ fun renderNavMeshVoxels(renderer: Renderer, hf: Heightfield) {
   globalState.depthEnabled = false
 }
 
-private fun renderOutlinedFaces(renderer: Renderer, polygons: List<List<Float>>) {
+private fun renderOutlinedFaces(renderer: Renderer, polygons: List<List<Float>>, solidColor: Vector4, lineColor: Vector4) {
   val effect = renderer.getShader(renderer.vertexSchemas.flat, ShaderFeatureConfig())
   val solidBrush = ObjectShaderConfig(
-      color = Vector4(0.2f, 0.6f, 0.8f, 0.3f)
+      color = solidColor
   )
   val lineBrush = ObjectShaderConfig(
-      color = Vector4(0f, 1f, 1f, 1f)
+      color = lineColor
   )
 
   globalState.depthEnabled = false
@@ -99,7 +99,7 @@ fun renderNavMesh(renderer: Renderer, navMesh: NavMesh) {
         }
       }
     }
-    renderOutlinedFaces(renderer, polygons)
+    renderOutlinedFaces(renderer, polygons, Vector4(0.2f, 0.6f, 0.8f, 0.3f), Vector4(0f, 1f, 1f, 0.5f))
   }
 
   if (getDebugBoolean("DRAW_NAV_INPUT")) {
@@ -111,6 +111,6 @@ fun renderNavMesh(renderer: Renderer, navMesh: NavMesh) {
         }
       }
     }
-    renderOutlinedFaces(renderer, polygons)
+    renderOutlinedFaces(renderer, polygons, Vector4(0.8f, 0.6f, 0.2f, 0.3f), Vector4(1f, 0f, 1f, 0.5f))
   }
 }

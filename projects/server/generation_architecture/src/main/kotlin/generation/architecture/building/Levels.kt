@@ -63,10 +63,12 @@ fun explodeHeightBlocks(levelIndex: Int): Map<String, BlockBuilder> {
           cubeWallLamps(lampRate = 0.5f, heightOffset = level.height - 0.1f)
       ,
 
-//      "lowerHalfStepSlopeA$levelIndex" to newSlope(lower, level.side) +
-//          newSlopeEdgeBlock(MeshId.largeBrick.name, lower.height + quarterStep + quarterStep, level.side, -1),
+      "lowerHalfStepSlopeA$levelIndex" to newSlope(lower, level.side),
 
       "lowerHalfStepSlopeB$levelIndex" to newSlope(lower, level.side) +
+          newSlopeEdgeBlock(MeshId.largeBrick.name, lower.height + quarterStep + quarterStep, level.side, -1),
+
+      "lowerHalfStepSlopeC$levelIndex" to newSlope(lower, level.side) +
           newSlopeEdgeBlock(MeshId.largeBrick.name, lower.height + quarterStep + quarterStep, level.side, 1),
 
       "diagonalCorner$levelIndex" to diagonalCornerFloor(level.side, level.height)

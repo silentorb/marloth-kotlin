@@ -1,6 +1,6 @@
 package marloth.definition
 
-import marloth.definition.data.creatures
+import marloth.definition.data.Creatures
 
 enum class DistributionGroup {
   cloud,
@@ -14,9 +14,9 @@ enum class DistributionGroup {
 typealias DistributionMap = Map<DistributionGroup, Int>
 
 fun enemyDistributions() = mapOf(
-    creatures.hogMan to 5,
-    creatures.sentinel to 12,
-    creatures.hound to 10
+    Creatures.hogMan to 4,
+    Creatures.sentinel to 12,
+    Creatures.hound to 8
 )
 
 fun scalingDistributions(): DistributionMap = mapOf(

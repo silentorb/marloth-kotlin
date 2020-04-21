@@ -47,6 +47,7 @@ fun newSlopedFloorMesh(mesh: MeshName, height: Float) = blockBuilder(down = impa
   val orientation = Quaternion()
       .rotateZ(applyTurns(input.turns))
       .rotateX(slopeAngle)
+//  listOf()
   floorMeshBuilder(mesh, offset = Vector3(0f, 0f, height + cellLength / 8f), orientation = orientation)(input)
 }
 
@@ -54,16 +55,20 @@ fun newSlopeEdgeBlock(mesh: MeshName, height: Float, openPattern: Side, turns: I
     block = Block(
         sides = mapOf(
             getTurnDirection(turns) to openPattern
+        ),
+        slots = listOf(
+//            Vector3(cellLength * 0.25f, cellLength * 0.25f, height)
+            Vector3(cellLength * (0.5f - turns.toFloat() * 0.25f), cellLength * 0.25f, height)
         )
     )
 ) { input ->
-  val side = getTurnedSide(input.sides, input.turns + turns)!!
-  if (side.any { openPattern.contains(it) }) {
-    val orientation = Quaternion().rotateZ(applyTurns(input.turns + 1))
-    val offset = Quaternion().rotateZ(applyTurns(input.turns + turns))
-        .transform(Vector3(0f, cellLength / 4f, 0f))
-    val position = offset + Vector3(0f, 0f, height)
-    floorMeshBuilder(mesh, offset = position, orientation = orientation)(input)
-  } else
-    listOf()
+//  val side = getTurnedSide(input.sides, input.turns + turns)!!
+//  if (side.any { openPattern.contains(it) }) {
+  val orientation = Quaternion().rotateZ(applyTurns(input.turns + 1))
+  val offset = Quaternion().rotateZ(applyTurns(input.turns + turns))
+      .transform(Vector3(0f, cellLength / 4f, 0f))
+  val position = offset + Vector3(0f, 0f, height)
+  floorMeshBuilder(mesh, offset = position, orientation = orientation)(input)
+//  } else
+//    listOf()
 }

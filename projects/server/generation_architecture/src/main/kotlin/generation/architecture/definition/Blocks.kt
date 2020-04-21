@@ -58,7 +58,7 @@ fun spiralStairBlocks(): Map<String, BlockBuilder> = mapOf(
         setOf(CellAttribute.lockedRotation, CellAttribute.traversable),
         blockBuilder(
             up = spiralStaircaseTopOrBottom,
-            east = openOrSolidCylinder,
+            east = impassableCylinder,
             north = openOrSolidCylinder,
             south = impassableCylinder,
             west = openOrSolidCylinder
@@ -88,7 +88,7 @@ fun spiralStairBlocks(): Map<String, BlockBuilder> = mapOf(
             up = impassableVertical,
             down = spiralStaircaseTopOrBottom,
             east = openOrSolidCylinder,
-            north = openOrSolidCylinder,
+            north = impassableCylinder,
             south = openOrSolidCylinder,
             west = impassableCylinder
         ),
@@ -123,4 +123,4 @@ fun allBlockBuilders(): Map<String, BlockBuilder> = mapOf(
     )
 )
     .plus(heights())
-//    .plus(spiralStairBlocks())
+    .plus(spiralStairBlocks())

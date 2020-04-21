@@ -6,7 +6,7 @@ import simulation.entities.CharacterDefinition
 import simulation.entities.DepictionType
 import simulation.entities.fieldOfView360
 
-class Creatures {
+object Creatures {
   val soldier = CharacterDefinition(
       health = 200,
       accessories = listOf(AccessoryId.shotgun.name),
@@ -72,10 +72,3 @@ class Creatures {
       deathSound = Sounds.girlScream
   )
 }
-
-val creatures = Creatures()
-
-val characterClasses = mapOf(
-    "soldier" to creatures.soldier,
-    "magician" to creatures.magician
-)

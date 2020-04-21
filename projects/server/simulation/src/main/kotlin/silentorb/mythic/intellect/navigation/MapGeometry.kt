@@ -20,14 +20,14 @@ private val boxLength = 1f
 
 private val boxVertices = listOf(
     Vector3(boxLength, boxLength, boxLength),
-    Vector3(-boxLength, boxLength, boxLength),
-    Vector3(-boxLength, -boxLength, boxLength),
     Vector3(boxLength, -boxLength, boxLength),
+    Vector3(-boxLength, -boxLength, boxLength),
+    Vector3(-boxLength, boxLength, boxLength),
 
     Vector3(boxLength, boxLength, -boxLength),
-    Vector3(-boxLength, boxLength, -boxLength),
+    Vector3(boxLength, -boxLength, -boxLength),
     Vector3(-boxLength, -boxLength, -boxLength),
-    Vector3(boxLength, -boxLength, -boxLength)
+    Vector3(-boxLength, boxLength, -boxLength)
 )
 
 private fun square(a: Int, b: Int, c: Int, d: Int): List<Int> =
@@ -95,9 +95,10 @@ private fun compositeShapeVertices(shape: CompositeShape): IntermediateMesh {
 }
 
 private fun meshShapeVertices(shape: MeshShape): IntermediateMesh {
+  val triangles = shape.triangles.reversed()
   return IntermediateMesh(
-      vertices = shape.triangles,
-      triangles = shape.triangles.mapIndexed { index, _ -> index }
+      vertices = triangles,
+      triangles = triangles.mapIndexed { index, _ -> index }
   )
 }
 
@@ -137,7 +138,7 @@ fun newNavMeshTriMeshes(deck: PhysicsDeck, architectureElements: Set<Id>): List<
       .map { id ->
         val shape = deck.collisionShapes[id]!!.shape
         val mesh = getShapeVertices(shape)
-          Pair(id, mesh)
+        Pair(id, mesh)
       }
       .map { (id, mesh) ->
         val body = deck.bodies[id]!!

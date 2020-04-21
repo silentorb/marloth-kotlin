@@ -19,7 +19,7 @@ fun newWorkbench(dice: Dice, blocks: Set<Block>, independentConnections: Set<Any
 
   return pipe(
       windingPath(dice, blockConfig, roomCount),
-      horrorVacui(dice, blockConfig, HorrorVacuiConfig(branchRate = 0.7f, branchLengthRange = 1..3)),
+      horrorVacui(dice, blockConfig, HorrorVacuiConfig(branchRate = 0.7f, branchLengthRange = 1..5)),
       horrorVacui(dice, blockConfig, HorrorVacuiConfig(branchRate = 0.7f, branchLengthRange = 1..3)),
       additionalConnecting(dice, blockConfig, rate = 0.7f)
   )(newWindingWorkbench(firstBlock.block))
