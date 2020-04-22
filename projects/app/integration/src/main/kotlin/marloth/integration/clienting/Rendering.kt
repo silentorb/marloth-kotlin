@@ -18,6 +18,7 @@ import simulation.misc.interpolateWorlds
 
 fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: List<Box>, viewports: List<Vector4i>) {
   updateAsyncTextureLoading(client.textureLoader, client.renderer.textures)
+//  updateOffscreenBufferAllocations(client.renderer, )
   renderContainer(client.renderer, windowInfo) {
     val world =
         if (getDebugBoolean("DISABLE_INTERPOLATION"))

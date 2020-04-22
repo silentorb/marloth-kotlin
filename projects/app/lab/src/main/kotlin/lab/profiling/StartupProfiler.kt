@@ -5,6 +5,7 @@ import lab.*
 import marloth.integration.front.newGameApp
 import marloth.integration.misc.loadGameConfig
 import silentorb.mythic.desktop.createDesktopPlatform
+import silentorb.mythic.lookinglass.toPlatformDisplayConfig
 
 object StartupProfiler {
   @JvmStatic
@@ -15,8 +16,9 @@ object StartupProfiler {
       System.gc()
       val labConfig = loadLabConfig()
       val gameConfig = loadGameConfig()
-      val platform = createDesktopPlatform("Dev Lab", gameConfig.display)
-      platform.display.initialize(gameConfig.display)
+      val platformDisplayConfig = toPlatformDisplayConfig(gameConfig.display)
+      val platform = createDesktopPlatform("Dev Lab", platformDisplayConfig)
+      platform.display.initialize(platformDisplayConfig)
       val gameApp = newGameApp(platform, gameConfig)
       val state = newLabState(gameApp, labConfig)
       val app = LabApp(gameApp, labConfig,

@@ -5,6 +5,7 @@ import lab.LabConfig
 import lab.labConfigPath
 import marloth.integration.misc.loadGameConfig
 import silentorb.mythic.desktop.createDesktopPlatform
+import silentorb.mythic.lookinglass.toPlatformDisplayConfig
 
 object WorldGenProfiler {
   @JvmStatic
@@ -12,8 +13,9 @@ object WorldGenProfiler {
     System.setProperty("joml.format", "false")
     val config = loadYamlFile<LabConfig>(labConfigPath) ?: LabConfig()
     val gameConfig = loadGameConfig()
-    val platform = createDesktopPlatform("WorldGenProfiler", gameConfig.display)
-    platform.display.initialize(gameConfig.display)
+    val platformDisplayConfig = toPlatformDisplayConfig(gameConfig.display)
+    val platform = createDesktopPlatform("WorldGenProfiler", platformDisplayConfig)
+    platform.display.initialize(platformDisplayConfig)
 
     while(true) {
       platform.display.swapBuffers()

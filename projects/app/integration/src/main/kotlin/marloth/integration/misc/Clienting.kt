@@ -41,15 +41,15 @@ fun newRenderer(
 ): Renderer {
   val glow = Glow()
   glow.state.clearColor = Vector4(0f, 0f, 0f, 1f)
-  val multisampler = if (config.multisamples == 0)
-    null
-  else
-    createMultiSampler(glow, config)
-
   val vertexSchemas: VertexSchemas = createVertexSchemas()
   val (loadedMeshes, loadedArmatures) = createMeshes(vertexSchemas)
   val meshes = loadedMeshes
   val armatures = loadedArmatures.associateBy { it.id }
+  val multisampler = if (config.multisamples == 0)
+    null
+  else
+    createMultiSampler(glow, config.width, config.height, config.multisamples)
+
   return Renderer(
       glow = glow,
       config = config,

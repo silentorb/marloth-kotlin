@@ -13,6 +13,8 @@ import silentorb.mythic.debugging.checkDotEnvChanged
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.lookinglass.SceneRenderer
+import silentorb.mythic.lookinglass.toPlatformDisplayConfig
+import silentorb.mythic.platforming.PlatformDisplayConfig
 import silentorb.mythic.scenery.Scene
 import simulation.main.World
 import simulation.misc.Definitions
@@ -55,7 +57,8 @@ fun newGameApp(platform: Platform, config: GameConfig): GameApp {
 }
 
 fun runApp(platform: Platform, config: GameConfig) {
-  platform.display.initialize(config.display)
+  val display = config.display
+  platform.display.initialize(toPlatformDisplayConfig(config.display))
   val app = newGameApp(platform, config)
   val world = generateWorld(app.definitions, getMeshInfo(app.client))
   val state = AppState(

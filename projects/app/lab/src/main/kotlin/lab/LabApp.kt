@@ -23,6 +23,7 @@ import silentorb.mythic.quartz.newTimestepState
 import org.lwjgl.glfw.GLFW
 import silentorb.mythic.debugging.getDebugRangeValue
 import silentorb.mythic.debugging.setDebugRangeValue
+import silentorb.mythic.lookinglass.toPlatformDisplayConfig
 import simulation.main.World
 import simulation.misc.Definitions
 import simulation.misc.WorldInput
@@ -178,8 +179,9 @@ fun loadLabConfig(): LabConfig =
 
 fun newLabGameApp(labConfig: LabConfig): GameApp {
   val gameConfig = loadGameConfig()
-  val platform = createDesktopPlatform("Dev Lab", gameConfig.display)
-  platform.display.initialize(gameConfig.display)
+  val platformDisplayConfig = toPlatformDisplayConfig(gameConfig.display)
+  val platform = createDesktopPlatform("Dev Lab", platformDisplayConfig)
+  platform.display.initialize(platformDisplayConfig)
   val client = newClient (platform, gameConfig.display)
   val clientDefinitions = definitionsFromClient(client)
   val definitions = staticDefinitions(clientDefinitions)
