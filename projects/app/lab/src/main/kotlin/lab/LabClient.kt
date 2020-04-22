@@ -128,7 +128,7 @@ class LabClient(val config: LabConfig, val client: Client) {
       emptyFlower
 
     val seed = Seed(
-        bag = state.app.client.bloomState.bag,
+        bag = state.app.client.bloomStates.values.first().bag,
         dimensions = windowInfo.dimensions
     )
     val relativeBox = layout(seed)
@@ -140,7 +140,7 @@ class LabClient(val config: LabConfig, val client: Client) {
     )
 
     val bloomInputState = newBloomInputState(newDeviceStates.last())
-    val (newBloomState, events) = updateBloomState(labLogicModules, box, state.app.client.bloomState, bloomInputState)
+    val (newBloomState, events) = updateBloomState(labLogicModules, box, state.app.client.bloomStates.values.first(), bloomInputState)
 
     for (e in events) {
       println(e.javaClass.name)
@@ -150,14 +150,14 @@ class LabClient(val config: LabConfig, val client: Client) {
       val allCommands = commands
           .plus(events.filterIsInstance<LabCommandType>().map { HaftCommand(it) })
       val input = getInputState(client.platform.input, allCommands)
-      updateMapState(config.mapView, world.realm, input, windowInfo, state.app.client.bloomState, delta)
+      updateMapState(config.mapView, world.realm, input, windowInfo, state.app.client.bloomStates.values.first(), delta)
     }
     return LabClientResult(
         listOf(),
         state.copy(
             app = state.app.copy(
                 client = state.app.client.copy(
-                    bloomState = newBloomState,
+                    bloomStates = mapOf(state.app.client.bloomStates.keys.first() to newBloomState),
                     input = newInputState
                 )
             )

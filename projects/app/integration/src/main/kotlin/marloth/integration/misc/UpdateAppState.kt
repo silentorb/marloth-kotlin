@@ -6,12 +6,12 @@ import marloth.clienting.menus.*
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.updateClient
 import marloth.integration.clienting.gatherHudData
+import marloth.integration.clienting.renderMain
 import marloth.integration.clienting.updateAppStateForFirstNewPlayer
 import marloth.integration.clienting.updateAppStateForNewPlayers
 import marloth.integration.front.GameApp
 import marloth.integration.front.RenderHook
 import silentorb.mythic.bloom.BloomState
-import silentorb.mythic.bloom.mergeBounds
 import silentorb.mythic.bloom.next.Box
 import silentorb.mythic.bloom.toAbsoluteBounds
 import silentorb.mythic.ent.Id
@@ -95,9 +95,12 @@ fun gatherAdditionalGameCommands(previousClient: ClientState, clientState: Clien
   }
 }
 
-fun gatherGuiEvents(bloomState: BloomState) = guiEvents(bloomState.bag)
+fun guiEventsFromBloomState(bloomState: BloomState) = guiEvents(bloomState.bag)
     .filter { it.type == GuiEventType.gameEvent }
     .map { it.data as GameEvent }
+
+fun guiEventsFromBloomStates(bloomStates: Map<Id, BloomState>) =
+    bloomStates.values.flatMap(::guiEventsFromBloomState)
 
 fun filterCommands(clientState: ClientState): (List<CharacterCommand>) -> List<CharacterCommand> = { commands ->
   commands
@@ -120,7 +123,7 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
   val clientEvents = events.plus(gameCommands)
   val simulationEvents = getSimulationEvents(definitions, previous.deck, world, clientEvents)
   val allEvents = clientEvents + simulationEvents
-  val nextWorld = updateWorld(definitions, allEvents, simulationDelta)(world)
+  val nextWorld = updateWorld(definitions, allEvents, simulationDelta, world)
   updateSimulationDatabase(app.db, nextWorld, world)
   return worlds
       .plus(nextWorld)
@@ -131,18 +134,18 @@ fun updateWorlds(app: GameApp, previousClient: ClientState, clientState: ClientS
   when {
     true -> {
       val commands = mapGameCommands(clientState.players, clientState.commands)
-      val events = gatherGuiEvents(clientState.bloomState)
+      val events = guiEventsFromBloomStates(clientState.bloomStates)
       updateSimulation(app, previousClient, clientState, worlds, commands, events)
     }
     else -> worlds.takeLast(1)
   }
 }
 
-fun updateFixedInterval(app: GameApp, box: Box): (AppState) -> AppState =
+fun updateFixedInterval(app: GameApp, boxes: List<Box>): (AppState) -> AppState =
     pipe(
         { appState ->
           app.platform.process.pollEvents()
-          val clientState = updateClient(app.client, appState.worlds, box)(appState.client)
+          val clientState = updateClient(app.client, appState.worlds, boxes)(appState.client)
           if (clientState.commands.any { it.type == GuiCommandType.newGame })
             restartGame(app, appState)
           else {
@@ -206,11 +209,11 @@ fun updateAppState(app: GameApp, hooks: GameHooks? = null): (AppState) -> AppSta
     else
       layoutGui(app, state, viewportDimensions)
 
-    val box = Box(
-        boxes = boxes,
-        bounds = mergeBounds(newBoxes.map { it.bounds })
-    )
-    val result = updateFixedInterval(app, box)(state)
+//    val box = Box(
+//        boxes = boxes,
+//        bounds = mergeBounds(newBoxes.map { it.bounds })
+//    )
+    val result = updateFixedInterval(app, newBoxes)(state)
     if (hooks != null) {
       hooks.onUpdate(result)
     }

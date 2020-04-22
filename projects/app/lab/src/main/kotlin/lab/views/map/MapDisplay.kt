@@ -17,7 +17,7 @@ import silentorb.mythic.glowing.globalState
 import silentorb.mythic.lookinglass.SceneRenderer
 import silentorb.mythic.lookinglass.createSceneRenderer
 import silentorb.mythic.lookinglass.drawing.renderMeshElement
-import silentorb.mythic.lookinglass.finishRender
+import silentorb.mythic.lookinglass.applyFilters
 import silentorb.mythic.lookinglass.prepareRender
 import silentorb.mythic.scenery.Camera
 import silentorb.mythic.scenery.ProjectionType
@@ -193,6 +193,6 @@ fun renderMapView(client: Client, world: World, deck: Deck, config: MapViewConfi
 
     conditionalDrawAiTargets(deck, renderer)
 
-    finishRender(renderer, windowInfo)
+    applyFilters(renderer, windowInfo)
   }
 }

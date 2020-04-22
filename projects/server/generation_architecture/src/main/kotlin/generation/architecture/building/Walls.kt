@@ -1,5 +1,8 @@
 package generation.architecture.building
 
+import generation.architecture.definition.ConnectionType
+import generation.architecture.definition.extraHeadroom
+import generation.architecture.misc.BuilderInput
 import generation.architecture.misc.GenerationConfig
 import generation.architecture.old.newArchitectureMesh
 import generation.general.*
@@ -13,6 +16,7 @@ import silentorb.mythic.spatial.quarterAngle
 import simulation.main.Hand
 import simulation.misc.cellCenterOffset
 import simulation.misc.cellHalfLength
+import simulation.misc.cellLength
 import simulation.misc.containsConnection
 
 data class WallPlacement(
@@ -74,4 +78,13 @@ fun cylinderWalls() = blockBuilder { input ->
         )
       }
       .map(::newWallInternal)
+}
+
+fun getTruncatedWallMesh(input: BuilderInput, height: Float): MeshName {
+  val scale = height / cellLength
+  return when {
+    !input.sides[Direction.up]!!.contains(ConnectionType.extraHeadroom) -> MeshId.squareWall.name
+    scale <= 0.5f -> MeshId.squareWallHalfHeight.name // Don't currently have a 3/4 height wall mesh
+    else -> MeshId.squareWallQuarterHeight.name
+  }
 }

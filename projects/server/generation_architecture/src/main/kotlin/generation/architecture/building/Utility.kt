@@ -19,7 +19,6 @@ fun mergeSides(blocks: List<Block>): Sides {
         .toSet()
   }
 
-  assert(sides.all { it.value.any() })
   return sides
 }
 

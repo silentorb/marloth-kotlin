@@ -1,6 +1,7 @@
 package marloth.integration.misc
 
 import generation.architecture.building.BlockBuilder
+import generation.architecture.building.blockBuilder
 import generation.architecture.definition.*
 import generation.architecture.misc.*
 import generation.architecture.old.applyTurns
@@ -72,6 +73,7 @@ fun explodeBlockMap(rotatingConnections: RotatingConnections, blockBuilders: Col
 fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, input: WorldInput): World {
   val dice = input.dice
   val blockBuilders = explodeBlockMap(rotatingConnectionTypes(), allBlockBuilders().values)
+  blockBuilders.forEach { blockBuilder -> assert(blockBuilder.block.sides.all { it.value.any() }) }
   val (blocks, builders) = splitBlockBuilders(devFilterBlockBuilders(blockBuilders))
   val independentConnections = independentConnectionTypes()
   val openConnectionTypes = openConnectionTypes()

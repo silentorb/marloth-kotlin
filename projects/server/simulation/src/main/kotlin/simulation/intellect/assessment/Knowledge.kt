@@ -16,7 +16,7 @@ data class CharacterMemory(
     val lastSeen: Float,
     val id: Id,
     override val position: Vector3,
-    override val nearestNode: Id,
+    val nearestNode: Id,
     val faction: Id,
     val targetable: Boolean
 ) : SimpleBody

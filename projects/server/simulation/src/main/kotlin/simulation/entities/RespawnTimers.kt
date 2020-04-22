@@ -1,11 +1,12 @@
 package simulation.entities
 
-import simulation.combat.general.RestoreHealth
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.timing.FloatTimer
+import simulation.combat.general.RestoreHealth
+import simulation.happenings.ReturnHome
 import simulation.main.Deck
 import simulation.main.Hand
 import simulation.main.IdHand
@@ -52,13 +53,21 @@ fun newRespawnCountdowns(nextId: IdSource, previous: Deck, next: Deck): List<IdH
   }
 }
 
-fun eventsFromRespawnCountdowns(previous: Deck, next: Deck, events: Events): Events {
+fun eventsFromRespawnCountdowns(previous: Deck, next: Deck): Events {
   val expiredCountdowns = previous.respawnCountdowns.keys.minus(next.respawnCountdowns.keys)
 
   return expiredCountdowns.flatMap { id ->
     val respawner = previous.respawnCountdowns[id]!!
+    val target = respawner.target
+    val repositionEvent = if (next.players.containsKey(target)) {
+      ReturnHome(target = target)
+    } else
+      null
     listOf(
-        RestoreHealth(target = respawner.target)
+        RestoreHealth(target = target)
     )
+        .plus(listOfNotNull(
+            repositionEvent
+        ))
   }
 }

@@ -108,7 +108,15 @@ fun allBlockBuilders(): Map<String, BlockBuilder> = mapOf(
     "singleCellRoom" to singleCellRoom(),
 //    "home" to homeBlock,
 
-    "diagonalCorner" to diagonalCornerFloor(requiredOpen, 0f),
+    "diagonalCorner" to diagonalCornerFloor(0f) + BlockBuilder(
+        block = Block(
+            sides = sides(
+                up = impassableVertical,
+                east = requiredWideOpen,
+                north = requiredWideOpen
+            )
+        )
+    ),
 
     "verticalDiagonal" to compose(
         setOf(CellAttribute.traversable),
@@ -123,4 +131,4 @@ fun allBlockBuilders(): Map<String, BlockBuilder> = mapOf(
     )
 )
     .plus(heights())
-    .plus(spiralStairBlocks())
+//    .plus(spiralStairBlocks())

@@ -1,9 +1,9 @@
 package simulation.happenings
 
-import silentorb.mythic.ent.Id
 import marloth.scenery.enums.ModifierId
-import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.accessorize.AccessoryName
+import silentorb.mythic.ent.Id
+import silentorb.mythic.happenings.GameEvent
 
 data class PurchaseEvent(
     val customer: Id,
@@ -29,3 +29,6 @@ data class TryUseAbilityEvent(
     val actor: Id
 ) : GameEvent
 
+data class ReturnHome(
+    val target: Id
+) : GameEvent

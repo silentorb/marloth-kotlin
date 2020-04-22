@@ -59,7 +59,7 @@ fun newCharacterRigHand(deck: Deck): (Id) -> CharacterRigHand = { character ->
 fun updateMarlothCharacterRigFacing(deck: Deck, commands: Commands, id: Id): (CharacterRig) -> CharacterRig = { characterRig ->
   val destructible = deck.destructibles[id]!!
   val character = deck.characters[id]!!
-  val isAlive = isAlive(destructible.health.value)
+  val isAlive = isAlive(destructible.health.value, deck.bodies[id]!!.position)
   val justDied = !isAlive && character.isAlive
 
   if (justDied) {

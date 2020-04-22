@@ -19,6 +19,7 @@ import simulation.main.Deck
 import simulation.main.World
 import simulation.misc.Definitions
 import simulation.particles.updateParticleEffect
+import simulation.physics.updateBodies
 import simulation.physics.updateMarlothCharacterRig
 
 fun updateEntities(definitions: Definitions, world: World, events: Events): (Deck) -> Deck =
@@ -29,7 +30,7 @@ fun updateEntities(definitions: Definitions, world: World, events: Events): (Dec
           actions = updateActions(world.definitions, deck, events),
           ambientSounds = updateAmbientAudio(dice, deck),
           animations = mapTable(deck.animations, updateCharacterAnimation(deck, definitions.animations, delta)),
-          bodies = mapTable(deck.bodies, updateSpinnerRotation(deck.spinners, delta)),
+          bodies = mapTable(deck.bodies, updateBodies(world.realm.grid, deck, events, delta)),
           characterRigs = mapTable(deck.characterRigs, updateMarlothCharacterRig(world.bulletState, deck, events)),
           accessories = mapTable(deck.accessories, updateAccessory(events)),
           attachments = mapTable(deck.attachments, updateAttachment(events)),

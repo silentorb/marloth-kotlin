@@ -1,16 +1,17 @@
 package simulation.entities
 
-import silentorb.mythic.ent.Id
-import silentorb.mythic.ent.pipe2
 import marloth.scenery.enums.ResourceId
 import marloth.scenery.enums.Sounds
 import silentorb.mythic.accessorize.AccessoryName
 import silentorb.mythic.aura.SoundType
+import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.Table
+import silentorb.mythic.ent.pipe2
 import silentorb.mythic.happenings.*
 import silentorb.mythic.physics.BulletState
+import silentorb.mythic.spatial.Vector3
 import simulation.combat.general.DamageMultipliers
 import simulation.combat.general.ResourceContainer
-import silentorb.mythic.ent.Table
 import simulation.happenings.PurchaseEvent
 import simulation.happenings.TakeItemEvent
 import simulation.main.Deck
@@ -39,13 +40,17 @@ data class Character(
     val activeAccessory: Id?,
     val canInteractWith: Id? = null,
     val interactingWith: Id? = null,
+    val isInfinitelyFalling: Boolean = false,
     val money: Int = 0
 )
 
+fun isInfinitelyFalling(position: Vector3): Boolean =
+    position.z < -100f
+
 // Currently this is such a simple function because it will likely get more complicated and I want to ensure
 // everything is already routing through a single point before things get more complicated.
-fun isAlive(health: Int): Boolean =
-    health > 0
+fun isAlive(health: Int, position: Vector3): Boolean =
+    health > 0 && !isInfinitelyFalling(position)
 
 val equipCommandSlots: Map<CommandName, Int> = listOf(
     CommonCharacterCommands.equipSlot0,
@@ -110,7 +115,8 @@ fun updateInteractingWith(deck: Deck, character: Id, commands: Commands, interac
 fun updateCharacter(deck: Deck, bulletState: BulletState, id: Id, character: Character,
                     commands: Commands, events: Events): Character {
   val destructible = deck.destructibles[id]!!
-  val isAlive = isAlive(destructible.health.value)
+  val position = deck.bodies[id]!!.position
+  val isAlive = isAlive(destructible.health.value, position)
   val canInteractWith = if (deck.players.containsKey(id))
     castInteractableRay(bulletState.dynamicsWorld, deck, id)
   else
@@ -118,7 +124,7 @@ fun updateCharacter(deck: Deck, bulletState: BulletState, id: Id, character: Cha
 
   return character.copy(
       isAlive = isAlive,
-//      activeAccessory = updateEquippedItem(deck, id, character.activeAccessory, commands),
+      isInfinitelyFalling = isInfinitelyFalling(position),
       canInteractWith = canInteractWith,
       interactingWith = updateInteractingWith(deck, id, commands, character.interactingWith),
       money = updateMoney(deck, events, id, character.money)

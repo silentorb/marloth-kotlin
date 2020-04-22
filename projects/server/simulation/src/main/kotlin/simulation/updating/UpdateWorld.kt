@@ -7,6 +7,7 @@ import silentorb.mythic.ent.mapTable
 import silentorb.mythic.ent.pipe
 import silentorb.mythic.ent.pipe2
 import silentorb.mythic.happenings.Events
+import silentorb.mythic.physics.applyBodyChanges
 import simulation.combat.toCombatDefinitions
 import simulation.combat.toModifierDeck
 import simulation.main.*
@@ -45,13 +46,21 @@ fun updateWorldDeck(definitions: Definitions, events: Events, delta: Float): (Wo
       ))
     }
 
-fun updateWorld(definitions: Definitions, events: Events, delta: Float): (World) -> World =
-    pipe2(listOf(
-        { world ->
-          pipe2(listOf(
-              updatePhysics(events),
-              updateWorldDeck(definitions, events, delta)
-          ))(world)
-        },
-        updateGlobalDetails
-    ))
+fun updateWorld(definitions: Definitions, events: Events, delta: Float, world: World): World {
+  val withPhysics = updatePhysics(events)(world)
+  val next = updateGlobalDetails(updateWorldDeck(definitions, events, delta)(withPhysics))
+
+//  val next = pipe2(listOf(
+//      {
+//        pipe2(listOf(
+//            updatePhysics(events),
+//            updateWorldDeck(definitions, events, delta)
+//        ))(it)
+//      },
+//      updateGlobalDetails
+//  ))(world)
+
+  applyBodyChanges(world.bulletState, withPhysics.deck.bodies, next.deck.bodies)
+
+  return next
+}

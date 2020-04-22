@@ -1,10 +1,11 @@
 package marloth.clienting.menus
 
-import silentorb.mythic.haft.HaftCommands
 import marloth.clienting.ClientState
+import marloth.clienting.getPlayerBloomState
 import marloth.clienting.hud.HudData
 import marloth.clienting.hud.hudLayout
 import marloth.clienting.input.GuiCommandType
+import marloth.scenery.enums.Text
 import silentorb.mythic.bloom.*
 import silentorb.mythic.bloom.next.Box
 import silentorb.mythic.bloom.next.Flower
@@ -14,10 +15,10 @@ import silentorb.mythic.drawing.Canvas
 import silentorb.mythic.drawing.grayTone
 import silentorb.mythic.ent.Id
 import silentorb.mythic.glowing.globalState
-import silentorb.mythic.spatial.Vector4
-import silentorb.mythic.spatial.Vector2i
-import marloth.scenery.enums.Text
+import silentorb.mythic.haft.HaftCommands
 import silentorb.mythic.happenings.CommonCharacterCommands
+import silentorb.mythic.spatial.Vector2i
+import silentorb.mythic.spatial.Vector4
 import simulation.main.World
 import simulation.misc.Definitions
 
@@ -100,10 +101,12 @@ fun guiLayout(textResources: TextResources, definitions: Definitions, clientStat
   ))
 }
 
-fun layoutPlayerGui(textResources: TextResources, definitions: Definitions, clientState: ClientState, world: World?, hudData: HudData?, dimensions: Vector2i, player: Id): Box {
+fun layoutPlayerGui(textResources: TextResources, definitions: Definitions, clientState: ClientState, world: World?,
+                    hudData: HudData?, dimensions: Vector2i, player: Id): Box {
   val layout = guiLayout(textResources, definitions, clientState, world, hudData, player)
+  val bloomState = getPlayerBloomState(clientState.bloomStates, player)
   val seed = Seed(
-      bag = clientState.bloomState.bag.plus(textResourcesKey to textResources),
+      bag = bloomState.bag.plus(textResourcesKey to textResources),
       dimensions = dimensions
   )
   return layout(seed)

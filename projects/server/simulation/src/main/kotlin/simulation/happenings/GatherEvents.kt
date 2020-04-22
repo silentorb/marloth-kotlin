@@ -6,6 +6,7 @@ import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.filterCharacterCommandsFromEvents
 import silentorb.mythic.timing.emitCycleEvents
 import simulation.combat.toSpatialCombatWorld
+import simulation.entities.eventsFromRespawnCountdowns
 import simulation.intellect.aliveSpirits
 import simulation.intellect.execution.pursueGoals
 import simulation.main.Deck
@@ -27,24 +28,18 @@ fun getSimulationEvents(definitions: Definitions, previous: Deck, world: World, 
   val collisions = getBulletCollisions(world.bulletState, deck)
       .associateBy { it.first }
 
-//  val triggerEvents = (if (shouldUpdateLogic(deck)) {
-//    val triggerings = gatherActivatedTriggers(deck, definitions, collisions, commands)
-//    triggersToEvents(triggerings)
-//  } else
-//    listOf())
-
   val events = listOf(
       externalEvents,
-//      triggerEvents,
       eventsFromPerformances(definitions, deck),
       commandsToEvents(commands),
       commands,
       emitCycleEvents(deck.cyclesInt),
       eventsFromMissiles(toSpatialCombatWorld(world), collisions),
       eventsFromItemPickups(world, collisions),
-      eventsFromVictoryKeys(world)
+      eventsFromVictoryKeys(world),
+      eventsFromRespawnCountdowns(previous, world.deck)
   )
       .flatten()
 
-  return events.plus(eventsFromEvents(previous, world, events))
+  return events.plus(eventsFromEvents(world, events))
 }
