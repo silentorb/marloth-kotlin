@@ -10,6 +10,7 @@ import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.debugging.getDebugRangeValue
 import simulation.entities.Interactable
 import silentorb.mythic.accessorize.Modifier
+import silentorb.mythic.characters.ViewMode
 import simulation.combat.general.ResourceContainer
 
 private val textStyle = textStyles.gray
@@ -19,6 +20,7 @@ data class HudData(
     val sanity: ResourceContainer,
     val interactable: Interactable?,
     val cooldown: Float?,
+    val viewMode: ViewMode?,
     val buffs: List<Pair<Modifier, Int>>,
     val debugInfo: List<String> = listOf()
 )
@@ -31,16 +33,11 @@ fun resourceString(resource: ResourceContainer): String {
 
 val df = java.text.DecimalFormat("#0.00")
 
-//fun characterVisibility(data: HudData, id: Id): String {
-//  val rating = simulation.intellect.acessment.lightRating(world, id)
-//  return "vis: " + df.format(rating)
-//}
-
 private fun playerStats(data: HudData): Flower {
   val rows = listOf(
       label(textStyle, "Health: ${resourceString(data.health)}"),
-      label(textStyle, "Sanity: ${resourceString(data.sanity)}"),
-      label(textStyle, "Debug Range: ${getDebugRangeValue()}")
+      label(textStyle, "Sanity: ${resourceString(data.sanity)}")
+//      label(textStyle, "Debug Range: ${getDebugRangeValue()}")
 //      mythic.bloom.localizedLabel(textStyle, characterVisibility(data, player)),
 //      mythic.bloom.localizedLabel(textStyle, "vel: " + df.format(world.deck.bodies[player]!!.velocity.length()))
   )
@@ -91,6 +88,6 @@ fun hudLayout(textResources: TextResources, data: HudData): Flower {
       playerStats(data),
       if (data.interactable != null) interactionDialog(textResources, data.interactable) else null,
       if (data.cooldown != null) cooldownIndicatorPlacement(data.cooldown) else null,
-      reticlePlacement()
+      if (data.viewMode == ViewMode.firstPerson) reticlePlacement() else null
   ))
 }

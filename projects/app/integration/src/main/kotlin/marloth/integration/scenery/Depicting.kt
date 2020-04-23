@@ -5,6 +5,7 @@ import marloth.scenery.enums.ArmatureSockets
 import marloth.scenery.enums.MeshId
 import silentorb.mythic.accessorize.getAccessories
 import silentorb.mythic.characters.CharacterRig
+import silentorb.mythic.characters.ViewMode
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.lookinglass.*
@@ -35,11 +36,11 @@ val simplePainterMap = MeshId.values().mapNotNull { meshId ->
     )
 
 
-fun filterDepictions(depictions: Table<Depiction>, player: Id, playerRecord: Player): Table<Depiction> =
-//    if (playerRecord.viewMode == ViewMode.firstPerson)
+fun filterDepictions(depictions: Table<Depiction>, player: Id, characterRig: CharacterRig?): Table<Depiction> =
+    if (characterRig?.viewMode == ViewMode.firstPerson)
     depictions.filter { it.key != player }
-//    else
-//      depictions
+    else
+      depictions
 
 fun depictionTransform(bodies: Table<Body>, characterRigs: Table<CharacterRig>, id: Id): Matrix {
   val body = bodies[id]!!
@@ -193,14 +194,14 @@ fun depictionSwitch(definitions: Definitions, deck: Deck, player: Id, depiction:
   }
 }
 
-fun gatherVisualElements(definitions: Definitions, deck: Deck, player: Id, playerRecord: Player): ElementGroups {
+fun gatherVisualElements(definitions: Definitions, deck: Deck, player: Id, characterRig: CharacterRig?): ElementGroups {
   val initialPass = deck.depictions.map { (id, depiction) ->
     Pair(id, depictionSwitch(definitions, deck, player, id, depiction))
   }
   val initial = initialPass.mapNotNull { it.second }
   val remaining = deck.depictions.minus(initialPass.filter { it.second != null }.map { it.first })
   val (complex, simple) =
-      filterDepictions(remaining, player, playerRecord)
+      filterDepictions(remaining, player, characterRig)
           .entries.partition { isComplexDepiction(it.value) }
 
   val complexElements = complex.map {
