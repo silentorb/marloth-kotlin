@@ -11,10 +11,8 @@ import persistence.Database
 import persistence.newDatabase
 import silentorb.mythic.debugging.checkDotEnvChanged
 import silentorb.mythic.debugging.getDebugBoolean
-import silentorb.mythic.randomly.Dice
 import silentorb.mythic.lookinglass.SceneRenderer
 import silentorb.mythic.lookinglass.toPlatformDisplayConfig
-import silentorb.mythic.platforming.PlatformDisplayConfig
 import silentorb.mythic.scenery.Scene
 import simulation.main.World
 import simulation.misc.Definitions
@@ -25,7 +23,7 @@ typealias NewWorld = (GameApp) -> World
 
 data class GameApp(
     val platform: Platform,
-    val config: GameConfig,
+    val config: AppConfig,
     val client: Client,
     val db: Database = newDatabase("game.db"),
     val definitions: Definitions,
@@ -43,7 +41,7 @@ tailrec fun gameLoop(app: GameApp, state: AppState) {
 }
 
 
-fun newGameApp(platform: Platform, config: GameConfig): GameApp {
+fun newGameApp(platform: Platform, config: AppConfig): GameApp {
   val client = newClient(platform, config.display)
   val clientDefinitions = definitionsFromClient(client)
   val definitions = staticDefinitions(clientDefinitions)
@@ -56,7 +54,7 @@ fun newGameApp(platform: Platform, config: GameConfig): GameApp {
   )
 }
 
-fun runApp(platform: Platform, config: GameConfig) {
+fun runApp(platform: Platform, config: AppConfig) {
   val display = config.display
   platform.display.initialize(toPlatformDisplayConfig(config.display))
   val app = newGameApp(platform, config)

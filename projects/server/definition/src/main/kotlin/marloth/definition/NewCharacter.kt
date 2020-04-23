@@ -3,6 +3,7 @@ package marloth.definition
 import marloth.scenery.enums.AnimationId
 import silentorb.mythic.accessorize.Accessory
 import silentorb.mythic.characters.CharacterRig
+import silentorb.mythic.characters.ViewMode
 import silentorb.mythic.characters.defaultCharacterHeight
 import silentorb.mythic.characters.defaultCharacterRadius
 import simulation.combat.general.Destructible
@@ -78,7 +79,8 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, defi
                   facingRotation = Vector3(0f, 0f, angle),
                   isActive = true,
                   maxSpeed = definition.maxSpeed,
-                  turnSpeed = Vector2(3f, 1f)
+                  turnSpeed = Vector2(3f, 1f),
+                  viewMode = if (spirit == null) ViewMode.firstPerson else ViewMode.firstPerson
               ),
               destructible = Destructible(
                   base = DestructibleBaseStats(

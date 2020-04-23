@@ -5,32 +5,30 @@ import silentorb.mythic.configuration.saveYamlFile
 import marloth.clienting.audio.AudioConfig
 import marloth.clienting.input.GameInputConfig
 import silentorb.mythic.lookinglass.DisplayConfig
-import simulation.entities.ViewMode
-
-data class GameplayConfig(
-    var defaultPlayerView: ViewMode = ViewMode.thirdPerson
-)
-
 
 data class GameConfig(
+    val placeholder: Boolean = true
+)
+
+data class AppConfig(
     var audio: AudioConfig = AudioConfig(),
     var display: DisplayConfig = DisplayConfig(),
-    var gameplay: GameplayConfig = GameplayConfig(),
+    var game: GameConfig = GameConfig(),
     var input: GameInputConfig = GameInputConfig()
 )
 
 val gameConfigFile = "../gameConfig.yaml"
 
-fun saveGameConfig(config: GameConfig) {
+fun saveGameConfig(config: AppConfig) {
   saveYamlFile(gameConfigFile, config)
 }
 
-fun loadGameConfig(): GameConfig {
-  val config = loadYamlFile<GameConfig>(gameConfigFile)
+fun loadGameConfig(): AppConfig {
+  val config = loadYamlFile<AppConfig>(gameConfigFile)
   if (config != null)
     return config
 
-  val newConfig = GameConfig()
+  val newConfig = AppConfig()
   saveGameConfig(newConfig)
   return newConfig
 }

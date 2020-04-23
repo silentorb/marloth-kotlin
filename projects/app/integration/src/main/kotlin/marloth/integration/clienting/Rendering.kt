@@ -19,29 +19,29 @@ import simulation.misc.interpolateWorlds
 fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: List<Box>, viewports: List<Vector4i>) {
   updateAsyncTextureLoading(client.textureLoader, client.renderer.textures)
 //  updateOffscreenBufferAllocations(client.renderer, )
-  renderContainer(client.renderer, windowInfo) {
-    val world =
-        if (getDebugBoolean("DISABLE_INTERPOLATION"))
-          appState.worlds.lastOrNull()
-        else
-          interpolateWorlds(appState.timestep.accumulator, appState.worlds)
-    if (world != null) {
-      val scenes = appState.client.players.map(createScene(world.definitions, world.deck))
-      val viewportIterator = viewports.iterator()
-      scenes.zip(boxes) { scene, box ->
-        val screenViewport = viewportIterator.next()
-        val renderer = client.renderer
-        val sceneRenderer = createSceneRenderer(client.renderer, scene, screenViewport)
-        val filters = prepareRender(sceneRenderer, scene)
-        renderSceneLayers(renderer, sceneRenderer.camera, scene.layers)
-        labRender(appState)(sceneRenderer, scene.main)
-        val dimensions = Vector2i(screenViewport.z, screenViewport.w)
-        val canvas = createCanvas(client.renderer, client.customBloomResources, dimensions)
-        applyFilters(sceneRenderer, filters)
-        renderLayout(box, canvas)
-      }
+  val renderer = client.renderer
+  prepareRender(renderer, windowInfo)
+  val world =
+      if (getDebugBoolean("DISABLE_INTERPOLATION"))
+        appState.worlds.lastOrNull()
+      else
+        interpolateWorlds(appState.timestep.accumulator, appState.worlds)
+  if (world != null) {
+    val scenes = appState.client.players.map(createScene(world.definitions, world.deck))
+    val viewportIterator = viewports.iterator()
+    scenes.zip(boxes) { scene, box ->
+      val screenViewport = viewportIterator.next()
+      val renderer = client.renderer
+      val sceneRenderer = createSceneRenderer(client.renderer, scene, screenViewport)
+      val filters = prepareRender(sceneRenderer, scene)
+      renderSceneLayers(renderer, sceneRenderer.camera, scene.layers)
+      labRender(appState)(sceneRenderer, scene.main)
+      val dimensions = Vector2i(screenViewport.z, screenViewport.w)
+      val canvas = createCanvas(client.renderer, client.customBloomResources, dimensions)
+      applyFilters(sceneRenderer, filters)
+      renderLayout(box, canvas, getDebugBoolean("MARK_BLOOM_PASS"))
     }
   }
-
+  finishRender(renderer, windowInfo)
   client.platform.display.swapBuffers()
 }

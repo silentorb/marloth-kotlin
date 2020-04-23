@@ -7,10 +7,11 @@ import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.times
 import silentorb.mythic.scenery.Camera
 import silentorb.mythic.scenery.ProjectionType
-import simulation.entities.HoverCamera
 import simulation.main.Deck
 import silentorb.mythic.physics.Body
 import silentorb.mythic.characters.CharacterRig
+import silentorb.mythic.characters.HoverCamera
+import silentorb.mythic.characters.ViewMode
 import silentorb.mythic.characters.defaultCharacterHeight
 
 val firstPersonCameraOffset = Vector3(0f, 0f, defaultCharacterHeight * 0.4f)
@@ -53,10 +54,8 @@ fun createCamera(deck: Deck, player: Id): Camera {
   val character = deck.characters[player]!!
   val characterRig = deck.characterRigs[player]!!
   val body = deck.bodies[player]!!
-  return firstPersonCamera(body, characterRig, character.isAlive)
-//  return when (playerRecord.viewMode) {
-//    ViewMode.firstPerson -> firstPersonCamera(body, characterRig, character.isAlive)
-//    ViewMode.thirdPerson -> thirdPersonCamera(body, playerRecord.hoverCamera)
-////    ViewMode.topDown -> createTopDownCamera(body)
-//  }
+  return when (characterRig.viewMode) {
+    ViewMode.firstPerson -> firstPersonCamera(body, characterRig, character.isAlive)
+    ViewMode.thirdPerson -> thirdPersonCamera(body, characterRig.hoverCamera)
+  }
 }
