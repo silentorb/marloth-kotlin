@@ -42,7 +42,7 @@ For at least the past decade somewhere somehow I got this idea that games need t
   * Example: Quake removing the need for a key press to interact with the environment, opting instead for doors that automatically open when you are nearby and wall buttons that can be pushed or shot.
 * Minigames - I don't like minigames and they tend to be the extreme use of different UIs
 
-I'm done with those concerns.  I want this game to be immersive where its reasonable but am no longer interested in forcing the issue.  A one-size-fits all UI is a very limiting.  Use the right tool for each job.
+I'm done with those concerns.  I want this game to be immersive where its reasonable but am no longer interested in forcing the issue.  A one-size-fits all UI is very limiting.  Use the right tool for each job.
 
 The main reason I don't like minigames is because they minimize relationship across components, and I love it when things are deeply relational.  Each minigame has little influence on its siblings. At one point I was throwing around ideas for a game that had deeply relational minigames but that is challenging and not a natural, obvious minigame structure.
 
@@ -120,7 +120,7 @@ Because of this I've already thrown out all other forms of code generating non-t
 | Minecraft          |             |           |   *    |
 | Tales of Maj'Eyal  |             |     *     |        |
 | Grim Dawn          |             |     *     |        |
-| Binding of Isaac   |             |     *     |        |
+| Binding of Isaac   |             |           |   *    |
 | Diablo II          |             |     *     |        |
 | Neverwinter Nights |      *      |           |        |
 | Dungeon Defenders  |      *      |           |        |
