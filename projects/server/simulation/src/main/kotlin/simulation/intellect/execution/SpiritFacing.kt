@@ -1,5 +1,6 @@
 package simulation.intellect.execution
 
+import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.characters.getHorizontalLookAtAngle
 import silentorb.mythic.characters.getVerticalLookAtAngle
@@ -8,7 +9,6 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.CommandName
 import silentorb.mythic.happenings.Commands
-import silentorb.mythic.happenings.CommonCharacterCommands
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.getAngleCourse
 import simulation.main.World
@@ -62,7 +62,7 @@ fun spiritHorizontalFacingChange(world: World, character: Id, offset: Vector3): 
   val course = horizontalFacingDistance(characterRig, offset)
 //  println("$course ${characterRig.facingRotation.z}")
   return spiritFacingChange(character, course, characterRig.lookVelocity.x, characterRig.turnSpeed.x,
-      CommonCharacterCommands.lookLeft, CommonCharacterCommands.lookRight)
+      CharacterCommands.lookLeft, CharacterCommands.lookRight)
 }
 
 fun spiritVerticalFacingChange(world: World, character: Id, offset: Vector3): Commands {
@@ -70,7 +70,7 @@ fun spiritVerticalFacingChange(world: World, character: Id, offset: Vector3): Co
   val course = verticalFacingDistance(characterRig, offset)
 //  println("$course ${characterRig.facingRotation.y}")
   return spiritFacingChange2(character, course, characterRig.lookVelocity.y, characterRig.turnSpeed.y,
-      CommonCharacterCommands.lookUp, CommonCharacterCommands.lookDown)
+      CharacterCommands.lookUp, CharacterCommands.lookDown)
 }
 
 fun spiritNeedsFacing(world: World, character: Id, offset: Vector3, acceptableRange: Float, action: () -> Commands): Commands {

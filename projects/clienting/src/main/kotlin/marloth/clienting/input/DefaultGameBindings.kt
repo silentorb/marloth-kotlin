@@ -1,42 +1,42 @@
 package marloth.clienting.input
 
+import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.haft.*
 import org.lwjgl.glfw.GLFW
-import silentorb.mythic.happenings.CommonCharacterCommands
 
 val gameGamepadStrokeBindings = mapOf(
     GAMEPAD_BUTTON_START to GuiCommandType.menu,
 
-    GAMEPAD_BUTTON_DPAD_UP to CommonCharacterCommands.equipSlot0,
-    GAMEPAD_BUTTON_DPAD_LEFT to CommonCharacterCommands.equipSlot1,
-    GAMEPAD_BUTTON_DPAD_RIGHT to CommonCharacterCommands.equipSlot2,
-    GAMEPAD_BUTTON_DPAD_DOWN to CommonCharacterCommands.equipSlot3,
+    GAMEPAD_BUTTON_DPAD_UP to CharacterCommands.equipSlot0,
+    GAMEPAD_BUTTON_DPAD_LEFT to CharacterCommands.equipSlot1,
+    GAMEPAD_BUTTON_DPAD_RIGHT to CharacterCommands.equipSlot2,
+    GAMEPAD_BUTTON_DPAD_DOWN to CharacterCommands.equipSlot3,
 
-    GAMEPAD_AXIS_LEFT_UP to CommonCharacterCommands.moveUp,
-    GAMEPAD_AXIS_LEFT_DOWN to CommonCharacterCommands.moveDown,
-    GAMEPAD_AXIS_LEFT_LEFT to CommonCharacterCommands.moveLeft,
-    GAMEPAD_AXIS_LEFT_RIGHT to CommonCharacterCommands.moveRight,
+    GAMEPAD_AXIS_LEFT_UP to CharacterCommands.moveUp,
+    GAMEPAD_AXIS_LEFT_DOWN to CharacterCommands.moveDown,
+    GAMEPAD_AXIS_LEFT_LEFT to CharacterCommands.moveLeft,
+    GAMEPAD_AXIS_LEFT_RIGHT to CharacterCommands.moveRight,
 
-    GAMEPAD_AXIS_RIGHT_UP to CommonCharacterCommands.lookUp,
-    GAMEPAD_AXIS_RIGHT_DOWN to CommonCharacterCommands.lookDown,
-    GAMEPAD_AXIS_RIGHT_LEFT to CommonCharacterCommands.lookLeft,
-    GAMEPAD_AXIS_RIGHT_RIGHT to CommonCharacterCommands.lookRight,
+    GAMEPAD_AXIS_RIGHT_UP to CharacterCommands.lookUp,
+    GAMEPAD_AXIS_RIGHT_DOWN to CharacterCommands.lookDown,
+    GAMEPAD_AXIS_RIGHT_LEFT to CharacterCommands.lookLeft,
+    GAMEPAD_AXIS_RIGHT_RIGHT to CharacterCommands.lookRight,
 
-    GAMEPAD_BUTTON_X to CommonCharacterCommands.ability,
-    GAMEPAD_BUTTON_A to CommonCharacterCommands.interactPrimary
+    GAMEPAD_BUTTON_X to CharacterCommands.ability,
+    GAMEPAD_BUTTON_A to CharacterCommands.interactPrimary
 )
 
 fun defaultMouseGameStrokeBindings() = mapOf(
-    GLFW.GLFW_MOUSE_BUTTON_LEFT to CommonCharacterCommands.ability
+    GLFW.GLFW_MOUSE_BUTTON_LEFT to CharacterCommands.ability
 )
 
 fun defaultKeyboardGameBindings() = mapOf(
-    GLFW.GLFW_KEY_W to CommonCharacterCommands.moveUp,
-    GLFW.GLFW_KEY_A to CommonCharacterCommands.moveLeft,
-    GLFW.GLFW_KEY_D to CommonCharacterCommands.moveRight,
-    GLFW.GLFW_KEY_S to CommonCharacterCommands.moveDown,
+    GLFW.GLFW_KEY_W to CharacterCommands.moveUp,
+    GLFW.GLFW_KEY_A to CharacterCommands.moveLeft,
+    GLFW.GLFW_KEY_D to CharacterCommands.moveRight,
+    GLFW.GLFW_KEY_S to CharacterCommands.moveDown,
 //    GLFW.GLFW_KEY_TAB to CommandType.switchView,
-    GLFW.GLFW_KEY_ENTER to CommonCharacterCommands.interactPrimary
+    GLFW.GLFW_KEY_ENTER to CharacterCommands.interactPrimary
 )
 
 fun defaultGameInputBindings(): Bindings =

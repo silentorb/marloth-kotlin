@@ -1,10 +1,10 @@
 package simulation.intellect.execution
 
+import marloth.scenery.enums.CharacterCommands
 import simulation.combat.general.AttackMethod
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.Commands
-import silentorb.mythic.happenings.CommonCharacterCommands
 import silentorb.mythic.physics.SimpleBody
 import silentorb.mythic.spatial.Vector3
 import simulation.intellect.Pursuit
@@ -47,7 +47,7 @@ fun spiritAttack(world: World, character: Id, knowledge: Knowledge, pursuit: Pur
     val body = world.deck.bodies[attacker]!!
     val offset = aimWeapon(world, character, target.position - body.position)
     spiritNeedsFacing(world, character, offset, 0.05f) {
-      listOf(CharacterCommand(CommonCharacterCommands.ability, attacker))
+      listOf(CharacterCommand(CharacterCommands.ability, attacker))
     }
   } else
     listOf()

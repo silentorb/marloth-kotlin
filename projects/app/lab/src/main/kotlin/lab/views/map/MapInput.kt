@@ -16,7 +16,7 @@ import silentorb.mythic.characters.joinInputVector
 import silentorb.mythic.characters.playerMoveMap
 import silentorb.mythic.lookinglass.createCameraEffectsData
 import silentorb.mythic.happenings.CharacterCommand
-import silentorb.mythic.happenings.CommonCharacterCommands
+import marloth.scenery.enums.CharacterCommands
 import simulation.misc.Realm
 
 data class Hit(
@@ -183,10 +183,10 @@ fun updateFirstPersonCamera(camera: MapViewFirstPersonCamera, commands: List<Haf
 
   val playerCommands = commands.mapNotNull {
     when (it.type) {
-      LabCommandType.moveLeft -> CommonCharacterCommands.moveLeft
-      LabCommandType.moveRight -> CommonCharacterCommands.moveRight
-      LabCommandType.moveDown -> CommonCharacterCommands.moveDown
-      LabCommandType.moveUp -> CommonCharacterCommands.moveUp
+      LabCommandType.moveLeft -> CharacterCommands.moveLeft
+      LabCommandType.moveRight -> CharacterCommands.moveRight
+      LabCommandType.moveDown -> CharacterCommands.moveDown
+      LabCommandType.moveUp -> CharacterCommands.moveUp
       else -> null
     }
   }.map { CharacterCommand(type = it, target = 0, value = 1f) }

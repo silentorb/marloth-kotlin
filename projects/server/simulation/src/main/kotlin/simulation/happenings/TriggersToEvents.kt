@@ -1,5 +1,6 @@
 package simulation.happenings
 
+import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.ent.Id
 import simulation.combat.general.Damage
 import simulation.combat.general.DamageEvent
@@ -68,7 +69,7 @@ typealias TriggerToEventMap = (List<Triggering>) -> Events
 fun gatherCommandTriggers(deck: Deck, commands: Commands): List<Triggering> {
   return commands.mapNotNull { command ->
     when (command.type) {
-      CommonCharacterCommands.interactPrimary -> {
+      CharacterCommands.interactPrimary -> {
         val player = deck.players.keys.first()
         val character = deck.characters[player]!!
         val interactable = deck.interactables[character.canInteractWith]

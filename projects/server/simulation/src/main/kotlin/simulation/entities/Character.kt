@@ -1,5 +1,6 @@
 package simulation.entities
 
+import marloth.scenery.enums.CharacterCommands
 import marloth.scenery.enums.ResourceId
 import marloth.scenery.enums.Sounds
 import silentorb.mythic.accessorize.AccessoryName
@@ -52,31 +53,31 @@ fun isInfinitelyFalling(position: Vector3): Boolean =
 fun isAlive(health: Int, position: Vector3): Boolean =
     health > 0 && !isInfinitelyFalling(position)
 
-val equipCommandSlots: Map<CommandName, Int> = listOf(
-    CommonCharacterCommands.equipSlot0,
-    CommonCharacterCommands.equipSlot1,
-    CommonCharacterCommands.equipSlot2,
-    CommonCharacterCommands.equipSlot3
-).mapIndexed { index, commandType -> Pair(commandType, index) }
-    .associate { it }
-
-fun updateEquippedItem(deck: Deck, id: Id, activeAccessory: Id?, commands: Commands): Id? {
-  val slot = commands
-      .mapNotNull { equipCommandSlots[it.type] }
-      .firstOrNull()
-
-  return if (slot != null) {
-    val itemId = getItemInSlot(deck, id, slot)
-    if (itemId == activeAccessory)
-      null
-    else
-      itemId
-  } else if (activeAccessory == null) {
-    val result = getTargetAttachments(deck, id).entries.firstOrNull { deck.actions.keys.contains(it.key) }?.key
-    result
-  } else
-    activeAccessory
-}
+//val equipCommandSlots: Map<CommandName, Int> = listOf(
+//    CharacterCommands.equipSlot0,
+//    CharacterCommands.equipSlot1,
+//    CharacterCommands.equipSlot2,
+//    CharacterCommands.equipSlot3
+//).mapIndexed { index, commandType -> Pair(commandType, index) }
+//    .associate { it }
+//
+//fun updateEquippedItem(deck: Deck, id: Id, activeAccessory: Id?, commands: Commands): Id? {
+//  val slot = commands
+//      .mapNotNull { equipCommandSlots[it.type] }
+//      .firstOrNull()
+//
+//  return if (slot != null) {
+//    val itemId = getItemInSlot(deck, id, slot)
+//    if (itemId == activeAccessory)
+//      null
+//    else
+//      itemId
+//  } else if (activeAccessory == null) {
+//    val result = getTargetAttachments(deck, id).entries.firstOrNull { deck.actions.keys.contains(it.key) }?.key
+//    result
+//  } else
+//    activeAccessory
+//}
 
 fun getPurchaseCost(deck: Deck, events: Events, character: Id): Int {
   val purchases = events.filterIsInstance<PurchaseEvent>()
@@ -104,9 +105,9 @@ fun updateMoney(deck: Deck, events: Events, character: Id, money: Int): Int {
 }
 
 fun updateInteractingWith(deck: Deck, character: Id, commands: Commands, interactingWith: Id?): Id? =
-    if (commands.any { it.type == CommonCharacterCommands.interactPrimary })
+    if (commands.any { it.type == CharacterCommands.interactPrimary })
       deck.characters[character]!!.canInteractWith
-    else if (commands.any { it.type == CommonCharacterCommands.stopInteracting } ||
+    else if (commands.any { it.type == CharacterCommands.stopInteracting } ||
         (interactingWith != null && !deck.interactables.containsKey(interactingWith)))
       null
     else

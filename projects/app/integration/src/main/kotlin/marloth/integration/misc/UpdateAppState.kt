@@ -28,7 +28,7 @@ import simulation.entities.Player
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.happenings.CharacterCommand
-import silentorb.mythic.happenings.CommonCharacterCommands
+import marloth.scenery.enums.CharacterCommands
 import simulation.main.World
 import simulation.updating.simulationDelta
 import simulation.misc.Victory
@@ -88,7 +88,7 @@ fun gatherAdditionalGameCommands(previousClient: ClientState, clientState: Clien
     val previousView = previousClient.playerViews[player] ?: ViewId.none
     listOfNotNull(
         if (view == ViewId.none && previousView == ViewId.merchant)
-          CharacterCommand(type = CommonCharacterCommands.stopInteracting, target = player)
+          CharacterCommand(type = CharacterCommands.stopInteracting, target = player)
         else
           null
     )
