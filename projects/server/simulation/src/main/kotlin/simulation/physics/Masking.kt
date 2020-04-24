@@ -7,9 +7,9 @@ object CollisionGroups {
   const val affectsCamera = 8
   const val walkable = 16
 
-  const val tangibleMask = CollisionGroups.dynamic or CollisionGroups.static
+  const val tangibleMask = dynamic or static
 
-  const val standardMask = CollisionGroups.dynamic or CollisionGroups.static or CollisionGroups.trigger
+  const val standardMask = dynamic or static or trigger
 
-  const val staticMask = CollisionGroups.trigger or CollisionGroups.dynamic
+  const val staticMask = dynamic or trigger
 }

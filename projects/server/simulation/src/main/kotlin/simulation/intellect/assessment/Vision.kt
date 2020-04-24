@@ -5,7 +5,7 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.BulletState
-import silentorb.mythic.physics.castCollisionRay
+import silentorb.mythic.physics.firstRayHit
 import silentorb.mythic.scenery.Light
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.quadOut
@@ -71,7 +71,7 @@ fun canSee(realm: Realm, bulletState: BulletState, deck: Deck, lightRatings: Tab
       && isInAngleOfView(deck.characterRigs[viewer]!!.facingVector, viewerBody, targetBody, fieldOfView)
       && lightRatings[target]!! + nearMod(distance) >= minimumLightRating
       && !isHiddenByHome(realm.grid, deck, viewer, target)
-      && castCollisionRay(bulletState.dynamicsWorld, viewerBody.position, targetBody.position, CollisionGroups.tangibleMask) != null
+      && firstRayHit(bulletState.dynamicsWorld, viewerBody.position, targetBody.position, CollisionGroups.tangibleMask) != null
   result
 }
 

@@ -99,7 +99,7 @@ fun updateMarlothCharacterRig(bulletState: BulletState, deck: Deck,
     pipe(
         updateMarlothCharacterRigActive(deck, id),
         updateCharacterRigGroundedDistance(bulletState, CollisionGroups.walkable, newCharacterRigHand(deck)(id)),
-        updateCharacterRigFacing(commands, movements, simulationDelta)
+        updateCharacterRigFacing(bulletState.dynamicsWorld, CollisionGroups.affectsCamera, deck.bodies, id, commands, movements, simulationDelta)
     )(characterRig)
   }
 }
