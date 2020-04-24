@@ -83,7 +83,8 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, defi
                         pitch = 0f,
                         yaw = 0f,
                         distance = 5f,
-                        facingDestination = angle
+                        facingDestination = angle,
+                        facingDestinationCandidate = angle
                     )
               else
                     null

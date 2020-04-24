@@ -1,11 +1,11 @@
 package simulation.physics
 
+import silentorb.mythic.characters.*
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.pipe
-import silentorb.mythic.physics.*
-import silentorb.mythic.characters.*
 import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.Events
+import silentorb.mythic.physics.*
 import simulation.main.Deck
 import simulation.main.World
 import simulation.updating.simulationDelta
@@ -24,7 +24,7 @@ fun updatePhysics(events: Events): (World) -> World = { world ->
       bulletState = world.bulletState,
       deck = physicsDeck
   )
-  val linearForces = characterMovementsToLinearImpulses(events)
+  val linearForces = characterMovementsToImpulses(deck.bodies, deck.characterRigs, events)
       .plus(events.filterIsInstance<LinearImpulse>())
 
   val nextPhysicsWorld = updateBulletPhysics(linearForces)(physicsWorld)

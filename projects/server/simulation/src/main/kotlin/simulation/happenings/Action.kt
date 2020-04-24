@@ -56,10 +56,10 @@ fun eventsFromTryUseAbility(world: World): (TryUseAbilityEvent) -> Events = { ev
 
       world.definitions.weapons.containsKey(accessory.type) -> {
         val target = getActionTarget(deck, event.actor)
-        if (isPlayer)
-          onAttack(toSpatialCombatWorld(world))(AttackEvent(event.actor, accessory.type, target))
-        else
-          listOf(startAttack(event.actor, action, accessory.type, target))
+//        if (isPlayer)
+//          onAttack(toSpatialCombatWorld(world))(AttackEvent(event.actor, accessory.type, target))
+//        else
+        listOf(startAttack(event.actor, action, accessory.type, target))
       }
 
       else -> listOf()
