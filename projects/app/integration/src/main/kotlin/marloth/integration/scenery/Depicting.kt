@@ -37,8 +37,8 @@ val simplePainterMap = MeshId.values().mapNotNull { meshId ->
 
 
 fun filterDepictions(depictions: Table<Depiction>, player: Id, characterRig: CharacterRig?): Table<Depiction> =
-    if (characterRig?.viewMode == ViewMode.firstPerson)
-    depictions.filter { it.key != player }
+    if (characterRig?.viewMode == ViewMode.firstPerson || characterRig?.hoverCamera?.distance ?: 10f < 1f)
+      depictions.filter { it.key != player }
     else
       depictions
 

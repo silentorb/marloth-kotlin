@@ -61,6 +61,7 @@ fun gatherHudData(world: World, player: Id, view: ViewId): HudData? {
 //            "LR: ${floatToRoundedString(lightRating(deck, player))}",
 //            floatToRoundedString(body.velocity.length()),
             "Keys: ${victoryKeyStats.collected}/${victoryKeyStats.total}"
+//            deck.characterRigs[player]!!.hoverCamera!!.pitch.toString()
 //            "${cell.x} ${cell.y} ${cell.z}",
 //            "${body.position.x.roundToInt()} ${body.position.y.roundToInt()} ${body.position.z.roundToInt()}"
 //          if (character.isGrounded) "Grounded" else "Air",
