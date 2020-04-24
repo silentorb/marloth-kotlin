@@ -82,10 +82,11 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, defi
                     HoverCamera(
                         pitch = 0f,
                         yaw = 0f,
-                        distance = 5f
+                        distance = 5f,
+                        facingDestination = angle
                     )
               else
-                    emptyHoverCamera()
+                    null
               ),
               destructible = Destructible(
                   base = DestructibleBaseStats(

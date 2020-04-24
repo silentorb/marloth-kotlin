@@ -1,5 +1,6 @@
 package marloth.integration.scenery
 
+import silentorb.mythic.characters.*
 import silentorb.mythic.ent.Id
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Quaternion
@@ -9,10 +10,6 @@ import silentorb.mythic.scenery.Camera
 import silentorb.mythic.scenery.ProjectionType
 import simulation.main.Deck
 import silentorb.mythic.physics.Body
-import silentorb.mythic.characters.CharacterRig
-import silentorb.mythic.characters.HoverCamera
-import silentorb.mythic.characters.ViewMode
-import silentorb.mythic.characters.defaultCharacterHeight
 
 val firstPersonCameraOffset = Vector3(0f, 0f, defaultCharacterHeight * 0.4f)
 val firstPersonDeadCameraOffset = Vector3(0f, 0f, -0.75f)
@@ -27,11 +24,9 @@ fun firstPersonCamera(body: Body, character: CharacterRig, isAlive: Boolean): Ca
 )
 
 fun thirdPersonCamera(body: Body, hoverCamera: HoverCamera): Camera {
-  val orientation = Quaternion()
-      .rotateZ(hoverCamera.yaw)
-      .rotateY(hoverCamera.pitch)
+  val orientation = getHoverCameraOrientation(hoverCamera)
 
-  val position = body.position + Vector3(0f, 0f, 1f) + orientation * Vector3(-hoverCamera.distance, 0f, 0f)
+  val position = getHoverCameraPosition(body.position, hoverCamera, orientation)
 //  val orientationSecond = Quaternion().rotateTo(Vector3(1f, 0f, 0f), -offset)
 //  val position = offset + body.position + Vector3(0f, 0f, 1f)
   return Camera(ProjectionType.perspective, position, orientation, 45f)
@@ -56,6 +51,6 @@ fun createCamera(deck: Deck, player: Id): Camera {
   val body = deck.bodies[player]!!
   return when (characterRig.viewMode) {
     ViewMode.firstPerson -> firstPersonCamera(body, characterRig, character.isAlive)
-    ViewMode.thirdPerson -> thirdPersonCamera(body, characterRig.hoverCamera)
+    ViewMode.thirdPerson -> thirdPersonCamera(body, characterRig.hoverCamera!!)
   }
 }

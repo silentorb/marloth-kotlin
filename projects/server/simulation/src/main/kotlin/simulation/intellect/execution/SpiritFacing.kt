@@ -9,24 +9,11 @@ import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.CommandName
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.CommonCharacterCommands
-import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.getAngleCourse
 import simulation.main.World
 import simulation.updating.simulationDelta
 import kotlin.math.abs
-
-fun getAngleCourse(source: Float, destination: Float): Float {
-  val full = Pi * 2
-  if (source == destination)
-    return 0f
-
-  val plus = (full + destination - source) % full
-  val minus = (full + source - destination) % full
-  return if (plus < minus)
-    plus
-  else
-    -minus
-}
 
 fun horizontalFacingDistance(character: CharacterRig, lookAt: Vector3): Float {
   val angle = getHorizontalLookAtAngle(lookAt)
