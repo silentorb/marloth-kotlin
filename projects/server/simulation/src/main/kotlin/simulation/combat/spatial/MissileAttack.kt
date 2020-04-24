@@ -17,6 +17,7 @@ import simulation.entities.DepictionType
 import simulation.happenings.NewHandEvent
 import simulation.happenings.Trigger
 import simulation.main.Hand
+import simulation.physics.CollisionGroups
 
 fun missileAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinition, target: Vector3?): Events {
   val (origin, vector) = getAttackerOriginAndFacing(world.deck, attacker, target, 0.8f)
@@ -28,7 +29,9 @@ fun missileAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinit
                   velocity = vector * weapon.velocity
               ),
               collisionShape = CollisionObject(
-                  shape = Sphere(0.3f)
+                  shape = Sphere(0.3f),
+                  groups = CollisionGroups.dynamic,
+                  mask = CollisionGroups.standardMask
               ),
               dynamicBody = DynamicBody(
                   gravity = false,

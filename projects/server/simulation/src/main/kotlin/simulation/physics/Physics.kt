@@ -13,7 +13,7 @@ import simulation.updating.simulationDelta
 fun toPhysicsDeck(deck: Deck): PhysicsDeck =
     PhysicsDeck(
         bodies = deck.bodies,
-        collisionShapes = deck.collisionShapes,
+        collisionObjects = deck.collisionShapes,
         dynamicBodies = deck.dynamicBodies
     )
 
@@ -34,7 +34,7 @@ fun updatePhysics(events: Events): (World) -> World = { world ->
       bulletState = nextPhysicsWorld.bulletState,
       deck = world.deck.copy(
           bodies = nextDeck.bodies,
-          collisionShapes = nextDeck.collisionShapes,
+          collisionShapes = nextDeck.collisionObjects,
           dynamicBodies = nextDeck.dynamicBodies
       )
   )
@@ -98,7 +98,7 @@ fun updateMarlothCharacterRig(bulletState: BulletState, deck: Deck,
 
     pipe(
         updateMarlothCharacterRigActive(deck, id),
-        updateCharacterRigGroundedDistance(bulletState, newCharacterRigHand(deck)(id)),
+        updateCharacterRigGroundedDistance(bulletState, CollisionGroups.walkable, newCharacterRigHand(deck)(id)),
         updateCharacterRigFacing(commands, movements, simulationDelta)
     )(characterRig)
   }

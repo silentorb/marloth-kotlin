@@ -12,6 +12,7 @@ import silentorb.mythic.spatial.quadOut
 import simulation.entities.fieldOfView360
 import simulation.main.Deck
 import simulation.misc.*
+import simulation.physics.CollisionGroups
 
 const val viewingRange = 30f
 const val minimumLightRating = 0.1f
@@ -70,7 +71,7 @@ fun canSee(realm: Realm, bulletState: BulletState, deck: Deck, lightRatings: Tab
       && isInAngleOfView(deck.characterRigs[viewer]!!.facingVector, viewerBody, targetBody, fieldOfView)
       && lightRatings[target]!! + nearMod(distance) >= minimumLightRating
       && !isHiddenByHome(realm.grid, deck, viewer, target)
-      && castCollisionRay(bulletState.dynamicsWorld, viewerBody.position, targetBody.position) != null
+      && castCollisionRay(bulletState.dynamicsWorld, viewerBody.position, targetBody.position, CollisionGroups.tangibleMask) != null
   result
 }
 

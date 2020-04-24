@@ -1,19 +1,26 @@
 package marloth.definition
 
-import silentorb.mythic.scenery.Box
-import silentorb.mythic.spatial.Vector3
+import marloth.scenery.enums.Text
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.physics.HingeConstraint
-import marloth.scenery.enums.Text
-import simulation.entities.*
+import silentorb.mythic.scenery.Box
+import silentorb.mythic.spatial.Vector3
+import simulation.entities.Door
+import simulation.entities.Interactable
+import simulation.entities.WidgetCommand
 import simulation.main.Hand
+import simulation.physics.CollisionGroups
 
 class EntityTemplates {
   companion object {
 
     val door = Hand(
-        collisionShape = CollisionObject(Box(halfExtents = Vector3(.5f, .165f / 2f, .5f))),
+        collisionShape = CollisionObject(
+            shape = Box(halfExtents = Vector3(.5f, .165f / 2f, .5f)),
+            groups = CollisionGroups.dynamic,
+            mask = CollisionGroups.standardMask
+        ),
         door = Door(
             isLocked = false
         ),

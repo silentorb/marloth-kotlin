@@ -8,13 +8,14 @@ import silentorb.mythic.physics.LinearImpulse
 import silentorb.mythic.physics.castCollisionRay
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.minMax
+import simulation.physics.CollisionGroups
 
 fun raycastAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinition, target: Vector3?): Events {
   val deck = world.deck
   val bulletState = world.bulletState
   val (origin, vector) = getAttackerOriginAndFacing(deck, attacker, target, 0.3f)
   val end = origin + vector * 30f
-  val collision = castCollisionRay(bulletState.dynamicsWorld, origin, end)
+  val collision = castCollisionRay(bulletState.dynamicsWorld, origin, end, CollisionGroups.tangibleMask)
   return if (collision != null && deck.destructibles.containsKey(collision.collisionObject)) {
     val damageEvents = newDamageEvents(collision.collisionObject, attacker, weapon.damages, position = collision.hitPoint)
     if (weapon.impulse != 0f) {

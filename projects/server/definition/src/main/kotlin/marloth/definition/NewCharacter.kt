@@ -23,6 +23,7 @@ import simulation.main.Hand
 import simulation.main.IdHand
 import simulation.misc.Definitions
 import simulation.happenings.newPossibleAction
+import simulation.physics.CollisionGroups
 
 fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, definition: CharacterDefinition, faction: Id, position: Vector3,
                  angle: Float = Pi / 2f,
@@ -98,7 +99,9 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, defi
                   damageMultipliers = definition.damageMultipliers
               ),
               collisionShape = CollisionObject(
-                  shape = Capsule(defaultCharacterRadius, defaultCharacterHeight)
+                  shape = Capsule(defaultCharacterRadius, defaultCharacterHeight),
+                  groups = CollisionGroups.dynamic,
+                  mask = CollisionGroups.standardMask
               ),
               depiction = Depiction(
                   type = definition.depictionType

@@ -3,17 +3,18 @@ package generation.architecture.old
 import generation.general.*
 import marloth.scenery.enums.*
 import silentorb.mythic.ent.Id
+import silentorb.mythic.physics.Body
+import silentorb.mythic.physics.CollisionObject
+import silentorb.mythic.randomly.Dice
+import silentorb.mythic.scenery.MeshName
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
-import silentorb.mythic.physics.Body
-import silentorb.mythic.randomly.Dice
-import silentorb.mythic.scenery.MeshName
-import silentorb.mythic.physics.CollisionObject
-import simulation.main.Hand
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
+import simulation.main.Hand
 import simulation.misc.Node
+import simulation.physics.CollisionGroups
 import kotlin.math.atan
 
 const val roundedMeshPadding = 0.08f
@@ -44,7 +45,14 @@ fun newArchitectureMesh(meshes: MeshInfoMap, mesh: MeshName, position: Vector3,
           nearestNode = node,
           scale = scale
       ),
-      collisionShape = if (shape != null) CollisionObject(shape = shape) else null
+      collisionShape = if (shape != null)
+        CollisionObject(
+            shape = shape,
+            groups = CollisionGroups.static or CollisionGroups.affectsCamera or CollisionGroups.walkable,
+            mask = CollisionGroups.staticMask
+        )
+      else
+        null
   )
 }
 

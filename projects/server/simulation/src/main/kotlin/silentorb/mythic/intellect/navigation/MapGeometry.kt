@@ -136,7 +136,7 @@ data class GeometryProvider(
 fun newNavMeshTriMeshes(deck: PhysicsDeck, architectureElements: Set<Id>): List<TriMesh> {
   return architectureElements
       .map { id ->
-        val shape = deck.collisionShapes[id]!!.shape
+        val shape = deck.collisionObjects[id]!!.shape
         val mesh = getShapeVertices(shape)
         Pair(id, mesh)
       }

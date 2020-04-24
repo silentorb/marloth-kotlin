@@ -14,6 +14,7 @@ import simulation.main.Hand
 import simulation.combat.general.ResourceBundle
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
+import simulation.physics.CollisionGroups
 
 fun newTreasureChest(meshInfo: MeshInfoMap, position: Vector3, amount: Int): Hand {
   val shape = meshInfo[MeshId.treasureChest.toString()]!!.shape
@@ -25,7 +26,14 @@ fun newTreasureChest(meshInfo: MeshInfoMap, position: Vector3, amount: Int): Han
           type = DepictionType.staticMesh,
           mesh = MeshId.treasureChest.toString()
       ),
-      collisionShape = if (shape != null) CollisionObject(shape = shape) else null,
+      collisionShape = if (shape != null)
+        CollisionObject(
+            shape = shape,
+            groups = CollisionGroups.static,
+            mask = CollisionGroups.staticMask
+        )
+      else
+        null,
       interactable = Interactable(
           primaryCommand = WidgetCommand(
               text = Text.gui_take,

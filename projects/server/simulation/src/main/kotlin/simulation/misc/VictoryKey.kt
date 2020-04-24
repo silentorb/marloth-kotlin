@@ -27,6 +27,7 @@ import simulation.main.Deck
 import simulation.main.Hand
 import simulation.main.IdHand
 import simulation.main.World
+import simulation.physics.CollisionGroups
 
 fun getAllVictoryKeys(accessories: Table<Accessory>): Table<Accessory> =
     accessories
@@ -76,7 +77,9 @@ fun newVictoryKeyPickup(nextId: IdSource): (Vector3) -> List<IdHand> = { locatio
               .copy(
                   collisionShape = CollisionObject(
                       shape = Sphere(1.2f),
-                      isSolid = false
+                      isSolid = false,
+                      groups = CollisionGroups.trigger,
+                      mask = CollisionGroups.staticMask
                   ),
                   trigger = Trigger(),
                   light = newVictoryKeyLight(Vector3(0f, 0f, 1f)),
