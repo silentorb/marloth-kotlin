@@ -11,7 +11,7 @@ import silentorb.mythic.physics.Collision
 fun castInteractableRay(dynamicsWorld: btDiscreteDynamicsWorld, deck: Deck, player: Id): Id? {
   val body = deck.bodies[player]!!
   val characterRig = deck.characterRigs[player]!!
-  val shape = deck.collisionShapes[player]!!
+  val shape = deck.collisionObjects[player]!!
   val direction = characterRig.facingVector
   val start = body.position + Vector3(0f, 0f, 0.5f) + direction * shape.shape.radius
   val end = start + direction * 5f

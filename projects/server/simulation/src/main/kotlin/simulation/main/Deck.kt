@@ -15,6 +15,7 @@ import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.characters.CharacterRig
+import silentorb.mythic.characters.ThirdPersonRig
 import simulation.combat.general.Destructible
 import simulation.combat.spatial.Missile
 import silentorb.mythic.entities.Attributes
@@ -41,7 +42,7 @@ data class Deck(
     val modifiers: Table<Modifier> = mapOf(),
     val characterRigs: Table<CharacterRig> = mapOf(),
     val characters: Table<Character> = mapOf(),
-    val collisionShapes: Table<CollisionObject> = mapOf(),
+    val collisionObjects: Table<CollisionObject> = mapOf(),
     val cyclesFloat: Table<FloatCycle> = mapOf(),
     val cyclesInt: Table<IntCycle> = mapOf(),
     val depictions: Table<Depiction> = mapOf(),
@@ -62,6 +63,8 @@ data class Deck(
     val sounds: Table<Sound> = mapOf(),
     val spinners: Table<Spinner> = mapOf(),
     val spirits: Table<Spirit> = mapOf(),
+    val targets: Table<Id> = mapOf(),
+    val thirdPersonRigs: Table<ThirdPersonRig> = mapOf(),
     val timersFloat: Table<FloatTimer> = mapOf(),
     val timersInt: Table<IntTimer> = mapOf(),
     val triggers: Table<Trigger> = mapOf(),

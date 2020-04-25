@@ -14,8 +14,8 @@ fun bloodFilter(strength: Float): ScreenFilter =
     solidColorFilter(Vector4(1f, 0f, 0f, strength))
 
 fun getScreenFilters(deck: Deck, player: Id): List<ScreenFilter> {
-  val character = deck.characters [player]!!
-  if (deck.characterRigs[player]!!.viewMode == ViewMode.thirdPerson)
+  val character = deck.characters[player]!!
+  if (deck.thirdPersonRigs.containsKey(player))
     return listOf()
 
   return if (!character.isAlive)

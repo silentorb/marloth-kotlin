@@ -28,7 +28,7 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
         interpolateWorlds(appState.timestep.accumulator, appState.worlds)
   if (world != null) {
     val scenes = appState.client.players
-        .map(createScene(world.definitions, world.deck, appState.client.targetings))
+        .map(createScene(world.definitions, world.deck))
 
     val viewportIterator = viewports.iterator()
     scenes.zip(boxes) { scene, box ->

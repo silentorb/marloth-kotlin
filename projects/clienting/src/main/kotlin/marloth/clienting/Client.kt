@@ -43,7 +43,6 @@ data class ClientState(
     val commands: List<HaftCommand>,
     val input: InputState,
     val playerViews: PlayerViews,
-    val targetings: TargetTable,
 
     // Players could be extracted from the world deck except the world does not care about player order.
     // Player order is only a client concern, and only for local multiplayer.
@@ -67,8 +66,7 @@ fun newClientState(platform: Platform, inputConfig: GameInputConfig, audioConfig
         audio = newAudioState(audioConfig.soundVolume),
         playerViews = mapOf(),
         commands = listOf(),
-        players = listOf(),
-        targetings = mapOf()
+        players = listOf()
     )
 
 //fun loadTextResource(): TextResources {
@@ -184,8 +182,8 @@ fun updateClient(client: Client, worlds: List<World>, boxes: List<Box>, clientSt
       input = input,
       bloomStates = bloomStates,
       commands = commands,
-      playerViews = playerViews,
-      targetings = updateTargeting(world, client, clientState.players, commands, clientState.targetings)
+      playerViews = playerViews
+//      targetings = updateTargeting(world, client, clientState.players, commands, clientState.targetings)
   )
 }
 

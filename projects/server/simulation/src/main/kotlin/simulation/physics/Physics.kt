@@ -2,18 +2,15 @@ package simulation.physics
 
 import silentorb.mythic.characters.*
 import silentorb.mythic.ent.Id
-import silentorb.mythic.ent.pipe
-import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.*
 import simulation.main.Deck
 import simulation.main.World
-import simulation.updating.simulationDelta
 
 fun toPhysicsDeck(deck: Deck): PhysicsDeck =
     PhysicsDeck(
         bodies = deck.bodies,
-        collisionObjects = deck.collisionShapes,
+        collisionObjects = deck.collisionObjects,
         dynamicBodies = deck.dynamicBodies
     )
 
@@ -34,7 +31,7 @@ fun updatePhysics(events: Events): (World) -> World = { world ->
       bulletState = nextPhysicsWorld.bulletState,
       deck = world.deck.copy(
           bodies = nextDeck.bodies,
-          collisionShapes = nextDeck.collisionObjects,
+          collisionObjects = nextDeck.collisionObjects,
           dynamicBodies = nextDeck.dynamicBodies
       )
   )
@@ -44,7 +41,7 @@ fun newCharacterRigHand(deck: Deck): (Id) -> CharacterRigHand = { character ->
   CharacterRigHand(
       body = deck.bodies[character]!!,
       characterRig = deck.characterRigs[character]!!,
-      collisionObject = deck.collisionShapes[character]!!
+      collisionObject = deck.collisionObjects[character]!!
   )
 }
 
@@ -74,32 +71,31 @@ fun newCharacterRigHand(deck: Deck): (Id) -> CharacterRigHand = { character ->
 //  }
 //}
 
-fun updateMarlothCharacterRigActive(deck: Deck, id: Id): (CharacterRig) -> CharacterRig = { characterRig ->
-  val character = deck.characters[id]
-  if (character != null && character.isAlive != characterRig.isActive)
-    characterRig.copy(
-        isActive = character.isAlive
-    )
-  else
-    characterRig
-}
-
-fun updateMarlothCharacterRig(bulletState: BulletState, deck: Deck,
-                              events: Events): (Id, CharacterRig) -> CharacterRig {
-  val allCommands = events
-      .filterIsInstance<CharacterCommand>()
-
-  val allMovements = events
-      .filterIsInstance<CharacterRigMovement>()
-
-  return { id, characterRig ->
-    val commands = allCommands.filter { it.target == id }
-    val movements = allMovements.filter { it.actor == id }
-
-    pipe(
-        updateMarlothCharacterRigActive(deck, id),
-        updateCharacterRigGroundedDistance(bulletState, CollisionGroups.walkable, newCharacterRigHand(deck)(id)),
-        updateCharacterRigFacing(bulletState.dynamicsWorld, CollisionGroups.affectsCamera, deck.bodies, id, commands, movements, simulationDelta)
-    )(characterRig)
-  }
-}
+//fun updateMarlothCharacterRig(bulletState: BulletState, deck: Deck,
+//                              events: Events): (Id, CharacterRig) -> CharacterRig {
+//  val allCommands = events
+//      .filterIsInstance<CharacterCommand>()
+//
+//  val allMovements = events
+//      .filterIsInstance<CharacterRigMovement>()
+//
+//  return { id, characterRig ->
+//    val commands = allCommands.filter { it.target == id }
+//    val movements = allMovements.filter { it.actor == id }
+//
+//    val character = deck.characters[id]
+//    val isActive = character != null && character.isAlive != characterRig.isActive &&
+//        deck.performances.none { it.value.target == id }
+//
+//    characterRig.copy(
+//        isActive = isActive,
+//        groundDistance = updateCharacterStepHeight(bulletState, CollisionGroups.walkable, newCharacterRigHand(deck)(id))
+//    )
+//
+////    pipe(
+////        updateMarlothCharacterRigActive(deck, id),
+////        updateCharacterRigGroundedDistance(bulletState, CollisionGroups.walkable, newCharacterRigHand(deck)(id)),
+////        updateCharacterRigFacing(bulletState.dynamicsWorld, CollisionGroups.affectsCamera, deck.bodies, id, commands, movements, simulationDelta)
+////    )(characterRig)
+//  }
+//}

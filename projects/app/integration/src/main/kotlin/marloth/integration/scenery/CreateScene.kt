@@ -1,6 +1,5 @@
 package marloth.integration.scenery
 
-import marloth.clienting.hud.TargetTable
 import marloth.clienting.rendering.GameScene
 import marloth.clienting.rendering.createCamera
 import silentorb.mythic.characters.ViewMode
@@ -10,15 +9,15 @@ import silentorb.mythic.scenery.*
 import simulation.main.Deck
 import simulation.misc.Definitions
 
-fun createScene(definitions: Definitions, deck: Deck, targetings: TargetTable): (Id) -> GameScene = { player ->
+fun createScene(definitions: Definitions, deck: Deck): (Id) -> GameScene = { player ->
   val camera = createCamera(deck, player)
-  val viewMode = deck.characterRigs[player]?.viewMode
-  val equipmentLayer = if (viewMode == ViewMode.firstPerson)
-      getPlayerEquipmentLayer(definitions, deck, player, camera)
+  val thirdPersonRig = deck.thirdPersonRigs[player]
+  val equipmentLayer = if (thirdPersonRig == null)
+    getPlayerEquipmentLayer(definitions, deck, player, camera)
   else
     null
 
-  val targetingLayer = getTargetingLayer(deck,targetings, player)
+  val targetingLayer = getTargetingLayer(deck, player)
 
   val layers = listOf(
       SceneLayer(
@@ -26,7 +25,7 @@ fun createScene(definitions: Definitions, deck: Deck, targetings: TargetTable): 
           useDepth = false
       ),
       SceneLayer(
-          elements = gatherVisualElements(definitions, deck, player, deck.characterRigs[player]),
+          elements = gatherVisualElements(definitions, deck, player, thirdPersonRig),
           useDepth = true
       ),
       SceneLayer(

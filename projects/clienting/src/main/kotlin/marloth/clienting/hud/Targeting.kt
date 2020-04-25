@@ -24,13 +24,9 @@ const val maxTargetRange = 25f
 fun isOnScreen(transform: Matrix, target: Vector3): Boolean {
   val coordinate = transform * Vector4(target.x, target.y, target.z, 1f)
   val normalized = coordinate.xyz / coordinate.w
-//  println("$coordinate $k")
-  val result = normalized.x > -1f && normalized.x < 1f && normalized.y > -1f && normalized.y < 1f && coordinate.w > 0
-  if (!result) {
-    println("$coordinate $normalized")
-  }
-  return result
-//  return false
+
+  // The w condition filters out targets behind the camera
+  return normalized.x > -1f && normalized.x < 1f && normalized.y > -1f && normalized.y < 1f && coordinate.w > 0f
 }
 
 fun isAvailableTarget(world: World, transform: Matrix, actorLocation: Vector3): IsAvailableTarget = { target ->

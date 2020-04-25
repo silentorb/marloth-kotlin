@@ -1,9 +1,9 @@
 package simulation.happenings
 
 import silentorb.mythic.characters.allCharacterMovements
-import simulation.combat.spatial.onAttack
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
+import simulation.combat.spatial.onAttack
 import simulation.combat.usingSpatialCombatWorld
 import simulation.main.World
 import simulation.physics.toPhysicsDeck
@@ -16,10 +16,12 @@ inline fun <reified T : GameEvent> mapEvents(crossinline transform: (World) -> (
   }
 }
 
-fun eventsFromEvents(world: World, events: Events): Events =
-    listOf(
-        mapEvents(::eventsFromTryUseAbility),
-        mapEvents(usingSpatialCombatWorld(::onAttack))
-    )
-        .flatMap { it(world, events) }
-        .plus(allCharacterMovements(toPhysicsDeck(world.deck), world.deck.characterRigs, events))
+fun eventsFromEvents(world: World, events: Events): Events {
+  val deck = world.deck
+  return listOf(
+      mapEvents(::eventsFromTryUseAbility),
+      mapEvents(usingSpatialCombatWorld(::onAttack))
+  )
+      .flatMap { it(world, events) }
+      .plus(allCharacterMovements(toPhysicsDeck(deck), deck.characterRigs, deck.thirdPersonRigs, events))
+}

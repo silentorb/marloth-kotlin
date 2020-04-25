@@ -2,7 +2,6 @@ package simulation.intellect.execution
 
 import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.ent.Id
-import simulation.intellect.Path
 import simulation.intellect.assessment.Knowledge
 import silentorb.mythic.spatial.Vector3
 import org.recast4j.detour.DefaultQueryFilter
@@ -62,7 +61,7 @@ fun getPathTargetPosition(world: World, character: Id, pursuit: Pursuit): Vector
 
 fun moveStraightTowardPosition(world: World, character: Id, target: Vector3): Commands {
   val body = world.deck.bodies[character]!!
-  val shape = world.deck.collisionShapes[character]!!
+  val shape = world.deck.collisionObjects[character]!!
   val middle = shape.shape.height / 2f
   val position = body.position
   val commands = listOf(CharacterCommand(CharacterCommands.moveUp, character))

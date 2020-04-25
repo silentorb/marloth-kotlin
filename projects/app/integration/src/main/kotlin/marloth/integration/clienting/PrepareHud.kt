@@ -2,10 +2,8 @@ package marloth.integration.clienting
 
 import marloth.clienting.hud.HudData
 import marloth.clienting.menus.ViewId
-import silentorb.mythic.characters.ViewMode
 import silentorb.mythic.ent.Id
 import simulation.happenings.getActiveAction
-import simulation.intellect.assessment.lightRating
 import simulation.main.World
 import simulation.misc.getPointCell
 import simulation.misc.getVictoryKeyStats
@@ -56,7 +54,6 @@ fun gatherHudData(world: World, player: Id, view: ViewId): HudData? {
         interactable = interactable,
         cooldown = cooldown,
         buffs = buffs,
-        viewMode = deck.characterRigs[player]?.viewMode,
         debugInfo = listOf(
 //            "LR: ${floatToRoundedString(lightRating(deck, player))}",
 //            floatToRoundedString(body.velocity.length()),

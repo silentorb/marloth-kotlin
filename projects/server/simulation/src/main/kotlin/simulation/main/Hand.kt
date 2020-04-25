@@ -4,10 +4,9 @@ import silentorb.mythic.accessorize.Accessory
 import silentorb.mythic.accessorize.Modifier
 import silentorb.mythic.aura.Sound
 import silentorb.mythic.characters.CharacterRig
-import simulation.combat.general.Destructible
-import simulation.combat.general.ResourceBundle
-import simulation.combat.spatial.Missile
+import silentorb.mythic.characters.ThirdPersonRig
 import silentorb.mythic.ent.GenericIdHand
+import silentorb.mythic.ent.Id
 import silentorb.mythic.entities.Attributes
 import silentorb.mythic.particles.ParticleEffect
 import silentorb.mythic.performing.Action
@@ -22,6 +21,9 @@ import silentorb.mythic.timing.IntCycle
 import silentorb.mythic.timing.IntTimer
 import simulation.accessorize.ItemPickup
 import simulation.combat.PlayerOverlay
+import simulation.combat.general.Destructible
+import simulation.combat.general.ResourceBundle
+import simulation.combat.spatial.Missile
 import simulation.entities.*
 import simulation.happenings.Trigger
 import simulation.intellect.Spirit
@@ -61,6 +63,8 @@ data class Hand(
     val sound: Sound? = null,
     val spinner: Spinner? = null,
     val spirit: Spirit? = null,
+    val target: Id? = null, // TODO: Delete this
+    val thirdPersonRig: ThirdPersonRig? = null, // TODO: Delete this
     val timer: IntTimer? = null,
     val timerFloat: FloatTimer? = null,
     val trigger: Trigger? = null,

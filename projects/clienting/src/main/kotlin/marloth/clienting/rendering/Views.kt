@@ -23,10 +23,10 @@ fun firstPersonCamera(body: Body, character: CharacterRig, isAlive: Boolean): Ca
     45f
 )
 
-fun thirdPersonCamera(body: Body, hoverCamera: HoverCamera): Camera {
-  val orientation = getHoverCameraOrientation(hoverCamera)
+fun thirdPersonCamera(body: Body, thirdPersonRig: ThirdPersonRig): Camera {
+  val orientation = getHoverCameraOrientation(thirdPersonRig)
 
-  val position = getHoverCameraPosition(body.position, hoverCamera, orientation)
+  val position = getHoverCameraPosition(body.position, thirdPersonRig, orientation)
 //  val orientationSecond = Quaternion().rotateTo(Vector3(1f, 0f, 0f), -offset)
 //  val position = offset + body.position + Vector3(0f, 0f, 1f)
   return Camera(ProjectionType.perspective, position, orientation, 45f)
@@ -48,9 +48,10 @@ fun createTopDownCamera(player: Body): Camera {
 fun createCamera(deck: Deck, player: Id): Camera {
   val character = deck.characters[player]!!
   val characterRig = deck.characterRigs[player]!!
+  val thirdPersonRig= deck.thirdPersonRigs[player]
   val body = deck.bodies[player]!!
-  return when (characterRig.viewMode) {
-    ViewMode.firstPerson -> firstPersonCamera(body, characterRig, character.isAlive)
-    ViewMode.thirdPerson -> thirdPersonCamera(body, characterRig.hoverCamera!!)
-  }
+  return if (thirdPersonRig== null)
+    firstPersonCamera(body, characterRig, character.isAlive)
+  else
+     thirdPersonCamera(body, thirdPersonRig)
 }

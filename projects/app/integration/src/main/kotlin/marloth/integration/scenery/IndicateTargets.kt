@@ -1,17 +1,15 @@
 package marloth.integration.scenery
 
 import marloth.scenery.enums.TextureId
-import silentorb.mythic.characters.targeting.TargetTable
 import silentorb.mythic.ent.Id
-import silentorb.mythic.ent.Table
 import silentorb.mythic.lookinglass.ElementGroup
 import silentorb.mythic.lookinglass.SceneLayer
 import silentorb.mythic.lookinglass.TexturedBillboard
 import silentorb.mythic.spatial.Vector4
 import simulation.main.Deck
 
-fun getTargetingLayer(deck: Deck, targetings: TargetTable, player: Id): SceneLayer? {
-  val target = targetings[player]
+fun getTargetingLayer(deck: Deck, player: Id): SceneLayer? {
+  val target = deck.targets[player]
   return if (target == null)
     null
   else {

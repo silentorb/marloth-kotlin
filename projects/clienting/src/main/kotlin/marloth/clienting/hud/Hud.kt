@@ -20,7 +20,6 @@ data class HudData(
     val sanity: ResourceContainer,
     val interactable: Interactable?,
     val cooldown: Float?,
-    val viewMode: ViewMode?,
     val buffs: List<Pair<Modifier, Int>>,
     val debugInfo: List<String> = listOf()
 )
@@ -87,7 +86,7 @@ fun hudLayout(textResources: TextResources, data: HudData): Flower {
   return compose(listOfNotNull(
       playerStats(data),
       if (data.interactable != null) interactionDialog(textResources, data.interactable) else null,
-      if (data.cooldown != null) cooldownIndicatorPlacement(data.cooldown) else null,
-      if (data.viewMode == ViewMode.firstPerson) reticlePlacement() else null
+      if (data.cooldown != null) cooldownIndicatorPlacement(data.cooldown) else null//,
+//      if (data.viewMode == ViewMode.firstPerson) reticlePlacement() else null
   ))
 }

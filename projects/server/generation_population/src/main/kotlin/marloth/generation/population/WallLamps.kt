@@ -29,7 +29,7 @@ fun toBoundingObjects(deck: Deck, ids: Collection<Id>): Map<Id, BoundingObject> 
     ids.associateWith { id ->
       BoundingObject(
           body = deck.bodies[id]!!,
-          shape = deck.collisionShapes[id]!!.shape
+          shape = deck.collisionObjects[id]!!.shape
       )
     }
 
@@ -92,7 +92,7 @@ fun placeWallLamps(deck: Deck, config: GenerationConfig, realm: Realm,
     if (options.any()) {
       val wallId = dice.takeOne(options)
       val wallBody = deck.bodies[wallId]!!
-      val wallShape = deck.collisionShapes[wallId]
+      val wallShape = deck.collisionObjects[wallId]
       val shape = wallShape!!.shape
       val heightOffset = dice.getFloat(2f, 3f) - shape.height / 2f
       val orientation = Quaternion(wallBody.orientation).rotateZ(Pi / 2f)

@@ -5,6 +5,7 @@ import marloth.scenery.enums.ArmatureSockets
 import marloth.scenery.enums.MeshId
 import silentorb.mythic.accessorize.getAccessories
 import silentorb.mythic.characters.CharacterRig
+import silentorb.mythic.characters.ThirdPersonRig
 import silentorb.mythic.characters.ViewMode
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
@@ -17,7 +18,6 @@ import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Vector3
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
-import simulation.entities.Player
 import simulation.main.Deck
 import simulation.misc.Definitions
 import kotlin.math.floor
@@ -36,8 +36,8 @@ val simplePainterMap = MeshId.values().mapNotNull { meshId ->
     )
 
 
-fun filterDepictions(depictions: Table<Depiction>, player: Id, characterRig: CharacterRig?): Table<Depiction> =
-    if (characterRig?.viewMode == ViewMode.firstPerson || characterRig?.hoverCamera?.distance ?: 10f < 1f)
+fun filterDepictions(depictions: Table<Depiction>, player: Id, thirdPersonRig: ThirdPersonRig?): Table<Depiction> =
+    if (thirdPersonRig == null || thirdPersonRig.distance < 1f)
       depictions.filter { it.key != player }
     else
       depictions
@@ -85,7 +85,7 @@ fun convertSimpleDepiction(deck: Deck, id: Id, depiction: Depiction): MeshElemen
 fun convertComplexDepiction(definitions: Definitions, deck: Deck, id: Id, depiction: Depiction): ElementGroup {
   val body = deck.bodies[id]!!
   val characterRig = deck.characterRigs[id]!!
-  val collisionObject = deck.collisionShapes[id]!!
+  val collisionObject = deck.collisionObjects[id]!!
   val shape = collisionObject.shape
   val verticalOffset = -shape.height / 2f
 
@@ -194,14 +194,14 @@ fun depictionSwitch(definitions: Definitions, deck: Deck, player: Id, depiction:
   }
 }
 
-fun gatherVisualElements(definitions: Definitions, deck: Deck, player: Id, characterRig: CharacterRig?): ElementGroups {
+fun gatherVisualElements(definitions: Definitions, deck: Deck, player: Id, thirdPersonRig: ThirdPersonRig?): ElementGroups {
   val initialPass = deck.depictions.map { (id, depiction) ->
     Pair(id, depictionSwitch(definitions, deck, player, id, depiction))
   }
   val initial = initialPass.mapNotNull { it.second }
   val remaining = deck.depictions.minus(initialPass.filter { it.second != null }.map { it.first })
   val (complex, simple) =
-      filterDepictions(remaining, player, characterRig)
+      filterDepictions(remaining, player, thirdPersonRig)
           .entries.partition { isComplexDepiction(it.value) }
 
   val complexElements = complex.map {

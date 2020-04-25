@@ -75,21 +75,20 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, defi
               ),
               characterRig = CharacterRig(
                   facingRotation = Vector3(0f, 0f, angle),
-                  isActive = true,
+//                  isActive = true,
                   maxSpeed = definition.maxSpeed,
-                  turnSpeed = Vector2(3f, 1f),
-                  viewMode = if (spirit == null) ViewMode.thirdPerson else ViewMode.firstPerson,
-                  hoverCamera = if (spirit == null)
-                    HoverCamera(
-                        pitch = 0f,
-                        yaw = 0f,
-                        distance = 5f,
-                        facingDestination = angle,
-                        facingDestinationCandidate = angle
-                    )
-              else
-                    null
+                  turnSpeed = Vector2(3f, 1f)
               ),
+              thirdPersonRig = if (spirit == null)
+                ThirdPersonRig(
+                    pitch = 0f,
+                    yaw = 0f,
+                    distance = 5f,
+                    facingDestination = angle,
+                    facingDestinationCandidate = angle
+                )
+              else
+                null,
               destructible = Destructible(
                   base = DestructibleBaseStats(
                       health = definition.health,
