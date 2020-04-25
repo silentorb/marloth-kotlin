@@ -6,7 +6,6 @@ import marloth.scenery.enums.MeshId
 import silentorb.mythic.accessorize.getAccessories
 import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.characters.ThirdPersonRig
-import silentorb.mythic.characters.ViewMode
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.lookinglass.*
@@ -47,7 +46,7 @@ fun depictionTransform(bodies: Table<Body>, characterRigs: Table<CharacterRig>, 
   val characterRig = characterRigs[id]
   val translate = Matrix.identity.translate(body.position)
   return if (characterRig != null)
-    translate.rotate(characterRig.facingQuaternion)
+    translate.rotate(characterRig.facingOrientation)
   else
     translate.rotate(body.orientation)
 

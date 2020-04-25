@@ -2,6 +2,7 @@ package marloth.integration.misc
 
 import marloth.clienting.ClientState
 import marloth.clienting.PlayerViews
+import marloth.clienting.hud.updateTargeting
 import marloth.clienting.menus.*
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.updateClient
@@ -124,9 +125,15 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
   val simulationEvents = getSimulationEvents(definitions, previous.deck, world, clientEvents)
   val allEvents = clientEvents + simulationEvents
   val nextWorld = updateWorld(definitions, allEvents, simulationDelta, world)
-  updateSimulationDatabase(app.db, nextWorld, world)
+  val finalWorld = nextWorld.copy(
+      deck = nextWorld.deck.copy(
+          targets = updateTargeting(nextWorld, app.client, clientState.players, commands, nextWorld.deck.targets)
+      )
+  )
+
+  updateSimulationDatabase(app.db, finalWorld, world)
   return worlds
-      .plus(nextWorld)
+      .plus(finalWorld)
       .takeLast(2)
 }
 

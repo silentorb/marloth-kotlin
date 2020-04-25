@@ -4,7 +4,7 @@ import marloth.clienting.Client
 import marloth.clienting.rendering.createCamera
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
-import silentorb.mythic.haft.HaftCommands
+import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.lookinglass.createCameraMatrix
 import silentorb.mythic.lookinglass.getPlayerViewports
 import silentorb.mythic.physics.firstRayHit
@@ -19,7 +19,7 @@ typealias TargetTable = Table<Id>
 
 typealias IsAvailableTarget = (Id) -> Boolean
 
-const val maxTargetRange = 25f
+const val maxTargetRange = 20f
 
 fun isOnScreen(transform: Matrix, target: Vector3): Boolean {
   val coordinate = transform * Vector4(target.x, target.y, target.z, 1f)
@@ -34,19 +34,19 @@ fun isAvailableTarget(world: World, transform: Matrix, actorLocation: Vector3): 
   val targetBody = deck.bodies[target]!!
   actorLocation.distance(targetBody.position) <= maxTargetRange &&
       isOnScreen(transform, targetBody.position)
-      firstRayHit(world.bulletState.dynamicsWorld, actorLocation, targetBody.position, CollisionGroups.tangibleMask)?.collisionObject == target
+  firstRayHit(world.bulletState.dynamicsWorld, actorLocation, targetBody.position, CollisionGroups.tangibleMask)?.collisionObject == target
 }
 
 fun autoSelectTarget(deck: Deck, actorLocation: Vector3, actor: Id, options: List<Id>): Id {
   val characterRig = deck.characterRigs[actor]!!
-  val end = actorLocation + characterRig.facingQuaternion.transform(Vector3(maxTargetRange, 0f, 0f))
+  val end = actorLocation + characterRig.facingOrientation.transform(Vector3(maxTargetRange, 0f, 0f))
   return options.minBy { target ->
     val location = deck.bodies[target]!!.position
     getPointToLineDistance(location, actorLocation, end)
   }!!
 }
 
-fun updateTargeting(world: World, client: Client, players: List<Id>, commands: HaftCommands, targets: TargetTable): TargetTable {
+fun updateTargeting(world: World, client: Client, players: List<Id>, commands: List<CharacterCommand>, targets: TargetTable): TargetTable {
   val deck = world.deck
   val toggleEvents = commands.filter { it.type == toggleTargetingCommand }.map { it.target }.toSet()
 

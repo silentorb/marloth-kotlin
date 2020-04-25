@@ -1,15 +1,18 @@
 package marloth.clienting.rendering
 
-import silentorb.mythic.characters.*
+import silentorb.mythic.characters.CharacterRig
+import silentorb.mythic.characters.ThirdPersonRig
+import silentorb.mythic.characters.defaultCharacterHeight
+import silentorb.mythic.characters.getHoverCameraPosition
 import silentorb.mythic.ent.Id
+import silentorb.mythic.physics.Body
+import silentorb.mythic.scenery.Camera
+import silentorb.mythic.scenery.ProjectionType
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.times
-import silentorb.mythic.scenery.Camera
-import silentorb.mythic.scenery.ProjectionType
 import simulation.main.Deck
-import silentorb.mythic.physics.Body
 
 val firstPersonCameraOffset = Vector3(0f, 0f, defaultCharacterHeight * 0.4f)
 val firstPersonDeadCameraOffset = Vector3(0f, 0f, -0.75f)
@@ -19,12 +22,12 @@ fun firstPersonCamera(body: Body, character: CharacterRig, isAlive: Boolean): Ca
 //    body.position + Vector3(0f, 3f, -0.75f), //if (isAlive) firstPersonCameraOffset else firstPersonDeadCameraOffset,
     body.position + if (isAlive) firstPersonCameraOffset else firstPersonDeadCameraOffset,
 //    world.player.orientation,
-    if (isAlive) character.facingQuaternion else character.facingQuaternion * Quaternion().rotateX(Pi / -6f),
+    if (isAlive) character.facingOrientation else character.facingOrientation * Quaternion().rotateX(Pi / -6f),
     45f
 )
 
 fun thirdPersonCamera(body: Body, thirdPersonRig: ThirdPersonRig): Camera {
-  val orientation = getHoverCameraOrientation(thirdPersonRig)
+  val orientation = thirdPersonRig.orientation
 
   val position = getHoverCameraPosition(body.position, thirdPersonRig, orientation)
 //  val orientationSecond = Quaternion().rotateTo(Vector3(1f, 0f, 0f), -offset)
@@ -48,10 +51,10 @@ fun createTopDownCamera(player: Body): Camera {
 fun createCamera(deck: Deck, player: Id): Camera {
   val character = deck.characters[player]!!
   val characterRig = deck.characterRigs[player]!!
-  val thirdPersonRig= deck.thirdPersonRigs[player]
+  val thirdPersonRig = deck.thirdPersonRigs[player]
   val body = deck.bodies[player]!!
-  return if (thirdPersonRig== null)
+  return if (thirdPersonRig == null)
     firstPersonCamera(body, characterRig, character.isAlive)
   else
-     thirdPersonCamera(body, thirdPersonRig)
+    thirdPersonCamera(body, thirdPersonRig)
 }

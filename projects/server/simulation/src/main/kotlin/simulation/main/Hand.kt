@@ -63,8 +63,7 @@ data class Hand(
     val sound: Sound? = null,
     val spinner: Spinner? = null,
     val spirit: Spirit? = null,
-    val target: Id? = null, // TODO: Delete this
-    val thirdPersonRig: ThirdPersonRig? = null, // TODO: Delete this
+    val thirdPersonRig: ThirdPersonRig? = null,
     val timer: IntTimer? = null,
     val timerFloat: FloatTimer? = null,
     val trigger: Trigger? = null,

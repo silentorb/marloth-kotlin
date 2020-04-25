@@ -75,14 +75,14 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, defi
               ),
               characterRig = CharacterRig(
                   facingRotation = Vector3(0f, 0f, angle),
+                  facingOrientation = characterRigOrentation(Vector3(0f, 0f, angle)),
 //                  isActive = true,
                   maxSpeed = definition.maxSpeed,
                   turnSpeed = Vector2(3f, 1f)
               ),
               thirdPersonRig = if (spirit == null)
                 ThirdPersonRig(
-                    pitch = 0f,
-                    yaw = 0f,
+                    orientation = Quaternion(),
                     distance = 5f,
                     facingDestination = angle,
                     facingDestinationCandidate = angle

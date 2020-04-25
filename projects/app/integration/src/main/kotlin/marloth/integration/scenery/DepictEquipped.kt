@@ -38,7 +38,7 @@ fun getPlayerEquipmentLayer(definitions: Definitions, deck: Deck, player: Id, ca
   return if (equippedMesh != null || victoryKey != null) {
     val body = deck.bodies[player]!!
     val characterRig = deck.characterRigs[player]!!
-    val relativeVelocity = characterRig.facingQuaternion.transform(body.velocity)
+    val relativeVelocity = characterRig.facingOrientation.transform(body.velocity)
     val motionOffsetX = minMax(characterRig.firstPersonLookVelocity.x * 0.5f, -1f, 1f) +
         minMax(relativeVelocity.y * 0.2f, -1f, 1f)
     val motionOffsetY = minMax(characterRig.firstPersonLookVelocity.y * 0.4f, -1f, 1f)
