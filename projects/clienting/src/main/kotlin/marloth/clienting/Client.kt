@@ -2,6 +2,7 @@ package marloth.clienting
 
 import marloth.clienting.audio.AudioConfig
 import marloth.clienting.audio.updateClientAudio
+import marloth.clienting.hud.TargetTable
 import marloth.clienting.hud.updateTargeting
 import marloth.clienting.input.*
 import marloth.clienting.menus.*
@@ -18,7 +19,6 @@ import silentorb.mythic.bloom.next.Box
 import silentorb.mythic.bloom.next.LogicModule
 import silentorb.mythic.bloom.next.newBloomState
 import silentorb.mythic.bloom.updateBloomState
-import silentorb.mythic.characters.targeting.TargetTable
 import silentorb.mythic.ent.Id
 import silentorb.mythic.haft.HaftCommand
 import silentorb.mythic.haft.HaftCommands
@@ -152,7 +152,6 @@ fun updateClientBloomStates(boxes: List<Box>, bloomStates: Map<Id, BloomState>, 
       .associate { it }
 }
 
-fun updateClient(client: Client, worlds: List<World>, boxes: List<Box>, clientState: ClientState): ClientState {
 //  pipe(
 //      updateClientInput(client),
 //      updateClientInputCommands(),
@@ -161,6 +160,8 @@ fun updateClient(client: Client, worlds: List<World>, boxes: List<Box>, clientSt
 //      updateClientCurrentMenus,
 //      updateClientAudio(clientState, client, worlds)
 //  )(clientState)
+
+fun updateClient(client: Client, worlds: List<World>, boxes: List<Box>, clientState: ClientState): ClientState {
   val world = worlds.last()
   val deviceStates = updateInputDeviceStates(client.platform.input, clientState.input.deviceStates)
   val input = clientState.input.copy(
@@ -184,7 +185,7 @@ fun updateClient(client: Client, worlds: List<World>, boxes: List<Box>, clientSt
       bloomStates = bloomStates,
       commands = commands,
       playerViews = playerViews,
-      targetings = updateTargeting(world, commands, clientState.targetings)
+      targetings = updateTargeting(world, client, clientState.players, commands, clientState.targetings)
   )
 }
 

@@ -33,7 +33,6 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
     val viewportIterator = viewports.iterator()
     scenes.zip(boxes) { scene, box ->
       val screenViewport = viewportIterator.next()
-      val renderer = client.renderer
       val sceneRenderer = createSceneRenderer(client.renderer, scene, screenViewport)
       val filters = prepareRender(sceneRenderer, scene)
       renderSceneLayers(renderer, sceneRenderer.camera, scene.layers)

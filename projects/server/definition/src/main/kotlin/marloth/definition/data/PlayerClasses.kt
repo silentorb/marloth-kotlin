@@ -25,7 +25,7 @@ object PlayerClasses {
   )
 
   val debug = CharacterDefinition(
-      health = 2000,
+      health = 20000,
       accessories = listOf(AccessoryId.rocketLauncher.name),
       depictionType = DepictionType.child,
       maxSpeed = 8f,

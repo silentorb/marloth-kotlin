@@ -1,4 +1,4 @@
-package marloth.integration.scenery
+package marloth.clienting.rendering
 
 import silentorb.mythic.characters.*
 import silentorb.mythic.ent.Id

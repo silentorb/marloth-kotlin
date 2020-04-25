@@ -1,10 +1,10 @@
 package marloth.integration.scenery
 
+import marloth.clienting.hud.TargetTable
 import marloth.clienting.rendering.GameScene
+import marloth.clienting.rendering.createCamera
 import silentorb.mythic.characters.ViewMode
-import silentorb.mythic.characters.targeting.TargetTable
 import silentorb.mythic.ent.Id
-import silentorb.mythic.ent.Table
 import silentorb.mythic.lookinglass.SceneLayer
 import silentorb.mythic.scenery.*
 import simulation.main.Deck

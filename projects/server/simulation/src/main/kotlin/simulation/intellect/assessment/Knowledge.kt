@@ -35,6 +35,7 @@ const val memoryLifetime: Float = 5f // In seconds
 
 fun getKnownCharacters(realm: Realm, bulletState: BulletState, deck: Deck, lightRatings: Table<Float>, character: Id): List<Id> {
   val faction = deck.characters[character]!!.faction
+  return listOf()
   return deck.characters.keys
       .minus(character)
       .filter { id ->
