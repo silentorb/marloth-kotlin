@@ -3,6 +3,7 @@ package marloth.clienting.input
 import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.haft.*
 import org.lwjgl.glfw.GLFW
+import silentorb.mythic.characters.targeting.toggleTargetingCommand
 
 val gameGamepadStrokeBindings = mapOf(
     GAMEPAD_BUTTON_START to GuiCommandType.menu,
@@ -23,7 +24,9 @@ val gameGamepadStrokeBindings = mapOf(
     GAMEPAD_AXIS_RIGHT_RIGHT to CharacterCommands.lookRight,
 
     GAMEPAD_BUTTON_X to CharacterCommands.ability,
-    GAMEPAD_BUTTON_A to CharacterCommands.interactPrimary
+    GAMEPAD_BUTTON_A to CharacterCommands.interactPrimary,
+    GAMEPAD_BUTTON_RIGHT_THUMB to toggleTargetingCommand
+
 )
 
 fun defaultMouseGameStrokeBindings() = mapOf(
@@ -43,5 +46,3 @@ fun defaultGameInputBindings(): Bindings =
     createBindings(DeviceIndex.keyboard, defaultKeyboardGameBindings())
         .plus(createBindings(DeviceIndex.mouse, defaultMouseGameStrokeBindings()))
         .plus(createBindings(DeviceIndex.gamepad, gameGamepadStrokeBindings))
-
-

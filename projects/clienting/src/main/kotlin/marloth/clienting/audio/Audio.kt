@@ -17,22 +17,14 @@ data class AudioConfig(
     var soundVolume: Float = 0.75f
 )
 
-fun updateAudioStateSounds(client: Client, previousSounds: Table<Sound>, nextSounds: Table<Sound>, listenerPosition: Vector3?, volume: Float): (AudioState) -> AudioState = { state ->
+fun updateAudioStateSounds(client: Client, previousSounds: Table<Sound>, nextSounds: Table<Sound>, listenerPosition: Vector3?): (AudioState) -> AudioState = { state ->
   //  val samples = client.platform.audio.availableBuffer / 4
   val newSounds = nextSounds.filterKeys { !previousSounds.keys.contains(it) }
       .filterValues { (it.position == null && listenerPosition == null) || it.position!!.distance(listenerPosition!!) < maxSoundDistance }
-  val sounds = updateSoundPlaying(client.platform.audio, newSounds, client.soundLibrary, listenerPosition, volume)(state.sounds)
+  val sounds = updateSoundPlaying(client.platform.audio, newSounds, client.soundLibrary, listenerPosition, state.volume)(state.sounds)
 
   state.copy(
       sounds = sounds
-  )
-}
-
-fun updateClientStateAudio(client: Client, previousSounds: Table<Sound>, nextSounds: Table<Sound>,
-                           listenerPosition: Vector3?): (ClientState) -> ClientState = { state ->
-  val audio = updateAudioStateSounds(client, previousSounds, nextSounds, listenerPosition, state.audio.volume)(state.audio)
-  state.copy(
-      audio = audio
   )
 }
 
@@ -51,7 +43,5 @@ fun loadSounds(audio: PlatformAudio): SoundLibrary =
     }
         .associate { it }
 
-fun updateClientAudio(previous: ClientState, client: Client, worlds: List<World>): (ClientState) -> ClientState =
-    pipe(
-        updateClientStateAudio(client, worlds.first().deck.sounds, worlds.last().deck.sounds, getListenerPosition(worlds.last().deck))
-    )
+fun updateClientAudio(client: Client, worlds: List<World>, audioState: AudioState) =
+    updateAudioStateSounds(client, worlds.first().deck.sounds, worlds.last().deck.sounds, getListenerPosition(worlds.last().deck))(audioState)

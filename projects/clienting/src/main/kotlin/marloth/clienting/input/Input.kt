@@ -87,13 +87,13 @@ fun getInputProfile(inputState: InputState, player: Id): InputProfile? {
 }
 
 fun isStroke(context: InputContext, type: Any): Boolean =
-    clientCommandStrokes[context]!!.contains(type)
+    commandStrokes[context]!!.contains(type)
 
 fun getBinding(inputState: InputState, playerViews: PlayerViews): BindingSource = { event ->
   val player = inputState.devicePlayers[event.device]
   val device = inputState.deviceTypeMap[event.device]
   if (player != null && device != null) {
-       val profile = getInputProfile(inputState, player)
+    val profile = getInputProfile(inputState, player)
     if (profile != null) {
       val inputContext = bindingContext(playerViews, player)
       val binding = profile.bindings

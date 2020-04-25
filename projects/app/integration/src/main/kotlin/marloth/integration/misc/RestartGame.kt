@@ -37,7 +37,8 @@ fun restartClientState(client: ClientState, playerMap: Map<Id, Id>): ClientState
         audio = client.audio,
         playerViews = mapOf(),
         commands = listOf(),
-        players = playerMap.values.toList()
+        players = playerMap.values.toList(),
+        targetings = mapOf()
     )
 
 fun restartGame(app: GameApp, appState: AppState): AppState {

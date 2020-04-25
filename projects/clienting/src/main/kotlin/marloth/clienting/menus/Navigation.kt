@@ -1,7 +1,9 @@
 package marloth.clienting.menus
 
 import marloth.clienting.ClientState
+import marloth.clienting.PlayerViews
 import marloth.clienting.input.GuiCommandType
+import silentorb.mythic.haft.HaftCommands
 
 fun nextView(command: Any, view: ViewId): ViewId? =
     when (command) {
@@ -33,10 +35,10 @@ fun nextView(command: Any, view: ViewId): ViewId? =
       else -> null
     }
 
-val updateClientCurrentMenus: (ClientState) -> ClientState = { state ->
-  val newViews = state.commands
+fun updateClientCurrentMenus(commands: HaftCommands, playerViews: PlayerViews): PlayerViews {
+  val newViews = commands
       .mapNotNull { command ->
-        val view = nextView(command.type, state.playerViews[command.target] ?: ViewId.none)
+        val view = nextView(command.type, playerViews[command.target] ?: ViewId.none)
         if (view != null)
           Pair(command.target, view)
         else
@@ -44,10 +46,8 @@ val updateClientCurrentMenus: (ClientState) -> ClientState = { state ->
       }
       .associate { it }
 
-  if (newViews.any()) {
-    state.copy(
-        playerViews = state.playerViews.plus(newViews)
-    )
-  } else
-    state
+  return if (newViews.any())
+    playerViews + newViews
+  else
+    playerViews
 }

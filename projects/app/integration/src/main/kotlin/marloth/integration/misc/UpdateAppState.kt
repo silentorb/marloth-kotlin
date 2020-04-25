@@ -145,7 +145,7 @@ fun updateFixedInterval(app: GameApp, boxes: List<Box>): (AppState) -> AppState 
     pipe(
         { appState ->
           app.platform.process.pollEvents()
-          val clientState = updateClient(app.client, appState.worlds, boxes)(appState.client)
+          val clientState = updateClient(app.client, appState.worlds, boxes, appState.client)
           if (clientState.commands.any { it.type == GuiCommandType.newGame })
             restartGame(app, appState)
           else {

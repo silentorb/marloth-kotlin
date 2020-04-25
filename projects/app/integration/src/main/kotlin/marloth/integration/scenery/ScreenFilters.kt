@@ -1,5 +1,6 @@
 package marloth.integration.scenery
 
+import silentorb.mythic.characters.ViewMode
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.ScreenFilter
 import silentorb.mythic.spatial.Vector4
@@ -14,6 +15,9 @@ fun bloodFilter(strength: Float): ScreenFilter =
 
 fun getScreenFilters(deck: Deck, player: Id): List<ScreenFilter> {
   val character = deck.characters [player]!!
+  if (deck.characterRigs[player]!!.viewMode == ViewMode.thirdPerson)
+    return listOf()
+
   return if (!character.isAlive)
     if (character.isInfinitelyFalling)
       listOf<ScreenFilter>(

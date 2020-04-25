@@ -1,6 +1,7 @@
 package marloth.clienting.input
 
 import marloth.scenery.enums.CharacterCommands
+import silentorb.mythic.characters.targeting.toggleTargetingCommand
 
 enum class GuiCommandType {
   characterInfo,
@@ -11,7 +12,7 @@ enum class GuiCommandType {
   quit
 }
 
-private fun standardClientStrokes() = setOf(
+private fun standardStrokes() = setOf(
     GuiCommandType.characterInfo,
     GuiCommandType.menu,
     GuiCommandType.menuSelect,
@@ -20,10 +21,13 @@ private fun standardClientStrokes() = setOf(
     GuiCommandType.quit
 )
 
-val clientCommandStrokes =
+val commandStrokes =
     mapOf(
-        InputContext.game to standardClientStrokes(),
-        InputContext.menu to standardClientStrokes()
+        InputContext.game to standardStrokes()
+            .plus(setOf(
+                toggleTargetingCommand
+            )),
+        InputContext.menu to standardStrokes()
             .plus(setOf(
                 CharacterCommands.moveUp,
                 CharacterCommands.moveDown,

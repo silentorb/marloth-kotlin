@@ -1,7 +1,6 @@
 package simulation.happenings
 
 import silentorb.mythic.characters.allCharacterMovements
-import silentorb.mythic.happenings.CharacterCommand
 import simulation.combat.spatial.onAttack
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent

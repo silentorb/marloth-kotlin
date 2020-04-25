@@ -40,7 +40,7 @@ fun removeWhole(soundDurations: SoundDurations, events: Events, deck: Deck): (De
   removeEntities(finished)(aggregator)
 }
 
-fun removeSoldWares(events: Events, deck: Deck): (Deck) -> Deck = { aggregator ->
+fun pruneSoldWares(events: Events, deck: Deck): (Deck) -> Deck = { aggregator ->
   val wares = deck.wares
   val next = aggregator.copy(
       wares = wares.filterKeys { id ->
@@ -50,8 +50,8 @@ fun removeSoldWares(events: Events, deck: Deck): (Deck) -> Deck = { aggregator -
   next
 }
 
-// Removes select components of an entity without removing all components of an entity
-fun removePartial(events: Events, deck: Deck): (Deck) -> Deck =
+// Removes particular components of an entity without removing all components of that entity
+fun removePartial(events: Events, previous: Deck): (Deck) -> Deck =
     pipe(
-        removeSoldWares(events, deck)
+        pruneSoldWares(events, previous)
     )

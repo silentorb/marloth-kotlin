@@ -2,7 +2,6 @@ package simulation.updating
 
 import silentorb.mythic.accessorize.updateAccessory
 import silentorb.mythic.aura.updateSound
-import simulation.combat.general.updateDestructibleHealth
 import silentorb.mythic.ent.mapTable
 import silentorb.mythic.ent.mapTableValues
 import silentorb.mythic.happenings.Events
@@ -10,7 +9,11 @@ import silentorb.mythic.timing.updateFloatCycle
 import silentorb.mythic.timing.updateFloatTimer
 import silentorb.mythic.timing.updateIntCycle
 import silentorb.mythic.timing.updateIntTimers
-import simulation.entities.*
+import simulation.combat.general.updateDestructibleHealth
+import simulation.entities.updateAmbientAudio
+import simulation.entities.updateAttachment
+import simulation.entities.updateCharacter
+import simulation.entities.updateCharacterAnimation
 import simulation.happenings.updateActions
 import simulation.intellect.assessment.lightRatings
 import simulation.intellect.assessment.updateKnowledge
