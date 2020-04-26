@@ -77,15 +77,9 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, defi
                   maxSpeed = definition.maxSpeed,
                   turnSpeed = Vector2(3f, 1f)
               ),
-              thirdPersonRig = if (spirit == null) {
-                val orientation = -Quaternion().rotateZ(angle)
-                val pivot = -orientation
-                ThirdPersonRig(
-                    orientation = orientation,
-                    location = position + pivot * Vector3(-2f, 0f, 0f),
-                    pivot = pivot
-                )
-              } else
+              thirdPersonRig = if (spirit == null)
+                newThirdPersonRig(position, angle)
+              else
                 null,
               destructible = Destructible(
                   base = DestructibleBaseStats(

@@ -3,6 +3,7 @@ package marloth.clienting.rendering
 import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.characters.ThirdPersonRig
 import silentorb.mythic.characters.defaultCharacterHeight
+import silentorb.mythic.characters.getCameraLocation
 import silentorb.mythic.ent.Id
 import silentorb.mythic.physics.Body
 import silentorb.mythic.scenery.Camera
@@ -27,10 +28,10 @@ fun firstPersonCamera(body: Body, character: CharacterRig, isAlive: Boolean): Ca
 fun thirdPersonCamera(body: Body, thirdPersonRig: ThirdPersonRig): Camera {
 //  val orientation = thirdPersonRig.orientation
 
-//  val position = getHoverCameraPosition(body.position, thirdPersonRig, orientation)
+  val location = getCameraLocation(body.position, thirdPersonRig.orientation, thirdPersonRig.distance)
 //  val orientationSecond = Quaternion().rotateTo(Vector3(1f, 0f, 0f), -offset)
 //  val position = offset + body.position + Vector3(0f, 0f, 1f)
-  return Camera(ProjectionType.perspective, thirdPersonRig.location, thirdPersonRig.orientation, 45f)
+  return Camera(ProjectionType.perspective, location, thirdPersonRig.orientation, 45f)
 }
 
 fun createTopDownCamera(player: Body): Camera {
