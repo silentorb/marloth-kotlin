@@ -10,9 +10,9 @@ import silentorb.mythic.spatial.toVector3
 import simulation.entities.*
 import simulation.main.Hand
 import simulation.misc.*
-import silentorb.mythic.characters.getHorizontalLookAtAngle
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.IdSource
+import silentorb.mythic.spatial.getHorizontalLookAtAngle
 import simulation.intellect.freshSpirit
 import simulation.main.IdHand
 

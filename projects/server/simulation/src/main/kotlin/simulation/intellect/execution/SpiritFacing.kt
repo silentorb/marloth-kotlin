@@ -2,8 +2,6 @@ package simulation.intellect.execution
 
 import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.characters.CharacterRig
-import silentorb.mythic.characters.getHorizontalLookAtAngle
-import silentorb.mythic.characters.getVerticalLookAtAngle
 import silentorb.mythic.characters.maxPositiveLookVelocityXChange
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.CharacterCommand
@@ -11,6 +9,8 @@ import silentorb.mythic.happenings.CommandName
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.getAngleCourse
+import silentorb.mythic.spatial.getHorizontalLookAtAngle
+import silentorb.mythic.spatial.getVerticalLookAtAngle
 import simulation.main.World
 import simulation.updating.simulationDelta
 import kotlin.math.abs

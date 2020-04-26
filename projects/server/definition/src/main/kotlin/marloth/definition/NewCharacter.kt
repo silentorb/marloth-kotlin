@@ -12,10 +12,7 @@ import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.scenery.Capsule
-import silentorb.mythic.spatial.Pi
-import silentorb.mythic.spatial.Quaternion
-import silentorb.mythic.spatial.Vector2
-import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.*
 import simulation.entities.*
 import simulation.intellect.Spirit
 import simulation.intellect.assessment.newKnowledge
@@ -80,14 +77,15 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, defi
                   maxSpeed = definition.maxSpeed,
                   turnSpeed = Vector2(3f, 1f)
               ),
-              thirdPersonRig = if (spirit == null)
+              thirdPersonRig = if (spirit == null) {
+                val orientation = -Quaternion().rotateZ(angle)
+                val pivot = -orientation
                 ThirdPersonRig(
-                    orientation = Quaternion(),
-                    distance = 5f,
-                    facingDestination = angle,
-                    facingDestinationCandidate = angle
+                    orientation = orientation,
+                    location = position + pivot * Vector3(-2f, 0f, 0f),
+                    pivot = pivot
                 )
-              else
+              } else
                 null,
               destructible = Destructible(
                   base = DestructibleBaseStats(

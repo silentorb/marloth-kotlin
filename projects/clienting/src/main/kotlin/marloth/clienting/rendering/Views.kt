@@ -3,7 +3,6 @@ package marloth.clienting.rendering
 import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.characters.ThirdPersonRig
 import silentorb.mythic.characters.defaultCharacterHeight
-import silentorb.mythic.characters.getHoverCameraPosition
 import silentorb.mythic.ent.Id
 import silentorb.mythic.physics.Body
 import silentorb.mythic.scenery.Camera
@@ -11,7 +10,6 @@ import silentorb.mythic.scenery.ProjectionType
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
-import silentorb.mythic.spatial.times
 import simulation.main.Deck
 
 val firstPersonCameraOffset = Vector3(0f, 0f, defaultCharacterHeight * 0.4f)
@@ -27,12 +25,12 @@ fun firstPersonCamera(body: Body, character: CharacterRig, isAlive: Boolean): Ca
 )
 
 fun thirdPersonCamera(body: Body, thirdPersonRig: ThirdPersonRig): Camera {
-  val orientation = thirdPersonRig.orientation
+//  val orientation = thirdPersonRig.orientation
 
-  val position = getHoverCameraPosition(body.position, thirdPersonRig, orientation)
+//  val position = getHoverCameraPosition(body.position, thirdPersonRig, orientation)
 //  val orientationSecond = Quaternion().rotateTo(Vector3(1f, 0f, 0f), -offset)
 //  val position = offset + body.position + Vector3(0f, 0f, 1f)
-  return Camera(ProjectionType.perspective, position, orientation, 45f)
+  return Camera(ProjectionType.perspective, thirdPersonRig.location, thirdPersonRig.orientation, 45f)
 }
 
 fun createTopDownCamera(player: Body): Camera {
