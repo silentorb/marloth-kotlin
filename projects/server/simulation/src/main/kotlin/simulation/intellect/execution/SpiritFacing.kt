@@ -7,23 +7,10 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.CommandName
 import silentorb.mythic.happenings.Commands
-import silentorb.mythic.spatial.Vector3
-import silentorb.mythic.spatial.getAngleCourse
-import silentorb.mythic.spatial.getHorizontalLookAtAngle
-import silentorb.mythic.spatial.getVerticalLookAtAngle
+import silentorb.mythic.spatial.*
 import simulation.main.World
 import simulation.updating.simulationDelta
 import kotlin.math.abs
-
-fun horizontalFacingDistance(character: CharacterRig, lookAt: Vector3): Float {
-  val angle = getHorizontalLookAtAngle(lookAt)
-  return getAngleCourse(character.facingRotation.z, angle)
-}
-
-fun verticalFacingDistance(character: CharacterRig, lookAt: Vector3): Float {
-  val angle = getVerticalLookAtAngle(lookAt)
-  return getAngleCourse(character.facingRotation.y, angle)
-}
 
 fun spiritFacingChange(character: Id, course: Float, velocity: Float, turnSpeed: Float,
                        positiveCommand: CommandName, negativeCommand: CommandName): Commands {
@@ -59,7 +46,7 @@ fun spiritFacingChange2(character: Id, course: Float, velocity: Float, turnSpeed
 
 fun spiritHorizontalFacingChange(world: World, character: Id, offset: Vector3): Commands {
   val characterRig = world.deck.characterRigs[character]!!
-  val course = horizontalFacingDistance(characterRig, offset)
+  val course = horizontalFacingDistance(characterRig.facingRotation.z, offset)
 //  println("$course ${characterRig.facingRotation.z}")
   return spiritFacingChange(character, course, characterRig.firstPersonLookVelocity.x, characterRig.turnSpeed.x,
       CharacterCommands.lookLeft, CharacterCommands.lookRight)
@@ -67,7 +54,7 @@ fun spiritHorizontalFacingChange(world: World, character: Id, offset: Vector3): 
 
 fun spiritVerticalFacingChange(world: World, character: Id, offset: Vector3): Commands {
   val characterRig = world.deck.characterRigs[character]!!
-  val course = verticalFacingDistance(characterRig, offset)
+  val course = verticalFacingDistance(characterRig.facingRotation.y, offset)
 //  println("$course ${characterRig.facingRotation.y}")
   return spiritFacingChange2(character, course, characterRig.firstPersonLookVelocity.y, characterRig.turnSpeed.y,
       CharacterCommands.lookUp, CharacterCommands.lookDown)
@@ -77,8 +64,8 @@ fun spiritNeedsFacing(world: World, character: Id, offset: Vector3, acceptableRa
   val characterRig = world.deck.characterRigs.getValue(character)
   val facingCommands = spiritHorizontalFacingChange(world, character, offset)
       .plus(spiritVerticalFacingChange(world, character, offset))
-  val horizontalCourse = horizontalFacingDistance(characterRig, offset)
-  val verticalCourse = verticalFacingDistance(characterRig, offset)
+  val horizontalCourse = horizontalFacingDistance(characterRig.facingRotation.z, offset)
+  val verticalCourse = verticalFacingDistance(characterRig.facingRotation.y, offset)
   return if (abs(horizontalCourse) <= acceptableRange && abs(verticalCourse) <= acceptableRange)
     facingCommands.plus(action())
   else
