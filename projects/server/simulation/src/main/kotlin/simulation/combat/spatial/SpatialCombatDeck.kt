@@ -3,6 +3,7 @@ package simulation.combat.spatial
 import silentorb.mythic.accessorize.Accessory
 import silentorb.mythic.accessorize.Modifier
 import silentorb.mythic.characters.CharacterRig
+import silentorb.mythic.ent.Id
 import simulation.combat.general.Destructible
 import silentorb.mythic.ent.Table
 import silentorb.mythic.performing.Action
@@ -17,5 +18,6 @@ data class SpatialCombatDeck(
     val collisionShapes: Table<CollisionObject>,
     val destructibles: Table<Destructible>,
     val modifiers: Table<Modifier>,
-    val missiles: Table<Missile>
+    val missiles: Table<Missile>,
+    val targets: Table<Id>
 )

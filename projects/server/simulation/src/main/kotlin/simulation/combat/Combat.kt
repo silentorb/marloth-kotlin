@@ -31,7 +31,8 @@ fun toSpatialCombatDeck(deck: Deck) =
         collisionShapes = deck.collisionObjects,
         destructibles = deck.destructibles,
         modifiers = deck.modifiers,
-        missiles = deck.missiles
+        missiles = deck.missiles,
+        targets = deck.targets
     )
 
 fun toSpatialCombatDefinitions(definitions: Definitions) =

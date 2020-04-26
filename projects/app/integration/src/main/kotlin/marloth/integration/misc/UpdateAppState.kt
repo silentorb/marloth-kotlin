@@ -127,7 +127,7 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
   val nextWorld = updateWorld(definitions, allEvents, simulationDelta, world)
   val finalWorld = nextWorld.copy(
       deck = nextWorld.deck.copy(
-          targets = updateTargeting(nextWorld, app.client, clientState.players, commands, nextWorld.deck.targets)
+          targets = updateTargeting(nextWorld, app.client, clientState.players, commands, previousClient.commands, nextWorld.deck.targets)
       )
   )
 

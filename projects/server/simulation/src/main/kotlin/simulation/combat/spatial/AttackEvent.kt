@@ -57,9 +57,10 @@ fun startAttack(attacker: Id, action: Id, accessory: AccessoryName, target: Vect
   )
 }
 
-fun getAttackerOriginAndFacing(deck: SpatialCombatDeck, attacker: Id, target: Vector3?, forwardOffset: Float): Pair<Vector3, Vector3> {
+fun getAttackerOriginAndFacing(deck: SpatialCombatDeck, attacker: Id, externalTarget: Vector3?, forwardOffset: Float): Pair<Vector3, Vector3> {
   val body = deck.bodies[attacker]!!
   val characterRig = deck.characterRigs[attacker]!!
+  val target = externalTarget ?: deck.bodies[deck.targets[attacker]]?.position
 //  val facingRotation = characterRig.facingRotation
 //  val vector = getFacingVector(Quaternion()
 //      .rotateZ(facingRotation.z)
