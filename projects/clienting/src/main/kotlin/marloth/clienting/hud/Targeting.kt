@@ -39,16 +39,9 @@ fun transformToScreen(transform: Matrix, target: Vector3): Vector2? {
     null
 }
 
-fun isOnScreen(transform: Matrix, target: Vector3): Boolean {
-  val coordinate = transform * Vector4(target.x, target.y, target.z, 1f)
-  val normalized = coordinate.xyz / coordinate.w
-
-  // The w condition filters out targets behind the camera
-  return normalized.x > -1f && normalized.x < 1f && normalized.y > -1f && normalized.y < 1f && coordinate.w > 0f
-}
-
 fun isOnScreen(offset: Vector2): Boolean {
-  return offset.x > -1f && offset.x < 1f && offset.y > -1f && offset.y < 1f
+  val range = 1.2f
+  return offset.x > -range && offset.x < range && offset.y > -range && offset.y < range
 }
 
 fun mapAvailableTarget(world: World, transform: Matrix, actorLocation: Vector3): MapAvailableTarget = { target ->
@@ -106,13 +99,13 @@ fun checkTargetChange(world: World, mapAvailableTarget: MapAvailableTarget, scre
     if (previousDirection != Vector2.zero)
       previousTarget
     else {
-      val availableTargets = getAvailableTargets(mapAvailableTarget, actor, world.deck.characters.keys)
+      val availableTargets = getAvailableTargets(mapAvailableTarget, actor, world.deck.characters.keys.minus(previousTarget))
 
-      if (availableTargets.size == 1)
+      if (availableTargets.none())
         previousTarget
       else {
         val direction = changeDirection.normalize()
-        val origin = transformToScreen(screenTransform, actorLocation)!!
+        val origin = transformToScreen(screenTransform, world.deck.bodies[previousTarget]!!.position)!!
         val mapped = availableTargets
             .mapNotNull { option ->
               val offset = (option.offset - origin)
@@ -150,7 +143,7 @@ fun updateTargeting(world: World, client: Client, players: List<Id>, commands: L
           val actorLocation = deck.bodies[actor]!!.position
           val mapAvailableTarget = mapAvailableTarget(world, screenTransform, actorLocation)
           val previousTarget = targets[actor]
-          val nextTarget = if (previousTarget != null && mapAvailableTarget(previousTarget) != null)
+          val nextTarget = if (previousTarget != null && actorLocation.distance(deck.bodies[previousTarget]!!.position) < maxTargetRange) //  && mapAvailableTarget(previousTarget) != null
             checkTargetChange(world, mapAvailableTarget, screenTransform, actor, actorLocation, commands, previousCommands, previousTarget)
           else {
             val availableTargets = getAvailableTargets(mapAvailableTarget, actor, deck.characters.keys)
