@@ -23,6 +23,7 @@ import simulation.intellect.updateSpirit
 import simulation.main.Deck
 import simulation.main.World
 import simulation.misc.Definitions
+import simulation.misc.getFreedomTable
 import simulation.particles.updateParticleEffect
 import simulation.physics.CollisionGroups
 import simulation.physics.updateBodies
@@ -31,12 +32,13 @@ fun updateEntities(definitions: Definitions, world: World, events: Events): (Dec
     { deck ->
       val delta = simulationDelta
       val dice = world.dice
+      val freedomTable = getFreedomTable(deck)
       deck.copy(
           actions = updateActions(world.definitions, deck, events),
           ambientSounds = updateAmbientAudio(dice, deck),
           animations = mapTable(deck.animations, updateCharacterAnimation(deck, definitions.animations, delta)),
           bodies = mapTable(deck.bodies, updateBodies(world.realm.grid, deck, events, delta)),
-          characterRigs = mapTable(deck.characterRigs, updateCharacterRig(world.bulletState, CollisionGroups.walkable, deck.bodies, deck.collisionObjects, deck.thirdPersonRigs, events, delta)),
+          characterRigs = mapTable(deck.characterRigs, updateCharacterRig(world.bulletState, CollisionGroups.walkable, deck.bodies, deck.collisionObjects, deck.thirdPersonRigs, freedomTable, events, delta)),
           accessories = mapTable(deck.accessories, updateAccessory(events)),
           attachments = mapTable(deck.attachments, updateAttachment(events)),
           cyclesFloat = mapTableValues(deck.cyclesFloat, updateFloatCycle(delta)),
@@ -47,7 +49,7 @@ fun updateEntities(definitions: Definitions, world: World, events: Events): (Dec
           particleEffects = mapTableValues(deck.particleEffects, deck.bodies, updateParticleEffect(definitions.particleEffects, dice, delta)),
           sounds = mapTableValues(deck.sounds, updateSound(delta)),
           spirits = mapTable(deck.spirits, updateSpirit(world, delta)),
-          thirdPersonRigs = mapTable(deck.thirdPersonRigs, updateThirdPersonCamera(world.bulletState.dynamicsWorld, CollisionGroups.affectsCamera, events, deck.bodies, deck.characterRigs, deck.targets, delta)),
+          thirdPersonRigs = mapTable(deck.thirdPersonRigs, updateThirdPersonCamera(world.bulletState.dynamicsWorld, CollisionGroups.affectsCamera, events, deck.bodies, deck.characterRigs, deck.targets, freedomTable, delta)),
           timersInt = updateIntTimers(events)(deck.timersInt),
           timersFloat = mapTableValues(deck.timersFloat, updateFloatTimer(delta))
       )
