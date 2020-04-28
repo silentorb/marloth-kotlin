@@ -1,6 +1,7 @@
 package marloth.definition
 
 import marloth.definition.data.Creatures
+import silentorb.mythic.debugging.getDebugInt
 
 enum class DistributionGroup {
   cloud,
@@ -27,5 +28,5 @@ fun scalingDistributions(): DistributionMap = mapOf(
 fun fixedDistributions(): DistributionMap =
     mapOf(
         DistributionGroup.monster to 3,
-        DistributionGroup.victoryKey to 3
+        DistributionGroup.victoryKey to (getDebugInt("VICTORY_KEY_COUNT") ?: 3)
     )

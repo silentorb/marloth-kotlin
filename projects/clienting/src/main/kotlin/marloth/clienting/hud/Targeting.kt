@@ -99,7 +99,7 @@ fun checkTargetChange(world: World, mapAvailableTarget: MapAvailableTarget, scre
     if (previousDirection != Vector2.zero)
       previousTarget
     else {
-      val availableTargets = getAvailableTargets(mapAvailableTarget, actor, world.deck.characters.keys.minus(previousTarget))
+      val availableTargets = getAvailableTargets(mapAvailableTarget, actor, world.deck.characters.filter { it.value.isAlive }.keys.minus(previousTarget))
 
       if (availableTargets.none())
         previousTarget
@@ -144,10 +144,11 @@ fun updateTargeting(world: World, client: Client, players: List<Id>, commands: L
           val actorLocation = deck.bodies[actor]!!.position
           val mapAvailableTarget = mapAvailableTarget(world, screenTransform, actorLocation)
           val previousTarget = targets[actor]
-          val nextTarget = if (previousTarget != null && actorLocation.distance(deck.bodies[previousTarget]!!.position) < maxTargetRange) //  && mapAvailableTarget(previousTarget) != null
+          val nextTarget = if (previousTarget != null && actorLocation.distance(deck.bodies[previousTarget]!!.position) < maxTargetRange
+              && deck.characters[previousTarget]!!.isAlive) //  && mapAvailableTarget(previousTarget) != null
             checkTargetChange(world, mapAvailableTarget, screenTransform, actor, actorLocation, commands, previousCommands, previousTarget)
           else {
-            val availableTargets = getAvailableTargets(mapAvailableTarget, actor, deck.characters.keys)
+            val availableTargets = getAvailableTargets(mapAvailableTarget, actor, deck.characters.filter { it.value.isAlive }.keys)
 
             if (availableTargets.none())
               null

@@ -2,6 +2,7 @@ package simulation.intellect.execution
 
 import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.characters.CharacterRig
+import silentorb.mythic.characters.maxNegativeLookVelocityXChange
 import silentorb.mythic.characters.maxPositiveLookVelocityXChange
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.CharacterCommand
@@ -19,17 +20,18 @@ fun spiritFacingChange(character: Id, course: Float, velocity: Float, turnSpeed:
     listOf()
   } else {
     val dir = if (course > 0f) positiveCommand else negativeCommand
-    val increment = turnSpeed * simulationDelta
-    val drift = increment * velocity / maxPositiveLookVelocityXChange()
-    if (absCourse <= drift)
-      listOf() // Don't need to rotate anymore.  The remaining momentum will get us there.
-    else
-      listOf(CharacterCommand(dir, character, 1f))
+//    val increment = turnSpeed * simulationDelta
+//    val overDrift = 2f
+//    val drift = overDrift * increment * velocity / maxNegativeLookVelocityXChange()
+//    if (absCourse <= drift)
+//      listOf() // Don't need to rotate anymore.  The remaining momentum will get us there.
+//    else
+    listOf(CharacterCommand(dir, character, 1f))
   }
 }
 
 fun spiritFacingChange2(character: Id, course: Float, velocity: Float, turnSpeed: Float,
-                       positiveCommand: CommandName, negativeCommand: CommandName): Commands {
+                        positiveCommand: CommandName, negativeCommand: CommandName): Commands {
   val absCourse = abs(course)
   return if (absCourse == 0f) {
     listOf()

@@ -58,7 +58,7 @@ fun newSlopeEdgeBlock(mesh: MeshName, height: Float, openPattern: Side, ledgeTur
         ),
         slots = listOf(
 //            Vector3(cellLength * (0.5f - ledgeTurns.toFloat() * 0.25f), cellLength * 0.25f, height)
-            Vector3(cellLength * 0.25f, cellLength * (0.5f + ledgeTurns.toFloat() * 0.25f), height)
+            Vector3(cellLength * 0.25f, cellLength * (0.5f + ledgeTurns.toFloat() * 0.25f), quarterStep)
         )
     )
 ) { input ->

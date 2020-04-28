@@ -31,7 +31,7 @@ fun updatePursuit(world: World, character: Id, knowledge: Knowledge, pursuit: Pu
   val target = knowledge.characters[pursuit.targetEnemy]
   val action = getActiveAction(deck, character)
   val targetPosition = if (target != null && action != null) {
-    target.position
+    target.position ?: target.lastPosition
   } else
     updateRoamingTargetPosition(world, character, knowledge, pursuit)
 

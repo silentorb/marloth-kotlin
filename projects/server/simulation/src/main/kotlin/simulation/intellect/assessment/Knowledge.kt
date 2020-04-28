@@ -4,11 +4,9 @@ import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.physics.BulletState
-import silentorb.mythic.physics.SimpleBody
 import silentorb.mythic.spatial.Vector3
 import simulation.entities.Character
 import simulation.entities.isAlly
-import simulation.entities.isEnemy
 import simulation.main.Deck
 import simulation.main.World
 import simulation.misc.Realm
@@ -16,11 +14,11 @@ import simulation.misc.Realm
 data class CharacterMemory(
     val lastSeen: Float,
     val id: Id,
-    override val position: Vector3,
-    val nearestNode: Id,
+    val lastPosition: Vector3,
+    val position: Vector3?,
     val faction: Id,
     val targetable: Boolean
-) : SimpleBody
+)
 
 data class Knowledge(
 //    val grid: MapGrid,
@@ -56,15 +54,20 @@ fun updateCharacterKnowledge(world: World, character: Id, knowledge: Knowledge, 
         Pair(id, CharacterMemory(
             lastSeen = 0f,
             id = id,
+            lastPosition = body.position,
             position = body.position,
-            nearestNode = body.nearestNode,
             faction = targetCharacter.faction,
             targetable = targetCharacter.isAlive
         ))
       }
 
   return knowledge.characters
-      .mapValues { (_, it) -> it.copy(lastSeen = it.lastSeen + delta) }
+      .mapValues { (_, it) ->
+        it.copy(
+            lastSeen = it.lastSeen + delta,
+            position = null
+        )
+      }
       .filter { (_, it) -> it.lastSeen < memoryLifetime }
       .plus(fresh)
 }

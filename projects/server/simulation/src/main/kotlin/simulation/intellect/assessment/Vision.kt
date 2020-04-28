@@ -71,7 +71,7 @@ fun canSee(realm: Realm, bulletState: BulletState, deck: Deck, lightRatings: Tab
       && isInAngleOfView(deck.characterRigs[viewer]!!.facingVector, viewerBody, targetBody, fieldOfView)
       && lightRatings[target]!! + nearMod(distance) >= minimumLightRating
       && !isHiddenByHome(realm.grid, deck, viewer, target)
-      && firstRayHit(bulletState.dynamicsWorld, viewerBody.position, targetBody.position, CollisionGroups.tangibleMask) != null
+      && firstRayHit(bulletState.dynamicsWorld, viewerBody.position + Vector3.up, targetBody.position + Vector3.up, CollisionGroups.tangibleMask)?.collisionObject == target
   result
 }
 

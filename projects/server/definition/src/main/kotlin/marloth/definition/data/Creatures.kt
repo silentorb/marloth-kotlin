@@ -11,7 +11,7 @@ object Creatures {
       health = 200,
       accessories = listOf(AccessoryId.shotgun.name),
       depictionType = DepictionType.child,
-      maxSpeed = 5f,
+      maxSpeed = 6f,
       deathSound = Sounds.girlScream,
       damageMultipliers = mapOf()
   )
@@ -20,7 +20,7 @@ object Creatures {
       health = 200,
       accessories = listOf(AccessoryId.rocketLauncher.name),
       depictionType = DepictionType.child,
-      maxSpeed = 4f,
+      maxSpeed = 5f,
       deathSound = Sounds.girlScream,
       damageMultipliers = mapOf()
   )

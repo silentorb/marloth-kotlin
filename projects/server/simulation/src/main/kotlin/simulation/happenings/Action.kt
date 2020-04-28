@@ -43,7 +43,9 @@ fun updateActions(definitions: Definitions, deck: Deck, events: Events): Table<A
 
 fun getActionTarget(deck: Deck, character: Id): Vector3? {
   val spirit = deck.spirits[character]
-  return spirit?.pursuit?.targetPosition
+  // Cheat a little since the AI target position memory may be a little outdated
+  // and in this case a little cheating could just be seen as anticipating
+  return deck.bodies[spirit?.pursuit?.targetEnemy]?.position ?: spirit?.pursuit?.targetPosition
 }
 
 fun eventsFromTryUseAbility(world: World): (TryUseAbilityEvent) -> Events = { event ->

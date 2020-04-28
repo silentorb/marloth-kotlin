@@ -40,13 +40,15 @@ fun aimWeapon(world: World, character: Id, baseOffset: Vector3): Vector3 {
     baseOffset
 }
 
-fun spiritAttack(world: World, character: Id, knowledge: Knowledge, pursuit: Pursuit): Commands {
-  val attacker = character
+fun spiritAttack(world: World, attacker: Id, knowledge: Knowledge, pursuit: Pursuit): Commands {
   val target = knowledge.characters[pursuit.targetEnemy]
-  return if (target != null) {
+  return if (target?.position != null) {
     val body = world.deck.bodies[attacker]!!
-    val offset = aimWeapon(world, character, target.position - body.position)
-    spiritNeedsFacing(world, character, offset, 0.05f) {
+    if (target.position.distance(world.deck.bodies[pursuit.targetEnemy]!!.position) > 0.3f) {
+      println("Warning, large discrepancy between AI attack target locations")
+    }
+    val offset = aimWeapon(world, attacker, target.position - body.position)
+    spiritNeedsFacing(world, attacker, offset, 0.2f) {
       listOf(CharacterCommand(CharacterCommands.ability, attacker))
     }
   } else

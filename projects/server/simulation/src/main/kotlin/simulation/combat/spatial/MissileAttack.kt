@@ -29,7 +29,7 @@ fun missileAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinit
                   velocity = vector * weapon.velocity
               ),
               collisionShape = CollisionObject(
-                  shape = Sphere(0.3f),
+                  shape = Sphere(0.2f),
                   groups = CollisionGroups.dynamic,
                   mask = CollisionGroups.standardMask
               ),

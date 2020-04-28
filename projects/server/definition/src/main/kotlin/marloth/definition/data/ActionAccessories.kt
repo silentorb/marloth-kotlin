@@ -50,7 +50,7 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         ),
         weapon = WeaponDefinition(
             attackMethod = AttackMethod.missile,
-            damageRadius = 2f,
+            damageRadius = 1f,
             velocity = 20f,
             damageFalloff = 1f,
             damages = listOf(
