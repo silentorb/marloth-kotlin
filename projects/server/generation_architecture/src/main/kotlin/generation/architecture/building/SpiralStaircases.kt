@@ -20,7 +20,7 @@ val curvedStaircases = blockBuilder() { input ->
   val stepWidth = meshInfo.shape!!.x
   val sweepLength = Pi * 2f
 
-  val baseAngle = applyTurns(input.turns)
+  val baseAngle = applyTurnsOld(input.turns)
 
   val stairHeight = cellLength
   val heightStep = 0.3f

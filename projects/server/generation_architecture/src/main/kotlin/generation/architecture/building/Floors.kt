@@ -32,7 +32,7 @@ fun halfFloorMesh(mesh: MeshName, offset: Vector3 = Vector3.zero, orientation: Q
 
 fun diagonalHalfFloorMesh(mesh: MeshName, height: Float) =
     blockBuilder { input ->
-      val angle = applyTurns(input.turns)
+      val angle = applyTurnsOld(input.turns)
 //      val position = Vector3(-5f, 5f, 0f).transform(Matrix.identity.rotateZ(angle))
 //      val position = Vector3(-5f, -5f, -0.01f)
       val position = Vector3(0f, 0f, height)
@@ -45,27 +45,27 @@ fun newSlopedFloorMesh(mesh: MeshName, height: Float) = blockBuilder(down = impa
   val meshInfo = input.general.config.meshes[mesh]!!
   val slopeAngle = asin(cellLength / 4f / meshInfo.shape!!.x) - 0.007f
   val orientation = Quaternion()
-      .rotateZ(applyTurns(input.turns))
+      .rotateZ(applyTurnsOld(input.turns))
       .rotateX(slopeAngle)
 //  listOf()
   floorMeshBuilder(mesh, offset = Vector3(0f, 0f, height + cellLength / 8f), orientation = orientation)(input)
 }
 
-fun newSlopeEdgeBlock(mesh: MeshName, height: Float, openPattern: Side, turns: Int) = BlockBuilder(
+fun newSlopeEdgeBlock(mesh: MeshName, height: Float, openPattern: Side, ledgeTurns: Int) = BlockBuilder(
     block = Block(
         sides = mapOf(
-            getTurnDirection(turns) to openPattern
+            getTurnDirection(ledgeTurns) to openPattern
         ),
         slots = listOf(
-//            Vector3(cellLength * 0.25f, cellLength * 0.25f, height)
-            Vector3(cellLength * (0.5f - turns.toFloat() * 0.25f), cellLength * 0.25f, height)
+//            Vector3(cellLength * (0.5f - ledgeTurns.toFloat() * 0.25f), cellLength * 0.25f, height)
+            Vector3(cellLength * 0.25f, cellLength * (0.5f + ledgeTurns.toFloat() * 0.25f), height)
         )
     )
 ) { input ->
 //  val side = getTurnedSide(input.sides, input.turns + turns)!!
 //  if (side.any { openPattern.contains(it) }) {
-  val orientation = Quaternion().rotateZ(applyTurns(input.turns + 1))
-  val offset = Quaternion().rotateZ(applyTurns(input.turns + turns))
+  val orientation = Quaternion().rotateZ(applyTurnsOld(input.turns + 1))
+  val offset = Quaternion().rotateZ(applyTurnsOld(input.turns + ledgeTurns))
       .transform(Vector3(0f, cellLength / 4f, 0f))
   val position = offset + Vector3(0f, 0f, height)
   floorMeshBuilder(mesh, offset = position, orientation = orientation)(input)

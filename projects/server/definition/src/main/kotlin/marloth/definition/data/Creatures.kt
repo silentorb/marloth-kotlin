@@ -40,8 +40,8 @@ object Creatures {
       maxSpeed = 2.5f,
       deathSound = Sounds.hogDeath,
       ambientSounds = listOf(
-          Sounds.hogAmbient01.name,
-          Sounds.hogAmbient03.name
+//          Sounds.hogAmbient01.name,
+//          Sounds.hogAmbient03.name
       )
   )
 

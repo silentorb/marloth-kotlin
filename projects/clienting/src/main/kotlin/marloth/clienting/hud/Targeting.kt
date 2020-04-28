@@ -129,7 +129,8 @@ fun updateTargeting(world: World, client: Client, players: List<Id>, commands: L
   val newTargets = toggleEvents
       .filter { !targets.containsKey(it) }
 
-  val candidates = targets.keys.minus(toggleEvents) + newTargets
+  val candidates = (targets.keys.minus(toggleEvents) + newTargets)
+      .filter { deck.characters[it]!!.isAlive }
 
   return if (candidates.none())
     mapOf()

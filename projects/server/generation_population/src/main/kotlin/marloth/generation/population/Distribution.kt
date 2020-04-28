@@ -6,6 +6,7 @@ import marloth.definition.DistributionGroup
 import marloth.definition.enemyDistributions
 import marloth.definition.fixedDistributions
 import marloth.definition.scalingDistributions
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.IdSource
@@ -64,6 +65,14 @@ fun absoluteSlots(cells: CellMap): (Vector3i) -> List<Vector3> = { location ->
   cells[location]!!.slots.map { point + it }
 }
 
+// Only used for debug purposes
+fun getAllSlots(grid: MapGrid): List<Vector3> {
+  return grid.cells
+      .filter { it.value.slots.any() }
+      .keys
+      .flatMap(absoluteSlots(grid.cells))
+}
+
 fun getGroupDistributions(dice: Dice, grid: MapGrid): Map<DistributionGroup, List<Vector3>> {
   if (getDebugString("NO_OBJECTS") != null)
     return mapOf()
@@ -114,16 +123,18 @@ fun populateMonsters(config: GenerationConfig, locations: List<Vector3>, nextId:
 }
 
 fun populateRooms(config: GenerationConfig, nextId: IdSource, dice: Dice, grid: MapGrid): List<IdHand> {
-  val groupDistributions = getGroupDistributions(dice, grid)
-  val monsters = if (config.includeEnemies)
-    populateMonsters(config, (groupDistributions[DistributionGroup.monster]
+  return if (getDebugBoolean("DEBUG_CELL_SLOTS")) {
+    getAllSlots(grid)
+        .flatMap(newVictoryKeyPickup(nextId))
+  } else {
+    val groupDistributions = getGroupDistributions(dice, grid)
+    val monsters = populateMonsters(config, (groupDistributions[DistributionGroup.monster]
         ?: listOf()).take(monsterLimit()), nextId, dice)
-  else
-    listOf()
 
-  val keys = groupDistributions
-      .getOrElse(DistributionGroup.victoryKey) { listOf() }
-      .flatMap(newVictoryKeyPickup(nextId))
+    val keys = groupDistributions
+        .getOrElse(DistributionGroup.victoryKey) { listOf() }
+        .flatMap(newVictoryKeyPickup(nextId))
 
-  return monsters + keys
+    monsters + keys
+  }
 }

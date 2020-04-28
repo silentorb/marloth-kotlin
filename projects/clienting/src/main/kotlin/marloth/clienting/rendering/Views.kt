@@ -24,7 +24,7 @@ fun firstPersonCamera(body: Body, character: CharacterRig, isAlive: Boolean): Ca
 
 fun thirdPersonCamera(body: Body, thirdPersonRig: ThirdPersonRig): Camera {
   val orientation = getCameraOrientation(thirdPersonRig.rotation)
-  val location = getCameraLocation(body.position, orientation, thirdPersonRig.distance)
+  val location = getCameraLocation(thirdPersonRig.pivotLocation, orientation, thirdPersonRig.distance)
   return Camera(ProjectionType.perspective, location, orientation, 45f)
 }
 

@@ -57,7 +57,8 @@ fun gatherHudData(world: World, player: Id, view: ViewId): HudData? {
         debugInfo = listOf(
 //            "LR: ${floatToRoundedString(lightRating(deck, player))}",
 //            floatToRoundedString(body.velocity.length()),
-            "Keys: ${victoryKeyStats.collected}/${victoryKeyStats.total}"
+            "Keys: ${victoryKeyStats.collected}/${victoryKeyStats.total}",
+            floatToRoundedString(deck.thirdPersonRigs[player]!!.rotation.x)
 //            deck.characterRigs[player]!!.hoverCamera!!.pitch.toString()
 //            "${cell.x} ${cell.y} ${cell.z}",
 //            "${body.position.x.roundToInt()} ${body.position.y.roundToInt()} ${body.position.z.roundToInt()}"

@@ -1,11 +1,10 @@
 package generation.architecture.building
 
-import generation.architecture.old.applyTurns
+import generation.architecture.old.applyTurnsOld
 import simulation.misc.cellHalfLength
 import generation.architecture.definition.impassableHorizontal
 import generation.architecture.definition.impassableVertical
 import generation.general.Block
-import generation.general.Side
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Vector3
 import marloth.scenery.enums.MeshId
@@ -15,7 +14,7 @@ fun randomDiagonalWall(height: Float = 0f) = blockBuilder { input ->
   val config = input.general.config
   val biome = input.biome
   val position = input.position + Vector3(cellHalfLength) + Vector3(0f, 0f, height)
-  val angle = applyTurns(input.turns) + Pi
+  val angle = applyTurnsOld(input.turns) + Pi
   val scale = Vector3(1.42f, 1f, 1f)
   val mesh = getTruncatedWallMesh(input, height)
   listOf(newWallInternal(config, mesh, position, angle - Pi * 0.25f, biome, scale = scale))

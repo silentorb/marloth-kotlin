@@ -1,5 +1,6 @@
 package simulation.intellect.assessment
 
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.physics.BulletState
@@ -34,13 +35,17 @@ fun newKnowledge() =
 const val memoryLifetime: Float = 5f // In seconds
 
 fun getKnownCharacters(realm: Realm, bulletState: BulletState, deck: Deck, lightRatings: Table<Float>, character: Id): List<Id> {
-  val faction = deck.characters[character]!!.faction
-  return deck.characters.keys
-      .minus(character)
-      .filter { id ->
-        isAlly(deck.characters, faction)(id) ||
-            canSee(realm, bulletState, deck, lightRatings, character)(id)
-      }
+  return if (getDebugBoolean("BLIND_AI"))
+    listOf()
+  else {
+    val faction = deck.characters[character]!!.faction
+    deck.characters.keys
+        .minus(character)
+        .filter { id ->
+          isAlly(deck.characters, faction)(id) ||
+              canSee(realm, bulletState, deck, lightRatings, character)(id)
+        }
+  }
 }
 
 fun updateCharacterKnowledge(world: World, character: Id, knowledge: Knowledge, lightRatings: Table<Float>, delta: Float): Table<CharacterMemory> {

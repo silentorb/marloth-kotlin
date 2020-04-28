@@ -107,8 +107,11 @@ fun wallPlacementFilter(dice: Dice, biome: BiomeInfo) =
 //  return dice.takeOne(meshPool)
 //}
 
-fun applyTurns(turns: Int): Float =
+fun applyTurnsOld(turns: Int): Float =
     (turns.toFloat() - 1) * Pi * 0.5f
+
+fun applyTurns(turns: Int): Float =
+    turns.toFloat() * Pi * 0.5f
 
 fun getTurnDirection(turns: Int): Direction =
     when ((turns + 4) % 4) {
