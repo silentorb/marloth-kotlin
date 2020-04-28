@@ -70,13 +70,13 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         ),
         action = ActionDefinition(
             cooldown = 3f,
-            range = 20f,
+            range = 25f,
             animation = AnimationId.shootPistol.name
         ),
         weapon = WeaponDefinition(
             attackMethod = AttackMethod.missile,
             damageRadius = 2f,
-            velocity = 20f,
+            velocity = 30f,
             damageFalloff = 1f,
             missileMesh = MeshId.missile.name,
             damages = listOf(
