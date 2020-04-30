@@ -5,6 +5,7 @@ import marloth.clienting.audio.loadSounds
 import marloth.clienting.gatherFontSets
 import marloth.clienting.hud.cooldownMeshKey
 import marloth.clienting.hud.createCooldownCircleMesh
+import marloth.clienting.rendering.createMeshes
 import silentorb.mythic.drawing.setGlobalFonts
 import silentorb.mythic.glowing.Glow
 import silentorb.mythic.glowing.prepareScreenFrameBuffer

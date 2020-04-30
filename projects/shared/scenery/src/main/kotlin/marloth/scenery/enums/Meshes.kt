@@ -1,8 +1,9 @@
 package marloth.scenery.enums
 
 enum class MeshId {
-  candle,
   billboard,
+  candle,
+  hollowCircle,
   cube,
   eyeball,
   grenadeLauncher,

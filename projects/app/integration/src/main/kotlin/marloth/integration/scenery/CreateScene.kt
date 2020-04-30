@@ -2,10 +2,10 @@ package marloth.integration.scenery
 
 import marloth.clienting.rendering.GameScene
 import marloth.clienting.rendering.createCamera
-import silentorb.mythic.characters.ViewMode
+import marloth.clienting.rendering.getMovementRangeLayer
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.SceneLayer
-import silentorb.mythic.scenery.*
+import silentorb.mythic.scenery.Scene
 import simulation.main.Deck
 import simulation.misc.Definitions
 
@@ -18,6 +18,7 @@ fun createScene(definitions: Definitions, deck: Deck): (Id) -> GameScene = { pla
     null
 
   val targetingLayer = getTargetingLayer(deck, player)
+  val movementRangeLayer = getMovementRangeLayer(definitions, deck, player)
 
   val layers = listOf(
       SceneLayer(
@@ -32,7 +33,7 @@ fun createScene(definitions: Definitions, deck: Deck): (Id) -> GameScene = { pla
           elements = gatherParticleElements(deck, camera.position),
           useDepth = false
       )
-  ) + listOfNotNull(equipmentLayer, targetingLayer)
+  ) + listOfNotNull(movementRangeLayer, equipmentLayer, targetingLayer)
 
   val elementLights = layers.flatMap { layer ->
     layer.elements.flatMap { it.lights }

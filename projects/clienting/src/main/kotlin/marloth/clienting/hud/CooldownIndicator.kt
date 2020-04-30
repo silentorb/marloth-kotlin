@@ -1,6 +1,5 @@
 package marloth.clienting.hud
 
-import marloth.clienting.menus.black
 import marloth.clienting.menus.textStyles
 import org.lwjgl.opengl.GL11
 import silentorb.mythic.bloom.*
@@ -21,12 +20,13 @@ const val cooldownMeshKey = "cooldown"
 fun createCooldownCircleMesh(): GeneralMesh {
   val dependencies = getStaticCanvasDependencies()
   val vertexSchema = dependencies.vertexSchemas.simple
-  val values = listOf(0f, 0f).plus(createCircleList(1f, cooldownCircleResolution, Pi, -1f))
+  val resolution = cooldownCircleResolution
+  val values = listOf(0f, 0f).plus(createCircleList(1f, resolution, Pi, -1f))
   return GeneralMesh(
       vertexSchema = vertexSchema,
       primitiveType = PrimitiveType.triangles,
       vertexBuffer = newVertexBuffer(vertexSchema).load(createFloatBuffer(values)),
-      count = values.size / 2
+      count = resolution
   )
 }
 

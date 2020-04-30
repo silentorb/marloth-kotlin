@@ -22,7 +22,7 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         ),
         action = ActionDefinition(
             cooldown = 2f,
-            range = 0f
+            duration = 3f
         )
     ),
 

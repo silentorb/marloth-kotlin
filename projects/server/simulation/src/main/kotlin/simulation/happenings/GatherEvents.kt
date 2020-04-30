@@ -39,7 +39,7 @@ fun getSimulationEvents(definitions: Definitions, previous: Deck, world: World, 
       eventsFromItemPickups(world, collisions),
       eventsFromVictoryKeys(world),
       eventsFromRespawnCountdowns(previous, world.deck),
-      mobilityEvents(world.deck, commands)
+      mobilityEvents(world.definitions, world.deck, commands)
   )
       .flatten()
 

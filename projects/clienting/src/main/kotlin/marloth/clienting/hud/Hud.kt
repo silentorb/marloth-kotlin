@@ -37,15 +37,15 @@ val df = java.text.DecimalFormat("#0.00")
 
 private fun playerStats(data: HudData): Flower {
   val rows = listOf(
-      label(textStyle, "Health: ${resourceString(data.health)}"),
-      label(textStyle, "Sanity: ${resourceString(data.sanity)}")
+      label(textStyle, "Health: ${resourceString(data.health)}")
+//      label(textStyle, "Sanity: ${resourceString(data.sanity)}")
 //      label(textStyle, "Debug Range: ${getDebugRangeValue()}")
 //      mythic.bloom.localizedLabel(textStyle, characterVisibility(data, player)),
 //      mythic.bloom.localizedLabel(textStyle, "vel: " + df.format(world.deck.bodies[player]!!.velocity.length()))
   )
-      .plus(data.buffs.map {
-        label(textStyle, "${it.first.type.name} ${it.second}")
-      })
+//      .plus(data.buffs.map {
+//        label(textStyle, "${it.first.type.name} ${it.second}")
+//      })
       .plus(data.debugInfo.map {
         label(textStyle, it)
       })

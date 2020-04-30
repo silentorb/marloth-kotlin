@@ -7,8 +7,9 @@ import simulation.misc.Definitions
 
 data class ActionDefinition(
     val cooldown: Float,
-    val range: Float,
-    val animation: AnimationName? = null
+    val range: Float = 0f,
+    val animation: AnimationName? = null,
+    val duration: Float = 0f
 )
 
 data class Action(

@@ -12,6 +12,7 @@ import silentorb.mythic.timing.FloatTimer
 import simulation.happenings.NewHandEvent
 import simulation.main.Deck
 import simulation.main.Hand
+import simulation.misc.Definitions
 
 private val mobilityCommands = setOf(
     CharacterCommands.moveUp,
@@ -23,7 +24,7 @@ private val mobilityCommands = setOf(
 fun isMobilityCommand(command: CharacterCommand): Boolean =
     mobilityCommands.contains(command.type)
 
-fun newMobilityModifierEvent(actor: Id, source: Id) =
+fun newMobilityModifierEvent(actor: Id, source: Id, duration: Float) =
     NewHandEvent(
         hand = Hand(
             modifier = Modifier(
@@ -31,11 +32,11 @@ fun newMobilityModifierEvent(actor: Id, source: Id) =
                 target = actor,
                 source = source
             ),
-            timerFloat = FloatTimer(3f)
+            timerFloat = FloatTimer(duration)
         )
     )
 
-fun mobilityEvents(deck: Deck, commands: List<CharacterCommand>): Events {
+fun mobilityEvents(definitions: Definitions, deck: Deck, commands: List<CharacterCommand>): Events {
   val charactersRequestingMovement = commands
       .filter(::isMobilityCommand)
       .map { it.target }
@@ -47,12 +48,14 @@ fun mobilityEvents(deck: Deck, commands: List<CharacterCommand>): Events {
         val accessory = deck.accessories.entries
             .first { it.value.type == AccessoryId.mobility.name && it.value.owner == actor }
 
+        val duration = definitions.actions[accessory.value.type]!!.duration
+
         listOf(
             UseAction(
                 actor = actor,
                 action = accessory.key
             ),
-            newMobilityModifierEvent(actor, accessory.key)
+            newMobilityModifierEvent(actor, accessory.key, duration)
         )
       }
 }
