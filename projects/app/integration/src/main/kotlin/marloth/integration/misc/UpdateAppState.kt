@@ -177,7 +177,7 @@ data class GameHooks(
 fun layoutPlayerGui(app: GameApp, appState: AppState): (Id, Vector2i) -> Box = { player, dimensions ->
   val world = appState.worlds.lastOrNull()
   val hudData = if (world != null)
-    gatherHudData(world, player, appState.client.playerViews[player]
+    gatherHudData(world, app.client.textResources, player, appState.client.playerViews[player]
         ?: ViewId.none)
   else
     null

@@ -10,9 +10,9 @@ import silentorb.mythic.happenings.EventTrigger
 
 data class Modifier(
     val type: ModifierId,
-    val strength: Int,
+    val strength: Int = 1,
     val target: Id,
-    val source: Id?
+    val source: Id? = null
 )
 
 data class RelativeModifier(

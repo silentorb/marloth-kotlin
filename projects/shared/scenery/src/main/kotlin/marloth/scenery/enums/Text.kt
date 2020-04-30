@@ -15,6 +15,8 @@ enum class Text {
   id_damageBurning,
   id_damagePoisoned,
   id_grenadeLauncher,
+  id_mobile,
+  id_mobility,
   id_resistanceCold,
   id_resistanceFire,
   id_resistancePoison,

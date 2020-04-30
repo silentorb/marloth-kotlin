@@ -15,7 +15,8 @@ val updateTimer: (IntTimer) -> IntTimer = { timer ->
 }
 
 data class FloatTimer(
-    val duration: Float
+    val duration: Float,
+    val original: Float = duration
 )
 
 fun updateFloatTimer(delta: Float): (FloatTimer) -> FloatTimer = { timer ->

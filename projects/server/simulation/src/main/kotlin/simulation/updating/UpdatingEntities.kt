@@ -23,7 +23,7 @@ import simulation.intellect.updateSpirit
 import simulation.main.Deck
 import simulation.main.World
 import simulation.misc.Definitions
-import simulation.misc.getFreedomTable
+import simulation.movement.getFreedomTable
 import simulation.particles.updateParticleEffect
 import simulation.physics.CollisionGroups
 import simulation.physics.updateBodies

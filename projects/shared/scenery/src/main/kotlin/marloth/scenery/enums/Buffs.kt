@@ -15,6 +15,7 @@ enum class ModifierId {
   damageBurning,
   damageChilled,
   damagePoisoned,
+  mobile,
   resistanceCold,
   resistanceFire,
   resistancePoison

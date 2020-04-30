@@ -7,19 +7,22 @@ import silentorb.mythic.bloom.*
 import silentorb.mythic.bloom.next.*
 
 import silentorb.mythic.spatial.Vector2i
-import silentorb.mythic.debugging.getDebugRangeValue
 import simulation.entities.Interactable
 import silentorb.mythic.accessorize.Modifier
-import silentorb.mythic.characters.ViewMode
 import simulation.combat.general.ResourceContainer
 
 private val textStyle = textStyles.gray
+
+data class Cooldown(
+    val name: String,
+    val value: Float
+)
 
 data class HudData(
     val health: ResourceContainer,
     val sanity: ResourceContainer,
     val interactable: Interactable?,
-    val cooldown: Float?,
+    val cooldowns: List<Cooldown>,
     val buffs: List<Pair<Modifier, Int>>,
     val debugInfo: List<String> = listOf()
 )
@@ -86,7 +89,7 @@ fun hudLayout(textResources: TextResources, data: HudData): Flower {
   return compose(listOfNotNull(
       playerStats(data),
       if (data.interactable != null) interactionDialog(textResources, data.interactable) else null,
-      if (data.cooldown != null) cooldownIndicatorPlacement(data.cooldown) else null//,
+      if (data.cooldowns.any()) cooldownIndicatorPlacement(data.cooldowns) else null//,
 //      if (data.viewMode == ViewMode.firstPerson) reticlePlacement() else null
   ))
 }

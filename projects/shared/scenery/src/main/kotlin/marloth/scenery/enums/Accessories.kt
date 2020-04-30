@@ -5,6 +5,7 @@ enum class AccessoryId {
   claws,
   victoryKey,
   grenadeLauncher,
+  mobility,
   rocketLauncher,
   pistol,
   resistanceCold,

@@ -25,7 +25,8 @@ data class PerformanceDefinitions(
 data class Performance(
     val target: Id,
     val animation: AnimationName,
-    val deferredEvents: Map<String, GameEvent>
+    val sourceAction: Id? = null,
+    val deferredEvents: Map<String, GameEvent> = mapOf()
 )
 
 fun performancesFromEvents(definitions: PerformanceDefinitions, deck: PerformanceDeck, events: Events): List<Performance> {
@@ -38,6 +39,7 @@ fun performancesFromEvents(definitions: PerformanceDefinitions, deck: Performanc
       Performance(
           target = event.actor,
           animation = animation,
+          sourceAction = event.action,
           deferredEvents = event.deferredEvents
       )
     } else

@@ -9,7 +9,7 @@ import simulation.entities.fieldOfView360
 object Creatures {
   val soldier = CharacterDefinition(
       health = 200,
-      accessories = listOf(AccessoryId.shotgun.name),
+      accessories = listOf(AccessoryId.shotgun.name, AccessoryId.mobility.name),
       depictionType = DepictionType.child,
       maxSpeed = 6f,
       deathSound = Sounds.girlScream,
@@ -18,7 +18,7 @@ object Creatures {
 
   val magician = CharacterDefinition(
       health = 200,
-      accessories = listOf(AccessoryId.rocketLauncher.name),
+      accessories = listOf(AccessoryId.rocketLauncher.name, AccessoryId.mobility.name),
       depictionType = DepictionType.child,
       maxSpeed = 5f,
       deathSound = Sounds.girlScream,
@@ -27,7 +27,7 @@ object Creatures {
 
   val ally = CharacterDefinition(
       health = 100,
-      accessories = listOf(AccessoryId.pistol.name),
+      accessories = listOf(AccessoryId.pistol.name, AccessoryId.mobility.name),
       depictionType = DepictionType.child,
       maxSpeed = 2f,
       deathSound = Sounds.girlScream
@@ -35,7 +35,7 @@ object Creatures {
 
   val hogMan = CharacterDefinition(
       health = 100,
-      accessories = listOf(AccessoryId.pistol.name),
+      accessories = listOf(AccessoryId.pistol.name, AccessoryId.mobility.name),
       depictionType = DepictionType.person,
       maxSpeed = 2.5f,
       deathSound = Sounds.hogDeath,
@@ -57,7 +57,7 @@ object Creatures {
 
   val hound = CharacterDefinition(
       health = 100,
-      accessories = listOf(AccessoryId.claws.name),
+      accessories = listOf(AccessoryId.claws.name, AccessoryId.mobility.name),
       depictionType = DepictionType.hound,
       maxSpeed = 4f,
       deathSound = null,

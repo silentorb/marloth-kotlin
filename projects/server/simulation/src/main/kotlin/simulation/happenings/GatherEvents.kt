@@ -1,20 +1,19 @@
 package simulation.happenings
 
-import simulation.accessorize.eventsFromItemPickups
-import simulation.combat.spatial.eventsFromMissiles
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.filterCharacterCommandsFromEvents
 import silentorb.mythic.timing.emitCycleEvents
+import simulation.accessorize.eventsFromItemPickups
+import simulation.combat.spatial.eventsFromMissiles
 import simulation.combat.toSpatialCombatWorld
 import simulation.entities.eventsFromRespawnCountdowns
 import simulation.intellect.aliveSpirits
 import simulation.intellect.execution.pursueGoals
 import simulation.main.Deck
 import simulation.main.World
-import simulation.misc.Definitions
-import simulation.misc.eventsFromVictoryKeys
-import simulation.misc.toPerformanceDeck
-import simulation.misc.toPerformanceDefinitions
+import simulation.misc.*
+import simulation.movement.getFreedomTable
+import simulation.movement.mobilityEvents
 import simulation.physics.getBulletCollisions
 import simulation.updating.simulationDelta
 
@@ -28,6 +27,8 @@ fun getSimulationEvents(definitions: Definitions, previous: Deck, world: World, 
   val collisions = getBulletCollisions(world.bulletState, deck)
       .associateBy { it.first }
 
+  val freedomTable = getFreedomTable(deck)
+
   val events = listOf(
       externalEvents,
       eventsFromPerformances(definitions, deck),
@@ -37,9 +38,10 @@ fun getSimulationEvents(definitions: Definitions, previous: Deck, world: World, 
       eventsFromMissiles(toSpatialCombatWorld(world), collisions),
       eventsFromItemPickups(world, collisions),
       eventsFromVictoryKeys(world),
-      eventsFromRespawnCountdowns(previous, world.deck)
+      eventsFromRespawnCountdowns(previous, world.deck),
+      mobilityEvents(world.deck, commands)
   )
       .flatten()
 
-  return events.plus(eventsFromEvents(world, events))
+  return events.plus(eventsFromEvents(world, freedomTable, events))
 }

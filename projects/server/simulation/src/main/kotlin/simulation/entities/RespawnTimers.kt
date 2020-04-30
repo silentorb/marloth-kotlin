@@ -46,8 +46,7 @@ fun newRespawnCountdowns(nextId: IdSource, previous: Deck, next: Deck): List<IdH
       3f
     else {
       // Use the id as a cheap source of random entropy
-      val durationVariance = (id % 30).toFloat() / 10f
-      7f + durationVariance
+      15f + (id % 10).toFloat()
     }
     newRespawnCountdown(id, duration, character)
   }

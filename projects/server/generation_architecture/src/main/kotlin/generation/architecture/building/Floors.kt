@@ -58,7 +58,7 @@ fun newSlopeEdgeBlock(mesh: MeshName, height: Float, openPattern: Side, ledgeTur
         ),
         slots = listOf(
 //            Vector3(cellLength * (0.5f - ledgeTurns.toFloat() * 0.25f), cellLength * 0.25f, height)
-            Vector3(cellLength * 0.25f, cellLength * (0.5f + ledgeTurns.toFloat() * 0.25f), quarterStep)
+            Vector3(cellLength * 0.25f, cellLength * (0.5f + ledgeTurns.toFloat() * 0.25f), height - quarterStep)
         )
     )
 ) { input ->
@@ -69,6 +69,7 @@ fun newSlopeEdgeBlock(mesh: MeshName, height: Float, openPattern: Side, ledgeTur
       .transform(Vector3(0f, cellLength / 4f, 0f))
   val position = offset + Vector3(0f, 0f, height)
   floorMeshBuilder(mesh, offset = position, orientation = orientation)(input)
+//  listOf()
 //  } else
 //    listOf()
 }

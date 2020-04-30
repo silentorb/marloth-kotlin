@@ -29,6 +29,10 @@ fun staticModifiers(): Map<ModifierId, ModifierDefinition> = mapOf(
             amount = 0
         )
     ),
+    ModifierId.mobile to ModifierDefinition(
+        name = Text.id_mobile
+    ),
+
     ModifierId.resistanceCold to newResistanceModifier(Text.id_resistanceCold, DamageTypes.cold.name),
     ModifierId.resistanceFire to newResistanceModifier(Text.id_resistanceFire, DamageTypes.fire.name),
     ModifierId.resistancePoison to newResistanceModifier(Text.id_resistancePoison, DamageTypes.poison.name)

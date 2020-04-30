@@ -1,9 +1,10 @@
 package marloth.integration.clienting
 
+import marloth.clienting.hud.Cooldown
 import marloth.clienting.hud.HudData
+import marloth.clienting.menus.TextResources
 import marloth.clienting.menus.ViewId
 import silentorb.mythic.ent.Id
-import simulation.happenings.getActiveAction
 import simulation.main.World
 import simulation.misc.getPointCell
 import simulation.misc.getVictoryKeyStats
@@ -12,7 +13,7 @@ import kotlin.math.roundToInt
 fun floatToRoundedString(value: Float): String =
     ((value * 100).roundToInt().toFloat() / 100).toString()
 
-fun gatherHudData(world: World, player: Id, view: ViewId): HudData? {
+fun gatherHudData(world: World, textResources: TextResources, player: Id, view: ViewId): HudData? {
   val deck = world.deck
   val definitions = world.definitions
   val grid = world.realm.grid
@@ -24,26 +25,44 @@ fun gatherHudData(world: World, player: Id, view: ViewId): HudData? {
     val destructible = deck.destructibles[player]!!
     val body = deck.bodies[player]!!
 
-    val buffs = deck.modifiers
+    val modifiers = deck.modifiers
         .filter { it.value.target == player }
-        .map { Pair(deck.modifiers[it.key]!!, deck.timersInt[it.key]!!.duration) }
+
+    val buffs = modifiers
+        .map { Pair(deck.modifiers[it.key]!!, deck.timersInt[it.key]?.duration ?: 0) }
 
     val interactable = if (view == ViewId.none)
       deck.interactables[character.canInteractWith]
     else null
 
-    val action = getActiveAction(deck, player)
-    val cooldown = if (action != null) {
-      val inverse = deck.actions[action]?.cooldown!!
-      val accessory = deck.accessories[action]!!
-      val definition = definitions.actions[accessory.type]!!
-      val c = 1f - (inverse / definition.cooldown)
-      if (c == 1f)
-        null
-      else
-        c
-    } else
-      null
+    val cooldowns = deck.accessories
+        .filter { it.value.owner == player }
+        .mapNotNull { (accessory, accessoryRecord) ->
+          val cooldown = deck.actions[accessory]?.cooldown
+          if (cooldown != null && cooldown != 0f) {
+            val actionDefinition = definitions.actions[accessoryRecord.type]!!
+            val accessoryDefinition = definitions.accessories[accessoryRecord.type]!!
+            Cooldown(
+                name = textResources[accessoryDefinition.name]!!,
+                value = 1f - cooldown / actionDefinition.cooldown
+            )
+          } else
+            null
+        }
+        .plus(
+            modifiers
+                .mapNotNull { (id, modifier) ->
+                  val timer = deck.timersFloat[id]
+                  if (timer != null) {
+                    Cooldown(
+                        name = textResources[definitions.modifiers[modifier.type]!!.name]!!,
+                        value = 1f - timer.duration / timer.original
+                    )
+                  }
+                  else
+                    null
+                }
+        )
 
     val victoryKeyStats = getVictoryKeyStats(grid, deck)
 
@@ -52,11 +71,11 @@ fun gatherHudData(world: World, player: Id, view: ViewId): HudData? {
         health = destructible.health,
         sanity = character.sanity,
         interactable = interactable,
-        cooldown = cooldown,
+        cooldowns = cooldowns,
         buffs = buffs,
         debugInfo = listOf(
 //            "LR: ${floatToRoundedString(lightRating(deck, player))}",
-//            floatToRoundedString(body.velocity.length()),
+            floatToRoundedString(body.velocity.length()),
             "Keys: ${victoryKeyStats.collected}/${victoryKeyStats.total}",
             floatToRoundedString(deck.thirdPersonRigs[player]!!.rotation.x)
 //            deck.characterRigs[player]!!.hoverCamera!!.pitch.toString()

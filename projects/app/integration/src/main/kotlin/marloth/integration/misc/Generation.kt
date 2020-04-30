@@ -52,7 +52,7 @@ fun explodeBlockMap(rotatingConnections: RotatingConnections, blockBuilders: Col
                   block = block.copy(
                       sides = rotateSides(rotatingConnections, turns)(block.sides),
                       slots = block.slots.map { slot ->
-                        rotation.transform(slot - cellHalfLength) + cellHalfLength
+                        rotation.transform(slot - floorOffset) + floorOffset
                       }
                   ),
                   builder = if (builder != null) {

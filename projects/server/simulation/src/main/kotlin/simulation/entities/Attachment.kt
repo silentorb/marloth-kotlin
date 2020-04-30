@@ -83,7 +83,7 @@ fun applyBuff(deck: Deck, nextId: IdSource): (ApplyBuffEvent) -> Deck = { event 
     )
   else {
     val hand = Hand(
-        buff = Modifier(
+        modifier = Modifier(
             type = modifierType,
             strength = event.strength,
             target = event.target,

@@ -1,9 +1,6 @@
 package simulation.happenings
 
 import silentorb.mythic.accessorize.AccessoryName
-import simulation.combat.spatial.AttackEvent
-import simulation.combat.spatial.onAttack
-import simulation.combat.spatial.startAttack
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.happenings.Events
@@ -11,7 +8,7 @@ import silentorb.mythic.happenings.UseAction
 import silentorb.mythic.performing.Action
 import silentorb.mythic.performing.updateCooldown
 import silentorb.mythic.spatial.Vector3
-import simulation.combat.toSpatialCombatWorld
+import simulation.combat.spatial.startAttack
 import simulation.main.Deck
 import simulation.main.World
 import simulation.misc.Definitions
@@ -31,12 +28,8 @@ fun updateActions(definitions: Definitions, deck: Deck, events: Events): Table<A
   val actionEvents = events.filterIsInstance<UseAction>()
   val activated = actionEvents.map { it.action }
   return deck.actions.mapValues { (id, action) ->
-    val isActivated = activated.contains(id)
-    val accessory = deck.accessories[id]!!
-    val definition = definitions.actions[accessory.type]!!
-    val cooldown = definition.cooldown
     action.copy(
-        cooldown = updateCooldown(action, isActivated, cooldown, simulationDelta)
+        cooldown = updateCooldown(definitions, deck, activated, id, action, simulationDelta)
     )
   }
 }
@@ -50,18 +43,16 @@ fun getActionTarget(deck: Deck, character: Id): Vector3? {
 
 fun eventsFromTryUseAbility(world: World): (TryUseAbilityEvent) -> Events = { event ->
   val deck = world.deck
-  val action = getActiveAction(deck, event.actor)
-  val isPlayer = world.deck.players.containsKey(event.actor)
+  val actor = event.actor
+  val action = getActiveAction(deck, actor)
+  val isPlayer = world.deck.players.containsKey(actor)
   if (action != null && canUse(deck, action)) {
     val accessory = deck.accessories[action]!!
     when {
 
       world.definitions.weapons.containsKey(accessory.type) -> {
-        val target = getActionTarget(deck, event.actor)
-//        if (isPlayer)
-//          onAttack(toSpatialCombatWorld(world))(AttackEvent(event.actor, accessory.type, target))
-//        else
-        listOf(startAttack(event.actor, action, accessory.type, target))
+        val target = getActionTarget(deck, actor)
+        listOf(startAttack(actor, action, accessory.type, target))
       }
 
       else -> listOf()

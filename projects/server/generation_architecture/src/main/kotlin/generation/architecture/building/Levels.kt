@@ -48,7 +48,7 @@ fun explodeHeightBlocks(levelIndex: Int): Map<String, BlockBuilder> {
       "halfStepRoom$levelIndex" to BlockBuilder(
           block = Block(
               attributes = setOf(CellAttribute.traversable),
-              slots = squareOffsets(2).map { it + upper.height },
+              slots = squareOffsets(2).map { it + Vector3(0f, 0f, upper.height) },
               sides = sides(
                   up = extraHeadroom,
                   east = halfStepOptionalOpen,

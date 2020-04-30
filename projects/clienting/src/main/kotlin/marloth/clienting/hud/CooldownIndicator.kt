@@ -1,9 +1,9 @@
 package marloth.clienting.hud
 
+import marloth.clienting.menus.black
+import marloth.clienting.menus.textStyles
 import org.lwjgl.opengl.GL11
-import silentorb.mythic.bloom.Depiction
-import silentorb.mythic.bloom.centered
-import silentorb.mythic.bloom.depict
+import silentorb.mythic.bloom.*
 import silentorb.mythic.bloom.next.*
 import silentorb.mythic.drawing.SingleColorShader
 import silentorb.mythic.drawing.createCircleList
@@ -49,11 +49,19 @@ fun cooldownIndicator(radius: Float, color: Vector4, completion: Float): Depicti
   drawCooldown(canvas.pixelsToScalar, mesh, canvas.effects.singleColorShader, position, radius, color, completion)
 }
 
-fun cooldownIndicatorPlacement(completion: Float): Flower {
-  return div("b",
-      reverse = reverseOffset(left = centered, top = centered))(
-      div(forward = forwardDimensions(fixed(30), fixed(30)))(
-          depict(cooldownIndicator(50f, Vector4(1f, 1f, 1f, 0.3f), completion))
-      )
+fun cooldownIndicatorPlacement(cooldowns: List<Cooldown>): Flower {
+  return div("cooldown",
+      forward = forwardOffset(top = percentage(0.80f)),
+      reverse = reverseOffset(left = centered))(
+      list(horizontalPlane, 20)(cooldowns.map { cooldown ->
+        list(verticalPlane, 10)(listOf(
+            margin(20)(
+                label(textStyles.smallGray, cooldown.name)
+            ) depictBehind solidBackground(Vector4(0f, 0f, 0f, 0.9f)),
+            div(forward = forwardDimensions(fixed(30), fixed(30)))(
+                depict(cooldownIndicator(50f, Vector4(1f, 1f, 1f, 0.3f), cooldown.value))
+            ))
+        )
+      })
   )
 }

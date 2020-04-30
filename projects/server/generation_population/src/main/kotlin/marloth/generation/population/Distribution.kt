@@ -66,12 +66,11 @@ fun absoluteSlots(cells: CellMap): (Vector3i) -> List<Vector3> = { location ->
 }
 
 // Only used for debug purposes
-fun getAllSlots(grid: MapGrid): List<Vector3> {
-  return grid.cells
-      .filter { it.value.slots.any() }
-      .keys
-      .flatMap(absoluteSlots(grid.cells))
-}
+fun getAllSlots(grid: MapGrid): List<Vector3> =
+    grid.cells
+        .filterValues { it.slots.any() }
+        .keys
+        .flatMap(absoluteSlots(grid.cells))
 
 fun getGroupDistributions(dice: Dice, grid: MapGrid): Map<DistributionGroup, List<Vector3>> {
   if (getDebugString("NO_OBJECTS") != null)

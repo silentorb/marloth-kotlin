@@ -16,6 +16,16 @@ data class ActionAccessory(
 )
 
 fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
+    AccessoryId.mobility.name to ActionAccessory(
+        accessory = AccessoryDefinition(
+            name = Text.id_mobility
+        ),
+        action = ActionDefinition(
+            cooldown = 2f,
+            range = 0f
+        )
+    ),
+
     AccessoryId.pistol.name to ActionAccessory(
         accessory = AccessoryDefinition(
             name = Text.id_pistol,
