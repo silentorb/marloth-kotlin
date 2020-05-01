@@ -1,5 +1,6 @@
 package simulation.happenings
 
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.filterCharacterCommandsFromEvents
 import silentorb.mythic.timing.emitCycleEvents
@@ -39,7 +40,7 @@ fun getSimulationEvents(definitions: Definitions, previous: Deck, world: World, 
       eventsFromItemPickups(world, collisions),
       eventsFromVictoryKeys(world),
       eventsFromRespawnCountdowns(previous, world.deck),
-      mobilityEvents(world.definitions, world.deck, commands)
+      if (getDebugBoolean("ENABLE_MOBILITY")) mobilityEvents(world.definitions, world.deck, commands) else listOf()
   )
       .flatten()
 

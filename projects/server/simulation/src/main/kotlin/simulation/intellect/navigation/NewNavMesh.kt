@@ -1,8 +1,5 @@
 package simulation.intellect.navigation
 
-import marloth.scenery.enums.MeshId
-import silentorb.mythic.ent.firstFloatSortedBy
-import silentorb.mythic.ent.firstFloatSortedByDescending
 import org.recast4j.detour.NavMesh
 import org.recast4j.detour.NavMeshBuilder
 import org.recast4j.recast.Heightfield
@@ -11,6 +8,8 @@ import org.recast4j.recast.RecastBuilderConfig
 import org.recast4j.recast.geom.TriMesh
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.firstFloatSortedBy
+import silentorb.mythic.ent.firstFloatSortedByDescending
 import silentorb.mythic.intellect.navigation.GeometryProvider
 import silentorb.mythic.intellect.navigation.newNavMeshTriMeshes
 import simulation.main.Deck

@@ -28,26 +28,12 @@ fun thirdPersonCamera(body: Body, thirdPersonRig: ThirdPersonRig): Camera {
   return Camera(ProjectionType.perspective, location, orientation, 45f)
 }
 
-fun createTopDownCamera(player: Body): Camera {
-  val position = Vector3(0f, -20f, 20f) + player.position
-  return Camera(
-      ProjectionType.perspective,
-      position,
-      Quaternion().rotate(0f, 0f, Pi * 0.5f)
-          *
-          Quaternion().rotate(0f, Pi * 0.25f, 0f)
-      ,
-      45f
-  )
-}
-
 fun createCamera(deck: Deck, player: Id): Camera {
   val character = deck.characters[player]!!
   val characterRig = deck.characterRigs[player]!!
-  val thirdPersonRig = deck.thirdPersonRigs[player]
   val body = deck.bodies[player]!!
-  return if (thirdPersonRig == null)
+  return if (characterRig.viewMode == ViewMode.firstPerson)
     firstPersonCamera(body, characterRig, character.isAlive)
   else
-    thirdPersonCamera(body, thirdPersonRig)
+    thirdPersonCamera(body, deck.thirdPersonRigs[player]!!)
 }

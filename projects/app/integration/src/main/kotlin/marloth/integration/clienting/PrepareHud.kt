@@ -4,6 +4,7 @@ import marloth.clienting.hud.Cooldown
 import marloth.clienting.hud.HudData
 import marloth.clienting.menus.TextResources
 import marloth.clienting.menus.ViewId
+import silentorb.mythic.characters.ViewMode
 import silentorb.mythic.ent.Id
 import simulation.main.World
 import simulation.misc.getPointCell
@@ -19,6 +20,7 @@ fun gatherHudData(world: World, textResources: TextResources, player: Id, view: 
   val grid = world.realm.grid
 
   val character = deck.characters[player]
+  val characterRig = deck.characterRigs[player]
   return if (character == null)
     null
   else {
@@ -72,15 +74,16 @@ fun gatherHudData(world: World, textResources: TextResources, player: Id, view: 
         sanity = character.sanity,
         interactable = interactable,
         cooldowns = cooldowns,
+        viewMode = characterRig?.viewMode ?: ViewMode.firstPerson,
         buffs = buffs,
         debugInfo = listOf(
 //            "LR: ${floatToRoundedString(lightRating(deck, player))}",
 //            floatToRoundedString(body.velocity.length()),
-            "Keys: ${victoryKeyStats.collected}/${victoryKeyStats.total}"
+            "Keys: ${victoryKeyStats.collected}/${victoryKeyStats.total}",
 //            floatToRoundedString(deck.thirdPersonRigs[player]!!.rotation.x)
 //            deck.characterRigs[player]!!.hoverCamera!!.pitch.toString()
 //            "${cell.x} ${cell.y} ${cell.z}",
-//            "${body.position.x.roundToInt()} ${body.position.y.roundToInt()} ${body.position.z.roundToInt()}"
+            "${floatToRoundedString(body.position.x)} ${floatToRoundedString(body.position.y)} ${floatToRoundedString(body.position.z)}"
 //          if (character.isGrounded) "Grounded" else "Air",
 //          character.groundDistance.toString()
         )

@@ -2,7 +2,9 @@ package marloth.integration.scenery
 
 import marloth.clienting.rendering.GameScene
 import marloth.clienting.rendering.createCamera
-import marloth.clienting.rendering.getMovementRangeLayer
+import marloth.clienting.hud.getMovementRangeLayer
+import silentorb.mythic.characters.ViewMode
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.SceneLayer
 import silentorb.mythic.scenery.Scene
@@ -11,14 +13,17 @@ import simulation.misc.Definitions
 
 fun createScene(definitions: Definitions, deck: Deck): (Id) -> GameScene = { player ->
   val camera = createCamera(deck, player)
-  val thirdPersonRig = deck.thirdPersonRigs[player]
-  val equipmentLayer = if (thirdPersonRig == null)
+  val characterRig = deck.characterRigs[player]!!
+  val equipmentLayer = if (characterRig.viewMode == ViewMode.firstPerson)
     getPlayerEquipmentLayer(definitions, deck, player, camera)
   else
     null
 
   val targetingLayer = getTargetingLayer(deck, player)
-  val movementRangeLayer = getMovementRangeLayer(definitions, deck, player)
+  val movementRangeLayer = if (getDebugBoolean("ENABLE_MOBILITY"))
+    getMovementRangeLayer(definitions, deck, player)
+  else
+    null
 
   val layers = listOf(
       SceneLayer(
@@ -26,7 +31,7 @@ fun createScene(definitions: Definitions, deck: Deck): (Id) -> GameScene = { pla
           useDepth = false
       ),
       SceneLayer(
-          elements = gatherVisualElements(definitions, deck, player, thirdPersonRig),
+          elements = gatherVisualElements(definitions, deck, player, characterRig),
           useDepth = true
       ),
       SceneLayer(

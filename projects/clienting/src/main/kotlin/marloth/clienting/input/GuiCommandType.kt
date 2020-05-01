@@ -2,6 +2,7 @@ package marloth.clienting.input
 
 import marloth.clienting.hud.toggleTargetingCommand
 import marloth.scenery.enums.CharacterCommands
+import silentorb.mythic.characters.CharacterRigCommands
 
 enum class GuiCommandType {
   characterInfo,
@@ -25,7 +26,8 @@ val commandStrokes =
     mapOf(
         InputContext.game to standardStrokes()
             .plus(setOf(
-                toggleTargetingCommand
+                toggleTargetingCommand,
+                CharacterRigCommands.switchView
             )),
         InputContext.menu to standardStrokes()
             .plus(setOf(

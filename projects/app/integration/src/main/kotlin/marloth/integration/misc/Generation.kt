@@ -12,6 +12,7 @@ import marloth.generation.population.populateWorld
 import marloth.scenery.enums.MeshShapeMap
 import marloth.scenery.enums.meshAttributes
 import org.recast4j.detour.NavMeshQuery
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.newGenericIdHand
@@ -121,10 +122,14 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
   )
 }
 
-fun newGenerationDice() =
-    Dice(getDebugString("GENERATION_SEED")?.toLong())
+fun newGenerationSeed(): Long =
+    getDebugString("GENERATION_SEED")?.toLong() ?: System.currentTimeMillis()
 
-fun generateWorld(definitions: Definitions, meshInfo: MeshShapeMap, dice: Dice = newGenerationDice()): World {
+fun generateWorld(definitions: Definitions, meshInfo: MeshShapeMap, seed: Long = newGenerationSeed()): World {
+  val dice = Dice(seed)
+  if (getDebugBoolean("LOG_SEED")) {
+    println("Generation seed: ${dice.seed}")
+  }
   val boundary = createWorldBoundary(100f)
   val generationConfig = GenerationConfig(
       definitions = definitions,

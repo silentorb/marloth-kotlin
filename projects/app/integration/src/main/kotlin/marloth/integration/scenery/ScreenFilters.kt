@@ -15,7 +15,7 @@ fun bloodFilter(strength: Float): ScreenFilter =
 
 fun getScreenFilters(deck: Deck, player: Id): List<ScreenFilter> {
   val character = deck.characters[player]!!
-  if (deck.thirdPersonRigs.containsKey(player))
+  if (deck.characterRigs[player]!!.viewMode != ViewMode.firstPerson)
     return listOf()
 
   return if (!character.isAlive)

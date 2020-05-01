@@ -9,6 +9,7 @@ import silentorb.mythic.bloom.next.*
 import silentorb.mythic.spatial.Vector2i
 import simulation.entities.Interactable
 import silentorb.mythic.accessorize.Modifier
+import silentorb.mythic.characters.ViewMode
 import simulation.combat.general.ResourceContainer
 
 private val textStyle = textStyles.gray
@@ -24,7 +25,8 @@ data class HudData(
     val interactable: Interactable?,
     val cooldowns: List<Cooldown>,
     val buffs: List<Pair<Modifier, Int>>,
-    val debugInfo: List<String> = listOf()
+    val debugInfo: List<String> = listOf(),
+    val viewMode: ViewMode
 )
 
 fun resourceString(resource: ResourceContainer): String {
@@ -89,7 +91,7 @@ fun hudLayout(textResources: TextResources, data: HudData): Flower {
   return compose(listOfNotNull(
       playerStats(data),
       if (data.interactable != null) interactionDialog(textResources, data.interactable) else null,
-      if (data.cooldowns.any()) cooldownIndicatorPlacement(data.cooldowns) else null//,
-//      if (data.viewMode == ViewMode.firstPerson) reticlePlacement() else null
+      if (data.cooldowns.any()) cooldownIndicatorPlacement(data.cooldowns) else null,
+      if (data.viewMode == ViewMode.firstPerson) reticlePlacement() else null
   ))
 }

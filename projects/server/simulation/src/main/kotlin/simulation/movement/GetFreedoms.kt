@@ -6,6 +6,7 @@ import silentorb.mythic.accessorize.Modifier
 import silentorb.mythic.characters.Freedom
 import silentorb.mythic.characters.FreedomTable
 import silentorb.mythic.characters.Freedoms
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import simulation.happenings.canUse
@@ -27,7 +28,7 @@ fun getFreedoms(deck: Deck): (Id) -> Freedoms = { actor ->
     Freedom.none
   else if (deck.performances.any { it.value.target == actor })
     Freedom.orbiting
-  else if (hasMobilityModifier(deck.modifiers, actor))
+  else if (!getDebugBoolean("ENABLE_MOBILITY") || hasMobilityModifier(deck.modifiers, actor))
     Freedom.all
   else
     Freedom.orbiting or Freedom.turning

@@ -53,3 +53,8 @@ fun getPointCell(point: Vector3): Vector3i =
 
 fun getCellPoint(cell: Vector3i): Vector3 =
     absoluteCellPosition(cell)
+
+fun cellSlots(location: Vector3i, cell: Cell): List<Vector3> {
+  val point = getCellPoint(location)
+  return cell.slots.map { point + it }
+}

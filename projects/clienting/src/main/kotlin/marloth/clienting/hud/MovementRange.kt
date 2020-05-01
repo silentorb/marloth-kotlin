@@ -1,4 +1,4 @@
-package marloth.clienting.rendering
+package marloth.clienting.hud
 
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.MeshId

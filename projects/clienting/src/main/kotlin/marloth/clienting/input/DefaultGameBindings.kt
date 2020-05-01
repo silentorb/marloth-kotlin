@@ -4,6 +4,7 @@ import marloth.clienting.hud.toggleTargetingCommand
 import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.haft.*
 import org.lwjgl.glfw.GLFW
+import silentorb.mythic.characters.CharacterRigCommands
 
 val gameGamepadStrokeBindings = mapOf(
     GAMEPAD_BUTTON_START to GuiCommandType.menu,
@@ -25,8 +26,8 @@ val gameGamepadStrokeBindings = mapOf(
 
     GAMEPAD_BUTTON_X to CharacterCommands.ability,
     GAMEPAD_BUTTON_A to CharacterCommands.interactPrimary,
-    GAMEPAD_BUTTON_RIGHT_THUMB to toggleTargetingCommand
-
+    GAMEPAD_BUTTON_RIGHT_THUMB to toggleTargetingCommand,
+    GAMEPAD_BUTTON_BACK to CharacterRigCommands.switchView
 )
 
 fun defaultMouseGameStrokeBindings() = mapOf(
@@ -38,7 +39,7 @@ fun defaultKeyboardGameBindings() = mapOf(
     GLFW.GLFW_KEY_A to CharacterCommands.moveLeft,
     GLFW.GLFW_KEY_D to CharacterCommands.moveRight,
     GLFW.GLFW_KEY_S to CharacterCommands.moveDown,
-//    GLFW.GLFW_KEY_TAB to CommandType.switchView,
+    GLFW.GLFW_KEY_TAB to CharacterRigCommands.switchView,
     GLFW.GLFW_KEY_ENTER to CharacterCommands.interactPrimary
 )
 

@@ -22,4 +22,5 @@ object CharacterCommands {
   const val stopInteracting = "stopInteracting"
 
   const val ability = "ability"
+
 }

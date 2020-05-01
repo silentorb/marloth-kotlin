@@ -61,8 +61,7 @@ fun allocateVictoryKeyCells(cells: Set<Vector3i>, connections: ConnectionSet, ho
 }
 
 fun absoluteSlots(cells: CellMap): (Vector3i) -> List<Vector3> = { location ->
-  val point = getCellPoint(location)
-  cells[location]!!.slots.map { point + it }
+  cellSlots(location, cells[location]!!)
 }
 
 // Only used for debug purposes

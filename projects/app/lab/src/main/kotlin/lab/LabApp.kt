@@ -24,6 +24,7 @@ import org.lwjgl.glfw.GLFW
 import silentorb.mythic.debugging.getDebugRangeValue
 import silentorb.mythic.debugging.setDebugRangeValue
 import silentorb.mythic.lookinglass.toPlatformDisplayConfig
+import silentorb.mythic.randomly.Dice
 import simulation.main.World
 import simulation.misc.Definitions
 import simulation.misc.WorldInput
@@ -48,7 +49,7 @@ fun generateWorld(definitions: Definitions, meshInfo: MeshShapeMap, gameViewConf
   )
   val input = WorldInput(
       boundary,
-      newGenerationDice()
+      Dice(newGenerationSeed())
   )
   return generateWorld(definitions, generationConfig, input)
 }
