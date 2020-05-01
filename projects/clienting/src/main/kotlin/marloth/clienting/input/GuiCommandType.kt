@@ -2,7 +2,7 @@ package marloth.clienting.input
 
 import marloth.clienting.hud.toggleTargetingCommand
 import marloth.scenery.enums.CharacterCommands
-import silentorb.mythic.characters.CharacterRigCommands
+import marloth.scenery.enums.CharacterRigCommands
 
 enum class GuiCommandType {
   characterInfo,

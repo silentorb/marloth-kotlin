@@ -6,7 +6,6 @@ import silentorb.mythic.aura.Sound
 import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.characters.ThirdPersonRig
 import silentorb.mythic.ent.GenericIdHand
-import silentorb.mythic.ent.Id
 import silentorb.mythic.entities.Attributes
 import silentorb.mythic.particles.ParticleEffect
 import silentorb.mythic.performing.Action

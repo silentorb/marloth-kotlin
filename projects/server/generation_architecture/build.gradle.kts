@@ -8,7 +8,6 @@ dependencies {
   implementation("silentorb.mythic:scenery")
   implementation("silentorb.mythic:physics")
   implementation("silentorb.mythic:debugging")
-  implementation("silentorb.mythic:characters")
 }
 
 requires(project, "simulation", "generation_general", "definition")

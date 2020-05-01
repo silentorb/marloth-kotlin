@@ -10,7 +10,7 @@ import simulation.main.WorldPair
 
 //fun isPlayerAlive(world: World): Boolean {
 //  val player = world.players[0]
-//  val character = world.deck.characters[player.id]!!
+//  val character = world.deck.silentorb.mythic.characters[player.id]!!
 //  return character.isAlive
 //}
 //

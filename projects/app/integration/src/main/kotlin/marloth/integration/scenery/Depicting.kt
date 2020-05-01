@@ -5,7 +5,6 @@ import marloth.scenery.enums.ArmatureSockets
 import marloth.scenery.enums.MeshId
 import silentorb.mythic.accessorize.getAccessories
 import silentorb.mythic.characters.CharacterRig
-import silentorb.mythic.characters.ThirdPersonRig
 import silentorb.mythic.characters.ViewMode
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table

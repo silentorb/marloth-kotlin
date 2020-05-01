@@ -51,7 +51,7 @@ fun restartGame(app: GameApp, appState: AppState): AppState {
   } else {
     val previousWorld = appState.worlds.last()
     val world = restartWorld(app, previousWorld)
-    // Right now order doesn't matter for new player characters since each one is identical other than location.
+    // Right now order doesn't matter for new player silentorb.mythic.characters since each one is identical other than location.
     // Eventually they will need to be more carefully mapped to preserve proper association
     val players = previousWorld.deck.players.keys
         .zip(world.deck.players.keys)

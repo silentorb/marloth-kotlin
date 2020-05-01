@@ -27,7 +27,7 @@ fun getFreedoms(deck: Deck): (Id) -> Freedoms = { actor ->
   if (!character.isAlive)
     Freedom.none
   else if (deck.performances.any { it.value.target == actor })
-    Freedom.orbiting
+    Freedom.orbiting  or Freedom.turning
   else if (!getDebugBoolean("ENABLE_MOBILITY") || hasMobilityModifier(deck.modifiers, actor))
     Freedom.all
   else

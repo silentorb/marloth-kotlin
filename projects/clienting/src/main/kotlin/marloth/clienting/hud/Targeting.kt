@@ -2,7 +2,7 @@ package marloth.clienting.hud
 
 import marloth.clienting.Client
 import marloth.clienting.rendering.createCamera
-import silentorb.mythic.characters.CharacterRigCommands
+import marloth.scenery.enums.CharacterRigCommands
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.haft.HaftCommand

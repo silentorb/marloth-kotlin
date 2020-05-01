@@ -23,7 +23,7 @@ typealias InteractableEntry = Map.Entry<Id, Interactable>
 
 //fun getVisibleInteractable(deck: Deck, player: Id): InteractableEntry? {
 //  val playerBody = deck.bodies[player]!!
-//  val playerCharacter = deck.characters[player]!!
+//  val playerCharacter = deck.silentorb.mythic.characters[player]!!
 //  val f = playerCharacter.facingVector
 //  val facingVector = Vector3(f.x, f.y, 0f)
 //  return deck.interactables.filter { (id, _) ->

@@ -1,6 +1,18 @@
 package marloth.scenery.enums
 
-import silentorb.mythic.characters.CharacterRigCommands
+object CharacterRigCommands {
+  const val lookLeft = "lookLeft"
+  const val lookRight = "lookRight"
+  const val lookUp = "lookUp"
+  const val lookDown = "lookDown"
+
+  const val moveUp = "moveUp"
+  const val moveDown = "moveDown"
+  const val moveLeft = "moveLeft"
+  const val moveRight = "moveRight"
+
+  const val switchView = "switchView"
+}
 
 object CharacterCommands {
   const val lookLeft = CharacterRigCommands.lookLeft

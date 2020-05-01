@@ -11,7 +11,6 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.platforming.WindowInfo
 import silentorb.mythic.spatial.*
 import silentorb.mythic.spatial.minus
-import silentorb.mythic.spatial.times
 import silentorb.mythic.characters.joinInputVector
 import silentorb.mythic.characters.playerMoveMap
 import silentorb.mythic.lookinglass.createCameraEffectsData

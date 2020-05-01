@@ -16,7 +16,7 @@ import simulation.happenings.getActiveAction
 fun shouldMoveDirectlyToward(deck: Deck, target: SimpleBody, attacker: Id): Boolean {
   val attackerBody = deck.bodies[attacker]!!
   throw Error("Not implemented")
-//  return !isInAttackRange(attackerBody, target.position, deck.characters[attacker]!!.abilities[0])
+//  return !isInAttackRange(attackerBody, target.position, deck.silentorb.mythic.characters[attacker]!!.abilities[0])
 //      && attackerBody.nearestNode == target.nearestNode
 }
 

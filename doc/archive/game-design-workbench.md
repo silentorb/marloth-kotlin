@@ -26,7 +26,7 @@ If an author is looking for awe, they should spend more time looking for it outs
 
 Authors long to be wowed by their own creations.
 
-The other issue with the current direction is while it's good to try to simplify the tech and not rely so much on animated, AI driven characters, the world feels so lonely and empty without that.  And not having lighting is a big issue too.
+The other issue with the current direction is while it's good to try to simplify the tech and not rely so much on animated, AI driven silentorb.mythic.characters, the world feels so lonely and empty without that.  And not having lighting is a big issue too.
 
 In some ways I'm reconsidering going back to the original Marloth RPG gameplay, or at least something close to it.
 

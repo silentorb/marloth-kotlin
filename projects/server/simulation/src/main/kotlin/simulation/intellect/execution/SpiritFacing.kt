@@ -1,8 +1,6 @@
 package simulation.intellect.execution
 
 import marloth.scenery.enums.CharacterCommands
-import silentorb.mythic.characters.CharacterRig
-import silentorb.mythic.characters.maxNegativeLookVelocityXChange
 import silentorb.mythic.characters.maxPositiveLookVelocityXChange
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.CharacterCommand

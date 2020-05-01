@@ -90,8 +90,8 @@ One classic case of this is platform games with role playing elements.  The game
 
 #### Pros
 
-* Provides a high-level metric for comparing characters
-  * An algorithm for rating characters could be used instead
+* Provides a high-level metric for comparing silentorb.mythic.characters
+  * An algorithm for rating silentorb.mythic.characters could be used instead
     * While such an algorithm may be involved to create and maintain, a leveling system can be involved as well
 * Gives an added sense of growth and accomplishment
 * Simplifies balancing character growth

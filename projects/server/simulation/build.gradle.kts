@@ -17,5 +17,4 @@ dependencies {
   api("silentorb.mythic:debugging")
   api("silentorb.mythic:happenings")
   api("silentorb.mythic:physics")
-  api("silentorb.mythic:characters")
 }
