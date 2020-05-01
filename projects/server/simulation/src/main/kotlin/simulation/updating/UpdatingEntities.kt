@@ -14,7 +14,7 @@ import silentorb.mythic.timing.updateIntTimers
 import simulation.combat.general.updateDestructibleHealth
 import simulation.entities.updateAmbientAudio
 import simulation.entities.updateAttachment
-import simulation.entities.updateCharacter
+import simulation.characters.updateCharacter
 import simulation.entities.updateCharacterAnimation
 import simulation.happenings.updateActions
 import simulation.intellect.assessment.lightRatings

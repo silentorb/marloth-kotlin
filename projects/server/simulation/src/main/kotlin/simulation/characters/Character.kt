@@ -1,8 +1,9 @@
-package simulation.entities
+package simulation.characters
 
 import marloth.scenery.enums.CharacterCommands
 import marloth.scenery.enums.ResourceId
 import marloth.scenery.enums.Sounds
+import marloth.scenery.enums.Text
 import silentorb.mythic.accessorize.AccessoryName
 import silentorb.mythic.aura.SoundType
 import silentorb.mythic.ent.Id
@@ -13,16 +14,19 @@ import silentorb.mythic.physics.BulletState
 import silentorb.mythic.spatial.Vector3
 import simulation.combat.general.DamageMultipliers
 import simulation.combat.general.ResourceContainer
+import simulation.entities.DepictionType
 import simulation.happenings.PurchaseEvent
 import simulation.happenings.TakeItemEvent
 import simulation.main.Deck
-import simulation.misc.getItemInSlot
 import simulation.physics.castInteractableRay
 import simulation.updating.simulationDelta
 
 const val fieldOfView360 = -1f
 
+typealias ProfessionId = String
+
 data class CharacterDefinition(
+    val name: Text,
     val health: Int,
     val maxSpeed: Float,
     val accessories: List<AccessoryName>,
@@ -34,6 +38,7 @@ data class CharacterDefinition(
 )
 
 data class Character(
+    val profession: ProfessionId,
     val definition: CharacterDefinition,
     val faction: Id,
     val sanity: ResourceContainer,

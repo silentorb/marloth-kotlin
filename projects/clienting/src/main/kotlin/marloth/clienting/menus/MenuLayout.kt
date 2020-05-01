@@ -25,9 +25,8 @@ data class MenuItem(
 
 data class SimpleMenuItem(
     val text: Text,
-//    val event: GuiEvent
-    val command: GuiCommandType
-//    val event: GameEvent? = null
+    val event: GuiEvent? = null,
+    val command: GuiCommandType? = null
 )
 
 typealias Menu = List<MenuItem>
@@ -175,7 +174,7 @@ fun menuFlower(textResources: TextResources, title: Text, menu: List<SimpleMenuI
   val items = menu.map {
     MenuItem(
         flower = simpleMenuButton(textResources[it.text]!!),
-        event = GuiEvent(GuiEventType.command, it.command)
+        event = it.event ?: GuiEvent(GuiEventType.command, it.command!!)
     )
   }
   return dialog(title)(

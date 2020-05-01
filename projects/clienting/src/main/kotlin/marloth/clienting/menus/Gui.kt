@@ -26,6 +26,7 @@ typealias TextResources = Map<Text, String>
 
 enum class ViewId {
   characterInfo,
+  chooseProfessionMenu,
   mainMenu,
   none,
   merchant,
@@ -81,12 +82,13 @@ fun haftToBloom(commands: HaftCommands): List<BloomEvent> =
     }
 
 fun victoryMenu() = listOfNotNull(
-    SimpleMenuItem(Text.message_victory, GuiCommandType.newGame)
+    SimpleMenuItem(Text.message_victory, command = GuiCommandType.newGame)
 )
 
 fun viewSelect(textResources: TextResources, definitions: Definitions, world: World?, view: ViewId, player: Id): Flower? {
   return when (view) {
     ViewId.characterInfo -> characterInfoView(definitions, world!!.deck, player)
+    ViewId.chooseProfessionMenu -> menuFlower(textResources, Text.gui_chooseProfessionMenu, chooseProfessionMenu(player))
     ViewId.mainMenu -> menuFlower(textResources, Text.gui_mainMenu, mainMenu(gameIsActive(world)))
     ViewId.merchant -> merchantView(textResources, definitions.accessories, world!!.deck, player)
     ViewId.victory -> menuFlower(textResources, Text.gui_victory, victoryMenu())

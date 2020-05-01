@@ -9,6 +9,7 @@ import silentorb.mythic.happenings.Events
 import silentorb.mythic.performing.Performance
 import silentorb.mythic.performing.performancesFromEvents
 import silentorb.mythic.timing.FloatTimer
+import simulation.characters.newPlayerCharacters
 import simulation.combat.newDamageVisualEffects
 import simulation.entities.*
 import simulation.happenings.NewHandEvent
@@ -55,6 +56,7 @@ fun newEntities(definitions: Definitions, grid: MapGrid, previous: Deck, events:
       .flatten()
       .plus(pruningEventsToIdHands(events))
       .plus(placeVictoryKeys(grid, next, events))
+      .plus(newPlayerCharacters(nextId, definitions, grid, events))
 
   val additions = listOf(
       newAccessoriesDeck(events, previous)

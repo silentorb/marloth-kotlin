@@ -10,3 +10,6 @@ fun isAtHome(grid: MapGrid, deck: Deck): (Id) -> Boolean = { id ->
   else
     false
 }
+
+fun getPlayerStart(grid: MapGrid) =
+    grid.cells.entries.first { it.value.attributes.contains(CellAttribute.home) }.key

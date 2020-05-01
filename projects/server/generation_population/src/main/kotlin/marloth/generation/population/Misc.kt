@@ -32,6 +32,3 @@ fun placeBuffCloud(node: Node, buff: ModifierId) =
 
 fun placeTreasureChest(meshInfo: MeshInfoMap, node: Node, amount: Int) =
     newTreasureChest(meshInfo, alignWithNodeFloor(meshInfo, node, MeshId.treasureChest.name) + floorOffset, amount)
-
-fun getPlayerCell(grid: MapGrid) =
-    grid.cells.entries.first { it.value.attributes.contains(CellAttribute.home) }.key

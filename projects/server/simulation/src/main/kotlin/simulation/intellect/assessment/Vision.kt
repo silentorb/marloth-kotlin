@@ -9,7 +9,7 @@ import silentorb.mythic.physics.firstRayHit
 import silentorb.mythic.scenery.Light
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.quadOut
-import simulation.entities.fieldOfView360
+import simulation.characters.fieldOfView360
 import simulation.main.Deck
 import simulation.misc.*
 import simulation.physics.CollisionGroups

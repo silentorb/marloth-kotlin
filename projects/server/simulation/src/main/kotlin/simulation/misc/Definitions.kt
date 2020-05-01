@@ -12,9 +12,11 @@ import silentorb.mythic.particles.ParticleEffectDefinitions
 import silentorb.mythic.scenery.Light
 import silentorb.mythic.scenery.MeshName
 import silentorb.mythic.performing.ActionDefinition
+import simulation.characters.CharacterDefinition
 
 typealias AccessoryDefinitions = Map<AccessoryName, AccessoryDefinition>
 typealias LightAttachmentMap = Map<MeshName, List<Light>>
+typealias Professions = Map<String, CharacterDefinition>
 
 data class Definitions(
     val accessories: Map<AccessoryName, AccessoryDefinition>,
@@ -24,6 +26,7 @@ data class Definitions(
     val lightAttachments: LightAttachmentMap,
     val modifiers: Map<ModifierId, ModifierDefinition>,
     val particleEffects: ParticleEffectDefinitions,
+    val professions: Professions,
     val soundDurations: Map<SoundType, Float>,
     val weapons: Map<AccessoryName, WeaponDefinition>
 )

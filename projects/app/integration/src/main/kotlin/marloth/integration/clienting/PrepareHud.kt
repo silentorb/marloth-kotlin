@@ -79,11 +79,11 @@ fun gatherHudData(world: World, textResources: TextResources, player: Id, view: 
         debugInfo = listOf(
 //            "LR: ${floatToRoundedString(lightRating(deck, player))}",
 //            floatToRoundedString(body.velocity.length()),
-            "Keys: ${victoryKeyStats.collected}/${victoryKeyStats.total}",
+            "Keys: ${victoryKeyStats.collected}/${victoryKeyStats.total}"
 //            floatToRoundedString(deck.thirdPersonRigs[player]!!.rotation.x)
 //            deck.characterRigs[player]!!.hoverCamera!!.pitch.toString()
 //            "${cell.x} ${cell.y} ${cell.z}",
-            "${floatToRoundedString(body.position.x)} ${floatToRoundedString(body.position.y)} ${floatToRoundedString(body.position.z)}"
+//            "${floatToRoundedString(body.position.x)} ${floatToRoundedString(body.position.y)} ${floatToRoundedString(body.position.z)}"
 //          if (character.isGrounded) "Grounded" else "Air",
 //          character.groundDistance.toString()
         )

@@ -2,30 +2,14 @@ package marloth.definition.data
 
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.Sounds
-import simulation.entities.CharacterDefinition
+import marloth.scenery.enums.Text
+import simulation.characters.CharacterDefinition
 import simulation.entities.DepictionType
-import simulation.entities.fieldOfView360
+import simulation.characters.fieldOfView360
 
-object Creatures {
-  val soldier = CharacterDefinition(
-      health = 200,
-      accessories = listOf(AccessoryId.shotgun.name, AccessoryId.mobility.name),
-      depictionType = DepictionType.child,
-      maxSpeed = 6f,
-      deathSound = Sounds.girlScream,
-      damageMultipliers = mapOf()
-  )
-
-  val magician = CharacterDefinition(
-      health = 200,
-      accessories = listOf(AccessoryId.rocketLauncher.name, AccessoryId.mobility.name),
-      depictionType = DepictionType.child,
-      maxSpeed = 5f,
-      deathSound = Sounds.girlScream,
-      damageMultipliers = mapOf()
-  )
-
+object CharacterDefinitions {
   val ally = CharacterDefinition(
+      name = Text.unnamed,
       health = 100,
       accessories = listOf(AccessoryId.pistol.name, AccessoryId.mobility.name),
       depictionType = DepictionType.child,
@@ -34,6 +18,7 @@ object Creatures {
   )
 
   val hogMan = CharacterDefinition(
+      name = Text.unnamed,
       health = 100,
       accessories = listOf(AccessoryId.pistol.name, AccessoryId.mobility.name),
       depictionType = DepictionType.person,
@@ -46,6 +31,7 @@ object Creatures {
   )
 
   val sentinel = CharacterDefinition(
+      name = Text.unnamed,
       health = 100,
       accessories = listOf(AccessoryId.rocketLauncher.name),
       depictionType = DepictionType.sentinel,
@@ -56,19 +42,12 @@ object Creatures {
   )
 
   val hound = CharacterDefinition(
+      name = Text.unnamed,
       health = 100,
       accessories = listOf(AccessoryId.claws.name, AccessoryId.mobility.name),
       depictionType = DepictionType.hound,
       maxSpeed = 4f,
       deathSound = null,
       ambientSounds = listOf()
-  )
-
-  val merchant = CharacterDefinition(
-      health = 100,
-      accessories = listOf(),
-      depictionType = DepictionType.child,
-      maxSpeed = 2f,
-      deathSound = Sounds.girlScream
   )
 }

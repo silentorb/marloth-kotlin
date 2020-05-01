@@ -1,5 +1,6 @@
 package marloth.definition
 
+import marloth.definition.data.allProfessions
 import marloth.definition.data.staticAccessories
 import marloth.definition.data.staticActionAccessories
 import marloth.definition.data.staticModifiers
@@ -21,6 +22,7 @@ fun staticDefinitions(clientDefinitions: ClientDefinitions): Definitions {
       lightAttachments = clientDefinitions.lightAttachments,
       modifiers = staticModifiers(),
       particleEffects = particleEffects(),
+      professions = allProfessions(),
       soundDurations = clientDefinitions.soundDurations,
       weapons = weapons
   )

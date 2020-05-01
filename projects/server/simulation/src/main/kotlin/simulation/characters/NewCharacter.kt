@@ -1,4 +1,4 @@
-package marloth.definition
+package simulation.characters
 
 import marloth.scenery.enums.AnimationId
 import silentorb.mythic.accessorize.Accessory
@@ -22,9 +22,10 @@ import simulation.misc.Definitions
 import simulation.happenings.newPossibleAction
 import simulation.physics.CollisionGroups
 
-fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, definition: CharacterDefinition, faction: Id, position: Vector3,
+fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, profession: ProfessionId, faction: Id, position: Vector3,
                  angle: Float = Pi / 2f,
                  spirit: Spirit? = null): List<IdHand> {
+  val definition = definitions.professions[profession]!!
   val accessories = definition.accessories
       .mapIndexed { index, type ->
         IdHand(
@@ -68,10 +69,11 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, defi
                   sanity = ResourceContainer(100),
                   money = 30,
                   isAlive = true,
-                  activeAccessory = accessories.firstOrNull()?.id
+                  activeAccessory = accessories.firstOrNull()?.id,
+                  profession = profession
               ),
               characterRig = CharacterRig(
-                  facingRotation = Vector2(angle,0f),
+                  facingRotation = Vector2(angle, 0f),
                   facingOrientation = characterRigOrentation(Vector2(angle, 0f)),
                   maxSpeed = definition.maxSpeed,
                   turnSpeed = Vector2(4f, 1f),

@@ -11,46 +11,50 @@ import silentorb.mythic.scenery.Scene
 import simulation.main.Deck
 import simulation.misc.Definitions
 
-fun createScene(definitions: Definitions, deck: Deck): (Id) -> GameScene = { player ->
-  val camera = createCamera(deck, player)
-  val characterRig = deck.characterRigs[player]!!
-  val equipmentLayer = if (characterRig.viewMode == ViewMode.firstPerson)
-    getPlayerEquipmentLayer(definitions, deck, player, camera)
-  else
+fun createScene(definitions: Definitions, deck: Deck): (Id) -> GameScene? = { player ->
+  if (!deck.characters.containsKey(player))
     null
+  else {
+    val camera = createCamera(deck, player)
+    val characterRig = deck.characterRigs[player]!!
+    val equipmentLayer = if (characterRig.viewMode == ViewMode.firstPerson)
+      getPlayerEquipmentLayer(definitions, deck, player, camera)
+    else
+      null
 
-  val targetingLayer = getTargetingLayer(deck, player)
-  val movementRangeLayer = if (getDebugBoolean("ENABLE_MOBILITY"))
-    getMovementRangeLayer(definitions, deck, player)
-  else
-    null
+    val targetingLayer = getTargetingLayer(deck, player)
+    val movementRangeLayer = if (getDebugBoolean("ENABLE_MOBILITY"))
+      getMovementRangeLayer(definitions, deck, player)
+    else
+      null
 
-  val layers = listOf(
-      SceneLayer(
-          elements = gatherBackground(deck.cyclesFloat, camera.position),
-          useDepth = false
-      ),
-      SceneLayer(
-          elements = gatherVisualElements(definitions, deck, player, characterRig),
-          useDepth = true
-      ),
-      SceneLayer(
-          elements = gatherParticleElements(deck, camera.position),
-          useDepth = false
-      )
-  ) + listOfNotNull(movementRangeLayer, equipmentLayer, targetingLayer)
+    val layers = listOf(
+        SceneLayer(
+            elements = gatherBackground(deck.cyclesFloat, camera.position),
+            useDepth = false
+        ),
+        SceneLayer(
+            elements = gatherVisualElements(definitions, deck, player, characterRig),
+            useDepth = true
+        ),
+        SceneLayer(
+            elements = gatherParticleElements(deck, camera.position),
+            useDepth = false
+        )
+    ) + listOfNotNull(movementRangeLayer, equipmentLayer, targetingLayer)
 
-  val elementLights = layers.flatMap { layer ->
-    layer.elements.flatMap { it.lights }
+    val elementLights = layers.flatMap { layer ->
+      layer.elements.flatMap { it.lights }
+    }
+
+    GameScene(
+        main = Scene(
+            camera = camera,
+            lights = mapLights(deck, player).plus(elementLights),
+            lightingConfig = defaultLightingConfig()
+        ),
+        layers = layers,
+        filters = getScreenFilters(deck, player)
+    )
   }
-
-  GameScene(
-      main = Scene(
-          camera = camera,
-          lights = mapLights(deck, player).plus(elementLights),
-          lightingConfig = defaultLightingConfig()
-      ),
-      layers = layers,
-      filters = getScreenFilters(deck, player)
-  )
 }

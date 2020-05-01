@@ -27,7 +27,6 @@ val titleBookend = FlexItem(titleBookendFlower, FlexType.stretch)
 val debugDepiction = solidBackground(Vector4(1f, 0f, 0f, 1f))
 
 fun titleBar(text: Text): Flower {
-//  return div(layout = layoutDimensions(height = fixed(titleContentHeight)))(
   return margin(20)(
       list(verticalPlane)(listOf(
           flexList(horizontalPlane, 10)(listOf(

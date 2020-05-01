@@ -148,7 +148,7 @@ fun updateClient(client: Client, worlds: List<World>, boxes: List<Box>, clientSt
 
   val commands = initialCommands.plus(commandsFromGui)
   applyCommandsToExternalSystem(client, commands)
-  val playerViews = updateClientCurrentMenus(commands, clientState.playerViews)
+  val playerViews = updateClientCurrentMenus(worlds.last().deck, commands, clientState.players, clientState.playerViews)
 
   return clientState.copy(
       audio = updateClientAudio(client, worlds, clientState.audio),

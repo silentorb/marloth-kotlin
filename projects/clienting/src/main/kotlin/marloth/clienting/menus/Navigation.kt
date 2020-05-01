@@ -1,9 +1,10 @@
 package marloth.clienting.menus
 
-import marloth.clienting.ClientState
 import marloth.clienting.PlayerViews
 import marloth.clienting.input.GuiCommandType
+import silentorb.mythic.ent.Id
 import silentorb.mythic.haft.HaftCommands
+import simulation.main.Deck
 
 fun nextView(command: Any, view: ViewId): ViewId? =
     when (command) {
@@ -32,22 +33,27 @@ fun nextView(command: Any, view: ViewId): ViewId? =
 
       GuiCommandType.newGame -> ViewId.none
 
-      else -> null
+      else -> view
     }
 
-fun updateClientCurrentMenus(commands: HaftCommands, playerViews: PlayerViews): PlayerViews {
-  val newViews = commands
-      .mapNotNull { command ->
-        val view = nextView(command.type, playerViews[command.target] ?: ViewId.none)
-        if (view != null)
-          Pair(command.target, view)
-        else
-          null
-      }
-      .associate { it }
+fun fallBackMenus(deck: Deck, player: Id): ViewId? =
+    if (!deck.characters.containsKey(player))
+      ViewId.chooseProfessionMenu
+    else
+      null
 
-  return if (newViews.any())
-    playerViews + newViews
-  else
-    playerViews
+fun updateClientCurrentMenus(deck: Deck, commands: HaftCommands, players: List<Id>, playerViews: PlayerViews): PlayerViews {
+  return players.associateWith { player ->
+    val command = commands.firstOrNull { it.target == player }
+    val view = playerViews[player]
+    val manuallyChangedView = if (command != null)
+      nextView(command.type, view ?: ViewId.none)
+    else
+      view
+
+    when (manuallyChangedView) {
+      null, ViewId.chooseProfessionMenu -> fallBackMenus(deck, player)
+      else -> manuallyChangedView
+    }
+  }
 }

@@ -16,7 +16,7 @@ import marloth.scenery.enums.Text
 import simulation.main.Deck
 
 fun getPlayerInteractingWith(deck: Deck, player: Id): Id? =
-    deck.characters[player]!!.interactingWith
+    deck.characters[player]?.interactingWith
 
 const val textResourcesKey = "textResources"
 

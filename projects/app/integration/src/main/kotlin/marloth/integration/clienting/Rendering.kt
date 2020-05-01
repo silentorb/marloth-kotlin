@@ -33,13 +33,15 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
     val viewportIterator = viewports.iterator()
     scenes.zip(boxes) { scene, box ->
       val screenViewport = viewportIterator.next()
-      val sceneRenderer = createSceneRenderer(client.renderer, scene, screenViewport)
-      val filters = prepareRender(sceneRenderer, scene)
-      renderSceneLayers(renderer, sceneRenderer.camera, scene.layers)
-      labRender(appState)(sceneRenderer, scene.main)
       val dimensions = Vector2i(screenViewport.z, screenViewport.w)
       val canvas = createCanvas(client.renderer, client.customBloomResources, dimensions)
-      applyFilters(sceneRenderer, filters)
+      if (scene != null) {
+        val sceneRenderer = createSceneRenderer(client.renderer, scene, screenViewport)
+        val filters = prepareRender(sceneRenderer, scene)
+        renderSceneLayers(renderer, sceneRenderer.camera, scene.layers)
+        labRender(appState)(sceneRenderer, scene.main)
+        applyFilters(sceneRenderer, filters)
+      }
       renderLayout(box, canvas, getDebugBoolean("MARK_BLOOM_PASS"))
     }
   }

@@ -2,11 +2,14 @@ package marloth.definition.data
 
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.Sounds
-import simulation.entities.CharacterDefinition
+import marloth.scenery.enums.Text
+import silentorb.mythic.ent.reflectPropertiesMap
+import simulation.characters.CharacterDefinition
 import simulation.entities.DepictionType
 
-object PlayerClasses {
+object Professions {
   val soldier = CharacterDefinition(
+      name = Text.id_soldier,
       health = 200,
       accessories = listOf(AccessoryId.shotgun.name, AccessoryId.mobility.name),
       depictionType = DepictionType.child,
@@ -16,6 +19,7 @@ object PlayerClasses {
   )
 
   val magician = CharacterDefinition(
+      name = Text.id_magician,
       health = 200,
       accessories = listOf(AccessoryId.rocketLauncher.name, AccessoryId.mobility.name),
       depictionType = DepictionType.child,
@@ -24,18 +28,18 @@ object PlayerClasses {
       damageMultipliers = mapOf()
   )
 
-  val debug = CharacterDefinition(
-      health = 20000,
-      accessories = listOf(AccessoryId.rocketLauncher.name, AccessoryId.mobility.name),
-      depictionType = DepictionType.child,
-      maxSpeed = 8f,
-      deathSound = Sounds.girlScream,
-      damageMultipliers = mapOf()
-  )
 }
 
-val characterClasses = mapOf(
-    "soldier" to PlayerClasses.soldier,
-    "magician" to PlayerClasses.magician,
-    "debug" to PlayerClasses.debug
+private val debug = CharacterDefinition(
+    name = Text.unnamed,
+    health = 20000,
+    accessories = listOf(AccessoryId.rocketLauncher.name, AccessoryId.mobility.name),
+    depictionType = DepictionType.child,
+    maxSpeed = 8f,
+    deathSound = Sounds.girlScream,
+    damageMultipliers = mapOf()
 )
+
+fun availableProfessions() = reflectPropertiesMap<CharacterDefinition>(Professions)
+
+fun allProfessions() = availableProfessions() + Pair("debug", debug)

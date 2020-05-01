@@ -1,68 +1,27 @@
 package marloth.generation.population
 
-import marloth.definition.data.characterClasses
-import simulation.misc.floorOffset
-import marloth.definition.newCharacter
 import silentorb.mythic.ent.Id
-import silentorb.mythic.spatial.Vector3
-import silentorb.mythic.spatial.Vector3i
-import silentorb.mythic.spatial.toVector3
-import simulation.entities.*
-import simulation.main.Hand
-import simulation.misc.*
-import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.IdSource
-import silentorb.mythic.spatial.getHorizontalLookAtAngle
+import silentorb.mythic.spatial.Vector3
+import simulation.characters.ProfessionId
+import simulation.characters.newCharacter
 import simulation.intellect.freshSpirit
 import simulation.main.IdHand
+import simulation.misc.Definitions
+import simulation.misc.monsterFaction
 
-fun placeAiCharacter(nextId: IdSource, definitions: Definitions, faction: Id, definition: CharacterDefinition, position: Vector3): List<IdHand> {
+fun placeAiCharacter(nextId: IdSource, definitions: Definitions, faction: Id, profession: ProfessionId, position: Vector3): List<IdHand> {
   return newCharacter(nextId, nextId(), definitions,
-      definition = definition,
+      profession = profession,
       faction = faction,
       position = position,
       spirit = freshSpirit()
   )
 }
 
-fun placeEnemy(nextId: IdSource, definitions: Definitions, cell: Vector3, definition: CharacterDefinition): List<IdHand> =
+fun placeEnemy(nextId: IdSource, definitions: Definitions, cell: Vector3, profession: ProfessionId): List<IdHand> =
     placeAiCharacter(nextId, definitions,
         faction = monsterFaction,
-        definition = definition,
+        profession = profession,
         position = cell
     )
-
-fun selectPlayerClassDebug(): CharacterDefinition =
-    characterClasses[getDebugString("CHARACTER_CLASS") ?: "magician"]!!
-
-fun newPlayer(nextId: IdSource, definitions: Definitions, grid: MapGrid, cellPosition: Vector3i): List<IdHand> {
-  val neighbor = cellNeighbors(grid.connections, cellPosition).first()
-  val character = nextId()
-  return newCharacter(nextId, character, definitions,
-      definition = selectPlayerClassDebug(),
-      faction = misfitFaction,
-      position = absoluteCellPosition(cellPosition) + floorOffset + Vector3(0f, 0f, 6f),
-      angle = getHorizontalLookAtAngle((neighbor - cellPosition).toVector3())
-  )
-      .plus(
-          IdHand(
-              id = character,
-              hand = Hand(
-                  player = Player(
-                      name = "Unknown Hero"
-                  )
-              )
-          )
-      )
-//      .plus(
-//          IdHand(
-//              id = nextId(),
-//              hand = Hand(
-//                  accessory = Accessory(
-//                      type = AccessoryId.candle.name,
-//                      target = character
-//                  )
-//              )
-//          )
-//      )
-}

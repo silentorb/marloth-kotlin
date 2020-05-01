@@ -5,8 +5,8 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.physics.BulletState
 import silentorb.mythic.spatial.Vector3
-import simulation.entities.Character
-import simulation.entities.isAlly
+import simulation.characters.Character
+import simulation.characters.isAlly
 import simulation.main.Deck
 import simulation.main.World
 import simulation.misc.Realm

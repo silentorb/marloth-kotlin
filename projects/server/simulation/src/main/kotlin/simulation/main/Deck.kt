@@ -26,6 +26,7 @@ import silentorb.mythic.timing.FloatCycle
 import silentorb.mythic.timing.FloatTimer
 import silentorb.mythic.timing.IntCycle
 import silentorb.mythic.timing.IntTimer
+import simulation.characters.Character
 import simulation.combat.PlayerOverlay
 import simulation.intellect.assessment.Knowledge
 

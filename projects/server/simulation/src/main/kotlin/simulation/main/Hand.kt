@@ -19,6 +19,7 @@ import silentorb.mythic.timing.FloatTimer
 import silentorb.mythic.timing.IntCycle
 import silentorb.mythic.timing.IntTimer
 import simulation.accessorize.ItemPickup
+import simulation.characters.Character
 import simulation.combat.PlayerOverlay
 import simulation.combat.general.Destructible
 import simulation.combat.general.ResourceBundle

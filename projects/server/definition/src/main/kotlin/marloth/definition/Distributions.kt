@@ -1,6 +1,7 @@
 package marloth.definition
 
-import marloth.definition.data.Creatures
+import marloth.definition.data.CharacterDefinitions
+import marloth.scenery.enums.CreatureId
 import silentorb.mythic.debugging.getDebugInt
 
 enum class DistributionGroup {
@@ -15,9 +16,9 @@ enum class DistributionGroup {
 typealias DistributionMap = Map<DistributionGroup, Int>
 
 fun enemyDistributions() = mapOf(
-    Creatures.hogMan to 4,
-    Creatures.sentinel to 12,
-    Creatures.hound to 8
+    CreatureId.hogMan to 4,
+    CreatureId.sentinel to 12,
+    CreatureId.hound to 8
 )
 
 fun scalingDistributions(): DistributionMap = mapOf(

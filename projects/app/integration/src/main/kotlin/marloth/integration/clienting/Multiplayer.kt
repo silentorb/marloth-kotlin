@@ -3,10 +3,12 @@ package marloth.integration.clienting
 import marloth.clienting.input.defaultInputProfile
 import marloth.clienting.input.joiningGamepads
 import marloth.integration.misc.AppState
-import marloth.generation.population.getPlayerCell
-import marloth.generation.population.newPlayer
 import silentorb.mythic.haft.DeviceIndex
+import simulation.characters.getDebugProfession
+import simulation.characters.newPlayerAndCharacter
+import simulation.characters.newPlayerIdHand
 import simulation.main.addEntitiesToWorldDeck
+import simulation.misc.getPlayerStart
 
 val updateAppStateForNewPlayers: (AppState) -> AppState = { appState ->
   val client = appState.client
@@ -28,9 +30,7 @@ val updateAppStateForNewPlayers: (AppState) -> AppState = { appState ->
 
     val nextWorld = addEntitiesToWorldDeck(world) { nextId ->
       gamepadJoinCommands.drop(availablePlayers.size)
-          .flatMap {
-            newPlayer(nextId, world.definitions, grid, getPlayerCell(grid))
-          }
+          .flatMap { newPlayerAndCharacter(nextId, world.definitions, grid) }
     }
     val newPlayers = nextWorld.deck.players.keys.minus(deck.players.keys)
     val playersWithNewGamepads = newPlayers.plus(availablePlayers)
