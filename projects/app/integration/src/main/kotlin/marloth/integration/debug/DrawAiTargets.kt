@@ -1,7 +1,7 @@
 package marloth.integration.debug
 
 import marloth.scenery.enums.MeshId
-import silentorb.mythic.debugging.isDebugSet
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.glowing.DrawMethod
 import silentorb.mythic.glowing.drawMesh
 import silentorb.mythic.glowing.globalState
@@ -31,7 +31,7 @@ fun drawAiTargets(deck: Deck, renderer: Renderer) {
 }
 
 fun conditionalDrawAiTargets(deck: Deck, renderer: Renderer) {
-  if (isDebugSet("DRAW_AI_TARGETS")) {
+  if (getDebugBoolean("DRAW_AI_TARGETS")) {
     drawAiTargets(deck, renderer)
   }
 }

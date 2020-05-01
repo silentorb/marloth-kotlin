@@ -1,7 +1,7 @@
 package marloth.integration.debug
 
 import marloth.scenery.enums.MeshId
-import silentorb.mythic.debugging.isDebugSet
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.glowing.DrawMethod
 import silentorb.mythic.glowing.drawMesh
 import silentorb.mythic.glowing.globalState
@@ -30,7 +30,7 @@ fun drawLights(lights: List<Light>, renderer: Renderer) {
 }
 
 fun conditionalDrawLights(lights: List<Light>, renderer: Renderer) {
-  if (isDebugSet("DRAW_LIGHTS")) {
+  if (getDebugBoolean("DRAW_LIGHTS")) {
     drawLights(lights, renderer)
   }
 }

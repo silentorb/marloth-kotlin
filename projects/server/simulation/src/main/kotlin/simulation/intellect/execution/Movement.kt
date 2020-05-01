@@ -16,11 +16,12 @@ import silentorb.mythic.intellect.navigation.fromRecastVector3
 
 fun getPathTargetPosition(world: World, character: Id, pursuit: Pursuit): Vector3? {
   val body = world.deck.bodies[character]!!
+  val shape = world.deck.collisionObjects[character]!!.shape
   val query = world.navMeshQuery
   if (query == null)
     throw Error("Missing navMeshQuery")
 
-  val start = asRecastVector3(body.position)
+  val start = asRecastVector3(body.position + Vector3(0f, 0f, - shape.height / 2f))
   val end = asRecastVector3(pursuit.targetPosition!!)
   val polygonRange = floatArrayOf(10f, 10f, 10f)
   val queryFilter = DefaultQueryFilter()
@@ -51,12 +52,12 @@ fun getPathTargetPosition(world: World, character: Id, pursuit: Pursuit): Vector
 //  assert(pathResult.result != null)
 //  assert(pathResult.result.size > 0)
 //  assert(pathResult.result[0] != null)
-  val firstPoint = fromRecastVector3(pathResult.result[0].pos)
-  return if (firstPoint.distance(body.position) < 0.1f) {
+  val nextPoint = fromRecastVector3(pathResult.result.last().pos)
+  return if (nextPoint.distance(body.position) < 0.1f) {
     assert(pathResult.result.size > 1)
     fromRecastVector3(pathResult.result[1].pos)
   } else
-    firstPoint
+    nextPoint
 }
 
 fun moveStraightTowardPosition(world: World, character: Id, target: Vector3): Commands {

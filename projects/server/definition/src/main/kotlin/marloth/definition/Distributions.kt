@@ -15,8 +15,8 @@ enum class DistributionGroup {
 typealias DistributionMap = Map<DistributionGroup, Int>
 
 fun enemyDistributions() = mapOf(
-    Creatures.hogMan to 4,
-    Creatures.sentinel to 12,
+//    Creatures.hogMan to 4,
+//    Creatures.sentinel to 12,
     Creatures.hound to 8
 )
 
