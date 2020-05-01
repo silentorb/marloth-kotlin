@@ -10,6 +10,7 @@ import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import simulation.happenings.canUse
+import simulation.happenings.canUseSimple
 import simulation.main.Deck
 
 fun hasMobilityModifier(modifiers: Table<Modifier>, actor: Id): Boolean =
@@ -18,7 +19,7 @@ fun hasMobilityModifier(modifiers: Table<Modifier>, actor: Id): Boolean =
 fun canUseMobility(deck: Deck): (Id) -> Boolean = { actor ->
   deck.characters[actor]!!.isAlive &&
       deck.performances.none { it.value.target == actor } &&
-      deck.accessories.any { it.value.type == AccessoryId.mobility.name && it.value.owner == actor && canUse(deck, it.key) } &&
+      deck.accessories.any { it.value.type == AccessoryId.mobility.name && it.value.owner == actor && canUseSimple(deck, it.key) } &&
       !hasMobilityModifier(deck.modifiers, actor)
 }
 

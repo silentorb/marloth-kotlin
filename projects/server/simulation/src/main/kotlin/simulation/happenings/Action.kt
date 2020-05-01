@@ -12,9 +12,23 @@ import simulation.combat.spatial.startAttack
 import simulation.main.Deck
 import simulation.main.World
 import simulation.misc.Definitions
+import simulation.misc.isAtHome
 import simulation.updating.simulationDelta
 
-fun canUse(deck: Deck, action: Id): Boolean {
+fun canUse(world: World, action: Id): Boolean {
+  val deck = world.deck
+  val definitions = world.definitions
+
+  val accessory = deck.accessories[action]!!
+  val isWeapon = definitions.weapons.containsKey(accessory.type)
+  if (isWeapon && isAtHome(world.realm.grid, deck)(accessory.owner))
+    return false
+
+  val actionRecord = deck.actions[action]
+  return actionRecord != null && actionRecord.cooldown == 0f
+}
+
+fun canUseSimple(deck: Deck, action: Id): Boolean {
   val actionRecord = deck.actions[action]
   return actionRecord != null && actionRecord.cooldown == 0f
 }
@@ -46,7 +60,7 @@ fun eventsFromTryUseAbility(world: World): (TryUseAbilityEvent) -> Events = { ev
   val actor = event.actor
   val action = getActiveAction(deck, actor)
   val isPlayer = world.deck.players.containsKey(actor)
-  if (action != null && canUse(deck, action)) {
+  if (action != null && canUse(world, action)) {
     val accessory = deck.accessories[action]!!
     when {
 

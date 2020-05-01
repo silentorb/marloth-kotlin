@@ -6,7 +6,7 @@ import marloth.scenery.enums.CharacterRigCommands
 import silentorb.mythic.haft.*
 import org.lwjgl.glfw.GLFW
 
-val gameGamepadStrokeBindings = mapOf(
+val gameGamepadBindings = mapOf(
     GAMEPAD_BUTTON_START to GuiCommandType.menu,
 
     GAMEPAD_BUTTON_DPAD_UP to CharacterCommands.equipSlot0,
@@ -30,7 +30,7 @@ val gameGamepadStrokeBindings = mapOf(
     GAMEPAD_BUTTON_BACK to CharacterRigCommands.switchView
 )
 
-fun defaultMouseGameStrokeBindings() = mapOf(
+fun defaultMouseGameBindings() = mapOf(
     GLFW.GLFW_MOUSE_BUTTON_LEFT to CharacterCommands.ability
 )
 
@@ -40,10 +40,11 @@ fun defaultKeyboardGameBindings() = mapOf(
     GLFW.GLFW_KEY_D to CharacterCommands.moveRight,
     GLFW.GLFW_KEY_S to CharacterCommands.moveDown,
     GLFW.GLFW_KEY_TAB to CharacterRigCommands.switchView,
-    GLFW.GLFW_KEY_ENTER to CharacterCommands.interactPrimary
+    GLFW.GLFW_KEY_ENTER to CharacterCommands.interactPrimary,
+    GLFW.GLFW_KEY_ESCAPE to GuiCommandType.menu
 )
 
 fun defaultGameInputBindings(): Bindings =
     createBindings(DeviceIndex.keyboard, defaultKeyboardGameBindings())
-        .plus(createBindings(DeviceIndex.mouse, defaultMouseGameStrokeBindings()))
-        .plus(createBindings(DeviceIndex.gamepad, gameGamepadStrokeBindings))
+        .plus(createBindings(DeviceIndex.mouse, defaultMouseGameBindings()))
+        .plus(createBindings(DeviceIndex.gamepad, gameGamepadBindings))

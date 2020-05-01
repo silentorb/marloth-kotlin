@@ -27,7 +27,7 @@ import silentorb.mythic.bloom.input.newBloomInputState
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.lookinglass.createCanvas
 import simulation.main.World
-import silentorb.mythic.bloom.input.updateInputDeviceStates
+import silentorb.mythic.haft.updateInputDeviceStates
 import silentorb.mythic.lookinglass.prepareRender
 
 data class LabState(
@@ -148,7 +148,7 @@ class LabClient(val config: LabConfig, val client: Client) {
 
     if (world != null) {
       val allCommands = commands
-          .plus(events.filterIsInstance<LabCommandType>().map { HaftCommand(it) })
+          .plus(events.filterIsInstance<LabCommandType>().map { HaftCommand(it, device = 0) })
       val input = getInputState(client.platform.input, allCommands)
       updateMapState(config.mapView, world.realm, input, windowInfo, state.app.client.bloomStates.values.first(), delta)
     }

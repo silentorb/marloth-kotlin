@@ -46,7 +46,7 @@ fun spiritFacingChange2(character: Id, course: Float, velocity: Float, turnSpeed
 
 fun spiritHorizontalFacingChange(world: World, character: Id, offset: Vector3): Commands {
   val characterRig = world.deck.characterRigs[character]!!
-  val course = horizontalFacingDistance(characterRig.facingRotation.z, offset)
+  val course = horizontalFacingDistance(characterRig.facingRotation.x, offset)
 //  println("$course ${characterRig.facingRotation.z}")
   return spiritFacingChange(character, course, characterRig.firstPersonLookVelocity.x, characterRig.turnSpeed.x,
       CharacterCommands.lookLeft, CharacterCommands.lookRight)
@@ -64,7 +64,7 @@ fun spiritNeedsFacing(world: World, character: Id, offset: Vector3, acceptableRa
   val characterRig = world.deck.characterRigs.getValue(character)
   val facingCommands = spiritHorizontalFacingChange(world, character, offset)
       .plus(spiritVerticalFacingChange(world, character, offset))
-  val horizontalCourse = horizontalFacingDistance(characterRig.facingRotation.z, offset)
+  val horizontalCourse = horizontalFacingDistance(characterRig.facingRotation.x, offset)
   val verticalCourse = verticalFacingDistance(characterRig.facingRotation.y, offset)
   return if (abs(horizontalCourse) <= acceptableRange && abs(verticalCourse) <= acceptableRange)
     facingCommands.plus(action())

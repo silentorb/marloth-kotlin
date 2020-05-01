@@ -21,7 +21,7 @@ import simulation.updating.simulationDelta
 fun eventsFromPerformances(definitions: Definitions, deck: Deck): Events =
     silentorb.mythic.performing.eventsFromPerformances(toPerformanceDefinitions(definitions), toPerformanceDeck(deck), simulationDelta)
 
-fun getSimulationEvents(definitions: Definitions, previous: Deck, world: World, externalEvents: Events): Events {
+fun withSimulationEvents(definitions: Definitions, previous: Deck, world: World, externalEvents: Events): Events {
   val deck = world.deck
   val spiritCommands = pursueGoals(world, aliveSpirits(world.deck))
   val commands = filterCharacterCommandsFromEvents(externalEvents).plus(spiritCommands)
@@ -34,7 +34,7 @@ fun getSimulationEvents(definitions: Definitions, previous: Deck, world: World, 
       externalEvents,
       eventsFromPerformances(definitions, deck),
       commandsToEvents(commands),
-      commands,
+      spiritCommands,
       emitCycleEvents(deck.cyclesInt),
       eventsFromMissiles(toSpatialCombatWorld(world), collisions),
       eventsFromItemPickups(world, collisions),

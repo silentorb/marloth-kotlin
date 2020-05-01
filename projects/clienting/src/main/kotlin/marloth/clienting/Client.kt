@@ -2,8 +2,6 @@ package marloth.clienting
 
 import marloth.clienting.audio.AudioConfig
 import marloth.clienting.audio.updateClientAudio
-import marloth.clienting.hud.TargetTable
-import marloth.clienting.hud.updateTargeting
 import marloth.clienting.input.*
 import marloth.clienting.menus.*
 import marloth.clienting.textResources.englishTextResources
@@ -14,16 +12,13 @@ import silentorb.mythic.aura.SoundLibrary
 import silentorb.mythic.aura.newAudioState
 import silentorb.mythic.bloom.BloomState
 import silentorb.mythic.bloom.input.newBloomInputState
-import silentorb.mythic.bloom.input.updateInputDeviceStates
 import silentorb.mythic.bloom.next.Box
 import silentorb.mythic.bloom.next.LogicModule
 import silentorb.mythic.bloom.next.newBloomState
 import silentorb.mythic.bloom.updateBloomState
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
-import silentorb.mythic.haft.HaftCommand
-import silentorb.mythic.haft.HaftCommands
-import silentorb.mythic.haft.InputDeviceState
-import silentorb.mythic.haft.simpleCommand
+import silentorb.mythic.haft.*
 import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.lookinglass.mapAnimationInfo
 import silentorb.mythic.lookinglass.texturing.AsyncTextureLoader
@@ -96,8 +91,10 @@ data class Client(
 }
 
 fun updateMousePointerVisibility(platform: Platform) {
-  val windowHasFocus = platform.display.hasFocus()
-  platform.input.isMouseVisible(!windowHasFocus)
+  if (!getDebugBoolean("DISABLE_MOUSE")) {
+    val windowHasFocus = platform.display.hasFocus()
+    platform.input.isMouseVisible(!windowHasFocus)
+  }
 }
 
 fun applyCommandsToExternalSystem(client: Client, commands: HaftCommands) {
@@ -113,15 +110,6 @@ fun getListenerPosition(deck: Deck): Vector3? {
   return body?.position
 }
 
-//fun updateClientInput(client: Client): (ClientState) -> ClientState = { clientState ->
-//  val deviceStates = updateInputDeviceStates(client.platform.input, clientState.input.deviceStates)
-//  clientState.copy(
-//      input = clientState.input.copy(
-//          deviceStates = deviceStates
-//      )
-//  )
-//}
-
 // So guiEvents are not persisted
 fun pruneBag(bloomState: BloomState): BloomState {
   return bloomState.copy(
@@ -130,12 +118,6 @@ fun pruneBag(bloomState: BloomState): BloomState {
 }
 
 val clientBloomModules: List<LogicModule> = listOf()
-
-//fun updateClientInputCommands(): (ClientState) -> ClientState = { clientState ->
-//  clientState.copy(
-//      commands = gatherInputCommands(clientState.input, clientState.playerViews)
-//  )
-//}
 
 fun updateClientBloomStates(boxes: List<Box>, bloomStates: Map<Id, BloomState>, deviceStates: List<InputDeviceState>, commands: HaftCommands, players: List<Id>): Map<Id, BloomState> {
   val baseBloomInputState = newBloomInputState(deviceStates.last())
@@ -150,17 +132,8 @@ fun updateClientBloomStates(boxes: List<Box>, bloomStates: Map<Id, BloomState>, 
       .associate { it }
 }
 
-//  pipe(
-//      updateClientInput(client),
-//      updateClientInputCommands(),
-//      updateClientBloomStates(boxes),
-//      applyCommandsToExternalSystem(client),
-//      updateClientCurrentMenus,
-//      updateClientAudio(clientState, client, worlds)
-//  )(clientState)
-
 fun updateClient(client: Client, worlds: List<World>, boxes: List<Box>, clientState: ClientState): ClientState {
-  val world = worlds.last()
+  updateMousePointerVisibility(client.platform)
   val deviceStates = updateInputDeviceStates(client.platform.input, clientState.input.deviceStates)
   val input = clientState.input.copy(
       deviceStates = deviceStates
@@ -170,7 +143,7 @@ fun updateClient(client: Client, worlds: List<World>, boxes: List<Box>, clientSt
   val commandsFromGui = bloomStates.flatMap { (player, bloomState) ->
     guiEvents(bloomState.bag)
         .filter { it.type == GuiEventType.command }
-        .map { simpleCommand(it.data as GuiCommandType, player) }
+        .map { simpleCommand(it.data as GuiCommandType, 0, player) }
   }
 
   val commands = initialCommands.plus(commandsFromGui)
@@ -183,7 +156,6 @@ fun updateClient(client: Client, worlds: List<World>, boxes: List<Box>, clientSt
       bloomStates = bloomStates,
       commands = commands,
       playerViews = playerViews
-//      targetings = updateTargeting(world, client, clientState.players, commands, clientState.targetings)
   )
 }
 

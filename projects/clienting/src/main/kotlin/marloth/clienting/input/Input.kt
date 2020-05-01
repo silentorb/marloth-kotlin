@@ -3,16 +3,21 @@ package marloth.clienting.input
 import silentorb.mythic.haft.*
 import marloth.clienting.PlayerViews
 import marloth.clienting.menus.ViewId
-import silentorb.mythic.bloom.input.DeviceTypeMap
+import silentorb.mythic.characters.MouseLookEvent
+import silentorb.mythic.haft.DeviceTypeMap
 import silentorb.mythic.ent.Id
+import silentorb.mythic.happenings.Events
 import silentorb.mythic.platforming.InputEvent
+import silentorb.mythic.spatial.Vector2
+import silentorb.mythic.spatial.Vector2i
+import silentorb.mythic.spatial.toVector2
 
 typealias UserCommand = HaftCommand
 
 typealias UserCommands = List<UserCommand>
 
 data class GameInputConfig(
-    var mouseInput: Boolean = true
+    var placeholder: Boolean = true
 )
 
 enum class InputContext {
@@ -113,4 +118,17 @@ fun gatherInputCommands(inputState: InputState, playerViews: PlayerViews): HaftC
   val getBinding = getBinding(inputState, playerViews)
   val deviceStates = inputState.deviceStates
   return mapEventsToCommands(deviceStates, getBinding)
+}
+
+fun mouseLookEvents(dimensions: Vector2i, nextState: InputDeviceState, previousState: InputDeviceState?, character: Id?): Events {
+  val previousMousePosition = previousState?.mousePosition ?: Vector2.zero
+  val offset = nextState.mousePosition - previousMousePosition
+  return if (offset != Vector2.zero && character != null) {
+    listOf(MouseLookEvent(
+        character = character,
+        offset = -offset / dimensions.toVector2()
+    ))
+  }
+  else
+    listOf()
 }

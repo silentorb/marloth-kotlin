@@ -129,7 +129,7 @@ fun updateCharacterRigBulletBodies(bulletState: BulletState, characterRigs: Tabl
 }
 
 fun characterOrientationZ(characterRig: CharacterRig) =
-    Quaternion().rotateZ(characterRig.facingRotation.z - Pi / 2)
+    Quaternion().rotateZ(characterRig.facingRotation.x - Pi / 2)
 
 fun hoverCameraOrientationZ(thirdPersonRig: ThirdPersonRig) =
     Quaternion().rotateZ(thirdPersonRig.rotation.x - Pi / 2)
@@ -152,27 +152,30 @@ fun updateCharacterRig(
     events: Events,
     delta: Float
 ): (Id, CharacterRig) -> CharacterRig {
-  val allCommands = events
-      .filterIsInstance<CharacterCommand>()
+  val allCommands = events.filterIsInstance<CharacterCommand>()
+  val mouseLookEvents = events.filterIsInstance<MouseLookEvent>()
 
   return { id, characterRig ->
     val commands = allCommands.filter { it.target == id }
     val freedoms = freedomTable[id] ?: Freedom.none
+    val isFirstPerson = characterRig.viewMode == ViewMode.firstPerson
 
-    val firstPersonLookVelocity = if (hasFreedom(freedoms, Freedom.turning) && characterRig.viewMode == ViewMode.firstPerson)
-      updateLookVelocity(commands, characterRig.turnSpeed * lookSensitivity(), characterRig.firstPersonLookVelocity)
+    val mouseLookEvent = mouseLookEvents.firstOrNull { it.character == id }
+
+    val firstPersonLookVelocity = if (hasFreedom(freedoms, Freedom.turning) && isFirstPerson && mouseLookEvent == null)
+      updateLookVelocityFirstPerson(commands, defaultGamepadMomentumAxis(), characterRig.firstPersonLookVelocity)
     else
       characterRig.firstPersonLookVelocity
 
     val facingRotation = if (!hasFreedom(freedoms, Freedom.turning))
       characterRig.facingRotation
-    else if (characterRig.viewMode == ViewMode.firstPerson)
-      updateFirstPersonFacingRotation(characterRig.facingRotation, firstPersonLookVelocity, delta)
+    else if (isFirstPerson)
+      updateFirstPersonFacingRotation(characterRig.facingRotation, mouseLookEvent?.offset, firstPersonLookVelocity, delta)
     else
       updateThirdPersonFacingRotation(characterRig.facingRotation, thirdPersonRigs[id]!!, delta)
 
     val viewMode = if (commands.any { it.type == CharacterRigCommands.switchView })
-      if (characterRig.viewMode == ViewMode.firstPerson) ViewMode.thirdPerson else ViewMode.firstPerson
+      if (isFirstPerson) ViewMode.thirdPerson else ViewMode.firstPerson
     else
       characterRig.viewMode
 

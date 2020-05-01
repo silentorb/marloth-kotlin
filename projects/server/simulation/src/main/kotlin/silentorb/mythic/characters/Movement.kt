@@ -16,28 +16,6 @@ val playerMoveMap = mapOf(
     CharacterRigCommands.moveDown to Vector3(0f, -1f, 0f)
 )
 
-fun joinInputVector(commands: Commands, commandMap: Map<CommandName, Vector3>): Vector3? {
-  val forces = commands.mapNotNull {
-    val vector = commandMap[it.type]
-    if (vector != null && it.value > 0)
-      vector * it.value
-    else
-      null
-  }
-  if (forces.isEmpty())
-    return null
-
-  val offset = forces.reduce { a, b -> a + b }
-  return if (offset == Vector3.zero)
-    Vector3.zero
-  else {
-    if (offset.length() > 1f)
-      offset.normalize()
-    else
-      offset
-  }
-}
-
 fun getMovementImpulseVector(baseSpeed: Float, velocity: Vector3, commandVector: Vector3): Vector3 {
   val rawImpulseVector = commandVector * 1.5f - velocity
   val finalImpulseVector = if (rawImpulseVector.length() > baseSpeed)

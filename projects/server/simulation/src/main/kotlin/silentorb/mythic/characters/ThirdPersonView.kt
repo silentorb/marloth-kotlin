@@ -87,13 +87,19 @@ fun updateThirdPersonCamera(
     camera: ThirdPersonRig
 ): ThirdPersonRig {
   val orientationVelocity = if (target == null) {
-    val limits = AxisVelocityLimits(
-        positiveX = 0.2f,
-        negativeX = 0.3f,
-        positiveY = 0.1f,
-        negativeY = 0.15f
+    val limits = MomentumAxis(
+        horizontal = MomentumConfig(
+            positiveIncrement = 0.2f,
+            maxVelocity = 3.5f,
+            negativeIncrement = 0.3f
+        ),
+        vertical = MomentumConfig(
+            positiveIncrement = 0.1f,
+            maxVelocity = 2f,
+            negativeIncrement = 0.15f
+        )
     )
-    updateLookVelocity(commands, Vector2(3.5f, 2f), limits, camera.orientationVelocity)
+    updateLookVelocityThirdPerson(commands, Vector2(3.5f, 2f), limits, camera.orientationVelocity)
   } else
     Vector2.zero
 
@@ -135,7 +141,7 @@ fun updateThirdPersonCamera(
   } else
     camera.rotation
 
-  val idealRotationX = facingDestination ?: characterRig.facingRotation.z
+  val idealRotationX = facingDestination ?: characterRig.facingRotation.x
   val idealRotationY = 0.4f
   val rotationAlignment = if (target != null)
     lookAtTargetOffset(newLocation, target, initialRotation, idealRotationY, delta)
@@ -205,16 +211,16 @@ fun updateThirdPersonCamera(
   }
 }
 
-fun updateThirdPersonFacingRotation(facingRotation: Vector3, thirdPersonRig: ThirdPersonRig,
-                                    delta: Float): Vector3 {
-  val facing = facingRotation.z
+fun updateThirdPersonFacingRotation(facingRotation: Vector2, thirdPersonRig: ThirdPersonRig,
+                                    delta: Float): Vector2 {
+  val facing = facingRotation.x
   val facingDestination = thirdPersonRig.facingDestination
   return if (facingDestination != null && facingDestination != facing) {
     val facingGap = getAngleCourse(facing, facingDestination)
     val maxFacingChange = 0.3f * delta + facingGap * facingGap * 2f * delta
     val change = minMax(facingGap, -maxFacingChange, maxFacingChange)
 //    println("$change $facingGap ${movement.offset} ${movement.offset.length()}")
-    Vector3(0f, 0f, normalizeRadialAngle(facing + change))
+    Vector2(normalizeRadialAngle(facing + change), 0f)
   } else
     facingRotation
 }

@@ -71,9 +71,8 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, defi
                   activeAccessory = accessories.firstOrNull()?.id
               ),
               characterRig = CharacterRig(
-                  facingRotation = Vector3(0f, 0f, angle),
-                  facingOrientation = characterRigOrentation(Vector3(0f, 0f, angle)),
-//                  isActive = true,
+                  facingRotation = Vector2(angle,0f),
+                  facingOrientation = characterRigOrentation(Vector2(angle, 0f)),
                   maxSpeed = definition.maxSpeed,
                   turnSpeed = Vector2(4f, 1f),
                   viewMode = ViewMode.firstPerson

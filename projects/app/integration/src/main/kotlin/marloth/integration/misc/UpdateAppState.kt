@@ -5,6 +5,7 @@ import marloth.clienting.PlayerViews
 import marloth.clienting.hud.updateTargeting
 import marloth.clienting.menus.*
 import marloth.clienting.input.GuiCommandType
+import marloth.clienting.input.mouseLookEvents
 import marloth.clienting.updateClient
 import marloth.integration.clienting.gatherHudData
 import marloth.integration.clienting.renderMain
@@ -33,7 +34,7 @@ import marloth.scenery.enums.CharacterCommands
 import simulation.main.World
 import simulation.updating.simulationDelta
 import simulation.misc.Victory
-import simulation.happenings.getSimulationEvents
+import simulation.happenings.withSimulationEvents
 import simulation.updating.updateWorld
 
 fun updateSimulationDatabase(db: Database, next: World, previous: World) {
@@ -89,7 +90,7 @@ fun gatherAdditionalGameCommands(previousClient: ClientState, clientState: Clien
     val previousView = previousClient.playerViews[player] ?: ViewId.none
     listOfNotNull(
         if (view == ViewId.none && previousView == ViewId.merchant)
-          CharacterCommand(type = CharacterCommands.stopInteracting, target = player)
+          CharacterCommand(type = CharacterCommands.stopInteracting, target = player, device = 0)
         else
           null
     )
@@ -121,9 +122,8 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
       .plus(gatherAdditionalGameCommands(previousClient, clientState))
 
   val definitions = app.definitions
-  val clientEvents = events.plus(gameCommands)
-  val simulationEvents = getSimulationEvents(definitions, previous.deck, world, clientEvents)
-  val allEvents = clientEvents + simulationEvents
+  val clientEvents = events + gameCommands + mouseLookEvents(app.client.renderer.config.dimensions, clientState.input.deviceStates.last(), previousClient.input.deviceStates.lastOrNull(), clientState.players.firstOrNull())
+  val allEvents = withSimulationEvents(definitions, previous.deck, world, clientEvents)
   val nextWorld = updateWorld(definitions, allEvents, simulationDelta, world)
   val finalWorld = nextWorld.copy(
       deck = nextWorld.deck.copy(

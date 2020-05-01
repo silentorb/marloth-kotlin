@@ -188,7 +188,7 @@ fun updateFirstPersonCamera(camera: MapViewFirstPersonCamera, commands: List<Haf
       LabCommandType.moveUp -> CharacterCommands.moveUp
       else -> null
     }
-  }.map { CharacterCommand(type = it, target = 0, value = 1f) }
+  }.map { CharacterCommand(type = it, target = 0, value = 1f, device = 0) }
 
   val moveOffset = joinInputVector(playerCommands, playerMoveMap)
 

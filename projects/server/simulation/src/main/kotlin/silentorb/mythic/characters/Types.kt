@@ -12,13 +12,13 @@ enum class ViewMode {
   thirdPerson
 }
 
-fun characterRigOrentation(facingRotation: Vector3) =
+fun characterRigOrentation(facingRotation: Vector2) =
     Quaternion()
-        .rotateZ(facingRotation.z)
+        .rotateZ(facingRotation.x)
         .rotateY(-facingRotation.y)
 
 data class CharacterRig(
-    val facingRotation: Vector3 = Vector3(),
+    val facingRotation: Vector2 = Vector2(),
     val facingOrientation: Quaternion,
     val groundDistance: Float = 0f,
     val maxSpeed: Float,
