@@ -9,6 +9,8 @@ import silentorb.mythic.spatial.Vector3
 import marloth.scenery.enums.MeshId
 import silentorb.mythic.scenery.MeshName
 import simulation.misc.CellAttribute
+import simulation.misc.cellHalfLength
+import simulation.misc.floorOffset
 
 const val quarterStep = cellLength / 4f
 
@@ -37,7 +39,14 @@ private fun newSlope(lower: Level, upper: Level) =
                 south = impassableHorizontalSolid
             )
         )
-    ) + newSlopedFloorMesh(MeshId.quarterSlope.name, lower.height) //+
+    ) + newSlopedFloorMesh(MeshId.quarterSlope.name, lower.height)
+
+fun plainSlopeSlot(lowerHeight: Float) =
+    BlockBuilder(
+        block = Block(
+            slots = listOf(Vector3(0f, 0f, lowerHeight + quarterStep / 2f + 0.05f) + floorOffset)
+        )
+    )
 
 fun explodeHeightBlocks(levelIndex: Int): Map<String, BlockBuilder> {
   val upper = levels[levelIndex]
@@ -61,7 +70,8 @@ fun explodeHeightBlocks(levelIndex: Int): Map<String, BlockBuilder> {
           cubeWallLamps(lampRate = 0.5f, heightOffset = upper.height - 0.1f)
       ,
 
-      "lowerHalfStepSlopeA$levelIndex" to newSlope(lower, upper),
+      "lowerHalfStepSlopeA$levelIndex" to newSlope(lower, upper) +
+          plainSlopeSlot(lower.height),
 
       "lowerHalfStepSlopeB$levelIndex" to newSlope(lower, upper) +
           newSlopeEdgeBlock(MeshId.largeBrick.name, lower.height + quarterStep + quarterStep, upper.side, -1),

@@ -41,7 +41,13 @@ fun diagonalHalfFloorMesh(mesh: MeshName, height: Float) =
       floorMeshBuilder(mesh, offset = position, orientation = orientation)(input)
     }
 
-fun newSlopedFloorMesh(mesh: MeshName, height: Float) = blockBuilder(down = impassableHorizontal) { input ->
+fun newSlopedFloorMesh(mesh: MeshName, height: Float) = BlockBuilder(
+    block = Block(
+        sides = sides(
+            down = impassableHorizontal
+        )
+    )
+) { input ->
   val meshInfo = input.general.config.meshes[mesh]!!
   val slopeAngle = asin(cellLength / 4f / meshInfo.shape!!.x) - 0.007f
   val orientation = Quaternion()
