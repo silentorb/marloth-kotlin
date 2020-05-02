@@ -37,7 +37,7 @@ val homeBlock = BlockBuilder(
             south = impassableHorizontal
         )
     )
-) + floorMesh(MeshId.squareFloor.name) + cubeWallLamps(lampRate = 1f)
+) + floorMesh(MeshId.squareFloor) + cubeWallLamps(lampRate = 1f)
 
 fun singleCellRoom() = BlockBuilder(
     block = Block(
@@ -51,7 +51,7 @@ fun singleCellRoom() = BlockBuilder(
             south = optionalOpen
         )
     )
-) + floorMesh(MeshId.squareFloor.name) + cubeWallLamps(lampRate = 0.7f)
+) + floorMesh(MeshId.squareFloor) + cubeWallLamps(lampRate = 0.7f)
 
 fun spiralStairBlocks(): Map<String, BlockBuilder> = mapOf(
     "stairBottom" to compose(
@@ -63,7 +63,7 @@ fun spiralStairBlocks(): Map<String, BlockBuilder> = mapOf(
             south = impassableCylinder,
             west = openOrSolidCylinder
         ),
-        floorMesh(MeshId.squareFloor.name),
+        floorMesh(MeshId.squareFloor),
         cylinderWalls(),
         curvedStaircases
     ),
@@ -93,7 +93,7 @@ fun spiralStairBlocks(): Map<String, BlockBuilder> = mapOf(
             west = impassableCylinder
         ),
         cylinderWalls(),
-        halfFloorMesh(MeshId.halfSquareFloor.name)
+        halfFloorMesh(MeshId.halfSquareFloor)
     )
 )
     .mapValues(mapEntryValue(withCellAttributes(

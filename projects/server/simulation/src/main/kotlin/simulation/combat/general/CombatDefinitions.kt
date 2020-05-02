@@ -8,5 +8,5 @@ import silentorb.mythic.accessorize.ModifierDefinition
 data class CombatDefinitions(
     val accessories: Map<AccessoryName, AccessoryDefinition>,
     val damageTypes: Set<DamageType>,
-    val modifiers: Map<ModifierId, ModifierDefinition>
+    val modifiers: Map<AccessoryName, ModifierDefinition>
 )

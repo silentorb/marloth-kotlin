@@ -18,7 +18,7 @@ data class TakeItemEvent(
 ) : GameEvent
 
 data class ApplyBuffEvent(
-    val buffType: ModifierId,
+    val buffType: AccessoryName,
     val strength: Int,
     val duration: Int,
     val target: Id,

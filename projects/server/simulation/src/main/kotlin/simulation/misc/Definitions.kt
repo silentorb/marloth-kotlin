@@ -1,6 +1,7 @@
 package simulation.misc
 
 import marloth.scenery.enums.ModifierId
+import marloth.scenery.enums.TextResourceMapper
 import silentorb.mythic.accessorize.AccessoryDefinition
 import silentorb.mythic.accessorize.AccessoryName
 import silentorb.mythic.accessorize.ModifierDefinition
@@ -24,9 +25,10 @@ data class Definitions(
     val animations: AnimationInfoMap,
     val damageTypes: Set<DamageType>,
     val lightAttachments: LightAttachmentMap,
-    val modifiers: Map<ModifierId, ModifierDefinition>,
+    val modifiers: Map<AccessoryName, ModifierDefinition>,
     val particleEffects: ParticleEffectDefinitions,
     val professions: Professions,
     val soundDurations: Map<SoundType, Float>,
+    val textLibrary: TextResourceMapper,
     val weapons: Map<AccessoryName, WeaponDefinition>
 )

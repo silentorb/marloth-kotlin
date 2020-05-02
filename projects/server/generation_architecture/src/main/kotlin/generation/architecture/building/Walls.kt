@@ -54,7 +54,7 @@ fun directionRotation(direction: Direction): Float =
 
 fun cylinderWalls() = blockBuilder { input ->
   val diagonals = (0 until 4)
-      .map { Pair(MeshId.arcWall8thA.name, (0.25f + it * 0.5f) * Pi) }
+      .map { Pair(MeshId.arcWall8thA, (0.25f + it * 0.5f) * Pi) }
 
   val optionalWalls = horizontalDirectionVectors
 //      .filterKeys { it == Direction.south }
@@ -62,7 +62,7 @@ fun cylinderWalls() = blockBuilder { input ->
         !containsConnection(input.general.grid.connections, input.cell, input.cell + offset)
       }
       .map { (direction, _) ->
-        Pair(MeshId.arcWall8thB.name, directionRotation(direction))
+        Pair(MeshId.arcWall8thB, directionRotation(direction))
       }
 
   diagonals.plus(optionalWalls)
@@ -83,8 +83,8 @@ fun cylinderWalls() = blockBuilder { input ->
 fun getTruncatedWallMesh(input: BuilderInput, height: Float): MeshName {
   val scale = height / cellLength
   return when {
-    !input.sides[Direction.up]!!.contains(ConnectionType.extraHeadroom) -> MeshId.squareWall.name
-    scale <= 0.5f -> MeshId.squareWallHalfHeight.name // Don't currently have a 3/4 height wall mesh
-    else -> MeshId.squareWallQuarterHeight.name
+    !input.sides[Direction.up]!!.contains(ConnectionType.extraHeadroom) -> MeshId.squareWall
+    scale <= 0.5f -> MeshId.squareWallHalfHeight // Don't currently have a 3/4 height wall mesh
+    else -> MeshId.squareWallQuarterHeight
   }
 }

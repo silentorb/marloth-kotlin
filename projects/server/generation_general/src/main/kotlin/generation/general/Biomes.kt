@@ -2,6 +2,7 @@ package generation.general
 
 import silentorb.mythic.scenery.MeshName
 import marloth.scenery.enums.TextureId
+import silentorb.mythic.scenery.TextureName
 import simulation.misc.BiomeName
 
 //enum class WallPlacement {
@@ -28,12 +29,12 @@ enum class TextureGroup {
 
 data class BiomeInfo(
     val name: String,
-    val textures: Map<TextureGroup, TextureId>,
+    val textures: Map<TextureGroup, TextureName>,
     val meshes: Set<MeshName>,
     val attributes: Set<BiomeAttribute> = setOf()
 )
 
 typealias BiomeInfoMap = Map<BiomeName, BiomeInfo>
 
-fun biomeTexture(info: BiomeInfo, group: TextureGroup): TextureId? =
+fun biomeTexture(info: BiomeInfo, group: TextureGroup): TextureName? =
     info.textures[group] ?: info.textures[TextureGroup.default]

@@ -1,53 +1,53 @@
 package marloth.scenery.enums
 
-enum class MeshId {
-  billboard,
-  candle,
-  hollowCircle,
-  cube,
-  eyeball,
-  grenadeLauncher,
-  hogHead,
-  key,
-  line,
-  missile,
-  pants,
-  personBody,
-  pistol,
-  prisonDoor,
-  pumpkinHead,
-  sentinelHead,
-  shirt,
-  shotgun,
-  skySphere,
-  sphere,
-  spikyBall,
-  treasureChest,
-  wallLamp,
+// As long as there is MeshId reflection, its fields cannot be const
+object MeshId {
+  val billboard = "billboard"
+  val candle = "candle"
+  val hollowCircle = "hollowCircle"
+  val cube = "cube"
+  val eyeball = "eyeball"
+  val grenadeLauncher = "grenadeLauncher"
+  val hogHead = "hogHead"
+  val key = "key"
+  val line = "line"
+  val missile = "missile"
+  val pants = "pants"
+  val personBody = "personBody"
+  val pistol = "pistol"
+  val prisonDoor = "prisonDoor"
+  val pumpkinHead = "pumpkinHead"
+  val sentinelHead = "sentinelHead"
+  val shirt = "shirt"
+  val shotgun = "shotgun"
+  val skySphere = "skySphere"
+  val sphere = "sphere"
+  val spikyBall = "spikyBall"
+  val treasureChest = "treasureChest"
+  val wallLamp = "wallLamp"
 
   // Architecture
-  arcWall8thA,
-  arcWall8thB,
-  circleFloor,
-  curvingStairStep,
-  diagonalWall,
-  fillerColumn,
-  halfCircleFloor,
-  halfLengthWall,
-  halfSquareFloor,
-  largeBrick,
-  longPillowStep,
-  longStairStep,
-  longStep,
-  quarterSlope,
-  spiralStaircaseColumn,
-  squareFloor,
-  squareFloorHalfDiagonal,
-  squareWallHalfHeight,
-  squareWall,
-  _squareWallPlain, // squareWall with different metadata
-  squareWallDoorway,
-  squareWallQuarterHeight,
-  squareWallQuarterSlope,
-  squareWallWindow
+  val arcWall8thA = "arcWall8thA"
+  val arcWall8thB = "arcWall8thB"
+  val circleFloor = "circleFloor"
+  val curvingStairStep = "curvingStairStep"
+  val diagonalWall = "diagonalWall"
+  val fillerColumn = "fillerColumn"
+  val halfCircleFloor = "halfCircleFloor"
+  val halfLengthWall = "halfLengthWall"
+  val halfSquareFloor = "halfSquareFloor"
+  val largeBrick = "largeBrick"
+  val longPillowStep = "longPillowStep"
+  val longStairStep = "longStairStep"
+  val longStep = "longStep"
+  val quarterSlope = "quarterSlope"
+  val spiralStaircaseColumn = "spiralStaircaseColumn"
+  val squareFloor = "squareFloor"
+  val squareFloorHalfDiagonal = "squareFloorHalfDiagonal"
+  val squareWallHalfHeight = "squareWallHalfHeight"
+  val squareWall = "squareWall"
+  val squareWallDoorway = "squareWallDoorway"
+  val squareWallQuarterHeight = "squareWallQuarterHeight"
+  val squareWallQuarterSlope = "squareWallQuarterSlope"
+  val squareWallWindow = "squareWallWindow"
 }

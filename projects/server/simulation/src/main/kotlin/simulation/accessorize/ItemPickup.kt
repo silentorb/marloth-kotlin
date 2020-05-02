@@ -32,7 +32,7 @@ fun eventsFromItemPickups(world: World, collisions: CollisionMap): Events {
           }
       if (available) {
         when {
-          itemAccessory.type == AccessoryId.victoryKey.name -> listOf(
+          itemAccessory.type == AccessoryId.victoryKey -> listOf(
               PruneEntityEvent(
                   id = itemPickup,
                   hand = newVictoryKey(owner = character)

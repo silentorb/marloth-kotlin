@@ -4,9 +4,10 @@ import marloth.clienting.audio.AudioConfig
 import marloth.clienting.audio.updateClientAudio
 import marloth.clienting.input.*
 import marloth.clienting.menus.*
-import marloth.clienting.textResources.englishTextResources
+import marloth.definition.texts.englishTextResources
 import marloth.definition.ClientDefinitions
 import marloth.scenery.enums.Text
+import marloth.scenery.enums.TextResourceMapper
 import silentorb.mythic.aura.AudioState
 import silentorb.mythic.aura.SoundLibrary
 import silentorb.mythic.aura.newAudioState

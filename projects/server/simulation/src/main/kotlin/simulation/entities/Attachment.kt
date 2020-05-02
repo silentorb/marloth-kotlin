@@ -1,6 +1,7 @@
 package simulation.entities
 
 import marloth.scenery.enums.ModifierId
+import silentorb.mythic.accessorize.AccessoryName
 import silentorb.mythic.accessorize.Modifier
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
@@ -31,7 +32,7 @@ fun getTargetAttachments(deck: Deck, target: Id) =
           attachment.value.target == target
         }
 
-fun getAttachmentOfEntityType(deck: Deck, target: Id, type: ModifierId): Id? =
+fun getAttachmentOfEntityType(deck: Deck, target: Id, type: AccessoryName): Id? =
     getTargetAttachments(deck, target)
         .keys.firstOrNull {
       val buff = deck.modifiers[it]

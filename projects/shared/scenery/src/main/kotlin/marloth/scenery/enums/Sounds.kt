@@ -1,13 +1,12 @@
 package marloth.scenery.enums
 
-enum class Sounds {
-  girlScream,
-  hogAmbient01,
-  hogAmbient02,
-  hogAmbient03,
-  hogDeath,
-  pistolFire,
-  throwWeapon
+// As long as there is SoundId reflection, its fields cannot be const
+ object SoundId {
+  val girlScream = "girlScream"
+  val hogAmbient01 = "hogAmbient01"
+  val hogAmbient02 = "hogAmbient02"
+  val hogAmbient03 = "hogAmbient03"
+  val hogDeath = "hogDeath"
+  val pistolFire = "pistolFire"
+  val throwWeapon = "throwWeapon"
 }
-
-fun soundId(sound: Sounds): Long = sound.ordinal.toLong()

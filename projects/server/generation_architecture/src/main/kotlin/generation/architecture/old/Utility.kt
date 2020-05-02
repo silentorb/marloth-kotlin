@@ -7,6 +7,7 @@ import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.MeshName
+import silentorb.mythic.scenery.TextureName
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
@@ -29,7 +30,7 @@ val floorOffsetOld = Vector3(0f, 0f, -wallHeight / 2f)
 fun newArchitectureMesh(meshes: MeshInfoMap, mesh: MeshName, position: Vector3,
                         orientation: Quaternion = Quaternion(),
                         node: Id = 0L,
-                        texture: TextureId? = null,
+                        texture: TextureName? = null,
                         scale: Vector3 = Vector3.unit): Hand {
   val meshInfo = meshes[mesh]!!
   val shape = meshInfo.shape
@@ -37,7 +38,7 @@ fun newArchitectureMesh(meshes: MeshInfoMap, mesh: MeshName, position: Vector3,
       depiction = Depiction(
           type = DepictionType.staticMesh,
           mesh = mesh,
-          texture = texture?.name
+          texture = texture
       ),
       body = Body(
           position = position,

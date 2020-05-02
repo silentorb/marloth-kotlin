@@ -24,7 +24,7 @@ fun mapLights(deck: Deck, player: Id): List<Light> =
           )
         }
         .plus(listOfNotNull(
-            if (hasEquipped(deck, player)(AccessoryId.candle.name))
+            if (hasEquipped(deck, player)(AccessoryId.candle))
               Light(
                   type = LightType.point,
                   color = Vector4(1f, 1f, 1f, 0.2f),

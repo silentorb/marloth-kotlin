@@ -2,6 +2,7 @@ package marloth.definition
 
 import marloth.definition.data.*
 import marloth.definition.particles.particleEffects
+import marloth.definition.texts.englishTextResources
 import marloth.scenery.enums.staticDamageTypes
 import silentorb.mythic.ent.reflectPropertiesMap
 import simulation.characters.CharacterDefinition
@@ -23,6 +24,7 @@ fun staticDefinitions(clientDefinitions: ClientDefinitions): Definitions {
       particleEffects = particleEffects(),
       professions = allProfessions() + reflectPropertiesMap<CharacterDefinition>(CharacterDefinitions),
       soundDurations = clientDefinitions.soundDurations,
+      textLibrary = englishTextResources,
       weapons = weapons
   )
 }

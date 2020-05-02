@@ -8,7 +8,7 @@ import silentorb.mythic.accessorize.AccessoryName
 import silentorb.mythic.accessorize.RelativeModifier
 
 fun staticAccessories(): Map<AccessoryName, AccessoryDefinition> = mapOf(
-    AccessoryId.resistanceCold.name to AccessoryDefinition(
+    AccessoryId.resistanceCold to AccessoryDefinition(
         name = Text.id_resistanceCold,
         modifiers = listOf(
             RelativeModifier(
@@ -17,7 +17,7 @@ fun staticAccessories(): Map<AccessoryName, AccessoryDefinition> = mapOf(
             )
         )
     ),
-    AccessoryId.resistanceFire.name to AccessoryDefinition(
+    AccessoryId.resistanceFire to AccessoryDefinition(
         name = Text.id_resistanceFire,
         modifiers = listOf(
             RelativeModifier(
@@ -26,7 +26,7 @@ fun staticAccessories(): Map<AccessoryName, AccessoryDefinition> = mapOf(
             )
         )
     ),
-    AccessoryId.resistancePoison.name to AccessoryDefinition(
+    AccessoryId.resistancePoison to AccessoryDefinition(
         name = Text.id_resistancePoison,
         modifiers = listOf(
             RelativeModifier(

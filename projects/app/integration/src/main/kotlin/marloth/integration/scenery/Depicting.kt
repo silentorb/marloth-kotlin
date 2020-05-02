@@ -9,9 +9,11 @@ import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.characters.ViewMode
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
+import silentorb.mythic.ent.reflectProperties
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.physics.Body
 import silentorb.mythic.scenery.MeshName
+import silentorb.mythic.scenery.Shape
 import silentorb.mythic.scenery.TextureName
 import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Pi
@@ -22,8 +24,8 @@ import simulation.main.Deck
 import simulation.misc.Definitions
 import kotlin.math.floor
 
-val simplePainterMap = MeshId.values().mapNotNull { meshId ->
-  val depictionType = DepictionType.values().firstOrNull { it.name == meshId.name }
+val simplePainterMap = reflectProperties<String>(MeshId).mapNotNull { meshId ->
+  val depictionType = DepictionType.values().firstOrNull { it.name == meshId }
   if (depictionType != null)
     Pair(depictionType, meshId)
   else
@@ -74,12 +76,33 @@ fun convertSimpleDepiction(deck: Deck, id: Id, depiction: Depiction): MeshElemen
   val mesh = if (depiction.type == DepictionType.staticMesh)
     depiction.mesh
   else
-    simplePainterMap[depiction.type]?.name
+    simplePainterMap[depiction.type]
 
   if (mesh == null)
     return null
 
   return convertSimpleDepiction(deck, id, mesh, depiction.texture)
+}
+
+fun getPerformanceTextBillboard(definitions: Definitions, deck: Deck, id: Id, footPosition: Vector3, shape: Shape): TextBillboard? {
+  val performance = deck.performances.entries.firstOrNull { it.value.target == id }
+  return if (performance != null) {
+    val action = performance.value.sourceAction
+    val accessory = deck.accessories[action]
+    if (accessory != null) {
+      val definition = definitions.accessories [accessory.type]!!
+      TextBillboard(
+          content = definitions.textLibrary(definition.name),
+          position = footPosition + Vector3(0f, 0f, shape.height + 0.1f),
+          style = textStyles.smallWhite,
+          depthOffset = -0.01f
+      )
+    }
+    else
+        null
+  }
+  else
+    null
 }
 
 fun convertCharacterDepiction(definitions: Definitions, deck: Deck, id: Id, depiction: Depiction): ElementGroup {
@@ -135,7 +158,7 @@ fun convertCharacterDepiction(definitions: Definitions, deck: Deck, id: Id, depi
           .map {
             MeshElement(
                 id = id,
-                mesh = it.name,
+                mesh = it,
                 transform = transform
             )
           },
@@ -157,11 +180,7 @@ fun convertCharacterDepiction(definitions: Definitions, deck: Deck, id: Id, depi
             else
               null
           },
-      text = TextBillboard(
-          content = deck.characters[id]!!.profession,
-          position = footPosition + Vector3(0f, 0f, shape.height + 0.1f),
-          style = textStyles.smallWhite
-      )
+      textBillboard = getPerformanceTextBillboard(definitions, deck, id, footPosition, shape)
   )
 }
 
@@ -219,7 +238,7 @@ fun gatherVisualElements(definitions: Definitions, deck: Deck, player: Id, chara
         convertSimpleDepiction(deck, it.key, it.value)
       }
           .plus(deck.doors.mapNotNull {
-            convertSimpleDepiction(deck, it.key, MeshId.prisonDoor.name)
+            convertSimpleDepiction(deck, it.key, MeshId.prisonDoor)
           })
 
   return initial + complexElements + ElementGroup(simpleElements)

@@ -15,7 +15,7 @@ import simulation.main.Deck
 fun drawAiTargets(deck: Deck, renderer: Renderer) {
   val targets = deck.spirits.mapNotNull { it.value.pursuit?.targetPosition }
   val effect = renderer.getShader(renderer.vertexSchemas.flat, ShaderFeatureConfig())
-  val cube = renderer.meshes[MeshId.cube.name]!!.primitives.first()
+  val cube = renderer.meshes[MeshId.cube]!!.primitives.first()
   for (target in targets) {
     effect.activate(ObjectShaderConfig(
         color = Vector4(1f, 0f, 1f, 0.3f),

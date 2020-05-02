@@ -6,6 +6,8 @@ import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.spatial.Vector3
 
+typealias SoundName = String
+
 data class NewSound(
     val type: SoundType,
     val volume: Float,

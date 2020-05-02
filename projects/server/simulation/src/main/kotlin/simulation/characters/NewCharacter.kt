@@ -53,7 +53,7 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, prof
               animation = CharacterAnimation(
                   animations = listOf(
                       SingleAnimation(
-                          animationId = AnimationId.stand.name,
+                          animationId = AnimationId.stand,
                           animationOffset = 0f
                       )
                   )

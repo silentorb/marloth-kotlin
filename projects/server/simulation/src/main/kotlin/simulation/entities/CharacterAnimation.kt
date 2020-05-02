@@ -16,7 +16,7 @@ data class CharacterAnimation(
     val animations: List<SingleAnimation>
 )
 
-private val transitionBeforeStart = setOf(AnimationId.shootPistol.name)
+private val transitionBeforeStart = setOf(AnimationId.shootPistol)
 
 fun updateAnimationOffset(animationInfo: AnimationInfoMap,
                           animation: SingleAnimation, delta: Float): Float {
@@ -71,7 +71,7 @@ fun getUpdatedAnimationDistributions(primary: AnimationName,
 fun updatePrimaryAnimation(deck: Deck, character: Id): AnimationName {
   val characterRecord = deck.characters[character]
   return if (characterRecord != null && !characterRecord.isAlive)
-    AnimationId.death.name
+    AnimationId.death
   else {
     val performance = deck.performances.values.firstOrNull { it.target == character }
     if (performance != null) {
@@ -80,9 +80,9 @@ fun updatePrimaryAnimation(deck: Deck, character: Id): AnimationName {
       val body = deck.bodies[character]!!
       val speed = body.velocity.length()
       return if (speed < 0.1f)
-        AnimationId.stand.name
+        AnimationId.stand
       else
-        AnimationId.walk.name
+        AnimationId.walk
     }
   }
 }

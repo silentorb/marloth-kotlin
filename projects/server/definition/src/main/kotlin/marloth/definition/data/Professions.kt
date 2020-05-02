@@ -1,7 +1,7 @@
 package marloth.definition.data
 
 import marloth.scenery.enums.AccessoryId
-import marloth.scenery.enums.Sounds
+import marloth.scenery.enums.SoundId
 import marloth.scenery.enums.Text
 import silentorb.mythic.ent.reflectPropertiesMap
 import simulation.characters.CharacterDefinition
@@ -11,20 +11,20 @@ object Professions {
   val soldier = CharacterDefinition(
       name = Text.id_soldier,
       health = 200,
-      accessories = listOf(AccessoryId.shotgun.name, AccessoryId.mobility.name),
+      accessories = listOf(AccessoryId.shotgun, AccessoryId.mobility),
       depictionType = DepictionType.child,
       maxSpeed = 5f,
-      deathSound = Sounds.girlScream,
+      deathSound = SoundId.girlScream,
       damageMultipliers = mapOf()
   )
 
   val magician = CharacterDefinition(
       name = Text.id_magician,
       health = 200,
-      accessories = listOf(AccessoryId.rocketLauncher.name, AccessoryId.mobility.name),
+      accessories = listOf(AccessoryId.rocketLauncher, AccessoryId.mobility),
       depictionType = DepictionType.child,
       maxSpeed = 8f,
-      deathSound = Sounds.girlScream,
+      deathSound = SoundId.girlScream,
       damageMultipliers = mapOf()
   )
 
@@ -33,10 +33,10 @@ object Professions {
 private val debug = CharacterDefinition(
     name = Text.unnamed,
     health = 20000,
-    accessories = listOf(AccessoryId.rocketLauncher.name, AccessoryId.mobility.name),
+    accessories = listOf(AccessoryId.rocketLauncher, AccessoryId.mobility),
     depictionType = DepictionType.child,
     maxSpeed = 8f,
-    deathSound = Sounds.girlScream,
+    deathSound = SoundId.girlScream,
     damageMultipliers = mapOf()
 )
 

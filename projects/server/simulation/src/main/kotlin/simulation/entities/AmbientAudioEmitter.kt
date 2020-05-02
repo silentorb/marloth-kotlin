@@ -3,7 +3,6 @@ package simulation.entities
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.randomly.Dice
-import marloth.scenery.enums.Sounds
 import silentorb.mythic.aura.SoundType
 import simulation.main.Deck
 import simulation.updating.simulationDelta

@@ -13,7 +13,7 @@ import silentorb.mythic.timing.FloatCycle
 fun createBackgroundSphere(texture: BackgroundTextureId, cameraPosition: Vector3, orientation: Quaternion = Quaternion()) =
     MeshElement(
         id = 1,
-        mesh = MeshId.skySphere.toString(),
+        mesh = MeshId.skySphere,
         transform = Matrix.identity
             .translate(cameraPosition)
             .rotate(orientation)

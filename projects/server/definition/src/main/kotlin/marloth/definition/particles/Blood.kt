@@ -28,7 +28,7 @@ fun bloodParticleEffect(): ParticleEffectDefinition {
   val gravity = -1.1f
   return ParticleEffectDefinition(
       initialAppearance = ParticleAppearance(
-          texture = TextureId.perlinParticle.name,
+          texture = TextureId.perlinParticle,
           color = newVector4(firstColor, 0f),
           size = 0.09f
       ),

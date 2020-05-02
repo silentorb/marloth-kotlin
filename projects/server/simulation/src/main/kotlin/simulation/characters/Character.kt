@@ -2,14 +2,16 @@ package simulation.characters
 
 import marloth.scenery.enums.CharacterCommands
 import marloth.scenery.enums.ResourceId
-import marloth.scenery.enums.Sounds
 import marloth.scenery.enums.Text
 import silentorb.mythic.accessorize.AccessoryName
+import silentorb.mythic.audio.SoundName
 import silentorb.mythic.aura.SoundType
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.ent.pipe2
-import silentorb.mythic.happenings.*
+import silentorb.mythic.happenings.CharacterCommand
+import silentorb.mythic.happenings.Commands
+import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.BulletState
 import silentorb.mythic.spatial.Vector3
 import simulation.combat.general.DamageMultipliers
@@ -31,7 +33,7 @@ data class CharacterDefinition(
     val maxSpeed: Float,
     val accessories: List<AccessoryName>,
     val depictionType: DepictionType,
-    val deathSound: Sounds?,
+    val deathSound: SoundName?,
     val ambientSounds: List<SoundType> = listOf(),
     val damageMultipliers: DamageMultipliers = mapOf(),
     val fieldOfView: Float = 0.5f // Only used for AI. Dot product: 1 is no vision, -1 is 360 degree vision

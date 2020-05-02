@@ -41,15 +41,15 @@ import simulation.entities.*
 
 val defaultWares: List<Ware> = listOf(
     Ware(
-        type = AccessoryId.resistanceCold.name,
+        type = AccessoryId.resistanceCold,
         price = 10
     ),
     Ware(
-        type = AccessoryId.resistanceFire.name,
+        type = AccessoryId.resistanceFire,
         price = 12
     ),
     Ware(
-        type = AccessoryId.resistancePoison.name,
+        type = AccessoryId.resistancePoison,
         price = 10
     )
 )

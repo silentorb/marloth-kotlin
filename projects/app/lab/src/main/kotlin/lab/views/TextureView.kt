@@ -8,9 +8,10 @@ import silentorb.mythic.drawing.Canvas
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.lookinglass.Renderer
 import marloth.scenery.enums.TextureId
+import silentorb.mythic.scenery.TextureName
 
 data class TextureViewConfig(
-    var texture: TextureId = TextureId.checkersBlackWhite
+    var texture: TextureName = TextureId.checkersBlackWhite
 )
 
 fun drawTextureView(renderer: Renderer, config: TextureViewConfig, bounds: Bounds, canvas: Canvas) {

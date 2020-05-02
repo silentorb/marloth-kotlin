@@ -15,7 +15,7 @@ import simulation.misc.floorOffset
 val curvedStaircases = blockBuilder() { input ->
   val biome = input.biome
   val config = input.general.config
-  val mesh = MeshId.curvingStairStep.name
+  val mesh = MeshId.curvingStairStep
   val meshInfo = input.general.config.meshes[mesh]!!
   val stepWidth = meshInfo.shape!!.x
   val sweepLength = Pi * 2f
@@ -44,7 +44,7 @@ val curvedStaircases = blockBuilder() { input ->
   }
       .plus(newArchitectureMesh(
           meshes = config.meshes,
-          mesh = MeshId.spiralStaircaseColumn.name,
+          mesh = MeshId.spiralStaircaseColumn,
           position = input.position + cellCenterOffset,
           texture = biomeTexture(biome, TextureGroup.wall)
       ))

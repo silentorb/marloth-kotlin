@@ -42,7 +42,7 @@ fun createHollowCircleMesh(vertexSchema: VertexSchema, resolution: Int): General
 fun createMeshes(vertexSchemas: VertexSchemas): Pair<Map<MeshName, ModelMesh>, List<Armature>> {
   val imports = importedMeshes(vertexSchemas)
   val meshes = mapOf(
-      MeshId.hollowCircle.name to createHollowCircleMesh(vertexSchemas.flat, 64),
+      MeshId.hollowCircle to createHollowCircleMesh(vertexSchemas.flat, 64),
       "line" to createLineMesh(vertexSchemas.flat),
       "billboard" to createBillboardMesh(vertexSchemas.billboard)
   )

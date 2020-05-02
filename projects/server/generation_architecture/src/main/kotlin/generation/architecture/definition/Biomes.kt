@@ -27,15 +27,13 @@ val commonMeshes = setOf(
     MeshId.squareWall
 )
 
-fun mapMeshes(meshes: Set<MeshId>): Set<MeshName> = meshes.map { it.name }.toSet()
-
 val biomeInfoMap: BiomeInfoMap = mapOf(
     BiomeId.checkers to BiomeInfo(
         name = "checkers",
         textures = mapOf(
             TextureGroup.default to TextureId.checkersBlackWhite
         ),
-        meshes = mapMeshes(commonMeshes),
+        meshes = commonMeshes,
         attributes = setOf(
             BiomeAttribute.wallsAll
         )
@@ -45,7 +43,7 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
         textures = mapOf(
             TextureGroup.default to TextureId.algae
         ),
-        meshes = mapMeshes(commonMeshes),
+        meshes = commonMeshes,
         attributes = setOf(
             BiomeAttribute.placeOnlyAtEnd,
             BiomeAttribute.wallsAll
@@ -57,7 +55,7 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
             TextureGroup.default to TextureId.bricks,
             TextureGroup.floor to TextureId.grass
         ),
-        meshes = mapMeshes(commonMeshes),
+        meshes = commonMeshes,
         attributes = setOf(
             BiomeAttribute.wallsAll
         )
@@ -67,7 +65,7 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
         textures = mapOf(
             TextureGroup.default to TextureId.redTile
         ),
-        meshes = mapMeshes(commonMeshes),
+        meshes = commonMeshes,
         attributes = setOf(
             BiomeAttribute.alwaysWindow,
             BiomeAttribute.alwaysLit,
@@ -81,7 +79,7 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
             TextureGroup.default to TextureId.diamondTiles,
             TextureGroup.wall to TextureId.arch
         ),
-        meshes = mapMeshes(commonMeshes),
+        meshes = commonMeshes,
         attributes = setOf(
             BiomeAttribute.wallsAll
         )
@@ -92,7 +90,7 @@ val biomeInfoMap: BiomeInfoMap = mapOf(
             TextureGroup.floor to TextureId.cobblestone,
             TextureGroup.wall to TextureId.woodPanel
         ),
-        meshes = mapMeshes(commonMeshes),
+        meshes = commonMeshes,
         attributes = setOf(
             BiomeAttribute.wallsAll
         )

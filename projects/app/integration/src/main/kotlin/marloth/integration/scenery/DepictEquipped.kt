@@ -33,7 +33,7 @@ fun getPlayerEquipmentLayer(definitions: Definitions, deck: Deck, player: Id, ca
   val equippedMesh = getEquippedMesh(definitions, deck, player)
   val victoryKey = deck.accessories.entries
       .firstOrNull { (_, accessory) ->
-        accessory.type == AccessoryId.victoryKey.name && accessory.owner == player
+        accessory.type == AccessoryId.victoryKey && accessory.owner == player
       }
   return if (equippedMesh != null || victoryKey != null) {
     val body = deck.bodies[player]!!
@@ -66,7 +66,7 @@ fun getPlayerEquipmentLayer(definitions: Definitions, deck: Deck, player: Id, ca
               meshes = listOf(
                   MeshElement(
                       id = 1L,
-                      mesh = MeshId.key.name,
+                      mesh = MeshId.key,
                       transform = transform
                   )
               ),

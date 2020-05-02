@@ -11,12 +11,12 @@ enum class ModifierDirection {
   outgoing
 }
 
-enum class ModifierId {
-  damageBurning,
-  damageChilled,
-  damagePoisoned,
-  mobile,
-  resistanceCold,
-  resistanceFire,
-  resistancePoison
+object ModifierId {
+  const val damageBurning = "damageBurning"
+  const val damageChilled = "damageChilled"
+  const val damagePoisoned = "damagePoisoned"
+  const val mobile = "mobile"
+  const val resistanceCold = "resistanceCold"
+  const val resistanceFire = "resistanceFire"
+  const val resistancePoison = "resistancePoison"
 }

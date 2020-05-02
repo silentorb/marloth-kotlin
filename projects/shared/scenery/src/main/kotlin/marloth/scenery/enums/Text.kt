@@ -35,3 +35,4 @@ enum class Text {
   unnamed
 }
 
+typealias TextResourceMapper = (Text) -> String

@@ -16,25 +16,16 @@ data class ActionAccessory(
 )
 
 fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
-    AccessoryId.mobility.name to ActionAccessory(
-        accessory = AccessoryDefinition(
-            name = Text.id_mobility
-        ),
-        action = ActionDefinition(
-            cooldown = 2f,
-            duration = 3f
-        )
-    ),
 
-    AccessoryId.pistol.name to ActionAccessory(
+    AccessoryId.entangle to ActionAccessory(
         accessory = AccessoryDefinition(
             name = Text.id_pistol,
-            equippedMesh = MeshId.pistol.name
+            equippedMesh = MeshId.pistol
         ),
         action = ActionDefinition(
             cooldown = 2f,
             range = 10f,
-            animation = AnimationId.shootPistol.name
+            animation = AnimationId.shootPistol
         ),
         weapon = WeaponDefinition(
             attackMethod = AttackMethod.raycast,
@@ -44,19 +35,51 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
                     amount = 70
                 )
             ),
-            sound = Sounds.pistolFire.name
+            sound = SoundId.pistolFire
         )
     ),
 
-    AccessoryId.grenadeLauncher.name to ActionAccessory(
+    AccessoryId.mobility to ActionAccessory(
+        accessory = AccessoryDefinition(
+            name = Text.id_mobility
+        ),
+        action = ActionDefinition(
+            cooldown = 2f,
+            duration = 3f
+        )
+    ),
+
+    AccessoryId.pistol to ActionAccessory(
+        accessory = AccessoryDefinition(
+            name = Text.id_pistol,
+            equippedMesh = MeshId.pistol
+        ),
+        action = ActionDefinition(
+            cooldown = 2f,
+            range = 10f,
+            animation = AnimationId.shootPistol
+        ),
+        weapon = WeaponDefinition(
+            attackMethod = AttackMethod.raycast,
+            damages = listOf(
+                DamageDefinition(
+                    type = DamageTypes.physical.name,
+                    amount = 70
+                )
+            ),
+            sound = SoundId.pistolFire
+        )
+    ),
+
+    AccessoryId.grenadeLauncher to ActionAccessory(
         accessory = AccessoryDefinition(
             name = Text.id_grenadeLauncher,
-            equippedMesh = MeshId.grenadeLauncher.name
+            equippedMesh = MeshId.grenadeLauncher
         ),
         action = ActionDefinition(
             cooldown = 3f,
             range = 20f,
-            animation = AnimationId.shootPistol.name
+            animation = AnimationId.shootPistol
         ),
         weapon = WeaponDefinition(
             attackMethod = AttackMethod.missile,
@@ -69,37 +92,37 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
                     amount = 70
                 )
             ),
-            sound = Sounds.pistolFire.name
+            sound = SoundId.pistolFire
         )
     ),
 
-    AccessoryId.rocketLauncher.name to ActionAccessory(
+    AccessoryId.rocketLauncher to ActionAccessory(
         accessory = AccessoryDefinition(
             name = Text.id_rocketLauncher,
-            equippedMesh = MeshId.grenadeLauncher.name
+            equippedMesh = MeshId.grenadeLauncher
         ),
         action = ActionDefinition(
             cooldown = 3f,
             range = 25f,
-            animation = AnimationId.shootPistol.name
+            animation = AnimationId.shootPistol
         ),
         weapon = WeaponDefinition(
             attackMethod = AttackMethod.missile,
             damageRadius = 2f,
             velocity = 30f,
             damageFalloff = 1f,
-            missileMesh = MeshId.missile.name,
+            missileMesh = MeshId.missile,
             damages = listOf(
                 DamageDefinition(
                     type = DamageTypes.physical.name,
                     amount = 70
                 )
             ),
-            sound = Sounds.pistolFire.name
+            sound = SoundId.pistolFire
         )
     ),
 
-    AccessoryId.claws.name to ActionAccessory(
+    AccessoryId.claws to ActionAccessory(
         accessory = AccessoryDefinition(
             name = Text.unnamed,
             equippedMesh = null
@@ -107,7 +130,7 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         action = ActionDefinition(
             cooldown = 3f,
             range = 3f,
-            animation = AnimationId.clawAttack.name
+            animation = AnimationId.clawAttack
         ),
         weapon = WeaponDefinition(
             attackMethod = AttackMethod.melee,
@@ -117,19 +140,19 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
                     amount = 70
                 )
             ),
-            sound = Sounds.pistolFire.name
+            sound = SoundId.pistolFire
         )
     ),
 
-    AccessoryId.shotgun.name to ActionAccessory(
+    AccessoryId.shotgun to ActionAccessory(
         accessory = AccessoryDefinition(
             name = Text.unnamed,
-            equippedMesh = MeshId.shotgun.name
+            equippedMesh = MeshId.shotgun
         ),
         action = ActionDefinition(
             cooldown = 0.2f,
             range = 10f,
-            animation = AnimationId.shootPistol.name
+            animation = AnimationId.shootPistol
         ),
         weapon = WeaponDefinition(
             attackMethod = AttackMethod.raycast,
@@ -140,7 +163,7 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
                     amount = 30
                 )
             ),
-            sound = Sounds.pistolFire.name
+            sound = SoundId.pistolFire
         )
     )
 

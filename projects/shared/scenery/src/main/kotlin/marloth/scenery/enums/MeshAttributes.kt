@@ -85,4 +85,4 @@ val meshAttributes: MeshAttributeMap = mapOf(
         MeshAttribute.wall
     )
 )
-    .mapKeys { it.key.name }
+    .mapKeys { it.key }

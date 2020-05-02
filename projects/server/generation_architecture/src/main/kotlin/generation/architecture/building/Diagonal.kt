@@ -29,5 +29,5 @@ fun diagonalCornerFloor(height: Float) = BlockBuilder(
             south = impassableHorizontal
         )
     )
-) + diagonalHalfFloorMesh(MeshId.squareFloorHalfDiagonal.name, height) +
+) + diagonalHalfFloorMesh(MeshId.squareFloorHalfDiagonal, height) +
     withWallLamp(0.7f)(randomDiagonalWall(height))

@@ -46,7 +46,7 @@ fun mobilityEvents(definitions: Definitions, deck: Deck, commands: List<Characte
       .filter(canUseMobility(deck))
       .flatMap { actor ->
         val accessory = deck.accessories.entries
-            .first { it.value.type == AccessoryId.mobility.name && it.value.owner == actor }
+            .first { it.value.type == AccessoryId.mobility && it.value.owner == actor }
 
         val duration = definitions.actions[accessory.value.type]!!.duration
 

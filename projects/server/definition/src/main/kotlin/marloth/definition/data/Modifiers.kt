@@ -4,10 +4,11 @@ import marloth.definition.newResistanceModifier
 import marloth.scenery.enums.ModifierId
 import marloth.scenery.enums.Text
 import marloth.scenery.enums.DamageTypes
+import silentorb.mythic.accessorize.AccessoryName
 import silentorb.mythic.accessorize.ModifierDefinition
 import simulation.happenings.DamageAction
 
-fun staticModifiers(): Map<ModifierId, ModifierDefinition> = mapOf(
+fun staticModifiers(): Map<AccessoryName, ModifierDefinition> = mapOf(
     ModifierId.damageBurning to ModifierDefinition(
         name = Text.id_damageBurning,
         overTime = DamageAction(

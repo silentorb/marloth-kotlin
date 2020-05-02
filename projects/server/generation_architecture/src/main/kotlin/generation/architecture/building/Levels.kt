@@ -39,7 +39,7 @@ private fun newSlope(lower: Level, upper: Level) =
                 south = impassableHorizontalSolid
             )
         )
-    ) + newSlopedFloorMesh(MeshId.quarterSlope.name, lower.height)
+    ) + newSlopedFloorMesh(MeshId.quarterSlope, lower.height)
 
 fun plainSlopeSlot(lowerHeight: Float) =
     BlockBuilder(
@@ -66,7 +66,7 @@ fun explodeHeightBlocks(levelIndex: Int): Map<String, BlockBuilder> {
                   south = halfStepOptionalOpen
               )
           )
-      ) + floorMesh(MeshId.squareFloor.name, Vector3(0f, 0f, upper.height)) +
+      ) + floorMesh(MeshId.squareFloor, Vector3(0f, 0f, upper.height)) +
           cubeWallLamps(lampRate = 0.5f, heightOffset = upper.height - 0.1f)
       ,
 
@@ -74,10 +74,10 @@ fun explodeHeightBlocks(levelIndex: Int): Map<String, BlockBuilder> {
           plainSlopeSlot(lower.height),
 
       "lowerHalfStepSlopeB$levelIndex" to newSlope(lower, upper) +
-          newSlopeEdgeBlock(MeshId.largeBrick.name, lower.height + quarterStep + quarterStep, upper.side, -1),
+          newSlopeEdgeBlock(MeshId.largeBrick, lower.height + quarterStep + quarterStep, upper.side, -1),
 
       "lowerHalfStepSlopeC$levelIndex" to newSlope(lower, upper) +
-          newSlopeEdgeBlock(MeshId.largeBrick.name, lower.height + quarterStep + quarterStep, upper.side, 1),
+          newSlopeEdgeBlock(MeshId.largeBrick, lower.height + quarterStep + quarterStep, upper.side, 1),
 
       "diagonalCorner$levelIndex" to diagonalCornerFloor(upper.height) + BlockBuilder(
           block = Block(

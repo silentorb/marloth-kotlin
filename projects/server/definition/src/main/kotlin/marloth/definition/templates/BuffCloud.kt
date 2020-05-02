@@ -2,6 +2,7 @@ package marloth.definition.templates
 
 import marloth.scenery.enums.ModifierId
 import marloth.scenery.enums.TextureId
+import silentorb.mythic.accessorize.AccessoryName
 import simulation.happenings.Trigger
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.physics.Body
@@ -14,13 +15,13 @@ import silentorb.mythic.particles.ParticleAppearance
 import silentorb.mythic.particles.ParticleEffect
 import silentorb.mythic.spatial.newVector4
 
-private val cloudColors: Map<ModifierId, Pair<Vector3, Vector3>> = mapOf(
+private val cloudColors: Map<AccessoryName, Pair<Vector3, Vector3>> = mapOf(
     ModifierId.damageBurning to Pair(Vector3(1f, 0.7f, 0f), Vector3(1f, 0.3f, 0.1f)),
     ModifierId.damageChilled to Pair(Vector3(0.2f, 0.3f, 1f), Vector3(0.9f, 0.9f, 1f)),
     ModifierId.damagePoisoned to Pair(Vector3(0.4f, 1f, 0.5f), Vector3(0.8f, 0.9f, 0.5f))
 )
 
-fun newBuffCloud(position: Vector3, radius: Float, buff: ModifierId): Hand {
+fun newBuffCloud(position: Vector3, radius: Float, buff: AccessoryName): Hand {
   throw Error("No longer implemented")
 //  val colors = cloudColors[buff]!!
 //  val shape = Cylinder(radius = radius, height = 10f)
@@ -34,7 +35,7 @@ fun newBuffCloud(position: Vector3, radius: Float, buff: ModifierId): Hand {
 //      ),
 //      particleEffect = ParticleEffect(
 //          initialAppearance = ParticleAppearance(
-//              texture = TextureId.perlinParticle.name,
+//              texture = TextureId.perlinParticle,
 //              color = newVector4(colors.first, 0f),
 //              size = 2f
 //          ),

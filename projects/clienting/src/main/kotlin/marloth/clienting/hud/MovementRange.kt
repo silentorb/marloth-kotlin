@@ -14,7 +14,7 @@ import simulation.misc.Definitions
 
 fun getMovementRangeLayer(definitions: Definitions, deck: Deck, actor: Id): SceneLayer? {
   val accessory = deck.accessories.entries
-      .firstOrNull { it.value.owner == actor && it.value.type == AccessoryId.mobility.name }
+      .firstOrNull { it.value.owner == actor && it.value.type == AccessoryId.mobility }
 
   return if (accessory == null)
     null
@@ -53,7 +53,7 @@ fun getMovementRangeLayer(definitions: Definitions, deck: Deck, actor: Id): Scen
                   meshes = listOf(
                       MeshElement(
                           id = 1L,
-                          mesh = MeshId.hollowCircle.name,
+                          mesh = MeshId.hollowCircle,
                           transform = transform,
                           material = Material(
                               color = color,

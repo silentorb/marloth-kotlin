@@ -31,20 +31,20 @@ import simulation.physics.CollisionGroups
 
 fun getAllVictoryKeys(accessories: Table<Accessory>): Table<Accessory> =
     accessories
-        .filterValues { it.type == AccessoryId.victoryKey.name }
+        .filterValues { it.type == AccessoryId.victoryKey }
 
 // Needs body
 fun newVictoryKey(owner: Id = 0L) =
     Hand(
         accessory = Accessory(
-            type = AccessoryId.victoryKey.name,
+            type = AccessoryId.victoryKey,
             owner = owner
         ),
         spinner = Spinner(Pi)
     )
 
 fun newSpatialVictoryKey(location: Vector3): Hand {
-  val mesh = MeshId.key.name
+  val mesh = MeshId.key
   return Hand(
       depiction = Depiction(
           type = DepictionType.staticMesh,

@@ -1,7 +1,7 @@
 package marloth.definition.data
 
 import marloth.scenery.enums.AccessoryId
-import marloth.scenery.enums.Sounds
+import marloth.scenery.enums.SoundId
 import marloth.scenery.enums.Text
 import simulation.characters.CharacterDefinition
 import simulation.entities.DepictionType
@@ -11,29 +11,29 @@ object CharacterDefinitions {
   val ally = CharacterDefinition(
       name = Text.unnamed,
       health = 100,
-      accessories = listOf(AccessoryId.pistol.name, AccessoryId.mobility.name),
+      accessories = listOf(AccessoryId.pistol, AccessoryId.mobility),
       depictionType = DepictionType.child,
       maxSpeed = 2f,
-      deathSound = Sounds.girlScream
+      deathSound = SoundId.girlScream
   )
 
   val hogMan = CharacterDefinition(
       name = Text.unnamed,
       health = 100,
-      accessories = listOf(AccessoryId.pistol.name, AccessoryId.mobility.name),
+      accessories = listOf(AccessoryId.pistol, AccessoryId.mobility),
       depictionType = DepictionType.person,
       maxSpeed = 2.5f,
-      deathSound = Sounds.hogDeath,
+      deathSound = SoundId.hogDeath,
       ambientSounds = listOf(
-//          Sounds.hogAmbient01.name,
-//          Sounds.hogAmbient03.name
+//          Sounds.hogAmbient01,
+//          Sounds.hogAmbient03
       )
   )
 
   val sentinel = CharacterDefinition(
       name = Text.unnamed,
       health = 100,
-      accessories = listOf(AccessoryId.rocketLauncher.name),
+      accessories = listOf(AccessoryId.rocketLauncher),
       depictionType = DepictionType.sentinel,
       maxSpeed = 0f,
       deathSound = null,
@@ -44,7 +44,7 @@ object CharacterDefinitions {
   val hound = CharacterDefinition(
       name = Text.unnamed,
       health = 100,
-      accessories = listOf(AccessoryId.claws.name, AccessoryId.mobility.name),
+      accessories = listOf(AccessoryId.claws, AccessoryId.mobility),
       depictionType = DepictionType.hound,
       maxSpeed = 4f,
       deathSound = null,

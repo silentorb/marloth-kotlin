@@ -14,7 +14,7 @@ import silentorb.mythic.spatial.Vector4
 
 fun drawLights(lights: List<Light>, renderer: Renderer) {
   val effect = renderer.getShader(renderer.vertexSchemas.flat, ShaderFeatureConfig())
-  val cube = renderer.meshes[MeshId.cube.name]!!.primitives.first()
+  val cube = renderer.meshes[MeshId.cube]!!.primitives.first()
   for (light in lights) {
     effect.activate(ObjectShaderConfig(
         color = Vector4(1f, 1f, 0f, 0.3f),

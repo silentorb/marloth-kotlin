@@ -25,7 +25,7 @@ fun renderNavMeshVoxels(renderer: Renderer, hf: Heightfield) {
   val w = hf.width
   val h = hf.height
 
-  val cube = renderer.meshes[MeshId.cube.name]!!
+  val cube = renderer.meshes[MeshId.cube]!!
   val effect = renderer.getShader(renderer.vertexSchemas.flat, ShaderFeatureConfig())
   globalState.depthEnabled = true
   for (y in 0 until h) {

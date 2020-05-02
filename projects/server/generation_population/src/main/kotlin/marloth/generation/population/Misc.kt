@@ -9,6 +9,7 @@ import marloth.definition.templates.newTreasureChest
 import silentorb.mythic.ent.Id
 import marloth.scenery.enums.MeshId
 import marloth.scenery.enums.ModifierId
+import silentorb.mythic.accessorize.AccessoryName
 import simulation.main.Deck
 import simulation.misc.MapGrid
 import simulation.misc.Node
@@ -23,7 +24,7 @@ fun groupElementsByCell(deck: Deck, elements: Collection<Id>): Map<Id, Set<Id>> 
       .mapValues { it.value.toSet() }
 }
 
-fun placeBuffCloud(node: Node, buff: ModifierId) =
+fun placeBuffCloud(node: Node, buff: AccessoryName) =
     newBuffCloud(
         position = nodeFloorCenter(node),
         radius = node.radius,
@@ -31,4 +32,4 @@ fun placeBuffCloud(node: Node, buff: ModifierId) =
     )
 
 fun placeTreasureChest(meshInfo: MeshInfoMap, node: Node, amount: Int) =
-    newTreasureChest(meshInfo, alignWithNodeFloor(meshInfo, node, MeshId.treasureChest.name) + floorOffset, amount)
+    newTreasureChest(meshInfo, alignWithNodeFloor(meshInfo, node, MeshId.treasureChest) + floorOffset, amount)

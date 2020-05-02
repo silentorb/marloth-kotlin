@@ -20,7 +20,7 @@ fun getTargetingLayer(deck: Deck, player: Id): SceneLayer? {
               ElementGroup(
                   billboards = listOf(
                       TexturedBillboard(
-                          texture = TextureId.perlinParticle.name,
+                          texture = TextureId.perlinParticle,
                           position = targetBody.position,
                           scale = 1f,
                           color = Vector4(1f),
