@@ -14,11 +14,8 @@ import silentorb.mythic.bloom.StateBag
 import silentorb.mythic.bloom.StateDepiction
 import silentorb.mythic.bloom.selectionStateOld
 import silentorb.mythic.glowing.globalState
-import silentorb.mythic.lookinglass.SceneRenderer
-import silentorb.mythic.lookinglass.createSceneRenderer
+import silentorb.mythic.lookinglass.*
 import silentorb.mythic.lookinglass.drawing.renderMeshElement
-import silentorb.mythic.lookinglass.finishRender
-import silentorb.mythic.lookinglass.prepareRender
 import silentorb.mythic.scenery.Camera
 import silentorb.mythic.scenery.ProjectionType
 import silentorb.mythic.scenery.Scene
@@ -39,7 +36,7 @@ fun drawWireframeWorld(renderer: SceneRenderer, deck: Deck, realm: Realm, config
 fun renderNodeIds(renderer: SceneRenderer, nodes: Collection<Node>) {
   globalState.depthEnabled = false
   for (node in nodes) {
-    renderer.drawText(node.id.toString(), node.position, LabTextStyles.lessRed)
+    drawText(renderer, node.id.toString(), node.position, LabTextStyles.lessRed)
   }
 }
 
@@ -80,7 +77,7 @@ fun renderMapMesh(sceneRenderer: SceneRenderer, realm: Realm, deck: Deck, config
         .mapNotNull { convertSimpleDepiction(deck, it.key, it.value) }
 //    renderElements(sceneRenderer, elements)
     for (element in elements) {
-      renderMeshElement(sceneRenderer.renderer, element.copy(material = element.material?.copy(shading = false)))
+      renderMeshElement(sceneRenderer, element.copy(material = element.material?.copy(shading = false)))
     }
 //    renderElements(sceneRenderer, )
 //    for (sector in sectors) {

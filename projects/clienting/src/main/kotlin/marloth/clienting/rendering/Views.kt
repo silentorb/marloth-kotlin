@@ -13,6 +13,14 @@ import simulation.main.Deck
 val firstPersonCameraOffset = Vector3(0f, 0f, defaultCharacterHeight * 0.4f)
 val firstPersonDeadCameraOffset = Vector3(0f, 0f, -0.75f)
 
+fun emptyCamera() =
+    Camera(
+        ProjectionType.perspective,
+        Vector3.zero,
+        Quaternion(),
+        45f
+    )
+
 fun firstPersonCamera(body: Body, character: CharacterRig, isAlive: Boolean): Camera = Camera(
     ProjectionType.perspective,
 //    body.position + Vector3(0f, 3f, -0.75f), //if (isAlive) firstPersonCameraOffset else firstPersonDeadCameraOffset,

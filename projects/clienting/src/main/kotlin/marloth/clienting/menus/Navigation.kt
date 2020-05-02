@@ -52,7 +52,7 @@ fun updateClientCurrentMenus(deck: Deck, commands: HaftCommands, players: List<I
       view
 
     when (manuallyChangedView) {
-      null, ViewId.chooseProfessionMenu -> fallBackMenus(deck, player)
+      null, ViewId.none, ViewId.chooseProfessionMenu -> fallBackMenus(deck, player)
       else -> manuallyChangedView
     }
   }

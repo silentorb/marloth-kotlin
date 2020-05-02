@@ -3,6 +3,7 @@ package marloth.integration.scenery
 import marloth.clienting.rendering.GameScene
 import marloth.clienting.rendering.createCamera
 import marloth.clienting.hud.getMovementRangeLayer
+import marloth.clienting.rendering.emptyCamera
 import silentorb.mythic.characters.ViewMode
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
@@ -11,9 +12,17 @@ import silentorb.mythic.scenery.Scene
 import simulation.main.Deck
 import simulation.misc.Definitions
 
-fun createScene(definitions: Definitions, deck: Deck): (Id) -> GameScene? = { player ->
+fun createScene(definitions: Definitions, deck: Deck): (Id) -> GameScene = { player ->
   if (!deck.characters.containsKey(player))
-    null
+    GameScene(
+        main = Scene(
+            camera = emptyCamera(),
+            lights = listOf(),
+            lightingConfig = defaultLightingConfig()
+        ),
+        layers = listOf(),
+        filters = listOf()
+    )
   else {
     val camera = createCamera(deck, player)
     val characterRig = deck.characterRigs[player]!!

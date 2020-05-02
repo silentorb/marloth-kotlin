@@ -10,6 +10,7 @@ import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.CommandName
 import silentorb.mythic.lookinglass.createCameraMatrix
 import silentorb.mythic.lookinglass.getPlayerViewports
+import silentorb.mythic.lookinglass.transformToScreen
 import silentorb.mythic.physics.firstRayHit
 import silentorb.mythic.spatial.*
 import simulation.main.Deck
@@ -28,16 +29,6 @@ data class ScreenTarget(
 typealias MapAvailableTarget = (Id) -> ScreenTarget?
 
 const val maxTargetRange = 25f
-
-fun transformToScreen(transform: Matrix, target: Vector3): Vector2? {
-  val coordinate = transform * Vector4(target.x, target.y, target.z, 1f)
-
-  // The w condition filters out targets behind the camera
-  return if (coordinate.w > 0f)
-    coordinate.xy() / coordinate.w
-  else
-    null
-}
 
 fun isOnScreen(offset: Vector2): Boolean {
   val range = 1.2f

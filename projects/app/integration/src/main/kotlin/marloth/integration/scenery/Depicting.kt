@@ -1,5 +1,6 @@
 package marloth.integration.scenery
 
+import marloth.clienting.menus.textStyles
 import marloth.scenery.enums.ArmatureId
 import marloth.scenery.enums.ArmatureSockets
 import marloth.scenery.enums.MeshId
@@ -81,15 +82,16 @@ fun convertSimpleDepiction(deck: Deck, id: Id, depiction: Depiction): MeshElemen
   return convertSimpleDepiction(deck, id, mesh, depiction.texture)
 }
 
-fun convertComplexDepiction(definitions: Definitions, deck: Deck, id: Id, depiction: Depiction): ElementGroup {
+fun convertCharacterDepiction(definitions: Definitions, deck: Deck, id: Id, depiction: Depiction): ElementGroup {
   val body = deck.bodies[id]!!
   val characterRig = deck.characterRigs[id]!!
   val collisionObject = deck.collisionObjects[id]!!
   val shape = collisionObject.shape
   val verticalOffset = -shape.height / 2f
+  val footPosition = body.position + Vector3(0f, 0f, verticalOffset)
 
   val transform = Matrix.identity
-      .translate(body.position + Vector3(0f, 0f, verticalOffset))
+      .translate(footPosition)
       .rotateZ(characterRig.facingRotation.x)
       .rotateZ(Pi / 2f)
 
@@ -154,7 +156,12 @@ fun convertComplexDepiction(definitions: Definitions, deck: Deck, id: Id, depict
               )
             else
               null
-          }
+          },
+      text = TextBillboard(
+          content = deck.characters[id]!!.profession,
+          position = footPosition + Vector3(0f, 0f, shape.height + 0.1f),
+          style = textStyles.smallWhite
+      )
   )
 }
 
@@ -188,7 +195,7 @@ fun gatherParticleElements(deck: Deck, cameraPosition: Vector3): ElementGroups {
 fun depictionSwitch(definitions: Definitions, deck: Deck, player: Id, depiction: Id, depictionRecord: Depiction): ElementGroup? {
   return when (depictionRecord.type) {
     DepictionType.hound,
-    DepictionType.sentinel -> convertComplexDepiction(definitions, deck, depiction, depictionRecord)
+    DepictionType.sentinel -> convertCharacterDepiction(definitions, deck, depiction, depictionRecord)
     else -> null
   }
 }
@@ -204,7 +211,7 @@ fun gatherVisualElements(definitions: Definitions, deck: Deck, player: Id, chara
           .entries.partition { isComplexDepiction(it.value) }
 
   val complexElements = complex.map {
-    convertComplexDepiction(definitions, deck, it.key, it.value)
+    convertCharacterDepiction(definitions, deck, it.key, it.value)
   }
 
   val simpleElements =

@@ -1,11 +1,10 @@
 package marloth.definition
 
-import marloth.definition.data.allProfessions
-import marloth.definition.data.staticAccessories
-import marloth.definition.data.staticActionAccessories
-import marloth.definition.data.staticModifiers
+import marloth.definition.data.*
 import marloth.definition.particles.particleEffects
 import marloth.scenery.enums.staticDamageTypes
+import silentorb.mythic.ent.reflectPropertiesMap
+import simulation.characters.CharacterDefinition
 import simulation.misc.Definitions
 
 fun staticDefinitions(clientDefinitions: ClientDefinitions): Definitions {
@@ -22,7 +21,7 @@ fun staticDefinitions(clientDefinitions: ClientDefinitions): Definitions {
       lightAttachments = clientDefinitions.lightAttachments,
       modifiers = staticModifiers(),
       particleEffects = particleEffects(),
-      professions = allProfessions(),
+      professions = allProfessions() + reflectPropertiesMap<CharacterDefinition>(CharacterDefinitions),
       soundDurations = clientDefinitions.soundDurations,
       weapons = weapons
   )
