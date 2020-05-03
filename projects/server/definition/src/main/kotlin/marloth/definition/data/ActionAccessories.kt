@@ -22,7 +22,7 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
             name = Text.id_entangle
         ),
         action = ActionDefinition(
-            cooldown = 2f,
+            cooldown = 4f,
             range = 20f,
             animation = AnimationId.cast,
             equipmentSlot = EquipmentSlot.utility

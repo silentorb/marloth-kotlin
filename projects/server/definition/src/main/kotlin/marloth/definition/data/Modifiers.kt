@@ -42,6 +42,9 @@ fun staticAccessories(): Map<AccessoryName, AccessoryDefinition> = mapOf(
     ModifierId.entangleImmune to AccessoryDefinition(
         name = Text.unnamed
     ),
+    ModifierId.entangling to AccessoryDefinition(
+        name = Text.unnamed
+    ),
     ModifierId.mobile to AccessoryDefinition(
         name = Text.id_mobile
     )

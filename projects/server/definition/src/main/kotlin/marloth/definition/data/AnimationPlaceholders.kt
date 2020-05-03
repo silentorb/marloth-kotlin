@@ -7,11 +7,11 @@ import simulation.combat.spatial.attackMarker
 
 object AnimationPlaceholders {
   val cast = AnimationInfo(
-      duration = 0.9f,
+      duration = 0.2f,
       markers = listOf(
           TimelineMarker(
               name = attackMarker,
-              frame = 40
+              frame = 6
           )
       )
   )

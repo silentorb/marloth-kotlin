@@ -17,6 +17,7 @@ object ModifierId {
   const val damagePoisoned = "damagePoisoned"
   const val entangled = "entangled"
   const val entangleImmune = "entangledImmune"
+  const val entangling = "entangling"
   const val mobile = "mobile"
   const val resistanceCold = "resistanceCold"
   const val resistanceFire = "resistanceFire"

@@ -1,8 +1,9 @@
 package marloth.integration.scenery
 
+import marloth.clienting.hud.entanglingMovementRangeLayer
 import marloth.clienting.rendering.GameScene
 import marloth.clienting.rendering.createCamera
-import marloth.clienting.hud.getMovementRangeLayer
+import marloth.clienting.hud.mobilityMovementRangeLayer
 import marloth.clienting.rendering.emptyCamera
 import silentorb.mythic.characters.ViewMode
 import silentorb.mythic.debugging.getDebugBoolean
@@ -32,8 +33,8 @@ fun createScene(definitions: Definitions, deck: Deck): (Id) -> GameScene = { pla
       null
 
     val targetingLayer = getTargetingLayer(deck, player)
-    val movementRangeLayer = if (getDebugBoolean("ENABLE_MOBILITY"))
-      getMovementRangeLayer(definitions, deck, player)
+    val movementRangeLayer = entanglingMovementRangeLayer(deck, player) ?: if (getDebugBoolean("ENABLE_MOBILITY"))
+      mobilityMovementRangeLayer(definitions, deck, player)
     else
       null
 
