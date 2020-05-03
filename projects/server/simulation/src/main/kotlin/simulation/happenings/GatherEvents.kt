@@ -40,7 +40,7 @@ fun withSimulationEvents(definitions: Definitions, previous: Deck, world: World,
   val events = listOf(
       externalEvents,
       eventsFromPerformances(definitions, deck),
-      commandsToEvents(deck, commands),
+      commandsToEvents(definitions, deck, commands),
       emitCycleEvents(deck.cyclesInt),
       eventsFromMissiles(toSpatialCombatWorld(world), collisions),
       eventsFromItemPickups(world, collisions),

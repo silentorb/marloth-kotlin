@@ -9,9 +9,10 @@ import silentorb.mythic.lookinglass.SceneLayer
 import silentorb.mythic.scenery.Camera
 import silentorb.mythic.scenery.MeshName
 import silentorb.mythic.spatial.*
+import simulation.characters.EquipmentSlot
+import simulation.happenings.getEquippedAction
 import simulation.main.Deck
 import simulation.misc.Definitions
-import simulation.happenings.getActiveAction
 import simulation.misc.newVictoryKeyLight
 
 fun getEquipmentTransform(camera: Camera, motionOffsetX: Float, motionOffsetY: Float, offsetX: Float, orientation: Quaternion): Matrix {
@@ -23,7 +24,7 @@ fun getEquipmentTransform(camera: Camera, motionOffsetX: Float, motionOffsetY: F
 }
 
 fun getEquippedMesh(definitions: Definitions, deck: Deck, player: Id): MeshName? {
-  val equipped = getActiveAction(deck, player)
+  val equipped = getEquippedAction(definitions, deck.accessories, EquipmentSlot.attack, player)
   val accessory = deck.accessories[equipped]
   val accessoryDefinition = definitions.accessories[accessory?.type]
   return accessoryDefinition?.equippedMesh

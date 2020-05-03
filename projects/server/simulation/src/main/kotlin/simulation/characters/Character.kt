@@ -39,13 +39,22 @@ data class CharacterDefinition(
     val fieldOfView: Float = 0.5f // Only used for AI. Dot product: 1 is no vision, -1 is 360 degree vision
 )
 
+enum class EquipmentSlot {
+  automatic,
+  attack,
+  defense,
+  mobility,
+  utility
+}
+
+typealias Equipment = Map<EquipmentSlot, Id>
+
 data class Character(
     val profession: ProfessionId,
     val definition: CharacterDefinition,
     val faction: Id,
     val sanity: ResourceContainer,
     val isAlive: Boolean,
-    val activeAccessory: Id?,
     val canInteractWith: Id? = null,
     val interactingWith: Id? = null,
     val isInfinitelyFalling: Boolean = false,

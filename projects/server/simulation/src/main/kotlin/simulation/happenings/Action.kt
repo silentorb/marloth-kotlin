@@ -9,18 +9,21 @@ import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.UseAction
 import silentorb.mythic.performing.Action
 import silentorb.mythic.performing.updateCooldown
-import silentorb.mythic.spatial.Vector3
-import simulation.combat.spatial.startAttack
+import simulation.characters.EquipmentSlot
 import simulation.main.Deck
-import simulation.main.World
 import simulation.misc.Definitions
-import simulation.misc.isAtHome
 import simulation.updating.simulationDelta
 
-fun getActiveAction(deck: Deck, character: Id): Id? {
-  val characterRecord = deck.characters.getValue(character)
-  return characterRecord.activeAccessory
-}
+fun getActions(definitions: Definitions, accessories: Table<Accessory>, actor: Id): Table<Accessory> =
+    getAccessories(accessories, actor)
+        .filterValues { definitions.actions.containsKey(it.type) }
+
+fun getEquippedAction(definitions: Definitions, accessories: Table<Accessory>, slot: EquipmentSlot, actor: Id): Id? =
+    getActions(definitions, accessories, actor)
+        .entries.firstOrNull { (_, accessory) ->
+          definitions.actions[accessory.type]?.equipmentSlot == slot
+        }?.key
+
 
 fun updateActions(definitions: Definitions, deck: Deck, events: Events): Table<Action> {
   val actionEvents = events.filterIsInstance<UseAction>()
@@ -42,7 +45,3 @@ fun newPossibleAction(definitions: Definitions, type: AccessoryName): Action? {
   else
     null
 }
-
-fun getActions(definitions: Definitions, accessories: Table<Accessory>, actor: Id): Table<Accessory> =
-    getAccessories(accessories, actor)
-        .filterValues { definitions.actions.containsKey(it.type) }

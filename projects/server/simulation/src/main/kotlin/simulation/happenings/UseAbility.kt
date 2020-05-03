@@ -8,6 +8,7 @@ import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.UseAction
 import simulation.abilities.entangleEvents
 import simulation.combat.spatial.startAttack
+import simulation.combat.spatial.withResolvedTarget
 import simulation.main.World
 
 fun eventsFromTryUseAbility(world: World, event: TryUseAbilityEvent): Events {
@@ -22,7 +23,7 @@ fun eventsFromTryUseAbility(world: World, event: TryUseAbilityEvent): Events {
       listOf(startAttack(actor, action, accessory.type, event.targetLocation))
     }
 
-    accessory.type == AccessoryId.entangle -> entangleEvents(deck, target!!)
+    accessory.type == AccessoryId.entangle -> withResolvedTarget(world, actor, target, entangleEvents(deck))
 
     else -> listOf()
   } + UseAction(

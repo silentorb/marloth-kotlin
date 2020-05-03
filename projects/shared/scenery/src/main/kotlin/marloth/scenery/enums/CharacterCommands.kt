@@ -33,6 +33,9 @@ object CharacterCommands {
   const val interactPrimary = "interactPrimary"
   const val stopInteracting = "stopInteracting"
 
-  const val ability = "ability"
+  const val abilityAttack = "abilityAttack"
+  const val abilityDefense = "abilityDefense"
+  const val abilityMobility = "abilityMobility"
+  const val abilityUtility = "abilityUtility"
 
 }

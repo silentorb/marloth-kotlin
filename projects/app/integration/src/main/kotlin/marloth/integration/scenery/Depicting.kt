@@ -90,16 +90,15 @@ fun convertSimpleDepiction(deck: Deck, id: Id, depiction: Depiction): MeshElemen
   return convertSimpleDepiction(deck, id, mesh, depiction.texture)
 }
 
-fun getPerformanceTextBillboard(definitions: Definitions, deck: Deck, id: Id, footPosition: Vector3, shape: Shape): TextBillboard? =
+fun getDebugTextBillboard(definitions: Definitions, deck: Deck, actor: Id, footPosition: Vector3, shape: Shape): List<TextBillboard> =
     if (!getDebugBoolean("DRAW_PERFORMANCE_TEXT"))
-      null
+      listOf()
     else {
-      val performance = deck.performances.entries.firstOrNull { it.value.target == id }
-      if (performance != null) {
+      val performance = deck.performances.entries.firstOrNull { it.value.target == actor }
+      val performanceBillboard = if (performance != null) {
         val action = performance.value.sourceAction
         val accessory = deck.accessories[action]
         if (accessory != null) {
-          val definition = definitions.accessories[accessory.type]!!
           val timer = deck.timersFloat.getValue(performance.key)
           val animation = definitions.animations.getValue(performance.value.animation)
           val isTriggered = isMarkerTriggered(timer.duration, animation, simulationDelta * 6f)(attackMarker)
@@ -108,6 +107,7 @@ fun getPerformanceTextBillboard(definitions: Definitions, deck: Deck, id: Id, fo
           else
             ""
 
+          val definition = definitions.accessories[accessory.type]!!
           TextBillboard(
               content = definitions.textLibrary(definition.name) + suffix,
               position = footPosition + Vector3(0f, 0f, shape.height + 0.1f),
@@ -118,6 +118,23 @@ fun getPerformanceTextBillboard(definitions: Definitions, deck: Deck, id: Id, fo
           null
       } else
         null
+
+      val accessory = getAccessories(deck.accessories, actor)
+          .filterKeys { deck.timersFloat.containsKey(it) }
+          .values.firstOrNull()
+
+      val modifierBillboard = if (accessory != null) {
+        val definition = definitions.accessories[accessory.type]!!
+        TextBillboard(
+            content = definitions.textLibrary(definition.name),
+            position = footPosition + Vector3(0f, 0f, shape.height - 0.3f),
+            style = textStyles.smallGray,
+            depthOffset = -0.01f
+        )
+      } else
+        null
+
+      listOfNotNull(performanceBillboard, modifierBillboard)
     }
 
 fun convertCharacterDepiction(definitions: Definitions, deck: Deck, id: Id, depiction: Depiction): ElementGroup {
@@ -200,7 +217,7 @@ fun convertCharacterDepiction(definitions: Definitions, deck: Deck, id: Id, depi
             else
               null
           },
-      textBillboard = getPerformanceTextBillboard(definitions, deck, id, footPosition, shape)
+      textBillboards = getDebugTextBillboard(definitions, deck, id, footPosition, shape)
   )
 }
 

@@ -18,10 +18,10 @@ fun updateTargetEnemy(world: World, character: Id, knowledge: Knowledge, pursuit
     null
 }
 
-fun getActionRange(deck: Deck, definitions: Definitions, action: Id): Float {
+fun getActionRange(deck: Deck, definitions: Definitions): (Id) -> Float = { action ->
   val accessory = deck.accessories[action]!!
   val definition = definitions.actions[accessory.type]!!
-  return definition.range
+  definition.range
 }
 
 fun updatePursuit(world: World, actor: Id, knowledge: Knowledge, pursuit: Pursuit): Pursuit {

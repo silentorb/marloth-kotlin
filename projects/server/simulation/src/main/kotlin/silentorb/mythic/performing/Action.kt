@@ -2,11 +2,13 @@ package silentorb.mythic.performing
 
 import silentorb.mythic.breeze.AnimationName
 import silentorb.mythic.ent.Id
+import simulation.characters.EquipmentSlot
 import simulation.main.Deck
 import simulation.misc.Definitions
 
 data class ActionDefinition(
     val cooldown: Float,
+    val equipmentSlot: EquipmentSlot,
     val range: Float = 0f,
     val animation: AnimationName? = null,
     val duration: Float = 0f

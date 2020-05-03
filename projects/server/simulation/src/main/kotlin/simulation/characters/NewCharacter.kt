@@ -69,7 +69,6 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, prof
                   sanity = ResourceContainer(100),
                   money = 30,
                   isAlive = true,
-                  activeAccessory = accessories.firstOrNull()?.id,
                   profession = profession
               ),
               characterRig = CharacterRig(

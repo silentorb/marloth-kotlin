@@ -13,10 +13,11 @@ import simulation.main.Hand
 val isEntangleImmune = hasAccessory(ModifierId.entangleImmune)
 val isEntangled = hasAccessory(ModifierId.entangled)
 
-fun entangleEvents(deck: Deck, target: Id): Events {
+fun entangleEvents(deck: Deck): (Id) -> Events = { target ->
   val entangledDuration = 2f
   val immunityDuration = 3f
-  return if (isEntangleImmune(deck.accessories, target))
+
+  if (isEntangleImmune(deck.accessories, target))
     listOf()
   else
     listOf(

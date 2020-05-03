@@ -1,19 +1,19 @@
 package simulation.intellect.execution
 
 import marloth.scenery.enums.CharacterCommands
-import silentorb.mythic.ent.Id
-import simulation.intellect.assessment.Knowledge
-import silentorb.mythic.spatial.Vector3
 import org.recast4j.detour.DefaultQueryFilter
-import simulation.happenings.getActiveAction
-import simulation.main.World
+import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.CharacterCommand
-import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.Events
-import simulation.intellect.Pursuit
-import simulation.intellect.design.getActionRange
 import silentorb.mythic.intellect.navigation.asRecastVector3
 import silentorb.mythic.intellect.navigation.fromRecastVector3
+import silentorb.mythic.spatial.Vector3
+import simulation.happenings.getEquippedAction
+import simulation.intellect.Pursuit
+import simulation.intellect.assessment.Knowledge
+import simulation.intellect.design.actionsForTarget
+import simulation.intellect.design.getActionRange
+import simulation.main.World
 
 fun getPathTargetPosition(world: World, character: Id, pursuit: Pursuit): Vector3? {
   val body = world.deck.bodies[character]!!
@@ -22,7 +22,7 @@ fun getPathTargetPosition(world: World, character: Id, pursuit: Pursuit): Vector
   if (query == null)
     throw Error("Missing navMeshQuery")
 
-  val start = asRecastVector3(body.position + Vector3(0f, 0f, - shape.height / 2f))
+  val start = asRecastVector3(body.position + Vector3(0f, 0f, -shape.height / 2f))
   val end = asRecastVector3(pursuit.targetPosition!!)
   val polygonRange = floatArrayOf(10f, 10f, 10f)
   val queryFilter = DefaultQueryFilter()
@@ -84,15 +84,16 @@ fun moveSpirit(world: World, character: Id, knowledge: Knowledge, pursuit: Pursu
     listOf()
 }
 
-fun isTargetInRange(world: World, character: Id, target: Id): Boolean {
+fun isTargetInRange(world: World, actor: Id, target: Id): Boolean {
   val deck = world.deck
-  val characterPosition = deck.bodies[character]?.position!!
+  val characterPosition = deck.bodies[actor]?.position!!
   val targetPosition = deck.bodies[target]?.position!!
-  val action = getActiveAction(deck, character)
-  if (action == null)
-    return false
-
-  val range = getActionRange(deck, world.definitions, action) - spiritAttackRangeBuffer
-  val distance = characterPosition.distance(targetPosition)
-  return distance <= range
+  val actions = actionsForTarget(world, actor, target)
+  return if (actions.none())
+    false
+  else {
+    val range = actions.map(getActionRange(deck, world.definitions)).min()!! - spiritAttackRangeBuffer
+    val distance = characterPosition.distance(targetPosition)
+    distance <= range
+  }
 }

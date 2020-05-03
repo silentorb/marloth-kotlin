@@ -1,13 +1,13 @@
 package marloth.definition.data
 
-import marloth.scenery.enums.MeshId
 import marloth.scenery.enums.*
 import silentorb.mythic.accessorize.AccessoryDefinition
 import silentorb.mythic.accessorize.AccessoryName
+import silentorb.mythic.performing.ActionDefinition
+import simulation.characters.EquipmentSlot
 import simulation.combat.general.AttackMethod
 import simulation.combat.general.DamageDefinition
 import simulation.combat.general.WeaponDefinition
-import silentorb.mythic.performing.ActionDefinition
 
 data class ActionAccessory(
     val accessory: AccessoryDefinition,
@@ -24,7 +24,8 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         action = ActionDefinition(
             cooldown = 2f,
             range = 20f,
-            animation = AnimationId.cast
+            animation = AnimationId.cast,
+            equipmentSlot = EquipmentSlot.utility
         )
     ),
 
@@ -34,7 +35,8 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         ),
         action = ActionDefinition(
             cooldown = 2f,
-            duration = 3f
+            duration = 3f,
+            equipmentSlot = EquipmentSlot.automatic
         )
     ),
 
@@ -46,7 +48,8 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         action = ActionDefinition(
             cooldown = 2f,
             range = 10f,
-            animation = AnimationId.shootPistol
+            animation = AnimationId.shootPistol,
+            equipmentSlot = EquipmentSlot.attack
         ),
         weapon = WeaponDefinition(
             attackMethod = AttackMethod.raycast,
@@ -68,7 +71,8 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         action = ActionDefinition(
             cooldown = 3f,
             range = 20f,
-            animation = AnimationId.shootPistol
+            animation = AnimationId.shootPistol,
+            equipmentSlot = EquipmentSlot.attack
         ),
         weapon = WeaponDefinition(
             attackMethod = AttackMethod.missile,
@@ -93,7 +97,8 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         action = ActionDefinition(
             cooldown = 3f,
             range = 25f,
-            animation = AnimationId.shootPistol
+            animation = AnimationId.shootPistol,
+            equipmentSlot = EquipmentSlot.attack
         ),
         weapon = WeaponDefinition(
             attackMethod = AttackMethod.missile,
@@ -119,7 +124,8 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         action = ActionDefinition(
             cooldown = 3f,
             range = 3f,
-            animation = AnimationId.clawAttack
+            animation = AnimationId.clawAttack,
+            equipmentSlot = EquipmentSlot.attack
         ),
         weapon = WeaponDefinition(
             attackMethod = AttackMethod.melee,
@@ -141,7 +147,8 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         action = ActionDefinition(
             cooldown = 0.2f,
             range = 10f,
-            animation = AnimationId.shootPistol
+            animation = AnimationId.shootPistol,
+            equipmentSlot = EquipmentSlot.attack
         ),
         weapon = WeaponDefinition(
             attackMethod = AttackMethod.raycast,

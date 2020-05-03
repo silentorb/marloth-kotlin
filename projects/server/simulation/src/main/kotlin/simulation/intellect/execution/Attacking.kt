@@ -4,9 +4,10 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.SimpleBody
 import silentorb.mythic.spatial.Vector3
+import simulation.characters.EquipmentSlot
 import simulation.combat.general.AttackMethod
 import simulation.happenings.TryUseAbilityEvent
-import simulation.happenings.getActiveAction
+import simulation.happenings.getEquippedAction
 import simulation.intellect.Pursuit
 import simulation.intellect.assessment.Knowledge
 import simulation.intellect.design.actionsForTarget
@@ -22,7 +23,7 @@ fun shouldMoveDirectlyToward(deck: Deck, target: SimpleBody, attacker: Id): Bool
 
 fun getWeaponAttackMethod(world: World, character: Id): AttackMethod? {
   val deck = world.deck
-  val action = getActiveAction(deck, character)
+  val action = getEquippedAction(world.definitions, deck.accessories, EquipmentSlot.attack, character)
   val accessory = deck.accessories[action]!!
   return if (action != null) {
     val weapon = world.definitions.weapons[accessory.type]

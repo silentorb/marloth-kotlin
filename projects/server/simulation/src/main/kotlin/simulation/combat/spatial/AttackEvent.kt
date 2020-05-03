@@ -61,11 +61,6 @@ fun getAttackerOriginAndFacing(deck: SpatialCombatDeck, attacker: Id, externalTa
   val body = deck.bodies[attacker]!!
   val characterRig = deck.characterRigs[attacker]!!
   val target = externalTarget ?: deck.bodies[deck.targets[attacker]]?.position
-//  val facingRotation = characterRig.facingRotation
-//  val vector = getFacingVector(Quaternion()
-//      .rotateZ(facingRotation.z)
-//      .rotateY(-facingRotation.y - 0.15f)
-//  )
   val baseOrigin = body.position + Vector3(0f, 0f, defaultCharacterHeight * 0.5f)
   val vector = if (target == null)
     characterRig.facingVector
