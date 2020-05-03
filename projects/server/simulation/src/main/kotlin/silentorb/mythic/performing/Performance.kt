@@ -66,3 +66,6 @@ fun eventsFromPerformances(definitions: PerformanceDefinitions, deck: Performanc
             .values
       }
 }
+
+fun isPerforming(performances: Table<Performance>, actor: Id): Boolean =
+    performances.any { it.value.target == actor }

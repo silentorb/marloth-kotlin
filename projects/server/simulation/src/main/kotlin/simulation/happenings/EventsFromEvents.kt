@@ -6,15 +6,16 @@ import silentorb.mythic.characters.characterMovementsToImpulses
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
 import simulation.combat.spatial.onAttack
+import simulation.combat.toSpatialCombatWorld
 import simulation.combat.usingSpatialCombatWorld
 import simulation.main.World
 import simulation.physics.toPhysicsDeck
 
-inline fun <reified T : GameEvent> mapEvents(crossinline transform: (World) -> (T) -> Events): (World, Events) -> Events {
-  return { deck, events ->
+inline fun <reified T : GameEvent> mapEvents(crossinline transform: (T) -> Events): (Events) -> Events {
+  return { events ->
     events
         .filterIsInstance<T>()
-        .flatMap(transform(deck))
+        .flatMap(transform)
   }
 }
 
@@ -22,10 +23,10 @@ fun eventsFromEvents(world: World, freedomTable: FreedomTable, events: Events): 
   val deck = world.deck
   val characterMovementEvents = allCharacterMovements(toPhysicsDeck(deck), deck.characterRigs, deck.thirdPersonRigs, events)
   return listOf(
-      mapEvents(::eventsFromTryUseAbility),
-      mapEvents(usingSpatialCombatWorld(::onAttack))
+      mapEvents(onAttack(toSpatialCombatWorld(world))),
+      mapEvents(eventsFromTryUseAbility(world, freedomTable))
   )
-      .flatMap { it(world, events) }
+      .flatMap { it(events) }
       .plus(characterMovementEvents)
       .plus(characterMovementsToImpulses(deck.bodies, deck.characterRigs, freedomTable, characterMovementEvents))
 }

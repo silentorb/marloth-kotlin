@@ -59,3 +59,6 @@ typealias FreedomTable = Table<Freedoms>
 
 fun hasFreedom(freedoms: Freedoms, freedom: Freedoms): Boolean =
     freedoms and freedom != 0
+
+fun hasFreedom(freedomTable: FreedomTable, actor: Id, freedom: Freedoms): Boolean =
+    hasFreedom(freedomTable.getOrDefault(actor, Freedom.none), freedom)

@@ -9,6 +9,7 @@ import silentorb.mythic.characters.Freedoms
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
+import silentorb.mythic.performing.isPerforming
 import simulation.abilities.isEntangled
 import simulation.happenings.canUse
 import simulation.happenings.canUseSimple
@@ -28,12 +29,13 @@ fun getFreedoms(deck: Deck): (Id) -> Freedoms = { actor ->
   val character = deck.characters[actor]!!
   if (!character.isAlive)
     Freedom.none
-  else if (deck.performances.any { it.value.target == actor })
-    Freedom.orbiting or Freedom.turning
-  else if (!isEntangled(deck.accessories, actor) && (!getDebugBoolean("ENABLE_MOBILITY") || hasMobilityModifier(deck.modifiers, actor)))
-    Freedom.all
-  else
-    Freedom.orbiting or Freedom.turning
+  else {
+    val isPerforming = isPerforming(deck.performances, actor)
+    val canWalk = !isPerforming && !isEntangled(deck.accessories, actor) && (!getDebugBoolean("ENABLE_MOBILITY") || hasMobilityModifier(deck.modifiers, actor))
+    val walking =if (canWalk) Freedom.walking else Freedom.none
+    val acting = if (!isPerforming) Freedom.acting else Freedom.none
+    Freedom.orbiting or Freedom.turning or walking or acting
+  }
 }
 
 // TODO: This is called more than once with the same input data per game loop.  The plan is to cache this.

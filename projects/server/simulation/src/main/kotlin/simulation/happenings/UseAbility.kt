@@ -1,6 +1,9 @@
 package simulation.happenings
 
 import marloth.scenery.enums.AccessoryId
+import silentorb.mythic.characters.Freedom
+import silentorb.mythic.characters.FreedomTable
+import silentorb.mythic.characters.hasFreedom
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.UseAction
 import simulation.abilities.entangleEvents
@@ -29,9 +32,9 @@ fun eventsFromTryUseAbility(world: World, event: TryUseAbilityEvent): Events {
   )
 }
 
-fun eventsFromTryUseAbility(world: World): (TryUseAbilityEvent) -> Events = { event ->
+fun eventsFromTryUseAbility(world: World, freedomTable: FreedomTable): (TryUseAbilityEvent) -> Events = { event ->
   val action = event.action
-  if (canUse(world, action))
+  if (hasFreedom(freedomTable, event.actor, Freedom.acting) && canUse(world, action))
     eventsFromTryUseAbility(world, event)
   else
     listOf()

@@ -1,5 +1,8 @@
 package simulation.intellect.execution
 
+import silentorb.mythic.characters.Freedom
+import silentorb.mythic.characters.FreedomTable
+import silentorb.mythic.characters.hasFreedom
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import simulation.intellect.Pursuit
@@ -26,11 +29,11 @@ fun pursueGoal(world: World, character: Id, knowledge: Knowledge, pursuit: Pursu
   }
 }
 
-fun pursueGoals(world: World, spirits: Table<Spirit>): Events {
+fun pursueGoals(world: World, spirits: Table<Spirit>, freedomTable: FreedomTable): Events {
   return spirits.flatMap { (id, spirit) ->
     val knowledge = world.deck.knowledge[id]
     val pursuit = spirit.pursuit
-    if (knowledge != null && pursuit != null)
+    if (knowledge != null && pursuit != null && hasFreedom(freedomTable, id, Freedom.acting))
       pursueGoal(world, id, knowledge, pursuit)
     else
       listOf()
