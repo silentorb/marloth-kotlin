@@ -65,15 +65,16 @@ fun getDamageMultiplierModifiers(definitions: CombatDefinitions, combatDeck: Com
       val expressionSeparator = 0
       { damageType ->
         modifiers.mapNotNull {
-          val definition = definitions.modifiers[it.type]
-          if (definition != null) {
-            val valueModifier = definition.valueModifier
-            if (valueModifier != null && valueModifier.operation == ModifierOperation.multiply
-                && valueModifier.subtype == damageType)
-              resolveValueModifier(valueModifier, it.strength)
-            else
-              null
-          } else null
+          null
+//          val definition = definitions.modifiers[it.type]
+//          if (definition != null) {
+//            val valueModifier = definition.valueModifier
+//            if (valueModifier != null && valueModifier.operation == ModifierOperation.multiply
+//                && valueModifier.subtype == damageType)
+//              resolveValueModifier(valueModifier, it.strength)
+//            else
+//              null
+//          } else null
         }
       }
     }

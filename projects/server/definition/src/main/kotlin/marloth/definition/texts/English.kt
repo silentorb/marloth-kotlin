@@ -1,7 +1,7 @@
 package marloth.definition.texts
 
-import marloth.scenery.enums.TextResourceMapper
 import marloth.scenery.enums.Text
+import marloth.scenery.enums.TextResourceMapper
 
 val englishTextResources: TextResourceMapper = { text ->
   when (text) {
@@ -19,6 +19,8 @@ val englishTextResources: TextResourceMapper = { text ->
     Text.id_damageChilled -> "Chilled"
     Text.id_damageBurning -> "Burning"
     Text.id_damagePoisoned -> "Poisoned"
+    Text.id_entangle -> "Entangle"
+    Text.id_entangled -> "Entangled"
     Text.id_grenadeLauncher -> "Grenade Launcher"
     Text.id_magician -> "Magician"
     Text.id_mobility -> "Mobility"

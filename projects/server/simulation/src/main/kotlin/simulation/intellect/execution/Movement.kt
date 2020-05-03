@@ -9,6 +9,7 @@ import simulation.happenings.getActiveAction
 import simulation.main.World
 import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.Commands
+import silentorb.mythic.happenings.Events
 import simulation.intellect.Pursuit
 import simulation.intellect.design.getActionRange
 import silentorb.mythic.intellect.navigation.asRecastVector3
@@ -60,7 +61,7 @@ fun getPathTargetPosition(world: World, character: Id, pursuit: Pursuit): Vector
     nextPoint
 }
 
-fun moveStraightTowardPosition(world: World, character: Id, target: Vector3): Commands {
+fun moveStraightTowardPosition(world: World, character: Id, target: Vector3): Events {
   val body = world.deck.bodies[character]!!
   val shape = world.deck.collisionObjects[character]!!
   val middle = shape.shape.height / 2f
@@ -75,7 +76,7 @@ fun moveStraightTowardPosition(world: World, character: Id, target: Vector3): Co
   }
 }
 
-fun moveSpirit(world: World, character: Id, knowledge: Knowledge, pursuit: Pursuit): Commands {
+fun moveSpirit(world: World, character: Id, knowledge: Knowledge, pursuit: Pursuit): Events {
   val target = getPathTargetPosition(world, character, pursuit)
   return if (target != null)
     moveStraightTowardPosition(world, character, target)

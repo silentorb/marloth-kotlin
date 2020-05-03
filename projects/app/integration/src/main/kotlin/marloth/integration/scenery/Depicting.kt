@@ -1,16 +1,20 @@
 package marloth.integration.scenery
 
 import marloth.clienting.menus.textStyles
+import marloth.definition.data.animationPlaceholders
+import marloth.scenery.enums.AnimationId
 import marloth.scenery.enums.ArmatureId
 import marloth.scenery.enums.ArmatureSockets
 import marloth.scenery.enums.MeshId
 import silentorb.mythic.accessorize.getAccessories
 import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.characters.ViewMode
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.ent.reflectProperties
 import silentorb.mythic.lookinglass.*
+import silentorb.mythic.performing.isMarkerTriggered
 import silentorb.mythic.physics.Body
 import silentorb.mythic.scenery.MeshName
 import silentorb.mythic.scenery.Shape
@@ -18,10 +22,12 @@ import silentorb.mythic.scenery.TextureName
 import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Vector3
+import simulation.combat.spatial.attackMarker
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
 import simulation.main.Deck
 import simulation.misc.Definitions
+import simulation.updating.simulationDelta
 import kotlin.math.floor
 
 val simplePainterMap = reflectProperties<String>(MeshId).mapNotNull { meshId ->
@@ -84,26 +90,35 @@ fun convertSimpleDepiction(deck: Deck, id: Id, depiction: Depiction): MeshElemen
   return convertSimpleDepiction(deck, id, mesh, depiction.texture)
 }
 
-fun getPerformanceTextBillboard(definitions: Definitions, deck: Deck, id: Id, footPosition: Vector3, shape: Shape): TextBillboard? {
-  val performance = deck.performances.entries.firstOrNull { it.value.target == id }
-  return if (performance != null) {
-    val action = performance.value.sourceAction
-    val accessory = deck.accessories[action]
-    if (accessory != null) {
-      val definition = definitions.accessories [accessory.type]!!
-      TextBillboard(
-          content = definitions.textLibrary(definition.name),
-          position = footPosition + Vector3(0f, 0f, shape.height + 0.1f),
-          style = textStyles.smallWhite,
-          depthOffset = -0.01f
-      )
-    }
-    else
+fun getPerformanceTextBillboard(definitions: Definitions, deck: Deck, id: Id, footPosition: Vector3, shape: Shape): TextBillboard? =
+    if (!getDebugBoolean("DRAW_PERFORMANCE_TEXT"))
+      null
+    else {
+      val performance = deck.performances.entries.firstOrNull { it.value.target == id }
+      if (performance != null) {
+        val action = performance.value.sourceAction
+        val accessory = deck.accessories[action]
+        if (accessory != null) {
+          val definition = definitions.accessories[accessory.type]!!
+          val timer = deck.timersFloat.getValue(performance.key)
+          val animation = definitions.animations.getValue(performance.value.animation)
+          val isTriggered = isMarkerTriggered(timer.duration, animation, simulationDelta * 6f)(attackMarker)
+          val suffix = if (isTriggered)
+            "!"
+          else
+            ""
+
+          TextBillboard(
+              content = definitions.textLibrary(definition.name) + suffix,
+              position = footPosition + Vector3(0f, 0f, shape.height + 0.1f),
+              style = textStyles.smallWhite,
+              depthOffset = -0.01f
+          )
+        } else
+          null
+      } else
         null
-  }
-  else
-    null
-}
+    }
 
 fun convertCharacterDepiction(definitions: Definitions, deck: Deck, id: Id, depiction: Depiction): ElementGroup {
   val body = deck.bodies[id]!!
@@ -119,8 +134,13 @@ fun convertCharacterDepiction(definitions: Definitions, deck: Deck, id: Id, depi
       .rotateZ(Pi / 2f)
 
   val animations = deck.animations[id]!!.animations.map {
+    val animationId = if (animationPlaceholders().containsKey(it.animationId))
+      AnimationId.stand
+    else
+      it.animationId
+
     ElementAnimation(
-        animationId = it.animationId,
+        animationId = animationId,
         timeOffset = it.animationOffset,
         strength = it.strength
     )

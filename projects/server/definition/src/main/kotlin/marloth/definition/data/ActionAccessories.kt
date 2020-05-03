@@ -19,23 +19,12 @@ fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
 
     AccessoryId.entangle to ActionAccessory(
         accessory = AccessoryDefinition(
-            name = Text.id_pistol,
-            equippedMesh = MeshId.pistol
+            name = Text.id_entangle
         ),
         action = ActionDefinition(
             cooldown = 2f,
-            range = 10f,
-            animation = AnimationId.shootPistol
-        ),
-        weapon = WeaponDefinition(
-            attackMethod = AttackMethod.raycast,
-            damages = listOf(
-                DamageDefinition(
-                    type = DamageTypes.physical.name,
-                    amount = 70
-                )
-            ),
-            sound = SoundId.pistolFire
+            range = 20f,
+            animation = AnimationId.cast
         )
     ),
 

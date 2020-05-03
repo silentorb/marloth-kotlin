@@ -4,6 +4,7 @@ import marloth.scenery.enums.ModifierId
 import silentorb.mythic.accessorize.AccessoryName
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.GameEvent
+import silentorb.mythic.spatial.Vector3
 
 data class PurchaseEvent(
     val customer: Id,
@@ -26,7 +27,10 @@ data class ApplyBuffEvent(
 ) : GameEvent
 
 data class TryUseAbilityEvent(
-    val actor: Id
+    val actor: Id,
+    val action: Id,
+    val target: Id? = null,
+    val targetLocation: Vector3? = null
 ) : GameEvent
 
 data class ReturnHome(

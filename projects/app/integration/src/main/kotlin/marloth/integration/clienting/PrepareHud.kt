@@ -27,18 +27,17 @@ fun gatherHudData(world: World, textResources: TextResources, player: Id, view: 
     val destructible = deck.destructibles[player]!!
     val body = deck.bodies[player]!!
 
-    val modifiers = deck.modifiers
-        .filter { it.value.target == player }
+    val accessories = deck.accessories
+        .filter { it.value.owner == player }
 
-    val buffs = modifiers
-        .map { Pair(deck.modifiers[it.key]!!, deck.timersInt[it.key]?.duration ?: 0) }
+//    val buffs = accessories
+//        .map { Pair(deck.modifiers[it.key]!!, deck.timersInt[it.key]?.duration ?: 0) }
 
     val interactable = if (view == ViewId.none)
       deck.interactables[character.canInteractWith]
     else null
 
-    val cooldowns = deck.accessories
-        .filter { it.value.owner == player }
+    val cooldowns = accessories
         .mapNotNull { (accessory, accessoryRecord) ->
           val cooldown = deck.actions[accessory]?.cooldown
           if (cooldown != null && cooldown != 0f) {
@@ -52,16 +51,19 @@ fun gatherHudData(world: World, textResources: TextResources, player: Id, view: 
             null
         }
         .plus(
-            modifiers
-                .mapNotNull { (id, modifier) ->
+            accessories
+                .mapNotNull { (id, accessory) ->
                   val timer = deck.timersFloat[id]
                   if (timer != null) {
-                    Cooldown(
-                        name = textResources[definitions.modifiers[modifier.type]!!.name]!!,
-                        value = 1f - timer.duration / timer.original
-                    )
-                  }
-                  else
+                    val definition = definitions.accessories[accessory.type]
+                    if (definition != null)
+                      Cooldown(
+                          name = textResources[definition.name]!!,
+                          value = 1f - timer.duration / timer.original
+                      )
+                    else
+                      null
+                  } else
                     null
                 }
         )
@@ -75,7 +77,6 @@ fun gatherHudData(world: World, textResources: TextResources, player: Id, view: 
         interactable = interactable,
         cooldowns = cooldowns,
         viewMode = characterRig?.viewMode ?: ViewMode.firstPerson,
-        buffs = buffs,
         debugInfo = listOf(
 //            "LR: ${floatToRoundedString(lightRating(deck, player))}",
 //            floatToRoundedString(body.velocity.length()),

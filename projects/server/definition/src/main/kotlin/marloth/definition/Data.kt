@@ -1,6 +1,7 @@
 package marloth.definition
 
 import marloth.definition.data.*
+import marloth.definition.misc.ClientDefinitions
 import marloth.definition.particles.particleEffects
 import marloth.definition.texts.englishTextResources
 import marloth.scenery.enums.staticDamageTypes
@@ -16,11 +17,10 @@ fun staticDefinitions(clientDefinitions: ClientDefinitions): Definitions {
 
   return Definitions(
       actions = actionAccessories.mapValues { it.value.action },
-      accessories = staticAccessories().plus(actionAccessories.mapValues { it.value.accessory }),
-      animations = clientDefinitions.animations,
+      accessories = staticAccessories() + actionAccessories.mapValues { it.value.accessory },
+      animations = clientDefinitions.animations + animationPlaceholders(),
       damageTypes = staticDamageTypes.toSet(),
       lightAttachments = clientDefinitions.lightAttachments,
-      modifiers = staticModifiers(),
       particleEffects = particleEffects(),
       professions = allProfessions() + reflectPropertiesMap<CharacterDefinition>(CharacterDefinitions),
       soundDurations = clientDefinitions.soundDurations,

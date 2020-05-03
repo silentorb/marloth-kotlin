@@ -25,7 +25,6 @@ data class Definitions(
     val animations: AnimationInfoMap,
     val damageTypes: Set<DamageType>,
     val lightAttachments: LightAttachmentMap,
-    val modifiers: Map<AccessoryName, ModifierDefinition>,
     val particleEffects: ParticleEffectDefinitions,
     val professions: Professions,
     val soundDurations: Map<SoundType, Float>,

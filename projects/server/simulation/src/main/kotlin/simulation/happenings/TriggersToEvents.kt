@@ -114,24 +114,24 @@ fun gatherActivatedTriggers(deck: Deck, definitions: Definitions, collisions: Co
 //      } else null
 //    } else null
 //  }
-  val buffTriggers = deck.modifiers
-      .mapNotNull { (id, buff) ->
-        val definition = definitions.modifiers[buff.type]!!
-        val attachment = deck.attachments[id]!!
-        val overTime = definition.overTime
-        if (overTime != null)
-          Triggering(
-              actor = attachment.source,
-              action = overTime,
-              target = attachment.target,
-              strength = buff.strength
-          )
-        else null
-      }
+//  val buffTriggers = deck.modifiers
+//      .mapNotNull { (id, buff) ->
+//        val definition = definitions.modifiers[buff.type]!!
+//        val attachment = deck.attachments[id]!!
+//        val overTime = definition.overTime
+//        if (overTime != null)
+//          Triggering(
+//              actor = attachment.source,
+//              action = overTime,
+//              target = attachment.target,
+//              strength = buff.strength
+//          )
+//        else null
+//      }
   val commandTriggers = gatherCommandTriggers(deck, commands)
 
   return attachmentTriggers
-      .plus(buffTriggers)
+//      .plus(buffTriggers)
       .plus(commandTriggers)
 }
 

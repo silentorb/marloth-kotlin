@@ -21,6 +21,10 @@ data class AccessoryDefinition(
     val equippedMesh: MeshName? = null
 )
 
+fun hasAccessory(type: AccessoryName): (Table<Accessory>, Id) -> Boolean = { accessories, actor ->
+  accessories.values.any { it.owner == actor && it.type == type }
+}
+
 fun getAccessories(accessories: Table<Accessory>, entity: Id): Table<Accessory> {
   return accessories.filterValues { it.owner == entity }
 }

@@ -33,7 +33,7 @@ object CharacterDefinitions {
   val sentinel = CharacterDefinition(
       name = Text.unnamed,
       health = 100,
-      accessories = listOf(AccessoryId.rocketLauncher),
+      accessories = listOf(AccessoryId.rocketLauncher, AccessoryId.entangle),
       depictionType = DepictionType.sentinel,
       maxSpeed = 0f,
       deathSound = null,

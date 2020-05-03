@@ -1,40 +1,48 @@
 package marloth.definition.data
 
-import marloth.definition.newResistanceModifier
+import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.ModifierId
 import marloth.scenery.enums.Text
-import marloth.scenery.enums.DamageTypes
+import silentorb.mythic.accessorize.AccessoryDefinition
 import silentorb.mythic.accessorize.AccessoryName
 import silentorb.mythic.accessorize.ModifierDefinition
-import simulation.happenings.DamageAction
+import silentorb.mythic.accessorize.RelativeModifier
 
-fun staticModifiers(): Map<AccessoryName, ModifierDefinition> = mapOf(
-    ModifierId.damageBurning to ModifierDefinition(
-        name = Text.id_damageBurning,
-        overTime = DamageAction(
-            damageType = DamageTypes.fire.name,
-            amount = 0
+fun staticAccessories(): Map<AccessoryName, AccessoryDefinition> = mapOf(
+    AccessoryId.resistanceCold to AccessoryDefinition(
+        name = Text.id_resistanceCold,
+        modifiers = listOf(
+            RelativeModifier(
+                type = ModifierId.resistanceCold,
+                strength = 10
+            )
         )
     ),
-    ModifierId.damageChilled to ModifierDefinition(
-        name = Text.id_damageChilled,
-        overTime = DamageAction(
-            damageType = DamageTypes.cold.name,
-            amount = 0
+    AccessoryId.resistanceFire to AccessoryDefinition(
+        name = Text.id_resistanceFire,
+        modifiers = listOf(
+            RelativeModifier(
+                type = ModifierId.resistanceFire,
+                strength = 10
+            )
         )
     ),
-    ModifierId.damagePoisoned to ModifierDefinition(
-        name = Text.id_damagePoisoned,
-        overTime = DamageAction(
-            damageType = DamageTypes.poison.name,
-            amount = 0
+    AccessoryId.resistancePoison to AccessoryDefinition(
+        name = Text.id_resistancePoison,
+        modifiers = listOf(
+            RelativeModifier(
+                type = ModifierId.resistancePoison,
+                strength = 50
+            )
         )
     ),
-    ModifierId.mobile to ModifierDefinition(
+    ModifierId.entangled to AccessoryDefinition(
+        name = Text.id_entangled
+    ),
+    ModifierId.entangleImmune to AccessoryDefinition(
+        name = Text.unnamed
+    ),
+    ModifierId.mobile to AccessoryDefinition(
         name = Text.id_mobile
-    ),
-
-    ModifierId.resistanceCold to newResistanceModifier(Text.id_resistanceCold, DamageTypes.cold.name),
-    ModifierId.resistanceFire to newResistanceModifier(Text.id_resistanceFire, DamageTypes.fire.name),
-    ModifierId.resistancePoison to newResistanceModifier(Text.id_resistancePoison, DamageTypes.poison.name)
+    )
 )

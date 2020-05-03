@@ -1,7 +1,6 @@
 package simulation.intellect.design
 
 import silentorb.mythic.ent.Id
-import simulation.happenings.getActiveAction
 import simulation.intellect.Pursuit
 import simulation.intellect.assessment.Knowledge
 import simulation.intellect.assessment.getVisibleEnemies
@@ -25,15 +24,19 @@ fun getActionRange(deck: Deck, definitions: Definitions, action: Id): Float {
   return definition.range
 }
 
-fun updatePursuit(world: World, character: Id, knowledge: Knowledge, pursuit: Pursuit): Pursuit {
+fun updatePursuit(world: World, actor: Id, knowledge: Knowledge, pursuit: Pursuit): Pursuit {
   val deck = world.deck
-  val targetEnemy = updateTargetEnemy(world, character, knowledge, pursuit)
+  val targetEnemy = updateTargetEnemy(world, actor, knowledge, pursuit)
   val target = knowledge.characters[pursuit.targetEnemy]
-  val action = getActiveAction(deck, character)
-  val targetPosition = if (target != null && action != null) {
+  val actions = if (target != null)
+    actionsForTarget(world, actor, target.id)
+  else
+    null
+
+  val targetPosition = if (target != null && actions != null) {
     target.position ?: target.lastPosition
   } else
-    updateRoamingTargetPosition(world, character, knowledge, pursuit)
+    updateRoamingTargetPosition(world, actor, knowledge, pursuit)
 
   return Pursuit(
       targetEnemy = targetEnemy,

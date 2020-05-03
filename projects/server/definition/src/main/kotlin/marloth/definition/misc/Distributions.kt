@@ -1,6 +1,5 @@
-package marloth.definition
+package marloth.definition.misc
 
-import marloth.definition.data.CharacterDefinitions
 import marloth.scenery.enums.CreatureId
 import silentorb.mythic.debugging.getDebugInt
 

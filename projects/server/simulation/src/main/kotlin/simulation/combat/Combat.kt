@@ -18,8 +18,7 @@ fun toModifierDeck(deck: Deck) =
 fun toCombatDefinitions(definitions: Definitions) =
     CombatDefinitions(
         accessories = definitions.accessories,
-        damageTypes = definitions.damageTypes,
-        modifiers = definitions.modifiers
+        damageTypes = definitions.damageTypes
     )
 
 fun toSpatialCombatDeck(deck: Deck) =

@@ -1,6 +1,7 @@
 package simulation.happenings
 
 import silentorb.mythic.debugging.getDebugBoolean
+import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.filterCharacterCommandsFromEvents
 import silentorb.mythic.timing.emitCycleEvents
@@ -23,7 +24,9 @@ fun eventsFromPerformances(definitions: Definitions, deck: Deck): Events =
 
 fun withSimulationEvents(definitions: Definitions, previous: Deck, world: World, externalEvents: Events): Events {
   val deck = world.deck
-  val spiritCommands = pursueGoals(world, aliveSpirits(world.deck))
+  val spiritEvents = pursueGoals(world, aliveSpirits(world.deck))
+  val spiritCommands= spiritEvents.filterIsInstance<CharacterCommand>()
+
   val commands = filterCharacterCommandsFromEvents(externalEvents).plus(spiritCommands)
   val collisions = getBulletCollisions(world.bulletState, deck)
       .associateBy { it.first }
@@ -33,8 +36,7 @@ fun withSimulationEvents(definitions: Definitions, previous: Deck, world: World,
   val events = listOf(
       externalEvents,
       eventsFromPerformances(definitions, deck),
-      commandsToEvents(commands),
-      spiritCommands,
+      commandsToEvents(deck, commands),
       emitCycleEvents(deck.cyclesInt),
       eventsFromMissiles(toSpatialCombatWorld(world), collisions),
       eventsFromItemPickups(world, collisions),
@@ -42,7 +44,7 @@ fun withSimulationEvents(definitions: Definitions, previous: Deck, world: World,
       eventsFromRespawnCountdowns(previous, world.deck),
       if (getDebugBoolean("ENABLE_MOBILITY")) mobilityEvents(world.definitions, world.deck, commands) else listOf()
   )
-      .flatten()
+      .flatten() + spiritEvents
 
   return events.plus(eventsFromEvents(world, freedomTable, events))
 }

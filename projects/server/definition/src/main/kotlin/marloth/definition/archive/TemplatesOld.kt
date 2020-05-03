@@ -1,4 +1,4 @@
-package marloth.definition
+package marloth.definition.archive
 
 import marloth.scenery.enums.Text
 import silentorb.mythic.physics.CollisionObject

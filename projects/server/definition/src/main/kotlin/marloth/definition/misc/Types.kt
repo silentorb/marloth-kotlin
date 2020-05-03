@@ -1,4 +1,4 @@
-package marloth.definition
+package marloth.definition.misc
 
 import silentorb.mythic.aura.SoundDurations
 import silentorb.mythic.breeze.AnimationInfoMap

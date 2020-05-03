@@ -2,6 +2,7 @@ package silentorb.mythic.performing
 
 import silentorb.mythic.accessorize.Accessory
 import silentorb.mythic.accessorize.AccessoryName
+import silentorb.mythic.breeze.AnimationInfo
 import silentorb.mythic.breeze.AnimationInfoMap
 import silentorb.mythic.breeze.AnimationName
 import silentorb.mythic.ent.Id
@@ -47,22 +48,21 @@ fun performancesFromEvents(definitions: PerformanceDefinitions, deck: Performanc
   }
 }
 
+fun isMarkerTriggered(duration: Float, animation: AnimationInfo, delta: Float): (String) -> Boolean = { markerName ->
+  val elapsed = animation.duration - duration
+  animation.markers.any {
+    val frame = it.frame.toFloat() / 60f
+    it.name == markerName && frame > elapsed && frame < elapsed + delta
+  }
+}
+
 fun eventsFromPerformances(definitions: PerformanceDefinitions, deck: PerformanceDeck, delta: Float): Events {
   return deck.performances
       .flatMap { (id, performance) ->
-        val timer = deck.timersFloat.getValue(id)
         val animation = definitions.animations.getValue(performance.animation)
-        val elapsed = animation.duration - timer.duration
+        val timer = deck.timersFloat.getValue(id)
         performance.deferredEvents
-            .mapNotNull { (markerName, event) ->
-              val isTriggered = animation.markers.any {
-                val frame = it.frame.toFloat() / 60f
-                it.name == markerName && frame > elapsed && frame < elapsed + delta
-              }
-              if (isTriggered)
-                event
-              else
-                null
-            }
+            .filterKeys(isMarkerTriggered(timer.duration, animation, delta))
+            .values
       }
 }

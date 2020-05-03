@@ -24,7 +24,6 @@ data class HudData(
     val sanity: ResourceContainer,
     val interactable: Interactable?,
     val cooldowns: List<Cooldown>,
-    val buffs: List<Pair<Modifier, Int>>,
     val debugInfo: List<String> = listOf(),
     val viewMode: ViewMode
 )

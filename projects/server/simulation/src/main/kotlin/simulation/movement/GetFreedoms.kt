@@ -9,6 +9,7 @@ import silentorb.mythic.characters.Freedoms
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
+import simulation.abilities.isEntangled
 import simulation.happenings.canUse
 import simulation.happenings.canUseSimple
 import simulation.main.Deck
@@ -28,8 +29,8 @@ fun getFreedoms(deck: Deck): (Id) -> Freedoms = { actor ->
   if (!character.isAlive)
     Freedom.none
   else if (deck.performances.any { it.value.target == actor })
-    Freedom.orbiting  or Freedom.turning
-  else if (!getDebugBoolean("ENABLE_MOBILITY") || hasMobilityModifier(deck.modifiers, actor))
+    Freedom.orbiting or Freedom.turning
+  else if (!isEntangled(deck.accessories, actor) && (!getDebugBoolean("ENABLE_MOBILITY") || hasMobilityModifier(deck.modifiers, actor)))
     Freedom.all
   else
     Freedom.orbiting or Freedom.turning

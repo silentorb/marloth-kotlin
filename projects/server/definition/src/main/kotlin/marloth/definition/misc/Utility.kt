@@ -1,4 +1,4 @@
-package marloth.definition
+package marloth.definition.misc
 
 import marloth.scenery.enums.ModifierDirection
 import marloth.scenery.enums.Text

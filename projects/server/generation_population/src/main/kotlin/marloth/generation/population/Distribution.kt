@@ -2,10 +2,10 @@ package marloth.generation.population
 
 import generation.abstracted.distributeToSlots
 import generation.architecture.misc.GenerationConfig
-import marloth.definition.DistributionGroup
-import marloth.definition.enemyDistributions
-import marloth.definition.fixedDistributions
-import marloth.definition.scalingDistributions
+import marloth.definition.misc.DistributionGroup
+import marloth.definition.misc.enemyDistributions
+import marloth.definition.misc.fixedDistributions
+import marloth.definition.misc.scalingDistributions
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.debugging.getDebugString

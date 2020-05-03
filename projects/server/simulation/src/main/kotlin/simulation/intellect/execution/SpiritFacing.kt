@@ -6,6 +6,7 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.CommandName
 import silentorb.mythic.happenings.Commands
+import silentorb.mythic.happenings.Events
 import silentorb.mythic.spatial.*
 import simulation.main.World
 import simulation.updating.simulationDelta
@@ -60,7 +61,7 @@ fun spiritVerticalFacingChange(world: World, character: Id, offset: Vector3): Co
       CharacterCommands.lookUp, CharacterCommands.lookDown)
 }
 
-fun spiritNeedsFacing(world: World, character: Id, offset: Vector3, acceptableRange: Float, action: () -> Commands): Commands {
+fun spiritNeedsFacing(world: World, character: Id, offset: Vector3, acceptableRange: Float, action: () -> Events): Events {
   val characterRig = world.deck.characterRigs.getValue(character)
   val facingCommands = spiritHorizontalFacingChange(world, character, offset)
       .plus(spiritVerticalFacingChange(world, character, offset))
