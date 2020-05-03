@@ -1,6 +1,6 @@
 package simulation.abilities
 
-import marloth.scenery.enums.ModifierId
+import marloth.scenery.enums.AccessoryId
 import silentorb.mythic.accessorize.Accessory
 import silentorb.mythic.accessorize.hasAccessory
 import silentorb.mythic.ent.Id
@@ -10,8 +10,8 @@ import simulation.happenings.NewHandEvent
 import simulation.main.Deck
 import simulation.main.Hand
 
-val isEntangleImmune = hasAccessory(ModifierId.entangleImmune)
-val isEntangled = hasAccessory(ModifierId.entangled)
+val isEntangleImmune = hasAccessory(AccessoryId.entangleImmune)
+val isEntangled = hasAccessory(AccessoryId.entangled)
 
 private const val entangledDuration = 2f
 
@@ -25,7 +25,7 @@ fun entangleEvents(deck: Deck): (Id) -> Events = { target ->
         NewHandEvent(
             hand = Hand(
                 accessory = Accessory(
-                    type = ModifierId.entangling,
+                    type = AccessoryId.entangling,
                     owner = target
                 ),
                 timerFloat = FloatTimer(1f)
@@ -34,7 +34,7 @@ fun entangleEvents(deck: Deck): (Id) -> Events = { target ->
         NewHandEvent(
             hand = Hand(
                 accessory = Accessory(
-                    type = ModifierId.entangleImmune,
+                    type = AccessoryId.entangleImmune,
                     owner = target
                 ),
                 timerFloat = FloatTimer(entangledDuration + immunityDuration)
@@ -46,12 +46,12 @@ fun entangleEvents(deck: Deck): (Id) -> Events = { target ->
 fun newEntangleEntities(previous: Deck): List<Hand> =
     previous.accessories
         .filter { (key, accessory) ->
-          accessory.type == ModifierId.entangling && previous.timersFloat[key]!!.duration <= 0f
+          accessory.type == AccessoryId.entangling && previous.timersFloat[key]!!.duration <= 0f
         }
         .map { (_, accessory) ->
           Hand(
               accessory = Accessory(
-                  type = ModifierId.entangled,
+                  type = AccessoryId.entangled,
                   owner = accessory.owner
               ),
               timerFloat = FloatTimer(entangledDuration)

@@ -2,7 +2,6 @@ package marloth.clienting.hud
 
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.MeshId
-import marloth.scenery.enums.ModifierId
 import silentorb.mythic.characters.defaultCharacterRadius
 import silentorb.mythic.ent.Id
 import silentorb.mythic.glowing.DrawMethod
@@ -83,7 +82,7 @@ fun mobilityMovementRangeLayer(definitions: Definitions, deck: Deck, actor: Id):
 
 fun entanglingMovementRangeLayer(deck: Deck, actor: Id): SceneLayer? {
   val accessory = deck.accessories.entries
-      .firstOrNull { it.value.owner == actor && it.value.type == ModifierId.entangling }
+      .firstOrNull { it.value.owner == actor && it.value.type == AccessoryId.entangling }
 
   return if (accessory == null)
     null

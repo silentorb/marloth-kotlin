@@ -1,6 +1,5 @@
 package simulation.entities
 
-import marloth.scenery.enums.ModifierId
 import silentorb.mythic.accessorize.AccessoryName
 import silentorb.mythic.accessorize.Modifier
 import silentorb.mythic.ent.Id

@@ -8,12 +8,9 @@ import marloth.definition.templates.newBuffCloud
 import marloth.definition.templates.newTreasureChest
 import silentorb.mythic.ent.Id
 import marloth.scenery.enums.MeshId
-import marloth.scenery.enums.ModifierId
 import silentorb.mythic.accessorize.AccessoryName
 import simulation.main.Deck
-import simulation.misc.MapGrid
 import simulation.misc.Node
-import simulation.misc.CellAttribute
 
 fun groupElementsByCell(deck: Deck, elements: Collection<Id>): Map<Id, Set<Id>> {
   return elements

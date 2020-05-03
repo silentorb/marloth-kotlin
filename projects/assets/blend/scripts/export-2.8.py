@@ -330,6 +330,7 @@ def main():
     name = get_blend_filename()
     export_dir = get_export_dir(name)
     export_file = os.path.join(export_dir, name + '.gltf')
+    print('Exporting ', export_file)
     if prepare_scene(export_dir):
         export_gltf(export_file)
         if os.environ.get('SAVE_DELETEME', None):

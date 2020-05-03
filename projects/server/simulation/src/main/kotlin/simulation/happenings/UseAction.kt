@@ -6,37 +6,40 @@ import silentorb.mythic.characters.FreedomTable
 import silentorb.mythic.characters.hasFreedom
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.UseAction
+import simulation.abilities.dashEvents
 import simulation.abilities.entangleEvents
 import simulation.combat.spatial.startAttack
 import simulation.combat.spatial.withResolvedTarget
 import simulation.main.World
 
-fun eventsFromTryUseAbility(world: World, event: TryUseAbilityEvent): Events {
+fun eventsFromTryAction(world: World, event: TryActionEvent): Events {
+  val definitions = world.definitions
   val deck = world.deck
   val actor = event.actor
   val action = event.action
   val target = event.target
   val accessory = deck.accessories[action]!!
-  return when {
+  val isWeapon = world.definitions.weapons.containsKey(accessory.type)
+  val specificEvents =
+      if (isWeapon)
+        listOf(startAttack(actor, action, accessory.type, event.targetLocation))
+      else when (accessory.type) {
+        AccessoryId.dash -> dashEvents(definitions, accessory.type, actor)
+        AccessoryId.entangle -> withResolvedTarget(world, actor, target, entangleEvents(deck))
+        else -> listOf()
+      }
 
-    world.definitions.weapons.containsKey(accessory.type) -> {
-      listOf(startAttack(actor, action, accessory.type, event.targetLocation))
-    }
-
-    accessory.type == AccessoryId.entangle -> withResolvedTarget(world, actor, target, entangleEvents(deck))
-
-    else -> listOf()
-  } + UseAction(
+  return specificEvents + UseAction(
       actor = actor,
       action = action,
       deferredEvents = mapOf()
   )
 }
 
-fun eventsFromTryUseAbility(world: World, freedomTable: FreedomTable): (TryUseAbilityEvent) -> Events = { event ->
+fun eventsFromTryAction(world: World, freedomTable: FreedomTable): (TryActionEvent) -> Events = { event ->
   val action = event.action
   if (hasFreedom(freedomTable, event.actor, Freedom.acting) && canUse(world, action))
-    eventsFromTryUseAbility(world, event)
+    eventsFromTryAction(world, event)
   else
     listOf()
 }

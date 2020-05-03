@@ -19,6 +19,7 @@ val englishTextResources: TextResourceMapper = { text ->
     Text.id_damageChilled -> "Chilled"
     Text.id_damageBurning -> "Burning"
     Text.id_damagePoisoned -> "Poisoned"
+    Text.id_dash -> "Dash"
     Text.id_entangle -> "Entangle"
     Text.id_entangled -> "Entangled"
     Text.id_grenadeLauncher -> "Grenade Launcher"

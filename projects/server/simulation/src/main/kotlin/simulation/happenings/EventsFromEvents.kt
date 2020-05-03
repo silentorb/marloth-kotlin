@@ -7,7 +7,6 @@ import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
 import simulation.combat.spatial.onAttack
 import simulation.combat.toSpatialCombatWorld
-import simulation.combat.usingSpatialCombatWorld
 import simulation.main.World
 import simulation.physics.toPhysicsDeck
 
@@ -24,7 +23,7 @@ fun eventsFromEvents(world: World, freedomTable: FreedomTable, events: Events): 
   val characterMovementEvents = allCharacterMovements(toPhysicsDeck(deck), deck.characterRigs, deck.thirdPersonRigs, events)
   return listOf(
       mapEvents(onAttack(toSpatialCombatWorld(world))),
-      mapEvents(eventsFromTryUseAbility(world, freedomTable))
+      mapEvents(eventsFromTryAction(world, freedomTable))
   )
       .flatMap { it(events) }
       .plus(characterMovementEvents)

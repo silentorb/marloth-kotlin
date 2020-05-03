@@ -4,6 +4,7 @@ enum class Text {
   damageType_cold,
   damageType_fire,
   damageType_poison,
+
   gui_characterInfo,
   gui_chooseProfessionMenu,
   gui_merchant,
@@ -11,10 +12,12 @@ enum class Text {
   gui_resistances,
   gui_take,
   gui_victory,
+
   id_candle,
   id_damageChilled,
   id_damageBurning,
   id_damagePoisoned,
+  id_dash,
   id_entangle,
   id_entangled,
   id_grenadeLauncher,
@@ -27,6 +30,7 @@ enum class Text {
   id_rocketLauncher,
   id_soldier,
   id_pistol,
+
   menu_close,
   menu_continueGame,
   menu_newGame,

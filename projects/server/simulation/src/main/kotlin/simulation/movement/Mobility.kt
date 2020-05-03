@@ -2,7 +2,6 @@ package simulation.movement
 
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.CharacterCommands
-import marloth.scenery.enums.ModifierId
 import silentorb.mythic.accessorize.Modifier
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.CharacterCommand
@@ -28,7 +27,7 @@ fun newMobilityModifierEvent(actor: Id, source: Id, duration: Float) =
     NewHandEvent(
         hand = Hand(
             modifier = Modifier(
-                type = ModifierId.mobile,
+                type = AccessoryId.mobile,
                 target = actor,
                 source = source
             ),

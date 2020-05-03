@@ -1,6 +1,5 @@
 package simulation.happenings
 
-import marloth.scenery.enums.ModifierId
 import silentorb.mythic.accessorize.AccessoryName
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.GameEvent
@@ -26,7 +25,7 @@ data class ApplyBuffEvent(
     val source: Id
 ) : GameEvent
 
-data class TryUseAbilityEvent(
+data class TryActionEvent(
     val actor: Id,
     val action: Id,
     val target: Id? = null,

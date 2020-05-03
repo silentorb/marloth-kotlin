@@ -1,7 +1,6 @@
 package simulation.movement
 
 import marloth.scenery.enums.AccessoryId
-import marloth.scenery.enums.ModifierId
 import silentorb.mythic.accessorize.Modifier
 import silentorb.mythic.characters.Freedom
 import silentorb.mythic.characters.FreedomTable
@@ -11,12 +10,11 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.performing.isPerforming
 import simulation.abilities.isEntangled
-import simulation.happenings.canUse
 import simulation.happenings.canUseSimple
 import simulation.main.Deck
 
 fun hasMobilityModifier(modifiers: Table<Modifier>, actor: Id): Boolean =
-    modifiers.any { it.value.target == actor && it.value.type == ModifierId.mobile }
+    modifiers.any { it.value.target == actor && it.value.type == AccessoryId.mobile }
 
 fun canUseMobility(deck: Deck): (Id) -> Boolean = { actor ->
   deck.characters[actor]!!.isAlive &&

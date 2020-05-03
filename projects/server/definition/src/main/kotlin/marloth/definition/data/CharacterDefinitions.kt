@@ -8,25 +8,16 @@ import simulation.entities.DepictionType
 import simulation.characters.fieldOfView360
 
 object CharacterDefinitions {
-  val ally = CharacterDefinition(
-      name = Text.unnamed,
-      health = 100,
-      accessories = listOf(AccessoryId.pistol, AccessoryId.mobility),
-      depictionType = DepictionType.child,
-      maxSpeed = 2f,
-      deathSound = SoundId.girlScream
-  )
 
   val hogMan = CharacterDefinition(
       name = Text.unnamed,
       health = 100,
-      accessories = listOf(AccessoryId.pistol, AccessoryId.mobility),
+      accessories = listOf(AccessoryId.pistol),
       depictionType = DepictionType.person,
       maxSpeed = 2.5f,
       deathSound = SoundId.hogDeath,
       ambientSounds = listOf(
-//          Sounds.hogAmbient01,
-//          Sounds.hogAmbient03
+
       )
   )
 
@@ -44,7 +35,7 @@ object CharacterDefinitions {
   val hound = CharacterDefinition(
       name = Text.unnamed,
       health = 100,
-      accessories = listOf(AccessoryId.claws, AccessoryId.mobility),
+      accessories = listOf(AccessoryId.claws, AccessoryId.dash),
       depictionType = DepictionType.hound,
       maxSpeed = 4f,
       deathSound = null,

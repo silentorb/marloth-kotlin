@@ -6,7 +6,7 @@ import silentorb.mythic.physics.SimpleBody
 import silentorb.mythic.spatial.Vector3
 import simulation.characters.EquipmentSlot
 import simulation.combat.general.AttackMethod
-import simulation.happenings.TryUseAbilityEvent
+import simulation.happenings.TryActionEvent
 import simulation.happenings.getEquippedAction
 import simulation.intellect.Pursuit
 import simulation.intellect.assessment.Knowledge
@@ -54,7 +54,7 @@ fun spiritAttack(world: World, attacker: Id, knowledge: Knowledge, pursuit: Purs
       if (actions.none())
         listOf()
       else
-        listOf(TryUseAbilityEvent(
+        listOf(TryActionEvent(
             actor = attacker,
             action = world.dice.takeOne(actions),
             target = target.id,

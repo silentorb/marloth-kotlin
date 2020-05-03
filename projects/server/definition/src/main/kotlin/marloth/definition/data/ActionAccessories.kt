@@ -15,7 +15,18 @@ data class ActionAccessory(
     val weapon: WeaponDefinition? = null
 )
 
-fun staticActionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
+fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
+
+    AccessoryId.dash to ActionAccessory(
+        accessory = AccessoryDefinition(
+            name = Text.id_dash
+        ),
+        action = ActionDefinition(
+            cooldown = 4f,
+            duration = 1f,
+            equipmentSlot = EquipmentSlot.mobility
+        )
+    ),
 
     AccessoryId.entangle to ActionAccessory(
         accessory = AccessoryDefinition(

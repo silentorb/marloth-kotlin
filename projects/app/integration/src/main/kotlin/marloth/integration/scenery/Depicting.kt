@@ -22,7 +22,7 @@ import silentorb.mythic.scenery.TextureName
 import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Vector3
-import simulation.combat.spatial.attackMarker
+import simulation.combat.spatial.executeMarker
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
 import simulation.main.Deck
@@ -101,7 +101,7 @@ fun getDebugTextBillboard(definitions: Definitions, deck: Deck, actor: Id, footP
         if (accessory != null) {
           val timer = deck.timersFloat.getValue(performance.key)
           val animation = definitions.animations.getValue(performance.value.animation)
-          val isTriggered = isMarkerTriggered(timer.duration, animation, simulationDelta * 6f)(attackMarker)
+          val isTriggered = isMarkerTriggered(timer.duration, animation, simulationDelta * 6f)(executeMarker)
           val suffix = if (isTriggered)
             "!"
           else

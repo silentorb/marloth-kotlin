@@ -10,7 +10,7 @@ import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.happenings.UseAction
 import silentorb.mythic.spatial.Vector3
 
-const val attackMarker = "attack"
+const val executeMarker = "execute"
 
 data class AttackEvent(
     val attacker: Id,
@@ -48,7 +48,7 @@ fun startAttack(attacker: Id, action: Id, accessory: AccessoryName, target: Vect
       actor = attacker,
       action = action,
       deferredEvents = mapOf(
-          attackMarker to AttackEvent(
+          executeMarker to AttackEvent(
               attacker = attacker,
               accessory = accessory,
               target = target

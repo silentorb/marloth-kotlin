@@ -1,7 +1,6 @@
 package silentorb.mythic.accessorize
 
 import marloth.scenery.enums.ModifierDirection
-import marloth.scenery.enums.ModifierId
 import marloth.scenery.enums.ModifierType
 import marloth.scenery.enums.Text
 import simulation.combat.general.ValueModifier
