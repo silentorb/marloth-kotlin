@@ -11,14 +11,16 @@ import silentorb.mythic.timing.updateFloatCycle
 import silentorb.mythic.timing.updateFloatTimer
 import silentorb.mythic.timing.updateIntCycle
 import silentorb.mythic.timing.updateIntTimers
+import simulation.characters.updateCharacter
 import simulation.combat.general.updateDestructibleHealth
 import simulation.entities.updateAmbientAudio
 import simulation.entities.updateAttachment
-import simulation.characters.updateCharacter
 import simulation.entities.updateCharacterAnimation
 import simulation.happenings.updateActions
 import simulation.intellect.assessment.lightRatings
 import simulation.intellect.assessment.updateKnowledge
+import simulation.intellect.navigation.NavigationState
+import simulation.intellect.navigation.updateNavigationDirections
 import simulation.intellect.updateSpirit
 import simulation.main.Deck
 import simulation.main.World
@@ -28,7 +30,7 @@ import simulation.particles.updateParticleEffect
 import simulation.physics.CollisionGroups
 import simulation.physics.updateBodies
 
-fun updateEntities(definitions: Definitions, world: World, events: Events): (Deck) -> Deck =
+fun updateEntities(definitions: Definitions, world: World, navigation: NavigationState, events: Events): (Deck) -> Deck =
     { deck ->
       val delta = simulationDelta
       val dice = world.dice
@@ -46,6 +48,7 @@ fun updateEntities(definitions: Definitions, world: World, events: Events): (Dec
           destructibles = mapTable(deck.destructibles, updateDestructibleHealth(events)),
           characters = mapTable(deck.characters, updateCharacter(deck, world.bulletState, events)),
           knowledge = mapTable(deck.knowledge, updateKnowledge(world, lightRatings(world.deck), delta)),
+          navigationDirections = updateNavigationDirections(navigation),
           particleEffects = mapTableValues(deck.particleEffects, deck.bodies, updateParticleEffect(definitions.particleEffects, dice, delta)),
           sounds = mapTableValues(deck.sounds, updateSound(delta)),
           spirits = mapTable(deck.spirits, updateSpirit(world, delta)),

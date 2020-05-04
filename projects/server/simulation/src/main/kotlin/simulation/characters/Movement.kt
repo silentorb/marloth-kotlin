@@ -21,5 +21,5 @@ fun getMoveSpeed(definitions: Definitions, deck: Deck): (Id) -> Float = { actor 
   baseSpeed * dashBonus
 }
 
-fun getMoveSpeedTable(definitions: Definitions, deck: Deck): MoveSpeedTable =
+fun newMoveSpeedTable(definitions: Definitions, deck: Deck): MoveSpeedTable =
     deck.characterRigs.keys.associateWith(getMoveSpeed(definitions, deck))

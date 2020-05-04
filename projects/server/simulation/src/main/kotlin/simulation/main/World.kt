@@ -3,9 +3,7 @@ package simulation.main
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.pass
-import org.recast4j.detour.NavMesh
-import org.recast4j.detour.NavMeshQuery
-import silentorb.mythic.intellect.navigation.NavigationState
+import simulation.intellect.navigation.NavigationState
 import silentorb.mythic.randomly.Dice
 import simulation.misc.Definitions
 import simulation.misc.GameOver

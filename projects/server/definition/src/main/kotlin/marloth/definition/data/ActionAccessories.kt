@@ -23,7 +23,7 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         ),
         action = ActionDefinition(
             cooldown = 4f,
-            duration = 1f,
+            duration = 1.3f,
             equipmentSlot = EquipmentSlot.mobility
         )
     ),

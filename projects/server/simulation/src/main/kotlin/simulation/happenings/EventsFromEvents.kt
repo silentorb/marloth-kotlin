@@ -5,7 +5,7 @@ import silentorb.mythic.characters.rigs.allCharacterMovements
 import silentorb.mythic.characters.rigs.characterMovementsToImpulses
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
-import simulation.characters.getMoveSpeedTable
+import simulation.characters.newMoveSpeedTable
 import simulation.combat.spatial.onAttack
 import simulation.combat.toSpatialCombatWorld
 import simulation.main.World
@@ -22,7 +22,7 @@ inline fun <reified T : GameEvent> mapEvents(crossinline transform: (T) -> Event
 fun eventsFromEvents(world: World, freedomTable: FreedomTable, events: Events): Events {
   val deck = world.deck
   val characterMovementEvents = allCharacterMovements(toPhysicsDeck(deck), deck.characterRigs, deck.thirdPersonRigs, events)
-  val moveSpeedTable = getMoveSpeedTable(world.definitions, world.deck)
+  val moveSpeedTable = newMoveSpeedTable(world.definitions, world.deck)
   return listOf(
       mapEvents(onAttack(toSpatialCombatWorld(world))),
       mapEvents(eventsFromTryAction(world, freedomTable))

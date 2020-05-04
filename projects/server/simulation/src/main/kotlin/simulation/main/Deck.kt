@@ -29,6 +29,7 @@ import silentorb.mythic.timing.IntTimer
 import simulation.characters.Character
 import simulation.combat.PlayerOverlay
 import simulation.intellect.assessment.Knowledge
+import simulation.intellect.navigation.NavigationDirection
 
 // Deck is basically a database full of tables
 
@@ -55,6 +56,7 @@ data class Deck(
     val lights: Table<Light> = mapOf(),
     val modifiers: Table<Modifier> = mapOf(),
     val missiles: Table<Missile> = mapOf(),
+    val navigationDirections: Table<NavigationDirection> = mapOf(),
     val particleEffects: Table<ParticleEffect> = mapOf(),
     val performances: Table<Performance> = mapOf(),
     val players: Table<Player> = mapOf(),

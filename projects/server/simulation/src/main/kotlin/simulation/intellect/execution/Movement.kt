@@ -7,7 +7,7 @@ import silentorb.mythic.accessorize.getAccessory
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.Events
-import silentorb.mythic.intellect.navigation.asRecastVector3
+import silentorb.mythic.intellect.navigation.toRecastVector3
 import silentorb.mythic.intellect.navigation.fromRecastVector3
 import silentorb.mythic.spatial.Vector3
 import simulation.happenings.TryActionEvent
@@ -16,6 +16,7 @@ import simulation.intellect.Pursuit
 import simulation.intellect.assessment.Knowledge
 import simulation.intellect.design.actionsForTarget
 import simulation.intellect.design.getActionRange
+import simulation.intellect.navigation.nearestPolygon
 import simulation.main.World
 
 fun getPathTargetPosition(world: World, character: Id, pursuit: Pursuit): Vector3? {
@@ -25,16 +26,16 @@ fun getPathTargetPosition(world: World, character: Id, pursuit: Pursuit): Vector
   if (query == null)
     throw Error("Missing navMeshQuery")
 
-  val start = asRecastVector3(body.position + Vector3(0f, 0f, -shape.height / 2f))
-  val end = asRecastVector3(pursuit.targetPosition!!)
-  val polygonRange = floatArrayOf(10f, 10f, 10f)
+  val startOriginal = body.position + Vector3(0f, 0f, -shape.height / 2f)
+  val start = toRecastVector3(startOriginal)
+  val end = toRecastVector3(pursuit.targetPosition!!)
   val queryFilter = DefaultQueryFilter()
-  val startPolygon = query.findNearestPoly(start, polygonRange, queryFilter)
-  if (startPolygon.failed() || startPolygon.result.nearestRef == 0L)
+  val startPolygon = nearestPolygon(world.navigation, startOriginal)
+  if (startPolygon == null)
     return null
 
-  val endPolygon = query.findNearestPoly(end, polygonRange, queryFilter)
-  if (endPolygon.failed() || endPolygon.result.nearestRef == 0L)
+  val endPolygon = nearestPolygon(world.navigation, pursuit.targetPosition)
+  if (endPolygon == null)
     return null
 
   val path = query.findPath(
@@ -88,7 +89,13 @@ fun moveStraightTowardPosition(world: World, actor: Id, target: Vector3): Events
     return commands
 
   val vector = (target - position)
-  val offset = vector.copy(z = 0f).normalize()
+  val navigationDirection = world.deck.navigationDirections[actor] ?: vector
+  val direction = if (navigationDirection == Vector3.zero)
+    vector
+  else
+    navigationDirection
+
+  val offset = direction.copy(z = 0f).normalize()
   val withDash = if (vector.length() > 0.5f)
     tryUseDash(world, actor)
   else
