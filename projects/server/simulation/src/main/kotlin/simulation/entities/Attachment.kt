@@ -89,7 +89,7 @@ fun applyBuff(deck: Deck, nextId: IdSource): (ApplyBuffEvent) -> Deck = { event 
             target = event.target,
             source = event.source
         ),
-        timer = IntTimer(
+        timerInt = IntTimer(
             duration = duration,
             interval = 2
         )

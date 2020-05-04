@@ -2,7 +2,6 @@ package simulation.intellect.design
 
 import silentorb.mythic.ent.Id
 import silentorb.mythic.spatial.Vector3
-import silentorb.mythic.randomly.Dice
 import simulation.intellect.Path
 import simulation.intellect.Pursuit
 import simulation.intellect.assessment.Knowledge
@@ -34,7 +33,7 @@ fun getRemainingPath(node: Id, path: Path): Path {
 }
 
 fun updateRoamingTargetPosition(world: World, character: Id, knowledge: Knowledge, pursuit: Pursuit): Vector3? {
-  return if (world.deck.characters[character]!!.definition.maxSpeed == 0f)
+  return if (world.deck.characters[character]!!.definition.speed == 0f)
     null
   else if (pursuit.targetPosition == null) // || !pathIsAccessible(world, knowledge, pursuit.path))
     startRoaming(world, character, knowledge)

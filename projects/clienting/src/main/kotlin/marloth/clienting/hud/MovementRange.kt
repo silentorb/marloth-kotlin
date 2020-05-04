@@ -12,6 +12,7 @@ import silentorb.mythic.lookinglass.SceneLayer
 import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector4
+import simulation.characters.getMoveSpeed
 import simulation.main.Deck
 import simulation.misc.Definitions
 
@@ -36,8 +37,8 @@ fun movementRangeLayer(color: Vector4, transform: Matrix) =
         useDepth = false
     )
 
-fun movementRangeLayer(deck: Deck, actor: Id, duration: Float, color: Vector4): SceneLayer {
-  val speed = deck.characterRigs[actor]!!.maxSpeed
+fun movementRangeLayer(definitions: Definitions, deck: Deck, actor: Id, duration: Float, color: Vector4): SceneLayer {
+  val speed = getMoveSpeed(definitions, deck)(actor)
   val range = duration * speed + defaultCharacterRadius
 
   val center = deck.bodies[actor]!!.position
@@ -75,12 +76,12 @@ fun mobilityMovementRangeLayer(definitions: Definitions, deck: Deck, actor: Id):
       else
         Vector4(1f, 0.2f, 0.2f, 0.1f)
 
-      movementRangeLayer(deck, actor, duration, color)
+      movementRangeLayer(definitions, deck, actor, duration, color)
     }
   }
 }
 
-fun entanglingMovementRangeLayer(deck: Deck, actor: Id): SceneLayer? {
+fun entanglingMovementRangeLayer(definitions: Definitions, deck: Deck, actor: Id): SceneLayer? {
   val accessory = deck.accessories.entries
       .firstOrNull { it.value.owner == actor && it.value.type == AccessoryId.entangling }
 
@@ -88,6 +89,6 @@ fun entanglingMovementRangeLayer(deck: Deck, actor: Id): SceneLayer? {
     null
   else {
     val duration = deck.timersFloat[accessory.key]!!.duration
-    movementRangeLayer(deck, actor, duration, Vector4(0f, 1f, 1f, 0.1f))
+    movementRangeLayer(definitions, deck, actor, duration, Vector4(0f, 1f, 1f, 0.1f))
   }
 }

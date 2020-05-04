@@ -30,7 +30,7 @@ typealias ProfessionId = String
 data class CharacterDefinition(
     val name: Text,
     val health: Int,
-    val maxSpeed: Float,
+    val speed: Float,
     val accessories: List<AccessoryName>,
     val depictionType: DepictionType,
     val deathSound: SoundName?,

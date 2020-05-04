@@ -64,7 +64,7 @@ data class Hand(
     val spinner: Spinner? = null,
     val spirit: Spirit? = null,
     val thirdPersonRig: ThirdPersonRig? = null,
-    val timer: IntTimer? = null,
+    val timerInt: IntTimer? = null,
     val timerFloat: FloatTimer? = null,
     val trigger: Trigger? = null,
     val ware: Ware? = null

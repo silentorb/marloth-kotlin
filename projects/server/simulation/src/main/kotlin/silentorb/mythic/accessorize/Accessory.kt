@@ -18,11 +18,18 @@ data class AccessoryDefinition(
     val name: Text,
     val modifiers: List<RelativeModifier> = listOf(),
     //This mesh field is a stopgap until attaching any depiction to an articulation is supported
-    val equippedMesh: MeshName? = null
+    val equippedMesh: MeshName? = null,
+    val debugName: String? = null
 )
 
+fun hasAccessory(type: AccessoryName, accessories: Table<Accessory>, actor: Id): Boolean =
+    accessories.values.any { it.owner == actor && it.type == type }
+
+fun getAccessory(type: AccessoryName, accessories: Table<Accessory>, actor: Id): Id? =
+    accessories.entries.firstOrNull { it.value.owner == actor && it.value.type == type }?.key
+
 fun hasAccessory(type: AccessoryName): (Table<Accessory>, Id) -> Boolean = { accessories, actor ->
-  accessories.values.any { it.owner == actor && it.type == type }
+  hasAccessory(type, accessories, actor)
 }
 
 fun getAccessories(accessories: Table<Accessory>, entity: Id): Table<Accessory> {

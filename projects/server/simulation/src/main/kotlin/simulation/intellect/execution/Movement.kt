@@ -1,14 +1,17 @@
 package simulation.intellect.execution
 
+import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.CharacterCommands
 import org.recast4j.detour.DefaultQueryFilter
+import silentorb.mythic.accessorize.getAccessory
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.intellect.navigation.asRecastVector3
 import silentorb.mythic.intellect.navigation.fromRecastVector3
 import silentorb.mythic.spatial.Vector3
-import simulation.happenings.getEquippedAction
+import simulation.happenings.TryActionEvent
+import simulation.happenings.canUse
 import simulation.intellect.Pursuit
 import simulation.intellect.assessment.Knowledge
 import simulation.intellect.design.actionsForTarget
@@ -61,19 +64,38 @@ fun getPathTargetPosition(world: World, character: Id, pursuit: Pursuit): Vector
     nextPoint
 }
 
-fun moveStraightTowardPosition(world: World, character: Id, target: Vector3): Events {
-  val body = world.deck.bodies[character]!!
-  val shape = world.deck.collisionObjects[character]!!
+fun tryUseDash(world: World, actor: Id): Events {
+  val deck = world.deck
+  val dash = getAccessory(AccessoryId.dash, deck.accessories, actor)
+  return if (dash != null && canUse(world, dash))
+    listOf(
+        TryActionEvent(
+            actor = actor,
+            action = dash
+        )
+    )
+  else
+    listOf()
+}
+
+fun moveStraightTowardPosition(world: World, actor: Id, target: Vector3): Events {
+  val body = world.deck.bodies[actor]!!
+  val shape = world.deck.collisionObjects[actor]!!
   val middle = shape.shape.height / 2f
   val position = body.position
-  val commands = listOf(CharacterCommand(CharacterCommands.moveUp, character))
+  val commands = listOf(CharacterCommand(CharacterCommands.moveUp, actor))
   if (target.x == position.x && target.y == position.y)
     return commands
 
-  val offset = (target - position).copy(z = 0f).normalize()
-  return spiritNeedsFacing(world, character, offset, 0.1f) {
+  val vector = (target - position)
+  val offset = vector.copy(z = 0f).normalize()
+  val withDash = if (vector.length() > 0.5f)
+    tryUseDash(world, actor)
+  else
+    listOf()
+  return spiritNeedsFacing(world, actor, offset, 0.1f) {
     commands
-  }
+  } + withDash
 }
 
 fun moveSpirit(world: World, character: Id, knowledge: Knowledge, pursuit: Pursuit): Events {

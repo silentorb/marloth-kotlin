@@ -2,10 +2,8 @@ package marloth.integration.scenery
 
 import marloth.clienting.menus.textStyles
 import marloth.definition.data.animationPlaceholders
-import marloth.scenery.enums.AnimationId
-import marloth.scenery.enums.ArmatureId
-import marloth.scenery.enums.ArmatureSockets
-import marloth.scenery.enums.MeshId
+import marloth.scenery.enums.*
+import silentorb.mythic.accessorize.AccessoryName
 import silentorb.mythic.accessorize.getAccessories
 import silentorb.mythic.characters.CharacterRig
 import silentorb.mythic.characters.ViewMode
@@ -90,6 +88,14 @@ fun convertSimpleDepiction(deck: Deck, id: Id, depiction: Depiction): MeshElemen
   return convertSimpleDepiction(deck, id, mesh, depiction.texture)
 }
 
+fun accessoryDebugName(definitions: Definitions, accessoryType: AccessoryName): String {
+  val definition = definitions.accessories[accessoryType]!!
+  return  if (definition.name == Text.unnamed)
+    definition.debugName ?: "???"
+  else
+    definitions.textLibrary(definition.name)
+}
+
 fun getDebugTextBillboard(definitions: Definitions, deck: Deck, actor: Id, footPosition: Vector3, shape: Shape): List<TextBillboard> =
     if (!getDebugBoolean("DRAW_PERFORMANCE_TEXT"))
       listOf()
@@ -107,9 +113,8 @@ fun getDebugTextBillboard(definitions: Definitions, deck: Deck, actor: Id, footP
           else
             ""
 
-          val definition = definitions.accessories[accessory.type]!!
           TextBillboard(
-              content = definitions.textLibrary(definition.name) + suffix,
+              content = accessoryDebugName(definitions, accessory.type) + suffix,
               position = footPosition + Vector3(0f, 0f, shape.height + 0.1f),
               style = textStyles.smallWhite,
               depthOffset = -0.01f
@@ -124,9 +129,8 @@ fun getDebugTextBillboard(definitions: Definitions, deck: Deck, actor: Id, footP
           .values.firstOrNull()
 
       val modifierBillboard = if (accessory != null) {
-        val definition = definitions.accessories[accessory.type]!!
         TextBillboard(
-            content = definitions.textLibrary(definition.name),
+            content = accessoryDebugName(definitions, accessory.type),
             position = footPosition + Vector3(0f, 0f, shape.height - 0.3f),
             style = textStyles.smallGray,
             depthOffset = -0.01f

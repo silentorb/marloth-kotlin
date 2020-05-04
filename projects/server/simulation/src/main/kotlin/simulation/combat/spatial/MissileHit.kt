@@ -1,13 +1,21 @@
 package simulation.combat.spatial
 
+import marloth.scenery.enums.MeshId
 import simulation.combat.general.DamageDefinition
 import simulation.combat.general.newDamageEvents
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.DeleteEntityEvent
 import silentorb.mythic.happenings.Events
+import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.Collision
+import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.getCenter
+import silentorb.mythic.timing.FloatTimer
 import simulation.entities.CollisionMap
+import simulation.entities.Depiction
+import simulation.entities.DepictionType
+import simulation.happenings.NewHandEvent
+import simulation.main.Hand
 
 data class Missile(
     val damageRadius: Float, // 0f for no AOE
@@ -29,8 +37,21 @@ fun eventsFromMissileCollision(world: SpatialCombatWorld, id: Id, missile: Missi
           null
       }
       .flatten()
-
-  return listOf(DeleteEntityEvent(id)) + damageEvents
+  val body = world.deck.bodies[id]!!
+  val explosionDepiction = NewHandEvent(
+      hand = Hand(
+          body = Body(
+              position = body.position,
+              scale = Vector3(missile.damageRadius)
+          ),
+          depiction = Depiction(
+              type = DepictionType.staticMesh,
+              mesh = MeshId.sphere
+          ),
+          timerFloat = FloatTimer(0.15f)
+      )
+  )
+  return listOf(DeleteEntityEvent(id)) + damageEvents + explosionDepiction
 }
 
 fun eventsFromMissiles(world: SpatialCombatWorld, collisions: CollisionMap): Events =

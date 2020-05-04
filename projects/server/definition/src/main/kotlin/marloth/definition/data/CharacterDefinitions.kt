@@ -14,7 +14,7 @@ object CharacterDefinitions {
       health = 100,
       accessories = listOf(AccessoryId.pistol),
       depictionType = DepictionType.person,
-      maxSpeed = 2.5f,
+      speed = 2.5f,
       deathSound = SoundId.hogDeath,
       ambientSounds = listOf(
 
@@ -26,7 +26,7 @@ object CharacterDefinitions {
       health = 100,
       accessories = listOf(AccessoryId.rocketLauncher, AccessoryId.entangle),
       depictionType = DepictionType.sentinel,
-      maxSpeed = 0f,
+      speed = 0f,
       deathSound = null,
       ambientSounds = listOf(),
       fieldOfView = fieldOfView360
@@ -37,7 +37,7 @@ object CharacterDefinitions {
       health = 100,
       accessories = listOf(AccessoryId.claws, AccessoryId.dash),
       depictionType = DepictionType.hound,
-      maxSpeed = 4f,
+      speed = 4f,
       deathSound = null,
       ambientSounds = listOf()
   )

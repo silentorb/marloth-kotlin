@@ -21,7 +21,6 @@ data class CharacterRig(
     val facingRotation: Vector2 = Vector2(),
     val facingOrientation: Quaternion,
     val groundDistance: Float = 0f,
-    val maxSpeed: Float,
     val firstPersonLookVelocity: Vector2 = Vector2(),
     val turnSpeed: Vector2,
     val viewMode: ViewMode

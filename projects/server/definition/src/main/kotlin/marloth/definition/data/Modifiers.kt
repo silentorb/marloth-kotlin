@@ -34,6 +34,10 @@ fun modifiers(): Map<AccessoryName, AccessoryDefinition> = mapOf(
             )
         )
     ),
+    AccessoryId.dashing to AccessoryDefinition(
+        name = Text.unnamed,
+        debugName = "dashing"
+    ),
     AccessoryId.entangled to AccessoryDefinition(
         name = Text.id_entangled
     ),

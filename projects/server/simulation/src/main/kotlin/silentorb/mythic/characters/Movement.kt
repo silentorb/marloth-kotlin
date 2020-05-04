@@ -8,6 +8,7 @@ import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.LinearImpulse
 import silentorb.mythic.physics.PhysicsDeck
 import silentorb.mythic.spatial.*
+import simulation.characters.MoveSpeedTable
 
 val playerMoveMap = mapOf(
     CharacterRigCommands.moveLeft to Vector3(-1f, 0f, 0f),
@@ -41,12 +42,11 @@ fun characterMovement(commands: Commands, characterRig: CharacterRig, thirdPerso
   }
 }
 
-fun characterMovementToImpulse(event: CharacterRigMovement, characterRig: CharacterRig, velocity: Vector3): LinearImpulse {
-  val baseSpeed = characterRig.maxSpeed
+fun characterMovementToImpulse(event: CharacterRigMovement, characterRig: CharacterRig, speed: Float, velocity: Vector3): LinearImpulse {
   val airControlMod = if (isGrounded(characterRig)) 1f else airControlReduction
-  val commandVector = event.offset * baseSpeed * airControlMod
+  val commandVector = event.offset * speed * airControlMod
   val horizontalVelocity = velocity.copy(z = 0f)
-  val impulseVector = getMovementImpulseVector(baseSpeed, horizontalVelocity, commandVector)
+  val impulseVector = getMovementImpulseVector(speed, horizontalVelocity, commandVector)
   val offset = impulseVector * 5f
   return LinearImpulse(body = event.actor, offset = offset)
 }
@@ -66,10 +66,14 @@ fun allCharacterMovements(
       .mapNotNull { characterMovement(filterCommands(it.key, commands), it.value, thirdPersonRigs[it.key], it.key) }
 }
 
-fun characterMovementsToImpulses(bodies: Table<Body>, characterRigs: Table<CharacterRig>,
-                                 freedomTable: FreedomTable,
-                                 events: Events): List<LinearImpulse> =
+fun characterMovementsToImpulses(
+    bodies: Table<Body>,
+    characterRigs: Table<CharacterRig>,
+    freedomTable: FreedomTable,
+    moveSpeedTable: MoveSpeedTable,
+    events: Events
+): List<LinearImpulse> =
     events
         .filterIsInstance<CharacterRigMovement>()
         .filter { hasFreedom(freedomTable[it.actor] ?: Freedom.none, Freedom.walking) }
-        .map { characterMovementToImpulse(it, characterRigs[it.actor]!!, bodies[it.actor]!!.velocity) }
+        .map { characterMovementToImpulse(it, characterRigs[it.actor]!!, moveSpeedTable[it.actor]!!, bodies[it.actor]!!.velocity) }

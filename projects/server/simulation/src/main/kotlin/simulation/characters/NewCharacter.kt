@@ -74,8 +74,7 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, prof
               characterRig = CharacterRig(
                   facingRotation = Vector2(angle, 0f),
                   facingOrientation = characterRigOrentation(Vector2(angle, 0f)),
-                  maxSpeed = definition.maxSpeed,
-                  turnSpeed = Vector2(4f, 1f),
+                  turnSpeed = if (spirit != null) Vector2(8f, 2f) else Vector2(4f, 1f),
                   viewMode = ViewMode.firstPerson
               ),
               thirdPersonRig = if (spirit == null)

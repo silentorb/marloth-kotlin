@@ -10,6 +10,8 @@ import simulation.happenings.NewHandEvent
 import simulation.main.Hand
 import simulation.misc.Definitions
 
+fun defaultDashBonus(): Float = 2f
+
 fun dashEvents(definitions: Definitions, accessoryType: AccessoryName, actor: Id): Events {
   val definition = definitions.actions[accessoryType]!!
   return listOf(

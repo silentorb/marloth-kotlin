@@ -33,10 +33,11 @@ fun createScene(definitions: Definitions, deck: Deck): (Id) -> GameScene = { pla
       null
 
     val targetingLayer = getTargetingLayer(deck, player)
-    val movementRangeLayer = entanglingMovementRangeLayer(deck, player) ?: if (getDebugBoolean("ENABLE_MOBILITY"))
-      mobilityMovementRangeLayer(definitions, deck, player)
-    else
-      null
+    val movementRangeLayer = entanglingMovementRangeLayer(definitions, deck, player)
+        ?: if (getDebugBoolean("ENABLE_MOBILITY"))
+          mobilityMovementRangeLayer(definitions, deck, player)
+        else
+          null
 
     val layers = listOf(
         SceneLayer(
