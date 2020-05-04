@@ -1,6 +1,7 @@
 package marloth.clienting.rendering
 
 import silentorb.mythic.characters.*
+import silentorb.mythic.characters.rigs.*
 import silentorb.mythic.ent.Id
 import silentorb.mythic.physics.Body
 import silentorb.mythic.scenery.Camera

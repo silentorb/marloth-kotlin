@@ -11,8 +11,8 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.platforming.WindowInfo
 import silentorb.mythic.spatial.*
 import silentorb.mythic.spatial.minus
-import silentorb.mythic.characters.joinInputVector
-import silentorb.mythic.characters.playerMoveMap
+import silentorb.mythic.characters.rigs.joinInputVector
+import silentorb.mythic.characters.rigs.playerMoveMap
 import silentorb.mythic.lookinglass.createCameraEffectsData
 import silentorb.mythic.happenings.CharacterCommand
 import marloth.scenery.enums.CharacterCommands

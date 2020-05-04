@@ -3,6 +3,7 @@ package simulation.characters
 import marloth.scenery.enums.AnimationId
 import silentorb.mythic.accessorize.Accessory
 import silentorb.mythic.characters.*
+import silentorb.mythic.characters.rigs.*
 import simulation.combat.general.Destructible
 import simulation.combat.general.DestructibleBaseStats
 import simulation.combat.general.ResourceContainer
@@ -74,7 +75,6 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, prof
               characterRig = CharacterRig(
                   facingRotation = Vector2(angle, 0f),
                   facingOrientation = characterRigOrentation(Vector2(angle, 0f)),
-                  turnSpeed = if (spirit != null) Vector2(8f, 2f) else Vector2(4f, 1f),
                   viewMode = ViewMode.firstPerson
               ),
               thirdPersonRig = if (spirit == null)

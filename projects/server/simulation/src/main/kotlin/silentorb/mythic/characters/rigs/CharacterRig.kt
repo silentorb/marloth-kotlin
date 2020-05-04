@@ -1,4 +1,4 @@
-package silentorb.mythic.characters
+package silentorb.mythic.characters.rigs
 
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld
 import marloth.scenery.enums.CharacterRigCommands
@@ -9,6 +9,7 @@ import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.*
 import silentorb.mythic.spatial.*
+import simulation.main.Deck
 import kotlin.math.min
 
 const val defaultCharacterRadius = 0.5f
@@ -145,13 +146,14 @@ fun interpolateCharacterRigs(scalar: Float, first: Table<CharacterRig>, second: 
 fun updateCharacterRig(
     bulletState: BulletState,
     walkableMask: Int,
-    bodies: Table<Body>,
-    collisionObjects: Table<CollisionObject>,
-    thirdPersonRigs: Table<ThirdPersonRig>,
+    deck: Deck,
     freedomTable: Table<Freedoms>,
     events: Events,
     delta: Float
 ): (Id, CharacterRig) -> CharacterRig {
+  val bodies = deck.bodies
+  val collisionObjects = deck.collisionObjects
+  val thirdPersonRigs = deck.thirdPersonRigs
   val allCommands = events.filterIsInstance<CharacterCommand>()
   val mouseLookEvents = events.filterIsInstance<MouseLookEvent>()
 
@@ -162,9 +164,13 @@ fun updateCharacterRig(
 
     val mouseLookEvent = mouseLookEvents.firstOrNull { it.character == id }
 
-    val firstPersonLookVelocity = if (hasFreedom(freedoms, Freedom.turning) && isFirstPerson && mouseLookEvent == null)
-      updateLookVelocityFirstPerson(commands, defaultGamepadMomentumAxis(), characterRig.firstPersonLookVelocity)
-    else
+    val firstPersonLookVelocity = if (hasFreedom(freedoms, Freedom.turning) && isFirstPerson && mouseLookEvent == null) {
+      val momentumAxis = if (deck.spirits.containsKey(id))
+        spiritGamepadMomentumAxis()
+      else
+        defaultGamepadMomentumAxis()
+      updateLookVelocityFirstPerson(commands, momentumAxis, characterRig.firstPersonLookVelocity)
+    } else
       characterRig.firstPersonLookVelocity
 
     val facingRotation = if (!hasFreedom(freedoms, Freedom.turning))

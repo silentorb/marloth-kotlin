@@ -1,6 +1,7 @@
 package simulation.physics
 
 import silentorb.mythic.characters.*
+import silentorb.mythic.characters.rigs.updateCharacterRigBulletBodies
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.*
 import simulation.main.Deck

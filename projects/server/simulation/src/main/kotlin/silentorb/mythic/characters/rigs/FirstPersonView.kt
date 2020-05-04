@@ -1,4 +1,4 @@
-package silentorb.mythic.characters
+package silentorb.mythic.characters.rigs
 
 import silentorb.mythic.spatial.Vector2
 import silentorb.mythic.spatial.Vector3

@@ -1,4 +1,4 @@
-package silentorb.mythic.characters
+package silentorb.mythic.characters.rigs
 
 import marloth.scenery.enums.CharacterRigCommands
 import silentorb.mythic.ent.Id
@@ -45,6 +45,20 @@ fun defaultGamepadMomentumAxis() =
             positiveIncrement = 0.1f,
             maxVelocity = 2f,
             negativeIncrement = 0.15f
+        )
+    )
+
+fun spiritGamepadMomentumAxis() =
+    MomentumAxis(
+        horizontal = MomentumConfig(
+            positiveIncrement = 0.6f,
+            maxVelocity = 6f,
+            negativeIncrement = 1.0f
+        ),
+        vertical = MomentumConfig(
+            positiveIncrement = 0.2f,
+            maxVelocity = 3f,
+            negativeIncrement = 0.3f
         )
     )
 

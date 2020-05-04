@@ -9,7 +9,7 @@ import silentorb.mythic.bloom.next.*
 import silentorb.mythic.spatial.Vector2i
 import simulation.entities.Interactable
 import silentorb.mythic.accessorize.Modifier
-import silentorb.mythic.characters.ViewMode
+import silentorb.mythic.characters.rigs.ViewMode
 import simulation.combat.general.ResourceContainer
 
 private val textStyle = textStyles.gray

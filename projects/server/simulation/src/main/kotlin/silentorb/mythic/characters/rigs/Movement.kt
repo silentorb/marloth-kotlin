@@ -1,4 +1,4 @@
-package silentorb.mythic.characters
+package silentorb.mythic.characters.rigs
 
 import marloth.scenery.enums.CharacterRigCommands
 import silentorb.mythic.ent.Id
@@ -75,5 +75,8 @@ fun characterMovementsToImpulses(
 ): List<LinearImpulse> =
     events
         .filterIsInstance<CharacterRigMovement>()
-        .filter { hasFreedom(freedomTable[it.actor] ?: Freedom.none, Freedom.walking) }
+        .filter {
+          hasFreedom(freedomTable[it.actor]
+              ?: Freedom.none, Freedom.walking)
+        }
         .map { characterMovementToImpulse(it, characterRigs[it.actor]!!, moveSpeedTable[it.actor]!!, bodies[it.actor]!!.velocity) }

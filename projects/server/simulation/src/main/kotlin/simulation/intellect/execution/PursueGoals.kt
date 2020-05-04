@@ -1,8 +1,8 @@
 package simulation.intellect.execution
 
-import silentorb.mythic.characters.Freedom
-import silentorb.mythic.characters.FreedomTable
-import silentorb.mythic.characters.hasFreedom
+import silentorb.mythic.characters.rigs.Freedom
+import silentorb.mythic.characters.rigs.FreedomTable
+import silentorb.mythic.characters.rigs.hasFreedom
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import simulation.intellect.Pursuit

@@ -1,4 +1,4 @@
-package silentorb.mythic.characters
+package silentorb.mythic.characters.rigs
 
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
@@ -22,7 +22,6 @@ data class CharacterRig(
     val facingOrientation: Quaternion,
     val groundDistance: Float = 0f,
     val firstPersonLookVelocity: Vector2 = Vector2(),
-    val turnSpeed: Vector2,
     val viewMode: ViewMode
 ) {
   val facingVector: Vector3

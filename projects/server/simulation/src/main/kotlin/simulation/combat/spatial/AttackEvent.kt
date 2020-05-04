@@ -2,7 +2,7 @@ package simulation.combat.spatial
 
 import silentorb.mythic.accessorize.AccessoryName
 import silentorb.mythic.audio.NewSound
-import silentorb.mythic.characters.defaultCharacterHeight
+import silentorb.mythic.characters.rigs.defaultCharacterHeight
 import simulation.combat.general.AttackMethod
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events

@@ -1,9 +1,9 @@
 package simulation.physics
 
-import silentorb.mythic.characters.CharacterRigMovement
-import silentorb.mythic.characters.Freedom
-import silentorb.mythic.characters.hasFreedom
-import silentorb.mythic.characters.isGrounded
+import silentorb.mythic.characters.rigs.CharacterRigMovement
+import silentorb.mythic.characters.rigs.Freedom
+import silentorb.mythic.characters.rigs.hasFreedom
+import silentorb.mythic.characters.rigs.isGrounded
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.Body

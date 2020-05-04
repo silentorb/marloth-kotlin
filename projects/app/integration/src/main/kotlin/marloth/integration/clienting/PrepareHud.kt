@@ -4,7 +4,7 @@ import marloth.clienting.hud.Cooldown
 import marloth.clienting.hud.HudData
 import marloth.clienting.menus.TextResources
 import marloth.clienting.menus.ViewId
-import silentorb.mythic.characters.ViewMode
+import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.ent.Id
 import simulation.main.World
 import simulation.misc.getPointCell

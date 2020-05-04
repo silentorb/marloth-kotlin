@@ -1,6 +1,6 @@
 package marloth.integration.scenery
 
-import silentorb.mythic.characters.ViewMode
+import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.ScreenFilter
 import silentorb.mythic.spatial.Vector4

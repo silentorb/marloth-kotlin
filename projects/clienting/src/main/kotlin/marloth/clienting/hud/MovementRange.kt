@@ -2,7 +2,7 @@ package marloth.clienting.hud
 
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.MeshId
-import silentorb.mythic.characters.defaultCharacterRadius
+import silentorb.mythic.characters.rigs.defaultCharacterRadius
 import silentorb.mythic.ent.Id
 import silentorb.mythic.glowing.DrawMethod
 import silentorb.mythic.lookinglass.ElementGroup

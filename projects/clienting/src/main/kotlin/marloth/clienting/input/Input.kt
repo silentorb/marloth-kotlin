@@ -3,7 +3,7 @@ package marloth.clienting.input
 import silentorb.mythic.haft.*
 import marloth.clienting.PlayerViews
 import marloth.clienting.menus.ViewId
-import silentorb.mythic.characters.MouseLookEvent
+import silentorb.mythic.characters.rigs.MouseLookEvent
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.haft.DeviceTypeMap
 import silentorb.mythic.ent.Id

@@ -1,8 +1,8 @@
 package simulation.happenings
 
-import silentorb.mythic.characters.FreedomTable
-import silentorb.mythic.characters.allCharacterMovements
-import silentorb.mythic.characters.characterMovementsToImpulses
+import silentorb.mythic.characters.rigs.FreedomTable
+import silentorb.mythic.characters.rigs.allCharacterMovements
+import silentorb.mythic.characters.rigs.characterMovementsToImpulses
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
 import simulation.characters.getMoveSpeedTable
@@ -29,5 +29,5 @@ fun eventsFromEvents(world: World, freedomTable: FreedomTable, events: Events): 
   )
       .flatMap { it(events) }
       .plus(characterMovementEvents)
-      .plus(characterMovementsToImpulses(deck.bodies, deck.characterRigs, freedomTable,moveSpeedTable, characterMovementEvents))
+      .plus(characterMovementsToImpulses(deck.bodies, deck.characterRigs, freedomTable, moveSpeedTable, characterMovementEvents))
 }

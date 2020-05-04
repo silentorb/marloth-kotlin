@@ -5,7 +5,7 @@ import marloth.clienting.rendering.GameScene
 import marloth.clienting.rendering.createCamera
 import marloth.clienting.hud.mobilityMovementRangeLayer
 import marloth.clienting.rendering.emptyCamera
-import silentorb.mythic.characters.ViewMode
+import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.SceneLayer

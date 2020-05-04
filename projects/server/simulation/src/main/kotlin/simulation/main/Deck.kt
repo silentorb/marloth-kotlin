@@ -14,8 +14,8 @@ import silentorb.mythic.particles.ParticleEffect
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
-import silentorb.mythic.characters.CharacterRig
-import silentorb.mythic.characters.ThirdPersonRig
+import silentorb.mythic.characters.rigs.CharacterRig
+import silentorb.mythic.characters.rigs.ThirdPersonRig
 import simulation.combat.general.Destructible
 import simulation.combat.spatial.Missile
 import silentorb.mythic.entities.Attributes

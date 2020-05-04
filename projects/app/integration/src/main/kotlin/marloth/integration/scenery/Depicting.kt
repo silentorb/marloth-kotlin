@@ -5,8 +5,8 @@ import marloth.definition.data.animationPlaceholders
 import marloth.scenery.enums.*
 import silentorb.mythic.accessorize.AccessoryName
 import silentorb.mythic.accessorize.getAccessories
-import silentorb.mythic.characters.CharacterRig
-import silentorb.mythic.characters.ViewMode
+import silentorb.mythic.characters.rigs.CharacterRig
+import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table

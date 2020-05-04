@@ -1,4 +1,4 @@
-package silentorb.mythic.characters
+package silentorb.mythic.characters.rigs
 
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld
 import silentorb.mythic.ent.Id

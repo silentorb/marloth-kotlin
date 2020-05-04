@@ -1,4 +1,4 @@
-package silentorb.mythic.characters
+package silentorb.mythic.characters.rigs
 
 import silentorb.mythic.happenings.CommandName
 import silentorb.mythic.happenings.Commands

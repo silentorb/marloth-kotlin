@@ -1,6 +1,6 @@
 package simulation.happenings
 
-import silentorb.mythic.characters.FreedomTable
+import silentorb.mythic.characters.rigs.FreedomTable
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.Events

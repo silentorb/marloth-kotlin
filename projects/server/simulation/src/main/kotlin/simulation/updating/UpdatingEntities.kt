@@ -2,8 +2,8 @@ package simulation.updating
 
 import silentorb.mythic.accessorize.updateAccessory
 import silentorb.mythic.aura.updateSound
-import silentorb.mythic.characters.updateCharacterRig
-import silentorb.mythic.characters.updateThirdPersonCamera
+import silentorb.mythic.characters.rigs.updateCharacterRig
+import silentorb.mythic.characters.rigs.updateThirdPersonCamera
 import silentorb.mythic.ent.mapTable
 import silentorb.mythic.ent.mapTableValues
 import silentorb.mythic.happenings.Events
@@ -38,7 +38,7 @@ fun updateEntities(definitions: Definitions, world: World, events: Events): (Dec
           ambientSounds = updateAmbientAudio(dice, deck),
           animations = mapTable(deck.animations, updateCharacterAnimation(deck, definitions.animations, delta)),
           bodies = mapTable(deck.bodies, updateBodies(world.realm.grid, deck, events, delta)),
-          characterRigs = mapTable(deck.characterRigs, updateCharacterRig(world.bulletState, CollisionGroups.walkable, deck.bodies, deck.collisionObjects, deck.thirdPersonRigs, freedomTable, events, delta)),
+          characterRigs = mapTable(deck.characterRigs, updateCharacterRig(world.bulletState, CollisionGroups.walkable, deck, freedomTable, events, delta)),
           accessories = mapTable(deck.accessories, updateAccessory(events)),
           attachments = mapTable(deck.attachments, updateAttachment(events)),
           cyclesFloat = mapTableValues(deck.cyclesFloat, updateFloatCycle(delta)),
