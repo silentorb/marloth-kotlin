@@ -184,7 +184,7 @@ fun renderMapView(client: Client, world: World, deck: Deck, config: MapViewConfi
     )
     val sceneRenderer = createSceneRenderer(renderer, scene, b.toVector4i())
     renderMapMesh(sceneRenderer, world.realm, deck, config, seed.bag)
-    val navMesh = world.navMesh
+    val navMesh = world.navigation?.mesh
     if (navMesh != null)
       renderNavMesh(sceneRenderer.renderer, config.display, navMesh)
 

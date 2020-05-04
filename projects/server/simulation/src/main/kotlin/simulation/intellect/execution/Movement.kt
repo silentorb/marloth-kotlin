@@ -21,7 +21,7 @@ import simulation.main.World
 fun getPathTargetPosition(world: World, character: Id, pursuit: Pursuit): Vector3? {
   val body = world.deck.bodies[character]!!
   val shape = world.deck.collisionObjects[character]!!.shape
-  val query = world.navMeshQuery
+  val query = world.navigation?.query
   if (query == null)
     throw Error("Missing navMeshQuery")
 

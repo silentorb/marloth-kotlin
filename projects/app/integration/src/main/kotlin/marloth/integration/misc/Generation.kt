@@ -21,6 +21,7 @@ import silentorb.mythic.physics.newBulletState
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Quaternion
 import simulation.intellect.navigation.newNavMesh
+import simulation.intellect.navigation.newNavigationState
 import simulation.main.Hand
 import simulation.main.World
 import simulation.main.idHandsToDeck
@@ -93,11 +94,11 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
   val architectureHands = architectureSource.map(newGenericIdHand<Hand>(nextId))
   val architectureDeck = idHandsToDeck(architectureHands)
 
-  val navMesh = if (generationConfig.includeEnemies) {
+  val navigation = if (generationConfig.includeEnemies) {
     val meshIds = architectureDeck.depictions
         .filterValues { generationConfig.meshes.containsKey(it.mesh) }
         .keys
-    newNavMesh(meshIds, architectureDeck)
+    newNavigationState(meshIds, architectureDeck)
   } else
     null
 
@@ -114,8 +115,7 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
       nextId = nextId(),
       dice = Dice(),
       availableIds = setOf(),
-      navMesh = navMesh,
-      navMeshQuery = if (navMesh != null) NavMeshQuery(navMesh) else null,
+      navigation = navigation,
       bulletState = newBulletState(),
       definitions = definitions,
       gameModeConfig = newGameModeConfig()

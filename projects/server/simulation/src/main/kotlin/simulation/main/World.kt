@@ -5,6 +5,7 @@ import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.pass
 import org.recast4j.detour.NavMesh
 import org.recast4j.detour.NavMeshQuery
+import silentorb.mythic.intellect.navigation.NavigationState
 import silentorb.mythic.randomly.Dice
 import simulation.misc.Definitions
 import simulation.misc.GameOver
@@ -19,8 +20,7 @@ data class World(
     val dice: Dice,
     val availableIds: Set<Id>,
     val gameOver: GameOver? = null,
-    val navMesh: NavMesh?,
-    val navMeshQuery: NavMeshQuery?,
+    val navigation: NavigationState?,
     val bulletState: BulletState,
     val definitions: Definitions,
     val gameModeConfig: GameModeConfig

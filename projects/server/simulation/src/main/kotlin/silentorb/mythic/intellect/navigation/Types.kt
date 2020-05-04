@@ -4,6 +4,6 @@ import org.recast4j.detour.NavMesh
 import org.recast4j.detour.NavMeshQuery
 
 data class NavigationState(
-    val navMesh: NavMesh,
-    val navMeshQuery: NavMeshQuery
+    val mesh: NavMesh,
+    val query: NavMeshQuery
 )

@@ -11,7 +11,7 @@ fun labRender(state: AppState): RenderHook = { sceneRenderer, scene ->
   if (getDebugBoolean("DRAW_PHYSICS")) {
     drawBulletDebug(world.bulletState, deck.bodies[deck.players.keys.first()]!!.position)(sceneRenderer, scene)
   }
-  val navMesh = state.worlds.last().navMesh
+  val navMesh = state.worlds.last().navigation?.mesh
   if (navMesh != null)
     renderNavMesh(renderer, navMesh)
 
