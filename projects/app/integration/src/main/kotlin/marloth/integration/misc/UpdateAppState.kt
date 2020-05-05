@@ -7,7 +7,6 @@ import marloth.clienting.menus.*
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.input.mouseLookEvents
 import marloth.clienting.updateClient
-import marloth.integration.clienting.gatherHudData
 import marloth.integration.clienting.renderMain
 import marloth.integration.clienting.updateAppStateForFirstNewPlayer
 import marloth.integration.clienting.updateAppStateForNewPlayers
@@ -176,13 +175,7 @@ data class GameHooks(
 
 fun layoutPlayerGui(app: GameApp, appState: AppState): (Id, Vector2i) -> Box = { player, dimensions ->
   val world = appState.worlds.lastOrNull()
-  val hudData = if (world != null)
-    gatherHudData(world, app.client.textResources, player, appState.client.playerViews[player]
-        ?: ViewId.none)
-  else
-    null
-
-  layoutPlayerGui(app.client.textResources, app.definitions, appState.client, world, hudData, dimensions, player)
+  layoutPlayerGui(app.client.textResources, app.definitions, appState.client, world, dimensions, player)
 }
 
 fun layoutGui(app: GameApp, appState: AppState, dimensions: List<Vector2i>): List<Box> {

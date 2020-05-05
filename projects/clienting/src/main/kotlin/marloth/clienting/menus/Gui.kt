@@ -2,9 +2,9 @@ package marloth.clienting.menus
 
 import marloth.clienting.ClientState
 import marloth.clienting.getPlayerBloomState
-import marloth.clienting.hud.HudData
 import marloth.clienting.hud.hudLayout
 import marloth.clienting.input.GuiCommandType
+import marloth.scenery.enums.CharacterCommands
 import marloth.scenery.enums.Text
 import silentorb.mythic.bloom.*
 import silentorb.mythic.bloom.next.Box
@@ -16,7 +16,6 @@ import silentorb.mythic.drawing.grayTone
 import silentorb.mythic.ent.Id
 import silentorb.mythic.glowing.globalState
 import silentorb.mythic.haft.HaftCommands
-import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector4
 import simulation.main.World
@@ -96,16 +95,17 @@ fun viewSelect(textResources: TextResources, definitions: Definitions, world: Wo
   }
 }
 
-fun guiLayout(textResources: TextResources, definitions: Definitions, clientState: ClientState, world: World?, hudData: HudData?, player: Id): Flower {
+fun guiLayout(textResources: TextResources, definitions: Definitions, clientState: ClientState, world: World?, player: Id): Flower {
+  val view = clientState.playerViews[player] ?: ViewId.none
   return compose(listOfNotNull(
-      if (hudData != null) hudLayout(textResources, hudData) else null,
-      viewSelect(textResources, definitions, world, clientState.playerViews[player] ?: ViewId.none, player)
+      if (world != null) hudLayout(textResources, world, player, view) else null,
+      viewSelect(textResources, definitions, world, view, player)
   ))
 }
 
 fun layoutPlayerGui(textResources: TextResources, definitions: Definitions, clientState: ClientState, world: World?,
-                    hudData: HudData?, dimensions: Vector2i, player: Id): Box {
-  val layout = guiLayout(textResources, definitions, clientState, world, hudData, player)
+                    dimensions: Vector2i, player: Id): Box {
+  val layout = guiLayout(textResources, definitions, clientState, world, player)
   val bloomState = getPlayerBloomState(clientState.bloomStates, player)
   val seed = Seed(
       bag = bloomState.bag.plus(textResourcesKey to textResources),

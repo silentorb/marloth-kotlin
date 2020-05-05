@@ -89,8 +89,10 @@ fun convertSimpleDepiction(deck: Deck, id: Id, depiction: Depiction): MeshElemen
 }
 
 fun accessoryDebugName(definitions: Definitions, accessoryType: AccessoryName): String {
-  val definition = definitions.accessories[accessoryType]!!
-  return  if (definition.name == Text.unnamed)
+  val definition = definitions.accessories[accessoryType]
+  return if (definition == null)
+    "???"
+  else if (definition.name == Text.unnamed)
     definition.debugName ?: "???"
   else
     definitions.textLibrary(definition.name)
