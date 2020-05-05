@@ -24,7 +24,6 @@ import silentorb.mythic.performing.Performance
 import silentorb.mythic.scenery.Light
 import silentorb.mythic.timing.FloatCycle
 import silentorb.mythic.timing.FloatTimer
-import silentorb.mythic.timing.IntCycle
 import silentorb.mythic.timing.IntTimer
 import simulation.characters.Character
 import simulation.combat.PlayerOverlay
@@ -45,7 +44,6 @@ data class Deck(
     val characters: Table<Character> = mapOf(),
     val collisionObjects: Table<CollisionObject> = mapOf(),
     val cyclesFloat: Table<FloatCycle> = mapOf(),
-    val cyclesInt: Table<IntCycle> = mapOf(),
     val depictions: Table<Depiction> = mapOf(),
     val destructibles: Table<Destructible> = mapOf(),
     val doors: Table<Door> = mapOf(),
@@ -83,11 +81,12 @@ val idHandsToDeck = genericIdHandsToDeck(deckReflection)
 val removeEntities = genericRemoveEntities(deckReflection)
 
 fun addEntitiesToWorldDeck(world: World, transform: (IdSource) -> List<IdHand>): World {
-  val (nextId, finalize) = newIdSource(world)
+  val nextId = newIdSource(world.nextId)
   val hands = transform(nextId)
-  return finalize(world.copy(
-      deck = mergeDecks(world.deck, idHandsToDeck(hands))
-  ))
+  return world.copy(
+      deck = mergeDecks(world.deck, idHandsToDeck(hands)),
+      nextId = nextId()
+  )
 }
 
 fun pipeHandsToDeck(nextId: IdSource, sources: List<(Deck) -> List<Hand>>): (Deck) -> Deck = { deck ->

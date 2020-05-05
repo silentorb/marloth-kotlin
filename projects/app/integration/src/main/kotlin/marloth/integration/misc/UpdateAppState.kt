@@ -38,8 +38,8 @@ import simulation.happenings.withSimulationEvents
 import simulation.updating.updateWorld
 
 fun updateSimulationDatabase(db: Database, next: World, previous: World) {
-  val nextGameOver = next.gameOver
-  if (previous.gameOver == null && nextGameOver != null) {
+  val nextGameOver = next.global.gameOver
+  if (previous.global.gameOver == null && nextGameOver != null) {
     if (nextGameOver.winningFaction == 1L)
       createVictory(db, Victory(
           next.deck.players.values.first().name
@@ -53,7 +53,7 @@ fun updateCurrentViews(world: World, playerViews: PlayerViews): Map<Id, ViewId?>
     val interactingWith = getPlayerInteractingWith(deck, player)
     val view = when {
 
-      world.gameOver != null -> ViewId.victory
+      world.global.gameOver != null -> ViewId.victory
 
       interactingWith != null -> selectInteractionView(deck, interactingWith)
 

@@ -15,28 +15,18 @@ data class World(
     val realm: Realm,
     val nextId: Id,
     val deck: Deck,
+    val global: GlobalState,
     val dice: Dice,
     val availableIds: Set<Id>,
-    val gameOver: GameOver? = null,
     val navigation: NavigationState?,
     val bulletState: BulletState,
     val definitions: Definitions,
     val gameModeConfig: GameModeConfig
 )
 
-typealias WorldTransform = (World) -> World
-
 typealias WorldPair = Pair<World, World>
 
-val shouldUpdateLogic = { deck: Deck -> deck.cyclesInt.values.firstOrNull { it.interval == 30 }?.value == 0 }
-
-fun <T> ifUpdatingLogic(deck: Deck, transform: (T) -> T): (T) -> T =
-    if (shouldUpdateLogic(deck))
-      transform
-    else
-      ::pass
-
-fun newIdSource(world: World): Pair<IdSource, (World) -> World> {
+fun newIdSourceFromWorld(world: World): Pair<IdSource, (World) -> World> {
   var availableIds = world.availableIds
   var nextId = world.nextId
   return Pair({

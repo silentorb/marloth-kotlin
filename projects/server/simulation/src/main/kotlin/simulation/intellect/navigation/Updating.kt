@@ -37,6 +37,7 @@ fun mythicToDetour(deck: Deck, moveSpeedTable: MoveSpeedTable, navigation: Navig
   val newAgents = missing.mapValues { (actor, _) ->
     val body = deck.bodies[actor]!!
     val agent = crowd.addAgent(toRecastVector3(body.position), newCrowdAgentParams(actor, moveSpeedTable[actor]!!))
+    assert(agent != -1)
     agent
   }
 

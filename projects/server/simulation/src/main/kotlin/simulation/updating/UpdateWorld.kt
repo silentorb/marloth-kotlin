@@ -2,6 +2,7 @@ package simulation.updating
 
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.mapTable
+import silentorb.mythic.ent.newIdSource
 import silentorb.mythic.ent.pipe
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.applyBodyChanges
@@ -33,29 +34,24 @@ fun updateDeck(definitions: Definitions, events: Events, world: World,
                nextId: IdSource): (Deck) -> Deck =
     pipe(
         updateEntities(definitions, world, navigation, events),
-        ifUpdatingLogic(world.deck, updateDeckCache(definitions)),
         removeWhole(world.definitions.soundDurations, events, world.deck),
         removePartial(events, world.deck),
         cleanOutdatedReferences,
         newEntities(definitions, world.realm.grid, world.deck, events, nextId)
     )
 
-fun updateWorldDeck(definitions: Definitions, navigation: NavigationState, events: Events, delta: Float): (World) -> World =
-    { world ->
-      val (nextId, finalize) = newIdSource(world)
-      val newDeck = updateDeck(definitions, events, world, navigation, nextId)(world.deck)
-      finalize(world.copy(
-          deck = newDeck
-      ))
-    }
-
 fun updateWorld(definitions: Definitions, events: Events, delta: Float, world: World): World {
   val withPhysics = updatePhysics(events)(world)
   val moveSpeedTable = newMoveSpeedTable(definitions, withPhysics.deck)
-  val navigation = updateNavigation(withPhysics.deck, moveSpeedTable, delta, world.navigation!!)
-  val next = updateGlobalDetails(updateWorldDeck(definitions, navigation, events, delta)(withPhysics))
-  applyBodyChanges(world.bulletState, withPhysics.deck.bodies, next.deck.bodies)
-  return next.copy(
-      navigation = navigation
+  val navigation = updateNavigation(withPhysics.deck, moveSpeedTable, delta, withPhysics.navigation!!)
+  val nextId = newIdSource(withPhysics.nextId)
+  val deck = updateDeck(definitions, events, withPhysics, navigation, nextId)(withPhysics.deck)
+  applyBodyChanges(withPhysics.bulletState, withPhysics.deck.bodies, deck.bodies)
+
+  return withPhysics.copy(
+      deck = deck,
+      global = updateGlobalState(deck, withPhysics.realm.grid, withPhysics.global),
+      navigation = navigation,
+      nextId = nextId()
   )
 }

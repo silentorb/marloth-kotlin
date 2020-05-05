@@ -25,20 +25,6 @@ fun updateFloatTimer(delta: Float): (FloatTimer) -> FloatTimer = { timer ->
   )
 }
 
-fun updateIntTimers(events: Events): (Table<IntTimer>) -> Table<IntTimer> = { timers ->
-  val frequencies = events
-      .filterIsInstance<IntCycleEvent>()
-      .map { it.interval }
-      .distinct()
-
-  timers.mapValues { (_, timer) ->
-    if (frequencies.contains(timer.interval))
-      updateTimer(timer)
-    else
-      timer
-  }
-}
-
 fun expiredTimers(timersFloat: Table<FloatTimer>, timersInt: Table<IntTimer>): Set<Id> =
     setOf<Id>()
         .plus(

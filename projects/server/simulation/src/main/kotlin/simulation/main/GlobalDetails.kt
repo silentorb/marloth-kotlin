@@ -1,21 +1,5 @@
 package simulation.main
 
-import simulation.misc.GameOver
-import simulation.misc.isVictory
-import simulation.misc.misfitFaction
-import simulation.updating.simulationFps
-
-val updateGlobalDetails: (World) -> World = { world ->
-  if (world.gameOver == null && isVictory(world))
-    world.copy(
-        gameOver = GameOver(
-            winningFaction = misfitFaction
-        )
-    )
-  else
-    world
-}
-
 const val updateFrequency = 2
 
 fun divideUp(dividend: Int, divisor: Int): Int {

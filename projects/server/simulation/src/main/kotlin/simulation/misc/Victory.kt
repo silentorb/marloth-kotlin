@@ -27,11 +27,8 @@ fun getVictoryKeyStats(grid: MapGrid, deck: Deck): VictoryKeyStats {
   )
 }
 
-fun isVictory(world: World): Boolean {
+fun isVictory(deck: Deck, grid: MapGrid): Boolean {
   if (getDebugString("DISABLE_VICTORY") != null) return false
-
-  val deck = world.deck
-  val grid = world.realm.grid
 
   val victoryKeyStats = getVictoryKeyStats(grid, deck)
 

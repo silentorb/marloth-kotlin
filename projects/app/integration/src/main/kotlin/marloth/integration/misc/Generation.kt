@@ -22,10 +22,7 @@ import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Quaternion
 import simulation.intellect.navigation.newNavMesh
 import simulation.intellect.navigation.newNavigationState
-import simulation.main.Hand
-import simulation.main.World
-import simulation.main.idHandsToDeck
-import simulation.main.pipeIdHandsToDeck
+import simulation.main.*
 import simulation.misc.*
 
 fun fixedCellBiomes(grid: MapGrid): CellBiomeMap {
@@ -114,6 +111,7 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
       realm = realm,
       nextId = nextId(),
       dice = Dice(),
+      global = newGlobalState(),
       availableIds = setOf(),
       navigation = navigation,
       bulletState = newBulletState(),

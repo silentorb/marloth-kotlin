@@ -16,7 +16,6 @@ import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.scenery.Light
 import silentorb.mythic.timing.FloatCycle
 import silentorb.mythic.timing.FloatTimer
-import silentorb.mythic.timing.IntCycle
 import silentorb.mythic.timing.IntTimer
 import simulation.accessorize.ItemPickup
 import simulation.characters.Character
@@ -44,7 +43,6 @@ data class Hand(
     val characterRig: CharacterRig? = null,
     val collisionShape: CollisionObject? = null,
     val cycleFloat: FloatCycle? = null,
-    val cycleInt: IntCycle? = null,
     val depiction: Depiction? = null,
     val destructible: Destructible? = null,
     val door: Door? = null,

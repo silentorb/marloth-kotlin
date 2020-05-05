@@ -39,7 +39,7 @@ enum class ViewId {
 //)
 
 fun gameIsActive(world: World?): Boolean =
-    world != null && world.gameOver == null
+    world != null && world.global.gameOver == null
 
 enum class GuiEventType {
   command,

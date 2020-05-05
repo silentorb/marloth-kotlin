@@ -5,7 +5,6 @@ import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.filterCharacterCommandsFromEvents
-import silentorb.mythic.timing.emitCycleEvents
 import simulation.accessorize.eventsFromItemPickups
 import simulation.combat.spatial.eventsFromMissiles
 import simulation.combat.toSpatialCombatWorld
@@ -41,7 +40,6 @@ fun withSimulationEvents(definitions: Definitions, previous: Deck, world: World,
       externalEvents,
       eventsFromPerformances(definitions, deck),
       commandsToEvents(definitions, deck, commands),
-      emitCycleEvents(deck.cyclesInt),
       eventsFromMissiles(toSpatialCombatWorld(world), collisions),
       eventsFromItemPickups(world, collisions),
       eventsFromVictoryKeys(world),
