@@ -26,6 +26,7 @@ fun enemyDistributions(): Map<String, Int> =
           CreatureId.sentinel to 12,
           CreatureId.hound to 8
       )
+          .mapKeys { it.key + "1" }
 
 fun scalingDistributions(): DistributionMap = mapOf(
     DistributionGroup.none to 10,

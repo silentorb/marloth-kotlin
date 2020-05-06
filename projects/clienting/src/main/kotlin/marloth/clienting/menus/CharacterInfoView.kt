@@ -1,10 +1,10 @@
 package marloth.clienting.menus
 
+import marloth.definition.misc.staticDamageTypes
 import silentorb.mythic.bloom.*
 import silentorb.mythic.bloom.next.*
 import silentorb.mythic.ent.Id
 import marloth.scenery.enums.Text
-import marloth.scenery.enums.staticDamageTypes
 import silentorb.mythic.bloom.horizontalPlane
 import silentorb.mythic.bloom.label
 import silentorb.mythic.bloom.list

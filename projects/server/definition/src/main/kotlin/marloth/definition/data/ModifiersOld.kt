@@ -12,21 +12,21 @@ fun staticModifiers(): Map<AccessoryName, ModifierDefinition> = mapOf(
     AccessoryId.damageBurning to ModifierDefinition(
         name = Text.id_damageBurning,
         overTime = DamageAction(
-            damageType = DamageTypes.fire.name,
+            damageType = DamageTypes.fire,
             amount = 0
         )
     ),
     AccessoryId.damageChilled to ModifierDefinition(
         name = Text.id_damageChilled,
         overTime = DamageAction(
-            damageType = DamageTypes.cold.name,
+            damageType = DamageTypes.cold,
             amount = 0
         )
     ),
     AccessoryId.damagePoisoned to ModifierDefinition(
         name = Text.id_damagePoisoned,
         overTime = DamageAction(
-            damageType = DamageTypes.poison.name,
+            damageType = DamageTypes.poison,
             amount = 0
         )
     ),
@@ -43,7 +43,7 @@ fun staticModifiers(): Map<AccessoryName, ModifierDefinition> = mapOf(
         name = Text.id_mobile
     ),
 
-    AccessoryId.resistanceCold to newResistanceModifier(Text.id_resistanceCold, DamageTypes.cold.name),
-    AccessoryId.resistanceFire to newResistanceModifier(Text.id_resistanceFire, DamageTypes.fire.name),
-    AccessoryId.resistancePoison to newResistanceModifier(Text.id_resistancePoison, DamageTypes.poison.name)
+    AccessoryId.resistanceCold to newResistanceModifier(Text.id_resistanceCold, DamageTypes.cold),
+    AccessoryId.resistanceFire to newResistanceModifier(Text.id_resistanceFire, DamageTypes.fire),
+    AccessoryId.resistancePoison to newResistanceModifier(Text.id_resistancePoison, DamageTypes.poison)
 )

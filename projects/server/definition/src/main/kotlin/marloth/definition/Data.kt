@@ -2,11 +2,9 @@ package marloth.definition
 
 import marloth.definition.data.*
 import marloth.definition.misc.ClientDefinitions
+import marloth.definition.misc.staticDamageTypes
 import marloth.definition.particles.particleEffects
 import marloth.definition.texts.englishTextResources
-import marloth.scenery.enums.staticDamageTypes
-import silentorb.mythic.ent.reflectPropertiesMap
-import simulation.characters.CharacterDefinition
 import simulation.misc.Definitions
 
 fun staticDefinitions(clientDefinitions: ClientDefinitions): Definitions {
@@ -22,7 +20,7 @@ fun staticDefinitions(clientDefinitions: ClientDefinitions): Definitions {
       damageTypes = staticDamageTypes.toSet(),
       lightAttachments = clientDefinitions.lightAttachments,
       particleEffects = particleEffects(),
-      professions = allProfessions() + reflectPropertiesMap<CharacterDefinition>(CharacterDefinitions),
+      professions = allProfessions() + monsterDefinitions(),
       soundDurations = clientDefinitions.soundDurations,
       textLibrary = englishTextResources,
       weapons = weapons

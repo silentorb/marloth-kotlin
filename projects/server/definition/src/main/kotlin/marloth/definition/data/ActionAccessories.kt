@@ -66,7 +66,7 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
             attackMethod = AttackMethod.raycast,
             damages = listOf(
                 DamageDefinition(
-                    type = DamageTypes.physical.name,
+                    type = DamageTypes.physical,
                     amount = 70
                 )
             ),
@@ -92,7 +92,7 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
             damageFalloff = 1f,
             damages = listOf(
                 DamageDefinition(
-                    type = DamageTypes.physical.name,
+                    type = DamageTypes.physical,
                     amount = 70
                 )
             ),
@@ -119,7 +119,7 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
             missileMesh = MeshId.missile,
             damages = listOf(
                 DamageDefinition(
-                    type = DamageTypes.physical.name,
+                    type = DamageTypes.physical,
                     amount = 70
                 )
             ),
@@ -142,7 +142,7 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
             attackMethod = AttackMethod.melee,
             damages = listOf(
                 DamageDefinition(
-                    type = DamageTypes.physical.name,
+                    type = DamageTypes.physical,
                     amount = 70
                 )
             ),
@@ -166,7 +166,7 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
             impulse = 1000f,
             damages = listOf(
                 DamageDefinition(
-                    type = DamageTypes.physical.name,
+                    type = DamageTypes.physical,
                     amount = 30
                 )
             ),

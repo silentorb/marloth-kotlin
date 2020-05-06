@@ -1,12 +1,11 @@
 package marloth.scenery.enums
 
-enum class DamageTypes {
+object DamageTypes {
   //  chaos,
-  cold,
-  //  lightning,
-  fire,
-  physical,
-  poison
-}
+  val cold = "cold"
 
-val staticDamageTypes = DamageTypes.values().map { it.name }
+  //  lightning,
+  val fire = "fire"
+  val physical = "physical"
+  val poison = "poison"
+}
