@@ -52,7 +52,6 @@ data class Deck(
     val itemPickups: Table<ItemPickup> = mapOf(),
     val knowledge: Table<Knowledge> = mapOf(),
     val lights: Table<Light> = mapOf(),
-    val modifiers: Table<Modifier> = mapOf(),
     val missiles: Table<Missile> = mapOf(),
     val navigationDirections: Table<NavigationDirection> = mapOf(),
     val particleEffects: Table<ParticleEffect> = mapOf(),

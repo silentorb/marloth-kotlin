@@ -51,7 +51,6 @@ data class Hand(
     val knowledge: Knowledge? = null,
     val light: Light? = null,
     val missile: Missile? = null,
-    val modifier: Modifier? = null,
     val particleEffect: ParticleEffect? = null,
     val performance: Performance? = null,
     val player: Player? = null,

@@ -2,7 +2,6 @@ package simulation.updating
 
 import silentorb.mythic.audio.soundsFromEvents
 import silentorb.mythic.breeze.AnimationInfoMap
-import simulation.entities.applyBuffsFromEvents
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.toIdHands
 import silentorb.mythic.happenings.Events
@@ -64,7 +63,6 @@ fun newEntities(definitions: Definitions, grid: MapGrid, previous: Deck, events:
       newAccessoriesDeck(events, previous)
   )
       .plus(idHandsToDeck(idHands))
-      .plus(applyBuffsFromEvents(previous, nextId, events))
 
   listOf(next).plus(additions).reduce(mergeDecks)
 }

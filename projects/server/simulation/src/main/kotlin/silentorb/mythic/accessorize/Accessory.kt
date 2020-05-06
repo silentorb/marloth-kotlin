@@ -9,7 +9,8 @@ import silentorb.mythic.scenery.MeshName
 
 data class Accessory(
     val type: AccessoryName,
-    val owner: Id
+    val owner: Id,
+    val source: Id? = null
 )
 
 typealias AccessoryName = String

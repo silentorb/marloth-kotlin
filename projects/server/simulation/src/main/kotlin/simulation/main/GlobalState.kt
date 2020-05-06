@@ -26,7 +26,7 @@ fun checkGameOver(deck: Deck, grid: MapGrid): GameOver? =
     else
       null
 
-const val doomInterval = 60 * 50
+const val doomInterval = 60 * 5
 
 fun updateDoom(frame: Long, doom: Long): Long {
   val interval = (frame % doomInterval)

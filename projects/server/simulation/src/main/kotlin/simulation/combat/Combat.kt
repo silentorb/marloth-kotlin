@@ -11,8 +11,7 @@ import simulation.misc.Definitions
 
 fun toModifierDeck(deck: Deck) =
     CombatDeck(
-        accessories = deck.accessories,
-        modifiers = deck.modifiers
+        accessories = deck.accessories
     )
 
 fun toCombatDefinitions(definitions: Definitions) =
@@ -29,7 +28,6 @@ fun toSpatialCombatDeck(deck: Deck) =
         characterRigs = deck.characterRigs,
         collisionShapes = deck.collisionObjects,
         destructibles = deck.destructibles,
-        modifiers = deck.modifiers,
         missiles = deck.missiles,
         targets = deck.targets
     )

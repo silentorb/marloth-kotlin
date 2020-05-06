@@ -21,12 +21,11 @@ data class Action(
 fun updateCooldown(definitions: Definitions, deck: Deck, activated: List<Id>, id: Id, action: Action, delta: Float): Float {
   val isActivated = activated.contains(id)
   val hasPerformance = deck.performances.any { it.value.sourceAction == id }
-  val hasModifier = deck.modifiers.any { it.value.source == id }
   val accessory = deck.accessories[id]!!
   val definition = definitions.actions[accessory.type]!!
   val cooldown = definition.cooldown
 
-  return if (isActivated || hasPerformance || hasModifier)
+  return if (isActivated || hasPerformance)
     cooldown
   else if (action.cooldown > 0f)
     Math.max(0f, action.cooldown - delta)

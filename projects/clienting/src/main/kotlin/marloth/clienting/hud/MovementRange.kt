@@ -58,7 +58,7 @@ fun mobilityMovementRangeLayer(definitions: Definitions, deck: Deck, actor: Id):
     null
   else {
     val action = deck.actions[accessory.key]!!
-    val modifier = deck.modifiers.entries
+    val modifier = deck.accessories.entries
         .firstOrNull { it.value.source == accessory.key }
 
     val duration = if (modifier != null)

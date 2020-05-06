@@ -1,5 +1,6 @@
 package simulation.entities
 
+import silentorb.mythic.accessorize.Accessory
 import silentorb.mythic.accessorize.AccessoryName
 import silentorb.mythic.accessorize.Modifier
 import silentorb.mythic.ent.Id
@@ -31,12 +32,12 @@ fun getTargetAttachments(deck: Deck, target: Id) =
           attachment.value.target == target
         }
 
-fun getAttachmentOfEntityType(deck: Deck, target: Id, type: AccessoryName): Id? =
-    getTargetAttachments(deck, target)
-        .keys.firstOrNull {
-      val buff = deck.modifiers[it]
-      buff?.type == type
-    }
+//fun getAttachmentOfEntityType(deck: Deck, target: Id, type: AccessoryName): Id? =
+//    getTargetAttachments(deck, target)
+//        .keys.firstOrNull {
+//      val buff = deck.modifiers[it]
+//      buff?.type == type
+//    }
 
 fun getTargetAttachmentsOfCategory(deck: Deck, target: Id, category: AttachmentCategory): List<Id> =
     getTargetAttachments(deck, target)
@@ -68,37 +69,37 @@ fun cleanupAttachmentSource(deck: Deck): (Attachment) -> Attachment = { attachme
   )
 }
 
-fun applyBuff(deck: Deck, nextId: IdSource): (ApplyBuffEvent) -> Deck = { event ->
-  val modifierType = event.buffType
-  val duration = event.duration
-  val existing = getAttachmentOfEntityType(deck, event.target, modifierType)
-  if (existing != null)
-    Deck(
-        timersInt = mapOf(
-            existing to IntTimer(
-                duration = duration,
-                interval = 2
-            )
-        )
-    )
-  else {
-    val hand = Hand(
-        modifier = Modifier(
-            type = modifierType,
-            strength = event.strength,
-            target = event.target,
-            source = event.source
-        ),
-        timerInt = IntTimer(
-            duration = duration,
-            interval = 2
-        )
-    )
-    handToDeck(nextId(), hand)
-  }
-}
+//fun applyBuff(deck: Deck, nextId: IdSource): (ApplyBuffEvent) -> Deck = { event ->
+//  val modifierType = event.buffType
+//  val duration = event.duration
+//  val existing = getAttachmentOfEntityType(deck, event.target, modifierType)
+//  if (existing != null)
+//    Deck(
+//        timersInt = mapOf(
+//            existing to IntTimer(
+//                duration = duration,
+//                interval = 2
+//            )
+//        )
+//    )
+//  else {
+//    val hand = Hand(
+//        accessory = Accessory(
+//            type = modifierType,
+////            strength = event.strength,
+//            owner = event.target,
+//            source = event.source
+//        ),
+//        timerInt = IntTimer(
+//            duration = duration,
+//            interval = 2
+//        )
+//    )
+//    handToDeck(nextId(), hand)
+//  }
+//}
 
-fun applyBuffsFromEvents(deck: Deck, nextId: IdSource, events: Events): List<Deck> =
-    events
-        .filterIsInstance<ApplyBuffEvent>()
-        .map(applyBuff(deck, nextId))
+//fun applyBuffsFromEvents(deck: Deck, nextId: IdSource, events: Events): List<Deck> =
+//    events
+//        .filterIsInstance<ApplyBuffEvent>()
+//        .map(applyBuff(deck, nextId))

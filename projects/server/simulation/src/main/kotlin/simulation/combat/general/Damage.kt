@@ -1,7 +1,6 @@
 package simulation.combat.general
 
 import silentorb.mythic.accessorize.RelativeModifier
-import silentorb.mythic.accessorize.modifierToRelative
 import silentorb.mythic.ent.Id
 
 const val defaultDamageMultiplier = 100
@@ -49,12 +48,8 @@ fun getValueModifiers(definitions: CombatDefinitions, combatDeck: CombatDeck, id
           null
       }
       .flatten()
-  val directModifiers = combatDeck.modifiers
-      .filterValues { it.target == id }
-      .map { combatDeck.modifiers[it.key]!! }
-      .map(::modifierToRelative)
 
-  return indirectModifiers.plus(directModifiers)
+  return indirectModifiers
 }
 
 typealias DamageModifierQuery = (Id) -> (DamageType) -> List<Int>

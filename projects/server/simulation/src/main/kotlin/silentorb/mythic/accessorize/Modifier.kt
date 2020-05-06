@@ -19,11 +19,11 @@ data class RelativeModifier(
     val strength: Int
 )
 
-fun modifierToRelative(modifier: Modifier) =
-    RelativeModifier(
-        type = modifier.type,
-        strength = modifier.strength
-    )
+//fun modifierToRelative(modifier: Modifier) =
+//    RelativeModifier(
+//        type = modifier.type,
+//        strength = modifier.strength
+//    )
 
 data class ModifierDefinition(
     val name: Text,
