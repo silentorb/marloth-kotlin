@@ -43,7 +43,7 @@ fun updateEntities(definitions: Definitions, world: World, navigation: Navigatio
           attachments = mapTable(deck.attachments, updateAttachment(events)),
           cyclesFloat = mapTableValues(deck.cyclesFloat, updateFloatCycle(delta)),
           destructibles = mapTable(deck.destructibles, updateDestructibleHealth(events)),
-          characters = mapTable(deck.characters, updateCharacter(deck, world.bulletState, events)),
+          characters = mapTable(deck.characters, updateCharacter(definitions, deck, world.bulletState, events)),
           knowledge = mapTable(deck.knowledge, updateKnowledge(world, lightRatings(world.deck), delta)),
           navigationDirections = updateNavigationDirections(navigation),
           particleEffects = mapTableValues(deck.particleEffects, deck.bodies, updateParticleEffect(definitions.particleEffects, dice, delta)),

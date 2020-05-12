@@ -12,23 +12,27 @@ import silentorb.mythic.ent.pipe2
 import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.Events
+import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.physics.BulletState
 import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.minMax
 import simulation.combat.general.DamageMultipliers
 import simulation.combat.general.ResourceContainer
 import simulation.entities.DepictionType
 import simulation.happenings.PurchaseEvent
 import simulation.happenings.TakeItemEvent
 import simulation.main.Deck
+import simulation.misc.Definitions
 import simulation.physics.castInteractableRay
-import simulation.updating.simulationDelta
 
 const val fieldOfView360 = -1f
+const val maxCharacterLevel = 3
 
 typealias ProfessionId = String
 
 data class CharacterDefinition(
     val name: Text,
+    val level: Int = 1,
     val health: Int,
     val speed: Float,
     val accessories: List<AccessoryName>,
@@ -60,6 +64,11 @@ data class Character(
     val isInfinitelyFalling: Boolean = false,
     val money: Int = 0
 )
+
+data class ModifyLevelEvent(
+    val actor: Id,
+    val offset: Int
+) : GameEvent
 
 fun isInfinitelyFalling(position: Vector3): Boolean =
     position.z < -100f
@@ -129,13 +138,26 @@ fun updateInteractingWith(deck: Deck, character: Id, commands: Commands, interac
     else
       interactingWith
 
-fun updateCharacter(deck: Deck, bulletState: BulletState, id: Id, character: Character,
+fun updateCharacterProfession(definitions: Definitions, actor: Id, events: Events, profession: ProfessionId): ProfessionId {
+  val modifyLevelEvents = events
+      .filterIsInstance<ModifyLevelEvent>()
+      .filter { it.actor == actor }
+
+  return if (modifyLevelEvents.any()) {
+    val definition = definitions.professions[profession]!!
+    val level = minMax(0, maxCharacterLevel)(definition.level + modifyLevelEvents.sumBy { it.offset })
+    profession.dropLast(1) + level
+  } else
+    profession
+}
+
+fun updateCharacter(definitions: Definitions, deck: Deck, bulletState: BulletState, actor: Id, character: Character,
                     commands: Commands, events: Events): Character {
-  val destructible = deck.destructibles[id]!!
-  val position = deck.bodies[id]!!.position
+  val destructible = deck.destructibles[actor]!!
+  val position = deck.bodies[actor]!!.position
   val isAlive = isAlive(destructible.health.value, position)
-  val canInteractWith = if (deck.players.containsKey(id))
-    castInteractableRay(bulletState.dynamicsWorld, deck, id)
+  val canInteractWith = if (deck.players.containsKey(actor))
+    castInteractableRay(bulletState.dynamicsWorld, deck, actor)
   else
     null
 
@@ -143,24 +165,20 @@ fun updateCharacter(deck: Deck, bulletState: BulletState, id: Id, character: Cha
       isAlive = isAlive,
       isInfinitelyFalling = isInfinitelyFalling(position),
       canInteractWith = canInteractWith,
-      interactingWith = updateInteractingWith(deck, id, commands, character.interactingWith),
-      money = updateMoney(deck, events, id, character.money)
+      interactingWith = updateInteractingWith(deck, actor, commands, character.interactingWith),
+      money = updateMoney(deck, events, actor, character.money),
+      profession = updateCharacterProfession(definitions, actor, events, character.profession)
   )
 }
 
-fun updateCharacter(deck: Deck, bulletState: BulletState, events: Events): (Id, Character) -> Character = { id, character ->
-  val delta = simulationDelta
+fun updateCharacter(definitions: Definitions, deck: Deck, bulletState: BulletState, events: Events): (Id, Character) -> Character = { id, character ->
   val commands = events.filterIsInstance<CharacterCommand>()
-  if (commands.any()) {
-    val k = 0
-  }
-
   val characterCommands = pipe2(commands, listOf(
       { c -> if (deck.characters[id]!!.isAlive) c else listOf() },
       { c -> c.filter { it.target == id } }
   ))
 
-  updateCharacter(deck, bulletState, id, character, characterCommands, events)
+  updateCharacter(definitions, deck, bulletState, id, character, characterCommands, events)
 }
 
 fun isEnemy(characters: Table<Character>, faction: Id): (Id) -> Boolean = { id ->

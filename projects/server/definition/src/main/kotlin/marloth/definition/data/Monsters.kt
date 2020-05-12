@@ -3,6 +3,7 @@ package marloth.definition.data
 import marloth.scenery.enums.*
 import simulation.characters.CharacterDefinition
 import simulation.characters.fieldOfView360
+import simulation.characters.maxCharacterLevel
 import simulation.entities.DepictionType
 
 fun monsterDefinitions(): Map<String, CharacterDefinition> =
@@ -38,9 +39,10 @@ fun monsterDefinitions(): Map<String, CharacterDefinition> =
         )
     )
         .flatMap { (key, definition) ->
-          (1..3).map { level ->
+          (1..maxCharacterLevel).map { level ->
             val health = definition.health
             Pair("$key$level", definition.copy(
+                level = level,
                 health = health * level,
                 damageMultipliers = mapOf(
                     DamageTypes.physical to 100 * level
