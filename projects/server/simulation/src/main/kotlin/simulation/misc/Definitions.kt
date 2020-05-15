@@ -25,6 +25,7 @@ data class Definitions(
     val lightAttachments: LightAttachmentMap,
     val particleEffects: ParticleEffectDefinitions,
     val professions: Professions,
+    val selectableAccessories: Set<AccessoryName>,
     val soundDurations: Map<SoundType, Float>,
     val textLibrary: TextResourceMapper,
     val weapons: Map<AccessoryName, WeaponDefinition>

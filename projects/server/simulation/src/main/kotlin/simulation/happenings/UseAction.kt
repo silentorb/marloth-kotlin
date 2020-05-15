@@ -24,8 +24,8 @@ fun eventsFromTryAction(world: World, event: TryActionEvent): Events {
       if (isWeapon)
         listOf(startAttack(actor, action, accessory.type, event.targetLocation))
       else when (accessory.type) {
-        AccessoryId.dash -> dashEvents(definitions, accessory.type, actor)
-        AccessoryId.entangle -> withResolvedTarget(world, actor, target, entangleEvents(deck))
+        AccessoryId.dash -> dashEvents(definitions, accessory, actor)
+        AccessoryId.entangle -> withResolvedTarget(world, actor, target, entangleEvents(deck, accessory))
         else -> listOf()
       }
 

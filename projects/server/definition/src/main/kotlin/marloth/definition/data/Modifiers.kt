@@ -4,33 +4,33 @@ import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.Text
 import silentorb.mythic.accessorize.AccessoryDefinition
 import silentorb.mythic.accessorize.AccessoryName
-import silentorb.mythic.accessorize.RelativeModifier
+import silentorb.mythic.accessorize.ChildAccessory
 
 fun modifiers(): Map<AccessoryName, AccessoryDefinition> = mapOf(
     AccessoryId.resistanceCold to AccessoryDefinition(
         name = Text.id_resistanceCold,
-        modifiers = listOf(
-            RelativeModifier(
+        children = listOf(
+            ChildAccessory(
                 type = AccessoryId.resistanceCold,
-                strength = 10
+                level = 10
             )
         )
     ),
     AccessoryId.resistanceFire to AccessoryDefinition(
         name = Text.id_resistanceFire,
-        modifiers = listOf(
-            RelativeModifier(
+        children = listOf(
+            ChildAccessory(
                 type = AccessoryId.resistanceFire,
-                strength = 10
+                level = 10
             )
         )
     ),
     AccessoryId.resistancePoison to AccessoryDefinition(
         name = Text.id_resistancePoison,
-        modifiers = listOf(
-            RelativeModifier(
+        children = listOf(
+            ChildAccessory(
                 type = AccessoryId.resistancePoison,
-                strength = 50
+                level = 50
             )
         )
     ),
@@ -43,5 +43,9 @@ fun modifiers(): Map<AccessoryName, AccessoryDefinition> = mapOf(
     ),
     AccessoryId.mobile to AccessoryDefinition(
         name = Text.id_mobile
+    ),
+    AccessoryId.graveDigger to AccessoryDefinition(
+        name = Text.id_graveDigger,
+        description = Text.id_graveDiggerDescription
     )
 )

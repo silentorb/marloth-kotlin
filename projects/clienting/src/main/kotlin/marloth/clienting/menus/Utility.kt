@@ -22,7 +22,7 @@ const val textResourcesKey = "textResources"
 
 fun localizedLabel(style: IndexedTextStyle, text: Text): Flower = { seed ->
   val textResources = seed.bag[textResourcesKey]!! as TextResources
-  val content = textResources[text]!!
+  val content = textResources(text)!!
   val config = TextConfiguration(content, Vector2(), resolveTextStyle(globalFonts(), style))
   val dimensions = calculateTextDimensions(config)
   Box(

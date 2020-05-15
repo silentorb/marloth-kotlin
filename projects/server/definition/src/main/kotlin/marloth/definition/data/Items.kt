@@ -1,2 +1,0 @@
-package marloth.definition.data
-

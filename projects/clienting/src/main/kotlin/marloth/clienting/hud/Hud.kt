@@ -8,10 +8,8 @@ import silentorb.mythic.bloom.*
 import silentorb.mythic.bloom.next.*
 import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.ent.Id
-import silentorb.mythic.spatial.Vector2i
 import simulation.combat.general.ResourceContainer
 import simulation.entities.Interactable
-import simulation.main.Deck
 import simulation.main.World
 import simulation.misc.getPointCell
 import simulation.misc.getVictoryKeyStats
@@ -41,17 +39,20 @@ fun reverseResourceString(resource: ResourceContainer): String {
 
 val df = java.text.DecimalFormat("#0.00")
 
-private fun playerStats(world: World, player: Id, debugInfo: List<String>): Flower {
+private fun playerStats(world: World, actor: Id, debugInfo: List<String>): Flower {
   val deck = world.deck
-  val destructible = deck.destructibles[player]!!
+  val destructible = deck.destructibles[actor]!!
+  val character = deck.characters[actor]!!
+  val accessoryPoints = character.accessoryPoints + if (character.accessoryOptions != null) 1 else 0
   val rows = listOf(
       label(textStyle, "Injury: ${reverseResourceString(destructible.health)}"),
       label(textStyle, "Doom: ${world.global.doom}")
 //      label(textStyle, "Sanity: ${resourceString(data.madness)}")
-  )
-      .plus(debugInfo.map {
-        label(textStyle, it)
-      })
+  ) + listOfNotNull(
+      if (accessoryPoints > 0) label(textStyle, "Ability Points: $accessoryPoints") else null
+  ) + debugInfo.map {
+    label(textStyle, it)
+  }
   return div(reverse = reverseOffset(top = justifiedEnd))(
       margin(10)(
           div(reverse = shrink, depiction = solidBackground(black))(
@@ -73,9 +74,9 @@ private val interactionBar =
 fun interactionDialog(textResources: TextResources, interactable: Interactable): Flower {
   val secondary = interactable.secondaryCommand
   val rows = listOfNotNull(
-      label(textStyle, textResources[interactable.primaryCommand.text]!! + " A"),
+      label(textStyle, textResources(interactable.primaryCommand.text) + " A"),
       if (secondary != null)
-        label(textStyle, textResources[secondary.text]!! + " B")
+        label(textStyle, textResources(secondary.text) + " B")
       else
         null
   )
@@ -117,7 +118,7 @@ fun hudLayout(textResources: TextResources, world: World, player: Id, view: View
             val actionDefinition = definitions.actions[accessoryRecord.type]!!
             val accessoryDefinition = definitions.accessories[accessoryRecord.type]!!
             Cooldown(
-                name = textResources[accessoryDefinition.name]!!,
+                name = textResources(accessoryDefinition.name)!!,
                 value = 1f - cooldown / actionDefinition.cooldown
             )
           } else
@@ -131,7 +132,7 @@ fun hudLayout(textResources: TextResources, world: World, player: Id, view: View
                     val definition = definitions.accessories[accessory.type]
                     if (definition != null)
                       Cooldown(
-                          name = textResources[definition.name]!!,
+                          name = textResources(definition.name)!!,
                           value = 1f - timer.duration / timer.original
                       )
                     else

@@ -14,9 +14,9 @@ data class Modifier(
     val source: Id? = null
 )
 
-data class RelativeModifier(
+data class ChildAccessory(
     val type: AccessoryName,
-    val strength: Int
+    val level: Int
 )
 
 //fun modifierToRelative(modifier: Modifier) =

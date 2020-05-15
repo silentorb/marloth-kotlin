@@ -12,6 +12,7 @@ object AccessoryId {
   const val entangled = "entangled"
   const val entangling = "entangling"
   const val entangleImmune = "entangledImmune"
+  const val graveDigger = "graveDigger"
   const val grenadeLauncher = "grenadeLauncher"
   const val mobile = "mobile"
   const val mobility = "mobility"

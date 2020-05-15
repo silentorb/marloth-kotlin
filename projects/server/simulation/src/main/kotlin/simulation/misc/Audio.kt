@@ -18,10 +18,11 @@ val deathSounds: (worlds: WorldPair) -> List<Sound> = { worlds ->
     val previous = worlds.first.deck.characters[key]
     previous != null && previous.isAlive && !value.isAlive
   }
-      .mapNotNull {
-        val type = it.value.definition.deathSound
+      .mapNotNull { (actor, character) ->
+        val characterDefinition = worlds.second.definitions.professions[character.profession]!!
+        val type = characterDefinition.deathSound
         if (type != null) {
-          val body = worlds.second.deck.bodies[it.key]!!
+          val body = worlds.second.deck.bodies[actor]!!
           Sound(
               type = type,
               position = body.position,

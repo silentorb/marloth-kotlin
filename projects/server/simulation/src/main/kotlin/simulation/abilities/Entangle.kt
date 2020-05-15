@@ -13,9 +13,15 @@ import simulation.main.Hand
 val isEntangleImmune = hasAccessory(AccessoryId.entangleImmune)
 val isEntangled = hasAccessory(AccessoryId.entangled)
 
-private const val entangledDuration = 2f
+fun entangledDuration(level: Int): Float =
+    when (level) {
+      1 -> 1.5f
+      2 -> 2f
+      3 -> 2.5f
+      else -> 1f
+    }
 
-fun entangleEvents(deck: Deck): (Id) -> Events = { target ->
+fun entangleEvents(deck: Deck, accessory: Accessory): (Id) -> Events = { target ->
   val immunityDuration = 3f
 
   if (isEntangleImmune(deck.accessories, target))
@@ -26,7 +32,8 @@ fun entangleEvents(deck: Deck): (Id) -> Events = { target ->
             hand = Hand(
                 accessory = Accessory(
                     type = AccessoryId.entangling,
-                    owner = target
+                    owner = target,
+                    level = accessory.level
                 ),
                 timerFloat = FloatTimer(1f)
             )
@@ -37,7 +44,7 @@ fun entangleEvents(deck: Deck): (Id) -> Events = { target ->
                     type = AccessoryId.entangleImmune,
                     owner = target
                 ),
-                timerFloat = FloatTimer(entangledDuration + immunityDuration)
+                timerFloat = FloatTimer(entangledDuration(accessory.level) + immunityDuration)
             )
         )
     )
@@ -52,8 +59,9 @@ fun newEntangleEntities(previous: Deck): List<Hand> =
           Hand(
               accessory = Accessory(
                   type = AccessoryId.entangled,
-                  owner = accessory.owner
+                  owner = accessory.owner,
+                  level = accessory.level
               ),
-              timerFloat = FloatTimer(entangledDuration)
+              timerFloat = FloatTimer(entangledDuration(accessory.level))
           )
         }

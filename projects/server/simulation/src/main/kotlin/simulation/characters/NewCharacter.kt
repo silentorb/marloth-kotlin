@@ -65,7 +65,6 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, prof
                   velocity = Vector3()
               ),
               character = Character(
-                  definition = definition,
                   faction = faction,
                   sanity = ResourceContainer(100),
                   money = 30,

@@ -70,10 +70,6 @@ fun newClientState(platform: Platform, inputConfig: GameInputConfig, audioConfig
 //  return loadYamlResource("text/english.yaml", typeref)
 //}
 
-fun loadTextResource(mapper: TextResourceMapper): TextResources {
-  return Text.values().map { Pair(it, mapper(it)) }.associate { it }
-}
-
 fun gatherFontSets() = loadFontSets(baseFonts, textStyles)
 
 data class Client(
@@ -81,7 +77,7 @@ data class Client(
     val renderer: Renderer,
     val soundLibrary: SoundLibrary,
     val textureLoader: AsyncTextureLoader,
-    val textResources: TextResources = loadTextResource(englishTextResources),
+    val textResources: TextResources = englishTextResources,
     val customBloomResources: Map<String, Any>
 ) {
   fun getWindowInfo() = platform.display.getInfo()

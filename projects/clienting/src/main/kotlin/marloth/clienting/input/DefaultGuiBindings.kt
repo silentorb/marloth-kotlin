@@ -14,10 +14,9 @@ fun defaultKeyboardMenuBindings() = mapOf(
     GLFW.GLFW_KEY_RIGHT to CharacterCommands.moveRight,
     GLFW.GLFW_KEY_DOWN to CharacterCommands.moveDown,
     GLFW.GLFW_KEY_ESCAPE to GuiCommandType.menu,
-    GLFW.GLFW_KEY_TAB to GuiCommandType.characterInfo,
     GLFW.GLFW_KEY_ENTER to GuiCommandType.menuSelect,
     GLFW.GLFW_KEY_SPACE to GuiCommandType.menuSelect
-)
+) + defaultSharedKeyboardBindings
 
 fun commonGamepadBindings() = mapOf(
     GAMEPAD_AXIS_LEFT_UP to CharacterCommands.moveUp,
@@ -43,11 +42,10 @@ fun defaultGamepadMenuBindings() = mapOf(
     GAMEPAD_BUTTON_DPAD_LEFT to CharacterCommands.moveLeft,
     GAMEPAD_BUTTON_DPAD_RIGHT to CharacterCommands.moveRight,
 
-    GAMEPAD_BUTTON_BACK to GuiCommandType.characterInfo,
     GAMEPAD_BUTTON_START to GuiCommandType.menu,
     GAMEPAD_BUTTON_A to GuiCommandType.menuSelect,
     GAMEPAD_BUTTON_B to GuiCommandType.menuBack
-)
+) + defaultSharedGamepadBindings
 
 val firstPersonGamepadBindings = mapOf(
     GAMEPAD_AXIS_RIGHT_UP to CharacterCommands.moveUp,

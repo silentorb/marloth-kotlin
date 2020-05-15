@@ -21,7 +21,7 @@ import silentorb.mythic.spatial.Vector4
 import simulation.main.World
 import simulation.misc.Definitions
 
-typealias TextResources = Map<Text, String>
+typealias TextResources = (Text) -> String?
 
 enum class ViewId {
   characterInfo,
@@ -86,7 +86,7 @@ fun victoryMenu() = listOfNotNull(
 
 fun viewSelect(textResources: TextResources, definitions: Definitions, world: World?, view: ViewId, player: Id): Flower? {
   return when (view) {
-    ViewId.characterInfo -> characterInfoView(definitions, world!!.deck, player)
+    ViewId.characterInfo -> characterInfoViewOrChooseAbilityMenu(definitions, world!!.deck, player)
     ViewId.chooseProfessionMenu -> menuFlower(textResources, Text.gui_chooseProfessionMenu, chooseProfessionMenu(player))
     ViewId.mainMenu -> menuFlower(textResources, Text.gui_mainMenu, mainMenu(gameIsActive(world)))
     ViewId.merchant -> merchantView(textResources, definitions.accessories, world!!.deck, player)

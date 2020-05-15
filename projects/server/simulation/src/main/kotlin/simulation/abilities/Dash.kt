@@ -10,16 +10,23 @@ import simulation.happenings.NewHandEvent
 import simulation.main.Hand
 import simulation.misc.Definitions
 
-fun defaultDashBonus(): Float = 2f
+fun dashBonus(level: Int): Float =
+    when (level) {
+      1 -> 1.5f
+      2 -> 2f
+      3 -> 2.5f
+      else -> 1f
+    }
 
-fun dashEvents(definitions: Definitions, accessoryType: AccessoryName, actor: Id): Events {
-  val definition = definitions.actions[accessoryType]!!
+fun dashEvents(definitions: Definitions, accessory: Accessory, actor: Id): Events {
+  val definition = definitions.actions[accessory.type]!!
   return listOf(
       NewHandEvent(
           hand = Hand(
               accessory = Accessory(
                   type = AccessoryId.dashing,
-                  owner = actor
+                  owner = actor,
+                  level = accessory.level
               ),
               timerFloat = FloatTimer(definition.duration)
           )

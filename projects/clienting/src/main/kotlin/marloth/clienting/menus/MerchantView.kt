@@ -58,7 +58,7 @@ fun wareMenuItem(textResources: TextResources, definitions: AccessoryDefinitions
                  player: Id, customerMoney: Int, id: Id): MenuItem {
   val ware = deck.wares[id]!!
   val definition = definitions[ware.type]!!
-  val name = textResources[definition.name]!!
+  val name = textResources(definition.name)!!
   val price = ware.price
   val canPurchase = ware.price <= customerMoney
   val event = if (canPurchase)

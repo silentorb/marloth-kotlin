@@ -19,7 +19,8 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
 
     AccessoryId.dash to ActionAccessory(
         accessory = AccessoryDefinition(
-            name = Text.id_dash
+            name = Text.id_dash,
+            maxLevel = 3
         ),
         action = ActionDefinition(
             cooldown = 4f,
@@ -30,7 +31,8 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
 
     AccessoryId.entangle to ActionAccessory(
         accessory = AccessoryDefinition(
-            name = Text.id_entangle
+            name = Text.id_entangle,
+            maxLevel = 3
         ),
         action = ActionDefinition(
             cooldown = 4f,

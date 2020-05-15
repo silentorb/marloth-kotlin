@@ -173,7 +173,7 @@ val embeddedMenuFlower = menuFlowerBase(embeddedMenuBox)
 fun menuFlower(textResources: TextResources, title: Text, menu: List<SimpleMenuItem>): Flower {
   val items = menu.map {
     MenuItem(
-        flower = simpleMenuButton(textResources[it.text]!!),
+        flower = simpleMenuButton(textResources(it.text)!!),
         event = it.event ?: GuiEvent(GuiEventType.command, it.command!!)
     )
   }

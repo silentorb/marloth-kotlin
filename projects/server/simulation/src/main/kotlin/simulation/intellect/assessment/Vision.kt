@@ -11,6 +11,7 @@ import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.quadOut
 import simulation.characters.fieldOfView360
 import simulation.main.Deck
+import simulation.main.World
 import simulation.misc.*
 import simulation.physics.CollisionGroups
 
@@ -61,11 +62,16 @@ fun isHiddenByHome(grid: MapGrid, deck: Deck, viewer: Id, target: Id): Boolean =
     areEnemies(deck, viewer, target)
         && isAtHome(grid, deck)(target)
 
-fun canSee(realm: Realm, bulletState: BulletState, deck: Deck, lightRatings: Table<Float>, viewer: Id): (Id) -> Boolean = { target ->
+fun canSee(world: World, lightRatings: Table<Float>, viewer: Id): (Id) -> Boolean = { target ->
+  val deck = world.deck
+  val definitions =world.definitions
+  val realm = world.realm
+  val bulletState = world.bulletState
+
   val viewerBody = deck.bodies[viewer]!!
   val targetBody = deck.bodies[target]!!
   val distance = viewerBody.position.distance(targetBody.position)
-  val viewerCharacterDefinition = deck.characters[viewer]!!.definition
+  val viewerCharacterDefinition = definitions.professions[deck.characters[viewer]!!.profession]!!
   val fieldOfView = viewerCharacterDefinition.fieldOfView
   val result = distance <= viewingRange
       && isInAngleOfView(deck.characterRigs[viewer]!!.facingVector, viewerBody, targetBody, fieldOfView)
@@ -75,8 +81,8 @@ fun canSee(realm: Realm, bulletState: BulletState, deck: Deck, lightRatings: Tab
   result
 }
 
-fun getVisibleCharacters(realm: Realm, bulletState: BulletState, deck: Deck, lightRatings: Table<Float>, character: Id): List<Id> {
-  return deck.characters.keys
+fun getVisibleCharacters(world: World, lightRatings: Table<Float>, character: Id): List<Id> {
+  return world.deck.characters.keys
       .minus(character)
-      .filter(canSee(realm, bulletState, deck, lightRatings, character))
+      .filter(canSee(world, lightRatings, character))
 }

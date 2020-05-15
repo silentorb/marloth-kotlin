@@ -4,6 +4,8 @@ import marloth.scenery.enums.CharacterCommands
 import marloth.scenery.enums.ResourceId
 import marloth.scenery.enums.Text
 import silentorb.mythic.accessorize.AccessoryName
+import silentorb.mythic.accessorize.ChoseImprovedAccessory
+import silentorb.mythic.accessorize.newAccessoryChoice
 import silentorb.mythic.audio.SoundName
 import silentorb.mythic.aura.SoundType
 import silentorb.mythic.ent.Id
@@ -14,6 +16,7 @@ import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.physics.BulletState
+import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.minMax
 import simulation.combat.general.DamageMultipliers
@@ -23,6 +26,8 @@ import simulation.happenings.PurchaseEvent
 import simulation.happenings.TakeItemEvent
 import simulation.main.Deck
 import simulation.misc.Definitions
+import simulation.misc.PlaceVictoryKeyEvent
+import simulation.misc.misfitFaction
 import simulation.physics.castInteractableRay
 
 const val fieldOfView360 = -1f
@@ -53,15 +58,18 @@ enum class EquipmentSlot {
 
 typealias Equipment = Map<EquipmentSlot, Id>
 
+typealias AccessoryOptions = List<AccessoryName>
+
 data class Character(
     val profession: ProfessionId,
-    val definition: CharacterDefinition,
     val faction: Id,
     val sanity: ResourceContainer,
     val isAlive: Boolean,
     val canInteractWith: Id? = null,
     val interactingWith: Id? = null,
     val isInfinitelyFalling: Boolean = false,
+    val accessoryPoints: Int = 0,
+    val accessoryOptions: AccessoryOptions? = null,
     val money: Int = 0
 )
 
@@ -70,39 +78,14 @@ data class ModifyLevelEvent(
     val offset: Int
 ) : GameEvent
 
+fun getFaction(deck: Deck, actor: Id): Id? =
+    deck.characters[actor]?.faction
+
 fun isInfinitelyFalling(position: Vector3): Boolean =
     position.z < -100f
 
-// Currently this is such a simple function because it will likely get more complicated and I want to ensure
-// everything is already routing through a single point before things get more complicated.
 fun isAlive(health: Int, position: Vector3): Boolean =
     health > 0 && !isInfinitelyFalling(position)
-
-//val equipCommandSlots: Map<CommandName, Int> = listOf(
-//    CharacterCommands.equipSlot0,
-//    CharacterCommands.equipSlot1,
-//    CharacterCommands.equipSlot2,
-//    CharacterCommands.equipSlot3
-//).mapIndexed { index, commandType -> Pair(commandType, index) }
-//    .associate { it }
-//
-//fun updateEquippedItem(deck: Deck, id: Id, activeAccessory: Id?, commands: Commands): Id? {
-//  val slot = commands
-//      .mapNotNull { equipCommandSlots[it.type] }
-//      .firstOrNull()
-//
-//  return if (slot != null) {
-//    val itemId = getItemInSlot(deck, id, slot)
-//    if (itemId == activeAccessory)
-//      null
-//    else
-//      itemId
-//  } else if (activeAccessory == null) {
-//    val result = getTargetAttachments(deck, id).entries.firstOrNull { deck.actions.keys.contains(it.key) }?.key
-//    result
-//  } else
-//    activeAccessory
-//}
 
 fun getPurchaseCost(deck: Deck, events: Events, character: Id): Int {
   val purchases = events.filterIsInstance<PurchaseEvent>()
@@ -151,7 +134,31 @@ fun updateCharacterProfession(definitions: Definitions, actor: Id, events: Event
     profession
 }
 
-fun updateCharacter(definitions: Definitions, deck: Deck, bulletState: BulletState, actor: Id, character: Character,
+fun updateAccessoryPoints(events: Events, character: Character): Int {
+  return if (character.faction == misfitFaction) {
+    val victoryKeyEventPlacementCount = events.filterIsInstance<PlaceVictoryKeyEvent>().count()
+    val removal = if (character.accessoryPoints > 0 && character.accessoryOptions == null)
+      -1
+    else
+      0
+    character.accessoryPoints + victoryKeyEventPlacementCount + removal
+  } else
+    character.accessoryPoints
+}
+
+fun updateAccessoryOptions(definitions: Definitions, dice: Dice, deck: Deck, events: Events, actor: Id, character: Character): AccessoryOptions? {
+  return if (character.faction == misfitFaction)
+    if (character.accessoryPoints > 0 && character.accessoryOptions == null)
+      newAccessoryChoice(definitions, dice, deck, actor)
+    else if (events.filterIsInstance<ChoseImprovedAccessory>().any { it.actor == actor })
+      null
+    else
+      character.accessoryOptions
+  else
+    character.accessoryOptions
+}
+
+fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletState: BulletState, actor: Id, character: Character,
                     commands: Commands, events: Events): Character {
   val destructible = deck.destructibles[actor]!!
   val position = deck.bodies[actor]!!.position
@@ -167,18 +174,20 @@ fun updateCharacter(definitions: Definitions, deck: Deck, bulletState: BulletSta
       canInteractWith = canInteractWith,
       interactingWith = updateInteractingWith(deck, actor, commands, character.interactingWith),
       money = updateMoney(deck, events, actor, character.money),
-      profession = updateCharacterProfession(definitions, actor, events, character.profession)
+      profession = updateCharacterProfession(definitions, actor, events, character.profession),
+      accessoryPoints = updateAccessoryPoints(events, character),
+      accessoryOptions = updateAccessoryOptions(definitions, dice, deck, events, actor, character)
   )
 }
 
-fun updateCharacter(definitions: Definitions, deck: Deck, bulletState: BulletState, events: Events): (Id, Character) -> Character = { id, character ->
+fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletState: BulletState, events: Events): (Id, Character) -> Character = { id, character ->
   val commands = events.filterIsInstance<CharacterCommand>()
   val characterCommands = pipe2(commands, listOf(
       { c -> if (deck.characters[id]!!.isAlive) c else listOf() },
       { c -> c.filter { it.target == id } }
   ))
 
-  updateCharacter(definitions, deck, bulletState, id, character, characterCommands, events)
+  updateCharacter(definitions, dice, deck, bulletState, id, character, characterCommands, events)
 }
 
 fun isEnemy(characters: Table<Character>, faction: Id): (Id) -> Boolean = { id ->

@@ -1,6 +1,6 @@
 package simulation.combat.general
 
-import silentorb.mythic.accessorize.RelativeModifier
+import silentorb.mythic.accessorize.ChildAccessory
 import silentorb.mythic.ent.Id
 
 const val defaultDamageMultiplier = 100
@@ -37,13 +37,13 @@ enum class ModifierOperation {
   multiply
 }
 
-fun getValueModifiers(definitions: CombatDefinitions, combatDeck: CombatDeck, id: Id): List<RelativeModifier> {
+fun getValueModifiers(definitions: CombatDefinitions, combatDeck: CombatDeck, id: Id): List<ChildAccessory> {
   val indirectModifiers = combatDeck.accessories
       .filterValues { it.owner == id }
       .mapNotNull {
         val accessory = combatDeck.accessories[it.key]
         if (accessory != null)
-          definitions.accessories[accessory.type]?.modifiers
+          definitions.accessories[accessory.type]?.children
         else
           null
       }

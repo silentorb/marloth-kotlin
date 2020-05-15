@@ -32,7 +32,8 @@ fun newKnowledge() =
 
 const val memoryLifetime: Float = 5f // In seconds
 
-fun getKnownCharacters(realm: Realm, bulletState: BulletState, deck: Deck, lightRatings: Table<Float>, character: Id): List<Id> {
+fun getKnownCharacters(world: World, lightRatings: Table<Float>, character: Id): List<Id> {
+  val deck = world.deck
   return if (getDebugBoolean("BLIND_AI"))
     listOf()
   else {
@@ -41,13 +42,13 @@ fun getKnownCharacters(realm: Realm, bulletState: BulletState, deck: Deck, light
         .minus(character)
         .filter { id ->
           isAlly(deck.characters, faction)(id) ||
-              canSee(realm, bulletState, deck, lightRatings, character)(id)
+              canSee(world, lightRatings, character)(id)
         }
   }
 }
 
 fun updateCharacterKnowledge(world: World, character: Id, knowledge: Knowledge, lightRatings: Table<Float>, delta: Float): Table<CharacterMemory> {
-  val fresh = getKnownCharacters(world.realm, world.bulletState, world.deck, lightRatings, character)
+  val fresh = getKnownCharacters(world, lightRatings, character)
       .map { id ->
         val body = world.deck.bodies[id]!!
         val targetCharacter = world.deck.characters.getValue(id)

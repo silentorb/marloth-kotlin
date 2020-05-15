@@ -32,15 +32,18 @@ fun getRemainingPath(node: Id, path: Path): Path {
     path.drop(index + 1)
 }
 
-fun updateRoamingTargetPosition(world: World, character: Id, knowledge: Knowledge, pursuit: Pursuit): Vector3? {
-  return if (world.deck.characters[character]!!.definition.speed == 0f)
+fun updateRoamingTargetPosition(world: World, actor: Id, knowledge: Knowledge, pursuit: Pursuit): Vector3? {
+  val definitions = world.definitions
+  val character = world.deck.characters[actor]!!
+  val characterDefinition = definitions.professions[character.profession]!!
+  return if (characterDefinition.speed == 0f)
     null
   else if (pursuit.targetPosition == null) // || !pathIsAccessible(world, knowledge, pursuit.path))
-    startRoaming(world, character, knowledge)
+    startRoaming(world, actor, knowledge)
   else {
-    val body = world.deck.bodies[character]!!
+    val body = world.deck.bodies[actor]!!
     if (body.position.distance(pursuit.targetPosition) < cellHalfLength)
-      startRoaming(world, character, knowledge)
+      startRoaming(world, actor, knowledge)
     else
       pursuit.targetPosition
   }

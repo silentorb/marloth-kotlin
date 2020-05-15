@@ -67,7 +67,7 @@ fun getPathTargetPosition(world: World, character: Id, pursuit: Pursuit): Vector
 
 fun tryUseDash(world: World, actor: Id): Events {
   val deck = world.deck
-  val dash = getAccessory(AccessoryId.dash, deck.accessories, actor)
+  val dash = getAccessory(AccessoryId.dash, deck.accessories, actor)?.key
   return if (dash != null && canUse(world, dash))
     listOf(
         TryActionEvent(

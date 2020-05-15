@@ -35,7 +35,7 @@ fun updateEntities(definitions: Definitions, world: World, navigation: Navigatio
       val freedomTable = getFreedomTable(deck)
       deck.copy(
           actions = updateActions(world.definitions, deck, events),
-          ambientSounds = updateAmbientAudio(dice, deck),
+          ambientSounds = updateAmbientAudio(definitions, dice, deck),
           animations = mapTable(deck.animations, updateCharacterAnimation(deck, definitions.animations, delta)),
           bodies = mapTable(deck.bodies, updateBodies(world.realm.grid, deck, events, delta)),
           characterRigs = mapTable(deck.characterRigs, updateCharacterRig(world.bulletState, CollisionGroups.walkable, deck, freedomTable, events, delta)),
@@ -43,7 +43,7 @@ fun updateEntities(definitions: Definitions, world: World, navigation: Navigatio
           attachments = mapTable(deck.attachments, updateAttachment(events)),
           cyclesFloat = mapTableValues(deck.cyclesFloat, updateFloatCycle(delta)),
           destructibles = mapTable(deck.destructibles, updateDestructibleHealth(events)),
-          characters = mapTable(deck.characters, updateCharacter(definitions, deck, world.bulletState, events)),
+          characters = mapTable(deck.characters, updateCharacter(definitions, dice, deck, world.bulletState, events)),
           knowledge = mapTable(deck.knowledge, updateKnowledge(world, lightRatings(world.deck), delta)),
           navigationDirections = updateNavigationDirections(navigation),
           particleEffects = mapTableValues(deck.particleEffects, deck.bodies, updateParticleEffect(definitions.particleEffects, dice, delta)),

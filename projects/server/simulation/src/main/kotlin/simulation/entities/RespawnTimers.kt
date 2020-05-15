@@ -5,6 +5,7 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.timing.FloatTimer
+import simulation.abilities.graveDiggerDurationModifer
 import simulation.combat.general.RestoreHealth
 import simulation.happenings.ReturnHome
 import simulation.main.Deck
@@ -40,15 +41,15 @@ fun newRespawnCountdowns(nextId: IdSource, previous: Deck, next: Deck): List<IdH
         !previous.players.containsKey(id) || getDebugBoolean("PLAYER_RESPAWN")
       }
 
-  return newlyDeceasedCharacters.map { character ->
+  return newlyDeceasedCharacters.map { actor ->
     val id = nextId()
     val duration = if (previous.players.containsKey(id))
       3f
     else {
-      // Use the id as a cheap source of random entropy
-      15f + (id % 10).toFloat()
+      // Use id as a cheap source of random entropy
+      15f + (id % 10).toFloat() + graveDiggerDurationModifer(previous, actor)
     }
-    newRespawnCountdown(id, duration, character)
+    newRespawnCountdown(id, duration, actor)
   }
 }
 

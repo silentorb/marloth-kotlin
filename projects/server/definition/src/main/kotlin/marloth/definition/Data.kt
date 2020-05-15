@@ -21,6 +21,7 @@ fun staticDefinitions(clientDefinitions: ClientDefinitions): Definitions {
       lightAttachments = clientDefinitions.lightAttachments,
       particleEffects = particleEffects(),
       professions = allProfessions() + monsterDefinitions(),
+      selectableAccessories = selectableAccessories(),
       soundDurations = clientDefinitions.soundDurations,
       textLibrary = englishTextResources,
       weapons = weapons
