@@ -1,6 +1,6 @@
 package simulation.happenings
 
-import silentorb.mythic.accessorize.AccessoryName
+import simulation.accessorize.AccessoryName
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.spatial.Vector3

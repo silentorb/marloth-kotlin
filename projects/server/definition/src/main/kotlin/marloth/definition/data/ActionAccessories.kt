@@ -1,8 +1,8 @@
 package marloth.definition.data
 
 import marloth.scenery.enums.*
-import silentorb.mythic.accessorize.AccessoryDefinition
-import silentorb.mythic.accessorize.AccessoryName
+import simulation.accessorize.AccessoryDefinition
+import simulation.accessorize.AccessoryName
 import silentorb.mythic.performing.ActionDefinition
 import simulation.characters.EquipmentSlot
 import simulation.combat.general.AttackMethod

@@ -1,8 +1,7 @@
 package simulation.characters
 
 import marloth.scenery.enums.AccessoryId
-import silentorb.mythic.accessorize.getAccessory
-import silentorb.mythic.accessorize.hasAccessory
+import simulation.accessorize.getAccessory
 import silentorb.mythic.ent.Id
 import simulation.abilities.dashBonus
 import simulation.main.Deck

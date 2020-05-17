@@ -20,7 +20,10 @@ fun commandsToEvents(definitions: Definitions, deck: Deck, commands: Commands): 
     commands.mapNotNull { command ->
       val actor = command.target
       when (command.type) {
-        CharacterCommands.abilityAttack, CharacterCommands.abilityUtility -> {
+        CharacterCommands.abilityAttack,
+        CharacterCommands.abilityUtility,
+        CharacterCommands.abilityDefense,
+        CharacterCommands.abilityMobility -> {
           val slot = characterCommandToEquipmentSlot(command.type)
           val action = getEquippedAction(definitions, deck.accessories, slot, actor)
           if (action != null) {

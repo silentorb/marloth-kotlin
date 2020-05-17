@@ -1,6 +1,6 @@
 package simulation.happenings
 
-import silentorb.mythic.accessorize.AccessoryName
+import simulation.accessorize.AccessoryName
 import simulation.combat.general.DamageType
 import silentorb.mythic.happenings.EventTrigger
 

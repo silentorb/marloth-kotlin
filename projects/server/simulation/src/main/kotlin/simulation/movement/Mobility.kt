@@ -2,8 +2,7 @@ package simulation.movement
 
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.CharacterCommands
-import silentorb.mythic.accessorize.Accessory
-import silentorb.mythic.accessorize.Modifier
+import simulation.accessorize.Accessory
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.Events

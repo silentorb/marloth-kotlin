@@ -1,6 +1,6 @@
 package simulation.combat.general
 
-import silentorb.mythic.accessorize.ChildAccessory
+import simulation.accessorize.ChildAccessory
 import silentorb.mythic.ent.Id
 
 const val defaultDamageMultiplier = 100

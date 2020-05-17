@@ -1,13 +1,16 @@
-package silentorb.mythic.accessorize
+package simulation.accessorize
 
 import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.Table
+import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.randomly.Dice
 import simulation.characters.AccessoryOptions
 import simulation.main.Deck
+import simulation.main.Hand
 import simulation.misc.Definitions
 
-data class ChoseImprovedAccessory(
+data class ChooseImprovedAccessory(
     val actor: Id,
     val accessory: AccessoryName
 ) : GameEvent
@@ -22,4 +25,18 @@ fun newAccessoryChoice(definitions: Definitions, dice: Dice, deck: Deck, actor: 
       }
 
   return dice.take(available, 2)
+}
+
+fun newChosenAccessories(accessories: Table<Accessory>, events: Events): List<Hand> {
+  val chooseAccessoryEvents = events.filterIsInstance<ChooseImprovedAccessory>()
+  return chooseAccessoryEvents
+      .filter { event -> !hasAccessory(event.accessory, accessories, event.actor) }
+      .map { event ->
+        Hand(
+            accessory = Accessory(
+                owner = event.actor,
+                type = event.accessory
+            )
+        )
+      }
 }

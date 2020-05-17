@@ -1,16 +1,9 @@
 package simulation.entities
 
-import silentorb.mythic.accessorize.Accessory
-import silentorb.mythic.accessorize.AccessoryName
-import silentorb.mythic.accessorize.Modifier
 import silentorb.mythic.ent.Id
-import silentorb.mythic.ent.IdSource
 import silentorb.mythic.happenings.Events
-import silentorb.mythic.timing.IntTimer
 import simulation.happenings.*
 import simulation.main.Deck
-import simulation.main.Hand
-import simulation.main.handToDeck
 
 enum class AttachmentCategory {
   ability,

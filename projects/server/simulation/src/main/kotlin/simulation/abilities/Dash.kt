@@ -1,8 +1,7 @@
 package simulation.abilities
 
 import marloth.scenery.enums.AccessoryId
-import silentorb.mythic.accessorize.Accessory
-import silentorb.mythic.accessorize.AccessoryName
+import simulation.accessorize.Accessory
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.timing.FloatTimer

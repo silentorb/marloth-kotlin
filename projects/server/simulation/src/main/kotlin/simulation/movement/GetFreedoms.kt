@@ -1,8 +1,7 @@
 package simulation.movement
 
 import marloth.scenery.enums.AccessoryId
-import silentorb.mythic.accessorize.Accessory
-import silentorb.mythic.accessorize.Modifier
+import simulation.accessorize.Accessory
 import silentorb.mythic.characters.rigs.Freedom
 import silentorb.mythic.characters.rigs.FreedomTable
 import silentorb.mythic.characters.rigs.Freedoms

@@ -1,6 +1,6 @@
 package simulation.misc
 
-import silentorb.mythic.accessorize.Accessory
+import simulation.accessorize.Accessory
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
 import simulation.happenings.PurchaseEvent

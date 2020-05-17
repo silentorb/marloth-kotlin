@@ -1,8 +1,7 @@
 package simulation.characters
 
 import marloth.scenery.enums.AnimationId
-import silentorb.mythic.accessorize.Accessory
-import silentorb.mythic.characters.*
+import simulation.accessorize.Accessory
 import silentorb.mythic.characters.rigs.*
 import simulation.combat.general.Destructible
 import simulation.combat.general.DestructibleBaseStats

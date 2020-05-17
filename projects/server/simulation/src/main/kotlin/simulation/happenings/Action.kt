@@ -1,8 +1,8 @@
 package simulation.happenings
 
-import silentorb.mythic.accessorize.Accessory
-import silentorb.mythic.accessorize.AccessoryName
-import silentorb.mythic.accessorize.getAccessories
+import simulation.accessorize.Accessory
+import simulation.accessorize.AccessoryName
+import simulation.accessorize.getAccessories
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.happenings.Events

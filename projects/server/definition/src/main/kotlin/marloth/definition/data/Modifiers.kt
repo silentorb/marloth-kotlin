@@ -2,9 +2,9 @@ package marloth.definition.data
 
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.Text
-import silentorb.mythic.accessorize.AccessoryDefinition
-import silentorb.mythic.accessorize.AccessoryName
-import silentorb.mythic.accessorize.ChildAccessory
+import simulation.accessorize.AccessoryDefinition
+import simulation.accessorize.AccessoryName
+import simulation.accessorize.ChildAccessory
 
 fun modifiers(): Map<AccessoryName, AccessoryDefinition> = mapOf(
     AccessoryId.resistanceCold to AccessoryDefinition(

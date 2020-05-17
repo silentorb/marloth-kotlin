@@ -3,7 +3,7 @@ package simulation.intellect.execution
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.CharacterCommands
 import org.recast4j.detour.DefaultQueryFilter
-import silentorb.mythic.accessorize.getAccessory
+import simulation.accessorize.getAccessory
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.Events

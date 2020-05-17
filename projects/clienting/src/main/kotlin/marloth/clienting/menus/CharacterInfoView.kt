@@ -2,7 +2,7 @@ package marloth.clienting.menus
 
 import marloth.definition.misc.staticDamageTypes
 import marloth.scenery.enums.Text
-import silentorb.mythic.accessorize.getAccessories
+import simulation.accessorize.getAccessories
 import silentorb.mythic.bloom.horizontalPlane
 import silentorb.mythic.bloom.label
 import silentorb.mythic.bloom.list

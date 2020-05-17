@@ -1,9 +1,8 @@
 package simulation.main
 
-import silentorb.mythic.accessorize.Accessory
+import simulation.accessorize.Accessory
 import simulation.accessorize.ItemPickup
 import simulation.entities.Attachment
-import silentorb.mythic.accessorize.Modifier
 import silentorb.mythic.aura.Sound
 import silentorb.mythic.ent.*
 import simulation.entities.*

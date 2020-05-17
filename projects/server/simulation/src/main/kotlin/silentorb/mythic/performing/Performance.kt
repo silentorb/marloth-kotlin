@@ -1,7 +1,7 @@
 package silentorb.mythic.performing
 
-import silentorb.mythic.accessorize.Accessory
-import silentorb.mythic.accessorize.AccessoryName
+import simulation.accessorize.Accessory
+import simulation.accessorize.AccessoryName
 import silentorb.mythic.breeze.AnimationInfo
 import silentorb.mythic.breeze.AnimationInfoMap
 import silentorb.mythic.breeze.AnimationName

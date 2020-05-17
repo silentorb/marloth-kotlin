@@ -2,8 +2,8 @@ package simulation.misc
 
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.MeshId
-import silentorb.mythic.accessorize.Accessory
-import silentorb.mythic.accessorize.ChangeItemOwnerEvent
+import simulation.accessorize.Accessory
+import simulation.accessorize.ChangeItemOwnerEvent
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.Table

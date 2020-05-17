@@ -8,7 +8,7 @@ import marloth.definition.templates.newBuffCloud
 import marloth.definition.templates.newTreasureChest
 import silentorb.mythic.ent.Id
 import marloth.scenery.enums.MeshId
-import silentorb.mythic.accessorize.AccessoryName
+import simulation.accessorize.AccessoryName
 import simulation.main.Deck
 import simulation.misc.Node
 

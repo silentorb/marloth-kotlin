@@ -3,9 +3,9 @@ package simulation.characters
 import marloth.scenery.enums.CharacterCommands
 import marloth.scenery.enums.ResourceId
 import marloth.scenery.enums.Text
-import silentorb.mythic.accessorize.AccessoryName
-import silentorb.mythic.accessorize.ChoseImprovedAccessory
-import silentorb.mythic.accessorize.newAccessoryChoice
+import simulation.accessorize.AccessoryName
+import simulation.accessorize.ChooseImprovedAccessory
+import simulation.accessorize.newAccessoryChoice
 import silentorb.mythic.audio.SoundName
 import silentorb.mythic.aura.SoundType
 import silentorb.mythic.ent.Id
@@ -150,7 +150,7 @@ fun updateAccessoryOptions(definitions: Definitions, dice: Dice, deck: Deck, eve
   return if (character.faction == misfitFaction)
     if (character.accessoryPoints > 0 && character.accessoryOptions == null)
       newAccessoryChoice(definitions, dice, deck, actor)
-    else if (events.filterIsInstance<ChoseImprovedAccessory>().any { it.actor == actor })
+    else if (events.filterIsInstance<ChooseImprovedAccessory>().any { it.actor == actor })
       null
     else
       character.accessoryOptions

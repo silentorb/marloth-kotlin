@@ -3,8 +3,8 @@ package marloth.integration.scenery
 import marloth.clienting.menus.textStyles
 import marloth.definition.data.animationPlaceholders
 import marloth.scenery.enums.*
-import silentorb.mythic.accessorize.AccessoryName
-import silentorb.mythic.accessorize.getAccessories
+import simulation.accessorize.AccessoryName
+import simulation.accessorize.getAccessories
 import silentorb.mythic.characters.rigs.CharacterRig
 import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.debugging.getDebugBoolean

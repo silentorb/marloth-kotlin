@@ -1,7 +1,7 @@
 package marloth.definition.templates
 
 import marloth.scenery.enums.AccessoryId
-import silentorb.mythic.accessorize.AccessoryName
+import simulation.accessorize.AccessoryName
 import silentorb.mythic.spatial.Vector3
 import simulation.main.Hand
 

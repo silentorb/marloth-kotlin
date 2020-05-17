@@ -1,6 +1,6 @@
 package simulation.updating
 
-import silentorb.mythic.accessorize.updateAccessory
+import simulation.accessorize.updateAccessory
 import silentorb.mythic.aura.updateSound
 import silentorb.mythic.characters.rigs.updateCharacterRig
 import silentorb.mythic.characters.rigs.updateThirdPersonCamera
@@ -39,7 +39,7 @@ fun updateEntities(definitions: Definitions, world: World, navigation: Navigatio
           animations = mapTable(deck.animations, updateCharacterAnimation(deck, definitions.animations, delta)),
           bodies = mapTable(deck.bodies, updateBodies(world.realm.grid, deck, events, delta)),
           characterRigs = mapTable(deck.characterRigs, updateCharacterRig(world.bulletState, CollisionGroups.walkable, deck, freedomTable, events, delta)),
-          accessories = mapTable(deck.accessories, updateAccessory(events)),
+          accessories = mapTable(deck.accessories, updateAccessory(definitions, events)),
           attachments = mapTable(deck.attachments, updateAttachment(events)),
           cyclesFloat = mapTableValues(deck.cyclesFloat, updateFloatCycle(delta)),
           destructibles = mapTable(deck.destructibles, updateDestructibleHealth(events)),

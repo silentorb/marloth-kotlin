@@ -1,6 +1,6 @@
 package simulation.entities
 
-import silentorb.mythic.accessorize.AccessoryName
+import simulation.accessorize.AccessoryName
 
 data class Ware(
     val type: AccessoryName,

@@ -1,6 +1,6 @@
 package simulation.combat.spatial
 
-import silentorb.mythic.accessorize.AccessoryName
+import simulation.accessorize.AccessoryName
 import silentorb.mythic.audio.NewSound
 import silentorb.mythic.characters.rigs.defaultCharacterHeight
 import simulation.combat.general.AttackMethod

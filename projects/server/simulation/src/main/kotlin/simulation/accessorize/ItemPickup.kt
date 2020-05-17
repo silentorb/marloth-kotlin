@@ -1,14 +1,12 @@
 package simulation.accessorize
 
 import marloth.scenery.enums.AccessoryId
-import silentorb.mythic.accessorize.ChangeItemOwnerEvent
 import silentorb.mythic.happenings.DeleteEntityEvent
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.Body
 import silentorb.mythic.spatial.Vector3
 import simulation.entities.CollisionMap
 import simulation.entities.PruneEntityEvent
-import simulation.main.Hand
 import simulation.main.World
 import simulation.misc.newVictoryKey
 

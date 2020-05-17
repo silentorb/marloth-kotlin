@@ -1,6 +1,6 @@
 package simulation.combat.spatial
 
-import silentorb.mythic.accessorize.AccessoryName
+import simulation.accessorize.AccessoryName
 import simulation.combat.general.WeaponDefinition
 import simulation.combat.general.newDamageEvents
 import silentorb.mythic.ent.Id

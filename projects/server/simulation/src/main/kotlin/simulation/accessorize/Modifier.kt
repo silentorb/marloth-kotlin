@@ -1,4 +1,4 @@
-package silentorb.mythic.accessorize
+package simulation.accessorize
 
 import marloth.scenery.enums.ModifierDirection
 import marloth.scenery.enums.ModifierType

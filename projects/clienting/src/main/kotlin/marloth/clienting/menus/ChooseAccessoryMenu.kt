@@ -1,6 +1,6 @@
 package marloth.clienting.menus
 
-import silentorb.mythic.accessorize.ChoseImprovedAccessory
+import simulation.accessorize.ChooseImprovedAccessory
 import silentorb.mythic.ent.Id
 import simulation.characters.AccessoryOptions
 import simulation.misc.Definitions
@@ -13,7 +13,7 @@ fun chooseAccessoryMenu(definitions: Definitions, actor: Id, accessoryOptions: A
               text = definition.name,
               event = GuiEvent(
                   type = GuiEventType.gameEvent,
-                  data = ChoseImprovedAccessory(
+                  data = ChooseImprovedAccessory(
                       actor = actor,
                       accessory = id
                   )

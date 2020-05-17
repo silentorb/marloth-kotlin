@@ -1,8 +1,8 @@
 package simulation.misc
 
 import marloth.scenery.enums.TextResourceMapper
-import silentorb.mythic.accessorize.AccessoryDefinition
-import silentorb.mythic.accessorize.AccessoryName
+import simulation.accessorize.AccessoryDefinition
+import simulation.accessorize.AccessoryName
 import silentorb.mythic.aura.SoundType
 import silentorb.mythic.breeze.AnimationInfoMap
 import simulation.combat.general.DamageType

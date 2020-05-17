@@ -1,7 +1,6 @@
 package simulation.combat.spatial
 
-import silentorb.mythic.accessorize.Accessory
-import silentorb.mythic.accessorize.Modifier
+import simulation.accessorize.Accessory
 import silentorb.mythic.characters.rigs.CharacterRig
 import silentorb.mythic.ent.Id
 import simulation.combat.general.Destructible
