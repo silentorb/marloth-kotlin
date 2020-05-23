@@ -72,7 +72,8 @@ fun convertSimpleDepiction(deck: Deck, id: Id, mesh: MeshName, texture: TextureN
       id = id,
       mesh = mesh,
       transform = transform.scale(body.scale),
-      material = material
+      material = material,
+      location = body.position
   )
 }
 
@@ -202,7 +203,8 @@ fun convertCharacterDepiction(definitions: Definitions, deck: Deck, id: Id, depi
             MeshElement(
                 id = id,
                 mesh = it,
-                transform = transform
+                transform = transform,
+                location = body.position
             )
           },
       armature = ArmatureId.person.name,

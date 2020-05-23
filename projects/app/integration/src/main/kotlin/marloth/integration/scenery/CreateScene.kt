@@ -52,7 +52,7 @@ fun createScene(definitions: Definitions, deck: Deck): (Id) -> GameScene = { pla
             elements = gatherParticleElements(deck, camera.position),
             useDepth = false
         )
-    ) + listOfNotNull(movementRangeLayer, equipmentLayer, targetingLayer)
+    )// + listOfNotNull(movementRangeLayer, equipmentLayer, targetingLayer)
 
     val elementLights = layers.flatMap { layer ->
       layer.elements.flatMap { it.lights }

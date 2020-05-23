@@ -17,6 +17,12 @@ dependencies {
   implementation("org.lwjgl:lwjgl:${Versions.lwjgl}:${Natives.lwjgl}")
   implementation("org.lwjgl:lwjgl-opengl:${Versions.lwjgl}")
   implementation("org.lwjgl:lwjgl-opengl:${Versions.lwjgl}:${Natives.lwjgl}")
+
+  implementation("silentorb.imp:parsing")
+  implementation("silentorb.imp:execution")
+  implementation("silentorb.imp:libraries_standard")
+  implementation("silentorb.imp:libraries_standard_implementation")
+  implementation("silentorb.mythic:imaging")
 }
 
 requires(project, "assets", "definition", "scenery", "simulation")
