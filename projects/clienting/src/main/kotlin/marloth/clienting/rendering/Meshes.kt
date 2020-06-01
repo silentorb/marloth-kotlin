@@ -2,8 +2,8 @@ package marloth.clienting.rendering
 
 import marloth.scenery.enums.MeshId
 import silentorb.imp.execution.*
-import silentorb.imp.library.implementation.standard.standardLibrary
-import silentorb.imp.parsing.parser.parseText
+import silentorb.imp.library.standard.standardLibrary
+import silentorb.imp.parsing.parser.parseToDungeon
 import silentorb.mythic.drawing.createCircleList
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.mapEntry
@@ -84,7 +84,7 @@ fun sampleModel(library: Library, vertexSchema: VertexSchema): (String, String) 
   val functions = library.implementation
 
   return { name, code ->
-    val (dungeon, errors) = parseText(context)(code)
+    val (dungeon, errors) = parseToDungeon("", context)(code)
     if (errors.any())
       throw Error(errors.first().message.name)
 
@@ -105,9 +105,10 @@ fun sampleModel(library: Library, vertexSchema: VertexSchema): (String, String) 
     val dimensions = decimalBounds.end - decimalBounds.start
 
     val stages = mapOf(
-        0f to 20,
-        10f to 15,
-        15f to 10,
+        0f to 10,
+//        0f to 20,
+//        10f to 15,
+//        15f to 10,
         30f to 6,
         60f to 1
     )
