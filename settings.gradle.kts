@@ -24,13 +24,6 @@ val addProjects = scanProjects { currentPath, name ->
 addProjects(file("projects").toPath())
 
 includeBuild("../../mythic/gradle")
-//{
-//  dependencySubstitution {
-//    substitute(module("mythic.gradle.assets.general:1.0")).with(project(":assets_general"))
-//    substitute(module("mythic.gradle.assets.svg:1.0")).with(project(":assets_svg"))
-//  }
-//}
-
 includeBuild("../../mythic")
 includeBuild("../../imp")
 

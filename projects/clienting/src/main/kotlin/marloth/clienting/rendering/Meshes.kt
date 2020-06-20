@@ -11,13 +11,13 @@ import silentorb.mythic.glowing.GeneralMesh
 import silentorb.mythic.glowing.PrimitiveType
 import silentorb.mythic.glowing.createFloatBuffer
 import silentorb.mythic.glowing.newVertexBuffer
-import silentorb.mythic.imaging.fathoming.ModelFunction
-import silentorb.mythic.imaging.fathoming.fathomLibrary
-import silentorb.mythic.imaging.fathoming.sampling.SamplingConfig
-import silentorb.mythic.imaging.fathoming.sampling.sampleFunction
-import silentorb.mythic.imaging.fathoming.surfacing.GridBounds
-import silentorb.mythic.imaging.fathoming.surfacing.getSceneDecimalBounds
-import silentorb.mythic.imaging.fathoming.surfacing.getSceneGridBounds
+import silentorb.mythic.fathom.ModelFunction
+import silentorb.mythic.fathom.fathomLibrary
+import silentorb.mythic.fathom.sampling.SamplingConfig
+import silentorb.mythic.fathom.sampling.sampleFunction
+import silentorb.mythic.fathom.surfacing.GridBounds
+import silentorb.mythic.fathom.surfacing.getSceneDecimalBounds
+import silentorb.mythic.fathom.surfacing.getSceneGridBounds
 import silentorb.mythic.imaging.texturing.texturingLibrary
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.lookinglass.meshes.*
@@ -86,10 +86,10 @@ fun sampleModel(library: Library, vertexSchema: VertexSchema): (String, String) 
   return { name, code ->
     val (dungeon, errors) = parseToDungeon("", context)(code)
     if (errors.any())
-      throw Error(errors.first().message.name)
+      throw Error(errors.first().message.toString())
 
     val graph = dungeon.graph
-    val model = executeToSingleValue(functions, graph)!! as ModelFunction
+    val model = executeToSingleValue(context, functions, graph)!! as ModelFunction
 
     val config = SamplingConfig(
         getDistance = model.distance,

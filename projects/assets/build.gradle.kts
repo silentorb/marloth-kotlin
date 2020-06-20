@@ -13,7 +13,6 @@
 ////    implementation("silentorb.imp:parsing")
 ////    implementation("silentorb.imp:execution")
 ////    implementation("silentorb.imp:libraries_standard")
-////    implementation("silentorb.imp:libraries_standard_implementation")
 ////    implementation("silentorb.mythic:imaging")
 //  }
 //}
@@ -22,7 +21,6 @@ dependencies {
     implementation("silentorb.imp:parsing")
     implementation("silentorb.imp:execution")
     implementation("silentorb.imp:libraries_standard")
-    implementation("silentorb.imp:libraries_standard_implementation")
     implementation("silentorb.mythic:imaging")
 }
 

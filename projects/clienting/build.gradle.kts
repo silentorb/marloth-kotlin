@@ -11,6 +11,7 @@ dependencies {
   implementation("silentorb.mythic:bloom_input")
   implementation("silentorb.mythic:drawing")
   implementation("silentorb.mythic:aura")
+  implementation("silentorb.mythic:fathom")
 
   api("org.lwjgl:lwjgl-glfw:${Versions.lwjgl}")
   implementation("org.lwjgl:lwjgl:${Versions.lwjgl}")
@@ -21,8 +22,8 @@ dependencies {
   implementation("silentorb.imp:parsing")
   implementation("silentorb.imp:execution")
   implementation("silentorb.imp:libraries_standard")
-  implementation("silentorb.imp:libraries_standard_implementation")
   implementation("silentorb.mythic:imaging")
+  api("silentorb.mythic:scenery")
 }
 
-requires(project, "assets", "definition", "scenery", "simulation")
+requires(project, "assets", "definition", "simulation")

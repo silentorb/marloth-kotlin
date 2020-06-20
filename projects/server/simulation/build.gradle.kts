@@ -2,7 +2,7 @@ plugins {
   kotlin("jvm")
 }
 
-requires(project, "scenery")
+requires(project, "marloth_scenery")
 
 dependencies {
   implementation("org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin}")
@@ -18,4 +18,5 @@ dependencies {
   api("silentorb.mythic:debugging")
   api("silentorb.mythic:happenings")
   api("silentorb.mythic:physics")
+  api("silentorb.mythic:scenery")
 }

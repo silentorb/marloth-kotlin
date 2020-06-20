@@ -9,4 +9,4 @@ let color = noise
     variation = 1
     . colorize (RgbColor 12 255 20) (RgbColor 0 0 0)
 
-let output = newModel distance color
+let output = newModel distance color collisionBox
