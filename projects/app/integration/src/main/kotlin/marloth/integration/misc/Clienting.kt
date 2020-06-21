@@ -49,7 +49,7 @@ fun newRenderer(
   val multisampler = if (config.multisamples == 0)
     null
   else
-    createMultiSampler(glow, config.width, config.height, config.multisamples)
+    createMultiSampler(glow, config.dimensions.x, config.dimensions.y, config.multisamples)
 
   return Renderer(
       glow = glow,
@@ -60,7 +60,7 @@ fun newRenderer(
       vertexSchemas = vertexSchemas,
       multisampler = multisampler,
       offscreenBuffers = (0..0).map {
-        prepareScreenFrameBuffer(config.width, config.height, true)
+        prepareScreenFrameBuffer(config.dimensions.x, config.dimensions.y, true)
       }
   )
 }

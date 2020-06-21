@@ -10,4 +10,4 @@ dependencies {
   implementation("silentorb.mythic:debugging")
 }
 
-requires(project, "simulation", "generation_general", "definition")
+requires(project, "simulation", "generation_general")

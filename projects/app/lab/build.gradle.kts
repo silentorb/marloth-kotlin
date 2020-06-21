@@ -8,7 +8,7 @@ dependencies {
   implementation("silentorb.mythic:quartz")
   implementation("silentorb.mythic:platforming")
   implementation("silentorb.mythic:configuration")
-  implementation("silentorb.mythic:desktop")
+  implementation("silentorb.mythic:mythic-desktop")
 }
 
 requires(project, "generation_architecture", "clienting", "integration", "simulation")

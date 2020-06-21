@@ -1,50 +1,61 @@
 package marloth.clienting.rendering
 
 import marloth.scenery.enums.MeshId
-import silentorb.imp.execution.*
+import silentorb.imp.execution.Library
+import silentorb.imp.execution.combineLibraries
+import silentorb.imp.execution.executeToSingleValue
 import silentorb.imp.library.standard.standardLibrary
 import silentorb.imp.parsing.parser.parseToDungeon
 import silentorb.mythic.drawing.createCircleList
-import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.mapEntry
-import silentorb.mythic.glowing.GeneralMesh
-import silentorb.mythic.glowing.PrimitiveType
-import silentorb.mythic.glowing.createFloatBuffer
-import silentorb.mythic.glowing.newVertexBuffer
-import silentorb.mythic.fathom.ModelFunction
 import silentorb.mythic.fathom.fathomLibrary
+import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.fathom.sampling.SamplingConfig
 import silentorb.mythic.fathom.sampling.sampleFunction
 import silentorb.mythic.fathom.surfacing.GridBounds
 import silentorb.mythic.fathom.surfacing.getSceneDecimalBounds
 import silentorb.mythic.fathom.surfacing.getSceneGridBounds
+import silentorb.mythic.glowing.GeneralMesh
+import silentorb.mythic.glowing.PrimitiveType
+import silentorb.mythic.glowing.createFloatBuffer
+import silentorb.mythic.glowing.newVertexBuffer
 import silentorb.mythic.imaging.texturing.texturingLibrary
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.lookinglass.meshes.*
 import silentorb.mythic.lookinglass.meshes.loading.loadGltf
+import silentorb.mythic.lookinglass.shading.toFloatList
+import silentorb.mythic.resource_loading.getUrlPath
 import silentorb.mythic.scenery.Box
 import silentorb.mythic.scenery.MeshName
-import silentorb.mythic.scenery.Shape
-import silentorb.mythic.spatial.toList
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
+import kotlin.streams.toList
 
-fun getModelFilenames(): Array<File> {
-  val modelRoot = getResourceUrl("models")
-  val files = File(modelRoot!!.toURI()).listFiles()
+fun listFiles(path: Path): List<Path> =
+    Files.list(path)
+        .use { paths ->
+          paths
+              .toList()
+              .filterIsInstance<Path>()
+        }
+
+fun getModelFilenames(): List<Path> {
+  val modelRoot = getUrlPath("models")
+  val files = listFiles(modelRoot)
   return files
 }
 
-fun getMeshFilenames(): Array<File> {
-  val modelRoot = getResourceUrl("gltf")
-  val files = File(modelRoot!!.toURI()).listFiles()
+fun getMeshFilenames(): List<Path> {
+  val modelRoot = getUrlPath("gltf")
+  val files = listFiles(modelRoot)
   return files
 }
 
 fun importedMeshes(vertexSchemas: VertexSchemas) =
     getMeshFilenames()
-        .map { it.name }
+        .map { it.fileName.toString() }
         .map { loadGltf(vertexSchemas, it, "gltf/" + it + "/" + it) }
-//    }
 
 fun createHollowCircleMesh(vertexSchema: VertexSchema, resolution: Int): GeneralMesh {
   val values2d = createCircleList(1f, resolution, 0f, -1f)
@@ -69,7 +80,7 @@ fun newImpLibrary(): Library =
 fun sampleGeneralMesh(vertexSchema: VertexSchema, config: SamplingConfig, bounds: GridBounds): GeneralMesh {
   val points = sampleFunction(config, bounds)
   val vertices = points
-      .flatMap { toList(it.location) + toList(it.normal) + listOf(it.size) + toList(it.color) }
+      .flatMap(::toFloatList)
       .toFloatArray()
   return GeneralMesh(
       vertexSchema = vertexSchema,
@@ -92,16 +103,16 @@ fun sampleModel(library: Library, vertexSchema: VertexSchema): (String, String) 
     val model = executeToSingleValue(context, functions, graph)!! as ModelFunction
 
     val config = SamplingConfig(
-        getDistance = model.distance,
-        getColor = model.color,
+        getDistance = model.form,
+        getShading = model.shading,
         resolution = 10,
         pointSize = 7f
     )
 
-    val bounds = getSceneGridBounds(model.distance, 1f)
+    val bounds = getSceneGridBounds(model.form, 1f)
         .pad(1)
 
-    val decimalBounds = getSceneDecimalBounds(model.distance)
+    val decimalBounds = getSceneDecimalBounds(model.form)
     val dimensions = decimalBounds.end - decimalBounds.start
 
     val stages = mapOf(
@@ -127,7 +138,7 @@ fun createMeshes(vertexSchemas: VertexSchemas): Pair<Map<MeshName, ModelMesh>, L
   val library = newImpLibrary()
   val imports = importedMeshes(vertexSchemas)
   val modelSources = getModelFilenames()
-      .associate { Pair(toCamelCase(it.nameWithoutExtension), loadTextResource("models/${it.name}")) }
+      .associate { Pair(toCamelCase(File(it.toString()).nameWithoutExtension), loadTextResource("models/${it.fileName}")) }
   val models = modelSources
       .mapValues(mapEntry(sampleModel(library, vertexSchemas.shadedPoint)))
 
