@@ -20,8 +20,6 @@ import silentorb.mythic.imaging.texturing.texturingLibrary
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.lookinglass.meshes.*
 import silentorb.mythic.lookinglass.meshes.loading.loadGltf
-import silentorb.mythic.lookinglass.partitionSamples
-import silentorb.mythic.lookinglass.toFloatList
 import silentorb.mythic.resource_loading.getUrlPath
 import silentorb.mythic.scenery.Box
 import silentorb.mythic.scenery.MeshName
@@ -107,10 +105,10 @@ fun sampleModel(library: Library, vertexSchema: VertexSchema): (String, String) 
     val config = SamplingConfig(
         getDistance = model.form,
         getShading = model.shading,
+        pointSizeScale = 5f,
+//        pointSize = 8f,
         resolution = 4,
-        pointSize = 8f,
-        levels = 3,
-        levelOffsetRange = 0.5f
+        levels = 3
     )
 
     val sampledModel = sampleGeneralMesh(vertexSchema, config, bounds, defaultLodRanges.takeLast(config.levels))
