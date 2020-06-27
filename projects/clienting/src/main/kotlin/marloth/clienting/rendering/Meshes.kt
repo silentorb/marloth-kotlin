@@ -76,33 +76,14 @@ fun newImpLibrary(): Library =
     )
 
 val defaultLodRanges: LodRanges = listOf(
-    10f,
-    20f,
-    30f,
-    40f,
-    50f
+    60f,
+    25f,
+    10f
 )
 
-fun sampleGeneralMesh(vertexSchema: VertexSchema, config: SamplingConfig, bounds: GridBounds): SampledModel {
-  val initialPoints = sampleForm(config, config.resolution, bounds)
-  val (partitioning, points) = partitionSamples(config.levels, initialPoints)
-  val vertices = points
-      .flatMap(::toFloatList)
-      .toFloatArray()
-
-  val mesh = GeneralMesh(
-      vertexSchema = vertexSchema,
-      primitiveType = PrimitiveType.points,
-      vertexBuffer = newVertexBuffer(vertexSchema).load(createFloatBuffer(vertices)),
-      count = vertices.size / vertexSchema.floatSize
-  )
-
-  return SampledModel(
-      mesh = mesh,
-      partitioning = partitioning,
-      levels = config.levels,
-      lodRanges = defaultLodRanges.takeLast(config.levels)
-  )
+fun sampleGeneralMesh(vertexSchema: VertexSchema, config: SamplingConfig, bounds: GridBounds, lodRanges: LodRanges): SampledModel {
+  val initialPoints = sampleForm(config, bounds)
+  return newSampledModel(vertexSchema, lodRanges, config.levels, initialPoints)
 }
 
 fun sampleModel(library: Library, vertexSchema: VertexSchema): (String, String) -> ModelMesh {
@@ -126,13 +107,13 @@ fun sampleModel(library: Library, vertexSchema: VertexSchema): (String, String) 
     val config = SamplingConfig(
         getDistance = model.form,
         getShading = model.shading,
-        resolution = 3,
-        pointSize = 5f,
+        resolution = 4,
+        pointSize = 8f,
         levels = 3,
-        levelOffsetRange = 0.3f
+        levelOffsetRange = 0.5f
     )
 
-    val sampledModel = sampleGeneralMesh(vertexSchema, config, bounds)
+    val sampledModel = sampleGeneralMesh(vertexSchema, config, bounds, defaultLodRanges.takeLast(config.levels))
 
     ModelMesh(
         id = name,
