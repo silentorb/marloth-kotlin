@@ -147,9 +147,9 @@ fun createOrbitalCamera(camera: MapViewOrbitalCamera): Camera {
       position,
       Quaternion(),
       nearClip = 0.001f,
-      angleOrZoom = camera.distance,
+      angleOrZoom = camera.distance
 
-      lookAt = camera.target
+//      lookAt = camera.target
   )
 }
 

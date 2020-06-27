@@ -56,7 +56,6 @@ fun depictionTransform(bodies: Table<Body>, characterRigs: Table<CharacterRig>, 
     translate.rotate(characterRig.facingOrientation)
   else
     translate.rotate(body.orientation)
-
 }
 
 fun convertSimpleDepiction(deck: Deck, id: Id, mesh: MeshName, texture: TextureName? = null): MeshElement? {

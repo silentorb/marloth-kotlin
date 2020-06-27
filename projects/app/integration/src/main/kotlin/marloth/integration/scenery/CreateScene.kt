@@ -8,12 +8,14 @@ import marloth.clienting.rendering.emptyCamera
 import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
+import silentorb.mythic.lookinglass.ModelMeshMap
 import silentorb.mythic.lookinglass.SceneLayer
+import silentorb.mythic.lookinglass.cullElementGroups
 import silentorb.mythic.scenery.Scene
 import simulation.main.Deck
 import simulation.misc.Definitions
 
-fun createScene(definitions: Definitions, deck: Deck): (Id) -> GameScene = { player ->
+fun createScene(meshes: ModelMeshMap, definitions: Definitions, deck: Deck): (Id) -> GameScene = { player ->
   if (!deck.characters.containsKey(player))
     GameScene(
         main = Scene(
@@ -45,7 +47,7 @@ fun createScene(definitions: Definitions, deck: Deck): (Id) -> GameScene = { pla
             useDepth = false
         ),
         SceneLayer(
-            elements = gatherVisualElements(definitions, deck, player, characterRig),
+            elements = cullElementGroups(meshes, camera, gatherVisualElements(definitions, deck, player, characterRig)),
             useDepth = true
         ),
         SceneLayer(

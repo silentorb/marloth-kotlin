@@ -11,19 +11,17 @@ import silentorb.mythic.ent.mapEntry
 import silentorb.mythic.fathom.fathomLibrary
 import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.fathom.sampling.SamplingConfig
-import silentorb.mythic.fathom.sampling.sampleFunction
+import silentorb.mythic.fathom.sampling.sampleForm
 import silentorb.mythic.fathom.surfacing.GridBounds
 import silentorb.mythic.fathom.surfacing.getSceneDecimalBounds
 import silentorb.mythic.fathom.surfacing.getSceneGridBounds
-import silentorb.mythic.glowing.GeneralMesh
-import silentorb.mythic.glowing.PrimitiveType
-import silentorb.mythic.glowing.createFloatBuffer
-import silentorb.mythic.glowing.newVertexBuffer
+import silentorb.mythic.glowing.*
 import silentorb.mythic.imaging.texturing.texturingLibrary
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.lookinglass.meshes.*
 import silentorb.mythic.lookinglass.meshes.loading.loadGltf
-import silentorb.mythic.lookinglass.shading.toFloatList
+import silentorb.mythic.lookinglass.partitionSamples
+import silentorb.mythic.lookinglass.toFloatList
 import silentorb.mythic.resource_loading.getUrlPath
 import silentorb.mythic.scenery.Box
 import silentorb.mythic.scenery.MeshName
@@ -77,16 +75,33 @@ fun newImpLibrary(): Library =
         fathomLibrary()
     )
 
-fun sampleGeneralMesh(vertexSchema: VertexSchema, config: SamplingConfig, bounds: GridBounds): GeneralMesh {
-  val points = sampleFunction(config, bounds)
+val defaultLodRanges: LodRanges = listOf(
+    10f,
+    20f,
+    30f,
+    40f,
+    50f
+)
+
+fun sampleGeneralMesh(vertexSchema: VertexSchema, config: SamplingConfig, bounds: GridBounds): SampledModel {
+  val initialPoints = sampleForm(config, config.resolution, bounds)
+  val (partitioning, points) = partitionSamples(config.levels, initialPoints)
   val vertices = points
       .flatMap(::toFloatList)
       .toFloatArray()
-  return GeneralMesh(
+
+  val mesh = GeneralMesh(
       vertexSchema = vertexSchema,
       primitiveType = PrimitiveType.points,
       vertexBuffer = newVertexBuffer(vertexSchema).load(createFloatBuffer(vertices)),
       count = vertices.size / vertexSchema.floatSize
+  )
+
+  return SampledModel(
+      mesh = mesh,
+      partitioning = partitioning,
+      levels = config.levels,
+      lodRanges = defaultLodRanges.takeLast(config.levels)
   )
 }
 
@@ -102,33 +117,26 @@ fun sampleModel(library: Library, vertexSchema: VertexSchema): (String, String) 
     val graph = dungeon.graph
     val model = executeToSingleValue(context, functions, graph)!! as ModelFunction
 
-    val config = SamplingConfig(
-        getDistance = model.form,
-        getShading = model.shading,
-        resolution = 10,
-        pointSize = 7f
-    )
-
     val bounds = getSceneGridBounds(model.form, 1f)
         .pad(1)
 
     val decimalBounds = getSceneDecimalBounds(model.form)
     val dimensions = decimalBounds.end - decimalBounds.start
 
-    val stages = mapOf(
-        0f to 10,
-//        0f to 20,
-//        10f to 15,
-//        15f to 10,
-        30f to 6,
-        60f to 1
+    val config = SamplingConfig(
+        getDistance = model.form,
+        getShading = model.shading,
+        resolution = 3,
+        pointSize = 5f,
+        levels = 3,
+        levelOffsetRange = 0.3f
     )
-    val lod = stages.mapValues { (_, resolution) ->
-      sampleGeneralMesh(vertexSchema, config.copy(resolution = resolution), bounds)
-    }
+
+    val sampledModel = sampleGeneralMesh(vertexSchema, config, bounds)
+
     ModelMesh(
         id = name,
-        particleLod = lod,
+        sampledModel = sampledModel,
         bounds = Box(dimensions / 2f)
     )
   }
