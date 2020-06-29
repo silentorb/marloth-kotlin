@@ -1,8 +1,11 @@
 package marloth.clienting.rendering
 
 import marloth.scenery.enums.MeshId
+import silentorb.imp.campaign.getModulesExecutionArtifacts
 import silentorb.imp.campaign.loadWorkspace
+import silentorb.imp.core.Context
 import silentorb.imp.core.Dungeon
+import silentorb.imp.core.FunctionImplementationMap
 import silentorb.imp.execution.Library
 import silentorb.imp.execution.combineLibraries
 import silentorb.imp.execution.executeToSingleValue
@@ -125,44 +128,42 @@ fun sampleModelOld(library: Library, vertexSchema: VertexSchema): (String, Strin
   }
 }
 
-fun sampleModel(library: Library, vertexSchema: VertexSchema): (String, Dungeon) -> ModelMesh {
-  val context = listOf(library.namespace)
-  val functions = library.implementation
+fun sampleModel(context: Context, functions: FunctionImplementationMap, vertexSchema: VertexSchema): (String, Dungeon) -> ModelMesh =
+    { name, dungeon ->
+      val graph = dungeon.graph
+      val model = executeToSingleValue(context, functions, graph)!! as ModelFunction
+      val voxelsPerUnit = 10
+      val (vertices, triangles) = marchingMesh(voxelsPerUnit, model.form, model.shading)
+      val vertexFloats = vertices
+          .flatMap(::serializeVertex)
+          .toFloatArray()
 
-  return { name, dungeon ->
-    val graph = dungeon.graph
-    val model = executeToSingleValue(context, functions, graph)!! as ModelFunction
-    val voxelsPerUnit = 10
-    val (vertices, triangles) = marchingMesh(voxelsPerUnit, model.form, model.shading)
-    val vertexFloats = vertices
-        .flatMap(::serializeVertex)
-        .toFloatArray()
+      val indices = createIntBuffer(triangles.flatten())
+      val mesh = GeneralMesh(
+          vertexSchema = vertexSchema,
+          vertexBuffer = newVertexBuffer(vertexSchema).load(createFloatBuffer(vertexFloats)),
+          count = vertices.size / vertexSchema.floatSize,
+          indices = indices,
+          primitiveType = PrimitiveType.triangles
+      )
 
-    val mesh = GeneralMesh(
-        vertexSchema = vertexSchema,
-        vertexBuffer = newVertexBuffer(vertexSchema).load(createFloatBuffer(vertexFloats)),
-        count = vertices.size / vertexSchema.floatSize,
-        primitiveType = PrimitiveType.triangles
-    )
+      val collision = model.collision
 
-    val collision = model.collision
-
-    ModelMesh(
-        id = name,
-        primitives = listOf(
-            Primitive(
-                mesh = mesh,
-                material = Material(
-                    drawMethod = DrawMethod.triangleFan,
-                    shading = true,
-                    coloredVertices = true
-                )
-            )
-        ),
-        bounds = if (collision != null) collision(getSceneDecimalBounds(model.form)) else null
-    )
-  }
-}
+      ModelMesh(
+          id = name,
+          primitives = listOf(
+              Primitive(
+                  mesh = mesh,
+                  material = Material(
+                      drawMethod = DrawMethod.triangles,
+                      shading = true,
+                      coloredVertices = true
+                  )
+              )
+          ),
+          bounds = if (collision != null) collision(getSceneDecimalBounds(model.form)) else null
+      )
+    }
 
 fun createMeshes(vertexSchemas: VertexSchemas): Pair<Map<MeshName, ModelMesh>, List<Armature>> {
   val library = newImpLibrary()
@@ -170,13 +171,12 @@ fun createMeshes(vertexSchemas: VertexSchemas): Pair<Map<MeshName, ModelMesh>, L
   val workspaceUrl = Thread.currentThread().contextClassLoader.getResource("models/workspace.yaml")!!
   val (workspace, campaignErrors, parsingErrors) = loadWorkspace(library, Paths.get(workspaceUrl.toURI()).parent)
   val modules = workspace.modules
+  val (context, functions) = getModulesExecutionArtifacts(library.implementation, listOf(library.namespace), modules)
   val assets = modules["models"]!!.dungeons
-//  val modelSources = getModelFilenames()
-//      .associate { Pair(toCamelCase(File(it.toString()).nameWithoutExtension), loadTextResource("models/${it.fileName}")) }
   val models = assets
-      .mapValues(mapEntry(sampleModel(library, vertexSchemas.shadedColor)))
+      .mapValues(mapEntry(sampleModel(context, functions, vertexSchemas.shadedColor)))
 
-  val importedMeshes = imports.flatMap { it.meshes }.associate { Pair(it.id, it) }
+  val importedMeshes = imports.flatMap { it.meshes }.associateBy { it.id }
 
   val customMeshes = mapOf(
       MeshId.hollowCircle to createHollowCircleMesh(vertexSchemas.flat, 64),
