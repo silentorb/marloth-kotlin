@@ -1,6 +1,8 @@
 package marloth.clienting.rendering
 
 import marloth.scenery.enums.MeshId
+import silentorb.imp.campaign.loadWorkspace
+import silentorb.imp.core.Dungeon
 import silentorb.imp.execution.Library
 import silentorb.imp.execution.combineLibraries
 import silentorb.imp.execution.executeToSingleValue
@@ -10,14 +12,12 @@ import silentorb.mythic.drawing.createCircleList
 import silentorb.mythic.ent.mapEntry
 import silentorb.mythic.fathom.fathomLibrary
 import silentorb.mythic.fathom.misc.ModelFunction
-import silentorb.mythic.fathom.misc.getNormal
 import silentorb.mythic.fathom.sampling.SamplingConfig
 import silentorb.mythic.fathom.sampling.sampleForm
 import silentorb.mythic.fathom.surfacing.GridBounds
 import silentorb.mythic.fathom.surfacing.getSceneDecimalBounds
 import silentorb.mythic.fathom.surfacing.getSceneGridBounds
-import silentorb.mythic.fathom.surfacing.old.marching.marchingCubes
-import silentorb.mythic.fathom.surfacing.old.voxelize
+import silentorb.mythic.fathom.surfacing.old.marching.marchingMesh
 import silentorb.mythic.glowing.*
 import silentorb.mythic.imaging.texturing.texturingLibrary
 import silentorb.mythic.lookinglass.*
@@ -26,11 +26,10 @@ import silentorb.mythic.lookinglass.meshes.loading.loadGltf
 import silentorb.mythic.resource_loading.getUrlPath
 import silentorb.mythic.scenery.Box
 import silentorb.mythic.scenery.MeshName
-import silentorb.mythic.spatial.Vector3
-import silentorb.mythic.spatial.toVector3
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 import kotlin.streams.toList
 
 fun listFiles(path: Path): List<Path> =
@@ -126,32 +125,22 @@ fun sampleModelOld(library: Library, vertexSchema: VertexSchema): (String, Strin
   }
 }
 
-fun sampleModel(library: Library, vertexSchema: VertexSchema): (String, String) -> ModelMesh {
+fun sampleModel(library: Library, vertexSchema: VertexSchema): (String, Dungeon) -> ModelMesh {
   val context = listOf(library.namespace)
   val functions = library.implementation
 
-  return { name, code ->
-    val (dungeon, errors) = parseToDungeon("", context)(code)
-    if (errors.any())
-      throw Error(errors.first().message.toString())
-
+  return { name, dungeon ->
     val graph = dungeon.graph
     val model = executeToSingleValue(context, functions, graph)!! as ModelFunction
-
     val voxelsPerUnit = 10
-    val bounds = getSceneGridBounds(model.form, 1f)
-        .pad(1)
-    val decimalBounds = getSceneDecimalBounds(model.form)
-    val voxels = voxelize(model.form, bounds, 1, voxelsPerUnit)
-    val dimensions = (bounds.end - bounds.start) * voxelsPerUnit
-    val vertices = marchingCubes(voxels, bounds.start.toVector3(), dimensions,
-        Vector3.unit / voxelsPerUnit.toFloat(), 0.5f,
-        serializeVertex(model.shading) { location -> getNormal(model.form, location)}
-    )
+    val (vertices, triangles) = marchingMesh(voxelsPerUnit, model.form, model.shading)
+    val vertexFloats = vertices
+        .flatMap(::serializeVertex)
+        .toFloatArray()
 
     val mesh = GeneralMesh(
         vertexSchema = vertexSchema,
-        vertexBuffer = newVertexBuffer(vertexSchema).load(createFloatBuffer(vertices)),
+        vertexBuffer = newVertexBuffer(vertexSchema).load(createFloatBuffer(vertexFloats)),
         count = vertices.size / vertexSchema.floatSize,
         primitiveType = PrimitiveType.triangles
     )
@@ -170,7 +159,7 @@ fun sampleModel(library: Library, vertexSchema: VertexSchema): (String, String) 
                 )
             )
         ),
-        bounds = if (collision != null) collision(decimalBounds) else null
+        bounds = if (collision != null) collision(getSceneDecimalBounds(model.form)) else null
     )
   }
 }
@@ -178,9 +167,13 @@ fun sampleModel(library: Library, vertexSchema: VertexSchema): (String, String) 
 fun createMeshes(vertexSchemas: VertexSchemas): Pair<Map<MeshName, ModelMesh>, List<Armature>> {
   val library = newImpLibrary()
   val imports = importedMeshes(vertexSchemas)
-  val modelSources = getModelFilenames()
-      .associate { Pair(toCamelCase(File(it.toString()).nameWithoutExtension), loadTextResource("models/${it.fileName}")) }
-  val models = modelSources
+  val workspaceUrl = Thread.currentThread().contextClassLoader.getResource("models/workspace.yaml")!!
+  val (workspace, campaignErrors, parsingErrors) = loadWorkspace(library, Paths.get(workspaceUrl.toURI()).parent)
+  val modules = workspace.modules
+  val assets = modules["models"]!!.dungeons
+//  val modelSources = getModelFilenames()
+//      .associate { Pair(toCamelCase(File(it.toString()).nameWithoutExtension), loadTextResource("models/${it.fileName}")) }
+  val models = assets
       .mapValues(mapEntry(sampleModel(library, vertexSchemas.shadedColor)))
 
   val importedMeshes = imports.flatMap { it.meshes }.associate { Pair(it.id, it) }

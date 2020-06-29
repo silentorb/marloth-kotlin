@@ -1,19 +1,13 @@
 import silentorb.mythic.fathom.*
 import silentorb.mythic.generation.texturing.RgbColor
 
-let distance = cube (Vector3 10.0 1.0 10.0)
-
-let bump = noise
+let dirtBump = noise
     scale = 74
     detail = 28
     variation = 112
 
-let color = noise
+let dirtColor = noise
     scale = 63
     detail = 78
     variation = 1
     . colorize (RgbColor 255 32 20) (RgbColor 30 50 0)
-
-let surface = deform distance (bump .* 0.5)
-
-let main = newModel surface color collisionBox
