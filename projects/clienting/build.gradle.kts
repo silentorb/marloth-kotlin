@@ -23,6 +23,7 @@ dependencies {
   implementation("silentorb.imp:execution")
   implementation("silentorb.imp:libraries_standard")
   implementation("silentorb.mythic:imaging")
+  implementation("silentorb.mythic:debugging")
   implementation("silentorb.imp:campaign")
   api("silentorb.mythic:scenery")
 }

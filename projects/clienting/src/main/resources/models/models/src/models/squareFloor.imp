@@ -1,7 +1,7 @@
 import silentorb.mythic.fathom.*
 import silentorb.mythic.generation.texturing.RgbColor
 
-let distance = cube (Vector3 10.0 10.0 1.0)
+let form = cube (Vector3 10.0 10.0 1.0)
 
 let color = noise
     scale = 63
@@ -9,4 +9,4 @@ let color = noise
     variation = 1
     . colorize (RgbColor 12 255 20) (RgbColor 0 0 0)
 
-let output = newModel distance color collisionBox
+let output = newModel form color (collisionBox form)

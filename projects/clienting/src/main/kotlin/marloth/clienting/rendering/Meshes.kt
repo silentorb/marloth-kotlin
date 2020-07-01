@@ -20,7 +20,7 @@ import silentorb.mythic.fathom.sampling.sampleForm
 import silentorb.mythic.fathom.surfacing.GridBounds
 import silentorb.mythic.fathom.surfacing.getSceneDecimalBounds
 import silentorb.mythic.fathom.surfacing.getSceneGridBounds
-import silentorb.mythic.fathom.surfacing.old.marching.marchingMesh
+import silentorb.mythic.fathom.marching.marchingMesh
 import silentorb.mythic.glowing.*
 import silentorb.mythic.imaging.texturing.texturingLibrary
 import silentorb.mythic.lookinglass.*
@@ -161,7 +161,7 @@ fun sampleModel(context: Context, functions: FunctionImplementationMap, vertexSc
                   )
               )
           ),
-          bounds = if (collision != null) collision(getSceneDecimalBounds(model.form)) else null
+          bounds = model.collision
       )
     }
 

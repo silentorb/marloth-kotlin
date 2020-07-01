@@ -2,8 +2,6 @@ plugins {
   kotlin("jvm")
 }
 
-requires(project, "marloth_scenery")
-
 dependencies {
   implementation("org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin}")
   api(group = "org.recast4j", name = "recast", version = "1.2.5")
@@ -15,8 +13,11 @@ dependencies {
   api("silentorb.mythic:randomly")
   api("silentorb.mythic:ent")
   api("silentorb.mythic:breeze")
-  api("silentorb.mythic:debugging")
   api("silentorb.mythic:happenings")
   api("silentorb.mythic:physics")
   api("silentorb.mythic:scenery")
+  implementation("silentorb.mythic:debugging")
+  implementation("silentorb.mythic:mythic-shape-meshes")
 }
+
+requires(project, "marloth_scenery")

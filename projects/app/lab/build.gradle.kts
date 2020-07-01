@@ -9,6 +9,7 @@ dependencies {
   implementation("silentorb.mythic:platforming")
   implementation("silentorb.mythic:configuration")
   implementation("silentorb.mythic:mythic-desktop")
+  implementation("silentorb.mythic:debugging")
 }
 
 requires(project, "generation_architecture", "clienting", "integration", "simulation")

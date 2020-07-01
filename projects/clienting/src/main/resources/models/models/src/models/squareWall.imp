@@ -2,8 +2,10 @@ import silentorb.mythic.fathom.*
 import silentorb.mythic.generation.texturing.RgbColor
 import lib.*
 
-let distance = cube (Vector3 10.0 1.0 10.0)
+let dimensions = Vector3 10.0 1.0 10.0
+let distance = cube dimensions
 
-let surface = deform distance (dirtBump .* 0.5)
+let form = deform distance (dirtBump .* 0.5)
 
-let main = newModel surface dirtColor collisionBox
+let main = newModel form dirtColor (collisionBox dimensions)
+
