@@ -1,11 +1,10 @@
 package marloth.clienting.rendering
 
 import marloth.scenery.enums.MeshId
+import silentorb.imp.campaign.codeFromFile
 import silentorb.imp.campaign.getModulesExecutionArtifacts
 import silentorb.imp.campaign.loadWorkspace
-import silentorb.imp.core.Context
-import silentorb.imp.core.Dungeon
-import silentorb.imp.core.FunctionImplementationMap
+import silentorb.imp.core.*
 import silentorb.imp.execution.Library
 import silentorb.imp.execution.combineLibraries
 import silentorb.imp.execution.executeToSingleValue
@@ -91,47 +90,9 @@ fun sampleGeneralMesh(vertexSchema: VertexSchema, config: SamplingConfig, bounds
   return newSampledModel(vertexSchema, lodRanges, config.levels, initialPoints)
 }
 
-fun sampleModelOld(library: Library, vertexSchema: VertexSchema): (String, String) -> ModelMesh {
-  val context = listOf(library.namespace)
-  val functions = library.implementation
-
-  return { name, code ->
-    val (dungeon, errors) = parseToDungeon("", context)(code)
-    if (errors.any())
-      throw Error(errors.first().message.toString())
-
-    val graph = dungeon.graph
-    val model = executeToSingleValue(context, functions, graph)!! as ModelFunction
-
-    val bounds = getSceneGridBounds(model.form, 1f)
-        .pad(1)
-
-    val decimalBounds = getSceneDecimalBounds(model.form)
-    val dimensions = decimalBounds.end - decimalBounds.start
-
-    val config = SamplingConfig(
-        getDistance = model.form,
-        getShading = model.shading,
-        pointSizeScale = 5f,
-//        pointSize = 8f,
-        resolution = 4,
-        levels = 3
-    )
-
-    val sampledModel = sampleGeneralMesh(vertexSchema, config, bounds, defaultLodRanges.takeLast(config.levels))
-
-    ModelMesh(
-        id = name,
-        sampledModel = sampledModel,
-        bounds = Box(dimensions / 2f)
-    )
-  }
-}
-
-fun sampleModel(context: Context, functions: FunctionImplementationMap, vertexSchema: VertexSchema): (String, Dungeon) -> ModelMesh =
-    { name, dungeon ->
-      val graph = dungeon.graph
-      val model = executeToSingleValue(context, functions, graph)!! as ModelFunction
+fun sampleModel(context: Context, functions: FunctionImplementationMap, vertexSchema: VertexSchema): (PathKey) -> ModelMesh =
+    { key ->
+      val model = executeToSingleValue(context, functions, key)!! as ModelFunction
       val voxelsPerUnit = 10
       val (vertices, triangles) = marchingMesh(voxelsPerUnit, model.form, model.shading)
       val vertexFloats = vertices
@@ -147,10 +108,8 @@ fun sampleModel(context: Context, functions: FunctionImplementationMap, vertexSc
           primitiveType = PrimitiveType.triangles
       )
 
-      val collision = model.collision
-
       ModelMesh(
-          id = name,
+          id = key.name,
           primitives = listOf(
               Primitive(
                   mesh = mesh,
@@ -169,12 +128,14 @@ fun createMeshes(vertexSchemas: VertexSchemas): Pair<Map<MeshName, ModelMesh>, L
   val library = newImpLibrary()
   val imports = importedMeshes(vertexSchemas)
   val workspaceUrl = Thread.currentThread().contextClassLoader.getResource("models/workspace.yaml")!!
-  val (workspace, campaignErrors, parsingErrors) = loadWorkspace(library, Paths.get(workspaceUrl.toURI()).parent)
+  val (workspace, errors) = loadWorkspace(codeFromFile, library, Paths.get(workspaceUrl.toURI()).parent)
   val modules = workspace.modules
   val (context, functions) = getModulesExecutionArtifacts(library.implementation, listOf(library.namespace), modules)
-  val assets = modules["models"]!!.dungeons
-  val models = assets
-      .mapValues(mapEntry(sampleModel(context, functions, vertexSchemas.shadedColor)))
+  val outputs = getGraphOutputNodes(mergeNamespaces(context))
+      .filter { it.path == "models" }
+  val models = outputs
+      .associateWith(sampleModel(context, functions, vertexSchemas.shadedColor))
+      .mapKeys { it.key.name }
 
   val importedMeshes = imports.flatMap { it.meshes }.associateBy { it.id }
 
