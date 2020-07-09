@@ -1,9 +1,10 @@
 import silentorb.mythic.fathom.*
 import silentorb.mythic.generation.texturing.RgbColor
+import silentorb.mythic.spatial.*
 import lib.*
 
 let squareWall = {
-    let dimensions = Vector3 10.0 1.0 10.0
+    let dimensions = Vector3 10.0 1.5 10.0
     let distance = cube dimensions
 
     let form = deform distance (dirtBump .* 0.2)

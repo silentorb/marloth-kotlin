@@ -1,0 +1,20 @@
+import silentorb.mythic.fathom.*
+import silentorb.mythic.generation.texturing.RgbColor
+import silentorb.mythic.spatial.*
+import lib.*
+
+let squareWall = {
+    let dimensions = Vector3 10.0 1.5 10.0
+    let sideDimensions = Vector3 3.5 1.5 10.0
+
+    let distance = cube dimensions
+
+    let form = deform distance (dirtBump .* 0.2)
+
+    let sideBounds = (collisionBox sideDimensions)
+
+    let bounds = + (transform (newMatrix.translate (Vector3 3.2 0.0 0.0)) sideBounds)
+        (transform (newMatrix.translate (Vector3 -3.2 0.0 0.0)) sideBounds)
+
+    let main = newModel form dirtColor bounds
+}

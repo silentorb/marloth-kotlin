@@ -1,4 +1,5 @@
 import silentorb.mythic.fathom.*
+import silentorb.mythic.spatial.*
 import silentorb.mythic.generation.texturing.RgbColor
 
 let squareFloor = {
