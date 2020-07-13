@@ -5,20 +5,14 @@ import silentorb.imp.campaign.codeFromFile
 import silentorb.imp.campaign.getModulesExecutionArtifacts
 import silentorb.imp.campaign.loadWorkspace
 import silentorb.imp.core.*
-import silentorb.imp.execution.Library
-import silentorb.imp.execution.combineLibraries
 import silentorb.imp.execution.executeToSingleValue
 import silentorb.imp.library.standard.standardLibrary
-import silentorb.imp.parsing.parser.parseToDungeon
 import silentorb.mythic.drawing.createCircleList
-import silentorb.mythic.ent.mapEntry
 import silentorb.mythic.fathom.fathomLibrary
 import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.fathom.sampling.SamplingConfig
 import silentorb.mythic.fathom.sampling.sampleForm
 import silentorb.mythic.fathom.surfacing.GridBounds
-import silentorb.mythic.fathom.surfacing.getSceneDecimalBounds
-import silentorb.mythic.fathom.surfacing.getSceneGridBounds
 import silentorb.mythic.fathom.marching.marchingMesh
 import silentorb.mythic.glowing.*
 import silentorb.mythic.imaging.texturing.texturingLibrary
@@ -26,9 +20,7 @@ import silentorb.mythic.lookinglass.*
 import silentorb.mythic.lookinglass.meshes.*
 import silentorb.mythic.lookinglass.meshes.loading.loadGltf
 import silentorb.mythic.resource_loading.getUrlPath
-import silentorb.mythic.scenery.Box
 import silentorb.mythic.scenery.MeshName
-import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -71,8 +63,8 @@ fun createHollowCircleMesh(vertexSchema: VertexSchema, resolution: Int): General
   )
 }
 
-fun newImpLibrary(): Library =
-    combineLibraries(
+fun newImpLibrary() =
+    listOf(
         standardLibrary(),
 //      auraLibrary(),
         texturingLibrary(),
@@ -90,9 +82,10 @@ fun sampleGeneralMesh(vertexSchema: VertexSchema, config: SamplingConfig, bounds
   return newSampledModel(vertexSchema, lodRanges, config.levels, initialPoints)
 }
 
-fun sampleModel(context: Context, functions: FunctionImplementationMap, vertexSchema: VertexSchema): (PathKey) -> ModelMesh =
+fun sampleModel(context: Context, vertexSchema: VertexSchema): (PathKey) -> ModelMesh =
     { key ->
-      val model = executeToSingleValue(context, functions, key)!! as ModelFunction
+      val value = executeToSingleValue(context, key)!!
+      val model = value as ModelFunction
       val voxelsPerUnit = 10
       val (vertices, triangles) = marchingMesh(voxelsPerUnit, model.form, model.shading)
       val vertexFloats = vertices
@@ -125,16 +118,16 @@ fun sampleModel(context: Context, functions: FunctionImplementationMap, vertexSc
     }
 
 fun createMeshes(vertexSchemas: VertexSchemas): Pair<Map<MeshName, ModelMesh>, List<Armature>> {
-  val library = newImpLibrary()
+  val initialContext = newImpLibrary()
   val imports = importedMeshes(vertexSchemas)
   val workspaceUrl = Thread.currentThread().contextClassLoader.getResource("models/workspace.yaml")!!
-  val (workspace, errors) = loadWorkspace(codeFromFile, library, Paths.get(workspaceUrl.toURI()).parent)
+  val (workspace, errors) = loadWorkspace(codeFromFile, initialContext, Paths.get(workspaceUrl.toURI()).parent)
   val modules = workspace.modules
-  val (context, functions) = getModulesExecutionArtifacts(library.implementation, listOf(library.namespace), modules)
+  val context = getModulesExecutionArtifacts(initialContext, modules)
   val outputs = getGraphOutputNodes(mergeNamespaces(context))
       .filter { it.path == "models" }
   val models = outputs
-      .associateWith(sampleModel(context, functions, vertexSchemas.shadedColor))
+      .associateWith(sampleModel(context, vertexSchemas.shadedColor))
       .mapKeys { it.key.name }
 
   val importedMeshes = imports.flatMap { it.meshes }.associateBy { it.id }

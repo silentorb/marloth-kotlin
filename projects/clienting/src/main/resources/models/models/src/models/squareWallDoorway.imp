@@ -1,20 +1,30 @@
 import silentorb.mythic.fathom.*
 import silentorb.mythic.generation.texturing.RgbColor
 import silentorb.mythic.spatial.*
+import imp.standard.math.*
 import lib.*
 
 let squareWall = {
-    let dimensions = Vector3 10.0 1.5 10.0
-    let sideDimensions = Vector3 3.5 1.5 10.0
+    let width = 10.0
+    let height = 10.0
+    let centerWidth = 3.0
+    let sideWidth = / (width .- centerWidth) 2.0
+    let sideOffset = + (sideWidth ./ 2.0) (centerWidth ./ 2.0)
+    let doorHeight = 5.0
+    let dimensions = Vector3 10.0 1.5 height
+    let centerDimensions = Vector3 centerWidth 1.5 (- height doorHeight)
+    let sideDimensions = Vector3 sideWidth 1.5 height
+    let sideBounds = (collisionBox sideDimensions)
+
+    let centerBox = transform (newMatrix.translate (Vector3 0.0 0.0 0.0)) (collisionBox centerDimensions)
+    let sideBox offset: Float = transform (newMatrix.translate (Vector3 offset 0.0 0.0)) sideBounds
 
     let distance = cube dimensions
 
     let form = deform distance (dirtBump .* 0.2)
 
-    let sideBounds = (collisionBox sideDimensions)
-
-    let bounds = + (transform (newMatrix.translate (Vector3 3.2 0.0 0.0)) sideBounds)
-        (transform (newMatrix.translate (Vector3 -3.2 0.0 0.0)) sideBounds)
+    let bounds = + (sideBox sideOffset) (sideBox (-sideOffset)) centerBox
 
     let main = newModel form dirtColor bounds
 }
+
