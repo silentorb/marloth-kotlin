@@ -65,6 +65,7 @@ fun createHollowCircleMesh(vertexSchema: VertexSchema, resolution: Int): General
 
 fun newImpLibrary() =
     listOf(
+        defaultImpNamespace(),
         standardLibrary(),
 //      auraLibrary(),
         texturingLibrary(),
