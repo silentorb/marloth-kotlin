@@ -14,7 +14,8 @@ let squareWallDoorway = {
     let doorHeight = 6.0
     let dimensions = Vector3 10.0 1.5 height
     let overDoorHeight = - height doorHeight
-    let overDoorZ = / overDoorHeight 2.0 .+ (/ height 2.0) .- overDoorHeight
+    let overDoorHeightHalf = / overDoorHeight 2.0
+    let overDoorZ = overDoorHeightHalf .+ (/ height 2.0) .- overDoorHeight
     let centerDimensions = Vector3 doorWidth 1.5 overDoorHeight
     let sideDimensions = Vector3 sideWidth 1.5 height
     let sideBounds = (collisionBox sideDimensions)
@@ -22,9 +23,10 @@ let squareWallDoorway = {
     let centerBox = transform (newMatrix.translate (Vector3 0.0 0.0 overDoorZ)) (collisionBox centerDimensions)
     let sideBox offset: Float = transform (newMatrix.translate (Vector3 offset 0.0 0.0)) sideBounds
 
-    let distance = cube dimensions
+    let outerForm = cube dimensions
+    let doorForm = cube (Vector3 doorWidth 2.0 doorHeight) . translate (Vector3 0.0 0.0 (-overDoorHeightHalf))
 
-    let form = deform distance (dirtBump .* 0.2)
+    let form = deform (- outerForm doorForm) (dirtBump .* 0.2)
 
     let bounds = + (sideBox sideOffset) (sideBox (-sideOffset)) centerBox
 
