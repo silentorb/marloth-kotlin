@@ -1,22 +1,19 @@
 package generation.architecture.building
 
 import generation.architecture.misc.Builder
-import generation.architecture.definition.ConnectionType
-import generation.architecture.definition.any
 import generation.architecture.misc.BuilderInput
 import generation.general.*
-import silentorb.mythic.randomly.Dice
-import marloth.scenery.enums.MeshId
-import silentorb.mythic.spatial.Vector3
 import simulation.main.Hand
 import simulation.misc.CellAttribute
 
 fun mergeSides(blocks: List<Block>): Sides {
   val sides = allDirections.associateWith { direction ->
-    blocks
+    val options = blocks
         .mapNotNull { block -> block.sides[direction] }
-        .flatten()
-        .toSet()
+        .filter { it != endpoint }
+
+    assert(options.size < 2)
+    options.firstOrNull() ?: endpoint
   }
 
   return sides
@@ -51,12 +48,12 @@ data class BlockBuilder(
 }
 
 fun sides(
-    up: Side = any,
-    down: Side = any,
-    east: Side = any,
-    north: Side = any,
-    west: Side = any,
-    south: Side = any
+    up: Side = endpoint,
+    down: Side = endpoint,
+    east: Side = endpoint,
+    north: Side = endpoint,
+    west: Side = endpoint,
+    south: Side = endpoint
 ) = mapOf(
     Direction.up to up,
     Direction.down to down,
@@ -66,12 +63,12 @@ fun sides(
     Direction.south to south
 )
 
-fun blockBuilder(up: Side = any,
-                 down: Side = any,
-                 east: Side = any,
-                 north: Side = any,
-                 west: Side = any,
-                 south: Side = any,
+fun blockBuilder(up: Side = endpoint,
+                 down: Side = endpoint,
+                 east: Side = endpoint,
+                 north: Side = endpoint,
+                 west: Side = endpoint,
+                 south: Side = endpoint,
                  attributes: Set<CellAttribute> = setOf(),
                  builder: Builder? = null): BlockBuilder =
     BlockBuilder(
@@ -89,13 +86,13 @@ fun blockBuilder(up: Side = any,
         builder = builder
     )
 
-fun getSideMesh(dice: Dice, sides: Sides, direction: Direction, meshMap: Map<ConnectionType, Set<MeshId>>): MeshId? {
-  val possibleMeshes = sides.getValue(direction).intersect(meshMap.keys)
-  if (possibleMeshes.none())
-    return null
-
-  return dice.takeOne(meshMap[dice.takeOne(possibleMeshes)]!!)
-}
+//fun getSideMesh(dice: Dice, sides: Sides, direction: Direction, meshMap: Map<ConnectionType, Set<MeshId>>): MeshId? {
+//  val possibleMeshes = sides.getValue(direction).intersect(meshMap.keys)
+//  if (possibleMeshes.none())
+//    return null
+//
+//  return dice.takeOne(meshMap[dice.takeOne(possibleMeshes)]!!)
+//}
 
 typealias BlockBuilderTransform = (BlockBuilder) -> BlockBuilder
 

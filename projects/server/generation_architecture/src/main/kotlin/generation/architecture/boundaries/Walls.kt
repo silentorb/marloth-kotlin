@@ -16,23 +16,23 @@ fun selectWallBiome(dice: Dice, biomes: List<BiomeName>): BiomeName =
     else
       dice.takeOne(biomes)
 
-fun placeWall(meshQuery: MeshQuery, height: Float = 0f): BoundaryBuilder = { input ->
-  val direction = input.direction
-  val dice = input.general.dice
-  val position = input.position + Vector3(0f, 0f, height)
-  val angleZ = directionRotation(direction)
-  val mesh = input.general.selectMesh(meshQuery)
-  val wall = if (mesh != null) {
-    val biome = selectWallBiome(dice, input.boundary.toList().mapNotNull { input.general.cellBiomes[it] })
-    val biomeInfo = input.general.config.biomes[biome]!!
-    newWallInternal(WallPlacement(input.general.config, mesh, position, angleZ, biomeInfo))
-  } else
-    null
+//fun placeWall(meshQuery: MeshQuery, height: Float = 0f): BoundaryBuilder = { input ->
+//  val direction = input.direction
+//  val dice = input.general.dice
+//  val position = input.position + Vector3(0f, 0f, height)
+//  val angleZ = directionRotation(direction)
+//  val mesh = input.general.selectMesh(meshQuery)
+//  val wall = if (mesh != null) {
+//    val biome = selectWallBiome(dice, input.boundary.toList().mapNotNull { input.general.cellBiomes[it] })
+//    val biomeInfo = input.general.config.biomes[biome]!!
+//    newWallInternal(WallPlacement(input.general.config, mesh, position, angleZ, biomeInfo))
+//  } else
+//    null
+//
+//  listOfNotNull(wall)
+//}
 
-  listOfNotNull(wall)
-}
-
-val plainWallBoundaryBuilder: BoundaryBuilder = placeWall(MeshQuery(all = setOf(MeshAttribute.wall, MeshAttribute.plain)))
-val doorwayBoundaryBuilder: BoundaryBuilder = placeWall(MeshQuery(all = setOf(MeshAttribute.doorway)))
-val decoratedWallBoundaryBuilder: BoundaryBuilder = placeWall(MeshQuery(all = setOf(MeshAttribute.wall, MeshAttribute.decorated)))
-val solidWallBoundaryBuilder: BoundaryBuilder = placeWall(MeshQuery(all = setOf(MeshAttribute.wall, MeshAttribute.solid)))
+//val plainWallBoundaryBuilder: BoundaryBuilder = placeWall(MeshQuery(all = setOf(MeshAttribute.wall, MeshAttribute.plain)))
+//val doorwayBoundaryBuilder: BoundaryBuilder = placeWall(MeshQuery(all = setOf(MeshAttribute.doorway)))
+//val decoratedWallBoundaryBuilder: BoundaryBuilder = placeWall(MeshQuery(all = setOf(MeshAttribute.wall, MeshAttribute.decorated)))
+//val solidWallBoundaryBuilder: BoundaryBuilder = placeWall(MeshQuery(all = setOf(MeshAttribute.wall, MeshAttribute.solid)))

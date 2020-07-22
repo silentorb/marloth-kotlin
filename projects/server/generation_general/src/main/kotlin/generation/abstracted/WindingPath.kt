@@ -6,11 +6,10 @@ import silentorb.mythic.randomly.Dice
 import simulation.misc.Cell
 import simulation.misc.MapGrid
 import simulation.misc.CellAttribute
-import simulation.misc.cellConnections
 
 private fun nextDirection(dice: Dice, config: BlockConfig, blockGrid: BlockGrid,
                           position: Vector3i): Map.Entry<Direction, Vector3i>? {
-  val options = possibleNextDirections(config, blockGrid, position)
+  val options = possibleNextDirections(blockGrid, position)
 
   return if (options.any())
     dice.takeOne(options.entries)
@@ -58,18 +57,17 @@ tailrec fun addPathStep(maxSteps: Int, dice: Dice, config: BlockConfig, workbenc
   val attributes = setOf<CellAttribute>()
 
   val nextPosition = position + offset
-  val openConnections = config.openConnections
 //  val blocks = if (stepCount == maxSteps - 1) {
 //    val directions = allDirections.minus(oppositeDirections[direction]!!)
 //    config.blocks.filter(isBlockIndependent(config.isSideIndependent, directions)).toSet()
 //  } else
 //    config.blocks
 
-  val block = matchConnectingBlock(dice, config.blocks, openConnections, workbench, direction, nextPosition)
+  val block = matchConnectingBlock(dice, config.blocks, workbench, nextPosition)
   if (block == null) {
-    val relevantConnections = cellConnections(grid.connections, position)
+//    val relevantConnections = cellConnections(grid.connections, position)
     return workbench
-//    throw Error("Could not find a matching block")
+    throw Error("Could not find a matching block")
   }
   val newWorkbench = newPathStep(position, offset, block, attributes)(workbench)
   return addPathStep(maxSteps, dice, config, newWorkbench, nextPosition, stepCount + 1)

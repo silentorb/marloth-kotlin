@@ -1,7 +1,6 @@
 package generation.architecture.building
 
 import generation.architecture.definition.ConnectionType
-import generation.architecture.definition.extraHeadroom
 import generation.architecture.misc.BuilderInput
 import generation.architecture.misc.GenerationConfig
 import generation.architecture.old.newArchitectureMesh
@@ -58,9 +57,9 @@ fun cylinderWalls() = blockBuilder { input ->
 
   val optionalWalls = horizontalDirectionVectors
 //      .filterKeys { it == Direction.south }
-      .filterValues { offset ->
-        !containsConnection(input.general.grid.connections, input.cell, input.cell + offset)
-      }
+//      .filterValues { offset ->
+//        !containsConnection(input.general.grid.connections, input.cell, input.cell + offset)
+//      }
       .map { (direction, _) ->
         Pair(MeshId.arcWall8thB, directionRotation(direction))
       }
@@ -72,7 +71,7 @@ fun cylinderWalls() = blockBuilder { input ->
         WallPlacement(
             config = input.general.config,
             mesh = mesh,
-            position = input.position + cellCenterOffset + facingOffset,
+            position = cellCenterOffset + facingOffset,
             angleZ = angleZ + Pi,
             biome = input.biome
         )
@@ -83,7 +82,7 @@ fun cylinderWalls() = blockBuilder { input ->
 fun getTruncatedWallMesh(input: BuilderInput, height: Float): MeshName {
   val scale = height / cellLength
   return when {
-    !input.sides[Direction.up]!!.contains(ConnectionType.extraHeadroom) -> MeshId.squareWall
+//    !input.sides[Direction.up]!!.contains(ConnectionType.extraHeadroom) -> MeshId.squareWall
     scale <= 0.5f -> MeshId.squareWallHalfHeight // Don't currently have a 3/4 height wall mesh
     else -> MeshId.squareWallQuarterHeight
   }

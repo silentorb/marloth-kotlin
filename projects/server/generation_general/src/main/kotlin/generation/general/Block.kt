@@ -4,6 +4,7 @@ import silentorb.mythic.spatial.Vector3
 import simulation.misc.CellAttribute
 
 typealias Sides = Map<Direction, Side>
+typealias OptionalSides = Map<Direction, Side?>
 
 data class Block(
     val sides: Sides = mapOf(),

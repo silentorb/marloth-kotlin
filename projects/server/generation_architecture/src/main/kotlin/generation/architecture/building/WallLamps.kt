@@ -6,7 +6,6 @@ import generation.architecture.misc.MeshQuery
 import generation.architecture.misc.meshMatches
 import generation.general.oppositeDirections
 import marloth.scenery.enums.MeshId
-import silentorb.mythic.spatial.times
 import silentorb.mythic.physics.Body
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.Shape
@@ -68,33 +67,32 @@ fun placeWallLamps(dice: Dice, meshes: MeshInfoMap, hands: List<Hand>): List<Wal
     listOf()
 }
 
-fun cubeWallLamps(lampRate: Float, heightOffset: Float = 0f) = blockBuilder { input ->
-  val dice = input.general.dice
-  val boundaryHands = input.boundaryHands
-  val meshes = input.general.config.meshes
-  val hasLamp = hasLamp(dice)(lampRate)
-  val inputs = if (hasLamp) {
-    val options = boundaryHands.entries
-        .flatMap { (direction, hands) ->
-          hands
-              .map { hand ->
-                val angleZ = directionRotation(oppositeDirections[direction]!!)
-                val body = hand.body!!
-                hand.copy(
-                    body = body.copy(
-                        orientation = Quaternion().rotateZ(angleZ),
-                        position = body.position + Vector3(0f, 0f, heightOffset)
-                    )
-                )
-              }
-        }
-
-    placeWallLamps(dice, meshes, options)
-  } else
-    listOf()
-
-  inputs.map(addWallLamp(dice))
-}
+//fun cubeWallLamps(lampRate: Float, heightOffset: Float = 0f) = blockBuilder { input ->
+//  val dice = input.general.dice
+//  val meshes = input.general.config.meshes
+//  val hasLamp = hasLamp(dice)(lampRate)
+//  val inputs = if (hasLamp) {
+//    val options = boundaryHands.entries
+//        .flatMap { (direction, hands) ->
+//          hands
+//              .map { hand ->
+//                val angleZ = directionRotation(oppositeDirections[direction]!!)
+//                val body = hand.body!!
+//                hand.copy(
+//                    body = body.copy(
+//                        orientation = Quaternion().rotateZ(angleZ),
+//                        position = body.position + Vector3(0f, 0f, heightOffset)
+//                    )
+//                )
+//              }
+//        }
+//
+//    placeWallLamps(dice, meshes, options)
+//  } else
+//    listOf()
+//
+//  inputs.map(addWallLamp(dice))
+//}
 
 fun withWallLamp(lampRate: Float) = wrapBlockBuilder { input, hands ->
   val dice = input.general.dice

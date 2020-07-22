@@ -4,14 +4,11 @@ import generation.architecture.building.BlockBuilder
 import generation.architecture.definition.*
 import generation.architecture.misc.*
 import generation.architecture.old.applyTurns
-import generation.general.RotatingConnections
-import generation.general.bakeSides
 import generation.general.newRandomizedBiomeGrid
 import generation.general.rotateSides
 import marloth.generation.population.populateWorld
 import marloth.scenery.enums.MeshShapeMap
 import marloth.scenery.enums.meshAttributes
-import org.recast4j.detour.NavMeshQuery
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.debugging.getDebugString
@@ -20,7 +17,6 @@ import silentorb.mythic.ent.newIdSource
 import silentorb.mythic.physics.newBulletState
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Quaternion
-import simulation.intellect.navigation.newNavMesh
 import simulation.intellect.navigation.newNavigationState
 import simulation.main.*
 import simulation.misc.*
@@ -35,11 +31,11 @@ fun fixedCellBiomes(grid: MapGrid): CellBiomeMap {
       .associate { it }
 }
 
-fun explodeBlockMap(rotatingConnections: RotatingConnections, blockBuilders: Collection<BlockBuilder>): List<BlockBuilder> {
+fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder> {
   val needsRotatedVariations = blockBuilders
       .filter { (block, _) ->
         !block.attributes.contains(CellAttribute.lockedRotation) &&
-            block.sides != rotateSides(rotatingConnections, 1)(block.sides)
+            block.sides != rotateSides(1)(block.sides)
       }
 
   val rotated = needsRotatedVariations
@@ -49,18 +45,13 @@ fun explodeBlockMap(rotatingConnections: RotatingConnections, blockBuilders: Col
               val rotation = Quaternion().rotateZ(applyTurns(turns))
               BlockBuilder(
                   block = block.copy(
-                      sides = rotateSides(rotatingConnections, turns)(block.sides),
+                      sides = rotateSides(turns)(block.sides),
                       slots = block.slots.map { slot ->
                         rotation.transform(slot - floorOffset) + floorOffset
-                      }
+                      },
+                      turns = turns
                   ),
-                  builder = if (builder != null) {
-                    val wrapper = { input: BuilderInput ->
-                      builder(input.copy(turns = turns))
-                    }
-                    wrapper
-                  } else
-                    null
+                  builder = builder
               )
             }
       }
@@ -70,21 +61,22 @@ fun explodeBlockMap(rotatingConnections: RotatingConnections, blockBuilders: Col
 
 fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, input: WorldInput): World {
   val dice = input.dice
-  val blockBuilders = explodeBlockMap(rotatingConnectionTypes(), allBlockBuilders().values)
-  blockBuilders.forEach { blockBuilder -> assert(blockBuilder.block.sides.all { it.value.any() }) }
+  val blockBuilders = explodeBlockMap(allBlockBuilders().values)
+//  blockBuilders.forEach { blockBuilder -> assert(blockBuilder.block.sides.all { it != null }) }
   val (blocks, builders) = splitBlockBuilders(devFilterBlockBuilders(blockBuilders))
   val independentConnections = independentConnectionTypes()
   val openConnectionTypes = openConnectionTypes()
-  val workbench = newWorkbench(dice, blocks, independentConnections, openConnectionTypes, generationConfig.roomCount)
+  val workbench = newWorkbench(dice, blocks, generationConfig.roomCount)
   val grid = workbench.mapGrid
-  val gridSideMap = bakeSides(independentConnections, openConnectionTypes, grid.connections, workbench.blockGrid)
+  assert(grid.connections.any())
+//  val gridSideMap = bakeSides(independentConnections, openConnectionTypes, grid.connections, workbench.blockGrid)
   val biomeGrid = newRandomizedBiomeGrid(biomeInfoMap, input)
   val cellBiomes = applyBiomesToGrid(grid, biomeGrid)
       .plus(fixedCellBiomes(grid))
 
   val realm = generateRealm(grid, cellBiomes)
   val nextId = newIdSource(1)
-  val architectureInput = newArchitectureInput(generationConfig, dice, gridSideMap, workbench, cellBiomes)
+  val architectureInput = newArchitectureInput(generationConfig, dice, workbench, cellBiomes)
   val architectureSource = buildArchitecture(architectureInput, builders + Pair(homeBlock.block, homeBlock.builder!!))
 
   // The <Hand> specifier shouldn't be needed here but without it Kotlin is throwing an internal error referencing this line

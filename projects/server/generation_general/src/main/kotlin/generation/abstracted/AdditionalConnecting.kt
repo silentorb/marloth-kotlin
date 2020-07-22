@@ -9,18 +9,17 @@ import simulation.misc.containsConnection
 
 // Connects neighboring cells that are not currently connected and have sides that support being connected
 
-fun canConnect(blockGrid: BlockGrid, openConnectionTypes: Set<Any>, first: Vector3i, direction: Direction): Boolean {
+fun canConnect(blockGrid: BlockGrid, first: Vector3i, direction: Direction): Boolean {
   val firstSide = blockGrid[first]!!.sides[direction]!!
   val second = first + directionVectors[direction]!!
   val secondDirection = oppositeDirections[direction]!!
   val secondSide = blockGrid[second]!!.sides[secondDirection]!!
-  return firstSide.any { openConnectionTypes.contains(it) && secondSide.contains(it) }
+  return sidesMatch(firstSide, secondSide)
 }
 
 fun availableNeighoringCellPairs(blockConfig: BlockConfig, workbench: Workbench, cells: Set<Vector3i>): List<ConnectionPair> {
   val blockGrid = workbench.blockGrid
   val connections = workbench.mapGrid.connections
-  val openConnections = blockConfig.openConnections
   val directions = setOf(Direction.down, Direction.east, Direction.south)
   return cells
       .flatMap { cell ->
@@ -28,7 +27,7 @@ fun availableNeighoringCellPairs(blockConfig: BlockConfig, workbench: Workbench,
           val neighbor = cell + directionVectors[direction]!!
           if (cells.contains(neighbor) && blockGrid.containsKey(neighbor)
               && !containsConnection(connections, cell, neighbor)
-              && canConnect(blockGrid, openConnections, cell, direction)) {
+              && canConnect(blockGrid, cell, direction)) {
             Pair(cell, neighbor)
           } else
             null

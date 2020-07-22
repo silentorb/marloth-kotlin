@@ -10,20 +10,20 @@ data class CellDirection(
 
 typealias GridSideMap = Map<CellDirection, Side>
 
-fun bakeSides(independentConnectionTypes: Set<Any>,
-              openConnectionTypes: Set<Any>,
-              connections: ConnectionSet,
-              blockGrid: BlockGrid): GridSideMap {
-  val getUsable = getUsableCellSide(independentConnectionTypes, openConnectionTypes, connections, blockGrid)
-
-  return blockGrid.flatMap { (cell, block) ->
-    block.sides.map { (direction, _) ->
-      val side = getUsable(cell)(direction)
-      Pair(CellDirection(cell, direction), side)
-    }
-  }
-      .associate { it }
-}
+//fun bakeSides(independentConnectionTypes: Set<Any>,
+//              openConnectionTypes: Set<Any>,
+//              connections: ConnectionSet,
+//              blockGrid: BlockGrid): GridSideMap {
+//  val getUsable = getUsableCellSide(independentConnectionTypes, openConnectionTypes, connections, blockGrid)
+//
+//  return blockGrid.flatMap { (cell, block) ->
+//    block.sides.map { (direction, _) ->
+//      val side = getUsable(cell)(direction)
+//      Pair(CellDirection(cell, direction), side)
+//    }
+//  }
+//      .associate { it }
+//}
 
 fun getUsableCellSide(gridSideMap: GridSideMap): UsableConnectionTypes = { position ->
   { direction ->
