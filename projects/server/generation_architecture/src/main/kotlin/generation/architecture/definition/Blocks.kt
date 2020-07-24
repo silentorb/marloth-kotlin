@@ -116,8 +116,8 @@ val homeBlock = deadEnd()
 //    )))
 
 fun allBlockBuilders(): Map<String, BlockBuilder> = mapOf(
-    "singleCellRoom" to singleCellRoom(),
-    "deadEnd" to deadEnd()
+    "singleCellRoom" to singleCellRoom()
+//    "deadEnd" to deadEnd()
 //    "home" to homeBlock,
 
 //    "diagonalCorner" to diagonalCornerFloor(0f) + BlockBuilder(

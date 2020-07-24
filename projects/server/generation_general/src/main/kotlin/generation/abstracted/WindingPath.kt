@@ -1,76 +1,117 @@
 package generation.abstracted
 
 import generation.general.*
+import silentorb.mythic.ent.firstNotNull
 import silentorb.mythic.spatial.Vector3i
 import silentorb.mythic.randomly.Dice
 import simulation.misc.Cell
 import simulation.misc.MapGrid
 import simulation.misc.CellAttribute
 
-private fun nextDirection(dice: Dice, config: BlockConfig, blockGrid: BlockGrid,
-                          position: Vector3i): Map.Entry<Direction, Vector3i>? {
-  val options = possibleNextDirections(blockGrid, position)
+data class BlockEntry(
+    val origin: Vector3i,
+    val position: Vector3i,
+    val block: Block
+)
 
-  return if (options.any())
-    dice.takeOne(options.entries)
-  else
-    null
-}
+typealias BlockHistory = List<BlockEntry>
 
-private fun newPathStep(position: Vector3i, direction: Vector3i, block: Block,
-                        attributes: Set<CellAttribute> = setOf()): (Workbench) -> Workbench = { workbench ->
-  val nextPosition = position + direction
-  val grid = workbench.mapGrid
-  val blockGrid = workbench.blockGrid
+data class SolvingState(
+    val grid: BlockGrid,
+    val history: BlockHistory,
+    val blacklist: Set<BlockEntry>
+)
 
-  assert(!grid.cells.containsKey(nextPosition))
-
-  workbench.copy(
-      blockGrid = blockGrid.plus(
-          nextPosition to block
-      ),
-      mapGrid = grid.copy(
-          cells = grid.cells.plus(listOf(
-              nextPosition to Cell(
-                  attributes = attributes.plus(block.attributes),
-                  slots = block.slots
-              )
-          )),
-          connections = grid.connections.plus(listOf(
-              Pair(position, nextPosition)
-          ))
-      )
+fun rollback(step: BlockEntry, state: SolvingState): SolvingState {
+  val (grid, history, blacklist) = state
+  assert(history.any())
+  println("- ${grid.size} ${step.position} ${openingCount(step.block)}")
+  return SolvingState(
+      grid = grid - step.position,
+      history = history - step,
+      blacklist = blacklist + step
   )
 }
 
-tailrec fun addPathStep(maxSteps: Int, dice: Dice, config: BlockConfig, workbench: Workbench, position: Vector3i, stepCount: Int = 0): Workbench {
-  val grid = workbench.mapGrid
-  if (stepCount == maxSteps)
-    return workbench
-
-  val directionPair = nextDirection(dice, config, workbench.blockGrid, position)
-  if (directionPair == null) {
-    return workbench
+fun addStep(entry: BlockEntry, state: SolvingState): SolvingState {
+  val (grid, history, blacklist) = state
+  println("+ ${grid.size} ${entry.position} ${openingCount(entry.block)}")
+  if (entry.position == Vector3i(x = 2, y = -2, z = 0)) {
+    val k = 0
   }
+  return SolvingState(
+      grid = grid + (entry.position to entry.block),
+      history = history + entry,
+      blacklist = blacklist
+  )
+}
 
-  val (direction, offset) = directionPair
-  val attributes = setOf<CellAttribute>()
+data class BlockGroups(
+    val all: Set<Block>,
+    val phases: List<Set<Block>>
+)
 
-  val nextPosition = position + offset
-//  val blocks = if (stepCount == maxSteps - 1) {
-//    val directions = allDirections.minus(oppositeDirections[direction]!!)
-//    config.blocks.filter(isBlockIndependent(config.isSideIndependent, directions)).toSet()
-//  } else
-//    config.blocks
+fun newBlockGroups(blocks: Set<Block>): BlockGroups {
+  val phases = blocks
+      .groupBy(::openingCount)
+      .entries
+      .sortedBy { it.key }
+      .map { it.value.toSet() }
 
-  val block = matchConnectingBlock(dice, config.blocks, workbench, nextPosition)
-  if (block == null) {
-//    val relevantConnections = cellConnections(grid.connections, position)
-    return workbench
-    throw Error("Could not find a matching block")
+  return BlockGroups(
+      all = blocks,
+      phases = phases
+  )
+}
+
+fun addPathStep(
+    maxSteps: Int,
+    dice: Dice,
+    blocks: Set<Block>,
+    grid: BlockGrid,
+    position: Vector3i
+): BlockGrid {
+  val incompleteSides = getIncompleteBlockSides(grid)
+  val beyondMinimum = grid.size >= maxSteps
+  val nextState = if (incompleteSides.none() && !beyondMinimum) {
+    rollback(state.history.last(), state)
+  } else {
+//    val incompleteSide = dice.takeOne(incompleteSides)
+    val incompleteSide = incompleteSides
+        .maxBy { side ->
+          history.indexOfLast { it.position == side.position }
+        }!!
+    val offset = directionVectors[incompleteSide.direction]!!
+    val position = incompleteSide.position
+    val nextPosition = position + offset
+    assert(!grid.containsKey(nextPosition))
+    val blacklisted = state.blacklist
+        .filter { it.origin == position && it.position == nextPosition }
+        .map { it.block }
+
+    val block = if (!beyondMinimum)
+      matchConnectingBlock(dice, blockGroups.all - blacklisted, grid, nextPosition)
+    else
+      blockGroups.phases
+          .firstNotNull { blocks ->
+            matchConnectingBlock(dice, blocks - blacklisted, grid, nextPosition)
+          }
+
+    if (block == null) {
+      val step = state.history.lastOrNull { it.position == position }
+      assert(step != null)
+      rollback(step!!, state)
+    } else {
+      val entry = BlockEntry(
+          origin = position,
+          position = nextPosition,
+          block = block
+      )
+
+      addStep(entry, state)
+    }
   }
-  val newWorkbench = newPathStep(position, offset, block, attributes)(workbench)
-  return addPathStep(maxSteps, dice, config, newWorkbench, nextPosition, stepCount + 1)
+  return addPathStep(maxSteps, dice, blockGroups, nextState)
 }
 
 fun newWindingWorkbench(firstBlock: Block): Workbench {
@@ -90,9 +131,13 @@ fun newWindingWorkbench(firstBlock: Block): Workbench {
   )
 }
 
-fun windingPath(dice: Dice, config: BlockConfig, length: Int,
-                startPosition: Vector3i = Vector3i.zero): (Workbench) -> Workbench = { workbench ->
-  val result = addPathStep(length - 1, dice, config, workbench, startPosition)
-  assert(result.blockGrid.size > 0)
-  result
+fun windingPath(dice: Dice, config: BlockConfig, length: Int): (BlockGrid) -> BlockGrid = { grid ->
+  val state = SolvingState(
+      grid = grid,
+      history = listOf(),
+      blacklist = setOf()
+  )
+  val nextGrid = addPathStep(length - 1, dice, newBlockGroups(config.blocks), state)
+  assert(nextGrid.size > grid.size)
+  nextGrid
 }

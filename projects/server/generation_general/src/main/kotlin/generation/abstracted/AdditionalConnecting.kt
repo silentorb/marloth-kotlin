@@ -17,7 +17,7 @@ fun canConnect(blockGrid: BlockGrid, first: Vector3i, direction: Direction): Boo
   return sidesMatch(firstSide, secondSide)
 }
 
-fun availableNeighoringCellPairs(blockConfig: BlockConfig, workbench: Workbench, cells: Set<Vector3i>): List<ConnectionPair> {
+fun availableNeighoringCellPairs(workbench: Workbench, cells: Set<Vector3i>): List<ConnectionPair> {
   val blockGrid = workbench.blockGrid
   val connections = workbench.mapGrid.connections
   val directions = setOf(Direction.down, Direction.east, Direction.south)
@@ -39,7 +39,7 @@ fun additionalConnecting(dice: Dice, blockConfig: BlockConfig, rate: Float): (Wo
   val mapGrid = workbench.mapGrid
   val connections = workbench.mapGrid.connections
   val cells = workbench.mapGrid.cells.filter { !it.value.attributes.contains(CellAttribute.home) }.keys
-  val possibleConnections = availableNeighoringCellPairs(blockConfig, workbench, cells)
+  val possibleConnections = availableNeighoringCellPairs(workbench, cells)
   val amount = (possibleConnections.size.toFloat() * rate).toInt()
   val newConnections = dice.take(possibleConnections, amount)
   workbench.copy(

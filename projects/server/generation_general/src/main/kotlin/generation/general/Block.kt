@@ -17,6 +17,9 @@ data class Block(
   }
 }
 
+fun openingCount(block: Block): Int =
+    block.sides.count { it.value != endpoint }
+
 fun newBlock(up: Side, down: Side, east: Side, north: Side, west: Side, south: Side,
              attributes: Set<CellAttribute> = setOf()) =
     Block(
