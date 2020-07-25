@@ -6,7 +6,6 @@ import generation.general.Block
 import generation.general.BlockConfig
 import generation.general.Workbench
 import generation.general.mapGridFromBlockGrid
-import silentorb.mythic.ent.pipe
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Vector3i
 
@@ -24,10 +23,10 @@ fun newWorkbench(dice: Dice, blocks: Set<Block>, roomCount: Int): Workbench {
       blockGrid = blockGrid,
       mapGrid = mapGridFromBlockGrid(blockGrid)
   )
-
-  return pipe(
-      horrorVacui(dice, blockConfig, HorrorVacuiConfig(branchRate = 0.7f, branchLengthRange = 1..5)),
-      horrorVacui(dice, blockConfig, HorrorVacuiConfig(branchRate = 0.7f, branchLengthRange = 1..3)),
-      additionalConnecting(dice, blockConfig, rate = 0.7f)
-  )(workbench)
+  return workbench
+//  return pipe(
+////      horrorVacui(dice, blockConfig, HorrorVacuiConfig(branchRate = 0.7f, branchLengthRange = 1..5)),
+////      horrorVacui(dice, blockConfig, HorrorVacuiConfig(branchRate = 0.7f, branchLengthRange = 1..3)),
+////      additionalConnecting(dice, blockConfig, rate = 0.7f)
+//  )(workbench)
 }

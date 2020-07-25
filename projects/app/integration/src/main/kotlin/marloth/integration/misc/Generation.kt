@@ -32,6 +32,7 @@ fun fixedCellBiomes(grid: MapGrid): CellBiomeMap {
 }
 
 fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder> {
+  assert(blockBuilders.all { it.block.name.isNotEmpty() })
   val needsRotatedVariations = blockBuilders
       .filter { (block, _) ->
         !block.attributes.contains(CellAttribute.lockedRotation) &&
@@ -61,7 +62,7 @@ fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder>
 
 fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, input: WorldInput): World {
   val dice = input.dice
-  val blockBuilders = explodeBlockMap(allBlockBuilders().values)
+  val blockBuilders = explodeBlockMap(allBlockBuilders())
 //  blockBuilders.forEach { blockBuilder -> assert(blockBuilder.block.sides.all { it != null }) }
   val (blocks, builders) = splitBlockBuilders(devFilterBlockBuilders(blockBuilders))
   val independentConnections = independentConnectionTypes()
@@ -77,7 +78,7 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
   val realm = generateRealm(grid, cellBiomes)
   val nextId = newIdSource(1)
   val architectureInput = newArchitectureInput(generationConfig, dice, workbench, cellBiomes)
-  val architectureSource = buildArchitecture(architectureInput, builders + Pair(homeBlock.block, homeBlock.builder!!))
+  val architectureSource = buildArchitecture(architectureInput, builders + Pair(homeBlock.block.name, homeBlock.builder!!))
 
   // The <Hand> specifier shouldn't be needed here but without it Kotlin is throwing an internal error referencing this line
   val architectureHands = architectureSource.map(newGenericIdHand<Hand>(nextId))
@@ -126,7 +127,7 @@ fun generateWorld(definitions: Definitions, meshInfo: MeshShapeMap, seed: Long =
       biomes = biomeInfoMap,
       meshes = compileArchitectureMeshInfo(meshInfo, meshAttributes),
       includeEnemies = getDebugString("NO_ENEMIES") != "1",
-      roomCount = getDebugInt("BASE_ROOM_COUNT") ?: 10
+      roomCount = getDebugInt("BASE_ROOM_COUNT") ?: 20
   )
   val input = WorldInput(
       boundary,

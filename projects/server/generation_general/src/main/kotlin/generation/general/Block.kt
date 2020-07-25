@@ -10,8 +10,9 @@ data class Block(
     val sides: Sides = mapOf(),
     val attributes: Set<CellAttribute> = setOf(),
     val slots: List<Vector3> = listOf(),
-    val turns: Int = 0
-) {
+    val turns: Int = 0,
+    val name: String = ""
+    ) {
   init {
     assert(slots.none { it.x > 10f || it.y > 10f })
   }

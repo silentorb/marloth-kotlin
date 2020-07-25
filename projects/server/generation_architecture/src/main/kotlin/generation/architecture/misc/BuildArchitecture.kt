@@ -1,47 +1,51 @@
 package generation.architecture.misc
 
-import generation.general.*
+import generation.general.Block
+import generation.general.directionVectors
 import silentorb.mythic.ent.Id
+import silentorb.mythic.spatial.Pi
+import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3i
 import simulation.main.Hand
 import simulation.main.IdHand
+import simulation.misc.absoluteCellPosition
+import simulation.misc.cellHalfLength
 
-fun buildArchitecture(general: ArchitectureInput,
-                      builders: Map<Block, Builder>): List<Hand> {
-
-//  val groupedBoundaryHands = buildBoundaries(general,
-//      horizontalBuilders = newHorizontalBoundaryBuilders(),
-//      verticalBuilders = newVerticalBoundaryBuilders()
-//  )
-
-  val groupedCellHands = general.blockGrid.mapValues { (position, block) ->
-    val biomeName = general.cellBiomes[position]!!
-//    val original = if (block.turns != 0) block.copy(turns = 0) else block
-    val original = block
-    val builder = builders[original]
-    if (builder == null)
-      throw Error("Could not find builder for block")
-
-//    val boundaryHands = groupedBoundaryHands
-//        .filterKeys { (first, second) ->
-//          position == first || position == second
-//        }
-//        .flatMap { (key, value) ->
-//          val neighor = if (position == key.first) key.second else key.first
-//          val direction = directionVectorsReverseLookup[neighor - position]!!
-//          value.map { Pair(direction, it) }
-//        }
-//        .groupBy({ it.first }) { it.second }
-
-    val input = BuilderInput(
-        general = general,
-        biome = general.config.biomes[biomeName]!!
+fun transformBlockHand(block: Block, position: Vector3i) = { hand: Hand ->
+  val body = hand.body
+  if (body == null)
+    hand
+  else {
+    val rotation = Quaternion().rotateZ(block.turns.toFloat() * Pi / 0.5f)
+    hand.copy(
+        body = body.copy(
+            position = rotation.transform(body.position) + cellHalfLength + absoluteCellPosition(position),
+            orientation = body.orientation * rotation
+        )
     )
-    builder(input)
   }
+}
 
-//  return groupedBoundaryHands.flatMap { it.value }
-//      .plus(groupedCellHands.flatMap { it.value })
+fun buildBlockCell(general: ArchitectureInput, block: Block, builder: Builder, position: Vector3i): List<Hand> {
+  val biomeName = general.cellBiomes[position]!!
+  val input = BuilderInput(
+      general = general,
+      biome = general.config.biomes[biomeName]!!,
+      isNeighborPopulated = directionVectors.mapValues { (_, offset) ->
+        general.cellBiomes.containsKey(position + offset)
+      }
+  )
+  val result = builder(input)
+  return result
+      .map(transformBlockHand(block, position))
+}
+
+fun buildArchitecture(general: ArchitectureInput, builders: Map<String, Builder>): List<Hand> {
+  val groupedCellHands = general.blockGrid
+      .mapValues { (position, block) ->
+        val builder = builders[block.name] ?: throw Error("Could not find builder for block")
+        buildBlockCell(general, block, builder, position)
+      }
 
   return groupedCellHands.flatMap { it.value }
 }

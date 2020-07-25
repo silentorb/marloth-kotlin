@@ -1,13 +1,16 @@
 package generation.architecture.building
 
-import generation.architecture.old.*
 import generation.architecture.misc.Builder
-import generation.general.*
+import generation.architecture.old.*
+import generation.general.Block
+import generation.general.Side
+import generation.general.TextureGroup
+import generation.general.biomeTexture
+import silentorb.mythic.scenery.MeshName
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
-import silentorb.mythic.scenery.MeshName
+import simulation.misc.cellHalfLength
 import simulation.misc.cellLength
-import simulation.misc.floorOffset
 import kotlin.math.asin
 
 fun floorMeshBuilder(mesh: MeshName, offset: Vector3 = Vector3.zero,
@@ -17,7 +20,7 @@ fun floorMeshBuilder(mesh: MeshName, offset: Vector3 = Vector3.zero,
   listOf(newArchitectureMesh(
       meshes = config.meshes,
       mesh = mesh,
-      position = floorOffset + align(config.meshes, alignWithCeiling)(mesh) + offset + Vector3(0f, 0f, 0.01f),
+      position = Vector3(0f, 0f, -cellHalfLength) + align(config.meshes, alignWithCeiling)(mesh) + offset + Vector3(0f, 0f, 0.01f),
       orientation = orientation,
       texture = biomeTexture(biome, TextureGroup.floor)
   ))

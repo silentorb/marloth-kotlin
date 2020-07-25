@@ -7,6 +7,7 @@ import silentorb.imp.campaign.loadWorkspace
 import silentorb.imp.core.*
 import silentorb.imp.execution.executeToSingleValue
 import silentorb.imp.library.standard.standardLibrary
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.drawing.createCircleList
 import silentorb.mythic.fathom.fathomLibrary
 import silentorb.mythic.fathom.misc.ModelFunction
@@ -118,20 +119,26 @@ fun sampleModel(context: Context, vertexSchema: VertexSchema): (PathKey) -> Mode
       )
     }
 
-fun createMeshes(vertexSchemas: VertexSchemas): Pair<Map<MeshName, ModelMesh>, List<Armature>> {
+fun impMeshes(vertexSchemas: VertexSchemas): Map<MeshName, ModelMesh> {
   val initialContext = newImpLibrary()
-  val imports = importedMeshes(vertexSchemas)
   val workspaceUrl = Thread.currentThread().contextClassLoader.getResource("models/workspace.yaml")!!
   val (workspace, errors) = loadWorkspace(codeFromFile, initialContext, Paths.get(workspaceUrl.toURI()).parent)
   val modules = workspace.modules
   val context = getModulesExecutionArtifacts(initialContext, modules)
   val outputs = getGraphOutputNodes(mergeNamespaces(context))
       .filter { it.path == "models" }
-  val models = outputs
+  return outputs
       .associateWith(sampleModel(context, vertexSchemas.shadedColor))
       .mapKeys { it.key.name }
+}
 
+fun createMeshes(vertexSchemas: VertexSchemas): Pair<Map<MeshName, ModelMesh>, List<Armature>> {
+  val imports = importedMeshes(vertexSchemas)
   val importedMeshes = imports.flatMap { it.meshes }.associateBy { it.id }
+  val models = if (getDebugBoolean("USE_IMP_MESHES"))
+    impMeshes(vertexSchemas)
+  else
+    mapOf()
 
   val customMeshes = mapOf(
       MeshId.hollowCircle to createHollowCircleMesh(vertexSchemas.flat, 64),
@@ -144,5 +151,4 @@ fun createMeshes(vertexSchemas: VertexSchemas): Pair<Map<MeshName, ModelMesh>, L
 
   val armatures = imports.flatMap { it.armatures }
   return Pair(meshes, armatures)
-
 }

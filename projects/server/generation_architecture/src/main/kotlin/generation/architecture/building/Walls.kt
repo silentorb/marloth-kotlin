@@ -1,22 +1,16 @@
 package generation.architecture.building
 
 import generation.architecture.definition.ConnectionType
+import generation.architecture.misc.ArchitectureInput
 import generation.architecture.misc.BuilderInput
 import generation.architecture.misc.GenerationConfig
 import generation.architecture.old.newArchitectureMesh
 import generation.general.*
 import marloth.scenery.enums.MeshId
-import silentorb.mythic.spatial.times
 import silentorb.mythic.scenery.MeshName
-import silentorb.mythic.spatial.Pi
-import silentorb.mythic.spatial.Quaternion
-import silentorb.mythic.spatial.Vector3
-import silentorb.mythic.spatial.quarterAngle
+import silentorb.mythic.spatial.*
 import simulation.main.Hand
-import simulation.misc.cellCenterOffset
-import simulation.misc.cellHalfLength
-import simulation.misc.cellLength
-import simulation.misc.containsConnection
+import simulation.misc.*
 
 data class WallPlacement(
     val config: GenerationConfig,
@@ -87,3 +81,22 @@ fun getTruncatedWallMesh(input: BuilderInput, height: Float): MeshName {
     else -> MeshId.squareWallQuarterHeight
   }
 }
+
+fun placeWall(general: ArchitectureInput, mesh: MeshName, position: Vector3, direction: Direction, biome: BiomeName): Hand {
+  val angleZ = directionRotation(direction)
+  val biomeInfo = general.config.biomes[biome]!!
+  return newWallInternal(WallPlacement(general.config, mesh, position, angleZ, biomeInfo))
+}
+
+fun placeCubeRoomWalls(mesh: MeshName) = blockBuilder(
+    builder = { input ->
+      val general = input.general
+      val biome = input.biome
+      val isNeighborPopulated = input.isNeighborPopulated
+      horizontalDirectionVectors
+          .filterKeys { isNeighborPopulated[it]?.not() ?: true }
+          .map { (direction, offset) ->
+            placeWall(general, mesh, offset.toVector3() * cellHalfLength, direction, biome.name)
+          }
+    }
+)

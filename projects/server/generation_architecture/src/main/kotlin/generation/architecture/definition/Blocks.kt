@@ -1,11 +1,10 @@
 package generation.architecture.definition
 
+import generation.architecture.building.placeCubeRoomWalls
 import generation.architecture.building.*
 import generation.architecture.misc.squareOffsets
 import generation.general.Block
-import generation.general.Side
 import marloth.scenery.enums.MeshId
-import silentorb.mythic.ent.mapEntryValue
 import simulation.misc.CellAttribute
 
 //val any: Side = setOf()
@@ -39,8 +38,20 @@ import simulation.misc.CellAttribute
 //    )
 //) + floorMesh(MeshId.squareFloor) + cubeWallLamps(lampRate = 1f)
 
+val homeBlock = BlockBuilder(
+    block = Block(
+        name = "home",
+        sides = sides(
+            east = Sides.open
+        ),
+        attributes = setOf(CellAttribute.home, CellAttribute.traversable),
+        slots = squareOffsets(2)
+    )
+) + floorMesh(MeshId.squareFloor) + placeCubeRoomWalls(MeshId.squareWall) // + cubeWallLamps(lampRate = 0.7f)
+
 fun singleCellRoom() = BlockBuilder(
     block = Block(
+        name = "cubeRoom",
         sides = sides(
             east = Sides.open,
             north = Sides.open,
@@ -50,19 +61,7 @@ fun singleCellRoom() = BlockBuilder(
         attributes = setOf(CellAttribute.categoryCommon, CellAttribute.traversable),
         slots = squareOffsets(2)
     )
-) + floorMesh(MeshId.squareFloor) // + cubeWallLamps(lampRate = 0.7f)
-
-fun deadEnd() = BlockBuilder(
-    block = Block(
-        sides = sides(
-            east = Sides.open
-        ),
-        attributes = setOf(CellAttribute.categoryCommon, CellAttribute.traversable),
-        slots = squareOffsets(2)
-    )
-) + floorMesh(MeshId.squareFloor) // + cubeWallLamps(lampRate = 0.7f)
-
-val homeBlock = deadEnd()
+) + floorMesh(MeshId.squareFloor) + placeCubeRoomWalls(MeshId.squareWall) // + cubeWallLamps(lampRate = 0.7f)
 
 //fun spiralStairBlocks(): Map<String, BlockBuilder> = mapOf(
 //    "stairBottom" to compose(
@@ -115,8 +114,8 @@ val homeBlock = deadEnd()
 //        )
 //    )))
 
-fun allBlockBuilders(): Map<String, BlockBuilder> = mapOf(
-    "singleCellRoom" to singleCellRoom()
+fun allBlockBuilders(): List<BlockBuilder> = listOf(
+    singleCellRoom()
 //    "deadEnd" to deadEnd()
 //    "home" to homeBlock,
 

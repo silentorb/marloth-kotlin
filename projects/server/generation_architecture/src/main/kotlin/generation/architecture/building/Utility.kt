@@ -21,6 +21,7 @@ fun mergeSides(blocks: List<Block>): Sides {
 
 fun mergeBlocks(blocks: List<Block>): Block =
     Block(
+        name = blocks.firstOrNull { it.name.isNotEmpty() }?.name ?: "",
         sides = mergeSides(blocks),
         attributes = blocks.flatMap { it.attributes }.toSet(),
         slots = blocks.flatMap { it.slots }
