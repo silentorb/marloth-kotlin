@@ -12,8 +12,8 @@ fun mergeSides(blocks: List<Block>): Sides {
         .mapNotNull { block -> block.sides[direction] }
         .filter { it != endpoint }
 
-    assert(options.size < 2)
-    options.firstOrNull() ?: endpoint
+//    assert(options.size < 2)
+    options.lastOrNull() ?: endpoint
   }
 
   return sides
@@ -26,6 +26,12 @@ fun mergeBlocks(blocks: List<Block>): Block =
         attributes = blocks.flatMap { it.attributes }.toSet(),
         slots = blocks.flatMap { it.slots }
     )
+
+fun mergeBuilders(vararg builders: Builder): Builder {
+  return { input ->
+    builders.flatMap { it(input) }
+  }
+}
 
 fun compose(vararg blockBuilders: BlockBuilder): BlockBuilder {
   val blocks = blockBuilders.map { it.block }

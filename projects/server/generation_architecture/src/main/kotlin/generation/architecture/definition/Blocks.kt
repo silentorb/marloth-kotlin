@@ -38,30 +38,41 @@ import simulation.misc.CellAttribute
 //    )
 //) + floorMesh(MeshId.squareFloor) + cubeWallLamps(lampRate = 1f)
 
+fun singleCellRoomBuilder() =
+    mergeBuilders(
+        floorMesh(MeshId.squareFloor),
+        placeCubeRoomWalls(MeshId.squareWall)
+    )
+
 val homeBlock = BlockBuilder(
     block = Block(
         name = "home",
         sides = sides(
-            east = Sides.open
+            east = Sides.flatOpen
         ),
         attributes = setOf(CellAttribute.home, CellAttribute.traversable),
         slots = squareOffsets(2)
-    )
-) + floorMesh(MeshId.squareFloor) + placeCubeRoomWalls(MeshId.squareWall) // + cubeWallLamps(lampRate = 0.7f)
+    ),
+    builder = singleCellRoomBuilder()
+)
+// + cubeWallLamps(lampRate = 0.7f)
 
 fun singleCellRoom() = BlockBuilder(
     block = Block(
         name = "cubeRoom",
         sides = sides(
-            east = Sides.open,
-            north = Sides.open,
-            west = Sides.open,
-            south = Sides.open
+            east = Sides.broadOpen,
+            north = Sides.broadOpen,
+            west = Sides.broadOpen,
+            south = Sides.broadOpen
         ),
-        attributes = setOf(CellAttribute.categoryCommon, CellAttribute.traversable),
+        attributes = setOf(CellAttribute.traversable),
         slots = squareOffsets(2)
-    )
-) + floorMesh(MeshId.squareFloor) + placeCubeRoomWalls(MeshId.squareWall) // + cubeWallLamps(lampRate = 0.7f)
+    ),
+    builder = singleCellRoomBuilder()
+)
+
+// + cubeWallLamps(lampRate = 0.7f)
 
 //fun spiralStairBlocks(): Map<String, BlockBuilder> = mapOf(
 //    "stairBottom" to compose(
@@ -116,9 +127,6 @@ fun singleCellRoom() = BlockBuilder(
 
 fun allBlockBuilders(): List<BlockBuilder> = listOf(
     singleCellRoom()
-//    "deadEnd" to deadEnd()
-//    "home" to homeBlock,
-
 //    "diagonalCorner" to diagonalCornerFloor(0f) + BlockBuilder(
 //        block = Block(
 //            sides = sides(
@@ -141,5 +149,5 @@ fun allBlockBuilders(): List<BlockBuilder> = listOf(
 //        )
 //    )
 )
-//    .plus(heights())
+    .plus(heights())
 //    .plus(spiralStairBlocks())

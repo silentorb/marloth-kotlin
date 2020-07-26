@@ -35,8 +35,12 @@ val horizontalDirectionList = listOf(Direction.east, Direction.north, Direction.
 
 fun rotateDirection(turns: Int): (Direction) -> Direction = { direction ->
   val index = horizontalDirectionList.indexOf(direction)
-  val newIndex = (index + turns) % 4
-  horizontalDirectionList[newIndex]
+  if (index == -1)
+    direction
+  else {
+    val newIndex = (index + 4 + turns) % 4
+    horizontalDirectionList[newIndex]
+  }
 }
 
 val oppositeDirections: Map<Direction, Direction> = mapOf(

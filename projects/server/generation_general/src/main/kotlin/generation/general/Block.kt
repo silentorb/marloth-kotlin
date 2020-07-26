@@ -7,11 +7,11 @@ typealias Sides = Map<Direction, Side>
 typealias OptionalSides = Map<Direction, Side?>
 
 data class Block(
+    val name: String = "",
     val sides: Sides = mapOf(),
     val attributes: Set<CellAttribute> = setOf(),
     val slots: List<Vector3> = listOf(),
-    val turns: Int = 0,
-    val name: String = ""
+    val turns: Int = 0
     ) {
   init {
     assert(slots.none { it.x > 10f || it.y > 10f })

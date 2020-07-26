@@ -30,7 +30,7 @@ fun newArchitectureInput(generationConfig: GenerationConfig, dice: Dice,
 data class BuilderInput(
     val general: ArchitectureInput,
     val biome: BiomeInfo,
-    val isNeighborPopulated: Map<Direction, Boolean>
+    val neighbors: Set<Direction>
 )
 
 typealias Builder = (BuilderInput) -> List<Hand>

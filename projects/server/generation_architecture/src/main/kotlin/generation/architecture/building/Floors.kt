@@ -2,13 +2,12 @@ package generation.architecture.building
 
 import generation.architecture.misc.Builder
 import generation.architecture.old.*
-import generation.general.Block
-import generation.general.Side
 import generation.general.TextureGroup
 import generation.general.biomeTexture
 import silentorb.mythic.scenery.MeshName
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.quarterAngle
 import simulation.misc.cellHalfLength
 import simulation.misc.cellLength
 import kotlin.math.asin
@@ -27,7 +26,7 @@ fun floorMeshBuilder(mesh: MeshName, offset: Vector3 = Vector3.zero,
 }
 
 fun floorMesh(mesh: MeshName, offset: Vector3 = Vector3.zero, orientation: Quaternion = Quaternion()) =
-    blockBuilder(builder = floorMeshBuilder(mesh, offset, orientation))
+    floorMeshBuilder(mesh, offset, orientation)
 
 fun halfFloorMesh(mesh: MeshName, offset: Vector3 = Vector3.zero, orientation: Quaternion = Quaternion()) =
     blockBuilder(builder = floorMeshBuilder(mesh, offset, orientation))
@@ -40,39 +39,18 @@ fun diagonalHalfFloorMesh(mesh: MeshName, height: Float) =
       floorMeshBuilder(mesh, offset = position)(input)
     }
 
-fun newSlopedFloorMesh(mesh: MeshName, height: Float) = BlockBuilder(
-    block = Block(
-        sides = sides()
-    )
-) { input ->
+fun newSlopedFloorMesh(mesh: MeshName, height: Float): Builder = { input ->
   val meshInfo = input.general.config.meshes[mesh]!!
   val slopeAngle = asin(cellLength / 4f / meshInfo.shape!!.x) - 0.007f
   val orientation = Quaternion()
-//      .rotateZ(applyTurnsOld(input.turns))
-      .rotateX(slopeAngle)
-//  listOf()
+      .rotateY(-slopeAngle)
+      .rotateZ(quarterAngle)
   floorMeshBuilder(mesh, offset = Vector3(0f, 0f, height + cellLength / 8f), orientation = orientation)(input)
 }
 
-fun newSlopeEdgeBlock(mesh: MeshName, height: Float, openPattern: Side, ledgeTurns: Int) = BlockBuilder(
-    block = Block(
-        sides = mapOf(
-            getTurnDirection(ledgeTurns) to openPattern
-        ),
-        slots = listOf(
-//            Vector3(cellLength * (0.5f - ledgeTurns.toFloat() * 0.25f), cellLength * 0.25f, height)
-            Vector3(cellLength * 0.25f, cellLength * (0.5f + ledgeTurns.toFloat() * 0.25f), height - quarterStep)
-        )
-    )
-) { input ->
-//  val side = getTurnedSide(input.sides, input.turns + turns)!!
-//  if (side.any { openPattern.contains(it) }) {
-//  val orientation = Quaternion().rotateZ(applyTurnsOld(input.turns + 1))
+fun newSlopeEdgeBlock(mesh: MeshName, height: Float, ledgeTurns: Int): Builder = { input ->
   val offset = Quaternion().rotateZ(applyTurnsOld(ledgeTurns))
       .transform(Vector3(0f, cellLength / 4f, 0f))
   val position = offset + Vector3(0f, 0f, height)
   floorMeshBuilder(mesh, offset = position)(input)
-//  listOf()
-//  } else
-//    listOf()
 }

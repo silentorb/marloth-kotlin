@@ -9,14 +9,15 @@ object CoreSide {
 
 data class Side(
     val mine: Any,
-    val other: Any
+    val other: Set<Any>,
+    val closeIfPossible: Boolean = false
 )
 
-fun newSide(mine: Any, other: Any) =
-    Side(mine, other)
+fun newSide(mine: Any, other: Set<Any>, closeIfPossible: Boolean = false) =
+    Side(mine, other, closeIfPossible)
 
 
 fun newSide(mine: Any) =
-    Side(mine, mine)
+    Side(mine, setOf(mine))
 
-val endpoint = newSide(CoreSide.end, CoreSide.void)
+val endpoint = newSide(CoreSide.end, setOf(CoreSide.void))

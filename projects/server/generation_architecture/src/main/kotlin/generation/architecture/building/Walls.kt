@@ -1,7 +1,7 @@
 package generation.architecture.building
 
-import generation.architecture.definition.ConnectionType
 import generation.architecture.misc.ArchitectureInput
+import generation.architecture.misc.Builder
 import generation.architecture.misc.BuilderInput
 import generation.architecture.misc.GenerationConfig
 import generation.architecture.old.newArchitectureMesh
@@ -39,7 +39,7 @@ fun newWallInternal(placement: WallPlacement) =
 fun directionRotation(direction: Direction): Float =
     when (direction) {
       Direction.east -> 0f
-      Direction.north -> Pi * 0.5f
+      Direction.north -> quarterAngle
       Direction.west -> Pi
       Direction.south -> Pi * 1.5f
       else -> throw Error("Not supported")
@@ -88,15 +88,13 @@ fun placeWall(general: ArchitectureInput, mesh: MeshName, position: Vector3, dir
   return newWallInternal(WallPlacement(general.config, mesh, position, angleZ, biomeInfo))
 }
 
-fun placeCubeRoomWalls(mesh: MeshName) = blockBuilder(
-    builder = { input ->
-      val general = input.general
-      val biome = input.biome
-      val isNeighborPopulated = input.isNeighborPopulated
-      horizontalDirectionVectors
-          .filterKeys { isNeighborPopulated[it]?.not() ?: true }
-          .map { (direction, offset) ->
-            placeWall(general, mesh, offset.toVector3() * cellHalfLength, direction, biome.name)
-          }
-    }
-)
+fun placeCubeRoomWalls(mesh: MeshName): Builder = { input ->
+  val general = input.general
+  val biome = input.biome
+  val neighbors = input.neighbors
+  horizontalDirectionVectors
+      .filterKeys { !neighbors.contains(it) }
+      .map { (direction, offset) ->
+        placeWall(general, mesh, offset.toVector3() * cellHalfLength, direction, biome.name)
+      }
+}

@@ -25,10 +25,10 @@ fun getOtherSide(grid: BlockGrid, origin: Vector3i): (Direction) -> Side? = { di
 }
 
 fun sidesMatch(blockSide: Side, otherSide: Side?): Boolean =
-    if (blockSide.other == CoreSide.void)
-      otherSide == null || (otherSide.mine == CoreSide.void && otherSide.other == blockSide.mine)
+    if (blockSide.other.contains(CoreSide.void))
+      otherSide == null || (otherSide.mine == CoreSide.void && otherSide.other.contains(blockSide.mine))
     else
-      otherSide == null || (otherSide.mine == blockSide.other && otherSide.other == blockSide.mine)
+      otherSide == null || (blockSide.other.contains(otherSide.mine) && otherSide.other.contains(blockSide.mine))
 
 fun sidesMatch(surroundingSides: OptionalSides): CheckBlockSide = { (direction, blockSide) ->
   val otherSide = surroundingSides[direction]
@@ -46,7 +46,8 @@ fun getSurroundingSides(blockGrid: BlockGrid, position: Vector3i): OptionalSides
 
 fun matchBlock(dice: Dice, blocks: Set<Block>, surroundingSides: OptionalSides): Block? {
   val shuffledBlocks = dice.shuffle(blocks)
-  return shuffledBlocks.firstOrNull(checkBlockMatch(surroundingSides))
+  val result = shuffledBlocks.firstOrNull(checkBlockMatch(surroundingSides))
+  return result
 }
 
 fun matchConnectingBlock(dice: Dice, blocks: Set<Block>, blockGrid: BlockGrid, position: Vector3i): Block? {
@@ -58,7 +59,7 @@ fun openSides(blockGrid: BlockGrid, position: Vector3i): Map<Direction, Vector3i
   val block = blockGrid[position]!!
   return directionVectors
       .filter { direction ->
-        block.sides[direction.key]!!.other != CoreSide.void &&
+        !block.sides[direction.key]!!.other.contains(CoreSide.void) &&
             !blockGrid.containsKey(position + direction.value)
       }
 }
