@@ -2,6 +2,7 @@ package generation.architecture.definition
 
 object Connector {
   const val open = "open"
+  const val doorway = "doorway"
 
   const val extraHeadroom = "extraHeadroom"
   const val verticalDiagonal= "verticalDiagonal"

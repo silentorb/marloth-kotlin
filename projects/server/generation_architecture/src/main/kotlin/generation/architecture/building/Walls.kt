@@ -11,30 +11,35 @@ import silentorb.mythic.scenery.MeshName
 import silentorb.mythic.spatial.*
 import simulation.main.Hand
 import simulation.misc.*
+import kotlin.math.min
 
 data class WallPlacement(
     val config: GenerationConfig,
     val mesh: MeshName,
     val position: Vector3,
-    val angleZ: Float,
+    val orientation: Quaternion,
     val biome: BiomeInfo
 )
 
-fun newWallInternal(config: GenerationConfig, mesh: MeshName, position: Vector3, angleZ: Float, biome: BiomeInfo,
+fun getWallOrientation(direction: Direction): Quaternion {
+  val angleZ = directionRotation(direction)
+  return Quaternion().rotateZ(angleZ)
+}
+
+fun newWallInternal(config: GenerationConfig, mesh: MeshName, position: Vector3, orientation: Quaternion, biome: BiomeInfo,
                     scale: Vector3 = Vector3.unit): Hand {
-  val orientation = Quaternion().rotateZ(angleZ + quarterAngle)
   return newArchitectureMesh(
       meshes = config.meshes,
       mesh = mesh,
       position = position,
-      orientation = orientation,
+      orientation = orientation.rotateZ(quarterAngle),
       texture = biomeTexture(biome, TextureGroup.wall),
       scale = scale
   )
 }
 
 fun newWallInternal(placement: WallPlacement) =
-    newWallInternal(placement.config, placement.mesh, placement.position, placement.angleZ, placement.biome)
+    newWallInternal(placement.config, placement.mesh, placement.position, placement.orientation, placement.biome)
 
 fun directionRotation(direction: Direction): Float =
     when (direction) {
@@ -66,35 +71,64 @@ fun cylinderWalls() = blockBuilder { input ->
             config = input.general.config,
             mesh = mesh,
             position = cellCenterOffset + facingOffset,
-            angleZ = angleZ + Pi,
+            orientation = Quaternion().rotateZ(angleZ + Pi),
             biome = input.biome
         )
       }
       .map(::newWallInternal)
 }
 
-fun getTruncatedWallMesh(input: BuilderInput, height: Float): MeshName {
-  val scale = height / cellLength
-  return when {
-//    !input.sides[Direction.up]!!.contains(ConnectionType.extraHeadroom) -> MeshId.squareWall
-    scale <= 0.5f -> MeshId.squareWallHalfHeight // Don't currently have a 3/4 height wall mesh
-    else -> MeshId.squareWallQuarterHeight
-  }
-}
-
 fun placeWall(general: ArchitectureInput, mesh: MeshName, position: Vector3, direction: Direction, biome: BiomeName): Hand {
-  val angleZ = directionRotation(direction)
+  val orientation = getWallOrientation(direction)
   val biomeInfo = general.config.biomes[biome]!!
-  return newWallInternal(WallPlacement(general.config, mesh, position, angleZ, biomeInfo))
+  return newWallInternal(WallPlacement(general.config, mesh, position, orientation, biomeInfo))
 }
 
-fun placeCubeRoomWalls(mesh: MeshName): Builder = { input ->
+fun getCubeWallPosition(direction: Direction): Vector3 {
+  val offset = directionVectors[direction]!!
+  return offset.toVector3() * cellHalfLength
+}
+
+fun cubeWall(input: BuilderInput, mesh: MeshName, direction: Direction): Hand {
   val general = input.general
   val biome = input.biome
-  val neighbors = input.neighbors
-  horizontalDirectionVectors
-      .filterKeys { !neighbors.contains(it) }
-      .map { (direction, offset) ->
-        placeWall(general, mesh, offset.toVector3() * cellHalfLength, direction, biome.name)
+  val position = getCubeWallPosition(direction)
+  return placeWall(general, mesh, position, direction, biome.name)
+}
+
+fun placeCubeRoomWalls(mesh: MeshName, directions: Collection<Direction>): Builder = { input ->
+  directions
+      .map { direction ->
+        cubeWall(input, mesh, direction)
       }
+}
+
+fun cubeWalls(mesh: MeshName): Builder = { input ->
+  placeCubeRoomWalls(mesh, horizontalDirections - input.neighbors)(input)
+}
+
+enum class WallFeature {
+  lamp,
+  window,
+  none
+}
+
+fun cubeWallsWithFeatures(mesh: MeshName, features: List<WallFeature>, offset: Vector3 = Vector3.zero): Builder = { input ->
+  val dice = input.general.dice
+  val directions = horizontalDirections - input.neighbors
+  val featureCount = dice.getInt(min(min(2, directions.size), features.size))
+  val featureDirections = dice.take(directions, featureCount)
+  val plainDirections = directions - featureDirections
+  val selectedFeatures = dice.take(features, featureCount)
+
+  placeCubeRoomWalls(mesh, plainDirections)(input)
+      .plus(featureDirections.zip(selectedFeatures) { direction, feature ->
+        when (feature) {
+          WallFeature.lamp -> listOf(cubeWall(input, mesh, direction), cubeWallLamp(direction, offset))
+          WallFeature.window -> listOf(cubeWall(input, MeshId.squareWallWindow, direction))
+          WallFeature.none -> listOf(cubeWall(input, mesh, direction))
+        }
+      }
+          .flatten()
+      )
 }

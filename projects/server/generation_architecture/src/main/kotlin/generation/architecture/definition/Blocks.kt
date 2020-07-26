@@ -1,10 +1,13 @@
 package generation.architecture.definition
 
 import generation.architecture.building.placeCubeRoomWalls
+import generation.architecture.building.cubeWalls
 import generation.architecture.building.*
 import generation.architecture.misc.squareOffsets
 import generation.general.Block
+import generation.general.Direction
 import marloth.scenery.enums.MeshId
+import silentorb.mythic.spatial.Vector3
 import simulation.misc.CellAttribute
 
 //val any: Side = setOf()
@@ -25,35 +28,24 @@ import simulation.misc.CellAttribute
 //val impassableCylinder: Side = setOf(ConnectionType.cylinderWall)
 //val openOrSolidCylinder: Side = impassableCylinder.plus(setOf(ConnectionType.doorway))
 
-//val homeBlock = BlockBuilder(
-//    block = Block(
-//        sides = sides(
-//            up = impassableVertical,
-//            east = doorway,
-//            north = impassableHorizontal,
-//            west = impassableHorizontal,
-//            south = impassableHorizontal
-//        ),
-//        attributes = setOf(CellAttribute.categoryCommon, CellAttribute.traversable, CellAttribute.home)
-//    )
-//) + floorMesh(MeshId.squareFloor) + cubeWallLamps(lampRate = 1f)
-
-fun singleCellRoomBuilder() =
-    mergeBuilders(
-        floorMesh(MeshId.squareFloor),
-        placeCubeRoomWalls(MeshId.squareWall)
-    )
+fun plainWallLampOffset() = Vector3(0f, 0f, -1f)
 
 val homeBlock = BlockBuilder(
     block = Block(
         name = "home",
         sides = sides(
-            east = Sides.flatOpen
+            east = Sides.doorway
         ),
         attributes = setOf(CellAttribute.home, CellAttribute.traversable),
         slots = squareOffsets(2)
     ),
-    builder = singleCellRoomBuilder()
+    builder = mergeBuilders(
+        floorMesh(MeshId.squareFloor),
+        placeCubeRoomWalls(MeshId.squareWallWindow, setOf(Direction.west)),
+        placeCubeRoomWalls(MeshId.squareWallDoorway, setOf(Direction.east)),
+        placeCubeRoomWalls(MeshId.squareWall, setOf(Direction.north, Direction.south)),
+        handBuilder(cubeWallLamp(Direction.north, plainWallLampOffset()))
+    )
 )
 // + cubeWallLamps(lampRate = 0.7f)
 
@@ -69,7 +61,10 @@ fun singleCellRoom() = BlockBuilder(
         attributes = setOf(CellAttribute.traversable),
         slots = squareOffsets(2)
     ),
-    builder = singleCellRoomBuilder()
+    builder = mergeBuilders(
+        floorMesh(MeshId.squareFloor),
+        cubeWallsWithFeatures(MeshId.squareWall, listOf(WallFeature.lamp, WallFeature.window, WallFeature.none), plainWallLampOffset())
+    )
 )
 
 // + cubeWallLamps(lampRate = 0.7f)

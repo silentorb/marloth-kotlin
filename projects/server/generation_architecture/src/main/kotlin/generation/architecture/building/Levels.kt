@@ -53,6 +53,9 @@ fun slopeSides(lower: Level, upper: Level) =
         south = newSlopeSide(lower.index, false)
     )
 
+fun tieredWalls(lower: Level) =
+    cubeWallsWithFeatures(MeshId.squareWall, listOf(WallFeature.lamp, WallFeature.none), Vector3(0f, 0f, lower.height - 1.2f))
+
 fun newSlope(lower: Level, upper: Level) =
     BlockBuilder(
         block = Block(
@@ -61,7 +64,7 @@ fun newSlope(lower: Level, upper: Level) =
         ),
         builder = mergeBuilders(
             newSlopedFloorMesh(MeshId.quarterSlope, lower.height),
-            placeCubeRoomWalls(MeshId.squareWall)
+            tieredWalls(lower)
         )
     )
 
@@ -98,7 +101,7 @@ fun newLedgeSlope(lower: Level, upper: Level, name: String, ledgeTurns: Int): Bl
       builder = mergeBuilders(
           newSlopedFloorMesh(MeshId.quarterSlope, lower.height),
           newSlopeEdgeBlock(MeshId.largeBrick, lower.height + quarterStep + quarterStep, ledgeTurns),
-          placeCubeRoomWalls(MeshId.squareWall)
+          tieredWalls(lower)
       )
   )
 }
@@ -124,11 +127,9 @@ fun explodeHeightBlocks(levelIndex: Int): List<BlockBuilder> {
           ),
           builder = mergeBuilders(
               floorMesh(MeshId.squareFloor, Vector3(0f, 0f, upper.height)),
-              placeCubeRoomWalls(MeshId.squareWall)
+              tieredWalls(lower)
           )
       )
-//          +
-//          cubeWallLamps(lampRate = 0.5f, heightOffset = upper.height - 0.1f)
       ,
 
       newSlope(lower, upper) +

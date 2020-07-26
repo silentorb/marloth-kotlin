@@ -44,6 +44,10 @@ fun compose(vararg blockBuilders: BlockBuilder): BlockBuilder {
   )
 }
 
+fun handBuilder(hand: Hand): Builder = { input ->
+  listOf(hand)
+}
+
 fun compose(attributes: Set<CellAttribute>, vararg blockBuilders: BlockBuilder): BlockBuilder =
     compose(*(blockBuilders.toList().plus(BlockBuilder(block = Block(attributes = attributes))).toTypedArray()))
 
@@ -114,14 +118,5 @@ fun wrapBlockBuilder(addition: (BuilderInput, List<Hand>) -> List<Hand>): BlockB
 
         hands.plus(addition(input, hands))
       }
-  )
-}
-
-fun withCellAttributes(attributes: Set<CellAttribute>): (BlockBuilder) -> BlockBuilder = { blockBuilder ->
-  val block = blockBuilder.block
-  blockBuilder.copy(
-      block = block.copy(
-          attributes = block.attributes.plus(attributes)
-      )
   )
 }
