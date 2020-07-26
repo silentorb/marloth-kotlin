@@ -8,6 +8,7 @@ import generation.general.Direction
 import marloth.scenery.enums.MeshId
 import silentorb.mythic.spatial.Vector3
 import simulation.misc.CellAttribute
+import simulation.misc.cellLength
 
 //val any: Side = setOf()
 //val doorway: Side = setOf(ConnectionType.doorway)
@@ -29,22 +30,6 @@ import simulation.misc.CellAttribute
 
 fun plainWallLampOffset() = Vector3(0f, 0f, -1f)
 
-val homeBlock = BlockBuilder(
-    block = Block(
-        name = "home",
-        sides = sides(
-            east = Sides.doorway
-        ),
-        attributes = setOf(CellAttribute.home, CellAttribute.traversable)
-    ),
-    builder = mergeBuilders(
-        floorMesh(MeshId.squareFloor),
-        placeCubeRoomWalls(MeshId.squareWallWindow, setOf(Direction.west)),
-        placeCubeRoomWalls(MeshId.squareWallDoorway, setOf(Direction.east)),
-        placeCubeRoomWalls(MeshId.squareWall, setOf(Direction.north, Direction.south)),
-        handBuilder(cubeWallLamp(Direction.north, plainWallLampOffset()))
-    )
-)
 // + cubeWallLamps(lampRate = 0.7f)
 
 fun singleCellRoomBuilder(): Builder =
@@ -123,6 +108,7 @@ fun singleCellRoom() = BlockBuilder(
 
 fun allBlockBuilders(): List<BlockBuilder> = listOf(
     singleCellRoom(),
+    homeBlock2(),
     diagonalCorner(
         name = "diagonalCorner",
         height = 0f,
@@ -156,5 +142,13 @@ fun allBlockBuilders(): List<BlockBuilder> = listOf(
 //        )
 //    )
 )
-    .plus(heights())
+    .plus(
+        listOf(
+            BiomeId.checkers
+//            BiomeId.forest,
+//            BiomeId.tealPalace,
+//            BiomeId.village
+        )
+            .flatMap(::heights)
+    )
 //    .plus(spiralStairBlocks())

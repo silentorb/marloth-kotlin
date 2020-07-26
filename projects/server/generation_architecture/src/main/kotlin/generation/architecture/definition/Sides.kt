@@ -24,3 +24,18 @@ fun preferredHorizontalClosed(connector: Any): Side =
         mine = connector,
         other = setOf(connector)
     )
+
+fun uniqueConnection(prefix: String): Pair<Side, Side> {
+  val firstConnector = prefix + "1"
+  val secondConnector = prefix + "2"
+  return Pair(
+      Side(
+          firstConnector, setOf(secondConnector),
+          connectionLogic = ConnectionLogic.connectWhenPossible
+      ),
+      Side(
+          secondConnector, setOf(firstConnector),
+          connectionLogic = ConnectionLogic.connectWhenPossible
+      )
+  )
+}

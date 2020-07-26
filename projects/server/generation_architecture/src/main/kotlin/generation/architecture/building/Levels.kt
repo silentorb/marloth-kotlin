@@ -1,13 +1,14 @@
 package generation.architecture.building
 
-import simulation.misc.cellLength
 import generation.architecture.definition.*
 import generation.architecture.misc.squareOffsets
 import generation.architecture.old.getTurnDirection
 import generation.general.*
-import silentorb.mythic.spatial.Vector3
 import marloth.scenery.enums.MeshId
+import silentorb.mythic.spatial.Vector3
+import simulation.misc.BiomeName
 import simulation.misc.CellAttribute
+import simulation.misc.cellLength
 import simulation.misc.floorOffset
 
 const val quarterStep = cellLength / 4f
@@ -50,8 +51,8 @@ fun slopeSides(lower: Level, upper: Level) =
         south = newSlopeSide(lower.index, false)
     )
 
-fun tieredWalls(lower: Level) =
-    cubeWallsWithFeatures(listOf(WallFeature.lamp, WallFeature.none), offset = Vector3(0f, 0f, lower.height - 1.2f))
+fun tieredWalls(level: Level) =
+    cubeWallsWithFeatures(listOf(WallFeature.lamp, WallFeature.none), offset = Vector3(0f, 0f, level.height - 1.2f))
 
 fun newSlope(lower: Level, upper: Level) =
     BlockBuilder(
@@ -103,16 +104,48 @@ fun newLedgeSlope(lower: Level, upper: Level, name: String, ledgeTurns: Int): Bl
   )
 }
 
-fun explodeHeightBlocks(levelIndex: Int): List<BlockBuilder> {
+data class CommonMatrixSides(
+    val halfStepRequiredOpen: Side,
+    val halfStepOptionalOpen: Side
+)
+
+data class BlockMatrixInput(
+    val level: Level,
+    val biome: BiomeName,
+    val sides: CommonMatrixSides,
+    val secondaryBiomes: List<BiomeName> = listOf()
+)
+
+fun newBlockMatrixInput(biome: BiomeName): (Int) -> BlockMatrixInput = { levelIndex ->
   val upper = levels[levelIndex]
-  val lower = levels[levelIndex - 1]
-  val halfStepRequiredOpen: Side = upper.side
-  val halfStepOptionalOpen: Side = halfStepRequiredOpen //.plus(ConnectionType.plainWall)
-  val squareFloorBuilder = mergeBuilders(
-      floorMesh(MeshId.squareFloor, Vector3(0f, 0f, upper.height)),
-      tieredWalls(lower)
+  BlockMatrixInput(
+      level = upper,
+      biome = biome,
+      sides = CommonMatrixSides(
+          halfStepRequiredOpen = upper.side,
+          halfStepOptionalOpen = upper.side
+      )
   )
-  return listOf(
+}
+
+typealias MatrixBlockBuilder = (BlockMatrixInput) -> List<BlockBuilder>
+
+fun getLowerLevelIndex(index: Int): Int =
+    (index + levels.size - 1) % levels.size
+
+fun getLowerLevel(level: Level): Level =
+    levels[getLowerLevelIndex(level.index)]
+
+fun tieredSquareFloorBuilder(upper: Level) = mergeBuilders(
+    floorMesh(MeshId.squareFloor, Vector3(0f, 0f, upper.height)),
+    tieredWalls(getLowerLevel(upper))
+)
+
+val squareRoom: MatrixBlockBuilder = { input ->
+  val level = input.level
+  val levelIndex = level.index
+  val halfStepOptionalOpen = input.sides.halfStepOptionalOpen
+  listOf(
       BlockBuilder(
           block = Block(
               name = "halfStepRoom$levelIndex",
@@ -124,20 +157,39 @@ fun explodeHeightBlocks(levelIndex: Int): List<BlockBuilder> {
                   south = halfStepOptionalOpen
               ),
               attributes = setOf(CellAttribute.traversable),
-              slots = squareOffsets(2).map { it + Vector3(0f, 0f, upper.height) }
+              slots = squareOffsets(2).map { it + Vector3(0f, 0f, level.height) }
           ),
-          builder = squareFloorBuilder
+          builder = tieredSquareFloorBuilder(level)
       )
-      ,
+  )
+}
 
+val fullSlope: MatrixBlockBuilder = { input ->
+  val upper = input.level
+  val lower = getLowerLevel(upper)
+  val levelIndex = upper.index
+  listOf(
       newSlope(lower, upper) +
           BlockBuilder(block = Block(name = "halfStepSlopeA$levelIndex")) +
           plainSlopeSlot(lower.height)
-      ,
+  )
+}
 
-      newLedgeSlope(lower, upper, "halfStepSlopeAndLedgeA$levelIndex", -1),
-      newLedgeSlope(lower, upper, "halfStepSlopeAndLedgeB$levelIndex", 1),
+val ledgeSlope: MatrixBlockBuilder = { input ->
+  val upper = input.level
+  val lower = getLowerLevel(upper)
+  val levelIndex = upper.index
+  listOf(
+      newLedgeSlope(lower, upper, "LedgeSlopeA$levelIndex", -1),
+      newLedgeSlope(lower, upper, "LedgeSlopeB$levelIndex", 1)
+  )
+}
 
+val diagnoseCorner: MatrixBlockBuilder = { input ->
+  val upper = input.level
+  val levelIndex = upper.index
+  val halfStepOptionalOpen = input.sides.halfStepOptionalOpen
+  listOf(
       diagonalCorner(
           "diagonalCorner$levelIndex",
           upper.height,
@@ -148,14 +200,24 @@ fun explodeHeightBlocks(levelIndex: Int): List<BlockBuilder> {
               west = preferredHorizontalClosed(levelConnectors[levelIndex]),
               south = preferredHorizontalClosed(levelConnectors[levelIndex])
           ),
-          squareFloorBuilder
+          tieredSquareFloorBuilder(upper)
       )
   )
 }
 
-fun heights(): List<BlockBuilder> =
+fun tieredBlocks(input: BlockMatrixInput): List<BlockBuilder> {
+  return listOf(
+      squareRoom,
+      fullSlope,
+      ledgeSlope,
+      diagnoseCorner
+  ).flatMap { it(input) }
+}
+
+fun heights(biome: BiomeName): List<BlockBuilder> =
     (1..3)
-        .map(::explodeHeightBlocks)
+        .map(newBlockMatrixInput(biome))
+        .map(::tieredBlocks)
         .reduce { a, b -> a.plus(b) }
         .plus(
             newSlope(levels.last(), Level(0, endpoint, Sides.verticalDiagonal)) +

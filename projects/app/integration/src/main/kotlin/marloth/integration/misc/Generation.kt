@@ -22,13 +22,10 @@ import simulation.main.*
 import simulation.misc.*
 
 fun fixedCellBiomes(grid: MapGrid): CellBiomeMap {
-  val homeNode = grid.cells.entries.firstOrNull { it.value.attributes.contains(CellAttribute.home) }?.key
-  val exitNode = grid.cells.entries.firstOrNull { it.value.attributes.contains(CellAttribute.exit) }?.key
-  return listOfNotNull(
-      if (homeNode != null) Pair(homeNode, BiomeId.home.name) else null,
-      if (exitNode != null) Pair(exitNode, BiomeId.exit.name) else null
-  )
-      .associate { it }
+  val homeNodes = grid.cells.filter { it.value.attributes.contains(CellAttribute.home) }.keys
+  val exitNodes = grid.cells.filter { it.value.attributes.contains(CellAttribute.exit) }.keys
+  return homeNodes.associateWith { BiomeId.home }
+      .plus(exitNodes.associateWith { BiomeId.exit })
 }
 
 fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder> {
@@ -74,7 +71,7 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
   val realm = generateRealm(grid, cellBiomes)
   val nextId = newIdSource(1)
   val architectureInput = newArchitectureInput(generationConfig, dice, workbench, cellBiomes)
-  val architectureSource = buildArchitecture(architectureInput, builders + Pair(homeBlock.block.name, homeBlock.builder!!))
+  val architectureSource = buildArchitecture(architectureInput, builders + Pair(homeBlock1.block.name, homeBlock1.builder!!))
 
   // The <Hand> specifier shouldn't be needed here but without it Kotlin is throwing an internal error referencing this line
   val architectureHands = architectureSource.map(newGenericIdHand<Hand>(nextId))

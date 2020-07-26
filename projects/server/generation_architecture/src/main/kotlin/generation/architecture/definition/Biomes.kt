@@ -8,13 +8,13 @@ import silentorb.mythic.scenery.MeshName
 import marloth.scenery.enums.MeshId
 import marloth.scenery.enums.TextureId
 
-enum class BiomeId {
-  checkers,
-  exit,
-  forest,
-  home,
-  tealPalace,
-  village,
+object BiomeId {
+  const val checkers = "checkers"
+  const val exit = "exit"
+  const val forest = "forest"
+  const val home = "home"
+  const val tealPalace = "tealPalace"
+  const val village = "village"
 }
 
 val commonMeshes = setOf(
