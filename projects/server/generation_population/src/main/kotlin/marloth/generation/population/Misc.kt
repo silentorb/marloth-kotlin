@@ -2,8 +2,6 @@ package marloth.generation.population
 
 import simulation.misc.floorOffset
 import marloth.scenery.enums.MeshInfoMap
-import generation.architecture.old.alignWithNodeFloor
-import generation.architecture.old.nodeFloorCenter
 import marloth.definition.templates.newBuffCloud
 import marloth.definition.templates.newTreasureChest
 import silentorb.mythic.ent.Id
@@ -21,12 +19,12 @@ fun groupElementsByCell(deck: Deck, elements: Collection<Id>): Map<Id, Set<Id>> 
       .mapValues { it.value.toSet() }
 }
 
-fun placeBuffCloud(node: Node, buff: AccessoryName) =
-    newBuffCloud(
-        position = nodeFloorCenter(node),
-        radius = node.radius,
-        buff = buff
-    )
+//fun placeBuffCloud(node: Node, buff: AccessoryName) =
+//    newBuffCloud(
+//        position = nodeFloorCenter(node),
+//        radius = node.radius,
+//        buff = buff
+//    )
 
-fun placeTreasureChest(meshInfo: MeshInfoMap, node: Node, amount: Int) =
-    newTreasureChest(meshInfo, alignWithNodeFloor(meshInfo, node, MeshId.treasureChest) + floorOffset, amount)
+//fun placeTreasureChest(meshInfo: MeshInfoMap, node: Node, amount: Int) =
+//    newTreasureChest(meshInfo, alignWithNodeFloor(meshInfo, node, MeshId.treasureChest) + floorOffset, amount)

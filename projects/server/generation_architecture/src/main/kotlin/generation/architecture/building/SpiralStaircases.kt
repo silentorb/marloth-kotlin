@@ -1,6 +1,5 @@
 package generation.architecture.building
 
-import generation.architecture.old.*
 import generation.general.TextureGroup
 import generation.general.biomeTexture
 import silentorb.mythic.spatial.Matrix
@@ -49,3 +48,54 @@ import simulation.misc.floorOffset
 //          texture = biomeTexture(biome, TextureGroup.wall)
 //      ))
 //}
+
+//fun spiralStairBlocks(): Map<String, BlockBuilder> = mapOf(
+//    "stairBottom" to compose(
+//        setOf(CellAttribute.lockedRotation, CellAttribute.traversable),
+//        blockBuilder(
+//            up = spiralStaircaseTopOrBottom,
+//            east = impassableCylinder,
+//            north = openOrSolidCylinder,
+//            south = impassableCylinder,
+//            west = openOrSolidCylinder
+//        ),
+//        floorMesh(MeshId.squareFloor),
+//        cylinderWalls(),
+//        curvedStaircases
+//    ),
+//
+//    "stairMiddle" to compose(
+//        setOf(CellAttribute.lockedRotation, CellAttribute.traversable),
+//        blockBuilder(
+//            up = spiralStaircaseTop,
+//            down = spiralStaircaseBottom,
+//            east = impassableCylinder,
+//            north = impassableCylinder,
+//            south = impassableCylinder,
+//            west = impassableCylinder
+//        ),
+//        cylinderWalls(),
+//        curvedStaircases
+//    ),
+//
+//    "stairTop" to compose(
+//        setOf(CellAttribute.lockedRotation, CellAttribute.traversable),
+//        blockBuilder(
+//            up = impassableVertical,
+//            down = spiralStaircaseTopOrBottom,
+//            east = openOrSolidCylinder,
+//            north = impassableCylinder,
+//            south = openOrSolidCylinder,
+//            west = impassableCylinder
+//        ),
+//        cylinderWalls(),
+//        halfFloorMesh(MeshId.halfSquareFloor)
+//    )
+//)
+//    .mapValues(mapEntryValue(withCellAttributes(
+//        setOf(
+//            CellAttribute.lockedRotation,
+//            CellAttribute.spiralStaircase,
+//            CellAttribute.traversable
+//        )
+//    )))

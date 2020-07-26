@@ -1,6 +1,8 @@
 package generation.architecture.building
 
-import generation.architecture.definition.plainWallLampOffset
+import generation.architecture.blocks.plainWallLampOffset
+import generation.architecture.engine.BlockBuilder
+import generation.architecture.engine.mergeBuilders
 import generation.architecture.misc.Builder
 import generation.general.Block
 import generation.general.Direction
@@ -19,25 +21,6 @@ fun randomDiagonalWall(mesh: MeshName, height: Float = 0f): Builder = { input ->
   val scale = Vector3(1.0f, 1f, 1f)
   listOf(newWallInternal(config, mesh, position, Quaternion().rotateZ(Pi * 0.25f), biome, scale = scale))
 }
-
-//fun diagonalCornerFloor(name: String, upper: Level) = BlockBuilder(
-//    block = Block(
-//        name = name,
-//        sides = sides(
-//            up = upper.up,
-//            east = upper.side,
-//            north = upper.side,
-//            west = Sides.preferredHorizontalClosed,
-//            south = Sides.preferredHorizontalClosed
-//        ),
-//        attributes = setOf(CellAttribute.categoryDiagonal, CellAttribute.traversable)
-//    ),
-//    builder = mergeBuilders(
-//        diagonalHalfFloorMesh(MeshId.squareFloorHalfDiagonal, upper.height),
-//        randomDiagonalWall(MeshId.diagonalWall, upper.height)
-//    )
-//) //+
-//+    withWallLamp(0.7f)(randomDiagonalWall(height))
 
 fun diagonalCorner(name: String, height: Float, sides: SideMap, fallback: Builder): BlockBuilder =
     BlockBuilder(

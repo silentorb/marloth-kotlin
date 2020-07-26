@@ -1,5 +1,6 @@
 package generation.architecture.misc
 
+import generation.architecture.engine.GenerationConfig
 import generation.general.*
 import silentorb.mythic.randomly.Dice
 import simulation.main.Hand

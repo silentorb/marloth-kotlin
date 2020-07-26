@@ -1,7 +1,7 @@
-package generation.architecture.misc
+package generation.architecture.engine
 
 import generation.abstracted.*
-import generation.architecture.definition.homeBlock1
+import generation.architecture.blocks.homeBlock1
 import generation.general.Block
 import generation.general.BlockConfig
 import generation.general.Workbench

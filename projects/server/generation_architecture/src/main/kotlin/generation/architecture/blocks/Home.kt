@@ -1,6 +1,12 @@
-package generation.architecture.definition
+package generation.architecture.blocks
 
 import generation.architecture.building.*
+import generation.architecture.definition.Sides
+import generation.architecture.definition.uniqueConnection
+import generation.architecture.engine.BlockBuilder
+import generation.architecture.engine.handBuilder
+import generation.architecture.engine.mergeBuilders
+import generation.architecture.engine.sides
 import generation.general.Block
 import generation.general.Direction
 import marloth.scenery.enums.MeshId

@@ -3,9 +3,9 @@ package lab
 import silentorb.mythic.configuration.ConfigManager
 import silentorb.mythic.configuration.loadYamlFile
 import silentorb.mythic.configuration.saveYamlFile
-import generation.architecture.misc.GenerationConfig
+import generation.architecture.engine.GenerationConfig
 import marloth.scenery.enums.MeshShapeMap
-import generation.architecture.misc.compileArchitectureMeshInfo
+import generation.architecture.engine.compileArchitectureMeshInfo
 import lab.utility.updateWatching
 import lab.views.model.newModelViewState
 import marloth.clienting.newClientState

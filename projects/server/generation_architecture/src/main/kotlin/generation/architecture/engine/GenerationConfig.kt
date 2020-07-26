@@ -1,4 +1,4 @@
-package generation.architecture.misc
+package generation.architecture.engine
 
 import generation.general.BiomeInfoMap
 import marloth.scenery.enums.MeshInfoMap

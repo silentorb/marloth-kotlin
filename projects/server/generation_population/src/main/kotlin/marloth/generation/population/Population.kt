@@ -1,6 +1,6 @@
 package marloth.generation.population
 
-import generation.architecture.misc.GenerationConfig
+import generation.architecture.engine.GenerationConfig
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.timing.FloatCycle

@@ -1,5 +1,8 @@
-package generation.architecture.misc
+package generation.architecture.engine
 
+import generation.architecture.misc.ArchitectureInput
+import generation.architecture.misc.Builder
+import generation.architecture.misc.BuilderInput
 import generation.general.*
 import silentorb.mythic.spatial.*
 import simulation.main.Hand

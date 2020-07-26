@@ -25,25 +25,6 @@ typealias MeshSource = (MeshQuery) -> Set<MeshName>
 
 typealias MeshSelector = (MeshQuery) -> MeshName?
 
-fun meshMatches(query: MeshQuery): (MeshAttributes) -> Boolean = { attributes ->
-  val hasAny = if (query.any.any())
-    query.any.any { attributes.contains(it) }
-  else
-    true
-
-  val hasAll = if (query.all.any())
-    query.all.all { attributes.contains(it) }
-  else
-    true
-
-  val hasNone = if (query.none.any())
-    query.none.none { attributes.contains(it) }
-  else
-    true
-
-  hasAll && hasAny && hasNone
-}
-
 fun newMeshSource(meshInfo: MeshInfoMap): MeshSource {
   return { query ->
     assert(query.all.size + query.any.size + query.none.size > 0)
@@ -78,17 +59,3 @@ fun randomlySelectMesh(dice: Dice, meshSource: MeshSource): MeshSelector = { que
   else
     null
 }
-
-//fun filterMeshes(meshInfo: MeshInfoMap, options: Set<MeshName>, mode: QueryFilter = QueryFilter.all): (MeshAttributes) -> Set<MeshName> = { attributes ->
-//  options.filter { key ->
-//    val info = meshInfo[key]!!
-//    when (mode) {
-//      QueryFilter.all -> info.attributes.containsAll(attributes)
-//      QueryFilter.none -> info.attributes.none { attributes.contains(it) }
-//      QueryFilter.any -> info.attributes.any { attributes.contains(it) }
-//    }
-//  }.toSet()
-//}
-
-//fun filterMeshes(meshInfo: MeshInfoMap, biome: BiomeInfo, attributes: MeshAttributes, mode: QueryFilter = QueryFilter.all): Set<MeshName> =
-//    filterMeshes(meshInfo, biome.meshes, mode)(attributes)

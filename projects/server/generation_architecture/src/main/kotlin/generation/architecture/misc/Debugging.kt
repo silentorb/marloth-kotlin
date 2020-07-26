@@ -1,6 +1,6 @@
 package generation.architecture.misc
 
-import generation.architecture.building.BlockBuilder
+import generation.architecture.engine.BlockBuilder
 import silentorb.mythic.debugging.getDebugString
 import simulation.misc.CellAttribute
 

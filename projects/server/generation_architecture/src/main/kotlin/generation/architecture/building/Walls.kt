@@ -3,8 +3,8 @@ package generation.architecture.building
 import generation.architecture.misc.ArchitectureInput
 import generation.architecture.misc.Builder
 import generation.architecture.misc.BuilderInput
-import generation.architecture.misc.GenerationConfig
-import generation.architecture.old.newArchitectureMesh
+import generation.architecture.engine.GenerationConfig
+import generation.architecture.misc.newArchitectureMesh
 import generation.general.*
 import marloth.scenery.enums.MeshId
 import silentorb.mythic.scenery.MeshName
@@ -50,33 +50,33 @@ fun directionRotation(direction: Direction): Float =
       else -> throw Error("Not supported")
     }
 
-fun cylinderWalls() = blockBuilder { input ->
-  val diagonals = (0 until 4)
-      .map { Pair(MeshId.arcWall8thA, (0.25f + it * 0.5f) * Pi) }
-
-  val optionalWalls = horizontalDirectionVectors
-//      .filterKeys { it == Direction.south }
-//      .filterValues { offset ->
-//        !containsConnection(input.general.grid.connections, input.cell, input.cell + offset)
+//fun cylinderWalls() = blockBuilder { input ->
+//  val diagonals = (0 until 4)
+//      .map { Pair(MeshId.arcWall8thA, (0.25f + it * 0.5f) * Pi) }
+//
+//  val optionalWalls = horizontalDirectionVectors
+////      .filterKeys { it == Direction.south }
+////      .filterValues { offset ->
+////        !containsConnection(input.general.grid.connections, input.cell, input.cell + offset)
+////      }
+//      .map { (direction, _) ->
+//        Pair(MeshId.arcWall8thB, directionRotation(direction))
 //      }
-      .map { (direction, _) ->
-        Pair(MeshId.arcWall8thB, directionRotation(direction))
-      }
-
-  diagonals.plus(optionalWalls)
-//      optionalWalls
-      .map { (mesh, angleZ) ->
-        val facingOffset = Quaternion().rotateZ(angleZ) * Vector3(cellHalfLength - 0.25f, 0f, 0f)
-        WallPlacement(
-            config = input.general.config,
-            mesh = mesh,
-            position = cellCenterOffset + facingOffset,
-            orientation = Quaternion().rotateZ(angleZ + Pi),
-            biome = input.biome
-        )
-      }
-      .map(::newWallInternal)
-}
+//
+//  diagonals.plus(optionalWalls)
+////      optionalWalls
+//      .map { (mesh, angleZ) ->
+//        val facingOffset = Quaternion().rotateZ(angleZ) * Vector3(cellHalfLength - 0.25f, 0f, 0f)
+//        WallPlacement(
+//            config = input.general.config,
+//            mesh = mesh,
+//            position = cellCenterOffset + facingOffset,
+//            orientation = Quaternion().rotateZ(angleZ + Pi),
+//            biome = input.biome
+//        )
+//      }
+//      .map(::newWallInternal)
+//}
 
 fun placeWall(general: ArchitectureInput, mesh: MeshName, position: Vector3, direction: Direction, biome: BiomeName): Hand {
   val orientation = getWallOrientation(direction)

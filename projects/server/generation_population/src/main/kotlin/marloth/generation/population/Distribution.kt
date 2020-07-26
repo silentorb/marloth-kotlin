@@ -1,10 +1,9 @@
 package marloth.generation.population
 
 import generation.abstracted.distributeToSlots
-import generation.architecture.misc.GenerationConfig
+import generation.architecture.engine.GenerationConfig
 import marloth.definition.misc.*
 import silentorb.mythic.debugging.getDebugBoolean
-import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.randomly.Dice

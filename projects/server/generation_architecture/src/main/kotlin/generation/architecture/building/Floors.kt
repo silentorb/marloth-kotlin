@@ -1,11 +1,9 @@
 package generation.architecture.building
 
-import generation.architecture.misc.Builder
-import generation.architecture.old.*
+import generation.architecture.misc.*
 import generation.general.TextureGroup
 import generation.general.biomeTexture
 import silentorb.mythic.scenery.MeshName
-import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.quarterAngle
@@ -29,8 +27,8 @@ fun floorMeshBuilder(mesh: MeshName, offset: Vector3 = Vector3.zero,
 fun floorMesh(mesh: MeshName, offset: Vector3 = Vector3.zero, orientation: Quaternion = Quaternion()) =
     floorMeshBuilder(mesh, offset, orientation)
 
-fun halfFloorMesh(mesh: MeshName, offset: Vector3 = Vector3.zero, orientation: Quaternion = Quaternion()) =
-    blockBuilder(builder = floorMeshBuilder(mesh, offset, orientation))
+//fun halfFloorMesh(mesh: MeshName, offset: Vector3 = Vector3.zero, orientation: Quaternion = Quaternion()) =
+//    blockBuilder(builder = floorMeshBuilder(mesh, offset, orientation))
 
 fun diagonalHalfFloorMesh(mesh: MeshName, height: Float): Builder = { input ->
   val position = Vector3(0f, 0f, height)
