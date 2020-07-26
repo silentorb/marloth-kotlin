@@ -1,7 +1,5 @@
 package generation.general
 
-import simulation.misc.CellAttribute
-
 data class MappedBlock(
     val original: Block,
     val turns: Int = 0
@@ -20,7 +18,7 @@ typealias RotatingConnections = Map<Any, List<Any>>
 //  }.toSet()
 //}
 
-fun rotateSides(turns: Int): (Sides) -> Sides = { sides ->
+fun rotateSides(turns: Int): (SideMap) -> SideMap = { sides ->
   val horizontal = horizontalDirectionList.map { sides[it]!! }
   val normalizedTurns = turns % 4
 

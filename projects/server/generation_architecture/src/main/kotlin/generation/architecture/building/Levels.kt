@@ -4,10 +4,7 @@ import simulation.misc.cellLength
 import generation.architecture.definition.*
 import generation.architecture.misc.squareOffsets
 import generation.architecture.old.getTurnDirection
-import generation.general.Block
-import generation.general.Side
-import generation.general.endpoint
-import generation.general.newSide
+import generation.general.*
 import silentorb.mythic.spatial.Vector3
 import marloth.scenery.enums.MeshId
 import simulation.misc.CellAttribute
@@ -39,9 +36,9 @@ fun newSlopeSide(level: Int, alternation: Boolean) =
 
 private val levels = listOf(
     newLevel(0, Connector.open, endpoint, setOf(levelLedgeConnectors[0])),
-    newLevel(1, ConnectionType.quarterLevelOpen1, endpoint, setOf(levelLedgeConnectors[1])),
-    newLevel(2, ConnectionType.quarterLevelOpen2, endpoint, setOf(levelLedgeConnectors[2])),
-    newLevel(3, ConnectionType.quarterLevelOpen3, Sides.extraHeadroom, setOf(levelLedgeConnectors[3]))
+    newLevel(1, Connector.quarterLevelOpen1, endpoint, setOf(levelLedgeConnectors[1])),
+    newLevel(2, Connector.quarterLevelOpen2, endpoint, setOf(levelLedgeConnectors[2])),
+    newLevel(3, Connector.quarterLevelOpen3, Sides.extraHeadroom, setOf(levelLedgeConnectors[3]))
 )
 
 fun slopeSides(lower: Level, upper: Level) =
@@ -54,7 +51,7 @@ fun slopeSides(lower: Level, upper: Level) =
     )
 
 fun tieredWalls(lower: Level) =
-    cubeWallsWithFeatures(MeshId.squareWall, listOf(WallFeature.lamp, WallFeature.none), Vector3(0f, 0f, lower.height - 1.2f))
+    cubeWallsWithFeatures(listOf(WallFeature.lamp, WallFeature.none), offset = Vector3(0f, 0f, lower.height - 1.2f))
 
 fun newSlope(lower: Level, upper: Level) =
     BlockBuilder(
@@ -76,7 +73,7 @@ fun plainSlopeSlot(lowerHeight: Float) =
     )
 
 fun newLedgeSide(level: Int) =
-    newSide(levelLedgeConnectors[level], setOf(levelConnectors[level]), true)
+    newSide(levelLedgeConnectors[level], setOf(levelConnectors[level]), ConnectionLogic.connectWhenPossible)
 
 fun newLedgeSlope(lower: Level, upper: Level, name: String, ledgeTurns: Int): BlockBuilder {
   val height = lower.height + quarterStep + quarterStep
@@ -111,6 +108,10 @@ fun explodeHeightBlocks(levelIndex: Int): List<BlockBuilder> {
   val lower = levels[levelIndex - 1]
   val halfStepRequiredOpen: Side = upper.side
   val halfStepOptionalOpen: Side = halfStepRequiredOpen //.plus(ConnectionType.plainWall)
+  val squareFloorBuilder = mergeBuilders(
+      floorMesh(MeshId.squareFloor, Vector3(0f, 0f, upper.height)),
+      tieredWalls(lower)
+  )
   return listOf(
       BlockBuilder(
           block = Block(
@@ -125,10 +126,7 @@ fun explodeHeightBlocks(levelIndex: Int): List<BlockBuilder> {
               attributes = setOf(CellAttribute.traversable),
               slots = squareOffsets(2).map { it + Vector3(0f, 0f, upper.height) }
           ),
-          builder = mergeBuilders(
-              floorMesh(MeshId.squareFloor, Vector3(0f, 0f, upper.height)),
-              tieredWalls(lower)
-          )
+          builder = squareFloorBuilder
       )
       ,
 
@@ -138,17 +136,20 @@ fun explodeHeightBlocks(levelIndex: Int): List<BlockBuilder> {
       ,
 
       newLedgeSlope(lower, upper, "halfStepSlopeAndLedgeA$levelIndex", -1),
-      newLedgeSlope(lower, upper, "halfStepSlopeAndLedgeB$levelIndex", 1)
+      newLedgeSlope(lower, upper, "halfStepSlopeAndLedgeB$levelIndex", 1),
 
-//      "diagonalCorner$levelIndex" to diagonalCornerFloor(upper.height) + BlockBuilder(
-//          block = Block(
-//              sides = sides(
-//                  up = upper.up,
-//                  east = upper.side,
-//                  north = upper.side
-//              )
-//          )
-//      )
+      diagonalCorner(
+          "diagonalCorner$levelIndex",
+          upper.height,
+          sides(
+              up = Sides.extraHeadroom,
+              east = halfStepOptionalOpen,
+              north = halfStepOptionalOpen,
+              west = preferredHorizontalClosed(levelConnectors[levelIndex]),
+              south = preferredHorizontalClosed(levelConnectors[levelIndex])
+          ),
+          squareFloorBuilder
+      )
   )
 }
 

@@ -3,12 +3,12 @@ package generation.general
 import silentorb.mythic.spatial.Vector3
 import simulation.misc.CellAttribute
 
-typealias Sides = Map<Direction, Side>
+typealias SideMap = Map<Direction, Side>
 typealias OptionalSides = Map<Direction, Side?>
 
 data class Block(
     val name: String = "",
-    val sides: Sides = mapOf(),
+    val sides: SideMap = mapOf(),
     val attributes: Set<CellAttribute> = setOf(),
     val slots: List<Vector3> = listOf(),
     val turns: Int = 0

@@ -6,7 +6,7 @@ import generation.general.*
 import simulation.main.Hand
 import simulation.misc.CellAttribute
 
-fun mergeSides(blocks: List<Block>): Sides {
+fun mergeSides(blocks: List<Block>): SideMap {
   val sides = allDirections.associateWith { direction ->
     val options = blocks
         .mapNotNull { block -> block.sides[direction] }

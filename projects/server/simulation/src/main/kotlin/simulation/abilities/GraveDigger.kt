@@ -12,9 +12,7 @@ fun graveDiggerDurationModifer(deck: Deck, actor: Id): Float =
           .filter { it.type == AccessoryId.graveDigger }
           .maxBy { it.level }
 
-      if (graveDigger != null)
-        graveDigger.level * 10f
-      else
-        0f
+      val mod = graveDigger?.level?.toFloat() ?: 0f
+      mod * 10f
     } else
       0f

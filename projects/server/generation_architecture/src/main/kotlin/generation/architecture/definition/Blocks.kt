@@ -1,8 +1,7 @@
 package generation.architecture.definition
 
-import generation.architecture.building.placeCubeRoomWalls
-import generation.architecture.building.cubeWalls
 import generation.architecture.building.*
+import generation.architecture.misc.Builder
 import generation.architecture.misc.squareOffsets
 import generation.general.Block
 import generation.general.Direction
@@ -36,8 +35,7 @@ val homeBlock = BlockBuilder(
         sides = sides(
             east = Sides.doorway
         ),
-        attributes = setOf(CellAttribute.home, CellAttribute.traversable),
-        slots = squareOffsets(2)
+        attributes = setOf(CellAttribute.home, CellAttribute.traversable)
     ),
     builder = mergeBuilders(
         floorMesh(MeshId.squareFloor),
@@ -48,6 +46,12 @@ val homeBlock = BlockBuilder(
     )
 )
 // + cubeWallLamps(lampRate = 0.7f)
+
+fun singleCellRoomBuilder(): Builder =
+    mergeBuilders(
+        floorMesh(MeshId.squareFloor),
+        cubeWallsWithFeatures(fullWallFeatures(), offset = plainWallLampOffset())
+    )
 
 fun singleCellRoom() = BlockBuilder(
     block = Block(
@@ -61,10 +65,7 @@ fun singleCellRoom() = BlockBuilder(
         attributes = setOf(CellAttribute.traversable),
         slots = squareOffsets(2)
     ),
-    builder = mergeBuilders(
-        floorMesh(MeshId.squareFloor),
-        cubeWallsWithFeatures(MeshId.squareWall, listOf(WallFeature.lamp, WallFeature.window, WallFeature.none), plainWallLampOffset())
-    )
+    builder = singleCellRoomBuilder()
 )
 
 // + cubeWallLamps(lampRate = 0.7f)
@@ -121,7 +122,18 @@ fun singleCellRoom() = BlockBuilder(
 //    )))
 
 fun allBlockBuilders(): List<BlockBuilder> = listOf(
-    singleCellRoom()
+    singleCellRoom(),
+    diagonalCorner(
+        name = "diagonalCorner",
+        height = 0f,
+        sides = sides(
+            east = Sides.broadOpen,
+            north = Sides.broadOpen,
+            west = preferredHorizontalClosed(Connector.open),
+            south = preferredHorizontalClosed(Connector.open)
+        ),
+        fallback = singleCellRoomBuilder()
+    )
 //    "diagonalCorner" to diagonalCornerFloor(0f) + BlockBuilder(
 //        block = Block(
 //            sides = sides(

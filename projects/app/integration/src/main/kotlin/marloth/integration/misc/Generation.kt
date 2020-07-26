@@ -63,14 +63,10 @@ fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder>
 fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, input: WorldInput): World {
   val dice = input.dice
   val blockBuilders = explodeBlockMap(allBlockBuilders())
-//  blockBuilders.forEach { blockBuilder -> assert(blockBuilder.block.sides.all { it != null }) }
   val (blocks, builders) = splitBlockBuilders(devFilterBlockBuilders(blockBuilders))
-  val independentConnections = independentConnectionTypes()
-  val openConnectionTypes = openConnectionTypes()
   val workbench = newWorkbench(dice, blocks, generationConfig.roomCount)
   val grid = workbench.mapGrid
   assert(grid.connections.any())
-//  val gridSideMap = bakeSides(independentConnections, openConnectionTypes, grid.connections, workbench.blockGrid)
   val biomeGrid = newRandomizedBiomeGrid(biomeInfoMap, input)
   val cellBiomes = applyBiomesToGrid(grid, biomeGrid)
       .plus(fixedCellBiomes(grid))

@@ -11,7 +11,7 @@ object Professions {
   val soldier = CharacterDefinition(
       name = Text.id_soldier,
       health = 200,
-      accessories = listOf(AccessoryId.shotgun),
+      accessories = listOf(AccessoryId.shotgun, AccessoryId.graveDigger),
       depictionType = DepictionType.child,
       speed = 5f,
       deathSound = SoundId.girlScream,

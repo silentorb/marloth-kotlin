@@ -11,17 +11,21 @@ tailrec fun addPathStep(
     blacklist: List<AbsoluteSide>
 ): BlockGrid {
   val incompleteSides = getIncompleteBlockSides(grid) - blacklist
-  val prioritySides = incompleteSides.filter {
-    grid[it.position]!!.sides[it.direction]!!.closeIfPossible
+  val sideGroups = incompleteSides.groupBy {
+    grid[it.position]!!.sides[it.direction]!!.connectionLogic
   }
+  val prioritySides = sideGroups[ConnectionLogic.connectWhenPossible] ?: listOf()
 
   return if (grid.size >= maxSteps && prioritySides.none())
     grid
   else {
     val incompleteSide = if (prioritySides.any())
       dice.takeOne(prioritySides)
+    else if (sideGroups.containsKey(ConnectionLogic.neutral))
+      dice.takeOne(sideGroups[ConnectionLogic.neutral]!!)
     else
       dice.takeOne(incompleteSides)
+
     val offset = directionVectors[incompleteSide.direction]!!
     val position = incompleteSide.position
     val nextPosition = position + offset

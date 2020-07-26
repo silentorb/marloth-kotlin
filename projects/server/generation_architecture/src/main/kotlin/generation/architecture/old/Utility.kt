@@ -123,5 +123,5 @@ fun getTurnDirection(turns: Int): Direction =
       else -> throw Error("Shouldn't be here")
     }
 
-fun getTurnedSide(sides: Sides, turns: Int): Side? =
+fun getTurnedSide(sides: SideMap, turns: Int): Side? =
     sides[getTurnDirection(turns)]

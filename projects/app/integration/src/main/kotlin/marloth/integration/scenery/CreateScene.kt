@@ -54,7 +54,8 @@ fun createScene(meshes: ModelMeshMap, definitions: Definitions, deck: Deck): (Id
             elements = gatherParticleElements(deck, camera.position),
             useDepth = false
         )
-    )// + listOfNotNull(movementRangeLayer, equipmentLayer, targetingLayer)
+    ) + listOfNotNull(equipmentLayer)
+    // + listOfNotNull(movementRangeLayer, equipmentLayer, targetingLayer)
 
     val elementLights = layers.flatMap { layer ->
       layer.elements.flatMap { it.lights }

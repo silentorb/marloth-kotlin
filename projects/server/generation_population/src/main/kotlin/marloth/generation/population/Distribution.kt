@@ -2,10 +2,7 @@ package marloth.generation.population
 
 import generation.abstracted.distributeToSlots
 import generation.architecture.misc.GenerationConfig
-import marloth.definition.misc.DistributionGroup
-import marloth.definition.misc.enemyDistributions
-import marloth.definition.misc.fixedDistributions
-import marloth.definition.misc.scalingDistributions
+import marloth.definition.misc.*
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.debugging.getDebugString
@@ -17,8 +14,6 @@ import silentorb.mythic.spatial.toVector3
 import simulation.main.IdHand
 import simulation.misc.*
 import kotlin.math.min
-
-fun monsterLimit() = getDebugInt("MONSTER_LIMIT") ?: 1000
 
 fun allocateVictoryKeyCells(cells: Set<Vector3i>, connections: ConnectionSet, home: Vector3i, victoryKeyCount: Int): List<Vector3i> {
   val homeVector3 = home.toVector3()

@@ -5,6 +5,7 @@ import generation.architecture.old.*
 import generation.general.TextureGroup
 import generation.general.biomeTexture
 import silentorb.mythic.scenery.MeshName
+import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.quarterAngle
@@ -31,13 +32,11 @@ fun floorMesh(mesh: MeshName, offset: Vector3 = Vector3.zero, orientation: Quate
 fun halfFloorMesh(mesh: MeshName, offset: Vector3 = Vector3.zero, orientation: Quaternion = Quaternion()) =
     blockBuilder(builder = floorMeshBuilder(mesh, offset, orientation))
 
-fun diagonalHalfFloorMesh(mesh: MeshName, height: Float) =
-    blockBuilder { input ->
-//      val position = Vector3(-5f, 5f, 0f).transform(Matrix.identity.rotateZ(angle))
-//      val position = Vector3(-5f, -5f, -0.01f)
-      val position = Vector3(0f, 0f, height)
-      floorMeshBuilder(mesh, offset = position)(input)
-    }
+fun diagonalHalfFloorMesh(mesh: MeshName, height: Float): Builder = { input ->
+  val position = Vector3(0f, 0f, height)
+  val orientation = Quaternion().rotateZ(-quarterAngle)
+  floorMeshBuilder(mesh, offset = position, orientation = orientation)(input)
+}
 
 fun newSlopedFloorMesh(mesh: MeshName, height: Float): Builder = { input ->
   val meshInfo = input.general.config.meshes[mesh]!!

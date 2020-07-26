@@ -6,13 +6,16 @@ object Connector {
 
   const val extraHeadroom = "extraHeadroom"
   const val verticalDiagonal= "verticalDiagonal"
+  const val quarterLevelOpen1 = "quarterLevelOpen1"
+  const val quarterLevelOpen2 = "quarterLevelOpen2"
+  const val quarterLevelOpen3 = "quarterLevelOpen3"
 }
 
 val levelConnectors = listOf(
     Connector.open,
-    ConnectionType.quarterLevelOpen1,
-    ConnectionType.quarterLevelOpen2,
-    ConnectionType.quarterLevelOpen3
+    Connector.quarterLevelOpen1,
+    Connector.quarterLevelOpen2,
+    Connector.quarterLevelOpen3
 )
 
 data class LedgeConnector(

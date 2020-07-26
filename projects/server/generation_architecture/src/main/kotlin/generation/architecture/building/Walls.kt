@@ -113,9 +113,16 @@ enum class WallFeature {
   none
 }
 
-fun cubeWallsWithFeatures(mesh: MeshName, features: List<WallFeature>, offset: Vector3 = Vector3.zero): Builder = { input ->
+fun fullWallFeatures() = listOf(WallFeature.lamp, WallFeature.window, WallFeature.none)
+
+fun cubeWallsWithFeatures(
+    features: List<WallFeature>,
+    mesh: MeshName = MeshId.squareWall,
+    offset: Vector3 = Vector3.zero,
+    possibleDirections: Set<Direction> = horizontalDirections
+): Builder = { input ->
   val dice = input.general.dice
-  val directions = horizontalDirections - input.neighbors
+  val directions = possibleDirections - input.neighbors
   val featureCount = dice.getInt(min(min(2, directions.size), features.size))
   val featureDirections = dice.take(directions, featureCount)
   val plainDirections = directions - featureDirections
