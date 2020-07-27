@@ -2,6 +2,7 @@ package generation.abstracted
 
 import generation.general.*
 import silentorb.mythic.randomly.Dice
+import simulation.misc.CellAttribute
 
 tailrec fun addPathStep(
     maxSteps: Int,
@@ -48,12 +49,13 @@ tailrec fun addPathStep(
       blacklist
     }
 
-    addPathStep(maxSteps, dice, blocks, nextGrid, nextBlacklist)
+    addPathStep(maxSteps, dice, filterUsedUniqueBlocks(nextGrid, blocks), nextGrid, nextBlacklist)
   }
 }
 
 fun windingPath(dice: Dice, config: BlockConfig, length: Int): (BlockGrid) -> BlockGrid = { grid ->
-  val nextGrid = addPathStep(length, dice, config.blocks, grid, listOf())
+  val blocks = filterUsedUniqueBlocks(grid, config.blocks)
+  val nextGrid = addPathStep(length, dice, blocks, grid, listOf())
   assert(nextGrid.size > grid.size)
   nextGrid
 }

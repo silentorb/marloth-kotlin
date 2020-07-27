@@ -7,6 +7,7 @@ enum class CellAttribute {
   exit,
   home,
   traversable,
+  unique,
 
   // Only used in development and not in game logic:
   spiralStaircase,

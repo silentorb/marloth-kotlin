@@ -59,9 +59,20 @@ fun applyBiomedBuilder(biome: BiomeName, builder: BiomedBuilder): Builder =
       ))
     }
 
+fun restrictBiomeBlockSides(biome: BiomeName, block: Block): Block =
+    block.copy(
+        name = biome + block.name,
+        sides = block.sides.mapValues { (_, side) ->
+          if (side == endpoint)
+            side
+          else
+            newBiomeSide(biome, side)
+        }
+    )
+
 fun applyBiomedBlockBuilder(biome: BiomeName): (BiomedBlockBuilder) -> BlockBuilder = { blockBuilder ->
   BlockBuilder(
-      block = blockBuilder.block,
+      block = restrictBiomeBlockSides(biome, blockBuilder.block),
       builder = applyBiomedBuilder(biome, blockBuilder.builder)
   )
 }

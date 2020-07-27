@@ -60,23 +60,3 @@ fun singleCellRoom() = BiomedBlockBuilder(
     ),
     builder = singleCellRoomBuilder()
 )
-
-fun biomeAdaptorCube(firstBiome: BiomeName, secondBiome: BiomeName): BlockBuilder {
-  val firstSide = newBiomeSide(firstBiome, Sides.broadOpen)
-  val secondSide = newBiomeSide(secondBiome, Sides.broadOpen)
-
-  return BlockBuilder(
-      block = Block(
-          name = "cubeRoom",
-          sides = sides(
-              east = firstSide,
-              north = secondSide,
-              west = firstSide,
-              south = firstSide
-          ),
-          attributes = setOf(CellAttribute.traversable),
-          slots = squareOffsets(2)
-      ),
-      builder = applyBiomedBuilder(firstBiome, singleCellRoomBuilder())
-  )
-}

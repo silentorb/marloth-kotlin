@@ -14,15 +14,15 @@ import simulation.misc.cellLength
 
 val homeSides = uniqueConnection("homeSides")
 
-val homeBlock1 = applyBiomedBlockBuilder(BiomeId.home)(
+fun homeBlocks(): List<BlockBuilder> = listOf(
     BiomedBlockBuilder(
         block = Block(
-            name = "home1",
+            name = "1",
             sides = sides(
                 east = Sides.doorway,
                 north = homeSides.first
             ),
-            attributes = setOf(CellAttribute.home, CellAttribute.traversable)
+            attributes = setOf(CellAttribute.home, CellAttribute.traversable, CellAttribute.unique)
         ),
         builder = mergeBuilders(
             floorMesh(MeshId.squareFloor),
@@ -32,17 +32,15 @@ val homeBlock1 = applyBiomedBlockBuilder(BiomeId.home)(
             placeCubeRoomWalls(MeshId.squareWall, setOf(Direction.south)),
             handBuilder(cubeWallLamp(Direction.south, plainWallLampOffset()))
         )
-    )
-)
+    ),
 
-fun homeBlock2() = applyBiomedBlockBuilder(BiomeId.home)(
     BiomedBlockBuilder(
         block = Block(
-            name = "home2",
+            name = "2",
             sides = sides(
                 south = homeSides.second
             ),
-            attributes = setOf(CellAttribute.home, CellAttribute.traversable)
+            attributes = setOf(CellAttribute.home, CellAttribute.traversable, CellAttribute.unique)
         ),
         builder = mergeBuilders(
             floorMesh(MeshId.squareFloor),
@@ -54,3 +52,4 @@ fun homeBlock2() = applyBiomedBlockBuilder(BiomeId.home)(
         )
     )
 )
+    .map(applyBiomedBlockBuilder(BiomeId.home))

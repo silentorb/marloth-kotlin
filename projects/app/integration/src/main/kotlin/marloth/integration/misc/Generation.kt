@@ -1,7 +1,6 @@
 package marloth.integration.misc
 
 import generation.architecture.blocks.allBlockBuilders
-import generation.architecture.blocks.homeBlock1
 import generation.architecture.matrical.BlockBuilder
 import generation.architecture.definition.*
 import generation.architecture.engine.*
@@ -63,7 +62,8 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
   val dice = input.dice
   val blockBuilders = explodeBlockMap(allBlockBuilders())
   val (blocks, builders) = splitBlockBuilders(devFilterBlockBuilders(blockBuilders))
-  val workbench = newWorkbench(dice, blocks, generationConfig.roomCount)
+  val home = blocks.first { it.name == "home1" }
+  val workbench = newWorkbench(dice, home, blocks - home, generationConfig.roomCount)
   val grid = workbench.mapGrid
   assert(grid.connections.any())
   val biomeGrid = newRandomizedBiomeGrid(biomeInfoMap, input)
@@ -73,7 +73,7 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
   val realm = generateRealm(grid, cellBiomes)
   val nextId = newIdSource(1)
   val architectureInput = newArchitectureInput(generationConfig, dice, workbench, cellBiomes)
-  val architectureSource = buildArchitecture(architectureInput, builders + Pair(homeBlock1.block.name, homeBlock1.builder!!))
+  val architectureSource = buildArchitecture(architectureInput, builders)
 
   // The <Hand> specifier shouldn't be needed here but without it Kotlin is throwing an internal error referencing this line
   val architectureHands = architectureSource.map(newGenericIdHand<Hand>(nextId))

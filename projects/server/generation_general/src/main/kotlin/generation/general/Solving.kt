@@ -2,6 +2,7 @@ package generation.general
 
 import silentorb.mythic.spatial.Vector3i
 import silentorb.mythic.randomly.Dice
+import simulation.misc.CellAttribute
 
 typealias GetBlock = (Vector3i) -> Block?
 typealias CheckBlockSide = (Map.Entry<Direction, Side>) -> Boolean
@@ -83,3 +84,15 @@ fun getIncompleteBlockSides(blockGrid: BlockGrid, position: Vector3i): List<Abso
 
 fun getIncompleteBlockSides(blockGrid: BlockGrid): List<AbsoluteSide> =
     blockGrid.keys.flatMap { getIncompleteBlockSides(blockGrid, it) }
+
+fun filterUsedUniqueBlocks(grid: BlockGrid, blocks: Set<Block>): Set<Block> {
+  val uniqueNames = grid
+      .filter { it.value.attributes.contains(CellAttribute.unique) }
+      .values
+      .map { it.name }
+      .toSet()
+
+  return blocks
+      .filter { !uniqueNames.contains(it.name) }
+      .toSet()
+}

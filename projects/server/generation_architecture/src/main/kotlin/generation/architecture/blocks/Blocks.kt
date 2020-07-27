@@ -1,14 +1,11 @@
 package generation.architecture.blocks
 
-import generation.architecture.building.*
 import generation.architecture.definition.BiomeId
-import generation.architecture.definition.Sides
-import generation.architecture.engine.squareOffsets
-import generation.architecture.matrical.*
-import generation.general.Block
-import marloth.scenery.enums.MeshId
+import generation.architecture.matrical.BiomedBlockBuilder
+import generation.architecture.matrical.BlockBuilder
+import generation.architecture.matrical.BlockMatrixInput
+import generation.architecture.matrical.heights
 import silentorb.mythic.spatial.Vector3
-import simulation.misc.CellAttribute
 
 fun plainWallLampOffset() = Vector3(0f, 0f, -1f)
 
@@ -19,22 +16,21 @@ val commonMatrixBlocks = listOf(
     diagonalCorner
 )
 
-fun tieredBlocks(input: BlockMatrixInput): List<BlockBuilder> =
+fun tieredBlocks(input: BlockMatrixInput): List<BiomedBlockBuilder> =
     commonMatrixBlocks
         .flatMap {
           it(input)
-              .map(applyBiomedBlockBuilder(input.biome))
         }
 
-fun allBlockBuilders(): List<BlockBuilder> = listOf(
-    homeBlock2()
-)
-    .plus(
-        listOf(
-            BiomeId.checkers,
-            BiomeId.forest,
-            BiomeId.tealPalace,
-            BiomeId.village
+fun allBlockBuilders(): List<BlockBuilder> =
+    homeBlocks()
+        .plus(biomeAdapters())
+        .plus(
+            listOf(
+                BiomeId.checkers,
+                BiomeId.forest,
+                BiomeId.tealPalace,
+                BiomeId.village
+            )
+                .flatMap(::heights)
         )
-            .flatMap(::heights)
-    )

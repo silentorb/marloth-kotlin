@@ -82,6 +82,7 @@ fun newBiomeSide(biome: BiomeName, side: Side): Side =
 
 fun heights(biome: BiomeName): List<BlockBuilder> =
     (1..3)
+        .asSequence()
         .map(newBlockMatrixInput(biome))
         .map(::tieredBlocks)
         .reduce { a, b -> a.plus(b) }
@@ -98,19 +99,6 @@ fun heights(biome: BiomeName): List<BlockBuilder> =
                     builder = slopeBuilder(levels.last())
                 )
             )
-                .map(applyBiomedBlockBuilder(biome))
         )
-        .map { blockBuilder ->
-          val block = blockBuilder.block
-          blockBuilder.copy(
-              block = block.copy(
-                  name = biome + block.name,
-                  sides = block.sides.mapValues { (_, side) ->
-                    if (side == endpoint)
-                      side
-                    else
-                      newBiomeSide(biome, side)
-                  }
-              )
-          )
-        }
+        .map(applyBiomedBlockBuilder(biome))
+        .toList()
