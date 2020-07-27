@@ -1,21 +1,26 @@
 package generation.architecture.blocks
 
 import generation.architecture.building.diagonalCorner
-import generation.architecture.building.floorMesh
+import generation.architecture.definition.Connector
 import generation.architecture.definition.Sides
 import generation.architecture.definition.levelConnectors
 import generation.architecture.definition.preferredHorizontalClosed
-import generation.architecture.engine.BlockBuilder
-import generation.architecture.engine.mergeBuilders
-import generation.architecture.engine.sides
 import generation.architecture.matrical.*
-import generation.architecture.misc.squareOffsets
 import generation.general.Block
-import marloth.scenery.enums.MeshId
-import silentorb.mythic.spatial.Vector3
+import generation.general.SideMap
 import simulation.misc.CellAttribute
 
-val diagnoseCorner: MatrixBlockBuilder = { input ->
+fun diagonalCorner(name: String, height: Float, sides: SideMap, fallback: BiomedBuilder): BiomedBlockBuilder =
+    BiomedBlockBuilder(
+        block = Block(
+            name = name,
+            sides = sides,
+            attributes = setOf(CellAttribute.categoryDiagonal, CellAttribute.traversable)
+        ),
+        builder = diagonalCorner(height, fallback)
+    )
+
+val diagonalCorner: MatrixBlockBuilder = { input ->
   val upper = input.level
   val levelIndex = upper.index
   val halfStepOptionalOpen = input.sides.halfStepOptionalOpen
@@ -34,3 +39,16 @@ val diagnoseCorner: MatrixBlockBuilder = { input ->
       )
   )
 }
+
+fun octaveDiagonalCorner() =
+    diagonalCorner(
+        name = "diagonalCorner",
+        height = 0f,
+        sides = sides(
+            east = Sides.broadOpen,
+            north = Sides.broadOpen,
+            west = preferredHorizontalClosed(Connector.open),
+            south = preferredHorizontalClosed(Connector.open)
+        ),
+        fallback = singleCellRoomBuilder()
+    )

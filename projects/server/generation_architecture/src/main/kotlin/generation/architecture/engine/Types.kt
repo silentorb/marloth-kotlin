@@ -1,6 +1,5 @@
-package generation.architecture.misc
+package generation.architecture.engine
 
-import generation.architecture.engine.GenerationConfig
 import generation.general.*
 import silentorb.mythic.randomly.Dice
 import simulation.main.Hand
@@ -30,7 +29,6 @@ fun newArchitectureInput(generationConfig: GenerationConfig, dice: Dice,
 
 data class BuilderInput(
     val general: ArchitectureInput,
-    val biome: BiomeInfo,
     val neighbors: Set<Direction>
 )
 

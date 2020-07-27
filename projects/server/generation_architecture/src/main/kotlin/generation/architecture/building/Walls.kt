@@ -1,10 +1,11 @@
 package generation.architecture.building
 
-import generation.architecture.misc.ArchitectureInput
-import generation.architecture.misc.Builder
-import generation.architecture.misc.BuilderInput
+import generation.architecture.engine.ArchitectureInput
+import generation.architecture.engine.Builder
 import generation.architecture.engine.GenerationConfig
-import generation.architecture.misc.newArchitectureMesh
+import generation.architecture.engine.newArchitectureMesh
+import generation.architecture.matrical.BiomedBuilder
+import generation.architecture.matrical.BiomedBuilderInput
 import generation.general.*
 import marloth.scenery.enums.MeshId
 import silentorb.mythic.scenery.MeshName
@@ -89,21 +90,21 @@ fun getCubeWallPosition(direction: Direction): Vector3 {
   return offset.toVector3() * cellHalfLength
 }
 
-fun cubeWall(input: BuilderInput, mesh: MeshName, direction: Direction): Hand {
+fun cubeWall(input: BiomedBuilderInput, mesh: MeshName, direction: Direction): Hand {
   val general = input.general
   val biome = input.biome
   val position = getCubeWallPosition(direction)
   return placeWall(general, mesh, position, direction, biome.name)
 }
 
-fun placeCubeRoomWalls(mesh: MeshName, directions: Collection<Direction>): Builder = { input ->
+fun placeCubeRoomWalls(mesh: MeshName, directions: Collection<Direction>): BiomedBuilder = { input ->
   directions
       .map { direction ->
         cubeWall(input, mesh, direction)
       }
 }
 
-fun cubeWalls(mesh: MeshName): Builder = { input ->
+fun cubeWalls(mesh: MeshName): BiomedBuilder = { input ->
   placeCubeRoomWalls(mesh, horizontalDirections - input.neighbors)(input)
 }
 
@@ -120,7 +121,7 @@ fun cubeWallsWithFeatures(
     mesh: MeshName = MeshId.squareWall,
     offset: Vector3 = Vector3.zero,
     possibleDirections: Set<Direction> = horizontalDirections
-): Builder = { input ->
+): BiomedBuilder = { input ->
   val dice = input.general.dice
   val directions = possibleDirections - input.neighbors
   val featureCount = dice.getInt(min(min(2, directions.size), features.size))

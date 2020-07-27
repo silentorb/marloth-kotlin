@@ -5,11 +5,11 @@ import generation.architecture.building.newSlopedFloorMesh
 import generation.architecture.building.slopeBuilder
 import generation.architecture.definition.levelConnectors
 import generation.architecture.definition.levelLedgeConnectors
-import generation.architecture.engine.BlockBuilder
-import generation.architecture.engine.mergeBuilders
-import generation.architecture.engine.sides
+import generation.architecture.matrical.BlockBuilder
+import generation.architecture.matrical.mergeBuilders
+import generation.architecture.matrical.sides
 import generation.architecture.matrical.*
-import generation.architecture.misc.getTurnDirection
+import generation.architecture.engine.getTurnDirection
 import generation.general.Block
 import generation.general.ConnectionLogic
 import generation.general.Side
@@ -43,9 +43,9 @@ fun slopeSides(lower: Level, upper: Level) =
 fun newLedgeSide(level: Int) =
     newSide(levelLedgeConnectors[level], setOf(levelConnectors[level]), ConnectionLogic.connectWhenPossible)
 
-fun newLedgeSlope(lower: Level, upper: Level, name: String, ledgeTurns: Int): BlockBuilder {
+fun newLedgeSlope(lower: Level, upper: Level, name: String, ledgeTurns: Int): BiomedBlockBuilder {
   val height = lower.height + quarterStep + quarterStep
-  return BlockBuilder(
+  return BiomedBlockBuilder(
       block = Block(
           name = name,
           sides = sides(
@@ -75,7 +75,7 @@ val fullSlope: MatrixBlockBuilder = { input ->
   val lower = getLowerLevel(upper)
   val levelIndex = upper.index
   listOf(
-      BlockBuilder(
+      BiomedBlockBuilder(
           block = Block(
               name = "halfStepSlopeA$levelIndex",
               sides = slopeSides(lower, upper),

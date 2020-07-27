@@ -1,4 +1,4 @@
-package generation.architecture.misc
+package generation.architecture.engine
 
 import marloth.scenery.enums.MeshAttributes
 import marloth.scenery.enums.MeshInfoMap

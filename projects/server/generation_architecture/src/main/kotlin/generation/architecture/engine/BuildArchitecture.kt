@@ -1,8 +1,5 @@
 package generation.architecture.engine
 
-import generation.architecture.misc.ArchitectureInput
-import generation.architecture.misc.Builder
-import generation.architecture.misc.BuilderInput
 import generation.general.*
 import silentorb.mythic.spatial.*
 import simulation.main.Hand
@@ -32,7 +29,6 @@ fun buildBlockCell(general: ArchitectureInput, block: Block, builder: Builder, p
   }.toSet()
   val input = BuilderInput(
       general = general,
-      biome = general.config.biomes[biomeName]!!,
       neighbors = neighbors
   )
   val result = builder(input)

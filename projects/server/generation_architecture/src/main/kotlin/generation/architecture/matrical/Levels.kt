@@ -1,12 +1,15 @@
 package generation.architecture.matrical
 
+import generation.architecture.blocks.octaveDiagonalCorner
+import generation.architecture.blocks.singleCellRoom
 import generation.architecture.blocks.slopeSides
 import generation.architecture.blocks.tieredBlocks
 import generation.architecture.building.*
 import generation.architecture.definition.*
-import generation.architecture.engine.BlockBuilder
+import generation.architecture.engine.ArchitectureInput
 import generation.general.*
 import silentorb.mythic.spatial.Vector3
+import simulation.main.Hand
 import simulation.misc.BiomeName
 import simulation.misc.CellAttribute
 import simulation.misc.cellLength
@@ -42,8 +45,8 @@ data class CommonMatrixSides(
 data class BlockMatrixInput(
     val level: Level,
     val biome: BiomeName,
-    val sides: CommonMatrixSides,
-    val secondaryBiomes: List<BiomeName> = listOf()
+    val sides: CommonMatrixSides
+//    val secondaryBiomes: List<BiomeName> = listOf()
 )
 
 fun newBlockMatrixInput(biome: BiomeName): (Int) -> BlockMatrixInput = { levelIndex ->
@@ -58,7 +61,7 @@ fun newBlockMatrixInput(biome: BiomeName): (Int) -> BlockMatrixInput = { levelIn
   )
 }
 
-typealias MatrixBlockBuilder = (BlockMatrixInput) -> List<BlockBuilder>
+typealias MatrixBlockBuilder = (BlockMatrixInput) -> List<BiomedBlockBuilder>
 
 fun getLowerLevelIndex(index: Int): Int =
     (index + levels.size - 1) % levels.size
@@ -72,12 +75,17 @@ fun heights(biome: BiomeName): List<BlockBuilder> =
         .map(::tieredBlocks)
         .reduce { a, b -> a.plus(b) }
         .plus(
-            BlockBuilder(
-                block = Block(
-                    name = "levelWrap",
-                    sides = slopeSides(levels.last(), Level(0, endpoint, Sides.verticalDiagonal)),
-                    attributes = setOf(CellAttribute.traversable)
-                ),
-                builder = slopeBuilder(levels.last())
+            listOf(
+                singleCellRoom(),
+                octaveDiagonalCorner(),
+                    BiomedBlockBuilder(
+                    block = Block(
+                        name = "levelWrap",
+                        sides = slopeSides(levels.last(), Level(0, endpoint, Sides.verticalDiagonal)),
+                        attributes = setOf(CellAttribute.traversable)
+                    ),
+                    builder = slopeBuilder(levels.last())
+                )
             )
+                .map(applyBiomedBlockBuilder(biome))
         )

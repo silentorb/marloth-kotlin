@@ -2,14 +2,8 @@ package generation.architecture.blocks
 
 import generation.architecture.building.floorMesh
 import generation.architecture.definition.Sides
-import generation.architecture.engine.BlockBuilder
-import generation.architecture.engine.mergeBuilders
-import generation.architecture.engine.sides
-import generation.architecture.matrical.Level
-import generation.architecture.matrical.MatrixBlockBuilder
-import generation.architecture.matrical.getLowerLevel
-import generation.architecture.matrical.tieredWalls
-import generation.architecture.misc.squareOffsets
+import generation.architecture.engine.squareOffsets
+import generation.architecture.matrical.*
 import generation.general.Block
 import marloth.scenery.enums.MeshId
 import silentorb.mythic.spatial.Vector3
@@ -25,7 +19,7 @@ val squareRoom: MatrixBlockBuilder = { input ->
   val levelIndex = level.index
   val halfStepOptionalOpen = input.sides.halfStepOptionalOpen
   listOf(
-      BlockBuilder(
+      BiomedBlockBuilder(
           block = Block(
               name = "halfStepRoom$levelIndex",
               sides = sides(
