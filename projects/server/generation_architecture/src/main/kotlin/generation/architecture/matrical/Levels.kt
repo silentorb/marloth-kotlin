@@ -6,10 +6,8 @@ import generation.architecture.blocks.slopeSides
 import generation.architecture.blocks.tieredBlocks
 import generation.architecture.building.*
 import generation.architecture.definition.*
-import generation.architecture.engine.ArchitectureInput
 import generation.general.*
 import silentorb.mythic.spatial.Vector3
-import simulation.main.Hand
 import simulation.misc.BiomeName
 import simulation.misc.CellAttribute
 import simulation.misc.cellLength
@@ -69,6 +67,19 @@ fun getLowerLevelIndex(index: Int): Int =
 fun getLowerLevel(level: Level): Level =
     levels[getLowerLevelIndex(level.index)]
 
+data class BiomeConnector(
+    val biome: BiomeName,
+    val connector: Any
+)
+
+fun newBiomeSide(biome: BiomeName, side: Side): Side =
+    side.copy(
+        mine = BiomeConnector(biome, side.mine),
+        other = side.other
+            .map { BiomeConnector(biome, it) }
+            .toSet()
+    )
+
 fun heights(biome: BiomeName): List<BlockBuilder> =
     (1..3)
         .map(newBlockMatrixInput(biome))
@@ -78,7 +89,7 @@ fun heights(biome: BiomeName): List<BlockBuilder> =
             listOf(
                 singleCellRoom(),
                 octaveDiagonalCorner(),
-                    BiomedBlockBuilder(
+                BiomedBlockBuilder(
                     block = Block(
                         name = "levelWrap",
                         sides = slopeSides(levels.last(), Level(0, endpoint, Sides.verticalDiagonal)),
@@ -89,3 +100,17 @@ fun heights(biome: BiomeName): List<BlockBuilder> =
             )
                 .map(applyBiomedBlockBuilder(biome))
         )
+        .map { blockBuilder ->
+          val block = blockBuilder.block
+          blockBuilder.copy(
+              block = block.copy(
+                  name = biome + block.name,
+                  sides = block.sides.mapValues { (_, side) ->
+                    if (side == endpoint)
+                      side
+                    else
+                      newBiomeSide(biome, side)
+                  }
+              )
+          )
+        }

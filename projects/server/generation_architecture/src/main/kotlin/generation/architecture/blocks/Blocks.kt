@@ -12,27 +12,6 @@ import simulation.misc.CellAttribute
 
 fun plainWallLampOffset() = Vector3(0f, 0f, -1f)
 
-fun singleCellRoomBuilder(): BiomedBuilder =
-    mergeBuilders(
-        floorMesh(MeshId.squareFloor),
-        cubeWallsWithFeatures(fullWallFeatures(), offset = plainWallLampOffset())
-    )
-
-fun singleCellRoom() = BiomedBlockBuilder(
-    block = Block(
-        name = "cubeRoom",
-        sides = sides(
-            east = Sides.broadOpen,
-            north = Sides.broadOpen,
-            west = Sides.broadOpen,
-            south = Sides.broadOpen
-        ),
-        attributes = setOf(CellAttribute.traversable),
-        slots = squareOffsets(2)
-    ),
-    builder = singleCellRoomBuilder()
-)
-
 val commonMatrixBlocks = listOf(
     squareRoom,
     fullSlope,
@@ -52,10 +31,10 @@ fun allBlockBuilders(): List<BlockBuilder> = listOf(
 )
     .plus(
         listOf(
-            BiomeId.checkers
-//            BiomeId.forest,
-//            BiomeId.tealPalace,
-//            BiomeId.village
+            BiomeId.checkers,
+            BiomeId.forest,
+            BiomeId.tealPalace,
+            BiomeId.village
         )
             .flatMap(::heights)
     )

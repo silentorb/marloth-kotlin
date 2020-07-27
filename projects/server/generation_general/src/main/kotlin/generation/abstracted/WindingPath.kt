@@ -11,6 +11,9 @@ tailrec fun addPathStep(
     blacklist: List<AbsoluteSide>
 ): BlockGrid {
   val incompleteSides = getIncompleteBlockSides(grid) - blacklist
+  if (incompleteSides.none())
+    return grid
+
   val sideGroups = incompleteSides.groupBy {
     grid[it.position]!!.sides[it.direction]!!.connectionLogic
   }

@@ -1,12 +1,15 @@
 package generation.architecture.blocks
 
+import generation.architecture.building.cubeWallsWithFeatures
 import generation.architecture.building.floorMesh
+import generation.architecture.building.fullWallFeatures
 import generation.architecture.definition.Sides
 import generation.architecture.engine.squareOffsets
 import generation.architecture.matrical.*
 import generation.general.Block
 import marloth.scenery.enums.MeshId
 import silentorb.mythic.spatial.Vector3
+import simulation.misc.BiomeName
 import simulation.misc.CellAttribute
 
 fun tieredSquareFloorBuilder(upper: Level) = mergeBuilders(
@@ -34,5 +37,46 @@ val squareRoom: MatrixBlockBuilder = { input ->
           ),
           builder = tieredSquareFloorBuilder(level)
       )
+  )
+}
+
+fun singleCellRoomBuilder(): BiomedBuilder =
+    mergeBuilders(
+        floorMesh(MeshId.squareFloor),
+        cubeWallsWithFeatures(fullWallFeatures(), offset = plainWallLampOffset())
+    )
+
+fun singleCellRoom() = BiomedBlockBuilder(
+    block = Block(
+        name = "cubeRoom",
+        sides = sides(
+            east = Sides.broadOpen,
+            north = Sides.broadOpen,
+            west = Sides.broadOpen,
+            south = Sides.broadOpen
+        ),
+        attributes = setOf(CellAttribute.traversable),
+        slots = squareOffsets(2)
+    ),
+    builder = singleCellRoomBuilder()
+)
+
+fun biomeAdaptorCube(firstBiome: BiomeName, secondBiome: BiomeName): BlockBuilder {
+  val firstSide = newBiomeSide(firstBiome, Sides.broadOpen)
+  val secondSide = newBiomeSide(secondBiome, Sides.broadOpen)
+
+  return BlockBuilder(
+      block = Block(
+          name = "cubeRoom",
+          sides = sides(
+              east = firstSide,
+              north = secondSide,
+              west = firstSide,
+              south = firstSide
+          ),
+          attributes = setOf(CellAttribute.traversable),
+          slots = squareOffsets(2)
+      ),
+      builder = applyBiomedBuilder(firstBiome, singleCellRoomBuilder())
   )
 }

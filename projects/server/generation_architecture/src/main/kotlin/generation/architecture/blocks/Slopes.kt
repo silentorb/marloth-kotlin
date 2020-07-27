@@ -5,11 +5,9 @@ import generation.architecture.building.newSlopedFloorMesh
 import generation.architecture.building.slopeBuilder
 import generation.architecture.definition.levelConnectors
 import generation.architecture.definition.levelLedgeConnectors
-import generation.architecture.matrical.BlockBuilder
-import generation.architecture.matrical.mergeBuilders
-import generation.architecture.matrical.sides
-import generation.architecture.matrical.*
 import generation.architecture.engine.getTurnDirection
+import generation.architecture.matrical.*
+import generation.architecture.matrical.sides
 import generation.general.Block
 import generation.general.ConnectionLogic
 import generation.general.Side
