@@ -3,26 +3,19 @@ package generation.architecture.engine
 import generation.general.*
 import silentorb.mythic.randomly.Dice
 import simulation.main.Hand
-import simulation.misc.CellBiomeMap
-import simulation.misc.MapGrid
 
 data class ArchitectureInput(
     val config: GenerationConfig,
-    val grid: MapGrid,
     val blockGrid: BlockGrid,
-    val cellBiomes: CellBiomeMap,
     val dice: Dice,
     val selectMesh: MeshSelector
 )
 
 fun newArchitectureInput(generationConfig: GenerationConfig, dice: Dice,
-                         workbench: Workbench,
-                         cellBiomes: CellBiomeMap) =
+                         blockGrid: BlockGrid) =
     ArchitectureInput(
         config = generationConfig,
-        grid = workbench.mapGrid,
-        blockGrid = workbench.blockGrid,
-        cellBiomes = cellBiomes,
+        blockGrid = blockGrid,
         dice = dice,
         selectMesh = randomlySelectMesh(dice, newMeshSource(generationConfig.meshes))
     )

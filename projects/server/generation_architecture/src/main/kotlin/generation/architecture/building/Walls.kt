@@ -1,7 +1,6 @@
 package generation.architecture.building
 
 import generation.architecture.engine.ArchitectureInput
-import generation.architecture.engine.Builder
 import generation.architecture.engine.GenerationConfig
 import generation.architecture.engine.newArchitectureMesh
 import generation.architecture.matrical.BiomedBuilder
@@ -90,10 +89,10 @@ fun getCubeWallPosition(direction: Direction): Vector3 {
   return offset.toVector3() * cellHalfLength
 }
 
-fun cubeWall(input: BiomedBuilderInput, mesh: MeshName, direction: Direction): Hand {
+fun cubeWall(input: BiomedBuilderInput, mesh: MeshName, direction: Direction, offset: Vector3 = Vector3.zero): Hand {
   val general = input.general
   val biome = input.biome
-  val position = getCubeWallPosition(direction)
+  val position = offset + getCubeWallPosition(direction)
   return placeWall(general, mesh, position, direction, biome.name)
 }
 
@@ -120,6 +119,7 @@ fun cubeWallsWithFeatures(
     features: List<WallFeature>,
     mesh: MeshName = MeshId.squareWall,
     offset: Vector3 = Vector3.zero,
+    lampOffset: Vector3 = Vector3.zero,
     possibleDirections: Set<Direction> = horizontalDirections
 ): BiomedBuilder = { input ->
   val dice = input.general.dice
@@ -132,9 +132,9 @@ fun cubeWallsWithFeatures(
   placeCubeRoomWalls(mesh, plainDirections)(input)
       .plus(featureDirections.zip(selectedFeatures) { direction, feature ->
         when (feature) {
-          WallFeature.lamp -> listOf(cubeWall(input, mesh, direction), cubeWallLamp(direction, offset))
-          WallFeature.window -> listOf(cubeWall(input, MeshId.squareWallWindow, direction))
-          WallFeature.none -> listOf(cubeWall(input, mesh, direction))
+          WallFeature.lamp -> listOf(cubeWall(input, mesh, direction, offset), cubeWallLamp(direction, offset + lampOffset))
+          WallFeature.window -> listOf(cubeWall(input, MeshId.squareWallWindow, direction, offset))
+          WallFeature.none -> listOf(cubeWall(input, mesh, direction, offset))
         }
       }
           .flatten()

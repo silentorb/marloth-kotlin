@@ -4,7 +4,6 @@ import silentorb.mythic.debugging.getDebugFloat
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.physics.Body
-import silentorb.mythic.physics.BulletState
 import silentorb.mythic.physics.firstRayHit
 import silentorb.mythic.scenery.Light
 import silentorb.mythic.spatial.Vector3

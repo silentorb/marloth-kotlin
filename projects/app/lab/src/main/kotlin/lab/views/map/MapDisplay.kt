@@ -43,7 +43,8 @@ fun renderNodeIds(renderer: SceneRenderer, nodes: Collection<Node>) {
 fun renderMapMesh(sceneRenderer: SceneRenderer, realm: Realm, deck: Deck, config: MapViewConfig, bag: StateBag) {
 //  val worldMesh = sceneRenderer.sceneRenderer.worldMesh!!
   val selectedNodes = selectionStateOld(bag[nodeListSelectionKey])
-  val nodes: Collection<Node> = realm.nodeList
+  //  val nodes: Collection<Node> = realm.nodeList
+  val nodes: Collection<Node> = listOf()
 //  else
 //    selectedNodes.map { it.toLong() }
 //        .flatMap { id ->

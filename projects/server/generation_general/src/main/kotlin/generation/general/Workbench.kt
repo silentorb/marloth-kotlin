@@ -6,11 +6,6 @@ import simulation.misc.MapGrid
 
 typealias BlockGrid = Map<Vector3i, Block>
 
-data class Workbench(
-    val mapGrid: MapGrid,
-    val blockGrid: BlockGrid
-)
-
 fun mapGridFromBlockGrid(blockGrid: BlockGrid): MapGrid {
   val directions = setOf(Direction.down, Direction.east, Direction.south)
   return MapGrid(

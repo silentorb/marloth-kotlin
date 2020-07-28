@@ -27,15 +27,8 @@ data class WorldInput(
     val dice: Dice
 )
 
-typealias NodeTable = Map<Id, Node>
-typealias CellPositionMap = Map<Id, Vector3i>
 typealias CellBiomeMap = Map<Vector3i, BiomeName>
 
 data class Realm(
-    val cellBiomes: CellBiomeMap,
-    val nodeList: List<Node>,
     val grid: MapGrid
-) {
-
-  val nodeTable: NodeTable = nodeList.associate { Pair(it.id, it) }
-}
+)

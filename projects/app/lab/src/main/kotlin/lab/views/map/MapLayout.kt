@@ -84,7 +84,8 @@ private fun nodeList(nodes: List<Node>): Flower =
 private fun rightPanel(realm: Realm, config: MapViewConfig): Flower =
     fixedList(verticalPlane, 10, listOf(250, null))(listOf(
         scrolling("infoPanel-scrolling")(infoPanel(realm, config)),
-        scrolling("nodeList-scrolling")(nodeList(realm.nodeList))
+//        scrolling("nodeList-scrolling")(nodeList(realm.nodeList))
+        scrolling("nodeList-scrolling")(nodeList(listOf()))
     ))
 
 fun mapLayout(client: Client, world: World, deck: Deck, config: MapViewConfig): Flower {

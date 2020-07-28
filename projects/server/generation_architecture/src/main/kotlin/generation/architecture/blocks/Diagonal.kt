@@ -1,10 +1,7 @@
 package generation.architecture.blocks
 
 import generation.architecture.building.diagonalCorner
-import generation.architecture.definition.Connector
-import generation.architecture.definition.Sides
-import generation.architecture.definition.levelConnectors
-import generation.architecture.definition.preferredHorizontalClosed
+import generation.architecture.definition.*
 import generation.architecture.matrical.*
 import generation.general.Block
 import generation.general.SideMap
@@ -21,34 +18,20 @@ fun diagonalCorner(name: String, height: Float, sides: SideMap, fallback: Biomed
     )
 
 val diagonalCorner: MatrixBlockBuilder = { input ->
-  val upper = input.level
-  val levelIndex = upper.index
-  val halfStepOptionalOpen = input.sides.halfStepOptionalOpen
+  val level = input.level
+  val open = levelSides[level].open
+  val preferredClosed = levelSides[level].preferredClosed
   listOf(
       diagonalCorner(
-          "diagonalCorner$levelIndex",
-          upper.height,
+          "diagonalCorner$level",
+          getLevelHeight(level),
           sides(
-              up = Sides.extraHeadroom,
-              east = halfStepOptionalOpen,
-              north = halfStepOptionalOpen,
-              west = preferredHorizontalClosed(levelConnectors[levelIndex]),
-              south = preferredHorizontalClosed(levelConnectors[levelIndex])
+              east = open,
+              north = open,
+              west = preferredClosed,
+              south = preferredClosed
           ),
-          tieredSquareFloorBuilder(upper)
+          tieredCubeBuilder(level)
       )
   )
 }
-
-fun octaveDiagonalCorner() =
-    diagonalCorner(
-        name = "diagonalCorner",
-        height = 0f,
-        sides = sides(
-            east = Sides.broadOpen,
-            north = Sides.broadOpen,
-            west = preferredHorizontalClosed(Connector.open),
-            south = preferredHorizontalClosed(Connector.open)
-        ),
-        fallback = singleCellRoomBuilder()
-    )

@@ -61,7 +61,7 @@ fun applyBiomedBuilder(biome: BiomeName, builder: BiomedBuilder): Builder =
 
 fun restrictBiomeBlockSides(biome: BiomeName, block: Block): Block =
     block.copy(
-        name = biome + block.name,
+        name = biome + "-" + block.name,
         sides = block.sides.mapValues { (_, side) ->
           if (side == endpoint)
             side

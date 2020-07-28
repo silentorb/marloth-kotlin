@@ -4,11 +4,8 @@ import marloth.clienting.input.defaultInputProfile
 import marloth.clienting.input.joiningGamepads
 import marloth.integration.misc.AppState
 import silentorb.mythic.haft.DeviceIndex
-import simulation.characters.getDebugProfession
 import simulation.characters.newPlayerAndCharacter
-import simulation.characters.newPlayerIdHand
 import simulation.main.addEntitiesToWorldDeck
-import simulation.misc.getPlayerStart
 
 val updateAppStateForNewPlayers: (AppState) -> AppState = { appState ->
   val client = appState.client

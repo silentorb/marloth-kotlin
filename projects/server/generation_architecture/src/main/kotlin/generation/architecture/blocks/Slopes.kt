@@ -39,7 +39,7 @@ fun slopeSides(lower: Level, upper: Level) =
     )
 
 fun newLedgeSide(level: Int) =
-    newSide(levelLedgeConnectors[level], setOf(levelConnectors[level]), ConnectionLogic.connectWhenPossible)
+    newSide(levelLedgeConnectors[level], setOf(levelConnectors[level].open), ConnectionLogic.connectWhenPossible)
 
 fun newLedgeSlope(lower: Level, upper: Level, name: String, ledgeTurns: Int): BiomedBlockBuilder {
   val height = lower.height + quarterStep + quarterStep
@@ -63,34 +63,40 @@ fun newLedgeSlope(lower: Level, upper: Level, name: String, ledgeTurns: Int): Bi
       builder = mergeBuilders(
           newSlopedFloorMesh(MeshId.quarterSlope, lower.height),
           newSlopeEdgeBlock(MeshId.largeBrick, lower.height + quarterStep + quarterStep, ledgeTurns),
-          tieredWalls(lower)
+          tieredWalls(lower.index)
       )
   )
 }
 
 val fullSlope: MatrixBlockBuilder = { input ->
-  val upper = input.level
+  val upper = input.levelOld
   val lower = getLowerLevel(upper)
-  val levelIndex = upper.index
-  listOf(
-      BiomedBlockBuilder(
-          block = Block(
-              name = "halfStepSlopeA$levelIndex",
-              sides = slopeSides(lower, upper),
-              attributes = setOf(CellAttribute.traversable),
-              slots = listOf(Vector3(0f, 0f, lower.height + quarterStep / 2f + 0.05f) + floorOffset)
-          ),
-          builder = slopeBuilder(lower)
-      )
-  )
+  val level = input.level
+  if (level == 0)
+    listOf()
+  else
+    listOf(
+        BiomedBlockBuilder(
+            block = Block(
+                name = "slope$level",
+                sides = slopeSides(lower, upper),
+                attributes = setOf(CellAttribute.traversable),
+                slots = listOf(Vector3(0f, 0f, lower.height + quarterStep / 2f + 0.05f) + floorOffset)
+            ),
+            builder = slopeBuilder(lower)
+        )
+    )
 }
 
 val ledgeSlope: MatrixBlockBuilder = { input ->
-  val upper = input.level
+  val upper = input.levelOld
   val lower = getLowerLevel(upper)
-  val levelIndex = upper.index
-  listOf(
-      newLedgeSlope(lower, upper, "LedgeSlopeA$levelIndex", -1),
-      newLedgeSlope(lower, upper, "LedgeSlopeB$levelIndex", 1)
-  )
+  val level = input.level
+  if (level == 0)
+    listOf()
+  else
+    listOf(
+        newLedgeSlope(lower, upper, "LedgeSlopeA$level", -1),
+        newLedgeSlope(lower, upper, "LedgeSlopeB$level", 1)
+    )
 }

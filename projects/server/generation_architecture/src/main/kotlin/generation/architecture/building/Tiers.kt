@@ -7,5 +7,5 @@ import marloth.scenery.enums.MeshId
 
 fun slopeBuilder(lower: Level) = mergeBuilders(
     newSlopedFloorMesh(MeshId.quarterSlope, lower.height),
-    tieredWalls(lower)
+    tieredWalls(lower.index)
 )

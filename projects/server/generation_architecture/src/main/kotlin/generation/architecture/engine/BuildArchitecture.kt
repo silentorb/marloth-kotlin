@@ -21,11 +21,10 @@ fun transformBlockHand(position: Vector3, rotation: Quaternion) = { hand: Hand -
 }
 
 fun buildBlockCell(general: ArchitectureInput, block: Block, builder: Builder, position: Vector3i): List<Hand> {
-  val biomeName = general.cellBiomes[position]!!
   val neighbors = allDirections.filter { direction ->
     val rotated = rotateDirection(block.turns)(direction)
     val offset = directionVectors[rotated]!!
-    general.cellBiomes.containsKey(position + offset)
+    general.blockGrid.containsKey(position + offset)
   }.toSet()
   val input = BuilderInput(
       general = general,

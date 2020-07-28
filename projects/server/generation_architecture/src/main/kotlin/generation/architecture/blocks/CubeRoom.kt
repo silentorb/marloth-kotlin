@@ -3,60 +3,48 @@ package generation.architecture.blocks
 import generation.architecture.building.cubeWallsWithFeatures
 import generation.architecture.building.floorMesh
 import generation.architecture.building.fullWallFeatures
-import generation.architecture.definition.Sides
+import generation.architecture.definition.levelSides
 import generation.architecture.engine.squareOffsets
 import generation.architecture.matrical.*
 import generation.general.Block
 import marloth.scenery.enums.MeshId
 import silentorb.mythic.spatial.Vector3
-import simulation.misc.BiomeName
 import simulation.misc.CellAttribute
 
-fun tieredSquareFloorBuilder(upper: Level) = mergeBuilders(
-    floorMesh(MeshId.squareFloor, Vector3(0f, 0f, upper.height)),
-    tieredWalls(getLowerLevel(upper))
+fun tieredSquareFloorBuilder(level: Int) =
+    floorMesh(MeshId.squareFloor, Vector3(0f, 0f, getLevelHeight(level)))
+
+fun tieredCubeBuilder(level: Int) = mergeBuilders(
+    tieredSquareFloorBuilder(level),
+    tieredWalls(level)
 )
 
 val squareRoom: MatrixBlockBuilder = { input ->
   val level = input.level
-  val levelIndex = level.index
-  val halfStepOptionalOpen = input.sides.halfStepOptionalOpen
+  val open = levelSides[level].open
   listOf(
       BiomedBlockBuilder(
           block = Block(
-              name = "halfStepRoom$levelIndex",
+              name = "halfStepRoom$level",
               sides = sides(
-                  up = Sides.extraHeadroom,
-                  east = halfStepOptionalOpen,
-                  north = halfStepOptionalOpen,
-                  west = halfStepOptionalOpen,
-                  south = halfStepOptionalOpen
+                  east = open,
+                  north = open,
+                  west = open,
+                  south = open
               ),
               attributes = setOf(CellAttribute.traversable),
-              slots = squareOffsets(2).map { it + Vector3(0f, 0f, level.height) }
+              slots = squareOffsets(2).map { it + Vector3(0f, 0f, getLevelHeight(level)) }
           ),
-          builder = tieredSquareFloorBuilder(level)
+          builder = tieredCubeBuilder(level)
       )
   )
 }
 
-fun singleCellRoomBuilder(): BiomedBuilder =
+fun singleCellRoomBuilder(level: Int): BiomedBuilder =
     mergeBuilders(
-        floorMesh(MeshId.squareFloor),
-        cubeWallsWithFeatures(fullWallFeatures(), offset = plainWallLampOffset())
+        tieredSquareFloorBuilder(level),
+        cubeWallsWithFeatures(
+            features = fullWallFeatures(),
+            offset = Vector3(0f, 0f, getLevelHeight(level)),
+            lampOffset = plainWallLampOffset())
     )
-
-fun singleCellRoom() = BiomedBlockBuilder(
-    block = Block(
-        name = "cubeRoom",
-        sides = sides(
-            east = Sides.broadOpen,
-            north = Sides.broadOpen,
-            west = Sides.broadOpen,
-            south = Sides.broadOpen
-        ),
-        attributes = setOf(CellAttribute.traversable),
-        slots = squareOffsets(2)
-    ),
-    builder = singleCellRoomBuilder()
-)

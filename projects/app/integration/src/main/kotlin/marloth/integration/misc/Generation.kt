@@ -5,7 +5,8 @@ import generation.architecture.matrical.BlockBuilder
 import generation.architecture.definition.*
 import generation.architecture.engine.*
 import generation.architecture.engine.applyTurns
-import generation.general.newRandomizedBiomeGrid
+import generation.general.BlockGrid
+import generation.general.mapGridFromBlockGrid
 import generation.general.rotateSides
 import marloth.generation.population.populateWorld
 import marloth.scenery.enums.MeshShapeMap
@@ -21,13 +22,6 @@ import silentorb.mythic.spatial.Quaternion
 import simulation.intellect.navigation.newNavigationState
 import simulation.main.*
 import simulation.misc.*
-
-fun fixedCellBiomes(grid: MapGrid): CellBiomeMap {
-  val homeNodes = grid.cells.filter { it.value.attributes.contains(CellAttribute.home) }.keys
-  val exitNodes = grid.cells.filter { it.value.attributes.contains(CellAttribute.exit) }.keys
-  return homeNodes.associateWith { BiomeId.home }
-      .plus(exitNodes.associateWith { BiomeId.exit })
-}
 
 fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder> {
   assert(blockBuilders.all { it.block.name.isNotEmpty() })
@@ -58,22 +52,22 @@ fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder>
   return blockBuilders.toList() + rotated
 }
 
-fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, input: WorldInput): World {
-  val dice = input.dice
+fun generateWorldBlocks(dice: Dice, generationConfig: GenerationConfig): Pair<BlockGrid, List<Hand>> {
   val blockBuilders = explodeBlockMap(allBlockBuilders())
   val (blocks, builders) = splitBlockBuilders(devFilterBlockBuilders(blockBuilders))
-  val home = blocks.first { it.name == "home1" }
-  val workbench = newWorkbench(dice, home, blocks - home, generationConfig.roomCount)
-  val grid = workbench.mapGrid
-  assert(grid.connections.any())
-  val biomeGrid = newRandomizedBiomeGrid(biomeInfoMap, input)
-  val cellBiomes = applyBiomesToGrid(grid, biomeGrid)
-      .plus(fixedCellBiomes(grid))
-
-  val realm = generateRealm(grid, cellBiomes)
-  val nextId = newIdSource(1)
-  val architectureInput = newArchitectureInput(generationConfig, dice, workbench, cellBiomes)
+  val home = blocks.first { it.name == "home-1" }
+  val blockGrid = newBlockGrid(dice, home, blocks - home, generationConfig.roomCount)
+  val architectureInput = newArchitectureInput(generationConfig, dice, blockGrid)
   val architectureSource = buildArchitecture(architectureInput, builders)
+  return Pair(blockGrid, architectureSource)
+}
+
+fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, input: WorldInput): World {
+  val nextId = newIdSource(1)
+  val dice = input.dice
+  val (blockGrid, architectureSource) = generateWorldBlocks(dice, generationConfig)
+  val grid = mapGridFromBlockGrid(blockGrid)
+  assert(grid.connections.any())
 
   // The <Hand> specifier shouldn't be needed here but without it Kotlin is throwing an internal error referencing this line
   val architectureHands = architectureSource.map(newGenericIdHand<Hand>(nextId))
@@ -89,6 +83,7 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
 
   val lightHands = lightHandsFromDepictions(definitions.lightAttachments, architectureHands)
 
+  val realm = generateRealm(grid)
   val deck = pipeIdHandsToDeck(listOf(
       { _ -> lightHands },
       populateWorld(nextId, generationConfig, input, realm)

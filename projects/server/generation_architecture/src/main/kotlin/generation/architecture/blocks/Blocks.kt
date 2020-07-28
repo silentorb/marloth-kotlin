@@ -10,7 +10,7 @@ import silentorb.mythic.spatial.Vector3
 fun plainWallLampOffset() = Vector3(0f, 0f, -1f)
 
 val commonMatrixBlocks = listOf(
-    squareRoom,
+//    squareRoom,
     fullSlope,
     ledgeSlope,
     diagonalCorner

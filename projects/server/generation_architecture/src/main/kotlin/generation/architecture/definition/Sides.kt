@@ -5,18 +5,30 @@ import generation.general.Side
 import generation.general.newSide
 
 object Sides {
-  val flatOpen = newSide(Connector.open)
-  val extraHeadroom = newSide(Connector.extraHeadroom)
-  val verticalDiagonal = newSide(Connector.verticalDiagonal, connectionLogic = ConnectionLogic.connectWhenPossible)
-
-  val broadOpen = newSide(Connector.open, setOf(
-      Connector.open,
-      Connector.doorway,
-      levelLedgeConnectors.first()
-  ))
-
+  val slopeOctaveWrap = newSide(Connector.verticalDiagonal, connectionLogic = ConnectionLogic.connectWhenPossible)
   val doorway = newSide(Connector.doorway, setOf(Connector.open))
 }
+
+data class LevelSides(
+    val open: Side,
+    val doorway: Side,
+    val preferredClosed: Side
+)
+
+val levelSides: List<LevelSides> = (0..3)
+    .map { index ->
+      val connectors = levelConnectors[index]
+      val open = connectors.open
+      val doorway = connectors.doorway
+      LevelSides(
+          open = newSide(open, setOf(
+              open,
+              doorway
+          )),
+          doorway = newSide(doorway, setOf(open)),
+          preferredClosed = newSide(open, connectionLogic = ConnectionLogic.endpointWhenPossible)
+      )
+    }
 
 fun preferredHorizontalClosed(connector: Any): Side =
     Side(

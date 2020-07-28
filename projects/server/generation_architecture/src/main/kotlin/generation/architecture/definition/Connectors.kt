@@ -3,20 +3,26 @@ package generation.architecture.definition
 object Connector {
   const val open = "open"
   const val doorway = "doorway"
-
-  const val extraHeadroom = "extraHeadroom"
-  const val verticalDiagonal= "verticalDiagonal"
-  const val quarterLevelOpen1 = "quarterLevelOpen1"
-  const val quarterLevelOpen2 = "quarterLevelOpen2"
-  const val quarterLevelOpen3 = "quarterLevelOpen3"
+  const val verticalDiagonal = "verticalDiagonal"
 }
 
-val levelConnectors = listOf(
-    Connector.open,
-    Connector.quarterLevelOpen1,
-    Connector.quarterLevelOpen2,
-    Connector.quarterLevelOpen3
+data class LevelConnector(
+    val connector: Any,
+    val level: Int
 )
+
+data class Connectors(
+    val open: LevelConnector,
+    val doorway: LevelConnector
+)
+
+val levelConnectors: List<Connectors> = (0..3)
+    .map {
+      Connectors(
+          open = LevelConnector(Connector.open, it),
+          doorway = LevelConnector(Connector.doorway, it)
+      )
+    }
 
 data class LedgeConnector(
     val levelConnector: Any

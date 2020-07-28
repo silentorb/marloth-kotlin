@@ -3,6 +3,7 @@ package generation.architecture.blocks
 import generation.architecture.building.*
 import generation.architecture.definition.BiomeId
 import generation.architecture.definition.Sides
+import generation.architecture.definition.levelSides
 import generation.architecture.definition.uniqueConnection
 import generation.architecture.matrical.*
 import generation.general.Block
@@ -19,7 +20,7 @@ fun homeBlocks(): List<BlockBuilder> = listOf(
         block = Block(
             name = "1",
             sides = sides(
-                east = Sides.doorway,
+                east = levelSides[0].doorway,
                 north = homeSides.first
             ),
             attributes = setOf(CellAttribute.home, CellAttribute.traversable, CellAttribute.unique)
