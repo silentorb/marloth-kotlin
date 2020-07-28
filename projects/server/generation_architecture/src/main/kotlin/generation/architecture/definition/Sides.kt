@@ -1,5 +1,6 @@
 package generation.architecture.definition
 
+import generation.architecture.blocks.slopeSides
 import generation.general.ConnectionLogic
 import generation.general.Side
 import generation.general.newSide
@@ -11,12 +12,19 @@ object Sides {
 
 data class LevelSides(
     val open: Side,
-    val doorway: Side
+    val doorway: Side,
+    val slopeSides: List<Side>
 )
 
+fun newSlopeSide(level: Int, alternation: Int) =
+    Side(
+        levelConnectors[level].slopeSides[alternation],
+        setOf(levelConnectors[level].slopeSides[1 - alternation])
+    )
+
 val levelSides: List<LevelSides> = (0..3)
-    .map { index ->
-      val connectors = levelConnectors[index]
+    .map { level ->
+      val connectors = levelConnectors[level]
       val open = connectors.open
       val doorway = connectors.doorway
       LevelSides(
@@ -24,7 +32,11 @@ val levelSides: List<LevelSides> = (0..3)
               open,
               doorway
           )),
-          doorway = newSide(doorway, setOf(open))
+          doorway = newSide(doorway, setOf(open)),
+          slopeSides = listOf(
+              newSlopeSide(level, 0),
+              newSlopeSide(level, 1)
+          )
       )
     }
 

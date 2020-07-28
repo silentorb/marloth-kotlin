@@ -4,13 +4,12 @@ import generation.architecture.building.newSlopeEdgeBlock
 import generation.architecture.building.newSlopedFloorMesh
 import generation.architecture.building.slopeBuilder
 import generation.architecture.definition.levelConnectors
-import generation.architecture.definition.levelLedgeConnectors
+import generation.architecture.definition.levelSides
 import generation.architecture.engine.getTurnDirection
 import generation.architecture.matrical.*
 import generation.architecture.matrical.sides
 import generation.general.Block
 import generation.general.ConnectionLogic
-import generation.general.Side
 import generation.general.newSide
 import marloth.scenery.enums.MeshId
 import silentorb.mythic.spatial.Vector3
@@ -18,42 +17,33 @@ import simulation.misc.CellAttribute
 import simulation.misc.cellLength
 import simulation.misc.floorOffset
 
-data class SlopeSideConnector(
-    val level: Int,
-    val alternation: Boolean
-)
-
-fun newSlopeSide(level: Int, alternation: Boolean) =
-    Side(
-        SlopeSideConnector(level, alternation),
-        setOf(SlopeSideConnector(level, !alternation))
-    )
-
 fun slopeSides(lower: Level, upper: Level) =
     sides(
         up = upper.up,
         east = upper.side,
         west = lower.side,
-        north = newSlopeSide(lower.index, true),
-        south = newSlopeSide(lower.index, false)
+        north = levelSides[lower.index].slopeSides[0],
+        south = levelSides[lower.index].slopeSides[1]
     )
 
 fun newLedgeSide(level: Int) =
-    newSide(levelLedgeConnectors[level], setOf(levelConnectors[level].open), ConnectionLogic.required)
+    newSide(levelConnectors[level].doorway, setOf(levelConnectors[level].open), ConnectionLogic.required)
 
-fun newLedgeSlope(lower: Level, upper: Level, name: String, ledgeTurns: Int): BiomedBlockBuilder {
-  val height = lower.height + quarterStep + quarterStep
+fun ledgeSlope(level: Int, name: String, ledgeTurns: Int): BiomedBlockBuilder {
+  val lower = getLowerLevelIndex(level)
+  val upperSides = levelSides[level]
+  val lowerSides = levelSides[lower]
+  val height = getLevelHeight(lower)// + quarterStep + quarterStep
   return BiomedBlockBuilder(
       block = Block(
           name = name,
           sides = sides(
-              up = upper.up,
-              east = newLedgeSide(upper.index),
-              west = newLedgeSide(lower.index),
-              north = newSlopeSide(lower.index, true),
-              south = newSlopeSide(lower.index, false)
+              east = newLedgeSide(level),
+              west = levelSides[lower].doorway,
+              north = lowerSides.slopeSides[0],
+              south = lowerSides.slopeSides[1]
           ) + mapOf(
-              getTurnDirection(ledgeTurns) to upper.side
+              getTurnDirection(ledgeTurns) to upperSides.open
           ),
           slots = listOf(
               Vector3(cellLength * 0.25f, cellLength * (0.5f + ledgeTurns.toFloat() * 0.25f), height - quarterStep)
@@ -61,9 +51,9 @@ fun newLedgeSlope(lower: Level, upper: Level, name: String, ledgeTurns: Int): Bi
           attributes = setOf(CellAttribute.traversable)
       ),
       builder = mergeBuilders(
-          newSlopedFloorMesh(MeshId.quarterSlope, lower.height),
-          newSlopeEdgeBlock(MeshId.largeBrick, lower.height + quarterStep + quarterStep, ledgeTurns),
-          tieredWalls(lower.index)
+          newSlopedFloorMesh(MeshId.quarterSlope, height),
+          newSlopeEdgeBlock(MeshId.largeBrick, height + quarterStep + quarterStep, ledgeTurns),
+          tieredWalls(lower)
       )
   )
 }
@@ -89,14 +79,12 @@ val fullSlope: MatrixBlockBuilder = { input ->
 }
 
 val ledgeSlope: MatrixBlockBuilder = { input ->
-  val upper = input.levelOld
-  val lower = getLowerLevel(upper)
   val level = input.level
   if (level == 0)
     listOf()
   else
     listOf(
-        newLedgeSlope(lower, upper, "LedgeSlopeA$level", -1),
-        newLedgeSlope(lower, upper, "LedgeSlopeB$level", 1)
+        ledgeSlope(level, "LedgeSlopeA$level", -1),
+        ledgeSlope(level, "LedgeSlopeB$level", 1)
     )
 }

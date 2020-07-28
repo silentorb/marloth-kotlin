@@ -60,8 +60,7 @@ tailrec fun addPathStep(
     maxSteps: Int,
     dice: Dice,
     state: BlockState,
-    bookMark: BlockState? = null,
-    safe: Boolean = false
+    bookMark: BlockState? = null
 ): BlockGrid {
   val (groupedBlocks, grid, blacklist) = state
   val incompleteSides = getIncompleteBlockSides(grid) - blacklist
@@ -88,7 +87,7 @@ tailrec fun addPathStep(
     val nextPosition = position + offset
     assert(!grid.containsKey(nextPosition))
 
-    val blocks = if (safe || incompleteSides.size < 2)
+    val blocks = if (incompleteSides.size < 2)
       if (grid.size >= maxSteps)
         groupedBlocks.flexible
       else
@@ -100,7 +99,10 @@ tailrec fun addPathStep(
         ?: matchConnectingBlock(dice, groupedBlocks.all, grid, nextPosition)
 
     val nextState = if (block == null) {
-      bookMark ?: state.copy(blacklist = blacklist + incompleteSide)
+      val next = bookMark ?: state
+      next.copy(
+          blacklist = next.blacklist + incompleteSide
+      )
     } else
       BlockState(
           groupedBlocks = filterUsedUniqueBlock(block, groupedBlocks),
@@ -110,13 +112,15 @@ tailrec fun addPathStep(
 
     val nextBookmark = if (block == null)
       null // Consume bookmark
-    else if (prioritySides.none() && groupedBlocks.polyominoes.contains(block)) {
-      assert(bookMark == null)
-      state // Place bookmark
+    else if (prioritySides.none()) {
+      if (groupedBlocks.polyominoes.contains(block))
+        bookMark ?: state // Place or persist bookmark
+      else
+        null // Remove finished bookmark
     } else
       bookMark // Persist bookmark
 
-    addPathStep(maxSteps, dice, nextState, nextBookmark, block == null)
+    addPathStep(maxSteps, dice, nextState, nextBookmark)
   }
 }
 

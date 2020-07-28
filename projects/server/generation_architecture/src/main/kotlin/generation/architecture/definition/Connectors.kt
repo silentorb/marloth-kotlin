@@ -3,6 +3,7 @@ package generation.architecture.definition
 object Connector {
   const val open = "open"
   const val doorway = "doorway"
+  const val slopeSide = "slopeSide"
   const val verticalDiagonal = "verticalDiagonal"
 }
 
@@ -11,21 +12,26 @@ data class LevelConnector(
     val level: Int
 )
 
+data class SlopeSideConnector(
+    val connector: Any,
+    val level: Int,
+    val alternation: Boolean
+)
+
 data class Connectors(
     val open: LevelConnector,
-    val doorway: LevelConnector
+    val doorway: LevelConnector,
+    val slopeSides: List<SlopeSideConnector>
 )
 
 val levelConnectors: List<Connectors> = (0..3)
     .map {
       Connectors(
           open = LevelConnector(Connector.open, it),
-          doorway = LevelConnector(Connector.doorway, it)
+          doorway = LevelConnector(Connector.doorway, it),
+          slopeSides = listOf(
+              SlopeSideConnector(Connector.slopeSide, it, true),
+              SlopeSideConnector(Connector.slopeSide, it, false)
+          )
       )
     }
-
-data class LedgeConnector(
-    val levelConnector: Any
-)
-
-val levelLedgeConnectors = levelConnectors.map { LedgeConnector(it) }
