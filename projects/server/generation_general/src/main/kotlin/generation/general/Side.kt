@@ -8,9 +8,8 @@ object CoreSide {
 }
 
 enum class ConnectionLogic {
-  connectWhenPossible,
+  required,
   neutral,
-  endpointWhenPossible
 }
 
 data class Side(

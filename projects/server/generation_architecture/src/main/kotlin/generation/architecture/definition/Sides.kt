@@ -5,14 +5,13 @@ import generation.general.Side
 import generation.general.newSide
 
 object Sides {
-  val slopeOctaveWrap = newSide(Connector.verticalDiagonal, connectionLogic = ConnectionLogic.connectWhenPossible)
+  val slopeOctaveWrap = newSide(Connector.verticalDiagonal, connectionLogic = ConnectionLogic.required)
   val doorway = newSide(Connector.doorway, setOf(Connector.open))
 }
 
 data class LevelSides(
     val open: Side,
-    val doorway: Side,
-    val preferredClosed: Side
+    val doorway: Side
 )
 
 val levelSides: List<LevelSides> = (0..3)
@@ -25,17 +24,9 @@ val levelSides: List<LevelSides> = (0..3)
               open,
               doorway
           )),
-          doorway = newSide(doorway, setOf(open)),
-          preferredClosed = newSide(open, connectionLogic = ConnectionLogic.endpointWhenPossible)
+          doorway = newSide(doorway, setOf(open))
       )
     }
-
-fun preferredHorizontalClosed(connector: Any): Side =
-    Side(
-        connectionLogic = ConnectionLogic.endpointWhenPossible,
-        mine = connector,
-        other = setOf(connector)
-    )
 
 fun uniqueConnection(prefix: String): Pair<Side, Side> {
   val firstConnector = prefix + "1"
@@ -43,11 +34,11 @@ fun uniqueConnection(prefix: String): Pair<Side, Side> {
   return Pair(
       Side(
           firstConnector, setOf(secondConnector),
-          connectionLogic = ConnectionLogic.connectWhenPossible
+          connectionLogic = ConnectionLogic.required
       ),
       Side(
           secondConnector, setOf(firstConnector),
-          connectionLogic = ConnectionLogic.connectWhenPossible
+          connectionLogic = ConnectionLogic.required
       )
   )
 }

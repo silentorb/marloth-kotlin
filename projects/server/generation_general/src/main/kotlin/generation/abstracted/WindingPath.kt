@@ -4,13 +4,66 @@ import generation.general.*
 import silentorb.mythic.randomly.Dice
 import simulation.misc.CellAttribute
 
+data class GroupedBlocks(
+    val all: Set<Block>,
+    val polyominoes: Set<Block>,
+    val expansive: Set<Block>,
+    val flexible: Set<Block>
+)
+
+fun newGroupedBlocks(blocks: Set<Block>): GroupedBlocks {
+  val polyominoes = blocks
+      .filter { block ->
+        block.sides
+            .any {
+              it.value.connectionLogic == ConnectionLogic.required
+            }
+      }
+      .toSet()
+
+  val narrow = blocks
+      .filter { block ->
+        block.sides
+            .minus(verticalDirections)
+            .containsValue(endpoint)
+      }
+      .toSet()
+
+  val expansive = blocks - narrow
+
+  return GroupedBlocks(
+      all = blocks,
+      polyominoes = polyominoes,
+      expansive = expansive,
+      flexible = expansive - polyominoes
+  )
+}
+
+fun filterUsedUniqueBlock(block: Block?, groupedBlocks: GroupedBlocks): GroupedBlocks =
+    if (block != null && block.attributes.contains(CellAttribute.unique))
+      GroupedBlocks(
+          all = groupedBlocks.all - block,
+          polyominoes = groupedBlocks.polyominoes - block,
+          expansive = groupedBlocks.expansive - block,
+          flexible = groupedBlocks.flexible - block
+      )
+    else
+      groupedBlocks
+
+data class BlockState(
+    val groupedBlocks: GroupedBlocks,
+    val grid: BlockGrid,
+    val blacklist: List<AbsoluteSide>
+)
+
 tailrec fun addPathStep(
     maxSteps: Int,
     dice: Dice,
-    blocks: Set<Block>,
-    grid: BlockGrid,
-    blacklist: List<AbsoluteSide>
+    state: BlockState,
+    bookMark: BlockState? = null,
+    safe: Boolean = false
 ): BlockGrid {
+  val (groupedBlocks, grid, blacklist) = state
   val incompleteSides = getIncompleteBlockSides(grid) - blacklist
   if (incompleteSides.none())
     return grid
@@ -18,7 +71,7 @@ tailrec fun addPathStep(
   val sideGroups = incompleteSides.groupBy {
     grid[it.position]!!.sides[it.direction]!!.connectionLogic
   }
-  val prioritySides = sideGroups[ConnectionLogic.connectWhenPossible] ?: listOf()
+  val prioritySides = sideGroups[ConnectionLogic.required] ?: listOf()
 
   return if (grid.size >= maxSteps && prioritySides.none())
     grid
@@ -35,27 +88,42 @@ tailrec fun addPathStep(
     val nextPosition = position + offset
     assert(!grid.containsKey(nextPosition))
 
+    val blocks = if (safe || incompleteSides.size < 2)
+      if (grid.size >= maxSteps)
+        groupedBlocks.flexible
+      else
+        groupedBlocks.expansive
+    else
+      groupedBlocks.all
+
     val block = matchConnectingBlock(dice, blocks, grid, nextPosition)
+        ?: matchConnectingBlock(dice, groupedBlocks.all, grid, nextPosition)
 
-    val nextGrid = if (block == null) {
-      grid
-    } else {
-      grid + (nextPosition to block)
-    }
+    val nextState = if (block == null) {
+      bookMark ?: state.copy(blacklist = blacklist + incompleteSide)
+    } else
+      BlockState(
+          groupedBlocks = filterUsedUniqueBlock(block, groupedBlocks),
+          grid = grid + (nextPosition to block),
+          blacklist = blacklist
+      )
 
-    val nextBlacklist = if (block == null) {
-      blacklist + incompleteSide
-    } else {
-      blacklist
-    }
+    val nextBookmark = if (block == null)
+      null // Consume bookmark
+    else if (prioritySides.none() && groupedBlocks.polyominoes.contains(block)) {
+      assert(bookMark == null)
+      state // Place bookmark
+    } else
+      bookMark // Persist bookmark
 
-    addPathStep(maxSteps, dice, filterUsedUniqueBlocks(nextGrid, blocks), nextGrid, nextBlacklist)
+    addPathStep(maxSteps, dice, nextState, nextBookmark, block == null)
   }
 }
 
 fun windingPath(dice: Dice, config: BlockConfig, length: Int): (BlockGrid) -> BlockGrid = { grid ->
   val blocks = filterUsedUniqueBlocks(grid, config.blocks)
-  val nextGrid = addPathStep(length, dice, blocks, grid, listOf())
+  val groupedBlocks = newGroupedBlocks(blocks)
+  val nextGrid = addPathStep(length, dice, BlockState(groupedBlocks, grid, listOf()))
   assert(nextGrid.size > grid.size)
   nextGrid
 }

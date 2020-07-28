@@ -5,22 +5,22 @@ import generation.architecture.definition.*
 import generation.architecture.matrical.*
 import generation.general.Block
 import generation.general.SideMap
+import generation.general.endpoint
 import simulation.misc.CellAttribute
 
-fun diagonalCorner(name: String, height: Float, sides: SideMap, fallback: BiomedBuilder): BiomedBlockBuilder =
+fun diagonalCorner(name: String, height: Float, sides: SideMap): BiomedBlockBuilder =
     BiomedBlockBuilder(
         block = Block(
             name = name,
             sides = sides,
             attributes = setOf(CellAttribute.categoryDiagonal, CellAttribute.traversable)
         ),
-        builder = diagonalCorner(height, fallback)
+        builder = diagonalCorner(height)
     )
 
 val diagonalCorner: MatrixBlockBuilder = { input ->
   val level = input.level
   val open = levelSides[level].open
-  val preferredClosed = levelSides[level].preferredClosed
   listOf(
       diagonalCorner(
           "diagonalCorner$level",
@@ -28,10 +28,9 @@ val diagonalCorner: MatrixBlockBuilder = { input ->
           sides(
               east = open,
               north = open,
-              west = preferredClosed,
-              south = preferredClosed
-          ),
-          tieredCubeBuilder(level)
+              west = endpoint,
+              south = endpoint
+          )
       )
   )
 }

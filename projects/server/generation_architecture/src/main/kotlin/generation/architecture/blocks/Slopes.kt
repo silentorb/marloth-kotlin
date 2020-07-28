@@ -39,7 +39,7 @@ fun slopeSides(lower: Level, upper: Level) =
     )
 
 fun newLedgeSide(level: Int) =
-    newSide(levelLedgeConnectors[level], setOf(levelConnectors[level].open), ConnectionLogic.connectWhenPossible)
+    newSide(levelLedgeConnectors[level], setOf(levelConnectors[level].open), ConnectionLogic.required)
 
 fun newLedgeSlope(lower: Level, upper: Level, name: String, ledgeTurns: Int): BiomedBlockBuilder {
   val height = lower.height + quarterStep + quarterStep

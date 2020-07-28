@@ -18,13 +18,8 @@ fun randomDiagonalWall(mesh: MeshName, height: Float = 0f): BiomedBuilder = { in
   listOf(newWallInternal(config, mesh, position, Quaternion().rotateZ(Pi * 0.25f), biome, scale = scale))
 }
 
-fun diagonalCorner(height: Float, fallback: BiomedBuilder): BiomedBuilder = { input ->
-  if (input.neighbors.intersect(setOf(Direction.west, Direction.south)).any())
-    fallback(input)
-  else
-    mergeBuilders(
-        diagonalHalfFloorMesh(MeshId.squareFloorHalfDiagonal, height),
-        randomDiagonalWall(MeshId.diagonalWall, height),
-        cubeWallsWithFeatures(fullWallFeatures(), lampOffset = plainWallLampOffset())
-    )(input)
-}
+fun diagonalCorner(height: Float): BiomedBuilder = mergeBuilders(
+    diagonalHalfFloorMesh(MeshId.squareFloorHalfDiagonal, height),
+    randomDiagonalWall(MeshId.diagonalWall, height),
+    cubeWallsWithFeatures(fullWallFeatures(), lampOffset = plainWallLampOffset())
+)

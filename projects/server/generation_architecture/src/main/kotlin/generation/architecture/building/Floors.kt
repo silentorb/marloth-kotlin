@@ -28,9 +28,6 @@ fun floorMeshBuilder(mesh: MeshName, offset: Vector3 = Vector3.zero,
 fun floorMesh(mesh: MeshName, offset: Vector3 = Vector3.zero, orientation: Quaternion = Quaternion()) =
     floorMeshBuilder(mesh, offset, orientation)
 
-//fun halfFloorMesh(mesh: MeshName, offset: Vector3 = Vector3.zero, orientation: Quaternion = Quaternion()) =
-//    blockBuilder(builder = floorMeshBuilder(mesh, offset, orientation))
-
 fun diagonalHalfFloorMesh(mesh: MeshName, height: Float): BiomedBuilder = { input ->
   val position = Vector3(0f, 0f, height)
   val orientation = Quaternion().rotateZ(-quarterAngle)
