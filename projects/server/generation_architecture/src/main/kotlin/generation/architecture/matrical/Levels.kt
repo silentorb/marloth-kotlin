@@ -16,8 +16,7 @@ fun getLevelHeight(level: Int): Float = level.toFloat() * quarterStep
 
 data class Level(
     val index: Int,
-    val side: Side,
-    val up: Side = endpoint
+    val side: Side
 ) {
   val height: Float = getLevelHeight(index)
 }
@@ -84,11 +83,26 @@ fun heights(biome: BiomeName): List<BlockBuilder> =
             listOf(
                 BiomedBlockBuilder(
                     block = Block(
-                        name = "levelWrap",
-                        sides = slopeSides(levels.last(), Level(0, Sides.slopeOctaveWrap, Sides.slopeOctaveWrap)),
+                        name = "octaveWrapSlope",
+                        sides = slopeSides(levels.last(), Level(0, endpoint))
+                            .plus(Direction.up to Sides.slopeOctaveWrap),
                         attributes = setOf(CellAttribute.traversable)
                     ),
                     builder = slopeBuilder(levels.last())
+                ),
+                BiomedBlockBuilder(
+                    block = Block(
+                        name = "octaveWrapSpace",
+                        sides = sides(
+                            east = levelSides[0].openRequired,
+                            down = Sides.slopeOctaveWrap
+                        ),
+                        attributes = setOf(CellAttribute.traversable)
+                    ),
+                    builder = cubeWallsWithFeatures(
+                        listOf(WallFeature.window, WallFeature.lamp, WallFeature.none), lampOffset = Vector3(0f, 0f, getLevelHeight(0) - 1.2f),
+                        possibleDirections = setOf(Direction.north, Direction.south)
+                    )
                 )
             )
         )

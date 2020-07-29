@@ -19,7 +19,6 @@ import simulation.misc.floorOffset
 
 fun slopeSides(lower: Level, upper: Level) =
     sides(
-        up = upper.up,
         east = upper.side,
         west = lower.side,
         north = levelSides[lower.index].slopeSides[0],

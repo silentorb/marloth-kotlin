@@ -36,24 +36,31 @@ fun sidesMatch(surroundingSides: OptionalSides): CheckBlockSide = { (direction, 
   sidesMatch(blockSide, otherSide)
 }
 
-fun checkBlockMatch(surroundingSides: OptionalSides): (Block) -> Boolean = { block ->
-  block.sides.all(sidesMatch(surroundingSides))
+fun verticalTurnsAlign(otherTurns: Int?, turns: Int): Boolean =
+    otherTurns == null || otherTurns == turns
+
+fun checkBlockMatch(surroundingSides: OptionalSides, upTurns: Int?, downTurns: Int?): (Block) -> Boolean = { block ->
+  block.sides.all(sidesMatch(surroundingSides)) &&
+      verticalTurnsAlign(upTurns, block.turns) &&
+      verticalTurnsAlign(downTurns, block.turns)
 }
 
-fun getSurroundingSides(blockGrid: BlockGrid, position: Vector3i): OptionalSides {
+fun getSurroundingSides(blockGrid: BlockGrid, location: Vector3i): OptionalSides {
   val getBlock: GetBlock = { blockGrid[it] }
-  return allDirections.associateWith(getOtherSide(getBlock, position))
+  return allDirections.associateWith(getOtherSide(getBlock, location))
 }
 
-fun matchBlock(dice: Dice, blocks: Set<Block>, surroundingSides: OptionalSides): Block? {
+fun matchBlock(dice: Dice, blocks: Set<Block>, surroundingSides: OptionalSides, upTurns: Int?, downTurns: Int?): Block? {
   val shuffledBlocks = dice.shuffle(blocks)
-  val result = shuffledBlocks.firstOrNull(checkBlockMatch(surroundingSides))
+  val result = shuffledBlocks.firstOrNull(checkBlockMatch(surroundingSides, upTurns, downTurns))
   return result
 }
 
-fun matchConnectingBlock(dice: Dice, blocks: Set<Block>, blockGrid: BlockGrid, position: Vector3i): Block? {
-  val surroundingSides = getSurroundingSides(blockGrid, position)
-  return matchBlock(dice, blocks, surroundingSides)
+fun matchConnectingBlock(dice: Dice, blocks: Set<Block>, blockGrid: BlockGrid, location: Vector3i): Block? {
+  val surroundingSides = getSurroundingSides(blockGrid, location)
+  val upTurns = blockGrid[location + directionVectors[Direction.up]!!]?.turns
+  val downTurns = blockGrid[location + directionVectors[Direction.down]!!]?.turns
+  return matchBlock(dice, blocks, surroundingSides, upTurns, downTurns)
 }
 
 fun openSides(blockGrid: BlockGrid, position: Vector3i): Map<Direction, Vector3i> {
