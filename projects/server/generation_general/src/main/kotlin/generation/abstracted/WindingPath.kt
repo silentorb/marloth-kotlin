@@ -2,11 +2,11 @@ package generation.abstracted
 
 import generation.general.*
 import silentorb.mythic.randomly.Dice
+import silentorb.mythic.spatial.Vector3i
 import simulation.misc.CellAttribute
 
 data class GroupedBlocks(
     val all: Set<Block>,
-    val polyominoes: Set<Block>,
     val expansive: Set<Block>,
     val flexible: Set<Block>
 )
@@ -33,7 +33,6 @@ fun newGroupedBlocks(blocks: Set<Block>): GroupedBlocks {
 
   return GroupedBlocks(
       all = blocks,
-      polyominoes = polyominoes,
       expansive = expansive,
       flexible = expansive - polyominoes
   )
@@ -43,7 +42,6 @@ fun filterUsedUniqueBlock(block: Block?, groupedBlocks: GroupedBlocks): GroupedB
     if (block != null && block.attributes.contains(CellAttribute.unique))
       GroupedBlocks(
           all = groupedBlocks.all - block,
-          polyominoes = groupedBlocks.polyominoes - block,
           expansive = groupedBlocks.expansive - block,
           flexible = groupedBlocks.flexible - block
       )
@@ -53,14 +51,15 @@ fun filterUsedUniqueBlock(block: Block?, groupedBlocks: GroupedBlocks): GroupedB
 data class BlockState(
     val groupedBlocks: GroupedBlocks,
     val grid: BlockGrid,
-    val blacklist: List<AbsoluteSide>
+    val blacklistSides: List<AbsoluteSide>,
+    val blacklistBlockLocations: Map<Vector3i, List<Block>>
 )
 
 tailrec fun addPathStep(
     maxSteps: Int,
     dice: Dice,
     state: BlockState,
-    bookMark: BlockState? = null
+    bookMark: Triple<Vector3i, Block, BlockState>? = null
 ): BlockGrid {
   val (groupedBlocks, grid, blacklist) = state
   val incompleteSides = getIncompleteBlockSides(grid) - blacklist
@@ -95,26 +94,39 @@ tailrec fun addPathStep(
     else
       groupedBlocks.all
 
+    if (nextPosition == Vector3i(1, 3, 0)) {
+      val k = 0
+    }
     val block = matchConnectingBlock(dice, blocks, grid, nextPosition)
         ?: matchConnectingBlock(dice, groupedBlocks.all, grid, nextPosition)
 
     val nextState = if (block == null) {
-      val next = bookMark ?: state
-      next.copy(
-          blacklist = next.blacklist + incompleteSide
-      )
+      if (bookMark != null) {
+        val (initialLocation, initialBlock, bookMarkState) = bookMark
+        val previousBlocks = bookMarkState.blacklistBlockLocations[initialLocation] ?: listOf()
+        val newBlackListEntry = initialLocation to previousBlocks + initialBlock
+        bookMarkState.copy(
+            blacklistBlockLocations = bookMarkState.blacklistBlockLocations + newBlackListEntry
+        )
+      } else {
+        state.copy(
+            blacklistSides = state.blacklistSides + incompleteSide
+        )
+      }
     } else
-      BlockState(
+      state.copy(
           groupedBlocks = filterUsedUniqueBlock(block, groupedBlocks),
-          grid = grid + (nextPosition to block),
-          blacklist = blacklist
+          grid = grid + (nextPosition to block)
       )
 
     val nextBookmark = if (block == null)
       null // Consume bookmark
     else if (prioritySides.none()) {
-      if (groupedBlocks.polyominoes.contains(block))
-        bookMark ?: state // Place or persist bookmark
+      if (block.sides.any { (direction, side) ->
+            side.connectionLogic == ConnectionLogic.required &&
+                !grid.containsKey(nextPosition + directionVectors[direction]!!)
+          })
+        bookMark ?: Triple(nextPosition, block, state) // Place or persist bookmark
       else
         null // Remove finished bookmark
     } else
@@ -127,7 +139,8 @@ tailrec fun addPathStep(
 fun windingPath(dice: Dice, config: BlockConfig, length: Int): (BlockGrid) -> BlockGrid = { grid ->
   val blocks = filterUsedUniqueBlocks(grid, config.blocks)
   val groupedBlocks = newGroupedBlocks(blocks)
-  val nextGrid = addPathStep(length, dice, BlockState(groupedBlocks, grid, listOf()))
+  val state = BlockState(groupedBlocks, grid, listOf(), mapOf())
+  val nextGrid = addPathStep(length, dice, state)
   assert(nextGrid.size > grid.size)
   nextGrid
 }

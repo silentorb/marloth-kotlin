@@ -33,7 +33,7 @@ fun ledgeSlope(level: Int, name: String, ledgeTurns: Int): BiomedBlockBuilder {
   val lower = getLowerLevelIndex(level)
   val upperSides = levelSides[level]
   val lowerSides = levelSides[lower]
-  val height = getLevelHeight(lower)// + quarterStep + quarterStep
+  val height = getLevelHeight(lower)
   return BiomedBlockBuilder(
       block = Block(
           name = name,

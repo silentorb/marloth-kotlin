@@ -20,14 +20,14 @@ fun diagonalCorner(name: String, height: Float, sides: SideMap): BiomedBlockBuil
 
 val diagonalCorner: MatrixBlockBuilder = { input ->
   val level = input.level
-  val open = levelSides[level].open
+  val openRequired = levelSides[level].openRequired
   listOf(
       diagonalCorner(
           "diagonalCorner$level",
           getLevelHeight(level),
           sides(
-              east = open,
-              north = open,
+              east = openRequired,
+              north = openRequired,
               west = endpoint,
               south = endpoint
           )
