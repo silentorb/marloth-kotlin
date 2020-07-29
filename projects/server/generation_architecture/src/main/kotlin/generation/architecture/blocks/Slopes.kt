@@ -1,28 +1,25 @@
 package generation.architecture.blocks
 
-import generation.architecture.building.newSlopeEdgeBlock
-import generation.architecture.building.newSlopedFloorMesh
-import generation.architecture.building.slopeBuilder
+import generation.architecture.building.*
+import generation.architecture.definition.Sides
 import generation.architecture.definition.levelConnectors
 import generation.architecture.definition.levelSides
 import generation.architecture.engine.getTurnDirection
 import generation.architecture.matrical.*
 import generation.architecture.matrical.sides
-import generation.general.Block
-import generation.general.ConnectionLogic
-import generation.general.newSide
+import generation.general.*
 import marloth.scenery.enums.MeshId
 import silentorb.mythic.spatial.Vector3
 import simulation.misc.CellAttribute
 import simulation.misc.cellLength
 import simulation.misc.floorOffset
 
-fun slopeSides(lower: Level, upper: Level) =
+fun slopeSides(lower: Int, upperSide: Side) =
     sides(
-        east = upper.side,
-        west = lower.side,
-        north = levelSides[lower.index].slopeSides[0],
-        south = levelSides[lower.index].slopeSides[1]
+        east = upperSide,
+        west = levelSides[lower].open,
+        north = levelSides[lower].slopeSides[0],
+        south = levelSides[lower].slopeSides[1]
     )
 
 fun newLedgeSide(level: Int) =
@@ -58,9 +55,8 @@ fun ledgeSlope(level: Int, name: String, ledgeTurns: Int): BiomedBlockBuilder {
 }
 
 val fullSlope: MatrixBlockBuilder = { input ->
-  val upper = input.levelOld
-  val lower = getLowerLevel(upper)
   val level = input.level
+  val lower = getLowerLevelIndex(level)
   if (level == 0)
     listOf()
   else
@@ -68,9 +64,9 @@ val fullSlope: MatrixBlockBuilder = { input ->
         BiomedBlockBuilder(
             block = Block(
                 name = "slope$level",
-                sides = slopeSides(lower, upper),
+                sides = slopeSides(lower, levelSides[level].open),
                 attributes = setOf(CellAttribute.traversable),
-                slots = listOf(Vector3(0f, 0f, lower.height + quarterStep / 2f + 0.05f) + floorOffset)
+                slots = listOf(Vector3(0f, 0f, getLevelHeight(lower) + quarterStep / 2f + 0.05f) + floorOffset)
             ),
             builder = slopeBuilder(lower)
         )
@@ -87,3 +83,29 @@ val ledgeSlope: MatrixBlockBuilder = { input ->
         ledgeSlope(level, "LedgeSlopeB$level", 1)
     )
 }
+
+fun slopeWrapper() = listOf(
+    BiomedBlockBuilder(
+        block = Block(
+            name = "octaveWrapSlope",
+            sides = slopeSides(3, levelSides[0].open)
+                .plus(Direction.up to Sides.slopeOctaveWrap),
+            attributes = setOf(CellAttribute.traversable)
+        ),
+        builder = slopeBuilder(3)
+    ),
+    BiomedBlockBuilder(
+        block = Block(
+            name = "octaveWrapSpace",
+            sides = sides(
+                east = levelSides[0].openRequired,
+                down = Sides.slopeOctaveWrap
+            ),
+            attributes = setOf(CellAttribute.traversable)
+        ),
+        builder = cubeWallsWithFeatures(
+            listOf(WallFeature.window, WallFeature.lamp, WallFeature.none), lampOffset = Vector3(0f, 0f, getLevelHeight(0) - 1.2f),
+            possibleDirections = setOf(Direction.north, Direction.south)
+        )
+    )
+)

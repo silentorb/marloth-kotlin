@@ -1,66 +1,34 @@
 package generation.architecture.matrical
 
-import generation.architecture.blocks.slopeSides
-import generation.architecture.blocks.tieredBlocks
-import generation.architecture.building.*
-import generation.architecture.definition.*
-import generation.general.*
+import generation.architecture.building.WallFeature
+import generation.architecture.building.cubeWallsWithFeatures
+import generation.general.Side
 import silentorb.mythic.spatial.Vector3
 import simulation.misc.BiomeName
-import simulation.misc.CellAttribute
 import simulation.misc.cellLength
 
 const val quarterStep = cellLength / 4f
 
 fun getLevelHeight(level: Int): Float = level.toFloat() * quarterStep
 
-data class Level(
-    val index: Int,
-    val side: Side
-) {
-  val height: Float = getLevelHeight(index)
-}
-
-fun newLevel(index: Int): Level =
-    Level(index, levelSides[index].open)
-
-private val levels = (0..3).map { newLevel(it) }
-
-fun tieredWalls(level: Int) =
-    cubeWallsWithFeatures(listOf(WallFeature.lamp, WallFeature.none), lampOffset = Vector3(0f, 0f, getLevelHeight(level) - 1.2f))
-
-data class CommonMatrixSides(
-    val halfStepRequiredOpen: Side,
-    val halfStepOptionalOpen: Side
-)
+const val levelCount = 4
 
 data class BlockMatrixInput(
     val level: Int,
-    val levelOld: Level,
-    val biome: BiomeName,
-    val sides: CommonMatrixSides
+    val biome: BiomeName
 )
 
-fun newBlockMatrixInput(biome: BiomeName): (Int) -> BlockMatrixInput = { levelIndex ->
-  val upper = levels[levelIndex]
+fun newBlockMatrixInput(biome: BiomeName): (Int) -> BlockMatrixInput = { level ->
   BlockMatrixInput(
-      level = levelIndex,
-      levelOld = upper,
-      biome = biome,
-      sides = CommonMatrixSides(
-          halfStepRequiredOpen = upper.side,
-          halfStepOptionalOpen = upper.side
-      )
+      level = level,
+      biome = biome
   )
 }
 
 typealias MatrixBlockBuilder = (BlockMatrixInput) -> List<BiomedBlockBuilder>
 
 fun getLowerLevelIndex(index: Int): Int =
-    (index + levels.size - 1) % levels.size
-
-fun getLowerLevel(level: Level): Level =
-    levels[getLowerLevelIndex(level.index)]
+    (index + levelCount - 1) % levelCount
 
 data class BiomeConnector(
     val biome: BiomeName,
@@ -74,36 +42,3 @@ fun newBiomeSide(biome: BiomeName, side: Side): Side =
             .map { BiomeConnector(biome, it) }
             .toSet()
     )
-
-fun heights(biome: BiomeName): List<BlockBuilder> =
-    (0..3)
-        .map(newBlockMatrixInput(biome))
-        .flatMap(::tieredBlocks)
-        .plus(
-            listOf(
-                BiomedBlockBuilder(
-                    block = Block(
-                        name = "octaveWrapSlope",
-                        sides = slopeSides(levels.last(), Level(0, endpoint))
-                            .plus(Direction.up to Sides.slopeOctaveWrap),
-                        attributes = setOf(CellAttribute.traversable)
-                    ),
-                    builder = slopeBuilder(levels.last())
-                ),
-                BiomedBlockBuilder(
-                    block = Block(
-                        name = "octaveWrapSpace",
-                        sides = sides(
-                            east = levelSides[0].openRequired,
-                            down = Sides.slopeOctaveWrap
-                        ),
-                        attributes = setOf(CellAttribute.traversable)
-                    ),
-                    builder = cubeWallsWithFeatures(
-                        listOf(WallFeature.window, WallFeature.lamp, WallFeature.none), lampOffset = Vector3(0f, 0f, getLevelHeight(0) - 1.2f),
-                        possibleDirections = setOf(Direction.north, Direction.south)
-                    )
-                )
-            )
-        )
-        .map(applyBiomedBlockBuilder(biome))

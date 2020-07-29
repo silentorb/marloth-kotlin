@@ -1,11 +1,9 @@
 package generation.architecture.blocks
 
 import generation.architecture.definition.BiomeId
-import generation.architecture.matrical.BiomedBlockBuilder
-import generation.architecture.matrical.BlockBuilder
-import generation.architecture.matrical.BlockMatrixInput
-import generation.architecture.matrical.heights
+import generation.architecture.matrical.*
 import silentorb.mythic.spatial.Vector3
+import simulation.misc.BiomeName
 
 fun plainWallLampOffset() = Vector3(0f, 0f, -1f)
 
@@ -21,6 +19,15 @@ fun tieredBlocks(input: BlockMatrixInput): List<BiomedBlockBuilder> =
         .flatMap {
           it(input)
         }
+
+fun heights(biome: BiomeName): List<BlockBuilder> =
+    (0..3)
+        .map(newBlockMatrixInput(biome))
+        .flatMap(::tieredBlocks)
+        .plus(
+            slopeWrapper()
+        )
+        .map(applyBiomedBlockBuilder(biome))
 
 fun allBlockBuilders(): List<BlockBuilder> =
     homeBlocks()
