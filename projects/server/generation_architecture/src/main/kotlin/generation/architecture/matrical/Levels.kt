@@ -1,9 +1,6 @@
 package generation.architecture.matrical
 
-import generation.architecture.building.WallFeature
-import generation.architecture.building.cubeWallsWithFeatures
 import generation.general.Side
-import silentorb.mythic.spatial.Vector3
 import simulation.misc.BiomeName
 import simulation.misc.cellLength
 
@@ -27,6 +24,8 @@ fun newBlockMatrixInput(biome: BiomeName): (Int) -> BlockMatrixInput = { level -
 
 typealias MatrixBlockBuilder = (BlockMatrixInput) -> List<BiomedBlockBuilder>
 
+typealias Blueprint = List<MatrixBlockBuilder>
+
 fun getLowerLevelIndex(index: Int): Int =
     (index + levelCount - 1) % levelCount
 
@@ -42,3 +41,22 @@ fun newBiomeSide(biome: BiomeName, side: Side): Side =
             .map { BiomeConnector(biome, it) }
             .toSet()
     )
+
+fun tieredBlocks(blockBuilders: List<MatrixBlockBuilder>): (BlockMatrixInput) -> List<BiomedBlockBuilder> = { input ->
+  blockBuilders
+      .flatMap {
+        it(input)
+      }
+}
+
+fun perHeights(biome: BiomeName, blockBuilders: List<MatrixBlockBuilder>): List<BlockBuilder> =
+    (0..3)
+        .map(newBlockMatrixInput(biome))
+        .flatMap(tieredBlocks(blockBuilders))
+        .map(applyBiomedBlockBuilder(biome))
+
+fun applyBiomeBlockBuilders(biomeBlockBuilders: Map<BiomeName, List<MatrixBlockBuilder>>): List<BlockBuilder> =
+    biomeBlockBuilders
+        .flatMap { (biome, blockBuilders) ->
+          perHeights(biome, blockBuilders)
+        }

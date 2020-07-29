@@ -54,37 +54,7 @@ fun ledgeSlope(level: Int, name: String, ledgeTurns: Int): BiomedBlockBuilder {
   )
 }
 
-val fullSlope: MatrixBlockBuilder = { input ->
-  val level = input.level
-  val lower = getLowerLevelIndex(level)
-  if (level == 0)
-    listOf()
-  else
-    listOf(
-        BiomedBlockBuilder(
-            block = Block(
-                name = "slope$level",
-                sides = slopeSides(lower, levelSides[level].open),
-                attributes = setOf(CellAttribute.traversable),
-                slots = listOf(Vector3(0f, 0f, getLevelHeight(lower) + quarterStep / 2f + 0.05f) + floorOffset)
-            ),
-            builder = slopeBuilder(lower)
-        )
-    )
-}
-
-val ledgeSlope: MatrixBlockBuilder = { input ->
-  val level = input.level
-  if (level == 0)
-    listOf()
-  else
-    listOf(
-        ledgeSlope(level, "LedgeSlopeA$level", -1),
-        ledgeSlope(level, "LedgeSlopeB$level", 1)
-    )
-}
-
-fun slopeWrapper() = listOf(
+fun slopeWrapping() = listOf(
     BiomedBlockBuilder(
         block = Block(
             name = "octaveWrapSlope",
@@ -109,3 +79,33 @@ fun slopeWrapper() = listOf(
         )
     )
 )
+
+val fullSlope: MatrixBlockBuilder = { input ->
+  val level = input.level
+  val lower = getLowerLevelIndex(level)
+  if (level == 0)
+    slopeWrapping()
+  else
+    listOf(
+        BiomedBlockBuilder(
+            block = Block(
+                name = "slope$level",
+                sides = slopeSides(lower, levelSides[level].open),
+                attributes = setOf(CellAttribute.traversable),
+                slots = listOf(Vector3(0f, 0f, getLevelHeight(lower) + quarterStep / 2f + 0.05f) + floorOffset)
+            ),
+            builder = slopeBuilder(lower)
+        )
+    )
+}
+
+val ledgeSlope: MatrixBlockBuilder = { input ->
+  val level = input.level
+  if (level == 0)
+    listOf()
+  else
+    listOf(
+        ledgeSlope(level, "LedgeSlopeA$level", -1),
+        ledgeSlope(level, "LedgeSlopeB$level", 1)
+    )
+}

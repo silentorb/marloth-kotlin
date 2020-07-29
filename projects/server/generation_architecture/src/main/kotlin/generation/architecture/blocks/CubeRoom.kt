@@ -12,6 +12,8 @@ import marloth.scenery.enums.MeshId
 import silentorb.mythic.spatial.Vector3
 import simulation.misc.CellAttribute
 
+fun plainWallLampOffset() = Vector3(0f, 0f, -1f)
+
 fun tieredSquareFloorBuilder(level: Int) =
     floorMesh(MeshId.squareFloor, Vector3(0f, 0f, getLevelHeight(level)))
 
