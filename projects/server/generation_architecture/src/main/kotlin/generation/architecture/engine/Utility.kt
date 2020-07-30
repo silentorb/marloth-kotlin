@@ -5,7 +5,6 @@ import generation.general.BiomeGrid
 import generation.general.Block
 import generation.general.Direction
 import marloth.scenery.enums.MeshInfoMap
-import silentorb.mythic.ent.Id
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.scenery.MeshName
@@ -41,23 +40,16 @@ fun squareOffsets(length: Int): List<Vector3> {
   }
 }
 
-fun newArchitectureMesh(meshes: MeshInfoMap, mesh: MeshName, position: Vector3,
+fun newArchitectureMesh(meshes: MeshInfoMap, depiction: Depiction, position: Vector3,
                         orientation: Quaternion = Quaternion(),
-                        node: Id = 0L,
-                        texture: TextureName? = null,
                         scale: Vector3 = Vector3.unit): Hand {
-  val meshInfo = meshes[mesh]!!
-  val shape = meshInfo.shape
+  val meshInfo = meshes[depiction.mesh]
+  val shape = meshInfo?.shape
   return Hand(
-      depiction = Depiction(
-          type = DepictionType.staticMesh,
-          mesh = mesh,
-          texture = texture
-      ),
+      depiction = depiction,
       body = Body(
           position = position,
           orientation = orientation,
-          nearestNode = node,
           scale = scale
       ),
       collisionShape = if (shape != null)
@@ -76,9 +68,12 @@ typealias VerticalAligner = (Float) -> (Float)
 val alignWithCeiling: VerticalAligner = { height -> -height / 2f }
 val alignWithFloor: VerticalAligner = { height -> height / 2f }
 
-fun align(meshInfo: MeshInfoMap, aligner: VerticalAligner) = { mesh: MeshName ->
-  val height = meshInfo[mesh]!!.shape!!.height
-  Vector3(0f, 0f, aligner(height))
+fun align(meshInfo: MeshInfoMap, aligner: VerticalAligner) = { mesh: MeshName? ->
+  val height = meshInfo[mesh]?.shape?.height
+  if (height != null)
+    Vector3(0f, 0f, aligner(height))
+  else
+    Vector3.zero
 }
 
 fun applyTurnsOld(turns: Int): Float =

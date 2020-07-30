@@ -15,23 +15,11 @@ enum class DepictionType {
   sentinel,
   staticMesh,
   test,
-//  wallLamp,
   world
 }
 
 data class Depiction(
-    val type: DepictionType,
+    val type: DepictionType = DepictionType.staticMesh,
     val mesh: MeshName? = null,
     val texture: TextureName? = null
 )
-
-//fun updateDepiction(deck: Deck, animationDurations: AnimationDurationMap): (Id, Depiction) -> Depiction = { id, depiction ->
-//  val animations = getTargetAnimations(deck, id)
-//  throw Error("Needs work")
-//  if (animations.none())
-//    depiction
-//  else
-//    depiction.copy(
-////        animations = updateAnimations(deck, animationDurations, id, animations, simulationDelta)
-//    )
-//}

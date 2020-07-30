@@ -1,36 +1,22 @@
 package generation.architecture.matrical
 
-import generation.architecture.engine.ArchitectureInput
 import generation.architecture.engine.Builder
 import generation.general.*
 import simulation.main.Hand
 import simulation.misc.BiomeName
 
-data class BiomedBuilderInput(
-    val general: ArchitectureInput,
-    val neighbors: Set<Direction>,
-    val biome: BiomeInfo
-)
-
-typealias BiomedBuilder = (BiomedBuilderInput) -> List<Hand>
-
 data class BlockBuilder(
     val block: Block,
-    val builder: Builder? = null
+    val builder: Builder
 )
 
-data class BiomedBlockBuilder(
-    val block: Block,
-    val builder: BiomedBuilder
-)
-
-fun mergeBuilders(vararg builders: BiomedBuilder): BiomedBuilder {
+fun mergeBuilders(vararg builders: Builder): Builder {
   return { input ->
     builders.flatMap { it(input) }
   }
 }
 
-fun handBuilder(hand: Hand): BiomedBuilder = { input ->
+fun handBuilder(hand: Hand): Builder = { input ->
   listOf(hand)
 }
 
@@ -50,15 +36,6 @@ fun sides(
     Direction.south to south
 )
 
-fun applyBiomedBuilder(biome: BiomeName, builder: BiomedBuilder): Builder =
-    { input ->
-      builder(BiomedBuilderInput(
-          general = input.general,
-          neighbors = input.neighbors,
-          biome = input.general.config.biomes[biome]!!
-      ))
-    }
-
 fun restrictBiomeBlockSides(biome: BiomeName, block: Block): Block =
     block.copy(
         name = biome + "-" + block.name,
@@ -70,9 +47,9 @@ fun restrictBiomeBlockSides(biome: BiomeName, block: Block): Block =
         }
     )
 
-fun applyBiomedBlockBuilder(biome: BiomeName): (BiomedBlockBuilder) -> BlockBuilder = { blockBuilder ->
+fun applyBiomedBlockBuilder(biome: BiomeName): (BlockBuilder) -> BlockBuilder = { blockBuilder ->
   BlockBuilder(
       block = restrictBiomeBlockSides(biome, blockBuilder.block),
-      builder = applyBiomedBuilder(biome, blockBuilder.builder)
+      builder = blockBuilder.builder
   )
 }

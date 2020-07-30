@@ -60,8 +60,8 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, prof
               ),
               body = Body(
                   position = position,
-                  orientation = Quaternion(),
-                  velocity = Vector3()
+                  velocity = Vector3(),
+                  orientation = Quaternion()
               ),
               character = Character(
                   faction = faction,

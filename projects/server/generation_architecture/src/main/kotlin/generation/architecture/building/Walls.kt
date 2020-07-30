@@ -1,45 +1,30 @@
 package generation.architecture.building
 
-import generation.architecture.engine.ArchitectureInput
-import generation.architecture.engine.GenerationConfig
-import generation.architecture.engine.newArchitectureMesh
-import generation.architecture.matrical.BiomedBuilder
-import generation.architecture.matrical.BiomedBuilderInput
-import generation.general.*
+import generation.architecture.engine.*
+import generation.general.Direction
+import generation.general.directionVectors
+import generation.general.horizontalDirections
 import marloth.scenery.enums.MeshId
-import silentorb.mythic.scenery.MeshName
 import silentorb.mythic.spatial.*
+import simulation.entities.Depiction
 import simulation.main.Hand
-import simulation.misc.*
+import simulation.misc.cellHalfLength
 import kotlin.math.min
-
-data class WallPlacement(
-    val config: GenerationConfig,
-    val mesh: MeshName,
-    val position: Vector3,
-    val orientation: Quaternion,
-    val biome: BiomeInfo
-)
 
 fun getWallOrientation(direction: Direction): Quaternion {
   val angleZ = directionRotation(direction)
   return Quaternion().rotateZ(angleZ)
 }
 
-fun newWallInternal(config: GenerationConfig, mesh: MeshName, position: Vector3, orientation: Quaternion, biome: BiomeInfo,
-                    scale: Vector3 = Vector3.unit): Hand {
+fun newWallInternal(config: GenerationConfig, depiction: Depiction, position: Vector3, orientation: Quaternion, scale: Vector3 = Vector3.unit): Hand {
   return newArchitectureMesh(
       meshes = config.meshes,
-      mesh = mesh,
+      depiction = depiction,
       position = position,
       orientation = orientation.rotateZ(quarterAngle),
-      texture = biomeTexture(biome, TextureGroup.wall),
       scale = scale
   )
 }
-
-fun newWallInternal(placement: WallPlacement) =
-    newWallInternal(placement.config, placement.mesh, placement.position, placement.orientation, placement.biome)
 
 fun directionRotation(direction: Direction): Float =
     when (direction) {
@@ -78,10 +63,9 @@ fun directionRotation(direction: Direction): Float =
 //      .map(::newWallInternal)
 //}
 
-fun placeWall(general: ArchitectureInput, mesh: MeshName, position: Vector3, direction: Direction, biome: BiomeName): Hand {
+fun placeWall(general: ArchitectureInput, depiction: Depiction, position: Vector3, direction: Direction): Hand {
   val orientation = getWallOrientation(direction)
-  val biomeInfo = general.config.biomes[biome]!!
-  return newWallInternal(WallPlacement(general.config, mesh, position, orientation, biomeInfo))
+  return newWallInternal(general.config, depiction, position, orientation)
 }
 
 fun getCubeWallPosition(direction: Direction): Vector3 {
@@ -89,22 +73,17 @@ fun getCubeWallPosition(direction: Direction): Vector3 {
   return offset.toVector3() * cellHalfLength
 }
 
-fun cubeWall(input: BiomedBuilderInput, mesh: MeshName, direction: Direction, offset: Vector3 = Vector3.zero): Hand {
+fun cubeWall(input: BuilderInput, depiction: Depiction, direction: Direction, offset: Vector3 = Vector3.zero): Hand {
   val general = input.general
-  val biome = input.biome
   val position = offset + getCubeWallPosition(direction)
-  return placeWall(general, mesh, position, direction, biome.name)
+  return placeWall(general, depiction, position, direction)
 }
 
-fun placeCubeRoomWalls(mesh: MeshName, directions: Collection<Direction>): BiomedBuilder = { input ->
+fun placeCubeRoomWalls(depiction: Depiction, directions: Collection<Direction>): Builder = { input ->
   directions
       .map { direction ->
-        cubeWall(input, mesh, direction)
+        cubeWall(input, depiction, direction)
       }
-}
-
-fun cubeWalls(mesh: MeshName): BiomedBuilder = { input ->
-  placeCubeRoomWalls(mesh, horizontalDirections - input.neighbors)(input)
 }
 
 enum class WallFeature {
@@ -117,11 +96,11 @@ fun fullWallFeatures() = listOf(WallFeature.lamp, WallFeature.window, WallFeatur
 
 fun cubeWallsWithFeatures(
     features: List<WallFeature>,
-    mesh: MeshName = MeshId.squareWall,
+    wallDepiction: Depiction,
     offset: Vector3 = Vector3.zero,
     lampOffset: Vector3 = Vector3.zero,
     possibleDirections: Set<Direction> = horizontalDirections
-): BiomedBuilder = { input ->
+): Builder = { input ->
   val dice = input.general.dice
   val directions = possibleDirections - input.neighbors
   val featureCount = dice.getInt(min(min(2, directions.size), features.size))
@@ -129,14 +108,21 @@ fun cubeWallsWithFeatures(
   val plainDirections = directions - featureDirections
   val selectedFeatures = dice.take(features, featureCount)
 
-  placeCubeRoomWalls(mesh, plainDirections)(input)
+  placeCubeRoomWalls(wallDepiction, plainDirections)(input)
       .plus(featureDirections.zip(selectedFeatures) { direction, feature ->
         when (feature) {
-          WallFeature.lamp -> listOf(cubeWall(input, mesh, direction, offset), cubeWallLamp(direction, offset + lampOffset))
-          WallFeature.window -> listOf(cubeWall(input, MeshId.squareWallWindow, direction, offset))
-          WallFeature.none -> listOf(cubeWall(input, mesh, direction, offset))
+          WallFeature.lamp -> listOf(cubeWall(input, wallDepiction, direction, offset), cubeWallLamp(direction, offset + lampOffset))
+          WallFeature.window -> listOf(cubeWall(input, Depiction(mesh = MeshId.squareWallWindow, texture = wallDepiction.texture), direction, offset))
+          WallFeature.none -> listOf(cubeWall(input, wallDepiction, direction, offset))
         }
       }
           .flatten()
       )
 }
+
+fun tieredWalls(depiction: Depiction) =
+    cubeWallsWithFeatures(
+        listOf(WallFeature.lamp, WallFeature.none),
+        wallDepiction = depiction,
+        lampOffset = Vector3(0f, 0f, -1.2f)
+    )

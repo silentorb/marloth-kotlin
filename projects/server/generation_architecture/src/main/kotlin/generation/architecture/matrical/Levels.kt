@@ -1,6 +1,9 @@
 package generation.architecture.matrical
 
+import generation.architecture.engine.Builder
+import generation.general.Block
 import generation.general.Side
+import silentorb.mythic.spatial.Vector3
 import simulation.misc.BiomeName
 import simulation.misc.cellLength
 
@@ -10,24 +13,24 @@ fun getLevelHeight(level: Int): Float = level.toFloat() * quarterStep
 
 const val levelCount = 4
 
-data class BlockMatrixInput(
-    val level: Int,
-    val biome: BiomeName
+typealias TieredBlock = (Int) -> Block?
+typealias TieredBuilder = (Int) -> Builder
+
+typealias PartiallyTieredBlockBuilder = Pair<TieredBlock, Builder>
+
+typealias TieredBlockBuilder = Pair<TieredBlock, TieredBuilder>
+typealias TieredBlockBuilders = List<TieredBlockBuilder>
+
+data class Blueprint(
+    val even: List<BlockBuilder> = listOf(),
+    val tiered: TieredBlockBuilders = listOf()
 )
 
-fun newBlockMatrixInput(biome: BiomeName): (Int) -> BlockMatrixInput = { level ->
-  BlockMatrixInput(
-      level = level,
-      biome = biome
-  )
-}
-
-typealias MatrixBlockBuilder = (BlockMatrixInput) -> List<BiomedBlockBuilder>
-
-typealias Blueprint = List<MatrixBlockBuilder>
+fun getWrappingLevelIndex(index: Int): Int =
+    (index + levelCount) % levelCount
 
 fun getLowerLevelIndex(index: Int): Int =
-    (index + levelCount - 1) % levelCount
+    getWrappingLevelIndex(index - 1)
 
 data class BiomeConnector(
     val biome: BiomeName,
@@ -42,21 +45,56 @@ fun newBiomeSide(biome: BiomeName, side: Side): Side =
             .toSet()
     )
 
-fun tieredBlocks(blockBuilders: List<MatrixBlockBuilder>): (BlockMatrixInput) -> List<BiomedBlockBuilder> = { input ->
-  blockBuilders
-      .flatMap {
-        it(input)
+fun tieredBlocks(blockBuilders: Blueprint): (Int) -> List<BlockBuilder> = { level ->
+  blockBuilders.tiered
+      .mapNotNull { (tieredBlock, builder) ->
+        val block = tieredBlock(level)
+        if (block == null)
+          null
+        else
+          BlockBuilder(
+              block = block,
+              builder = builder(level)
+          )
       }
+      .plus(blockBuilders.even)
 }
 
-fun perHeights(biome: BiomeName, blockBuilders: List<MatrixBlockBuilder>): List<BlockBuilder> =
+fun perHeights(biome: BiomeName, blockBuilders: Blueprint): List<BlockBuilder> =
     (0..3)
-        .map(newBlockMatrixInput(biome))
         .flatMap(tieredBlocks(blockBuilders))
         .map(applyBiomedBlockBuilder(biome))
 
-fun applyBiomeBlockBuilders(biomeBlockBuilders: Map<BiomeName, List<MatrixBlockBuilder>>): List<BlockBuilder> =
+fun applyBiomeBlockBuilders(biomeBlockBuilders: Map<BiomeName, Blueprint>): List<BlockBuilder> =
     biomeBlockBuilders
         .flatMap { (biome, blockBuilders) ->
           perHeights(biome, blockBuilders)
         }
+
+fun applyBuilderLevels(builder: Builder): TieredBuilder = { level ->
+  if (level == 0)
+    builder
+  else {
+    { input ->
+      builder(input)
+          .map { hand ->
+            val body = hand.body
+            if (body == null)
+              hand
+            else {
+              val offset = Vector3(0f, 0f, getLevelHeight(level))
+              hand.copy(
+                  body = body.copy(
+                      position = body.position + offset
+                  )
+              )
+            }
+          }
+    }
+  }
+}
+
+val applyBlockBuilderLevels: (PartiallyTieredBlockBuilder) -> TieredBlockBuilder =
+    { (block, builder) ->
+      block to applyBuilderLevels(builder)
+    }

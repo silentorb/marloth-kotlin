@@ -18,8 +18,8 @@ fun addWallLamp(position: Vector3, orientation: Quaternion): Hand {
       ),
       body = Body(
           position = position,
-          orientation = orientation,
-          velocity = Vector3()
+          velocity = Vector3(),
+          orientation = orientation
       )
   )
 }

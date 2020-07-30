@@ -10,14 +10,14 @@ import simulation.accessorize.AccessoryName
 import simulation.main.Deck
 import simulation.misc.Node
 
-fun groupElementsByCell(deck: Deck, elements: Collection<Id>): Map<Id, Set<Id>> {
-  return elements
-      .groupBy { id ->
-        val body = deck.bodies[id]!!
-        body.nearestNode
-      }
-      .mapValues { it.value.toSet() }
-}
+//fun groupElementsByCell(deck: Deck, elements: Collection<Id>): Map<Id, Set<Id>> {
+//  return elements
+//      .groupBy { id ->
+//        val body = deck.bodies[id]!!
+//        body.nearestNode
+//      }
+//      .mapValues { it.value.toSet() }
+//}
 
 //fun placeBuffCloud(node: Node, buff: AccessoryName) =
 //    newBuffCloud(
