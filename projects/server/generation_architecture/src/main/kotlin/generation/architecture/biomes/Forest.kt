@@ -34,7 +34,8 @@ fun forestBiome(): Blueprint {
       tiered = listOf(
           squareRoom to floorMesh(floor),
           fullSlope to newSlopedFloorMesh(Depiction(mesh = MeshId.quarterSlope, texture = texture)),
-          diagonalCornerBlock to diagonalHalfFloorMesh(Depiction(mesh = MeshId.squareFloorHalfDiagonal, texture = texture))
+          diagonalCornerBlock to diagonalHalfFloorMesh(Depiction(mesh = MeshId.squareFloorHalfDiagonal, texture = texture)),
+          cornerSlope to cornerSlope(texture)
       )
           .map(applyBlockBuilderLevels)
   )

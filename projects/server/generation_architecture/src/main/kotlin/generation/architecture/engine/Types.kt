@@ -7,8 +7,7 @@ import simulation.main.Hand
 data class ArchitectureInput(
     val config: GenerationConfig,
     val blockGrid: BlockGrid,
-    val dice: Dice,
-    val selectMesh: MeshSelector
+    val dice: Dice
 )
 
 fun newArchitectureInput(generationConfig: GenerationConfig, dice: Dice,
@@ -16,8 +15,7 @@ fun newArchitectureInput(generationConfig: GenerationConfig, dice: Dice,
     ArchitectureInput(
         config = generationConfig,
         blockGrid = blockGrid,
-        dice = dice,
-        selectMesh = randomlySelectMesh(dice, newMeshSource(generationConfig.meshes))
+        dice = dice
     )
 
 data class BuilderInput(

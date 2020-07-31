@@ -1,7 +1,5 @@
 package generation.architecture.blocks
 
-import generation.architecture.building.WallFeature
-import generation.architecture.building.cubeWallsWithFeatures
 import generation.architecture.building.ledgeSlopeBuilder
 import generation.architecture.definition.Sides
 import generation.architecture.definition.levelConnectors
@@ -13,7 +11,6 @@ import generation.architecture.matrical.sides
 import generation.general.*
 import silentorb.mythic.scenery.TextureName
 import silentorb.mythic.spatial.Vector3
-import simulation.entities.Depiction
 import simulation.misc.CellAttribute
 import simulation.misc.cellLength
 import simulation.misc.floorOffset
@@ -34,7 +31,6 @@ fun ledgeSlopeBlock(ledgeTurns: Int): TieredBlock = { level ->
   if (level == 3)
     null
   else {
-//    val lower = getLowerLevelIndex(level)
     val upper = getWrappingLevelIndex(lower + 1)
     val upperSides = levelSides[upper]
     val lowerSides = levelSides[lower]
@@ -91,3 +87,17 @@ fun ledgeSlope(texture: TextureName): List<PartiallyTieredBlockBuilder> = listOf
     ledgeSlopeBlock(-1) to ledgeSlopeBuilder(texture, -1),
     ledgeSlopeBlock(1) to ledgeSlopeBuilder(texture, 1)
 )
+
+val cornerSlope: TieredBlock = { level ->
+  val lowerSides = levelSides[level]
+  Block(
+      name = "cornerSlope$level",
+      sides = sides(
+          east = lowerSides.open,
+          south = lowerSides.open,
+          west = lowerSides.slopeSides[0],
+          north = lowerSides.slopeSides[1]
+      ),
+      attributes = setOf(CellAttribute.traversable)
+  )
+}

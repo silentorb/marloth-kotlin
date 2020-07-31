@@ -1,7 +1,6 @@
 package generation.architecture.building
 
-import generation.architecture.engine.Builder
-import generation.architecture.engine.applyTurnsOld
+import generation.architecture.engine.*
 import generation.architecture.matrical.mergeBuilders
 import generation.architecture.matrical.quarterStep
 import generation.general.Direction
@@ -19,7 +18,7 @@ fun newSlopedFloorMesh(depiction: Depiction): Builder = { input ->
   val slopeAngle = asin(cellLength / 4f / meshInfo.shape!!.x) - 0.007f
   val orientation = Quaternion()
       .rotateY(-slopeAngle)
-      .rotateZ(quarterAngle)
+//      .rotateZ(quarterAngle)
   floorMeshBuilder(depiction, offset = Vector3(0f, 0f, cellLength / 8f), orientation = orientation)(input)
 }
 
@@ -48,3 +47,18 @@ fun slopeWrapBuilder(wall: Depiction) =
         possibleDirections = setOf(Direction.north, Direction.south),
         wallDepiction = wall
     )
+
+fun cornerSlope(texture: TextureName): Builder = { input ->
+  val config = input.general.config
+  val depiction = Depiction(
+      mesh = MeshId.cornerSlope,
+      texture = texture
+  )
+  listOf(
+      newArchitectureMesh(
+          meshes = config.meshes,
+          depiction = depiction,
+          position = align(config.meshes, alignWithFloor)(depiction.mesh) + Vector3(0f, 0f, 0.5f - quarterStep * 3f)
+      )
+  )
+}

@@ -6,8 +6,6 @@ import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.quarterAngle
 import simulation.entities.Depiction
 import simulation.misc.cellHalfLength
-import simulation.misc.cellLength
-import kotlin.math.asin
 
 fun floorMeshBuilder(depiction: Depiction, offset: Vector3 = Vector3.zero, orientation: Quaternion = Quaternion()): Builder = { input ->
   val config = input.general.config

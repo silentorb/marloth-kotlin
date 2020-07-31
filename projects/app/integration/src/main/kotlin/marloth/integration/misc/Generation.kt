@@ -1,8 +1,7 @@
 package marloth.integration.misc
 
-import generation.architecture.blocks.allBlockBuilders
+import generation.architecture.biomes.allBlockBuilders
 import generation.architecture.matrical.BlockBuilder
-import generation.architecture.definition.*
 import generation.architecture.engine.*
 import generation.architecture.engine.applyTurns
 import generation.general.BlockGrid
@@ -10,7 +9,6 @@ import generation.general.mapGridFromBlockGrid
 import generation.general.rotateSides
 import marloth.generation.population.populateWorld
 import marloth.scenery.enums.MeshShapeMap
-import marloth.scenery.enums.meshAttributes
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.debugging.getDebugString
@@ -114,8 +112,7 @@ fun generateWorld(definitions: Definitions, meshInfo: MeshShapeMap, seed: Long =
   val boundary = createWorldBoundary(100f)
   val generationConfig = GenerationConfig(
       definitions = definitions,
-      biomes = biomeInfoMap,
-      meshes = compileArchitectureMeshInfo(meshInfo, meshAttributes),
+      meshes = compileArchitectureMeshInfo(meshInfo),
       includeEnemies = getDebugString("NO_ENEMIES") != "1",
       roomCount = getDebugInt("BASE_ROOM_COUNT") ?: 30
   )

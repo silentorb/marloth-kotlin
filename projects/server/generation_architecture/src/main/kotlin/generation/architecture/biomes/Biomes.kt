@@ -1,8 +1,6 @@
-package generation.architecture.blocks
+package generation.architecture.biomes
 
-import generation.architecture.biomes.checkersBiome
-import generation.architecture.biomes.forestBiome
-import generation.architecture.biomes.homeBlocks
+import generation.architecture.blocks.biomeAdapters
 import generation.architecture.definition.BiomeId
 import generation.architecture.matrical.BlockBuilder
 import generation.architecture.matrical.applyBiomeBlockBuilders

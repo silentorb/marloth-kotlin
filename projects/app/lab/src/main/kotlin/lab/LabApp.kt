@@ -9,8 +9,6 @@ import generation.architecture.engine.compileArchitectureMeshInfo
 import lab.utility.updateWatching
 import lab.views.model.newModelViewState
 import marloth.clienting.newClientState
-import generation.architecture.definition.biomeInfoMap
-import marloth.scenery.enums.meshAttributes
 import lab.views.game.*
 import marloth.clienting.definitionsFromClient
 import marloth.definition.staticDefinitions
@@ -42,8 +40,7 @@ fun generateWorld(definitions: Definitions, meshInfo: MeshShapeMap, gameViewConf
   val boundary = createWorldBoundary(gameViewConfig.worldLength)
   val generationConfig = GenerationConfig(
       definitions = definitions,
-      biomes = biomeInfoMap,
-      meshes = compileArchitectureMeshInfo(meshInfo, meshAttributes),
+      meshes = compileArchitectureMeshInfo(meshInfo),
       includeEnemies = gameViewConfig.haveEnemies,
       roomCount = gameViewConfig.roomCount
   )

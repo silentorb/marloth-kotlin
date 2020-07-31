@@ -8,7 +8,7 @@ from mythic_lib import get_material_texture_node
 sys.path.append(os.path.dirname(__file__))
 from baking import bake_all, prune_graph_for_texture
 
-models_path = 'src/main/resources/models'
+models_path = 'src/main/resources/gltf'
 textures_path = 'src/main/resources/textures'
 script_path = os.path.realpath(__file__)
 
