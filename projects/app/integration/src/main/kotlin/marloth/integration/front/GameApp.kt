@@ -3,6 +3,7 @@ package marloth.integration.front
 import marloth.clienting.Client
 import marloth.clienting.definitionsFromClient
 import marloth.clienting.newClientState
+import marloth.clienting.rendering.getMeshInfo
 import marloth.definition.staticDefinitions
 import marloth.integration.misc.*
 import silentorb.mythic.platforming.Platform

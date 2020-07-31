@@ -11,14 +11,12 @@ import simulation.entities.Depiction
 
 fun forestFloor(): Depiction =
     Depiction(
-        mesh = MeshId.squareFloor,
-        texture = TextureId.grass
+        mesh = MeshId.grassFloor
     )
 
 fun forestWall(): Depiction =
     Depiction(
-        mesh = MeshId.squareWall,
-        texture = TextureId.bricks
+        mesh = MeshId.dirtWall
     )
 
 fun generalForestBuilder(): Builder =

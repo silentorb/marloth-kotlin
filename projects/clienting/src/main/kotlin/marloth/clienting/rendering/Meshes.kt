@@ -7,14 +7,10 @@ import silentorb.imp.campaign.loadWorkspace
 import silentorb.imp.core.*
 import silentorb.imp.execution.executeToSingleValue
 import silentorb.imp.library.standard.standardLibrary
-import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.drawing.createCircleList
 import silentorb.mythic.fathom.fathomLibrary
-import silentorb.mythic.fathom.misc.ModelFunction
-import silentorb.mythic.fathom.sampling.SamplingConfig
-import silentorb.mythic.fathom.sampling.sampleForm
-import silentorb.mythic.fathom.surfacing.GridBounds
 import silentorb.mythic.fathom.marching.marchingMesh
+import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.glowing.*
 import silentorb.mythic.imaging.texturing.texturingLibrary
 import silentorb.mythic.lookinglass.*
@@ -22,6 +18,8 @@ import silentorb.mythic.lookinglass.meshes.*
 import silentorb.mythic.lookinglass.meshes.loading.loadGltf
 import silentorb.mythic.resource_loading.getUrlPath
 import silentorb.mythic.scenery.MeshName
+import silentorb.mythic.scenery.SamplePoint
+import silentorb.mythic.scenery.Shape
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -79,47 +77,84 @@ val defaultLodRanges: LodRanges = listOf(
     10f
 )
 
-fun sampleGeneralMesh(vertexSchema: VertexSchema, config: SamplingConfig, bounds: GridBounds, lodRanges: LodRanges): SampledModel {
-  val initialPoints = sampleForm(config, bounds)
-  return newSampledModel(vertexSchema, lodRanges, config.levels, initialPoints)
+data class DeferredImpMesh(
+    val name: String,
+    val model: ModelFunction
+)
+
+data class LoadedMeshData(
+    val name: String,
+    val vertices: List<SamplePoint>,
+    val triangles: List<List<Int>>,
+    val collision: Shape?
+)
+
+fun compileModel(context: Context, key: PathKey): DeferredImpMesh {
+  val value = executeToSingleValue(context, key)!!
+  val model = value as ModelFunction
+  return DeferredImpMesh(
+      name = key.name,
+      model = model
+  )
 }
 
-fun sampleModel(context: Context, vertexSchema: VertexSchema): (PathKey) -> ModelMesh =
-    { key ->
-      val value = executeToSingleValue(context, key)!!
-      val model = value as ModelFunction
-      val voxelsPerUnit = 10
-      val (vertices, triangles) = marchingMesh(voxelsPerUnit, model.form, model.shading)
-      val vertexFloats = vertices
-          .flatMap(::serializeVertex)
-          .toFloatArray()
+fun sampleModel(deferred: DeferredImpMesh): LoadedMeshData {
+  val model = deferred.model
+  val name = deferred.name
+  val voxelsPerUnit = 10
+  val (vertices, triangles) = marchingMesh(voxelsPerUnit, model.form, model.shading)
+  return LoadedMeshData(
+      name = name,
+      vertices = vertices,
+      triangles = triangles,
+      collision = model.collision
+  )
+}
 
-      val indices = createIntBuffer(triangles.flatten())
-      val mesh = GeneralMesh(
-          vertexSchema = vertexSchema,
-          vertexBuffer = newVertexBuffer(vertexSchema).load(createFloatBuffer(vertexFloats)),
-          count = vertices.size / vertexSchema.floatSize,
-          indices = indices,
-          primitiveType = PrimitiveType.triangles
-      )
+fun sampleModels(deferred: List<DeferredImpMesh>): List<LoadedMeshData> =
+    deferred.map(::sampleModel)
 
-      ModelMesh(
-          id = key.name,
-          primitives = listOf(
-              Primitive(
-                  mesh = mesh,
-                  material = Material(
-                      drawMethod = DrawMethod.triangles,
-                      shading = true,
-                      coloredVertices = true
-                  )
+fun meshToGpu(vertexSchema: VertexSchema, data: LoadedMeshData): ModelMesh {
+  val vertices = data.vertices
+  val triangles = data.triangles
+  val name = data.name
+  val collision = data.collision
+  val vertexFloats = vertices
+      .flatMap(::serializeVertex)
+      .toFloatArray()
+
+  val indices = createIntBuffer(triangles.flatten())
+  val mesh = GeneralMesh(
+      vertexSchema = vertexSchema,
+      vertexBuffer = newVertexBuffer(vertexSchema).load(createFloatBuffer(vertexFloats)),
+      count = vertices.size / vertexSchema.floatSize,
+      indices = indices,
+      primitiveType = PrimitiveType.triangles
+  )
+
+  return ModelMesh(
+      id = name,
+      primitives = listOf(
+          Primitive(
+              mesh = mesh,
+              material = Material(
+                  drawMethod = DrawMethod.triangles,
+                  shading = true,
+                  coloredVertices = true
               )
-          ),
-          bounds = model.collision
-      )
-    }
+          )
+      ),
+      bounds = collision
+  )
+}
 
-fun impMeshes(vertexSchemas: VertexSchemas): Map<MeshName, ModelMesh> {
+fun meshesToGpu(vertexSchema: VertexSchema): (List<LoadedMeshData>) -> Map<String, ModelMesh> = { meshes ->
+  meshes.associate { mesh ->
+    mesh.name to meshToGpu(vertexSchema, mesh)
+  }
+}
+
+fun gatherImpMeshes(): List<DeferredImpMesh> {
   val initialContext = newImpLibrary()
   val workspaceUrl = Thread.currentThread().contextClassLoader.getResource("models/workspace.yaml")!!
   val (workspace, errors) = loadWorkspace(codeFromFile, initialContext, Paths.get(workspaceUrl.toURI()).parent)
@@ -128,18 +163,16 @@ fun impMeshes(vertexSchemas: VertexSchemas): Map<MeshName, ModelMesh> {
   val outputs = getGraphOutputNodes(mergeNamespaces(context))
       .filter { it.path == "models" }
   return outputs
-      .associateWith(sampleModel(context, vertexSchemas.shadedColor))
-      .mapKeys { it.key.name }
+      .map { compileModel(context, it) }
 }
+
+typealias MeshLoadingState = LoadingState<DeferredImpMesh, LoadedMeshData>
+
+fun updateAsyncMeshLoading(vertexSchema: VertexSchema) = updateAsyncLoading(::sampleModels, meshesToGpu(vertexSchema))
 
 fun createMeshes(vertexSchemas: VertexSchemas): Pair<Map<MeshName, ModelMesh>, List<Armature>> {
   val imports = importedMeshes(vertexSchemas)
   val importedMeshes = imports.flatMap { it.meshes }.associateBy { it.id }
-  val models = if (getDebugBoolean("USE_IMP_MESHES"))
-    impMeshes(vertexSchemas)
-  else
-    mapOf()
-
   val customMeshes = mapOf(
       MeshId.hollowCircle to createHollowCircleMesh(vertexSchemas.flat, 64),
       "line" to createLineMesh(vertexSchemas.flat),
@@ -147,7 +180,7 @@ fun createMeshes(vertexSchemas: VertexSchemas): Pair<Map<MeshName, ModelMesh>, L
   )
       .mapValues { createModelElements(it.value) }
       .mapValues { ModelMesh(it.key, it.value) }
-  val meshes = importedMeshes + customMeshes + models
+  val meshes = importedMeshes + customMeshes
 
   val armatures = imports.flatMap { it.armatures }
   return Pair(meshes, armatures)

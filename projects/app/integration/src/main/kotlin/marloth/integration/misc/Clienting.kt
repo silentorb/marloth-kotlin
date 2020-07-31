@@ -5,14 +5,16 @@ import marloth.clienting.audio.loadSounds
 import marloth.clienting.gatherFontSets
 import marloth.clienting.hud.cooldownMeshKey
 import marloth.clienting.hud.createCooldownCircleMesh
+import marloth.clienting.rendering.MeshLoadingState
 import marloth.clienting.rendering.createMeshes
+import marloth.clienting.rendering.gatherImpMeshes
 import silentorb.mythic.drawing.setGlobalFonts
 import silentorb.mythic.glowing.Glow
 import silentorb.mythic.glowing.prepareScreenFrameBuffer
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.lookinglass.meshes.VertexSchemas
 import silentorb.mythic.lookinglass.meshes.createVertexSchemas
-import silentorb.mythic.lookinglass.texturing.AsyncTextureLoader
+import silentorb.mythic.lookinglass.texturing.TextureLoadingState
 import silentorb.mythic.lookinglass.texturing.DeferredTexture
 import silentorb.mythic.lookinglass.texturing.gatherTextures
 import silentorb.mythic.lookinglass.texturing.getFileShortName
@@ -55,7 +57,7 @@ fun newRenderer(
       glow = glow,
       config = config,
       fonts = fontSource(),
-      meshes = meshes,
+      meshes = meshes.toMutableMap(),
       armatures = armatures,
       vertexSchemas = vertexSchemas,
       multisampler = multisampler,
@@ -67,6 +69,7 @@ fun newRenderer(
 
 fun newClient(platform: Platform, displayConfig: DisplayConfig): Client {
   val textures = gatherTextures(platform.display, displayConfig)
+  val impMeshes = gatherImpMeshes()
   val renderer = newRenderer(
       config = displayConfig,
       fontSource = ::gatherFontSets
@@ -78,7 +81,8 @@ fun newClient(platform: Platform, displayConfig: DisplayConfig): Client {
       platform = platform,
       renderer = renderer,
       soundLibrary = soundLibrary,
-      textureLoader = AsyncTextureLoader(textures),
+      meshLoadingState = MeshLoadingState(impMeshes),
+      textureLoadingState = TextureLoadingState(textures),
       customBloomResources = mapOf(
           cooldownMeshKey to createCooldownCircleMesh()
       )

@@ -80,17 +80,17 @@ fun biomeAdapters(): List<BlockBuilder> {
   return listOf(
       biomeAdapterCube(BiomeId.forest, BiomeId.home, generalForestBuilder(), setOf(CellAttribute.unique))(0)
   )
-//      .plus(
-//          listOf(
-//              biomeAdapterCube(BiomeId.checkers, BiomeId.home, generalCheckersBuilder(), setOf(CellAttribute.unique)),
-//              biomeAdapterCube(BiomeId.checkers, BiomeId.forest, generalCheckersBuilder())
-//          )
-////              .plus(
-////                  intermediary.flatMap { biome ->
-////                    edges.map { biomeAdapterHall(biome, it) }
-////                  }
-////              )
-//              .flatMap { (0..2 step 2).map { level -> it(level) } }
-//      )
+      .plus(
+          listOf(
+              biomeAdapterCube(BiomeId.checkers, BiomeId.home, generalCheckersBuilder(), setOf(CellAttribute.unique)),
+              biomeAdapterCube(BiomeId.checkers, BiomeId.forest, generalCheckersBuilder())
+          )
+//              .plus(
+//                  intermediary.flatMap { biome ->
+//                    edges.map { biomeAdapterHall(biome, it) }
+//                  }
+//              )
+              .flatMap { (0..2 step 2).map { level -> it(level) } }
+      )
 
 }

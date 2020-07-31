@@ -3,6 +3,7 @@ package marloth.integration.clienting
 import marloth.clienting.Client
 import marloth.clienting.rendering.createSceneRenderer
 import marloth.clienting.rendering.prepareRender
+import marloth.clienting.rendering.updateAsyncMeshLoading
 import marloth.integration.debug.labRender
 import marloth.integration.misc.AppState
 import marloth.integration.scenery.createScene
@@ -17,9 +18,9 @@ import silentorb.mythic.spatial.Vector4i
 import simulation.misc.interpolateWorlds
 
 fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: List<Box>, viewports: List<Vector4i>) {
-  updateAsyncTextureLoading(client.textureLoader, client.renderer.textures)
-//  updateOffscreenBufferAllocations(client.renderer, )
   val renderer = client.renderer
+  updateAsyncMeshLoading(renderer.vertexSchemas.shadedColor)(client.meshLoadingState, renderer.meshes)
+  updateAsyncTextureLoading(client.textureLoadingState, renderer.textures)
   prepareRender(renderer, windowInfo)
   val world =
       if (getDebugBoolean("DISABLE_INTERPOLATION"))

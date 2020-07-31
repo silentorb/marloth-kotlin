@@ -11,6 +11,7 @@ import lab.views.model.newModelViewState
 import marloth.clienting.newClientState
 import lab.views.game.*
 import marloth.clienting.definitionsFromClient
+import marloth.clienting.rendering.getMeshInfo
 import marloth.definition.staticDefinitions
 import marloth.integration.front.GameApp
 import marloth.integration.front.RenderHook

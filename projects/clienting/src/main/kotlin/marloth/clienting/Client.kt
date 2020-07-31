@@ -4,6 +4,7 @@ import marloth.clienting.audio.AudioConfig
 import marloth.clienting.audio.updateClientAudio
 import marloth.clienting.input.*
 import marloth.clienting.menus.*
+import marloth.clienting.rendering.MeshLoadingState
 import marloth.definition.texts.englishTextResources
 import marloth.definition.misc.ClientDefinitions
 import silentorb.mythic.aura.AudioState
@@ -20,7 +21,7 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.haft.*
 import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.lookinglass.mapAnimationInfo
-import silentorb.mythic.lookinglass.texturing.AsyncTextureLoader
+import silentorb.mythic.lookinglass.texturing.TextureLoadingState
 import silentorb.mythic.platforming.Platform
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.typography.loadFontSets
@@ -74,7 +75,8 @@ data class Client(
     val platform: Platform,
     val renderer: Renderer,
     val soundLibrary: SoundLibrary,
-    val textureLoader: AsyncTextureLoader,
+    val meshLoadingState: MeshLoadingState,
+    val textureLoadingState: TextureLoadingState,
     val textResources: TextResources = englishTextResources,
     val customBloomResources: Map<String, Any>
 ) {

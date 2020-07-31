@@ -5,7 +5,7 @@ import imp.standard.*
 import imp.standard.math.*
 import lib.*
 
-let squareWallDoorway = {
+let dirtWallDoorway = {
     let width = 10.0
     let height = 10.0
     let doorWidth = 3.0
