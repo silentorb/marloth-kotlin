@@ -37,7 +37,7 @@ fun checkersBiome(): Blueprint {
       ),
       tiered = listOf(
           squareRoom to cubeRoomBuilder(floor, wall),
-          fullSlope to slopeBuilder(Depiction(mesh = MeshId.quarterSlope, texture = texture), wall),
+          fullSlope to slopeBuilder(Depiction(mesh = MeshId.fullSlope, texture = texture), wall),
           diagonalCornerBlock to diagonalCornerBuilder(texture)
       )
           .plus(ledgeSlope(texture))

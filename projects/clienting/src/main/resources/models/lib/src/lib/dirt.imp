@@ -2,12 +2,12 @@ import silentorb.mythic.fathom.*
 import silentorb.mythic.generation.texturing.RgbColor
 
 let dirtBump = noise
-    scale = 74
+    scale = 33
     detail = 28
     variation = 112
 
 let dirtColor = noise
-    scale = 63
+    scale = 77
     detail = 78
-    variation = 1
-    . colorize (RgbColor 255 32 20) (RgbColor 30 50 0)
+    variation = 68
+    . colorize (RgbColor 255 32 20) (RgbColor 84 113 0)

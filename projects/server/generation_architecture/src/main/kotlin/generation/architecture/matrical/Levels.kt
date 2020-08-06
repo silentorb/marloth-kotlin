@@ -45,8 +45,8 @@ fun newBiomeSide(biome: BiomeName, side: Side): Side =
             .toSet()
     )
 
-fun tieredBlocks(blockBuilders: Blueprint): (Int) -> List<BlockBuilder> = { level ->
-  blockBuilders.tiered
+fun tieredBlocks(blockBuilders: TieredBlockBuilders): (Int) -> List<BlockBuilder> = { level ->
+  blockBuilders
       .mapNotNull { (tieredBlock, builder) ->
         val block = tieredBlock(level)
         if (block == null)
@@ -57,18 +57,26 @@ fun tieredBlocks(blockBuilders: Blueprint): (Int) -> List<BlockBuilder> = { leve
               builder = builder(level)
           )
       }
+}
+
+fun tieredBlocks(blockBuilders: Blueprint): (Int) -> List<BlockBuilder> = { level ->
+  tieredBlocks(blockBuilders.tiered)(level)
       .plus(blockBuilders.even)
 }
 
-fun perHeights(biome: BiomeName, blockBuilders: Blueprint): List<BlockBuilder> =
-    (0..3)
+fun perHeights(range: IntRange, blockBuilders: TieredBlockBuilders): List<BlockBuilder> =
+    range
+        .flatMap(tieredBlocks(blockBuilders))
+
+fun perHeights(range: IntRange, biome: BiomeName, blockBuilders: Blueprint): List<BlockBuilder> =
+    range
         .flatMap(tieredBlocks(blockBuilders))
         .map(applyBiomedBlockBuilder(biome))
 
 fun applyBiomeBlockBuilders(biomeBlockBuilders: Map<BiomeName, Blueprint>): List<BlockBuilder> =
     biomeBlockBuilders
         .flatMap { (biome, blockBuilders) ->
-          perHeights(biome, blockBuilders)
+          perHeights(0..3, biome, blockBuilders)
         }
 
 fun applyBuilderLevels(builder: Builder): TieredBuilder = { level ->

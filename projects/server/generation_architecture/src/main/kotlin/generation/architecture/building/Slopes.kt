@@ -17,14 +17,14 @@ fun newSlopedFloorMesh(depiction: Depiction): Builder = { input ->
   val meshInfo = input.general.config.meshes[depiction.mesh!!]!!
   val slopeAngle = asin(cellLength / 4f / meshInfo.shape!!.x) - 0.007f
   val orientation = Quaternion()
-      .rotateY(-slopeAngle)
+//      .rotateY(-slopeAngle)
 //      .rotateZ(quarterAngle)
   floorMeshBuilder(depiction, offset = Vector3(0f, 0f, cellLength / 8f), orientation = orientation)(input)
 }
 
 fun ledgeSlopeBuilder(texture: TextureName, ledgeTurns: Int) =
     mergeBuilders(
-        newSlopedFloorMesh(Depiction(mesh = MeshId.quarterSlope, texture = texture)),
+        newSlopedFloorMesh(Depiction(mesh = MeshId.fullSlope, texture = texture)),
         newSlopeEdgeBlock(Depiction(mesh = MeshId.largeBrick, texture = texture), quarterStep + quarterStep, ledgeTurns),
         tieredWalls(Depiction(mesh = MeshId.squareWall, texture = texture))
     )

@@ -3,6 +3,7 @@ package marloth.clienting.rendering
 import marloth.scenery.enums.MeshId
 import silentorb.imp.campaign.codeFromFile
 import silentorb.imp.campaign.getModulesExecutionArtifacts
+import silentorb.imp.campaign.loadModules
 import silentorb.imp.campaign.loadWorkspace
 import silentorb.imp.core.*
 import silentorb.imp.execution.executeToSingleValue
@@ -157,8 +158,8 @@ fun meshesToGpu(vertexSchema: VertexSchema): (List<LoadedMeshData>) -> Map<Strin
 fun gatherImpMeshes(): List<DeferredImpMesh> {
   val initialContext = newImpLibrary()
   val workspaceUrl = Thread.currentThread().contextClassLoader.getResource("models/workspace.yaml")!!
-  val (workspace, errors) = loadWorkspace(codeFromFile, initialContext, Paths.get(workspaceUrl.toURI()).parent)
-  val modules = workspace.modules
+  val (workspace, errors) = loadWorkspace(Paths.get(workspaceUrl.toURI()).parent)
+  val (modules) = loadModules(workspace, initialContext, codeFromFile)
   val context = getModulesExecutionArtifacts(initialContext, modules)
   val outputs = getGraphOutputNodes(mergeNamespaces(context))
       .filter { it.path == "models" }

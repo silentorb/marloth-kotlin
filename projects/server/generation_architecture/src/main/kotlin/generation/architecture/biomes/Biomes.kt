@@ -1,6 +1,5 @@
 package generation.architecture.biomes
 
-import generation.architecture.blocks.biomeAdapters
 import generation.architecture.definition.BiomeId
 import generation.architecture.matrical.BlockBuilder
 import generation.architecture.matrical.applyBiomeBlockBuilders
