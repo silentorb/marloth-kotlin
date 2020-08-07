@@ -5,10 +5,7 @@ import generation.general.*
 import simulation.main.Hand
 import simulation.misc.BiomeName
 
-data class BlockBuilder(
-    val block: Block,
-    val builder: Builder
-)
+typealias BlockBuilder = Pair<Block, Builder>
 
 fun mergeBuilders(vararg builders: Builder): Builder {
   return { input ->
@@ -48,8 +45,5 @@ fun restrictBiomeBlockSides(biome: BiomeName, block: Block): Block =
     )
 
 fun applyBiomedBlockBuilder(biome: BiomeName): (BlockBuilder) -> BlockBuilder = { blockBuilder ->
-  BlockBuilder(
-      block = restrictBiomeBlockSides(biome, blockBuilder.block),
-      builder = blockBuilder.builder
-  )
+  restrictBiomeBlockSides(biome, blockBuilder.first) to blockBuilder.second
 }

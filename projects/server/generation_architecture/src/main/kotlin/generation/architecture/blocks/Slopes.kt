@@ -1,9 +1,9 @@
 package generation.architecture.blocks
 
 import generation.architecture.building.ledgeSlopeBuilder
-import generation.architecture.definition.Sides
-import generation.architecture.definition.levelConnectors
-import generation.architecture.definition.levelSides
+import generation.architecture.connecting.Sides
+import generation.architecture.connecting.levelConnectors
+import generation.architecture.connecting.levelSides
 import generation.architecture.engine.Builder
 import generation.architecture.engine.getTurnDirection
 import generation.architecture.matrical.*
@@ -24,7 +24,7 @@ fun slopeSides(lower: Int, upperSide: Side) =
     )
 
 fun newLedgeSide(level: Int) =
-    newSide(levelConnectors[level].doorway, setOf(levelConnectors[level].open), ConnectionLogic.required)
+    Side(levelConnectors[level].doorway, setOf(levelConnectors[level].open), connectionLogic = ConnectionLogic.required)
 
 fun ledgeSlopeBlock(ledgeTurns: Int): TieredBlock = { level ->
   val lower = level
@@ -53,18 +53,14 @@ fun ledgeSlopeBlock(ledgeTurns: Int): TieredBlock = { level ->
   }
 }
 
-fun slopeWrap(builder: Builder) =
-    BlockBuilder(
-        block = Block(
-            name = "octaveWrapSpace",
-            sides = sides(
-                east = levelSides[0].openRequired,
-                down = Sides.slopeOctaveWrap
-            ),
-            attributes = setOf(CellAttribute.traversable)
-        ),
-        builder = builder
-    )
+val slopeWrap = Block(
+    name = "octaveWrapSpace",
+    sides = sides(
+        east = levelSides[0].openRequired,
+        down = Sides.slopeOctaveWrap
+    ),
+    attributes = setOf(CellAttribute.traversable)
+)
 
 val fullSlope: TieredBlock = { level ->
   val lower = level

@@ -27,14 +27,6 @@ fun <T>voronoiAnchors(values: List<T>, count: Int, dice: Dice, start: Vector3, e
           )
         }
 
-//private fun <T> logVoronoiGrid(width: Int, height: Int, list: List<T>) {
-//  for (y in 0 until height) {
-//    val line = (0 until width).map { x -> list[y * width + x].toString().substring(0, 1) }
-//        .joinToString(" ")
-//    println(line)
-//  }
-//}
-
 fun <T>voronoi(anchors: List<VoronoiAnchor<T>>): Grid<T> {
 //  val total = width * depth * height
 //  val list: List<Int> = (0 until total).map { i ->
@@ -57,16 +49,3 @@ fun <T>voronoi(anchors: List<VoronoiAnchor<T>>): Grid<T> {
 //    list[index]
 //  }
 }
-
-//fun <T> cachedVoronoi(width: Int, height: Int, anchors: List<VoronoiAnchor<T>>): Grid<T> {
-//  val cellResolution = anchors.size / 10
-//
-//}
-
-//fun clampGrid(grid: Grid): Grid = { (x, y, z) ->
-//  grid(
-//      minMax(x, 0f, 1f),
-//      minMax(y, 0f, 1f),
-//      minMax(z, 0f, 1f)
-//  )
-//}

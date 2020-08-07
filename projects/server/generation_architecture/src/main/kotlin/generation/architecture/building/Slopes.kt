@@ -8,7 +8,6 @@ import marloth.scenery.enums.MeshId
 import silentorb.mythic.scenery.TextureName
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
-import silentorb.mythic.spatial.quarterAngle
 import simulation.entities.Depiction
 import simulation.misc.cellLength
 import kotlin.math.asin
@@ -26,7 +25,7 @@ fun ledgeSlopeBuilder(texture: TextureName, ledgeTurns: Int) =
     mergeBuilders(
         newSlopedFloorMesh(Depiction(mesh = MeshId.fullSlope, texture = texture)),
         newSlopeEdgeBlock(Depiction(mesh = MeshId.largeBrick, texture = texture), quarterStep + quarterStep, ledgeTurns),
-        tieredWalls(Depiction(mesh = MeshId.squareWall, texture = texture))
+        roomWalls(Depiction(mesh = MeshId.squareWall, texture = texture))
     )
 
 fun newSlopeEdgeBlock(depiction: Depiction, height: Float, ledgeTurns: Int): Builder = { input ->
@@ -38,7 +37,7 @@ fun newSlopeEdgeBlock(depiction: Depiction, height: Float, ledgeTurns: Int): Bui
 
 fun slopeBuilder(floor: Depiction, wall: Depiction) = mergeBuilders(
     newSlopedFloorMesh(floor),
-    tieredWalls(wall)
+    roomWalls(wall)
 )
 
 fun slopeWrapBuilder(wall: Depiction) =

@@ -25,8 +25,8 @@ fun applyBiomesToGrid(grid: MapGrid, biomeGrid: BiomeGrid): CellBiomeMap =
 
 fun splitBlockBuilders(blockBuilders: Collection<BlockBuilder>): Pair<Set<Block>, Map<String, Builder>> =
     Pair(
-        blockBuilders.map { it.block }.toSet(),
-        blockBuilders.associate { Pair(it.block.name, it.builder ?: { listOf() }) }
+        blockBuilders.map { it.first }.toSet(),
+        blockBuilders.associate { Pair(it.first.name, it.second) }
     )
 
 fun squareOffsets(length: Int): List<Vector3> {

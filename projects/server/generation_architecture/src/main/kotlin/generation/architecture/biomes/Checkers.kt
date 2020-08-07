@@ -33,7 +33,7 @@ fun checkersBiome(): Blueprint {
   val wall = checkersWall()
   return Blueprint(
       even = listOf(
-          slopeWrap(slopeWrapBuilder(wall))
+          slopeWrap to slopeWrapBuilder(wall)
       ),
       tiered = listOf(
           squareRoom to cubeRoomBuilder(floor, wall),

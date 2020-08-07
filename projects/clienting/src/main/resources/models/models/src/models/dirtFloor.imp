@@ -1,0 +1,11 @@
+import silentorb.mythic.fathom.*
+import silentorb.mythic.generation.texturing.RgbColor
+import silentorb.mythic.spatial.*
+import lib.*
+
+let dirtFloor = {
+    let dimensions = Vector3 10.0 10.0 1.0
+    let distance = cube dimensions
+    let form = deform distance (dirtBump .* 0.2)
+    let main = newModel form dirtColor (collisionBox dimensions)
+}

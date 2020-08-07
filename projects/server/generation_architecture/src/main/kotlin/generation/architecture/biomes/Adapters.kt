@@ -1,7 +1,6 @@
 package generation.architecture.biomes
 
 import generation.architecture.blocks.biomeAdapterCube
-import generation.architecture.definition.BiomeId
 import generation.architecture.matrical.BlockBuilder
 import simulation.misc.CellAttribute
 

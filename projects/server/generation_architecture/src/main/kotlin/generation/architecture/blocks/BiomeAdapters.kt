@@ -1,10 +1,7 @@
 package generation.architecture.blocks
 
-import generation.architecture.biomes.generalCheckersBuilder
-import generation.architecture.biomes.generalForestBuilder
 import generation.architecture.building.singleCellRoomBuilder
-import generation.architecture.definition.BiomeId
-import generation.architecture.definition.levelSides
+import generation.architecture.connecting.levelSides
 import generation.architecture.engine.squareOffsets
 import generation.architecture.matrical.BlockBuilder
 import generation.architecture.matrical.TieredBlock
@@ -48,16 +45,13 @@ fun biomeAdapterHall(
   val firstSide = newBiomeSide(firstBiome, localSides.open)
   val secondSide = newBiomeSide(secondBiome, localSides.open)
 
-  BlockBuilder(
-      block = Block(
-          name = "$firstBiome-$secondBiome-adapterHall$level",
-          sides = sides(
-              north = secondSide,
-              south = firstSide
-          ),
-          attributes = setOf(CellAttribute.traversable) + attributes,
-          slots = squareOffsets(2)
+  Block(
+      name = "$firstBiome-$secondBiome-adapterHall$level",
+      sides = sides(
+          north = secondSide,
+          south = firstSide
       ),
-      builder = singleCellRoomBuilder(floor, wall)
-  )
+      attributes = setOf(CellAttribute.traversable) + attributes,
+      slots = squareOffsets(2)
+  ) to singleCellRoomBuilder(floor, wall)
 }

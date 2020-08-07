@@ -14,12 +14,9 @@ enum class ConnectionLogic {
 
 data class Side(
     val mine: Any,
-    val other: Set<Any>,
+    val other: Set<Any> = setOf(mine),
     val isTraversable: Boolean = true,
     val connectionLogic: ConnectionLogic = ConnectionLogic.neutral
 )
 
-fun newSide(mine: Any, other: Set<Any> = setOf(mine), connectionLogic: ConnectionLogic = ConnectionLogic.neutral) =
-    Side(mine, other, connectionLogic = connectionLogic)
-
-val endpoint = newSide(CoreSide.end, setOf(CoreSide.void))
+val endpoint = Side(CoreSide.end, setOf(CoreSide.void))

@@ -52,10 +52,7 @@ fun tieredBlocks(blockBuilders: TieredBlockBuilders): (Int) -> List<BlockBuilder
         if (block == null)
           null
         else
-          BlockBuilder(
-              block = block,
-              builder = builder(level)
-          )
+          block to builder(level)
       }
 }
 

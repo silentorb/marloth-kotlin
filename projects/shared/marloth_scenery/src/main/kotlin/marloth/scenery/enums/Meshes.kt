@@ -33,6 +33,7 @@ object MeshId {
   val cornerSlope = "cornerSlope"
   val curvingStairStep = "curvingStairStep"
   val diagonalWall = "diagonalWall"
+  val dirtFloor = "dirtFloor"
   val dirtWall = "dirtWall"
   val dirtWallDoorway = "dirtWallDoorway"
   val fillerColumn = "fillerColumn"

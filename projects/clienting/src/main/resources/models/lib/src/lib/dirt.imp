@@ -10,4 +10,4 @@ let dirtColor = noise
     scale = 77
     detail = 78
     variation = 68
-    . colorize (RgbColor 255 32 20) (RgbColor 84 113 0)
+    . colorize (RgbColor 183 98 80) (RgbColor 40 15 10)

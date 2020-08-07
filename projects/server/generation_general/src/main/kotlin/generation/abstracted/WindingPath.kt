@@ -71,7 +71,8 @@ tailrec fun addPathStep(
   }
   val prioritySides = sideGroups[ConnectionLogic.required] ?: listOf()
 
-  return if (grid.size >= maxSteps && prioritySides.none())
+  val stepCount = grid.count { it.value.attributes.contains(CellAttribute.traversable) }
+  return if (stepCount >= maxSteps && prioritySides.none())
     grid
   else {
     val incompleteSide = if (prioritySides.any())
@@ -87,7 +88,7 @@ tailrec fun addPathStep(
     assert(!grid.containsKey(nextPosition))
 
     val blocks = if (incompleteSides.size < 2)
-      if (grid.size >= maxSteps)
+      if (stepCount >= maxSteps)
         groupedBlocks.flexible
       else
         groupedBlocks.expansive

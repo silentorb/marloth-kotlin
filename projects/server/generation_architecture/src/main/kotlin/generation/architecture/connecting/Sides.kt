@@ -1,11 +1,12 @@
-package generation.architecture.definition
+package generation.architecture.connecting
 
 import generation.general.ConnectionLogic
 import generation.general.Side
-import generation.general.newSide
 
 object Sides {
-  val slopeOctaveWrap = newSide(Connector.verticalDiagonal, connectionLogic = ConnectionLogic.required)
+  val slopeOctaveWrap = Side(Connector.slopeOverheadWrapper, connectionLogic = ConnectionLogic.required)
+  val solid = Side(Connector.solid, isTraversable = false)
+  val solidRequired = solid.copy(connectionLogic = ConnectionLogic.required)
 }
 
 data class LevelSides(
@@ -26,7 +27,7 @@ val levelSides: List<LevelSides> = (0..3)
       val connectors = levelConnectors[level]
       val open = connectors.open
       val doorway = connectors.doorway
-      val openSide = newSide(open, setOf(
+      val openSide = Side(open, setOf(
           open,
           doorway
       ))
@@ -35,7 +36,7 @@ val levelSides: List<LevelSides> = (0..3)
           openRequired = openSide.copy(
               connectionLogic = ConnectionLogic.required
           ),
-          doorway = newSide(doorway, setOf(open)),
+          doorway = Side(doorway, setOf(open)),
           slopeSides = listOf(
               newSlopeSide(level, 0),
               newSlopeSide(level, 1)

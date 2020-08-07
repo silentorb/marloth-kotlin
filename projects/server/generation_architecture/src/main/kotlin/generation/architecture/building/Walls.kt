@@ -4,6 +4,7 @@ import generation.architecture.engine.*
 import generation.general.Direction
 import generation.general.directionVectors
 import generation.general.horizontalDirections
+import generation.general.verticalDirections
 import marloth.scenery.enums.MeshId
 import silentorb.mythic.spatial.*
 import simulation.entities.Depiction
@@ -73,17 +74,18 @@ fun getCubeWallPosition(direction: Direction): Vector3 {
   return offset.toVector3() * cellHalfLength
 }
 
-fun cubeWall(input: BuilderInput, depiction: Depiction, direction: Direction, offset: Vector3 = Vector3.zero): Hand {
+fun cubeWall(input: BuilderInput, depiction: Depiction, offset: Vector3 = Vector3.zero): (Direction) -> Hand = { direction ->
   val general = input.general
   val position = offset + getCubeWallPosition(direction)
-  return placeWall(general, depiction, position, direction)
+  placeWall(general, depiction, position, direction)
 }
+
+fun cubeWall(input: BuilderInput, depiction: Depiction, direction: Direction, offset: Vector3 = Vector3.zero): Hand =
+    cubeWall(input, depiction, offset)(direction)
 
 fun placeCubeRoomWalls(depiction: Depiction, directions: Collection<Direction>): Builder = { input ->
   directions
-      .map { direction ->
-        cubeWall(input, depiction, direction)
-      }
+      .map(cubeWall(input, depiction))
 }
 
 enum class WallFeature {
@@ -120,7 +122,7 @@ fun cubeWallsWithFeatures(
       )
 }
 
-fun tieredWalls(depiction: Depiction) =
+fun roomWalls(depiction: Depiction) =
     cubeWallsWithFeatures(
         listOf(WallFeature.lamp, WallFeature.none),
         wallDepiction = depiction,

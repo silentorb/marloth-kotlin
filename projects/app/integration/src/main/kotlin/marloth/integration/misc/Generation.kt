@@ -22,7 +22,7 @@ import simulation.main.*
 import simulation.misc.*
 
 fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder> {
-  assert(blockBuilders.all { it.block.name.isNotEmpty() })
+  assert(blockBuilders.all { it.first.name.isNotEmpty() })
   val needsRotatedVariations = blockBuilders
       .filter { (block, _) ->
         !block.attributes.contains(CellAttribute.lockedRotation) &&
@@ -34,16 +34,13 @@ fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder>
         (1..3)
             .map { turns ->
               val rotation = Quaternion().rotateZ(applyTurns(turns))
-              BlockBuilder(
-                  block = block.copy(
-                      sides = rotateSides(turns)(block.sides),
-                      slots = block.slots.map { slot ->
-                        rotation.transform(slot - floorOffset) + floorOffset
-                      },
-                      turns = turns
-                  ),
-                  builder = builder
-              )
+              block.copy(
+                  sides = rotateSides(turns)(block.sides),
+                  slots = block.slots.map { slot ->
+                    rotation.transform(slot - floorOffset) + floorOffset
+                  },
+                  turns = turns
+              ) to builder
             }
       }
 

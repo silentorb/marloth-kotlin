@@ -21,9 +21,9 @@ fun devFilterBlockBuilders(blockBuilders: Collection<BlockBuilder>): Collection<
       ?: setOf()
 
   val filtered = if (filter != null)
-    blockBuilders.filter { it.block.attributes.intersect(filter).any() }
+    blockBuilders.filter { it.first.attributes.intersect(filter).any() }
   else
     blockBuilders
 
-  return filtered.filter { it.block.attributes.intersect(exclude).none() }
+  return filtered.filter { it.first.attributes.intersect(exclude).none() }
 }

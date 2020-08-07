@@ -1,10 +1,12 @@
-package generation.architecture.definition
+package generation.architecture.connecting
 
 object Connector {
   const val open = "open"
   const val doorway = "doorway"
   const val slopeSide = "slopeSide"
-  const val verticalDiagonal = "verticalDiagonal"
+  const val solid = "solid"
+  const val slopeOverheadWrapper = "slopeOverheadWrapper"
+  const val diagonalVerticalSolid = "diagonalVerticalSolid"
 }
 
 data class LevelConnector(
