@@ -51,11 +51,11 @@ fun filterDepictions(depictions: Table<Depiction>, player: Id, characterRig: Cha
 fun depictionTransform(bodies: Table<Body>, characterRigs: Table<CharacterRig>, id: Id): Matrix {
   val body = bodies[id]!!
   val characterRig = characterRigs[id]
-  val translate = Matrix.identity.translate(body.position)
+  val transform = Matrix.identity.translate(body.position)
   return if (characterRig != null)
-    translate.rotate(characterRig.facingOrientation)
+    transform.rotate(characterRig.facingOrientation)
   else
-    translate.rotate(body.orientation)
+    transform.rotate(body.orientation)
 }
 
 fun convertSimpleDepiction(deck: Deck, id: Id, mesh: MeshName, texture: TextureName? = null): MeshElement? {

@@ -35,7 +35,8 @@ fun withSolidBase(block: Block) =
     block.copy(
         sides = block.sides
             .plus(
-                Direction.down to Sides.solidRequired
+                Direction.down to Sides.solid
+//                    Direction.down to Sides.solidRequired
             )
     )
 
