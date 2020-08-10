@@ -40,7 +40,7 @@ fun solidDiagonal() =
     Block(
         name = "solidDiagonal",
         sides = sides(
-            up = Sides.solidRequired,
+            up = Sides.solidDiagonalVerticalRequired,
             east = Sides.solid,
             north = Sides.solid,
             west = endpoint,

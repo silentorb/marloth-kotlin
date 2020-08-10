@@ -1,0 +1,17 @@
+import silentorb.mythic.fathom.*
+import silentorb.mythic.generation.texturing.RgbColor
+import silentorb.mythic.spatial.*
+
+let floorDimensions = Vector3 10.0 10.0 1.0
+
+let squareFloor = cube floorDimensions
+let squareFloorBounds = collisionBox squareFloor
+
+let diagonalFloor = {
+    let distance = squareFloor
+    let diagonalLength = 14.0
+    let mask = cube (Vector3 diagonalLength diagonalLength 2.0) . rotate (rotationFromAxis 0.0 0.0 45.0) . translate (Vector3 -5.0 -5.0 0.0)
+    let main = - distance mask
+}
+
+let diagonalFloorBounds = transform (newMatrix.rotate(rotationFromAxis 0.0 0.0 90.0)) (triangularPrism floorDimensions)

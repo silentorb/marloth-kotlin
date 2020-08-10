@@ -7,6 +7,8 @@ object Sides {
   val slopeOctaveWrap = Side(Connector.slopeOverheadWrapper, connectionLogic = ConnectionLogic.required)
   val solid = Side(Connector.solid, isTraversable = false)
   val solidRequired = solid.copy(connectionLogic = ConnectionLogic.required)
+  val solidDiagonalVertical = Side(Connector.diagonalVerticalSolid, isTraversable = false)
+  val solidDiagonalVerticalRequired = solidDiagonalVertical.copy(connectionLogic = ConnectionLogic.required)
 }
 
 data class LevelSides(

@@ -1,13 +1,11 @@
 package marloth.clienting.rendering
 
 import marloth.scenery.enums.MeshId
-import silentorb.imp.campaign.codeFromFile
-import silentorb.imp.campaign.getModulesExecutionArtifacts
-import silentorb.imp.campaign.loadModules
-import silentorb.imp.campaign.loadWorkspace
+import silentorb.imp.campaign.*
 import silentorb.imp.core.*
 import silentorb.imp.execution.executeToSingleValue
 import silentorb.imp.library.standard.standardLibrary
+import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.drawing.createCircleList
 import silentorb.mythic.fathom.fathomLibrary
 import silentorb.mythic.fathom.marching.marchingMesh
@@ -102,7 +100,7 @@ fun compileModel(context: Context, key: PathKey): DeferredImpMesh {
 fun sampleModel(deferred: DeferredImpMesh): LoadedMeshData {
   val model = deferred.model
   val name = deferred.name
-  val voxelsPerUnit = 10
+  val voxelsPerUnit = getDebugInt("MESH_RESOLUTION") ?: 10
   val (vertices, triangles) = marchingMesh(voxelsPerUnit, model.form, model.shading)
   return LoadedMeshData(
       name = name,
@@ -159,7 +157,7 @@ fun gatherImpMeshes(): List<DeferredImpMesh> {
   val initialContext = newImpLibrary()
   val workspaceUrl = Thread.currentThread().contextClassLoader.getResource("models/workspace.yaml")!!
   val (workspace, errors) = loadWorkspace(Paths.get(workspaceUrl.toURI()).parent)
-  val (modules) = loadModules(workspace, initialContext, codeFromFile)
+  val (modules) = loadAllModules(workspace, initialContext, codeFromFile)
   val context = getModulesExecutionArtifacts(initialContext, modules)
   val outputs = getGraphOutputNodes(mergeNamespaces(context))
       .filter { it.path == "models" }

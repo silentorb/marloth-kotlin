@@ -1,0 +1,10 @@
+import silentorb.mythic.fathom.*
+import silentorb.mythic.generation.texturing.RgbColor
+import silentorb.mythic.spatial.*
+import lib.*
+
+let dirtDiagonalFloor = newModel (deform diagonalFloor (dirtBump .* 0.2)) dirtColor diagonalFloorBounds
+
+let grassFloor = newModel (deform squareFloor (dirtBump .* 0.2)) grassColor squareFloorBounds
+
+let grassDiagonalFloor = newModel (deform diagonalFloor (dirtBump .* 0.2)) grassColor diagonalFloorBounds

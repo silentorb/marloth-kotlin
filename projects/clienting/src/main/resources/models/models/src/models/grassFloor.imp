@@ -1,15 +1,10 @@
 import silentorb.mythic.fathom.*
-import silentorb.mythic.spatial.*
 import silentorb.mythic.generation.texturing.RgbColor
+import silentorb.mythic.spatial.*
+import lib.*
 
-let grassFloor = {
-    let form2 = cube (Vector3 10.0 10.0 1.0)
-
-    let color = noise
-        scale = 63
-        detail = 78
-        variation = 1
-        . colorize (RgbColor 12 255 20) (RgbColor 0 0 0)
-
-    let output = newModel form2 color (collisionBox form2)
+let grassFloorOld = {
+    let basicForm = squareFloor
+    let detailedForm = basicForm . deform (dirtBump .* 0.2)
+    let main = newModel detailedForm grassColor (collisionBox basicForm)
 }

@@ -1,0 +1,23 @@
+import silentorb.mythic.fathom.*
+import silentorb.mythic.generation.texturing.RgbColor
+import silentorb.mythic.spatial.*
+import lib.*
+
+let branchingTree = {
+    let leavesBump = noise
+        scale = 77
+        detail = 42
+        variation = 1
+
+    let treeLeavesBig = deform (sphere 1.5) (leavesBump .* 1.5)
+    let treeLeavesSmall = deform (sphere 1.1) (leavesBump .* 1.5)
+
+    let a = treeLeavesBig . translate (Vector3 0.5 0.0 1.0)
+    let b = treeLeavesBig . translate (Vector3 0.0 0.0 -1.0)
+    let c = treeLeavesSmall
+        . translate (Vector3 0.0 1.0 0.0)
+        . rotate (rotationFromAxis 0.0 0.0 45.0)
+
+    let combined = + a b c
+    let main = newModel combined grassColor
+}

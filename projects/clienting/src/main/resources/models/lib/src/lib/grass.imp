@@ -1,0 +1,13 @@
+import silentorb.mythic.fathom.*
+import silentorb.mythic.generation.texturing.RgbColor
+
+let grassBump = noise
+    scale = 33
+    detail = 28
+    variation = 112
+
+let grassColor = noise
+    scale = 63
+    detail = 78
+    variation = 1
+    . colorize (RgbColor 136 255 132) (RgbColor 12 13 11)

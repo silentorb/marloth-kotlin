@@ -22,6 +22,5 @@ fun floorMesh(depiction: Depiction, offset: Vector3 = Vector3.zero, orientation:
     floorMeshBuilder(depiction, offset, orientation)
 
 fun diagonalHalfFloorMesh(depiction: Depiction): Builder = { input ->
-  val orientation = Quaternion().rotateZ(-quarterAngle)
-  floorMeshBuilder(depiction, orientation = orientation)(input)
+  floorMeshBuilder(depiction)(input)
 }
