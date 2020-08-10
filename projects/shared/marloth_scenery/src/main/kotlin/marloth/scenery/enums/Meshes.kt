@@ -58,4 +58,5 @@ object MeshId {
   val squareWallQuarterHeight = "squareWallQuarterHeight"
   val squareWallQuarterSlope = "squareWallQuarterSlope"
   val squareWallWindow = "squareWallWindow"
+  val treeBranching = "treeBranching"
 }

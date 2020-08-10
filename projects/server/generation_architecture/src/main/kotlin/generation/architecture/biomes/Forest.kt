@@ -7,6 +7,7 @@ import generation.architecture.engine.Builder
 import generation.architecture.matrical.Blueprint
 import generation.architecture.matrical.TieredBlock
 import generation.architecture.matrical.applyBlockBuilderLevels
+import generation.architecture.matrical.mergeBuilders
 import generation.general.Block
 import generation.general.Direction
 import marloth.scenery.enums.MeshId
@@ -36,6 +37,11 @@ fun dirtDiagonalFloor(): Depiction =
 fun forestWall(): Depiction =
     Depiction(
         mesh = MeshId.dirtWall
+    )
+
+fun treeBranching(): Depiction =
+    Depiction(
+        mesh = MeshId.treeBranching
     )
 
 fun generalForestBuilder(): Builder =
@@ -80,7 +86,7 @@ fun forestBiome(): Blueprint {
           withSolidBase(squareRoom) to floorMesh(floor),
           withSolidBase(fullSlope) to newSlopedFloorMesh(Depiction(mesh = MeshId.fullSlope, texture = texture)),
           withDiagonalSolidBase(diagonalCornerBlock) to diagonalHalfFloorMesh(grassDiagonalFloor()),
-          withSolidBase(cornerSlope) to cornerSlope(texture)
+          withSolidBase(cornerSlope) to mergeBuilders(cornerSlope(texture), treeBuilder(treeBranching()))
       )
           .map(applyBlockBuilderLevels)
   )

@@ -2,6 +2,8 @@ package generation.architecture.biomes
 
 import generation.architecture.blocks.biomeAdapterCube
 import generation.architecture.matrical.BlockBuilder
+import generation.architecture.matrical.applyBuilderLevels
+import generation.architecture.matrical.perHeights
 import simulation.misc.CellAttribute
 
 fun biomeAdapters(): List<BlockBuilder> {
@@ -16,11 +18,11 @@ fun biomeAdapters(): List<BlockBuilder> {
   return listOf(
       BlockBuilder(biomeAdapterCube(BiomeId.forest, BiomeId.home, setOf(CellAttribute.unique))(0)!!, generalForestBuilder())
   )
-//      .plus(
-//          perHeights(0..3,
-//              listOf(
-//                  biomeAdapterCube(BiomeId.checkers, BiomeId.forest) to applyBuilderLevels(generalCheckersBuilder())
-//              )
-//          )
-//      )
+      .plus(
+          perHeights(0..3,
+              listOf(
+                  biomeAdapterCube(BiomeId.checkers, BiomeId.forest) to applyBuilderLevels(generalCheckersBuilder())
+              )
+          )
+      )
 }

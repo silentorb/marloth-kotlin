@@ -3,7 +3,7 @@ import silentorb.mythic.generation.texturing.RgbColor
 import silentorb.mythic.spatial.*
 import lib.*
 
-let branchingTree = {
+let treeBranching = {
     let leavesBump = noise
         scale = 77
         detail = 42
@@ -18,6 +18,9 @@ let branchingTree = {
         . translate (Vector3 0.0 1.0 0.0)
         . rotate (rotationFromAxis 0.0 0.0 45.0)
 
-    let combined = + a b c
+    let trunk = capsule 0.2 1.2
+        . translate (Vector3 0.0 0.0 -3.0)
+
+    let combined = + a b c trunk
     let main = newModel combined grassColor
 }

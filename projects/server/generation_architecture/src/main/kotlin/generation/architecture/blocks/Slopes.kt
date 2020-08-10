@@ -74,8 +74,8 @@ val fullSlope: TieredBlock = { level ->
       name = "slope$level",
       sides = slopeSides(lower, levelSides[upper].open)
           .plus(slotMod),
-      attributes = setOf(CellAttribute.traversable),
-      slots = listOf(Vector3(0f, 0f, getLevelHeight(lower) + quarterStep / 2f + 0.05f) + floorOffset)
+      attributes = setOf(CellAttribute.traversable)
+//      slots = listOf(Vector3(0f, 0f, getLevelHeight(lower) + quarterStep / 2f + 0.05f) + floorOffset)
   )
 }
 
