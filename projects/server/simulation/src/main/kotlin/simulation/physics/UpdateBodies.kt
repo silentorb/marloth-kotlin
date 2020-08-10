@@ -25,7 +25,7 @@ fun updateBodies(grid: MapGrid, deck: Deck, events: Events, delta: Float): (Id, 
     val position = if (returnHomeEvents.any { it.target == id }) {
       val home = grid.cells.entries
           .first { (_, cell) -> cell.attributes.contains(CellAttribute.home) }
-      getCellPoint(home.key) + floorOffset + Vector3(0f, 0f, 2f)
+      getCellPoint(home.key) + Vector3(0f, 0f, -2f)
     } else
       body.position
 

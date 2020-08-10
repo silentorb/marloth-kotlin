@@ -37,7 +37,7 @@ fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder>
               block.copy(
                   sides = rotateSides(turns)(block.sides),
                   slots = block.slots.map { slot ->
-                    rotation.transform(slot - floorOffset) + floorOffset
+                    rotation.transform(slot)
                   },
                   turns = turns
               ) to builder

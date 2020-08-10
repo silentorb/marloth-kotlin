@@ -35,7 +35,7 @@ fun squareOffsets(length: Int): List<Vector3> {
 
   return (0 until length).flatMap { y ->
     (0 until length).map { x ->
-      Vector3(start + step * x, start + step * y, 0f)
+      Vector3(start + step * x - cellHalfLength, start + step * y - cellHalfLength, -cellHalfLength)
     }
   }
 }

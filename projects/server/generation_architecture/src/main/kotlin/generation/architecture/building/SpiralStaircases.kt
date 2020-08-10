@@ -7,7 +7,6 @@ import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
 import marloth.scenery.enums.MeshId
-import simulation.misc.cellCenterOffset
 import simulation.misc.cellLength
 import simulation.misc.floorOffset
 

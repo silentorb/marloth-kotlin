@@ -12,6 +12,7 @@ import generation.general.*
 import silentorb.mythic.scenery.TextureName
 import silentorb.mythic.spatial.Vector3
 import simulation.misc.CellAttribute
+import simulation.misc.cellHalfLength
 import simulation.misc.cellLength
 import simulation.misc.floorOffset
 
@@ -46,7 +47,7 @@ fun ledgeSlopeBlock(ledgeTurns: Int): TieredBlock = { level ->
             getTurnDirection(ledgeTurns) to upperSides.open
         ),
         slots = listOf(
-            Vector3(cellLength * 0.25f, cellLength * (0.5f + ledgeTurns.toFloat() * 0.25f), height - quarterStep)
+            Vector3(cellLength * 0.25f, cellLength * (0.5f + ledgeTurns.toFloat() * 0.25f) - cellHalfLength, height - quarterStep)
         ),
         attributes = setOf(CellAttribute.traversable)
     )
@@ -94,6 +95,7 @@ val cornerSlope: TieredBlock = { level ->
           west = lowerSides.slopeSides[0],
           north = lowerSides.slopeSides[1]
       ),
-      attributes = setOf(CellAttribute.traversable)
+      attributes = setOf(CellAttribute.traversable),
+      slots = listOf(Vector3(0f, 0f, - (quarterStep + quarterStep / 2f)))
   )
 }

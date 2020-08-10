@@ -14,7 +14,7 @@ data class Block(
     val turns: Int = 0
     ) {
   init {
-    assert(slots.none { it.x > 10f || it.y > 10f })
+    assert(slots.none { it.x > 5f || it.y > 5f || it.x < -5f || it.y < -5f })
   }
 }
 

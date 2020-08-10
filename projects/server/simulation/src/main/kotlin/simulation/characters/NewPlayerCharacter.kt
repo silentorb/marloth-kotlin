@@ -37,7 +37,7 @@ fun newPlayerCharacter(nextId: IdSource, id: Id, definitions: Definitions, grid:
   return newCharacter(nextId, id, definitions,
       profession = profession,
       faction = misfitFaction,
-      position = absoluteCellPosition(cellPosition) + floorOffset + Vector3(0f, 0f, 6f),
+      position = absoluteCellPosition(cellPosition) + Vector3(0f, 0f, 1f),
       angle = getHorizontalLookAtAngle((neighbor - cellPosition).toVector3())
   )
 }

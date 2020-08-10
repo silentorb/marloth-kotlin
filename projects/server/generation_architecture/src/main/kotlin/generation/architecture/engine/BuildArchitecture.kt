@@ -33,7 +33,7 @@ fun buildBlockCell(general: ArchitectureInput, block: Block, builder: Builder, p
   val result = builder(input)
   val rotation = Quaternion().rotateZ(block.turns.toFloat() * quarterAngle)
   return result
-      .map(transformBlockHand(absoluteCellPosition(position) + cellHalfLength, rotation))
+      .map(transformBlockHand(absoluteCellPosition(position), rotation))
 }
 
 fun buildArchitecture(general: ArchitectureInput, builders: Map<String, Builder>): List<Hand> {

@@ -9,8 +9,7 @@ const val cellLength = 10f
 
 val cellHalfLength = cellLength / 2f
 
-val floorOffset = Vector3(cellHalfLength, cellHalfLength, 0f)
-val cellCenterOffset = Vector3(cellHalfLength)
+val floorOffset = Vector3(0f, 0f, -cellHalfLength)
 
 data class Cell(
     val attributes: Set<CellAttribute>,

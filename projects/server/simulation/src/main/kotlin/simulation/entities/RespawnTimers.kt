@@ -43,7 +43,7 @@ fun newRespawnCountdowns(nextId: IdSource, previous: Deck, next: Deck): List<IdH
 
   return newlyDeceasedCharacters.map { actor ->
     val id = nextId()
-    val duration = if (previous.players.containsKey(id))
+    val duration = if (previous.players.containsKey(actor))
       3f
     else {
       // Use id as a cheap source of random entropy
