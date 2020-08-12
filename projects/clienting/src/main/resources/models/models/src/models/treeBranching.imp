@@ -1,5 +1,4 @@
 import silentorb.mythic.fathom.*
-import silentorb.mythic.generation.texturing.RgbColor
 import silentorb.mythic.spatial.*
 import lib.*
 
@@ -18,9 +17,11 @@ let treeBranching = {
         . translate (Vector3 0.0 1.0 0.0)
         . rotate (rotationFromAxis 0.0 0.0 45.0)
 
-    let trunk = capsule 0.2 1.2
+    let trunkForm = capsule 0.2 1.2
         . translate (Vector3 0.0 0.0 -3.0)
 
-    let combined = + a b c trunk
-    let main = newModel combined grassColor
+    let branches = newModel (+ a b c) grassColor
+    let trunk = newModel trunkForm dirtColor
+    let main = + trunk branches
 }
+

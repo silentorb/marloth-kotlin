@@ -1,0 +1,29 @@
+import silentorb.mythic.fathom.*
+import silentorb.mythic.generation.texturing.RgbColor
+import silentorb.mythic.spatial.*
+
+let lampPost = {
+    let glassColor = RgbColor 255 255 132
+    let glassShader = newShading
+        color = glassColor
+        opacity = 0.8
+        glow = 0.8
+
+    let glassForm = capsule 0.15 0.3
+        .translate (Vector3 0.0 0.0 1.0)
+
+    let glass = newModel glassForm glassShader
+
+    let black = RgbColor 0 0 0
+    let blackShader = newShading
+        color = black
+        opacity = 0.8
+        glow = 0.8
+
+    let postForm = capsule 0.05 2.0
+        .translate (Vector3 0.0 0.0 -1.0)
+
+    let post = newModel postForm blackShader
+
+    let main = + post glass
+}
