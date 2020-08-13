@@ -16,31 +16,43 @@ import simulation.entities.Depiction
 
 fun grassFloor(): Depiction =
     Depiction(
-        mesh = MeshId.grassFloor
+        mesh = MeshId.squareFloor,
+        texture = TextureId.grass
+//        mesh = MeshId.grassFloor
     )
 
 fun grassDiagonalFloor(): Depiction =
     Depiction(
-        mesh = MeshId.grassDiagonalFloor
+        mesh = MeshId.squareFloorHalfDiagonal,
+        texture = TextureId.grass
+//        mesh = MeshId.grassDiagonalFloor
     )
 
 fun dirtFloor(): Depiction =
     Depiction(
-        mesh = MeshId.dirtFloor
+        mesh = MeshId.squareFloor,
+        texture = TextureId.bricks
+//        mesh = MeshId.dirtFloor
     )
 
 fun dirtDiagonalFloor(): Depiction =
     Depiction(
-        mesh = MeshId.dirtDiagonalFloor
+        mesh = MeshId.squareFloorHalfDiagonal,
+        texture = TextureId.bricks
+//        mesh = MeshId.dirtDiagonalFloor
     )
 
 fun forestWall(): Depiction =
     Depiction(
-        mesh = MeshId.dirtWall
+        mesh = MeshId.squareWall,
+        texture = TextureId.bricks
+//        mesh = MeshId.dirtWall
     )
 
 fun treeBranching(): Depiction =
     Depiction(
+//        mesh = MeshId.squareFloor,
+//        texture = TextureId.grass
         mesh = MeshId.treeBranching
     )
 
