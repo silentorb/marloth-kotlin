@@ -1,6 +1,5 @@
 import mythic.gradle.assets.general.ModelAssetsTask
-
-//import mythic.gradle.assets.general.TextureAssetsTask
+import mythic.gradle.assets.general.TextureAssetsTask
 //import mythic.gradle.assets.general.AudioAssetsTask
 //import mythic.gradle.assets.texturing.TexturingTask
 
@@ -34,12 +33,12 @@ tasks.create<ModelAssetsTask>("modelAssets") {
   projectDir.set(assetsDir)
 }
 
-//tasks.create<TextureAssetsTask>("textureAssets") {
-//  inputDir.set(file("$assetsDir/textures"))
-//  outputDir.set(file("$assetsDir/src/main/resources/textures"))
-//  executablePath.set(getRequiredConfigValue("PYTHON_PATH"))
-//  projectDir.set(assetsDir)
-//}
+tasks.create<TextureAssetsTask>("textureAssets") {
+  inputDir.set(file("$assetsDir/textures"))
+  outputDir.set(file("$assetsDir/src/main/resources/textures"))
+  executablePath.set(getRequiredConfigValue("PYTHON_PATH"))
+  projectDir.set(assetsDir)
+}
 
 //tasks.create<AudioAssetsTask>("audioAssets") {
 //  inputDir.set(file("$assetsDir/audio/supercollider/sounds"))
