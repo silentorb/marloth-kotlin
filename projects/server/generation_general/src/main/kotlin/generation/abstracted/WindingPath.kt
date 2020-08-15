@@ -1,6 +1,7 @@
 package generation.abstracted
 
 import generation.general.*
+import silentorb.mythic.debugging.conditionalDebugLog
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Vector3i
 import simulation.misc.CellAttribute
@@ -55,6 +56,9 @@ data class BlockState(
     val blacklistBlockLocations: Map<Vector3i, List<Block>>
 )
 
+const val debugWorldGenerationKey = "DEBUG_WORLD_GENERATION"
+val worldGenerationLog = conditionalDebugLog(debugWorldGenerationKey)
+
 tailrec fun addPathStep(
     maxSteps: Int,
     dice: Dice,
@@ -72,13 +76,18 @@ tailrec fun addPathStep(
   val prioritySides = sideGroups[ConnectionLogic.required] ?: listOf()
 
   val stepCount = grid.count { it.value.attributes.contains(CellAttribute.traversable) }
+  worldGenerationLog {
+    val required = sideGroups.getOrElse(ConnectionLogic.required) { listOf() }.size
+    val optional = sideGroups.getOrElse(ConnectionLogic.optional) { listOf() }.size
+    "Grid size: ${grid.size}, Traversable: $stepCount, Required: $required, Optional: $optional"
+  }
   return if (stepCount >= maxSteps && prioritySides.none())
     grid
   else {
     val incompleteSide = if (prioritySides.any())
       dice.takeOne(prioritySides)
-    else if (sideGroups.containsKey(ConnectionLogic.neutral))
-      dice.takeOne(sideGroups[ConnectionLogic.neutral]!!)
+    else if (sideGroups.containsKey(ConnectionLogic.optional))
+      dice.takeOne(sideGroups[ConnectionLogic.optional]!!)
     else
       dice.takeOne(incompleteSides)
 
@@ -86,7 +95,12 @@ tailrec fun addPathStep(
     val position = incompleteSide.position
     val nextPosition = position + offset
     assert(!grid.containsKey(nextPosition))
+    val currentBlock = grid[position]!!
+    val side = currentBlock.sides[incompleteSide.direction]!!
+    worldGenerationLog {
 
+      "Side: ${currentBlock.name} ${side.mine}, ${incompleteSide.position} ${incompleteSide.direction}"
+    }
     val blocks = if (incompleteSides.size < 2)
       if (stepCount >= maxSteps)
         groupedBlocks.flexible
@@ -102,10 +116,11 @@ tailrec fun addPathStep(
         ?: matchConnectingBlock(dice, groupedBlocks.all, grid, nextPosition)
 
     val nextState = if (block == null) {
-      if (bookMark != null) {
+      if (bookMark != null && side.connectionLogic == ConnectionLogic.required) {
         val (initialLocation, initialBlock, bookMarkState) = bookMark
         val previousBlocks = bookMarkState.blacklistBlockLocations[initialLocation] ?: listOf()
         val newBlackListEntry = initialLocation to previousBlocks + initialBlock
+        worldGenerationLog { "Rolling back to $initialLocation ${initialBlock.name}" }
         bookMarkState.copy(
             blacklistBlockLocations = bookMarkState.blacklistBlockLocations + newBlackListEntry
         )
@@ -114,11 +129,13 @@ tailrec fun addPathStep(
             blacklistSides = state.blacklistSides + incompleteSide
         )
       }
-    } else
+    } else {
+      worldGenerationLog { "Block: ${block.name}" }
       state.copy(
           groupedBlocks = filterUsedUniqueBlock(block, groupedBlocks),
           grid = grid + (nextPosition to block)
       )
+    }
 
     val nextBookmark = if (block == null)
       null // Consume bookmark

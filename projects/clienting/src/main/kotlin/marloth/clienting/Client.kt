@@ -75,7 +75,7 @@ data class Client(
     val platform: Platform,
     val renderer: Renderer,
     val soundLibrary: SoundLibrary,
-    val meshLoadingState: MeshLoadingState,
+    val meshLoadingState: MeshLoadingState? = null,
     val textureLoadingState: TextureLoadingState,
     val textResources: TextResources = englishTextResources,
     val customBloomResources: Map<String, Any>

@@ -9,6 +9,14 @@ object Sides {
   val solidRequired = solid.copy(connectionLogic = ConnectionLogic.required)
   val solidDiagonalVertical = Side(Connector.diagonalVerticalSolid, isTraversable = false)
   val solidDiagonalVerticalRequired = solidDiagonalVertical.copy(connectionLogic = ConnectionLogic.required)
+  val headroomHorizontal = Side(Connector.headroom,
+      isTraversable = false,
+      connectionLogic = ConnectionLogic.minimal,
+      isUniversal = true
+  )
+  val headroomVertical = headroomHorizontal.copy(
+      connectionLogic = ConnectionLogic.required
+  )
 }
 
 data class LevelSides(

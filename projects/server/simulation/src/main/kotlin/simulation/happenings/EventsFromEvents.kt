@@ -24,8 +24,8 @@ fun eventsFromEvents(world: World, freedomTable: FreedomTable, events: Events): 
   val characterMovementEvents = allCharacterMovements(toPhysicsDeck(deck), deck.characterRigs, deck.thirdPersonRigs, events)
   val moveSpeedTable = newMoveSpeedTable(world.definitions, world.deck)
   return listOf(
-      mapEvents(onAttack(toSpatialCombatWorld(world))),
-      mapEvents(eventsFromTryAction(world, freedomTable))
+      mapEvents(eventsFromTryAction(world, freedomTable)),
+      mapEvents(onAttack(toSpatialCombatWorld(world)))
   )
       .flatMap { it(events) }
       .plus(characterMovementEvents)

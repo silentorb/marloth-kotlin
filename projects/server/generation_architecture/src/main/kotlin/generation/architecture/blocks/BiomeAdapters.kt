@@ -1,6 +1,7 @@
 package generation.architecture.blocks
 
 import generation.architecture.building.singleCellRoomBuilder
+import generation.architecture.connecting.Sides
 import generation.architecture.connecting.levelSides
 import generation.architecture.engine.squareOffsets
 import generation.architecture.matrical.BlockBuilder
@@ -27,7 +28,8 @@ fun biomeAdapterCube(
           east = firstSide,
           north = secondSide,
           west = firstSide,
-          south = firstSide
+          south = firstSide,
+          up = Sides.headroomVertical
       ),
       attributes = setOf(CellAttribute.traversable) + attributes,
       slots = squareOffsets(2)

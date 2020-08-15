@@ -1,5 +1,7 @@
 package generation.architecture.biomes
 
+import generation.architecture.blocks.headroomBlock
+import generation.architecture.building.emptyBuilder
 import generation.architecture.matrical.BlockBuilder
 import generation.architecture.matrical.applyBiomeBlockBuilders
 
@@ -21,6 +23,7 @@ object BiomeId {
 
 fun allBlockBuilders(): List<BlockBuilder> =
     homeBlocks()
+        .plus(headroomBlock to emptyBuilder)
         .plus(biomeAdapters())
         .plus(
             applyBiomeBlockBuilders(

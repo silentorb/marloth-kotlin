@@ -81,7 +81,7 @@ fun newClient(platform: Platform, displayConfig: DisplayConfig): Client {
       platform = platform,
       renderer = renderer,
       soundLibrary = soundLibrary,
-      meshLoadingState = MeshLoadingState(impMeshes),
+//      meshLoadingState = MeshLoadingState(impMeshes),
       textureLoadingState = TextureLoadingState(textures),
       customBloomResources = mapOf(
           cooldownMeshKey to createCooldownCircleMesh()

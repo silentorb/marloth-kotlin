@@ -4,15 +4,14 @@ import generation.architecture.blocks.*
 import generation.architecture.building.*
 import generation.architecture.connecting.Sides
 import generation.architecture.engine.Builder
-import generation.architecture.matrical.Blueprint
-import generation.architecture.matrical.TieredBlock
-import generation.architecture.matrical.applyBlockBuilderLevels
-import generation.architecture.matrical.mergeBuilders
+import generation.architecture.matrical.*
 import generation.general.Block
 import generation.general.Direction
 import marloth.scenery.enums.MeshId
 import marloth.scenery.enums.TextureId
+import silentorb.mythic.spatial.Vector3
 import simulation.entities.Depiction
+import simulation.misc.cellHalfLength
 
 fun grassFloor(): Depiction =
     Depiction(
@@ -53,7 +52,7 @@ fun treeBranching(): Depiction =
     Depiction(
 //        mesh = MeshId.squareFloor,
 //        texture = TextureId.grass
-        mesh = MeshId.treeBranching
+        mesh = MeshId.branchingTree
     )
 
 fun generalForestBuilder(): Builder =
@@ -63,8 +62,8 @@ fun withSolidBase(block: Block) =
     block.copy(
         sides = block.sides
             .plus(
-                Direction.down to Sides.solid
-//                    Direction.down to Sides.solidRequired
+//                Direction.down to Sides.solid
+                    Direction.down to Sides.solidRequired
             )
     )
 
@@ -76,7 +75,7 @@ fun withDiagonalSolidBase(block: Block) =
     block.copy(
         sides = block.sides
             .plus(
-                Direction.down to Sides.solidDiagonalVertical
+                Direction.down to Sides.solidDiagonalVerticalRequired
 //                    Direction.down to Sides.solidRequired
             )
     )
@@ -95,10 +94,10 @@ fun forestBiome(): Blueprint {
           solidDiagonal() to solidDiagonalBuilder(forestWall(), dirtDiagonalFloor())
       ),
       tiered = listOf(
-          withSolidBase(squareRoom) to floorMesh(floor),
+          withSolidBase(squareRoom) to floorMesh(floor) + prop(Depiction(mesh = MeshId.lampPost), Vector3(0f, 0f, -cellHalfLength)),
           withSolidBase(fullSlope) to newSlopedFloorMesh(Depiction(mesh = MeshId.fullSlope, texture = texture)),
           withDiagonalSolidBase(diagonalCornerBlock) to diagonalHalfFloorMesh(grassDiagonalFloor()),
-          withSolidBase(cornerSlope) to mergeBuilders(cornerSlope(texture), treeBuilder(treeBranching()))
+          withSolidBase(cornerSlope) to cornerSlope(texture) + prop(treeBranching(), Vector3(0f, 0f, -3.5f))
       )
           .map(applyBlockBuilderLevels)
   )

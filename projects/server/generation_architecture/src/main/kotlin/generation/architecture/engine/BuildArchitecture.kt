@@ -22,7 +22,7 @@ fun transformBlockHand(position: Vector3, rotation: Quaternion) = { hand: Hand -
 
 fun buildBlockCell(general: ArchitectureInput, block: Block, builder: Builder, position: Vector3i): List<Hand> {
   val neighbors = allDirections.filter { direction ->
-    val rotated = rotateDirection(block.turns)(direction)
+    val rotated = rotateDirection(block.turns ?: 0)(direction)
     val offset = directionVectors[rotated]!!
     general.blockGrid.containsKey(position + offset)
   }.toSet()
@@ -31,7 +31,7 @@ fun buildBlockCell(general: ArchitectureInput, block: Block, builder: Builder, p
       neighbors = neighbors
   )
   val result = builder(input)
-  val rotation = Quaternion().rotateZ(block.turns.toFloat() * quarterAngle)
+  val rotation = Quaternion().rotateZ((block.turns?.toFloat() ?: 0f) * quarterAngle)
   return result
       .map(transformBlockHand(absoluteCellPosition(position), rotation))
 }

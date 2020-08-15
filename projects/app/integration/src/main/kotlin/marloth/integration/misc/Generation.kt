@@ -23,15 +23,15 @@ import simulation.misc.*
 
 fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder> {
   assert(blockBuilders.all { it.first.name.isNotEmpty() })
-  val needsRotatedVariations = blockBuilders
-      .filter { (block, _) ->
+  val (needsRotatedVariations, noTurns) = blockBuilders
+      .partition { (block, _) ->
         !block.attributes.contains(CellAttribute.lockedRotation) &&
             block.sides != rotateSides(1)(block.sides)
       }
 
   val rotated = needsRotatedVariations
       .flatMap { (block, builder) ->
-        (1..3)
+        (0..3)
             .map { turns ->
               val rotation = Quaternion().rotateZ(applyTurns(turns))
               block.copy(
@@ -44,7 +44,7 @@ fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder>
             }
       }
 
-  return blockBuilders.toList() + rotated
+  return noTurns + rotated
 }
 
 fun generateWorldBlocks(dice: Dice, generationConfig: GenerationConfig): Pair<BlockGrid, List<Hand>> {

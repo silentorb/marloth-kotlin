@@ -11,7 +11,7 @@ data class Block(
     val sides: SideMap = mapOf(),
     val attributes: Set<CellAttribute> = setOf(),
     val slots: List<Vector3> = listOf(),
-    val turns: Int = 0
+    val turns: Int? = null
     ) {
   init {
     assert(slots.none { it.x > 5f || it.y > 5f || it.x < -5f || it.y < -5f })

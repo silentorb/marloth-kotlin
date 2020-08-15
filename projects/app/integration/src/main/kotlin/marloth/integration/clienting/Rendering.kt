@@ -19,7 +19,11 @@ import simulation.misc.interpolateWorlds
 
 fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: List<Box>, viewports: List<Vector4i>) {
   val renderer = client.renderer
-  updateAsyncMeshLoading(renderer.vertexSchemas.shadedColor)(client.meshLoadingState, renderer.meshes)
+  val meshLoadingState = client.meshLoadingState
+  if (meshLoadingState != null) {
+    updateAsyncMeshLoading(renderer.vertexSchemas.shadedColor)(meshLoadingState, renderer.meshes)
+  }
+
   updateAsyncTextureLoading(client.textureLoadingState, renderer.textures)
   prepareRender(renderer, windowInfo)
   val world =

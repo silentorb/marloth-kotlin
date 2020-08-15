@@ -21,7 +21,7 @@ fun monsterDefinitions(): Map<String, CharacterDefinition> =
         CreatureId.sentinel to CharacterDefinition(
             name = Text.unnamed,
             health = 100,
-            accessories = listOf(AccessoryId.rocketLauncher, AccessoryId.entangle),
+            accessories = listOf(AccessoryId.rocketLauncher),
             depictionType = DepictionType.sentinel,
             speed = 0f,
             deathSound = null,

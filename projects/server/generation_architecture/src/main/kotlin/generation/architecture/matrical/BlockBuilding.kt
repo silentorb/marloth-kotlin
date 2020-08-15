@@ -1,5 +1,6 @@
 package generation.architecture.matrical
 
+import generation.architecture.connecting.Sides
 import generation.architecture.engine.Builder
 import generation.general.*
 import simulation.main.Hand
@@ -12,6 +13,9 @@ fun mergeBuilders(vararg builders: Builder): Builder {
     builders.flatMap { it(input) }
   }
 }
+
+operator fun Builder.plus(builder: Builder): Builder =
+    mergeBuilders(this, builder)
 
 fun handBuilder(hand: Hand): Builder = { input ->
   listOf(hand)
@@ -37,7 +41,7 @@ fun restrictBiomeBlockSides(biome: BiomeName, block: Block): Block =
     block.copy(
         name = biome + "-" + block.name,
         sides = block.sides.mapValues { (_, side) ->
-          if (side == endpoint)
+          if (side.isUniversal)
             side
           else
             newBiomeSide(biome, side)

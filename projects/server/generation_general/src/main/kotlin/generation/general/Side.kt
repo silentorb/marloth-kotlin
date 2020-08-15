@@ -8,15 +8,17 @@ object CoreSide {
 }
 
 enum class ConnectionLogic {
+  minimal,
   required,
-  neutral,
+  optional,
 }
 
 data class Side(
     val mine: Any,
     val other: Set<Any> = setOf(mine),
     val isTraversable: Boolean = true,
-    val connectionLogic: ConnectionLogic = ConnectionLogic.neutral
+    val connectionLogic: ConnectionLogic = ConnectionLogic.optional,
+    val isUniversal: Boolean = false
 )
 
-val endpoint = Side(CoreSide.end, setOf(CoreSide.void))
+val endpoint = Side(CoreSide.end, setOf(CoreSide.void), isUniversal = true, isTraversable = false)

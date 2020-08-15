@@ -1,14 +1,15 @@
 package simulation.combat.spatial
 
-import simulation.accessorize.AccessoryName
 import silentorb.mythic.audio.NewSound
 import silentorb.mythic.characters.rigs.defaultCharacterHeight
-import simulation.combat.general.AttackMethod
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.happenings.UseAction
+import silentorb.mythic.performing.ActionDefinition
 import silentorb.mythic.spatial.Vector3
+import simulation.accessorize.AccessoryName
+import simulation.combat.general.AttackMethod
 
 const val executeMarker = "execute"
 
@@ -43,18 +44,23 @@ fun onAttack(world: SpatialCombatWorld): (AttackEvent) -> Events = { event ->
     attackEvents
 }
 
-fun startAttack(attacker: Id, action: Id, accessory: AccessoryName, target: Vector3?): UseAction {
-  return UseAction(
-      actor = attacker,
-      action = action,
-      deferredEvents = mapOf(
-          executeMarker to AttackEvent(
-              attacker = attacker,
-              accessory = accessory,
-              target = target
-          )
-      )
+fun startAttack(actionDefinition: ActionDefinition, attacker: Id, action: Id, accessory: AccessoryName, target: Vector3?): GameEvent {
+  val attackEvent = AttackEvent(
+      attacker = attacker,
+      accessory = accessory,
+      target = target
   )
+
+  return if (actionDefinition.animation == null)
+    attackEvent
+  else
+    UseAction(
+        actor = attacker,
+        action = action,
+        deferredEvents = mapOf(
+            executeMarker to attackEvent
+        )
+    )
 }
 
 fun getAttackerOriginAndFacing(deck: SpatialCombatDeck, attacker: Id, externalTarget: Vector3?, forwardOffset: Float): Pair<Vector3, Vector3> {

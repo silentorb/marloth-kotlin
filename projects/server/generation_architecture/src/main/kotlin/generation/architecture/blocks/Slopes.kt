@@ -21,7 +21,8 @@ fun slopeSides(lower: Int, upperSide: Side) =
         east = upperSide,
         west = levelSides[lower].open,
         north = levelSides[lower].slopeSides[0],
-        south = levelSides[lower].slopeSides[1]
+        south = levelSides[lower].slopeSides[1],
+        up = Sides.headroomVertical
     )
 
 fun newLedgeSide(level: Int) =
@@ -42,7 +43,8 @@ fun ledgeSlopeBlock(ledgeTurns: Int): TieredBlock = { level ->
             east = newLedgeSide(upper),
             west = levelSides[lower].doorway,
             north = lowerSides.slopeSides[0],
-            south = lowerSides.slopeSides[1]
+            south = lowerSides.slopeSides[1],
+            up = Sides.headroomVertical
         ) + mapOf(
             getTurnDirection(ledgeTurns) to upperSides.open
         ),
@@ -58,7 +60,8 @@ val slopeWrap = Block(
     name = "octaveWrapSpace",
     sides = sides(
         east = levelSides[0].openRequired,
-        down = Sides.slopeOctaveWrap
+        down = Sides.slopeOctaveWrap,
+        up = Sides.headroomVertical
     ),
     attributes = setOf(CellAttribute.traversable)
 )
@@ -93,7 +96,8 @@ val cornerSlope: TieredBlock = { level ->
           east = lowerSides.open,
           south = lowerSides.open,
           west = lowerSides.slopeSides[0],
-          north = lowerSides.slopeSides[1]
+          north = lowerSides.slopeSides[1],
+          up = Sides.headroomVertical
       ),
       attributes = setOf(CellAttribute.traversable),
       slots = listOf(Vector3(0f, 0f, - (quarterStep + quarterStep / 2f)))

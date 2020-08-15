@@ -1,6 +1,7 @@
 package generation.architecture.biomes
 
 import generation.architecture.building.*
+import generation.architecture.connecting.Sides
 import generation.architecture.connecting.levelSides
 import generation.architecture.connecting.uniqueConnection
 import generation.architecture.matrical.*
@@ -37,7 +38,8 @@ fun homeBlocks(): List<BlockBuilder> {
           name = "1",
           sides = sides(
               east = levelSides[0].doorway,
-              north = homeSides.first
+              north = homeSides.first,
+              up = Sides.headroomVertical
           ),
           attributes = setOf(CellAttribute.home, CellAttribute.traversable, CellAttribute.unique)
       ) to mergeBuilders(

@@ -27,6 +27,7 @@ object MeshId {
   val wallLamp = "wallLamp"
 
   // Architecture
+
   val arcWall8thA = "arcWall8thA"
   val arcWall8thB = "arcWall8thB"
   val circleFloor = "circleFloor"
@@ -58,5 +59,9 @@ object MeshId {
   val squareWallQuarterHeight = "squareWallQuarterHeight"
   val squareWallQuarterSlope = "squareWallQuarterSlope"
   val squareWallWindow = "squareWallWindow"
-  val treeBranching = "treeBranching"
+
+  // Props
+
+  val branchingTree = "branchingTree"
+  val lampPost = "lampPost"
 }

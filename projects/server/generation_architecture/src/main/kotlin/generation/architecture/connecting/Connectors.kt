@@ -7,6 +7,8 @@ object Connector {
   const val solid = "solid"
   const val slopeOverheadWrapper = "slopeOverheadWrapper"
   const val diagonalVerticalSolid = "diagonalVerticalSolid"
+  const val headroom = "headroom"
+
 }
 
 data class LevelConnector(

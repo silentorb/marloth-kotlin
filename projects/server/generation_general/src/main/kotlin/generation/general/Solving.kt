@@ -36,8 +36,8 @@ fun sidesMatch(surroundingSides: OptionalSides): CheckBlockSide = { (direction, 
   sidesMatch(blockSide, otherSide)
 }
 
-fun verticalTurnsAlign(otherTurns: Int?, turns: Int): Boolean =
-    otherTurns == null || otherTurns == turns
+fun verticalTurnsAlign(otherTurns: Int?, turns: Int?): Boolean =
+    otherTurns == null || turns == null || otherTurns == turns
 
 fun checkBlockMatch(surroundingSides: OptionalSides, upTurns: Int?, downTurns: Int?): (Block) -> Boolean = { block ->
   block.sides.all(sidesMatch(surroundingSides)) &&
@@ -67,7 +67,9 @@ fun openSides(blockGrid: BlockGrid, position: Vector3i): Map<Direction, Vector3i
   val block = blockGrid[position]!!
   return directionVectors
       .filter { direction ->
-        !block.sides[direction.key]!!.other.contains(CoreSide.void) &&
+        val side = block.sides[direction.key]!!
+        side.connectionLogic != ConnectionLogic.minimal &&
+            !side.other.contains(CoreSide.void) &&
             !blockGrid.containsKey(position + direction.value)
       }
 }

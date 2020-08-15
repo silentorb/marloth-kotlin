@@ -20,9 +20,21 @@ val squareRoom: TieredBlock = { level ->
           north = open,
           west = open,
           south = open,
-          down = Sides.solid
+          down = Sides.solid,
+          up = Sides.headroomVertical
       ),
       attributes = setOf(CellAttribute.traversable),
       slots = squareOffsets(2).map { it + Vector3(0f, 0f, getLevelHeight(level)) }
   )
 }
+
+val headroomBlock: Block = Block(
+    name = "headroom",
+    sides = sides(
+        east = Sides.headroomHorizontal,
+        north = Sides.headroomHorizontal,
+        west = Sides.headroomHorizontal,
+        south = Sides.headroomHorizontal,
+        down = Sides.headroomVertical
+    )
+)
