@@ -17,6 +17,7 @@ object AccessoryId {
   const val mobile = "mobile"
   const val mobility = "mobility"
   const val rocketLauncher = "rocketLauncher"
+  const val spiritRocketLauncher = "spiritRocketLauncher"
   const val pistol = "pistol"
   const val resistanceCold = "resistanceCold"
   const val resistanceFire = "resistanceFire"

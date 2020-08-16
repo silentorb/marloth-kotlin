@@ -15,6 +15,43 @@ data class ActionAccessory(
     val weapon: WeaponDefinition? = null
 )
 
+fun rocketLauncher() =
+    ActionAccessory(
+        accessory = AccessoryDefinition(
+            name = Text.id_rocketLauncher,
+            equippedMesh = MeshId.grenadeLauncher
+        ),
+        action = ActionDefinition(
+            cooldown = 2f,
+            range = 25f,
+            equipmentSlot = EquipmentSlot.attack
+        ),
+        weapon = WeaponDefinition(
+            attackMethod = AttackMethod.missile,
+            damageRadius = 2f,
+            velocity = 30f,
+            damageFalloff = 1f,
+            missileMesh = MeshId.missile,
+            damages = listOf(
+                DamageDefinition(
+                    type = DamageTypes.physical,
+                    amount = 70
+                )
+            ),
+            sound = SoundId.pistolFire
+        )
+    )
+
+fun spiritRocketLauncher(): ActionAccessory {
+  val accessory = rocketLauncher()
+  return accessory.copy(
+      action = accessory.action.copy(
+          cooldown = 3f,
+          animation = AnimationId.shootPistol
+      )
+  )
+}
+
 fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
 
     AccessoryId.dash to ActionAccessory(
@@ -102,32 +139,8 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         )
     ),
 
-    AccessoryId.rocketLauncher to ActionAccessory(
-        accessory = AccessoryDefinition(
-            name = Text.id_rocketLauncher,
-            equippedMesh = MeshId.grenadeLauncher
-        ),
-        action = ActionDefinition(
-            cooldown = 3f,
-            range = 25f,
-            animation = AnimationId.shootPistol,
-            equipmentSlot = EquipmentSlot.attack
-        ),
-        weapon = WeaponDefinition(
-            attackMethod = AttackMethod.missile,
-            damageRadius = 2f,
-            velocity = 30f,
-            damageFalloff = 1f,
-            missileMesh = MeshId.missile,
-            damages = listOf(
-                DamageDefinition(
-                    type = DamageTypes.physical,
-                    amount = 70
-                )
-            ),
-            sound = SoundId.pistolFire
-        )
-    ),
+    AccessoryId.rocketLauncher to rocketLauncher(),
+    AccessoryId.spiritRocketLauncher to spiritRocketLauncher(),
 
     AccessoryId.claws to ActionAccessory(
         accessory = AccessoryDefinition(

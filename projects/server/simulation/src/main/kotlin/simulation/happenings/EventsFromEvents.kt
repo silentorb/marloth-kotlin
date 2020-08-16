@@ -27,7 +27,7 @@ fun eventsFromEvents(world: World, freedomTable: FreedomTable, events: Events): 
       mapEvents(eventsFromTryAction(world, freedomTable)),
       mapEvents(onAttack(toSpatialCombatWorld(world)))
   )
-      .flatMap { it(events) }
+      .fold(events) { a, b -> a + b(a) }
       .plus(characterMovementEvents)
       .plus(characterMovementsToImpulses(deck.bodies, deck.characterRigs, freedomTable, moveSpeedTable, characterMovementEvents))
 }

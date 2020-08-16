@@ -116,7 +116,7 @@ def preprocess_bounds_shape(obj):
         }
 
     if bounds:
-        if type != 'mesh':
+        if type != 'mesh' and type != 'composite':
             offset = get_shape_offset(obj.bound_box)
             if is_vector_approximately_non_zero(obj.location, 0.01):
                 if offset:
