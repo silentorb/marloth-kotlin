@@ -7,6 +7,7 @@ import generation.architecture.engine.applyTurns
 import generation.general.BlockGrid
 import generation.general.mapGridFromBlockGrid
 import generation.general.rotateSides
+import marloth.clienting.rendering.loadBlocks
 import marloth.generation.population.populateWorld
 import marloth.scenery.enums.MeshShapeMap
 import silentorb.mythic.debugging.getDebugBoolean
@@ -111,7 +112,8 @@ fun generateWorld(definitions: Definitions, meshInfo: MeshShapeMap, seed: Long =
       definitions = definitions,
       meshes = compileArchitectureMeshInfo(meshInfo),
       includeEnemies = getDebugString("NO_ENEMIES") != "1",
-      roomCount = getDebugInt("BASE_ROOM_COUNT") ?: 30
+      roomCount = getDebugInt("BASE_ROOM_COUNT") ?: 30,
+      blocks = loadBlocks()
   )
   val input = WorldInput(
       boundary,

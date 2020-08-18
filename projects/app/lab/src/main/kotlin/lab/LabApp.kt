@@ -12,6 +12,7 @@ import marloth.clienting.newClientState
 import lab.views.game.*
 import marloth.clienting.definitionsFromClient
 import marloth.clienting.rendering.getMeshInfo
+import marloth.clienting.rendering.loadBlocks
 import marloth.definition.staticDefinitions
 import marloth.integration.front.GameApp
 import marloth.integration.front.RenderHook
@@ -43,7 +44,8 @@ fun generateWorld(definitions: Definitions, meshInfo: MeshShapeMap, gameViewConf
       definitions = definitions,
       meshes = compileArchitectureMeshInfo(meshInfo),
       includeEnemies = gameViewConfig.haveEnemies,
-      roomCount = gameViewConfig.roomCount
+      roomCount = gameViewConfig.roomCount,
+      blocks = loadBlocks().blocks
   )
   val input = WorldInput(
       boundary,
