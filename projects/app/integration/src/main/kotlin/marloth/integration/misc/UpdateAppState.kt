@@ -30,6 +30,7 @@ import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.happenings.CharacterCommand
 import marloth.scenery.enums.CharacterCommands
+import silentorb.mythic.debugging.getDebugBoolean
 import simulation.main.World
 import simulation.updating.simulationDelta
 import simulation.misc.Victory
@@ -154,6 +155,8 @@ fun updateFixedInterval(app: GameApp, boxes: List<Box>): (AppState) -> AppState 
           val clientState = updateClient(app.client, appState.worlds, boxes, appState.client)
           if (clientState.commands.any { it.type == GuiCommandType.newGame })
             restartGame(app, appState)
+          else if (getDebugBoolean("PAUSE_SIMULATION") && appState.worlds.size > 1)
+            appState
           else {
             val worlds = updateWorlds(app, appState.client, clientState)(appState.worlds)
             appState.copy(

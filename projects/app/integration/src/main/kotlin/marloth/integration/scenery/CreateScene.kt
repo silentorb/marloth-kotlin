@@ -2,7 +2,7 @@ package marloth.integration.scenery
 
 import marloth.clienting.hud.entanglingMovementRangeLayer
 import marloth.clienting.rendering.GameScene
-import marloth.clienting.rendering.createCamera
+import marloth.clienting.rendering.createPlayerCamera
 import marloth.clienting.hud.mobilityMovementRangeLayer
 import marloth.clienting.rendering.emptyCamera
 import silentorb.mythic.characters.rigs.ViewMode
@@ -16,6 +16,7 @@ import simulation.main.Deck
 import simulation.misc.Definitions
 
 fun createScene(meshes: ModelMeshMap, definitions: Definitions, deck: Deck): (Id) -> GameScene = { player ->
+  val flyThrough = getDebugBoolean("FLY_THROUGH_CAMERA")
   if (!deck.characters.containsKey(player))
     GameScene(
         main = Scene(
@@ -27,9 +28,13 @@ fun createScene(meshes: ModelMeshMap, definitions: Definitions, deck: Deck): (Id
         filters = listOf()
     )
   else {
-    val camera = createCamera(deck, player)
+    val camera = if (flyThrough)
+      newFlyThroughCamera()
+    else
+      createPlayerCamera(deck, player)
+
     val characterRig = deck.characterRigs[player]!!
-    val equipmentLayer = if (characterRig.viewMode == ViewMode.firstPerson)
+    val equipmentLayer = if (characterRig.viewMode == ViewMode.firstPerson && !flyThrough)
       getPlayerEquipmentLayer(definitions, deck, player, camera)
     else
       null

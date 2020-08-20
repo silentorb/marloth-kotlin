@@ -1,7 +1,7 @@
 package marloth.clienting.hud
 
 import marloth.clienting.Client
-import marloth.clienting.rendering.createCamera
+import marloth.clienting.rendering.createPlayerCamera
 import marloth.scenery.enums.CharacterRigCommands
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
@@ -129,7 +129,7 @@ fun updateTargeting(world: World, client: Client, players: List<Id>, commands: L
     val viewports = getPlayerViewports(players.size, client.getWindowInfo().dimensions)
     candidates
         .mapNotNull { actor ->
-          val camera = createCamera(deck, actor)
+          val camera = createPlayerCamera(deck, actor)
           val dimensions = viewports[players.indexOf(actor)].zw
           val screenTransform = createCameraMatrix(dimensions, camera)
           val actorLocation = deck.bodies[actor]!!.position
