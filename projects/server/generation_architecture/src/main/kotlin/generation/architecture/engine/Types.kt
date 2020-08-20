@@ -5,7 +5,9 @@ import marloth.scenery.enums.MeshInfoMap
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector3i
 import simulation.main.Hand
+import simulation.misc.CellAttribute
 import simulation.misc.Definitions
 
 data class BlockElement(
@@ -15,11 +17,22 @@ data class BlockElement(
     val scale: Vector3
 )
 
-typealias BlockElementsMap = Map<String, List<BlockElement>>
+data class ImportedAttributes(
+    val cell: Vector3i,
+    val attributes: List<CellAttribute>
+)
+
+data class Polyomino(
+    val attributes: List<ImportedAttributes>,
+    val cells: List<Vector3i>,
+    val elements: List<BlockElement>
+)
+
+typealias PolyominoMap = Map<String, Polyomino>
 
 data class GenerationConfig(
     val definitions: Definitions,
-    val blocks: BlockElementsMap,
+    val polyominoes: PolyominoMap,
     val meshes: MeshInfoMap,
     val includeEnemies: Boolean,
     val roomCount: Int

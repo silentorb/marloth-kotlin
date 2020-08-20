@@ -49,9 +49,14 @@ fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder>
 }
 
 fun generateWorldBlocks(dice: Dice, generationConfig: GenerationConfig): Pair<BlockGrid, List<Hand>> {
-  val blockBuilders = explodeBlockMap(allBlockBuilders())
+  val importedBlockBuilders = generationConfig.polyominoes
+      .flatMap { (name, polyomino) ->
+        blockBuildersFromElements(name, polyomino)
+      }
+
+  val blockBuilders = explodeBlockMap(allBlockBuilders() + importedBlockBuilders)
   val (blocks, builders) = splitBlockBuilders(devFilterBlockBuilders(blockBuilders))
-  val home = blocks.first { it.name == "home-1" }
+  val home = blocks.first { it.name == "home" }
   val blockGrid = newBlockGrid(dice, home, blocks - home, generationConfig.roomCount)
   val architectureInput = newArchitectureInput(generationConfig, dice, blockGrid)
   val architectureSource = buildArchitecture(architectureInput, builders)
@@ -113,7 +118,7 @@ fun generateWorld(definitions: Definitions, meshInfo: MeshShapeMap, seed: Long =
       meshes = compileArchitectureMeshInfo(meshInfo),
       includeEnemies = getDebugString("NO_ENEMIES") != "1",
       roomCount = getDebugInt("BASE_ROOM_COUNT") ?: 30,
-      blocks = loadBlocks()
+      polyominoes = loadBlocks()
   )
   val input = WorldInput(
       boundary,

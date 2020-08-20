@@ -45,7 +45,7 @@ fun generateWorld(definitions: Definitions, meshInfo: MeshShapeMap, gameViewConf
       meshes = compileArchitectureMeshInfo(meshInfo),
       includeEnemies = gameViewConfig.haveEnemies,
       roomCount = gameViewConfig.roomCount,
-      blocks = loadBlocks().blocks
+      polyominoes = loadBlocks().blocks
   )
   val input = WorldInput(
       boundary,
