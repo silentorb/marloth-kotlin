@@ -21,9 +21,9 @@ fun renderMarchingLab(renderer: SceneRenderer, models: Map<String, ModelFunction
     val points = gatherNeededCells(camera, getDistance, listOf(Vector2(0f, 0f)))
     val cube = renderer.meshes["cube"]
     if (cube != null) {
-      if (points.any()) {
-        setDebugString("${points.first()} ${toCellVector3i(points.first())}")
-      }
+//      if (points.any()) {
+//        setDebugString("${points.first()} ${toCellVector3i(points.first())}")
+//      }
       globalState.depthEnabled = false
       points.map { offset ->
         drawPrimitive(renderer.renderer, cube.primitives.first(), Matrix.identity.translate(toCellVector3i(offset).toVector3() + 0.5f).scale(0.5f))

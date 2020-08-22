@@ -26,7 +26,7 @@ let dirtWallDoorway = {
     let outerForm = cube dimensions
     let doorForm = cube (Vector3 doorWidth 2.0 doorHeight) . translate (Vector3 0.0 0.0 (-overDoorHeightHalf))
 
-    let form = deform (- outerForm doorForm) (dirtBump .* 0.2)
+    let form = deform (- outerForm doorForm) dirtBump 0.2
 
     let bounds = + (sideBox sideOffset) (sideBox (-sideOffset)) centerBox
 

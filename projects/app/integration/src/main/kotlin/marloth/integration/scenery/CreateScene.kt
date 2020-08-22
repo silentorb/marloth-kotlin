@@ -1,16 +1,13 @@
 package marloth.integration.scenery
 
 import marloth.clienting.hud.entanglingMovementRangeLayer
-import marloth.clienting.rendering.GameScene
-import marloth.clienting.rendering.createPlayerCamera
 import marloth.clienting.hud.mobilityMovementRangeLayer
-import marloth.clienting.rendering.emptyCamera
+import marloth.clienting.rendering.*
 import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.ModelMeshMap
 import silentorb.mythic.lookinglass.SceneLayer
-import marloth.clienting.rendering.cullElementGroups
 import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.scenery.Scene
 import simulation.main.Deck
@@ -55,6 +52,11 @@ fun createScene(meshes: ModelMeshMap, models: Map<String, ModelFunction>, defini
         SceneLayer(
             elements = cullElementGroups(meshes, models, camera, gatherVisualElements(definitions, deck, player, characterRig)),
             useDepth = true
+        ),
+        SceneLayer(
+            elements = listOf(),
+            useDepth = true,
+            attributes = setOf(marchingRenderLayer)
         ),
         SceneLayer(
             elements = gatherParticleElements(deck, camera.position),

@@ -5,11 +5,9 @@ import marloth.clienting.rendering.marching.services.marchingCoordinates
 import marloth.clienting.rendering.marching.services.renderNewCells
 import silentorb.mythic.fathom.mergeDistanceFunctionsTrackingIds
 import silentorb.mythic.fathom.misc.ModelFunction
-import silentorb.mythic.fathom.misc.mergeShadingFunctions
 import silentorb.mythic.glowing.*
 import silentorb.mythic.lookinglass.ElementGroups
 import silentorb.mythic.lookinglass.Renderer
-import silentorb.mythic.lookinglass.SceneLayer
 import silentorb.mythic.lookinglass.shading.ObjectShaderConfig
 import silentorb.mythic.lookinglass.shading.ShaderFeatureConfig
 import silentorb.mythic.scenery.Camera
@@ -18,14 +16,13 @@ import silentorb.mythic.spatial.Vector3i
 fun updateMarching(models: Map<String, ModelFunction>, camera: Camera, allElements: ElementGroups, previousCells: Set<Vector3i>):CellSourceMeshes {
   val elements = filterModels(models, allElements)
   return if (elements.any()) {
-    val forms = mapElementTransforms(models, elements)
-    val form = mergeDistanceFunctionsTrackingIds(forms)
+    val transformedModels = mapElementTransforms(models, elements)
+    val form = mergeDistanceFunctionsTrackingIds(transformedModels)
     val points = gatherNeededCells(camera, form, marchingCoordinates())
     val cells = points
         .map(::toCellVector3i)
     val newCells = cells - previousCells
-    val shading = mergeShadingFunctions(forms, form)
-    renderNewCells(form, shading, newCells)
+    renderNewCells(transformedModels, newCells)
   } else
     mapOf()
 }

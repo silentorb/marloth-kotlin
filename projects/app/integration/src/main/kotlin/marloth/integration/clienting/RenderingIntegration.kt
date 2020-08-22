@@ -4,6 +4,8 @@ import marloth.clienting.Client
 import marloth.clienting.rendering.createSceneRenderer
 import marloth.clienting.rendering.marching.*
 import marloth.clienting.rendering.prepareRender
+import marloth.clienting.rendering.renderLayersWithMarching
+import marloth.clienting.rendering.updateMarchingMain
 import marloth.integration.debug.labRender
 import marloth.integration.misc.AppState
 import marloth.integration.scenery.createScene
@@ -19,10 +21,6 @@ import simulation.misc.interpolateWorlds
 
 fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: List<Box>, viewports: List<Vector4i>): MarchingGpuState {
   val renderer = client.renderer
-//  val meshLoadingState = client.meshLoadingState
-//  if (meshLoadingState != null) {
-//    updateAsyncMeshLoading(renderer.vertexSchemas.shadedColor)(meshLoadingState, renderer.meshes)
-//  }
 
   updateAsyncTextureLoading(client.textureLoadingState, renderer.textures)
   prepareRender(renderer, windowInfo)
@@ -43,14 +41,9 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
       val canvas = createCanvas(client.renderer, client.customBloomResources, dimensions)
       val sceneRenderer = createSceneRenderer(client.renderer, scene, screenViewport)
       val filters = prepareRender(sceneRenderer, scene)
+      currentMarchingGpu = updateMarchingMain(sceneRenderer, client.impModels, scene.layers, currentMarchingGpu)
+      renderLayersWithMarching(sceneRenderer, scene.layers, currentMarchingGpu)
 
-      renderSceneLayers(sceneRenderer, sceneRenderer.camera, scene.layers)
-      val vertexSchema = sceneRenderer.renderer.vertexSchemas.shadedColor
-      val allElements = scene.layers.flatMap { it.elements }
-      val sources = updateMarching(client.impModels, sceneRenderer.camera, allElements, currentMarchingGpu.meshes.keys)
-      renderMarchingLab(sceneRenderer, client.impModels, sceneRenderer.camera, allElements)
-      currentMarchingGpu = updateMarchingGpu(vertexSchema, sources, currentMarchingGpu)
-      drawMarching(sceneRenderer.renderer, currentMarchingGpu)
       labRender(appState)(sceneRenderer, scene.main)
       applyFilters(sceneRenderer, filters)
       renderLayout(box, canvas, getDebugBoolean("MARK_BLOOM_PASS"))
