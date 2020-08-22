@@ -8,11 +8,6 @@ fun getMeshInfo(client: Client): MeshShapeMap =
         .filterValues { it.bounds != null }
         .mapValues { it.value.bounds!! }
         .plus(
-            if (client.meshLoadingState != null)
-              client.meshLoadingState.remaining
-                  .filter { it.model.collision != null }
-                  .associate { it.name to it.model.collision!! }
-            else
-              mapOf()
+            client.impModels.filter { it.value.collision != null }
+                .mapValues { it.value.collision!! }
         )
-

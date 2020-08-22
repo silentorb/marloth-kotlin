@@ -16,7 +16,7 @@ fun diagonalWall(depiction: Depiction): Builder = { input ->
 }
 
 fun diagonalCornerBuilder(texture: TextureName): Builder = mergeBuilders(
-    diagonalHalfFloorMesh(Depiction(mesh = MeshId.squareFloorHalfDiagonal, texture = texture)),
+    diagonalHalfFloorMesh(Depiction(mesh = MeshId.floorDiagonal, texture = texture)),
     diagonalWall(Depiction(mesh = MeshId.diagonalWall, texture = texture))
 //    cubeWallsWithFeatures(fullWallFeatures(), lampOffset = plainWallLampOffset())
 )

@@ -18,6 +18,7 @@ import silentorb.mythic.bloom.next.newBloomState
 import silentorb.mythic.bloom.updateBloomState
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
+import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.haft.*
 import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.lookinglass.mapAnimationInfo
@@ -76,6 +77,7 @@ data class Client(
     val renderer: Renderer,
     val soundLibrary: SoundLibrary,
     val meshLoadingState: MeshLoadingState? = null,
+    val impModels: Map<String, ModelFunction>,
     val textureLoadingState: TextureLoadingState,
     val textResources: TextResources = englishTextResources,
     val customBloomResources: Map<String, Any>

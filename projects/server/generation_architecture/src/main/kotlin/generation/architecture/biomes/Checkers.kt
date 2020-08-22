@@ -14,7 +14,7 @@ import simulation.entities.Depiction
 
 fun checkersFloor(): Depiction =
     Depiction(
-        mesh = MeshId.squareFloor,
+        mesh = MeshId.floorSquare,
         texture = TextureId.checkersBlackWhite
     )
 

@@ -10,12 +10,13 @@ import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.ModelMeshMap
 import silentorb.mythic.lookinglass.SceneLayer
-import silentorb.mythic.lookinglass.cullElementGroups
+import marloth.clienting.rendering.cullElementGroups
+import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.scenery.Scene
 import simulation.main.Deck
 import simulation.misc.Definitions
 
-fun createScene(meshes: ModelMeshMap, definitions: Definitions, deck: Deck): (Id) -> GameScene = { player ->
+fun createScene(meshes: ModelMeshMap, models: Map<String, ModelFunction>, definitions: Definitions, deck: Deck): (Id) -> GameScene = { player ->
   val flyThrough = getDebugBoolean("FLY_THROUGH_CAMERA")
   if (!deck.characters.containsKey(player))
     GameScene(
@@ -52,7 +53,7 @@ fun createScene(meshes: ModelMeshMap, definitions: Definitions, deck: Deck): (Id
             useDepth = false
         ),
         SceneLayer(
-            elements = cullElementGroups(meshes, camera, gatherVisualElements(definitions, deck, player, characterRig)),
+            elements = cullElementGroups(meshes, models, camera, gatherVisualElements(definitions, deck, player, characterRig)),
             useDepth = true
         ),
         SceneLayer(

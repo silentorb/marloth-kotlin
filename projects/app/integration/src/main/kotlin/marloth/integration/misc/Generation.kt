@@ -49,14 +49,15 @@ fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder>
 }
 
 fun generateWorldBlocks(dice: Dice, generationConfig: GenerationConfig): Pair<BlockGrid, List<Hand>> {
-  val importedBlockBuilders = generationConfig.polyominoes
-      .flatMap { (name, polyomino) ->
-        blockBuildersFromElements(name, polyomino)
-      }
+//  val importedBlockBuilders = generationConfig.polyominoes
+//      .flatMap { (name, polyomino) ->
+//        blockBuildersFromElements(name, polyomino)
+//      }
 
-  val blockBuilders = explodeBlockMap(allBlockBuilders() + importedBlockBuilders)
+//  val blockBuilders = explodeBlockMap(allBlockBuilders() + importedBlockBuilders)
+  val blockBuilders = explodeBlockMap(allBlockBuilders())
   val (blocks, builders) = splitBlockBuilders(devFilterBlockBuilders(blockBuilders))
-  val home = blocks.first { it.name == "home" }
+  val home = blocks.first { it.name == "home-1" }
   val blockGrid = newBlockGrid(dice, home, blocks - home, generationConfig.roomCount)
   val architectureInput = newArchitectureInput(generationConfig, dice, blockGrid)
   val architectureSource = buildArchitecture(architectureInput, builders)

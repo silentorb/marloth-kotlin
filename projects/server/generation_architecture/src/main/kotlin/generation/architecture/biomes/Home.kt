@@ -18,12 +18,13 @@ val homeSides = uniqueConnection("homeSides")
 
 fun homeBlocks(): List<BlockBuilder> {
   val floor = Depiction(
-      mesh = MeshId.squareFloor,
+      mesh = MeshId.floorSquare,
       texture = TextureId.redTile
   )
   val wall = Depiction(
-      mesh = MeshId.squareWall,
-      texture = TextureId.redTile
+      mesh = MeshId.dirtWall
+//      mesh = MeshId.squareWall,
+//      texture = TextureId.redTile
   )
   val window = Depiction(
       mesh = MeshId.squareWallWindow,

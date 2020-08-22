@@ -11,7 +11,7 @@ dependencies {
   implementation("silentorb.mythic:bloom_input")
   implementation("silentorb.mythic:drawing")
   implementation("silentorb.mythic:aura")
-  implementation("silentorb.mythic:fathom")
+  api("silentorb.mythic:fathom")
 
   api("org.lwjgl:lwjgl-glfw:${Versions.lwjgl}")
   implementation("org.lwjgl:lwjgl:${Versions.lwjgl}")

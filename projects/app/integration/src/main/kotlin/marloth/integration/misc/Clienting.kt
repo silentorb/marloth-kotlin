@@ -5,9 +5,8 @@ import marloth.clienting.audio.loadSounds
 import marloth.clienting.gatherFontSets
 import marloth.clienting.hud.cooldownMeshKey
 import marloth.clienting.hud.createCooldownCircleMesh
-import marloth.clienting.rendering.MeshLoadingState
 import marloth.clienting.rendering.createMeshes
-import marloth.clienting.rendering.gatherImpMeshes
+import marloth.clienting.rendering.gatherImpModels
 import silentorb.mythic.drawing.setGlobalFonts
 import silentorb.mythic.glowing.Glow
 import silentorb.mythic.glowing.prepareScreenFrameBuffer
@@ -69,7 +68,7 @@ fun newRenderer(
 
 fun newClient(platform: Platform, displayConfig: DisplayConfig): Client {
   val textures = gatherTextures(platform.display, displayConfig)
-  val impMeshes = gatherImpMeshes()
+  val impModels = gatherImpModels()
   val renderer = newRenderer(
       config = displayConfig,
       fontSource = ::gatherFontSets
@@ -82,6 +81,7 @@ fun newClient(platform: Platform, displayConfig: DisplayConfig): Client {
       renderer = renderer,
       soundLibrary = soundLibrary,
 //      meshLoadingState = MeshLoadingState(impMeshes),
+      impModels = impModels,
       textureLoadingState = TextureLoadingState(textures),
       customBloomResources = mapOf(
           cooldownMeshKey to createCooldownCircleMesh()

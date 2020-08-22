@@ -2,6 +2,7 @@ package marloth.integration.clienting
 
 import marloth.clienting.Client
 import marloth.clienting.rendering.createSceneRenderer
+import marloth.clienting.rendering.marching.renderMarching
 import marloth.clienting.rendering.prepareRender
 import marloth.clienting.rendering.updateAsyncMeshLoading
 import marloth.integration.debug.labRender
@@ -33,7 +34,7 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
         interpolateWorlds(appState.timestep.accumulator, appState.worlds)
   if (world != null) {
     val scenes = appState.client.players
-        .map(createScene(renderer.meshes, world.definitions, world.deck))
+        .map(createScene(renderer.meshes, client.impModels, world.definitions, world.deck))
 
     val viewportIterator = viewports.iterator()
     scenes.zip(boxes) { scene, box ->
@@ -42,7 +43,9 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
       val canvas = createCanvas(client.renderer, client.customBloomResources, dimensions)
       val sceneRenderer = createSceneRenderer(client.renderer, scene, screenViewport)
       val filters = prepareRender(sceneRenderer, scene)
-      renderSceneLayers(sceneRenderer, sceneRenderer.camera, scene.layers)
+      renderSceneLayers(sceneRenderer, sceneRenderer.camera, scene.layers) { localSceneRenderer, camera, layer ->
+        renderMarching(localSceneRenderer, client.impModels, camera, layer)
+      }
       labRender(appState)(sceneRenderer, scene.main)
       applyFilters(sceneRenderer, filters)
       renderLayout(box, canvas, getDebugBoolean("MARK_BLOOM_PASS"))

@@ -11,32 +11,31 @@ import marloth.scenery.enums.MeshId
 import marloth.scenery.enums.TextureId
 import silentorb.mythic.spatial.Vector3
 import simulation.entities.Depiction
-import simulation.misc.cellHalfLength
 
 fun grassFloor(): Depiction =
     Depiction(
-        mesh = MeshId.squareFloor,
+        mesh = MeshId.floorSquare,
         texture = TextureId.grass
 //        mesh = MeshId.grassFloor
     )
 
 fun grassDiagonalFloor(): Depiction =
     Depiction(
-        mesh = MeshId.squareFloorHalfDiagonal,
+        mesh = MeshId.floorDiagonal,
         texture = TextureId.grass
 //        mesh = MeshId.grassDiagonalFloor
     )
 
 fun dirtFloor(): Depiction =
     Depiction(
-        mesh = MeshId.squareFloor,
+        mesh = MeshId.floorSquare,
         texture = TextureId.bricks
 //        mesh = MeshId.dirtFloor
     )
 
 fun dirtDiagonalFloor(): Depiction =
     Depiction(
-        mesh = MeshId.squareFloorHalfDiagonal,
+        mesh = MeshId.floorDiagonal,
         texture = TextureId.bricks
 //        mesh = MeshId.dirtDiagonalFloor
     )

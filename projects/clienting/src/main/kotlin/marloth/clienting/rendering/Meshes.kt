@@ -153,7 +153,7 @@ fun meshesToGpu(vertexSchema: VertexSchema): (List<LoadedMeshData>) -> Map<Strin
   }
 }
 
-fun gatherImpMeshes(): List<DeferredImpMesh> {
+fun gatherImpModels(): Map<String, ModelFunction> {
   val initialContext = newImpLibrary()
   val workspaceUrl = Thread.currentThread().contextClassLoader.getResource("models/workspace.yaml")!!
   val (workspace, errors) = loadWorkspace(Paths.get(workspaceUrl.toURI()).parent)
@@ -161,8 +161,12 @@ fun gatherImpMeshes(): List<DeferredImpMesh> {
   val context = getModulesExecutionArtifacts(initialContext, modules)
   val outputs = getGraphOutputNodes(mergeNamespaces(context))
       .filter { it.path == "models" }
+
   return outputs
-      .map { compileModel(context, it) }
+      .associate {
+        val result = compileModel(context, it)
+        result.name to result.model
+      }
 }
 
 typealias MeshLoadingState = LoadingState<DeferredImpMesh, LoadedMeshData>
