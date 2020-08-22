@@ -2,9 +2,11 @@ package marloth.integration.clienting
 
 import marloth.clienting.Client
 import marloth.clienting.rendering.createSceneRenderer
-import marloth.clienting.rendering.marching.renderMarching
+import marloth.clienting.rendering.marching.MarchingGpuState
+import marloth.clienting.rendering.marching.drawMarching
+import marloth.clienting.rendering.marching.updateMarching
+import marloth.clienting.rendering.marching.updateMarchingGpu
 import marloth.clienting.rendering.prepareRender
-import marloth.clienting.rendering.updateAsyncMeshLoading
 import marloth.integration.debug.labRender
 import marloth.integration.misc.AppState
 import marloth.integration.scenery.createScene
@@ -18,15 +20,16 @@ import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector4i
 import simulation.misc.interpolateWorlds
 
-fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: List<Box>, viewports: List<Vector4i>) {
+fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: List<Box>, viewports: List<Vector4i>): MarchingGpuState {
   val renderer = client.renderer
-  val meshLoadingState = client.meshLoadingState
-  if (meshLoadingState != null) {
-    updateAsyncMeshLoading(renderer.vertexSchemas.shadedColor)(meshLoadingState, renderer.meshes)
-  }
+//  val meshLoadingState = client.meshLoadingState
+//  if (meshLoadingState != null) {
+//    updateAsyncMeshLoading(renderer.vertexSchemas.shadedColor)(meshLoadingState, renderer.meshes)
+//  }
 
   updateAsyncTextureLoading(client.textureLoadingState, renderer.textures)
   prepareRender(renderer, windowInfo)
+  var currentMarchingGpu = appState.client.marchingGpu
   val world =
       if (getDebugBoolean("DISABLE_INTERPOLATION"))
         appState.worlds.lastOrNull()
@@ -44,7 +47,10 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
       val sceneRenderer = createSceneRenderer(client.renderer, scene, screenViewport)
       val filters = prepareRender(sceneRenderer, scene)
       renderSceneLayers(sceneRenderer, sceneRenderer.camera, scene.layers) { localSceneRenderer, camera, layer ->
-        renderMarching(localSceneRenderer, client.impModels, camera, layer)
+        val vertexSchema = localSceneRenderer.renderer.vertexSchemas.shadedColor
+        val sources = updateMarching(client.impModels, camera, layer, currentMarchingGpu.meshes.keys)
+        currentMarchingGpu = updateMarchingGpu(vertexSchema, sources, currentMarchingGpu)
+        drawMarching(localSceneRenderer.renderer, currentMarchingGpu)
       }
       labRender(appState)(sceneRenderer, scene.main)
       applyFilters(sceneRenderer, filters)
@@ -53,4 +59,5 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
   }
   finishRender(renderer, windowInfo)
   client.platform.display.swapBuffers()
+  return currentMarchingGpu
 }

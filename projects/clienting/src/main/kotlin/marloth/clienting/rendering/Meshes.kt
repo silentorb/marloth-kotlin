@@ -1,5 +1,6 @@
 package marloth.clienting.rendering
 
+import marloth.clienting.rendering.marching.MarchingModelMesh
 import marloth.scenery.enums.MeshId
 import silentorb.imp.campaign.*
 import silentorb.imp.core.*
@@ -83,8 +84,7 @@ data class DeferredImpMesh(
 
 data class LoadedMeshData(
     val name: String,
-    val vertices: List<SamplePoint>,
-    val triangles: List<List<Int>>,
+    val data: MarchingModelMesh,
     val collision: Shape?
 )
 
@@ -104,8 +104,10 @@ fun sampleModel(deferred: DeferredImpMesh): LoadedMeshData {
   val (vertices, triangles) = marchingMesh(voxelsPerUnit, model.form, model.shading)
   return LoadedMeshData(
       name = name,
-      vertices = vertices,
-      triangles = triangles,
+      data = MarchingModelMesh(
+          vertices = vertices,
+          triangles = triangles
+      ),
       collision = model.collision
   )
 }
@@ -113,45 +115,11 @@ fun sampleModel(deferred: DeferredImpMesh): LoadedMeshData {
 fun sampleModels(deferred: List<DeferredImpMesh>): List<LoadedMeshData> =
     deferred.map(::sampleModel)
 
-fun meshToGpu(vertexSchema: VertexSchema, data: LoadedMeshData): ModelMesh {
-  val vertices = data.vertices
-  val triangles = data.triangles
-  val name = data.name
-  val collision = data.collision
-  val vertexFloats = vertices
-      .flatMap(::serializeVertex)
-      .toFloatArray()
-
-  val indices = createIntBuffer(triangles.flatten())
-  val mesh = GeneralMesh(
-      vertexSchema = vertexSchema,
-      vertexBuffer = newVertexBuffer(vertexSchema).load(createFloatBuffer(vertexFloats)),
-      count = vertices.size / vertexSchema.floatSize,
-      indices = indices,
-      primitiveType = PrimitiveType.triangles
-  )
-
-  return ModelMesh(
-      id = name,
-      primitives = listOf(
-          Primitive(
-              mesh = mesh,
-              material = Material(
-                  drawMethod = DrawMethod.triangles,
-                  shading = true,
-                  coloredVertices = true
-              )
-          )
-      ),
-      bounds = collision
-  )
-}
-
-fun meshesToGpu(vertexSchema: VertexSchema): (List<LoadedMeshData>) -> Map<String, ModelMesh> = { meshes ->
-  meshes.associate { mesh ->
-    mesh.name to meshToGpu(vertexSchema, mesh)
-  }
-}
+//fun meshesToGpu(vertexSchema: VertexSchema): (List<LoadedMeshData>) -> Map<String, ModelMesh> = { meshes ->
+//  meshes.associate { mesh ->
+//    mesh.name to meshToGpu(vertexSchema, mesh)
+//  }
+//}
 
 fun gatherImpModels(): Map<String, ModelFunction> {
   val initialContext = newImpLibrary()
@@ -171,7 +139,7 @@ fun gatherImpModels(): Map<String, ModelFunction> {
 
 typealias MeshLoadingState = LoadingState<DeferredImpMesh, LoadedMeshData>
 
-fun updateAsyncMeshLoading(vertexSchema: VertexSchema) = updateAsyncLoading(::sampleModels, meshesToGpu(vertexSchema))
+//fun updateAsyncMeshLoading(vertexSchema: VertexSchema) = updateAsyncLoading(::sampleModels, meshesToGpu(vertexSchema))
 
 fun createMeshes(vertexSchemas: VertexSchemas): Pair<Map<MeshName, ModelMesh>, List<Armature>> {
   val imports = importedMeshes(vertexSchemas)

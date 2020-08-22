@@ -202,11 +202,18 @@ fun updateAppState(app: GameApp, hooks: GameHooks? = null): (AppState) -> AppSta
   if (minDroppedFrame != null && timestep.rawDelta > minDroppedFrame) {
     println("Dropped frame: ${timestep.rawDelta}")
   }
-  if (steps <= 1) {
+  val nextMarchingGpu = if (steps <= 1)
     renderMain(app.client, windowInfo, appState, boxes, viewports)
-  }
+  else
+    appState.client.marchingGpu
 
-  (1..steps).fold(appState) { state, step ->
+  val nextAppState = appState.copy(
+      client = appState.client.copy(
+          marchingGpu = nextMarchingGpu
+      )
+  )
+
+  (1..steps).fold(nextAppState) { state, step ->
     val newBoxes = if (step == 1)
       boxes
     else
