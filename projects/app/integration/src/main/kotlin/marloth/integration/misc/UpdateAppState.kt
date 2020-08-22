@@ -11,7 +11,6 @@ import marloth.integration.clienting.renderMain
 import marloth.integration.clienting.updateAppStateForFirstNewPlayer
 import marloth.integration.clienting.updateAppStateForNewPlayers
 import marloth.integration.front.GameApp
-import marloth.integration.front.RenderHook
 import silentorb.mythic.bloom.BloomState
 import silentorb.mythic.bloom.next.Box
 import silentorb.mythic.bloom.toAbsoluteBounds
@@ -23,7 +22,6 @@ import silentorb.mythic.quartz.updateTimestep
 import silentorb.mythic.spatial.Vector2i
 import persistence.Database
 import persistence.createVictory
-import silentorb.mythic.debugging.getDebugFloat
 import silentorb.mythic.lookinglass.getPlayerViewports
 import simulation.entities.Player
 import silentorb.mythic.happenings.Events
@@ -169,13 +167,6 @@ fun updateFixedInterval(app: GameApp, boxes: List<Box>): (AppState) -> AppState 
         updateAppStateForNewPlayers
     )
 
-typealias GameUpdateHook = (AppState) -> Unit
-
-data class GameHooks(
-    val onRender: RenderHook,
-    val onUpdate: GameUpdateHook
-)
-
 fun layoutPlayerGui(app: GameApp, appState: AppState): (Id, Vector2i) -> Box = { player, dimensions ->
   val world = appState.worlds.lastOrNull()
   layoutPlayerGui(app.client.textResources, app.definitions, appState.client, world, dimensions, player)
@@ -190,7 +181,7 @@ fun layoutGui(app: GameApp, appState: AppState, dimensions: List<Vector2i>): Lis
   }
 }
 
-fun updateAppState(app: GameApp, hooks: GameHooks? = null): (AppState) -> AppState = { appState ->
+fun updateAppState(app: GameApp): (AppState) -> AppState = { appState ->
   incrementGlobalDebugLoopNumber(60)
   val windowInfo = app.client.getWindowInfo()
   val viewports = getPlayerViewports(appState.client.players.size, windowInfo.dimensions)
@@ -198,18 +189,18 @@ fun updateAppState(app: GameApp, hooks: GameHooks? = null): (AppState) -> AppSta
   val nestedBoxes = layoutGui(app, appState, viewportDimensions)
   val boxes = nestedBoxes.map { toAbsoluteBounds(Vector2i.zero, it) }
   val (timestep, steps) = updateTimestep(appState.timestep, simulationDelta.toDouble())
-  val minDroppedFrame = getDebugFloat("DROPPED_FRAME_MINIMUM")
-  if (minDroppedFrame != null && timestep.rawDelta > minDroppedFrame) {
-    println("Dropped frame: ${timestep.rawDelta}")
+  val onTimeStep = app.hooks?.onTimeStep
+  if (onTimeStep != null) {
+    onTimeStep(timestep, steps, appState)
   }
-  val nextMarchingGpu = if (steps <= 1)
+  val nextMarching = if (steps <= 1)
     renderMain(app.client, windowInfo, appState, boxes, viewports)
   else
-    appState.client.marchingGpu
+    appState.client.marching
 
   val nextAppState = appState.copy(
       client = appState.client.copy(
-          marchingGpu = nextMarchingGpu
+          marching = nextMarching
       )
   )
 
@@ -219,13 +210,10 @@ fun updateAppState(app: GameApp, hooks: GameHooks? = null): (AppState) -> AppSta
     else
       layoutGui(app, state, viewportDimensions)
 
-//    val box = Box(
-//        boxes = boxes,
-//        bounds = mergeBounds(newBoxes.map { it.bounds })
-//    )
     val result = updateFixedInterval(app, newBoxes)(state)
-    if (hooks != null) {
-      hooks.onUpdate(result)
+    val onUpdate = app.hooks?.onUpdate
+    if (onUpdate != null) {
+      onUpdate(result)
     }
     result
   }

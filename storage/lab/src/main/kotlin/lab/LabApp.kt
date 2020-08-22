@@ -61,7 +61,7 @@ data class LabApp(
     val labConfigManager: ConfigManager<LabConfig>
 ) {
 
-//  val newWorld = { lab.generateWorld(getMeshInfo(gameApp.client), config.gameView) }
+//  val newWorld = { generateWorld(getMeshInfo(gameApp.client), config.gameView) }
 }
 
 private var saveIncrement = 0f
@@ -96,14 +96,14 @@ fun updateDebugRangeValue(appState: AppState) {
 tailrec fun labLoop(app: LabApp, state: LabState) {
   val gameApp = app.gameApp
   val newAppState = if (app.config.view == Views.game) {
-    val hooks = GameHooks(
-        onRender = labRender(app, state),
-        onUpdate = { appState ->
-          app.labClient.updateInput(mapOf(), appState.client.input.deviceStates)
-        }
-    )
+//    val hooks = GameHooks(
+//        onRender = labRender(app, state),
+//        onUpdate = { appState ->
+//          app.labClient.updateInput(mapOf(), appState.client.input.deviceStates)
+//        }
+//    )
 
-    val update = updateAppState(gameApp, hooks)
+    val update = updateAppState(gameApp)
     val fixture = app.config.gameView.fixture
     if (fixture == FixtureId.none)
       update(state.app)

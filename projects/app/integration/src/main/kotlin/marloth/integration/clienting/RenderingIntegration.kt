@@ -5,7 +5,6 @@ import marloth.clienting.rendering.createSceneRenderer
 import marloth.clienting.rendering.marching.*
 import marloth.clienting.rendering.prepareRender
 import marloth.clienting.rendering.renderLayersWithMarching
-import marloth.clienting.rendering.updateMarchingMain
 import marloth.integration.debug.labRender
 import marloth.integration.misc.AppState
 import marloth.integration.scenery.createScene
@@ -19,12 +18,14 @@ import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector4i
 import simulation.misc.interpolateWorlds
 
-fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: List<Box>, viewports: List<Vector4i>): MarchingGpuState {
+fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: List<Box>, viewports: List<Vector4i>
+): MarchingState {
   val renderer = client.renderer
 
   updateAsyncTextureLoading(client.textureLoadingState, renderer.textures)
   prepareRender(renderer, windowInfo)
-  var currentMarchingGpu = appState.client.marchingGpu
+  var currentMarchingGpu = appState.client.marching.marchingGpu
+  var timings: ServiceTimeMeasurements = mapOf()
   val world =
       if (getDebugBoolean("DISABLE_INTERPOLATION"))
         appState.worlds.lastOrNull()
@@ -41,7 +42,9 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
       val canvas = createCanvas(client.renderer, client.customBloomResources, dimensions)
       val sceneRenderer = createSceneRenderer(client.renderer, scene, screenViewport)
       val filters = prepareRender(sceneRenderer, scene)
-      currentMarchingGpu = updateMarchingMain(sceneRenderer, client.impModels, scene.layers, currentMarchingGpu)
+      val (nextMarchingGpu, timing) = updateMarchingMain(sceneRenderer, client.impModels, scene.layers, currentMarchingGpu)
+      currentMarchingGpu = nextMarchingGpu
+      timings = timings + timing
       renderLayersWithMarching(sceneRenderer, scene.layers, currentMarchingGpu)
 
       labRender(appState)(sceneRenderer, scene.main)
@@ -51,5 +54,8 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
   }
   finishRender(renderer, windowInfo)
   client.platform.display.swapBuffers()
-  return currentMarchingGpu
+  return appState.client.marching.copy(
+      marchingGpu = currentMarchingGpu,
+      timeMeasurements = timings
+  )
 }

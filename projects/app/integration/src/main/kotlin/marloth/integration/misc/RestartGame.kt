@@ -3,7 +3,6 @@ package marloth.integration.misc
 import marloth.clienting.ClientState
 import marloth.clienting.input.newInputState
 import marloth.integration.front.GameApp
-import silentorb.mythic.bloom.next.newBloomState
 import silentorb.mythic.ent.Id
 import silentorb.mythic.physics.releaseBulletState
 import silentorb.mythic.quartz.newTimestepState
@@ -38,7 +37,7 @@ fun restartClientState(client: ClientState, playerMap: Map<Id, Id>): ClientState
         playerViews = mapOf(),
         commands = listOf(),
         players = playerMap.values.toList(),
-        marchingGpu = client.marchingGpu
+        marching = client.marching
     )
 
 fun restartGame(app: GameApp, appState: AppState): AppState {

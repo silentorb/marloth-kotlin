@@ -5,10 +5,10 @@ import marloth.clienting.audio.updateClientAudio
 import marloth.clienting.input.*
 import marloth.clienting.menus.*
 import marloth.clienting.rendering.MeshLoadingState
-import marloth.clienting.rendering.marching.MarchingGpuState
-import marloth.clienting.rendering.marching.newMarchingGpuState
-import marloth.definition.texts.englishTextResources
+import marloth.clienting.rendering.marching.MarchingState
+import marloth.clienting.rendering.marching.newMarchingState
 import marloth.definition.misc.ClientDefinitions
+import marloth.definition.texts.englishTextResources
 import silentorb.mythic.aura.AudioState
 import silentorb.mythic.aura.SoundLibrary
 import silentorb.mythic.aura.newAudioState
@@ -41,7 +41,7 @@ data class ClientState(
     val commands: List<HaftCommand>,
     val input: InputState,
     val playerViews: PlayerViews,
-    val marchingGpu: MarchingGpuState,
+    val marching: MarchingState,
 
     // Players could be extracted from the world deck except the world does not care about player order.
     // Player order is only a client concern, and only for local multiplayer.
@@ -66,7 +66,7 @@ fun newClientState(platform: Platform, inputConfig: GameInputConfig, audioConfig
         playerViews = mapOf(),
         commands = listOf(),
         players = listOf(),
-        marchingGpu = newMarchingGpuState()
+        marching = newMarchingState()
     )
 
 //fun loadTextResource(): TextResources {

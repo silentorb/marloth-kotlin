@@ -3,6 +3,7 @@ package marloth.integration.scenery
 import marloth.clienting.hud.entanglingMovementRangeLayer
 import marloth.clienting.hud.mobilityMovementRangeLayer
 import marloth.clienting.rendering.*
+import marloth.clienting.rendering.marching.marchingRenderLayer
 import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id

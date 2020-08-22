@@ -13,7 +13,6 @@ import silentorb.mythic.spatial.*
 import silentorb.mythic.lookinglass.shading.populateBoneBuffer
 import marloth.scenery.enums.AnimationId
 import marloth.integration.scenery.defaultLightingConfig
-import silentorb.mythic.spatial.times
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.scenery.Camera
 import silentorb.mythic.scenery.ProjectionType

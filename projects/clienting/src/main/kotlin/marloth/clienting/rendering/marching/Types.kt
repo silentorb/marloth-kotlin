@@ -1,12 +1,14 @@
 package marloth.clienting.rendering.marching
 
 import silentorb.mythic.glowing.GeneralMesh
-import silentorb.mythic.lookinglass.meshes.Primitive
 import silentorb.mythic.scenery.SamplePoint
-import silentorb.mythic.scenery.Shape
 import silentorb.mythic.spatial.MutableVector3
 import silentorb.mythic.spatial.Vector2
 import silentorb.mythic.spatial.Vector3i
+
+const val marchingRenderLayer: String = "marchingLayer"
+
+const val renderCellsService: String = "renderCellsService"
 
 //interface Ray {
 //  val position: Vector3
@@ -51,7 +53,18 @@ data class MarchingGpuState(
     val meshes: CellGpuMeshes
 )
 
+data class MarchingState(
+    val marchingGpu: MarchingGpuState,
+    val timeMeasurements: ServiceTimeMeasurements
+)
+
 fun newMarchingGpuState(): MarchingGpuState =
     MarchingGpuState(
         meshes = mapOf()
+    )
+
+fun newMarchingState(): MarchingState =
+    MarchingState(
+        marchingGpu = newMarchingGpuState(),
+        timeMeasurements = mapOf()
     )
