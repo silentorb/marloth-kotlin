@@ -1,7 +1,9 @@
 package marloth.clienting.rendering.marching
 
 import marloth.clienting.rendering.marching.services.gatherNeededCells
+import marloth.clienting.rendering.marching.services.marchingCoordinates
 import marloth.clienting.rendering.marching.services.renderNewCells
+import silentorb.mythic.debugging.setDebugString
 import silentorb.mythic.fathom.mergeDistanceFunctionsTrackingIds
 import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.fathom.misc.mergeShadingFunctions
@@ -11,7 +13,6 @@ import silentorb.mythic.glowing.VertexSchema
 import silentorb.mythic.glowing.drawMesh
 import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.lookinglass.SceneLayer
-import silentorb.mythic.lookinglass.SceneRenderer
 import silentorb.mythic.lookinglass.shading.ObjectShaderConfig
 import silentorb.mythic.lookinglass.shading.ShaderFeatureConfig
 import silentorb.mythic.scenery.Camera
@@ -22,15 +23,12 @@ fun updateMarching(models: Map<String, ModelFunction>, camera: Camera, layer: Sc
   return if (elements.any()) {
     val forms = mapElementTransforms(models, elements)
     val form = mergeDistanceFunctionsTrackingIds(forms)
-    val points = gatherNeededCells(camera, form)
+    val points = gatherNeededCells(camera, form, marchingCoordinates())
     val cells = points
-        .map { (x, y, z) ->
-          Vector3i(
-              x.toInt(),
-              y.toInt(),
-              z.toInt()
-          )
-        }
+        .map(::toCellVector3i)
+    if (points.any()) {
+      setDebugString("${points.first()} ${cells.first()}")
+    }
     val newCells = cells - previousCells
     val shading = mergeShadingFunctions(forms, form)
     renderNewCells(form, shading, newCells)
@@ -51,7 +49,10 @@ fun drawMarchingMeshes(renderer: Renderer, meshes: Collection<GeneralMesh>) {
 
   val vertexSchema = renderer.vertexSchemas.shadedColor
 
-  val effect = renderer.getShader(vertexSchema, ShaderFeatureConfig())
+  val effect = renderer.getShader(vertexSchema, ShaderFeatureConfig(
+      colored = true,
+      shading = true
+  ))
   effect.activate(ObjectShaderConfig())
   for (mesh in meshes) {
     drawMesh(mesh, DrawMethod.triangleFan)

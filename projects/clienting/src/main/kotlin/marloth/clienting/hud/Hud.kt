@@ -8,6 +8,7 @@ import silentorb.mythic.bloom.*
 import silentorb.mythic.bloom.next.*
 import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.debugging.getDebugBoolean
+import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.Id
 import simulation.combat.general.ResourceContainer
 import simulation.entities.Interactable
@@ -152,6 +153,7 @@ fun hudLayout(textResources: TextResources, world: World, player: Id, view: View
         "Keys: ${victoryKeyStats.collected}/${victoryKeyStats.total}",
 //            floatToRoundedString(deck.thirdPersonRigs[player]!!.rotation.x)
 //            deck.characterRigs[player]!!.hoverCamera!!.pitch.toString()
+        if (getDebugString() != "") getDebugString() else null,
         if (getDebugBoolean("HUD_DRAW_CELL_LOCATION")) "${cell.x} ${cell.y} ${cell.z}" else null
 //            "${floatToRoundedString(body.position.x)} ${floatToRoundedString(body.position.y)} ${floatToRoundedString(body.position.z)}"
 //          if (character.isGrounded) "Grounded" else "Air",

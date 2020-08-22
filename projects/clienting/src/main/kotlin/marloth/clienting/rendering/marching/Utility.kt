@@ -8,6 +8,10 @@ import silentorb.mythic.fathom.misc.ModelFunctionMap
 import silentorb.mythic.fathom.transform
 import silentorb.mythic.lookinglass.ElementGroups
 import silentorb.mythic.lookinglass.MeshElement
+import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector3i
+import silentorb.mythic.spatial.toVector3
+import kotlin.math.floor
 
 fun filterModels(models: ModelFunctionMap, elements: ElementGroups): List<MeshElement> =
     elements
@@ -28,3 +32,10 @@ fun mapElementTransforms(models: ModelFunctionMap, elements: List<MeshElement>):
 
 fun elementsToDistanceFunction(models: ModelFunctionMap, elements: List<MeshElement>): DistanceFunction =
     mergeDistanceFunctionsTrackingIds(mapElementTransforms(models, elements))
+
+fun toCellVector3i(offset: Vector3): Vector3i =
+    Vector3i(
+        floor(offset.x).toInt(),
+        floor(offset.y).toInt(),
+        floor(offset.z).toInt()
+    )

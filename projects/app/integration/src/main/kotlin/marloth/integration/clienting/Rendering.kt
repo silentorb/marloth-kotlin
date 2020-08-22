@@ -2,10 +2,7 @@ package marloth.integration.clienting
 
 import marloth.clienting.Client
 import marloth.clienting.rendering.createSceneRenderer
-import marloth.clienting.rendering.marching.MarchingGpuState
-import marloth.clienting.rendering.marching.drawMarching
-import marloth.clienting.rendering.marching.updateMarching
-import marloth.clienting.rendering.marching.updateMarchingGpu
+import marloth.clienting.rendering.marching.*
 import marloth.clienting.rendering.prepareRender
 import marloth.integration.debug.labRender
 import marloth.integration.misc.AppState
@@ -49,6 +46,7 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
       renderSceneLayers(sceneRenderer, sceneRenderer.camera, scene.layers) { localSceneRenderer, camera, layer ->
         val vertexSchema = localSceneRenderer.renderer.vertexSchemas.shadedColor
         val sources = updateMarching(client.impModels, camera, layer, currentMarchingGpu.meshes.keys)
+        renderMarchingLab(localSceneRenderer, client.impModels, camera, layer)
         currentMarchingGpu = updateMarchingGpu(vertexSchema, sources, currentMarchingGpu)
         drawMarching(localSceneRenderer.renderer, currentMarchingGpu)
       }
