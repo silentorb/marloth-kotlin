@@ -7,12 +7,13 @@ import silentorb.mythic.fathom.misc.DistanceFunction
 import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.fathom.misc.ShadingFunction
 import silentorb.mythic.fathom.surfacing.GridBounds
+import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.Shading
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
 
 fun renderModel(form: DistanceFunction, shading: ShadingFunction, bounds: GridBounds): MarchingModelMesh {
-  val voxelsPerUnit = getDebugInt("MESH_RESOLUTION") ?: 10
+  val voxelsPerUnit = getDebugInt("MESH_RESOLUTION") ?: 10 // (if (Dice().getBoolean()) 5 else 15 )
   val (vertices, triangles) = marchingMesh(voxelsPerUnit, form, shading, bounds)
   return MarchingModelMesh(
       vertices = vertices,

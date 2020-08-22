@@ -43,13 +43,14 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
       val canvas = createCanvas(client.renderer, client.customBloomResources, dimensions)
       val sceneRenderer = createSceneRenderer(client.renderer, scene, screenViewport)
       val filters = prepareRender(sceneRenderer, scene)
-      renderSceneLayers(sceneRenderer, sceneRenderer.camera, scene.layers) { localSceneRenderer, camera, layer ->
-        val vertexSchema = localSceneRenderer.renderer.vertexSchemas.shadedColor
-        val sources = updateMarching(client.impModels, camera, layer, currentMarchingGpu.meshes.keys)
-        renderMarchingLab(localSceneRenderer, client.impModels, camera, layer)
-        currentMarchingGpu = updateMarchingGpu(vertexSchema, sources, currentMarchingGpu)
-        drawMarching(localSceneRenderer.renderer, currentMarchingGpu)
-      }
+
+      renderSceneLayers(sceneRenderer, sceneRenderer.camera, scene.layers)
+      val vertexSchema = sceneRenderer.renderer.vertexSchemas.shadedColor
+      val allElements = scene.layers.flatMap { it.elements }
+      val sources = updateMarching(client.impModels, sceneRenderer.camera, allElements, currentMarchingGpu.meshes.keys)
+      renderMarchingLab(sceneRenderer, client.impModels, sceneRenderer.camera, allElements)
+      currentMarchingGpu = updateMarchingGpu(vertexSchema, sources, currentMarchingGpu)
+      drawMarching(sceneRenderer.renderer, currentMarchingGpu)
       labRender(appState)(sceneRenderer, scene.main)
       applyFilters(sceneRenderer, filters)
       renderLayout(box, canvas, getDebugBoolean("MARK_BLOOM_PASS"))
