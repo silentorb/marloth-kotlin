@@ -12,10 +12,7 @@ import marloth.integration.scenery.createScene
 import silentorb.mythic.bloom.next.Box
 import silentorb.mythic.bloom.renderLayout
 import silentorb.mythic.debugging.getDebugBoolean
-import silentorb.mythic.lookinglass.applyFilters
-import silentorb.mythic.lookinglass.createCanvas
-import silentorb.mythic.lookinglass.finishRender
-import silentorb.mythic.lookinglass.prepareRender
+import silentorb.mythic.lookinglass.*
 import silentorb.mythic.lookinglass.texturing.updateAsyncTextureLoading
 import silentorb.mythic.platforming.WindowInfo
 import silentorb.mythic.spatial.Vector2i
@@ -47,9 +44,13 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
       val sceneRenderer = createSceneRenderer(client.renderer, scene, screenViewport)
       val filters = prepareRender(sceneRenderer, scene)
       val idleTime = getIdle(appState.timestep.increment)
-      currentMarching =  updateMarchingMain(sceneRenderer, client.impModels, idleTime, scene.layers, currentMarching)
-      renderLayersWithMarching(sceneRenderer, scene.layers, currentMarching.gpu)
-
+      if (getDebugBoolean("RENDER_MARCHING")) {
+        currentMarching = updateMarchingMain(sceneRenderer, client.impModels, idleTime, scene.layers, currentMarching)
+        renderLayersWithMarching(sceneRenderer, scene.layers, currentMarching.gpu)
+      }
+      else {
+        renderSceneLayers(sceneRenderer, sceneRenderer.camera, scene.layers)
+      }
       labRender(appState)(sceneRenderer, scene.main)
       applyFilters(sceneRenderer, filters)
       renderLayout(box, canvas, getDebugBoolean("MARK_BLOOM_PASS"))

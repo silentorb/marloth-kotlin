@@ -43,7 +43,7 @@ val simplePainterMap = reflectProperties<String>(MeshId).mapNotNull { meshId ->
 
 
 fun filterDepictions(depictions: Table<Depiction>, player: Id, characterRig: CharacterRig): Table<Depiction> =
-    if (characterRig.viewMode == ViewMode.firstPerson)
+    if (characterRig.viewMode == ViewMode.firstPerson && !getDebugBoolean("FLY_THROUGH_CAMERA"))
       depictions.filter { it.key != player }
     else
       depictions

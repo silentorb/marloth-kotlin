@@ -1,6 +1,7 @@
 package marloth.clienting.rendering
 
 import silentorb.mythic.characters.rigs.*
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.physics.Body
 import silentorb.mythic.scenery.Camera
@@ -55,3 +56,4 @@ fun createPlayerCamera(deck: Deck, player: Id): Camera {
   else
     thirdPersonCamera(body, deck.thirdPersonRigs[player]!!)
 }
+

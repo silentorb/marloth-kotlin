@@ -11,6 +11,7 @@ import marloth.integration.clienting.renderMain
 import marloth.integration.clienting.updateAppStateForFirstNewPlayer
 import marloth.integration.clienting.updateAppStateForNewPlayers
 import marloth.integration.front.GameApp
+import marloth.integration.scenery.updateFlyThroughCamera
 import silentorb.mythic.bloom.BloomState
 import silentorb.mythic.bloom.next.Box
 import silentorb.mythic.bloom.toAbsoluteBounds
@@ -151,12 +152,17 @@ fun updateFixedInterval(app: GameApp, boxes: List<Box>): (AppState) -> AppState 
         { appState ->
           app.platform.process.pollEvents()
           val clientState = updateClient(app.client, appState.worlds, boxes, appState.client)
+          if (getDebugBoolean("FLY_THROUGH_CAMERA")) {
+            updateFlyThroughCamera(clientState)
+          }
           if (clientState.commands.any { it.type == GuiCommandType.newGame })
             restartGame(app, appState)
-          else if (getDebugBoolean("PAUSE_SIMULATION") && appState.worlds.size > 1)
-            appState
           else {
-            val worlds = updateWorlds(app, appState.client, clientState)(appState.worlds)
+            val worlds = if (getDebugBoolean("PAUSE_SIMULATION") && appState.worlds.size > 1)
+              appState.worlds
+            else
+                updateWorlds(app, appState.client, clientState)(appState.worlds)
+
             appState.copy(
                 client = updateClientFromWorld(worlds)(clientState),
                 worlds = worlds

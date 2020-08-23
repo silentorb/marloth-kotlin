@@ -154,8 +154,11 @@ fun hudLayout(textResources: TextResources, world: World, player: Id, view: View
 //            floatToRoundedString(deck.thirdPersonRigs[player]!!.rotation.x)
 //            deck.characterRigs[player]!!.hoverCamera!!.pitch.toString()
         if (getDebugString() != "") getDebugString() else null,
-        if (getDebugBoolean("HUD_DRAW_CELL_LOCATION")) "${cell.x} ${cell.y} ${cell.z}" else null
-//            "${floatToRoundedString(body.position.x)} ${floatToRoundedString(body.position.y)} ${floatToRoundedString(body.position.z)}"
+        if (getDebugBoolean("HUD_DRAW_CELL_LOCATION")) "${cell.x} ${cell.y} ${cell.z}" else null,
+        if (getDebugBoolean("HUD_DRAW_LOCATION"))
+          "${floatToRoundedString(body.position.x)} ${floatToRoundedString(body.position.y)} ${floatToRoundedString(body.position.z)}"
+        else
+          null
 //          if (character.isGrounded) "Grounded" else "Air",
 //          character.groundDistance.toString()
     )
