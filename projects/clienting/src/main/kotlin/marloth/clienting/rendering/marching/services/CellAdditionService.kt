@@ -6,6 +6,7 @@ import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.lookinglass.SceneLayer
 import silentorb.mythic.lookinglass.SceneRenderer
 import silentorb.mythic.lookinglass.drawing.drawPrimitive
+import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.Camera
 import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Vector2
@@ -13,8 +14,8 @@ import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector3
 
 fun marchingCoordinates(): List<Vector2> {
-  val resolution = Vector2i(12, 8) * 2
-  val scale = 3f
+  val resolution = Vector2i(14, 8) * 4
+  val scale = 5f
   return (0 until resolution.y)
       .flatMap { y ->
         (0 until resolution.x)
@@ -28,7 +29,12 @@ fun marchingCoordinates(): List<Vector2> {
 }
 
 fun gatherNeededCells(camera: Camera, getDistance: DistanceFunction, coordinates: List<Vector2>): List<Vector3> {
-  val startRay = perspectiveRay(camera)
+  val randomHalfRange = 1f
+  val dice = Dice()
+  val orientation = camera.orientation.copy()
+      .rotateZ(dice.getFloat(-randomHalfRange, randomHalfRange))
+      .rotateY(dice.getFloat(-randomHalfRange, randomHalfRange))
+  val startRay = perspectiveRay(camera.copy(orientation = orientation))
   val ray = newMutableRay()
   val config = MarchingConfig(
       end = camera.farClip,

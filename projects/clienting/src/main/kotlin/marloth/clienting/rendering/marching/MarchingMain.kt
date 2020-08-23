@@ -16,7 +16,13 @@ import silentorb.mythic.lookinglass.shading.ShaderFeatureConfig
 import silentorb.mythic.scenery.Camera
 import silentorb.mythic.spatial.Vector3i
 
-fun updateMarching(models: Map<String, ModelFunction>, camera: Camera, allElements: ElementGroups, previousCells: Set<Vector3i>): CellSourceMeshes {
+fun updateMarching(
+    gate: TimeGate,
+    models: Map<String, ModelFunction>,
+    camera: Camera,
+    allElements: ElementGroups,
+    previousCells: Set<Vector3i>
+): CellSourceMeshes {
   val elements = filterModels(models, allElements)
   return if (elements.any()) {
     val transformedModels = mapElementTransforms(models, elements)
@@ -25,7 +31,7 @@ fun updateMarching(models: Map<String, ModelFunction>, camera: Camera, allElemen
     val cells = points
         .map(::toCellVector3i)
     val newCells = cells - previousCells
-    renderNewCells(newTimeGate(1000), transformedModels, newCells)
+    renderNewCells(gate, transformedModels, newCells)
   } else
     mapOf()
 }
@@ -34,6 +40,30 @@ fun updateMarchingGpu(vertexSchema: VertexSchema, sources: CellSourceMeshes, sta
   val newGpuMeshes = cellMeshesToGpuMeshes(vertexSchema, sources)
   return state.copy(
       meshes = state.meshes + newGpuMeshes
+  )
+}
+
+fun updateMarchingMain(
+    sceneRenderer: SceneRenderer,
+    impModels: Map<String, ModelFunction>,
+    idleTime: Long,
+    layers: SceneLayers,
+    marching: MarchingState
+): MarchingState {
+  val allElements = layers.flatMap { it.elements }
+  val vertexSchema = sceneRenderer.renderer.vertexSchemas.shadedColor
+  val timeLimits = allocateTimeLimits(idleTime,1_500_000, marching.timeMeasurements)
+  val (sources, sourcesTime) = measureTime {
+    val gate = newTimeGate(timeLimits[renderCellsService] ?: 2_000_000)
+    updateMarching(gate, impModels, sceneRenderer.camera, allElements, marching.marchingGpu.meshes.keys)
+  }
+  if (getDebugBoolean("DRAW_MARCHING_CENTER_HIT")) {
+    renderMarchingLab(sceneRenderer, impModels, sceneRenderer.camera, allElements)
+  }
+  val nextMarchingGpu = updateMarchingGpu(vertexSchema, sources, marching.marchingGpu)
+  return marching.copy(
+      marchingGpu = nextMarchingGpu,
+      timeMeasurements = mapOf(renderCellsService to sourcesTime)
   )
 }
 
@@ -52,23 +82,6 @@ fun drawMarchingMeshes(renderer: Renderer, meshes: Collection<GeneralMesh>) {
   for (mesh in meshes) {
     drawMesh(mesh, DrawMethod.triangleFan)
   }
-}
-
-fun updateMarchingMain(
-    sceneRenderer: SceneRenderer,
-    impModels: Map<String, ModelFunction>,
-    layers: SceneLayers,
-    marchingGpu: MarchingGpuState
-): Pair<MarchingGpuState, ServiceTimeMeasurements> {
-  val allElements = layers.flatMap { it.elements }
-  val vertexSchema = sceneRenderer.renderer.vertexSchemas.shadedColor
-  val (sources, sourcesTime) = measureTime {
-    updateMarching(impModels, sceneRenderer.camera, allElements, marchingGpu.meshes.keys)
-  }
-  if (getDebugBoolean("DRAW_MARCHING_CENTER_HIT")) {
-    renderMarchingLab(sceneRenderer, impModels, sceneRenderer.camera, allElements)
-  }
-  return updateMarchingGpu(vertexSchema, sources, marchingGpu) to mapOf(renderCellsService to sourcesTime)
 }
 
 fun drawMarching(renderer: Renderer, state: MarchingGpuState) {

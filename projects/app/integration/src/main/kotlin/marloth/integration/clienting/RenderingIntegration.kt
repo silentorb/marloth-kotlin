@@ -2,7 +2,8 @@ package marloth.integration.clienting
 
 import marloth.clienting.Client
 import marloth.clienting.rendering.createSceneRenderer
-import marloth.clienting.rendering.marching.*
+import marloth.clienting.rendering.marching.MarchingState
+import marloth.clienting.rendering.marching.updateMarchingMain
 import marloth.clienting.rendering.prepareRender
 import marloth.clienting.rendering.renderLayersWithMarching
 import marloth.integration.debug.labRender
@@ -11,12 +12,16 @@ import marloth.integration.scenery.createScene
 import silentorb.mythic.bloom.next.Box
 import silentorb.mythic.bloom.renderLayout
 import silentorb.mythic.debugging.getDebugBoolean
-import silentorb.mythic.lookinglass.*
+import silentorb.mythic.lookinglass.applyFilters
+import silentorb.mythic.lookinglass.createCanvas
+import silentorb.mythic.lookinglass.finishRender
+import silentorb.mythic.lookinglass.prepareRender
 import silentorb.mythic.lookinglass.texturing.updateAsyncTextureLoading
 import silentorb.mythic.platforming.WindowInfo
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector4i
 import simulation.misc.interpolateWorlds
+import simulation.updating.getIdle
 
 fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: List<Box>, viewports: List<Vector4i>
 ): MarchingState {
@@ -24,8 +29,7 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
 
   updateAsyncTextureLoading(client.textureLoadingState, renderer.textures)
   prepareRender(renderer, windowInfo)
-  var currentMarchingGpu = appState.client.marching.marchingGpu
-  var timings: ServiceTimeMeasurements = mapOf()
+  var currentMarching = appState.client.marching
   val world =
       if (getDebugBoolean("DISABLE_INTERPOLATION"))
         appState.worlds.lastOrNull()
@@ -42,10 +46,9 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
       val canvas = createCanvas(client.renderer, client.customBloomResources, dimensions)
       val sceneRenderer = createSceneRenderer(client.renderer, scene, screenViewport)
       val filters = prepareRender(sceneRenderer, scene)
-      val (nextMarchingGpu, timing) = updateMarchingMain(sceneRenderer, client.impModels, scene.layers, currentMarchingGpu)
-      currentMarchingGpu = nextMarchingGpu
-      timings = timings + timing
-      renderLayersWithMarching(sceneRenderer, scene.layers, currentMarchingGpu)
+      val idleTime = getIdle(appState.timestep.increment)
+      currentMarching =  updateMarchingMain(sceneRenderer, client.impModels, idleTime, scene.layers, currentMarching)
+      renderLayersWithMarching(sceneRenderer, scene.layers, currentMarching.marchingGpu)
 
       labRender(appState)(sceneRenderer, scene.main)
       applyFilters(sceneRenderer, filters)
@@ -54,8 +57,5 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
   }
   finishRender(renderer, windowInfo)
   client.platform.display.swapBuffers()
-  return appState.client.marching.copy(
-      marchingGpu = currentMarchingGpu,
-      timeMeasurements = timings
-  )
+  return currentMarching
 }

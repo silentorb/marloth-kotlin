@@ -55,7 +55,7 @@ data class MarchingGpuState(
 
 data class MarchingState(
     val marchingGpu: MarchingGpuState,
-    val timeMeasurements: ServiceTimeMeasurements
+    val timeMeasurements: ServiceTimes
 )
 
 fun newMarchingGpuState(): MarchingGpuState =

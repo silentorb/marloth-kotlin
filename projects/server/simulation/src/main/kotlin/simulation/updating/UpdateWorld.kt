@@ -16,9 +16,14 @@ import simulation.intellect.navigation.updateNavigation
 import simulation.main.*
 import simulation.misc.Definitions
 import simulation.physics.updatePhysics
+import kotlin.math.max
 
 const val simulationFps = 60
 const val simulationDelta = 1f / simulationFps.toFloat()
+const val simulationNanoseconds = 1_000_000_000 / simulationFps
+
+fun getIdle(increment: Long): Long =
+    max(0L, simulationNanoseconds - increment)
 
 fun updateDeckCache(definitions: Definitions): (Deck) -> Deck =
     { deck ->

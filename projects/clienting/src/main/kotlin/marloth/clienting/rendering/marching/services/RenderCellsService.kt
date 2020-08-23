@@ -30,8 +30,8 @@ tailrec fun renderNewCells(
     cells: Collection<Vector3i>,
     accumulator: CellSourceMeshes = mapOf()
 ): CellSourceMeshes {
-//  return if (cells.none() || isGateReached(gate))
-  return if (cells.none())
+  return if (cells.none() || isGateReached(gate))
+//  return if (cells.none())
     accumulator
   else {
     val cell = cells.first()

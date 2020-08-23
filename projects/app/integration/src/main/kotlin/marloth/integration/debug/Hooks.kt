@@ -1,11 +1,9 @@
 package marloth.integration.debug
 
-import marloth.clienting.rendering.marching.getNanoTime
 import marloth.integration.front.GameHooks
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugFloat
-import silentorb.mythic.quartz.nanosecondsToDelta
-import simulation.updating.simulationDelta
+import simulation.updating.getIdle
 
 fun newDebugHooks(): GameHooks? {
   val metricSamples: MutableList<MetricSample> = mutableListOf()
@@ -18,12 +16,12 @@ fun newDebugHooks(): GameHooks? {
         }
         if (getDebugBoolean("LOG_PROFILING_METRICS")) {
           val time = timestep.time.latest
-          metricSamples.add(MetricSample("Raw Delta", time, timestep.rawDelta))
-          metricSamples.add(MetricSample("Delta", time, timestep.delta))
-          metricSamples.add(MetricSample("Buffer", time, simulationDelta - timestep.rawDelta))
-          for (measurement in appState.client.marching.timeMeasurements) {
-            metricSamples.add(MetricSample(measurement.key, time, nanosecondsToDelta(measurement.value)))
-          }
+          metricSamples.add(MetricSample("Increment", time, timestep.increment / 1000_000))
+          metricSamples.add(MetricSample("Idle", time, getIdle(timestep.increment / 1000_000)))
+//          metricSamples.add(MetricSample("Buffer", time, simulationDelta - timestep.rawDelta))
+//          for (measurement in appState.client.marching.timeMeasurements) {
+//            metricSamples.add(MetricSample(measurement.key, time, nanosecondsToDelta(measurement.value)))
+//          }
         }
       },
 

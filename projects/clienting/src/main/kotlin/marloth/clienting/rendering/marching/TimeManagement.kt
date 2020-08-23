@@ -1,6 +1,6 @@
 package marloth.clienting.rendering.marching
 
-typealias ServiceTimeMeasurements = Map<String, Long>
+typealias ServiceTimes = Map<String, Long>
 
 data class TimeGate(
     val start: Long,
@@ -18,12 +18,28 @@ fun newTimeGate(relativeLimit: Long): TimeGate {
   )
 }
 
-fun isGateReached(gate: TimeGate): Boolean =
-    gate.start + getNanoTime() >= gate.absoluteLimit
+fun isGateReached(gate: TimeGate): Boolean {
+  val now = getNanoTime()
+  return now >= gate.absoluteLimit
+}
 
-fun <T>measureTime(action: () -> T): Pair<T, Long>{
+fun <T> measureTime(action: () -> T): Pair<T, Long> {
   val start = getNanoTime()
   val result = action()
   val duration = getNanoTime() - start
   return result to duration
+}
+
+fun calculateTimePool(idle: Long, fixedBuffer: Long, consumption: Long): Long =
+    consumption + idle - fixedBuffer
+
+fun allocateTimeLimits(idle: Long, fixedBuffer: Long, measurements: ServiceTimes): ServiceTimes {
+  return if (measurements.none())
+    mapOf()
+  else {
+    val previousTotal = measurements.values.sum()
+    val pool = calculateTimePool(idle, fixedBuffer, previousTotal)
+    val average = previousTotal / measurements.size
+    measurements.mapValues { it.value * pool / average }
+  }
 }
