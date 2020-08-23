@@ -9,16 +9,13 @@ import silentorb.mythic.scenery.TextureName
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
 import simulation.entities.Depiction
+import simulation.misc.cellHalfLength
 import simulation.misc.cellLength
 import kotlin.math.asin
 
 fun newSlopedFloorMesh(depiction: Depiction): Builder = { input ->
-  val meshInfo = input.general.config.meshes[depiction.mesh!!]!!
-  val slopeAngle = asin(cellLength / 4f / meshInfo.shape!!.x) - 0.007f
   val orientation = Quaternion()
-//      .rotateY(-slopeAngle)
-//      .rotateZ(quarterAngle)
-  floorMeshBuilder(depiction, offset = Vector3(0f, 0f, cellLength / 8f), orientation = orientation)(input)
+  floorMeshBuilder(depiction, orientation = orientation)(input)
 }
 
 fun ledgeSlopeBuilder(texture: TextureName, ledgeTurns: Int) =
@@ -57,7 +54,7 @@ fun cornerSlope(texture: TextureName): Builder = { input ->
       newArchitectureMesh(
           meshes = config.meshes,
           depiction = depiction,
-          position = align(config.meshes, alignWithFloor)(depiction.mesh) + Vector3(0f, 0f, 0.5f - quarterStep * 3f)
+          position = Vector3(0f, 0f, -cellHalfLength)
       )
   )
 }
