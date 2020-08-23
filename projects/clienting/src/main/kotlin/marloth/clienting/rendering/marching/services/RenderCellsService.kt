@@ -42,9 +42,14 @@ tailrec fun renderNewCells(
       distance < 1.5f
     }
 
-    val form = mergeDistanceFunctionsTrackingIds(localModels)
-    val shading = mergeShadingFunctions(localModels, form)
-    val next = renderModel(form, shading, bounds)
-    renderNewCells(gate, models, cells.drop(1), accumulator + (cell to next))
+    val nextAccumulator = if (localModels.none())
+      accumulator
+    else {
+      val form = mergeDistanceFunctionsTrackingIds(localModels)
+      val shading = mergeShadingFunctions(localModels, form)
+      val next = renderModel(form, shading, bounds)
+      accumulator + (cell to next)
+    }
+    renderNewCells(gate, models, cells.drop(1), nextAccumulator)
   }
 }

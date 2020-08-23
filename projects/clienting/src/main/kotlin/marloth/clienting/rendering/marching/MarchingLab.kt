@@ -1,11 +1,9 @@
 package marloth.clienting.rendering.marching
 
-import marloth.clienting.rendering.marching.services.gatherNeededCells
-import silentorb.mythic.debugging.setDebugString
+import marloth.clienting.rendering.marching.services.gatherNeededPoints
 import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.glowing.globalState
 import silentorb.mythic.lookinglass.ElementGroups
-import silentorb.mythic.lookinglass.SceneLayer
 import silentorb.mythic.lookinglass.SceneRenderer
 import silentorb.mythic.lookinglass.drawing.drawPrimitive
 import silentorb.mythic.scenery.Camera
@@ -18,7 +16,7 @@ fun renderMarchingLab(renderer: SceneRenderer, models: Map<String, ModelFunction
   val elements = filterModels(models, allElements)
   if (elements.any()) {
     val getDistance = elementsToDistanceFunction(models, elements)
-    val points = gatherNeededCells(camera, getDistance, listOf(Vector2(0f, 0f)))
+    val points = gatherNeededPoints(camera, getDistance, listOf(Vector2(0f, 0f)))
     val cube = renderer.meshes["cube"]
     if (cube != null) {
 //      if (points.any()) {

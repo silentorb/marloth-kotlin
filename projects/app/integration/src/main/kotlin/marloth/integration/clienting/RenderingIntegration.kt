@@ -48,7 +48,7 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
       val filters = prepareRender(sceneRenderer, scene)
       val idleTime = getIdle(appState.timestep.increment)
       currentMarching =  updateMarchingMain(sceneRenderer, client.impModels, idleTime, scene.layers, currentMarching)
-      renderLayersWithMarching(sceneRenderer, scene.layers, currentMarching.marchingGpu)
+      renderLayersWithMarching(sceneRenderer, scene.layers, currentMarching.gpu)
 
       labRender(appState)(sceneRenderer, scene.main)
       applyFilters(sceneRenderer, filters)

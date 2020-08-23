@@ -49,13 +49,17 @@ typealias CellSourceMeshes = Map<Vector3i, MarchingModelMesh>
 
 typealias CellGpuMeshes = Map<Vector3i, GeneralMesh>
 
+typealias CellTimingMap = Map<Vector3i, Long>
+
 data class MarchingGpuState(
     val meshes: CellGpuMeshes
 )
 
 data class MarchingState(
-    val marchingGpu: MarchingGpuState,
-    val timeMeasurements: ServiceTimes
+    val pendingCells: Set<Vector3i>,
+    val gpu: MarchingGpuState,
+    val timeMeasurements: ServiceTimes,
+    val lastUsed: CellTimingMap
 )
 
 fun newMarchingGpuState(): MarchingGpuState =
@@ -65,6 +69,8 @@ fun newMarchingGpuState(): MarchingGpuState =
 
 fun newMarchingState(): MarchingState =
     MarchingState(
-        marchingGpu = newMarchingGpuState(),
-        timeMeasurements = mapOf()
+        pendingCells = setOf(),
+        gpu = newMarchingGpuState(),
+        timeMeasurements = mapOf(),
+        lastUsed = mapOf()
     )

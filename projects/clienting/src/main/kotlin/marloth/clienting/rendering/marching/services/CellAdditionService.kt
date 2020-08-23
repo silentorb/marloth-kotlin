@@ -1,17 +1,15 @@
 package marloth.clienting.rendering.marching.services
 
 import marloth.clienting.rendering.marching.*
+import silentorb.mythic.fathom.mergeDistanceFunctionsTrackingIds
 import silentorb.mythic.fathom.misc.DistanceFunction
 import silentorb.mythic.fathom.misc.ModelFunction
-import silentorb.mythic.lookinglass.SceneLayer
-import silentorb.mythic.lookinglass.SceneRenderer
-import silentorb.mythic.lookinglass.drawing.drawPrimitive
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.Camera
-import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Vector2
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector3i
 
 fun marchingCoordinates(): List<Vector2> {
   val resolution = Vector2i(14, 8) * 4
@@ -28,7 +26,7 @@ fun marchingCoordinates(): List<Vector2> {
       }
 }
 
-fun gatherNeededCells(camera: Camera, getDistance: DistanceFunction, coordinates: List<Vector2>): List<Vector3> {
+fun gatherNeededPoints(camera: Camera, getDistance: DistanceFunction, coordinates: List<Vector2>): List<Vector3> {
   val randomHalfRange = 1f
   val dice = Dice()
   val orientation = camera.orientation.copy()
@@ -51,4 +49,15 @@ fun gatherNeededCells(camera: Camera, getDistance: DistanceFunction, coordinates
         } else
           null
       }
+}
+
+fun gatherNeededCells(camera: Camera, form: DistanceFunction, coordinates: List<Vector2>): List<Vector3i> {
+  val points = gatherNeededPoints(camera, form, coordinates)
+  return points
+      .map(::toCellVector3i)
+}
+
+fun gatherNeededCells(camera: Camera, models: List<ModelFunction>): List<Vector3i> {
+  val form = mergeDistanceFunctionsTrackingIds(models)
+  return gatherNeededCells(camera, form, marchingCoordinates())
 }
