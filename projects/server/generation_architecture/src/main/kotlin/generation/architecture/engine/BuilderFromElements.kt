@@ -7,6 +7,7 @@ import silentorb.mythic.spatial.Vector3i
 import simulation.entities.Depiction
 import simulation.misc.CellAttribute
 import simulation.misc.absoluteCellPosition
+import simulation.misc.cellHalfLength
 import simulation.misc.cellLength
 
 fun blockBuildersFromElements(name: String, polyomino: Polyomino): List<BlockBuilder> {
@@ -15,7 +16,7 @@ fun blockBuildersFromElements(name: String, polyomino: Polyomino): List<BlockBui
   val attributes = polyomino.attributes
       .associate { it.cell to it.attributes }
 
-  val elementOffset = -absoluteCellPosition(cells.first())
+  val elementOffset = -absoluteCellPosition(cells.first()) - cellHalfLength
   val mainBuilder: Builder = { input ->
     elements.map { element ->
       val config = input.general.config

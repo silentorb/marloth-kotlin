@@ -54,11 +54,11 @@ object MeshId {
   val floorSquare = "floorSquare"
   val floorDiagonal = "floorDiagonal"
   val squareWallHalfHeight = "squareWallHalfHeight"
-  val squareWall = "squareWall"
   val squareWallDoorway = "squareWallDoorway"
   val squareWallQuarterHeight = "squareWallQuarterHeight"
   val squareWallQuarterSlope = "squareWallQuarterSlope"
   val squareWallWindow = "squareWallWindow"
+  val wallSquareShort = "wallSquareShort"
 
   // Props
 

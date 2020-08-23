@@ -20,7 +20,7 @@ fun checkersFloor(): Depiction =
 
 fun checkersWall(): Depiction =
     Depiction(
-        mesh = MeshId.squareWall,
+        mesh = MeshId.wallSquareShort,
         texture = TextureId.checkersBlackWhite
     )
 

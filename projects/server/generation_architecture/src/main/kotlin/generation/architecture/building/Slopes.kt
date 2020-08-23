@@ -25,7 +25,7 @@ fun ledgeSlopeBuilder(texture: TextureName, ledgeTurns: Int) =
     mergeBuilders(
         newSlopedFloorMesh(Depiction(mesh = MeshId.fullSlope, texture = texture)),
         newSlopeEdgeBlock(Depiction(mesh = MeshId.largeBrick, texture = texture), quarterStep + quarterStep, ledgeTurns),
-        roomWalls(Depiction(mesh = MeshId.squareWall, texture = texture))
+        roomWalls(Depiction(mesh = MeshId.wallSquareShort, texture = texture))
     )
 
 fun newSlopeEdgeBlock(depiction: Depiction, height: Float, ledgeTurns: Int): Builder = { input ->

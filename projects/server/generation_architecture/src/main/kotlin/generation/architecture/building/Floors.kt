@@ -9,7 +9,7 @@ import simulation.misc.cellHalfLength
 
 fun floorMeshBuilder(depiction: Depiction, offset: Vector3 = Vector3.zero, orientation: Quaternion = Quaternion()): Builder = { input ->
   val config = input.general.config
-  val location = Vector3(0f, 0f, -cellHalfLength) + align(config.meshes, alignWithCeiling)(depiction.mesh) + offset + Vector3(0f, 0f, 0.01f)
+  val location = Vector3(0f, 0f, -cellHalfLength) + offset + Vector3(0f, 0f, 0.01f)
   listOf(newArchitectureMesh(
       meshes = config.meshes,
       depiction = depiction,

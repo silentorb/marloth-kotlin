@@ -76,7 +76,7 @@ fun getCubeWallPosition(direction: Direction): Vector3 {
 
 fun cubeWall(input: BuilderInput, depiction: Depiction, offset: Vector3 = Vector3.zero): (Direction) -> Hand = { direction ->
   val general = input.general
-  val position = offset + getCubeWallPosition(direction)
+  val position = offset + getCubeWallPosition(direction) + Vector3(0f, 0f, -cellHalfLength)
   placeWall(general, depiction, position, direction)
 }
 

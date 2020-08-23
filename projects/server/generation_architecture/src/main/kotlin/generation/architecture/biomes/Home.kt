@@ -23,7 +23,7 @@ fun homeBlocks(): List<BlockBuilder> {
   )
   val wall = Depiction(
 //      mesh = MeshId.dirtWall
-      mesh = MeshId.squareWall,
+      mesh = MeshId.wallSquareShort,
       texture = TextureId.redTile
   )
   val window = Depiction(

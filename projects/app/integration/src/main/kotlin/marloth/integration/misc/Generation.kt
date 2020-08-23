@@ -57,8 +57,8 @@ fun generateWorldBlocks(dice: Dice, generationConfig: GenerationConfig): Pair<Bl
   val blockBuilders = explodeBlockMap(allBlockBuilders() + importedBlockBuilders)
 //  val blockBuilders = explodeBlockMap(allBlockBuilders())
   val (blocks, builders) = splitBlockBuilders(devFilterBlockBuilders(blockBuilders))
-  val home = blocks.first { it.name == "home" }
-//  val home = blocks.first { it.name == "home-1" }
+//  val home = blocks.first { it.name == "home" }
+  val home = blocks.first { it.name == "home-1" }
   val blockGrid = newBlockGrid(dice, home, blocks - home, generationConfig.roomCount)
   val architectureInput = newArchitectureInput(generationConfig, dice, blockGrid)
   val architectureSource = buildArchitecture(architectureInput, builders)

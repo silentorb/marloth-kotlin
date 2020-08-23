@@ -6,6 +6,8 @@ import silentorb.mythic.lookinglass.ElementGroups
 import silentorb.mythic.lookinglass.ModelMeshMap
 import silentorb.mythic.scenery.Camera
 import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.toMutableMatrix
+import kotlin.math.max
 
 data class CullingContext(
     val location: Vector3,
@@ -16,7 +18,13 @@ fun cullElementGroup(meshes: ModelMeshMap, models: Map<String, ModelFunction>, c
   val groupMeshes = group.meshes.filter { meshElement ->
     val bounds = meshes[meshElement.mesh]?.bounds ?: models[meshElement.mesh]?.collision
     val meshLocation = Vector3.zero.transform(meshElement.transform)
-    val meshRadius = if (bounds != null) bounds.radius else 7f
+    val meshRadius = if (bounds != null) {
+      val scale = meshElement.transform.getScale()
+      bounds.radius * max(max(scale.x, scale.y), scale.z)
+    }
+    else
+      7f
+
     val sizeOffset = cullingContext.facingNormal * meshRadius
     val a = (meshLocation - (cullingContext.location - sizeOffset)).normalize()
     val dot = a.dot(cullingContext.facingNormal)

@@ -42,7 +42,7 @@ fun dirtDiagonalFloor(): Depiction =
 
 fun forestWall(): Depiction =
     Depiction(
-        mesh = MeshId.squareWall,
+        mesh = MeshId.wallSquareShort,
         texture = TextureId.bricks
 //        mesh = MeshId.dirtWall
     )
