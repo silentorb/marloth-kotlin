@@ -96,7 +96,8 @@ fun forestBiome(): Blueprint {
 //          withSolidBase(squareRoom) to floorMesh(floor) + prop(Depiction(mesh = MeshId.lampPost), Vector3(0f, 0f, -cellHalfLength)),
           withSolidBase(fullSlope) to newSlopedFloorMesh(Depiction(mesh = MeshId.fullSlope, texture = texture)),
           withDiagonalSolidBase(diagonalCornerBlock) to diagonalHalfFloorMesh(grassDiagonalFloor()),
-          withSolidBase(cornerSlope) to cornerSlope(texture) + prop(treeBranching(), Vector3(0f, 0f, -3.5f))
+          withSolidBase(cornerSlope("corner-tree")) to cornerSlopeBuilder(texture) + prop(treeBranching(), Vector3(0f, 0f, -3.5f)),
+          withSolidBase(cornerSlope("corner-lamp-post")) to cornerSlopeBuilder(texture) + prop(Depiction(mesh = MeshId.lampPost), Vector3(0f, 0f, -3.5f))
       )
           .map(applyBlockBuilderLevels)
   )

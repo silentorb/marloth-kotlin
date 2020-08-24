@@ -88,10 +88,10 @@ fun ledgeSlope(texture: TextureName): List<PartiallyTieredBlockBuilder> = listOf
     ledgeSlopeBlock(1) to ledgeSlopeBuilder(texture, 1)
 )
 
-val cornerSlope: TieredBlock = { level ->
+fun cornerSlope(name: String = "cornerSlope"): TieredBlock = { level ->
   val lowerSides = levelSides[level]
   Block(
-      name = "cornerSlope$level",
+      name = "$name$level",
       sides = sides(
           east = lowerSides.open,
           south = lowerSides.open,
@@ -100,6 +100,6 @@ val cornerSlope: TieredBlock = { level ->
           up = Sides.headroomVertical
       ),
       attributes = setOf(CellAttribute.traversable),
-      slots = listOf(Vector3(0f, 0f, - (quarterStep + quarterStep / 2f)))
+      slots = listOf(Vector3(0f, 0f, -(quarterStep + quarterStep / 2f)))
   )
 }

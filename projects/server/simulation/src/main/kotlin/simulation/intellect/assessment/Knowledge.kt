@@ -88,4 +88,5 @@ fun updateKnowledge(world: World, lightRatings: Table<Float>, delta: Float): (Id
 
 fun getVisibleEnemies(character: Character, knowledge: Knowledge): List<CharacterMemory> =
     knowledge.characters.values
-        .filter { it.faction != character.faction && it.targetable }
+        .filter { false }
+//        .filter { it.faction != character.faction && it.targetable }
