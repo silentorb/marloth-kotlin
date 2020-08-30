@@ -14,3 +14,7 @@ dependencies {
 requires(project, "clienting", "definition", "generation_architecture", "generation_population",
     "simulation", "persistence"
 )
+
+tasks.processResources {
+  expand("version" to project.properties["version"])
+}

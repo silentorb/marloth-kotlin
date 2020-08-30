@@ -17,10 +17,15 @@ typealias AccessoryDefinitions = Map<AccessoryName, AccessoryDefinition>
 typealias LightAttachmentMap = Map<MeshName, List<Light>>
 typealias Professions = Map<String, CharacterDefinition>
 
+data class ApplicationInfo(
+    val version: String
+)
+
 data class Definitions(
     val accessories: Map<AccessoryName, AccessoryDefinition>,
     val actions: Map<AccessoryName, ActionDefinition>,
     val animations: AnimationInfoMap,
+    val applicationInfo: ApplicationInfo,
     val damageTypes: Set<DamageType>,
     val lightAttachments: LightAttachmentMap,
     val particleEffects: ParticleEffectDefinitions,

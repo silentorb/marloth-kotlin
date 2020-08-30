@@ -7,15 +7,15 @@ import marloth.clienting.rendering.getMeshInfo
 import marloth.definition.staticDefinitions
 import marloth.integration.debug.newDebugHooks
 import marloth.integration.misc.*
-import silentorb.mythic.platforming.Platform
-import silentorb.mythic.quartz.newTimestepState
 import persistence.Database
 import persistence.newDatabase
 import silentorb.mythic.debugging.checkDotEnvChanged
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.lookinglass.SceneRenderer
 import silentorb.mythic.lookinglass.toPlatformDisplayConfig
+import silentorb.mythic.platforming.Platform
 import silentorb.mythic.quartz.TimestepState
+import silentorb.mythic.quartz.newTimestepState
 import silentorb.mythic.scenery.Scene
 import simulation.main.World
 import simulation.misc.Definitions
@@ -63,7 +63,7 @@ fun conditionalDebugHooks(): GameHooks? =
 fun newGameApp(platform: Platform, config: AppConfig): GameApp {
   val client = newClient(platform, config.display)
   val clientDefinitions = definitionsFromClient(client)
-  val definitions = staticDefinitions(clientDefinitions)
+  val definitions = staticDefinitions(clientDefinitions, loadApplicationInfo())
   return GameApp(
       platform = platform,
       config = config,

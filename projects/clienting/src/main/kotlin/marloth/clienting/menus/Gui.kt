@@ -3,6 +3,7 @@ package marloth.clienting.menus
 import marloth.clienting.ClientState
 import marloth.clienting.getPlayerBloomState
 import marloth.clienting.hud.hudLayout
+import marloth.clienting.hud.versionDisplay
 import marloth.clienting.input.GuiCommandType
 import marloth.scenery.enums.CharacterCommands
 import marloth.scenery.enums.Text
@@ -88,7 +89,7 @@ fun viewSelect(textResources: TextResources, definitions: Definitions, world: Wo
   return when (view) {
     ViewId.characterInfo -> characterInfoViewOrChooseAbilityMenu(definitions, world!!.deck, player)
     ViewId.chooseProfessionMenu -> menuFlower(textResources, Text.gui_chooseProfessionMenu, chooseProfessionMenu(player))
-    ViewId.mainMenu -> menuFlower(textResources, Text.gui_mainMenu, mainMenu(gameIsActive(world)))
+    ViewId.mainMenu -> compose(menuFlower(textResources, Text.gui_mainMenu, mainMenu(gameIsActive(world))), versionDisplay(definitions.applicationInfo.version))
     ViewId.merchant -> merchantView(textResources, definitions.accessories, world!!.deck, player)
     ViewId.victory -> menuFlower(textResources, Text.gui_victory, victoryMenu())
     ViewId.none -> null
