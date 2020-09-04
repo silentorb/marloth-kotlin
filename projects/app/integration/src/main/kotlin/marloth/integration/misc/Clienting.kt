@@ -2,6 +2,7 @@ package marloth.integration.misc
 
 import marloth.clienting.Client
 import marloth.clienting.audio.loadSounds
+import marloth.clienting.canvasRendererKey
 import marloth.clienting.gatherFontSets
 import marloth.clienting.hud.cooldownMeshKey
 import marloth.clienting.hud.createCooldownCircleMesh
@@ -89,7 +90,8 @@ fun newClient(platform: Platform, displayConfig: DisplayConfig): Client {
       impModels = impModels,
       textureLoadingState = TextureLoadingState(textures),
       customBloomResources = mapOf(
-          cooldownMeshKey to createCooldownCircleMesh()
+          cooldownMeshKey to createCooldownCircleMesh(),
+          canvasRendererKey to renderer
       )
   )
 }

@@ -33,6 +33,8 @@ import simulation.main.World
 
 const val maxPlayerCount = 4
 
+const val canvasRendererKey = "renderer"
+
 typealias PlayerViews = Map<Id, ViewId?>
 
 data class ClientState(

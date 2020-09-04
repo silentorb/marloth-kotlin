@@ -60,13 +60,7 @@ data class ButtonState(
     val isEnabled: Boolean = true
 )
 
-fun depictBackground(backgroundColor: Vector4): Depiction = { b: Bounds, canvas: Canvas ->
-  globalState.depthEnabled = false
-  drawFill(b, canvas, backgroundColor)
-  drawBorder(b, canvas, Vector4(0f, 0f, 0f, 1f))
-}
-
-val menuBackground: Depiction = depictBackground(grayTone(0.5f))
+val menuBackground: Depiction = solidBackground(grayTone(0.5f))
 
 fun haftToBloom(commands: HaftCommands): List<BloomEvent> =
     commands.mapNotNull {
@@ -89,7 +83,7 @@ fun viewSelect(textResources: TextResources, definitions: Definitions, world: Wo
   return when (view) {
     ViewId.characterInfo -> characterInfoViewOrChooseAbilityMenu(definitions, world!!.deck, player)
     ViewId.chooseProfessionMenu -> menuFlower(textResources, Text.gui_chooseProfessionMenu, chooseProfessionMenu(player))
-    ViewId.mainMenu -> compose(menuFlower(textResources, Text.gui_mainMenu, mainMenu(gameIsActive(world))), versionDisplay(definitions.applicationInfo.version))
+    ViewId.mainMenu -> mainMenu(textResources, definitions, world)
     ViewId.merchant -> merchantView(textResources, definitions.accessories, world!!.deck, player)
     ViewId.victory -> menuFlower(textResources, Text.gui_victory, victoryMenu())
     ViewId.none -> null

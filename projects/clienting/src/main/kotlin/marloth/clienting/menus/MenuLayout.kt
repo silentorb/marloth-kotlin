@@ -1,6 +1,7 @@
 package marloth.clienting.menus
 
 import marloth.clienting.input.GuiCommandType
+import marloth.clienting.resources.UiTextures
 import silentorb.mythic.bloom.*
 import silentorb.mythic.bloom.next.*
 import silentorb.mythic.drawing.Canvas
@@ -170,6 +171,8 @@ val menuFlower = menuFlowerBase(standaloneMenuBox)
 
 val embeddedMenuFlower = menuFlowerBase(embeddedMenuBox)
 
+val faintBlack = black.copy(w = 0.6f)
+
 fun menuFlower(textResources: TextResources, title: Text, menu: List<SimpleMenuItem>): Flower {
   val items = menu.map {
     MenuItem(
@@ -177,7 +180,23 @@ fun menuFlower(textResources: TextResources, title: Text, menu: List<SimpleMenuI
         event = it.event ?: GuiEvent(GuiEventType.command, it.command!!)
     )
   }
-  return dialog(title)(
-      embeddedMenuFlower(items)
+  return compose(
+      div(forward = stretchBoth)(
+          depict(solidBackground(black.copy(w = 0.6f)))
+      ),
+      div(reverse = centerDialog)(
+          reversePair(verticalPlane, 20)(
+              Pair(
+                  div(reverse = reverseOffset(left = centered), forward = forwardDimensions(fixed(500), fixed(90)))(
+                      imageElement(UiTextures.marlothTitle)
+                  ),
+                  div(reverse = shrink, depiction = menuBackground)(
+                      dialogContent(title)(
+                          embeddedMenuFlower(items)
+                      )
+                  )
+              )
+          )
+      )
   )
 }

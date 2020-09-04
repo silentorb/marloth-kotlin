@@ -66,11 +66,15 @@ fun reversePair(plane: Plane, spacing: Int = 0, name: String = "reversePair"): (
   }
 }
 
+fun dialogContent(title: Text): FlowerWrapper = { flower ->
+  reversePair(verticalPlane, 0)(Pair(
+      titleBar(title),
+      flower
+  ))
+}
+
 fun dialog(title: Text): FlowerWrapper = { flower ->
   div(reverse = centerDialog, depiction = menuBackground)(
-      reversePair(verticalPlane, 0)(Pair(
-          titleBar(title),
-          flower
-      ))
+      dialogContent(title)(flower)
   )
 }
