@@ -147,8 +147,12 @@ fun updateClient(client: Client, worlds: List<World>, boxes: List<Box>, clientSt
   val bloomStates = updateClientBloomStates(boxes, clientState.bloomStates, clientState.input.deviceStates, initialCommands, clientState.players)
   val commandsFromGui = bloomStates.flatMap { (player, bloomState) ->
     guiEvents(bloomState.bag)
-        .filter { it.type == GuiEventType.command }
-        .map { simpleCommand(it.data as GuiCommandType, 0, player) }
+        .mapNotNull {
+          if (it.client != null)
+            simpleCommand(it.client.type, 0, player, it.client.data)
+          else
+            null
+        }
   }
 
   val commands = initialCommands.plus(commandsFromGui)

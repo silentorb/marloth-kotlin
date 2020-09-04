@@ -3,33 +3,36 @@ package marloth.clienting.menus
 import marloth.clienting.ClientState
 import marloth.clienting.getPlayerBloomState
 import marloth.clienting.hud.hudLayout
-import marloth.clienting.hud.versionDisplay
 import marloth.clienting.input.GuiCommandType
 import marloth.scenery.enums.CharacterCommands
 import marloth.scenery.enums.Text
-import silentorb.mythic.bloom.*
-import silentorb.mythic.bloom.next.Box
-import silentorb.mythic.bloom.next.Flower
-import silentorb.mythic.bloom.next.Seed
-import silentorb.mythic.bloom.next.compose
-import silentorb.mythic.drawing.Canvas
+import silentorb.mythic.bloom.BloomEvent
+import silentorb.mythic.bloom.Depiction
+import silentorb.mythic.bloom.existingOrNewState
+import silentorb.mythic.bloom.next.*
+import silentorb.mythic.bloom.solidBackground
 import silentorb.mythic.drawing.grayTone
 import silentorb.mythic.ent.Id
-import silentorb.mythic.glowing.globalState
 import silentorb.mythic.haft.HaftCommands
+import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.spatial.Vector2i
-import silentorb.mythic.spatial.Vector4
 import simulation.main.World
 import simulation.misc.Definitions
 
 typealias TextResources = (Text) -> String?
 
 enum class ViewId {
+  audioOptions,
   characterInfo,
   chooseProfessionMenu,
+  displayOptions,
+  gamepadOptions,
+  inputOptions,
   mainMenu,
-  none,
   merchant,
+  mouseOptions,
+  options,
+  none,
   victory
 }
 
@@ -41,18 +44,30 @@ enum class ViewId {
 fun gameIsActive(world: World?): Boolean =
     world != null && world.global.gameOver == null
 
-enum class GuiEventType {
-  command,
-  gameEvent
+enum class GuiEventDomain {
+  client,
+  server
 }
 
 data class GuiEvent(
-    val type: GuiEventType,
-    val data: Any
+    val type: GuiCommandType,
+    val data: Any? = null
 )
 
+data class ClientOrServerEvent(
+    val client: GuiEvent? = null,
+    val server: GameEvent? = null
+) {
+  init {
+    assert((client == null && server != null) || (client != null && server == null))
+  }
+}
+
+fun clientEvent(type: GuiCommandType, data: Any? = null): ClientOrServerEvent =
+    ClientOrServerEvent(client = GuiEvent(type, data))
+
 const val guiEventsKey = "guiEvents"
-val guiEvents = existingOrNewState(guiEventsKey) { listOf<GuiEvent>() }
+val guiEvents = existingOrNewState(guiEventsKey) { listOf<ClientOrServerEvent>() }
 
 data class ButtonState(
     val text: String,
@@ -81,11 +96,17 @@ fun victoryMenu() = listOfNotNull(
 
 fun viewSelect(textResources: TextResources, definitions: Definitions, world: World?, view: ViewId, player: Id): Flower? {
   return when (view) {
+    ViewId.audioOptions -> emptyFlower
+    ViewId.displayOptions -> emptyFlower
+    ViewId.gamepadOptions -> emptyFlower
+    ViewId.inputOptions -> inputOptionsMenu(definitions)
+    ViewId.mouseOptions -> emptyFlower
+    ViewId.options -> optionsMenu(definitions)
     ViewId.characterInfo -> characterInfoViewOrChooseAbilityMenu(definitions, world!!.deck, player)
-    ViewId.chooseProfessionMenu -> menuFlower(textResources, Text.gui_chooseProfessionMenu, chooseProfessionMenu(player))
-    ViewId.mainMenu -> mainMenu(textResources, definitions, world)
+    ViewId.chooseProfessionMenu -> menuFlower(definitions, Text.gui_chooseProfessionMenu, chooseProfessionMenu(player))
+    ViewId.mainMenu -> mainMenu(definitions, world)
     ViewId.merchant -> merchantView(textResources, definitions.accessories, world!!.deck, player)
-    ViewId.victory -> menuFlower(textResources, Text.gui_victory, victoryMenu())
+    ViewId.victory -> menuFlower(definitions, Text.gui_victory, victoryMenu())
     ViewId.none -> null
   }
 }

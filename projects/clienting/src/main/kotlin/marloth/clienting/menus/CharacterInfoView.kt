@@ -77,7 +77,7 @@ fun characterInfoViewOrChooseAbilityMenu(definitions: Definitions, deck: Deck, a
   val character = deck.characters[actor]!!
   val accessoryOptions = character.accessoryOptions
   return if (accessoryOptions != null)
-    menuFlower(definitions.textLibrary, Text.gui_chooseAccessoryMenu, chooseAccessoryMenu(definitions, actor, accessoryOptions))
+    menuFlower(definitions, Text.gui_chooseAccessoryMenu, chooseAccessoryMenu(definitions, actor, accessoryOptions))
   else
     characterInfoView(definitions, deck, actor)
 }

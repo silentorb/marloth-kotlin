@@ -1,5 +1,6 @@
 package marloth.clienting.menus
 
+import marloth.clienting.hud.versionDisplay
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.resources.UiTextures
 import silentorb.mythic.bloom.*
@@ -15,18 +16,19 @@ import silentorb.mythic.typography.calculateTextDimensions
 import silentorb.mythic.typography.resolveTextStyle
 import silentorb.mythic.spatial.Vector2i
 import marloth.scenery.enums.Text
+import simulation.misc.Definitions
 import kotlin.math.min
 
 typealias MenuItemFlower = (Boolean) -> Flower
 
 data class MenuItem(
     val flower: MenuItemFlower,
-    val event: GuiEvent?
+    val event: ClientOrServerEvent?
 )
 
 data class SimpleMenuItem(
     val text: Text,
-    val event: GuiEvent? = null,
+    val event: ClientOrServerEvent? = null,
     val command: GuiCommandType? = null
 )
 
@@ -45,7 +47,7 @@ fun menuFocusIndexLogic(menu: Menu): LogicModuleOld = { bundle ->
   mapOf(menuFocusIndexKey to newIndex)
 }
 
-fun addEvent(bag: StateBag, event: GuiEvent?): StateBagMods {
+fun addEvent(bag: StateBag, event: ClientOrServerEvent?): StateBagMods {
   return if (event == null)
     mapOf()
   else {
@@ -57,7 +59,7 @@ fun addEvent(bag: StateBag, event: GuiEvent?): StateBagMods {
   }
 }
 
-fun eventLogic(handler: (LogicBundle) -> GuiEvent?): LogicModuleOld = { bundle ->
+fun eventLogic(handler: (LogicBundle) -> ClientOrServerEvent?): LogicModuleOld = { bundle ->
   val bag = bundle.state.bag
   addEvent(bag, handler(bundle))
 }
@@ -173,17 +175,18 @@ val embeddedMenuFlower = menuFlowerBase(embeddedMenuBox)
 
 val faintBlack = black.copy(w = 0.6f)
 
-fun menuFlower(textResources: TextResources, title: Text, menu: List<SimpleMenuItem>): Flower {
+fun menuFlower(definitions: Definitions, title: Text, menu: List<SimpleMenuItem>): Flower {
   val items = menu.map {
     MenuItem(
-        flower = simpleMenuButton(textResources(it.text)!!),
-        event = it.event ?: GuiEvent(GuiEventType.command, it.command!!)
+        flower = simpleMenuButton(definitions.textLibrary(it.text)),
+        event = it.event ?: clientEvent(it.command!!)
     )
   }
   return compose(
       div(forward = stretchBoth)(
           depict(solidBackground(black.copy(w = 0.6f)))
       ),
+      versionDisplay(definitions.applicationInfo.version),
       div(reverse = centerDialog)(
           reversePair(verticalPlane, 20)(
               Pair(

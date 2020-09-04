@@ -12,7 +12,7 @@ fun mapGameCommands(players: List<Id>, commands: HaftCommands): List<CharacterCo
           CharacterCommand(
               type = command.type as CommandName,
               target = command.target,
-              value = command.value,
+              value = command.value!! as Float,
               device = command.device
           )
         }

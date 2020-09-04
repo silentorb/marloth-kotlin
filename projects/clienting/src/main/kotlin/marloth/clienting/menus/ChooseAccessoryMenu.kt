@@ -11,9 +11,8 @@ fun chooseAccessoryMenu(definitions: Definitions, actor: Id, accessoryOptions: A
           val definition = definitions.accessories[id]!!
           SimpleMenuItem(
               text = definition.name,
-              event = GuiEvent(
-                  type = GuiEventType.gameEvent,
-                  data = ChooseImprovedAccessory(
+              event = ClientOrServerEvent(
+                  server = ChooseImprovedAccessory(
                       actor = actor,
                       accessory = id
                   )

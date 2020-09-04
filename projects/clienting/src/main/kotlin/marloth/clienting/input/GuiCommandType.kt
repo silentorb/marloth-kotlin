@@ -7,8 +7,9 @@ import marloth.scenery.enums.CharacterRigCommands
 enum class GuiCommandType {
   characterInfo,
   menu,
-  menuSelect,
   menuBack,
+  menuSelect,
+  navigate,
   newGame,
   quit
 }

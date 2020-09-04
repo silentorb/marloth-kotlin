@@ -96,9 +96,9 @@ fun gatherAdditionalGameCommands(previousClient: ClientState, clientState: Clien
   }
 }
 
-fun guiEventsFromBloomState(bloomState: BloomState) = guiEvents(bloomState.bag)
-    .filter { it.type == GuiEventType.gameEvent }
-    .map { it.data as GameEvent }
+fun guiEventsFromBloomState(bloomState: BloomState) =
+    guiEvents(bloomState.bag)
+        .mapNotNull { it.server }
 
 fun guiEventsFromBloomStates(bloomStates: Map<Id, BloomState>) =
     bloomStates.values.flatMap(::guiEventsFromBloomState)
@@ -161,7 +161,7 @@ fun updateFixedInterval(app: GameApp, boxes: List<Box>): (AppState) -> AppState 
             val worlds = if (getDebugBoolean("PAUSE_SIMULATION") && appState.worlds.size > 1)
               appState.worlds
             else
-                updateWorlds(app, appState.client, clientState)(appState.worlds)
+              updateWorlds(app, appState.client, clientState)(appState.worlds)
 
             appState.copy(
                 client = updateClientFromWorld(worlds)(clientState),

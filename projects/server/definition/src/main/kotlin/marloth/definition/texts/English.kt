@@ -8,6 +8,14 @@ val englishTextResources: TextResourceMapper = { text ->
     Text.damageType_cold -> "Cold"
     Text.damageType_fire -> "Fire"
     Text.damageType_poison -> "Poison"
+
+    Text.gui_optionsMenu -> "Options"
+    Text.gui_audioOptions -> "Audio"
+    Text.gui_displayOptions -> "Display"
+    Text.gui_inputOptions -> "Input"
+    Text.gui_gamepadOptions -> "Gamepad"
+    Text.gui_mouseOptions -> "Mouse"
+
     Text.gui_accessories -> "Modifiers"
     Text.gui_characterInfo -> "Character Info"
     Text.gui_chooseAccessoryMenu -> "Accessorize"

@@ -42,14 +42,20 @@ fun fallBackMenus(deck: Deck, player: Id): ViewId? =
     else
       null
 
-fun updateClientCurrentMenus(deck: Deck, commands: HaftCommands, players: List<Id>, playerViews: PlayerViews): PlayerViews {
+fun updateClientCurrentMenus(deck: Deck, events: HaftCommands, players: List<Id>, playerViews: PlayerViews): PlayerViews {
   return players.associateWith { player ->
-    val command = commands.firstOrNull { it.target == player }
+    val playerEvents = events.filter { it.target == player }
+    val navigate = playerEvents.firstOrNull { it.type == GuiCommandType.navigate }
     val view = playerViews[player]
-    val manuallyChangedView = if (command != null)
-      nextView(command.type, view ?: ViewId.none)
-    else
-      view
+    val manuallyChangedView = if (navigate != null)
+      navigate.value!! as ViewId
+    else {
+      val command = playerEvents.firstOrNull()
+      if (command != null)
+        nextView(command.type, view ?: ViewId.none)
+      else
+        view
+    }
 
     when (manuallyChangedView) {
       null, ViewId.none, ViewId.chooseProfessionMenu -> fallBackMenus(deck, player)

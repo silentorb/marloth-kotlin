@@ -62,9 +62,8 @@ fun wareMenuItem(textResources: TextResources, definitions: AccessoryDefinitions
   val price = ware.price
   val canPurchase = ware.price <= customerMoney
   val event = if (canPurchase)
-    GuiEvent(
-        type = GuiEventType.gameEvent,
-        data = PurchaseEvent(
+    ClientOrServerEvent(
+        server = PurchaseEvent(
             customer = player,
             merchant = merchant,
             ware = id,
