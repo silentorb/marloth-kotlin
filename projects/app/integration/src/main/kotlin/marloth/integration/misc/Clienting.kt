@@ -15,14 +15,18 @@ import silentorb.mythic.glowing.prepareScreenFrameBuffer
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.lookinglass.meshes.VertexSchemas
 import silentorb.mythic.lookinglass.meshes.createVertexSchemas
-import silentorb.mythic.lookinglass.texturing.TextureLoadingState
-import silentorb.mythic.lookinglass.texturing.DeferredTexture
-import silentorb.mythic.lookinglass.texturing.gatherTextures
-import silentorb.mythic.lookinglass.texturing.getFileShortName
+import silentorb.mythic.lookinglass.texturing.*
+import silentorb.mythic.platforming.ImageLoader
 import silentorb.mythic.platforming.Platform
 import silentorb.mythic.platforming.PlatformDisplay
 import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.typography.FontSet
+
+fun gatherTextures(loadImage: ImageLoader, attributes: TextureAttributeMapper): List<DeferredTexture> =
+    scanTextureResources("models")
+        .plus(scanTextureResources("textures"))
+        .plus(scanTextureResources("external/images"))
+        .map { deferImageFile(loadImage, it, attributes(it)) }
 
 fun gatherTextures(display: PlatformDisplay, displayConfig: DisplayConfig): List<DeferredTexture> {
   val defaultAttributes = textureAttributesFromConfig(displayConfig)
