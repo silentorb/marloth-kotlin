@@ -60,7 +60,7 @@ fun newInputState(config: GameInputConfig) =
     )
 
 fun bindingContext(playerViews: PlayerViews, player: Id): InputContext =
-    if ((playerViews[player] ?: ViewId.none) != ViewId.none)
+    if (playerViews[player] != null)
       InputContext.menu
     else
       InputContext.game

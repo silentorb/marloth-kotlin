@@ -93,7 +93,7 @@ fun interactionDialog(textResources: TextResources, interactable: Interactable):
   )
 }
 
-fun hudLayout(textResources: TextResources, world: World, player: Id, view: ViewId): Flower? {
+fun hudLayout(textResources: TextResources, world: World, player: Id, view: ViewId?): Flower? {
   val deck = world.deck
   val definitions = world.definitions
   val grid = world.realm.grid
@@ -109,7 +109,7 @@ fun hudLayout(textResources: TextResources, world: World, player: Id, view: View
     val accessories = deck.accessories
         .filter { it.value.owner == player }
 
-    val interactable = if (view == ViewId.none)
+    val interactable = if (view == null)
       deck.interactables[character.canInteractWith]
     else null
 

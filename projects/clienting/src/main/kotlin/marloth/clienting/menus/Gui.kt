@@ -1,6 +1,7 @@
 package marloth.clienting.menus
 
 import marloth.clienting.ClientState
+import marloth.clienting.MarlothBloomState
 import marloth.clienting.getPlayerBloomState
 import marloth.clienting.hud.hudLayout
 import marloth.clienting.input.GuiCommandType
@@ -32,7 +33,6 @@ enum class ViewId {
   merchant,
   mouseOptions,
   options,
-  none,
   victory
 }
 
@@ -94,28 +94,28 @@ fun victoryMenu() = listOfNotNull(
     SimpleMenuItem(Text.message_victory, command = GuiCommandType.newGame)
 )
 
-fun viewSelect(textResources: TextResources, definitions: Definitions, world: World?, view: ViewId, player: Id): Flower? {
-  return when (view) {
+fun viewSelect(textResources: TextResources, definitions: Definitions, world: World?, state: MarlothBloomState, player: Id): Flower? {
+  return when (state.view) {
     ViewId.audioOptions -> emptyFlower
     ViewId.displayOptions -> emptyFlower
     ViewId.gamepadOptions -> emptyFlower
-    ViewId.inputOptions -> inputOptionsMenu(definitions)
+    ViewId.inputOptions -> inputOptionsMenu(definitions)(state)
     ViewId.mouseOptions -> emptyFlower
-    ViewId.options -> optionsMenu(definitions)
-    ViewId.characterInfo -> characterInfoViewOrChooseAbilityMenu(definitions, world!!.deck, player)
-    ViewId.chooseProfessionMenu -> menuFlower(definitions, Text.gui_chooseProfessionMenu, chooseProfessionMenu(player))
-    ViewId.mainMenu -> mainMenu(definitions, world)
+    ViewId.options -> optionsMenu(definitions)(state)
+    ViewId.characterInfo -> characterInfoViewOrChooseAbilityMenu(definitions, world!!.deck, player)(state)
+    ViewId.chooseProfessionMenu -> menuFlower(definitions, Text.gui_chooseProfessionMenu, chooseProfessionMenu(player))(state)
+    ViewId.mainMenu -> mainMenu(definitions, world)(state)
     ViewId.merchant -> merchantView(textResources, definitions.accessories, world!!.deck, player)
-    ViewId.victory -> menuFlower(definitions, Text.gui_victory, victoryMenu())
-    ViewId.none -> null
+    ViewId.victory -> menuFlower(definitions, Text.gui_victory, victoryMenu())(state)
+    null -> null
   }
 }
 
 fun guiLayout(textResources: TextResources, definitions: Definitions, clientState: ClientState, world: World?, player: Id): Flower {
-  val view = clientState.playerViews[player] ?: ViewId.none
+  val state = clientState.bloomStates[player]
   return compose(listOfNotNull(
-      if (world != null) hudLayout(textResources, world, player, view) else null,
-      viewSelect(textResources, definitions, world, view, player)
+      if (world != null) hudLayout(textResources, world, player, state?.view) else null,
+      if (state != null) viewSelect(textResources, definitions, world, state, player) else null
   ))
 }
 
@@ -124,7 +124,7 @@ fun layoutPlayerGui(textResources: TextResources, definitions: Definitions, clie
   val layout = guiLayout(textResources, definitions, clientState, world, player)
   val bloomState = getPlayerBloomState(clientState.bloomStates, player)
   val seed = Seed(
-      bag = bloomState.bag.plus(textResourcesKey to textResources),
+      bag = bloomState.bloom.bag.plus(textResourcesKey to textResources),
       dimensions = dimensions
   )
   return layout(seed)

@@ -1,23 +1,39 @@
 package marloth.clienting.menus
 
+import marloth.clienting.MarlothBloomState
 import marloth.clienting.hud.versionDisplay
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.resources.UiTextures
+import marloth.scenery.enums.Text
 import silentorb.mythic.bloom.*
 import silentorb.mythic.bloom.next.*
 import silentorb.mythic.drawing.Canvas
 import silentorb.mythic.drawing.grayTone
 import silentorb.mythic.glowing.globalState
+import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.spatial.toVector2
 import silentorb.mythic.spatial.toVector2i
 import silentorb.mythic.typography.TextConfiguration
 import silentorb.mythic.typography.calculateTextDimensions
 import silentorb.mythic.typography.resolveTextStyle
-import silentorb.mythic.spatial.Vector2i
-import marloth.scenery.enums.Text
 import simulation.misc.Definitions
 import kotlin.math.min
+
+const val menuFocusIndexKey = "silentorb.menuFocusIndex"
+const val menuStackKey = "silentorb.menuStack"
+
+fun addEvent(bag: StateBag, event: ClientOrServerEvent?): StateBag {
+  return if (event == null)
+    mapOf()
+  else {
+    val events = guiEvents(bag)
+
+    mapOf(
+        guiEventsKey to events.plus(event)
+    )
+  }
+}
 
 typealias MenuItemFlower = (Boolean) -> Flower
 
@@ -36,61 +52,50 @@ typealias Menu = List<MenuItem>
 
 fun cycle(value: Int, max: Int) = (value + max) % max
 
-fun menuFocusIndexLogic(menu: Menu): LogicModuleOld = { bundle ->
-  val events = bundle.state.input.current.events
-  val index = menuFocusIndex(menu.size, bundle.state.bag)
-  val newIndex = when {
-    events.contains(BloomEvent.down) -> cycle(index + 1, menu.size)
-    events.contains(BloomEvent.up) -> cycle(index - 1, menu.size)
-    else -> index
-  }
-  mapOf(menuFocusIndexKey to newIndex)
+data class MenuLayer(
+    val view: ViewId,
+    val focusIndex: Int? = null
+)
+
+typealias MenuStack = List<MenuLayer>
+
+fun menuCommandLogic(menu: Menu, bag: StateBag, events: List<BloomEvent>): StateBag {
+  val activated = events.contains(BloomEvent.activate)
+  val index = menuFocusIndex(menu.size, bag)
+  val menuItem = menu[index]
+  return addEvent(bag,
+      if (activated)
+        menuItem.event
+      else
+        null
+  )
 }
 
-fun addEvent(bag: StateBag, event: ClientOrServerEvent?): StateBagMods {
-  return if (event == null)
-    mapOf()
-  else {
-    val events = guiEvents(bag)
+fun updateMenuFocus(menuSize: Int, events: List<BloomEvent>, index: Int) =
+    when {
+      events.contains(BloomEvent.down) -> cycle(index + 1, menuSize)
+      events.contains(BloomEvent.up) -> cycle(index - 1, menuSize)
+      events.contains(BloomEvent.activate) -> 0
+//      events.contains(BloomEvent.back) -> stack.lastOrNull()?.previousFocusIndex ?: 0
+      else -> index
+    }
 
-    mapOf(
-        guiEventsKey to events.plus(event)
-    )
-  }
+fun getMenuStack(bag: StateBag): MenuStack =
+    getBagEntry(bag, menuStackKey) { listOf() }
+
+fun menuLogic(menu: Menu): LogicModuleOld = { bundle ->
+  val bag = bundle.state.bag
+  val events = bundle.state.input.current.events
+  val index = menuFocusIndex(menu.size, bag)
+  val nextIndex = updateMenuFocus(menu.size, events, index)
+  mapOf(
+      menuFocusIndexKey to nextIndex,
+  ) + menuCommandLogic(menu, bag, events)
 }
 
 fun eventLogic(handler: (LogicBundle) -> ClientOrServerEvent?): LogicModuleOld = { bundle ->
   val bag = bundle.state.bag
   addEvent(bag, handler(bundle))
-}
-
-val menuNavigationLogic: LogicModuleOld = { bundle ->
-  mapOf()
-//  val events = bundle.state.input.current.events
-//  val bag = bundle.state.bag
-//  val activated = events.contains(BloomEvent.activate)
-//  val newEvent = if (activated || events.contains(BloomEvent.back))
-//    GuiEvent(GuiEventType.command, GuiCommandType.menuBack)
-//  else
-//    null
-//
-//  addEvent(bag, newEvent)
-}
-
-fun menuCommandLogic(menu: Menu): LogicModuleOld = eventLogic { bundle ->
-  if (menu.none()) {
-    null
-  } else {
-    val inputEvents = bundle.state.input.current.events
-    val bag = bundle.state.bag
-    val activated = inputEvents.contains(BloomEvent.activate)
-    val index = menuFocusIndex(menu.size, bag)
-    val menuItem = menu[index]
-    if (activated)
-      menuItem.event
-    else
-      null
-  }
 }
 
 fun drawMenuButton(state: ButtonState): Depiction = { bounds: Bounds, canvas: Canvas ->
@@ -109,13 +114,11 @@ fun drawMenuButton(state: ButtonState): Depiction = { bounds: Bounds, canvas: Ca
   canvas.drawText(position, style.first, state.text)
 }
 
-const val menuFocusIndexKey = "menuFocusIndex"
+fun getMenuFocusIndex(bag: StateBag): Int =
+    getBagEntry(bag, menuFocusIndexKey) { 0 }
 
 fun menuFocusIndex(menuSize: Int, bag: StateBag): Int =
-    min((bag[menuFocusIndexKey] ?: 0) as Int, menuSize - 1)
-
-fun menuLogic(menu: Menu): LogicModuleOld =
-    menuFocusIndexLogic(menu) combineLogic menuNavigationLogic combineLogic menuCommandLogic(menu)
+    min(getMenuFocusIndex(bag), menuSize - 1)
 
 private val buttonDimensions = Vector2i(200, 50)
 
@@ -175,16 +178,16 @@ val embeddedMenuFlower = menuFlowerBase(embeddedMenuBox)
 
 val faintBlack = black.copy(w = 0.6f)
 
-fun menuFlower(definitions: Definitions, title: Text, menu: List<SimpleMenuItem>): Flower {
+fun menuFlower(definitions: Definitions, title: Text, menu: List<SimpleMenuItem>): (MarlothBloomState) -> Flower = { state ->
   val items = menu.map {
     MenuItem(
         flower = simpleMenuButton(definitions.textLibrary(it.text)),
         event = it.event ?: clientEvent(it.command!!)
     )
   }
-  return compose(
+  compose(
       div(forward = stretchBoth)(
-          depict(solidBackground(black.copy(w = 0.6f)))
+          depict(solidBackground(faintBlack))
       ),
       versionDisplay(definitions.applicationInfo.version),
       div(reverse = centerDialog)(

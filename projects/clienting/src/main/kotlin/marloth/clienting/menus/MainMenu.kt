@@ -1,5 +1,6 @@
 package marloth.clienting.menus
 
+import marloth.clienting.MarlothBloomState
 import marloth.clienting.input.GuiCommandType
 import marloth.scenery.enums.Text
 import simulation.main.World

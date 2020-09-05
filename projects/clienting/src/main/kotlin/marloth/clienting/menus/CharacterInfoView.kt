@@ -1,5 +1,6 @@
 package marloth.clienting.menus
 
+import marloth.clienting.MarlothBloomState
 import marloth.definition.misc.staticDamageTypes
 import marloth.scenery.enums.Text
 import simulation.accessorize.getAccessories
@@ -35,7 +36,7 @@ fun resistancesView(deck: Deck, player: Id): Flower {
 }
 
 fun generalCharacterInfo(definitions: Definitions, deck: Deck, actor: Id): Flower {
-  val character = deck.characters [actor]!!
+  val character = deck.characters[actor]!!
   val profession = definitions.professions[character.profession]!!
   val rows = listOf(
       localizedLabel(textStyles.smallBlack, Text.gui_profession),
@@ -73,11 +74,11 @@ fun characterInfoView(definitions: Definitions, deck: Deck, actor: Id): Flower {
   )
 }
 
-fun characterInfoViewOrChooseAbilityMenu(definitions: Definitions, deck: Deck, actor: Id): Flower {
+fun characterInfoViewOrChooseAbilityMenu(definitions: Definitions, deck: Deck, actor: Id): (MarlothBloomState) -> Flower = { state ->
   val character = deck.characters[actor]!!
   val accessoryOptions = character.accessoryOptions
-  return if (accessoryOptions != null)
-    menuFlower(definitions, Text.gui_chooseAccessoryMenu, chooseAccessoryMenu(definitions, actor, accessoryOptions))
+  if (accessoryOptions != null)
+    menuFlower(definitions, Text.gui_chooseAccessoryMenu, chooseAccessoryMenu(definitions, actor, accessoryOptions))(state)
   else
     characterInfoView(definitions, deck, actor)
 }
