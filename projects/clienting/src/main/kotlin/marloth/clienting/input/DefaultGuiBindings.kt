@@ -13,7 +13,7 @@ fun defaultKeyboardMenuBindings() = mapOf(
     GLFW.GLFW_KEY_LEFT to CharacterCommands.moveLeft,
     GLFW.GLFW_KEY_RIGHT to CharacterCommands.moveRight,
     GLFW.GLFW_KEY_DOWN to CharacterCommands.moveDown,
-    GLFW.GLFW_KEY_ESCAPE to GuiCommandType.menu,
+    GLFW.GLFW_KEY_ESCAPE to GuiCommandType.menuBack,
     GLFW.GLFW_KEY_ENTER to GuiCommandType.menuSelect,
     GLFW.GLFW_KEY_SPACE to GuiCommandType.menuSelect
 ) + defaultSharedKeyboardBindings

@@ -1,5 +1,7 @@
 package marloth.clienting.menus
 
+import marloth.clienting.MarlothBloomState
+import marloth.clienting.StateFlower
 import silentorb.mythic.bloom.*
 import silentorb.mythic.bloom.next.*
 import silentorb.mythic.drawing.Canvas
@@ -92,7 +94,7 @@ fun merchantInfoFlower(customerMoney: Int) =
         )
     )
 
-fun merchantView(textResources: TextResources, definitions: AccessoryDefinitions, deck: Deck, player: Id): Flower {
+fun merchantView(textResources: TextResources, definitions: AccessoryDefinitions, deck: Deck, player: Id): StateFlower = { state ->
   val merchant = getPlayerInteractingWith(deck, player)!!
   val customerMoney = deck.characters[player]!!.money
   val buttons = deck.attachments
@@ -101,9 +103,9 @@ fun merchantView(textResources: TextResources, definitions: AccessoryDefinitions
         wareMenuItem(textResources, definitions, deck, merchant, player, customerMoney, id)
       }
 
-  return dialog(Text.gui_merchant)(
+  dialog(Text.gui_merchant)(
       list(horizontalPlane, 10)(listOf(
-          embeddedMenuFlower(buttons),
+          embeddedMenuFlower(buttons, state.menuFocusIndex),
           merchantInfoFlower(customerMoney)
       ))
   )

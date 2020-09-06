@@ -14,15 +14,13 @@ import silentorb.mythic.aura.SoundLibrary
 import silentorb.mythic.aura.newAudioState
 import silentorb.mythic.bloom.BloomState
 import silentorb.mythic.bloom.input.newBloomInputState
-import silentorb.mythic.bloom.next.Box
-import silentorb.mythic.bloom.next.LogicModule
-import silentorb.mythic.bloom.next.emptyLogic
-import silentorb.mythic.bloom.next.newBloomState
+import silentorb.mythic.bloom.next.*
 import silentorb.mythic.bloom.updateBloomState
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.haft.*
+import silentorb.mythic.happenings.Events
 import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.lookinglass.mapAnimationInfo
 import silentorb.mythic.lookinglass.texturing.TextureLoadingState
@@ -46,6 +44,7 @@ data class MarlothBloomState(
 )
 
 typealias MarlothBloomStateMap = Map<Id, MarlothBloomState>
+typealias StateFlower = (MarlothBloomState) -> Flower
 
 data class ClientState(
     val audio: AudioState,
@@ -53,6 +52,7 @@ data class ClientState(
     val commands: List<HaftCommand>,
     val input: InputState,
     val marching: MarchingState,
+    val gameEvents: Events,
 
     // Players could be extracted from the world deck except the world does not care about player order.
     // Player order is only a client concern, and only for local multiplayer.
@@ -84,7 +84,8 @@ fun newClientState(platform: Platform, inputConfig: GameInputConfig, audioConfig
         audio = newAudioState(audioConfig.soundVolume),
         commands = listOf(),
         players = listOf(),
-        marching = newMarchingState()
+        marching = newMarchingState(),
+        gameEvents = listOf()
     )
 
 fun playerViews(client: ClientState): Map<Id, ViewId?> =
@@ -143,7 +144,7 @@ fun pruneBag(bloomState: BloomState): BloomState {
 
 val clientBloomModule: LogicModule = emptyLogic
 
-fun updateClientBloomStates(boxes: List<Box>, bloomStates: Map<Id, MarlothBloomState>, deviceStates: List<InputDeviceState>, commands: HaftCommands, players: List<Id>): Map<Id, BloomState> {
+fun updateClientBloomStates(boxes: Collection<Box>, bloomStates: Map<Id, MarlothBloomState>, deviceStates: List<InputDeviceState>, commands: HaftCommands, players: List<Id>): Map<Id, BloomState> {
   val baseBloomInputState = newBloomInputState(deviceStates.last())
 
   return players.zip(boxes) { player, box ->
@@ -156,7 +157,7 @@ fun updateClientBloomStates(boxes: List<Box>, bloomStates: Map<Id, MarlothBloomS
       .associate { it }
 }
 
-fun updateClient(client: Client, worlds: List<World>, boxes: List<Box>, clientState: ClientState): ClientState {
+fun updateClient(client: Client, worlds: List<World>, boxes: Collection<Box>, playerBloomDefinitions: Map<Id, BloomDefinition>, clientState: ClientState): ClientState {
   updateMousePointerVisibility(client.platform)
   val deviceStates = updateInputDeviceStates(client.platform.input, clientState.input.deviceStates)
   val input = clientState.input.copy(
@@ -164,26 +165,36 @@ fun updateClient(client: Client, worlds: List<World>, boxes: List<Box>, clientSt
   )
   val initialCommands = gatherInputCommands(clientState.input, playerViews(clientState))
   val bloomStates = updateClientBloomStates(boxes, clientState.bloomStates, clientState.input.deviceStates, initialCommands, clientState.players)
-  val commandsFromGui = bloomStates
-      .flatMap { (player, bloomState) ->
-        guiEvents(bloomState.bag)
-            .mapNotNull {
-              if (it.client != null)
-                simpleCommand(it.client.type, 0, player, it.client.data)
-              else
-                null
-            }
+  val menuEvents = playerBloomDefinitions.mapValues { (player, definition) ->
+    val state = clientState.bloomStates[player]
+    if (state != null)
+      emitMenuEvents(definition.menu, state.menuFocusIndex, initialCommands.filter { it.target == player })
+    else
+      listOf()
+  }
+
+  val menuClientCommands = menuEvents
+      .flatMap { (player, events) ->
+        events
+            .mapNotNull { it.client }
+            .map { simpleCommand(it.type, 0, player, it.data) }
       }
 
-  val commands = initialCommands.plus(commandsFromGui)
+  val menuGameEvents = menuEvents.values
+      .flatMap { events ->
+        events.mapNotNull { it.server }
+      }
+
+  val commands = initialCommands.plus(menuClientCommands)
   applyCommandsToExternalSystem(client, commands)
-  val playerViews = updateClientCurrentMenus(worlds.last().deck, clientState.bloomStates, commands, clientState.players)
+  val nextBloomStates = updateClientCurrentMenus(worlds.last().deck, clientState.bloomStates, playerBloomDefinitions, commands, clientState.players)
 
   return clientState.copy(
       audio = updateClientAudio(client, worlds, clientState.audio),
       input = input,
-      bloomStates = playerViews.mapValues { it.value.copy(bloom = bloomStates[it.key]!!) },
-      commands = commands
+      bloomStates = nextBloomStates.mapValues { it.value.copy(bloom = bloomStates[it.key]!!) },
+      commands = commands,
+      gameEvents = menuGameEvents
   )
 }
 

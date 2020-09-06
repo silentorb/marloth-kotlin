@@ -2,6 +2,7 @@ package marloth.clienting.menus
 
 import marloth.clienting.ClientState
 import marloth.clienting.MarlothBloomState
+import marloth.clienting.StateFlower
 import marloth.clienting.getPlayerBloomState
 import marloth.clienting.hud.hudLayout
 import marloth.clienting.input.GuiCommandType
@@ -36,10 +37,14 @@ enum class ViewId {
   victory
 }
 
-//val pauseViews = listOf(
-//    ViewId.mainMenu,
-//    ViewId.victory
-//)
+data class BloomDefinition(
+    val menu: Menu?
+)
+
+fun newBloomDefinition(data: Map<String, Any>): BloomDefinition =
+    BloomDefinition(
+        menu = getBagEntry(data, menuKey) { null }
+    )
 
 fun gameIsActive(world: World?): Boolean =
     world != null && world.global.gameOver == null
@@ -94,19 +99,21 @@ fun victoryMenu() = listOfNotNull(
     SimpleMenuItem(Text.message_victory, command = GuiCommandType.newGame)
 )
 
-fun viewSelect(textResources: TextResources, definitions: Definitions, world: World?, state: MarlothBloomState, player: Id): Flower? {
+val emptyViewFlower: StateFlower = { emptyFlower }
+
+fun viewSelect(textResources: TextResources, definitions: Definitions, world: World?, state: MarlothBloomState, player: Id): StateFlower? {
   return when (state.view) {
-    ViewId.audioOptions -> emptyFlower
-    ViewId.displayOptions -> emptyFlower
-    ViewId.gamepadOptions -> emptyFlower
-    ViewId.inputOptions -> inputOptionsMenu(definitions)(state)
-    ViewId.mouseOptions -> emptyFlower
-    ViewId.options -> optionsMenu(definitions)(state)
-    ViewId.characterInfo -> characterInfoViewOrChooseAbilityMenu(definitions, world!!.deck, player)(state)
-    ViewId.chooseProfessionMenu -> menuFlower(definitions, Text.gui_chooseProfessionMenu, chooseProfessionMenu(player))(state)
-    ViewId.mainMenu -> mainMenu(definitions, world)(state)
+    ViewId.audioOptions -> emptyViewFlower
+    ViewId.displayOptions -> emptyViewFlower
+    ViewId.gamepadOptions -> emptyViewFlower
+    ViewId.inputOptions -> inputOptionsMenu(definitions)
+    ViewId.mouseOptions -> emptyViewFlower
+    ViewId.options -> optionsMenu(definitions)
+    ViewId.characterInfo -> characterInfoViewOrChooseAbilityMenu(definitions, world!!.deck, player)
+    ViewId.chooseProfessionMenu -> menuFlower(definitions, Text.gui_chooseProfessionMenu, chooseProfessionMenu(player))
+    ViewId.mainMenu -> mainMenu(definitions, world)
     ViewId.merchant -> merchantView(textResources, definitions.accessories, world!!.deck, player)
-    ViewId.victory -> menuFlower(definitions, Text.gui_victory, victoryMenu())(state)
+    ViewId.victory -> menuFlower(definitions, Text.gui_victory, victoryMenu())
     null -> null
   }
 }
@@ -115,7 +122,7 @@ fun guiLayout(textResources: TextResources, definitions: Definitions, clientStat
   val state = clientState.bloomStates[player]
   return compose(listOfNotNull(
       if (world != null) hudLayout(textResources, world, player, state?.view) else null,
-      if (state != null) viewSelect(textResources, definitions, world, state, player) else null
+      if (state != null) viewSelect(textResources, definitions, world, state, player)?.invoke(state) else null
   ))
 }
 

@@ -1,6 +1,7 @@
 package marloth.clienting.menus
 
 import marloth.clienting.MarlothBloomState
+import marloth.clienting.StateFlower
 import marloth.definition.misc.staticDamageTypes
 import marloth.scenery.enums.Text
 import simulation.accessorize.getAccessories
@@ -74,7 +75,7 @@ fun characterInfoView(definitions: Definitions, deck: Deck, actor: Id): Flower {
   )
 }
 
-fun characterInfoViewOrChooseAbilityMenu(definitions: Definitions, deck: Deck, actor: Id): (MarlothBloomState) -> Flower = { state ->
+fun characterInfoViewOrChooseAbilityMenu(definitions: Definitions, deck: Deck, actor: Id): StateFlower = { state ->
   val character = deck.characters[actor]!!
   val accessoryOptions = character.accessoryOptions
   if (accessoryOptions != null)
