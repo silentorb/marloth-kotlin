@@ -44,13 +44,13 @@ fun getHoverIndex(hoverBoxes: List<Box>): Int? =
     hoverBoxes
         .firstNotNull { it.attributes[menuItemIndexKey] as? Int }
 
-fun updateMenuFocus(stack: MenuStack, menuSize: Int, commands: List<Any>, index: Int) =
+fun updateMenuFocus(stack: MenuStack, menuSize: Int, commands: List<Any>, hoverFocusIndex: Int?, index: Int) =
     when {
       commands.contains(CharacterRigCommands.moveDown) -> cycle(index + 1, menuSize)
       commands.contains(CharacterRigCommands.moveUp) -> cycle(index - 1, menuSize)
       commands.contains(GuiCommandType.navigate) -> 0
       commands.contains(GuiCommandType.menuBack) -> stack.lastOrNull()?.focusIndex ?: 0
-      else -> index
+      else -> hoverFocusIndex ?: index
     }
 
 fun updateMenuStack(commands: List<Any>, state: MarlothBloomState): MenuStack {

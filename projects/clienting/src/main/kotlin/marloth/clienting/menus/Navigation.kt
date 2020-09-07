@@ -64,8 +64,12 @@ fun updateMarlothBloomState(
   val menuSize = bloomDefinition.menu?.size
   val commandTypes = commands.map { it.type }
   val menuFocusIndex = if (menuSize != null) {
-    val hoverFocusIndex = getHoverIndex(hoverBoxes)
-    hoverFocusIndex ?: updateMenuFocus(state.menuStack, menuSize, commandTypes, state.menuFocusIndex)
+    val hoverFocusIndex = if (commandTypes.contains(GuiCommandType.mouseMove))
+      getHoverIndex(hoverBoxes)
+    else
+      null
+
+    updateMenuFocus(state.menuStack, menuSize, commandTypes, hoverFocusIndex, state.menuFocusIndex)
   } else
     0
 
