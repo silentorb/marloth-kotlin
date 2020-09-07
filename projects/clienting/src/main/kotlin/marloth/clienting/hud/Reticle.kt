@@ -1,9 +1,6 @@
 package marloth.clienting.hud
 
-import silentorb.mythic.bloom.Depiction
-import silentorb.mythic.bloom.centered
-import silentorb.mythic.bloom.depict
-import silentorb.mythic.bloom.next.*
+import silentorb.mythic.bloom.*
 import silentorb.mythic.spatial.Vector2
 import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.spatial.toVector2

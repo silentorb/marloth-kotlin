@@ -6,7 +6,6 @@ import marloth.clienting.input.GuiCommandType
 import marloth.clienting.resources.UiTextures
 import marloth.scenery.enums.Text
 import silentorb.mythic.bloom.*
-import silentorb.mythic.bloom.next.*
 import silentorb.mythic.drawing.Canvas
 import silentorb.mythic.drawing.grayTone
 import silentorb.mythic.glowing.globalState
@@ -63,13 +62,13 @@ fun menuButton(flower: MenuItemFlower, hasFocus: Boolean): Flower = { seed: Seed
 fun simpleMenuButton(content: String): MenuItemFlower = { hasFocus ->
   { seed: Seed ->
     Box(
+        name = "simple menu button",
         bounds = Bounds(
             dimensions = buttonDimensions
         ),
         depiction = drawMenuButton(
             ButtonState(content, hasFocus)
-        ),
-        name = "simple menu button"
+        )
     )
   }
 }
@@ -121,7 +120,7 @@ fun menuFlower(definitions: Definitions, title: Text, source: List<SimpleMenuIte
           depict(solidBackground(faintBlack))
       ),
       versionDisplay(definitions.applicationInfo.version),
-      div(reverse = centerDialog, data = mapOf(menuKey to menu))(
+      div(reverse = centerDialog, attributes = mapOf(menuKey to menu))(
           reversePair(verticalPlane, 20)(
               Pair(
                   div(reverse = reverseOffset(left = centered), forward = forwardDimensions(fixed(500), fixed(90)))(

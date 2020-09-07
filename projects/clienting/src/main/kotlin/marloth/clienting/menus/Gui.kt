@@ -8,13 +8,10 @@ import marloth.clienting.hud.hudLayout
 import marloth.clienting.input.GuiCommandType
 import marloth.scenery.enums.CharacterCommands
 import marloth.scenery.enums.Text
-import silentorb.mythic.bloom.BloomEvent
-import silentorb.mythic.bloom.Depiction
-import silentorb.mythic.bloom.existingOrNewState
-import silentorb.mythic.bloom.next.*
-import silentorb.mythic.bloom.solidBackground
+import silentorb.mythic.bloom.*
 import silentorb.mythic.drawing.grayTone
 import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.firstNotNull
 import silentorb.mythic.haft.HaftCommands
 import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.spatial.Vector2i
@@ -41,9 +38,18 @@ data class BloomDefinition(
     val menu: Menu?
 )
 
-fun newBloomDefinition(data: Map<String, Any>): BloomDefinition =
+inline fun <reified T> findAttributeValue(boxes: List<Box>, key: String): T? =
+    boxes.firstNotNull {
+      val value = it.attributes[key]
+      if (value != null)
+        value as? T
+      else
+        null
+    }
+
+fun newBloomDefinition(boxes: List<Box>): BloomDefinition =
     BloomDefinition(
-        menu = getBagEntry(data, menuKey) { null }
+        menu = findAttributeValue<Menu>(boxes, menuKey)
     )
 
 fun gameIsActive(world: World?): Boolean =
@@ -118,20 +124,20 @@ fun viewSelect(textResources: TextResources, definitions: Definitions, world: Wo
   }
 }
 
-fun guiLayout(textResources: TextResources, definitions: Definitions, clientState: ClientState, world: World?, player: Id): Flower {
+fun guiLayout(definitions: Definitions, clientState: ClientState, world: World?, player: Id): Flower {
   val state = clientState.bloomStates[player]
   return compose(listOfNotNull(
-      if (world != null) hudLayout(textResources, world, player, state?.view) else null,
-      if (state != null) viewSelect(textResources, definitions, world, state, player)?.invoke(state) else null
+      if (world != null) hudLayout(definitions.textLibrary, world, player, state?.view) else null,
+      if (state != null) viewSelect(definitions.textLibrary, definitions, world, state, player)?.invoke(state) else null
   ))
 }
 
-fun layoutPlayerGui(textResources: TextResources, definitions: Definitions, clientState: ClientState, world: World?,
-                    dimensions: Vector2i, player: Id): Box {
-  val layout = guiLayout(textResources, definitions, clientState, world, player)
+fun layoutPlayerGui(definitions: Definitions, clientState: ClientState, world: World?, dimensions: Vector2i,
+                    player: Id): Box {
+  val layout = guiLayout(definitions, clientState, world, player)
   val bloomState = getPlayerBloomState(clientState.bloomStates, player)
   val seed = Seed(
-      bag = bloomState.bloom.resourceBag.plus(textResourcesKey to textResources),
+      bag = bloomState.bloom.resourceBag.plus(textResourcesKey to definitions.textLibrary),
       dimensions = dimensions
   )
   return layout(seed)

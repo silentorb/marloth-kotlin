@@ -2,13 +2,13 @@ package marloth.clienting.menus
 
 import marloth.clienting.MarlothBloomState
 import marloth.clienting.MarlothBloomStateMap
+import marloth.clienting.PlayerBoxes
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.newMarlothBloomState
-import silentorb.mythic.bloom.next.Box
-import silentorb.mythic.bloom.next.flattenAllBoxes
-import silentorb.mythic.bloom.next.getHoverBoxes
+import silentorb.mythic.bloom.Box
+import silentorb.mythic.bloom.flattenAllBoxes
+import silentorb.mythic.bloom.getHoverBoxes
 import silentorb.mythic.ent.Id
-import silentorb.mythic.haft.HaftCommand
 import silentorb.mythic.haft.HaftCommands
 import silentorb.mythic.spatial.Vector2i
 import simulation.main.Deck
@@ -81,38 +81,17 @@ fun updateMarlothBloomState(
     )
 }
 
-fun updateClientCurrentMenus(deck: Deck, bloomStates: MarlothBloomStateMap,
-                             playerBloomDefinitions: Map<Id, BloomDefinition>,
-                             mousePosition: Vector2i,
-                             boxes: Map<Id, Box>,
-                             events: HaftCommands, players: List<Id>): MarlothBloomStateMap {
-  return players
-      .associateWith { player ->
+fun updateMenus(
+    bloomStates: MarlothBloomStateMap,
+    playerBloomDefinitions: Map<Id, BloomDefinition>,
+    mousePosition: Vector2i,
+    boxes: PlayerBoxes,
+    events: HaftCommands): MarlothBloomStateMap {
+  return playerBloomDefinitions
+      .mapValues { (player, bloomDefinition) ->
         val playerEvents = events.filter { it.target == player }
         val state = bloomStates[player] ?: newMarlothBloomState()
-        val bloomDefinition = playerBloomDefinitions[player]
-        if (bloomDefinition == null)
-          state
-        else {
-          val hoverBoxes = getHoverBoxes(mousePosition, flattenAllBoxes(boxes[player]!!))
-          updateMarlothBloomState(state, bloomDefinition, hoverBoxes, playerEvents)
-        }
-//        val navigate = playerEvents.firstOrNull { it.type == GuiCommandType.navigate }
-//        val view = playerViews[player] ?: listOf()
-//        val bag = bloomStates[player]?.bag ?: mapOf()
-//        if (navigate != null)
-//          view + MenuLayer(view = navigate.value!! as ViewId, focusIndex = getMenuFocusIndex(bag))
-//        else {
-//          val command = playerEvents.firstOrNull()
-//          if (command != null) {
-//            nextView(command.type, view)
-//          } else
-//            view
-//        }
-
-//    when (manuallyChangedView) {
-//      null, ViewId.none, ViewId.chooseProfessionMenu -> fallBackMenus(deck, player)
-//      else -> manuallyChangedView
-//    }
+        val hoverBoxes = getHoverBoxes(mousePosition, boxes[player]!!)
+        updateMarlothBloomState(state, bloomDefinition, hoverBoxes, playerEvents)
       }
 }

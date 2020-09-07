@@ -9,7 +9,7 @@ import marloth.clienting.rendering.renderLayersWithMarching
 import marloth.integration.debug.labRender
 import marloth.integration.misc.AppState
 import marloth.integration.scenery.createScene
-import silentorb.mythic.bloom.next.Box
+import silentorb.mythic.bloom.Box
 import silentorb.mythic.bloom.renderLayout
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.lookinglass.*

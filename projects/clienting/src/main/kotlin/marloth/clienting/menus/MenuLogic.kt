@@ -3,9 +3,8 @@ package marloth.clienting.menus
 import marloth.clienting.MarlothBloomState
 import marloth.clienting.input.GuiCommandType
 import marloth.scenery.enums.CharacterRigCommands
-import silentorb.mythic.bloom.next.Box
+import silentorb.mythic.bloom.Box
 import silentorb.mythic.ent.firstNotNull
-import silentorb.mythic.haft.HaftCommand
 import silentorb.mythic.haft.HaftCommands
 
 const val menuKey = "silentorb.menu"

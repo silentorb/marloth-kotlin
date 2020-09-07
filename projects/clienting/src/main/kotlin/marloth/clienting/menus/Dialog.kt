@@ -1,7 +1,6 @@
 package marloth.clienting.menus
 
 import silentorb.mythic.bloom.*
-import silentorb.mythic.bloom.next.*
 import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.spatial.Vector2i
 import marloth.scenery.enums.Text
@@ -58,10 +57,10 @@ fun reversePair(plane: Plane, spacing: Int = 0, name: String = "reversePair"): (
     val boxes = listOf(top, newSecond).reversed()
     Box(
         name = name,
-        boxes = boxes,
         bounds = Bounds(
             dimensions = plane(Vector2i(topDimensions.x + bottomDimensions.x, bottomDimensions.y))
-        )
+        ),
+        boxes = boxes
     )
   }
 }

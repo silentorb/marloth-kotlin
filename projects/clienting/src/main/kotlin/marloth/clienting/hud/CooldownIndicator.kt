@@ -3,7 +3,6 @@ package marloth.clienting.hud
 import marloth.clienting.menus.textStyles
 import org.lwjgl.opengl.GL11
 import silentorb.mythic.bloom.*
-import silentorb.mythic.bloom.next.*
 import silentorb.mythic.drawing.SingleColorShader
 import silentorb.mythic.drawing.createCircleList
 import silentorb.mythic.drawing.getStaticCanvasDependencies

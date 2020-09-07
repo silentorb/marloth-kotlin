@@ -2,8 +2,8 @@ package marloth.clienting.menus
 
 import marloth.clienting.canvasRendererKey
 import silentorb.mythic.bloom.Bounds
-import silentorb.mythic.bloom.next.Box
-import silentorb.mythic.bloom.next.Flower
+import silentorb.mythic.bloom.Box
+import silentorb.mythic.bloom.Flower
 import silentorb.mythic.bloom.textDepiction
 import silentorb.mythic.drawing.globalFonts
 import silentorb.mythic.ent.Id
@@ -30,11 +30,11 @@ fun localizedLabel(style: IndexedTextStyle, text: Text): Flower = { seed ->
   val config = TextConfiguration(content, Vector2(), resolveTextStyle(globalFonts(), style))
   val dimensions = calculateTextDimensions(config)
   Box(
+      name = if (content.length < 32) content else content.substring(0, 32),
       bounds = Bounds(
           dimensions = dimensions.toVector2i()
       ),
-      depiction = textDepiction(style, content),
-      name = if (content.length < 32) content else content.substring(0, 32)
+      depiction = textDepiction(style, content)
   )
 }
 

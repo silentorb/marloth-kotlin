@@ -1,15 +1,12 @@
 package marloth.integration.misc
 
-import marloth.clienting.ClientState
-import marloth.clienting.MarlothBloomStateMap
+import marloth.clienting.*
 import marloth.clienting.hud.updateTargeting
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.input.mouseLookEvents
 import marloth.clienting.menus.BloomDefinition
 import marloth.clienting.menus.ViewId
-import marloth.clienting.menus.layoutPlayerGui
 import marloth.clienting.menus.newBloomDefinition
-import marloth.clienting.updateClient
 import marloth.integration.clienting.renderMain
 import marloth.integration.clienting.updateAppStateForFirstNewPlayer
 import marloth.integration.clienting.updateAppStateForNewPlayers
@@ -18,14 +15,14 @@ import marloth.integration.scenery.updateFlyThroughCamera
 import marloth.scenery.enums.CharacterCommands
 import persistence.Database
 import persistence.createVictory
-import silentorb.mythic.bloom.next.Box
-import silentorb.mythic.bloom.next.flattenBoxData
-import silentorb.mythic.bloom.toAbsoluteBounds
+import silentorb.mythic.bloom.Box
+import silentorb.mythic.bloom.toAbsoluteBoundsRecursive
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.incrementGlobalDebugLoopNumber
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.ent.pipe
+import silentorb.mythic.ent.singleValueCache
 import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.lookinglass.getPlayerViewports
@@ -143,7 +140,7 @@ fun updateWorlds(app: GameApp, previousClient: ClientState, clientState: ClientS
   }
 }
 
-fun updateFixedInterval(app: GameApp, boxes: Map<Id, Box>, playerBloomDefinitions: Map<Id, BloomDefinition>): (AppState) -> AppState =
+fun updateFixedInterval(app: GameApp, boxes: PlayerBoxes, playerBloomDefinitions: Map<Id, BloomDefinition>): (AppState) -> AppState =
     pipe(
         { appState ->
           app.platform.process.pollEvents()
@@ -169,62 +166,50 @@ fun updateFixedInterval(app: GameApp, boxes: Map<Id, Box>, playerBloomDefinition
         updateAppStateForNewPlayers
     )
 
-fun layoutPlayerGui(app: GameApp, appState: AppState): (Id, Vector2i) -> Box = { player, dimensions ->
-  val world = appState.worlds.lastOrNull()
-  layoutPlayerGui(app.client.textResources, app.definitions, appState.client, world, dimensions, player)
-}
-
-fun layoutGui(app: GameApp, appState: AppState, dimensions: List<Vector2i>): Map<Id, Box> {
-  val players = appState.client.players
-  return if (players.none()) {
-    mapOf()
-  } else {
-    players.zip(dimensions) { player, d -> player to layoutPlayerGui(app, appState)(player, d) }
-        .associate { it }
-  }
-}
-
-fun updateAppState(app: GameApp): (AppState) -> AppState = { appState ->
-  incrementGlobalDebugLoopNumber(60)
+fun layoutBoxes(app: GameApp, appState: AppState): Map<Id, Box> {
   val windowInfo = app.client.getWindowInfo()
   val viewports = getPlayerViewports(appState.client.players.size, windowInfo.dimensions)
   val viewportDimensions = viewports.map { Vector2i(it.z, it.w) }
-  val playerBoxes = layoutGui(app, appState, viewportDimensions)
-  val playerBloomDefinitions = playerBoxes
-      .mapValues {
-        newBloomDefinition(flattenBoxData(listOf(it.value)))
+  val playerBoxes = layoutGui(app.definitions, appState, viewportDimensions)
+  return playerBoxes.mapValues { toAbsoluteBoundsRecursive(Vector2i.zero, it.value) }
+}
+
+fun updateFixedIntervalSteps(app: GameApp, layoutBoxes: (AppState) -> Map<Id, Box>, remainingSteps: Int, appState: AppState): AppState =
+    if (remainingSteps == 0)
+      appState
+    else {
+      val flatBoxes = flattenToPlayerBoxes(layoutBoxes(appState))
+      val playerBloomDefinitions = flatBoxes
+          .mapValues { newBloomDefinition(it.value) }
+      val nextState = updateFixedInterval(app, flatBoxes, playerBloomDefinitions)(appState)
+      val onUpdate = app.hooks?.onUpdate
+      if (onUpdate != null) {
+        onUpdate(nextState)
       }
-  val boxes = playerBoxes.mapValues { toAbsoluteBounds(Vector2i.zero, it.value) }
+      updateFixedIntervalSteps(app, layoutBoxes, remainingSteps - 1, nextState)
+    }
+
+fun updateAppState(app: GameApp): (AppState) -> AppState = { appState ->
+  incrementGlobalDebugLoopNumber(60)
   val (timestep, steps) = updateTimestep(appState.timestep, simulationDelta.toDouble())
   val onTimeStep = app.hooks?.onTimeStep
   if (onTimeStep != null) {
     onTimeStep(timestep, steps, appState)
   }
-  val nextMarching = if (steps <= 1)
-    renderMain(app.client, windowInfo, appState, boxes.values, viewports)
-  else
-    appState.client.marching
 
-  val nextAppState = appState.copy(
-      client = appState.client.copy(
-          marching = nextMarching
-      )
-  )
+  val layoutBoxes = singleValueCache { source: AppState -> layoutBoxes(app, source) }
 
-  (1..steps).fold(nextAppState) { state, step ->
-    val newBoxes = if (step == 1)
-      boxes
-    else
-      layoutGui(app, state, viewportDimensions)
-
-    val result = updateFixedInterval(app, newBoxes, playerBloomDefinitions)(state)
-    val onUpdate = app.hooks?.onUpdate
-    if (onUpdate != null) {
-      onUpdate(result)
-    }
-    result
-  }
+  val nextAppState = updateFixedIntervalSteps(app, layoutBoxes, steps, appState)
       .copy(
           timestep = timestep
       )
+
+  if (steps <= 1) {
+    val windowInfo = app.client.getWindowInfo()
+    val viewports = getPlayerViewports(appState.client.players.size, windowInfo.dimensions)
+    val boxes = layoutBoxes(nextAppState)
+    renderMain(app.client, windowInfo, nextAppState, boxes.values, viewports)
+  }
+
+  nextAppState
 }

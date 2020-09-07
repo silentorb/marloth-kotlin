@@ -3,6 +3,7 @@ package marloth.clienting
 import marloth.clienting.audio.AudioConfig
 import marloth.clienting.audio.updateClientAudio
 import marloth.clienting.input.*
+import marloth.clienting.input.InputState
 import marloth.clienting.menus.*
 import marloth.clienting.rendering.MeshLoadingState
 import marloth.clienting.rendering.marching.MarchingState
@@ -12,14 +13,14 @@ import marloth.definition.texts.englishTextResources
 import silentorb.mythic.aura.AudioState
 import silentorb.mythic.aura.SoundLibrary
 import silentorb.mythic.aura.newAudioState
-import silentorb.mythic.bloom.BloomState
-import silentorb.mythic.bloom.input.newBloomInputState
-import silentorb.mythic.bloom.next.*
-import silentorb.mythic.bloom.updateBloomState
+import silentorb.mythic.bloom.*
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.fathom.misc.ModelFunction
-import silentorb.mythic.haft.*
+import silentorb.mythic.haft.HaftCommand
+import silentorb.mythic.haft.HaftCommands
+import silentorb.mythic.haft.simpleCommand
+import silentorb.mythic.haft.updateInputDeviceStates
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.lookinglass.mapAnimationInfo
@@ -61,10 +62,6 @@ data class ClientState(
     val players: List<Id>
 )
 
-//fun isMenuActive(state: ClientState): (Id) -> Boolean = { player ->
-//  state.playerViews[player] ?: ViewId.none != ViewId.none
-//}
-
 fun newMarlothBloomState() =
     MarlothBloomState(
         bloom = newBloomState(),
@@ -76,9 +73,7 @@ fun newMarlothBloomState() =
 fun getPlayerBloomState(bloomStates: Map<Id, MarlothBloomState>, player: Id): MarlothBloomState =
     bloomStates.getOrElse(player) { newMarlothBloomState() }
 
-//fun isAnyGuiActive(state: ClientState): Boolean = pauseViews.any { state.playerViews.values.contains(it) }
-
-fun newClientState(platform: Platform, inputConfig: GameInputConfig, audioConfig: AudioConfig) =
+fun newClientState(inputConfig: GameInputConfig, audioConfig: AudioConfig) =
     ClientState(
         input = newInputState(inputConfig),
         bloomStates = mapOf(),
@@ -136,50 +131,25 @@ fun getListenerPosition(deck: Deck): Vector3? {
   return body?.position
 }
 
-// So guiEvents are not persisted
-fun pruneBag(bloomState: BloomState): BloomState {
-  return bloomState.copy(
-      resourceBag = bloomState.resourceBag.minus(guiEventsKey)
-  )
-}
+typealias PlayerBoxes = Map<Id, List<Box>>
 
-val clientBloomModule: LogicModule = emptyLogic
+fun flattenToPlayerBoxes(boxes: Map<Id, Box>): PlayerBoxes =
+    boxes.mapValues { flattenAllBoxes(it.value).filter(::hasAttributes) }
 
-fun updateClientBloomStates(
-    boxes: Map<Id, Box>,
-    bloomStates: Map<Id, MarlothBloomState>,
-    deviceStates: List<InputDeviceState>,
-    commands: HaftCommands,
-    players: List<Id>
-): Map<Id, BloomState> {
-  val baseBloomInputState = newBloomInputState(deviceStates.last())
-
-  return players.map { player ->
-    val box = boxes[player]!!
-    val playerCommands = commands.filter { it.target == player }
-    val bloomInputState = baseBloomInputState.copy(events = haftToBloom(playerCommands))
-    val previousBloomState = getPlayerBloomState(bloomStates, player)
-    val (bloomState, _) = updateBloomState(clientBloomModule, box, pruneBag(previousBloomState.bloom), bloomInputState)
-    Pair(player, bloomState)
-  }
-      .associate { it }
-}
-
-fun updateClient(client: Client, worlds: List<World>, boxes: Map<Id, Box>, playerBloomDefinitions: Map<Id, BloomDefinition>, clientState: ClientState): ClientState {
+fun updateClient(client: Client, worlds: List<World>, playerBoxes: PlayerBoxes, playerBloomDefinitions: Map<Id, BloomDefinition>, clientState: ClientState): ClientState {
   updateMousePointerVisibility(client.platform)
   val deviceStates = updateInputDeviceStates(client.platform.input, clientState.input.deviceStates)
   val input = clientState.input.copy(
       deviceStates = deviceStates
   )
   val initialCommands = gatherInputCommands(clientState.input, input, playerViews(clientState))
-  val bloomStates = updateClientBloomStates(boxes, clientState.bloomStates, clientState.input.deviceStates, initialCommands, clientState.players)
-  val menuEvents = boxes
-      .mapValues { (player, box) ->
+  val mousePosition = clientState.input.deviceStates.first().mousePosition.toVector2i()
+  val menuEvents = playerBoxes
+      .mapValues { (player, boxes) ->
         val state = clientState.bloomStates[player]
         if (state != null) {
-          val attributeBoxes = flattenAllBoxes(box).filter(::hasAttributes)
-          val hoverBoxes = getHoverBoxes(deviceStates.first().mousePosition.toVector2i(), attributeBoxes)
-          getMenuEvents(attributeBoxes, hoverBoxes, initialCommands.filter { it.target == player })
+          val hoverBoxes = getHoverBoxes(mousePosition, boxes)
+          getMenuEvents(boxes, hoverBoxes, initialCommands.filter { it.target == player })
         } else
           listOf()
       }
@@ -198,12 +168,12 @@ fun updateClient(client: Client, worlds: List<World>, boxes: Map<Id, Box>, playe
 
   val commands = initialCommands.plus(menuClientCommands)
   applyCommandsToExternalSystem(client, commands)
-  val nextBloomStates = updateClientCurrentMenus(worlds.last().deck, clientState.bloomStates, playerBloomDefinitions, clientState.input.deviceStates.first().mousePosition.toVector2i(), boxes, commands, clientState.players)
+  val nextBloomStates = updateMenus(clientState.bloomStates, playerBloomDefinitions, mousePosition, playerBoxes, commands)
 
   return clientState.copy(
       audio = updateClientAudio(client, worlds, clientState.audio),
       input = input,
-      bloomStates = nextBloomStates.mapValues { it.value.copy(bloom = bloomStates[it.key]!!) },
+      bloomStates = nextBloomStates, //.mapValues { it.value.copy(bloom = bloomStates[it.key]!!) },
       commands = commands,
       gameEvents = menuGameEvents
   )
