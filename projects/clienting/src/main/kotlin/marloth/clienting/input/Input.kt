@@ -2,13 +2,13 @@ package marloth.clienting.input
 
 import silentorb.mythic.haft.*
 import marloth.clienting.PlayerViews
-import marloth.clienting.menus.ViewId
 import silentorb.mythic.characters.rigs.MouseLookEvent
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.haft.DeviceTypeMap
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.platforming.InputEvent
+import silentorb.mythic.platforming.mouseDeviceIndex
 import silentorb.mythic.spatial.Vector2
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.toVector2
@@ -115,10 +115,21 @@ fun getBinding(inputState: InputState, playerViews: PlayerViews): BindingSource 
     null
 }
 
-fun gatherInputCommands(inputState: InputState, playerViews: PlayerViews): HaftCommands {
-  val getBinding = getBinding(inputState, playerViews)
-  val deviceStates = inputState.deviceStates
-  return mapEventsToCommands(deviceStates, getBinding)
+fun isMouseDown(deviceStates: List<InputDeviceState>): Boolean =
+    deviceStates.any { state -> state.events.any { it.device == mouseDeviceIndex && it.index == 0 } }
+
+fun isMouseClickFinished(previous: List<InputDeviceState>, next: List<InputDeviceState>): Boolean =
+    isMouseDown(previous) && !isMouseDown(next)
+
+fun gatherInputCommands(previous: InputState, next: InputState, playerViews: PlayerViews): HaftCommands {
+  val getBinding = getBinding(next, playerViews)
+  val deviceStates = next.deviceStates
+  val commands = mapEventsToCommands(deviceStates, getBinding)
+
+  return if (isMouseClickFinished(previous.deviceStates, deviceStates))
+    commands + HaftCommand(type = GuiCommandType.mouseClick, device = mouseDeviceIndex, target = playerViews.keys.first())
+  else
+    commands
 }
 
 fun mouseLookEvents(dimensions: Vector2i, nextState: InputDeviceState, previousState: InputDeviceState?, character: Id?): Events {

@@ -13,41 +13,41 @@ import silentorb.mythic.haft.HaftCommands
 import silentorb.mythic.spatial.Vector2i
 import simulation.main.Deck
 
-fun lowerView(stack: MenuStack): MenuLayer? =
-    stack.dropLast(1).lastOrNull()
-
-fun nextView(stack: MenuStack, command: HaftCommand, view: ViewId?): ViewId? =
-    when (command.type) {
-      GuiCommandType.menu -> {
-        if (view != null)
-          null
-        else
-          ViewId.mainMenu
-      }
-
-      GuiCommandType.characterInfo -> {
-        if (view == ViewId.characterInfo)
-          null
-        else if (view == null)
-          ViewId.characterInfo
-        else
-          null
-      }
-
-      GuiCommandType.menuBack -> stack.lastOrNull()?.view
-
-      GuiCommandType.newGame -> null
-
-      GuiCommandType.navigate -> {
-        val destination = command.value
-        if (destination is ViewId)
-          destination
-        else
-          view
-      }
-
-      else -> view
+fun nextView(stack: MenuStack, commands: HaftCommands, view: ViewId?): ViewId? {
+  val commandTypes = commands.map { it.type }
+  return when {
+    commandTypes.contains(GuiCommandType.menu) -> {
+      if (view != null)
+        null
+      else
+        ViewId.mainMenu
     }
+
+    commandTypes.contains(GuiCommandType.characterInfo) -> {
+      if (view == ViewId.characterInfo)
+        null
+      else if (view == null)
+        ViewId.characterInfo
+      else
+        null
+    }
+
+    commandTypes.contains(GuiCommandType.menuBack) -> stack.lastOrNull()?.view
+
+    commandTypes.contains(GuiCommandType.newGame) -> null
+
+    commandTypes.contains(GuiCommandType.navigate) -> {
+      val command = commands.first { it.type == GuiCommandType.navigate }
+      val destination = command.value
+      if (destination is ViewId)
+        destination
+      else
+        view
+    }
+
+    else -> view
+  }
+}
 
 fun fallBackMenus(deck: Deck, player: Id): ViewId? =
     if (!deck.characters.containsKey(player))
@@ -59,25 +59,25 @@ fun updateMarlothBloomState(
     state: MarlothBloomState,
     bloomDefinition: BloomDefinition,
     hoverBoxes: List<Box>,
-    events: HaftCommands
+    commands: HaftCommands
 ): MarlothBloomState {
-  val command = events.firstOrNull()
   val menuSize = bloomDefinition.menu?.size
+  val commandTypes = commands.map { it.type }
   val menuFocusIndex = if (menuSize != null) {
     val hoverFocusIndex = getHoverIndex(hoverBoxes)
-    hoverFocusIndex ?: updateMenuFocus(state.menuStack, menuSize, command, state.menuFocusIndex)
+    hoverFocusIndex ?: updateMenuFocus(state.menuStack, menuSize, commandTypes, state.menuFocusIndex)
   } else
     0
 
-  return if (command == null)
+  return if (commands.none())
     state.copy(
         menuFocusIndex = menuFocusIndex
     )
   else
     state.copy(
-        view = nextView(state.menuStack, command, state.view),
+        view = nextView(state.menuStack, commands, state.view),
         menuFocusIndex = menuFocusIndex,
-        menuStack = updateMenuStack(command, state)
+        menuStack = updateMenuStack(commandTypes, state)
     )
 }
 
@@ -86,10 +86,9 @@ fun updateClientCurrentMenus(deck: Deck, bloomStates: MarlothBloomStateMap,
                              mousePosition: Vector2i,
                              boxes: Map<Id, Box>,
                              events: HaftCommands, players: List<Id>): MarlothBloomStateMap {
-  val narrowedEvents = events.filter { it.type != GuiCommandType.menuSelect }
   return players
       .associateWith { player ->
-        val playerEvents = narrowedEvents.filter { it.target == player }
+        val playerEvents = events.filter { it.target == player }
         val state = bloomStates[player] ?: newMarlothBloomState()
         val bloomDefinition = playerBloomDefinitions[player]
         if (bloomDefinition == null)

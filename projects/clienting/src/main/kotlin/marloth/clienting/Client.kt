@@ -171,15 +171,18 @@ fun updateClient(client: Client, worlds: List<World>, boxes: Map<Id, Box>, playe
   val input = clientState.input.copy(
       deviceStates = deviceStates
   )
-  val initialCommands = gatherInputCommands(clientState.input, playerViews(clientState))
+  val initialCommands = gatherInputCommands(clientState.input, input, playerViews(clientState))
   val bloomStates = updateClientBloomStates(boxes, clientState.bloomStates, clientState.input.deviceStates, initialCommands, clientState.players)
-  val menuEvents = playerBloomDefinitions.mapValues { (player, definition) ->
-    val state = clientState.bloomStates[player]
-    if (state != null)
-      getMenuEvents(definition.menu, state.menuFocusIndex, initialCommands.filter { it.target == player })
-    else
-      listOf()
-  }
+  val menuEvents = boxes
+      .mapValues { (player, box) ->
+        val state = clientState.bloomStates[player]
+        if (state != null) {
+          val attributeBoxes = flattenAllBoxes(box).filter(::hasAttributes)
+          val hoverBoxes = getHoverBoxes(deviceStates.first().mousePosition.toVector2i(), attributeBoxes)
+          getMenuEvents(attributeBoxes, hoverBoxes, initialCommands.filter { it.target == player })
+        } else
+          listOf()
+      }
 
   val menuClientCommands = menuEvents
       .flatMap { (player, events) ->
@@ -195,7 +198,7 @@ fun updateClient(client: Client, worlds: List<World>, boxes: Map<Id, Box>, playe
 
   val commands = initialCommands.plus(menuClientCommands)
   applyCommandsToExternalSystem(client, commands)
-  val nextBloomStates = updateClientCurrentMenus(worlds.last().deck, clientState.bloomStates, playerBloomDefinitions,clientState.input.deviceStates.first().mousePosition.toVector2i(), boxes, commands, clientState.players)
+  val nextBloomStates = updateClientCurrentMenus(worlds.last().deck, clientState.bloomStates, playerBloomDefinitions, clientState.input.deviceStates.first().mousePosition.toVector2i(), boxes, commands, clientState.players)
 
   return clientState.copy(
       audio = updateClientAudio(client, worlds, clientState.audio),

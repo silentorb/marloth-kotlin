@@ -9,6 +9,7 @@ enum class GuiCommandType {
   menu,
   menuBack,
   menuSelect,
+  mouseClick,
   navigate,
   newGame,
   quit

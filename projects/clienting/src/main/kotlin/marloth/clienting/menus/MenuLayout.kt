@@ -82,9 +82,17 @@ val embeddedMenuBox: (Menu) -> FlowerWrapper = { menu ->
 
 fun menuFlowerBase(menuBox: (Menu) -> FlowerWrapper): (Menu, Int) -> Flower = { menu, focusIndex ->
   val rows = menu
-      .mapIndexed { index, it ->
-        withAttributes(menuItemIndexKey to index)(
-            menuButton(it.flower, index == focusIndex)
+      .mapIndexed { index, item ->
+        val hasFocus = index == focusIndex
+        val flower = menuButton(item.flower, hasFocus)
+        val event = item.event
+        val attributes = if (hasFocus)
+          mapOf(onActivateKey to event, onClickKey to event)
+        else
+          mapOf()
+
+        withAttributes(attributes + (menuItemIndexKey to index))(
+            flower
         )
       }
 
