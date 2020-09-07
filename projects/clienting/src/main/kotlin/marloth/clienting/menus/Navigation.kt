@@ -2,13 +2,15 @@ package marloth.clienting.menus
 
 import marloth.clienting.MarlothBloomState
 import marloth.clienting.MarlothBloomStateMap
-import marloth.clienting.PlayerViews
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.newMarlothBloomState
-import silentorb.mythic.bloom.BloomState
+import silentorb.mythic.bloom.next.Box
+import silentorb.mythic.bloom.next.flattenAllBoxes
+import silentorb.mythic.bloom.next.getHoverBoxes
 import silentorb.mythic.ent.Id
 import silentorb.mythic.haft.HaftCommand
 import silentorb.mythic.haft.HaftCommands
+import silentorb.mythic.spatial.Vector2i
 import simulation.main.Deck
 
 fun lowerView(stack: MenuStack): MenuLayer? =
@@ -47,45 +49,55 @@ fun nextView(stack: MenuStack, command: HaftCommand, view: ViewId?): ViewId? =
       else -> view
     }
 
-fun updateMenuStack(command: HaftCommand, state: MarlothBloomState): MenuStack {
-  val stack = state.menuStack
-  return when (command.type) {
-    GuiCommandType.navigate -> stack + MenuLayer(state.view!!, state.menuFocusIndex)
-    GuiCommandType.menuBack -> stack.dropLast(1)
-    GuiCommandType.menu -> listOf()
-    else -> stack
-  }
-}
-
 fun fallBackMenus(deck: Deck, player: Id): ViewId? =
     if (!deck.characters.containsKey(player))
       ViewId.chooseProfessionMenu
     else
       null
 
-fun updateMarlothBloomState(state: MarlothBloomState, bloomDefinition: BloomDefinition, events: HaftCommands): MarlothBloomState {
+fun updateMarlothBloomState(
+    state: MarlothBloomState,
+    bloomDefinition: BloomDefinition,
+    hoverBoxes: List<Box>,
+    events: HaftCommands
+): MarlothBloomState {
   val command = events.firstOrNull()
   val menuSize = bloomDefinition.menu?.size
+  val menuFocusIndex = if (menuSize != null) {
+    val hoverFocusIndex = getHoverIndex(hoverBoxes)
+    hoverFocusIndex ?: updateMenuFocus(state.menuStack, menuSize, command, state.menuFocusIndex)
+  } else
+    0
+
   return if (command == null)
-    state
+    state.copy(
+        menuFocusIndex = menuFocusIndex
+    )
   else
     state.copy(
         view = nextView(state.menuStack, command, state.view),
-        menuFocusIndex = if (menuSize != null) updateMenuFocus(state.menuStack, menuSize, command, state.menuFocusIndex) else 0,
+        menuFocusIndex = menuFocusIndex,
         menuStack = updateMenuStack(command, state)
     )
 }
 
 fun updateClientCurrentMenus(deck: Deck, bloomStates: MarlothBloomStateMap,
                              playerBloomDefinitions: Map<Id, BloomDefinition>,
+                             mousePosition: Vector2i,
+                             boxes: Map<Id, Box>,
                              events: HaftCommands, players: List<Id>): MarlothBloomStateMap {
   val narrowedEvents = events.filter { it.type != GuiCommandType.menuSelect }
   return players
       .associateWith { player ->
         val playerEvents = narrowedEvents.filter { it.target == player }
         val state = bloomStates[player] ?: newMarlothBloomState()
-        val bloomDefinition = playerBloomDefinitions[player] ?: newBloomDefinition(mapOf())
-        updateMarlothBloomState(state, bloomDefinition, playerEvents)
+        val bloomDefinition = playerBloomDefinitions[player]
+        if (bloomDefinition == null)
+          state
+        else {
+          val hoverBoxes = getHoverBoxes(mousePosition, flattenAllBoxes(boxes[player]!!))
+          updateMarlothBloomState(state, bloomDefinition, hoverBoxes, playerEvents)
+        }
 //        val navigate = playerEvents.firstOrNull { it.type == GuiCommandType.navigate }
 //        val view = playerViews[player] ?: listOf()
 //        val bag = bloomStates[player]?.bag ?: mapOf()

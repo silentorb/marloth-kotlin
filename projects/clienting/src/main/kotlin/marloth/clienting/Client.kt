@@ -26,6 +26,7 @@ import silentorb.mythic.lookinglass.mapAnimationInfo
 import silentorb.mythic.lookinglass.texturing.TextureLoadingState
 import silentorb.mythic.platforming.Platform
 import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.toVector2i
 import silentorb.mythic.typography.loadFontSets
 import simulation.main.Deck
 import simulation.main.World
@@ -138,16 +139,23 @@ fun getListenerPosition(deck: Deck): Vector3? {
 // So guiEvents are not persisted
 fun pruneBag(bloomState: BloomState): BloomState {
   return bloomState.copy(
-      bag = bloomState.bag.minus(guiEventsKey)
+      resourceBag = bloomState.resourceBag.minus(guiEventsKey)
   )
 }
 
 val clientBloomModule: LogicModule = emptyLogic
 
-fun updateClientBloomStates(boxes: Collection<Box>, bloomStates: Map<Id, MarlothBloomState>, deviceStates: List<InputDeviceState>, commands: HaftCommands, players: List<Id>): Map<Id, BloomState> {
+fun updateClientBloomStates(
+    boxes: Map<Id, Box>,
+    bloomStates: Map<Id, MarlothBloomState>,
+    deviceStates: List<InputDeviceState>,
+    commands: HaftCommands,
+    players: List<Id>
+): Map<Id, BloomState> {
   val baseBloomInputState = newBloomInputState(deviceStates.last())
 
-  return players.zip(boxes) { player, box ->
+  return players.map { player ->
+    val box = boxes[player]!!
     val playerCommands = commands.filter { it.target == player }
     val bloomInputState = baseBloomInputState.copy(events = haftToBloom(playerCommands))
     val previousBloomState = getPlayerBloomState(bloomStates, player)
@@ -157,7 +165,7 @@ fun updateClientBloomStates(boxes: Collection<Box>, bloomStates: Map<Id, Marloth
       .associate { it }
 }
 
-fun updateClient(client: Client, worlds: List<World>, boxes: Collection<Box>, playerBloomDefinitions: Map<Id, BloomDefinition>, clientState: ClientState): ClientState {
+fun updateClient(client: Client, worlds: List<World>, boxes: Map<Id, Box>, playerBloomDefinitions: Map<Id, BloomDefinition>, clientState: ClientState): ClientState {
   updateMousePointerVisibility(client.platform)
   val deviceStates = updateInputDeviceStates(client.platform.input, clientState.input.deviceStates)
   val input = clientState.input.copy(
@@ -168,7 +176,7 @@ fun updateClient(client: Client, worlds: List<World>, boxes: Collection<Box>, pl
   val menuEvents = playerBloomDefinitions.mapValues { (player, definition) ->
     val state = clientState.bloomStates[player]
     if (state != null)
-      emitMenuEvents(definition.menu, state.menuFocusIndex, initialCommands.filter { it.target == player })
+      getMenuEvents(definition.menu, state.menuFocusIndex, initialCommands.filter { it.target == player })
     else
       listOf()
   }
@@ -187,7 +195,7 @@ fun updateClient(client: Client, worlds: List<World>, boxes: Collection<Box>, pl
 
   val commands = initialCommands.plus(menuClientCommands)
   applyCommandsToExternalSystem(client, commands)
-  val nextBloomStates = updateClientCurrentMenus(worlds.last().deck, clientState.bloomStates, playerBloomDefinitions, commands, clientState.players)
+  val nextBloomStates = updateClientCurrentMenus(worlds.last().deck, clientState.bloomStates, playerBloomDefinitions,clientState.input.deviceStates.first().mousePosition.toVector2i(), boxes, commands, clientState.players)
 
   return clientState.copy(
       audio = updateClientAudio(client, worlds, clientState.audio),

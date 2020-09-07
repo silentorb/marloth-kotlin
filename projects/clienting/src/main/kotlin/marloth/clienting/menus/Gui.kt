@@ -131,7 +131,7 @@ fun layoutPlayerGui(textResources: TextResources, definitions: Definitions, clie
   val layout = guiLayout(textResources, definitions, clientState, world, player)
   val bloomState = getPlayerBloomState(clientState.bloomStates, player)
   val seed = Seed(
-      bag = bloomState.bloom.bag.plus(textResourcesKey to textResources),
+      bag = bloomState.bloom.resourceBag.plus(textResourcesKey to textResources),
       dimensions = dimensions
   )
   return layout(seed)

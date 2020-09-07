@@ -20,7 +20,7 @@ import silentorb.mythic.spatial.Vector4i
 import simulation.misc.interpolateWorlds
 import simulation.updating.getIdle
 
-fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: List<Box>, viewports: List<Vector4i>
+fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: Collection<Box>, viewports: List<Vector4i>
 ): MarchingState {
   val renderer = client.renderer
 

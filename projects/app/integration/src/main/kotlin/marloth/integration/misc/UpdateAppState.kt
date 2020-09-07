@@ -1,36 +1,41 @@
 package marloth.integration.misc
 
-import marloth.clienting.*
+import marloth.clienting.ClientState
+import marloth.clienting.MarlothBloomStateMap
 import marloth.clienting.hud.updateTargeting
-import marloth.clienting.menus.*
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.input.mouseLookEvents
+import marloth.clienting.menus.BloomDefinition
+import marloth.clienting.menus.ViewId
+import marloth.clienting.menus.layoutPlayerGui
+import marloth.clienting.menus.newBloomDefinition
+import marloth.clienting.updateClient
 import marloth.integration.clienting.renderMain
 import marloth.integration.clienting.updateAppStateForFirstNewPlayer
 import marloth.integration.clienting.updateAppStateForNewPlayers
 import marloth.integration.front.GameApp
 import marloth.integration.scenery.updateFlyThroughCamera
-import silentorb.mythic.bloom.next.Box
-import silentorb.mythic.bloom.toAbsoluteBounds
-import silentorb.mythic.ent.Id
-import silentorb.mythic.ent.Table
-import silentorb.mythic.debugging.incrementGlobalDebugLoopNumber
-import silentorb.mythic.ent.pipe
-import silentorb.mythic.quartz.updateTimestep
-import silentorb.mythic.spatial.Vector2i
+import marloth.scenery.enums.CharacterCommands
 import persistence.Database
 import persistence.createVictory
-import silentorb.mythic.lookinglass.getPlayerViewports
-import simulation.entities.Player
-import silentorb.mythic.happenings.Events
-import silentorb.mythic.happenings.CharacterCommand
-import marloth.scenery.enums.CharacterCommands
+import silentorb.mythic.bloom.next.Box
 import silentorb.mythic.bloom.next.flattenBoxData
+import silentorb.mythic.bloom.toAbsoluteBounds
 import silentorb.mythic.debugging.getDebugBoolean
-import simulation.main.World
-import simulation.updating.simulationDelta
-import simulation.misc.Victory
+import silentorb.mythic.debugging.incrementGlobalDebugLoopNumber
+import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.Table
+import silentorb.mythic.ent.pipe
+import silentorb.mythic.happenings.CharacterCommand
+import silentorb.mythic.happenings.Events
+import silentorb.mythic.lookinglass.getPlayerViewports
+import silentorb.mythic.quartz.updateTimestep
+import silentorb.mythic.spatial.Vector2i
+import simulation.entities.Player
 import simulation.happenings.withSimulationEvents
+import simulation.main.World
+import simulation.misc.Victory
+import simulation.updating.simulationDelta
 import simulation.updating.updateWorld
 
 fun updateSimulationDatabase(db: Database, next: World, previous: World) {
@@ -138,7 +143,7 @@ fun updateWorlds(app: GameApp, previousClient: ClientState, clientState: ClientS
   }
 }
 
-fun updateFixedInterval(app: GameApp, boxes: Collection<Box>, playerBloomDefinitions: Map<Id, BloomDefinition>): (AppState) -> AppState =
+fun updateFixedInterval(app: GameApp, boxes: Map<Id, Box>, playerBloomDefinitions: Map<Id, BloomDefinition>): (AppState) -> AppState =
     pipe(
         { appState ->
           app.platform.process.pollEvents()
@@ -189,14 +194,14 @@ fun updateAppState(app: GameApp): (AppState) -> AppState = { appState ->
       .mapValues {
         newBloomDefinition(flattenBoxData(listOf(it.value)))
       }
-  val boxes = playerBoxes.values.map { toAbsoluteBounds(Vector2i.zero, it) }
+  val boxes = playerBoxes.mapValues { toAbsoluteBounds(Vector2i.zero, it.value) }
   val (timestep, steps) = updateTimestep(appState.timestep, simulationDelta.toDouble())
   val onTimeStep = app.hooks?.onTimeStep
   if (onTimeStep != null) {
     onTimeStep(timestep, steps, appState)
   }
   val nextMarching = if (steps <= 1)
-    renderMain(app.client, windowInfo, appState, boxes, viewports)
+    renderMain(app.client, windowInfo, appState, boxes.values, viewports)
   else
     appState.client.marching
 
@@ -210,7 +215,7 @@ fun updateAppState(app: GameApp): (AppState) -> AppState = { appState ->
     val newBoxes = if (step == 1)
       boxes
     else
-      layoutGui(app, state, viewportDimensions).values
+      layoutGui(app, state, viewportDimensions)
 
     val result = updateFixedInterval(app, newBoxes, playerBloomDefinitions)(state)
     val onUpdate = app.hooks?.onUpdate

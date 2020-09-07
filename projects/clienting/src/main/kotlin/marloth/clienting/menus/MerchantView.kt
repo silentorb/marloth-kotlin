@@ -1,18 +1,11 @@
 package marloth.clienting.menus
 
-import marloth.clienting.MarlothBloomState
 import marloth.clienting.StateFlower
 import silentorb.mythic.bloom.*
 import silentorb.mythic.bloom.next.*
 import silentorb.mythic.drawing.Canvas
 import silentorb.mythic.drawing.grayTone
 import silentorb.mythic.ent.Id
-import silentorb.mythic.spatial.Vector4
-import silentorb.mythic.spatial.toVector2
-import silentorb.mythic.spatial.toVector2i
-import silentorb.mythic.typography.TextConfiguration
-import silentorb.mythic.typography.calculateTextDimensions
-import silentorb.mythic.typography.resolveTextStyle
 import silentorb.mythic.spatial.Vector2i
 import marloth.scenery.enums.Text
 import simulation.entities.AttachmentCategory
@@ -27,17 +20,7 @@ fun drawWareButton(state: ButtonState): Depiction = { bounds: Bounds, canvas: Ca
     grayTone(0.25f)
 
   drawFill(bounds, canvas, background)
-  val style = if (state.hasFocus)
-    Pair(textStyles.smallBlack, LineStyle(Vector4(1f), 2f))
-  else
-    Pair(textStyles.smallBlack, LineStyle(Vector4(0f, 0f, 0f, 1f), 1f))
-
-  drawBorder(bounds, canvas, style.second)
-
-  val textConfig = TextConfiguration(state.text, bounds.position.toVector2(), resolveTextStyle(canvas.fonts, style.first))
-  val textDimensions = calculateTextDimensions(textConfig)
-  val position = centeredPosition(bounds, textDimensions.toVector2i())
-  canvas.drawText(position, style.first, state.text)
+  drawMenuButtonFront(state, bounds, canvas)
 }
 
 fun wareFlower(content: String, isEnabled: Boolean): MenuItemFlower = { hasFocus ->
@@ -105,7 +88,7 @@ fun merchantView(textResources: TextResources, definitions: AccessoryDefinitions
 
   dialog(Text.gui_merchant)(
       list(horizontalPlane, 10)(listOf(
-          embeddedMenuFlower(buttons, state.menuFocusIndex),
+          menuFlower(buttons, state.menuFocusIndex),
           merchantInfoFlower(customerMoney)
       ))
   )
