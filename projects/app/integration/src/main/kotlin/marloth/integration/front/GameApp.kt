@@ -1,5 +1,6 @@
 package marloth.integration.front
 
+import marloth.clienting.AppOptions
 import marloth.clienting.Client
 import marloth.clienting.definitionsFromClient
 import marloth.clienting.newClientState
@@ -36,7 +37,6 @@ typealias NewWorld = (GameApp) -> World
 
 data class GameApp(
     val platform: Platform,
-    val config: AppConfig,
     val client: Client,
     val db: Database = newDatabase("game.db"),
     val definitions: Definitions,
@@ -60,13 +60,11 @@ fun conditionalDebugHooks(): GameHooks? =
     else
       null
 
-fun newGameApp(platform: Platform, config: AppConfig): GameApp {
-  val client = newClient(platform, config.display)
+fun newGameApp(platform: Platform, client: Client): GameApp {
   val clientDefinitions = definitionsFromClient(client)
   val definitions = staticDefinitions(clientDefinitions, loadApplicationInfo())
   return GameApp(
       platform = platform,
-      config = config,
       client = client,
       definitions = definitions,
       newWorld = { gameApp -> generateWorld(definitions, getMeshInfo(gameApp.client)) },
@@ -74,13 +72,13 @@ fun newGameApp(platform: Platform, config: AppConfig): GameApp {
   )
 }
 
-fun runApp(platform: Platform, config: AppConfig) {
-  val display = config.display
-  platform.display.initialize(toPlatformDisplayConfig(config.display))
-  val app = newGameApp(platform, config)
+fun runApp(platform: Platform, options: AppOptions) {
+  platform.display.initialize(toPlatformDisplayConfig(options.display))
+  val app = newGameApp(platform, newClient(platform, options.display))
   val world = generateWorld(app.definitions, getMeshInfo(app.client))
   val state = AppState(
-      client = newClientState(config.input, config.audio),
+      client = newClientState(options.input, options.audio),
+      options = options,
       worlds = listOf(world),
       timestep = newTimestepState()
   )

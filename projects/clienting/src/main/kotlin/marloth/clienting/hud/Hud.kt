@@ -3,7 +3,7 @@ package marloth.clienting.hud
 import marloth.clienting.menus.TextResources
 import marloth.clienting.menus.ViewId
 import marloth.clienting.menus.black
-import marloth.clienting.menus.textStyles
+import marloth.clienting.menus.TextStyles
 import silentorb.mythic.bloom.*
 import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.debugging.getDebugBoolean
@@ -16,7 +16,7 @@ import simulation.misc.getPointCell
 import simulation.misc.getVictoryKeyStats
 import kotlin.math.roundToInt
 
-private val textStyle = textStyles.smallGray
+private val textStyle = TextStyles.smallGray
 
 data class Cooldown(
     val name: String,

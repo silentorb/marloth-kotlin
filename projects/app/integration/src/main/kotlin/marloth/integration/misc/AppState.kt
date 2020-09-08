@@ -1,5 +1,6 @@
 package marloth.integration.misc
 
+import marloth.clienting.AppOptions
 import marloth.clienting.ClientState
 import silentorb.mythic.quartz.TimestepState
 import silentorb.mythic.quartz.updateTimestep
@@ -8,6 +9,7 @@ import simulation.updating.simulationDelta
 
 data class AppState(
     val client: ClientState,
+    val options: AppOptions,
     val worlds: List<World>,
     val timestep: TimestepState
 )

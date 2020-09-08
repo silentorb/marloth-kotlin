@@ -1,6 +1,6 @@
 package marloth.clienting.hud
 
-import marloth.clienting.menus.textStyles
+import marloth.clienting.menus.TextStyles
 import org.lwjgl.opengl.GL11
 import silentorb.mythic.bloom.*
 import silentorb.mythic.drawing.SingleColorShader
@@ -55,7 +55,7 @@ fun cooldownIndicatorPlacement(cooldowns: List<Cooldown>): Flower {
       list(horizontalPlane, 20)(cooldowns.map { cooldown ->
         list(verticalPlane, 10)(listOf(
             margin(20)(
-                label(textStyles.smallGray, cooldown.name)
+                label(TextStyles.smallGray, cooldown.name)
             ) depictBehind solidBackground(Vector4(0f, 0f, 0f, 0.9f)),
             div(forward = forwardDimensions(fixed(30), fixed(30)))(
                 depict(cooldownIndicator(50f, Vector4(1f, 1f, 1f, 0.3f), cooldown.value))

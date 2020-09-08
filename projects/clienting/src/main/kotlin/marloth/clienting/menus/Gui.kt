@@ -1,17 +1,14 @@
 package marloth.clienting.menus
 
-import marloth.clienting.ClientState
-import marloth.clienting.MarlothBloomState
-import marloth.clienting.StateFlower
-import marloth.clienting.getPlayerBloomState
+import marloth.clienting.*
 import marloth.clienting.hud.hudLayout
 import marloth.clienting.input.GuiCommandType
+import marloth.clienting.menus.views.*
 import marloth.scenery.enums.CharacterCommands
 import marloth.scenery.enums.Text
 import silentorb.mythic.bloom.*
 import silentorb.mythic.drawing.grayTone
 import silentorb.mythic.ent.Id
-import silentorb.mythic.ent.firstNotNull
 import silentorb.mythic.haft.HaftCommands
 import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.spatial.Vector2i
@@ -38,27 +35,13 @@ data class BloomDefinition(
     val menu: Menu?
 )
 
-inline fun <reified T> findAttributeValue(boxes: List<Box>, key: String): T? =
-    boxes.firstNotNull {
-      val value = it.attributes[key]
-      if (value != null)
-        value as? T
-      else
-        null
-    }
-
 fun newBloomDefinition(boxes: List<Box>): BloomDefinition =
     BloomDefinition(
-        menu = findAttributeValue<Menu>(boxes, menuKey)
+        menu = getAttributeValue<Menu>(boxes, menuKey)
     )
 
 fun gameIsActive(world: World?): Boolean =
     world != null && world.global.gameOver == null
-
-enum class GuiEventDomain {
-  client,
-  server
-}
 
 data class GuiEvent(
     val type: GuiCommandType,
@@ -76,9 +59,6 @@ data class ClientOrServerEvent(
 
 fun clientEvent(type: GuiCommandType, data: Any? = null): ClientOrServerEvent =
     ClientOrServerEvent(client = GuiEvent(type, data))
-
-const val guiEventsKey = "guiEvents"
-val guiEvents = existingOrNewState(guiEventsKey) { listOf<ClientOrServerEvent>() }
 
 data class ButtonState(
     val text: String,
@@ -105,36 +85,36 @@ fun victoryMenu() = listOfNotNull(
     SimpleMenuItem(Text.message_victory, command = GuiCommandType.newGame)
 )
 
-val emptyViewFlower: StateFlower = { emptyFlower }
+val emptyViewFlower: StateFlower = { _, _ -> emptyFlower }
 
-fun viewSelect(textResources: TextResources, definitions: Definitions, world: World?, state: MarlothBloomState, player: Id): StateFlower? {
-  return when (state.view) {
+fun viewSelect(world: World?, options: AppOptions, view: ViewId?, player: Id): StateFlower? {
+  return when (view) {
     ViewId.audioOptions -> emptyViewFlower
-    ViewId.displayOptions -> emptyViewFlower
+    ViewId.displayOptions -> displayOptionsFlower(options.display)
     ViewId.gamepadOptions -> emptyViewFlower
-    ViewId.inputOptions -> inputOptionsMenu(definitions)
+    ViewId.inputOptions -> inputOptionsMenu
     ViewId.mouseOptions -> emptyViewFlower
-    ViewId.options -> optionsMenu(definitions)
-    ViewId.characterInfo -> characterInfoViewOrChooseAbilityMenu(definitions, world!!.deck, player)
-    ViewId.chooseProfessionMenu -> menuFlower(definitions, Text.gui_chooseProfessionMenu, chooseProfessionMenu(player))
-    ViewId.mainMenu -> mainMenu(definitions, world)
-    ViewId.merchant -> merchantView(textResources, definitions.accessories, world!!.deck, player)
-    ViewId.victory -> menuFlower(definitions, Text.gui_victory, victoryMenu())
+    ViewId.options -> optionsMenu
+    ViewId.characterInfo -> characterInfoViewOrChooseAbilityMenu(world!!.deck, player)
+    ViewId.chooseProfessionMenu -> simpleMenuFlower(Text.gui_chooseProfessionMenu, chooseProfessionMenu(player))
+    ViewId.mainMenu -> mainMenu(world)
+    ViewId.merchant -> merchantView(world!!.deck, player)
+    ViewId.victory -> simpleMenuFlower(Text.gui_victory, victoryMenu())
     null -> null
   }
 }
 
-fun guiLayout(definitions: Definitions, clientState: ClientState, world: World?, player: Id): Flower {
+fun guiLayout(definitions: Definitions, options: AppOptions, clientState: ClientState, world: World?, player: Id): Flower {
   val state = clientState.bloomStates[player]
   return compose(listOfNotNull(
       if (world != null) hudLayout(definitions.textLibrary, world, player, state?.view) else null,
-      if (state != null) viewSelect(definitions.textLibrary, definitions, world, state, player)?.invoke(state) else null
+      if (state != null) viewSelect(world, options, state.view, player)?.invoke(definitions, state) else null
   ))
 }
 
-fun layoutPlayerGui(definitions: Definitions, clientState: ClientState, world: World?, dimensions: Vector2i,
+fun layoutPlayerGui(definitions: Definitions, options: AppOptions, clientState: ClientState, world: World?, dimensions: Vector2i,
                     player: Id): Box {
-  val layout = guiLayout(definitions, clientState, world, player)
+  val layout = guiLayout(definitions, options, clientState, world, player)
   val bloomState = getPlayerBloomState(clientState.bloomStates, player)
   val seed = Seed(
       bag = bloomState.bloom.resourceBag.plus(textResourcesKey to definitions.textLibrary),

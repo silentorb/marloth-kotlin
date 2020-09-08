@@ -31,6 +31,7 @@ import silentorb.mythic.spatial.toVector2i
 import silentorb.mythic.typography.loadFontSets
 import simulation.main.Deck
 import simulation.main.World
+import simulation.misc.Definitions
 
 const val maxPlayerCount = 4
 
@@ -46,7 +47,7 @@ data class MarlothBloomState(
 )
 
 typealias MarlothBloomStateMap = Map<Id, MarlothBloomState>
-typealias StateFlower = (MarlothBloomState) -> Flower
+typealias StateFlower = (Definitions, MarlothBloomState) -> Flower
 
 data class ClientState(
     val audio: AudioState,
@@ -92,7 +93,7 @@ fun playerViews(client: ClientState): Map<Id, ViewId?> =
 //  return loadYamlResource("text/english.yaml", typeref)
 //}
 
-fun gatherFontSets() = loadFontSets(baseFonts, textStyles)
+fun gatherFontSets() = loadFontSets(baseFonts, TextStyles)
 
 data class Client(
     val platform: Platform,

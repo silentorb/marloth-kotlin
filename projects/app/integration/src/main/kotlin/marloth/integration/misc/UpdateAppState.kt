@@ -7,6 +7,7 @@ import marloth.clienting.input.mouseLookEvents
 import marloth.clienting.menus.BloomDefinition
 import marloth.clienting.menus.ViewId
 import marloth.clienting.menus.newBloomDefinition
+import marloth.integration.clienting.layoutGui
 import marloth.integration.clienting.renderMain
 import marloth.integration.clienting.updateAppStateForFirstNewPlayer
 import marloth.integration.clienting.updateAppStateForNewPlayers

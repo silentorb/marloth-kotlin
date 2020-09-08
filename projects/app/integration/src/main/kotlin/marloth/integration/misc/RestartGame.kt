@@ -45,6 +45,7 @@ fun restartGame(app: GameApp, appState: AppState): AppState {
   return if (appState.worlds.none()) {
     AppState(
         client = appState.client,
+        options = appState.options,
         worlds = listOf(app.newWorld(app)),
         timestep = newTimestepState()
     )
@@ -58,6 +59,7 @@ fun restartGame(app: GameApp, appState: AppState): AppState {
         .associate { Pair(it.first, it.second) }
     AppState(
         client = restartClientState(appState.client, players),
+        options = appState.options,
         worlds = listOf(world),
         timestep = newTimestepState()
     )

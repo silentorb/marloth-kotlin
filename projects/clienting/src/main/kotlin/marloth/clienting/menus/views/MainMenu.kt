@@ -1,10 +1,9 @@
-package marloth.clienting.menus
+package marloth.clienting.menus.views
 
-import marloth.clienting.MarlothBloomState
 import marloth.clienting.input.GuiCommandType
+import marloth.clienting.menus.*
 import marloth.scenery.enums.Text
 import simulation.main.World
-import simulation.misc.Definitions
 
 fun mainMenuItems(isGameActive: Boolean): List<SimpleMenuItem> = listOfNotNull(
     if (isGameActive) SimpleMenuItem(command = GuiCommandType.menuBack, text = Text.menu_continueGame) else null,
@@ -13,5 +12,5 @@ fun mainMenuItems(isGameActive: Boolean): List<SimpleMenuItem> = listOfNotNull(
     SimpleMenuItem(event = clientEvent(GuiCommandType.quit), text = Text.menu_quit)
 )
 
-fun mainMenu(definitions: Definitions, world: World?) =
-    menuFlower(definitions, Text.gui_mainMenu, mainMenuItems(gameIsActive(world)))
+fun mainMenu(world: World?) =
+    simpleMenuFlower(Text.gui_mainMenu, mainMenuItems(gameIsActive(world)))

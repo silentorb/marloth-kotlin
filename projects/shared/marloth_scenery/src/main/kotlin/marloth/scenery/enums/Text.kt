@@ -22,6 +22,12 @@ enum class Text {
   gui_take,
   gui_victory,
 
+  // Display options
+  gui_antialiasing,
+  gui_fullscreen,
+  gui_resolution,
+  gui_vsync,
+
   id_candle,
   id_damageChilled,
   id_damageBurning,

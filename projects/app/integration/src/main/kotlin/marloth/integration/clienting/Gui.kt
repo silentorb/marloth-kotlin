@@ -1,5 +1,6 @@
-package marloth.integration.misc
+package marloth.integration.clienting
 
+import marloth.integration.misc.AppState
 import silentorb.mythic.bloom.Box
 import silentorb.mythic.ent.Id
 import silentorb.mythic.spatial.Vector2i
@@ -7,7 +8,7 @@ import simulation.misc.Definitions
 
 fun layoutPlayerGui(definitions: Definitions, appState: AppState): (Id, Vector2i) -> Box = { player, dimensions ->
   val world = appState.worlds.lastOrNull()
-  marloth.clienting.menus.layoutPlayerGui(definitions, appState.client, world, dimensions, player)
+  marloth.clienting.menus.layoutPlayerGui(definitions, appState.options, appState.client, world, dimensions, player)
 }
 
 fun layoutGui(definitions: Definitions, appState: AppState, dimensions: List<Vector2i>): Map<Id, Box> {

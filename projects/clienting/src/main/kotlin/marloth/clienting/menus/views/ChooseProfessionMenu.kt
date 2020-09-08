@@ -1,5 +1,7 @@
-package marloth.clienting.menus
+package marloth.clienting.menus.views
 
+import marloth.clienting.menus.ClientOrServerEvent
+import marloth.clienting.menus.SimpleMenuItem
 import marloth.definition.data.availableProfessions
 import silentorb.mythic.ent.Id
 import simulation.characters.NewPlayerCharacter

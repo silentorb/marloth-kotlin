@@ -1,6 +1,6 @@
 package marloth.integration.scenery
 
-import marloth.clienting.menus.textStyles
+import marloth.clienting.menus.TextStyles
 import marloth.definition.data.animationPlaceholders
 import marloth.scenery.enums.*
 import simulation.accessorize.AccessoryName
@@ -118,7 +118,7 @@ fun getDebugTextBillboard(definitions: Definitions, deck: Deck, actor: Id, footP
           TextBillboard(
               content = accessoryDebugName(definitions, accessory.type) + suffix,
               position = footPosition + Vector3(0f, 0f, shape.height + 0.1f),
-              style = textStyles.smallWhite,
+              style = TextStyles.smallWhite,
               depthOffset = -0.01f
           )
         } else
@@ -134,7 +134,7 @@ fun getDebugTextBillboard(definitions: Definitions, deck: Deck, actor: Id, footP
         TextBillboard(
             content = accessoryDebugName(definitions, accessory.type),
             position = footPosition + Vector3(0f, 0f, shape.height - 0.3f),
-            style = textStyles.smallGray,
+            style = TextStyles.smallGray,
             depthOffset = -0.01f
         )
       } else

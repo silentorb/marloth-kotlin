@@ -1,6 +1,8 @@
-package marloth.clienting.menus
+package marloth.clienting.menus.views
 
 import marloth.clienting.StateFlower
+import marloth.clienting.menus.*
+import marloth.clienting.menus.ButtonState
 import silentorb.mythic.bloom.*
 import silentorb.mythic.drawing.Canvas
 import silentorb.mythic.drawing.grayTone
@@ -10,7 +12,7 @@ import marloth.scenery.enums.Text
 import simulation.entities.AttachmentCategory
 import simulation.happenings.PurchaseEvent
 import simulation.main.Deck
-import simulation.misc.AccessoryDefinitions
+import simulation.misc.Definitions
 
 fun drawWareButton(state: ButtonState): Depiction = { bounds: Bounds, canvas: Canvas ->
   val background = if (state.isEnabled)
@@ -19,7 +21,7 @@ fun drawWareButton(state: ButtonState): Depiction = { bounds: Bounds, canvas: Ca
     grayTone(0.25f)
 
   drawFill(bounds, canvas, background)
-  drawMenuButtonFront(state, bounds, canvas)
+  drawMenuButtonBorder(state.hasFocus, bounds, canvas)
 }
 
 fun wareFlower(content: String, isEnabled: Boolean): MenuItemFlower = { hasFocus ->
@@ -38,11 +40,11 @@ fun wareFlower(content: String, isEnabled: Boolean): MenuItemFlower = { hasFocus
   }
 }
 
-fun wareMenuItem(textResources: TextResources, definitions: AccessoryDefinitions, deck: Deck, merchant: Id,
+fun wareMenuItem(definitions: Definitions, deck: Deck, merchant: Id,
                  player: Id, customerMoney: Int, id: Id): MenuItem {
   val ware = deck.wares[id]!!
-  val definition = definitions[ware.type]!!
-  val name = textResources(definition.name)!!
+  val definition = definitions.accessories[ware.type]!!
+  val name = definitions.textLibrary(definition.name)
   val price = ware.price
   val canPurchase = ware.price <= customerMoney
   val event = if (canPurchase)
@@ -71,18 +73,18 @@ fun merchantInfoFlower(customerMoney: Int) =
     )(
         margin(20)(
             list(verticalPlane, 10)(listOf(
-                label(textStyles.smallBlack, "Money: $$customerMoney")
+                label(TextStyles.smallBlack, "Money: $$customerMoney")
             ))
         )
     )
 
-fun merchantView(textResources: TextResources, definitions: AccessoryDefinitions, deck: Deck, player: Id): StateFlower = { state ->
+fun merchantView(deck: Deck, player: Id): StateFlower = { definitions, state ->
   val merchant = getPlayerInteractingWith(deck, player)!!
   val customerMoney = deck.characters[player]!!.money
   val buttons = deck.attachments
       .filter { it.value.target == merchant && it.value.category == AttachmentCategory.inventory }
       .map { (id, _) ->
-        wareMenuItem(textResources, definitions, deck, merchant, player, customerMoney, id)
+        wareMenuItem(definitions, deck, merchant, player, customerMoney, id)
       }
 
   dialog(Text.gui_merchant)(

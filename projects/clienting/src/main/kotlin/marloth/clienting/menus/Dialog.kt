@@ -1,9 +1,12 @@
 package marloth.clienting.menus
 
+import marloth.clienting.hud.versionDisplay
+import marloth.clienting.resources.UiTextures
 import silentorb.mythic.bloom.*
 import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.spatial.Vector2i
 import marloth.scenery.enums.Text
+import simulation.misc.Definitions
 
 val centeredDiv = reverseOffset(left = centered, top = centered)
 val centerDialog = centeredDiv + shrink
@@ -30,7 +33,7 @@ fun titleBar(text: Text): Flower {
       list(verticalPlane)(listOf(
           flexList(horizontalPlane, 10)(listOf(
               titleBookend,
-              FlexItem(localizedLabel(textStyles.mediumBlack, text)),
+              FlexItem(localizedLabel(TextStyles.mediumBlack, text)),
               titleBookend
           )),
           div(forward = forwardDimensions(width = fixed(250), height = fixed(10)), reverse = reverseOffset(left = centered))(
@@ -77,3 +80,23 @@ fun dialog(title: Text): FlowerWrapper = { flower ->
       dialogContent(title)(flower)
   )
 }
+
+fun commonDialog(definitions: Definitions, title: Text, flower: Flower) =
+    compose(
+        div(forward = stretchBoth)(
+            depict(solidBackground(faintBlack))
+        ),
+        versionDisplay(definitions.applicationInfo.version),
+        div(reverse = centerDialog)(
+            reversePair(verticalPlane, 20)(
+                Pair(
+                    div(reverse = reverseOffset(left = centered), forward = forwardDimensions(fixed(500), fixed(90)))(
+                        imageElement(UiTextures.marlothTitle)
+                    ),
+                    div(reverse = shrink, depiction = menuBackground)(
+                        dialogContent(title)(flower)
+                    )
+                )
+            )
+        )
+    )

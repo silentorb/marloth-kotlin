@@ -13,7 +13,7 @@ import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.toVector2
 
 data class GameInputConfig(
-    var placeholder: Boolean = true
+    val placeholder: Boolean = true
 )
 
 enum class InputContext {

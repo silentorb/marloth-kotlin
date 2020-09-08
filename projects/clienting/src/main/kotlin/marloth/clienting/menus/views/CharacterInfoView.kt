@@ -1,6 +1,7 @@
-package marloth.clienting.menus
+package marloth.clienting.menus.views
 
 import marloth.clienting.StateFlower
+import marloth.clienting.menus.*
 import marloth.definition.misc.staticDamageTypes
 import marloth.scenery.enums.Text
 import silentorb.mythic.bloom.*
@@ -18,13 +19,13 @@ fun resistancesView(deck: Deck, player: Id): Flower {
 
     list(horizontalPlane, 20)(listOf(
         div(layout = layoutDimensions(width = fixed(70)))(
-            localizedLabel(textStyles.smallBlack, damageTypeNames[damageType] ?: Text.unnamed)
+            localizedLabel(TextStyles.smallBlack, damageTypeNames[damageType] ?: Text.unnamed)
         ),
-        label(textStyles.smallBlack, value.toString() + " %")
+        label(TextStyles.smallBlack, value.toString() + " %")
     ))
   }
   return list(verticalPlane)(listOf(
-      localizedLabel(textStyles.smallBlack, Text.gui_resistances),
+      localizedLabel(TextStyles.smallBlack, Text.gui_resistances),
       margin(20)(
           list(verticalPlane, 15)(items)
       )
@@ -35,8 +36,8 @@ fun generalCharacterInfo(definitions: Definitions, deck: Deck, actor: Id): Flowe
   val character = deck.characters[actor]!!
   val profession = definitions.professions[character.profession]!!
   val rows = listOf(
-      localizedLabel(textStyles.smallBlack, Text.gui_profession),
-      localizedLabel(textStyles.smallBlack, profession.name)
+      localizedLabel(TextStyles.smallBlack, Text.gui_profession),
+      localizedLabel(TextStyles.smallBlack, profession.name)
   )
   return list(verticalPlane, 10)(rows)
 }
@@ -48,13 +49,13 @@ fun accessoriesView(definitions: Definitions, deck: Deck, actor: Id): Flower {
         val accessoryDefinition = definitions.accessories[accessoryRecord.type]
         if (accessoryDefinition != null && accessoryDefinition.name != Text.unnamed) {
           div(layout = layoutDimensions(width = fixed(120)))(
-              localizedLabel(textStyles.smallBlack, accessoryDefinition.name)
+              localizedLabel(TextStyles.smallBlack, accessoryDefinition.name)
           )
         } else
           null
       }
   return list(verticalPlane)(listOf(
-      localizedLabel(textStyles.smallBlack, Text.gui_accessories),
+      localizedLabel(TextStyles.smallBlack, Text.gui_accessories),
       margin(20)(
           list(verticalPlane, 15)(items)
       )
@@ -70,11 +71,11 @@ fun characterInfoView(definitions: Definitions, deck: Deck, actor: Id): Flower {
   )
 }
 
-fun characterInfoViewOrChooseAbilityMenu(definitions: Definitions, deck: Deck, actor: Id): StateFlower = { state ->
+fun characterInfoViewOrChooseAbilityMenu(deck: Deck, actor: Id): StateFlower = { definitions, state ->
   val character = deck.characters[actor]!!
   val accessoryOptions = character.accessoryOptions
   if (accessoryOptions != null)
-    menuFlower(definitions, Text.gui_chooseAccessoryMenu, chooseAccessoryMenu(definitions, actor, accessoryOptions))(state)
+    simpleMenuFlower(Text.gui_chooseAccessoryMenu, chooseAccessoryMenu(definitions, actor, accessoryOptions))(definitions, state)
   else
     characterInfoView(definitions, deck, actor)
 }

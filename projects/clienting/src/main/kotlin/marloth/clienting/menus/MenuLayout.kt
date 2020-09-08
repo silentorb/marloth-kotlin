@@ -1,28 +1,19 @@
 package marloth.clienting.menus
 
 import marloth.clienting.StateFlower
-import marloth.clienting.hud.versionDisplay
 import marloth.clienting.input.GuiCommandType
-import marloth.clienting.resources.UiTextures
 import marloth.scenery.enums.Text
 import silentorb.mythic.bloom.*
 import silentorb.mythic.drawing.Canvas
 import silentorb.mythic.drawing.grayTone
-import silentorb.mythic.glowing.globalState
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector4
-import silentorb.mythic.spatial.toVector2
-import silentorb.mythic.spatial.toVector2i
-import silentorb.mythic.typography.TextConfiguration
-import silentorb.mythic.typography.calculateTextDimensions
-import silentorb.mythic.typography.resolveTextStyle
-import simulation.misc.Definitions
 
 typealias MenuItemFlower = (Boolean) -> Flower
 
 data class MenuItem(
     val flower: MenuItemFlower,
-    val event: ClientOrServerEvent?
+    val event: ClientOrServerEvent? = null
 )
 
 data class SimpleMenuItem(
@@ -33,24 +24,25 @@ data class SimpleMenuItem(
 
 typealias Menu = List<MenuItem>
 
-fun drawMenuButtonFront(state: ButtonState, bounds: Bounds, canvas: Canvas) {
-  val style = if (state.hasFocus)
-    Pair(textStyles.mediumBlack, LineStyle(Vector4(1f), 2f))
-  else
-    Pair(textStyles.mediumBlack, LineStyle(Vector4(0f, 0f, 0f, 1f), 1f))
+fun getFocusStyle(hasFocus: Boolean) =
+    if (hasFocus)
+      Pair(TextStyles.mediumBlack, LineStyle(Vector4(1f), 2f))
+    else
+      Pair(TextStyles.mediumBlack, LineStyle(Vector4(0f, 0f, 0f, 1f), 1f))
 
+fun drawMenuButtonBorder(hasFocus: Boolean, bounds: Bounds, canvas: Canvas) {
+  val style = getFocusStyle(hasFocus)
   drawBorder(bounds, canvas, style.second)
-
-  val textConfig = TextConfiguration(state.text, bounds.position.toVector2(), resolveTextStyle(canvas.fonts, style.first))
-  val textDimensions = calculateTextDimensions(textConfig)
-  val position = centeredPosition(bounds, textDimensions.toVector2i())
-  canvas.drawText(position, style.first, state.text)
 }
 
-fun drawMenuButton(state: ButtonState): Depiction = { bounds: Bounds, canvas: Canvas ->
-  globalState.depthEnabled = false
+fun menuTextFlower(text: Text): MenuItemFlower = { hasFocus ->
+  val style = getFocusStyle(hasFocus)
+  localizedLabel(style.first, text)
+}
+
+fun drawMenuButtonBackground(hasFocus: Boolean): Depiction = { bounds: Bounds, canvas: Canvas ->
   drawFill(bounds, canvas, grayTone(0.5f))
-  drawMenuButtonFront(state, bounds, canvas)
+  drawMenuButtonBorder(hasFocus, bounds, canvas)
 }
 
 private val buttonDimensions = Vector2i(200, 50)
@@ -59,27 +51,25 @@ fun menuButton(flower: MenuItemFlower, hasFocus: Boolean): Flower = { seed: Seed
   flower(hasFocus)(seed)
 }
 
-fun simpleMenuButton(content: String): MenuItemFlower = { hasFocus ->
-  { seed: Seed ->
-    Box(
+fun menuButtonWrapper(flower: MenuItemFlower): MenuItemFlower = { hasFocus ->
+  { seed ->
+    div(
         name = "simple menu button",
-        bounds = Bounds(
-            dimensions = buttonDimensions
-        ),
-        depiction = drawMenuButton(
-            ButtonState(content, hasFocus)
-        )
-    )
+        forward = forwardDimensions(buttonDimensions),
+        reverse = shrink,
+        depiction = drawMenuButtonBackground(hasFocus)
+    )(flower(hasFocus))(seed)
   }
 }
 
 val embeddedMenuBox: (Menu) -> FlowerWrapper = { menu ->
   div(
-      reverse = shrink
+      reverse = shrink,
+      attributes = mapOf(menuKey to menu)
   )
 }
 
-fun menuFlowerBase(menuBox: (Menu) -> FlowerWrapper): (Menu, Int) -> Flower = { menu, focusIndex ->
+fun menuFlower(menu: Menu, focusIndex: Int): Flower {
   val rows = menu
       .mapIndexed { index, item ->
         val hasFocus = index == focusIndex
@@ -97,42 +87,25 @@ fun menuFlowerBase(menuBox: (Menu) -> FlowerWrapper): (Menu, Int) -> Flower = { 
 
   val gap = 20
 
-  menuBox(menu)(
+  return embeddedMenuBox(menu)(
       margin(all = gap)(
           list(verticalPlane, gap)(rows)
       )
   )
 }
 
-val menuFlower = menuFlowerBase(embeddedMenuBox)
-
 val faintBlack = black.copy(w = 0.6f)
 
-fun menuFlower(definitions: Definitions, title: Text, source: List<SimpleMenuItem>): StateFlower = { state ->
+fun menuFlower(title: Text, menu: Menu): StateFlower = { definitions, state ->
+  commonDialog(definitions, title, menuFlower(menu, state.menuFocusIndex))
+}
+
+fun simpleMenuFlower(title: Text, source: List<SimpleMenuItem>): StateFlower = { definitions, state ->
   val menu = source.map {
     MenuItem(
-        flower = simpleMenuButton(definitions.textLibrary(it.text)),
+        flower = menuButtonWrapper(menuTextFlower(it.text)),
         event = it.event ?: clientEvent(it.command!!)
     )
   }
-  compose(
-      div(forward = stretchBoth)(
-          depict(solidBackground(faintBlack))
-      ),
-      versionDisplay(definitions.applicationInfo.version),
-      div(reverse = centerDialog, attributes = mapOf(menuKey to menu))(
-          reversePair(verticalPlane, 20)(
-              Pair(
-                  div(reverse = reverseOffset(left = centered), forward = forwardDimensions(fixed(500), fixed(90)))(
-                      imageElement(UiTextures.marlothTitle)
-                  ),
-                  div(reverse = shrink, depiction = menuBackground)(
-                      dialogContent(title)(
-                          menuFlower(menu, state.menuFocusIndex)
-                      )
-                  )
-              )
-          )
-      )
-  )
+  menuFlower(title, menu)(definitions, state)
 }
