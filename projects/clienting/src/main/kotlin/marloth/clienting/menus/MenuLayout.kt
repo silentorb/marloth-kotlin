@@ -5,7 +5,6 @@ import marloth.clienting.input.GuiCommandType
 import marloth.scenery.enums.Text
 import silentorb.mythic.bloom.*
 import silentorb.mythic.drawing.Canvas
-import silentorb.mythic.drawing.grayTone
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector4
 
@@ -41,7 +40,7 @@ fun menuTextFlower(text: Text): MenuItemFlower = { hasFocus ->
 }
 
 fun drawMenuButtonBackground(hasFocus: Boolean): Depiction = { bounds: Bounds, canvas: Canvas ->
-  drawFill(bounds, canvas, grayTone(0.5f))
+//  drawFill(bounds, canvas, grayTone(0.5f))
   drawMenuButtonBorder(hasFocus, bounds, canvas)
 }
 
@@ -57,16 +56,22 @@ fun menuButtonWrapper(flower: MenuItemFlower): MenuItemFlower = { hasFocus ->
         name = "simple menu button",
         forward = forwardDimensions(buttonDimensions),
         reverse = shrink,
-        depiction = drawMenuButtonBackground(hasFocus)
+//        depiction = drawMenuButtonBackground(hasFocus)
     )(flower(hasFocus))(seed)
   }
 }
 
-val embeddedMenuBox: (Menu) -> FlowerWrapper = { menu ->
-  div(
-      reverse = shrink,
-      attributes = mapOf(menuKey to menu)
-  )
+fun foo(plane: Plane, wrapper: IndexedFlowerWrapper): FlowerContainerWrapper = { container ->
+  { items ->
+    { seed ->
+      val boxes = items.map { it(seed) }
+      val breadth = getListBreadth(plane, boxes)
+      val childSeed = seed.copy(
+          dimensions = plane(Vector2i(plane(seed.dimensions).x, breadth))
+      )
+      container(items.mapIndexed(wrapper))(childSeed)
+    }
+  }
 }
 
 fun menuFlower(menu: Menu, focusIndex: Int): Flower {
@@ -87,11 +92,26 @@ fun menuFlower(menu: Menu, focusIndex: Int): Flower {
 
   val gap = 20
 
-  return embeddedMenuBox(menu)(
-      margin(all = gap)(
-          list(verticalPlane, gap)(rows)
-      )
+  val wrapper: IndexedFlowerWrapper = { index, flower ->
+    div(
+        reverse = shrinkVertical,
+        depiction = drawMenuButtonBackground(index == focusIndex)
+    )(
+        reverseMargin(all = gap)(
+            div(
+                reverse = shrink + reverseOffset(left = centered),
+            )(flower)
+        )
+    )
+  }
+  return div(
+      reverse = shrink,
+      attributes = mapOf(menuKey to menu)
+  )(forwardMargin(all = gap)(
+      foo(verticalPlane, wrapper)(list(verticalPlane, gap))(rows)
   )
+  )
+
 }
 
 val faintBlack = black.copy(w = 0.6f)

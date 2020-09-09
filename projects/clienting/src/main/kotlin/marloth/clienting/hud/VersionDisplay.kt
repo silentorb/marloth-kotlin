@@ -6,9 +6,9 @@ import silentorb.mythic.bloom.*
 
 fun versionDisplay(version: String): Flower =
     div(reverse = reverseOffset(top = justifiedEnd, left= justifiedEnd))(
-        margin(10)(
+        forwardMargin(10)(
             div(reverse = shrink, depiction = solidBackground(black))(
-                margin(20)(
+                forwardMargin(20)(
                     label(TextStyles.smallWhite, "Version $version")
                 )
             )

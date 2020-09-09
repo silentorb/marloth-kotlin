@@ -55,9 +55,9 @@ private fun playerStats(world: World, actor: Id, debugInfo: List<String>): Flowe
     label(textStyle, it)
   }
   return div(reverse = reverseOffset(top = justifiedEnd))(
-      margin(10)(
+      forwardMargin(10)(
           div(reverse = shrink, depiction = solidBackground(black))(
-              margin(20)(
+              forwardMargin(20)(
                   list(verticalPlane, 10)(rows)
               )
           )
@@ -85,7 +85,7 @@ fun interactionDialog(textResources: TextResources, interactable: Interactable):
   val gap = 20
   return interactionBar(
       div("b", reverse = reverseOffset(left = centered) + reverseDimensions(height = shrinkWrap))(
-          margin(top = gap, bottom = gap)(
+          forwardMargin(top = gap, bottom = gap)(
               list(verticalPlane, gap)(rows)
           )
       )

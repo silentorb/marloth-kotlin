@@ -26,7 +26,7 @@ fun resistancesView(deck: Deck, player: Id): Flower {
   }
   return list(verticalPlane)(listOf(
       localizedLabel(TextStyles.smallBlack, Text.gui_resistances),
-      margin(20)(
+      forwardMargin(20)(
           list(verticalPlane, 15)(items)
       )
   ))
@@ -56,7 +56,7 @@ fun accessoriesView(definitions: Definitions, deck: Deck, actor: Id): Flower {
       }
   return list(verticalPlane)(listOf(
       localizedLabel(TextStyles.smallBlack, Text.gui_accessories),
-      margin(20)(
+      forwardMargin(20)(
           list(verticalPlane, 15)(items)
       )
   ))

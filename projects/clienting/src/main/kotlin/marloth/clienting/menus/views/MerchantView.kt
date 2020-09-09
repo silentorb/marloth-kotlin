@@ -71,7 +71,7 @@ fun merchantInfoFlower(customerMoney: Int) =
         forward = forwardDimensions(width = fixed(200)),
         reverse = shrink
     )(
-        margin(20)(
+        forwardMargin(20)(
             list(verticalPlane, 10)(listOf(
                 label(TextStyles.smallBlack, "Money: $$customerMoney")
             ))
