@@ -14,19 +14,16 @@ data class Option(
     val id: Any
 )
 
-fun spinButton(text: String, attributes: Map<String, Any?>): Flower =
-    div(attributes = attributes)(
-        label(TextStyles.mediumBlack, text)
-    )
+fun spinButton(text: String, attributes: Map<String, Any?>): Box =
+    label(TextStyles.mediumBlack, text)
+        .copy(attributes = attributes)
 
-fun spinField(id: Any, valueText: String): Flower =
-    div()(
-        horizontalList(spacing = 10)(
-            listOf(
-                spinButton("<", mapOf(previousOptionKey to id)),
-                label(TextStyles.mediumBlack, valueText),
-                spinButton(">", mapOf(nextOptionKey to id))
-            )
+fun spinField(id: Any, valueText: String): Box =
+    horizontalList(spacing = 10)(
+        listOf(
+            spinButton("<", mapOf(previousOptionKey to id)),
+            label(TextStyles.mediumBlack, valueText),
+            spinButton(">", mapOf(nextOptionKey to id))
         )
     )
 

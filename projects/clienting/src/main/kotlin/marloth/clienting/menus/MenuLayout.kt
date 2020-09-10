@@ -8,7 +8,7 @@ import silentorb.mythic.drawing.Canvas
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector4
 
-typealias MenuItemFlower = (Boolean) -> Flower
+typealias MenuItemFlower = (Boolean) -> Box
 
 data class MenuItem(
     val flower: MenuItemFlower,
@@ -46,22 +46,21 @@ fun drawMenuButtonBackground(hasFocus: Boolean): Depiction = { bounds: Bounds, c
 
 private val buttonDimensions = Vector2i(200, 50)
 
-fun menuButton(flower: MenuItemFlower, hasFocus: Boolean): Flower = { dimensions: Seed ->
-  flower(hasFocus)(dimensions)
-}
+//fun menuButton(flower: MenuItemFlower, hasFocus: Boolean): Flower = { dimensions: Seed ->
+//  flower(hasFocus)(dimensions)
+//}
 
 fun menuButtonWrapper(flower: MenuItemFlower): MenuItemFlower = { hasFocus ->
-  { dimensions ->
-    div(
-        name = "simple menu button",
-        forward = forwardDimensions(buttonDimensions),
-        reverse = shrink,
-//        depiction = drawMenuButtonBackground(hasFocus)
-    )(flower(hasFocus))(dimensions)
-  }
+//  div(
+//      name = "simple menu button",
+//      forward = forwardDimensions(buttonDimensions),
+//      reverse = shrink,
+////        depiction = drawMenuButtonBackground(hasFocus)
+//  )(flower(hasFocus))(dimensions)
+  flower(hasFocus)
 }
 
-fun foo(plane: Plane, wrapper: IndexedFlowerWrapper): FlowerContainerWrapper = { container ->
+fun menuListWrapper(plane: Plane, wrapper: IndexedFlowerWrapper): FlowerContainerWrapper = { container ->
   { items ->
     { dimensions ->
       val boxes = items.map { it(dimensions) }
@@ -76,16 +75,14 @@ fun menuFlower(menu: Menu, focusIndex: Int): Flower {
   val rows = menu
       .mapIndexed { index, item ->
         val hasFocus = index == focusIndex
-        val flower = menuButton(item.flower, hasFocus)
+        val box = item.flower(hasFocus)
         val event = item.event
         val attributes = if (hasFocus)
           mapOf(onActivateKey to event, onClickKey to event)
         else
           mapOf()
 
-        withAttributes(attributes + (menuItemIndexKey to index))(
-            flower
-        )
+        withAttributes(attributes + (menuItemIndexKey to index), box)
       }
 
   val gap = 20
@@ -95,19 +92,27 @@ fun menuFlower(menu: Menu, focusIndex: Int): Flower {
         reverse = shrinkVertical,
         depiction = drawMenuButtonBackground(index == focusIndex)
     )(
-        reverseMargin(all = gap)(
-            div(
-                reverse = shrink + reverseOffset(left = centered),
-            )(flower)
+        boxToFlower(
+            reverseMargin(all = gap)(
+                flowerToBox(
+                    div(
+                        reverse = shrink + reverseOffset(left = centered),
+                    )(flower)
+                )
+            )
         )
     )
   }
   return div(
       reverse = shrink,
       attributes = mapOf(menuKey to menu)
-  )(forwardMargin(all = gap)(
-      foo(verticalPlane, wrapper)(list(verticalPlane, gap))(rows)
-  )
+  )(
+      boxToFlower(
+          reverseMargin(all = gap)(
+//      menuListWrapper(verticalPlane, wrapper)(list(verticalPlane, gap))(rows)
+              list(verticalPlane, gap)(rows)
+          )
+      )
   )
 
 }

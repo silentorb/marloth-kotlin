@@ -7,42 +7,43 @@ import marloth.scenery.enums.Text
 import silentorb.mythic.bloom.*
 import simulation.accessorize.getAccessories
 import silentorb.mythic.ent.Id
+import silentorb.mythic.spatial.Vector2i
 import simulation.combat.general.defaultDamageMultiplier
 import simulation.main.Deck
 import simulation.misc.Definitions
 
-fun resistancesView(deck: Deck, player: Id): Flower {
-  val destructible = deck.destructibles[player]!!
-  val items = staticDamageTypes.map { damageType ->
-    val modifier = destructible.damageMultipliers[damageType] ?: defaultDamageMultiplier
-    val value = 100 - modifier
+//fun resistancesView(deck: Deck, player: Id): Flower {
+//  val destructible = deck.destructibles[player]!!
+//  val items = staticDamageTypes.map { damageType ->
+//    val modifier = destructible.damageMultipliers[damageType] ?: defaultDamageMultiplier
+//    val value = 100 - modifier
+//
+//    list(horizontalPlane, 20)(listOf(
+//        div(layout = layoutDimensions(width = fixed(70)))(
+//            localizedLabel(TextStyles.smallBlack, damageTypeNames[damageType] ?: Text.unnamed)
+//        ),
+//        label(TextStyles.smallBlack, value.toString() + " %")
+//    ))
+//  }
+//  return list(verticalPlane)(listOf(
+//      localizedLabel(TextStyles.smallBlack, Text.gui_resistances),
+//      forwardMargin(20)(
+//          list(verticalPlane, 15)(items)
+//      )
+//  ))
+//}
 
-    list(horizontalPlane, 20)(listOf(
-        div(layout = layoutDimensions(width = fixed(70)))(
-            localizedLabel(TextStyles.smallBlack, damageTypeNames[damageType] ?: Text.unnamed)
-        ),
-        label(TextStyles.smallBlack, value.toString() + " %")
-    ))
-  }
-  return list(verticalPlane)(listOf(
-      localizedLabel(TextStyles.smallBlack, Text.gui_resistances),
-      forwardMargin(20)(
-          list(verticalPlane, 15)(items)
-      )
-  ))
-}
-
-fun generalCharacterInfo(definitions: Definitions, deck: Deck, actor: Id): Flower {
+fun generalCharacterInfo(definitions: Definitions, deck: Deck, actor: Id): Box {
   val character = deck.characters[actor]!!
   val profession = definitions.professions[character.profession]!!
   val rows = listOf(
-      localizedLabel(TextStyles.smallBlack, Text.gui_profession),
-      localizedLabel(TextStyles.smallBlack, profession.name)
+      label(TextStyles.smallBlack, definitions.textLibrary(Text.gui_profession)),
+      label(TextStyles.smallBlack, definitions.textLibrary(profession.name))
   )
   return list(verticalPlane, 10)(rows)
 }
 
-fun accessoriesView(definitions: Definitions, deck: Deck, actor: Id): Flower {
+fun accessoriesView(definitions: Definitions, deck: Deck, actor: Id): Box {
   val accessories = getAccessories(deck.accessories, actor)
   val items = accessories
       .mapNotNull { (_, accessoryRecord) ->
@@ -55,19 +56,21 @@ fun accessoriesView(definitions: Definitions, deck: Deck, actor: Id): Flower {
           null
       }
   return list(verticalPlane)(listOf(
-      localizedLabel(TextStyles.smallBlack, Text.gui_accessories),
-      forwardMargin(20)(
-          list(verticalPlane, 15)(items)
+      label(TextStyles.smallBlack, definitions.textLibrary(Text.gui_accessories)),
+      reverseMargin(20)(
+          list(verticalPlane, 15)(flowersToBoxes(items))
       )
   ))
 }
 
 fun characterInfoView(definitions: Definitions, deck: Deck, actor: Id): Flower {
   return dialog(definitions.textLibrary(Text.gui_characterInfo))(
-      list(horizontalPlane, 10)(listOf(
-          div(forward = forwardDimensions(fixed(300), fixed(300)))(generalCharacterInfo(definitions, deck, actor)),
-          accessoriesView(definitions, deck, actor)
-      ))
+      boxToFlower(
+          list(horizontalPlane, 10)(listOf(
+              flowerToBox(div(forward = forwardDimensions(fixed(300), fixed(300)))(boxToFlower(generalCharacterInfo(definitions, deck, actor)))),
+              accessoriesView(definitions, deck, actor)
+          ))
+      )
   )
 }
 

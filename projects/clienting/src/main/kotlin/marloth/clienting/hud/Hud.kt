@@ -58,7 +58,7 @@ private fun playerStats(world: World, actor: Id, debugInfo: List<String>): Flowe
       forwardMargin(10)(
           div(reverse = shrink, depiction = solidBackground(black))(
               forwardMargin(20)(
-                  list(verticalPlane, 10)(rows)
+                  boxToFlower(list(verticalPlane, 10)(rows))
               )
           )
       )
@@ -86,7 +86,7 @@ fun interactionDialog(textResources: TextResources, interactable: Interactable):
   return interactionBar(
       div("b", reverse = reverseOffset(left = centered) + reverseDimensions(height = shrinkWrap))(
           forwardMargin(top = gap, bottom = gap)(
-              list(verticalPlane, gap)(rows)
+              boxToFlower(list(verticalPlane, gap)(rows))
           )
       )
   )

@@ -52,15 +52,21 @@ fun cooldownIndicatorPlacement(cooldowns: List<Cooldown>): Flower {
   return div("cooldown",
       forward = forwardOffset(top = percentage(0.80f)),
       reverse = reverseOffset(left = centered))(
-      list(horizontalPlane, 20)(cooldowns.map { cooldown ->
-        list(verticalPlane, 10)(listOf(
-            forwardMargin(20)(
-                label(TextStyles.smallGray, cooldown.name)
-            ) depictBehind solidBackground(Vector4(0f, 0f, 0f, 0.9f)),
-            div(forward = forwardDimensions(fixed(30), fixed(30)))(
-                depict(cooldownIndicator(50f, Vector4(1f, 1f, 1f, 0.3f), cooldown.value))
-            ))
-        )
-      })
+      boxToFlower(
+          list(horizontalPlane, 20)(cooldowns.map { cooldown ->
+            list(verticalPlane, 10)(
+                listOf(
+                    reverseMargin(20)(
+                        label(TextStyles.smallGray, cooldown.name)
+                    ).copy(depiction = solidBackground(Vector4(0f, 0f, 0f, 0.9f))),
+                    flowerToBox(
+                        div(forward = forwardDimensions(fixed(30), fixed(30)))(
+                            depict(cooldownIndicator(50f, Vector4(1f, 1f, 1f, 0.3f), cooldown.value))
+                        )
+                    )
+                )
+            )
+          })
+      )
   )
 }

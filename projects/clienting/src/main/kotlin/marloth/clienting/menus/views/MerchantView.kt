@@ -26,19 +26,17 @@ fun drawWareButton(state: ButtonState): Depiction = { bounds: Bounds, canvas: Ca
 }
 
 fun wareFlower(content: String, isEnabled: Boolean): MenuItemFlower = { hasFocus ->
-  { dimensions: Seed ->
-    Box(
-        bounds = Bounds(
-            dimensions = Vector2i(300, 50)
-        ),
-        depiction = drawWareButton(
-            ButtonState(
-                text = content,
-                hasFocus = hasFocus,
-                isEnabled = isEnabled)
-        )
-    )
-  }
+  Box(
+      bounds = Bounds(
+          dimensions = Vector2i(300, 50)
+      ),
+      depiction = drawWareButton(
+          ButtonState(
+              text = content,
+              hasFocus = hasFocus,
+              isEnabled = isEnabled)
+      )
+  )
 }
 
 fun wareMenuItem(definitions: Definitions, deck: Deck, merchant: Id,
@@ -72,10 +70,12 @@ fun merchantInfoFlower(customerMoney: Int) =
         forward = forwardDimensions(width = fixed(200)),
         reverse = shrink
     )(
-        forwardMargin(20)(
-            list(verticalPlane, 10)(listOf(
-                label(TextStyles.smallBlack, "Money: $$customerMoney")
-            ))
+        boxToFlower(
+            reverseMargin(20)(
+                list(verticalPlane, 10)(listOf(
+                    label(TextStyles.smallBlack, "Money: $$customerMoney")
+                ))
+            )
         )
     )
 
@@ -89,9 +89,13 @@ fun merchantView(deck: Deck, player: Id): StateFlower = { definitions, state ->
       }
 
   dialog(definitions.textLibrary(Text.gui_merchant))(
-      list(horizontalPlane, 10)(listOf(
-          menuFlower(buttons, state.menuFocusIndex),
-          merchantInfoFlower(customerMoney)
-      ))
+      boxToFlower(
+          list(horizontalPlane, 10)(
+              listOf(
+                  flowerToBox(menuFlower(buttons, state.menuFocusIndex)),
+                  flowerToBox(merchantInfoFlower(customerMoney))
+              )
+          )
+      )
   )
 }

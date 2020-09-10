@@ -27,18 +27,24 @@ val titleBookendFlower = div(depiction = titleBookendDepiction)(emptyFlower)
 val titleBookend = FlexItem(titleBookendFlower, FlexType.stretch)
 val debugDepiction = solidBackground(Vector4(1f, 0f, 0f, 1f))
 
-fun titleBar(text: String): Flower {
-  return forwardMargin(20)(
-      list(verticalPlane)(listOf(
-          flexList(horizontalPlane, 10)(listOf(
-              titleBookend,
-              FlexItem(label(TextStyles.mediumBlack, text)),
-              titleBookend
-          )),
-          div(forward = forwardDimensions(width = fixed(250), height = fixed(10)), reverse = reverseOffset(left = centered))(
-              div(depiction = horizontalLine)(emptyFlower)
+fun titleBar(text: String): Box {
+  return reverseMargin(20)(
+      list(verticalPlane)(
+          listOf(
+              flowerToBox(
+                  flexList(horizontalPlane, 10)(listOf(
+                      titleBookend,
+                      FlexItem(boxToFlower(label(TextStyles.mediumBlack, text))),
+                      titleBookend
+                  ))
+              ),
+              flowerToBox(
+                  div(forward = forwardDimensions(width = fixed(250), height = fixed(10)), reverse = reverseOffset(left = centered))(
+                      div(depiction = horizontalLine)(emptyFlower)
+                  )
+              )
           )
-      ))
+      )
   )
 }
 
@@ -67,7 +73,7 @@ fun reversePair(plane: Plane, spacing: Int = 0, name: String = "reversePair"): (
 
 fun dialogContent(title: String): FlowerWrapper = { flower ->
   reversePair(verticalPlane, 0)(Pair(
-      titleBar(title),
+      boxToFlower(titleBar(title)),
       flower
   ))
 }
