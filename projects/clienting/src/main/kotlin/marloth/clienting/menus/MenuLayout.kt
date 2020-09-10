@@ -34,9 +34,9 @@ fun drawMenuButtonBorder(hasFocus: Boolean, bounds: Bounds, canvas: Canvas) {
   drawBorder(bounds, canvas, style.second)
 }
 
-fun menuTextFlower(text: Text): MenuItemFlower = { hasFocus ->
+fun menuTextFlower(text: String): MenuItemFlower = { hasFocus ->
   val style = getFocusStyle(hasFocus)
-  localizedLabel(style.first, text)
+  label(style.first, text)
 }
 
 fun drawMenuButtonBackground(hasFocus: Boolean): Depiction = { bounds: Bounds, canvas: Canvas ->
@@ -46,29 +46,27 @@ fun drawMenuButtonBackground(hasFocus: Boolean): Depiction = { bounds: Bounds, c
 
 private val buttonDimensions = Vector2i(200, 50)
 
-fun menuButton(flower: MenuItemFlower, hasFocus: Boolean): Flower = { seed: Seed ->
-  flower(hasFocus)(seed)
+fun menuButton(flower: MenuItemFlower, hasFocus: Boolean): Flower = { dimensions: Seed ->
+  flower(hasFocus)(dimensions)
 }
 
 fun menuButtonWrapper(flower: MenuItemFlower): MenuItemFlower = { hasFocus ->
-  { seed ->
+  { dimensions ->
     div(
         name = "simple menu button",
         forward = forwardDimensions(buttonDimensions),
         reverse = shrink,
 //        depiction = drawMenuButtonBackground(hasFocus)
-    )(flower(hasFocus))(seed)
+    )(flower(hasFocus))(dimensions)
   }
 }
 
 fun foo(plane: Plane, wrapper: IndexedFlowerWrapper): FlowerContainerWrapper = { container ->
   { items ->
-    { seed ->
-      val boxes = items.map { it(seed) }
+    { dimensions ->
+      val boxes = items.map { it(dimensions) }
       val breadth = getListBreadth(plane, boxes)
-      val childSeed = seed.copy(
-          dimensions = plane(Vector2i(plane(seed.dimensions).x, breadth))
-      )
+      val childSeed = plane(Vector2i(plane(dimensions).x, breadth))
       container(items.mapIndexed(wrapper))(childSeed)
     }
   }
@@ -117,13 +115,13 @@ fun menuFlower(menu: Menu, focusIndex: Int): Flower {
 val faintBlack = black.copy(w = 0.6f)
 
 fun menuFlower(title: Text, menu: Menu): StateFlower = { definitions, state ->
-  commonDialog(definitions, title, menuFlower(menu, state.menuFocusIndex))
+  commonDialog(definitions, definitions.textLibrary(title), menuFlower(menu, state.menuFocusIndex))
 }
 
 fun simpleMenuFlower(title: Text, source: List<SimpleMenuItem>): StateFlower = { definitions, state ->
   val menu = source.map {
     MenuItem(
-        flower = menuButtonWrapper(menuTextFlower(it.text)),
+        flower = menuButtonWrapper(menuTextFlower(definitions.textLibrary(it.text))),
         event = it.event ?: clientEvent(it.command!!)
     )
   }

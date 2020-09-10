@@ -66,7 +66,7 @@ private val nodeListSelectable = selectable<Node>(nodeListSelectionKey, optional
 }
 
 private val nodeRow: (Node) -> Flower = { node ->
-  selectableFlower(nodeListSelectionKey, node.id.toString()) { seed, selected ->
+  selectableFlower(nodeListSelectionKey, node.id.toString()) { dimensions, selected ->
     val style = if (selected)
       selectedTextStyle
     else

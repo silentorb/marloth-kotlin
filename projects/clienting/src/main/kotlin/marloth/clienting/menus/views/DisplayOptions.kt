@@ -10,13 +10,13 @@ import marloth.clienting.menus.forms.spinField
 import marloth.scenery.enums.Text
 import silentorb.mythic.lookinglass.DisplayConfig
 
-fun displayOptionsFlower(display: DisplayConfig): StateFlower =
-    menuFlower(Text.gui_displayOptions, listOf(
-        MenuItem(
-            flower = menuField(Text.gui_fullscreen, spinField("", "Fullscreen"))
-        ),
+fun displayOptionsFlower(display: DisplayConfig): StateFlower = { definitions, state ->
+  menuFlower(Text.gui_displayOptions, listOf(
+      MenuItem(
+          flower = menuField(definitions.textLibrary(Text.gui_fullscreen), spinField("", "Fullscreen"))
+      ),
 //        MenuItem(
 //            flower = localizedLabel(textStyles.smallBlack, Text.gui_resolution)
 //        )
-    ))
-
+  ))(definitions, state)
+}

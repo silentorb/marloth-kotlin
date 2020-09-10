@@ -171,7 +171,7 @@ fun createMapViewCamera(config: MapViewConfig) =
     else
       createFirstPersonCamera(config.firstPersonCamera)
 
-fun renderMapView(client: Client, world: World, deck: Deck, config: MapViewConfig): StateDepiction = { seed ->
+fun renderMapView(client: Client, world: World, deck: Deck, config: MapViewConfig): StateDepiction = { dimensions ->
   embedCameraView { b, c ->
     val camera = createMapViewCamera(config)
     val windowInfo = client.getWindowInfo()

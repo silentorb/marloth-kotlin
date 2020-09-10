@@ -63,7 +63,7 @@ fun accessoriesView(definitions: Definitions, deck: Deck, actor: Id): Flower {
 }
 
 fun characterInfoView(definitions: Definitions, deck: Deck, actor: Id): Flower {
-  return dialog(Text.gui_characterInfo)(
+  return dialog(definitions.textLibrary(Text.gui_characterInfo))(
       list(horizontalPlane, 10)(listOf(
           div(forward = forwardDimensions(fixed(300), fixed(300)))(generalCharacterInfo(definitions, deck, actor)),
           accessoriesView(definitions, deck, actor)

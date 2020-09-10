@@ -9,6 +9,7 @@ import silentorb.mythic.drawing.grayTone
 import silentorb.mythic.ent.Id
 import silentorb.mythic.spatial.Vector2i
 import marloth.scenery.enums.Text
+import marloth.scenery.enums.TextResourceMapper
 import simulation.entities.AttachmentCategory
 import simulation.happenings.PurchaseEvent
 import simulation.main.Deck
@@ -25,7 +26,7 @@ fun drawWareButton(state: ButtonState): Depiction = { bounds: Bounds, canvas: Ca
 }
 
 fun wareFlower(content: String, isEnabled: Boolean): MenuItemFlower = { hasFocus ->
-  { seed: Seed ->
+  { dimensions: Seed ->
     Box(
         bounds = Bounds(
             dimensions = Vector2i(300, 50)
@@ -87,7 +88,7 @@ fun merchantView(deck: Deck, player: Id): StateFlower = { definitions, state ->
         wareMenuItem(definitions, deck, merchant, player, customerMoney, id)
       }
 
-  dialog(Text.gui_merchant)(
+  dialog(definitions.textLibrary(Text.gui_merchant))(
       list(horizontalPlane, 10)(listOf(
           menuFlower(buttons, state.menuFocusIndex),
           merchantInfoFlower(customerMoney)

@@ -115,10 +115,5 @@ fun guiLayout(definitions: Definitions, options: AppOptions, clientState: Client
 fun layoutPlayerGui(definitions: Definitions, options: AppOptions, clientState: ClientState, world: World?, dimensions: Vector2i,
                     player: Id): Box {
   val layout = guiLayout(definitions, options, clientState, world, player)
-  val bloomState = getPlayerBloomState(clientState.bloomStates, player)
-  val seed = Seed(
-      bag = bloomState.bloom.resourceBag.plus(textResourcesKey to definitions.textLibrary),
-      dimensions = dimensions
-  )
-  return layout(seed)
+  return layout(dimensions)
 }
