@@ -85,7 +85,11 @@ fun dialogWrapper(box: Box) =
     div(reverse = centerDialog)(
         reversePair(verticalPlane, 20)(
             Pair(
-                boxToFlower(SimpleBox(dimensions = Vector2i(500, 90), depiction = imageDepiction(UiTextures.marlothTitle))),
+                lengthToFlower<HorizontalPlane>(
+                    centeredAxis<HorizontalPlane>(
+                        SimpleBox(dimensions = Vector2i(500, 90), depiction = imageDepiction(UiTextures.marlothTitle))
+                    )
+                ),
 //                div(reverse = reverseOffset(left = centered), forward = forwardDimensions(fixed(500), fixed(90)))(
 //                    imageElement(UiTextures.marlothTitle)
 //                ),
