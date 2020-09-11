@@ -85,7 +85,7 @@ fun victoryMenu() = listOfNotNull(
     SimpleMenuItem(Text.message_victory, command = GuiCommandType.newGame)
 )
 
-val emptyViewFlower: StateFlower = { _, _ -> emptyFlower }
+val emptyViewFlower: StateFlower = { _, _ -> emptyBox }
 
 fun viewSelect(world: World?, options: AppOptions, view: ViewId?, player: Id): StateFlower? {
   return when (view) {
@@ -108,7 +108,14 @@ fun guiLayout(definitions: Definitions, options: AppOptions, clientState: Client
   val state = clientState.bloomStates[player]
   return compose(listOfNotNull(
       if (world != null) hudLayout(definitions.textLibrary, world, player, state?.view) else null,
-      if (state != null) viewSelect(world, options, state.view, player)?.invoke(definitions, state) else null
+      if (state != null) {
+        val stateFlower = viewSelect(world, options, state.view, player)
+        if (stateFlower != null)
+          dialogWrapperWithExtras(definitions, stateFlower(definitions, state))
+        else
+          null
+      } else
+        null
   ))
 }
 

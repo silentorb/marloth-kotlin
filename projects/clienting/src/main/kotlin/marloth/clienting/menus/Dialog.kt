@@ -22,31 +22,26 @@ val titleBookendDepiction: Depiction = { bounds, canvas ->
   canvas.drawLine(bounds.left.toFloat(), middleY, bounds.right.toFloat(), middleY, black, 2f)
 }
 
-val titleBookendFlower = div(depiction = titleBookendDepiction)(emptyFlower)
+val titleBookend = div(depiction = titleBookendDepiction)(emptyFlower)
 
-val titleBookend = FlexItem(titleBookendFlower, FlexType.stretch)
 val debugDepiction = solidBackground(Vector4(1f, 0f, 0f, 1f))
 
-fun titleBar(text: String): Box {
-  return reverseMargin(20)(
-      list(verticalPlane)(
-          listOf(
-              flowerToBox(
-                  flexList(horizontalPlane, 10)(listOf(
-                      titleBookend,
-                      FlexItem(boxToFlower(label(TextStyles.mediumBlack, text))),
-                      titleBookend
-                  ))
-              ),
-              flowerToBox(
-                  div(forward = forwardDimensions(width = fixed(250), height = fixed(10)), reverse = reverseOffset(left = centered))(
-                      div(depiction = horizontalLine)(emptyFlower)
-                  )
-              )
-          )
-      )
-  )
-}
+fun titleBar(text: String): HorizontalLengthFlower =
+    axisMargin<HorizontalPlane>(20, child =
+    list<HorizontalPlane>(children = listOf(
+        flexList<HorizontalPlane>(spacing = 10, children =
+        listOf(
+//                    flex2<HorizontalPlane>(titleBookend),
+            flex2<HorizontalPlane>(label(TextStyles.mediumBlack, text)),
+//                    flex2<HorizontalPlane>(titleBookend)
+        )
+        ),
+//            div(forward = forwardDimensions(width = fixed(250), height = fixed(10)), reverse = reverseOffset(left = centered))(
+//                div(depiction = horizontalLine)(emptyFlower)
+//            )
+    )
+    )
+    )
 
 fun reversePair(plane: Plane, spacing: Int = 0, name: String = "reversePair"): (Pair<Flower, Flower>) -> Flower = { pair ->
   { dimensions ->
@@ -60,7 +55,7 @@ fun reversePair(plane: Plane, spacing: Int = 0, name: String = "reversePair"): (
             position = bottom.bounds.position + plane(Vector2i(topDimensions.x + spacing, 0))
         )
     )
-    val boxes = listOf(top, newSecond).reversed()
+    val boxes = listOf(newSecond, top)
     Box(
         name = name,
         bounds = Bounds(
@@ -71,35 +66,39 @@ fun reversePair(plane: Plane, spacing: Int = 0, name: String = "reversePair"): (
   }
 }
 
-fun dialogContent(title: String): FlowerWrapper = { flower ->
-  reversePair(verticalPlane, 0)(Pair(
-      boxToFlower(titleBar(title)),
-      flower
-  ))
-}
-
-fun dialog(title: String): FlowerWrapper = { flower ->
-  div(reverse = centerDialog, depiction = menuBackground)(
-      dialogContent(title)(flower)
+fun dialogContent(title: String): WildFlower = { box ->
+  list(verticalPlane, 0)(
+      listOf(
+          titleBar(title)(box.dimensions.x),
+          box
+      )
   )
 }
 
-fun commonDialog(definitions: Definitions, title: String, flower: Flower) =
+fun dialog(title: String): WildFlower = { box ->
+//  div(reverse = centerDialog, depiction = menuBackground)(
+  dialogContent(title)(box)
+//  )
+}
+
+fun dialogWrapper(box: Box) =
+    div(reverse = centerDialog)(
+        reversePair(verticalPlane, 20)(
+            Pair(
+                boxToFlower(SimpleBox(dimensions = Vector2i(500, 90), depiction = imageDepiction(UiTextures.marlothTitle))),
+//                div(reverse = reverseOffset(left = centered), forward = forwardDimensions(fixed(500), fixed(90)))(
+//                    imageElement(UiTextures.marlothTitle)
+//                ),
+                boxToFlower(box.copy(depiction = menuBackground))
+            )
+        )
+    )
+
+fun dialogWrapperWithExtras(definitions: Definitions, box: Box): Flower =
     compose(
         div(forward = stretchBoth)(
             depict(solidBackground(faintBlack))
         ),
         versionDisplay(definitions.applicationInfo.version),
-        div(reverse = centerDialog)(
-            reversePair(verticalPlane, 20)(
-                Pair(
-                    div(reverse = reverseOffset(left = centered), forward = forwardDimensions(fixed(500), fixed(90)))(
-                        imageElement(UiTextures.marlothTitle)
-                    ),
-                    div(reverse = shrink, depiction = menuBackground)(
-                        dialogContent(title)(flower)
-                    )
-                )
-            )
-        )
+        dialogWrapper(box)
     )

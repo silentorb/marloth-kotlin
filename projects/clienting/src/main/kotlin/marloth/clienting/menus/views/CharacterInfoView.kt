@@ -63,14 +63,12 @@ fun accessoriesView(definitions: Definitions, deck: Deck, actor: Id): Box {
   ))
 }
 
-fun characterInfoView(definitions: Definitions, deck: Deck, actor: Id): Flower {
+fun characterInfoView(definitions: Definitions, deck: Deck, actor: Id): Box {
   return dialog(definitions.textLibrary(Text.gui_characterInfo))(
-      boxToFlower(
-          list(horizontalPlane, 10)(listOf(
-              flowerToBox(div(forward = forwardDimensions(fixed(300), fixed(300)))(boxToFlower(generalCharacterInfo(definitions, deck, actor)))),
-              accessoriesView(definitions, deck, actor)
-          ))
-      )
+      list(horizontalPlane, 10)(listOf(
+          flowerToBox(div(forward = forwardDimensions(fixed(300), fixed(300)))(boxToFlower(generalCharacterInfo(definitions, deck, actor)))),
+          accessoriesView(definitions, deck, actor)
+      ))
   )
 }
 

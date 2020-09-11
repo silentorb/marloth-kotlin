@@ -47,7 +47,7 @@ data class MarlothBloomState(
 )
 
 typealias MarlothBloomStateMap = Map<Id, MarlothBloomState>
-typealias StateFlower = (Definitions, MarlothBloomState) -> Flower
+typealias StateFlower = (Definitions, MarlothBloomState) -> Box
 
 data class ClientState(
     val audio: AudioState,

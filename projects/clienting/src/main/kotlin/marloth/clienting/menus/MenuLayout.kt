@@ -71,7 +71,7 @@ fun menuListWrapper(plane: Plane, wrapper: IndexedFlowerWrapper): FlowerContaine
   }
 }
 
-fun menuFlower(menu: Menu, focusIndex: Int): Flower {
+fun menuFlower(menu: Menu, focusIndex: Int): Box {
   val rows = menu
       .mapIndexed { index, item ->
         val hasFocus = index == focusIndex
@@ -87,40 +87,40 @@ fun menuFlower(menu: Menu, focusIndex: Int): Flower {
 
   val gap = 20
 
-  val wrapper: IndexedFlowerWrapper = { index, flower ->
-    div(
-        reverse = shrinkVertical,
-        depiction = drawMenuButtonBackground(index == focusIndex)
-    )(
-        boxToFlower(
-            reverseMargin(all = gap)(
-                flowerToBox(
-                    div(
-                        reverse = shrink + reverseOffset(left = centered),
-                    )(flower)
-                )
-            )
-        )
-    )
-  }
-  return div(
-      reverse = shrink,
-      attributes = mapOf(menuKey to menu)
-  )(
-      boxToFlower(
-          reverseMargin(all = gap)(
-//      menuListWrapper(verticalPlane, wrapper)(list(verticalPlane, gap))(rows)
-              list(verticalPlane, gap)(rows)
-          )
-      )
-  )
-
+//  val wrapper: IndexedFlowerWrapper = { index, flower ->
+//    div(
+//        reverse = shrinkVertical,
+//        depiction = drawMenuButtonBackground(index == focusIndex)
+//    )(
+//        boxToFlower(
+//            reverseMargin(all = gap)(
+//                flowerToBox(
+//                    div(
+//                        reverse = shrink + reverseOffset(left = centered),
+//                    )(flower)
+//                )
+//            )
+//        )
+//    )
+//  }
+//  return div(
+//      reverse = shrink,
+//      attributes = mapOf(menuKey to menu)
+//  )(
+//      boxToFlower(
+//          reverseMargin(all = gap)(
+////      menuListWrapper(verticalPlane, wrapper)(list(verticalPlane, gap))(rows)
+//              list(verticalPlane, gap)(rows)
+//          )
+//      )
+//  )
+  return list(verticalPlane, gap)(rows)
 }
 
 val faintBlack = black.copy(w = 0.6f)
 
 fun menuFlower(title: Text, menu: Menu): StateFlower = { definitions, state ->
-  commonDialog(definitions, definitions.textLibrary(title), menuFlower(menu, state.menuFocusIndex))
+  dialogContent(definitions.textLibrary(title))(menuFlower(menu, state.menuFocusIndex))
 }
 
 fun simpleMenuFlower(title: Text, source: List<SimpleMenuItem>): StateFlower = { definitions, state ->

@@ -7,6 +7,7 @@ import silentorb.mythic.bloom.Flower
 import silentorb.mythic.ent.Id
 import silentorb.mythic.typography.IndexedTextStyle
 import marloth.scenery.enums.Text
+import silentorb.mythic.bloom.Depiction
 import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.scenery.TextureName
 import silentorb.mythic.spatial.toVector2
@@ -32,17 +33,19 @@ fun localizedLabel(style: IndexedTextStyle, text: Text): Flower = { dimensions -
 //  )
 }
 
+fun imageDepiction(texture: TextureName): Depiction = { b, c ->
+  val renderer = c.custom[canvasRendererKey]!! as Renderer
+  val textureResource = renderer.textures[texture]
+  if (textureResource != null) {
+    c.drawImage(b.position.toVector2(), b.dimensions.toVector2(), c.image(textureResource))
+  }
+}
+
 fun imageElement(texture: TextureName): Flower = { dimensions ->
   Box(
       bounds = Bounds(
           dimensions = dimensions
       ),
-      depiction = { b, c ->
-        val renderer = c.custom[canvasRendererKey]!! as Renderer
-        val textureResource = renderer.textures[texture]
-        if (textureResource != null) {
-          c.drawImage(b.position.toVector2(), b.dimensions.toVector2(), c.image(textureResource))
-        }
-      }
+      depiction = imageDepiction(texture)
   )
 }
