@@ -46,29 +46,26 @@ fun drawMenuButtonBackground(hasFocus: Boolean): Depiction = { bounds: Bounds, c
 
 private val buttonDimensions = Vector2i(200, 50)
 
-//fun menuButton(flower: MenuItemFlower, hasFocus: Boolean): Flower = { dimensions: Seed ->
-//  flower(hasFocus)(dimensions)
-//}
-
 fun menuButtonWrapper(flower: MenuItemFlower): MenuItemFlower = { hasFocus ->
-//  div(
-//      name = "simple menu button",
-//      forward = forwardDimensions(buttonDimensions),
-//      reverse = shrink,
-////        depiction = drawMenuButtonBackground(hasFocus)
-//  )(flower(hasFocus))(dimensions)
   flower(hasFocus)
 }
 
-fun menuListWrapper(plane: Plane, wrapper: IndexedFlowerWrapper): FlowerContainerWrapper = { container ->
-  { items ->
-    { dimensions ->
-      val boxes = items.map { it(dimensions) }
-      val breadth = getListBreadth(plane, boxes)
-      val childSeed = plane(Vector2i(plane(dimensions).x, breadth))
-      container(items.mapIndexed(wrapper))(childSeed)
-    }
-  }
+fun fieldWrapper(focusIndex: Int, breadth: Int): (Int, Box) -> Box = { index, box ->
+  val gap = 20
+  val finalLength = breadth + gap * 2
+  val wrapped = boxMargin(all = gap, top = 12)(
+      box
+  )
+  Box(
+      boxes = listOf(
+          OffsetBox(
+              child = wrapped,
+              offset = Vector2i(centered(finalLength, wrapped.dimensions.x), 0)
+          )
+      ),
+      dimensions = Vector2i(finalLength, wrapped.dimensions.y),
+      depiction = drawMenuButtonBackground(index == focusIndex)
+  )
 }
 
 fun menuFlower(menu: Menu, focusIndex: Int): Box {
@@ -87,34 +84,11 @@ fun menuFlower(menu: Menu, focusIndex: Int): Box {
 
   val gap = 20
 
-//  val wrapper: IndexedFlowerWrapper = { index, flower ->
-//    div(
-//        reverse = shrinkVertical,
-//        depiction = drawMenuButtonBackground(index == focusIndex)
-//    )(
-//        boxToFlower(
-//            reverseMargin(all = gap)(
-//                flowerToBox(
-//                    div(
-//                        reverse = shrink + reverseOffset(left = centered),
-//                    )(flower)
-//                )
-//            )
-//        )
-//    )
-//  }
-//  return div(
-//      reverse = shrink,
-//      attributes = mapOf(menuKey to menu)
-//  )(
-//      boxToFlower(
-//          reverseMargin(all = gap)(
-////      menuListWrapper(verticalPlane, wrapper)(list(verticalPlane, gap))(rows)
-//              list(verticalPlane, gap)(rows)
-//          )
-//      )
-//  )
-  return boxList(verticalPlane, gap)(rows)
+  val breadth = boxList(verticalPlane, gap)(rows).dimensions.x
+  return boxList(verticalPlane, gap)(
+      rows.mapIndexed(fieldWrapper(focusIndex, breadth))
+  )
+
 }
 
 val faintBlack = black.copy(w = 0.6f)
@@ -126,7 +100,7 @@ fun menuFlower(title: Text, menu: Menu): StateFlower = { definitions, state ->
 fun simpleMenuFlower(title: Text, source: List<SimpleMenuItem>): StateFlower = { definitions, state ->
   val menu = source.map {
     MenuItem(
-        flower = menuButtonWrapper(menuTextFlower(definitions.textLibrary(it.text))),
+        flower = menuTextFlower(definitions.textLibrary(it.text)),
         event = it.event ?: clientEvent(it.command!!)
     )
   }

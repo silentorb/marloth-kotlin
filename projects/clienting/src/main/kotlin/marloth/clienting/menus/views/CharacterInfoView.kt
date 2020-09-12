@@ -50,7 +50,7 @@ fun accessoriesView(definitions: Definitions, deck: Deck, actor: Id): Box {
 //              localizedLabel(TextStyles.smallBlack, accessoryDefinition.name)
 //          )
 //        } else
-          null
+        null
       }
   return boxList(verticalPlane)(listOf(
       label(TextStyles.smallBlack, definitions.textLibrary(Text.gui_accessories)),
@@ -62,10 +62,12 @@ fun accessoriesView(definitions: Definitions, deck: Deck, actor: Id): Box {
 
 fun characterInfoView(definitions: Definitions, deck: Deck, actor: Id): Box {
   return dialog(definitions.textLibrary(Text.gui_characterInfo))(
-      boxList(horizontalPlane, 10)(listOf(
+      boxList(horizontalPlane, 10)(
+          listOf(
 //          flowerToBox(div(forward = forwardDimensions(fixed(300), fixed(300)))(boxToFlower(generalCharacterInfo(definitions, deck, actor)))),
-          accessoriesView(definitions, deck, actor)
-      ))
+              accessoriesView(definitions, deck, actor)
+          )
+      )
   )
 }
 

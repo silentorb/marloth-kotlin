@@ -54,16 +54,11 @@ private fun playerStats(world: World, actor: Id, debugInfo: List<String>): Flowe
   ) + debugInfo.map {
     label(textStyle, it)
   }
-  return boxToFlower(boxList(verticalPlane, 10)(rows))
-//  return div(reverse = reverseOffset(top = justifiedEnd))(
-//      forwardMargin(10)(
-//          div(reverse = shrink, depiction = solidBackground(black))(
-//              forwardMargin(20)(
-//                  boxToFlower(boxList(verticalPlane, 10)(rows))
-//              )
-//          )
-//      )
-//  )
+  return reverseOffset(justifiedStart, justifiedEnd)(
+      hudBox(
+          boxList(verticalPlane, 10)(rows)
+      )
+  )
 }
 
 //private val interactionBar =
