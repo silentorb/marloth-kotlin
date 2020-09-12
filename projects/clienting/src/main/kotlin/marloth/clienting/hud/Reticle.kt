@@ -15,10 +15,11 @@ fun reticleDepiction(radius: Float, color: Vector4): Depiction = { bounds, canva
 }
 
 fun reticlePlacement(): Flower {
-  return div("b",
-        reverse = reverseOffset(left = centered, top = centered))(
-      div(forward = forwardDimensions(fixed(30), fixed(30)))(
-          depict(reticleDepiction(15f, Vector4(1f, 1f, 1f, 0.4f)))
-      )
-  )
+  return depict(reticleDepiction(15f, Vector4(1f, 1f, 1f, 0.4f)))
+//  return div("b",
+//        reverse = reverseOffset(left = centered, top = centered))(
+//      div(forward = forwardDimensions(fixed(30), fixed(30)))(
+//          depict(reticleDepiction(15f, Vector4(1f, 1f, 1f, 0.4f)))
+//      )
+//  )
 }

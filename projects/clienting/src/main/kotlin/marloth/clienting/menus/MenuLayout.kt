@@ -114,7 +114,7 @@ fun menuFlower(menu: Menu, focusIndex: Int): Box {
 //          )
 //      )
 //  )
-  return list(verticalPlane, gap)(rows)
+  return boxList(verticalPlane, gap)(rows)
 }
 
 val faintBlack = black.copy(w = 0.6f)

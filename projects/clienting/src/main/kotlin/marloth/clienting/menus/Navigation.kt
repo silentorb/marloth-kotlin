@@ -6,6 +6,7 @@ import marloth.clienting.PlayerBoxes
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.newMarlothBloomState
 import silentorb.mythic.bloom.Box
+import silentorb.mythic.bloom.OffsetBox
 import silentorb.mythic.bloom.flattenAllBoxes
 import silentorb.mythic.bloom.getHoverBoxes
 import silentorb.mythic.ent.Id
@@ -58,7 +59,7 @@ fun fallBackMenus(deck: Deck, player: Id): ViewId? =
 fun updateMarlothBloomState(
     state: MarlothBloomState,
     bloomDefinition: BloomDefinition,
-    hoverBoxes: List<Box>,
+    hoverBoxes: List<OffsetBox>,
     commands: HaftCommands
 ): MarlothBloomState {
   val menuSize = bloomDefinition.menu?.size

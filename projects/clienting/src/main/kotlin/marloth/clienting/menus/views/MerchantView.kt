@@ -9,7 +9,6 @@ import silentorb.mythic.drawing.grayTone
 import silentorb.mythic.ent.Id
 import silentorb.mythic.spatial.Vector2i
 import marloth.scenery.enums.Text
-import marloth.scenery.enums.TextResourceMapper
 import simulation.entities.AttachmentCategory
 import simulation.happenings.PurchaseEvent
 import simulation.main.Deck
@@ -25,19 +24,19 @@ fun drawWareButton(state: ButtonState): Depiction = { bounds: Bounds, canvas: Ca
   drawMenuButtonBorder(state.hasFocus, bounds, canvas)
 }
 
-fun wareFlower(content: String, isEnabled: Boolean): MenuItemFlower = { hasFocus ->
-  Box(
-      bounds = Bounds(
-          dimensions = Vector2i(300, 50)
-      ),
-      depiction = drawWareButton(
-          ButtonState(
-              text = content,
-              hasFocus = hasFocus,
-              isEnabled = isEnabled)
-      )
-  )
-}
+//fun wareFlower(content: String, isEnabled: Boolean): MenuItemFlower = { hasFocus ->
+//  Box(
+//      bounds = Bounds(
+//          dimensions = Vector2i(300, 50)
+//      ),
+//      depiction = drawWareButton(
+//          ButtonState(
+//              text = content,
+//              hasFocus = hasFocus,
+//              isEnabled = isEnabled)
+//      )
+//  )
+//}
 
 fun wareMenuItem(definitions: Definitions, deck: Deck, merchant: Id,
                  player: Id, customerMoney: Int, id: Id): MenuItem {
@@ -58,26 +57,27 @@ fun wareMenuItem(definitions: Definitions, deck: Deck, merchant: Id,
   else
     null
 
-  return MenuItem(
-      flower = wareFlower("$name $$price", canPurchase),
-      event = event
-  )
+  throw Error("Needs updating")
+//  return MenuItem(
+//      flower = wareFlower("$name $$price", canPurchase),
+//      event = event
+//  )
 }
 
-fun merchantInfoFlower(customerMoney: Int) =
-    div(
-        name = "merchant",
-        forward = forwardDimensions(width = fixed(200)),
-        reverse = shrink
-    )(
-        boxToFlower(
-            reverseMargin(20)(
-                list(verticalPlane, 10)(listOf(
-                    label(TextStyles.smallBlack, "Money: $$customerMoney")
-                ))
-            )
-        )
-    )
+//fun merchantInfoFlower(customerMoney: Int) =
+//    div(
+//        name = "merchant",
+//        forward = forwardDimensions(width = fixed(200)),
+//        reverse = shrink
+//    )(
+//        boxToFlower(
+//            reverseMargin(20)(
+//                boxList(verticalPlane, 10)(listOf(
+//                    label(TextStyles.smallBlack, "Money: $$customerMoney")
+//                ))
+//            )
+//        )
+//    )
 
 fun merchantView(deck: Deck, player: Id): StateFlower = { definitions, state ->
   val merchant = getPlayerInteractingWith(deck, player)!!
@@ -89,10 +89,10 @@ fun merchantView(deck: Deck, player: Id): StateFlower = { definitions, state ->
       }
 
   dialog(definitions.textLibrary(Text.gui_merchant))(
-      list(horizontalPlane, 10)(
+      boxList(horizontalPlane, 10)(
           listOf(
               menuFlower(buttons, state.menuFocusIndex),
-              flowerToBox(merchantInfoFlower(customerMoney))
+//              flowerToBox(merchantInfoFlower(customerMoney))
           )
       )
   )

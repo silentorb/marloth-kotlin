@@ -54,23 +54,24 @@ private fun playerStats(world: World, actor: Id, debugInfo: List<String>): Flowe
   ) + debugInfo.map {
     label(textStyle, it)
   }
-  return div(reverse = reverseOffset(top = justifiedEnd))(
-      forwardMargin(10)(
-          div(reverse = shrink, depiction = solidBackground(black))(
-              forwardMargin(20)(
-                  boxToFlower(list(verticalPlane, 10)(rows))
-              )
-          )
-      )
-  )
+  return boxToFlower(boxList(verticalPlane, 10)(rows))
+//  return div(reverse = reverseOffset(top = justifiedEnd))(
+//      forwardMargin(10)(
+//          div(reverse = shrink, depiction = solidBackground(black))(
+//              forwardMargin(20)(
+//                  boxToFlower(boxList(verticalPlane, 10)(rows))
+//              )
+//          )
+//      )
+//  )
 }
 
-private val interactionBar =
-    div("a",
-        forward = forwardOffset(top = percentage(0.8f)),
-        reverse = reverseOffset(left = centered) + reverseDimensions(height = shrinkWrap),
-        depiction = solidBackground(black)
-    )
+//private val interactionBar =
+//    div("a",
+//        forward = forwardOffset(top = percentage(0.8f)),
+//        reverse = reverseOffset(left = centered) + reverseDimensions(height = shrinkWrap),
+//        depiction = solidBackground(black)
+//    )
 
 fun interactionDialog(textResources: TextResources, interactable: Interactable): Flower {
   val secondary = interactable.secondaryCommand
@@ -83,13 +84,14 @@ fun interactionDialog(textResources: TextResources, interactable: Interactable):
   )
 
   val gap = 20
-  return interactionBar(
-      div("b", reverse = reverseOffset(left = centered) + reverseDimensions(height = shrinkWrap))(
-          forwardMargin(top = gap, bottom = gap)(
-              boxToFlower(list(verticalPlane, gap)(rows))
-          )
-      )
-  )
+  throw Error("Need Updating")
+//  return interactionBar(
+//      div("b", reverse = reverseOffset(left = centered) + reverseDimensions(height = shrinkWrap))(
+//          forwardMargin(top = gap, bottom = gap)(
+//              boxToFlower(boxList(verticalPlane, gap)(rows))
+//          )
+//      )
+//  )
 }
 
 fun hudLayout(textResources: TextResources, world: World, player: Id, view: ViewId?): Flower? {

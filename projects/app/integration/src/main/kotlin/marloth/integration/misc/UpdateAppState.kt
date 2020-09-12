@@ -17,6 +17,7 @@ import marloth.scenery.enums.CharacterCommands
 import persistence.Database
 import persistence.createVictory
 import silentorb.mythic.bloom.Box
+import silentorb.mythic.bloom.OffsetBox
 import silentorb.mythic.bloom.toAbsoluteBoundsRecursive
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.incrementGlobalDebugLoopNumber
@@ -172,7 +173,7 @@ fun layoutBoxes(app: GameApp, appState: AppState): Map<Id, Box> {
   val viewports = getPlayerViewports(appState.client.players.size, windowInfo.dimensions)
   val viewportDimensions = viewports.map { Vector2i(it.z, it.w) }
   val playerBoxes = layoutGui(app.definitions, appState, viewportDimensions)
-  return playerBoxes.mapValues { toAbsoluteBoundsRecursive(Vector2i.zero, it.value) }
+  return playerBoxes.mapValues { toAbsoluteBoundsRecursive(it.value) }
 }
 
 fun updateFixedIntervalSteps(app: GameApp, layoutBoxes: (AppState) -> Map<Id, Box>, remainingSteps: Int, appState: AppState): AppState =

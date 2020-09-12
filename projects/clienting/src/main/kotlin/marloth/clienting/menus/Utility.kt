@@ -41,11 +41,11 @@ fun imageDepiction(texture: TextureName): Depiction = { b, c ->
   }
 }
 
-fun imageElement(texture: TextureName): Flower = { dimensions ->
-  Box(
-      bounds = Bounds(
-          dimensions = dimensions
-      ),
-      depiction = imageDepiction(texture)
-  )
-}
+//fun imageElement(texture: TextureName): Flower = { dimensions ->
+//  Box(
+//      bounds = Bounds(
+//          dimensions = dimensions
+//      ),
+//      depiction = imageDepiction(texture)
+//  )
+//}

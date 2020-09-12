@@ -17,11 +17,11 @@ fun checkboxDepiction(value: Boolean): Depiction = { bounds, canvas ->
   }
 }
 
-fun checkboxFlower(id: Any, value: Boolean): Flower =
-    div(
-        forward = forwardDimensions(fixed(50), fixed(50)),
-        attributes = mapOf(checkboxIdKey to id)
-    )(depict(checkboxDepiction(value)))
-
-fun getToggledCheckbox(hoverBoxes: Boxes): Any? =
-    getAttributeValue(hoverBoxes, checkboxIdKey)
+//fun checkboxFlower(id: Any, value: Boolean): Flower =
+//    div(
+//        forward = forwardDimensions(fixed(50), fixed(50)),
+//        attributes = mapOf(checkboxIdKey to id)
+//    )(depict(checkboxDepiction(value)))
+//
+//fun getToggledCheckbox(hoverBoxes: Collection<OffsetBox>): Any? =
+//    getAttributeValue(hoverBoxes, checkboxIdKey)

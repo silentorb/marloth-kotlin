@@ -35,7 +35,7 @@ data class BloomDefinition(
     val menu: Menu?
 )
 
-fun newBloomDefinition(boxes: List<Box>): BloomDefinition =
+fun newBloomDefinition(boxes: List<AttributeHolder>): BloomDefinition =
     BloomDefinition(
         menu = getAttributeValue<Menu>(boxes, menuKey)
     )

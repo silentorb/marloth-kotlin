@@ -4,6 +4,7 @@ import marloth.clienting.MarlothBloomState
 import marloth.clienting.input.GuiCommandType
 import marloth.scenery.enums.CharacterRigCommands
 import silentorb.mythic.bloom.Box
+import silentorb.mythic.bloom.OffsetBox
 import silentorb.mythic.ent.firstNotNull
 import silentorb.mythic.haft.HaftCommands
 
@@ -24,7 +25,7 @@ data class MenuLayer(
 
 typealias MenuStack = List<MenuLayer>
 
-fun getMenuEvents(attributeBoxes: List<Box>, hoverBoxes: List<Box>, events: HaftCommands): List<ClientOrServerEvent> {
+fun getMenuEvents(attributeBoxes: List<OffsetBox>, hoverBoxes: List<OffsetBox>, events: HaftCommands): List<ClientOrServerEvent> {
   // The pattern between these two blocks could be abstracted but it may be an accidental pattern
   // so I'll wait until another repetition of the pattern occurs
   val clickEvents = if (events.any { it.type == GuiCommandType.mouseClick })
@@ -40,7 +41,7 @@ fun getMenuEvents(attributeBoxes: List<Box>, hoverBoxes: List<Box>, events: Haft
   return clickEvents + menuSelectEvents
 }
 
-fun getHoverIndex(hoverBoxes: List<Box>): Int? =
+fun getHoverIndex(hoverBoxes: List<OffsetBox>): Int? =
     hoverBoxes
         .firstNotNull { it.attributes[menuItemIndexKey] as? Int }
 

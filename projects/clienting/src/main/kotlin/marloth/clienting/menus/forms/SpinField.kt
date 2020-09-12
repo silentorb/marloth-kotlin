@@ -35,7 +35,7 @@ fun <T> cycle(options: List<T>, offset: Int, value: T): T {
   return options[nextIndex]
 }
 
-fun <T> updateSpinField(options: List<T>, commands: List<Any>, hoverBoxes: Boxes, value: T) =
+fun <T> updateSpinField(options: List<T>, commands: List<Any>, hoverBoxes: Collection<OffsetBox>, value: T) =
     when {
       commands.contains(CharacterRigCommands.moveRight) ||
           commands.contains(GuiCommandType.menuSelect) -> cycle(options, 1, value)

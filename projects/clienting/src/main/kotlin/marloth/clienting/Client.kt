@@ -132,10 +132,10 @@ fun getListenerPosition(deck: Deck): Vector3? {
   return body?.position
 }
 
-typealias PlayerBoxes = Map<Id, List<Box>>
+typealias PlayerBoxes = Map<Id, List<OffsetBox>>
 
 fun flattenToPlayerBoxes(boxes: Map<Id, Box>): PlayerBoxes =
-    boxes.mapValues { flattenAllBoxes(it.value).filter(::hasAttributes) }
+    boxes.mapValues { flattenAllBoxes(OffsetBox(it.value)).filter(::hasAttributes) }
 
 fun updateClient(client: Client, worlds: List<World>, playerBoxes: PlayerBoxes, playerBloomDefinitions: Map<Id, BloomDefinition>, clientState: ClientState): ClientState {
   updateMousePointerVisibility(client.platform)
