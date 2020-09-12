@@ -17,7 +17,6 @@ import marloth.scenery.enums.CharacterCommands
 import persistence.Database
 import persistence.createVictory
 import silentorb.mythic.bloom.Box
-import silentorb.mythic.bloom.OffsetBox
 import silentorb.mythic.bloom.toAbsoluteBoundsRecursive
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.incrementGlobalDebugLoopNumber
@@ -116,7 +115,7 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
       .plus(gatherAdditionalGameCommands(previousClient, clientState))
 
   val definitions = app.definitions
-  val clientEvents = events + gameCommands + mouseLookEvents(app.client.renderer.config.dimensions, clientState.input.deviceStates.last(), previousClient.input.deviceStates.lastOrNull(), clientState.players.firstOrNull())
+  val clientEvents = events + gameCommands + mouseLookEvents(app.client.renderer.options.dimensions, clientState.input.deviceStates.last(), previousClient.input.deviceStates.lastOrNull(), clientState.players.firstOrNull())
   val allEvents = withSimulationEvents(definitions, previous.deck, world, clientEvents)
   val nextWorld = updateWorld(definitions, allEvents, simulationDelta, world)
   val finalWorld = nextWorld.copy(

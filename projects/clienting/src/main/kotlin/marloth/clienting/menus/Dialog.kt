@@ -15,7 +15,7 @@ val horizontalLineDepiction: Depiction = { bounds, canvas ->
 }
 
 val horizontalLine: LengthFlower = { length ->
-  Box(dimensions = Vector2i(length, 10), depiction = horizontalLineDepiction)
+  Box(dimensions = Vector2i(length, 15), depiction = horizontalLineDepiction)
 }
 
 val titleBookendDepiction: Depiction = { bounds, canvas ->
@@ -24,8 +24,6 @@ val titleBookendDepiction: Depiction = { bounds, canvas ->
 }
 
 val titleBookend: Flower = depict(titleBookendDepiction)
-
-val debugDepiction = solidBackground(Vector4(1f, 0f, 0f, 1f))
 
 fun titleBar(text: String): LengthFlower =
     breadthList(verticalPlane)(
@@ -37,12 +35,9 @@ fun titleBar(text: String): LengthFlower =
                     flexFlower(titleBookend),
                 )
             ),
-            axisMargin(horizontalPlane, all = 0, left = 20, right = 20)(
+            axisMargin(horizontalPlane, all = 0, left = 30, right = 30)(
                 horizontalLine
             )
-//            div(forward = forwardDimensions(width = fixed(250), height = fixed(10)), reverse = reverseOffset(left = centered))(
-//                div(depiction = horizontalLine)(emptyFlower)
-//            )
         )
     )
 

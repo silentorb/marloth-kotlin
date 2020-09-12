@@ -2,22 +2,27 @@ package marloth.clienting.menus
 
 import marloth.clienting.StateFlower
 import marloth.clienting.input.GuiCommandType
+import marloth.clienting.menus.logic.menuItemIndexKey
+import marloth.clienting.menus.logic.menuKey
+import marloth.clienting.menus.logic.onActivateKey
+import marloth.clienting.menus.logic.onClickKey
 import marloth.scenery.enums.Text
 import silentorb.mythic.bloom.*
 import silentorb.mythic.drawing.Canvas
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector4
+import kotlin.math.max
 
 typealias MenuItemFlower = (Boolean) -> Box
 
 data class MenuItem(
     val flower: MenuItemFlower,
-    val event: ClientOrServerEvent? = null
+    val event: EventUnion? = null
 )
 
 data class SimpleMenuItem(
     val text: Text,
-    val event: ClientOrServerEvent? = null,
+    val event: EventUnion? = null,
     val command: GuiCommandType? = null
 )
 
@@ -79,15 +84,18 @@ fun menuFlower(menu: Menu, focusIndex: Int): Box {
         else
           mapOf()
 
-        withAttributes(attributes + (menuItemIndexKey to index), box)
+        box.copy(
+            attributes = attributes + (menuItemIndexKey to index)
+        )
       }
 
   val gap = 20
 
   val breadth = boxList(verticalPlane, gap)(rows).dimensions.x
   return boxList(verticalPlane, gap)(
-      rows.mapIndexed(fieldWrapper(focusIndex, breadth))
+      rows.mapIndexed(fieldWrapper(focusIndex, max(150, breadth)))
   )
+      .addAttributes(menuKey to menu)
 
 }
 

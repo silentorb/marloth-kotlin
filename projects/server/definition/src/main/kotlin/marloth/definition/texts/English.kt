@@ -22,6 +22,9 @@ val englishTextResources: TextResourceMapper = { text ->
     Text.gui_fullscreen -> "Fullscreen"
     Text.gui_resolution -> "Resolution"
     Text.gui_vsync -> "VSync"
+    Text.gui_windowed -> "Windowed"
+    Text.gui_windowedFullscreen -> "Windowed Fullscreen"
+    Text.gui_windowMode -> "Window Mode"
 
     Text.gui_accessories -> "Modifiers"
     Text.gui_characterInfo -> "Character Info"

@@ -7,7 +7,6 @@ import silentorb.mythic.bloom.*
 import silentorb.mythic.drawing.Canvas
 import silentorb.mythic.drawing.grayTone
 import silentorb.mythic.ent.Id
-import silentorb.mythic.spatial.Vector2i
 import marloth.scenery.enums.Text
 import simulation.entities.AttachmentCategory
 import simulation.happenings.PurchaseEvent
@@ -46,13 +45,11 @@ fun wareMenuItem(definitions: Definitions, deck: Deck, merchant: Id,
   val price = ware.price
   val canPurchase = ware.price <= customerMoney
   val event = if (canPurchase)
-    ClientOrServerEvent(
-        server = PurchaseEvent(
-            customer = player,
-            merchant = merchant,
-            ware = id,
-            wareType = ware.type
-        )
+    PurchaseEvent(
+        customer = player,
+        merchant = merchant,
+        ware = id,
+        wareType = ware.type
     )
   else
     null

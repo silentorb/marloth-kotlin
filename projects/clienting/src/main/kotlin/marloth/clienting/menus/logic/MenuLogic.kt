@@ -1,9 +1,10 @@
-package marloth.clienting.menus
+package marloth.clienting.menus.logic
 
 import marloth.clienting.MarlothBloomState
 import marloth.clienting.input.GuiCommandType
+import marloth.clienting.menus.EventUnion
+import marloth.clienting.menus.ViewId
 import marloth.scenery.enums.CharacterRigCommands
-import silentorb.mythic.bloom.Box
 import silentorb.mythic.bloom.OffsetBox
 import silentorb.mythic.ent.firstNotNull
 import silentorb.mythic.haft.HaftCommands
@@ -12,6 +13,7 @@ const val menuKey = "silentorb.menu"
 const val onActivateKey = "silentorb.onActivate"
 const val onClickKey = "silentorb.onClick"
 const val menuItemIndexKey = "silentorb.menuItemIndex"
+const val onClientEventKey = "silentorb.onClientEventKey"
 
 fun cycle(value: Int, max: Int): Int {
   assert(max > 0)
@@ -25,16 +27,16 @@ data class MenuLayer(
 
 typealias MenuStack = List<MenuLayer>
 
-fun getMenuEvents(attributeBoxes: List<OffsetBox>, hoverBoxes: List<OffsetBox>, events: HaftCommands): List<ClientOrServerEvent> {
+fun getMenuEvents(attributeBoxes: List<OffsetBox>, hoverBoxes: List<OffsetBox>, events: HaftCommands): List<EventUnion> {
   // The pattern between these two blocks could be abstracted but it may be an accidental pattern
   // so I'll wait until another repetition of the pattern occurs
   val clickEvents = if (events.any { it.type == GuiCommandType.mouseClick })
-    hoverBoxes.mapNotNull { it.attributes[onClickKey] as? ClientOrServerEvent }
+    hoverBoxes.mapNotNull { it.attributes[onClickKey] as? EventUnion }
   else
     listOf()
 
   val menuSelectEvents = if (events.any { it.type == GuiCommandType.menuSelect })
-    attributeBoxes.mapNotNull { it.attributes[onActivateKey] as? ClientOrServerEvent }
+    attributeBoxes.mapNotNull { it.attributes[onActivateKey] as? EventUnion }
   else
     listOf()
 

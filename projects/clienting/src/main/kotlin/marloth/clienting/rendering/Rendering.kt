@@ -1,14 +1,13 @@
 package marloth.clienting.rendering
 
 import marloth.clienting.rendering.marching.*
-import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.glowing.globalState
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.scenery.Light
 import silentorb.mythic.spatial.Vector4i
 
 fun prepareRender(renderer: SceneRenderer, scene: GameScene): List<ScreenFilter> {
-  val filters = getDisplayConfigFilters(renderer.renderer.config).plus(scene.filters)
+  val filters = getDisplayConfigFilters(renderer.renderer.options).plus(scene.filters)
   prepareRender(renderer, filters)
   globalState.lineThickness = 2f
   return filters

@@ -5,6 +5,9 @@ import marloth.clienting.audio.updateClientAudio
 import marloth.clienting.input.*
 import marloth.clienting.input.InputState
 import marloth.clienting.menus.*
+import marloth.clienting.menus.logic.MenuStack
+import marloth.clienting.menus.logic.getMenuEvents
+import marloth.clienting.menus.logic.updateMenus
 import marloth.clienting.rendering.MeshLoadingState
 import marloth.clienting.rendering.marching.MarchingState
 import marloth.clienting.rendering.marching.newMarchingState
@@ -22,6 +25,7 @@ import silentorb.mythic.haft.HaftCommands
 import silentorb.mythic.haft.simpleCommand
 import silentorb.mythic.haft.updateInputDeviceStates
 import silentorb.mythic.happenings.Events
+import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.lookinglass.mapAnimationInfo
 import silentorb.mythic.lookinglass.texturing.TextureLoadingState
@@ -158,13 +162,13 @@ fun updateClient(client: Client, worlds: List<World>, playerBoxes: PlayerBoxes, 
   val menuClientCommands = menuEvents
       .flatMap { (player, events) ->
         events
-            .mapNotNull { it.client }
+            .filterIsInstance<GuiEvent>()
             .map { simpleCommand(it.type, 0, player, it.data) }
       }
 
   val menuGameEvents = menuEvents.values
       .flatMap { events ->
-        events.mapNotNull { it.server }
+        events.filterIsInstance<GameEvent>()
       }
 
   val commands = initialCommands.plus(menuClientCommands)
@@ -174,7 +178,7 @@ fun updateClient(client: Client, worlds: List<World>, playerBoxes: PlayerBoxes, 
   return clientState.copy(
       audio = updateClientAudio(client, worlds, clientState.audio),
       input = input,
-      bloomStates = nextBloomStates, //.mapValues { it.value.copy(bloom = bloomStates[it.key]!!) },
+      bloomStates = nextBloomStates,
       commands = commands,
       gameEvents = menuGameEvents
   )

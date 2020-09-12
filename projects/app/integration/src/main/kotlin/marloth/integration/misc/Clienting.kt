@@ -28,8 +28,8 @@ fun gatherTextures(loadImage: ImageLoader, attributes: TextureAttributeMapper): 
         .plus(scanTextureResources("external/images"))
         .map { deferImageFile(loadImage, it, attributes(it)) }
 
-fun gatherTextures(display: PlatformDisplay, displayConfig: DisplayConfig): List<DeferredTexture> {
-  val defaultAttributes = textureAttributesFromConfig(displayConfig)
+fun gatherTextures(display: PlatformDisplay, displayOptions: DisplayOptions): List<DeferredTexture> {
+  val defaultAttributes = textureAttributesFromConfig(displayOptions)
   val backgroundAttributes = defaultAttributes.copy(
       mipmap = false
   )
@@ -44,7 +44,7 @@ fun gatherTextures(display: PlatformDisplay, displayConfig: DisplayConfig): List
 }
 
 fun newRenderer(
-    config: DisplayConfig,
+    options: DisplayOptions,
     fontSource: () -> List<FontSet>
 ): Renderer {
   val glow = Glow()
@@ -53,34 +53,34 @@ fun newRenderer(
   val (loadedMeshes, loadedArmatures) = createMeshes(vertexSchemas)
   val meshes = loadedMeshes
   val armatures = loadedArmatures.associateBy { it.id }
-  val multisampler = if (config.multisamples == 0)
+  val multisampler = if (options.multisamples == 0)
     null
   else
-    createMultiSampler(glow, config.dimensions.x, config.dimensions.y, config.multisamples)
+    createMultiSampler(glow, options.dimensions.x, options.dimensions.y, options.multisamples)
 
   return Renderer(
       glow = glow,
-      config = config,
+      options = options,
       fonts = fontSource(),
       meshes = meshes.toMutableMap(),
       armatures = armatures,
       vertexSchemas = vertexSchemas,
       multisampler = multisampler,
       offscreenBuffers = (0..0).map {
-        prepareScreenFrameBuffer(config.dimensions.x, config.dimensions.y, true)
+        prepareScreenFrameBuffer(options.dimensions.x, options.dimensions.y, true)
       }
   )
 }
 
-fun newClient(platform: Platform, displayConfig: DisplayConfig): Client {
-  val textures = gatherTextures(platform.display, displayConfig)
+fun newClient(platform: Platform, displayOptions: DisplayOptions): Client {
+  val textures = gatherTextures(platform.display, displayOptions)
   val impModels = if (getDebugBoolean("RENDER_MARCHING"))
     gatherImpModels()
   else
     mapOf()
 
   val renderer = newRenderer(
-      config = displayConfig,
+      options = displayOptions,
       fontSource = ::gatherFontSets
   )
   setGlobalFonts(renderer.fonts)

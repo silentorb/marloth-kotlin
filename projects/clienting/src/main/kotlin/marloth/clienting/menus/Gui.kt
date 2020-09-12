@@ -3,6 +3,7 @@ package marloth.clienting.menus
 import marloth.clienting.*
 import marloth.clienting.hud.hudLayout
 import marloth.clienting.input.GuiCommandType
+import marloth.clienting.menus.logic.menuKey
 import marloth.clienting.menus.views.*
 import marloth.scenery.enums.CharacterCommands
 import marloth.scenery.enums.Text
@@ -48,17 +49,15 @@ data class GuiEvent(
     val data: Any? = null
 )
 
-data class ClientOrServerEvent(
-    val client: GuiEvent? = null,
-    val server: GameEvent? = null
-) {
-  init {
-    assert((client == null && server != null) || (client != null && server == null))
-  }
-}
+typealias EventUnion = Any
 
-fun clientEvent(type: GuiCommandType, data: Any? = null): ClientOrServerEvent =
-    ClientOrServerEvent(client = GuiEvent(type, data))
+fun clientEvent(type: GuiCommandType, data: Any? = null): EventUnion =
+    GuiEvent(type, data)
+
+data class OnClientEvent(
+    val pattern: (GuiEvent) -> Boolean,
+    val event: EventUnion
+)
 
 data class ButtonState(
     val text: String,

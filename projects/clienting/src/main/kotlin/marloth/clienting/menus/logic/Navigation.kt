@@ -1,13 +1,13 @@
-package marloth.clienting.menus
+package marloth.clienting.menus.logic
 
 import marloth.clienting.MarlothBloomState
 import marloth.clienting.MarlothBloomStateMap
 import marloth.clienting.PlayerBoxes
 import marloth.clienting.input.GuiCommandType
+import marloth.clienting.menus.BloomDefinition
+import marloth.clienting.menus.ViewId
 import marloth.clienting.newMarlothBloomState
-import silentorb.mythic.bloom.Box
 import silentorb.mythic.bloom.OffsetBox
-import silentorb.mythic.bloom.flattenAllBoxes
 import silentorb.mythic.bloom.getHoverBoxes
 import silentorb.mythic.ent.Id
 import silentorb.mythic.haft.HaftCommands

@@ -25,6 +25,9 @@ enum class Text {
   // Display options
   gui_antialiasing,
   gui_fullscreen,
+  gui_windowedFullscreen,
+  gui_windowed,
+  gui_windowMode,
   gui_resolution,
   gui_vsync,
 
