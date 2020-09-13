@@ -59,7 +59,7 @@ data class ClientState(
     val commands: List<HaftCommand>,
     val input: InputState,
     val marching: MarchingState,
-    val gameEvents: Events,
+    val events: List<Any>,
 
     // Players could be extracted from the world deck except the world does not care about player order.
     // Player order is only a client concern, and only for local multiplayer.
@@ -86,7 +86,7 @@ fun newClientState(inputConfig: GameInputConfig, audioConfig: AudioConfig) =
         commands = listOf(),
         players = listOf(),
         marching = newMarchingState(),
-        gameEvents = listOf()
+        events = listOf()
     )
 
 fun playerViews(client: ClientState): Map<Id, ViewId?> =
@@ -166,11 +166,6 @@ fun updateClient(client: Client, worlds: List<World>, playerBoxes: PlayerBoxes, 
             .map { simpleCommand(it.type, 0, player, it.data) }
       }
 
-  val menuGameEvents = menuEvents.values
-      .flatMap { events ->
-        events.filterIsInstance<GameEvent>()
-      }
-
   val commands = initialCommands.plus(menuClientCommands)
   applyCommandsToExternalSystem(client, commands)
   val nextBloomStates = updateMenus(clientState.bloomStates, playerBloomDefinitions, mousePosition, playerBoxes, commands)
@@ -180,7 +175,7 @@ fun updateClient(client: Client, worlds: List<World>, playerBoxes: PlayerBoxes, 
       input = input,
       bloomStates = nextBloomStates,
       commands = commands,
-      gameEvents = menuGameEvents
+      events = menuEvents.values.flatten()
   )
 }
 

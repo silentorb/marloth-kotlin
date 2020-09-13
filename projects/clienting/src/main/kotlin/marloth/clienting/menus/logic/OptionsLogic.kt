@@ -18,8 +18,4 @@ fun updateAppOptions(options: AppOptions, event: ClientEvent): AppOptions =
     )
 
 fun updateAppOptions(events: List<ClientEvent>, options: AppOptions): AppOptions =
-    if (events.none()) {
-      options
-    } else {
-      events.fold(options, ::updateAppOptions)
-    }
+    events.fold(options, ::updateAppOptions)

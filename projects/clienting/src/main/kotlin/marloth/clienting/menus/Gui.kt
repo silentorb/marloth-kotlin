@@ -10,6 +10,7 @@ import marloth.scenery.enums.Text
 import silentorb.mythic.bloom.*
 import silentorb.mythic.drawing.grayTone
 import silentorb.mythic.ent.Id
+import silentorb.mythic.haft.HaftCommand
 import silentorb.mythic.haft.HaftCommands
 import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.spatial.Vector2i
@@ -54,9 +55,8 @@ typealias EventUnion = Any
 fun clientEvent(type: GuiCommandType, data: Any? = null): EventUnion =
     GuiEvent(type, data)
 
-data class OnClientEvent(
-    val pattern: (GuiEvent) -> Boolean,
-    val event: EventUnion
+data class OnClientEvents(
+    val map: List<Pair<EventUnion, (HaftCommand) -> Boolean>>
 )
 
 data class ButtonState(

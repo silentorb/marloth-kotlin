@@ -13,7 +13,7 @@ fun windowModeTextMap(windowMode: WindowMode): Text=
     when(windowMode){
       WindowMode.fullscreen->Text.gui_fullscreen
       WindowMode.windowed->Text.gui_windowed
-      WindowMode.windowedFullscreen->Text.gui_fullscreen
+      WindowMode.windowedFullscreen->Text.gui_windowedFullscreen
     }
 
 fun displayOptionsFlower(display: DisplayOptions): StateFlower = { definitions, state ->

@@ -2,12 +2,12 @@ package marloth.clienting.menus.forms
 
 import marloth.clienting.ClientEvent
 import marloth.clienting.ClientEventType
-import marloth.clienting.input.GuiCommandType
+import marloth.clienting.menus.OnClientEvents
 import marloth.clienting.menus.logic.cycle
 import marloth.clienting.menus.TextStyles
-import marloth.clienting.menus.clientEvent
 import marloth.clienting.menus.logic.onActivateKey
 import marloth.clienting.menus.logic.onClickKey
+import marloth.clienting.menus.logic.onClientEventsKey
 import marloth.scenery.enums.CharacterRigCommands
 import silentorb.mythic.bloom.*
 
@@ -31,18 +31,26 @@ fun <T> cycle(options: List<T>, offset: Int, value: T): T {
   return options[nextIndex]
 }
 
-fun <T>spinField(options: List<T>, id: Any, valueText: String): Box {
+fun <T> spinField(options: List<T>, id: Any, valueText: String): Box {
   val decrementEvent = ClientEvent(ClientEventType.setWindowMode, cycle(options, 1, id))
   val incrementEvent = ClientEvent(ClientEventType.setWindowMode, cycle(options, -1, id))
 
   return horizontalList(spacing = 10)(
       listOf(
           spinButton("<", mapOf(previousOptionKey to id, onClickKey to decrementEvent)),
-          label(TextStyles.mediumBlack, valueText),
+          label(TextStyles.mediumBlack, valueText).addAttributes(onClickKey to incrementEvent),
           spinButton(">", mapOf(nextOptionKey to id, onClickKey to incrementEvent))
       )
   )
-      .addAttributes(onActivateKey to incrementEvent)
+      .addAttributes(
+          onActivateKey to incrementEvent,
+          onClientEventsKey to OnClientEvents(
+              listOf(
+                  decrementEvent to { it.type == CharacterRigCommands.moveLeft },
+                  incrementEvent to { it.type == CharacterRigCommands.moveRight }
+              )
+          )
+      )
 }
 
 //fun <T> updateSpinField(options: List<T>, commands: List<Any>, hoverBoxes: Collection<OffsetBox>, value: T): T =

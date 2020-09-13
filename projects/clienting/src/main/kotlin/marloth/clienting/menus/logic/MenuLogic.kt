@@ -3,6 +3,7 @@ package marloth.clienting.menus.logic
 import marloth.clienting.MarlothBloomState
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.menus.EventUnion
+import marloth.clienting.menus.OnClientEvents
 import marloth.clienting.menus.ViewId
 import marloth.scenery.enums.CharacterRigCommands
 import silentorb.mythic.bloom.OffsetBox
@@ -13,7 +14,7 @@ const val menuKey = "silentorb.menu"
 const val onActivateKey = "silentorb.onActivate"
 const val onClickKey = "silentorb.onClick"
 const val menuItemIndexKey = "silentorb.menuItemIndex"
-const val onClientEventKey = "silentorb.onClientEventKey"
+const val onClientEventsKey = "silentorb.onClientEventKey"
 
 fun cycle(value: Int, max: Int): Int {
   assert(max > 0)
@@ -31,16 +32,28 @@ fun getMenuEvents(attributeBoxes: List<OffsetBox>, hoverBoxes: List<OffsetBox>, 
   // The pattern between these two blocks could be abstracted but it may be an accidental pattern
   // so I'll wait until another repetition of the pattern occurs
   val clickEvents = if (events.any { it.type == GuiCommandType.mouseClick })
-    hoverBoxes.mapNotNull { it.attributes[onClickKey] as? EventUnion }
+    hoverBoxes.mapNotNull { it.attributes[onClickKey] }
   else
     listOf()
 
   val menuSelectEvents = if (events.any { it.type == GuiCommandType.menuSelect })
-    attributeBoxes.mapNotNull { it.attributes[onActivateKey] as? EventUnion }
+    attributeBoxes.mapNotNull { it.attributes[onActivateKey] }
   else
     listOf()
 
-  return clickEvents + menuSelectEvents
+  val customListenerEvents = attributeBoxes
+      .mapNotNull { it.attributes[onClientEventsKey] }
+      .filterIsInstance<OnClientEvents>()
+      .flatMap { handlers ->
+        handlers.map.mapNotNull { (event, pattern) ->
+          if (events.any { pattern(it) })
+            event
+          else
+            null
+        }
+      }
+
+  return clickEvents + menuSelectEvents + customListenerEvents
 }
 
 fun getHoverIndex(hoverBoxes: List<OffsetBox>): Int? =

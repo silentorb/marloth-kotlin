@@ -37,7 +37,7 @@ fun restartClientState(client: ClientState, playerMap: Map<Id, Id>): ClientState
         commands = listOf(),
         players = playerMap.values.toList(),
         marching = client.marching,
-        gameEvents = listOf()
+        events = listOf()
     )
 
 fun restartGame(app: GameApp, appState: AppState): AppState {

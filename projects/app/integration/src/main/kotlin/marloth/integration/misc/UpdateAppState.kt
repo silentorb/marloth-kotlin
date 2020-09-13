@@ -6,6 +6,7 @@ import marloth.clienting.input.GuiCommandType
 import marloth.clienting.input.mouseLookEvents
 import marloth.clienting.menus.BloomDefinition
 import marloth.clienting.menus.ViewId
+import marloth.clienting.menus.logic.updateAppOptions
 import marloth.clienting.menus.newBloomDefinition
 import marloth.integration.clienting.layoutGui
 import marloth.integration.clienting.renderMain
@@ -26,6 +27,7 @@ import silentorb.mythic.ent.pipe
 import silentorb.mythic.ent.singleValueCache
 import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.Events
+import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.lookinglass.getPlayerViewports
 import silentorb.mythic.quartz.updateTimestep
 import silentorb.mythic.spatial.Vector2i
@@ -134,8 +136,8 @@ fun updateWorlds(app: GameApp, previousClient: ClientState, clientState: ClientS
   when {
     true -> {
       val commands = mapGameCommands(clientState.players, clientState.commands)
-      val events = clientState.gameEvents
-      updateSimulation(app, previousClient, clientState, worlds, commands, events)
+      val gameEvents = clientState.events.filterIsInstance<GameEvent>()
+      updateSimulation(app, previousClient, clientState, worlds, commands, gameEvents)
     }
     else -> worlds.takeLast(1)
   }
@@ -159,7 +161,8 @@ fun updateFixedInterval(app: GameApp, boxes: PlayerBoxes, playerBloomDefinitions
 
             appState.copy(
                 client = updateClientFromWorld(worlds)(clientState),
-                worlds = worlds
+                worlds = worlds,
+                options = updateAppOptions(clientState.events.filterIsInstance<ClientEvent>(), appState.options)
             )
           }
         },
