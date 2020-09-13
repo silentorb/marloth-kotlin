@@ -6,6 +6,7 @@ import marloth.clienting.input.GuiCommandType
 import marloth.clienting.input.mouseLookEvents
 import marloth.clienting.menus.BloomDefinition
 import marloth.clienting.menus.ViewId
+import marloth.clienting.menus.logic.syncDisplayOptions
 import marloth.clienting.menus.logic.updateAppOptions
 import marloth.clienting.menus.newBloomDefinition
 import marloth.integration.clienting.layoutGui
@@ -117,7 +118,7 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
       .plus(gatherAdditionalGameCommands(previousClient, clientState))
 
   val definitions = app.definitions
-  val clientEvents = events + gameCommands + mouseLookEvents(app.client.renderer.options.dimensions, clientState.input.deviceStates.last(), previousClient.input.deviceStates.lastOrNull(), clientState.players.firstOrNull())
+  val clientEvents = events + gameCommands + mouseLookEvents(app.client.renderer.options.windowedDimensions, clientState.input.deviceStates.last(), previousClient.input.deviceStates.lastOrNull(), clientState.players.firstOrNull())
   val allEvents = withSimulationEvents(definitions, previous.deck, world, clientEvents)
   val nextWorld = updateWorld(definitions, allEvents, simulationDelta, world)
   val finalWorld = nextWorld.copy(
@@ -215,5 +216,6 @@ fun updateAppState(app: GameApp): (AppState) -> AppState = { appState ->
     renderMain(app.client, windowInfo, nextAppState, boxes.values, viewports)
   }
 
+  syncDisplayOptions(app.platform.display, appState.options.display, nextAppState.options.display)
   nextAppState
 }

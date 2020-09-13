@@ -112,6 +112,7 @@ data class Client(
   fun getWindowInfo() = platform.display.getInfo()
 
   fun shutdown() {
+    platform.display.shutdown()
     platform.audio.stop()
   }
 }

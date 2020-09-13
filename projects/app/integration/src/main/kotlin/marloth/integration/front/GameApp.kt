@@ -1,9 +1,6 @@
 package marloth.integration.front
 
-import marloth.clienting.AppOptions
-import marloth.clienting.Client
-import marloth.clienting.definitionsFromClient
-import marloth.clienting.newClientState
+import marloth.clienting.*
 import marloth.clienting.rendering.getMeshInfo
 import marloth.definition.staticDefinitions
 import marloth.integration.debug.newDebugHooks
@@ -44,11 +41,19 @@ data class GameApp(
     val hooks: GameHooks? = null
 )
 
+fun checkSaveOptions(previous: AppOptions, next: AppOptions) {
+  if (previous != next) {
+    saveGameConfig(next)
+  }
+}
+
 tailrec fun gameLoop(app: GameApp, state: AppState) {
   if (getDebugBoolean("WATCH_DOT_ENV"))
     checkDotEnvChanged()
 
   val nextState = updateAppState(app)(state)
+
+  checkSaveOptions(state.options, nextState.options)
 
   if (!app.platform.process.isClosing())
     gameLoop(app, nextState)
@@ -83,6 +88,7 @@ fun runApp(platform: Platform, options: AppOptions) {
       timestep = newTimestepState()
   )
   gameLoop(app, state)
+  println("Closing")
   val onClose = app.hooks?.onClose
   if (onClose != null)
     onClose()

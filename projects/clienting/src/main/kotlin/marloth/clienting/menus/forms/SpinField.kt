@@ -52,11 +52,3 @@ fun <T> spinField(options: List<T>, id: Any, valueText: String): Box {
           )
       )
 }
-
-//fun <T> updateSpinField(options: List<T>, commands: List<Any>, hoverBoxes: Collection<OffsetBox>, value: T): T =
-//    when {
-//      commands.contains(CharacterRigCommands.moveRight) ||
-//          commands.contains(GuiCommandType.menuSelect) -> cycle(options, 1, value)
-//      commands.contains(CharacterRigCommands.moveLeft) -> cycle(options, -1, value)
-//      else -> value
-//    }
