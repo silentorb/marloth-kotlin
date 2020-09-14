@@ -25,6 +25,10 @@ val englishTextResources: TextResourceMapper = { text ->
     Text.gui_windowed -> "Windowed"
     Text.gui_windowedFullscreen -> "Windowed Fullscreen"
     Text.gui_windowMode -> "Window Mode"
+    Text.gui_query_saveDisplayChanges -> "Save Display Changes?"
+
+    Text.gui_yes -> "Yes"
+    Text.gui_no -> "No"
 
     Text.gui_accessories -> "Modifiers"
     Text.gui_characterInfo -> "Character Info"

@@ -1,6 +1,6 @@
 package marloth.clienting.input
 
-import marloth.clienting.hud.toggleTargetingCommand
+import marloth.clienting.gui.hud.toggleTargetingCommand
 import marloth.scenery.enums.CharacterCommands
 import marloth.scenery.enums.CharacterRigCommands
 import silentorb.mythic.haft.*

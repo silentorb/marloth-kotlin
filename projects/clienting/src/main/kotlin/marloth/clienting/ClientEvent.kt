@@ -5,6 +5,9 @@ enum class ClientEventType {
   //  Display Options
   setWindowMode,
 
+  // Display Options Workflow
+  previewDisplayChanges,
+  revertDisplayChanges,
 }
 
 data class ClientEvent(

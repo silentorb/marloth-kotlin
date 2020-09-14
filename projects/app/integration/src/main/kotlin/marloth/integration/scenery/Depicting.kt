@@ -1,6 +1,6 @@
 package marloth.integration.scenery
 
-import marloth.clienting.menus.TextStyles
+import marloth.clienting.gui.menus.TextStyles
 import marloth.definition.data.animationPlaceholders
 import marloth.scenery.enums.*
 import simulation.accessorize.AccessoryName

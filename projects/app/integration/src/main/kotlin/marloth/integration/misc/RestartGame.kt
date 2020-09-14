@@ -32,7 +32,7 @@ fun restartWorld(app: GameApp, oldWorld: World): World {
 fun restartClientState(client: ClientState, playerMap: Map<Id, Id>): ClientState =
     ClientState(
         input = newInputState(client.input.config),
-        bloomStates = mapOf(),
+        guiStates = mapOf(),
         audio = client.audio,
         commands = listOf(),
         players = playerMap.values.toList(),

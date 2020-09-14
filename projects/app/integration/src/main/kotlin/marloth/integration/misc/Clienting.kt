@@ -4,8 +4,8 @@ import marloth.clienting.Client
 import marloth.clienting.audio.loadSounds
 import marloth.clienting.canvasRendererKey
 import marloth.clienting.gatherFontSets
-import marloth.clienting.hud.cooldownMeshKey
-import marloth.clienting.hud.createCooldownCircleMesh
+import marloth.clienting.gui.hud.cooldownMeshKey
+import marloth.clienting.gui.hud.createCooldownCircleMesh
 import marloth.clienting.rendering.createMeshes
 import marloth.clienting.rendering.gatherImpModels
 import silentorb.mythic.debugging.getDebugBoolean

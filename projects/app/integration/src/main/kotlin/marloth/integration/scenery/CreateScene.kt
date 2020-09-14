@@ -1,7 +1,7 @@
 package marloth.integration.scenery
 
-import marloth.clienting.hud.entanglingMovementRangeLayer
-import marloth.clienting.hud.mobilityMovementRangeLayer
+import marloth.clienting.gui.hud.entanglingMovementRangeLayer
+import marloth.clienting.gui.hud.mobilityMovementRangeLayer
 import marloth.clienting.rendering.*
 import marloth.clienting.rendering.marching.marchingRenderLayer
 import silentorb.mythic.characters.rigs.CharacterRig

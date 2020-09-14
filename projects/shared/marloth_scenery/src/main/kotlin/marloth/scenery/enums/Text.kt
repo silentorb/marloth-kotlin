@@ -5,6 +5,9 @@ enum class Text {
   damageType_fire,
   damageType_poison,
 
+  gui_yes,
+  gui_no,
+
   gui_accessories,
   gui_audioOptions,
   gui_characterInfo,
@@ -30,6 +33,7 @@ enum class Text {
   gui_windowMode,
   gui_resolution,
   gui_vsync,
+  gui_query_saveDisplayChanges,
 
   id_candle,
   id_damageChilled,

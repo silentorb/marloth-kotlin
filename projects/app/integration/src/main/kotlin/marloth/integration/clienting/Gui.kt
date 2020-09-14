@@ -8,7 +8,7 @@ import simulation.misc.Definitions
 
 fun layoutPlayerGui(definitions: Definitions, appState: AppState): (Id, Vector2i) -> Box = { player, dimensions ->
   val world = appState.worlds.lastOrNull()
-  marloth.clienting.menus.layoutPlayerGui(definitions, appState.options, appState.client, world, dimensions, player)
+  marloth.clienting.gui.layoutPlayerGui(definitions, appState.options, appState.client, world, dimensions, player)
 }
 
 fun layoutGui(definitions: Definitions, appState: AppState, dimensions: List<Vector2i>): Map<Id, Box> {

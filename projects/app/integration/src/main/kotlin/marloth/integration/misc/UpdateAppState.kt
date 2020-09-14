@@ -1,14 +1,14 @@
 package marloth.integration.misc
 
 import marloth.clienting.*
-import marloth.clienting.hud.updateTargeting
+import marloth.clienting.gui.hud.updateTargeting
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.input.mouseLookEvents
-import marloth.clienting.menus.BloomDefinition
-import marloth.clienting.menus.ViewId
-import marloth.clienting.menus.logic.syncDisplayOptions
-import marloth.clienting.menus.logic.updateAppOptions
-import marloth.clienting.menus.newBloomDefinition
+import marloth.clienting.gui.BloomDefinition
+import marloth.clienting.gui.ViewId
+import marloth.clienting.gui.menus.logic.syncDisplayOptions
+import marloth.clienting.gui.menus.logic.updateAppOptions
+import marloth.clienting.gui.newBloomDefinition
 import marloth.integration.clienting.layoutGui
 import marloth.integration.clienting.renderMain
 import marloth.integration.clienting.updateAppStateForFirstNewPlayer
@@ -22,10 +22,7 @@ import silentorb.mythic.bloom.Box
 import silentorb.mythic.bloom.toAbsoluteBoundsRecursive
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.incrementGlobalDebugLoopNumber
-import silentorb.mythic.ent.Id
-import silentorb.mythic.ent.Table
-import silentorb.mythic.ent.pipe
-import silentorb.mythic.ent.singleValueCache
+import silentorb.mythic.ent.*
 import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
@@ -49,27 +46,27 @@ fun updateSimulationDatabase(db: Database, next: World, previous: World) {
   }
 }
 
-fun updateCurrentViews(world: World, playerViews: MarlothBloomStateMap): MarlothBloomStateMap {
-  val deck = world.deck
-//  val newEntries = deck.players.keys.mapNotNull { player ->
-//    val interactingWith = getPlayerInteractingWith(deck, player)
-//    val view = when {
-//
-//      world.global.gameOver != null -> ViewId.victory
-//
-//      interactingWith != null -> selectInteractionView(deck, interactingWith)
-//
-//      else -> null
-//    }
-//    if (view != null)
-//      Pair(player, view)
-//    else null
-//  }
-//      .associate { it }
-//
-//  return playerViews.plus(newEntries)
-  return playerViews
-}
+//fun updateCurrentViews(world: World, playerViews: MarlothBloomStateMap): MarlothBloomStateMap {
+//  val deck = world.deck
+////  val newEntries = deck.players.keys.mapNotNull { player ->
+////    val interactingWith = getPlayerInteractingWith(deck, player)
+////    val view = when {
+////
+////      world.global.gameOver != null -> ViewId.victory
+////
+////      interactingWith != null -> selectInteractionView(deck, interactingWith)
+////
+////      else -> null
+////    }
+////    if (view != null)
+////      Pair(player, view)
+////    else null
+////  }
+////      .associate { it }
+////
+////  return playerViews.plus(newEntries)
+//  return playerViews
+//}
 
 fun updateClientPlayers(deckPlayers: Table<Player>): (List<Id>) -> List<Id> = { clientPlayers ->
   clientPlayers.plus(deckPlayers.keys.minus(clientPlayers))
@@ -82,15 +79,14 @@ fun updateClientFromWorld(worlds: List<World>): (ClientState) -> ClientState = {
       players = if (clientState.commands.any { it.type == GuiCommandType.newGame })
         listOf()
       else
-        updateClientPlayers(world.deck.players)(clientState.players),
-      bloomStates = updateCurrentViews(world, clientState.bloomStates)
+        updateClientPlayers(world.deck.players)(clientState.players)
   )
 }
 
 fun gatherAdditionalGameCommands(previousClient: ClientState, clientState: ClientState): List<CharacterCommand> {
   return clientState.players.flatMap { player ->
-    val view = clientState.bloomStates[player]?.view
-    val previousView = previousClient.bloomStates[player]?.view
+    val view = clientState.guiStates[player]?.view
+    val previousView = previousClient.guiStates[player]?.view
     listOfNotNull(
         if (view == null && previousView == ViewId.merchant)
           CharacterCommand(type = CharacterCommands.stopInteracting, target = player, device = 0)
@@ -105,7 +101,7 @@ fun filterCommands(clientState: ClientState): (List<CharacterCommand>) -> List<C
       .groupBy { it.target }
       .flatMap { (_, commands) ->
         commands.filter { command ->
-          val view = clientState.bloomStates[command.target]?.view
+          val view = clientState.guiStates[command.target]?.view
           view == null
         }
       }
@@ -148,7 +144,14 @@ fun updateFixedInterval(app: GameApp, boxes: PlayerBoxes, playerBloomDefinitions
     pipe(
         { appState ->
           app.platform.process.pollEvents()
-          val clientState = updateClient(app.client, appState.worlds, boxes, playerBloomDefinitions, appState.client)
+          val clientState = updateClient(
+              app.client,
+              appState.options,
+              appState.worlds,
+              boxes,
+              playerBloomDefinitions,
+              appState.client
+          )
           if (getDebugBoolean("FLY_THROUGH_CAMERA")) {
             updateFlyThroughCamera(clientState)
           }
@@ -216,6 +219,10 @@ fun updateAppState(app: GameApp): (AppState) -> AppState = { appState ->
     renderMain(app.client, windowInfo, nextAppState, boxes.values, viewports)
   }
 
-  syncDisplayOptions(app.platform.display, appState.options.display, nextAppState.options.display)
+  syncDisplayOptions(
+      app.platform.display,
+      appState.options.display, nextAppState.options.display,
+      nextAppState.client.events.filterIsInstance<ClientEvent>()
+  )
   nextAppState
 }
