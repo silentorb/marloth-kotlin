@@ -2,11 +2,28 @@ package marloth.clienting.gui.menus.logic
 
 import marloth.clienting.*
 import marloth.clienting.gui.BloomDefinition
+import marloth.clienting.gui.ViewId
+import marloth.clienting.input.GuiCommandType
 import silentorb.mythic.bloom.OffsetBox
 import silentorb.mythic.bloom.getHoverBoxes
 import silentorb.mythic.ent.Id
+import silentorb.mythic.haft.HaftCommand
 import silentorb.mythic.haft.HaftCommands
 import silentorb.mythic.spatial.Vector2i
+
+fun commandToClientEvents(options: AppOptions, state: GuiState, command: HaftCommand): List<ClientEvent> =
+    when (command.type) {
+      GuiCommandType.menuBack -> {
+        if (needsDisplayConfirmation(options, state))
+          listOf(ClientEvent(ClientEventType.menuReplace, ViewId.displayChangeConfirmation))
+        else
+          listOf(ClientEvent(ClientEventType.menuBack))
+      }
+      else -> listOf()
+    }
+
+fun commandsToClientEvents(options: AppOptions, state: GuiState, commands: HaftCommands): List<ClientEvent> =
+    commands.flatMap { commandToClientEvents(options, state, it) }
 
 fun updateGuiState(
     options: AppOptions,
@@ -17,7 +34,8 @@ fun updateGuiState(
     events: List<ClientEvent>
 ): GuiState {
   val menuSize = bloomDefinition.menu?.size
-  val commandTypes = commands.map { it.type }
+  val extendedEvents = events + commandsToClientEvents(options, state, commands)
+  val commandTypes = commands.map { it.type } + extendedEvents.map { it.type }
   val menuFocusIndex = updateMenuFocusIndex(state, menuSize, commandTypes, hoverBoxes)
 
   return if (commands.none())
@@ -26,10 +44,10 @@ fun updateGuiState(
     )
   else
     state.copy(
-        view = nextView(state.menuStack, commands, state.view),
+        view = nextView(state.menuStack, commandTypes, extendedEvents, state.view),
         menuFocusIndex = menuFocusIndex,
         menuStack = updateMenuStack(commandTypes, state),
-        displayChange = updateDisplayChangeState(options.display, state, events)
+        displayChange = updateDisplayChangeState(options.display, state, extendedEvents)
     )
 }
 

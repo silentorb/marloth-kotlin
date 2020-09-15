@@ -1,8 +1,8 @@
 package marloth.clienting.gui.menus
 
+import marloth.clienting.ClientEvent
 import marloth.clienting.StateFlower
 import marloth.clienting.gui.EventUnion
-import marloth.clienting.gui.clientEvent
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.gui.menus.logic.menuItemIndexKey
 import marloth.clienting.gui.menus.logic.menuKey
@@ -111,7 +111,7 @@ fun simpleMenuFlower(title: Text, source: List<SimpleMenuItem>): StateFlower = {
   val menu = source.map {
     MenuItem(
         flower = menuTextFlower(definitions.textLibrary(it.text)),
-        events = listOfNotNull(it.event ?: clientEvent(it.command!!))
+        events = listOfNotNull(it.event ?: ClientEvent(it.command!!))
     )
   }
   menuFlower(title, menu)(definitions, state)

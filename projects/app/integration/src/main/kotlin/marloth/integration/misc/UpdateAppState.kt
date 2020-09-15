@@ -166,7 +166,7 @@ fun updateFixedInterval(app: GameApp, boxes: PlayerBoxes, playerBloomDefinitions
             appState.copy(
                 client = updateClientFromWorld(worlds)(clientState),
                 worlds = worlds,
-                options = updateAppOptions(clientState.events.filterIsInstance<ClientEvent>(), appState.options)
+                options = updateAppOptions(clientState, appState.options)
             )
           }
         },
@@ -221,8 +221,10 @@ fun updateAppState(app: GameApp): (AppState) -> AppState = { appState ->
 
   syncDisplayOptions(
       app.platform.display,
-      appState.options.display, nextAppState.options.display,
-      nextAppState.client.events.filterIsInstance<ClientEvent>()
+      appState.client,
+      nextAppState.client,
+      appState.options.display,
+      nextAppState.options.display,
   )
   nextAppState
 }

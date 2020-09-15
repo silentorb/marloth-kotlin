@@ -3,8 +3,6 @@ package marloth.clienting.gui.menus.views
 import marloth.clienting.ClientEvent
 import marloth.clienting.ClientEventType
 import marloth.clienting.StateFlower
-import marloth.clienting.gui.GuiEvent
-import marloth.clienting.gui.clientEvent
 import marloth.clienting.gui.menus.*
 import marloth.clienting.input.GuiCommandType
 import marloth.scenery.enums.Text
@@ -14,13 +12,16 @@ val displayChangeConfirmationFlower: StateFlower = { definitions, state ->
   val menuBox = menuFlower(Text.gui_displayOptions, listOf(
       MenuItem(
           flower = menuTextFlower(definitions.textLibrary(Text.gui_yes)),
-          events = listOf(clientEvent(GuiCommandType.menuBack))
+          events = listOf(
+              ClientEvent(ClientEventType.saveDisplayChange),
+              ClientEvent(GuiCommandType.menuBack)
+          )
       ),
       MenuItem(
           flower = menuTextFlower(definitions.textLibrary(Text.gui_no)),
           events = listOf(
               ClientEvent(ClientEventType.revertDisplayChanges),
-              GuiEvent(GuiCommandType.menuBack)
+              ClientEvent(GuiCommandType.menuBack)
           )
       ),
   ))(definitions, state)

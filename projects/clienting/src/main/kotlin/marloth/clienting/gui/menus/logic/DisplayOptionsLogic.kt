@@ -1,9 +1,9 @@
 package marloth.clienting.gui.menus.logic
 
-import marloth.clienting.ClientEvent
-import marloth.clienting.ClientEventType
-import marloth.clienting.GuiState
+import marloth.clienting.*
 import marloth.clienting.gui.ViewId
+import marloth.clienting.input.GuiCommandType
+import silentorb.mythic.ent.firstNotNull
 import silentorb.mythic.lookinglass.DisplayOptions
 import silentorb.mythic.lookinglass.toPlatformDisplayConfig
 import silentorb.mythic.platforming.PlatformDisplay
@@ -56,25 +56,52 @@ fun updateDisplayChangeState(
   )
 }
 
-fun updateDisplayOptions(options: DisplayOptions, event: ClientEvent): DisplayOptions =
+fun updateDisplayOptions(clientState: ClientState, options: DisplayOptions, event: ClientEvent): DisplayOptions =
     when (event.type) {
       ClientEventType.setWindowMode -> options.copy(windowMode = event.data as? WindowMode ?: options.windowMode)
+      ClientEventType.saveDisplayChange -> clientState.guiStates.values
+          .firstNotNull { it.displayChange?.options } ?: options
       else -> options
     }
 
+fun needsDisplayConfirmation(options: AppOptions, guiState: GuiState): Boolean {
+  val display = options.display
+  val staging = guiState.displayChange?.options
+  return true
+//  return staging != null && (
+//      display.windowMode != staging.windowMode ||
+//          display.windowedDimensions != staging.windowedDimensions ||
+//          display.fullscreenDimensions != staging.fullscreenDimensions
+//      )
+}
+
 fun syncDisplayOptions(
     display: PlatformDisplay,
+    previous: ClientState,
+    next: ClientState,
     previousOptions: DisplayOptions,
-    options: DisplayOptions,
-    events: List<ClientEvent>
+    options: DisplayOptions
 ) {
-  val preview = events
-      .firstOrNull { it.type == ClientEventType.previewDisplayChanges }
-      ?.data as? DisplayOptions
+  val revert = if (next.events
+          .filterIsInstance<ClientEvent>()
+          .any { it.type == ClientEventType.revertDisplayChanges })
+    previous.guiStates.values.firstNotNull { it.displayChange?.options }
+  else
+    null
 
-  val destination = preview ?: if (options != previousOptions) options else null
+  if (revert != null) {
+    display.setOptions(toPlatformDisplayConfig(revert), toPlatformDisplayConfig(options))
+  } else {
+    val preview = previous.guiStates
+        .entries.firstOrNull { (player, guiState) ->
+          guiState.view == ViewId.displayOptions &&
+              next.commands.any { it.type == GuiCommandType.menuBack && it.target == player }
+        }?.value?.displayChange?.options
 
-  if (destination != null) {
-    display.setOptions(toPlatformDisplayConfig(previousOptions), toPlatformDisplayConfig(destination))
+    val destination = preview ?: if (options != previousOptions) options else null
+
+    if (destination != null) {
+      display.setOptions(toPlatformDisplayConfig(previousOptions), toPlatformDisplayConfig(destination))
+    }
   }
 }

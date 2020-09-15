@@ -46,15 +46,7 @@ fun newBloomDefinition(boxes: List<AttributeHolder>): BloomDefinition =
 fun gameIsActive(world: World?): Boolean =
     world != null && world.global.gameOver == null
 
-data class GuiEvent(
-    val type: GuiCommandType,
-    val data: Any? = null
-)
-
 typealias EventUnion = Any
-
-fun clientEvent(type: GuiCommandType, data: Any? = null): EventUnion =
-    GuiEvent(type, data)
 
 data class OnClientEvents(
     val map: List<Pair<EventUnion, (HaftCommand) -> Boolean>>

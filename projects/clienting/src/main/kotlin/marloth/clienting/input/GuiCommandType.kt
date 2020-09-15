@@ -11,7 +11,6 @@ enum class GuiCommandType {
   menuSelect,
   mouseClick,
   mouseMove,
-  navigate,
   newGame,
   quit
 }

@@ -1,5 +1,7 @@
 package marloth.clienting.gui.menus.logic
 
+import marloth.clienting.ClientEvent
+import marloth.clienting.ClientEventType
 import marloth.clienting.GuiState
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.gui.EventUnion
@@ -28,7 +30,7 @@ data class MenuLayer(
 
 typealias MenuStack = List<MenuLayer>
 
-fun getMenuEvents(attributeBoxes: List<OffsetBox>, hoverBoxes: List<OffsetBox>, events: HaftCommands): List<EventUnion> {
+fun getMenuItemEvents(attributeBoxes: List<OffsetBox>, hoverBoxes: List<OffsetBox>, events: HaftCommands): List<EventUnion> {
   // The pattern between these two blocks could be abstracted but it may be an accidental pattern
   // so I'll wait until another repetition of the pattern occurs
   val clickEvents = if (events.any { it.type == GuiCommandType.mouseClick })
@@ -37,7 +39,10 @@ fun getMenuEvents(attributeBoxes: List<OffsetBox>, hoverBoxes: List<OffsetBox>, 
     listOf()
 
   val menuSelectEvents = if (events.any { it.type == GuiCommandType.menuSelect })
-    attributeBoxes.mapNotNull { it.attributes[onActivateKey] }
+    attributeBoxes
+        .mapNotNull { it.attributes[onActivateKey] }
+        .filterIsInstance<List<Any>>()
+        .flatten()
   else
     listOf()
 
@@ -64,16 +69,16 @@ fun updateMenuFocus(stack: MenuStack, menuSize: Int, commands: List<Any>, hoverF
     when {
       commands.contains(CharacterRigCommands.moveDown) -> cycle(index + 1, menuSize)
       commands.contains(CharacterRigCommands.moveUp) -> cycle(index - 1, menuSize)
-      commands.contains(GuiCommandType.navigate) -> 0
-      commands.contains(GuiCommandType.menuBack) -> stack.lastOrNull()?.focusIndex ?: 0
+      commands.contains(ClientEventType.navigate) -> 0
+      commands.contains(ClientEventType.menuBack) -> stack.lastOrNull()?.focusIndex ?: 0
       else -> hoverFocusIndex ?: index
     }
 
 fun updateMenuStack(commands: List<Any>, state: GuiState): MenuStack {
   val stack = state.menuStack
   return when {
-    commands.contains(GuiCommandType.navigate) -> stack + MenuLayer(state.view!!, state.menuFocusIndex)
-    commands.contains(GuiCommandType.menuBack) -> stack.dropLast(1)
+    commands.contains(ClientEventType.navigate) -> stack + MenuLayer(state.view!!, state.menuFocusIndex)
+    commands.contains(ClientEventType.menuBack) -> stack.dropLast(1)
     commands.contains(GuiCommandType.menu) -> listOf()
     else -> stack
   }

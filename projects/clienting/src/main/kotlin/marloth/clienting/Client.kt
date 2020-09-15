@@ -4,10 +4,9 @@ import marloth.clienting.audio.AudioConfig
 import marloth.clienting.audio.updateClientAudio
 import marloth.clienting.input.*
 import marloth.clienting.gui.menus.*
-import marloth.clienting.gui.menus.logic.getMenuEvents
+import marloth.clienting.gui.menus.logic.getMenuItemEvents
 import marloth.clienting.gui.menus.logic.updateGuiStates
 import marloth.clienting.gui.BloomDefinition
-import marloth.clienting.gui.GuiEvent
 import marloth.clienting.gui.TextResources
 import marloth.clienting.gui.ViewId
 import marloth.clienting.rendering.MeshLoadingState
@@ -129,7 +128,7 @@ fun updateClient(
         val state = clientState.guiStates[player]
         if (state != null) {
           val hoverBoxes = getHoverBoxes(mousePosition, boxes)
-          getMenuEvents(boxes, hoverBoxes, initialCommands.filter { it.target == player })
+          getMenuItemEvents(boxes, hoverBoxes, initialCommands.filter { it.target == player })
         } else
           listOf()
       }
@@ -137,7 +136,7 @@ fun updateClient(
   val menuClientCommands = menuEvents
       .flatMap { (player, events) ->
         events
-            .filterIsInstance<GuiEvent>()
+            .filterIsInstance<ClientEvent>()
             .map { simpleCommand(it.type, 0, player, it.data) }
       }
 
