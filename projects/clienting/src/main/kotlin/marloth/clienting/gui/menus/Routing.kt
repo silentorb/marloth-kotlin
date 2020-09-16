@@ -14,7 +14,7 @@ fun viewSelect(world: World?, options: AppOptions, view: ViewId?, player: Id): S
   return when (view) {
     ViewId.audioOptions -> emptyViewFlower
     ViewId.displayChangeConfirmation -> displayChangeConfirmationFlower
-    ViewId.displayOptions -> displayOptionsFlower(options.display)
+    ViewId.displayOptions -> displayOptionsFlower()
     ViewId.gamepadOptions -> emptyViewFlower
     ViewId.inputOptions -> inputOptionsMenu
     ViewId.mouseOptions -> emptyViewFlower

@@ -7,7 +7,7 @@ enum class ClientEventType {
   navigate,
 
   //  Display Options
-  setWindowMode,
+  setStagingWindowMode,
 
   // Display Options Workflow
   saveDisplayChange,
@@ -17,5 +17,5 @@ enum class ClientEventType {
 data class ClientEvent(
     val type: Any,
     val data: Any? = null,
-    val player: Int? = null
+    val user: Any? = null
 )

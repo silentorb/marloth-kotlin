@@ -9,29 +9,30 @@ import marloth.scenery.enums.Text
 import silentorb.mythic.bloom.*
 
 val displayChangeConfirmationFlower: StateFlower = { definitions, state ->
-  val menuBox = menuFlower(Text.gui_displayOptions, listOf(
+  val title = dialogTitle(definitions.textLibrary(Text.gui_query_saveDisplayChanges))
+  val menuBox = menuFlower(listOf(
       MenuItem(
           flower = menuTextFlower(definitions.textLibrary(Text.gui_yes)),
           events = listOf(
               ClientEvent(ClientEventType.saveDisplayChange),
-              ClientEvent(GuiCommandType.menuBack)
+              ClientEvent(ClientEventType.menuBack)
           )
       ),
       MenuItem(
           flower = menuTextFlower(definitions.textLibrary(Text.gui_no)),
           events = listOf(
               ClientEvent(ClientEventType.revertDisplayChanges),
-              ClientEvent(GuiCommandType.menuBack)
+              ClientEvent(ClientEventType.menuBack)
           )
       ),
-  ))(definitions, state)
+  ), state.menuFocusIndex, title.dimensions.x)
 
-  dialogContent(definitions.textLibrary(Text.gui_query_saveDisplayChanges))(
+  dialogContent(title)(
       boxList(verticalPlane)(
           listOf(
               menuBox,
               centeredAxis(horizontalPlane)(
-                  label(TextStyles.mediumBlack, (state.displayChange?.timeout ?: 0.0).toInt().toString())
+                  label(TextStyles.mediumBlack, ((state.displayChange?.timeout ?: 0.0).toInt() + 1).toString())
               )(menuBox.dimensions.x)
           )
       )

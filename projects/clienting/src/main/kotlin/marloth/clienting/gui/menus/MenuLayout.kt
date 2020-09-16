@@ -75,7 +75,7 @@ fun fieldWrapper(focusIndex: Int, breadth: Int): (Int, Box) -> Box = { index, bo
   )
 }
 
-fun menuFlower(menu: Menu, focusIndex: Int): Box {
+fun menuFlower(menu: Menu, focusIndex: Int, titleWidth: Int): Box {
   val rows = menu
       .mapIndexed { index, item ->
         val hasFocus = index == focusIndex
@@ -95,7 +95,7 @@ fun menuFlower(menu: Menu, focusIndex: Int): Box {
 
   val breadth = boxList(verticalPlane, gap)(rows).dimensions.x
   return boxList(verticalPlane, gap)(
-      rows.mapIndexed(fieldWrapper(focusIndex, max(150, breadth)))
+      rows.mapIndexed(fieldWrapper(focusIndex, max(titleWidth + 100, breadth)))
   )
       .addAttributes(menuKey to menu)
 
@@ -103,8 +103,12 @@ fun menuFlower(menu: Menu, focusIndex: Int): Box {
 
 val faintBlack = black.copy(w = 0.6f)
 
+fun menuFlower(title: Box, menu: Menu): StateFlower = { definitions, state ->
+  dialogContent(title)(menuFlower(menu, state.menuFocusIndex, title.dimensions.x))
+}
+
 fun menuFlower(title: Text, menu: Menu): StateFlower = { definitions, state ->
-  dialogContent(definitions.textLibrary(title))(menuFlower(menu, state.menuFocusIndex))
+  menuFlower(dialogTitle(definitions.textLibrary(title)), menu)(definitions, state)
 }
 
 fun simpleMenuFlower(title: Text, source: List<SimpleMenuItem>): StateFlower = { definitions, state ->

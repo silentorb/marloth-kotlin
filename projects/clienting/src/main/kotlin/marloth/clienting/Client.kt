@@ -7,8 +7,11 @@ import marloth.clienting.gui.menus.*
 import marloth.clienting.gui.menus.logic.getMenuItemEvents
 import marloth.clienting.gui.menus.logic.updateGuiStates
 import marloth.clienting.gui.BloomDefinition
+import marloth.clienting.gui.EventUnion
 import marloth.clienting.gui.TextResources
 import marloth.clienting.gui.ViewId
+import marloth.clienting.gui.menus.logic.commandsToClientEvents
+import marloth.clienting.gui.menus.logic.eventsFromGuiState
 import marloth.clienting.rendering.MeshLoadingState
 import marloth.clienting.rendering.marching.newMarchingState
 import marloth.definition.misc.ClientDefinitions
@@ -20,12 +23,12 @@ import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.haft.HaftCommands
-import silentorb.mythic.haft.simpleCommand
 import silentorb.mythic.haft.updateInputDeviceStates
 import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.lookinglass.mapAnimationInfo
 import silentorb.mythic.lookinglass.texturing.TextureLoadingState
 import silentorb.mythic.platforming.Platform
+import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.toVector2i
 import silentorb.mythic.typography.loadFontSets
@@ -88,6 +91,8 @@ fun updateMousePointerVisibility(platform: Platform) {
   if (!getDebugBoolean("DISABLE_MOUSE")) {
     val windowHasFocus = platform.display.hasFocus()
     platform.input.isMouseVisible(!windowHasFocus)
+  } else {
+    platform.input.isMouseVisible(true)
   }
 }
 
@@ -109,6 +114,40 @@ typealias PlayerBoxes = Map<Id, List<OffsetBox>>
 fun flattenToPlayerBoxes(boxes: Map<Id, Box>): PlayerBoxes =
     boxes.mapValues { flattenAllBoxes(OffsetBox(it.value)).filter(::hasAttributes) }
 
+fun gatherUserEvents(
+    options: AppOptions,
+    clientState: ClientState,
+    playerBoxes: PlayerBoxes,
+    mousePosition: Vector2i,
+    commands: HaftCommands
+): List<EventUnion> {
+  val menuEvents = playerBoxes
+      .mapValues { (player, boxes) ->
+        val state = clientState.guiStates[player]
+        if (state != null) {
+          val hoverBoxes = getHoverBoxes(mousePosition, boxes)
+          val playerCommands = commands.filter { it.target == player }
+          getMenuItemEvents(boxes, hoverBoxes, playerCommands).map { event ->
+            if (event is ClientEvent)
+              event.copy(
+                  user = player
+              )
+            else
+              event
+          } +
+              (commandsToClientEvents(options, state, playerCommands) + eventsFromGuiState(state))
+                  .map { event ->
+                    event.copy(
+                        user = player
+                    )
+                  }
+        } else
+          listOf()
+      }
+
+  return menuEvents.values.flatten()
+}
+
 fun updateClient(
     client: Client,
     options: AppOptions,
@@ -121,28 +160,10 @@ fun updateClient(
   val input = clientState.input.copy(
       deviceStates = deviceStates
   )
-  val initialCommands = gatherInputCommands(clientState.input, input, playerViews(clientState))
+  val commands = gatherInputCommands(clientState.input, input, playerViews(clientState))
   val mousePosition = clientState.input.deviceStates.first().mousePosition.toVector2i()
-  val menuEvents = playerBoxes
-      .mapValues { (player, boxes) ->
-        val state = clientState.guiStates[player]
-        if (state != null) {
-          val hoverBoxes = getHoverBoxes(mousePosition, boxes)
-          getMenuItemEvents(boxes, hoverBoxes, initialCommands.filter { it.target == player })
-        } else
-          listOf()
-      }
+  val events = gatherUserEvents(options, clientState, playerBoxes, mousePosition, commands)
 
-  val menuClientCommands = menuEvents
-      .flatMap { (player, events) ->
-        events
-            .filterIsInstance<ClientEvent>()
-            .map { simpleCommand(it.type, 0, player, it.data) }
-      }
-
-  val events = menuEvents.values.flatten()
-
-  val commands = initialCommands.plus(menuClientCommands)
   applyCommandsToExternalSystem(client, commands)
   val nextGuiStates = updateGuiStates(
       options,

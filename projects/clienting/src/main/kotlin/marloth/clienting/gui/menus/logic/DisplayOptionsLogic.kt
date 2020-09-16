@@ -23,7 +23,7 @@ fun displayChangeStateLifecycle(displayOptions: DisplayOptions, view: ViewId?, s
 
 fun updateStagingDisplayOptions(options: DisplayOptions, event: ClientEvent): DisplayOptions =
     when (event.type) {
-      ClientEventType.setWindowMode -> options.copy(windowMode = event.data as? WindowMode ?: options.windowMode)
+      ClientEventType.setStagingWindowMode -> options.copy(windowMode = event.data as? WindowMode ?: options.windowMode)
       else -> options
     }
 
@@ -58,21 +58,21 @@ fun updateDisplayChangeState(
 
 fun updateDisplayOptions(clientState: ClientState, options: DisplayOptions, event: ClientEvent): DisplayOptions =
     when (event.type) {
-      ClientEventType.setWindowMode -> options.copy(windowMode = event.data as? WindowMode ?: options.windowMode)
       ClientEventType.saveDisplayChange -> clientState.guiStates.values
           .firstNotNull { it.displayChange?.options } ?: options
       else -> options
     }
 
-fun needsDisplayConfirmation(options: AppOptions, guiState: GuiState): Boolean {
-  val display = options.display
-  val staging = guiState.displayChange?.options
-  return true
-//  return staging != null && (
-//      display.windowMode != staging.windowMode ||
-//          display.windowedDimensions != staging.windowedDimensions ||
-//          display.fullscreenDimensions != staging.fullscreenDimensions
-//      )
+fun needsWindowChange(previous: DisplayOptions, next: DisplayOptions?): Boolean {
+  return next != null && (
+      previous.windowMode != next.windowMode ||
+          previous.windowedDimensions != next.windowedDimensions ||
+          previous.fullscreenDimensions != next.fullscreenDimensions
+      )
+}
+
+fun setPlatformDisplayOptions(display: PlatformDisplay, previous: DisplayOptions, next: DisplayOptions) {
+  display.setOptions(toPlatformDisplayConfig(previous), toPlatformDisplayConfig(next))
 }
 
 fun syncDisplayOptions(
@@ -90,7 +90,8 @@ fun syncDisplayOptions(
     null
 
   if (revert != null) {
-    display.setOptions(toPlatformDisplayConfig(revert), toPlatformDisplayConfig(options))
+    val k = 0
+    setPlatformDisplayOptions(display, revert, options)
   } else {
     val preview = previous.guiStates
         .entries.firstOrNull { (player, guiState) ->
@@ -98,10 +99,14 @@ fun syncDisplayOptions(
               next.commands.any { it.type == GuiCommandType.menuBack && it.target == player }
         }?.value?.displayChange?.options
 
-    val destination = preview ?: if (options != previousOptions) options else null
+    val destination = preview ?: if (needsWindowChange(previousOptions, options))
+      options
+    else
+      null
 
     if (destination != null) {
-      display.setOptions(toPlatformDisplayConfig(previousOptions), toPlatformDisplayConfig(destination))
+      val k = 0
+      setPlatformDisplayOptions(display, previousOptions, destination)
     }
   }
 }

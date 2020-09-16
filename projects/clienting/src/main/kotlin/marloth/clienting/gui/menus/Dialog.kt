@@ -25,13 +25,13 @@ val titleBookendDepiction: Depiction = { bounds, canvas ->
 
 val titleBookend: Flower = depict(titleBookendDepiction)
 
-fun titleBar(text: String): LengthFlower =
+fun titleBar(title: Box): LengthFlower =
     breadthList(verticalPlane)(
         listOf(
             flexList(horizontalPlane, spacing = 10)(
                 listOf(
                     flexFlower(titleBookend),
-                    flex(label(TextStyles.mediumBlack, text)),
+                    flex(title),
                     flexFlower(titleBookend),
                 )
             ),
@@ -41,7 +41,7 @@ fun titleBar(text: String): LengthFlower =
         )
     )
 
-fun dialogContent(title: String): WildFlower = { box ->
+fun dialogContent(title: Box): WildFlower = { box ->
   boxMargin(20)(
       boxList(verticalPlane, 20,
           titleBar(title)(box.dimensions.x),
@@ -50,9 +50,15 @@ fun dialogContent(title: String): WildFlower = { box ->
   ).copy(depiction = menuBackground)
 }
 
-fun dialog(title: String): WildFlower = { box ->
+fun dialogTitle(text: String) =
+    label(TextStyles.mediumBlack, text)
+
+fun dialog(title: Box): WildFlower = { box ->
   dialogContent(title)(box)
 }
+
+fun dialog(title: String): WildFlower =
+    dialog(dialogTitle(title))
 
 fun dialogWrapper(box: Box): Flower =
     centered(

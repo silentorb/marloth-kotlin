@@ -32,8 +32,8 @@ fun <T> cycle(options: List<T>, offset: Int, value: T): T {
 }
 
 fun <T> spinField(options: List<T>, id: Any, valueText: String): Box {
-  val decrementEvent = ClientEvent(ClientEventType.setWindowMode, cycle(options, 1, id))
-  val incrementEvent = ClientEvent(ClientEventType.setWindowMode, cycle(options, -1, id))
+  val decrementEvent = ClientEvent(ClientEventType.setStagingWindowMode, cycle(options, 1, id))
+  val incrementEvent = ClientEvent(ClientEventType.setStagingWindowMode, cycle(options, -1, id))
 
   return horizontalList(spacing = 10)(
       listOf(
@@ -42,8 +42,11 @@ fun <T> spinField(options: List<T>, id: Any, valueText: String): Box {
           spinButton(">", mapOf(nextOptionKey to id, onClickKey to incrementEvent))
       )
   )
+      .copy(
+          name="spinField"
+      )
       .addAttributes(
-          onActivateKey to incrementEvent,
+          onActivateKey to listOf(incrementEvent),
           onClientEventsKey to OnClientEvents(
               listOf(
                   decrementEvent to { it.type == CharacterRigCommands.moveLeft },

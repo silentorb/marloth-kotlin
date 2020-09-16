@@ -88,7 +88,7 @@ fun merchantView(deck: Deck, player: Id): StateFlower = { definitions, state ->
   dialog(definitions.textLibrary(Text.gui_merchant))(
       boxList(horizontalPlane, 10)(
           listOf(
-              menuFlower(buttons, state.menuFocusIndex),
+//              menuFlower(buttons, state.menuFocusIndex),
 //              flowerToBox(merchantInfoFlower(customerMoney))
           )
       )
