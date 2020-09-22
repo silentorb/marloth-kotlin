@@ -96,9 +96,9 @@ fun updateMousePointerVisibility(platform: Platform) {
   }
 }
 
-fun applyCommandsToExternalSystem(client: Client, commands: HaftCommands) {
-  val c = commands.map { it.type }
-  if (c.contains(GuiCommandType.quit)) {
+fun applyCommandsToExternalSystem(client: Client, events: List<ClientEvent>) {
+  val eventTypes = events.map { it.type }
+  if (eventTypes.contains(GuiCommandType.quit)) {
     client.platform.process.close()
   }
 }
@@ -164,7 +164,7 @@ fun updateClient(
   val mousePosition = clientState.input.deviceStates.first().mousePosition.toVector2i()
   val events = gatherUserEvents(options, clientState, playerBoxes, mousePosition, commands)
 
-  applyCommandsToExternalSystem(client, commands)
+  applyCommandsToExternalSystem(client, events.filterIsInstance<ClientEvent>())
   val nextGuiStates = updateGuiStates(
       options,
       clientState.guiStates,
