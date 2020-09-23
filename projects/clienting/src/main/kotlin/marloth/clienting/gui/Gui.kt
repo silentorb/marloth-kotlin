@@ -84,7 +84,7 @@ fun guiLayout(definitions: Definitions, options: AppOptions, clientState: Client
   return compose(listOfNotNull(
       if (world != null) hudLayout(definitions.textLibrary, world, player, state?.view) else null,
       if (state != null) {
-        val stateFlower = viewSelect(world, options, state.view, player)
+        val stateFlower = viewSelect(world, options, clientState, state.view, player)
         if (stateFlower != null)
           dialogWrapperWithExtras(definitions, stateFlower(definitions, state))
         else

@@ -1,6 +1,9 @@
 package marloth.clienting.gui.menus.logic
 
-import marloth.clienting.*
+import marloth.clienting.ClientEvent
+import marloth.clienting.ClientEventType
+import marloth.clienting.ClientState
+import marloth.clienting.GuiState
 import marloth.clienting.gui.ViewId
 import marloth.clienting.input.GuiCommandType
 import silentorb.mythic.ent.firstNotNull
@@ -8,6 +11,7 @@ import silentorb.mythic.lookinglass.DisplayOptions
 import silentorb.mythic.lookinglass.toPlatformDisplayConfig
 import silentorb.mythic.platforming.PlatformDisplay
 import silentorb.mythic.platforming.WindowMode
+import silentorb.mythic.spatial.Vector2i
 import simulation.updating.simulationDelta
 
 data class DisplayChangeState(
@@ -23,7 +27,19 @@ fun displayChangeStateLifecycle(displayOptions: DisplayOptions, view: ViewId?, s
 
 fun updateStagingDisplayOptions(options: DisplayOptions, event: ClientEvent): DisplayOptions =
     when (event.type) {
-      ClientEventType.setStagingWindowMode -> options.copy(windowMode = event.data as? WindowMode ?: options.windowMode)
+
+      ClientEventType.setStagingWindowMode -> options.copy(
+          windowMode = event.data as? WindowMode ?: options.windowMode
+      )
+
+      ClientEventType.setStagingWindowedResolution -> options.copy(
+          windowedResolution = event.data as? Vector2i ?: options.windowedResolution
+      )
+
+      ClientEventType.setStagingFullscreenResolution -> options.copy(
+          fullscreenResolution = event.data as? Vector2i ?: options.fullscreenResolution
+      )
+
       else -> options
     }
 
@@ -66,8 +82,8 @@ fun updateDisplayOptions(clientState: ClientState, options: DisplayOptions, even
 fun needsWindowChange(previous: DisplayOptions, next: DisplayOptions?): Boolean {
   return next != null && (
       previous.windowMode != next.windowMode ||
-          previous.windowedDimensions != next.windowedDimensions ||
-          previous.fullscreenDimensions != next.fullscreenDimensions
+          previous.windowedResolution != next.windowedResolution ||
+          previous.fullscreenResolution != next.fullscreenResolution
       )
 }
 
@@ -90,7 +106,6 @@ fun syncDisplayOptions(
     null
 
   if (revert != null) {
-    val k = 0
     setPlatformDisplayOptions(display, revert, options)
   } else {
     val preview = previous.guiStates

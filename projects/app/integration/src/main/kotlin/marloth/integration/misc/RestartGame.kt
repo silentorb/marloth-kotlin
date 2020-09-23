@@ -2,6 +2,7 @@ package marloth.integration.misc
 
 import marloth.clienting.ClientState
 import marloth.clienting.input.newInputState
+import marloth.clienting.rendering.marching.newMarchingState
 import marloth.integration.front.GameApp
 import silentorb.mythic.ent.Id
 import silentorb.mythic.physics.releaseBulletState
@@ -13,22 +14,6 @@ fun restartWorld(app: GameApp, oldWorld: World): World {
   return app.newWorld(app)
 }
 
-//fun restartInputState(playerMap: Map<Id, Id>, input: InputState): InputState =
-//    input.copy(
-//        devicePlayers = input.devicePlayers
-//            .mapValues { (_, playerDevice) ->
-//              playerDevice.copy(
-//                  player = playerMap[playerDevice.player] ?: 0L
-//              )
-//            }
-//            .filter { it.value.player != 0L },
-//        playerProfiles = input.playerProfiles
-//            .mapKeys { (player, _) ->
-//              playerMap[player] ?: 0L
-//            }
-//            .minus(0L)
-//    )
-
 fun restartClientState(client: ClientState, playerMap: Map<Id, Id>): ClientState =
     ClientState(
         input = newInputState(client.input.config),
@@ -36,8 +21,9 @@ fun restartClientState(client: ClientState, playerMap: Map<Id, Id>): ClientState
         audio = client.audio,
         commands = listOf(),
         players = playerMap.values.toList(),
-        marching = client.marching,
-        events = listOf()
+        marching = newMarchingState(),
+        events = listOf(),
+        displayModes = client.displayModes
     )
 
 fun restartGame(app: GameApp, appState: AppState): AppState {

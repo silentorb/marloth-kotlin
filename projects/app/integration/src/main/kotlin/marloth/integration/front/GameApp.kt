@@ -82,7 +82,7 @@ fun runApp(platform: Platform, options: AppOptions) {
   val app = newGameApp(platform, newClient(platform, options.display))
   val world = generateWorld(app.definitions, getMeshInfo(app.client))
   val state = AppState(
-      client = newClientState(options.input, options.audio),
+      client = newClientState(options.input, options.audio, platform.display.getDisplayModes()),
       options = options,
       worlds = listOf(world),
       timestep = newTimestepState()

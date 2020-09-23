@@ -7,12 +7,12 @@ import silentorb.mythic.bloom.Box
 import silentorb.mythic.bloom.horizontalList
 import silentorb.mythic.bloom.label
 
-fun menuField(labelText: String, flower: Box): MenuItemFlower =
-    menuButtonWrapper {
+fun menuField(labelText: String, flower: MenuItemFlower): MenuItemFlower =
+    menuButtonWrapper { hasFocus ->
       horizontalList(20)(
           listOf(
               label(TextStyles.mediumBlack, labelText),
-              flower
+              flower(hasFocus)
           )
       )
     }

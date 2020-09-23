@@ -8,6 +8,8 @@ enum class ClientEventType {
 
   //  Display Options
   setStagingWindowMode,
+  setStagingWindowedResolution,
+  setStagingFullscreenResolution,
 
   // Display Options Workflow
   saveDisplayChange,

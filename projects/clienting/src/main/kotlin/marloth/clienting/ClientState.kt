@@ -11,6 +11,7 @@ import silentorb.mythic.bloom.Box
 import silentorb.mythic.ent.Id
 import silentorb.mythic.haft.HaftCommand
 import silentorb.mythic.lookinglass.DisplayOptions
+import silentorb.mythic.platforming.DisplayMode
 import simulation.misc.Definitions
 
 const val canvasRendererKey = "renderer"
@@ -35,6 +36,7 @@ data class ClientState(
     val input: InputState,
     val marching: MarchingState,
     val events: List<Any>,
+    val displayModes: List<DisplayMode>,
 
     // Player ids could be purely maintained in the world deck except the world does not care about player order.
     // Player order is only a client concern, and only for local multiplayer.

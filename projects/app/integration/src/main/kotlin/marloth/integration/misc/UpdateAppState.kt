@@ -114,7 +114,7 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
       .plus(gatherAdditionalGameCommands(previousClient, clientState))
 
   val definitions = app.definitions
-  val clientEvents = events + gameCommands + mouseLookEvents(app.client.renderer.options.windowedDimensions, clientState.input.deviceStates.last(), previousClient.input.deviceStates.lastOrNull(), clientState.players.firstOrNull())
+  val clientEvents = events + gameCommands + mouseLookEvents(app.client.renderer.options.windowedResolution, clientState.input.deviceStates.last(), previousClient.input.deviceStates.lastOrNull(), clientState.players.firstOrNull())
   val allEvents = withSimulationEvents(definitions, previous.deck, world, clientEvents)
   val nextWorld = updateWorld(definitions, allEvents, simulationDelta, world)
   val finalWorld = nextWorld.copy(

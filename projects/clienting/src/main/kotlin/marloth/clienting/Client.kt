@@ -27,6 +27,7 @@ import silentorb.mythic.haft.updateInputDeviceStates
 import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.lookinglass.mapAnimationInfo
 import silentorb.mythic.lookinglass.texturing.TextureLoadingState
+import silentorb.mythic.platforming.DisplayMode
 import silentorb.mythic.platforming.Platform
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector3
@@ -48,7 +49,7 @@ fun newMarlothBloomState() =
 fun getPlayerBloomState(guiStates: Map<Id, GuiState>, player: Id): GuiState =
     guiStates.getOrElse(player) { newMarlothBloomState() }
 
-fun newClientState(inputConfig: GameInputConfig, audioConfig: AudioConfig) =
+fun newClientState(inputConfig: GameInputConfig, audioConfig: AudioConfig, displayModes: List<DisplayMode>) =
     ClientState(
         input = newInputState(inputConfig),
         guiStates = mapOf(),
@@ -56,7 +57,8 @@ fun newClientState(inputConfig: GameInputConfig, audioConfig: AudioConfig) =
         commands = listOf(),
         players = listOf(),
         marching = newMarchingState(),
-        events = listOf()
+        events = listOf(),
+        displayModes = displayModes
     )
 
 fun playerViews(client: ClientState): Map<Id, ViewId?> =
