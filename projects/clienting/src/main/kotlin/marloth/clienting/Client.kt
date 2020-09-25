@@ -93,12 +93,12 @@ data class Client(
   }
 }
 
-fun updateMousePointerVisibility(platform: Platform) {
+fun updateMousePointerVisibility(platform: Platform, viewId: ViewId?) {
   if (!getDebugBoolean("DISABLE_MOUSE")) {
     val windowHasFocus = platform.display.hasFocus()
-    platform.input.isMouseVisible(!windowHasFocus)
+    platform.input.setMouseVisibility(!windowHasFocus || viewId != null)
   } else {
-    platform.input.isMouseVisible(true)
+    platform.input.setMouseVisibility(true)
   }
 }
 
@@ -161,7 +161,7 @@ fun updateClient(
     playerBoxes: PlayerBoxes,
     playerBloomDefinitions: Map<Id, BloomDefinition>,
     clientState: ClientState): ClientState {
-  updateMousePointerVisibility(client.platform)
+  updateMousePointerVisibility(client.platform, clientState.guiStates[clientState.players.firstOrNull()]?.view)
   val deviceStates = updateInputDeviceStates(client.platform.input, clientState.input.deviceStates)
   val input = clientState.input.copy(
       deviceStates = deviceStates
