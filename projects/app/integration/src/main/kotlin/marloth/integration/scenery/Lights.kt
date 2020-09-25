@@ -33,5 +33,5 @@ fun mapLights(deck: Deck, player: Id): List<Light> =
 
 fun defaultLightingConfig() =
     LightingConfig(
-        ambient = getDebugFloat("AMBIENT_LIGHT_LEVEL") ?: 0f
+        ambient = getDebugFloat("AMBIENT_LIGHT_LEVEL") ?: 0.08f
     )

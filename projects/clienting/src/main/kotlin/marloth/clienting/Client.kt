@@ -2,16 +2,20 @@ package marloth.clienting
 
 import marloth.clienting.audio.AudioConfig
 import marloth.clienting.audio.updateClientAudio
-import marloth.clienting.input.*
-import marloth.clienting.gui.menus.*
-import marloth.clienting.gui.menus.logic.getMenuItemEvents
-import marloth.clienting.gui.menus.logic.updateGuiStates
 import marloth.clienting.gui.BloomDefinition
 import marloth.clienting.gui.EventUnion
 import marloth.clienting.gui.TextResources
 import marloth.clienting.gui.ViewId
+import marloth.clienting.gui.menus.TextStyles
+import marloth.clienting.gui.menus.baseFonts
 import marloth.clienting.gui.menus.logic.commandsToClientEvents
 import marloth.clienting.gui.menus.logic.eventsFromGuiState
+import marloth.clienting.gui.menus.logic.getMenuItemEvents
+import marloth.clienting.gui.menus.logic.updateGuiState
+import marloth.clienting.input.GameInputConfig
+import marloth.clienting.input.GuiCommandType
+import marloth.clienting.input.gatherInputCommands
+import marloth.clienting.input.newInputState
 import marloth.clienting.rendering.MeshLoadingState
 import marloth.clienting.rendering.marching.newMarchingState
 import marloth.definition.misc.ClientDefinitions
@@ -167,15 +171,20 @@ fun updateClient(
   val events = gatherUserEvents(options, clientState, playerBoxes, mousePosition, commands)
 
   applyCommandsToExternalSystem(client, events.filterIsInstance<ClientEvent>())
-  val nextGuiStates = updateGuiStates(
-      options,
-      clientState.guiStates,
-      playerBloomDefinitions,
-      mousePosition,
-      playerBoxes,
-      commands,
-      events.filterIsInstance<ClientEvent>()
-  )
+  val nextGuiStates = playerBloomDefinitions
+      .mapValues { (player, bloomDefinition) ->
+        updateGuiState(
+            options,
+            worlds.lastOrNull()?.deck,
+            clientState.guiStates,
+            mousePosition,
+            playerBoxes,
+            commands,
+            events.filterIsInstance<ClientEvent>(),
+            player,
+            bloomDefinition
+        )
+      }
 
   return clientState.copy(
       audio = updateClientAudio(client, worlds, clientState.audio),

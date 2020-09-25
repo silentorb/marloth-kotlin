@@ -119,7 +119,7 @@ fun generateWorld(definitions: Definitions, meshInfo: MeshShapeMap, seed: Long =
       definitions = definitions,
       meshes = compileArchitectureMeshInfo(meshInfo),
       includeEnemies = getDebugString("NO_ENEMIES") != "1",
-      roomCount = getDebugInt("BASE_ROOM_COUNT") ?: 30,
+      roomCount = getDebugInt("BASE_ROOM_COUNT") ?: 100,
       polyominoes = loadBlocks()
   )
   val input = WorldInput(

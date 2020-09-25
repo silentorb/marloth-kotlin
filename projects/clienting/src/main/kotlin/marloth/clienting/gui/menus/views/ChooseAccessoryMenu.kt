@@ -1,6 +1,7 @@
 package marloth.clienting.gui.menus.views
 
 import marloth.clienting.gui.menus.SimpleMenuItem
+import marloth.clienting.gui.menus.newSimpleMenuItem
 import simulation.accessorize.ChooseImprovedAccessory
 import silentorb.mythic.ent.Id
 import simulation.characters.AccessoryOptions
@@ -10,7 +11,7 @@ fun chooseAccessoryMenu(definitions: Definitions, actor: Id, accessoryOptions: A
     accessoryOptions
         .map { id ->
           val definition = definitions.accessories[id]!!
-          SimpleMenuItem(
+          newSimpleMenuItem(
               text = definition.name,
               event = ChooseImprovedAccessory(
                   actor = actor,

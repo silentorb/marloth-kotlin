@@ -24,9 +24,14 @@ data class MenuItem(
 
 data class SimpleMenuItem(
     val text: Text,
-    val event: EventUnion? = null,
-    val command: GuiCommandType? = null
+    val events: List<EventUnion> = listOf()
 )
+
+fun newSimpleMenuItem(text: Text, event: EventUnion? = null) =
+    SimpleMenuItem(
+        text = text,
+        events = listOfNotNull(event)
+    )
 
 typealias Menu = List<MenuItem>
 
@@ -115,7 +120,7 @@ fun simpleMenuFlower(title: Text, source: List<SimpleMenuItem>): StateFlower = {
   val menu = source.map {
     MenuItem(
         flower = menuTextFlower(definitions.textLibrary(it.text)),
-        events = listOfNotNull(it.event ?: ClientEvent(it.command!!))
+        events = it.events
     )
   }
   menuFlower(title, menu)(definitions, state)

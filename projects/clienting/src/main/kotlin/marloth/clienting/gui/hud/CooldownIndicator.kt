@@ -1,5 +1,6 @@
 package marloth.clienting.gui.hud
 
+import marloth.clienting.gui.menus.TextStyles
 import org.lwjgl.opengl.GL11
 import silentorb.mythic.bloom.*
 import silentorb.mythic.drawing.SingleColorShader
@@ -48,8 +49,25 @@ fun cooldownIndicator(radius: Float, color: Vector4, completion: Float): Depicti
 }
 
 fun cooldownIndicatorPlacement(cooldowns: List<Cooldown>): Flower {
-  throw Error("Need's updating")
-//  return div("cooldown",
+  return align(centered, percentage(0.8f))(
+      boxList(horizontalPlane, 20)(cooldowns
+          .map { cooldown ->
+            boxList(verticalPlane, 10)(
+                listOf(
+                    boxMargin(20)(
+                        label(TextStyles.smallGray, cooldown.name)
+                    ).copy(depiction = solidBackground(Vector4(0f, 0f, 0f, 0.9f))),
+                    Box(
+                        dimensions = Vector2i(30, 30),
+                        depiction = cooldownIndicator(50f, Vector4(1f, 1f, 1f, 0.3f), cooldown.value)
+                    )
+                )
+            )
+          }
+      )
+  )
+
+  //  return div("cooldown",
 //      forward = forwardOffset(top = percentage(0.80f)),
 //      reverse = reverseOffset(left = centered))(
 //      boxToFlower(

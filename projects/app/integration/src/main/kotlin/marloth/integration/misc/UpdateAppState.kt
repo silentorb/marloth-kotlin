@@ -155,7 +155,7 @@ fun updateFixedInterval(app: GameApp, boxes: PlayerBoxes, playerBloomDefinitions
           if (getDebugBoolean("FLY_THROUGH_CAMERA")) {
             updateFlyThroughCamera(clientState)
           }
-          if (clientState.commands.any { it.type == GuiCommandType.newGame })
+          if (clientState.events.filterIsInstance<ClientEvent>().any { it.type == GuiCommandType.newGame })
             restartGame(app, appState)
           else {
             val worlds = if (getDebugBoolean("PAUSE_SIMULATION") && appState.worlds.size > 1)

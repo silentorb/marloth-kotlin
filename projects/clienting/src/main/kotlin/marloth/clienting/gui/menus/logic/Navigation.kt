@@ -43,12 +43,16 @@ fun nextView(stack: MenuStack, eventTypes: List<Any>, events: List<Any>, view: V
       command?.data as? ViewId ?: view
     }
 
+    view == ViewId.chooseProfessionMenu -> null
+
     else -> view
   }
 }
 
-fun fallBackMenus(deck: Deck, player: Id): ViewId? =
-    if (!deck.characters.containsKey(player))
+fun fallBackMenus(deck: Deck?, player: Id): ViewId? =
+    if (deck == null)
+      null
+    else if (!deck.characters.containsKey(player))
       ViewId.chooseProfessionMenu
     else
       null

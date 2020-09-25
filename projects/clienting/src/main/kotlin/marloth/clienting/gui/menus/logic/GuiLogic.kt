@@ -11,6 +11,7 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.haft.HaftCommand
 import silentorb.mythic.haft.HaftCommands
 import silentorb.mythic.spatial.Vector2i
+import simulation.main.Deck
 
 fun eventsFromGuiState(state: GuiState): List<ClientEvent> {
   val timeout = state.displayChange?.timeout
@@ -39,11 +40,13 @@ fun commandsToClientEvents(options: AppOptions, state: GuiState, commands: HaftC
 
 fun updateGuiState(
     options: AppOptions,
+    deck: Deck?,
     state: GuiState,
     bloomDefinition: BloomDefinition,
     hoverBoxes: List<OffsetBox>,
     commands: HaftCommands,
-    events: List<ClientEvent>
+    events: List<ClientEvent>,
+    player: Id
 ): GuiState {
   val menuSize = bloomDefinition.menu?.size
   val commandTypes = commands.map { it.type } + events.map { it.type }
@@ -55,33 +58,26 @@ fun updateGuiState(
       println("${event.type} ${event.data}")
     }
   }
-  return if (commandTypes.none())
-    state.copy(
-        menuFocusIndex = menuFocusIndex,
-        displayChange = displayChange
-    )
-  else
-    state.copy(
-        view = nextView(state.menuStack, commandTypes, events, state.view),
-        menuFocusIndex = menuFocusIndex,
-        menuStack = updateMenuStack(commandTypes, state),
-        displayChange = displayChange
-    )
+
+  return state.copy(
+      view = nextView(state.menuStack, commandTypes, events, state.view) ?: fallBackMenus(deck, player),
+      menuFocusIndex = menuFocusIndex,
+      menuStack = updateMenuStack(commandTypes, state),
+      displayChange = displayChange
+  )
 }
 
-fun updateGuiStates(
+fun updateGuiState(
     options: AppOptions,
+    deck: Deck?,
     bloomStates: GuiStateMap,
-    playerBloomDefinitions: Map<Id, BloomDefinition>,
     mousePosition: Vector2i,
     boxes: PlayerBoxes,
     commands: HaftCommands,
-    events: List<ClientEvent>): GuiStateMap {
-  return playerBloomDefinitions
-      .mapValues { (player, bloomDefinition) ->
-        val playerEvents = commands.filter { it.target == player }
-        val state = bloomStates[player] ?: newMarlothBloomState()
-        val hoverBoxes = getHoverBoxes(mousePosition, boxes[player]!!)
-        updateGuiState(options, state, bloomDefinition, hoverBoxes, playerEvents, events.filter { it.user == player })
-      }
+    events: List<ClientEvent>,
+    player: Id, bloomDefinition: BloomDefinition): GuiState {
+  val playerEvents = commands.filter { it.target == player }
+  val state = bloomStates[player] ?: newMarlothBloomState()
+  val hoverBoxes = getHoverBoxes(mousePosition, boxes[player]!!)
+  return updateGuiState(options, deck, state, bloomDefinition, hoverBoxes, playerEvents, events.filter { it.user == player }, player)
 }

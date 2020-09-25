@@ -74,7 +74,7 @@ fun haftToBloom(commands: HaftCommands): List<BloomEvent> =
     }
 
 fun victoryMenu() = listOfNotNull(
-    SimpleMenuItem(Text.message_victory, command = GuiCommandType.newGame)
+    newSimpleMenuItem(Text.message_victory, event = ClientEvent(GuiCommandType.newGame))
 )
 
 val emptyViewFlower: StateFlower = { _, _ -> emptyBox }
