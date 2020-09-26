@@ -114,7 +114,8 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
       .plus(gatherAdditionalGameCommands(previousClient, clientState))
 
   val definitions = app.definitions
-  val clientEvents = events + gameCommands + mouseLookEvents(app.client.renderer.options.windowedResolution, clientState.input.deviceStates.last(), previousClient.input.deviceStates.lastOrNull(), clientState.players.firstOrNull())
+  val windowResolution = app.client.renderer.options.windowedResolution
+  val clientEvents = events + gameCommands + mouseLookEvents(windowResolution, previousClient.input.deviceStates.lastOrNull(), clientState.input.deviceStates.last(), clientState.players.firstOrNull(), clientState.guiStates)
   val allEvents = withSimulationEvents(definitions, previous.deck, world, clientEvents)
   val nextWorld = updateWorld(definitions, allEvents, simulationDelta, world)
   val finalWorld = nextWorld.copy(
@@ -130,14 +131,9 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
 }
 
 fun updateWorlds(app: GameApp, previousClient: ClientState, clientState: ClientState): (List<World>) -> List<World> = { worlds ->
-  when {
-    true -> {
-      val commands = mapGameCommands(clientState.players, clientState.commands)
-      val gameEvents = clientState.events.filterIsInstance<GameEvent>()
-      updateSimulation(app, previousClient, clientState, worlds, commands, gameEvents)
-    }
-    else -> worlds.takeLast(1)
-  }
+  val commands = mapGameCommands(clientState.players, clientState.commands)
+  val gameEvents = clientState.events.filterIsInstance<GameEvent>()
+  updateSimulation(app, previousClient, clientState, worlds, commands, gameEvents)
 }
 
 fun updateFixedInterval(app: GameApp, boxes: PlayerBoxes, playerBloomDefinitions: Map<Id, BloomDefinition>): (AppState) -> AppState =

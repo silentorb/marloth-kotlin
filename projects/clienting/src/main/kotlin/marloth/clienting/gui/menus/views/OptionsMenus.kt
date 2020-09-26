@@ -15,7 +15,7 @@ val inputOptionsMenu =
 
 val optionsMenu =
     simpleMenuFlower(Text.gui_optionsMenu, listOfNotNull(
-        newSimpleMenuItem(event = ClientEvent(ClientEventType.navigate, ViewId.audioOptions), text = Text.gui_audioOptions),
+//        newSimpleMenuItem(event = ClientEvent(ClientEventType.navigate, ViewId.audioOptions), text = Text.gui_audioOptions),
         newSimpleMenuItem(event = ClientEvent(ClientEventType.navigate, ViewId.displayOptions), text = Text.gui_displayOptions),
-        newSimpleMenuItem(event = ClientEvent(ClientEventType.navigate, ViewId.inputOptions), text = Text.gui_inputOptions)
+//        newSimpleMenuItem(event = ClientEvent(ClientEventType.navigate, ViewId.inputOptions), text = Text.gui_inputOptions)
     ))

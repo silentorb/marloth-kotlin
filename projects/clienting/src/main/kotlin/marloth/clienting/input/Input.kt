@@ -1,5 +1,6 @@
 package marloth.clienting.input
 
+import marloth.clienting.GuiState
 import marloth.clienting.PlayerViews
 import silentorb.mythic.characters.rigs.MouseLookEvent
 import silentorb.mythic.debugging.getDebugBoolean
@@ -131,14 +132,17 @@ fun gatherInputCommands(previous: InputState, next: InputState, playerViews: Pla
   return commands + mouseCommands
 }
 
-fun mouseLookEvents(dimensions: Vector2i, nextState: InputDeviceState, previousState: InputDeviceState?, character: Id?): Events {
-  val previousMousePosition = previousState?.mousePosition ?: Vector2.zero
-  val offset = nextState.mousePosition - previousMousePosition
-  return if (offset != Vector2.zero && character != null && !getDebugBoolean("DISABLE_MOUSE")) {
-    listOf(MouseLookEvent(
-        character = character,
-        offset = -offset / dimensions.toVector2()
-    ))
-  } else
-    listOf()
-}
+fun mouseLookEvents(dimensions: Vector2i, previousState: InputDeviceState?, nextState: InputDeviceState, character: Id?, guiStates: Map<Id, GuiState>): Events =
+    if (getDebugBoolean("DISABLE_MOUSE") || guiStates[character]?.view != null)
+      listOf()
+    else {
+      val previousMousePosition = previousState?.mousePosition ?: Vector2.zero
+      val offset = nextState.mousePosition - previousMousePosition
+      if (offset != Vector2.zero && character != null && !getDebugBoolean("DISABLE_MOUSE")) {
+        listOf(MouseLookEvent(
+            character = character,
+            offset = -offset / dimensions.toVector2()
+        ))
+      } else
+        listOf()
+    }

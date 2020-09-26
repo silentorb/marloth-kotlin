@@ -1,9 +1,7 @@
 package marloth.clienting.gui.menus
 
-import marloth.clienting.ClientEvent
 import marloth.clienting.StateFlower
 import marloth.clienting.gui.EventUnion
-import marloth.clienting.input.GuiCommandType
 import marloth.clienting.gui.menus.logic.menuItemIndexKey
 import marloth.clienting.gui.menus.logic.menuKey
 import marloth.clienting.gui.menus.logic.onActivateKey
@@ -84,23 +82,27 @@ fun menuFlower(menu: Menu, focusIndex: Int, titleWidth: Int): Box {
   val rows = menu
       .mapIndexed { index, item ->
         val hasFocus = index == focusIndex
-        val box = item.flower(hasFocus)
-        val event = item.events
-        val attributes = if (hasFocus)
-          mapOf(onActivateKey to event, onClickKey to event)
-        else
-          mapOf()
-
-        box.copy(
-            attributes = attributes + (menuItemIndexKey to index)
-        )
+        item.flower(hasFocus)
       }
 
   val gap = 20
 
   val breadth = boxList(verticalPlane, gap)(rows).dimensions.x
   return boxList(verticalPlane, gap)(
-      rows.mapIndexed(fieldWrapper(focusIndex, max(titleWidth + 100, breadth)))
+//      rows.mapIndexed(fieldWrapper(focusIndex, max(titleWidth + 100, breadth)))
+      rows.mapIndexed { index, box ->
+        val hasFocus = index == focusIndex
+        val events = menu[index].events
+        val attributes = if (hasFocus)
+          mapOf(onActivateKey to events, onClickKey to events)
+        else
+          mapOf()
+
+        fieldWrapper(focusIndex, max(titleWidth + 100, breadth))(index, box)
+            .copy(
+                attributes = attributes + (menuItemIndexKey to index)
+            )
+      }
   )
       .addAttributes(menuKey to menu)
 

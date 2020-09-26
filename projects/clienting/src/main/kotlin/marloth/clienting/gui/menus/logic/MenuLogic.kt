@@ -34,7 +34,9 @@ fun getMenuItemEvents(attributeBoxes: List<OffsetBox>, hoverBoxes: List<OffsetBo
   // The pattern between these two blocks could be abstracted but it may be an accidental pattern
   // so I'll wait until another repetition of the pattern occurs
   val clickEvents = if (events.any { it.type == GuiCommandType.mouseClick })
-    hoverBoxes.mapNotNull { it.attributes[onClickKey] }
+    hoverBoxes.mapNotNull {
+      it.attributes[onClickKey] as List<EventUnion>? }
+        .flatten()
   else
     listOf()
 

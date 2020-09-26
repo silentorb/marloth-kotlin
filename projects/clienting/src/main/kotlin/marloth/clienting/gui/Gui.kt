@@ -82,7 +82,7 @@ val emptyViewFlower: StateFlower = { _, _ -> emptyBox }
 fun guiLayout(definitions: Definitions, options: AppOptions, clientState: ClientState, world: World?, player: Id): Flower {
   val state = clientState.guiStates[player]
   return compose(listOfNotNull(
-      if (world != null) hudLayout(definitions.textLibrary, world, player, state?.view) else null,
+      if (world != null) hudLayout(definitions.textLibrary, world, clientState, player, state?.view) else null,
       if (state != null) {
         val stateFlower = viewSelect(world, options, clientState, state.view, player)
         if (stateFlower != null)

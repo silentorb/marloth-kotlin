@@ -1,67 +1,46 @@
 # Marloth Kotlin
 
-## Setup
+A 3D Marloth Game created by Christopher W. Johnson
 
-This project depends on the following external media software:
-* Blender 2.81
-    * Currently depends on version 1.0.10 of the gltf exporter (for animation extras to serialize markers), which isn't yet shipped with Blender and needs to be manually copied over the bundled version
-* Filter Forge 8
+## Overview
 
-## IntelliJ Settings
+* There is also a Marloth book but the rest of this document only refers to Marloth the game
+* This codebase is written in Kotlin and 95% functional/immutable
+* The main purpose of publishing this repository with an MIT license is to provide an example implementation
+* Marloth is currently in early alpha
+* Silent Orb may eventually release a commercial version of Marloth
+    * At such a point 
+## Dependencies
 
-### Java Debugging
-```
-!(this instanceof java.lang.ClassNotFoundException)
-&& !(this instanceof java.lang.NumberFormatException)
-&& !(this instanceof java.io.IOException)
-&& !(this instanceof java.security.PrivilegedActionException)
-&& !(this instanceof java.lang.NoSuchFieldError)
-&& !(this instanceof java.lang.NoSuchFieldException)
-&& !(this instanceof java.lang.NoSuchMethodError)
-&& !(this instanceof java.lang.NoSuchMethodException)
-&& (!(this instanceof java.lang.NullPointerException) || (this instanceof kotlin.KotlinNullPointerException))
-&& !(this instanceof java.lang.UnsatisfiedLinkError)
-&& !(this instanceof java.lang.IllegalAccessException)
-&& !(this instanceof java.lang.NoClassDefFoundError)
-&& !(this instanceof java.lang.IncompatibleClassChangeError)
-&& !(this instanceof java.lang.InterruptedException)
-&& !(this instanceof sun.nio.fs.WindowsException)
-```
+### Repositories
 
-```
-&& !(this instanceof kotlin.reflect.jvm.internal.KotlinReflectionInternalError)
-```
+This project depends on two repositories
 
-```
-!(this instanceof java.lang.ClassNotFoundException)
-&& !(this instanceof java.io.IOException)
-&& !(this instanceof java.security.PrivilegedActionException)
-&& !(this instanceof kotlin.reflect.jvm.internal.KotlinReflectionInternalError)
-&& !(this instanceof sun.nio.fs.WindowsException)
-```
+* [Mythic Game Engine](https://github.com/silentorb/mythic-kotlin)
+* [Imp Programming Langauge](https://github.com/silentorb/imp-kotlin)
 
-```
-&& (this.getClass().getName() != "kotlin.reflect.jvm.internal.KotlinReflectionInternalError")
-```
-### VM Options
-```
--Djava.library.path="E:/dev/games/java-freetype/cmake-build-debug/bin" -ea -Dcom.sun.management.jmxremote
--Xlog:gc*=debug:file=logs/gclog.txt 
--XX:MaxGCPauseMillis=8
+The Marloth Gradle configuration currently assumes that each repo is cloned alongside the Marloth project and 
+named `mythic` and `imp`
+
+#### Example directory structure
+
+* `imp`
+* `marloth`
+* `mythic`
+
+### Assets
+
+The following programs are needed to run the assets pipeline:
+
+* Blender 2.83+
+* Filter Forge 8+
+* Python 3.5+
+
+The paths to these files can be configured using the following environment variables:
+```dotenv
+BLENDER_PATH=/path-to/blender.exe
+FILTER_FORGE_PATH=/path-to/FFXCmdRenderer-x64.exe
+PYTHON_PATH=/path-to/python.exe
 ```
 
-### Experimental Shenandoah GC
-With default settings this seemes to bedrastically increasing heap size.
-That could probably be reduced with configuration, but also raises the question
-whether (due to it's present experimental state) Shenandoah is only useful with excessive memory usage.
-```
--XX:+UnlockExperimentalVMOptions -XX:+UseShenandoahGC
-```
-
-### Experimental Graal JIT
-Haven't noticed a performance difference yet when this is enabled
-```
--XX:+UnlockExperimentalVMOptions -XX:+EnableJVMCI -XX:+UseJVMCICompiler
-```
-### Working directory
-```out\bin```
+Marloth uses `dotenv` for development.  You can place a `.env` file in the root project directory.

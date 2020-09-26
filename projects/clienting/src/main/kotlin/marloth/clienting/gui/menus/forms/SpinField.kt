@@ -25,8 +25,8 @@ fun <T> cycle(options: List<T>, offset: Int, value: T): T {
 }
 
 data class SpinHandlers(
-    val incrementEvent: Any,
-    val decrementEvent: Any
+    val incrementEvent: List<Any>,
+    val decrementEvent: List<Any>
 )
 
 fun spinField(valueText: String, handlers: SpinHandlers): MenuItemFlower = { hasFocus ->
@@ -61,6 +61,6 @@ fun spinField(valueText: String, handlers: SpinHandlers): MenuItemFlower = { has
 
 fun <T> clientEventSpinHandlers(eventType: ClientEventType, options: List<T>, id: T) =
     SpinHandlers(
-        incrementEvent = ClientEvent(eventType, cycle(options, 1, id)),
-        decrementEvent = ClientEvent(eventType, cycle(options, -1, id))
+        incrementEvent = listOf(ClientEvent(eventType, cycle(options, 1, id))),
+        decrementEvent = listOf(ClientEvent(eventType, cycle(options, -1, id)))
     )

@@ -1,5 +1,6 @@
 package marloth.clienting.gui.hud
 
+import marloth.clienting.ClientState
 import marloth.clienting.gui.TextResources
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.TextStyles
@@ -88,7 +89,7 @@ fun interactionDialog(textResources: TextResources, interactable: Interactable):
 //  )
 }
 
-fun hudLayout(textResources: TextResources, world: World, player: Id, view: ViewId?): Flower? {
+fun hudLayout(textResources: TextResources, world: World, clientState: ClientState, player: Id, view: ViewId?): Flower? {
   val deck = world.deck
   val definitions = world.definitions
   val grid = world.realm.grid
@@ -153,7 +154,8 @@ fun hudLayout(textResources: TextResources, world: World, player: Id, view: View
         if (getDebugBoolean("HUD_DRAW_LOCATION"))
           "${floatToRoundedString(body.position.x)} ${floatToRoundedString(body.position.y)} ${floatToRoundedString(body.position.z)}"
         else
-          null
+          null,
+        if (getDebugBoolean("HUD_DRAW_MOUSE_LOCATION")) clientState.input.deviceStates.first().mousePosition.toString() else null
 //          if (character.isGrounded) "Grounded" else "Air",
 //          character.groundDistance.toString()
     )
