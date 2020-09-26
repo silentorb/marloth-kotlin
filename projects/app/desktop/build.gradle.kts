@@ -1,8 +1,7 @@
 plugins {
   kotlin("jvm")
-  application
-  id("edu.sc.seis.launch4j") version "2.4.6"
   id("org.beryx.runtime") version "1.11.2"
+  id("edu.sc.seis.launch4j") version "2.4.6"
 }
 
 dependencies {
@@ -22,7 +21,7 @@ runtime {
   ))
   jreDir.set(project.layout.buildDirectory.dir("dist/marloth-${project.properties["version"]}/jre"))
 }
-
+h
 // Build the executable
 tasks.withType<edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask> {
   outfile = "marloth.exe"
@@ -35,7 +34,7 @@ tasks.withType<edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask> {
   bundledJrePath = "./jre"
   jreRuntimeBits = "64"
   jvmOptions = setOf("-ea", "-XX:MaxGCPauseMillis=8")
-  headerType = "console"
+  headerType = "gui"
   outputDir = "dist/marloth-${project.properties["version"]}"
   dependsOn("copyFonts", "runtime")
 }
