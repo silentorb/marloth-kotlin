@@ -21,7 +21,7 @@ runtime {
   ))
   jreDir.set(project.layout.buildDirectory.dir("dist/marloth-${project.properties["version"]}/jre"))
 }
-h
+
 // Build the executable
 tasks.withType<edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask> {
   outfile = "marloth.exe"

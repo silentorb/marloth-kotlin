@@ -1,0 +1,4 @@
+javaImports:
+  - packagePath: ../../../../out/production/classes
+    classPath: silentorb.marloth.world_generation.imp.LibraryKt
+    method: newWorldGenerationLibrary

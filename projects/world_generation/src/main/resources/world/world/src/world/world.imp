@@ -1,0 +1,7 @@
+import silentorb.marloth.generation.world.*
+import silentorb.mythic.fathom.*
+import silentorb.mythic.spatial.*
+
+let child = endpoint (mesh "cube") . rotate (rotationFromAxis 0.0 0.0 46.0)
+
+let output = parentNode (listOf child) . translate (Vector3 0.0 0.0 10.0)

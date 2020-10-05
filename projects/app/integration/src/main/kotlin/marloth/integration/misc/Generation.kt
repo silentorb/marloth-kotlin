@@ -10,6 +10,7 @@ import generation.general.rotateSides
 import marloth.clienting.rendering.loadBlocks
 import marloth.generation.population.populateWorld
 import marloth.scenery.enums.MeshShapeMap
+import silentorb.marloth.world_generation.compileWorldGenerationCode
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.debugging.getDebugString
@@ -68,6 +69,8 @@ fun generateWorldBlocks(dice: Dice, generationConfig: GenerationConfig): Pair<Bl
 fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, input: WorldInput): World {
   val nextId = newIdSource(1)
   val dice = input.dice
+  val getSpatialNode = compileWorldGenerationCode()
+
   val (blockGrid, architectureSource) = generateWorldBlocks(dice, generationConfig)
   val grid = mapGridFromBlockGrid(blockGrid)
   assert(grid.connections.any())
