@@ -8,14 +8,16 @@ data class HandInput(
     val meshes: MeshInfoMap,
 )
 
-typealias GetHand = (HandInput) -> Hand
+//typealias GetHand = (HandInput) -> Hand
 
 data class SpatialNode(
     val transform: Matrix = Matrix.identity,
     val children: List<SpatialNode> = listOf(),
-    val getHand: GetHand? = null
+    val hand: Hand? = null
 )
 
-typealias SpatialNodeInput = String
+data class SpatialNodeInput(
+    val meshes: MeshInfoMap,
+)
 
 typealias GetSpatialNode = (SpatialNodeInput) -> SpatialNode
