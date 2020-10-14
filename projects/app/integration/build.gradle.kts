@@ -9,6 +9,7 @@ dependencies {
   implementation("silentorb.mythic:randomly")
   implementation("silentorb.mythic:haft")
   implementation("silentorb.mythic:debugging")
+  implementation("silentorb.mythic:editing")
 }
 
 requires(project, "clienting", "definition", "generation_architecture", "generation_population",

@@ -71,7 +71,7 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
   val nextId = newIdSource(1)
   val dice = input.dice
   val getSpatialNode = compileWorldGenerationCode()
-  val root = getSpatialNode(SpatialNodeInput(meshes = generationConfig.meshes))
+//  val root = getSpatialNode(SpatialNodeInput(meshes = generationConfig.meshes))
 
   val (blockGrid, architectureSource) = generateWorldBlocks(dice, generationConfig)
   val grid = mapGridFromBlockGrid(blockGrid)

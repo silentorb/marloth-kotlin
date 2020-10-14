@@ -1,7 +1,7 @@
 package marloth.clienting.rendering
 
 import generation.architecture.engine.PolyominoMap
-import silentorb.mythic.lookinglass.meshes.loading.loadJsonResource
+import silentorb.mythic.spatial.serialization.loadJsonResource
 import silentorb.mythic.lookinglass.toCamelCase
 
 data class BlocksFile(

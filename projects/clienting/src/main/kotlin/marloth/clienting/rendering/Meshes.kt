@@ -18,7 +18,6 @@ import silentorb.mythic.lookinglass.meshes.*
 import silentorb.mythic.lookinglass.meshes.loading.loadGltf
 import silentorb.mythic.resource_loading.getUrlPath
 import silentorb.mythic.scenery.MeshName
-import silentorb.mythic.scenery.SamplePoint
 import silentorb.mythic.scenery.Shape
 import java.nio.file.Files
 import java.nio.file.Path
