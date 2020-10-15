@@ -2,6 +2,7 @@ package marloth.clienting
 
 import marloth.clienting.audio.AudioConfig
 import marloth.clienting.audio.updateClientAudio
+import marloth.clienting.editing.updateEditorState
 import marloth.clienting.gui.BloomDefinition
 import marloth.clienting.gui.EventUnion
 import marloth.clienting.gui.TextResources
@@ -24,6 +25,7 @@ import silentorb.mythic.aura.SoundLibrary
 import silentorb.mythic.aura.newAudioState
 import silentorb.mythic.bloom.*
 import silentorb.mythic.debugging.getDebugBoolean
+import silentorb.mythic.editing.closeImGui
 import silentorb.mythic.ent.Id
 import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.haft.HaftCommands
@@ -88,15 +90,16 @@ data class Client(
   fun getWindowInfo() = platform.display.getInfo()
 
   fun shutdown() {
+    closeImGui()
     platform.display.shutdown()
     platform.audio.stop()
   }
 }
 
-fun updateMousePointerVisibility(platform: Platform, viewId: ViewId?) {
+fun updateMousePointerVisibility(platform: Platform, viewId: ViewId?, isEditorActive: Boolean) {
   if (!getDebugBoolean("DISABLE_MOUSE")) {
     val windowHasFocus = platform.display.hasFocus()
-    platform.input.setMouseVisibility(!windowHasFocus || viewId != null)
+    platform.input.setMouseVisibility(!windowHasFocus || viewId != null || isEditorActive)
   } else {
     platform.input.setMouseVisibility(true)
   }
@@ -160,8 +163,11 @@ fun updateClient(
     worlds: List<World>,
     playerBoxes: PlayerBoxes,
     playerBloomDefinitions: Map<Id, BloomDefinition>,
-    clientState: ClientState): ClientState {
-  updateMousePointerVisibility(client.platform, clientState.guiStates[clientState.players.firstOrNull()]?.view)
+    clientState: ClientState
+): ClientState {
+
+  updateMousePointerVisibility(client.platform, clientState.guiStates[clientState.players.firstOrNull()]?.view, clientState.editor.isActive)
+
   val deviceStates = updateInputDeviceStates(client.platform.input, clientState.input.deviceStates)
   val input = clientState.input.copy(
       deviceStates = deviceStates
@@ -191,7 +197,8 @@ fun updateClient(
       input = input,
       guiStates = nextGuiStates,
       commands = commands,
-      events = events
+      events = events,
+      editor = updateEditorState(commands, clientState.editor)
   )
 }
 

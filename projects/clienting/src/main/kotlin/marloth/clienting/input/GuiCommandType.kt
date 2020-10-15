@@ -6,6 +6,7 @@ import marloth.scenery.enums.CharacterRigCommands
 
 enum class GuiCommandType {
   characterInfo,
+  editor,
   menu,
   menuBack,
   menuSelect,
@@ -17,6 +18,7 @@ enum class GuiCommandType {
 
 private fun standardStrokes() = setOf(
     GuiCommandType.characterInfo,
+    GuiCommandType.editor,
     GuiCommandType.menu,
     GuiCommandType.menuSelect,
     GuiCommandType.menuBack,

@@ -9,7 +9,6 @@ import persistence.Database
 import persistence.newDatabase
 import silentorb.mythic.debugging.checkDotEnvChanged
 import silentorb.mythic.debugging.getDebugBoolean
-import silentorb.mythic.editing.closeImGui
 import silentorb.mythic.lookinglass.SceneRenderer
 import silentorb.mythic.lookinglass.toPlatformDisplayConfig
 import silentorb.mythic.platforming.Platform
@@ -94,6 +93,5 @@ fun runApp(platform: Platform, options: AppOptions) {
   if (onClose != null)
     onClose()
 
-  closeImGui()
   app.client.shutdown()
 }

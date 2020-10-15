@@ -40,6 +40,7 @@ fun defaultMouseGameBindings() = mapOf(
 )
 
 val defaultSharedKeyboardBindings = mapOf(
+    GLFW.GLFW_KEY_GRAVE_ACCENT to GuiCommandType.editor,
     GLFW.GLFW_KEY_C to GuiCommandType.characterInfo
 )
 
@@ -48,7 +49,6 @@ fun defaultKeyboardGameBindings() = mapOf(
     GLFW.GLFW_KEY_A to CharacterCommands.moveLeft,
     GLFW.GLFW_KEY_D to CharacterCommands.moveRight,
     GLFW.GLFW_KEY_S to CharacterCommands.moveDown,
-    GLFW.GLFW_KEY_GRAVE_ACCENT to CharacterRigCommands.switchView,
     GLFW.GLFW_KEY_ENTER to CharacterCommands.interactPrimary,
     GLFW.GLFW_KEY_ESCAPE to GuiCommandType.menu,
     GLFW.GLFW_KEY_E to CharacterCommands.abilityUtility,

@@ -29,6 +29,10 @@ data class GuiState(
 typealias GuiStateMap = Map<Id, GuiState>
 typealias StateFlower = (Definitions, GuiState) -> Box
 
+data class EditorState(
+    val isActive: Boolean = false
+)
+
 data class ClientState(
     val audio: AudioState,
     val guiStates: Map<Id, GuiState>,
@@ -37,6 +41,7 @@ data class ClientState(
     val marching: MarchingState,
     val events: List<Any>,
     val displayModes: List<DisplayMode>,
+    val editor: EditorState = EditorState(),
 
     // Player ids could be purely maintained in the world deck except the world does not care about player order.
     // Player order is only a client concern, and only for local multiplayer.

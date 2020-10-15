@@ -7,7 +7,7 @@ import marloth.clienting.rendering.marching.updateMarchingMain
 import marloth.clienting.rendering.prepareRender
 import marloth.clienting.rendering.renderLayersWithMarching
 import marloth.integration.debug.labRender
-import marloth.integration.editing.updateMarlothEditor
+import marloth.clienting.editing.updateMarlothEditor
 import marloth.integration.misc.AppState
 import marloth.integration.scenery.createScene
 import silentorb.mythic.bloom.Box
@@ -58,7 +58,7 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
     }
   }
 
-  updateMarlothEditor(windowInfo.id)
+  updateMarlothEditor(windowInfo.id, appState.client.editor)
 
   finishRender(renderer, windowInfo)
   client.platform.display.swapBuffers()
