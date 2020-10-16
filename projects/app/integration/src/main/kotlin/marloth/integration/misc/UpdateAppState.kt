@@ -9,6 +9,8 @@ import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.logic.syncDisplayOptions
 import marloth.clienting.gui.menus.logic.updateAppOptions
 import marloth.clienting.gui.newBloomDefinition
+import marloth.clienting.input.firstPlayer
+import marloth.clienting.input.isGameMouseActive
 import marloth.integration.clienting.layoutGui
 import marloth.integration.clienting.renderMain
 import marloth.integration.clienting.updateAppStateForFirstNewPlayer
@@ -115,7 +117,12 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
 
   val definitions = app.definitions
   val windowResolution = app.client.renderer.options.windowedResolution
-  val clientEvents = events + gameCommands + mouseLookEvents(windowResolution, previousClient.input.deviceStates.lastOrNull(), clientState.input.deviceStates.last(), clientState.players.firstOrNull(), clientState.guiStates)
+  val mouseEvents = if (isGameMouseActive(clientState))
+    listOf()
+  else
+    mouseLookEvents(windowResolution, previousClient.input.deviceStates.lastOrNull(), clientState.input.deviceStates.last(), firstPlayer(clientState))
+
+  val clientEvents = events + gameCommands + mouseEvents
   val allEvents = withSimulationEvents(definitions, previous.deck, world, clientEvents)
   val nextWorld = updateWorld(definitions, allEvents, simulationDelta, world)
   val finalWorld = nextWorld.copy(
@@ -131,7 +138,11 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
 }
 
 fun updateWorlds(app: GameApp, previousClient: ClientState, clientState: ClientState): (List<World>) -> List<World> = { worlds ->
-  val commands = mapGameCommands(clientState.players, clientState.commands)
+  val commands = if (clientState.editor.isActive)
+    listOf()
+  else
+    mapGameCommands(clientState.players, clientState.commands)
+
   val gameEvents = clientState.events.filterIsInstance<GameEvent>()
   updateSimulation(app, previousClient, clientState, worlds, commands, gameEvents)
 }

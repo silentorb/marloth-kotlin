@@ -26,7 +26,7 @@ dependencies {
   implementation("silentorb.mythic:debugging")
   implementation("silentorb.imp:campaign")
   api("silentorb.mythic:scenery")
-  implementation("silentorb.mythic:editing")
+  api("silentorb.mythic:editing")
 }
 
 requires(project, "assets", "definition", "simulation")

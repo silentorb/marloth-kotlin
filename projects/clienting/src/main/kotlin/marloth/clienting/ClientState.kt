@@ -8,6 +8,7 @@ import marloth.clienting.rendering.marching.MarchingState
 import silentorb.mythic.aura.AudioState
 import silentorb.mythic.bloom.BloomState
 import silentorb.mythic.bloom.Box
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.haft.HaftCommand
 import silentorb.mythic.lookinglass.DisplayOptions
@@ -30,7 +31,7 @@ typealias GuiStateMap = Map<Id, GuiState>
 typealias StateFlower = (Definitions, GuiState) -> Box
 
 data class EditorState(
-    val isActive: Boolean = false
+    val isActive: Boolean = getDebugBoolean("START_EDITOR")
 )
 
 data class ClientState(

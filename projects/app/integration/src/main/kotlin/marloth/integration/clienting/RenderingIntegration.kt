@@ -1,18 +1,20 @@
 package marloth.integration.clienting
 
 import marloth.clienting.Client
+import marloth.clienting.editing.prepareEditorGui
+import marloth.clienting.editing.renderEditorGui
 import marloth.clienting.rendering.createSceneRenderer
 import marloth.clienting.rendering.marching.MarchingState
 import marloth.clienting.rendering.marching.updateMarchingMain
 import marloth.clienting.rendering.prepareRender
 import marloth.clienting.rendering.renderLayersWithMarching
 import marloth.integration.debug.labRender
-import marloth.clienting.editing.updateMarlothEditor
 import marloth.integration.misc.AppState
 import marloth.integration.scenery.createScene
 import silentorb.mythic.bloom.Box
 import silentorb.mythic.bloom.renderLayout
 import silentorb.mythic.debugging.getDebugBoolean
+import silentorb.mythic.drawing.flipViewport
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.lookinglass.texturing.updateAsyncTextureLoading
 import silentorb.mythic.platforming.WindowInfo
@@ -33,11 +35,19 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
         appState.worlds.lastOrNull()
       else
         interpolateWorlds(appState.timestep.accumulator, appState.worlds)
+
+  val editor = prepareEditorGui(windowInfo.id, appState.client.editor)
+  val editorViewport = editor?.viewport
+
   if (world != null) {
     val scenes = appState.client.players
         .map(createScene(renderer.meshes, client.impModels, world.definitions, world.deck))
 
-    val viewportIterator = viewports.iterator()
+    val viewportIterator = if (editorViewport != null)
+      listOf(flipViewport(windowInfo.dimensions.y, editorViewport)).iterator()
+    else
+      viewports.iterator()
+
     scenes.zip(boxes) { scene, box ->
       val screenViewport = viewportIterator.next()
       val dimensions = Vector2i(screenViewport.z, screenViewport.w)
@@ -48,8 +58,7 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
       if (getDebugBoolean("RENDER_MARCHING")) {
         currentMarching = updateMarchingMain(sceneRenderer, client.impModels, idleTime, scene.layers, currentMarching)
         renderLayersWithMarching(sceneRenderer, scene.layers, currentMarching.gpu)
-      }
-      else {
+      } else {
         renderSceneLayers(sceneRenderer, sceneRenderer.camera, scene.layers)
       }
       labRender(appState)(sceneRenderer, scene.main)
@@ -58,7 +67,7 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
     }
   }
 
-  updateMarlothEditor(windowInfo.id, appState.client.editor)
+  renderEditorGui(appState.client.editor)
 
   finishRender(renderer, windowInfo)
   client.platform.display.swapBuffers()

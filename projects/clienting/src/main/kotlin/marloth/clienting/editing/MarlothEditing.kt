@@ -4,9 +4,7 @@ import marloth.clienting.ClientEvent
 import marloth.clienting.EditorState
 import marloth.clienting.gui.EventUnion
 import marloth.clienting.input.GuiCommandType
-import silentorb.mythic.editing.Typeface
-import silentorb.mythic.editing.ensureImGuiIsInitialized
-import silentorb.mythic.editing.updateEditorGui
+import silentorb.mythic.editing.*
 import silentorb.mythic.haft.HaftCommands
 
 val fonts = listOf(
@@ -17,10 +15,17 @@ val fonts = listOf(
     )
 )
 
-fun updateMarlothEditor(window: Long, editorState: EditorState) {
-  if (editorState.isActive) {
+fun prepareEditorGui(window: Long, editorState: EditorState): EditorResult? {
+  return if (editorState.isActive) {
     ensureImGuiIsInitialized(fonts, window)
-    updateEditorGui()
+    defineEditorGui()
+  } else
+    null
+}
+
+fun renderEditorGui(editorState: EditorState) {
+  if (editorState.isActive) {
+    renderEditorGui()
   }
 }
 
