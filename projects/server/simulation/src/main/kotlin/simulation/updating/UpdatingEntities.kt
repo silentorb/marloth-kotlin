@@ -28,7 +28,7 @@ import simulation.particles.updateParticleEffect
 import simulation.physics.CollisionGroups
 import simulation.physics.updateBodies
 
-fun updateEntities(definitions: Definitions, world: World, navigation: NavigationState, events: Events): (Deck) -> Deck =
+fun updateEntities(definitions: Definitions, world: World, navigation: NavigationState?, events: Events): (Deck) -> Deck =
     { deck ->
       val delta = simulationDelta
       val dice = world.dice
@@ -45,7 +45,7 @@ fun updateEntities(definitions: Definitions, world: World, navigation: Navigatio
           destructibles = mapTable(deck.destructibles, updateDestructibleHealth(events)),
           characters = mapTable(deck.characters, updateCharacter(definitions, dice, deck, world.bulletState, events)),
           knowledge = mapTable(deck.knowledge, updateKnowledge(world, lightRatings(world.deck), delta)),
-          navigationDirections = updateNavigationDirections(navigation),
+          navigationDirections = if (navigation != null)updateNavigationDirections(navigation) else mapOf(),
           particleEffects = mapTableValues(deck.particleEffects, deck.bodies, updateParticleEffect(definitions.particleEffects, dice, delta)),
           sounds = mapTableValues(deck.sounds, updateSound(delta)),
           spirits = mapTable(deck.spirits, updateSpirit(world, delta)),

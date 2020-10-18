@@ -1,8 +1,6 @@
 package marloth.integration.clienting
 
 import marloth.clienting.Client
-import marloth.clienting.editing.prepareEditorGui
-import marloth.clienting.editing.renderEditorGui
 import marloth.clienting.rendering.createSceneRenderer
 import marloth.clienting.rendering.marching.MarchingState
 import marloth.clienting.rendering.marching.updateMarchingMain
@@ -14,7 +12,6 @@ import marloth.integration.scenery.createScene
 import silentorb.mythic.bloom.Box
 import silentorb.mythic.bloom.renderLayout
 import silentorb.mythic.debugging.getDebugBoolean
-import silentorb.mythic.drawing.flipViewport
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.lookinglass.texturing.updateAsyncTextureLoading
 import silentorb.mythic.platforming.WindowInfo
@@ -36,17 +33,11 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
       else
         interpolateWorlds(appState.timestep.accumulator, appState.worlds)
 
-  val editor = prepareEditorGui(windowInfo.id, appState.client.editor)
-  val editorViewport = editor?.viewport
-
   if (world != null) {
     val scenes = appState.client.players
         .map(createScene(renderer.meshes, client.impModels, world.definitions, world.deck))
 
-    val viewportIterator = if (editorViewport != null)
-      listOf(flipViewport(windowInfo.dimensions.y, editorViewport)).iterator()
-    else
-      viewports.iterator()
+    val viewportIterator = viewports.iterator()
 
     scenes.zip(boxes) { scene, box ->
       val screenViewport = viewportIterator.next()
@@ -67,7 +58,10 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
     }
   }
 
-  renderEditorGui(appState.client.editor)
+  val onRenderPost = appState.hooks?.onRenderPost
+  if (onRenderPost != null) {
+    onRenderPost(windowInfo, appState)
+  }
 
   finishRender(renderer, windowInfo)
   client.platform.display.swapBuffers()

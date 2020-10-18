@@ -1,6 +1,7 @@
 package marloth.integration.misc
 
 import marloth.clienting.*
+import marloth.clienting.editing.editorFonts
 import marloth.clienting.gui.hud.updateTargeting
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.input.mouseLookEvents
@@ -24,6 +25,9 @@ import silentorb.mythic.bloom.Box
 import silentorb.mythic.bloom.toAbsoluteBoundsRecursive
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.incrementGlobalDebugLoopNumber
+import silentorb.mythic.drawing.flipViewport
+import silentorb.mythic.editing.isActive
+import silentorb.mythic.editing.prepareEditorGui
 import silentorb.mythic.ent.*
 import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.Events
@@ -31,6 +35,7 @@ import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.lookinglass.getPlayerViewports
 import silentorb.mythic.quartz.updateTimestep
 import silentorb.mythic.spatial.Vector2i
+import silentorb.mythic.spatial.Vector4i
 import simulation.entities.Player
 import simulation.happenings.withSimulationEvents
 import simulation.main.World
@@ -109,6 +114,14 @@ fun filterCommands(clientState: ClientState): (List<CharacterCommand>) -> List<C
       }
 }
 
+fun getPlayerViewports(clientState: ClientState, windowDimensions: Vector2i): List<Vector4i> {
+  val editorViewport = clientState.editor?.viewport
+  return if (editorViewport != null)
+    listOf(flipViewport(windowDimensions.y, editorViewport))
+  else
+    getPlayerViewports(clientState.players.size, windowDimensions)
+}
+
 fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: ClientState, worlds: List<World>, commands: List<CharacterCommand>, events: Events): List<World> {
   val world = worlds.last()
   val previous = worlds.takeLast(2).first()
@@ -138,7 +151,7 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
 }
 
 fun updateWorlds(app: GameApp, previousClient: ClientState, clientState: ClientState): (List<World>) -> List<World> = { worlds ->
-  val commands = if (clientState.editor.isActive)
+  val commands = if (isActive(clientState.editor))
     listOf()
   else
     mapGameCommands(clientState.players, clientState.commands)
@@ -183,7 +196,7 @@ fun updateFixedInterval(app: GameApp, boxes: PlayerBoxes, playerBloomDefinitions
 
 fun layoutBoxes(app: GameApp, appState: AppState): Map<Id, Box> {
   val windowInfo = app.client.getWindowInfo()
-  val viewports = getPlayerViewports(appState.client.players.size, windowInfo.dimensions)
+  val viewports = getPlayerViewports(appState.client, windowInfo.dimensions)
   val viewportDimensions = viewports.map { Vector2i(it.z, it.w) }
   val playerBoxes = layoutGui(app.definitions, appState, viewportDimensions)
   return playerBoxes.mapValues { toAbsoluteBoundsRecursive(it.value) }
@@ -197,7 +210,7 @@ fun updateFixedIntervalSteps(app: GameApp, layoutBoxes: (AppState) -> Map<Id, Bo
       val playerBloomDefinitions = flatBoxes
           .mapValues { newBloomDefinition(it.value) }
       val nextState = updateFixedInterval(app, flatBoxes, playerBloomDefinitions)(appState)
-      val onUpdate = app.hooks?.onUpdate
+      val onUpdate = appState.hooks?.onUpdate
       if (onUpdate != null) {
         onUpdate(nextState)
       }
@@ -207,13 +220,12 @@ fun updateFixedIntervalSteps(app: GameApp, layoutBoxes: (AppState) -> Map<Id, Bo
 fun updateAppState(app: GameApp): (AppState) -> AppState = { appState ->
   incrementGlobalDebugLoopNumber(60)
   val (timestep, steps) = updateTimestep(appState.timestep, simulationDelta.toDouble())
-  val onTimeStep = app.hooks?.onTimeStep
+  val onTimeStep = appState.hooks?.onTimeStep
   if (onTimeStep != null) {
     onTimeStep(timestep, steps, appState)
   }
 
   val layoutBoxes = singleValueCache { source: AppState -> layoutBoxes(app, source) }
-
   val nextAppState = updateFixedIntervalSteps(app, layoutBoxes, steps, appState)
       .copy(
           timestep = timestep
@@ -221,7 +233,7 @@ fun updateAppState(app: GameApp): (AppState) -> AppState = { appState ->
 
   if (steps <= 1) {
     val windowInfo = app.client.getWindowInfo()
-    val viewports = getPlayerViewports(appState.client.players.size, windowInfo.dimensions)
+    val viewports = getPlayerViewports(appState.client, windowInfo.dimensions)
     val boxes = layoutBoxes(nextAppState)
     renderMain(app.client, windowInfo, nextAppState, boxes.values, viewports)
   }

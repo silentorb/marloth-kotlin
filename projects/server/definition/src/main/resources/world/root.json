@@ -1,0 +1,11 @@
+{
+  "nodes": {
+    "root": {
+
+    },
+    "floor": {
+      "type": "squareFloor",
+      "parent": "root"
+    }
+  }
+}

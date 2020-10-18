@@ -1,6 +1,7 @@
 package simulation.misc
 
 import silentorb.mythic.ent.Id
+import silentorb.mythic.spatial.Vector3i
 import simulation.main.Deck
 
 fun isAtHome(grid: MapGrid, deck: Deck): (Id) -> Boolean = { id ->
@@ -11,5 +12,5 @@ fun isAtHome(grid: MapGrid, deck: Deck): (Id) -> Boolean = { id ->
     false
 }
 
-fun getPlayerStart(grid: MapGrid) =
-    grid.cells.entries.first { it.value.attributes.contains(CellAttribute.home) }.key
+fun getPlayerStart(grid: MapGrid): Vector3i? =
+    grid.cells.entries.firstOrNull { it.value.attributes.contains(CellAttribute.home) }?.key ?: Vector3i.zero

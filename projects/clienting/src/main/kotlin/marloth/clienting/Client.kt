@@ -2,6 +2,7 @@ package marloth.clienting
 
 import marloth.clienting.audio.AudioConfig
 import marloth.clienting.audio.updateClientAudio
+import marloth.clienting.editing.editorFonts
 import marloth.clienting.editing.updateEditorState
 import marloth.clienting.gui.BloomDefinition
 import marloth.clienting.gui.EventUnion
@@ -26,6 +27,8 @@ import silentorb.mythic.aura.newAudioState
 import silentorb.mythic.bloom.*
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.editing.closeImGui
+import silentorb.mythic.editing.isActive
+import silentorb.mythic.editing.prepareEditorGui
 import silentorb.mythic.ent.Id
 import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.haft.HaftCommands
@@ -166,7 +169,7 @@ fun updateClient(
     clientState: ClientState
 ): ClientState {
 
-  updateMousePointerVisibility(client.platform, clientState.guiStates[clientState.players.firstOrNull()]?.view, clientState.editor.isActive)
+  updateMousePointerVisibility(client.platform, clientState.guiStates[clientState.players.firstOrNull()]?.view, isActive(clientState.editor))
 
   val deviceStates = updateInputDeviceStates(client.platform.input, clientState.input.deviceStates)
   val input = clientState.input.copy(
@@ -192,13 +195,17 @@ fun updateClient(
         )
       }
 
+  val previousEditorState = clientState.editor
+  val windowInfo = client.getWindowInfo()
+  val nextEditor = prepareEditorGui(editorFonts, windowInfo.id, previousEditorState)
+
   return clientState.copy(
       audio = updateClientAudio(client, worlds, clientState.audio),
       input = input,
       guiStates = nextGuiStates,
       commands = commands,
       events = events,
-      editor = updateEditorState(commands, clientState.editor)
+      editor = updateEditorState(commands, nextEditor)
   )
 }
 

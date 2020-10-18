@@ -17,7 +17,7 @@ import simulation.misc.*
 data class NewPlayerCharacter(
     val id: Id,
     val profession: ProfessionId
-): GameEvent
+) : GameEvent
 
 fun newPlayerIdHand(id: Id) =
     IdHand(
@@ -33,13 +33,16 @@ fun getDebugProfession() =
     getDebugString("CHARACTER_CLASS")
 
 fun newPlayerCharacter(nextId: IdSource, id: Id, definitions: Definitions, grid: MapGrid, profession: ProfessionId, cellPosition: Vector3i): List<IdHand> {
-  val neighbor = cellNeighbors(grid.connections, cellPosition).first()
-  return newCharacter(nextId, id, definitions,
-      profession = profession,
-      faction = misfitFaction,
-      position = absoluteCellPosition(cellPosition) + Vector3(0f, 0f, 1f),
-      angle = getHorizontalLookAtAngle((neighbor - cellPosition).toVector3())
-  )
+  val neighbor = cellNeighbors(grid.connections, cellPosition).firstOrNull()
+  return if (neighbor == null)
+    listOf()
+  else
+    newCharacter(nextId, id, definitions,
+        profession = profession,
+        faction = misfitFaction,
+        position = absoluteCellPosition(cellPosition) + Vector3(0f, 0f, 1f),
+        angle = getHorizontalLookAtAngle((neighbor - cellPosition).toVector3())
+    )
 }
 
 fun newPlayerAndCharacter(nextId: IdSource, definitions: Definitions, grid: MapGrid, cellPosition: Vector3i, profession: ProfessionId): List<IdHand> {
@@ -48,16 +51,22 @@ fun newPlayerAndCharacter(nextId: IdSource, definitions: Definitions, grid: MapG
       .plus(newPlayerIdHand(id))
 }
 
-fun newPlayerCharacters(nextId: IdSource, definitions: Definitions, grid: MapGrid, events: Events): List<IdHand> =
+fun newPlayerCharacters(nextId: IdSource, definitions: Definitions, grid: MapGrid, events: Events): List<IdHand> {
+  val playerStart = getPlayerStart(grid)
+  return if (playerStart == null)
+    listOf()
+  else
     events.filterIsInstance<NewPlayerCharacter>()
         .flatMap { event ->
-          newPlayerCharacter(nextId, event.id, definitions, grid, event.profession, getPlayerStart(grid))
+          newPlayerCharacter(nextId, event.id, definitions, grid, event.profession, playerStart)
         }
+}
 
 fun newPlayerAndCharacter(nextId: IdSource, definitions: Definitions, grid: MapGrid): List<IdHand> {
   val debugProfession = getDebugProfession()
-  return if (debugProfession != null)
-    newPlayerAndCharacter(nextId, definitions, grid, getPlayerStart(grid), debugProfession)
+  val playerStart = getPlayerStart(grid)
+  return if (debugProfession != null && playerStart != null)
+    newPlayerAndCharacter(nextId, definitions, grid, playerStart, debugProfession)
   else
     listOf(newPlayerIdHand(nextId()))
 }

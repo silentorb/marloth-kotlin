@@ -19,13 +19,16 @@ import simulation.physics.toPhysicsDeck
 var originalNavMeshData: List<TriMesh> = listOf()
 var globalHeightMap: Heightfield? = null
 
-fun newNavMesh(meshIds: Set<Id>, deck: Deck): NavMesh {
+fun newNavMesh(meshIds: Set<Id>, deck: Deck): NavMesh? {
   val filteredMeshIds = if (getDebugString("NAV_MESH_FILTER") != null)
     meshIds.filter { deck.depictions[it]!!.mesh == getDebugString("NAV_MESH_FILTER")!! }.toSet()
   else
     meshIds
 
   val meshes = newNavMeshTriMeshes(toPhysicsDeck(deck), filteredMeshIds)
+  if (meshes.none())
+    return null
+
   val vertices = meshes.flatMap { it.verts.toList() }
   originalNavMeshData = meshes
 

@@ -17,20 +17,13 @@ import silentorb.mythic.lookinglass.*
 import silentorb.mythic.lookinglass.meshes.*
 import silentorb.mythic.lookinglass.meshes.loading.loadGltf
 import silentorb.mythic.resource_loading.getUrlPath
+import silentorb.mythic.resource_loading.listFiles
 import silentorb.mythic.scenery.MeshName
 import silentorb.mythic.scenery.Shape
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.streams.toList
-
-fun listFiles(path: Path): List<Path> =
-    Files.list(path)
-        .use { paths ->
-          paths
-              .toList()
-              .filterIsInstance<Path>()
-        }
 
 fun getModelFilenames(): List<Path> {
   val modelRoot = getUrlPath("models")

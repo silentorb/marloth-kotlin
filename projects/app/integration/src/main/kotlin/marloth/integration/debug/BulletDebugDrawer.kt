@@ -2,7 +2,7 @@ package marloth.integration.debug
 
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw
 import com.badlogic.gdx.utils.Disposable
-import marloth.integration.front.RenderHook
+import marloth.integration.front.RenderSceneHook
 import silentorb.mythic.glowing.globalState
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector4
@@ -50,7 +50,7 @@ class BulletDebugDrawer : btIDebugDraw(), Disposable {
 
 private var debugDrawer: BulletDebugDrawer? = null
 
-fun drawBulletDebug(bulletState: BulletState, origin: Vector3): RenderHook = { sceneRenderer: SceneRenderer, _: Scene ->
+fun drawBulletDebug(bulletState: BulletState, origin: Vector3): RenderSceneHook = { sceneRenderer: SceneRenderer, _: Scene ->
   val dynamicsWorld = bulletState.dynamicsWorld
   val drawer = if (debugDrawer == null) {
     debugDrawer = BulletDebugDrawer()

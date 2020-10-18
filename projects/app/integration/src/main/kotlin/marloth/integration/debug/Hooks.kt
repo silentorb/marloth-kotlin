@@ -1,13 +1,14 @@
 package marloth.integration.debug
 
+import marloth.clienting.editing.renderEditorGui
 import marloth.integration.front.GameHooks
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugFloat
 import simulation.updating.getIdle
 
-fun newDebugHooks(): GameHooks? {
+fun newDebugHooks(hooks: GameHooks): GameHooks {
   val metricSamples: MutableList<MetricSample> = mutableListOf()
-  return GameHooks(
+  return hooks.copy(
 
       onTimeStep = { timestep, steps, appState ->
         val minDroppedFrame = getDebugFloat("DROPPED_FRAME_MINIMUM")
@@ -32,3 +33,8 @@ fun newDebugHooks(): GameHooks? {
       }
   )
 }
+
+fun newEditorHooks(hooks: GameHooks): GameHooks? =
+    hooks.copy(
+        onRenderPost = { _, appState -> renderEditorGui(appState.client.editor) }
+    )

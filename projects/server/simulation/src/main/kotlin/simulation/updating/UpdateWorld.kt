@@ -36,7 +36,7 @@ fun updateDeckCache(definitions: Definitions): (Deck) -> Deck =
     }
 
 fun updateDeck(definitions: Definitions, events: Events, world: World,
-               navigation: NavigationState,
+               navigation: NavigationState?,
                nextId: IdSource): (Deck) -> Deck =
     pipe(
         updateEntities(definitions, world, navigation, events),
@@ -49,7 +49,11 @@ fun updateDeck(definitions: Definitions, events: Events, world: World,
 fun updateWorld(definitions: Definitions, events: Events, delta: Float, world: World): World {
   val withPhysics = updatePhysics(events)(world)
   val moveSpeedTable = newMoveSpeedTable(definitions, withPhysics.deck)
-  val navigation = updateNavigation(withPhysics.deck, moveSpeedTable, delta, withPhysics.navigation!!)
+  val navigation = if (withPhysics.navigation != null)
+    updateNavigation(withPhysics.deck, moveSpeedTable, delta, withPhysics.navigation)
+  else
+    null
+
   val nextId = newIdSource(withPhysics.nextId)
   val deck = updateDeck(definitions, events, withPhysics, navigation, nextId)(withPhysics.deck)
   applyBodyChanges(withPhysics.bulletState, withPhysics.deck.bodies, deck.bodies)

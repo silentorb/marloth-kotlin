@@ -15,6 +15,8 @@ import silentorb.marloth.world_generation.compileWorldGenerationCode
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.debugging.getDebugString
+import silentorb.mythic.editing.Graph
+import silentorb.mythic.editing.loadGraphLibrary
 import silentorb.mythic.ent.newGenericIdHand
 import silentorb.mythic.ent.newIdSource
 import silentorb.mythic.physics.newBulletState
@@ -67,39 +69,47 @@ fun generateWorldBlocks(dice: Dice, generationConfig: GenerationConfig): Pair<Bl
   return Pair(blockGrid, architectureSource)
 }
 
+fun worldFromGraph(generationConfig: GenerationConfig, dice: Dice, graph: Graph): Deck {
+  return Deck()
+}
+
 fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, input: WorldInput): World {
   val nextId = newIdSource(1)
   val dice = input.dice
-  val getSpatialNode = compileWorldGenerationCode()
+//  val getSpatialNode = compileWorldGenerationCode()
 //  val root = getSpatialNode(SpatialNodeInput(meshes = generationConfig.meshes))
 
-  val (blockGrid, architectureSource) = generateWorldBlocks(dice, generationConfig)
-  val grid = mapGridFromBlockGrid(blockGrid)
-  assert(grid.connections.any())
+//  val (blockGrid, architectureSource) = generateWorldBlocks(dice, generationConfig)
+//  val grid = mapGridFromBlockGrid(blockGrid)
+//  assert(grid.connections.any())
 
   // The <Hand> specifier shouldn't be needed here but without it Kotlin is throwing an internal error referencing this line
-  val architectureHands = architectureSource.map(newGenericIdHand<Hand>(nextId))
-  val architectureDeck = idHandsToDeck(architectureHands)
+//  val architectureHands = architectureSource.map(newGenericIdHand<Hand>(nextId))
+//  val architectureDeck = idHandsToDeck(architectureHands)
 
+//
+//  val lightHands = lightHandsFromDepictions(definitions.lightAttachments, architectureHands)
+//
+//  val realm = generateRealm(grid)
+//  val deck = pipeIdHandsToDeck(listOf(
+//      { _ -> lightHands },
+//      populateWorld(nextId, generationConfig, input, realm)
+//  ))(architectureDeck)
+
+  val graphLibrary = loadGraphLibrary("world")
+  val rootGraph = graphLibrary["root"]!!
+  val deck = worldFromGraph(generationConfig, dice, rootGraph)
   val navigation = if (generationConfig.includeEnemies) {
-    val meshIds = architectureDeck.depictions
+    val meshIds = deck.depictions
         .filterValues { generationConfig.meshes.containsKey(it.mesh) }
         .keys
-    newNavigationState(meshIds, architectureDeck)
+    newNavigationState(meshIds, deck)
   } else
     null
 
-  val lightHands = lightHandsFromDepictions(definitions.lightAttachments, architectureHands)
-
-  val realm = generateRealm(grid)
-  val deck = pipeIdHandsToDeck(listOf(
-      { _ -> lightHands },
-      populateWorld(nextId, generationConfig, input, realm)
-  ))(architectureDeck)
-
   return World(
       deck = deck,
-      realm = realm,
+      realm = Realm(grid = MapGrid()),
       nextId = nextId(),
       dice = Dice(),
       global = newGlobalState(),

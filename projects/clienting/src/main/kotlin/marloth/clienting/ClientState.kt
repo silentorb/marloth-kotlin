@@ -9,9 +9,9 @@ import silentorb.mythic.aura.AudioState
 import silentorb.mythic.bloom.BloomState
 import silentorb.mythic.bloom.Box
 import silentorb.mythic.debugging.getDebugBoolean
+import silentorb.mythic.editing.Editor
 import silentorb.mythic.ent.Id
 import silentorb.mythic.haft.HaftCommand
-import silentorb.mythic.lookinglass.DisplayOptions
 import silentorb.mythic.platforming.DisplayMode
 import simulation.misc.Definitions
 
@@ -30,9 +30,13 @@ data class GuiState(
 typealias GuiStateMap = Map<Id, GuiState>
 typealias StateFlower = (Definitions, GuiState) -> Box
 
-data class EditorState(
-    val isActive: Boolean = getDebugBoolean("START_EDITOR")
-)
+fun initialEditor(): Editor? =
+    if (getDebugBoolean("START_EDITOR"))
+      Editor(
+          isActive = true
+      )
+    else
+      null
 
 data class ClientState(
     val audio: AudioState,
@@ -42,7 +46,7 @@ data class ClientState(
     val marching: MarchingState,
     val events: List<Any>,
     val displayModes: List<DisplayMode>,
-    val editor: EditorState = EditorState(),
+    val editor: Editor? = initialEditor(),
 
     // Player ids could be purely maintained in the world deck except the world does not care about player order.
     // Player order is only a client concern, and only for local multiplayer.

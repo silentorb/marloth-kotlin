@@ -1,10 +1,10 @@
 package marloth.integration.debug
 
-import marloth.integration.front.RenderHook
+import marloth.integration.front.RenderSceneHook
 import marloth.integration.misc.AppState
 import silentorb.mythic.debugging.getDebugBoolean
 
-fun labRender(state: AppState): RenderHook = { sceneRenderer, scene ->
+fun labRender(state: AppState): RenderSceneHook = { sceneRenderer, scene ->
   val world = state.worlds.last()
   val deck = world.deck
   val renderer = sceneRenderer.renderer
