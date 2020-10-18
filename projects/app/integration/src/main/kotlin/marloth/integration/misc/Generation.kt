@@ -8,6 +8,7 @@ import generation.general.BlockGrid
 import generation.general.mapGridFromBlockGrid
 import generation.general.rotateSides
 import marloth.clienting.rendering.loadBlocks
+import marloth.definition.misc.loadMarlothGraphLibrary
 import marloth.generation.population.populateWorld
 import marloth.scenery.enums.MeshShapeMap
 import silentorb.marloth.world_generation.SpatialNodeInput
@@ -96,7 +97,7 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
 //      populateWorld(nextId, generationConfig, input, realm)
 //  ))(architectureDeck)
 
-  val graphLibrary = loadGraphLibrary("world")
+  val graphLibrary = loadMarlothGraphLibrary()
   val rootGraph = graphLibrary["root"]!!
   val deck = worldFromGraph(generationConfig, dice, rootGraph)
   val navigation = if (generationConfig.includeEnemies) {

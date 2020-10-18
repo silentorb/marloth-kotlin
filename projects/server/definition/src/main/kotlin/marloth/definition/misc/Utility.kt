@@ -3,6 +3,7 @@ package marloth.definition.misc
 import marloth.scenery.enums.DamageTypes
 import marloth.scenery.enums.ModifierDirection
 import marloth.scenery.enums.Text
+import silentorb.mythic.editing.loadGraphLibrary
 import simulation.combat.general.DamageType
 import simulation.combat.general.ModifierOperation
 import simulation.accessorize.ModifierDefinition
@@ -21,3 +22,6 @@ fun newResistanceModifier(name: Text, damageType: DamageType) = ModifierDefiniti
 )
 
 val staticDamageTypes = reflectPropertiesMap<String>(DamageTypes).keys
+
+fun loadMarlothGraphLibrary() =
+    loadGraphLibrary("world")

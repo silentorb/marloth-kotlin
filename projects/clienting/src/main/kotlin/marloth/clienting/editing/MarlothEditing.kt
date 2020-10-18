@@ -1,8 +1,11 @@
 package marloth.clienting.editing
 
 import marloth.clienting.input.GuiCommandType
+import marloth.definition.misc.loadMarlothGraphLibrary
 import silentorb.mythic.editing.*
 import silentorb.mythic.haft.HaftCommands
+
+private var graphLibrary: GraphLibrary? = null
 
 val editorFonts = listOf(
     Typeface(
@@ -27,7 +30,9 @@ fun updateEditorState(commands: HaftCommands, previous: Editor?): Editor? {
 
   return if (active) {
     (previous ?: Editor()).copy(
-        isActive = active
+        isActive = active,
+        graphLibrary = loadMarlothGraphLibrary(),
+        graph = "root"
     )
   } else
     previous
