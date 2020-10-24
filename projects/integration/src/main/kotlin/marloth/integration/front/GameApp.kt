@@ -8,17 +8,18 @@ import marloth.integration.debug.newEditorHooks
 import marloth.integration.misc.*
 import persistence.Database
 import persistence.newDatabase
+import silentorb.mythic.godot.newGodotWrapper
 import silentorb.mythic.debugging.checkDotEnvChanged
 import silentorb.mythic.debugging.getDebugBoolean
+import silentorb.mythic.debugging.getConfigString
 import silentorb.mythic.lookinglass.SceneRenderer
-import silentorb.mythic.lookinglass.toPlatformDisplayConfig
 import silentorb.mythic.platforming.Platform
 import silentorb.mythic.platforming.WindowInfo
 import silentorb.mythic.quartz.TimestepState
-import silentorb.mythic.quartz.newTimestepState
 import silentorb.mythic.scenery.Scene
 import simulation.main.World
 import simulation.misc.Definitions
+import java.lang.management.ManagementFactory
 
 typealias RenderHook = (WindowInfo, AppState) -> Unit
 typealias RenderSceneHook = (SceneRenderer, Scene) -> Unit
@@ -86,21 +87,33 @@ fun newGameApp(platform: Platform, client: Client): GameApp {
 }
 
 fun runApp(platform: Platform, options: AppOptions) {
-  platform.display.initialize(toPlatformDisplayConfig(options.display))
-  val app = newGameApp(platform, newClient(platform, options.display))
-  val world = generateWorld(app.definitions, getMeshInfo(app.client))
-  val state = AppState(
-      client = newClientState(options.input, options.audio, platform.display.getDisplayModes()),
-      options = options,
-      worlds = listOf(world),
-      timestep = newTimestepState(),
-      hooks = conditionalHooks()
+  val pid = ManagementFactory.getRuntimeMXBean().name
+  val libraryDir = getConfigString("GODOT_LIBRARY_DIR")!!
+  val libraryName = getConfigString("GODOT_LIBRARY_NAME")!!
+  val godotProjectPath = getConfigString("GODOT_PROJECT_PATH")!!
+  val godotWrapper = newGodotWrapper(libraryDir, libraryName)
+  val args = arrayOf(
+      "--path", godotProjectPath, //--remote-debug 127.0.0.1:6007 --allow_focus_steal_pid 15936 --position 448,240"
   )
-  gameLoop(app, state)
-  println("Closing")
-  val onClose = state.hooks?.onClose
-  if (onClose != null)
-    onClose()
 
-  app.client.shutdown()
+  godotWrapper.mythicMain("", args.size, args)
+
+//  platform.display.initialize(toPlatformDisplayConfig(options.display))
+//
+//  val app = newGameApp(platform, newClient(platform, options.display))
+//  val world = generateWorld(app.definitions, getMeshInfo(app.client))
+//  val state = AppState(
+//      client = newClientState(options.input, options.audio, platform.display.getDisplayModes()),
+//      options = options,
+//      worlds = listOf(world),
+//      timestep = newTimestepState(),
+//      hooks = conditionalHooks()
+//  )
+//  gameLoop(app, state)
+//  println("Closing")
+//  val onClose = state.hooks?.onClose
+//  if (onClose != null)
+//    onClose()
+//
+//  app.client.shutdown()
 }

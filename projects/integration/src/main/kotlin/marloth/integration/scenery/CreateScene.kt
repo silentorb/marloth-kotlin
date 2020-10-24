@@ -4,7 +4,6 @@ import marloth.clienting.gui.hud.entanglingMovementRangeLayer
 import marloth.clienting.gui.hud.mobilityMovementRangeLayer
 import marloth.clienting.rendering.*
 import marloth.clienting.rendering.marching.marchingRenderLayer
-import silentorb.mythic.characters.rigs.CharacterRig
 import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
@@ -12,7 +11,6 @@ import silentorb.mythic.lookinglass.ModelMeshMap
 import silentorb.mythic.lookinglass.SceneLayer
 import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.scenery.Scene
-import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
 import simulation.main.Deck
 import simulation.misc.Definitions
