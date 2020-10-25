@@ -2,26 +2,49 @@
 
 #include "main/main.h"
 #include "platform/windows/os_windows.h"
+#include "mythic_windows.h"
 
 #include <locale.h>
 
 extern "C" {
 
-_declspec(dllexport)
-int mythicMain(const char *execpath, int argc, char *argv[]) {
+	_declspec(dllexport) WindowsPlatform* newWindowsPlatform() {
+		return new WindowsPlatform();
+	}
 
-  OS_Windows os(NULL);
+	_declspec(dllexport) void deleteWindowsPlatform(WindowsPlatform* platform) {
+		if (platform) {
+			delete platform;
+		}
+	}
 
-  setlocale(LC_CTYPE, "");
+	_declspec(dllexport) int startGodot(Platform *platform, const char* execpath, int argc, char* argv[]) {
 
-  Error err = Main::setup(execpath, argc, argv);
+		setlocale(LC_CTYPE, "");
 
-  if (Main::start())
-    os.run();
+		Error err = Main::setup(execpath, argc, argv);
 
-  Main::cleanup();
+		int startResult = Main::start();
+		if (!startResult)
+			return startResult;
 
-  return os.get_exit_code();
-}
+		return platform->start();
+		
+		//os->mainLoop.init();
 
+					//os->run();
+
+	}
+
+	_declspec(dllexport) void pumpEvents(Platform* platform) {
+		platform->pumpEvents();
+	}
+
+	_declspec(dllexport) int stopGodot(Platform* platform) {
+
+		//	mainLoop.finish();
+		platform->stop();
+		Main::cleanup();
+		return platform->getOs()->get_exit_code();
+	}
 }

@@ -1,4 +1,5 @@
 .idea
+cmake-*
 
 # Files placed in src by Godot
 *.obj

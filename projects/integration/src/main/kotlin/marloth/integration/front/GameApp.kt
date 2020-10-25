@@ -12,6 +12,8 @@ import silentorb.mythic.godot.newGodotWrapper
 import silentorb.mythic.debugging.checkDotEnvChanged
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getConfigString
+import silentorb.mythic.godot.GodotWrapper
+import silentorb.mythic.godot.NativePlatform
 import silentorb.mythic.lookinglass.SceneRenderer
 import silentorb.mythic.platforming.Platform
 import silentorb.mythic.platforming.WindowInfo
@@ -86,17 +88,42 @@ fun newGameApp(platform: Platform, client: Client): GameApp {
   )
 }
 
-fun runApp(platform: Platform, options: AppOptions) {
+fun updateGodot(godot: GodotWrapper, platform: NativePlatform): Boolean {
+  godot.updateTiming()
+  var exit = godot.updatePhysicsStatic()
+  val idleBegin = godot.getTicks()
+  exit = godot.updateIdle() || exit
+  godot.updateDisplayStatic()
+  return godot.postUpdateMiscStatic(idleBegin) || exit
+}
+
+/*
+	exit = exit || updateIdle();
+	updateDisplay(static_scaled_step);
+	return exit || postUpdateMisc(idle_begin, static_ticks);
+ */
+fun runApp(platformKotlin: Platform, options: AppOptions) {
   val pid = ManagementFactory.getRuntimeMXBean().name
   val libraryDir = getConfigString("GODOT_LIBRARY_DIR")!!
   val libraryName = getConfigString("GODOT_LIBRARY_NAME")!!
   val godotProjectPath = getConfigString("GODOT_PROJECT_PATH")!!
-  val godotWrapper = newGodotWrapper(libraryDir, libraryName)
+  val godot = newGodotWrapper(libraryDir, libraryName)
   val args = arrayOf(
       "--path", godotProjectPath, //--remote-debug 127.0.0.1:6007 --allow_focus_steal_pid 15936 --position 448,240"
   )
 
-  godotWrapper.mythicMain("", args.size, args)
+  val platform = godot.newWindowsPlatform()
+  godot.startGodot(platform, "", args.size, args)
+  try {
+    while (true) {
+      godot.pumpEvents(platform)
+      if (updateGodot(godot, platform))
+        break
+    }
+  } finally {
+    godot.stopGodot(platform)
+    godot.deleteWindowsPlatform(platform)
+  }
 
 //  platform.display.initialize(toPlatformDisplayConfig(options.display))
 //
