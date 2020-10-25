@@ -1,11 +1,6 @@
 {
-  "nodes": {
-    "root": {
-
-    },
-    "floor": {
-      "type": "squareFloor",
-      "parent": "root"
-    }
-  }
+  "graph": [
+    ["floor", "parent", "root"],
+    ["floor", "mesh", "floorSquare"]
+  ]
 }
