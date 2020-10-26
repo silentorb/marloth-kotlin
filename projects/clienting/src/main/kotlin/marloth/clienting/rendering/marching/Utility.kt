@@ -1,6 +1,5 @@
 package marloth.clienting.rendering.marching
 
-import silentorb.mythic.fathom.mergeDistanceFunctions
 import silentorb.mythic.fathom.mergeDistanceFunctionsTrackingIds
 import silentorb.mythic.fathom.misc.DistanceFunction
 import silentorb.mythic.fathom.misc.ModelFunction
@@ -10,7 +9,6 @@ import silentorb.mythic.lookinglass.ElementGroups
 import silentorb.mythic.lookinglass.MeshElement
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
-import silentorb.mythic.spatial.toVector3
 import kotlin.math.floor
 
 fun filterModels(models: ModelFunctionMap, elements: ElementGroups): List<MeshElement> =

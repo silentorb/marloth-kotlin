@@ -1,9 +1,5 @@
 package silentorb.mythic.timing
 
-import silentorb.mythic.ent.Table
-import silentorb.mythic.happenings.Events
-import silentorb.mythic.happenings.GameEvent
-
 data class FloatCycle(
     val speed: Float,
     val value: Float

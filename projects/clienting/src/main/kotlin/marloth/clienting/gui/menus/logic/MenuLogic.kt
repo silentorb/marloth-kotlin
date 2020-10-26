@@ -1,6 +1,5 @@
 package marloth.clienting.gui.menus.logic
 
-import marloth.clienting.ClientEvent
 import marloth.clienting.ClientEventType
 import marloth.clienting.GuiState
 import marloth.clienting.input.GuiCommandType

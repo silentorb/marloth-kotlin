@@ -21,6 +21,12 @@ fun renderEditorGui(editor: Editor?) {
   }
 }
 
+fun newEditor() =
+    Editor(
+        isActive = true,
+        propertyDefinitions = commonPropertyDefinitions()
+    )
+
 fun updateEditorState(commands: HaftCommands, previous: Editor?): Editor? {
   val previousIsActive = previous?.isActive ?: false
   val active = if (commands.any { it.type == GuiCommandType.editor })
@@ -29,7 +35,7 @@ fun updateEditorState(commands: HaftCommands, previous: Editor?): Editor? {
     previousIsActive
 
   return if (active) {
-    (previous ?: Editor()).copy(
+    (previous ?: newEditor()).copy(
         isActive = active,
         graphLibrary = loadMarlothGraphLibrary(),
         graph = "root"

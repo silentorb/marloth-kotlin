@@ -10,7 +10,7 @@ import silentorb.mythic.spatial.manhattanDistance
 import silentorb.mythic.physics.toVector3
 import silentorb.mythic.lookinglass.SceneRenderer
 import silentorb.mythic.physics.BulletState
-import silentorb.mythic.scenery.Scene
+import silentorb.mythic.lookinglass.Scene
 import com.badlogic.gdx.math.Vector3 as GdxVector3
 
 class BulletDebugDrawer : btIDebugDraw(), Disposable {

@@ -16,7 +16,7 @@ import silentorb.mythic.platforming.Platform
 import silentorb.mythic.platforming.WindowInfo
 import silentorb.mythic.quartz.TimestepState
 import silentorb.mythic.quartz.newTimestepState
-import silentorb.mythic.scenery.Scene
+import silentorb.mythic.lookinglass.Scene
 import simulation.main.World
 import simulation.misc.Definitions
 

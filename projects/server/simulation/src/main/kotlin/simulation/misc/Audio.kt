@@ -3,7 +3,6 @@ package simulation.misc
 import silentorb.mythic.aura.Sound
 import simulation.main.Deck
 import simulation.main.Hand
-import simulation.main.World
 import simulation.main.WorldPair
 
 fun handsFromSounds(sounds: List<Sound>) =

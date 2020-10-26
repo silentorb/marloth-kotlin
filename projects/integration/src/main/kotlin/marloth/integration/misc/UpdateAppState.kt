@@ -1,7 +1,6 @@
 package marloth.integration.misc
 
 import marloth.clienting.*
-import marloth.clienting.editing.editorFonts
 import marloth.clienting.gui.hud.updateTargeting
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.input.mouseLookEvents
@@ -17,7 +16,7 @@ import marloth.integration.clienting.renderMain
 import marloth.integration.clienting.updateAppStateForFirstNewPlayer
 import marloth.integration.clienting.updateAppStateForNewPlayers
 import marloth.integration.front.GameApp
-import marloth.integration.scenery.updateFlyThroughCamera
+import silentorb.mythic.editing.updateFlyThroughCamera
 import marloth.scenery.enums.CharacterCommands
 import persistence.Database
 import persistence.createVictory
@@ -27,7 +26,6 @@ import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.incrementGlobalDebugLoopNumber
 import silentorb.mythic.drawing.flipViewport
 import silentorb.mythic.editing.isActive
-import silentorb.mythic.editing.prepareEditorGui
 import silentorb.mythic.ent.*
 import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.Events

@@ -4,15 +4,16 @@ import marloth.clienting.gui.hud.entanglingMovementRangeLayer
 import marloth.clienting.gui.hud.mobilityMovementRangeLayer
 import marloth.clienting.rendering.*
 import marloth.clienting.rendering.marching.marchingRenderLayer
-import silentorb.mythic.characters.rigs.CharacterRig
 import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.debugging.getDebugBoolean
+import silentorb.mythic.editing.FlyThroughCamera
+import silentorb.mythic.editing.newFlyThroughCamera
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.ModelMeshMap
 import silentorb.mythic.lookinglass.SceneLayer
 import silentorb.mythic.fathom.misc.ModelFunction
-import silentorb.mythic.scenery.Scene
-import silentorb.mythic.spatial.Quaternion
+import silentorb.mythic.lookinglass.GameScene
+import silentorb.mythic.lookinglass.Scene
 import silentorb.mythic.spatial.Vector3
 import simulation.main.Deck
 import simulation.misc.Definitions
@@ -34,7 +35,7 @@ fun createScene(meshes: ModelMeshMap, models: Map<String, ModelFunction>, defini
       val body = deck.bodies[player]!!
       val characterRig = deck.characterRigs[player]!!
       newFlyThroughCamera {
-        FlyThroughCameraState(
+        FlyThroughCamera(
             location = body.position + characterRig.facingOrientation.transform(Vector3(-3f, 0f, 0f)),
             rig = characterRig
         )

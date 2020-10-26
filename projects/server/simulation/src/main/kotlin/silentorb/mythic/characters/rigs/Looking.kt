@@ -5,8 +5,6 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.CommandName
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.GameEvent
-import silentorb.mythic.platforming.generalGamepadDeviceIndex
-import silentorb.mythic.platforming.mouseDeviceIndex
 import silentorb.mythic.spatial.Vector2
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.minMax

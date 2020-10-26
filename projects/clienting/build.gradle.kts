@@ -27,6 +27,7 @@ dependencies {
   implementation("silentorb.imp:campaign")
   api("silentorb.mythic:scenery")
   api("silentorb.mythic:editing")
+  api("silentorb.mythic:editing-lookinglass")
 }
 
 requires(project, "assets", "definition", "simulation")

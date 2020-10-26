@@ -8,8 +8,6 @@ import silentorb.mythic.physics.LinearImpulse
 import silentorb.mythic.physics.firstRayHit
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.minMax
-import simulation.combat.toSpatialCombatDeck
-import simulation.main.World
 import simulation.physics.CollisionGroups
 
 fun raycastAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinition, target: Vector3?): Events {

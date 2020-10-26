@@ -1,6 +1,5 @@
 package marloth.clienting
 
-import silentorb.mythic.haft.*
 import silentorb.mythic.haft.InputProfiles
 
 data class InputConfiguration(

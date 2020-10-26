@@ -7,9 +7,10 @@ import marloth.clienting.rendering.marching.updateMarchingMain
 import marloth.clienting.rendering.prepareRender
 import marloth.clienting.rendering.renderLayersWithMarching
 import marloth.integration.debug.labRender
+import marloth.integration.editing.sceneFromEditorGraph
 import marloth.integration.misc.AppState
 import marloth.integration.scenery.createScene
-import marloth.integration.scenery.sceneFromEditorGraph
+import marloth.integration.scenery.defaultLightingConfig
 import silentorb.mythic.bloom.Box
 import silentorb.mythic.bloom.renderLayout
 import silentorb.mythic.debugging.getDebugBoolean
@@ -37,7 +38,7 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
   if (world != null) {
     val isEditing = appState.client.editor?.isActive ?: false
     val scenes = if (isEditing)
-      listOf(sceneFromEditorGraph(renderer.meshes, world.definitions, appState.client.editor!!))
+      listOf(sceneFromEditorGraph(renderer.meshes, appState.client.editor!!, defaultLightingConfig()))
     else
       appState.client.players
           .map(createScene(renderer.meshes, client.impModels, world.definitions, world.deck))

@@ -6,7 +6,6 @@ import silentorb.mythic.lookinglass.ElementGroups
 import silentorb.mythic.lookinglass.ModelMeshMap
 import silentorb.mythic.scenery.Camera
 import silentorb.mythic.spatial.Vector3
-import silentorb.mythic.spatial.toMutableMatrix
 import kotlin.math.max
 
 data class CullingContext(

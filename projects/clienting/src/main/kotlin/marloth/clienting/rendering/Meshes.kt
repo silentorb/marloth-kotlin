@@ -20,10 +20,8 @@ import silentorb.mythic.resource_loading.getUrlPath
 import silentorb.mythic.resource_loading.listFiles
 import silentorb.mythic.scenery.MeshName
 import silentorb.mythic.scenery.Shape
-import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import kotlin.streams.toList
 
 fun getModelFilenames(): List<Path> {
   val modelRoot = getUrlPath("models")

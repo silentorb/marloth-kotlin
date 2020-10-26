@@ -18,6 +18,7 @@ dependencies {
   api("silentorb.mythic:scenery")
   implementation("silentorb.mythic:debugging")
   implementation("silentorb.mythic:mythic-shape-meshes")
+  implementation("silentorb.mythic:character-movement")
 }
 
 requires(project, "marloth_scenery")

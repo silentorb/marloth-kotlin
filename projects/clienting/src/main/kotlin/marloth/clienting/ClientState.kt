@@ -1,5 +1,6 @@
 package marloth.clienting
 
+import marloth.clienting.editing.newEditor
 import marloth.clienting.input.InputState
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.logic.DisplayChangeState
@@ -32,9 +33,7 @@ typealias StateFlower = (Definitions, GuiState) -> Box
 
 fun initialEditor(): Editor? =
     if (getDebugBoolean("START_EDITOR"))
-      Editor(
-          isActive = true
-      )
+      newEditor()
     else
       null
 

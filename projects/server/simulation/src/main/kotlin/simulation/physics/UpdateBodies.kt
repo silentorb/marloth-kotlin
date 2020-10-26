@@ -13,7 +13,6 @@ import simulation.happenings.ReturnHome
 import simulation.main.Deck
 import simulation.misc.CellAttribute
 import simulation.misc.MapGrid
-import simulation.misc.floorOffset
 import simulation.misc.getCellPoint
 import simulation.movement.getFreedoms
 

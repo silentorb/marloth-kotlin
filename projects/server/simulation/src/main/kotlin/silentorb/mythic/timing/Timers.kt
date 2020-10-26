@@ -1,7 +1,6 @@
 package silentorb.mythic.timing
 
 import silentorb.mythic.ent.*
-import silentorb.mythic.happenings.Events
 
 data class IntTimer(
     val duration: Int,

@@ -14,7 +14,7 @@ fun prepareRender(renderer: SceneRenderer, scene: GameScene): List<ScreenFilter>
 }
 
 fun gatherSceneLights(meshes: ModelMeshMap, scene: GameScene): List<Light> {
-  return scene.lights
+  return scene.main.lights
 //      .plus(gatherChildLights(meshes, scene.opaqueElementGroups))
 }
 
