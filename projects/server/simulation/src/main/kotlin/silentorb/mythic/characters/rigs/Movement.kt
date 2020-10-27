@@ -1,6 +1,6 @@
 package silentorb.mythic.characters.rigs
 
-import marloth.scenery.enums.CharacterRigCommands
+import silentorb.mythic.cameraman.playerMoveMap
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.happenings.*
@@ -9,13 +9,6 @@ import silentorb.mythic.physics.LinearImpulse
 import silentorb.mythic.physics.PhysicsDeck
 import silentorb.mythic.spatial.*
 import simulation.characters.MoveSpeedTable
-
-val playerMoveMap = mapOf(
-    CharacterRigCommands.moveLeft to Vector3(-1f, 0f, 0f),
-    CharacterRigCommands.moveRight to Vector3(1f, 0f, 0f),
-    CharacterRigCommands.moveUp to Vector3(0f, 1f, 0f),
-    CharacterRigCommands.moveDown to Vector3(0f, -1f, 0f)
-)
 
 fun getMovementImpulseVector(baseSpeed: Float, velocity: Vector3, commandVector: Vector3): Vector3 {
   val rawImpulseVector = commandVector * 1.5f - velocity
@@ -28,18 +21,16 @@ fun getMovementImpulseVector(baseSpeed: Float, velocity: Vector3, commandVector:
 }
 
 fun characterMovement(commands: Commands, characterRig: CharacterRig, thirdPersonRig: ThirdPersonRig?, id: Id): CharacterRigMovement? {
-  val offsetVector = joinInputVector(commands, playerMoveMap)
-  return if (offsetVector != null) {
-    val orientation = if (characterRig.viewMode == ViewMode.firstPerson)
-      characterOrientationZ(characterRig)
-    else
-      hoverCameraOrientationZ(thirdPersonRig!!)
+  val orientation = if (characterRig.viewMode == ViewMode.firstPerson)
+    characterOrientationZ(characterRig)
+  else
+    hoverCameraOrientationZ(thirdPersonRig!!)
 
-    val offset = orientation * offsetVector
+  val offset = silentorb.mythic.cameraman.characterMovementVector(commands, orientation)
+  return if (offset != null)
     CharacterRigMovement(actor = id, offset = offset)
-  } else {
+  else
     null
-  }
 }
 
 fun characterMovementToImpulse(event: CharacterRigMovement, characterRig: CharacterRig, speed: Float, velocity: Vector3): LinearImpulse {

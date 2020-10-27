@@ -14,6 +14,7 @@ import marloth.integration.scenery.defaultLightingConfig
 import silentorb.mythic.bloom.Box
 import silentorb.mythic.bloom.renderLayout
 import silentorb.mythic.debugging.getDebugBoolean
+import silentorb.mythic.editing.panels.defaultViewportId
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.lookinglass.texturing.updateAsyncTextureLoading
 import silentorb.mythic.platforming.WindowInfo
@@ -38,7 +39,7 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
   if (world != null) {
     val isEditing = appState.client.editor?.isActive ?: false
     val scenes = if (isEditing)
-      listOf(sceneFromEditorGraph(renderer.meshes, appState.client.editor!!, defaultLightingConfig()))
+      listOf(sceneFromEditorGraph(renderer.meshes, appState.client.editor!!, defaultLightingConfig(), defaultViewportId))
     else
       appState.client.players
           .map(createScene(renderer.meshes, client.impModels, world.definitions, world.deck))

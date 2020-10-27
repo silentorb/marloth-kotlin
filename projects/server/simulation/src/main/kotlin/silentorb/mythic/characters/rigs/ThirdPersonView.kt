@@ -1,6 +1,9 @@
 package silentorb.mythic.characters.rigs
 
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld
+import silentorb.mythic.cameraman.MomentumAxis
+import silentorb.mythic.cameraman.MomentumConfig
+import silentorb.mythic.cameraman.updateLookVelocityThirdPerson
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.happenings.CharacterCommand

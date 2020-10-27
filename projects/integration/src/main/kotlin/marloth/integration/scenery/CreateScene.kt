@@ -6,8 +6,7 @@ import marloth.clienting.rendering.*
 import marloth.clienting.rendering.marching.marchingRenderLayer
 import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.debugging.getDebugBoolean
-import silentorb.mythic.editing.FlyThroughCamera
-import silentorb.mythic.editing.newFlyThroughCamera
+import silentorb.mythic.editing.CameraRig
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.ModelMeshMap
 import silentorb.mythic.lookinglass.SceneLayer
@@ -31,18 +30,7 @@ fun createScene(meshes: ModelMeshMap, models: Map<String, ModelFunction>, defini
         filters = listOf()
     )
   else {
-    val camera = if (flyThrough) {
-      val body = deck.bodies[player]!!
-      val characterRig = deck.characterRigs[player]!!
-      newFlyThroughCamera {
-        FlyThroughCamera(
-            location = body.position + characterRig.facingOrientation.transform(Vector3(-3f, 0f, 0f)),
-            rig = characterRig
-        )
-      }
-    }
-    else
-      createPlayerCamera(deck, player)
+    val camera = createPlayerCamera(deck, player)
 
     val characterRig = deck.characterRigs[player]!!
     val equipmentLayer = if (characterRig.viewMode == ViewMode.firstPerson && !flyThrough)

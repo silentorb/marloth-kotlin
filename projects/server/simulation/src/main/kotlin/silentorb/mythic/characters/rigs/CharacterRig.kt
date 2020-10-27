@@ -2,6 +2,9 @@ package silentorb.mythic.characters.rigs
 
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld
 import marloth.scenery.enums.CharacterRigCommands
+import silentorb.mythic.cameraman.defaultLookMomentumAxis
+import silentorb.mythic.cameraman.updateFirstPersonFacingRotation
+import silentorb.mythic.cameraman.updateLookVelocityFirstPerson
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.ent.firstFloatSortedBy
@@ -168,7 +171,7 @@ fun updateCharacterRig(
       val momentumAxis = if (deck.spirits.containsKey(id))
         spiritGamepadMomentumAxis()
       else
-        defaultGamepadMomentumAxis()
+        defaultLookMomentumAxis()
       updateLookVelocityFirstPerson(commands, momentumAxis, characterRig.firstPersonLookVelocity)
     } else
       characterRig.firstPersonLookVelocity

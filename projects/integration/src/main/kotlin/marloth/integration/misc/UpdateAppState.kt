@@ -16,7 +16,6 @@ import marloth.integration.clienting.renderMain
 import marloth.integration.clienting.updateAppStateForFirstNewPlayer
 import marloth.integration.clienting.updateAppStateForNewPlayers
 import marloth.integration.front.GameApp
-import silentorb.mythic.editing.updateFlyThroughCamera
 import marloth.scenery.enums.CharacterCommands
 import persistence.Database
 import persistence.createVictory
@@ -113,7 +112,7 @@ fun filterCommands(clientState: ClientState): (List<CharacterCommand>) -> List<C
 }
 
 fun getPlayerViewports(clientState: ClientState, windowDimensions: Vector2i): List<Vector4i> {
-  val editorViewport = clientState.editor?.viewport
+  val editorViewport = clientState.editor?.viewportBoundsMap?.values?.firstOrNull()
   return if (editorViewport != null)
     listOf(flipViewport(windowDimensions.y, editorViewport))
   else
@@ -170,9 +169,6 @@ fun updateFixedInterval(app: GameApp, boxes: PlayerBoxes, playerBloomDefinitions
               playerBloomDefinitions,
               appState.client
           )
-          if (getDebugBoolean("FLY_THROUGH_CAMERA")) {
-            updateFlyThroughCamera(clientState)
-          }
           if (clientState.events.filterIsInstance<ClientEvent>().any { it.type == GuiCommandType.newGame })
             restartGame(app, appState)
           else {
