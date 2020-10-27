@@ -15,31 +15,32 @@ val editorFonts = listOf(
     )
 )
 
-fun renderEditorGui(editor: Editor?) {
-  if (isActive(editor)) {
-    renderEditorGui()
-  }
-}
-
 fun newEditor() =
     Editor(
-        isActive = true,
-        propertyDefinitions = commonPropertyDefinitions()
-    )
-
-fun updateEditorState(commands: HaftCommands, previous: Editor?): Editor? {
-  val previousIsActive = previous?.isActive ?: false
-  val active = if (commands.any { it.type == GuiCommandType.editor })
-    !previousIsActive
-  else
-    previousIsActive
-
-  return if (active) {
-    (previous ?: newEditor()).copy(
-        isActive = active,
+        propertyDefinitions = commonPropertyDefinitions(),
         graphLibrary = loadMarlothGraphLibrary(),
         graph = "root"
     )
-  } else
-    previous
+
+fun updateEditor(commands: HaftCommands, previous: Editor): Editor {
+//  return updateFlyThroughCamera(commands, listOf(), previous.cameras[])
+  return previous
+}
+
+fun updateEditingActive(commands: HaftCommands, previousIsActive: Boolean): Boolean =
+    if (commands.any { it.type == GuiCommandType.editor })
+      !previousIsActive
+    else
+      previousIsActive
+
+fun updateEditing(commands: HaftCommands, isActive: Boolean, previous: Editor?): Editor? {
+  val editor = if (isActive)
+    previous ?: newEditor()
+  else
+    null
+
+  return if (isActive && editor != null)
+    updateEditor(commands, editor)
+  else
+    null
 }

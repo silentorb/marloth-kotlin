@@ -136,7 +136,7 @@ fun firstPlayer(clientState: ClientState) =
     clientState.players.firstOrNull()
 
 fun isGameMouseActive(clientState: ClientState): Boolean =
-    clientState.editor?.isActive == true || getDebugBoolean("DISABLE_MOUSE") || clientState.guiStates[firstPlayer(clientState)]?.view != null
+    clientState.isEditorActive || getDebugBoolean("DISABLE_MOUSE") || clientState.guiStates[firstPlayer(clientState)]?.view != null
 
 fun mouseLookEvents(dimensions: Vector2i, previousState: InputDeviceState?, nextState: InputDeviceState, character: Id?): Events =
     if (getDebugBoolean("DISABLE_MOUSE"))

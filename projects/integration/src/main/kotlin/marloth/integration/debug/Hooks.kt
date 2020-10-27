@@ -1,9 +1,9 @@
 package marloth.integration.debug
 
-import marloth.clienting.editing.renderEditorGui
 import marloth.integration.front.GameHooks
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugFloat
+import silentorb.mythic.editing.renderEditorGui
 import simulation.updating.getIdle
 
 fun newDebugHooks(hooks: GameHooks): GameHooks {
@@ -36,5 +36,8 @@ fun newDebugHooks(hooks: GameHooks): GameHooks {
 
 fun newEditorHooks(hooks: GameHooks): GameHooks? =
     hooks.copy(
-        onRenderPost = { _, appState -> renderEditorGui(appState.client.editor) }
+        onRenderPost = { _, appState ->
+          if (appState.client.isEditorActive)
+            renderEditorGui()
+        }
     )

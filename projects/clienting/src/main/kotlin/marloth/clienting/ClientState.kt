@@ -46,6 +46,7 @@ data class ClientState(
     val events: List<Any>,
     val displayModes: List<DisplayMode>,
     val editor: Editor? = initialEditor(),
+    val isEditorActive: Boolean = getDebugBoolean("START_EDITOR"),
 
     // Player ids could be purely maintained in the world deck except the world does not care about player order.
     // Player order is only a client concern, and only for local multiplayer.

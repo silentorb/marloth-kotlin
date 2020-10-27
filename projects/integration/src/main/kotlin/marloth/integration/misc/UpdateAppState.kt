@@ -24,7 +24,6 @@ import silentorb.mythic.bloom.toAbsoluteBoundsRecursive
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.incrementGlobalDebugLoopNumber
 import silentorb.mythic.drawing.flipViewport
-import silentorb.mythic.editing.isActive
 import silentorb.mythic.ent.*
 import silentorb.mythic.happenings.CharacterCommand
 import silentorb.mythic.happenings.Events
@@ -148,7 +147,7 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
 }
 
 fun updateWorlds(app: GameApp, previousClient: ClientState, clientState: ClientState): (List<World>) -> List<World> = { worlds ->
-  val commands = if (isActive(clientState.editor))
+  val commands = if (clientState.isEditorActive)
     listOf()
   else
     mapGameCommands(clientState.players, clientState.commands)
