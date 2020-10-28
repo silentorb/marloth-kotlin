@@ -45,7 +45,7 @@ fun getAccessories(accessories: Table<Accessory>, entity: Id): Table<Accessory> 
 data class ChangeItemOwnerEvent(
     val item: Id,
     val newOwner: Id
-) : GameEvent
+)
 
 fun updateAccessory(definitions: Definitions, events: Events): (Id, Accessory) -> Accessory {
   val changeOwnerEvents = events.filterIsInstance<ChangeItemOwnerEvent>()

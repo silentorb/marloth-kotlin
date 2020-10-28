@@ -5,8 +5,7 @@ import marloth.clienting.rendering.createPlayerCamera
 import marloth.scenery.enums.CharacterRigCommands
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
-import silentorb.mythic.haft.HaftCommand
-import silentorb.mythic.happenings.CharacterCommand
+import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.CommandName
 import silentorb.mythic.lookinglass.createCameraMatrix
 import silentorb.mythic.lookinglass.getPlayerViewports
@@ -65,10 +64,10 @@ fun autoSelectTarget(deck: Deck, actorLocation: Vector3, actor: Id, options: Lis
   }
 }
 
-fun integrateCommands(commands: List<CharacterCommand>, type: CommandName): Float =
+fun integrateCommands(commands: List<Command>, type: CommandName): Float =
     commands.filter { it.type == type }.sumByDouble { it.value.toDouble() }.toFloat()
 
-fun getTargetChangeDirection(commands: List<CharacterCommand>): Vector2 {
+fun getTargetChangeDirection(commands: List<Command>): Vector2 {
   return Vector2(
       x = integrateCommands(commands, CharacterRigCommands.lookRight) - integrateCommands(commands, CharacterRigCommands.lookLeft),
       y = integrateCommands(commands, CharacterRigCommands.lookUp) - integrateCommands(commands, CharacterRigCommands.lookDown)
@@ -77,14 +76,14 @@ fun getTargetChangeDirection(commands: List<CharacterCommand>): Vector2 {
 
 fun checkTargetChange(world: World, mapAvailableTarget: MapAvailableTarget, screenTransform: Matrix,
                       actor: Id, actorLocation: Vector3,
-                      commands: List<CharacterCommand>, previousCommands: List<HaftCommand>, previousTarget: Id): Id {
+                      commands: List<Command>, previousCommands: List<Command>, previousTarget: Id): Id {
   val changeDirection = getTargetChangeDirection(commands.filter { it.target == actor })
   return if (changeDirection == Vector2.zero)
     previousTarget
   else {
     val filteredPreviousCommands = previousCommands
         .filter { it.target == actor }
-        .map { CharacterCommand(it.type.toString(), it.target, it.value!! as Float) }
+        .map { Command(it.type.toString(), it.target, it.value!! as Float) }
 
     val previousDirection = getTargetChangeDirection(filteredPreviousCommands)
     if (previousDirection != Vector2.zero)
@@ -113,7 +112,7 @@ fun checkTargetChange(world: World, mapAvailableTarget: MapAvailableTarget, scre
   }
 }
 
-fun updateTargeting(world: World, client: Client, players: List<Id>, commands: List<CharacterCommand>, previousCommands: List<HaftCommand>, targets: TargetTable): TargetTable {
+fun updateTargeting(world: World, client: Client, players: List<Id>, commands: List<Command>, previousCommands: List<Command>, targets: TargetTable): TargetTable {
   val deck = world.deck
   val toggleEvents = commands.filter { it.type == toggleTargetingCommand }.map { it.target }.toSet()
 

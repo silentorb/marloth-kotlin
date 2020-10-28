@@ -49,7 +49,7 @@ fun allCharacterMovements(
     events: Events
 ): List<CharacterRigMovement> {
   val commands = events
-      .filterIsInstance<CharacterCommand>()
+      .filterIsInstance<Command>()
       .filter { playerMoveMap.keys.contains(it.type) }
 
   return characterRigs

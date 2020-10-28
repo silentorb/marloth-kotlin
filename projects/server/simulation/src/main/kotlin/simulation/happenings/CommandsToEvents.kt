@@ -7,7 +7,7 @@ import simulation.characters.EquipmentSlot
 import simulation.main.Deck
 import simulation.misc.Definitions
 
-fun characterCommandToEquipmentSlot(type: String): EquipmentSlot =
+fun characterCommandToEquipmentSlot(type: Any): EquipmentSlot =
     when (type) {
       CharacterCommands.abilityAttack -> EquipmentSlot.attack
       CharacterCommands.abilityDefense -> EquipmentSlot.defense

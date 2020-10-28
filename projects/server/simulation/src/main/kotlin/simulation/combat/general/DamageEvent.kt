@@ -9,7 +9,7 @@ data class DamageEvent(
     val damage: Damage,
     val target: Id,
     val position: Vector3? = null
-) : GameEvent
+)
 
 fun newDamageEvents(target: Id, source: Id, damages: List<DamageDefinition>, position: Vector3? = null): Events =
     damages.map { damage ->

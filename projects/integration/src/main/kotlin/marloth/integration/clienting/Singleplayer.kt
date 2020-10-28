@@ -2,7 +2,7 @@ package marloth.integration.clienting
 
 import marloth.clienting.input.defaultInputProfile
 import marloth.integration.misc.AppState
-import silentorb.mythic.haft.DeviceIndex
+import silentorb.mythic.haft.DeviceIndexes
 
 val updateAppStateForFirstNewPlayer: (AppState) -> AppState = { appState ->
   val client = appState.client
@@ -11,7 +11,7 @@ val updateAppStateForFirstNewPlayer: (AppState) -> AppState = { appState ->
   val deviceMap = input.deviceTypeMap
   val world = appState.worlds.lastOrNull()
   if (world != null && world.deck.players.any()) {
-    val missingDevices = listOf(Pair(0, DeviceIndex.keyboard), Pair(1, DeviceIndex.mouse))
+    val missingDevices = listOf(Pair(0, DeviceIndexes.keyboard), Pair(1, DeviceIndexes.mouse))
         .filter { device -> deviceMap.none { it.value == device.second } }
     if (missingDevices.any()) {
       val player = world.deck.players.keys.first()

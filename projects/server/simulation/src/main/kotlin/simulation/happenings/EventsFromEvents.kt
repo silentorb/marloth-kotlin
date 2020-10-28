@@ -11,7 +11,7 @@ import simulation.combat.toSpatialCombatWorld
 import simulation.main.World
 import simulation.physics.toPhysicsDeck
 
-inline fun <reified T : GameEvent> mapEvents(crossinline transform: (T) -> Events): (Events) -> Events {
+inline fun <reified T> mapEvents(crossinline transform: (T) -> Events): (Events) -> Events {
   return { events ->
     events
         .filterIsInstance<T>()

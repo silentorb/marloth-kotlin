@@ -56,6 +56,6 @@ fun defaultKeyboardGameBindings() = mapOf(
 ) + defaultSharedKeyboardBindings
 
 fun defaultGameInputBindings(): Bindings =
-    createBindings(DeviceIndex.keyboard, defaultKeyboardGameBindings())
-        .plus(createBindings(DeviceIndex.mouse, defaultMouseGameBindings()))
-        .plus(createBindings(DeviceIndex.gamepad, gameGamepadBindings))
+    createBindings(DeviceIndexes.keyboard, defaultKeyboardGameBindings())
+        .plus(createBindings(DeviceIndexes.mouse, defaultMouseGameBindings()))
+        .plus(createBindings(DeviceIndexes.gamepad, gameGamepadBindings))

@@ -17,7 +17,7 @@ data class AttackEvent(
     val attacker: Id,
     val accessory: AccessoryName,
     val target: Vector3? = null
-) : GameEvent
+)
 
 fun onAttack(world: SpatialCombatWorld): (AttackEvent) -> Events = { event ->
   val (definitions, deck, bulletState) = world

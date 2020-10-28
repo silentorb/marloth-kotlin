@@ -4,6 +4,7 @@ import marloth.clienting.audio.AudioConfig
 import marloth.clienting.audio.updateClientAudio
 import marloth.clienting.editing.editorFonts
 import marloth.clienting.editing.updateEditing
+import marloth.clienting.editing.updateEditingActive
 import marloth.clienting.gui.BloomDefinition
 import marloth.clienting.gui.EventUnion
 import marloth.clienting.gui.TextResources
@@ -30,7 +31,7 @@ import silentorb.mythic.editing.closeImGui
 import silentorb.mythic.editing.prepareEditorGui
 import silentorb.mythic.ent.Id
 import silentorb.mythic.fathom.misc.ModelFunction
-import silentorb.mythic.haft.HaftCommands
+import silentorb.mythic.happenings.Commands
 import silentorb.mythic.haft.updateInputDeviceStates
 import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.lookinglass.mapAnimationInfo
@@ -130,7 +131,7 @@ fun gatherUserEvents(
     clientState: ClientState,
     playerBoxes: PlayerBoxes,
     mousePosition: Vector2i,
-    commands: HaftCommands
+    commands: Commands
 ): List<EventUnion> {
   val menuEvents = playerBoxes
       .mapValues { (player, boxes) ->
@@ -204,7 +205,8 @@ fun updateClient(
       guiStates = nextGuiStates,
       commands = commands,
       events = events,
-      editor = updateEditing(commands, clientState.isEditorActive, nextEditor)
+      isEditorActive = updateEditingActive(commands, clientState.isEditorActive),
+      editor = updateEditing(deviceStates, clientState.isEditorActive, nextEditor)
   )
 }
 

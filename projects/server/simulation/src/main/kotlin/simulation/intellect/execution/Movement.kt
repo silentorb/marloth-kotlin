@@ -5,7 +5,7 @@ import marloth.scenery.enums.CharacterCommands
 import org.recast4j.detour.DefaultQueryFilter
 import simulation.accessorize.getAccessory
 import silentorb.mythic.ent.Id
-import silentorb.mythic.happenings.CharacterCommand
+import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.intellect.navigation.toRecastVector3
 import silentorb.mythic.intellect.navigation.fromRecastVector3
@@ -84,7 +84,7 @@ fun moveStraightTowardPosition(world: World, actor: Id, target: Vector3): Events
   val shape = world.deck.collisionObjects[actor]!!
   val middle = shape.shape.height / 2f
   val position = body.position
-  val commands = listOf(CharacterCommand(CharacterCommands.moveUp, actor))
+  val commands = listOf(Command(CharacterCommands.moveUp, actor))
   if (target.x == position.x && target.y == position.y)
     return commands
 

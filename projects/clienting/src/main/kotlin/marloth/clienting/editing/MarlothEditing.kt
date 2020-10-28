@@ -3,9 +3,9 @@ package marloth.clienting.editing
 import marloth.clienting.input.GuiCommandType
 import marloth.definition.misc.loadMarlothGraphLibrary
 import silentorb.mythic.editing.*
-import silentorb.mythic.haft.HaftCommands
-
-private var graphLibrary: GraphLibrary? = null
+import silentorb.mythic.editing.panels.defaultViewportId
+import silentorb.mythic.happenings.Commands
+import silentorb.mythic.haft.InputDeviceState
 
 val editorFonts = listOf(
     Typeface(
@@ -19,28 +19,29 @@ fun newEditor() =
     Editor(
         propertyDefinitions = commonPropertyDefinitions(),
         graphLibrary = loadMarlothGraphLibrary(),
-        graph = "root"
+        graph = "root",
+        cameras = mapOf(defaultViewportId to CameraRig())
     )
 
-fun updateEditor(commands: HaftCommands, previous: Editor): Editor {
-//  return updateFlyThroughCamera(commands, listOf(), previous.cameras[])
-  return previous
+fun updateEditor(deviceStates: List<InputDeviceState>, previous: Editor): Editor {
+  val commands = mapCommands(defaultEditorBindings(), deviceStates)
+  val cameras = previous.cameras
+      .mapValues { (_, camera) ->
+        updateFlyThroughCamera(commands, camera)
+      }
+  return previous.copy(
+      cameras = cameras
+  )
 }
 
-fun updateEditingActive(commands: HaftCommands, previousIsActive: Boolean): Boolean =
+fun updateEditingActive(commands: Commands, previousIsActive: Boolean): Boolean =
     if (commands.any { it.type == GuiCommandType.editor })
       !previousIsActive
     else
       previousIsActive
 
-fun updateEditing(commands: HaftCommands, isActive: Boolean, previous: Editor?): Editor? {
-  val editor = if (isActive)
-    previous ?: newEditor()
-  else
-    null
-
-  return if (isActive && editor != null)
-    updateEditor(commands, editor)
-  else
-    null
-}
+fun updateEditing(deviceStates: List<InputDeviceState>, isActive: Boolean, previous: Editor?): Editor? =
+    if (isActive)
+      updateEditor(deviceStates, previous ?: newEditor())
+    else
+      previous

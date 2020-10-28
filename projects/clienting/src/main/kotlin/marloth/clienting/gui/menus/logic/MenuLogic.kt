@@ -9,7 +9,7 @@ import marloth.clienting.gui.ViewId
 import marloth.scenery.enums.CharacterRigCommands
 import silentorb.mythic.bloom.OffsetBox
 import silentorb.mythic.ent.firstNotNull
-import silentorb.mythic.haft.HaftCommands
+import silentorb.mythic.happenings.Commands
 
 const val menuKey = "silentorb.menu"
 const val onActivateKey = "silentorb.onActivate"
@@ -29,7 +29,7 @@ data class MenuLayer(
 
 typealias MenuStack = List<MenuLayer>
 
-fun getMenuItemEvents(attributeBoxes: List<OffsetBox>, hoverBoxes: List<OffsetBox>, events: HaftCommands): List<EventUnion> {
+fun getMenuItemEvents(attributeBoxes: List<OffsetBox>, hoverBoxes: List<OffsetBox>, events: Commands): List<EventUnion> {
   // The pattern between these two blocks could be abstracted but it may be an accidental pattern
   // so I'll wait until another repetition of the pattern occurs
   val clickEvents = if (events.any { it.type == GuiCommandType.mouseClick })

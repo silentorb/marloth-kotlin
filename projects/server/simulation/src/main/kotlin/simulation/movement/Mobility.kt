@@ -4,7 +4,7 @@ import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.CharacterCommands
 import simulation.accessorize.Accessory
 import silentorb.mythic.ent.Id
-import silentorb.mythic.happenings.CharacterCommand
+import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.UseAction
 import silentorb.mythic.timing.FloatTimer
@@ -20,7 +20,7 @@ private val mobilityCommands = setOf(
     CharacterCommands.moveRight
 )
 
-fun isMobilityCommand(command: CharacterCommand): Boolean =
+fun isMobilityCommand(command: Command): Boolean =
     mobilityCommands.contains(command.type)
 
 fun newMobilityModifierEvent(actor: Id, source: Id, duration: Float) =
@@ -35,7 +35,7 @@ fun newMobilityModifierEvent(actor: Id, source: Id, duration: Float) =
         )
     )
 
-fun mobilityEvents(definitions: Definitions, deck: Deck, commands: List<CharacterCommand>): Events {
+fun mobilityEvents(definitions: Definitions, deck: Deck, commands: List<Command>): Events {
   val charactersRequestingMovement = commands
       .filter(::isMobilityCommand)
       .map { it.target }

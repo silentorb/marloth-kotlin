@@ -11,10 +11,9 @@ import silentorb.mythic.aura.SoundType
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.ent.pipe2
-import silentorb.mythic.happenings.CharacterCommand
+import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.Events
-import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.physics.BulletState
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Vector3
@@ -76,7 +75,7 @@ data class Character(
 data class ModifyLevelEvent(
     val actor: Id,
     val offset: Int
-) : GameEvent
+)
 
 fun getFaction(deck: Deck, actor: Id): Id? =
     deck.characters[actor]?.faction
@@ -181,7 +180,7 @@ fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletStat
 }
 
 fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletState: BulletState, events: Events): (Id, Character) -> Character = { id, character ->
-  val commands = events.filterIsInstance<CharacterCommand>()
+  val commands = events.filterIsInstance<Command>()
   val characterCommands = pipe2(commands, listOf(
       { c -> if (deck.characters[id]!!.isAlive) c else listOf() },
       { c -> c.filter { it.target == id } }

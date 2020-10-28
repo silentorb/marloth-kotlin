@@ -8,7 +8,7 @@ import silentorb.mythic.cameraman.updateLookVelocityFirstPerson
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.ent.firstFloatSortedBy
-import silentorb.mythic.happenings.CharacterCommand
+import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.*
 import silentorb.mythic.spatial.*
@@ -157,7 +157,7 @@ fun updateCharacterRig(
   val bodies = deck.bodies
   val collisionObjects = deck.collisionObjects
   val thirdPersonRigs = deck.thirdPersonRigs
-  val allCommands = events.filterIsInstance<CharacterCommand>()
+  val allCommands = events.filterIsInstance<Command>()
   val mouseLookEvents = events.filterIsInstance<MouseLookEvent>()
 
   return { id, characterRig ->

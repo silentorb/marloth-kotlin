@@ -2,7 +2,7 @@ package simulation.intellect.execution
 
 import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.ent.Id
-import silentorb.mythic.happenings.CharacterCommand
+import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.CommandName
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.Events
@@ -40,7 +40,7 @@ fun spiritFacingChange2(character: Id, course: Float, velocity: Float, turnSpeed
     if (absCourse <= drift)
       listOf() // Don't need to rotate anymore.  The remaining momentum will get us there.
     else
-      listOf(CharacterCommand(dir, character, 1f))
+      listOf(Command(dir, character, 1f))
   }
 }
 

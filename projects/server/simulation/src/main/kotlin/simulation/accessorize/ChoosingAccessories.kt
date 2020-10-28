@@ -13,7 +13,7 @@ import simulation.misc.Definitions
 data class ChooseImprovedAccessory(
     val actor: Id,
     val accessory: AccessoryName
-) : GameEvent
+)
 
 fun newAccessoryChoice(definitions: Definitions, dice: Dice, deck: Deck, actor: Id): AccessoryOptions {
   val currentAccessories = getAccessories(deck.accessories, actor)

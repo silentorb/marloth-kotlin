@@ -12,7 +12,7 @@ import silentorb.mythic.bloom.Box
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.editing.Editor
 import silentorb.mythic.ent.Id
-import silentorb.mythic.haft.HaftCommand
+import silentorb.mythic.happenings.Command
 import silentorb.mythic.platforming.DisplayMode
 import simulation.misc.Definitions
 
@@ -40,7 +40,7 @@ fun initialEditor(): Editor? =
 data class ClientState(
     val audio: AudioState,
     val guiStates: Map<Id, GuiState>,
-    val commands: List<HaftCommand>,
+    val commands: List<Command>,
     val input: InputState,
     val marching: MarchingState,
     val events: List<Any>,

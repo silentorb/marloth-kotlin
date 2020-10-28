@@ -92,7 +92,7 @@ fun newVictoryKeyPickup(nextId: IdSource): (Vector3) -> List<IdHand> = { locatio
 data class PlaceVictoryKeyEvent(
     val item: Id,
     val cell: Vector3i
-) : GameEvent
+)
 
 fun eventsFromVictoryKeys(world: World): Events {
   val deck = world.deck

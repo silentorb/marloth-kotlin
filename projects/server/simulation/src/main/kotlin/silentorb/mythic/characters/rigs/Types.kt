@@ -39,7 +39,7 @@ data class ThirdPersonRig(
 data class CharacterRigMovement(
     val actor: Id,
     val offset: Vector3
-) : GameEvent
+)
 
 object Freedom {
   const val none = 0

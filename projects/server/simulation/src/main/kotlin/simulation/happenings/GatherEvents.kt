@@ -1,7 +1,7 @@
 package simulation.happenings
 
 import silentorb.mythic.debugging.getDebugBoolean
-import silentorb.mythic.happenings.CharacterCommand
+import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.filterCharacterCommandsFromEvents
 import simulation.accessorize.eventsFromItemPickups
@@ -25,7 +25,7 @@ fun withSimulationEvents(definitions: Definitions, previousDeck: Deck, world: Wo
   val deck = world.deck
   val freedomTable = getFreedomTable(deck)
   val spiritEvents = pursueGoals(world, aliveSpirits(world.deck), freedomTable)
-  val spiritCommands = spiritEvents.filterIsInstance<CharacterCommand>()
+  val spiritCommands = spiritEvents.filterIsInstance<Command>()
 
   val commands = filterCharacterCommandsFromEvents(externalEvents).plus(spiritCommands)
   val collisions = getBulletCollisions(world.bulletState, deck)

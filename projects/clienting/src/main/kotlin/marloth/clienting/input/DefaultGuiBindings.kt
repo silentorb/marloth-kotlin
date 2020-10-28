@@ -63,9 +63,9 @@ fun allGamepadBindings() =
         .plus(firstPersonGamepadBindings)
 
 fun createDefaultGamepadBindings() =
-    createBindings(DeviceIndex.gamepad, allGamepadBindings())
-        .plus(createBindings(DeviceIndex.gamepad, allGamepadStrokeBindings))
+    createBindings(DeviceIndexes.gamepad, allGamepadBindings())
+        .plus(createBindings(DeviceIndexes.gamepad, allGamepadStrokeBindings))
 
 fun defaultMenuInputProfile() =
-    createBindings(DeviceIndex.keyboard, defaultKeyboardMenuBindings())
-        .plus(createBindings(DeviceIndex.gamepad, defaultGamepadMenuBindings()))
+    createBindings(DeviceIndexes.keyboard, defaultKeyboardMenuBindings())
+        .plus(createBindings(DeviceIndexes.gamepad, defaultGamepadMenuBindings()))

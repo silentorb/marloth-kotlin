@@ -7,6 +7,8 @@ import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.haft.*
 import silentorb.mythic.happenings.Events
+import silentorb.mythic.happenings.Command
+import silentorb.mythic.happenings.Commands
 import silentorb.mythic.platforming.InputEvent
 import silentorb.mythic.platforming.mouseDeviceIndex
 import silentorb.mythic.spatial.Vector2
@@ -84,11 +86,12 @@ fun getBinding(inputState: InputState, playerViews: PlayerViews): BindingSource 
     val profile = getInputProfile(inputState, player)
     if (profile != null) {
       val inputContext = bindingContext(playerViews, player)
+      val strokes = commandStrokes[inputContext] ?: setOf()
       val binding = profile.bindings
           .getValue(inputContext)
           .firstOrNull { it.device == device && it.trigger == event.index }
       if (binding != null)
-        Triple(binding, player, isStroke(inputContext, binding.command))
+        Triple(binding, player, strokes.contains(binding.command))
       else
         null
     } else
@@ -109,19 +112,19 @@ fun didMouseMove(previous: List<InputDeviceState>, next: List<InputDeviceState>)
 fun getMouseEvents(player: Id, previous: List<InputDeviceState>, next: List<InputDeviceState>) =
     listOfNotNull(
         if (isMouseClickFinished(previous, next))
-          HaftCommand(type = GuiCommandType.mouseClick, device = mouseDeviceIndex, target = player)
+          Command(type = GuiCommandType.mouseClick, device = mouseDeviceIndex, target = player)
         else
           null,
         if (didMouseMove(previous, next))
-          HaftCommand(type = GuiCommandType.mouseMove, device = mouseDeviceIndex, target = player)
+          Command(type = GuiCommandType.mouseMove, device = mouseDeviceIndex, target = player)
         else
           null,
     )
 
-fun gatherInputCommands(previous: InputState, next: InputState, playerViews: PlayerViews): HaftCommands {
+fun gatherInputCommands(previous: InputState, next: InputState, playerViews: PlayerViews): Commands {
   val getBinding = getBinding(next, playerViews)
   val deviceStates = next.deviceStates
-  val commands = mapEventsToCommands(deviceStates, getBinding)
+  val commands = mapEventsToCommandsOld(deviceStates, getBinding)
 
   val firstPlayer = playerViews.keys.firstOrNull()
   val mouseCommands = if (firstPlayer != null)

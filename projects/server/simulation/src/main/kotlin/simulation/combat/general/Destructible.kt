@@ -20,7 +20,7 @@ data class Destructible(
 // It overrides any other health modifying events.
 data class RestoreHealth(
     val target: Id
-) : GameEvent
+)
 
 fun updateDestructibleCache(damageTypes: Set<DamageType>, modifierQuery: DamageModifierQuery): (Id, Destructible) -> Destructible = { id, destructible ->
   val multiplers = calculateDamageMultipliers(damageTypes, modifierQuery, id, destructible.base.damageMultipliers)

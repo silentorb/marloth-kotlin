@@ -25,7 +25,7 @@ import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.incrementGlobalDebugLoopNumber
 import silentorb.mythic.drawing.flipViewport
 import silentorb.mythic.ent.*
-import silentorb.mythic.happenings.CharacterCommand
+import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.lookinglass.getPlayerViewports
@@ -86,20 +86,20 @@ fun updateClientFromWorld(worlds: List<World>): (ClientState) -> ClientState = {
   )
 }
 
-fun gatherAdditionalGameCommands(previousClient: ClientState, clientState: ClientState): List<CharacterCommand> {
+fun gatherAdditionalGameCommands(previousClient: ClientState, clientState: ClientState): List<Command> {
   return clientState.players.flatMap { player ->
     val view = clientState.guiStates[player]?.view
     val previousView = previousClient.guiStates[player]?.view
     listOfNotNull(
         if (view == null && previousView == ViewId.merchant)
-          CharacterCommand(type = CharacterCommands.stopInteracting, target = player, device = 0)
+          Command(type = CharacterCommands.stopInteracting, target = player)
         else
           null
     )
   }
 }
 
-fun filterCommands(clientState: ClientState): (List<CharacterCommand>) -> List<CharacterCommand> = { commands ->
+fun filterCommands(clientState: ClientState): (List<Command>) -> List<Command> = { commands ->
   commands
       .groupBy { it.target }
       .flatMap { (_, commands) ->
@@ -118,7 +118,7 @@ fun getPlayerViewports(clientState: ClientState, windowDimensions: Vector2i): Li
     getPlayerViewports(clientState.players.size, windowDimensions)
 }
 
-fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: ClientState, worlds: List<World>, commands: List<CharacterCommand>, events: Events): List<World> {
+fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: ClientState, worlds: List<World>, commands: List<Command>, events: Events): List<World> {
   val world = worlds.last()
   val previous = worlds.takeLast(2).first()
   val gameCommands = filterCommands(clientState)(commands)

@@ -10,8 +10,8 @@ import marloth.scenery.enums.Text
 import silentorb.mythic.bloom.*
 import silentorb.mythic.drawing.grayTone
 import silentorb.mythic.ent.Id
-import silentorb.mythic.haft.HaftCommand
-import silentorb.mythic.haft.HaftCommands
+import silentorb.mythic.happenings.Command
+import silentorb.mythic.happenings.Commands
 import silentorb.mythic.spatial.Vector2i
 import simulation.main.World
 import simulation.misc.Definitions
@@ -48,7 +48,7 @@ fun gameIsActive(world: World?): Boolean =
 typealias EventUnion = Any
 
 data class OnClientEvents(
-    val map: List<Pair<EventUnion, (HaftCommand) -> Boolean>>
+    val map: List<Pair<EventUnion, (Command) -> Boolean>>
 )
 
 data class ButtonState(
@@ -59,7 +59,7 @@ data class ButtonState(
 
 val menuBackground: Depiction = solidBackground(grayTone(0.5f))
 
-fun haftToBloom(commands: HaftCommands): List<BloomEvent> =
+fun haftToBloom(commands: Commands): List<BloomEvent> =
     commands.mapNotNull {
       when (it.type) {
         CharacterCommands.moveUp -> BloomEvent.up

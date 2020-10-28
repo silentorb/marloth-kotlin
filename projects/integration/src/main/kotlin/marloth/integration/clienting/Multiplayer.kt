@@ -3,7 +3,7 @@ package marloth.integration.clienting
 import marloth.clienting.input.defaultInputProfile
 import marloth.clienting.input.joiningGamepads
 import marloth.integration.misc.AppState
-import silentorb.mythic.haft.DeviceIndex
+import silentorb.mythic.haft.DeviceIndexes
 import simulation.characters.newPlayerAndCharacter
 import simulation.main.addEntitiesToWorldDeck
 
@@ -22,7 +22,7 @@ val updateAppStateForNewPlayers: (AppState) -> AppState = { appState ->
   if (gamepadJoinCommands.none())
     appState
   else {
-    val gamepadPlayers = devicePlayers.filter { deviceTypeMap[it.key]!! == DeviceIndex.gamepad }.map { it.value }
+    val gamepadPlayers = devicePlayers.filter { deviceTypeMap[it.key]!! == DeviceIndexes.gamepad }.map { it.value }
     val availablePlayers = world.deck.players.keys.minus(gamepadPlayers)
 
     val nextWorld = addEntitiesToWorldDeck(world) { nextId ->
@@ -35,7 +35,7 @@ val updateAppStateForNewPlayers: (AppState) -> AppState = { appState ->
     appState.copy(
         client = client.copy(
             input = inputState.copy(
-                deviceTypeMap = deviceTypeMap + gamepadJoinCommands.associateWith { DeviceIndex.gamepad },
+                deviceTypeMap = deviceTypeMap + gamepadJoinCommands.associateWith { DeviceIndexes.gamepad },
                 devicePlayers = devicePlayers + gamepadJoinCommands.zip(playersWithNewGamepads).associate { Pair(it.first, it.second) },
                 playerProfiles = inputState.playerProfiles + playersWithNewGamepads.associateWith { defaultInputProfile }
             ),

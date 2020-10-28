@@ -17,7 +17,7 @@ import simulation.misc.*
 data class NewPlayerCharacter(
     val id: Id,
     val profession: ProfessionId
-) : GameEvent
+)
 
 fun newPlayerIdHand(id: Id) =
     IdHand(

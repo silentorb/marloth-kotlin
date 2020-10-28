@@ -12,7 +12,7 @@ typealias CollisionMap = Map<Id, Collision>
 data class PruneEntityEvent(
     val id: Id,
     val hand: Hand
-) : GameEvent
+)
 
 fun pruningEventsToIdHands(events: Events) =
     events.filterIsInstance<PruneEntityEvent>().map { event ->

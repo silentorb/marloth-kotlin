@@ -8,8 +8,8 @@ import silentorb.mythic.bloom.OffsetBox
 import silentorb.mythic.bloom.getHoverBoxes
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
-import silentorb.mythic.haft.HaftCommand
-import silentorb.mythic.haft.HaftCommands
+import silentorb.mythic.happenings.Command
+import silentorb.mythic.happenings.Commands
 import silentorb.mythic.spatial.Vector2i
 import simulation.main.Deck
 
@@ -24,7 +24,7 @@ fun eventsFromGuiState(state: GuiState): List<ClientEvent> {
     listOf()
 }
 
-fun commandToClientEvents(options: AppOptions, state: GuiState, command: HaftCommand): List<ClientEvent> =
+fun commandToClientEvents(options: AppOptions, state: GuiState, command: Command): List<ClientEvent> =
     when (command.type) {
       GuiCommandType.menuBack -> {
         if (needsWindowChange(options.display, state.displayChange?.options))
@@ -35,7 +35,7 @@ fun commandToClientEvents(options: AppOptions, state: GuiState, command: HaftCom
       else -> listOf()
     }
 
-fun commandsToClientEvents(options: AppOptions, state: GuiState, commands: HaftCommands): List<ClientEvent> =
+fun commandsToClientEvents(options: AppOptions, state: GuiState, commands: Commands): List<ClientEvent> =
     commands.flatMap { commandToClientEvents(options, state, it) }
 
 fun updateGuiState(
@@ -44,7 +44,7 @@ fun updateGuiState(
     state: GuiState,
     bloomDefinition: BloomDefinition,
     hoverBoxes: List<OffsetBox>,
-    commands: HaftCommands,
+    commands: Commands,
     events: List<ClientEvent>,
     player: Id
 ): GuiState {
@@ -73,7 +73,7 @@ fun updateGuiState(
     bloomStates: GuiStateMap,
     mousePosition: Vector2i,
     boxes: PlayerBoxes,
-    commands: HaftCommands,
+    commands: Commands,
     events: List<ClientEvent>,
     player: Id, bloomDefinition: BloomDefinition): GuiState {
   val playerEvents = commands.filter { it.target == player }

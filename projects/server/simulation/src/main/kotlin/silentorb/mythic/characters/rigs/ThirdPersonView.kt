@@ -6,7 +6,7 @@ import silentorb.mythic.cameraman.MomentumConfig
 import silentorb.mythic.cameraman.updateLookVelocityThirdPerson
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
-import silentorb.mythic.happenings.CharacterCommand
+import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.Body
@@ -195,7 +195,7 @@ fun updateThirdPersonCamera(
     delta: Float
 ): (Id, ThirdPersonRig) -> ThirdPersonRig {
   val allCommands = events
-      .filterIsInstance<CharacterCommand>()
+      .filterIsInstance<Command>()
 
   val allMovements = events
       .filterIsInstance<CharacterRigMovement>()

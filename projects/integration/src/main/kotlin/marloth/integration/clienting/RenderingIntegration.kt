@@ -37,8 +37,7 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
         interpolateWorlds(appState.timestep.accumulator, appState.worlds)
 
   if (world != null) {
-    val isEditing = appState.client.isEditorActive ?: false
-    val scenes = if (isEditing)
+    val scenes = if (appState.client.isEditorActive)
       listOf(sceneFromEditorGraph(renderer.meshes, appState.client.editor!!, defaultLightingConfig(), defaultViewportId))
     else
       appState.client.players

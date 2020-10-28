@@ -12,7 +12,7 @@ data class NewSound(
     val type: SoundType,
     val volume: Float,
     val position: Vector3? = null
-) : GameEvent
+)
 
 fun soundsFromEvents(events: Events): List<Sound> =
     events.filterIsInstance<NewSound>()
