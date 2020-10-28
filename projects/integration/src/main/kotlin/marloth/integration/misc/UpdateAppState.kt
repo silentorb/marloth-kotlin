@@ -111,7 +111,7 @@ fun filterCommands(clientState: ClientState): (List<Command>) -> List<Command> =
 }
 
 fun getPlayerViewports(clientState: ClientState, windowDimensions: Vector2i): List<Vector4i> {
-  val editorViewport = clientState.editor?.viewportBoundsMap?.values?.firstOrNull()
+  val editorViewport = clientState.editor?.state?.viewportBoundsMap?.values?.firstOrNull()
   return if (editorViewport != null)
     listOf(flipViewport(windowDimensions.y, editorViewport))
   else

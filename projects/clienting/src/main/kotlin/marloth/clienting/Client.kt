@@ -195,9 +195,9 @@ fun updateClient(
         )
       }
 
-  val previousEditorState = clientState.editor
+  val previousEditor = clientState.editor
   val windowInfo = client.getWindowInfo()
-  val nextEditor = prepareEditorGui(editorFonts, windowInfo.id, clientState.isEditorActive, previousEditorState)
+  val nextEditor = prepareEditorGui(editorFonts, windowInfo.id, clientState.isEditorActive, previousEditor)
 
   return clientState.copy(
       audio = updateClientAudio(client, worlds, clientState.audio),
@@ -206,7 +206,9 @@ fun updateClient(
       commands = commands,
       events = events,
       isEditorActive = updateEditingActive(commands, clientState.isEditorActive),
-      editor = updateEditing(deviceStates, clientState.isEditorActive, nextEditor)
+      editor = previousEditor?.copy(
+          state = updateEditing(deviceStates, clientState.isEditorActive, previousEditor.copy(state = nextEditor!!))!!
+      )
   )
 }
 
