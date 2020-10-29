@@ -228,7 +228,7 @@ fun updateAppState(app: GameApp): (AppState) -> AppState = { appState ->
     val windowInfo = app.client.getWindowInfo()
     val viewports = getPlayerViewports(appState.client, windowInfo.dimensions)
     val boxes = layoutBoxes(nextAppState)
-    renderMain(app.client, windowInfo, nextAppState, boxes.values, viewports)
+    renderMain(app.client, windowInfo, nextAppState, boxes, viewports)
   }
 
   syncDisplayOptions(

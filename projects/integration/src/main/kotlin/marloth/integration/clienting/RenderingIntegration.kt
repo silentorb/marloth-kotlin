@@ -15,6 +15,7 @@ import silentorb.mythic.bloom.Box
 import silentorb.mythic.bloom.renderLayout
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.editing.panels.defaultViewportId
+import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.lookinglass.texturing.updateAsyncTextureLoading
 import silentorb.mythic.platforming.WindowInfo
@@ -23,7 +24,7 @@ import silentorb.mythic.spatial.Vector4i
 import simulation.misc.interpolateWorlds
 import simulation.updating.getIdle
 
-fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: Collection<Box>, viewports: List<Vector4i>
+fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: Map<Id, Box>, viewports: List<Vector4i>
 ): MarchingState {
   val renderer = client.renderer
 
@@ -44,8 +45,9 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
           .map(createScene(renderer.meshes, client.impModels, world.definitions, world.deck))
 
     val viewportIterator = viewports.iterator()
+    val boxIterator = boxes.values.iterator()
 
-    scenes.zip(boxes) { scene, box ->
+    for (scene in scenes) {
       val screenViewport = viewportIterator.next()
       val dimensions = Vector2i(screenViewport.z, screenViewport.w)
       val canvas = createCanvas(client.renderer, client.customBloomResources, dimensions)
@@ -60,7 +62,10 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
       }
       labRender(appState)(sceneRenderer, scene.main)
       applyFilters(sceneRenderer, filters)
-      renderLayout(box, canvas, getDebugBoolean("MARK_BLOOM_PASS"))
+      if (boxIterator.hasNext()) {
+        val box = boxIterator.next()
+        renderLayout(box, canvas, getDebugBoolean("MARK_BLOOM_PASS"))
+      }
     }
   }
 

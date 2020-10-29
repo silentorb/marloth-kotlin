@@ -27,6 +27,7 @@ import silentorb.mythic.aura.SoundLibrary
 import silentorb.mythic.aura.newAudioState
 import silentorb.mythic.bloom.*
 import silentorb.mythic.debugging.getDebugBoolean
+import silentorb.mythic.editing.checkSaveEditorState
 import silentorb.mythic.editing.closeImGui
 import silentorb.mythic.editing.prepareEditorGui
 import silentorb.mythic.ent.Id
@@ -198,6 +199,11 @@ fun updateClient(
   val previousEditor = clientState.editor
   val windowInfo = client.getWindowInfo()
   val nextEditor = prepareEditorGui(editorFonts, windowInfo.id, clientState.isEditorActive, previousEditor)
+  val editor3 = previousEditor?.copy(
+      state = updateEditing(deviceStates, clientState.isEditorActive, nextEditor)!!
+  )
+
+  checkSaveEditorState(clientState.editor?.state, editor3?.state)
 
   return clientState.copy(
       audio = updateClientAudio(client, worlds, clientState.audio),
@@ -206,9 +212,7 @@ fun updateClient(
       commands = commands,
       events = events,
       isEditorActive = updateEditingActive(commands, clientState.isEditorActive),
-      editor = previousEditor?.copy(
-          state = updateEditing(deviceStates, clientState.isEditorActive, previousEditor.copy(state = nextEditor!!))!!
-      )
+      editor = editor3,
   )
 }
 
