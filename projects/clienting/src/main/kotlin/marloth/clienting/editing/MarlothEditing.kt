@@ -5,11 +5,9 @@ import marloth.definition.misc.loadMarlothGraphLibrary
 import marloth.scenery.enums.MeshId
 import marloth.scenery.enums.TextureId
 import silentorb.mythic.editing.*
-import silentorb.mythic.editing.panels.defaultViewportId
 import silentorb.mythic.ent.reflectProperties
 import silentorb.mythic.haft.InputDeviceState
 import silentorb.mythic.happenings.Commands
-import silentorb.mythic.spatial.Vector3
 
 val editorFonts = listOf(
     Typeface(
@@ -33,9 +31,3 @@ fun updateEditingActive(commands: Commands, previousIsActive: Boolean): Boolean 
       !previousIsActive
     else
       previousIsActive
-
-fun updateEditing(deviceStates: List<InputDeviceState>, isActive: Boolean, previous: Editor?): EditorState? =
-    if (isActive)
-      updateEditor(deviceStates, previous ?: newEditor())
-    else
-      previous?.state

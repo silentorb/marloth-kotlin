@@ -3,7 +3,6 @@ package marloth.clienting
 import marloth.clienting.audio.AudioConfig
 import marloth.clienting.audio.updateClientAudio
 import marloth.clienting.editing.editorFonts
-import marloth.clienting.editing.updateEditing
 import marloth.clienting.editing.updateEditingActive
 import marloth.clienting.gui.BloomDefinition
 import marloth.clienting.gui.EventUnion
@@ -27,9 +26,7 @@ import silentorb.mythic.aura.SoundLibrary
 import silentorb.mythic.aura.newAudioState
 import silentorb.mythic.bloom.*
 import silentorb.mythic.debugging.getDebugBoolean
-import silentorb.mythic.editing.checkSaveEditorState
-import silentorb.mythic.editing.closeImGui
-import silentorb.mythic.editing.prepareEditorGui
+import silentorb.mythic.editing.*
 import silentorb.mythic.ent.Id
 import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.happenings.Commands
@@ -198,12 +195,13 @@ fun updateClient(
 
   val previousEditor = clientState.editor
   val windowInfo = client.getWindowInfo()
-  val nextEditor = prepareEditorGui(editorFonts, windowInfo.id, clientState.isEditorActive, previousEditor)
-  val editor3 = previousEditor?.copy(
-      state = updateEditing(deviceStates, clientState.isEditorActive, nextEditor)!!
-  )
+  val nextEditor = if (clientState.isEditorActive && previousEditor != null) {
+    ensureImGuiIsInitialized(editorFonts, windowInfo.id)
+    updateEditor(deviceStates, previousEditor)
+  } else
+    previousEditor
 
-  checkSaveEditorState(clientState.editor?.state, editor3?.state)
+  checkSaveEditorState(clientState.editor?.state, nextEditor?.state)
 
   return clientState.copy(
       audio = updateClientAudio(client, worlds, clientState.audio),
@@ -212,7 +210,7 @@ fun updateClient(
       commands = commands,
       events = events,
       isEditorActive = updateEditingActive(commands, clientState.isEditorActive),
-      editor = editor3,
+      editor = nextEditor,
   )
 }
 
