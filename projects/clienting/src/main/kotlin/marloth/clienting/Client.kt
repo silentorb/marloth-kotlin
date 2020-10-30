@@ -27,6 +27,7 @@ import silentorb.mythic.aura.newAudioState
 import silentorb.mythic.bloom.*
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.editing.*
+import silentorb.mythic.editing.updating.updateEditor
 import silentorb.mythic.ent.Id
 import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.happenings.Commands
@@ -178,20 +179,23 @@ fun updateClient(
   val events = gatherUserEvents(options, clientState, playerBoxes, mousePosition, commands)
 
   applyCommandsToExternalSystem(client, events.filterIsInstance<ClientEvent>())
-  val nextGuiStates = playerBloomDefinitions
-      .mapValues { (player, bloomDefinition) ->
-        updateGuiState(
-            options,
-            worlds.lastOrNull()?.deck,
-            clientState.guiStates,
-            mousePosition,
-            playerBoxes,
-            commands,
-            events.filterIsInstance<ClientEvent>(),
-            player,
-            bloomDefinition
-        )
-      }
+  val nextGuiStates = if (clientState.isEditorActive)
+    clientState.guiStates
+  else
+    playerBloomDefinitions
+        .mapValues { (player, bloomDefinition) ->
+          updateGuiState(
+              options,
+              worlds.lastOrNull()?.deck,
+              clientState.guiStates,
+              mousePosition,
+              playerBoxes,
+              commands,
+              events.filterIsInstance<ClientEvent>(),
+              player,
+              bloomDefinition
+          )
+        }
 
   val previousEditor = clientState.editor
   val windowInfo = client.getWindowInfo()
