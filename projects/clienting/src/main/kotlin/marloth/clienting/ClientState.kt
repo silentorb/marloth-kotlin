@@ -5,7 +5,6 @@ import marloth.clienting.input.InputState
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.logic.DisplayChangeState
 import marloth.clienting.gui.menus.logic.MenuStack
-import marloth.clienting.rendering.marching.MarchingState
 import silentorb.mythic.aura.AudioState
 import silentorb.mythic.bloom.BloomState
 import silentorb.mythic.bloom.Box
@@ -42,7 +41,6 @@ data class ClientState(
     val guiStates: Map<Id, GuiState>,
     val commands: List<Command>,
     val input: InputState,
-    val marching: MarchingState,
     val events: List<Any>,
     val displayModes: List<DisplayMode>,
     val editor: Editor? = initialEditor(),

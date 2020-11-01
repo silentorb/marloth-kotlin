@@ -2,7 +2,6 @@ package marloth.integration.misc
 
 import marloth.clienting.ClientState
 import marloth.clienting.input.newInputState
-import marloth.clienting.rendering.marching.newMarchingState
 import marloth.integration.front.GameApp
 import silentorb.mythic.ent.Id
 import silentorb.mythic.physics.releaseBulletState
@@ -21,7 +20,6 @@ fun restartClientState(client: ClientState, playerMap: Map<Id, Id>): ClientState
         audio = client.audio,
         commands = listOf(),
         players = playerMap.values.toList(),
-        marching = newMarchingState(),
         events = listOf(),
         displayModes = client.displayModes
     )

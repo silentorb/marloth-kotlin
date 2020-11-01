@@ -4,10 +4,9 @@ import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.happenings.Events
-import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
-import silentorb.mythic.spatial.getHorizontalLookAtAngle
+import silentorb.mythic.spatial.getYawAngle
 import silentorb.mythic.spatial.toVector3
 import simulation.entities.Player
 import simulation.main.Hand
@@ -41,7 +40,7 @@ fun newPlayerCharacter(nextId: IdSource, id: Id, definitions: Definitions, grid:
         profession = profession,
         faction = misfitFaction,
         position = absoluteCellPosition(cellPosition) + Vector3(0f, 0f, 1f),
-        angle = getHorizontalLookAtAngle((neighbor - cellPosition).toVector3())
+        angle = getYawAngle((neighbor - cellPosition).toVector3())
     )
 }
 

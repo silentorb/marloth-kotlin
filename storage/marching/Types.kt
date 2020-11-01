@@ -1,7 +1,6 @@
 package marloth.clienting.rendering.marching
 
 import silentorb.mythic.glowing.GeneralMesh
-import silentorb.mythic.scenery.SamplePoint
 import silentorb.mythic.spatial.MutableVector3
 import silentorb.mythic.spatial.Vector2
 import silentorb.mythic.spatial.Vector3i

@@ -51,7 +51,7 @@ fun adjustCameraDistance(dynamicsWorld: btDiscreteDynamicsWorld, cameraCollision
 fun lookAtTargetOffset(location: Vector3, target: Vector3, rotation: Vector2, idealRotationY: Float, delta: Float): Vector2 {
   val targetRotationX = atan(target.xy() - location.xy())
   val rawGapX = getAngleCourse(rotation.x, targetRotationX)
-  val gapY = getAngleCourse(rotation.y, idealRotationY - getVerticalLookAtAngle((target - location).normalize()))
+  val gapY = getAngleCourse(rotation.y, idealRotationY - getPitchAngle((target - location).normalize()))
   val margin = 0.4f
   val gapX = if (abs(rawGapX) < margin) 0f else rawGapX
   return if (gapX == 0f && gapY == 0f) {
@@ -131,9 +131,9 @@ fun updateThirdPersonCamera(
   }
 
   val facingDestination = if (movement != null) {
-    getHorizontalLookAtAngle(movement.offset)
+    getYawAngle(movement.offset)
   } else if (target != null) {
-    getHorizontalLookAtAngle(target - body.position)
+    getYawAngle(target - body.position)
   } else
     null
 

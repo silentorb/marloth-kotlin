@@ -1,6 +1,5 @@
 package marloth.clienting.rendering
 
-import marloth.clienting.rendering.marching.*
 import silentorb.mythic.glowing.globalState
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.scenery.Light
@@ -23,12 +22,4 @@ fun createSceneRenderer(renderer: Renderer, scene: GameScene, viewport: Vector4i
       lights = gatherSceneLights(renderer.meshes, scene)
   )
   return createSceneRenderer(renderer, minimalScene, viewport)
-}
-
-fun renderLayersWithMarching(sceneRenderer: SceneRenderer, layers: SceneLayers, marchingGpu: MarchingGpuState) {
-  renderSceneLayers(sceneRenderer, sceneRenderer.camera, layers) { _, _, layer ->
-    if (layer.attributes.contains(marchingRenderLayer)) {
-      drawMarching(sceneRenderer.renderer, marchingGpu)
-    }
-  }
 }

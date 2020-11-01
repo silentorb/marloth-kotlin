@@ -3,21 +3,17 @@ package marloth.integration.scenery
 import marloth.clienting.gui.hud.entanglingMovementRangeLayer
 import marloth.clienting.gui.hud.mobilityMovementRangeLayer
 import marloth.clienting.rendering.*
-import marloth.clienting.rendering.marching.marchingRenderLayer
 import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.debugging.getDebugBoolean
-import silentorb.mythic.editing.CameraRig
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.ModelMeshMap
 import silentorb.mythic.lookinglass.SceneLayer
-import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.lookinglass.GameScene
 import silentorb.mythic.lookinglass.Scene
-import silentorb.mythic.spatial.Vector3
 import simulation.main.Deck
 import simulation.misc.Definitions
 
-fun createScene(meshes: ModelMeshMap, models: Map<String, ModelFunction>, definitions: Definitions, deck: Deck): (Id) -> GameScene = { player ->
+fun createScene(meshes: ModelMeshMap, definitions: Definitions, deck: Deck): (Id) -> GameScene = { player ->
   val flyThrough = getDebugBoolean("FLY_THROUGH_CAMERA")
   if (!deck.characters.containsKey(player))
     GameScene(
@@ -51,13 +47,8 @@ fun createScene(meshes: ModelMeshMap, models: Map<String, ModelFunction>, defini
             useDepth = false
         ),
         SceneLayer(
-            elements = cullElementGroups(meshes, models, camera, gatherVisualElements(definitions, deck, player, characterRig)),
+            elements = cullElementGroups(meshes, camera, gatherVisualElements(definitions, deck, player, characterRig)),
             useDepth = true
-        ),
-        SceneLayer(
-            elements = listOf(),
-            useDepth = true,
-            attributes = setOf(marchingRenderLayer)
         ),
         SceneLayer(
             elements = gatherParticleElements(deck, camera.position),

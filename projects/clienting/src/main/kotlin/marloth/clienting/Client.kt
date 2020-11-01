@@ -18,8 +18,6 @@ import marloth.clienting.input.GameInputConfig
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.input.gatherInputCommands
 import marloth.clienting.input.newInputState
-import marloth.clienting.rendering.MeshLoadingState
-import marloth.clienting.rendering.marching.newMarchingState
 import marloth.definition.misc.ClientDefinitions
 import marloth.definition.texts.englishTextResources
 import silentorb.mythic.aura.SoundLibrary
@@ -29,7 +27,6 @@ import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.editing.*
 import silentorb.mythic.editing.updating.updateEditor
 import silentorb.mythic.ent.Id
-import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.haft.updateInputDeviceStates
 import silentorb.mythic.lookinglass.Renderer
@@ -64,7 +61,6 @@ fun newClientState(inputConfig: GameInputConfig, audioConfig: AudioConfig, displ
         audio = newAudioState(audioConfig.soundVolume),
         commands = listOf(),
         players = listOf(),
-        marching = newMarchingState(),
         events = listOf(),
         displayModes = displayModes
     )
@@ -83,8 +79,6 @@ data class Client(
     val platform: Platform,
     val renderer: Renderer,
     val soundLibrary: SoundLibrary,
-    val meshLoadingState: MeshLoadingState? = null,
-    val impModels: Map<String, ModelFunction>,
     val textureLoadingState: TextureLoadingState,
     val textResources: TextResources = englishTextResources,
     val customBloomResources: Map<String, Any>

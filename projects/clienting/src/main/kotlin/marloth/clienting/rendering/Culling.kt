@@ -1,6 +1,5 @@
 package marloth.clienting.rendering
 
-import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.lookinglass.ElementGroup
 import silentorb.mythic.lookinglass.ElementGroups
 import silentorb.mythic.lookinglass.ModelMeshMap
@@ -13,9 +12,9 @@ data class CullingContext(
     val facingNormal: Vector3
 )
 
-fun cullElementGroup(meshes: ModelMeshMap, models: Map<String, ModelFunction>, cullingContext: CullingContext): (ElementGroup) -> ElementGroup = { group ->
+fun cullElementGroup(meshes: ModelMeshMap, cullingContext: CullingContext): (ElementGroup) -> ElementGroup = { group ->
   val groupMeshes = group.meshes.filter { meshElement ->
-    val bounds = meshes[meshElement.mesh]?.bounds ?: models[meshElement.mesh]?.collision
+    val bounds = meshes[meshElement.mesh]?.bounds
     val meshLocation = Vector3.zero.transform(meshElement.transform)
     val meshRadius = if (bounds != null) {
       val scale = meshElement.transform.getScale()
@@ -41,9 +40,9 @@ fun getCullingContext(camera: Camera) =
         facingNormal = camera.lookAt
     )
 
-fun cullElementGroups(meshes: ModelMeshMap, models: Map<String, ModelFunction>, camera: Camera, groups: ElementGroups): ElementGroups {
+fun cullElementGroups(meshes: ModelMeshMap, camera: Camera, groups: ElementGroups): ElementGroups {
 //  val previous = groups.sumBy { it.meshes.size }
-  val result = groups.map(cullElementGroup(meshes, models, getCullingContext(camera)))
+  val result = groups.map(cullElementGroup(meshes, getCullingContext(camera)))
 //  val next = result.sumBy { it.meshes.size }
   return result
 }
