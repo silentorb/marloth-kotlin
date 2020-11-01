@@ -9,7 +9,6 @@ import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.CommandName
 import silentorb.mythic.lookinglass.createCameraMatrix
 import silentorb.mythic.lookinglass.getPlayerViewports
-import silentorb.mythic.lookinglass.transformToScreen
 import silentorb.mythic.physics.firstRayHit
 import silentorb.mythic.spatial.*
 import simulation.main.Deck
