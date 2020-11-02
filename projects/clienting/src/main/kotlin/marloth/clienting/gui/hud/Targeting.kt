@@ -64,7 +64,7 @@ fun autoSelectTarget(deck: Deck, actorLocation: Vector3, actor: Id, options: Lis
 }
 
 fun integrateCommands(commands: List<Command>, type: CommandName): Float =
-    commands.filter { it.type == type }.sumByDouble { it.value.toDouble() }.toFloat()
+    commands.filter { it.type == type }.sumByDouble { (it.value as Float).toDouble() }.toFloat()
 
 fun getTargetChangeDirection(commands: List<Command>): Vector2 {
   return Vector2(
