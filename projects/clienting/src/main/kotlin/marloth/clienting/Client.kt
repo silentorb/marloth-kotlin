@@ -199,7 +199,7 @@ fun updateClient(
   } else
     previousEditor
 
-  checkSaveEditorState(clientState.editor?.state, nextEditor?.state)
+  checkSaveEditor(clientState.editor, nextEditor)
 
   return clientState.copy(
       audio = updateClientAudio(client, worlds, clientState.audio),

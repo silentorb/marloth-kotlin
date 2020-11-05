@@ -45,7 +45,7 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
 
     for (scene in scenes) {
       val screenViewport = viewportIterator.next()
-      val dimensions = Vector2i(screenViewport.z, screenViewport.w)
+      val dimensions = screenViewport.zw()
       val canvas = createCanvas(client.renderer, client.customBloomResources, dimensions)
       val sceneRenderer = createSceneRenderer(client.renderer, scene, screenViewport)
       val filters = prepareRender(sceneRenderer, scene)
