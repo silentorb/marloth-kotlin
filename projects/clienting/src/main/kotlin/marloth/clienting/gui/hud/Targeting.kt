@@ -82,7 +82,7 @@ fun checkTargetChange(world: World, mapAvailableTarget: MapAvailableTarget, scre
   else {
     val filteredPreviousCommands = previousCommands
         .filter { it.target == actor }
-        .map { Command(it.type.toString(), it.target, it.value!! as Float) }
+        .map { Command(it.type.toString(), it.value!! as Float, it.target) }
 
     val previousDirection = getTargetChangeDirection(filteredPreviousCommands)
     if (previousDirection != Vector2.zero)

@@ -11,7 +11,7 @@ fun mapGameCommands(players: List<Id>, commands: Commands): List<Command> =
         .map { command ->
           Command(
               type = command.type as CommandName,
-              target = command.target,
-              value = command.value!! as Float
+              value = command.value!! as Float,
+              target = command.target
           )
         }

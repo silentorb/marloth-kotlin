@@ -40,7 +40,7 @@ fun spiritFacingChange2(character: Id, course: Float, velocity: Float, turnSpeed
     if (absCourse <= drift)
       listOf() // Don't need to rotate anymore.  The remaining momentum will get us there.
     else
-      listOf(Command(dir, character, 1f))
+      listOf(Command(dir, 1f, character))
   }
 }
 

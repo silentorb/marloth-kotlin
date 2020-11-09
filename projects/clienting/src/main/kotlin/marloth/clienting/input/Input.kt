@@ -112,11 +112,11 @@ fun didMouseMove(previous: List<InputDeviceState>, next: List<InputDeviceState>)
 fun getMouseEvents(player: Id, previous: List<InputDeviceState>, next: List<InputDeviceState>) =
     listOfNotNull(
         if (isMouseClickFinished(previous, next))
-          Command(type = GuiCommandType.mouseClick, device = mouseDeviceIndex, target = player)
+          Command(type = GuiCommandType.mouseClick, target = player, device = mouseDeviceIndex)
         else
           null,
         if (didMouseMove(previous, next))
-          Command(type = GuiCommandType.mouseMove, device = mouseDeviceIndex, target = player)
+          Command(type = GuiCommandType.mouseMove, target = player, device = mouseDeviceIndex)
         else
           null,
     )

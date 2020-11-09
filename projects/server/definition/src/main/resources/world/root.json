@@ -1,8 +1,0 @@
-{
-  "graph": [
-    ["root", "", ""],
-    ["floor", "parent", "root"],
-    ["floor", "mesh", "floorSquare"],
-    ["floor", "texture", "redTile"]
-  ]
-}

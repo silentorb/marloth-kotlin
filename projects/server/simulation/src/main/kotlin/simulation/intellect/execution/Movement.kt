@@ -84,7 +84,7 @@ fun moveStraightTowardPosition(world: World, actor: Id, target: Vector3): Events
   val shape = world.deck.collisionObjects[actor]!!
   val middle = shape.shape.height / 2f
   val position = body.position
-  val commands = listOf(Command(CharacterCommands.moveUp, actor))
+  val commands = listOf(Command(CharacterCommands.moveUp, target = actor))
   if (target.x == position.x && target.y == position.y)
     return commands
 

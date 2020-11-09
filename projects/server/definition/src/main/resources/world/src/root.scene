@@ -1,0 +1,19 @@
+{
+"graph" : [
+["floor","parent","root"],
+["floor","mesh","floorSquare"],
+["floor","translation",[0.0,0.0,0.0]],
+["floor","texture","bricks"],
+["floor","collisionShape","box"],
+["lamp","parent","root"],
+["lamp","translation",[0.0,0.0,1.4081311]],
+["lamp","range",5.0],
+["lamp","rgba","#8f45c3ff"],
+["lamp","light","point"],
+["root","",""],
+["root","rotation",[0.0,0.0,0.0]],
+["text","parent","root"],
+["text","text3d","Hello World"],
+["text","translation",[1.4484181,2.287299,1.1312795]]
+]
+}
