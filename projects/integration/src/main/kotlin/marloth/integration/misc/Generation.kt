@@ -8,11 +8,12 @@ import generation.general.BlockGrid
 import generation.general.rotateSides
 import marloth.clienting.rendering.loadBlocks
 import marloth.definition.misc.loadMarlothGraphLibrary
+import marloth.generation.population.populateWorld
 import marloth.scenery.enums.MeshShapeMap
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.debugging.getDebugString
-import silentorb.mythic.editing.Graph
+import silentorb.mythic.ent.Graph
 import silentorb.mythic.editing.commonPropertyDefinitions
 import silentorb.mythic.ent.newIdSource
 import silentorb.mythic.physics.newBulletState
@@ -94,7 +95,8 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
 
   val graphLibrary = loadMarlothGraphLibrary(commonPropertyDefinitions())
   val rootGraph = graphLibrary["root"]!!
-  val deck = worldFromGraph(generationConfig, dice, rootGraph)
+//  val deck = worldFromGraph(generationConfig, dice, rootGraph)
+  val deck = populateWorld(nextId, generationConfig, input)
   val navigation = if (generationConfig.includeEnemies) {
     val meshIds = deck.depictions
         .filterValues { generationConfig.meshes.containsKey(it.mesh) }

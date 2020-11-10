@@ -1,6 +1,7 @@
 package marloth.clienting.editing
 
 import marloth.clienting.input.GuiCommandType
+import simulation.misc.GameAttributes
 import marloth.scenery.enums.MeshId
 import marloth.scenery.enums.TextureId
 import silentorb.mythic.debugging.getDebugString
@@ -21,9 +22,7 @@ val editorFonts = listOf(
 const val worldResourcePath = "world"
 
 fun getMarlothEditorAttributes(): List<String> =
-    commonEditorAttributes() + listOf(
-        "playerSpawn"
-    )
+    commonEditorAttributes() + reflectProperties(GameAttributes)
 
 fun newEditor(): Editor {
   val debugProjectPath = getDebugString("EDITOR_PROJECT_PATH")

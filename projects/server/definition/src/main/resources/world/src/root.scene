@@ -12,8 +12,8 @@
 ["lamp","light","point"],
 ["root","",""],
 ["root","rotation",[0.0,0.0,0.0]],
-["text","parent","root"],
-["text","text3d","Hello World"],
-["text","translation",[1.4484181,2.287299,1.1312795]]
+["start","parent","root"],
+["start","type","playerSpawn"],
+["start","translation",[0.0,0.0,3.0545511]]
 ]
 }

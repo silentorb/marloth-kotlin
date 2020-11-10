@@ -1,8 +1,6 @@
 package simulation.main
 
-import silentorb.mythic.ent.Id
-import silentorb.mythic.ent.IdSource
-import silentorb.mythic.ent.pass
+import silentorb.mythic.ent.*
 import simulation.intellect.navigation.NavigationState
 import silentorb.mythic.randomly.Dice
 import simulation.misc.Definitions
@@ -19,6 +17,7 @@ data class World(
     val dice: Dice,
     val availableIds: Set<Id>,
     val navigation: NavigationState?,
+    val graph: Graph = newGraph(),
     val bulletState: BulletState,
     val definitions: Definitions,
     val gameModeConfig: GameModeConfig

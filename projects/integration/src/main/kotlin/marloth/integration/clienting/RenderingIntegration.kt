@@ -4,7 +4,7 @@ import marloth.clienting.Client
 import marloth.clienting.rendering.createSceneRenderer
 import marloth.clienting.rendering.prepareRender
 import marloth.integration.debug.labRender
-import marloth.integration.editing.sceneFromEditorGraph
+import silentorb.mythic.editing.lookinglass.sceneFromEditorGraph
 import marloth.integration.misc.AppState
 import marloth.integration.scenery.createScene
 import marloth.integration.scenery.defaultLightingConfig
@@ -16,7 +16,6 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.lookinglass.texturing.updateAsyncTextureLoading
 import silentorb.mythic.platforming.WindowInfo
-import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector4i
 import simulation.misc.interpolateWorlds
 import simulation.updating.getIdle
