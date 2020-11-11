@@ -5,7 +5,11 @@ import marloth.clienting.gui.hud.mobilityMovementRangeLayer
 import marloth.clienting.rendering.*
 import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.debugging.getDebugBoolean
+import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.scenery.getGraphRoots
+import silentorb.mythic.ent.scenery.nodeToElements
+import silentorb.mythic.ent.scenery.nodesToElements
 import silentorb.mythic.lookinglass.ModelMeshMap
 import silentorb.mythic.lookinglass.SceneLayer
 import silentorb.mythic.lookinglass.GameScene
@@ -13,7 +17,7 @@ import silentorb.mythic.lookinglass.Scene
 import simulation.main.Deck
 import simulation.misc.Definitions
 
-fun createScene(meshes: ModelMeshMap, definitions: Definitions, deck: Deck): (Id) -> GameScene = { player ->
+fun createScene(meshes: ModelMeshMap, definitions: Definitions, deck: Deck, graph: Graph): (Id) -> GameScene = { player ->
   val flyThrough = getDebugBoolean("FLY_THROUGH_CAMERA")
   if (!deck.characters.containsKey(player))
     GameScene(
@@ -41,13 +45,20 @@ fun createScene(meshes: ModelMeshMap, definitions: Definitions, deck: Deck): (Id
         else
           null
 
+    val roots = getGraphRoots(graph)
+    val mainElements = gatherVisualElements(definitions, deck, player, characterRig) +
+        if (roots.any())
+          nodesToElements(mapOf(), setOf(), mapOf(), graph)
+        else
+          listOf()
+
     val layers = listOf(
         SceneLayer(
             elements = gatherBackground(deck.cyclesFloat, camera.position),
             useDepth = false
         ),
         SceneLayer(
-            elements = cullElementGroups(meshes, camera, gatherVisualElements(definitions, deck, player, characterRig)),
+            elements = cullElementGroups(meshes, camera, mainElements),
             useDepth = true
         ),
         SceneLayer(

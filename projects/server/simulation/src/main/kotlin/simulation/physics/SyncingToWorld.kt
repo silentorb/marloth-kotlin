@@ -17,7 +17,7 @@ fun castInteractableRay(dynamicsWorld: btDiscreteDynamicsWorld, deck: Deck, play
   val end = start + direction * 5f
   val callback = firstRayHit(dynamicsWorld, start, end, CollisionGroups.tangibleMask)
   if (callback != null) {
-    val id = callback.collisionObject
+    val id = callback.collisionObject as? Id
     if (deck.interactables.containsKey(id)) {
       return id
     }
@@ -39,8 +39,8 @@ fun getBulletCollisions(bulletState: BulletState, deck: Deck): List<Collision> {
       if (distance < 0.0f) {
         val firstBody = manifold.body0
         val secondBody = manifold.body1
-        val a = firstBody.userData as Id
-        val b = secondBody.userData as Id
+        val a = firstBody.userData
+        val b = secondBody.userData
         if (deck.triggers.containsKey(a))
           result.add(Collision(
               first = a,

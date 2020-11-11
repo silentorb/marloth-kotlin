@@ -7,7 +7,7 @@ import silentorb.mythic.physics.Collision
 import simulation.main.Hand
 import simulation.main.IdHand
 
-typealias CollisionMap = Map<Id, Collision>
+typealias CollisionMap = Map<Any, Collision>
 
 data class PruneEntityEvent(
     val id: Id,

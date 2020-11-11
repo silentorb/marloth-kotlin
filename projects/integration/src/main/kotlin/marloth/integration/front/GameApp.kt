@@ -1,7 +1,6 @@
 package marloth.integration.front
 
 import marloth.clienting.*
-import marloth.clienting.rendering.getMeshInfo
 import marloth.definition.staticDefinitions
 import marloth.integration.debug.newDebugHooks
 import marloth.integration.debug.newEditorHooks
@@ -17,6 +16,7 @@ import silentorb.mythic.platforming.WindowInfo
 import silentorb.mythic.quartz.TimestepState
 import silentorb.mythic.quartz.newTimestepState
 import silentorb.mythic.lookinglass.Scene
+import silentorb.mythic.lookinglass.getMeshShapes
 import simulation.main.World
 import simulation.misc.Definitions
 
@@ -81,14 +81,14 @@ fun newGameApp(platform: Platform, client: Client): GameApp {
       platform = platform,
       client = client,
       definitions = definitions,
-      newWorld = { gameApp -> generateWorld(definitions, getMeshInfo(gameApp.client)) }
+      newWorld = { gameApp -> generateWorld(definitions, getMeshShapes(gameApp.client.renderer)) }
   )
 }
 
 fun runApp(platform: Platform, options: AppOptions) {
   platform.display.initialize(toPlatformDisplayConfig(options.display))
   val app = newGameApp(platform, newClient(platform, options.display))
-  val world = generateWorld(app.definitions, getMeshInfo(app.client))
+  val world = generateWorld(app.definitions, getMeshShapes(app.client.renderer))
   val state = AppState(
       client = newClientState(options.input, options.audio, platform.display.getDisplayModes()),
       options = options,

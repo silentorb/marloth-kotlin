@@ -16,14 +16,15 @@ fun raycastAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinit
   val (origin, vector) = getAttackerOriginAndFacing(deck, attacker, target, 0.3f)
   val end = origin + vector * 30f
   val collision = firstRayHit(bulletState.dynamicsWorld, origin, end, CollisionGroups.tangibleMask)
-  return if (collision != null && deck.destructibles.containsKey(collision.collisionObject)) {
-    val damageEvents = newDamageEvents(collision.collisionObject, attacker, weapon.damages, position = collision.hitPoint)
+  val collisionObject = collision?.collisionObject as? Id?
+  return if (collisionObject != null && deck.destructibles.containsKey(collisionObject)) {
+    val damageEvents = newDamageEvents(collisionObject, attacker, weapon.damages, position = collision.hitPoint)
     if (weapon.impulse != 0f) {
       val distance = origin.distance(collision.hitPoint) - 1.5f
       val maxImpulseRange = 10f
       val impulse = weapon.impulse * (1f - minMax(distance / maxImpulseRange, 0f, 1f))
       damageEvents + LinearImpulse(
-          body = collision.collisionObject,
+          body = collisionObject,
           offset = (vector + Vector3(0f, 0f, 0.3f)).normalize() * impulse
       )
     } else

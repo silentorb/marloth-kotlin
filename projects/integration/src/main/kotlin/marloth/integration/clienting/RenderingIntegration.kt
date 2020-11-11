@@ -34,10 +34,10 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
 
   if (world != null) {
     val scenes = if (appState.client.isEditorActive)
-      listOf(sceneFromEditorGraph(renderer.meshes, appState.client.editor!!, defaultLightingConfig(), defaultViewportId))
+      listOf(sceneFromEditorGraph(getMeshShapes(renderer), appState.client.editor!!, defaultLightingConfig(), defaultViewportId))
     else
       appState.client.players
-          .map(createScene(renderer.meshes, world.definitions, world.deck))
+          .map(createScene(renderer.meshes, world.definitions, world.deck, world.graph))
 
     val viewportIterator = viewports.iterator()
     val boxIterator = boxes.values.iterator()

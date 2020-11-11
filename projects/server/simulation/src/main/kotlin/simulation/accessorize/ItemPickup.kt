@@ -1,6 +1,7 @@
 package simulation.accessorize
 
 import marloth.scenery.enums.AccessoryId
+import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.DeleteEntityEvent
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.Body
@@ -21,7 +22,7 @@ fun eventsFromItemPickups(world: World, collisions: CollisionMap): Events {
     if (collision != null && deck.characters.containsKey(collision.second) &&
         (!itemPickupRecord.playerOnly || deck.players.containsKey(collision.second))
     ) {
-      val character = collision.second
+      val character = collision.second as Id
       val itemAccessory = deck.accessories[itemPickup]!!
       val characterAccessories = deck.accessories.filter { it.value.owner == character }
       val available = characterAccessories
