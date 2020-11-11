@@ -18,7 +18,6 @@ import marloth.integration.clienting.updateAppStateForNewPlayers
 import marloth.integration.front.GameApp
 import marloth.scenery.enums.CharacterCommands
 import persistence.Database
-import persistence.createVictory
 import silentorb.mythic.bloom.Box
 import silentorb.mythic.bloom.toAbsoluteBoundsRecursive
 import silentorb.mythic.debugging.getDebugBoolean
@@ -42,10 +41,11 @@ import simulation.updating.updateWorld
 fun updateSimulationDatabase(db: Database, next: World, previous: World) {
   val nextGameOver = next.global.gameOver
   if (previous.global.gameOver == null && nextGameOver != null) {
-    if (nextGameOver.winningFaction == 1L)
-      createVictory(db, Victory(
-          next.deck.players.values.first().name
-      ))
+    if (nextGameOver.winningFaction == 1L) {
+//      createVictory(db, Victory(
+//          next.deck.players.values.first().name
+//      ))
+    }
   }
 }
 

@@ -1,8 +1,9 @@
 package persistence
 
 import org.sqlite.SQLiteDataSource
-import simulation.misc.PlayerStats
-import simulation.misc.Victory
+import silentorb.mythic.ent.Entry
+import silentorb.mythic.ent.Graph
+import silentorb.mythic.ent.LooseGraph
 import java.io.File
 import java.sql.ResultSet
 import javax.sql.DataSource
@@ -21,34 +22,84 @@ fun newDatabase(filepath: String): Database {
   return db
 }
 
-fun <T> querySql(db: Database, sql: String, handler: (ResultSet) -> T): T {
+fun <T> querySql(db: Database, sql: String, arguments: List<String>, handler: (ResultSet) -> T): T {
   val connection = db.source.connection
-  val statement = connection.createStatement()
-  return handler(statement.executeQuery(sql))
+  return connection.prepareStatement(sql).use { statement ->
+    var step = 1
+    for (argument in arguments) {
+      statement.setString(step++, argument)
+    }
+    handler(statement.executeQuery())
+  }
 }
 
 fun executeSql(db: Database, sql: String) {
   val connection = db.source.connection
-  val statement = connection.createStatement()
-  statement.execute(sql)
-}
-
-fun createVictory(db: Database, victory: Victory) {
-  val sql = """
-    INSERT INTO victories (player) VALUES ('${victory.player}')
-  """.trimIndent()
-  executeSql(db, sql)
-}
-
-fun queryStats(db: Database, player: String): PlayerStats {
-  val sql = """
-    SELECT
-      (SELECT COUNT(*) FROM victories WHERE player = $player) as victoryCount
-  """.trimIndent()
-  return querySql(db, sql) {
-    PlayerStats(
-        player = player,
-        victoryCount = it.getInt(0)
-    )
+  connection.createStatement().use { statement ->
+    statement.execute(sql)
   }
 }
+
+fun executeSqlWithStringArguments(db: Database, sql: String, arguments: List<String>) {
+  val connection = db.source.connection
+  connection.prepareStatement(sql).use { statement ->
+    var step = 1
+    for (argument in arguments) {
+      statement.setString(step++, argument)
+    }
+    statement.execute()
+  }
+}
+
+fun insertEntry(db: Database, entry: Entry) {
+  val (source, property, target) = entry
+  val sql = """
+INSERT INTO entries (source, property, target) VALUES (?, ?, ?)
+ON CONFLICT(source, property, target) DO UPDATE SET touched = date('now')
+  """.trimIndent()
+  executeSqlWithStringArguments(db, sql, listOf(source, property, target.toString()))
+}
+
+fun insertEntries(db: Database, graph: LooseGraph) {
+  val valuesClause = graph.joinToString(",\n") { "VALUES (?, ?, ?)" }
+  val values = graph.flatMap { listOf(it.source, it.property, it.target.toString()) }
+  val sql = """
+INSERT INTO entries (source, property, target)
+$valuesClause
+ON CONFLICT(source, property, target) DO UPDATE SET touched = date('now')
+  """.trimIndent()
+  executeSqlWithStringArguments(db, sql, values)
+}
+
+fun queryEntryValue(db: Database, source: String, property: String): String? {
+  val sql = """
+SELECT target FROM entries
+WHERE source = ? AND property = ?
+  """.trimIndent()
+  return querySql(db, sql, listOf(source, property)) { result ->
+    if (result.next())
+      result.getString(1)
+    else
+      null
+  }
+}
+
+//fun createVictory(db: Database, victory: Victory) {
+//  val sql = """
+//    INSERT INTO victories (player) VALUES ('${victory.player}')
+//  """.trimIndent()
+//  executeSql(db, sql)
+//}
+//
+//fun queryStats(db: Database, player: String): PlayerStats {
+//  val sql = """
+//    SELECT
+//      (SELECT COUNT(*) FROM victories WHERE player = $player) as victoryCount
+//  """.trimIndent()
+//  return querySql(db, sql) {
+//    PlayerStats(
+//        player = player,
+//        victoryCount = it.getInt(0)
+//    )
+//  }
+//}
