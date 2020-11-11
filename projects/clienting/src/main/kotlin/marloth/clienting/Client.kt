@@ -18,6 +18,7 @@ import marloth.clienting.input.GameInputConfig
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.input.gatherInputCommands
 import marloth.clienting.input.newInputState
+import marloth.clienting.rendering.getMeshInfo
 import marloth.definition.misc.ClientDefinitions
 import marloth.definition.texts.englishTextResources
 import silentorb.mythic.aura.SoundLibrary
@@ -216,5 +217,6 @@ fun definitionsFromClient(client: Client): ClientDefinitions =
     ClientDefinitions(
         animations = mapAnimationInfo(client.renderer.armatures),
         lightAttachments = gatherMeshLights(client.renderer.meshes),
-        soundDurations = client.soundLibrary.mapValues { it.value.duration }
+        soundDurations = client.soundLibrary.mapValues { it.value.duration },
+        meshShapeMap = getMeshInfo(client)
     )

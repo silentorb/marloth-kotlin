@@ -11,6 +11,7 @@ import silentorb.mythic.particles.ParticleEffectDefinitions
 import silentorb.mythic.scenery.Light
 import silentorb.mythic.scenery.MeshName
 import silentorb.mythic.performing.ActionDefinition
+import silentorb.mythic.scenery.Shape
 import simulation.characters.CharacterDefinition
 
 typealias AccessoryDefinitions = Map<AccessoryName, AccessoryDefinition>
@@ -33,5 +34,6 @@ data class Definitions(
     val selectableAccessories: Set<AccessoryName>,
     val soundDurations: Map<SoundType, Float>,
     val textLibrary: TextResourceMapper,
-    val weapons: Map<AccessoryName, WeaponDefinition>
+    val weapons: Map<AccessoryName, WeaponDefinition>,
+    val meshShapeMap: Map<String, Shape>,
 )
