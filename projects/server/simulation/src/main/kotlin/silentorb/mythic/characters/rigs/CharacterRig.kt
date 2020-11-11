@@ -133,7 +133,7 @@ fun updateCharacterRigBulletBodies(bulletState: BulletState, characterRigs: Tabl
 }
 
 fun characterOrientationZ(characterRig: CharacterRig) =
-    Quaternion().rotateZ(characterRig.facingRotation.x - Pi / 2)
+    Quaternion().rotateZ(characterRig.facingRotation.x)
 
 fun hoverCameraOrientationZ(thirdPersonRig: ThirdPersonRig) =
     Quaternion().rotateZ(thirdPersonRig.rotation.x - Pi / 2)
