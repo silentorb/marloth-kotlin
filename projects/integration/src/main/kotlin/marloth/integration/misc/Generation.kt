@@ -16,6 +16,7 @@ import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.editing.commonPropertyDefinitions
 import silentorb.mythic.ent.newIdSource
+import silentorb.mythic.ent.scenery.expandInstances
 import silentorb.mythic.physics.newBulletState
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Quaternion
@@ -94,9 +95,10 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
 //  ))(architectureDeck)
 
   val graphLibrary = loadMarlothGraphLibrary(commonPropertyDefinitions())
-  val rootGraph = graphLibrary["root"]!!
+  assert(graphLibrary.contains("root"))
+  val graph = expandInstances(graphLibrary, graphLibrary["root"]!!)
 //  val deck = worldFromGraph(generationConfig, dice, rootGraph)
-  val deck = populateWorld(nextId, generationConfig, input)
+  val deck = idHandsToDeck(populateWorld(nextId, generationConfig, graph))
   val navigation = if (generationConfig.includeEnemies) {
     val meshIds = deck.depictions
         .filterValues { generationConfig.meshes.containsKey(it.mesh) }
@@ -106,6 +108,7 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
     null
 
   return World(
+      graph = graph,
       deck = deck,
       realm = Realm(grid = MapGrid()),
       nextId = nextId(),

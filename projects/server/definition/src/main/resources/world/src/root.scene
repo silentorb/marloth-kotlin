@@ -13,7 +13,7 @@
 ["root","",""],
 ["root","rotation",[0.0,0.0,0.0]],
 ["start","parent","root"],
-["start","type","playerSpawn"],
+["start","instance","playerSpawn"],
 ["start","translation",[0.0,0.0,3.0545511]]
 ]
 }

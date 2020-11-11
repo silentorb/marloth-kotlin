@@ -1,13 +1,11 @@
 package simulation.characters
 
 import silentorb.mythic.debugging.getDebugString
+import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.spatial.Vector3
-import silentorb.mythic.spatial.Vector3i
-import silentorb.mythic.spatial.getYawAngle
-import silentorb.mythic.spatial.toVector3
 import simulation.entities.Player
 import simulation.main.Hand
 import simulation.main.IdHand
@@ -31,41 +29,37 @@ fun newPlayerIdHand(id: Id) =
 fun getDebugProfession() =
     getDebugString("CHARACTER_CLASS")
 
-fun newPlayerCharacter(nextId: IdSource, id: Id, definitions: Definitions, grid: MapGrid, profession: ProfessionId, cellPosition: Vector3i): List<IdHand> {
-  val neighbor = cellNeighbors(grid.connections, cellPosition).firstOrNull()
-  return if (neighbor == null)
-    listOf()
-  else
-    newCharacter(nextId, id, definitions,
-        profession = profession,
-        faction = misfitFaction,
-        position = absoluteCellPosition(cellPosition) + Vector3(0f, 0f, 1f),
-        angle = getYawAngle((neighbor - cellPosition).toVector3())
-    )
+fun newPlayerCharacter(nextId: IdSource, id: Id, definitions: Definitions, profession: ProfessionId, location: Vector3, angle: Float): List<IdHand> {
+  return newCharacter(nextId, id, definitions,
+      profession = profession,
+      faction = misfitFaction,
+      position = location + Vector3(0f, 0f, 1f),
+      angle = angle
+  )
 }
 
-fun newPlayerAndCharacter(nextId: IdSource, definitions: Definitions, grid: MapGrid, cellPosition: Vector3i, profession: ProfessionId): List<IdHand> {
+fun newPlayerAndCharacter(nextId: IdSource, definitions: Definitions, location: Vector3, angle: Float, profession: ProfessionId): List<IdHand> {
   val id = nextId()
-  return newPlayerCharacter(nextId, id, definitions, grid, profession, cellPosition)
+  return newPlayerCharacter(nextId, id, definitions, profession, location, angle)
       .plus(newPlayerIdHand(id))
 }
 
-fun newPlayerCharacters(nextId: IdSource, definitions: Definitions, grid: MapGrid, events: Events): List<IdHand> {
-  val playerStart = getPlayerStart(grid)
+fun newPlayerCharacters(nextId: IdSource, definitions: Definitions, graph: Graph, events: Events): List<IdHand> {
+  val playerStart = getPlayerStart(graph)
   return if (playerStart == null)
     listOf()
   else
     events.filterIsInstance<NewPlayerCharacter>()
         .flatMap { event ->
-          newPlayerCharacter(nextId, event.id, definitions, grid, event.profession, playerStart)
+          newPlayerCharacter(nextId, event.id, definitions, event.profession, playerStart.translation(), playerStart.rotation().z)
         }
 }
 
-fun newPlayerAndCharacter(nextId: IdSource, definitions: Definitions, grid: MapGrid): List<IdHand> {
+fun newPlayerAndCharacter(nextId: IdSource, definitions: Definitions, graph: Graph): List<IdHand> {
   val debugProfession = getDebugProfession()
-  val playerStart = getPlayerStart(grid)
+  val playerStart = getPlayerStart(graph)
   return if (debugProfession != null && playerStart != null)
-    newPlayerAndCharacter(nextId, definitions, grid, playerStart, debugProfession)
+    newPlayerAndCharacter(nextId, definitions, playerStart.translation(), playerStart.rotation().z, debugProfession)
   else
     listOf(newPlayerIdHand(nextId()))
 }

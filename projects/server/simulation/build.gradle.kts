@@ -12,7 +12,7 @@ dependencies {
   api("silentorb.mythic:sculpting")
   api("silentorb.mythic:randomly")
   api("silentorb.mythic:ent")
-  api("silentorb.mythic:ent-spatial")
+  api("silentorb.mythic:ent-scenery")
   api("silentorb.mythic:breeze")
   api("silentorb.mythic:happenings")
   api("silentorb.mythic:physics")

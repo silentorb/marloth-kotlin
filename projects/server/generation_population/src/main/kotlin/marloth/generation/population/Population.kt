@@ -14,10 +14,10 @@ import simulation.misc.lightHandsFromDepictions
 
 fun populateWorld(nextId: IdSource, config: GenerationConfig, graph: Graph): List<IdHand> {
   val definitions = config.definitions
-  val playerCell = getPlayerStart(grid)
+  val playerCell = getPlayerStart(graph)
   val playerCount = getDebugString("INITIAL_PLAYER_COUNT")?.toInt() ?: 1
   val hands = (1..playerCount)
-      .flatMap { newPlayerAndCharacter(nextId, definitions, grid) }
+      .flatMap { newPlayerAndCharacter(nextId, definitions, graph) }
 //      .plus(populateRooms(config, nextId, input.dice, grid))
       .plus(listOf(
           IdHand(

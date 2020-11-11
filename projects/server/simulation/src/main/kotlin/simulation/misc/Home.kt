@@ -3,8 +3,8 @@ package simulation.misc
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.firstOrNullWithAttribute
-import silentorb.mythic.ent.spatial.getTransform
-import silentorb.mythic.scenery.Properties
+import silentorb.mythic.ent.scenery.getTransform
+import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
 import simulation.main.Deck
@@ -20,10 +20,10 @@ fun isAtHome(grid: MapGrid, deck: Deck): (Id) -> Boolean = { id ->
 fun getPlayerStart(grid: MapGrid): Vector3i? =
     grid.cells.entries.firstOrNull { it.value.attributes.contains(CellAttribute.home) }?.key ?: Vector3i.zero
 
-fun getPlayerStart(graph: Graph): Vector3? {
+fun getPlayerStart(graph: Graph): Matrix? {
   val spawner = firstOrNullWithAttribute(graph, GameAttributes.playerSpawn)
   return if (spawner != null)
-    getTransform(graph, spawner).translation()
+    getTransform(graph, spawner)
   else
     null
 }

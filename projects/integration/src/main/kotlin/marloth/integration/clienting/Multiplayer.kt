@@ -15,8 +15,7 @@ val updateAppStateForNewPlayers: (AppState) -> AppState = { appState ->
   val devicePlayers = inputState.devicePlayers
   val world = appState.worlds.last()
   val deck = world.deck
-  val realm = world.realm
-  val grid = realm.grid
+  val graph = world.graph
 
   val gamepadJoinCommands = joiningGamepads(deviceState.events, deviceTypeMap)
   if (gamepadJoinCommands.none())
@@ -27,7 +26,7 @@ val updateAppStateForNewPlayers: (AppState) -> AppState = { appState ->
 
     val nextWorld = addEntitiesToWorldDeck(world) { nextId ->
       gamepadJoinCommands.drop(availablePlayers.size)
-          .flatMap { newPlayerAndCharacter(nextId, world.definitions, grid) }
+          .flatMap { newPlayerAndCharacter(nextId, world.definitions, graph) }
     }
     val newPlayers = nextWorld.deck.players.keys.minus(deck.players.keys)
     val playersWithNewGamepads = newPlayers.plus(availablePlayers)
