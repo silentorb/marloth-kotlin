@@ -5,6 +5,7 @@ import silentorb.mythic.ent.Entry
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.LooseGraph
 import java.io.File
+import java.sql.PreparedStatement
 import java.sql.ResultSet
 import javax.sql.DataSource
 
@@ -40,14 +41,33 @@ fun executeSql(db: Database, sql: String) {
   }
 }
 
-fun executeSqlWithStringArguments(db: Database, sql: String, arguments: List<String>) {
+fun executeSql(db: Database, sql: String, prepare: (PreparedStatement) -> Unit) {
   val connection = db.source.connection
   connection.prepareStatement(sql).use { statement ->
+    prepare(statement)
+    statement.execute()
+  }
+}
+
+fun executeSqlWithStringArguments(db: Database, sql: String, arguments: List<String>) {
+  executeSql(db, sql) { statement ->
     var step = 1
     for (argument in arguments) {
       statement.setString(step++, argument)
     }
-    statement.execute()
+  }
+}
+
+fun executeSqlWithArguments(db: Database, sql: String, arguments: List<Any>) {
+  executeSql(db, sql) { statement ->
+    arguments.forEachIndexed { index, argument ->
+      val i = index + 1
+      when (argument) {
+        is String -> statement.setString(i, argument)
+        is Int -> statement.setInt(i, argument)
+        else -> throw Error("Not supported")
+      }
+    }
   }
 }
 
