@@ -39,7 +39,7 @@ typealias NewWorld = (GameApp) -> World
 data class GameApp(
     val platform: Platform,
     val client: Client,
-    val db: Database = newDatabase("game.db"),
+    val db: Database,
     val definitions: Definitions,
     val newWorld: NewWorld
 )
@@ -77,18 +77,20 @@ fun conditionalHooks(): GameHooks? {
 fun newGameApp(platform: Platform, client: Client): GameApp {
   val clientDefinitions = definitionsFromClient(client)
   val definitions = staticDefinitions(clientDefinitions, loadApplicationInfo())
+  val db = newDatabase("game.db")
   return GameApp(
       platform = platform,
       client = client,
       definitions = definitions,
-      newWorld = { gameApp -> generateWorld(definitions, getMeshShapes(gameApp.client.renderer)) }
+      db = db,
+      newWorld = { gameApp -> generateWorld(db, definitions, getMeshShapes(gameApp.client.renderer)) }
   )
 }
 
 fun runApp(platform: Platform, options: AppOptions) {
   platform.display.initialize(toPlatformDisplayConfig(options.display))
   val app = newGameApp(platform, newClient(platform, options.display))
-  val world = generateWorld(app.definitions, getMeshShapes(app.client.renderer))
+  val world = generateWorld(app.db, app.definitions, getMeshShapes(app.client.renderer))
   val state = AppState(
       client = newClientState(options.input, options.audio, platform.display.getDisplayModes()),
       options = options,

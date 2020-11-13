@@ -10,6 +10,9 @@ import marloth.clienting.rendering.loadBlocks
 import marloth.definition.misc.loadMarlothGraphLibrary
 import marloth.generation.population.populateWorld
 import marloth.scenery.enums.MeshShapeMap
+import persistence.Database
+import persistence.persistenceTable
+import persistence.queryEntries
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.debugging.getDebugString
@@ -71,7 +74,7 @@ fun worldFromGraph(generationConfig: GenerationConfig, dice: Dice, graph: Graph)
   return Deck()
 }
 
-fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, input: WorldInput): World {
+fun generateWorld(db: Database, definitions: Definitions, generationConfig: GenerationConfig, input: WorldInput): World {
   val nextId = newIdSource(1)
   val dice = input.dice
 //  val getSpatialNode = compileWorldGenerationCode()
@@ -107,6 +110,8 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
   } else
     null
 
+  val persistence = queryEntries(db, persistenceTable).toSet()
+
   return World(
       graph = graph,
       deck = deck,
@@ -118,14 +123,15 @@ fun generateWorld(definitions: Definitions, generationConfig: GenerationConfig, 
       navigation = navigation,
       bulletState = newBulletState(),
       definitions = definitions,
-      gameModeConfig = newGameModeConfig()
+      gameModeConfig = newGameModeConfig(),
+      persistence = persistence,
   )
 }
 
 fun newGenerationSeed(): Long =
     getDebugString("GENERATION_SEED")?.toLong() ?: System.currentTimeMillis()
 
-fun generateWorld(definitions: Definitions, meshInfo: MeshShapeMap, seed: Long = newGenerationSeed()): World {
+fun generateWorld(db: Database, definitions: Definitions, meshInfo: MeshShapeMap, seed: Long = newGenerationSeed()): World {
   val dice = Dice(seed)
   if (getDebugBoolean("LOG_SEED")) {
     println("Generation seed: ${dice.seed}")
@@ -142,5 +148,5 @@ fun generateWorld(definitions: Definitions, meshInfo: MeshShapeMap, seed: Long =
       boundary,
       dice
   )
-  return generateWorld(definitions, generationConfig, input)
+  return generateWorld(db, definitions, generationConfig, input)
 }

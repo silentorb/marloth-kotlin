@@ -20,7 +20,8 @@ data class World(
     val graph: Graph = newGraph(),
     val bulletState: BulletState,
     val definitions: Definitions,
-    val gameModeConfig: GameModeConfig
+    val gameModeConfig: GameModeConfig,
+    val persistence: Graph,
 )
 
 typealias WorldPair = Pair<World, World>

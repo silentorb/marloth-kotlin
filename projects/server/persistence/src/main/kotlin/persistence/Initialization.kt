@@ -8,7 +8,7 @@ object Rulers {
 }
 
 fun initialHistoricalData(): LooseGraph = listOf(
-    Entry("global", "ruler", Rulers.kingBob)
+    Entry("global", PersistenceProperties.ruler, Rulers.kingBob)
 )
 
 fun initializeDatabaseInfoTable(db: Database) {
@@ -17,7 +17,10 @@ fun initializeDatabaseInfoTable(db: Database) {
 }
 
 fun initializeDatabase(db: Database) {
-  executeSql(db, schemaSql())
-  insertEntries(db, initialHistoricalData())
+  for (tableSql in schemaSql()) {
+    executeSql(db, tableSql)
+  }
+
+  insertEntries(db, "persistence", initialHistoricalData())
   initializeDatabaseInfoTable(db)
 }

@@ -1,6 +1,7 @@
 package persistence
 
 import silentorb.mythic.ent.Entry
+import silentorb.mythic.ent.Graph
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
