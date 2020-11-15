@@ -1,6 +1,7 @@
 package marloth.integration.front
 
 import marloth.clienting.*
+import marloth.definition.data.persistence.initialHistoricalData
 import marloth.definition.staticDefinitions
 import marloth.integration.debug.newDebugHooks
 import marloth.integration.debug.newEditorHooks
@@ -77,7 +78,7 @@ fun conditionalHooks(): GameHooks? {
 fun newGameApp(platform: Platform, client: Client): GameApp {
   val clientDefinitions = definitionsFromClient(client)
   val definitions = staticDefinitions(clientDefinitions, loadApplicationInfo())
-  val db = newDatabase("game.db")
+  val db = newDatabase("game.db", ::initialHistoricalData)
   return GameApp(
       platform = platform,
       client = client,

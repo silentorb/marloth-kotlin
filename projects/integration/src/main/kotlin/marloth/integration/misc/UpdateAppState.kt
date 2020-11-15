@@ -218,7 +218,13 @@ fun updateAppState(app: GameApp): (AppState) -> AppState = { appState ->
     onTimeStep(timestep, steps, appState)
   }
 
-  val layoutBoxes = singleValueCache { source: AppState -> layoutBoxes(app, source) }
+  val layoutBoxes = singleValueCache { source: AppState ->
+    if (appState.client.isEditorActive)
+      mapOf()
+    else
+      layoutBoxes(app, source)
+  }
+
   val nextAppState = updateFixedIntervalSteps(app, layoutBoxes, steps, appState)
       .copy(
           timestep = timestep

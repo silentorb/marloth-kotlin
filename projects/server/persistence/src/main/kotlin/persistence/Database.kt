@@ -13,12 +13,12 @@ data class Database(
     val source: DataSource
 )
 
-fun newDatabase(filepath: String): Database {
+fun newDatabase(filepath: String, initialPersistence: () -> LooseGraph): Database {
   val source = SQLiteDataSource()
   source.url = "jdbc:sqlite:$filepath"
   val db = Database(source)
   if (!File(filepath).exists())
-    initializeDatabase(db)
+    initializeDatabase(db, initialPersistence())
 
   return db
 }

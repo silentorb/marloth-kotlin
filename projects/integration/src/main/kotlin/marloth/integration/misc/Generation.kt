@@ -11,7 +11,6 @@ import marloth.definition.misc.loadMarlothGraphLibrary
 import marloth.generation.population.populateWorld
 import marloth.scenery.enums.MeshShapeMap
 import persistence.Database
-import persistence.persistenceTable
 import persistence.queryEntries
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugInt
@@ -68,10 +67,6 @@ fun generateWorldBlocks(dice: Dice, generationConfig: GenerationConfig): Pair<Bl
   val architectureInput = newArchitectureInput(generationConfig, dice, blockGrid)
   val architectureSource = buildArchitecture(architectureInput, builders)
   return Pair(blockGrid, architectureSource)
-}
-
-fun worldFromGraph(generationConfig: GenerationConfig, dice: Dice, graph: Graph): Deck {
-  return Deck()
 }
 
 fun generateWorld(db: Database, definitions: Definitions, generationConfig: GenerationConfig, input: WorldInput): World {
