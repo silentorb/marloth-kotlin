@@ -1,17 +1,12 @@
 package marloth.integration.clienting
 
 import marloth.clienting.Client
-import marloth.clienting.rendering.createSceneRenderer
-import marloth.clienting.rendering.prepareRender
 import marloth.integration.debug.labRender
-import silentorb.mythic.editing.lookinglass.sceneFromEditorGraph
 import marloth.integration.misc.AppState
 import marloth.integration.scenery.createScene
-import marloth.integration.scenery.defaultLightingConfig
 import silentorb.mythic.bloom.Box
 import silentorb.mythic.bloom.renderLayout
 import silentorb.mythic.debugging.getDebugBoolean
-import silentorb.mythic.editing.panels.defaultViewportId
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.lookinglass.texturing.updateAsyncTextureLoading
@@ -33,11 +28,8 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
         interpolateWorlds(appState.timestep.accumulator, appState.worlds)
 
   if (world != null) {
-    val scenes = if (appState.client.isEditorActive)
-      listOf(sceneFromEditorGraph(getMeshShapes(renderer), appState.client.editor!!, defaultLightingConfig(), defaultViewportId))
-    else
-      appState.client.players
-          .map(createScene(renderer.meshes, world.definitions, world.deck, world.graph))
+    val scenes = appState.client.players
+        .map(createScene(renderer.meshes, world.definitions, world.deck, world.graph))
 
     val viewportIterator = viewports.iterator()
     val boxIterator = boxes.values.iterator()

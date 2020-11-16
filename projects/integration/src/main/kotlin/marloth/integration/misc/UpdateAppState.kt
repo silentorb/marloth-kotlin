@@ -1,6 +1,7 @@
 package marloth.integration.misc
 
 import marloth.clienting.*
+import marloth.clienting.editing.renderEditorViewport
 import marloth.clienting.gui.hud.updateTargeting
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.input.mouseLookEvents
@@ -110,13 +111,8 @@ fun filterCommands(clientState: ClientState): (List<Command>) -> List<Command> =
       }
 }
 
-fun getPlayerViewports(clientState: ClientState, windowDimensions: Vector2i): List<Vector4i> {
-  val editorViewport = clientState.editor?.viewportBoundsMap?.values?.firstOrNull()
-  return if (editorViewport != null)
-    listOf(flipViewport(windowDimensions.y, editorViewport))
-  else
-    getPlayerViewports(clientState.players.size, windowDimensions)
-}
+fun getPlayerViewports(clientState: ClientState, windowDimensions: Vector2i): List<Vector4i> =
+  getPlayerViewports(clientState.players.size, windowDimensions)
 
 fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: ClientState, worlds: List<World>, commands: List<Command>, events: Events): List<World> {
   val world = worlds.last()
@@ -234,7 +230,12 @@ fun updateAppState(app: GameApp): (AppState) -> AppState = { appState ->
     val windowInfo = app.client.getWindowInfo()
     val viewports = getPlayerViewports(appState.client, windowInfo.dimensions)
     val boxes = layoutBoxes(nextAppState)
-    renderMain(app.client, windowInfo, nextAppState, boxes, viewports)
+    val editor = nextAppState.client.editor
+    if (appState.client.isEditorActive && editor != null) {
+      renderEditorViewport(app.client, windowInfo, editor)
+    } else {
+      renderMain(app.client, windowInfo, nextAppState, boxes, viewports)
+    }
   }
 
   syncDisplayOptions(

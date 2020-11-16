@@ -1,0 +1,11 @@
+{
+"graph" : [
+["root","",""],
+["wall","mesh","squareWallDoorway"],
+["wall","collisionShape","mesh"],
+["wall","translation",[5.022894,0.0,0.0]],
+["wall","texture","redTile"],
+["wall","rotation",[0.0,0.0,1.5707964]],
+["wall","parent","root"]
+]
+}

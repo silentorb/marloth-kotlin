@@ -33,11 +33,3 @@ fun newDebugHooks(hooks: GameHooks): GameHooks {
       }
   )
 }
-
-fun newEditorHooks(hooks: GameHooks): GameHooks? =
-    hooks.copy(
-        onRenderPost = { _, appState ->
-          if (appState.client.isEditorActive)
-            renderEditorGui()
-        }
-    )

@@ -8,7 +8,6 @@ import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.scenery.getGraphRoots
-import silentorb.mythic.ent.scenery.nodeToElements
 import silentorb.mythic.ent.scenery.nodesToElements
 import silentorb.mythic.lookinglass.ModelMeshMap
 import silentorb.mythic.lookinglass.SceneLayer
@@ -48,7 +47,7 @@ fun createScene(meshes: ModelMeshMap, definitions: Definitions, deck: Deck, grap
     val roots = getGraphRoots(graph)
     val mainElements = gatherVisualElements(definitions, deck, player, characterRig) +
         if (roots.any())
-          nodesToElements(mapOf(), setOf(), mapOf(), graph)
+          nodesToElements(mapOf(), mapOf(), graph)
         else
           listOf()
 

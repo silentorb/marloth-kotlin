@@ -1,0 +1,18 @@
+{
+"graph" : [
+["floor","parent","root"],
+["floor","mesh","floorSquare"],
+["floor","texture","redTile"],
+["floor","collisionShape","box"],
+["root","",""],
+["start","parent","root"],
+["start","instance","playerSpawn"],
+["start","translation",[0.0,0.0,1.9107323]],
+["wall","parent","root"],
+["wall","collisionShape","mesh"],
+["wall","translation",[5.022894,0.0,0.0]],
+["wall","texture","redTile"],
+["wall","rotation",[0.0,0.0,1.5707964]],
+["wall","mesh","wallSquareShort"]
+]
+}

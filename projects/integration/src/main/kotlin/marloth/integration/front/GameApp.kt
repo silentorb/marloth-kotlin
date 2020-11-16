@@ -4,7 +4,6 @@ import marloth.clienting.*
 import marloth.definition.data.persistence.initialHistoricalData
 import marloth.definition.staticDefinitions
 import marloth.integration.debug.newDebugHooks
-import marloth.integration.debug.newEditorHooks
 import marloth.integration.misc.*
 import persistence.Database
 import persistence.newDatabase
@@ -63,17 +62,11 @@ tailrec fun gameLoop(app: GameApp, state: AppState) {
     gameLoop(app, nextState)
 }
 
-fun conditionalHooks(): GameHooks? {
-  val debugHooks = if (getDebugBoolean("ENABLE_DEBUGGING"))
+fun conditionalHooks(): GameHooks? =
+    if (getDebugBoolean("ENABLE_DEBUGGING"))
     newDebugHooks(GameHooks())
   else
     null
-
-  return if (getDebugBoolean("ENABLE_EDITOR"))
-    newEditorHooks(debugHooks ?: GameHooks())
-  else
-    debugHooks
-}
 
 fun newGameApp(platform: Platform, client: Client): GameApp {
   val clientDefinitions = definitionsFromClient(client)
