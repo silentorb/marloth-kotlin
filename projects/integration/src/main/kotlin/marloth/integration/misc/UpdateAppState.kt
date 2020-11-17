@@ -112,7 +112,7 @@ fun filterCommands(clientState: ClientState): (List<Command>) -> List<Command> =
 }
 
 fun getPlayerViewports(clientState: ClientState, windowDimensions: Vector2i): List<Vector4i> =
-  getPlayerViewports(clientState.players.size, windowDimensions)
+    getPlayerViewports(clientState.players.size, windowDimensions)
 
 fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: ClientState, worlds: List<World>, commands: List<Command>, events: Events): List<World> {
   val world = worlds.last()
@@ -221,7 +221,7 @@ fun updateAppState(app: GameApp): (AppState) -> AppState = { appState ->
       layoutBoxes(app, source)
   }
 
-  val nextAppState = updateFixedIntervalSteps(app, layoutBoxes, steps, appState)
+  var nextAppState = updateFixedIntervalSteps(app, layoutBoxes, steps, appState)
       .copy(
           timestep = timestep
       )
@@ -232,7 +232,16 @@ fun updateAppState(app: GameApp): (AppState) -> AppState = { appState ->
     val boxes = layoutBoxes(nextAppState)
     val editor = nextAppState.client.editor
     if (appState.client.isEditorActive && editor != null) {
-      renderEditorViewport(app.client, windowInfo, editor)
+      val selectionQuery = renderEditorViewport(app.client, windowInfo, editor)
+      if (selectionQuery != editor.selectionQuery) {
+        nextAppState = nextAppState.copy(
+            client = nextAppState.client.copy(
+                editor = editor.copy(
+                    selectionQuery = selectionQuery
+                )
+            )
+        )
+      }
     } else {
       renderMain(app.client, windowInfo, nextAppState, boxes, viewports)
     }

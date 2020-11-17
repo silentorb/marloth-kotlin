@@ -38,7 +38,7 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
       val screenViewport = viewportIterator.next()
       val dimensions = screenViewport.zw()
       val canvas = createCanvas(client.renderer, client.customBloomResources, dimensions)
-      val sceneRenderer = createSceneRenderer(client.renderer, scene, screenViewport)
+      val sceneRenderer = createSceneRenderer(client.renderer, windowInfo, scene, screenViewport)
       val filters = prepareRender(sceneRenderer, scene)
       val idleTime = getIdle(appState.timestep.increment)
       if (getDebugBoolean("RENDER_MARCHING")) {
