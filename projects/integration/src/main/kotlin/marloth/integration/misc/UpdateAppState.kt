@@ -114,8 +114,20 @@ fun filterCommands(clientState: ClientState): (List<Command>) -> List<Command> =
 fun getPlayerViewports(clientState: ClientState, windowDimensions: Vector2i): List<Vector4i> =
     getPlayerViewports(clientState.players.size, windowDimensions)
 
+fun updateWorldGraph(events: Events, graph: Graph): Graph {
+  val setGraphEvent = events.filterIsInstance<ClientEvent>().firstOrNull { it.type == ClientEventType.setWorldGraph }
+  return if (setGraphEvent != null)
+    setGraphEvent.data!! as Graph
+  else
+    graph
+}
+
 fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: ClientState, worlds: List<World>, commands: List<Command>, events: Events): List<World> {
   val world = worlds.last()
+      .copy(
+          graph = updateWorldGraph(events, worlds.last().graph),
+      )
+
   val previous = worlds.takeLast(2).first()
   val gameCommands = filterCommands(clientState)(commands)
       .plus(gatherAdditionalGameCommands(previousClient, clientState))
@@ -133,7 +145,7 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
   val finalWorld = nextWorld.copy(
       deck = nextWorld.deck.copy(
           targets = updateTargeting(nextWorld, app.client, clientState.players, commands, previousClient.commands, nextWorld.deck.targets)
-      )
+      ),
   )
 
   updateSimulationDatabase(app.db, finalWorld, world)

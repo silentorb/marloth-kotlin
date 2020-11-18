@@ -14,6 +14,8 @@ enum class ClientEventType {
   // Display Options Workflow
   saveDisplayChange,
   revertDisplayChanges,
+
+  setWorldGraph,
 }
 
 data class ClientEvent(

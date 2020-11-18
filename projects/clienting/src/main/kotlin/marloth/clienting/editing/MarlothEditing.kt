@@ -1,12 +1,16 @@
 package marloth.clienting.editing
 
 import marloth.clienting.input.GuiCommandType
+import marloth.definition.misc.loadMarlothGraphLibrary
 import simulation.misc.GameAttributes
 import marloth.scenery.enums.MeshId
 import marloth.scenery.enums.TextureId
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.editing.*
+import silentorb.mythic.ent.Graph
+import silentorb.mythic.ent.GraphLibrary
 import silentorb.mythic.ent.reflectProperties
+import silentorb.mythic.ent.scenery.expandInstances
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.resource_loading.getUrlPath
 import java.nio.file.Path
@@ -49,3 +53,19 @@ fun updateEditingActive(commands: Commands, previousIsActive: Boolean): Boolean 
       !previousIsActive
     else
       previousIsActive
+
+fun loadWorldGraph(name: String): Graph {
+  val graphLibrary = loadMarlothGraphLibrary(commonPropertyDefinitions())
+  assert(graphLibrary.contains(name))
+  return expandInstances(graphLibrary, name)
+}
+
+const val defaultWorldScene = "root"
+
+fun expandDefaultWorldGraph(editor: Editor): Graph {
+  val graphLibrary = loadAllDependencies(editor, defaultWorldScene)
+  return expandInstances(graphLibrary, defaultWorldScene)
+}
+
+fun loadDefaultWorldGraph() =
+    loadWorldGraph(defaultWorldScene)

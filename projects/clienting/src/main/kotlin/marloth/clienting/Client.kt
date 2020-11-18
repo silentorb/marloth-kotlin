@@ -3,6 +3,8 @@ package marloth.clienting
 import marloth.clienting.audio.AudioConfig
 import marloth.clienting.audio.updateClientAudio
 import marloth.clienting.editing.editorFonts
+import marloth.clienting.editing.expandDefaultWorldGraph
+import marloth.clienting.editing.loadDefaultWorldGraph
 import marloth.clienting.editing.updateEditingActive
 import marloth.clienting.gui.BloomDefinition
 import marloth.clienting.gui.EventUnion
@@ -202,13 +204,19 @@ fun updateClient(
 
   checkSaveEditor(clientState.editor, nextEditor)
 
+  val nextIsEditorActive = updateEditingActive(commands, clientState.isEditorActive)
+  val editorEvents = if (!nextIsEditorActive && clientState.isEditorActive && nextEditor != null)
+    listOf(ClientEvent(ClientEventType.setWorldGraph, expandDefaultWorldGraph(nextEditor)))
+  else
+    listOf()
+
   return clientState.copy(
       audio = updateClientAudio(client, worlds, clientState.audio),
       input = input,
       guiStates = nextGuiStates,
       commands = commands,
-      events = events,
-      isEditorActive = updateEditingActive(commands, clientState.isEditorActive),
+      events = events + editorEvents,
+      isEditorActive = nextIsEditorActive,
       editor = nextEditor,
   )
 }
