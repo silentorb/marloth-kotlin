@@ -43,4 +43,7 @@ fun loadSounds(audio: PlatformAudio): SoundLibrary =
         .associate { it }
 
 fun updateClientAudio(client: Client, worlds: List<World>, audioState: AudioState) =
-    updateAudioStateSounds(client, worlds.first().deck.sounds, worlds.last().deck.sounds, getListenerPosition(worlds.last().deck))(audioState)
+    if (worlds.size < 2)
+      audioState
+    else
+      updateAudioStateSounds(client, worlds.first().deck.sounds, worlds.last().deck.sounds, getListenerPosition(worlds.last().deck))(audioState)

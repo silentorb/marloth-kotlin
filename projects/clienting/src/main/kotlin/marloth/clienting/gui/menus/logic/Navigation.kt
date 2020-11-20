@@ -14,7 +14,7 @@ fun getMenuReplaceView(events: List<Any>) =
         .filterIsInstance<ClientEvent>()
         .firstOrNull {
           it.type == ClientEventType.menuReplace
-        }?.data as? ViewId
+        }?.value as? ViewId
 
 fun nextView(stack: MenuStack, eventTypes: List<Any>, events: List<Any>, view: ViewId?): ViewId? {
   return when {
@@ -40,7 +40,7 @@ fun nextView(stack: MenuStack, eventTypes: List<Any>, events: List<Any>, view: V
 
     eventTypes.contains(ClientEventType.navigate) -> {
       val command = events.filterIsInstance<ClientEvent>().firstOrNull { it.type == ClientEventType.navigate }
-      command?.data as? ViewId ?: view
+      command?.value as? ViewId ?: view
     }
 
     view == ViewId.chooseProfessionMenu -> null

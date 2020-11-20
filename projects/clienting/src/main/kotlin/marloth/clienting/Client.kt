@@ -4,7 +4,6 @@ import marloth.clienting.audio.AudioConfig
 import marloth.clienting.audio.updateClientAudio
 import marloth.clienting.editing.editorFonts
 import marloth.clienting.editing.expandDefaultWorldGraph
-import marloth.clienting.editing.loadDefaultWorldGraph
 import marloth.clienting.editing.updateEditingActive
 import marloth.clienting.gui.BloomDefinition
 import marloth.clienting.gui.EventUnion
@@ -27,10 +26,12 @@ import silentorb.mythic.aura.newAudioState
 import silentorb.mythic.bloom.*
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.editing.*
+import silentorb.mythic.editing.updating.prepareEditorUpdate
 import silentorb.mythic.editing.updating.updateEditor
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.haft.updateInputDeviceStates
+import silentorb.mythic.happenings.Command
 import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.lookinglass.getMeshShapes
 import silentorb.mythic.lookinglass.mapAnimationInfo
@@ -54,9 +55,6 @@ fun newMarlothBloomState() =
         menuFocusIndex = 0
     )
 
-fun getPlayerBloomState(guiStates: Map<Id, GuiState>, player: Id): GuiState =
-    guiStates.getOrElse(player) { newMarlothBloomState() }
-
 fun newClientState(inputConfig: GameInputConfig, audioConfig: AudioConfig, displayModes: List<DisplayMode>) =
     ClientState(
         input = newInputState(inputConfig),
@@ -70,11 +68,6 @@ fun newClientState(inputConfig: GameInputConfig, audioConfig: AudioConfig, displ
 
 fun playerViews(client: ClientState): Map<Id, ViewId?> =
     client.guiStates.mapValues { it.value.view }
-
-//fun loadTextResource(): TextResources {
-//  val typeref = object : TypeReference<TextResources>() {}
-//  return loadYamlResource("text/english.yaml", typeref)
-//}
 
 fun gatherFontSets() = loadFontSets(baseFonts, TextStyles)
 
@@ -138,7 +131,7 @@ fun gatherUserEvents(
           getMenuItemEvents(boxes, hoverBoxes, playerCommands).map { event ->
             if (event is ClientEvent)
               event.copy(
-                  user = player
+                  target = player
               )
             else
               event
@@ -146,7 +139,7 @@ fun gatherUserEvents(
               (commandsToClientEvents(options, state, playerCommands) + eventsFromGuiState(state))
                   .map { event ->
                     event.copy(
-                        user = player
+                        target = player
                     )
                   }
         } else
@@ -196,16 +189,20 @@ fun updateClient(
 
   val previousEditor = clientState.editor
   val windowInfo = client.getWindowInfo()
-  val nextEditor = if (clientState.isEditorActive && previousEditor != null) {
+  val (nextEditor, editorEvents1) = if (clientState.isEditorActive && previousEditor != null) {
     ensureImGuiIsInitialized(editorFonts, windowInfo.id)
-    updateEditor(deviceStates, previousEditor)
+    val editorCommands = prepareEditorUpdate(deviceStates, previousEditor)
+    val editorEvents = editorCommands
+        .filter { it.type == EditorCommands.playScene }
+        .map { ClientEvent(GuiCommandType.newGame, previousEditor.state.graph) }
+
+    updateEditor(deviceStates, editorCommands, previousEditor) to editorEvents
   } else
-    previousEditor
+    previousEditor to listOf()
 
   checkSaveEditor(clientState.editor, nextEditor)
-
-  val nextIsEditorActive = updateEditingActive(commands, clientState.isEditorActive)
-  val editorEvents = if (!nextIsEditorActive && clientState.isEditorActive && nextEditor != null)
+  val nextIsEditorActive = updateEditingActive(commands + editorEvents1, clientState.isEditorActive)
+  val editorEvents2 = if (!nextIsEditorActive && clientState.isEditorActive && nextEditor != null)
     listOf(ClientEvent(ClientEventType.setWorldGraph, expandDefaultWorldGraph(nextEditor)))
   else
     listOf()
@@ -214,8 +211,8 @@ fun updateClient(
       audio = updateClientAudio(client, worlds, clientState.audio),
       input = input,
       guiStates = nextGuiStates,
-      commands = commands,
-      events = events + editorEvents,
+      commands = commands + editorEvents1 + editorEvents2 + events.filterIsInstance<Command>(),
+      events = events,
       isEditorActive = nextIsEditorActive,
       editor = nextEditor,
   )

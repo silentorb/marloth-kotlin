@@ -1,6 +1,8 @@
 package marloth.integration.front
 
 import marloth.clienting.*
+import marloth.clienting.editing.defaultWorldScene
+import marloth.clienting.editing.loadDefaultWorldGraph
 import marloth.definition.data.persistence.initialHistoricalData
 import marloth.definition.staticDefinitions
 import marloth.integration.debug.newDebugHooks
@@ -9,14 +11,13 @@ import persistence.Database
 import persistence.newDatabase
 import silentorb.mythic.debugging.checkDotEnvChanged
 import silentorb.mythic.debugging.getDebugBoolean
+import silentorb.mythic.lookinglass.Scene
 import silentorb.mythic.lookinglass.SceneRenderer
 import silentorb.mythic.lookinglass.toPlatformDisplayConfig
 import silentorb.mythic.platforming.Platform
 import silentorb.mythic.platforming.WindowInfo
 import silentorb.mythic.quartz.TimestepState
 import silentorb.mythic.quartz.newTimestepState
-import silentorb.mythic.lookinglass.Scene
-import silentorb.mythic.lookinglass.getMeshShapes
 import simulation.main.World
 import simulation.misc.Definitions
 
@@ -34,14 +35,11 @@ data class GameHooks(
     val onClose: SimpleHook? = null
 )
 
-typealias NewWorld = (GameApp) -> World
-
 data class GameApp(
     val platform: Platform,
     val client: Client,
     val db: Database,
     val definitions: Definitions,
-    val newWorld: NewWorld
 )
 
 fun checkSaveOptions(previous: AppOptions, next: AppOptions) {
@@ -64,9 +62,9 @@ tailrec fun gameLoop(app: GameApp, state: AppState) {
 
 fun conditionalHooks(): GameHooks? =
     if (getDebugBoolean("ENABLE_DEBUGGING"))
-    newDebugHooks(GameHooks())
-  else
-    null
+      newDebugHooks(GameHooks())
+    else
+      null
 
 fun newGameApp(platform: Platform, client: Client): GameApp {
   val clientDefinitions = definitionsFromClient(client)
@@ -77,18 +75,22 @@ fun newGameApp(platform: Platform, client: Client): GameApp {
       client = client,
       definitions = definitions,
       db = db,
-      newWorld = { gameApp -> generateWorld(db, definitions, getMeshShapes(gameApp.client.renderer)) }
   )
 }
 
 fun runApp(platform: Platform, options: AppOptions) {
   platform.display.initialize(toPlatformDisplayConfig(options.display))
   val app = newGameApp(platform, newClient(platform, options.display))
-  val world = generateWorld(app.db, app.definitions, getMeshShapes(app.client.renderer))
+  val clientState = newClientState(options.input, options.audio, platform.display.getDisplayModes())
+  val worlds = if (clientState.isEditorActive)
+    listOf()
+  else
+    listOf(newWorld(app, loadDefaultWorldGraph()))
+
   val state = AppState(
-      client = newClientState(options.input, options.audio, platform.display.getDisplayModes()),
+      client = clientState,
       options = options,
-      worlds = listOf(world),
+      worlds = worlds,
       timestep = newTimestepState(),
       hooks = conditionalHooks()
   )

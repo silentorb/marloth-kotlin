@@ -18,22 +18,25 @@ fun characterCommandToEquipmentSlot(type: Any): EquipmentSlot =
 
 fun commandsToEvents(definitions: Definitions, deck: Deck, commands: Commands): Events =
     commands.mapNotNull { command ->
-      val actor = command.target
-      when (command.type) {
-        CharacterCommands.abilityAttack,
-        CharacterCommands.abilityUtility,
-        CharacterCommands.abilityDefense,
-        CharacterCommands.abilityMobility -> {
-          val slot = characterCommandToEquipmentSlot(command.type)
-          val action = getEquippedAction(definitions, deck.accessories, slot, actor)
-          if (action != null) {
-            TryActionEvent(
-                actor = actor,
-                action = action
-            )
-          } else
-            null
+      val actor = command.target as? Long
+      if (actor != null) {
+        when (command.type) {
+          CharacterCommands.abilityAttack,
+          CharacterCommands.abilityUtility,
+          CharacterCommands.abilityDefense,
+          CharacterCommands.abilityMobility -> {
+            val slot = characterCommandToEquipmentSlot(command.type)
+            val action = getEquippedAction(definitions, deck.accessories, slot, actor)
+            if (action != null) {
+              TryActionEvent(
+                  actor = actor,
+                  action = action
+              )
+            } else
+              null
+          }
+          else -> null
         }
-        else -> null
-      }
+      } else
+        null
     }

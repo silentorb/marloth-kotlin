@@ -38,7 +38,7 @@ fun newMobilityModifierEvent(actor: Id, source: Id, duration: Float) =
 fun mobilityEvents(definitions: Definitions, deck: Deck, commands: List<Command>): Events {
   val charactersRequestingMovement = commands
       .filter(::isMobilityCommand)
-      .map { it.target }
+      .mapNotNull { it.target as? Long }
       .distinct()
 
   return charactersRequestingMovement

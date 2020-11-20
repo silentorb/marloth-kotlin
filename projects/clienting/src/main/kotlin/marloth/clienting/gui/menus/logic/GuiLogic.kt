@@ -55,7 +55,7 @@ fun updateGuiState(
 
   if (getDebugBoolean("LOG_CLIENT_EVENTS")) {
     for (event in events) {
-      println("${event.type} ${event.data}")
+      println("${event.type} ${event.value}")
     }
   }
 
@@ -79,5 +79,5 @@ fun updateGuiState(
   val playerEvents = commands.filter { it.target == player }
   val state = bloomStates[player] ?: newMarlothBloomState()
   val hoverBoxes = getHoverBoxes(mousePosition, boxes[player]!!)
-  return updateGuiState(options, deck, state, bloomDefinition, hoverBoxes, playerEvents, events.filter { it.user == player }, player)
+  return updateGuiState(options, deck, state, bloomDefinition, hoverBoxes, playerEvents, events.filter { it.target == player }, player)
 }

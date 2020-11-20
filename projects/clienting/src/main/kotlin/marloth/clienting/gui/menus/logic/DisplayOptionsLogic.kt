@@ -29,15 +29,15 @@ fun updateStagingDisplayOptions(options: DisplayOptions, event: ClientEvent): Di
     when (event.type) {
 
       ClientEventType.setStagingWindowMode -> options.copy(
-          windowMode = event.data as? WindowMode ?: options.windowMode
+          windowMode = event.value as? WindowMode ?: options.windowMode
       )
 
       ClientEventType.setStagingWindowedResolution -> options.copy(
-          windowedResolution = event.data as? Vector2i ?: options.windowedResolution
+          windowedResolution = event.value as? Vector2i ?: options.windowedResolution
       )
 
       ClientEventType.setStagingFullscreenResolution -> options.copy(
-          fullscreenResolution = event.data as? Vector2i ?: options.fullscreenResolution
+          fullscreenResolution = event.value as? Vector2i ?: options.fullscreenResolution
       )
 
       else -> options

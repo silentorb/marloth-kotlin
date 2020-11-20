@@ -58,7 +58,7 @@ fun generateWorld(db: Database, definitions: Definitions, generationConfig: Gene
 fun newGenerationSeed(): Long =
     getDebugString("GENERATION_SEED")?.toLong() ?: System.currentTimeMillis()
 
-fun generateWorld(db: Database, definitions: Definitions, meshInfo: MeshShapeMap, graph: Graph = loadDefaultWorldGraph(), seed: Long = newGenerationSeed()): World {
+fun generateWorld(db: Database, definitions: Definitions, meshInfo: MeshShapeMap, graph: Graph, seed: Long = newGenerationSeed()): World {
   val dice = Dice(seed)
   if (getDebugBoolean("LOG_SEED")) {
     println("Generation seed: ${dice.seed}")

@@ -1,5 +1,7 @@
 package marloth.clienting
 
+import silentorb.mythic.happenings.Command
+
 enum class ClientEventType {
 
   menuBack,
@@ -18,8 +20,10 @@ enum class ClientEventType {
   setWorldGraph,
 }
 
-data class ClientEvent(
-    val type: Any,
-    val data: Any? = null,
-    val user: Any? = null
-)
+//data class ClientEvent(
+//    val type: Any,
+//    val value: Any? = null,
+//    val target: Any? = null
+//)
+
+typealias ClientEvent = Command

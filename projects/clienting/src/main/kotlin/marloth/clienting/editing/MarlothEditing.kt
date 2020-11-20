@@ -49,10 +49,11 @@ fun newEditor(): Editor {
 }
 
 fun updateEditingActive(commands: Commands, previousIsActive: Boolean): Boolean =
-    if (commands.any { it.type == GuiCommandType.editor })
-      !previousIsActive
-    else
-      previousIsActive
+    when {
+      commands.any { it.type == GuiCommandType.editor } -> !previousIsActive
+      commands.any { it.type == GuiCommandType.newGame } -> false
+      else -> previousIsActive
+    }
 
 fun loadWorldGraph(name: String): Graph {
   val graphLibrary = loadMarlothGraphLibrary(commonPropertyDefinitions())
@@ -62,10 +63,13 @@ fun loadWorldGraph(name: String): Graph {
 
 const val defaultWorldScene = "root"
 
-fun expandDefaultWorldGraph(editor: Editor): Graph {
-  val graphLibrary = loadAllDependencies(editor, defaultWorldScene)
-  return expandInstances(graphLibrary, defaultWorldScene)
+fun expandWorldGraph(editor: Editor, scene: String): Graph {
+  val graphLibrary = loadAllDependencies(editor, scene)
+  return expandInstances(graphLibrary, scene)
 }
+
+fun expandDefaultWorldGraph(editor: Editor): Graph =
+    expandWorldGraph(editor, defaultWorldScene)
 
 fun loadDefaultWorldGraph() =
     loadWorldGraph(defaultWorldScene)

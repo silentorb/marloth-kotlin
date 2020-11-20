@@ -79,27 +79,6 @@ fun getInputProfile(inputState: InputState, player: Id): InputProfile? {
 fun isStroke(context: InputContext, type: Any): Boolean =
     commandStrokes[context]!!.contains(type)
 
-fun getBinding(inputState: InputState, playerViews: PlayerViews): BindingSource = { event ->
-  val player = inputState.devicePlayers[event.device]
-  val device = inputState.deviceTypeMap[event.device]
-  if (player != null && device != null) {
-    val profile = getInputProfile(inputState, player)
-    if (profile != null) {
-      val inputContext = bindingContext(playerViews, player)
-      val strokes = commandStrokes[inputContext] ?: setOf()
-      val binding = profile.bindings
-          .getValue(inputContext)
-          .firstOrNull { it.device == device && it.trigger == event.index }
-      if (binding != null)
-        Triple(binding, player, strokes.contains(binding.command))
-      else
-        null
-    } else
-      null
-  } else
-    null
-}
-
 fun isMouseDown(deviceStates: List<InputDeviceState>): Boolean =
     deviceStates.any { state -> state.events.any { it.device == mouseDeviceIndex && it.index == 0 } }
 
@@ -121,10 +100,37 @@ fun getMouseEvents(player: Id, previous: List<InputDeviceState>, next: List<Inpu
           null,
     )
 
+fun gatherInputCommandsWithoutPlayers(deviceStates: List<InputDeviceState>): Commands {
+  val bindings = defaultGameInputBindings()
+  val strokes = commandStrokes[InputContext.menu] ?: setOf()
+  return mapInputToCommands(strokes, bindings, deviceStates)
+}
+
+fun gatherInputCommandsForPlayers(inputState: InputState, playerViews: PlayerViews): Commands =
+    playerViews
+        .flatMap { (player, view) ->
+          val profile = getInputProfile(inputState, player)
+          if (profile == null)
+            listOf()
+          else {
+            val inputContext = bindingContext(playerViews, player)
+            val strokes = commandStrokes[inputContext] ?: setOf()
+            val bindings = profile.bindings[inputContext] ?: listOf()
+            mapInputToCommands(strokes, bindings, inputState.deviceStates)
+                .map { command ->
+                  command.copy(
+                      target = player
+                  )
+                }
+          }
+        }
+
 fun gatherInputCommands(previous: InputState, next: InputState, playerViews: PlayerViews): Commands {
-  val getBinding = getBinding(next, playerViews)
   val deviceStates = next.deviceStates
-  val commands = mapEventsToCommandsOld(deviceStates, getBinding)
+  val commands = if (playerViews.none())
+    gatherInputCommandsWithoutPlayers(deviceStates)
+  else
+    gatherInputCommandsForPlayers(next, playerViews)
 
   val firstPlayer = playerViews.keys.firstOrNull()
   val mouseCommands = if (firstPlayer != null)

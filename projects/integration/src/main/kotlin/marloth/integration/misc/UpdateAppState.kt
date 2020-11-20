@@ -1,6 +1,7 @@
 package marloth.integration.misc
 
 import marloth.clienting.*
+import marloth.clienting.editing.defaultWorldScene
 import marloth.clienting.editing.renderEditorViewport
 import marloth.clienting.gui.hud.updateTargeting
 import marloth.clienting.input.GuiCommandType
@@ -23,7 +24,6 @@ import silentorb.mythic.bloom.Box
 import silentorb.mythic.bloom.toAbsoluteBoundsRecursive
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.incrementGlobalDebugLoopNumber
-import silentorb.mythic.drawing.flipViewport
 import silentorb.mythic.ent.*
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Events
@@ -35,7 +35,6 @@ import silentorb.mythic.spatial.Vector4i
 import simulation.entities.Player
 import simulation.happenings.withSimulationEvents
 import simulation.main.World
-import simulation.misc.Victory
 import simulation.updating.simulationDelta
 import simulation.updating.updateWorld
 
@@ -50,41 +49,22 @@ fun updateSimulationDatabase(db: Database, next: World, previous: World) {
   }
 }
 
-//fun updateCurrentViews(world: World, playerViews: MarlothBloomStateMap): MarlothBloomStateMap {
-//  val deck = world.deck
-////  val newEntries = deck.players.keys.mapNotNull { player ->
-////    val interactingWith = getPlayerInteractingWith(deck, player)
-////    val view = when {
-////
-////      world.global.gameOver != null -> ViewId.victory
-////
-////      interactingWith != null -> selectInteractionView(deck, interactingWith)
-////
-////      else -> null
-////    }
-////    if (view != null)
-////      Pair(player, view)
-////    else null
-////  }
-////      .associate { it }
-////
-////  return playerViews.plus(newEntries)
-//  return playerViews
-//}
-
 fun updateClientPlayers(deckPlayers: Table<Player>): (List<Id>) -> List<Id> = { clientPlayers ->
   clientPlayers.plus(deckPlayers.keys.minus(clientPlayers))
 }
 
-fun updateClientFromWorld(worlds: List<World>): (ClientState) -> ClientState = { clientState ->
-  val world = worlds.last()
+fun updateClientFromWorld(worlds: List<World>, clientState: ClientState): ClientState {
+  val world = worlds.lastOrNull()
 
-  clientState.copy(
-      players = if (clientState.commands.any { it.type == GuiCommandType.newGame })
-        listOf()
-      else
-        updateClientPlayers(world.deck.players)(clientState.players)
-  )
+  return if (world == null)
+    clientState
+  else
+    clientState.copy(
+        players = if (clientState.commands.any { it.type == GuiCommandType.newGame })
+          listOf()
+        else
+          updateClientPlayers(world.deck.players)(clientState.players)
+    )
 }
 
 fun gatherAdditionalGameCommands(previousClient: ClientState, clientState: ClientState): List<Command> {
@@ -117,7 +97,7 @@ fun getPlayerViewports(clientState: ClientState, windowDimensions: Vector2i): Li
 fun updateWorldGraph(events: Events, graph: Graph): Graph {
   val setGraphEvent = events.filterIsInstance<ClientEvent>().firstOrNull { it.type == ClientEventType.setWorldGraph }
   return if (setGraphEvent != null)
-    setGraphEvent.data!! as Graph
+    setGraphEvent.value!! as Graph
   else
     graph
 }
@@ -164,6 +144,30 @@ fun updateWorlds(app: GameApp, previousClient: ClientState, clientState: ClientS
   updateSimulation(app, previousClient, clientState, worlds, commands, gameEvents)
 }
 
+fun checkRestartGame(app: GameApp, appState: AppState, clientState: ClientState): AppState? {
+  val newGameCommand = clientState.commands
+      .firstOrNull { it.type == GuiCommandType.newGame }
+
+  return if (newGameCommand != null) {
+    val scene = newGameCommand.value as? String ?: defaultWorldScene
+    restartGame(app, appState.copy(client = clientState), scene)
+  } else
+    null
+}
+
+fun updateAppStateWorlds(app: GameApp, appState: AppState, clientState: ClientState): AppState {
+  val worlds = if (appState.worlds.none() || getDebugBoolean("PAUSE_SIMULATION"))
+    appState.worlds
+  else
+    updateWorlds(app, appState.client, clientState)(appState.worlds)
+
+  return appState.copy(
+      client = updateClientFromWorld(worlds, clientState),
+      worlds = worlds,
+      options = updateAppOptions(clientState, appState.options)
+  )
+}
+
 fun updateFixedInterval(app: GameApp, boxes: PlayerBoxes, playerBloomDefinitions: Map<Id, BloomDefinition>): (AppState) -> AppState =
     pipe(
         { appState ->
@@ -176,20 +180,8 @@ fun updateFixedInterval(app: GameApp, boxes: PlayerBoxes, playerBloomDefinitions
               playerBloomDefinitions,
               appState.client
           )
-          if (clientState.events.filterIsInstance<ClientEvent>().any { it.type == GuiCommandType.newGame })
-            restartGame(app, appState)
-          else {
-            val worlds = if (getDebugBoolean("PAUSE_SIMULATION") && appState.worlds.size > 1)
-              appState.worlds
-            else
-              updateWorlds(app, appState.client, clientState)(appState.worlds)
 
-            appState.copy(
-                client = updateClientFromWorld(worlds)(clientState),
-                worlds = worlds,
-                options = updateAppOptions(clientState, appState.options)
-            )
-          }
+          checkRestartGame(app, appState, clientState) ?: updateAppStateWorlds(app, appState, clientState)
         },
         updateAppStateForFirstNewPlayer,
         updateAppStateForNewPlayers
