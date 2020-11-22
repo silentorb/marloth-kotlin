@@ -2,7 +2,6 @@ package marloth.clienting.editing
 
 import marloth.clienting.input.GuiCommandType
 import marloth.definition.misc.loadMarlothGraphLibrary
-import simulation.misc.GameAttributes
 import marloth.scenery.enums.MeshId
 import marloth.scenery.enums.TextureId
 import silentorb.mythic.debugging.getDebugString
@@ -11,6 +10,8 @@ import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.expandInstances
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.resource_loading.getUrlPath
+import simulation.misc.GameAttributes
+import simulation.physics.CollisionGroups
 import java.nio.file.Path
 
 val editorFonts = listOf(
@@ -26,6 +27,11 @@ const val worldResourcePath = "world"
 fun getMarlothEditorAttributes(): List<String> =
     commonEditorAttributes() + reflectProperties(GameAttributes)
 
+fun marlothCollisionPresets(): Map<Int, String> =
+    reflectPropertiesMap<Int>(CollisionGroups)
+        .map { it.value to it.key }
+        .associate { it }
+
 fun newEditor(): Editor {
   val debugProjectPath = getDebugString("EDITOR_PROJECT_PATH")
   val projectPath = if (debugProjectPath != null)
@@ -40,6 +46,7 @@ fun newEditor(): Editor {
           textures = reflectProperties(TextureId),
           attributes = getMarlothEditorAttributes(),
           meshes = reflectProperties(MeshId),
+          collisionPresets = marlothCollisionPresets()
       ),
       fileItems = loadProjectTree(projectPath, "world"),
       state = loadEditorStateOrDefault(),

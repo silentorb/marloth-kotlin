@@ -39,8 +39,8 @@ fun updateBodies(grid: MapGrid, deck: Deck, events: Events, delta: Float): (Id, 
 //        && body.velocity.length() < 0.1f
     ) {
 //      println(System.currentTimeMillis())
-//      body.velocity
-      Vector3.zero
+      body.velocity * 0.9f
+//      Vector3.zero
     } else
       body.velocity
 

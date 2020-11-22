@@ -13,7 +13,7 @@ object Professions {
       health = 200,
       accessories = listOf(AccessoryId.shotgun, AccessoryId.graveDigger),
       depictionType = DepictionType.child,
-      speed = 5f,
+        speed = 5f,
       deathSound = SoundId.girlScream,
       damageMultipliers = mapOf()
   )
@@ -23,7 +23,7 @@ object Professions {
       health = 200,
       accessories = listOf(AccessoryId.rocketLauncher, AccessoryId.entangle),
       depictionType = DepictionType.child,
-      speed = 8f,
+      speed = 12f,
       deathSound = SoundId.girlScream,
       damageMultipliers = mapOf()
   )
@@ -35,7 +35,7 @@ private val debug = CharacterDefinition(
     health = 20000,
     accessories = listOf(AccessoryId.rocketLauncher),
     depictionType = DepictionType.child,
-    speed = 8f,
+    speed = 16f,
     deathSound = SoundId.girlScream,
     damageMultipliers = mapOf()
 )

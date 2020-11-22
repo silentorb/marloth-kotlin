@@ -3,6 +3,7 @@ package marloth.integration.debug
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw
 import com.badlogic.gdx.utils.Disposable
 import marloth.integration.front.RenderSceneHook
+import silentorb.mythic.debugging.getDebugFloat
 import silentorb.mythic.glowing.globalState
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector4
@@ -28,7 +29,7 @@ class BulletDebugDrawer : btIDebugDraw(), Disposable {
   }
 
   override fun drawLine(from: GdxVector3, to: GdxVector3, color: GdxVector3) {
-    if (manhattanDistance(origin, toVector3(from)) > 30f)
+    if (manhattanDistance(origin, toVector3(from)) > getDebugFloat("DRAW_PHYSICS_MAX_DISTANCE") ?: 30f)
       return
 
     val c = toVector3(color)

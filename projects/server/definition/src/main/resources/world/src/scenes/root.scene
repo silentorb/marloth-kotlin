@@ -2,8 +2,11 @@
 "graph" : [
 ["floor","parent","root"],
 ["floor","mesh","floorSquare"],
-["floor","translation",[-9.325582,0.28964093,-0.34977442]],
 ["floor","collisionShape","box"],
+["floor","collisionGroups",16],
+["floor","scale",[6.489331,12.687749,14.6972065]],
+["floor","translation",[-8.624502,-0.08203608,-7.924655]],
+["floor","collisionMask",6],
 ["home","parent","root"],
 ["home","instance","home"],
 ["root","",""],

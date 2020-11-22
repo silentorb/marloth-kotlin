@@ -97,7 +97,8 @@ fun updateCharacterStepHeight(
   }
 }
 
-fun isGrounded(characterRig: CharacterRig) = characterRig.groundDistance <= characterGroundBuffer
+fun isGrounded(characterRig: CharacterRig) =
+    characterRig.groundDistance <= characterGroundBuffer
 
 fun updateCharacterRigBulletBody(bulletState: BulletState): (Id, CharacterRig) -> Unit = { id, characterRig ->
   val groundDistance = characterRig.groundDistance

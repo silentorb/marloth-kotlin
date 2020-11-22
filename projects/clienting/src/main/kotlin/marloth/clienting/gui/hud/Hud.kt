@@ -145,12 +145,11 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
     val cell = getPointCell(body.position)
     val debugInfo = listOfNotNull(
 //            "LR: ${floatToRoundedString(lightRating(deck, player))}",
-//            floatToRoundedString(body.velocity.length()),
+        if (getDebugBoolean("HUD_DRAW_PLAYER_VELOCITY")) "Velocity: ${floatToRoundedString(body.velocity.length())}" else null,
         "Keys: ${victoryKeyStats.collected}/${victoryKeyStats.total}",
 //            floatToRoundedString(deck.thirdPersonRigs[player]!!.rotation.x)
 //            deck.characterRigs[player]!!.hoverCamera!!.pitch.toString()
         if (getDebugString() != "") getDebugString() else null,
-        if (getDebugBoolean("HUD_DRAW_CELL_LOCATION")) "${cell.x} ${cell.y} ${cell.z}" else null,
         if (getDebugBoolean("HUD_DRAW_LOCATION"))
           "${floatToRoundedString(body.position.x)} ${floatToRoundedString(body.position.y)} ${floatToRoundedString(body.position.z)}"
         else

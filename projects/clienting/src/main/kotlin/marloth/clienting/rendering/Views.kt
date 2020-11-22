@@ -24,9 +24,15 @@ fun emptyCamera() =
         defaultAngle
     )
 
+fun debugThirdPersonCameraOffset(orientation: Quaternion) =
+    if (getDebugBoolean("THIRD_PERSON_CAMERA"))
+      orientation.transform(Vector3(-4f, 0f, -1f))
+    else
+      Vector3.zero
+
 fun firstPersonCamera(body: Body, character: CharacterRig): Camera = Camera(
     ProjectionType.perspective,
-    body.position + firstPersonCameraOffset,
+    body.position + firstPersonCameraOffset + debugThirdPersonCameraOffset(character.facingOrientation),
     character.facingOrientation,
     defaultAngle
 )
