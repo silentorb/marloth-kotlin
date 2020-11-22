@@ -45,14 +45,14 @@ fun newPlayerAndCharacter(nextId: IdSource, definitions: Definitions, location: 
 }
 
 fun newPlayerCharacters(nextId: IdSource, definitions: Definitions, graph: Graph, events: Events): List<IdHand> {
-  val playerStart = getPlayerStart(graph)
-  return if (playerStart == null)
-    listOf()
-  else
-    events.filterIsInstance<NewPlayerCharacter>()
-        .flatMap { event ->
+  return events.filterIsInstance<NewPlayerCharacter>()
+      .flatMap { event ->
+        val playerStart = getPlayerStart(graph)
+        if (playerStart == null)
+          listOf()
+        else
           newPlayerCharacter(nextId, event.id, definitions, event.profession, playerStart.translation(), playerStart.rotation().z)
-        }
+      }
 }
 
 fun newPlayerAndCharacter(nextId: IdSource, definitions: Definitions, graph: Graph): List<IdHand> {

@@ -7,9 +7,7 @@ import marloth.scenery.enums.MeshId
 import marloth.scenery.enums.TextureId
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.editing.*
-import silentorb.mythic.ent.Graph
-import silentorb.mythic.ent.GraphLibrary
-import silentorb.mythic.ent.reflectProperties
+import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.expandInstances
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.resource_loading.getUrlPath
@@ -55,17 +53,27 @@ fun updateEditingActive(commands: Commands, previousIsActive: Boolean): Boolean 
       else -> previousIsActive
     }
 
+fun filterOutEditorOnlyNodes(graph: Graph): Graph {
+  val editorOnlyNodes = filterByAttribute(graph, CommonEditorAttributes.editorOnly)
+  return graph
+      .filter { !editorOnlyNodes.contains(it.source) }
+      .toSet()
+}
+
+fun expandGameInstances(graphs: GraphLibrary, name: String): Graph =
+    filterOutEditorOnlyNodes(expandInstances(graphs, name))
+
 fun loadWorldGraph(name: String): Graph {
   val graphLibrary = loadMarlothGraphLibrary(commonPropertyDefinitions())
   assert(graphLibrary.contains(name))
-  return expandInstances(graphLibrary, name)
+  return expandGameInstances(graphLibrary, name)
 }
 
 const val defaultWorldScene = "root"
 
 fun expandWorldGraph(editor: Editor, scene: String): Graph {
   val graphLibrary = loadAllDependencies(editor, scene)
-  return expandInstances(graphLibrary, scene)
+  return expandGameInstances(graphLibrary, scene)
 }
 
 fun expandDefaultWorldGraph(editor: Editor): Graph =

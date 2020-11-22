@@ -4,7 +4,6 @@
 ["label","attribute","editorOnly"],
 ["label","text3d","Player"],
 ["root","",""],
-["root","attribute","playerSpawn"],
-["root","attribute","editorOnly"]
+["root","attribute","playerSpawn"]
 ]
 }

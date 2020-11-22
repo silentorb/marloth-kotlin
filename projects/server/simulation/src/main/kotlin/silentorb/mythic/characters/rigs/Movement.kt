@@ -1,5 +1,6 @@
 package silentorb.mythic.characters.rigs
 
+import silentorb.mythic.cameraman.characterMovementVector
 import silentorb.mythic.cameraman.playerMoveMap
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
@@ -26,7 +27,7 @@ fun characterMovement(commands: Commands, characterRig: CharacterRig, thirdPerso
   else
     hoverCameraOrientationZ(thirdPersonRig!!)
 
-  val offset = silentorb.mythic.cameraman.characterMovementVector(commands, orientation)
+  val offset = characterMovementVector(commands, orientation)
   return if (offset != null)
     CharacterRigMovement(actor = id, offset = offset)
   else

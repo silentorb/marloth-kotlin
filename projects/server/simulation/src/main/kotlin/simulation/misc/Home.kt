@@ -2,6 +2,7 @@ package simulation.misc
 
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.filterByAttribute
 import silentorb.mythic.ent.firstOrNullWithAttribute
 import silentorb.mythic.ent.scenery.getNodeTransform
 import silentorb.mythic.spatial.Matrix
@@ -20,7 +21,8 @@ fun getPlayerStart(grid: MapGrid): Vector3i? =
     grid.cells.entries.firstOrNull { it.value.attributes.contains(CellAttribute.home) }?.key ?: Vector3i.zero
 
 fun getPlayerStart(graph: Graph): Matrix? {
-  val spawner = firstOrNullWithAttribute(graph, GameAttributes.playerSpawn)
+  val spawners = filterByAttribute(graph, GameAttributes.playerSpawn)
+  val spawner = spawners.minByOrNull { path -> path.count { it == '.' } }
   return if (spawner != null)
     getNodeTransform(graph, spawner)
   else

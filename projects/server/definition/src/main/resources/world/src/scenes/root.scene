@@ -1,5 +1,9 @@
 {
 "graph" : [
+["floor","parent","root"],
+["floor","mesh","floorSquare"],
+["floor","translation",[-9.325582,0.28964093,-0.34977442]],
+["floor","collisionShape","box"],
 ["home","parent","root"],
 ["home","instance","home"],
 ["root","",""],
