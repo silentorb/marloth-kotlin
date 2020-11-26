@@ -13,7 +13,7 @@
 ### Dungeons and Dragons
 
 * D&D is composed of many systems
-* These systems have minimal relationships with each other
+* These systems are non-orthogonal
 * These systems allow for minimal composition
 
 ### The Example of Lock Picking
@@ -56,7 +56,7 @@
   * Maximize composition *across systems*
   * Be easy for players to learn, remember, and reason about
   * Be easy to communicate via UI and for players to interact with
-* For a real-time 3D game, spatial reality is the most universal system that other system integrations will need to utilize and comply with
+* For a real-time 3D game, spatial reality is the most universal system that other system integrations need to utilize and comply with
 
 ### Framework
 
