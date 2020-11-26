@@ -1,10 +1,10 @@
 {
 "graph" : [
 ["root","",""],
-["wall","mesh","squareWallDoorway"],
-["wall","collisionShape","mesh"],
-["wall","texture","redTile"],
-["wall","parent","root"],
-["wall","rotation",[0.0,0.0,1.5707964]]
+["root","mesh","squareWallDoorway"],
+["root","texture","redTile"],
+["root","rotation",[0.0,0.0,1.5707964]],
+["root","collisionShape","mesh"],
+["root","instance","walkable"]
 ]
 }
