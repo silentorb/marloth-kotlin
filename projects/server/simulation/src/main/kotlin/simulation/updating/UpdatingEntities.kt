@@ -38,7 +38,7 @@ fun updateEntities(definitions: Definitions, world: World, navigation: Navigatio
           ambientSounds = updateAmbientAudio(definitions, dice, deck),
           animations = mapTable(deck.animations, updateCharacterAnimation(deck, definitions.animations, delta)),
           bodies = mapTable(deck.bodies, updateBodies(world.realm.grid, deck, events, delta)),
-          characterRigs = mapTable(deck.characterRigs, updateCharacterRig(world.bulletState, CollisionGroups.walkable, deck, freedomTable, events, delta)),
+          characterRigs = mapTable(deck.characterRigs, updateCharacterRig(world.bulletState, CollisionGroups.static, deck, freedomTable, events, delta)),
           accessories = mapTable(deck.accessories, updateAccessory(definitions, events)),
           attachments = mapTable(deck.attachments, updateAttachment(events)),
           cyclesFloat = mapTableValues(deck.cyclesFloat, updateFloatCycle(delta)),

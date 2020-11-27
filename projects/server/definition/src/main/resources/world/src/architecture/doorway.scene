@@ -5,6 +5,6 @@
 ["root","texture","redTile"],
 ["root","rotation",[0.0,0.0,1.5707964]],
 ["root","collisionShape","mesh"],
-["root","instance","walkable"]
+["root","instance","solid-static"]
 ]
 }

@@ -27,7 +27,7 @@ fun newMeshHand(meshes: MeshInfoMap, meshName: MeshName): Hand {
       collisionShape = if (shape != null)
         CollisionObject(
             shape = shape,
-            groups = CollisionGroups.static or CollisionGroups.affectsCamera or CollisionGroups.walkable,
+            groups = CollisionGroups.solidStatic,
             mask = CollisionGroups.staticMask
         )
       else

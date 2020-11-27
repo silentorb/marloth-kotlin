@@ -55,7 +55,7 @@ fun newArchitectureMesh(meshes: MeshInfoMap, depiction: Depiction, position: Vec
       collisionShape = if (shape != null)
         CollisionObject(
             shape = shape,
-            groups = CollisionGroups.static or CollisionGroups.affectsCamera or CollisionGroups.walkable,
+            groups = CollisionGroups.solidStatic,
             mask = CollisionGroups.staticMask
         )
       else

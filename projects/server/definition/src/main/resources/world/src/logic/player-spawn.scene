@@ -1,9 +1,9 @@
 {
 "graph" : [
 ["label","parent","root"],
-["label","attribute","editorOnly"],
+["label","instance","editorOnly"],
 ["label","text3d","Player"],
 ["root","",""],
-["root","attribute","playerSpawn"]
+["root","instance","playerSpawn"]
 ]
 }
