@@ -105,7 +105,7 @@ fun updateWorldGraph(events: Events, graph: Graph): Graph {
 fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: ClientState, worlds: List<World>, commands: List<Command>, events: Events): List<World> {
   val world = worlds.last()
       .copy(
-          graph = updateWorldGraph(events, worlds.last().graph),
+          staticGraph = updateWorldGraph(events, worlds.last().staticGraph),
       )
 
   val previous = worlds.takeLast(2).first()

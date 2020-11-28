@@ -2,9 +2,7 @@ package marloth.integration.misc
 
 import generation.architecture.engine.GenerationConfig
 import generation.architecture.engine.compileArchitectureMeshInfo
-import marloth.clienting.editing.loadDefaultWorldGraph
 import marloth.clienting.rendering.loadBlocks
-import marloth.definition.misc.loadMarlothGraphLibrary
 import marloth.generation.population.populateWorld
 import marloth.scenery.enums.MeshShapeMap
 import persistence.Database
@@ -12,10 +10,8 @@ import persistence.queryEntries
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.debugging.getDebugString
-import silentorb.mythic.editing.commonPropertyDefinitions
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.newIdSource
-import silentorb.mythic.ent.scenery.expandInstances
 import silentorb.mythic.physics.newBulletState
 import silentorb.mythic.randomly.Dice
 import simulation.intellect.navigation.newNavigationState
@@ -40,7 +36,7 @@ fun generateWorld(db: Database, definitions: Definitions, generationConfig: Gene
   val persistence = queryEntries(db, persistenceTable).toSet()
 
   return World(
-      graph = graph,
+      staticGraph = graph,
       deck = deck,
       realm = Realm(grid = MapGrid()),
       nextId = nextId(),

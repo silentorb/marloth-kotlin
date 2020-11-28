@@ -43,7 +43,7 @@ fun updateDeck(definitions: Definitions, events: Events, world: World,
         removeWhole(world.definitions.soundDurations, events, world.deck),
         removePartial(events, world.deck),
         cleanOutdatedReferences,
-        newEntities(definitions, world.graph, world.deck, events, nextId)
+        newEntities(definitions, world.staticGraph, world.deck, events, nextId)
     )
 
 fun updateWorld(definitions: Definitions, events: Events, delta: Float, world: World): World {

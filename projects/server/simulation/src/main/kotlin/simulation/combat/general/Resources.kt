@@ -1,10 +1,24 @@
 package simulation.combat.general
 
+import silentorb.mythic.ent.AnyGraph
+import silentorb.mythic.ent.filterByAttribute
+import simulation.misc.GameAttributes
+
 typealias ResourceType = String
 
 typealias ResourceMap = Map<ResourceType, Int>
 
 val emptyResourceMap: ResourceMap = mapOf()
+
+object ResourceTypes {
+  val injury = "injury"
+  val energy = "energy"
+  val sanity = "sanity"
+  val money = "money"
+}
+
+fun getResources(graph: AnyGraph): List<Any> =
+    filterByAttribute(graph, GameAttributes.resource)
 
 data class ResourceContainer(
     val value: Int,

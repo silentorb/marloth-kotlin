@@ -40,10 +40,10 @@ fun newTreasureChest(meshInfo: MeshInfoMap, position: Vector3, amount: Int): Han
               action = TakeItem()
           )
       ),
-      resources = ResourceBundle(
-          values = mapOf(
-              ResourceId.money.name to amount
-          )
-      )
+//      resources = ResourceBundle(
+//          values = mapOf(
+//              ResourceId.money.name to amount
+//          )
+//      )
   )
 }

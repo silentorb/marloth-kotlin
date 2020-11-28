@@ -1,7 +1,7 @@
 {
 "graph" : [
 ["doorway","parent","root"],
-["doorway","instance","doorway"],
+["doorway","type","doorway"],
 ["doorway","translation",[-1.067403,3.0397868,0.0]],
 ["root","",""]
 ]

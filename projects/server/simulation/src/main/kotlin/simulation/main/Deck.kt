@@ -57,7 +57,7 @@ data class Deck(
     val performances: Table<Performance> = mapOf(),
     val players: Table<Player> = mapOf(),
     val playerOverlays: Table<PlayerOverlay> = mapOf(),
-    val resources: Table<ResourceBundle> = mapOf(),
+//    val resources: Table<ResourceBundle> = mapOf(),
     val respawnCountdowns: Table<RespawnCountdown> = mapOf(),
     val sounds: Table<Sound> = mapOf(),
     val spinners: Table<Spinner> = mapOf(),
@@ -67,10 +67,11 @@ data class Deck(
     val timersFloat: Table<FloatTimer> = mapOf(),
     val timersInt: Table<IntTimer> = mapOf(),
     val triggers: Table<Trigger> = mapOf(),
-    val wares: Table<Ware> = mapOf()
+    val wares: Table<Ware> = mapOf(),
+    val graph: AnyGraph = setOf()
 )
 
-val deckReflection = newDeckReflection(Deck::class, Hand::class)
+val deckReflection = newDeckReflection(Deck::class, Hand::class, listOf("graph" to setOf<AnyEntry>()))
 
 val handToDeck = genericHandToDeck(deckReflection)
 val mergeDecks = genericMergeDecks(deckReflection)

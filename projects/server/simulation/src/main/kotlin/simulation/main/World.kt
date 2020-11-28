@@ -17,6 +17,7 @@ data class World(
     val dice: Dice,
     val availableIds: Set<Id>,
     val navigation: NavigationState?,
+    val staticGraph: Graph = newGraph(),
     val graph: Graph = newGraph(),
     val bulletState: BulletState,
     val definitions: Definitions,

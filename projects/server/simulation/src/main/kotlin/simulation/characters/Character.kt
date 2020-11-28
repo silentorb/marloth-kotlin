@@ -97,18 +97,18 @@ fun getPurchaseCost(deck: Deck, events: Events, character: Id): Int {
       .sum()
 }
 
-fun getMoneyFromTakenItems(deck: Deck, events: Events, character: Id): Int {
-  val takes = events.filterIsInstance<TakeItemEvent>().filter { it.actor == character }.map { it.item }
-  val moneyTakes = deck.resources.filterKeys { takes.contains(it) }
-  return moneyTakes
-      .mapNotNull { it.value.values[ResourceId.money.name] }
-      .sum()
-}
+//fun getMoneyFromTakenItems(deck: Deck, events: Events, character: Id): Int {
+//  val takes = events.filterIsInstance<TakeItemEvent>().filter { it.actor == character }.map { it.item }
+//  val moneyTakes = deck.resources.filterKeys { takes.contains(it) }
+//  return moneyTakes
+//      .mapNotNull { it.value.values[ResourceId.money.name] }
+//      .sum()
+//}
 
 fun updateMoney(deck: Deck, events: Events, character: Id, money: Int): Int {
-  val moneyFromItems = getMoneyFromTakenItems(deck, events, character)
+//  val moneyFromItems = getMoneyFromTakenItems(deck, events, character)
   val cost = getPurchaseCost(deck, events, character)
-  return money - cost + moneyFromItems
+  return money - cost // + moneyFromItems
 }
 
 fun updateInteractingWith(deck: Deck, character: Id, commands: Commands, interactingWith: Id?): Id? =

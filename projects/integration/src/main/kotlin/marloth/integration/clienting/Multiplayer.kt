@@ -18,7 +18,7 @@ val updateAppStateForNewPlayers: (AppState) -> AppState = { appState ->
     val devicePlayers = inputState.devicePlayers
     val world = appState.worlds.last()
     val deck = world.deck
-    val graph = world.graph
+    val graph = world.staticGraph
 
     val gamepadJoinCommands = joiningGamepads(deviceState.events, deviceTypeMap)
     if (gamepadJoinCommands.none())

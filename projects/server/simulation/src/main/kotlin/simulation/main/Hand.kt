@@ -54,7 +54,7 @@ data class Hand(
     val performance: Performance? = null,
     val player: Player? = null,
     val playerOverlay: PlayerOverlay? = null,
-    val resources: ResourceBundle? = null,
+//    val resources: ResourceBundle? = null,
     val respawnCountdown: RespawnCountdown? = null,
     val sound: Sound? = null,
     val spinner: Spinner? = null,

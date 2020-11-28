@@ -1,7 +1,7 @@
 {
 "graph" : [
 ["home","parent","root"],
-["home","instance","home"],
+["home","type","home"],
 ["root","",""],
 ["root","rotation",[0.0,0.0,0.0]]
 ]

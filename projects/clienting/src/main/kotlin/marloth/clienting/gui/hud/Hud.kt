@@ -47,7 +47,7 @@ private fun playerStats(world: World, actor: Id, debugInfo: List<String>): Flowe
   val accessoryPoints = character.accessoryPoints + if (character.accessoryOptions != null) 1 else 0
   val rows = listOf(
       label(textStyle, "Injury: ${reverseResourceString(destructible.health)}"),
-      label(textStyle, "Doom: ${world.global.doom}")
+//      label(textStyle, "Doom: ${world.global.doom}")
 //      label(textStyle, "Sanity: ${resourceString(data.madness)}")
   ) + listOfNotNull(
       if (accessoryPoints > 0) label(textStyle, "Ability Points: $accessoryPoints") else null
