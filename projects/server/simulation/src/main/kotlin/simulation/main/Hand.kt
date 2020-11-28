@@ -4,6 +4,7 @@ import simulation.accessorize.Accessory
 import silentorb.mythic.aura.Sound
 import silentorb.mythic.characters.rigs.CharacterRig
 import silentorb.mythic.characters.rigs.ThirdPersonRig
+import silentorb.mythic.ent.AnyGraph
 import silentorb.mythic.ent.GenericIdHand
 import silentorb.mythic.entities.Attributes
 import silentorb.mythic.particles.ParticleEffect
@@ -28,6 +29,8 @@ import simulation.intellect.Spirit
 import simulation.intellect.assessment.Knowledge
 
 // Hand is a slice of a deck, mostly used for instantiating new entities.
+
+typealias GetAnyGraph = (Any) -> AnyGraph
 
 data class Hand(
     val accessory: Accessory? = null,
@@ -63,7 +66,8 @@ data class Hand(
     val timerInt: IntTimer? = null,
     val timerFloat: FloatTimer? = null,
     val trigger: Trigger? = null,
-    val ware: Ware? = null
+    val ware: Ware? = null,
+    val graph: GetAnyGraph? = null
 )
 
 typealias IdHand = GenericIdHand<Hand>

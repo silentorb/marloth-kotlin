@@ -65,8 +65,6 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, prof
               ),
               character = Character(
                   faction = faction,
-                  sanity = ResourceContainer(100),
-                  money = 30,
                   isAlive = true,
                   profession = profession
               ),

@@ -78,7 +78,8 @@ fun wareMenuItem(definitions: Definitions, deck: Deck, merchant: Id,
 
 fun merchantView(deck: Deck, player: Id): StateFlower = { definitions, state ->
   val merchant = getPlayerInteractingWith(deck, player)!!
-  val customerMoney = deck.characters[player]!!.money
+//  val customerMoney = deck.characters[player]!!.money
+  val customerMoney = 0
   val buttons = deck.attachments
       .filter { it.value.target == merchant && it.value.category == AttachmentCategory.inventory }
       .map { (id, _) ->
