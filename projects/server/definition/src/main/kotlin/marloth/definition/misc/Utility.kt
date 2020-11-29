@@ -26,3 +26,6 @@ val staticDamageTypes = reflectPropertiesMap<String>(DamageTypes).keys
 
 fun loadMarlothGraphLibrary(propertyDefinitions: PropertyDefinitions) =
     loadGraphLibrary(propertyDefinitions, "world")
+
+fun loadMarlothDefinitions(propertyDefinitions: PropertyDefinitions) =
+    loadGraphLibrary(propertyDefinitions, "world/src/entities")
