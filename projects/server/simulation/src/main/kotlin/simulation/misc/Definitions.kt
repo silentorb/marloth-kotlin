@@ -6,6 +6,7 @@ import simulation.accessorize.AccessoryName
 import silentorb.mythic.aura.SoundType
 import silentorb.mythic.breeze.AnimationInfoMap
 import silentorb.mythic.ent.GraphLibrary
+import silentorb.mythic.ent.GraphStores
 import simulation.combat.general.DamageType
 import simulation.combat.general.WeaponDefinition
 import silentorb.mythic.particles.ParticleEffectDefinitions
@@ -37,5 +38,5 @@ data class Definitions(
     val textLibrary: TextResourceMapper,
     val weapons: Map<AccessoryName, WeaponDefinition>,
     val meshShapeMap: Map<String, Shape>,
-    val graphs: GraphLibrary,
+    val graphs: GraphStores,
 )

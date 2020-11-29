@@ -5,6 +5,9 @@ import marloth.scenery.enums.ModifierDirection
 import marloth.scenery.enums.Text
 import silentorb.mythic.editing.PropertyDefinitions
 import silentorb.mythic.editing.loadGraphLibrary
+import silentorb.mythic.ent.AnyGraph
+import silentorb.mythic.ent.GraphStores
+import silentorb.mythic.ent.SimpleGraphStore
 import silentorb.mythic.ent.reflectPropertiesMap
 import simulation.accessorize.ModifierDefinition
 import simulation.combat.general.DamageType
@@ -27,5 +30,6 @@ val staticDamageTypes = reflectPropertiesMap<String>(DamageTypes).keys
 fun loadMarlothGraphLibrary(propertyDefinitions: PropertyDefinitions) =
     loadGraphLibrary(propertyDefinitions, "world")
 
-fun loadMarlothDefinitions(propertyDefinitions: PropertyDefinitions) =
+fun loadMarlothDefinitions(propertyDefinitions: PropertyDefinitions): GraphStores =
     loadGraphLibrary(propertyDefinitions, "world/src/entities")
+        .mapValues { SimpleGraphStore(it.value as AnyGraph) }

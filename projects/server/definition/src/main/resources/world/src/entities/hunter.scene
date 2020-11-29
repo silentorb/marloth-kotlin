@@ -1,0 +1,11 @@
+{
+"graph" : [
+["health","parent","hunter"],
+["health","type","resource"],
+["health","value",100],
+["hunter","",""],
+["sanity","type","resource"],
+["sanity","parent","hunter"],
+["sanity","value",103]
+]
+}

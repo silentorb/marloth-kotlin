@@ -2,12 +2,11 @@ package marloth.definition
 
 import marloth.definition.data.*
 import marloth.definition.misc.ClientDefinitions
-import marloth.definition.misc.loadMarlothGraphLibrary
+import marloth.definition.misc.loadMarlothDefinitions
 import marloth.definition.misc.staticDamageTypes
 import marloth.definition.particles.particleEffects
 import marloth.definition.texts.englishTextResources
 import silentorb.mythic.editing.commonPropertyDefinitions
-import silentorb.mythic.editing.loadGraphLibrary
 import simulation.misc.ApplicationInfo
 import simulation.misc.Definitions
 
@@ -31,6 +30,6 @@ fun staticDefinitions(clientDefinitions: ClientDefinitions, applicationInfo: App
       textLibrary = englishTextResources,
       weapons = weapons,
       meshShapeMap = clientDefinitions.meshShapeMap,
-      graphs = loadMarlothGraphLibrary(commonPropertyDefinitions()),
+      graphs = loadMarlothDefinitions(commonPropertyDefinitions()),
   )
 }
