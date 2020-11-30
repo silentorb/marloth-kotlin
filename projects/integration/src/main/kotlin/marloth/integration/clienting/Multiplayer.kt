@@ -28,7 +28,8 @@ val updateAppStateForNewPlayers: (AppState) -> AppState = { appState ->
       val availablePlayers = world.deck.players.keys.minus(gamepadPlayers)
 
       val nextWorld = addEntitiesToWorldDeck(world) { nextId ->
-        gamepadJoinCommands.drop(availablePlayers.size)
+        gamepadJoinCommands
+            .drop(availablePlayers.size)
             .flatMap { newPlayerAndCharacter(nextId, world.definitions, graph) }
       }
       val newPlayers = nextWorld.deck.players.keys.minus(deck.players.keys)

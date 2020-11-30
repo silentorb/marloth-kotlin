@@ -27,7 +27,7 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, prof
                  spirit: Spirit? = null): List<IdHand> {
   val definition = definitions.professions[profession]!!
   val accessories = definition.accessories
-      .mapIndexed { index, type ->
+      .map { type ->
         IdHand(
             id = nextId(),
             hand = Hand(

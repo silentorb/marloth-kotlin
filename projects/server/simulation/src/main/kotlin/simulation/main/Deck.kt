@@ -68,14 +68,11 @@ data class Deck(
     val timersInt: Table<IntTimer> = mapOf(),
     val triggers: Table<Trigger> = mapOf(),
     val wares: Table<Ware> = mapOf(),
-    val graph: AnyGraph = setOf()
 )
 
-val deckReflection = newDeckReflection(Deck::class, Hand::class, listOf("graph" to setOf<AnyEntry>()))
+val deckReflection = newDeckReflection(Deck::class, Hand::class)
 
-val handToDeck = genericHandToDeck(deckReflection)
 val mergeDecks = genericMergeDecks(deckReflection)
-val allHandsOnDeck = genericAllHandsOnDeck(deckReflection)
 val idHandsToDeck = genericIdHandsToDeck(deckReflection)
 val removeEntities = genericRemoveEntities(deckReflection)
 
@@ -88,19 +85,4 @@ fun addEntitiesToWorldDeck(world: World, transform: (IdSource) -> List<IdHand>):
   )
 }
 
-fun pipeHandsToDeck(nextId: IdSource, sources: List<(Deck) -> List<Hand>>): (Deck) -> Deck = { deck ->
-  pipe2(sources.map { handSource ->
-    { accumulator: Deck -> allHandsOnDeck(handSource(accumulator), nextId, accumulator) }
-  })(deck)
-}
-
-fun pipeIdHandsToDeck(sources: List<(Deck) -> List<IdHand>>): (Deck) -> Deck = { deck ->
-  pipe2(sources.map { handSource ->
-    { accumulator: Deck -> mergeDecks(idHandsToDeck(handSource(accumulator)), accumulator) }
-  })(deck)
-}
-
 typealias DeckSource = (IdSource) -> Deck
-
-fun resolveDecks(nextId: IdSource, deckSources: List<DeckSource>): List<Deck> =
-    deckSources.map { it(nextId) }

@@ -18,7 +18,6 @@ data class World(
     val availableIds: Set<Id>,
     val navigation: NavigationState?,
     val staticGraph: Graph = newGraph(),
-    val graph: GraphStore = SimpleGraphStore(),
     val bulletState: BulletState,
     val definitions: Definitions,
     val gameModeConfig: GameModeConfig,
