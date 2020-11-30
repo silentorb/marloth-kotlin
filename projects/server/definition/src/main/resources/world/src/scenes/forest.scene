@@ -27,10 +27,10 @@
 ["ground2","collisionShape","box"],
 ["ground2","type","solid-static"],
 ["ground2","texture","grass"],
-["ground2","scale",[1.4138216,1.4138216,1.4138216]],
 ["ground2","parent","forest"],
-["ground2","rotation",[6.241625,0.03830942,6.15422]],
-["ground2","translation",[-13.318898,-9.00048,-0.49005368]],
+["ground2","scale",[1.7933003,1.7933003,1.7933003]],
+["ground2","translation",[-19.997236,-13.762864,0.97648597]],
+["ground2","rotation",[5.885898,0.03830942,0.07007384]],
 ["ground3","mesh","floorSquare"],
 ["ground3","collisionShape","box"],
 ["ground3","type","solid-static"],
@@ -52,6 +52,10 @@
 ["small-tree","translation",[-30.668798,0.0,-1.0417334]],
 ["small-tree1","type","small-tree"],
 ["small-tree1","parent","forest"],
-["small-tree1","translation",[-43.619125,13.54404,-1.2335998]]
+["small-tree1","translation",[-43.619125,13.54404,-1.2335998]],
+["small-tree2","type","small-tree"],
+["small-tree2","parent","forest"],
+["small-tree2","translation",[-26.37301,-20.478653,4.1071563]],
+["small-tree2","rotation",[0.0,0.0,1.7048438]]
 ]
 }

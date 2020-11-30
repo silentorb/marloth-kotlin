@@ -1,5 +1,9 @@
 {
 "graph" : [
+["city-street","parent","root"],
+["city-street","type","city-street"],
+["city-street","rotation",[0.0,0.0,3.2118404]],
+["city-street","translation",[16.929657,-80.09961,11.087681]],
 ["forest","parent","root"],
 ["forest","type","forest"],
 ["forest","translation",[30.998295,-49.788307,0.677906]],
