@@ -62,12 +62,14 @@ typealias AccessoryOptions = List<AccessoryName>
 data class Character(
     val profession: ProfessionId,
     val faction: Id,
+    val sanity: ResourceContainer = ResourceContainer(100),
     val isAlive: Boolean,
     val canInteractWith: Id? = null,
     val interactingWith: Id? = null,
     val isInfinitelyFalling: Boolean = false,
     val accessoryPoints: Int = 0,
     val accessoryOptions: AccessoryOptions? = null,
+    val money: Int = 0
 )
 
 data class ModifyLevelEvent(
@@ -170,7 +172,7 @@ fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletStat
       isInfinitelyFalling = isInfinitelyFalling(position),
       canInteractWith = canInteractWith,
       interactingWith = updateInteractingWith(deck, actor, commands, character.interactingWith),
-//      money = updateMoney(deck, events, actor, character.money),
+      money = updateMoney(deck, events, actor, character.money),
       profession = updateCharacterProfession(definitions, actor, events, character.profession),
       accessoryPoints = updateAccessoryPoints(events, character),
       accessoryOptions = updateAccessoryOptions(definitions, dice, deck, events, actor, character)

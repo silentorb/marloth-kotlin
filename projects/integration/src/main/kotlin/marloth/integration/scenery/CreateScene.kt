@@ -9,12 +9,14 @@ import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.scenery.getGraphRoots
 import silentorb.mythic.ent.scenery.nodesToElements
-import silentorb.mythic.lookinglass.ModelMeshMap
-import silentorb.mythic.lookinglass.SceneLayer
-import silentorb.mythic.lookinglass.GameScene
-import silentorb.mythic.lookinglass.Scene
+import silentorb.mythic.ent.singleValueCache
+import silentorb.mythic.lookinglass.*
 import simulation.main.Deck
 import simulation.misc.Definitions
+
+val graphElementCache = singleValueCache<Graph, ElementGroups> { graph ->
+  nodesToElements(mapOf(), mapOf(), graph)
+}
 
 fun createScene(meshes: ModelMeshMap, definitions: Definitions, deck: Deck, graph: Graph): (Id) -> GameScene = { player ->
   val flyThrough = getDebugBoolean("FLY_THROUGH_CAMERA")
@@ -47,7 +49,7 @@ fun createScene(meshes: ModelMeshMap, definitions: Definitions, deck: Deck, grap
     val roots = getGraphRoots(graph)
     val mainElements = gatherVisualElements(definitions, deck, player, characterRig) +
         if (roots.any())
-          nodesToElements(mapOf(), mapOf(), graph)
+          graphElementCache(graph)
         else
           listOf()
 

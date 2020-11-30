@@ -3,8 +3,8 @@
 ["doorway","",""],
 ["doorway","mesh","squareWallDoorway"],
 ["doorway","texture","redTile"],
-["doorway","rotation",[0.0,0.0,1.5707964]],
 ["doorway","collisionShape","mesh"],
-["doorway","type","solid-static"]
+["doorway","type","solid-static"],
+["doorway","rotation",[0.0,0.0,0.0]]
 ]
 }
