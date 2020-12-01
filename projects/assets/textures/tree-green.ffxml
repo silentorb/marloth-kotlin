@@ -44,21 +44,26 @@
 			</Lighting>
 		</Result>
 		<Blend6 id="blend6 01">
-			<Foreground red="0.7092652685135106827" green="0.8488372093023255349" blue="0.3026861366504416395" alpha="1"/>
+			<Foreground red="0.1415930533020852145" green="0.5620155038759689914" blue="0.3608016462083125653" alpha="1"/>
 			<Background red="0.1490196078431372528" green="0.5490196078431373028" blue="0" alpha="1"/>
-			<Opacity source="levels3 01" value="0.5"/>
+			<Opacity source="blur2 01" value="0.5"/>
 			<Mode value="0"/>
 		</Blend6>
+		<Blur2 id="blur2 01">
+			<Source source="levels3 01"/>
+			<Radius value="0.0700000000000000067"/>
+			<Gaussian value="true"/>
+		</Blur2>
 		<Levels3 id="levels3 01">
 			<Source source="perlinnoise2 02"/>
 			<BlackPoint value="0"/>
-			<Gamma value="-0.5600000000000000533"/>
-			<WhitePoint value="1"/>
+			<Gamma value="-0.6799999999999999378"/>
+			<WhitePoint value="0.8399999999999999689"/>
 			<PreserveColor value="false"/>
 		</Levels3>
 		<PerlinNoise2 id="perlinnoise2 01">
 			<Noise source="blend6 01" red="0.1783948837630183748" green="0.5581395348837209225" blue="0.131963223363980503" alpha="1"/>
-			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Background source="perlinnoise2 03" red="0" green="0.0129400054293728611" blue="0.1279069767441860517" alpha="1"/>
 			<Roughness value="0.5699999999999999512"/>
 			<Scale value="2.25"/>
 			<Stretch value="0"/>
@@ -71,13 +76,25 @@
 		<PerlinNoise2 id="perlinnoise2 02">
 			<Noise red="1" green="1" blue="1" alpha="1"/>
 			<Background red="0" green="0" blue="0" alpha="1"/>
-			<Roughness value="0.0700000000000000067"/>
-			<Scale value="2.1600000000000001421"/>
+			<Roughness value="0.5899999999999999689"/>
+			<Scale value="2.1000000000000000888"/>
 			<Stretch value="0"/>
 			<Angle value="0"/>
 			<Details value="1"/>
-			<Contrast value="0.4799999999999999822"/>
-			<Variation value="4178"/>
+			<Contrast value="0.4500000000000000111"/>
+			<Variation value="13033"/>
+			<OctaveCurve value="0"/>
+		</PerlinNoise2>
+		<PerlinNoise2 id="perlinnoise2 03">
+			<Noise red="0.0805240069707349321" green="0.0944668797730605775" blue="0.2596899224806201723" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.8499999999999999778"/>
+			<Scale value="1.1999999999999999556"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.4500000000000000111"/>
+			<Variation value="13033"/>
 			<OctaveCurve value="0"/>
 		</PerlinNoise2>
 	</Components>
@@ -144,25 +161,31 @@
 		<Groups/>
 		<ThumbnailSize value="1"/>
 		<Canvas left="-257" top="-392" zoom_factor="0"/>
-		<Viewport left="0" top="30" zoom_factor="1"/>
+		<Viewport left="0" top="0" zoom_factor="-2"/>
 		<LockPreview>
 			<Locked value="false"/>
 			<LockedComponent name=""/>
 		</LockPreview>
 		<Item id="blend6 01">
-			<Position left="224" top="-160"/>
+			<Position left="256" top="-176"/>
+		</Item>
+		<Item id="blur2 01">
+			<Position left="320" top="-352"/>
 		</Item>
 		<Item id="levels3 01">
-			<Position left="448" top="-272"/>
+			<Position left="512" top="-224"/>
 		</Item>
 		<Item id="perlinnoise2 01">
-			<Position left="224" top="16"/>
+			<Position left="208" top="64"/>
 		</Item>
 		<Item id="perlinnoise2 02">
 			<Position left="576" top="48"/>
 		</Item>
+		<Item id="perlinnoise2 03">
+			<Position left="544" top="272"/>
+		</Item>
 		<Item id="result">
-			<Position left="0" top="0"/>
+			<Position left="-64" top="-16"/>
 		</Item>
 	</FilterEditor>
 </Filter>

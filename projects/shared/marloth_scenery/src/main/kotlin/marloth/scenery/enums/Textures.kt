@@ -7,6 +7,7 @@ object TextureId {
   val background = "background"
   val bricks = "bricks"
   val checkersBlackWhite = "checkersBlackWhite"
+  val dirt = "dirt"
   val cobblestone = "cobblestone"
   val diamondTiles = "diamondTiles"
   val grass = "grass"

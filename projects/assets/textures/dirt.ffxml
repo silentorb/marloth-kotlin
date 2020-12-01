@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Filter>
+	<Components>
+		<Result id="result">
+			<SurfaceColor source="blend6 01" red="1" green="0" blue="1" alpha="1"/>
+			<Height source="chaffs2 02"/>
+			<Reflectivity value="0"/>
+			<ReflectionBlur value="0"/>
+			<Metallic value="0"/>
+			<FilterType value="1"/>
+			<Advanced value="false"/>
+			<Lighting>
+				<Height value="0.2000000000000000111"/>
+				<Environment>
+					<Source value="Forest"/>
+					<Brightness value="0.6999999999999999556"/>
+					<Saturation value="1"/>
+					<Rotation value="18.3197395006737053791"/>
+					<RotationAxis x="0.9933523150313802175" y="0.1136649180316557373" z="-0.0182061701260583346"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+				<Light>
+					<Color red="1" green="1" blue="1"/>
+					<Latitude value="73.1319922938907467369"/>
+					<Longitude value="0"/>
+					<AngularWidthIndex value="2"/>
+					<AffectDiffuseSpecular value="0"/>
+				</Light>
+			</Lighting>
+		</Result>
+		<Blend6 id="blend6 01">
+			<Foreground source="blend6 03" red="0.9147286821705425952" green="0.8269199158143228923" blue="0.6771828616068745754" alpha="1"/>
+			<Background source="stones2 01" red="0.2054263565891473187" green="0.0988435809824172174" blue="0.0414037617931614782" alpha="1"/>
+			<Opacity source="chaffs2 01" value="0.5"/>
+			<Mode value="0"/>
+		</Blend6>
+		<Blend6 id="blend6 02">
+			<Foreground source="colormapcontrol 01" red="0.9147286821705425952" green="0.8269199158143228923" blue="0.6771828616068745754" alpha="1"/>
+			<Background source="colormapcontrol 02" red="0.6511627906976744651" green="0.5261763816666772398" blue="0.4265368667748333231" alpha="1"/>
+			<Opacity source="perlinnoise2 01" value="0.5"/>
+			<Mode value="0"/>
+		</Blend6>
+		<Blend6 id="blend6 03">
+			<Foreground source="blend6 02" red="0.9147286821705425952" green="0.8269199158143228923" blue="0.6771828616068745754" alpha="1"/>
+			<Background red="0.1356589147286821895" green="0.119860070890494344" blue="0.1072651883901207942" alpha="1"/>
+			<Opacity source="levels3 01" value="0.5"/>
+			<Mode value="0"/>
+		</Blend6>
+		<Chaffs2 id="chaffs2 01">
+			<Noise red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness source="perlinnoise2 01" value="0.2000000000000000111"/>
+			<Contrast value="0"/>
+			<Formula value="0"/>
+			<Scale value="1.9799999999999999822"/>
+			<Stretch value="0.25"/>
+			<VerticalStretch value="true"/>
+			<Smooth value="false"/>
+			<Flat value="false"/>
+			<SolidFill value="false"/>
+			<Details value="0.4000000000000000222"/>
+			<Variation value="1"/>
+			<OctaveCurve value="1"/>
+		</Chaffs2>
+		<Chaffs2 id="chaffs2 02">
+			<Noise red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness source="perlinnoise2 01" value="0.2000000000000000111"/>
+			<Contrast value="0.4400000000000000022"/>
+			<Formula value="0"/>
+			<Scale value="1.9799999999999999822"/>
+			<Stretch value="0.25"/>
+			<VerticalStretch value="true"/>
+			<Smooth value="false"/>
+			<Flat value="false"/>
+			<SolidFill value="false"/>
+			<Details value="0.4000000000000000222"/>
+			<Variation value="1"/>
+			<OctaveCurve value="0"/>
+		</Chaffs2>
+		<ColorMapControl id="colormapcontrol 01">
+			<Name value-en="Foreground"/>
+			<ExternalImagesMode value="0"/>
+			<HDRMode value="0"/>
+			<HorizontalAnchor value="1"/>
+			<VerticalAnchor value="1"/>
+			<PlacementMode value="0"/>
+			<TilingMode value="0"/>
+			<Color red="0.922480620155038733" green="0.8005558560182680639" blue="0.5899585361456642918" alpha="1"/>
+			<AlphaMode value="0"/>
+		</ColorMapControl>
+		<ColorMapControl id="colormapcontrol 02">
+			<Name value-en="Foreground"/>
+			<ExternalImagesMode value="0"/>
+			<HDRMode value="0"/>
+			<HorizontalAnchor value="1"/>
+			<VerticalAnchor value="1"/>
+			<PlacementMode value="0"/>
+			<TilingMode value="0"/>
+			<Color red="0.8565891472868216727" green="0.733667454884413095" blue="0.6739829337179256141" alpha="1"/>
+			<AlphaMode value="0"/>
+		</ColorMapControl>
+		<Levels3 id="levels3 01">
+			<Source source="perlinnoise2 02"/>
+			<BlackPoint value="0"/>
+			<Gamma value="0.6599999999999999201"/>
+			<WhitePoint value="0.92000000000000004"/>
+			<PreserveColor value="false"/>
+		</Levels3>
+		<PerlinNoise2 id="perlinnoise2 01">
+			<Noise red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.75"/>
+			<Scale value="2.5"/>
+			<Stretch value="0.25"/>
+			<Angle value="91"/>
+			<Details value="1"/>
+			<Contrast value="0.25"/>
+			<Variation value="1"/>
+			<OctaveCurve value="0"/>
+		</PerlinNoise2>
+		<PerlinNoise2 id="perlinnoise2 02">
+			<Noise red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.75"/>
+			<Scale value="2.0099999999999997868"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.25"/>
+			<Variation value="1"/>
+			<OctaveCurve value="0"/>
+		</PerlinNoise2>
+		<Stones2 id="stones2 01">
+			<Noise red="0.1511627906976744651" green="0.0802686136650442028" blue="0.0802686136650442028" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.2000000000000000111"/>
+			<Contrast value="0"/>
+			<Formula value="0"/>
+			<Scale value="2.3999999999999999112"/>
+			<Stretch value="0"/>
+			<VerticalStretch value="false"/>
+			<Flat value="false"/>
+			<SolidFill value="false"/>
+			<Details value="0.4000000000000000222"/>
+			<Variation value="1"/>
+			<OctaveCurve value="0"/>
+		</Stones2>
+	</Components>
+	<GroupNames/>
+	<SettingsOverride>
+		<Size value="0"/>
+		<Variation value="0"/>
+		<Seamless value="0"/>
+		<ResultBlending value="0"/>
+	</SettingsOverride>
+	<Presets>
+		<DefaultPreset preview_image="LIFESAVER_OPAQUE">
+			<Settings size_factor="1" variation="1" seamless="true" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="false"/>
+			<Lighting>
+				<Height value="0.2000000000000000111"/>
+				<Environment>
+					<Source value="Forest"/>
+					<Brightness value="0.6999999999999999556"/>
+					<Saturation value="1"/>
+					<Rotation value="18.3197395006737053791"/>
+					<RotationAxis x="0.9933523150313802175" y="0.1136649180316557373" z="-0.0182061701260583346"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+				<Light>
+					<Color red="1" green="1" blue="1"/>
+					<Latitude value="73.1319922938907467369"/>
+					<Longitude value="0"/>
+					<AngularWidthIndex value="2"/>
+					<AffectDiffuseSpecular value="0"/>
+				</Light>
+			</Lighting>
+			<Controls>
+				<ColorMapControl id="colormapcontrol 01">
+					<HorizontalAnchor value="1"/>
+					<VerticalAnchor value="1"/>
+					<PlacementMode value="0"/>
+					<TilingMode value="0"/>
+					<Color red="0.922480620155038733" green="0.8005558560182680639" blue="0.5899585361456642918" alpha="1"/>
+				</ColorMapControl>
+				<ColorMapControl id="colormapcontrol 02">
+					<HorizontalAnchor value="1"/>
+					<VerticalAnchor value="1"/>
+					<PlacementMode value="0"/>
+					<TilingMode value="0"/>
+					<Color red="0.8565891472868216727" green="0.733667454884413095" blue="0.6739829337179256141" alpha="1"/>
+				</ColorMapControl>
+			</Controls>
+		</DefaultPreset>
+	</Presets>
+	<Locks>
+		<Settings size="false" variation="false"/>
+		<Lighting elements="false" environment="false" brightness="false" saturation="false" height="false"/>
+		<Controls>
+			<Control id="colormapcontrol 01" lock="false"/>
+			<Control id="colormapcontrol 02" lock="false"/>
+		</Controls>
+	</Locks>
+	<Information author="cj" name-en="dirt" url="" description="" keywords="" update_notes="" major_version="8" minor_version="5"/>
+	<ControlsOrder>
+		<Automatic value="true"/>
+	</ControlsOrder>
+	<FilterEditor>
+		<Groups/>
+		<ThumbnailSize value="1"/>
+		<Canvas left="-478" top="-302" zoom_factor="0"/>
+		<Viewport left="0" top="0" zoom_factor="-2"/>
+		<LockPreview>
+			<Locked value="false"/>
+			<LockedComponent name=""/>
+		</LockPreview>
+		<Item id="blend6 01">
+			<Position left="32" top="208"/>
+		</Item>
+		<Item id="blend6 02">
+			<Position left="432" top="-128"/>
+		</Item>
+		<Item id="blend6 03">
+			<Position left="160" top="0"/>
+		</Item>
+		<Item id="chaffs2 01">
+			<Position left="768" top="128"/>
+		</Item>
+		<Item id="chaffs2 02">
+			<Position left="800" top="416"/>
+		</Item>
+		<Item id="colormapcontrol 01">
+			<Position left="800" top="-240"/>
+		</Item>
+		<Item id="colormapcontrol 02">
+			<Position left="832" top="-144"/>
+		</Item>
+		<Item id="levels3 01">
+			<Position left="224" top="-320"/>
+		</Item>
+		<Item id="perlinnoise2 01">
+			<Position left="1088" top="0"/>
+		</Item>
+		<Item id="perlinnoise2 02">
+			<Position left="464" top="-368"/>
+		</Item>
+		<Item id="result">
+			<Position left="-288" top="192"/>
+		</Item>
+		<Item id="stones2 01">
+			<Position left="192" top="480"/>
+		</Item>
+	</FilterEditor>
+</Filter>
