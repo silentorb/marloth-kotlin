@@ -29,9 +29,10 @@ import silentorb.mythic.editing.*
 import silentorb.mythic.editing.updating.prepareEditorUpdate
 import silentorb.mythic.editing.updating.updateEditor
 import silentorb.mythic.ent.Id
-import silentorb.mythic.happenings.Commands
 import silentorb.mythic.haft.updateInputDeviceStates
 import silentorb.mythic.happenings.Command
+import silentorb.mythic.happenings.Commands
+import silentorb.mythic.happenings.handleCommands
 import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.lookinglass.getMeshShapes
 import silentorb.mythic.lookinglass.mapAnimationInfo
@@ -149,6 +150,14 @@ fun gatherUserEvents(
   return menuEvents.values.flatten()
 }
 
+fun getEditorEvents(editor: Editor) = handleCommands<List<ClientEvent>> { command, events ->
+  when (command.type) {
+    EditorCommands.playGame -> events + ClientEvent(GuiCommandType.newGame)
+    EditorCommands.playScene -> events + ClientEvent(GuiCommandType.newGame, editor.state.graph)
+    else -> events
+  }
+}
+
 fun updateClient(
     client: Client,
     options: AppOptions,
@@ -192,10 +201,7 @@ fun updateClient(
   val (nextEditor, editorEvents1) = if (clientState.isEditorActive && previousEditor != null) {
     ensureImGuiIsInitialized(editorFonts, windowInfo.id)
     val editorCommands = prepareEditorUpdate(deviceStates, previousEditor)
-    val editorEvents = editorCommands
-        .filter { it.type == EditorCommands.playScene }
-        .map { ClientEvent(GuiCommandType.newGame, previousEditor.state.graph) }
-
+    val editorEvents = getEditorEvents(previousEditor)(editorCommands, listOf())
     updateEditor(deviceStates, editorCommands, previousEditor) to editorEvents
   } else
     previousEditor to listOf()
