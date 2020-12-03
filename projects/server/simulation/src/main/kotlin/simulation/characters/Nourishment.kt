@@ -15,8 +15,9 @@ fun updateNourishment(frames: Int, character: Character, velocity: Int1000): Hig
   else {
     feetTravelled1000 += velocity / 60
     val delta = highIntScale * frames
-    val movementCostPerFoot = highIntScale / 1000
-    val timeDrainDuration = intMinute * 30
+    val distanceTraveledDrainDuration = 1000 // With no other factors, moving X feet will deplete full nourishment
+    val timeDrainDuration = intMinute * 30 // With no other factors, waiting X frames will deplete full nourishment
+    val movementCostPerFoot = highIntScale / distanceTraveledDrainDuration
     val movementCost = movementCostPerFoot * frames * velocity / 1000 / 60
     val timeCost = delta / timeDrainDuration
     val cost = movementCost + timeCost

@@ -80,8 +80,10 @@ fun getFaction(deck: Deck, actor: Id): Id? =
 fun isInfinitelyFalling(position: Vector3): Boolean =
     position.z < -100f
 
-fun isAlive(health: Int, position: Vector3): Boolean =
-    health > 0 && !isInfinitelyFalling(position)
+fun isAlive(health: Int, nourishment: HighInt, position: Vector3): Boolean =
+    health > 0 &&
+        nourishment > 0 &&
+        !isInfinitelyFalling(position)
 
 fun getPurchaseCost(deck: Deck, events: Events, character: Id): Int {
   val purchases = events.filterIsInstance<PurchaseEvent>()
@@ -159,7 +161,7 @@ fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletStat
   val destructible = deck.destructibles[actor]!!
   val body = deck.bodies[actor]!!
   val position = body.position
-  val isAlive = isAlive(destructible.health.value, position)
+  val isAlive = isAlive(destructible.health.value, character.nourishment, position)
   val canInteractWith = if (deck.players.containsKey(actor))
     castInteractableRay(bulletState.dynamicsWorld, deck, actor)
   else
