@@ -9,26 +9,26 @@ import generation.architecture.engine.Builder
 import generation.architecture.matrical.Blueprint
 import generation.architecture.matrical.applyBlockBuilderLevels
 import marloth.scenery.enums.MeshId
-import marloth.scenery.enums.TextureId
+import marloth.scenery.enums.TextureIdOld
 import simulation.entities.Depiction
 
 fun checkersFloor(): Depiction =
     Depiction(
         mesh = MeshId.floorSquare,
-        texture = TextureId.checkersBlackWhite
+        texture = TextureIdOld.checkersBlackWhite
     )
 
 fun checkersWall(): Depiction =
     Depiction(
         mesh = MeshId.wallSquareShort,
-        texture = TextureId.checkersBlackWhite
+        texture = TextureIdOld.checkersBlackWhite
     )
 
 fun generalCheckersBuilder(): Builder =
     cubeRoomBuilder(checkersFloor(), checkersWall())
 
 fun checkersBiome(): Blueprint {
-  val texture = TextureId.checkersBlackWhite
+  val texture = TextureIdOld.checkersBlackWhite
   val floor = checkersFloor()
   val wall = checkersWall()
   return Blueprint(

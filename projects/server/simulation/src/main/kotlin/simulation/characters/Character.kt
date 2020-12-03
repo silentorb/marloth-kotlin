@@ -1,11 +1,7 @@
 package simulation.characters
 
 import marloth.scenery.enums.CharacterCommands
-import marloth.scenery.enums.ResourceId
 import marloth.scenery.enums.Text
-import simulation.accessorize.AccessoryName
-import simulation.accessorize.ChooseImprovedAccessory
-import simulation.accessorize.newAccessoryChoice
 import silentorb.mythic.audio.SoundName
 import silentorb.mythic.aura.SoundType
 import silentorb.mythic.ent.Id
@@ -18,15 +14,15 @@ import silentorb.mythic.physics.BulletState
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.minMax
+import simulation.accessorize.AccessoryName
+import simulation.accessorize.ChooseImprovedAccessory
+import simulation.accessorize.newAccessoryChoice
 import simulation.combat.general.DamageMultipliers
 import simulation.combat.general.ResourceContainer
 import simulation.entities.DepictionType
 import simulation.happenings.PurchaseEvent
-import simulation.happenings.TakeItemEvent
 import simulation.main.Deck
-import simulation.misc.Definitions
-import simulation.misc.PlaceVictoryKeyEvent
-import simulation.misc.misfitFaction
+import simulation.misc.*
 import simulation.physics.castInteractableRay
 
 const val fieldOfView360 = -1f
@@ -69,7 +65,8 @@ data class Character(
     val isInfinitelyFalling: Boolean = false,
     val accessoryPoints: Int = 0,
     val accessoryOptions: AccessoryOptions? = null,
-    val money: Int = 0
+    val money: Int = 0,
+    val nourishment: HighInt = highIntScale,
 )
 
 data class ModifyLevelEvent(
@@ -160,7 +157,8 @@ fun updateAccessoryOptions(definitions: Definitions, dice: Dice, deck: Deck, eve
 fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletState: BulletState, actor: Id, character: Character,
                     commands: Commands, events: Events): Character {
   val destructible = deck.destructibles[actor]!!
-  val position = deck.bodies[actor]!!.position
+  val body = deck.bodies[actor]!!
+  val position = body.position
   val isAlive = isAlive(destructible.health.value, position)
   val canInteractWith = if (deck.players.containsKey(actor))
     castInteractableRay(bulletState.dynamicsWorld, deck, actor)
@@ -175,7 +173,8 @@ fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletStat
       money = updateMoney(deck, events, actor, character.money),
       profession = updateCharacterProfession(definitions, actor, events, character.profession),
       accessoryPoints = updateAccessoryPoints(events, character),
-      accessoryOptions = updateAccessoryOptions(definitions, dice, deck, events, actor, character)
+      accessoryOptions = updateAccessoryOptions(definitions, dice, deck, events, actor, character),
+      nourishment = updateNourishment(1, character, toInt1000(body.velocity.length())),
   )
 }
 

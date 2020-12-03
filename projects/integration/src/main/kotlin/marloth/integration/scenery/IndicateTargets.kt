@@ -1,6 +1,6 @@
 package marloth.integration.scenery
 
-import marloth.scenery.enums.TextureId
+import marloth.scenery.enums.TextureIdOld
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.ElementGroup
 import silentorb.mythic.lookinglass.SceneLayer
@@ -20,7 +20,7 @@ fun getTargetingLayer(deck: Deck, player: Id): SceneLayer? {
               ElementGroup(
                   billboards = listOf(
                       TexturedBillboard(
-                          texture = TextureId.perlinParticle,
+                          texture = TextureIdOld.perlinParticle,
                           position = targetBody.position,
                           scale = 1f,
                           color = Vector4(1f),

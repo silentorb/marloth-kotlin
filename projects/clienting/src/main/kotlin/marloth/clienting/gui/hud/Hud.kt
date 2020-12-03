@@ -12,8 +12,8 @@ import silentorb.mythic.ent.Id
 import simulation.combat.general.ResourceContainer
 import simulation.entities.Interactable
 import simulation.main.World
-import simulation.misc.getPointCell
 import simulation.misc.getVictoryKeyStats
+import simulation.misc.highPercentage
 import kotlin.math.roundToInt
 
 private val textStyle = TextStyles.smallGray
@@ -46,7 +46,9 @@ private fun playerStats(world: World, actor: Id, debugInfo: List<String>): Flowe
   val character = deck.characters[actor]!!
   val accessoryPoints = character.accessoryPoints + if (character.accessoryOptions != null) 1 else 0
   val rows = listOf(
-      label(textStyle, "Injury: ${reverseResourceString(destructible.health)}"),
+      label(textStyle, "Health: ${resourceString(destructible.health)}"),
+      label(textStyle, "Nourishment: ${highPercentage(character.nourishment)}"),
+      label(textStyle, "RawNourish: ${character.nourishment}"),
 //      label(textStyle, "Doom: ${world.global.doom}")
 //      label(textStyle, "Sanity: ${resourceString(data.madness)}")
   ) + listOfNotNull(
@@ -142,7 +144,6 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
 
     val victoryKeyStats = getVictoryKeyStats(grid, deck)
     val viewMode = characterRig?.viewMode ?: ViewMode.firstPerson
-    val cell = getPointCell(body.position)
     val debugInfo = listOfNotNull(
 //            "LR: ${floatToRoundedString(lightRating(deck, player))}",
         if (getDebugBoolean("HUD_DRAW_PLAYER_VELOCITY")) "Velocity: ${floatToRoundedString(body.velocity.length())}" else null,

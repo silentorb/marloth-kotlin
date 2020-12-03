@@ -3,7 +3,8 @@ package marloth.clienting.editing
 import marloth.clienting.input.GuiCommandType
 import marloth.definition.misc.loadMarlothGraphLibrary
 import marloth.scenery.enums.MeshId
-import marloth.scenery.enums.TextureId
+import marloth.scenery.enums.TextureIdOld
+import marloth.scenery.enums.textures
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.editing.*
 import silentorb.mythic.ent.*
@@ -43,7 +44,7 @@ fun newEditor(): Editor {
       projectPath = projectPath,
       enumerations = EditorEnumerations(
           propertyDefinitions = commonPropertyDefinitions(),
-          textures = reflectProperties(TextureId),
+          textures = textures(),
           attributes = getMarlothEditorAttributes(),
           meshes = reflectProperties(MeshId),
           collisionPresets = marlothCollisionPresets()

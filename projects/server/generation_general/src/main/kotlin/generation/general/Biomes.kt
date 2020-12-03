@@ -1,7 +1,6 @@
 package generation.general
 
 import silentorb.mythic.scenery.MeshName
-import marloth.scenery.enums.TextureId
 import silentorb.mythic.scenery.TextureName
 import simulation.misc.BiomeName
 

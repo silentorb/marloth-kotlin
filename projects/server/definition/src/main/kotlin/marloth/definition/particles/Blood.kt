@@ -1,7 +1,7 @@
 package marloth.definition.particles
 
 import marloth.definition.templates.newColorTransitionParticleAnimation
-import marloth.scenery.enums.TextureId
+import marloth.scenery.enums.TextureIdOld
 import silentorb.mythic.particles.*
 import silentorb.mythic.scenery.Sphere
 import silentorb.mythic.spatial.Vector3
@@ -28,7 +28,7 @@ fun bloodParticleEffect(): ParticleEffectDefinition {
   val gravity = -1.1f
   return ParticleEffectDefinition(
       initialAppearance = ParticleAppearance(
-          texture = TextureId.perlinParticle,
+          texture = TextureIdOld.perlinParticle,
           color = newVector4(firstColor, 0f),
           size = 0.09f
       ),
