@@ -69,10 +69,13 @@ fun updateClientFromWorld(worlds: List<World>, clientState: ClientState): Client
 
 fun gatherAdditionalGameCommands(previousClient: ClientState, clientState: ClientState): List<Command> {
   return clientState.players.flatMap { player ->
-    val view = clientState.guiStates[player]?.view
+    val guiState = clientState.guiStates[player]
+    val view = guiState?.view
     val previousView = previousClient.guiStates[player]?.view
     listOfNotNull(
-        if (view == null && previousView == ViewId.merchant)
+        if (previousView == ViewId.merchant &&
+            clientState.commands.any { it.target == player && it.type == ClientEventType.menuBack })
+//        if (view == null && previousView == ViewId.merchant)
           Command(type = CharacterCommands.stopInteracting, target = player)
         else
           null
@@ -114,7 +117,7 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
 
   val definitions = app.definitions
   val windowResolution = app.client.renderer.options.windowedResolution
-  val mouseEvents = if (isGameMouseActive(clientState))
+  val mouseEvents = if (isGameMouseActive(app.platform, clientState))
     listOf()
   else
     mouseLookEvents(windowResolution, previousClient.input.deviceStates.lastOrNull(), clientState.input.deviceStates.last(), firstPlayer(clientState))

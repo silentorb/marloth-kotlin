@@ -1,13 +1,12 @@
 package marloth.clienting.gui.menus.views
 
-import marloth.clienting.StateFlower
+import marloth.clienting.StateFlowerTransform
 import marloth.clienting.gui.menus.*
-import marloth.clienting.gui.ButtonState
-import silentorb.mythic.bloom.*
-import silentorb.mythic.drawing.Canvas
-import silentorb.mythic.drawing.grayTone
-import silentorb.mythic.ent.Id
 import marloth.scenery.enums.Text
+import silentorb.mythic.bloom.boxList
+import silentorb.mythic.bloom.emptyBox
+import silentorb.mythic.bloom.horizontalPlane
+import silentorb.mythic.ent.Id
 import simulation.entities.Ware
 import simulation.happenings.PurchaseEvent
 import simulation.main.Deck
@@ -76,23 +75,26 @@ fun wareMenuItem(definitions: Definitions, merchant: Id, player: Id,
 //        )
 //    )
 
-fun merchantView(deck: Deck, player: Id): StateFlower = { definitions, state ->
-  val merchant = getPlayerInteractingWith(deck, player)!!
-//  val customerMoney = deck.characters[player]!!.money
-  val customerMoney = 0
-  val wares = deck.merchants[merchant]?.wares ?: mapOf()
-  val buttons = wares
-      .map { (id, ware) ->
-        wareMenuItem(definitions, merchant, player, customerMoney, id, ware)
-      }
+fun merchantView(deck: Deck, player: Id): StateFlowerTransform = dialogWrapper { definitions, state ->
+  val merchant = getPlayerInteractingWith(deck, player)
+  if (merchant == null)
+    emptyBox
+  else {
+  val customerMoney = deck.characters[player]?.money ?: 0
+    val wares = deck.merchants[merchant]?.wares ?: mapOf()
+    val buttons = wares
+        .map { (id, ware) ->
+          wareMenuItem(definitions, merchant, player, customerMoney, id, ware)
+        }
 
-  dialog(definitions.textLibrary(Text.gui_merchant))(
-      boxList(horizontalPlane, 10)(
-          listOf(
+//    dialog(definitions.textLibrary(Text.gui_merchant))(
+//        boxList(horizontalPlane, 10)(
+//            listOf(
 //              menuFlower(buttons, state.menuFocusIndex),
-              menuFlower(Text.gui_merchant, buttons)(definitions, state),
+                menuFlower(Text.gui_merchant, buttons)(definitions, state)
 //              flowerToBox(merchantInfoFlower(customerMoney))
-          )
-      )
-  )
+//            )
+//        )
+//    )
+  }
 }

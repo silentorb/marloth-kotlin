@@ -1,5 +1,7 @@
 package marloth.clienting.gui.menus
 
+import marloth.clienting.StateFlower
+import marloth.clienting.StateFlowerTransform
 import marloth.clienting.gui.hud.versionDisplay
 import marloth.clienting.gui.menuBackground
 import marloth.clienting.resources.UiTextures
@@ -35,7 +37,7 @@ fun titleBar(title: Box): LengthFlower =
                     flexFlower(titleBookend),
                 )
             ),
-            axisMargin(horizontalPlane, all = 0, left = 30, right = 30)(
+            marginSingle(horizontalPlane, all = 0, left = 30, right = 30)(
                 horizontalLine
             )
         )
@@ -60,21 +62,26 @@ fun dialog(title: Box): WildFlower = { box ->
 fun dialog(title: String): WildFlower =
     dialog(dialogTitle(title))
 
-fun dialogWrapper(box: Box): Flower =
-    centered(
-        alignListItems(verticalPlane, centered)(
-            boxList(verticalPlane, 20)(
-                listOf(
-                    Box(dimensions = Vector2i(500, 90), depiction = imageDepiction(UiTextures.marlothTitle)),
-                    box
+fun dialogWrapperWithExtras(definitions: Definitions, box: Box): Flower =
+    compose(
+        depict(solidBackground(faintBlack)),
+        versionDisplay(definitions.applicationInfo.version),
+        centered(
+            alignListItems(verticalPlane, centered)(
+                boxList(verticalPlane, 20)(
+                    listOf(
+                        Box(dimensions = Vector2i(500, 90), depiction = imageDepiction(UiTextures.marlothTitle)),
+                        box
+                    )
                 )
             )
         )
     )
 
-fun dialogWrapperWithExtras(definitions: Definitions, box: Box): Flower =
-    compose(
-        depict(solidBackground(faintBlack)),
-        versionDisplay(definitions.applicationInfo.version),
-        dialogWrapper(box)
-    )
+fun dialogWrapper(flower: StateFlower): StateFlowerTransform = { definitions, guiState ->
+  centered(flower(definitions, guiState))
+}
+
+fun dialogWrapperWithExtras(flower: StateFlower): StateFlowerTransform = { definitions, guiState ->
+  dialogWrapperWithExtras(definitions, flower(definitions, guiState))
+}

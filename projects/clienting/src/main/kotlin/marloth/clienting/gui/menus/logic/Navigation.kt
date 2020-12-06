@@ -5,6 +5,7 @@ import marloth.clienting.ClientEventType
 import marloth.clienting.GuiState
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.gui.ViewId
+import marloth.scenery.enums.ClientCommand
 import silentorb.mythic.bloom.OffsetBox
 import silentorb.mythic.ent.Id
 import simulation.main.Deck
@@ -32,7 +33,8 @@ fun nextView(stack: MenuStack, eventTypes: List<Any>, events: List<Any>, view: V
         null
     }
 
-    eventTypes.contains(ClientEventType.menuBack) -> stack.lastOrNull()?.view
+    eventTypes.contains(ClientEventType.menuBack) ->
+      stack.lastOrNull()?.view
 
     eventTypes.contains(ClientEventType.menuReplace) -> getMenuReplaceView(events)
 
@@ -49,13 +51,17 @@ fun nextView(stack: MenuStack, eventTypes: List<Any>, events: List<Any>, view: V
   }
 }
 
-fun fallBackMenus(deck: Deck?, player: Id): ViewId? =
+fun selectInteractionView(deck: Deck?, player: Id): ViewId? =
     if (deck == null)
       null
-//    else if (!deck.characters.containsKey(player))
-//      ViewId.chooseProfessionMenu
-    else
-      null
+    else {
+      val interactingWith = deck.characters[player]?.interactingWith
+      val interaction = deck.interactables[interactingWith]
+      when (interaction?.primaryCommand?.clientCommand) {
+        ClientCommand.showMerchantView -> ViewId.merchant
+        else -> null
+      }
+    }
 
 fun updateMenuFocusIndex(state: GuiState, menuSize: Int?, commandTypes: List<Any>, hoverBoxes: List<OffsetBox>) =
     if (menuSize != null) {

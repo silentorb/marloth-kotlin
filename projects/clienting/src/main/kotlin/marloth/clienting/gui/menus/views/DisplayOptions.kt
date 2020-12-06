@@ -3,13 +3,11 @@ package marloth.clienting.gui.menus.views
 import marloth.clienting.ClientEventType
 import marloth.clienting.ClientState
 import marloth.clienting.StateFlower
-import marloth.clienting.gui.menus.MenuItem
-import marloth.clienting.gui.menus.MenuItemFlower
-import marloth.clienting.gui.menus.TextStyles
+import marloth.clienting.StateFlowerTransform
+import marloth.clienting.gui.menus.*
 import marloth.clienting.gui.menus.forms.clientEventSpinHandlers
 import marloth.clienting.gui.menus.forms.menuField
 import marloth.clienting.gui.menus.forms.spinField
-import marloth.clienting.gui.menus.menuFlower
 import marloth.scenery.enums.Text
 import marloth.scenery.enums.TextResourceMapper
 import silentorb.mythic.bloom.emptyBox
@@ -75,15 +73,16 @@ fun resolutionField(textLibrary: TextResourceMapper, displayModes: List<DisplayM
   )
 }
 
-fun displayOptionsFlower(clientState: ClientState): StateFlower = { definitions, state ->
-  val textLibrary = definitions.textLibrary
-  val options = state.displayChange?.options
-  if (options == null)
-    emptyBox
-  else {
-    menuFlower(Text.gui_displayOptions, listOf(
-        windowModeField(textLibrary, options.windowMode),
-        resolutionField(textLibrary, clientState.displayModes, options),
-    ))(definitions, state)
-  }
-}
+fun displayOptionsFlower(clientState: ClientState): StateFlowerTransform =
+    dialogWrapperWithExtras { definitions, state ->
+      val textLibrary = definitions.textLibrary
+      val options = state.displayChange?.options
+      if (options == null)
+        emptyBox
+      else {
+        menuFlower(Text.gui_displayOptions, listOf(
+            windowModeField(textLibrary, options.windowMode),
+            resolutionField(textLibrary, clientState.displayModes, options),
+        ))(definitions, state)
+      }
+    }

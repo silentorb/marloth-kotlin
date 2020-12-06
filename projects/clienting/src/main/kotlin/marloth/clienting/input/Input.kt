@@ -6,11 +6,12 @@ import silentorb.mythic.characters.rigs.MouseLookEvent
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.haft.*
-import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Commands
+import silentorb.mythic.happenings.Events
+import silentorb.mythic.platforming.Devices
 import silentorb.mythic.platforming.InputEvent
-import silentorb.mythic.platforming.mouseDeviceIndex
+import silentorb.mythic.platforming.Platform
 import silentorb.mythic.spatial.Vector2
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.toVector2
@@ -80,7 +81,7 @@ fun isStroke(context: InputContext, type: Any): Boolean =
     commandStrokes[context]!!.contains(type)
 
 fun isMouseDown(deviceStates: List<InputDeviceState>): Boolean =
-    deviceStates.any { state -> state.events.any { it.device == mouseDeviceIndex && it.index == 0 } }
+    deviceStates.any { state -> state.events.any { it.device == Devices.mouse && it.index == 0 } }
 
 fun isMouseClickFinished(previous: List<InputDeviceState>, next: List<InputDeviceState>): Boolean =
     isMouseDown(previous) && !isMouseDown(next)
@@ -91,11 +92,11 @@ fun didMouseMove(previous: List<InputDeviceState>, next: List<InputDeviceState>)
 fun getMouseEvents(player: Id, previous: List<InputDeviceState>, next: List<InputDeviceState>) =
     listOfNotNull(
         if (isMouseClickFinished(previous, next))
-          Command(type = GuiCommandType.mouseClick, target = player, device = mouseDeviceIndex)
+          Command(type = GuiCommandType.mouseClick, target = player, device = Devices.mouse)
         else
           null,
         if (didMouseMove(previous, next))
-          Command(type = GuiCommandType.mouseMove, target = player, device = mouseDeviceIndex)
+          Command(type = GuiCommandType.mouseMove, target = player, device = Devices.mouse)
         else
           null,
     )
@@ -144,8 +145,11 @@ fun gatherInputCommands(previous: InputState, next: InputState, playerViews: Pla
 fun firstPlayer(clientState: ClientState) =
     clientState.players.firstOrNull()
 
-fun isGameMouseActive(clientState: ClientState): Boolean =
-    clientState.isEditorActive || getDebugBoolean("DISABLE_MOUSE") || clientState.guiStates[firstPlayer(clientState)]?.view != null
+fun isGameMouseActive(platform: Platform, clientState: ClientState): Boolean =
+    clientState.isEditorActive ||
+        getDebugBoolean("DISABLE_MOUSE") ||
+        clientState.guiStates[firstPlayer(clientState)]?.view != null ||
+        !platform.display.hasFocus()
 
 fun mouseLookEvents(dimensions: Vector2i, previousState: InputDeviceState?, nextState: InputDeviceState, character: Id?): Events =
     if (getDebugBoolean("DISABLE_MOUSE"))

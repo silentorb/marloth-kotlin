@@ -48,9 +48,8 @@ fun defaultKeyboardGameBindings() = mapOf(
     GLFW.GLFW_KEY_A to CharacterCommands.moveLeft,
     GLFW.GLFW_KEY_D to CharacterCommands.moveRight,
     GLFW.GLFW_KEY_S to CharacterCommands.moveDown,
-    GLFW.GLFW_KEY_ENTER to CharacterCommands.interactPrimary,
     GLFW.GLFW_KEY_ESCAPE to GuiCommandType.menu,
-    GLFW.GLFW_KEY_E to CharacterCommands.abilityUtility,
+    GLFW.GLFW_KEY_E to CharacterCommands.interactPrimary,
     GLFW.GLFW_KEY_Q to CharacterCommands.abilityDefense,
     GLFW.GLFW_KEY_SPACE to CharacterCommands.abilityMobility
 ) + defaultSharedKeyboardBindings

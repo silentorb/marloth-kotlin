@@ -48,12 +48,13 @@ import simulation.main.World
 
 const val maxPlayerCount = 4
 
-fun newMarlothBloomState() =
+fun newMarlothBloomState(primarydeviceMode: DeviceMode) =
     GuiState(
         bloom = newBloomState(),
         menuStack = listOf(),
         view = null,
-        menuFocusIndex = 0
+        menuFocusIndex = 0,
+        primarydeviceMode = primarydeviceMode,
     )
 
 fun newClientState(inputConfig: GameInputConfig, audioConfig: AudioConfig, displayModes: List<DisplayMode>) =
@@ -166,7 +167,6 @@ fun updateClient(
     playerBloomDefinitions: Map<Id, BloomDefinition>,
     clientState: ClientState
 ): ClientState {
-
   updateMousePointerVisibility(client.platform, clientState.guiStates[clientState.players.firstOrNull()]?.view, clientState.isEditorActive)
 
   val deviceStates = updateInputDeviceStates(client.platform.input, clientState.input.deviceStates)
@@ -176,8 +176,9 @@ fun updateClient(
   val commands = gatherInputCommands(clientState.input, input, playerViews(clientState))
   val mousePosition = clientState.input.deviceStates.first().mousePosition.toVector2i()
   val events = gatherUserEvents(options, clientState, playerBoxes, mousePosition, commands)
+  val commands2 = commands + events.filterIsInstance<Command>()
 
-  applyCommandsToExternalSystem(client, events.filterIsInstance<ClientEvent>())
+  applyCommandsToExternalSystem(client, commands2)
   val nextGuiStates = if (clientState.isEditorActive)
     clientState.guiStates
   else
@@ -189,8 +190,7 @@ fun updateClient(
               clientState.guiStates,
               mousePosition,
               playerBoxes,
-              commands,
-              events.filterIsInstance<ClientEvent>(),
+              commands2,
               player,
               bloomDefinition
           )
@@ -217,7 +217,7 @@ fun updateClient(
       audio = updateClientAudio(client, worlds, clientState.audio),
       input = input,
       guiStates = nextGuiStates,
-      commands = commands + editorEvents1 + editorEvents2 + events.filterIsInstance<Command>(),
+      commands = commands2 + editorEvents1 + editorEvents2,
       events = events,
       isEditorActive = nextIsEditorActive,
       editor = nextEditor,

@@ -1,6 +1,7 @@
 package marloth.clienting.gui.hud
 
 import marloth.clienting.ClientState
+import marloth.clienting.DeviceMode
 import marloth.clienting.gui.TextResources
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.TextStyles
@@ -57,38 +58,41 @@ private fun playerStats(world: World, actor: Id, debugInfo: List<String>): Flowe
   ) + debugInfo.map {
     label(textStyle, it)
   }
-  return reverseOffset(reverseJustifiedStart, reverseJustifiedEnd)(
+  return alignBoth(justifiedStart, justifiedEnd,
       hudBox(
           boxList(verticalPlane, 10)(rows)
       )
   )
 }
 
-fun interactionDialog(textResources: TextResources, interactable: Interactable): Flower {
+fun getInteractKeyText(deviceMode: DeviceMode) =
+    when (deviceMode) {
+      DeviceMode.gamepad -> "(A)"
+      DeviceMode.mouseKeyboard -> "E"
+    }
+
+fun interactionDialog(primaryInteractText: String, textResources: TextResources, interactable: Interactable): Flower {
   val secondary = interactable.secondaryCommand
   val rows = listOfNotNull(
-      label(textStyle, textResources(interactable.primaryCommand.text) + " A"),
+      label(textStyle, textResources(interactable.primaryCommand.text) + " $primaryInteractText"),
       if (secondary != null)
-        label(textStyle, textResources(secondary.text) + " B")
+        label(textStyle, textResources(secondary.text) + " (B)")
       else
         null
   )
 
-  return align(justifiedStart, percentage(0.8f)) { dimensions ->
-    val result = align(centered, justifiedStart,
-       boxMargin(10)(boxList(verticalPlane, 20)(rows))
-    )(dimensions)
-    result.copy(
-        dimensions = result.dimensions.copy(x = dimensions.x),
-        depiction = solidBackground(black)
-    )
-  }
+  return alignSingle(percentage(0.8f), verticalPlane,
+      alignSingle(centered, horizontalPlane,
+          boxMargin(10)(boxList(verticalPlane, 20)(rows))
+      ) depictBehind solidBackground(black)
+  )
 }
 
 fun hudLayout(textResources: TextResources, world: World, clientState: ClientState, player: Id, view: ViewId?): Flower? {
   val deck = world.deck
   val definitions = world.definitions
   val grid = world.realm.grid
+  val guiState = clientState.guiStates[player]
 
   val character = deck.characters[player]
   val characterRig = deck.characterRigs[player]
@@ -154,7 +158,7 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
 //          character.groundDistance.toString()
     )
     compose(listOfNotNull(
-        if (interactable != null) interactionDialog(textResources, interactable) else null,
+        if (interactable != null) interactionDialog(getInteractKeyText(guiState!!.primarydeviceMode), textResources, interactable) else null,
         playerStats(world, player, debugInfo),
         if (cooldowns.any()) cooldownIndicatorPlacement(cooldowns) else null,
         if (viewMode == ViewMode.firstPerson) reticlePlacement() else null

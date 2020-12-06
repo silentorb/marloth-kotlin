@@ -8,6 +8,7 @@ import marloth.clienting.gui.menus.logic.MenuStack
 import silentorb.mythic.aura.AudioState
 import silentorb.mythic.bloom.BloomState
 import silentorb.mythic.bloom.Box
+import silentorb.mythic.bloom.Flower
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.editing.Editor
 import silentorb.mythic.ent.Id
@@ -19,16 +20,23 @@ const val canvasRendererKey = "renderer"
 
 typealias PlayerViews = Map<Id, ViewId?>
 
+enum class DeviceMode {
+  mouseKeyboard,
+  gamepad
+}
+
 data class GuiState(
     val bloom: BloomState,
     val menuStack: MenuStack,
     val view: ViewId?,
     val menuFocusIndex: Int,
-    val displayChange: DisplayChangeState? = null
+    val displayChange: DisplayChangeState? = null,
+    val primarydeviceMode: DeviceMode,
 )
 
 typealias GuiStateMap = Map<Id, GuiState>
 typealias StateFlower = (Definitions, GuiState) -> Box
+typealias StateFlowerTransform = (Definitions, GuiState) -> Flower
 
 fun initialEditor(): Editor? =
     if (getDebugBoolean("START_EDITOR"))

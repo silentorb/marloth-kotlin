@@ -49,7 +49,7 @@ fun cooldownIndicator(radius: Float, color: Vector4, completion: Float): Depicti
 }
 
 fun cooldownIndicatorPlacement(cooldowns: List<Cooldown>): Flower {
-  return align(centered, percentage(0.8f),
+  return alignBoth(centered, percentage(0.8f),
       boxList(horizontalPlane, 20)(cooldowns
           .map { cooldown ->
             boxList(verticalPlane, 10)(

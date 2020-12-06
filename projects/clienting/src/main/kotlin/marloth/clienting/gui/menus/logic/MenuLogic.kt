@@ -77,8 +77,9 @@ fun updateMenuFocus(stack: MenuStack, menuSize: Int, commands: List<Any>, hoverF
 
 fun updateMenuStack(commands: List<Any>, state: GuiState): MenuStack {
   val stack = state.menuStack
+  val view = state.view
   return when {
-    commands.contains(ClientEventType.navigate) -> stack + MenuLayer(state.view!!, state.menuFocusIndex)
+    commands.contains(ClientEventType.navigate) && view != null -> stack + MenuLayer(view, state.menuFocusIndex)
     commands.contains(ClientEventType.menuBack) -> stack.dropLast(1)
     commands.contains(GuiCommandType.menu) -> listOf()
     else -> stack

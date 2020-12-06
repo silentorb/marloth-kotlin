@@ -1,6 +1,7 @@
 package marloth.clienting.gui.menus.views
 
 import marloth.clienting.StateFlower
+import marloth.clienting.StateFlowerTransform
 import marloth.clienting.gui.menus.*
 import marloth.scenery.enums.Text
 import silentorb.mythic.bloom.*
@@ -71,11 +72,12 @@ fun characterInfoView(definitions: Definitions, deck: Deck, actor: Id): Box {
   )
 }
 
-fun characterInfoViewOrChooseAbilityMenu(deck: Deck, actor: Id): StateFlower = { definitions, state ->
-  val character = deck.characters[actor]!!
-  val accessoryOptions = character.accessoryOptions
-  if (accessoryOptions != null)
-    simpleMenuFlower(Text.gui_chooseAccessoryMenu, chooseAccessoryMenu(definitions, actor, accessoryOptions))(definitions, state)
-  else
-    characterInfoView(definitions, deck, actor)
-}
+fun characterInfoViewOrChooseAbilityMenu(deck: Deck, actor: Id): StateFlowerTransform =
+    dialogWrapperWithExtras { definitions, state ->
+      val character = deck.characters[actor]!!
+      val accessoryOptions = character.accessoryOptions
+      if (accessoryOptions != null)
+        simpleMenuFlower(Text.gui_chooseAccessoryMenu, chooseAccessoryMenu(definitions, actor, accessoryOptions))(definitions, state)
+      else
+        characterInfoView(definitions, deck, actor)
+    }
