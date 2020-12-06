@@ -22,6 +22,7 @@ data class World(
     val definitions: Definitions,
     val gameModeConfig: GameModeConfig,
     val persistence: Graph,
+    val graph: GraphStore,
 )
 
 typealias WorldPair = Pair<World, World>

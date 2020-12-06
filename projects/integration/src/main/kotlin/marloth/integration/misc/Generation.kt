@@ -2,29 +2,31 @@ package marloth.integration.misc
 
 import generation.architecture.engine.GenerationConfig
 import generation.architecture.engine.compileArchitectureMeshInfo
-import marloth.clienting.rendering.loadBlocks
 import marloth.generation.population.populateWorld
 import marloth.scenery.enums.MeshShapeMap
 import persistence.Database
 import persistence.queryEntries
 import silentorb.mythic.debugging.getDebugBoolean
-import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.Graph
+import silentorb.mythic.ent.IdSource
+import silentorb.mythic.ent.SimpleGraphStore
 import silentorb.mythic.ent.newIdSource
 import silentorb.mythic.physics.newBulletState
 import silentorb.mythic.randomly.Dice
+import silentorb.mythic.scenery.SceneProperties
 import simulation.intellect.navigation.newNavigationState
-import simulation.main.World
-import simulation.main.idHandsToDeck
-import simulation.main.newGlobalState
-import simulation.misc.*
+import simulation.main.*
+import simulation.misc.Definitions
+import simulation.misc.GameAttributes
+import simulation.misc.MapGrid
+import simulation.misc.Realm
+import simulation.physics.graphToBody
 
-fun generateWorld(db: Database, definitions: Definitions, generationConfig: GenerationConfig, input: WorldInput, graph: Graph): World {
+fun generateWorld(db: Database, definitions: Definitions, generationConfig: GenerationConfig, dice: Dice, graph: Graph): World {
   val nextId = newIdSource(1)
-  val dice = input.dice
-
-  val deck = idHandsToDeck(populateWorld(nextId, generationConfig, graph))
+  val deck = allHandsToDeck(nextId, populateWorld(nextId, generationConfig, graph), Deck())
+//  val graphHands = graphToHands(nextId, graph)
   val navigation = if (generationConfig.includeEnemies) {
     val meshIds = deck.depictions
         .filterValues { generationConfig.meshes.containsKey(it.mesh) }
@@ -48,6 +50,7 @@ fun generateWorld(db: Database, definitions: Definitions, generationConfig: Gene
       definitions = definitions,
       gameModeConfig = newGameModeConfig(),
       persistence = persistence,
+      graph = SimpleGraphStore(),
   )
 }
 
@@ -59,17 +62,11 @@ fun generateWorld(db: Database, definitions: Definitions, meshInfo: MeshShapeMap
   if (getDebugBoolean("LOG_SEED")) {
     println("Generation seed: ${dice.seed}")
   }
-  val boundary = createWorldBoundary(100f)
   val generationConfig = GenerationConfig(
       definitions = definitions,
       meshes = compileArchitectureMeshInfo(meshInfo),
-      includeEnemies = getDebugString("NO_ENEMIES") != "1",
-      roomCount = getDebugInt("BASE_ROOM_COUNT") ?: 100,
-      polyominoes = loadBlocks()
+      includeEnemies = getDebugString("NO_ENEMIES") != "1"
   )
-  val input = WorldInput(
-      boundary,
-      dice
-  )
-  return generateWorld(db, definitions, generationConfig, input, graph)
+
+  return generateWorld(db, definitions, generationConfig, dice, graph)
 }

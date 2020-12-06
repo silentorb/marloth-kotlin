@@ -1,9 +1,6 @@
 package simulation.main
 
-import simulation.misc.GameOver
-import simulation.misc.MapGrid
-import simulation.misc.isVictory
-import simulation.misc.misfitFaction
+import simulation.misc.*
 
 data class GlobalState(
     val doom: Long,
@@ -21,7 +18,7 @@ fun newGlobalState(): GlobalState =
 fun checkGameOver(deck: Deck, grid: MapGrid): GameOver? =
     if (isVictory(deck, grid))
       GameOver(
-          winningFaction = misfitFaction
+          winningFaction = Factions.misfits
       )
     else
       null

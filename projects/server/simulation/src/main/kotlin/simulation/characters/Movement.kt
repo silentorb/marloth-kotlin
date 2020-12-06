@@ -11,7 +11,7 @@ typealias MoveSpeedTable = Map<Id, Float>
 
 fun getMoveSpeed(definitions: Definitions, deck: Deck): (Id) -> Float = { actor ->
   val character = deck.characters[actor]!!
-  val definition = definitions.professions[character.profession]!!
+  val definition = character.definition
   val baseSpeed = definition.speed
   val accessory = getAccessory(AccessoryId.dashing, deck.accessories, actor)?.value
   val dashBonus = if (accessory != null)

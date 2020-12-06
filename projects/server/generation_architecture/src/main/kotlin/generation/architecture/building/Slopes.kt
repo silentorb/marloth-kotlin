@@ -11,7 +11,6 @@ import silentorb.mythic.spatial.Vector3
 import simulation.entities.Depiction
 import simulation.misc.cellHalfLength
 import simulation.misc.cellLength
-import kotlin.math.asin
 
 fun newSlopedFloorMesh(depiction: Depiction): Builder = { input ->
   val orientation = Quaternion()

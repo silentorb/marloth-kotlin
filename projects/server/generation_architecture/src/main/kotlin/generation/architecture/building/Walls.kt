@@ -4,7 +4,6 @@ import generation.architecture.engine.*
 import generation.general.Direction
 import generation.general.directionVectors
 import generation.general.horizontalDirections
-import generation.general.verticalDirections
 import marloth.scenery.enums.MeshId
 import silentorb.mythic.spatial.*
 import simulation.entities.Depiction

@@ -20,6 +20,7 @@ import simulation.accessorize.newAccessoryChoice
 import simulation.combat.general.DamageMultipliers
 import simulation.combat.general.ResourceContainer
 import simulation.entities.DepictionType
+import simulation.entities.Ware
 import simulation.happenings.PurchaseEvent
 import simulation.main.Deck
 import simulation.misc.*
@@ -40,7 +41,8 @@ data class CharacterDefinition(
     val deathSound: SoundName?,
     val ambientSounds: List<SoundType> = listOf(),
     val damageMultipliers: DamageMultipliers = mapOf(),
-    val fieldOfView: Float = 0.5f // Only used for AI. Dot product: 1 is no vision, -1 is 360 degree vision
+    val fieldOfView: Float = 0.5f, // Only used for AI. Dot product: 1 is no vision, -1 is 360 degree vision
+    val wares: List<Ware> = listOf()
 )
 
 enum class EquipmentSlot {
@@ -56,7 +58,7 @@ typealias Equipment = Map<EquipmentSlot, Id>
 typealias AccessoryOptions = List<AccessoryName>
 
 data class Character(
-    val profession: ProfessionId,
+    val definition: CharacterDefinition,
     val faction: Id,
     val sanity: ResourceContainer = ResourceContainer(100),
     val isAlive: Boolean,
@@ -89,10 +91,12 @@ fun getPurchaseCost(deck: Deck, events: Events, character: Id): Int {
   val purchases = events.filterIsInstance<PurchaseEvent>()
       .filter { it.customer == character }
 
-  return purchases.map { purchase ->
-    val ware = deck.wares[purchase.ware]!!
-    ware.price
-  }
+  return purchases
+      .mapNotNull { purchase ->
+        val wares = deck.merchants[purchase.merchant]?.wares
+        assert(wares != null)
+        wares!![purchase.ware]?.price
+      }
       .sum()
 }
 
@@ -119,21 +123,21 @@ fun updateInteractingWith(deck: Deck, character: Id, commands: Commands, interac
     else
       interactingWith
 
-fun updateCharacterProfession(definitions: Definitions, actor: Id, events: Events, profession: ProfessionId): ProfessionId {
-  val modifyLevelEvents = events
-      .filterIsInstance<ModifyLevelEvent>()
-      .filter { it.actor == actor }
-
-  return if (modifyLevelEvents.any()) {
-    val definition = definitions.professions[profession]!!
-    val level = minMax(0, maxCharacterLevel)(definition.level + modifyLevelEvents.sumBy { it.offset })
-    profession.dropLast(1) + level
-  } else
-    profession
-}
+//fun updateCharacterProfession(definitions: Definitions, actor: Id, events: Events, profession: ProfessionId): ProfessionId {
+//  val modifyLevelEvents = events
+//      .filterIsInstance<ModifyLevelEvent>()
+//      .filter { it.actor == actor }
+//
+//  return if (modifyLevelEvents.any()) {
+//    val definition = definitions.professions[profession]!!
+//    val level = minMax(0, maxCharacterLevel)(definition.level + modifyLevelEvents.sumBy { it.offset })
+//    profession.dropLast(1) + level
+//  } else
+//    profession
+//}
 
 fun updateAccessoryPoints(events: Events, character: Character): Int {
-  return if (character.faction == misfitFaction) {
+  return if (character.faction == Factions.misfits) {
     val victoryKeyEventPlacementCount = events.filterIsInstance<PlaceVictoryKeyEvent>().count()
     val removal = if (character.accessoryPoints > 0 && character.accessoryOptions == null)
       -1
@@ -145,7 +149,7 @@ fun updateAccessoryPoints(events: Events, character: Character): Int {
 }
 
 fun updateAccessoryOptions(definitions: Definitions, dice: Dice, deck: Deck, events: Events, actor: Id, character: Character): AccessoryOptions? {
-  return if (character.faction == misfitFaction)
+  return if (character.faction == Factions.misfits)
     if (character.accessoryPoints > 0 && character.accessoryOptions == null)
       newAccessoryChoice(definitions, dice, deck, actor)
     else if (events.filterIsInstance<ChooseImprovedAccessory>().any { it.actor == actor })
@@ -173,7 +177,7 @@ fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletStat
       canInteractWith = canInteractWith,
       interactingWith = updateInteractingWith(deck, actor, commands, character.interactingWith),
       money = updateMoney(deck, events, actor, character.money),
-      profession = updateCharacterProfession(definitions, actor, events, character.profession),
+//      definition = updateCharacterProfession(definitions, actor, events, character.definition),
       accessoryPoints = updateAccessoryPoints(events, character),
       accessoryOptions = updateAccessoryOptions(definitions, dice, deck, events, actor, character),
       nourishment = updateNourishment(1, character, toInt1000(body.velocity.length())),

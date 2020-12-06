@@ -21,11 +21,11 @@ fun newRespawnCountdown(id: Id, duration: Float, character: Id): IdHand {
   return IdHand(
       id = id,
       hand = Hand(
-          timerFloat = FloatTimer(
-              duration = duration
-          ),
           respawnCountdown = RespawnCountdown(
               target = character
+          ),
+          timerFloat = FloatTimer(
+              duration = duration
           )
       )
   )

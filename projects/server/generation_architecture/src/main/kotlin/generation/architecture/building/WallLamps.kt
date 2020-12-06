@@ -12,14 +12,14 @@ import simulation.main.Hand
 
 fun addWallLamp(position: Vector3, orientation: Quaternion): Hand {
   return Hand(
-      depiction = Depiction(
-          type = DepictionType.staticMesh,
-          mesh = MeshId.wallLamp
-      ),
       body = Body(
           position = position,
           velocity = Vector3(),
           orientation = orientation
+      ),
+      depiction = Depiction(
+          type = DepictionType.staticMesh,
+          mesh = MeshId.wallLamp
       )
   )
 }

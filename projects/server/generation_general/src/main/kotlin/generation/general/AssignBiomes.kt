@@ -1,21 +1,20 @@
 package generation.general
 
 import simulation.misc.BiomeName
-import simulation.misc.WorldInput
 
 typealias BiomeGrid = Grid<BiomeName>
 
-fun newBiomeGrid(biomes: BiomeInfoMap, input: WorldInput): BiomeGrid {
-  val gridScale = 0.5f
-  val dimensions = input.boundary.dimensions * gridScale
-  val width = dimensions.x.toInt()
-  val height = dimensions.y.toInt()
-  val anchorCount = (width * height * 0.1f).toInt()
-  val boundary = input.boundary
-  val values = biomes.keys.toList()
-  val anchors = voronoiAnchors(values, anchorCount, input.dice, boundary.start, boundary.end)
-  return voronoi(anchors)
-}
+//fun newBiomeGrid(biomes: BiomeInfoMap, input: WorldInput): BiomeGrid {
+//  val gridScale = 0.5f
+//  val dimensions = input.boundary.dimensions * gridScale
+//  val width = dimensions.x.toInt()
+//  val height = dimensions.y.toInt()
+//  val anchorCount = (width * height * 0.1f).toInt()
+//  val boundary = input.boundary
+//  val values = biomes.keys.toList()
+//  val anchors = voronoiAnchors(values, anchorCount, input.dice, boundary.start, boundary.end)
+//  return voronoi(anchors)
+//}
 
 //private fun logGrid(grid: Grid<BiomeId>, boundary: WorldBoundary) {
 //  for (y in 0 until (boundary.dimensions.y).toInt()) {
@@ -38,5 +37,5 @@ val fixedDistributionBiomeAttributes = setOf(
 fun randomDistributionBiomes(biomes: BiomeInfoMap): BiomeInfoMap =
     biomes.filterValues { biome -> biome.attributes.none { fixedDistributionBiomeAttributes.contains(it) } }
 
-fun newRandomizedBiomeGrid(biomes: BiomeInfoMap, input: WorldInput) =
-    newBiomeGrid(randomDistributionBiomes(biomes), input)
+//fun newRandomizedBiomeGrid(biomes: BiomeInfoMap, input: WorldInput) =
+//    newBiomeGrid(randomDistributionBiomes(biomes), input)

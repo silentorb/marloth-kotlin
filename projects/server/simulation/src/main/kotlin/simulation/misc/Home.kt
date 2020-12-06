@@ -17,9 +17,6 @@ fun isAtHome(grid: MapGrid, deck: Deck): (Id) -> Boolean = { id ->
     false
 }
 
-fun getPlayerStart(grid: MapGrid): Vector3i? =
-    grid.cells.entries.firstOrNull { it.value.attributes.contains(CellAttribute.home) }?.key ?: Vector3i.zero
-
 fun getPlayerStart(graph: Graph): Matrix? {
   val spawners = filterByAttribute(graph, GameAttributes.playerSpawn)
   val spawner = spawners.minByOrNull { path -> path.count { it == '.' } }
@@ -28,3 +25,7 @@ fun getPlayerStart(graph: Graph): Matrix? {
   else
     null
 }
+
+fun getNodePositionsByAttribute(graph: Graph): List<Matrix> =
+    filterByAttribute(graph, GameAttributes.playerSpawn)
+        .map { getNodeTransform(graph, it) }

@@ -8,7 +8,6 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.Table
 import silentorb.mythic.happenings.Events
-import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.scenery.Light
@@ -46,12 +45,12 @@ fun newVictoryKey(owner: Id = 0L) =
 fun newSpatialVictoryKey(location: Vector3): Hand {
   val mesh = MeshId.key
   return Hand(
+      body = Body(
+          position = location + Vector3(0f, 0f, 0.4f)
+      ),
       depiction = Depiction(
           type = DepictionType.staticMesh,
           mesh = mesh
-      ),
-      body = Body(
-          position = location + Vector3(0f, 0f, 0.4f)
       )
   )
 }

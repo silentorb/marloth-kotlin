@@ -8,7 +8,7 @@ import simulation.characters.newCharacter
 import simulation.intellect.freshSpirit
 import simulation.main.IdHand
 import simulation.misc.Definitions
-import simulation.misc.monsterFaction
+import simulation.misc.Factions
 
 fun placeAiCharacter(nextId: IdSource, definitions: Definitions, faction: Id, profession: ProfessionId, position: Vector3): List<IdHand> {
   return newCharacter(nextId, nextId(), definitions,
@@ -21,7 +21,7 @@ fun placeAiCharacter(nextId: IdSource, definitions: Definitions, faction: Id, pr
 
 fun placeEnemy(nextId: IdSource, definitions: Definitions, cell: Vector3, profession: ProfessionId): List<IdHand> =
     placeAiCharacter(nextId, definitions,
-        faction = monsterFaction,
+        faction = Factions.monsters,
         profession = profession,
         position = cell
     )

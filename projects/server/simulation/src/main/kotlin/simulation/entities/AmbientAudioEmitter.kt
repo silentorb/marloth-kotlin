@@ -18,7 +18,7 @@ fun updateAmbientAudioEmitter(definitions: Definitions, dice: Dice, deck: Deck):
   val newSound = delay <= 0.0
   val sound = if (newSound) {
     val character = deck.characters[id]!!
-    dice.takeOne(definitions.professions[character.profession]!!.ambientSounds)
+    dice.takeOne(character.definition.ambientSounds)
   } else
     null
 

@@ -2,17 +2,21 @@
 <Filter>
 	<Components>
 		<Result id="result">
-			<Source source="multiblend2 01"/>
-			<FilterType value="0"/>
+			<SurfaceColor source="multiblend2 01" red="1" green="0" blue="1" alpha="1"/>
+			<Height source="multiblend2 01"/>
+			<Reflectivity value="0"/>
+			<ReflectionBlur value="0"/>
+			<Metallic value="0"/>
+			<FilterType value="1"/>
 			<Advanced value="false"/>
 			<Lighting>
 				<Height value="0.2000000000000000111"/>
 				<Environment>
-					<Source value=""/>
+					<Source value="Church"/>
 					<Brightness value="1"/>
 					<Saturation value="1"/>
-					<Rotation value="0"/>
-					<RotationAxis x="0" y="0" z="0"/>
+					<Rotation value="5.9805090675894394536"/>
+					<RotationAxis x="0.350861088050155423" y="-0.9362702773883887497" z="0.0171599700289281308"/>
 				</Environment>
 				<Ambience>
 					<AmbientLight red="0" green="0" blue="0"/>
@@ -41,6 +45,13 @@
 						<WhitePoint value="1"/>
 					</ArtisticSettings>
 				</Ambience>
+				<Light>
+					<Color red="1" green="1" blue="1"/>
+					<Latitude value="43.4044796116903839334"/>
+					<Longitude value="68.3672487831999831087"/>
+					<AngularWidthIndex value="1"/>
+					<AffectDiffuseSpecular value="0"/>
+				</Light>
 			</Lighting>
 		</Result>
 		<Blend6 id="blend6 01">
@@ -73,11 +84,11 @@
 			<Noise red="1" green="0.8725756341809187688" blue="0.7248062015503875521" alpha="1"/>
 			<Background red="0.595954930125467075" green="0.6007751937984495694" blue="0.5355747851691604611" alpha="1"/>
 			<Roughness value="0.6600000000000000311"/>
-			<Scale value="0.9899999999999999911"/>
+			<Scale value="1.4699999999999999734"/>
 			<Stretch value="0"/>
 			<Angle value="0"/>
 			<Details value="1"/>
-			<Contrast value="0"/>
+			<Contrast value="0.2700000000000000178"/>
 			<Variation value="1"/>
 			<OctaveCurve value="0"/>
 		</PerlinNoise2>
@@ -182,11 +193,11 @@
 			<Lighting>
 				<Height value="0.2000000000000000111"/>
 				<Environment>
-					<Source value=""/>
+					<Source value="Church"/>
 					<Brightness value="1"/>
 					<Saturation value="1"/>
-					<Rotation value="0"/>
-					<RotationAxis x="0" y="0" z="0"/>
+					<Rotation value="5.9805090675894394536"/>
+					<RotationAxis x="0.350861088050155423" y="-0.9362702773883887497" z="0.0171599700289281308"/>
 				</Environment>
 				<Ambience>
 					<AmbientLight red="0" green="0" blue="0"/>
@@ -215,6 +226,13 @@
 						<WhitePoint value="1"/>
 					</ArtisticSettings>
 				</Ambience>
+				<Light>
+					<Color red="1" green="1" blue="1"/>
+					<Latitude value="43.4044796116903839334"/>
+					<Longitude value="68.3672487831999831087"/>
+					<AngularWidthIndex value="1"/>
+					<AffectDiffuseSpecular value="0"/>
+				</Light>
 			</Lighting>
 			<Controls/>
 		</DefaultPreset>
@@ -231,11 +249,11 @@
 	<FilterEditor>
 		<Groups/>
 		<ThumbnailSize value="2"/>
-		<Canvas left="-1200" top="-233" zoom_factor="0"/>
-		<Viewport left="0" top="22" zoom_factor="1"/>
+		<Canvas left="-1134" top="-296" zoom_factor="0"/>
+		<Viewport left="467" top="558" zoom_factor="2"/>
 		<LockPreview>
-			<Locked value="false"/>
-			<LockedComponent name=""/>
+			<Locked value="true"/>
+			<LockedComponent name="result"/>
 		</LockPreview>
 		<Item id="blend6 01">
 			<Position left="-624" top="160"/>
@@ -253,7 +271,7 @@
 			<Position left="48" top="352"/>
 		</Item>
 		<Item id="result">
-			<Position left="-1376" top="288"/>
+			<Position left="-1488" top="416"/>
 		</Item>
 		<Item id="stones2 01">
 			<Position left="-304" top="80"/>

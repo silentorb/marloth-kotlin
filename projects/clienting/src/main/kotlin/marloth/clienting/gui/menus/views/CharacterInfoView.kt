@@ -32,7 +32,7 @@ import simulation.misc.Definitions
 
 fun generalCharacterInfo(definitions: Definitions, deck: Deck, actor: Id): Box {
   val character = deck.characters[actor]!!
-  val profession = definitions.professions[character.profession]!!
+  val profession = character.definition
   val rows = listOf(
       label(TextStyles.smallBlack, definitions.textLibrary(Text.gui_profession)),
       label(TextStyles.smallBlack, definitions.textLibrary(profession.name))

@@ -28,15 +28,15 @@ fun missileAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinit
                   position = origin,
                   velocity = vector * weapon.velocity
               ),
-              collisionShape = CollisionObject(
-                  shape = Sphere(0.2f),
-                  groups = CollisionGroups.dynamic,
-                  mask = CollisionGroups.standardMask
-              ),
               dynamicBody = DynamicBody(
                   gravity = false,
                   mass = 1f,
                   resistance = 1f
+              ),
+              collisionShape = CollisionObject(
+                  shape = Sphere(0.2f),
+                  groups = CollisionGroups.dynamic,
+                  mask = CollisionGroups.standardMask
               ),
               depiction = Depiction(
                   type = DepictionType.staticMesh,
@@ -53,8 +53,8 @@ fun missileAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinit
                   damageFalloff = weapon.damageFalloff,
                   damages = weapon.damages
               ),
-              trigger = Trigger(),
-              timerFloat = FloatTimer(1.5f)
+              timerFloat = FloatTimer(1.5f),
+              trigger = Trigger()
           )
       )
   )

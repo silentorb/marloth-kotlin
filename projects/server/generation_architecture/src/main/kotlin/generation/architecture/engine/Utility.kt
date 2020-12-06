@@ -8,12 +8,10 @@ import marloth.scenery.enums.MeshInfoMap
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.scenery.MeshName
-import silentorb.mythic.scenery.TextureName
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
 import simulation.entities.Depiction
-import simulation.entities.DepictionType
 import simulation.main.Hand
 import simulation.misc.*
 import simulation.physics.CollisionGroups
@@ -46,7 +44,6 @@ fun newArchitectureMesh(meshes: MeshInfoMap, depiction: Depiction, position: Vec
   val meshInfo = meshes[depiction.mesh]
   val shape = meshInfo?.shape
   return Hand(
-      depiction = depiction,
       body = Body(
           position = position,
           orientation = orientation,
@@ -59,7 +56,8 @@ fun newArchitectureMesh(meshes: MeshInfoMap, depiction: Depiction, position: Vec
             mask = CollisionGroups.staticMask
         )
       else
-        null
+        null,
+      depiction = depiction
   )
 }
 

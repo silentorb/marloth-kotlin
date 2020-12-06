@@ -3,7 +3,6 @@ package marloth.clienting.editing
 import marloth.clienting.input.GuiCommandType
 import marloth.definition.misc.loadMarlothGraphLibrary
 import marloth.scenery.enums.MeshId
-import marloth.scenery.enums.TextureIdOld
 import marloth.scenery.enums.textures
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.editing.*

@@ -3,7 +3,6 @@ package simulation.accessorize
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.happenings.Events
-import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.randomly.Dice
 import simulation.characters.AccessoryOptions
 import simulation.main.Deck

@@ -70,7 +70,7 @@ fun canSee(world: World, lightRatings: Table<Float>, viewer: Id): (Id) -> Boolea
   val viewerBody = deck.bodies[viewer]!!
   val targetBody = deck.bodies[target]!!
   val distance = viewerBody.position.distance(targetBody.position)
-  val viewerCharacterDefinition = definitions.professions[deck.characters[viewer]!!.profession]!!
+  val viewerCharacterDefinition = deck.characters[viewer]!!.definition
   val fieldOfView = viewerCharacterDefinition.fieldOfView
   val result = distance <= viewingRange
       && isInAngleOfView(deck.characterRigs[viewer]!!.facingVector, viewerBody, targetBody, fieldOfView)

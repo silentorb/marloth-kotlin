@@ -3,12 +3,10 @@ package generation.architecture.engine
 import generation.architecture.building.emptyBuilder
 import generation.architecture.matrical.BlockBuilder
 import generation.general.*
-import silentorb.mythic.spatial.Vector3i
 import simulation.entities.Depiction
 import simulation.misc.CellAttribute
 import simulation.misc.absoluteCellPosition
 import simulation.misc.cellHalfLength
-import simulation.misc.cellLength
 
 fun blockBuildersFromElements(name: String, polyomino: Polyomino): List<BlockBuilder> {
   val elements = polyomino.elements

@@ -21,7 +21,6 @@ import simulation.accessorize.ItemPickup
 import simulation.characters.Character
 import simulation.combat.PlayerOverlay
 import simulation.combat.general.Destructible
-import simulation.combat.general.ResourceBundle
 import simulation.combat.spatial.Missile
 import simulation.entities.*
 import simulation.happenings.Trigger
@@ -66,8 +65,7 @@ data class Hand(
     val timerInt: IntTimer? = null,
     val timerFloat: FloatTimer? = null,
     val trigger: Trigger? = null,
-    val ware: Ware? = null,
-    val graph: GetAnyGraph? = null
+    val ware: Ware? = null
 )
 
 typealias IdHand = GenericIdHand<Hand>

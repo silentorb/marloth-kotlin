@@ -3,7 +3,6 @@ package generation.architecture.building
 import generation.architecture.engine.*
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
-import silentorb.mythic.spatial.quarterAngle
 import simulation.entities.Depiction
 import simulation.misc.cellHalfLength
 

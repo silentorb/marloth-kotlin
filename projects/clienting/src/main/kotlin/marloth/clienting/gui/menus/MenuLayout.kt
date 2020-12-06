@@ -11,6 +11,7 @@ import silentorb.mythic.bloom.*
 import silentorb.mythic.drawing.Canvas
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector4
+import silentorb.mythic.typography.IndexedTextStyle
 import kotlin.math.max
 
 typealias MenuItemFlower = (Boolean) -> Box
@@ -33,25 +34,30 @@ fun newSimpleMenuItem(text: Text, event: EventUnion? = null) =
 
 typealias Menu = List<MenuItem>
 
-fun getFocusStyle(hasFocus: Boolean) =
-    if (hasFocus)
-      Pair(TextStyles.mediumBlack, LineStyle(Vector4(1f), 2f))
-    else
-      Pair(TextStyles.mediumBlack, LineStyle(Vector4(0f, 0f, 0f, 1f), 1f))
+fun getFocusStyle(hasFocus: Boolean, enabled: Boolean): Pair<IndexedTextStyle, LineStyle> {
+  val textStyle = if (enabled)
+    TextStyles.mediumBlack
+  else
+    TextStyles.gray
 
-fun drawMenuButtonBorder(hasFocus: Boolean, bounds: Bounds, canvas: Canvas) {
-  val style = getFocusStyle(hasFocus)
+  return if (hasFocus)
+    textStyle to LineStyle(Vector4(1f), 2f)
+  else
+    textStyle to LineStyle(Vector4(0f, 0f, 0f, 1f), 1f)
+}
+
+fun drawMenuButtonBorder(hasFocus: Boolean, enabled: Boolean, bounds: Bounds, canvas: Canvas) {
+  val style = getFocusStyle(hasFocus, enabled)
   drawBorder(bounds, canvas, style.second)
 }
 
-fun menuTextFlower(text: String): MenuItemFlower = { hasFocus ->
-  val style = getFocusStyle(hasFocus)
+fun menuTextFlower(text: String, enabled: Boolean = true): MenuItemFlower = { hasFocus ->
+  val style = getFocusStyle(hasFocus, enabled)
   label(style.first, text)
 }
 
 fun drawMenuButtonBackground(hasFocus: Boolean): Depiction = { bounds: Bounds, canvas: Canvas ->
-//  drawFill(bounds, canvas, grayTone(0.5f))
-  drawMenuButtonBorder(hasFocus, bounds, canvas)
+  drawMenuButtonBorder(hasFocus, true, bounds, canvas)
 }
 
 private val buttonDimensions = Vector2i(200, 50)

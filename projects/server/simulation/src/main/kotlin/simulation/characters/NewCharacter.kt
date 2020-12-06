@@ -8,6 +8,7 @@ import simulation.combat.general.DestructibleBaseStats
 import simulation.combat.general.ResourceContainer
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
+import silentorb.mythic.ent.newIdSource
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
@@ -20,6 +21,7 @@ import simulation.main.Hand
 import simulation.main.IdHand
 import simulation.misc.Definitions
 import simulation.happenings.newPossibleAction
+import simulation.main.NewHand
 import simulation.physics.CollisionGroups
 
 fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, profession: ProfessionId, faction: Id, position: Vector3,
@@ -39,7 +41,6 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, prof
             )
         )
       }
-
   return listOf(
       IdHand(
           id = character,
@@ -50,6 +51,11 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, prof
                 )
               else
                 null,
+              body = Body(
+                  position = position,
+                  velocity = Vector3(),
+                  orientation = Quaternion()
+              ),
               animation = CharacterAnimation(
                   animations = listOf(
                       SingleAnimation(
@@ -58,32 +64,20 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, prof
                       )
                   )
               ),
-              body = Body(
-                  position = position,
-                  velocity = Vector3(),
-                  orientation = Quaternion()
+              dynamicBody = DynamicBody(
+                  gravity = true,
+                  mass = 45f,
+                  resistance = 4f
               ),
               character = Character(
                   faction = faction,
                   isAlive = true,
-                  profession = profession
+                  definition = definition,
               ),
               characterRig = CharacterRig(
                   facingRotation = Vector2(angle, 0f),
                   facingOrientation = characterRigOrentation(Vector2(angle, 0f)),
                   viewMode = ViewMode.firstPerson
-              ),
-              thirdPersonRig = if (spirit == null)
-                newThirdPersonRig(position, angle)
-              else
-                null,
-              destructible = Destructible(
-                  base = DestructibleBaseStats(
-                      health = definition.health,
-                      damageMultipliers = definition.damageMultipliers
-                  ),
-                  health = ResourceContainer(definition.health),
-                  damageMultipliers = definition.damageMultipliers
               ),
               collisionShape = CollisionObject(
                   shape = Capsule(defaultCharacterRadius, defaultCharacterHeight),
@@ -93,17 +87,114 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, prof
               depiction = Depiction(
                   type = definition.depictionType
               ),
-              dynamicBody = DynamicBody(
-                  gravity = true,
-                  mass = 45f,
-                  resistance = 4f
+              destructible = Destructible(
+                  base = DestructibleBaseStats(
+                      health = definition.health,
+                      damageMultipliers = definition.damageMultipliers
+                  ),
+                  health = ResourceContainer(definition.health),
+                  damageMultipliers = definition.damageMultipliers
               ),
-              spirit = spirit,
               knowledge = if (spirit != null)
                 newKnowledge()
+              else
+                null,
+              spirit = spirit,
+              thirdPersonRig = if (spirit == null)
+                newThirdPersonRig(position, angle)
               else
                 null
           )
       )
   ).plus(accessories)
+}
+
+fun newCharacter2(id: Id, definitions: Definitions, definition: CharacterDefinition, faction: Id, position: Vector3,
+                  angle: Float = Pi / 2f,
+                  spirit: Spirit? = null): NewHand {
+  val accessories = definition.accessories
+      .map { type ->
+        NewHand(
+            components = listOfNotNull(
+                Accessory(
+                    type = type,
+                    owner = id,
+                ),
+                newPossibleAction(definitions, type),
+            )
+        )
+      }
+
+  return NewHand(
+      id = id,
+      children = accessories,
+      components = listOfNotNull(
+          if (definition.ambientSounds.any())
+            AmbientAudioEmitter(
+                delay = position.length() % 2.0
+            )
+          else
+            null,
+          Body(
+              position = position,
+              velocity = Vector3(),
+              orientation = Quaternion()
+          ),
+          CharacterAnimation(
+              animations = listOf(
+                  SingleAnimation(
+                      animationId = AnimationId.stand,
+                      animationOffset = 0f
+                  )
+              )
+          ),
+          DynamicBody(
+              gravity = true,
+              mass = 45f,
+              resistance = 4f
+          ),
+          Character(
+              faction = faction,
+              isAlive = true,
+              definition = definition,
+          ),
+          CharacterRig(
+              facingRotation = Vector2(angle, 0f),
+              facingOrientation = characterRigOrentation(Vector2(angle, 0f)),
+              viewMode = ViewMode.firstPerson
+          ),
+          CollisionObject(
+              shape = Capsule(defaultCharacterRadius, defaultCharacterHeight),
+              groups = CollisionGroups.dynamic,
+              mask = CollisionGroups.standardMask
+          ),
+          Depiction(
+              type = definition.depictionType
+          ),
+          Destructible(
+              base = DestructibleBaseStats(
+                  health = definition.health,
+                  damageMultipliers = definition.damageMultipliers
+              ),
+              health = ResourceContainer(definition.health),
+              damageMultipliers = definition.damageMultipliers
+          ),
+          if (spirit != null)
+            newKnowledge()
+          else
+            null,
+          spirit,
+          if (spirit == null)
+            newThirdPersonRig(position, angle)
+          else
+            null,
+          if (definition.wares.any()) {
+            val nextWareId = newIdSource(1)
+            Merchant(
+                wares = definition.wares.associateBy { nextWareId() }
+            )
+          } else
+            null,
+      )
+  )
 }

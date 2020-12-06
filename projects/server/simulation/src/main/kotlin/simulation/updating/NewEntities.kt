@@ -2,9 +2,7 @@ package simulation.updating
 
 import silentorb.mythic.audio.soundsFromEvents
 import silentorb.mythic.breeze.AnimationInfoMap
-import silentorb.mythic.ent.Graph
-import silentorb.mythic.ent.IdSource
-import silentorb.mythic.ent.toIdHands
+import silentorb.mythic.ent.*
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.performing.Performance
 import silentorb.mythic.performing.performancesFromEvents
@@ -13,9 +11,9 @@ import simulation.abilities.newEntangleEntities
 import simulation.accessorize.newChosenAccessories
 import simulation.characters.newPlayerCharacters
 import simulation.combat.newDamageVisualEffects
-import simulation.entities.*
-import simulation.happenings.NewHandEvent
+import simulation.entities.newRespawnCountdowns
 import simulation.entities.pruningEventsToIdHands
+import simulation.happenings.NewHandEvent
 import simulation.main.*
 import simulation.misc.*
 
@@ -43,6 +41,27 @@ fun newPerformances(definitions: Definitions, previous: Deck, events: Events, ne
       .map(newPerformanceHand(definitions.animations, nextId))
 }
 
+fun finalizeHands(nextId: IdSource, additions: List<NewHand> = listOf()): (NewHand) -> List<SimpleHand> = { hand ->
+  listOf(
+      SimpleHand(
+          id = hand.id ?: nextId(),
+          components = hand.components + additions,
+      )
+  ) + hand.children.flatMap(finalizeHands(nextId, listOf()))
+}
+
+inline fun <reified T> applyHands(hands: List<SimpleHand>): Table<T> =
+    hands.mapNotNull { hand ->
+      val component = hand.components
+          .filterIsInstance<T>()
+          .firstOrNull()
+      if (component != null)
+        hand.id to component
+      else
+        null
+    }
+        .associate { it }
+
 fun newEntities(definitions: Definitions, graph: Graph, previous: Deck, events: Events, nextId: IdSource): (Deck) -> Deck = { next ->
   val idHands = listOf(
       newRespawnCountdowns(nextId, previous, next),
@@ -59,13 +78,13 @@ fun newEntities(definitions: Definitions, graph: Graph, previous: Deck, events: 
   )
       .flatten()
       .plus(pruningEventsToIdHands(events))
-//      .plus(placeVictoryKeys(grid, next, events))
-      .plus(newPlayerCharacters(nextId, definitions, graph, events))
 
   val additions = listOf(
       newAccessoriesDeck(events, previous)
   )
       .plus(idHandsToDeck(idHands))
 
-  listOf(next).plus(additions).reduce(mergeDecks)
+  val lastDeck = listOf(next).plus(additions).reduce(mergeDecks)
+  val newHands = newPlayerCharacters(nextId, definitions, graph, events)
+  allHandsToDeck(nextId, newHands, lastDeck)
 }

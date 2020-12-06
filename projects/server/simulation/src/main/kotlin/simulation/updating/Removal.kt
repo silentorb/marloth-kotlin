@@ -41,9 +41,9 @@ fun removeWhole(soundDurations: SoundDurations, events: Events, deck: Deck): (De
 }
 
 fun pruneSoldWares(events: Events, deck: Deck): (Deck) -> Deck = { aggregator ->
-  val wares = deck.wares
+  val wares = deck.merchants
   val next = aggregator.copy(
-      wares = wares.filterKeys { id ->
+      merchants = wares.filterKeys { id ->
         events.filterIsInstance<PurchaseEvent>().none { it.ware == id }
       }
   )

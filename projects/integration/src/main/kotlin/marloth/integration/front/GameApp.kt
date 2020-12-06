@@ -1,7 +1,6 @@
 package marloth.integration.front
 
 import marloth.clienting.*
-import marloth.clienting.editing.defaultWorldScene
 import marloth.clienting.editing.loadDefaultWorldGraph
 import marloth.definition.data.persistence.initialHistoricalData
 import marloth.definition.staticDefinitions
@@ -18,7 +17,6 @@ import silentorb.mythic.platforming.Platform
 import silentorb.mythic.platforming.WindowInfo
 import silentorb.mythic.quartz.TimestepState
 import silentorb.mythic.quartz.newTimestepState
-import simulation.main.World
 import simulation.misc.Definitions
 
 typealias RenderHook = (WindowInfo, AppState) -> Unit

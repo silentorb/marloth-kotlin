@@ -1,7 +1,5 @@
 package marloth.clienting.gui.menus.views
 
-import marloth.clienting.ClientEvent
-import marloth.clienting.ClientEventType
 import marloth.clienting.gui.menus.SimpleMenuItem
 import marloth.clienting.gui.menus.newSimpleMenuItem
 import marloth.definition.data.availableProfessions

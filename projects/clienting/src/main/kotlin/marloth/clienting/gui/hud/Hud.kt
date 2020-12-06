@@ -4,6 +4,7 @@ import marloth.clienting.ClientState
 import marloth.clienting.gui.TextResources
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.TextStyles
+import marloth.clienting.gui.menus.black
 import silentorb.mythic.bloom.*
 import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.debugging.getDebugBoolean
@@ -56,19 +57,12 @@ private fun playerStats(world: World, actor: Id, debugInfo: List<String>): Flowe
   ) + debugInfo.map {
     label(textStyle, it)
   }
-  return reverseOffset(justifiedStart, justifiedEnd)(
+  return reverseOffset(reverseJustifiedStart, reverseJustifiedEnd)(
       hudBox(
           boxList(verticalPlane, 10)(rows)
       )
   )
 }
-
-//private val interactionBar =
-//    div("a",
-//        forward = forwardOffset(top = percentage(0.8f)),
-//        reverse = reverseOffset(left = centered) + reverseDimensions(height = shrinkWrap),
-//        depiction = solidBackground(black)
-//    )
 
 fun interactionDialog(textResources: TextResources, interactable: Interactable): Flower {
   val secondary = interactable.secondaryCommand
@@ -80,15 +74,15 @@ fun interactionDialog(textResources: TextResources, interactable: Interactable):
         null
   )
 
-  val gap = 20
-  throw Error("Need Updating")
-//  return interactionBar(
-//      div("b", reverse = reverseOffset(left = centered) + reverseDimensions(height = shrinkWrap))(
-//          forwardMargin(top = gap, bottom = gap)(
-//              boxToFlower(boxList(verticalPlane, gap)(rows))
-//          )
-//      )
-//  )
+  return align(justifiedStart, percentage(0.8f)) { dimensions ->
+    val result = align(centered, justifiedStart,
+       boxMargin(10)(boxList(verticalPlane, 20)(rows))
+    )(dimensions)
+    result.copy(
+        dimensions = result.dimensions.copy(x = dimensions.x),
+        depiction = solidBackground(black)
+    )
+  }
 }
 
 fun hudLayout(textResources: TextResources, world: World, clientState: ClientState, player: Id, view: ViewId?): Flower? {
@@ -160,8 +154,8 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
 //          character.groundDistance.toString()
     )
     compose(listOfNotNull(
-        playerStats(world, player, debugInfo),
         if (interactable != null) interactionDialog(textResources, interactable) else null,
+        playerStats(world, player, debugInfo),
         if (cooldowns.any()) cooldownIndicatorPlacement(cooldowns) else null,
         if (viewMode == ViewMode.firstPerson) reticlePlacement() else null
     ))

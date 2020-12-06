@@ -13,8 +13,8 @@ fun doomEvents(definitions: Definitions, world: World): Events {
   return if (doom > 0 && interval == 0L) {
     val deck = world.deck
     val monsters = deck.characters
-        .filterValues { it.faction == monsterFaction }
-        .mapValues { definitions.professions[it.value.profession]!! }
+        .filterValues { it.faction == Factions.monsters }
+        .mapValues { it.value.definition }
         .filterValues { it.level < maxCharacterLevel }
 
     if (monsters.none())
