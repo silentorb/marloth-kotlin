@@ -4,6 +4,7 @@ import marloth.scenery.enums.*
 import simulation.accessorize.AccessoryDefinition
 import simulation.accessorize.AccessoryName
 import silentorb.mythic.performing.ActionDefinition
+import simulation.accessorize.Nutrient
 import simulation.characters.EquipmentSlot
 import simulation.combat.general.AttackMethod
 import simulation.combat.general.DamageDefinition
@@ -46,10 +47,15 @@ fun cookie() =
     ActionAccessory(
         accessory = AccessoryDefinition(
             name = Text.id_cookie,
+            equippedMesh = MeshId.cookie,
+            charges = 1,
+            components = listOf(
+                Nutrient(
+                    value = 10
+                )
+            )
         ),
         action = ActionDefinition(
-            cooldown = 2f,
-            range = 25f,
             equipmentSlot = EquipmentSlot.utility
         ),
     )

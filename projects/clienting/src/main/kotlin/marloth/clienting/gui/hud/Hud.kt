@@ -47,6 +47,7 @@ private fun playerStats(world: World, actor: Id, debugInfo: List<String>): Flowe
   val destructible = deck.destructibles[actor]!!
   val character = deck.characters[actor]!!
   val accessoryPoints = character.accessoryPoints + if (character.accessoryOptions != null) 1 else 0
+  val equipment = deck.accessories.filter { it.value.owner == actor }.values
   val rows = listOf(
       label(textStyle, "Health: ${resourceString(destructible.health)}"),
       label(textStyle, "Nourishment: ${highPercentage(character.nourishment)}"),
@@ -57,6 +58,12 @@ private fun playerStats(world: World, actor: Id, debugInfo: List<String>): Flowe
       if (accessoryPoints > 0) label(textStyle, "Ability Points: $accessoryPoints") else null
   ) + debugInfo.map {
     label(textStyle, it)
+  } + equipment.mapNotNull { accessory ->
+    val definition = world.definitions.accessories[accessory.type]
+    if (definition == null)
+      null
+    else
+      label(textStyle, world.definitions.textLibrary(definition.name))
   }
   return alignBoth(justifiedStart, justifiedEnd,
       hudBox(

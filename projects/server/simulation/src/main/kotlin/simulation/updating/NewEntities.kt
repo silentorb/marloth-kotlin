@@ -17,11 +17,6 @@ import simulation.happenings.NewHandEvent
 import simulation.main.*
 import simulation.misc.*
 
-fun newAccessoriesDeck(events: Events, deck: Deck): Deck =
-    Deck(
-        accessories = newAccessories(events, deck)
-    )
-
 fun newPerformanceHand(animations: AnimationInfoMap, nextId: IdSource): (Performance) -> IdHand = { performance ->
   IdHand(
       id = nextId(),
@@ -79,12 +74,12 @@ fun newEntities(definitions: Definitions, graph: Graph, previous: Deck, events: 
       .flatten()
       .plus(pruningEventsToIdHands(events))
 
-  val additions = listOf(
-      newAccessoriesDeck(events, previous)
-  )
+  val lastDeck = listOf(next)
       .plus(idHandsToDeck(idHands))
+      .reduce(mergeDecks)
 
-  val lastDeck = listOf(next).plus(additions).reduce(mergeDecks)
-  val newHands = newPlayerCharacters(nextId, definitions, graph, events)
+  val newHands = newPlayerCharacters(nextId, definitions, graph, events) +
+      newAccessories(events, definitions)
+
   allHandsToDeck(nextId, newHands, lastDeck)
 }

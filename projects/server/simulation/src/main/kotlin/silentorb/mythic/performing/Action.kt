@@ -7,7 +7,7 @@ import simulation.main.Deck
 import simulation.misc.Definitions
 
 data class ActionDefinition(
-    val cooldown: Float,
+    val cooldown: Float = 1f,
     val equipmentSlot: EquipmentSlot,
     val range: Float = 0f,
     val animation: AnimationName? = null,

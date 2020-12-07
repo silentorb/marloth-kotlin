@@ -41,7 +41,7 @@ fun updateDeck(definitions: Definitions, events: Events, world: World,
     pipe(
         updateEntities(definitions, world, navigation, events),
         removeWhole(world.definitions.soundDurations, events, world.deck),
-        removePartial(events, world.deck),
+//        removePartial(events, world.deck),
         cleanOutdatedReferences,
         newEntities(definitions, world.staticGraph, world.deck, events, nextId)
     )

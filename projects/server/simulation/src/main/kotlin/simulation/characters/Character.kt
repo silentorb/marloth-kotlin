@@ -172,6 +172,8 @@ fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletStat
   else
     null
 
+  val nourishmentAdjustment = getNourishmentEventsAdjustment(definitions, deck, actor, events)
+
   return character.copy(
       isAlive = isAlive,
       isInfinitelyFalling = isInfinitelyFalling(position),
@@ -181,7 +183,7 @@ fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletStat
 //      definition = updateCharacterProfession(definitions, actor, events, character.definition),
       accessoryPoints = updateAccessoryPoints(events, character),
       accessoryOptions = updateAccessoryOptions(definitions, dice, deck, events, actor, character),
-      nourishment = updateNourishment(1, character, toInt1000(body.velocity.length())),
+      nourishment = updateNourishment(1, character, nourishmentAdjustment, toInt1000(body.velocity.length())),
   )
 }
 

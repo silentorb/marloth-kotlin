@@ -3,12 +3,14 @@ package simulation.updating
 import silentorb.mythic.aura.SoundDurations
 import silentorb.mythic.aura.finishedSounds
 import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.Table
 import silentorb.mythic.ent.mapEntryValue
 import silentorb.mythic.ent.pipe
 import silentorb.mythic.happenings.DeleteEntityEvent
 import silentorb.mythic.happenings.Events
 import simulation.entities.cleanupAttachmentSource
 import silentorb.mythic.timing.expiredTimers
+import simulation.accessorize.Accessory
 import simulation.entities.PruneEntityEvent
 import simulation.happenings.PurchaseEvent
 import simulation.happenings.TakeItemEvent
@@ -28,30 +30,35 @@ fun getFinished(soundDurations: SoundDurations, events: Events, deck: Deck): Set
       .plus(finishedSounds(soundDurations)(deck.sounds))
 }
 
+fun exhaustedAccessories(accessories: Table<Accessory>) =
+    accessories.filter {
+      val charges = it.value.charges
+      charges != null && charges < 1
+    }.keys
+
 // Gathers all entities that need to be deleted
 // and for each entity, all records of all types are deleted that have the same key as that entity
 fun removeWhole(soundDurations: SoundDurations, events: Events, deck: Deck): (Deck) -> Deck = { aggregator ->
   val finished = getFinished(soundDurations, events, deck)
       .plus(events.filterIsInstance<DeleteEntityEvent>().map { it.id })
       .plus(events.filterIsInstance<PruneEntityEvent>().map { it.id })
-  if (finished.any()) {
-    val k = 0
-  }
+      .plus(exhaustedAccessories(aggregator.accessories))
+
   removeEntities(finished)(aggregator)
 }
 
-fun pruneSoldWares(events: Events, deck: Deck): (Deck) -> Deck = { aggregator ->
-  val wares = deck.vendors
-  val next = aggregator.copy(
-      vendors = wares.filterKeys { id ->
-        events.filterIsInstance<PurchaseEvent>().none { it.ware == id }
-      }
-  )
-  next
-}
+//fun pruneSoldWares(events: Events, deck: Deck): (Deck) -> Deck = { aggregator ->
+//  val wares = deck.vendors
+//  val next = aggregator.copy(
+//      vendors = wares.filterKeys { id ->
+//        events.filterIsInstance<PurchaseEvent>().none { it.ware == id }
+//      }
+//  )
+//  next
+//}
 
 // Removes particular components of an entity without removing all components of that entity
-fun removePartial(events: Events, previous: Deck): (Deck) -> Deck =
-    pipe(
-        pruneSoldWares(events, previous)
-    )
+//fun removePartial(events: Events, previous: Deck): (Deck) -> Deck =
+//    pipe(
+//        pruneSoldWares(events, previous)
+//    )

@@ -116,11 +116,13 @@ fun newCharacter2(id: Id, definitions: Definitions, definition: CharacterDefinit
                   spirit: Spirit? = null): NewHand {
   val accessories = definition.accessories
       .map { type ->
+        val accessoryDefinition = definitions.accessories[type]
         NewHand(
             components = listOfNotNull(
                 Accessory(
                     type = type,
                     owner = id,
+                    charges = accessoryDefinition?.charges,
                 ),
                 newPossibleAction(definitions, type),
             )

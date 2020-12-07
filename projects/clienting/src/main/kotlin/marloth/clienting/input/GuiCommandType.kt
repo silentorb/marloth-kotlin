@@ -29,10 +29,15 @@ private fun standardStrokes() = setOf(
 val commandStrokes =
     mapOf(
         InputContext.game to standardStrokes()
-            .plus(setOf(
-                toggleTargetingCommand,
-                CharacterRigCommands.switchView
-            )),
+            .plus(
+                setOf(
+                    toggleTargetingCommand,
+                    CharacterRigCommands.switchView,
+                    CharacterCommands.abilityUtility,
+                    CharacterCommands.abilityDefense,
+                    CharacterCommands.abilityMobility,
+                )
+            ),
         InputContext.menu to standardStrokes()
             .plus(setOf(
                 CharacterCommands.moveUp,

@@ -14,6 +14,9 @@ const val intHour = intMinute * 60
 fun highPercentage(value: HighInt): Int =
     value * 100 / highIntScale
 
+fun percentageToHighInt(value: Int): HighInt =
+    value * highIntScale / 100
+
 fun toInt100(value: Float): Int100 =
     (value * 100f).toInt()
 

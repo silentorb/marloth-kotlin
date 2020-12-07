@@ -21,7 +21,7 @@ object Professions {
   val magician = CharacterDefinition(
       name = Text.id_magician,
       health = 200,
-      accessories = listOf(AccessoryId.rocketLauncher, AccessoryId.entangle),
+      accessories = listOf(AccessoryId.rocketLauncher),
       depictionType = DepictionType.child,
       speed = 12f,
       deathSound = SoundId.girlScream,

@@ -5,7 +5,9 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
+import silentorb.mythic.happenings.UseAction
 import silentorb.mythic.scenery.MeshName
+import simulation.happenings.TryActionEvent
 import simulation.misc.Definitions
 import kotlin.math.min
 
@@ -13,10 +15,15 @@ data class Accessory(
     val type: AccessoryName,
     val owner: Id,
     val source: Id? = null,
-    val level: Int = 1
+    val level: Int = 1,
+    val charges: Int? = null,
 )
 
 typealias AccessoryName = String
+
+data class Nutrient(
+    val value: Int, // Percentage
+)
 
 data class AccessoryDefinition(
     val name: Text,
@@ -25,7 +32,9 @@ data class AccessoryDefinition(
     //This mesh field is a stopgap until attaching any depiction to an articulation is supported
     val equippedMesh: MeshName? = null,
     val debugName: String? = null,
-    val maxLevel: Int = 1
+    val maxLevel: Int = 1,
+    val charges: Int? = null,
+    val components: List<Any> = listOf()
 )
 
 fun hasAccessory(type: AccessoryName, accessories: Table<Accessory>, actor: Id): Boolean =
@@ -50,6 +59,8 @@ data class ChangeItemOwnerEvent(
 fun updateAccessory(definitions: Definitions, events: Events): (Id, Accessory) -> Accessory {
   val changeOwnerEvents = events.filterIsInstance<ChangeItemOwnerEvent>()
   val choseImprovedAccessoryEvents = events.filterIsInstance<ChooseImprovedAccessory>()
+  val allUseEvents = events.filterIsInstance<TryActionEvent>()
+
   return { id, accessory ->
     val levelIncreases = choseImprovedAccessoryEvents.count {
       it.accessory == accessory.type && it.actor == accessory.owner
@@ -57,12 +68,17 @@ fun updateAccessory(definitions: Definitions, events: Events): (Id, Accessory) -
     // Currently if two change owner events are triggered at the same time it is random which one
     // is honored
     val ownerChange = changeOwnerEvents.firstOrNull { it.item == id }
+    val charges = accessory.charges
     accessory.copy(
-        owner = if (ownerChange != null) ownerChange.newOwner else accessory.owner,
+        owner = ownerChange?.newOwner ?: accessory.owner,
         level = if (levelIncreases > 0)
           min(accessory.level + levelIncreases, definitions.accessories[accessory.type]!!.maxLevel)
         else
-          accessory.level
+          accessory.level,
+        charges = if (charges != null)
+          charges - allUseEvents.count { it.action == id }
+        else
+          null
     )
   }
 }
