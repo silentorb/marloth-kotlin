@@ -1,6 +1,8 @@
 package simulation.characters
 
 import marloth.scenery.enums.AnimationId
+import marloth.scenery.enums.ClientCommand
+import marloth.scenery.enums.Text
 import simulation.accessorize.Accessory
 import silentorb.mythic.characters.rigs.*
 import simulation.combat.general.Destructible
@@ -157,6 +159,7 @@ fun newCharacter2(id: Id, definitions: Definitions, definition: CharacterDefinit
               faction = faction,
               isAlive = true,
               definition = definition,
+              money = definition.money,
           ),
           CharacterRig(
               facingRotation = Vector2(angle, 0f),
@@ -190,8 +193,17 @@ fun newCharacter2(id: Id, definitions: Definitions, definition: CharacterDefinit
             null,
           if (definition.wares.any()) {
             val nextWareId = newIdSource(1)
-            Merchant(
+            Vendor(
                 wares = definition.wares.associateBy { nextWareId() }
+            )
+          } else
+            null,
+          if (definition.wares.any()) {
+            Interactable(
+                primaryCommand = WidgetCommand(
+                    text = Text.menu_talk,
+                    clientCommand = ClientCommand.showMerchantView
+                )
             )
           } else
             null,

@@ -95,7 +95,6 @@ fun menuFlower(menu: Menu, focusIndex: Int, titleWidth: Int): Box {
 
   val breadth = boxList(verticalPlane, gap)(rows).dimensions.x
   return boxList(verticalPlane, gap)(
-//      rows.mapIndexed(fieldWrapper(focusIndex, max(titleWidth + 100, breadth)))
       rows.mapIndexed { index, box ->
         val hasFocus = index == focusIndex
         val events = menu[index].events

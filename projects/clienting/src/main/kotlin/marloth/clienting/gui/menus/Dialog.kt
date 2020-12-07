@@ -5,6 +5,7 @@ import marloth.clienting.StateFlowerTransform
 import marloth.clienting.gui.hud.versionDisplay
 import marloth.clienting.gui.menuBackground
 import marloth.clienting.resources.UiTextures
+import marloth.scenery.enums.Text
 import silentorb.mythic.bloom.*
 import silentorb.mythic.spatial.Vector2i
 import simulation.misc.Definitions
@@ -61,6 +62,11 @@ fun dialog(title: Box): WildFlower = { box ->
 
 fun dialog(title: String): WildFlower =
     dialog(dialogTitle(title))
+
+fun dialog(title: Text, box: Box): StateFlower = { definitions, _ ->
+  val titleBox = dialogTitle(definitions.textLibrary(title))
+  dialogContent(titleBox)(box)
+}
 
 fun dialogWrapperWithExtras(definitions: Definitions, box: Box): Flower =
     compose(

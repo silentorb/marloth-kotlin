@@ -18,7 +18,6 @@ import simulation.main.NewHand
 import simulation.misc.Definitions
 import simulation.misc.Factions
 import simulation.misc.GameAttributes
-import simulation.physics.graphToBody
 
 fun cycleHands(nextId: IdSource) =
     listOf(

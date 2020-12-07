@@ -5,10 +5,10 @@ import simulation.accessorize.AccessoryName
 
 data class Ware(
     val type: AccessoryName,
-    val quantity: Int?,
+    val quantity: Int? = null,
     val price: Int,
 )
 
-data class Merchant(
+data class Vendor(
     val wares: Map<Id, Ware>,
 )

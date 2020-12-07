@@ -43,5 +43,5 @@ fun withSimulationEvents(definitions: Definitions, previousDeck: Deck, world: Wo
   )
       .flatten() + spiritEvents + doomEvents(definitions, world)
 
-  return events.plus(eventsFromEvents(world, freedomTable, events))
+  return eventsFromEvents(world, freedomTable, events)
 }

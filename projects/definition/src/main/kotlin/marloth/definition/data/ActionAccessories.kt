@@ -42,6 +42,18 @@ fun rocketLauncher() =
         )
     )
 
+fun cookie() =
+    ActionAccessory(
+        accessory = AccessoryDefinition(
+            name = Text.id_cookie,
+        ),
+        action = ActionDefinition(
+            cooldown = 2f,
+            range = 25f,
+            equipmentSlot = EquipmentSlot.utility
+        ),
+    )
+
 fun spiritRocketLauncher(): ActionAccessory {
   val accessory = rocketLauncher()
   return accessory.copy(
@@ -141,6 +153,7 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
 
     AccessoryId.rocketLauncher to rocketLauncher(),
     AccessoryId.spiritRocketLauncher to spiritRocketLauncher(),
+    AccessoryId.cookie to cookie(),
 
     AccessoryId.claws to ActionAccessory(
         accessory = AccessoryDefinition(

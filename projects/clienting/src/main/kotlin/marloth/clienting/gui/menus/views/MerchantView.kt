@@ -3,9 +3,7 @@ package marloth.clienting.gui.menus.views
 import marloth.clienting.StateFlowerTransform
 import marloth.clienting.gui.menus.*
 import marloth.scenery.enums.Text
-import silentorb.mythic.bloom.boxList
-import silentorb.mythic.bloom.emptyBox
-import silentorb.mythic.bloom.horizontalPlane
+import silentorb.mythic.bloom.*
 import silentorb.mythic.ent.Id
 import simulation.entities.Ware
 import simulation.happenings.PurchaseEvent
@@ -60,7 +58,8 @@ fun wareMenuItem(definitions: Definitions, merchant: Id, player: Id,
   )
 }
 
-//fun merchantInfoFlower(customerMoney: Int) =
+fun merchantInfoFlower(customerMoney: Int): Box =
+    label(TextStyles.smallBlack, "Money: $$customerMoney")
 //    div(
 //        name = "merchant",
 //        forward = forwardDimensions(width = fixed(200)),
@@ -80,9 +79,9 @@ fun merchantView(deck: Deck, player: Id): StateFlowerTransform = dialogWrapper {
   if (merchant == null)
     emptyBox
   else {
-  val customerMoney = deck.characters[player]?.money ?: 0
-    val wares = deck.merchants[merchant]?.wares ?: mapOf()
-    val buttons = wares
+    val customerMoney = deck.characters[player]?.money ?: 0
+    val wares = deck.vendors[merchant]?.wares ?: mapOf()
+    val menu = wares
         .map { (id, ware) ->
           wareMenuItem(definitions, merchant, player, customerMoney, id, ware)
         }
@@ -91,7 +90,13 @@ fun merchantView(deck: Deck, player: Id): StateFlowerTransform = dialogWrapper {
 //        boxList(horizontalPlane, 10)(
 //            listOf(
 //              menuFlower(buttons, state.menuFocusIndex),
-                menuFlower(Text.gui_merchant, buttons)(definitions, state)
+//                menuFlower(Text.gui_merchant, buttons)(definitions, state)
+    dialog(Text.gui_merchant,
+        boxList2(horizontalPlane, 10,
+            menuFlower(menu, state.menuFocusIndex, 100),
+            merchantInfoFlower(customerMoney),
+        )
+    )(definitions, state)
 //              flowerToBox(merchantInfoFlower(customerMoney))
 //            )
 //        )

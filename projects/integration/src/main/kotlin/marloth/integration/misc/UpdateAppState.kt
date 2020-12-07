@@ -27,7 +27,6 @@ import silentorb.mythic.debugging.incrementGlobalDebugLoopNumber
 import silentorb.mythic.ent.*
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Events
-import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.lookinglass.getPlayerViewports
 import silentorb.mythic.quartz.updateTimestep
 import silentorb.mythic.spatial.Vector2i
@@ -105,10 +104,10 @@ fun updateWorldGraph(events: Events, graph: Graph): Graph {
     graph
 }
 
-fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: ClientState, worlds: List<World>, commands: List<Command>, events: Events): List<World> {
+fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: ClientState, worlds: List<World>, commands: List<Command>): List<World> {
   val world = worlds.last()
       .copy(
-          staticGraph = updateWorldGraph(events, worlds.last().staticGraph),
+          staticGraph = updateWorldGraph(clientState.events, worlds.last().staticGraph),
       )
 
   val previous = worlds.takeLast(2).first()
@@ -122,7 +121,7 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
   else
     mouseLookEvents(windowResolution, previousClient.input.deviceStates.lastOrNull(), clientState.input.deviceStates.last(), firstPlayer(clientState))
 
-  val clientEvents = events + gameCommands + mouseEvents
+  val clientEvents = clientState.events + gameCommands + mouseEvents
   val allEvents = withSimulationEvents(definitions, previous.deck, world, clientEvents)
   val nextWorld = updateWorld(definitions, allEvents, simulationDelta, world)
   val finalWorld = nextWorld.copy(
@@ -143,8 +142,7 @@ fun updateWorlds(app: GameApp, previousClient: ClientState, clientState: ClientS
   else
     mapGameCommands(clientState.players, clientState.commands)
 
-  val gameEvents = clientState.events.filterIsInstance<GameEvent>()
-  updateSimulation(app, previousClient, clientState, worlds, commands, gameEvents)
+  updateSimulation(app, previousClient, clientState, worlds, commands)
 }
 
 fun checkRestartGame(app: GameApp, appState: AppState, clientState: ClientState): AppState? {

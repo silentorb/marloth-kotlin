@@ -25,7 +25,8 @@ object Professions {
       depictionType = DepictionType.child,
       speed = 12f,
       deathSound = SoundId.girlScream,
-      damageMultipliers = mapOf()
+      damageMultipliers = mapOf(),
+      money = 200,
   )
 
 }

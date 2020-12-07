@@ -1,6 +1,7 @@
 package simulation.characters
 
 import marloth.scenery.enums.CharacterCommands
+import marloth.scenery.enums.SoundId
 import marloth.scenery.enums.Text
 import silentorb.mythic.audio.SoundName
 import silentorb.mythic.aura.SoundType
@@ -13,7 +14,6 @@ import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.BulletState
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Vector3
-import silentorb.mythic.spatial.minMax
 import simulation.accessorize.AccessoryName
 import simulation.accessorize.ChooseImprovedAccessory
 import simulation.accessorize.newAccessoryChoice
@@ -34,13 +34,14 @@ typealias ProfessionId = String
 data class CharacterDefinition(
     val name: Text,
     val level: Int = 1,
-    val health: Int,
-    val speed: Float,
-    val accessories: List<AccessoryName>,
+    val health: Int = 200,
+    val speed: Float = 12f,
+    val accessories: List<AccessoryName> = listOf(),
     val depictionType: DepictionType,
-    val deathSound: SoundName?,
+    val deathSound: SoundName? = SoundId.girlScream,
     val ambientSounds: List<SoundType> = listOf(),
     val damageMultipliers: DamageMultipliers = mapOf(),
+    val money: Int = 0,
     val fieldOfView: Float = 0.5f, // Only used for AI. Dot product: 1 is no vision, -1 is 360 degree vision
     val wares: List<Ware> = listOf()
 )
@@ -93,7 +94,7 @@ fun getPurchaseCost(deck: Deck, events: Events, character: Id): Int {
 
   return purchases
       .mapNotNull { purchase ->
-        val wares = deck.merchants[purchase.merchant]?.wares
+        val wares = deck.vendors[purchase.merchant]?.wares
         assert(wares != null)
         wares!![purchase.ware]?.price
       }

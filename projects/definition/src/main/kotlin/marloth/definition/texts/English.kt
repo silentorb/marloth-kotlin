@@ -41,6 +41,7 @@ val englishTextResources: TextResourceMapper = { text ->
     Text.gui_take -> "Take"
     Text.gui_victory -> "Victory"
     Text.id_candle -> "Candle"
+    Text.id_cookie -> "Cookie"
     Text.id_damageChilled -> "Chilled"
     Text.id_damageBurning -> "Burning"
     Text.id_damagePoisoned -> "Poisoned"

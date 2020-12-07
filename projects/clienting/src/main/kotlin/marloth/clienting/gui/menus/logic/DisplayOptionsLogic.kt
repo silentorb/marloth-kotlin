@@ -120,7 +120,6 @@ fun syncDisplayOptions(
       null
 
     if (destination != null) {
-      val k = 0
       setPlatformDisplayOptions(display, previousOptions, destination)
     }
   }

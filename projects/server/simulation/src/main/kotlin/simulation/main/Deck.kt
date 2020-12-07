@@ -68,7 +68,7 @@ data class Deck(
     val timersFloat: Table<FloatTimer> = mapOf(),
     val timersInt: Table<IntTimer> = mapOf(),
     val triggers: Table<Trigger> = mapOf(),
-    val merchants: Table<Merchant> = mapOf(),
+    val vendors: Table<Vendor> = mapOf(),
 )
 
 fun allHandsToDeck(nextId: IdSource, newHands: List<NewHand>, deck: Deck): Deck {
@@ -108,7 +108,7 @@ fun allHandsToDeck(nextId: IdSource, newHands: List<NewHand>, deck: Deck): Deck 
       timersFloat = deck.timersFloat + applyHands(hands),
       timersInt = deck.timersInt + applyHands(hands),
       triggers = deck.triggers + applyHands(hands),
-      merchants = deck.merchants + applyHands(hands),
+      vendors = deck.vendors + applyHands(hands),
   )
 }
 
