@@ -30,7 +30,7 @@ val englishTextResources: TextResourceMapper = { text ->
     Text.gui_yes -> "Yes"
     Text.gui_no -> "No"
 
-    Text.gui_accessories -> "Modifiers"
+    Text.gui_accessories -> "Accessories"
     Text.gui_characterInfo -> "Character Info"
     Text.gui_chooseAccessoryMenu -> "Accessorize"
     Text.gui_chooseProfessionMenu -> "Profession"
@@ -54,6 +54,7 @@ val englishTextResources: TextResourceMapper = { text ->
     Text.id_magician -> "Magician"
     Text.id_mobility -> "Mobility"
     Text.id_mobile -> "Mobile"
+    Text.gui_money -> "Money"
     Text.id_pistol -> "Pistol"
     Text.id_resistanceCold -> "Cold Resistance"
     Text.id_resistanceFire -> "Fire Resistance"

@@ -31,13 +31,14 @@ val titleBookend: Flower = depict(titleBookendDepiction)
 fun titleBar(title: Box): LengthFlower =
     breadthList(verticalPlane)(
         listOf(
-            flexList(horizontalPlane, spacing = 10)(
-                listOf(
-                    flexFlower(titleBookend),
-                    flex(title),
-                    flexFlower(titleBookend),
-                )
-            ),
+            alignSingle(centered, horizontalPlane, title),
+//            flexList(horizontalPlane, spacing = 10)(
+//                listOf(
+//                    flexFlower(titleBookend),
+//                    flex(title),
+//                    flexFlower(titleBookend),
+//                )
+//            ),
             marginSingle(horizontalPlane, all = 0, left = 30, right = 30)(
                 horizontalLine
             )
@@ -45,12 +46,13 @@ fun titleBar(title: Box): LengthFlower =
     )
 
 fun dialogContent(title: Box): WildFlower = { box ->
-  boxMargin(20)(
+  val result = boxMargin(20)(
       boxList(verticalPlane, 20,
           titleBar(title)(box.dimensions.x),
           box
       )
   ).copy(depiction = menuBackground)
+  result
 }
 
 fun dialogTitle(text: String) =
@@ -63,9 +65,9 @@ fun dialog(title: Box): WildFlower = { box ->
 fun dialog(title: String): WildFlower =
     dialog(dialogTitle(title))
 
-fun dialog(title: Text, box: Box): StateFlower = { definitions, _ ->
+fun dialog(definitions: Definitions, title: Text, box: Box): Box {
   val titleBox = dialogTitle(definitions.textLibrary(title))
-  dialogContent(titleBox)(box)
+  return dialogContent(titleBox)(box)
 }
 
 fun dialogWrapperWithExtras(definitions: Definitions, box: Box): Flower =

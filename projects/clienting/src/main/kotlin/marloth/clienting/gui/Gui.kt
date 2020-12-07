@@ -51,26 +51,7 @@ data class OnClientEvents(
     val map: List<Pair<EventUnion, (Command) -> Boolean>>
 )
 
-data class ButtonState(
-    val text: String,
-    val hasFocus: Boolean,
-    val isEnabled: Boolean = true
-)
-
 val menuBackground: Depiction = solidBackground(grayTone(0.5f))
-
-fun haftToBloom(commands: Commands): List<BloomEvent> =
-    commands.mapNotNull {
-      when (it.type) {
-        CharacterCommands.moveUp -> BloomEvent.up
-        CharacterCommands.moveDown -> BloomEvent.down
-        CharacterCommands.moveLeft -> BloomEvent.left
-        CharacterCommands.moveRight -> BloomEvent.right
-        GuiCommandType.menuBack -> BloomEvent.back
-        GuiCommandType.menuSelect -> BloomEvent.activate
-        else -> null
-      }
-    }
 
 fun victoryMenu() = listOfNotNull(
     newSimpleMenuItem(Text.message_victory, event = ClientEvent(GuiCommandType.newGame))

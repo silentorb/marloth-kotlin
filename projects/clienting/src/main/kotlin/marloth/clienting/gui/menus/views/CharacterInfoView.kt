@@ -35,8 +35,10 @@ fun generalCharacterInfo(definitions: Definitions, deck: Deck, actor: Id): Box {
   val character = deck.characters[actor]!!
   val profession = character.definition
   val rows = listOf(
-      label(TextStyles.smallBlack, definitions.textLibrary(Text.gui_profession)),
-      label(TextStyles.smallBlack, definitions.textLibrary(profession.name))
+//      label(TextStyles.smallBoldBlack, definitions.textLibrary(Text.gui_profession)),
+//      label(TextStyles.smallBlack, definitions.textLibrary(profession.name)),
+//      label(TextStyles.smallBoldBlack, definitions.textLibrary(Text.gui_money)),
+      moneyLabel(definitions.textLibrary, character.money),
   )
   return boxList(verticalPlane, 10)(rows)
 }
@@ -46,26 +48,24 @@ fun accessoriesView(definitions: Definitions, deck: Deck, actor: Id): Box {
   val items = accessories
       .mapNotNull { (_, accessoryRecord) ->
         val accessoryDefinition = definitions.accessories[accessoryRecord.type]
-//        if (accessoryDefinition != null && accessoryDefinition.name != Text.unnamed) {
-//          div(layout = layoutDimensions(width = fixed(120)))(
-//              localizedLabel(TextStyles.smallBlack, accessoryDefinition.name)
-//          )
-//        } else
-        null
+        if (accessoryDefinition != null && accessoryDefinition.name != Text.unnamed) {
+          label(TextStyles.smallBlack, definitions.textLibrary(accessoryDefinition.name))
+        } else
+          null
       }
   return boxList(verticalPlane)(listOf(
-      label(TextStyles.smallBlack, definitions.textLibrary(Text.gui_accessories)),
-//      reverseMargin(20)(
-//          boxList(verticalPlane, 15)(flowersToBoxes(items))
-//      )
+      label(TextStyles.smallSemiBoldBlack, definitions.textLibrary(Text.gui_accessories)),
+      boxMargin(20)(
+          boxList(verticalPlane, 15)(items)
+      )
   ))
 }
 
 fun characterInfoView(definitions: Definitions, deck: Deck, actor: Id): Box {
-  return dialog(definitions.textLibrary(Text.gui_characterInfo))(
+  return dialog(definitions, Text.gui_characterInfo,
       boxList(horizontalPlane, 10)(
           listOf(
-//          flowerToBox(div(forward = forwardDimensions(fixed(300), fixed(300)))(boxToFlower(generalCharacterInfo(definitions, deck, actor)))),
+              generalCharacterInfo(definitions, deck, actor),
               accessoriesView(definitions, deck, actor)
           )
       )
@@ -73,7 +73,7 @@ fun characterInfoView(definitions: Definitions, deck: Deck, actor: Id): Box {
 }
 
 fun characterInfoViewOrChooseAbilityMenu(deck: Deck, actor: Id): StateFlowerTransform =
-    dialogWrapperWithExtras { definitions, state ->
+    dialogWrapper { definitions, state ->
       val character = deck.characters[actor]!!
       val accessoryOptions = character.accessoryOptions
       if (accessoryOptions != null)

@@ -18,6 +18,7 @@ enum class Text {
   gui_gamepadOptions,
   gui_merchant,
   gui_mainMenu,
+  gui_money,
   gui_mouseOptions,
   gui_optionsMenu,
   gui_profession,

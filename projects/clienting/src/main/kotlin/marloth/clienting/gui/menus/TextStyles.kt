@@ -13,6 +13,14 @@ val baseFonts = listOf(
     FontLoadInfo(
         filename = "fonts/EBGaramond-Regular.ttf",
         pixelHeight = 0
+    ),
+    FontLoadInfo(
+        filename = "fonts/EBGaramond-SemiBold.ttf",
+        pixelHeight = 0
+    ),
+    FontLoadInfo(
+        filename = "fonts/EBGaramond-Bold.ttf",
+        pixelHeight = 0
     )
 )
 
@@ -23,6 +31,18 @@ val smallFontSize = 22
 object TextStyles {
   val smallBlack = IndexedTextStyle(
       0,
+      smallFontSize,
+      color = black
+  )
+
+  val smallSemiBoldBlack = IndexedTextStyle(
+      1,
+      smallFontSize,
+      color = black
+  )
+
+  val smallBoldBlack = IndexedTextStyle(
+      2,
       smallFontSize,
       color = black
   )

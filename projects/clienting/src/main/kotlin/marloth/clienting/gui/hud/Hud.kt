@@ -58,13 +58,16 @@ private fun playerStats(world: World, actor: Id, debugInfo: List<String>): Flowe
       if (accessoryPoints > 0) label(textStyle, "Ability Points: $accessoryPoints") else null
   ) + debugInfo.map {
     label(textStyle, it)
-  } + equipment.mapNotNull { accessory ->
+  } + if (getDebugBoolean("HUD_DRAW_INVENTORY")) equipment.mapNotNull { accessory ->
     val definition = world.definitions.accessories[accessory.type]
     if (definition == null)
       null
     else
       label(textStyle, world.definitions.textLibrary(definition.name))
   }
+  else
+    listOf()
+
   return alignBoth(justifiedStart, justifiedEnd,
       hudBox(
           boxList(verticalPlane, 10)(rows)
