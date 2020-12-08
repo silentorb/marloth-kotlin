@@ -9,19 +9,20 @@ import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.UseAction
 import silentorb.mythic.performing.Action
 import silentorb.mythic.performing.updateCooldown
+import simulation.accessorize.AccessoryStack
 import simulation.characters.EquipmentSlot
 import simulation.main.Deck
 import simulation.misc.Definitions
 import simulation.updating.simulationDelta
 
-fun getActions(definitions: Definitions, accessories: Table<Accessory>, actor: Id): Table<Accessory> =
+fun getActions(definitions: Definitions, accessories: Table<AccessoryStack>, actor: Id): Table<AccessoryStack> =
     getAccessories(accessories, actor)
-        .filterValues { definitions.actions.containsKey(it.type) }
+        .filterValues { definitions.actions.containsKey(it.value.type) }
 
-fun getEquippedAction(definitions: Definitions, accessories: Table<Accessory>, slot: EquipmentSlot, actor: Id): Id? =
+fun getEquippedAction(definitions: Definitions, accessories: Table<AccessoryStack>, slot: EquipmentSlot, actor: Id): Id? =
     getActions(definitions, accessories, actor)
         .entries.firstOrNull { (_, accessory) ->
-          definitions.actions[accessory.type]?.equipmentSlot == slot
+          definitions.actions[accessory.value.type]?.equipmentSlot == slot
         }?.key
 
 

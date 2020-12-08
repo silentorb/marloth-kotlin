@@ -1,6 +1,7 @@
 package simulation.happenings
 
 import marloth.scenery.enums.CharacterCommands
+import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.Events
 import simulation.characters.EquipmentSlot
@@ -18,7 +19,7 @@ fun characterCommandToEquipmentSlot(type: Any): EquipmentSlot =
 
 fun commandsToEvents(definitions: Definitions, deck: Deck, commands: Commands): Events =
     commands.mapNotNull { command ->
-      val actor = command.target as? Long
+      val actor = command.target as? Id
       if (actor != null) {
         when (command.type) {
           CharacterCommands.abilityAttack,

@@ -3,7 +3,6 @@ package simulation.misc
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.Id
 import simulation.main.Deck
-import simulation.main.World
 
 data class GameOver(
     val winningFaction: Id
@@ -17,7 +16,11 @@ data class VictoryKeyStats(
 
 fun getVictoryKeyStats(grid: MapGrid, deck: Deck): VictoryKeyStats {
   val victoryKeys = getAllVictoryKeys(deck.accessories)
-  val collectedKeyCount = victoryKeys.count { (id, accessory) -> isAtHome(grid, deck)(id) && accessory.owner == 0L }
+  val collectedKeyCount = victoryKeys
+      .count { (id, accessory) ->
+        isAtHome(grid, deck)(id) && accessory.owner == 0L
+      }
+
   val total = victoryKeys.size
 
   return VictoryKeyStats(

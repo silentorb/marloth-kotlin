@@ -1,6 +1,5 @@
 package simulation.main
 
-import simulation.accessorize.Accessory
 import silentorb.mythic.aura.Sound
 import silentorb.mythic.characters.rigs.CharacterRig
 import silentorb.mythic.characters.rigs.ThirdPersonRig
@@ -17,6 +16,7 @@ import silentorb.mythic.scenery.Light
 import silentorb.mythic.timing.FloatCycle
 import silentorb.mythic.timing.FloatTimer
 import silentorb.mythic.timing.IntTimer
+import simulation.accessorize.AccessoryStack
 import simulation.accessorize.ItemPickup
 import simulation.characters.Character
 import simulation.combat.PlayerOverlay
@@ -32,13 +32,12 @@ import simulation.intellect.assessment.Knowledge
 typealias GetAnyGraph = (Any) -> AnyGraph
 
 data class Hand(
-    val accessory: Accessory? = null,
+    val accessory: AccessoryStack? = null,
     val action: Action? = null,
     val ambientAudioEmitter: AmbientAudioEmitter? = null,
     val attributes: Attributes? = null,
     val body: Body? = null,
     val animation: CharacterAnimation? = null,
-    val attachment: Attachment? = null,
     val dynamicBody: DynamicBody? = null,
     val character: Character? = null,
     val characterRig: CharacterRig? = null,

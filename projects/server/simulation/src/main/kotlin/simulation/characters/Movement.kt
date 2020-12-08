@@ -15,7 +15,7 @@ fun getMoveSpeed(definitions: Definitions, deck: Deck): (Id) -> Float = { actor 
   val baseSpeed = definition.speed
   val accessory = getAccessory(AccessoryId.dashing, deck.accessories, actor)?.value
   val dashBonus = if (accessory != null)
-    dashBonus(accessory.level)
+    dashBonus(accessory.value.level)
   else
     1f
 

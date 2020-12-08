@@ -34,13 +34,14 @@ import silentorb.mythic.spatial.Vector4i
 import simulation.entities.Player
 import simulation.happenings.withSimulationEvents
 import simulation.main.World
+import simulation.misc.Factions
 import simulation.updating.simulationDelta
 import simulation.updating.updateWorld
 
 fun updateSimulationDatabase(db: Database, next: World, previous: World) {
   val nextGameOver = next.global.gameOver
   if (previous.global.gameOver == null && nextGameOver != null) {
-    if (nextGameOver.winningFaction == 1L) {
+    if (nextGameOver.winningFaction == Factions.misfits) {
 //      createVictory(db, Victory(
 //          next.deck.players.values.first().name
 //      ))

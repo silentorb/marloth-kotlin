@@ -59,7 +59,7 @@ private fun playerStats(world: World, actor: Id, debugInfo: List<String>): Flowe
   ) + debugInfo.map {
     label(textStyle, it)
   } + if (getDebugBoolean("HUD_DRAW_INVENTORY")) equipment.mapNotNull { accessory ->
-    val definition = world.definitions.accessories[accessory.type]
+    val definition = world.definitions.accessories[accessory.value.type]
     if (definition == null)
       null
     else
@@ -123,8 +123,8 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
         .mapNotNull { (accessory, accessoryRecord) ->
           val cooldown = deck.actions[accessory]?.cooldown
           if (cooldown != null && cooldown != 0f) {
-            val actionDefinition = definitions.actions[accessoryRecord.type]!!
-            val accessoryDefinition = definitions.accessories[accessoryRecord.type]!!
+            val actionDefinition = definitions.actions[accessoryRecord.value.type]!!
+            val accessoryDefinition = definitions.accessories[accessoryRecord.value.type]!!
             Cooldown(
                 name = textResources(accessoryDefinition.name)!!,
                 value = 1f - cooldown / actionDefinition.cooldown
@@ -137,7 +137,7 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
                 .mapNotNull { (id, accessory) ->
                   val timer = deck.timersFloat[id]
                   if (timer != null) {
-                    val definition = definitions.accessories[accessory.type]
+                    val definition = definitions.accessories[accessory.value.type]
                     if (definition != null)
                       Cooldown(
                           name = textResources(definition.name)!!,

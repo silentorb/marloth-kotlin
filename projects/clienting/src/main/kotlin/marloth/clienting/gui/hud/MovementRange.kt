@@ -22,7 +22,7 @@ fun movementRangeLayer(color: Vector4, transform: Matrix) =
             ElementGroup(
                 meshes = listOf(
                     MeshElement(
-                        id = 1L,
+                        id = 1,
                         mesh = MeshId.hollowCircle,
                         transform = transform,
                         material = Material(
@@ -52,19 +52,19 @@ fun movementRangeLayer(definitions: Definitions, deck: Deck, actor: Id, duration
 
 fun mobilityMovementRangeLayer(definitions: Definitions, deck: Deck, actor: Id): SceneLayer? {
   val accessory = deck.accessories.entries
-      .firstOrNull { it.value.owner == actor && it.value.type == AccessoryId.mobility }
+      .firstOrNull { it.value.owner == actor && it.value.value.type == AccessoryId.mobility }
 
   return if (accessory == null)
     null
   else {
     val action = deck.actions[accessory.key]!!
     val modifier = deck.accessories.entries
-        .firstOrNull { it.value.source == accessory.key }
+        .firstOrNull { it.value.value.source == accessory.key }
 
     val duration = if (modifier != null)
       deck.timersFloat[modifier.key]!!.duration
     else if (action.cooldown == 0f)
-      definitions.actions[accessory.value.type]!!.duration
+      definitions.actions[accessory.value.value.type]!!.duration
     else
       0f
 
@@ -83,7 +83,7 @@ fun mobilityMovementRangeLayer(definitions: Definitions, deck: Deck, actor: Id):
 
 fun entanglingMovementRangeLayer(definitions: Definitions, deck: Deck, actor: Id): SceneLayer? {
   val accessory = deck.accessories.entries
-      .firstOrNull { it.value.owner == actor && it.value.type == AccessoryId.entangling }
+      .firstOrNull { it.value.owner == actor && it.value.value.type == AccessoryId.entangling }
 
   return if (accessory == null)
     null

@@ -89,51 +89,51 @@ fun gatherCommandTriggers(deck: Deck, commands: Commands): List<Triggering> {
   }
 }
 
-fun gatherActivatedTriggers(deck: Deck, definitions: Definitions, collisions: CollisionMap, commands: Commands): List<Triggering> {
-  val attachmentTriggers = deck.triggers.mapNotNull { trigger ->
-    val attachment = deck.attachments[trigger.key]
-    val action = trigger.value.action
-    if (attachment != null && action != null) {
-      Triggering(
-          actor = trigger.key,
-          action = action,
-          target = attachment.target
-      )
-    } else
-      null
-  }
-//  val sensorTriggers = deck.triggers.mapNotNull { trigger ->
-//    if (deck.collisionShapes.containsKey(trigger.key)) {
-//      val collision = collisions.firstOrNull { it.first == trigger.key }
-//      if (collision != null) {
-//        Triggering(
-//            actor = trigger.key,
-//            action = trigger.value.action,
-//            target = collision.second
-//        )
-//      } else null
-//    } else null
+//fun gatherActivatedTriggers(deck: Deck, definitions: Definitions, collisions: CollisionMap, commands: Commands): List<Triggering> {
+//  val attachmentTriggers = deck.triggers.mapNotNull { trigger ->
+//    val attachment = deck.attachments[trigger.key]
+//    val action = trigger.value.action
+//    if (attachment != null && action != null) {
+//      Triggering(
+//          actor = trigger.key,
+//          action = action,
+//          target = attachment.target
+//      )
+//    } else
+//      null
 //  }
-//  val buffTriggers = deck.modifiers
-//      .mapNotNull { (id, buff) ->
-//        val definition = definitions.modifiers[buff.type]!!
-//        val attachment = deck.attachments[id]!!
-//        val overTime = definition.overTime
-//        if (overTime != null)
-//          Triggering(
-//              actor = attachment.source,
-//              action = overTime,
-//              target = attachment.target,
-//              strength = buff.strength
-//          )
-//        else null
-//      }
-  val commandTriggers = gatherCommandTriggers(deck, commands)
-
-  return attachmentTriggers
-//      .plus(buffTriggers)
-      .plus(commandTriggers)
-}
+////  val sensorTriggers = deck.triggers.mapNotNull { trigger ->
+////    if (deck.collisionShapes.containsKey(trigger.key)) {
+////      val collision = collisions.firstOrNull { it.first == trigger.key }
+////      if (collision != null) {
+////        Triggering(
+////            actor = trigger.key,
+////            action = trigger.value.action,
+////            target = collision.second
+////        )
+////      } else null
+////    } else null
+////  }
+////  val buffTriggers = deck.modifiers
+////      .mapNotNull { (id, buff) ->
+////        val definition = definitions.modifiers[buff.type]!!
+////        val attachment = deck.attachments[id]!!
+////        val overTime = definition.overTime
+////        if (overTime != null)
+////          Triggering(
+////              actor = attachment.source,
+////              action = overTime,
+////              target = attachment.target,
+////              strength = buff.strength
+////          )
+////        else null
+////      }
+//  val commandTriggers = gatherCommandTriggers(deck, commands)
+//
+//  return attachmentTriggers
+////      .plus(buffTriggers)
+//      .plus(commandTriggers)
+//}
 
 fun triggersToEvents(triggers: List<Triggering>): Events =
     listOf(

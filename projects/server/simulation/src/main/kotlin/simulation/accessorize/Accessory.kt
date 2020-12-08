@@ -4,8 +4,6 @@ import marloth.scenery.enums.Text
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.happenings.Events
-import silentorb.mythic.happenings.GameEvent
-import silentorb.mythic.happenings.UseAction
 import silentorb.mythic.scenery.MeshName
 import simulation.happenings.TryActionEvent
 import simulation.misc.Definitions
@@ -13,10 +11,14 @@ import kotlin.math.min
 
 data class Accessory(
     val type: AccessoryName,
-    val owner: Id,
-    val source: Id? = null,
+    val source: Id = 0,
     val level: Int = 1,
-    val charges: Int? = null,
+)
+
+data class AccessoryStack(
+    val value: Accessory,
+    val owner: Id,
+    val quantity: Int? = null,
 )
 
 typealias AccessoryName = String
@@ -37,17 +39,17 @@ data class AccessoryDefinition(
     val components: List<Any> = listOf()
 )
 
-fun hasAccessory(type: AccessoryName, accessories: Table<Accessory>, actor: Id): Boolean =
-    accessories.values.any { it.owner == actor && it.type == type }
+fun hasAccessory(type: AccessoryName, accessories: Table<AccessoryStack>, actor: Id): Boolean =
+    accessories.values.any { it.owner == actor && it.value.type == type }
 
-fun getAccessory(type: AccessoryName, accessories: Table<Accessory>, actor: Id): Map.Entry<Id, Accessory>? =
-    accessories.entries.firstOrNull { it.value.owner == actor && it.value.type == type }
+fun getAccessory(type: AccessoryName, accessories: Table<AccessoryStack>, actor: Id): Map.Entry<Id, AccessoryStack>? =
+    accessories.entries.firstOrNull { it.value.owner == actor && it.value.value.type == type }
 
-fun hasAccessory(type: AccessoryName): (Table<Accessory>, Id) -> Boolean = { accessories, actor ->
+fun hasAccessory(type: AccessoryName): (Table<AccessoryStack>, Id) -> Boolean = { accessories, actor ->
   hasAccessory(type, accessories, actor)
 }
 
-fun getAccessories(accessories: Table<Accessory>, entity: Id): Table<Accessory> {
+fun getAccessories(accessories: Table<AccessoryStack>, entity: Id): Table<AccessoryStack> {
   return accessories.filterValues { it.owner == entity }
 }
 
@@ -56,26 +58,29 @@ data class ChangeItemOwnerEvent(
     val newOwner: Id
 )
 
-fun updateAccessory(definitions: Definitions, events: Events): (Id, Accessory) -> Accessory {
+fun updateAccessory(definitions: Definitions, events: Events): (Id, AccessoryStack) -> AccessoryStack {
   val changeOwnerEvents = events.filterIsInstance<ChangeItemOwnerEvent>()
   val choseImprovedAccessoryEvents = events.filterIsInstance<ChooseImprovedAccessory>()
   val allUseEvents = events.filterIsInstance<TryActionEvent>()
 
   return { id, accessory ->
     val levelIncreases = choseImprovedAccessoryEvents.count {
-      it.accessory == accessory.type && it.actor == accessory.owner
+      it.accessory == accessory.value.type && it.actor == accessory.owner
     }
     // Currently if two change owner events are triggered at the same time it is random which one
     // is honored
     val ownerChange = changeOwnerEvents.firstOrNull { it.item == id }
-    val charges = accessory.charges
+    val charges = accessory.quantity
     accessory.copy(
         owner = ownerChange?.newOwner ?: accessory.owner,
-        level = if (levelIncreases > 0)
-          min(accessory.level + levelIncreases, definitions.accessories[accessory.type]!!.maxLevel)
-        else
-          accessory.level,
-        charges = if (charges != null)
+        value = accessory.value.copy(
+            level = if (levelIncreases > 0)
+              min(accessory.value.level + levelIncreases, definitions.accessories[accessory.value.type]!!.maxLevel)
+            else
+              accessory.value.level,
+
+            ),
+        quantity = if (charges != null)
           charges - allUseEvents.count { it.action == id }
         else
           null

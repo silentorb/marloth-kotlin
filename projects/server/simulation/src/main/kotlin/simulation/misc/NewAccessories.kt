@@ -1,10 +1,9 @@
 package simulation.misc
 
-import simulation.accessorize.Accessory
-import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
+import simulation.accessorize.Accessory
+import simulation.accessorize.AccessoryStack
 import simulation.happenings.PurchaseEvent
-import simulation.main.Deck
 import simulation.main.NewHand
 
 fun newAccessories(events: Events, definitions: Definitions): List<NewHand> =
@@ -13,10 +12,12 @@ fun newAccessories(events: Events, definitions: Definitions): List<NewHand> =
           val definition = definitions.accessories[purchase.wareType]
           NewHand(
               components = listOf(
-                  Accessory(
-                      type = purchase.wareType,
+                  AccessoryStack(
+                      value = Accessory(
+                          type = purchase.wareType,
+                      ),
                       owner = purchase.customer,
-                      charges = definition?.charges,
+                      quantity = definition?.charges,
                   )
               )
           )

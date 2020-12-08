@@ -5,22 +5,20 @@ import silentorb.mythic.aura.finishedSounds
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.ent.mapEntryValue
-import silentorb.mythic.ent.pipe
 import silentorb.mythic.happenings.DeleteEntityEvent
 import silentorb.mythic.happenings.Events
-import simulation.entities.cleanupAttachmentSource
 import silentorb.mythic.timing.expiredTimers
 import simulation.accessorize.Accessory
+import simulation.accessorize.AccessoryStack
 import simulation.entities.PruneEntityEvent
-import simulation.happenings.PurchaseEvent
 import simulation.happenings.TakeItemEvent
 import simulation.main.Deck
 import simulation.main.removeEntities
 
 val cleanOutdatedReferences: (Deck) -> Deck = { deck ->
   deck.copy(
-      attachments = deck.attachments
-          .mapValues(mapEntryValue(cleanupAttachmentSource(deck)))
+//      attachments = deck.attachments
+//          .mapValues(mapEntryValue(cleanupAttachmentSource(deck)))
   )
 }
 
@@ -30,9 +28,9 @@ fun getFinished(soundDurations: SoundDurations, events: Events, deck: Deck): Set
       .plus(finishedSounds(soundDurations)(deck.sounds))
 }
 
-fun exhaustedAccessories(accessories: Table<Accessory>) =
+fun exhaustedAccessories(accessories: Table<AccessoryStack>) =
     accessories.filter {
-      val charges = it.value.charges
+      val charges = it.value.quantity
       charges != null && charges < 1
     }.keys
 

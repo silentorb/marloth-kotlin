@@ -5,6 +5,7 @@ import simulation.accessorize.Accessory
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.timing.FloatTimer
+import simulation.accessorize.AccessoryStack
 import simulation.happenings.NewHandEvent
 import simulation.main.Hand
 import simulation.misc.Definitions
@@ -22,10 +23,12 @@ fun dashEvents(definitions: Definitions, accessory: Accessory, actor: Id): Event
   return listOf(
       NewHandEvent(
           hand = Hand(
-              accessory = Accessory(
-                  type = AccessoryId.dashing,
+              accessory = AccessoryStack(
+                  value = Accessory(
+                      type = AccessoryId.dashing,
+                      level = accessory.level,
+                  ),
                   owner = actor,
-                  level = accessory.level
               ),
               timerFloat = FloatTimer(definition.duration)
           )

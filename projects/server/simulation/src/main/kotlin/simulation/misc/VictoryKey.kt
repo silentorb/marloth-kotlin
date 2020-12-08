@@ -2,8 +2,6 @@ package simulation.misc
 
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.MeshId
-import simulation.accessorize.Accessory
-import simulation.accessorize.ChangeItemOwnerEvent
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.Table
@@ -17,6 +15,9 @@ import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
 import silentorb.mythic.spatial.Vector4
+import simulation.accessorize.Accessory
+import simulation.accessorize.AccessoryStack
+import simulation.accessorize.ChangeItemOwnerEvent
 import simulation.accessorize.ItemPickup
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
@@ -28,15 +29,17 @@ import simulation.main.IdHand
 import simulation.main.World
 import simulation.physics.CollisionGroups
 
-fun getAllVictoryKeys(accessories: Table<Accessory>): Table<Accessory> =
+fun getAllVictoryKeys(accessories: Table<AccessoryStack>): Table<AccessoryStack> =
     accessories
-        .filterValues { it.type == AccessoryId.victoryKey }
+        .filterValues { it.value.type == AccessoryId.victoryKey }
 
 // Needs body
-fun newVictoryKey(owner: Id = 0L) =
+fun newVictoryKey(owner: Id = 0) =
     Hand(
-        accessory = Accessory(
-            type = AccessoryId.victoryKey,
+        accessory = AccessoryStack(
+            value = Accessory(
+                type = AccessoryId.victoryKey,
+            ),
             owner = owner
         ),
         spinner = Spinner(Pi)
@@ -108,7 +111,7 @@ fun eventsFromVictoryKeys(world: World): Events {
           ),
           ChangeItemOwnerEvent(
               item = item,
-              newOwner = 0L
+              newOwner = 0
           )
       )
     } else

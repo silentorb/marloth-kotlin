@@ -19,23 +19,23 @@ fun newAccessoryChoice(definitions: Definitions, dice: Dice, deck: Deck, actor: 
   val available = definitions.selectableAccessories
       .filter { accessory ->
         val definition = definitions.accessories[accessory]!!
-        val currentLevel = currentAccessories.values.firstOrNull { it.type == accessory }?.level ?: 0
+        val currentLevel = currentAccessories.values.firstOrNull { it.value.type == accessory }?.value?.level ?: 0
         definition.maxLevel > currentLevel
       }
 
   return dice.take(available, 2)
 }
 
-fun newChosenAccessories(accessories: Table<Accessory>, events: Events): List<Hand> {
-  val chooseAccessoryEvents = events.filterIsInstance<ChooseImprovedAccessory>()
-  return chooseAccessoryEvents
-      .filter { event -> !hasAccessory(event.accessory, accessories, event.actor) }
-      .map { event ->
-        Hand(
-            accessory = Accessory(
-                owner = event.actor,
-                type = event.accessory
-            )
-        )
-      }
-}
+//fun newChosenAccessories(accessories: Table<AccessoryStack>, events: Events): List<Hand> {
+//  val chooseAccessoryEvents = events.filterIsInstance<ChooseImprovedAccessory>()
+//  return chooseAccessoryEvents
+//      .filter { event -> !hasAccessory(event.accessory, accessories, event.actor) }
+//      .map { event ->
+//        Hand(
+//            accessory = AccessoryStack(
+//                owner = event.actor,
+//                type = event.accessory
+//            )
+//        )
+//      }
+//}

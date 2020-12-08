@@ -8,7 +8,6 @@ import silentorb.mythic.performing.Performance
 import silentorb.mythic.performing.performancesFromEvents
 import silentorb.mythic.timing.FloatTimer
 import simulation.abilities.newEntangleEntities
-import simulation.accessorize.newChosenAccessories
 import simulation.characters.newPlayerCharacters
 import simulation.combat.newDamageVisualEffects
 import simulation.entities.newRespawnCountdowns
@@ -67,7 +66,7 @@ fun newEntities(definitions: Definitions, graph: Graph, previous: Deck, events: 
           events.filterIsInstance<NewHandEvent>().map { it.hand },
           newDamageVisualEffects(next, events),
           newEntangleEntities(previous),
-          newChosenAccessories(previous.accessories, events)
+//          newChosenAccessories(previous.accessories, events)
       )
           .flatMap { toIdHands(nextId, it) }
   )

@@ -43,7 +43,7 @@ fun getValueModifiers(definitions: CombatDefinitions, combatDeck: CombatDeck, id
       .mapNotNull {
         val accessory = combatDeck.accessories[it.key]
         if (accessory != null)
-          definitions.accessories[accessory.type]?.children
+          definitions.accessories[accessory.value.type]?.children
         else
           null
       }

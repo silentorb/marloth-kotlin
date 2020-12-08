@@ -9,7 +9,6 @@ dependencies {
   api(group = "org.recast4j", name = "detour-crowd", version = "1.2.5")
   api("silentorb.mythic:aura")
   api("silentorb.mythic:spatial")
-  api("silentorb.mythic:sculpting")
   api("silentorb.mythic:randomly")
   api("silentorb.mythic:ent")
   api("silentorb.mythic:ent-scenery")

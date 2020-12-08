@@ -27,11 +27,11 @@ fun eventsFromItemPickups(world: World, collisions: CollisionMap): Events {
       val characterAccessories = deck.accessories.filter { it.value.owner == character }
       val available = characterAccessories
           .none { (_, accessory) ->
-            itemAccessory.type == accessory.type
+            itemAccessory.value.type == accessory.value.type
           }
       if (available) {
         when {
-          itemAccessory.type == AccessoryId.victoryKey -> listOf(
+          itemAccessory.value.type == AccessoryId.victoryKey -> listOf(
               PruneEntityEvent(
                   id = itemPickup,
                   hand = newVictoryKey(owner = character)

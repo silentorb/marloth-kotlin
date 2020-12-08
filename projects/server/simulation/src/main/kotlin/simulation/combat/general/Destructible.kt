@@ -1,6 +1,7 @@
 package simulation.combat.general
 
 import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.emptyId
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
 
@@ -13,7 +14,7 @@ data class Destructible(
     val base: DestructibleBaseStats,
     val health: ResourceContainer,
     val damageMultipliers: DamageMultipliers = mapOf(),
-    val lastDamageSource: Id = 0L
+    val lastDamageSource: Id = 0
 )
 
 // This is intended to be used outside of combat.
@@ -37,7 +38,7 @@ fun damageDestructible(damages: List<Damage>): (Destructible) -> Destructible = 
     val health = modifyResource(destructible.health, healthMod)
     destructible.copy(
         health = destructible.health.copy(value = health),
-        lastDamageSource = damages.firstOrNull { it.source != 0L }?.source ?: destructible.lastDamageSource
+        lastDamageSource = damages.firstOrNull { it.source != emptyId }?.source ?: destructible.lastDamageSource
     )
   }
 }

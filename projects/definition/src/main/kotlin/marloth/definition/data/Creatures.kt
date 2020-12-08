@@ -14,6 +14,7 @@ object Creatures {
           Ware(
               type = AccessoryId.cookie,
               price = 10,
+              quantity = 10,
           )
       )
   )

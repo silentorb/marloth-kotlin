@@ -2,12 +2,13 @@ package simulation.movement
 
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.CharacterCommands
-import simulation.accessorize.Accessory
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.UseAction
 import silentorb.mythic.timing.FloatTimer
+import simulation.accessorize.Accessory
+import simulation.accessorize.AccessoryStack
 import simulation.happenings.NewHandEvent
 import simulation.main.Deck
 import simulation.main.Hand
@@ -26,10 +27,12 @@ fun isMobilityCommand(command: Command): Boolean =
 fun newMobilityModifierEvent(actor: Id, source: Id, duration: Float) =
     NewHandEvent(
         hand = Hand(
-            accessory = Accessory(
-                type = AccessoryId.mobile,
+            accessory = AccessoryStack(
+                value = Accessory(
+                    type = AccessoryId.mobile,
+                    source = source,
+                ),
                 owner = actor,
-                source = source
             ),
             timerFloat = FloatTimer(duration)
         )
@@ -38,16 +41,16 @@ fun newMobilityModifierEvent(actor: Id, source: Id, duration: Float) =
 fun mobilityEvents(definitions: Definitions, deck: Deck, commands: List<Command>): Events {
   val charactersRequestingMovement = commands
       .filter(::isMobilityCommand)
-      .mapNotNull { it.target as? Long }
+      .mapNotNull { it.target as? Id }
       .distinct()
 
   return charactersRequestingMovement
       .filter(canUseMobility(deck))
       .flatMap { actor ->
         val accessory = deck.accessories.entries
-            .first { it.value.type == AccessoryId.mobility && it.value.owner == actor }
+            .first { it.value.value.type == AccessoryId.mobility && it.value.owner == actor }
 
-        val duration = definitions.actions[accessory.value.type]!!.duration
+        val duration = definitions.actions[accessory.value.value.type]!!.duration
 
         listOf(
             UseAction(

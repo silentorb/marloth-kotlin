@@ -47,7 +47,7 @@ fun accessoriesView(definitions: Definitions, deck: Deck, actor: Id): Box {
   val accessories = getAccessories(deck.accessories, actor)
   val items = accessories
       .mapNotNull { (_, accessoryRecord) ->
-        val accessoryDefinition = definitions.accessories[accessoryRecord.type]
+        val accessoryDefinition = definitions.accessories[accessoryRecord.value.type]
         if (accessoryDefinition != null && accessoryDefinition.name != Text.unnamed) {
           label(TextStyles.smallBlack, definitions.textLibrary(accessoryDefinition.name))
         } else

@@ -14,9 +14,9 @@ fun actionsForTarget(world: World, actor: Id, target: Id): List<Id> {
   val distance = actorBody.position.distance(targetBody.position)
   return getActions(definitions, deck.accessories, actor)
       .filter { (_, accessoryRecord) ->
-        val action = definitions.actions[accessoryRecord.type]!!
+        val action = definitions.actions[accessoryRecord.value.type]!!
         action.range >= distance &&
-            (accessoryRecord.type != AccessoryId.entangle || !isEntangleImmune(deck.accessories, target))
+            (accessoryRecord.value.type != AccessoryId.entangle || !isEntangleImmune(deck.accessories, target))
       }
       .keys
       .toList()

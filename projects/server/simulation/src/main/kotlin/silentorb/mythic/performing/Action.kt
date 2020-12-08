@@ -22,7 +22,7 @@ fun updateCooldown(definitions: Definitions, deck: Deck, activated: List<Id>, id
   val isActivated = activated.contains(id)
   val hasPerformance = deck.performances.any { it.value.sourceAction == id }
   val accessory = deck.accessories[id]!!
-  val definition = definitions.actions[accessory.type]!!
+  val definition = definitions.actions[accessory.value.type]!!
   val cooldown = definition.cooldown
 
   return if (isActivated || hasPerformance)

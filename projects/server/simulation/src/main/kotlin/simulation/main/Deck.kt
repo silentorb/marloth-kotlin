@@ -1,30 +1,29 @@
 package simulation.main
 
-import simulation.accessorize.Accessory
-import simulation.accessorize.ItemPickup
-import simulation.entities.Attachment
 import silentorb.mythic.aura.Sound
+import silentorb.mythic.characters.rigs.CharacterRig
+import silentorb.mythic.characters.rigs.ThirdPersonRig
 import silentorb.mythic.ent.*
-import simulation.entities.*
-import simulation.happenings.Trigger
-import simulation.intellect.Spirit
+import silentorb.mythic.entities.Attributes
 import silentorb.mythic.particles.ParticleEffect
+import silentorb.mythic.performing.Action
+import silentorb.mythic.performing.Performance
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
-import silentorb.mythic.characters.rigs.CharacterRig
-import silentorb.mythic.characters.rigs.ThirdPersonRig
-import simulation.combat.general.Destructible
-import simulation.combat.spatial.Missile
-import silentorb.mythic.entities.Attributes
-import silentorb.mythic.performing.Action
-import silentorb.mythic.performing.Performance
 import silentorb.mythic.scenery.Light
 import silentorb.mythic.timing.FloatCycle
 import silentorb.mythic.timing.FloatTimer
 import silentorb.mythic.timing.IntTimer
+import simulation.accessorize.AccessoryStack
+import simulation.accessorize.ItemPickup
 import simulation.characters.Character
 import simulation.combat.PlayerOverlay
+import simulation.combat.general.Destructible
+import simulation.combat.spatial.Missile
+import simulation.entities.*
+import simulation.happenings.Trigger
+import simulation.intellect.Spirit
 import simulation.intellect.assessment.Knowledge
 import simulation.intellect.navigation.NavigationDirection
 import simulation.updating.applyHands
@@ -33,11 +32,10 @@ import simulation.updating.finalizeHands
 // Deck is basically a database full of tables
 
 data class Deck(
-    val accessories: Table<Accessory> = mapOf(),
+    val accessories: Table<AccessoryStack> = mapOf(),
     val actions: Table<Action> = mapOf(),
     val ambientSounds: Table<AmbientAudioEmitter> = mapOf(),
     val animations: Table<CharacterAnimation> = mapOf(),
-    val attachments: Table<Attachment> = mapOf(),
     val attributes: Table<Attributes> = mapOf(),
     val bodies: Table<Body> = mapOf(),
     val characterRigs: Table<CharacterRig> = mapOf(),
@@ -78,7 +76,6 @@ fun allHandsToDeck(nextId: IdSource, newHands: List<NewHand>, deck: Deck): Deck 
       actions = deck.actions + applyHands(hands),
       ambientSounds = deck.ambientSounds + applyHands(hands),
       animations = deck.animations + applyHands(hands),
-      attachments = deck.attachments + applyHands(hands),
       attributes = deck.attributes + applyHands(hands),
       bodies = deck.bodies + applyHands(hands),
       characterRigs = deck.characterRigs + applyHands(hands),

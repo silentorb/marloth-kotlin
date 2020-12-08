@@ -3,11 +3,7 @@ package simulation.characters
 import marloth.scenery.enums.AnimationId
 import marloth.scenery.enums.ClientCommand
 import marloth.scenery.enums.Text
-import simulation.accessorize.Accessory
 import silentorb.mythic.characters.rigs.*
-import simulation.combat.general.Destructible
-import simulation.combat.general.DestructibleBaseStats
-import simulation.combat.general.ResourceContainer
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.newIdSource
@@ -15,15 +11,23 @@ import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.scenery.Capsule
-import silentorb.mythic.spatial.*
+import silentorb.mythic.spatial.Pi
+import silentorb.mythic.spatial.Quaternion
+import silentorb.mythic.spatial.Vector2
+import silentorb.mythic.spatial.Vector3
+import simulation.accessorize.Accessory
+import simulation.accessorize.AccessoryStack
+import simulation.combat.general.Destructible
+import simulation.combat.general.DestructibleBaseStats
+import simulation.combat.general.ResourceContainer
 import simulation.entities.*
+import simulation.happenings.newPossibleAction
 import simulation.intellect.Spirit
 import simulation.intellect.assessment.newKnowledge
 import simulation.main.Hand
 import simulation.main.IdHand
-import simulation.misc.Definitions
-import simulation.happenings.newPossibleAction
 import simulation.main.NewHand
+import simulation.misc.Definitions
 import simulation.physics.CollisionGroups
 
 fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, profession: ProfessionId, faction: Id, position: Vector3,
@@ -35,8 +39,10 @@ fun newCharacter(nextId: IdSource, character: Id, definitions: Definitions, prof
         IdHand(
             id = nextId(),
             hand = Hand(
-                accessory = Accessory(
-                    type = type,
+                accessory = AccessoryStack(
+                    value = Accessory(
+                        type = type,
+                    ),
                     owner = character
                 ),
                 action = newPossibleAction(definitions, type)
@@ -119,10 +125,12 @@ fun newCharacter2(id: Id, definitions: Definitions, definition: CharacterDefinit
         val accessoryDefinition = definitions.accessories[type]
         NewHand(
             components = listOfNotNull(
-                Accessory(
-                    type = type,
+                AccessoryStack(
+                    value = Accessory(
+                        type = type,
+                    ),
                     owner = id,
-                    charges = accessoryDefinition?.charges,
+                    quantity = accessoryDefinition?.charges,
                 ),
                 newPossibleAction(definitions, type),
             )
