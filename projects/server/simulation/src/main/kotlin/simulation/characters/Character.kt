@@ -19,9 +19,7 @@ import simulation.accessorize.ChooseImprovedAccessory
 import simulation.accessorize.newAccessoryChoice
 import simulation.combat.general.DamageMultipliers
 import simulation.combat.general.ResourceContainer
-import simulation.entities.Contract
-import simulation.entities.DepictionType
-import simulation.entities.Ware
+import simulation.entities.*
 import simulation.happenings.PurchaseEvent
 import simulation.main.Deck
 import simulation.misc.*
@@ -45,6 +43,7 @@ data class CharacterDefinition(
     val money: Int = 0,
     val fieldOfView: Float = 0.5f, // Only used for AI. Dot product: 1 is no vision, -1 is 360 degree vision
     val wares: List<Ware> = listOf(),
+    val availableContracts: List<ContractDefinition> = listOf(),
 )
 
 enum class EquipmentSlot {
@@ -72,6 +71,7 @@ data class Character(
     val money: Int = 0,
     val nourishment: HighInt = highIntScale,
     val wares: Map<Id, Ware> = mapOf(),
+    val availableContracts: Map<Id, ContractDefinition> = mapOf(),
 )
 
 data class ModifyLevelEvent(
@@ -103,14 +103,6 @@ fun getPurchaseCost(deck: Deck, events: Events, character: Id): Int {
       .sum()
 }
 
-//fun getMoneyFromTakenItems(deck: Deck, events: Events, character: Id): Int {
-//  val takes = events.filterIsInstance<TakeItemEvent>().filter { it.actor == character }.map { it.item }
-//  val moneyTakes = deck.resources.filterKeys { takes.contains(it) }
-//  return moneyTakes
-//      .mapNotNull { it.value.values[ResourceId.money.name] }
-//      .sum()
-//}
-
 fun updateMoney(deck: Deck, events: Events, character: Id, money: Int): Int {
 //  val moneyFromItems = getMoneyFromTakenItems(deck, events, character)
   val cost = getPurchaseCost(deck, events, character)
@@ -125,19 +117,6 @@ fun updateInteractingWith(deck: Deck, character: Id, commands: Commands, interac
       null
     else
       interactingWith
-
-//fun updateCharacterProfession(definitions: Definitions, actor: Id, events: Events, profession: ProfessionId): ProfessionId {
-//  val modifyLevelEvents = events
-//      .filterIsInstance<ModifyLevelEvent>()
-//      .filter { it.actor == actor }
-//
-//  return if (modifyLevelEvents.any()) {
-//    val definition = definitions.professions[profession]!!
-//    val level = minMax(0, maxCharacterLevel)(definition.level + modifyLevelEvents.sumBy { it.offset })
-//    profession.dropLast(1) + level
-//  } else
-//    profession
-//}
 
 fun updateAccessoryPoints(events: Events, character: Character): Int {
   return if (character.faction == Factions.misfits) {
@@ -186,6 +165,7 @@ fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletStat
       accessoryPoints = updateAccessoryPoints(events, character),
       accessoryOptions = updateAccessoryOptions(definitions, dice, deck, events, actor, character),
       nourishment = updateNourishment(1, character, nourishmentAdjustment, toInt1000(body.velocity.length())),
+      availableContracts = updateAvailableContracts(commands, character.availableContracts)
   )
 }
 

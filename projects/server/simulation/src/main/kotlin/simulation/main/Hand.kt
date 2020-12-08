@@ -31,6 +31,7 @@ import simulation.intellect.assessment.Knowledge
 
 typealias GetAnyGraph = (Any) -> AnyGraph
 
+@Deprecated("Use NewHand")
 data class Hand(
     val accessory: AccessoryStack? = null,
     val action: Action? = null,
@@ -67,4 +68,5 @@ data class Hand(
     val ware: Ware? = null
 )
 
+@Deprecated("Use NewHand")
 typealias IdHand = GenericIdHand<Hand>

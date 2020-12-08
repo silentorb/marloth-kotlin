@@ -89,7 +89,8 @@ fun newCharacter(
               isAlive = true,
               definition = definition,
               money = definition.money,
-              wares = definition.wares.associateBy { nextWareId() }
+              wares = definition.wares.associateBy { nextWareId() },
+              availableContracts = definition.availableContracts.associateBy { nextWareId() },
           ),
           CharacterRig(
               facingRotation = Vector2(angle, 0f),
@@ -124,7 +125,7 @@ fun newCharacter(
           else
             null,
 
-          if (definition.wares.any()) {
+          if (definition.wares.any() || definition.availableContracts.any()) {
             Interactable(
                 primaryCommand = WidgetCommand(
                     text = TextId.menu_talk,

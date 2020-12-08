@@ -78,7 +78,8 @@ fun newEntities(definitions: Definitions, graph: Graph, previous: Deck, events: 
       .reduce(mergeDecks)
 
   val newHands = newPlayerCharacters(nextId, definitions, graph, events) +
-      newAccessories(events, definitions)
+      newAccessories(events, definitions) +
+      events.filterIsInstance<NewHand>()
 
   allHandsToDeck(nextId, newHands, lastDeck)
 }
