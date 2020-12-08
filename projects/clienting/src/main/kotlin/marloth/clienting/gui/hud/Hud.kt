@@ -48,10 +48,10 @@ private fun playerStats(world: World, actor: Id, debugInfo: List<String>): Flowe
   val character = deck.characters[actor]!!
   val accessoryPoints = character.accessoryPoints + if (character.accessoryOptions != null) 1 else 0
   val equipment = deck.accessories.filter { it.value.owner == actor }.values
-  val rows = listOf(
+  val rows = listOfNotNull(
       label(textStyle, "Health: ${resourceString(destructible.health)}"),
       label(textStyle, "Nourishment: ${highPercentage(character.nourishment)}"),
-      label(textStyle, "RawNourish: ${character.nourishment}"),
+      if (getDebugBoolean("HUD_DRAW_RAW_NOURISHMENT")) label(textStyle, "RawNourish: ${character.nourishment}") else null,
 //      label(textStyle, "Doom: ${world.global.doom}")
 //      label(textStyle, "Sanity: ${resourceString(data.madness)}")
   ) + listOfNotNull(

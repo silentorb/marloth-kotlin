@@ -9,7 +9,7 @@ import simulation.entities.DepictionType
 fun monsterDefinitions(): Map<String, CharacterDefinition> =
     mapOf(
         CreatureId.hogMan to CharacterDefinition(
-            name = Text.unnamed,
+            name = TextId.unnamed,
             health = 100,
             accessories = listOf(AccessoryId.pistol),
             depictionType = DepictionType.person,
@@ -19,7 +19,7 @@ fun monsterDefinitions(): Map<String, CharacterDefinition> =
             )
         ),
         CreatureId.sentinel to CharacterDefinition(
-            name = Text.unnamed,
+            name = TextId.unnamed,
             health = 100,
             accessories = listOf(AccessoryId.spiritRocketLauncher),
             depictionType = DepictionType.sentinel,
@@ -29,7 +29,7 @@ fun monsterDefinitions(): Map<String, CharacterDefinition> =
             fieldOfView = fieldOfView360
         ),
         CreatureId.hound to CharacterDefinition(
-            name = Text.unnamed,
+            name = TextId.unnamed,
             health = 100,
             accessories = listOf(AccessoryId.claws, AccessoryId.dash),
             depictionType = DepictionType.hound,

@@ -1,23 +1,16 @@
 package marloth.generation.population
 
 import generation.architecture.engine.GenerationConfig
-import marloth.definition.data.Creatures
-import marloth.scenery.enums.ClientCommand
-import marloth.scenery.enums.Text
+import marloth.definition.data.characterDefinitions
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.IdSource
-import silentorb.mythic.ent.scenery.getNodeTransform
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.timing.FloatCycle
-import simulation.characters.newCharacter2
+import simulation.characters.newCharacter
 import simulation.characters.newPlayerAndCharacter
-import simulation.entities.Interactable
-import simulation.entities.WidgetCommand
 import simulation.main.NewHand
 import simulation.misc.Definitions
-import simulation.misc.Factions
-import simulation.misc.GameAttributes
 
 fun cycleHands(nextId: IdSource) =
     listOf(
@@ -35,30 +28,11 @@ fun cycleHands(nextId: IdSource) =
         )
     )
 
-typealias EntityConstructor = (IdSource, Definitions, Graph, String) -> NewHand
-
-val newFoodVendor: EntityConstructor = { nextId, definitions, graph, node ->
-  val transform = getNodeTransform(graph, node)
-  newCharacter2(nextId(), definitions, Creatures.foodVendor, Factions.neutral, transform.translation(), transform.rotation().z)
-      .plusComponents(
-          Interactable(
-              primaryCommand = WidgetCommand(
-                  text = Text.menu_talk,
-                  clientCommand = ClientCommand.showMerchantView
-              )
-          )
-      )
-}
-
-fun entityConstructors(): Map<String, EntityConstructor> = mapOf(
-    GameAttributes.foodVendor to newFoodVendor
-)
-
 fun graphToHands(definitions: Definitions, nextId: IdSource, graph: Graph): List<NewHand> {
-  val constructors = entityConstructors()
-  val typeEntries = graph.filter { it.property == SceneProperties.type && constructors.containsKey(it.target) }
+  val characterDefinitions = characterDefinitions()
+  val typeEntries = graph.filter { it.property == SceneProperties.type && characterDefinitions.containsKey(it.target) }
   return typeEntries.map { entry ->
-    constructors[entry.target]!!(nextId, definitions, graph, entry.source)
+    newCharacter(nextId, definitions, characterDefinitions[entry.target]!!, graph, entry.source)
   }
 }
 

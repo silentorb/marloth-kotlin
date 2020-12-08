@@ -4,27 +4,28 @@ import marloth.definition.misc.newResistanceModifier
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.Text
 import marloth.scenery.enums.DamageTypes
+import marloth.scenery.enums.TextId
 import simulation.accessorize.AccessoryName
 import simulation.accessorize.ModifierDefinition
 import simulation.happenings.DamageAction
 
 fun staticModifiers(): Map<AccessoryName, ModifierDefinition> = mapOf(
     AccessoryId.damageBurning to ModifierDefinition(
-        name = Text.id_damageBurning,
+        name = TextId.id_damageBurning,
         overTime = DamageAction(
             damageType = DamageTypes.fire,
             amount = 0
         )
     ),
     AccessoryId.damageChilled to ModifierDefinition(
-        name = Text.id_damageChilled,
+        name = TextId.id_damageChilled,
         overTime = DamageAction(
             damageType = DamageTypes.cold,
             amount = 0
         )
     ),
     AccessoryId.damagePoisoned to ModifierDefinition(
-        name = Text.id_damagePoisoned,
+        name = TextId.id_damagePoisoned,
         overTime = DamageAction(
             damageType = DamageTypes.poison,
             amount = 0
@@ -32,18 +33,18 @@ fun staticModifiers(): Map<AccessoryName, ModifierDefinition> = mapOf(
     ),
 
     AccessoryId.entangled to ModifierDefinition(
-        name = Text.id_entangled
+        name = TextId.id_entangled
     ),
 
     AccessoryId.entangleImmune to ModifierDefinition(
-        name = Text.unnamed
+        name = TextId.unnamed
     ),
     
     AccessoryId.mobile to ModifierDefinition(
-        name = Text.id_mobile
+        name = TextId.id_mobile
     ),
 
-    AccessoryId.resistanceCold to newResistanceModifier(Text.id_resistanceCold, DamageTypes.cold),
-    AccessoryId.resistanceFire to newResistanceModifier(Text.id_resistanceFire, DamageTypes.fire),
-    AccessoryId.resistancePoison to newResistanceModifier(Text.id_resistancePoison, DamageTypes.poison)
+    AccessoryId.resistanceCold to newResistanceModifier(TextId.id_resistanceCold, DamageTypes.cold),
+    AccessoryId.resistanceFire to newResistanceModifier(TextId.id_resistanceFire, DamageTypes.fire),
+    AccessoryId.resistancePoison to newResistanceModifier(TextId.id_resistancePoison, DamageTypes.poison)
 )

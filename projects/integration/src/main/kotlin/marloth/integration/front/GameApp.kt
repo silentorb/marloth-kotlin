@@ -79,7 +79,7 @@ fun newGameApp(platform: Platform, client: Client): GameApp {
 fun runApp(platform: Platform, options: AppOptions) {
   platform.display.initialize(toPlatformDisplayConfig(options.display))
   val app = newGameApp(platform, newClient(platform, options.display))
-  val clientState = newClientState(options.input, options.audio, platform.display.getDisplayModes())
+  val clientState = newClientState(app.definitions.textLibrary, options.input, options.audio, platform.display.getDisplayModes())
   val worlds = if (clientState.isEditorActive)
     listOf()
   else

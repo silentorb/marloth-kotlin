@@ -1,6 +1,7 @@
 package simulation.accessorize
 
 import marloth.scenery.enums.Text
+import marloth.scenery.enums.TextId
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.happenings.Events
@@ -29,7 +30,7 @@ data class Nutrient(
 
 data class AccessoryDefinition(
     val name: Text,
-    val description: Text = Text.unnamed,
+    val description: Text = TextId.unnamed,
     val children: List<ChildAccessory> = listOf(),
     //This mesh field is a stopgap until attaching any depiction to an articulation is supported
     val equippedMesh: MeshName? = null,

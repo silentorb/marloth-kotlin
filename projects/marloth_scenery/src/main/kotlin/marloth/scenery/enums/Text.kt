@@ -1,6 +1,12 @@
 package marloth.scenery.enums
 
-enum class Text {
+interface Text
+
+data class DevText(
+    val value: String
+) : Text
+
+enum class TextId : Text {
   damageType_cold,
   damageType_fire,
   damageType_poison,

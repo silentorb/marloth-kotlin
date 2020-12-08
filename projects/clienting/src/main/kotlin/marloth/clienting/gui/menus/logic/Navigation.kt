@@ -58,7 +58,7 @@ fun selectInteractionView(deck: Deck?, player: Id): ViewId? =
       val interactingWith = deck.characters[player]?.interactingWith
       val interaction = deck.interactables[interactingWith]
       when (interaction?.primaryCommand?.clientCommand) {
-        ClientCommand.showMerchantView -> ViewId.merchant
+        ClientCommand.showConversationView -> ViewId.conversation
         else -> null
       }
     }

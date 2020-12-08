@@ -6,8 +6,6 @@ import silentorb.mythic.ent.scenery.toSpatialEntries
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.spatial.Vector3
 import simulation.entities.Player
-import simulation.main.Hand
-import simulation.main.IdHand
 import simulation.main.NewHand
 import simulation.misc.*
 
@@ -30,7 +28,7 @@ fun getDebugProfession() =
     getDebugString("CHARACTER_CLASS")
 
 fun newPlayerCharacter(nextId: IdSource, id: Id, definitions: Definitions, profession: ProfessionId, location: Vector3, angle: Float): NewHand {
-  return newCharacter2(id, definitions,
+  return newCharacter(id, definitions,
       definition = definitions.professions[profession]!!,
       faction = Factions.misfits,
       position = location + Vector3(0f, 0f, 1f),

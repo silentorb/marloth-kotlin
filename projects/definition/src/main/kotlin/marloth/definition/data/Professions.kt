@@ -3,13 +3,14 @@ package marloth.definition.data
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.SoundId
 import marloth.scenery.enums.Text
+import marloth.scenery.enums.TextId
 import silentorb.mythic.ent.reflectPropertiesMap
 import simulation.characters.CharacterDefinition
 import simulation.entities.DepictionType
 
 object Professions {
   val soldier = CharacterDefinition(
-      name = Text.id_soldier,
+      name = TextId.id_soldier,
       health = 200,
       accessories = listOf(AccessoryId.shotgun, AccessoryId.graveDigger),
       depictionType = DepictionType.child,
@@ -19,7 +20,7 @@ object Professions {
   )
 
   val magician = CharacterDefinition(
-      name = Text.id_magician,
+      name = TextId.id_magician,
       health = 200,
       accessories = listOf(AccessoryId.rocketLauncher),
       depictionType = DepictionType.child,
@@ -32,7 +33,7 @@ object Professions {
 }
 
 private val debug = CharacterDefinition(
-    name = Text.unnamed,
+    name = TextId.unnamed,
     health = 20000,
     accessories = listOf(AccessoryId.rocketLauncher),
     depictionType = DepictionType.child,

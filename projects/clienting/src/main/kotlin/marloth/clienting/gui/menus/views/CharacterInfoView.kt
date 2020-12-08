@@ -4,6 +4,7 @@ import marloth.clienting.StateFlower
 import marloth.clienting.StateFlowerTransform
 import marloth.clienting.gui.menus.*
 import marloth.scenery.enums.Text
+import marloth.scenery.enums.TextId
 import silentorb.mythic.bloom.*
 import simulation.accessorize.getAccessories
 import silentorb.mythic.ent.Id
@@ -18,13 +19,13 @@ import simulation.misc.Definitions
 //
 //    list(horizontalPlane, 20)(listOf(
 //        div(layout = layoutDimensions(width = fixed(70)))(
-//            localizedLabel(TextStyles.smallBlack, damageTypeNames[damageType] ?: Text.unnamed)
+//            localizedLabel(TextStyles.smallBlack, damageTypeNames[damageType] ?: TextId.unnamed)
 //        ),
 //        label(TextStyles.smallBlack, value.toString() + " %")
 //    ))
 //  }
 //  return list(verticalPlane)(listOf(
-//      localizedLabel(TextStyles.smallBlack, Text.gui_resistances),
+//      localizedLabel(TextStyles.smallBlack, TextId.gui_resistances),
 //      forwardMargin(20)(
 //          list(verticalPlane, 15)(items)
 //      )
@@ -35,9 +36,9 @@ fun generalCharacterInfo(definitions: Definitions, deck: Deck, actor: Id): Box {
   val character = deck.characters[actor]!!
   val profession = character.definition
   val rows = listOf(
-//      label(TextStyles.smallBoldBlack, definitions.textLibrary(Text.gui_profession)),
+//      label(TextStyles.smallBoldBlack, definitions.textLibrary(TextId.gui_profession)),
 //      label(TextStyles.smallBlack, definitions.textLibrary(profession.name)),
-//      label(TextStyles.smallBoldBlack, definitions.textLibrary(Text.gui_money)),
+//      label(TextStyles.smallBoldBlack, definitions.textLibrary(TextId.gui_money)),
       moneyLabel(definitions.textLibrary, character.money),
   )
   return boxList(verticalPlane, 10)(rows)
@@ -48,13 +49,13 @@ fun accessoriesView(definitions: Definitions, deck: Deck, actor: Id): Box {
   val items = accessories
       .mapNotNull { (_, accessoryRecord) ->
         val accessoryDefinition = definitions.accessories[accessoryRecord.value.type]
-        if (accessoryDefinition != null && accessoryDefinition.name != Text.unnamed) {
+        if (accessoryDefinition != null && accessoryDefinition.name != TextId.unnamed) {
           label(TextStyles.smallBlack, definitions.textLibrary(accessoryDefinition.name))
         } else
           null
       }
   return boxList(verticalPlane)(listOf(
-      label(TextStyles.smallSemiBoldBlack, definitions.textLibrary(Text.gui_accessories)),
+      label(TextStyles.smallSemiBoldBlack, definitions.textLibrary(TextId.gui_accessories)),
       boxMargin(20)(
           boxList(verticalPlane, 15)(items)
       )
@@ -62,7 +63,7 @@ fun accessoriesView(definitions: Definitions, deck: Deck, actor: Id): Box {
 }
 
 fun characterInfoView(definitions: Definitions, deck: Deck, actor: Id): Box {
-  return dialog(definitions, Text.gui_characterInfo,
+  return dialog(definitions, TextId.gui_characterInfo,
       boxList(horizontalPlane, 10)(
           listOf(
               generalCharacterInfo(definitions, deck, actor),
@@ -77,7 +78,7 @@ fun characterInfoViewOrChooseAbilityMenu(deck: Deck, actor: Id): StateFlowerTran
       val character = deck.characters[actor]!!
       val accessoryOptions = character.accessoryOptions
       if (accessoryOptions != null)
-        simpleMenuFlower(Text.gui_chooseAccessoryMenu, chooseAccessoryMenu(definitions, actor, accessoryOptions))(definitions, state)
+        simpleMenuFlower(TextId.gui_chooseAccessoryMenu, chooseAccessoryMenu(definitions, actor, accessoryOptions))(definitions, state)
       else
         characterInfoView(definitions, deck, actor)
     }

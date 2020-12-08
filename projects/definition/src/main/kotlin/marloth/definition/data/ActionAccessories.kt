@@ -19,7 +19,7 @@ data class ActionAccessory(
 fun rocketLauncher() =
     ActionAccessory(
         accessory = AccessoryDefinition(
-            name = Text.id_rocketLauncher,
+            name = TextId.id_rocketLauncher,
             equippedMesh = MeshId.grenadeLauncher
         ),
         action = ActionDefinition(
@@ -46,7 +46,7 @@ fun rocketLauncher() =
 fun cookie() =
     ActionAccessory(
         accessory = AccessoryDefinition(
-            name = Text.id_cookie,
+            name = TextId.id_cookie,
             equippedMesh = MeshId.cookie,
             charges = 1,
             components = listOf(
@@ -74,7 +74,7 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
 
     AccessoryId.dash to ActionAccessory(
         accessory = AccessoryDefinition(
-            name = Text.id_dash,
+            name = TextId.id_dash,
             maxLevel = 3
         ),
         action = ActionDefinition(
@@ -86,7 +86,7 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
 
     AccessoryId.entangle to ActionAccessory(
         accessory = AccessoryDefinition(
-            name = Text.id_entangle,
+            name = TextId.id_entangle,
             maxLevel = 3
         ),
         action = ActionDefinition(
@@ -99,7 +99,7 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
 
     AccessoryId.mobility to ActionAccessory(
         accessory = AccessoryDefinition(
-            name = Text.id_mobility
+            name = TextId.id_mobility
         ),
         action = ActionDefinition(
             cooldown = 2f,
@@ -110,7 +110,7 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
 
     AccessoryId.pistol to ActionAccessory(
         accessory = AccessoryDefinition(
-            name = Text.id_pistol,
+            name = TextId.id_pistol,
             equippedMesh = MeshId.pistol
         ),
         action = ActionDefinition(
@@ -133,7 +133,7 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
 
     AccessoryId.grenadeLauncher to ActionAccessory(
         accessory = AccessoryDefinition(
-            name = Text.id_grenadeLauncher,
+            name = TextId.id_grenadeLauncher,
             equippedMesh = MeshId.grenadeLauncher
         ),
         action = ActionDefinition(
@@ -163,7 +163,7 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
 
     AccessoryId.claws to ActionAccessory(
         accessory = AccessoryDefinition(
-            name = Text.unnamed,
+            name = TextId.unnamed,
             equippedMesh = null
         ),
         action = ActionDefinition(
@@ -186,7 +186,7 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
 
     AccessoryId.shotgun to ActionAccessory(
         accessory = AccessoryDefinition(
-            name = Text.unnamed,
+            name = TextId.unnamed,
             equippedMesh = MeshId.shotgun
         ),
         action = ActionDefinition(

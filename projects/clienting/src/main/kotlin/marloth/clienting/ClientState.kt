@@ -5,6 +5,7 @@ import marloth.clienting.input.InputState
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.logic.DisplayChangeState
 import marloth.clienting.gui.menus.logic.MenuStack
+import marloth.scenery.enums.TextResourceMapper
 import silentorb.mythic.aura.AudioState
 import silentorb.mythic.bloom.BloomState
 import silentorb.mythic.bloom.Box
@@ -38,9 +39,9 @@ typealias GuiStateMap = Map<Id, GuiState>
 typealias StateFlower = (Definitions, GuiState) -> Box
 typealias StateFlowerTransform = (Definitions, GuiState) -> Flower
 
-fun initialEditor(): Editor? =
+fun initialEditor(textLibrary: TextResourceMapper): Editor? =
     if (getDebugBoolean("START_EDITOR"))
-      newEditor()
+      newEditor(textLibrary)
     else
       null
 
@@ -51,7 +52,7 @@ data class ClientState(
     val input: InputState,
     val events: List<Any>,
     val displayModes: List<DisplayMode>,
-    val editor: Editor? = initialEditor(),
+    val editor: Editor? = null,
     val isEditorActive: Boolean = getDebugBoolean("START_EDITOR"),
 
     // Player ids could be purely maintained in the world deck except the world does not care about player order.

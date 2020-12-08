@@ -92,7 +92,7 @@ fun accessoryDebugName(definitions: Definitions, accessoryType: AccessoryName): 
   val definition = definitions.accessories[accessoryType]
   return if (definition == null)
     "???"
-  else if (definition.name == Text.unnamed)
+  else if (definition.name == TextId.unnamed)
     definition.debugName ?: "???"
   else
     definitions.textLibrary(definition.name)

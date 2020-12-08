@@ -1,9 +1,0 @@
-{
-"graph" : [
-["food-vendor","",""],
-["food-vendor","type","foodVendor"],
-["label","type","editorOnly"],
-["label","parent","food-vendor"],
-["label","text3d","Food Vendor"]
-]
-}

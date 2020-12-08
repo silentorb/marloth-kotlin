@@ -7,6 +7,7 @@ import marloth.clienting.input.GuiCommandType
 import marloth.clienting.gui.menus.logic.menuKey
 import marloth.scenery.enums.CharacterCommands
 import marloth.scenery.enums.Text
+import marloth.scenery.enums.TextId
 import silentorb.mythic.bloom.*
 import silentorb.mythic.drawing.grayTone
 import silentorb.mythic.ent.Id
@@ -27,7 +28,7 @@ enum class ViewId {
   gamepadOptions,
   inputOptions,
   mainMenu,
-  merchant,
+  conversation,
   mouseOptions,
   options,
   victory
@@ -54,7 +55,7 @@ data class OnClientEvents(
 val menuBackground: Depiction = solidBackground(grayTone(0.5f))
 
 fun victoryMenu() = listOfNotNull(
-    newSimpleMenuItem(Text.message_victory, event = ClientEvent(GuiCommandType.newGame))
+    newSimpleMenuItem(TextId.message_victory, event = ClientEvent(GuiCommandType.newGame))
 )
 
 val emptyViewFlower: StateFlowerTransform = { _, _ -> emptyFlower }

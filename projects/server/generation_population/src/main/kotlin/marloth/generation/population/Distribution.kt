@@ -99,34 +99,34 @@ fun getGroupDistributions(dice: Dice, grid: MapGrid): Map<DistributionGroup, Lis
       .plus(Pair(DistributionGroup.victoryKey, victoryKeyLocations))
 }
 
-fun populateMonsters(config: GenerationConfig, locations: List<Vector3>, nextId: IdSource, dice: Dice): List<IdHand> {
-  println("Monster count: ${locations.size}")
-  return if (locations.none())
-    listOf()
-  else {
-    val distributions = distributeToSlots(dice, locations.size, enemyDistributions(), mapOf())
-    locations
-        .zip(distributions) { location, definition ->
-          println("Monster location: $location")
-          placeEnemy(nextId, config.definitions, location, definition)
-        }
-        .flatten()
-  }
-}
+//fun populateMonsters(config: GenerationConfig, locations: List<Vector3>, nextId: IdSource, dice: Dice): List<IdHand> {
+//  println("Monster count: ${locations.size}")
+//  return if (locations.none())
+//    listOf()
+//  else {
+//    val distributions = distributeToSlots(dice, locations.size, enemyDistributions(), mapOf())
+//    locations
+//        .zip(distributions) { location, definition ->
+//          println("Monster location: $location")
+//          placeEnemy(nextId, config.definitions, location, definition)
+//        }
+//        .flatten()
+//  }
+//}
 
-fun populateRooms(config: GenerationConfig, nextId: IdSource, dice: Dice, grid: MapGrid): List<IdHand> {
-  return if (getDebugBoolean("DEBUG_CELL_SLOTS")) {
-    getAllSlots(grid)
-        .flatMap(newVictoryKeyPickup(nextId))
-  } else {
-    val groupDistributions = getGroupDistributions(dice, grid)
-    val monsters = populateMonsters(config, (groupDistributions[DistributionGroup.monster]
-        ?: listOf()).take(monsterLimit()), nextId, dice)
-
-    val keys = groupDistributions
-        .getOrElse(DistributionGroup.victoryKey) { listOf() }
-        .flatMap(newVictoryKeyPickup(nextId))
-
-    monsters + keys
-  }
-}
+//fun populateRooms(config: GenerationConfig, nextId: IdSource, dice: Dice, grid: MapGrid): List<IdHand> {
+//  return if (getDebugBoolean("DEBUG_CELL_SLOTS")) {
+//    getAllSlots(grid)
+//        .flatMap(newVictoryKeyPickup(nextId))
+//  } else {
+//    val groupDistributions = getGroupDistributions(dice, grid)
+//    val monsters = populateMonsters(config, (groupDistributions[DistributionGroup.monster]
+//        ?: listOf()).take(monsterLimit()), nextId, dice)
+//
+//    val keys = groupDistributions
+//        .getOrElse(DistributionGroup.victoryKey) { listOf() }
+//        .flatMap(newVictoryKeyPickup(nextId))
+//
+//    monsters + keys
+//  }
+//}

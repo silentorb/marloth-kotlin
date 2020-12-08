@@ -16,7 +16,7 @@ import simulation.entities.*
 //              hand = Hand(
 //                  interactable = Interactable(
 //                      primaryCommand = WidgetCommand(
-//                          text = Text.menu_talk,
+//                          text = TextId.menu_talk,
 //                          clientCommand = ClientCommand.showMerchantView
 //                      )
 //                  )

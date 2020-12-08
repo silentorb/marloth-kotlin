@@ -73,7 +73,7 @@ fun gatherAdditionalGameCommands(previousClient: ClientState, clientState: Clien
     val view = guiState?.view
     val previousView = previousClient.guiStates[player]?.view
     listOfNotNull(
-        if (previousView == ViewId.merchant &&
+        if (previousView == ViewId.conversation &&
             clientState.commands.any { it.target == player && it.type == ClientEventType.menuBack })
 //        if (view == null && previousView == ViewId.merchant)
           Command(type = CharacterCommands.stopInteracting, target = player)
@@ -176,6 +176,7 @@ fun updateFixedInterval(app: GameApp, boxes: PlayerBoxes, playerBloomDefinitions
           app.platform.process.pollEvents()
           val clientState = updateClient(
               app.client,
+              app.definitions.textLibrary,
               appState.options,
               appState.worlds,
               boxes,

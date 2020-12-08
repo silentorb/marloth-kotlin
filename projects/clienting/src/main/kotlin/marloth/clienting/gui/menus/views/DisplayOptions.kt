@@ -9,6 +9,7 @@ import marloth.clienting.gui.menus.forms.clientEventSpinHandlers
 import marloth.clienting.gui.menus.forms.menuField
 import marloth.clienting.gui.menus.forms.spinField
 import marloth.scenery.enums.Text
+import marloth.scenery.enums.TextId
 import marloth.scenery.enums.TextResourceMapper
 import silentorb.mythic.bloom.emptyBox
 import silentorb.mythic.bloom.label
@@ -19,9 +20,9 @@ import silentorb.mythic.spatial.Vector2i
 
 fun windowModeTextMap(windowMode: WindowMode): Text =
     when (windowMode) {
-      WindowMode.fullscreen -> Text.gui_fullscreen
-      WindowMode.windowed -> Text.gui_windowed
-      WindowMode.windowedFullscreen -> Text.gui_windowedFullscreen
+      WindowMode.fullscreen -> TextId.gui_fullscreen
+      WindowMode.windowed -> TextId.gui_windowed
+      WindowMode.windowedFullscreen -> TextId.gui_windowedFullscreen
     }
 
 fun formatResolutionOption(resolution: Vector2i): String =
@@ -30,7 +31,7 @@ fun formatResolutionOption(resolution: Vector2i): String =
 fun windowModeField(textLibrary: TextResourceMapper, windowMode: WindowMode): MenuItem {
   val windowModeOptions = WindowMode.values().toList()
   return MenuItem(
-      flower = menuField(textLibrary(Text.gui_windowMode),
+      flower = menuField(textLibrary(TextId.gui_windowMode),
           spinField(textLibrary(windowModeTextMap(windowMode)),
               clientEventSpinHandlers(ClientEventType.setStagingWindowMode, windowModeOptions, windowMode)
           )
@@ -67,7 +68,7 @@ fun resolutionField(textLibrary: TextResourceMapper, displayModes: List<DisplayM
     { _ -> label(TextStyles.mediumBlack, "-") }
 
   return MenuItem(
-      flower = menuField(textLibrary(Text.gui_resolution),
+      flower = menuField(textLibrary(TextId.gui_resolution),
           valueEditor
       )
   )
@@ -80,7 +81,7 @@ fun displayOptionsFlower(clientState: ClientState): StateFlowerTransform =
       if (options == null)
         emptyBox
       else {
-        menuFlower(Text.gui_displayOptions, listOf(
+        menuFlower(TextId.gui_displayOptions, listOf(
             windowModeField(textLibrary, options.windowMode),
             resolutionField(textLibrary, clientState.displayModes, options),
         ))(definitions, state)

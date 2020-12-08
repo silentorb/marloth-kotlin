@@ -19,6 +19,7 @@ import simulation.accessorize.ChooseImprovedAccessory
 import simulation.accessorize.newAccessoryChoice
 import simulation.combat.general.DamageMultipliers
 import simulation.combat.general.ResourceContainer
+import simulation.entities.Contract
 import simulation.entities.DepictionType
 import simulation.entities.Ware
 import simulation.happenings.PurchaseEvent
@@ -43,7 +44,7 @@ data class CharacterDefinition(
     val damageMultipliers: DamageMultipliers = mapOf(),
     val money: Int = 0,
     val fieldOfView: Float = 0.5f, // Only used for AI. Dot product: 1 is no vision, -1 is 360 degree vision
-    val wares: List<Ware> = listOf()
+    val wares: List<Ware> = listOf(),
 )
 
 enum class EquipmentSlot {
@@ -70,6 +71,7 @@ data class Character(
     val accessoryOptions: AccessoryOptions? = null,
     val money: Int = 0,
     val nourishment: HighInt = highIntScale,
+    val wares: Map<Id, Ware> = mapOf(),
 )
 
 data class ModifyLevelEvent(
@@ -94,7 +96,7 @@ fun getPurchaseCost(deck: Deck, events: Events, character: Id): Int {
 
   return purchases
       .mapNotNull { purchase ->
-        val wares = deck.vendors[purchase.merchant]?.wares
+        val wares = deck.characters[purchase.merchant]?.wares
         assert(wares != null)
         wares!![purchase.ware]?.price
       }

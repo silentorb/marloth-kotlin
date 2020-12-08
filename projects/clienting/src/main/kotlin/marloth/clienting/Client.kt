@@ -4,6 +4,7 @@ import marloth.clienting.audio.AudioConfig
 import marloth.clienting.audio.updateClientAudio
 import marloth.clienting.editing.editorFonts
 import marloth.clienting.editing.expandDefaultWorldGraph
+import marloth.clienting.editing.newEditor
 import marloth.clienting.editing.updateEditingActive
 import marloth.clienting.gui.BloomDefinition
 import marloth.clienting.gui.EventUnion
@@ -21,6 +22,7 @@ import marloth.clienting.input.gatherInputCommands
 import marloth.clienting.input.newInputState
 import marloth.definition.misc.ClientDefinitions
 import marloth.definition.texts.englishTextResources
+import marloth.scenery.enums.TextResourceMapper
 import silentorb.mythic.aura.SoundLibrary
 import silentorb.mythic.aura.newAudioState
 import silentorb.mythic.bloom.*
@@ -57,7 +59,12 @@ fun newMarlothBloomState(primarydeviceMode: DeviceMode) =
         primarydeviceMode = primarydeviceMode,
     )
 
-fun newClientState(inputConfig: GameInputConfig, audioConfig: AudioConfig, displayModes: List<DisplayMode>) =
+fun newClientState(
+    textLibrary: TextResourceMapper,
+    inputConfig: GameInputConfig,
+    audioConfig: AudioConfig,
+    displayModes: List<DisplayMode>
+) =
     ClientState(
         input = newInputState(inputConfig),
         guiStates = mapOf(),
@@ -65,7 +72,8 @@ fun newClientState(inputConfig: GameInputConfig, audioConfig: AudioConfig, displ
         commands = listOf(),
         players = listOf(),
         events = listOf(),
-        displayModes = displayModes
+        displayModes = displayModes,
+        editor = initialEditor(textLibrary)
     )
 
 fun playerViews(client: ClientState): Map<Id, ViewId?> =
@@ -161,6 +169,7 @@ fun getEditorEvents(editor: Editor) = handleCommands<List<ClientEvent>> { comman
 
 fun updateClient(
     client: Client,
+    textLibrary: TextResourceMapper,
     options: AppOptions,
     worlds: List<World>,
     playerBoxes: PlayerBoxes,
@@ -198,11 +207,12 @@ fun updateClient(
 
   val previousEditor = clientState.editor
   val windowInfo = client.getWindowInfo()
-  val (nextEditor, editorEvents1) = if (clientState.isEditorActive && previousEditor != null) {
+  val (nextEditor, editorEvents1) = if (clientState.isEditorActive) {
     ensureImGuiIsInitialized(editorFonts, windowInfo.id)
-    val editorCommands = prepareEditorUpdate(deviceStates, previousEditor)
-    val editorEvents = getEditorEvents(previousEditor)(editorCommands, listOf())
-    updateEditor(deviceStates, editorCommands, previousEditor) to editorEvents
+    val editor = previousEditor ?: newEditor(textLibrary)
+    val editorCommands = prepareEditorUpdate(deviceStates, editor)
+    val editorEvents = getEditorEvents(editor)(editorCommands, listOf())
+    updateEditor(deviceStates, editorCommands, editor) to editorEvents
   } else
     previousEditor to listOf()
 

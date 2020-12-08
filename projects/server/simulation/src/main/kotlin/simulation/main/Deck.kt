@@ -41,6 +41,7 @@ data class Deck(
     val characterRigs: Table<CharacterRig> = mapOf(),
     val characters: Table<Character> = mapOf(),
     val collisionObjects: Table<CollisionObject> = mapOf(),
+    val contracts: Table<Contract> = mapOf(),
     val cyclesFloat: Table<FloatCycle> = mapOf(),
     val depictions: Table<Depiction> = mapOf(),
     val destructibles: Table<Destructible> = mapOf(),
@@ -66,7 +67,6 @@ data class Deck(
     val timersFloat: Table<FloatTimer> = mapOf(),
     val timersInt: Table<IntTimer> = mapOf(),
     val triggers: Table<Trigger> = mapOf(),
-    val vendors: Table<Vendor> = mapOf(),
 )
 
 fun allHandsToDeck(nextId: IdSource, newHands: List<NewHand>, deck: Deck): Deck {
@@ -81,6 +81,7 @@ fun allHandsToDeck(nextId: IdSource, newHands: List<NewHand>, deck: Deck): Deck 
       characterRigs = deck.characterRigs + applyHands(hands),
       characters = deck.characters + applyHands(hands),
       collisionObjects = deck.collisionObjects + applyHands(hands),
+      contracts = deck.contracts + applyHands(hands),
       cyclesFloat = deck.cyclesFloat + applyHands(hands),
       depictions = deck.depictions + applyHands(hands),
       destructibles = deck.destructibles + applyHands(hands),
@@ -105,7 +106,6 @@ fun allHandsToDeck(nextId: IdSource, newHands: List<NewHand>, deck: Deck): Deck 
       timersFloat = deck.timersFloat + applyHands(hands),
       timersInt = deck.timersInt + applyHands(hands),
       triggers = deck.triggers + applyHands(hands),
-      vendors = deck.vendors + applyHands(hands),
   )
 }
 

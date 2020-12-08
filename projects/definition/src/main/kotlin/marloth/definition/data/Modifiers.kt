@@ -2,13 +2,14 @@ package marloth.definition.data
 
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.Text
+import marloth.scenery.enums.TextId
 import simulation.accessorize.AccessoryDefinition
 import simulation.accessorize.AccessoryName
 import simulation.accessorize.ChildAccessory
 
 fun modifiers(): Map<AccessoryName, AccessoryDefinition> = mapOf(
     AccessoryId.resistanceCold to AccessoryDefinition(
-        name = Text.id_resistanceCold,
+        name = TextId.id_resistanceCold,
         children = listOf(
             ChildAccessory(
                 type = AccessoryId.resistanceCold,
@@ -17,7 +18,7 @@ fun modifiers(): Map<AccessoryName, AccessoryDefinition> = mapOf(
         )
     ),
     AccessoryId.resistanceFire to AccessoryDefinition(
-        name = Text.id_resistanceFire,
+        name = TextId.id_resistanceFire,
         children = listOf(
             ChildAccessory(
                 type = AccessoryId.resistanceFire,
@@ -26,7 +27,7 @@ fun modifiers(): Map<AccessoryName, AccessoryDefinition> = mapOf(
         )
     ),
     AccessoryId.resistancePoison to AccessoryDefinition(
-        name = Text.id_resistancePoison,
+        name = TextId.id_resistancePoison,
         children = listOf(
             ChildAccessory(
                 type = AccessoryId.resistancePoison,
@@ -35,17 +36,17 @@ fun modifiers(): Map<AccessoryName, AccessoryDefinition> = mapOf(
         )
     ),
     AccessoryId.dashing to AccessoryDefinition(
-        name = Text.unnamed,
+        name = TextId.unnamed,
         debugName = "dashing"
     ),
     AccessoryId.entangled to AccessoryDefinition(
-        name = Text.id_entangled
+        name = TextId.id_entangled
     ),
     AccessoryId.mobile to AccessoryDefinition(
-        name = Text.id_mobile
+        name = TextId.id_mobile
     ),
     AccessoryId.graveDigger to AccessoryDefinition(
-        name = Text.id_graveDigger,
-        description = Text.id_graveDiggerDescription
+        name = TextId.id_graveDigger,
+        description = TextId.id_graveDiggerDescription
     )
 )

@@ -1,6 +1,7 @@
 package marloth.definition.archive
 
 import marloth.scenery.enums.Text
+import marloth.scenery.enums.TextId
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.physics.HingeConstraint
@@ -35,10 +36,10 @@ class EntityTemplates {
         ),
         interactable = Interactable(
             primaryCommand = WidgetCommand(
-                text = Text.menu_open
+                text = TextId.menu_open
             ),
             secondaryCommand = WidgetCommand(
-                text = Text.menu_close
+                text = TextId.menu_close
             )
         )
     )

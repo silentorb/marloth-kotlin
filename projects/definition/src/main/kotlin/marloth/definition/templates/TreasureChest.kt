@@ -4,6 +4,7 @@ import marloth.scenery.enums.MeshInfoMap
 import silentorb.mythic.spatial.Vector3
 import marloth.scenery.enums.MeshId
 import marloth.scenery.enums.Text
+import marloth.scenery.enums.TextId
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
 import simulation.entities.Interactable
@@ -34,7 +35,7 @@ fun newTreasureChest(meshInfo: MeshInfoMap, position: Vector3, amount: Int): Han
       ),
       interactable = Interactable(
           primaryCommand = WidgetCommand(
-              text = Text.gui_take,
+              text = TextId.gui_take,
               action = TakeItem()
           )
       ),

@@ -7,24 +7,25 @@ import marloth.clienting.gui.menus.dialogWrapperWithExtras
 import marloth.clienting.gui.menus.newSimpleMenuItem
 import marloth.clienting.gui.menus.simpleMenuFlower
 import marloth.scenery.enums.Text
+import marloth.scenery.enums.TextId
 
 val inputOptionsMenu =
     dialogWrapperWithExtras(
-        simpleMenuFlower(Text.gui_optionsMenu,
+        simpleMenuFlower(TextId.gui_optionsMenu,
             listOfNotNull(
-                newSimpleMenuItem(event = ClientEvent(ClientEventType.navigate, ViewId.gamepadOptions), text = Text.gui_gamepadOptions),
-                newSimpleMenuItem(event = ClientEvent(ClientEventType.navigate, ViewId.mouseOptions), text = Text.gui_mouseOptions)
+                newSimpleMenuItem(event = ClientEvent(ClientEventType.navigate, ViewId.gamepadOptions), text = TextId.gui_gamepadOptions),
+                newSimpleMenuItem(event = ClientEvent(ClientEventType.navigate, ViewId.mouseOptions), text = TextId.gui_mouseOptions)
             )
         )
     )
 
 val optionsMenu =
     dialogWrapperWithExtras(
-        simpleMenuFlower(Text.gui_optionsMenu,
+        simpleMenuFlower(TextId.gui_optionsMenu,
             listOfNotNull(
-//        newSimpleMenuItem(event = ClientEvent(ClientEventType.navigate, ViewId.audioOptions), text = Text.gui_audioOptions),
-                newSimpleMenuItem(event = ClientEvent(ClientEventType.navigate, ViewId.displayOptions), text = Text.gui_displayOptions),
-//        newSimpleMenuItem(event = ClientEvent(ClientEventType.navigate, ViewId.inputOptions), text = Text.gui_inputOptions)
+//        newSimpleMenuItem(event = ClientEvent(ClientEventType.navigate, ViewId.audioOptions), text = TextId.gui_audioOptions),
+                newSimpleMenuItem(event = ClientEvent(ClientEventType.navigate, ViewId.displayOptions), text = TextId.gui_displayOptions),
+//        newSimpleMenuItem(event = ClientEvent(ClientEventType.navigate, ViewId.inputOptions), text = TextId.gui_inputOptions)
             )
         )
     )

@@ -6,21 +6,22 @@ import marloth.clienting.StateFlower
 import marloth.clienting.StateFlowerTransform
 import marloth.clienting.gui.menus.*
 import marloth.scenery.enums.Text
+import marloth.scenery.enums.TextId
 import silentorb.mythic.bloom.*
 
 val displayChangeConfirmationFlower: StateFlowerTransform =
     dialogWrapperWithExtras { definitions, state ->
-      val title = dialogTitle(definitions.textLibrary(Text.gui_query_saveDisplayChanges))
+      val title = dialogTitle(definitions.textLibrary(TextId.gui_query_saveDisplayChanges))
       val menuBox = menuFlower(listOf(
           MenuItem(
-              flower = menuTextFlower(definitions.textLibrary(Text.gui_yes)),
+              flower = menuTextFlower(definitions.textLibrary(TextId.gui_yes)),
               events = listOf(
                   ClientEvent(ClientEventType.saveDisplayChange),
                   ClientEvent(ClientEventType.menuBack)
               )
           ),
           MenuItem(
-              flower = menuTextFlower(definitions.textLibrary(Text.gui_no)),
+              flower = menuTextFlower(definitions.textLibrary(TextId.gui_no)),
               events = listOf(
                   ClientEvent(ClientEventType.revertDisplayChanges),
                   ClientEvent(ClientEventType.menuBack)

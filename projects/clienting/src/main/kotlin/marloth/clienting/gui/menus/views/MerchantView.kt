@@ -2,10 +2,14 @@ package marloth.clienting.gui.menus.views
 
 import marloth.clienting.StateFlowerTransform
 import marloth.clienting.gui.menus.*
-import marloth.scenery.enums.Text
+import marloth.scenery.enums.TextId
 import marloth.scenery.enums.TextResourceMapper
-import silentorb.mythic.bloom.*
+import silentorb.mythic.bloom.Box
+import silentorb.mythic.bloom.boxList2
+import silentorb.mythic.bloom.horizontalPlane
+import silentorb.mythic.bloom.label
 import silentorb.mythic.ent.Id
+import simulation.characters.Character
 import simulation.entities.Ware
 import simulation.happenings.PurchaseEvent
 import simulation.main.Deck
@@ -36,30 +40,29 @@ fun wareMenuItem(definitions: Definitions, merchant: Id, player: Id,
 }
 
 fun moneyLabel(textLibrary: TextResourceMapper, value: Int): Box =
-    label(TextStyles.smallBlack, "${textLibrary(Text.gui_money)}: $$value")
+    label(TextStyles.smallBlack, "${textLibrary(TextId.gui_money)}: $$value")
 
 fun merchantInfoFlower(textLibrary: TextResourceMapper, customerMoney: Int): Box =
     moneyLabel(textLibrary, customerMoney)
 
-fun merchantView(deck: Deck, player: Id): StateFlowerTransform = dialogWrapper { definitions, state ->
-  val merchant = getPlayerInteractingWith(deck, player)
-  if (merchant == null)
-    emptyBox
-  else {
-    val customerMoney = deck.characters[player]?.money ?: 0
-    val wares = deck.vendors[merchant]?.wares ?: mapOf()
-    val menu = wares
-        .map { (id, ware) ->
-          wareMenuItem(definitions, merchant, player, customerMoney, id, ware)
-        }
+fun merchantView(
+    deck: Deck,
+    player: Id,
+    merchant: Id,
+    customerCharacter: Character,
+    merchantCharacter: Character
+): StateFlowerTransform = dialogWrapper { definitions, state ->
+  val customerMoney = customerCharacter.money
+  val menu = merchantCharacter.wares
+      .map { (id, ware) ->
+        wareMenuItem(definitions, merchant, player, customerMoney, id, ware)
+      }
 
-    dialog(definitions, Text.gui_merchant,
-        boxList2(
-            horizontalPlane, 10,
-            menuFlower(menu, state.menuFocusIndex, 100),
-            merchantInfoFlower(definitions.textLibrary, customerMoney),
-        )
-    )
-
-  }
+  dialog(definitions, merchantCharacter.definition.name,
+      boxList2(
+          horizontalPlane, 10,
+          menuFlower(menu, state.menuFocusIndex, 100),
+          merchantInfoFlower(definitions.textLibrary, customerMoney),
+      )
+  )
 }
