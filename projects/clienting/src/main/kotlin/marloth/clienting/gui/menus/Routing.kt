@@ -5,6 +5,7 @@ import marloth.clienting.ClientState
 import marloth.clienting.StateFlowerTransform
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.emptyViewFlower
+import marloth.clienting.gui.menus.general.simpleMenuFlower
 import marloth.clienting.gui.menus.views.*
 import marloth.clienting.gui.victoryMenu
 import marloth.scenery.enums.TextId
@@ -20,7 +21,9 @@ fun viewSelect(world: World?, options: AppOptions, clientState: ClientState, vie
     ViewId.inputOptions -> inputOptionsMenu
     ViewId.mouseOptions -> emptyViewFlower
     ViewId.options -> optionsMenu
-    ViewId.characterInfo -> characterInfoViewOrChooseAbilityMenu(world!!.deck, player)
+    ViewId.characterInventory -> characterInfoView(world!!.deck, player)
+    ViewId.characterStatus -> characterInfoView(world!!.deck, player)
+    ViewId.characterContracts -> characterInfoView(world!!.deck, player)
     ViewId.chooseProfessionMenu -> dialogWrapper(simpleMenuFlower(TextId.gui_chooseProfessionMenu, chooseProfessionMenu(player)))
     ViewId.mainMenu -> mainMenu(world)
     ViewId.conversation -> conversationView(world!!.deck, player)

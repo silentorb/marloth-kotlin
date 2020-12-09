@@ -1,7 +1,7 @@
 package marloth.clienting.gui.menus.views
 
-import marloth.clienting.gui.menus.SimpleMenuItem
-import marloth.clienting.gui.menus.newSimpleMenuItem
+import marloth.clienting.gui.menus.general.SimpleMenuItem
+import marloth.clienting.gui.menus.general.newSimpleMenuItem
 import simulation.accessorize.ChooseImprovedAccessory
 import silentorb.mythic.ent.Id
 import simulation.characters.AccessoryOptions

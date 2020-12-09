@@ -1,9 +1,9 @@
-package marloth.clienting.gui.menus.forms
+package marloth.clienting.gui.menus.general.forms
 
 import marloth.clienting.ClientEvent
 import marloth.clienting.ClientEventType
 import marloth.clienting.gui.OnClientEvents
-import marloth.clienting.gui.menus.MenuItemFlower
+import marloth.clienting.gui.menus.general.MenuItemFlower
 import marloth.clienting.gui.menus.logic.cycle
 import marloth.clienting.gui.menus.TextStyles
 import marloth.clienting.gui.menus.logic.onActivateKey
@@ -25,13 +25,13 @@ fun <T> cycle(options: List<T>, offset: Int, value: T): T {
 }
 
 data class SpinHandlers(
-    val incrementEvent: List<Any>,
-    val decrementEvent: List<Any>
+    val incrementEvents: List<Any>,
+    val decrementEvents: List<Any>
 )
 
 fun spinField(valueText: String, handlers: SpinHandlers): MenuItemFlower = { hasFocus ->
-  val incrementEvent = handlers.incrementEvent
-  val decrementEvent = handlers.decrementEvent
+  val incrementEvent = handlers.incrementEvents
+  val decrementEvent = handlers.decrementEvents
 
   val box = horizontalList(spacing = 10)(
       listOf(
@@ -61,6 +61,6 @@ fun spinField(valueText: String, handlers: SpinHandlers): MenuItemFlower = { has
 
 fun <T> clientEventSpinHandlers(eventType: ClientEventType, options: List<T>, id: T) =
     SpinHandlers(
-        incrementEvent = listOf(ClientEvent(eventType, cycle(options, 1, id))),
-        decrementEvent = listOf(ClientEvent(eventType, cycle(options, -1, id)))
+        incrementEvents = listOf(ClientEvent(eventType, cycle(options, 1, id))),
+        decrementEvents = listOf(ClientEvent(eventType, cycle(options, -1, id)))
     )

@@ -2,35 +2,37 @@ package marloth.clienting.gui.menus.views
 
 import marloth.clienting.StateFlower
 import marloth.clienting.StateFlowerTransform
+import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.*
-import marloth.scenery.enums.Text
+import marloth.clienting.gui.menus.general.Tab
+import marloth.clienting.gui.menus.general.simpleMenuFlower
+import marloth.clienting.gui.menus.general.tabView
+import marloth.scenery.enums.DevText
 import marloth.scenery.enums.TextId
+import marloth.scenery.enums.TextResourceMapper
 import silentorb.mythic.bloom.*
 import simulation.accessorize.getAccessories
 import silentorb.mythic.ent.Id
 import simulation.main.Deck
 import simulation.misc.Definitions
 
-//fun resistancesView(deck: Deck, player: Id): Flower {
-//  val destructible = deck.destructibles[player]!!
-//  val items = staticDamageTypes.map { damageType ->
-//    val modifier = destructible.damageMultipliers[damageType] ?: defaultDamageMultiplier
-//    val value = 100 - modifier
-//
-//    list(horizontalPlane, 20)(listOf(
-//        div(layout = layoutDimensions(width = fixed(70)))(
-//            localizedLabel(TextStyles.smallBlack, damageTypeNames[damageType] ?: TextId.unnamed)
-//        ),
-//        label(TextStyles.smallBlack, value.toString() + " %")
-//    ))
-//  }
-//  return list(verticalPlane)(listOf(
-//      localizedLabel(TextStyles.smallBlack, TextId.gui_resistances),
-//      forwardMargin(20)(
-//          list(verticalPlane, 15)(items)
-//      )
-//  ))
-//}
+val characterViewTabs = listOf(
+    Tab(ViewId.characterInventory, DevText("Inventory")),
+    Tab(ViewId.characterStatus, DevText("Status")),
+    Tab(ViewId.characterContracts, DevText("Contracts")),
+)
+
+fun characterView(flower: StateFlower): StateFlowerTransform =
+    dialogWrapper { definitions, state ->
+      dialog(definitions, TextId.gui_characterInfo,
+          boxList(verticalPlane, 10)(
+              listOf(
+                  tabView(definitions.textLibrary, characterViewTabs, state.view!!),
+                  flower(definitions, state),
+              )
+          )
+      )
+    }
 
 fun generalCharacterInfo(definitions: Definitions, deck: Deck, actor: Id): Box {
   val character = deck.characters[actor]!!
@@ -62,23 +64,21 @@ fun accessoriesView(definitions: Definitions, deck: Deck, actor: Id): Box {
   ))
 }
 
-fun characterInfoView(definitions: Definitions, deck: Deck, actor: Id): Box {
-  return dialog(definitions, TextId.gui_characterInfo,
-      boxList(horizontalPlane, 10)(
-          listOf(
-              generalCharacterInfo(definitions, deck, actor),
-              accessoriesView(definitions, deck, actor)
-          )
+fun characterInfoView(deck: Deck, actor: Id): StateFlowerTransform = characterView { definitions, state ->
+  boxList(horizontalPlane, 10)(
+      listOf(
+          generalCharacterInfo(definitions, deck, actor),
+          accessoriesView(definitions, deck, actor)
       )
   )
 }
 
-fun characterInfoViewOrChooseAbilityMenu(deck: Deck, actor: Id): StateFlowerTransform =
-    dialogWrapper { definitions, state ->
-      val character = deck.characters[actor]!!
-      val accessoryOptions = character.accessoryOptions
-      if (accessoryOptions != null)
-        simpleMenuFlower(TextId.gui_chooseAccessoryMenu, chooseAccessoryMenu(definitions, actor, accessoryOptions))(definitions, state)
-      else
-        characterInfoView(definitions, deck, actor)
-    }
+//fun characterInfoViewOrChooseAbilityMenu(deck: Deck, actor: Id): StateFlowerTransform =
+//    dialogWrapper { definitions, state ->
+//      val character = deck.characters[actor]!!
+//      val accessoryOptions = character.accessoryOptions
+//      if (accessoryOptions != null)
+//        simpleMenuFlower(TextId.gui_chooseAccessoryMenu, chooseAccessoryMenu(definitions, actor, accessoryOptions))(definitions, state)
+//      else
+//        characterInfoView(definitions, deck, actor)
+//    }

@@ -6,7 +6,7 @@ import marloth.clienting.gui.ViewId
 import marloth.clienting.input.GuiCommandType
 import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.bloom.OffsetBox
-import silentorb.mythic.bloom.getHoverBoxes
+import silentorb.mythic.bloom.old.getHoverBoxes
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Command

@@ -2,12 +2,14 @@ package marloth.clienting.gui.menus.views
 
 import marloth.clienting.ClientEventType
 import marloth.clienting.ClientState
-import marloth.clienting.StateFlower
 import marloth.clienting.StateFlowerTransform
 import marloth.clienting.gui.menus.*
-import marloth.clienting.gui.menus.forms.clientEventSpinHandlers
-import marloth.clienting.gui.menus.forms.menuField
-import marloth.clienting.gui.menus.forms.spinField
+import marloth.clienting.gui.menus.general.forms.clientEventSpinHandlers
+import marloth.clienting.gui.menus.general.forms.menuField
+import marloth.clienting.gui.menus.general.forms.spinField
+import marloth.clienting.gui.menus.general.MenuItem
+import marloth.clienting.gui.menus.general.MenuItemFlower
+import marloth.clienting.gui.menus.general.menuFlower
 import marloth.scenery.enums.Text
 import marloth.scenery.enums.TextId
 import marloth.scenery.enums.TextResourceMapper

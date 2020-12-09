@@ -42,6 +42,9 @@ fun defaultGamepadMenuBindings() = mapOf(
     GAMEPAD_BUTTON_DPAD_LEFT to CharacterCommands.moveLeft,
     GAMEPAD_BUTTON_DPAD_RIGHT to CharacterCommands.moveRight,
 
+    GAMEPAD_BUTTON_LEFT_BUMPER to GuiCommandType.tabPrevious,
+    GAMEPAD_BUTTON_RIGHT_BUMPER to GuiCommandType.tabNext,
+
     GAMEPAD_BUTTON_START to GuiCommandType.menu,
     GAMEPAD_BUTTON_A to GuiCommandType.menuSelect,
     GAMEPAD_BUTTON_B to GuiCommandType.menuBack

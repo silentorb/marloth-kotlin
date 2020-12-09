@@ -1,4 +1,4 @@
-package marloth.clienting.gui.menus.forms
+package marloth.clienting.gui.menus.general.forms
 
 import silentorb.mythic.bloom.*
 import silentorb.mythic.drawing.Colors

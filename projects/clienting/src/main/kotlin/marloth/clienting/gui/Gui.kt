@@ -3,16 +3,17 @@ package marloth.clienting.gui
 import marloth.clienting.*
 import marloth.clienting.gui.hud.hudLayout
 import marloth.clienting.gui.menus.*
+import marloth.clienting.gui.menus.general.Menu
+import marloth.clienting.gui.menus.general.newSimpleMenuItem
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.gui.menus.logic.menuKey
-import marloth.scenery.enums.CharacterCommands
 import marloth.scenery.enums.Text
 import marloth.scenery.enums.TextId
 import silentorb.mythic.bloom.*
+import silentorb.mythic.bloom.old.getAttributeValue
 import silentorb.mythic.drawing.grayTone
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Command
-import silentorb.mythic.happenings.Commands
 import silentorb.mythic.spatial.Vector2i
 import simulation.main.World
 import simulation.misc.Definitions
@@ -21,7 +22,9 @@ typealias TextResources = (Text) -> String?
 
 enum class ViewId {
   audioOptions,
-  characterInfo,
+  characterContracts,
+  characterInventory,
+  characterStatus,
   chooseProfessionMenu,
   displayChangeConfirmation,
   displayOptions,

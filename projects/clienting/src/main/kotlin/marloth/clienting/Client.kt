@@ -26,6 +26,10 @@ import marloth.scenery.enums.TextResourceMapper
 import silentorb.mythic.aura.SoundLibrary
 import silentorb.mythic.aura.newAudioState
 import silentorb.mythic.bloom.*
+import silentorb.mythic.bloom.old.flattenAllBoxes
+import silentorb.mythic.bloom.old.getHoverBoxes
+import silentorb.mythic.bloom.old.hasAttributes
+import silentorb.mythic.bloom.old.newBloomState
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.editing.*
 import silentorb.mythic.editing.updating.prepareEditorUpdate
@@ -138,6 +142,10 @@ fun gatherUserEvents(
         if (state != null) {
           val hoverBoxes = getHoverBoxes(mousePosition, boxes)
           val playerCommands = commands.filter { it.target == player }
+          val input = Input(
+              commands = playerCommands,
+              mousePosition = mousePosition,
+          )
           getMenuItemEvents(boxes, hoverBoxes, playerCommands).map { event ->
             if (event is ClientEvent)
               event.copy(
@@ -151,7 +159,8 @@ fun gatherUserEvents(
                     event.copy(
                         target = player
                     )
-                  }
+                  } +
+              commandsFromBoxes(boxes, input).map { it.copy(target = player) }
         } else
           listOf()
       }

@@ -1,7 +1,11 @@
-package marloth.clienting.gui.menus
+package marloth.clienting.gui.menus.general
 
 import marloth.clienting.StateFlower
 import marloth.clienting.gui.EventUnion
+import marloth.clienting.gui.menus.TextStyles
+import marloth.clienting.gui.menus.black
+import marloth.clienting.gui.menus.dialogContent
+import marloth.clienting.gui.menus.dialogTitle
 import marloth.clienting.gui.menus.logic.menuItemIndexKey
 import marloth.clienting.gui.menus.logic.menuKey
 import marloth.clienting.gui.menus.logic.onActivateKey

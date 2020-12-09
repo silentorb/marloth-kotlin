@@ -2,10 +2,11 @@ package marloth.clienting.gui.menus.views
 
 import marloth.clienting.ClientEvent
 import marloth.clienting.ClientEventType
-import marloth.clienting.StateFlower
 import marloth.clienting.StateFlowerTransform
 import marloth.clienting.gui.menus.*
-import marloth.scenery.enums.Text
+import marloth.clienting.gui.menus.general.MenuItem
+import marloth.clienting.gui.menus.general.menuFlower
+import marloth.clienting.gui.menus.general.menuTextFlower
 import marloth.scenery.enums.TextId
 import silentorb.mythic.bloom.*
 

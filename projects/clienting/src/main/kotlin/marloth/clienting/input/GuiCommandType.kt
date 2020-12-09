@@ -10,9 +10,10 @@ enum class GuiCommandType {
   menu,
   menuBack,
   menuSelect,
-  mouseClick,
   mouseMove,
   newGame,
+  tabNext,
+  tabPrevious,
   quit
 }
 
@@ -43,6 +44,8 @@ val commandStrokes =
                 CharacterCommands.moveUp,
                 CharacterCommands.moveDown,
                 CharacterCommands.moveLeft,
-                CharacterCommands.moveRight
+                CharacterCommands.moveRight,
+                GuiCommandType.tabPrevious,
+                GuiCommandType.tabNext,
             ))
     )

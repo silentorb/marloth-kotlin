@@ -7,7 +7,7 @@ import marloth.clienting.gui.menus.logic.DisplayChangeState
 import marloth.clienting.gui.menus.logic.MenuStack
 import marloth.scenery.enums.TextResourceMapper
 import silentorb.mythic.aura.AudioState
-import silentorb.mythic.bloom.BloomState
+import silentorb.mythic.bloom.old.BloomState
 import silentorb.mythic.bloom.Box
 import silentorb.mythic.bloom.Flower
 import silentorb.mythic.debugging.getDebugBoolean

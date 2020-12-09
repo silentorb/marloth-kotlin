@@ -4,9 +4,8 @@ import marloth.clienting.ClientEvent
 import marloth.clienting.ClientEventType
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.dialogWrapperWithExtras
-import marloth.clienting.gui.menus.newSimpleMenuItem
-import marloth.clienting.gui.menus.simpleMenuFlower
-import marloth.scenery.enums.Text
+import marloth.clienting.gui.menus.general.newSimpleMenuItem
+import marloth.clienting.gui.menus.general.simpleMenuFlower
 import marloth.scenery.enums.TextId
 
 val inputOptionsMenu =

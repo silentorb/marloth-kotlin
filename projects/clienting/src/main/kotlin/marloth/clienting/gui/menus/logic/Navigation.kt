@@ -28,7 +28,7 @@ fun nextView(stack: MenuStack, eventTypes: List<Any>, events: List<Any>, view: V
 
     eventTypes.contains(GuiCommandType.characterInfo) -> {
       if (view == null)
-        ViewId.characterInfo
+        ViewId.characterStatus
       else
         null
     }
