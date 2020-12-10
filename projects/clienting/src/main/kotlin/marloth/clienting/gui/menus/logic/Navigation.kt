@@ -1,48 +1,41 @@
 package marloth.clienting.gui.menus.logic
 
-import marloth.clienting.ClientEvent
 import marloth.clienting.ClientEventType
 import marloth.clienting.GuiState
-import marloth.clienting.input.GuiCommandType
 import marloth.clienting.gui.ViewId
+import marloth.clienting.input.GuiCommandType
 import marloth.scenery.enums.ClientCommand
 import silentorb.mythic.bloom.OffsetBox
 import silentorb.mythic.ent.Id
+import silentorb.mythic.happenings.Commands
+import silentorb.mythic.happenings.handleCommands
 import simulation.main.Deck
 
-fun getMenuReplaceView(events: List<Any>) =
-    events
-        .filterIsInstance<ClientEvent>()
-        .firstOrNull {
-          it.type == ClientEventType.menuReplace
-        }?.value as? ViewId
-
-fun nextView(stack: MenuStack, eventTypes: List<Any>, events: List<Any>, view: ViewId?): ViewId? {
-  return when {
-    eventTypes.contains(GuiCommandType.menu) -> {
+fun nextView(stack: MenuStack) = handleCommands< ViewId?> { command, view ->
+  when(command.type) {
+    GuiCommandType.menu -> {
       if (view != null)
         null
       else
         ViewId.mainMenu
     }
 
-    eventTypes.contains(GuiCommandType.characterInfo) -> {
+    GuiCommandType.characterInfo -> {
       if (view == null)
         ViewId.characterStatus
       else
         null
     }
 
-    eventTypes.contains(ClientEventType.menuBack) ->
+    ClientEventType.menuBack ->
       stack.lastOrNull()?.view
 
-    eventTypes.contains(ClientEventType.menuReplace) -> getMenuReplaceView(events)
+    ClientEventType.menuReplace -> command.value as? ViewId
 
-    eventTypes.contains(GuiCommandType.newGame) -> null
+    GuiCommandType.newGame -> null
 
-    eventTypes.contains(ClientEventType.navigate) -> {
-      val command = events.filterIsInstance<ClientEvent>().firstOrNull { it.type == ClientEventType.navigate }
-      command?.value as? ViewId ?: view
+    ClientEventType.navigate, ClientEventType.drillDown -> {
+      command.value as? ViewId ?: view
     }
 
     view == ViewId.chooseProfessionMenu -> null
@@ -63,13 +56,13 @@ fun selectInteractionView(deck: Deck?, player: Id): ViewId? =
       }
     }
 
-fun updateMenuFocusIndex(state: GuiState, menuSize: Int?, commandTypes: List<Any>, hoverBoxes: List<OffsetBox>) =
+fun updateMenuFocusIndex(state: GuiState, menuSize: Int?, commands: Commands, hoverBoxes: List<OffsetBox>) =
     if (menuSize != null) {
-      val hoverFocusIndex = if (commandTypes.contains(GuiCommandType.mouseMove))
+      val hoverFocusIndex = if (commands.any { it.type == GuiCommandType.mouseMove })
         getHoverIndex(hoverBoxes)
       else
         null
 
-      updateMenuFocus(state.menuStack, menuSize, commandTypes, hoverFocusIndex, state.menuFocusIndex)
+      updateMenuFocus(state.menuStack, menuSize, hoverFocusIndex)(commands, state.menuFocusIndex)
     } else
       0

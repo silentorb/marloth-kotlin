@@ -147,7 +147,7 @@ fun gatherUserEvents(
               mousePosition = mousePosition,
           )
           getMenuItemEvents(boxes, hoverBoxes, playerCommands).map { event ->
-            if (event is ClientEvent)
+            if (event is ClientEvent && event.target == null)
               event.copy(
                   target = player
               )

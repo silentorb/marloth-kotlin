@@ -4,9 +4,10 @@ import silentorb.mythic.happenings.Command
 
 enum class ClientEventType {
 
+  navigate,
   menuBack,
   menuReplace,
-  navigate,
+  drillDown,
 
   //  Display Options
   setStagingWindowMode,

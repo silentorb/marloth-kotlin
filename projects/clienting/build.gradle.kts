@@ -30,4 +30,4 @@ dependencies {
   api("silentorb.mythic:editing-lookinglass")
 }
 
-requires(project, "assets", "definition", "simulation")
+requires(project, "assets", "definition", "simulation", "marloth_scenery")

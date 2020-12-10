@@ -12,8 +12,8 @@ val inputOptionsMenu =
     dialogWrapperWithExtras(
         simpleMenuFlower(TextId.gui_optionsMenu,
             listOfNotNull(
-                newSimpleMenuItem(event = ClientEvent(ClientEventType.navigate, ViewId.gamepadOptions), text = TextId.gui_gamepadOptions),
-                newSimpleMenuItem(event = ClientEvent(ClientEventType.navigate, ViewId.mouseOptions), text = TextId.gui_mouseOptions)
+                newSimpleMenuItem(event = ClientEvent(ClientEventType.drillDown, ViewId.gamepadOptions), text = TextId.gui_gamepadOptions),
+                newSimpleMenuItem(event = ClientEvent(ClientEventType.drillDown, ViewId.mouseOptions), text = TextId.gui_mouseOptions)
             )
         )
     )
@@ -23,7 +23,7 @@ val optionsMenu =
         simpleMenuFlower(TextId.gui_optionsMenu,
             listOfNotNull(
 //        newSimpleMenuItem(event = ClientEvent(ClientEventType.navigate, ViewId.audioOptions), text = TextId.gui_audioOptions),
-                newSimpleMenuItem(event = ClientEvent(ClientEventType.navigate, ViewId.displayOptions), text = TextId.gui_displayOptions),
+                newSimpleMenuItem(event = ClientEvent(ClientEventType.drillDown, ViewId.displayOptions), text = TextId.gui_displayOptions),
 //        newSimpleMenuItem(event = ClientEvent(ClientEventType.navigate, ViewId.inputOptions), text = TextId.gui_inputOptions)
             )
         )

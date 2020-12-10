@@ -11,6 +11,7 @@ import silentorb.mythic.bloom.OffsetBox
 import silentorb.mythic.ent.firstNotNull
 import silentorb.mythic.haft.HaftCommand
 import silentorb.mythic.happenings.Commands
+import silentorb.mythic.happenings.handleCommands
 
 const val menuKey = "silentorb.menu"
 const val onActivateKey = "silentorb.onActivate"
@@ -74,22 +75,25 @@ fun getHoverIndex(hoverBoxes: List<OffsetBox>): Int? =
     hoverBoxes
         .firstNotNull { it.attributes[menuItemIndexKey] as? Int }
 
-fun updateMenuFocus(stack: MenuStack, menuSize: Int, commands: List<Any>, hoverFocusIndex: Int?, index: Int) =
-    when {
-      commands.contains(CharacterRigCommands.moveDown) -> cycle(index + 1, menuSize)
-      commands.contains(CharacterRigCommands.moveUp) -> cycle(index - 1, menuSize)
-      commands.contains(ClientEventType.navigate) -> 0
-      commands.contains(ClientEventType.menuBack) -> stack.lastOrNull()?.focusIndex ?: 0
-      else -> hoverFocusIndex ?: index
+fun updateMenuFocus(stack: MenuStack, menuSize: Int, hoverFocusIndex: Int?) =
+    handleCommands<Int> { command, index ->
+      when (command.type) {
+        CharacterRigCommands.moveDown -> cycle(index + 1, menuSize)
+        CharacterRigCommands.moveUp -> cycle(index - 1, menuSize)
+        ClientEventType.navigate, ClientEventType.drillDown -> 0
+        ClientEventType.menuBack -> stack.lastOrNull()?.focusIndex ?: 0
+        else -> hoverFocusIndex ?: index
+      }
     }
 
-fun updateMenuStack(commands: List<Any>, state: GuiState): MenuStack {
-  val stack = state.menuStack
-  val view = state.view
-  return when {
-    commands.contains(ClientEventType.navigate) && view != null -> stack + MenuLayer(view, state.menuFocusIndex)
-    commands.contains(ClientEventType.menuBack) -> stack.dropLast(1)
-    commands.contains(GuiCommandType.menu) -> listOf()
-    else -> stack
-  }
-}
+fun updateMenuStack(state: GuiState) =
+    handleCommands<MenuStack> { command, index ->
+      val stack = state.menuStack
+      val view = state.view
+      when {
+        command.type == ClientEventType.drillDown && view != null -> stack + MenuLayer(view, state.menuFocusIndex)
+        command.type == ClientEventType.menuBack -> stack.dropLast(1)
+        command.type == GuiCommandType.menu -> listOf()
+        else -> stack
+      }
+    }

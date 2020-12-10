@@ -7,6 +7,7 @@ import marloth.clienting.gui.menus.*
 import marloth.clienting.gui.menus.general.Tab
 import marloth.clienting.gui.menus.general.simpleMenuFlower
 import marloth.clienting.gui.menus.general.tabView
+import marloth.clienting.gui.menus.general.verticalList
 import marloth.scenery.enums.DevText
 import marloth.scenery.enums.TextId
 import marloth.scenery.enums.TextResourceMapper
@@ -64,21 +65,22 @@ fun accessoriesView(definitions: Definitions, deck: Deck, actor: Id): Box {
   ))
 }
 
-fun characterInfoView(deck: Deck, actor: Id): StateFlowerTransform = characterView { definitions, state ->
-  boxList(horizontalPlane, 10)(
-      listOf(
-          generalCharacterInfo(definitions, deck, actor),
-          accessoriesView(definitions, deck, actor)
-      )
-  )
+fun characterContractsView(deck: Deck, actor: Id): StateFlowerTransform = characterView { definitions, state ->
+  val contracts = deck.contracts.filter { it.value.agent == actor }
+  if (contracts.any())
+    verticalList(
+        contracts.map { (id, contract) ->
+          label(TextStyles.smallBlack, definitions.textLibrary(contract.definition.name))
+        }
+    )
+  else
+    label(TextStyles.smallBlack, "You have no contracts.  Get a job.")
 }
 
-//fun characterInfoViewOrChooseAbilityMenu(deck: Deck, actor: Id): StateFlowerTransform =
-//    dialogWrapper { definitions, state ->
-//      val character = deck.characters[actor]!!
-//      val accessoryOptions = character.accessoryOptions
-//      if (accessoryOptions != null)
-//        simpleMenuFlower(TextId.gui_chooseAccessoryMenu, chooseAccessoryMenu(definitions, actor, accessoryOptions))(definitions, state)
-//      else
-//        characterInfoView(definitions, deck, actor)
-//    }
+fun characterInventoryView(deck: Deck, actor: Id): StateFlowerTransform = characterView { definitions, state ->
+  accessoriesView(definitions, deck, actor)
+}
+
+fun characterInfoView(deck: Deck, actor: Id): StateFlowerTransform = characterView { definitions, state ->
+  generalCharacterInfo(definitions, deck, actor)
+}

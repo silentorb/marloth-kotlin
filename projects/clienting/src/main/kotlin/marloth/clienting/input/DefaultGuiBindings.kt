@@ -15,14 +15,15 @@ fun defaultKeyboardMenuBindings() = mapOf(
     GLFW.GLFW_KEY_DOWN to CharacterCommands.moveDown,
     GLFW.GLFW_KEY_ESCAPE to GuiCommandType.menuBack,
     GLFW.GLFW_KEY_ENTER to GuiCommandType.menuSelect,
-    GLFW.GLFW_KEY_SPACE to GuiCommandType.menuSelect
+    GLFW.GLFW_KEY_SPACE to GuiCommandType.menuSelect,
+    GLFW.GLFW_KEY_TAB to GuiCommandType.tabNext,
 ) + defaultSharedKeyboardBindings
 
 fun commonGamepadBindings() = mapOf(
     GAMEPAD_AXIS_LEFT_UP to CharacterCommands.moveUp,
     GAMEPAD_AXIS_LEFT_DOWN to CharacterCommands.moveDown,
     GAMEPAD_AXIS_LEFT_LEFT to CharacterCommands.moveLeft,
-    GAMEPAD_AXIS_LEFT_RIGHT to CharacterCommands.moveRight
+    GAMEPAD_AXIS_LEFT_RIGHT to CharacterCommands.moveRight,
 )
 
 fun defaultGamepadMenuBindings() = mapOf(

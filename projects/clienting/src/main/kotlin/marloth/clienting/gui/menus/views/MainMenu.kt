@@ -15,7 +15,7 @@ import simulation.main.World
 fun mainMenuItems(isGameActive: Boolean): List<SimpleMenuItem> = listOfNotNull(
     if (isGameActive) newSimpleMenuItem(event = ClientEvent(GuiCommandType.menuBack), text = TextId.menu_continueGame) else null,
     newSimpleMenuItem(event = ClientEvent(GuiCommandType.newGame), text = TextId.menu_newGame),
-    newSimpleMenuItem(event = ClientEvent(ClientEventType.navigate, ViewId.options), text = TextId.gui_optionsMenu),
+    newSimpleMenuItem(event = ClientEvent(ClientEventType.drillDown, ViewId.options), text = TextId.gui_optionsMenu),
     newSimpleMenuItem(event = ClientEvent(GuiCommandType.quit), text = TextId.menu_quit)
 )
 

@@ -55,8 +55,7 @@ fun updateGuiState(
     commands: Commands,
 ): GuiState {
   val menuSize = bloomDefinition.menu?.size
-  val commandTypes = commands.map { it.type }
-  val menuFocusIndex = updateMenuFocusIndex(state, menuSize, commandTypes, hoverBoxes)
+  val menuFocusIndex = updateMenuFocusIndex(state, menuSize, commands, hoverBoxes)
   val displayChange = updateDisplayChangeState(options.display, state, commands)
 
   if (getDebugBoolean("LOG_CLIENT_EVENTS")) {
@@ -66,9 +65,9 @@ fun updateGuiState(
   }
 
   return state.copy(
-      view = nextView(state.menuStack, commandTypes, commands, state.view),
+      view = nextView(state.menuStack)(commands, state.view),
       menuFocusIndex = menuFocusIndex,
-      menuStack = updateMenuStack(commandTypes, state),
+      menuStack = updateMenuStack(state)(commands, state.menuStack),
       displayChange = displayChange,
       primarydeviceMode = updatePrimaryDeviceMode(commands, state.primarydeviceMode),
   )

@@ -141,7 +141,7 @@ fun updateWorlds(app: GameApp, previousClient: ClientState, clientState: ClientS
   val commands = if (clientState.isEditorActive)
     listOf()
   else
-    mapGameCommands(clientState.players, clientState.commands)
+    clientState.commands
 
   updateSimulation(app, previousClient, clientState, worlds, commands)
 }

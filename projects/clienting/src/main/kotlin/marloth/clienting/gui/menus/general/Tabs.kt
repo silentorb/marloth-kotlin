@@ -3,7 +3,6 @@ package marloth.clienting.gui.menus.general
 import marloth.clienting.ClientEventType
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.TextStyles
-import marloth.clienting.gui.menus.general.forms.cycle
 import marloth.clienting.gui.menus.logic.cycle
 import marloth.clienting.input.GuiCommandType
 import marloth.scenery.enums.Text

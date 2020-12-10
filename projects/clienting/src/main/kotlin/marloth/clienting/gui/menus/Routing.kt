@@ -21,9 +21,9 @@ fun viewSelect(world: World?, options: AppOptions, clientState: ClientState, vie
     ViewId.inputOptions -> inputOptionsMenu
     ViewId.mouseOptions -> emptyViewFlower
     ViewId.options -> optionsMenu
-    ViewId.characterInventory -> characterInfoView(world!!.deck, player)
+    ViewId.characterInventory -> characterInventoryView(world!!.deck, player)
     ViewId.characterStatus -> characterInfoView(world!!.deck, player)
-    ViewId.characterContracts -> characterInfoView(world!!.deck, player)
+    ViewId.characterContracts -> characterContractsView(world!!.deck, player)
     ViewId.chooseProfessionMenu -> dialogWrapper(simpleMenuFlower(TextId.gui_chooseProfessionMenu, chooseProfessionMenu(player)))
     ViewId.mainMenu -> mainMenu(world)
     ViewId.conversation -> conversationView(world!!.deck, player)
