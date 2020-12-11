@@ -13,6 +13,8 @@ import silentorb.mythic.ent.scenery.expandInstances
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.resource_loading.getUrlPath
 import silentorb.mythic.scenery.SceneProperties
+import silentorb.mythic.scenery.scenePropertiesSchema
+import simulation.misc.Entities
 import simulation.misc.GameAttributes
 import simulation.physics.CollisionGroups
 import java.nio.file.Path
@@ -35,17 +37,28 @@ fun marlothCollisionPresets(): Map<Int, String> =
         .map { it.value to it.key }
         .associate { it }
 
+fun editorLabel(parent: String, text: String): Graph = setOf(
+    Entry("label", SceneProperties.type, CommonEditorAttributes.editorOnly),
+    Entry("label", SceneProperties.parent, parent),
+    Entry("label", SceneProperties.text3d, text),
+)
+
+fun spawners(): GraphLibrary = listOf(
+    Entities.monsterSpawn
+)
+    .associateWith { key ->
+      setOf(
+          Entry(key, "", ""),
+      ) + editorLabel(key, key)
+    }
+
 fun newEditorGraphLibrary(textLibrary: TextResourceMapper): GraphLibrary =
     characterDefinitions()
         .mapValues { (key, definition) ->
-          val labelKey = "label"
           setOf(
               Entry(key, "", ""),
-              Entry(labelKey, SceneProperties.type, CommonEditorAttributes.editorOnly),
-              Entry(labelKey, SceneProperties.parent, key),
-              Entry(labelKey, SceneProperties.text3d, textLibrary(definition.name)),
-          )
-        }
+          ) + editorLabel(key, textLibrary(definition.name))
+        } + spawners()
 
 fun newEditor(textLibrary: TextResourceMapper): Editor {
   val debugProjectPath = getDebugString("EDITOR_PROJECT_PATH")
@@ -58,6 +71,7 @@ fun newEditor(textLibrary: TextResourceMapper): Editor {
       projectPath = projectPath,
       enumerations = EditorEnumerations(
           propertyDefinitions = commonPropertyDefinitions(),
+          schema = scenePropertiesSchema(),
           textures = textures(),
           attributes = getMarlothEditorAttributes(),
           meshes = reflectProperties(MeshId),
