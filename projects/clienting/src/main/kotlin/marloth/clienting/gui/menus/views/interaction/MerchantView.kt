@@ -1,4 +1,4 @@
-package marloth.clienting.gui.menus.views
+package marloth.clienting.gui.menus.views.interaction
 
 import marloth.clienting.StateFlowerTransform
 import marloth.clienting.gui.menus.*
@@ -7,10 +7,7 @@ import marloth.clienting.gui.menus.general.menuFlower
 import marloth.clienting.gui.menus.general.menuTextFlower
 import marloth.scenery.enums.TextId
 import marloth.scenery.enums.TextResourceMapper
-import silentorb.mythic.bloom.Box
-import silentorb.mythic.bloom.boxList2
-import silentorb.mythic.bloom.horizontalPlane
-import silentorb.mythic.bloom.label
+import silentorb.mythic.bloom.*
 import silentorb.mythic.ent.Id
 import simulation.characters.Character
 import simulation.entities.Ware
@@ -48,24 +45,19 @@ fun moneyLabel(textLibrary: TextResourceMapper, value: Int): Box =
 fun merchantInfoFlower(textLibrary: TextResourceMapper, customerMoney: Int): Box =
     moneyLabel(textLibrary, customerMoney)
 
-fun merchantView(
-    deck: Deck,
-    player: Id,
-    merchant: Id,
-    customerCharacter: Character,
-    merchantCharacter: Character
-): StateFlowerTransform = dialogWrapper { definitions, state ->
-  val customerMoney = customerCharacter.money
-  val menu = merchantCharacter.wares
-      .map { (id, ware) ->
-        wareMenuItem(definitions, merchant, player, customerMoney, id, ware)
-      }
+val merchantView = conversationPage { deck, player, other, character, otherCharacter ->
+  { definitions, state ->
+    val customerMoney = character.money
+    val menu = otherCharacter.wares
+        .map { (id, ware) ->
+          wareMenuItem(definitions, other, player, customerMoney, id, ware)
+        }
 
-  dialog(definitions, merchantCharacter.definition.name,
-      boxList2(
-          horizontalPlane, 10,
-          menuFlower(menu, state.menuFocusIndex, 100),
-          merchantInfoFlower(definitions.textLibrary, customerMoney),
-      )
-  )
+    boxList2(
+        horizontalPlane, 10,
+        menuFlower(menu, state.menuFocusIndex, 100),
+        merchantInfoFlower(definitions.textLibrary, customerMoney),
+    )
+  }
 }
+  

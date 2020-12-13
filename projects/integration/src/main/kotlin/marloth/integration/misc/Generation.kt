@@ -8,10 +8,8 @@ import persistence.Database
 import persistence.queryEntries
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugString
-import silentorb.mythic.ent.Graph
-import silentorb.mythic.ent.IdSource
-import silentorb.mythic.ent.SimpleGraphStore
-import silentorb.mythic.ent.newIdSource
+import silentorb.mythic.ent.*
+import silentorb.mythic.ent.scenery.filterByAttribute
 import silentorb.mythic.physics.newBulletState
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.SceneProperties
@@ -25,13 +23,10 @@ import simulation.physics.graphToBody
 
 fun generateWorld(db: Database, definitions: Definitions, generationConfig: GenerationConfig, dice: Dice, graph: Graph): World {
   val nextId = newIdSource(1)
-  val deck = allHandsToDeck(nextId, populateWorld(nextId, generationConfig, graph), Deck())
-//  val graphHands = graphToHands(nextId, graph)
+  val deck = allHandsToDeck(nextId, populateWorld(nextId, generationConfig, dice, graph), Deck())
   val navigation = if (generationConfig.includeEnemies) {
-    val meshIds = deck.depictions
-        .filterValues { generationConfig.meshes.containsKey(it.mesh) }
-        .keys
-    newNavigationState(meshIds, deck)
+    val meshIds = filterByProperty2(graph, SceneProperties.collisionShape).map { it.source }
+    newNavigationState(definitions.meshShapeMap, meshIds, graph)
   } else
     null
 

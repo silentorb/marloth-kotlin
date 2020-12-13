@@ -1,4 +1,4 @@
-package marloth.clienting.gui.menus.views
+package marloth.clienting.gui.menus.views.character
 
 import marloth.clienting.gui.menus.general.SimpleMenuItem
 import marloth.clienting.gui.menus.general.newSimpleMenuItem

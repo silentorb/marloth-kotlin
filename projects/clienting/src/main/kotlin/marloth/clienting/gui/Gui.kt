@@ -32,6 +32,9 @@ enum class ViewId {
   inputOptions,
   mainMenu,
   conversation,
+  conversationActiveContracts,
+  conversationAvailableContracts,
+  conversationMerchandise,
   mouseOptions,
   options,
   victory

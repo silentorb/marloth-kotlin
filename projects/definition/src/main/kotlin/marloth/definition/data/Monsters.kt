@@ -38,17 +38,17 @@ fun monsterDefinitions(): Map<String, CharacterDefinition> =
             ambientSounds = listOf()
         )
     )
-        .flatMap { (key, definition) ->
-          (1..maxCharacterLevel).map { level ->
-            val health = definition.health
-            Pair("$key$level", definition.copy(
-                level = level,
-                health = health * level,
-                damageMultipliers = mapOf(
-                    DamageTypes.physical to 100 * level
-                )
-            ))
-          }
-        }
-        .associate { it }
+//        .flatMap { (key, definition) ->
+//          (1..maxCharacterLevel).map { level ->
+//            val health = definition.health
+//            Pair("$key$level", definition.copy(
+//                level = level,
+//                health = health * level,
+//                damageMultipliers = mapOf(
+//                    DamageTypes.physical to 100 * level
+//                )
+//            ))
+//          }
+//        }
+//        .associate { it }
 

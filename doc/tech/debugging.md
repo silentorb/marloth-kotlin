@@ -24,7 +24,6 @@ Needed lines may vary depending on environment
 && !(this instanceof java.lang.NoSuchFieldException)
 && !(this instanceof java.lang.NoSuchMethodError)
 && !(this instanceof java.lang.NoSuchMethodException)
-&& (!(this instanceof java.lang.NullPointerException) || (this instanceof kotlin.KotlinNullPointerException))
 && !(this instanceof java.lang.UnsatisfiedLinkError)
 && !(this instanceof java.lang.IllegalAccessException)
 && !(this instanceof java.lang.NoClassDefFoundError)

@@ -21,8 +21,6 @@ import simulation.combat.general.DestructibleBaseStats
 import simulation.combat.general.ResourceContainer
 import simulation.entities.*
 import simulation.happenings.newPossibleAction
-import simulation.intellect.Spirit
-import simulation.intellect.assessment.newKnowledge
 import simulation.main.NewHand
 import simulation.misc.Definitions
 import simulation.misc.Factions
@@ -34,8 +32,7 @@ fun newCharacter(
     definition: CharacterDefinition,
     faction: Id,
     position: Vector3,
-    angle: Float = Pi / 2f,
-    spirit: Spirit? = null
+    angle: Float = Pi / 2f
 ): NewHand {
   val accessories = definition.accessories
       .map { type ->
@@ -114,17 +111,6 @@ fun newCharacter(
               damageMultipliers = definition.damageMultipliers
           ),
 
-          if (spirit != null)
-            newKnowledge()
-          else
-            null,
-          spirit,
-
-          if (spirit == null)
-            newThirdPersonRig(position, angle)
-          else
-            null,
-
           if (definition.wares.any() || definition.availableContracts.any()) {
             Interactable(
                 primaryCommand = WidgetCommand(
@@ -138,7 +124,7 @@ fun newCharacter(
   )
 }
 
-fun newCharacter(nextId: IdSource, definitions: Definitions, definition: CharacterDefinition, graph: Graph, node: Key): NewHand {
+fun newCharacter(nextId: IdSource, definitions: Definitions, definition: CharacterDefinition, graph: Graph, node: Key, faction: Id = Factions.neutral): NewHand {
   val transform = getNodeTransform(graph, node)
-  return newCharacter(nextId(), definitions, definition, Factions.neutral, transform.translation(), transform.rotation().z)
+  return newCharacter(nextId(), definitions, definition, faction, transform.translation(), transform.rotation().z)
 }

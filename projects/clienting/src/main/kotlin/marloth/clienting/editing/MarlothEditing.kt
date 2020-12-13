@@ -10,6 +10,7 @@ import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.editing.*
 import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.expandInstances
+import silentorb.mythic.ent.scenery.filterByAttribute
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.resource_loading.getUrlPath
 import silentorb.mythic.scenery.SceneProperties

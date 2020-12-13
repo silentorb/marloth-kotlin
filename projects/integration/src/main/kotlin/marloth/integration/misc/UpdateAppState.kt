@@ -33,6 +33,7 @@ import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector4i
 import simulation.entities.Player
 import simulation.happenings.withSimulationEvents
+import simulation.main.Deck
 import simulation.main.World
 import simulation.misc.Factions
 import simulation.updating.simulationDelta
@@ -67,15 +68,15 @@ fun updateClientFromWorld(worlds: List<World>, clientState: ClientState): Client
     )
 }
 
-fun gatherAdditionalGameCommands(previousClient: ClientState, clientState: ClientState): List<Command> {
+fun gatherAdditionalGameCommands(deck: Deck, previousClient: ClientState, clientState: ClientState): List<Command> {
   return clientState.players.flatMap { player ->
     val guiState = clientState.guiStates[player]
     val view = guiState?.view
     val previousView = previousClient.guiStates[player]?.view
+    val character = deck.characters[player]
     listOfNotNull(
-        if (previousView == ViewId.conversation &&
+        if (character?.interactingWith != null &&
             clientState.commands.any { it.target == player && it.type == ClientEventType.menuBack })
-//        if (view == null && previousView == ViewId.merchant)
           Command(type = CharacterCommands.stopInteracting, target = player)
         else
           null
@@ -113,7 +114,7 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
 
   val previous = worlds.takeLast(2).first()
   val gameCommands = filterCommands(clientState)(commands)
-      .plus(gatherAdditionalGameCommands(previousClient, clientState))
+      .plus(gatherAdditionalGameCommands(world.deck, previousClient, clientState))
 
   val definitions = app.definitions
   val windowResolution = app.client.renderer.options.windowedResolution

@@ -2,11 +2,9 @@ package simulation.misc
 
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.Id
-import silentorb.mythic.ent.filterByAttribute
-import silentorb.mythic.ent.firstOrNullWithAttribute
+import silentorb.mythic.ent.scenery.filterByAttribute
 import silentorb.mythic.ent.scenery.getNodeTransform
 import silentorb.mythic.spatial.Matrix
-import silentorb.mythic.spatial.Vector3i
 import simulation.main.Deck
 
 fun isAtHome(grid: MapGrid, deck: Deck): (Id) -> Boolean = { id ->

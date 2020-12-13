@@ -1,7 +1,7 @@
 package simulation.combat.general
 
 import silentorb.mythic.ent.AnyGraph
-import silentorb.mythic.ent.filterByAttribute
+import silentorb.mythic.ent.scenery.filterByAttribute
 import simulation.misc.GameAttributes
 
 typealias ResourceType = String

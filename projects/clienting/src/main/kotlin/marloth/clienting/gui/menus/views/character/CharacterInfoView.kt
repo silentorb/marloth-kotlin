@@ -1,16 +1,14 @@
-package marloth.clienting.gui.menus.views
+package marloth.clienting.gui.menus.views.character
 
-import marloth.clienting.StateFlower
 import marloth.clienting.StateFlowerTransform
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.*
 import marloth.clienting.gui.menus.general.Tab
-import marloth.clienting.gui.menus.general.simpleMenuFlower
-import marloth.clienting.gui.menus.general.tabView
+import marloth.clienting.gui.menus.general.tabDialog
 import marloth.clienting.gui.menus.general.verticalList
+import marloth.clienting.gui.menus.views.interaction.moneyLabel
 import marloth.scenery.enums.DevText
 import marloth.scenery.enums.TextId
-import marloth.scenery.enums.TextResourceMapper
 import silentorb.mythic.bloom.*
 import simulation.accessorize.getAccessories
 import silentorb.mythic.ent.Id
@@ -23,17 +21,7 @@ val characterViewTabs = listOf(
     Tab(ViewId.characterContracts, DevText("Contracts")),
 )
 
-fun characterView(flower: StateFlower): StateFlowerTransform =
-    dialogWrapper { definitions, state ->
-      dialog(definitions, TextId.gui_characterInfo,
-          boxList(verticalPlane, 10)(
-              listOf(
-                  tabView(definitions.textLibrary, characterViewTabs, state.view!!),
-                  flower(definitions, state),
-              )
-          )
-      )
-    }
+val characterView = tabDialog(TextId.gui_characterInfo, characterViewTabs)
 
 fun generalCharacterInfo(definitions: Definitions, deck: Deck, actor: Id): Box {
   val character = deck.characters[actor]!!

@@ -4,12 +4,14 @@ import org.recast4j.recast.AreaModification
 import org.recast4j.recast.ConvexVolume
 import org.recast4j.recast.geom.InputGeomProvider
 import org.recast4j.recast.geom.TriMesh
-import silentorb.mythic.ent.Id
-import silentorb.mythic.physics.PhysicsDeck
-import silentorb.mythic.physics.getBodyTransform
+import silentorb.mythic.ent.Graph
+import silentorb.mythic.ent.Key
+import silentorb.mythic.ent.scenery.getNodeTransform
+import silentorb.mythic.ent.scenery.getShape
+import silentorb.mythic.scenery.Shape
 import silentorb.mythic.shapemeshes.getShapeVertices
 
-val SAMPLE_POLYAREA_TYPE_WALKABLE = 0x3f
+const val SAMPLE_POLYAREA_TYPE_WALKABLE = 0x3f
 val walkable = AreaModification(SAMPLE_POLYAREA_TYPE_WALKABLE)
 
 data class GeometryProvider(
@@ -24,16 +26,15 @@ data class GeometryProvider(
   override fun getMeshBoundsMax(): FloatArray = _meshBoundsMax
 }
 
-fun newNavMeshTriMeshes(deck: PhysicsDeck, architectureElements: Set<Id>): List<TriMesh> {
+fun newNavMeshTriMeshes(meshShapeMap: Map<String, Shape>, graph: Graph, architectureElements: Collection<Key>): List<TriMesh> {
   return architectureElements
-      .map { id ->
-        val shape = deck.collisionObjects[id]!!.shape
+      .map { node ->
+        val shape = getShape(meshShapeMap, graph, node)!!
         val mesh = getShapeVertices(shape)
-        Pair(id, mesh)
+        Pair(node, mesh)
       }
-      .map { (id, mesh) ->
-        val body = deck.bodies[id]!!
-        val transform = getBodyTransform(body).scale(body.scale)
+      .map { (node, mesh) ->
+        val transform = getNodeTransform(graph, node)
         val vertices = mesh.vertices.flatMap {
           val temp = it.transform(transform)
           // Convert to an array and Recast's Y-up coordinate system

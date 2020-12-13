@@ -11,10 +11,5 @@ data class Pursuit(
 )
 
 data class Spirit(
-    val pursuit: Pursuit?
+    val pursuit: Pursuit? = null
 )
-
-fun freshSpirit(): Spirit =
-    Spirit(
-        pursuit = null
-    )

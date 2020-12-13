@@ -19,9 +19,13 @@ fun startRoaming(world: World, character: Id, knowledge: Knowledge): Vector3? {
   val options = world.realm.grid.cells
       .filter { isCellExplorableByMonsters(it.value.attributes) && it.value.slots.any() }
       .keys.minus(currentCell)
-  val destination = world.dice.takeOne(options)
-  val destinationCell = world.realm.grid.cells[destination]!!
-  return world.dice.takeOne(cellSlots(destination, destinationCell))
+  return if (options.none())
+    null
+  else {
+    val destination = world.dice.takeOne(options)
+    val destinationCell = world.realm.grid.cells[destination]!!
+    world.dice.takeOne(cellSlots(destination, destinationCell))
+  }
 }
 
 fun getRemainingPath(node: Id, path: Path): Path {

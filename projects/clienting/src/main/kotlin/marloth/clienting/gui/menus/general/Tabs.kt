@@ -1,9 +1,14 @@
 package marloth.clienting.gui.menus.general
 
 import marloth.clienting.ClientEventType
+import marloth.clienting.StateFlower
+import marloth.clienting.StateFlowerTransform
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.TextStyles
+import marloth.clienting.gui.menus.dialog
+import marloth.clienting.gui.menus.dialogWrapper
 import marloth.clienting.gui.menus.logic.cycle
+import marloth.clienting.gui.menus.redirectBox
 import marloth.clienting.input.GuiCommandType
 import marloth.scenery.enums.Text
 import marloth.scenery.enums.TextResourceMapper
@@ -48,4 +53,23 @@ fun tabView(textLibrary: TextResourceMapper, tabs: List<Tab>, view: ViewId): Box
       .handle { input, _ ->
         updateTabNavigation(tabs, view, input.commands)
       }
+}
+
+fun tabDialog(title: Text, tabs: List<Tab>): (StateFlower) -> StateFlowerTransform = { flower ->
+  dialogWrapper { definitions, state ->
+    if (tabs.none { it.view == state.view })
+      if (tabs.any())
+        redirectBox(tabs.first().view)
+      else
+        redirectBox(null)
+    else
+      dialog(definitions, title,
+          boxList(verticalPlane, 10)(
+              listOf(
+                  tabView(definitions.textLibrary, tabs, state.view!!),
+                  flower(definitions, state),
+              )
+          )
+      )
+  }
 }
