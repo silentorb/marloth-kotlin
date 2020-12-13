@@ -75,8 +75,7 @@ fun gatherAdditionalGameCommands(deck: Deck, previousClient: ClientState, client
     val previousView = previousClient.guiStates[player]?.view
     val character = deck.characters[player]
     listOfNotNull(
-        if (character?.interactingWith != null &&
-            clientState.commands.any { it.target == player && it.type == ClientEventType.menuBack })
+        if (character?.interactingWith != null && view == null && previousView != null)
           Command(type = CharacterCommands.stopInteracting, target = player)
         else
           null

@@ -8,12 +8,14 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Command
 import simulation.entities.ContractCommands
 import simulation.entities.ContractDefinition
+import simulation.entities.ContractStatus
 import simulation.entities.getContracts
 import simulation.misc.Definitions
 
 fun activeContractMenuItem(definitions: Definitions, client: Id, player: Id, contract: Id, definition: ContractDefinition): MenuItem {
   val events = listOf(
-      Command(ContractCommands.reportContractCompleted, target = client, value = contract)
+      Command(ContractCommands.reportContractCompleted, target = contract),
+      Command(ContractCommands.payAgent, target = player, value = definition.reward),
   )
 
   return MenuItem(
@@ -24,7 +26,7 @@ fun activeContractMenuItem(definitions: Definitions, client: Id, player: Id, con
 
 val clientActiveContractsView = conversationPage { deck, player, other, character, otherCharacter ->
   { definitions, state ->
-    val menu = getContracts(deck, client = other, agent = player)
+    val menu = getContracts(deck, client = other, agent = player, status = ContractStatus.active)
         .map { (id, contract) ->
           activeContractMenuItem(definitions, other, player, id, contract.definition)
         }

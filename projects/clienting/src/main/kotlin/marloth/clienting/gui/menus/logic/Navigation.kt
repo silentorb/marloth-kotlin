@@ -11,8 +11,8 @@ import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.handleCommands
 import simulation.main.Deck
 
-fun nextView(stack: MenuStack) = handleCommands< ViewId?> { command, view ->
-  when(command.type) {
+fun nextView(stack: MenuStack) = handleCommands<ViewId?> { command, view ->
+  when (command.type) {
     GuiCommandType.menu -> {
       if (view != null)
         null
@@ -35,7 +35,10 @@ fun nextView(stack: MenuStack) = handleCommands< ViewId?> { command, view ->
     GuiCommandType.newGame -> null
 
     ClientEventType.navigate, ClientEventType.drillDown -> {
-      command.value as? ViewId ?: view
+      if (command.value == null)
+        null
+      else
+        command.value as? ViewId ?: view
     }
 
     view == ViewId.chooseProfessionMenu -> null

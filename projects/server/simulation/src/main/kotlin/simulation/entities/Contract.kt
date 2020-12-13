@@ -5,6 +5,7 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Key
 import silentorb.mythic.ent.Table
 import silentorb.mythic.happenings.Commands
+import silentorb.mythic.happenings.handleCommands
 import simulation.main.Deck
 
 data class ContractDefinition(
@@ -29,6 +30,7 @@ data class Contract(
 object ContractCommands {
   const val removeAvailableContract = "removeAvailableContract"
   const val reportContractCompleted = "reportContractCompleted"
+  const val payAgent = "payAgent"
 }
 
 data class ClearAreaTask(
@@ -43,4 +45,23 @@ fun updateAvailableContracts(commands: Commands, availableContracts: Map<Id, Con
 fun getContracts(deck: Deck, client: Id, agent: Id): Table<Contract> =
     deck.contracts.filterValues { contract ->
       contract.agent == agent && contract.client == client
+    }
+
+fun getContracts(deck: Deck, client: Id, agent: Id, status: ContractStatus): Table<Contract> =
+    getContracts(deck, client, agent)
+        .filter { it.value.status == status }
+
+
+val updateContract = handleCommands<Contract> { command, contract ->
+  when (command.type) {
+    ContractCommands.reportContractCompleted -> contract.copy(
+        status = ContractStatus.completed
+    )
+    else -> contract
+  }
+}
+
+fun updateContracts(commands: Commands, contracts: Table<Contract>): Table<Contract> =
+    contracts.mapValues { (key, value) ->
+      updateContract(commands.filter { it.target == key }, value)
     }

@@ -155,7 +155,7 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
     val debugInfo = listOfNotNull(
 //            "LR: ${floatToRoundedString(lightRating(deck, player))}",
         if (getDebugBoolean("HUD_DRAW_PLAYER_VELOCITY")) "Velocity: ${floatToRoundedString(body.velocity.length())}" else null,
-        "Keys: ${victoryKeyStats.collected}/${victoryKeyStats.total}",
+//        "Keys: ${victoryKeyStats.collected}/${victoryKeyStats.total}",
 //            floatToRoundedString(deck.thirdPersonRigs[player]!!.rotation.x)
 //            deck.characterRigs[player]!!.hoverCamera!!.pitch.toString()
         if (getDebugString() != "") getDebugString() else null,

@@ -104,9 +104,13 @@ fun getPurchaseCost(deck: Deck, events: Events, character: Id): Int {
 }
 
 fun updateMoney(deck: Deck, events: Events, character: Id, money: Int): Int {
-//  val moneyFromItems = getMoneyFromTakenItems(deck, events, character)
+  val rewards = events
+      .filterIsInstance<Command>()
+      .filter { it.type == ContractCommands.payAgent }
+      .sumBy { it.value as? Int ?: 0 }
+
   val cost = getPurchaseCost(deck, events, character)
-  return money - cost // + moneyFromItems
+  return money + rewards - cost // + moneyFromItems
 }
 
 fun updateInteractingWith(deck: Deck, character: Id, commands: Commands, interactingWith: Id?): Id? =

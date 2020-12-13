@@ -5,6 +5,7 @@ import silentorb.mythic.characters.rigs.updateCharacterRig
 import silentorb.mythic.characters.rigs.updateThirdPersonCamera
 import silentorb.mythic.ent.mapTable
 import silentorb.mythic.ent.mapTableValues
+import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.timing.updateFloatCycle
 import silentorb.mythic.timing.updateFloatTimer
@@ -13,6 +14,7 @@ import simulation.characters.updateCharacter
 import simulation.combat.general.updateDestructibleHealth
 import simulation.entities.updateAmbientAudio
 import simulation.entities.updateCharacterAnimation
+import simulation.entities.updateContracts
 import simulation.happenings.updateActions
 import simulation.intellect.assessment.lightRatings
 import simulation.intellect.assessment.updateKnowledge
@@ -32,12 +34,14 @@ fun updateEntities(definitions: Definitions, world: World, navigation: Navigatio
       val delta = simulationDelta
       val dice = world.dice
       val freedomTable = getFreedomTable(deck)
+      val commands = events.filterIsInstance<Command>()
       deck.copy(
           actions = updateActions(world.definitions, deck, events),
           ambientSounds = updateAmbientAudio(definitions, dice, deck),
           animations = mapTable(deck.animations, updateCharacterAnimation(deck, definitions.animations, delta)),
           bodies = mapTable(deck.bodies, updateBodies(world.realm.grid, deck, events, delta)),
           characterRigs = mapTable(deck.characterRigs, updateCharacterRig(world.bulletState, CollisionGroups.static, deck, freedomTable, events, delta)),
+          contracts = updateContracts(commands, deck.contracts),
           accessories = mapTable(deck.accessories, updateAccessory(definitions, events)),
           cyclesFloat = mapTableValues(deck.cyclesFloat, updateFloatCycle(delta)),
           destructibles = mapTable(deck.destructibles, updateDestructibleHealth(events)),
