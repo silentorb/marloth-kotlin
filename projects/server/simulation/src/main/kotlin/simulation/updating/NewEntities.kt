@@ -56,7 +56,7 @@ inline fun <reified T> applyHands(hands: List<SimpleHand>): Table<T> =
     }
         .associate { it }
 
-fun newEntities(definitions: Definitions, graph: Graph, previous: Deck, events: Events, nextId: IdSource): (Deck) -> Deck = { next ->
+fun newEntities(definitions: Definitions, graph: Graph, step: Long, previous: Deck, events: Events, nextId: IdSource): (Deck) -> Deck = { next ->
   val idHands = listOf(
 //      newRespawnCountdowns(nextId, previous, next),
       newPerformances(definitions, previous, events, nextId),
@@ -81,5 +81,5 @@ fun newEntities(definitions: Definitions, graph: Graph, previous: Deck, events: 
       newAccessories(events, definitions) +
       events.filterIsInstance<NewHand>()
 
-  allHandsToDeck(nextId, newHands, lastDeck)
+  allHandsToDeck(nextId, newHands, step, lastDeck)
 }

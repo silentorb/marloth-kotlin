@@ -10,10 +10,7 @@ import marloth.clienting.gui.menus.views.character.characterContractsView
 import marloth.clienting.gui.menus.views.character.characterInfoView
 import marloth.clienting.gui.menus.views.character.characterInventoryView
 import marloth.clienting.gui.menus.views.character.chooseProfessionMenu
-import marloth.clienting.gui.menus.views.interaction.clientActiveContractsView
-import marloth.clienting.gui.menus.views.interaction.clientAvailableContractsView
-import marloth.clienting.gui.menus.views.interaction.conversationView
-import marloth.clienting.gui.menus.views.interaction.merchantView
+import marloth.clienting.gui.menus.views.interaction.*
 import marloth.clienting.gui.menus.views.main.*
 import marloth.clienting.gui.victoryMenu
 import marloth.scenery.enums.TextId
@@ -34,6 +31,7 @@ fun viewSelect(world: World?, options: AppOptions, clientState: ClientState, vie
     ViewId.characterContracts -> characterContractsView(world!!.deck, player)
     ViewId.chooseProfessionMenu -> dialogWrapper(simpleMenuFlower(TextId.gui_chooseProfessionMenu, chooseProfessionMenu(player)))
     ViewId.mainMenu -> mainMenu(world)
+    ViewId.messageTooSoon -> messageTooSoon
     ViewId.conversation -> conversationView(world!!.deck, player)
     ViewId.conversationActiveContracts -> clientActiveContractsView(world!!.deck, player)
     ViewId.conversationAvailableContracts -> clientAvailableContractsView(world!!.deck, player)

@@ -57,7 +57,6 @@ data class Deck(
     val performances: Table<Performance> = mapOf(),
     val players: Table<Player> = mapOf(),
     val playerOverlays: Table<PlayerOverlay> = mapOf(),
-//    val resources: Table<ResourceBundle> = mapOf(),
     val respawnCountdowns: Table<RespawnCountdown> = mapOf(),
     val sounds: Table<Sound> = mapOf(),
     val spinners: Table<Spinner> = mapOf(),
@@ -69,7 +68,7 @@ data class Deck(
     val triggers: Table<Trigger> = mapOf(),
 )
 
-fun allHandsToDeck(nextId: IdSource, newHands: List<NewHand>, deck: Deck): Deck {
+fun allHandsToDeck(nextId: IdSource, newHands: List<NewHand>, time: Long = -1L, deck: Deck): Deck {
   val hands = newHands.flatMap(finalizeHands(nextId))
   return deck.copy(
       accessories = deck.accessories + applyHands(hands),
@@ -81,7 +80,7 @@ fun allHandsToDeck(nextId: IdSource, newHands: List<NewHand>, deck: Deck): Deck 
       characterRigs = deck.characterRigs + applyHands(hands),
       characters = deck.characters + applyHands(hands),
       collisionObjects = deck.collisionObjects + applyHands(hands),
-      contracts = deck.contracts + applyHands(hands),
+      contracts = deck.contracts + applyHands<Contract>(hands).mapValues { it.value.copy(start = time) },
       cyclesFloat = deck.cyclesFloat + applyHands(hands),
       depictions = deck.depictions + applyHands(hands),
       destructibles = deck.destructibles + applyHands(hands),
@@ -119,7 +118,7 @@ fun addEntitiesToWorldDeck(world: World, transform: (IdSource) -> List<NewHand>)
   val nextId = newIdSource(world.nextId)
   val hands = transform(nextId)
   return world.copy(
-      deck = allHandsToDeck(nextId, hands, world.deck),
+      deck = allHandsToDeck(nextId, hands, world.step, world.deck),
       nextId = nextId()
   )
 }

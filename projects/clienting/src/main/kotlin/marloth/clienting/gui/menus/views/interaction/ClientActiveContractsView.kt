@@ -10,12 +10,12 @@ import simulation.entities.ContractCommands
 import simulation.entities.ContractDefinition
 import simulation.entities.ContractStatus
 import simulation.entities.getContracts
+import simulation.happenings.requestCommand
 import simulation.misc.Definitions
 
 fun activeContractMenuItem(definitions: Definitions, client: Id, player: Id, contract: Id, definition: ContractDefinition): MenuItem {
   val events = listOf(
-      Command(ContractCommands.reportContractCompleted, target = contract),
-      Command(ContractCommands.payAgent, target = player, value = definition.reward),
+      requestCommand(ContractCommands.contractCompleted, player, client, contract),
   )
 
   return MenuItem(

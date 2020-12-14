@@ -31,6 +31,7 @@ enum class ViewId {
   gamepadOptions,
   inputOptions,
   mainMenu,
+  messageTooSoon,
   conversation,
   conversationActiveContracts,
   conversationAvailableContracts,

@@ -2,6 +2,7 @@ package simulation.happenings
 
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.happenings.Command
+import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.filterCharacterCommandsFromEvents
 import simulation.accessorize.eventsFromItemPickups
@@ -10,6 +11,7 @@ import simulation.combat.toSpatialCombatWorld
 import simulation.entities.eventsFromRespawnCountdowns
 import simulation.intellect.aliveSpirits
 import simulation.intellect.execution.pursueGoals
+import simulation.intellect.execution.spiritsHandleRequests
 import simulation.main.Deck
 import simulation.main.World
 import simulation.misc.*
@@ -24,8 +26,9 @@ fun eventsFromPerformances(definitions: Definitions, deck: Deck): Events =
 fun withSimulationEvents(definitions: Definitions, previousDeck: Deck, world: World, externalEvents: Events): Events {
   val deck = world.deck
   val freedomTable = getFreedomTable(deck)
-  val spiritEvents = pursueGoals(world, aliveSpirits(world.deck), freedomTable)
-  val spiritCommands = spiritEvents.filterIsInstance<Command>()
+  val spirits = aliveSpirits(world.deck)
+  val spiritPursuitEvents = pursueGoals(world, spirits, freedomTable)
+  val spiritCommands = spiritPursuitEvents.filterIsInstance<Command>()
 
   val commands = filterCharacterCommandsFromEvents(externalEvents).plus(spiritCommands)
   val collisions = getBulletCollisions(world.bulletState, deck)
@@ -41,7 +44,13 @@ fun withSimulationEvents(definitions: Definitions, previousDeck: Deck, world: Wo
       eventsFromRespawnCountdowns(previousDeck, world.deck),
       if (getDebugBoolean("ENABLE_MOBILITY")) mobilityEvents(world.definitions, world.deck, commands) else listOf()
   )
-      .flatten() + spiritEvents + doomEvents(definitions, world)
+      .flatten() + spiritPursuitEvents + doomEvents(definitions, world)
 
   return eventsFromEvents(world, freedomTable, events)
+}
+
+fun gatherNextCommands(world: World, commands: Commands): Commands {
+  val spirits = aliveSpirits(world.deck)
+  val spiritResponseCommands = spiritsHandleRequests(world, spirits, commands)
+  return spiritResponseCommands
 }

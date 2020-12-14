@@ -1,12 +1,15 @@
 package simulation.main
 
 import silentorb.mythic.ent.*
+import silentorb.mythic.happenings.Commands
 import simulation.intellect.navigation.NavigationState
 import silentorb.mythic.randomly.Dice
 import simulation.misc.Definitions
 import simulation.misc.GameOver
 import simulation.misc.Realm
 import silentorb.mythic.physics.BulletState
+import simulation.happenings.Request
+import simulation.happenings.Requests
 import simulation.misc.GameModeConfig
 
 data class World(
@@ -23,6 +26,9 @@ data class World(
     val gameModeConfig: GameModeConfig,
     val persistence: Graph,
     val graph: GraphStore,
+    val step: Long,
+    val nextCommands: Commands = listOf(),
+//    val requests: Requests = listOf(),
 )
 
 typealias WorldPair = Pair<World, World>

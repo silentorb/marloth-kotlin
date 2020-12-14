@@ -42,6 +42,10 @@ fun graphToHands(definitions: Definitions, nextId: IdSource, graph: Graph): List
   val typeEntries = graph.filter { it.property == SceneProperties.type && characterDefinitions.containsKey(it.target) }
   return typeEntries.map { entry ->
     newCharacter(nextId, definitions, characterDefinitions[entry.target]!!, graph, entry.source)
+        .plusComponents(
+            Spirit(),
+            newKnowledge()
+        )
   }
 }
 

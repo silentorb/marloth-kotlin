@@ -4,6 +4,7 @@ import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.mapTable
 import silentorb.mythic.ent.newIdSource
 import silentorb.mythic.ent.pipe
+import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.applyBodyChanges
 import simulation.characters.newMoveSpeedTable
@@ -11,6 +12,7 @@ import simulation.combat.general.getDamageMultiplierModifiers
 import simulation.combat.general.updateDestructibleCache
 import simulation.combat.toCombatDefinitions
 import simulation.combat.toModifierDeck
+import simulation.happenings.gatherNextCommands
 import simulation.intellect.navigation.NavigationState
 import simulation.intellect.navigation.updateNavigation
 import simulation.main.*
@@ -18,8 +20,8 @@ import simulation.misc.Definitions
 import simulation.physics.updatePhysics
 import kotlin.math.max
 
-const val simulationFps = 60
-const val simulationDelta = 1f / simulationFps.toFloat()
+const val simulationFps: Int = 60
+const val simulationDelta: Float = 1f / simulationFps.toFloat()
 const val nanosecondsInSecond = 1_000_000_000
 const val simulationNanoseconds = nanosecondsInSecond / simulationFps
 
@@ -43,10 +45,10 @@ fun updateDeck(definitions: Definitions, events: Events, world: World,
         removeWhole(world.definitions.soundDurations, events, world.deck),
 //        removePartial(events, world.deck),
         cleanOutdatedReferences,
-        newEntities(definitions, world.staticGraph, world.deck, events, nextId)
+        newEntities(definitions, world.staticGraph, world.step, world.deck, events, nextId)
     )
 
-fun updateWorld(definitions: Definitions, events: Events, delta: Float, world: World): World {
+fun updateWorld(definitions: Definitions, events: Events, commands: Commands, delta: Float, world: World): World {
   val withPhysics = updatePhysics(events)(world)
   val moveSpeedTable = newMoveSpeedTable(definitions, withPhysics.deck)
   val navigation = if (withPhysics.navigation != null)
@@ -62,6 +64,8 @@ fun updateWorld(definitions: Definitions, events: Events, delta: Float, world: W
       deck = deck,
       global = updateGlobalState(deck, withPhysics.realm.grid, withPhysics.global),
       navigation = navigation,
-      nextId = nextId()
+      nextId = nextId(),
+      nextCommands = gatherNextCommands(world, commands),
+      step = world.step + 1L,
   )
 }

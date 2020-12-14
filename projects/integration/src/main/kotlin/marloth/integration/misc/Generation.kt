@@ -21,9 +21,9 @@ import simulation.misc.MapGrid
 import simulation.misc.Realm
 import simulation.physics.graphToBody
 
-fun generateWorld(db: Database, definitions: Definitions, generationConfig: GenerationConfig, dice: Dice, graph: Graph): World {
+fun generateWorld(db: Database, definitions: Definitions, generationConfig: GenerationConfig, dice: Dice, graph: Graph, step: Long): World {
   val nextId = newIdSource(1)
-  val deck = allHandsToDeck(nextId, populateWorld(nextId, generationConfig, dice, graph), Deck())
+  val deck = allHandsToDeck(nextId, populateWorld(nextId, generationConfig, dice, graph), step, Deck())
   val navigation = if (generationConfig.includeEnemies) {
     val meshIds = filterByProperty2(graph, SceneProperties.collisionShape).map { it.source }
     newNavigationState(definitions.meshShapeMap, meshIds, graph)
@@ -46,6 +46,7 @@ fun generateWorld(db: Database, definitions: Definitions, generationConfig: Gene
       gameModeConfig = newGameModeConfig(),
       persistence = persistence,
       graph = SimpleGraphStore(),
+      step = 0L,
   )
 }
 
@@ -63,5 +64,5 @@ fun generateWorld(db: Database, definitions: Definitions, meshInfo: MeshShapeMap
       includeEnemies = getDebugString("NO_ENEMIES") != "1"
   )
 
-  return generateWorld(db, definitions, generationConfig, dice, graph)
+  return generateWorld(db, definitions, generationConfig, dice, graph, 0L)
 }

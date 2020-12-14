@@ -49,7 +49,7 @@ fun getMenuItemEvents(attributeBoxes: List<OffsetBox>, hoverBoxes: List<OffsetBo
     listOf()
 
   val menuSelectEvents = if (events.any { it.type == GuiCommandType.menuSelect })
-    attributeBoxes
+      attributeBoxes
         .mapNotNull { it.attributes[onActivateKey] }
         .filterIsInstance<List<Any>>()
         .flatten()

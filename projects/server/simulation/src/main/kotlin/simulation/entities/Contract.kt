@@ -16,21 +16,23 @@ data class ContractDefinition(
 
 enum class ContractStatus {
   active,
+  canceled,
   completed,
-  failed,
 }
 
 data class Contract(
     val client: Id,
     val agent: Id,
     val definition: ContractDefinition,
-    val status: ContractStatus
+    val status: ContractStatus,
+    val start: Long = -1L,
 )
 
 object ContractCommands {
   const val removeAvailableContract = "removeAvailableContract"
-  const val reportContractCompleted = "reportContractCompleted"
+  const val contractCompleted = "reportContractCompleted"
   const val payAgent = "payAgent"
+  const val tooSoon = "tooSoon"
 }
 
 data class ClearAreaTask(
@@ -54,7 +56,7 @@ fun getContracts(deck: Deck, client: Id, agent: Id, status: ContractStatus): Tab
 
 val updateContract = handleCommands<Contract> { command, contract ->
   when (command.type) {
-    ContractCommands.reportContractCompleted -> contract.copy(
+    ContractCommands.contractCompleted -> contract.copy(
         status = ContractStatus.completed
     )
     else -> contract
