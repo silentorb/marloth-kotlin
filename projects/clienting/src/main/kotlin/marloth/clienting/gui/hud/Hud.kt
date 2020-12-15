@@ -1,18 +1,21 @@
 package marloth.clienting.gui.hud
 
 import marloth.clienting.ClientState
-import marloth.clienting.DeviceMode
+import marloth.clienting.gui.DeviceMode
 import marloth.clienting.gui.TextResources
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.TextStyles
 import marloth.clienting.gui.menus.black
+import marloth.clienting.gui.menus.general.verticalList
 import silentorb.mythic.bloom.*
 import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugString
+import marloth.clienting.gui.Colors
 import silentorb.mythic.ent.Id
 import simulation.combat.general.ResourceContainer
 import simulation.entities.Interactable
+import simulation.happenings.Notification
 import simulation.main.World
 import simulation.misc.getVictoryKeyStats
 import simulation.misc.highPercentage
@@ -42,7 +45,28 @@ fun reverseResourceString(resource: ResourceContainer): String {
 
 val df = java.text.DecimalFormat("#0.00")
 
-private fun playerStats(world: World, actor: Id, debugInfo: List<String>): Flower {
+fun notificationFlower(notification: Notification): Box {
+  val from = notification.from
+  return boxMargin(10)(
+      verticalList(listOfNotNull(
+          label(TextStyles.smallWhite, notification.message),
+          if (from != null) label(TextStyles.smallGray, from) else null,
+      ))
+  ) depictBehind solidBackground(Colors.darkGray)
+}
+
+fun notificationsFlower(notifications: List<Notification>): Flower =
+    alignBoth(justifiedStart, justifiedEnd,
+        hudBox(
+            boxList(verticalPlane, 10)(
+                notifications
+                    .sortedBy { it.elapsedTime }
+                    .map(::notificationFlower)
+            )
+        )
+    )
+
+fun playerStats(world: World, actor: Id, debugInfo: List<String>): Flower {
   val deck = world.deck
   val destructible = deck.destructibles[actor]!!
   val character = deck.characters[actor]!!
@@ -103,7 +127,7 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
   val definitions = world.definitions
   val grid = world.realm.grid
   val guiState = clientState.guiStates[player]
-
+  val notifications = guiState?.notifications ?: listOf()
   val character = deck.characters[player]
   val characterRig = deck.characterRigs[player]
   return if (character == null)
@@ -118,6 +142,7 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
     val interactable = if (view == null)
       deck.interactables[character.canInteractWith]
     else null
+
 
     val cooldowns = accessories
         .mapNotNull { (accessory, accessoryRecord) ->
@@ -170,6 +195,7 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
     compose(listOfNotNull(
         if (interactable != null) interactionDialog(getInteractKeyText(guiState!!.primarydeviceMode), textResources, interactable) else null,
         playerStats(world, player, debugInfo),
+        if (notifications.any()) notificationsFlower(notifications) else null,
         if (cooldowns.any()) cooldownIndicatorPlacement(cooldowns) else null,
         if (viewMode == ViewMode.firstPerson) reticlePlacement() else null
     ))

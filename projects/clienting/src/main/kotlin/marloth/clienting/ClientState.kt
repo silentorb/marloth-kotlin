@@ -1,43 +1,24 @@
 package marloth.clienting
 
+import marloth.clienting.audio.AudioConfig
 import marloth.clienting.editing.newEditor
+import marloth.clienting.gui.GuiState
 import marloth.clienting.input.InputState
 import marloth.clienting.gui.ViewId
-import marloth.clienting.gui.menus.logic.DisplayChangeState
-import marloth.clienting.gui.menus.logic.MenuStack
+import marloth.clienting.input.GameInputConfig
+import marloth.clienting.input.newInputState
 import marloth.scenery.enums.TextResourceMapper
 import silentorb.mythic.aura.AudioState
-import silentorb.mythic.bloom.old.BloomState
-import silentorb.mythic.bloom.Box
-import silentorb.mythic.bloom.Flower
+import silentorb.mythic.aura.newAudioState
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.editing.Editor
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.platforming.DisplayMode
-import simulation.misc.Definitions
 
 const val canvasRendererKey = "renderer"
 
 typealias PlayerViews = Map<Id, ViewId?>
-
-enum class DeviceMode {
-  mouseKeyboard,
-  gamepad
-}
-
-data class GuiState(
-    val bloom: BloomState,
-    val menuStack: MenuStack,
-    val view: ViewId?,
-    val menuFocusIndex: Int,
-    val displayChange: DisplayChangeState? = null,
-    val primarydeviceMode: DeviceMode,
-)
-
-typealias GuiStateMap = Map<Id, GuiState>
-typealias StateFlower = (Definitions, GuiState) -> Box
-typealias StateFlowerTransform = (Definitions, GuiState) -> Flower
 
 fun initialEditor(textLibrary: TextResourceMapper): Editor? =
     if (getDebugBoolean("START_EDITOR"))
@@ -60,3 +41,20 @@ data class ClientState(
     // The only reason for this players list is to keep track of the client player order.
     val players: List<Id>
 )
+
+fun newClientState(
+    textLibrary: TextResourceMapper,
+    inputConfig: GameInputConfig,
+    audioConfig: AudioConfig,
+    displayModes: List<DisplayMode>
+) =
+    ClientState(
+        input = newInputState(inputConfig),
+        guiStates = mapOf(),
+        audio = newAudioState(audioConfig.soundVolume),
+        commands = listOf(),
+        players = listOf(),
+        events = listOf(),
+        displayModes = displayModes,
+        editor = initialEditor(textLibrary)
+    )

@@ -3,7 +3,7 @@ package marloth.clienting.gui.menus.logic
 import marloth.clienting.ClientEvent
 import marloth.clienting.ClientEventType
 import marloth.clienting.ClientState
-import marloth.clienting.GuiState
+import marloth.clienting.gui.GuiState
 import marloth.clienting.gui.ViewId
 import marloth.clienting.input.GuiCommandType
 import silentorb.mythic.ent.firstNotNull

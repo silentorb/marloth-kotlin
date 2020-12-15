@@ -1,18 +1,18 @@
 package marloth.clienting.gui.menus.views.interaction
 
-import marloth.clienting.StateFlowerTransform
-import marloth.clienting.gui.menus.*
+import marloth.clienting.gui.menus.TextStyles
 import marloth.clienting.gui.menus.general.MenuItem
 import marloth.clienting.gui.menus.general.menuFlower
 import marloth.clienting.gui.menus.general.menuTextFlower
 import marloth.scenery.enums.TextId
 import marloth.scenery.enums.TextResourceMapper
-import silentorb.mythic.bloom.*
+import silentorb.mythic.bloom.Box
+import silentorb.mythic.bloom.boxList2
+import silentorb.mythic.bloom.horizontalPlane
+import silentorb.mythic.bloom.label
 import silentorb.mythic.ent.Id
-import simulation.characters.Character
 import simulation.entities.Ware
 import simulation.happenings.PurchaseEvent
-import simulation.main.Deck
 import simulation.misc.Definitions
 
 fun wareMenuItem(definitions: Definitions, merchant: Id, player: Id,

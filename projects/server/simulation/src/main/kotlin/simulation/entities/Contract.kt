@@ -32,7 +32,6 @@ object ContractCommands {
   const val removeAvailableContract = "removeAvailableContract"
   const val contractCompleted = "reportContractCompleted"
   const val payAgent = "payAgent"
-  const val tooSoon = "tooSoon"
 }
 
 data class ClearAreaTask(

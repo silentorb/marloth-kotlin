@@ -1,6 +1,6 @@
 package marloth.clienting.gui.menus.views.character
 
-import marloth.clienting.StateFlowerTransform
+import marloth.clienting.gui.StateFlowerTransform
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.*
 import marloth.clienting.gui.menus.general.Tab

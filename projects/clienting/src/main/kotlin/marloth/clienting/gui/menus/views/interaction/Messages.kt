@@ -1,6 +1,6 @@
 package marloth.clienting.gui.menus.views.interaction
 
-import marloth.clienting.StateFlowerTransform
+import marloth.clienting.gui.StateFlowerTransform
 import marloth.clienting.gui.menus.TextStyles
 import marloth.clienting.gui.menus.dialog
 import marloth.clienting.gui.menus.dialogWrapper

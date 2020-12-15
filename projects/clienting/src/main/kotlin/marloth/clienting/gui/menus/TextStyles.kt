@@ -1,6 +1,6 @@
 package marloth.clienting.gui.menus
 
-import silentorb.mythic.drawing.Colors
+import marloth.clienting.gui.Colors
 import silentorb.mythic.drawing.grayTone
 import silentorb.mythic.typography.FontLoadInfo
 import silentorb.mythic.typography.IndexedTextStyle

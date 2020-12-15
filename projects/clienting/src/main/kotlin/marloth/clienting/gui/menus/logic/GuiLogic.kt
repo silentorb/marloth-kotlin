@@ -1,8 +1,7 @@
 package marloth.clienting.gui.menus.logic
 
 import marloth.clienting.*
-import marloth.clienting.gui.BloomDefinition
-import marloth.clienting.gui.ViewId
+import marloth.clienting.gui.*
 import marloth.clienting.input.GuiCommandType
 import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.bloom.OffsetBox
@@ -13,7 +12,9 @@ import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.platforming.Devices
 import silentorb.mythic.spatial.Vector2i
+import simulation.happenings.updateNotifications
 import simulation.main.Deck
+import simulation.updating.simulationDelta
 
 fun eventsFromGuiState(state: GuiState): List<ClientEvent> {
   val timeout = state.displayChange?.timeout
@@ -70,6 +71,7 @@ fun updateGuiState(
       menuStack = updateMenuStack(state)(commands, state.menuStack),
       displayChange = displayChange,
       primarydeviceMode = updatePrimaryDeviceMode(commands, state.primarydeviceMode),
+      notifications = updateNotifications(simulationDelta, commands, state.notifications)
   )
 }
 

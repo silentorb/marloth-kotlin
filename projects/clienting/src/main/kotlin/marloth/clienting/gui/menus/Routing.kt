@@ -2,7 +2,7 @@ package marloth.clienting.gui.menus
 
 import marloth.clienting.AppOptions
 import marloth.clienting.ClientState
-import marloth.clienting.StateFlowerTransform
+import marloth.clienting.gui.StateFlowerTransform
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.emptyViewFlower
 import marloth.clienting.gui.menus.general.simpleMenuFlower
@@ -31,7 +31,6 @@ fun viewSelect(world: World?, options: AppOptions, clientState: ClientState, vie
     ViewId.characterContracts -> characterContractsView(world!!.deck, player)
     ViewId.chooseProfessionMenu -> dialogWrapper(simpleMenuFlower(TextId.gui_chooseProfessionMenu, chooseProfessionMenu(player)))
     ViewId.mainMenu -> mainMenu(world)
-    ViewId.messageTooSoon -> messageTooSoon
     ViewId.conversation -> conversationView(world!!.deck, player)
     ViewId.conversationActiveContracts -> clientActiveContractsView(world!!.deck, player)
     ViewId.conversationAvailableContracts -> clientAvailableContractsView(world!!.deck, player)

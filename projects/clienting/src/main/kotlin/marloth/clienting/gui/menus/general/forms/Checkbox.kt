@@ -1,7 +1,7 @@
 package marloth.clienting.gui.menus.general.forms
 
 import silentorb.mythic.bloom.*
-import silentorb.mythic.drawing.Colors
+import marloth.clienting.gui.Colors
 
 const val checkboxIdKey = "silentorb.bloom.checkbox"
 

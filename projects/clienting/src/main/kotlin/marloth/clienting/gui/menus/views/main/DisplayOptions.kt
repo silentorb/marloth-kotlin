@@ -2,7 +2,7 @@ package marloth.clienting.gui.menus.views.main
 
 import marloth.clienting.ClientEventType
 import marloth.clienting.ClientState
-import marloth.clienting.StateFlowerTransform
+import marloth.clienting.gui.StateFlowerTransform
 import marloth.clienting.gui.menus.*
 import marloth.clienting.gui.menus.general.forms.clientEventSpinHandlers
 import marloth.clienting.gui.menus.general.forms.menuField

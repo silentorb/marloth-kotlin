@@ -1,13 +1,12 @@
 package marloth.clienting.gui.menus.views.interaction
 
-import marloth.clienting.StateFlower
-import marloth.clienting.StateFlowerTransform
+import marloth.clienting.gui.StateFlower
+import marloth.clienting.gui.StateFlowerTransform
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.*
 import marloth.clienting.gui.menus.general.Tab
 import marloth.clienting.gui.menus.general.tabDialog
 import marloth.scenery.enums.DevText
-import silentorb.mythic.bloom.emptyFlower
 import silentorb.mythic.bloom.label
 import silentorb.mythic.ent.Id
 import simulation.characters.Character

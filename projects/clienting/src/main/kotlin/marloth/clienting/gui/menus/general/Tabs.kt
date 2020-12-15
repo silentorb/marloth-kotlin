@@ -1,8 +1,8 @@
 package marloth.clienting.gui.menus.general
 
 import marloth.clienting.ClientEventType
-import marloth.clienting.StateFlower
-import marloth.clienting.StateFlowerTransform
+import marloth.clienting.gui.StateFlower
+import marloth.clienting.gui.StateFlowerTransform
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.TextStyles
 import marloth.clienting.gui.menus.dialog

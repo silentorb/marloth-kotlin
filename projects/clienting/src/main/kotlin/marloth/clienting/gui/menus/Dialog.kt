@@ -1,7 +1,7 @@
 package marloth.clienting.gui.menus
 
-import marloth.clienting.StateFlower
-import marloth.clienting.StateFlowerTransform
+import marloth.clienting.gui.StateFlower
+import marloth.clienting.gui.StateFlowerTransform
 import marloth.clienting.gui.hud.versionDisplay
 import marloth.clienting.gui.menuBackground
 import marloth.clienting.gui.menus.general.faintBlack

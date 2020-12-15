@@ -1,22 +1,18 @@
 package marloth.clienting
 
-import marloth.clienting.audio.AudioConfig
+import marloth.clienting.gui.DeviceMode
+import marloth.clienting.gui.GuiState
 import marloth.clienting.gui.TextResources
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.TextStyles
 import marloth.clienting.gui.menus.baseFonts
-import marloth.clienting.input.GameInputConfig
-import marloth.clienting.input.newInputState
 import marloth.definition.texts.englishTextResources
-import marloth.scenery.enums.TextResourceMapper
 import silentorb.mythic.aura.SoundLibrary
-import silentorb.mythic.aura.newAudioState
 import silentorb.mythic.bloom.old.newBloomState
 import silentorb.mythic.editing.closeImGui
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.lookinglass.texturing.TextureLoadingState
-import silentorb.mythic.platforming.DisplayMode
 import silentorb.mythic.platforming.Platform
 import silentorb.mythic.typography.loadFontSets
 
@@ -29,23 +25,6 @@ fun newMarlothBloomState(primarydeviceMode: DeviceMode) =
         view = null,
         menuFocusIndex = 0,
         primarydeviceMode = primarydeviceMode,
-    )
-
-fun newClientState(
-    textLibrary: TextResourceMapper,
-    inputConfig: GameInputConfig,
-    audioConfig: AudioConfig,
-    displayModes: List<DisplayMode>
-) =
-    ClientState(
-        input = newInputState(inputConfig),
-        guiStates = mapOf(),
-        audio = newAudioState(audioConfig.soundVolume),
-        commands = listOf(),
-        players = listOf(),
-        events = listOf(),
-        displayModes = displayModes,
-        editor = initialEditor(textLibrary)
     )
 
 fun playerViews(client: ClientState): Map<Id, ViewId?> =
