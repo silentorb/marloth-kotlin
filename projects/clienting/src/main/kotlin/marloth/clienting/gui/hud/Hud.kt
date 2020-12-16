@@ -56,7 +56,7 @@ fun notificationFlower(notification: Notification): Box {
 }
 
 fun notificationsFlower(notifications: List<Notification>): Flower =
-    alignBoth(justifiedStart, justifiedEnd,
+    alignBoth(justifiedEnd, centered,
         hudBox(
             boxList(verticalPlane, 10)(
                 notifications

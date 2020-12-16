@@ -6,6 +6,7 @@ import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Commands
 import simulation.entities.ContractCommands
 import simulation.happenings.Request
+import simulation.happenings.notify
 import simulation.happenings.requestCommandType
 import simulation.intellect.Spirit
 import simulation.main.World
@@ -17,10 +18,10 @@ fun spiritHandleRequest(world: World, spirit: Id, request: Request): Commands =
         val contract = request.value as Id
         val contractRecord = world.deck.contracts[contract]
         if (contractRecord != null) {
-          val duration = world.step - contractRecord.start / simulationFps
-          if (duration < 60)
+          val duration = (world.step - contractRecord.start) / simulationFps
+          if (duration < 30)
             listOf(
-                Command(ContractCommands.tooSoon, target = request.from),
+                notify(contractRecord.agent, "You couldn't be done yet."),
             )
           else
             listOf(

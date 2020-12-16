@@ -73,10 +73,3 @@ fun characterMovementsToImpulses(
         characterMovementToImpulse(actor, offset, characterRigs[actor]!!, moveSpeedTable[actor]!!, bodies[actor]!!.velocity)
       }
 }
-//    events
-//        .filterIsInstance<CharacterRigMovement>()
-//        .filter {
-//          hasFreedom(freedomTable[it.actor]
-//              ?: Freedom.none, Freedom.walking)
-//        }
-//        .map { characterMovementToImpulse(it, characterRigs[it.actor]!!, moveSpeedTable[it.actor]!!, bodies[it.actor]!!.velocity) }

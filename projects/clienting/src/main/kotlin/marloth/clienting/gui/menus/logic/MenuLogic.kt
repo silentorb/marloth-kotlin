@@ -78,8 +78,8 @@ fun getHoverIndex(hoverBoxes: List<OffsetBox>): Int? =
 fun updateMenuFocus(stack: MenuStack, menuSize: Int, hoverFocusIndex: Int?) =
     handleCommands<Int> { command, index ->
       when (command.type) {
-        CharacterRigCommands.moveDown -> cycle(index + 1, menuSize)
-        CharacterRigCommands.moveUp -> cycle(index - 1, menuSize)
+        CharacterRigCommands.moveBackward -> cycle(index + 1, menuSize)
+        CharacterRigCommands.moveForward -> cycle(index - 1, menuSize)
         ClientEventType.navigate, ClientEventType.drillDown -> 0
         ClientEventType.menuBack -> stack.lastOrNull()?.focusIndex ?: 0
         else -> hoverFocusIndex ?: index

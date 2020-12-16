@@ -33,7 +33,7 @@ fun monsterDefinitions(): Map<String, CharacterDefinition> =
             health = 100,
             accessories = listOf(AccessoryId.claws, AccessoryId.dash),
             depictionType = DepictionType.hound,
-            speed = 4f,
+            speed = 8f,
             deathSound = null,
             ambientSounds = listOf()
         )

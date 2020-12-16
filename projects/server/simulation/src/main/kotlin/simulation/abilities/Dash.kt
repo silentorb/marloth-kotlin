@@ -8,29 +8,31 @@ import silentorb.mythic.timing.FloatTimer
 import simulation.accessorize.AccessoryStack
 import simulation.happenings.NewHandEvent
 import simulation.main.Hand
+import simulation.main.NewHand
 import simulation.misc.Definitions
 
 fun dashBonus(level: Int): Float =
-    when (level) {
-      1 -> 1.5f
-      2 -> 2f
-      3 -> 2.5f
-      else -> 1f
-    }
+    2f
+//    when (level) {
+//      1 -> 1.5f
+//      2 -> 2f
+//      3 -> 2.5f
+//      else -> 1f
+//    }
 
 fun dashEvents(definitions: Definitions, accessory: Accessory, actor: Id): Events {
   val definition = definitions.actions[accessory.type]!!
   return listOf(
-      NewHandEvent(
-          hand = Hand(
-              accessory = AccessoryStack(
+      NewHand(
+          components = listOf(
+              AccessoryStack(
                   value = Accessory(
                       type = AccessoryId.dashing,
                       level = accessory.level,
                   ),
                   owner = actor,
               ),
-              timerFloat = FloatTimer(definition.duration)
+              FloatTimer(definition.duration),
           )
       )
   )

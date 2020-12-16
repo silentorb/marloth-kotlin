@@ -167,8 +167,8 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
             equippedMesh = null
         ),
         action = ActionDefinition(
-            cooldown = 3f,
-            range = 3f,
+            cooldown = 1f,
+            range = 3.5f,
             animation = AnimationId.clawAttack,
             equipmentSlot = EquipmentSlot.attack
         ),
@@ -177,7 +177,7 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
             damages = listOf(
                 DamageDefinition(
                     type = DamageTypes.physical,
-                    amount = 70
+                    amount = 80
                 )
             ),
             sound = SoundId.pistolFire

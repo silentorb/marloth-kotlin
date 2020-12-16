@@ -174,6 +174,7 @@ fun updateFixedInterval(app: GameApp, boxes: PlayerBoxes, playerBloomDefinitions
     pipe(
         { appState ->
           app.platform.process.pollEvents()
+          val deferredCommands = appState.worlds.lastOrNull()?.nextCommands ?: listOf()
           val clientState = updateClient(
               app.client,
               app.definitions.textLibrary,
@@ -181,7 +182,8 @@ fun updateFixedInterval(app: GameApp, boxes: PlayerBoxes, playerBloomDefinitions
               appState.worlds,
               boxes,
               playerBloomDefinitions,
-              appState.client
+              appState.client,
+              deferredCommands
           )
 
           checkRestartGame(app, appState, clientState) ?: updateAppStateWorlds(app, appState, clientState)

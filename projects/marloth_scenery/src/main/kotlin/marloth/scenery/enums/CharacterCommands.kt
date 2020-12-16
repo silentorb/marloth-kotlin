@@ -8,8 +8,8 @@ object CharacterRigCommands {
   const val lookUp = CameramanCommands.lookUp
   const val lookDown = CameramanCommands.lookDown
 
-  const val moveUp = CameramanCommands.moveForward
-  const val moveDown = CameramanCommands.moveBackwards
+  const val moveForward = CameramanCommands.moveForward
+  const val moveBackward = CameramanCommands.moveBackward
   const val moveLeft = CameramanCommands.moveLeft
   const val moveRight = CameramanCommands.moveRight
 
@@ -22,8 +22,8 @@ object CharacterCommands {
   const val lookUp = CharacterRigCommands.lookUp
   const val lookDown = CharacterRigCommands.lookDown
 
-  const val moveUp = CharacterRigCommands.moveUp
-  const val moveDown = CharacterRigCommands.moveDown
+  const val moveUp = CharacterRigCommands.moveForward
+  const val moveDown = CharacterRigCommands.moveBackward
   const val moveLeft = CharacterRigCommands.moveLeft
   const val moveRight = CharacterRigCommands.moveRight
 
