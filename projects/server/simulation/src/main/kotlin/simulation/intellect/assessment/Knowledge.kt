@@ -21,7 +21,6 @@ data class CharacterMemory(
 )
 
 data class Knowledge(
-//    val grid: MapGrid,
     val characters: Table<CharacterMemory>
 )
 

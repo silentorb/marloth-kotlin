@@ -1,9 +1,9 @@
 package simulation.intellect.execution
 
 import marloth.scenery.enums.AccessoryId
-import marloth.scenery.enums.CharacterCommands
 import marloth.scenery.enums.CharacterRigCommands
 import org.recast4j.detour.DefaultQueryFilter
+import org.recast4j.detour.StraightPathItem
 import simulation.accessorize.getAccessory
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Command
@@ -20,24 +20,24 @@ import simulation.intellect.design.getActionRange
 import simulation.intellect.navigation.nearestPolygon
 import simulation.main.World
 
-fun getPathTargetPosition(world: World, character: Id, pursuit: Pursuit): Vector3? {
-  val body = world.deck.bodies[character]!!
-  val shape = world.deck.collisionObjects[character]!!.shape
+fun getPath(world: World, actor: Id, targetPosition: Vector3): List<StraightPathItem> {
+  val body = world.deck.bodies[actor]!!
+  val shape = world.deck.collisionObjects[actor]!!.shape
   val query = world.navigation?.query
   if (query == null)
     throw Error("Missing navMeshQuery")
 
   val startOriginal = body.position + Vector3(0f, 0f, -shape.height / 2f)
   val start = toRecastVector3(startOriginal)
-  val end = toRecastVector3(pursuit.targetPosition!!)
+  val end = toRecastVector3(targetPosition)
   val queryFilter = DefaultQueryFilter()
   val startPolygon = nearestPolygon(world.navigation, startOriginal)
   if (startPolygon == null)
-    return null
+    return listOf()
 
-  val endPolygon = nearestPolygon(world.navigation, pursuit.targetPosition)
+  val endPolygon = nearestPolygon(world.navigation, targetPosition)
   if (endPolygon == null)
-    return null
+    return listOf()
 
   val path = query.findPath(
       startPolygon.result.nearestRef,
@@ -48,22 +48,32 @@ fun getPathTargetPosition(world: World, character: Id, pursuit: Pursuit): Vector
   )
 
   if (path.failed())
-    return null
+    return listOf()
 
   val pathResult = query.findStraightPath(start, end, path.result, 2, 0)
   if (pathResult.failed())
-    return null
+    return listOf()
 
+  return pathResult.result
 //  assert(pathResult != null)
 //  assert(pathResult.result != null)
 //  assert(pathResult.result.size > 0)
 //  assert(pathResult.result[0] != null)
-  val nextPoint = fromRecastVector3(pathResult.result.last().pos)
-  return if (nextPoint.distance(body.position) < 0.1f) {
-    assert(pathResult.result.size > 1)
-    fromRecastVector3(pathResult.result[1].pos)
-  } else
-    nextPoint
+}
+
+fun getPathTargetPosition(world: World, actor: Id, targetPosition: Vector3): Vector3? {
+  val body = world.deck.bodies[actor]!!
+  val path = getPath(world, actor, targetPosition)
+  return if (path.none())
+    null
+  else {
+    val nextPoint = fromRecastVector3(path.last().pos)
+    if (nextPoint.distance(body.position) < 0.1f) {
+      assert(path.size > 1)
+      fromRecastVector3(path[1].pos)
+    } else
+      nextPoint
+  }
 }
 
 fun tryUseDash(world: World, actor: Id): Events {
@@ -107,7 +117,7 @@ fun moveStraightTowardPosition(world: World, actor: Id, target: Vector3): Events
 }
 
 fun moveSpirit(world: World, character: Id, knowledge: Knowledge, pursuit: Pursuit): Events {
-  val target = getPathTargetPosition(world, character, pursuit)
+  val target = getPathTargetPosition(world, character, pursuit.targetPosition!!)
   return if (target != null)
     moveStraightTowardPosition(world, character, target)
   else

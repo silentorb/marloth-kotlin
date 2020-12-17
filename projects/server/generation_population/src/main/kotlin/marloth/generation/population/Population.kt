@@ -8,6 +8,7 @@ import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.scenery.filterByAttribute
 import silentorb.mythic.ent.scenery.gatherChildren
+import silentorb.mythic.ent.scenery.getNodeTransform
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.timing.FloatCycle
@@ -57,9 +58,13 @@ fun populateZone(nextId: IdSource, definitions: Definitions, dice: Dice, graph: 
   val selection = dice.take(spawners, count)
   return selection.map { spawner ->
     val definition = definitions.professions[CreatureId.hound]!!
-    newCharacter(nextId, definitions, definition, graph, spawner, Factions.monsters)
+    val transform = getNodeTransform(graph, spawner)
+    newCharacter(nextId, definitions, definition, transform, Factions.monsters)
         .plusComponents(
-            Spirit(),
+            Spirit(
+                post = transform.translation(),
+                zone = zone,
+            ),
             newKnowledge()
         )
   }

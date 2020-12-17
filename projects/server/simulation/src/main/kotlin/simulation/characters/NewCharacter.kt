@@ -10,10 +10,7 @@ import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.scenery.Capsule
-import silentorb.mythic.spatial.Pi
-import silentorb.mythic.spatial.Quaternion
-import silentorb.mythic.spatial.Vector2
-import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.*
 import simulation.accessorize.Accessory
 import simulation.accessorize.AccessoryStack
 import simulation.combat.general.Destructible
@@ -124,7 +121,11 @@ fun newCharacter(
   )
 }
 
+fun newCharacter(nextId: IdSource, definitions: Definitions, definition: CharacterDefinition, transform: Matrix, faction: Id = Factions.neutral): NewHand {
+  return newCharacter(nextId(), definitions, definition, faction, transform.translation(), transform.rotation().z)
+}
+
 fun newCharacter(nextId: IdSource, definitions: Definitions, definition: CharacterDefinition, graph: Graph, node: Key, faction: Id = Factions.neutral): NewHand {
   val transform = getNodeTransform(graph, node)
-  return newCharacter(nextId(), definitions, definition, faction, transform.translation(), transform.rotation().z)
+  return newCharacter(nextId, definitions, definition, transform, faction)
 }
