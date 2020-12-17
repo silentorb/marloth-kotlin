@@ -3,34 +3,11 @@ package simulation.intellect.design
 import silentorb.mythic.ent.Id
 import silentorb.mythic.intellect.navigation.fromRecastVector3
 import silentorb.mythic.spatial.Vector3
-import simulation.intellect.Path
 import simulation.intellect.Pursuit
 import simulation.intellect.assessment.Knowledge
 import simulation.intellect.execution.getPath
-import simulation.intellect.execution.getPathTargetPosition
 import simulation.intellect.navigation.nearestPolygon
 import simulation.main.World
-import simulation.misc.*
-
-fun isCellExplorableByMonsters(attributes: Set<CellAttribute>): Boolean =
-    attributes.contains(CellAttribute.traversable)
-        && !attributes.contains(CellAttribute.home)
-
-fun startRoamingOld(world: World, character: Id, knowledge: Knowledge): Vector3? {
-  val body = world.deck.bodies[character]!!
-  val currentCell = getPointCell(body.position)
-//  val options = knowledge.grid.cells
-  val options = world.realm.grid.cells
-      .filter { isCellExplorableByMonsters(it.value.attributes) && it.value.slots.any() }
-      .keys.minus(currentCell)
-  return if (options.none())
-    null
-  else {
-    val destination = world.dice.takeOne(options)
-    val destinationCell = world.realm.grid.cells[destination]!!
-    world.dice.takeOne(cellSlots(destination, destinationCell))
-  }
-}
 
 fun startRoaming(world: World, actor: Id, knowledge: Knowledge): Vector3? {
   val post = world.deck.spirits[actor]?.post
@@ -53,25 +30,8 @@ fun startRoaming(world: World, actor: Id, knowledge: Knowledge): Vector3? {
         null
     } else
       null
-//    val path = getPath(world, actor, target)
-//    if (path.any()) {
-//      val last = fromRecastVector3(path.last().pos)
-//      if (last.distance(target) < 1f)
-//        last
-//      else
-//        null
-//    } else
-//      null
   } else
     null
-}
-
-fun getRemainingPath(node: Id, path: Path): Path {
-  val index = path.indexOf(node)
-  return if (index == -1)
-    path
-  else
-    path.drop(index + 1)
 }
 
 fun updateRoamingTargetPosition(world: World, actor: Id, knowledge: Knowledge, pursuit: Pursuit): Vector3? {

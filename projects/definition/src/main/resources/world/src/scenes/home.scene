@@ -1,5 +1,8 @@
 {
 "graph" : [
+["bed","parent","home"],
+["bed","type","bed"],
+["bed","translation",[-2.6781645,1.5260838,0.63343346]],
 ["floor","parent","home"],
 ["floor","mesh","floorSquare"],
 ["floor","texture","redTile"],

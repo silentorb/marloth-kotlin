@@ -87,13 +87,9 @@ fun updateGuiState(
   val state = bloomStates[player]
       ?: newMarlothBloomState(if (bloomStates.none()) DeviceMode.mouseKeyboard else DeviceMode.gamepad)
 
-  val gameCommands = if (playerCommands.any { it.type == CharacterCommands.interactPrimary }) {
-    val nextView = selectInteractionView(deck, player)
-    if (nextView != null)
-      listOf(Command(type = ClientEventType.navigate, target = player, value = nextView))
-    else
-      listOf()
-  } else
+  val gameCommands = if (playerCommands.any { it.type == CharacterCommands.interactPrimary })
+    getInteractionCommands(deck, player)
+  else
     listOf()
 
   val hoverBoxes = getHoverBoxes(mousePosition, boxes[player]!!)

@@ -13,7 +13,7 @@ fun updateSpirit(world: World, delta: Float): (Id, Spirit) -> Spirit = { id, spi
       spirit
   else {
     val knowledge = world.deck.knowledge[id]!!
-    val pursuit = updatePursuit(world, id, knowledge, spirit.pursuit ?: Pursuit())
+    val pursuit = updatePursuit(world, id, knowledge, spirit)
     spirit.copy(
         pursuit = pursuit
     )

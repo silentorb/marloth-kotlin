@@ -9,6 +9,7 @@ import simulation.accessorize.eventsFromItemPickups
 import simulation.combat.spatial.eventsFromMissiles
 import simulation.combat.toSpatialCombatWorld
 import simulation.entities.eventsFromRespawnCountdowns
+import simulation.entities.gatherInteractCommands
 import simulation.intellect.aliveSpirits
 import simulation.intellect.execution.pursueGoals
 import simulation.intellect.execution.spiritsHandleRequests
@@ -50,7 +51,9 @@ fun withSimulationEvents(definitions: Definitions, previousDeck: Deck, world: Wo
 }
 
 fun gatherNextCommands(world: World, commands: Commands): Commands {
-  val spirits = aliveSpirits(world.deck)
+  val deck = world.deck
+  val spirits = aliveSpirits(deck)
   val spiritResponseCommands = spiritsHandleRequests(world, spirits, commands)
-  return spiritResponseCommands
+  val interactCommands = gatherInteractCommands(deck, commands)
+  return spiritResponseCommands + interactCommands
 }

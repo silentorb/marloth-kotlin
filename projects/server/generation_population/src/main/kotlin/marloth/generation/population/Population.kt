@@ -2,24 +2,29 @@ package marloth.generation.population
 
 import generation.architecture.engine.GenerationConfig
 import marloth.definition.data.characterDefinitions
+import marloth.definition.data.newSleepable
 import marloth.scenery.enums.CreatureId
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.IdSource
+import silentorb.mythic.ent.Key
 import silentorb.mythic.ent.scenery.filterByAttribute
 import silentorb.mythic.ent.scenery.gatherChildren
 import silentorb.mythic.ent.scenery.getNodeTransform
+import silentorb.mythic.physics.Body
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.timing.FloatCycle
 import simulation.characters.newCharacter
 import simulation.characters.newPlayerAndCharacter
 import simulation.intellect.Spirit
+import simulation.intellect.SpiritAttributes
 import simulation.intellect.assessment.newKnowledge
 import simulation.main.NewHand
 import simulation.misc.Definitions
 import simulation.misc.Entities
 import simulation.misc.Factions
+import simulation.misc.GameAttributes
 import kotlin.math.min
 
 fun cycleHands(nextId: IdSource) =
@@ -38,15 +43,51 @@ fun cycleHands(nextId: IdSource) =
         )
     )
 
+data class ExpansionContext(
+    val definitions: Definitions,
+    val graph: Graph,
+    val nextId: IdSource,
+)
+
+typealias NodeExpansion = (ExpansionContext, Key) -> NewHand
+typealias NodeExpansionMap = Map<Key, NodeExpansion>
+
+fun characterDefinitionExpansions(): NodeExpansionMap =
+    characterDefinitions()
+        .mapValues { (_, definition) ->
+          { context, node ->
+            newCharacter(context.nextId, context.definitions, definition, context.graph, node)
+                .plusComponents(
+                    Spirit(),
+                    newKnowledge()
+                )
+          }
+        }
+
+fun miscellaneousExpansions(): NodeExpansionMap =
+    mapOf(
+        GameAttributes.sleepable to { context, node ->
+          val transform = getNodeTransform(context.graph, node)
+          NewHand(
+              components = newSleepable() + listOf(
+                  Body(
+                      position = transform.translation()
+                  )
+              )
+          )
+        }
+    )
+
 fun graphToHands(definitions: Definitions, nextId: IdSource, graph: Graph): List<NewHand> {
-  val characterDefinitions = characterDefinitions()
-  val typeEntries = graph.filter { it.property == SceneProperties.type && characterDefinitions.containsKey(it.target) }
+  val expansions =
+      characterDefinitionExpansions() +
+          miscellaneousExpansions()
+
+  val typeEntries = graph.filter { it.property == SceneProperties.type && expansions.containsKey(it.target) }
+  val context = ExpansionContext(definitions, graph, nextId)
   return typeEntries.map { entry ->
-    newCharacter(nextId, definitions, characterDefinitions[entry.target]!!, graph, entry.source)
-        .plusComponents(
-            Spirit(),
-            newKnowledge()
-        )
+    val expansion = expansions[entry.target]!!
+    expansion(context, entry.source)
   }
 }
 
@@ -64,6 +105,7 @@ fun populateZone(nextId: IdSource, definitions: Definitions, dice: Dice, graph: 
             Spirit(
                 post = transform.translation(),
                 zone = zone,
+                attributes = setOf(SpiritAttributes.isAggressive)
             ),
             newKnowledge()
         )

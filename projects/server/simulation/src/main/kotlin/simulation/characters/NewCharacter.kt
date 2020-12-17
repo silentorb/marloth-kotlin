@@ -112,7 +112,7 @@ fun newCharacter(
             Interactable(
                 primaryCommand = WidgetCommand(
                     text = TextId.menu_talk,
-                    clientCommand = ClientCommand.showConversationView
+                    commandType = ClientCommand.showConversationView
                 )
             )
           } else

@@ -2,6 +2,8 @@ package simulation.intellect.design
 
 import silentorb.mythic.ent.Id
 import simulation.intellect.Pursuit
+import simulation.intellect.Spirit
+import simulation.intellect.SpiritAttributes
 import simulation.intellect.assessment.Knowledge
 import simulation.intellect.assessment.getVisibleEnemies
 import simulation.main.Deck
@@ -24,8 +26,7 @@ fun getActionRange(deck: Deck, definitions: Definitions): (Id) -> Float = { acti
   definition.range
 }
 
-fun updatePursuit(world: World, actor: Id, knowledge: Knowledge, pursuit: Pursuit): Pursuit {
-  val deck = world.deck
+fun updateAggression(world: World, actor: Id, knowledge: Knowledge, pursuit: Pursuit): Pursuit {
   val targetEnemy = updateTargetEnemy(world, actor, knowledge, pursuit)
   val target = knowledge.characters[pursuit.targetEnemy]
   val actions = if (target != null)
@@ -42,4 +43,12 @@ fun updatePursuit(world: World, actor: Id, knowledge: Knowledge, pursuit: Pursui
       targetEnemy = targetEnemy,
       targetPosition = targetPosition
   )
+}
+
+fun updatePursuit(world: World, actor: Id, knowledge: Knowledge, spirit: Spirit): Pursuit {
+  val pursuit = spirit.pursuit ?: Pursuit()
+  return if (spirit.attributes.contains(SpiritAttributes.isAggressive))
+    updateAggression(world, actor, knowledge, pursuit)
+  else
+    pursuit
 }

@@ -1,0 +1,14 @@
+{
+"graph" : [
+["bed","",""],
+["mattress","parent","bed"],
+["mattress","mesh","cube"],
+["mattress","scale",[0.848116,1.5548011,0.18356985]],
+["mattress","collisionShape","box"],
+["mattress","type","solid-static"],
+["pillow","mesh","cube"],
+["pillow","parent","bed"],
+["pillow","scale",[0.6586754,0.35745,0.1250504]],
+["pillow","translation",[0.0,1.0794456,0.27167794]]
+]
+}

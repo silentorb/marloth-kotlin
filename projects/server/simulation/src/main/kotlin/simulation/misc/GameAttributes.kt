@@ -9,4 +9,5 @@ object Entities {
 object GameAttributes {
   val playerSpawn = "playerSpawn"
   val resource = "resource"
+  val sleepable = "sleepable"
 }

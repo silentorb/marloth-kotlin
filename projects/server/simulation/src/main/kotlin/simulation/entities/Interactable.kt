@@ -1,14 +1,19 @@
 package simulation.entities
 
+import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.ent.Id
 import marloth.scenery.enums.ClientCommand
 import marloth.scenery.enums.Text
+import silentorb.mythic.happenings.Command
+import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.EventTrigger
+import simulation.main.Deck
 
 data class WidgetCommand(
     val text: Text,
     val action: EventTrigger? = null,
-    val clientCommand: ClientCommand? = null
+    val commandType: Any? = null,
+    val commandValue: Any? = null,
 )
 
 data class Interactable(
@@ -21,15 +26,22 @@ private const val interactableMaxRotation = 0.99f
 
 typealias InteractableEntry = Map.Entry<Id, Interactable>
 
-//fun getVisibleInteractable(deck: Deck, player: Id): InteractableEntry? {
-//  val playerBody = deck.bodies[player]!!
-//  val playerCharacter = deck.silentorb.mythic.characters[player]!!
-//  val f = playerCharacter.facingVector
-//  val facingVector = Vector3(f.x, f.y, 0f)
-//  return deck.interactables.filter { (id, _) ->
-//    val body = deck.bodies[id]!!
-//    val isInRange = body.position.distance(playerBody.position) < interactableMaxDistance
-//    val isInFront = (body.position - playerBody.position).normalize().dot(facingVector) > interactableMaxRotation
-//    isInRange && isInFront
-//  }.entries.firstOrNull()
-//}
+fun gatherInteractCommands(deck: Deck, commands: Commands): Commands {
+  return deck.players.keys.mapNotNull { player ->
+    if (commands.any { it.type == CharacterCommands.interactPrimary && it.target == player }) {
+      val interactingWith = deck.characters[player]?.interactingWith
+      val interaction = deck.interactables[interactingWith]
+      val primaryCommand = interaction?.primaryCommand
+      val commandType = primaryCommand?.commandType
+      if (commandType != null)
+        Command(
+            type = commandType,
+            target = player,
+            value = primaryCommand.commandValue,
+        )
+      else
+        null
+    } else
+      null
+  }
+}
