@@ -74,7 +74,6 @@ fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletStat
     null
 
   val nourishmentAdjustment = getNourishmentEventsAdjustment(definitions, deck, actor, events)
-  val energyAdjustment = 0
   val intVelocity = toInt1000(body.velocity.length())
 
   return character.copy(
@@ -86,7 +85,7 @@ fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletStat
       accessoryPoints = updateAccessoryPoints(events, character),
       accessoryOptions = updateAccessoryOptions(definitions, dice, deck, events, actor, character),
       nourishment = updateNourishment(1, intVelocity, nourishmentAdjustment, character.nourishment),
-      energy = updateEnergy(1, intVelocity, energyAdjustment, character.energy),
+      energy = updateEnergy(character, intVelocity, commands),
       availableContracts = updateAvailableContracts(commands, character.availableContracts),
   )
 }

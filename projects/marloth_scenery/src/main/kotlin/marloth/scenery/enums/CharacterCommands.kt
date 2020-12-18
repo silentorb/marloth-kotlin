@@ -40,6 +40,6 @@ object CharacterCommands {
   const val abilityMobility = "abilityMobility"
   const val abilityUtility = "abilityUtility"
 
-  // Commands that our circumstantial and not normally bound to user input buttons
+  // Commands that are circumstantial and not normally bound to user input buttons
   const val sleep = "sleep"
 }

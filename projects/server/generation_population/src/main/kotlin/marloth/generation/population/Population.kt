@@ -2,7 +2,7 @@ package marloth.generation.population
 
 import generation.architecture.engine.GenerationConfig
 import marloth.definition.data.characterDefinitions
-import marloth.definition.data.newSleepable
+import marloth.definition.data.miscellaneousDefinitions
 import marloth.scenery.enums.CreatureId
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.ent.Graph
@@ -11,7 +11,6 @@ import silentorb.mythic.ent.Key
 import silentorb.mythic.ent.scenery.filterByAttribute
 import silentorb.mythic.ent.scenery.gatherChildren
 import silentorb.mythic.ent.scenery.getNodeTransform
-import silentorb.mythic.physics.Body
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.timing.FloatCycle
@@ -24,7 +23,7 @@ import simulation.main.NewHand
 import simulation.misc.Definitions
 import simulation.misc.Entities
 import simulation.misc.Factions
-import simulation.misc.GameAttributes
+import simulation.misc.NodeReference
 import kotlin.math.min
 
 fun cycleHands(nextId: IdSource) =
@@ -65,18 +64,13 @@ fun characterDefinitionExpansions(): NodeExpansionMap =
         }
 
 fun miscellaneousExpansions(): NodeExpansionMap =
-    mapOf(
-        GameAttributes.sleepable to { context, node ->
-          val transform = getNodeTransform(context.graph, node)
-          NewHand(
-              components = newSleepable() + listOf(
-                  Body(
-                      position = transform.translation()
-                  )
-              )
-          )
-        }
-    )
+    miscellaneousDefinitions().mapValues { (_, hand) ->
+      { _, node ->
+        hand.plusComponents(
+            NodeReference(node)
+        )
+      }
+    }
 
 fun graphToHands(definitions: Definitions, nextId: IdSource, graph: Graph): List<NewHand> {
   val expansions =

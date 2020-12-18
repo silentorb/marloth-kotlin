@@ -8,6 +8,18 @@ import silentorb.mythic.spatial.Vector3
 import simulation.main.Deck
 import silentorb.mythic.physics.Collision
 
+fun getEntityId(deck: Deck, value: Any?): Id? {
+  val id = value as? Id
+  return if (id != null)
+    id
+  else {
+    val node = value as? String
+    deck.nodeReferences.entries
+        .firstOrNull { it.value.node == node }
+        ?.key
+  }
+}
+
 fun castInteractableRay(dynamicsWorld: btDiscreteDynamicsWorld, deck: Deck, player: Id): Id? {
   val body = deck.bodies[player]!!
   val characterRig = deck.characterRigs[player]!!
@@ -16,14 +28,14 @@ fun castInteractableRay(dynamicsWorld: btDiscreteDynamicsWorld, deck: Deck, play
   val start = body.position + Vector3(0f, 0f, 0.5f) + direction * shape.shape.radius
   val end = start + direction * 7f
   val callback = firstRayHit(dynamicsWorld, start, end, CollisionGroups.tangibleMask)
-  if (callback != null) {
-    val id = callback.collisionObject as? Id
-    if (deck.interactables.containsKey(id)) {
-      return id
-    }
-  }
-
-  return null
+  return if (callback != null) {
+    val id = getEntityId(deck, callback.collisionObject)
+    if (deck.interactables.containsKey(id))
+      id
+    else
+      null
+  } else
+    null
 }
 
 fun getBulletCollisions(bulletState: BulletState, deck: Deck): List<Collision> {
