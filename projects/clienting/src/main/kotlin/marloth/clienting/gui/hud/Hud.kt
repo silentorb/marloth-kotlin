@@ -74,9 +74,9 @@ fun playerStats(world: World, actor: Id, debugInfo: List<String>): Flower {
   val equipment = deck.accessories.filter { it.value.owner == actor }.values
   val rows = listOfNotNull(
       label(textStyle, "Health: ${resourceString(destructible.health)}"),
-      label(textStyle, "Nourishment: ${highPercentage(character.nourishment)}"),
+//      label(textStyle, "Nourishment: ${highPercentage(character.nourishment)}"),
       label(textStyle, "Energy: ${highPercentage(character.energy)}"),
-      if (getDebugBoolean("HUD_DRAW_RAW_NOURISHMENT")) label(textStyle, "RawNourish: ${character.nourishment}") else null,
+//      if (getDebugBoolean("HUD_DRAW_RAW_NOURISHMENT")) label(textStyle, "RawNourish: ${character.nourishment}") else null,
 //      label(textStyle, "Doom: ${world.global.doom}")
 //      label(textStyle, "Sanity: ${resourceString(data.madness)}")
   ) + listOfNotNull(

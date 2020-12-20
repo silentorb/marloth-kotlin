@@ -82,7 +82,7 @@ fun isInfinitelyFalling(position: Vector3): Boolean =
 
 fun isAlive(health: Int, character: Character, position: Vector3): Boolean =
     health > 0 &&
-        character.nourishment > 0 &&
+//        character.nourishment > 0 &&
         character.energy > 0 &&
         !isInfinitelyFalling(position)
 

@@ -6,8 +6,8 @@ import simulation.misc.*
 import kotlin.math.min
 
 val energyRates = ResourceRates(
-    distanceTraveledDrainDuration = 500,
-    timeDrainDuration = intMinute * 15,
+    distanceTraveledDrainDuration = 1000,
+    timeDrainDuration = intMinute * 30,
 )
 
 val updateEnergy = updatePercentageResource(energyRates)

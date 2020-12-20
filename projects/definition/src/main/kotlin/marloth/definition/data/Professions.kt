@@ -14,7 +14,7 @@ object Professions {
       health = 200,
       accessories = listOf(AccessoryId.shotgun, AccessoryId.graveDigger),
       depictionType = DepictionType.child,
-      speed = 5f,
+      speed = 12f,
       deathSound = SoundId.girlScream,
       damageMultipliers = mapOf()
   )

@@ -84,7 +84,7 @@ fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletStat
       money = updateMoney(deck, events, actor, character.money),
       accessoryPoints = updateAccessoryPoints(events, character),
       accessoryOptions = updateAccessoryOptions(definitions, dice, deck, events, actor, character),
-      nourishment = updateNourishment(1, intVelocity, nourishmentAdjustment, character.nourishment),
+//      nourishment = updateNourishment(1, intVelocity, nourishmentAdjustment, character.nourishment),
       energy = updateEnergy(character, intVelocity, commands),
       availableContracts = updateAvailableContracts(commands, character.availableContracts),
   )

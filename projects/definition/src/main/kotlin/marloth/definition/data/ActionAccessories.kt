@@ -23,7 +23,7 @@ fun rocketLauncher() =
             equippedMesh = MeshId.grenadeLauncher
         ),
         action = ActionDefinition(
-            cooldown = 2f,
+            cooldown = 1f,
             range = 25f,
             equipmentSlot = EquipmentSlot.attack
         ),
