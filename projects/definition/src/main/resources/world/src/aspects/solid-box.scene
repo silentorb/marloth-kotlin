@@ -1,0 +1,7 @@
+{
+"graph" : [
+["solid-box","",""],
+["solid-box","type","solid-static"],
+["solid-box","collisionShape","box"]
+]
+}

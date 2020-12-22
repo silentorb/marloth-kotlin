@@ -11,6 +11,7 @@ import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
 import simulation.main.Deck
 
+// This is assuming the anchor point is around the torso of the character, not the feet.
 val firstPersonCameraOffset = Vector3(0f, 0f, defaultCharacterHeight * 0.4f)
 val firstPersonDeadCameraOffset = Vector3(0f, 0f, -0.75f)
 

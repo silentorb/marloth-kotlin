@@ -15,15 +15,15 @@ import silentorb.mythic.spatial.*
 import simulation.main.Deck
 import kotlin.math.min
 
-const val defaultCharacterRadius = 0.5f
-const val defaultCharacterHeight = 2.5f
-const val characterGroundBuffer = 0.02f
+const val defaultCharacterRadius = 0.1524f
+const val defaultCharacterHeight = 0.762f
+const val characterGroundBuffer = 0.01f
 
 const val groundedLinearDamping = 0.9f
 const val airLinearDamping = 0f
 const val airControlReduction = 0.4f
 
-const val maxFootStepHeight = 0.6f
+const val maxFootStepHeight = 0.18f
 
 fun maxPositiveLookVelocityXChange() = 0.06f
 fun maxNegativeLookVelocityXChange() = 0.15f
