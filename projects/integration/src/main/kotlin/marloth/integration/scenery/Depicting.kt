@@ -155,6 +155,7 @@ fun convertCharacterDepiction(definitions: Definitions, deck: Deck, id: Id, depi
       .translate(footPosition)
       .rotateZ(characterRig.facingRotation.x)
       .rotateZ(Pi / 2f)
+      .scale(0.3f)
 
   val animations = deck.animations[id]!!.animations.map {
     val animationId = if (animationPlaceholders().containsKey(it.animationId))

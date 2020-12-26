@@ -9,11 +9,11 @@ import silentorb.mythic.characters.rigs.defaultCharacterHeight
 import silentorb.mythic.characters.rigs.defaultCharacterRadius
 import silentorb.mythic.intellect.navigation.walkable
 
-const val cellSize = 0.2f
+const val cellSize = 0.1f
 const val cellHeight = cellSize
 const val agentHeight = defaultCharacterHeight
-const val agentRadius = defaultCharacterRadius + 0.05f
-const val agentMaxClimb = 0.4f
+const val agentRadius = defaultCharacterRadius + 0.02f
+const val agentMaxClimb = 0.2f
 
 val vertsPerPoly = 6
 

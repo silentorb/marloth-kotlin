@@ -23,7 +23,7 @@ import silentorb.mythic.typography.FontSet
 fun gatherTextures(loadImage: ImageLoader, attributes: TextureAttributeMapper): List<DeferredTexture> =
     scanTextureResources("models")
         .plus(scanTextureResources("textures"))
-        .plus(scanTextureResources("external/images"))
+        .plus(scanTextureResources("images"))
         .map { deferImageFile(loadImage, it, attributes(it)) }
 
 fun gatherTextures(display: PlatformDisplay, displayOptions: DisplayOptions): List<DeferredTexture> {

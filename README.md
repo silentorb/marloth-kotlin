@@ -18,9 +18,16 @@ This project depends on two repositories
 
 * [Mythic Game Engine](https://github.com/silentorb/mythic-kotlin)
 * [Imp Programming Langauge](https://github.com/silentorb/imp-kotlin)
+* [Game Assets](https://github.com/silentorb/marloth-assets)
 
 The Marloth Gradle configuration currently assumes that each repo is cloned alongside the Marloth project and 
 named `mythic` and `imp`
+
+### Assets
+
+```
+new-item -itemtype SymbolicLink -path projects/assets/src/main/resources -value ../marloth-assets/output
+```
 
 #### Example directory structure
 

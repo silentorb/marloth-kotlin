@@ -6,14 +6,14 @@ import org.recast4j.recast.Heightfield
 import org.recast4j.recast.RecastBuilder
 import org.recast4j.recast.RecastBuilderConfig
 import org.recast4j.recast.geom.TriMesh
-import silentorb.mythic.debugging.getDebugString
-import silentorb.mythic.ent.*
+import silentorb.mythic.ent.Graph
+import silentorb.mythic.ent.Key
+import silentorb.mythic.ent.firstFloatSortedBy
+import silentorb.mythic.ent.firstFloatSortedByDescending
 import silentorb.mythic.intellect.navigation.GeometryProvider
 import silentorb.mythic.intellect.navigation.newNavMeshTriMeshes
 import silentorb.mythic.scenery.Shape
-import simulation.main.Deck
 import simulation.misc.cellLength
-import simulation.physics.toPhysicsDeck
 
 var originalNavMeshData: List<TriMesh> = listOf()
 var globalHeightMap: Heightfield? = null
