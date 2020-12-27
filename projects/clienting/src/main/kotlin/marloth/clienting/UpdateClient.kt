@@ -45,10 +45,12 @@ import simulation.main.Deck
 import simulation.main.World
 
 
-fun updateMousePointerVisibility(platform: Platform, viewId: ViewId?, isEditorActive: Boolean) {
+fun updateMousePointerVisibility(platform: Platform, clientState: ClientState) {
   if (!getDebugBoolean("DISABLE_MOUSE")) {
     val windowHasFocus = platform.display.hasFocus()
-    platform.input.setMouseVisibility(!windowHasFocus || viewId != null || isEditorActive)
+    val view =clientState.guiStates[clientState.players.firstOrNull()]?.view
+    val isEditing = clientState.isEditorActive && !(clientState.editor?.flyThrough ?: false)
+    platform.input.setMouseVisibility(!windowHasFocus || view != null || isEditing)
   } else {
     platform.input.setMouseVisibility(true)
   }
@@ -129,7 +131,7 @@ fun updateClient(
     clientState: ClientState,
     externalCommands: Commands
 ): ClientState {
-  updateMousePointerVisibility(client.platform, clientState.guiStates[clientState.players.firstOrNull()]?.view, clientState.isEditorActive)
+  updateMousePointerVisibility(client.platform, clientState)
 
   val deviceStates = updateInputDeviceStates(client.platform.input, clientState.input.deviceStates)
   val input = clientState.input.copy(
