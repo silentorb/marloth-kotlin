@@ -1,0 +1,7 @@
+{
+"graph" : [
+["solid-custom","",""],
+["solid-custom","type","solid-static"],
+["solid-custom","collisionShape","mesh"]
+]
+}
