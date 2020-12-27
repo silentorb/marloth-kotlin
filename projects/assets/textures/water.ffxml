@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Filter>
+	<Components>
+		<Result id="result">
+			<Source source="tonecurve3 02"/>
+			<FilterType value="0"/>
+			<Advanced value="false"/>
+			<Lighting>
+				<Height value="0.2000000000000000111"/>
+				<Environment>
+					<Source value=""/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+		</Result>
+		<Blend6 id="blend6 01">
+			<Foreground source="noisedistortion2 02" red="1" green="1" blue="1" alpha="1"/>
+			<Background source="blend6 02" red="0" green="0" blue="0" alpha="1"/>
+			<Opacity source="blend6 03" value="0.5"/>
+			<Mode value="0"/>
+		</Blend6>
+		<Blend6 id="blend6 02">
+			<Foreground red="0.0510786611381527783" green="0.1767281925449240843" blue="0.3294573643410853014" alpha="1"/>
+			<Background red="0.0393611999054419084" green="0.0202812330989724093" blue="0.0968992248062015005" alpha="1"/>
+			<Opacity source="perlinnoise2 01" value="0.5"/>
+			<Mode value="0"/>
+		</Blend6>
+		<Blend6 id="blend6 03">
+			<Foreground source="noisedistortion2 01" red="1" green="1" blue="1" alpha="1"/>
+			<Background source="stones2 01" red="0" green="0" blue="0" alpha="1"/>
+			<Opacity value="0.8499999999999999778"/>
+			<Mode value="0"/>
+		</Blend6>
+		<ColorMapControl id="colormapcontrol 01">
+			<Name value-en="Foreground"/>
+			<ExternalImagesMode value="0"/>
+			<HDRMode value="0"/>
+			<HorizontalAnchor value="1"/>
+			<VerticalAnchor value="1"/>
+			<PlacementMode value="0"/>
+			<TilingMode value="0"/>
+			<Color red="0.1960218736854756894" green="0.4326319341123851525" blue="0.9031007751937984995" alpha="1"/>
+			<AlphaMode value="0"/>
+		</ColorMapControl>
+		<ColorMapControl id="colormapcontrol 02">
+			<Name value-en="Foreground"/>
+			<ExternalImagesMode value="0"/>
+			<HDRMode value="0"/>
+			<HorizontalAnchor value="1"/>
+			<VerticalAnchor value="1"/>
+			<PlacementMode value="0"/>
+			<TilingMode value="0"/>
+			<Color red="0.3589928489874408268" green="0.8992248062015504306" blue="0.8046316619422705374" alpha="1"/>
+			<AlphaMode value="0"/>
+		</ColorMapControl>
+		<CurveControl id="curvecontrol 01">
+			<Name value-en="Curve"/>
+			<ControlPoints>
+				<ControlPoint>
+					<Type value="2"/>
+					<Position x="0" y="0"/>
+					<Handle1 x="-0.2178571428571428603" y="-0.2160714285714285809"/>
+					<Handle2 x="0.2178571428571428603" y="0.2160714285714285809"/>
+				</ControlPoint>
+				<ControlPoint>
+					<Type value="3"/>
+					<Position x="0.7000000000000001776" y="0.500000000000000111"/>
+					<Handle x="-0.1321428571428573395" y="-0.1517857142857144126"/>
+				</ControlPoint>
+				<ControlPoint>
+					<Type value="2"/>
+					<Position x="1" y="1"/>
+					<Handle1 x="-0.0428571428571428159" y="-0.2482142857142857206"/>
+					<Handle2 x="0.0428571428571428159" y="0.2482142857142857206"/>
+				</ControlPoint>
+			</ControlPoints>
+			<LeftContinuationType value="0"/>
+			<RightContinuationType value="0"/>
+			<Periodic value="false"/>
+		</CurveControl>
+		<CurveControl id="curvecontrol 02">
+			<Name value-en="Curve"/>
+			<ControlPoints>
+				<ControlPoint>
+					<Type value="2"/>
+					<Position x="0" y="0"/>
+					<Handle1 x="-0.2321428571428571508" y="-0.1803571428571428825"/>
+					<Handle2 x="0.2321428571428571508" y="0.1803571428571428825"/>
+				</ControlPoint>
+				<ControlPoint>
+					<Type value="3"/>
+					<Position x="0.5107142857142857872" y="0.5928571428571427493"/>
+					<Handle x="-0.1321428571428570065" y="-0.2303571428571429269"/>
+				</ControlPoint>
+				<ControlPoint>
+					<Type value="2"/>
+					<Position x="1" y="1"/>
+					<Handle1 x="-0.1500000000000000222" y="-0.0875000000000000222"/>
+					<Handle2 x="0.1500000000000000222" y="0.0875000000000000222"/>
+				</ControlPoint>
+			</ControlPoints>
+			<LeftContinuationType value="0"/>
+			<RightContinuationType value="0"/>
+			<Periodic value="false"/>
+		</CurveControl>
+		<HueSaturation id="huesaturation 01">
+			<Source source="perlinnoise2 04"/>
+			<Hue value="0"/>
+			<Saturation source="perlinnoise2 05" value="0"/>
+			<Lightness value="0"/>
+		</HueSaturation>
+		<NoiseDistortion2 id="noisedistortion2 01">
+			<Source source="tonecurve3 01"/>
+			<Distortion source="slidercontrol 01" value="0.1499999999999999944">
+				<Minimum value="0"/>
+				<Maximum value="1"/>
+			</Distortion>
+			<Roughness value="0.3099999999999999978"/>
+			<Scale value="1.9499999999999999556"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Variation value="1"/>
+		</NoiseDistortion2>
+		<NoiseDistortion2 id="noisedistortion2 02">
+			<Source source="huesaturation 01"/>
+			<Distortion source="slidercontrol 01" value="0.1499999999999999944">
+				<Minimum value="0"/>
+				<Maximum value="1"/>
+			</Distortion>
+			<Roughness source="slidercontrol 02" value="0.3099999999999999978">
+				<Minimum value="0"/>
+				<Maximum value="1"/>
+			</Roughness>
+			<Scale value="1.9499999999999999556"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Variation value="1"/>
+		</NoiseDistortion2>
+		<PerlinNoise2 id="perlinnoise2 01">
+			<Noise red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.3900000000000000133"/>
+			<Scale value="1.7099999999999999645"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0"/>
+			<Variation value="11312"/>
+			<OctaveCurve value="2"/>
+		</PerlinNoise2>
+		<PerlinNoise2 id="perlinnoise2 02">
+			<Noise red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.57999999999999996"/>
+			<Scale value="2.1000000000000000888"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.4199999999999999845"/>
+			<Variation value="8862"/>
+			<OctaveCurve value="0"/>
+		</PerlinNoise2>
+		<PerlinNoise2 id="perlinnoise2 04">
+			<Noise source="colormapcontrol 01" red="1" green="1" blue="1" alpha="1"/>
+			<Background source="colormapcontrol 02" red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.2099999999999999922"/>
+			<Scale value="2.7000000000000001776"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.0100000000000000002"/>
+			<Variation value="19918"/>
+			<OctaveCurve value="0"/>
+		</PerlinNoise2>
+		<PerlinNoise2 id="perlinnoise2 05">
+			<Noise red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0.3333333333333333703" green="0.3333333333333333703" blue="0.3333333333333333703" alpha="1"/>
+			<Roughness value="0.3900000000000000133"/>
+			<Scale value="2.3999999999999999112"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0"/>
+			<Variation value="11066"/>
+			<OctaveCurve value="0"/>
+		</PerlinNoise2>
+		<SliderControl id="slidercontrol 01">
+			<Name value-en="Distortion"/>
+			<UseRemapping value="false"/>
+			<Value value="0.0899999999999999967"/>
+		</SliderControl>
+		<SliderControl id="slidercontrol 02">
+			<Name value-en="Roughness"/>
+			<UseRemapping value="false"/>
+			<Value value="0.3099999999999999978"/>
+		</SliderControl>
+		<Stones2 id="stones2 01">
+			<Noise red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.2099999999999999922"/>
+			<Contrast value="0"/>
+			<Formula value="1"/>
+			<Scale value="2.3999999999999999112"/>
+			<Stretch value="0"/>
+			<VerticalStretch value="false"/>
+			<Flat value="false"/>
+			<SolidFill value="true"/>
+			<Details value="0.3900000000000000133"/>
+			<Variation value="1"/>
+			<OctaveCurve value="1"/>
+		</Stones2>
+		<ToneCurve3 id="tonecurve3 01">
+			<Source source="perlinnoise2 02"/>
+			<Curve source="curvecontrol 01"/>
+			<PreserveColor value="false"/>
+		</ToneCurve3>
+		<ToneCurve3 id="tonecurve3 02">
+			<Source source="blend6 01"/>
+			<Curve source="curvecontrol 02"/>
+			<PreserveColor value="false"/>
+		</ToneCurve3>
+	</Components>
+	<GroupNames/>
+	<SettingsOverride>
+		<Size value="0"/>
+		<Variation value="0"/>
+		<Seamless value="0"/>
+		<ResultBlending value="0"/>
+	</SettingsOverride>
+	<Presets>
+		<DefaultPreset preview_image="LIFESAVER_OPAQUE">
+			<Settings size_factor="1" variation="1" seamless="false" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="false"/>
+			<Lighting>
+				<Height value="0.2000000000000000111"/>
+				<Environment>
+					<Source value=""/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+			<Controls>
+				<ColorMapControl id="colormapcontrol 01">
+					<HorizontalAnchor value="1"/>
+					<VerticalAnchor value="1"/>
+					<PlacementMode value="0"/>
+					<TilingMode value="0"/>
+					<Color red="0.1960218736854756894" green="0.4326319341123851525" blue="0.9031007751937984995" alpha="1"/>
+				</ColorMapControl>
+				<ColorMapControl id="colormapcontrol 02">
+					<HorizontalAnchor value="1"/>
+					<VerticalAnchor value="1"/>
+					<PlacementMode value="0"/>
+					<TilingMode value="0"/>
+					<Color red="0.3589928489874408268" green="0.8992248062015504306" blue="0.8046316619422705374" alpha="1"/>
+				</ColorMapControl>
+				<CurveControl id="curvecontrol 01">
+					<ControlPoints>
+						<ControlPoint>
+							<Type value="2"/>
+							<Position x="0" y="0"/>
+							<Handle1 x="-0.2178571428571428603" y="-0.2160714285714285809"/>
+							<Handle2 x="0.2178571428571428603" y="0.2160714285714285809"/>
+						</ControlPoint>
+						<ControlPoint>
+							<Type value="3"/>
+							<Position x="0.7000000000000001776" y="0.500000000000000111"/>
+							<Handle x="-0.1321428571428573395" y="-0.1517857142857144126"/>
+						</ControlPoint>
+						<ControlPoint>
+							<Type value="2"/>
+							<Position x="1" y="1"/>
+							<Handle1 x="-0.0428571428571428159" y="-0.2482142857142857206"/>
+							<Handle2 x="0.0428571428571428159" y="0.2482142857142857206"/>
+						</ControlPoint>
+					</ControlPoints>
+					<LeftContinuationType value="0"/>
+					<RightContinuationType value="0"/>
+					<Periodic value="false"/>
+				</CurveControl>
+				<CurveControl id="curvecontrol 02">
+					<ControlPoints>
+						<ControlPoint>
+							<Type value="2"/>
+							<Position x="0" y="0"/>
+							<Handle1 x="-0.2321428571428571508" y="-0.1803571428571428825"/>
+							<Handle2 x="0.2321428571428571508" y="0.1803571428571428825"/>
+						</ControlPoint>
+						<ControlPoint>
+							<Type value="3"/>
+							<Position x="0.5107142857142857872" y="0.5928571428571427493"/>
+							<Handle x="-0.1321428571428570065" y="-0.2303571428571429269"/>
+						</ControlPoint>
+						<ControlPoint>
+							<Type value="2"/>
+							<Position x="1" y="1"/>
+							<Handle1 x="-0.1500000000000000222" y="-0.0875000000000000222"/>
+							<Handle2 x="0.1500000000000000222" y="0.0875000000000000222"/>
+						</ControlPoint>
+					</ControlPoints>
+					<LeftContinuationType value="0"/>
+					<RightContinuationType value="0"/>
+					<Periodic value="false"/>
+				</CurveControl>
+				<SliderControl id="slidercontrol 01">
+					<Value value="0.0899999999999999967"/>
+				</SliderControl>
+				<SliderControl id="slidercontrol 02">
+					<Value value="0.3099999999999999978"/>
+				</SliderControl>
+			</Controls>
+		</DefaultPreset>
+	</Presets>
+	<Locks>
+		<Settings size="false" variation="false"/>
+		<Lighting elements="false" environment="false" brightness="false" saturation="false" height="false"/>
+		<Controls>
+			<Control id="colormapcontrol 01" lock="false"/>
+			<Control id="colormapcontrol 02" lock="false"/>
+			<Control id="curvecontrol 01" lock="false"/>
+			<Control id="curvecontrol 02" lock="false"/>
+			<Control id="slidercontrol 01" lock="false"/>
+			<Control id="slidercontrol 02" lock="false"/>
+		</Controls>
+	</Locks>
+	<Information author="cj" name-en="water" url="" description="" keywords="" update_notes="" major_version="8" minor_version="5"/>
+	<ControlsOrder>
+		<Automatic value="true"/>
+	</ControlsOrder>
+	<FilterEditor>
+		<Groups/>
+		<ThumbnailSize value="1"/>
+		<Canvas left="-505" top="-1037" zoom_factor="1"/>
+		<Viewport left="0" top="0" zoom_factor="1"/>
+		<LockPreview>
+			<Locked value="true"/>
+			<LockedComponent name="result"/>
+		</LockPreview>
+		<Item id="blend6 01">
+			<Position left="352" top="-48"/>
+		</Item>
+		<Item id="blend6 02">
+			<Position left="496" top="96"/>
+		</Item>
+		<Item id="blend6 03">
+			<Position left="1104" top="48"/>
+		</Item>
+		<Item id="colormapcontrol 01">
+			<Position left="864" top="-64"/>
+		</Item>
+		<Item id="colormapcontrol 02">
+			<Position left="896" top="32"/>
+		</Item>
+		<Item id="curvecontrol 01">
+			<Position left="1680" top="-16"/>
+		</Item>
+		<Item id="curvecontrol 02">
+			<Position left="240" top="-192"/>
+		</Item>
+		<Item id="huesaturation 01">
+			<Position left="464" top="-256"/>
+		</Item>
+		<Item id="noisedistortion2 01">
+			<Position left="1168" top="-240"/>
+		</Item>
+		<Item id="noisedistortion2 02">
+			<Position left="272" top="-416"/>
+		</Item>
+		<Item id="perlinnoise2 01">
+			<Position left="816" top="160"/>
+		</Item>
+		<Item id="perlinnoise2 02">
+			<Position left="1664" top="-272"/>
+		</Item>
+		<Item id="perlinnoise2 04">
+			<Position left="672" top="-272"/>
+		</Item>
+		<Item id="perlinnoise2 05">
+			<Position left="624" top="-528"/>
+		</Item>
+		<Item id="result">
+			<Position left="-80" top="64"/>
+		</Item>
+		<Item id="slidercontrol 01">
+			<Position left="976" top="-480"/>
+		</Item>
+		<Item id="slidercontrol 02">
+			<Position left="976" top="-384"/>
+		</Item>
+		<Item id="stones2 01">
+			<Position left="1280" top="208"/>
+		</Item>
+		<Item id="tonecurve3 01">
+			<Position left="1376" top="-128"/>
+		</Item>
+		<Item id="tonecurve3 02">
+			<Position left="80" top="-112"/>
+		</Item>
+	</FilterEditor>
+</Filter>
