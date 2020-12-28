@@ -1,8 +1,12 @@
 {
 "graph" : [
-["doorway","parent","test"],
-["doorway","type","doorway"],
-["doorway","translation",[-1.067403,3.0397868,0.0]],
+["earth-block","parent","test"],
+["earth-block","type","earth-block"],
+["earth-block","rotation",[0.0,0.0,0.53224874]],
+["earth-block","translation",[0.0,14.157244,0.0]],
+["player-spawn","parent","test"],
+["player-spawn","type","player-spawn"],
+["player-spawn","translation",[0.0,14.367477,16.59475]],
 ["test","",""]
 ]
 }
