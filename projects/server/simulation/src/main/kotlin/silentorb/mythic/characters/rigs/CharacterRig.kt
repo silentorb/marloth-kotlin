@@ -23,7 +23,7 @@ const val groundedLinearDamping = 0.9f
 const val airLinearDamping = 0f
 const val airControlReduction = 0.4f
 
-const val maxFootStepHeight = 0.18f
+const val maxFootStepHeight = 0.3f
 
 fun maxPositiveLookVelocityXChange() = 0.06f
 fun maxNegativeLookVelocityXChange() = 0.15f

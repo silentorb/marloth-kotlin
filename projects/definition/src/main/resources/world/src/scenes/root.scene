@@ -7,7 +7,7 @@
 ["farm","parent","root"],
 ["farm","type","farm"],
 ["farm","rotation",[0.0,0.0,1.8121809]],
-["farm","translation",[-59.790062,-41.631393,-8.123289]],
+["farm","translation",[-59.790062,-41.631393,-7.898304]],
 ["forest","parent","root"],
 ["forest","type","forest"],
 ["forest","rotation",[0.0,0.0,3.3232312]],
@@ -17,7 +17,7 @@
 ["home","translation",[0.0,0.0,-0.24621662]],
 ["lamppost","parent","root"],
 ["lamppost","type","lamppost"],
-["lamppost","translation",[-31.725817,-40.566757,-4.344827]],
+["lamppost","translation",[-31.725817,-40.566757,-5.697345]],
 ["path","mesh","floorSquare"],
 ["path","collisionShape","box"],
 ["path","type","solid-static"],
@@ -49,7 +49,7 @@
 ["path3","parent","root"],
 ["path3","rotation",[0.0,5.977115,0.0]],
 ["path3","scale",[1.3549619,3.2326517,1.0]],
-["path3","translation",[-31.464289,-35.063515,-5.027881]],
+["path3","translation",[-31.464289,-35.063515,-6.1771693]],
 ["root","",""],
 ["root","rotation",[0.0,0.0,0.0]]
 ]

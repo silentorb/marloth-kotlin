@@ -1,6 +1,11 @@
 {
 "graph" : [
 ["lamppost","",""],
-["lamppost","mesh","lampPost"]
+["lamppost","mesh","lampPost"],
+["light","parent","lamppost"],
+["light","translation",[0.0,0.0,2.051511]],
+["light","light","point"],
+["light","rgba","#ffffffff"],
+["light","range",20.0]
 ]
 }
