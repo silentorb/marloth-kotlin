@@ -14,7 +14,6 @@ object Professions {
       health = 200,
       accessories = listOf(AccessoryId.shotgun, AccessoryId.graveDigger),
       depictionType = DepictionType.child,
-      speed = 12f,
       deathSound = SoundId.girlScream,
       damageMultipliers = mapOf()
   )
@@ -24,7 +23,6 @@ object Professions {
       health = 200,
       accessories = listOf(AccessoryId.rocketLauncher),
       depictionType = DepictionType.child,
-      speed = 12f,
       deathSound = SoundId.girlScream,
       damageMultipliers = mapOf(),
       money = 200,
