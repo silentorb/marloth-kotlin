@@ -1,0 +1,10 @@
+{
+"graph" : [
+["lamppost","parent","test"],
+["lamppost","type","lamppost"],
+["lamppost","translation",[5.8302784,0.0,0.0]],
+["lamppost1","type","lamppost"],
+["lamppost1","parent","test"],
+["test","",""]
+]
+}
