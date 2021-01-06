@@ -7,6 +7,7 @@ import marloth.clienting.input.InputState
 import marloth.clienting.gui.ViewId
 import marloth.clienting.input.GameInputConfig
 import marloth.clienting.input.newInputState
+import marloth.scenery.enums.MeshShapeMap
 import marloth.scenery.enums.TextResourceMapper
 import silentorb.mythic.aura.AudioState
 import silentorb.mythic.aura.newAudioState
@@ -20,9 +21,9 @@ const val canvasRendererKey = "renderer"
 
 typealias PlayerViews = Map<Id, ViewId?>
 
-fun initialEditor(textLibrary: TextResourceMapper): Editor? =
+fun initialEditor(textLibrary: TextResourceMapper, meshShapes: MeshShapeMap): Editor? =
     if (getDebugBoolean("START_EDITOR"))
-      newEditor(textLibrary)
+      newEditor(textLibrary, meshShapes)
     else
       null
 
@@ -46,7 +47,8 @@ fun newClientState(
     textLibrary: TextResourceMapper,
     inputConfig: GameInputConfig,
     audioConfig: AudioConfig,
-    displayModes: List<DisplayMode>
+    displayModes: List<DisplayMode>,
+    meshShapes: MeshShapeMap,
 ) =
     ClientState(
         input = newInputState(inputConfig),
@@ -56,5 +58,5 @@ fun newClientState(
         players = listOf(),
         events = listOf(),
         displayModes = displayModes,
-        editor = initialEditor(textLibrary)
+        editor = initialEditor(textLibrary, meshShapes)
     )

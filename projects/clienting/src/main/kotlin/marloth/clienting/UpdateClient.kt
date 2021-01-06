@@ -164,7 +164,7 @@ fun updateClient(
   val windowInfo = client.getWindowInfo()
   val (nextEditor, editorEvents1) = if (clientState.isEditorActive) {
     ensureImGuiIsInitialized(editorFonts, windowInfo.id)
-    val editor = previousEditor ?: newEditor(textLibrary)
+    val editor = previousEditor ?: newEditor(textLibrary, getMeshShapes(client.renderer))
     val editorCommands = prepareEditorUpdate(deviceStates, editor)
     val editorEvents = getEditorEvents(editor)(editorCommands, listOf())
     updateEditor(deviceStates, editorCommands, editor) to editorEvents

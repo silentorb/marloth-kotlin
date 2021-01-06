@@ -42,7 +42,7 @@ fun restartGame(app: GameApp, appState: AppState, scene: String): AppState {
   val graph = if (editor != null)
     expandWorldGraph(editor, scene)
   else
-    loadWorldGraph(scene)
+    loadWorldGraph(getMeshShapes(app.client.renderer), scene)
 
   return if (appState.worlds.none()) {
     AppState(

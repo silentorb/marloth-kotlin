@@ -12,6 +12,7 @@ import silentorb.mythic.debugging.checkDotEnvChanged
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.lookinglass.Scene
 import silentorb.mythic.lookinglass.SceneRenderer
+import silentorb.mythic.lookinglass.getMeshShapes
 import silentorb.mythic.lookinglass.toPlatformDisplayConfig
 import silentorb.mythic.platforming.Platform
 import silentorb.mythic.platforming.WindowInfo
@@ -79,11 +80,12 @@ fun newGameApp(platform: Platform, client: Client): GameApp {
 fun runApp(platform: Platform, options: AppOptions) {
   platform.display.initialize(toPlatformDisplayConfig(options.display))
   val app = newGameApp(platform, newClient(platform, options.display))
-  val clientState = newClientState(app.definitions.textLibrary, options.input, options.audio, platform.display.getDisplayModes())
+  val meshShapes = getMeshShapes(app.client.renderer)
+  val clientState = newClientState(app.definitions.textLibrary, options.input, options.audio, platform.display.getDisplayModes(), meshShapes)
   val worlds = if (clientState.isEditorActive)
     listOf()
   else
-    listOf(newWorld(app, loadDefaultWorldGraph()))
+    listOf(newWorld(app, loadDefaultWorldGraph(meshShapes)))
 
   val state = AppState(
       client = clientState,

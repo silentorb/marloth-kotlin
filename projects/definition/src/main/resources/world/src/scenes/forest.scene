@@ -60,6 +60,8 @@
 ["grocer","parent","forest"],
 ["grocer","type","grocer"],
 ["grocer","translation",[-10.420908,16.839539,-2.281118]],
+["jointA","parent","forest"],
+["jointA","translation",[9.097786,-6.809726,-4.1861353]],
 ["lamppost","parent","forest"],
 ["lamppost","type","lamppost"],
 ["lamppost","translation",[-45.740284,-13.940904,-3.7879655]],
