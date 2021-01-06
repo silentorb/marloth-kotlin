@@ -7,7 +7,6 @@ object MeshId {
   val cookie = "cookie"
   val hollowCircle = "hollowCircle"
   val cube = "cube"
-  val eyeball = "eyeball"
   val grenadeLauncher = "grenadeLauncher"
   val hogHead = "hogHead"
   val key = "key"
