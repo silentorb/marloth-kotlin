@@ -10,7 +10,6 @@
 ["connector","mesh","floorSquare"],
 ["connector","type","simpleBridge"],
 ["connector","texture","algae"],
-["connector","translation",[-31.464289,-35.063515,-18.692026]],
 ["farm","parent","root"],
 ["farm","type","farm"],
 ["farm","rotation",[0.0,0.0,1.8121809]],
