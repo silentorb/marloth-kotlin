@@ -1,5 +1,17 @@
 {
 "graph" : [
+["a","parent","earth-block"],
+["a","type","joint"],
+["a","translation",[-7.0713034,0.0,10.220993]],
+["b","type","joint"],
+["b","parent","earth-block"],
+["b","translation",[7.0713034,0.0,10.220993]],
+["c","type","joint"],
+["c","parent","earth-block"],
+["c","translation",[0.0,7.066301,10.229977]],
+["d","type","joint"],
+["d","parent","earth-block"],
+["d","translation",[0.0,-7.066301,10.229977]],
 ["dirt","mesh","floorSquare"],
 ["dirt","texture","dirt"],
 ["dirt","parent","earth-block"],
@@ -12,18 +24,6 @@
 ["ground1","scale",[1.4138216,1.4138216,1.4138216]],
 ["ground1","parent","earth-block"],
 ["ground1","translation",[0.0,0.0,9.525155]],
-["ground1","type","solid-box"],
-["jointA","parent","earth-block"],
-["jointA","type","joint"],
-["jointA","translation",[-7.0713034,0.0,10.220993]],
-["jointB","type","joint"],
-["jointB","parent","earth-block"],
-["jointB","translation",[7.0713034,0.0,10.220993]],
-["jointC","type","joint"],
-["jointC","parent","earth-block"],
-["jointC","translation",[0.0,7.066301,10.229977]],
-["jointD","type","joint"],
-["jointD","parent","earth-block"],
-["jointD","translation",[0.0,-7.066301,10.229977]]
+["ground1","type","solid-box"]
 ]
 }

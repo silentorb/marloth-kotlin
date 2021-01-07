@@ -20,30 +20,24 @@ fun marlothExpanders(): Expanders = mapOf(
         graph
       else {
         val (a, b) = connections
-        val aTransform = getNodeTransform(graph, a)
-        val bTransform = getNodeTransform(graph, b)
-        val aLocation = aTransform.translation()
-        val bLocation = bTransform.translation()
-        if (aLocation == bLocation)
+        val (a1, a2) = a.split("+")
+        val (b1, b2) = b.split("+")
+        val a1Location = getNodeTransform(graph, a1).translation()
+        val a2Location = getNodeTransform(graph, a2).translation()
+        val b1Location = getNodeTransform(graph, b1).translation()
+        val b2Location = getNodeTransform(graph, b2).translation()
+        if (a2Location == b2Location)
           graph
         else {
-          val center = getCenter(aLocation, bLocation)
-          val distance = aLocation.distance(bLocation)
-          val vector = (bLocation - aLocation).normalize()
+          val center = getCenter(a2Location, b2Location)
+          val gap = a2Location.distance(b2Location)
+          val vector = (b2Location - a2Location).normalize()
           val (yaw, pitch) = getYawAndPitch(vector)
-          val mesh = getGraphValue<Key>(entries, node, SceneProperties.mesh)
-          val shape = library.meshShapes[mesh]
-          val offset = if (shape != null)
-            Vector3(0f, 0f, -shape.height / 2f)
-          else
-            Vector3.zero
+          val offset = Vector3(0f, 0f, -a1Location.z)
 
-          val length = if (shape != null)
-            shape.x
-          else
-            1f
+          val length = a1Location.distance(b1Location)
 
-          val scale = Vector3((distance / length) + 0.05f, 1f, 1f)
+          val scale = Vector3((gap / length) + 0.05f, 1f, 1f)
 
           replaceValues(graph,
               setOf(

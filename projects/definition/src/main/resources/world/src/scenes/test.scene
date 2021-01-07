@@ -1,9 +1,17 @@
 {
 "graph" : [
-["lamppost","parent","test"],
-["lamppost","type","lamppost"],
-["lamppost","translation",[1.8433142,0.11158204,-0.90729415]],
-["lamppost","rgba","#ffffffff"],
+["bridge","parent","test"],
+["bridge","texture","arch"],
+["bridge","type","simple-connector"],
+["bridge","connects","bridge.a+earth-block1.b"],
+["bridge","connects","bridge.b+earth-block.a"],
+["bridge","translation",[3.0948484,0.0,-3.1299906]],
+["earth-block","parent","test"],
+["earth-block","type","earth-block"],
+["earth-block","translation",[15.999731,0.0,0.0]],
+["earth-block1","type","earth-block"],
+["earth-block1","parent","test"],
+["earth-block1","translation",[-10.089934,0.0,0.0]],
 ["test","",""]
 ]
 }

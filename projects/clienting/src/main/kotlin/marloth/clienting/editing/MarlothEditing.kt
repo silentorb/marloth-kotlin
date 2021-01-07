@@ -83,7 +83,7 @@ fun newEditor(textLibrary: TextResourceMapper, meshShapes: MeshShapeMap): Editor
           expanders = marlothExpanders(),
       ),
       fileItems = loadProjectTree(projectPath, "world"),
-      state = loadEditorStateOrDefault(),
+      persistentState = loadEditorStateOrDefault(),
       graphLibrary = newEditorGraphLibrary(textLibrary),
   )
 }

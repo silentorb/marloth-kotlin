@@ -7,7 +7,6 @@ import marloth.clienting.editing.newEditor
 import marloth.clienting.editing.updateEditingActive
 import marloth.clienting.gui.BloomDefinition
 import marloth.clienting.gui.EventUnion
-import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.logic.commandsToClientEvents
 import marloth.clienting.gui.menus.logic.eventsFromGuiState
 import marloth.clienting.gui.menus.logic.getMenuItemEvents
@@ -116,7 +115,7 @@ fun gatherUserEvents(
 fun getEditorEvents(editor: Editor) = handleCommands<List<ClientEvent>> { command, events ->
   when (command.type) {
     EditorCommands.playGame -> events + ClientEvent(GuiCommandType.newGame)
-    EditorCommands.playScene -> events + ClientEvent(GuiCommandType.newGame, editor.state.graph)
+    EditorCommands.playScene -> events + ClientEvent(GuiCommandType.newGame, editor.persistentState.graph)
     else -> events
   }
 }

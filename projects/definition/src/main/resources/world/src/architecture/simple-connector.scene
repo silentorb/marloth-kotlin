@@ -1,0 +1,12 @@
+{
+"graph" : [
+["a","type","joint"],
+["a","parent","simple-connector"],
+["a","translation",[-5.0,0.0,0.5]],
+["b","type","joint"],
+["b","parent","simple-connector"],
+["b","translation",[5.0,0.0,0.5]],
+["simple-connector","",""],
+["simple-connector","mesh","floorSquare"]
+]
+}
