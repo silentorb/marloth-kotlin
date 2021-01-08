@@ -1,0 +1,9 @@
+{
+"graph" : [
+["deleteme","parent","test2"],
+["deleteme","text3d","bridga"],
+["test","parent","test2"],
+["test","type","test"],
+["test2","",""]
+]
+}

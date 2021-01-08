@@ -16,32 +16,32 @@ fun marlothExpanders(): Expanders = mapOf(
     MarlothExpanders.simpleBridge to { library, graph, node ->
       val entries = getProperties(graph, node)
       val connections = getPropertyValues<Key>(entries, node, SceneProperties.connects)
-      if (connections.size != 2)
-        graph
+      if (connections.size != 2 || connections.any { !it.contains('+') })
+        null
       else {
         val (a, b) = connections
         val (a1, a2) = a.split("+")
         val (b1, b2) = b.split("+")
-        val a1Location = getNodeTransform(graph, a1).translation()
+        val accidentalLocation = getNodeTransform(graph, node).translation()
+        val a1Location = getNodeTransform(graph, a1).translation() - accidentalLocation
         val a2Location = getNodeTransform(graph, a2).translation()
-        val b1Location = getNodeTransform(graph, b1).translation()
+        val b1Location = getNodeTransform(graph, b1).translation() - accidentalLocation
         val b2Location = getNodeTransform(graph, b2).translation()
         if (a2Location == b2Location)
           graph
         else {
-          val center = getCenter(a2Location, b2Location)
           val gap = a2Location.distance(b2Location)
+          val gapCenter = getCenter(a2Location, b2Location)
+          val length = a1Location.distance(b1Location)
+          val lengthCenter = getCenter(a1Location, b1Location)
           val vector = (b2Location - a2Location).normalize()
           val (yaw, pitch) = getYawAndPitch(vector)
-          val offset = Vector3(0f, 0f, -a1Location.z)
-
-          val length = a1Location.distance(b1Location)
-
+          val offset = -lengthCenter
           val scale = Vector3((gap / length) + 0.05f, 1f, 1f)
 
           replaceValues(graph,
               setOf(
-                  Entry(node, SceneProperties.translation, center + offset),
+                  Entry(node, SceneProperties.translation, gapCenter + offset),
                   Entry(node, SceneProperties.rotation, Vector3(0f, -pitch, yaw)),
                   Entry(node, SceneProperties.scale, scale),
               )

@@ -12,6 +12,7 @@
 ["floor1","scale",[3.8801932,3.8801932,3.8801932]],
 ["jointA","parent","farm"],
 ["jointA","translation",[9.577931,-25.447435,1.295588]],
+["jointA","type","joint"],
 ["monster","parent","farm"],
 ["monster","type","monsterSpawn"],
 ["monster","translation",[9.850718,-9.656529,3.1165767]],

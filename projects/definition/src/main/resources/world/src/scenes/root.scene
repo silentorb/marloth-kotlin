@@ -4,12 +4,6 @@
 ["city-street","type","city-street"],
 ["city-street","rotation",[0.0,0.0,3.0016196]],
 ["city-street","translation",[45.097702,-66.68707,8.019672]],
-["connector","parent","root"],
-["connector","connects","forest.jointA"],
-["connector","connects","farm.jointA"],
-["connector","mesh","floorSquare"],
-["connector","type","simpleBridge"],
-["connector","texture","algae"],
 ["farm","parent","root"],
 ["farm","type","farm"],
 ["farm","rotation",[0.0,0.0,1.8121809]],
@@ -49,6 +43,13 @@
 ["path2","rotation",[0.0,6.086006,1.4685113]],
 ["path2","translation",[1.4312043,-16.115242,-3.683097]],
 ["root","",""],
-["root","rotation",[0.0,0.0,0.0]]
+["root","rotation",[0.0,0.0,0.0]],
+["simple-connector","parent","root"],
+["simple-connector","type","simple-connector"],
+["simple-connector","translation",[-45.441277,-23.471157,-16.996511]],
+["simple-connector","connects","simple-connector.a+farm.jointA"],
+["simple-connector","connects","simple-connector.b+forest.earth-block.b"],
+["simple-connector","mesh","arcWall8thA"],
+["simple-connector","texture","grass"]
 ]
 }
