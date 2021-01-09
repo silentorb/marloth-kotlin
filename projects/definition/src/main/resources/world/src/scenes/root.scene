@@ -46,10 +46,8 @@
 ["root","rotation",[0.0,0.0,0.0]],
 ["simple-connector","parent","root"],
 ["simple-connector","type","simple-connector"],
-["simple-connector","translation",[-45.441277,-23.471157,-16.996511]],
 ["simple-connector","connects","simple-connector.a+farm.jointA"],
 ["simple-connector","connects","simple-connector.b+forest.earth-block.b"],
-["simple-connector","mesh","arcWall8thA"],
 ["simple-connector","texture","grass"]
 ]
 }

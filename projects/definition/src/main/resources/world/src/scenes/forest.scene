@@ -45,7 +45,6 @@
 ["earth-block6","type","simple-connector"],
 ["earth-block6","connects","earth-block6.b+earth-block9.d"],
 ["earth-block6","connects","earth-block6.a+earth-block5.b"],
-["earth-block6","mesh","arcWall8thA"],
 ["earth-block6","texture","grass"],
 ["earth-block6","scale",[0.71888477,1.0,1.0]],
 ["earth-block8","type","earth-block"],
