@@ -17,6 +17,7 @@ import silentorb.mythic.lookinglass.texturing.*
 import silentorb.mythic.platforming.ImageLoader
 import silentorb.mythic.platforming.Platform
 import silentorb.mythic.platforming.PlatformDisplay
+import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.typography.FontSet
 
@@ -42,6 +43,7 @@ fun gatherTextures(display: PlatformDisplay, displayOptions: DisplayOptions): Li
 }
 
 fun newRenderer(
+    dimensions: Vector2i,
     options: DisplayOptions,
     fontSource: () -> List<FontSet>
 ): Renderer {
@@ -54,7 +56,7 @@ fun newRenderer(
   val multisampler = if (options.multisamples == 0)
     null
   else
-    createMultiSampler(glow, options.windowedResolution.x, options.windowedResolution.y, options.multisamples)
+    createMultiSampler(glow, dimensions.x, dimensions.y, options.multisamples)
 
   return Renderer(
       glow = glow,
@@ -65,14 +67,16 @@ fun newRenderer(
       vertexSchemas = vertexSchemas,
       multisampler = multisampler,
       offscreenBuffers = (0..0).map {
-        prepareScreenFrameBuffer(options.windowedResolution.x, options.windowedResolution.y, true)
+        prepareScreenFrameBuffer(dimensions.x, dimensions.y, true)
       }
   )
 }
 
 fun newClient(platform: Platform, displayOptions: DisplayOptions): Client {
   val textures = gatherTextures(platform.display, displayOptions)
+  val windowInfo = platform.display.getInfo()
   val renderer = newRenderer(
+      dimensions = windowInfo.dimensions,
       options = displayOptions,
       fontSource = ::gatherFontSets
   )

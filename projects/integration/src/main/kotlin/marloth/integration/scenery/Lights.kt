@@ -1,16 +1,16 @@
 package marloth.integration.scenery
 
-import silentorb.mythic.debugging.getDebugFloat
+import marloth.clienting.rendering.depictionTransform
 import silentorb.mythic.ent.Id
 import silentorb.mythic.scenery.Light
 import silentorb.mythic.scenery.LightType
-import silentorb.mythic.scenery.LightingConfig
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector4
 import simulation.main.Deck
 
 fun mapLights(deck: Deck, player: Id): List<Light> =
     deck.lights
+        .filterValues { it.isDynamic }
         .map { (id, light) ->
           val transform = depictionTransform(deck.bodies, deck.characterRigs, id)
           Light(

@@ -61,7 +61,8 @@ fun generateWorld(db: Database, definitions: Definitions, meshInfo: MeshShapeMap
   val generationConfig = GenerationConfig(
       definitions = definitions,
       meshes = compileArchitectureMeshInfo(meshInfo),
-      includeEnemies = getDebugString("NO_ENEMIES") != "1"
+      includeEnemies = getDebugString("NO_ENEMIES") != "1",
+      meshShapes = meshInfo,
   )
 
   return generateWorld(db, definitions, generationConfig, dice, graph, 0L)

@@ -15,8 +15,8 @@ import silentorb.mythic.spatial.*
 import simulation.main.Deck
 import kotlin.math.min
 
-const val defaultCharacterRadius = 0.1524f
-const val defaultCharacterHeight = 0.762f
+const val defaultCharacterRadius = 0.16f
+const val defaultCharacterHeight = 1.2f
 const val characterGroundBuffer = 0.01f
 
 const val groundedLinearDamping = 0.9f
@@ -56,6 +56,7 @@ private fun castFootStepRay(walkableMask: Int, dynamicsWorld: btDiscreteDynamics
   return { it: Vector3 ->
     val start = basePosition + it
     val end = start + endOffset
+    null
     val result = firstRayHit(dynamicsWorld, start, end, walkableMask)
     if (result != null)
       start.z - result.hitPoint.z

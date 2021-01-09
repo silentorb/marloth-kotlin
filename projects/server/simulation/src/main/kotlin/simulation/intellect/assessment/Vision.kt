@@ -11,7 +11,8 @@ import silentorb.mythic.spatial.quadOut
 import simulation.characters.fieldOfView360
 import simulation.main.Deck
 import simulation.main.World
-import simulation.misc.*
+import simulation.misc.MapGrid
+import simulation.misc.isAtHome
 import simulation.physics.CollisionGroups
 
 const val viewingRange = 30f
@@ -23,9 +24,17 @@ fun isInAngleOfView(facingVector: Vector3, viewerBody: Body, targetBody: Body, f
     else
       facingVector.dot((targetBody.position - viewerBody.position).normalize()) >= fieldOfView
 
+fun lightLocation(deck: Deck, id: Id, light: Light): Vector3 {
+  val body = deck.bodies[id]
+  return if (body != null)
+    body.position + light.offset
+  else
+    light.offset
+}
+
 fun lightDistanceMod(deck: Deck, body: Body, id: Id, light: Light): Float {
-  val lightBody = deck.bodies[id]!!
-  val distance = body.position.distance(lightBody.position)
+  val lightLocation = lightLocation(deck, id, light)
+  val distance = body.position.distance(lightLocation)
   val distanceMod = 1f - Math.min(1f, distance / light.range)
   return quadOut(distanceMod)
 }
@@ -76,7 +85,7 @@ fun canSee(world: World, lightRatings: Table<Float>, viewer: Id): (Id) -> Boolea
       && isInAngleOfView(deck.characterRigs[viewer]!!.facingVector, viewerBody, targetBody, fieldOfView)
       && lightRatings[target]!! + nearMod(distance) >= minimumLightRating
       && !isHiddenByHome(realm.grid, deck, viewer, target)
-      && firstRayHit(bulletState.dynamicsWorld, viewerBody.position + Vector3.up, targetBody.position + Vector3.up, CollisionGroups.tangibleMask)?.collisionObject as? Id ?: 0L == target
+      && firstRayHit(bulletState.dynamicsWorld, viewerBody.position, targetBody.position, CollisionGroups.tangibleMask)?.collisionObject as? Id ?: 0L == target
   result
 }
 

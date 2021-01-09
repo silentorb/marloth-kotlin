@@ -27,8 +27,11 @@ fun windowModeTextMap(windowMode: WindowMode): Text =
       WindowMode.windowedFullscreen -> TextId.gui_windowedFullscreen
     }
 
-fun formatResolutionOption(resolution: Vector2i): String =
-    "${resolution.x} x ${resolution.y}".padEnd(11)
+fun formatResolutionOption(resolution: Vector2i?): String =
+    if (resolution == null)
+      "Auto"
+    else
+      "${resolution.x} x ${resolution.y}".padEnd(11)
 
 fun windowModeField(textLibrary: TextResourceMapper, windowMode: WindowMode): MenuItem {
   val windowModeOptions = WindowMode.values().toList()

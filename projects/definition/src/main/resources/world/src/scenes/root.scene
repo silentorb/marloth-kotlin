@@ -1,5 +1,14 @@
 {
 "graph" : [
+["cbe","parent","root"],
+["cbe","mesh","cube"],
+["cbe","translation",[-53.759357,-34.960747,-5.5640955]],
+["cbe","type","solid-box"],
+["cbe1","mesh","cube"],
+["cbe1","parent","root"],
+["cbe1","scale",[0.5,0.5,0.5]],
+["cbe1","translation",[-49.437687,-38.823895,-6.191193]],
+["cbe1","type","solid-box"],
 ["city-street","parent","root"],
 ["city-street","type","city-street"],
 ["city-street","rotation",[0.0,0.0,3.0016196]],

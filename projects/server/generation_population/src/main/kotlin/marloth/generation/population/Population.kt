@@ -11,6 +11,7 @@ import silentorb.mythic.ent.Key
 import silentorb.mythic.ent.scenery.filterByAttribute
 import silentorb.mythic.ent.scenery.gatherChildren
 import silentorb.mythic.ent.scenery.getNodeTransform
+import silentorb.mythic.ent.scenery.nodesToElements
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.timing.FloatCycle
@@ -109,10 +110,18 @@ fun populateZone(nextId: IdSource, definitions: Definitions, dice: Dice, graph: 
 fun populateWorld(nextId: IdSource, config: GenerationConfig, dice: Dice, graph: Graph): List<NewHand> {
   val definitions = config.definitions
   val playerCount = getDebugInt("INITIAL_PLAYER_COUNT") ?: 1
+  val elementGroups = nodesToElements(config.meshShapes, graph)
+  val lights = elementGroups.flatMap { it.lights }
   val hands = (1..playerCount)
       .flatMap { newPlayerAndCharacter(nextId, definitions, graph) }
       .plus(graphToHands(definitions, nextId, graph))
       .plus(cycleHands(nextId))
       .plus(populateZone(nextId, definitions, dice, graph, "farm"))
+      .plus(lights.map {
+        NewHand(listOf(
+            it.copy(isDynamic = false)
+        ))
+      })
+
   return hands
 }

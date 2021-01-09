@@ -1,4 +1,4 @@
-package marloth.integration.scenery
+package marloth.clienting.rendering
 
 import marloth.clienting.gui.menus.TextStyles
 import marloth.definition.data.animationPlaceholders
@@ -143,19 +143,51 @@ fun getDebugTextBillboard(definitions: Definitions, deck: Deck, actor: Id, footP
       listOfNotNull(performanceBillboard, modifierBillboard)
     }
 
+fun characterMeshes(depictionType: DepictionType) =
+    when (depictionType) {
+      DepictionType.child -> listOf(
+          MeshId.personBody,
+          MeshId.pants,
+          MeshId.shirt,
+          MeshId.pumpkinHead
+      )
+      DepictionType.sentinel -> listOf(
+          MeshId.personBody,
+          MeshId.pants,
+          MeshId.shirt,
+          MeshId.sentinelHead
+      )
+      DepictionType.hound -> listOf(
+          MeshId.personBody,
+          MeshId.pants,
+          MeshId.shirt
+      )
+      else -> listOf(
+          MeshId.personBody,
+          MeshId.hogHead,
+          MeshId.pants,
+          MeshId.shirt
+      )
+    }
+
+fun characterFootPosition(location: Vector3, height: Float): Vector3 {
+  val verticalOffset = -height / 2f
+  return location + Vector3(0f, 0f, verticalOffset)
+}
+
+fun characterPlacement(location: Vector3, height: Float, rotationZ: Float): Matrix = Matrix.identity
+      .translate(characterFootPosition(location, height))
+      .rotateZ(rotationZ)
+      .rotateZ(Pi / 2f)
+      .scale(0.7f)
+
 fun convertCharacterDepiction(definitions: Definitions, deck: Deck, id: Id, depiction: Depiction): ElementGroup {
   val body = deck.bodies[id]!!
   val characterRig = deck.characterRigs[id]!!
   val collisionObject = deck.collisionObjects[id]!!
   val shape = collisionObject.shape
-  val verticalOffset = -shape.height / 2f
-  val footPosition = body.position + Vector3(0f, 0f, verticalOffset)
-
-  val transform = Matrix.identity
-      .translate(footPosition)
-      .rotateZ(characterRig.facingRotation.x)
-      .rotateZ(Pi / 2f)
-      .scale(0.3f)
+  val transform = characterPlacement(body.position, shape.height, characterRig.facingRotation.x)
+  val meshes = characterMeshes(depiction.type)
 
   val animations = deck.animations[id]!!.animations.map {
     val animationId = if (animationPlaceholders().containsKey(it.animationId))
@@ -167,31 +199,6 @@ fun convertCharacterDepiction(definitions: Definitions, deck: Deck, id: Id, depi
         animationId = animationId,
         timeOffset = it.animationOffset,
         strength = it.strength
-    )
-  }
-  val meshes = when {
-    depiction.type == DepictionType.child -> listOf(
-        MeshId.personBody,
-        MeshId.pants,
-        MeshId.shirt,
-        MeshId.pumpkinHead
-    )
-    depiction.type == DepictionType.sentinel -> listOf(
-        MeshId.personBody,
-        MeshId.pants,
-        MeshId.shirt,
-        MeshId.sentinelHead
-    )
-    depiction.type == DepictionType.hound -> listOf(
-        MeshId.personBody,
-        MeshId.pants,
-        MeshId.shirt
-    )
-    else -> listOf(
-        MeshId.personBody,
-        MeshId.hogHead,
-        MeshId.pants,
-        MeshId.shirt
     )
   }
 
@@ -225,7 +232,7 @@ fun convertCharacterDepiction(definitions: Definitions, deck: Deck, id: Id, depi
             else
               null
           },
-      textBillboards = getDebugTextBillboard(definitions, deck, id, footPosition, shape)
+      textBillboards = getDebugTextBillboard(definitions, deck, id, transform.translation(), shape)
   )
 }
 

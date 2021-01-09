@@ -15,7 +15,7 @@ import simulation.main.Deck
 import simulation.misc.Definitions
 
 val graphElementCache = singleValueCache<Graph, ElementGroups> { graph ->
-  nodesToElements(mapOf(), mapOf(), graph)
+  nodesToElements(mapOf(), graph)
 }
 
 fun createScene(meshes: ModelMeshMap, definitions: Definitions, deck: Deck, graph: Graph): (Id) -> GameScene = { player ->

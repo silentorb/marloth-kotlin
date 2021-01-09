@@ -116,11 +116,11 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
       .plus(gatherAdditionalGameCommands(world.deck, previousClient, clientState))
 
   val definitions = app.definitions
-  val windowResolution = app.client.renderer.options.windowedResolution
+  val dimensions = app.platform.display.getInfo().dimensions
   val mouseEvents = if (isGameMouseActive(app.platform, clientState))
     listOf()
   else
-    mouseLookEvents(windowResolution, previousClient.input.deviceStates.lastOrNull(), clientState.input.deviceStates.last(), firstPlayer(clientState))
+    mouseLookEvents(dimensions, previousClient.input.deviceStates.lastOrNull(), clientState.input.deviceStates.last(), firstPlayer(clientState))
 
   val clientEvents = clientState.events + gameCommands + mouseEvents
   val allEvents = withSimulationEvents(definitions, previous.deck, world, clientEvents) + world.nextCommands

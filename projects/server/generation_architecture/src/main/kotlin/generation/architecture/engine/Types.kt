@@ -2,6 +2,7 @@ package generation.architecture.engine
 
 import generation.general.*
 import marloth.scenery.enums.MeshInfoMap
+import marloth.scenery.enums.MeshShapeMap
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
@@ -33,6 +34,7 @@ typealias PolyominoMap = Map<String, Polyomino>
 data class GenerationConfig(
     val definitions: Definitions,
     val meshes: MeshInfoMap,
+    val meshShapes: MeshShapeMap,
     val includeEnemies: Boolean
 )
 
