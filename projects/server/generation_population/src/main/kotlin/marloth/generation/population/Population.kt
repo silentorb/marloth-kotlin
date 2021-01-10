@@ -1,20 +1,24 @@
 package marloth.generation.population
 
+import generation.abstracted.distributeToSlots
 import generation.architecture.engine.GenerationConfig
 import marloth.definition.data.characterDefinitions
 import marloth.definition.data.miscellaneousDefinitions
+import marloth.definition.misc.enemyDistributions
 import marloth.scenery.enums.CreatureId
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.Key
 import silentorb.mythic.ent.scenery.filterByAttribute
-import silentorb.mythic.ent.scenery.gatherChildren
 import silentorb.mythic.ent.scenery.getNodeTransform
 import silentorb.mythic.ent.scenery.nodesToElements
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.SceneProperties
+import silentorb.mythic.spatial.Matrix
+import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.timing.FloatCycle
+import simulation.characters.CharacterDefinition
 import simulation.characters.newCharacter
 import simulation.characters.newPlayerAndCharacter
 import simulation.intellect.Spirit
@@ -86,25 +90,39 @@ fun graphToHands(definitions: Definitions, nextId: IdSource, graph: Graph): List
   }
 }
 
-fun populateZone(nextId: IdSource, definitions: Definitions, dice: Dice, graph: Graph, zone: String): List<NewHand> {
-  val childKeys = gatherChildren(graph, zone)
-  val childEntries = graph.filter { childKeys.contains(it.source) }
-  val spawners = filterByAttribute(childEntries, Entities.monsterSpawn)
-  val count = min(spawners.size, spawners.size / 2 + 1)
-  val selection = dice.take(spawners, count)
-  return selection.map { spawner ->
-    val definition = definitions.professions[CreatureId.hound]!!
-    val transform = getNodeTransform(graph, spawner)
-    newCharacter(nextId, definitions, definition, transform, Factions.monsters)
-        .plusComponents(
-            Spirit(
-                post = transform.translation(),
-                zone = zone,
-                attributes = setOf(SpiritAttributes.isAggressive)
-            ),
-            newKnowledge()
-        )
+fun placeMonster(definitions: Definitions, definition: CharacterDefinition, nextId: IdSource, transform: Matrix): NewHand {
+  return newCharacter(nextId, definitions, definition, transform, Factions.monsters)
+      .plusComponents(
+          Spirit(
+              post = transform.translation(),
+              attributes = setOf(SpiritAttributes.isAggressive)
+          ),
+          newKnowledge()
+      )
+}
+
+fun populateMonsters(definitions: Definitions, locations: List<Matrix>, nextId: IdSource, dice: Dice): List<NewHand> {
+  println("Monster count: ${locations.size}")
+  return if (locations.none())
+    listOf()
+  else {
+    val distributions = distributeToSlots(dice, locations.size, enemyDistributions(), mapOf())
+    locations
+        .zip(distributions) { location, definitionName ->
+          println("Monster location: $location")
+          val definition = definitions.professions[definitionName]!!
+          placeMonster(definitions, definition, nextId, location)
+        }
   }
+}
+
+fun populateMonsters(nextId: IdSource, definitions: Definitions, dice: Dice, graph: Graph): List<NewHand> {
+  val spawners = filterByAttribute(graph, Entities.monsterSpawn)
+  val count = min(spawners.size, spawners.size / 2 + 1)
+  val locations = dice.take(spawners, count)
+      .map { getNodeTransform(graph, it) }
+
+  return populateMonsters(definitions, locations, nextId, dice)
 }
 
 fun populateWorld(nextId: IdSource, config: GenerationConfig, dice: Dice, graph: Graph): List<NewHand> {
@@ -116,7 +134,7 @@ fun populateWorld(nextId: IdSource, config: GenerationConfig, dice: Dice, graph:
       .flatMap { newPlayerAndCharacter(nextId, definitions, graph) }
       .plus(graphToHands(definitions, nextId, graph))
       .plus(cycleHands(nextId))
-      .plus(populateZone(nextId, definitions, dice, graph, "farm"))
+      .plus(populateMonsters(nextId, definitions, dice, graph))
       .plus(lights.map {
         NewHand(listOf(
             it.copy(isDynamic = false)

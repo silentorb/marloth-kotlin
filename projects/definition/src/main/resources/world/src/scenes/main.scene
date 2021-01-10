@@ -1,0 +1,14 @@
+{
+"graph" : [
+["dungeon","parent","main"],
+["dungeon","type","dungeon"],
+["home","parent","main"],
+["home","type","home"],
+["home","rotation",[0.0,0.0,4.491581]],
+["home","translation",[36.790134,25.3569,8.310338]],
+["main","",""],
+["tunnel","parent","main"],
+["tunnel","type","tunnel"],
+["tunnel","translation",[-0.062533855,44.82806,7.6566005]]
+]
+}

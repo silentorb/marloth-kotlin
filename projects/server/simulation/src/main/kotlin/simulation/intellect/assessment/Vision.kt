@@ -85,7 +85,7 @@ fun canSee(world: World, lightRatings: Table<Float>, viewer: Id): (Id) -> Boolea
       && isInAngleOfView(deck.characterRigs[viewer]!!.facingVector, viewerBody, targetBody, fieldOfView)
       && lightRatings[target]!! + nearMod(distance) >= minimumLightRating
       && !isHiddenByHome(realm.grid, deck, viewer, target)
-      && firstRayHit(bulletState.dynamicsWorld, viewerBody.position, targetBody.position, CollisionGroups.tangibleMask)?.collisionObject as? Id ?: 0L == target
+      && firstRayHit(bulletState.dynamicsWorld, viewerBody.position + Vector3(0f, 0f, 0.4f), targetBody.position, CollisionGroups.tangibleMask)?.collisionObject as? Id ?: 0L == target
   result
 }
 

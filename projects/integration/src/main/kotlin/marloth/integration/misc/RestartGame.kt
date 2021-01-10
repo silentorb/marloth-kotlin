@@ -1,14 +1,10 @@
 package marloth.integration.misc
 
 import marloth.clienting.ClientState
-import marloth.clienting.editing.defaultWorldScene
-import marloth.clienting.editing.expandDefaultWorldGraph
 import marloth.clienting.editing.expandWorldGraph
 import marloth.clienting.editing.loadWorldGraph
 import marloth.clienting.input.newInputState
 import marloth.integration.front.GameApp
-import silentorb.mythic.editing.Editor
-import silentorb.mythic.editing.getActiveEditorGraph
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.getMeshShapes

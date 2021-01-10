@@ -4,7 +4,7 @@
 ["lamp","parent","wall-lamp"],
 ["lamp","rgba","#fff5d8ff"],
 ["lamp","translation",[0.45234454,0.0,0.5453807]],
-["lamp","range",15.0],
+["lamp","range",20.0],
 ["wall-lamp","",""],
 ["wall-lamp","mesh","wallLamp"]
 ]

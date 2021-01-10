@@ -1,13 +1,12 @@
 package marloth.integration.misc
 
 import marloth.clienting.*
-import marloth.clienting.editing.defaultWorldScene
+import marloth.clienting.editing.mainScene
 import marloth.clienting.editing.renderEditorViewport
 import marloth.clienting.gui.hud.updateTargeting
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.input.mouseLookEvents
 import marloth.clienting.gui.BloomDefinition
-import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.logic.syncDisplayOptions
 import marloth.clienting.gui.menus.logic.updateAppOptions
 import marloth.clienting.gui.newBloomDefinition
@@ -151,7 +150,7 @@ fun checkRestartGame(app: GameApp, appState: AppState, clientState: ClientState)
       .firstOrNull { it.type == GuiCommandType.newGame }
 
   return if (newGameCommand != null) {
-    val scene = newGameCommand.value as? String ?: defaultWorldScene
+    val scene = newGameCommand.value as? String ?: mainScene()
     restartGame(app, appState.copy(client = clientState), scene)
   } else
     null

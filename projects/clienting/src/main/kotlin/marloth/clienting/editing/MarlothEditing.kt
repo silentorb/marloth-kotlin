@@ -137,7 +137,9 @@ fun loadWorldGraph(meshShapes: MeshShapeMap, name: String): Graph {
   return expandGameInstances(library, name)
 }
 
-const val defaultWorldScene = "root"
+const val defaultScene = "root"
+
+fun mainScene() = getDebugString("DEFAULT_SCENE") ?: defaultScene
 
 fun expandWorldGraph(editor: Editor, scene: String): Graph {
   val graphLibrary = loadAllDependencies(editor, scene)
@@ -146,7 +148,7 @@ fun expandWorldGraph(editor: Editor, scene: String): Graph {
 }
 
 fun expandDefaultWorldGraph(editor: Editor): Graph =
-    expandWorldGraph(editor, defaultWorldScene)
+    expandWorldGraph(editor, mainScene())
 
 fun loadDefaultWorldGraph(meshShapes: MeshShapeMap) =
-    loadWorldGraph(meshShapes, defaultWorldScene)
+    loadWorldGraph(meshShapes, mainScene())

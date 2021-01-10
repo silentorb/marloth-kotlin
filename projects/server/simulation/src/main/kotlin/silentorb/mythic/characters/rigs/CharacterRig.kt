@@ -15,7 +15,7 @@ import silentorb.mythic.spatial.*
 import simulation.main.Deck
 import kotlin.math.min
 
-const val defaultCharacterRadius = 0.16f
+const val defaultCharacterRadius = 0.2f
 const val defaultCharacterHeight = 1.2f
 const val characterGroundBuffer = 0.01f
 
