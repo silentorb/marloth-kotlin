@@ -4,6 +4,8 @@
 ["deleteme","text3d","bridga"],
 ["test","parent","test2"],
 ["test","type","test"],
-["test2","",""]
+["test2","",""],
+["wide-tunnel","parent","test2"],
+["wide-tunnel","type","wide-tunnel"]
 ]
 }
