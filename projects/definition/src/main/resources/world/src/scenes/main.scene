@@ -1,5 +1,8 @@
 {
 "graph" : [
+["cube-room-fork","parent","main"],
+["cube-room-fork","type","cube-room-fork"],
+["cube-room-fork","translation",[0.0,61.64489,7.97411]],
 ["dungeon","parent","main"],
 ["dungeon","type","dungeon"],
 ["home","parent","main"],
