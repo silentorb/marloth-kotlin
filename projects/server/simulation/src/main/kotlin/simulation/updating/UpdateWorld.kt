@@ -62,7 +62,7 @@ fun updateWorld(definitions: Definitions, events: Events, commands: Commands, de
 
   return withPhysics.copy(
       deck = deck,
-      global = updateGlobalState(deck, withPhysics.realm.grid, withPhysics.global),
+      global = updateGlobalState(deck, world.staticGraph, withPhysics.global),
       navigation = navigation,
       nextId = nextId(),
       nextCommands = gatherNextCommands(world, commands),

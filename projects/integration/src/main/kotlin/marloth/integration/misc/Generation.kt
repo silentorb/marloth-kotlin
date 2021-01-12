@@ -8,18 +8,21 @@ import persistence.Database
 import persistence.queryEntries
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugString
-import silentorb.mythic.ent.*
-import silentorb.mythic.ent.scenery.filterByAttribute
+import silentorb.mythic.ent.Graph
+import silentorb.mythic.ent.SimpleGraphStore
+import silentorb.mythic.ent.filterByProperty2
+import silentorb.mythic.ent.newIdSource
 import silentorb.mythic.physics.newBulletState
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.SceneProperties
 import simulation.intellect.navigation.newNavigationState
-import simulation.main.*
+import simulation.main.Deck
+import simulation.main.World
+import simulation.main.allHandsToDeck
+import simulation.main.newGlobalState
 import simulation.misc.Definitions
-import simulation.misc.GameAttributes
 import simulation.misc.MapGrid
 import simulation.misc.Realm
-import simulation.physics.graphToBody
 
 fun generateWorld(db: Database, definitions: Definitions, generationConfig: GenerationConfig, dice: Dice, graph: Graph, step: Long): World {
   val nextId = newIdSource(1)

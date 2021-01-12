@@ -7,6 +7,7 @@ import marloth.clienting.editing.newEditor
 import marloth.clienting.editing.updateEditingActive
 import marloth.clienting.gui.BloomDefinition
 import marloth.clienting.gui.EventUnion
+import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.logic.commandsToClientEvents
 import marloth.clienting.gui.menus.logic.eventsFromGuiState
 import marloth.clienting.gui.menus.logic.getMenuItemEvents
@@ -42,12 +43,13 @@ import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.toVector2i
 import simulation.main.Deck
 import simulation.main.World
+import simulation.misc.Factions
 
 
 fun updateMousePointerVisibility(platform: Platform, clientState: ClientState) {
   if (!getDebugBoolean("DISABLE_MOUSE")) {
     val windowHasFocus = platform.display.hasFocus()
-    val view =clientState.guiStates[clientState.players.firstOrNull()]?.view
+    val view = clientState.guiStates[clientState.players.firstOrNull()]?.view
     val isEditing = clientState.isEditorActive && !(clientState.editor?.flyThrough ?: false)
     platform.input.setMouseVisibility(!windowHasFocus || view != null || isEditing)
   } else {
@@ -139,7 +141,14 @@ fun updateClient(
   val commands = gatherInputCommands(clientState.input, input, playerViews(clientState))
   val mousePosition = clientState.input.deviceStates.first().mousePosition.toVector2i()
   val events = gatherUserEvents(options, clientState, playerBoxes, mousePosition, commands)
-  val commands2 = commands + events.filterIsInstance<Command>()
+  val commands2 = commands + events.filterIsInstance<Command>() +
+      listOfNotNull(
+          if (worlds.size > 1 && worlds.last().global.gameOver?.winningFaction == Factions.misfits &&
+              worlds.dropLast(1).last().global.gameOver?.winningFaction != Factions.misfits)
+            Command(ClientEventType.navigate, ViewId.victory, worlds.last().deck.players.keys.first())
+          else
+            null
+      )
 
   applyCommandsToExternalSystem(client, commands2)
   val nextGuiStates = if (clientState.isEditorActive)

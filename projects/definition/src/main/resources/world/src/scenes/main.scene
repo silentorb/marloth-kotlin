@@ -23,6 +23,9 @@
 ["monster2","rotation",[0.0,0.0,5.477712]],
 ["tunnel","parent","main"],
 ["tunnel","type","tunnel"],
-["tunnel","translation",[-0.062533855,44.82806,7.6566005]]
+["tunnel","translation",[-0.062533855,44.82806,7.6566005]],
+["victory-zone","parent","main"],
+["victory-zone","type","victoryZone"],
+["victory-zone","translation",[-86.49053,26.896343,20.571827]]
 ]
 }
