@@ -22,7 +22,7 @@ fun checkGameOver(deck: Deck, graph: LooseGraph): GameOver? {
   val playersInRange = deck.players.keys
       .mapNotNull { deck.bodies[it] }
       .any { body ->
-        victoryLocations.any { it.distance(body.position) < 5f }
+        victoryLocations.any { it.distance(body.position) < 8f }
       }
   return if (playersInRange)
     GameOver(

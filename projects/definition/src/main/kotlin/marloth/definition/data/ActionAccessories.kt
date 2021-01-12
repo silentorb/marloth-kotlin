@@ -102,8 +102,8 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
             name = TextId.id_mobility
         ),
         action = ActionDefinition(
-            cooldown = 2f,
-            duration = 3f,
+            cooldown = 3f,
+            duration = 2f,
             equipmentSlot = EquipmentSlot.automatic
         )
     ),

@@ -11,7 +11,7 @@ fun monsterDefinitions(): Map<String, CharacterDefinition> =
         CreatureId.hogMan to CharacterDefinition(
             name = TextId.unnamed,
             health = 100,
-            accessories = listOf(AccessoryId.pistol),
+            accessories = listOf(AccessoryId.pistol, AccessoryId.mobility),
             depictionType = DepictionType.person,
             speed = 2.5f,
             deathSound = SoundId.hogDeath,
@@ -31,7 +31,7 @@ fun monsterDefinitions(): Map<String, CharacterDefinition> =
         CreatureId.hound to CharacterDefinition(
             name = TextId.unnamed,
             health = 100,
-            accessories = listOf(AccessoryId.claws, AccessoryId.dash),
+            accessories = listOf(AccessoryId.claws, AccessoryId.dash, AccessoryId.mobility),
             depictionType = DepictionType.hound,
             speed = 5f,
             deathSound = null,

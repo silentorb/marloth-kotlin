@@ -31,7 +31,7 @@ fun getFreedoms(deck: Deck): (Id) -> Freedoms = { actor ->
   else {
     val isPerforming = isPerforming(deck.performances, actor)
     val canWalk = /*!isPerforming && */ !isEntangled(deck.accessories, actor) && (!getDebugBoolean("ENABLE_MOBILITY") || hasMobilityModifier(deck.accessories, actor))
-    val walking =if (canWalk) Freedom.walking else Freedom.none
+    val walking = if (canWalk) Freedom.walking else Freedom.none
     val acting = if (!isPerforming) Freedom.acting else Freedom.none
     Freedom.orbiting or Freedom.turning or walking or acting
   }

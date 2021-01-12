@@ -12,6 +12,7 @@ import simulation.accessorize.AccessoryStack
 import simulation.happenings.NewHandEvent
 import simulation.main.Deck
 import simulation.main.Hand
+import simulation.main.NewHand
 import simulation.misc.Definitions
 
 private val mobilityCommands = setOf(
@@ -25,16 +26,16 @@ fun isMobilityCommand(command: Command): Boolean =
     mobilityCommands.contains(command.type)
 
 fun newMobilityModifierEvent(actor: Id, source: Id, duration: Float) =
-    NewHandEvent(
-        hand = Hand(
-            accessory = AccessoryStack(
+    NewHand(
+        components = listOf(
+            AccessoryStack(
                 value = Accessory(
                     type = AccessoryId.mobile,
                     source = source,
                 ),
                 owner = actor,
             ),
-            timerFloat = FloatTimer(duration)
+            FloatTimer(duration)
         )
     )
 

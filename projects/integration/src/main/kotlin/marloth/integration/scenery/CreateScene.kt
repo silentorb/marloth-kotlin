@@ -40,11 +40,15 @@ fun createScene(meshes: ModelMeshMap, definitions: Definitions, deck: Deck, grap
       null
 
     val targetingLayer = getTargetingLayer(deck, player)
-    val movementRangeLayer = entanglingMovementRangeLayer(definitions, deck, player)
-        ?: if (getDebugBoolean("ENABLE_MOBILITY"))
-          mobilityMovementRangeLayer(definitions, deck, player)
-        else
-          null
+//    val movementRangeLayer = entanglingMovementRangeLayer(definitions, deck, player)
+//        ?: if (getDebugBoolean("ENABLE_MOBILITY"))
+//          mobilityMovementRangeLayer(definitions, deck, player)
+//        else
+//          null
+    val movementRangeLayer = if (getDebugBoolean("ENABLE_MOBILITY"))
+      mobilityMovementRangeLayer(definitions, deck, player)
+    else
+      null
 
     val roots = getGraphRoots(graph)
     val mainElements = gatherVisualElements(definitions, deck, player, characterRig) +
@@ -66,7 +70,7 @@ fun createScene(meshes: ModelMeshMap, definitions: Definitions, deck: Deck, grap
             elements = gatherParticleElements(deck, camera.position),
             useDepth = false
         )
-    ) + listOfNotNull(equipmentLayer)
+    ) + listOfNotNull(movementRangeLayer, equipmentLayer)
     // + listOfNotNull(movementRangeLayer, equipmentLayer, targetingLayer)
 
     val elementLights = layers.flatMap { layer ->
