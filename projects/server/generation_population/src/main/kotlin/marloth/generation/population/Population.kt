@@ -5,6 +5,7 @@ import generation.architecture.engine.GenerationConfig
 import marloth.definition.data.characterDefinitions
 import marloth.definition.data.miscellaneousDefinitions
 import marloth.definition.misc.enemyDistributions
+import marloth.definition.misc.monsterLimit
 import marloth.scenery.enums.CreatureId
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.ent.Graph
@@ -118,7 +119,7 @@ fun populateMonsters(definitions: Definitions, locations: List<Matrix>, nextId: 
 
 fun populateMonsters(nextId: IdSource, definitions: Definitions, dice: Dice, graph: Graph): List<NewHand> {
   val spawners = filterByAttribute(graph, Entities.monsterSpawn)
-  val count = min(spawners.size, spawners.size / 2 + 1)
+  val count = min(monsterLimit(), min(spawners.size, spawners.size / 2 + 1))
   val locations = dice.take(spawners, count)
       .map { getNodeTransform(graph, it) }
 

@@ -15,7 +15,7 @@ import silentorb.mythic.spatial.*
 import simulation.main.Deck
 import kotlin.math.min
 
-const val defaultCharacterRadius = 0.2f
+const val defaultCharacterRadius = 0.3f
 const val defaultCharacterHeight = 1.2f
 const val characterGroundBuffer = 0.01f
 
@@ -23,7 +23,7 @@ const val groundedLinearDamping = 0.9f
 const val airLinearDamping = 0f
 const val airControlReduction = 0.4f
 
-const val maxFootStepHeight = 0.3f
+const val maxFootStepHeight = 0.35f
 
 fun maxPositiveLookVelocityXChange() = 0.06f
 fun maxNegativeLookVelocityXChange() = 0.15f
@@ -65,18 +65,12 @@ private fun castFootStepRay(walkableMask: Int, dynamicsWorld: btDiscreteDynamics
   }
 }
 
-data class CharacterRigHand(
-    val characterRig: CharacterRig,
-    val body: Body,
-    val collisionObject: CollisionObject
-)
-
 fun updateCharacterStepHeight(
     bulletState: BulletState,
     walkableMask: Int,
     body: Body,
     collisionObject: CollisionObject
-): Float {
+): Pair<Float, Float> {
   val shape = collisionObject.shape
   val radius = shape.radius
   val footHeight = maxFootStepHeight
@@ -84,7 +78,7 @@ fun updateCharacterStepHeight(
   val cast = castFootStepRay(walkableMask, bulletState.dynamicsWorld, body.position, footHeight, shape.height)
   val centerDistance = cast(Vector3.zero)
   if (centerDistance == null) {
-    return noHitValue
+    return noHitValue to noHitValue
   } else {
     val distances = offsets
         .mapNotNull(cast)
@@ -92,9 +86,9 @@ fun updateCharacterStepHeight(
 
     return if (distances.any()) {
       val distance = distances.firstFloatSortedBy { it }
-      distance - footHeight
+      (centerDistance - footHeight) to (distance - footHeight)
     } else
-      noHitValue
+      noHitValue to noHitValue
   }
 }
 
@@ -107,13 +101,14 @@ fun updateCharacterRigBulletBody(bulletState: BulletState): (Id, CharacterRig) -
   val isGrounded = isGrounded(characterRig)
   if (isGrounded && (groundDistance < -0.01f || groundDistance > 0.1f)) {
     val stepHeight = -groundDistance
-
-    if (stepHeight < 0f) {
-      val k = 0
+    if (groundDistance < -0.01f) {
+      val transitionStepHeight = min(0.03f, stepHeight)
+      println("$groundDistance $transitionStepHeight")
+      btBody.translate(toGdxVector3(Vector3(0f, 0f, transitionStepHeight)))
+    } else if (groundDistance > 0.1f) {
+//      val transitionStepHeight = min(0.015f, stepHeight)
+//      btBody.translate(toGdxVector3(Vector3(0f, 0f, transitionStepHeight)))
     }
-    val transitionStepHeight = min(0.015f, stepHeight)
-//    println("$groundDistance $transitionStepHeight")
-    btBody.translate(toGdxVector3(Vector3(0f, 0f, transitionStepHeight)))
   }
 
   val linearDamping = if (isGrounded)
@@ -191,8 +186,10 @@ fun updateCharacterRig(
       characterRig.viewMode
 
 //    assert(facingRotation.z > - Pi * 2 && facingRotation.z < Pi * 2)
+    val (centerGroundDistance, groundDistance) = updateCharacterStepHeight(bulletState, walkableMask, bodies[id]!!, collisionObjects[id]!!)
     characterRig.copy(
-        groundDistance = updateCharacterStepHeight(bulletState, walkableMask, bodies[id]!!, collisionObjects[id]!!),
+        centerGroundDistance = centerGroundDistance,
+        groundDistance = groundDistance,
         facingRotation = facingRotation,
         facingOrientation = characterRigOrentation(facingRotation),
         firstPersonLookVelocity = firstPersonLookVelocity,

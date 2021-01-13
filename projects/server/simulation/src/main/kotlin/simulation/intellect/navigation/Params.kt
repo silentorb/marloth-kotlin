@@ -13,7 +13,7 @@ const val cellSize = 0.1f
 const val cellHeight = cellSize
 const val agentHeight = defaultCharacterHeight
 const val agentRadius = defaultCharacterRadius + 0.02f
-const val agentMaxClimb = 0.2f
+const val agentMaxClimb = 0.3f
 
 val vertsPerPoly = 6
 

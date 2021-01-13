@@ -20,6 +20,7 @@ fun characterRigOrentation(facingRotation: Vector2) =
 data class CharacterRig(
     val facingRotation: Vector2 = Vector2(),
     val facingOrientation: Quaternion,
+    val centerGroundDistance: Float = 0f,
     val groundDistance: Float = 0f,
     val firstPersonLookVelocity: Vector2 = Vector2(),
     val viewMode: ViewMode= ViewMode.firstPerson
